@@ -1,0 +1,53 @@
+name: weekly-screen
+
+# Configure once, runs forever: every Monday it refreshes EOD prices for the stored universe,
+# runs Screen 2, and commits the updated JSONL snapshots back. No manual re-runs.
+on:
+  schedule:
+    - cron: "0 6 * * 1" # Mondays 06:00 UTC
+  workflow_dispatch: {} # also runnable on demand
+
+permissions:
+  contents: write # to commit the refreshed snapshots back
+
+concurrency:
+  group: mosaic-scheduled # weekly + monthly never race on the snapshot commit
+  cancel-in-progress: false
+
+jobs:
+  screen:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -e .
+
+      # Immutable per-day grouped-daily responses are cached, so only new days hit the network.
+      - name: Restore EOD cache
+        uses: actions/cache@v4
+        with:
+          path: data/cache
+          key: mosaic-eod-cache-${{ github.run_id }}
+          restore-keys: mosaic-eod-cache-
+
+      - name: Run weekly screen
+        env:
+          POLYGON_API_KEY: ${{ secrets.POLYGON_API_KEY }}
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          SEC_USER_AGENT: ${{ secrets.SEC_USER_AGENT }}
+        run: python -m mosaic run-weekly
+
+      - name: Commit refreshed snapshots
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add data/snapshots
+          git diff --staged --quiet || git commit -m "weekly screen: refresh snapshots [skip ci]"
+          git push

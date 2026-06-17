@@ -1,0 +1,52 @@
+name: monthly-score
+
+# Configure once, runs forever: on the 1st of each month it scores the decision ledger
+# (the BUY−AVOID spread + supporting metrics) and commits the report back.
+on:
+  schedule:
+    - cron: "0 7 1 * *" # 1st of the month, 07:00 UTC
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+
+concurrency:
+  group: mosaic-scheduled
+  cancel-in-progress: false
+
+jobs:
+  score:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -e .
+
+      - name: Restore EOD cache
+        uses: actions/cache@v4
+        with:
+          path: data/cache
+          key: mosaic-eod-cache-${{ github.run_id }}
+          restore-keys: mosaic-eod-cache-
+
+      - name: Run monthly scoring
+        env:
+          POLYGON_API_KEY: ${{ secrets.POLYGON_API_KEY }}
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          SEC_USER_AGENT: ${{ secrets.SEC_USER_AGENT }}
+        run: python -m mosaic run-monthly
+
+      - name: Commit scoring report
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add data/snapshots
+          git diff --staged --quiet || git commit -m "monthly score: update report [skip ci]"
+          git push

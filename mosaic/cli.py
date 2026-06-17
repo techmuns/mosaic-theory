@@ -16,8 +16,8 @@ from mosaic.config import get_config
 from mosaic.edgar import EdgarClient
 from mosaic.eod import PolygonEodClient, compute_price_features, ingest_prices
 from mosaic.ledger import LedgerError, log_verdict
+from mosaic.orchestrator import benchmark_identity, run_monthly, run_weekly
 from mosaic.resolver import EntityResolver, ResolutionError
-from mosaic.schemas.data_record import Identity
 from mosaic.schemas.ledger import Confidence, Verdict
 from mosaic.scoring import score_ledger
 from mosaic.screens import (
@@ -106,20 +106,6 @@ def _cmd_eod(args: argparse.Namespace) -> int:
     return 0
 
 
-def _benchmark_identity(symbol: str) -> Identity:
-    """A synthetic identity for a benchmark ETF (not a SEC issuer, so not resolver-resolved)."""
-    return Identity(
-        internal_id=f"IDX-{symbol}",
-        issuer_id="IDX",
-        cik="",
-        ticker=symbol,
-        mic="ARCX",
-        exchange="ETF",
-        eod_symbol=symbol,
-        name=f"{symbol} (benchmark)",
-    )
-
-
 def _cmd_screen(args: argparse.Namespace) -> int:
     """Run Screen 2 across the stored universe; print the gate matrix and candidates."""
     cfg = get_config()
@@ -127,7 +113,7 @@ def _cmd_screen(args: argparse.Namespace) -> int:
     edgar = EdgarClient.from_config(cfg)
     client = PolygonEodClient.from_config(cfg)
     th = Screen2Thresholds()
-    bench = _benchmark_identity(args.benchmark)
+    bench = benchmark_identity(args.benchmark)
     with Store(cfg.db_path) as store:
         rng = store._conn.execute(
             "SELECT MIN(bar_date) a, MAX(bar_date) b FROM prices WHERE internal_id NOT LIKE 'IDX-%'"
@@ -243,6 +229,21 @@ def _cmd_score(args: argparse.Namespace) -> int:
     return 0
 
 
+def _cmd_run_weekly(args: argparse.Namespace) -> int:
+    """Scheduled weekly job: refresh the universe + run the screen + export snapshots."""
+    end = date.fromisoformat(args.end) if args.end else date.today()
+    print(f"weekly run: {run_weekly(end=end, benchmark=args.benchmark)}")
+    return 0
+
+
+def _cmd_run_monthly(args: argparse.Namespace) -> int:
+    """Scheduled monthly job: score the ledger + write the report + export snapshots."""
+    as_of = date.fromisoformat(args.as_of) if args.as_of else date.today()
+    report = run_monthly(as_of=as_of, benchmark=args.benchmark, cost_bps=args.cost_bps)
+    print(f"monthly run: spread={report['buy_avoid_spread']} pending={report['n_pending']}")
+    return 0
+
+
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(prog="mosaic", description=__doc__)
     sub = parser.add_subparsers(dest="command", required=True)
@@ -291,6 +292,17 @@ def build_parser() -> argparse.ArgumentParser:
     p_score.add_argument("--ref", help="as-of date YYYY-MM-DD (default: today)")
     p_score.add_argument("--json", action="store_true", help="also write the report JSON")
     p_score.set_defaults(func=_cmd_score)
+
+    p_weekly = sub.add_parser("run-weekly", help="scheduled: refresh + screen + export snapshots")
+    p_weekly.add_argument("--end", help="end date YYYY-MM-DD (default: today)")
+    p_weekly.add_argument("--benchmark", default="IWM")
+    p_weekly.set_defaults(func=_cmd_run_weekly)
+
+    p_monthly = sub.add_parser("run-monthly", help="scheduled: score the ledger + export report")
+    p_monthly.add_argument("--as-of", dest="as_of", help="as-of date YYYY-MM-DD (default: today)")
+    p_monthly.add_argument("--benchmark", default="IWM")
+    p_monthly.add_argument("--cost-bps", type=float, default=25.0, dest="cost_bps")
+    p_monthly.set_defaults(func=_cmd_run_monthly)
     return parser
 
 
