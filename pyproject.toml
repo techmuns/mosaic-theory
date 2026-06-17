@@ -1,0 +1,58 @@
+[project]
+name = "mosaic"
+version = "0.1.0"
+description = "Loop 1 — first production slice of an AI-native, long-only US equity research engine (paper mode)."
+readme = "README.md"
+requires-python = ">=3.11"
+license = { text = "Proprietary" }
+authors = [{ name = "Munshot Research" }]
+dependencies = [
+    "pydantic>=2.11",
+    "httpx>=0.27",
+]
+
+[project.optional-dependencies]
+# Pulled in only when the scoring harness (step 7) is built, to keep the
+# early-step install minimal and avoid bleeding-edge wheel friction.
+scoring = [
+    "numpy>=1.26",
+    "pandas>=2.2",
+    "statsmodels>=0.14",
+]
+dev = [
+    "pytest>=8.0",
+    "ruff>=0.6",
+    "mypy>=1.11",
+]
+
+[project.scripts]
+mosaic = "mosaic.cli:main"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["mosaic"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+
+[tool.ruff.lint]
+# pyflakes, pycodestyle, isort, bugbear, comprehensions, pyupgrade, naming
+select = ["F", "E", "W", "I", "B", "C4", "UP", "N", "SIM"]
+
+[tool.mypy]
+python_version = "3.11"
+strict = true
+warn_unused_ignores = true
+disallow_untyped_defs = true
+plugins = ["pydantic.mypy"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-q"
+markers = [
+    "network: tests that hit live external APIs (SEC EDGAR, Polygon); deselect with -m 'not network'",
+]
