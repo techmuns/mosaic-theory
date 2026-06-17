@@ -9,11 +9,21 @@ from __future__ import annotations
 import argparse
 import sys
 from collections.abc import Sequence
-from datetime import date
+from datetime import date, datetime
 
 from mosaic.config import get_config
+from mosaic.edgar import EdgarClient
 from mosaic.eod import PolygonEodClient, compute_price_features, ingest_prices
 from mosaic.resolver import EntityResolver, ResolutionError
+from mosaic.schemas.data_record import Identity
+from mosaic.screens import (
+    Screen2Thresholds,
+    build_data_record,
+    evaluate_screen2,
+    gate_g1_drawdown,
+    gate_g2_idiosyncratic,
+    gate_g3_multiple_floor,
+)
 from mosaic.store import Store
 
 
@@ -75,14 +85,94 @@ def _cmd_eod(args: argparse.Namespace) -> int:
     span = f"{bars[0].bar_date}..{bars[-1].bar_date} ({len(bars)} bars)"
     print(f"=== {ident.ticker} ({ident.name})  features as of {ref}  [{span}] ===")
     for label, field in [
-        ("last close", f.last), ("52w high", f.high_52w), ("52w low", f.low_52w),
-        ("drawdown from high", f.drawdown_from_high), ("dist from low", f.dist_from_low),
-        ("return 3m", f.ret_3m), ("return 6m", f.ret_6m), ("return 12m", f.ret_12m),
-        ("90d ADV (sh)", f.adv_90d_shares), ("90d ADV ($)", f.adv_90d_usd),
+        ("last close", f.last),
+        ("52w high", f.high_52w),
+        ("52w low", f.low_52w),
+        ("drawdown from high", f.drawdown_from_high),
+        ("dist from low", f.dist_from_low),
+        ("return 3m", f.ret_3m),
+        ("return 6m", f.ret_6m),
+        ("return 12m", f.ret_12m),
+        ("90d ADV (sh)", f.adv_90d_shares),
+        ("90d ADV ($)", f.adv_90d_usd),
         ("volume spike", f.volume_spike),
     ]:
         v = f"{field.value:,.4g}" if isinstance(field.value, (int, float)) else "—"
         print(f"  {label:<20} {field.coverage_status.value:<8} {v}")
+    return 0
+
+
+def _benchmark_identity(symbol: str) -> Identity:
+    """A synthetic identity for a benchmark ETF (not a SEC issuer, so not resolver-resolved)."""
+    return Identity(
+        internal_id=f"IDX-{symbol}",
+        issuer_id="IDX",
+        cik="",
+        ticker=symbol,
+        mic="ARCX",
+        exchange="ETF",
+        eod_symbol=symbol,
+        name=f"{symbol} (benchmark)",
+    )
+
+
+def _cmd_screen(args: argparse.Namespace) -> int:
+    """Run Screen 2 across the stored universe; print the gate matrix and candidates."""
+    cfg = get_config()
+    cfg.ensure_dirs()
+    edgar = EdgarClient.from_config(cfg)
+    client = PolygonEodClient.from_config(cfg)
+    th = Screen2Thresholds()
+    bench = _benchmark_identity(args.benchmark)
+    with Store(cfg.db_path) as store:
+        rng = store._conn.execute(
+            "SELECT MIN(bar_date) a, MAX(bar_date) b FROM prices WHERE internal_id NOT LIKE 'IDX-%'"
+        ).fetchone()
+        if not rng or not rng["a"]:
+            print("no prices stored; run `mosaic refresh` first")
+            return 1
+        start, end = date.fromisoformat(rng["a"]), date.fromisoformat(rng["b"])
+        ref = date.fromisoformat(args.ref) if args.ref else end
+
+        store.upsert_security(bench)
+        if not store.get_price_history(bench.internal_id):
+            ingest_prices(client, store, [bench], start=start, end=end)  # cache hits → instant
+        bench_bars = store.get_price_history(bench.internal_id)
+
+        secs = [s for s in store.iter_securities() if not s.internal_id.startswith("IDX-")]
+        print(f"=== Screen 2 · {len(secs)} names · ref {ref} · benchmark {args.benchmark} ===")
+        print(f"{'TICKER':<7}{'G1_dd':<8}{'G2_idio':<9}{'G3_mult':<9}verdict")
+        admitted = []
+        run_at = datetime.combine(ref, datetime.min.time())
+        for s in secs:
+            rec = build_data_record(
+                s,
+                price_bars=store.get_price_history(s.internal_id),
+                benchmark_bars=bench_bars,
+                edgar=edgar,
+                reference_date=ref,
+                staleness_days=cfg.price_staleness_days,
+            )
+            g1, g2, g3 = (
+                gate_g1_drawdown(rec, th)[0],
+                gate_g2_idiosyncratic(rec, th)[0],
+                gate_g3_multiple_floor(rec, th)[0],
+            )
+            cand = evaluate_screen2(rec, screen_run_at=run_at, thresholds=th)
+            verdict = "CANDIDATE" if cand else "reject"
+            print(f"{s.ticker:<7}{g1.value:<8}{g2.value:<9}{g3.value:<9}{verdict}")
+            if cand:
+                admitted.append(cand)
+                store.save_candidate(cand)
+        print(f"\n{len(admitted)} candidate(s) emitted to the store:")
+        for c in admitted:
+            d = c.data_record
+            print(
+                f"  • {d.identity.ticker} [band {c.triage_band.value}]  drawdown "
+                f"{d.prices.drawdown_from_high.value:.0%}"
+            )
+            print(f"      trigger: {c.trigger_reason}")
+            print(f"      twin: {c.twin_to_rule_out} | depth tasks: {c.unknown_gates_for_depth}")
     return 0
 
 
@@ -107,6 +197,11 @@ def build_parser() -> argparse.ArgumentParser:
     p_eod.add_argument("ticker", help="ticker (e.g. AAPL)")
     p_eod.add_argument("--ref", help="reference date YYYY-MM-DD (default: today)")
     p_eod.set_defaults(func=_cmd_eod)
+
+    p_screen = sub.add_parser("screen", help="run Screen 2 across the stored universe")
+    p_screen.add_argument("--benchmark", default="IWM", help="benchmark ETF for G2 (default: IWM)")
+    p_screen.add_argument("--ref", help="reference date YYYY-MM-DD (default: latest stored bar)")
+    p_screen.set_defaults(func=_cmd_screen)
     return parser
 
 
