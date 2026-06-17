@@ -17,7 +17,7 @@ from typing import Any, cast
 
 from pydantic import BaseModel
 
-from mosaic.config import Config, get_config, sec_user_agent
+from mosaic.config import Config, get_config
 from mosaic.netcache import CachedHttp
 from mosaic.resolver.errors import AmbiguousResolutionError, UnknownSymbolError
 from mosaic.resolver.index import (
@@ -75,17 +75,10 @@ class EntityResolver:
     @classmethod
     def from_config(cls, config: Config | None = None) -> EntityResolver:
         """Build a network-backed resolver with a SEC-polite cached HTTP client."""
+        from mosaic.sec import build_sec_http
+
         cfg = config or get_config()
-        cfg.ensure_dirs()
-        http = CachedHttp(
-            cache_dir=cfg.cache_dir,
-            user_agent=sec_user_agent(),
-            min_interval_sec=1.0 / cfg.pacing.sec_requests_per_sec,
-            max_retries=cfg.pacing.max_retries,
-            timeout_sec=cfg.pacing.http_timeout_sec,
-            namespace="sec",
-        )
-        return cls(http=http, config=cfg)
+        return cls(http=build_sec_http(cfg), config=cfg)
 
     # --- index --------------------------------------------------------------------------------
     @property

@@ -49,6 +49,9 @@ class PacingConfig(BaseModel, frozen=True):
     tier ~5 req/min. Conservative defaults to stay well within limits."""
 
     sec_requests_per_sec: float = 8.0
+    # efts (full-text search) is a separate, more rate-sensitive service than data.sec.gov;
+    # pace it conservatively (it throttles to an error response, not a 429, under load).
+    efts_requests_per_sec: float = 1.0
     polygon_requests_per_min: float = 5.0
     http_timeout_sec: float = 30.0
     max_retries: int = 4
