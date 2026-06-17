@@ -7,6 +7,7 @@ Grown one subcommand per build step. Today: ``resolve`` (step 1). Later: ``refre
 from __future__ import annotations
 
 import argparse
+import sqlite3
 import sys
 from collections.abc import Sequence
 from datetime import date, datetime
@@ -14,8 +15,10 @@ from datetime import date, datetime
 from mosaic.config import get_config
 from mosaic.edgar import EdgarClient
 from mosaic.eod import PolygonEodClient, compute_price_features, ingest_prices
+from mosaic.ledger import LedgerError, log_verdict
 from mosaic.resolver import EntityResolver, ResolutionError
 from mosaic.schemas.data_record import Identity
+from mosaic.schemas.ledger import Confidence, Verdict
 from mosaic.screens import (
     Screen2Thresholds,
     build_data_record,
@@ -176,6 +179,49 @@ def _cmd_screen(args: argparse.Namespace) -> int:
     return 0
 
 
+def _cmd_log_verdict(args: argparse.Namespace) -> int:
+    """Record a manual BUY/AVOID-terminal verdict for a candidate, freezing the entry price."""
+    cfg = get_config()
+    ref = date.fromisoformat(args.ref) if args.ref else date.today()
+    with Store(cfg.db_path) as store:
+        try:
+            entry = log_verdict(
+                store, candidate_id=args.candidate_id, verdict=Verdict(args.verdict),
+                twin_call=args.twin, thesis=args.thesis, kill_criteria=args.kill,
+                horizon_days=args.horizon_days, confidence=Confidence(args.confidence),
+                decided_at=datetime.now(), reference_date=ref,
+                staleness_days=cfg.price_staleness_days, benchmark=args.benchmark,
+            )
+        except LedgerError as exc:
+            print(f"could not log verdict: {exc}")
+            return 1
+        except sqlite3.IntegrityError:
+            print(f"a verdict is already logged for {args.candidate_id} (ledger is append-only)")
+            return 1
+    print(
+        f"logged {entry.verdict.value} for {entry.ticker}: frozen entry "
+        f"{entry.entry_price:.2f} as_of {entry.entry_price_as_of}, horizon {entry.horizon_days}d"
+    )
+    return 0
+
+
+def _cmd_ledger(args: argparse.Namespace) -> int:
+    """List all recorded paper verdicts (BUY and AVOID alike)."""
+    cfg = get_config()
+    with Store(cfg.db_path) as store:
+        entries = list(store.iter_ledger())
+    if not entries:
+        print("decision ledger is empty")
+        return 0
+    print(f"{'TICKER':<7}{'VERDICT':<16}{'ENTRY':>9}{'AS_OF':>13}{'HORIZON':>9}  DECIDED")
+    for e in entries:
+        print(
+            f"{e.ticker:<7}{e.verdict.value:<16}{e.entry_price:>9.2f}"
+            f"{str(e.entry_price_as_of):>13}{e.horizon_days:>8}d  {e.decided_at:%Y-%m-%d}"
+        )
+    return 0
+
+
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(prog="mosaic", description=__doc__)
     sub = parser.add_subparsers(dest="command", required=True)
@@ -202,6 +248,21 @@ def build_parser() -> argparse.ArgumentParser:
     p_screen.add_argument("--benchmark", default="IWM", help="benchmark ETF for G2 (default: IWM)")
     p_screen.add_argument("--ref", help="reference date YYYY-MM-DD (default: latest stored bar)")
     p_screen.set_defaults(func=_cmd_screen)
+
+    p_log = sub.add_parser("log-verdict", help="record a manual BUY/AVOID verdict for a candidate")
+    p_log.add_argument("candidate_id", help="candidate id from `mosaic screen`")
+    p_log.add_argument("--verdict", required=True, choices=[v.value for v in Verdict])
+    p_log.add_argument("--twin", required=True, help="how the terminal-decline twin was ruled out")
+    p_log.add_argument("--thesis", required=True, help="short thesis / rationale")
+    p_log.add_argument("--kill", required=True, help="kill-criteria that would falsify the thesis")
+    p_log.add_argument("--horizon-days", type=int, required=True, dest="horizon_days")
+    p_log.add_argument("--confidence", required=True, choices=[c.value for c in Confidence])
+    p_log.add_argument("--benchmark", default="IWM", help="scoring benchmark (default: IWM)")
+    p_log.add_argument("--ref", help="decision/entry-price date YYYY-MM-DD (default: today)")
+    p_log.set_defaults(func=_cmd_log_verdict)
+
+    p_ledger = sub.add_parser("ledger", help="list recorded paper verdicts")
+    p_ledger.set_defaults(func=_cmd_ledger)
     return parser
 
 
