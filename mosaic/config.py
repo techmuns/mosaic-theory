@@ -65,6 +65,10 @@ class Config(BaseModel, frozen=True):
     pacing: PacingConfig = PacingConfig()
     # A datum older than this many calendar days flips coverage_status -> STALE.
     price_staleness_days: int = 5
+    # Fail-loud floor: a real US trading day returns ~10-12k grouped-daily rows. A non-trading day
+    # returns 0 (legitimate). A status=OK response with 0 < rows < this floor signals a partial/
+    # degraded refresh and must RAISE rather than silently write a half day.
+    grouped_daily_min_results: int = 3000
 
     # --- derived paths (kept out of the model so they don't serialize) ---
     @property

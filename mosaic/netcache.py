@@ -50,17 +50,19 @@ class CachedHttp:
         max_retries: int = 4,
         timeout_sec: float = 30.0,
         namespace: str = "http",
+        extra_headers: dict[str, str] | None = None,
     ) -> None:
         self._cache_dir = cache_dir / namespace
         self._cache_dir.mkdir(parents=True, exist_ok=True)
         self._min_interval = min_interval_sec
         self._max_retries = max_retries
         self._last_request_at = 0.0
-        self._client = httpx.Client(
-            headers={"User-Agent": user_agent, "Accept-Encoding": "gzip, deflate"},
-            timeout=timeout_sec,
-            follow_redirects=True,
-        )
+        # extra_headers carries secrets like ``Authorization: Bearer <key>`` so the key travels in a
+        # header, never in the request URL — keeping it out of the on-disk cache, logs, and errors.
+        headers = {"User-Agent": user_agent, "Accept-Encoding": "gzip, deflate"}
+        if extra_headers:
+            headers.update(extra_headers)
+        self._client = httpx.Client(headers=headers, timeout=timeout_sec, follow_redirects=True)
 
     # --- public API ---------------------------------------------------------------------------
     def get_text(
