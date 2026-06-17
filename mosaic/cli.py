@@ -19,6 +19,7 @@ from mosaic.ledger import LedgerError, log_verdict
 from mosaic.resolver import EntityResolver, ResolutionError
 from mosaic.schemas.data_record import Identity
 from mosaic.schemas.ledger import Confidence, Verdict
+from mosaic.scoring import score_ledger
 from mosaic.screens import (
     Screen2Thresholds,
     build_data_record,
@@ -222,6 +223,26 @@ def _cmd_ledger(args: argparse.Namespace) -> int:
     return 0
 
 
+def _cmd_score(args: argparse.Namespace) -> int:
+    """Score the decision ledger and print the BUY−AVOID-spread report."""
+    import json
+
+    cfg = get_config()
+    ref = date.fromisoformat(args.ref) if args.ref else date.today()
+    with Store(cfg.db_path) as store:
+        _scores, report = score_ledger(
+            store, as_of=ref, cost_bps=args.cost_bps,
+            benchmark_internal_id=f"IDX-{args.benchmark}",
+        )
+    print(report.to_markdown())
+    if args.json:
+        cfg.ensure_dirs()
+        path = cfg.snapshots_dir / "scoring_report.json"
+        path.write_text(json.dumps(report.to_dict(), indent=2, default=str))
+        print(f"\nwrote {path}")
+    return 0
+
+
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(prog="mosaic", description=__doc__)
     sub = parser.add_subparsers(dest="command", required=True)
@@ -263,6 +284,13 @@ def build_parser() -> argparse.ArgumentParser:
 
     p_ledger = sub.add_parser("ledger", help="list recorded paper verdicts")
     p_ledger.set_defaults(func=_cmd_ledger)
+
+    p_score = sub.add_parser("score", help="score the ledger (BUY−AVOID spread + metrics)")
+    p_score.add_argument("--benchmark", default="IWM", help="benchmark ETF (default: IWM)")
+    p_score.add_argument("--cost-bps", type=float, default=25.0, dest="cost_bps")
+    p_score.add_argument("--ref", help="as-of date YYYY-MM-DD (default: today)")
+    p_score.add_argument("--json", action="store_true", help="also write the report JSON")
+    p_score.set_defaults(func=_cmd_score)
     return parser
 
 
