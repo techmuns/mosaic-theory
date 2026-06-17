@@ -46,13 +46,19 @@ These will not be edited in response to results. Tuning the screen or the metric
 | 0 | Scaffold + schemas-as-code (envelope, data-record, candidate-record, ledger) | ✅ done |
 | 1 | US entity resolver (CIK↔ticker↔name, fail-loud) | ✅ done |
 | 2 | SQLite store + durable JSONL snapshots | ✅ done |
-| 3 | EOD client (Polygon Grouped Daily) + Screen-2 price features | ⏳ needs `POLYGON_API_KEY` |
+| 3 | EOD client (Polygon Grouped Daily) + Screen-2 price features | ✅ done |
 | 4 | EDGAR client (XBRL fundamentals + 8-K full-text + filings) | ✅ done |
-| 5 | Screen 2 (overshot de-rating) as PASS/FAIL/UNKNOWN gates | ⏳ after step 3 |
-| 6 | Decision ledger + entry workflow (BUY **and** AVOID) | ⏳ |
-| 7 | Scoring harness (BUY−AVOID spread, hit-rate, α/β, twin-realisation) | ⏳ |
-| 8 | Scheduled automation (GitHub Actions cron) | ⏳ |
-| — | Graph track Test 0 (1-hop graph quality) | ⏳ needs `ANTHROPIC_API_KEY` |
+| 5 | Screen 2 (overshot de-rating) as PASS/FAIL/UNKNOWN gates | ✅ done |
+| 6 | Decision ledger + entry workflow (BUY **and** AVOID) | ✅ done |
+| 7 | Scoring harness (BUY−AVOID spread, hit-rate, α/β, twin-realisation) | ✅ done |
+| 8 | Scheduled automation (GitHub Actions cron) | ✅ done |
+| — | Graph track Test 0 (1-hop graph quality) | ⏳ next (parallel; needs `ANTHROPIC_API_KEY`) |
+
+**Loop 1 build order complete.** The pipeline runs end-to-end on real data: a weekly screen surfaces
+candidates → the manual discriminator logs BUY/AVOID verdicts (entry price frozen) → monthly scoring
+computes the BUY−AVOID spread. It now needs **time**: the PM logs forward verdicts; verdicts resolve at
+their horizons; the spread accumulates. Remaining build work is the **graph track (Test 0)** — offline,
+parallel, validating the moat — plus the cap-band universe builder (the current universe is a thin seed).
 
 ## Data sources (US-only, free/cheap)
 
