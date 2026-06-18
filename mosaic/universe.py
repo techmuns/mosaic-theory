@@ -12,12 +12,12 @@ non-primary dual-class line is approximate — fine for a coarse band, not a val
 
 from __future__ import annotations
 
-from collections import Counter
+from collections import Counter, defaultdict
 from datetime import date, timedelta
 
 from mosaic.config import Config, get_config
 from mosaic.edgar import EdgarClient
-from mosaic.eod import PolygonEodClient
+from mosaic.eod import EodClient, PolygonEodClient
 from mosaic.resolver import EntityResolver
 from mosaic.schemas.data_record import Identity
 from mosaic.schemas.envelope import DataField, SourceTier
@@ -47,6 +47,25 @@ def recent_share_periods(reference_date: date, *, n: int = 5) -> list[str]:
     return [k for _, k in keys[-n:]]
 
 
+def latest_close_and_adv(
+    eod: EodClient, reference_date: date, *, lookback_days: int = 90
+) -> tuple[dict[str, float], dict[str, float]]:
+    """({ticker: latest close}, {ticker: 90d avg daily $-volume}) from cached grouped-daily bars."""
+    closes: dict[str, float] = {}
+    dollar_vol: dict[str, float] = defaultdict(float)
+    n_days: dict[str, int] = defaultdict(int)
+    d = reference_date
+    horizon = reference_date - timedelta(days=lookback_days)
+    while d >= horizon:
+        for t, b in eod.grouped_daily(d).items():
+            closes.setdefault(t, b.close)  # most-recent close wins
+            dollar_vol[t] += b.close * b.volume
+            n_days[t] += 1
+        d -= timedelta(days=1)
+    adv = {t: dollar_vol[t] / n_days[t] for t in dollar_vol if n_days[t] > 0}
+    return closes, adv
+
+
 def build_universe(
     config: Config | None = None, *, reference_date: date, share_periods: list[str] | None = None
 ) -> dict[str, int]:
@@ -58,12 +77,13 @@ def build_universe(
     edgar = EdgarClient.from_config(cfg)
     band = cfg.universe
 
-    closes = {t: b.close for t, b in eod.grouped_daily(reference_date).items()}
+    closes, adv = latest_close_and_adv(eod, reference_date)
     periods = share_periods or recent_share_periods(reference_date)
     shares = edgar.shares_outstanding_by_cik(periods)
 
     stats: Counter[str] = Counter()
     with Store(cfg.db_path) as store:
+        store.clear_universe(reference_date)  # a rebuild is a clean snapshot, not an accretion
         for ident in resolver.iter_universe(band.exchanges):
             stats["considered"] += 1
             close = closes.get(ident.eod_symbol)
@@ -77,6 +97,9 @@ def build_universe(
             market_cap = close * sh
             if not (band.market_cap_min_usd <= market_cap <= band.market_cap_max_usd):
                 stats["out_of_band"] += 1
+                continue
+            if adv.get(ident.eod_symbol, 0.0) < band.adv_floor_usd:
+                stats["below_adv_floor"] += 1  # tradeability gate
                 continue
             stats["in_universe"] += 1
             store.upsert_security(ident, first_seen=reference_date)

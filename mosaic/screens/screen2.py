@@ -31,6 +31,10 @@ class Screen2Thresholds(BaseModel, frozen=True):
     """Coarse gate thresholds — calibrated by face-validity, never by P&L."""
 
     drawdown_max: float = -0.30  # G1: at least a 30% fall from the 52w high
+    # G1 terminal-by-magnitude cap: a fall worse than this is the market pricing bankruptcy/zero —
+    # the terminal side of Edge 2 by definition, not a recoverable overshoot. Set from the thesis,
+    # never from testing which cutoff would have paid.
+    drawdown_terminal_floor: float = -0.85
     idio_rel_max: float = -0.15  # G2: underperformed the benchmark by ≥15% over the window
     multiple_floor_pctile: float = 0.25  # G3: current multiple in the bottom quartile of its range
 
@@ -39,9 +43,12 @@ def gate_g1_drawdown(rec: DataRecord, th: Screen2Thresholds) -> tuple[GateResult
     f = rec.prices.drawdown_from_high
     if not f.is_evaluable or f.value is None:
         return GateResult.UNKNOWN, "no drawdown (insufficient price history)"
-    if f.value <= th.drawdown_max:
-        return GateResult.PASS, f"drawdown {f.value:.1%} ≤ {th.drawdown_max:.0%}"
-    return GateResult.FAIL, f"drawdown {f.value:.1%} shallower than {th.drawdown_max:.0%}"
+    dd, floor = f.value, th.drawdown_terminal_floor
+    if dd < floor:
+        return GateResult.FAIL, f"drawdown {dd:.1%} past terminal floor {floor:.0%}"
+    if dd <= th.drawdown_max:
+        return GateResult.PASS, f"drawdown {dd:.1%} ≤ {th.drawdown_max:.0%}"
+    return GateResult.FAIL, f"drawdown {dd:.1%} shallower than {th.drawdown_max:.0%}"
 
 
 def gate_g2_idiosyncratic(rec: DataRecord, th: Screen2Thresholds) -> tuple[GateResult, str]:

@@ -9,6 +9,9 @@ authors = [{ name = "Munshot Research" }]
 dependencies = [
     "pydantic>=2.11",
     "httpx>=0.27",
+    "striprtf>=0.0.26",   # CIQ Business Relationships exports (real RTF)
+    "anthropic>=0.69",    # graph-track who-names-whom extraction (Sonnet 4.6)
+    "beautifulsoup4>=4.12",  # 10-K HTML → text for the graph extractor
 ]
 
 [project.optional-dependencies]

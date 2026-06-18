@@ -151,6 +151,11 @@ class Store:
         )
         self._conn.commit()
 
+    def clear_universe(self, as_of: date) -> None:
+        """Drop any prior universe snapshot for ``as_of`` — a rebuild is a clean snapshot."""
+        self._conn.execute("DELETE FROM universe_snapshot WHERE as_of = ?", (_iso(as_of),))
+        self._conn.commit()
+
     def get_universe(self, as_of: date) -> list[str]:
         rows = self._conn.execute(
             "SELECT internal_id FROM universe_snapshot "

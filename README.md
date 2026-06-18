@@ -52,13 +52,17 @@ These will not be edited in response to results. Tuning the screen or the metric
 | 6 | Decision ledger + entry workflow (BUY **and** AVOID) | ✅ done |
 | 7 | Scoring harness (BUY−AVOID spread, hit-rate, α/β, twin-realisation) | ✅ done |
 | 8 | Scheduled automation (GitHub Actions cron) | ✅ done |
-| — | Graph track Test 0 (1-hop graph quality) | ⏳ next (parallel; needs `ANTHROPIC_API_KEY`) |
+| E1 | 5y history (Polygon Starter) → G3 multiple-at-floor operative | ✅ done |
+| E2 | Cap-band universe builder (close × XBRL shares; $3M ADV tradeability gate) + lazy screen | ✅ done |
+| E3a | CIQ Business Relationships parser → supply-chain edges (Test-0 ground truth) | ✅ done |
+| E3b | 1-hop EDGAR who-names-whom graph (Sonnet 4.6, swappable LLM client) | ⏳ in progress |
+| E3c | Graph **Test 0** — precision/recall/entity-accuracy vs CIQ | ⏳ next |
 
-**Loop 1 build order complete.** The pipeline runs end-to-end on real data: a weekly screen surfaces
-candidates → the manual discriminator logs BUY/AVOID verdicts (entry price frozen) → monthly scoring
-computes the BUY−AVOID spread. It now needs **time**: the PM logs forward verdicts; verdicts resolve at
-their horizons; the spread accumulates. Remaining build work is the **graph track (Test 0)** — offline,
-parallel, validating the moat — plus the cap-band universe builder (the current universe is a thin seed).
+**Loop 1 (steps 0–8) is complete and now extended.** The pipeline runs end-to-end: a weekly screen
+over the real **US small/mid universe** (~1,800 names, cap-band + tradeability gate) surfaces de-rating
+candidates → the manual discriminator logs BUY/AVOID verdicts (entry frozen) → monthly scoring computes
+the BUY−AVOID spread. It needs **time** to accumulate resolved verdicts. The **graph track** (the moat
+validation) is being built alongside: the CIQ ground truth is parsed; the EDGAR graph + Test 0 are next.
 
 ## Data sources (US-only, free/cheap)
 

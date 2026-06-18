@@ -38,6 +38,10 @@ class UniverseConfig(BaseModel, frozen=True):
     # eyeballing the resulting universe, never by forward returns).
     market_cap_min_usd: float = 300_000_000.0
     market_cap_max_usd: float = 10_000_000_000.0
+    # Tradeability gate: minimum 90-day average daily $-volume. An unbuyable/unexitable micro-cap
+    # fails tradeability before the de-rating question is even asked — a property of the name, not a
+    # screen judgment. Excludes the illiquid failed-SPAC/zombie junk the cap band alone passes.
+    adv_floor_usd: float = 3_000_000.0
     country: str = "US"
     currency: str = "USD"
     # Optional cap on universe size for the thin Loop 1 slice (None = no cap).
@@ -67,6 +71,9 @@ class Config(BaseModel, frozen=True):
     pacing: PacingConfig = PacingConfig()
     # A datum older than this many calendar days flips coverage_status -> STALE.
     price_staleness_days: int = 5
+    # Graph-track LLM (who-names-whom extraction). Accuracy gates the moat hypothesis, so this is a
+    # strong model, not the cheapest — a swappable knob (Opus is the diagnostic fallback).
+    graph_llm_model: str = "claude-sonnet-4-6"
     # Fail-loud floor: a real US trading day returns ~10-12k grouped-daily rows. A non-trading day
     # returns 0 (legitimate). A status=OK response with 0 < rows < this floor signals a partial/
     # degraded refresh and must RAISE rather than silently write a half day.

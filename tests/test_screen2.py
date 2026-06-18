@@ -90,6 +90,8 @@ def _rec(*, drawdown: float | None, rel: float | None, pe_pctile: float | None) 
 def test_g1_drawdown() -> None:
     assert gate_g1_drawdown(_rec(drawdown=-0.44, rel=-0.3, pe_pctile=0.1), TH)[0] is GateResult.PASS
     assert gate_g1_drawdown(_rec(drawdown=-0.10, rel=-0.3, pe_pctile=0.1), TH)[0] is GateResult.FAIL
+    # terminal-by-magnitude: a -95% wipeout is the terminal side of Edge 2, not an overshoot
+    assert gate_g1_drawdown(_rec(drawdown=-0.95, rel=-0.3, pe_pctile=0.1), TH)[0] is GateResult.FAIL
     assert (
         gate_g1_drawdown(_rec(drawdown=None, rel=-0.3, pe_pctile=0.1), TH)[0] is GateResult.UNKNOWN
     )

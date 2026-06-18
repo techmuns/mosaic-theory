@@ -5,9 +5,24 @@ from __future__ import annotations
 from datetime import date
 from pathlib import Path
 
+from mosaic.eod.client import RawBar
 from mosaic.schemas.envelope import DataField, SourceTier
 from mosaic.store import Store
-from mosaic.universe import benchmark_identity, recent_share_periods
+from mosaic.universe import benchmark_identity, latest_close_and_adv, recent_share_periods
+
+
+def test_latest_close_and_adv() -> None:
+    class _FakeEod:
+        def grouped_daily(self, day: date) -> dict[str, RawBar]:
+            if day == date(2026, 6, 12):
+                return {"X": RawBar(ticker="X", open=12, high=13, low=11, close=12, volume=200)}
+            if day == date(2026, 6, 11):
+                return {"X": RawBar(ticker="X", open=10, high=11, low=9, close=10, volume=100)}
+            return {}  # weekend / no data
+
+    closes, adv = latest_close_and_adv(_FakeEod(), date(2026, 6, 12), lookback_days=3)
+    assert closes["X"] == 12.0  # most-recent close wins
+    assert adv["X"] == (12 * 200 + 10 * 100) / 2  # mean daily $-volume over the 2 trading days
 
 
 def test_recent_share_periods() -> None:
