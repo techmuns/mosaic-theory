@@ -13,7 +13,7 @@ from typing import Any, cast
 from mosaic.ciq import CiqEdge
 from mosaic.graph import GraphEdge, judge_edges
 from mosaic.graph import test0 as t0mod
-from mosaic.graph.extract import _direction, _resolve_counterparty
+from mosaic.graph.extract import _direction, _is_generic_placeholder, _resolve_node
 from mosaic.graph.llm import LlmClient
 from mosaic.graph.test0 import ciq_ground_truth, score_test0
 from mosaic.resolver import EntityResolver, RawEntry, ResolverIndex
@@ -36,16 +36,27 @@ def test_direction_mirrors_ciq_goods_flow() -> None:
     assert _direction("manufacturer") == "upstream"
 
 
-def test_resolve_counterparty_ticker_first_then_name() -> None:
-    # a clean ticker resolves directly
-    assert _resolve_counterparty(_RESOLVER, "Acme Corp", "ACME") == (
-        "0000000001", "SEC-0000000001-ACME", "resolved_ticker",
+def test_resolve_node_ticker_then_name_then_global_identity() -> None:
+    # a clean US ticker resolves to a position-eligible us_listed node
+    n = _resolve_node(_RESOLVER, "Acme Corp", "ACME")
+    assert (n.cik, n.resolution, n.node_id, n.node_kind) == (
+        "0000000001", "resolved_ticker", "US:0000000001", "us_listed",
     )
     # a bad ticker hint falls back to the exact normalised name
-    cik, _iid, res = _resolve_counterparty(_RESOLVER, "Beta Industries", "NOPE")
-    assert (cik, res) == ("0000000002", "resolved_name")
-    # neither a known ticker nor a known name → unresolved (never guessed)
-    assert _resolve_counterparty(_RESOLVER, "Unknown Private LLC", None)[2] == "unresolved"
+    n = _resolve_node(_RESOLVER, "Beta Industries", "NOPE")
+    assert (n.cik, n.resolution, n.node_kind) == ("0000000002", "resolved_name", "us_listed")
+    # a foreign hub with no US listing still gets a stable GLOBAL identity (a shared connector),
+    # canonicalised so variant spellings collapse to one node — but no US position (cik None)
+    n = _resolve_node(_RESOLVER, "Foxconn", None)
+    assert n.cik is None and n.node_kind == "global"
+    assert n.node_id == _resolve_node(_RESOLVER, "Hon Hai Precision", None).node_id  # unified
+
+
+def test_generic_placeholder_rejects_non_nodes() -> None:
+    assert _is_generic_placeholder("Distributor A")
+    assert _is_generic_placeholder("vendor in Spain")
+    assert _is_generic_placeholder("third-party manufacturers")
+    assert not _is_generic_placeholder("Taiwan Semiconductor Manufacturing")
 
 
 def _ciq_edge(cp_internal_id: str | None, *, ticker: str | None) -> CiqEdge:
@@ -73,7 +84,10 @@ def _graph_edge(cp_cik: str | None) -> GraphEdge:
     return GraphEdge(
         focal_ticker="FOC", focal_name="Focal Inc", focal_cik="0000000009",
         counterparty_name="x", counterparty_ticker=None, counterparty_cik=cp_cik,
-        counterparty_internal_id=None, relationship_type="customer", direction="downstream",
+        counterparty_internal_id=None,
+        node_id=f"US:{cp_cik}" if cp_cik else "NAME:x",
+        node_kind="us_listed" if cp_cik else "global",
+        relationship_type="customer", direction="downstream",
         evidence="...", accession="0000-00-000000", source_model="fake",
         resolution="resolved_ticker" if cp_cik else "unresolved",
     )

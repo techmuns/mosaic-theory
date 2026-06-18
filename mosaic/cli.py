@@ -287,13 +287,18 @@ def _cmd_graph_coverage(args: argparse.Namespace) -> int:
     )
     print(
         f"edges {rep['total_edges']} ({rep['names_with_edges']} names w/ edges) · density "
-        f"{rep['edges_per_name']}/name · real {rep['real_edges_per_name']}/name · "
-        f"resolution {rep['resolution_rate']:.0%}"
+        f"{rep['edges_per_name']}/name · real {rep['real_edges_per_name']}/name"
     )
     print(
-        f"evidence-precision {rep['evidence_precision']:.0%} "
-        f"({rep['real_edges']}/{rep['total_edges']} real) · classes {rep['by_class']}"
+        f"evidence-precision {rep['evidence_precision']:.0%} ({rep['real_edges']} real = "
+        f"{rep['real_us_listed']} US-listed + {rep['real_global']} global) · {rep['by_class']}"
     )
+    shared = rep["shared_nodes"]
+    print(f"\n--- shared nodes (behind 2+ small/mid names) — the Test-1 (a) set: {len(shared)} ---")
+    for s in shared:
+        kind = "US" if s["node_kind"] == "us_listed" else "global"
+        tag = s["ticker"] or s["node_id"].split(":", 1)[-1][:18]
+        print(f"  {s['degree']}x  {s['name'][:30]:<30} [{kind}:{tag}]  <- {', '.join(s['focals'])}")
     if args.json:
         out = cfg.data_dir / "graph_coverage.json"
         out.write_text(json.dumps(rep, indent=2))

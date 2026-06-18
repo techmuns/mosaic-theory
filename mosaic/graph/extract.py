@@ -14,8 +14,9 @@ model never mints the internal id. Direction mirrors CIQ (downstream = focal→c
 
 from __future__ import annotations
 
+import re
 from collections import Counter
-from typing import Any
+from typing import Any, NamedTuple
 
 from pydantic import BaseModel
 
@@ -25,6 +26,7 @@ from mosaic.graph.filings import latest_10k_excerpts
 from mosaic.graph.llm import LlmClient
 from mosaic.netcache import CachedHttp
 from mosaic.resolver import AmbiguousResolutionError, EntityResolver, UnknownSymbolError
+from mosaic.resolver.index import normalize_name
 from mosaic.schemas.data_record import Identity
 
 # Relationship vocabulary + the goods-flow direction each implies *from the focal's perspective*
@@ -62,8 +64,9 @@ EXTRACT_TOOL: dict[str, Any] = {
                         "counterparty_ticker": {
                             "type": ["string", "null"],
                             "description": (
-                                "Its US stock ticker ONLY if it is a publicly-traded company you "
-                                "recognise with high confidence; otherwise null. Never guess."
+                                "Its US-listed stock ticker if publicly traded — INCLUDING a "
+                                "US-listed ADR for a foreign company (e.g. TSMC→TSM). Only if you "
+                                "recognise it with high confidence; otherwise null. Never guess."
                             ),
                         },
                         "relationship": {
@@ -107,8 +110,10 @@ class GraphEdge(BaseModel, frozen=True):
     focal_cik: str
     counterparty_name: str
     counterparty_ticker: str | None  # the model's proposal (may be wrong / unverified)
-    counterparty_cik: str | None  # resolved issuer CIK (None if unresolved)
+    counterparty_cik: str | None  # resolved US issuer CIK — position-eligible; None for connectors
     counterparty_internal_id: str | None
+    node_id: str  # stable graph identity for EVERY node ("US:<cik>" | "NAME:<canonical>")
+    node_kind: str  # "us_listed" (position-eligible) | "global" (foreign/private connector)
     relationship_type: str
     direction: str  # "downstream" (focal→counterparty) | "upstream" (counterparty→focal)
     evidence: str  # verbatim 10-K phrase (provenance)
@@ -122,24 +127,104 @@ def _direction(rel: str) -> str:
     return "downstream" if rel in _DOWNSTREAM else "upstream"
 
 
-def _resolve_counterparty(
-    resolver: EntityResolver, name: str, ticker: str | None
-) -> tuple[str | None, str | None, str]:
-    """(cik, internal_id, resolution). Ticker first (verified), then exact normalised name."""
-    if ticker:
-        try:
-            ident = resolver.resolve_ticker(ticker)
-            return ident.cik, ident.internal_id, "resolved_ticker"
-        except (UnknownSymbolError, AmbiguousResolutionError):
-            pass  # a bad/foreign ticker hint — fall back to the name
+# A graph NODE must be a specific named company. The model sometimes emits unnamed placeholders
+# ("Distributor A", "vendor in Spain", "third-party vendors", "dark fiber vendors") — a real
+# *relationship* but a useless node (can't resolve, can't propagate). Reject them at extraction.
+_PLACEHOLDER_HEAD = re.compile(
+    r"^(distributor|vendor|supplier|manufacturer|customer|reseller|subcontractor)s?\b",
+    re.IGNORECASE,
+)
+_PLACEHOLDER_LEAD = re.compile(
+    r"^(a|an|the|our|certain|various|multiple|several|other|third[- ]party|unnamed)\b",
+    re.IGNORECASE,
+)
+
+
+def _is_generic_placeholder(name: str) -> bool:
+    """True for unnamed/generic counterparties that are real relationships but not usable nodes."""
+    n = name.strip()
+    if not n or n[0].islower():  # a real company name is capitalised
+        return True
+    return bool(_PLACEHOLDER_HEAD.match(n) or _PLACEHOLDER_LEAD.match(n))
+
+
+# Recurring global supply-chain hubs a US-filers-only resolver misses — the highest-degree shared
+# nodes there are. Each alias maps to (canonical node name, US-ADR ticker or None). The canonical
+# name unifies variant spellings into ONE shared node ("Hon Hai" and "Foxconn" → one); the ADR
+# ticker, where one exists, also makes the node position-eligible. A node needs an IDENTITY to be a
+# shared connector; only a POSITION needs a US ticker. Hand-curated + documented; extend as needed.
+_FOREIGN_HUBS: dict[str, tuple[str, str | None]] = {
+    "tsmc": ("Taiwan Semiconductor Manufacturing", "TSM"),
+    "taiwan semiconductor": ("Taiwan Semiconductor Manufacturing", "TSM"),
+    "asml": ("ASML Holding", "ASML"),
+    "umc": ("United Microelectronics", "UMC"),
+    "united microelectronics": ("United Microelectronics", "UMC"),
+    "globalfoundries": ("GlobalFoundries", "GFS"),
+    "stmicroelectronics": ("STMicroelectronics", "STM"),
+    "infineon": ("Infineon Technologies", None),
+    "sk hynix": ("SK Hynix", None),
+    "samsung": ("Samsung Electronics", None),
+    "foxconn": ("Hon Hai Precision (Foxconn)", None),
+    "hon hai": ("Hon Hai Precision (Foxconn)", None),
+    "catl": ("Contemporary Amperex (CATL)", None),
+    "contemporary amperex": ("Contemporary Amperex (CATL)", None),
+    "lg energy": ("LG Energy Solution", None),
+    "panasonic": ("Panasonic Holdings", None),
+    "sony": ("Sony Group", "SONY"),
+    "bosch": ("Robert Bosch", None),
+    "weichai": ("Weichai Power", None),
+    "hyundai": ("Hyundai", None),
+    "mitsubishi": ("Mitsubishi", None),
+}
+
+
+class NodeResolution(NamedTuple):
+    """A counterparty's graph IDENTITY (always present) + US POSITION key (only when US-listed)."""
+
+    cik: str | None  # US issuer CIK — position-eligible (incl. ADRs); None for connector-only nodes
+    internal_id: str | None
+    resolution: str  # resolved_ticker | resolved_name | ambiguous | unresolved
+    node_id: str  # stable identity for EVERY node: "US:<cik>" or "NAME:<canonical>"
+    node_kind: str  # "us_listed" (position-eligible) | "global" (foreign/private connector)
+
+
+def _canonicalize(name: str) -> tuple[str, str | None]:
+    """Map a counterparty name through the foreign-hub table → (canonical name, US-ADR ticker)."""
+    key = normalize_name(name).lower()
+    for alias, (canon, adr) in _FOREIGN_HUBS.items():
+        if re.search(rf"\b{re.escape(alias)}\b", key):
+            return canon, adr
+    return name, None
+
+
+def _resolve_node(resolver: EntityResolver, name: str, ticker: str | None) -> NodeResolution:
+    """Identity-first resolution: a US/ADR security if we can, else a stable global connector node.
+
+    Decouples node identity from tradeability — a foreign hub (TSMC, CATL) is a real shared node
+    even with no US position. We try the model's ticker, then a known ADR ticker, then the US name
+    index; failing all three the node keeps a canonical NAME identity so it still connects.
+    """
+    canon, adr = _canonicalize(name)
+    for t in (ticker, adr):
+        if t:
+            try:
+                ident = resolver.resolve_ticker(t)
+                return NodeResolution(ident.cik, ident.internal_id, "resolved_ticker",
+                                      f"US:{ident.cik}", "us_listed")
+            except (UnknownSymbolError, AmbiguousResolutionError):
+                pass  # a bad/foreign ticker hint — keep trying
+    resolution = "unresolved"
     try:
         issuer = resolver.resolve_name(name)
         internal = issuer.securities[0].internal_id if issuer.securities else None
-        return issuer.cik, internal, "resolved_name"
+        return NodeResolution(
+            issuer.cik, internal, "resolved_name", f"US:{issuer.cik}", "us_listed"
+        )
     except AmbiguousResolutionError:
-        return None, None, "ambiguous"
+        resolution = "ambiguous"
     except UnknownSymbolError:
-        return None, None, "unresolved"
+        resolution = "unresolved"
+    return NodeResolution(None, None, resolution, f"NAME:{normalize_name(canon)}", "global")
 
 
 def extract_graph_edges(
@@ -180,12 +265,16 @@ def extract_graph_edges(
         if not name or rtype not in _REL_TYPES:
             counts["skipped_malformed"] += 1
             continue
+        if _is_generic_placeholder(name):  # unnamed placeholder — a non-node, drop it
+            counts["skipped_generic"] += 1
+            continue
         ticker = rel.get("counterparty_ticker") or None
-        cik, internal_id, resolution = _resolve_counterparty(resolver, name, ticker)
-        if cik is not None and cik == focal.cik:
+        node = _resolve_node(resolver, name, ticker)
+        if node.cik is not None and node.cik == focal.cik:
             counts["self_loop"] += 1
             continue
-        counts[resolution] += 1
+        counts[node.resolution] += 1
+        counts[f"kind_{node.node_kind}"] += 1
         edges.append(
             GraphEdge(
                 focal_ticker=focal.ticker,
@@ -193,14 +282,16 @@ def extract_graph_edges(
                 focal_cik=focal.cik,
                 counterparty_name=name,
                 counterparty_ticker=ticker,
-                counterparty_cik=cik,
-                counterparty_internal_id=internal_id,
+                counterparty_cik=node.cik,
+                counterparty_internal_id=node.internal_id,
+                node_id=node.node_id,
+                node_kind=node.node_kind,
                 relationship_type=rtype,
                 direction=_direction(rtype),
                 evidence=str(rel.get("evidence", "")).strip(),
                 accession=accession,
                 source_model=llm.model,
-                resolution=resolution,
+                resolution=node.resolution,
             )
         )
     info["status"] = "ok"
