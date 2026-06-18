@@ -275,16 +275,28 @@ def _cmd_graph_coverage(args: argparse.Namespace) -> int:
     edgar = EdgarClient.from_config(cfg)
     llm = AnthropicLlmClient(model=args.model or cfg.graph_llm_model)
     with Store(cfg.db_path) as store:
-        ids = store.candidate_internal_ids(band=args.band)
-        focals = [s for iid in ids if (s := store.get_security(iid)) is not None]
+        if args.sic:  # a SIC slice of the universe (e.g. semis/electronics → foreign hubs)
+            prefixes = tuple(args.sic.split(","))
+            ref = date.fromisoformat(args.ref) if args.ref else date.today()
+            label = f"SIC {args.sic}"
+            focals = []
+            for iid in store.latest_universe(ref):
+                s = store.get_security(iid)
+                if s is None:
+                    continue
+                sic = resolver.sic_for(s.cik)[0]
+                if sic and sic.startswith(prefixes):
+                    focals.append(s)
+        else:
+            label = f"{args.band or 'all'}-band"
+            ids = store.candidate_internal_ids(band=args.band)
+            focals = [s for iid in ids if (s := store.get_security(iid)) is not None]
     if args.max_names:
         focals = focals[: args.max_names]
 
-    rep = graph_coverage(edgar, resolver, llm, focals)
-    print(
-        f"=== Graph coverage · model {rep['model']} · "
-        f"{rep['n_names']} {args.band or 'all'}-band small/mid names ==="
-    )
+    sc_degree = args.super_connector_degree or cfg.graph_super_connector_degree
+    rep = graph_coverage(edgar, resolver, llm, focals, super_connector_degree=sc_degree)
+    print(f"=== Graph coverage · {rep['model']} · {rep['n_names']} {label} small/mid names ===")
     print(
         f"edges {rep['total_edges']} ({rep['names_with_edges']} names w/ edges) · density "
         f"{rep['edges_per_name']}/name · real {rep['real_edges_per_name']}/name"
@@ -293,8 +305,11 @@ def _cmd_graph_coverage(args: argparse.Namespace) -> int:
         f"evidence-precision {rep['evidence_precision']:.0%} ({rep['real_edges']} real = "
         f"{rep['real_us_listed']} US-listed + {rep['real_global']} global) · {rep['by_class']}"
     )
+    sc = rep["super_connectors"]
+    if sc:
+        print(f"super-connectors excluded ({len(sc)}, named ≥{sc_degree} hubs): {', '.join(sc)}")
     shared = rep["shared_nodes"]
-    print(f"\n--- shared nodes (behind 2+ small/mid names) — the Test-1 (a) set: {len(shared)} ---")
+    print(f"\n--- shared nodes (2+ INDEPENDENT names) — the Test-1 (a) set: {len(shared)} ---")
     for s in shared:
         kind = "US" if s["node_kind"] == "us_listed" else "global"
         tag = s["ticker"] or s["node_id"].split(":", 1)[-1][:18]
@@ -383,8 +398,12 @@ def build_parser() -> argparse.ArgumentParser:
 
     p_cov = sub.add_parser("graph-coverage", help="build+measure the 1-hop graph on screen names")
     p_cov.add_argument("--band", default="A", help="triage band to build on (default: A)")
+    p_cov.add_argument("--sic", help="instead of a band: a universe SIC slice, e.g. 3674,357,367")
+    p_cov.add_argument("--ref", help="universe as-of date for --sic (default: today)")
     p_cov.add_argument("--max-names", type=int, dest="max_names", help="limit names (sample)")
     p_cov.add_argument("--model", help="LLM model id (default: config graph_llm_model)")
+    p_cov.add_argument("--super-connector-degree", type=int, dest="super_connector_degree",
+                       help="override: a focal naming this many hubs is excluded (default 6)")
     p_cov.add_argument("--json", action="store_true", help="write graph_coverage.json (ignored)")
     p_cov.set_defaults(func=_cmd_graph_coverage)
     return parser

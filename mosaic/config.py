@@ -80,6 +80,13 @@ class Config(BaseModel, frozen=True):
     # Graph-track LLM (who-names-whom extraction). Accuracy gates the moat hypothesis, so this is a
     # strong model, not the cheapest — a swappable knob (Opus is the diagnostic fallback).
     graph_llm_model: str = "claude-sonnet-4-6"
+    # A focal naming this many or more distinct hubs is a "super-connector" (e.g. an IT integrator
+    # like Kyndryl that names every hyperscaler, or a packager that lists all its customers). Such a
+    # name enumerates a LIST, not a few concentrated dependencies, and manufactures spurious shared-
+    # node degree. Excluded from the shared-node count (a node needs 2+ NON-super-connector focals).
+    # Default 6: band-A data showed a clean gap — normal names ≤5 hubs, list-enumerators ≥13. A
+    # multi-sourced sector (semis naming many foundries) may warrant a higher value; overridable.
+    graph_super_connector_degree: int = 6
     # Fail-loud floor: a real US trading day returns ~10-12k grouped-daily rows. A non-trading day
     # returns 0 (legitimate). A status=OK response with 0 < rows < this floor signals a partial/
     # degraded refresh and must RAISE rather than silently write a half day.

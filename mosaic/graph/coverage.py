@@ -29,6 +29,7 @@ def graph_coverage(
     focals: list[Identity],
     *,
     http: CachedHttp | None = None,
+    super_connector_degree: int = 5,
 ) -> dict[str, Any]:
     """Extract the 1-hop graph for ``focals`` and judge every edge against its own evidence.
 
@@ -71,6 +72,7 @@ def graph_coverage(
     n = len(focals)
     real = len(real_edges)
     us_listed = sum(1 for e in real_edges if e["node_kind"] == "us_listed")
+    sn = shared_node_map(real_edges, super_connector_degree=super_connector_degree)
     return {
         "model": llm.model,
         "n_names": n,
@@ -83,19 +85,33 @@ def graph_coverage(
         "real_edges_per_name": round(real / n, 2) if n else 0.0,  # moat-relevant density
         "evidence_precision": jrep["evidence_precision"],
         "by_class": jrep["by_class"],
-        "shared_nodes": shared_node_map(real_edges),
+        "shared_nodes": sn["shared_nodes"],
+        "super_connectors": sn["super_connectors"],
         "per_name": per_name,
         "edges": edges_out,
     }
 
 
-def shared_node_map(real_edges: list[dict[str, Any]]) -> list[dict[str, Any]]:
-    """Nodes (US or foreign) that sit behind 2+ distinct US small/mid focals — the (a) Test-1 set.
+def super_connectors(real_edges: list[dict[str, Any]], *, degree: int) -> set[str]:
+    """Focals naming ``degree``+ distinct hubs — they manufacture shared-degree, so exclude them."""
+    out: dict[str, set[str]] = {}
+    for e in real_edges:
+        out.setdefault(e["focal_ticker"], set()).add(e["node_id"])
+    return {f for f, nodes in out.items() if len(nodes) >= degree}
 
-    This is the moat-readiness read: a shared node is a single shock source whose exposure across
-    several small-caps no individual filing reveals and no human has assembled. Grouped by node_id
-    so a foreign hub (TSMC, CATL) counts even with no US position — identity, not tradeability.
+
+def shared_node_map(
+    real_edges: list[dict[str, Any]], *, super_connector_degree: int = 5
+) -> dict[str, Any]:
+    """Nodes (US or foreign) behind 2+ *independent* US small/mid focals — the (a) Test-1 set.
+
+    A shared node is a single shock source whose exposure across several small-caps no individual
+    filing reveals. Grouped by node_id so a foreign hub (TSMC, CATL) counts even with no US position
+    — identity, not tradeability. Super-connector focals (an IT integrator naming every hyperscaler)
+    are flagged and **excluded from the degree count**: their sharing is one name's known multi-
+    dependency, not independent signal. A node qualifies on 2+ NON-super-connector focals.
     """
+    supers = super_connectors(real_edges, degree=super_connector_degree)
     by_node: dict[str, dict[str, Any]] = {}
     for e in real_edges:
         node = by_node.setdefault(
@@ -103,10 +119,14 @@ def shared_node_map(real_edges: list[dict[str, Any]]) -> list[dict[str, Any]]:
             {"node_id": e["node_id"], "node_kind": e["node_kind"], "name": e["counterparty_name"],
              "ticker": e["counterparty_ticker"], "focals": set()},
         )
-        node["focals"].add(e["focal_ticker"])
+        if e["focal_ticker"] not in supers:  # only independent focals build shared-degree
+            node["focals"].add(e["focal_ticker"])
     shared = [
         {**v, "degree": len(v["focals"]), "focals": sorted(v["focals"])}
         for v in by_node.values()
         if len(v["focals"]) >= 2
     ]
-    return sorted(shared, key=lambda s: s["degree"], reverse=True)
+    return {
+        "super_connectors": sorted(supers),
+        "shared_nodes": sorted(shared, key=lambda s: s["degree"], reverse=True),
+    }
