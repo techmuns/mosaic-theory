@@ -60,21 +60,31 @@ Each line: *what it does* — *verified how*.
 
 ## 4. Deferred — built only after the gate clears
 
-**Gate (explicit):** deferred until the **BUY−AVOID spread shows the discriminator adds value
-(≥2 quarters of resolved verdicts)**. Building these first is the premature-investment trap. *Verified
-absent from the repo today.*
+**GATE:** nothing here is built until the **BUY−AVOID spread shows the discriminator adds value** —
+≥2 quarters of *resolved* verdicts, positive and large enough to be real, not noise. Building any of
+it first is the premature-investment trap. *Verified absent from the repo today* (no
+execution/sizing/portfolio/monitoring modules; only `SourceTier.IBKR` labels in schemas).
 
-- **Verification harness** (LLM bull/bear/judge).
-- **Position sizing / risk / portfolio construction.**
-- **Execution (IBKR)** — hard-deferred; paper mode until the spread proves out. (Only `SourceTier.IBKR`
-  *labels* exist in schemas — no client.)
-- **Monitoring / thesis-break / decay.**
-- **Edge 1 (orphaned quality)** — a genuinely viable *second* edge (neglect, not overreaction; needs a
-  different screen). The strongest "next edge to add" once Edge 2's spread validates.
-- **Active event-detection feeding `graph-exposure`** — watch for trigger events (sanction, export curb,
-  supply shock) and proactively surface the exposed cross-section to the human (china→canada,
-  hormuz→logistics→fertilizer). An **alerting layer on top of the existing lookup** — NOT a revival of
-  the falsified mechanical screen; still decides nothing. Build after Edge 2 validates.
+**FIRST WAVE — unlocked directly by a positive spread** (turns the *proven* Edge-2 loop into real money):
+1. **Position sizing / risk / portfolio construction** — trigger: spread positive. First, because you
+   can't size until you know the edge is real, and sizing precedes execution.
+2. **Execution (IBKR)** — trigger: sizing built **+** spread positive **+** the regulatory gate (§6,
+   SFC Type 9) clear for real money. Hard-deferred; paper until all three.
+3. **Monitoring / thesis-break / decay** — trigger: live positions exist (i.e. after execution).
+
+**SECOND WAVE — widen the proven funnel** (only after the Edge-2 loop is real and running):
+4. **Edge 1 (orphaned quality) screen** — trigger: Edge-2 loop validated **and** running smoothly.
+   Reuses the same ranker + dossier-assembler on a different (neglect-based, not drawdown-based)
+   screen — the strongest funnel expansion.
+5. **Active event-detection feeding `graph-exposure`** — trigger: Edge-2 loop validated; bandwidth
+   free. An alerting layer on the existing lookup (**not** the falsified mechanical screen) — surfaces
+   exposed cross-sections to the human on a real event; decides nothing.
+
+**CONDITIONAL — only if separately earned** (not gated on the spread):
+- **Verification harness (LLM bull/bear/judge)** — trigger: only if running the manual discriminator
+  reveals it needs a structured bull/bear step. May never be needed; do not build speculatively.
+- **Drive adapter for the dossier-assembler** — trigger: the local-folder assembler is proven and the
+  manual export→folder step is the real friction. A convenience, not a milestone.
 
 ## 5. Next steps (ordered, current)
 
