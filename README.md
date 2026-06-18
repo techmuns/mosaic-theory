@@ -89,13 +89,22 @@ ASML, CATL, Foxconn — the highest-degree hubs. They now resolve (TSMC→TSM AD
 global identity (Foxconn ≡ Hon Hai). The **shared-node map** over the foreign-inclusive graph is the
 real moat-readiness read and the **Test 1** (a)-set (Test 1 stays gated until it's reviewed).
 
-Full band-A read (134 names): 67 disclose edges; 205 judged-real edges (68% precision); **13 shared
-nodes** — one hub behind 2+ small-caps (Microsoft←5, Google/Amazon←4, Walmart/NVIDIA←3, plus a
-Pfizer/GSK/Novartis biotech cluster). The cross-sectional structure exists and is machine-assembled.
-Caveat for Test-1 scoping: band-A's shared hubs are *famous* (big-tech/pharma) because the de-rating
-universe skews SaaS/biotech — so they are closer to the **control** (priced fast) than the
-non-replicable case; the obscure/foreign shared hubs the architecture now supports surface in a
-hardware-heavier or deeper graph. Test 1 runs the famous hubs as controls and hunts lag elsewhere.
+Full band-A read (134 names): 67 disclose edges; 205 judged-real edges. After excluding
+**super-connectors** (a focal naming ≥6 hubs *enumerates a list*, not a concentrated dependency —
+config `graph_super_connector_degree`; a clean data gap separates normal names ≤5 from list-enumerators
+≥13), the raw 13 shared nodes collapse to **4 genuinely independent** cross-sections — all famous
+big-tech, i.e. mostly the **control**. So band A alone can't test the moat.
+
+Broadened read — semis/electronics slice (`graph-coverage --sic 3559,357,366,367,…`, 109 names): 75
+disclose edges, **84%** precision, 2.6 real/name. At the sector-appropriate threshold (8; semis
+multi-source to ~7, enumerators name ≥10), **17 independent cross-sections, ~13 non-big-tech** — the
+genuinely non-replicable set: **TSMC behind 5 fabless semis** (AMBQ/CRUS/MXL/PI/SLAB), **Samsung
+Display behind 3** (a foreign hub with *no US listing*, captured only via node-identity), a
+semis-equipment cluster (Applied Materials, Lam Research, GlobalFoundries) and a defense cluster
+(Northrop, Collins). TSMC + Samsung Display — the two highest-value hubs — were invisible before the
+resolver fix. This clears the moat-readiness gate: a real non-control test set exists. **Test 1**
+(event study) scopes famous hubs (Apple/Amazon) as controls expecting ~0 lag, the foreign/semis hubs
+as the live test — post-shock CAR in dependents, reported as a coverage-limited lower bound.
 
 ## Data sources (US-only, free/cheap)
 
