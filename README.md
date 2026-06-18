@@ -58,6 +58,8 @@ These will not be edited in response to results. Tuning the screen or the metric
 | E3b | 1-hop EDGAR who-names-whom graph (Sonnet 4.6, swappable LLM client; entity-resolved, provenanced) | ✅ done |
 | E3c | Graph **Test 0** — EDGAR graph scored vs CIQ (`mosaic graph-test0`) | ✅ run — see finding |
 | E3d | Evidence precision judge + small/mid moat-readiness read (`mosaic graph-coverage`) | ✅ run — see finding |
+| E3e | **Test 1** event study (`mosaic.graph.test1`) → graph-as-signal **FALSIFIED** (2 nulls) | ✅ run — retired |
+| E3f | Graph reframed to discriminator **input** — on-demand exposure lookup (`mosaic graph-exposure`) | ✅ built — validate live |
 
 **Loop 1 (steps 0–8) is complete and now extended.** The pipeline runs end-to-end: a weekly screen
 over the real **US small/mid universe** (~1,770 names: cap-band + tradeability + operating-cos gates) surfaces de-rating
@@ -102,9 +104,27 @@ genuinely non-replicable set: **TSMC behind 5 fabless semis** (AMBQ/CRUS/MXL/PI/
 Display behind 3** (a foreign hub with *no US listing*, captured only via node-identity), a
 semis-equipment cluster (Applied Materials, Lam Research, GlobalFoundries) and a defense cluster
 (Northrop, Collins). TSMC + Samsung Display — the two highest-value hubs — were invisible before the
-resolver fix. This clears the moat-readiness gate: a real non-control test set exists. **Test 1**
-(event study) scopes famous hubs (Apple/Amazon) as controls expecting ~0 lag, the foreign/semis hubs
-as the live test — post-shock CAR in dependents, reported as a coverage-limited lower bound.
+resolver fix. **Test 1** (`mosaic.graph.test1`) then ran the event study on this set —
+sector-deconfounded shocks, dependent CAR measured vs IWM **and** vs the dependent's own sector (the
+deciding number).
+
+**Result — graph-as-standalone-signal is FALSIFIED.** Two clean nulls on the deciding de-confounded
+column. *Same-sector* (TSMC←fabless): once shared SOXX beta is removed the signal vanishes (~0).
+*Cross-sector*: noise read honestly as a null — the famous-hub control posted **+1.0% vs its own
+sector** where a clean control must be ~0, which *is* the n≈8–16 noise floor, so the live pooled
+**−1.0%** sits inside it (RTX flat, PCG's −3.1% median an n=8 outlier we pre-committed not to mine).
+Beyond the data the hypothesis was always weak: supply-chain momentum is a ~17-year-old published,
+**arbitraged (replicable)** anomaly, and its "hub-down → dependent-down" **direction is an
+un-tradeable short** for a long-only small/mid book. **Retired.**
+
+**Graph-as-discriminator-INPUT is OPEN** — the role that matches the fund's actual edge. The
+non-replicable value is cognitive, not mechanical: `mosaic graph-exposure --entity <X>` returns, on
+demand, the N-hop cross-section of names exposed to a real event — a TSMC shock surfaces 32 names
+within 2 hops **with 10-K provenance**, including multi-hop ones a human wouldn't assemble (Apple via
+Cirrus Logic) — as a candidate list for the **manual** discriminator. It gates nothing, runs no
+statistics (so it can't be data-mined), and is validated **operationally** against a hand-built
+baseline on the next live event, never by a backtest. The go-live gate remains the **BUY−AVOID
+spread**; the graph widens research, it does not improve judgment.
 
 ## Data sources (US-only, free/cheap)
 

@@ -173,6 +173,30 @@ def test_cumulative_abnormal_return_lag_and_own_news_guard() -> None:
     assert cumulative_abnormal_return(own, flat, date(2025, 1, 1), lo=1, hi=3) is None
 
 
+def test_exposure_graph_n_hop_with_provenance() -> None:
+    from mosaic.graph.exposure import ExposureGraph
+
+    def edge(focal_cik: str, ft: str, node: str, cp: str) -> dict[str, Any]:
+        return {
+            "focal_cik": focal_cik, "focal_ticker": ft, "node_id": node, "counterparty_name": cp,
+            "counterparty_ticker": None, "relationship_type": "supplier",
+            "evidence": f"{ft} uses {cp}",
+        }
+
+    # A→Hub, B→Hub (both directly exposed); B→Hub2 (Hub2 reachable from Hub only at 2 hops)
+    g = ExposureGraph.from_edges([
+        edge("1", "A", "US:9", "Hub"),
+        edge("2", "B", "US:9", "Hub"),
+        edge("2", "B", "US:8", "Hub2"),
+    ])
+    one = g.exposed_within("US:9", hops=1)
+    assert {x.node_id for x in one} == {"US:1", "US:2"}  # A, B at 1 hop; Hub2 not yet
+    two = g.exposed_within("US:9", hops=2)
+    assert "US:8" in {x.node_id for x in two}  # Hub2 reached via B at 2 hops
+    hub2 = next(x for x in two if x.node_id == "US:8")
+    assert hub2.hops == 2 and len(hub2.path) == 2  # provenance chain Hub→B→Hub2
+
+
 def test_judge_edges_counts_only_real_supply_chain() -> None:
     # the evidence judge: precision = share of edges whose verdict is the real supply-chain class;
     # competitor / bio / M&A verdicts are false positives (the noise classes Test 0 surfaced).

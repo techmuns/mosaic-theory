@@ -321,6 +321,32 @@ def _cmd_graph_coverage(args: argparse.Namespace) -> int:
     return 0
 
 
+def _cmd_graph_exposure(args: argparse.Namespace) -> int:
+    """Given an entity/event, list its N-hop exposed names from the graph (discriminator input)."""
+    import json
+
+    from mosaic.graph.exposure import ExposureGraph
+
+    cfg = get_config()
+    resolver = EntityResolver.from_config(cfg)
+    path = cfg.data_dir / "graph_coverage.json"
+    if not path.exists():
+        print("no graph yet — run `mosaic graph-coverage` first")
+        return 1
+    g = ExposureGraph.from_edges(json.loads(path.read_text())["edges"])
+    start = g.resolve(args.entity, resolver)
+    if start is None:
+        print(f"{args.entity!r} is not in the current graph (run coverage on its neighbourhood)")
+        return 1
+    exposed = g.exposed_within(start, hops=args.hops)
+    name0 = g.display.get(start, (args.entity, None))[0]
+    print(f"=== exposed to {name0} within {args.hops} hop(s): {len(exposed)} names ===")
+    for x in exposed:
+        print(f"  [{x.hops}h] {(x.ticker or x.node_id):<8} {x.name[:34]:<34}")
+        print(f"        via: {' · '.join(x.path)}")
+    return 0
+
+
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(prog="mosaic", description=__doc__)
     sub = parser.add_subparsers(dest="command", required=True)
@@ -406,6 +432,11 @@ def build_parser() -> argparse.ArgumentParser:
                        help="override: a focal naming this many hubs is excluded (default 6)")
     p_cov.add_argument("--json", action="store_true", help="write graph_coverage.json (ignored)")
     p_cov.set_defaults(func=_cmd_graph_coverage)
+
+    p_exp = sub.add_parser("graph-exposure", help="given an entity/event, list N-hop exposed names")
+    p_exp.add_argument("--entity", required=True, help="ticker or company name of the shocked node")
+    p_exp.add_argument("--hops", type=int, default=2, help="reachability radius (default: 2)")
+    p_exp.set_defaults(func=_cmd_graph_exposure)
     return parser
 
 
