@@ -125,6 +125,30 @@ class _FakeLlm(LlmClient):
         return {"relationships": []}
 
 
+def test_detect_shocks_is_market_adjusted() -> None:
+    from datetime import date, timedelta
+
+    from mosaic.graph.test1 import detect_shocks
+    from mosaic.schemas.market import PriceBar
+
+    def bars(iid: str, closes: list[float]) -> list[PriceBar]:
+        d0 = date(2025, 1, 1)
+        return [
+            PriceBar(internal_id=iid, bar_date=d0 + timedelta(days=i * 7), open=c, high=c,
+                     low=c, close=c, volume=1e6, source="test")
+            for i, c in enumerate(closes)
+        ]
+
+    # a hub-idiosyncratic -8% day against a flat market IS a shock
+    hub = bars("H", [100, 100, 92, 92])
+    flat = bars("B", [50, 50, 50, 50])
+    shocks = detect_shocks("H", hub, flat, abnormal_threshold=-0.06)
+    assert len(shocks) == 1 and shocks[0].abnormal_return < -0.06
+    # the SAME -8% move on a -8% market day is NOT a shock — market-adjusted to ~0
+    down_mkt = bars("B", [50, 50, 46, 46])
+    assert detect_shocks("H", hub, down_mkt, abnormal_threshold=-0.06) == []
+
+
 def test_judge_edges_counts_only_real_supply_chain() -> None:
     # the evidence judge: precision = share of edges whose verdict is the real supply-chain class;
     # competitor / bio / M&A verdicts are false positives (the noise classes Test 0 surfaced).
