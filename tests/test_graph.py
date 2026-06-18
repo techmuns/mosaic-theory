@@ -149,6 +149,30 @@ def test_detect_shocks_is_market_adjusted() -> None:
     assert detect_shocks("H", hub, down_mkt, abnormal_threshold=-0.06) == []
 
 
+def test_cumulative_abnormal_return_lag_and_own_news_guard() -> None:
+    from datetime import date, timedelta
+
+    from mosaic.graph.test1 import cumulative_abnormal_return
+    from mosaic.schemas.market import PriceBar
+
+    def bars(iid: str, closes: list[float]) -> list[PriceBar]:
+        d0 = date(2025, 1, 1)
+        return [
+            PriceBar(internal_id=iid, bar_date=d0 + timedelta(days=i * 7), open=c, high=c,
+                     low=c, close=c, volume=1e6, source="test")
+            for i, c in enumerate(closes)
+        ]
+
+    flat = bars("B", [50] * 6)
+    # dependent drifts down ~2%/period for 3 periods after the shock (index 0) vs a flat market
+    dep = bars("D", [100, 98, 96.04, 94.12, 94.12, 94.12])
+    car = cumulative_abnormal_return(dep, flat, date(2025, 1, 1), lo=1, hi=3)
+    assert car is not None and car < -0.05  # ~ -6% cumulative abnormal (lag captured)
+    # a dependent with its OWN >20% single-day move in the window is excluded (its own news)
+    own = bars("D", [100, 98, 70, 70, 70, 70])
+    assert cumulative_abnormal_return(own, flat, date(2025, 1, 1), lo=1, hi=3) is None
+
+
 def test_judge_edges_counts_only_real_supply_chain() -> None:
     # the evidence judge: precision = share of edges whose verdict is the real supply-chain class;
     # competitor / bio / M&A verdicts are false positives (the noise classes Test 0 surfaced).

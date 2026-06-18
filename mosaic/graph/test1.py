@@ -64,3 +64,29 @@ def detect_shocks(
         if all(abs((s.shock_date - k.shock_date).days) > refractory_days for k in kept):
             kept.append(s)
     return sorted(kept, key=lambda s: s.shock_date)
+
+
+def cumulative_abnormal_return(
+    dep_bars: list[PriceBar],
+    bench_bars: list[PriceBar],
+    shock_date: date,
+    *,
+    lo: int = 1,
+    hi: int = 10,
+    own_gap: float = 0.20,
+) -> float | None:
+    """Dependent's cumulative abnormal return over trading days [shock+lo, shock+hi].
+
+    Skips the shock day itself (``lo``≥1) so we measure LAG, not same-day co-movement. ``abnormal``
+    = dependent return minus the benchmark (market IWM *or* sector SOXX — the caller picks which,
+    and the gap between the two is the finding). Returns None on insufficient data, or when the
+    dependent has its own ``own_gap``+ single-day move in the window (its own news, not the hub's).
+    """
+    dep = [(d, r) for d, r in _daily_returns(dep_bars) if d > shock_date][lo - 1 : hi]
+    if len(dep) < hi - lo + 1:
+        return None  # not enough post-shock history
+    if any(abs(r) >= own_gap for _, r in dep):
+        return None  # the dependent's own earnings/news contaminate the window
+    bench = dict(_daily_returns(bench_bars))
+    abn = [r - bench[d] for d, r in dep if d in bench]
+    return sum(abn) if abn else None
