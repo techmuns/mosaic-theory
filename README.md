@@ -75,14 +75,19 @@ The **evidence judge** (`mosaic.graph.judge`, CIQ-independent) replaced it — i
 against its own cited 10-K passage (real link vs competitor / bio-governance / M&A-legal noise).
 Measured **84%** evidence-precision on the Test-0 edges, confirming the eyeball.
 
-**Moat-readiness read** (`mosaic graph-coverage`, band-A small/mid): the moat lives on *obscure* edges,
-disclosed from the **small party's side** by SEC concentration rules (PAR→McDonald's, SPSC→Microsoft,
-AORT→Baxter — captured). On 30 band-A names: 73% evidence-precision, ~1.4 real edges/name, but
-**resolution only ~19%** and **coverage is sector-dependent** (medtech/hardware/industrial dense;
-biotech/financials/pure-software empty). The binding gate for **Test 1** (still gated) is therefore the
-*usable* density — edges that are real **and** resolve to a tradeable US counterparty — which is
-thinner than precision alone; densifying it (better entity resolution, dropping generic
-"Distributor A" placeholders, widening disclosure sources) is the next graph-track work.
+**Moat-readiness read** (`mosaic graph-coverage`, band-A small/mid). The moat is the **cross-sectional
+reasoning over the graph**, not a denser map (coverage is the replicable axis), so the read targets the
+non-replicable case: **shared nodes** — one shock source behind *multiple* small-caps, an exposure no
+single filing reveals. The moat-bearing edges are disclosed from the **small party's side** by SEC
+concentration rules (PAR→McDonald's, SPSC→Microsoft, AORT→Baxter — captured) and run large→small.
+
+**Node identity is decoupled from tradeability** (`extract._resolve_node`): every counterparty gets a
+stable `node_id` so it can be a shared connector, but only US-listed nodes (incl. ADRs) are
+position-eligible — the trading universe stays US-only. This fixed the apparent "resolution ceiling",
+which was largely a *resolver gap*, not structural: a US-filers-only resolver had been dropping TSMC,
+ASML, CATL, Foxconn — the highest-degree hubs. They now resolve (TSMC→TSM ADR) or carry a canonical
+global identity (Foxconn ≡ Hon Hai). The **shared-node map** over the foreign-inclusive graph is the
+real moat-readiness read and the **Test 1** (a)-set (Test 1 stays gated until it's reviewed).
 
 ## Data sources (US-only, free/cheap)
 
