@@ -89,6 +89,14 @@ ASML, CATL, Foxconn — the highest-degree hubs. They now resolve (TSMC→TSM AD
 global identity (Foxconn ≡ Hon Hai). The **shared-node map** over the foreign-inclusive graph is the
 real moat-readiness read and the **Test 1** (a)-set (Test 1 stays gated until it's reviewed).
 
+Full band-A read (134 names): 67 disclose edges; 205 judged-real edges (68% precision); **13 shared
+nodes** — one hub behind 2+ small-caps (Microsoft←5, Google/Amazon←4, Walmart/NVIDIA←3, plus a
+Pfizer/GSK/Novartis biotech cluster). The cross-sectional structure exists and is machine-assembled.
+Caveat for Test-1 scoping: band-A's shared hubs are *famous* (big-tech/pharma) because the de-rating
+universe skews SaaS/biotech — so they are closer to the **control** (priced fast) than the
+non-replicable case; the obscure/foreign shared hubs the architecture now supports surface in a
+hardware-heavier or deeper graph. Test 1 runs the famous hubs as controls and hunts lag elsewhere.
+
 ## Data sources (US-only, free/cheap)
 
 - **SEC EDGAR** — XBRL `companyfacts` fundamentals, 8-K full-text search (de-rating trigger), submissions
