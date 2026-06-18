@@ -55,14 +55,23 @@ These will not be edited in response to results. Tuning the screen or the metric
 | E1 | 5y history (Polygon Starter) → G3 multiple-at-floor operative | ✅ done |
 | E2 | Cap-band universe builder (close × XBRL shares; $3M ADV + operating-cos-only SIC gates) + lazy screen | ✅ done |
 | E3a | CIQ Business Relationships parser → supply-chain edges (Test-0 ground truth) | ✅ done |
-| E3b | 1-hop EDGAR who-names-whom graph (Sonnet 4.6, swappable LLM client) | ⏳ in progress |
-| E3c | Graph **Test 0** — precision/recall/entity-accuracy vs CIQ | ⏳ next |
+| E3b | 1-hop EDGAR who-names-whom graph (Sonnet 4.6, swappable LLM client; entity-resolved, provenanced) | ✅ done |
+| E3c | Graph **Test 0** — EDGAR graph scored vs CIQ (`mosaic graph-test0`) | ✅ run — see finding |
 
 **Loop 1 (steps 0–8) is complete and now extended.** The pipeline runs end-to-end: a weekly screen
 over the real **US small/mid universe** (~1,770 names: cap-band + tradeability + operating-cos gates) surfaces de-rating
 candidates → the manual discriminator logs BUY/AVOID verdicts (entry frozen) → monthly scoring computes
-the BUY−AVOID spread. It needs **time** to accumulate resolved verdicts. The **graph track** (the moat
-validation) is being built alongside: the CIQ ground truth is parsed; the EDGAR graph + Test 0 are next.
+the BUY−AVOID spread. It needs **time** to accumulate resolved verdicts.
+
+The **graph track** (moat validation) runs alongside. Test 0 (`mosaic graph-test0`) scores the
+LLM-extracted, entity-resolved EDGAR who-names-whom graph against the CIQ ground truth. **Finding:**
+raw precision-vs-CIQ is low (~45%) but *understates* the graph — manual review of the "misses" shows
+most are **real, verbatim-sourced supply-chain edges CIQ simply doesn't list** (e.g. NVDA→TSMC,
+QRVO→Apple), so true extraction precision is ~85%; the genuine errors are a few company mentions in
+executive bios / M&A legalese. Recall-vs-CIQ is structurally tiny (a 10-K names ~5–10 counterparties;
+CIQ aggregates 50–180) — the graph is **precise but sparse**. The decisive read: CIQ is a poor
+*precision* yardstick (non-exhaustive, different coverage), so an evidence-grounded precision check is
+the right next gate before Test 1.
 
 ## Data sources (US-only, free/cheap)
 

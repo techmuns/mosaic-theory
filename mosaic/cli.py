@@ -218,6 +218,50 @@ def _cmd_run_monthly(args: argparse.Namespace) -> int:
     return 0
 
 
+def _cmd_graph_test0(args: argparse.Namespace) -> int:
+    """Score the EDGAR who-names-whom graph against the CIQ ground truth (graph-track Test 0)."""
+    import json
+    from pathlib import Path
+
+    from mosaic.ciq import LocalFolderManualStore, load_ciq_edges
+    from mosaic.graph import AnthropicLlmClient
+    from mosaic.graph.test0 import score_test0
+
+    cfg = get_config()
+    cfg.ensure_dirs()
+    resolver = EntityResolver.from_config(cfg)
+    edgar = EdgarClient.from_config(cfg)
+    llm = AnthropicLlmClient(model=args.model or cfg.graph_llm_model)
+    ciq_dir = Path(args.ciq_dir) if args.ciq_dir else cfg.data_dir / "manual" / "ciq"
+    ciq_edges, _ = load_ciq_edges(LocalFolderManualStore(ciq_dir), resolver)
+
+    report = score_test0(edgar, resolver, llm, ciq_edges, max_focals=args.max_focals)
+    print(
+        f"=== Graph Test 0 · model {report['model']} · "
+        f"{report['focals_scored']} focals vs CIQ ground truth ==="
+    )
+    print(
+        f"precision {report['precision']:.0%} · recall {report['recall']:.0%} (coverage-limited) · "
+        f"resolution-rate {report['resolution_rate']:.0%} · "
+        f"TP {report['true_positives']} / spurious {report['spurious']} / missed {report['missed']}"
+    )
+    for f in report["per_focal"]:
+        print(
+            f"  • {f['focal']:<6} {f['status']:<8} extracted {f['edges_extracted']:>2} "
+            f"(resolved {f['edges_resolved']:>2}) · CIQ {f['ciq_truth']:>3} · "
+            f"matched {len(f['matched']):>2} · spurious {len(f['spurious']):>2}"
+        )
+    if args.json:
+        dump = {k: v for k, v in report.items() if k != "edges"}
+        dump["edges"] = [e.model_dump() for e in report["edges"]]
+        # NOT into snapshots/: the per-focal CIK lists are derived from the licensed CIQ ground
+        # truth, so this artifact stays in the git-ignored data root, never committed.
+        out = cfg.data_dir / "graph_test0.json"
+        out.write_text(json.dumps(dump, indent=2))
+        print(f"wrote {out} (git-ignored — contains CIQ-derived comparison)")
+    return 0
+
+
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(prog="mosaic", description=__doc__)
     sub = parser.add_subparsers(dest="command", required=True)
@@ -285,6 +329,13 @@ def build_parser() -> argparse.ArgumentParser:
     p_monthly.add_argument("--benchmark", default="IWM")
     p_monthly.add_argument("--cost-bps", type=float, default=25.0, dest="cost_bps")
     p_monthly.set_defaults(func=_cmd_run_monthly)
+
+    p_t0 = sub.add_parser("graph-test0", help="score the EDGAR graph vs CIQ ground truth (Test 0)")
+    p_t0.add_argument("--model", help="LLM model id (default: config; claude-opus-4-8 to diagnose)")
+    p_t0.add_argument("--ciq-dir", dest="ciq_dir", help="CIQ exports folder (data/manual/ciq)")
+    p_t0.add_argument("--max-focals", type=int, dest="max_focals", help="limit focals (smoke test)")
+    p_t0.add_argument("--json", action="store_true", help="write graph_test0.json to snapshots")
+    p_t0.set_defaults(func=_cmd_graph_test0)
     return parser
 
 
