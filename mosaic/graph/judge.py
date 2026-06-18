@@ -90,7 +90,10 @@ def judge_edges(llm: LlmClient, edges: list[GraphEdge]) -> dict[str, Any]:
     by_class: Counter[str] = Counter()
     judged: list[dict[str, Any]] = []
     for e in edges:
-        verdict, reason = judge_edge(llm, e)
+        try:
+            verdict, reason = judge_edge(llm, e)
+        except Exception as exc:  # a transient judge failure must not drop the whole batch
+            verdict, reason = "unsupported", f"judge_error:{type(exc).__name__}"
         by_class[verdict] += 1
         judged.append(
             {

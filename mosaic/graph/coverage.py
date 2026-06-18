@@ -38,13 +38,17 @@ def graph_coverage(
     all_edges = []
     per_name: list[dict[str, Any]] = []
     for f in focals:
-        edges, info = extract_graph_edges(edgar, resolver, llm, f, http=http)
+        try:
+            edges, info = extract_graph_edges(edgar, resolver, llm, f, http=http)
+            status = info.get("status")
+        except Exception as exc:  # one bad name must never lose a whole 100+-name run
+            edges, status = [], f"error:{type(exc).__name__}"
         all_edges.extend(edges)
         per_name.append(
             {
                 "focal": f.ticker,
                 "name": f.name[:34],
-                "status": info.get("status"),
+                "status": status,
                 "edges": len(edges),
                 "us_listed": sum(1 for e in edges if e.node_kind == "us_listed"),
             }
