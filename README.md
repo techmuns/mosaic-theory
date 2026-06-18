@@ -57,21 +57,32 @@ These will not be edited in response to results. Tuning the screen or the metric
 | E3a | CIQ Business Relationships parser → supply-chain edges (Test-0 ground truth) | ✅ done |
 | E3b | 1-hop EDGAR who-names-whom graph (Sonnet 4.6, swappable LLM client; entity-resolved, provenanced) | ✅ done |
 | E3c | Graph **Test 0** — EDGAR graph scored vs CIQ (`mosaic graph-test0`) | ✅ run — see finding |
+| E3d | Evidence precision judge + small/mid moat-readiness read (`mosaic graph-coverage`) | ✅ run — see finding |
 
 **Loop 1 (steps 0–8) is complete and now extended.** The pipeline runs end-to-end: a weekly screen
 over the real **US small/mid universe** (~1,770 names: cap-band + tradeability + operating-cos gates) surfaces de-rating
 candidates → the manual discriminator logs BUY/AVOID verdicts (entry frozen) → monthly scoring computes
 the BUY−AVOID spread. It needs **time** to accumulate resolved verdicts.
 
-The **graph track** (moat validation) runs alongside. Test 0 (`mosaic graph-test0`) scores the
-LLM-extracted, entity-resolved EDGAR who-names-whom graph against the CIQ ground truth. **Finding:**
-raw precision-vs-CIQ is low (~45%) but *understates* the graph — manual review of the "misses" shows
-most are **real, verbatim-sourced supply-chain edges CIQ simply doesn't list** (e.g. NVDA→TSMC,
-QRVO→Apple), so true extraction precision is ~85%; the genuine errors are a few company mentions in
-executive bios / M&A legalese. Recall-vs-CIQ is structurally tiny (a 10-K names ~5–10 counterparties;
-CIQ aggregates 50–180) — the graph is **precise but sparse**. The decisive read: CIQ is a poor
-*precision* yardstick (non-exhaustive, different coverage), so an evidence-grounded precision check is
-the right next gate before Test 1.
+The **graph track** (moat validation) runs alongside. **Test 0** (`mosaic graph-test0`) scored the
+LLM-extracted, entity-resolved EDGAR who-names-whom graph against CIQ: raw precision-vs-CIQ was low
+(45% Sonnet, 50% Opus) but *understated* it — most "misses" are **real, verbatim-sourced edges CIQ
+doesn't list** (NVDA→TSMC, QRVO→Apple). Opus≈Sonnet confirmed the gap is *coverage/approach*, not
+model strength; recall-vs-CIQ is structurally tiny (a 10-K names ~5–10 counterparties, CIQ aggregates
+50–180). So CIQ is a poor *precision* yardstick.
+
+The **evidence judge** (`mosaic.graph.judge`, CIQ-independent) replaced it — it scores each edge
+against its own cited 10-K passage (real link vs competitor / bio-governance / M&A-legal noise).
+Measured **84%** evidence-precision on the Test-0 edges, confirming the eyeball.
+
+**Moat-readiness read** (`mosaic graph-coverage`, band-A small/mid): the moat lives on *obscure* edges,
+disclosed from the **small party's side** by SEC concentration rules (PAR→McDonald's, SPSC→Microsoft,
+AORT→Baxter — captured). On 30 band-A names: 73% evidence-precision, ~1.4 real edges/name, but
+**resolution only ~19%** and **coverage is sector-dependent** (medtech/hardware/industrial dense;
+biotech/financials/pure-software empty). The binding gate for **Test 1** (still gated) is therefore the
+*usable* density — edges that are real **and** resolve to a tradeable US counterparty — which is
+thinner than precision alone; densifying it (better entity resolution, dropping generic
+"Distributor A" placeholders, widening disclosure sources) is the next graph-track work.
 
 ## Data sources (US-only, free/cheap)
 

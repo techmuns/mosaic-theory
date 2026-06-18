@@ -262,6 +262,45 @@ def _cmd_graph_test0(args: argparse.Namespace) -> int:
     return 0
 
 
+def _cmd_graph_coverage(args: argparse.Namespace) -> int:
+    """Build + measure the 1-hop graph on the small/mid screen universe (moat-readiness read)."""
+    import json
+
+    from mosaic.graph import AnthropicLlmClient
+    from mosaic.graph.coverage import graph_coverage
+
+    cfg = get_config()
+    cfg.ensure_dirs()
+    resolver = EntityResolver.from_config(cfg)
+    edgar = EdgarClient.from_config(cfg)
+    llm = AnthropicLlmClient(model=args.model or cfg.graph_llm_model)
+    with Store(cfg.db_path) as store:
+        ids = store.candidate_internal_ids(band=args.band)
+        focals = [s for iid in ids if (s := store.get_security(iid)) is not None]
+    if args.max_names:
+        focals = focals[: args.max_names]
+
+    rep = graph_coverage(edgar, resolver, llm, focals)
+    print(
+        f"=== Graph coverage · model {rep['model']} · "
+        f"{rep['n_names']} {args.band or 'all'}-band small/mid names ==="
+    )
+    print(
+        f"edges {rep['total_edges']} ({rep['names_with_edges']} names w/ edges) · density "
+        f"{rep['edges_per_name']}/name · real {rep['real_edges_per_name']}/name · "
+        f"resolution {rep['resolution_rate']:.0%}"
+    )
+    print(
+        f"evidence-precision {rep['evidence_precision']:.0%} "
+        f"({rep['real_edges']}/{rep['total_edges']} real) · classes {rep['by_class']}"
+    )
+    if args.json:
+        out = cfg.data_dir / "graph_coverage.json"
+        out.write_text(json.dumps(rep, indent=2))
+        print(f"wrote {out} (git-ignored)")
+    return 0
+
+
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(prog="mosaic", description=__doc__)
     sub = parser.add_subparsers(dest="command", required=True)
@@ -334,8 +373,15 @@ def build_parser() -> argparse.ArgumentParser:
     p_t0.add_argument("--model", help="LLM model id (default: config; claude-opus-4-8 to diagnose)")
     p_t0.add_argument("--ciq-dir", dest="ciq_dir", help="CIQ exports folder (data/manual/ciq)")
     p_t0.add_argument("--max-focals", type=int, dest="max_focals", help="limit focals (smoke test)")
-    p_t0.add_argument("--json", action="store_true", help="write graph_test0.json to snapshots")
+    p_t0.add_argument("--json", action="store_true", help="write graph_test0.json (git-ignored)")
     p_t0.set_defaults(func=_cmd_graph_test0)
+
+    p_cov = sub.add_parser("graph-coverage", help="build+measure the 1-hop graph on screen names")
+    p_cov.add_argument("--band", default="A", help="triage band to build on (default: A)")
+    p_cov.add_argument("--max-names", type=int, dest="max_names", help="limit names (sample)")
+    p_cov.add_argument("--model", help="LLM model id (default: config graph_llm_model)")
+    p_cov.add_argument("--json", action="store_true", help="write graph_coverage.json (ignored)")
+    p_cov.set_defaults(func=_cmd_graph_coverage)
     return parser
 
 

@@ -268,6 +268,23 @@ class Store:
         ).fetchone()
         return CandidateRecord.model_validate_json(row["payload"]) if row else None
 
+    def candidate_internal_ids(self, *, band: str | None = None) -> list[str]:
+        """Internal ids of the most recent screen run's candidates, optionally filtered to a band.
+
+        The graph track builds its 1-hop graph on these (the small/mid-cap screen universe) — where
+        the moat-bearing, concentration-disclosed edges live — not on the CIQ mega-cap focals.
+        """
+        q = "SELECT MAX(screen_run_at) AS m FROM candidate_records"
+        latest = self._conn.execute(q).fetchone()
+        if latest is None or latest["m"] is None:
+            return []
+        sql = "SELECT internal_id FROM candidate_records WHERE screen_run_at = ?"
+        params: list[str] = [latest["m"]]
+        if band is not None:
+            sql += " AND triage_band = ?"
+            params.append(band)
+        return [r["internal_id"] for r in self._conn.execute(sql, params).fetchall()]
+
     # --- decision ledger (append-only) --------------------------------------------------------
     def append_ledger(self, entry: LedgerEntry) -> None:
         self._conn.execute(

@@ -11,7 +11,7 @@ from __future__ import annotations
 from typing import Any, cast
 
 from mosaic.ciq import CiqEdge
-from mosaic.graph import GraphEdge
+from mosaic.graph import GraphEdge, judge_edges
 from mosaic.graph import test0 as t0mod
 from mosaic.graph.extract import _direction, _resolve_counterparty
 from mosaic.graph.llm import LlmClient
@@ -109,3 +109,23 @@ class _FakeLlm(LlmClient):
 
     def extract(self, *, system: str, user: str, tool: dict[str, Any]) -> dict[str, Any]:
         return {"relationships": []}
+
+
+def test_judge_edges_counts_only_real_supply_chain() -> None:
+    # the evidence judge: precision = share of edges whose verdict is the real supply-chain class;
+    # competitor / bio / M&A verdicts are false positives (the noise classes Test 0 surfaced).
+    edges = [_graph_edge("0000000001"), _graph_edge("0000000002"), _graph_edge("0000000003")]
+    verdicts = iter(["real_supply_chain", "competitor", "bio_or_governance"])
+
+    class _Judge(LlmClient):
+        @property
+        def model(self) -> str:
+            return "fake-judge"
+
+        def extract(self, *, system: str, user: str, tool: dict[str, Any]) -> dict[str, Any]:
+            return {"verdict": next(verdicts), "reason": "because"}
+
+    rep = judge_edges(_Judge(), edges)
+    assert rep["real_edges"] == 1
+    assert rep["evidence_precision"] == round(1 / 3, 3)
+    assert rep["by_class"] == {"real_supply_chain": 1, "competitor": 1, "bio_or_governance": 1}
