@@ -1,4 +1,4 @@
-# mosaic — Loop 1 (paper-mode validation engine)
+# mosaic — Loop 1 (paper-mode validation engine): by banks @nogods404
 
 The **first production slice of a real, AI-native, long-only US equity research system** — the fund's
 actual engine, thin in *scope* (one screen, thin ingestion) but production-grade in *quality*. It runs
