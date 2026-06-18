@@ -130,6 +130,10 @@ class ResolverIndex:
     def issuer_name(self, cik: str) -> str | None:
         return self._cik_name.get(cik)
 
+    def all_tickers(self) -> list[str]:
+        """Every known (normalised) ticker — the seed the universe builder filters down."""
+        return list(self._by_ticker)
+
     @property
     def n_tickers(self) -> int:
         return len(self._by_ticker)

@@ -10,70 +10,44 @@ candidates, ledger, and as-reported fundamentals.
 
 from __future__ import annotations
 
-from datetime import date, datetime, timedelta
+from datetime import date, timedelta
 
 from mosaic.config import Config, get_config
 from mosaic.edgar import EdgarClient
 from mosaic.eod import PolygonEodClient, ingest_prices
-from mosaic.schemas.data_record import Identity
 from mosaic.scoring import score_ledger
-from mosaic.screens import build_data_record, evaluate_screen2
+from mosaic.screens import screen_universe
 from mosaic.store import Store
+from mosaic.universe import benchmark_identity
 
-# ~52 weeks + buffer: enough history for the 52w drawdown and the multiple range.
-_SCREEN_LOOKBACK_DAYS = 400
-# Monthly scoring refreshes ~2y (the Polygon free-tier max) so verdicts entered within that window
-# have their forward prices available; verdicts older than this are beyond the free feed's reach.
+# ~5y: enough history for the 52w drawdown AND the G3 multiple-at-floor range (Polygon Starter).
+_SCREEN_LOOKBACK_DAYS = 1825
+# Monthly scoring refreshes ~2y so verdicts in that window have forward prices to score against.
 _SCORE_LOOKBACK_DAYS = 730
 
 
-def benchmark_identity(symbol: str) -> Identity:
-    """Synthetic identity for a benchmark ETF (not a SEC issuer → not resolver-resolved)."""
-    return Identity(
-        internal_id=f"IDX-{symbol}", issuer_id="IDX", cik="", ticker=symbol, mic="ARCX",
-        exchange="ETF", eod_symbol=symbol, name=f"{symbol} (benchmark)",
-    )
-
-
-def _latest_bar_date(store: Store, internal_id: str) -> date | None:
-    bars = store.get_price_history(internal_id)
-    return bars[-1].bar_date if bars else None
-
-
 def run_weekly(
-    config: Config | None = None, *, end: date, benchmark: str = "IWM"
+    config: Config | None = None,
+    *,
+    end: date,
+    benchmark: str = "IWM",
+    lookback_days: int = _SCREEN_LOOKBACK_DAYS,
 ) -> dict[str, object]:
-    """Weekly: refresh the universe's prices and run Screen 2; persist candidates to snapshots."""
+    """Weekly: refresh the universe's prices and lazily run Screen 2; persist candidates."""
     cfg = config or get_config()
     cfg.ensure_dirs()
-    client = PolygonEodClient.from_config(cfg)
+    eod = PolygonEodClient.from_config(cfg)
     edgar = EdgarClient.from_config(cfg)
-    bench = benchmark_identity(benchmark)
-    start = end - timedelta(days=_SCREEN_LOOKBACK_DAYS)
     with Store(cfg.db_path) as store:
         store.rebuild_from_snapshots(cfg.snapshots_dir)
-        universe = [s for s in store.iter_securities() if not s.internal_id.startswith("IDX-")]
-        if not universe:
-            return {"status": "no universe in snapshots — seed it first"}
-        ingest_prices(client, store, universe, start=start, end=end)
-        store.upsert_security(bench)
-        ingest_prices(client, store, [bench], start=start, end=end)
-
-        ref = _latest_bar_date(store, universe[0].internal_id) or end
-        bench_bars = store.get_price_history(bench.internal_id)
-        run_at = datetime.combine(ref, datetime.min.time())
-        n_candidates = 0
-        for s in universe:
-            rec = build_data_record(
-                s, price_bars=store.get_price_history(s.internal_id), benchmark_bars=bench_bars,
-                edgar=edgar, reference_date=ref, staleness_days=cfg.price_staleness_days,
-            )
-            cand = evaluate_screen2(rec, screen_run_at=run_at)
-            if cand is not None:
-                store.save_candidate(cand)
-                n_candidates += 1
+        if not any(not s.internal_id.startswith("IDX-") for s in store.iter_securities()):
+            return {"status": "no universe in snapshots — run build-universe first"}
+        _cands, stats = screen_universe(
+            store, eod, edgar, reference_date=end, lookback_days=lookback_days,
+            staleness_days=cfg.price_staleness_days, benchmark=benchmark,
+        )
         store.export_snapshots(cfg.snapshots_dir)
-    return {"universe": len(universe), "candidates": n_candidates, "ref": ref.isoformat()}
+    return {**stats, "ref": end.isoformat()}
 
 
 def run_monthly(

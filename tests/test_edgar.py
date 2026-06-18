@@ -105,7 +105,9 @@ def test_shares_extracted_from_dei_namespace() -> None:
         "facts": {
             "dei": {
                 "EntityCommonStockSharesOutstanding": {
-                    "units": {"shares": [{"end": "2026-03-31", "val": 1234.0, "filed": "2026-04-01"}]}
+                    "units": {
+                        "shares": [{"end": "2026-03-31", "val": 1234.0, "filed": "2026-04-01"}]
+                    }
                 }
             }
         }

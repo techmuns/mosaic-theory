@@ -1,36 +1,85 @@
-"""Step 8 verification — the scheduled orchestration (weekly screen, monthly score).
+"""Verification — the lazy universe screen (``screen_universe``).
 
-Network-marked end-to-end test: it copies the committed seed snapshots + the warm grouped-daily
-cache into a temp data dir (so it neither mutates the repo nor re-pulls), then runs both jobs. Skips
-cleanly where the local cache/seed isn't present (e.g. a fresh clone)."""
+Fake EOD + EDGAR clients drive the whole loop deterministically (no network): the cheap price gates
+run on every name, EDGAR is fetched only for the price-gate survivors, and one clean idiosyncratic
+de-rating is admitted while a flat name is rejected without ever touching EDGAR.
+"""
 
 from __future__ import annotations
 
-import shutil
 from datetime import date
 from pathlib import Path
 
-import pytest
+from mosaic.edgar.client import all_unknown_snapshot
+from mosaic.eod.client import RawBar
+from mosaic.resolver.index import pad_cik
+from mosaic.schemas.data_record import Identity
+from mosaic.schemas.envelope import DataField, SourceTier
+from mosaic.screens import screen_universe
+from mosaic.store import Store
 
-from mosaic.config import Config
-from mosaic.orchestrator import run_monthly, run_weekly
-
-_REPO_DATA = Path("data")
+REF = date(2026, 6, 12)
+LOOKBACK = 500
 
 
-@pytest.mark.network
-def test_run_weekly_then_monthly(tmp_path: Path) -> None:
-    if not (_REPO_DATA / "snapshots").exists() or not (_REPO_DATA / "cache").exists():
-        pytest.skip("no local seed snapshots / warm cache (fresh clone)")
-    shutil.copytree(_REPO_DATA / "snapshots", tmp_path / "snapshots")
-    shutil.copytree(_REPO_DATA / "cache", tmp_path / "cache")
-    cfg = Config(data_dir=tmp_path)
+def _ident(ticker: str, cik: str) -> Identity:
+    return Identity(
+        internal_id=f"SEC-{cik}-{ticker}", issuer_id=f"ISS-{cik}", cik=cik, ticker=ticker,
+        mic="XNYS", exchange="NYSE", eod_symbol=ticker, name=f"{ticker} Inc.",
+    )
 
-    weekly = run_weekly(cfg, end=date(2026, 6, 12))
-    assert weekly["universe"] == 9  # the seeded thin universe
-    assert isinstance(weekly["candidates"], int) and weekly["candidates"] >= 1  # NKE at minimum
 
-    # lookback_days kept within the warm cache window (the seed cache starts 2025-05-01)
-    monthly = run_monthly(cfg, as_of=date(2026, 6, 12), lookback_days=380)
-    assert "buy_avoid_spread" in monthly  # report shape
-    assert (tmp_path / "snapshots" / "scoring_report.md").exists()
+class _FakeEod:  # duck-types EodClient.grouped_daily
+    def __init__(self, paths: dict[str, object]) -> None:
+        self._paths = paths
+
+    def grouped_daily(self, day: date) -> dict[str, RawBar]:
+        out = {}
+        for t, fn in self._paths.items():
+            c = fn(day)  # type: ignore[operator]
+            out[t] = RawBar(ticker=t, open=c, high=c + 1, low=c - 1, close=c, volume=1e6)
+        return out
+
+
+class _FakeEdgar:  # duck-types the two EdgarClient methods enrich uses
+    def __init__(self) -> None:
+        self.fetched: list[str] = []
+
+    def fundamental_snapshot(self, cik):  # type: ignore[no-untyped-def]
+        self.fetched.append(pad_cik(cik))
+        return all_unknown_snapshot(pad_cik(cik))
+
+    def companyfacts(self, cik):  # type: ignore[no-untyped-def]
+        return {}  # no EPS → G3 P/E-percentile defers (UNKNOWN)
+
+
+def _drop(day: date) -> float:
+    # flat at 100 until ~120 days before the ref date, then a sharp idiosyncratic decline to 55
+    days_before = (REF - day).days
+    return 100.0 if days_before > 120 else 100.0 - (120 - days_before) / 120 * 45.0
+
+
+def _flat(_day: date) -> float:
+    return 100.0
+
+
+def test_screen_universe_lazy_admits_one_de_rating(tmp_path: Path) -> None:
+    drop, flat = _ident("DROP", "0000000001"), _ident("FLAT", "0000000002")
+    with Store(tmp_path / "u.db") as store:
+        for s in (drop, flat):
+            store.upsert_security(s)
+            cap = DataField.present(1e9, as_of=REF, source="DERIVED", tier=SourceTier.DERIVED)
+            store.record_universe(
+                as_of=REF, internal_id=s.internal_id, in_universe=True, market_cap=cap
+            )
+        eod = _FakeEod({"DROP": _drop, "FLAT": _flat, "IWM": _flat})
+        edgar = _FakeEdgar()
+        cands, stats = screen_universe(
+            store, eod, edgar, reference_date=REF, lookback_days=LOOKBACK, staleness_days=5
+        )
+
+    assert stats["universe"] == 2
+    # the de-rating is admitted; the flat name is not
+    assert {c.data_record.identity.ticker for c in cands} == {"DROP"}
+    # EDGAR was fetched ONLY for the price-gate survivor (lazy), never for the flat name
+    assert edgar.fetched == ["0000000001"]

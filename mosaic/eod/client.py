@@ -23,7 +23,7 @@ from typing import Any, cast
 from pydantic import BaseModel
 
 from mosaic.config import Config, get_config, require_env, sec_user_agent
-from mosaic.netcache import CachedHttp
+from mosaic.netcache import CachedHttp, HttpError
 from mosaic.schemas.data_record import Identity
 from mosaic.schemas.market import PriceBar
 
@@ -134,7 +134,14 @@ class PolygonEodClient(EodClient):
     def grouped_daily(self, day: date) -> dict[str, RawBar]:
         url = _GROUPED.format(day=day.isoformat())
         # immutable once the day has closed → cache forever
-        raw = self._http.get_json(url, ttl_seconds=_ONE_DAY, params={"adjusted": "true"})
+        try:
+            raw = self._http.get_json(url, ttl_seconds=_ONE_DAY, params={"adjusted": "true"})
+        except HttpError as exc:
+            # A date before the plan's rolling history window returns 403 NOT_AUTHORIZED — that is
+            # "no data for this date" (the start of available history), not a degraded refresh.
+            if "NOT_AUTHORIZED" in str(exc):
+                return {}
+            raise
         data = cast(dict[str, Any], raw)
         return parse_grouped_daily(data, day=day, min_results=self._min_results)
 

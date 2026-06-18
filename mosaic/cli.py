@@ -16,19 +16,13 @@ from mosaic.config import get_config
 from mosaic.edgar import EdgarClient
 from mosaic.eod import PolygonEodClient, compute_price_features, ingest_prices
 from mosaic.ledger import LedgerError, log_verdict
-from mosaic.orchestrator import benchmark_identity, run_monthly, run_weekly
+from mosaic.orchestrator import run_monthly, run_weekly
 from mosaic.resolver import EntityResolver, ResolutionError
 from mosaic.schemas.ledger import Confidence, Verdict
 from mosaic.scoring import score_ledger
-from mosaic.screens import (
-    Screen2Thresholds,
-    build_data_record,
-    evaluate_screen2,
-    gate_g1_drawdown,
-    gate_g2_idiosyncratic,
-    gate_g3_multiple_floor,
-)
+from mosaic.screens import screen_universe
 from mosaic.store import Store
+from mosaic.universe import build_universe
 
 
 def _cmd_resolve(args: argparse.Namespace) -> int:
@@ -106,63 +100,43 @@ def _cmd_eod(args: argparse.Namespace) -> int:
     return 0
 
 
+def _cmd_build_universe(args: argparse.Namespace) -> int:
+    """Build + snapshot the cap-band universe (market cap = close × XBRL shares)."""
+    cfg = get_config()
+    ref = date.fromisoformat(args.ref) if args.ref else date.today()
+    stats = build_universe(reference_date=ref)
+    band = cfg.universe
+    lo, hi = band.market_cap_min_usd / 1e6, band.market_cap_max_usd / 1e9
+    print(f"universe @ {ref} [${lo:.0f}M–${hi:.0f}B, {'/'.join(band.exchanges)}]: {stats}")
+    return 0
+
+
 def _cmd_screen(args: argparse.Namespace) -> int:
-    """Run Screen 2 across the stored universe; print the gate matrix and candidates."""
+    """Run Screen 2 (lazily) across the cap-band universe; print the candidate list."""
     cfg = get_config()
     cfg.ensure_dirs()
+    eod = PolygonEodClient.from_config(cfg)
     edgar = EdgarClient.from_config(cfg)
-    client = PolygonEodClient.from_config(cfg)
-    th = Screen2Thresholds()
-    bench = benchmark_identity(args.benchmark)
+    ref = date.fromisoformat(args.ref) if args.ref else date.today()
     with Store(cfg.db_path) as store:
-        rng = store._conn.execute(
-            "SELECT MIN(bar_date) a, MAX(bar_date) b FROM prices WHERE internal_id NOT LIKE 'IDX-%'"
-        ).fetchone()
-        if not rng or not rng["a"]:
-            print("no prices stored; run `mosaic refresh` first")
-            return 1
-        start, end = date.fromisoformat(rng["a"]), date.fromisoformat(rng["b"])
-        ref = date.fromisoformat(args.ref) if args.ref else end
-
-        store.upsert_security(bench)
-        if not store.get_price_history(bench.internal_id):
-            ingest_prices(client, store, [bench], start=start, end=end)  # cache hits → instant
-        bench_bars = store.get_price_history(bench.internal_id)
-
-        secs = [s for s in store.iter_securities() if not s.internal_id.startswith("IDX-")]
-        print(f"=== Screen 2 · {len(secs)} names · ref {ref} · benchmark {args.benchmark} ===")
-        print(f"{'TICKER':<7}{'G1_dd':<8}{'G2_idio':<9}{'G3_mult':<9}verdict")
-        admitted = []
-        run_at = datetime.combine(ref, datetime.min.time())
-        for s in secs:
-            rec = build_data_record(
-                s,
-                price_bars=store.get_price_history(s.internal_id),
-                benchmark_bars=bench_bars,
-                edgar=edgar,
-                reference_date=ref,
-                staleness_days=cfg.price_staleness_days,
-            )
-            g1, g2, g3 = (
-                gate_g1_drawdown(rec, th)[0],
-                gate_g2_idiosyncratic(rec, th)[0],
-                gate_g3_multiple_floor(rec, th)[0],
-            )
-            cand = evaluate_screen2(rec, screen_run_at=run_at, thresholds=th)
-            verdict = "CANDIDATE" if cand else "reject"
-            print(f"{s.ticker:<7}{g1.value:<8}{g2.value:<9}{g3.value:<9}{verdict}")
-            if cand:
-                admitted.append(cand)
-                store.save_candidate(cand)
-        print(f"\n{len(admitted)} candidate(s) emitted to the store:")
-        for c in admitted:
-            d = c.data_record
-            print(
-                f"  • {d.identity.ticker} [band {c.triage_band.value}]  drawdown "
-                f"{d.prices.drawdown_from_high.value:.0%}"
-            )
-            print(f"      trigger: {c.trigger_reason}")
-            print(f"      twin: {c.twin_to_rule_out} | depth tasks: {c.unknown_gates_for_depth}")
+        cands, stats = screen_universe(
+            store, eod, edgar, reference_date=ref, lookback_days=args.lookback_days,
+            staleness_days=cfg.price_staleness_days, benchmark=args.benchmark,
+        )
+        store.export_snapshots(cfg.snapshots_dir)
+    print(f"=== Screen 2 · {stats['universe']} names · ref {ref} · benchmark {args.benchmark} ===")
+    print(
+        f"price-gate survivors (G1 pass, G2 not-fail): {stats['g1_g2_survivors']} · "
+        f"candidates: {stats['candidates']}"
+    )
+    for c in sorted(cands, key=lambda c: c.data_record.prices.drawdown_from_high.value or 0):
+        d = c.data_record
+        print(
+            f"  • {d.identity.ticker:<6} [{c.triage_band.value}] "
+            f"dd {d.prices.drawdown_from_high.value:.0%}  {d.identity.name[:42]}"
+        )
+        print(f"      trigger: {c.trigger_reason}")
+        print(f"      twin: {c.twin_to_rule_out} | depth: {c.unknown_gates_for_depth}")
     return 0
 
 
@@ -266,9 +240,17 @@ def build_parser() -> argparse.ArgumentParser:
     p_eod.add_argument("--ref", help="reference date YYYY-MM-DD (default: today)")
     p_eod.set_defaults(func=_cmd_eod)
 
-    p_screen = sub.add_parser("screen", help="run Screen 2 across the stored universe")
+    p_univ = sub.add_parser("build-universe", help="build the cap-band universe")
+    p_univ.add_argument("--ref", help="as-of date YYYY-MM-DD (default: today)")
+    p_univ.set_defaults(func=_cmd_build_universe)
+
+    p_screen = sub.add_parser("screen", help="run Screen 2 across the cap-band universe")
     p_screen.add_argument("--benchmark", default="IWM", help="benchmark ETF for G2 (default: IWM)")
-    p_screen.add_argument("--ref", help="reference date YYYY-MM-DD (default: latest stored bar)")
+    p_screen.add_argument("--ref", help="reference date YYYY-MM-DD (default: today)")
+    p_screen.add_argument(
+        "--lookback-days", type=int, default=1825, dest="lookback_days",
+        help="price history to refresh (default: 1825 = 5y, for G3)",
+    )
     p_screen.set_defaults(func=_cmd_screen)
 
     p_log = sub.add_parser("log-verdict", help="record a manual BUY/AVOID verdict for a candidate")

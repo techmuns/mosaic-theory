@@ -98,6 +98,78 @@ def detect_gap_downs(
     return out
 
 
+def build_price_record(
+    identity: Identity,
+    *,
+    price_bars: list[PriceBar],
+    benchmark_bars: list[PriceBar],
+    reference_date: date,
+    staleness_days: int,
+    decline_window_days: int = 180,
+    market_cap: DataField[float] | None = None,
+) -> DataRecord:
+    """The **cheap** price-only data-record — enough to evaluate G1/G2 without any EDGAR call.
+
+    Fundamentals are left UNKNOWN; the full-universe screen enriches with EDGAR only for the names
+    that survive the price gates (see :func:`enrich_with_fundamentals`)."""
+    prices = compute_price_features(
+        price_bars, reference_date=reference_date, staleness_days=staleness_days
+    )
+    rel = relative_return(
+        price_bars, benchmark_bars, reference_date=reference_date, lookback_days=decline_window_days
+    )
+    prices = prices.model_copy(update={"rel_ret_vs_sector": rel})
+
+    uf: DataField[float] = DataField.unknown(
+        source="EDGAR", tier=SourceTier.DERIVED, note="deferred until price gates pass"
+    )
+    ui: DataField[int] = DataField.unknown(source="EDGAR", tier=SourceTier.EDGAR, note="deferred")
+    fundamentals = Fundamentals(
+        ev_ebitda=uf, ev_ebitda_pctile_vs_history=uf, pe=uf, pe_pctile_vs_history=uf,
+        fcf_sign=ui, op_income_sign=ui, net_leverage=uf,
+    )
+    gap_since = reference_date - timedelta(days=decline_window_days)
+    events = [
+        TypedEvent(event_type=EventType.EARNINGS_GAP_DOWN, event_date=d, source="EOD gap-down")
+        for d in detect_gap_downs(price_bars, since=gap_since)
+    ]
+    return DataRecord(
+        identity=identity,
+        market_cap=market_cap
+        or DataField.unknown(source="DERIVED", tier=SourceTier.DERIVED, note="needs shares"),
+        prices=prices,
+        fundamentals=fundamentals,
+        stress=_no_stress(),
+        events=events,
+        overall_coverage_tier=CoverageTier.US_FULL,
+        as_of=reference_date,
+    )
+
+
+def enrich_with_fundamentals(
+    rec: DataRecord, *, edgar: EdgarClient, price_bars: list[PriceBar], reference_date: date
+) -> DataRecord:
+    """Fetch EDGAR and fill the fundamentals (G3 multiple-at-floor + non-distress signals)."""
+    cik = rec.identity.cik
+    snap = edgar.fundamental_snapshot(cik)
+    facts = edgar.companyfacts(cik) if cik else {}
+    annual_eps = [p for p in extract_points(facts, "eps_diluted") if p.is_annual] if facts else []
+    pe, pe_pctile = pe_current_and_percentile(price_bars, annual_eps, reference_date=reference_date)
+    ev_unknown: DataField[float] = DataField.unknown(
+        source="EDGAR", tier=SourceTier.DERIVED, note="EV/EBITDA history deferred (needs net-debt)"
+    )
+    fundamentals = Fundamentals(
+        ev_ebitda=snap.ebitda_annual,
+        ev_ebitda_pctile_vs_history=ev_unknown,
+        pe=pe,
+        pe_pctile_vs_history=pe_pctile,
+        fcf_sign=snap.fcf_sign,
+        op_income_sign=snap.op_income_sign,
+        net_leverage=snap.net_leverage,
+    )
+    return rec.model_copy(update={"fundamentals": fundamentals})
+
+
 def build_data_record(
     identity: Identity,
     *,
@@ -108,52 +180,15 @@ def build_data_record(
     staleness_days: int,
     decline_window_days: int = 180,
 ) -> DataRecord:
-    """Assemble the full data-record the Screen-2 gates consume."""
-    prices = compute_price_features(
-        price_bars, reference_date=reference_date, staleness_days=staleness_days
+    """Assemble the full data-record (price + EDGAR fundamentals). The eager path used off the
+    hot loop (orchestrator/tests); the screen uses the lazy price→enrich split."""
+    rec = build_price_record(
+        identity, price_bars=price_bars, benchmark_bars=benchmark_bars,
+        reference_date=reference_date, staleness_days=staleness_days,
+        decline_window_days=decline_window_days,
     )
-    rel = relative_return(
-        price_bars, benchmark_bars, reference_date=reference_date, lookback_days=decline_window_days
-    )
-    prices = prices.model_copy(update={"rel_ret_vs_sector": rel})
-
-    snap = edgar.fundamental_snapshot(identity.cik)
-    facts = edgar.companyfacts(identity.cik) if identity.cik else {}
-    annual_eps = [p for p in extract_points(facts, "eps_diluted") if p.is_annual] if facts else []
-    pe, pe_pctile = pe_current_and_percentile(price_bars, annual_eps, reference_date=reference_date)
-
-    ev_unknown: DataField[float] = DataField.unknown(
-        source="EDGAR",
-        tier=SourceTier.DERIVED,
-        note="EV/EBITDA history deferred (needs shares/net-debt)",
-    )
-    fundamentals = Fundamentals(
-        ev_ebitda=snap.ebitda_annual,  # raw EBITDA carried; EV multiple deferred
-        ev_ebitda_pctile_vs_history=ev_unknown,
-        pe=pe,
-        pe_pctile_vs_history=pe_pctile,
-        fcf_sign=snap.fcf_sign,
-        op_income_sign=snap.op_income_sign,
-        net_leverage=snap.net_leverage,
-    )
-
-    gap_since = reference_date - timedelta(days=decline_window_days)
-    events = [
-        TypedEvent(event_type=EventType.EARNINGS_GAP_DOWN, event_date=d, source="EOD gap-down")
-        for d in detect_gap_downs(price_bars, since=gap_since)
-    ]
-
-    return DataRecord(
-        identity=identity,
-        market_cap=DataField.unknown(
-            source="DERIVED", tier=SourceTier.DERIVED, note="needs shares (universe builder)"
-        ),
-        prices=prices,
-        fundamentals=fundamentals,
-        stress=_no_stress(),
-        events=events,
-        overall_coverage_tier=CoverageTier.US_FULL,
-        as_of=reference_date,
+    return enrich_with_fundamentals(
+        rec, edgar=edgar, price_bars=price_bars, reference_date=reference_date
     )
 
 

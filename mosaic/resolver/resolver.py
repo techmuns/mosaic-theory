@@ -13,13 +13,18 @@ component hardened hardest.
 
 from __future__ import annotations
 
+from collections.abc import Iterable, Iterator
 from typing import Any, cast
 
 from pydantic import BaseModel
 
 from mosaic.config import Config, get_config
 from mosaic.netcache import CachedHttp
-from mosaic.resolver.errors import AmbiguousResolutionError, UnknownSymbolError
+from mosaic.resolver.errors import (
+    AmbiguousResolutionError,
+    ResolutionError,
+    UnknownSymbolError,
+)
 from mosaic.resolver.index import (
     ResolverIndex,
     normalize_name,
@@ -90,6 +95,22 @@ class EntityResolver:
             cte = self._http.get_json(_CTE_URL, ttl_seconds=_ONE_DAY)
             self._index = ResolverIndex.from_sec_files(ct, cte)
         return self._index
+
+    # --- universe iteration -------------------------------------------------------------------
+    def iter_universe(self, exchanges: Iterable[str]) -> Iterator[Identity]:
+        """Yield an :class:`Identity` for every cleanly-resolvable security on ``exchanges``.
+
+        The seed for the cap-band universe builder. Ambiguous/unknown tickers are skipped (not a
+        clean universe member); the band/coverage filtering happens downstream.
+        """
+        wanted = set(exchanges)
+        for tic in self.index.all_tickers():
+            try:
+                ident = self.resolve_ticker(tic)
+            except ResolutionError:
+                continue
+            if ident.exchange in wanted:
+                yield ident
 
     # --- resolution ---------------------------------------------------------------------------
     def resolve_ticker(self, ticker: str, *, enrich: bool = False) -> Identity:

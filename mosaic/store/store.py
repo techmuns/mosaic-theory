@@ -159,6 +159,16 @@ class Store:
         ).fetchall()
         return [r["internal_id"] for r in rows]
 
+    def latest_universe(self, on_or_before: date) -> list[str]:
+        """In-universe internal_ids from the most recent universe snapshot at/before a date."""
+        row = self._conn.execute(
+            "SELECT MAX(as_of) m FROM universe_snapshot WHERE as_of <= ? AND in_universe = 1",
+            (_iso(on_or_before),),
+        ).fetchone()
+        if row is None or row["m"] is None:
+            return []
+        return self.get_universe(date.fromisoformat(row["m"]))
+
     # --- prices -------------------------------------------------------------------------------
     def write_prices(self, bars: Iterable[PriceBar]) -> int:
         n = 0

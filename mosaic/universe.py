@@ -1,0 +1,92 @@
+"""Cap-band universe builder — the start of the real validation clock.
+
+Market cap = latest EOD close × XBRL shares outstanding, filtered to the configured small/mid band
+(US exchanges only). It uses the **breadth tools** so it never makes thousands of per-name calls:
+one Polygon grouped-daily call (cached) for every close, and a handful of EDGAR ``frames`` calls for
+every filer's shares. Membership is snapshotted with an ``as_of`` so future backtests aren't
+survivorship-biased.
+
+Coarse-band caveat: market cap uses the issuer's *total* shares against each security's price, so a
+non-primary dual-class line is approximate — fine for a coarse band, not a valuation.
+"""
+
+from __future__ import annotations
+
+from collections import Counter
+from datetime import date, timedelta
+
+from mosaic.config import Config, get_config
+from mosaic.edgar import EdgarClient
+from mosaic.eod import PolygonEodClient
+from mosaic.resolver import EntityResolver
+from mosaic.schemas.data_record import Identity
+from mosaic.schemas.envelope import DataField, SourceTier
+from mosaic.store import Store
+
+_QUARTER_ENDS = ((3, 31), (6, 30), (9, 30), (12, 31))
+_FILING_LAG_DAYS = 40  # don't ask for a quarter's shares frame until it's plausibly filed
+
+
+def benchmark_identity(symbol: str) -> Identity:
+    """Synthetic identity for a benchmark ETF (not a SEC issuer → not resolver-resolved)."""
+    return Identity(
+        internal_id=f"IDX-{symbol}", issuer_id="IDX", cik="", ticker=symbol, mic="ARCX",
+        exchange="ETF", eod_symbol=symbol, name=f"{symbol} (benchmark)",
+    )
+
+
+def recent_share_periods(reference_date: date, *, n: int = 5) -> list[str]:
+    """The ``n`` most recent quarter-instant frame keys (e.g. ``CY2026Q1I``), oldest→newest."""
+    keys: list[tuple[date, str]] = []
+    for yy in range(reference_date.year - 2, reference_date.year + 2):
+        for q, (m, d) in enumerate(_QUARTER_ENDS, start=1):
+            qe = date(yy, m, d)
+            if qe <= reference_date - timedelta(days=_FILING_LAG_DAYS):
+                keys.append((qe, f"CY{yy}Q{q}I"))
+    keys.sort()
+    return [k for _, k in keys[-n:]]
+
+
+def build_universe(
+    config: Config | None = None, *, reference_date: date, share_periods: list[str] | None = None
+) -> dict[str, int]:
+    """Build + snapshot the cap-band universe as of ``reference_date``. Returns a stats summary."""
+    cfg = config or get_config()
+    cfg.ensure_dirs()
+    resolver = EntityResolver.from_config(cfg)
+    eod = PolygonEodClient.from_config(cfg)
+    edgar = EdgarClient.from_config(cfg)
+    band = cfg.universe
+
+    closes = {t: b.close for t, b in eod.grouped_daily(reference_date).items()}
+    periods = share_periods or recent_share_periods(reference_date)
+    shares = edgar.shares_outstanding_by_cik(periods)
+
+    stats: Counter[str] = Counter()
+    with Store(cfg.db_path) as store:
+        for ident in resolver.iter_universe(band.exchanges):
+            stats["considered"] += 1
+            close = closes.get(ident.eod_symbol)
+            sh = shares.get(ident.cik)
+            if close is None:
+                stats["no_price"] += 1
+                continue
+            if sh is None:
+                stats["no_shares"] += 1
+                continue
+            market_cap = close * sh
+            if not (band.market_cap_min_usd <= market_cap <= band.market_cap_max_usd):
+                stats["out_of_band"] += 1
+                continue
+            stats["in_universe"] += 1
+            store.upsert_security(ident, first_seen=reference_date)
+            store.record_universe(
+                as_of=reference_date,
+                internal_id=ident.internal_id,
+                in_universe=True,
+                market_cap=DataField.present(
+                    market_cap, as_of=reference_date, source="DERIVED", tier=SourceTier.DERIVED
+                ),
+            )
+        store.export_snapshots(cfg.snapshots_dir)
+    return dict(stats)
