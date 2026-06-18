@@ -13,12 +13,16 @@ __pycache__/
 !.env.example
 
 # Local working store — durable state is the committed JSON/CSV snapshots, NOT the binary DB.
-# (See plan: SQLite is the rebuildable working store; provenance lives in data/snapshots/.)
 *.db
 *.db-journal
 *.db-wal
 *.db-shm
-data/cache/
+
+# Everything under data/ is git-ignored — the working DB, the EOD cache, and the LICENSED manual
+# CIQ exports (data/manual/ciq/, never committed) — EXCEPT the durable JSONL snapshots, which are
+# the committed provenance the scheduled jobs rebuild from.
+data/*
+!data/snapshots/
 
 # OS
 .DS_Store

@@ -99,6 +99,22 @@ def test_latest_annual_picks_most_recent_period() -> None:
     assert op.value == pytest.approx(200.0)
 
 
+def test_shares_extracted_from_dei_namespace() -> None:
+    # shares-outstanding lives in the dei taxonomy, not us-gaap — extract_points must search both
+    facts = {
+        "facts": {
+            "dei": {
+                "EntityCommonStockSharesOutstanding": {
+                    "units": {"shares": [{"end": "2026-03-31", "val": 1234.0, "filed": "2026-04-01"}]}
+                }
+            }
+        }
+    }
+    pts = extract_points(facts, "shares")
+    assert pts and pts[0].tag == "EntityCommonStockSharesOutstanding"
+    assert latest_instant(pts).value == pytest.approx(1234.0)
+
+
 def test_latest_instant_balance_sheet() -> None:
     cash = latest_instant(extract_points(SYNTHETIC_FACTS, "cash"))
     assert cash is not None and cash.is_instant and cash.value == pytest.approx(150.0)

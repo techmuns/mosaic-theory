@@ -27,7 +27,7 @@ from mosaic.schemas.envelope import DataField, SourceTier
 from mosaic.schemas.market import PriceBar
 
 _GAP_DOWN = -0.10  # a single-day close-to-close drop this steep is a de-rating event marker
-_PE_WINDOW_DAYS = 730  # Polygon free tier caps history at ~2y
+_PE_WINDOW_DAYS = 1825  # ~5y multiple range (Polygon Starter gives 5y history) — the spec's 3-5y
 # "Multiple at/near floor of its OWN trailing range" needs a real range to judge against. The spec
 # wants 3-5y; the free 2y feed caps us, so we require ≈the full ~2y (~450 trading days) before G3
 # returns PASS/FAIL. With less, G3 → UNKNOWN→defer (depth judges cheapness) — never a short-window

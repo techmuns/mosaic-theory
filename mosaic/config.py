@@ -52,7 +52,9 @@ class PacingConfig(BaseModel, frozen=True):
     # efts (full-text search) is a separate, more rate-sensitive service than data.sec.gov;
     # pace it conservatively (it throttles to an error response, not a 429, under load).
     efts_requests_per_sec: float = 1.0
-    polygon_requests_per_min: float = 5.0
+    # Polygon Starter lifts the free-tier 5/min cap and gives 5y history; this is latency-bound
+    # (~1s/call) anyway, so the throttle rarely engages. (Free tier was 5.0.)
+    polygon_requests_per_min: float = 100.0
     http_timeout_sec: float = 30.0
     max_retries: int = 4
 

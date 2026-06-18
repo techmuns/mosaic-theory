@@ -47,7 +47,16 @@ CONCEPT_ALIASES: dict[str, list[str]] = {
         "CashAndCashEquivalentsAtCarryingValue",
         "CashCashEquivalentsRestrictedCashAndRestrictedCashEquivalents",
     ],
+    # shares outstanding lives in the dei namespace (cover page) with a us-gaap fallback
+    "shares": [
+        "EntityCommonStockSharesOutstanding",
+        "CommonStockSharesOutstanding",
+        "CommonStockSharesIssued",
+    ],
 }
+
+# XBRL concepts span two taxonomies; dei holds cover-page facts (shares), us-gaap the financials.
+_NAMESPACES = ("dei", "us-gaap")
 
 
 class ConceptPoint(BaseModel, frozen=True):
@@ -83,9 +92,13 @@ def _parse_date(s: str | None) -> date | None:
 
 def extract_points(facts: dict[str, Any], concept: str) -> list[ConceptPoint]:
     """Extract all reported points for a logical concept, trying alias tags in priority order."""
-    gaap = facts.get("facts", {}).get("us-gaap", {})
+    nsmap = facts.get("facts", {})
     for tag in CONCEPT_ALIASES[concept]:
-        node = gaap.get(tag)
+        node = None
+        for ns in _NAMESPACES:
+            node = nsmap.get(ns, {}).get(tag)
+            if node:
+                break
         if not node:
             continue
         points: list[ConceptPoint] = []

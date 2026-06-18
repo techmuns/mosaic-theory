@@ -15,6 +15,7 @@ the pure :func:`compute_fundamental_snapshot` so it is unit-testable without the
 from __future__ import annotations
 
 import urllib.parse
+from collections.abc import Sequence
 from datetime import date
 from typing import Any, cast
 
@@ -29,6 +30,7 @@ from mosaic.sec import build_efts_http, build_sec_http
 
 _COMPANYFACTS = "https://data.sec.gov/api/xbrl/companyfacts/CIK{cik}.json"
 _SUBMISSIONS = "https://data.sec.gov/submissions/CIK{cik}.json"
+_FRAMES = "https://data.sec.gov/api/xbrl/frames/{ns}/{concept}/{unit}/{period}.json"
 _EFTS = "https://efts.sec.gov/LATEST/search-index"
 _ONE_DAY = 86_400.0
 
@@ -203,6 +205,32 @@ class EdgarClient:
         cik10 = pad_cik(cik)
         data = self._http.get_json(_COMPANYFACTS.format(cik=cik10), ttl_seconds=_ONE_DAY)
         return cast(dict[str, Any], data)
+
+    def frame(
+        self, concept: str, *, namespace: str = "dei", unit: str = "shares", period: str
+    ) -> dict[str, float]:
+        """One XBRL concept across **all filers** for a period → ``{cik10: val}`` (breadth tool).
+
+        ``period`` is a frame key, e.g. ``CY2026Q1I`` (instant) or ``CY2025`` (annual duration).
+        Used by the universe builder to size every name's market cap without per-name pulls.
+        """
+        url = _FRAMES.format(ns=namespace, concept=concept, unit=unit, period=period)
+        data = cast(dict[str, Any], self._http.get_json(url, ttl_seconds=_ONE_DAY))
+        out: dict[str, float] = {}
+        for row in data.get("data", []):
+            if row.get("val") is not None and row.get("cik") is not None:
+                out[pad_cik(row["cik"])] = float(row["val"])
+        return out
+
+    def shares_outstanding_by_cik(self, periods: Sequence[str]) -> dict[str, float]:
+        """Merge shares-outstanding frames over recent ``periods`` (later win) for coverage."""
+        merged: dict[str, float] = {}
+        for period in periods:
+            try:
+                merged.update(self.frame("EntityCommonStockSharesOutstanding", period=period))
+            except Exception:  # noqa: BLE001 — a missing/empty frame just contributes nothing
+                continue
+        return merged
 
     def fundamental_snapshot(self, cik: int | str) -> FundamentalSnapshot:
         """Non-distress signals + step-5 inputs, each enveloped (UNKNOWN where XBRL is absent)."""
