@@ -53,6 +53,7 @@ def screen_universe(
     bench_bars = store.get_price_history(bench.internal_id)
 
     run_at = datetime.combine(reference_date, datetime.min.time())
+    store.clear_candidates(run_at)  # clean re-screen, not an accretion of stale candidates
     candidates: list[CandidateRecord] = []
     g1_survivors = 0
     for s in universe:

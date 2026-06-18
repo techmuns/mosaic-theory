@@ -181,6 +181,17 @@ def test_candidate_round_trip(store: Store) -> None:
     assert store.get_candidate(cand.candidate_id) == cand
 
 
+def test_clear_candidates_drops_prior_run(store: Store) -> None:
+    # a re-screen is a clean snapshot: clearing the run timestamp removes stale candidates so a
+    # name dropped from the universe doesn't linger as a candidate (survivorship hygiene).
+    ident = _identity()
+    store.upsert_security(ident, first_seen=AS_OF)
+    cand = _candidate(ident)
+    store.save_candidate(cand)
+    store.clear_candidates(cand.screen_run_at)
+    assert store.get_candidate(cand.candidate_id) is None
+
+
 def test_ledger_append_get_iter_and_no_dup(store: Store) -> None:
     ident = _identity()
     store.upsert_security(ident, first_seen=AS_OF)

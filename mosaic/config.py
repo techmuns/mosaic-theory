@@ -42,6 +42,12 @@ class UniverseConfig(BaseModel, frozen=True):
     # fails tradeability before the de-rating question is even asked — a property of the name, not a
     # screen judgment. Excludes the illiquid failed-SPAC/zombie junk the cap band alone passes.
     adv_floor_usd: float = 3_000_000.0
+    # Operating-companies-only gate: an ETF/ETP/closed-end fund/blank-check is a basket or shell,
+    # not a de-rated business — outside the universe by definition. entityType and 10-K-on-file do
+    # NOT separate them (a commodity ETP files a 10-K and is "operating"); the SIC code does.
+    # Excluded: 6189 asset-backed, 6221 commodity ETPs, 6722 open-end funds, 6726 investment
+    # offices, 6770 blank-check/SPAC.
+    excluded_sic_codes: tuple[str, ...] = ("6189", "6221", "6722", "6726", "6770")
     country: str = "US"
     currency: str = "USD"
     # Optional cap on universe size for the thin Loop 1 slice (None = no cap).

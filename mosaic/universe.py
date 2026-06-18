@@ -101,6 +101,13 @@ def build_universe(
             if adv.get(ident.eod_symbol, 0.0) < band.adv_floor_usd:
                 stats["below_adv_floor"] += 1  # tradeability gate
                 continue
+            # Operating-companies-only gate (structural fact = SIC, not entityType/10-K-on-file).
+            # Fetch the SIC only for names that already clear cap+ADV — the would-be-admitted set.
+            # Fail open on a missing SIC: exclude only CONFIRMED fund/shell codes, never on absence.
+            sic = resolver.sic_for(ident.cik)[0]
+            if sic in band.excluded_sic_codes:
+                stats["non_operating"] += 1  # ETF/ETP/fund/blank-check — a basket, not a business
+                continue
             stats["in_universe"] += 1
             store.upsert_security(ident, first_seen=reference_date)
             store.record_universe(

@@ -53,13 +53,13 @@ These will not be edited in response to results. Tuning the screen or the metric
 | 7 | Scoring harness (BUY−AVOID spread, hit-rate, α/β, twin-realisation) | ✅ done |
 | 8 | Scheduled automation (GitHub Actions cron) | ✅ done |
 | E1 | 5y history (Polygon Starter) → G3 multiple-at-floor operative | ✅ done |
-| E2 | Cap-band universe builder (close × XBRL shares; $3M ADV tradeability gate) + lazy screen | ✅ done |
+| E2 | Cap-band universe builder (close × XBRL shares; $3M ADV + operating-cos-only SIC gates) + lazy screen | ✅ done |
 | E3a | CIQ Business Relationships parser → supply-chain edges (Test-0 ground truth) | ✅ done |
 | E3b | 1-hop EDGAR who-names-whom graph (Sonnet 4.6, swappable LLM client) | ⏳ in progress |
 | E3c | Graph **Test 0** — precision/recall/entity-accuracy vs CIQ | ⏳ next |
 
 **Loop 1 (steps 0–8) is complete and now extended.** The pipeline runs end-to-end: a weekly screen
-over the real **US small/mid universe** (~1,800 names, cap-band + tradeability gate) surfaces de-rating
+over the real **US small/mid universe** (~1,770 names: cap-band + tradeability + operating-cos gates) surfaces de-rating
 candidates → the manual discriminator logs BUY/AVOID verdicts (entry frozen) → monthly scoring computes
 the BUY−AVOID spread. It needs **time** to accumulate resolved verdicts. The **graph track** (the moat
 validation) is being built alongside: the CIQ ground truth is parsed; the EDGAR graph + Test 0 are next.

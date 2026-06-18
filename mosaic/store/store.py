@@ -12,7 +12,7 @@ from __future__ import annotations
 import json
 import sqlite3
 from collections.abc import Iterable, Iterator
-from datetime import date
+from datetime import date, datetime
 from pathlib import Path
 from typing import Any
 
@@ -154,6 +154,14 @@ class Store:
     def clear_universe(self, as_of: date) -> None:
         """Drop any prior universe snapshot for ``as_of`` — a rebuild is a clean snapshot."""
         self._conn.execute("DELETE FROM universe_snapshot WHERE as_of = ?", (_iso(as_of),))
+        self._conn.commit()
+
+    def clear_candidates(self, run_at: datetime) -> None:
+        """Drop any prior candidate set for this run timestamp — a re-screen is a clean snapshot,
+        not an accretion (else names dropped from the universe linger as stale candidates)."""
+        self._conn.execute(
+            "DELETE FROM candidate_records WHERE screen_run_at = ?", (run_at.isoformat(),)
+        )
         self._conn.commit()
 
     def get_universe(self, as_of: date) -> list[str]:
