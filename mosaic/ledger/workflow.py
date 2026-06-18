@@ -41,9 +41,16 @@ def log_verdict(
         raise LedgerError(f"no candidate {candidate_id!r} in the store (run the screen first)")
     ident = cand.data_record.identity
 
-    close = store.latest_close(
-        ident.internal_id, reference_date=reference_date, staleness_days=staleness_days
-    )
+    try:
+        # point-in-time: freeze on the latest bar ON OR BEFORE the decision date — never a future
+        # one (that would be lookahead). Fails loud if no such bar exists.
+        close = store.close_as_of(
+            ident.internal_id, reference_date=reference_date, staleness_days=staleness_days
+        )
+    except LookupError as exc:
+        raise LedgerError(
+            f"no price to freeze an entry for {ident.ticker} ({ident.internal_id}): {exc}"
+        ) from exc
     if not close.is_known or close.value is None or close.as_of is None:
         raise LedgerError(
             f"no price to freeze an entry for {ident.ticker} "

@@ -156,6 +156,34 @@ def test_price_round_trip_and_staleness(store: Store) -> None:
     assert old.value == pytest.approx(101.0)  # value retained, but flagged stale
 
 
+def test_close_as_of_never_looks_ahead_and_fails_loud(store: Store) -> None:
+    """The entry-price freeze must clamp to bar_date <= reference_date and fail loud on no bar."""
+    ident = _identity()
+    store.upsert_security(ident, first_seen=AS_OF)
+    store.write_prices([
+        PriceBar(internal_id=ident.internal_id, bar_date=date(2026, 1, 5), open=100, high=100,
+                 low=100, close=100.0, volume=1e6, source="t"),  # the as-of bar
+        PriceBar(internal_id=ident.internal_id, bar_date=date(2026, 1, 12), open=120, high=120,
+                 low=120, close=120.0, volume=1e6, source="t"),  # a FUTURE bar
+    ])
+    # the lookahead guard: freezing as of 2026-01-05 returns the 100 bar, NOT the future 120
+    frozen = store.close_as_of(ident.internal_id, reference_date=date(2026, 1, 5), staleness_days=5)
+    assert frozen.coverage_status is CoverageStatus.PRESENT
+    assert frozen.value == pytest.approx(100.0)
+    assert frozen.as_of == date(2026, 1, 5)
+    # contrast: the unclamped latest_close WOULD grab the future 120 bar — the trapdoor we shut
+    assert store.latest_close(
+        ident.internal_id, reference_date=date(2026, 1, 5), staleness_days=30
+    ).value == pytest.approx(120.0)
+    # fail-loud: no bar on or before the date → raise (never reach forward, never return nothing)
+    with pytest.raises(LookupError):
+        store.close_as_of(ident.internal_id, reference_date=date(2026, 1, 1), staleness_days=5)
+    # staleness still applies on top: a too-old PRIOR bar comes back STALE (surfaced)
+    stale = store.close_as_of(ident.internal_id, reference_date=date(2026, 3, 1), staleness_days=5)
+    assert stale.coverage_status is CoverageStatus.STALE
+    assert stale.value == pytest.approx(120.0)  # latest bar <= 2026-03-01 is the 2026-01-12 one
+
+
 # --- universe membership ----------------------------------------------------------------------
 def test_universe_membership(store: Store) -> None:
     ident = _identity()

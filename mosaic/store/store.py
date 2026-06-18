@@ -245,6 +245,39 @@ class Store:
             row["close"], as_of=bar_date, source=row["source"], tier=SourceTier.EOD
         )
 
+    def close_as_of(
+        self, internal_id: str, *, reference_date: date, staleness_days: int
+    ) -> DataField[float]:
+        """Latest close ON OR BEFORE ``reference_date`` — the point-in-time entry-price freeze.
+
+        Unlike :meth:`latest_close` (which takes the globally-latest bar), this never reaches past
+        ``reference_date``, so it cannot freeze an entry on a *future* price when the prices table
+        has been backfilled — the lookahead trapdoor that would silently inflate a verdict's return
+        and corrupt the BUY−AVOID spread. **Fails loud**: if there is no bar on or before
+        ``reference_date`` it raises, rather than reaching forward or returning nothing to ignore.
+        The staleness check still applies on top: a too-old *prior* bar comes back STALE (surfaced).
+        """
+        row = self._conn.execute(
+            "SELECT bar_date, close, source FROM prices "
+            "WHERE internal_id = ? AND bar_date <= ? ORDER BY bar_date DESC LIMIT 1",
+            (internal_id, _iso(reference_date)),
+        ).fetchone()
+        if row is None:
+            raise LookupError(
+                f"no price bar on or before {reference_date} for {internal_id} "
+                "— cannot freeze a point-in-time entry price"
+            )
+        bar_date = date.fromisoformat(row["bar_date"])
+        age = (reference_date - bar_date).days
+        if age > staleness_days:
+            return DataField.stale(
+                row["close"], as_of=bar_date, source=row["source"], tier=SourceTier.EOD,
+                note=f"{age}d old (> {staleness_days}d)",
+            )
+        return DataField.present(
+            row["close"], as_of=bar_date, source=row["source"], tier=SourceTier.EOD
+        )
+
     # --- candidate-records --------------------------------------------------------------------
     def save_candidate(self, rec: CandidateRecord) -> None:
         self._conn.execute(
