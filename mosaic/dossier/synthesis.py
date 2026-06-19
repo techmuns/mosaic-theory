@@ -176,13 +176,15 @@ def _validate(synth: Synthesis, mech: MechanicalLayer) -> tuple[Synthesis, list[
     mech_nums = _floats(json.dumps(mech.model_dump(), default=str))
 
     def _num_traces(n: float) -> bool:
-        # a figure traces if it equals a mechanical number at the same scale OR at a standard
-        # financial unit rendering (%, thousands, millions, billions): the LLM writes the stored
-        # −0.726 as "−72.6%" and the stored 29,643,500 shares as "29.6 million".
+        # Trace by MAGNITUDE at any standard financial unit rendering (%, thousands, millions,
+        # billions): the LLM writes the stored −0.726 as "−72.6%", 29,643,500 shares as "29.6
+        # million", and a stored −0.027 as "shrunk by 2.7%" (sign carried in words, not the digit).
+        # Direction is the directional-lint's job; this only asks whether the figure exists.
+        a = abs(n)
         for mf in mech_nums:
             for s in _TRACE_SCALES:
-                target = mf * s
-                if abs(n - target) <= max(0.05, abs(target) * 0.02):
+                target = abs(mf) * s
+                if abs(a - target) <= max(0.05, target * 0.02):
                     return True
         return False
 
