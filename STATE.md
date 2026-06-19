@@ -24,9 +24,32 @@ Each line: *what it does* — *verified how*.
 - **EDGAR** (`mosaic/edgar`) — XBRL `companyfacts`/`frames` + 8-K full-text + submissions — *feeds G3; module + tests.*
 - **Universe builder** (`mosaic/universe`) — market cap = close × XBRL shares, cap-band + $3M ADV +
   **operating-cos-only SIC** gates — *`build-universe` ran → ~1,770 names (committed snapshot 1,771; latest run 1,767 — drifts a few names as SEC data updates).*
+  - **The "operating-cos-only SIC" gate is a weak 5-code DENYLIST, not an operating-co allowlist
+    (audit 2026-06-19).** `excluded_sic_codes = 6189/6221/6722/6726/6770`; `universe.py:108` does
+    `if sic in excluded_sic_codes`. It leaks investment companies it is meant to drop: (a) **BDCs with a
+    BLANK EDGAR SIC pass** (`None in set` is False) — CION Investment Corp + Blue Owl Technology Finance
+    (OTF) are in the 308 candidates; (b) **a ticker→CIK collision** — ticker **SHNY** (a leveraged ETF)
+    resolves to cik 927971 = **"BANK OF MONTREAL /CAN/"** (foreign commercial bank, SIC 6029, not in the
+    denylist), in universe AND candidates — the screen splices the ETF's price bars onto a Canadian
+    bank's fundamental identity. *0/308 candidates carry an excluded SIC, yet 2 BDCs + the SHNY
+    collision sail through.* Recorded, not fixed (read-and-verify).
 - **Screen 2 + gates** (`mosaic/screens`) — G1 drawdown ≤−30% (capped at −85% terminal floor) / G2
-  idiosyncratic vs sector / G3 multiple vs ~5y floor (`_PE_WINDOW_DAYS=1825`); PASS/FAIL/UNKNOWN,
-  recall-favoring — *`screen` ran → ~307 candidates (committed 308), A/B/C bands.*
+  idiosyncratic **vs the IWM market index** (NOT a sector cohort — see caveat) / G3 multiple vs ~5y
+  floor (`_PE_WINDOW_DAYS=1825`); PASS/FAIL/UNKNOWN, recall-favoring — *`screen` ran → ~307 candidates
+  (committed 308), A/B/C bands.* G1 drawdown = `last close / max(intraday HIGH over trailing 365d) − 1`
+  (`eod/features.compute_price_features`, ≥330d history else UNKNOWN).
+  - **G2 "idiosyncratic" is name-vs-IWM, NOT name-vs-SIC-sector (verified 2026-06-19 read-and-verify
+    audit).** The field `rel_ret_vs_sector` is misnamed: `assemble.build_price_record` sets it to
+    `relative_return(name_bars, benchmark_bars, lookback_days=180)` = **name 180d trailing return − IWM
+    180d trailing return** (`eod/features.relative_return`; `run.py` passes `benchmark="IWM"`). It is a
+    *trailing return*, not peak-to-current drawdown. The SIC peer-cohort was **deferred and never built**
+    (`features.py:135` leaves the field UNKNOWN, note "needs SIC peers (step 5)"; **no SIC-cohort /
+    peer-aggregation code exists anywhere in `mosaic/`** — so the Part-1 sub-questions on SIC
+    source/granularity/aggregate/thin-cohort are all moot). So G2 removes **market** beta only — a name
+    that fell *with its sector* (sector-wide derate) still PASSES G2 if it merely lagged IWM. *Re-derived
+    FUBO from raw bars: depth −84.3% (=snapshot, close 8.90 / 52w high-of-highs 56.64); idio −88.2%
+    (=snapshot) = FUBO −72.6% − IWM **+15.6%** over 180d — the "−88% vs sector" is FUBO's fall minus the
+    small-cap market's RISE, no sector comparison at all.*
 - **Ranker / triage layer** (`mosaic/rank`, `rank` CLI) — **orders** the ~307 candidates into a
   priority queue so a 2-person team deep-pulls the most structurally-promising overshoots first.
   A *transparent* weighted composite of the Tier-1 axes (idiosyncrasy .30 / drawdown-depth .25 /
