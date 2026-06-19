@@ -10,6 +10,7 @@ a fabricated number. This layer is the ONLY input the synthesis LLM is later giv
 
 from __future__ import annotations
 
+import re
 import statistics
 from datetime import date, timedelta
 
@@ -60,7 +61,65 @@ def _window_return(bars: list[PriceBar], ref: date, days: int) -> float | None:
     return (now / then - 1.0) if (then and now and then > 0) else None
 
 
-# --- drawdown cause (EDGAR 8-K around the gap-downs) -------------------------------------------
+# --- drawdown cause: label by 8-K item codes + parse the catalyst from the filing TEXT --------
+
+# 8-K item codes → standard titles (cause is read from the codes, never blanket "earnings").
+_ITEM_TITLES: dict[str, str] = {
+    "1.01": "Entry into a Material Definitive Agreement",
+    "1.02": "Termination of a Material Definitive Agreement",
+    "2.02": "Results of Operations and Financial Condition",
+    "2.05": "Costs Associated with Exit or Disposal Activities",
+    "2.06": "Material Impairments",
+    "3.01": "Notice of Delisting or Failure to Satisfy a Listing Rule",
+    "4.02": "Non-Reliance on Previously Issued Financial Statements",
+    "5.02": "Departure/Election of Directors or Certain Officers",
+    "7.01": "Regulation FD Disclosure",
+    "8.01": "Other Events",
+    "9.01": "Financial Statements and Exhibits",
+}
+# short per-code cause label for the per-gap summary (9.01 exhibits carry no event, omitted).
+_CAUSE_BY_ITEM: dict[str, str] = {
+    "1.01": "material agreement (1.01)", "1.02": "agreement termination (1.02)",
+    "2.02": "earnings (2.02)", "2.05": "restructuring (2.05)", "2.06": "impairment (2.06)",
+    "3.01": "delisting notice (3.01)", "4.02": "restatement (4.02)",
+    "5.02": "management change (5.02)", "7.01": "Reg-FD (7.01)", "8.01": "other event (8.01)",
+}
+
+
+def item_labels(items: list[str]) -> list[str]:
+    """Map 8-K item codes to "code title" so the cause is read from the codes, not guessed."""
+    return [f"{c} {_ITEM_TITLES.get(c, 'Item ' + c)}" for c in items]
+
+
+def _gap_label(items: list[str]) -> str:
+    """A short cause label for one gap-down from its 8-K items. Never "earnings" without 2.02."""
+    labels = [_CAUSE_BY_ITEM[c] for c in items if c in _CAUSE_BY_ITEM]
+    return " + ".join(labels) if labels else f"non-narrative items {items}"
+
+
+def parse_8k_events(text: str, items: list[str], accession: str) -> list[str]:
+    """Source-bound per-item catalyst summaries from the 8-K body — the customer/contract/executive
+    action, not just the code. Fail loud (UNKNOWN — read by hand) when a body can't be parsed; never
+    fabricate. Pure: the filing's own words in, capped summaries out."""
+    out: list[str] = []
+    for code in items:
+        if code == "9.01":  # exhibits — no narrative event
+            continue
+        title = _ITEM_TITLES.get(code, f"Item {code}")
+        m = re.search(rf"Item\s+{re.escape(code)}\b", text, re.IGNORECASE)
+        body = ""
+        if m:
+            seg = text[m.end() : m.end() + 1400]
+            nxt = re.search(r"Item\s+\d\.\d\d\b|\bSIGNATURES?\b", seg, re.IGNORECASE)
+            seg = seg[: nxt.start()] if nxt else seg
+            body = re.sub(r"\s+", " ", seg).strip(" .:;-—").strip()
+        if len(body) >= 40:
+            out.append(f"{code} {title}: {body[:400]}")
+        else:
+            out.append(f"{code} {title}: UNKNOWN narrative — read filing {accession} by hand")
+    if not out:
+        out.append(f"only non-narrative items {items} — read filing {accession} by hand")
+    return out
 
 
 def _drawdown_filings(
@@ -78,30 +137,42 @@ def _drawdown_filings(
         if not near:
             continue
         f = near[0]
-        url, excerpt = "", "(no primary document)"
+        url, events = "", [f"UNKNOWN — no primary document for {f.accession}; read by hand"]
         if f.primary_doc:
             url = _ARCHIVE.format(
                 cik=int(pad_cik(f.cik)), acc=f.accession.replace("-", ""), doc=f.primary_doc
             )
             try:
-                excerpt = html_to_text(http.get_text(url, ttl_seconds=None))[:700]
+                events = parse_8k_events(
+                    html_to_text(http.get_text(url, ttl_seconds=None)), list(f.items), f.accession
+                )
             except HttpError:
-                excerpt = "(filing body could not be fetched)"
+                events = [f"UNKNOWN — could not fetch filing {f.accession}; read by hand"]
         refs.append(
             FilingRef(
-                filing_date=f.filing_date.isoformat(), form=f.form, items=list(f.items),
-                accession=f.accession, url=url, excerpt=excerpt,
+                gap_date=gd.isoformat(), filing_date=f.filing_date.isoformat(), form=f.form,
+                items=list(f.items), item_types=item_labels(list(f.items)),
+                accession=f.accession, url=url, events=events,
             )
         )
     return refs
 
 
 def _drawdown_cause(record: DataRecord, edgar: EdgarClient, http: CachedHttp) -> DrawdownCause:
-    gaps = [e.event_date for e in record.events if e.event_type.value == "earnings_gap_down"]
+    gaps = sorted(e.event_date for e in record.events if e.event_type.value == "earnings_gap_down")
+    cik = record.identity.cik
+    filings = _drawdown_filings(edgar, http, cik, gaps) if cik else []
+    by_gap = {f.gap_date: f for f in filings}
     if gaps:
+        parts = [
+            f"{gd.isoformat()} {_gap_label(by_gap[gd.isoformat()].items)}"
+            if gd.isoformat() in by_gap
+            else f"{gd.isoformat()} no 8-K matched"
+            for gd in gaps
+        ]
         shape = Sourced.present(
-            f"discrete event(s) — {len(gaps)} earnings gap-down(s)",
-            source_ref="EOD gap-down detector (screen events)",
+            "discrete gap-downs by 8-K item code — " + "; ".join(parts),
+            source_ref="EDGAR 8-K item codes at the gap-down dates (not blanket-labelled earnings)",
         )
     else:
         shape = Sourced.present(
@@ -115,8 +186,6 @@ def _drawdown_cause(record: DataRecord, edgar: EdgarClient, http: CachedHttp) ->
         if gaps
         else Sourced.unknown(note="no gap-down events on the data-record")
     )
-    cik = record.identity.cik
-    filings = _drawdown_filings(edgar, http, cik, gaps) if cik else []
     return DrawdownCause(shape=shape, gap_down_dates=dates_field, filings=filings)
 
 
@@ -202,25 +271,60 @@ def _idiosyncratic_vs_shared(
     )
 
 
-# --- share-count trend (EDGAR XBRL shares) ----------------------------------------------------
+# --- share-count trend + P/E-basis sanity (EDGAR XBRL) ----------------------------------------
+
+_SHARES_WINDOW_DAYS = 730  # trailing ~2y — current capital-allocation posture, not a stale 7y delta
 
 
-def _share_count_trend(edgar: EdgarClient, cik: str) -> Sourced[str]:
+def _share_count_trend(edgar: EdgarClient, cik: str, reference_date: date) -> Sourced[str]:
+    """Recent (trailing ~2y) share-count trend — a 7y endpoint delta hides the current posture."""
     try:
         pts = [p for p in extract_points(edgar.companyfacts(cik), "shares") if p.value]
     except (HttpError, KeyError):
         return Sourced.unknown(note="EDGAR companyfacts shares unavailable")
-    if len(pts) < 2:
-        return Sourced.unknown(note="insufficient XBRL shares history for a dilution trend")
     pts.sort(key=lambda p: p.period_end)
-    first, last = pts[0], pts[-1]
+    recent = [p for p in pts if (reference_date - p.period_end).days <= _SHARES_WINDOW_DAYS]
+    if len(recent) < 2:
+        return Sourced.unknown(
+            note=f"<2 XBRL shares points in the trailing ~2y ({len(pts)} total) — no current trend"
+        )
+    first, last = recent[0], recent[-1]
     pct = (last.value / first.value - 1.0) if first.value else 0.0
     word = "diluting" if pct > 0.02 else "buying back" if pct < -0.02 else "flat"
+    span = (last.period_end - first.period_end).days / 365.0
     return Sourced.present(
-        f"{word}: shares {first.value:,.0f} ({first.period_end}) → {last.value:,.0f} "
-        f"({last.period_end}), {pct:+.1%}",
-        source_ref=f"EDGAR XBRL shares (companyfacts), {first.period_end}..{last.period_end}",
+        f"{word} (trailing ~{span:.1f}y): {first.value:,.0f} ({first.period_end}) → "
+        f"{last.value:,.0f} ({last.period_end}), {pct:+.1%}",
+        source_ref=f"EDGAR XBRL shares, trailing {first.period_end}..{last.period_end}",
     )
+
+
+def _pe_basis_flag(record: DataRecord, edgar: EdgarClient) -> str | None:
+    """Flag a P/E whose trailing-EPS denominator is far out of line with recent EPS history — a
+    one-time item can make the multiple look at a 5y floor when it is a numerator artifact."""
+    pe = record.fundamentals.pe
+    if not pe.is_known or pe.value is None or not record.identity.cik:
+        return None
+    try:
+        eps = sorted(
+            (p for p in extract_points(edgar.companyfacts(record.identity.cik), "eps_diluted")
+             if p.is_annual and p.value is not None),
+            key=lambda p: p.period_end,
+        )
+    except (HttpError, KeyError):
+        return None
+    if len(eps) < 3:
+        return None
+    latest, prior = eps[-1].value, [p.value for p in eps[:-1]][-4:]
+    med = statistics.median(prior)
+    if med == 0 or latest is None:
+        return None
+    if (latest > 0) != (med > 0) or latest / med > 2.5 or latest / med < 0.4:
+        return (
+            f"P/E may be distorted by non-recurring EPS — latest annual EPS {latest:.2f} vs "
+            f"recent median {med:.2f}; verify against normalized/forward EPS (CIQ)"
+        )
+    return None
 
 
 # --- CIQ-sourced fields (fail-loud MISSING when the export is absent) --------------------------
@@ -272,7 +376,9 @@ def _valuation(record: DataRecord, bundle: CiqBundle, location: str) -> Valuatio
     )
 
 
-def _quality(record: DataRecord, edgar: EdgarClient, bundle: CiqBundle, location: str) -> Quality:
+def _quality(
+    record: DataRecord, edgar: EdgarClient, bundle: CiqBundle, location: str, reference_date: date
+) -> Quality:
     f = record.fundamentals
     return Quality(
         fcf_sign=_sourced(f.fcf_sign, source_ref="EDGAR XBRL FCF sign (screen data-record)"),
@@ -283,7 +389,7 @@ def _quality(record: DataRecord, edgar: EdgarClient, bundle: CiqBundle, location
         ),
         interest_coverage=_ciq_missing(bundle, "Financials (interest coverage)", location),
         share_count_trend=(
-            _share_count_trend(edgar, record.identity.cik)
+            _share_count_trend(edgar, record.identity.cik, reference_date)
             if record.identity.cik
             else Sourced.unknown(note="no CIK")
         ),
@@ -320,11 +426,12 @@ def assemble_mechanical(
     bundle: CiqBundle,
     ciq_location: str,
     reference_date: date,
-) -> MechanicalLayer:
-    """Assemble the full source-bound mechanical layer for one finalist. No LLM, no conclusions."""
-    return MechanicalLayer(
+) -> tuple[MechanicalLayer, list[str]]:
+    """Assemble the source-bound mechanical layer (no LLM) + any flags for human review (e.g. a
+    distorted-P/E-basis warning). No conclusions."""
+    mech = MechanicalLayer(
         valuation=_valuation(record, bundle, ciq_location),
-        quality=_quality(record, edgar, bundle, ciq_location),
+        quality=_quality(record, edgar, bundle, ciq_location, reference_date),
         concentration=_concentration(bundle, ciq_location),
         drawdown_cause=_drawdown_cause(record, edgar, http),
         idiosyncratic_vs_shared=_idiosyncratic_vs_shared(
@@ -332,3 +439,7 @@ def assemble_mechanical(
         ),
         consensus_context=_consensus(bundle, ciq_location),
     )
+    flags: list[str] = []
+    if (pe_flag := _pe_basis_flag(record, edgar)) is not None:
+        flags.append(pe_flag)
+    return mech, flags

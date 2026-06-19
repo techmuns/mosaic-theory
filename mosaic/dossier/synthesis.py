@@ -39,6 +39,12 @@ _DIRECTIONAL = re.compile(
     r"rebound|outperform)|we (expect|believe|are confident))\b",
     re.IGNORECASE,
 )
+# a claim ABOUT data being absent — it must bind to that field's MISSING marker, not a present field
+_MISSING_CLAIM = re.compile(
+    r"\b(missing|unavailable|not (disclosed|available|provided|reported)|no .{0,15}data|"
+    r"absent|undisclosed|MISSING|UNKNOWN)\b",
+    re.IGNORECASE,
+)
 
 _POINT = {
     "type": "object",
@@ -151,6 +157,28 @@ def _refs_in(mech: MechanicalLayer) -> set[str]:
     return refs
 
 
+def _present_refs(mech: MechanicalLayer) -> set[str]:
+    """source_refs of PRESENT facts only (MISSING/UNKNOWN carry none) + filing accessions/urls."""
+    refs: set[str] = set()
+
+    def rec(o: Any) -> None:
+        if isinstance(o, dict):
+            if o.get("status") == "present" and o.get("source_ref"):
+                refs.add(str(o["source_ref"]))
+            if o.get("accession"):
+                refs.add(str(o["accession"]))
+            if o.get("url"):
+                refs.add(str(o["url"]))
+            for v in o.values():
+                rec(v)
+        elif isinstance(o, list):
+            for v in o:
+                rec(v)
+
+    rec(mech.model_dump())
+    return refs
+
+
 def _digit_strings(text: str) -> set[str]:
     return {m.group().replace(",", "").lstrip("-") for m in _NUM.finditer(text)}
 
@@ -173,6 +201,7 @@ def _validate(synth: Synthesis, mech: MechanicalLayer) -> tuple[Synthesis, list[
     """Apply the guardrails: cite-check, number-trace, twin checks, directional lint → flags."""
     flags: list[str] = []
     refs = _refs_in(mech)
+    present_refs = _present_refs(mech)
     mech_nums = _floats(json.dumps(mech.model_dump(), default=str))
 
     def _num_traces(n: float) -> bool:
@@ -192,6 +221,14 @@ def _validate(synth: Synthesis, mech: MechanicalLayer) -> tuple[Synthesis, list[
         cited = _traces(p.source_ref, refs)
         if not cited:
             flags.append(f"UNCITED {where}: '{p.claim[:70]}' (ref not in mechanical facts)")
+        elif _MISSING_CLAIM.search(p.claim) and _traces(p.source_ref, present_refs):
+            # a "field X is missing" claim must bind to X's MISSING marker (no source_ref), not to
+            # an unrelated PRESENT field — such a claim belongs in key_unknowns, not here.
+            cited = False
+            flags.append(
+                f"MISMATCH {where}: '{p.claim[:55]}' asserts missing/UNKNOWN data yet cites a "
+                "PRESENT field — move to key_unknowns, don't source-bind it"
+            )
         for n in _floats(p.claim):
             if not _num_traces(n):
                 flags.append(f"UNTRACEABLE figure '{n:g}' in {where}: '{p.claim[:70]}'")

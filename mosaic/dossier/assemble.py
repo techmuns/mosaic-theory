@@ -113,11 +113,12 @@ def assemble_one(
     if bundle.is_empty:
         flags.append(f"pull CIQ for {ticker} and re-run — no export found at {location}")
     with Store(cfg.db_path) as store:
-        mech = assemble_mechanical(
+        mech, mech_flags = assemble_mechanical(
             rec, store=store, edgar=EdgarClient.from_config(cfg), http=build_sec_http(cfg),
             graph=graph, resolver=resolver, bundle=bundle, ciq_location=location,
             reference_date=fin.reference_date,
         )
+    flags += mech_flags
     synthesis = None
     llm_log = ""
     if llm is not None:

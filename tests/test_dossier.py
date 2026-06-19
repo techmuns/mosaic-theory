@@ -15,6 +15,7 @@ import pytest
 from pydantic import BaseModel
 
 from mosaic.dossier import ciq, manual_store
+from mosaic.dossier import mechanical as dm
 from mosaic.dossier import schemas as ds
 from mosaic.dossier import synthesis as syn
 from mosaic.graph.llm import LlmClient, LlmError
@@ -228,3 +229,50 @@ def test_synthesis_fails_loud_when_llm_errors() -> None:
     synth, flags, _ = syn.synthesize(_minimal_mech(), llm=_BadLlm(), ticker="X", name="X")
     assert synth is None
     assert any("synthesis failed" in f for f in flags)
+
+
+# --- cause-parsing fixes surfaced by the VRRM run --------------------------------------------
+
+
+def test_cause_labels_reflect_item_codes_not_blanket_earnings() -> None:
+    """Fix #1: a gap-down is labelled by its 8-K item codes — never 'earnings' without 2.02."""
+    assert dm._gap_label(["5.02", "9.01"]) == "management change (5.02)"  # CEO change, NOT earnings
+    assert "earnings" in dm._gap_label(["2.02", "9.01"])  # 2.02 → earnings
+    assert dm._gap_label(["1.02", "8.01"]) == "agreement termination (1.02) + other event (8.01)"
+    assert dm.item_labels(["5.02"]) == ["5.02 Departure/Election of Directors or Certain Officers"]
+
+
+def test_parse_8k_events_surfaces_catalyst_and_fails_loud() -> None:
+    """Fix #2: the catalyst is parsed from the filing TEXT (source-bound); unparseable → by-hand."""
+    body = (
+        "Item 5.02 Departure of Directors or Certain Officers. On May 6, 2026, the Company's Chief "
+        "Executive Officer notified the Board of his resignation, effective immediately. "
+        "Item 8.01 Other Events. On May 6, 2026, the Company received an Avis Budget Group notice "
+        "terminating the master services agreement. SIGNATURE"
+    )
+    events = dm.parse_8k_events(body, ["5.02", "8.01", "9.01"], "0001-26-00")
+    text = " ".join(events)
+    assert "resignation" in text or "Chief Executive Officer" in text  # CEO departure surfaced
+    assert "Avis" in text  # the customer-termination catalyst surfaced
+    assert not any("UNKNOWN" in e for e in events)  # both narrative items parsed
+    assert all("9.01" not in e for e in events)  # exhibits carry no event
+    # fail loud: a body with no item text → read-by-hand marker, never fabricated
+    bad = dm.parse_8k_events("(no parseable content)", ["8.01"], "0001-26-99")
+    assert "UNKNOWN" in bad[0] and "0001-26-99" in bad[0]
+
+
+def test_cite_check_flags_missing_claim_bound_to_present_field() -> None:
+    """Fix #5: a 'data is missing' point citing a PRESENT field's ref is flagged + uncited."""
+    payload = {
+        "bull_points": [],
+        # claim asserts missing data but cites a PRESENT field's ref (not the MISSING marker)
+        "bear_points": [{"claim": "Segment concentration data is unavailable",
+                         "source_ref": "EOD name-IWM 180d"}],
+        "twin_reference_cases": [],
+        "decisive_question": {"question": "?", "evidence_for": [], "evidence_against": []},
+        "key_unknowns": [],
+    }
+    synth, flags, _ = syn.synthesize(_minimal_mech(), llm=_FakeLlm(payload), ticker="X", name="X")
+    assert synth is not None
+    assert synth.bear_points[0].cited is False
+    assert any("MISMATCH" in f for f in flags)

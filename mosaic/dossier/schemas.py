@@ -72,14 +72,20 @@ class Sourced(BaseModel, Generic[T]):
 
 
 class FilingRef(BaseModel):
-    """One EDGAR 8-K bound to a drawdown — the primary source for the de-rating cause."""
+    """One EDGAR 8-K bound to a specific gap-down — the primary source for the de-rating cause.
 
+    ``item_types`` maps the 8-K's codes to their standard titles (so the cause is read from the
+    codes, not blanket-labelled "earnings"); ``events`` is the source-bound catalyst parsed from the
+    filing's own text (customer/contract/executive action), or an UNKNOWN read-by-hand marker."""
+
+    gap_date: str  # the gap-down this 8-K explains
     filing_date: str
     form: str
     items: list[str]  # 8-K item codes, e.g. ["2.02", "9.01"]
+    item_types: list[str]  # code → title, e.g. "5.02 Departure/Election of Directors or Officers"
     accession: str
     url: str
-    excerpt: str  # verbatim text snippet from the filing (human reads the primary doc via url)
+    events: list[str]  # per-item catalyst from the body, or "UNKNOWN — read <acc> by hand"
 
     model_config = {"frozen": True}
 

@@ -117,6 +117,26 @@ Each line: *what it does* — *verified how*.
   mechanical layer; 11 dossier tests incl. the no-conclusion-field schema guard + the no-ledger import
   guard. Writes `data/dossiers/<ticker>/{dossier.json,dossier.md,llm_call.log}` (git-ignored — may carry
   licensed CIQ).*
+  - **Cause-parsing + integrity hardening (VRRM run, 2026-06-19) — the dossier must see catalysts that
+    live in 8-K TEXT and never mislabel cause.** (1) Each gap-down is labelled by its **8-K item codes**
+    (2.02 earnings / 5.02 management change / 8.01 other / 1.02 agreement-termination / 4.02 restatement
+    / 3.01 delisting) — never blanket "earnings". (2) The 8-K body is parsed for the **source-bound
+    catalyst** (the customer/contract/executive action, bound to the accession), fail-loud
+    "UNKNOWN — read filing by hand" when unparseable; free EDGAR only. (3) Share-count trend uses a
+    **trailing ~2y** window (a 7y endpoint delta hid the current posture). (4) A **P/E-basis flag** fires
+    when trailing EPS is far out of line with the name's recent EPS history (a multiple at its 5y floor
+    can be an EPS-numerator artifact — verify vs normalized/forward CIQ). (5) Cite-check **tightened**:
+    a "field X is missing" point that cites an unrelated PRESENT field is flagged + un-cited (it belongs
+    in key_unknowns). *Verified: VRRM's three drops now read earnings (2.02) / other-event-Avis-
+    termination (8.01) / management-change (5.02) — NOT three earnings misses; the 8-K text surfaced
+    "termination notice from Avis Budget" + the executive change, source-bound to accessions; the P/E
+    1%-ile flagged as an EPS artifact (latest 0.85 vs median 0.28); the synthesis decisive question is
+    now the Avis customer-concentration question, not a false repeated-earnings-miss premise.*
+  - **Graph-cohort coverage caveat (report-only):** only **~4% (11/301)** of the ranked candidates are
+    in `graph_coverage.json` (built on a narrow slice, not the candidate universe) — so the
+    idiosyncratic-vs-shared **graph-cohort read is effectively dormant at the dossier stage**; 96%
+    (incl. FUBO, VRRM) fall back to the name-vs-IWM read with cohort UNKNOWN. Activating it needs the
+    graph built across the candidate universe — deferred, not rebuilt.
 - **Decision ledger** (`mosaic/ledger` + `store`) — append-only: `append_ledger` is INSERT-only and
   **no `clear_ledger`/ledger-DELETE exists anywhere** — *2 verdicts across 2 processes both persist;
   survives `clear_candidates`+`clear_universe`+`export_snapshots`; re-log → `sqlite3.IntegrityError`.*

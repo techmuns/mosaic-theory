@@ -60,12 +60,12 @@ def render_markdown(d: Dossier) -> str:
         _fact("Gap-down dates", m.drawdown_cause.gap_down_dates),
     ]
     if m.drawdown_cause.filings:
-        out.append("- **8-Ks at the gap-downs:**")
+        out.append("- **8-Ks at the gap-downs (cause from item codes + parsed filing text):**")
         for f in m.drawdown_cause.filings:
-            out.append(
-                f"  - {f.filing_date} {f.form} items {f.items} — [`{f.accession}`]({f.url})\n"
-                f"    > {f.excerpt[:300]}"
-            )
+            out.append(f"  - gap {f.gap_date} → {f.filing_date} [`{f.accession}`]({f.url})")
+            out.append(f"    - items: {', '.join(f.item_types) or '—'}")
+            for ev in f.events:
+                out.append(f"    - {ev}")
     out += [
         "",
         "### Idiosyncratic vs shared (G2-vs-market compensation)",
