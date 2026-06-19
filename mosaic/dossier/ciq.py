@@ -16,7 +16,8 @@ from __future__ import annotations
 import enum
 import html as _html
 import quopri
-from dataclasses import dataclass
+from dataclasses import dataclass, field
+from datetime import date, datetime, timedelta
 from pathlib import Path
 from typing import Any
 
@@ -102,10 +103,25 @@ def read_text(path: Path, fmt: CiqFormat | None = None) -> str:
         )
         return out.stdout
     if fmt is CiqFormat.OLE_DISGUISED:
-        raise CiqParseError(
-            f"{path.name}: OLE-disguised Word doc (transcript/annual) — needs LibreOffice/Word "
-            "pre-conversion; no RTF library parses it (ciq_extraction_notes.md)"
-        )
+        import shutil
+        import subprocess
+        import tempfile
+
+        soffice = shutil.which("soffice") or shutil.which("libreoffice")
+        if soffice is None:
+            raise CiqParseError(
+                f"{path.name}: OLE-disguised Word doc — needs LibreOffice; soffice not installed "
+                "(ciq_extraction_notes.md: striprtf returns ~12 words of garbage)"
+            )
+        with tempfile.TemporaryDirectory() as td:
+            subprocess.run(  # noqa: S603 — fixed args, path from the local manual store
+                [soffice, "--headless", "--convert-to", "txt", "--outdir", td, str(path)],
+                capture_output=True, check=True,
+            )
+            txt_path = Path(td) / f"{path.stem}.txt"
+            if not txt_path.exists():
+                raise CiqParseError(f"{path.name}: LibreOffice conversion produced no .txt output")
+            return txt_path.read_text(encoding="utf-8", errors="replace")
     raise CiqParseError(f"{path.name}: format {fmt.value} is not text — use read_sheets()")
 
 
@@ -135,49 +151,146 @@ def read_sheets(path: Path, fmt: CiqFormat | None = None) -> dict[str, list[list
     raise CiqParseError(f"{path.name}: format {fmt.value} is not a spreadsheet")
 
 
-# --- bundle: index a name's CIQ files by module ----------------------------------------------
+# --- workbook-aware model: a CIQ export is a multi-sheet workbook; address = (kind, sheet) ----
+#
+# A CIQ Financials export is ONE 13-subsheet workbook (Income Statement / Balance Sheet / Cash
+# Multiples / Segments / Capital Structure Details / Ratios / …); the Estimates export is its own
+# workbook (Consensus / Recent Changes / Multiples-forward / Surprise / Revisions). A module is an
+# explicit (workbook-kind, sheet) ADDRESS — never module→file by filename keyword, which silently
+# grabs the WRONG Multiples (the historical Financials one vs the forward Estimates one differ).
 
-_MODULE_KEYWORDS: dict[str, tuple[str, ...]] = {
+# Filename → workbook KIND (the export type). Financials may appear twice (Annual + Quarterly),
+# disambiguated by a verbatim Period-Type read, not the filename.
+_WORKBOOK_KEYWORDS: dict[str, tuple[str, ...]] = {
+    "estimates": ("estimate", "consensus"),
     "financials": ("financial", "income", "balance", "cash flow", "cashflow"),
-    "multiples": ("multiple",),
-    "segments": ("segment",),
     "customers": ("customer", "supplier", "business relationship"),
-    "estimates": ("estimate", "consensus", "revision"),
+    "transcript": ("earnings call", "transcript", "conference call"),
+    "key_developments": ("key development",),
+    "profile": ("company profile", "tearsheet"),
 }
+# unparseable / withheld CIQ cells — ALL mean UNAVAILABLE (notes lines 61, 74); never coerce to 0.
+_UNAVAILABLE_CELLS = frozenset({"", "-", "—", "NM", "NA", "N/A", "Entitlement Needed"})
+
+
+class CiqUnavailableError(RuntimeError):
+    """A needed CIQ workbook/subsheet is absent or a parse tool missing — fail loud, never fake."""
+
+
+def clean_num(cell: Any) -> float | None:
+    """A CIQ numeric cell → float, or None when UNAVAILABLE (empty / '-' / 'NM' / 'Entitlement'
+    / 'NA') — never coerced to 0 or a value (notes lines 61, 74)."""
+    if isinstance(cell, bool):
+        return None
+    if isinstance(cell, (int, float)):
+        return float(cell)
+    s = str(cell).strip()
+    if s in _UNAVAILABLE_CELLS:
+        return None
+    try:
+        return float(s.replace(",", "").replace("%", ""))
+    except ValueError:
+        return None
+
+
+def excel_date(cell: Any) -> date | None:
+    """A CIQ date cell → date: Excel serial (Multiples/Estimates), already-decoded datetime, or an
+    ISO/`Mon-DD-YYYY` string (notes lines 63-66). UNAVAILABLE → None."""
+    if isinstance(cell, datetime):
+        return cell.date()
+    if isinstance(cell, (int, float)) and not isinstance(cell, bool):
+        try:
+            return (datetime(1899, 12, 30) + timedelta(days=int(cell))).date()
+        except (ValueError, OverflowError):
+            return None
+    s = str(cell).strip()
+    for fmt in ("%Y-%m-%d", "%b-%d-%Y", "%m/%d/%Y"):
+        try:
+            return datetime.strptime(s, fmt).date()
+        except ValueError:
+            continue
+    return None
+
+
+def period_type(income_rows: list[list[Any]]) -> str | None:
+    """Verbatim Period-Type read: scan for the "Period Type:" label cell, return the next cell
+    (notes lines 136-138 — ground frequency on this cell, NEVER on column-count/shape inference)."""
+    for row in income_rows[:14]:
+        for j, cell in enumerate(row):
+            if isinstance(cell, str) and cell.strip() == "Period Type:" and j + 1 < len(row):
+                return str(row[j + 1]).strip().lower() or None
+    return None
 
 
 @dataclass(frozen=True)
-class CiqFile:
+class CiqWorkbook:
+    kind: str
     path: Path
     fmt: CiqFormat
-    module: str | None  # best-effort module guess from the filename
+    freq: str | None  # "annual"/"quarterly" for financials (verbatim Period-Type), else None
 
 
-@dataclass(frozen=True)
+@dataclass
 class CiqBundle:
-    """A name's available CIQ files, classified by real format + best-effort module."""
+    """A name's CIQ exports as workbooks. A field resolves to a (workbook-kind, sheet) address via
+    :meth:`sheet` (fail-loud UNAVAILABLE). Adding a consumer = register an address + write its
+    extractor — no loader re-architecture; unconsumed sheets are reachable but not pre-extracted."""
 
     ticker: str
-    files: tuple[CiqFile, ...]
+    workbooks: tuple[CiqWorkbook, ...]
+    _cache: dict[Path, dict[str, list[list[Any]]]] = field(default_factory=dict, repr=False)
 
     @classmethod
     def from_files(cls, ticker: str, paths: list[Path]) -> CiqBundle:
-        out: list[CiqFile] = []
+        wbs: list[CiqWorkbook] = []
+        cache: dict[Path, dict[str, list[list[Any]]]] = {}
         for p in paths:
             name = p.name.lower()
-            module = next(
-                (m for m, kws in _MODULE_KEYWORDS.items() if any(k in name for k in kws)), None
+            kind = next(
+                (k for k, kws in _WORKBOOK_KEYWORDS.items() if any(w in name for w in kws)), None
             )
+            if kind is None:
+                continue
             try:
                 fmt = classify(p)
             except OSError:
                 fmt = CiqFormat.UNKNOWN
-            out.append(CiqFile(path=p, fmt=fmt, module=module))
-        return cls(ticker=ticker, files=tuple(out))
+            freq = None
+            if kind == "financials" and fmt in (CiqFormat.BIFF_XLS, CiqFormat.OOXML):
+                try:
+                    cache[p] = read_sheets(p, fmt)
+                    freq = period_type(cache[p].get("Income Statement", []))
+                except CiqParseError:
+                    freq = None
+            wbs.append(CiqWorkbook(kind=kind, path=p, fmt=fmt, freq=freq))
+        return cls(ticker=ticker, workbooks=tuple(wbs), _cache=cache)
 
-    def for_module(self, module: str) -> list[CiqFile]:
-        return [f for f in self.files if f.module == module]
+    def workbook(self, kind: str, *, freq: str | None = None) -> CiqWorkbook | None:
+        cands = [w for w in self.workbooks if w.kind == kind]
+        if not cands:
+            return None
+        if freq is not None:
+            return next((w for w in cands if w.freq == freq), None) or cands[0]
+        return cands[0]
+
+    def sheet(self, kind: str, sheet_name: str, *, freq: str | None = None) -> list[list[Any]]:
+        """Parsed rows at a (kind, sheet) address, or fail loud :class:`CiqUnavailableError`."""
+        wb = self.workbook(kind, freq=freq)
+        if wb is None:
+            raise CiqUnavailableError(f"no '{kind}' CIQ workbook for {self.ticker}")
+        if wb.path not in self._cache:
+            try:
+                self._cache[wb.path] = read_sheets(wb.path, wb.fmt)
+            except CiqParseError as exc:
+                raise CiqUnavailableError(str(exc)) from exc
+        sheets = self._cache[wb.path]
+        if sheet_name not in sheets:
+            raise CiqUnavailableError(f"{kind} workbook {wb.path.name} has no '{sheet_name}' sheet")
+        return sheets[sheet_name]
+
+    def has(self, kind: str) -> bool:
+        return any(w.kind == kind for w in self.workbooks)
 
     @property
     def is_empty(self) -> bool:
-        return not self.files
+        return not self.workbooks

@@ -183,6 +183,7 @@ class MechanicalLayer(BaseModel):
     drawdown_cause: DrawdownCause
     idiosyncratic_vs_shared: IdiosyncraticVsShared
     consensus_context: ConsensusContext
+    management_commentary: Sourced[str]  # earnings-call transcript — QUALITATIVE only, no numbers
 
     model_config = {"frozen": True}
 

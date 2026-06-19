@@ -14,7 +14,8 @@ import re
 import statistics
 from datetime import date, timedelta
 
-from mosaic.dossier.ciq import CiqBundle, CiqParseError, read_sheets, read_text
+from mosaic.dossier import ciq_sheets
+from mosaic.dossier.ciq import CiqBundle
 from mosaic.dossier.schemas import (
     CohortMember,
     Concentration,
@@ -327,39 +328,10 @@ def _pe_basis_flag(record: DataRecord, edgar: EdgarClient) -> str | None:
     return None
 
 
-# --- CIQ-sourced fields (fail-loud MISSING when the export is absent) --------------------------
+# --- CIQ-sourced fields (workbook-addressed; the extractors fail loud MISSING/UNKNOWN) ---------
 
 
-def _ciq_missing(bundle: CiqBundle, module: str, location: str) -> Sourced[str]:
-    return Sourced.missing(
-        note=f"CIQ {module} not found for {bundle.ticker} — pull into {location} and re-run"
-    )
-
-
-def _ciq_text_summary(bundle: CiqBundle, module: str, location: str, label: str) -> Sourced[str]:
-    """Surface a CIQ module's primary data, source-bound. Present-file read; MISSING when absent.
-
-    Deliberately a source-bound *surfacing* of the primary cells/rows (not a derived metric we can't
-    verify): the human reads the cited file. Fail-loud UNKNOWN if the present file can't be parsed
-    here (e.g. an OLE-disguised transcript needs LibreOffice)."""
-    cfiles = bundle.for_module(module)
-    if not cfiles:
-        return _ciq_missing(bundle, label, location)
-    cf = cfiles[0]
-    try:
-        if cf.fmt.value in ("rtf_text", "mime_doc", "html", "pdf"):
-            text = read_text(cf.path, cf.fmt)
-            return Sourced.present(text[:1200], source_ref=f"CIQ {cf.path.name} ({cf.fmt.value})")
-        sheets = read_sheets(cf.path, cf.fmt)
-        preview = "; ".join(f"{name}[{len(rows)}r]" for name, rows in list(sheets.items())[:6])
-        return Sourced.present(
-            f"sheets: {preview}", source_ref=f"CIQ {cf.path.name} ({cf.fmt.value})"
-        )
-    except CiqParseError as exc:
-        return Sourced.unknown(note=str(exc))
-
-
-def _valuation(record: DataRecord, bundle: CiqBundle, location: str) -> Valuation:
+def _valuation(record: DataRecord, bundle: CiqBundle) -> Valuation:
     f = record.fundamentals
     return Valuation(
         pe=_sourced(f.pe, source_ref="EDGAR XBRL eps_diluted × EOD price (screen data-record, G3)"),
@@ -370,48 +342,46 @@ def _valuation(record: DataRecord, bundle: CiqBundle, location: str) -> Valuatio
         ev_ebitda_percentile_5y=(
             _sourced(f.ev_ebitda_pctile_vs_history, source_ref="EDGAR (screen data-record)")
             if f.ev_ebitda_pctile_vs_history.is_known
-            else _ciq_missing(bundle, "Financials→Multiples (EV/EBITDA percentile)", location)
+            else ciq_sheets.ev_ebitda_percentile(bundle)
         ),
-        range_position=_ciq_text_summary(bundle, "multiples", location, "Financials→Multiples"),
+        range_position=ciq_sheets.range_position(bundle),
     )
 
 
 def _quality(
-    record: DataRecord, edgar: EdgarClient, bundle: CiqBundle, location: str, reference_date: date
+    record: DataRecord, edgar: EdgarClient, bundle: CiqBundle, reference_date: date
 ) -> Quality:
     f = record.fundamentals
     return Quality(
         fcf_sign=_sourced(f.fcf_sign, source_ref="EDGAR XBRL FCF sign (screen data-record)"),
-        free_cash_flow=_ciq_missing(bundle, "Financials→Cash Flow (FCF value)", location),
-        margin_trend=_ciq_text_summary(bundle, "financials", location, "Financials→Income Stmt"),
+        free_cash_flow=ciq_sheets.free_cash_flow(bundle),
+        margin_trend=ciq_sheets.margin_trend(bundle),
         net_debt_to_ebitda=_sourced(
             f.net_leverage, source_ref="EDGAR XBRL net-debt/EBITDA (screen data-record)"
         ),
-        interest_coverage=_ciq_missing(bundle, "Financials (interest coverage)", location),
+        interest_coverage=ciq_sheets.interest_coverage(bundle),
         share_count_trend=(
             _share_count_trend(edgar, record.identity.cik, reference_date)
             if record.identity.cik
             else Sourced.unknown(note="no CIK")
         ),
-        liquidity_covenant_flags=_ciq_missing(
-            bundle, "Capital Structure Details (covenants/liquidity)", location
-        ),
+        liquidity_covenant_flags=ciq_sheets.liquidity_covenant_flags(bundle),
     )
 
 
-def _concentration(bundle: CiqBundle, location: str) -> Concentration:
+def _concentration(bundle: CiqBundle) -> Concentration:
     return Concentration(
-        segments=_ciq_text_summary(bundle, "segments", location, "Segments"),
-        customers=_ciq_text_summary(bundle, "customers", location, "Customers & Suppliers"),
-        geographic=_ciq_text_summary(bundle, "segments", location, "Segments (geographic)"),
+        segments=ciq_sheets.segments(bundle),
+        customers=ciq_sheets.customers(bundle),
+        geographic=ciq_sheets.geographic(bundle),
     )
 
 
-def _consensus(bundle: CiqBundle, location: str) -> ConsensusContext:
+def _consensus(bundle: CiqBundle) -> ConsensusContext:
     return ConsensusContext(
-        eps_trend=_ciq_text_summary(bundle, "estimates", location, "Estimates→Consensus (EPS)"),
-        revenue_trend=_ciq_text_summary(bundle, "estimates", location, "Estimates→Consensus (Rev)"),
-        revision_history=_ciq_text_summary(bundle, "estimates", location, "Estimates→Revisions"),
+        eps_trend=ciq_sheets.eps_revisions(bundle),
+        revenue_trend=ciq_sheets.revenue_revisions(bundle),
+        revision_history=ciq_sheets.consensus_view(bundle),
     )
 
 
@@ -424,20 +394,20 @@ def assemble_mechanical(
     graph: ExposureGraph,
     resolver: EntityResolver,
     bundle: CiqBundle,
-    ciq_location: str,
     reference_date: date,
 ) -> tuple[MechanicalLayer, list[str]]:
     """Assemble the source-bound mechanical layer (no LLM) + any flags for human review (e.g. a
     distorted-P/E-basis warning). No conclusions."""
     mech = MechanicalLayer(
-        valuation=_valuation(record, bundle, ciq_location),
-        quality=_quality(record, edgar, bundle, ciq_location, reference_date),
-        concentration=_concentration(bundle, ciq_location),
+        valuation=_valuation(record, bundle),
+        quality=_quality(record, edgar, bundle, reference_date),
+        concentration=_concentration(bundle),
         drawdown_cause=_drawdown_cause(record, edgar, http),
         idiosyncratic_vs_shared=_idiosyncratic_vs_shared(
             record, store, graph, resolver, reference_date
         ),
-        consensus_context=_consensus(bundle, ciq_location),
+        consensus_context=_consensus(bundle),
+        management_commentary=ciq_sheets.management_commentary(bundle),
     )
     flags: list[str] = []
     if (pe_flag := _pe_basis_flag(record, edgar)) is not None:

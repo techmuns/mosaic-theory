@@ -89,6 +89,9 @@ def render_markdown(d: Dossier) -> str:
         _fact("Revenue trend", m.consensus_context.revenue_trend),
         _fact("Revision history", m.consensus_context.revision_history),
         "",
+        "### Management commentary (transcript — qualitative, no numbers derived)",
+        _fact("Earnings call", m.management_commentary),
+        "",
     ]
 
     if d.synthesis is None:

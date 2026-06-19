@@ -115,8 +115,7 @@ def assemble_one(
     with Store(cfg.db_path) as store:
         mech, mech_flags = assemble_mechanical(
             rec, store=store, edgar=EdgarClient.from_config(cfg), http=build_sec_http(cfg),
-            graph=graph, resolver=resolver, bundle=bundle, ciq_location=location,
-            reference_date=fin.reference_date,
+            graph=graph, resolver=resolver, bundle=bundle, reference_date=fin.reference_date,
         )
     flags += mech_flags
     synthesis = None

@@ -9,12 +9,14 @@ from __future__ import annotations
 
 import ast
 import typing
+from datetime import date
 from pathlib import Path
 
 import pytest
 from pydantic import BaseModel
 
 from mosaic.dossier import ciq, manual_store
+from mosaic.dossier import ciq_sheets as cs
 from mosaic.dossier import mechanical as dm
 from mosaic.dossier import schemas as ds
 from mosaic.dossier import synthesis as syn
@@ -169,6 +171,7 @@ def _minimal_mech() -> ds.MechanicalLayer:
         consensus_context=ds.ConsensusContext(
             eps_trend=_u(), revenue_trend=_u(), revision_history=_u()
         ),
+        management_commentary=_u(),
     )
 
 
@@ -276,3 +279,89 @@ def test_cite_check_flags_missing_claim_bound_to_present_field() -> None:
     assert synth is not None
     assert synth.bear_points[0].cited is False
     assert any("MISMATCH" in f for f in flags)
+
+
+# --- CIQ workbook-aware loader (the export structure ≠ one-file-per-module) -------------------
+
+
+_Sheets = dict[str, list[list[typing.Any]]]
+
+
+def _fin_bundle(sheets: _Sheets, freq: str = "quarterly") -> ciq.CiqBundle:
+    """A CiqBundle with one Financials workbook whose sheets are pre-seeded (no .xls on disk)."""
+    p = Path("/fake/Financials.xls")
+    wb = ciq.CiqWorkbook(kind="financials", path=p, fmt=ciq.CiqFormat.BIFF_XLS, freq=freq)
+    return ciq.CiqBundle(ticker="X", workbooks=(wb,), _cache={p: sheets})
+
+
+def test_clean_num_treats_ciq_blanks_as_unavailable() -> None:
+    for blank in ("", "-", "—", "NM", "NA", "Entitlement Needed"):
+        assert ciq.clean_num(blank) is None  # UNAVAILABLE — never coerced to 0
+    assert ciq.clean_num("1,234.5") == 1234.5
+    assert ciq.clean_num(5) == 5.0
+
+
+def test_excel_date_handles_serial_and_string() -> None:
+    assert ciq.excel_date(44377.0) == date(2021, 6, 30)  # Excel serial
+    assert ciq.excel_date("Jan-31-2024") == date(2024, 1, 31)  # string
+    assert ciq.excel_date("-") is None
+
+
+def test_workbook_routing_finds_multiples_and_segments_inside_financials() -> None:
+    """Core fix: Multiples + Segments are SUBSHEETS of the Financials workbook, by address."""
+    mult: list[list[typing.Any]] = [
+        ["For Quarter Ending", "", 44377.0, 44469.0, 44561.0, 44651.0],
+        ["TEV/LTM EBITDA", "Average", 30, 25, 22, 11],
+        ["", "High", 33, 28, 25, 13],
+        ["", "Low", 28, 22, 18, 9],
+        ["", "Close", 30.0, 20.0, 10.0, 10.0],  # history [30,20,10]; last col = current, excluded
+    ]
+    seg: list[list[typing.Any]] = [
+        ["For the Fiscal Period", "12 months Dec-31-2024", "12 months Dec-31-2025"],
+        ["Revenues", "", ""],
+        ["Commercial Services", 372.0, 407.0],
+        ["Government Solutions", 358.0, 390.0],
+        ["  Total Revenues", 730.0, 797.0],
+    ]
+    b = _fin_bundle({"Multiples": mult, "Segments": seg})
+    pct = cs.ev_ebitda_percentile(b)
+    assert pct.status is ds.SourceStatus.PRESENT
+    assert pct.value == round(1 / 3, 3)  # would be 0.5 if the partial last col were NOT excluded
+    segs = cs.segments(b)
+    assert segs.status is ds.SourceStatus.PRESENT
+    assert "Commercial Services" in (segs.value or "") and "797" in (segs.value or "")
+
+
+def test_reclassified_boundary_blocks_cross_basis_yoy() -> None:
+    inc: list[list[typing.Any]] = [
+        ["For the Fiscal Period", "Reclassified\n12 months\nDec-2023", "12 months\nDec-2024"],
+        ["Total Revenue", 700, 800],
+        ["Gross Profit", 300, 360],
+        ["EBITDA", 320, 360],
+    ]
+    assert cs._reclassified_cols(inc[0]) == {1}  # col1 carries the restated basis
+    mt = cs.margin_trend(_fin_bundle({"Income Statement": inc}, freq="annual"))
+    assert "UNAVAILABLE (reclassified-basis boundary)" in (mt.value or "")  # YoY refused
+
+
+def test_interest_coverage_and_fcf_from_subsheets() -> None:
+    inc: list[list[typing.Any]] = [
+        ["For the Fiscal Period", "12mo 2024", "12mo 2025"], ["EBITDA", 360, 400],
+        ["Interest Expense", 40, 50],
+    ]
+    cf: list[list[typing.Any]] = [
+        ["For the Fiscal Period", "12mo 2024", "12mo 2025"],
+        ["Levered Free Cash Flow", 120.0, 150.0],
+    ]
+    ic = cs.interest_coverage(_fin_bundle({"Income Statement": inc}, freq="annual"))
+    assert ic.status is ds.SourceStatus.PRESENT and ic.value == 8.0  # 400 / 50
+    fcf = cs.free_cash_flow(_fin_bundle({"Cash Flow": cf}, freq="annual"))
+    assert fcf.status is ds.SourceStatus.PRESENT and fcf.value == 150.0
+
+
+def test_missing_workbook_is_missing_absent_sheet_is_unknown() -> None:
+    empty = ciq.CiqBundle(ticker="X", workbooks=())
+    assert cs.ev_ebitda_percentile(empty).status is ds.SourceStatus.MISSING  # no financials wb
+    absent: list[list[typing.Any]] = [["For the Fiscal Period", "x"]]  # wb present, no Multiples
+    r = cs.ev_ebitda_percentile(_fin_bundle({"Income Statement": absent}))
+    assert r.status is ds.SourceStatus.UNKNOWN and "Multiples" in (r.note or "")

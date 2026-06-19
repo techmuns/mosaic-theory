@@ -132,6 +132,34 @@ Each line: *what it does* — *verified how*.
     "termination notice from Avis Budget" + the executive change, source-bound to accessions; the P/E
     1%-ile flagged as an EPS artifact (latest 0.85 vs median 0.28); the synthesis decisive question is
     now the Avis customer-concentration question, not a false repeated-earnings-miss premise.*
+  - **CIQ loader → workbook-aware addressing model (VRRM, 2026-06-19) — the prior loader couldn't
+    reach the subsheets, so every CIQ section read MISSING.** CIQ Financials is ONE ~13-subsheet
+    workbook (Income Statement / Cash Flow / Multiples / Segments / Capital Structure Details / …);
+    Estimates is its own; **Multiples lives in BOTH** (historical in Financials, forward in Estimates).
+    The old filename-keyword `module→file` match never opened a subsheet. New model: each module
+    resolves to an explicit **(workbook-kind, sheet-name) ADDRESS** via one accessor
+    (`bundle.sheet(kind, name, freq)` → rows or fail-loud `CiqUnavailableError`); adding a consumer =
+    register an address + write its extractor, no loader re-architecture. **`xlrd` added** so legacy
+    `.xls` (BIFF) parses. Per-sheet reading rules bound to the sheet: partial-period **last column
+    excluded** from the Multiples history but used as "current"; **Reclassified boundary** never
+    YoY'd across; frequency read **verbatim** from Income Statement "Period Type", never shape-
+    inferred; empty / `-` / `Entitlement Needed` all → UNAVAILABLE; per-sheet date formats (string /
+    Excel-serial / datetime). The four formerly hard-MISSING fields now extract: **free_cash_flow,
+    ev_ebitda_percentile_5y, interest_coverage, liquidity_covenant_flags**. **Transcripts** module
+    added: earnings-call files are Word-disguised-as-`.rtf` (OLE) → routed through LibreOffice/Word,
+    NOT striprtf; fed as a **qualitative** input only (no numbers derived). *Verified: VRRM re-run —
+    segments PRESENT (Commercial Services 436/45%, Parking 83/8%, Government 461/47% of 979),
+    EV/EBITDA (TEV/LTM) 8.5x at the 0%ile of 19 closes, FCF 53.9, EBITDA-margin 37%, interest-cov
+    5.6x, term-loan/notes liquidity table, EPS rev 1↑/5↓ & revenue 0↑/8↓, customers — all PRESENT and
+    source-bound; geographic UNKNOWN (section present, extractor not wired) and transcript UNKNOWN
+    (LibreOffice not installed) — honest fail-loud, not fabricated. 6 new workbook tests (subsheet
+    routing finds Multiples+Segments inside Financials; partial-col exclusion; Reclassified guard;
+    blank/`-`/Entitlement→UNAVAILABLE; missing-workbook MISSING vs absent-sheet UNKNOWN).*
+  - **⚠ LANDMINE (unbuilt — insider/Form-4):** when insider data is wired, the CIQ **Transaction-Type
+    direction-flip** (`ciq_extraction_notes` ~line 80) MUST be handled — the Type column signs the
+    trade, so a naive `net_shares_sold` summed off raw quantities is **sign-flip wrong** (buys and
+    sells counted with one sign). High-severity: it would invert the insider-flow read. No insider
+    extractor exists yet — this is a warning for whoever builds it.
   - **Graph-cohort coverage caveat (report-only):** only **~4% (11/301)** of the ranked candidates are
     in `graph_coverage.json` (built on a narrow slice, not the candidate universe) — so the
     idiosyncratic-vs-shared **graph-cohort read is effectively dormant at the dossier stage**; 96%
