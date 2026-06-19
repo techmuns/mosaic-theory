@@ -30,21 +30,32 @@ Each line: *what it does* — *verified how*.
 - **Ranker / triage layer** (`mosaic/rank`, `rank` CLI) — **orders** the ~307 candidates into a
   priority queue so a 2-person team deep-pulls the most structurally-promising overshoots first.
   A *transparent* weighted composite of the Tier-1 axes (idiosyncrasy .30 / drawdown-depth .25 /
-  multiple-vs-own-5y .20 / cause .15 / shape .10 — **face-validity weights, never return-tuned**),
-  + a minor Tier-2 volume overlay (±0.05, panic-exhausted vs still-distributing), coloured by a
-  Tier-3 LLM cause-annotation that only **demotes/colours** (structural-break vs mean-revert,
-  `UNCLASSIFIED` by default — never fabricated). Tradeability is an **ADV gate** (not a quality
-  signal; default floor = universe floor, a no-op re-check — adds no filtering). **Orders, never
-  decides; a lagging/coincident description of the existing setup, not a return prediction.**
-  **Replaces the bare A/B/C band with a legible per-name structural profile** (score *and* profile
-  are the same artifact — priority score + per-axis breakdown that sums back to it; A/B/C kept only
-  as a quick depth tag). Fail-loud: an UNKNOWN axis earns 0 credit and is flagged for depth, never
-  imputed — *ran `rank` on the committed 308 snapshot → top-15 legible profiles, every position
-  reconstructs from weight·sub-score + overlay (ICCM's 61.7× active-distribution overlay sinks it
-  #2→#8); 156 UNKNOWN-multiple names flagged; ADV floor $10M gates 75 thin names to the queue
-  bottom; a structural-break flag demotes FUBO #1→#12 while mean-revert lifts PAR #3→#1. 20 tests
-  incl. an AST guard that `mosaic.rank` imports no scoring/ledger/store (no forward-return path).
-  Emits `ranked_queue.{jsonl,md}` snapshots.*
+  **drawdown-character .25** / multiple-vs-own-5y .20 — **face-validity weights, never
+  return-tuned**), + a minor Tier-2 volume overlay (±0.05, panic-exhausted vs still-distributing),
+  coloured by a Tier-3 LLM cause-annotation that only **demotes/colours** (structural-break vs
+  mean-revert, `UNCLASSIFIED` by default — never fabricated). *drawdown-character folds shape (sharp
+  vs grind) and cause (discrete event vs bleed) into ONE axis today — both rest on the same EOD
+  gap-down detector, so two axes would be false precision; splits back out when 8-K/guidance TEXT
+  events land (§4).* Tradeability is an **ADV gate** (not a quality signal; default floor = universe
+  floor, a no-op re-check — adds no filtering). **Orders, never decides; a lagging/coincident
+  description of the existing setup, not a return prediction.** **Replaces the bare A/B/C band with a
+  legible per-name structural profile** (score *and* profile are the same artifact — priority score +
+  per-axis breakdown that sums back to it; A/B/C kept only as a quick depth tag). Fail-loud: an
+  UNKNOWN axis earns 0 credit and is flagged for depth, never imputed — *ran `rank` on the committed
+  308 snapshot → top-15 legible profiles, every position reconstructs from weight·sub-score + overlay
+  (ICCM's 61.7× active-distribution overlay sinks it from a top-2 quality to #6); 156 UNKNOWN-multiple
+  names flagged; ADV floor $10M gates 75 thin names to the queue bottom; a structural-break flag
+  demotes FUBO #1→#12 while mean-revert lifts PAR #3→#1. 20 tests incl. an AST guard that
+  `mosaic.rank` imports no scoring/ledger/store (no forward-return path). Emits
+  `ranked_queue.{jsonl,md}` snapshots.*
+  - **Coverage caveat (an upstream data gap, NOT a ranker defect):** the ranking is **most reliable
+    for names with a *confirmed* at-floor multiple, weaker for the ~51% without one** —
+    multiple-percentile is present for only ~49% (P/E only; **EV/EBITDA pctile never populated** →
+    that axis is UNKNOWN/0-credit, flagged, for the rest); **market_cap is 100% UNKNOWN** so
+    tradeability rests on ADV alone; **events are 100% EOD `earnings_gap_down`** (no 8-K/guidance
+    text — so drawdown-character is one axis, and Tier-2 reads *current* volume, not volume-at-the-
+    gap). All handled fail-loud (UNKNOWN → 0-credit + flagged, never imputed) — correct behaviour; the
+    fix is upstream coverage (§4), recorded not chased.
 - **Decision ledger** (`mosaic/ledger` + `store`) — append-only: `append_ledger` is INSERT-only and
   **no `clear_ledger`/ledger-DELETE exists anywhere** — *2 verdicts across 2 processes both persist;
   survives `clear_candidates`+`clear_universe`+`export_snapshots`; re-log → `sqlite3.IntegrityError`.*
@@ -103,6 +114,12 @@ execution/sizing/portfolio/monitoring modules; only `SourceTier.IBKR` labels in 
   reveals it needs a structured bull/bear step. May never be needed; do not build speculatively.
 - **Drive adapter for the dossier-assembler** — trigger: the local-folder assembler is proven and the
   manual export→folder step is the real friction. A convenience, not a milestone.
+- **Close the ranker's coverage gaps** — wire **EV/EBITDA-pctile history** + **8-K/guidance TEXT
+  events** (the latter also splits drawdown-character back into shape + cause and feeds the Tier-3
+  LLM cause-pass, which then reads filing text instead of `LLM: —`). Trigger: **only if the gap
+  proves to bite during real finalist selection** — i.e. the ~51% UNKNOWN-multiple names or the
+  un-split character axis visibly distort the queue-top in use. **Monitor in use; don't chase
+  preemptively** (the ranker already handles the gaps fail-loud — §2 coverage caveat).
 
 ### Candidate edge-types — untested hypotheses (DO NOT build; record-only)
 
@@ -155,14 +172,9 @@ signal, not the whole idea.
    via UI. Cloudflare Pages auto-deploy applies **here** (static frontend on committed snapshots),
    not before.
 
-**Ranker wire-ups left open** (the layer is built and verified; these sharpen it, none block):
-- **Tier-3 live LLM pass** — the cause-annotation *channel* is built (`mosaic/rank/cause.py`,
-  `rank --cause-file`); the live pass needs the de-rating **8-K body** linked onto events (today
-  events carry only EOD gap-down dates) + an `ANTHROPIC_API_KEY`. Until wired, every cause reads
-  `LLM: —` (honest default, no demotion).
-- **Capitulation-volume-at-the-gap** — Tier-2 currently reads *current* volume vs 90d avg (panic
-  exhausted vs still-distributing) from the screen-time record; reading volume *at* the gap-down day
-  needs the bar series (not snapshotted). A minor refinement, not a pillar.
+The ranker is built/verified (§2); its coverage-gap wire-ups (EV/EBITDA-pctile + 8-K/guidance text,
+which also re-splits drawdown-character and turns on the live Tier-3 LLM pass) are parked in §4 —
+**monitored in use, not chased**.
 
 Then: operate the weekly loop and accumulate resolved verdicts.
 

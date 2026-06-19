@@ -57,21 +57,23 @@ _MULT_FLOOR_PCTILE = 0.25
 # imputed. A name must rank on what we can CONFIRM; missing data ranks lower, explicitly.
 _UNKNOWN_AXIS_SCORE = 0.0
 
-# Shape (sharp discrete fall vs slow grind), read from the EOD gap-down detector. A single clean
-# discrete drop is the archetype overshoot (one bad print, possibly overreacted); repeated gaps are
-# messier — more often the market re-rating on accumulating bad news — so the score eases off, never
-# rewarding "more violent" as "more promising". 0 gaps == a known grind, not missing data.
-_SHAPE_BY_GAPS: dict[int, float] = {0: 0.0, 1: 1.0, 2: 0.90, 3: 0.80}
-_SHAPE_MANY_GAPS = 0.70  # 4+ gap-downs
-
-# Cause (discrete identifiable catalyst vs unexplained slow bleed). NB: today this SHARES the
-# gap-down detector with shape (the only event source wired is EOD gap-downs); their combined weight
-# is held modest below so one EOD signal can't dominate. They diverge once 8-K/guidance *text*
-# events and the Tier-3 LLM annotation populate cause independently of price geometry.
-_CAUSE_BLEED = 0.30  # no discrete catalyst — "more often real deterioration" → ranks lower
-_CAUSE_DISCRETE_BASE = 0.80  # an identifiable discrete de-rating event → ranks higher
-_CAUSE_STRUCTURAL_BREAK = 0.05  # Tier-3 LLM: terminal-looking (lost customer / reg kill / fraud)
-_CAUSE_MEAN_REVERT = 0.97  # Tier-3 LLM: confirmed mean-revert candidate
+# Drawdown CHARACTER — sharp/discrete/recent fall vs slow grind/bleed. ONE axis today *on purpose*:
+# "shape" (sharp vs grind) and "cause" (discrete event vs unexplained bleed) both rest on the SAME
+# EOD gap-down detector (the only event source wired), so treating them as two independent axes
+# would be false precision. A discrete, recent drop is the overshoot signature (ranks higher); a
+# grind/bleed is "more often real deterioration" (ranks lower); many repeated gaps ease the score
+# off (accumulating bad news, messier — never reward "more violent" as "more promising"). The
+# Tier-3 LLM cause-flag COLOURS this axis (demote/boost), never sets it.
+# SPLIT THIS BACK into a price-geometry "shape" axis + a filing-text "cause" axis once 8-K/guidance
+# TEXT events and the LLM annotation populate cause INDEPENDENTLY of price geometry (see §4/§5).
+_CHAR_BLEED = 0.30  # no discrete catalyst (slow grind/bleed) → ranks lower
+_CHAR_DISCRETE_BASE = 0.80  # an identifiable discrete de-rating event (gap-down) → ranks higher
+# Gentle sharpness easing by gap-down count: a single clean discrete drop is the archetype overshoot
+# and repeated gaps are messier. A multiplier on the (recency-bumped) discrete base.
+_SHARPNESS_BY_GAPS: dict[int, float] = {1: 1.0, 2: 0.97, 3: 0.94}
+_SHARPNESS_MANY_GAPS = 0.90  # 4+ gap-downs
+_CHAR_STRUCTURAL_BREAK = 0.05  # Tier-3 LLM: terminal-looking (lost customer / reg kill / fraud)
+_CHAR_MEAN_REVERT = 0.97  # Tier-3 LLM: confirmed mean-revert candidate
 _DECLINE_WINDOW_DAYS = 180  # the screen's gap-down detection window (for catalyst recency)
 
 # Tier-2 volume overlay (MINOR). The only bar readable from a screen-time record is current volume
@@ -105,20 +107,20 @@ class RankWeights(BaseModel, frozen=True):
       - **idiosyncrasy** is THE most on-thesis axis (idiosyncratic dislocation = where mispricing
         lives; sector beta is not) → the largest weight.
       - **depth** is the screen's defining, fully-covered signal → second.
-      - **multiple-at-floor** (cheap vs its OWN history) → third.
-      - **cause** and **shape** share the gap-down detector today, so their COMBINED weight is held
-        modest — one EOD signal must not dominate.
+      - **character** (sharp/discrete/recent fall vs grind/bleed) ties depth — it rests on the
+        gap-down detector, kept at ~0.25 so one EOD signal can't dominate. SPLITS into shape + cause
+        once 8-K/guidance TEXT events land (then re-weight the two halves).
+      - **multiple-at-floor** (cheap vs its OWN history) → fourth.
     """
 
     idiosyncrasy: float = 0.30
     depth: float = 0.25
+    character: float = 0.25
     multiple: float = 0.20
-    cause: float = 0.15
-    shape: float = 0.10
 
     @model_validator(mode="after")
     def _sum_to_one(self) -> RankWeights:
-        total = self.idiosyncrasy + self.depth + self.multiple + self.cause + self.shape
+        total = self.idiosyncrasy + self.depth + self.character + self.multiple
         if abs(total - 1.0) > 1e-9:
             raise ValueError(f"Tier-1 weights must sum to 1.0 (got {total})")
         return self
@@ -127,9 +129,8 @@ class RankWeights(BaseModel, frozen=True):
         return {
             "idiosyncrasy": self.idiosyncrasy,
             "depth": self.depth,
+            "character": self.character,
             "multiple": self.multiple,
-            "cause": self.cause,
-            "shape": self.shape,
         }
 
 
@@ -157,23 +158,6 @@ def depth_axis(prices: PriceFeatures) -> AxisScore:
     return AxisScore(
         axis="depth", score=score, coverage=AxisCoverage.PRESENT,
         label=f"{dd:.0%} from 52w high", raw=dd,
-    )
-
-
-def shape_axis(rec: DataRecord) -> AxisScore:
-    """Drawdown shape: sharp discrete fall (gap-down) vs slow grind (none). Always evaluable."""
-    gaps = _gap_down_dates(rec)
-    n = len(gaps)
-    if n == 0:
-        return AxisScore(
-            axis="shape", score=0.0, coverage=AxisCoverage.PRESENT,
-            label="grind — no discrete gap-down", raw=0.0,
-        )
-    score = _SHAPE_BY_GAPS.get(n, _SHAPE_MANY_GAPS)
-    s = "" if n == 1 else "s"
-    return AxisScore(
-        axis="shape", score=score, coverage=AxisCoverage.PRESENT,
-        label=f"sharp — {n} gap-down{s}", raw=float(n),
     )
 
 
@@ -213,14 +197,21 @@ def multiple_axis(funds: Fundamentals) -> AxisScore:
     )
 
 
-def cause_axis(rec: DataRecord, cause_class: CauseClass) -> AxisScore:
-    """De-rating cause: discrete identifiable catalyst vs unexplained bleed, COLOURED by the Tier-3
-    LLM flag. Discrete + recent → higher; a structural-break flag demotes; absent flag → as-is."""
+def character_axis(rec: DataRecord, cause_class: CauseClass) -> AxisScore:
+    """Drawdown character: sharp/discrete/recent fall (overshoot signature → higher) vs slow
+    grind/bleed (→ lower), eased off for many repeated gaps, COLOURED by the Tier-3 LLM cause-flag.
+
+    ONE axis today on purpose — shape (price geometry) and cause (catalyst) both rest on the same
+    EOD gap-down detector, so splitting them now is false precision. Split back out when 8-K/
+    guidance TEXT events let cause read the filing independently of price. Always evaluable (a grind
+    is a *known* zero-gap state, not missing data).
+    """
     gaps = _gap_down_dates(rec)
     ref = rec.as_of
-    if not gaps:
-        base = _CAUSE_BLEED
-        label = "slow bleed — no discrete catalyst"
+    n = len(gaps)
+    if n == 0:
+        base = _CHAR_BLEED
+        label = "grind/bleed — no discrete gap-down"
     else:
         recent = gaps[-1]
         recency = 1.0
@@ -228,23 +219,25 @@ def cause_axis(rec: DataRecord, cause_class: CauseClass) -> AxisScore:
         if ref is not None:
             age = (ref - recent).days
             recency = _clip01(1.0 - age / _DECLINE_WINDOW_DAYS)
-            age_txt = f" ({age}d ago)"
-        base = _CAUSE_DISCRETE_BASE + (1.0 - _CAUSE_DISCRETE_BASE) * recency
-        label = f"discrete — gap-down {recent.isoformat()}{age_txt}"
+            age_txt = f", {age}d ago"
+        base = _CHAR_DISCRETE_BASE + (1.0 - _CHAR_DISCRETE_BASE) * recency
+        base *= _SHARPNESS_BY_GAPS.get(n, _SHARPNESS_MANY_GAPS)  # ease off for many repeated gaps
+        s = "" if n == 1 else "s"
+        label = f"sharp discrete — {n} gap-down{s} (latest {recent.isoformat()}{age_txt})"
 
-    # Tier-3 LLM annotation COLOURS the cause; it never sets the primary sort key.
+    # Tier-3 LLM annotation COLOURS the character; it never sets the primary sort key.
     if cause_class is CauseClass.STRUCTURAL_BREAK:
         return AxisScore(
-            axis="cause", score=_CAUSE_STRUCTURAL_BREAK, coverage=AxisCoverage.PRESENT,
+            axis="character", score=_CHAR_STRUCTURAL_BREAK, coverage=AxisCoverage.PRESENT,
             label=f"{label} · LLM: structural-break (demoted)", raw=base,
         )
     if cause_class is CauseClass.MEAN_REVERT:
         return AxisScore(
-            axis="cause", score=max(base, _CAUSE_MEAN_REVERT), coverage=AxisCoverage.PRESENT,
+            axis="character", score=max(base, _CHAR_MEAN_REVERT), coverage=AxisCoverage.PRESENT,
             label=f"{label} · LLM: mean-revert", raw=base,
         )
     return AxisScore(
-        axis="cause", score=base, coverage=AxisCoverage.PRESENT,
+        axis="character", score=base, coverage=AxisCoverage.PRESENT,
         label=f"{label} · LLM: —", raw=base,
     )
 
@@ -295,9 +288,8 @@ def rank_candidate(
     axes: dict[str, AxisScore] = {
         "idiosyncrasy": idiosyncrasy_axis(prices),
         "depth": depth_axis(prices),
+        "character": character_axis(rec, cause_class),
         "multiple": multiple_axis(rec.fundamentals),
-        "cause": cause_axis(rec, cause_class),
-        "shape": shape_axis(rec),
     }
     weight = w.as_map()
     contributions: dict[str, float] = {}
@@ -387,7 +379,7 @@ def _profile_line(ticker: str, score: float, band: str, axes: dict[str, AxisScor
     return (
         f"{ticker:<6} {score:.3f} [{band}]  "
         f"idio: {lab('idiosyncrasy')} | depth: {lab('depth')} | "
-        f"mult: {lab('multiple')} | cause: {lab('cause')} | shape: {lab('shape')}"
+        f"character: {lab('character')} | mult: {lab('multiple')}"
     )
 
 
@@ -431,7 +423,7 @@ def render_profile_block(r: RankedCandidate) -> str:
     """The full, auditable per-name profile: every axis, its sub-score, and its additive
     contribution (summing to ``quality``) — readable so you see *why* the name is where it is."""
     lines = [f"#{r.rank:<3} {r.ticker:<6} {r.priority_score:.3f}  [{r.depth_band}]  {r.name[:46]}"]
-    order = ["idiosyncrasy", "depth", "multiple", "cause", "shape"]
+    order = ["idiosyncrasy", "depth", "character", "multiple"]
     for name in order:
         ax = r.axes[name]
         contrib = r.contributions[name]
@@ -469,7 +461,7 @@ def render_queue_markdown(ranked: list[RankedCandidate], *, top: int | None = No
         "decides**; tuned by face-validity, never forward returns."
     )
     header = (
-        "| # | ticker | score | band | idiosyncrasy | depth | multiple | cause | shape | "
+        "| # | ticker | score | band | idiosyncrasy | depth | character | multiple | "
         "liquidity |"
     )
     out = [
@@ -478,13 +470,14 @@ def render_queue_markdown(ranked: list[RankedCandidate], *, top: int | None = No
         intro,
         "",
         header,
-        "|--:|:--|--:|:-:|:--|:--|:--|:--|:--|:--|",
+        "|--:|:--|--:|:-:|:--|:--|:--|:--|:--|",
     ]
     for r in rows:
         flag = " ⟂" if r.tradeability_gated else ""
         out.append(
             f"| {r.rank} | {r.ticker} | {r.priority_score:.3f} | {r.depth_band} | "
-            f"{_md_cell(r, 'idiosyncrasy')} | {_md_cell(r, 'depth')} | {_md_cell(r, 'multiple')} | "
-            f"{_md_cell(r, 'cause')} | {_md_cell(r, 'shape')} | {r.liquidity_tier.value}{flag} |"
+            f"{_md_cell(r, 'idiosyncrasy')} | {_md_cell(r, 'depth')} | "
+            f"{_md_cell(r, 'character')} | {_md_cell(r, 'multiple')} | "
+            f"{r.liquidity_tier.value}{flag} |"
         )
     return "\n".join(out) + "\n"

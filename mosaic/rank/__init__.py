@@ -20,7 +20,7 @@ from mosaic.rank.profile import (
 )
 from mosaic.rank.ranker import (
     RankWeights,
-    cause_axis,
+    character_axis,
     depth_axis,
     idiosyncrasy_axis,
     liquidity_tier,
@@ -31,7 +31,6 @@ from mosaic.rank.ranker import (
     rank_candidates,
     render_profile_block,
     render_queue_markdown,
-    shape_axis,
     volume_overlay,
 )
 
@@ -42,7 +41,7 @@ __all__ = [
     "LiquidityTier",
     "RankWeights",
     "RankedCandidate",
-    "cause_axis",
+    "character_axis",
     "classify_cause",
     "depth_axis",
     "idiosyncrasy_axis",
@@ -56,6 +55,5 @@ __all__ = [
     "rank_candidates",
     "render_profile_block",
     "render_queue_markdown",
-    "shape_axis",
     "volume_overlay",
 ]

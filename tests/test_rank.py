@@ -16,7 +16,7 @@ from mosaic.rank import (
     CauseClass,
     LiquidityTier,
     RankWeights,
-    cause_axis,
+    character_axis,
     depth_axis,
     idiosyncrasy_axis,
     multiple_axis,
@@ -24,7 +24,6 @@ from mosaic.rank import (
     rank_candidate,
     rank_candidates,
     render_profile_block,
-    shape_axis,
     volume_overlay,
 )
 from mosaic.rank.cause import annotations_from_raw, classify_cause
@@ -136,33 +135,40 @@ def test_multiple_axis_unknown_is_surfaced_not_imputed() -> None:
     assert "UNKNOWN" in ax.label
 
 
-def test_shape_axis_sharp_vs_grind() -> None:
-    grind = shape_axis(_cand(gap_dates=()).data_record)
-    one = shape_axis(_cand(gap_dates=(date(2026, 6, 5),)).data_record)
-    many = shape_axis(_cand(gap_dates=tuple(date(2026, 2, d) for d in range(1, 6))).data_record)
-    assert grind.score == 0.0 and "grind" in grind.label
-    assert one.score == 1.0 and "sharp" in one.label  # single clean discrete drop = archetype
-    assert many.score is not None and 0.0 < many.score < 1.0  # repeated gaps eased off, still sharp
-
-
-def test_cause_axis_discrete_beats_bleed_and_recency_helps() -> None:
-    bleed = cause_axis(_cand(gap_dates=()).data_record, CauseClass.UNCLASSIFIED)
-    recent = cause_axis(_cand(gap_dates=(date(2026, 6, 12),)).data_record, CauseClass.UNCLASSIFIED)
-    stale = cause_axis(_cand(gap_dates=(date(2026, 1, 1),)).data_record, CauseClass.UNCLASSIFIED)
-    assert bleed.score is not None and recent.score is not None and stale.score is not None
-    assert bleed.score < stale.score < recent.score  # discrete > bleed; fresher catalyst > stale
+def test_character_axis_sharp_recent_beats_grind() -> None:
+    # ONE axis today: shape (sharp vs grind) + cause (discrete vs bleed) share the gap-down feed.
+    grind = character_axis(_cand(gap_dates=()).data_record, CauseClass.UNCLASSIFIED)
+    recent = character_axis(
+        _cand(gap_dates=(date(2026, 6, 12),)).data_record, CauseClass.UNCLASSIFIED
+    )
+    stale = character_axis(
+        _cand(gap_dates=(date(2026, 1, 1),)).data_record, CauseClass.UNCLASSIFIED
+    )
+    assert grind.score is not None and recent.score is not None and stale.score is not None
+    assert grind.score < stale.score < recent.score  # discrete > grind/bleed; fresher → higher
+    assert "grind" in grind.label and "sharp discrete" in recent.label
     assert "LLM: —" in recent.label  # unclassified by default
 
 
-# --- Tier-3 LLM annotation (colours cause; never the sort key) --------------------------------
+def test_character_axis_many_gaps_eased_off() -> None:
+    one = character_axis(_cand(gap_dates=(date(2026, 6, 12),)).data_record, CauseClass.UNCLASSIFIED)
+    many = character_axis(
+        _cand(gap_dates=tuple(date(2026, 6, d) for d in range(2, 13))).data_record,
+        CauseClass.UNCLASSIFIED,
+    )
+    assert one.score is not None and many.score is not None
+    assert many.score < one.score  # repeated gaps are messier — a single clean drop ranks higher
+
+
+# --- Tier-3 LLM annotation (colours the character axis; never the sort key) -------------------
 def test_llm_structural_break_demotes_mean_revert_boosts() -> None:
     # An older gap → a mid-range discrete baseline, so both the demote and the boost are visible
     # (a very recent gap is already above the mean-revert confirmation floor, making the boost a
     # deliberate no-op — confirmation never *lowers* a name).
     older = _cand(gap_dates=(date(2026, 3, 1),))
-    base = cause_axis(older.data_record, CauseClass.UNCLASSIFIED).score
-    broke = cause_axis(older.data_record, CauseClass.STRUCTURAL_BREAK).score
-    rev = cause_axis(older.data_record, CauseClass.MEAN_REVERT).score
+    base = character_axis(older.data_record, CauseClass.UNCLASSIFIED).score
+    broke = character_axis(older.data_record, CauseClass.STRUCTURAL_BREAK).score
+    rev = character_axis(older.data_record, CauseClass.MEAN_REVERT).score
     assert base is not None and broke is not None and rev is not None
     assert broke < base < rev  # terminal-looking demoted; mean-revert boosted
     assert broke < 0.1  # strong demotion toward the structural-break floor
@@ -212,7 +218,7 @@ def test_volume_overlay_bounded_and_directional() -> None:
 def test_weights_must_sum_to_one() -> None:
     RankWeights()  # default is valid
     try:
-        RankWeights(idiosyncrasy=0.9, depth=0.9, multiple=0.0, cause=0.0, shape=0.0)
+        RankWeights(idiosyncrasy=0.9, depth=0.9, character=0.0, multiple=0.0)
         raise AssertionError("expected a validation error for weights not summing to 1")
     except ValueError:
         pass

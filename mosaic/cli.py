@@ -174,7 +174,7 @@ def _cmd_rank(args: argparse.Namespace) -> int:
     n_gated = sum(1 for r in ranked if r.tradeability_gated)
     print(
         f"=== Ranked queue · {len(ranked)} candidates · weights "
-        f"idio .30 / depth .25 / mult .20 / cause .15 / shape .10 "
+        f"idio .30 / depth .25 / character .25 / mult .20 "
         f"(face-validity, never returns) ==="
     )
     print(
