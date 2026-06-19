@@ -4,7 +4,7 @@
 > planning fossils (`planning/` briefs + `docs/` specs) as *current* guidance — those stay unchanged
 > as the historical origin record.** Read this first at the start of any session; **every build
 > updates it.** Its value is accuracy, not optimism: falsified is recorded as falsified, deferred as
-> deferred-and-why, unproven as unproven. _Last verified against the repo: 2026-06-18._
+> deferred-and-why, unproven as unproven. _Last verified against the repo: 2026-06-19._
 
 ## 1. What this is
 
@@ -27,6 +27,24 @@ Each line: *what it does* — *verified how*.
 - **Screen 2 + gates** (`mosaic/screens`) — G1 drawdown ≤−30% (capped at −85% terminal floor) / G2
   idiosyncratic vs sector / G3 multiple vs ~5y floor (`_PE_WINDOW_DAYS=1825`); PASS/FAIL/UNKNOWN,
   recall-favoring — *`screen` ran → ~307 candidates (committed 308), A/B/C bands.*
+- **Ranker / triage layer** (`mosaic/rank`, `rank` CLI) — **orders** the ~307 candidates into a
+  priority queue so a 2-person team deep-pulls the most structurally-promising overshoots first.
+  A *transparent* weighted composite of the Tier-1 axes (idiosyncrasy .30 / drawdown-depth .25 /
+  multiple-vs-own-5y .20 / cause .15 / shape .10 — **face-validity weights, never return-tuned**),
+  + a minor Tier-2 volume overlay (±0.05, panic-exhausted vs still-distributing), coloured by a
+  Tier-3 LLM cause-annotation that only **demotes/colours** (structural-break vs mean-revert,
+  `UNCLASSIFIED` by default — never fabricated). Tradeability is an **ADV gate** (not a quality
+  signal; default floor = universe floor, a no-op re-check — adds no filtering). **Orders, never
+  decides; a lagging/coincident description of the existing setup, not a return prediction.**
+  **Replaces the bare A/B/C band with a legible per-name structural profile** (score *and* profile
+  are the same artifact — priority score + per-axis breakdown that sums back to it; A/B/C kept only
+  as a quick depth tag). Fail-loud: an UNKNOWN axis earns 0 credit and is flagged for depth, never
+  imputed — *ran `rank` on the committed 308 snapshot → top-15 legible profiles, every position
+  reconstructs from weight·sub-score + overlay (ICCM's 61.7× active-distribution overlay sinks it
+  #2→#8); 156 UNKNOWN-multiple names flagged; ADV floor $10M gates 75 thin names to the queue
+  bottom; a structural-break flag demotes FUBO #1→#12 while mean-revert lifts PAR #3→#1. 20 tests
+  incl. an AST guard that `mosaic.rank` imports no scoring/ledger/store (no forward-return path).
+  Emits `ranked_queue.{jsonl,md}` snapshots.*
 - **Decision ledger** (`mosaic/ledger` + `store`) — append-only: `append_ledger` is INSERT-only and
   **no `clear_ledger`/ledger-DELETE exists anywhere** — *2 verdicts across 2 processes both persist;
   survives `clear_candidates`+`clear_universe`+`export_snapshots`; re-log → `sqlite3.IntegrityError`.*
@@ -125,20 +143,26 @@ signal, not the whole idea.
 
 ## 5. Next steps (ordered, current)
 
-1. **Ranker / triage layer** — orders the ~307 candidates into a priority queue so a 2-person team
-   deep-pulls ~10/week. Tier-1 structural sort key (drawdown depth+shape, idiosyncrasy,
-   multiple-vs-5yr-percentile, discrete-event-vs-bleed cause, tradeability); Tier-2 volume as a minor
-   capitulation overlay only; Tier-3 LLM cause-classification as a demoting annotation only.
-   Transparent weighted composite — **orders, doesn't decide**; tuned by face-validity, not returns.
-   Replaces the bare A/B/C band with a legible per-name structural profile.
-2. **Dossier-assembler** — per-finalist local folder → parse CIQ per `ciq_extraction_notes.md` →
+1. **Dossier-assembler** — per-finalist local folder → parse CIQ per `ciq_extraction_notes.md` →
    parallel structured, source-bound dossiers. **Assembles and cites, never concludes**; fail-loud on
-   missing fields; local folder now (swappable Drive adapter later).
-3. **Run one real finalist cycle by hand** — produces the first genuine verdict, **starts the spread**.
-4. **Lightweight local frontend** — read-and-trigger ops dashboard (ingestion health; candidates with
-   profiles; `graph-exposure` labeled research-input; ledger; spread showing 0 verdicts honestly).
-   Read-only, renders committed snapshots, never trades or logs via UI. Cloudflare Pages auto-deploy
-   applies **here** (static frontend on committed snapshots), not before.
+   missing fields; local folder now (swappable Drive adapter later). Fed the **queue-top** by the
+   ranker (§2) — assemble dossiers for the ~10/week the priority queue surfaces first.
+2. **Run one real finalist cycle by hand** — take the top of the ranked queue → assemble → judge →
+   log a verdict. Produces the first genuine verdict, **starts the spread**.
+3. **Lightweight local frontend** — read-and-trigger ops dashboard (ingestion health; the **ranked
+   queue with per-name structural profiles** (§2); `graph-exposure` labeled research-input; ledger;
+   spread showing 0 verdicts honestly). Read-only, renders committed snapshots, never trades or logs
+   via UI. Cloudflare Pages auto-deploy applies **here** (static frontend on committed snapshots),
+   not before.
+
+**Ranker wire-ups left open** (the layer is built and verified; these sharpen it, none block):
+- **Tier-3 live LLM pass** — the cause-annotation *channel* is built (`mosaic/rank/cause.py`,
+  `rank --cause-file`); the live pass needs the de-rating **8-K body** linked onto events (today
+  events carry only EOD gap-down dates) + an `ANTHROPIC_API_KEY`. Until wired, every cause reads
+  `LLM: —` (honest default, no demotion).
+- **Capitulation-volume-at-the-gap** — Tier-2 currently reads *current* volume vs 90d avg (panic
+  exhausted vs still-distributing) from the screen-time record; reading volume *at* the gap-down day
+  needs the bar series (not snapshotted). A minor refinement, not a pillar.
 
 Then: operate the weekly loop and accumulate resolved verdicts.
 

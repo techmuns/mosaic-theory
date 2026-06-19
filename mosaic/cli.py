@@ -17,6 +17,15 @@ from mosaic.edgar import EdgarClient
 from mosaic.eod import PolygonEodClient, compute_price_features, ingest_prices
 from mosaic.ledger import LedgerError, log_verdict
 from mosaic.orchestrator import run_monthly, run_weekly
+from mosaic.rank import (
+    RankWeights,
+    load_candidates_from_snapshot,
+    load_cause_annotations,
+    load_market_caps_from_snapshot,
+    rank_candidates,
+    render_profile_block,
+    render_queue_markdown,
+)
 from mosaic.resolver import EntityResolver, ResolutionError
 from mosaic.schemas.ledger import Confidence, Verdict
 from mosaic.scoring import score_ledger
@@ -137,6 +146,54 @@ def _cmd_screen(args: argparse.Namespace) -> int:
         )
         print(f"      trigger: {c.trigger_reason}")
         print(f"      twin: {c.twin_to_rule_out} | depth: {c.unknown_gates_for_depth}")
+    return 0
+
+
+def _cmd_rank(args: argparse.Namespace) -> int:
+    """Order the screen's candidates into a priority queue + print the top-N structural profiles.
+
+    Reads the committed snapshots (no DB, no network): ``candidate_records.jsonl`` for the screen
+    output and ``universe_snapshot.jsonl`` for size. Orders, never decides — see ``mosaic.rank``.
+    """
+    from pathlib import Path
+
+    cfg = get_config()
+    snaps = cfg.snapshots_dir
+    cands = load_candidates_from_snapshot(snaps / "candidate_records.jsonl")
+    if not cands:
+        print(f"no candidates in {snaps / 'candidate_records.jsonl'} — run `mosaic screen` first")
+        return 1
+    caps = load_market_caps_from_snapshot(snaps / "universe_snapshot.jsonl")
+    annotations = load_cause_annotations(Path(args.cause_file)) if args.cause_file else {}
+
+    ranked = rank_candidates(
+        cands, weights=RankWeights(), annotations=annotations,
+        market_caps=caps, deep_work_adv_floor=args.deep_work_adv_floor,
+    )
+    n_unknown = sum(1 for r in ranked if r.unknown_axes)
+    n_gated = sum(1 for r in ranked if r.tradeability_gated)
+    print(
+        f"=== Ranked queue · {len(ranked)} candidates · weights "
+        f"idio .30 / depth .25 / mult .20 / cause .15 / shape .10 "
+        f"(face-validity, never returns) ==="
+    )
+    print(
+        f"top {args.top} shown · {n_unknown} carry an UNKNOWN axis (flagged) · "
+        f"{n_gated} tradeability-gated · LLM cause annotations: {len(annotations)}\n"
+    )
+    for r in ranked[: args.top]:
+        print(render_profile_block(r))
+        print()
+
+    if not args.no_write:
+        cfg.ensure_dirs()
+        jsonl = snaps / "ranked_queue.jsonl"
+        with jsonl.open("w") as f:
+            for r in ranked:
+                f.write(r.model_dump_json() + "\n")
+        md = snaps / "ranked_queue.md"
+        md.write_text(render_queue_markdown(ranked, top=args.md_top))
+        print(f"wrote {jsonl} ({len(ranked)} rows) and {md} (top {args.md_top})")
     return 0
 
 
@@ -381,6 +438,27 @@ def build_parser() -> argparse.ArgumentParser:
         help="price history to refresh (default: 1825 = 5y, for G3)",
     )
     p_screen.set_defaults(func=_cmd_screen)
+
+    p_rank = sub.add_parser("rank", help="order screen candidates into a priority queue (profiles)")
+    p_rank.add_argument("--top", type=int, default=15, help="profiles to print (default: 15)")
+    p_rank.add_argument(
+        "--md-top", type=int, default=50, dest="md_top",
+        help="rows in the committed ranked_queue.md table (default: 50)",
+    )
+    p_rank.add_argument(
+        "--deep-work-adv-floor", type=float, default=3_000_000.0, dest="deep_work_adv_floor",
+        help="ADV($) below which a name is tradeability-gated (default: 3e6 = universe floor, a "
+        "no-op re-check; raise to push thin names down)",
+    )
+    p_rank.add_argument(
+        "--cause-file", dest="cause_file",
+        help="optional JSON {ticker_or_id: mean_revert|structural_break} Tier-3 LLM annotations",
+    )
+    p_rank.add_argument(
+        "--no-write", action="store_true", dest="no_write",
+        help="print only; do not write ranked_queue.jsonl / .md snapshots",
+    )
+    p_rank.set_defaults(func=_cmd_rank)
 
     p_log = sub.add_parser("log-verdict", help="record a manual BUY/AVOID verdict for a candidate")
     p_log.add_argument("candidate_id", help="candidate id from `mosaic screen`")
