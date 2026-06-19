@@ -26,6 +26,7 @@ from mosaic.dossier.schemas import (
     MechanicalLayer,
     Quality,
     Sourced,
+    SourceStatus,
     Valuation,
 )
 from mosaic.edgar.client import EdgarClient
@@ -328,6 +329,31 @@ def _pe_basis_flag(record: DataRecord, edgar: EdgarClient) -> str | None:
     return None
 
 
+def _eps_caveat_flags(record: DataRecord, bundle: CiqBundle) -> list[str]:
+    """The surfaced EPS is GAAP-based. Flag (a) that earnings power (company-adjusted, non-GAAP) is
+    NOT reachable from the CIQ Financials workbook — it lives in the earnings-release/transcript
+    reconciliation; and (b) when the EDGAR P/E conflicts ~Nx with the CIQ P/LTM EPS, that the EDGAR
+    trailing EPS is one-time-inflated and the synthesis must not anchor on it as 'cheap'."""
+    pe = record.fundamentals.pe
+    ciq_pe = ciq_sheets.pe_ltm_current(bundle)
+    if not pe.is_known and ciq_pe.status is not SourceStatus.PRESENT:
+        return []  # no EPS-based multiple shown at all — nothing to caveat
+    out = [
+        "EPS shown is GAAP-based and understates earnings power; the company-adjusted (non-GAAP) "
+        "EPS is not in the CIQ Financials workbook — it lives in the earnings-release/transcript "
+        "reconciliation (currently UNAVAILABLE) — not a ceiling on earnings power."
+    ]
+    if pe.is_known and pe.value and ciq_pe.status is SourceStatus.PRESENT and ciq_pe.value:
+        ratio = max(pe.value, ciq_pe.value) / min(pe.value, ciq_pe.value)
+        if ratio >= 2:
+            out.append(
+                f"EDGAR P/E ({pe.value:.1f}x) conflicts ~{ratio:.0f}x with CIQ P/LTM EPS "
+                f"({ciq_pe.value:.1f}x) — EDGAR trailing EPS is one-time-inflated; the "
+                f"synthesis must not anchor on {pe.value:.1f}x as 'cheap'."
+            )
+    return out
+
+
 # --- CIQ-sourced fields (workbook-addressed; the extractors fail loud MISSING/UNKNOWN) ---------
 
 
@@ -338,7 +364,10 @@ def _valuation(record: DataRecord, bundle: CiqBundle) -> Valuation:
         pe_percentile_5y=_sourced(
             f.pe_pctile_vs_history, source_ref="EDGAR/EOD P/E pctile vs ~5y (screen data-record)"
         ),
-        ev_ebitda=_sourced(f.ev_ebitda, source_ref="EDGAR XBRL (screen data-record)"),
+        # The EDGAR screen field `f.ev_ebitda` carries EBITDA *dollars* (screens/assemble.py
+        # populates it from ebitda_annual), not the multiple — so the dossier's EV/EBITDA is the
+        # authoritative CIQ TEV/LTM multiple, never the EDGAR scalar (never a dollar figure here).
+        ev_ebitda=ciq_sheets.ev_ebitda_current(bundle),
         ev_ebitda_percentile_5y=(
             _sourced(f.ev_ebitda_pctile_vs_history, source_ref="EDGAR (screen data-record)")
             if f.ev_ebitda_pctile_vs_history.is_known
@@ -372,6 +401,7 @@ def _quality(
 def _concentration(bundle: CiqBundle) -> Concentration:
     return Concentration(
         segments=ciq_sheets.segments(bundle),
+        segment_ebitda=ciq_sheets.segment_ebitda(bundle),
         customers=ciq_sheets.customers(bundle),
         geographic=ciq_sheets.geographic(bundle),
     )
@@ -412,4 +442,5 @@ def assemble_mechanical(
     flags: list[str] = []
     if (pe_flag := _pe_basis_flag(record, edgar)) is not None:
         flags.append(pe_flag)
+    flags += _eps_caveat_flags(record, bundle)
     return mech, flags

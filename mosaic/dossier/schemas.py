@@ -128,9 +128,14 @@ class Quality(BaseModel):
 
 
 class Concentration(BaseModel):
-    """Segment / customer / geographic concentration (CIQ Segments + Customers & Suppliers)."""
+    """Segment / customer / geographic concentration (CIQ Segments + Customers & Suppliers).
 
-    segments: Sourced[str]
+    Segment exposure is carried on BOTH bases: ``segments`` (revenue share) and ``segment_ebitda``
+    (EBITDA share). The profit view is the decision-relevant one — a customer can sit in a segment
+    that is a small slice of revenue but a large slice of EBITDA."""
+
+    segments: Sourced[str]  # revenue share
+    segment_ebitda: Sourced[str]  # EBITDA share — where the profit (and the customer risk) sits
     customers: Sourced[str]
     geographic: Sourced[str]
 

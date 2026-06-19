@@ -155,6 +155,28 @@ Each line: *what it does* — *verified how*.
     (LibreOffice not installed) — honest fail-loud, not fabricated. 6 new workbook tests (subsheet
     routing finds Multiples+Segments inside Financials; partial-col exclusion; Reclassified guard;
     blank/`-`/Entitlement→UNAVAILABLE; missing-workbook MISSING vs absent-sheet UNKNOWN).*
+  - **Silent-misread reconciliation (VRRM, 2026-06-19) — extraction can be wrong without failing
+    loud; checked extracted-vs-known-correct, fixed 3, flagged 1.** The fail-loud path can't catch a
+    value that parses but means the wrong thing. (1) **Segment EBITDA now surfaced** — the Segments
+    sheet's EBITDA section parses to exact figures but only Revenues was read; the dossier showed
+    Commercial Services at **45% of revenue** while hiding that it is **~68% of EBITDA** (Avis sits
+    in the profit-concentrated segment). Added `segment_ebitda` (same `_segment_section`,
+    `section="EBITDA"`); render BOTH revenue-share and EBITDA-share; it reaches the synthesis (the
+    bear case now cites "68% of segment EBITDA vs 45% of revenue"). (2) **Margin YoY LTM-vs-FY guard**
+    — the revenue YoY was dividing LTM-ending-Mar-2026 by FY-Dec-2025 and printing "+0%", a silent
+    period mix (notes ~line 204); added an LTM/FY guard beside the Reclassified guard → now
+    "UNAVAILABLE (LTM-vs-FY period mix)"; single-column margins (gross 57%, EBITDA 37%) unchanged.
+    (3) **EV/EBITDA dollar-scalar fixed** — `valuation.ev_ebitda` rendered **352,494,000** because
+    `screens/assemble.py:162` feeds it `snap.ebitda_annual` (EBITDA dollars) into a multiple-named
+    field; the dossier now sources the **CIQ TEV/LTM multiple (8.5x)** via `ev_ebitda_current`, never
+    the EDGAR scalar. The misnamed screen field is left as-is (out of scope) and flagged for a
+    separate rename. (4) **Adjusted-EPS — FLAGGED, not built** (LibreOffice still absent): two flags
+    now fire — the surfaced EPS is GAAP-based and the company-adjusted (~1.35) figure lives in the
+    transcript/earnings-release reconciliation (UNAVAILABLE); and the EDGAR P/E (5.5x) **conflicts
+    ~3× with the CIQ P/LTM EPS (16.8x)** because the EDGAR trailing EPS is one-time-inflated — the
+    synthesis must not anchor on 5.5x as "cheap" (it still cites it; the flag is the human's guard).
+    *Verified on VRRM + 3 new regression tests (segment-EBITDA share, LTM/FY YoY guard, ev_ebitda is
+    a multiple).*
   - **⚠ LANDMINE (unbuilt — insider/Form-4):** when insider data is wired, the CIQ **Transaction-Type
     direction-flip** (`ciq_extraction_notes` ~line 80) MUST be handled — the Type column signs the
     trade, so a naive `net_shares_sold` summed off raw quantities is **sign-flip wrong** (buys and

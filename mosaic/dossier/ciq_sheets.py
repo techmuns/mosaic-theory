@@ -52,6 +52,11 @@ def _reclassified_cols(header: list[Any]) -> set[int]:
     return {j for j, c in enumerate(header) if isinstance(c, str) and "Reclassified" in c}
 
 
+def _is_ltm(cell: Any) -> bool:
+    """A period-header cell whose label marks a trailing-twelve-month column (vs a fiscal year)."""
+    return "LTM" in str(cell).upper()
+
+
 def _latest_col(rows: Rows, ri: int, hdr: int | None) -> tuple[int, float, str] | None:
     """The rightmost column of row ``ri`` carrying a value → (col, value, period-label)."""
     valid = [(j, clean_num(rows[ri][j])) for j in range(1, len(rows[ri]))]
@@ -132,6 +137,36 @@ def range_position(bundle: CiqBundle) -> Sourced[str]:
     )
 
 
+def ev_ebitda_current(bundle: CiqBundle) -> Sourced[float]:
+    """The current TEV/LTM EBITDA — the authoritative EV/EBITDA, a MULTIPLE (~8.5x) not a dollar
+    figure. Latest Close of the trailing block. Fail loud when the Multiples sheet is absent."""
+    try:
+        rows = bundle.sheet("financials", "Multiples", freq="quarterly")
+    except CiqUnavailableError as exc:
+        return _miss_or_unknown(bundle, "financials", exc)
+    ev = [v for _, v in _multiples_close(rows, "TEV/LTM EBITDA") if v is not None]
+    if not ev:
+        return Sourced.unknown(note="TEV/LTM EBITDA Close has no value")
+    return Sourced.present(
+        round(ev[-1], 1),
+        source_ref="CIQ Financials→Multiples 'TEV/LTM EBITDA' Close (latest) — current multiple",
+    )
+
+
+def pe_ltm_current(bundle: CiqBundle) -> Sourced[float]:
+    """Current P/LTM EPS (latest Close) — GAAP-trailing, for cross-checking the EDGAR P/E basis."""
+    try:
+        rows = bundle.sheet("financials", "Multiples", freq="quarterly")
+    except CiqUnavailableError as exc:
+        return _miss_or_unknown(bundle, "financials", exc)
+    pe = [v for _, v in _multiples_close(rows, "P/LTM EPS") if v is not None]
+    if not pe:
+        return Sourced.unknown(note="P/LTM EPS Close has no value")
+    return Sourced.present(
+        round(pe[-1], 1), source_ref="CIQ Financials→Multiples 'P/LTM EPS' Close (latest)"
+    )
+
+
 # --- quality: Cash Flow / Income Statement / Capital Structure Details ------------------------
 
 
@@ -204,10 +239,18 @@ def margin_trend(bundle: CiqBundle) -> Sourced[str]:
 
     recl = _reclassified_cols(rows[hdr])
     prior = [j for j in range(1, col) if clean_num(rows[rev_i][j]) is not None]
-    yoy = "UNAVAILABLE (reclassified-basis boundary)"  # default fail-loud across the boundary
-    if prior and ((prior[-1] in recl) == (col in recl)):  # same accounting basis on both sides
-        pv = clean_num(rows[rev_i][prior[-1]])
-        yoy = f"{rev / pv - 1:+.0%}" if pv else "n/a"
+    yoy = "UNAVAILABLE (no prior-period column)"
+    if prior:
+        pj = prior[-1]
+        lc = rows[hdr][col] if col < len(rows[hdr]) else ""
+        lp = rows[hdr][pj] if pj < len(rows[hdr]) else ""
+        if _is_ltm(lc) != _is_ltm(lp):  # never compare an LTM column against a fiscal-year one
+            yoy = "UNAVAILABLE (LTM-vs-FY period mix)"
+        elif (pj in recl) != (col in recl):  # never YoY across a reclassified-basis change
+            yoy = "UNAVAILABLE (reclassified-basis boundary)"
+        else:
+            pv = clean_num(rows[rev_i][pj])
+            yoy = f"{rev / pv - 1:+.0%}" if pv else "n/a"
     return Sourced.present(
         f"[{period}] gross {margin(gp_i)}, EBITDA {margin(eb_i)}; revenue YoY {yoy}",
         source_ref="CIQ Financials→Income Statement (margins; YoY respects Reclassified)",
@@ -275,7 +318,14 @@ def _segment_section(bundle: CiqBundle, section: str) -> Sourced[str]:
 
 
 def segments(bundle: CiqBundle) -> Sourced[str]:
+    """Segment REVENUE mix + each segment's share of total revenue."""
     return _segment_section(bundle, "Revenues")
+
+
+def segment_ebitda(bundle: CiqBundle) -> Sourced[str]:
+    """Segment EBITDA mix + each segment's share of total EBITDA — the decision-relevant view: a
+    customer can sit in a segment that is a small share of revenue but a large share of profit."""
+    return _segment_section(bundle, "EBITDA")
 
 
 def geographic(bundle: CiqBundle) -> Sourced[str]:

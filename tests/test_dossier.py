@@ -160,7 +160,9 @@ def _minimal_mech() -> ds.MechanicalLayer:
             fcf_sign=_u(), free_cash_flow=_u(), margin_trend=_u(), net_debt_to_ebitda=_u(),
             interest_coverage=_u(), share_count_trend=_u(), liquidity_covenant_flags=_u(),
         ),
-        concentration=ds.Concentration(segments=_u(), customers=_u(), geographic=_u()),
+        concentration=ds.Concentration(
+            segments=_u(), segment_ebitda=_u(), customers=_u(), geographic=_u()
+        ),
         drawdown_cause=ds.DrawdownCause(shape=_u(), gap_down_dates=_u(), filings=[]),
         idiosyncratic_vs_shared=ds.IdiosyncraticVsShared(
             name_180d_return=ds.Sourced.present(-0.726, source_ref="EOD FUBO 180d"),
@@ -365,3 +367,52 @@ def test_missing_workbook_is_missing_absent_sheet_is_unknown() -> None:
     absent: list[list[typing.Any]] = [["For the Fiscal Period", "x"]]  # wb present, no Multiples
     r = cs.ev_ebitda_percentile(_fin_bundle({"Income Statement": absent}))
     assert r.status is ds.SourceStatus.UNKNOWN and "Multiples" in (r.note or "")
+
+
+def test_segment_ebitda_section_surfaces_profit_share() -> None:
+    """The Segments EBITDA section parses to EBITDA share — the decision-relevant concentration:
+    a segment can be 45% of revenue but 68% of profit (the Avis-in-Commercial-Services case)."""
+    seg: list[list[typing.Any]] = [
+        ["For the Fiscal Period", "12 months Dec-31-2025"],
+        ["Revenues", ""],
+        ["Commercial Services", 435.791],
+        ["Government Solutions", 460.707],
+        ["  Total Revenues", 979.079],
+        ["EBITDA", ""],
+        ["Commercial Services", 282.513],
+        ["Government Solutions", 121.907],
+        ["  Total EBITDA", 415.905],
+    ]
+    b = _fin_bundle({"Segments": seg}, freq="annual")
+    rev, eb = cs.segments(b), cs.segment_ebitda(b)
+    assert rev.status is ds.SourceStatus.PRESENT
+    assert "Commercial Services 436 (45%)" in (rev.value or "")  # revenue share
+    assert eb.status is ds.SourceStatus.PRESENT
+    assert "Commercial Services 283 (68%)" in (eb.value or "")  # 282.5/415.9 — profit, not revenue
+    assert "EBITDA section" in (eb.source_ref or "")
+
+
+def test_margin_yoy_refuses_ltm_vs_fy_mix() -> None:
+    """A revenue YoY that would divide an LTM column by a fiscal-year column is UNAVAILABLE, not a
+    fabricated number (notes ~line 204: never mix LTM with FY)."""
+    inc: list[list[typing.Any]] = [
+        ["For the Fiscal Period", "12 months\nDec-31-2025", "LTM\n12 months\nMar-31-2026"],
+        ["Total Revenue", 979.079, 979.393],
+        ["Gross Profit", 572.0, 557.3],
+        ["EBITDA", 361.8, 358.0],
+    ]
+    mt = cs.margin_trend(_fin_bundle({"Income Statement": inc}, freq="annual"))
+    assert mt.status is ds.SourceStatus.PRESENT
+    assert "UNAVAILABLE (LTM-vs-FY period mix)" in (mt.value or "")  # not "+0%"
+    assert "gross 57%" in (mt.value or "")  # single-column margins are still fine
+
+
+def test_ev_ebitda_current_is_a_multiple_not_dollars() -> None:
+    """ev_ebitda_current returns the TEV/LTM EBITDA MULTIPLE (~8.5x), never a dollar figure."""
+    mult: list[list[typing.Any]] = [
+        ["For Quarter Ending", "", 44377.0, 44469.0, 46112.0],
+        ["TEV/LTM EBITDA", "Average", 15.0, 12.0, 8.6],
+        ["", "Close", 15.7, 12.0, 8.5],
+    ]
+    ev = cs.ev_ebitda_current(_fin_bundle({"Multiples": mult}))
+    assert ev.status is ds.SourceStatus.PRESENT and ev.value == 8.5  # the latest Close, a multiple
