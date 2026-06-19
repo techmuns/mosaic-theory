@@ -197,6 +197,37 @@ def _cmd_rank(args: argparse.Namespace) -> int:
     return 0
 
 
+def _cmd_dossier(args: argparse.Namespace) -> int:
+    """Assemble per-finalist dossiers (top N, or one --ticker). Assembles, never concludes."""
+    from mosaic.dossier.assemble import assemble_cohort, load_finalists
+
+    cfg = get_config()
+    cfg.ensure_dirs()
+    finalists = load_finalists(cfg, top=args.top, ticker=args.ticker)
+    if not finalists:
+        print("no finalists — run `mosaic screen` then `mosaic rank` first")
+        return 1
+    llm = None
+    if not args.no_llm:
+        from mosaic.graph.llm import AnthropicLlmClient
+
+        try:
+            llm = AnthropicLlmClient.from_config(cfg)
+        except Exception as exc:  # noqa: BLE001 — degrade to mechanical-only, never crash the CLI
+            print(f"LLM unavailable ({exc}) — assembling the mechanical layer only")
+    dossiers, errors = assemble_cohort(finalists, cfg=cfg, llm=llm)
+    out = cfg.data_dir / "dossiers"
+    print(f"=== dossier · {len(dossiers)} done · {len(errors)} error(s) · → {out}/<ticker>/ ===")
+    for d in sorted(dossiers, key=lambda d: d.rank or 1_000_000):
+        print(f"  {d.ticker:<6} rank {d.rank} · {'synth' if d.synthesis else 'NO-synth'} · "
+              f"{len(d.flags)} flag(s)")
+        for fl in d.flags:
+            print(f"      ⚠ {fl}")
+    for e in errors:
+        print(f"  ERROR {e}")
+    return 0
+
+
 def _cmd_log_verdict(args: argparse.Namespace) -> int:
     """Record a manual BUY/AVOID-terminal verdict for a candidate, freezing the entry price."""
     cfg = get_config()
@@ -459,6 +490,14 @@ def build_parser() -> argparse.ArgumentParser:
         help="print only; do not write ranked_queue.jsonl / .md snapshots",
     )
     p_rank.set_defaults(func=_cmd_rank)
+
+    p_dossier = sub.add_parser("dossier", help="assemble per-finalist dossiers (never concludes)")
+    p_dossier.add_argument("--top", type=int, default=10, help="top N of the queue (default: 10)")
+    p_dossier.add_argument("--ticker", help="assemble one name instead of the top N")
+    p_dossier.add_argument(
+        "--no-llm", action="store_true", dest="no_llm", help="mechanical layer only; skip synthesis"
+    )
+    p_dossier.set_defaults(func=_cmd_dossier)
 
     p_log = sub.add_parser("log-verdict", help="record a manual BUY/AVOID verdict for a candidate")
     p_log.add_argument("candidate_id", help="candidate id from `mosaic screen`")

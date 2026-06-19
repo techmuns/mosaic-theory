@@ -94,6 +94,29 @@ Each line: *what it does* — *verified how*.
     text — so drawdown-character is one axis, and Tier-2 reads *current* volume, not volume-at-the-
     gap). All handled fail-loud (UNKNOWN → 0-credit + flagged, never imputed) — correct behaviour; the
     fix is upstream coverage (§4), recorded not chased.
+- **Dossier-assembler** (`mosaic/dossier`, `dossier` CLI) — per-finalist; **assembles and cites, NEVER
+  concludes.** A deterministic source-bound MECHANICAL layer (every fact a `{value, source_ref}`: P/E +
+  percentile / FCF-sign / net-leverage from the screen's EDGAR data-record; the gap-down **8-Ks** fetched
+  + bound as the de-rating cause; **idiosyncratic-vs-shared** = name vs IWM 180d return + the graph-exposed
+  cohort's same-window returns (the G2-vs-market compensation; graph is INPUT, never a predictor);
+  share-count/dilution from EDGAR XBRL; CIQ multiples/quality/segments/customers/consensus from a
+  **manual** export) + a *fenced* LLM SYNTHESIS whose ONLY input is those facts: bull/bear cases, 3–6
+  **named** twin analogues, the decisive question, key unknowns. **The synthesis schema has NO field for a
+  verdict / recommendation / direction / score / probability — concluding is structurally impossible**,
+  locked by a test that walks the schema (mirrors the ranker's no-forward-returns guard); a second AST
+  guard proves the package imports no `ledger`/`scoring` (logging the BUY/AVOID stays the human's act).
+  Post-LLM guardrails flag for human review: uncited points (each must cite a source_ref in the input),
+  untraceable figures (scale-aware: every number must trace to a mechanical value), numeric/unsourced
+  twins, directional language. CIQ via a swappable **ManualDataStore** — `LocalFolderStore` live
+  (`data/manual/ciq/<ticker>/`, git-ignored); `DriveStore` an unimplemented interface (CIQ is
+  manual-export-only by licence). Missing CIQ → sections MISSING + a "pull CIQ" flag, batch continues;
+  parallel across the cohort. *Verified: `dossier --ticker FUBO` end-to-end → mechanical facts
+  source-bound (P/E 12.0 at the 0.16%ile of its 5y range, FCF-sign −1, −88.2% vs IWM, 2 gap-down 8-Ks
+  bound with accessions, shares 29.6M→342.4M +1055%; CIQ MISSING + flagged; graph cohort UNKNOWN — FUBO
+  not in the graph) + a live verdict-free synthesis (claude-sonnet-4-6), every figure tracing to the
+  mechanical layer; 11 dossier tests incl. the no-conclusion-field schema guard + the no-ledger import
+  guard. Writes `data/dossiers/<ticker>/{dossier.json,dossier.md,llm_call.log}` (git-ignored — may carry
+  licensed CIQ).*
 - **Decision ledger** (`mosaic/ledger` + `store`) — append-only: `append_ledger` is INSERT-only and
   **no `clear_ledger`/ledger-DELETE exists anywhere** — *2 verdicts across 2 processes both persist;
   survives `clear_candidates`+`clear_universe`+`export_snapshots`; re-log → `sqlite3.IntegrityError`.*
@@ -198,21 +221,22 @@ signal, not the whole idea.
 
 ## 5. Next steps (ordered, current)
 
-1. **Dossier-assembler** — per-finalist local folder → parse CIQ per `ciq_extraction_notes.md` →
-   parallel structured, source-bound dossiers. **Assembles and cites, never concludes**; fail-loud on
-   missing fields; local folder now (swappable Drive adapter later). Fed the **queue-top** by the
-   ranker (§2) — assemble dossiers for the ~10/week the priority queue surfaces first.
-2. **Run one real finalist cycle by hand** — take the top of the ranked queue → assemble → judge →
-   log a verdict. Produces the first genuine verdict, **starts the spread**.
-3. **Lightweight local frontend** — read-and-trigger ops dashboard (ingestion health; the **ranked
+The **dossier-assembler is built and verified (§2)** — the queue-top now flows ranker → `dossier`.
+Remaining:
+
+1. **Run one real finalist cycle by hand** — top of the ranked queue → `dossier` → the human reads the
+   source-bound bull/bear framing → logs a BUY/AVOID verdict via the ledger CLI with a frozen entry
+   price. Produces the first genuine verdict, **starts the spread**. (Pull the finalist's CIQ export
+   first, so the dossier's CIQ sections populate instead of flagging MISSING.)
+2. **Lightweight local frontend** — read-and-trigger ops dashboard (ingestion health; the **ranked
    queue with per-name structural profiles** (§2); `graph-exposure` labeled research-input; ledger;
    spread showing 0 verdicts honestly). Read-only, renders committed snapshots, never trades or logs
    via UI. Cloudflare Pages auto-deploy applies **here** (static frontend on committed snapshots),
    not before.
 
-The ranker is built/verified (§2); its coverage-gap wire-ups (EV/EBITDA-pctile + 8-K/guidance text,
-which also re-splits drawdown-character and turns on the live Tier-3 LLM pass) are parked in §4 —
-**monitored in use, not chased**.
+The ranker + dossier-assembler are built/verified (§2); the ranker's coverage-gap wire-ups
+(EV/EBITDA-pctile + 8-K/guidance text, which also re-splits drawdown-character and turns on the live
+Tier-3 LLM pass) are parked in §4 — **monitored in use, not chased**.
 
 Then: operate the weekly loop and accumulate resolved verdicts.
 
