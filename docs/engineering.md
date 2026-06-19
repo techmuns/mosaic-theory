@@ -1,0 +1,92 @@
+# Engineering practices — mosaic-theory
+
+> The fuller "how we build" handbook. **CLAUDE.md** holds the non-negotiable, every-build behavior and
+> the fund guardrails; **STATE.md** holds project state; this file holds engineering conventions,
+> practice, and the code workflow. This is deliberately SMALL — a 2-person paper-mode team doesn't need
+> a full standards manual, and writing one for contributors who don't exist is premature. It captures
+> only what is load-bearing today, and is the designated home for standards to grow into as the team
+> and blast radius grow.
+
+## Principles that protect the fund (load-bearing now)
+
+The BUY−AVOID spread's integrity depends on these. They are real today.
+
+### Reproducibility — the spread must be reconstructable
+- Same inputs → same outputs. A run's result must be reproducible from committed state (JSONL
+  snapshots) + the code at that commit.
+- LLM calls (the ranker's Tier-3 cause-classifier, the dossier-assembler) are NON-DETERMINISTIC.
+  Therefore: pin what you can (low/0 temperature where a stable label is wanted); **log the model
+  identifier and the raw LLM output** alongside any artifact derived from it; and never let an LLM
+  output silently become a NUMBER that feeds the spread. LLM output may annotate or classify; the
+  numeric inputs to the spread come from deterministic computation on real data.
+- Anything stochastic gets a seed where the library allows; record the seed.
+
+### As-of discipline — never use data that didn't exist at the decision time
+- Every datum carries (or resolves to) its as-of date. No value is used at a decision point if it
+  postdates that point. The `close_as_of` entry-price freeze (clamped to `bar_date ≤ reference_date`,
+  fail-loud) is the canonical instance; the rule is general — apply it anywhere data meets a decision.
+- This is the lookahead guard, generalized. Backfilling future data into the store is allowed for
+  storage but must never leak into a decision via an unclamped read.
+
+### Re-run safety / idempotency — the pipeline will be re-run
+- The weekly screen and monthly score will be re-run, interrupted, partially-failed, and resumed.
+  Running a step twice must not corrupt or double-count state.
+- The append-only ledger (INSERT-only, overwrite rejected at the DB layer) is one piece. The property
+  is broader: prefer idempotent writes; make resumption safe; don't assume a step runs exactly once.
+
+### Testing
+- **Regression test for every bug fix** — and it must demonstrate the previously-broken case, not just
+  pass. (Template: the lookahead guard test constructs a future-dated bar and asserts the freeze ignores
+  it.)
+- New modules carry tests for their fail-loud paths (UNKNOWN/raise on missing data), not just happy path.
+- `pytest -m "not network"` is the offline gate; network-dependent tests are marked and excluded there.
+
+## Code workflow (current — calibrated for a 2-person paper-mode team)
+
+The invariant that prevents spiral, regardless of process: **main is always runnable** — anyone can pull
+main and run the weekly loop. Everything below serves that, kept as light as the current blast radius
+(2 people, paper, no live capital, no external users) justifies.
+
+Every change, regardless of size:
+1. **Work on a local branch**, not directly on main. Costs nothing; lets you abandon a half-done change
+   cleanly.
+2. **Green before it lands:** full offline suite (`pytest -m "not network"`) + ruff + `mypy --strict`.
+3. **Bug fix → regression test** that would have caught it (and demonstrates the previously-broken case).
+4. **Decision-path changes get a real shown run.** Anything touching how a candidate is screened, ranked,
+   logged, priced, or scored (screen / ranker / ledger / scoring / freeze) gets run on real data and
+   eyeballed before landing — NOT just green tests. Tests catch what you thought to test; the manual run
+   catches what you didn't. (The lookahead bug passed every test and was still wrong — this step is why.)
+   Non-decision-path changes (docs, comments, behavior-preserving refactors) skip this.
+5. **Merge to main and push.** Focused, single-purpose commit; honest message.
+
+Deliberately SKIPPED now (premature at 2 people — see deferred triggers): formal PR review (can't
+meaningfully self-review; becomes rubber-stamping), protected-branch CI merge gates, long-lived feature
+branches with verification environments.
+
+## Conventions (light — expand as needed)
+
+- **Quality gate:** ruff + `mypy --strict` clean before commit.
+- **Persistence:** SQLite store; committed analytical state as JSONL (diff-able), never binary `.db`.
+- **Secrets / data boundary:** see CLAUDE.md (Security). Not duplicated here.
+- **Commits:** focused, single-purpose, honest messages; push to origin when done.
+
+## Deferred — expand when the team grows / blast radius increases
+
+Stubs, intentionally not written yet (premature for a 2-person team; documented so the gap is visible and
+has a home). Each carries the trigger that should prompt adopting it:
+
+- **Real PR review** — trigger: a SECOND person is committing code. Self-review at 2 people is rubber-
+  stamping; with two committers, review catches what one person misses.
+- **Protected main + CI gate** (block merge on red suite/lint; run tests in CI, not just locally) —
+  trigger: live capital, OR CI is set up. Until then the gate is the human running the suite green locally.
+- **Release tagging / change log** — trigger: LP-facing outputs or real-money operation, where you must
+  point to "the exact version that produced this result."
+- **Branching model** (beyond branch→merge) — trigger: parallel workstreams that can't land independently.
+- **Dependency / environment reproducibility** (pinned versions, lockfile, reproducible runtime).
+- **Module / interface conventions** (how new screens/edges/adapters are added — e.g. the swappable
+  ManualDataStore interface for the dossier-assembler's local→Drive path).
+- **Logging / observability standards** for the operating pipeline.
+- **Onboarding doc** for a new team member.
+
+> When you add a practice here, keep it a CONVENTION (how we build over time). If a rule is high-stakes
+> and must be followed on EVERY build, it belongs in CLAUDE.md instead.
