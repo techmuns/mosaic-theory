@@ -86,6 +86,43 @@ execution/sizing/portfolio/monitoring modules; only `SourceTier.IBKR` labels in 
 - **Drive adapter for the dossier-assembler** — trigger: the local-folder assembler is proven and the
   manual export→folder step is the real friction. A convenience, not a milestone.
 
+### Candidate edge-types — untested hypotheses (DO NOT build; record-only)
+
+These are recorded so the reasoning survives; they are NOT next steps. The binding constraint is
+proving Edge 2 (the empty spread), not expanding the edge inventory. Build toward none of these
+until the spread validates the discriminator.
+
+- **Edge 1 (orphaned quality) — already in §4 above; noted here as the most DURABLE non-consensus.**
+  Mispricing = neglect (no one's looking), not overreaction. Unlike Edge 2 it has no value-trap
+  SYMMETRY problem (was-it-an-overshoot-or-terminal is the hard call; is-it-quietly-good-and-
+  under-covered is more verifiable), and its persistence reason is structural (too small/boring for
+  big capital; labor-intensive to underwrite). Deferred for measurability, not weakness.
+
+- **Non-consensus on AGGREGATION (the LIVE core of the graph thesis — NOT the dead mechanical signal).**
+  Hypothesis: second-order / cross-sectional consequences of CONFIRMED PUBLIC events are mispriced
+  because no one assembles the affected cross-section (e.g. a regulatory change or cost-input shift
+  hitting a diffuse long-tail no analyst covers as a group). DISTINCT from the falsified Edge-3
+  mechanical signal: this is a RESEARCH INPUT that assembles a cross-section of exposed names FOR THE
+  HUMAN to research — it does NOT predict a tradeable price lag. The mechanical-lag form is dead
+  (§3, three reasons); THIS aggregation form was never tested. KILL CRITERION if ever tested: it must
+  beat a hand-built baseline (names the human would assemble unaided on the same event) — if it
+  surfaces nothing the human wouldn't already find, it adds no value and is dropped. It must NEVER
+  become "the graph predicts a move you trade" — that is the dead mechanical signal returning.
+
+- **Non-consensus on CLASSIFICATION.** Hypothesis: the market mis-categorizes a name into the wrong
+  reference class (treats a changed business as its old declining industry; lumps a sound name with
+  real value-traps), so it's priced by the wrong comp set. AI-native fit: reading the ACTUAL business
+  from filings across many names at breadth. Overlaps Edge 1/2 but the mispricing is taxonomic.
+  KILL CRITERION if tested: must show mis-classified names re-rate when re-classified, forward, not
+  in hindsight. Untested.
+
+Note the honest status of the graph thesis (corrects any flat "Edge 3 is dead" reading): the
+MECHANICAL graph SIGNAL is dead (§3). The graph-exposure LOOKUP is built (§2). The broad
+thesis — cross-sectional/second-order consequences are mispriced — was tested ONLY in its
+narrowest, most-arbitraged, least-tradeable form (1-hop propagation lag), and its AGGREGATION
+form (above) remains genuinely untested as a research input. "Dead" applies to the mechanical
+signal, not the whole idea.
+
 ## 5. Next steps (ordered, current)
 
 1. **Ranker / triage layer** — orders the ~307 candidates into a priority queue so a 2-person team
