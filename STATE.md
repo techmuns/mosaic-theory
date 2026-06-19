@@ -23,23 +23,38 @@ Each line: *what it does* — *verified how*.
 - **Polygon EOD** (`mosaic/eod`) — whole-market grouped-daily, 5y history (Starter) — *universe/screen ran on 5y bars.*
 - **EDGAR** (`mosaic/edgar`) — XBRL `companyfacts`/`frames` + 8-K full-text + submissions — *feeds G3; module + tests.*
 - **Universe builder** (`mosaic/universe`) — market cap = close × XBRL shares, cap-band + $3M ADV +
-  **operating-cos-only SIC** gates — *`build-universe` ran → ~1,770 names (committed snapshot 1,771; latest run 1,767 — drifts a few names as SEC data updates).*
-  - **The "operating-cos-only SIC" gate is a weak 5-code DENYLIST, not an operating-co allowlist
-    (audit 2026-06-19).** `excluded_sic_codes = 6189/6221/6722/6726/6770`; `universe.py:108` does
-    `if sic in excluded_sic_codes`. It leaks investment companies it is meant to drop: (a) **BDCs with a
-    BLANK EDGAR SIC pass** (`None in set` is False) — CION Investment Corp + Blue Owl Technology Finance
-    (OTF) are in the 308 candidates; (b) **a ticker→CIK collision** — ticker **SHNY** (a leveraged ETF)
-    resolves to cik 927971 = **"BANK OF MONTREAL /CAN/"** (foreign commercial bank, SIC 6029, not in the
-    denylist), in universe AND candidates — the screen splices the ETF's price bars onto a Canadian
-    bank's fundamental identity. *0/308 candidates carry an excluded SIC, yet 2 BDCs + the SHNY
-    collision sail through.* Recorded, not fixed (read-and-verify).
+  an **operating-cos-only gate on TWO fail-closed axes** — *`build-universe` ran → 1,727 names (drifts
+  a few as SEC data updates).*
+  - **Two independent operating-co axes, each fail-CLOSED on a missing value (exclude what we cannot
+    confirm; never silently admit) — built + verified 2026-06-19 by a full rebuild:**
+    - **Axis 1 — issuer BUSINESS type (EDGAR SIC).** Denylist `excluded_sic_codes =
+      6189/6221/6722/6726/6770` (`non_operating=38`) PLUS a **blank/unknown SIC is now excluded**
+      (`unknown_sic=29`) — closing the hole where a BDC with no EDGAR SIC slipped the denylist (`None`
+      is never `in` the set). *The 29 are 28 BDCs (CION, OTF, Prospect, Main Street, FS KKR, Sixth
+      Street, …) + 1 foreign miner; the BDC candidates CION/OTF/GLAD/MSIF/PFLT left the queue.*
+    - **Axis 2 — security INSTRUMENT type (Polygon reference; `PolygonEodClient.security_types()`,
+      one cached bulk pull).** An **ALLOWLIST** `allowed_security_types = CS/ADRC/OS/GDR` (domestic
+      common / ADR common / foreign ordinary / GDR); everything else excluded, split for honesty into
+      `non_common_equity=7` (a confirmed basket/derivative — SHNY=ETS, DHC/ILPT=FUND, MNR/NOVTU/VSECU=
+      UNIT, CORZW=WARRANT) and `unknown_type=4` (absent from Polygon's reference = recently delisted,
+      stale bars — MASI/KW/KALV/SCVL, last trade before the 06-17 ref). *SHNY left both the universe
+      AND the queue; the 14 ADRC candidates (ABVX, ATHM, CHA, DQ, …) survive — ADRC is admitted, so
+      operating-co ADRs are not dropped.*
+  - **SHNY was NOT a resolver collision.** Its ticker→CIK (→ cik 927971, Bank of Montreal) is
+    **correct** — BMO *issues* the SHNY ETN (one of 27 BMO tickers). It was an **untyped-instrument
+    leak**: a leveraged ETN (Polygon type ETS) whose bank fundamentals describe none of it, now caught
+    by Axis 2 — not by any ticker-validation (a collision guard was built, then reverted as the wrong
+    diagnosis). Axis 2's fail-closed-on-missing also sweeps recently-delisted names the 90-day price
+    gate still admitted (an as-of-now vs as-of-date asymmetry, acceptable for a forward-tradeable
+    universe).
 - **Screen 2 + gates** (`mosaic/screens`) — G1 drawdown ≤−30% (capped at −85% terminal floor) / G2
   idiosyncratic **vs the IWM market index** (NOT a sector cohort — see caveat) / G3 multiple vs ~5y
-  floor (`_PE_WINDOW_DAYS=1825`); PASS/FAIL/UNKNOWN, recall-favoring — *`screen` ran → ~307 candidates
-  (committed 308), A/B/C bands.* G1 drawdown = `last close / max(intraday HIGH over trailing 365d) − 1`
-  (`eod/features.compute_price_features`, ≥330d history else UNKNOWN).
-  - **G2 "idiosyncratic" is name-vs-IWM, NOT name-vs-SIC-sector (verified 2026-06-19 read-and-verify
-    audit).** The field `rel_ret_vs_sector` is misnamed: `assemble.build_price_record` sets it to
+  floor (`_PE_WINDOW_DAYS=1825`); PASS/FAIL/UNKNOWN, recall-favoring — *`screen` ran → 301 candidates
+  (308 before the universe-axis fixes), A/B/C bands.* G1 drawdown = `last close / max(intraday HIGH
+  over trailing 365d) − 1` (`eod/features.compute_price_features`, ≥330d history else UNKNOWN).
+  - **G2 "idiosyncratic" is name-vs-IWM, NOT name-vs-SIC-sector (verified 2026-06-19; the field was
+    then renamed `rel_ret_vs_sector` → `rel_ret_vs_market`, the old name being a lie — it compares to
+    IWM, not a sector).** `assemble.build_price_record` sets it to
     `relative_return(name_bars, benchmark_bars, lookback_days=180)` = **name 180d trailing return − IWM
     180d trailing return** (`eod/features.relative_return`; `run.py` passes `benchmark="IWM"`). It is a
     *trailing return*, not peak-to-current drawdown. The SIC peer-cohort was **deferred and never built**
@@ -48,7 +63,7 @@ Each line: *what it does* — *verified how*.
     source/granularity/aggregate/thin-cohort are all moot). So G2 removes **market** beta only — a name
     that fell *with its sector* (sector-wide derate) still PASSES G2 if it merely lagged IWM. *Re-derived
     FUBO from raw bars: depth −84.3% (=snapshot, close 8.90 / 52w high-of-highs 56.64); idio −88.2%
-    (=snapshot) = FUBO −72.6% − IWM **+15.6%** over 180d — the "−88% vs sector" is FUBO's fall minus the
+    (=snapshot) = FUBO −72.6% − IWM **+15.6%** over 180d — the "−88% vs market" is FUBO's fall minus the
     small-cap market's RISE, no sector comparison at all.*
 - **Ranker / triage layer** (`mosaic/rank`, `rank` CLI) — **orders** the ~307 candidates into a
   priority queue so a 2-person team deep-pulls the most structurally-promising overshoots first.

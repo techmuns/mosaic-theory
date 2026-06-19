@@ -32,7 +32,7 @@ class Identity(BaseModel, frozen=True):
     eod_symbol: str  # symbol as the EOD source (Polygon) knows it
     name: str
     share_class: str | None = None  # e.g. "A"/"B" for dual-class issuers
-    sic: str | None = None  # SEC Standard Industrial Classification code (sector source, G2)
+    sic: str | None = None  # SEC SIC — operating-co universe gate (not G2)
     sic_description: str | None = None
     country: str = "US"
     currency: str = "USD"
@@ -49,7 +49,7 @@ class PriceFeatures(BaseModel, frozen=True):
     ret_3m: DataField[float]
     ret_6m: DataField[float]
     ret_12m: DataField[float]
-    rel_ret_vs_sector: DataField[float]  # name minus sector over the decline window (G2)
+    rel_ret_vs_market: DataField[float]  # name return minus IWM return over the decline window (G2)
     adv_90d_shares: DataField[float]
     adv_90d_usd: DataField[float]
     turnover: DataField[float]  # adv_90d_usd / market_cap

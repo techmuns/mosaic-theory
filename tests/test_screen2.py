@@ -59,7 +59,7 @@ def _rec(*, drawdown: float | None, rel: float | None, pe_pctile: float | None) 
         ret_3m=_f(-0.3),
         ret_6m=_f(-0.4),
         ret_12m=_f(-0.45),
-        rel_ret_vs_sector=_f(rel),
+        rel_ret_vs_market=_f(rel),
         adv_90d_shares=_f(5e6),
         adv_90d_usd=_f(5e8),
         turnover=_f(0.01),

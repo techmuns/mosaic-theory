@@ -69,7 +69,7 @@ def _cand(
         last=_f(50.0), high_52w=_f(120.0), low_52w=_f(40.0),
         drawdown_from_high=_f(drawdown), dist_from_low=_f(0.25),
         ret_3m=_f(-0.2), ret_6m=_f(-0.3), ret_12m=_f(-0.45),
-        rel_ret_vs_sector=_f(rel),
+        rel_ret_vs_market=_f(rel),
         adv_90d_shares=_f(adv_usd / 50.0), adv_90d_usd=_f(adv_usd),
         turnover=_f(None), volume_spike=_f(volume_spike),
     )

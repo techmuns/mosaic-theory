@@ -66,6 +66,16 @@ def latest_close_and_adv(
     return closes, adv
 
 
+def admit_security_type(ptype: str | None, allowed: tuple[str, ...]) -> bool:
+    """Instrument-type ALLOWLIST test (Axis 2). Admit ONLY listed operating-co equity types.
+
+    Fail-closed: a blank/unknown/missing ``ptype`` (``None``) is never in the allowlist, so it is
+    excluded — never silently admitted (the same rule as a blank SIC). An allowlist, not a denylist:
+    a structured-product type we have not enumerated defaults to *excluded*.
+    """
+    return ptype in allowed
+
+
 def build_universe(
     config: Config | None = None, *, reference_date: date, share_periods: list[str] | None = None
 ) -> dict[str, int]:
@@ -78,6 +88,7 @@ def build_universe(
     band = cfg.universe
 
     closes, adv = latest_close_and_adv(eod, reference_date)
+    sec_types = eod.security_types()  # instrument-type axis (one cached bulk reference pull)
     periods = share_periods or recent_share_periods(reference_date)
     shares = edgar.shares_outstanding_by_cik(periods)
 
@@ -101,12 +112,30 @@ def build_universe(
             if adv.get(ident.eod_symbol, 0.0) < band.adv_floor_usd:
                 stats["below_adv_floor"] += 1  # tradeability gate
                 continue
-            # Operating-companies-only gate (structural fact = SIC, not entityType/10-K-on-file).
-            # Fetch the SIC only for names that already clear cap+ADV — the would-be-admitted set.
-            # Fail open on a missing SIC: exclude only CONFIRMED fund/shell codes, never on absence.
+            # Operating-companies-only gate — TWO independent structural axes, both fail-CLOSED on a
+            # missing value (exclude what we cannot confirm; never silently admit). SIC is fetched
+            # only for names that already clear cap+ADV — the would-be-admitted set.
+            #
+            # Axis 1 — issuer BUSINESS type (EDGAR SIC). A BLANK/unknown SIC is excluded, not
+            # admitted: a blank SIC is exactly how a BDC/fund slips a denylist (`None` is never `in`
+            # the exclude set — CION, OTF). Then drop the confirmed fund/shell codes.
             sic = resolver.sic_for(ident.cik)[0]
+            if sic is None:
+                stats["unknown_sic"] += 1  # cannot confirm operating-co → excluded, not admitted
+                continue
             if sic in band.excluded_sic_codes:
                 stats["non_operating"] += 1  # ETF/ETP/fund/blank-check — a basket, not a business
+                continue
+            # Axis 2 — security INSTRUMENT type (Polygon). An ALLOWLIST of operating-company common
+            # equity, fail-CLOSED, with the two exclusion reasons counted separately:
+            #   • a CONFIRMED non-equity type (ETN/ETF/ETV/ETS/FUND/SP/PFD/RIGHT/WARRANT/UNIT) — a
+            #     basket/derivative. This catches an ETN spliced onto its bank issuer (SHNY=ETS →
+            #     Bank of Montreal: ticker→CIK is correct, just not common equity).
+            #   • a MISSING type — absent from Polygon's current reference, i.e. recently delisted
+            #     (these carry stale bars the 90-day price gate still admitted); flagged, excluded.
+            ptype = sec_types.get(ident.eod_symbol)
+            if not admit_security_type(ptype, band.allowed_security_types):
+                stats["unknown_type" if ptype is None else "non_common_equity"] += 1
                 continue
             stats["in_universe"] += 1
             store.upsert_security(ident, first_seen=reference_date)

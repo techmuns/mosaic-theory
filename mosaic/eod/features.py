@@ -6,8 +6,9 @@ e.g. a "52-week high" computed from 3 months would understate it, so we defer in
 
 What is computable from price alone (filled here): last, 52w high/low, drawdown-from-high,
 distance-from-low, trailing returns (3/6/12m), 90D ADV (shares & USD), volume spike. What needs
-external inputs is left UNKNOWN for step 5: ``rel_ret_vs_sector`` (SIC peers) and ``turnover``
-(needs market cap, unless passed in).
+external inputs is left UNKNOWN here and filled by the assembler: ``rel_ret_vs_market`` (set vs the
+IWM benchmark in :func:`mosaic.screens.assemble.build_price_record`) and ``turnover`` (needs market
+cap, unless passed in).
 """
 
 from __future__ import annotations
@@ -62,7 +63,7 @@ def compute_price_features(
         u = _unknown("no price bars")
         return PriceFeatures(
             last=u, high_52w=u, low_52w=u, drawdown_from_high=u, dist_from_low=u,
-            ret_3m=u, ret_6m=u, ret_12m=u, rel_ret_vs_sector=u,
+            ret_3m=u, ret_6m=u, ret_12m=u, rel_ret_vs_market=u,
             adv_90d_shares=u, adv_90d_usd=u, turnover=u, volume_spike=u,
         )
 
@@ -132,8 +133,8 @@ def compute_price_features(
         ret_3m=rets["3m"],
         ret_6m=rets["6m"],
         ret_12m=rets["12m"],
-        rel_ret_vs_sector=DataField.unknown(
-            source="EOD", tier=SourceTier.DERIVED, note="needs SIC peers (step 5)"
+        rel_ret_vs_market=DataField.unknown(
+            source="EOD", tier=SourceTier.DERIVED, note="set vs IWM benchmark in assemble"
         ),
         adv_90d_shares=adv_shares,
         adv_90d_usd=adv_usd,

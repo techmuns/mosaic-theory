@@ -17,7 +17,6 @@
 {"as_of": "2026-06-17", "coverage_status": "present", "in_universe": 1, "internal_id": "SEC-0000016040-CBT", "market_cap": 4565914333.650001, "source": "DERIVED"}
 {"as_of": "2026-06-17", "coverage_status": "present", "in_universe": 1, "internal_id": "SEC-0000016160-CALM", "market_cap": 3709586840.4, "source": "DERIVED"}
 {"as_of": "2026-06-17", "coverage_status": "present", "in_universe": 1, "internal_id": "SEC-0000016732-CPB", "market_cap": 6293872361.68, "source": "DERIVED"}
-{"as_of": "2026-06-17", "coverage_status": "present", "in_universe": 1, "internal_id": "SEC-0000017313-CSWC", "market_cap": 1419294181.84, "source": "DERIVED"}
 {"as_of": "2026-06-17", "coverage_status": "present", "in_universe": 1, "internal_id": "SEC-0000018498-GCO", "market_cap": 375368803.68, "source": "DERIVED"}
 {"as_of": "2026-06-17", "coverage_status": "present", "in_universe": 1, "internal_id": "SEC-0000018926-LUMN", "market_cap": 8345519667.0, "source": "DERIVED"}
 {"as_of": "2026-06-17", "coverage_status": "present", "in_universe": 1, "internal_id": "SEC-0000019584-CHE", "market_cap": 5787907567.12, "source": "DERIVED"}
@@ -129,7 +128,6 @@
 {"as_of": "2026-06-17", "coverage_status": "present", "in_universe": 1, "internal_id": "SEC-0000102037-UVV", "market_cap": 1316209823.76, "source": "DERIVED"}
 {"as_of": "2026-06-17", "coverage_status": "present", "in_universe": 1, "internal_id": "SEC-0000102212-UVSP", "market_cap": 1154765408.94, "source": "DERIVED"}
 {"as_of": "2026-06-17", "coverage_status": "present", "in_universe": 1, "internal_id": "SEC-0000102752-VSEC", "market_cap": 5840657331.839999, "source": "DERIVED"}
-{"as_of": "2026-06-17", "coverage_status": "present", "in_universe": 1, "internal_id": "SEC-0000102752-VSECU", "market_cap": 1517611351.68, "source": "DERIVED"}
 {"as_of": "2026-06-17", "coverage_status": "present", "in_universe": 1, "internal_id": "SEC-0000103145-VECO", "market_cap": 4625117493.3, "source": "DERIVED"}
 {"as_of": "2026-06-17", "coverage_status": "present", "in_universe": 1, "internal_id": "SEC-0000103379-VFC", "market_cap": 6542554073.5, "source": "DERIVED"}
 {"as_of": "2026-06-17", "coverage_status": "present", "in_universe": 1, "internal_id": "SEC-0000104918-AVA", "market_cap": 3255954142.0, "source": "DERIVED"}
@@ -276,7 +274,6 @@
 {"as_of": "2026-06-17", "coverage_status": "present", "in_universe": 1, "internal_id": "SEC-0000793733-SKYW", "market_cap": 3637640973.32, "source": "DERIVED"}
 {"as_of": "2026-06-17", "coverage_status": "present", "in_universe": 1, "internal_id": "SEC-0000793952-HOG", "market_cap": 2674867553.82, "source": "DERIVED"}
 {"as_of": "2026-06-17", "coverage_status": "present", "in_universe": 1, "internal_id": "SEC-0000794367-M", "market_cap": 6300736416.1, "source": "DERIVED"}
-{"as_of": "2026-06-17", "coverage_status": "present", "in_universe": 1, "internal_id": "SEC-0000794619-AMWD", "market_cap": 700651823.5500001, "source": "DERIVED"}
 {"as_of": "2026-06-17", "coverage_status": "present", "in_universe": 1, "internal_id": "SEC-0000795266-KBH", "market_cap": 3284021055.32, "source": "DERIVED"}
 {"as_of": "2026-06-17", "coverage_status": "present", "in_universe": 1, "internal_id": "SEC-0000796505-CLFD", "market_cap": 528358204.8, "source": "DERIVED"}
 {"as_of": "2026-06-17", "coverage_status": "present", "in_universe": 1, "internal_id": "SEC-0000797721-VSAT", "market_cap": 8815525916.15, "source": "DERIVED"}
@@ -409,7 +406,7 @@
 {"as_of": "2026-06-17", "coverage_status": "present", "in_universe": 1, "internal_id": "SEC-0000894405-ARCB", "market_cap": 3247172313.0, "source": "DERIVED"}
 {"as_of": "2026-06-17", "coverage_status": "present", "in_universe": 1, "internal_id": "SEC-0000894627-EGY", "market_cap": 578633304.15, "source": "DERIVED"}
 {"as_of": "2026-06-17", "coverage_status": "present", "in_universe": 1, "internal_id": "SEC-0000895419-WOLF", "market_cap": 2353629853.89, "source": "DERIVED"}
-{"as_of": "2026-06-17", "coverage_status": "present", "in_universe": 1, "internal_id": "SEC-0000895447-SCVL", "market_cap": 478794622.53, "source": "DERIVED"}
+{"as_of": "2026-06-17", "coverage_status": "present", "in_universe": 1, "internal_id": "SEC-0000895447-SHOE", "market_cap": 439787831.71000004, "source": "DERIVED"}
 {"as_of": "2026-06-17", "coverage_status": "present", "in_universe": 1, "internal_id": "SEC-0000896156-ETD", "market_cap": 536154362.73, "source": "DERIVED"}
 {"as_of": "2026-06-17", "coverage_status": "present", "in_universe": 1, "internal_id": "SEC-0000896622-ATR", "market_cap": 7657799716.839999, "source": "DERIVED"}
 {"as_of": "2026-06-17", "coverage_status": "present", "in_universe": 1, "internal_id": "SEC-0000897077-ALG", "market_cap": 1900330126.31, "source": "DERIVED"}
@@ -468,14 +465,11 @@
 {"as_of": "2026-06-17", "coverage_status": "present", "in_universe": 1, "internal_id": "SEC-0000921825-FR", "market_cap": 8047024736.8, "source": "DERIVED"}
 {"as_of": "2026-06-17", "coverage_status": "present", "in_universe": 1, "internal_id": "SEC-0000922864-AIV", "market_cap": 417223945.4, "source": "DERIVED"}
 {"as_of": "2026-06-17", "coverage_status": "present", "in_universe": 1, "internal_id": "SEC-0000923120-GBX", "market_cap": 1524963298.26, "source": "DERIVED"}
-{"as_of": "2026-06-17", "coverage_status": "present", "in_universe": 1, "internal_id": "SEC-0000923139-FFIC", "market_cap": 524179694.22, "source": "DERIVED"}
 {"as_of": "2026-06-17", "coverage_status": "present", "in_universe": 1, "internal_id": "SEC-0000923796-GEO", "market_cap": 3856223676.24, "source": "DERIVED"}
 {"as_of": "2026-06-17", "coverage_status": "present", "in_universe": 1, "internal_id": "SEC-0000924805-FRHC", "market_cap": 8210545986.3, "source": "DERIVED"}
 {"as_of": "2026-06-17", "coverage_status": "present", "in_universe": 1, "internal_id": "SEC-0000924822-MLR", "market_cap": 554629497.72, "source": "DERIVED"}
-{"as_of": "2026-06-17", "coverage_status": "present", "in_universe": 1, "internal_id": "SEC-0000924901-VRE", "market_cap": 1781983942.83, "source": "DERIVED"}
 {"as_of": "2026-06-17", "coverage_status": "present", "in_universe": 1, "internal_id": "SEC-0000926282-ADTN", "market_cap": 1222261329.0, "source": "DERIVED"}
 {"as_of": "2026-06-17", "coverage_status": "present", "in_universe": 1, "internal_id": "SEC-0000926326-OMCL", "market_cap": 1750937996.5, "source": "DERIVED"}
-{"as_of": "2026-06-17", "coverage_status": "present", "in_universe": 1, "internal_id": "SEC-0000927971-SHNY", "market_cap": 6684980552.97, "source": "DERIVED"}
 {"as_of": "2026-06-17", "coverage_status": "present", "in_universe": 1, "internal_id": "SEC-0000928054-FTK", "market_cap": 813157597.6800001, "source": "DERIVED"}
 {"as_of": "2026-06-17", "coverage_status": "present", "in_universe": 1, "internal_id": "SEC-0000928340-CWCO", "market_cap": 474057186.255, "source": "DERIVED"}
 {"as_of": "2026-06-17", "coverage_status": "present", "in_universe": 1, "internal_id": "SEC-0000929351-STRZ", "market_cap": 478329008.84999996, "source": "DERIVED"}
@@ -490,7 +484,6 @@
 {"as_of": "2026-06-17", "coverage_status": "present", "in_universe": 1, "internal_id": "SEC-0000935036-ACIW", "market_cap": 4538172484.8, "source": "DERIVED"}
 {"as_of": "2026-06-17", "coverage_status": "present", "in_universe": 1, "internal_id": "SEC-0000936528-WAFD", "market_cap": 2675501860.8, "source": "DERIVED"}
 {"as_of": "2026-06-17", "coverage_status": "present", "in_universe": 1, "internal_id": "SEC-0000937098-TNET", "market_cap": 2094156827.9399998, "source": "DERIVED"}
-{"as_of": "2026-06-17", "coverage_status": "present", "in_universe": 1, "internal_id": "SEC-0000937556-MASI", "market_cap": 9423227149.599998, "source": "DERIVED"}
 {"as_of": "2026-06-17", "coverage_status": "present", "in_universe": 1, "internal_id": "SEC-0000938323-PSO", "market_cap": 9651669878.4, "source": "DERIVED"}
 {"as_of": "2026-06-17", "coverage_status": "present", "in_universe": 1, "internal_id": "SEC-0000941221-ICL", "market_cap": 6763125099.96, "source": "DERIVED"}
 {"as_of": "2026-06-17", "coverage_status": "present", "in_universe": 1, "internal_id": "SEC-0000944148-CBZ", "market_cap": 1785998749.9199998, "source": "DERIVED"}
@@ -612,9 +605,7 @@
 {"as_of": "2026-06-17", "coverage_status": "present", "in_universe": 1, "internal_id": "SEC-0001071236-RRBI", "market_cap": 579255707.12, "source": "DERIVED"}
 {"as_of": "2026-06-17", "coverage_status": "present", "in_universe": 1, "internal_id": "SEC-0001071438-BAK", "market_cap": 1517606670.72, "source": "DERIVED"}
 {"as_of": "2026-06-17", "coverage_status": "present", "in_universe": 1, "internal_id": "SEC-0001073404-GGB", "market_cap": 3222843959.31, "source": "DERIVED"}
-{"as_of": "2026-06-17", "coverage_status": "present", "in_universe": 1, "internal_id": "SEC-0001075415-DHC", "market_cap": 2079698494.34, "source": "DERIVED"}
 {"as_of": "2026-06-17", "coverage_status": "present", "in_universe": 1, "internal_id": "SEC-0001076930-NOVT", "market_cap": 5392703656.940001, "source": "DERIVED"}
-{"as_of": "2026-06-17", "coverage_status": "present", "in_universe": 1, "internal_id": "SEC-0001076930-NOVTU", "market_cap": 2260284627.2599998, "source": "DERIVED"}
 {"as_of": "2026-06-17", "coverage_status": "present", "in_universe": 1, "internal_id": "SEC-0001077183-NEO", "market_cap": 1351598276.4, "source": "DERIVED"}
 {"as_of": "2026-06-17", "coverage_status": "present", "in_universe": 1, "internal_id": "SEC-0001077428-TCBI", "market_cap": 4336960952.09, "source": "DERIVED"}
 {"as_of": "2026-06-17", "coverage_status": "present", "in_universe": 1, "internal_id": "SEC-0001078075-NTCT", "market_cap": 2804042332.2999997, "source": "DERIVED"}
@@ -671,13 +662,11 @@
 {"as_of": "2026-06-17", "coverage_status": "present", "in_universe": 1, "internal_id": "SEC-0001130464-BKH", "market_cap": 5484303767.68, "source": "DERIVED"}
 {"as_of": "2026-06-17", "coverage_status": "present", "in_universe": 1, "internal_id": "SEC-0001130713-BBBY", "market_cap": 418491881.7, "source": "DERIVED"}
 {"as_of": "2026-06-17", "coverage_status": "present", "in_universe": 1, "internal_id": "SEC-0001131383-STN", "market_cap": 7955032231.299999, "source": "DERIVED"}
-{"as_of": "2026-06-17", "coverage_status": "present", "in_universe": 1, "internal_id": "SEC-0001133470-CVGW", "market_cap": 466334721.11, "source": "DERIVED"}
 {"as_of": "2026-06-17", "coverage_status": "present", "in_universe": 1, "internal_id": "SEC-0001133869-CAPR", "market_cap": 1607422248.25, "source": "DERIVED"}
 {"as_of": "2026-06-17", "coverage_status": "present", "in_universe": 1, "internal_id": "SEC-0001137091-PSIX", "market_cap": 897123514.0, "source": "DERIVED"}
 {"as_of": "2026-06-17", "coverage_status": "present", "in_universe": 1, "internal_id": "SEC-0001141103-CCRN", "market_cap": 425821145.37, "source": "DERIVED"}
 {"as_of": "2026-06-17", "coverage_status": "present", "in_universe": 1, "internal_id": "SEC-0001142417-NXST", "market_cap": 5028988462.54, "source": "DERIVED"}
 {"as_of": "2026-06-17", "coverage_status": "present", "in_universe": 1, "internal_id": "SEC-0001142750-AMN", "market_cap": 1255892363.76, "source": "DERIVED"}
-{"as_of": "2026-06-17", "coverage_status": "present", "in_universe": 1, "internal_id": "SEC-0001143513-GLAD", "market_cap": 427912726.86, "source": "DERIVED"}
 {"as_of": "2026-06-17", "coverage_status": "present", "in_universe": 1, "internal_id": "SEC-0001144215-AYI", "market_cap": 9266134250.880001, "source": "DERIVED"}
 {"as_of": "2026-06-17", "coverage_status": "present", "in_universe": 1, "internal_id": "SEC-0001144800-TAC", "market_cap": 4023489232.2000003, "source": "DERIVED"}
 {"as_of": "2026-06-17", "coverage_status": "present", "in_universe": 1, "internal_id": "SEC-0001144980-ABG", "market_cap": 3539992444.0, "source": "DERIVED"}
@@ -744,12 +733,10 @@
 {"as_of": "2026-06-17", "coverage_status": "present", "in_universe": 1, "internal_id": "SEC-0001277866-EXK", "market_cap": 2324189426.18, "source": "DERIVED"}
 {"as_of": "2026-06-17", "coverage_status": "present", "in_universe": 1, "internal_id": "SEC-0001278021-MKTX", "market_cap": 4261180414.7000003, "source": "DERIVED"}
 {"as_of": "2026-06-17", "coverage_status": "present", "in_universe": 1, "internal_id": "SEC-0001278027-BGS", "market_cap": 316551303.9, "source": "DERIVED"}
-{"as_of": "2026-06-17", "coverage_status": "present", "in_universe": 1, "internal_id": "SEC-0001278752-MFIC", "market_cap": 913819621.79, "source": "DERIVED"}
 {"as_of": "2026-06-17", "coverage_status": "present", "in_universe": 1, "internal_id": "SEC-0001279495-BTE", "market_cap": 3131173721.23, "source": "DERIVED"}
 {"as_of": "2026-06-17", "coverage_status": "present", "in_universe": 1, "internal_id": "SEC-0001280058-BLKB", "market_cap": 1229602477.62, "source": "DERIVED"}
 {"as_of": "2026-06-17", "coverage_status": "present", "in_universe": 1, "internal_id": "SEC-0001280263-AMBA", "market_cap": 2884811348.52, "source": "DERIVED"}
 {"as_of": "2026-06-17", "coverage_status": "present", "in_universe": 1, "internal_id": "SEC-0001280776-IMUX", "market_cap": 1934250515.0, "source": "DERIVED"}
-{"as_of": "2026-06-17", "coverage_status": "present", "in_universe": 1, "internal_id": "SEC-0001280784-HTGC", "market_cap": 2883497471.9, "source": "DERIVED"}
 {"as_of": "2026-06-17", "coverage_status": "present", "in_universe": 1, "internal_id": "SEC-0001281895-RCKT", "market_cap": 345051614.84000003, "source": "DERIVED"}
 {"as_of": "2026-06-17", "coverage_status": "present", "in_universe": 1, "internal_id": "SEC-0001282637-NEU", "market_cap": 7023331367.830001, "source": "DERIVED"}
 {"as_of": "2026-06-17", "coverage_status": "present", "in_universe": 1, "internal_id": "SEC-0001284812-CNS", "market_cap": 3822006880.45, "source": "DERIVED"}
@@ -760,7 +747,6 @@
 {"as_of": "2026-06-17", "coverage_status": "present", "in_universe": 1, "internal_id": "SEC-0001286139-LZ", "market_cap": 956078045.48, "source": "DERIVED"}
 {"as_of": "2026-06-17", "coverage_status": "present", "in_universe": 1, "internal_id": "SEC-0001286613-LINC", "market_cap": 1482371919.0, "source": "DERIVED"}
 {"as_of": "2026-06-17", "coverage_status": "present", "in_universe": 1, "internal_id": "SEC-0001286973-USAS", "market_cap": 1845612184.32, "source": "DERIVED"}
-{"as_of": "2026-06-17", "coverage_status": "present", "in_universe": 1, "internal_id": "SEC-0001287032-PSEC", "market_cap": 1102216836.6000001, "source": "DERIVED"}
 {"as_of": "2026-06-17", "coverage_status": "present", "in_universe": 1, "internal_id": "SEC-0001287213-PLOW", "market_cap": 1110009216.0, "source": "DERIVED"}
 {"as_of": "2026-06-17", "coverage_status": "present", "in_universe": 1, "internal_id": "SEC-0001287865-MPT", "market_cap": 2834994000.0, "source": "DERIVED"}
 {"as_of": "2026-06-17", "coverage_status": "present", "in_universe": 1, "internal_id": "SEC-0001288403-WTI", "market_cap": 492454180.38, "source": "DERIVED"}
@@ -801,7 +787,6 @@
 {"as_of": "2026-06-17", "coverage_status": "present", "in_universe": 1, "internal_id": "SEC-0001320414-SEM", "market_cap": 2052478040.0, "source": "DERIVED"}
 {"as_of": "2026-06-17", "coverage_status": "present", "in_universe": 1, "internal_id": "SEC-0001320461-CPS", "market_cap": 509221545.12, "source": "DERIVED"}
 {"as_of": "2026-06-17", "coverage_status": "present", "in_universe": 1, "internal_id": "SEC-0001320760-TSSI", "market_cap": 356890682.9, "source": "DERIVED"}
-{"as_of": "2026-06-17", "coverage_status": "present", "in_universe": 1, "internal_id": "SEC-0001321741-GAIN", "market_cap": 591754429.62, "source": "DERIVED"}
 {"as_of": "2026-06-17", "coverage_status": "present", "in_universe": 1, "internal_id": "SEC-0001323468-GLP", "market_cap": 1475407434.2, "source": "DERIVED"}
 {"as_of": "2026-06-17", "coverage_status": "present", "in_universe": 1, "internal_id": "SEC-0001323885-ATRC", "market_cap": 1373383106.4, "source": "DERIVED"}
 {"as_of": "2026-06-17", "coverage_status": "present", "in_universe": 1, "internal_id": "SEC-0001325618-IRMD", "market_cap": 1164406658.15, "source": "DERIVED"}
@@ -833,7 +818,6 @@
 {"as_of": "2026-06-17", "coverage_status": "present", "in_universe": 1, "internal_id": "SEC-0001345105-CPA", "market_cap": 5892274946.19, "source": "DERIVED"}
 {"as_of": "2026-06-17", "coverage_status": "present", "in_universe": 1, "internal_id": "SEC-0001345126-CODI", "market_cap": 746340782.72, "source": "DERIVED"}
 {"as_of": "2026-06-17", "coverage_status": "present", "in_universe": 1, "internal_id": "SEC-0001347178-VNDA", "market_cap": 358407949.52, "source": "DERIVED"}
-{"as_of": "2026-06-17", "coverage_status": "present", "in_universe": 1, "internal_id": "SEC-0001348911-KALV", "market_cap": 1383007149.0, "source": "DERIVED"}
 {"as_of": "2026-06-17", "coverage_status": "present", "in_universe": 1, "internal_id": "SEC-0001349436-SD", "market_cap": 522024182.26000005, "source": "DERIVED"}
 {"as_of": "2026-06-17", "coverage_status": "present", "in_universe": 1, "internal_id": "SEC-0001350593-MWA", "market_cap": 4013483176.35, "source": "DERIVED"}
 {"as_of": "2026-06-17", "coverage_status": "present", "in_universe": 1, "internal_id": "SEC-0001350653-ATEC", "market_cap": 1247178548.8, "source": "DERIVED"}
@@ -876,7 +860,6 @@
 {"as_of": "2026-06-17", "coverage_status": "present", "in_universe": 1, "internal_id": "SEC-0001377121-PTGX", "market_cap": 7166859407.12, "source": "DERIVED"}
 {"as_of": "2026-06-17", "coverage_status": "present", "in_universe": 1, "internal_id": "SEC-0001377757-GAU", "market_cap": 571538961.4000001, "source": "DERIVED"}
 {"as_of": "2026-06-17", "coverage_status": "present", "in_universe": 1, "internal_id": "SEC-0001379041-EIG", "market_cap": 847018822.03, "source": "DERIVED"}
-{"as_of": "2026-06-17", "coverage_status": "present", "in_universe": 1, "internal_id": "SEC-0001379785-BBDC", "market_cap": 862784724.16, "source": "DERIVED"}
 {"as_of": "2026-06-17", "coverage_status": "present", "in_universe": 1, "internal_id": "SEC-0001381640-MLCO", "market_cap": 6638845516.160001, "source": "DERIVED"}
 {"as_of": "2026-06-17", "coverage_status": "present", "in_universe": 1, "internal_id": "SEC-0001381668-TFSL", "market_cap": 4562630934.07, "source": "DERIVED"}
 {"as_of": "2026-06-17", "coverage_status": "present", "in_universe": 1, "internal_id": "SEC-0001382101-STRO", "market_cap": 470675231.58, "source": "DERIVED"}
@@ -896,7 +879,6 @@
 {"as_of": "2026-06-17", "coverage_status": "present", "in_universe": 1, "internal_id": "SEC-0001394832-ATS", "market_cap": 2743803165.6, "source": "DERIVED"}
 {"as_of": "2026-06-17", "coverage_status": "present", "in_universe": 1, "internal_id": "SEC-0001395937-SNDX", "market_cap": 1687134914.08, "source": "DERIVED"}
 {"as_of": "2026-06-17", "coverage_status": "present", "in_universe": 1, "internal_id": "SEC-0001395942-OPLN", "market_cap": 3943314065.3199997, "source": "DERIVED"}
-{"as_of": "2026-06-17", "coverage_status": "present", "in_universe": 1, "internal_id": "SEC-0001396440-MAIN", "market_cap": 4560205496.91, "source": "DERIVED"}
 {"as_of": "2026-06-17", "coverage_status": "present", "in_universe": 1, "internal_id": "SEC-0001396536-DUOT", "market_cap": 360422892.0, "source": "DERIVED"}
 {"as_of": "2026-06-17", "coverage_status": "present", "in_universe": 1, "internal_id": "SEC-0001396814-PCRX", "market_cap": 890836999.36, "source": "DERIVED"}
 {"as_of": "2026-06-17", "coverage_status": "present", "in_universe": 1, "internal_id": "SEC-0001398659-G", "market_cap": 5137742318.099999, "source": "DERIVED"}
@@ -910,7 +892,6 @@
 {"as_of": "2026-06-17", "coverage_status": "present", "in_universe": 1, "internal_id": "SEC-0001406587-FOR", "market_cap": 1449668191.8600001, "source": "DERIVED"}
 {"as_of": "2026-06-17", "coverage_status": "present", "in_universe": 1, "internal_id": "SEC-0001406666-CALX", "market_cap": 2394387504.46, "source": "DERIVED"}
 {"as_of": "2026-06-17", "coverage_status": "present", "in_universe": 1, "internal_id": "SEC-0001408075-GPK", "market_cap": 3149640702.15, "source": "DERIVED"}
-{"as_of": "2026-06-17", "coverage_status": "present", "in_universe": 1, "internal_id": "SEC-0001408100-KW", "market_cap": 1521191763.0, "source": "DERIVED"}
 {"as_of": "2026-06-17", "coverage_status": "present", "in_universe": 1, "internal_id": "SEC-0001409171-TITN", "market_cap": 453310825.59, "source": "DERIVED"}
 {"as_of": "2026-06-17", "coverage_status": "present", "in_universe": 1, "internal_id": "SEC-0001409493-CIM", "market_cap": 1109982658.86, "source": "DERIVED"}
 {"as_of": "2026-06-17", "coverage_status": "present", "in_universe": 1, "internal_id": "SEC-0001409970-LC", "market_cap": 2169750899.25, "source": "DERIVED"}
@@ -920,9 +901,7 @@
 {"as_of": "2026-06-17", "coverage_status": "present", "in_universe": 1, "internal_id": "SEC-0001411342-EFC", "market_cap": 1672789888.66, "source": "DERIVED"}
 {"as_of": "2026-06-17", "coverage_status": "present", "in_universe": 1, "internal_id": "SEC-0001411579-AMC", "market_cap": 1628104670.5, "source": "DERIVED"}
 {"as_of": "2026-06-17", "coverage_status": "present", "in_universe": 1, "internal_id": "SEC-0001412408-PHR", "market_cap": 568134657.75, "source": "DERIVED"}
-{"as_of": "2026-06-17", "coverage_status": "present", "in_universe": 1, "internal_id": "SEC-0001414932-OCSL", "market_cap": 1019149501.11, "source": "DERIVED"}
 {"as_of": "2026-06-17", "coverage_status": "present", "in_universe": 1, "internal_id": "SEC-0001415921-NMM", "market_cap": 2075068109.19, "source": "DERIVED"}
-{"as_of": "2026-06-17", "coverage_status": "present", "in_universe": 1, "internal_id": "SEC-0001418076-SLRC", "market_cap": 673749729.9, "source": "DERIVED"}
 {"as_of": "2026-06-17", "coverage_status": "present", "in_universe": 1, "internal_id": "SEC-0001418121-APLE", "market_cap": 3836097752.5, "source": "DERIVED"}
 {"as_of": "2026-06-17", "coverage_status": "present", "in_universe": 1, "internal_id": "SEC-0001418819-IRDM", "market_cap": 4763034867.2, "source": "DERIVED"}
 {"as_of": "2026-06-17", "coverage_status": "present", "in_universe": 1, "internal_id": "SEC-0001419612-SEDG", "market_cap": 3325539285.36, "source": "DERIVED"}
@@ -932,7 +911,6 @@
 {"as_of": "2026-06-17", "coverage_status": "present", "in_universe": 1, "internal_id": "SEC-0001421517-ERII", "market_cap": 463391878.41, "source": "DERIVED"}
 {"as_of": "2026-06-17", "coverage_status": "present", "in_universe": 1, "internal_id": "SEC-0001421876-LKFT", "market_cap": 1869499904.27, "source": "DERIVED"}
 {"as_of": "2026-06-17", "coverage_status": "present", "in_universe": 1, "internal_id": "SEC-0001422143-KURA", "market_cap": 845315793.63, "source": "DERIVED"}
-{"as_of": "2026-06-17", "coverage_status": "present", "in_universe": 1, "internal_id": "SEC-0001422183-FSK", "market_cap": 2862278945.26, "source": "DERIVED"}
 {"as_of": "2026-06-17", "coverage_status": "present", "in_universe": 1, "internal_id": "SEC-0001423221-NX", "market_cap": 743209110.52, "source": "DERIVED"}
 {"as_of": "2026-06-17", "coverage_status": "present", "in_universe": 1, "internal_id": "SEC-0001424182-BNL", "market_cap": 3908202390.8999996, "source": "DERIVED"}
 {"as_of": "2026-06-17", "coverage_status": "present", "in_universe": 1, "internal_id": "SEC-0001424929-FOXF", "market_cap": 739753386.12, "source": "DERIVED"}
@@ -1004,7 +982,6 @@
 {"as_of": "2026-06-17", "coverage_status": "present", "in_universe": 1, "internal_id": "SEC-0001476045-CLDT", "market_cap": 604851673.6, "source": "DERIVED"}
 {"as_of": "2026-06-17", "coverage_status": "present", "in_universe": 1, "internal_id": "SEC-0001476150-TRNO", "market_cap": 6788778366.74, "source": "DERIVED"}
 {"as_of": "2026-06-17", "coverage_status": "present", "in_universe": 1, "internal_id": "SEC-0001476204-PECO", "market_cap": 5101740000.0, "source": "DERIVED"}
-{"as_of": "2026-06-17", "coverage_status": "present", "in_universe": 1, "internal_id": "SEC-0001476765-GBDC", "market_cap": 3217115485.35, "source": "DERIVED"}
 {"as_of": "2026-06-17", "coverage_status": "present", "in_universe": 1, "internal_id": "SEC-0001477294-ST", "market_cap": 7193068995.16, "source": "DERIVED"}
 {"as_of": "2026-06-17", "coverage_status": "present", "in_universe": 1, "internal_id": "SEC-0001477449-TDOC", "market_cap": 1370094330.33, "source": "DERIVED"}
 {"as_of": "2026-06-17", "coverage_status": "present", "in_universe": 1, "internal_id": "SEC-0001477641-DQ", "market_cap": 4892261690.64, "source": "DERIVED"}
@@ -1020,14 +997,12 @@
 {"as_of": "2026-06-17", "coverage_status": "present", "in_universe": 1, "internal_id": "SEC-0001486159-CHRD", "market_cap": 7148307265.51, "source": "DERIVED"}
 {"as_of": "2026-06-17", "coverage_status": "present", "in_universe": 1, "internal_id": "SEC-0001487952-VPG", "market_cap": 1635589489.6499999, "source": "DERIVED"}
 {"as_of": "2026-06-17", "coverage_status": "present", "in_universe": 1, "internal_id": "SEC-0001488813-CUBI", "market_cap": 2535528596.48, "source": "DERIVED"}
-{"as_of": "2026-06-17", "coverage_status": "present", "in_universe": 1, "internal_id": "SEC-0001489096-THR", "market_cap": 2008349464.08, "source": "DERIVED"}
 {"as_of": "2026-06-17", "coverage_status": "present", "in_universe": 1, "internal_id": "SEC-0001490281-GRPN", "market_cap": 674712210.9599999, "source": "DERIVED"}
 {"as_of": "2026-06-17", "coverage_status": "present", "in_universe": 1, "internal_id": "SEC-0001490906-CFFN", "market_cap": 1015426314.27, "source": "DERIVED"}
 {"as_of": "2026-06-17", "coverage_status": "present", "in_universe": 1, "internal_id": "SEC-0001492298-SBRA", "market_cap": 4552031214.75, "source": "DERIVED"}
 {"as_of": "2026-06-17", "coverage_status": "present", "in_universe": 1, "internal_id": "SEC-0001493225-NFBK", "market_cap": 602234745.84, "source": "DERIVED"}
 {"as_of": "2026-06-17", "coverage_status": "present", "in_universe": 1, "internal_id": "SEC-0001495240-LAND", "market_cap": 359626098.04, "source": "DERIVED"}
 {"as_of": "2026-06-17", "coverage_status": "present", "in_universe": 1, "internal_id": "SEC-0001495932-AGNT", "market_cap": 767392725.08, "source": "DERIVED"}
-{"as_of": "2026-06-17", "coverage_status": "present", "in_universe": 1, "internal_id": "SEC-0001496099-NMFC", "market_cap": 690446970.9, "source": "DERIVED"}
 {"as_of": "2026-06-17", "coverage_status": "present", "in_universe": 1, "internal_id": "SEC-0001496443-PAYS", "market_cap": 402301522.26, "source": "DERIVED"}
 {"as_of": "2026-06-17", "coverage_status": "present", "in_universe": 1, "internal_id": "SEC-0001497645-INN", "market_cap": 694620149.98, "source": "DERIVED"}
 {"as_of": "2026-06-17", "coverage_status": "present", "in_universe": 1, "internal_id": "SEC-0001497770-WD", "market_cap": 1750893291.0, "source": "DERIVED"}
@@ -1039,19 +1014,15 @@
 {"as_of": "2026-06-17", "coverage_status": "present", "in_universe": 1, "internal_id": "SEC-0001501989-CTMX", "market_cap": 644400640.24, "source": "DERIVED"}
 {"as_of": "2026-06-17", "coverage_status": "present", "in_universe": 1, "internal_id": "SEC-0001504008-BKU", "market_cap": 3407318752.32, "source": "DERIVED"}
 {"as_of": "2026-06-17", "coverage_status": "present", "in_universe": 1, "internal_id": "SEC-0001504461-NGL", "market_cap": 1942646194.4099998, "source": "DERIVED"}
-{"as_of": "2026-06-17", "coverage_status": "present", "in_universe": 1, "internal_id": "SEC-0001504619-PFLT", "market_cap": 752071651.68, "source": "DERIVED"}
 {"as_of": "2026-06-17", "coverage_status": "present", "in_universe": 1, "internal_id": "SEC-0001506184-IMMP", "market_cap": 546039662.0925, "source": "DERIVED"}
 {"as_of": "2026-06-17", "coverage_status": "present", "in_universe": 1, "internal_id": "SEC-0001507079-FND", "market_cap": 5413355032.0, "source": "DERIVED"}
 {"as_of": "2026-06-17", "coverage_status": "present", "in_universe": 1, "internal_id": "SEC-0001507605-MARA", "market_cap": 5307285401.76, "source": "DERIVED"}
-{"as_of": "2026-06-17", "coverage_status": "present", "in_universe": 1, "internal_id": "SEC-0001508655-TSLX", "market_cap": 1567823400.0, "source": "DERIVED"}
 {"as_of": "2026-06-17", "coverage_status": "present", "in_universe": 1, "internal_id": "SEC-0001509261-RZLT", "market_cap": 461240265.49, "source": "DERIVED"}
-{"as_of": "2026-06-17", "coverage_status": "present", "in_universe": 1, "internal_id": "SEC-0001509470-SSSS", "market_cap": 327502052.40000004, "source": "DERIVED"}
 {"as_of": "2026-06-17", "coverage_status": "present", "in_universe": 1, "internal_id": "SEC-0001509991-KOS", "market_cap": 1482973185.0, "source": "DERIVED"}
 {"as_of": "2026-06-17", "coverage_status": "present", "in_universe": 1, "internal_id": "SEC-0001511337-RLJ", "market_cap": 1686419958.6, "source": "DERIVED"}
 {"as_of": "2026-06-17", "coverage_status": "present", "in_universe": 1, "internal_id": "SEC-0001512228-NB", "market_cap": 755596779.12, "source": "DERIVED"}
 {"as_of": "2026-06-17", "coverage_status": "present", "in_universe": 1, "internal_id": "SEC-0001512499-LIND", "market_cap": 1571088779.28, "source": "DERIVED"}
 {"as_of": "2026-06-17", "coverage_status": "present", "in_universe": 1, "internal_id": "SEC-0001512920-SII", "market_cap": 3318433542.02, "source": "DERIVED"}
-{"as_of": "2026-06-17", "coverage_status": "present", "in_universe": 1, "internal_id": "SEC-0001513363-FDUS", "market_cap": 684317182.9200001, "source": "DERIVED"}
 {"as_of": "2026-06-17", "coverage_status": "present", "in_universe": 1, "internal_id": "SEC-0001513761-NCLH", "market_cap": 9104154076.199999, "source": "DERIVED"}
 {"as_of": "2026-06-17", "coverage_status": "present", "in_universe": 1, "internal_id": "SEC-0001514705-SXC", "market_cap": 740768418.5400001, "source": "DERIVED"}
 {"as_of": "2026-06-17", "coverage_status": "present", "in_universe": 1, "internal_id": "SEC-0001515673-RARE", "market_cap": 2650345017.84, "source": "DERIVED"}
@@ -1090,16 +1061,13 @@
 {"as_of": "2026-06-17", "coverage_status": "present", "in_universe": 1, "internal_id": "SEC-0001531031-ESQ", "market_cap": 970000018.79, "source": "DERIVED"}
 {"as_of": "2026-06-17", "coverage_status": "present", "in_universe": 1, "internal_id": "SEC-0001533615-XRN", "market_cap": 462689656.8, "source": "DERIVED"}
 {"as_of": "2026-06-17", "coverage_status": "present", "in_universe": 1, "internal_id": "SEC-0001534120-AVTX", "market_cap": 350942160.8, "source": "DERIVED"}
-{"as_of": "2026-06-17", "coverage_status": "present", "in_universe": 1, "internal_id": "SEC-0001534254-CION", "market_cap": 340346571.76, "source": "DERIVED"}
 {"as_of": "2026-06-17", "coverage_status": "present", "in_universe": 1, "internal_id": "SEC-0001534675-TGLS", "market_cap": 2002184146.0800002, "source": "DERIVED"}
-{"as_of": "2026-06-17", "coverage_status": "present", "in_universe": 1, "internal_id": "SEC-0001535778-MSIF", "market_cap": 543572693.37, "source": "DERIVED"}
 {"as_of": "2026-06-17", "coverage_status": "present", "in_universe": 1, "internal_id": "SEC-0001535929-VOYA", "market_cap": 8208021496.95, "source": "DERIVED"}
 {"as_of": "2026-06-17", "coverage_status": "present", "in_universe": 1, "internal_id": "SEC-0001537054-GOGO", "market_cap": 473334830.5, "source": "DERIVED"}
 {"as_of": "2026-06-17", "coverage_status": "present", "in_universe": 1, "internal_id": "SEC-0001537137-SLI", "market_cap": 836572442.7900001, "source": "DERIVED"}
 {"as_of": "2026-06-17", "coverage_status": "present", "in_universe": 1, "internal_id": "SEC-0001538263-HTB", "market_cap": 806640785.4499999, "source": "DERIVED"}
 {"as_of": "2026-06-17", "coverage_status": "present", "in_universe": 1, "internal_id": "SEC-0001539638-TFIN", "market_cap": 1690482025.5300002, "source": "DERIVED"}
 {"as_of": "2026-06-17", "coverage_status": "present", "in_universe": 1, "internal_id": "SEC-0001543418-TMQ", "market_cap": 665317971.8100001, "source": "DERIVED"}
-{"as_of": "2026-06-17", "coverage_status": "present", "in_universe": 1, "internal_id": "SEC-0001544206-CGBD", "market_cap": 767551383.78, "source": "DERIVED"}
 {"as_of": "2026-06-17", "coverage_status": "present", "in_universe": 1, "internal_id": "SEC-0001546417-BLMN", "market_cap": 657517724.16, "source": "DERIVED"}
 {"as_of": "2026-06-17", "coverage_status": "present", "in_universe": 1, "internal_id": "SEC-0001547459-NGVC", "market_cap": 707812945.92, "source": "DERIVED"}
 {"as_of": "2026-06-17", "coverage_status": "present", "in_universe": 1, "internal_id": "SEC-0001547903-NMIH", "market_cap": 2874776355.44, "source": "DERIVED"}
@@ -1130,7 +1098,6 @@
 {"as_of": "2026-06-17", "coverage_status": "present", "in_universe": 1, "internal_id": "SEC-0001570827-VCTR", "market_cap": 5436454355.639999, "source": "DERIVED"}
 {"as_of": "2026-06-17", "coverage_status": "present", "in_universe": 1, "internal_id": "SEC-0001571123-SAIC", "market_cap": 4634143276.49, "source": "DERIVED"}
 {"as_of": "2026-06-17", "coverage_status": "present", "in_universe": 1, "internal_id": "SEC-0001571283-REXR", "market_cap": 7329067323.929999, "source": "DERIVED"}
-{"as_of": "2026-06-17", "coverage_status": "present", "in_universe": 1, "internal_id": "SEC-0001572694-GSBD", "market_cap": 1034509725.7299999, "source": "DERIVED"}
 {"as_of": "2026-06-17", "coverage_status": "present", "in_universe": 1, "internal_id": "SEC-0001573221-REAL", "market_cap": 1372355221.92, "source": "DERIVED"}
 {"as_of": "2026-06-17", "coverage_status": "present", "in_universe": 1, "internal_id": "SEC-0001575515-SFM", "market_cap": 7491569017.66, "source": "DERIVED"}
 {"as_of": "2026-06-17", "coverage_status": "present", "in_universe": 1, "internal_id": "SEC-0001575828-XPRO", "market_cap": 1636293933.69, "source": "DERIVED"}
@@ -1272,10 +1239,8 @@
 {"as_of": "2026-06-17", "coverage_status": "present", "in_universe": 1, "internal_id": "SEC-0001653477-NGVT", "market_cap": 2494868757.5, "source": "DERIVED"}
 {"as_of": "2026-06-17", "coverage_status": "present", "in_universe": 1, "internal_id": "SEC-0001654126-ZIM", "market_cap": 2888772473.84, "source": "DERIVED"}
 {"as_of": "2026-06-17", "coverage_status": "present", "in_universe": 1, "internal_id": "SEC-0001654795-BBUC", "market_cap": 2799166834.98, "source": "DERIVED"}
-{"as_of": "2026-06-17", "coverage_status": "present", "in_universe": 1, "internal_id": "SEC-0001655050-BCSF", "market_cap": 801774746.52, "source": "DERIVED"}
 {"as_of": "2026-06-17", "coverage_status": "present", "in_universe": 1, "internal_id": "SEC-0001655210-BYND", "market_cap": 323056065.7989, "source": "DERIVED"}
 {"as_of": "2026-06-17", "coverage_status": "present", "in_universe": 1, "internal_id": "SEC-0001655759-ARVN", "market_cap": 494877588.65999997, "source": "DERIVED"}
-{"as_of": "2026-06-17", "coverage_status": "present", "in_universe": 1, "internal_id": "SEC-0001655888-OBDC", "market_cap": 5370024687.68, "source": "DERIVED"}
 {"as_of": "2026-06-17", "coverage_status": "present", "in_universe": 1, "internal_id": "SEC-0001655891-TRMD", "market_cap": 2940675157.14, "source": "DERIVED"}
 {"as_of": "2026-06-17", "coverage_status": "present", "in_universe": 1, "internal_id": "SEC-0001656472-CRON", "market_cap": 997677644.13, "source": "DERIVED"}
 {"as_of": "2026-06-17", "coverage_status": "present", "in_universe": 1, "internal_id": "SEC-0001657853-HTZ", "market_cap": 1525142646.09, "source": "DERIVED"}
@@ -1364,7 +1329,6 @@
 {"as_of": "2026-06-17", "coverage_status": "present", "in_universe": 1, "internal_id": "SEC-0001714174-BUR", "market_cap": 966095679.15, "source": "DERIVED"}
 {"as_of": "2026-06-17", "coverage_status": "present", "in_universe": 1, "internal_id": "SEC-0001714899-DNLI", "market_cap": 3728091722.1299996, "source": "DERIVED"}
 {"as_of": "2026-06-17", "coverage_status": "present", "in_universe": 1, "internal_id": "SEC-0001715497-BORR", "market_cap": 1311809839.1299999, "source": "DERIVED"}
-{"as_of": "2026-06-17", "coverage_status": "present", "in_universe": 1, "internal_id": "SEC-0001717307-ILPT", "market_cap": 554656718.72, "source": "DERIVED"}
 {"as_of": "2026-06-17", "coverage_status": "present", "in_universe": 1, "internal_id": "SEC-0001717393-CAAP", "market_cap": 4487352005.36, "source": "DERIVED"}
 {"as_of": "2026-06-17", "coverage_status": "present", "in_universe": 1, "internal_id": "SEC-0001717547-BRSP", "market_cap": 710015454.25, "source": "DERIVED"}
 {"as_of": "2026-06-17", "coverage_status": "present", "in_universe": 1, "internal_id": "SEC-0001718405-HYMC", "market_cap": 2336090567.57, "source": "DERIVED"}
@@ -1390,7 +1354,6 @@
 {"as_of": "2026-06-17", "coverage_status": "present", "in_universe": 1, "internal_id": "SEC-0001734713-BV", "market_cap": 1177116000.0, "source": "DERIVED"}
 {"as_of": "2026-06-17", "coverage_status": "present", "in_universe": 1, "internal_id": "SEC-0001735438-MGTX", "market_cap": 847854171.66, "source": "DERIVED"}
 {"as_of": "2026-06-17", "coverage_status": "present", "in_universe": 1, "internal_id": "SEC-0001735707-GTX", "market_cap": 6319483861.28, "source": "DERIVED"}
-{"as_of": "2026-06-17", "coverage_status": "present", "in_universe": 1, "internal_id": "SEC-0001736035-BXSL", "market_cap": 5464995550.469999, "source": "DERIVED"}
 {"as_of": "2026-06-17", "coverage_status": "present", "in_universe": 1, "internal_id": "SEC-0001736946-ARLO", "market_cap": 1378258577.73, "source": "DERIVED"}
 {"as_of": "2026-06-17", "coverage_status": "present", "in_universe": 1, "internal_id": "SEC-0001737287-ALLO", "market_cap": 477804723.2, "source": "DERIVED"}
 {"as_of": "2026-06-17", "coverage_status": "present", "in_universe": 1, "internal_id": "SEC-0001737450-OPRA", "market_cap": 1684486972.24, "source": "DERIVED"}
@@ -1408,8 +1371,6 @@
 {"as_of": "2026-06-17", "coverage_status": "present", "in_universe": 1, "internal_id": "SEC-0001745999-BEAM", "market_cap": 3341516870.72, "source": "DERIVED"}
 {"as_of": "2026-06-17", "coverage_status": "present", "in_universe": 1, "internal_id": "SEC-0001746109-BFC", "market_cap": 1583805111.0299997, "source": "DERIVED"}
 {"as_of": "2026-06-17", "coverage_status": "present", "in_universe": 1, "internal_id": "SEC-0001747068-MCBS", "market_cap": 972789363.24, "source": "DERIVED"}
-{"as_of": "2026-06-17", "coverage_status": "present", "in_universe": 1, "internal_id": "SEC-0001747172-KBDC", "market_cap": 917620527.66, "source": "DERIVED"}
-{"as_of": "2026-06-17", "coverage_status": "present", "in_universe": 1, "internal_id": "SEC-0001747777-OTF", "market_cap": 4982656537.08, "source": "DERIVED"}
 {"as_of": "2026-06-17", "coverage_status": "present", "in_universe": 1, "internal_id": "SEC-0001748824-AAMI", "market_cap": 2954970824.96, "source": "DERIVED"}
 {"as_of": "2026-06-17", "coverage_status": "present", "in_universe": 1, "internal_id": "SEC-0001750284-OLMA", "market_cap": 822761711.8399999, "source": "DERIVED"}
 {"as_of": "2026-06-17", "coverage_status": "present", "in_universe": 1, "internal_id": "SEC-0001753539-BKSY", "market_cap": 1095458447.52, "source": "DERIVED"}
@@ -1452,10 +1413,8 @@
 {"as_of": "2026-06-17", "coverage_status": "present", "in_universe": 1, "internal_id": "SEC-0001779128-SRTA", "market_cap": 500988840.3, "source": "DERIVED"}
 {"as_of": "2026-06-17", "coverage_status": "present", "in_universe": 1, "internal_id": "SEC-0001781730-TCBX", "market_cap": 638296971.37, "source": "DERIVED"}
 {"as_of": "2026-06-17", "coverage_status": "present", "in_universe": 1, "internal_id": "SEC-0001782170-RELY", "market_cap": 4301762843.97, "source": "DERIVED"}
-{"as_of": "2026-06-17", "coverage_status": "present", "in_universe": 1, "internal_id": "SEC-0001782524-MSDL", "market_cap": 1298102363.8, "source": "DERIVED"}
 {"as_of": "2026-06-17", "coverage_status": "present", "in_universe": 1, "internal_id": "SEC-0001783183-PHAT", "market_cap": 877315483.0, "source": "DERIVED"}
 {"as_of": "2026-06-17", "coverage_status": "present", "in_universe": 1, "internal_id": "SEC-0001784535-PRCH", "market_cap": 1564514605.5, "source": "DERIVED"}
-{"as_of": "2026-06-17", "coverage_status": "present", "in_universe": 1, "internal_id": "SEC-0001786108-TRIN", "market_cap": 1507415907.27, "source": "DERIVED"}
 {"as_of": "2026-06-17", "coverage_status": "present", "in_universe": 1, "internal_id": "SEC-0001786352-BILL", "market_cap": 3206018642.1299996, "source": "DERIVED"}
 {"as_of": "2026-06-17", "coverage_status": "present", "in_universe": 1, "internal_id": "SEC-0001786431-REYN", "market_cap": 4917202905.41, "source": "DERIVED"}
 {"as_of": "2026-06-17", "coverage_status": "present", "in_universe": 1, "internal_id": "SEC-0001786842-VNT", "market_cap": 4088832000.0, "source": "DERIVED"}
@@ -1570,7 +1529,6 @@
 {"as_of": "2026-06-17", "coverage_status": "present", "in_universe": 1, "internal_id": "SEC-0001838359-RGTI", "market_cap": 6724388026.465, "source": "DERIVED"}
 {"as_of": "2026-06-17", "coverage_status": "present", "in_universe": 1, "internal_id": "SEC-0001838406-BKV", "market_cap": 2639498923.43, "source": "DERIVED"}
 {"as_of": "2026-06-17", "coverage_status": "present", "in_universe": 1, "internal_id": "SEC-0001839341-CORZ", "market_cap": 9021584586.96, "source": "DERIVED"}
-{"as_of": "2026-06-17", "coverage_status": "present", "in_universe": 1, "internal_id": "SEC-0001839341-CORZW", "market_cap": 6844070336.76, "source": "DERIVED"}
 {"as_of": "2026-06-17", "coverage_status": "present", "in_universe": 1, "internal_id": "SEC-0001839839-JBI", "market_cap": 713730998.9399999, "source": "DERIVED"}
 {"as_of": "2026-06-17", "coverage_status": "present", "in_universe": 1, "internal_id": "SEC-0001840616-NFGC", "market_cap": 551150760.65, "source": "DERIVED"}
 {"as_of": "2026-06-17", "coverage_status": "present", "in_universe": 1, "internal_id": "SEC-0001841387-CADL", "market_cap": 585242946.73, "source": "DERIVED"}
@@ -1596,7 +1554,7 @@
 {"as_of": "2026-06-17", "coverage_status": "present", "in_universe": 1, "internal_id": "SEC-0001854640-CGAU", "market_cap": 3478628640.55, "source": "DERIVED"}
 {"as_of": "2026-06-17", "coverage_status": "present", "in_universe": 1, "internal_id": "SEC-0001855129-GHRS", "market_cap": 1346037871.5, "source": "DERIVED"}
 {"as_of": "2026-06-17", "coverage_status": "present", "in_universe": 1, "internal_id": "SEC-0001855644-ZURA", "market_cap": 343468170.2, "source": "DERIVED"}
-{"as_of": "2026-06-17", "coverage_status": "present", "in_universe": 1, "internal_id": "SEC-0001856437-VSCO", "market_cap": 4369358751.599999, "source": "DERIVED"}
+{"as_of": "2026-06-17", "coverage_status": "present", "in_universe": 1, "internal_id": "SEC-0001856437-VSXY", "market_cap": 6318269782.24, "source": "DERIVED"}
 {"as_of": "2026-06-17", "coverage_status": "present", "in_universe": 1, "internal_id": "SEC-0001856485-SLVM", "market_cap": 1573153624.2400002, "source": "DERIVED"}
 {"as_of": "2026-06-17", "coverage_status": "present", "in_universe": 1, "internal_id": "SEC-0001857154-DNUT", "market_cap": 651672000.0, "source": "DERIVED"}
 {"as_of": "2026-06-17", "coverage_status": "present", "in_universe": 1, "internal_id": "SEC-0001857475-DOLE", "market_cap": 1337934837.0, "source": "DERIVED"}
@@ -1693,7 +1651,6 @@
 {"as_of": "2026-06-17", "coverage_status": "present", "in_universe": 1, "internal_id": "SEC-0001970622-USAR", "market_cap": 3123638111.55, "source": "DERIVED"}
 {"as_of": "2026-06-17", "coverage_status": "present", "in_universe": 1, "internal_id": "SEC-0001974138-NATL", "market_cap": 3187288094.4, "source": "DERIVED"}
 {"as_of": "2026-06-17", "coverage_status": "present", "in_universe": 1, "internal_id": "SEC-0001979330-NBBK", "market_cap": 901276246.08, "source": "DERIVED"}
-{"as_of": "2026-06-17", "coverage_status": "present", "in_universe": 1, "internal_id": "SEC-0001980088-MNR", "market_cap": 2097688061.9, "source": "DERIVED"}
 {"as_of": "2026-06-17", "coverage_status": "present", "in_universe": 1, "internal_id": "SEC-0001981535-SBET", "market_cap": 1056771210.8800001, "source": "DERIVED"}
 {"as_of": "2026-06-17", "coverage_status": "present", "in_universe": 1, "internal_id": "SEC-0001981599-CTRI", "market_cap": 3025011820.14, "source": "DERIVED"}
 {"as_of": "2026-06-17", "coverage_status": "present", "in_universe": 1, "internal_id": "SEC-0001981792-HHH", "market_cap": 3963253077.83, "source": "DERIVED"}
@@ -1704,7 +1661,6 @@
 {"as_of": "2026-06-17", "coverage_status": "present", "in_universe": 1, "internal_id": "SEC-0001991792-CGON", "market_cap": 5102419136.0, "source": "DERIVED"}
 {"as_of": "2026-06-17", "coverage_status": "present", "in_universe": 1, "internal_id": "SEC-0001992243-TE", "market_cap": 2522492192.8799996, "source": "DERIVED"}
 {"as_of": "2026-06-17", "coverage_status": "present", "in_universe": 1, "internal_id": "SEC-0001993004-NWE", "market_cap": 4258815027.8399997, "source": "DERIVED"}
-{"as_of": "2026-06-17", "coverage_status": "present", "in_universe": 1, "internal_id": "SEC-0001993344-AAUC", "market_cap": 3190778113.18, "source": "DERIVED"}
 {"as_of": "2026-06-17", "coverage_status": "present", "in_universe": 1, "internal_id": "SEC-0001994702-KYTX", "market_cap": 485936739.71999997, "source": "DERIVED"}
 {"as_of": "2026-06-17", "coverage_status": "present", "in_universe": 1, "internal_id": "SEC-0001997464-MRX", "market_cap": 4492218777.3, "source": "DERIVED"}
 {"as_of": "2026-06-17", "coverage_status": "present", "in_universe": 1, "internal_id": "SEC-0001997652-TBN", "market_cap": 1019480724.0, "source": "DERIVED"}

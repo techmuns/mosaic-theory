@@ -118,7 +118,7 @@ def build_price_record(
     rel = relative_return(
         price_bars, benchmark_bars, reference_date=reference_date, lookback_days=decline_window_days
     )
-    prices = prices.model_copy(update={"rel_ret_vs_sector": rel})
+    prices = prices.model_copy(update={"rel_ret_vs_market": rel})
 
     uf: DataField[float] = DataField.unknown(
         source="EDGAR", tier=SourceTier.DERIVED, note="deferred until price gates pass"

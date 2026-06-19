@@ -66,7 +66,7 @@ Pulls (*verify exact endpoints, tick types, scan codes, pacing at build*):
 ### A — Name data-record (what the gates consume)
 Every field with its `(value, as_of, source, coverage_status)` envelope.
 - **identity:** internal_id · conid · ticker+MIC · eod_symbol · CIK? · name · country · currency · market_cap
-- **price-derived (source: EOD; IBKR cross-check at depth):** last · 52w_high · drawdown_from_high · ret_3m/6m/12m · rel_ret_vs_sector · adv_90d_shares · adv_90d_usd · turnover · volume_spike
+- **price-derived (source: EOD; IBKR cross-check at depth):** last · 52w_high · drawdown_from_high · ret_3m/6m/12m · rel_ret_vs_market · adv_90d_shares · adv_90d_usd · turnover · volume_spike
 - **fundamental (US: present / non-US: unknown):** ev_ebitda + pctile_vs_history · pe + pctile · fcf_sign · op_income_sign · net_leverage
 - **stress (attached, never a gate; shortlist only):** iv_pctile *(or unavailable)* · short_interest *(or unavailable)*
 - **events (pointers only):** typed events {downgrade | guidance_cut | contract | threat} with dates

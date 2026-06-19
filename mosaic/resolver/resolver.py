@@ -180,7 +180,7 @@ class EntityResolver:
         return cast(dict[str, Any], data)
 
     def sic_for(self, cik: int | str) -> tuple[str | None, str | None]:
-        """(SIC code, description) — the pinned sector source for Screen-2 G2."""
+        """(SIC code, description) — the operating-co universe gate's structural fact."""
         d = self.submissions(cik)
         sic = str(d["sic"]) if d.get("sic") else None
         return sic, d.get("sicDescription")

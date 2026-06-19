@@ -116,7 +116,7 @@ def test_features_52w_and_returns() -> None:
     # only 3 monthly bars fall in the 90d window -> ADV defers
     assert f.adv_90d_shares.coverage_status is CoverageStatus.UNKNOWN
     # rel-return-vs-sector always defers to step 5 (needs SIC peers)
-    assert f.rel_ret_vs_sector.coverage_status is CoverageStatus.UNKNOWN
+    assert f.rel_ret_vs_market.coverage_status is CoverageStatus.UNKNOWN
 
 
 def test_features_adv_and_volume_spike() -> None:

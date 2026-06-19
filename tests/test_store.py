@@ -61,7 +61,7 @@ def _data_record(ident: Identity) -> DataRecord:
         last=p(100.0), high_52w=p(180.0), low_52w=p(95.0),
         drawdown_from_high=d(-0.44),
         dist_from_low=p(0.05), ret_3m=p(-0.3), ret_6m=p(-0.4), ret_12m=p(-0.45),
-        rel_ret_vs_sector=d(-0.35),
+        rel_ret_vs_market=d(-0.35),
         adv_90d_shares=p(5e6), adv_90d_usd=p(5e8), turnover=p(0.01), volume_spike=p(2.1),
     )
     fund = Fundamentals(

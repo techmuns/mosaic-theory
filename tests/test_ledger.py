@@ -44,7 +44,7 @@ def _min_record(ident: Identity) -> DataRecord:
     ui: DataField[int] = DataField.unknown(source="X", tier=SourceTier.EDGAR)
     prices = PriceFeatures(
         last=_u(), high_52w=_u(), low_52w=_u(), drawdown_from_high=_u(), dist_from_low=_u(),
-        ret_3m=_u(), ret_6m=_u(), ret_12m=_u(), rel_ret_vs_sector=_u(),
+        ret_3m=_u(), ret_6m=_u(), ret_12m=_u(), rel_ret_vs_market=_u(),
         adv_90d_shares=_u(), adv_90d_usd=_u(), turnover=_u(), volume_spike=_u(),
     )
     funds = Fundamentals(

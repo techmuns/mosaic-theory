@@ -46,8 +46,8 @@ from mosaic.schemas.data_record import DataRecord, EventType, Fundamentals, Pric
 # by magnitude) and > −30% (too shallow), so this maps the *admitted* range.
 _DD_GATE = 0.30
 _DD_FLOOR = 0.85
-# Idiosyncrasy anchor: a name underperforming its sector by this much over the decline window earns
-# full credit. Idiosyncratic dislocation is where mispricing lives — THE most on-thesis axis.
+# Idiosyncrasy anchor: a name underperforming the market (IWM) by this much over the decline window
+# earns full credit. Idiosyncratic dislocation is where mispricing lives — THE most on-thesis axis.
 _IDIO_FULL = 0.60
 # Multiple-at-floor: G3 admits only a current multiple in the bottom ``_MULT_FLOOR_PCTILE`` of a
 # name's OWN ~5y range; we map [0, floor] → [1, 0] so the cheapest-vs-its-own-history names earn the
@@ -105,7 +105,7 @@ class RankWeights(BaseModel, frozen=True):
     Set by eyeballing the queue-top, NEVER by forward returns (see the module docstring). Their
     *ordering of magnitude* encodes the thesis, not an optimisation:
       - **idiosyncrasy** is THE most on-thesis axis (idiosyncratic dislocation = where mispricing
-        lives; sector beta is not) → the largest weight.
+        lives; market beta is not) → the largest weight.
       - **depth** is the screen's defining, fully-covered signal → second.
       - **character** (sharp/discrete/recent fall vs grind/bleed) ties depth — it rests on the
         gap-down detector, kept at ~0.25 so one EOD signal can't dominate. SPLITS into shape + cause
@@ -162,18 +162,18 @@ def depth_axis(prices: PriceFeatures) -> AxisScore:
 
 
 def idiosyncrasy_axis(prices: PriceFeatures) -> AxisScore:
-    """Idiosyncrasy: how much of the fall is the name vs its sector (G2). Name-specific → higher."""
-    f = prices.rel_ret_vs_sector
+    """Idiosyncrasy: how much of the fall is name-specific vs the market (IWM) — the G2 input."""
+    f = prices.rel_ret_vs_market
     if not f.is_evaluable or f.value is None:
         return AxisScore(
             axis="idiosyncrasy", score=None, coverage=AxisCoverage.UNKNOWN,
-            label="UNKNOWN — no clean sector benchmark",
+            label="UNKNOWN — no clean market benchmark",
         )
-    rel = f.value  # negative == underperformed its sector
+    rel = f.value  # negative == underperformed the market (IWM)
     score = _clip01(-rel / _IDIO_FULL)
     return AxisScore(
         axis="idiosyncrasy", score=score, coverage=AxisCoverage.PRESENT,
-        label=f"{rel:+.0%} vs sector", raw=rel,
+        label=f"{rel:+.0%} vs market", raw=rel,
     )
 
 

@@ -8,6 +8,7 @@
 {"cik": "0000005513", "country": "US", "first_seen": "2026-06-12", "issuer_id": "ISS-0000005513", "name": "Unum Group", "sic": null, "sic_description": null}
 {"cik": "0000006201", "country": "US", "first_seen": "2026-06-12", "issuer_id": "ISS-0000006201", "name": "American Airlines Group Inc.", "sic": null, "sic_description": null}
 {"cik": "0000006845", "country": "US", "first_seen": "2026-06-12", "issuer_id": "ISS-0000006845", "name": "APOGEE ENTERPRISES, INC.", "sic": null, "sic_description": null}
+{"cik": "0000006951", "country": "US", "first_seen": null, "issuer_id": "ISS-0000006951", "name": "APPLIED MATERIALS INC /DE", "sic": null, "sic_description": null}
 {"cik": "0000006955", "country": "US", "first_seen": "2026-06-12", "issuer_id": "ISS-0000006955", "name": "ENERPAC TOOL GROUP CORP", "sic": null, "sic_description": null}
 {"cik": "0000007431", "country": "US", "first_seen": "2026-06-12", "issuer_id": "ISS-0000007431", "name": "ARMSTRONG WORLD INDUSTRIES INC", "sic": null, "sic_description": null}
 {"cik": "0000007789", "country": "US", "first_seen": "2026-06-12", "issuer_id": "ISS-0000007789", "name": "ASSOCIATED BANC-CORP", "sic": null, "sic_description": null}
@@ -149,11 +150,13 @@
 {"cik": "0000101199", "country": "US", "first_seen": "2026-06-12", "issuer_id": "ISS-0000101199", "name": "UNITED FIRE GROUP INC", "sic": null, "sic_description": null}
 {"cik": "0000101382", "country": "US", "first_seen": "2026-06-12", "issuer_id": "ISS-0000101382", "name": "UMB FINANCIAL CORP", "sic": null, "sic_description": null}
 {"cik": "0000101538", "country": "US", "first_seen": "2026-06-12", "issuer_id": "ISS-0000101538", "name": "UNITED STATES ANTIMONY CORP", "sic": null, "sic_description": null}
+{"cik": "0000101829", "country": "US", "first_seen": null, "issuer_id": "ISS-0000101829", "name": "RTX Corp", "sic": null, "sic_description": null}
 {"cik": "0000102037", "country": "US", "first_seen": "2026-06-12", "issuer_id": "ISS-0000102037", "name": "UNIVERSAL CORP /VA/", "sic": null, "sic_description": null}
 {"cik": "0000102212", "country": "US", "first_seen": "2026-06-12", "issuer_id": "ISS-0000102212", "name": "UNIVEST FINANCIAL Corp", "sic": null, "sic_description": null}
 {"cik": "0000102752", "country": "US", "first_seen": "2026-06-12", "issuer_id": "ISS-0000102752", "name": "VSE CORP", "sic": null, "sic_description": null}
 {"cik": "0000103145", "country": "US", "first_seen": "2026-06-12", "issuer_id": "ISS-0000103145", "name": "VEECO INSTRUMENTS INC", "sic": null, "sic_description": null}
 {"cik": "0000103379", "country": "US", "first_seen": "2026-06-12", "issuer_id": "ISS-0000103379", "name": "V F CORP", "sic": null, "sic_description": null}
+{"cik": "0000104169", "country": "US", "first_seen": null, "issuer_id": "ISS-0000104169", "name": "Walmart Inc.", "sic": null, "sic_description": null}
 {"cik": "0000104918", "country": "US", "first_seen": "2026-06-12", "issuer_id": "ISS-0000104918", "name": "AVISTA CORP", "sic": null, "sic_description": null}
 {"cik": "0000105132", "country": "US", "first_seen": "2026-06-12", "issuer_id": "ISS-0000105132", "name": "WD 40 CO", "sic": null, "sic_description": null}
 {"cik": "0000105418", "country": "US", "first_seen": "2026-06-12", "issuer_id": "ISS-0000105418", "name": "WEIS MARKETS INC", "sic": null, "sic_description": null}
@@ -212,6 +215,7 @@
 {"cik": "0000705432", "country": "US", "first_seen": "2026-06-12", "issuer_id": "ISS-0000705432", "name": "SOUTHSIDE BANCSHARES INC", "sic": null, "sic_description": null}
 {"cik": "0000706129", "country": "US", "first_seen": "2026-06-12", "issuer_id": "ISS-0000706129", "name": "HORIZON BANCORP INC /IN/", "sic": null, "sic_description": null}
 {"cik": "0000707179", "country": "US", "first_seen": "2026-06-12", "issuer_id": "ISS-0000707179", "name": "OLD NATIONAL BANCORP /IN/", "sic": null, "sic_description": null}
+{"cik": "0000707549", "country": "US", "first_seen": null, "issuer_id": "ISS-0000707549", "name": "LAM RESEARCH CORP", "sic": null, "sic_description": null}
 {"cik": "0000708781", "country": "US", "first_seen": "2026-06-12", "issuer_id": "ISS-0000708781", "name": "CASS INFORMATION SYSTEMS INC", "sic": null, "sic_description": null}
 {"cik": "0000708821", "country": "US", "first_seen": "2026-06-12", "issuer_id": "ISS-0000708821", "name": "PAR TECHNOLOGY CORP", "sic": null, "sic_description": null}
 {"cik": "0000708955", "country": "US", "first_seen": "2026-06-12", "issuer_id": "ISS-0000708955", "name": "FIRST FINANCIAL BANCORP /OH/", "sic": null, "sic_description": null}
@@ -239,6 +243,7 @@
 {"cik": "0000720500", "country": "US", "first_seen": "2026-06-12", "issuer_id": "ISS-0000720500", "name": "AMTECH SYSTEMS INC", "sic": null, "sic_description": null}
 {"cik": "0000720858", "country": "US", "first_seen": "2026-06-12", "issuer_id": "ISS-0000720858", "name": "INVESTORS TITLE CO", "sic": null, "sic_description": null}
 {"cik": "0000721994", "country": "US", "first_seen": "2026-06-12", "issuer_id": "ISS-0000721994", "name": "LAKELAND FINANCIAL CORP", "sic": null, "sic_description": null}
+{"cik": "0000723125", "country": "US", "first_seen": null, "issuer_id": "ISS-0000723125", "name": "MICRON TECHNOLOGY INC", "sic": null, "sic_description": null}
 {"cik": "0000723188", "country": "US", "first_seen": "2026-06-12", "issuer_id": "ISS-0000723188", "name": "COMMUNITY FINANCIAL SYSTEM, INC.", "sic": null, "sic_description": null}
 {"cik": "0000723612", "country": "US", "first_seen": "2026-06-12", "issuer_id": "ISS-0000723612", "name": "AVIS BUDGET GROUP, INC.", "sic": null, "sic_description": null}
 {"cik": "0000724004", "country": "US", "first_seen": "2026-06-12", "issuer_id": "ISS-0000724004", "name": "MESA LABORATORIES INC /CO/", "sic": null, "sic_description": null}
@@ -378,7 +383,7 @@
 {"cik": "0000842717", "country": "US", "first_seen": "2026-06-12", "issuer_id": "ISS-0000842717", "name": "BLUE RIDGE BANKSHARES, INC.", "sic": null, "sic_description": null}
 {"cik": "0000844059", "country": "US", "first_seen": "2026-06-12", "issuer_id": "ISS-0000844059", "name": "FRP HOLDINGS, INC.", "sic": null, "sic_description": null}
 {"cik": "0000844965", "country": "US", "first_seen": "2026-06-12", "issuer_id": "ISS-0000844965", "name": "TETRA TECHNOLOGIES INC", "sic": null, "sic_description": null}
-{"cik": "0000846617", "country": "US", "first_seen": "2026-06-12", "issuer_id": "ISS-0000846617", "name": "Dime Community Bancshares, Inc. /NY/", "sic": null, "sic_description": null}
+{"cik": "0000846617", "country": "US", "first_seen": "2026-06-12", "issuer_id": "ISS-0000846617", "name": "Dime Commercial Bancshares, Inc. /NY/", "sic": null, "sic_description": null}
 {"cik": "0000849399", "country": "US", "first_seen": "2026-06-12", "issuer_id": "ISS-0000849399", "name": "Gen Digital Inc.", "sic": null, "sic_description": null}
 {"cik": "0000849869", "country": "US", "first_seen": "2026-06-12", "issuer_id": "ISS-0000849869", "name": "SILGAN HOLDINGS INC", "sic": null, "sic_description": null}
 {"cik": "0000850141", "country": "US", "first_seen": "2026-06-12", "issuer_id": "ISS-0000850141", "name": "HORACE MANN EDUCATORS CORP /DE/", "sic": null, "sic_description": null}
@@ -473,6 +478,7 @@
 {"cik": "0000897077", "country": "US", "first_seen": "2026-06-12", "issuer_id": "ISS-0000897077", "name": "ALAMO GROUP INC", "sic": null, "sic_description": null}
 {"cik": "0000897322", "country": "US", "first_seen": "2026-06-12", "issuer_id": "ISS-0000897322", "name": "GILAT SATELLITE NETWORKS LTD", "sic": null, "sic_description": null}
 {"cik": "0000898174", "country": "US", "first_seen": "2026-06-12", "issuer_id": "ISS-0000898174", "name": "REINSURANCE GROUP OF AMERICA INC", "sic": null, "sic_description": null}
+{"cik": "0000898293", "country": "US", "first_seen": null, "issuer_id": "ISS-0000898293", "name": "JABIL INC", "sic": null, "sic_description": null}
 {"cik": "0000899460", "country": "US", "first_seen": "2026-06-12", "issuer_id": "ISS-0000899460", "name": "MANNKIND CORP", "sic": null, "sic_description": null}
 {"cik": "0000899629", "country": "US", "first_seen": "2026-06-12", "issuer_id": "ISS-0000899629", "name": "ACADIA REALTY TRUST", "sic": null, "sic_description": null}
 {"cik": "0000899689", "country": "US", "first_seen": "2026-06-12", "issuer_id": "ISS-0000899689", "name": "VORNADO REALTY TRUST", "sic": null, "sic_description": null}
@@ -547,6 +553,7 @@
 {"cik": "0000932695", "country": "US", "first_seen": "2026-06-12", "issuer_id": "ISS-0000932695", "name": "CHINA YUCHAI INTERNATIONAL LTD", "sic": null, "sic_description": null}
 {"cik": "0000932696", "country": "US", "first_seen": "2026-06-12", "issuer_id": "ISS-0000932696", "name": "INSIGHT ENTERPRISES INC", "sic": null, "sic_description": null}
 {"cik": "0000932781", "country": "US", "first_seen": "2026-06-12", "issuer_id": "ISS-0000932781", "name": "FIRST COMMUNITY CORP /SC/", "sic": null, "sic_description": null}
+{"cik": "0000932787", "country": "US", "first_seen": null, "issuer_id": "ISS-0000932787", "name": "STMicroelectronics N.V.", "sic": null, "sic_description": null}
 {"cik": "0000933034", "country": "US", "first_seen": "2026-06-12", "issuer_id": "ISS-0000933034", "name": "STRATTEC SECURITY CORP", "sic": null, "sic_description": null}
 {"cik": "0000933036", "country": "US", "first_seen": "2026-06-12", "issuer_id": "ISS-0000933036", "name": "UPBOUND GROUP, INC.", "sic": null, "sic_description": null}
 {"cik": "0000933974", "country": "US", "first_seen": "2026-06-12", "issuer_id": "ISS-0000933974", "name": "Azenta, Inc.", "sic": null, "sic_description": null}
@@ -585,6 +592,7 @@
 {"cik": "0001003935", "country": "US", "first_seen": "2026-06-12", "issuer_id": "ISS-0001003935", "name": "NICE Ltd.", "sic": null, "sic_description": null}
 {"cik": "0001004434", "country": "US", "first_seen": "2026-06-12", "issuer_id": "ISS-0001004434", "name": "AFFILIATED MANAGERS GROUP, INC.", "sic": null, "sic_description": null}
 {"cik": "0001004702", "country": "US", "first_seen": "2026-06-12", "issuer_id": "ISS-0001004702", "name": "OCEANFIRST FINANCIAL CORP", "sic": null, "sic_description": null}
+{"cik": "0001004980", "country": "US", "first_seen": null, "issuer_id": "ISS-0001004980", "name": "PG&E Corp", "sic": null, "sic_description": null}
 {"cik": "0001005210", "country": "US", "first_seen": "2026-06-12", "issuer_id": "ISS-0001005210", "name": "SUBURBAN PROPANE PARTNERS LP", "sic": null, "sic_description": null}
 {"cik": "0001005229", "country": "US", "first_seen": "2026-06-12", "issuer_id": "ISS-0001005229", "name": "COLUMBUS MCKINNON CORP", "sic": null, "sic_description": null}
 {"cik": "0001005284", "country": "US", "first_seen": "2026-06-12", "issuer_id": "ISS-0001005284", "name": "UNIVERSAL DISPLAY CORP \\PA\\", "sic": null, "sic_description": null}
@@ -604,6 +612,7 @@
 {"cik": "0001015820", "country": "US", "first_seen": "2026-06-12", "issuer_id": "ISS-0001015820", "name": "QIAGEN N.V.", "sic": null, "sic_description": null}
 {"cik": "0001016281", "country": "US", "first_seen": "2026-06-12", "issuer_id": "ISS-0001016281", "name": "CARRIAGE SERVICES INC", "sic": null, "sic_description": null}
 {"cik": "0001018164", "country": "US", "first_seen": "2026-06-12", "issuer_id": "ISS-0001018164", "name": "WILLIS LEASE FINANCE CORP", "sic": null, "sic_description": null}
+{"cik": "0001018724", "country": "US", "first_seen": null, "issuer_id": "ISS-0001018724", "name": "AMAZON COM INC", "sic": null, "sic_description": null}
 {"cik": "0001018840", "country": "US", "first_seen": "2026-06-12", "issuer_id": "ISS-0001018840", "name": "ABERCROMBIE & FITCH CO /DE/", "sic": null, "sic_description": null}
 {"cik": "0001018979", "country": "US", "first_seen": "2026-06-12", "issuer_id": "ISS-0001018979", "name": "AMERISAFE INC", "sic": null, "sic_description": null}
 {"cik": "0001020214", "country": "US", "first_seen": "2026-06-12", "issuer_id": "ISS-0001020214", "name": "CERUS CORP", "sic": null, "sic_description": null}
@@ -650,6 +659,7 @@
 {"cik": "0001045810", "country": "US", "first_seen": null, "issuer_id": "ISS-0001045810", "name": "NVIDIA CORP", "sic": null, "sic_description": null}
 {"cik": "0001046025", "country": "US", "first_seen": "2026-06-12", "issuer_id": "ISS-0001046025", "name": "HERITAGE FINANCIAL CORP /WA/", "sic": null, "sic_description": null}
 {"cik": "0001046050", "country": "US", "first_seen": "2026-06-12", "issuer_id": "ISS-0001046050", "name": "TIMBERLAND BANCORP INC", "sic": null, "sic_description": null}
+{"cik": "0001046179", "country": "US", "first_seen": null, "issuer_id": "ISS-0001046179", "name": "TAIWAN SEMICONDUCTOR MANUFACTURING CO LTD", "sic": null, "sic_description": null}
 {"cik": "0001046257", "country": "US", "first_seen": "2026-06-12", "issuer_id": "ISS-0001046257", "name": "Ingredion Inc", "sic": null, "sic_description": null}
 {"cik": "0001046311", "country": "US", "first_seen": "2026-06-12", "issuer_id": "ISS-0001046311", "name": "CHOICE HOTELS INTERNATIONAL INC /DE", "sic": null, "sic_description": null}
 {"cik": "0001046568", "country": "US", "first_seen": "2026-06-12", "issuer_id": "ISS-0001046568", "name": "PERDOCEO EDUCATION Corp", "sic": null, "sic_description": null}
@@ -719,6 +729,7 @@
 {"cik": "0001093691", "country": "US", "first_seen": "2026-06-12", "issuer_id": "ISS-0001093691", "name": "PLUG POWER INC", "sic": null, "sic_description": null}
 {"cik": "0001094324", "country": "US", "first_seen": "2026-06-12", "issuer_id": "ISS-0001094324", "name": "SIFY TECHNOLOGIES LTD", "sic": null, "sic_description": null}
 {"cik": "0001094366", "country": "US", "first_seen": "2026-06-12", "issuer_id": "ISS-0001094366", "name": "RADWARE LTD", "sic": null, "sic_description": null}
+{"cik": "0001094517", "country": "US", "first_seen": null, "issuer_id": "ISS-0001094517", "name": "TOYOTA MOTOR CORP/", "sic": null, "sic_description": null}
 {"cik": "0001094972", "country": "US", "first_seen": "2026-06-12", "issuer_id": "ISS-0001094972", "name": "ULTRAPAR HOLDINGS INC", "sic": null, "sic_description": null}
 {"cik": "0001095565", "country": "US", "first_seen": "2026-06-12", "issuer_id": "ISS-0001095565", "name": "HEALTHSTREAM INC", "sic": null, "sic_description": null}
 {"cik": "0001095651", "country": "US", "first_seen": "2026-06-12", "issuer_id": "ISS-0001095651", "name": "Safehold Inc.", "sic": null, "sic_description": null}
@@ -762,6 +773,7 @@
 {"cik": "0001130464", "country": "US", "first_seen": "2026-06-12", "issuer_id": "ISS-0001130464", "name": "BLACK HILLS CORP /SD/", "sic": null, "sic_description": null}
 {"cik": "0001130713", "country": "US", "first_seen": "2026-06-12", "issuer_id": "ISS-0001130713", "name": "BED BATH & BEYOND, INC.", "sic": null, "sic_description": null}
 {"cik": "0001131383", "country": "US", "first_seen": "2026-06-12", "issuer_id": "ISS-0001131383", "name": "STANTEC INC", "sic": null, "sic_description": null}
+{"cik": "0001133421", "country": "US", "first_seen": null, "issuer_id": "ISS-0001133421", "name": "NORTHROP GRUMMAN CORP /DE/", "sic": null, "sic_description": null}
 {"cik": "0001133470", "country": "US", "first_seen": "2026-06-12", "issuer_id": "ISS-0001133470", "name": "CALAVO GROWERS INC", "sic": null, "sic_description": null}
 {"cik": "0001133869", "country": "US", "first_seen": "2026-06-12", "issuer_id": "ISS-0001133869", "name": "CAPRICOR THERAPEUTICS, INC.", "sic": null, "sic_description": null}
 {"cik": "0001134115", "country": "US", "first_seen": "2026-06-12", "issuer_id": "ISS-0001134115", "name": "INTERNATIONAL TOWER HILL MINES LTD", "sic": null, "sic_description": null}
@@ -1188,7 +1200,7 @@
 {"cik": "0001492298", "country": "US", "first_seen": "2026-06-12", "issuer_id": "ISS-0001492298", "name": "Sabra Health Care REIT, Inc.", "sic": null, "sic_description": null}
 {"cik": "0001493225", "country": "US", "first_seen": "2026-06-12", "issuer_id": "ISS-0001493225", "name": "Northfield Bancorp, Inc.", "sic": null, "sic_description": null}
 {"cik": "0001495240", "country": "US", "first_seen": "2026-06-12", "issuer_id": "ISS-0001495240", "name": "GLADSTONE LAND Corp", "sic": null, "sic_description": null}
-{"cik": "0001495932", "country": "US", "first_seen": "2026-06-12", "issuer_id": "ISS-0001495932", "name": "eXp World Holdings, Inc.", "sic": null, "sic_description": null}
+{"cik": "0001495932", "country": "US", "first_seen": "2026-06-12", "issuer_id": "ISS-0001495932", "name": "AGNT, Inc.", "sic": null, "sic_description": null}
 {"cik": "0001496099", "country": "US", "first_seen": "2026-06-12", "issuer_id": "ISS-0001496099", "name": "New Mountain Finance Corp", "sic": null, "sic_description": null}
 {"cik": "0001496443", "country": "US", "first_seen": "2026-06-12", "issuer_id": "ISS-0001496443", "name": "Paysign, Inc.", "sic": null, "sic_description": null}
 {"cik": "0001497645", "country": "US", "first_seen": "2026-06-12", "issuer_id": "ISS-0001497645", "name": "Summit Hotel Properties, Inc.", "sic": null, "sic_description": null}
@@ -1576,6 +1588,7 @@
 {"cik": "0001707919", "country": "US", "first_seen": "2026-06-12", "issuer_id": "ISS-0001707919", "name": "Cenntro Inc.", "sic": null, "sic_description": null}
 {"cik": "0001708035", "country": "US", "first_seen": "2026-06-12", "issuer_id": "ISS-0001708035", "name": "Ecovyst Inc.", "sic": null, "sic_description": null}
 {"cik": "0001708055", "country": "US", "first_seen": "2026-06-12", "issuer_id": "ISS-0001708055", "name": "Ribbon Communications Inc.", "sic": null, "sic_description": null}
+{"cik": "0001709048", "country": "US", "first_seen": null, "issuer_id": "ISS-0001709048", "name": "GLOBALFOUNDRIES Inc.", "sic": null, "sic_description": null}
 {"cik": "0001709442", "country": "US", "first_seen": "2026-06-12", "issuer_id": "ISS-0001709442", "name": "FIRSTSUN CAPITAL BANCORP", "sic": null, "sic_description": null}
 {"cik": "0001709682", "country": "US", "first_seen": "2026-06-12", "issuer_id": "ISS-0001709682", "name": "Custom Truck One Source, Inc.", "sic": null, "sic_description": null}
 {"cik": "0001709941", "country": "US", "first_seen": "2026-06-12", "issuer_id": "ISS-0001709941", "name": "BioAge Labs, Inc.", "sic": null, "sic_description": null}
@@ -1634,7 +1647,7 @@
 {"cik": "0001736946", "country": "US", "first_seen": "2026-06-12", "issuer_id": "ISS-0001736946", "name": "Arlo Technologies, Inc.", "sic": null, "sic_description": null}
 {"cik": "0001737287", "country": "US", "first_seen": "2026-06-12", "issuer_id": "ISS-0001737287", "name": "Allogene Therapeutics, Inc.", "sic": null, "sic_description": null}
 {"cik": "0001737450", "country": "US", "first_seen": "2026-06-12", "issuer_id": "ISS-0001737450", "name": "Opera Ltd", "sic": null, "sic_description": null}
-{"cik": "0001737706", "country": "US", "first_seen": "2026-06-12", "issuer_id": "ISS-0001737706", "name": "Seadrill Ltd", "sic": null, "sic_description": null}
+{"cik": "0001737706", "country": "US", "first_seen": "2026-06-12", "issuer_id": "ISS-0001737706", "name": "SEADRILL Ltd", "sic": null, "sic_description": null}
 {"cik": "0001737924", "country": "US", "first_seen": "2026-06-12", "issuer_id": "ISS-0001737924", "name": "Nuveen Churchill Direct Lending Corp.", "sic": null, "sic_description": null}
 {"cik": "0001737927", "country": "US", "first_seen": "2026-06-12", "issuer_id": "ISS-0001737927", "name": "Canopy Growth Corp", "sic": null, "sic_description": null}
 {"cik": "0001737953", "country": "US", "first_seen": "2026-06-12", "issuer_id": "ISS-0001737953", "name": "Replimune Group, Inc.", "sic": null, "sic_description": null}
@@ -1730,7 +1743,7 @@
 {"cik": "0001794546", "country": "US", "first_seen": "2026-06-12", "issuer_id": "ISS-0001794546", "name": "CARLSMED, INC.", "sic": null, "sic_description": null}
 {"cik": "0001794669", "country": "US", "first_seen": "2026-06-12", "issuer_id": "ISS-0001794669", "name": "Shift4 Payments, Inc.", "sic": null, "sic_description": null}
 {"cik": "0001794776", "country": "US", "first_seen": "2026-06-12", "issuer_id": "ISS-0001794776", "name": "Palmer Square Capital BDC Inc.", "sic": null, "sic_description": null}
-{"cik": "0001795815", "country": "US", "first_seen": "2026-06-12", "issuer_id": "ISS-0001795815", "name": "California BanCorp CA", "sic": null, "sic_description": null}
+{"cik": "0001795815", "country": "US", "first_seen": "2026-06-12", "issuer_id": "ISS-0001795815", "name": "California BanCorp \\ CA", "sic": null, "sic_description": null}
 {"cik": "0001796073", "country": "US", "first_seen": "2026-06-12", "issuer_id": "ISS-0001796073", "name": "Vizsla Silver Corp.", "sic": null, "sic_description": null}
 {"cik": "0001796280", "country": "US", "first_seen": "2026-06-12", "issuer_id": "ISS-0001796280", "name": "Oric Pharmaceuticals, Inc.", "sic": null, "sic_description": null}
 {"cik": "0001798100", "country": "US", "first_seen": "2026-06-12", "issuer_id": "ISS-0001798100", "name": "NETSTREIT Corp.", "sic": null, "sic_description": null}

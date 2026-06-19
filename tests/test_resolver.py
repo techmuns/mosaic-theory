@@ -144,7 +144,7 @@ def test_resolver_against_real_sec_data() -> None:
     with pytest.raises(UnknownSymbolError):
         r.resolve_ticker("NOTATICKER123")
 
-    # SIC enrichment (the pinned sector source for Screen-2 G2)
+    # SIC enrichment (the operating-co universe gate's structural fact — NOT G2)
     meta = r.resolve_ticker("META", enrich=True)
     assert meta.sic == "7370"
     assert meta.sic_description

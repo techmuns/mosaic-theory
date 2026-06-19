@@ -127,7 +127,7 @@ def _price_features() -> PriceFeatures:
         ret_3m=_present(-0.30),
         ret_6m=_present(-0.40),
         ret_12m=_present(-0.45),
-        rel_ret_vs_sector=DataField.present(
+        rel_ret_vs_market=DataField.present(
             -0.35, as_of=AS_OF, source="EOD", tier=SourceTier.DERIVED
         ),
         adv_90d_shares=_present(5_000_000.0),

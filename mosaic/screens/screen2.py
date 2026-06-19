@@ -7,7 +7,7 @@ The screen finds the **setup** (a name has been sharply, idiosyncratically de-ra
 
 Gates (read from the assembled data-record's enveloped fields):
 - **G1 sharp drawdown** ≤ −30% from the 52w high (price; the cleanest gate). Defining gate.
-- **G2 idiosyncratic** — underperformed its sector/market by a wide margin over the decline window.
+- **G2 idiosyncratic** — underperformed the market (IWM) by a wide margin over the decline window.
 - **G3 multiple at/near floor** — current multiple in the bottom quartile of its trailing range
   (EDGAR + price; UNKNOWN→defer where XBRL is absent or earnings are negative).
 
@@ -52,9 +52,9 @@ def gate_g1_drawdown(rec: DataRecord, th: Screen2Thresholds) -> tuple[GateResult
 
 
 def gate_g2_idiosyncratic(rec: DataRecord, th: Screen2Thresholds) -> tuple[GateResult, str]:
-    f = rec.prices.rel_ret_vs_sector
+    f = rec.prices.rel_ret_vs_market
     if not f.is_evaluable or f.value is None:
-        return GateResult.UNKNOWN, "no clean sector/market benchmark"
+        return GateResult.UNKNOWN, "no clean market benchmark"
     if f.value <= th.idio_rel_max:
         return GateResult.PASS, f"rel-return {f.value:.1%} ≤ {th.idio_rel_max:.0%} (idiosyncratic)"
     return GateResult.FAIL, f"rel-return {f.value:.1%} — fell with the market, not name-specific"

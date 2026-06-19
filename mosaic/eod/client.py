@@ -28,6 +28,7 @@ from mosaic.schemas.data_record import Identity
 from mosaic.schemas.market import PriceBar
 
 _GROUPED = "https://api.polygon.io/v2/aggs/grouped/locale/us/market/stocks/{day}"
+_REFERENCE = "https://api.polygon.io/v3/reference/tickers"
 _ONE_DAY = 86_400.0
 
 
@@ -130,6 +131,28 @@ class PolygonEodClient(EodClient):
             extra_headers={"Authorization": f"Bearer {require_env('POLYGON_API_KEY')}"},
         )
         return cls(http, min_results=cfg.grouped_daily_min_results)
+
+    def security_types(self) -> dict[str, str | None]:
+        """``{ticker: Polygon security type}`` for all active US stocks — the instrument-type gate.
+
+        One cached, paginated bulk reference pull (no per-name calls); universe size is irrelevant —
+        the same breadth-tool discipline as grouped-daily. ``type`` is ``None`` when Polygon lists a
+        ticker without one; the universe gate treats that fail-closed (excluded, never admitted).
+        """
+        out: dict[str, str | None] = {}
+        url: str | None = _REFERENCE
+        params: dict[str, Any] | None = {"market": "stocks", "active": "true", "limit": 1000}
+        pages = 0
+        while url and pages < 50:  # ~13 pages for ~12.8k stocks; 50 is a safety stop, not a cap
+            raw = self._http.get_json(url, ttl_seconds=_ONE_DAY, params=params)
+            data = cast(dict[str, Any], raw)
+            for r in data.get("results", []):
+                if (t := r.get("ticker")) is not None:
+                    out[t] = r.get("type") or None
+            url = data.get("next_url")
+            params = None  # the cursor is carried inside next_url
+            pages += 1
+        return out
 
     def grouped_daily(self, day: date) -> dict[str, RawBar]:
         url = _GROUPED.format(day=day.isoformat())
