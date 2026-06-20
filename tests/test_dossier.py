@@ -493,3 +493,22 @@ def test_transcript_prose_skips_estimates_table_and_toc() -> None:
     assert prose.lstrip().startswith("Operator")  # the real call opening, not the TOC/estimates
     assert "S&P Global Estimates" not in prose and "0.14" not in prose  # estimates table skipped
     assert "...." not in prose  # the dotted TOC skipped
+
+
+def test_transcript_prose_anchors_past_legalese_and_carries_qa() -> None:
+    """Anchor at the IR hand-off (past the operator intro + forward-looking-statements legalese) and
+    carry the prepared remarks AND Q&A — the call's substance, surfaced in full, never curated."""
+    text = (
+        "S&P Estimates EPS 0.14 Revenue 223.40\nCall Participants ..... 3\n"
+        "Operator Good afternoon and welcome to the call. I'll turn the presentation over to IR. "
+        "IR: Thank you. Forward-looking statements involve risks and uncertainties; actual results "
+        "may differ materially. With that, I will turn the call over to our CEO. "
+        "CEO: Good afternoon, we had a solid quarter. " + "Prepared remarks continue. " * 40 +
+        "Question and Answer Operator: first question. Analyst: the significant-customer renewal? "
+        "CEO: those negotiations remain constructive."
+    )
+    prose = cs._transcript_prose(text)
+    assert prose.startswith("turn the call over to our CEO")  # past operator + FLS legalese
+    assert "risks and uncertainties" not in prose  # the legalese is skipped
+    assert "turn the presentation over to IR" not in prose  # operator→IR hand-off skipped too
+    assert all(s in prose for s in ("Question and Answer", "renewal", "constructive"))

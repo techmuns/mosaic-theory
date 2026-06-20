@@ -477,23 +477,34 @@ _TRANSCRIPT_PROSE = ("Call Participants", "Corporate Participants", "Presentatio
 
 
 _CALL_OPEN = re.compile(r"Operator\s+Good\s+(?:morning|afternoon|evening)", re.I)
+# the IR's hand-off to management — the boundary between boilerplate and the call's substance.
+# "the call"/"it" (not "the presentation", which is the operator→IR hand-off before the legalese).
+_HANDOFF = re.compile(r"\b(?:turn|hand)\w*\s+(?:the\s+call|it)\s+(?:over\s+|back\s+)?to\b", re.I)
 
 
 def _transcript_prose(text: str) -> str:
-    """Land on the management REMARKS — skip CIQ's leading S&P estimates table AND the dotted
-    table-of-contents. Prefer the operator opening the call (the real prepared remarks begin there);
-    else the first transcript section marker; else the whole text. Keeps the window qualitative."""
-    m = _CALL_OPEN.search(text)
-    if m is not None:
-        return text[m.start() :]
+    """Land on the call's SUBSTANCE — management's prepared remarks onward — skipping CIQ's leading
+    S&P estimates table, the dotted table-of-contents, the operator intro, and the forward-looking-
+    statements legalese. Anchor at the IR's hand-off to management (after the boilerplate); else
+    the operator opening; else the first marker; else the whole text. The machine only WIDENS
+    the window — it never picks the 'relevant' passage; the human reads the call and judges."""
+    for pat in (_HANDOFF, _CALL_OPEN):
+        m = pat.search(text)
+        if m is not None:
+            return text[m.start() :]
     starts = [i for i in (text.find(k) for k in _TRANSCRIPT_PROSE) if i >= 0]
     return text[min(starts) :] if starts else text
+
+
+_TRANSCRIPT_CAP = 80_000  # carry the whole call (remarks + Q&A); a runaway bound, not token economy
 
 
 def management_commentary(bundle: CiqBundle) -> Sourced[str]:
     """Earnings-call transcript as QUALITATIVE context (no numbers computed from it). CIQ ships them
     Word docs renamed .rtf (``ole_disguised``) → the LibreOffice path; UNKNOWN if no converter. The
-    leading S&P estimates table is skipped so the surfaced window is prose, not a numbers table."""
+    boilerplate (estimates table / TOC / operator intro / forward-looking-statements legalese) is
+    skipped and the window is WIDE — prepared remarks AND Q&A (the call's substance), surfaced
+    in full for the human to read. The machine does not curate the 'relevant' passage."""
     wb = bundle.workbook("transcript")
     if wb is None:
         return Sourced.missing(note=f"no earnings-call transcript for {bundle.ticker} — pull it")
@@ -502,6 +513,6 @@ def management_commentary(bundle: CiqBundle) -> Sourced[str]:
     except CiqParseError as exc:
         return Sourced.unknown(note=f"transcript needs LibreOffice/Word conversion: {exc}")
     return Sourced.present(
-        text[:1500],
-        source_ref=f"CIQ transcript {wb.path.name} (qualitative context only — no numbers derived)",
+        text[:_TRANSCRIPT_CAP],
+        source_ref=f"CIQ transcript {wb.path.name} (remarks + Q&A; qualitative, no numbers)",
     )

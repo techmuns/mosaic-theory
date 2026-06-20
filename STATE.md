@@ -196,11 +196,17 @@ Each line: *what it does* — *verified how*.
     `DrawdownCause.revised_guidance`). For VRRM: revenue **$985–995M / adj-EBITDA $380–385M / adj-EPS
     $1.19–1.25 / FCF $140–150M**, bound to the exhibit URL — the single most decision-relevant number,
     previously absent. Verbatim only (no number-parsing → no mis-extraction); fail-loud UNKNOWN with
-    the accession if the exhibit/section is absent. (2) **Transcript dependency met** — installed
-    LibreOffice (`soffice`, brew-symlinked onto PATH) so the existing `ole_disguised`→soffice
-    `read_text` path runs; `management_commentary` now surfaces the prepared-remarks opening
-    (qualitative, source-bound), skipping CIQ's leading S&P **estimates table + dotted TOC** (no
-    numbers table). (3) **Render-boundary formatting standard** — screen-DataField floats are
+    the accession if the exhibit/section is absent. (2) **Transcript dependency met + WIDENED** —
+    installed LibreOffice (`soffice`, brew-symlinked onto PATH) so the existing `ole_disguised`→soffice
+    `read_text` path runs; `management_commentary` skips the boilerplate (S&P estimates table / dotted
+    TOC / operator intro / forward-looking-statements legalese) by anchoring at the IR's hand-off to
+    management, and surfaces the call's **SUBSTANCE in full — prepared remarks AND Q&A** (cap raised
+    1.5k→80k; token economy, not principle). VRRM: 40k/44k chars surfaced, including the CEO's
+    pre-termination "ongoing and **constructive**" framing of the >10% Avis renewal AND the Q&A
+    renegotiation exchange — verdict-relevant context the human reads and judges. The machine only
+    WIDENS the window; it never curates/labels the 'relevant' passage. Qualitative, no numbers derived.
+    (One consequence, noted: a wide transcript enlarges the synthesis number-trace haystack — more
+    spoken figures become traceable; acceptable, the transcript is source-bound mechanical content.) (3) **Render-boundary formatting standard** — screen-DataField floats are
     formatted for legibility **at render only** (`_mult`→"2.9x", `_pctile`→"1st %ile", `_pct`→"−78.7%",
     `_signword`→"positive"); **the stored `Sourced.value` keeps full precision** so the synthesis /
     number-trace still see the real number (a fenced, asserted invariant). CIQ string fields stay
@@ -208,8 +214,9 @@ Each line: *what it does* — *verified how*.
     explains the "Buy (1.00)" CIQ score. (4) **Customers parsed** — the Business-Relationships RTF is
     parsed into readable `Name — Type · Industry · src` lines (Avis/Enterprise/NYC-DOT/Hertz for
     VRRM), not a raw pipe-dump; fail-loud UNKNOWN if the table can't be parsed. *Verified end-to-end
-    on the VRRM dossier.md + 6 new offline tests (99.1 extractor & name-matcher, render formatters &
-    the precision fence, customers parse, transcript-prose skip).* **Record-only (not acted on):** the
+    on the VRRM dossier.md + 7 new offline tests (99.1 extractor & name-matcher, render formatters &
+    the precision fence, customers parse, transcript skip-boilerplate & carry-Q&A).* **Record-only
+    (not acted on):** the
     graph-cohort ~4% caveat (next bullet) stands; the screen still tags every gap-down
     `earnings_gap_down` (the dossier relabels by 8-K item code at surface — upstream cosmetic); the
     screen's `ev_ebitda` dollar-field was already fixed separately (deferred to UNKNOWN, the dossier
