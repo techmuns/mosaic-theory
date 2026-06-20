@@ -169,8 +169,14 @@ Each line: *what it does* — *verified how*.
     (3) **EV/EBITDA dollar-scalar fixed** — `valuation.ev_ebitda` rendered **352,494,000** because
     `screens/assemble.py:162` feeds it `snap.ebitda_annual` (EBITDA dollars) into a multiple-named
     field; the dossier now sources the **CIQ TEV/LTM multiple (8.5x)** via `ev_ebitda_current`, never
-    the EDGAR scalar. The misnamed screen field is left as-is (out of scope) and flagged for a
-    separate rename. (4) **Adjusted-EPS — FLAGGED, not built** (LibreOffice still absent): two flags
+    the EDGAR scalar. **Root cause also fixed at the producer** (separate commit): `assemble.py:162`
+    no longer writes EBITDA dollars into `ev_ebitda` — the field was always meant to hold the
+    (deferred, never-built) **EV/EBITDA multiple**, so it now defers to UNKNOWN ("needs net-debt/EV"),
+    matching its percentile sibling. **No rename / no snapshot migration / no alias** — a bare rename
+    would have broken the 301 committed `candidate_records.jsonl` (required key, strict-parsed by the
+    dossier/ranker/CLI loaders); verified both legacy-float and new-UNKNOWN parse under the unchanged
+    `DataField[float]` schema, +2 regression tests (producer defers; committed snapshot still loads).
+    (4) **Adjusted-EPS — FLAGGED, not built** (LibreOffice still absent): two flags
     now fire — the surfaced EPS is GAAP-based and the company-adjusted (~1.35) figure lives in the
     transcript/earnings-release reconciliation (UNAVAILABLE); and the EDGAR P/E (5.5x) **conflicts
     ~3× with the CIQ P/LTM EPS (16.8x)** because the EDGAR trailing EPS is one-time-inflated — the

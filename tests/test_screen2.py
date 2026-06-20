@@ -3,9 +3,12 @@
 from __future__ import annotations
 
 from datetime import date, datetime, timedelta
+from pathlib import Path
+from typing import Any, cast
 
 import pytest
 
+from mosaic.edgar.client import EdgarClient, FundamentalSnapshot, all_unknown_snapshot
 from mosaic.edgar.concepts import ConceptPoint
 from mosaic.schemas.candidate import GateResult
 from mosaic.schemas.data_record import (
@@ -22,6 +25,7 @@ from mosaic.screens import (
     Screen2Thresholds,
     annual_eps_as_of,
     detect_gap_downs,
+    enrich_with_fundamentals,
     evaluate_screen2,
     gate_g1_drawdown,
     gate_g2_idiosyncratic,
@@ -285,3 +289,49 @@ def test_detect_gap_downs() -> None:
     ]
     assert detect_gap_downs(bars, since=date(2026, 1, 1)) == [date(2026, 3, 2)]
     assert detect_gap_downs(bars, since=date(2026, 3, 3)) == []  # since-filter excludes it
+
+
+# --- producer: ev_ebitda is the (deferred) MULTIPLE, never EBITDA dollars --------------------
+def test_enrich_defers_ev_ebitda_never_writes_ebitda_dollars() -> None:
+    """enrich must NOT copy EBITDA *dollars* into the EV/EBITDA *multiple* field — it stays
+    UNKNOWN-deferred (needs net-debt), like its percentile sibling. Regression: assemble.py used to
+    set ``ev_ebitda = snap.ebitda_annual`` — a (sometimes negative) dollar figure in a multiple."""
+    snap = all_unknown_snapshot("0000000001").model_copy(
+        update={
+            "ebitda_annual": DataField.present(
+                3.5e8, as_of=REF, source="EDGAR", tier=SourceTier.EDGAR
+            )
+        }
+    )
+
+    class _Edgar:
+        def fundamental_snapshot(self, cik: int | str) -> FundamentalSnapshot:
+            return snap
+
+        def companyfacts(self, cik: int | str) -> dict[str, Any]:
+            return {}
+
+    out = enrich_with_fundamentals(
+        _rec(drawdown=-0.4, rel=-0.3, pe_pctile=0.1),
+        edgar=cast(EdgarClient, _Edgar()),
+        price_bars=[],
+        reference_date=REF,
+    )
+    ev = out.fundamentals.ev_ebitda
+    assert not ev.is_known and ev.value is None  # deferred — NOT the 3.5e8 EBITDA dollars
+    assert not out.fundamentals.ev_ebitda_pctile_vs_history.is_known  # sibling stays deferred too
+
+
+def test_committed_candidate_snapshot_still_loads_with_legacy_ev_ebitda_floats() -> None:
+    """The committed candidate_records.jsonl predate the deferral and carry a present FLOAT for
+    ev_ebitda; the unchanged ``DataField[float]`` schema must still parse them — the producer fix
+    only changes NEW records to UNKNOWN, it must never break the legacy snapshot."""
+    from mosaic.rank.ranker import load_candidates_from_snapshot
+
+    snap = Path(__file__).resolve().parents[1] / "data" / "snapshots" / "candidate_records.jsonl"
+    if not snap.exists():
+        pytest.skip("committed candidate snapshot not present")
+    recs = load_candidates_from_snapshot(snap)
+    assert recs  # legacy records load under the current schema
+    # the legacy present-float shape coexists with the new UNKNOWN shape under one schema
+    assert any(r.data_record.fundamentals.ev_ebitda.is_known for r in recs)

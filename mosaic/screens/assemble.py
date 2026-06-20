@@ -155,11 +155,14 @@ def enrich_with_fundamentals(
     facts = edgar.companyfacts(cik) if cik else {}
     annual_eps = [p for p in extract_points(facts, "eps_diluted") if p.is_annual] if facts else []
     pe, pe_pctile = pe_current_and_percentile(price_bars, annual_eps, reference_date=reference_date)
+    # EV/EBITDA — the multiple and its trailing-range percentile are both DEFERRED (need net-debt).
+    # The multiple stays UNKNOWN: do NOT write EBITDA *dollars* (``snap.ebitda_annual``) into a
+    # field named for a multiple — that mislabel traps any reader (the dossier sources it from CIQ).
     ev_unknown: DataField[float] = DataField.unknown(
-        source="EDGAR", tier=SourceTier.DERIVED, note="EV/EBITDA history deferred (needs net-debt)"
+        source="EDGAR", tier=SourceTier.DERIVED, note="EV/EBITDA deferred — needs net-debt/EV"
     )
     fundamentals = Fundamentals(
-        ev_ebitda=snap.ebitda_annual,
+        ev_ebitda=ev_unknown,
         ev_ebitda_pctile_vs_history=ev_unknown,
         pe=pe,
         pe_pctile_vs_history=pe_pctile,
