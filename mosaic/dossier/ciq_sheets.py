@@ -10,9 +10,11 @@ with an absent/garbled sheet → UNKNOWN with the reason — never a fabricated 
 
 from __future__ import annotations
 
+import re
 from typing import Any
 
 from mosaic.dossier.ciq import (
+    _UNAVAILABLE_CELLS,
     CiqBundle,
     CiqParseError,
     CiqUnavailableError,
@@ -55,6 +57,18 @@ def _reclassified_cols(header: list[Any]) -> set[int]:
 def _is_ltm(cell: Any) -> bool:
     """A period-header cell whose label marks a trailing-twelve-month column (vs a fiscal year)."""
     return "LTM" in str(cell).upper()
+
+
+def _find_row_prefix(rows: Rows, label: str) -> int | None:
+    return next((i for i, r in enumerate(rows) if r and str(r[0]).strip().startswith(label)), None)
+
+
+def _usd(v: float | None) -> str:  # a dollar figure → "$9.71", or em-dash when absent
+    return f"${v:,.2f}" if v is not None else "—"
+
+
+def _pct1(v: float | None) -> str:  # a fraction → "1.9%" (one decimal), or em-dash when absent
+    return f"{v * 100:.1f}%" if v is not None else "—"
 
 
 def _latest_col(rows: Rows, ri: int, hdr: int | None) -> tuple[int, float, str] | None:
@@ -379,51 +393,112 @@ def revenue_revisions(bundle: CiqBundle) -> Sourced[str]:
 
 
 def consensus_view(bundle: CiqBundle) -> Sourced[str]:
-    """Consensus target price / LT growth / recommendation (the 'am I non-consensus' context)."""
+    """Consensus target / LT growth / recommendation (the 'am I non-consensus' context). The two
+    columns are mean / median; growth is shown as a percent; the recommendation score is explained
+    (CIQ scores 1=buy … 5=sell) — no bare/unlabelled numbers."""
     try:
         rows = bundle.sheet("estimates", "Consensus")
     except CiqUnavailableError as exc:
         return _miss_or_unknown(bundle, "estimates", exc)
     parts: list[str] = []
-    for label in ("Target Price", "LT Growth", "Industry Recommend"):
-        ri = next(
-            (i for i, r in enumerate(rows) if r and str(r[0]).strip().startswith(label)), None
-        )
-        if ri is not None:
-            cells = [str(c).strip() for c in rows[ri][1:3] if str(c).strip()]
-            if cells:
-                parts.append(f"{label} {' / '.join(cells)}")
+    tp = _find_row_prefix(rows, "Target Price")
+    if tp is not None and len(rows[tp]) > 2:
+        mean, med = clean_num(rows[tp][1]), clean_num(rows[tp][2])
+        if mean is not None or med is not None:
+            parts.append(f"Target price: mean {_usd(mean)} / median {_usd(med)}")
+    lg = _find_row_prefix(rows, "LT Growth")
+    if lg is not None and len(rows[lg]) > 2:
+        mean, med = clean_num(rows[lg][1]), clean_num(rows[lg][2])
+        if mean is not None or med is not None:
+            parts.append(f"LT growth: mean {_pct1(mean)} / median {_pct1(med)}")
+    rec = _find_row_prefix(rows, "Industry Recommend")
+    if rec is not None and len(rows[rec]) > 1:
+        v = str(rows[rec][1]).strip()
+        if v and v not in _UNAVAILABLE_CELLS:
+            parts.append(f"Recommendation: {v} (CIQ score, 1=buy … 5=sell)")
     if not parts:
         return Sourced.unknown(note="no Target Price/LT Growth/Recommendation rows in Consensus")
     return Sourced.present("; ".join(parts), source_ref="CIQ Estimates→Consensus")
 
 
+def _parse_business_relationships(raw: str) -> list[str] | None:
+    """Parse the CIQ Business-Relationships export (pipe-delimited RTF text) into readable lines
+    'Name — Type · Industry · src: Source'. The table starts at a 'Customer Name|Relationship
+    Type|…' header; 'Business Description:' prose rows are skipped. None if no table is found."""
+    lines = [ln.strip() for ln in raw.splitlines()]
+    hdr = next(
+        (i for i, ln in enumerate(lines) if "Customer Name" in ln and "Relationship Type" in ln),
+        None,
+    )
+    if hdr is None:
+        return None
+    out: list[str] = []
+    for ln in lines[hdr + 1 :]:
+        if not ln or ln.startswith("Business Description"):
+            continue
+        cells = [c.strip() for c in ln.split("|") if c.strip()]
+        if len(cells) < 3:  # need at least name | type | industry
+            continue
+        name, rtype, industry = cells[0], cells[1], cells[2]
+        line = f"{name} — {rtype} · {industry}"
+        if len(cells) > 3:
+            line += f" · src: {cells[3]}"
+        out.append(line)
+    return out or None
+
+
 def customers(bundle: CiqBundle) -> Sourced[str]:
-    """Customer / supplier concentration from the CIQ Business Relationships (.rtf) export."""
+    """Customer concentration from the CIQ Business-Relationships (.rtf) export — parsed into
+    readable lines (name / relationship / industry), not a raw pipe-dump. Fail loud if unparsed."""
     wb = bundle.workbook("customers")
     if wb is None:
         return Sourced.missing(
             note=f"no Customers & Suppliers export for {bundle.ticker} — pull it and re-run"
         )
     try:
-        return Sourced.present(
-            read_text(wb.path, wb.fmt)[:1200], source_ref=f"CIQ Customers&Suppliers {wb.path.name}"
-        )
+        raw = read_text(wb.path, wb.fmt)
     except CiqParseError as exc:
         return Sourced.unknown(note=str(exc))
+    parsed = _parse_business_relationships(raw)
+    if not parsed:
+        return Sourced.unknown(
+            note=f"could not parse the Business-Relationships table in {wb.path.name}"
+        )
+    body = "; ".join(parsed[:30])
+    if len(parsed) > 30:
+        body += f"; …(+{len(parsed) - 30} more)"
+    return Sourced.present(body, source_ref=f"CIQ Customers&Suppliers {wb.path.name}")
 
 
 # --- transcripts: qualitative context only (no numbers derived) -------------------------------
 
 
+_TRANSCRIPT_PROSE = ("Call Participants", "Corporate Participants", "Presentation", "Operator")
+
+
+_CALL_OPEN = re.compile(r"Operator\s+Good\s+(?:morning|afternoon|evening)", re.I)
+
+
+def _transcript_prose(text: str) -> str:
+    """Land on the management REMARKS — skip CIQ's leading S&P estimates table AND the dotted
+    table-of-contents. Prefer the operator opening the call (the real prepared remarks begin there);
+    else the first transcript section marker; else the whole text. Keeps the window qualitative."""
+    m = _CALL_OPEN.search(text)
+    if m is not None:
+        return text[m.start() :]
+    starts = [i for i in (text.find(k) for k in _TRANSCRIPT_PROSE) if i >= 0]
+    return text[min(starts) :] if starts else text
+
+
 def management_commentary(bundle: CiqBundle) -> Sourced[str]:
     """Earnings-call transcript as QUALITATIVE context (no numbers computed from it). CIQ ships them
-    Word docs renamed .rtf (``ole_disguised``) → the LibreOffice path; UNKNOWN if no converter."""
+    Word docs renamed .rtf (``ole_disguised``) → the LibreOffice path; UNKNOWN if no converter. The
+    leading S&P estimates table is skipped so the surfaced window is prose, not a numbers table."""
     wb = bundle.workbook("transcript")
     if wb is None:
         return Sourced.missing(note=f"no earnings-call transcript for {bundle.ticker} — pull it")
     try:
-        text = read_text(wb.path, wb.fmt)
+        text = _transcript_prose(read_text(wb.path, wb.fmt))
     except CiqParseError as exc:
         return Sourced.unknown(note=f"transcript needs LibreOffice/Word conversion: {exc}")
     return Sourced.present(

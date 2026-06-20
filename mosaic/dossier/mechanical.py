@@ -160,6 +160,68 @@ def _drawdown_filings(
     return refs
 
 
+_INDEX = "https://www.sec.gov/Archives/edgar/data/{cik}/{acc}/index.json"
+_EX991 = re.compile(r"ex\W*99\W*d?\W*1(?!\d)", re.I)  # Ex-99.1: dex991/ex-99.1/ex99d1 (not 99.2)
+_GUIDANCE_ANCHOR = re.compile(r"revis\w*[^.]{0,80}?(?:full[- ]year|outlook|guidance)", re.I)
+_MONEY = re.compile(r"\$\s?\d")
+_METRIC = re.compile(r"\b(revenue|ebitda|eps|free cash flow|earnings per share)\b", re.I)
+
+
+def _is_ex991(name: str) -> bool:
+    low = name.lower()
+    return low.endswith((".htm", ".html", ".txt")) and _EX991.search(low) is not None
+
+
+def _exhibit_991_url(http: CachedHttp, cik: str, accession: str) -> str | None:
+    """The furnished Exhibit 99.1 (press release) URL from the filing index, or None if absent."""
+    acc = accession.replace("-", "")
+    try:
+        idx = http.get_json(_INDEX.format(cik=int(pad_cik(cik)), acc=acc), ttl_seconds=None)
+    except (HttpError, ValueError):
+        return None
+    for item in idx.get("directory", {}).get("item", []):
+        name = str(item.get("name", ""))
+        if _is_ex991(name):
+            return _ARCHIVE.format(cik=int(pad_cik(cik)), acc=acc, doc=name)
+    return None
+
+
+def _extract_revised_guidance(text: str) -> str | None:
+    """The REVISED full-year outlook block (figures verbatim) from a 99.1 press release. Anchored on
+    'revis…(full-year|outlook|guidance)' so it surfaces the *revised* outlook, not an initial one.
+    Verbatim — the figures are read from the primary source, never parsed into numbers here (no
+    mis-extraction). Returns None when no revised-outlook section exists (→ UNKNOWN upstream)."""
+    for m in _GUIDANCE_ANCHOR.finditer(text):  # skip the lede; take the anchor whose window has the
+        window = " ".join(text[m.start() : m.start() + 800].split())  # the figures window
+        if len(_MONEY.findall(window)) >= 2 and _METRIC.search(window):
+            return window
+    return None
+
+
+def _revised_guidance(http: CachedHttp, cik: str, filings: list[FilingRef]) -> Sourced[str]:
+    """Follow the furnished 99.1 exhibit on the drawdown 8-Ks (the body only *points* to it) and
+    surface the company's revised full-year guidance — the verdict-relevant number. Source-bound to
+    the exhibit; fail loud UNKNOWN with the accession(s) when no revised-outlook exhibit parses."""
+    tried: list[str] = []
+    for f in filings:
+        if not ({"2.02", "7.01", "8.01"} & set(f.items)):  # press releases live under these items
+            continue
+        tried.append(f.accession)
+        url = _exhibit_991_url(http, cik, f.accession)
+        if url is None:
+            continue
+        try:
+            block = _extract_revised_guidance(html_to_text(http.get_text(url, ttl_seconds=None)))
+        except HttpError:
+            continue
+        if block:
+            ref = f"EDGAR 8-K {f.accession} Ex-99.1 — {url}"
+            return Sourced.present(block, source_ref=ref)
+    if tried:
+        return Sourced.unknown(note=f"no revised-outlook 99.1 exhibit parsed for 8-Ks {tried}")
+    return Sourced.unknown(note="no results/Reg-FD/other-event 8-K at the gap-downs with a 99.1")
+
+
 def _drawdown_cause(record: DataRecord, edgar: EdgarClient, http: CachedHttp) -> DrawdownCause:
     gaps = sorted(e.event_date for e in record.events if e.event_type.value == "earnings_gap_down")
     cik = record.identity.cik
@@ -188,7 +250,16 @@ def _drawdown_cause(record: DataRecord, edgar: EdgarClient, http: CachedHttp) ->
         if gaps
         else Sourced.unknown(note="no gap-down events on the data-record")
     )
-    return DrawdownCause(shape=shape, gap_down_dates=dates_field, filings=filings)
+    return DrawdownCause(
+        shape=shape,
+        gap_down_dates=dates_field,
+        filings=filings,
+        revised_guidance=(
+            _revised_guidance(http, cik, filings)
+            if cik and filings
+            else Sourced.unknown(note="no catalyst 8-K to follow for a revised-guidance exhibit")
+        ),
+    )
 
 
 # --- idiosyncratic vs shared (graph cohort + EOD window returns) -------------------------------

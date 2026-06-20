@@ -148,6 +148,7 @@ class DrawdownCause(BaseModel):
     shape: Sourced[str]  # "discrete event" vs "gradual bleed" — from the gap-down detector
     gap_down_dates: Sourced[list[str]]
     filings: list[FilingRef]  # 8-Ks bound to the gap-down dates (the cause, source-bound)
+    revised_guidance: Sourced[str]  # revised FY outlook from the catalyst 8-K's Ex-99.1
 
     model_config = {"frozen": True}
 

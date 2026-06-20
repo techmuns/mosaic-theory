@@ -7,14 +7,46 @@ prints why; bull/bear points print their citation and an ⚠ when a guardrail fl
 
 from __future__ import annotations
 
+from collections.abc import Callable
 from typing import Any
 
 from mosaic.dossier.schemas import Dossier, Sourced, SourceStatus
 
+# --- display formatters (render boundary ONLY — the stored Sourced.value keeps full precision) ---
+# Screen-data-record fields arrive as raw DataField floats; format for legibility here, never at the
+# source, so the synthesis / number-trace still see the real number. CIQ-path fields are already
+# clean strings and pass through unformatted (default ``str``).
 
-def _fact(label: str, s: Sourced[Any]) -> str:
+
+def _ordinal(n: int) -> str:
+    suf = "th" if 10 <= n % 100 <= 20 else {1: "st", 2: "nd", 3: "rd"}.get(n % 10, "th")
+    return f"{n}{suf}"
+
+
+def _mult(v: Any) -> str:  # multiples / ratios → "5.5x", "2.9x"
+    return f"{float(v):.1f}x"
+
+
+def _pctile(v: Any) -> str:  # a 0..1 percentile → "1st %ile", not 0.0103
+    return f"{_ordinal(round(float(v) * 100))} %ile"
+
+
+def _pct(v: Any) -> str:  # a fraction → percent → "-72.6%", not -0.726
+    return f"{float(v) * 100:.1f}%"
+
+
+def _signword(v: Any) -> str:  # -1/0/+1 → word, not a bare int
+    n = int(v)
+    return "positive" if n > 0 else "negative" if n < 0 else "flat"
+
+
+def _dates(v: Any) -> str:  # list of ISO dates → comma-joined, not a Python list repr
+    return ", ".join(str(x) for x in v)
+
+
+def _fact(label: str, s: Sourced[Any], fmt: Callable[[Any], str] = str) -> str:
     if s.status is SourceStatus.PRESENT:
-        return f"- **{label}:** {s.value}\n  - ↳ `{s.source_ref}`"
+        return f"- **{label}:** {fmt(s.value)}\n  - ↳ `{s.source_ref}`"
     return f"- **{label}:** _{s.status.value.upper()}_ — {s.note}"
 
 
@@ -35,18 +67,18 @@ def render_markdown(d: Dossier) -> str:
 
     out += ["## Mechanical layer (source-bound facts)", "", "### Valuation"]
     out += [
-        _fact("P/E", m.valuation.pe),
-        _fact("P/E percentile (5y)", m.valuation.pe_percentile_5y),
-        _fact("EV/EBITDA", m.valuation.ev_ebitda),
-        _fact("EV/EBITDA percentile (5y)", m.valuation.ev_ebitda_percentile_5y),
+        _fact("P/E", m.valuation.pe, _mult),
+        _fact("P/E percentile (5y)", m.valuation.pe_percentile_5y, _pctile),
+        _fact("EV/EBITDA", m.valuation.ev_ebitda, _mult),
+        _fact("EV/EBITDA percentile (5y)", m.valuation.ev_ebitda_percentile_5y, _pctile),
         _fact("Range position", m.valuation.range_position),
         "",
         "### Quality / durability",
-        _fact("FCF sign", m.quality.fcf_sign),
-        _fact("Free cash flow", m.quality.free_cash_flow),
+        _fact("FCF sign", m.quality.fcf_sign, _signword),
+        _fact("Free cash flow ($M)", m.quality.free_cash_flow),
         _fact("Margin trend", m.quality.margin_trend),
-        _fact("Net debt / EBITDA", m.quality.net_debt_to_ebitda),
-        _fact("Interest coverage", m.quality.interest_coverage),
+        _fact("Net debt / EBITDA", m.quality.net_debt_to_ebitda, _mult),
+        _fact("Interest coverage", m.quality.interest_coverage, _mult),
         _fact("Share-count trend", m.quality.share_count_trend),
         _fact("Liquidity / covenant flags", m.quality.liquidity_covenant_flags),
         "",
@@ -58,7 +90,7 @@ def render_markdown(d: Dossier) -> str:
         "",
         "### Drawdown cause",
         _fact("Shape", m.drawdown_cause.shape),
-        _fact("Gap-down dates", m.drawdown_cause.gap_down_dates),
+        _fact("Gap-down dates", m.drawdown_cause.gap_down_dates, _dates),
     ]
     if m.drawdown_cause.filings:
         out.append("- **8-Ks at the gap-downs (cause from item codes + parsed filing text):**")
@@ -67,12 +99,15 @@ def render_markdown(d: Dossier) -> str:
             out.append(f"    - items: {', '.join(f.item_types) or '—'}")
             for ev in f.events:
                 out.append(f"    - {ev}")
+    out.append(
+        _fact("Revised guidance (catalyst 8-K Ex-99.1)", m.drawdown_cause.revised_guidance)
+    )
     out += [
         "",
         "### Idiosyncratic vs shared (G2-vs-market compensation)",
-        _fact("Name 180d return", m.idiosyncratic_vs_shared.name_180d_return),
-        _fact("Market (IWM) 180d return", m.idiosyncratic_vs_shared.market_180d_return),
-        _fact("Relative vs market", m.idiosyncratic_vs_shared.rel_vs_market),
+        _fact("Name 180d return", m.idiosyncratic_vs_shared.name_180d_return, _pct),
+        _fact("Market (IWM) 180d return", m.idiosyncratic_vs_shared.market_180d_return, _pct),
+        _fact("Relative vs market", m.idiosyncratic_vs_shared.rel_vs_market, _pct),
         _fact("Cohort read", m.idiosyncratic_vs_shared.read),
     ]
     cohort = m.idiosyncratic_vs_shared.cohort

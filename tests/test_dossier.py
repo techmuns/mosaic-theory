@@ -18,6 +18,7 @@ from pydantic import BaseModel
 from mosaic.dossier import ciq, manual_store
 from mosaic.dossier import ciq_sheets as cs
 from mosaic.dossier import mechanical as dm
+from mosaic.dossier import render as dr
 from mosaic.dossier import schemas as ds
 from mosaic.dossier import synthesis as syn
 from mosaic.graph.llm import LlmClient, LlmError
@@ -163,7 +164,9 @@ def _minimal_mech() -> ds.MechanicalLayer:
         concentration=ds.Concentration(
             segments=_u(), segment_ebitda=_u(), customers=_u(), geographic=_u()
         ),
-        drawdown_cause=ds.DrawdownCause(shape=_u(), gap_down_dates=_u(), filings=[]),
+        drawdown_cause=ds.DrawdownCause(
+            shape=_u(), gap_down_dates=_u(), filings=[], revised_guidance=_u()
+        ),
         idiosyncratic_vs_shared=ds.IdiosyncraticVsShared(
             name_180d_return=ds.Sourced.present(-0.726, source_ref="EOD FUBO 180d"),
             market_180d_return=ds.Sourced.present(0.156, source_ref="EOD IWM 180d"),
@@ -416,3 +419,77 @@ def test_ev_ebitda_current_is_a_multiple_not_dollars() -> None:
     ]
     ev = cs.ev_ebitda_current(_fin_bundle({"Multiples": mult}))
     assert ev.status is ds.SourceStatus.PRESENT and ev.value == 8.5  # the latest Close, a multiple
+
+
+# --- item 1: the catalyst 8-K's Exhibit 99.1 revised-guidance fetch (offline parts) -----------
+def test_revised_guidance_extracts_figures_block_not_lede() -> None:
+    """Skips the press-release lede; surfaces the revised-outlook figures block verbatim. Absent a
+    revised-outlook section → None (→ fail-loud UNKNOWN upstream). Numbers are never parsed here."""
+    lede = (
+        "Provides revised 2026 full-year outlook. Received a termination notice from Avis Budget "
+        "Group, effective September 2026. "
+    )
+    filler = "The company is taking immediate actions to reduce costs and adapt operations. " * 12
+    figures = (
+        "Revised 2026 Full-Year Guidance the Company is revising its 2026 full-year financial "
+        "outlook to the following: Total Revenue of $985 million to $995 million; Adjusted EBITDA "
+        "of $380 million to $385 million; Adjusted EPS of $1.19 to $1.25; Free Cash Flow of $140 "
+        "million to $150 million."
+    )
+    block = dm._extract_revised_guidance(lede + filler + figures)
+    assert block is not None
+    assert all(s in block for s in ("985", "380", "1.19", "140"))  # all four figures, verbatim
+    assert "termination notice from Avis" not in block  # lede skipped (no figures in its window)
+    assert dm._extract_revised_guidance("An earnings call. Revenue grew. No outlook given.") is None
+
+
+def test_ex_991_name_matcher() -> None:
+    assert dm._is_ex991("d123116dex991.htm")  # RR Donnelley 'dex991' form (VRRM's filer)
+    assert dm._is_ex991("ex-99.1.htm") and dm._is_ex991("ex99d1.htm")
+    assert not dm._is_ex991("ex99.2.htm")  # 99.2 is a different exhibit
+    assert not dm._is_ex991("ex99.10.htm")  # 99.10, not 99.1
+    assert not dm._is_ex991("FilingSummary.xml")  # not a readable document
+
+
+# --- item 3: render formatters (raw float → legible at render; source value untouched) --------
+def test_render_formatters() -> None:
+    assert dr._mult(2.861674241263681) == "2.9x"
+    assert dr._pctile(0.01036682615629984) == "1st %ile" and dr._pctile(0.0) == "0th %ile"
+    assert dr._pct(-0.7263) == "-72.6%"
+    assert dr._signword(1) == "positive" and dr._signword(-1) == "negative"
+
+
+def test_render_formats_display_only_keeps_full_precision() -> None:
+    """The hard fence: format at render; the stored Sourced.value keeps full precision."""
+    s = ds.Sourced.present(2.861674241263681, source_ref="EDGAR net-debt/EBITDA")
+    assert "2.9x" in dr._fact("Net debt / EBITDA", s, dr._mult)  # display formatted
+    assert s.value == 2.861674241263681  # source value untouched
+
+
+# --- item 4: customers Business-Relationships parse (no raw pipe-dump) -------------------------
+def test_customers_relationship_parse() -> None:
+    raw = (
+        "Recently disclosed customers only|\n\nCustomers|\n|\n"
+        "Customer Name|Relationship Type|Primary Industry|Source|\n"
+        "Avis Budget Group, Inc. (NasdaqGS:CAR)|Customer|Passenger Ground Transportation|10-K|\n"
+        "Business Description: Avis Budget Group, Inc. provides car rentals...|\n"
+    )
+    rows = cs._parse_business_relationships(raw)
+    assert rows is not None and len(rows) == 1  # the 'Business Description' prose row is skipped
+    assert rows[0].startswith("Avis Budget Group, Inc. (NasdaqGS:CAR) — Customer · Passenger")
+    assert cs._parse_business_relationships("no table here|just text") is None  # fail loud
+
+
+# --- item 2: transcript surfaces REMARKS, not the S&P estimates table / TOC -------------------
+def test_transcript_prose_skips_estimates_table_and_toc() -> None:
+    """management_commentary leads with management's prose — never CIQ's leading S&P estimates table
+    or the dotted table-of-contents (qualitative window, no numbers table)."""
+    text = (
+        "FQ1 2026 Earnings Call S&P Global Estimates EPS 0.14 0.17 Revenue 223.40\n"
+        "Call Participants .......... 3\nPresentation .......... 4\n"
+        "Presentation \nOperator \nGood afternoon, and welcome to the First Quarter call."
+    )
+    prose = cs._transcript_prose(text)
+    assert prose.lstrip().startswith("Operator")  # the real call opening, not the TOC/estimates
+    assert "S&P Global Estimates" not in prose and "0.14" not in prose  # estimates table skipped
+    assert "...." not in prose  # the dotted TOC skipped

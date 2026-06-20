@@ -188,6 +188,32 @@ Each line: *what it does* — *verified how*.
     adjusted measure is not the CIQ segment-sum and isn't in the Financials workbook). *Verified on
     VRRM (4 flags fire) + 3 new regression tests (segment-EBITDA share, LTM/FY YoY guard, ev_ebitda is
     a multiple).*
+  - **Completeness + presentation pass (VRRM, 2026-06-20) — retrieval/formatting, no judgement.** Four
+    mechanical gaps closed; the assemble-not-conclude line and the loud flags are untouched. (1)
+    **Ex-99.1 revised-guidance fetch** — the catalyst 8-K body only *points* to the press release
+    ("furnished as Exhibit 99.1"); the assembler now follows the filing index to the 99.1 doc, and
+    surfaces the company's **revised full-year guidance VERBATIM, source-bound** (new
+    `DrawdownCause.revised_guidance`). For VRRM: revenue **$985–995M / adj-EBITDA $380–385M / adj-EPS
+    $1.19–1.25 / FCF $140–150M**, bound to the exhibit URL — the single most decision-relevant number,
+    previously absent. Verbatim only (no number-parsing → no mis-extraction); fail-loud UNKNOWN with
+    the accession if the exhibit/section is absent. (2) **Transcript dependency met** — installed
+    LibreOffice (`soffice`, brew-symlinked onto PATH) so the existing `ole_disguised`→soffice
+    `read_text` path runs; `management_commentary` now surfaces the prepared-remarks opening
+    (qualitative, source-bound), skipping CIQ's leading S&P **estimates table + dotted TOC** (no
+    numbers table). (3) **Render-boundary formatting standard** — screen-DataField floats are
+    formatted for legibility **at render only** (`_mult`→"2.9x", `_pctile`→"1st %ile", `_pct`→"−78.7%",
+    `_signword`→"positive"); **the stored `Sourced.value` keeps full precision** so the synthesis /
+    number-trace still see the real number (a fenced, asserted invariant). CIQ string fields stay
+    clean at extraction; `consensus_view` now labels mean/median, shows LT-growth as a percent, and
+    explains the "Buy (1.00)" CIQ score. (4) **Customers parsed** — the Business-Relationships RTF is
+    parsed into readable `Name — Type · Industry · src` lines (Avis/Enterprise/NYC-DOT/Hertz for
+    VRRM), not a raw pipe-dump; fail-loud UNKNOWN if the table can't be parsed. *Verified end-to-end
+    on the VRRM dossier.md + 6 new offline tests (99.1 extractor & name-matcher, render formatters &
+    the precision fence, customers parse, transcript-prose skip).* **Record-only (not acted on):** the
+    graph-cohort ~4% caveat (next bullet) stands; the screen still tags every gap-down
+    `earnings_gap_down` (the dossier relabels by 8-K item code at surface — upstream cosmetic); the
+    screen's `ev_ebitda` dollar-field was already fixed separately (deferred to UNKNOWN, the dossier
+    sources the CIQ multiple).
   - **⚠ LANDMINE (unbuilt — insider/Form-4):** when insider data is wired, the CIQ **Transaction-Type
     direction-flip** (`ciq_extraction_notes` ~line 80) MUST be handled — the Type column signs the
     trade, so a naive `net_shares_sold` summed off raw quantities is **sign-flip wrong** (buys and
