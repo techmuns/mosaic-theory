@@ -275,45 +275,40 @@ def _quarterly_revenue_yoy(bundle: CiqBundle) -> str | None:
 
 
 def margin_trend(bundle: CiqBundle) -> Sourced[str]:
+    """The MARGIN trajectory — gross and EBITDA margin (%) per period across the years, so the trend
+    is visible (e.g. VRRM's ~42%→37% EBITDA-margin compression). Each margin is a ratio within one
+    column, so the Reclassified basis (marked) is never crossed. Revenue GROWTH is a top-line metric
+    and lives in the multi-year trajectory, not under a margin label."""
     try:
         rows = bundle.sheet("financials", "Income Statement", freq="annual")
     except CiqUnavailableError as exc:
         return _miss_or_unknown(bundle, "financials", exc)
-    hdr = _period_header(rows)
-    rev_i, gp_i = _find_row(rows, "Total Revenue"), _find_row(rows, "Gross Profit")
-    eb_i = _find_row(rows, "EBITDA")
+    hdr, rev_i = _period_header(rows), _find_row(rows, "Total Revenue")
     if rev_i is None or hdr is None:
         return Sourced.unknown(note="Income Statement missing Total Revenue / period header")
-    latest = _latest_col(rows, rev_i, hdr)
-    if latest is None:
-        return Sourced.unknown(note="no revenue value")
-    col, rev, period = latest
 
-    def margin(ri: int | None) -> str:
-        v = clean_num(rows[ri][col]) if ri is not None and col < len(rows[ri]) else None
-        return f"{v / rev:.0%}" if v is not None and rev else "n/a"
+    def margin_traj(ri: int | None) -> str | None:
+        if ri is None:
+            return None
+        parts: list[str] = []
+        for j in range(1, len(rows[ri])):
+            v = clean_num(rows[ri][j])
+            rv = clean_num(rows[rev_i][j]) if j < len(rows[rev_i]) else None
+            if v is not None and rv:
+                lab = _period_label(rows[hdr][j]) if j < len(rows[hdr]) else f"c{j}"
+                parts.append(f"{lab} {v / rv:.0%}")
+        return " → ".join(parts) if len(parts) >= 2 else None
 
-    # revenue YoY: prefer a clean same-quarter YoY from the QUARTERLY file (the annual file's latest
-    # column is LTM, whose only same-basis prior is reclassified — both guards correctly refuse).
-    yoy = _quarterly_revenue_yoy(bundle)
-    if yoy is None:
-        recl = _reclassified_cols(rows[hdr])
-        prior = [j for j in range(1, col) if clean_num(rows[rev_i][j]) is not None]
-        yoy = "UNAVAILABLE (no prior-period column)"
-        if prior:
-            pj = prior[-1]
-            lc = rows[hdr][col] if col < len(rows[hdr]) else ""
-            lp = rows[hdr][pj] if pj < len(rows[hdr]) else ""
-            if _is_ltm(lc) != _is_ltm(lp):  # never compare an LTM column against a fiscal-year one
-                yoy = "UNAVAILABLE (LTM-vs-FY period mix)"
-            elif (pj in recl) != (col in recl):  # never YoY across a reclassified-basis change
-                yoy = "UNAVAILABLE (reclassified-basis boundary)"
-            else:
-                pv = clean_num(rows[rev_i][pj])
-                yoy = f"{rev / pv - 1:+.0%}" if pv else "n/a"
+    eb_traj = margin_traj(_find_row(rows, "EBITDA"))
+    gp_traj = margin_traj(_find_row(rows, "Gross Profit"))
+    if eb_traj is None and gp_traj is None:
+        return Sourced.unknown(note="no gross/EBITDA margin series in the Income Statement")
+    bits = [f"EBITDA margin: {eb_traj}"] if eb_traj else []
+    if gp_traj:
+        bits.append(f"gross margin: {gp_traj}")
     return Sourced.present(
-        f"[{period}] gross {margin(gp_i)}, EBITDA {margin(eb_i)}; revenue YoY {yoy}",
-        source_ref="CIQ Financials→Income Statement (annual margins; quarterly same-basis YoY)",
+        "; ".join(bits) + "  [R reclassified basis; each margin is within one period]",
+        source_ref="CIQ Financials→Income Statement (margin trajectory)",
     )
 
 
@@ -344,7 +339,8 @@ def liquidity_covenant_flags(bundle: CiqBundle) -> Sourced[str]:
 
 
 def _segment_section(
-    bundle: CiqBundle, section: str, *, after_label: str | None = None
+    bundle: CiqBundle, section: str, *, after_label: str | None = None, total_label: str = "Total",
+    extra_fn: Callable[[float, str], str] | None = None, source_note: str = "",
 ) -> Sourced[str]:
     """Revenue/EBITDA share for a Segments-sheet section. ``after_label`` scopes the search past a
     sub-header (e.g. 'Geographic Segments') so the SAME 'Revenues' block under it is found, not
@@ -386,10 +382,35 @@ def _segment_section(
     if not parts:
         return Sourced.unknown(note=f"no {section} segment rows with values")
     label = f"{after_label} → {section}" if after_label else section
+    tail = extra_fn(tot, period) if extra_fn else ""
     return Sourced.present(
-        f"[{period}] " + "; ".join(parts) + f" of Total {tot:,.0f}",
-        source_ref=f"CIQ Financials→Segments ({label}, latest annual column)",
+        f"[{period}] " + "; ".join(parts) + f" of {total_label} {tot:,.0f}{tail}",
+        source_ref=f"CIQ Financials→Segments ({label}, latest annual column){source_note}",
     )
+
+
+def _consolidated_ebitda(bundle: CiqBundle, period: str) -> float | None:
+    """Consolidated EBITDA (Income Statement) for the FY period matching a segment column — the
+    behind the multiples/leverage/coverage, vs the pre-corporate segment sum."""
+    m = re.search(r"[A-Z][a-z]{2}-[\d-]*\d{4}", period)
+    if m is None:
+        return None
+    token = m.group(0)
+    try:
+        rows = bundle.sheet("financials", "Income Statement", freq="annual")
+    except CiqUnavailableError:
+        return None
+    hdr, eb_i = _period_header(rows), _find_row(rows, "EBITDA")
+    if hdr is None or eb_i is None:
+        return None
+    col = next(
+        (
+            j for j in range(1, len(rows[hdr]))
+            if token in str(rows[hdr][j]) and "LTM" not in str(rows[hdr][j]).upper()
+        ),
+        None,
+    )
+    return clean_num(rows[eb_i][col]) if col is not None and col < len(rows[eb_i]) else None
 
 
 def segments(bundle: CiqBundle) -> Sourced[str]:
@@ -398,9 +419,20 @@ def segments(bundle: CiqBundle) -> Sourced[str]:
 
 
 def segment_ebitda(bundle: CiqBundle) -> Sourced[str]:
-    """Segment EBITDA mix + each segment's share of total EBITDA — the decision-relevant view: a
-    customer can sit in a segment that is a small share of revenue but a large share of profit."""
-    return _segment_section(bundle, "EBITDA")
+    """Segment EBITDA mix — each share is of the SEGMENT-EBITDA sum (pre-corporate), explicitly
+    distinguished from the CONSOLIDATED EBITDA behind the multiples/leverage; the reconciling
+    unallocated-corporate item is surfaced so the two 'EBITDA' bases aren't confused."""
+
+    def reconcile(tot: float, period: str) -> str:
+        cons = _consolidated_ebitda(bundle, period)
+        if cons is None:
+            return ""
+        return f"; consolidated EBITDA {cons:,.0f} (~{tot - cons:,.0f} unallocated corporate)"
+
+    return _segment_section(
+        bundle, "EBITDA", total_label="segment-EBITDA sum (pre-corporate)", extra_fn=reconcile,
+        source_note=" + Income Statement (consolidated EBITDA)",
+    )
 
 
 def geographic(bundle: CiqBundle) -> Sourced[str]:
@@ -454,6 +486,8 @@ def multi_year_trajectory(bundle: CiqBundle) -> Sourced[str]:
             lines.append(f"EBITDA: {eb}")
     except CiqUnavailableError:
         pass
+    if (yoy := _quarterly_revenue_yoy(bundle)) is not None:  # latest top-line growth (moved here)
+        lines.append(f"Revenue YoY (latest same-quarter): {yoy}")
     try:
         seg = bundle.sheet("financials", "Segments", freq="annual")
         shdr = _period_header(seg)
@@ -514,13 +548,14 @@ def surprise_history(bundle: CiqBundle) -> Sourced[str]:
 
     parts: list[str] = []
     if (e := series(_find_row_prefix(rows, "EPS (GAAP)"))) is not None:
-        parts.append(f"EPS surprise: {e}")
+        parts.append(f"GAAP-EPS surprise: {e}")
     if (rv := series(_find_row(rows, "Revenue"))) is not None:
         parts.append(f"Revenue surprise: {rv}")
     if not parts:
         return Sourced.unknown(note="no EPS/Revenue surprise series in the Surprise sheet")
     return Sourced.present(
-        "; ".join(parts) + " (fiscal-year; +beat / −miss)",
+        "; ".join(parts) + " (fiscal-year, GAAP-EPS basis — adjusted basis is the 99.1 guide; "
+        "+beat / −miss)",
         source_ref="CIQ Estimates→Surprise (annual)",
     )
 

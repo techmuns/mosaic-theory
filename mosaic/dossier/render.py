@@ -80,7 +80,7 @@ def render_markdown(d: Dossier) -> str:
         _fact("Free cash flow ($M)", m.quality.free_cash_flow),
         _fact("Margin trend", m.quality.margin_trend),
         _fact("Net debt / EBITDA (GAAP)", m.quality.net_debt_to_ebitda, _mult),
-        _fact("Net debt / EBITDA (adjusted, covenant)", m.quality.net_debt_to_ebitda_adjusted),
+        _fact("Net debt / EBITDA (fwd-adj)", m.quality.net_debt_to_ebitda_adjusted),
         _fact("Interest coverage", m.quality.interest_coverage, _mult),
         _fact("Share-count trend", m.quality.share_count_trend),
         _fact("Liquidity / covenant flags", m.quality.liquidity_covenant_flags),

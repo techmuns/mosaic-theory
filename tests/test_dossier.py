@@ -373,16 +373,21 @@ def test_workbook_routing_finds_multiples_and_segments_inside_financials() -> No
     assert "Commercial Services" in (segs.value or "") and "797" in (segs.value or "")
 
 
-def test_reclassified_boundary_blocks_cross_basis_yoy() -> None:
-    inc: list[list[typing.Any]] = [
-        ["For the Fiscal Period", "Reclassified\n12 months\nDec-2023", "12 months\nDec-2024"],
-        ["Total Revenue", 700, 800],
-        ["Gross Profit", 300, 360],
-        ["EBITDA", 320, 360],
+def test_quarterly_yoy_refuses_cross_basis_prior() -> None:
+    """The same-quarter revenue YoY refuses a prior on a different (reclassified) basis — the
+    trajectory then omits the YoY rather than computing across a basis change (notes ~line 204)."""
+    quarterly: list[list[typing.Any]] = [
+        ["For the Fiscal Period", "Reclassified\n3 months\nQ1 Mar-2025", "3 months\nQ4 Dec-2025",
+         "3 months\nQ1 Mar-2026"],
+        ["Total Revenue", 223.0, 262.0, 224.0],
     ]
-    assert cs._reclassified_cols(inc[0]) == {1}  # col1 carries the restated basis
-    mt = cs.margin_trend(_fin_bundle({"Income Statement": inc}, freq="annual"))
-    assert "UNAVAILABLE (reclassified-basis boundary)" in (mt.value or "")  # YoY refused
+    assert cs._reclassified_cols(quarterly[0]) == {1}  # the prior Q1 is on the restated basis
+    annual: list[list[typing.Any]] = [
+        ["For the Fiscal Period", "12 months Dec-2025"],
+        ["Total Revenue", 979.0], ["EBITDA", 362.0],
+    ]
+    b = _fin_bundle2({"Income Statement": annual}, {"Income Statement": quarterly})
+    assert cs._quarterly_revenue_yoy(b) is None  # the only prior Q1 is cross-basis → refused
 
 
 def test_interest_coverage_and_fcf_from_subsheets() -> None:
@@ -431,19 +436,22 @@ def test_segment_ebitda_section_surfaces_profit_share() -> None:
     assert "Segments (EBITDA" in (eb.source_ref or "")
 
 
-def test_margin_yoy_refuses_ltm_vs_fy_mix() -> None:
-    """A revenue YoY that would divide an LTM column by a fiscal-year column is UNAVAILABLE, not a
-    fabricated number (notes ~line 204: never mix LTM with FY)."""
+def test_margin_trend_is_a_margin_trajectory() -> None:
+    """'Margin trend' is the gross/EBITDA-margin trajectory across years (the trend), not single-
+    period levels with a misfiled revenue YoY — growth is top-line, kept out of this field."""
     inc: list[list[typing.Any]] = [
-        ["For the Fiscal Period", "12 months\nDec-31-2025", "LTM\n12 months\nMar-31-2026"],
-        ["Total Revenue", 979.079, 979.393],
-        ["Gross Profit", 572.0, 557.3],
-        ["EBITDA", 361.8, 358.0],
+        ["For the Fiscal Period", "Reclassified\n12 months\nDec-2023", "12 months\nDec-2024",
+         "12 months\nDec-2025"],
+        ["Total Revenue", 817.0, 879.0, 979.0],
+        ["Gross Profit", 504.0, 537.0, 572.0],
+        ["EBITDA", 306.0, 342.0, 362.0],
     ]
     mt = cs.margin_trend(_fin_bundle({"Income Statement": inc}, freq="annual"))
     assert mt.status is ds.SourceStatus.PRESENT
-    assert "UNAVAILABLE (LTM-vs-FY period mix)" in (mt.value or "")  # not "+0%"
-    assert "gross 57%" in (mt.value or "")  # single-column margins are still fine
+    v = mt.value or ""
+    assert "EBITDA margin:" in v and "37%" in v  # 362/979 ≈ 37% — the margin trajectory
+    assert "(R)" in v  # the reclassified basis is marked
+    assert "YoY" not in v  # revenue growth is NOT reported under a margin label
 
 
 def test_ev_ebitda_current_is_a_multiple_not_dollars() -> None:
@@ -585,7 +593,9 @@ def test_geographic_section_parsed() -> None:
 
 
 # --- item 3: clean same-quarter YoY from the quarterly file; annual margins + guards kept --------
-def test_quarterly_revenue_yoy_same_quarter() -> None:
+def test_quarterly_revenue_yoy_lives_in_trajectory_not_margin() -> None:
+    """The clean same-quarter revenue YoY (Q1-2026 vs Q1-2025) now lives in the trajectory/growth
+    field; margin_trend carries only the margin trajectory (no growth under a margin label)."""
     annual: list[list[typing.Any]] = [
         ["For the Fiscal Period", "12 months Dec-31-2025", "LTM 12 months Mar-31-2026"],
         ["Total Revenue", 979.0, 979.4], ["Gross Profit", 572.0, 557.0], ["EBITDA", 362.0, 358.0],
@@ -596,13 +606,10 @@ def test_quarterly_revenue_yoy_same_quarter() -> None:
         ["Total Revenue", 223.254, 261.938, 223.568],
     ]
     b = _fin_bundle2({"Income Statement": annual}, {"Income Statement": quarterly})
+    tr = cs.multi_year_trajectory(b)
+    assert "Revenue YoY" in (tr.value or "") and "+0.1%" in (tr.value or "")  # YoY in trajectory
     mt = cs.margin_trend(b)
-    assert mt.status is ds.SourceStatus.PRESENT
-    assert "+0.1%" in (mt.value or "")  # 223.568/223.254-1, Q1-2026 vs Q1-2025 (same-quarter)
-    assert "gross 57%" in (mt.value or "")  # annual single-column margins kept
-    # guard intact: annual-only bundle (no same-quarter prior) still refuses LTM-vs-FY
-    mt_annual = cs.margin_trend(_fin_bundle({"Income Statement": annual}, freq="annual"))
-    assert "UNAVAILABLE (LTM-vs-FY period mix)" in (mt_annual.value or "")
+    assert "EBITDA margin:" in (mt.value or "") and "YoY" not in (mt.value or "")  # margins only
 
 
 # --- item 4: multi-year arc shows per-period values, basis marked, never YoY'd across ------------

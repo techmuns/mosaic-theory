@@ -372,9 +372,14 @@ def _share_count_trend(edgar: EdgarClient, cik: str, reference_date: date) -> So
     )
 
 
-def _pe_basis_flag(record: DataRecord, edgar: EdgarClient) -> str | None:
-    """Flag a P/E whose trailing-EPS denominator is far out of line with recent EPS history — a
-    one-time item can make the multiple look at a 5y floor when it is a numerator artifact."""
+def _pe_reconciliation(
+    record: DataRecord, edgar: EdgarClient, bundle: CiqBundle, revised_guidance: Sourced[str]
+) -> str | None:
+    """Whether the trailing GAAP P/E is meaningful. When the forward adjusted EPS is now in the
+    dossier (99.1), RESOLVE the old 'verify against forward EPS' flag into a reconciliation — the
+    trailing GAAP P/E is one-time-distorted and the clean read is the forward adjusted guide (this
+    also subsumes the EDGAR-vs-CIQ P/E conflict). When the adjusted EPS isn't available the original
+    open flag stands. None when the trailing EPS is in line with recent history (no distortion)."""
     pe = record.fundamentals.pe
     if not pe.is_known or pe.value is None or not record.identity.cik:
         return None
@@ -392,12 +397,27 @@ def _pe_basis_flag(record: DataRecord, edgar: EdgarClient) -> str | None:
     med = statistics.median(prior)
     if med == 0 or latest is None:
         return None
-    if (latest > 0) != (med > 0) or latest / med > 2.5 or latest / med < 0.4:
-        return (
-            f"P/E may be distorted by non-recurring EPS — latest annual EPS {latest:.2f} vs "
-            f"recent median {med:.2f}; verify against normalized/forward EPS (CIQ)"
+    if not ((latest > 0) != (med > 0) or latest / med > 2.5 or latest / med < 0.4):
+        return None  # trailing EPS is in line with recent history — no distortion
+    eps_m = _ADJ_EPS.search(revised_guidance.value or "")
+    price = record.prices.last.value if record.prices.last.is_known else None
+    ciq_pe = ciq_sheets.pe_ltm_current(bundle)
+    if eps_m and price:  # RESOLVED — the forward adjusted EPS is now sourced
+        lo, hi = float(eps_m.group(1)), float(eps_m.group(2))
+        ciq_tail = (
+            f"; CIQ P/LTM {ciq_pe.value:.1f}x uses a different (lower) trailing EPS basis"
+            if ciq_pe.status is SourceStatus.PRESENT and ciq_pe.value else ""
         )
-    return None
+        return (
+            f"RESOLVED (P/E basis) — trailing GAAP P/E {pe.value:.1f}x is one-time-distorted: "
+            f"latest GAAP EPS {latest:.2f} is ~{latest / med:.1f}× the recent median {med:.2f}, so "
+            f"{pe.value:.1f}x is not a meaningful 'cheap' read. Clean read: forward adjusted guide "
+            f"${lo:.2f}–${hi:.2f} → ~{price / ((lo + hi) / 2):.1f}x at the current price{ciq_tail}."
+        )
+    return (  # adjusted EPS not available — the original open flag stands
+        f"P/E may be distorted by non-recurring EPS — latest annual EPS {latest:.2f} vs "
+        f"recent median {med:.2f}; verify against normalized/forward EPS (CIQ)"
+    )
 
 
 def _eps_caveat_flags(record: DataRecord, bundle: CiqBundle, *, eps_resolved: bool) -> list[str]:
@@ -416,7 +436,12 @@ def _eps_caveat_flags(record: DataRecord, bundle: CiqBundle, *, eps_resolved: bo
             "EPS is not in the CIQ workbook — it lives in the earnings-release/transcript "
             "reconciliation (currently UNAVAILABLE) — not a ceiling on earnings power."
         )
-    if pe.is_known and pe.value and ciq_pe.status is SourceStatus.PRESENT and ciq_pe.value:
+    # the EDGAR-vs-CIQ P/E conflict: an open flag only while unresolved; when the adjusted EPS is
+    # shown it folds into the resolved P/E reconciliation (_pe_reconciliation), not repeated here.
+    if (
+        not eps_resolved and pe.is_known and pe.value
+        and ciq_pe.status is SourceStatus.PRESENT and ciq_pe.value
+    ):
         ratio = max(pe.value, ciq_pe.value) / min(pe.value, ciq_pe.value)
         if ratio >= 2:
             out.append(
@@ -492,7 +517,7 @@ def _adjusted_facts(
         band = f"FY26 adj-EBITDA ${eb_lo:.0f}–${eb_hi:.0f}M"
         if net_debt is not None:
             nd_adj = Sourced.present(
-                f"~{net_debt / eb_mid:.1f}x covenant (net debt ${net_debt / 1e6:,.0f}M / {band})",
+                f"~{net_debt / eb_mid:.1f}x fwd-adj (net debt ${net_debt / 1e6:,.0f}M / {band})",
                 source_ref=f"{src} (adj-EBITDA) + EDGAR net debt",
             )
             if price and shares:
@@ -603,8 +628,9 @@ def assemble_mechanical(
         management_commentary=ciq_sheets.management_commentary(bundle),
     )
     flags: list[str] = []
-    if (pe_flag := _pe_basis_flag(record, edgar)) is not None:
-        flags.append(pe_flag)
+    pe_recon = _pe_reconciliation(record, edgar, bundle, drawdown.revised_guidance)
+    if pe_recon is not None:
+        flags.append(pe_recon)
     flags += _eps_caveat_flags(record, bundle, eps_resolved=adj_eps.status is SourceStatus.PRESENT)
     # the GAAP-leverage caveat is an open warning only while the covenant basis isn't shown
     if adj_lev.status is not SourceStatus.PRESENT and (lev := _leverage_basis_flag(record)):

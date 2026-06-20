@@ -247,6 +247,24 @@ Each line: *what it does* — *verified how*.
     Cap-Structure-Summary / Pension-OPEB / Supplemental / Industry-Specific sheets; directional-lint
     refine (fires on quoted consensus, glance-and-clear); quarterly consensus point estimates;
     transcript summary (deliberately raw).
+  - **Label-integrity pass (VRRM, 2026-06-20) — values correct, labels imprecise; recomputation only,
+    no new extraction.** (1) **"Margin trend" is now the gross/EBITDA-margin TRAJECTORY** across the
+    years (VRRM's 42%→37% EBITDA-margin compression visible), not single-period levels; the revenue
+    YoY (a top-line metric) MOVED out of the margin field into the multi-year trajectory/growth line.
+    (2) **EBITDA-basis reconciliation** — segment EBITDA shares are now explicitly "% of
+    segment-EBITDA sum (pre-corporate) 416", with the **consolidated EBITDA 362 (~54 unallocated
+    corporate)** surfaced, so the two 'EBITDA' bases (segment-sum behind the shares vs consolidated
+    behind the multiples/leverage/coverage) are distinguishable, not silently mixed. (3) **P/E-
+    distortion flag RESOLVED in-pipeline** — now that the forward adjusted EPS is sourced, the open
+    "verify against forward EPS" flag becomes a resolved statement: trailing GAAP P/E 5.5x is
+    one-time-distorted (GAAP EPS 0.85 ~3.1× the 0.28 median), clean read = forward adjusted $1.19–1.25
+    → ~3.9x; the EDGAR-vs-CIQ P/E conflict folds into it (no longer a separate open flag). (4) **Minor
+    labels** — net-debt/adj-EBITDA "(adjusted, covenant)" → **"(fwd-adj)"** (it uses forward, not
+    trailing, EBITDA); the Surprise line tagged **GAAP-EPS basis** (vs the 99.1 adjusted guide). The
+    final flag set: 1 RESOLVED-P/E statement + the synthesis guardrail flags. *Verified on VRRM; 3
+    margin tests updated (margin_trend is a trajectory; revenue YoY lives in the trajectory;
+    quarterly-YoY refuses a cross-basis prior). DID NOT change any correct value, refine the
+    directional/twin/number-trace guards (working-as-designed), or add sheets.*
   - **⚠ LANDMINE (unbuilt — insider/Form-4):** when insider data is wired, the CIQ **Transaction-Type
     direction-flip** (`ciq_extraction_notes` ~line 80) MUST be handled — the Type column signs the
     trade, so a naive `net_shares_sold` summed off raw quantities is **sign-flip wrong** (buys and
