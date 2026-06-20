@@ -704,23 +704,36 @@ def _transcript_prose(text: str) -> str:
     return text[min(starts) :] if starts else text
 
 
-_TRANSCRIPT_CAP = 80_000  # carry the whole call (remarks + Q&A); a runaway bound, not token economy
+# the synthesis LLM gets a MECHANICALLY-bounded slice (sections + a fixed char budget) — a
+# structural cut, never a topic/relevance selection. The DOSSIER embeds nothing (a pointer only).
+_SYNTHESIS_TRANSCRIPT_BUDGET = 12_000
+
+
+def transcript_for_synthesis(bundle: CiqBundle) -> str | None:
+    """A mechanically-bounded transcript slice for the synthesis LLM INPUT ONLY (never embedded in
+    the dossier): boilerplate stripped (operator intro / forward-looking-statements legalese /
+    estimates table / TOC, via ``_transcript_prose``), prepared-remarks + Q&A truncated to a fixed
+    char budget. A structural cut (sections + budget), NOT a topic/relevance selection —
+    name-agnostic (no per-name topics). None when there is no transcript or it can't be parsed."""
+    wb = bundle.workbook("transcript")
+    if wb is None:
+        return None
+    try:
+        return _transcript_prose(read_text(wb.path, wb.fmt))[:_SYNTHESIS_TRANSCRIPT_BUDGET]
+    except CiqParseError:
+        return None
 
 
 def management_commentary(bundle: CiqBundle) -> Sourced[str]:
-    """Earnings-call transcript as QUALITATIVE context (no numbers computed from it). CIQ ships them
-    Word docs renamed .rtf (``ole_disguised``) → the LibreOffice path; UNKNOWN if no converter. The
-    boilerplate (estimates table / TOC / operator intro / forward-looking-statements legalese) is
-    skipped and the window is WIDE — prepared remarks AND Q&A (the call's substance), surfaced
-    in full for the human to read. The machine does not curate the 'relevant' passage."""
+    """A POINTER to the earnings-call transcript — NOT an embedded or machine-selected excerpt. The
+    human reads it in full for management posture/tone; the machine points, it does not curate
+    transcript content (a machine-chosen 'salient extract' is the relevance judgment this project
+    forbids; the full embed is a duplicate that bloated the synthesis prompt)."""
     wb = bundle.workbook("transcript")
     if wb is None:
         return Sourced.missing(note=f"no earnings-call transcript for {bundle.ticker} — pull it")
-    try:
-        text = _transcript_prose(read_text(wb.path, wb.fmt))
-    except CiqParseError as exc:
-        return Sourced.unknown(note=f"transcript needs LibreOffice/Word conversion: {exc}")
     return Sourced.present(
-        text[:_TRANSCRIPT_CAP],
-        source_ref=f"CIQ transcript {wb.path.name} (remarks + Q&A; qualitative, no numbers)",
+        f"Earnings-call transcript on file — read {wb.path.name} in full for management posture "
+        "(pointer only; the machine does not curate or embed transcript content)",
+        source_ref=f"CIQ transcript {wb.path.name}",
     )

@@ -17,6 +17,7 @@ from pathlib import Path
 from typing import Any
 
 from mosaic.config import Config, get_config
+from mosaic.dossier import ciq_sheets
 from mosaic.dossier.ciq import CiqBundle
 from mosaic.dossier.manual_store import LocalFolderStore, ManualDataStore
 from mosaic.dossier.mechanical import assemble_mechanical
@@ -122,7 +123,8 @@ def assemble_one(
     llm_log = ""
     if llm is not None:
         synthesis, synth_flags, llm_log = synthesize(
-            mech, llm=llm, ticker=ticker, name=rec.identity.name
+            mech, llm=llm, ticker=ticker, name=rec.identity.name,
+            transcript=ciq_sheets.transcript_for_synthesis(bundle),
         )
         flags += synth_flags
     else:

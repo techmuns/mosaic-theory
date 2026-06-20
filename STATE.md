@@ -265,6 +265,25 @@ Each line: *what it does* — *verified how*.
     margin tests updated (margin_trend is a trajectory; revenue YoY lives in the trajectory;
     quarterly-YoY refuses a cross-basis prior). DID NOT change any correct value, refine the
     directional/twin/number-trace guards (working-as-designed), or add sheets.*
+  - **Synthesis truncation fix + transcript redesign (VRRM, 2026-06-21) — SUPERSEDES the 80k full
+    transcript embed above.** A run dropped the last two synthesis fields (decisive_question,
+    key_unknowns) as BLANK: the model hit `max_tokens` mid-tool-call (the mech layer had grown to
+    56.5k chars, ~40k of it the embedded transcript), and two silent-failure points let it pass —
+    `llm.extract` ignored `stop_reason`, and `synthesize`/`_parse` defaulted the missing required
+    fields. Three fixes: **(1) FAIL LOUD on truncation** — `extract` now raises `LlmError` when
+    `stop_reason=="max_tokens"`, and `synthesize` rejects any raw output missing a required field
+    (the tool marks all five required) → the synthesis is marked **UNAVAILABLE** with a loud flag,
+    never a blank indistinguishable from genuine absence. **(2) Output cap 4096→8192.** **(3)
+    Transcript redesign — the machine POINTS, never embeds-full or curates:** the dossier
+    `management_commentary` is now a **pointer** to the call file ("read in full for posture/tone",
+    source-bound; ~210 chars), and the synthesis gets a separate **mechanically-bounded** slice
+    (`transcript_for_synthesis`: boilerplate-stripped, prepared-remarks + Q&A to a 12k char budget) —
+    a structural cut (sections + budget), NOT a topic/relevance selection, name-agnostic. This removes
+    the bloat at the root (mech layer 56.5k→14.2k) and tightens the number-trace (the transcript is no
+    longer in the mech dump). *Verified on VRRM: pointer not embed, all 5 synthesis fields populate
+    (decisive_question + 3/3 evidence + 10 key_unknowns), grounded bull/bear from the bounded input;
+    +3 offline tests (truncated tool response → UNAVAILABLE not blank; extract raises on max_tokens;
+    management_commentary is a pointer).*
   - **⚠ LANDMINE (unbuilt — insider/Form-4):** when insider data is wired, the CIQ **Transaction-Type
     direction-flip** (`ciq_extraction_notes` ~line 80) MUST be handled — the Type column signs the
     trade, so a naive `net_shares_sold` summed off raw quantities is **sign-flip wrong** (buys and

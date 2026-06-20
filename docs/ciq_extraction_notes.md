@@ -209,6 +209,29 @@ trailing, EBITDA.
 the surfaced surprise is annual; the EPS row is GAAP-EPS basis (distinct from the 99.1 adjusted guide)
 and is labelled as such; `+beat / −miss`.
 
+**Transcript: POINTED-TO in the dossier, MECHANICALLY-BOUNDED for the synthesis — never embedded
+full, never curated.** Two separate paths, by design:
+- DOSSIER (`management_commentary()`): a POINTER only — the call/file identifier + "read in full for
+  management posture/tone", source-bound to the file. NO machine-selected excerpt and NO full embed.
+  A machine-chosen "salient extract" is the relevance judgment this project forbids (the machine
+  widens/points, never decides what matters); the full embed was also a duplicate (the human holds
+  the file) that bloated the synthesis prompt and truncated it.
+- SYNTHESIS LLM INPUT (`transcript_for_synthesis()`): a MECHANICALLY-bounded slice — boilerplate
+  stripped (operator intro / forward-looking-statements legalese / leading estimates table / TOC, via
+  `_transcript_prose`'s hand-off anchor) and prepared-remarks + Q&A truncated to a FIXED char budget
+  (`_SYNTHESIS_TRANSCRIPT_BUDGET`). This is a STRUCTURAL cut (sections + budget), NOT a topic/relevance
+  selection — no name-specific topics are hardcoded; it works for any ticker. The slice is passed to
+  the synthesis as qualitative context (no numbers derived; points still bind to the mechanical
+  facts' source_refs), and is NOT part of the mechanical-layer dump, so it does not enlarge the
+  number-trace haystack.
+
+**Synthesis truncation is fail-loud, not silently-blank** (`llm.extract` + `synthesize`). The forced
+tool marks all five synthesis fields required. If the model is cut at `max_tokens` mid-tool-call,
+`extract` raises `LlmError` (it checks `stop_reason`), and `synthesize` independently rejects any raw
+output missing a required field — marking the whole synthesis UNAVAILABLE with a loud flag rather than
+defaulting the missing trailing fields to blank (which is indistinguishable from a genuine empty
+field). The output cap is 8192 tokens.
+
 ## Sparse-data fallback for Multiples percentile-quartile classification
 
 The framework's B1 valuation-position classification (NEAR-FLOOR / BELOW-CENTER / ABOVE-CENTER / NEAR-CEILING) uses percentile-of-Close-history quartiles. This computation requires sufficient settled-quarter data points to produce meaningful quartiles.

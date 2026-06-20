@@ -31,7 +31,7 @@ class LlmClient(ABC):
 class AnthropicLlmClient(LlmClient):
     """Anthropic adapter — forces a single tool call and returns its structured input."""
 
-    def __init__(self, *, model: str, max_tokens: int = 4096, api_key: str | None = None) -> None:
+    def __init__(self, *, model: str, max_tokens: int = 8192, api_key: str | None = None) -> None:
         import anthropic  # lazy: the package only needs anthropic for the graph track
 
         self._model = model
@@ -55,6 +55,14 @@ class AnthropicLlmClient(LlmClient):
             tool_choice={"type": "tool", "name": tool["name"]},
             messages=[{"role": "user", "content": user}],
         )
+        # FAIL LOUD on truncation: a tool call cut off at max_tokens yields a PARTIAL input dict
+        # (trailing required fields dropped). Never accept it as complete — raise so the caller
+        # marks the result UNAVAILABLE rather than surfacing silently-missing fields as blanks.
+        if msg.stop_reason == "max_tokens":
+            raise LlmError(
+                f"model {self._model} truncated at max_tokens={self._max_tokens} — tool call "
+                "incomplete; raise the cap or shrink the prompt"
+            )
         for block in msg.content:
             if getattr(block, "type", None) == "tool_use":
                 return dict(block.input)

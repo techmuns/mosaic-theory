@@ -22,7 +22,7 @@ from mosaic.dossier import render as dr
 from mosaic.dossier import schemas as ds
 from mosaic.dossier import synthesis as syn
 from mosaic.edgar.client import EdgarClient, FundamentalSnapshot, all_unknown_snapshot
-from mosaic.graph.llm import LlmClient, LlmError
+from mosaic.graph.llm import AnthropicLlmClient, LlmClient, LlmError
 from mosaic.schemas import data_record as sdr
 from mosaic.schemas.envelope import DataField, SourceTier
 
@@ -740,3 +740,72 @@ def test_surprise_history_parsed_and_gaap_labelled() -> None:
     assert s.status is ds.SourceStatus.PRESENT
     assert "GAAP-EPS surprise:" in (s.value or "") and "FY2024 -76%" in (s.value or "")
     assert "GAAP-EPS basis" in (s.value or "")  # basis distinguished from the adjusted guide
+
+
+# --- truncation fail-loud (change 1) + transcript pointer (change 3) --------------------------
+class _StubLlm(LlmClient):
+    """An LlmClient whose extract() returns a fixed dict — to exercise synthesize() truncation."""
+
+    def __init__(self, result: dict[str, typing.Any]) -> None:
+        self._result = result
+
+    def extract(
+        self, *, system: str, user: str, tool: dict[str, typing.Any]
+    ) -> dict[str, typing.Any]:
+        return self._result
+
+    @property
+    def model(self) -> str:
+        return "stub-model"
+
+
+def test_synthesis_truncated_response_is_unavailable_not_blank() -> None:
+    """A partial tool response (missing required fields) → synthesis UNAVAILABLE + a loud flag,
+    never a blank decisive_question / key_unknowns indistinguishable from a genuine empty field."""
+    partial = {  # missing decisive_question + key_unknowns — the truncation signature
+        "bull_points": [{"claim": "x", "source_ref": "EOD FUBO 180d"}],
+        "bear_points": [], "twin_reference_cases": [],
+    }
+    synth, flags, log = syn.synthesize(
+        _minimal_mech(), llm=_StubLlm(partial), ticker="X", name="X Co"
+    )
+    assert synth is None  # NOT a blank synthesis
+    assert any("UNAVAILABLE" in f for f in flags) and "INCOMPLETE" in log
+    complete = {
+        "bull_points": [], "bear_points": [], "twin_reference_cases": [],
+        "decisive_question": {"question": "Q?", "evidence_for": [], "evidence_against": []},
+        "key_unknowns": ["u1"],
+    }
+    synth2, _, _ = syn.synthesize(_minimal_mech(), llm=_StubLlm(complete), ticker="X", name="X Co")
+    assert synth2 is not None and synth2.decisive_question.question == "Q?"  # complete → parses
+
+
+def test_extract_fails_loud_on_max_tokens_truncation() -> None:
+    """llm.extract raises (never returns a partial dict) when the tool call is cut at max_tokens."""
+    from types import SimpleNamespace
+    client = AnthropicLlmClient(model="claude-x", api_key="test")
+    block = SimpleNamespace(type="tool_use", input={"bull_points": []})
+
+    def made(stop: str) -> typing.Callable[..., typing.Any]:
+        return lambda **kw: SimpleNamespace(content=[block], stop_reason=stop)
+
+    client._client = SimpleNamespace(messages=SimpleNamespace(create=made("max_tokens")))  # type: ignore[assignment]
+    with pytest.raises(LlmError):
+        client.extract(system="s", user="u", tool={"name": "t"})
+    client._client = SimpleNamespace(messages=SimpleNamespace(create=made("tool_use")))  # type: ignore[assignment]
+    assert client.extract(system="s", user="u", tool={"name": "t"}) == {"bull_points": []}
+
+
+def test_management_commentary_is_a_pointer_not_embedded() -> None:
+    """The dossier carries a POINTER to the transcript file, never an embedded/curated excerpt."""
+    p = Path("/fake/VRRM Q1 2026 Earnings Call.rtf")
+    wb = ciq.CiqWorkbook(
+        kind="transcript", path=p, fmt=ciq.CiqFormat.OLE_DISGUISED, freq="quarterly"
+    )
+    mc = cs.management_commentary(ciq.CiqBundle(ticker="VRRM", workbooks=(wb,)))
+    assert mc.status is ds.SourceStatus.PRESENT
+    assert "VRRM Q1 2026 Earnings Call.rtf" in (mc.value or "")
+    assert "read" in (mc.value or "").lower()
+    assert len(mc.value or "") < 300  # a pointer, not a 40K embed
+    assert "VRRM Q1 2026 Earnings Call.rtf" in (mc.source_ref or "")
+    assert cs.transcript_for_synthesis(ciq.CiqBundle(ticker="X", workbooks=())) is None  # no file

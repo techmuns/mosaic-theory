@@ -130,7 +130,7 @@ def render_markdown(d: Dossier) -> str:
         _fact("Revision history", m.consensus_context.revision_history),
         _fact("Surprise history (beat/miss)", m.consensus_context.surprise_history),
         "",
-        "### Management commentary (transcript — qualitative, no numbers derived)",
+        "### Management commentary (transcript POINTER — read the file; not a machine excerpt)",
         _fact("Earnings call", m.management_commentary),
         "",
     ]

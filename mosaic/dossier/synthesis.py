@@ -295,14 +295,23 @@ def _parse(raw: dict[str, Any]) -> Synthesis:
 
 
 def synthesize(
-    mech: MechanicalLayer, *, llm: LlmClient, ticker: str, name: str
+    mech: MechanicalLayer, *, llm: LlmClient, ticker: str, name: str, transcript: str | None = None
 ) -> tuple[Synthesis | None, list[str], str]:
-    """Run the fenced synthesis → (synthesis|None, flags, log). Fail-loud, never fabricates."""
+    """Run the fenced synthesis → (synthesis|None, flags, log). Fail-loud, never fabricates. The
+    ``transcript`` (a mechanically-bounded slice — NOT embedded in the dossier) is QUALITATIVE
+    context only; no numbers are derived from it and points still bind to the mechanical facts."""
     facts = json.dumps(mech.model_dump(), indent=2, default=str)
     user = (
         f"Name: {name} ({ticker}). The ONLY facts you may use — each carries a source_ref to copy "
         f"verbatim when you cite it:\n\n{facts}"
     )
+    if transcript:
+        user += (
+            "\n\n=== Earnings-call transcript (prepared remarks + Q&A, mechanically bounded) — "
+            "QUALITATIVE context for management posture/tone ONLY. Derive NO numbers from it; any "
+            "a point resting on it cites the 'CIQ transcript …' source_ref from the facts. ===\n"
+            + transcript
+        )
     log_parts = [f"model: {llm.model}", "", "=== SYSTEM ===", _SYSTEM, "", "=== USER ===", user]
     try:
         raw = llm.extract(system=_SYSTEM, user=user, tool=SYNTHESIS_TOOL)
@@ -310,5 +319,14 @@ def synthesize(
         log_parts += ["", "=== ERROR ===", str(exc)]
         return None, [f"LLM synthesis failed (no usable output): {exc}"], "\n".join(log_parts)
     log_parts += ["", "=== RAW OUTPUT ===", json.dumps(raw, indent=2, default=str)]
+    # the tool marks all five fields required; a missing one means a truncated response — mark the
+    # synthesis UNAVAILABLE rather than silently defaulting to a blank (indistinguishable from a
+    # genuinely empty field). Defence-in-depth alongside the extract-level max_tokens guard.
+    missing = [k for k in SYNTHESIS_TOOL["input_schema"]["required"] if k not in raw]
+    if missing:
+        note = f"synthesis tool returned incomplete output — missing required field(s) {missing}"
+        log_parts += ["", "=== INCOMPLETE ===", note]
+        flag = f"LLM synthesis UNAVAILABLE — {note} (likely truncated)"
+        return None, [flag], "\n".join(log_parts)
     synth, flags = _validate(_parse(raw), mech)
     return synth, flags, "\n".join(log_parts)
