@@ -22,6 +22,8 @@ from mosaic.dossier import render as dr
 from mosaic.dossier import schemas as ds
 from mosaic.dossier import synthesis as syn
 from mosaic.graph.llm import LlmClient, LlmError
+from mosaic.schemas import data_record as sdr
+from mosaic.schemas.envelope import DataField, SourceTier
 
 # A conclusion = verdict / recommendation / direction / score / rating / probability (or a synonym).
 # No dossier field may carry one: the LLM can't conclude because there is nowhere to put it.
@@ -155,11 +157,12 @@ def _minimal_mech() -> ds.MechanicalLayer:
     return ds.MechanicalLayer(
         valuation=ds.Valuation(
             pe=_u(), pe_percentile_5y=_u(), ev_ebitda=_u(), ev_ebitda_percentile_5y=_u(),
-            range_position=_u(),
+            ev_ebitda_adjusted_fwd=_u(), adjusted_eps=_u(), range_position=_u(),
         ),
         quality=ds.Quality(
             fcf_sign=_u(), free_cash_flow=_u(), margin_trend=_u(), net_debt_to_ebitda=_u(),
-            interest_coverage=_u(), share_count_trend=_u(), liquidity_covenant_flags=_u(),
+            net_debt_to_ebitda_adjusted=_u(), interest_coverage=_u(), share_count_trend=_u(),
+            liquidity_covenant_flags=_u(), multi_year_trajectory=_u(),
         ),
         concentration=ds.Concentration(
             segments=_u(), segment_ebitda=_u(), customers=_u(), geographic=_u()
@@ -174,7 +177,7 @@ def _minimal_mech() -> ds.MechanicalLayer:
             cohort=_u(), read=_u(),
         ),
         consensus_context=ds.ConsensusContext(
-            eps_trend=_u(), revenue_trend=_u(), revision_history=_u()
+            eps_trend=_u(), revenue_trend=_u(), revision_history=_u(), surprise_history=_u()
         ),
         management_commentary=_u(),
     )
@@ -299,6 +302,39 @@ def _fin_bundle(sheets: _Sheets, freq: str = "quarterly") -> ciq.CiqBundle:
     return ciq.CiqBundle(ticker="X", workbooks=(wb,), _cache={p: sheets})
 
 
+def _fin_bundle2(annual: _Sheets, quarterly: _Sheets) -> ciq.CiqBundle:
+    """A CiqBundle with an annual AND a quarterly Financials workbook (for the quarterly YoY)."""
+    pa, pq = Path("/fake/A.xls"), Path("/fake/Q.xls")
+    wa = ciq.CiqWorkbook(kind="financials", path=pa, fmt=ciq.CiqFormat.BIFF_XLS, freq="annual")
+    wq = ciq.CiqWorkbook(kind="financials", path=pq, fmt=ciq.CiqFormat.BIFF_XLS, freq="quarterly")
+    return ciq.CiqBundle(ticker="X", workbooks=(wa, wq), _cache={pa: annual, pq: quarterly})
+
+
+def _min_record(pe: float) -> sdr.DataRecord:
+    """A DataRecord with just fundamentals.pe set — rest UNKNOWN (for the flag-downgrade test)."""
+    u: DataField[float] = DataField.unknown(source="x", tier=SourceTier.DERIVED)
+    ui: DataField[int] = DataField.unknown(source="x", tier=SourceTier.EDGAR)
+    prices = sdr.PriceFeatures(
+        last=u, high_52w=u, low_52w=u, drawdown_from_high=u, dist_from_low=u, ret_3m=u,
+        ret_6m=u, ret_12m=u, rel_ret_vs_market=u, adv_90d_shares=u, adv_90d_usd=u,
+        turnover=u, volume_spike=u,
+    )
+    funds = sdr.Fundamentals(
+        ev_ebitda=u, ev_ebitda_pctile_vs_history=u,
+        pe=DataField.present(pe, as_of=date(2026, 6, 17), source="EOD", tier=SourceTier.DERIVED),
+        pe_pctile_vs_history=u, fcf_sign=ui, op_income_sign=ui, net_leverage=u,
+    )
+    return sdr.DataRecord(
+        identity=sdr.Identity(
+            internal_id="SEC-X", issuer_id="I", cik="0001682745", ticker="VRRM", mic="XNAS",
+            exchange="Nasdaq", eod_symbol="VRRM", name="VRRM Inc.",
+        ),
+        market_cap=u, prices=prices, fundamentals=funds,
+        stress=sdr.StressSignals(iv_pctile=u, short_interest=u),
+        overall_coverage_tier=sdr.CoverageTier.US_FULL, as_of=date(2026, 6, 17),
+    )
+
+
 def test_clean_num_treats_ciq_blanks_as_unavailable() -> None:
     for blank in ("", "-", "—", "NM", "NA", "Entitlement Needed"):
         assert ciq.clean_num(blank) is None  # UNAVAILABLE — never coerced to 0
@@ -392,7 +428,7 @@ def test_segment_ebitda_section_surfaces_profit_share() -> None:
     assert "Commercial Services 436 (45%)" in (rev.value or "")  # revenue share
     assert eb.status is ds.SourceStatus.PRESENT
     assert "Commercial Services 283 (68%)" in (eb.value or "")  # 282.5/415.9 — profit, not revenue
-    assert "EBITDA section" in (eb.source_ref or "")
+    assert "Segments (EBITDA" in (eb.source_ref or "")
 
 
 def test_margin_yoy_refuses_ltm_vs_fy_mix() -> None:
@@ -512,3 +548,78 @@ def test_transcript_prose_anchors_past_legalese_and_carries_qa() -> None:
     assert "risks and uncertainties" not in prose  # the legalese is skipped
     assert "turn the presentation over to IR" not in prose  # operator→IR hand-off skipped too
     assert all(s in prose for s in ("Question and Answer", "renewal", "constructive"))
+
+
+# --- item 1: adjusted-basis figures parse; the GAAP-EPS caveat downgrades when they're shown ----
+def test_adjusted_guidance_parse_and_eps_flag_downgrade() -> None:
+    text = (
+        "revising its outlook to: Total Revenue of $985 million to $995 million; Adjusted EBITDA "
+        "of $380 million to $385 million; Adjusted EPS of $1.19 to $1.25."
+    )
+    eb, eps = dm._ADJ_EBITDA.search(text), dm._ADJ_EPS.search(text)
+    assert eb is not None and (float(eb.group(1)), float(eb.group(2))) == (380.0, 385.0)
+    assert eps is not None and (float(eps.group(1)), float(eps.group(2))) == (1.19, 1.25)
+    rec, empty = _min_record(pe=5.5), ciq.CiqBundle(ticker="VRRM", workbooks=())
+    open_warn = dm._eps_caveat_flags(rec, empty, eps_resolved=False)  # adjusted basis absent
+    resolved = dm._eps_caveat_flags(rec, empty, eps_resolved=True)  # adjusted basis now shown
+    assert any("understates earnings power" in f for f in open_warn)  # open warning
+    assert not any("understates earnings power" in f for f in resolved)  # downgraded to a fact
+
+
+# --- item 2: geographic = the 'Geographic Segments' → 'Revenues' block, not the business one ----
+def test_geographic_section_parsed() -> None:
+    seg: list[list[typing.Any]] = [
+        ["For the Fiscal Period", "12 months Dec-31-2025"],
+        ["Business Segments", ""], ["Revenues", ""], ["Commercial Services", 436.0],
+        ["  Total Revenues", 979.0],
+        ["Geographic Segments", ""],
+        ["For the Fiscal Period", "12 months Dec-31-2025"],
+        ["Revenues", ""], ["United States", 846.0], ["Australia", 66.0],
+        ["  Total Revenues", 979.0],
+    ]
+    b = _fin_bundle({"Segments": seg}, freq="annual")
+    geo = cs.geographic(b)
+    assert geo.status is ds.SourceStatus.PRESENT
+    assert "United States 846 (86%)" in (geo.value or "") and "Geographic" in (geo.source_ref or "")
+    assert "Commercial Services 436" in (cs.segments(b).value or "")  # business block unaffected
+
+
+# --- item 3: clean same-quarter YoY from the quarterly file; annual margins + guards kept --------
+def test_quarterly_revenue_yoy_same_quarter() -> None:
+    annual: list[list[typing.Any]] = [
+        ["For the Fiscal Period", "12 months Dec-31-2025", "LTM 12 months Mar-31-2026"],
+        ["Total Revenue", 979.0, 979.4], ["Gross Profit", 572.0, 557.0], ["EBITDA", 362.0, 358.0],
+    ]
+    quarterly: list[list[typing.Any]] = [
+        ["For the Fiscal Period", "3 months Q1 Mar-31-2025", "3 months Q4 Dec-31-2025",
+         "3 months Q1 Mar-31-2026"],
+        ["Total Revenue", 223.254, 261.938, 223.568],
+    ]
+    b = _fin_bundle2({"Income Statement": annual}, {"Income Statement": quarterly})
+    mt = cs.margin_trend(b)
+    assert mt.status is ds.SourceStatus.PRESENT
+    assert "+0.1%" in (mt.value or "")  # 223.568/223.254-1, Q1-2026 vs Q1-2025 (same-quarter)
+    assert "gross 57%" in (mt.value or "")  # annual single-column margins kept
+    # guard intact: annual-only bundle (no same-quarter prior) still refuses LTM-vs-FY
+    mt_annual = cs.margin_trend(_fin_bundle({"Income Statement": annual}, freq="annual"))
+    assert "UNAVAILABLE (LTM-vs-FY period mix)" in (mt_annual.value or "")
+
+
+# --- item 4: multi-year arc shows per-period values, basis marked, never YoY'd across ------------
+def test_multi_year_trajectory_marks_reclassified_basis() -> None:
+    inc: list[list[typing.Any]] = [
+        ["For the Fiscal Period", "Reclassified 12 months Dec-2023", "12 months Dec-2024",
+         "LTM 12 months Mar-2026"],
+        ["Total Revenue", 817.0, 879.0, 979.0], ["EBITDA", 371.0, 401.0, 358.0],
+    ]
+    seg: list[list[typing.Any]] = [
+        ["For the Fiscal Period", "Reclassified 12 months Dec-2023", "12 months Dec-2024"],
+        ["EBITDA", "", ""], ["Commercial Services", 242.0, 267.0], ["  Total EBITDA", 371.0, 401.0],
+    ]
+    tr = cs.multi_year_trajectory(_fin_bundle({"Income Statement": inc, "Segments": seg}, "annual"))
+    v = tr.value or ""
+    assert tr.status is ds.SourceStatus.PRESENT
+    assert "Revenue:" in v and "817" in v and "979" in v  # per-period values surfaced
+    assert "(R)" in v and "Mar-2026 (LTM)" in v  # reclassified + LTM basis marked
+    assert "Commercial Services EBITDA:" in v  # segment EBITDA arc
+    assert "→" in v and "%" not in v  # per-period values only — no cross-basis growth computed

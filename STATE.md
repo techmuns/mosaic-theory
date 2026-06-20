@@ -221,6 +221,32 @@ Each line: *what it does* — *verified how*.
     `earnings_gap_down` (the dossier relabels by 8-K item code at surface — upstream cosmetic); the
     screen's `ev_ebitda` dollar-field was already fixed separately (deferred to UNKNOWN, the dossier
     sources the CIQ multiple).
+  - **Final extraction batch (VRRM, 2026-06-20) — surface data already in the inputs; no judgement,
+    no value changes.** Five gaps closed; the assemble-not-conclude line + loud flags hold. (1)
+    **Adjusted-basis multiples + leverage** — the 99.1 revised guidance (adj-EBITDA $380–385M, adj-EPS
+    $1.19–1.25) now feeds, source-bound: forward **EV/adj-EBITDA ~4.5x** (current EV ÷ FY-guide
+    adj-EBITDA) and covenant-basis **net-debt/adj-EBITDA ~2.6x**, ALONGSIDE the GAAP TEV/LTM 8.5x and
+    GAAP 2.9x; plus adjusted EPS (adj P/E ~3.9x). With the adjusted basis now SHOWN, the two GAAP
+    caveats **downgrade from open flags to resolved facts** ("EPS-understates" + "leverage-covenant-
+    UNAVAILABLE" drop); the "P/E distorted by non-recurring EPS" and "EDGAR-vs-CIQ P/E conflict" flags
+    are KEPT. Fail-loud: only figures actually in the 99.1 are used; missing → the caveat stays. EV =
+    EOD price×shares + EDGAR net-debt; adj-EBITDA from the 99.1. (2) **Geographic segments wired** — the
+    Segments 'Geographic Segments → Revenues' block now parses (VRRM 86% US), same code as business
+    segments (`_segment_section(after_label=…)`). (3) **Revenue YoY from the quarterly file** — the
+    annual file's only clean comparison is LTM-vs-FY (both guards refuse); the quarterly Income
+    Statement gives a clean same-quarter YoY (Q1-2026 vs Q1-2025 = **+0.1%**, same-basis), guards
+    intact. (4) **Multi-year trajectory** — the 5y arc (revenue 551→979, EBITDA 229→362, segment
+    EBITDA, ROIC 5.1%→11.5%) surfaced per-period with the Reclassified basis marked, NEVER YoY'd across
+    — the compounder-vs-melting-ice signal (VRRM was *growing* pre-Avis). (5) **ROIC + surprise** — ROIC
+    arc folded into the trajectory (Ratios sheet); **annual** estimate surprise from Estimates→Surprise
+    (EPS beat→miss: FY23 −32%, FY24 −76% — the pre-Avis crack; the sheet has no quarterly view, so it's
+    fiscal-year). *Verified on the VRRM dossier.md + 4 new offline tests (adjusted parse & flag-
+    downgrade, geographic, quarterly YoY with guards, trajectory respecting Reclassified). A synthetic
+    test caught a real regex bug (the adj-figure pattern swallowed a trailing '.') — fixed.* **DID NOT
+    (verified redundant/immaterial/working-as-designed):** Key Stats / Hist-Capitalization /
+    Cap-Structure-Summary / Pension-OPEB / Supplemental / Industry-Specific sheets; directional-lint
+    refine (fires on quoted consensus, glance-and-clear); quarterly consensus point estimates;
+    transcript summary (deliberately raw).
   - **⚠ LANDMINE (unbuilt — insider/Form-4):** when insider data is wired, the CIQ **Transaction-Type
     direction-flip** (`ciq_extraction_notes` ~line 80) MUST be handled — the Type column signs the
     trade, so a naive `net_shares_sold` summed off raw quantities is **sign-flip wrong** (buys and

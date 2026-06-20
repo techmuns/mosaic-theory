@@ -106,8 +106,10 @@ class Valuation(BaseModel):
 
     pe: Sourced[float]
     pe_percentile_5y: Sourced[float]
-    ev_ebitda: Sourced[float]
+    ev_ebitda: Sourced[float]  # GAAP TEV/LTM EBITDA (CIQ, trailing)
     ev_ebitda_percentile_5y: Sourced[float]
+    ev_ebitda_adjusted_fwd: Sourced[str]  # forward EV / FY-guide adjusted EBITDA (alongside GAAP)
+    adjusted_eps: Sourced[str]  # company-adjusted EPS from the 99.1 guide (earnings power, vs GAAP)
     range_position: Sourced[str]  # near-floor / below-center / above-center / near-ceiling
 
     model_config = {"frozen": True}
@@ -119,10 +121,12 @@ class Quality(BaseModel):
     fcf_sign: Sourced[int]
     free_cash_flow: Sourced[float]
     margin_trend: Sourced[str]
-    net_debt_to_ebitda: Sourced[float]
+    net_debt_to_ebitda: Sourced[float]  # GAAP consolidated EBITDA basis
+    net_debt_to_ebitda_adjusted: Sourced[str]  # covenant basis: net debt / FY-guide adjusted EBITDA
     interest_coverage: Sourced[float]
     share_count_trend: Sourced[str]
     liquidity_covenant_flags: Sourced[str]
+    multi_year_trajectory: Sourced[str]  # 5y arc of revenue/EBITDA/segment-EBITDA/ROIC (per period)
 
     model_config = {"frozen": True}
 
@@ -176,6 +180,7 @@ class ConsensusContext(BaseModel):
     eps_trend: Sourced[str]
     revenue_trend: Sourced[str]
     revision_history: Sourced[str]
+    surprise_history: Sourced[str]  # annual estimate beat/miss (Estimates→Surprise)
 
     model_config = {"frozen": True}
 

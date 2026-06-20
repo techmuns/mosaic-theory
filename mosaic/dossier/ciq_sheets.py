@@ -11,6 +11,7 @@ with an absent/garbled sheet → UNKNOWN with the reason — never a fabricated 
 from __future__ import annotations
 
 import re
+from collections.abc import Callable
 from typing import Any
 
 from mosaic.dossier.ciq import (
@@ -232,6 +233,47 @@ def interest_coverage(bundle: CiqBundle) -> Sourced[float]:
     )
 
 
+def _quarter_token(cell: Any) -> str | None:
+    m = re.search(r"\bQ([1-4])\b", str(cell))
+    return f"Q{m.group(1)}" if m else None
+
+
+def _short_period(cell: Any) -> str:
+    s = str(cell).replace("\n", " ").strip()
+    m = re.search(r"(Q[1-4]).*?([A-Z][a-z]{2}-[\d-]*\d{4})", s)
+    return f"{m.group(1)} {m.group(2)}" if m else s[:16]
+
+
+def _quarterly_revenue_yoy(bundle: CiqBundle) -> str | None:
+    """Clean same-basis revenue YoY from the QUARTERLY Income Statement: the latest quarter vs the
+    same quarter a year earlier (Q1 vs the prior Q1), same period-type AND reclassified basis (notes
+    ~line 204). None when no same-quarter, same-basis prior exists — caller falls to UNAVAILABLE."""
+    try:
+        rows = bundle.sheet("financials", "Income Statement", freq="quarterly")
+    except CiqUnavailableError:
+        return None
+    hdr, rev_i = _period_header(rows), _find_row(rows, "Total Revenue")
+    if hdr is None or rev_i is None:
+        return None
+    latest = _latest_col(rows, rev_i, hdr)
+    if latest is None:
+        return None
+    col, rev, _ = latest
+    q = _quarter_token(rows[hdr][col]) if col < len(rows[hdr]) else None
+    if q is None:
+        return None
+    recl = _reclassified_cols(rows[hdr])
+    base = col in recl
+    for j in range(col - 1, 0, -1):  # nearest earlier same-quarter column on the same basis
+        if j < len(rows[hdr]) and _quarter_token(rows[hdr][j]) == q and (j in recl) == base:
+            pv = clean_num(rows[rev_i][j])
+            if not pv:
+                return None
+            cur, pri = _short_period(rows[hdr][col]), _short_period(rows[hdr][j])
+            return f"{rev / pv - 1:+.1%} ({cur} vs {pri})"
+    return None
+
+
 def margin_trend(bundle: CiqBundle) -> Sourced[str]:
     try:
         rows = bundle.sheet("financials", "Income Statement", freq="annual")
@@ -251,23 +293,27 @@ def margin_trend(bundle: CiqBundle) -> Sourced[str]:
         v = clean_num(rows[ri][col]) if ri is not None and col < len(rows[ri]) else None
         return f"{v / rev:.0%}" if v is not None and rev else "n/a"
 
-    recl = _reclassified_cols(rows[hdr])
-    prior = [j for j in range(1, col) if clean_num(rows[rev_i][j]) is not None]
-    yoy = "UNAVAILABLE (no prior-period column)"
-    if prior:
-        pj = prior[-1]
-        lc = rows[hdr][col] if col < len(rows[hdr]) else ""
-        lp = rows[hdr][pj] if pj < len(rows[hdr]) else ""
-        if _is_ltm(lc) != _is_ltm(lp):  # never compare an LTM column against a fiscal-year one
-            yoy = "UNAVAILABLE (LTM-vs-FY period mix)"
-        elif (pj in recl) != (col in recl):  # never YoY across a reclassified-basis change
-            yoy = "UNAVAILABLE (reclassified-basis boundary)"
-        else:
-            pv = clean_num(rows[rev_i][pj])
-            yoy = f"{rev / pv - 1:+.0%}" if pv else "n/a"
+    # revenue YoY: prefer a clean same-quarter YoY from the QUARTERLY file (the annual file's latest
+    # column is LTM, whose only same-basis prior is reclassified — both guards correctly refuse).
+    yoy = _quarterly_revenue_yoy(bundle)
+    if yoy is None:
+        recl = _reclassified_cols(rows[hdr])
+        prior = [j for j in range(1, col) if clean_num(rows[rev_i][j]) is not None]
+        yoy = "UNAVAILABLE (no prior-period column)"
+        if prior:
+            pj = prior[-1]
+            lc = rows[hdr][col] if col < len(rows[hdr]) else ""
+            lp = rows[hdr][pj] if pj < len(rows[hdr]) else ""
+            if _is_ltm(lc) != _is_ltm(lp):  # never compare an LTM column against a fiscal-year one
+                yoy = "UNAVAILABLE (LTM-vs-FY period mix)"
+            elif (pj in recl) != (col in recl):  # never YoY across a reclassified-basis change
+                yoy = "UNAVAILABLE (reclassified-basis boundary)"
+            else:
+                pv = clean_num(rows[rev_i][pj])
+                yoy = f"{rev / pv - 1:+.0%}" if pv else "n/a"
     return Sourced.present(
         f"[{period}] gross {margin(gp_i)}, EBITDA {margin(eb_i)}; revenue YoY {yoy}",
-        source_ref="CIQ Financials→Income Statement (margins; YoY respects Reclassified)",
+        source_ref="CIQ Financials→Income Statement (annual margins; quarterly same-basis YoY)",
     )
 
 
@@ -297,17 +343,31 @@ def liquidity_covenant_flags(bundle: CiqBundle) -> Sourced[str]:
 # --- concentration: Segments ------------------------------------------------------------------
 
 
-def _segment_section(bundle: CiqBundle, section: str) -> Sourced[str]:
+def _segment_section(
+    bundle: CiqBundle, section: str, *, after_label: str | None = None
+) -> Sourced[str]:
+    """Revenue/EBITDA share for a Segments-sheet section. ``after_label`` scopes the search past a
+    sub-header (e.g. 'Geographic Segments') so the SAME 'Revenues' block under it is found, not
+    the first one — same parsing for business segments and geography."""
     try:
         rows = bundle.sheet("financials", "Segments", freq="annual")
     except CiqUnavailableError as exc:
         return _miss_or_unknown(bundle, "financials", exc)
     hdr = _period_header(rows)
-    start = _find_row(rows, section)
+    floor = 0
+    if after_label is not None:
+        a = next((i for i, r in enumerate(rows) if r and after_label in str(r[0])), None)
+        if a is None:
+            return Sourced.unknown(note=f"Segments sheet has no '{after_label}' section")
+        floor, hdr = a, _period_header(rows[a:])
+        hdr = hdr + a if hdr is not None else None
+    start = next(
+        (i for i in range(floor, len(rows)) if rows[i] and str(rows[i][0]).strip() == section), None
+    )
     total = next(
         (
-            i for i, r in enumerate(rows)
-            if r and str(r[0]).strip().startswith(f"Total {section.rstrip('s')}")
+            i for i in range(floor, len(rows))
+            if rows[i] and str(rows[i][0]).strip().startswith(f"Total {section.rstrip('s')}")
         ),
         None,
     )
@@ -325,9 +385,10 @@ def _segment_section(bundle: CiqBundle, section: str) -> Sourced[str]:
             parts.append(f"{seg} {v:,.0f} ({v / tot:.0%})")
     if not parts:
         return Sourced.unknown(note=f"no {section} segment rows with values")
+    label = f"{after_label} → {section}" if after_label else section
     return Sourced.present(
         f"[{period}] " + "; ".join(parts) + f" of Total {tot:,.0f}",
-        source_ref=f"CIQ Financials→Segments ({section} section, latest annual column)",
+        source_ref=f"CIQ Financials→Segments ({label}, latest annual column)",
     )
 
 
@@ -343,13 +404,125 @@ def segment_ebitda(bundle: CiqBundle) -> Sourced[str]:
 
 
 def geographic(bundle: CiqBundle) -> Sourced[str]:
+    """Revenue by geography — the Segments sheet's 'Geographic Segments' → 'Revenues' block, parsed
+    like the business-segment revenue share. Fail loud UNKNOWN only if the section is absent."""
+    return _segment_section(bundle, "Revenues", after_label="Geographic Segment")
+
+
+def _period_label(cell: Any) -> str:
+    """A compact period label + basis markers — 'Dec-2024 (R)' reclassified, 'Mar-31-2026 (LTM)'."""
+    s = str(cell).replace("\n", " ").strip()
+    m = re.search(r"([A-Z][a-z]{2}-[\d-]*\d{4}|\d{4})", s)
+    suffix = (" (R)" if "Reclassified" in s else "") + (" (LTM)" if "LTM" in s.upper() else "")
+    return (m.group(1) if m else s[:10]) + suffix
+
+
+def _fmt_num(v: float) -> str:
+    return f"{v:,.0f}"
+
+
+def _fmt_pct(v: float) -> str:
+    return f"{v * 100:.1f}%"
+
+
+def _trajectory_row(
+    rows: Rows, ri: int | None, hdr: int | None, fmt: Callable[[float], str] = _fmt_num
+) -> str | None:
+    """The multi-period series for a row: 'period value' per column, basis marked — NEVER YoY'd
+    across (the human sees growth-vs-decline; cross-basis growth is not computed)."""
+    if ri is None or hdr is None:
+        return None
+    parts = [
+        f"{_period_label(rows[hdr][j]) if j < len(rows[hdr]) else f'c{j}'} {fmt(v)}"
+        for j in range(1, len(rows[ri]))
+        if (v := clean_num(rows[ri][j])) is not None
+    ]
+    return " → ".join(parts) if len(parts) >= 2 else None
+
+
+def multi_year_trajectory(bundle: CiqBundle) -> Sourced[str]:
+    """The multi-year arc (values per period, basis noted, never YoY'd across the Reclassified
+    boundary) for total revenue, EBITDA, and segment EBITDA — the compounder-vs-melting-ice signal:
+    was the business growing or declining pre-catalyst?"""
+    lines: list[str] = []
     try:
-        rows = bundle.sheet("financials", "Segments", freq="annual")
+        inc = bundle.sheet("financials", "Income Statement", freq="annual")
+        ihdr = _period_header(inc)
+        if (rev := _trajectory_row(inc, _find_row(inc, "Total Revenue"), ihdr)) is not None:
+            lines.append(f"Revenue: {rev}")
+        if (eb := _trajectory_row(inc, _find_row(inc, "EBITDA"), ihdr)) is not None:
+            lines.append(f"EBITDA: {eb}")
+    except CiqUnavailableError:
+        pass
+    try:
+        seg = bundle.sheet("financials", "Segments", freq="annual")
+        shdr = _period_header(seg)
+        eb_start = _find_row(seg, "EBITDA")
+        for i in range(eb_start + 1, min(eb_start + 6, len(seg))) if eb_start is not None else []:
+            name = str(seg[i][0]).strip()
+            if not name or name.startswith("Total"):
+                break
+            if (arc := _trajectory_row(seg, i, shdr)) is not None:
+                lines.append(f"{name} EBITDA: {arc}")
+    except CiqUnavailableError:
+        pass
+    try:  # ROIC arc (item 5) — returns quality over time, alongside the revenue/EBITDA arc
+        rat = bundle.sheet("financials", "Ratios", freq="annual")
+        roic = _trajectory_row(
+            rat, _find_row(rat, "Return on Capital %"), _period_header(rat), _fmt_pct
+        )
+        if roic is not None:
+            lines.append(f"ROIC: {roic}")
+    except CiqUnavailableError:
+        pass
+    if not lines:
+        return Sourced.unknown(note="no multi-year revenue/EBITDA series in the sheets")
+    return Sourced.present(
+        "; ".join(lines) + "  [R reclassified; per-period values, never YoY'd across a basis]",
+        source_ref="CIQ Financials→Income Statement + Segments + Ratios (multi-year columns)",
+    )
+
+
+def surprise_history(bundle: CiqBundle) -> Sourced[str]:
+    """Estimate beat/miss history from Estimates→Surprise — the pre-catalyst 'cracks' (EPS & revenue
+    actual-vs-consensus). The sheet is by FISCAL YEAR (no quarterly view) — annual surprise;
+    +beat / −miss. Fail loud if the sheet/rows are absent."""
+    try:
+        rows = bundle.sheet("estimates", "Surprise")
     except CiqUnavailableError as exc:
-        return _miss_or_unknown(bundle, "financials", exc)
-    if not any(r and "geograph" in str(r[0]).lower() for r in rows):
-        return Sourced.unknown(note="no geographic breakdown in Segments (likely single-geography)")
-    return Sourced.unknown(note="geographic section present; extractor not wired — read by hand")
+        return _miss_or_unknown(bundle, "estimates", exc)
+    yhdr = next(
+        (
+            i for i, r in enumerate(rows)
+            if sum(1 for c in r[1:10] if (n := clean_num(c)) is not None and 2000 < n < 2100) >= 3
+        ),
+        None,
+    )
+    if yhdr is None:
+        return Sourced.unknown(note="Surprise sheet has no fiscal-year header row")
+
+    def series(ri: int | None) -> str | None:
+        if ri is None:
+            return None
+        out = [
+            f"FY{int(yr)} {v:+.0%}"
+            for j in range(1, len(rows[ri]))
+            if (v := clean_num(rows[ri][j])) is not None
+            and j < len(rows[yhdr]) and (yr := clean_num(rows[yhdr][j])) is not None
+        ]
+        return ", ".join(out[-5:]) if out else None
+
+    parts: list[str] = []
+    if (e := series(_find_row_prefix(rows, "EPS (GAAP)"))) is not None:
+        parts.append(f"EPS surprise: {e}")
+    if (rv := series(_find_row(rows, "Revenue"))) is not None:
+        parts.append(f"Revenue surprise: {rv}")
+    if not parts:
+        return Sourced.unknown(note="no EPS/Revenue surprise series in the Surprise sheet")
+    return Sourced.present(
+        "; ".join(parts) + " (fiscal-year; +beat / −miss)",
+        source_ref="CIQ Estimates→Surprise (annual)",
+    )
 
 
 # --- consensus context: Estimates → Consensus / Revisions -------------------------------------

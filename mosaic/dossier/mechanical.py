@@ -400,20 +400,22 @@ def _pe_basis_flag(record: DataRecord, edgar: EdgarClient) -> str | None:
     return None
 
 
-def _eps_caveat_flags(record: DataRecord, bundle: CiqBundle) -> list[str]:
-    """The surfaced EPS is GAAP-based. Flag (a) that earnings power (company-adjusted, non-GAAP) is
-    NOT reachable from the CIQ Financials workbook — it lives in the earnings-release/transcript
-    reconciliation; and (b) when the EDGAR P/E conflicts ~Nx with the CIQ P/LTM EPS, that the EDGAR
-    trailing EPS is one-time-inflated and the synthesis must not anchor on it as 'cheap'."""
+def _eps_caveat_flags(record: DataRecord, bundle: CiqBundle, *, eps_resolved: bool) -> list[str]:
+    """Flag (a) that earnings power (company-adjusted, non-GAAP EPS) is not shown — UNLESS it now is
+    (``eps_resolved``: the 99.1 adjusted EPS surfaced it, so the caveat is a resolved fact, not a
+    warning); and (b) when the EDGAR P/E conflicts ~Nx with CIQ P/LTM EPS, that the EDGAR trailing
+    EPS is one-time-inflated and the synthesis must not anchor on it as 'cheap' (always kept)."""
     pe = record.fundamentals.pe
     ciq_pe = ciq_sheets.pe_ltm_current(bundle)
     if not pe.is_known and ciq_pe.status is not SourceStatus.PRESENT:
         return []  # no EPS-based multiple shown at all — nothing to caveat
-    out = [
-        "EPS shown is GAAP-based and understates earnings power; the company-adjusted (non-GAAP) "
-        "EPS is not in the CIQ Financials workbook — it lives in the earnings-release/transcript "
-        "reconciliation (currently UNAVAILABLE) — not a ceiling on earnings power."
-    ]
+    out: list[str] = []
+    if not eps_resolved:  # only an open warning while the adjusted basis is UNAVAILABLE
+        out.append(
+            "EPS shown is GAAP-based and understates earnings power; company-adjusted (non-GAAP) "
+            "EPS is not in the CIQ workbook — it lives in the earnings-release/transcript "
+            "reconciliation (currently UNAVAILABLE) — not a ceiling on earnings power."
+        )
     if pe.is_known and pe.value and ciq_pe.status is SourceStatus.PRESENT and ciq_pe.value:
         ratio = max(pe.value, ciq_pe.value) / min(pe.value, ciq_pe.value)
         if ratio >= 2:
@@ -442,10 +444,73 @@ def _leverage_basis_flag(record: DataRecord) -> str | None:
     )
 
 
+# --- adjusted-basis multiples + leverage (from the 99.1 guide + EDGAR net-debt/shares + EOD) ----
+
+_NUM = r"(\d+(?:\.\d+)?)"  # a plain number — never swallow trailing punctuation (e.g. '1.25.')
+_ADJ_EBITDA = re.compile(rf"Adjusted EBITDA of \$?{_NUM}\s*million to \$?{_NUM}\s*million", re.I)
+_ADJ_EPS = re.compile(rf"Adjusted EPS of \$?{_NUM} to \$?{_NUM}", re.I)
+
+
+def _adjusted_facts(
+    record: DataRecord, edgar: EdgarClient, revised_guidance: Sourced[str]
+) -> tuple[Sourced[str], Sourced[str], Sourced[str]]:
+    """Surface the adjusted (non-GAAP) figures the GAAP caveats called UNAVAILABLE — the 99.1
+    revised guidance is in the dossier: adjusted EPS, forward EV/adj-EBITDA, and covenant-basis
+    net-debt/adj-EBITDA. Each is UNKNOWN if its inputs aren't present — never fabricated (the GAAP
+    caveat stays a flag whenever its adjusted counterpart can't be shown). Returns
+    (adjusted_eps, ev_ebitda_adjusted_fwd, net_debt_to_ebitda_adjusted)."""
+    src = revised_guidance.source_ref or "EDGAR 8-K Ex-99.1"
+    text = revised_guidance.value or ""
+    eb, eps = _ADJ_EBITDA.search(text), _ADJ_EPS.search(text)
+    unk: Sourced[str] = Sourced.unknown(note="adjusted figure not in the 99.1 revised guidance")
+    price = record.prices.last.value if record.prices.last.is_known else None
+
+    adj_eps = unk
+    if eps:
+        lo, hi = float(eps.group(1)), float(eps.group(2))
+        tail = f"; adj P/E ~{price / ((lo + hi) / 2):.1f}x at ${price:.2f}" if price else ""
+        adj_eps = Sourced.present(
+            f"FY26 guide ${lo:.2f}–${hi:.2f}{tail} — earnings power above the GAAP basis",
+            source_ref=src,
+        )
+
+    cik = record.identity.cik
+    try:
+        snap = edgar.fundamental_snapshot(cik) if cik else None
+        share_pts = (
+            [p for p in extract_points(edgar.companyfacts(cik), "shares") if p.value] if cik else []
+        )
+    except (HttpError, KeyError):
+        snap, share_pts = None, []
+    net_debt = snap.net_debt.value if snap and snap.net_debt.is_known else None
+    shares = max(share_pts, key=lambda p: p.period_end).value if share_pts else None
+
+    ev_adj, nd_adj = unk, unk
+    if eb:
+        eb_lo, eb_hi = float(eb.group(1)), float(eb.group(2))
+        eb_mid = (eb_lo + eb_hi) / 2 * 1e6  # $ (the guide is in $M)
+        band = f"FY26 adj-EBITDA ${eb_lo:.0f}–${eb_hi:.0f}M"
+        if net_debt is not None:
+            nd_adj = Sourced.present(
+                f"~{net_debt / eb_mid:.1f}x covenant (net debt ${net_debt / 1e6:,.0f}M / {band})",
+                source_ref=f"{src} (adj-EBITDA) + EDGAR net debt",
+            )
+            if price and shares:
+                ev = price * shares + net_debt
+                ev_adj = Sourced.present(
+                    f"~{ev / eb_mid:.1f}x (fwd, at current ${price:.2f}; EV ${ev / 1e6:,.0f}M "
+                    f"/ {band})",
+                    source_ref=f"{src} (adj-EBITDA) + EDGAR net debt + EOD price × shares",
+                )
+    return adj_eps, ev_adj, nd_adj
+
+
 # --- CIQ-sourced fields (workbook-addressed; the extractors fail loud MISSING/UNKNOWN) ---------
 
 
-def _valuation(record: DataRecord, bundle: CiqBundle) -> Valuation:
+def _valuation(
+    record: DataRecord, bundle: CiqBundle, adj_eps: Sourced[str], adj_ev: Sourced[str]
+) -> Valuation:
     f = record.fundamentals
     return Valuation(
         pe=_sourced(f.pe, source_ref="EDGAR XBRL eps_diluted × EOD price (screen data-record, G3)"),
@@ -461,12 +526,15 @@ def _valuation(record: DataRecord, bundle: CiqBundle) -> Valuation:
             if f.ev_ebitda_pctile_vs_history.is_known
             else ciq_sheets.ev_ebitda_percentile(bundle)
         ),
+        ev_ebitda_adjusted_fwd=adj_ev,
+        adjusted_eps=adj_eps,
         range_position=ciq_sheets.range_position(bundle),
     )
 
 
 def _quality(
-    record: DataRecord, edgar: EdgarClient, bundle: CiqBundle, reference_date: date
+    record: DataRecord, edgar: EdgarClient, bundle: CiqBundle, reference_date: date,
+    adj_leverage: Sourced[str],
 ) -> Quality:
     f = record.fundamentals
     return Quality(
@@ -476,6 +544,7 @@ def _quality(
         net_debt_to_ebitda=_sourced(
             f.net_leverage, source_ref="EDGAR XBRL net-debt/EBITDA (screen data-record)"
         ),
+        net_debt_to_ebitda_adjusted=adj_leverage,
         interest_coverage=ciq_sheets.interest_coverage(bundle),
         share_count_trend=(
             _share_count_trend(edgar, record.identity.cik, reference_date)
@@ -483,6 +552,7 @@ def _quality(
             else Sourced.unknown(note="no CIK")
         ),
         liquidity_covenant_flags=ciq_sheets.liquidity_covenant_flags(bundle),
+        multi_year_trajectory=ciq_sheets.multi_year_trajectory(bundle),
     )
 
 
@@ -500,6 +570,7 @@ def _consensus(bundle: CiqBundle) -> ConsensusContext:
         eps_trend=ciq_sheets.eps_revisions(bundle),
         revenue_trend=ciq_sheets.revenue_revisions(bundle),
         revision_history=ciq_sheets.consensus_view(bundle),
+        surprise_history=ciq_sheets.surprise_history(bundle),
     )
 
 
@@ -516,11 +587,15 @@ def assemble_mechanical(
 ) -> tuple[MechanicalLayer, list[str]]:
     """Assemble the source-bound mechanical layer (no LLM) + any flags for human review (e.g. a
     distorted-P/E-basis warning). No conclusions."""
+    # the catalyst 8-K's 99.1 (revised guidance) is fetched first: its adjusted EBITDA/EPS feed the
+    # adjusted-basis multiples + leverage, which in turn RESOLVE the GAAP-only caveats below.
+    drawdown = _drawdown_cause(record, edgar, http)
+    adj_eps, adj_ev, adj_lev = _adjusted_facts(record, edgar, drawdown.revised_guidance)
     mech = MechanicalLayer(
-        valuation=_valuation(record, bundle),
-        quality=_quality(record, edgar, bundle, reference_date),
+        valuation=_valuation(record, bundle, adj_eps, adj_ev),
+        quality=_quality(record, edgar, bundle, reference_date, adj_lev),
         concentration=_concentration(bundle),
-        drawdown_cause=_drawdown_cause(record, edgar, http),
+        drawdown_cause=drawdown,
         idiosyncratic_vs_shared=_idiosyncratic_vs_shared(
             record, store, graph, resolver, reference_date
         ),
@@ -530,7 +605,8 @@ def assemble_mechanical(
     flags: list[str] = []
     if (pe_flag := _pe_basis_flag(record, edgar)) is not None:
         flags.append(pe_flag)
-    flags += _eps_caveat_flags(record, bundle)
-    if (lev_flag := _leverage_basis_flag(record)) is not None:
-        flags.append(lev_flag)
+    flags += _eps_caveat_flags(record, bundle, eps_resolved=adj_eps.status is SourceStatus.PRESENT)
+    # the GAAP-leverage caveat is an open warning only while the covenant basis isn't shown
+    if adj_lev.status is not SourceStatus.PRESENT and (lev := _leverage_basis_flag(record)):
+        flags.append(lev)
     return mech, flags
