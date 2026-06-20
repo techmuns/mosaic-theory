@@ -354,6 +354,23 @@ def _eps_caveat_flags(record: DataRecord, bundle: CiqBundle) -> list[str]:
     return out
 
 
+def _leverage_basis_flag(record: DataRecord) -> str | None:
+    """Net debt/EBITDA is computed on CONSOLIDATED GAAP EBITDA. Management and credit covenants
+    typically define leverage on ADJUSTED EBITDA (a larger denominator → a lower ratio); that
+    non-GAAP reconciliation lives in the earnings release/transcript (UNAVAILABLE), so the
+    covenant-basis leverage is not surfaced. Flag the basis — neither is wrong, they differ by
+    denominator; the human must not read the GAAP ratio as the covenant ratio."""
+    lev = record.fundamentals.net_leverage
+    if not lev.is_known or lev.value is None:
+        return None
+    return (
+        f"Net debt/EBITDA ({lev.value:.1f}x) is on consolidated GAAP EBITDA; management and credit "
+        f"covenants typically define leverage on adjusted EBITDA (a larger denominator → a lower "
+        f"ratio). That non-GAAP reconciliation lives in the earnings release/transcript (currently "
+        f"UNAVAILABLE) — do not read {lev.value:.1f}x as the covenant-basis leverage."
+    )
+
+
 # --- CIQ-sourced fields (workbook-addressed; the extractors fail loud MISSING/UNKNOWN) ---------
 
 
@@ -443,4 +460,6 @@ def assemble_mechanical(
     if (pe_flag := _pe_basis_flag(record, edgar)) is not None:
         flags.append(pe_flag)
     flags += _eps_caveat_flags(record, bundle)
+    if (lev_flag := _leverage_basis_flag(record)) is not None:
+        flags.append(lev_flag)
     return mech, flags

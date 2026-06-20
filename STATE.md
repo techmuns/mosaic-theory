@@ -175,7 +175,12 @@ Each line: *what it does* — *verified how*.
     transcript/earnings-release reconciliation (UNAVAILABLE); and the EDGAR P/E (5.5x) **conflicts
     ~3× with the CIQ P/LTM EPS (16.8x)** because the EDGAR trailing EPS is one-time-inflated — the
     synthesis must not anchor on 5.5x as "cheap" (it still cites it; the flag is the human's guard).
-    *Verified on VRRM + 3 new regression tests (segment-EBITDA share, LTM/FY YoY guard, ev_ebitda is
+    (4b) **Leverage-basis — FLAGGED** (same GAAP-vs-adjusted theme): net debt/EBITDA reads **2.9x on
+    consolidated GAAP EBITDA**, but management/credit-covenants define leverage on **adjusted EBITDA**
+    (larger denominator → ~2.5x); the adjusted-EBITDA reconciliation is in the release/transcript
+    (UNAVAILABLE), so the covenant-basis ratio isn't surfaced — flag only, not re-sourced (the
+    adjusted measure is not the CIQ segment-sum and isn't in the Financials workbook). *Verified on
+    VRRM (4 flags fire) + 3 new regression tests (segment-EBITDA share, LTM/FY YoY guard, ev_ebitda is
     a multiple).*
   - **⚠ LANDMINE (unbuilt — insider/Form-4):** when insider data is wired, the CIQ **Transaction-Type
     direction-flip** (`ciq_extraction_notes` ~line 80) MUST be handled — the Type column signs the
