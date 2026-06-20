@@ -21,6 +21,7 @@ from mosaic.dossier import mechanical as dm
 from mosaic.dossier import render as dr
 from mosaic.dossier import schemas as ds
 from mosaic.dossier import synthesis as syn
+from mosaic.edgar.client import EdgarClient, FundamentalSnapshot, all_unknown_snapshot
 from mosaic.graph.llm import LlmClient, LlmError
 from mosaic.schemas import data_record as sdr
 from mosaic.schemas.envelope import DataField, SourceTier
@@ -310,12 +311,55 @@ def _fin_bundle2(annual: _Sheets, quarterly: _Sheets) -> ciq.CiqBundle:
     return ciq.CiqBundle(ticker="X", workbooks=(wa, wq), _cache={pa: annual, pq: quarterly})
 
 
-def _min_record(pe: float) -> sdr.DataRecord:
-    """A DataRecord with just fundamentals.pe set — rest UNKNOWN (for the flag-downgrade test)."""
+def _est_bundle(sheets: _Sheets) -> ciq.CiqBundle:
+    """A CiqBundle with one Estimates workbook (for the Surprise / Consensus / Revisions sheets)."""
+    p = Path("/fake/Estimates.xls")
+    wb = ciq.CiqWorkbook(kind="estimates", path=p, fmt=ciq.CiqFormat.BIFF_XLS, freq="quarterly")
+    return ciq.CiqBundle(ticker="X", workbooks=(wb,), _cache={p: sheets})
+
+
+def _eps_pt(year: int, val: float) -> dict[str, typing.Any]:
+    return {"end": f"{year}-12-31", "start": f"{year}-01-01", "val": val,
+            "filed": f"{year + 1}-02-15", "fp": "FY", "form": "10-K"}
+
+
+def _facts(eps: list[tuple[int, float]], shares: float) -> dict[str, typing.Any]:
+    """A minimal companyfacts dict: annual diluted-EPS points + a shares-outstanding instant."""
+    return {"facts": {
+        "us-gaap": {"EarningsPerShareDiluted": {
+            "units": {"USD/shares": [_eps_pt(y, v) for y, v in eps]}}},
+        "dei": {"EntityCommonStockSharesOutstanding": {"units": {"shares": [
+            {"end": "2026-03-31", "val": shares, "filed": "2026-04-01", "form": "10-K"}]}}},
+    }}
+
+
+class _StubEdgar:
+    """Duck-types the two EdgarClient methods _adjusted_facts / _pe_reconciliation use."""
+
+    def __init__(self, facts: dict[str, typing.Any], net_debt: float) -> None:
+        self._facts, self._net_debt = facts, net_debt
+
+    def companyfacts(self, cik: int | str) -> dict[str, typing.Any]:
+        return self._facts
+
+    def fundamental_snapshot(self, cik: int | str) -> FundamentalSnapshot:
+        return all_unknown_snapshot("0001682745").model_copy(update={
+            "net_debt": DataField.present(
+                self._net_debt, as_of=date(2026, 3, 31), source="EDGAR", tier=SourceTier.EDGAR
+            )
+        })
+
+
+def _min_record(pe: float, *, price: float | None = None) -> sdr.DataRecord:
+    """A DataRecord with fundamentals.pe (and optionally the last price) set — the rest UNKNOWN."""
     u: DataField[float] = DataField.unknown(source="x", tier=SourceTier.DERIVED)
     ui: DataField[int] = DataField.unknown(source="x", tier=SourceTier.EDGAR)
+    last = (
+        DataField.present(price, as_of=date(2026, 6, 17), source="EOD", tier=SourceTier.DERIVED)
+        if price is not None else u
+    )
     prices = sdr.PriceFeatures(
-        last=u, high_52w=u, low_52w=u, drawdown_from_high=u, dist_from_low=u, ret_3m=u,
+        last=last, high_52w=u, low_52w=u, drawdown_from_high=u, dist_from_low=u, ret_3m=u,
         ret_6m=u, ret_12m=u, rel_ret_vs_market=u, adv_90d_shares=u, adv_90d_usd=u,
         turnover=u, volume_spike=u,
     )
@@ -630,3 +674,69 @@ def test_multi_year_trajectory_marks_reclassified_basis() -> None:
     assert "(R)" in v and "Mar-2026 (LTM)" in v  # reclassified + LTM basis marked
     assert "Commercial Services EBITDA:" in v  # segment EBITDA arc
     assert "→" in v and "%" not in v  # per-period values only — no cross-basis growth computed
+
+
+# --- durability: segment-vs-consolidated EBITDA basis is labelled + reconciled ----------------
+def test_segment_ebitda_reconciles_to_consolidated() -> None:
+    """Segment EBITDA shares are pre-corporate (segment sum); the consolidated EBITDA + the
+    unallocated-corporate reconciling item are surfaced so the two 'EBITDA' bases are distinct."""
+    seg: list[list[typing.Any]] = [
+        ["For the Fiscal Period", "12 months Dec-31-2025"],
+        ["EBITDA", ""], ["Commercial Services", 283.0], ["Government Solutions", 122.0],
+        ["  Total EBITDA", 416.0],
+    ]
+    inc: list[list[typing.Any]] = [
+        ["For the Fiscal Period", "12 months Dec-31-2025"], ["EBITDA", 362.0],
+    ]
+    eb = cs.segment_ebitda(_fin_bundle({"Segments": seg, "Income Statement": inc}, freq="annual"))
+    assert eb.status is ds.SourceStatus.PRESENT
+    assert "segment-EBITDA sum (pre-corporate) 416" in (eb.value or "")  # the share base, labelled
+    assert "consolidated EBITDA 362 (~54 unallocated corporate)" in (eb.value or "")  # reconciled
+
+
+# --- durability: the adjusted-basis multiples ARITHMETIC (EV/adj-EBITDA, net-debt/adj-EBITDA) --
+def test_adjusted_facts_compute_forward_ev_and_leverage() -> None:
+    """_adjusted_facts computes forward EV/adj-EBITDA = (price×shares + net-debt)/FY-guide-EBITDA
+    and covenant net-debt/adj-EBITDA — general arithmetic from 99.1 + EDGAR + EOD, no literals."""
+    rg = ds.Sourced.present(
+        "Adjusted EBITDA of $380 million to $385 million; Adjusted EPS of $1.19 to $1.25",
+        source_ref="EDGAR 8-K X Ex-99.1",
+    )
+    edgar = _StubEdgar(_facts([(2024, 0.85)], shares=151_906_653), net_debt=1_008_723_000.0)
+    adj_eps, adj_ev, adj_lev = dm._adjusted_facts(
+        _min_record(pe=5.5, price=4.71), typing.cast(EdgarClient, edgar), rg
+    )
+    assert "~2.6x fwd-adj" in (adj_lev.value or "")  # 1008.7M / 382.5M ≈ 2.6x
+    assert "~4.5x" in (adj_ev.value or "")  # (4.71×151.9M + 1008.7M) / 382.5M ≈ 4.5x
+    assert "$1.19–$1.25" in (adj_eps.value or "") and "~3.9x" in (adj_eps.value or "")  # adj P/E
+
+
+# --- durability: the P/E-distortion RESOLUTION path (trailing GAAP vs forward adjusted) --------
+def test_pe_reconciliation_resolves_with_forward_adjusted() -> None:
+    """A one-time-distorted trailing GAAP EPS + a sourced forward adjusted EPS → a RESOLVED P/E
+    statement (not an open 'verify'); without the forward adjusted EPS, the original flag stands."""
+    edgar = _StubEdgar(
+        _facts([(2021, 0.28), (2022, 0.28), (2023, 0.28), (2024, 0.85)], shares=1.5e8), net_debt=1e9
+    )
+    rec, empty = _min_record(pe=5.5, price=4.71), ciq.CiqBundle(ticker="X", workbooks=())
+    rg = ds.Sourced.present("Adjusted EPS of $1.19 to $1.25", source_ref="EDGAR 8-K X Ex-99.1")
+    resolved = dm._pe_reconciliation(rec, typing.cast(EdgarClient, edgar), empty, rg)
+    assert resolved is not None and resolved.startswith("RESOLVED")
+    assert "~3.9x" in resolved  # 4.71 / 1.22 (mid of $1.19–1.25)
+    no_guide = dm._pe_reconciliation(rec, typing.cast(EdgarClient, edgar), empty, _u())
+    assert no_guide is not None and "verify against normalized/forward EPS" in no_guide  # open flag
+
+
+# --- durability: Surprise history parsed + GAAP-basis labelled --------------------------------
+def test_surprise_history_parsed_and_gaap_labelled() -> None:
+    """Annual estimate surprise (Estimates→Surprise) parses by fiscal year, EPS labelled GAAP-basis
+    (distinct from the 99.1 adjusted guide); +beat / −miss."""
+    surprise: list[list[typing.Any]] = [
+        ["NasdaqCM:VRRM", 2023.0, 2024.0, 2025.0],
+        ["EPS (GAAP)", -0.32, -0.76, -0.11],
+        ["Revenue", 0.01, 0.0, 0.02],
+    ]
+    s = cs.surprise_history(_est_bundle({"Surprise": surprise}))
+    assert s.status is ds.SourceStatus.PRESENT
+    assert "GAAP-EPS surprise:" in (s.value or "") and "FY2024 -76%" in (s.value or "")
+    assert "GAAP-EPS basis" in (s.value or "")  # basis distinguished from the adjusted guide
