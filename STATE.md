@@ -163,8 +163,18 @@ Each line: *what it does* — *verified how*.
     for the frontend upload UI. *Verified: checklist + `--json` (5 modules, 3 EDGAR-free) render; the
     partial-folder manifest flags exactly the 3 still-missing required modules when the annual is
     present; `dossier --top 1` (FUBO, no CIQ folder) now emits the per-module summary flag naming all
-    four required modules. 8 new tests incl. the single-source anti-drift guard (`assemble.requirements
+    four required modules. 9 tests incl. the single-source anti-drift guard (`assemble.requirements
     is requirements` + both consumers enumerate the same required set).*
+    - **Drift-PROOFED against the code it mirrors (AST coverage guard).** `CIQ_MODULES` is a
+      hand-maintained mirror of the `(kind, sheet, freq)` addresses the extractors actually read — so
+      the two *consumers* can't drift from the tuple, but the tuple could fall behind the *producer*
+      (`ciq_sheets.py`). A static AST test now closes that: it scans the dossier package for every
+      `bundle.sheet/.workbook` (+ `_miss_or_unknown`) call, requires each kind/freq/sheet arg be a
+      string LITERAL, and asserts every consumed `(kind, freq)` is declared in `CIQ_MODULES` and each
+      sheet is listed. A new extractor consuming an undeclared kind FAILS the test → must be declared.
+      Same idiom as the ranker's no-forward-returns AST guard. *Verified: passes today; a throwaway
+      `key_developments` extractor failed it naming `('key_developments', None)`, then removed.* **This
+      is correct only while the input set is FIXED (the 5 CIQ files) — see the §4 registry trigger.**
   - **Cause-parsing + integrity hardening (VRRM run, 2026-06-19) — the dossier must see catalysts that
     live in 8-K TEXT and never mislabel cause.** (1) Each gap-down is labelled by its **8-K item codes**
     (2.02 earnings / 5.02 management change / 8.01 other / 1.02 agreement-termination / 4.02 restatement
@@ -406,6 +416,17 @@ execution/sizing/portfolio/monitoring modules; only `SourceTier.IBKR` labels in 
   proves to bite during real finalist selection** — i.e. the ~51% UNKNOWN-multiple names or the
   un-split character axis visibly distort the queue-top in use. **Monitor in use; don't chase
   preemptively** (the ranker already handles the gaps fail-loud — §2 coverage caveat).
+- **Self-registering CIQ address registry (the dossier manifest's Option A) — named decision point,
+  NOT a TODO.** Today `CIQ_MODULES` is **hand-maintained, drift-PROOFED by the AST coverage test**
+  (§2: a new extractor consuming an undeclared kind fails the test → you declare it in the tuple).
+  That is **correct while the assembler's input set is FIXED (the 5 CIQ files)** — the tuple is small
+  and the test catches every drift. **TRIGGER to migrate** to a registry where extractors declare
+  their own `(kind, sheet, freq)` addresses (via decorator / co-located const) and **`CIQ_MODULES` is
+  GENERATED, not mirrored**: when the assembler begins ingesting **NEW document KINDS as a deliberate
+  direction** (e.g. `key_developments`, litigation, new filing types, alt-data). At that point the
+  hand-maintained tuple becomes a maintenance tax that scales with source count, and the registry
+  inverts it so a new extractor registers itself. **Do NOT build it preemptively — build it when the
+  2nd or 3rd new kind lands and the pattern is real.** Until then the AST guard is the binding.
 
 ### Candidate edge-types — untested hypotheses (DO NOT build; record-only)
 

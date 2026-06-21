@@ -935,3 +935,62 @@ def test_requirements_checklist_renders_for_a_name() -> None:
     assert "DO NOT upload" in text and "EDGAR" in text
     # the generic (no-ticker) form uses the template placeholder
     assert "data/manual/ciq/<TICKER>/" in dreq.render_checklist(None)
+
+
+def test_ciq_modules_covers_every_address_the_extractors_consume() -> None:
+    """Drift-PROOF the hand-maintained manifest against the CODE it mirrors: every (kind, freq,
+    sheet) address the dossier extractors actually consume must be declared in CIQ_MODULES. A new
+    extractor wiring an UNDECLARED kind/freq — or a non-literal address the scan can't see — fails
+    HERE, forcing the tuple to be updated (so a folder can't pass the manifest yet fail extraction).
+
+    Same static-guard idiom as the ranker's no-forward-returns AST test. It scans the whole dossier
+    package, so addressing can't escape the guard by moving out of ciq_sheets.py. STATE.md §2 logs
+    the trigger to migrate to a self-registering address registry once NEW document kinds start
+    landing — until then this test is the binding."""
+    pkg = Path(__file__).resolve().parents[1] / "mosaic" / "dossier"
+    declared_kf = {(m.workbook_kind, m.freq) for m in dreq.CIQ_MODULES}
+    sheets_by_kf = {(m.workbook_kind, m.freq): set(m.sheets) for m in dreq.CIQ_MODULES}
+
+    def _lit(node: ast.expr) -> str:
+        assert isinstance(node, ast.Constant) and isinstance(node.value, str), (
+            f"a bundle-address arg must be a string literal, got {ast.dump(node)} — a computed "
+            "kind/freq is invisible to this drift guard"
+        )
+        return node.value
+
+    consumed_kf: set[tuple[str, str | None]] = set()
+    consumed_sheets: set[tuple[str, str | None, str]] = set()
+    for py in sorted(pkg.glob("*.py")):
+        for node in ast.walk(ast.parse(py.read_text())):
+            if not isinstance(node, ast.Call):
+                continue
+            fn = node.func
+            if (
+                isinstance(fn, ast.Attribute) and fn.attr in ("sheet", "workbook")
+                and isinstance(fn.value, ast.Name) and fn.value.id == "bundle"
+            ):  # bundle.sheet(kind, sheet, freq=?) / bundle.workbook(kind, freq=?)
+                kw = {k.arg: k.value for k in node.keywords}
+                kind = _lit(node.args[0])
+                freq = _lit(kw["freq"]) if "freq" in kw else None
+                consumed_kf.add((kind, freq))
+                if fn.attr == "sheet":
+                    consumed_sheets.add((kind, freq, _lit(node.args[1])))
+            elif (
+                isinstance(fn, ast.Name) and fn.id == "_miss_or_unknown" and len(node.args) >= 2
+            ):  # the MISSING-fallback helper — its kind must be literal too (it feeds bundle.has)
+                _lit(node.args[1])
+
+    assert consumed_kf, "scan found no bundle addresses — the guard is mis-wired"
+    undeclared = consumed_kf - declared_kf
+    assert not undeclared, (
+        f"extractors consume CIQ addresses absent from CIQ_MODULES: {sorted(map(str, undeclared))} "
+        "— declare them in requirements.CIQ_MODULES (or, if this is a NEW document KIND, see the "
+        "STATE.md registry trigger)"
+    )
+    missing_sheets = sorted(
+        f"{k}/{f}:{s}" for (k, f, s) in consumed_sheets if s not in sheets_by_kf.get((k, f), set())
+    )
+    assert not missing_sheets, (
+        f"sheets consumed but not listed in CIQ_MODULES.sheets: {missing_sheets} — add them so the "
+        "manifest's documented subsheets stay honest"
+    )
