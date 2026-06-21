@@ -141,6 +141,97 @@ If the verbatim read shows a mismatch between the file's actual Period Type and 
 
 **Industry Specific / Pension OPEB / Supplemental empty-subsheet rule:** when these subsheets contain "No Data Available", this is expected behavior for sectors where the industry-specific KPIs aren't aggregated to structured CIQ data. Do NOT treat empty as a missing file. The framework still needs the equivalent metrics from other sources (transcripts, IR releases, formal annual filing); the gap is just that CIQ hasn't aggregated them for this sector.
 
+## Dossier extractor semantics (code-matched spec — `mosaic/dossier/ciq_sheets.py`, `mechanical.py`)
+
+This section is the spec the dossier extractors actually implement. It must not lag the code; each
+rule names the function so a future session can find and extend it. All rules are name-agnostic
+(no ticker literals); the VRRM figures below are illustrative.
+
+**Geographic Segments — location and extraction.** The Segments subsheet contains a `Geographic
+Segments` section AFTER the `Business Segments` section (≈ row 38 on the verified export), with its
+own period header and a `Revenues` block listing countries (e.g. United States / Australia / United
+Kingdom / Canada / ALL Other) down to a `Total Revenue` row, structured identically to the business
+`Revenues` block. `geographic()` extracts it via `_segment_section(after_label="Geographic Segment")`:
+find the `Geographic Segments` header, scope the `Revenues` / `Total Revenue` search to rows after it
+(so the GEOGRAPHIC block is found, not the first/business one), and parse country revenue shares the
+same way as business-segment revenue share. Fail loud UNKNOWN only if the section is genuinely absent.
+
+**Clean revenue YoY comes from the QUARTERLY file, not the annual one** (`margin_trend` /
+`multi_year_trajectory` via `_quarterly_revenue_yoy()`). The annual Income Statement's latest column
+is LTM, whose only same-basis prior column is Reclassified — so a clean annual YoY is genuinely
+impossible (the LTM-vs-FY guard and the Reclassified-boundary guard both correctly refuse). The
+quarterly Income Statement gives a clean same-basis YoY: the latest quarter vs the SAME quarter a
+year earlier (Q1-2026 vs Q1-2025), matched on the quarter token (Q1/Q2/Q3/Q4) AND the same
+Reclassified basis. Guards stay intact: never YoY across a Reclassified boundary, never mix LTM with
+FY, never compare different quarters. If no same-quarter same-basis prior exists, the YoY is simply
+omitted (returns None) — never fabricated.
+
+**"Margin trend" = the margin TRAJECTORY, never revenue growth** (`margin_trend()`). The field is the
+gross-margin and EBITDA-margin series per period across the years (e.g. EBITDA margin 42%→37%
+compression), so the *trend* is visible. Each margin is a ratio WITHIN a single column, so it is
+never computed across the Reclassified boundary (the basis is marked `(R)`). Revenue GROWTH (YoY) is
+a top-line metric and lives in the multi-year trajectory/growth field — it must NOT be reported under
+a margin label. Do not conflate top-line growth with margin trend.
+
+**Segment EBITDA is PRE-CORPORATE; consolidated EBITDA is the multiples/leverage/coverage base.** The
+Segments EBITDA section sums to SEGMENT EBITDA (pre-corporate; e.g. 416 = CS+Parking+Gov segment
+EBITDA). The CONSOLIDATED EBITDA (Income Statement; e.g. 362) is lower by the unallocated-corporate
+item (≈54). These two "EBITDA" bases must never be silently mixed:
+- Segment EBITDA SHARES (`segment_ebitda()`) are computed on the segment sum and labelled "% of
+  segment-EBITDA sum (pre-corporate)"; the field also surfaces the consolidated EBITDA (matched to
+  the same fiscal period via `_consolidated_ebitda()`) and the reconciling unallocated-corporate item.
+- MULTIPLES / LEVERAGE / COVERAGE (EV/EBITDA, net-debt/EBITDA, interest coverage) use CONSOLIDATED
+  EBITDA, not the segment sum.
+- When labelling any EBITDA figure, state the base.
+
+**P/E-distortion RESOLUTION path** (`_pe_reconciliation()`, replaces the old open `_pe_basis_flag`).
+When the trailing GAAP EPS denominator is far out of line with recent history (latest annual EPS
+> ~2.5× or < ~0.4× the recent median), the trailing GAAP P/E is one-time-distorted and not a
+meaningful cheap/expensive read. Resolve rather than flag-and-defer, by reconciling the surfaced reads:
+trailing GAAP P/E (distorted; e.g. 5.5x on a one-time-elevated EPS 0.85 vs ~0.28 median) → forward
+ADJUSTED EPS from the catalyst 8-K's Ex-99.1 revised guidance (e.g. $1.19–1.25 → adj P/E ~3.9x at the
+current price, the clean earnings-power read) → the CIQ P/LTM EPS multiple (uses a different, lower
+trailing EPS basis). The EDGAR-vs-CIQ P/E conflict folds into this resolved statement (not a separate
+flag). The resolved statement is emitted only when the forward adjusted EPS is actually sourced;
+otherwise the original "verify against normalized/forward EPS (CIQ)" flag stands. (Consensus GAAP FY
+is a third clean read when surfaced — currently only revision *breadth* is extracted, not the point
+estimate.)
+
+**Adjusted-basis multiples** (`_adjusted_facts()`). When the Ex-99.1 furnishes forward adjusted
+EBITDA/EPS, surface forward EV/adj-EBITDA = (EOD price × EDGAR shares + EDGAR net-debt) ÷ FY-guide
+adj-EBITDA, and covenant-basis net-debt/adj-EBITDA = net-debt ÷ FY-guide adj-EBITDA, ALONGSIDE the GAAP
+trailing TEV/LTM and GAAP net-debt/EBITDA — source-bound to the 99.1 (adj-EBITDA) + EDGAR + EOD. Only
+figures actually present in the 99.1 are used; if absent, the GAAP caveat stays an open flag (never
+fabricate the adjusted side). The leverage field is labelled `(fwd-adj)` because it uses forward, not
+trailing, EBITDA.
+
+**Surprise basis** (`surprise_history()`). Estimates→Surprise is by FISCAL YEAR (no quarterly view), so
+the surfaced surprise is annual; the EPS row is GAAP-EPS basis (distinct from the 99.1 adjusted guide)
+and is labelled as such; `+beat / −miss`.
+
+**Transcript: POINTED-TO in the dossier, MECHANICALLY-BOUNDED for the synthesis — never embedded
+full, never curated.** Two separate paths, by design:
+- DOSSIER (`management_commentary()`): a POINTER only — the call/file identifier + "read in full for
+  management posture/tone", source-bound to the file. NO machine-selected excerpt and NO full embed.
+  A machine-chosen "salient extract" is the relevance judgment this project forbids (the machine
+  widens/points, never decides what matters); the full embed was also a duplicate (the human holds
+  the file) that bloated the synthesis prompt and truncated it.
+- SYNTHESIS LLM INPUT (`transcript_for_synthesis()`): a MECHANICALLY-bounded slice — boilerplate
+  stripped (operator intro / forward-looking-statements legalese / leading estimates table / TOC, via
+  `_transcript_prose`'s hand-off anchor) and prepared-remarks + Q&A truncated to a FIXED char budget
+  (`_SYNTHESIS_TRANSCRIPT_BUDGET`). This is a STRUCTURAL cut (sections + budget), NOT a topic/relevance
+  selection — no name-specific topics are hardcoded; it works for any ticker. The slice is passed to
+  the synthesis as qualitative context (no numbers derived; points still bind to the mechanical
+  facts' source_refs), and is NOT part of the mechanical-layer dump, so it does not enlarge the
+  number-trace haystack.
+
+**Synthesis truncation is fail-loud, not silently-blank** (`llm.extract` + `synthesize`). The forced
+tool marks all five synthesis fields required. If the model is cut at `max_tokens` mid-tool-call,
+`extract` raises `LlmError` (it checks `stop_reason`), and `synthesize` independently rejects any raw
+output missing a required field — marking the whole synthesis UNAVAILABLE with a loud flag rather than
+defaulting the missing trailing fields to blank (which is indistinguishable from a genuine empty
+field). The output cap is 8192 tokens.
+
 ## Sparse-data fallback for Multiples percentile-quartile classification
 
 The framework's B1 valuation-position classification (NEAR-FLOOR / BELOW-CENTER / ABOVE-CENTER / NEAR-CEILING) uses percentile-of-Close-history quartiles. This computation requires sufficient settled-quarter data points to produce meaningful quartiles.

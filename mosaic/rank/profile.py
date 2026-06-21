@@ -34,6 +34,19 @@ class CauseClass(enum.StrEnum):
     UNCLASSIFIED = "unclassified"  # no LLM read available — the honest default (no demotion)
 
 
+class StructuralDisqualifier(BaseModel, frozen=True):
+    """A TERMINAL/STRUCTURAL signal read deterministically from a name's 8-K filings (item codes +
+    text) or its shares-outstanding series — **DEMOTE-ONLY**. It sinks a structurally-dead name so
+    scarce deep-analysis time isn't wasted on it; it can NEVER raise a name's rank. Source-bound to
+    the specific 8-K (accession + item + date) — or the EDGAR shares series — so the human verifies.
+    Not a return predictor; the default for every name is *no flag* (None), never fabricated.
+    """
+
+    signal: str  # e.g. "non-reliance/restatement (4.02)", "going-concern", "dilution-spiral"
+    source: str  # source-bound: "8-K <accession> item <code> filed <date>" or "EDGAR XBRL shares …"
+    detail: str  # one grounded line
+
+
 class LiquidityTier(enum.StrEnum):
     """A *display* band for tradeability (face-validity, NOT a filter). The GATE is separate."""
 
@@ -84,6 +97,8 @@ class RankedCandidate(BaseModel, frozen=True):
     market_cap: float | None  # size, joined from the universe snapshot (None if unresolved)
     volume_state: str  # Tier-2 read, e.g. "exhausted (0.68×)" / "heavy distribution (12.4×)"
     cause_class: CauseClass  # Tier-3 annotation (UNCLASSIFIED by default)
+    structurally_disqualified: bool  # a deterministic 8-K structural signal fired → sunk
+    structural_flag: StructuralDisqualifier | None  # the source-bound signal (None = no flag)
     unknown_axes: list[str]  # Tier-1 axes that were UNKNOWN — depth tasks (flagged, never imputed)
     tradeability_gated: bool  # below the deep-work ADV floor → de-prioritised + flagged
     profile_line: str  # the one-line legible summary

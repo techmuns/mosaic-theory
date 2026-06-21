@@ -12,6 +12,7 @@ dependencies = [
     "striprtf>=0.0.26",   # CIQ Business Relationships exports (real RTF)
     "anthropic>=0.69",    # graph-track who-names-whom extraction (Sonnet 4.6)
     "beautifulsoup4>=4.12",  # 10-K HTML → text for the graph extractor
+    "xlrd>=2.0",          # legacy .xls (BIFF) CIQ Financials/Estimates workbooks (dossier)
 ]
 
 [project.optional-dependencies]

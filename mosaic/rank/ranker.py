@@ -36,6 +36,7 @@ from mosaic.rank.profile import (
     CauseClass,
     LiquidityTier,
     RankedCandidate,
+    StructuralDisqualifier,
 )
 from mosaic.schemas.candidate import CandidateRecord
 from mosaic.schemas.data_record import DataRecord, EventType, Fundamentals, PriceFeatures
@@ -97,6 +98,11 @@ _ADV_WORKABLE = 5_000_000.0
 # names down the queue without dropping them.
 _DEEP_WORK_ADV_FLOOR = 3_000_000.0
 _GATED_SCORE_MULT = 0.5
+# Tier-3 deterministic structural-disqualifier: a fired 8-K signal SINKS the name. The cap is set
+# with min() so it can ONLY lower a score (DEMOTE-ONLY — there is no promote path), and disqualified
+# names sort below the live queue. Stops the team wasting CIQ deep-pull effort on structurally-dead
+# names; never a return signal.
+_STRUCTURAL_SINK_CAP = 0.05
 
 
 class RankWeights(BaseModel, frozen=True):
@@ -273,6 +279,7 @@ def rank_candidate(
     weights: RankWeights | None = None,
     cause_class: CauseClass = CauseClass.UNCLASSIFIED,
     market_cap: float | None = None,
+    structural_flag: StructuralDisqualifier | None = None,
     deep_work_adv_floor: float = _DEEP_WORK_ADV_FLOOR,
 ) -> RankedCandidate:
     """Score one candidate into a :class:`RankedCandidate` (``rank`` is assigned later, on sort).
@@ -312,6 +319,11 @@ def rank_candidate(
     score = _clip01(quality + vol_adj)
     if gated:
         score *= _GATED_SCORE_MULT
+    # Tier-3 deterministic structural disqualifier — DEMOTE-ONLY: min() caps the score (it can only
+    # LOWER, never raise), sinking a structurally-dead name. No promote path exists.
+    structurally_disqualified = structural_flag is not None
+    if structurally_disqualified:
+        score = min(score, _STRUCTURAL_SINK_CAP)
 
     return RankedCandidate(
         candidate_id=cand.candidate_id,
@@ -329,6 +341,8 @@ def rank_candidate(
         market_cap=market_cap,
         volume_state=vol_state,
         cause_class=cause_class,
+        structurally_disqualified=structurally_disqualified,
+        structural_flag=structural_flag,
         unknown_axes=unknown_axes,
         tradeability_gated=gated,
         profile_line=_profile_line(rec.identity.ticker, score, cand.triage_band.value, axes),
@@ -342,15 +356,18 @@ def rank_candidates(
     weights: RankWeights | None = None,
     annotations: dict[str, CauseClass] | None = None,
     market_caps: dict[str, float] | None = None,
+    structural_flags: dict[str, StructuralDisqualifier] | None = None,
     deep_work_adv_floor: float = _DEEP_WORK_ADV_FLOOR,
 ) -> list[RankedCandidate]:
     """Rank the whole candidate set into the priority queue (deterministic order, 1-based ``rank``).
 
-    Sort: tradeable names first (the gate), then priority-score desc, then — for a stable, legible
+    Sort: structurally-disqualified names sink to the very bottom (Tier-3, demote-only), then
+    tradeable names first (the gate), then priority-score desc, then — for a stable, legible
     tie-break — deeper drawdown, then more-idiosyncratic, then ticker.
     """
     ann = annotations or {}
     caps = market_caps or {}
+    struct = structural_flags or {}
     ranked: list[RankedCandidate] = []
     for c in cands:
         iid = c.data_record.identity.internal_id
@@ -358,16 +375,21 @@ def rank_candidates(
         cc = ann.get(iid) or ann.get(tk) or CauseClass.UNCLASSIFIED
         ranked.append(
             rank_candidate(
-                c, weights=weights, cause_class=cc,
-                market_cap=caps.get(iid), deep_work_adv_floor=deep_work_adv_floor,
+                c, weights=weights, cause_class=cc, market_cap=caps.get(iid),
+                structural_flag=struct.get(iid) or struct.get(tk),
+                deep_work_adv_floor=deep_work_adv_floor,
             )
         )
 
-    def sort_key(r: RankedCandidate) -> tuple[bool, float, float, float, str]:
+    def sort_key(r: RankedCandidate) -> tuple[bool, bool, float, float, float, str]:
         dd = r.axes["depth"].raw if r.axes["depth"].raw is not None else 0.0
         idio = r.axes["idiosyncrasy"].raw if r.axes["idiosyncrasy"].raw is not None else 0.0
-        # gated last; score desc; deeper (more negative dd) first; more idiosyncratic first; ticker.
-        return (r.tradeability_gated, -r.priority_score, dd, idio, r.ticker)
+        # structurally-disqualified sink to the absolute bottom; then gated; then score desc; deeper
+        # (more negative dd) first; more idiosyncratic first; ticker.
+        return (
+            r.structurally_disqualified, r.tradeability_gated, -r.priority_score, dd, idio,
+            r.ticker,
+        )
 
     ranked.sort(key=sort_key)
     return [r.model_copy(update={"rank": i + 1}) for i, r in enumerate(ranked)]
@@ -423,6 +445,11 @@ def render_profile_block(r: RankedCandidate) -> str:
     """The full, auditable per-name profile: every axis, its sub-score, and its additive
     contribution (summing to ``quality``) — readable so you see *why* the name is where it is."""
     lines = [f"#{r.rank:<3} {r.ticker:<6} {r.priority_score:.3f}  [{r.depth_band}]  {r.name[:46]}"]
+    if r.structural_flag is not None:
+        lines.append(
+            f"       ⛔ STRUCTURAL DISQUALIFIER (Tier-3, demote-only): {r.structural_flag.signal}"
+        )
+        lines.append(f"          ↳ {r.structural_flag.detail} · src: {r.structural_flag.source}")
     order = ["idiosyncrasy", "depth", "character", "multiple"]
     for name in order:
         ax = r.axes[name]

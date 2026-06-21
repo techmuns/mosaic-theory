@@ -17,6 +17,7 @@ from mosaic.rank.profile import (
     CauseClass,
     LiquidityTier,
     RankedCandidate,
+    StructuralDisqualifier,
 )
 from mosaic.rank.ranker import (
     RankWeights,
@@ -33,16 +34,24 @@ from mosaic.rank.ranker import (
     render_queue_markdown,
     volume_overlay,
 )
+from mosaic.rank.structural import (
+    FilingText,
+    classify_structural_disqualifier,
+    scan_structural,
+)
 
 __all__ = [
     "AxisCoverage",
     "AxisScore",
     "CauseClass",
+    "FilingText",
     "LiquidityTier",
     "RankWeights",
     "RankedCandidate",
+    "StructuralDisqualifier",
     "character_axis",
     "classify_cause",
+    "classify_structural_disqualifier",
     "depth_axis",
     "idiosyncrasy_axis",
     "liquidity_tier",
@@ -55,5 +64,6 @@ __all__ = [
     "rank_candidates",
     "render_profile_block",
     "render_queue_markdown",
+    "scan_structural",
     "volume_overlay",
 ]

@@ -7,6 +7,7 @@ Grown one subcommand per build step. Today: ``resolve`` (step 1). Later: ``refre
 from __future__ import annotations
 
 import argparse
+import json
 import sqlite3
 import sys
 from collections.abc import Sequence
@@ -19,6 +20,7 @@ from mosaic.ledger import LedgerError, log_verdict
 from mosaic.orchestrator import run_monthly, run_weekly
 from mosaic.rank import (
     RankWeights,
+    StructuralDisqualifier,
     load_candidates_from_snapshot,
     load_cause_annotations,
     load_market_caps_from_snapshot,
@@ -166,12 +168,28 @@ def _cmd_rank(args: argparse.Namespace) -> int:
     caps = load_market_caps_from_snapshot(snaps / "universe_snapshot.jsonl")
     annotations = load_cause_annotations(Path(args.cause_file)) if args.cause_file else {}
 
+    structural_flags: dict[str, StructuralDisqualifier] = {}
+    if args.structural:
+        from mosaic.edgar.client import EdgarClient
+        from mosaic.rank import scan_structural
+        from mosaic.sec import build_sec_http
+
+        print(
+            f"scanning {len(cands)} candidates for structural disqualifiers "
+            f"(EDGAR 8-K text + shares; DEMOTE-ONLY)…"
+        )
+        structural_flags = scan_structural(
+            cands, edgar=EdgarClient.from_config(cfg), http=build_sec_http(cfg)
+        )
+
     ranked = rank_candidates(
         cands, weights=RankWeights(), annotations=annotations,
         market_caps=caps, deep_work_adv_floor=args.deep_work_adv_floor,
+        structural_flags=structural_flags or None,
     )
     n_unknown = sum(1 for r in ranked if r.unknown_axes)
     n_gated = sum(1 for r in ranked if r.tradeability_gated)
+    disqualified = [r for r in ranked if r.structurally_disqualified]
     print(
         f"=== Ranked queue · {len(ranked)} candidates · weights "
         f"idio .30 / depth .25 / character .25 / mult .20 "
@@ -181,6 +199,17 @@ def _cmd_rank(args: argparse.Namespace) -> int:
         f"top {args.top} shown · {n_unknown} carry an UNKNOWN axis (flagged) · "
         f"{n_gated} tradeability-gated · LLM cause annotations: {len(annotations)}\n"
     )
+    if args.structural:
+        print(
+            f"--- structural disqualifiers (Tier-3, DEMOTE-ONLY): {len(disqualified)} of "
+            f"{len(ranked)} sunk ---"
+        )
+        for r in disqualified:
+            assert r.structural_flag is not None  # disqualified ⇒ flag present
+            print(
+                f"  ⛔ {r.ticker:<6} {r.structural_flag.signal}  ·  {r.structural_flag.source}"
+            )
+        print()
     for r in ranked[: args.top]:
         print(render_profile_block(r))
         print()
@@ -194,6 +223,49 @@ def _cmd_rank(args: argparse.Namespace) -> int:
         md = snaps / "ranked_queue.md"
         md.write_text(render_queue_markdown(ranked, top=args.md_top))
         print(f"wrote {jsonl} ({len(ranked)} rows) and {md} (top {args.md_top})")
+    return 0
+
+
+def _cmd_dossier(args: argparse.Namespace) -> int:
+    """Assemble per-finalist dossiers (top N, or one --ticker). Assembles, never concludes.
+
+    The ``requirements`` mode instead prints the canonical manual-CIQ manifest (export checklist, or
+    ``--json`` for the upload UI) — the single source the MISSING-manifest path also reads."""
+    if getattr(args, "mode", "assemble") == "requirements":
+        from mosaic.dossier import requirements
+
+        if args.json:
+            print(json.dumps(requirements.as_payload(args.ticker), indent=2))
+        else:
+            print(requirements.render_checklist(args.ticker))
+        return 0
+
+    from mosaic.dossier.assemble import assemble_cohort, load_finalists
+
+    cfg = get_config()
+    cfg.ensure_dirs()
+    finalists = load_finalists(cfg, top=args.top, ticker=args.ticker)
+    if not finalists:
+        print("no finalists — run `mosaic screen` then `mosaic rank` first")
+        return 1
+    llm = None
+    if not args.no_llm:
+        from mosaic.graph.llm import AnthropicLlmClient
+
+        try:
+            llm = AnthropicLlmClient.from_config(cfg)
+        except Exception as exc:  # noqa: BLE001 — degrade to mechanical-only, never crash the CLI
+            print(f"LLM unavailable ({exc}) — assembling the mechanical layer only")
+    dossiers, errors = assemble_cohort(finalists, cfg=cfg, llm=llm)
+    out = cfg.data_dir / "dossiers"
+    print(f"=== dossier · {len(dossiers)} done · {len(errors)} error(s) · → {out}/<ticker>/ ===")
+    for d in sorted(dossiers, key=lambda d: d.rank or 1_000_000):
+        print(f"  {d.ticker:<6} rank {d.rank} · {'synth' if d.synthesis else 'NO-synth'} · "
+              f"{len(d.flags)} flag(s)")
+        for fl in d.flags:
+            print(f"      ⚠ {fl}")
+    for e in errors:
+        print(f"  ERROR {e}")
     return 0
 
 
@@ -455,10 +527,35 @@ def build_parser() -> argparse.ArgumentParser:
         help="optional JSON {ticker_or_id: mean_revert|structural_break} Tier-3 LLM annotations",
     )
     p_rank.add_argument(
+        "--structural", action="store_true",
+        help="Tier-3 deterministic structural-disqualifier scan (network: free EDGAR 8-K text + "
+        "shares series). DEMOTE-ONLY — a fired going-concern/4.02/4.01/3.01/dilution signal sinks "
+        "the name, source-bound to its 8-K; never raises rank. Off by default (no network).",
+    )
+    p_rank.add_argument(
         "--no-write", action="store_true", dest="no_write",
         help="print only; do not write ranked_queue.jsonl / .md snapshots",
     )
     p_rank.set_defaults(func=_cmd_rank)
+
+    p_dossier = sub.add_parser("dossier", help="assemble per-finalist dossiers (never concludes)")
+    p_dossier.add_argument(
+        "mode", nargs="?", default="assemble", choices=("assemble", "requirements"),
+        help="'assemble' (default) builds dossiers; 'requirements' prints the canonical manual-CIQ "
+        "manifest (export checklist; the MISSING-manifest path reads the same definition)",
+    )
+    p_dossier.add_argument("--top", type=int, default=10, help="top N of the queue (default: 10)")
+    p_dossier.add_argument(
+        "--ticker", help="assemble (or, with 'requirements', render the checklist for) one name"
+    )
+    p_dossier.add_argument(
+        "--no-llm", action="store_true", dest="no_llm", help="mechanical layer only; skip synthesis"
+    )
+    p_dossier.add_argument(
+        "--json", action="store_true", dest="json",
+        help="with 'requirements': emit the manifest as JSON (machine-readable, for the upload UI)",
+    )
+    p_dossier.set_defaults(func=_cmd_dossier)
 
     p_log = sub.add_parser("log-verdict", help="record a manual BUY/AVOID verdict for a candidate")
     p_log.add_argument("candidate_id", help="candidate id from `mosaic screen`")
