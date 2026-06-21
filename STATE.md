@@ -374,6 +374,14 @@ Each line: *what it does* — *verified how*.
 - **Decision ledger** (`mosaic/ledger` + `store`) — append-only: `append_ledger` is INSERT-only and
   **no `clear_ledger`/ledger-DELETE exists anywhere** — *2 verdicts across 2 processes both persist;
   survives `clear_candidates`+`clear_universe`+`export_snapshots`; re-log → `sqlite3.IntegrityError`.*
+  - **FIRST REAL VERDICT LOGGED — 2026-06-21.** `VRRM` **AVOID_TERMINAL**, frozen entry **$4.71 @
+    2026-06-17** (last settled close ≤ the Sunday decision date; PRESENT, 4d old — NOT the $4.44 a live
+    quote showed, surfaced to the PM before writing since the store stops at 06-17), horizon **180d**
+    (resolves ~2026-12-18), benchmark IWM. The PM's rationale is source-bound in the entry: thesis =
+    the Avis-termination → cascading-RAC-channel-exit structural-break case; twin ruled out = Conduent
+    (lost-NJMVC analogue); explicit kill-criteria. Committed to `decision_ledger.jsonl`. **This is
+    leg 1 of the BUY−AVOID spread — unresolved; 0 resolved verdicts, so the §4 gate is NOT met.** The
+    spread needs BUY legs and calendar time before it can show anything.
 - **Scoring harness** (`mosaic/scoring`) — BUY−AVOID spread = `buy_mean_return − avoid_mean_return`
   (benchmark-free), over **resolved** verdicts only — *synthetic +20% BUY / −20% AVOID → spread +40%.*
 - **Entry-price freeze** (`store.close_as_of`) — clamps to `bar_date ≤ reference_date`, fail-loud if
@@ -489,10 +497,13 @@ signal, not the whole idea.
 The **dossier-assembler is built and verified (§2)** — the queue-top now flows ranker → `dossier`.
 Remaining:
 
-1. **Run one real finalist cycle by hand** — top of the ranked queue → `dossier` → the human reads the
+1. **Run real finalist cycles by hand** — top of the ranked queue → `dossier` → the human reads the
    source-bound bull/bear framing → logs a BUY/AVOID verdict via the ledger CLI with a frozen entry
-   price. Produces the first genuine verdict, **starts the spread**. (Pull the finalist's CIQ export
-   first, so the dossier's CIQ sections populate instead of flagging MISSING.)
+   price. **First verdict DONE (2026-06-21): VRRM AVOID_TERMINAL, frozen $4.71 @ 2026-06-17, 180d** —
+   the spread has its first (unresolved) leg (§2). Remaining: accumulate more verdicts — **especially
+   BUY legs** (the spread is BUY−AVOID; one AVOID alone can't show separation) — and let them resolve
+   over their horizons. (VRRM was logged with its CIQ dossier sections MISSING — pull the CIQ export
+   per `dossier requirements` to populate the dossier for subsequent names.)
 2. **Lightweight local frontend** — read-and-trigger ops dashboard (ingestion health; the **ranked
    queue with per-name structural profiles** (§2); `graph-exposure` labeled research-input; ledger;
    spread showing 0 verdicts honestly). Read-only, renders committed snapshots, never trades or logs
