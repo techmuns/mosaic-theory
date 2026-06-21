@@ -9,9 +9,11 @@ own lookahead guards.
 from __future__ import annotations
 
 import ast
+import json
 from datetime import date, datetime
 from pathlib import Path
 
+from mosaic.edgar.client import Filing
 from mosaic.rank import (
     CauseClass,
     FilingText,
@@ -27,6 +29,7 @@ from mosaic.rank import (
     rank_candidate,
     rank_candidates,
     render_profile_block,
+    scan_structural,
     volume_overlay,
 )
 from mosaic.rank.cause import annotations_from_raw, classify_cause
@@ -63,9 +66,10 @@ def _cand(
     volume_spike: float = 1.0,
     adv_usd: float = 30_000_000.0,
     band: TriageBand = TriageBand.A,
+    cik: str = "0000000001",
 ) -> CandidateRecord:
     ident = Identity(
-        internal_id=f"SEC-X-{ticker}", issuer_id="ISS-X", cik="0000000001", ticker=ticker,
+        internal_id=f"SEC-X-{ticker}", issuer_id="ISS-X", cik=cik, ticker=ticker,
         mic="XNAS", exchange="Nasdaq", eod_symbol=ticker, name=f"{ticker} Inc.",
     )
     prices = PriceFeatures(
@@ -242,19 +246,95 @@ def test_structural_delisting_3_01_fires() -> None:
     assert flag is not None and "3.01" in flag.signal
 
 
+def _auditor_4_01(body: str) -> StructuralDisqualifier | None:
+    """Run the classifier on a single Item-4.01 8-K with the given body."""
+    f = FilingText(accession="0001-26-000045", filing_date=date(2026, 5, 4), items=("4.01",),
+                   body=body)
+    return classify_structural_disqualifier([f], [], _prices())
+
+
 def test_structural_auditor_exit_4_01_needs_the_resign_dismiss_verb() -> None:
-    # A routine rotation (engaging a NEW firm) is NOT a disqualifier — only resign/dismiss fires.
-    routine = FilingText(
-        accession="ROT", filing_date=date(2026, 5, 4), items=("4.01",),
-        body="The Company engaged a new independent registered public accounting firm.",
-    )
-    assert classify_structural_disqualifier([routine], [], _prices()) is None
-    quit_ = FilingText(
-        accession="0001-26-000045", filing_date=date(2026, 5, 4), items=("4.01",),
-        body="Our independent registered public accounting firm resigned effective immediately.",
-    )
-    flag = classify_structural_disqualifier([quit_], [], _prices())
+    # A routine rotation (engaging a NEW firm, no verb) is NOT a disqualifier.
+    assert _auditor_4_01("The Company engaged a new independent registered public accounting "
+                         "firm.") is None
+    # A genuine auditor RESIGNATION fires (auditor-initiated → distress).
+    flag = _auditor_4_01("Our independent registered public accounting firm resigned effective "
+                         "immediately.")
     assert flag is not None and "4.01" in flag.signal
+
+
+def test_structural_auditor_exit_does_not_fire_on_non_auditor_events() -> None:
+    """The bug fix: _AUDITOR_EXIT must detect an AUDITOR exit, not ANY resignation/dismissal. A
+    wrong demote sinks a good name out of the human's sight — worse than a miss."""
+    # (a) Big-4 UPGRADE — a routine company-initiated switch ("dismissed X, appointed Y, no
+    # disagreements"). This is NOT distress; it must NOT fire (the PODD/FUBO false positive).
+    assert _auditor_4_01(
+        "On May 20, 2025 the Audit Committee dismissed KPMG LLP as the Company's independent "
+        "registered public accounting firm and appointed PricewaterhouseCoopers LLP. There were "
+        "no disagreements or reportable events with KPMG."
+    ) is None
+    # (b) A co-filed DIRECTOR resignation (5.02-style text sharing a 4.01 body) must NOT fire —
+    # 'resigned' is nowhere near an auditor token.
+    assert _auditor_4_01(
+        "On May 1, 2026, Jane Doe resigned from the Board of Directors. Separately, the Company "
+        "engaged a new independent registered public accounting firm."
+    ) is None
+
+
+def test_structural_auditor_dismissal_for_cause_fires() -> None:
+    """A genuine auditor exit DOES fire: a dismissal accompanied by an affirmative cause marker
+    (disagreement / material weakness), and an auditor-initiated resignation."""
+    for_cause = _auditor_4_01(
+        "The Company dismissed its independent registered public accounting firm following "
+        "disagreements regarding revenue recognition."
+    )
+    assert for_cause is not None and "4.01" in for_cause.signal
+    material_weakness = _auditor_4_01(
+        "The registered public accounting firm was dismissed; management identified a material "
+        "weakness in internal control over financial reporting."
+    )
+    assert material_weakness is not None  # affirmative cause → distress dismissal fires
+
+
+class _ScanFakeEdgar:
+    """EdgarClient stand-in for scan_structural: raises errors uncaught by the per-extractor
+    helpers for the 'boom' CIKs (to exercise the scan-level guard), and returns a clean 4.02
+    filing (→ restatement flag, no body needed) for the healthy one."""
+
+    def recent_filings(
+        self, cik: str, *, forms: tuple[str, ...] = ("8-K",), since: date | None = None
+    ) -> list[Filing]:
+        if cik == "CIK-IDX":  # IndexError ∉ _filings_for's (HttpError, KeyError, ValueError)
+            raise IndexError("malformed parallel SEC arrays")
+        if cik == "CIK-GOOD":
+            return [Filing(cik=cik, form="8-K", filing_date=date(2026, 3, 1),
+                           accession="0001-26-000099", items=["4.02"], primary_doc=None)]
+        return []  # CIK-JSON / CIK-TYPE: no filings, so the failure surfaces from companyfacts
+
+    def companyfacts(self, cik: str) -> dict[str, object]:
+        if cik == "CIK-JSON":  # JSONDecodeError ⊂ ValueError — not in _shares_for's catch tuple
+            raise json.JSONDecodeError("corrupt cache body", "", 0)
+        if cik == "CIK-TYPE":  # TypeError ∉ _shares_for's catch tuple
+            raise TypeError("bad XBRL 'val' shape")
+        return {}
+
+
+def test_scan_structural_skips_a_name_whose_edgar_fetch_raises() -> None:
+    """#1 robustness regression: one bad EDGAR response / corrupt cache must NOT kill the whole
+    pass. A candidate whose fetch raises an error the per-extractor helpers don't catch
+    (IndexError from mismatched arrays, JSONDecodeError from a corrupt body/cache, TypeError from a
+    bad XBRL val) is SKIPPED by scan_structural's per-name guard; the scan completes and still flags
+    the healthy names. Mirrors assemble_cohort's per-name resilience."""
+    cands = [
+        _cand(ticker="IDX", cik="CIK-IDX"),
+        _cand(ticker="JSON", cik="CIK-JSON"),
+        _cand(ticker="TYPE", cik="CIK-TYPE"),
+        _cand(ticker="GOOD", cik="CIK-GOOD"),
+    ]
+    # http is unused (the GOOD filing has primary_doc=None → no body fetch); None proves that.
+    flags = scan_structural(cands, edgar=_ScanFakeEdgar(), http=None)  # type: ignore[arg-type]
+    assert set(flags) == {"SEC-X-GOOD"}  # 3 boom names skipped, no crash; healthy name survives
+    assert "4.02" in flags["SEC-X-GOOD"].signal
 
 
 def test_structural_dilution_spiral_fires_on_shares_into_drawdown() -> None:

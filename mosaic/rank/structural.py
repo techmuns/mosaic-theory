@@ -40,13 +40,44 @@ _DILUTION_SHARE_GROWTH = 0.50  # +50% shares over the window = aggressive diluti
 _DILUTION_PRICE_DROP = -0.50  # ≤ −50% from the 52w high confirms the "into a falling price" leg
 
 # item codes whose BODY we read (going-concern can sit in a results/other-event 8-K; 4.01 needs the
-# resign/dismiss verb). Pure item-code signals (3.01, 4.02) don't need the body to fire.
+# auditor-exit text). Pure item-code signals (3.01, 4.02) don't need the body to fire.
 _BODY_ITEMS = frozenset({"2.02", "4.01", "8.01", "4.02"})
 _GOING_CONCERN = re.compile(r"going concern|substantial doubt", re.IGNORECASE)
-_AUDITOR_EXIT = re.compile(
-    r"\bresign|\bdismiss|declined to (?:stand|be re-?engaged)|terminat\w*\b[^.]{0,40}\bauditor",
+
+# AUDITOR EXIT — a GENUINE auditor departure, not any resignation. The verb must sit next to an
+# auditor token (the bug fired on a co-filed director "resigned" or a routine 4.01 firm switch).
+# A RESIGNATION (auditor-initiated) fires on its own; a DISMISSAL (company-initiated — usually a
+# routine switch / Big-4 upgrade: "dismissed X, engaged Y, no disagreements") fires ONLY with an
+# affirmative cause marker, so an upgrade never sinks a good name. DEMOTE-ONLY → bias to precision:
+# an ambiguous dismissal stays unflagged (safe under-demote; the name still reaches the dossier).
+# Grounded in Item 4.01 + Reg S-K 304: disagreements / reportable events = the distress markers.
+_AUDITOR_TOKEN = r"(?:accounting firm|auditors?|accountants?)"
+_AUDITOR_VERB = r"(?:resign\w*|declin\w+ to (?:stand|be re-?engaged))"  # auditor-initiated exit
+_PROX = 80  # chars between verb and auditor token — keeps the match within one sentence/clause
+_AUDITOR_RESIGN = re.compile(
+    rf"{_AUDITOR_VERB}[^.]{{0,{_PROX}}}{_AUDITOR_TOKEN}|{_AUDITOR_TOKEN}[^.]{{0,{_PROX}}}{_AUDITOR_VERB}",
     re.IGNORECASE,
 )
+_AUDITOR_DISMISS = re.compile(
+    rf"dismiss\w*[^.]{{0,{_PROX}}}{_AUDITOR_TOKEN}|{_AUDITOR_TOKEN}[^.]{{0,{_PROX}}}dismiss\w*",
+    re.IGNORECASE,
+)
+# affirmative cause — phrased to NOT match the routine "no disagreements or reportable events"
+# boilerplate a clean switch discloses (so a Big-4 upgrade with a dismissal does not fire):
+_AUDITOR_CAUSE = re.compile(
+    r"material weakness|restat\w+|going concern|\ba reportable event"
+    r"|\ba disagreement|disagreement[s]?\s+(?:with|regarding|concerning|over|about|as to)",
+    re.IGNORECASE,
+)
+
+
+def _auditor_exit(body: str) -> bool:
+    """True iff the 8-K text shows a GENUINE auditor exit (not any resignation). A resignation near
+    an auditor token fires on its own (auditor-initiated → distress); a dismissal fires only with an
+    affirmative cause marker (a bare company-initiated dismissal is a routine switch)."""
+    if _AUDITOR_RESIGN.search(body):
+        return True
+    return bool(_AUDITOR_DISMISS.search(body) and _AUDITOR_CAUSE.search(body))
 
 
 @dataclass(frozen=True)
@@ -112,11 +143,11 @@ def classify_structural_disqualifier(
                 signal="delisting/deficiency notice (3.01)", source=_src(f),
                 detail="delisting or listing-rule deficiency notice",
             )
-    for f in filings:  # (4) auditor resignation / dismissal (not a routine rotation)
-        if "4.01" in f.items and f.body and _AUDITOR_EXIT.search(f.body):
+    for f in filings:  # (4) auditor resignation / dismissal-for-cause (NOT a routine firm switch)
+        if "4.01" in f.items and f.body and _auditor_exit(f.body):
             return StructuralDisqualifier(
                 signal="auditor resignation/dismissal (4.01)", source=_src(f),
-                detail="certifying accountant resigned or was dismissed",
+                detail="certifying accountant resigned, or was dismissed for cause",
             )
     return _dilution_spiral(shares, prices)  # (5) dilution death-spiral
 
@@ -168,10 +199,16 @@ def scan_structural(
         cik = rec.identity.cik
         if not cik:
             continue
-        since = (rec.as_of or date.today()) - timedelta(days=_FILINGS_WINDOW_DAYS)
-        flag = classify_structural_disqualifier(
-            _filings_for(edgar, http, cik, since), _shares_for(edgar, cik), rec.prices
-        )
+        # Per-name guard (mirrors assemble_cohort): one bad EDGAR response or a corrupt cache file
+        # must not kill the whole pass. A skipped name is simply not triaged here — a safe
+        # under-demote (it still reaches the dossier), never a fabricated flag.
+        try:
+            since = (rec.as_of or date.today()) - timedelta(days=_FILINGS_WINDOW_DAYS)
+            flag = classify_structural_disqualifier(
+                _filings_for(edgar, http, cik, since), _shares_for(edgar, cik), rec.prices
+            )
+        except Exception:  # noqa: BLE001 — fail soft per name, never crash the cohort scan
+            continue
         if flag is not None:
             out[rec.identity.internal_id] = flag
     return out
