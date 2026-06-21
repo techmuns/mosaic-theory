@@ -83,7 +83,7 @@ Each line: *what it does* — *verified how*.
   308 snapshot → top-15 legible profiles, every position reconstructs from weight·sub-score + overlay
   (ICCM's 61.7× active-distribution overlay sinks it from a top-2 quality to #6); 156 UNKNOWN-multiple
   names flagged; ADV floor $10M gates 75 thin names to the queue bottom; a structural-break flag
-  demotes FUBO #1→#12 while mean-revert lifts PAR #3→#1. 20 tests incl. an AST guard that
+  demotes FUBO #1→#12 while mean-revert lifts PAR #3→#1. 31 tests incl. an AST guard that
   `mosaic.rank` imports no scoring/ledger/store (no forward-return path). Emits
   `ranked_queue.{jsonl,md}` snapshots.*
   - **Coverage caveat (an upstream data gap, NOT a ranker defect):** the ranking is **most reliable
@@ -94,6 +94,36 @@ Each line: *what it does* — *verified how*.
     text — so drawdown-character is one axis, and Tier-2 reads *current* volume, not volume-at-the-
     gap). All handled fail-loud (UNKNOWN → 0-credit + flagged, never imputed) — correct behaviour; the
     fix is upstream coverage (§4), recorded not chased.
+  - **Tier-3 DETERMINISTIC structural-disqualifier channel** (`mosaic/rank/structural.py`, `rank
+    --structural` flag) — **DEMOTE-ONLY, source-bound, off by default (network).** Reads the **free**
+    EDGAR 8-K full text (item codes + body) + the EDGAR-XBRL shares series already used for market
+    cap, and flags TERMINAL/STRUCTURAL signals only: **restatement/non-reliance (Item 4.02)**,
+    **going-concern / substantial-doubt** (filing text), **delisting/deficiency (Item 3.01)**,
+    **auditor resignation/dismissal (Item 4.01 + resign/dismiss verb)**, and a **dilution death-spiral**
+    (shares ↑ ≥50% into a ≤−50% TRAILING drawdown — the *already-computed* historical drawdown, never
+    a forward return). A fired flag **caps `priority_score` at 0.05 via `min()` (can only LOWER) and
+    sorts the name to the queue bottom** — **there is NO promote path**; default is `UNCLASSIFIED`
+    (`None`) → **zero effect, never fabricated**. Every flag is **source-bound** (accession + item +
+    date, or the two share datapoints) so the human verifies. This completes the Tier-3 slot that was
+    `UNCLASSIFIED` because 8-K text was never wired; it is **separate** from the LLM cause-annotation
+    channel (which can boost mean-revert) — *this* one can only sink. **Its only job is triage hygiene
+    — stop wasting CIQ deep-pull on structurally-dead names; NOT a return predictor.** *Verified by a
+    real run: `rank --structural --no-write` over the committed 301-candidate snapshot → **54 sunk**
+    (23 dilution-spiral / 14 auditor-exit / 7 restatement / 5 going-concern / 5 delisting), each traced
+    to a specific 8-K (accession+item+date) or XBRL share series; **deterministic** (re-scan reproduced
+    the identical 54). Read the primary filing for the non-trivial cases: FUBO 4.01 = "**dismissed
+    KPMG**"; RGC dilution = **13.0M → 494.5M** shares; TLRY/EOSE/ZBIO going-concern language confirmed
+    in the cited 8-K.* **Honest precision caveat — by design, not a defect:** the signals fire on
+    structural **FORM** (item code + verb / language / share-count delta), which has a real
+    false-positive surface — e.g. **PODD's 4.01 is a voluntary Big-4 UPGRADE** ("dismissed Grant
+    Thornton, appointed PwC"), and **MBLY's "dilution" is Intel's Class-B→A distribution**, neither a
+    distress signal. That is exactly why the channel is **demote-to-verify, never auto-kill**: it sinks
+    a name for a human verification glance with the source attached; **the machine sinks + cites, the
+    human concludes** (CLAUDE.md). 11 tests: each signal fires + is source-bound, dilution needs BOTH
+    legs, default-`None` never fabricated, severity ordering, the explicit **no-promote-path** test
+    (flagged score ≤ unflagged across strong+weak setups, sunk ≤ the 0.05 cap), sink-below-a-clean-name
+    in the queue, no-flag leaves score/sort untouched; the AST no-forward-returns guard extended to
+    assert `structural.py` is in scope. ruff + `mypy --strict` clean; 166 suite green.
 - **Dossier-assembler** (`mosaic/dossier`, `dossier` CLI) — per-finalist; **assembles and cites, NEVER
   concludes.** A deterministic source-bound MECHANICAL layer (every fact a `{value, source_ref}`: P/E +
   percentile / FCF-sign / net-leverage from the screen's EDGAR data-record; the gap-down **8-Ks** fetched

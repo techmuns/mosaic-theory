@@ -14,9 +14,12 @@ from pathlib import Path
 
 from mosaic.rank import (
     CauseClass,
+    FilingText,
     LiquidityTier,
     RankWeights,
+    StructuralDisqualifier,
     character_axis,
+    classify_structural_disqualifier,
     depth_axis,
     idiosyncrasy_axis,
     multiple_axis,
@@ -205,6 +208,133 @@ def test_classify_cause_uses_tool_and_empty_text_is_unclassified() -> None:
     assert classify_cause(FakeLlm(), ticker="X", derate_text="   ") is CauseClass.UNCLASSIFIED
 
 
+# --- Tier-3 DETERMINISTIC structural-disqualifier channel (DEMOTE-ONLY, source-bound) ---------
+def _prices(dd: float | None = -0.50) -> PriceFeatures:
+    return _cand(drawdown=dd).data_record.prices
+
+
+def test_structural_restatement_4_02_fires_source_bound() -> None:
+    # Item 4.02 (non-reliance) is a pure item-code signal — no body text needed.
+    f = FilingText(
+        accession="0001-26-000042", filing_date=date(2026, 5, 1), items=("4.02",), body=""
+    )
+    flag = classify_structural_disqualifier([f], [], _prices())
+    assert flag is not None and "4.02" in flag.signal
+    assert "0001-26-000042" in flag.source and "2026-05-01" in flag.source  # source-bound
+
+
+def test_structural_going_concern_fires_from_filing_text() -> None:
+    f = FilingText(
+        accession="0001-26-000043", filing_date=date(2026, 5, 2), items=("8.01",),
+        body="The Company has concluded there is substantial doubt about its ability to continue "
+        "as a going concern.",
+    )
+    flag = classify_structural_disqualifier([f], [], _prices())
+    assert flag is not None and "going-concern" in flag.signal
+    assert "0001-26-000043" in flag.source  # bound to the 8-K that carried the language
+
+
+def test_structural_delisting_3_01_fires() -> None:
+    f = FilingText(
+        accession="0001-26-000044", filing_date=date(2026, 5, 3), items=("3.01",), body=""
+    )
+    flag = classify_structural_disqualifier([f], [], _prices())
+    assert flag is not None and "3.01" in flag.signal
+
+
+def test_structural_auditor_exit_4_01_needs_the_resign_dismiss_verb() -> None:
+    # A routine rotation (engaging a NEW firm) is NOT a disqualifier — only resign/dismiss fires.
+    routine = FilingText(
+        accession="ROT", filing_date=date(2026, 5, 4), items=("4.01",),
+        body="The Company engaged a new independent registered public accounting firm.",
+    )
+    assert classify_structural_disqualifier([routine], [], _prices()) is None
+    quit_ = FilingText(
+        accession="0001-26-000045", filing_date=date(2026, 5, 4), items=("4.01",),
+        body="Our independent registered public accounting firm resigned effective immediately.",
+    )
+    flag = classify_structural_disqualifier([quit_], [], _prices())
+    assert flag is not None and "4.01" in flag.signal
+
+
+def test_structural_dilution_spiral_fires_on_shares_into_drawdown() -> None:
+    # Shares rising materially INTO a falling price = death-spiral signature (FUBO-shaped).
+    shares = [(date(2024, 6, 1), 30_000_000.0), (date(2026, 3, 1), 90_000_000.0)]  # +200%
+    flag = classify_structural_disqualifier([], shares, _prices(dd=-0.70))
+    assert flag is not None and "dilution" in flag.signal
+    assert "30,000,000" in flag.source and "90,000,000" in flag.source  # source-bound to the series
+
+
+def test_structural_dilution_needs_both_legs() -> None:
+    grown = [(date(2024, 6, 1), 30_000_000.0), (date(2026, 3, 1), 90_000_000.0)]
+    flat = [(date(2024, 6, 1), 30_000_000.0), (date(2026, 3, 1), 31_000_000.0)]
+    # price barely down → the "into a falling price" leg fails (a buyer might WANT cheap dilution):
+    assert classify_structural_disqualifier([], grown, _prices(dd=-0.20)) is None
+    # shares ~flat → no dilution even into a deep drawdown:
+    assert classify_structural_disqualifier([], flat, _prices(dd=-0.70)) is None
+
+
+def test_structural_default_is_unclassified_none_never_fabricated() -> None:
+    # A benign results 8-K with no terminal language and no dilution → None (zero effect).
+    benign = FilingText(
+        accession="BEN", filing_date=date(2026, 5, 5), items=("2.02", "7.01"),
+        body="Quarterly results were in line with prior guidance; the outlook is reaffirmed.",
+    )
+    assert classify_structural_disqualifier([benign], [], _prices()) is None
+
+
+def test_structural_severity_prefers_restatement_over_co_present_signals() -> None:
+    # 4.02 (financials can't be trusted) outranks a co-present 3.01 and a dilution spiral.
+    delist = FilingText(accession="D", filing_date=date(2026, 5, 7), items=("3.01",), body="")
+    restate = FilingText(accession="R", filing_date=date(2026, 5, 6), items=("4.02",), body="")
+    shares = [(date(2024, 6, 1), 30_000_000.0), (date(2026, 3, 1), 90_000_000.0)]
+    flag = classify_structural_disqualifier([delist, restate], shares, _prices(dd=-0.70))
+    assert flag is not None and "4.02" in flag.signal
+
+
+def test_structural_flag_has_no_promote_path() -> None:
+    """The load-bearing fence: a fired flag can ONLY lower (or leave) a score — NEVER raise it."""
+    flag = StructuralDisqualifier(
+        signal="going-concern / substantial doubt", source="8-K test", detail="d"
+    )
+    # Across strong AND weak base setups, the flagged score is always ≤ the unflagged score.
+    for dd, rel, pe in [(-0.80, -0.70, 0.01), (-0.45, -0.25, 0.20), (-0.55, -0.45, None)]:
+        base = rank_candidate(_cand(drawdown=dd, rel=rel, pe_pctile=pe))
+        flagged = rank_candidate(_cand(drawdown=dd, rel=rel, pe_pctile=pe), structural_flag=flag)
+        assert flagged.priority_score <= base.priority_score  # demote-only — never promotes
+        assert flagged.priority_score <= 0.05  # sunk to/under the structural cap
+        assert flagged.structurally_disqualified and flagged.structural_flag is flag
+
+
+def test_structural_disqualified_sinks_below_a_clean_name_in_the_queue() -> None:
+    # A structurally-dead name sinks BELOW a mediocre-but-alive one despite a stronger raw setup.
+    flag = StructuralDisqualifier(
+        signal="non-reliance/restatement (4.02)", source="8-K 0001-26-000042 item 4.02", detail="d"
+    )
+    dead = _cand(ticker="DEAD", drawdown=-0.85, rel=-0.80, pe_pctile=0.01,
+                 gap_dates=(date(2026, 6, 12),))
+    alive = _cand(ticker="ALIVE", drawdown=-0.45, rel=-0.30, pe_pctile=0.20)
+    ranked = rank_candidates([dead, alive], structural_flags={"SEC-X-DEAD": flag})
+    assert [r.ticker for r in ranked] == ["ALIVE", "DEAD"]  # dead sinks despite the stronger setup
+    sunk = next(r for r in ranked if r.ticker == "DEAD")
+    assert sunk.structurally_disqualified and sunk.priority_score <= 0.05
+    assert sunk.structural_flag is not None and "4.02" in sunk.structural_flag.signal  # carried
+    # ticker-keyed flags resolve too (scan_structural emits internal_id; the CLI may pass either):
+    by_ticker = rank_candidates([dead, alive], structural_flags={"DEAD": flag})
+    assert next(r for r in by_ticker if r.ticker == "DEAD").structurally_disqualified
+
+
+def test_structural_no_flag_leaves_score_and_sort_untouched() -> None:
+    # The honest default: no structural_flags arg → identical to a plain rank (zero effect).
+    plain = rank_candidates([_cand(ticker="A"), _cand(ticker="B", drawdown=-0.80, rel=-0.70)])
+    none_passed = rank_candidates(
+        [_cand(ticker="A"), _cand(ticker="B", drawdown=-0.80, rel=-0.70)], structural_flags=None
+    )
+    assert [r.ticker for r in plain] == [r.ticker for r in none_passed]
+    assert all(not r.structurally_disqualified for r in plain)
+    assert all(r.structural_flag is None for r in plain)
+
+
 # --- Tier-2 volume overlay (minor, bounded) ---------------------------------------------------
 def test_volume_overlay_bounded_and_directional() -> None:
     exhausted, _ = volume_overlay(_cand(volume_spike=0.6).data_record.prices)
@@ -282,6 +412,9 @@ def test_ranker_reads_no_forward_returns() -> None:
     """
     forbidden = {"mosaic.scoring", "mosaic.ledger", "mosaic.store"}
     pkg = Path(__file__).resolve().parent.parent / "mosaic" / "rank"
+    scanned = {src.name for src in pkg.glob("*.py")}
+    # the Tier-3 deterministic structural-disqualifier channel must be in scope of this guard:
+    assert {"structural.py", "ranker.py", "cause.py"} <= scanned
     for src in pkg.glob("*.py"):
         tree = ast.parse(src.read_text())
         for node in ast.walk(tree):
