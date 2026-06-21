@@ -147,6 +147,24 @@ Each line: *what it does* — *verified how*.
   mechanical layer; 11 dossier tests incl. the no-conclusion-field schema guard + the no-ledger import
   guard. Writes `data/dossiers/<ticker>/{dossier.json,dossier.md,llm_call.log}` (git-ignored — may carry
   licensed CIQ).*
+  - **CIQ requirements manifest — ONE definition, two consumers (`mosaic/dossier/requirements.py`,
+    `dossier requirements` CLI).** The canonical list of manual CIQ inputs the assembler expects lives
+    in a single `CIQ_MODULES` tuple; each module is a structured record — workbook-kind + the subsheets
+    consumed, what the mechanical layer derives from it (names the extractor), granularity, lookback,
+    required-vs-optional, expected path `data/manual/ciq/<TICKER>/`. **REQUIRED** = a source-bound FACT
+    depends on it (**Financials-Annual + Financials-Quarterly + Estimates + Business Relationships**);
+    **OPTIONAL** = synthesis colour only (the **earnings-call transcript**). The **MISSING-manifest**
+    path in `assemble_one` and the **`dossier requirements`** command BOTH read `CIQ_MODULES`, so they
+    **cannot drift** — an empty folder yields one summary "pull CIQ" flag, a partial folder names each
+    still-missing module (freq-strict: the Annual and Quarterly Financials are distinct required
+    exports). Documents the **don't-double-pull** rule: 10-K/10-Q, 8-K, Form 4 are FREE on EDGAR (XBRL
+    companyfacts / 8-K + Ex-99.1 / Form 4) and must NOT be manually uploaded — `EDGAR_FREE_INPUTS`.
+    `--ticker VRRM` renders a per-name export checklist; `--json` emits the machine-readable manifest
+    for the frontend upload UI. *Verified: checklist + `--json` (5 modules, 3 EDGAR-free) render; the
+    partial-folder manifest flags exactly the 3 still-missing required modules when the annual is
+    present; `dossier --top 1` (FUBO, no CIQ folder) now emits the per-module summary flag naming all
+    four required modules. 8 new tests incl. the single-source anti-drift guard (`assemble.requirements
+    is requirements` + both consumers enumerate the same required set).*
   - **Cause-parsing + integrity hardening (VRRM run, 2026-06-19) — the dossier must see catalysts that
     live in 8-K TEXT and never mislabel cause.** (1) Each gap-down is labelled by its **8-K item codes**
     (2.02 earnings / 5.02 management change / 8.01 other / 1.02 agreement-termination / 4.02 restatement

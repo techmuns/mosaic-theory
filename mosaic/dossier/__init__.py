@@ -8,6 +8,15 @@ has no field for a verdict/score/direction/probability — the conclude-step is 
 separately via the ledger. The graph is a research INPUT, never a predictor.
 """
 
+from mosaic.dossier.requirements import (
+    CIQ_MODULES,
+    EDGAR_FREE_INPUTS,
+    CiqModuleRequirement,
+    as_payload,
+    manifest_flags,
+    missing_required,
+    render_checklist,
+)
 from mosaic.dossier.schemas import (
     Dossier,
     MechanicalLayer,
@@ -16,4 +25,17 @@ from mosaic.dossier.schemas import (
     Synthesis,
 )
 
-__all__ = ["Dossier", "MechanicalLayer", "Sourced", "SourceStatus", "Synthesis"]
+__all__ = [
+    "CIQ_MODULES",
+    "EDGAR_FREE_INPUTS",
+    "CiqModuleRequirement",
+    "Dossier",
+    "MechanicalLayer",
+    "Sourced",
+    "SourceStatus",
+    "Synthesis",
+    "as_payload",
+    "manifest_flags",
+    "missing_required",
+    "render_checklist",
+]

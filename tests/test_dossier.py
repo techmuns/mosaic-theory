@@ -15,10 +15,12 @@ from pathlib import Path
 import pytest
 from pydantic import BaseModel
 
+from mosaic.dossier import assemble as dass
 from mosaic.dossier import ciq, manual_store
 from mosaic.dossier import ciq_sheets as cs
 from mosaic.dossier import mechanical as dm
 from mosaic.dossier import render as dr
+from mosaic.dossier import requirements as dreq
 from mosaic.dossier import schemas as ds
 from mosaic.dossier import synthesis as syn
 from mosaic.edgar.client import EdgarClient, FundamentalSnapshot, all_unknown_snapshot
@@ -809,3 +811,127 @@ def test_management_commentary_is_a_pointer_not_embedded() -> None:
     assert len(mc.value or "") < 300  # a pointer, not a 40K embed
     assert "VRRM Q1 2026 Earnings Call.rtf" in (mc.source_ref or "")
     assert cs.transcript_for_synthesis(ciq.CiqBundle(ticker="X", workbooks=())) is None  # no file
+
+
+# --- the CIQ requirements manifest: ONE definition, two consumers (must not drift) ------------
+
+
+def _req_bundle(*specs: tuple[str, str | None]) -> ciq.CiqBundle:
+    """A CiqBundle holding workbooks of the given (kind, freq) — presence only (no sheets)."""
+    wbs = tuple(
+        ciq.CiqWorkbook(kind=k, path=Path(f"/fake/{k}-{f}.xls"), fmt=ciq.CiqFormat.BIFF_XLS, freq=f)
+        for k, f in specs
+    )
+    return ciq.CiqBundle(ticker="VRRM", workbooks=wbs)
+
+
+_ALL_REQUIRED: tuple[tuple[str, str | None], ...] = (
+    ("financials", "annual"), ("financials", "quarterly"), ("estimates", None), ("customers", None),
+)
+
+
+def test_requirements_single_source_drives_both_consumers() -> None:
+    """THE single-source guard: the MISSING-manifest path (assemble) and the `requirements` command
+    both read :data:`CIQ_MODULES`, so they cannot drift. If the assembler's required set changes in
+    one place, both outputs change together — asserted by deriving both from the same definition."""
+    # the assemble module imports the SAME requirements module that defines CIQ_MODULES (one object)
+    assert dass.requirements is dreq
+
+    required_defn = {m.module for m in dreq.CIQ_MODULES if m.required}
+
+    # consumer 1 — the MISSING-manifest path (assemble_one → manifest_flags/missing_required)
+    empty = _req_bundle()
+    manifest_set = {m.module for m in dreq.missing_required(empty)}
+    assert manifest_set == required_defn  # an empty folder is missing exactly the required set
+
+    # consumer 2 — the `dossier requirements` command payload
+    payload = dreq.as_payload("VRRM")
+    command_required = {m["module"] for m in payload["modules"] if m["required"]}
+    command_all = {m["module"] for m in payload["modules"]}
+    assert command_required == required_defn
+    assert command_all == {m.module for m in dreq.CIQ_MODULES}
+
+    # the two consumers agree BECAUSE they share the one definition — the anti-drift property
+    assert manifest_set == command_required
+
+
+def test_requirements_partial_folder_flags_only_whats_missing() -> None:
+    """A partial folder (only the annual Financials present) flags exactly the still-missing
+    required modules — not the one already pulled, and never the optional transcript."""
+    partial = _req_bundle(("financials", "annual"))
+    missing = {m.module for m in dreq.missing_required(partial)}
+    assert "Financials — Annual" not in missing  # present → satisfied
+    assert missing == {
+        "Financials — Quarterly", "Estimates Report",
+        "Business Relationships (Customers & Suppliers)",
+    }
+    flags = dreq.manifest_flags(partial, ticker="VRRM", location="data/manual/ciq/VRRM")
+    assert len(flags) == 3 and all("pull CIQ 'Financials — Quarterly'" in f or "Estimates" in f
+                                   or "Business Relationships" in f for f in flags)
+
+
+def test_requirements_financials_freq_is_strict() -> None:
+    """The Annual and Quarterly Financials are DISTINCT required exports (notes line ~116): an
+    annual workbook satisfies the annual slot but NOT the quarterly one (no lenient fallback)."""
+    annual_only = _req_bundle(("financials", "annual"))
+    ann = next(m for m in dreq.CIQ_MODULES if m.freq == "annual")
+    qtr = next(m for m in dreq.CIQ_MODULES if m.freq == "quarterly")
+    assert dreq.module_present(annual_only, ann) is True
+    assert dreq.module_present(annual_only, qtr) is False
+
+
+def test_requirements_full_folder_yields_no_flags_even_without_optional() -> None:
+    """Every REQUIRED module present → no MISSING flags, even though the OPTIONAL transcript is
+    absent (optional modules never block — the dossier degrades gracefully)."""
+    full = _req_bundle(*_ALL_REQUIRED)
+    assert dreq.missing_required(full) == []
+    assert dreq.manifest_flags(full, ticker="VRRM", location="x") == []
+    # the transcript IS optional and IS absent from `full`
+    transcript = next(m for m in dreq.CIQ_MODULES if m.workbook_kind == "transcript")
+    assert transcript.required is False
+    assert not dreq.module_present(full, transcript)
+
+
+def test_requirements_workbook_kinds_match_bundle_vocabulary() -> None:
+    """Every module's ``workbook_kind`` must be a real :class:`CiqBundle` kind — else the presence
+    check could never match and a required module would be silently always-missing."""
+    valid = set(ciq._WORKBOOK_KEYWORDS)
+    for m in dreq.CIQ_MODULES:
+        assert m.workbook_kind in valid, f"{m.module}: unknown workbook kind {m.workbook_kind}"
+
+
+def test_requirements_edgar_free_documents_dont_double_pull() -> None:
+    """The manifest documents the don't-double-pull rule: 10-K, 8-K, Form 4 are FREE on EDGAR and
+    must NOT be manually uploaded — and none of them is asked for as a CIQ module."""
+    free_blob = " ".join(e.input + " " + e.edgar_source for e in dreq.EDGAR_FREE_INPUTS).lower()
+    assert "8-k" in free_blob and "10-k" in free_blob and "form 4" in free_blob
+    assert all("edgar" in (e.edgar_source or "").lower() for e in dreq.EDGAR_FREE_INPUTS)
+    # we never ask the human to upload an EDGAR-free filing as a CIQ module
+    module_blob = " ".join(m.module for m in dreq.CIQ_MODULES).lower()
+    assert "10-k" not in module_blob and "form 4" not in module_blob and "8-k" not in module_blob
+
+
+def test_requirements_payload_records_carry_every_field() -> None:
+    """Each module record exposes the full structured contract the frontend upload UI consumes."""
+    payload = dreq.as_payload("vrrm")
+    assert payload["ticker"] == "VRRM" and payload["manual_ciq_root"] == "data/manual/ciq/VRRM/"
+    for m in payload["modules"]:
+        assert set(m) == {
+            "module", "workbook_kind", "freq", "sheets", "used_for", "granularity", "lookback",
+            "required", "expected_path",
+        }
+        assert m["expected_path"] == "data/manual/ciq/VRRM/"
+        assert m["granularity"] in {"annual", "quarterly", "both", "snapshot"}
+    assert [e["input"] for e in payload["edgar_free_do_not_upload"]]  # non-empty
+
+
+def test_requirements_checklist_renders_for_a_name() -> None:
+    """The human checklist names the path, every required module, and the DO-NOT-upload section."""
+    text = dreq.render_checklist("VRRM")
+    assert "data/manual/ciq/VRRM/" in text
+    for m in dreq.CIQ_MODULES:
+        if m.required:
+            assert m.module in text
+    assert "DO NOT upload" in text and "EDGAR" in text
+    # the generic (no-ticker) form uses the template placeholder
+    assert "data/manual/ciq/<TICKER>/" in dreq.render_checklist(None)

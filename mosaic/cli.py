@@ -7,6 +7,7 @@ Grown one subcommand per build step. Today: ``resolve`` (step 1). Later: ``refre
 from __future__ import annotations
 
 import argparse
+import json
 import sqlite3
 import sys
 from collections.abc import Sequence
@@ -226,7 +227,19 @@ def _cmd_rank(args: argparse.Namespace) -> int:
 
 
 def _cmd_dossier(args: argparse.Namespace) -> int:
-    """Assemble per-finalist dossiers (top N, or one --ticker). Assembles, never concludes."""
+    """Assemble per-finalist dossiers (top N, or one --ticker). Assembles, never concludes.
+
+    The ``requirements`` mode instead prints the canonical manual-CIQ manifest (export checklist, or
+    ``--json`` for the upload UI) — the single source the MISSING-manifest path also reads."""
+    if getattr(args, "mode", "assemble") == "requirements":
+        from mosaic.dossier import requirements
+
+        if args.json:
+            print(json.dumps(requirements.as_payload(args.ticker), indent=2))
+        else:
+            print(requirements.render_checklist(args.ticker))
+        return 0
+
     from mosaic.dossier.assemble import assemble_cohort, load_finalists
 
     cfg = get_config()
@@ -526,10 +539,21 @@ def build_parser() -> argparse.ArgumentParser:
     p_rank.set_defaults(func=_cmd_rank)
 
     p_dossier = sub.add_parser("dossier", help="assemble per-finalist dossiers (never concludes)")
+    p_dossier.add_argument(
+        "mode", nargs="?", default="assemble", choices=("assemble", "requirements"),
+        help="'assemble' (default) builds dossiers; 'requirements' prints the canonical manual-CIQ "
+        "manifest (export checklist; the MISSING-manifest path reads the same definition)",
+    )
     p_dossier.add_argument("--top", type=int, default=10, help="top N of the queue (default: 10)")
-    p_dossier.add_argument("--ticker", help="assemble one name instead of the top N")
+    p_dossier.add_argument(
+        "--ticker", help="assemble (or, with 'requirements', render the checklist for) one name"
+    )
     p_dossier.add_argument(
         "--no-llm", action="store_true", dest="no_llm", help="mechanical layer only; skip synthesis"
+    )
+    p_dossier.add_argument(
+        "--json", action="store_true", dest="json",
+        help="with 'requirements': emit the manifest as JSON (machine-readable, for the upload UI)",
     )
     p_dossier.set_defaults(func=_cmd_dossier)
 

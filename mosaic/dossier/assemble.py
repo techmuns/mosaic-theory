@@ -17,7 +17,7 @@ from pathlib import Path
 from typing import Any
 
 from mosaic.config import Config, get_config
-from mosaic.dossier import ciq_sheets
+from mosaic.dossier import ciq_sheets, requirements
 from mosaic.dossier.ciq import CiqBundle
 from mosaic.dossier.manual_store import LocalFolderStore, ManualDataStore
 from mosaic.dossier.mechanical import assemble_mechanical
@@ -110,9 +110,9 @@ def assemble_one(
     ticker = rec.identity.ticker
     bundle = CiqBundle.from_files(ticker, manual.files(ticker))
     location = manual.location(ticker)
-    flags: list[str] = []
-    if bundle.is_empty:
-        flags.append(f"pull CIQ for {ticker} and re-run — no export found at {location}")
+    # MISSING-manifest: per-module 'pull CIQ' flags from the ONE requirements definition (so this
+    # and `mosaic dossier requirements` can't drift). Empty/partial folder → what's still owed.
+    flags: list[str] = requirements.manifest_flags(bundle, ticker=ticker, location=location)
     with Store(cfg.db_path) as store:
         mech, mech_flags = assemble_mechanical(
             rec, store=store, edgar=EdgarClient.from_config(cfg), http=build_sec_http(cfg),
