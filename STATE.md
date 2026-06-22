@@ -4,7 +4,7 @@
 > planning fossils (`planning/` briefs + `docs/` specs) as *current* guidance — those stay unchanged
 > as the historical origin record.** Read this first at the start of any session; **every build
 > updates it.** Its value is accuracy, not optimism: falsified is recorded as falsified, deferred as
-> deferred-and-why, unproven as unproven. _Last verified against the repo: 2026-06-22._
+> deferred-and-why, unproven as unproven. _Last verified against the repo: 2026-06-23._
 
 ## 1. What this is
 
@@ -49,9 +49,26 @@ Each line: *what it does* — *verified how*.
     universe).
 - **Screen 2 + gates** (`mosaic/screens`) — G1 drawdown ≤−30% (capped at −85% terminal floor) / G2
   idiosyncratic **vs the IWM market index** (NOT a sector cohort — see caveat) / G3 multiple vs ~5y
-  floor (`_PE_WINDOW_DAYS=1825`); PASS/FAIL/UNKNOWN, recall-favoring — *`screen` ran → 301 candidates
-  (308 before the universe-axis fixes), A/B/C bands.* G1 drawdown = `last close / max(intraday HIGH
+  floor (`_PE_WINDOW_DAYS=1825`); PASS/FAIL/UNKNOWN, recall-favoring — *`screen` / `run-weekly` → 317
+  candidates @ ref 2026-06-22 (was 301 @ 06-17; the universe/screen drift weekly as SEC+EOD data
+  update), A/B/C bands.* G1 drawdown = `last close / max(intraday HIGH
   over trailing 365d) − 1` (`eod/features.compute_price_features`, ≥330d history else UNKNOWN).
+  - **Re-screen accretion bug — FIXED 2026-06-23 (root cause + regression-pinned).** The first weekly
+    re-run produced a DOUBLED candidate set (618 = last week's 301 + this week's 317, 287 tickers
+    twice) and the ranker faithfully ranked the duplicates. **Root cause = the screen WRITE path, not
+    just `run_weekly`:** `screen_universe` cleared only the *current* run's `screen_run_at`
+    (`clear_candidates(run_at)`), so a re-screen on a NEW reference date layered on top of prior
+    generations instead of replacing them — any caller accretes (the `screen` CLI too); `run_weekly`
+    merely triggers it by `rebuild_from_snapshots`-ing last week's set first. The writer
+    (`save_candidate`, INSERT-OR-REPLACE by id) was never at fault. **Fix:** `clear_candidates()` is
+    now a FULL replace (`DELETE FROM candidate_records`), matching its own docstring — a re-screen is a
+    clean snapshot. **Regression-pinned:** `test_rescreen_replaces_not_accretes` runs the screen TWICE
+    consecutively and asserts the stored set is the SECOND run's only (week-1 ids gone), NOT the union
+    — it FAILS on the old run-scoped clear, passes on the fix (both shown). *Cleaned: dropped the 618,
+    re-ran the fixed screen → 317 single-generation candidates (no dup ids), re-ranked → 47/317
+    structurally sunk, top-15 unique.* (Side effect: the `ev_ebitda` legacy-float compat test was
+    decoupled from the live snapshot — the current producer defers all `ev_ebitda` to UNKNOWN, so the
+    legacy present-float shape is now guarded by a synthetic record, not the live snapshot's contents.)
   - **G2 "idiosyncratic" is name-vs-IWM, NOT name-vs-SIC-sector (verified 2026-06-19; the field was
     then renamed `rel_ret_vs_sector` → `rel_ret_vs_market`, the old name being a lie — it compares to
     IWM, not a sector).** `assemble.build_price_record` sets it to

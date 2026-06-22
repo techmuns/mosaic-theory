@@ -209,14 +209,15 @@ def test_candidate_round_trip(store: Store) -> None:
     assert store.get_candidate(cand.candidate_id) == cand
 
 
-def test_clear_candidates_drops_prior_run(store: Store) -> None:
-    # a re-screen is a clean snapshot: clearing the run timestamp removes stale candidates so a
-    # name dropped from the universe doesn't linger as a candidate (survivorship hygiene).
+def test_clear_candidates_is_a_full_replace(store: Store) -> None:
+    # a re-screen is a clean snapshot: clear_candidates() is a FULL replace (not run-scoped), so
+    # ANY prior candidate is dropped — a name removed from the universe, or a whole earlier screen
+    # generation, never lingers as a stale candidate (no cross-run accretion).
     ident = _identity()
     store.upsert_security(ident, first_seen=AS_OF)
     cand = _candidate(ident)
     store.save_candidate(cand)
-    store.clear_candidates(cand.screen_run_at)
+    store.clear_candidates()
     assert store.get_candidate(cand.candidate_id) is None
 
 

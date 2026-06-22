@@ -12,7 +12,7 @@ from __future__ import annotations
 import json
 import sqlite3
 from collections.abc import Iterable, Iterator
-from datetime import date, datetime
+from datetime import date
 from pathlib import Path
 from typing import Any
 
@@ -156,12 +156,14 @@ class Store:
         self._conn.execute("DELETE FROM universe_snapshot WHERE as_of = ?", (_iso(as_of),))
         self._conn.commit()
 
-    def clear_candidates(self, run_at: datetime) -> None:
-        """Drop any prior candidate set for this run timestamp — a re-screen is a clean snapshot,
-        not an accretion (else names dropped from the universe linger as stale candidates)."""
-        self._conn.execute(
-            "DELETE FROM candidate_records WHERE screen_run_at = ?", (run_at.isoformat(),)
-        )
+    def clear_candidates(self) -> None:
+        """Drop the ENTIRE candidate set — a re-screen is a clean snapshot (a FULL replace), not an
+        accretion. The prior behaviour cleared only the current run's ``screen_run_at``, so a
+        re-screen on a NEW reference date layered its candidates on top of earlier generations
+        (e.g. ``run_weekly`` reloads last week's snapshot, then screens this week → both lingered).
+        Clearing all guarantees the stored candidates are exactly the latest screen's, so a name
+        dropped from the universe (or a whole prior screen run) never lingers as a candidate."""
+        self._conn.execute("DELETE FROM candidate_records")
         self._conn.commit()
 
     def get_universe(self, as_of: date) -> list[str]:
