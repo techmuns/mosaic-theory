@@ -416,6 +416,22 @@ Each line: *what it does* — *verified how*.
   Cirrus); unit test. This is research-input only — see §3.*
 - **GitHub Actions cron** (`.github/workflows/weekly-screen.yml`, `monthly-score.yml`) — present.
   *Manual trigger preferred for now.*
+- **Read-only ops dashboard** (`frontend/`, static; `frontend/build.py` snapshot mirror) — a
+  no-backend viewer over the COMMITTED snapshots: overview + the **validation-gate spread** (honest
+  0-resolved), ingestion/universe health, the overshoot screen, the **ranked queue with per-name
+  structural profiles**, the `graph-exposure` cross-section (research-input), the per-finalist
+  **dossier** (assembles-not-concludes), and the decision log; capital-stage views (sizing / execution
+  / monitoring) shown **locked** until the gate clears. **Renders only — never trades, writes, or logs
+  a verdict** (vanilla ES modules, hash routing, runtime fetch). `build.py` mirrors the lightweight
+  snapshots + (locally) the DERIVED dossiers + graph into a **git-ignored** mirror, regenerated every
+  build. **Merged to main CODE-ONLY (PR #3, `bb3dbae`, 2026-06-22):** committed = frontend source +
+  non-licensed snapshots (ranked_queue, ledger, universe_stats); the DERIVED `dossier.json` +
+  `graph_coverage.json` stay **git-ignored / local-only** and raw CIQ is never committed — held for the
+  separately-gated deploy step (§4 CONDITIONAL). *Verified locally: `build.py` mirrored 301 queue /
+  1,727 universe / FUBO+VRRM dossiers / 339-edge graph; served on `:8731` → overview, dossier (full
+  VRRM), and graph all render against local data, no console errors.* **No deploy is wired** —
+  Cloudflare is unconnected (0 GitHub deployments / environments / webhooks), so the merge deployed
+  nothing.
 - _Whole suite green (ruff + mypy --strict clean; `pytest -m "not network"` passes)._
 
 ## 3. FALSIFIED — tested and retired (NOT deferred)
@@ -457,6 +473,16 @@ execution/sizing/portfolio/monitoring modules; only `SourceTier.IBKR` labels in 
    exposed cross-sections to the human on a real event; decides nothing.
 
 **CONDITIONAL — only if separately earned** (not gated on the spread):
+- **Cloudflare deploy + licensed-artifact commit (LATER-STAGE; the dashboard is built + merged
+  code-only, §2).** Stand up the GitHub→Cloudflare Pages auto-deploy **with Cloudflare Access (authed)**
+  and commit the DERIVED `dossier.json` + `graph_coverage.json` to the private repo (add the targeted
+  `.gitignore` exceptions; raw CIQ stays ignored). **Two hard gates before any licensed data is served
+  — BLOCKER A:** prove the deployed URL rejects an unauthenticated request (no-cred / incognito fetch
+  returns an Access challenge, not content) — the irreversible gate, since once licensed data is served
+  from a reachable URL it can't be retracted; **BLOCKER B:** confirm `graph_coverage.json` is CIQ-free
+  (EDGAR-10-K relationship/exposure only — verified clean 2026-06-22: zero licensed financials, only
+  verbatim 10-K evidence + graph counts). Trigger: operator go-ahead **after both blockers confirm**.
+  Until then the dashboard is **local-only**; nothing is deployed (Cloudflare currently unconnected).
 - **Verification harness (LLM bull/bear/judge)** — trigger: only if running the manual discriminator
   reveals it needs a structured bull/bear step. May never be needed; do not build speculatively.
 - **Drive adapter for the dossier-assembler** — trigger: the local-folder assembler is proven and the
@@ -583,11 +609,14 @@ Remaining:
    BUY legs** (the spread is BUY−AVOID; one AVOID alone can't show separation) — and let them resolve
    over their horizons. (VRRM was logged with its CIQ dossier sections MISSING — pull the CIQ export
    per `dossier requirements` to populate the dossier for subsequent names.)
-2. **Lightweight local frontend** — read-and-trigger ops dashboard (ingestion health; the **ranked
-   queue with per-name structural profiles** (§2); `graph-exposure` labeled research-input; ledger;
-   spread showing 0 verdicts honestly). Read-only, renders committed snapshots, never trades or logs
-   via UI. Cloudflare Pages auto-deploy applies **here** (static frontend on committed snapshots),
-   not before.
+2. **Lightweight local frontend — DONE (2026-06-22, §2).** The read-only ops dashboard is built and
+   **merged to main code-only** (PR #3); it runs locally against local data (renders committed
+   snapshots; never trades or logs via UI). **Remaining is a SEPARATE later-stage step (not done): the
+   Cloudflare deploy + committing the DERIVED licensed-adjacent artifacts** (`dossier.json`,
+   `graph_coverage.json`) to the private repo — **gated** on verifying the deploy is genuinely
+   private+authed (an unauthenticated request to the URL is rejected) and that `graph_coverage.json` is
+   CIQ-free (§4 CONDITIONAL). Until then those artifacts stay git-ignored / local-only and nothing is
+   deployed.
 
 The ranker + dossier-assembler are built/verified (§2); the ranker's coverage-gap wire-ups
 (EV/EBITDA-pctile + 8-K/guidance text, which also re-splits drawdown-character and turns on the live
