@@ -1,0 +1,85 @@
+// OVERVIEW — fund status at a glance. Read-only render of committed snapshots.
+import {
+  getSpreadStatus, getUniverseHealth, getRankedQueue, getLedger,
+  getDossierIndex, getSnapshotMeta,
+} from "../lib/snapshots.js";
+import { fmtInt, fmtDate, DASH, escapeHtml } from "../lib/format.js";
+
+export async function render(root) {
+  root.innerHTML = `<div class="notice">Loading fund status…</div>`;
+
+  const [spread, health, queue, ledger, dossiers, meta] = await Promise.all([
+    getSpreadStatus(), getUniverseHealth(), getRankedQueue(), getLedger(),
+    getDossierIndex(), getSnapshotMeta(),
+  ]);
+
+  const gateCard = `
+    <div class="card gate-card" style="grid-column: 1 / -1;">
+      <h3 class="g-label">Validation gate · BUY−AVOID spread</h3>
+      <div class="g-spread">${spread.spread === null ? DASH : spread.spread}</div>
+      <div class="g-status">
+        <b>${spread.resolvedCount} resolved</b> · gate not met ·
+        needs ≥2 quarters of resolved verdicts, both legs, positive and large enough to be real
+        <span class="muted">(${spread.loggedCount} logged so far: ${spread.buyLegs} buy · ${spread.avoidLegs} avoid, all unresolved)</span>
+      </div>
+      <div class="g-def">The spread is the fund's only proof: ${escapeHtml(spread.definition)}. It is empty by design until verdicts resolve forward over calendar time.</div>
+    </div>`;
+
+  const metric = (label, value, unit, foot) => `
+    <div class="card metric">
+      <h3>${label}</h3>
+      <div class="value">${value}${unit ? ` <span class="unit">${unit}</span>` : ""}</div>
+      <div class="foot">${foot}</div>
+    </div>`;
+
+  const metrics = `
+    ${metric("Universe → queue",
+      `${fmtInt(health.universe.count)} <span class="unit">→</span> ${fmtInt(queue.counts.total)}`,
+      "",
+      `screened ${fmtDate(health.screen.asOf)} · ${fmtInt(queue.counts.demoted)} structurally sunk`)}
+    ${metric("Verdicts",
+      `${fmtInt(ledger.counts.logged)}`,
+      "logged",
+      `${fmtInt(ledger.counts.resolved)} resolved · ${fmtInt(ledger.counts.buy)} buy / ${fmtInt(ledger.counts.avoid)} avoid`)}
+    ${metric("Dossiers",
+      `${fmtInt(dossiers.length)}`,
+      "assembled",
+      dossiers.length ? escapeHtml(dossiers.join(" · ")) : "none committed to this deploy yet")}
+    ${metric("Positions", `0`, "", `capital locked until the gate clears`)}`;
+
+  const chips = `
+    <div class="chips">
+      <span class="chip live"><span class="dot live"></span> Research loop · live</span>
+      <span class="chip gate">Validation gate · accumulating (0 resolved)</span>
+      <span class="chip locked">🔒 Capital · locked</span>
+    </div>`;
+
+  const cue = `
+    <div class="cue">
+      <div class="arrow">→</div>
+      <div class="t"><b>Next:</b> work finalists from the ranked queue into dossiers, then log BUY/AVOID verdicts (the CLI freezes the entry price). The spread needs <b>both legs</b> and calendar time — especially BUY legs — before it can show anything.</div>
+    </div>`;
+
+  root.innerHTML = `
+    <div class="breadcrumb">Overview</div>
+    <div class="header-block">
+      <h1 class="page-h">Mosaic Theory · fund status</h1>
+      <div class="subtitle">An AI-native, long-biased, US-first concentrated equity fund. The edge is deep human judgment on a few finalists, fed by an AI funnel that achieves breadth a human can't.</div>
+      <div class="subtitle muted">Read-only dashboard — a static mirror of the last pushed snapshots. It never trades, writes, or logs; verdicts are logged via the CLI only.</div>
+    </div>
+
+    <div class="grid cols-4" style="margin-bottom:16px;">
+      ${gateCard}
+    </div>
+    <div class="grid cols-4" style="margin-bottom:18px;">
+      ${metrics}
+    </div>
+    <div style="margin-bottom:18px;">${chips}</div>
+    ${cue}
+
+    <div class="provenance">
+      <span>Snapshot source: <span class="mono">${meta.sourceCommit ? escapeHtml(meta.sourceCommit) : DASH}</span></span>
+      <span>Mirror built: ${meta.generatedAt ? escapeHtml(meta.generatedAt) : DASH}</span>
+      <span>Lags local state until the next <span class="mono">git push</span> — point-in-time by design.</span>
+    </div>`;
+}

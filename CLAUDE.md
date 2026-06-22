@@ -51,10 +51,19 @@ flag it. That incremental blur is the failure mode this whole project is built t
   vars / GitHub Actions secrets ONLY. Never hardcoded, committed, or printed to logs/stdout. A key in
   the repo is the single most likely real security incident here. Read secrets from env; fail loud if
   absent.
-- **Never commit or log, ever:** licensed CIQ data and CIQ-derived relationship data (git-ignored,
-  manual-pull: `data/manual/ciq`, `data/graph_*.json`, `*.db`); any credential/token; (later) any LP/
-  investor PII. Committed artifacts are: code, JSONL snapshots, STATE.md/docs. Format NOTES are fine;
-  pasted licensed tables are not.
+- **Never commit or log, ever:** the **raw licensed CIQ workbooks** (`data/manual/ciq/`), the working
+  DB (`*.db`), any credential/token, (later) any LP/investor PII. Pasted licensed CIQ tables are never
+  committed. Raw CIQ stays git-ignored REGARDLESS of repo/deploy privacy.
+- **DERIVED analytical artifacts ARE committable — to the PRIVATE/authed repo ONLY** (this repo is
+  private; the Cloudflare deploy is authed/internal). They are derived analysis, NOT reproduced
+  licensed content: code, JSONL snapshots/docs, **`data/graph_coverage.json`** (the EDGAR-10-K-derived
+  customer/supplier **exposure map** — every edge carries a verbatim 10-K phrase + accession; it
+  borrows only CIQ's relationship-*type* taxonomy, never workbook data), and the per-ticker
+  **`data/dossiers/<TICKER>/dossier.json`** (extracted facts, each a `{value, source_ref}`). The
+  committable set: snapshots (ranked queue, ledger, universe/screen counts) + `graph_coverage.json` +
+  per-ticker `dossier.json`. **If the repo or the deploy ever becomes public, the graph + dossiers
+  revert to git-ignored / local-only.** (`data/graph_test0.json` — the falsified Edge-3 test artifact —
+  stays git-ignored; only `graph_coverage.json` is authorized.)
 - **Execution is human-authorized and paper-gated** (when execution is built): nothing places a trade
   without an explicit, deliberate human action; default is paper; no code path reaches a live broker
   autonomously. State this in any execution code from its first line.

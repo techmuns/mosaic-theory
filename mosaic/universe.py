@@ -12,6 +12,7 @@ non-primary dual-class line is approximate — fine for a coarse band, not a val
 
 from __future__ import annotations
 
+import json
 from collections import Counter, defaultdict
 from datetime import date, timedelta
 
@@ -148,4 +149,17 @@ def build_universe(
                 ),
             )
         store.export_snapshots(cfg.snapshots_dir)
-    return dict(stats)
+    # Persist the fail-closed gate-exclusion counts as a committed health snapshot (the ops
+    # dashboard reads these; a wrong count signals a gate bug). Derived counts only — no licensed
+    # data. SIC-denylist drops = unknown_sic + non_operating; type-allowlist = unknown_type +
+    # non_common_equity.
+    stats_out = dict(stats)
+    payload = {
+        "as_of": reference_date.isoformat(),
+        "market_cap_min_usd": band.market_cap_min_usd,
+        "market_cap_max_usd": band.market_cap_max_usd,
+        "adv_floor_usd": band.adv_floor_usd,
+        **stats_out,
+    }
+    (cfg.snapshots_dir / "universe_stats.json").write_text(json.dumps(payload, indent=2) + "\n")
+    return stats_out

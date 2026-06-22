@@ -1,0 +1,389 @@
+// ============================================================================
+// THE SINGLE DATA-ACCESS LAYER  (the swappable seam)
+// ----------------------------------------------------------------------------
+// Every view reads ALL data through the typed functions exported here, and
+// consumes only their RETURN VALUES — never a file, path, or fetch directly.
+//
+// Today these read the committed snapshot files (static, no backend): the
+// `mosaic` CLI emits snapshots -> they are committed -> Cloudflare serves them
+// -> we fetch them from our OWN private origin. That runtime fetch is NOT a
+// backend; the site is a static mirror of the last pushed snapshots.
+//
+// SWAPPABILITY: each function's return SHAPE is defined by what the UI needs,
+// independent of the source. If the data source ever changes (a backend API,
+// R2 object storage, a DB-backed service), ONLY this file changes — every
+// sub-screen stays untouched. Do NOT add backend/adapter scaffolding here; the
+// functions read files, full stop. The clean boundary is the future-proofing.
+//
+// WRITE-PATH DISCIPLINE: there is NO write path. v1 is read-only. If a future
+// OPERATIONAL write is ever added (resolve-at-horizon, re-run trigger), it
+// lives HERE, behind a deliberate function — components never write directly.
+// The integrity-critical writes (logging a verdict, freezing an entry price)
+// are PERMANENTLY CLI-only/append-only/immutable by design and must never
+// become a frontend action; the friction is the safeguard for the spread.
+// ============================================================================
+import { fmtMoney } from "./format.js";
+
+const SNAPSHOTS = "./snapshots"; // copied from data/snapshots/ at deploy (build.py)
+const DOSSIERS = "./dossiers"; // derived dossier.json only (committed to the PRIVATE repo when authed)
+
+async function _fetch(path) {
+  const res = await fetch(path, { cache: "no-store" });
+  if (!res.ok) {
+    const err = new Error(`snapshot fetch failed (${res.status}) for ${path}`);
+    err.status = res.status;
+    throw err;
+  }
+  return res;
+}
+
+async function _json(path) {
+  return (await _fetch(path)).json();
+}
+
+async function _jsonl(path) {
+  const text = await (await _fetch(path)).text();
+  return text.split("\n").filter((l) => l.trim()).map((l) => JSON.parse(l));
+}
+
+// --- the build-time index (cheap counts + dates + dossier list) --------------
+// manifest.json is regenerated from the snapshots on every deploy, so it cannot
+// drift from them; it exists only to keep the overview/ingestion cards fast
+// without fetching the megabyte-scale candidate files.
+
+let _manifest = null;
+async function _getManifest() {
+  if (!_manifest) _manifest = await _json(`${SNAPSHOTS}/manifest.json`);
+  return _manifest;
+}
+
+// getSnapshotMeta() -> { sourceCommit, generatedAt }  (provenance for the footer)
+export async function getSnapshotMeta() {
+  const m = await _getManifest();
+  return { sourceCommit: m.source_commit ?? null, generatedAt: m.generated_at ?? null };
+}
+
+// getUniverseHealth() -> {
+//   universe: { count, asOf }, screen: { candidates, asOf },
+//   eod: { asOf }   // prices are frozen as-of the screen's EOD date (point-in-time)
+// }
+export async function getUniverseHealth() {
+  const m = await _getManifest();
+  return {
+    universe: { count: m.universe?.count ?? null, asOf: m.universe?.as_of ?? null },
+    screen: { candidates: m.screen?.candidates ?? null, asOf: m.screen?.as_of ?? null },
+    eod: { asOf: m.screen?.as_of ?? null },
+  };
+}
+
+// getScreenStatus() -> {
+//   asOf, candidates, gates: [{ id, name, rule }]   // gate rules are stable descriptive text
+// }
+export async function getScreenStatus() {
+  const m = await _getManifest();
+  return {
+    asOf: m.screen?.as_of ?? null,
+    candidates: m.screen?.candidates ?? null,
+    gates: [
+      { id: "G1", name: "Drawdown", rule: "−30% to −85% from the 52-week high — deep but not terminal-by-magnitude." },
+      { id: "G2", name: "Idiosyncratic vs market", rule: "Underperformed the market (IWM) over the decline window — strips market beta so what remains is name-specific." },
+      { id: "G3", name: "Multiple at its own floor", rule: "Current multiple in the bottom quartile of the name's own ~5-year range (UNKNOWN ⇒ deferred, never imputed)." },
+    ],
+  };
+}
+
+// getRankedQueue() -> {
+//   asOf, weights: {idiosyncrasy,depth,character,multiple},
+//   counts: { total, demoted, gated, unknownAxis },
+//   rows: [{ rank, ticker, name, score, depthBand, quality, volumeOverlay, volumeState,
+//            liquidityTier, advUsd, marketCap, gated, unknownAxes:[],
+//            structurallyDisqualified, structuralFlag: {signal,detail,source}|null,
+//            axes: { idiosyncrasy, depth, character, multiple } each {score,label,coverage,raw,contribution} }]
+// }
+let _ranked = null;
+export async function getRankedQueue() {
+  if (_ranked) return _ranked; // immutable per page load — sorting/filtering is client-side, no re-fetch
+  const raw = await _jsonl(`${SNAPSHOTS}/ranked_queue.jsonl`);
+  const rows = raw
+    .map((r) => ({
+      rank: r.rank,
+      ticker: r.ticker,
+      name: r.name,
+      score: r.priority_score,
+      depthBand: r.depth_band,
+      quality: r.quality,
+      volumeOverlay: r.volume_overlay,
+      volumeState: r.volume_state,
+      liquidityTier: r.liquidity_tier,
+      advUsd: r.adv_usd,
+      marketCap: r.market_cap,
+      gated: !!r.tradeability_gated,
+      unknownAxes: r.unknown_axes || [],
+      structurallyDisqualified: !!r.structurally_disqualified,
+      structuralFlag: r.structural_flag
+        ? { signal: r.structural_flag.signal, detail: r.structural_flag.detail, source: r.structural_flag.source }
+        : null,
+      axes: Object.fromEntries(
+        ["idiosyncrasy", "depth", "character", "multiple"].map((k) => {
+          const a = r.axes?.[k] || {};
+          return [k, {
+            score: a.score, label: a.label, coverage: a.coverage, raw: a.raw,
+            contribution: r.contributions?.[k] ?? null,
+          }];
+        })
+      ),
+    }))
+    .sort((a, b) => a.rank - b.rank);
+  _ranked = {
+    asOf: raw[0]?.screen_run_at ? String(raw[0].screen_run_at).slice(0, 10) : null,
+    weights: { idiosyncrasy: 0.3, depth: 0.25, character: 0.25, multiple: 0.2 },
+    counts: {
+      total: rows.length,
+      demoted: rows.filter((r) => r.structurallyDisqualified).length,
+      gated: rows.filter((r) => r.gated).length,
+      unknownAxis: rows.filter((r) => r.unknownAxes.length).length,
+    },
+    rows,
+  };
+  return _ranked;
+}
+
+// getLedger() -> {
+//   counts: { logged, resolved, buy, avoid },
+//   entries: [{ ticker, verdict, entryPrice, entryPriceAsOf, horizonDays, horizonDate,
+//               confidence, benchmark, decidedAt, resolved, daysToHorizon,
+//               thesis, killCriteria, twinCall }]   // immutable, append-only
+// }
+let _ledger = null;
+export async function getLedger() {
+  if (_ledger) return _ledger;
+  const raw = await _jsonl(`${SNAPSHOTS}/decision_ledger.jsonl`);
+  const today = new Date().toISOString().slice(0, 10);
+  const entries = raw
+    .map((r) => {
+      const p = JSON.parse(r.payload);
+      const horizonDate = _addDays(p.entry_price_as_of, p.horizon_days);
+      const daysToHorizon = horizonDate ? _diffDays(today, horizonDate) : null;
+      return {
+        ticker: p.ticker,
+        verdict: p.verdict,
+        entryPrice: p.entry_price,
+        entryPriceAsOf: p.entry_price_as_of,
+        horizonDays: p.horizon_days,
+        horizonDate,
+        confidence: p.confidence,
+        benchmark: p.benchmark,
+        decidedAt: p.decided_at,
+        resolved: daysToHorizon !== null ? daysToHorizon <= 0 : false,
+        daysToHorizon,
+        thesis: p.thesis,
+        killCriteria: p.kill_criteria,
+        twinCall: p.twin_call,
+      };
+    })
+    .sort((a, b) => String(b.decidedAt).localeCompare(String(a.decidedAt)));
+  _ledger = {
+    counts: {
+      logged: entries.length,
+      resolved: entries.filter((e) => e.resolved).length,
+      buy: entries.filter((e) => isBuyVerdict(e.verdict)).length,
+      avoid: entries.filter((e) => !isBuyVerdict(e.verdict)).length,
+    },
+    entries,
+  };
+  return _ledger;
+}
+
+// The long leg is any BUY-family verdict; everything else (AVOID_TERMINAL, …) is the avoid leg.
+// Classify by family, not exact equality, so a future BUY_* verdict isn't miscounted as avoid.
+export function isBuyVerdict(v) {
+  return String(v || "").toUpperCase().startsWith("BUY");
+}
+
+// getSpreadStatus() -> {
+//   spread, resolvedCount, buyLegs, avoidLegs, gateMet, definition
+// }   // spread is null until verdicts resolve — the gate's headline number
+export async function getSpreadStatus() {
+  const led = await getLedger();
+  const resolved = led.counts.resolved;
+  return {
+    spread: resolved > 0 ? null : null, // computed from RESOLVED forward returns only; none yet
+    resolvedCount: resolved,
+    buyLegs: led.counts.buy,
+    avoidLegs: led.counts.avoid,
+    loggedCount: led.counts.logged,
+    gateMet: false, // requires >=2 quarters of resolved verdicts, both legs, positive & real
+    definition: "the BUY−AVOID spread that must prove positive before capital deploys",
+  };
+}
+
+// getDossierIndex() -> [ticker, ...]  (committed, derived dossiers available to the viewer)
+export async function getDossierIndex() {
+  try {
+    const idx = await _json(`${DOSSIERS}/index.json`);
+    return Array.isArray(idx?.tickers) ? idx.tickers : [];
+  } catch (e) {
+    if (e.status === 404) return []; // none committed yet (gated on the private/authed deploy)
+    throw e;
+  }
+}
+
+// getDossier(ticker) -> the Dossier shape (mechanical + synthesis + flags + meta), or null if absent.
+export async function getDossier(ticker) {
+  try {
+    return await _json(`${DOSSIERS}/${String(ticker).toUpperCase()}.json`);
+  } catch (e) {
+    if (e.status === 404) return null;
+    throw e;
+  }
+}
+
+// getGraphCoverage() -> {
+//   available, model, stats: {names,withEdges,totalEdges,realEdges,realUsListed},
+//   edges: [{focal, counterpartyName, counterpartyTicker, relType, direction, resolution, evidence}],
+//   sharedNodes: [{name,ticker,focals,degree,...}], superConnectors: [ticker,...]
+// }
+// The graph is a RESEARCH INPUT — it gates nothing and predicts nothing (Edge-3 falsified).
+let _graph = null;
+export async function getGraphCoverage() {
+  if (_graph) return _graph;
+  try {
+    const g = await _json(`${SNAPSHOTS}/graph.json`);
+    _graph = { available: true, ...g };
+  } catch (e) {
+    if (e.status === 404) _graph = { available: false, edges: [], sharedNodes: [], superConnectors: [] };
+    else throw e;
+  }
+  return _graph;
+}
+
+// getGraphExposure(entity) -> {
+//   available, entity, found,
+//   asFocal:  [{counterparty, ticker, relType, direction, resolution, evidence}],   // entity's own 10-K disclosures
+//   namedBy:  [{focal, relType, direction, evidence}],                              // who discloses exposure to entity
+//   coExposed:[{ticker, via}]                                                       // names sharing a counterparty (cross-section)
+// }
+// Pure client-side traversal of the committed exposure map. Research lookup only.
+export async function getGraphExposure(entity) {
+  const g = await getGraphCoverage();
+  if (!g.available) return { available: false, entity, found: false };
+  const q = String(entity || "").trim().toUpperCase();
+  if (!q) return { available: true, entity: "", found: false, asFocal: [], namedBy: [], coExposed: [] };
+
+  const matchCp = (e) =>
+    (e.counterpartyTicker && e.counterpartyTicker.toUpperCase() === q) ||
+    (e.counterpartyName && e.counterpartyName.toUpperCase().includes(q));
+
+  const asFocal = g.edges.filter((e) => (e.focal || "").toUpperCase() === q).map((e) => ({
+    counterparty: e.counterpartyName, ticker: e.counterpartyTicker, relType: e.relType,
+    direction: e.direction, resolution: e.resolution, evidence: e.evidence,
+  }));
+  const namedBy = g.edges.filter(matchCp).map((e) => ({
+    focal: e.focal, relType: e.relType, direction: e.direction, evidence: e.evidence,
+  }));
+
+  // co-exposed cross-section: other focals that share any counterparty with this entity (2-hop)
+  const myCps = new Set(asFocal.map((e) => (e.ticker || e.counterparty || "").toUpperCase()).filter(Boolean));
+  const coExposed = [];
+  if (myCps.size) {
+    const seen = new Set([q]);
+    for (const e of g.edges) {
+      const f = (e.focal || "").toUpperCase();
+      const cp = (e.counterpartyTicker || e.counterpartyName || "").toUpperCase();
+      if (f && f !== q && myCps.has(cp) && !seen.has(f)) {
+        seen.add(f);
+        coExposed.push({ ticker: e.focal, via: e.counterpartyName });
+      }
+    }
+  }
+  return { available: true, entity: q, found: asFocal.length + namedBy.length > 0, asFocal, namedBy, coExposed };
+}
+
+// getScreenAdmitted() -> { asOf, count, gates:[{id,name,rule}],
+//   names:[{ticker, name, depthBand, depthLabel, idioLabel, multipleLabel}] }
+// THIS edge's admitted set — the names that passed the Overshoot gates (G1/G2/G3). Order-agnostic
+// (sorted by ticker), distinct from the ranker's cross-edge priority order. The structural demote is
+// a RANKER overlay, not a screen gate, so it is intentionally absent here.
+let _g3 = null;
+export async function getG3Reasons() {
+  if (_g3) return _g3;
+  try { _g3 = await _json(`${SNAPSHOTS}/g3_reasons.json`); }
+  catch (e) { if (e.status === 404) _g3 = {}; else throw e; }
+  return _g3;
+}
+
+export async function getScreenAdmitted() {
+  const [q, status, g3] = await Promise.all([getRankedQueue(), getScreenStatus(), getG3Reasons()]);
+  const names = q.rows
+    .map((r) => {
+      const mUnknown = r.axes.multiple?.coverage === "unknown";
+      return {
+        ticker: r.ticker, name: r.name, depthBand: r.depthBand,
+        depthLabel: r.axes.depth?.label, idioLabel: r.axes.idiosyncrasy?.label,
+        // G3 UNKNOWN → the specific per-name reason (negative earnings vs XBRL gap), never a slash-menu
+        multipleLabel: mUnknown ? (g3[r.ticker] || "multiple unavailable") : r.axes.multiple?.label,
+        multipleUnknown: mUnknown,
+      };
+    })
+    .sort((a, b) => a.ticker.localeCompare(b.ticker));
+  return { asOf: q.asOf, count: names.length, gates: status.gates, names };
+}
+
+// getUniverseStats() -> { available, asOf, considered, inUniverse, gates:[{label, count, sub}] }
+// The universe builder's fail-closed gate-exclusion counts (HEALTH, not analytics — a wrong count
+// signals a gate bug). The two structural gates (SIC denylist, security-type allowlist) each carry a
+// confirmed-drop count + an unconfirmable-input sub-count, both fail-closed (excluded, never admitted).
+export async function getUniverseStats() {
+  try {
+    const s = await _json(`${SNAPSHOTS}/universe_stats.json`);
+    const n = (k) => s[k] ?? 0;
+    const band = { capMin: s.market_cap_min_usd ?? null, capMax: s.market_cap_max_usd ?? null, advFloor: s.adv_floor_usd ?? null };
+    const capTxt = band.capMin != null ? `outside ${fmtMoney(band.capMin)}–${fmtMoney(band.capMax)}` : "outside the market-cap window";
+    const advTxt = band.advFloor != null ? `below ${fmtMoney(band.advFloor)} 90-day ADV — too thin to build a position` : "too thin to build a position";
+    return {
+      available: true, asOf: s.as_of ?? null, considered: n("considered"), inUniverse: n("in_universe"), band,
+      gates: [
+        // 2a: the exclusion is a genuine no-bar, not a swallowed error — a degraded Polygon fetch
+        // raises EodError and aborts the whole refresh, so only a legitimate no-trade lands here.
+        { label: "Missing price", count: n("no_price"), sub: "no trade in the 90-day window (delisted / illiquid) — fetch errors fail loud, never counted here" },
+        { label: "Missing shares", count: n("no_shares"), sub: "EDGAR reported no shares-outstanding figure — market cap can't be computed" },
+        { label: "Out of cap band", count: n("out_of_band"), sub: capTxt },
+        { label: "Below ADV floor", count: n("below_adv_floor"), sub: advTxt },
+        { label: "SIC denylist", count: n("non_operating") + n("unknown_sic"), sub: `fund / ETP / blank-check (${n("non_operating")}) + unconfirmable SIC (${n("unknown_sic")})` },
+        { label: "Security-type allowlist", count: n("non_common_equity") + n("unknown_type"), sub: `not common equity (${n("non_common_equity")}) + unconfirmable type (${n("unknown_type")})` },
+      ],
+    };
+  } catch (e) {
+    if (e.status === 404) return { available: false };
+    throw e;
+  }
+}
+
+// getProcessedStates() -> (ticker) => "verdict-logged" | "dossier-built" | "not-started"
+// Per-name WORKFLOW state, derived (read-only) from committed dossier presence + ledger presence.
+// Turns the queue into a workflow surface; it reads those snapshots, it never writes them.
+export async function getProcessedStates() {
+  const [dossiers, led] = await Promise.all([getDossierIndex(), getLedger()]);
+  const built = new Set(dossiers.map((t) => String(t).toUpperCase()));
+  const logged = new Set(led.entries.map((e) => String(e.ticker).toUpperCase()));
+  return (ticker) => {
+    const t = String(ticker).toUpperCase();
+    if (logged.has(t)) return "verdict-logged";
+    if (built.has(t)) return "dossier-built";
+    return "not-started";
+  };
+}
+
+// --- internal date helpers (UTC-safe) ----------------------------------------
+function _addDays(iso, days) {
+  if (!iso || typeof days !== "number") return null;
+  const d = new Date(String(iso).slice(0, 10) + "T00:00:00Z");
+  if (isNaN(d)) return null;
+  d.setUTCDate(d.getUTCDate() + days);
+  return d.toISOString().slice(0, 10);
+}
+function _diffDays(aIso, bIso) {
+  const a = new Date(aIso + "T00:00:00Z");
+  const b = new Date(bIso + "T00:00:00Z");
+  return Math.round((b - a) / 86400000);
+}

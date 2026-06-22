@@ -4,7 +4,7 @@
 > planning fossils (`planning/` briefs + `docs/` specs) as *current* guidance — those stay unchanged
 > as the historical origin record.** Read this first at the start of any session; **every build
 > updates it.** Its value is accuracy, not optimism: falsified is recorded as falsified, deferred as
-> deferred-and-why, unproven as unproven. _Last verified against the repo: 2026-06-19._
+> deferred-and-why, unproven as unproven. _Last verified against the repo: 2026-06-22._
 
 ## 1. What this is
 
@@ -384,6 +384,30 @@ Each line: *what it does* — *verified how*.
     spread needs BUY legs and calendar time before it can show anything.
 - **Scoring harness** (`mosaic/scoring`) — BUY−AVOID spread = `buy_mean_return − avoid_mean_return`
   (benchmark-free), over **resolved** verdicts only — *synthetic +20% BUY / −20% AVOID → spread +40%.*
+  - **Per-sector spread enabler — verdicts sector-tagged at log time (built 2026-06-22).** Every
+    `LedgerEntry` now carries a `sector` (coarse GICS-like, `mosaic/sectors.sector_for_sic` over the
+    EDGAR SIC the resolver already provides — **NO new data source**), captured + frozen at log time
+    like the entry price, never derived later. `log_verdict` resolves the SIC via the resolver
+    (`Identity.sic` is not populated on candidates) through a `SicSource` Protocol that keeps the
+    ledger decoupled + testable; `sector` rides in the entry payload JSON, so **no SQLite migration**.
+    **Behavior note:** this adds one **cached** EDGAR `submissions` lookup at log time (1-day TTL) —
+    logging a verdict (previously fully offline) now needs that fetch to succeed; fail-loud if it
+    can't, consistent with the ethos. Not a real-candidate blocker: the operating-co gate guarantees
+    every candidate has a CIK (VRRM resolved SIC 4700 → Industrials live); only CIK-less benchmark
+    ETFs would raise, and those are never candidates.
+    The harness reads it: `scoring.spread_by_sector` returns a per-sector BUY−AVOID spread that is
+    **`sufficient=False` ("insufficient data") until a sector has ≥2 resolved BUYs AND ≥2 AVOIDs** —
+    honest emptiness, never a spread off a one-name leg; `ScoreReport.by_sector` + the report markdown
+    surface it. **VRRM (logged 2026-06-21, pre-feature) reads back `sector=None` — the immutable entry
+    is NOT rewritten;** it is the one untagged verdict and buckets under "Unknown" (no backfill, no
+    silent edit — the honest option (b)). *Verified: `sector_for_sic` maps 7372→Technology,
+    2834/3841→Health Care, 1311/2911→Energy, 6022→Financials, 6798→Real Estate, 5812→Consumer
+    Discretionary, blank/None→Unknown; a logged verdict carries + round-trips its sector; the real
+    ledger's per-sector read is empty (0 resolved) honestly. +2 tests (a verdict carries its sector;
+    the spread groups by sector + stays insufficient until both legs are real, untagged→"Unknown").
+    ruff + `mypy --strict` clean; suite green.* This is the cheap enabler the §6 sector-expertise
+    scoping question needs **in place before data accrues** — the scoping DECISION stays open + data-
+    gated (§6).
 - **Entry-price freeze** (`store.close_as_of`) — clamps to `bar_date ≤ reference_date`, fail-loud if
   none, staleness kept on top — *Phase-0 lookahead fix; 3 shown cases + regression test; commit
   `a3b63bb` on `main` (orig `b9d438d`, rebased).*
@@ -455,42 +479,97 @@ execution/sizing/portfolio/monitoring modules; only `SourceTier.IBKR` labels in 
   inverts it so a new extractor registers itself. **Do NOT build it preemptively — build it when the
   2nd or 3rd new kind lands and the pattern is real.** Until then the AST guard is the binding.
 
-### Candidate edge-types — untested hypotheses (DO NOT build; record-only)
+### Edge-hypothesis ledger — the full inventory (record-only; DO NOT build)
 
-These are recorded so the reasoning survives; they are NOT next steps. The binding constraint is
-proving Edge 2 (the empty spread), not expanding the edge inventory. Build toward none of these
-until the spread validates the discriminator.
+The coherent record of every edge hypothesis considered, so the reasoning survives and a future
+session neither re-litigates a dead one nor chases an unrecorded one. **The binding constraint is
+proving Edge 2 (the empty spread), not expanding this inventory — build toward none of these until
+the spread validates the discriminator.** Each carries an explicit status + (where testable) a KILL
+CRITERION.
 
-- **Edge 1 (orphaned quality) — already in §4 above; noted here as the most DURABLE non-consensus.**
-  Mispricing = neglect (no one's looking), not overreaction. Unlike Edge 2 it has no value-trap
-  SYMMETRY problem (was-it-an-overshoot-or-terminal is the hard call; is-it-quietly-good-and-
-  under-covered is more verifiable), and its persistence reason is structural (too small/boring for
-  big capital; labor-intensive to underwrite). Deferred for measurability, not weakness.
+**THE EDGE FILTER (the frame every hypothesis is judged against).** The fund's one edge is **deep
+human judgment on a few finalists, fed by an AI funnel that achieves breadth a human can't** (§1,
+CLAUDE.md). A candidate edge counts ONLY if it FEEDS that judgment — assembles, orders, cites, or
+surfaces a cross-section for the human. The instant a hypothesis becomes "the machine's OUTPUT is the
+decision" (a score/signal you trade), it has left the thesis and is the exact failure mode this
+project exists to avoid. This is the line that keeps the falsified Edge-3 *signal* dead (§3) while
+its *aggregation* form survives below: one concludes, the other feeds. Every entry is filtered by
+this test.
 
-- **Non-consensus on AGGREGATION (the LIVE core of the graph thesis — NOT the dead mechanical signal).**
-  Hypothesis: second-order / cross-sectional consequences of CONFIRMED PUBLIC events are mispriced
-  because no one assembles the affected cross-section (e.g. a regulatory change or cost-input shift
-  hitting a diffuse long-tail no analyst covers as a group). DISTINCT from the falsified Edge-3
-  mechanical signal: this is a RESEARCH INPUT that assembles a cross-section of exposed names FOR THE
-  HUMAN to research — it does NOT predict a tradeable price lag. The mechanical-lag form is dead
-  (§3, three reasons); THIS aggregation form was never tested. KILL CRITERION if ever tested: it must
-  beat a hand-built baseline (names the human would assemble unaided on the same event) — if it
-  surfaces nothing the human wouldn't already find, it adds no value and is dropped. It must NEVER
-  become "the graph predicts a move you trade" — that is the dead mechanical signal returning.
+**LIVE — being proven now: Edge 2 (overshoot de-rating).** The entire built funnel
+(universe→screen→ranker→dossier→ledger) serves this one. Mispricing = an exaggerated-and-temporary
+de-rating a human can name a reversal for, vs its terminal-decline twin. Status: **UNPROVEN** — the
+BUY−AVOID spread is empty (one unresolved AVOID leg, §2). Everything else waits on it.
 
-- **Non-consensus on CLASSIFICATION.** Hypothesis: the market mis-categorizes a name into the wrong
-  reference class (treats a changed business as its old declining industry; lumps a sound name with
-  real value-traps), so it's priced by the wrong comp set. AI-native fit: reading the ACTUAL business
-  from filings across many names at breadth. Overlaps Edge 1/2 but the mispricing is taxonomic.
-  KILL CRITERION if tested: must show mis-classified names re-rate when re-classified, forward, not
-  in hindsight. Untested.
+**FALSIFIED — Edge 3 / graph-as-mechanical-signal.** Dead, three independent reasons (§3). Kept in
+the inventory only so "the graph" is never reread as a live tradeable signal. Its research-input
+remnant + untested live core follow.
 
-Note the honest status of the graph thesis (corrects any flat "Edge 3 is dead" reading): the
-MECHANICAL graph SIGNAL is dead (§3). The graph-exposure LOOKUP is built (§2). The broad
-thesis — cross-sectional/second-order consequences are mispriced — was tested ONLY in its
-narrowest, most-arbitraged, least-tradeable form (1-hop propagation lag), and its AGGREGATION
-form (above) remains genuinely untested as a research input. "Dead" applies to the mechanical
-signal, not the whole idea.
+**RESEARCH-INPUT (built, gates nothing) + its untested live core:**
+- **graph-exposure lookup** — built (§2); validated **operationally**, never statistically (so it
+  can't be data-mined); feeds the human, decides nothing.
+- **Non-consensus on AGGREGATION (the LIVE core of the graph thesis — NOT the dead mechanical
+  signal).** Second-order / cross-sectional consequences of CONFIRMED PUBLIC events are mispriced
+  because no one ASSEMBLES the affected cross-section (a regulatory change, a cost-input shift, a key
+  customer's collapse hitting a diffuse long-tail no analyst covers as a group). It is a RESEARCH
+  INPUT handing the human an exposed cross-section to research — it does NOT predict a tradeable price
+  lag (that is the dead mechanical form, §3). **Face-valid proof-of-concept it is real — VRRM:** the
+  Avis-termination 8-K's decision-relevant consequence was the *cascading RAC-channel-exit* across
+  VRRM's customer cross-section — exactly the second-order assembly a human reasons about from
+  source-bound facts (the dossier surfaced the Avis customer-concentration question, §2), not a
+  price-lag prediction. **TRIGGER: do NOT build the active cross-section assembler until the Edge-2
+  spread validates** — it is a funnel WIDENER (second-wave, §4), gated on the proven loop, sibling to
+  the active event-detection layer. **KILL CRITERION when tested:** it must beat a hand-built baseline
+  (the names a human assembles unaided on the same event) — surfaces nothing new → adds nothing →
+  dropped. It must NEVER drift into "the graph predicts a move you trade."
+
+**UNTESTED CANDIDATE EDGES (record-only; do NOT build; each gated behind the proven spread):**
+- **Edge 1 (orphaned quality) — the most DURABLE non-consensus** (also §4 first-/second-wave).
+  Mispricing = neglect (no one's looking), not overreaction. No value-trap SYMMETRY problem
+  (quietly-good-and-under-covered is more verifiable than overshoot-vs-terminal); persistence is
+  structural (too small/boring for big capital; labor-intensive to underwrite). Deferred for
+  measurability, not weakness.
+- **Non-consensus on CLASSIFICATION.** The market prices a name by the wrong reference class (a
+  changed business read as its old declining industry; a sound name lumped with real value-traps).
+  AI-native fit: read the ACTUAL business from filings at breadth. Overlaps Edge 1/2 but the
+  mispricing is taxonomic. KILL CRITERION: mis-classified names must re-rate when re-classified,
+  **forward, not in hindsight.** Untested.
+- **Causal-chain / second-order real-economy reasoning (e.g. an El Niño → input-cost → margin
+  chain).** Reason forward from a confirmed physical/macro cause to the specific names it
+  mechanically hits. KEPT as a hypothesis, but the **LEAST validatable** of the set — the chain is
+  long, confounded, and slow, the hardest to separate from coincidence — and therefore **gated the
+  LONGEST**: do not touch until everything above is proven AND running. Record-only.
+- **Large-cap forced-de-rating — recorded at LOW credibility; a SEPARATE edge, NOT a ceiling
+  change.** Forced/mechanical selling (index reconstitution, forced deleveraging, a flow-driven exit)
+  temporarily de-rates even a large-cap below fair value. Logged so it is not re-discovered as novel,
+  but credibility is **LOW** (large-cap mispricings are the most-arbitraged), and it is **explicitly
+  NOT a reason to lift the $10B ceiling** (§6, RESOLVED-KEEP). If ever pursued it is its own edge with
+  its own benchmark/calibration — not a widening of the overshoot universe.
+- **Different-archetype mispricings — two sub-cases, opposite rulings.** (a) **Forced-flow /
+  mechanical-structure plays** (SPAC/SPCX-style structural mechanics) are **NOT on the roadmap** —
+  mechanical and replicable, not human-judgment edges; they fail the edge filter. (b) **Cross-filing
+  contradiction** (the same fact stated inconsistently across a name's filings / exhibits /
+  transcript) IS a genuine signal-edge — but **only as a DOSSIER INPUT** that flags the contradiction
+  for the human, never a standalone screen or auto-verdict. (a) closed; (b) folded into the dossier's
+  assemble-and-flag role if ever built.
+
+**DELIBERATELY NOT RECORDED — the graveyard (considered and rejected; listed so they are not
+re-proposed as fresh ideas):** sentiment / social signals, generic alt-data, patent-flow,
+management-turnover screens. Rejected as replicable/arbitraged (sentiment, alt-data), weak/noisy at
+this fund's scale, or simply not feeding the human-judgment edge (the edge filter). These are **out
+of scope on purpose** — not "untested-but-promising."
+
+**SCOPING QUESTIONS (where the edge LIVES — not new edges; full text in §6).** (1) **Cap-band
+ceiling — RESOLVED 2026-06-22: KEEP $10B**, a deliberate proxy for where the overshoot edge lives,
+coupled to the IWM benchmark + G2/G3 calibration. (2) **Sector-expertise — OPEN, data-gated** on the
+now-built per-sector BUY−AVOID spread (§2): keep a sector where discrimination proves real,
+learn-or-filter where it doesn't — the discriminator decides from the resolved spread, never a
+pre-imposed filter.
+
+Honest status of the graph thesis (corrects any flat "Edge 3 is dead" reading): the MECHANICAL graph
+SIGNAL is dead (§3); the graph-exposure LOOKUP is built (§2); the AGGREGATION form (above) is
+genuinely untested as a research input, with VRRM as a face-valid proof-of-concept. "Dead" applies
+to the mechanical signal, not the whole idea.
 
 ## 5. Next steps (ordered, current)
 
@@ -525,6 +604,43 @@ Then: operate the weekly loop and accumulate resolved verdicts.
   money). CIQ stays manual-pull / git-ignored.
 - **Return target** — the "beat index ≥2×" stretch is provisional and conflicts with the ~15% floor by
   regime; re-set once the spread exists.
+- **Sector-expertise scoping — OPEN DESIGN QUESTION (operator-raised; do NOT act yet — the
+  discriminator decides; sibling to the cap-band scoping below).** Small-cap drawdowns carry high
+  value-trap / low-survival / terminal risk — that is CORRECT and is the premium the discriminator
+  exists to underwrite, NOT a reason to flee to large-caps (where the overshoot edge is arbitraged away
+  and human judgment has nothing to bite on). The tension: small-cap discrimination (overshoot vs
+  terminal) often needs DEEP SECTOR EXPERTISE — biotech trial readouts, mining geology, niche-tech
+  roadmaps — which sits against the fund's breadth/generalist assembly model. The dossier **assembles**
+  sector facts; it cannot supply the **domain judgment** to weigh whether a specific drawdown is
+  recoverable — and that is exactly where small-cap value traps hide from generalists. **The question:**
+  across the sectors the overshoot screen surfaces, where does the human genuinely have the expertise to
+  tell overshoot from terminal, and where not? If discrimination is high in some sectors and low in
+  others, the honest instrument is **NOT** large-caps and **NOT** pretending breadth substitutes for
+  depth — it is a **SECTOR FILTER** scoping the universe to where the discriminator's judgment is expert
+  (gating for "can we tell trap from overshoot *here*?", the same way the cap band gates for *where the
+  edge lives*). VRRM was judge-able from assembled facts (tolling/mobility, not deep-domain); a small-cap
+  biotech at the same drawdown may be un-judge-able for a generalist regardless of dossier quality.
+  **Resolution path — DATA-DRIVEN, not pre-imposed:** as verdicts resolve, track whether the BUY−AVOID
+  spread is positive in some sectors and negative/noisy in others — a good per-sector spread means the
+  expertise is real (keep); a poor one means learn it or filter it out. The scoping decision therefore
+  waits on the resolved spread, but is **flagged now so the enabler lands early: verdicts must be tagged
+  by sector from the first one**, or the per-sector read is impossible later. *Enabler BUILT 2026-06-22
+  (§2): verdicts are sector-tagged at log time and the harness reads a per-sector BUY−AVOID spread,
+  honestly "insufficient data" until each sector has both legs. VRRM stays the one untagged (pre-feature)
+  leg — NOT backfilled, NOT rewritten; it buckets under "Unknown". The SCOPING DECISION itself remains
+  OPEN and data-gated — it waits on the resolved per-sector spread; do NOT pre-impose a sector filter,
+  the discriminator decides where the expertise is real.*
+- **Cap-band ceiling scoping — RESOLVED 2026-06-22: KEEP the $10B ceiling.** The universe is
+  $300M–$10B; the upper $10B ceiling excludes **900 mega-caps** (CRM ~$143B, NOW ~$98B exit at
+  `out_of_band`, before the screen — *traced this session, read-only*). **Decision: KEEP $10B.** The
+  ceiling is a deliberate **PROXY for where the overshoot edge lives** — small/mid-cap de-rating human
+  judgment can underwrite and big capital can't arbitrage; the excluded mega-caps are where the edge is
+  largely gone, not overshoots worth hunting. It is **coupled to the IWM benchmark + G2/G3 calibration**
+  (G2 measures idiosyncrasy *vs IWM*/Russell 2000; G3 uses own-history), so it is **not a free dial** —
+  moving it would mean moving the band **and** the benchmark **and** G3 together, not a one-number
+  change; not revisited until that whole small-cap calibration is deliberately reconsidered. **Distinct
+  from the large-cap forced-de-rating hypothesis** (§4 edge-hypothesis ledger, item recorded LOW
+  credibility) — that is a SEPARATE edge with its own benchmark, NOT a reason to lift this ceiling.
 
 ## 7. The standing discipline
 

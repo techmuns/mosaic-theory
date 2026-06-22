@@ -24,5 +24,11 @@ __pycache__/
 data/*
 !data/snapshots/
 
+# Frontend — generated snapshot mirror (rebuilt by frontend/build.py every deploy; never committed).
+# The DERIVED dossier.json is mirrored here for the viewer; raw CIQ in data/manual/ciq stays ignored.
+frontend/snapshots/
+frontend/dossiers/
+node_modules/
+
 # OS
 .DS_Store

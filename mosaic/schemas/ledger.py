@@ -37,6 +37,10 @@ class LedgerEntry(BaseModel, frozen=True):
     candidate_id: str  # links back to the CandidateRecord that was judged
     internal_id: str  # the security judged
     ticker: str
+    # Sector (coarse GICS-like, from EDGAR SIC) — captured at log time so the spread can be read
+    # PER-SECTOR (where the edge is real). Optional: None == a verdict logged before sector-tagging
+    # existed (VRRM). Frozen with the verdict; never derived later.
+    sector: str | None = None
 
     verdict: Verdict
     twin_call: str  # how the twin was ruled out / why it is the twin (the central judgement)
