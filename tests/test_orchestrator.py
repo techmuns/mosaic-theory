@@ -83,3 +83,39 @@ def test_screen_universe_lazy_admits_one_de_rating(tmp_path: Path) -> None:
     assert {c.data_record.identity.ticker for c in cands} == {"DROP"}
     # EDGAR was fetched ONLY for the price-gate survivor (lazy), never for the flat name
     assert edgar.fetched == ["0000000001"]
+
+
+def test_rescreen_replaces_not_accretes(tmp_path: Path) -> None:
+    """A re-screen on a NEW reference date must REPLACE the candidate set, not pile on top of the
+    prior run's — the run_weekly accretion bug (601-style duplicates). Run the screen TWICE against
+    one store and assert the stored candidates are exactly the SECOND run's set, never the union.
+
+    This catches the accretion specifically: a test that only checks "one run → N candidates" passes
+    even with the bug. Here week-1's date-stamped ids can only survive into week-2 if the re-screen
+    accreted, so asserting they are gone is the discriminating check.
+    """
+    drop, flat = _ident("DROP", "0000000001"), _ident("FLAT", "0000000002")
+    with Store(tmp_path / "u.db") as store:
+        for s in (drop, flat):
+            store.upsert_security(s)
+            cap = DataField.present(1e9, as_of=REF, source="DERIVED", tier=SourceTier.DERIVED)
+            store.record_universe(
+                as_of=REF, internal_id=s.internal_id, in_universe=True, market_cap=cap
+            )
+        eod = _FakeEod({"DROP": _drop, "FLAT": _flat, "IWM": _flat})
+        edgar = _FakeEdgar()
+        c1, _ = screen_universe(  # week 1
+            store, eod, edgar, reference_date=REF, lookback_days=LOOKBACK, staleness_days=5
+        )
+        c2, _ = screen_universe(  # week 2 — a LATER reference date, like the next weekly run
+            store, eod, edgar, reference_date=date(2026, 6, 19), lookback_days=LOOKBACK,
+            staleness_days=5,
+        )
+        assert c1 and c2  # both runs admit the de-rating
+        # week-1's candidate ids (date-stamped 20260612) must be GONE — the full-replace clear drops
+        # the whole prior generation. Under the accretion bug they lingered and these asserts fail.
+        for c in c1:
+            assert store.get_candidate(c.candidate_id) is None
+        # ...and only week-2's generation remains — the set is THIS run's, not the union of both.
+        for c in c2:
+            assert store.get_candidate(c.candidate_id) is not None
