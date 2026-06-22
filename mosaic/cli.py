@@ -273,10 +273,12 @@ def _cmd_log_verdict(args: argparse.Namespace) -> int:
     """Record a manual BUY/AVOID-terminal verdict for a candidate, freezing the entry price."""
     cfg = get_config()
     ref = date.fromisoformat(args.ref) if args.ref else date.today()
+    resolver = EntityResolver.from_config(cfg)  # sources the name's EDGAR SIC → sector at log time
     with Store(cfg.db_path) as store:
         try:
             entry = log_verdict(
-                store, candidate_id=args.candidate_id, verdict=Verdict(args.verdict),
+                store, resolver=resolver, candidate_id=args.candidate_id,
+                verdict=Verdict(args.verdict),
                 twin_call=args.twin, thesis=args.thesis, kill_criteria=args.kill,
                 horizon_days=args.horizon_days, confidence=Confidence(args.confidence),
                 decided_at=datetime.now(), reference_date=ref,
@@ -289,7 +291,7 @@ def _cmd_log_verdict(args: argparse.Namespace) -> int:
             print(f"a verdict is already logged for {args.candidate_id} (ledger is append-only)")
             return 1
     print(
-        f"logged {entry.verdict.value} for {entry.ticker}: frozen entry "
+        f"logged {entry.verdict.value} for {entry.ticker} [sector: {entry.sector}]: frozen entry "
         f"{entry.entry_price:.2f} as_of {entry.entry_price_as_of}, horizon {entry.horizon_days}d"
     )
     return 0

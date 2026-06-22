@@ -10,7 +10,8 @@ significance tests.
 from __future__ import annotations
 
 import statistics
-from dataclasses import dataclass
+from collections import defaultdict
+from dataclasses import dataclass, field
 
 from mosaic.schemas.ledger import Verdict
 
@@ -29,6 +30,7 @@ class VerdictScore:
     resolved: bool  # True once the thesis horizon has passed
     name_return: float
     bench_return: float
+    sector: str | None = None  # carried from the ledger entry — for the per-sector spread read
 
     @property
     def excess_gross(self) -> float:
@@ -37,6 +39,37 @@ class VerdictScore:
     def excess_net(self, cost_bps: float) -> float:
         # round-trip cost in return terms (entry + exit); coarse, applied to the long leg.
         return self.excess_gross - 2.0 * cost_bps / 10_000.0
+
+
+@dataclass(frozen=True)
+class SectorSpread:
+    """The BUY−AVOID spread within ONE sector — None/insufficient until both legs have enough."""
+
+    sector: str
+    n_buy: int
+    n_avoid: int
+    spread: float | None  # None until >= min_per_leg resolved BUYs AND AVOIDs in this sector
+    sufficient: bool  # False == "insufficient data" — honest until the per-sector sample is real
+
+
+def spread_by_sector(
+    scores: list[VerdictScore], *, min_per_leg: int = 2
+) -> dict[str, SectorSpread]:
+    """Per-sector BUY−AVOID spread over the given (resolved) verdict scores. A sector reports
+    ``sufficient=False`` ("insufficient data") until it has at least ``min_per_leg`` resolved BUYs
+    AND AVOIDs — the per-sector edge is only readable once each sector's sample is real. Untagged
+    verdicts (``sector is None``, e.g. the pre-feature VRRM entry) bucket under ``"Unknown"``."""
+    by: dict[str, list[VerdictScore]] = defaultdict(list)
+    for s in scores:
+        by[s.sector or "Unknown"].append(s)
+    out: dict[str, SectorSpread] = {}
+    for sector, ss in sorted(by.items()):
+        buys = [x.name_return for x in ss if x.verdict is Verdict.BUY]
+        avoids = [x.name_return for x in ss if x.verdict is Verdict.AVOID_TERMINAL]
+        sufficient = len(buys) >= min_per_leg and len(avoids) >= min_per_leg
+        spread = (statistics.fmean(buys) - statistics.fmean(avoids)) if sufficient else None
+        out[sector] = SectorSpread(sector, len(buys), len(avoids), spread, sufficient)
+    return out
 
 
 def ols_beta_alpha(
@@ -80,9 +113,18 @@ class ScoreReport:
     alpha: float | None
     twin_buy_bounced: bool | None  # did BUYs on average rise?
     twin_avoid_fell: bool | None  # did AVOID-terminal names on average keep falling?
+    # Per-sector BUY−AVOID spread (the sector-expertise read) — each "insufficient data" until its
+    # own sample is real. Empty until verdicts resolve. See STATE.md §sector-expertise scoping.
+    by_sector: dict[str, SectorSpread] = field(default_factory=dict)
 
     def to_dict(self) -> dict[str, object]:
-        return {k: getattr(self, k) for k in self.__dataclass_fields__}
+        d: dict[str, object] = {k: getattr(self, k) for k in self.__dataclass_fields__}
+        d["by_sector"] = {
+            s: {"n_buy": v.n_buy, "n_avoid": v.n_avoid, "spread": v.spread,
+                "sufficient": v.sufficient}
+            for s, v in self.by_sector.items()
+        }
+        return d
 
     def to_markdown(self) -> str:
         def pct(x: float | None) -> str:
@@ -105,6 +147,16 @@ class ScoreReport:
             f"α: {pct(self.alpha)}",
             f"- Twin-realisation — BUYs bounced: {self.twin_buy_bounced} · "
             f"AVOIDs kept falling: {self.twin_avoid_fell}",
+        ]
+        sector_lines = [
+            f"- {v.sector}: {('spread ' + pct(v.spread)) if v.sufficient else 'insufficient data'} "
+            f"({v.n_buy} buy / {v.n_avoid} avoid)"
+            for v in self.by_sector.values()
+        ]
+        lines += [
+            "",
+            "## Per-sector BUY−AVOID spread (sector-expertise read)",
+            *(sector_lines or ["- (no resolved verdicts yet)"]),
             "",
             "_Tiny n: directional gates, not significance tests. Paper fills are optimistic._",
         ]
@@ -151,4 +203,5 @@ def aggregate(
         alpha=alpha,
         twin_buy_bounced=(buy_mean > 0) if buy_mean is not None else None,
         twin_avoid_fell=(avoid_mean < 0) if avoid_mean is not None else None,
+        by_sector=spread_by_sector(scores),
     )

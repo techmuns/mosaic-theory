@@ -11,9 +11,18 @@ The ledger is append-only: re-logging a candidate fails loud (a verdict is never
 from __future__ import annotations
 
 from datetime import date, datetime
+from typing import Protocol
 
 from mosaic.schemas.ledger import Confidence, LedgerEntry, Verdict
+from mosaic.sectors import sector_for_sic
 from mosaic.store import Store
+
+
+class SicSource(Protocol):
+    """Anything that can resolve a CIK's SEC SIC (the resolver). Kept a Protocol so the ledger
+    stays decoupled from the resolver implementation and is trivial to stub in tests."""
+
+    def sic_for(self, cik: int | str) -> tuple[str | None, str | None]: ...
 
 
 class LedgerError(RuntimeError):
@@ -23,6 +32,7 @@ class LedgerError(RuntimeError):
 def log_verdict(
     store: Store,
     *,
+    resolver: SicSource,
     candidate_id: str,
     verdict: Verdict,
     twin_call: str,
@@ -35,11 +45,15 @@ def log_verdict(
     staleness_days: int,
     benchmark: str = "IWM",
 ) -> LedgerEntry:
-    """Freeze the entry price and append a verdict for ``candidate_id``; returns the entry."""
+    """Freeze the entry price + the sector and append a verdict for ``candidate_id``; returns it.
+
+    The sector is captured HERE, at log time, from the name's EDGAR SIC (via ``resolver``) → it is
+    frozen with the verdict and never derived later, so the spread is sector-readable forever."""
     cand = store.get_candidate(candidate_id)
     if cand is None:
         raise LedgerError(f"no candidate {candidate_id!r} in the store (run the screen first)")
     ident = cand.data_record.identity
+    sector = sector_for_sic(resolver.sic_for(ident.cik)[0])
 
     try:
         # point-in-time: freeze on the latest bar ON OR BEFORE the decision date — never a future
@@ -62,6 +76,7 @@ def log_verdict(
         candidate_id=candidate_id,
         internal_id=ident.internal_id,
         ticker=ident.ticker,
+        sector=sector,
         verdict=verdict,
         twin_call=twin_call,
         entry_price=close.value,  # frozen

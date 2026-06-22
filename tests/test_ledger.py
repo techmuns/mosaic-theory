@@ -26,6 +26,7 @@ from mosaic.schemas.data_record import (
 from mosaic.schemas.envelope import DataField, SourceTier
 from mosaic.schemas.ledger import Confidence, Verdict
 from mosaic.schemas.market import PriceBar
+from mosaic.scoring.metrics import VerdictScore, spread_by_sector
 from mosaic.store import Store
 
 
@@ -83,7 +84,18 @@ def _seed(store: Store, ident: Identity, *, close: float = 44.93) -> str:
     return cand.candidate_id
 
 
+class _StubResolver:
+    """A minimal SicSource for tests — returns a fixed SIC so sector-tagging is deterministic."""
+
+    def __init__(self, sic: str = "7372") -> None:  # 7372 = prepackaged software → Technology
+        self._sic = sic
+
+    def sic_for(self, cik: int | str) -> tuple[str | None, str | None]:
+        return self._sic, None
+
+
 _KW = dict(  # noqa: C408 — common verdict kwargs
+    resolver=_StubResolver(),
     twin_call="One-off demand air-pocket; brand intact; reversal = inventory reset.",
     thesis="Overshoot on a transient guidance miss.",
     kill_criteria="Two consecutive quarters of accelerating revision cuts.",
@@ -135,3 +147,39 @@ def test_no_price_raises(tmp_path: Path) -> None:
         with pytest.raises(LedgerError):
             log_verdict(store, candidate_id="DRY-screen2-20260612", verdict=Verdict.BUY,
                         decided_at=datetime(2026, 6, 15), **_KW)
+
+
+def test_verdict_carries_its_sector(tmp_path: Path) -> None:
+    """A verdict is sector-tagged at log time from the name's EDGAR SIC, frozen + round-tripped."""
+    with Store(tmp_path / "t.db") as store:
+        ident = _ident("PHRM", "SEC-0000000011-PHRM", "0000000011")
+        cid = _seed(store, ident)
+        kw = {**_KW, "resolver": _StubResolver("2834")}  # 2834 = pharmaceuticals → Health Care
+        entry = log_verdict(store, candidate_id=cid, verdict=Verdict.BUY,
+                            decided_at=datetime(2026, 6, 15, 10, 0), **kw)
+        assert entry.sector == "Health Care"  # captured from the SIC at log time
+        stored = store.get_ledger_entry(entry.entry_id)
+        assert stored is not None and stored.sector == "Health Care"  # frozen + survives round-trip
+
+
+def test_spread_groups_by_sector_and_is_honest_until_enough() -> None:
+    """The spread reads PER-SECTOR; a sector returns 'insufficient data' until both legs are real,
+    and an untagged verdict (sector None, like the pre-feature VRRM) buckets under 'Unknown'."""
+    def vs(t: str, verdict: Verdict, ret: float, sector: str | None) -> VerdictScore:
+        return VerdictScore(entry_id=f"V-{t}", ticker=t, verdict=verdict, resolved=True,
+                            name_return=ret, bench_return=0.0, sector=sector)
+
+    scores = [
+        vs("A", Verdict.BUY, 0.20, "Technology"), vs("B", Verdict.BUY, 0.10, "Technology"),
+        vs("C", Verdict.AVOID_TERMINAL, -0.20, "Technology"),
+        vs("D", Verdict.AVOID_TERMINAL, -0.10, "Technology"),
+        vs("E", Verdict.BUY, 0.30, "Energy"),  # Energy: 1 buy, 0 avoid → insufficient
+        vs("F", Verdict.BUY, 0.05, None),  # untagged → buckets under "Unknown"
+    ]
+    by = spread_by_sector(scores, min_per_leg=2)
+
+    tech = by["Technology"]
+    assert tech.sufficient and tech.spread == pytest.approx(0.30)  # 0.15 − (−0.15)
+    assert by["Energy"].sufficient is False and by["Energy"].spread is None  # honest insufficient
+    assert by["Energy"].n_buy == 1 and by["Energy"].n_avoid == 0
+    assert "Unknown" in by and by["Unknown"].n_buy == 1 and by["Unknown"].sufficient is False
