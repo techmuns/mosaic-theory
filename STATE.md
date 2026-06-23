@@ -383,6 +383,18 @@ Each line: *what it does* — *verified how*.
     (decisive_question + 3/3 evidence + 10 key_unknowns), grounded bull/bear from the bounded input;
     +3 offline tests (truncated tool response → UNAVAILABLE not blank; extract raises on max_tokens;
     management_commentary is a pointer).*
+  - **Synthesis model → Opus 4.8 (groundedness benchmark, 2026-06-23).** Sonnet-4.6 vs Opus-4.8 on the
+    dossier synthesis: same names, same mechanical facts (model-independent), only the synthesis model
+    varied; measured FAITHFULNESS via the guardrail flags (untraceable / uncited / mis-cite / directional),
+    NOT "better take" (the synthesis doesn't conclude — that is the human's). 4 CIQ names (BRBR, EPAM,
+    VRRM, MVST) × 2 runs each → **Opus 1.25 untraceable-figures/dossier vs Sonnet 4.0 (~⅓), 0 mis-cites
+    vs 0.75, ~half the total flags, and 3.5× more run-to-run stable** (|r1−r2| mean 1.0 vs 3.5). Gap
+    widest on the thin-fact name (MVST: Sonnet invented 11 figures/run, Opus 1–2). Coverage slightly
+    lower (Opus ~7.9 bull-pts vs 9.5) but far more grounded per claim. **Decision: `graph_llm_model`
+    default flipped `claude-sonnet-4-6` → `claude-opus-4-8` (`config.py`)** — a dossier's job is to feed
+    the human FAITHFUL source-bound facts, not to be exhaustive; cost/latency higher, acceptable at
+    ~10 dossiers/week. *First cut (n=4×2); the robust signals (total flags, untraceable, stability) all
+    favoured Opus. Re-measure if the synthesis prompt/inputs change materially.*
   - **⚠ LANDMINE (unbuilt — insider/Form-4):** when insider data is wired, the CIQ **Transaction-Type
     direction-flip** (`ciq_extraction_notes` ~line 80) MUST be handled — the Type column signs the
     trade, so a naive `net_shares_sold` summed off raw quantities is **sign-flip wrong** (buys and
