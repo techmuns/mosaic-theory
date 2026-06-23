@@ -10,13 +10,13 @@ from __future__ import annotations
 
 from typing import Any, cast
 
-from mosaic.ciq import CiqEdge
-from mosaic.graph import GraphEdge, judge_edges
-from mosaic.graph import test0 as t0mod
-from mosaic.graph.extract import _direction, _is_generic_placeholder, _resolve_node
-from mosaic.graph.llm import LlmClient
-from mosaic.graph.test0 import ciq_ground_truth, score_test0
-from mosaic.resolver import EntityResolver, RawEntry, ResolverIndex
+from vinci.ciq import CiqEdge
+from vinci.graph import GraphEdge, judge_edges
+from vinci.graph import test0 as t0mod
+from vinci.graph.extract import _direction, _is_generic_placeholder, _resolve_node
+from vinci.graph.llm import LlmClient
+from vinci.graph.test0 import ciq_ground_truth, score_test0
+from vinci.resolver import EntityResolver, RawEntry, ResolverIndex
 
 _RESOLVER = EntityResolver(
     index=ResolverIndex(
@@ -128,8 +128,8 @@ class _FakeLlm(LlmClient):
 def test_detect_shocks_is_market_adjusted() -> None:
     from datetime import date, timedelta
 
-    from mosaic.graph.test1 import detect_shocks
-    from mosaic.schemas.market import PriceBar
+    from vinci.graph.test1 import detect_shocks
+    from vinci.schemas.market import PriceBar
 
     def bars(iid: str, closes: list[float]) -> list[PriceBar]:
         d0 = date(2025, 1, 1)
@@ -152,8 +152,8 @@ def test_detect_shocks_is_market_adjusted() -> None:
 def test_cumulative_abnormal_return_lag_and_own_news_guard() -> None:
     from datetime import date, timedelta
 
-    from mosaic.graph.test1 import cumulative_abnormal_return
-    from mosaic.schemas.market import PriceBar
+    from vinci.graph.test1 import cumulative_abnormal_return
+    from vinci.schemas.market import PriceBar
 
     def bars(iid: str, closes: list[float]) -> list[PriceBar]:
         d0 = date(2025, 1, 1)
@@ -174,7 +174,7 @@ def test_cumulative_abnormal_return_lag_and_own_news_guard() -> None:
 
 
 def test_exposure_graph_n_hop_with_provenance() -> None:
-    from mosaic.graph.exposure import ExposureGraph
+    from vinci.graph.exposure import ExposureGraph
 
     def edge(focal_cik: str, ft: str, node: str, cp: str) -> dict[str, Any]:
         return {

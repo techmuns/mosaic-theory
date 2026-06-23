@@ -10,13 +10,13 @@ from __future__ import annotations
 from datetime import date
 from pathlib import Path
 
-from mosaic.edgar.client import all_unknown_snapshot
-from mosaic.eod.client import RawBar
-from mosaic.resolver.index import pad_cik
-from mosaic.schemas.data_record import Identity
-from mosaic.schemas.envelope import DataField, SourceTier
-from mosaic.screens import screen_universe
-from mosaic.store import Store
+from vinci.edgar.client import all_unknown_snapshot
+from vinci.eod.client import RawBar
+from vinci.resolver.index import pad_cik
+from vinci.schemas.data_record import Identity
+from vinci.schemas.envelope import DataField, SourceTier
+from vinci.screens import screen_universe
+from vinci.store import Store
 
 REF = date(2026, 6, 12)
 LOOKBACK = 500

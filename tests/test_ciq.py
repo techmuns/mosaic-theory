@@ -4,9 +4,9 @@ from __future__ import annotations
 
 from collections.abc import Iterator
 
-from mosaic.ciq import ManualDataStore, load_ciq_edges, parse_relationships
-from mosaic.ciq.relationships import _parse_entity
-from mosaic.resolver import EntityResolver, RawEntry, ResolverIndex
+from vinci.ciq import ManualDataStore, load_ciq_edges, parse_relationships
+from vinci.ciq.relationships import _parse_entity
+from vinci.resolver import EntityResolver, RawEntry, ResolverIndex
 
 _CUSTOMERS_VIEW = "\n".join(
     [

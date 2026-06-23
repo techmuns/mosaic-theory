@@ -12,11 +12,11 @@ from pathlib import Path
 
 import pytest
 
-from mosaic.schemas.ledger import Confidence, LedgerEntry, Verdict
-from mosaic.schemas.market import PriceBar
-from mosaic.scoring import aggregate, ols_beta_alpha, score_ledger, total_return
-from mosaic.scoring.metrics import VerdictScore
-from mosaic.store import Store
+from vinci.schemas.ledger import Confidence, LedgerEntry, Verdict
+from vinci.schemas.market import PriceBar
+from vinci.scoring import aggregate, ols_beta_alpha, score_ledger, total_return
+from vinci.scoring.metrics import VerdictScore
+from vinci.store import Store
 
 
 def test_total_return() -> None:

@@ -12,7 +12,7 @@ from datetime import date, timedelta
 
 import pytest
 
-from mosaic.eod import (
+from vinci.eod import (
     EodError,
     PolygonEodClient,
     compute_price_features,
@@ -21,11 +21,11 @@ from mosaic.eod import (
     parse_tiingo_prices,
     relative_return,
 )
-from mosaic.eod.features import _close_on_or_before
-from mosaic.resolver import EntityResolver
-from mosaic.schemas.envelope import CoverageStatus
-from mosaic.schemas.market import PriceBar
-from mosaic.store import Store
+from vinci.eod.features import _close_on_or_before
+from vinci.resolver import EntityResolver
+from vinci.schemas.envelope import CoverageStatus
+from vinci.schemas.market import PriceBar
+from vinci.store import Store
 
 REF = date(2026, 6, 15)
 

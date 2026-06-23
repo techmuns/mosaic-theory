@@ -86,7 +86,7 @@ flag it. That incremental blur is the failure mode this whole project is built t
 
 ## Stack & layout (orientation)
 
-- Python; `mosaic/` package (resolver, eod, edgar, universe, screens, ledger, scoring, graph, store).
+- Python; `vinci/` package (resolver, eod, edgar, universe, screens, ledger, scoring, graph, store).
 - SQLite store + **append-only** ledger (no ledger-DELETE; the spread IS the accumulated ledger).
   Snapshots committed as **JSONL, not binary** — keep committed state diff-able.
 - EOD via Polygon grouped-daily (5y); fundamentals via EDGAR XBRL + 8-K. No CIQ programmatic feed —

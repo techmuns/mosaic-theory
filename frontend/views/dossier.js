@@ -15,7 +15,7 @@ export async function render(root, params, { item, frame }) {
   if (!d) {
     root.innerHTML = frame(item, { crumbExtra: crumb, bodyHtml: `
       <div class="notice">No dossier assembled for <b>${escapeHtml(ticker)}</b> in this deploy.
-      Assemble it via <span class="mono">mosaic dossier --ticker ${escapeHtml(ticker)}</span> (then commit the derived
+      Assemble it via <span class="mono">vinci dossier --ticker ${escapeHtml(ticker)}</span> (then commit the derived
       <span class="mono">dossier.json</span> to the private repo).</div>` });
     return;
   }
@@ -39,7 +39,7 @@ async function renderIndex(root, item, frame) {
           <div class="mono" style="font-size:16px; font-weight:650;">${escapeHtml(t)}</div>
           <div class="muted" style="font-size:12px; margin-top:4px;">assembled facts · no verdict →</div>
         </a>`).join("")}</div>`
-    : `<div class="notice">No dossiers committed to this deploy yet. Assemble with <span class="mono">mosaic dossier</span>, then commit the derived <span class="mono">dossier.json</span> to the private repo.</div>`;
+    : `<div class="notice">No dossiers committed to this deploy yet. Assemble with <span class="mono">vinci dossier</span>, then commit the derived <span class="mono">dossier.json</span> to the private repo.</div>`;
   root.innerHTML = frame(item, {
     bodyHtml: `<div class="subtitle" style="margin-bottom:10px;">Search any ticker, open a finalist from the <a href="#/ranker">ranker</a>, or pick a committed one below.</div>${search}${body}`,
   });

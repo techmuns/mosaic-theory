@@ -11,7 +11,7 @@ permissions:
   contents: write # to commit the refreshed snapshots back
 
 concurrency:
-  group: mosaic-scheduled # weekly + monthly never race on the snapshot commit
+  group: vinci-scheduled # weekly + monthly never race on the snapshot commit
   cancel-in-progress: false
 
 jobs:
@@ -34,15 +34,15 @@ jobs:
         uses: actions/cache@v4
         with:
           path: data/cache
-          key: mosaic-eod-cache-${{ github.run_id }}
-          restore-keys: mosaic-eod-cache-
+          key: vinci-eod-cache-${{ github.run_id }}
+          restore-keys: vinci-eod-cache-
 
       - name: Run weekly screen
         env:
           POLYGON_API_KEY: ${{ secrets.POLYGON_API_KEY }}
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
           SEC_USER_AGENT: ${{ secrets.SEC_USER_AGENT }}
-        run: python -m mosaic run-weekly
+        run: python -m vinci run-weekly
 
       - name: Commit refreshed snapshots
         run: |

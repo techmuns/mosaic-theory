@@ -8,10 +8,10 @@ from typing import Any, cast
 
 import pytest
 
-from mosaic.edgar.client import EdgarClient, FundamentalSnapshot, all_unknown_snapshot
-from mosaic.edgar.concepts import ConceptPoint
-from mosaic.schemas.candidate import GateResult
-from mosaic.schemas.data_record import (
+from vinci.edgar.client import EdgarClient, FundamentalSnapshot, all_unknown_snapshot
+from vinci.edgar.concepts import ConceptPoint
+from vinci.schemas.candidate import GateResult
+from vinci.schemas.data_record import (
     CoverageTier,
     DataRecord,
     Fundamentals,
@@ -19,9 +19,9 @@ from mosaic.schemas.data_record import (
     PriceFeatures,
     StressSignals,
 )
-from mosaic.schemas.envelope import CoverageStatus, DataField, SourceTier
-from mosaic.schemas.market import PriceBar
-from mosaic.screens import (
+from vinci.schemas.envelope import CoverageStatus, DataField, SourceTier
+from vinci.schemas.market import PriceBar
+from vinci.screens import (
     Screen2Thresholds,
     annual_eps_as_of,
     detect_gap_downs,
@@ -331,8 +331,8 @@ def test_legacy_float_ev_ebitda_parses_under_current_schema(tmp_path: Path) -> N
     import json
     from datetime import date
 
-    from mosaic.rank.ranker import load_candidates_from_snapshot
-    from mosaic.schemas.envelope import DataField, SourceTier
+    from vinci.rank.ranker import load_candidates_from_snapshot
+    from vinci.schemas.envelope import DataField, SourceTier
 
     live = Path(__file__).resolve().parents[1] / "data" / "snapshots" / "candidate_records.jsonl"
     if not live.exists():

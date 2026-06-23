@@ -5,11 +5,11 @@ from __future__ import annotations
 from datetime import date
 from pathlib import Path
 
-from mosaic.config import UniverseConfig
-from mosaic.eod.client import RawBar
-from mosaic.schemas.envelope import DataField, SourceTier
-from mosaic.store import Store
-from mosaic.universe import (
+from vinci.config import UniverseConfig
+from vinci.eod.client import RawBar
+from vinci.schemas.envelope import DataField, SourceTier
+from vinci.store import Store
+from vinci.universe import (
     admit_security_type,
     benchmark_identity,
     latest_close_and_adv,

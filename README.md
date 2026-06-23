@@ -1,4 +1,4 @@
-# mosaic — Loop 1 (paper-mode validation engine): by banks @nogods404
+# vinci — Loop 1 (paper-mode validation engine): by banks @nogods404
 
 The **first production slice of a real, AI-native, long-only US equity research system** — the fund's
 actual engine, thin in *scope* (one screen, thin ingestion) but production-grade in *quality*. It runs
@@ -56,28 +56,28 @@ These will not be edited in response to results. Tuning the screen or the metric
 | E2 | Cap-band universe builder (close × XBRL shares; $3M ADV + operating-cos-only SIC gates) + lazy screen | ✅ done |
 | E3a | CIQ Business Relationships parser → supply-chain edges (Test-0 ground truth) | ✅ done |
 | E3b | 1-hop EDGAR who-names-whom graph (Sonnet 4.6, swappable LLM client; entity-resolved, provenanced) | ✅ done |
-| E3c | Graph **Test 0** — EDGAR graph scored vs CIQ (`mosaic graph-test0`) | ✅ run — see finding |
-| E3d | Evidence precision judge + small/mid moat-readiness read (`mosaic graph-coverage`) | ✅ run — see finding |
-| E3e | **Test 1** event study (`mosaic.graph.test1`) → graph-as-signal **FALSIFIED** (2 nulls) | ✅ run — retired |
-| E3f | Graph reframed to discriminator **input** — on-demand exposure lookup (`mosaic graph-exposure`) | ✅ built — validate live |
+| E3c | Graph **Test 0** — EDGAR graph scored vs CIQ (`vinci graph-test0`) | ✅ run — see finding |
+| E3d | Evidence precision judge + small/mid moat-readiness read (`vinci graph-coverage`) | ✅ run — see finding |
+| E3e | **Test 1** event study (`vinci.graph.test1`) → graph-as-signal **FALSIFIED** (2 nulls) | ✅ run — retired |
+| E3f | Graph reframed to discriminator **input** — on-demand exposure lookup (`vinci graph-exposure`) | ✅ built — validate live |
 
 **Loop 1 (steps 0–8) is complete and now extended.** The pipeline runs end-to-end: a weekly screen
 over the real **US small/mid universe** (~1,770 names: cap-band + tradeability + operating-cos gates) surfaces de-rating
 candidates → the manual discriminator logs BUY/AVOID verdicts (entry frozen) → monthly scoring computes
 the BUY−AVOID spread. It needs **time** to accumulate resolved verdicts.
 
-The **graph track** (moat validation) runs alongside. **Test 0** (`mosaic graph-test0`) scored the
+The **graph track** (moat validation) runs alongside. **Test 0** (`vinci graph-test0`) scored the
 LLM-extracted, entity-resolved EDGAR who-names-whom graph against CIQ: raw precision-vs-CIQ was low
 (45% Sonnet, 50% Opus) but *understated* it — most "misses" are **real, verbatim-sourced edges CIQ
 doesn't list** (NVDA→TSMC, QRVO→Apple). Opus≈Sonnet confirmed the gap is *coverage/approach*, not
 model strength; recall-vs-CIQ is structurally tiny (a 10-K names ~5–10 counterparties, CIQ aggregates
 50–180). So CIQ is a poor *precision* yardstick.
 
-The **evidence judge** (`mosaic.graph.judge`, CIQ-independent) replaced it — it scores each edge
+The **evidence judge** (`vinci.graph.judge`, CIQ-independent) replaced it — it scores each edge
 against its own cited 10-K passage (real link vs competitor / bio-governance / M&A-legal noise).
 Measured **84%** evidence-precision on the Test-0 edges, confirming the eyeball.
 
-**Moat-readiness read** (`mosaic graph-coverage`, band-A small/mid). The moat is the **cross-sectional
+**Moat-readiness read** (`vinci graph-coverage`, band-A small/mid). The moat is the **cross-sectional
 reasoning over the graph**, not a denser map (coverage is the replicable axis), so the read targets the
 non-replicable case: **shared nodes** — one shock source behind *multiple* small-caps, an exposure no
 single filing reveals. The moat-bearing edges are disclosed from the **small party's side** by SEC
@@ -104,7 +104,7 @@ genuinely non-replicable set: **TSMC behind 5 fabless semis** (AMBQ/CRUS/MXL/PI/
 Display behind 3** (a foreign hub with *no US listing*, captured only via node-identity), a
 semis-equipment cluster (Applied Materials, Lam Research, GlobalFoundries) and a defense cluster
 (Northrop, Collins). TSMC + Samsung Display — the two highest-value hubs — were invisible before the
-resolver fix. **Test 1** (`mosaic.graph.test1`) then ran the event study on this set —
+resolver fix. **Test 1** (`vinci.graph.test1`) then ran the event study on this set —
 sector-deconfounded shocks, dependent CAR measured vs IWM **and** vs the dependent's own sector (the
 deciding number).
 
@@ -118,7 +118,7 @@ Beyond the data the hypothesis was always weak: supply-chain momentum is a ~17-y
 un-tradeable short** for a long-only small/mid book. **Retired.**
 
 **Graph-as-discriminator-INPUT is OPEN** — the role that matches the fund's actual edge. The
-non-replicable value is cognitive, not mechanical: `mosaic graph-exposure --entity <X>` returns, on
+non-replicable value is cognitive, not mechanical: `vinci graph-exposure --entity <X>` returns, on
 demand, the N-hop cross-section of names exposed to a real event — a TSMC shock surfaces 32 names
 within 2 hops **with 10-K provenance**, including multi-hop ones a human wouldn't assemble (Apple via
 Cirrus Logic) — as a candidate list for the **manual** discriminator. It gates nothing, runs no
@@ -156,17 +156,17 @@ export SEC_USER_AGENT="you you@example.com"   # optional; SEC fair-access contac
 
 ```bash
 # Run from the repo root (python -m is the robust entrypoint).
-.venv/bin/python -m mosaic resolve AAPL GOOGL BRK.B --enrich   # entity resolver demo
+.venv/bin/python -m vinci resolve AAPL GOOGL BRK.B --enrich   # entity resolver demo
 
 .venv/bin/pytest -q                   # full suite
 .venv/bin/pytest -q -m "not network"  # offline only (skip live SEC/Polygon tests)
-.venv/bin/ruff check mosaic tests && .venv/bin/mypy mosaic     # lint + types
+.venv/bin/ruff check vinci tests && .venv/bin/mypy vinci     # lint + types
 ```
 
 ## Layout
 
 ```
-mosaic/
+vinci/
   config.py     universe definition (exchange filter, cap band), paths, API pacing
   schemas/      the data contracts (envelope, data-record A, candidate-record B, ledger)
   resolver/     US entity resolver — the join key (built first, hardened hardest)

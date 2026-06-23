@@ -13,8 +13,8 @@ from pathlib import Path
 
 import pytest
 
-from mosaic.schemas.candidate import CandidateRecord, GateResult, TriageBand
-from mosaic.schemas.data_record import (
+from vinci.schemas.candidate import CandidateRecord, GateResult, TriageBand
+from vinci.schemas.data_record import (
     CoverageTier,
     DataRecord,
     Fundamentals,
@@ -22,10 +22,10 @@ from mosaic.schemas.data_record import (
     PriceFeatures,
     StressSignals,
 )
-from mosaic.schemas.envelope import CoverageStatus, DataField, SourceTier
-from mosaic.schemas.ledger import Confidence, LedgerEntry, Verdict
-from mosaic.schemas.market import PriceBar
-from mosaic.store import Store
+from vinci.schemas.envelope import CoverageStatus, DataField, SourceTier
+from vinci.schemas.ledger import Confidence, LedgerEntry, Verdict
+from vinci.schemas.market import PriceBar
+from vinci.store import Store
 
 AS_OF = date(2026, 6, 10)
 

@@ -63,7 +63,7 @@ export async function render(root) {
   root.innerHTML = `
     <div class="breadcrumb">Overview</div>
     <div class="header-block">
-      <h1 class="page-h">Mosaic Theory · fund status</h1>
+      <h1 class="page-h">Nostra Vinci · fund status</h1>
       <div class="subtitle">An AI-native, long-biased, US-first concentrated equity fund. The edge is deep human judgment on a few finalists, fed by an AI funnel that achieves breadth a human can't.</div>
       <div class="subtitle muted">Read-only dashboard — a static mirror of the last pushed snapshots. It never trades, writes, or logs; verdicts are logged via the CLI only.</div>
     </div>
