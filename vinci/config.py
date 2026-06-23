@@ -87,9 +87,10 @@ class Config(BaseModel, frozen=True):
     pacing: PacingConfig = PacingConfig()
     # A datum older than this many calendar days flips coverage_status -> STALE.
     price_staleness_days: int = 5
-    # Graph-track LLM (who-names-whom extraction). Accuracy gates the moat hypothesis, so this is a
-    # strong model, not the cheapest — a swappable knob (Opus is the diagnostic fallback).
-    graph_llm_model: str = "claude-sonnet-4-6"
+    # LLM for graph extraction + dossier synthesis. Default Opus 4.8 (groundedness benchmark vs
+    # Sonnet 4.6: ~1/3 the untraceable figures, 0 mis-cites, ~3.5x more stable — see STATE.md).
+    # Accuracy gates the moat hypothesis, so we run the stronger model; swappable config knob.
+    graph_llm_model: str = "claude-opus-4-8"
     # A focal naming this many or more distinct hubs is a "super-connector" (e.g. an IT integrator
     # like Kyndryl that names every hyperscaler, or a packager that lists all its customers). Such a
     # name enumerates a LIST, not a few concentrated dependencies, and manufactures spurious shared-

@@ -1,9 +1,10 @@
 """Swappable LLM client for the graph track (who-names-whom extraction).
 
-The model is a **config parameter** (``graph_llm_model``, default Claude Sonnet 4.6) behind this
+The model is a **config parameter** (``graph_llm_model``, default Claude Opus 4.8) behind this
 interface — accuracy here gates the moat hypothesis, so we do not use the cheapest model. Extraction
 is forced through a tool-use schema so the model returns validated structured output, not prose.
-Opus is the *diagnostic* fallback (swap the config), not a runtime router.
+Opus 4.8 became the default after a groundedness benchmark (see ``config.graph_llm_model``); the
+model is still a swap-the-config knob, not a runtime router.
 """
 
 from __future__ import annotations

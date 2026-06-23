@@ -15,7 +15,7 @@ export async function render(root, params, { item, frame }) {
   if (!d) {
     root.innerHTML = frame(item, { crumbExtra: crumb, bodyHtml: `
       <div class="notice">No dossier assembled for <b>${escapeHtml(ticker)}</b> in this deploy.
-      Assemble it via <span class="mono">vinci dossier --ticker ${escapeHtml(ticker)}</span> (then commit the derived
+      Assemble it via <span class="mono">python -m vinci dossier --ticker ${escapeHtml(ticker)}</span> (then commit the derived
       <span class="mono">dossier.json</span> to the private repo).</div>` });
     return;
   }
@@ -39,9 +39,9 @@ async function renderIndex(root, item, frame) {
           <div class="mono" style="font-size:16px; font-weight:650;">${escapeHtml(t)}</div>
           <div class="muted" style="font-size:12px; margin-top:4px;">assembled facts · no verdict →</div>
         </a>`).join("")}</div>`
-    : `<div class="notice">No dossiers committed to this deploy yet. Assemble with <span class="mono">vinci dossier</span>, then commit the derived <span class="mono">dossier.json</span> to the private repo.</div>`;
+    : `<div class="notice">No dossiers committed to this deploy yet. Assemble with <span class="mono">python -m vinci dossier</span>, then commit the derived <span class="mono">dossier.json</span> to the private repo.</div>`;
   root.innerHTML = frame(item, {
-    bodyHtml: `<div class="subtitle" style="margin-bottom:10px;">Search any ticker, open a finalist from the <a href="#/ranker">ranker</a>, or pick a committed one below.</div>${search}${body}`,
+    bodyHtml: `${assembleHelp()}<div class="subtitle" style="margin-bottom:10px;">Search any ticker, open a finalist from the <a href="#/ranker">ranker</a>, or pick a committed one below.</div>${search}${body}`,
   });
   // client-side navigation only (no write path) — jump to any ticker's dossier
   root.querySelector("#ds-search").addEventListener("submit", (e) => {
@@ -49,6 +49,20 @@ async function renderIndex(root, item, frame) {
     const t = root.querySelector("#ds-q").value.trim().toUpperCase();
     if (t) location.hash = `#/dossier/${encodeURIComponent(t)}`;
   });
+}
+
+// "How to assemble a dossier" — COPYABLE TEXT in the same compact, collapsible style as the
+// Ingestion page's refresh block (never a button). The dashboard is read-only and runs nothing.
+function assembleHelp() {
+  return `
+    <details class="card" style="margin-bottom:18px; background:var(--surface-2);">
+      <summary style="cursor:pointer; font-size:12.5px; font-weight:600; color:var(--ink-2);">How to assemble a dossier <span class="muted" style="font-weight:400;">(read-only — copy &amp; run locally, then rebuild)</span></summary>
+      <div class="subtitle muted" style="margin:10px 0 8px;">Replace <span class="mono">&lt;TICKER&gt;</span> with the name. Pull the licensed CIQ first, assemble, then rebuild the mirror — the dashboard runs nothing.</div>
+      <pre style="background:var(--nav-bg); color:#c3cad6; padding:12px 14px; border-radius:8px; font-size:12px; overflow-x:auto; margin:0; line-height:1.6;"><code>python -m vinci dossier requirements --ticker &lt;TICKER&gt;  # which licensed CIQ to pull first
+python -m vinci dossier --ticker &lt;TICKER&gt;               # assemble one finalist (facts + fenced synthesis)
+python -m vinci dossier --top 10                         # or: the top 10 of the ranked queue
+python3 frontend/build.py                                # mirror into this dashboard, then reload</code></pre>
+    </details>`;
 }
 
 // --- a single Sourced fact: value + ↳ source_ref, or honest UNKNOWN/MISSING --
@@ -85,7 +99,7 @@ function renderDossier(d, verdict) {
     sec("Management commentary", "Earnings-call transcript — a pointer for the human to read in full; never a machine-curated excerpt.",
       fact("Transcript", m.management_commentary)),
     synthesis(d.synthesis),
-    loggedVerdict(verdict, d.ticker),
+    loggedVerdict(verdict, d.ticker, d.reference_date),
   ].join("");
 }
 
@@ -219,11 +233,19 @@ function synthesis(s) {
   </div>`;
 }
 
-function loggedVerdict(v, ticker) {
+function loggedVerdict(v, ticker, refDate) {
   if (!v) {
-    return `<div class="card ds-section"><div class="ds-title">Logged verdict</div>
-      <div class="logged-verdict none">No verdict logged for <span class="mono">${escapeHtml(ticker)}</span>.
-      Verdicts are logged via the <span class="mono">log-verdict</span> CLI only — never from this dashboard. The friction is the safeguard.</div></div>`;
+    const cid = `${ticker}-screen2-${String(refDate || "").replace(/-/g, "")}`;
+    return `<details class="card ds-section">
+      <summary style="cursor:pointer; font-size:12.5px; font-weight:600; color:var(--ink-2);">Logged verdict <span class="muted" style="font-weight:400;">— none yet for ${escapeHtml(ticker)} · how to log it (read-only — run locally)</span></summary>
+      <div class="logged-verdict none" style="margin-top:10px;">Verdicts are logged via the CLI only — never from this dashboard (the friction is the safeguard). After deciding from the facts above, run this locally from the repo root:</div>
+      <pre style="background:var(--nav-bg); color:#c3cad6; padding:12px 14px; border-radius:8px; font-size:12px; overflow-x:auto; margin:10px 0 0; line-height:1.6;"><code>python -m vinci log-verdict ${escapeHtml(cid)} \\
+  --verdict &lt;BUY|AVOID_TERMINAL&gt; \\
+  --twin "how the terminal-decline twin is ruled out" \\
+  --thesis "the overshoot thesis (or AVOID rationale)" \\
+  --kill "what would falsify it" \\
+  --horizon-days 180 --confidence &lt;low|medium|high&gt;</code></pre>
+      <div class="subtitle muted" style="margin-top:8px;">Append-only — the entry price is frozen from the screen's as-of date (<span class="mono">${escapeHtml(String(refDate || DASH))}</span>); a logged verdict cannot be edited or deleted.</div></details>`;
   }
   const isBuy = isBuyVerdict(v.verdict);
   return `<div class="card ds-section"><div class="ds-title">Logged verdict — immutable</div>
