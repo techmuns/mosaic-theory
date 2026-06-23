@@ -12,7 +12,7 @@ from __future__ import annotations
 
 import pytest
 
-from mosaic.resolver import (
+from vinci.resolver import (
     AmbiguousResolutionError,
     EntityResolver,
     RawEntry,

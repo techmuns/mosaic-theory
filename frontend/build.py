@@ -61,7 +61,7 @@ def main() -> None:
     for name in _MIRRORED:
         shutil.copyfile(SNAP / name, OUT_SNAP / name)
     # universe gate-exclusion health stats — present once the universe has been built with the
-    # stats emit (mosaic/universe.py). Absent on older snapshots → the ingestion screen degrades.
+    # stats emit (vinci/universe.py). Absent on older snapshots → the ingestion screen degrades.
     if (SNAP / "universe_stats.json").exists():
         shutil.copyfile(SNAP / "universe_stats.json", OUT_SNAP / "universe_stats.json")
 

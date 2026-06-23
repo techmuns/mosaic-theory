@@ -11,11 +11,11 @@ from __future__ import annotations
 
 import statistics
 
-from mosaic.config import get_config
-from mosaic.graph.test1 import cumulative_abnormal_return, detect_shocks
-from mosaic.resolver import EntityResolver
-from mosaic.store import Store
-from mosaic.universe import benchmark_identity
+from vinci.config import get_config
+from vinci.graph.test1 import cumulative_abnormal_return, detect_shocks
+from vinci.resolver import EntityResolver
+from vinci.store import Store
+from vinci.universe import benchmark_identity
 
 # hub -> [(dependent, its own sector ETF)] — documented; genuinely cross-sector cross-sections.
 XSECTOR = {

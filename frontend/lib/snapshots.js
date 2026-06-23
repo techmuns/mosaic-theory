@@ -5,7 +5,7 @@
 // consumes only their RETURN VALUES — never a file, path, or fetch directly.
 //
 // Today these read the committed snapshot files (static, no backend): the
-// `mosaic` CLI emits snapshots -> they are committed -> Cloudflare serves them
+// `vinci` CLI emits snapshots -> they are committed -> Cloudflare serves them
 // -> we fetch them from our OWN private origin. That runtime fetch is NOT a
 // backend; the site is a static mirror of the last pushed snapshots.
 //

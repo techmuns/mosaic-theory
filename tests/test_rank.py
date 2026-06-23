@@ -13,8 +13,8 @@ import json
 from datetime import date, datetime
 from pathlib import Path
 
-from mosaic.edgar.client import Filing
-from mosaic.rank import (
+from vinci.edgar.client import Filing
+from vinci.rank import (
     CauseClass,
     FilingText,
     LiquidityTier,
@@ -32,9 +32,9 @@ from mosaic.rank import (
     scan_structural,
     volume_overlay,
 )
-from mosaic.rank.cause import annotations_from_raw, classify_cause
-from mosaic.schemas.candidate import CandidateRecord, GateResult, TriageBand
-from mosaic.schemas.data_record import (
+from vinci.rank.cause import annotations_from_raw, classify_cause
+from vinci.schemas.candidate import CandidateRecord, GateResult, TriageBand
+from vinci.schemas.data_record import (
     CoverageTier,
     DataRecord,
     EventType,
@@ -44,7 +44,7 @@ from mosaic.schemas.data_record import (
     StressSignals,
     TypedEvent,
 )
-from mosaic.schemas.envelope import DataField, SourceTier
+from vinci.schemas.envelope import DataField, SourceTier
 
 REF = date(2026, 6, 17)
 RUN_AT = datetime(2026, 6, 17, 0, 0)
@@ -485,13 +485,13 @@ def test_market_cap_joined_into_profile() -> None:
 
 # --- the discipline guard: the ranker reads NO forward returns --------------------------------
 def test_ranker_reads_no_forward_returns() -> None:
-    """No code path in ``mosaic.rank`` may import the returns/ledger machinery — the backtest trap.
+    """No code path in ``vinci.rank`` may import the returns/ledger machinery — the backtest trap.
 
     Weights are tuned by face-validity only; this asserts mechanically that the package cannot reach
     forward returns, the BUY−AVOID spread, or the post-screen price freeze.
     """
-    forbidden = {"mosaic.scoring", "mosaic.ledger", "mosaic.store"}
-    pkg = Path(__file__).resolve().parent.parent / "mosaic" / "rank"
+    forbidden = {"vinci.scoring", "vinci.ledger", "vinci.store"}
+    pkg = Path(__file__).resolve().parent.parent / "vinci" / "rank"
     scanned = {src.name for src in pkg.glob("*.py")}
     # the Tier-3 deterministic structural-disqualifier channel must be in scope of this guard:
     assert {"structural.py", "ranker.py", "cause.py"} <= scanned

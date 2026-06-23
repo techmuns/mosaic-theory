@@ -15,18 +15,18 @@ from pathlib import Path
 import pytest
 from pydantic import BaseModel
 
-from mosaic.dossier import assemble as dass
-from mosaic.dossier import ciq, manual_store
-from mosaic.dossier import ciq_sheets as cs
-from mosaic.dossier import mechanical as dm
-from mosaic.dossier import render as dr
-from mosaic.dossier import requirements as dreq
-from mosaic.dossier import schemas as ds
-from mosaic.dossier import synthesis as syn
-from mosaic.edgar.client import EdgarClient, FundamentalSnapshot, all_unknown_snapshot
-from mosaic.graph.llm import AnthropicLlmClient, LlmClient, LlmError
-from mosaic.schemas import data_record as sdr
-from mosaic.schemas.envelope import DataField, SourceTier
+from vinci.dossier import assemble as dass
+from vinci.dossier import ciq, manual_store
+from vinci.dossier import ciq_sheets as cs
+from vinci.dossier import mechanical as dm
+from vinci.dossier import render as dr
+from vinci.dossier import requirements as dreq
+from vinci.dossier import schemas as ds
+from vinci.dossier import synthesis as syn
+from vinci.edgar.client import EdgarClient, FundamentalSnapshot, all_unknown_snapshot
+from vinci.graph.llm import AnthropicLlmClient, LlmClient, LlmError
+from vinci.schemas import data_record as sdr
+from vinci.schemas.envelope import DataField, SourceTier
 
 # A conclusion = verdict / recommendation / direction / score / rating / probability (or a synonym).
 # No dossier field may carry one: the LLM can't conclude because there is nowhere to put it.
@@ -84,8 +84,8 @@ def test_twin_cases_are_never_numeric() -> None:
 
 def test_dossier_package_imports_no_ledger_or_scoring() -> None:
     """The assembler must not be able to write a verdict: it imports no ledger/scoring module."""
-    pkg = Path(__file__).resolve().parents[1] / "mosaic" / "dossier"
-    forbidden = {"mosaic.ledger", "mosaic.scoring"}
+    pkg = Path(__file__).resolve().parents[1] / "vinci" / "dossier"
+    forbidden = {"vinci.ledger", "vinci.scoring"}
     offenders: list[str] = []
     for py in sorted(pkg.glob("*.py")):
         tree = ast.parse(py.read_text())
@@ -947,7 +947,7 @@ def test_ciq_modules_covers_every_address_the_extractors_consume() -> None:
     package, so addressing can't escape the guard by moving out of ciq_sheets.py. STATE.md §2 logs
     the trigger to migrate to a self-registering address registry once NEW document kinds start
     landing — until then this test is the binding."""
-    pkg = Path(__file__).resolve().parents[1] / "mosaic" / "dossier"
+    pkg = Path(__file__).resolve().parents[1] / "vinci" / "dossier"
     declared_kf = {(m.workbook_kind, m.freq) for m in dreq.CIQ_MODULES}
     sheets_by_kf = {(m.workbook_kind, m.freq): set(m.sheets) for m in dreq.CIQ_MODULES}
 

@@ -8,8 +8,8 @@ from datetime import date, datetime
 import pytest
 from pydantic import ValidationError
 
-from mosaic.config import get_config
-from mosaic.schemas import (
+from vinci.config import get_config
+from vinci.schemas import (
     CandidateRecord,
     CoverageStatus,
     DataField,
@@ -25,9 +25,9 @@ from mosaic.schemas import (
     TypedEvent,
     Verdict,
 )
-from mosaic.schemas.candidate import derive_unknown_gates
-from mosaic.schemas.data_record import EventType
-from mosaic.schemas.ledger import Confidence
+from vinci.schemas.candidate import derive_unknown_gates
+from vinci.schemas.data_record import EventType
+from vinci.schemas.ledger import Confidence
 
 AS_OF = date(2026, 6, 1)
 
@@ -37,7 +37,7 @@ def test_config_loads_and_paths_derive() -> None:
     cfg = get_config()
     assert cfg.universe.market_cap_min_usd < cfg.universe.market_cap_max_usd
     assert "Nasdaq" in cfg.universe.exchanges
-    assert cfg.db_path.name == "mosaic.db"
+    assert cfg.db_path.name == "vinci.db"
     assert cfg.snapshots_dir.name == "snapshots"
 
 

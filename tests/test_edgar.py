@@ -11,7 +11,7 @@ from datetime import date
 
 import pytest
 
-from mosaic.edgar import (
+from vinci.edgar import (
     EdgarClient,
     all_unknown_snapshot,
     compute_fundamental_snapshot,
@@ -21,8 +21,8 @@ from mosaic.edgar import (
     parse_fts_hit,
     parse_fts_response,
 )
-from mosaic.netcache import HttpError
-from mosaic.schemas.envelope import CoverageStatus
+from vinci.netcache import HttpError
+from vinci.schemas.envelope import CoverageStatus
 
 CROCS_CIK = "0001334036"
 

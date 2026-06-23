@@ -5,6 +5,11 @@
 > as the historical origin record.** Read this first at the start of any session; **every build
 > updates it.** Its value is accuracy, not optimism: falsified is recorded as falsified, deferred as
 > deferred-and-why, unproven as unproven. _Last verified against the repo: 2026-06-23._
+>
+> **Renamed 2026-06-23:** "Mosaic Theory" → **Nostra Vinci** (brand); the `mosaic` Python package /
+> CLI → **`vinci`** (run via `python -m vinci.cli` or the `vinci` entry point). The GitHub repo +
+> local folder are still `mosaic-theory` (a separate, manual rename — until then 2 doc headers keep
+> that name); `MOSAIC CO` (ticker MOS) in `data/` is an unrelated universe holding, untouched.
 
 ## 1. What this is
 
@@ -18,11 +23,11 @@ return spread** on the manual discriminator's verdicts — which needs calendar 
 
 Each line: *what it does* — *verified how*.
 
-- **Entity resolver** (`mosaic/resolver`) — US SEC CIK↔ticker↔name, fail-loud on unknown/ambiguous —
+- **Entity resolver** (`vinci/resolver`) — US SEC CIK↔ticker↔name, fail-loud on unknown/ambiguous —
   *ran `resolve AAPL GOOGL GOOG BRK.B ZZZZZ`: GOOGL/GOOG→one CIK, BRK.B→BRK-B, ZZZZZ fails loud.*
-- **Polygon EOD** (`mosaic/eod`) — whole-market grouped-daily, 5y history (Starter) — *universe/screen ran on 5y bars.*
-- **EDGAR** (`mosaic/edgar`) — XBRL `companyfacts`/`frames` + 8-K full-text + submissions — *feeds G3; module + tests.*
-- **Universe builder** (`mosaic/universe`) — market cap = close × XBRL shares, cap-band + $3M ADV +
+- **Polygon EOD** (`vinci/eod`) — whole-market grouped-daily, 5y history (Starter) — *universe/screen ran on 5y bars.*
+- **EDGAR** (`vinci/edgar`) — XBRL `companyfacts`/`frames` + 8-K full-text + submissions — *feeds G3; module + tests.*
+- **Universe builder** (`vinci/universe`) — market cap = close × XBRL shares, cap-band + $3M ADV +
   an **operating-cos-only gate on TWO fail-closed axes** — *`build-universe` ran → 1,727 names (drifts
   a few as SEC data updates).*
   - **Two independent operating-co axes, each fail-CLOSED on a missing value (exclude what we cannot
@@ -47,7 +52,7 @@ Each line: *what it does* — *verified how*.
     diagnosis). Axis 2's fail-closed-on-missing also sweeps recently-delisted names the 90-day price
     gate still admitted (an as-of-now vs as-of-date asymmetry, acceptable for a forward-tradeable
     universe).
-- **Screen 2 + gates** (`mosaic/screens`) — G1 drawdown ≤−30% (capped at −85% terminal floor) / G2
+- **Screen 2 + gates** (`vinci/screens`) — G1 drawdown ≤−30% (capped at −85% terminal floor) / G2
   idiosyncratic **vs the IWM market index** (NOT a sector cohort — see caveat) / G3 multiple vs ~5y
   floor (`_PE_WINDOW_DAYS=1825`); PASS/FAIL/UNKNOWN, recall-favoring — *`screen` / `run-weekly` → 317
   candidates @ ref 2026-06-22 (was 301 @ 06-17; the universe/screen drift weekly as SEC+EOD data
@@ -76,13 +81,13 @@ Each line: *what it does* — *verified how*.
     180d trailing return** (`eod/features.relative_return`; `run.py` passes `benchmark="IWM"`). It is a
     *trailing return*, not peak-to-current drawdown. The SIC peer-cohort was **deferred and never built**
     (`features.py:135` leaves the field UNKNOWN, note "needs SIC peers (step 5)"; **no SIC-cohort /
-    peer-aggregation code exists anywhere in `mosaic/`** — so the Part-1 sub-questions on SIC
+    peer-aggregation code exists anywhere in `vinci/`** — so the Part-1 sub-questions on SIC
     source/granularity/aggregate/thin-cohort are all moot). So G2 removes **market** beta only — a name
     that fell *with its sector* (sector-wide derate) still PASSES G2 if it merely lagged IWM. *Re-derived
     FUBO from raw bars: depth −84.3% (=snapshot, close 8.90 / 52w high-of-highs 56.64); idio −88.2%
     (=snapshot) = FUBO −72.6% − IWM **+15.6%** over 180d — the "−88% vs market" is FUBO's fall minus the
     small-cap market's RISE, no sector comparison at all.*
-- **Ranker / triage layer** (`mosaic/rank`, `rank` CLI) — **orders** the ~307 candidates into a
+- **Ranker / triage layer** (`vinci/rank`, `rank` CLI) — **orders** the ~307 candidates into a
   priority queue so a 2-person team deep-pulls the most structurally-promising overshoots first.
   A *transparent* weighted composite of the Tier-1 axes (idiosyncrasy .30 / drawdown-depth .25 /
   **drawdown-character .25** / multiple-vs-own-5y .20 — **face-validity weights, never
@@ -101,7 +106,7 @@ Each line: *what it does* — *verified how*.
   (ICCM's 61.7× active-distribution overlay sinks it from a top-2 quality to #6); 156 UNKNOWN-multiple
   names flagged; ADV floor $10M gates 75 thin names to the queue bottom; a structural-break flag
   demotes FUBO #1→#12 while mean-revert lifts PAR #3→#1. 31 tests incl. an AST guard that
-  `mosaic.rank` imports no scoring/ledger/store (no forward-return path). Emits
+  `vinci.rank` imports no scoring/ledger/store (no forward-return path). Emits
   `ranked_queue.{jsonl,md}` snapshots.*
   - **Coverage caveat (an upstream data gap, NOT a ranker defect):** the ranking is **most reliable
     for names with a *confirmed* at-floor multiple, weaker for the ~51% without one** —
@@ -111,7 +116,7 @@ Each line: *what it does* — *verified how*.
     text — so drawdown-character is one axis, and Tier-2 reads *current* volume, not volume-at-the-
     gap). All handled fail-loud (UNKNOWN → 0-credit + flagged, never imputed) — correct behaviour; the
     fix is upstream coverage (§4), recorded not chased.
-  - **Tier-3 DETERMINISTIC structural-disqualifier channel** (`mosaic/rank/structural.py`, `rank
+  - **Tier-3 DETERMINISTIC structural-disqualifier channel** (`vinci/rank/structural.py`, `rank
     --structural` flag) — **DEMOTE-ONLY, source-bound, off by default (network).** Reads the **free**
     EDGAR 8-K full text (item codes + body) + the EDGAR-XBRL shares series already used for market
     cap, and flags TERMINAL/STRUCTURAL signals only: **restatement/non-reliance (Item 4.02)**,
@@ -160,7 +165,7 @@ Each line: *what it does* — *verified how*.
       2.04/1.01 is missed — a **safe-direction MISS** (under-demote → the name still reaches the
       dossier, which reads its 8-Ks and surfaces the distress), consistent with the recall-favoring
       funnel. Fix only if it bites in real use. ruff + `mypy --strict` clean; 178 suite green.
-- **Dossier-assembler** (`mosaic/dossier`, `dossier` CLI) — per-finalist; **assembles and cites, NEVER
+- **Dossier-assembler** (`vinci/dossier`, `dossier` CLI) — per-finalist; **assembles and cites, NEVER
   concludes.** A deterministic source-bound MECHANICAL layer (every fact a `{value, source_ref}`: P/E +
   percentile / FCF-sign / net-leverage from the screen's EDGAR data-record; the gap-down **8-Ks** fetched
   + bound as the de-rating cause; **idiosyncratic-vs-shared** = name vs IWM 180d return + the graph-exposed
@@ -183,7 +188,7 @@ Each line: *what it does* — *verified how*.
   mechanical layer; 11 dossier tests incl. the no-conclusion-field schema guard + the no-ledger import
   guard. Writes `data/dossiers/<ticker>/{dossier.json,dossier.md,llm_call.log}` (git-ignored — may carry
   licensed CIQ).*
-  - **CIQ requirements manifest — ONE definition, two consumers (`mosaic/dossier/requirements.py`,
+  - **CIQ requirements manifest — ONE definition, two consumers (`vinci/dossier/requirements.py`,
     `dossier requirements` CLI).** The canonical list of manual CIQ inputs the assembler expects lives
     in a single `CIQ_MODULES` tuple; each module is a structured record — workbook-kind + the subsheets
     consumed, what the mechanical layer derives from it (names the extractor), granularity, lookback,
@@ -388,7 +393,7 @@ Each line: *what it does* — *verified how*.
     idiosyncratic-vs-shared **graph-cohort read is effectively dormant at the dossier stage**; 96%
     (incl. FUBO, VRRM) fall back to the name-vs-IWM read with cohort UNKNOWN. Activating it needs the
     graph built across the candidate universe — deferred, not rebuilt.
-- **Decision ledger** (`mosaic/ledger` + `store`) — append-only: `append_ledger` is INSERT-only and
+- **Decision ledger** (`vinci/ledger` + `store`) — append-only: `append_ledger` is INSERT-only and
   **no `clear_ledger`/ledger-DELETE exists anywhere** — *2 verdicts across 2 processes both persist;
   survives `clear_candidates`+`clear_universe`+`export_snapshots`; re-log → `sqlite3.IntegrityError`.*
   - **FIRST REAL VERDICT LOGGED — 2026-06-21.** `VRRM` **AVOID_TERMINAL**, frozen entry **$4.71 @
@@ -399,10 +404,10 @@ Each line: *what it does* — *verified how*.
     (lost-NJMVC analogue); explicit kill-criteria. Committed to `decision_ledger.jsonl`. **This is
     leg 1 of the BUY−AVOID spread — unresolved; 0 resolved verdicts, so the §4 gate is NOT met.** The
     spread needs BUY legs and calendar time before it can show anything.
-- **Scoring harness** (`mosaic/scoring`) — BUY−AVOID spread = `buy_mean_return − avoid_mean_return`
+- **Scoring harness** (`vinci/scoring`) — BUY−AVOID spread = `buy_mean_return − avoid_mean_return`
   (benchmark-free), over **resolved** verdicts only — *synthetic +20% BUY / −20% AVOID → spread +40%.*
   - **Per-sector spread enabler — verdicts sector-tagged at log time (built 2026-06-22).** Every
-    `LedgerEntry` now carries a `sector` (coarse GICS-like, `mosaic/sectors.sector_for_sic` over the
+    `LedgerEntry` now carries a `sector` (coarse GICS-like, `vinci/sectors.sector_for_sic` over the
     EDGAR SIC the resolver already provides — **NO new data source**), captured + frozen at log time
     like the entry price, never derived later. `log_verdict` resolves the SIC via the resolver
     (`Identity.sic` is not populated on candidates) through a `SicSource` Protocol that keeps the
@@ -428,7 +433,7 @@ Each line: *what it does* — *verified how*.
 - **Entry-price freeze** (`store.close_as_of`) — clamps to `bar_date ≤ reference_date`, fail-loud if
   none, staleness kept on top — *Phase-0 lookahead fix; 3 shown cases + regression test; commit
   `a3b63bb` on `main` (orig `b9d438d`, rebased).*
-- **graph-exposure** (`mosaic/graph/exposure`, `graph-exposure` CLI) — given an entity, returns N-hop
+- **graph-exposure** (`vinci/graph/exposure`, `graph-exposure` CLI) — given an entity, returns N-hop
   exposed names with 10-K provenance — *`--entity TSM` → 32 names within 2 hops (incl. Apple via
   Cirrus); unit test. This is research-input only — see §3.*
 - **GitHub Actions cron** (`.github/workflows/weekly-screen.yml`, `monthly-score.yml`) — present.
@@ -455,7 +460,7 @@ Each line: *what it does* — *verified how*.
 
 **The fossils call the graph "the differentiator." That is wrong, and recorded honestly here:**
 
-- **Edge 3 / graph-as-mechanical-signal (shock-propagation): FALSIFIED.** Test 1 (`mosaic/graph/test1`,
+- **Edge 3 / graph-as-mechanical-signal (shock-propagation): FALSIFIED.** Test 1 (`vinci/graph/test1`,
   `scripts/run_test1*.py`) returned **two clean nulls on the sector-deconfounded column**: same-sector
   semis (signal vanished after SOXX-adjustment); cross-sector (live pooled −1.0% vs own-sector, while
   the control AMZN posted +1.0% — *that was the n≈8–16 noise floor*; the apparent vs-IWM signal was

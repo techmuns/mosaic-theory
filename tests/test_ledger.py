@@ -13,9 +13,9 @@ from pathlib import Path
 
 import pytest
 
-from mosaic.ledger import LedgerError, log_verdict
-from mosaic.schemas.candidate import CandidateRecord, GateResult, TriageBand
-from mosaic.schemas.data_record import (
+from vinci.ledger import LedgerError, log_verdict
+from vinci.schemas.candidate import CandidateRecord, GateResult, TriageBand
+from vinci.schemas.data_record import (
     CoverageTier,
     DataRecord,
     Fundamentals,
@@ -23,11 +23,11 @@ from mosaic.schemas.data_record import (
     PriceFeatures,
     StressSignals,
 )
-from mosaic.schemas.envelope import DataField, SourceTier
-from mosaic.schemas.ledger import Confidence, Verdict
-from mosaic.schemas.market import PriceBar
-from mosaic.scoring.metrics import VerdictScore, spread_by_sector
-from mosaic.store import Store
+from vinci.schemas.envelope import DataField, SourceTier
+from vinci.schemas.ledger import Confidence, Verdict
+from vinci.schemas.market import PriceBar
+from vinci.scoring.metrics import VerdictScore, spread_by_sector
+from vinci.store import Store
 
 
 def _u() -> DataField[float]:

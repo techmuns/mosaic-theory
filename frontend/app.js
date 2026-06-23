@@ -110,7 +110,7 @@ function renderSidebar() {
 
   document.getElementById("sidebar").innerHTML = `
     <div class="brand">
-      <div class="mark">Mosaic Theory</div>
+      <div class="mark">Nostra Vinci</div>
       <div class="sub">research &amp; decision ops · read-only</div>
     </div>
     ${NAV.map(block).join("")}`;

@@ -141,7 +141,7 @@ If the verbatim read shows a mismatch between the file's actual Period Type and 
 
 **Industry Specific / Pension OPEB / Supplemental empty-subsheet rule:** when these subsheets contain "No Data Available", this is expected behavior for sectors where the industry-specific KPIs aren't aggregated to structured CIQ data. Do NOT treat empty as a missing file. The framework still needs the equivalent metrics from other sources (transcripts, IR releases, formal annual filing); the gap is just that CIQ hasn't aggregated them for this sector.
 
-## Dossier extractor semantics (code-matched spec — `mosaic/dossier/ciq_sheets.py`, `mechanical.py`)
+## Dossier extractor semantics (code-matched spec — `vinci/dossier/ciq_sheets.py`, `mechanical.py`)
 
 This section is the spec the dossier extractors actually implement. It must not lag the code; each
 rule names the function so a future session can find and extend it. All rules are name-agnostic
