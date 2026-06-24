@@ -272,6 +272,28 @@ Each line: *what it does* — *verified how*.
     audit question "should we flag data already labelled LLM-verified?" — answer: don't blanket-flag
     cited claims (the ↳ is the verify-this affordance; would be noise), DO flag prose claiming
     verification + clarify the label.*
+  - **Synthesis-reproduces-consensus fix (2026-06-24) — make the CORRECTED read the DEFAULT, flag
+    regressions; does NOT claim to eliminate LLM face-value tendency (the guardrail + human verdict are
+    the backstop).** Three bounded mechanisms in the existing package, no new data source. **(A) Mechanical
+    pairs misleading metrics with their reconciler** so the synthesis can't see the metric without its
+    disconfirming context: `margin_trend` now carries the **absolute EBITDA + revenue trajectory inline**
+    (a margin % can fall while absolute EBITDA RISES); a trailing multiple with NO forward counterpart
+    carries a **'trailing-only — can't tell cheap-overshoot from cheap-terminal' blind-flag**; leverage is
+    promoted to a **`survival_capacity`** block (net-debt/EBITDA + self-funding + nearest refinancing wall,
+    any leg UNKNOWN = a risk). **(B) Synthesis contract** adds a required **`evidence_balance`** (committed,
+    possibly-lopsided — no laundering a one-sided case into a balanced list), **opacity-as-signal** (a
+    missing expected disclosure is a BEARISH risk, not neutral), and **contrarian-reconciliation** (each
+    optical/trailing bear point must declare REAL-signal vs consensus-MISREAD using the paired reconciler).
+    **(C) Guardrails FLAG (never block):** `UNRECONCILED` a margin-compression bear point lacking its
+    absolute-EBITDA reconciliation; `FALSE-BALANCE` a 'mixed' read over a lopsided split; missing
+    evidence_balance. *Verified — VRRM re-run, the proof case: the margin bear point flipped from
+    "EBITDA margin 42%→37%" (face-value) to "largely an optical MISREAD — absolute EBITDA RISING 229→362
+    while the % compressed"; evidence_balance committed ("mixed — FCF-positive/self-funding/growing… yet a
+    >10%-customer Avis termination"); survival_capacity reads as one block (2.9x | self-funding | 2028 wall);
+    no UNRECONCILED flag fired. 5 dossier-test pins added (margin reconciler, evidence_balance, opacity,
+    UNRECONCILED + FALSE-BALANCE, survival block). ruff + mypy --strict (65) + pytest (188) green.* **NOT in
+    scope (still deferred): the SIC peer-cohort / single-name cross-section read — a new capability, not a
+    surgical fix.**
   - **CIQ loader → workbook-aware addressing model (VRRM, 2026-06-19) — the prior loader couldn't
     reach the subsheets, so every CIQ section read MISSING.** CIQ Financials is ONE ~13-subsheet
     workbook (Income Statement / Cash Flow / Multiples / Segments / Capital Structure Details / …);

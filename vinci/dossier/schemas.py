@@ -120,9 +120,12 @@ class Quality(BaseModel):
 
     fcf_sign: Sourced[int]
     free_cash_flow: Sourced[float]
-    margin_trend: Sourced[str]
+    margin_trend: Sourced[str]  # margin % PAIRED with the absolute EBITDA/revenue reconciler
     net_debt_to_ebitda: Sourced[float]  # GAAP consolidated EBITDA basis
     net_debt_to_ebitda_adjusted: Sourced[str]  # covenant basis: net debt / FY-guide adjusted EBITDA
+    # Solvency as ONE block (leverage + self-funding + nearest refinancing wall) so survival isn't
+    # read as one metric among many; any leg UNKNOWN is itself a risk (opacity-as-signal).
+    survival_capacity: Sourced[str]
     interest_coverage: Sourced[float]
     share_count_trend: Sourced[str]
     liquidity_covenant_flags: Sourced[str]
@@ -244,6 +247,9 @@ class Synthesis(BaseModel):
     field exists — the assemble-not-conclude line, structural. The two cases are framing for the
     human (exaggerated/temporary overshoot vs secular/terminal decline), not a conclusion."""
 
+    # A committed, possibly-LOPSIDED balance read — a one-sided reality must NOT be laundered into a
+    # symmetric bull/bear list. Required of the LLM (tool schema); "" default only tolerates legacy.
+    evidence_balance: str = ""
     bull_points: list[SourcedPoint]  # the overshoot case
     bear_points: list[SourcedPoint]  # the terminal-decline case
     twin_reference_cases: list[TwinCase]
