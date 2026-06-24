@@ -336,6 +336,12 @@ def test_consensus_reproduction_guardrails_unreconciled_and_false_balance() -> N
                             "229→362", "source_ref": "x"}]}
     _, f2, _ = syn.synthesize(_minimal_mech(), llm=_FakeLlm(rec), ticker="X", name="X")
     assert not any("UNRECONCILED" in f for f in f2)
+    # a bare 'absolute' intensifier ("absolute disaster") must NOT count as reconciliation → flagged
+    byp = {**base, "evidence_balance": "strongly-bearish",
+           "bear_points": [{"claim": "EBITDA margin compressed to 37%, an absolute disaster",
+                            "source_ref": "x"}]}
+    _, fb, _ = syn.synthesize(_minimal_mech(), llm=_FakeLlm(byp), ticker="X", name="X")
+    assert any("UNRECONCILED" in f for f in fb)
     # G.2: missing evidence_balance is flagged
     noeb = {**base, "bear_points": [{"claim": "revenue fell", "source_ref": "x"}]}
     _, f3, _ = syn.synthesize(_minimal_mech(), llm=_FakeLlm(noeb), ticker="X", name="X")
@@ -649,8 +655,8 @@ def test_margin_trend_carries_its_absolute_ebitda_reconciler() -> None:
     assert mt.status is ds.SourceStatus.PRESENT
     v = mt.value or ""
     assert "EBITDA margin:" in v and "37%" in v  # 362/979 ≈ 37% — the margin % trajectory
-    # the RECONCILER is INLINE: the absolute EBITDA series (306 → 342 → 362, RISING) + revenue
-    assert "ABSOLUTE" in v and "306" in v and "362" in v and "revenue" in v
+    # the RECONCILER is INLINE, as its own clean series: absolute EBITDA (306 → 342 → 362) + revenue
+    assert "absolute EBITDA:" in v and "306" in v and "362" in v and "absolute revenue:" in v
     assert "(R)" in v  # the reclassified basis is marked
     assert "YoY" not in v  # the quarterly same-quarter YoY stays in the trajectory, not here
 
@@ -812,7 +818,7 @@ def test_quarterly_revenue_yoy_lives_in_trajectory_not_margin() -> None:
     assert "Revenue YoY" in (tr.value or "") and "+0.1%" in (tr.value or "")  # YoY in trajectory
     mt = cs.margin_trend(b)
     mv = mt.value or ""
-    assert "EBITDA margin:" in mv and "ABSOLUTE" in mv  # margin % + its absolute reconciler (A.1)
+    assert "EBITDA margin:" in mv and "absolute EBITDA:" in mv  # margin % + its reconciler (A.1)
     assert "YoY" not in mv  # the quarterly YoY stays in the trajectory, never under a margin label
 
 

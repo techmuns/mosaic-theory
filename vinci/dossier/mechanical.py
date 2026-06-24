@@ -587,7 +587,7 @@ def _nearest_maturity(liquidity: Sourced[str]) -> str:
     UNKNOWN (itself a solvency-visibility risk per the synthesis's opacity-as-signal rule)."""
     if liquidity.status is not SourceStatus.PRESENT or not liquidity.value:
         return "nearest refinancing wall UNKNOWN (no instrument table — a risk)"
-    years = sorted(int(y) for y in re.findall(r"Due\s+(\d{4})", liquidity.value))
+    years = sorted(int(y) for y in re.findall(r"Due\s+(\d{4})(?!\d)", liquidity.value))
     if not years:
         return "nearest refinancing wall UNKNOWN (no maturity dates parsed — a risk)"
     return f"nearest maturity wall: {years[0]}"

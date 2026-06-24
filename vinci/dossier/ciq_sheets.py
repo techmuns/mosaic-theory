@@ -310,15 +310,16 @@ def margin_trend(bundle: CiqBundle) -> Sourced[str]:
         bits.append(f"gross margin: {gp_traj}")
     # PAIR the margin % with its RECONCILER — absolute EBITDA + revenue — in the SAME field, so the
     # % is never read alone (a margin % can FALL while absolute EBITDA RISES: scaling, not decline).
+    # Emitted as clean ';'-separated series so the table renderer parses each as its own row.
     abs_eb = _trajectory_row(rows, eb_i, hdr)
     abs_rev = _trajectory_row(rows, rev_i, hdr)
-    recon = ([f"EBITDA {abs_eb}"] if abs_eb else []) + ([f"revenue {abs_rev}"] if abs_rev else [])
-    abs_block = (
-        "  ‖ ABSOLUTE (the reconciler — read the % WITH this): " + "; ".join(recon)
-    ) if recon else ""
+    if abs_eb:
+        bits.append(f"absolute EBITDA: {abs_eb}")
+    if abs_rev:
+        bits.append(f"absolute revenue: {abs_rev}")
     return Sourced.present(
-        "; ".join(bits) + abs_block
-        + "  [R reclassified; margin % can fall while absolute EBITDA rises — read them together]",
+        "; ".join(bits)
+        + "  [R reclassified; margin % can fall while absolute EBITDA RISES — read them together]",
         source_ref="CIQ Financials→Income Statement (margin % + absolute EBITDA reconciler)",
     )
 

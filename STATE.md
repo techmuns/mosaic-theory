@@ -291,9 +291,12 @@ Each line: *what it does* — *verified how*.
     while the % compressed"; evidence_balance committed ("mixed — FCF-positive/self-funding/growing… yet a
     >10%-customer Avis termination"); survival_capacity reads as one block (2.9x | self-funding | 2028 wall);
     no UNRECONCILED flag fired. 5 dossier-test pins added (margin reconciler, evidence_balance, opacity,
-    UNRECONCILED + FALSE-BALANCE, survival block). ruff + mypy --strict (65) + pytest (188) green.* **NOT in
-    scope (still deferred): the SIC peer-cohort / single-name cross-section read — a new capability, not a
-    surgical fix.**
+    UNRECONCILED + FALSE-BALANCE, survival block). ruff + mypy --strict (65) + pytest green.* *Post-audit
+    (same day): margin_trend emitted as clean ';'-separated series — the old `‖ ABSOLUTE` block corrupted
+    the frontend table parser (gross-margin row); `survival_capacity` + `evidence_balance` are now rendered
+    in render.py + the frontend (the fix's output was hidden from the human); `_ABS_RECON` tightened (a bare
+    "absolute"/"EBITDA <year>" no longer counts as reconciliation).* **NOT in scope (still deferred): the
+    SIC peer-cohort / single-name cross-section read — a new capability, not a surgical fix.**
   - **CIQ loader → workbook-aware addressing model (VRRM, 2026-06-19) — the prior loader couldn't
     reach the subsheets, so every CIQ section read MISSING.** CIQ Financials is ONE ~13-subsheet
     workbook (Income Statement / Cash Flow / Multiples / Segments / Capital Structure Details / …);

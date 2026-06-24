@@ -108,10 +108,12 @@ _MARGIN_DROP = re.compile(
     r"|\b(compress|contract|erod|declin|fell|fall|shrink)\w*[^.]{0,25}\bmargin\b",
     re.IGNORECASE,
 )
+# the claim DID reconcile vs the RISING absolute EBITDA (a bare 'absolute'/'EBITDA <year>' is not)
 _ABS_RECON = re.compile(
-    r"\babsolute\b|\bEBITDA (?:rose|grew|grow|up\b|higher|increas|expand|climb|rising|\$?\d)"
-    r"|while EBITDA|EBITDA in dollars|dollar EBITDA|EBITDA dollars|\bscal(?:e|es|ed|ing)\b"
-    r"|operating leverage|reconcil",
+    r"\bEBITDA (?:rose|grew|grow\w*|up\b|higher|increas\w*|expand\w*|climb\w*|rising)"
+    r"|\bEBITDA[^.]{0,25}→"
+    r"|\babsolute (?:ebitda|dollar)\w*[^.]{0,35}(?:ros\w*|grew|up\b|higher|increas\w*|rising|→)"
+    r"|EBITDA (?:in )?dollars|dollar EBITDA|\bscal(?:e|es|ed|ing)\b|operating leverage|reconcil\w*",
     re.IGNORECASE,
 )
 
@@ -393,7 +395,7 @@ def _validate(synth: Synthesis, mech: MechanicalLayer) -> tuple[Synthesis, list[
         flags.append(
             "evidence_balance MISSING — the synthesis must commit a balance read, never default it"
         )
-    elif "mixed" in eb and (nb + nr) >= 3 and (min(nb, nr) == 0 or max(nb, nr) >= 2 * min(nb, nr)):
+    elif "mixed" in eb and (nb + nr) >= 3 and (min(nb, nr) == 0 or max(nb, nr) > 2 * min(nb, nr)):
         flags.append(
             f"FALSE-BALANCE? evidence_balance reads 'mixed' but the bull/bear split is lopsided "
             f"({nb} bull vs {nr} bear) — confirm genuinely mixed, not one-sided dressed as balanced"

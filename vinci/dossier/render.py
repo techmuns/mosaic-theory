@@ -81,6 +81,7 @@ def render_markdown(d: Dossier) -> str:
         _fact("Margin trend", m.quality.margin_trend),
         _fact("Net debt / EBITDA (GAAP)", m.quality.net_debt_to_ebitda, _mult),
         _fact("Net debt / EBITDA (fwd-adj)", m.quality.net_debt_to_ebitda_adjusted),
+        _fact("Survival capacity (leverage + self-funding + wall)", m.quality.survival_capacity),
         _fact("Interest coverage", m.quality.interest_coverage, _mult),
         _fact("Share-count trend", m.quality.share_count_trend),
         _fact("Liquidity / covenant flags", m.quality.liquidity_covenant_flags),
@@ -141,6 +142,8 @@ def render_markdown(d: Dossier) -> str:
 
     s = d.synthesis
     out += ["## Synthesis (LLM — framing for the human, every point source-bound)", ""]
+    if s.evidence_balance:
+        out += [f"**Evidence balance:** {s.evidence_balance}", ""]
 
     def points(title: str, pts: list[Any]) -> None:
         out.append(f"### {title}")
