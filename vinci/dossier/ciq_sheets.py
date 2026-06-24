@@ -275,10 +275,11 @@ def _quarterly_revenue_yoy(bundle: CiqBundle) -> str | None:
 
 
 def margin_trend(bundle: CiqBundle) -> Sourced[str]:
-    """The MARGIN trajectory — gross and EBITDA margin (%) per period across the years, so the trend
-    is visible (e.g. VRRM's ~42%→37% EBITDA-margin compression). Each margin is a ratio within one
-    column, so the Reclassified basis (marked) is never crossed. Revenue GROWTH is a top-line metric
-    and lives in the multi-year trajectory, not under a margin label."""
+    """The MARGIN trajectory — gross and EBITDA margin (%) per period — PAIRED in the same field
+    with the ABSOLUTE EBITDA + revenue trajectory, so margin compression is never shown without its
+    disconfirming context (VRRM: ~42%→37% margin WHILE EBITDA 229→362 — consensus misreads the
+    falling % as a bear; the absolute EBITDA RISING is the real signal). Each margin is a ratio
+    within one column, so the Reclassified basis (marked) is never crossed."""
     try:
         rows = bundle.sheet("financials", "Income Statement", freq="annual")
     except CiqUnavailableError as exc:
@@ -299,16 +300,27 @@ def margin_trend(bundle: CiqBundle) -> Sourced[str]:
                 parts.append(f"{lab} {v / rv:.0%}")
         return " → ".join(parts) if len(parts) >= 2 else None
 
-    eb_traj = margin_traj(_find_row(rows, "EBITDA"))
+    eb_i = _find_row(rows, "EBITDA")
+    eb_traj = margin_traj(eb_i)
     gp_traj = margin_traj(_find_row(rows, "Gross Profit"))
     if eb_traj is None and gp_traj is None:
         return Sourced.unknown(note="no gross/EBITDA margin series in the Income Statement")
     bits = [f"EBITDA margin: {eb_traj}"] if eb_traj else []
     if gp_traj:
         bits.append(f"gross margin: {gp_traj}")
+    # PAIR the margin % with its RECONCILER — absolute EBITDA + revenue — in the SAME field, so the
+    # % is never read alone (a margin % can FALL while absolute EBITDA RISES: scaling, not decline).
+    # Emitted as clean ';'-separated series so the table renderer parses each as its own row.
+    abs_eb = _trajectory_row(rows, eb_i, hdr)
+    abs_rev = _trajectory_row(rows, rev_i, hdr)
+    if abs_eb:
+        bits.append(f"absolute EBITDA: {abs_eb}")
+    if abs_rev:
+        bits.append(f"absolute revenue: {abs_rev}")
     return Sourced.present(
-        "; ".join(bits) + "  [R reclassified basis; each margin is within one period]",
-        source_ref="CIQ Financials→Income Statement (margin trajectory)",
+        "; ".join(bits)
+        + "  [R reclassified; margin % can fall while absolute EBITDA RISES — read them together]",
+        source_ref="CIQ Financials→Income Statement (margin % + absolute EBITDA reconciler)",
     )
 
 

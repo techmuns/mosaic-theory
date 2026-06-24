@@ -100,6 +100,23 @@ _VERIFIED_ASSERTION = re.compile(
     re.IGNORECASE,
 )
 
+# Margin compression cited as a bear point WITHOUT its absolute-EBITDA reconciler (Mechanism A.1
+# now pairs them) — the consensus misread. _ABS_RECON = the claim reconciled vs the absolute.
+_MARGIN_DROP = re.compile(
+    r"\bmargin\b[^.]{0,40}\b(compress|contract|erod|declin|fell|fall|lower|down|deteriorat|shrink|"
+    r"weaken|weak\b)\w*"
+    r"|\b(compress|contract|erod|declin|fell|fall|shrink)\w*[^.]{0,25}\bmargin\b",
+    re.IGNORECASE,
+)
+# the claim DID reconcile vs the RISING absolute EBITDA (a bare 'absolute'/'EBITDA <year>' is not)
+_ABS_RECON = re.compile(
+    r"\bEBITDA (?:rose|grew|grow\w*|up\b|higher|increas\w*|expand\w*|climb\w*|rising)"
+    r"|\bEBITDA[^.]{0,25}→"
+    r"|\babsolute (?:ebitda|dollar)\w*[^.]{0,35}(?:ros\w*|grew|up\b|higher|increas\w*|rising|→)"
+    r"|EBITDA (?:in )?dollars|dollar EBITDA|\bscal(?:e|es|ed|ing)\b|operating leverage|reconcil\w*",
+    re.IGNORECASE,
+)
+
 _POINT = {
     "type": "object",
     "properties": {
@@ -131,7 +148,12 @@ SYNTHESIS_TOOL: dict[str, Any] = {
             "bear_points": {
                 "type": "array",
                 "items": _POINT,
-                "description": "The secular-and-TERMINAL decline case (value-trap reading).",
+                "description": "The secular-and-TERMINAL decline case. For EACH bear point on an "
+                "OPTICAL/timing/trailing metric (a margin %, a trailing multiple, leverage), state "
+                "in the claim whether it is the REAL signal or the consensus MISREAD, using the "
+                "paired reconciler in the SAME fact (margin % carries absolute EBITDA beside it; a "
+                "trailing multiple carries its forward or a 'trailing-only' blind-flag). The edge "
+                "diverges from the biased consensus read — do not reproduce it.",
             },
             "twin_reference_cases": {
                 "type": "array",
@@ -166,10 +188,16 @@ SYNTHESIS_TOOL: dict[str, Any] = {
                 "items": {"type": "string"},
                 "description": "What the human must still resolve — esp. MISSING/UNKNOWN facts.",
             },
+            "evidence_balance": {  # LAST on purpose: if the response truncates, this (not a
+                "type": "string",  # structural field) is the casualty, and it's flag-not-block.
+                "description": "ONE concise line, ≤25 words: <strongly-bearish|mixed|strongly-"
+                "bullish> — <the single dominant reason>. NOT a paragraph; do not restate the "
+                "bull/bear points. A lopsided reality must produce a lopsided read.",
+            },
         },
         "required": [
             "bull_points", "bear_points", "twin_reference_cases", "decisive_question",
-            "key_unknowns",
+            "key_unknowns", "evidence_balance",
         ],
     },
 }
@@ -185,7 +213,19 @@ _SYSTEM = (
     "source_ref or exactly '[LLM-suggested, unverified]'; never a recovery rate, base rate, or "
     "probability — analogues are for reasoning, not stats. (5) Surface the decisive question; do "
     "NOT answer it. (6) Never recommend, rate, score, or predict a direction — there is nowhere to "
-    "put a verdict and it is not your job."
+    "put a verdict and it is not your job. "
+    "(7) ANTI-BALANCE: do NOT default to symmetric bull/bear lists. evidence_balance is the LAST "
+    "field — ONE concise line (≤25 words: label + the single dominant reason, NOT a paragraph, do "
+    "not restate the points); a one-sided reality must produce a one-sided dossier, not laundered "
+    "into a balanced-looking list. "
+    "(8) OPACITY-AS-SIGNAL: a MISSING expected disclosure (no segment breakout, no cash-runway "
+    "visibility, an opaque structure, no forward guide, a survival_capacity leg UNKNOWN) is NOT "
+    "neutral — surface it in key_unknowns as a BEARISH risk, not a neutral gap. "
+    "(9) CONTRARIAN-RECONCILIATION: for each major bear point citing an optical/timing/trailing "
+    "metric, state explicitly whether it is the REAL signal or the optical/consensus MISREAD, "
+    "using the paired reconciler in the same fact (a falling margin % carries the absolute EBITDA "
+    "beside it — a % can fall while EBITDA RISES). The edge diverges from the biased consensus "
+    "read; do not reproduce it."
 )
 
 
@@ -337,6 +377,30 @@ def _validate(synth: Synthesis, mech: MechanicalLayer) -> tuple[Synthesis, list[
                 "verify; confirm against the source (cited ≠ verified)"
             )
 
+    # G.1 unreconciled margin claim: a bear/decisive-against point citing margin COMPRESSION without
+    # the absolute-EBITDA reconciliation the layer now pairs it with (A.1) — the exact consensus
+    # misread the fix targets (a margin % can fall while absolute EBITDA rises).
+    g1 = [(x, "bear_point") for x in bear] + [(x, "decisive.against") for x in dq.evidence_against]
+    for p, where in g1:
+        if _MARGIN_DROP.search(p.claim) and not _ABS_RECON.search(p.claim):
+            flags.append(
+                f"UNRECONCILED {where}: '{_snip(p.claim)}' — cites margin compression without the "
+                "absolute-EBITDA reconciliation (margin % can fall while EBITDA rises)"
+            )
+    # G.2 false-balance: evidence_balance must be present + committed; a 'mixed' read over a
+    # lopsided bull/bear split is a one-sided case laundered to look balanced.
+    eb = (synth.evidence_balance or "").strip().lower()
+    nb, nr = len(bull), len(bear)
+    if not eb:
+        flags.append(
+            "evidence_balance MISSING — the synthesis must commit a balance read, never default it"
+        )
+    elif "mixed" in eb and (nb + nr) >= 3 and (min(nb, nr) == 0 or max(nb, nr) > 2 * min(nb, nr)):
+        flags.append(
+            f"FALSE-BALANCE? evidence_balance reads 'mixed' but the bull/bear split is lopsided "
+            f"({nb} bull vs {nr} bear) — confirm genuinely mixed, not one-sided dressed as balanced"
+        )
+
     validated = synth.model_copy(
         update={"bull_points": bull, "bear_points": bear, "decisive_question": dq}
     )
@@ -362,6 +426,7 @@ def _parse(raw: dict[str, Any]) -> Synthesis:
         if isinstance(t, dict)
     ]
     return Synthesis(
+        evidence_balance=str(raw.get("evidence_balance", "")),
         bull_points=pts(raw.get("bull_points")),
         bear_points=pts(raw.get("bear_points")),
         twin_reference_cases=twins,
@@ -399,10 +464,11 @@ def synthesize(
         log_parts += ["", "=== ERROR ===", str(exc)]
         return None, [f"LLM synthesis failed (no usable output): {exc}"], "\n".join(log_parts)
     log_parts += ["", "=== RAW OUTPUT ===", json.dumps(raw, indent=2, default=str)]
-    # the tool marks all five fields required; a missing one means a truncated response — mark the
-    # synthesis UNAVAILABLE rather than silently defaulting to a blank (indistinguishable from a
-    # genuinely empty field). Defence-in-depth alongside the extract-level max_tokens guard.
-    missing = [k for k in SYNTHESIS_TOOL["input_schema"]["required"] if k not in raw]
+    # a missing STRUCTURAL field means a truncated response — mark the synthesis UNAVAILABLE rather
+    # than silently defaulting to a blank. evidence_balance is excluded: its absence is a contract
+    # REGRESSION the guardrail FLAGS (G.2), not a truncation that blocks — flag, don't drop.
+    structural = [k for k in SYNTHESIS_TOOL["input_schema"]["required"] if k != "evidence_balance"]
+    missing = [k for k in structural if k not in raw]
     if missing:
         note = f"synthesis tool returned incomplete output — missing required field(s) {missing}"
         log_parts += ["", "=== INCOMPLETE ===", note]

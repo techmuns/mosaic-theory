@@ -553,6 +553,15 @@ def _valuation(
     pe = _sourced(f.pe, source_ref="EDGAR XBRL eps_diluted × EOD price (screen data-record, G3)")
     if pe_note and pe.status is SourceStatus.PRESENT:
         pe = pe.model_copy(update={"note": pe_note})  # carry the distortion caveat ON the value
+    # trailing-only blind-flag: a trailing multiple with NO forward counterpart can't tell
+    # cheap-overshoot from cheap-terminal — force the synthesis to declare it's flying blind rather
+    # than imply trailing-cheap = overshoot.
+    ev = ciq_sheets.ev_ebitda_current(bundle)
+    if ev.status is SourceStatus.PRESENT and adj_ev.status is not SourceStatus.PRESENT:
+        ev = ev.model_copy(update={
+            "note": "trailing only — no forward basis; cannot distinguish cheap-overshoot from "
+            "cheap-terminal"
+        })
     return Valuation(
         pe=pe,
         pe_percentile_5y=_sourced(
@@ -561,7 +570,7 @@ def _valuation(
         # The EDGAR screen field `f.ev_ebitda` carries EBITDA *dollars* (screens/assemble.py
         # populates it from ebitda_annual), not the multiple — so the dossier's EV/EBITDA is the
         # authoritative CIQ TEV/LTM multiple, never the EDGAR scalar (never a dollar figure here).
-        ev_ebitda=ciq_sheets.ev_ebitda_current(bundle),
+        ev_ebitda=ev,
         ev_ebitda_percentile_5y=(
             _sourced(f.ev_ebitda_pctile_vs_history, source_ref="EDGAR (screen data-record)")
             if f.ev_ebitda_pctile_vs_history.is_known
@@ -573,26 +582,71 @@ def _valuation(
     )
 
 
+def _nearest_maturity(liquidity: Sourced[str]) -> str:
+    """The nearest refinancing wall — the earliest 'Due YYYY' in the instrument table, or fail-loud
+    UNKNOWN (itself a solvency-visibility risk per the synthesis's opacity-as-signal rule)."""
+    if liquidity.status is not SourceStatus.PRESENT or not liquidity.value:
+        return "nearest refinancing wall UNKNOWN (no instrument table — a risk)"
+    years = sorted(int(y) for y in re.findall(r"Due\s+(\d{4})(?!\d)", liquidity.value))
+    if not years:
+        return "nearest refinancing wall UNKNOWN (no maturity dates parsed — a risk)"
+    return f"nearest maturity wall: {years[0]}"
+
+
+def _survival_capacity(
+    net_lev: Sourced[float], adj_lev: Sourced[str], fcf_sign: Sourced[float],
+    liquidity: Sourced[str],
+) -> Sourced[str]:
+    """Solvency as ONE block — net leverage + self-funding (FCF sign) + nearest refinancing wall —
+    so survival can't be read as one quality metric among many. Each leg is present or fail-loud
+    UNKNOWN (itself a risk). Uses only already-derived EDGAR/CIQ facts; no new data source."""
+    present = SourceStatus.PRESENT
+    parts: list[str] = []
+    if net_lev.status is present and net_lev.value is not None:
+        lev = f"net-debt/EBITDA {net_lev.value:.1f}x (GAAP)"
+        if adj_lev.status is present and adj_lev.value:
+            lev += f"; {adj_lev.value}"
+        parts.append(lev)
+    else:
+        parts.append(
+            f"net-debt/EBITDA UNKNOWN ({net_lev.note or 'not derivable'}) — solvency risk"
+        )
+    if fcf_sign.status is present and fcf_sign.value is not None:
+        parts.append(
+            "FCF-positive → self-funding (no runway constraint)" if fcf_sign.value > 0
+            else "FCF-negative → burning cash; runway = cash ÷ burn (cash not derived — a risk)"
+        )
+    else:
+        parts.append("FCF sign UNKNOWN — runway not assessable (a risk)")
+    parts.append(_nearest_maturity(liquidity))
+    return Sourced.present(
+        " | ".join(parts),
+        source_ref="EDGAR net-debt/EBITDA + FCF sign + CIQ Capital Structure (survival capacity)",
+    )
+
+
 def _quality(
     record: DataRecord, edgar: EdgarClient, bundle: CiqBundle, reference_date: date,
     adj_leverage: Sourced[str],
 ) -> Quality:
     f = record.fundamentals
+    net_lev = _sourced(f.net_leverage, source_ref="EDGAR XBRL net-debt/EBITDA (screen data-record)")
+    fcf_sign = _sourced(f.fcf_sign, source_ref="EDGAR XBRL FCF sign (screen data-record)")
+    liquidity = ciq_sheets.liquidity_covenant_flags(bundle)
     return Quality(
-        fcf_sign=_sourced(f.fcf_sign, source_ref="EDGAR XBRL FCF sign (screen data-record)"),
+        fcf_sign=fcf_sign,
         free_cash_flow=ciq_sheets.free_cash_flow(bundle),
         margin_trend=ciq_sheets.margin_trend(bundle),
-        net_debt_to_ebitda=_sourced(
-            f.net_leverage, source_ref="EDGAR XBRL net-debt/EBITDA (screen data-record)"
-        ),
+        net_debt_to_ebitda=net_lev,
         net_debt_to_ebitda_adjusted=adj_leverage,
+        survival_capacity=_survival_capacity(net_lev, adj_leverage, fcf_sign, liquidity),
         interest_coverage=ciq_sheets.interest_coverage(bundle),
         share_count_trend=(
             _share_count_trend(edgar, record.identity.cik, reference_date)
             if record.identity.cik
             else Sourced.unknown(note="no CIK")
         ),
-        liquidity_covenant_flags=ciq_sheets.liquidity_covenant_flags(bundle),
+        liquidity_covenant_flags=liquidity,
         multi_year_trajectory=ciq_sheets.multi_year_trajectory(bundle),
     )
 

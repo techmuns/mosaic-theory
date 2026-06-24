@@ -216,6 +216,7 @@ function quality(q) {
     seriesTable("Margin trend", q.margin_trend) +
     fact("Net debt / EBITDA (GAAP)", q.net_debt_to_ebitda, mult) +
     fact("Net debt / EBITDA (covenant adj.)", q.net_debt_to_ebitda_adjusted) +
+    fact("Survival capacity", q.survival_capacity) +
     fact("Interest coverage", q.interest_coverage, mult) +
     fact("Share-count trend", q.share_count_trend) +
     fact("Liquidity / covenant flags", q.liquidity_covenant_flags) +
@@ -286,6 +287,7 @@ function synthesis(s) {
       <div class="muted" style="font-size:12px; margin-top:3px;">distinguished by: ${escapeHtml(t.distinguishing_fact || "")}</div>
       <span class="cite">${escapeHtml(t.source || "")}</span></div>`).join("");
   return `<div class="card ds-section"><div class="ds-title">Synthesis · framing</div>${fence}
+    ${s.evidence_balance ? `<div style="margin:6px 0; padding:8px 11px; border:1px solid var(--line); border-left:3px solid var(--accent); border-radius:4px; font-size:13px; line-height:1.5;"><b>Evidence balance:</b> ${escapeHtml(s.evidence_balance)}</div>` : ""}
     <div class="ds-title" style="font-size:12px; margin-top:6px;">Bull — the overshoot case</div>
     ${(s.bull_points || []).map((p) => point(p, "bull")).join("") || `<div class="muted">—</div>`}
     <div class="ds-title" style="font-size:12px; margin-top:14px;">Bear — the terminal-decline case</div>

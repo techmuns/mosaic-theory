@@ -70,9 +70,11 @@ def test_dossier_schema_has_no_conclusion_field() -> None:
 
 
 def test_synthesis_is_the_only_llm_output_and_carries_no_conclusion() -> None:
-    """The synthesis model's fields are exactly the spec'd five — no place for a conclusion."""
+    """The synthesis model's fields are exactly the spec'd six — no place for a conclusion.
+    evidence_balance is a committed balance read, NOT a verdict/score/direction."""
     assert set(ds.Synthesis.model_fields) == {
-        "bull_points", "bear_points", "twin_reference_cases", "decisive_question", "key_unknowns",
+        "evidence_balance", "bull_points", "bear_points", "twin_reference_cases",
+        "decisive_question", "key_unknowns",
     }
 
 
@@ -164,8 +166,8 @@ def _minimal_mech() -> ds.MechanicalLayer:
         ),
         quality=ds.Quality(
             fcf_sign=_u(), free_cash_flow=_u(), margin_trend=_u(), net_debt_to_ebitda=_u(),
-            net_debt_to_ebitda_adjusted=_u(), interest_coverage=_u(), share_count_trend=_u(),
-            liquidity_covenant_flags=_u(), multi_year_trajectory=_u(),
+            net_debt_to_ebitda_adjusted=_u(), survival_capacity=_u(), interest_coverage=_u(),
+            share_count_trend=_u(), liquidity_covenant_flags=_u(), multi_year_trajectory=_u(),
         ),
         concentration=ds.Concentration(
             segments=_u(), segment_ebitda=_u(), customers=_u(), geographic=_u()
@@ -313,6 +315,75 @@ def test_verification_assertion_tripwire_flags_machine_claiming_it_verified() ->
     _, flags, _ = syn.synthesize(_minimal_mech(), llm=_FakeLlm(payload), ticker="X", name="X")
     vc = [f for f in flags if "VERIFICATION-CLAIM" in f]
     assert len(vc) == 1 and "bull_point" in vc[0] and "We verified" in vc[0]  # the over-assertion
+
+
+def test_consensus_reproduction_guardrails_unreconciled_and_false_balance() -> None:
+    """Mechanism B guardrails: (G.1) a bear point citing margin COMPRESSION without the
+    absolute-EBITDA reconciliation flags UNRECONCILED, but a reconciled one does not; (G.2) a
+    missing evidence_balance flags (required of the LLM, flagged not blocked), and 'mixed' over a
+    split flags FALSE-BALANCE."""
+    base = {"twin_reference_cases": [], "key_unknowns": [], "bull_points": [],
+            "decisive_question": {"question": "q?", "evidence_for": [], "evidence_against": []}}
+    # G.1: margin compression cited WITHOUT the absolute EBITDA → UNRECONCILED
+    unrec = {**base, "evidence_balance": "strongly-bearish — margins",
+             "bear_points": [{"claim": "EBITDA margin compressed from 42% to 37%, deteriorating",
+                              "source_ref": "x"}]}
+    _, f1, _ = syn.synthesize(_minimal_mech(), llm=_FakeLlm(unrec), ticker="X", name="X")
+    assert any("UNRECONCILED bear_point" in f for f in f1)
+    # reconciled (cites the absolute EBITDA RISING) → NOT flagged
+    rec = {**base, "evidence_balance": "mixed — see notes",
+           "bear_points": [{"claim": "EBITDA margin fell 42%→37% WHILE absolute EBITDA rose "
+                            "229→362", "source_ref": "x"}]}
+    _, f2, _ = syn.synthesize(_minimal_mech(), llm=_FakeLlm(rec), ticker="X", name="X")
+    assert not any("UNRECONCILED" in f for f in f2)
+    # a bare 'absolute' intensifier ("absolute disaster") must NOT count as reconciliation → flagged
+    byp = {**base, "evidence_balance": "strongly-bearish",
+           "bear_points": [{"claim": "EBITDA margin compressed to 37%, an absolute disaster",
+                            "source_ref": "x"}]}
+    _, fb, _ = syn.synthesize(_minimal_mech(), llm=_FakeLlm(byp), ticker="X", name="X")
+    assert any("UNRECONCILED" in f for f in fb)
+    # G.2: missing evidence_balance is flagged
+    noeb = {**base, "bear_points": [{"claim": "revenue fell", "source_ref": "x"}]}
+    _, f3, _ = syn.synthesize(_minimal_mech(), llm=_FakeLlm(noeb), ticker="X", name="X")
+    assert any("evidence_balance MISSING" in f for f in f3)
+    # G.2: 'mixed' label over a 0-bull / 3-bear split → FALSE-BALANCE
+    lop = {**base, "evidence_balance": "mixed",
+           "bear_points": [{"claim": "a", "source_ref": "x"}, {"claim": "b", "source_ref": "x"},
+                           {"claim": "c", "source_ref": "x"}]}
+    _, f4, _ = syn.synthesize(_minimal_mech(), llm=_FakeLlm(lop), ticker="X", name="X")
+    assert any("FALSE-BALANCE" in f for f in f4)
+
+
+def test_synthesis_contract_requires_balance_and_treats_opacity_as_risk() -> None:
+    """Mechanism B lives in the synthesis CONTRACT (prompt + tool schema): evidence_balance is a
+    required tool field; opacity is a bearish risk; anti-balance + contrarian-reconciliation are
+    instructed. evidence_balance carries no conclusion token (the no-verdict line still holds)."""
+    assert "evidence_balance" in syn.SYNTHESIS_TOOL["input_schema"]["required"]
+    sys = syn._SYSTEM
+    assert "OPACITY-AS-SIGNAL" in sys and "BEARISH risk" in sys
+    assert "ANTI-BALANCE" in sys and "CONTRARIAN-RECONCILIATION" in sys
+    assert not any(tok in "evidence_balance" for tok in _FORBIDDEN)  # not a verdict-shaped field
+
+
+def test_survival_capacity_blocks_leverage_with_runway_and_wall() -> None:
+    """Mechanism A.3: leverage is promoted to a SURVIVAL block — net-debt/EBITDA + self-funding +
+    nearest refinancing wall in one field; a missing leg fails loud as a risk."""
+    present, unknown = ds.Sourced.present, ds.Sourced.unknown
+    sc = dm._survival_capacity(
+        present(2.9, source_ref="EDGAR"), present("~2.6x fwd-adj", source_ref="99.1"),
+        present(1.0, source_ref="EDGAR"),  # FCF sign +1 → self-funding
+        present("2021 Term Loan Due 2028 (Term Loans) 687 @ 5.7%", source_ref="CIQ"),
+    )
+    v = sc.value or ""
+    assert "net-debt/EBITDA 2.9x" in v and "self-funding" in v
+    assert "nearest maturity wall: 2028" in v
+    # a missing leg fails loud as a risk, never silently dropped
+    risky = dm._survival_capacity(
+        unknown(note="no debt/cash"), unknown(note="no guide"), unknown(note="no FCF"),
+        unknown(note="no instruments"),
+    )
+    rv = risky.value or ""
+    assert "UNKNOWN" in rv and "risk" in rv
 
 
 def test_synthesis_fails_loud_when_llm_errors() -> None:
@@ -569,9 +640,10 @@ def test_segment_ebitda_section_surfaces_profit_share() -> None:
     assert "Segments (EBITDA" in (eb.source_ref or "")
 
 
-def test_margin_trend_is_a_margin_trajectory() -> None:
-    """'Margin trend' is the gross/EBITDA-margin trajectory across years (the trend), not single-
-    period levels with a misfiled revenue YoY — growth is top-line, kept out of this field."""
+def test_margin_trend_carries_its_absolute_ebitda_reconciler() -> None:
+    """Mechanism A.1: margin_trend pairs the margin % WITH the absolute EBITDA + revenue trajectory
+    in the SAME field, so a falling margin % is never presentable without the absolute EBITDA that
+    reconciles it (a % can fall while absolute EBITDA RISES — scaling, not deterioration)."""
     inc: list[list[typing.Any]] = [
         ["For the Fiscal Period", "Reclassified\n12 months\nDec-2023", "12 months\nDec-2024",
          "12 months\nDec-2025"],
@@ -582,9 +654,11 @@ def test_margin_trend_is_a_margin_trajectory() -> None:
     mt = cs.margin_trend(_fin_bundle({"Income Statement": inc}, freq="annual"))
     assert mt.status is ds.SourceStatus.PRESENT
     v = mt.value or ""
-    assert "EBITDA margin:" in v and "37%" in v  # 362/979 ≈ 37% — the margin trajectory
+    assert "EBITDA margin:" in v and "37%" in v  # 362/979 ≈ 37% — the margin % trajectory
+    # the RECONCILER is INLINE, as its own clean series: absolute EBITDA (306 → 342 → 362) + revenue
+    assert "absolute EBITDA:" in v and "306" in v and "362" in v and "absolute revenue:" in v
     assert "(R)" in v  # the reclassified basis is marked
-    assert "YoY" not in v  # revenue growth is NOT reported under a margin label
+    assert "YoY" not in v  # the quarterly same-quarter YoY stays in the trajectory, not here
 
 
 def test_ev_ebitda_current_is_a_multiple_not_dollars() -> None:
@@ -727,8 +801,9 @@ def test_geographic_section_parsed() -> None:
 
 # --- item 3: clean same-quarter YoY from the quarterly file; annual margins + guards kept --------
 def test_quarterly_revenue_yoy_lives_in_trajectory_not_margin() -> None:
-    """The clean same-quarter revenue YoY (Q1-2026 vs Q1-2025) now lives in the trajectory/growth
-    field; margin_trend carries only the margin trajectory (no growth under a margin label)."""
+    """The clean same-quarter revenue YoY (Q1-2026 vs Q1-2025) lives in the trajectory/growth field;
+    margin_trend carries the margin % + its absolute EBITDA reconciler (A.1) but never the quarterly
+    YoY (that growth metric is top-line, not a margin-field item)."""
     annual: list[list[typing.Any]] = [
         ["For the Fiscal Period", "12 months Dec-31-2025", "LTM 12 months Mar-31-2026"],
         ["Total Revenue", 979.0, 979.4], ["Gross Profit", 572.0, 557.0], ["EBITDA", 362.0, 358.0],
@@ -742,7 +817,9 @@ def test_quarterly_revenue_yoy_lives_in_trajectory_not_margin() -> None:
     tr = cs.multi_year_trajectory(b)
     assert "Revenue YoY" in (tr.value or "") and "+0.1%" in (tr.value or "")  # YoY in trajectory
     mt = cs.margin_trend(b)
-    assert "EBITDA margin:" in (mt.value or "") and "YoY" not in (mt.value or "")  # margins only
+    mv = mt.value or ""
+    assert "EBITDA margin:" in mv and "absolute EBITDA:" in mv  # margin % + its reconciler (A.1)
+    assert "YoY" not in mv  # the quarterly YoY stays in the trajectory, never under a margin label
 
 
 # --- item 4: multi-year arc shows per-period values, basis marked, never YoY'd across ------------
