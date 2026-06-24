@@ -257,6 +257,21 @@ Each line: *what it does* — *verified how*.
     net-debt text. **Caveat:** the net-debt NOTE itself is computed at SCREEN time (cached in `vinci.db`),
     so dossier re-assembly reads the stale value — the `edgar/client.py` disambiguation lands on the next
     `run-weekly` (re-screen), not on re-assembly.*
+  - **Verification-assertion tripwire + cited≠verified label (2026-06-24) — the dossier CITES, it
+    never VERIFIES; the machine asserting it verified something is the one line it can't cross.** A
+    new `VERIFICATION-CLAIM` guard flags any synthesis claim whose prose asserts the machine
+    verified/proved something (`verified`, `proves that`, `definitively`, `established fact`) — honest
+    negations (`unverified`, `cannot be verified`) and benign domain terms (`proven track record`,
+    `confirmed orders`) are redacted first, so it fires only on real over-assertion. Frontend: the
+    synthesis fence now states **"citations (↳) locate each claim for you to verify — cited is not
+    verified"**, and twins are labelled **LLM-selected analogies** (a citation means the data is
+    sourced, not that the analogy holds). *Verified: fires NOTHING on all 5 live dossiers (the model
+    hedges correctly today) — it is drift insurance; fires on synthetic over-assertions; skips
+    `cannot be verified` / `proven track record` / `confirmed orders`. Frontend notes render (preview
+    eval, console clean). Regression test added; ruff + mypy --strict + pytest green. Origin: the
+    audit question "should we flag data already labelled LLM-verified?" — answer: don't blanket-flag
+    cited claims (the ↳ is the verify-this affordance; would be noise), DO flag prose claiming
+    verification + clarify the label.*
   - **CIQ loader → workbook-aware addressing model (VRRM, 2026-06-19) — the prior loader couldn't
     reach the subsheets, so every CIQ section read MISSING.** CIQ Financials is ONE ~13-subsheet
     workbook (Income Statement / Cash Flow / Multiples / Segments / Capital Structure Details / …);

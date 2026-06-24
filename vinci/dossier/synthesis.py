@@ -75,6 +75,31 @@ _CHEAP_CUE = re.compile(
     re.IGNORECASE,
 )
 
+# Verification-assertion tripwire: the dossier CITES, it never VERIFIES — flag prose asserting the
+# machine has verified/proven something (only the human can make that call). Honest negations
+# ("unverified", "cannot be verified") and benign domain terms ("proven track record", "confirmed
+# orders") are redacted FIRST, so the tripwire fires only on real over-assertion.
+_VERIFIED_BENIGN = re.compile(
+    r"\bun(?:verified|confirmed|proven|substantiated)\b"
+    r"|\b(?:cannot|can(?:no|')t|could ?n[o']?t|not)(?:\s+(?:yet|be|been))*\s+"
+    r"(?:verified|confirmed|proven|established|substantiated)\b"
+    r"|\bcan(?: be)?\s+(?:verified|confirmed)\b"
+    r"|\bno\s+\w{0,12}\s+(?:verification|confirmation)\b"
+    r"|\bproven\s+(?:track record|model|playbook|formula|reserves?)\b"
+    r"|\bestablished\s+(?:brand|player|leader|franchise|compan\w*|business|name|presence|\d{4})"
+    r"|\bconfirmed\s+(?:orders?|bookings?|backlog|cases?|reservations?)\b"
+    r"|\bverified\s+(?:users?|accounts?|buyers?|customers?)\b",
+    re.IGNORECASE,
+)
+_VERIFIED_ASSERTION = re.compile(
+    r"\bverified\b"
+    r"|\b(?:confirm(?:s|ed|ing)?|prov(?:es|en)|demonstrat(?:es|ed)|establish(?:es|ed))\s+"
+    r"(?:that|this|the (?:fact|case|thesis|bull|bear|claim))\b"
+    r"|\b(?:definitively|conclusively|incontrovertibl[ey]|irrefutabl[ey]|certified|demonstrably)\b"
+    r"|\bbeyond (?:any |reasonable )?doubt\b|\bestablished fact\b",
+    re.IGNORECASE,
+)
+
 _POINT = {
     "type": "object",
     "properties": {
@@ -298,6 +323,19 @@ def _validate(synth: Synthesis, mech: MechanicalLayer) -> tuple[Synthesis, list[
                     f"ANCHORS-ON-DISTORTED-P/E {where}: '{_snip(p.claim)}' — the P/E is distorted "
                     "(rests on a non-current/non-recurring EPS); don't read it as cheap"
                 )
+
+    # Verification-assertion tripwire: the dossier cites, it never verifies. After redacting honest
+    # negations + benign domain terms, any remaining claim asserting the machine VERIFIED/PROVED
+    # something crosses the line the dossier can't — flag it for the human to confirm.
+    pts = ([(p, "bull_point") for p in bull] + [(p, "bear_point") for p in bear]
+           + [(p, "decisive.for") for p in dq.evidence_for]
+           + [(p, "decisive.against") for p in dq.evidence_against])
+    for p, where in pts:
+        if _VERIFIED_ASSERTION.search(_VERIFIED_BENIGN.sub(" ", p.claim)):
+            flags.append(
+                f"VERIFICATION-CLAIM {where}: '{_snip(p.claim)}' — the dossier cites, it does not "
+                "verify; confirm against the source (cited ≠ verified)"
+            )
 
     validated = synth.model_copy(
         update={"bull_points": bull, "bear_points": bear, "decisive_question": dq}
