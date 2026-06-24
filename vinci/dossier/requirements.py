@@ -155,6 +155,24 @@ CIQ_MODULES: tuple[CiqModuleRequirement, ...] = (
         lookback="the last ~2 quarters (most recent 1–2 earnings calls)",
         required=False,
     ),
+    CiqModuleRequirement(
+        module="Company Comparable Analysis (peer comps)",
+        workbook_kind="comps",
+        freq=None,
+        sheets=(
+            "Financial Data", "Trading Multiples", "Operating Statistics", "Business Description",
+        ),
+        used_for=(
+            "peer-set COMPOSITION + market-cap / business-model dispersion (peer_set / "
+            "comparability), the trailing-vs-forward peer-multiple spread (trading_multiples), and "
+            "the name-vs-peer fundamental DELTAS — growth / margin / leverage / beta "
+            "(fundamental_deltas). The Implied Valuation sheet is deliberately SKIPPED (the "
+            "consensus implied-upside trap — see ciq_extraction_notes.md); Valuation Chart is empty"
+        ),
+        granularity=Granularity.SNAPSHOT,
+        lookback="current — the latest comp set (LTM + NTM forward), current-only",
+        required=False,
+    ),
 )
 
 # Inputs that must NOT be manually uploaded — the funnel already pulls them FREE from EDGAR. Pulling

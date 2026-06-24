@@ -397,6 +397,31 @@ So **col0 is always the counterparty, col1 always the focal** — identify the f
 
 ---
 
+## Company Comparable Analysis export (peer comps) — valuation-comparability source
+
+`Company Comparable Analysis <name>.xls` — a BIFF `.xls` (xlrd; same reader as Financials). Workbook kind `comps` (filename keyword "comparable"/"comps"), one snapshot file per name. Staged for all current targets (FUBO, VRRM, MVST, BRBR, EPAM).
+
+**EDGE STANCE — this file carries CONSENSUS framings the fund's edge must RESIST, not ingest.** Auto-peer-medians and implied-upside are the face-value comp read; the edge-worthy parts are the peer-set COMPOSITION (who anchors the median) and the fundamental DELTAS (is the discount earned or residual). The extractor captures the roster + market-cap dispersion + business descriptions + deltas — NOT just the summary statistics most comp-parsing stops at — and the synthesis POSES the justified-vs-residual question rather than reading "cheap vs median."
+
+**Layout (constant across names):** title rows carry the target name + as-of date; each data sheet has a header row whose col0 is `Company Name`, followed by ~10 peer rows. Address by sheet NAME — some files carry extra `Credit Health Panel` / `Disclaimer` sheets; ignore them. Find the header by the `Company Name` label, not a hardcoded row index.
+
+**Six sheets — what each feeds:**
+
+| Sheet | Carries | Feeds (extractor) |
+|---|---|---|
+| **Financial Data** | peer roster + per-peer Market Cap, net debt, TEV, LTM & NTM rev/EBITDA/EBIT/EPS | `peer_set` (roster + market caps → heterogeneity) |
+| **Trading Multiples** | LTM TEV/Rev, TEV/EBITDA, TEV/EBIT, P/E, P/TangBV + NTM fwd TEV/Rev, TEV/EBITDA, P/E + High/Low/Mean/Median | `trading_multiples` (name vs peer stats; trailing-vs-forward spread) |
+| **Operating Statistics** | margins, 1yr growth, Total Debt/Capital, Total Debt/EBITDA, NTM LT EPS growth, 5y beta | `fundamental_deltas` (growth/margin/leverage/beta — earned-vs-residual). **No concentration here** — concentration stays from EDGAR/CIQ customers+segments, unchanged |
+| **Business Description** | peer business description + HQ | `comparability` / `peer_set` (judge comparability by what businesses DO, not size) |
+| **Implied Valuation** | peer multiples → target implied value/upside + High/Low/Mean/Median | **SKIPPED** — see below |
+| **Valuation Chart** | empty (chart object; ~11 metadata cells, no tabular rows) | **SKIPPED** — not an omission; a CIQ-UI chart container with no data |
+
+**`NM` is a REAL value, not missing.** `NM` (Not Meaningful) means a multiple isn't computable — a peer with negative tangible book → P/TangBV `NM`, or negative EBITDA → TEV/EBITDA `NM` (FUBO's own EBITDA multiple is `NM`). It is INFORMATIVE (it signals peer-set heterogeneity), so the comps extractor PRESERVES it as the literal `NM`, NOT via `clean_num` (which lumps `NM` into `_UNAVAILABLE_CELLS` → None). `-` is true-missing (a target-row gap) → drop from numerics. The two states are distinct; never conflate.
+
+**Implied Valuation — DELIBERATELY SKIPPED (decision, 2026-06).** This sheet applies peer multiples to the target's metrics to derive an implied value/upside — the single most CONSENSUS artifact in the file. We surface NO implied-value/upside number: it is peer-median × target-metric (zero information beyond the peer multiples + target absolutes already captured), and even framed it becomes the anchor the edge exists to resist (the dead-signal/consensus trap). The edge-worthy substitute — the peer-multiple GAP carried WITH composition + deltas — lets the human form the divergent view without a consensus number. Recorded so the skip reads as deliberate.
+
+---
+
 ## What this file does NOT cover
 
 Not a CIQ user manual. Not exhaustive of every CIQ module. If PM uploads a CIQ file type not described above and LLM can't determine structure from inspection, LLM surfaces to PM and asks for the first 20 rows pasted as text so PM can confirm format before LLM extracts.

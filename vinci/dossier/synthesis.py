@@ -23,6 +23,7 @@ from vinci.dossier.schemas import (
     DecisiveQuestion,
     MechanicalLayer,
     SourcedPoint,
+    SourceStatus,
     Synthesis,
     TwinCase,
 )
@@ -117,6 +118,40 @@ _ABS_RECON = re.compile(
     re.IGNORECASE,
 )
 
+# Peer-comp contract (the CIQ Company Comparable Analysis read the edge must RESIST, not echo). A
+# relative-valuation verdict ('cheap/rich vs peers') is a CONSENSUS framing, not a signal, until it
+# is decomposed (earned vs residual, via the fundamental deltas) AND set against the peer-set
+# composition. These cues let the guardrail flag a BARE peer gap and a heterogeneous set read as a
+# clean benchmark — the machine POSES the question; it never computes a residual or implied upside.
+_PEER_REF = re.compile(  # the claim positions the name against its comp set
+    r"\bpeers?\b|\bpeer[\s-]?(?:set|group|median|multiple|average)\b|\bcomparabl\w*\b|\bcomps?\b"
+    r"|\b(?:versus|vs\.?|relative to|discount to|premium to|below|above)\s+(?:the\s+)?"
+    r"(?:median|group)\b",
+    re.IGNORECASE,
+)
+_REL_VAL_CUE = re.compile(  # a relative-VALUATION verdict — NARROWED to exclude brand/quality uses
+    # of premium/rich/discount (a premium BRAND, a rich ROADMAP, a discount RETAILER are NOT
+    # valuation verdicts): premium/discount count only in a valuation construction ("… to/vs the
+    # median", "at a premium"); "rich" only as "rich multiple/valuation".
+    r"\b(cheap|inexpensive|under-?valued|over-?valued|bargain|expensive)\b"
+    r"|\brich(?:ly)?\s+(?:multiple|valuation|valued|priced)\b"
+    r"|\b(?:trades?|screens?|valued|priced)\s+(?:below|under|above|over)\b"
+    r"|\b(?:discount|premium)\s+(?:to|versus|vs\.?|relative\s+to)\b"
+    r"|\bat\s+a\s+(?:discount|premium)\b",
+    re.IGNORECASE,
+)
+_DECOMP_REF = re.compile(  # the EARNED-vs-RESIDUAL decomposition (the fundamental deltas) — count
+    # nouns PLURALISED so a decomposed claim reconciling via "margins"/"fundamentals" isn't missed.
+    r"\b(earned|residuals?|justif\w*|unexplained|value.?trap|overshoot|deserv\w*|warrant\w*|"
+    r"growth|margins?|leverage|betas?|fundamentals?|deltas?)\b",
+    re.IGNORECASE,
+)
+_COMPARABILITY_ACK = re.compile(  # the peer-set COMPOSITION / comparability caveat
+    r"\b(heterogen\w*|comparab\w*|composition|dispersion|roster|scale|business model|"
+    r"different (?:scale|model|business)|not (?:a )?clean|confidence|caveat|scrutin\w*)\b",
+    re.IGNORECASE,
+)
+
 _POINT = {
     "type": "object",
     "properties": {
@@ -143,7 +178,12 @@ SYNTHESIS_TOOL: dict[str, Any] = {
             "bull_points": {
                 "type": "array",
                 "items": _POINT,
-                "description": "The exaggerated/TEMPORARY overshoot case (mean-revert).",
+                "description": "The exaggerated/TEMPORARY overshoot case (mean-revert). A 'cheap "
+                "vs peers' claim is a CONSENSUS framing, not a signal: present a peer gap only "
+                "WITH the peer-set composition AND the earned-vs-residual decomposition "
+                "(fundamental_deltas) — POSE whether the discount is EARNED (value trap) or "
+                "RESIDUAL (overshoot); never compute a residual or an implied upside, and never "
+                "read a HETEROGENEOUS peer set as a clean benchmark.",
             },
             "bear_points": {
                 "type": "array",
@@ -225,7 +265,18 @@ _SYSTEM = (
     "metric, state explicitly whether it is the REAL signal or the optical/consensus MISREAD, "
     "using the paired reconciler in the same fact (a falling margin % carries the absolute EBITDA "
     "beside it — a % can fall while EBITDA RISES). The edge diverges from the biased consensus "
-    "read; do not reproduce it."
+    "read; do not reproduce it. "
+    "(10) PEER-COMP CONTRACT: the peer-comps facts (peer_set / comparability / trading_multiples / "
+    "fundamental_deltas) ARE the consensus comp read — the thing the edge must RESIST, not echo. "
+    "NEVER present 'cheap vs the peer median' as a conclusion: a peer multiple is meaningful only "
+    "WITH the peer-set COMPOSITION beside it, and a discount to peers is a signal only once "
+    "decomposed into EARNED (worse growth/margin/leverage/beta — a value trap) vs RESIDUAL "
+    "(unexplained by the fundamental_deltas — a possible overshoot). POSE that "
+    "justified-vs-residual question for the human; do NOT compute a residual, run a regression, "
+    "or assert an implied "
+    "upside / 'X% mispriced' — there is no field for it. When comparability flags a HETEROGENEOUS "
+    "peer set, treat every peer stat as a CONFIDENCE-GATED input, not a clean benchmark; and read "
+    "the trailing-vs-forward (LTM vs NTM) peer spread before leaning on any single multiple."
 )
 
 
@@ -400,6 +451,37 @@ def _validate(synth: Synthesis, mech: MechanicalLayer) -> tuple[Synthesis, list[
             f"FALSE-BALANCE? evidence_balance reads 'mixed' but the bull/bear split is lopsided "
             f"({nb} bull vs {nr} bear) — confirm genuinely mixed, not one-sided dressed as balanced"
         )
+
+    # G.3 peer-comp contract: the comps facts are the CONSENSUS read the edge must RESIST. A
+    # relative-valuation verdict ('cheap/rich vs peers') is only a signal WITH (a) the earned-vs-
+    # residual decomposition (fundamental_deltas) OR (b) the peer-set composition — a BARE gap is
+    # the consensus misread. And when comparability flags the set HETEROGENEOUS, a peer stat read
+    # as a clean benchmark ignores the confidence gate. Human-review flags only: the machine POSES
+    # the justified-vs-residual question; it never computes a residual or an implied upside here.
+    comp = mech.peer_comps.comparability
+    hetero = bool(
+        comp.status is SourceStatus.PRESENT
+        and comp.value
+        and re.search(r"heterogen|low comparability", comp.value, re.IGNORECASE)
+    )
+    peer_pts = ([(p, "bull_point") for p in bull] + [(p, "bear_point") for p in bear]
+                + [(p, "decisive.for") for p in dq.evidence_for]
+                + [(p, "decisive.against") for p in dq.evidence_against])
+    for p, where in peer_pts:
+        if not (_PEER_REF.search(p.claim) and _REL_VAL_CUE.search(p.claim)):
+            continue
+        if not _DECOMP_REF.search(p.claim) and not _COMPARABILITY_ACK.search(p.claim):
+            flags.append(
+                f"PEER-COMP-BARE {where}: '{_snip(p.claim)}' — presents cheap/rich vs peers as a "
+                "verdict without the earned-vs-residual decomposition or the peer-set composition; "
+                "POSE justified-vs-residual, never the bare gap"
+            )
+        if hetero and not _COMPARABILITY_ACK.search(p.claim):
+            flags.append(
+                f"HETEROGENEOUS-BENCHMARK {where}: '{_snip(p.claim)}' — leans on the peer set as a "
+                "clean benchmark, but comparability flags it HETEROGENEOUS; confidence-gate every "
+                "peer stat"
+            )
 
     validated = synth.model_copy(
         update={"bull_points": bull, "bear_points": bear, "decisive_question": dq}

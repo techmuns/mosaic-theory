@@ -168,6 +168,7 @@ _WORKBOOK_KEYWORDS: dict[str, tuple[str, ...]] = {
     "transcript": ("earnings call", "transcript", "conference call"),
     "key_developments": ("key development",),
     "profile": ("company profile", "tearsheet"),
+    "comps": ("comparable", "comps"),  # "Company Comparable Analysis <name>.xls" (peer comps)
 }
 # unparseable / withheld CIQ cells — ALL mean UNAVAILABLE (notes lines 61, 74); never coerce to 0.
 _UNAVAILABLE_CELLS = frozenset({"", "-", "—", "NM", "NA", "N/A", "Entitlement Needed"})

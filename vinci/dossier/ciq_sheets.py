@@ -11,6 +11,7 @@ with an absent/garbled sheet → UNKNOWN with the reason — never a fabricated 
 from __future__ import annotations
 
 import re
+import statistics
 from collections.abc import Callable
 from typing import Any
 
@@ -23,7 +24,7 @@ from vinci.dossier.ciq import (
     excel_date,
     read_text,
 )
-from vinci.dossier.schemas import Sourced
+from vinci.dossier.schemas import PeerComps, Sourced
 
 Rows = list[list[Any]]
 
@@ -748,4 +749,186 @@ def management_commentary(bundle: CiqBundle) -> Sourced[str]:
         f"Earnings-call transcript on file — read {wb.path.name} in full for management posture "
         "(pointer only; the machine does not curate or embed transcript content)",
         source_ref=f"CIQ transcript {wb.path.name}",
+    )
+
+
+# --- peer comps (CIQ Company Comparable Analysis) — FRAMED to resist the consensus comp read ------
+
+_COMPS_MULTIPLES = (  # Trading Multiples: (label, col). LTM + NTM forward.
+    ("TEV/Rev", 1), ("TEV/EBITDA", 2), ("P/E", 4),
+    ("NTM TEV/Rev", 6), ("NTM TEV/EBITDA", 7), ("NTM P/E", 8),
+)
+_COMPS_DELTAS = (  # Operating Statistics: (label, col, is_pct) — the earned-vs-residual inputs.
+    ("EBITDA margin", 2, True), ("rev growth", 5, True), ("EBITDA growth", 6, True),
+    ("Debt/EBITDA", 10, False), ("LT EPS growth", 11, True), ("beta", 12, False),
+)
+
+
+def _comps_short_name(full: str) -> str:
+    """'Roku, Inc. (NasdaqGS:ROKU)' → 'Roku'."""
+    return re.split(r",| \(", full.strip(), maxsplit=1)[0].strip() or full.strip()
+
+
+def _comps_cell(rows: Rows, ri: int | None, ci: int) -> float | str | None:
+    """A comps cell → rounded number, the literal 'NM' (a REAL not-meaningful state — a negative/
+    near-zero base, never dropped), or None for true-blank/'-'. clean_num would lump NM into
+    UNAVAILABLE; here NM is informative (it signals peer-set heterogeneity)."""
+    if ri is None or ri >= len(rows) or ci >= len(rows[ri]):
+        return None
+    if str(rows[ri][ci]).strip().upper() == "NM":
+        return "NM"
+    return clean_num(rows[ri][ci])
+
+
+def _comps_layout(rows: Rows) -> tuple[int | None, list[int], int | None]:
+    """(header_i, peer_indices, target_i): peers = the contiguous company block after the header;
+    the target = the first company row after the gap (before 'Summary Statistics'). A company row
+    has a '(' ticker paren in col 0."""
+    hdr = _find_row(rows, "Company Name")
+    if hdr is None:
+        return None, [], None
+    end = _find_row(rows, "Summary Statistics") or len(rows)
+    company = [i for i in range(hdr + 1, end) if rows[i] and "(" in str(rows[i][0])]
+    peers: list[int] = []
+    target: int | None = None
+    for i in company:
+        if not peers or i == peers[-1] + 1:
+            peers.append(i)
+        elif target is None:
+            target = i
+    return hdr, peers, target
+
+
+def _tok(v: float | str | None) -> str:
+    """A multiple/stat display token: 'NM', a compact number, or an em-dash."""
+    if v == "NM":
+        return "NM"
+    return f"{v:g}" if isinstance(v, (int, float)) else "–"
+
+
+def _fmt_cap(m: float | None) -> str:
+    if m is None:
+        return "?"
+    return f"${m / 1000:.1f}B" if m >= 1000 else f"${m:.0f}M"
+
+
+def _comps_multiples(bundle: CiqBundle, src: str) -> Sourced[str]:
+    try:
+        tm = bundle.sheet("comps", "Trading Multiples")
+    except CiqUnavailableError as exc:
+        return _miss_or_unknown(bundle, "comps", exc)
+    _hdr, _peers, tgt = _comps_layout(tm)
+    stat_row = {k: _find_row(tm, k) for k in ("Low", "Median", "Mean", "High")}
+    if tgt is None and not any(stat_row.values()):
+        return Sourced.unknown(note="Trading Multiples: no target row / summary block")
+    bits: list[str] = []
+    for lab, col in _COMPS_MULTIPLES:
+        peer_stats = " / ".join(
+            f"{k} {_tok(_comps_cell(tm, stat_row[k], col))}"
+            for k in ("Low", "Median", "Mean", "High") if stat_row[k] is not None
+        )
+        bits.append(f"{lab}: name {_tok(_comps_cell(tm, tgt, col))} vs peers {peer_stats}")
+    return Sourced.present(
+        "; ".join(bits) + "  [LTM + NTM forward; NM = a real state (negative base), not missing]",
+        source_ref=f"{src}→Trading Multiples (name row + Summary Statistics Low/Median/Mean/High)",
+    )
+
+
+def _comps_deltas(bundle: CiqBundle, src: str) -> Sourced[str]:
+    try:
+        op = bundle.sheet("comps", "Operating Statistics")
+    except CiqUnavailableError as exc:
+        return _miss_or_unknown(bundle, "comps", exc)
+    _hdr, peers, tgt = _comps_layout(op)
+    if tgt is None:
+        return Sourced.unknown(note="Operating Statistics: no target row")
+    bits: list[str] = []
+    for lab, col, pct in _COMPS_DELTAS:
+        nv = _comps_cell(op, tgt, col)
+        peer_vals = [v for i in peers if isinstance((v := _comps_cell(op, i, col)), (int, float))]
+        med = statistics.median(peer_vals) if peer_vals else None
+
+        def _f(x: float, p: bool = pct) -> str:
+            return f"{x * 100:.0f}%" if p else f"{x:.1f}"
+
+        ns = _f(nv) if isinstance(nv, (int, float)) else _tok(nv)
+        ms = _f(med) if med is not None else "–"
+        bits.append(f"{lab} name {ns} vs peer-median {ms}")
+    return Sourced.present(
+        "; ".join(bits) + "  [justified-vs-residual inputs: is the discount EARNED (worse "
+        "fundamentals) or RESIDUAL (unexplained)? the human judges — not computed here]",
+        source_ref=f"{src}→Operating Statistics (name vs peer median: growth/margin/leverage/beta)",
+    )
+
+
+def peer_comps(bundle: CiqBundle) -> PeerComps:
+    """Assemble the peer-comps section from the CIQ Company Comparable Analysis workbook: roster +
+    market-cap/business dispersion + the name-vs-peer multiple gap (LTM + NTM) + the fundamental
+    deltas — each fail-loud UNKNOWN/MISSING if its sheet is absent. NM preserved (a real state);
+    the Implied Valuation sheet is deliberately SKIPPED (the consensus implied-upside trap)."""
+    src = "CIQ Comparable Analysis"
+    caps: dict[str, float] = {}
+    peer_caps: list[float] = []
+    name_cap: float | None = None
+    try:
+        fd = bundle.sheet("comps", "Financial Data")
+        _hdr, peers, tgt = _comps_layout(fd)
+        for i in peers:
+            nm = _comps_short_name(str(fd[i][0]))
+            c = clean_num(fd[i][3]) if len(fd[i]) > 3 else None
+            if c is not None:
+                caps[nm] = c
+                peer_caps.append(c)
+        if tgt is not None and len(fd[tgt]) > 3:
+            name_cap = clean_num(fd[tgt][3])
+    except CiqUnavailableError:
+        pass
+    desc: dict[str, str] = {}
+    try:
+        bd = bundle.sheet("comps", "Business Description")
+        _hdr, bpeers, _t = _comps_layout(bd)
+        for i in bpeers:
+            nm = _comps_short_name(str(bd[i][0]))
+            full = str(bd[i][1]).strip() if len(bd[i]) > 1 else ""
+            vm = re.search(
+                r"\b(operates|provides|engages|develops|offers|designs|manufactures|owns|"
+                r"distributes|focuses|is a)\b", full,
+            )
+            d = (full[vm.start():] if vm else full)[:55].rsplit(" ", 1)[0]
+            hq = str(bd[i][2]).strip().rsplit(",", 1)[-1].strip()[:18] if len(bd[i]) > 2 else ""
+            desc[nm] = f"{d} ({hq})" if hq else d
+    except CiqUnavailableError:
+        pass
+
+    if caps:
+        roster = "; ".join(
+            f"{nm} {_fmt_cap(caps[nm])}" + (f" — {desc[nm]}" if desc.get(nm) else "") for nm in caps
+        )
+        tail = f" | the name: {_fmt_cap(name_cap)}" if name_cap is not None else ""
+        peer_set = Sourced.present(
+            f"{len(caps)} peers — {roster}{tail}",
+            source_ref=f"{src}→Financial Data + Business Description (roster + caps + business)",
+        )
+    else:
+        peer_set = _miss_or_unknown(bundle, "comps", CiqUnavailableError("Financial Data roster"))
+
+    if peer_caps:
+        hi, lo = max(peer_caps), min(peer_caps)
+        spread = hi / lo if lo else 0.0
+        het = "HETEROGENEOUS — low comparability" if spread >= 10 else "moderately dispersed"
+        gate = f"market caps span {_fmt_cap(lo)}–{_fmt_cap(hi)} ({spread:.0f}x)"
+        gate += f"; the name is {_fmt_cap(name_cap)}" if name_cap is not None else ""
+        comparability = Sourced.present(
+            f"{gate} → {het}: the peer median is anchored by businesses of differing scale/model; "
+            "scrutinise comparability before reading any peer stat as a clean benchmark.",
+            source_ref=f"{src}→Financial Data (market-cap dispersion) + Business Description",
+        )
+    else:
+        comparability = _miss_or_unknown(bundle, "comps", CiqUnavailableError("market caps"))
+
+    return PeerComps(
+        peer_set=peer_set,
+        comparability=comparability,
+        trading_multiples=_comps_multiples(bundle, src),
+        fundamental_deltas=_comps_deltas(bundle, src),
     )

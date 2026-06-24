@@ -188,12 +188,29 @@ class ConsensusContext(BaseModel):
     model_config = {"frozen": True}
 
 
+class PeerComps(BaseModel):
+    """Comparable-company multiples FRAMED to RESIST the consensus comp read (CIQ Company Comparable
+    Analysis). The peer-vs-name gap is never presentable without (a) the peer-set COMPOSITION — so
+    the human judges comparability and can mentally re-draw the thesis-correct set — and (b) the
+    fundamental DELTAS — so the discount is judged EARNED (value-trap) vs RESIDUAL (overshoot). The
+    machine assembles + POSES the justified-vs-residual question; it NEVER re-draws the set,
+    computes a residual, or emits an implied upside (the Implied Valuation sheet is skipped)."""
+
+    peer_set: Sourced[str]  # roster: each peer's name + market cap + short business + HQ country
+    comparability: Sourced[str]  # CONFIDENCE GATE: market-cap + business-model dispersion
+    trading_multiples: Sourced[str]  # name's multiples vs peer High/Low/Mean/Median (LTM + NTM fwd)
+    fundamental_deltas: Sourced[str]  # name vs peer median: growth / margin / leverage / beta
+
+    model_config = {"frozen": True}
+
+
 class MechanicalLayer(BaseModel):
     """The deterministic, source-bound facts — the ONLY input the synthesis LLM is given."""
 
     valuation: Valuation
     quality: Quality
     concentration: Concentration
+    peer_comps: PeerComps  # comparable-company multiples + composition + deltas (consensus-resist)
     drawdown_cause: DrawdownCause
     idiosyncratic_vs_shared: IdiosyncraticVsShared
     consensus_context: ConsensusContext

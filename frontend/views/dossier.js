@@ -162,6 +162,7 @@ function renderDossier(d, verdict) {
     valuation(m.valuation),
     quality(m.quality),
     concentration(m.concentration),
+    peerComps(m.peer_comps),
     drawdownCause(m.drawdown_cause),
     idioVsShared(m.idiosyncratic_vs_shared),
     consensus(m.consensus_context),
@@ -230,6 +231,109 @@ function concentration(c) {
     fact("Segment EBITDA share", c.segment_ebitda, null, { hi: true }) +
     fact("Customers", c.customers) +
     fact("Geographic", c.geographic));
+}
+
+// --- peer comps → scannable tables. The mechanical layer encodes these as deterministic composite
+// strings; we parse each into a grid, EXACTLY like seriesTable — anything that doesn't parse falls
+// back to the plain-text fact() (never breaks, never alters a value). The NAME column is a FOCAL
+// highlight, not a verdict; the deltas carry NO better/worse colour because the earned-vs-residual
+// call is the human's, not the UI's. Comparability stays prose (a narrative gate, not a grid).
+const PC_NAME = 'class="num" style="background:rgba(47,111,222,.06); font-weight:600; color:var(--ink);"';
+const PC_PEER = 'class="num" style="color:var(--ink-2);"';
+
+function peerFactTable(label, s, head, body, noteText) {
+  const note = noteText ? `<div class="muted" style="font-size:11px; margin-top:5px;">${escapeHtml(noteText)}</div>` : "";
+  const cite = s.source_ref ? `<span class="cite">${escapeHtml(s.source_ref)}</span>` : "";
+  return `<div class="fact"><div class="fact-label">${escapeHtml(label)}</div>
+    <div style="min-width:0;"><div style="overflow-x:auto;"><table class="data">${head}${body}</table></div>${note}${cite}</div></div>`;
+}
+
+function parsePeerMultiples(text) {
+  let s = String(text).trim(), note = "";
+  const nm = s.match(/\s*\[([^\]]*)\]\s*$/);
+  if (nm) { note = nm[1]; s = s.slice(0, nm.index).trim(); }
+  const rows = [];
+  for (const seg of s.split(";")) {
+    const t = seg.trim();
+    if (!t) continue;
+    const m = t.match(/^(.+?):\s*name\s+(\S+)\s+vs peers\s+Low\s+(\S+)\s*\/\s*Median\s+(\S+)\s*\/\s*Mean\s+(\S+)\s*\/\s*High\s+(\S+)$/i);
+    if (!m) return null;  // any segment off-format → bail to the plain-text fallback
+    rows.push({ metric: m[1].trim(), name: m[2], low: m[3], median: m[4], mean: m[5], high: m[6] });
+  }
+  return rows.length ? { rows, note } : null;
+}
+
+function peerMultiplesFact(label, s) {
+  if (!s || s.status !== "present" || s.value == null) return fact(label, s);
+  const p = parsePeerMultiples(s.value);
+  if (!p) return fact(label, s);
+  const head = `<thead><tr><th>Multiple</th><th class="num">Name</th><th class="num">Low</th><th class="num">Median</th><th class="num">Mean</th><th class="num">High</th></tr></thead>`;
+  const body = `<tbody>${p.rows.map((r) => `<tr><td style="white-space:nowrap;">${escapeHtml(r.metric)}</td><td ${PC_NAME}>${escapeHtml(r.name)}</td><td ${PC_PEER}>${escapeHtml(r.low)}</td><td ${PC_PEER}>${escapeHtml(r.median)}</td><td ${PC_PEER}>${escapeHtml(r.mean)}</td><td ${PC_PEER}>${escapeHtml(r.high)}</td></tr>`).join("")}</tbody>`;
+  return peerFactTable(label, s, head, body, p.note);
+}
+
+function parsePeerDeltas(text) {
+  let s = String(text).trim(), note = "";
+  const nm = s.match(/\s*\[([^\]]*)\]\s*$/);
+  if (nm) { note = nm[1]; s = s.slice(0, nm.index).trim(); }
+  const rows = [];
+  for (const seg of s.split(";")) {
+    const t = seg.trim();
+    if (!t) continue;
+    const m = t.match(/^(.+?)\s+name\s+(\S+)\s+vs peer-median\s+(\S+)$/i);
+    if (!m) return null;
+    rows.push({ metric: m[1].trim(), name: m[2], median: m[3] });
+  }
+  return rows.length ? { rows, note } : null;
+}
+
+function peerDeltasFact(label, s) {
+  if (!s || s.status !== "present" || s.value == null) return fact(label, s);
+  const p = parsePeerDeltas(s.value);
+  if (!p) return fact(label, s);
+  const head = `<thead><tr><th>Metric</th><th class="num">Name</th><th class="num">Peer median</th></tr></thead>`;
+  const body = `<tbody>${p.rows.map((r) => `<tr><td style="white-space:nowrap;">${escapeHtml(r.metric)}</td><td ${PC_NAME}>${escapeHtml(r.name)}</td><td ${PC_PEER}>${escapeHtml(r.median)}</td></tr>`).join("")}</tbody>`;
+  return peerFactTable(label, s, head, body, p.note);
+}
+
+function parsePeerRoster(text) {
+  let s = String(text).trim(), nameCap = "";
+  const tm = s.match(/\|\s*the name:\s*([^|]+)$/i);
+  if (tm) { nameCap = tm[1].trim(); s = s.slice(0, tm.index).trim(); }
+  const pm = s.match(/^(\d+)\s+peers?\s+—\s+/i);
+  if (!pm) return null;
+  s = s.slice(pm[0].length);
+  const rows = [];
+  for (const seg of s.split(";")) {
+    const t = seg.trim();
+    if (!t) continue;
+    const di = t.indexOf(" — ");
+    const head = di >= 0 ? t.slice(0, di).trim() : t;
+    let desc = di >= 0 ? t.slice(di + 3).trim() : "";
+    const hm = desc.match(/\s*\(([^)]*)\)\s*$/);
+    if (hm) desc = desc.slice(0, hm.index).trim();
+    const cm = head.match(/^(.*?)\s+(\$[\d.]+[MBK]?)$/);
+    rows.push({ name: cm ? cm[1].trim() : head, cap: cm ? cm[2] : "", desc });
+  }
+  return rows.length ? { rows, nameCap } : null;
+}
+
+function peerRosterFact(label, s) {
+  if (!s || s.status !== "present" || s.value == null) return fact(label, s);
+  const p = parsePeerRoster(s.value);
+  if (!p) return fact(label, s);
+  const head = `<thead><tr><th>Peer</th><th class="num">Mkt cap</th><th>Business</th></tr></thead>`;
+  const body = `<tbody>${p.rows.map((r) => `<tr><td style="white-space:nowrap;">${escapeHtml(r.name)}</td><td class="num">${escapeHtml(r.cap)}</td><td style="color:var(--ink-2);">${escapeHtml(r.desc)}</td></tr>`).join("")}</tbody>`;
+  return peerFactTable(label, s, head, body, p.nameCap ? `the name: ${p.nameCap}` : "");
+}
+
+function peerComps(pc) {
+  if (!pc) return "";
+  return sec("Peer comps", "CIQ Company Comparable Analysis — the consensus comp, framed to RESIST. The peer-vs-name gap is never a verdict: composition + fundamental deltas let the human judge the discount EARNED (value-trap) vs RESIDUAL (overshoot). The machine never re-draws the peer set or computes an implied upside.",
+    peerRosterFact("Peer set (roster · caps · business)", pc.peer_set) +
+    fact("Comparability (confidence gate)", pc.comparability, null, { hi: true }) +
+    peerMultiplesFact("Trading multiples (name vs peer Low/Median/Mean/High · LTM+NTM)", pc.trading_multiples) +
+    peerDeltasFact("Fundamental deltas (earned-vs-residual inputs)", pc.fundamental_deltas));
 }
 
 function drawdownCause(dc) {

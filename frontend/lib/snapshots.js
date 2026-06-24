@@ -46,15 +46,24 @@ async function _jsonl(path) {
   return text.split("\n").filter((l) => l.trim()).map((l) => JSON.parse(l));
 }
 
+// Memoize the in-flight PROMISE (not the resolved value) per key, so concurrent callers — e.g. an
+// overview Promise.all where two helpers both want the manifest — share ONE fetch instead of racing
+// to issue duplicates. Cleared on rejection so a failed load can be retried on a later call.
+const _inflight = new Map();
+function _once(key, load) {
+  if (!_inflight.has(key)) {
+    _inflight.set(key, Promise.resolve().then(load).catch((e) => { _inflight.delete(key); throw e; }));
+  }
+  return _inflight.get(key);
+}
+
 // --- the build-time index (cheap counts + dates + dossier list) --------------
 // manifest.json is regenerated from the snapshots on every deploy, so it cannot
 // drift from them; it exists only to keep the overview/ingestion cards fast
 // without fetching the megabyte-scale candidate files.
 
-let _manifest = null;
-async function _getManifest() {
-  if (!_manifest) _manifest = await _json(`${SNAPSHOTS}/manifest.json`);
-  return _manifest;
+function _getManifest() {
+  return _once("manifest", () => _json(`${SNAPSHOTS}/manifest.json`));
 }
 
 // getSnapshotMeta() -> { sourceCommit, generatedAt }  (provenance for the footer)
@@ -72,6 +81,9 @@ export async function getUniverseHealth() {
   return {
     universe: { count: m.universe?.count ?? null, asOf: m.universe?.as_of ?? null },
     screen: { candidates: m.screen?.candidates ?? null, asOf: m.screen?.as_of ?? null },
+    // queue counts come from the manifest (build-time) so the overview never loads the full queue;
+    // `total` falls back to screen.candidates for an older manifest that predates the queue block.
+    queue: { total: m.queue?.total ?? m.screen?.candidates ?? null, demoted: m.queue?.demoted ?? null },
     eod: { asOf: m.screen?.as_of ?? null },
   };
 }
@@ -154,9 +166,8 @@ export async function getRankedQueue() {
 //               confidence, benchmark, decidedAt, resolved, daysToHorizon,
 //               thesis, killCriteria, twinCall }]   // immutable, append-only
 // }
-let _ledger = null;
-export async function getLedger() {
-  if (_ledger) return _ledger;
+export function getLedger() { return _once("ledger", _loadLedger); }
+async function _loadLedger() {
   const raw = await _jsonl(`${SNAPSHOTS}/decision_ledger.jsonl`);
   const today = new Date().toISOString().slice(0, 10);
   const entries = raw
@@ -182,7 +193,7 @@ export async function getLedger() {
       };
     })
     .sort((a, b) => String(b.decidedAt).localeCompare(String(a.decidedAt)));
-  _ledger = {
+  return {
     counts: {
       logged: entries.length,
       resolved: entries.filter((e) => e.resolved).length,
@@ -191,7 +202,6 @@ export async function getLedger() {
     },
     entries,
   };
-  return _ledger;
 }
 
 // The long leg is any BUY-family verdict; everything else (AVOID_TERMINAL, …) is the avoid leg.

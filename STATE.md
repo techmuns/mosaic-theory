@@ -19,6 +19,11 @@ paper-validation**: the only thing that gates going live with real money is the 
 return spread** on the manual discriminator's verdicts — which needs calendar time to accumulate.
 **The fund is unproven: zero resolved verdicts so far, no spread yet.**
 
+**What it's FOR — the objective, in causal order: LP RETURNS → AUM GROWTH → MOAT-BUILDING.** Returns
+build LP confidence and grow AUM; growing AUM earns the time and capital to compound durable,
+non-replicable moats. Non-replicability is **INSTRUMENTAL** — it makes returns durable and defensible
+at scale — NOT the terminal goal; the terminal goal is LP returns and the AUM growth they enable.
+
 ## 2. Built and verified (checked against the repo, not memory)
 
 Each line: *what it does* — *verified how*.
@@ -201,7 +206,7 @@ Each line: *what it does* — *verified how*.
     exports). Documents the **don't-double-pull** rule: 10-K/10-Q, 8-K, Form 4 are FREE on EDGAR (XBRL
     companyfacts / 8-K + Ex-99.1 / Form 4) and must NOT be manually uploaded — `EDGAR_FREE_INPUTS`.
     `--ticker VRRM` renders a per-name export checklist; `--json` emits the machine-readable manifest
-    for the frontend upload UI. *Verified: checklist + `--json` (5 modules, 3 EDGAR-free) render; the
+    for the frontend upload UI. *Verified: checklist + `--json` (6 modules, 3 EDGAR-free) render; the
     partial-folder manifest flags exactly the 3 still-missing required modules when the annual is
     present; `dossier --top 1` (FUBO, no CIQ folder) now emits the per-module summary flag naming all
     four required modules. 9 tests incl. the single-source anti-drift guard (`assemble.requirements
@@ -215,7 +220,7 @@ Each line: *what it does* — *verified how*.
       sheet is listed. A new extractor consuming an undeclared kind FAILS the test → must be declared.
       Same idiom as the ranker's no-forward-returns AST guard. *Verified: passes today; a throwaway
       `key_developments` extractor failed it naming `('key_developments', None)`, then removed.* **This
-      is correct only while the input set is FIXED (the 5 CIQ files) — see the §4 registry trigger.**
+      is correct only while the input set is FIXED (the 6 CIQ modules) — see the §4 registry trigger.**
   - **Cause-parsing + integrity hardening (VRRM run, 2026-06-19) — the dossier must see catalysts that
     live in 8-K TEXT and never mislabel cause.** (1) Each gap-down is labelled by its **8-K item codes**
     (2.02 earnings / 5.02 management change / 8.01 other / 1.02 agreement-termination / 4.02 restatement
@@ -302,6 +307,51 @@ Each line: *what it does* — *verified how*.
     5 dossiers now assemble with a committed evidence_balance; BRBR/EPAM/FUBO/MVST re-run clean.* **NOT in
     scope (still deferred): the SIC peer-cohort / single-name cross-section read — a new capability, not a
     surgical fix.**
+  - **Peer-comps read — the CIQ Company Comparable Analysis, FRAMED to RESIST the consensus comp
+    (2026-06-24).** A sixth manual-CIQ kind (`comps`) + a `peer_comps` mechanical section
+    (`ciq_sheets.peer_comps`): the peer ROSTER (each peer's cap + business + HQ), a market-cap-dispersion
+    **comparability gate**, the name-vs-peer multiple spread (LTM + NTM forward; High/Low/Mean/Median), and
+    the name-vs-peer **fundamental deltas** (growth/margin/leverage/beta). **NM preserved** as a real
+    not-meaningful state (a negative base), distinct from a true-missing `–` (`_comps_cell` keeps NM where
+    `clean_num` would drop it). The **Implied Valuation sheet is deliberately SKIPPED** (the consensus
+    implied-upside trap; Valuation Chart is empty). Three EV/EBITDA concepts stay distinctly namespaced —
+    screen `Fundamentals.ev_ebitda` (dead/UNKNOWN, `DataField[float]`), dossier `Valuation.ev_ebitda` (live
+    single-name, `Sourced[float]`), the new `PeerComps.trading_multiples` (peer composite, `Sourced[str]`)
+    — a structural test pins it. **Synthesis CONTRACT (system rule 10 + two guardrails):** the model POSES
+    justified-vs-residual (is the discount EARNED — worse fundamentals — or RESIDUAL — an overshoot?),
+    always WITH the peer-set composition, and reads a HETEROGENEOUS set as a confidence gate; it NEVER
+    computes a residual, regresses, or emits an implied upside. `PEER-COMP-BARE` flags a cheap/rich-vs-peers
+    verdict lacking decomposition/composition; `HETEROGENEOUS-BENCHMARK` flags a heterogeneous set read as a
+    clean benchmark. *Verified — REAL licensed workbooks: VRRM (7 peers, 37x cap span → HETEROGENEOUS; name
+    TEV/EBITDA 4.7 vs peer-median 10.3 reads "cheap," but LT EPS growth 2% vs 10% → the discount may be
+    EARNED) + FUBO (10 peers, 642x span; NM preserved, true-missing `–` distinct). VRRM mechanical dossier
+    assembles clean (the new REQUIRED field doesn't break assembly); namespacing distinct in real output
+    (8.5x GAAP trailing / ~4.4x fwd-adj / 4.7x peer composite); no regression (all other sections populated).
+    VRRM LIVE synthesis: the peer-comps bull points POSED "whether this gap is EARNED or RESIDUAL is the
+    human's call, not a clean discount" + named the heterogeneous set + surfaced the confidence gate in
+    key_unknowns — the new guardrails did NOT fire (the prompt steered it; they are the safety net). 8
+    dossier-test pins (field present; roster+descriptions+deltas; NM; 3-way namespacing; render section; 2
+    synthesis guardrails + a precision regression). ruff + mypy --strict (65) + pytest (196 offline) green.*
+    *Post-build read-only AUDIT + precision fix (2026-06-24): required-field-meets-missing-input PROVEN
+    graceful (VRRM mechanical with its comps file removed → peer_comps all MISSING fail-loud, assembly clean,
+    no regression; file restored); no-verdict + serialisation + AST guards confirmed NON-vacuous (PeerComps
+    is reachable, 0 forbidden field-names, comps consumes exactly its 4 declared sheets); namespacing distinct
+    under missing data. ONE finding — the two new guardrails could false-fire on quality/brand
+    'premium/rich/discount + noun' and the plural 'margins' — FIXED by NARROWING _REL_VAL_CUE to valuation
+    constructions + PLURALISING _DECOMP_REF (regression-pinned). VRRM LIVE re-run post-fix: the model's
+    peer-comp points decomposed EARNED-vs-RESIDUAL + named the heterogeneous set → both new guardrails
+    correctly SILENT. KNOWN (separate, not addressed): the PRE-EXISTING ANCHORS-ON-DISTORTED-P/E flag now
+    fires 3x on VRRM (incl. on a well-formed peer-comp decomposition that cites the distorted-basis P/E) — the
+    comps feature amplifies that existing flag; it's conservative human-review, not a block.* *Frontend
+    readability (2026-06-24): the peer-comps composites (roster / trading-multiples / fundamental-deltas) now
+    render as scannable TABLES in the dossier viewer (parse-with-fallback to the plain fact() line, the same
+    discipline as seriesTable — never breaks, never alters a value); comparability stays prose; the name
+    column is a focal highlight and the deltas carry NO better/worse colour (the earned-vs-residual call is
+    the human's, not the UI's). Verified live on VRRM (3 tables, real comp set) + parsers unit-checked
+    (NM / '–' preserved, malformed → fallback).* **Does NOT close the SIC
+    peer-cohort / graph-cohort known-unknown — that is the EDGAR-derived AUTOMATED cross-section, a separate
+    deferred capability; this is the MANUAL CIQ comp set, and a heterogeneous peer set is itself surfaced as
+    a confidence gate, not silently trusted.**
   - **CIQ loader → workbook-aware addressing model (VRRM, 2026-06-19) — the prior loader couldn't
     reach the subsheets, so every CIQ section read MISSING.** CIQ Financials is ONE ~13-subsheet
     workbook (Income Statement / Cash Flow / Multiples / Segments / Capital Structure Details / …);
@@ -537,6 +587,20 @@ Each line: *what it does* — *verified how*.
   VRRM), and graph all render against local data, no console errors.* **No deploy is wired** —
   Cloudflare is unconnected (0 GitHub deployments / environments / webhooks), so the merge deployed
   nothing.
+  - **Frontend eager-load / memory fix (2026-06-24):** the OVERVIEW landing page was fetching +
+    parsing the full ~440 KB `ranked_queue.jsonl` just to show two counts, and `manifest`/`ledger` were
+    each fetched TWICE (the caches stored the resolved VALUE, so concurrent `Promise.all` callers
+    raced). Fixed: `build.py` emits the queue counts into `manifest.json` (the ~200-byte index) → the
+    overview reads them there and **no longer loads the queue** (it loads lazily only on the Ranker);
+    the snapshot loaders now memoize the in-flight PROMISE (`_once`) so concurrent callers share one
+    fetch. *Verified via fresh-module import (the live tab's ES-module cache is stale, like the
+    screenshot tooling this session): `getUniverseHealth().queue = {total 317, demoted 47}` from the
+    manifest, 0 ranked_queue fetches, and 2 concurrent manifest/ledger calls → 1 fetch each; landing-
+    page data ~447 KB → ~4 KB, overview heap roughly halves. NO leak existed — heap was 2–4 MB, stable
+    across 24 navigations; the Ranker's 318-row table is the heaviest DOM, and OS-process memory is the
+    per-tab renderer baseline, not this app.* All 5 dossiers were re-assembled so each carries
+    peer_comps (now rendered as TABLES, NM preserved); BRBR's 'premium brand' drew 0 peer-comp
+    guardrail false-fires (the narrowed _REL_VAL_CUE held live).
 - _Whole suite green (ruff + mypy --strict clean; `pytest -m "not network"` passes)._
 
 ## 3. FALSIFIED — tested and retired (NOT deferred)
@@ -614,8 +678,10 @@ without starving the lead loop; each becomes a *real* widener only when its OWN 
 - **Self-registering CIQ address registry (the dossier manifest's Option A) — named decision point,
   NOT a TODO.** Today `CIQ_MODULES` is **hand-maintained, drift-PROOFED by the AST coverage test**
   (§2: a new extractor consuming an undeclared kind fails the test → you declare it in the tuple).
-  That is **correct while the assembler's input set is FIXED (the 5 CIQ files)** — the tuple is small
-  and the test catches every drift. **TRIGGER to migrate** to a registry where extractors declare
+  That is **correct while the assembler's input set is FIXED (the 6 CIQ modules)** — the tuple is small
+  and the test catches every drift. (**`comps` peer-comps landed 2026-06-24 as the 1st new KIND** since
+  this trigger was written — manifest stayed hand-maintained, per the "revisit at the 3rd new kind"
+  call; not yet a migration.) **TRIGGER to migrate** to a registry where extractors declare
   their own `(kind, sheet, freq)` addresses (via decorator / co-located const) and **`CIQ_MODULES` is
   GENERATED, not mirrored**: when the assembler begins ingesting **NEW document KINDS as a deliberate
   direction** (e.g. `key_developments`, litigation, new filing types, alt-data). At that point the
@@ -789,8 +855,9 @@ so long as it never diverts verdict throughput from the lead loop. Design first;
   these are residual. Blocks real money, not code.
 - **CIQ data-license scope** — blocks *automated* storage of CIQ-derived data (a go-live gate before LP
   money). CIQ stays manual-pull / git-ignored.
-- **Return target** — the "beat index ≥2×" stretch is provisional and conflicts with the ~15% floor by
-  regime; re-set once the spread exists.
+- **Return target** — under the objective (§1), NOT a fixed "beat index ≥2×" multiple but **returns
+  sufficient to build LP confidence and grow AUM**, re-set quantitatively once the spread exists. (The
+  old "beat index ≥2×" stretch conflicts with the ~15% floor by regime.)
 - **Sector-expertise scoping — OPEN DESIGN QUESTION (operator-raised; do NOT act yet — the
   discriminator decides; sibling to the cap-band scoping below).** Small-cap drawdowns carry high
   value-trap / low-survival / terminal risk — that is CORRECT and is the premium the discriminator
@@ -841,6 +908,26 @@ so long as it never diverts verdict throughput from the lead loop. Design first;
   change; not revisited until that whole small-cap calibration is deliberately reconsidered. **Distinct
   from the large-cap forced-de-rating hypothesis** (§4 edge-hypothesis ledger, item recorded LOW
   credibility) — that is a SEPARATE edge with its own benchmark, NOT a reason to lift this ceiling.
+  **Re-derived under the objective (§1, returns→AUM→moat) — 2026-06-24.** The $10B ceiling carries a
+  SECOND meaning the non-replicability-first framing hid: it is also a **CAPACITY CONSTRAINT** — a
+  sub-$10B / $3M-ADV universe can absorb only so much AUM before own-buying slippage erodes the very
+  returns the edge produces. **Edge 2 (overshoot):** ceiling KEPT now — **not binding at current AUM
+  (~$1.2M)**; it correctly scopes where the edge lives, coupled to IWM + G2/G3 (above). **TRIGGER to
+  revisit:** AUM grows to where the small-cap universe can't absorb capital without slippage — the
+  strategy can outgrow its pond; record as a future re-examination, not a change now. **Edge 1
+  (orphaned quality, §4 ledger) — NOT the same ceiling/floor decision.** Ceiling inherited ($10B;
+  neglect above it is rare / arbitraged); the **FLOOR is the open parameter** — deepest neglect =
+  thinnest names = worst capacity (a direct depth-vs-capacity conflict). **Do NOT hardcode a floor
+  number** (an unvalidated guess; violates the face-validity / data-gated discipline). Decide it in two
+  steps: (1) **CAPACITY MATH** sets the initial floor — current AUM × concentration → position size →
+  required ADV at a safe participation rate → implied min market cap (arithmetic from known inputs,
+  re-derived as AUM grows); (2) **SIZE-BANDED SPREAD** refines it — tag Edge-1 verdicts by size band,
+  raise the floor toward "orphaned mid-cap" if deployable-neglect proves to live in larger names, keep
+  it low if smaller names show a deployable positive spread. **Floor = function of AUM (capacity) +
+  resolved spread, never a fixed number.** **PRINCIPLE:** parameters justified under
+  non-replicability-first must be re-checked against returns→AUM→moat — under the old objective smaller
+  was monotonically better; under the new one CAPACITY is a countervailing force, so past some point
+  smaller = un-investable, which fights AUM growth.
 
 ## 7. The standing discipline
 
