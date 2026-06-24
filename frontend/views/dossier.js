@@ -70,13 +70,18 @@ function fact(label, s, fmt, { hi = false } = {}) {
   s = s || {};
   const present = s.status === "present" && s.value != null;
   if (!present) {
-    const badge = s.status === "missing" ? "MISSING" : "UNKNOWN";
+    // "not applicable by fact" (e.g. negative earnings → no meaningful P/E) reads as N/A, not a data gap
+    const na = s.status !== "missing" && /no positive eps|negative earnings|not applicable|^\s*n\/a/i.test(s.note || "");
+    const badge = s.status === "missing" ? "MISSING" : (na ? "N/A" : "UNKNOWN");
     return `<div class="fact"><div class="fact-label">${escapeHtml(label)}</div>
       <div class="fact-val muted"><span class="pill unresolved">${badge}</span> ${escapeHtml(s.note || "")}</div></div>`;
   }
   const val = fmt ? fmt(s.value) : escapeHtml(String(s.value)); // fmt() returns safe formatted text
+  const cite = s.source_ref ? `<span class="cite">${escapeHtml(s.source_ref)}</span>` : "";
+  // a note ON a present value is a caveat (e.g. a distorted P/E that must not read as a clean multiple)
+  const caveat = s.note ? `<div class="fact-caveat">⚠ ${escapeHtml(s.note)}</div>` : "";
   return `<div class="fact"><div class="fact-label">${escapeHtml(label)}</div>
-    <div class="fact-val${hi ? " hi" : ""}">${val}${s.source_ref ? `<span class="cite">${escapeHtml(s.source_ref)}</span>` : ""}</div></div>`;
+    <div class="fact-val${hi ? " hi" : ""}">${val}${cite}${caveat}</div></div>`;
 }
 
 const sec = (title, sub, inner) => `<div class="card ds-section"><div class="ds-title">${escapeHtml(title)}</div>${sub ? `<div class="subtitle muted ds-sub">${escapeHtml(sub)}</div>` : ""}${inner}</div>`;
@@ -84,6 +89,70 @@ const mult = (v) => escapeHtml(Number(v).toFixed(1)) + "&times;";
 const pctile = (v) => escapeHtml((Number(v) * 100).toFixed(0)) + "<span class='muted'>th %ile vs ~5y</span>";
 const ret = (v) => fmtPct(v, { signed: true });
 const signWord = (v) => (v > 0 ? "positive" : v < 0 ? "negative" : "breakeven");
+
+// --- multi-period series (margin trend / trajectory / surprise) → a scannable metric×period table.
+// The mechanical layer encodes these as a deterministic string ("<metric>: <period> [(basis)] <value>
+// → …; …" with a trailing note). We parse it into a grid and render a table; anything that doesn't
+// parse falls back to the plain-text fact() — presentation only, never breaks, never alters a value.
+function parseSeries(text) {
+  let s = String(text).trim();
+  let note = "";
+  const m = s.match(/\s*\[([^\]]*)\]\s*$/) || s.match(/\s*\(([^()]*)\)\s*$/);
+  if (m) { note = m[1]; s = s.slice(0, m.index).trim(); }
+  const series = [], scalars = [];
+  for (const seg of s.split(";")) {
+    const t = seg.trim();
+    const ci = t.indexOf(": ");
+    if (ci < 0) continue;
+    const label = t.slice(0, ci).trim();
+    const data = t.slice(ci + 2).trim();
+    const sep = data.includes(" → ") ? " → " : (data.includes(", ") ? ", " : null);
+    if (!sep) { scalars.push({ label, value: data }); continue; }
+    const points = [];
+    for (const raw of data.split(sep)) {
+      const toks = raw.trim().split(/\s+/);
+      if (toks.length < 2) continue;
+      const b = toks[toks.length - 2];
+      const hasBasis = b && b.startsWith("(") && b.endsWith(")");
+      points.push({ period: toks.slice(0, hasBasis ? -2 : -1).join(" "),
+                    basis: hasBasis ? b.slice(1, -1) : "", value: toks[toks.length - 1] });
+    }
+    if (points.length) series.push({ label, points });
+  }
+  return { series, scalars, note };
+}
+
+function fmtPeriod(p) {
+  let m = p.match(/^([A-Za-z]{3})-\d{2}-(\d{4})$/);
+  if (m) return `${m[1]} '${m[2].slice(2)}`;
+  m = p.match(/^FY(\d{4})$/);
+  return m ? `FY${m[1].slice(2)}` : p;
+}
+
+function seriesTable(label, s) {
+  if (!s || s.status !== "present" || s.value == null) return fact(label, s);  // honest UNKNOWN/MISSING
+  let parsed;
+  try { parsed = parseSeries(s.value); } catch { parsed = { series: [], scalars: [], note: "" }; }
+  if (!parsed.series.length) return fact(label, s);  // unparseable shape → raw-text fallback
+  const periods = [];
+  for (const sr of parsed.series) for (const p of sr.points) if (!periods.includes(p.period)) periods.push(p.period);
+  const sup = (b) => (b ? `<sup class="muted">${escapeHtml(b)}</sup>` : "");
+  const head = `<tr><th></th>${periods.map((p) => `<th class="num">${escapeHtml(fmtPeriod(p))}</th>`).join("")}</tr>`;
+  const body = parsed.series.map((sr) => {
+    const by = Object.fromEntries(sr.points.map((p) => [p.period, p]));
+    const cells = periods.map((p) => (by[p]
+      ? `<td class="num">${escapeHtml(by[p].value)}${sup(by[p].basis)}</td>` : `<td class="num">${DASH}</td>`)).join("");
+    return `<tr><td style="white-space:nowrap;">${escapeHtml(sr.label)}</td>${cells}</tr>`;
+  }).join("");
+  const scalars = parsed.scalars.map((x) =>
+    `<div class="muted" style="font-size:12px; margin-top:6px;">${escapeHtml(x.label)}: <b style="color:var(--ink);">${escapeHtml(x.value)}</b></div>`).join("");
+  const note = parsed.note ? `<div class="muted" style="font-size:11px; margin-top:5px;">${escapeHtml(parsed.note)}</div>` : "";
+  const cite = s.source_ref ? `<span class="cite">${escapeHtml(s.source_ref)}</span>` : "";
+  // a normal label-left / value-right fact ROW where the value IS the table — keeps it uniform with
+  // every other fact; the value cell clamps to its grid column (min-width:0) and scrolls if too wide.
+  return `<div class="fact"><div class="fact-label">${escapeHtml(label)}</div>
+    <div style="min-width:0;"><div style="overflow-x:auto;"><table class="data"><thead>${head}</thead><tbody>${body}</tbody></table></div>${scalars}${note}${cite}</div></div>`;
+}
 
 function renderDossier(d, verdict) {
   const m = d.mechanical || {};
@@ -144,13 +213,13 @@ function quality(q) {
   return sec("Quality", "Durability: cash generation, margins, leverage, dilution, covenant flags.",
     fact("FCF sign", q.fcf_sign, signWord) +
     fact("Free cash flow", q.free_cash_flow) +
-    fact("Margin trend", q.margin_trend) +
+    seriesTable("Margin trend", q.margin_trend) +
     fact("Net debt / EBITDA (GAAP)", q.net_debt_to_ebitda, mult) +
     fact("Net debt / EBITDA (covenant adj.)", q.net_debt_to_ebitda_adjusted) +
     fact("Interest coverage", q.interest_coverage, mult) +
     fact("Share-count trend", q.share_count_trend) +
     fact("Liquidity / covenant flags", q.liquidity_covenant_flags) +
-    fact("Multi-year trajectory", q.multi_year_trajectory));
+    seriesTable("Multi-year trajectory", q.multi_year_trajectory));
 }
 
 function concentration(c) {
@@ -201,7 +270,7 @@ function consensus(cc) {
     fact("EPS revisions", cc.eps_trend) +
     fact("Revenue revisions", cc.revenue_trend) +
     fact("Revision history", cc.revision_history) +
-    fact("Surprise history", cc.surprise_history));
+    seriesTable("Surprise history", cc.surprise_history));
 }
 
 function synthesis(s) {

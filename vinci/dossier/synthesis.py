@@ -45,6 +45,24 @@ _MISSING_CLAIM = re.compile(
     r"absent|undisclosed|MISSING|UNKNOWN)\b",
     re.IGNORECASE,
 )
+# analyst-RATING context: "buy"/"sell" here describe the CONSENSUS (a fact surfaced as context),
+# not the dossier concluding. Redact these spans before the directional lint so it stops flagging
+# both 'buy' and 'sell' on a single sentence that merely reports the sell-side rating.
+_RATING_CTX = re.compile(
+    r"\b(?:buy|sell)-side\b"                                # sell-side / buy-side
+    r"|\b(?:buy|sell|hold|outperform|underperform|overweight|underweight)\b\s*\([^)]*\)"
+    r"|\b\d+\s*=\s*(?:buy|sell)\b"                          # 1=buy / 5=sell
+    r"|\b(?:buy|sell)\b(?=\s*(?:…|\.\.\.|scale|rating))",   # buy… / sell scale
+    re.IGNORECASE,
+)
+
+
+def _snip(s: str, n: int = 70) -> str:
+    """A claim prefix that ends on a WORD boundary + '…' — so a flag never cuts mid-word (e.g.
+    '…Phase 3.2 capac' → '…Phase 3.2 capacity…'). Returns the whole string when short."""
+    if len(s) <= n:
+        return s
+    return (s[:n].rsplit(" ", 1)[0] or s[:n]) + "…"
 
 _POINT = {
     "type": "object",
@@ -220,18 +238,18 @@ def _validate(synth: Synthesis, mech: MechanicalLayer) -> tuple[Synthesis, list[
     def check_point(p: SourcedPoint, where: str) -> SourcedPoint:
         cited = _traces(p.source_ref, refs)
         if not cited:
-            flags.append(f"UNCITED {where}: '{p.claim[:70]}' (ref not in mechanical facts)")
+            flags.append(f"UNCITED {where}: '{_snip(p.claim)}' (ref not in mechanical facts)")
         elif _MISSING_CLAIM.search(p.claim) and _traces(p.source_ref, present_refs):
             # a "field X is missing" claim must bind to X's MISSING marker (no source_ref), not to
             # an unrelated PRESENT field — such a claim belongs in key_unknowns, not here.
             cited = False
             flags.append(
-                f"MISMATCH {where}: '{p.claim[:55]}' asserts missing/UNKNOWN data yet cites a "
-                "PRESENT field — move to key_unknowns, don't source-bind it"
+                f"MISMATCH {where}: '{_snip(p.claim, 55)}' asserts missing/UNKNOWN data yet cites "
+                "a PRESENT field — move to key_unknowns, don't source-bind it"
             )
         for n in _floats(p.claim):
             if not _num_traces(n):
-                flags.append(f"UNTRACEABLE figure '{n:g}' in {where}: '{p.claim[:70]}'")
+                flags.append(f"UNTRACEABLE figure '{n:g}' in {where}: '{_snip(p.claim)}'")
         return p.model_copy(update={"cited": cited})
 
     bull = [check_point(p, "bull_point") for p in synth.bull_points]
@@ -254,7 +272,8 @@ def _validate(synth: Synthesis, mech: MechanicalLayer) -> tuple[Synthesis, list[
         + [dq.question, *synth.key_unknowns]
         + [f"{t.outcome} {t.distinguishing_fact}" for t in synth.twin_reference_cases]
     )
-    for hit in {m.group(0).lower() for m in _DIRECTIONAL.finditer(blob)}:
+    lint_blob = _RATING_CTX.sub(" ", blob)  # don't flag buy/sell reporting the analyst rating
+    for hit in {m.group(0).lower() for m in _DIRECTIONAL.finditer(lint_blob)}:
         flags.append(f"DIRECTIONAL language '{hit}' — human review (dossier frames, not concludes)")
 
     validated = synth.model_copy(

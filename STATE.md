@@ -231,6 +231,26 @@ Each line: *what it does* — *verified how*.
     "termination notice from Avis Budget" + the executive change, source-bound to accessions; the P/E
     1%-ile flagged as an EPS artifact (latest 0.85 vs median 0.28); the synthesis decisive question is
     now the Avis customer-concentration question, not a false repeated-earnings-miss premise.*
+  - **Faithfulness-flag noise + P/E-display hardening (2026-06-24) — the flags must read as signal,
+    and a distorted multiple must never render as a clean 'cheap' read.** (1) The directional lint
+    redacts analyst-RATING context (`sell-side`, `Buy (1.00) recommendation`, a `1=buy…5=sell` scale)
+    before scanning, so it no longer fires both 'buy' AND 'sell' on a sentence that merely reports the
+    consensus. (2) Flag snippets truncate on a WORD boundary + '…' (no more mid-word '…Phase 3.2 capac').
+    (3) The dossier P/E renders **N/A** (not UNKNOWN) when there's no positive EPS, and a PRESENT but
+    distorted P/E now carries an inline caveat ON the value (`_pe_reconciliation` returns
+    `(flag, pe_note)`; the loss-making case names that the multiple rests on a NON-CURRENT positive EPS)
+    — closing the gap where FUBO's 12.1x rendered clean while VRRM's 5.2x had a RESOLVED note. (4) The
+    net-debt/EBITDA UNKNOWN note names the SPECIFIC missing input (a positive-EBITDA name reads
+    'no net-debt — debt/cash not in XBRL', not the misleading lumped 'EBITDA<=0 or missing'). *Verified:
+    VRRM 5→3 / EPAM 3→1 directional flags (the contradictory buy+sell on rating context gone, single
+    'recommendation' remains); snippets clean ('…Phase…', '~$71M…'); MVST P/E → N/A; FUBO 12.1x renders
+    with the amber distortion caveat (live screenshot + node render). Regression tests: rating-context
+    exemption + `_snip`; `_pe_reconciliation` `(flag, note)` incl the non-current-EPS caveat; net-leverage
+    note disambiguation. ruff + mypy --strict + pytest -m "not network" green.* **Open (audit finding):
+    FUBO's existing synthesis anchored a mean-reversion bull case on the distorted 12.1x / 0.2-pctile P/E,
+    UN-flagged by the directional lint — the caveat now lives on the mechanical pe field so a re-assemble
+    steers the synthesis off it; full effect needs re-assembling FUBO (and MVST, whose synthesis still
+    quotes the old net-debt note text).**
   - **CIQ loader → workbook-aware addressing model (VRRM, 2026-06-19) — the prior loader couldn't
     reach the subsheets, so every CIQ section read MISSING.** CIQ Financials is ONE ~13-subsheet
     workbook (Income Statement / Cash Flow / Multiples / Segments / Capital Structure Details / …);

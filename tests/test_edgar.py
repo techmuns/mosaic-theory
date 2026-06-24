@@ -159,6 +159,31 @@ def test_leverage_unknown_when_ebitda_nonpositive() -> None:
     snap = compute_fundamental_snapshot("x", facts)
     assert snap.op_income_sign.value == -1  # loss-making → negative sign (a distress tell)
     assert snap.net_leverage.coverage_status is CoverageStatus.UNKNOWN  # EBITDA<=0 → meaningless
+    assert "EBITDA<=0" in (snap.net_leverage.note or "")  # the note names the real cause
+
+
+def test_leverage_unknown_note_names_missing_debt_not_negative_ebitda() -> None:
+    """The net-leverage UNKNOWN note names the SPECIFIC missing input. A positive-EBITDA name
+    with no debt/cash line reads 'no net-debt …', NOT the misleading 'EBITDA<=0 …' (the MVST
+    case — its EBITDA is clearly positive, the gap is just that EDGAR has no debt/cash line)."""
+    facts = {
+        "facts": {
+            "us-gaap": {
+                "OperatingIncomeLoss": {
+                    "units": {"USD": [_flow("op", "2024-12-31", "2024-01-01", 200.0, "2025-02-01")]}
+                },
+                "DepreciationDepletionAndAmortization": {
+                    "units": {"USD": [_flow("da", "2024-12-31", "2024-01-01", 50.0, "2025-02-01")]}
+                },
+                # no debt/cash lines → net-debt unavailable; EBITDA = 250 > 0
+            }
+        }
+    }
+    snap = compute_fundamental_snapshot("x", facts)
+    assert snap.ebitda_annual.value == pytest.approx(250.0)  # EBITDA clearly positive
+    assert snap.net_leverage.coverage_status is CoverageStatus.UNKNOWN
+    note = snap.net_leverage.note or ""
+    assert "debt/cash not in XBRL" in note and "EBITDA<=0" not in note  # names the gap
 
 
 def test_all_unknown_snapshot_is_graceful() -> None:
