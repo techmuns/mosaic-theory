@@ -228,6 +228,68 @@ def test_synthesis_guardrails_flag_uncited_directional_and_numeric_twins() -> No
     assert "fake-model-1" in log and "RAW OUTPUT" in log
 
 
+def test_directional_lint_exempts_analyst_rating_context() -> None:
+    """#1: 'buy'/'sell' that merely report the analyst rating (a Buy (1.00) recommendation, a
+    1=buy…5=sell scale, the sell-side) are NOT directional-flagged; a real conclusion still is.
+    #2: a long claim is quoted to a word boundary + '…', never mid-word."""
+    base = {
+        "twin_reference_cases": [], "key_unknowns": [],
+        "decisive_question": {
+            "question": "does it reverse?", "evidence_for": [], "evidence_against": []
+        },
+    }
+    rating = {
+        **base,
+        "bull_points": [{"claim": "Sell-side still carries a Buy (1.00) recommendation "
+                         "versus the current price", "source_ref": "x"}],
+        "bear_points": [{"claim": "The analyst recommendation is only Hold (3.00 on a "
+                         "1=buy…5=sell scale), not an endorsement", "source_ref": "x"}],
+    }
+    _, flags, _ = syn.synthesize(_minimal_mech(), llm=_FakeLlm(rating), ticker="X", name="X")
+    hits = {f.split("'")[1] for f in flags if "DIRECTIONAL language" in f}
+    assert "buy" not in hits and "sell" not in hits  # rating context, not a conclusion
+
+    concl = {**base, "bear_points": [],
+             "bull_points": [{"claim": "BUY now, undervalued", "source_ref": "x"}]}
+    _, flags2, _ = syn.synthesize(_minimal_mech(), llm=_FakeLlm(concl), ticker="X", name="X")
+    assert any("DIRECTIONAL language 'buy'" in f for f in flags2)  # a real conclusion still flags
+
+    assert syn._snip("alpha beta gamma delta", 12) == "alpha beta…"  # cuts at a word boundary + …
+    assert syn._snip("short", 70) == "short"  # short claim unchanged
+
+
+def test_anchors_on_distorted_pe_flags_bull_case_leaning_on_the_multiple() -> None:
+    """When the mechanical P/E is marked distorted, a BULLISH claim that leans on that multiple/
+    percentile as cheap/mean-reverting is flagged (the FUBO trap) — but NOT when the P/E is clean,
+    and not a bull claim that doesn't touch the P/E."""
+    mech = _minimal_mech()
+    distorted = ds.Sourced.present(
+        12.1, source_ref="EDGAR XBRL", note="distorted — rests on a non-current positive EPS"
+    )
+    mech_d = mech.model_copy(
+        update={"valuation": mech.valuation.model_copy(update={"pe": distorted})}
+    )
+    payload = {
+        "bull_points": [
+            {"claim": "The P/E sits at the 0.2nd percentile, a depressed valuation that "
+                      "could revert", "source_ref": "EDGAR/EOD P/E pctile"},
+            {"claim": "Gross margin expanded 300bps as the mix shifted to subscription",
+             "source_ref": "x"},
+        ],
+        "bear_points": [], "twin_reference_cases": [], "key_unknowns": [],
+        "decisive_question": {
+            "question": "does it reverse?", "evidence_for": [], "evidence_against": []
+        },
+    }
+    _, flags, _ = syn.synthesize(mech_d, llm=_FakeLlm(payload), ticker="FUBO", name="FuboTV")
+    anchors = [f for f in flags if "ANCHORS-ON-DISTORTED-P/E" in f]
+    assert len(anchors) == 1 and "depressed valuation" in anchors[0]  # only the P/E-leaning point
+
+    # clean P/E (no distortion note) → the SAME claim does NOT fire the anchor flag
+    _, clean, _ = syn.synthesize(mech, llm=_FakeLlm(payload), ticker="FUBO", name="FuboTV")
+    assert not any("ANCHORS-ON-DISTORTED-P/E" in f for f in clean)
+
+
 def test_synthesis_fails_loud_when_llm_errors() -> None:
     """An LLM with no usable output → None synthesis + a flag, never a fabricated dossier."""
     class _BadLlm(LlmClient):
@@ -716,17 +778,32 @@ def test_adjusted_facts_compute_forward_ev_and_leverage() -> None:
 # --- durability: the P/E-distortion RESOLUTION path (trailing GAAP vs forward adjusted) --------
 def test_pe_reconciliation_resolves_with_forward_adjusted() -> None:
     """A one-time-distorted trailing GAAP EPS + a sourced forward adjusted EPS → a RESOLVED P/E
-    statement (not an open 'verify'); without the forward adjusted EPS, the original flag stands."""
+    statement (not an open 'verify'); without it the original flag stands. Each return now also
+    carries a SHORT caveat on the P/E field, so a distorted multiple never renders 'naked'."""
     edgar = _StubEdgar(
         _facts([(2021, 0.28), (2022, 0.28), (2023, 0.28), (2024, 0.85)], shares=1.5e8), net_debt=1e9
     )
     rec, empty = _min_record(pe=5.5, price=4.71), ciq.CiqBundle(ticker="X", workbooks=())
     rg = ds.Sourced.present("Adjusted EPS of $1.19 to $1.25", source_ref="EDGAR 8-K X Ex-99.1")
     resolved = dm._pe_reconciliation(rec, typing.cast(EdgarClient, edgar), empty, rg)
-    assert resolved is not None and resolved.startswith("RESOLVED")
-    assert "~3.9x" in resolved  # 4.71 / 1.22 (mid of $1.19–1.25)
+    assert resolved is not None
+    flag, pe_note = resolved
+    assert flag.startswith("RESOLVED") and "~3.9x" in flag  # 4.71 / 1.22 (mid of $1.19–1.25)
+    assert "not a clean multiple" in pe_note  # the SHORT caveat now carried ON the P/E field
     no_guide = dm._pe_reconciliation(rec, typing.cast(EdgarClient, edgar), empty, _u())
-    assert no_guide is not None and "verify against normalized/forward EPS" in no_guide  # open flag
+    assert no_guide is not None and "verify against normalized/forward EPS" in no_guide[0]
+    assert "not a clean multiple" in no_guide[1]  # caveat present on the open-flag path too
+    # FUBO-style structurally loss-making: latest annual EPS negative → the caveat names that the
+    # P/E rests on a NON-CURRENT positive EPS (the screen reached back past the loss years).
+    loss = _StubEdgar(
+        _facts([(2021, -2.78), (2022, -3.08), (2023, -1.04), (2024, -0.54)], shares=3e8),
+        net_debt=0.0,
+    )
+    fubo = dm._pe_reconciliation(
+        _min_record(pe=12.1, price=6.5), typing.cast(EdgarClient, loss), empty, _u()
+    )
+    assert fubo is not None and "non-current positive EPS" in fubo[1]
+    assert "latest annual EPS is negative" in fubo[1]
 
 
 # --- durability: Surprise history parsed + GAAP-basis labelled --------------------------------

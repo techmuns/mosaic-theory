@@ -374,12 +374,15 @@ def _share_count_trend(edgar: EdgarClient, cik: str, reference_date: date) -> So
 
 def _pe_reconciliation(
     record: DataRecord, edgar: EdgarClient, bundle: CiqBundle, revised_guidance: Sourced[str]
-) -> str | None:
-    """Whether the trailing GAAP P/E is meaningful. When the forward adjusted EPS is now in the
-    dossier (99.1), RESOLVE the old 'verify against forward EPS' flag into a reconciliation — the
-    trailing GAAP P/E is one-time-distorted and the clean read is the forward adjusted guide (this
-    also subsumes the EDGAR-vs-CIQ P/E conflict). When the adjusted EPS isn't available the original
-    open flag stands. None when the trailing EPS is in line with recent history (no distortion)."""
+) -> tuple[str, str] | None:
+    """Whether the trailing GAAP P/E is meaningful. Returns ``(flag, pe_note)`` or None — ``flag``
+    is the full human-review line; ``pe_note`` is a SHORT caveat to carry ON the P/E field itself so
+    the multiple never renders 'naked' as cheap (closes the gap where a distorted P/E showed clean).
+    When the forward adjusted EPS is now in the dossier (99.1), RESOLVE the old 'verify against
+    forward EPS' flag into a reconciliation — the trailing GAAP P/E is one-time-distorted and the
+    clean read is the forward adjusted guide (this also subsumes the EDGAR-vs-CIQ P/E conflict).
+    When the adjusted EPS isn't available the original open flag stands. None when trailing EPS is
+    in line with recent history (no distortion)."""
     pe = record.fundamentals.pe
     if not pe.is_known or pe.value is None or not record.identity.cik:
         return None
@@ -408,16 +411,25 @@ def _pe_reconciliation(
             f"; CIQ P/LTM {ciq_pe.value:.1f}x uses a different (lower) trailing EPS basis"
             if ciq_pe.status is SourceStatus.PRESENT and ciq_pe.value else ""
         )
-        return (
+        flag = (
             f"RESOLVED (P/E basis) — trailing GAAP P/E {pe.value:.1f}x is one-time-distorted: "
             f"latest GAAP EPS {latest:.2f} is ~{latest / med:.1f}× the recent median {med:.2f}, so "
             f"{pe.value:.1f}x is not a meaningful 'cheap' read. Clean read: forward adjusted guide "
             f"${lo:.2f}–${hi:.2f} → ~{price / ((lo + hi) / 2):.1f}x at the current price{ciq_tail}."
         )
-    return (  # adjusted EPS not available — the original open flag stands
+        return flag, "one-time-distorted EPS — not a clean multiple; see the P/E-basis flag"
+    flag = (  # adjusted EPS not available — the original open flag stands
         f"P/E may be distorted by non-recurring EPS — latest annual EPS {latest:.2f} vs "
         f"recent median {med:.2f}; verify against normalized/forward EPS (CIQ)"
     )
+    note = (
+        f"distorted — P/E rests on a non-current positive EPS; latest annual EPS is negative "
+        f"({latest:.2f}). Not a meaningful multiple — see the P/E-basis flag"
+        if latest < 0 else
+        f"distorted — trailing EPS {latest:.2f} is anomalous vs the recent median {med:.2f}; "
+        f"not a clean multiple — see the P/E-basis flag"
+    )
+    return flag, note
 
 
 def _eps_caveat_flags(record: DataRecord, bundle: CiqBundle, *, eps_resolved: bool) -> list[str]:
@@ -534,11 +546,15 @@ def _adjusted_facts(
 
 
 def _valuation(
-    record: DataRecord, bundle: CiqBundle, adj_eps: Sourced[str], adj_ev: Sourced[str]
+    record: DataRecord, bundle: CiqBundle, adj_eps: Sourced[str], adj_ev: Sourced[str],
+    *, pe_note: str | None = None,
 ) -> Valuation:
     f = record.fundamentals
+    pe = _sourced(f.pe, source_ref="EDGAR XBRL eps_diluted × EOD price (screen data-record, G3)")
+    if pe_note and pe.status is SourceStatus.PRESENT:
+        pe = pe.model_copy(update={"note": pe_note})  # carry the distortion caveat ON the value
     return Valuation(
-        pe=_sourced(f.pe, source_ref="EDGAR XBRL eps_diluted × EOD price (screen data-record, G3)"),
+        pe=pe,
         pe_percentile_5y=_sourced(
             f.pe_pctile_vs_history, source_ref="EDGAR/EOD P/E pctile vs ~5y (screen data-record)"
         ),
@@ -616,8 +632,11 @@ def assemble_mechanical(
     # adjusted-basis multiples + leverage, which in turn RESOLVE the GAAP-only caveats below.
     drawdown = _drawdown_cause(record, edgar, http)
     adj_eps, adj_ev, adj_lev = _adjusted_facts(record, edgar, drawdown.revised_guidance)
+    pe_recon = _pe_reconciliation(record, edgar, bundle, drawdown.revised_guidance)
     mech = MechanicalLayer(
-        valuation=_valuation(record, bundle, adj_eps, adj_ev),
+        valuation=_valuation(
+            record, bundle, adj_eps, adj_ev, pe_note=pe_recon[1] if pe_recon else None
+        ),
         quality=_quality(record, edgar, bundle, reference_date, adj_lev),
         concentration=_concentration(bundle),
         drawdown_cause=drawdown,
@@ -628,9 +647,8 @@ def assemble_mechanical(
         management_commentary=ciq_sheets.management_commentary(bundle),
     )
     flags: list[str] = []
-    pe_recon = _pe_reconciliation(record, edgar, bundle, drawdown.revised_guidance)
     if pe_recon is not None:
-        flags.append(pe_recon)
+        flags.append(pe_recon[0])
     flags += _eps_caveat_flags(record, bundle, eps_resolved=adj_eps.status is SourceStatus.PRESENT)
     # the GAAP-leverage caveat is an open warning only while the covenant basis isn't shown
     if adj_lev.status is not SourceStatus.PRESENT and (lev := _leverage_basis_flag(record)):

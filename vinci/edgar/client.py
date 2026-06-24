@@ -136,11 +136,20 @@ def compute_fundamental_snapshot(cik10: str, facts: dict[str, Any]) -> Fundament
     else:
         net_debt = _unknown_f("no debt/cash")
 
-    # net leverage = net debt / EBITDA; UNKNOWN if EBITDA <= 0 (ratio meaningless / itself distress)
-    if net_debt_val is not None and ebitda_val is not None and ebitda_val > 0 and net_debt.as_of:
-        net_lev = _present_f(net_debt_val / ebitda_val, net_debt.as_of)
+    # net leverage = net debt / EBITDA; UNKNOWN with the SPECIFIC missing input — never lump them.
+    # "missing debt/cash" and "EBITDA<=0" are different facts: a positive-EBITDA name (e.g. one with
+    # 10x interest coverage) reading "EBITDA<=0 or…" mis-reads as distress when the real gap is just
+    # that no debt/cash line was in the XBRL.
+    if net_debt_val is None:
+        net_lev = _unknown_f("no net-debt — debt/cash not in XBRL")
+    elif ebitda_val is None:
+        net_lev = _unknown_f("no EBITDA in XBRL")
+    elif ebitda_val <= 0:
+        net_lev = _unknown_f("EBITDA<=0 (ratio meaningless)")
+    elif not net_debt.as_of:
+        net_lev = _unknown_f("net-debt as-of date missing")
     else:
-        net_lev = _unknown_f("EBITDA<=0 or missing debt/cash")
+        net_lev = _present_f(net_debt_val / ebitda_val, net_debt.as_of)
 
     eps_df = _present_f(eps.value, eps.filed) if eps else _unknown_f("no diluted EPS")
     filed_dates = [p.filed for p in (op, da, ocf, capex, eps, ltd, dc, cash) if p]

@@ -231,6 +231,32 @@ Each line: *what it does* — *verified how*.
     "termination notice from Avis Budget" + the executive change, source-bound to accessions; the P/E
     1%-ile flagged as an EPS artifact (latest 0.85 vs median 0.28); the synthesis decisive question is
     now the Avis customer-concentration question, not a false repeated-earnings-miss premise.*
+  - **Faithfulness-flag noise + P/E-display hardening (2026-06-24) — the flags must read as signal,
+    and a distorted multiple must never render as a clean 'cheap' read.** (1) The directional lint
+    redacts analyst-RATING context (`sell-side`, `Buy (1.00) recommendation`, a `1=buy…5=sell` scale)
+    before scanning, so it no longer fires both 'buy' AND 'sell' on a sentence that merely reports the
+    consensus. (2) Flag snippets truncate on a WORD boundary + '…' (no more mid-word '…Phase 3.2 capac').
+    (3) The dossier P/E renders **N/A** (not UNKNOWN) when there's no positive EPS, and a PRESENT but
+    distorted P/E now carries an inline caveat ON the value (`_pe_reconciliation` returns
+    `(flag, pe_note)`; the loss-making case names that the multiple rests on a NON-CURRENT positive EPS)
+    — closing the gap where FUBO's 12.1x rendered clean while VRRM's 5.2x had a RESOLVED note. (4) The
+    net-debt/EBITDA UNKNOWN note names the SPECIFIC missing input (a positive-EBITDA name reads
+    'no net-debt — debt/cash not in XBRL', not the misleading lumped 'EBITDA<=0 or missing'). *Verified:
+    VRRM 5→3 / EPAM 3→1 directional flags (the contradictory buy+sell on rating context gone, single
+    'recommendation' remains); snippets clean ('…Phase…', '~$71M…'); MVST P/E → N/A; FUBO 12.1x renders
+    with the amber distortion caveat (live screenshot + node render). Regression tests: rating-context
+    exemption + `_snip`; `_pe_reconciliation` `(flag, note)` incl the non-current-EPS caveat; net-leverage
+    note disambiguation. ruff + mypy --strict + pytest -m "not network" green.* (5) **NEW guardrail
+    `ANCHORS-ON-DISTORTED-P/E`** — when the mechanical P/E is marked distorted, any BULLISH claim that
+    leans on that multiple/percentile as cheap or mean-reverting is flagged (the directional lint missed
+    these: hedged phrasing, traceable numbers). *Verified the original audit case: FUBO's pre-fix
+    synthesis anchored a mean-reversion bull thesis on the 12.1x / 0.2-pctile P/E (3 claims) un-flagged;
+    the guardrail catches all 3 on the stored synthesis. Then **re-assembled FUBO + MVST (opus 4.8)**:
+    FUBO's fresh synthesis anchoring dropped 3→1 (the pe caveat steered it), and the guardrail flagged the
+    remaining one; zero buy/sell directional noise; MVST's fresh synthesis no longer quotes the old
+    net-debt text. **Caveat:** the net-debt NOTE itself is computed at SCREEN time (cached in `vinci.db`),
+    so dossier re-assembly reads the stale value — the `edgar/client.py` disambiguation lands on the next
+    `run-weekly` (re-screen), not on re-assembly.*
   - **CIQ loader → workbook-aware addressing model (VRRM, 2026-06-19) — the prior loader couldn't
     reach the subsheets, so every CIQ section read MISSING.** CIQ Financials is ONE ~13-subsheet
     workbook (Income Statement / Cash Flow / Multiples / Segments / Capital Structure Details / …);
