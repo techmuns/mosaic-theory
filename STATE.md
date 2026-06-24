@@ -19,6 +19,11 @@ paper-validation**: the only thing that gates going live with real money is the 
 return spread** on the manual discriminator's verdicts — which needs calendar time to accumulate.
 **The fund is unproven: zero resolved verdicts so far, no spread yet.**
 
+**What it's FOR — the objective, in causal order: LP RETURNS → AUM GROWTH → MOAT-BUILDING.** Returns
+build LP confidence and grow AUM; growing AUM earns the time and capital to compound durable,
+non-replicable moats. Non-replicability is **INSTRUMENTAL** — it makes returns durable and defensible
+at scale — NOT the terminal goal; the terminal goal is LP returns and the AUM growth they enable.
+
 ## 2. Built and verified (checked against the repo, not memory)
 
 Each line: *what it does* — *verified how*.
@@ -850,8 +855,9 @@ so long as it never diverts verdict throughput from the lead loop. Design first;
   these are residual. Blocks real money, not code.
 - **CIQ data-license scope** — blocks *automated* storage of CIQ-derived data (a go-live gate before LP
   money). CIQ stays manual-pull / git-ignored.
-- **Return target** — the "beat index ≥2×" stretch is provisional and conflicts with the ~15% floor by
-  regime; re-set once the spread exists.
+- **Return target** — under the objective (§1), NOT a fixed "beat index ≥2×" multiple but **returns
+  sufficient to build LP confidence and grow AUM**, re-set quantitatively once the spread exists. (The
+  old "beat index ≥2×" stretch conflicts with the ~15% floor by regime.)
 - **Sector-expertise scoping — OPEN DESIGN QUESTION (operator-raised; do NOT act yet — the
   discriminator decides; sibling to the cap-band scoping below).** Small-cap drawdowns carry high
   value-trap / low-survival / terminal risk — that is CORRECT and is the premium the discriminator
@@ -902,6 +908,26 @@ so long as it never diverts verdict throughput from the lead loop. Design first;
   change; not revisited until that whole small-cap calibration is deliberately reconsidered. **Distinct
   from the large-cap forced-de-rating hypothesis** (§4 edge-hypothesis ledger, item recorded LOW
   credibility) — that is a SEPARATE edge with its own benchmark, NOT a reason to lift this ceiling.
+  **Re-derived under the objective (§1, returns→AUM→moat) — 2026-06-24.** The $10B ceiling carries a
+  SECOND meaning the non-replicability-first framing hid: it is also a **CAPACITY CONSTRAINT** — a
+  sub-$10B / $3M-ADV universe can absorb only so much AUM before own-buying slippage erodes the very
+  returns the edge produces. **Edge 2 (overshoot):** ceiling KEPT now — **not binding at current AUM
+  (~$1.2M)**; it correctly scopes where the edge lives, coupled to IWM + G2/G3 (above). **TRIGGER to
+  revisit:** AUM grows to where the small-cap universe can't absorb capital without slippage — the
+  strategy can outgrow its pond; record as a future re-examination, not a change now. **Edge 1
+  (orphaned quality, §4 ledger) — NOT the same ceiling/floor decision.** Ceiling inherited ($10B;
+  neglect above it is rare / arbitraged); the **FLOOR is the open parameter** — deepest neglect =
+  thinnest names = worst capacity (a direct depth-vs-capacity conflict). **Do NOT hardcode a floor
+  number** (an unvalidated guess; violates the face-validity / data-gated discipline). Decide it in two
+  steps: (1) **CAPACITY MATH** sets the initial floor — current AUM × concentration → position size →
+  required ADV at a safe participation rate → implied min market cap (arithmetic from known inputs,
+  re-derived as AUM grows); (2) **SIZE-BANDED SPREAD** refines it — tag Edge-1 verdicts by size band,
+  raise the floor toward "orphaned mid-cap" if deployable-neglect proves to live in larger names, keep
+  it low if smaller names show a deployable positive spread. **Floor = function of AUM (capacity) +
+  resolved spread, never a fixed number.** **PRINCIPLE:** parameters justified under
+  non-replicability-first must be re-checked against returns→AUM→moat — under the old objective smaller
+  was monotonically better; under the new one CAPACITY is a countervailing force, so past some point
+  smaller = un-investable, which fights AUM growth.
 
 ## 7. The standing discipline
 
