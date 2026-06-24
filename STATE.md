@@ -4,7 +4,7 @@
 > planning fossils (`planning/` briefs + `docs/` specs) as *current* guidance — those stay unchanged
 > as the historical origin record.** Read this first at the start of any session; **every build
 > updates it.** Its value is accuracy, not optimism: falsified is recorded as falsified, deferred as
-> deferred-and-why, unproven as unproven. _Last verified against the repo: 2026-06-23._
+> deferred-and-why, unproven as unproven. _Last verified against the repo: 2026-06-24._
 >
 > **Renamed 2026-06-23:** "Mosaic Theory" → **Nostra Vinci** (brand); the `mosaic` Python package /
 > CLI → **`vinci`** (run via `python -m vinci.cli` or the `vinci` entry point). The GitHub repo +
@@ -512,10 +512,20 @@ Each line: *what it does* — *verified how*.
 
 ## 4. Deferred — built only after the gate clears
 
-**GATE:** nothing here is built until the **BUY−AVOID spread shows the discriminator adds value** —
-≥2 quarters of *resolved* verdicts, positive and large enough to be real, not noise. Building any of
-it first is the premature-investment trap. *Verified absent from the repo today* (no
-execution/sizing/portfolio/monitoring modules; only `SourceTier.IBKR` labels in schemas).
+**GATE — disciplined on CAPITAL, flexible on BUILD.** No real capital deploys on an edge until its
+**BUY−AVOID spread validates the discriminator** — ≥2 quarters of *resolved* verdicts, positive and
+large enough to be real, not noise (the hard rule, unchanged). But validation has weeks-to-quarters
+latency; single-threading the BUILD wastes it and is wrong for a fund growing LP capital on finite
+runway. Building toward AND forward-validating multiple edges in PARALLEL is correct — each accrues its
+own spread, capital deploys on whichever validates first; this is NOT the premature-investment trap
+(that trap is real CAPITAL on an unproven edge, never parallel build). **THE GOVERNOR:** start the next
+edge in parallel ONLY when (a) it has a specified validation design and (b) it does not starve the
+overshoot loop of verdicts — "next edge, validation-design-first, without diluting the lead loop,"
+never "build everything"; the 2-person failure mode is spreading thin and validating nothing. **Lead
+horse unchanged:** overshoot is the most-validatable edge; parallel work runs WHILE its verdicts
+resolve, not instead — the binding constraint on proving anything is still resolved verdicts.
+*Verified absent from the repo today* (no execution/sizing/portfolio/monitoring modules; only
+`SourceTier.IBKR` labels in schemas).
 
 **FIRST WAVE — unlocked directly by a positive spread** (turns the *proven* Edge-2 loop into real money):
 1. **Position sizing / risk / portfolio construction** — trigger: spread positive. First, because you
@@ -524,13 +534,15 @@ execution/sizing/portfolio/monitoring modules; only `SourceTier.IBKR` labels in 
    SFC Type 9) clear for real money. Hard-deferred; paper until all three.
 3. **Monitoring / thesis-break / decay** — trigger: live positions exist (i.e. after execution).
 
-**SECOND WAVE — widen the proven funnel** (only after the Edge-2 loop is real and running):
-4. **Edge 1 (orphaned quality) screen** — trigger: Edge-2 loop validated **and** running smoothly.
-   Reuses the same ranker + dossier-assembler on a different (neglect-based, not drawdown-based)
-   screen — the strongest funnel expansion.
-5. **Active event-detection feeding `graph-exposure`** — trigger: Edge-2 loop validated; bandwidth
-   free. An alerting layer on the existing lookup (**not** the falsified mechanical screen) — surfaces
-   exposed cross-sections to the human on a real event; decides nothing.
+**SECOND WAVE — widen the funnel** (buildable in PARALLEL per §4's GOVERNOR — validation-design-first,
+without starving the lead loop; each becomes a *real* widener only when its OWN spread validates):
+4. **Edge 1 (orphaned quality) screen** — buildable in parallel per the governor (validation design =
+   its own BUY−AVOID spread); real capital still waits on that spread. Reuses the same ranker +
+   dossier-assembler on a different (neglect-based, not drawdown-based) screen — the strongest expansion.
+5. **Active event-detection feeding `graph-exposure`** — buildable in parallel per the governor
+   (validation design = the event-assembly obvious/non-obvious test, ledger below); gated only on not
+   starving the lead loop. An alerting layer on the existing lookup (**not** the falsified mechanical
+   screen) — surfaces exposed cross-sections to the human on a real event; decides nothing.
 
 **CONDITIONAL — only if separately earned** (not gated on the spread):
 - **Cloudflare deploy + licensed-artifact commit (LATER-STAGE; the dashboard is built + merged
@@ -565,13 +577,13 @@ execution/sizing/portfolio/monitoring modules; only `SourceTier.IBKR` labels in 
   inverts it so a new extractor registers itself. **Do NOT build it preemptively — build it when the
   2nd or 3rd new kind lands and the pattern is real.** Until then the AST guard is the binding.
 
-### Edge-hypothesis ledger — the full inventory (record-only; DO NOT build)
+### Edge-hypothesis ledger — the full inventory (record-only doc; the edges are gated, built per §4's GOVERNOR)
 
 The coherent record of every edge hypothesis considered, so the reasoning survives and a future
 session neither re-litigates a dead one nor chases an unrecorded one. **The binding constraint is
-proving Edge 2 (the empty spread), not expanding this inventory — build toward none of these until
-the spread validates the discriminator.** Each carries an explicit status + (where testable) a KILL
-CRITERION.
+proving Edge 2 (the empty spread). Parallel build toward another edge is allowed under §4's GOVERNOR
+(validation-design-first, without starving overshoot's verdicts); what stays hard-gated on the spread
+is real CAPITAL, not build.** Each carries an explicit status + (where testable) a KILL CRITERION.
 
 **THE EDGE FILTER (the frame every hypothesis is judged against).** The fund's one edge is **deep
 human judgment on a few finalists, fed by an AI funnel that achieves breadth a human can't** (§1,
@@ -585,7 +597,7 @@ this test.
 **LIVE — being proven now: Edge 2 (overshoot de-rating).** The entire built funnel
 (universe→screen→ranker→dossier→ledger) serves this one. Mispricing = an exaggerated-and-temporary
 de-rating a human can name a reversal for, vs its terminal-decline twin. Status: **UNPROVEN** — the
-BUY−AVOID spread is empty (one unresolved AVOID leg, §2). Everything else waits on it.
+BUY−AVOID spread is empty (one unresolved AVOID leg, §2). CAPITAL waits on it; parallel build toward another edge does not (§4 governor).
 
 **FALSIFIED — Edge 3 / graph-as-mechanical-signal.** Dead, three independent reasons (§3). Kept in
 the inventory only so "the graph" is never reread as a live tradeable signal. Its research-input
@@ -603,13 +615,22 @@ remnant + untested live core follow.
   Avis-termination 8-K's decision-relevant consequence was the *cascading RAC-channel-exit* across
   VRRM's customer cross-section — exactly the second-order assembly a human reasons about from
   source-bound facts (the dossier surfaced the Avis customer-concentration question, §2), not a
-  price-lag prediction. **TRIGGER: do NOT build the active cross-section assembler until the Edge-2
-  spread validates** — it is a funnel WIDENER (second-wave, §4), gated on the proven loop, sibling to
-  the active event-detection layer. **KILL CRITERION when tested:** it must beat a hand-built baseline
+  price-lag prediction. **TRIGGER: build the active cross-section assembler per §4's GOVERNOR
+  (validation-design-first — the baseline-beat test below), not single-threaded behind the spread** —
+  it is a funnel WIDENER (second-wave, §4), sibling to the active event-detection layer. **KILL
+  CRITERION when tested:** it must beat a hand-built baseline
   (the names a human assembles unaided on the same event) — surfaces nothing new → adds nothing →
   dropped. It must NEVER drift into "the graph predicts a move you trade."
+- **Event-assembly (USTR / regulatory / major-news feed) — the aggregation edge's concrete form.**
+  Edge = assembling the complete N-hop exposed cross-section from a **CONFIRMED public event**
+  faster/wider than any human desk; the human judges mispricing. Serves the aggregation edge, **NOT**
+  the overshoot screen (overshoot's catalyst is already EDGAR-bound post-hoc). Must FEED the human's
+  assembly, never become a machine catalyst-SIGNAL (the dead-signal failure, §3). **VALIDATION:** tag
+  each event-driven verdict "direct/obvious" vs "assembled/non-obvious"; proven ONLY if the spread is
+  positive on the **NON-OBVIOUS** leg — positive only on obvious targets = no edge, just trading news.
+  Gated; the **validation design is the deliverable NOW**, built when the §4 GOVERNOR greenlights.
 
-**UNTESTED CANDIDATE EDGES (record-only; do NOT build; each gated behind the proven spread):**
+**UNTESTED CANDIDATE EDGES (each gated; build the next per §4's GOVERNOR — validation-design-first, not single-threaded behind the spread):**
 - **Edge 1 (orphaned quality) — the most DURABLE non-consensus** (also §4 first-/second-wave).
   Mispricing = neglect (no one's looking), not overreaction. No value-trap SYMMETRY problem
   (quietly-good-and-under-covered is more verifiable than overshoot-vs-terminal); persistence is
@@ -623,8 +644,18 @@ remnant + untested live core follow.
 - **Causal-chain / second-order real-economy reasoning (e.g. an El Niño → input-cost → margin
   chain).** Reason forward from a confirmed physical/macro cause to the specific names it
   mechanically hits. KEPT as a hypothesis, but the **LEAST validatable** of the set — the chain is
-  long, confounded, and slow, the hardest to separate from coincidence — and therefore **gated the
-  LONGEST**: do not touch until everything above is proven AND running. Record-only.
+  long, confounded, and slow, the hardest to separate from coincidence — so it is **gated the
+  LONGEST**: hardest to give a validation design, thus the last the §4 GOVERNOR greenlights. Its limit
+  is **attribution, not timing** — strong on *why/whether* a driver is intact, weak on *when* it tops
+  (timing would be the dead signal, §3). Record-only.
+- **Theme-anticipation via AI-native assembly — LEGITIMATE, possibly the most DIFFERENTIATED edge
+  (corrects a prior over-dismissal).** If AI-assembly anticipates themes better-calibrated than
+  macro-fund intuition, that is a real moat over macro funds (the Vinci thesis) — **NOT** auto-rejected.
+  The distinction that matters is NOT "anticipate vs confirmed-catalyst" but "does the assembly beat a
+  naive baseline," measured. **Gated the LONGEST** (a sibling of the causal-chain edge — both few /
+  slow / macro / confounded), legitimate but hardest to validate. KILL CRITERION: benchmark
+  AI-anticipated theme bets vs a naive momentum/macro baseline; real ONLY if it beats the baseline on a
+  sample large enough to exclude luck.
 - **Large-cap forced-de-rating — recorded at LOW credibility; a SEPARATE edge, NOT a ceiling
   change.** Forced/mechanical selling (index reconstitution, forced deleveraging, a flow-driven exit)
   temporarily de-rates even a large-cap below fair value. Logged so it is not re-discovered as novel,
@@ -657,6 +688,23 @@ SIGNAL is dead (§3); the graph-exposure LOOKUP is built (§2); the AGGREGATION 
 genuinely untested as a research input, with VRRM as a face-valid proof-of-concept. "Dead" applies
 to the mechanical signal, not the whole idea.
 
+**WORKED-EXAMPLE VALIDATION (2026-06-24, record-only — evidence the inventory is sound).** An external
+two-name analysis (mid/small-caps, opposite directions) mapped against this inventory:
+- **Already covered:** "cost-plus pass-through misread" (margin-% optical, EBITDA/unit intact) = the
+  dossier's existing GAAP-vs-economic-reality reconciliation (VRRM-class); "pre-sales/P&L divergence"
+  (bookings up, recognized revenue down on percentage-of-completion timing) = a textbook **OVERSHOOT**
+  finalist (the market misreads a recognition trough as deterioration and sells). Both confirm the
+  dossier's core competency **generalizes to unseen names — not new edges.**
+- **Recorded-but-unbuilt, value confirmed:** sector-cycle positioning (separating sector de-rating from
+  company signal) = the deferred SIC-cohort / §6 read; commodity-driver overlay (price → realization →
+  margin beta) = an instance of the §4 causal-chain edge — the analysis confirms it is real AND confirms
+  its recorded limit (*why/whether* the driver is intact, not *when* it tops; attribution feeds
+  judgment, timing would be the dead signal, §3).
+- **Framing refinement (kept):** the overshoot-vs-terminal job is precisely **classify the DURABILITY
+  of the current driver, in either direction** — a name UP on a transient tailwind (priced for
+  permanence) mirrors a name DOWN on transient weakness (priced for terminal); the fund (long-biased)
+  targets the latter, and the dossier must flag whether the current driver is **durable or fading**.
+
 ## 5. Next steps (ordered, current)
 
 The **dossier-assembler is built and verified (§2)** — the queue-top now flows ranker → `dossier`.
@@ -683,6 +731,10 @@ The ranker + dossier-assembler are built/verified (§2); the ranker's coverage-g
 Tier-3 LLM pass) are parked in §4 — **monitored in use, not chased**.
 
 Then: operate the weekly loop and accumulate resolved verdicts.
+
+In PARALLEL (per §4's GOVERNOR, not instead): a validation design may be drafted for the next edge —
+event-assembly's obvious/non-obvious verdict tagging, theme-anticipation's naive-baseline benchmark —
+so long as it never diverts verdict throughput from the lead loop. Design first; build on greenlight.
 
 ## 6. Open items carried from the fossils (live, not being worked now)
 
@@ -719,6 +771,19 @@ Then: operate the weekly loop and accumulate resolved verdicts.
   leg — NOT backfilled, NOT rewritten; it buckets under "Unknown". The SCOPING DECISION itself remains
   OPEN and data-gated — it waits on the resolved per-sector spread; do NOT pre-impose a sector filter,
   the discriminator decides where the expertise is real.*
+- **Fundamental vs quant — the decision is FUNDAMENTAL, the funnel is QUANT (operator-raised).** The
+  fund is fundamental-for-the-VERDICT (overshoot vs terminal) and quant-for-the-FUNNEL (the screen's
+  drawdown / idiosyncrasy / multiple filters) + risk-sizing. Do **NOT** add technical / price-pattern
+  signals as DECISION inputs — replicable (fails the edge filter) and they don't solve the real problem
+  (the generalist depth-gap). The depth-gap is bridged by the **dossier** supplying specialist-grade
+  sector facts (FCF runway, covenants, segment economics, customer concentration) the generalist lacks;
+  the per-sector spread (§2) measures whether it bridges — positive in a generalist-blind sector =
+  dossier worked, poor = filter or learn it. **AI-disruption regime (relates to the small-cap terminal
+  risk above):** AI re-rates software P/Es across all caps, but small-caps carry higher TERMINAL risk —
+  survival needs the FCF / capital access mega-caps have and they don't. So AI-disrupted sectors
+  (software esp.) are high-terminal-risk regimes where the overshoot-vs-terminal call is HARDEST; the
+  dossier must surface FCF + liquidity runway prominently for these names (already extracted, §2), and
+  the per-sector spread reveals whether discrimination there is real. **NOT a cap-ceiling change.**
 - **Cap-band ceiling scoping — RESOLVED 2026-06-22: KEEP the $10B ceiling.** The universe is
   $300M–$10B; the upper $10B ceiling excludes **900 mega-caps** (CRM ~$143B, NOW ~$98B exit at
   `out_of_band`, before the screen — *traced this session, read-only*). **Decision: KEEP $10B.** The
@@ -738,3 +803,10 @@ calendar time. Validate **forward, never backtest**. Pre-register kill criteria;
 **face-validity, never by forward returns**. **The control says no** — trust the
 de-confounded/control number over the persuasive story. **Manual** = the CIQ export + the verdict;
 **automated** = everything mechanical between.
+
+**Disciplined on CAPITAL, flexible on BUILD (§4 GATE).** Real capital waits on an edge's validated
+spread — hard, unchanged. The BUILD does **not** single-thread: build toward + forward-validate edges
+in parallel under the §4 GOVERNOR (validation-design-first, never starving the lead loop's verdicts).
+Single-threading wastes validation's weeks-to-quarters latency; the 2-person failure mode is spreading
+thin and validating nothing — so every parallel edge carries its own validation design before any
+build, and capital still deploys only on whichever spread validates first.
