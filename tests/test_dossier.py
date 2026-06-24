@@ -9,7 +9,7 @@ from __future__ import annotations
 
 import ast
 import typing
-from datetime import date
+from datetime import date, datetime
 from pathlib import Path
 
 import pytest
@@ -171,6 +171,9 @@ def _minimal_mech() -> ds.MechanicalLayer:
         ),
         concentration=ds.Concentration(
             segments=_u(), segment_ebitda=_u(), customers=_u(), geographic=_u()
+        ),
+        peer_comps=ds.PeerComps(
+            peer_set=_u(), comparability=_u(), trading_multiples=_u(), fundamental_deltas=_u()
         ),
         drawdown_cause=ds.DrawdownCause(
             shape=_u(), gap_down_dates=_u(), filings=[], revised_guidance=_u()
@@ -1172,4 +1175,276 @@ def test_ciq_modules_covers_every_address_the_extractors_consume() -> None:
     assert not missing_sheets, (
         f"sheets consumed but not listed in CIQ_MODULES.sheets: {missing_sheets} — add them so the "
         "manifest's documented subsheets stay honest"
+    )
+
+
+# --- Stage-2 peer-comps extractor (CIQ Company Comparable Analysis) -------------------------------
+#
+# The consensus comp read is the thing the fund's edge must RESIST, not ingest. These exercise the
+# extractor end-to-end on a SYNTHETIC workbook (no licensed CIQ file — the raw workbooks are never
+# committed): the roster + business descriptions + market-cap dispersion (so the human judges
+# comparability and can re-draw the set), NM PRESERVED as a real not-meaningful state (never dropped
+# to missing), and the fundamental DELTAS that let the discount be judged EARNED vs RESIDUAL. The
+# fourth is a structural namespacing guard — three EV/EBITDA concepts that must never collide.
+
+# One internally-consistent 3-peer + 1-target comp set, aligned across all four sheets. Caps span
+# $478M–$306.6B (641x → HETEROGENEOUS); the target (fuboTV) carries NM on its trailing TEV/EBITDA
+# and P/E (a negative base — a REAL state), and out-grows the peer median on revenue at higher beta.
+_COMPS_FINANCIAL_DATA = [
+    ["Company Name", "", "", "Market Cap ($M)"],
+    ["Roku, Inc. (NasdaqGS:ROKU)", "", "", 19900.0],
+    ["Netflix, Inc. (NasdaqGS:NFLX)", "", "", 306600.0],
+    ["Vimeo, Inc. (NasdaqGS:VMEO)", "", "", 478.0],
+    ["", "", "", ""],  # gap separating the peer block from the target
+    ["fuboTV Inc. (NYSE:FUBO)", "", "", 256.0],
+]
+_COMPS_BUSINESS_DESCRIPTION = [
+    ["Company Name", "Business Description", "Headquarters"],
+    ["Roku, Inc. (NasdaqGS:ROKU)",
+     "Roku, Inc. operates a TV streaming platform in the United States.",
+     "San Jose, California, United States"],
+    ["Netflix, Inc. (NasdaqGS:NFLX)",
+     "Netflix, Inc. provides entertainment services worldwide.",
+     "Los Gatos, California, United States"],
+    ["Vimeo, Inc. (NasdaqGS:VMEO)",
+     "Vimeo, Inc. operates a video software platform globally.",
+     "New York, New York, United States"],
+    ["", "", ""],
+    ["fuboTV Inc. (NYSE:FUBO)",
+     "fuboTV Inc. operates a live TV streaming platform.",
+     "New York, New York, United States"],
+]
+# Trading Multiples cols: TEV/Rev=1, TEV/EBITDA=2, P/E=4, NTM TEV/Rev=6, NTM TEV/EBITDA=7, NTM_PE=8.
+_COMPS_TRADING_MULTIPLES = [
+    ["Company Name", "TEV/Rev", "TEV/EBITDA", "", "P/E", "",
+     "NTM TEV/Rev", "NTM TEV/EBITDA", "NTM P/E"],
+    ["Roku, Inc. (NasdaqGS:ROKU)", 3.0, 25.0, "", 40.0, "", 2.5, 20.0, 35.0],
+    ["Netflix, Inc. (NasdaqGS:NFLX)", 8.0, 30.0, "", 45.0, "", 7.0, 25.0, 40.0],
+    ["Vimeo, Inc. (NasdaqGS:VMEO)", 1.5, 12.0, "", 18.0, "", 1.3, 10.0, 16.0],
+    ["", "", "", "", "", "", "", "", ""],
+    ["fuboTV Inc. (NYSE:FUBO)", 1.2, "NM", "", "NM", "", 1.0, 15.0, 50.0],  # NM = negative base
+    ["Summary Statistics", "", "", "", "", "", "", "", ""],
+    ["Low", 1.5, 12.0, "", 18.0, "", 1.3, 10.0, 16.0],
+    ["Median", 3.0, 25.0, "", 40.0, "", 2.5, 20.0, 35.0],
+    ["Mean", 4.17, 22.33, "", 34.33, "", 3.6, 18.33, 30.33],
+    ["High", 8.0, 30.0, "", 45.0, "", 7.0, 25.0, 40.0],
+]
+# Operating Statistics cols: EBITDA margin=2, rev growth=5, EBITDA growth=6, Debt/EBITDA=10,
+# LT EPS growth=11, beta=12.
+_COMPS_OPERATING_STATISTICS = [
+    ["Company Name", "", "EBITDA margin", "", "", "Rev growth", "EBITDA growth", "", "", "",
+     "Debt/EBITDA", "LT EPS growth", "Beta"],
+    ["Roku, Inc. (NasdaqGS:ROKU)", 0.0, 0.10, 0.0, 0.0, 0.09, 0.12, 0.0, 0.0, 0.0, 2.0, 0.15, 1.4],
+    ["Netflix, Inc. (NasdaqGS:NFLX)", 0.0, 0.20, 0.0, 0.0, 0.08, 0.10, 0.0, 0.0, 0.0,
+     1.5, 0.12, 1.2],
+    ["Vimeo, Inc. (NasdaqGS:VMEO)", 0.0, 0.05, 0.0, 0.0, 0.10, 0.15, 0.0, 0.0, 0.0, 1.0, 0.20, 1.5],
+    ["", "", "", "", "", "", "", "", "", "", "", "", ""],
+    ["fuboTV Inc. (NYSE:FUBO)", 0.0, -0.05, 0.0, 0.0, 0.22, 0.30, 0.0, 0.0, 0.0, 3.0, 0.25, 2.4],
+]
+
+
+class _FakeCompsBundle:
+    """A minimal CiqBundle stand-in serving the synthetic comp sheets (and raising the same
+    fail-loud error for anything absent) — runs the extractor without a licensed workbook."""
+
+    ticker = "TEST"
+
+    def __init__(self, sheets: dict[tuple[str, str], list[list[typing.Any]]]) -> None:
+        self._sheets = sheets
+
+    def sheet(
+        self, kind: str, sheet_name: str, *, freq: str | None = None
+    ) -> list[list[typing.Any]]:
+        try:
+            return self._sheets[(kind, sheet_name)]
+        except KeyError:
+            raise ciq.CiqUnavailableError(f"no {kind}/{sheet_name} in fake bundle") from None
+
+    def workbook(self, kind: str, *, freq: str | None = None) -> None:
+        return None
+
+
+def _fake_peer_comps() -> ds.PeerComps:
+    bundle = _FakeCompsBundle(
+        {
+            ("comps", "Financial Data"): _COMPS_FINANCIAL_DATA,
+            ("comps", "Business Description"): _COMPS_BUSINESS_DESCRIPTION,
+            ("comps", "Trading Multiples"): _COMPS_TRADING_MULTIPLES,
+            ("comps", "Operating Statistics"): _COMPS_OPERATING_STATISTICS,
+        }
+    )
+    return cs.peer_comps(typing.cast(ciq.CiqBundle, bundle))
+
+
+def test_peer_comps_field_is_present_on_the_mechanical_layer() -> None:
+    """The consensus-resisting comp read has a HOME on the mechanical layer, with the four
+    sub-fields the human needs: peer-set COMPOSITION, comparability gate, multiple gap, deltas."""
+    assert "peer_comps" in ds.MechanicalLayer.model_fields
+    assert ds.MechanicalLayer.model_fields["peer_comps"].annotation is ds.PeerComps
+    assert set(ds.PeerComps.model_fields) == {
+        "peer_set", "comparability", "trading_multiples", "fundamental_deltas"
+    }
+
+
+def test_peer_comps_carries_roster_descriptions_and_deltas_not_just_summary_stats() -> None:
+    """The edge needs the COMPOSITION (every peer named, sized, described) and the fundamental
+    DELTAS — NOT just the High/Low/Mean/Median the consensus comp leads with. A roster collapsed to
+    four summary stats would hide exactly the heterogeneity the human must weigh."""
+    pc = _fake_peer_comps()
+    for peer in ("Roku", "Netflix", "Vimeo"):  # each peer named, not summary-collapsed
+        assert peer in pc.peer_set.value
+    assert "$306.6B" in pc.peer_set.value and "$478M" in pc.peer_set.value  # individual caps
+    assert "streaming" in pc.peer_set.value  # business model carried, not just the name
+    assert "HETEROGENEOUS" in pc.comparability.value and "641x" in pc.comparability.value
+    # name-vs-peer-median deltas (these appear in NO summary-statistics block — they are the
+    # earned-vs-residual inputs, surfaced so the human judges the discount, not the machine)
+    assert "rev growth name 22% vs peer-median 9%" in pc.fundamental_deltas.value
+    assert "beta name 2.4 vs peer-median 1.4" in pc.fundamental_deltas.value
+    assert pc.peer_set.source_ref is not None and pc.fundamental_deltas.source_ref is not None
+
+
+def test_peer_comps_preserves_nm_as_a_real_state_not_dropped_to_missing() -> None:
+    """NM (not-meaningful — a negative/near-zero base) is a REAL signal of peer-set heterogeneity,
+    never a blank. clean_num would lump it into UNAVAILABLE; the comp extractor keeps it verbatim
+    so the human sees the name's trailing multiple does not exist at a negative base."""
+    pc = _fake_peer_comps()
+    tm = pc.trading_multiples.value
+    assert "TEV/EBITDA: name NM" in tm  # the target's trailing EV/EBITDA preserved as NM
+    assert "P/E: name NM" in tm  # and its trailing P/E
+    assert tm.count("NM") >= 2  # both NM cells survived — not silently dropped to a missing em-dash
+
+
+def test_three_ev_ebitda_concepts_are_distinctly_named_across_layers() -> None:
+    """The three EV/EBITDA concepts must never collide: (a) the SCREEN's Fundamentals.ev_ebitda
+    (a dead/quarantined float, deferred until net-debt/EV lands), (b) the DOSSIER's
+    Valuation.ev_ebitda (the live single-name trailing multiple), and (c) the PEER composite —
+    deliberately carried by PeerComps.trading_multiples, NOT a third field named ev_ebitda. Distinct
+    container TYPES and distinct NAMES = no silent merge of dead, live single-name, and peer-set."""
+
+    def _generic(anno: typing.Any) -> tuple[type, tuple[type, ...]]:
+        meta = anno.__pydantic_generic_metadata__  # pydantic resolves Sourced[T] to a concrete cls
+        return meta["origin"], meta["args"]
+
+    screen_origin, screen_args = _generic(sdr.Fundamentals.model_fields["ev_ebitda"].annotation)
+    val_origin, val_args = _generic(ds.Valuation.model_fields["ev_ebitda"].annotation)
+    peer_origin, peer_args = _generic(ds.PeerComps.model_fields["trading_multiples"].annotation)
+
+    assert screen_origin is DataField and screen_args == (float,)  # screen: DataField[float] (dead)
+    assert val_origin is ds.Sourced and val_args == (float,)  # dossier valuation: Sourced[float]
+    assert peer_origin is ds.Sourced and peer_args == (str,)  # peer composite: Sourced[str]
+    assert screen_origin is not val_origin  # screen vs dossier: genuinely different containers
+    assert "ev_ebitda" not in ds.PeerComps.model_fields  # no colliding third 'ev_ebitda' field
+
+
+def test_peer_comps_section_reaches_the_rendered_markdown() -> None:
+    """The consensus-resisting comp read reaches the human-facing artifact: a 'Peer comps' section
+    carries the roster, the comparability gate, the multiple gap (NM intact), and the deltas — and
+    the framing poses the discount as a QUESTION (earned vs residual), never a verdict."""
+    mech = _minimal_mech().model_copy(update={"peer_comps": _fake_peer_comps()})
+    dossier = ds.Dossier(
+        ticker="FUBO", name="fuboTV", cik="0001546296", reference_date=date(2026, 6, 1),
+        rank=1, mechanical=mech, synthesis=None, flags=[], llm_model=None,
+        assembled_at=datetime(2026, 6, 1, 12, 0),
+    )
+    md = dr.render_markdown(dossier)
+    assert "### Peer comps" in md  # the section is wired into the mechanical-layer render
+    assert "Roku" in md and "$306.6B" in md  # the roster + caps reach the page
+    assert "name NM" in md  # NM survives all the way to the rendered artifact
+    assert "earned-vs-residual" in md  # the discount is POSED as a question, not concluded
+
+
+# --- Stage-3 synthesis peer-comp contract (G.3) — the consensus comp read, RESISTED ---------------
+#
+# The synthesis PROMPT change is untestable directly, but its GUARDRAILS are not: a bare 'cheap vs
+# the peer median' verdict (no decomposition, no composition) is the consensus misread the edge must
+# resist, and a heterogeneous peer set read as a clean benchmark ignores the confidence gate. Both
+# are human-review flags; the machine POSES justified-vs-residual and never computes a residual.
+
+def test_synthesis_peer_comp_contract_flags_bare_gap_and_heterogeneous_benchmark() -> None:
+    """G.3: a 'cheap vs the peer median' bull point with no earned-vs-residual decomposition and no
+    peer-set composition trips PEER-COMP-BARE; and because comparability flags the set HETEROGENEOUS
+    (641x cap span), reading the peer median as a clean benchmark also trips the BENCHMARK gate.
+    A claim that DOES decompose the gap and names the heterogeneous set draws neither flag."""
+    pc = _fake_peer_comps()  # comparability reads "HETEROGENEOUS — low comparability"
+    mech = _minimal_mech().model_copy(update={"peer_comps": pc})
+    payload = {
+        "bull_points": [
+            {"claim": "The name trades cheap versus the peer median on EV/EBITDA.",
+             "source_ref": pc.trading_multiples.source_ref},
+            {"claim": "Much of the discount to the heterogeneous peer set looks earned by the "
+                      "name's weaker revenue growth and higher leverage, leaving a residual the "
+                      "human must size.",
+             "source_ref": pc.fundamental_deltas.source_ref},
+        ],
+        "bear_points": [], "twin_reference_cases": [],
+        "decisive_question": {"question": "earned or residual?", "evidence_for": [],
+                              "evidence_against": []},
+        "key_unknowns": [],
+    }
+    _, flags, _ = syn.synthesize(mech, llm=_FakeLlm(payload), ticker="FUBO", name="FuboTV")
+    contract = [f for f in flags if "PEER-COMP-BARE" in f or "HETEROGENEOUS-BENCHMARK" in f]
+    assert any("PEER-COMP-BARE bull_point" in f for f in contract)  # bare gap = consensus misread
+    assert any("HETEROGENEOUS-BENCHMARK bull_point" in f for f in contract)  # gate fires
+    # both flags hit ONLY the bare claim — the decomposed, composition-aware claim is clean
+    assert contract and all("trades cheap" in f for f in contract)
+
+
+def test_synthesis_peer_comp_heterogeneity_gate_is_off_for_a_comparable_set() -> None:
+    """The HETEROGENEOUS-BENCHMARK flag KEYS OFF comparability, not a blanket: over a reasonably
+    comparable peer set a bare 'cheap vs peers' still trips PEER-COMP-BARE (decomposition is always
+    required), but the confidence-gate flag does NOT fire — heterogeneity is a real, gated state."""
+    pc = _fake_peer_comps().model_copy(update={
+        "comparability": ds.Sourced.present(
+            "market caps span $8B–$30B (4x); a reasonably comparable set",
+            source_ref="CIQ Comparable Analysis→Financial Data (comparable)",
+        )
+    })
+    mech = _minimal_mech().model_copy(update={"peer_comps": pc})
+    payload = {
+        "bull_points": [{"claim": "The name screens cheap relative to the peer median.",
+                         "source_ref": pc.trading_multiples.source_ref}],
+        "bear_points": [], "twin_reference_cases": [],
+        "decisive_question": {"question": "q?", "evidence_for": [], "evidence_against": []},
+        "key_unknowns": [],
+    }
+    _, flags, _ = syn.synthesize(mech, llm=_FakeLlm(payload), ticker="FUBO", name="FuboTV")
+    assert any("PEER-COMP-BARE" in f for f in flags)  # decomposition still required
+    assert not any("HETEROGENEOUS-BENCHMARK" in f for f in flags)  # comparable set → gate off
+
+
+def test_synthesis_peer_comp_guardrail_precision_no_false_fire_on_brand_or_plural_margins() -> None:
+    """G.3 precision (regression for the audit's only finding): the peer-comp guardrails must NOT
+    flag (a) quality/brand uses of premium/rich/discount — a premium BRAND, a rich ROADMAP, a
+    discount RETAILER are not valuation verdicts (they once tripped the broad _REL_VAL_CUE), nor (b)
+    a genuinely DECOMPOSED claim reconciling via the PLURAL 'margins' (the singular-only _DECOMP_REF
+    once missed it, false-flagging the very claim it should pass). A bare verdict still fires."""
+    pc = _fake_peer_comps()  # comparability reads HETEROGENEOUS
+    mech = _minimal_mech().model_copy(update={"peer_comps": pc})
+
+    def contract_flags(claim: str) -> list[str]:
+        payload = {
+            "bull_points": [{"claim": claim, "source_ref": pc.trading_multiples.source_ref}],
+            "bear_points": [], "twin_reference_cases": [],
+            "decisive_question": {"question": "q", "evidence_for": [], "evidence_against": []},
+            "key_unknowns": [],
+        }
+        _, flags, _ = syn.synthesize(mech, llm=_FakeLlm(payload), ticker="BRBR", name="BellRing")
+        return [f for f in flags if "PEER-COMP-BARE" in f or "HETEROGENEOUS-BENCHMARK" in f]
+
+    # (a) brand/quality words beside a peer mention are NOT valuation verdicts → no contract flag
+    for claim in (
+        "BellRing's premium protein brand outsells peers in the category.",
+        "A rich product roadmap differentiates it from peers.",
+        "It is the discount retailer of choice versus department-store peers.",
+    ):
+        assert contract_flags(claim) == [], f"false-fired on brand claim: {claim}"
+    # (b) the PLURAL 'margins' now satisfies the earned-vs-residual decomposition → no bare-gap flag
+    decomposed = contract_flags(
+        "The name looks cheap vs peers, but its structurally higher margins explain the gap."
+    )
+    assert not any("PEER-COMP-BARE" in f for f in decomposed)  # 'margins' counts as decomposition
+    # control: a BARE relative-valuation verdict still fires PEER-COMP-BARE (guardrail not disabled)
+    assert any(
+        "PEER-COMP-BARE" in f
+        for f in contract_flags("The name trades cheap versus the peer median.")
     )

@@ -693,6 +693,7 @@ def assemble_mechanical(
         ),
         quality=_quality(record, edgar, bundle, reference_date, adj_lev),
         concentration=_concentration(bundle),
+        peer_comps=ciq_sheets.peer_comps(bundle),
         drawdown_cause=drawdown,
         idiosyncratic_vs_shared=_idiosyncratic_vs_shared(
             record, store, graph, resolver, reference_date

@@ -1,6 +1,6 @@
 // OVERVIEW — fund status at a glance. Read-only render of committed snapshots.
 import {
-  getSpreadStatus, getUniverseHealth, getRankedQueue, getLedger,
+  getSpreadStatus, getUniverseHealth, getLedger,
   getDossierIndex, getSnapshotMeta,
 } from "../lib/snapshots.js";
 import { fmtInt, fmtDate, DASH, escapeHtml } from "../lib/format.js";
@@ -8,8 +8,8 @@ import { fmtInt, fmtDate, DASH, escapeHtml } from "../lib/format.js";
 export async function render(root) {
   root.innerHTML = `<div class="notice">Loading fund status…</div>`;
 
-  const [spread, health, queue, ledger, dossiers, meta] = await Promise.all([
-    getSpreadStatus(), getUniverseHealth(), getRankedQueue(), getLedger(),
+  const [spread, health, ledger, dossiers, meta] = await Promise.all([
+    getSpreadStatus(), getUniverseHealth(), getLedger(),
     getDossierIndex(), getSnapshotMeta(),
   ]);
 
@@ -34,9 +34,9 @@ export async function render(root) {
 
   const metrics = `
     ${metric("Universe → queue",
-      `${fmtInt(health.universe.count)} <span class="unit">→</span> ${fmtInt(queue.counts.total)}`,
+      `${fmtInt(health.universe.count)} <span class="unit">→</span> ${fmtInt(health.queue.total)}`,
       "",
-      `screened ${fmtDate(health.screen.asOf)} · ${fmtInt(queue.counts.demoted)} structurally sunk`)}
+      `screened ${fmtDate(health.screen.asOf)} · ${fmtInt(health.queue.demoted)} structurally sunk`)}
     ${metric("Verdicts",
       `${fmtInt(ledger.counts.logged)}`,
       "logged",

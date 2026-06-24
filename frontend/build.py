@@ -120,6 +120,14 @@ def main() -> None:
             "candidates": len(queue),
             "as_of": (str(queue[0].get("screen_run_at"))[:10] if queue and queue[0].get("screen_run_at") else None),
         },
+        # Queue summary counts so the overview reads two numbers from this ~200-byte file instead
+        # of fetching + parsing the full ~440 KB ranked_queue.jsonl to show them. The full queue
+        # still loads lazily on the Ranker screen, where it's actually needed.
+        "queue": {
+            "total": len(queue),
+            "demoted": sum(1 for r in queue if r.get("structurally_disqualified")),
+            "gated": sum(1 for r in queue if r.get("tradeability_gated")),
+        },
     }
     (OUT_SNAP / "manifest.json").write_text(json.dumps(manifest, indent=2))
 
