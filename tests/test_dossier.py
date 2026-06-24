@@ -258,6 +258,38 @@ def test_directional_lint_exempts_analyst_rating_context() -> None:
     assert syn._snip("short", 70) == "short"  # short claim unchanged
 
 
+def test_anchors_on_distorted_pe_flags_bull_case_leaning_on_the_multiple() -> None:
+    """When the mechanical P/E is marked distorted, a BULLISH claim that leans on that multiple/
+    percentile as cheap/mean-reverting is flagged (the FUBO trap) — but NOT when the P/E is clean,
+    and not a bull claim that doesn't touch the P/E."""
+    mech = _minimal_mech()
+    distorted = ds.Sourced.present(
+        12.1, source_ref="EDGAR XBRL", note="distorted — rests on a non-current positive EPS"
+    )
+    mech_d = mech.model_copy(
+        update={"valuation": mech.valuation.model_copy(update={"pe": distorted})}
+    )
+    payload = {
+        "bull_points": [
+            {"claim": "The P/E sits at the 0.2nd percentile, a depressed valuation that "
+                      "could revert", "source_ref": "EDGAR/EOD P/E pctile"},
+            {"claim": "Gross margin expanded 300bps as the mix shifted to subscription",
+             "source_ref": "x"},
+        ],
+        "bear_points": [], "twin_reference_cases": [], "key_unknowns": [],
+        "decisive_question": {
+            "question": "does it reverse?", "evidence_for": [], "evidence_against": []
+        },
+    }
+    _, flags, _ = syn.synthesize(mech_d, llm=_FakeLlm(payload), ticker="FUBO", name="FuboTV")
+    anchors = [f for f in flags if "ANCHORS-ON-DISTORTED-P/E" in f]
+    assert len(anchors) == 1 and "depressed valuation" in anchors[0]  # only the P/E-leaning point
+
+    # clean P/E (no distortion note) → the SAME claim does NOT fire the anchor flag
+    _, clean, _ = syn.synthesize(mech, llm=_FakeLlm(payload), ticker="FUBO", name="FuboTV")
+    assert not any("ANCHORS-ON-DISTORTED-P/E" in f for f in clean)
+
+
 def test_synthesis_fails_loud_when_llm_errors() -> None:
     """An LLM with no usable output → None synthesis + a flag, never a fabricated dossier."""
     class _BadLlm(LlmClient):

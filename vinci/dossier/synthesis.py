@@ -64,6 +64,17 @@ def _snip(s: str, n: int = 70) -> str:
         return s
     return (s[:n].rsplit(" ", 1)[0] or s[:n]) + "…"
 
+
+# Anchors-on-distorted-P/E: a valuation mention (the P/E or its percentile) + a cheapness/mean-
+# reversion cue. Flagged ONLY when the mechanical P/E is marked distorted (the FUBO trap — a bull
+# case leaning on a multiple built on a non-current EPS). Human review, never auto-removed.
+_PE_TERM = re.compile(r"\bP/E\b|\bP/?E ratio\b|percentile", re.IGNORECASE)
+_CHEAP_CUE = re.compile(
+    r"\b(cheap|depressed|undervalued|inexpensive|trough|floor|mean.?reversion|revert|reversion|"
+    r"attractive|discount(ed)?|bargain)\b|not\b.{0,20}priced",
+    re.IGNORECASE,
+)
+
 _POINT = {
     "type": "object",
     "properties": {
@@ -275,6 +286,18 @@ def _validate(synth: Synthesis, mech: MechanicalLayer) -> tuple[Synthesis, list[
     lint_blob = _RATING_CTX.sub(" ", blob)  # don't flag buy/sell reporting the analyst rating
     for hit in {m.group(0).lower() for m in _DIRECTIONAL.finditer(lint_blob)}:
         flags.append(f"DIRECTIONAL language '{hit}' — human review (dossier frames, not concludes)")
+
+    # when the mechanical P/E is marked distorted, flag a BULLISH claim leaning on the multiple as
+    # cheap / mean-reverting — the bull case must not anchor on a P/E built on a non-current EPS.
+    pe = mech.valuation.pe
+    if pe.note and "distort" in pe.note.lower():
+        bullish = [(p, "bull_point") for p in bull] + [(p, "decisive.for") for p in dq.evidence_for]
+        for p, where in bullish:
+            if _PE_TERM.search(p.claim) and _CHEAP_CUE.search(p.claim):
+                flags.append(
+                    f"ANCHORS-ON-DISTORTED-P/E {where}: '{_snip(p.claim)}' — the P/E is distorted "
+                    "(rests on a non-current/non-recurring EPS); don't read it as cheap"
+                )
 
     validated = synth.model_copy(
         update={"bull_points": bull, "bear_points": bear, "decisive_question": dq}

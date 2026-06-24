@@ -246,11 +246,17 @@ Each line: *what it does* — *verified how*.
     'recommendation' remains); snippets clean ('…Phase…', '~$71M…'); MVST P/E → N/A; FUBO 12.1x renders
     with the amber distortion caveat (live screenshot + node render). Regression tests: rating-context
     exemption + `_snip`; `_pe_reconciliation` `(flag, note)` incl the non-current-EPS caveat; net-leverage
-    note disambiguation. ruff + mypy --strict + pytest -m "not network" green.* **Open (audit finding):
-    FUBO's existing synthesis anchored a mean-reversion bull case on the distorted 12.1x / 0.2-pctile P/E,
-    UN-flagged by the directional lint — the caveat now lives on the mechanical pe field so a re-assemble
-    steers the synthesis off it; full effect needs re-assembling FUBO (and MVST, whose synthesis still
-    quotes the old net-debt note text).**
+    note disambiguation. ruff + mypy --strict + pytest -m "not network" green.* (5) **NEW guardrail
+    `ANCHORS-ON-DISTORTED-P/E`** — when the mechanical P/E is marked distorted, any BULLISH claim that
+    leans on that multiple/percentile as cheap or mean-reverting is flagged (the directional lint missed
+    these: hedged phrasing, traceable numbers). *Verified the original audit case: FUBO's pre-fix
+    synthesis anchored a mean-reversion bull thesis on the 12.1x / 0.2-pctile P/E (3 claims) un-flagged;
+    the guardrail catches all 3 on the stored synthesis. Then **re-assembled FUBO + MVST (opus 4.8)**:
+    FUBO's fresh synthesis anchoring dropped 3→1 (the pe caveat steered it), and the guardrail flagged the
+    remaining one; zero buy/sell directional noise; MVST's fresh synthesis no longer quotes the old
+    net-debt text. **Caveat:** the net-debt NOTE itself is computed at SCREEN time (cached in `vinci.db`),
+    so dossier re-assembly reads the stale value — the `edgar/client.py` disambiguation lands on the next
+    `run-weekly` (re-screen), not on re-assembly.*
   - **CIQ loader → workbook-aware addressing model (VRRM, 2026-06-19) — the prior loader couldn't
     reach the subsheets, so every CIQ section read MISSING.** CIQ Financials is ONE ~13-subsheet
     workbook (Income Statement / Cash Flow / Multiples / Segments / Capital Structure Details / …);
