@@ -274,7 +274,7 @@ function consensus(cc) {
 }
 
 function synthesis(s) {
-  const fence = `<div class="synth-fence"><b>The framing, not the answer.</b> A verdict-free bull/bear structure for the human to reason about — there is no recommendation, score, direction, or probability anywhere in it, by design. The human decides and logs BUY/AVOID via the CLI.</div>`;
+  const fence = `<div class="synth-fence"><b>The framing, not the answer.</b> A verdict-free bull/bear structure for the human to reason about — there is no recommendation, score, direction, or probability anywhere in it, by design. The human decides and logs BUY/AVOID via the CLI. <b>Citations (↳) locate each claim in a source for you to verify — cited is not verified.</b></div>`;
   if (!s) {
     return `<div class="card ds-section"><div class="ds-title">Synthesis</div>${fence}
       <div class="notice">Synthesis not assembled — mechanical layer only (CIQ inputs too thin, or the LLM step was skipped). The facts above stand on their own.</div></div>`;
@@ -298,7 +298,7 @@ function synthesis(s) {
     ${(dq.evidence_against || []).map((p) => point(p, "bear")).join("") || `<div class="muted">—</div>`}
     <div class="ds-title" style="font-size:12px; margin-top:14px;">Key unknowns</div>
     <ul class="kv-list">${(s.key_unknowns || []).map((k) => `<li>${escapeHtml(k)}</li>`).join("") || "<li class='muted'>—</li>"}</ul>
-    ${twins ? `<div class="ds-title" style="font-size:12px; margin-top:14px;">Twin analogues</div>${twins}` : ""}
+    ${twins ? `<div class="ds-title" style="font-size:12px; margin-top:14px;">Twin analogues</div><div class="muted" style="font-size:11px; margin:-2px 0 6px;">LLM-selected analogies — accept or reject each. A citation means the data is sourced, not that the analogy holds.</div>${twins}` : ""}
   </div>`;
 }
 

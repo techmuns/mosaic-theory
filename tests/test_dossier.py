@@ -290,6 +290,31 @@ def test_anchors_on_distorted_pe_flags_bull_case_leaning_on_the_multiple() -> No
     assert not any("ANCHORS-ON-DISTORTED-P/E" in f for f in clean)
 
 
+def test_verification_assertion_tripwire_flags_machine_claiming_it_verified() -> None:
+    """The dossier cites, it never verifies. A claim asserting the machine verified/proved something
+    is flagged; honest negations ('cannot be verified') and benign domain terms ('proven track
+    record') are not — fires only on real over-assertion (today it fires nothing live)."""
+    payload = {
+        "bull_points": [
+            {"claim": "We verified the revenue and it proves that the thesis holds",
+             "source_ref": "x"},
+            {"claim": "The company has a proven track record and an established brand",
+             "source_ref": "x"},
+        ],
+        "bear_points": [
+            {"claim": "Adjusted leverage cannot be verified from the parsed facts",
+             "source_ref": "x"},
+        ],
+        "twin_reference_cases": [], "key_unknowns": [],
+        "decisive_question": {
+            "question": "does it reverse?", "evidence_for": [], "evidence_against": []
+        },
+    }
+    _, flags, _ = syn.synthesize(_minimal_mech(), llm=_FakeLlm(payload), ticker="X", name="X")
+    vc = [f for f in flags if "VERIFICATION-CLAIM" in f]
+    assert len(vc) == 1 and "bull_point" in vc[0] and "We verified" in vc[0]  # the over-assertion
+
+
 def test_synthesis_fails_loud_when_llm_errors() -> None:
     """An LLM with no usable output → None synthesis + a flag, never a fabricated dossier."""
     class _BadLlm(LlmClient):
