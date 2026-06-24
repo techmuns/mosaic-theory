@@ -510,7 +510,7 @@ Each line: *what it does* — *verified how*.
   discriminator. It gates nothing and makes no trade decision. Validated **operationally** (vs a
   hand-built baseline on a live event), never statistically — so it can't be data-mined.
 
-## 4. Deferred — built only after the gate clears
+## 4. Deferred — CAPITAL-gated on the spread; BUILD per the GOVERNOR
 
 **GATE — disciplined on CAPITAL, flexible on BUILD.** No real capital deploys on an edge until its
 **BUY−AVOID spread validates the discriminator** — ≥2 quarters of *resolved* verdicts, positive and
@@ -527,7 +527,8 @@ resolve, not instead — the binding constraint on proving anything is still res
 *Verified absent from the repo today* (no execution/sizing/portfolio/monitoring modules; only
 `SourceTier.IBKR` labels in schemas).
 
-**FIRST WAVE — unlocked directly by a positive spread** (turns the *proven* Edge-2 loop into real money):
+**FIRST WAVE — unlocked directly by a positive spread** (capital-deployment machinery for the *proven*
+Edge-2 — gated by definition, not parallel-buildable; turns the loop into real money):
 1. **Position sizing / risk / portfolio construction** — trigger: spread positive. First, because you
    can't size until you know the edge is real, and sizing precedes execution.
 2. **Execution (IBKR)** — trigger: sizing built **+** spread positive **+** the regulatory gate (§6,
