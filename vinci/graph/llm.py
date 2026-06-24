@@ -32,7 +32,7 @@ class LlmClient(ABC):
 class AnthropicLlmClient(LlmClient):
     """Anthropic adapter — forces a single tool call and returns its structured input."""
 
-    def __init__(self, *, model: str, max_tokens: int = 8192, api_key: str | None = None) -> None:
+    def __init__(self, *, model: str, max_tokens: int = 16384, api_key: str | None = None) -> None:
         import anthropic  # lazy: the package only needs anthropic for the graph track
 
         self._model = model

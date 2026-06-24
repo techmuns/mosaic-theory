@@ -295,8 +295,13 @@ Each line: *what it does* — *verified how*.
     (same day): margin_trend emitted as clean ';'-separated series — the old `‖ ABSOLUTE` block corrupted
     the frontend table parser (gross-margin row); `survival_capacity` + `evidence_balance` are now rendered
     in render.py + the frontend (the fix's output was hidden from the human); `_ABS_RECON` tightened (a bare
-    "absolute"/"EBITDA <year>" no longer counts as reconciliation).* **NOT in scope (still deferred): the
-    SIC peer-cohort / single-name cross-section read — a new capability, not a surgical fix.**
+    "absolute"/"EBITDA <year>" no longer counts as reconciliation). Cohort re-run (2026-06-24) caught a
+    truncation regression: a verbose `evidence_balance` in FIRST position starved the structural fields
+    for data-rich names (FUBO/MVST returned UNAVAILABLE) — moved it LAST (a truncated last field is
+    non-blocking, flag-not-block) + capped it concise (≤25 words) + synthesis max_tokens 8192→16384. All
+    5 dossiers now assemble with a committed evidence_balance; BRBR/EPAM/FUBO/MVST re-run clean.* **NOT in
+    scope (still deferred): the SIC peer-cohort / single-name cross-section read — a new capability, not a
+    surgical fix.**
   - **CIQ loader → workbook-aware addressing model (VRRM, 2026-06-19) — the prior loader couldn't
     reach the subsheets, so every CIQ section read MISSING.** CIQ Financials is ONE ~13-subsheet
     workbook (Income Statement / Cash Flow / Multiples / Segments / Capital Structure Details / …);

@@ -140,13 +140,6 @@ SYNTHESIS_TOOL: dict[str, Any] = {
     "input_schema": {
         "type": "object",
         "properties": {
-            "evidence_balance": {
-                "type": "string",
-                "description": "ONE committed line: 'strongly-bearish' | 'mixed' | "
-                "'strongly-bullish' + WHY (the dominant reason). Do NOT default to balanced — a "
-                "lopsided reality MUST produce a lopsided read; never launder a one-sided case "
-                "into a symmetric list.",
-            },
             "bull_points": {
                 "type": "array",
                 "items": _POINT,
@@ -195,10 +188,16 @@ SYNTHESIS_TOOL: dict[str, Any] = {
                 "items": {"type": "string"},
                 "description": "What the human must still resolve — esp. MISSING/UNKNOWN facts.",
             },
+            "evidence_balance": {  # LAST on purpose: if the response truncates, this (not a
+                "type": "string",  # structural field) is the casualty, and it's flag-not-block.
+                "description": "ONE concise line, ≤25 words: <strongly-bearish|mixed|strongly-"
+                "bullish> — <the single dominant reason>. NOT a paragraph; do not restate the "
+                "bull/bear points. A lopsided reality must produce a lopsided read.",
+            },
         },
         "required": [
-            "evidence_balance", "bull_points", "bear_points", "twin_reference_cases",
-            "decisive_question", "key_unknowns",
+            "bull_points", "bear_points", "twin_reference_cases", "decisive_question",
+            "key_unknowns", "evidence_balance",
         ],
     },
 }
@@ -215,9 +214,10 @@ _SYSTEM = (
     "probability — analogues are for reasoning, not stats. (5) Surface the decisive question; do "
     "NOT answer it. (6) Never recommend, rate, score, or predict a direction — there is nowhere to "
     "put a verdict and it is not your job. "
-    "(7) ANTI-BALANCE: do NOT default to symmetric bull/bear lists. Commit evidence_balance "
-    "(strongly-bearish / mixed / strongly-bullish + why); a one-sided reality must produce a "
-    "one-sided dossier — never launder it into a balanced-looking list. "
+    "(7) ANTI-BALANCE: do NOT default to symmetric bull/bear lists. evidence_balance is the LAST "
+    "field — ONE concise line (≤25 words: label + the single dominant reason, NOT a paragraph, do "
+    "not restate the points); a one-sided reality must produce a one-sided dossier, not laundered "
+    "into a balanced-looking list. "
     "(8) OPACITY-AS-SIGNAL: a MISSING expected disclosure (no segment breakout, no cash-runway "
     "visibility, an opaque structure, no forward guide, a survival_capacity leg UNKNOWN) is NOT "
     "neutral — surface it in key_unknowns as a BEARISH risk, not a neutral gap. "
