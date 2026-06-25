@@ -277,6 +277,22 @@ Each line: *what it does* — *verified how*.
     audit question "should we flag data already labelled LLM-verified?" — answer: don't blanket-flag
     cited claims (the ↳ is the verify-this affordance; would be noise), DO flag prose claiming
     verification + clarify the label.*
+  - **Flag-noise reduction in "flags for human review" (2026-06-25) — the guards' INTENT is sound;
+    the issue was signal-to-noise (~8 of 14 flags low-value on AORT+CNXC).** **FIX 1 (twin contract):**
+    the synthesis restated peer caps / Debt-EBITDA in twin prose — figures already source-bound in
+    peer_set / fundamental_deltas — which the (deliberately sharp) TWIN-non-numeric guard then flagged.
+    Fix = CONTRACT change only (rule 4 + the twin-field + distinguishing_fact descriptions): twins stay
+    QUALITATIVE, figures live in the structured fields; the guard is UNCHANGED. **FIX 2
+    (VERIFICATION-CLAIM precision):** it fired on "not demonstrably earning" — a NEGATED adverb (a
+    hedge), not an over-claim; `_VERIFIED_BENIGN` now redacts negated over-assertion adverbs (tighter,
+    NOT blunter — positive "demonstrably true" still fires). **FIX 3 (GAAP-basis caveats):** REPORTED +
+    HELD — `flags` is a flat `list[str]`, so re-tiering the always-on EPS/leverage-GAAP caveats to a
+    standing-caveat tier (kept VISIBLE — opacity-as-signal) is a schema + render + frontend change;
+    awaiting go-ahead, not built in this cleanup. *Verified — REAL opus-4.8 re-runs: AORT 7→3, CNXC
+    7→3; TWIN 7→0 with NO info loss (twins stay qualitative + meaningful, caps still in peer_set);
+    VERIFICATION-CLAIM 1→0 (deterministic test: the negated hedge clears, 4 genuine over-assertions
+    still fire). 2 guard tests adjusted/added; ruff + mypy --strict (66) + pytest green.* **Out of
+    scope: wiring CIQ forward EPS to RESOLVE the distorted-P/E flag (separate enhancement).**
   - **Synthesis-reproduces-consensus fix (2026-06-24) — make the CORRECTED read the DEFAULT, flag
     regressions; does NOT claim to eliminate LLM face-value tendency (the guardrail + human verdict are
     the backstop).** Three bounded mechanisms in the existing package, no new data source. **(A) Mechanical

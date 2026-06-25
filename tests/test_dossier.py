@@ -306,10 +306,15 @@ def test_verification_assertion_tripwire_flags_machine_claiming_it_verified() ->
              "source_ref": "x"},
             {"claim": "The company has a proven track record and an established brand",
              "source_ref": "x"},
+            {"claim": "The mean-reversion is demonstrably underway", "source_ref": "x"},  # genuine
         ],
         "bear_points": [
             {"claim": "Adjusted leverage cannot be verified from the parsed facts",
              "source_ref": "x"},
+            # FIX 2: a NEGATED over-assertion adverb is a hedge/derivation, not an over-claim —
+            # incl. contractions (the \B + mandatory-apostrophe arm: "doesn't conclusively")
+            {"claim": "the equity is not demonstrably earning on a GAAP basis", "source_ref": "x"},
+            {"claim": "the thesis doesn't conclusively hold yet", "source_ref": "x"},
         ],
         "twin_reference_cases": [], "key_unknowns": [],
         "decisive_question": {
@@ -318,7 +323,22 @@ def test_verification_assertion_tripwire_flags_machine_claiming_it_verified() ->
     }
     _, flags, _ = syn.synthesize(_minimal_mech(), llm=_FakeLlm(payload), ticker="X", name="X")
     vc = [f for f in flags if "VERIFICATION-CLAIM" in f]
-    assert len(vc) == 1 and "bull_point" in vc[0] and "We verified" in vc[0]  # the over-assertion
+    assert any("We verified" in f for f in vc)            # the over-assertion fires
+    assert any("demonstrably underway" in f for f in vc)  # a POSITIVE 'demonstrably' still fires
+    assert not any("not demonstrably" in f for f in vc)   # FIX 2: the negated hedge does NOT fire
+    assert not any("doesn't conclusively" in f for f in vc)  # contraction hedge does NOT fire
+    assert not any("proven track record" in f for f in vc)  # benign domain term, not flagged
+    assert not any("cannot be verified" in f for f in vc)   # honest negation, not flagged
+
+
+def test_twin_contract_keeps_analogues_qualitative() -> None:
+    """FIX 1: the contract keeps twins QUALITATIVE — figures (caps/multiples/ratios) live
+    source-bound in peer_set / fundamental_deltas, not restated in twin prose — so the (unchanged,
+    still-sharp) TWIN-non-numeric guard isn't fed verifiable roster numbers it then over-flags."""
+    assert "QUALITATIVE" in syn._SYSTEM and "fundamental_deltas" in syn._SYSTEM
+    twin = syn.SYNTHESIS_TOOL["input_schema"]["properties"]["twin_reference_cases"]
+    assert "QUALITATIVE" in twin["items"]["properties"]["distinguishing_fact"]["description"]
+    assert "fundamental_deltas" in twin["description"] or "peer_set" in twin["description"]
 
 
 def test_consensus_reproduction_guardrails_unreconciled_and_false_balance() -> None:
