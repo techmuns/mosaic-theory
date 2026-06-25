@@ -753,21 +753,48 @@ remnant + untested live core follow.
   AI-native fit: read the ACTUAL business from filings at breadth. Overlaps Edge 1/2 but the
   mispricing is taxonomic. KILL CRITERION: mis-classified names must re-rate when re-classified,
   **forward, not in hindsight.** Untested.
+
+**THE THEME / TREND FAMILY** — AI-assembled reasoning about themes / trends / rotations. All three
+share ONE failure mode and ONE discipline: they are **MOMENTUM-ADJACENT** — simpler replicable
+strategies (momentum, trend-following) capture much of any theme move — so EACH is this fund's edge
+**ONLY IF AI-assembly (selection / timing / exit discipline) beats a NAIVE MOMENTUM BASELINE**; the
+momentum itself is replicable and is NOT the edge (§3 retired graph-momentum for exactly this —
+arbitraged, fails the first-principle filter). All are **FREQUENT** (themes always running) → all
+**PAPER-VALIDATABLE IN PARALLEL** against the baseline (per the §4 GOVERNOR — never capital, never
+single-threaded ahead of the lead loop).
+- **Theme-anticipation via AI-native assembly — LEGITIMATE; differentiated ONLY IF AI-assembly beats
+  the naive baseline (corrects a prior over-dismissal AND a prior over-claim).** Get in EARLY: if
+  AI-assembly anticipates themes better-calibrated than macro-fund intuition, that is a real moat over
+  macro funds (the Vinci thesis) — **NOT** auto-rejected. But differentiation is **CONDITIONAL on
+  clearing the momentum baseline, NOT inherent** — theme edges are momentum-flavored and momentum is the
+  least-differentiated strategy. The distinction that matters is NOT "anticipate vs confirmed-catalyst"
+  but "does the assembly beat a naive baseline," measured. Bets are **FREQUENT** (rotations resolve in
+  MONTHS-TO-QUARTERS and are PLURAL — not few/slow), so it is **PAPER-VALIDATABLE NOW** in parallel; the
+  gate is **ATTRIBUTION AGAINST MOMENTUM** (proving the assembly beats the baseline), NOT frequency —
+  hard-to-validate, not long-gated-for-slowness. KILL CRITERION: benchmark AI-anticipated theme bets vs
+  a naive momentum/macro baseline; real ONLY if it beats the baseline on a sample large enough to
+  exclude luck.
+- **Theme-participation via AI-native assembly — ride a CONFIRMED winning trend with disciplined
+  rotation (get in LATE; the sibling to anticipation's get-in-early).** Examples: AI / semis /
+  hyperscalers (2–3yr), gold / silver '23–'25, the SaaS / crypto / dot-com / housing cycles. **THE
+  COLLISION:** this IS momentum in its purest form, so per the family frame it counts **ONLY IF
+  AI-assembled SELECTION (which confirmed theme / which names) + human EXIT DISCIPLINE beat a naive
+  trailing-stop momentum baseline.** **HIGHER BAR THAN ANTICIPATION:** for a *confirmed* trend the naive
+  baseline is STRONG — a trailing stop captures most of a multi-year theme AND the late-retail
+  self-reinforcing wave (the very dynamic cited as the opportunity) — so it must clear a high baseline,
+  hardest exactly where momentum is strongest. **TEAM FIT is real** (the AI dev assembles theme / name
+  breadth; the analyst judges real-and-durable vs late-and-exhausted; rotation discipline is human
+  temperament) **but fit ≠ edge.** TRACTABILITY: frequent signals → a strong PARALLEL PAPER-VALIDATION
+  candidate now; if AI-selection + exit-discipline beats the baseline over a few quarters → edge,
+  graduate to capital; if it merely matches → it was momentum, learned cheaply, zero LP capital risked.
 - **Causal-chain / second-order real-economy reasoning (e.g. an El Niño → input-cost → margin
-  chain).** Reason forward from a confirmed physical/macro cause to the specific names it
-  mechanically hits. KEPT as a hypothesis, but the **LEAST validatable** of the set — the chain is
-  long, confounded, and slow, the hardest to separate from coincidence — so it is **gated the
-  LONGEST**: hardest to give a validation design, thus the last the §4 GOVERNOR greenlights. Its limit
-  is **attribution, not timing** — strong on *why/whether* a driver is intact, weak on *when* it tops
-  (timing would be the dead signal, §3). Record-only.
-- **Theme-anticipation via AI-native assembly — LEGITIMATE, possibly the most DIFFERENTIATED edge
-  (corrects a prior over-dismissal).** If AI-assembly anticipates themes better-calibrated than
-  macro-fund intuition, that is a real moat over macro funds (the Vinci thesis) — **NOT** auto-rejected.
-  The distinction that matters is NOT "anticipate vs confirmed-catalyst" but "does the assembly beat a
-  naive baseline," measured. **Gated the LONGEST** (a sibling of the causal-chain edge — both few /
-  slow / macro / confounded), legitimate but hardest to validate. KILL CRITERION: benchmark
-  AI-anticipated theme bets vs a naive momentum/macro baseline; real ONLY if it beats the baseline on a
-  sample large enough to exclude luck.
+  chain).** Reason forward from a confirmed physical/macro cause to the specific names it mechanically
+  hits — the same family species (confirmed-cause → names, momentum/coincidence-confounded), the same
+  baseline discipline. KEPT as a hypothesis, but the **LEAST validatable** of the set — the chain is the
+  longest and most attribution-confounded, the hardest to separate from coincidence — so it has the
+  **hardest validation design**, the last the §4 GOVERNOR greenlights (on attribution difficulty, NOT on
+  being infrequent). Its limit is **attribution, not timing** — strong on *why/whether* a driver is
+  intact, weak on *when* it tops (timing would be the dead signal, §3). Record-only.
 - **Large-cap forced-de-rating — recorded at LOW credibility; a SEPARATE edge, NOT a ceiling
   change.** Forced/mechanical selling (index reconstitution, forced deleveraging, a flow-driven exit)
   temporarily de-rates even a large-cap below fair value. Logged so it is not re-discovered as novel,
