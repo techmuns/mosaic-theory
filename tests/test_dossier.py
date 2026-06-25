@@ -1562,7 +1562,6 @@ def test_edgar_full_coverage_populates_fields_with_honest_edgar_source_refs() ->
     for s in (fcf, margin, traj):  # honestly tagged EDGAR, never a CIQ ref
         assert (s.source_ref or "").startswith("EDGAR XBRL companyfacts")
         assert "CIQ" not in (s.source_ref or "")
-    assert ef.contributed
 
 
 def test_edgar_ebitda_is_fail_loud_unknown_when_dna_missing_the_cnxc_case() -> None:
@@ -1587,6 +1586,9 @@ def test_cross_source_basis_flag_lands_on_fundamental_deltas_only() -> None:
     assert "EDGAR-GAAP basis" in (flagged.fundamental_deltas.value or "")  # flag carried here…
     assert "EDGAR-GAAP basis" not in (flagged.trading_multiples.value or "")  # …not on multiples
     assert flagged.trading_multiples == pc.trading_multiples  # multiples comparison untouched
+    # a MISSING/UNKNOWN fundamental_deltas has no comparison to caveat → flag is a no-op (no note)
+    none_pc = pc.model_copy(update={"fundamental_deltas": ds.Sourced.unknown(note="no comps")})
+    assert efb.flag_deltas_basis(none_pc).fundamental_deltas == none_pc.fundamental_deltas
 
 
 def test_financials_freq_prefers_filename_over_empty_income_statement() -> None:
@@ -1600,3 +1602,38 @@ def test_financials_freq_prefers_filename_over_empty_income_statement() -> None:
     qrows = [["", "Period Type:", "Quarterly"]]  # an un-named export → read the verbatim cell
     assert ciq._financials_freq("Financials.xls", qrows) == "quarterly"
     assert ciq._financials_freq("Financials.xls", []) is None
+    # a company NAME containing 'quarterly'/'annual' must NOT override the '_Quarterly'/'_Annual'
+    # suffix (the match is anchored on the underscore, not a bare substring)
+    assert ciq._financials_freq("Quarterly Brands Financials_Annual.xls", []) == "annual"
+    assert ciq._financials_freq("Annual Corp Financials_Quarterly.xls", []) == "quarterly"
+
+
+def test_edgar_ebitda_requires_same_period_start_not_just_period_end() -> None:
+    """EBITDA = operating_income + D&A only when BOTH cover the SAME fiscal period. A
+    same-period_end pair of different durations (a fiscal-year-transition stub) must NOT be summed —
+    the misaligned period is dropped, never fabricated into a wrong EBITDA."""
+    def _r(start: str, end: str, val: float) -> dict[str, typing.Any]:
+        return {"start": start, "end": end, "val": val, "filed": end, "fy": int(end[:4]),
+                "fp": "FY", "form": "10-K", "accn": "x"}
+    facts = {"facts": {"us-gaap": {
+        "OperatingIncomeLoss": {"units": {"USD": [
+            _r("2023-01-01", "2023-12-31", 50e6), _r("2024-01-01", "2024-12-31", 60e6)]}},
+        "DepreciationDepletionAndAmortization": {"units": {"USD": [
+            _r("2023-01-01", "2023-12-31", 20e6),    # FY2023 aligned → EBITDA computable
+            _r("2024-07-01", "2024-12-31", 12e6)]}},  # FY2024: SAME end, 6-month start → must drop
+        "RevenueFromContractWithCustomerExcludingAssessedTax": {"units": {"USD": [
+            _r("2023-01-01", "2023-12-31", 300e6), _r("2024-01-01", "2024-12-31", 350e6)]}},
+    }}}
+    ef = efb.EdgarFundamentals(facts)
+    # only FY2023 EBITDA survives (FY2024 start-mismatched) → 1 margin point → UNKNOWN
+    assert ef.margin_trend().status is ds.SourceStatus.UNKNOWN
+    assert "EBITDA:" not in (ef.multi_year_trajectory().value or "")  # no fabricated FY2024 EBITDA
+
+
+def test_companyfacts_or_none_swallows_valueerror_from_a_bad_cik() -> None:
+    """A non-numeric CIK makes companyfacts → pad_cik → int() raise ValueError; the helper must
+    return None (never raise into the assembler), per its docstring contract."""
+    class _Edgar:
+        def companyfacts(self, cik: object) -> dict[str, typing.Any]:
+            raise ValueError("invalid literal for int()")
+    assert dm._companyfacts_or_none(_Edgar(), "N/A") is None  # type: ignore[arg-type]

@@ -80,13 +80,17 @@ class EdgarFundamentals:
         # EBITDA per period: operating_income + D&A, BOTH the same fiscal period. A period missing
         # D&A is DROPPED (fail-loud), never operating_income alone. CNXC (op present, D&A absent) →
         # this dict stays empty → EBITDA-margin / EBITDA-trajectory are UNKNOWN, never fabricated.
+        # period_end AND period_start must match — a same-end pair of different durations (a
+        # fiscal-year-transition stub) would otherwise sum mismatched spans into a wrong EBITDA.
         self._ebitda: dict[date, float] = {
             pe: self._op[pe].value + self._da[pe].value
             for pe in sorted(self._op.keys() & self._da.keys())
+            if self._op[pe].period_start == self._da[pe].period_start
         }
         self._fcf: dict[date, float] = {
             pe: self._ocf[pe].value - self._capex[pe].value
             for pe in sorted(self._ocf.keys() & self._capex.keys())
+            if self._ocf[pe].period_start == self._capex[pe].period_start
         }
 
     # --- the three CIQ-sourced fundamentals fields, mirrored on a raw-GAAP basis -----------------
@@ -162,14 +166,6 @@ class EdgarFundamentals:
             for pe in periods
         )
 
-    @property
-    def contributed(self) -> bool:
-        """Did EDGAR supply ≥1 fundamentals field? (Gates the cross-source flag.)"""
-        return any(
-            s.status is SourceStatus.PRESENT
-            for s in (self.free_cash_flow(), self.margin_trend(), self.multi_year_trajectory())
-        )
-
 
 def build_fallback(
     *,
@@ -197,12 +193,10 @@ def build_fallback(
 
 
 def flag_deltas_basis(pc: PeerComps) -> PeerComps:
-    """Carry the cross-source basis flag on ``fundamental_deltas`` ONLY (never trading_multiples).
-    Appended to the value when the deltas are present; carried in the note otherwise. Pure."""
+    """Carry the cross-source basis flag on ``fundamental_deltas`` ONLY (never trading_multiples),
+    and only when there IS a delta to caveat (PRESENT) — a no-op otherwise (no comparison). Pure."""
     fd = pc.fundamental_deltas
-    if fd.status is SourceStatus.PRESENT and fd.value:
-        fd = fd.model_copy(update={"value": f"{fd.value}  [⚠ {CROSS_SOURCE_DELTA_FLAG}]"})
-    else:
-        prefix = f"{fd.note} · " if fd.note else ""
-        fd = fd.model_copy(update={"note": f"{prefix}⚠ {CROSS_SOURCE_DELTA_FLAG}"})
+    if fd.status is not SourceStatus.PRESENT or not fd.value:
+        return pc
+    fd = fd.model_copy(update={"value": f"{fd.value}  [⚠ {CROSS_SOURCE_DELTA_FLAG}]"})
     return pc.model_copy(update={"fundamental_deltas": fd})

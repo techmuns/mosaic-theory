@@ -71,7 +71,7 @@ def _companyfacts_or_none(edgar: EdgarClient, cik: str | None) -> dict[str, Any]
         return None
     try:
         return edgar.companyfacts(cik)
-    except (HttpError, KeyError):
+    except (HttpError, KeyError, ValueError):  # ValueError: pad_cik int() on a non-numeric CIK
         return None
 
 
@@ -730,9 +730,14 @@ def assemble_mechanical(
     fcf = _prefer_ciq(ciq_fcf, edgar_fb.free_cash_flow() if edgar_fb else None)
     margin = _prefer_ciq(ciq_margin, edgar_fb.margin_trend() if edgar_fb else None)
     trajectory = _prefer_ciq(ciq_traj, edgar_fb.multi_year_trajectory() if edgar_fb else None)
-    if edgar_fb is not None and edgar_fb.contributed:
-        # name fundamentals are now EDGAR-GAAP basis — flag the cross-source comparison on
-        # fundamental_deltas ONLY (trading_multiples is CIQ-vs-CIQ, so it stays unflagged).
+    # Flag the cross-source comparison ONLY when an EDGAR field reached the dossier (CIQ was
+    # empty for it). Keying on the RESOLVED fields — not "EDGAR could supply" — avoids a false basis
+    # warning when CIQ won every field. fundamental_deltas only (trading_multiples is CIQ-vs-CIQ).
+    edgar_used = any(
+        (s.source_ref or "").startswith("EDGAR XBRL companyfacts")
+        for s in (fcf, margin, trajectory)
+    )
+    if edgar_used:
         peer_comps = edgar_fundamentals.flag_deltas_basis(peer_comps)
     mech = MechanicalLayer(
         valuation=_valuation(

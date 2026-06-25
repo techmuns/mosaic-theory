@@ -224,16 +224,18 @@ def period_type(income_rows: list[list[Any]]) -> str | None:
 
 
 def _financials_freq(name: str, income_rows: list[list[Any]]) -> str | None:
-    """The period type of a financials export. The FILENAME is authoritative ('…_Quarterly' /
-    '…_Annual'); :func:`period_type` reads the Income Statement's "Period Type:" cell, which
-    is unreliable when that sheet is EMPTY — AORT's Quarterly export has an empty Income Statement
-    whose boilerplate reads "Annual", so a content-only read mis-tagged the quarterly workbook
-    'annual' and a freq="quarterly" request silently fell back to the Annual workbook. Fall back to
-    the verbatim cell only for an un-named export."""
+    """The period type of a financials export. The FILENAME is authoritative — CIQ names them
+    '…Financials_Quarterly' / '…Financials_Annual', so we match the '_quarterly' / '_annual' token
+    (anchored on the underscore so a company NAME with 'quarterly'/'annual' can't false-match).
+    :func:`period_type` reads the Income Statement's "Period Type:" cell, which is unreliable when
+    that sheet is EMPTY — AORT's Quarterly export has an empty Income Statement whose boilerplate
+    reads "Annual", so a content-only read mis-tagged the quarterly workbook 'annual' and a
+    freq="quarterly" request silently fell back to the Annual workbook. Fall back to the verbatim
+    cell only for an un-named export."""
     low = name.lower()
-    if "quarterly" in low:
+    if "_quarterly" in low:
         return "quarterly"
-    if "annual" in low:
+    if "_annual" in low:
         return "annual"
     return period_type(income_rows)
 

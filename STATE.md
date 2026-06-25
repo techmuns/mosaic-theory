@@ -399,8 +399,15 @@ Each line: *what it does* — *verified how*.
     reads True, so the stale 'pull CIQ' flag is gone at the root (no manifest_flags change needed).
     Separately, frontend `seriesTable` sorts period columns chronologically (a `periodKey` year*13+month
     key) so uneven EDGAR sub-series render FY11→FY25, not out-of-order. (The fundamentals stay
-    EDGAR-filled — both financials Income Statements are empty.) 1 dossier-test pin (freq-from-filename);
-    ruff + mypy --strict (66) + pytest (202 offline) + node --check green.* **Out of scope (still
+    EDGAR-filled — both financials Income Statements are empty.) ruff + mypy --strict (66) + pytest +
+    node --check green.* *Code-review audit (high-effort, multi-agent, PR #20) hardened 5 edge cases:
+    EBITDA/FCF now require period_start match (not just period_end — a fiscal-year-transition stub
+    would have summed mismatched spans); the cross-source flag keys on the RESOLVED fields actually
+    used (no false warning when CIQ wins every field); `_companyfacts_or_none` also swallows ValueError
+    (a non-numeric CIK → pad_cik int()); `_financials_freq` anchors on the '_quarterly'/'_annual' token
+    (a company NAME can't false-match); `flag_deltas_basis` is a no-op on an absent delta. +3 test pins
+    (freq-from-filename, EBITDA period_start, companyfacts-ValueError); pytest (204 offline) green.*
+    **Out of scope (still
     owed): the CNXC D&A alias-list extension; CIQ normalized/adjusted figures (not derivable from raw
     XBRL).**
   - **CIQ loader → workbook-aware addressing model (VRRM, 2026-06-19) — the prior loader couldn't
