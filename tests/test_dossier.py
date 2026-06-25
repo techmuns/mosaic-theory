@@ -357,6 +357,57 @@ def test_consensus_reproduction_guardrails_unreconciled_and_false_balance() -> N
     assert any("FALSE-BALANCE" in f for f in f4)
 
 
+def test_false_balance_flags_strong_lean_with_symmetric_body_both_directions() -> None:
+    """G.2 (DIRECTION-AGNOSTIC, the MVST defect): a COMMITTED strong lean over a near-symmetric body
+    whose MINORITY side isn't qualified-as-outweighed launders a one-sided case — flagged the same
+    whether the lean is bearish (bull minority padded) or bullish (bear minority padded). A
+    qualified minority, or a genuinely lopsided body, does NOT fire — proving the fix SIZES rather
+    than counts, and never demands deleting a genuine counter-point."""
+    base = {"twin_reference_cases": [], "key_unknowns": [],
+            "decisive_question": {"question": "q?", "evidence_for": [], "evidence_against": []}}
+
+    def pt(c: str) -> dict[str, str]:
+        return {"claim": c, "source_ref": "x"}
+
+    # (A) strongly-BEARISH but 3-bull / 4-bear with an UNqualified bull minority → FALSE-BALANCE
+    bearish = {**base, "evidence_balance": "strongly-bearish — a major customer terminated",
+               "bull_points": [pt("FCF is positive"), pt("the buyback shrinks the share count"),
+                               pt("guidance holds the top line")],
+               "bear_points": [pt("a major customer terminated"), pt("estimates are being cut"),
+                               pt("an interim CEO was named"), pt("the decline is idiosyncratic")]}
+    _, fa, _ = syn.synthesize(_minimal_mech(), llm=_FakeLlm(bearish), ticker="X", name="X")
+    assert any("FALSE-BALANCE" in f and "near-symmetric" in f and "bull_points" in f for f in fa)
+
+    # (B) SYMMETRIC, not bull-biased: strongly-BULLISH with an UNqualified bear minority fires too
+    bullish = {**base, "evidence_balance": "strongly-bullish — durable compounding",
+               "bear_points": [pt("leverage is elevated"), pt("customer concentration exists"),
+                               pt("a soft recent quarter")],
+               "bull_points": [pt("revenue is compounding"), pt("FCF is inflecting"),
+                               pt("it is gaining share"), pt("the balance sheet is net cash")]}
+    _, fb, _ = syn.synthesize(_minimal_mech(), llm=_FakeLlm(bullish), ticker="X", name="X")
+    assert any("FALSE-BALANCE" in f and "near-symmetric" in f and "bear_points" in f for f in fb)
+
+    # (C) a QUALIFIED minority (sized-as-outweighed) does NOT fire — the genuine point survives
+    qualified = {**base, "evidence_balance": "strongly-bearish — a major customer terminated",
+                 "bull_points": [
+                     pt("FCF-positive is a genuine counter-point, OUTWEIGHED by the customer loss"),
+                     pt("the buyback continues but does not offset the lost revenue"),
+                     pt("guidance holds — what would have to be true is the loss is one-off")],
+                 "bear_points": [pt("a major customer terminated"), pt("estimates are being cut"),
+                                 pt("an interim CEO was named"),
+                                 pt("the decline is idiosyncratic")]}
+    _, fc, _ = syn.synthesize(_minimal_mech(), llm=_FakeLlm(qualified), ticker="X", name="X")
+    assert not any("near-symmetric" in f for f in fc)
+
+    # (D) a genuinely LOPSIDED body (1 bull / 4 bear) does NOT fire even with the bull unqualified
+    lopsided = {**base, "evidence_balance": "strongly-bearish — terminal",
+                "bull_points": [pt("FCF is positive")],
+                "bear_points": [pt("a major customer terminated"), pt("estimates are being cut"),
+                                pt("an interim CEO was named"), pt("the decline is idiosyncratic")]}
+    _, fd, _ = syn.synthesize(_minimal_mech(), llm=_FakeLlm(lopsided), ticker="X", name="X")
+    assert not any("near-symmetric" in f for f in fd)
+
+
 def test_synthesis_contract_requires_balance_and_treats_opacity_as_risk() -> None:
     """Mechanism B lives in the synthesis CONTRACT (prompt + tool schema): evidence_balance is a
     required tool field; opacity is a bearish risk; anti-balance + contrarian-reconciliation are
