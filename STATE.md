@@ -365,6 +365,34 @@ Each line: *what it does* — *verified how*.
     peer-cohort / graph-cohort known-unknown — that is the EDGAR-derived AUTOMATED cross-section, a separate
     deferred capability; this is the MANUAL CIQ comp set, and a heterogeneous peer set is itself surfaced as
     a confidence gate, not silently trusted.**
+  - **EDGAR fundamentals fallback — fills EMPTY CIQ fundamentals from XBRL; CIQ multiples stay
+    PRIMARY (2026-06-25).** ~10 of the top-20 Edge-2 finalists ship a CIQ Financials export whose
+    Income Statement / Balance Sheet / Cash Flow subsheets are header-only (present-but-data-empty)
+    while the Comparable-Analysis Trading Multiples ARE populated. New `edgar_fundamentals` module +
+    a per-field hook in `assemble_mechanical`: when a CIQ fundamentals field is UNKNOWN (empty
+    subsheet) AND a CIQ multiples signal is PRESENT (Financials→Multiples and/or the comps Trading
+    Multiples — for AORT only the comps reads PRESENT: the Financials→Multiples IS populated but a
+    PRE-EXISTING `_multiples_close` annual-'For Year Ending'-header gap leaves it unparsed),
+    `free_cash_flow` / `margin_trend` / `multi_year_trajectory` derive from EDGAR companyfacts (REUSING
+    `concepts.extract_points`, no new
+    XBRL layer). Fail-loud: **EBITDA = operating_income + aligned D&A** — a name with op-income but
+    ZERO D&A datapoints (CNXC) yields **EBITDA UNKNOWN, never op-income alone** (mirrors
+    `fundamental_snapshot`); FCF = OCF − capex. Each EDGAR field's `source_ref` reads `EDGAR XBRL
+    companyfacts <tag> [period]` (NOT a CIQ ref) — provenance honest + visible. `_prefer_ciq` NEVER
+    overrides a PRESENT CIQ field (multiples primary). The ONE cross-source risk is localized:
+    EDGAR-derived fundamentals → `peer_comps.fundamental_deltas` carries an "EDGAR-GAAP basis vs peers
+    CIQ basis — a delta may be definitional" flag; `trading_multiples` (CIQ-vs-CIQ) is NOT flagged,
+    nor is it a blanket dossier flag. *Verified — REAL run on AORT (CIQ fundamentals empty, comps
+    Multiples populated): the trigger fired; the 3 fields populated from EDGAR with EDGAR source_refs
+    (revenue FY2018→FY2025 180→354 $M, an 8y EBITDA-margin series, FCF $0.8M); CIQ trading_multiples
+    unchanged; 5/6 quality fundamentals now PRESENT (only interest_coverage UNKNOWN — needs an
+    interest_expense alias, out of scope); fundamental_deltas carries the basis flag, trading_multiples
+    does not. CNXC fail-loud (EBITDA UNKNOWN, Revenue+FCF still derive) proven by a deterministic test.
+    ruff + mypy --strict (66) + pytest (201 offline) green; 5 dossier-test pins (trigger; full-coverage
+    fields + EDGAR refs; EBITDA fail-loud/CNXC; cross-source flag on fundamental_deltas only).* **Out
+    of scope (still owed): the CNXC D&A alias-list extension; filling the empty Financials→Multiples
+    HISTORY from EDGAR (multiples stay CIQ-primary); CIQ normalized/adjusted figures (not derivable
+    from raw XBRL).**
   - **CIQ loader → workbook-aware addressing model (VRRM, 2026-06-19) — the prior loader couldn't
     reach the subsheets, so every CIQ section read MISSING.** CIQ Financials is ONE ~13-subsheet
     workbook (Income Statement / Cash Flow / Multiples / Segments / Capital Structure Details / …);

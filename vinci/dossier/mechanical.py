@@ -13,8 +13,9 @@ from __future__ import annotations
 import re
 import statistics
 from datetime import date, timedelta
+from typing import Any, TypeVar
 
-from vinci.dossier import ciq_sheets
+from vinci.dossier import ciq_sheets, edgar_fundamentals
 from vinci.dossier.ciq import CiqBundle
 from vinci.dossier.schemas import (
     CohortMember,
@@ -50,6 +51,28 @@ def _sourced(field: DataField[float] | DataField[int], *, source_ref: str) -> So
     if field.is_known and field.value is not None:
         return Sourced.present(float(field.value), source_ref=source_ref, note=field.note)
     return Sourced.unknown(note=field.note or "UNKNOWN in the screen data-record")
+
+
+_S = TypeVar("_S")
+
+
+def _prefer_ciq(ciq: Sourced[_S], edgar: Sourced[_S] | None) -> Sourced[_S]:
+    """CIQ stays PRIMARY: keep the CIQ field whenever it is PRESENT; otherwise fall to the EDGAR
+    fallback (itself PRESENT or fail-loud UNKNOWN). Never overrides a populated CIQ field."""
+    if ciq.status is SourceStatus.PRESENT or edgar is None:
+        return ciq
+    return edgar
+
+
+def _companyfacts_or_none(edgar: EdgarClient, cik: str | None) -> dict[str, Any] | None:
+    """EDGAR companyfacts for the fallback, or None (no CIK / fetch failed) — never raises into the
+    assembler; a None just leaves the CIQ field UNKNOWN (no fabrication)."""
+    if not cik:
+        return None
+    try:
+        return edgar.companyfacts(cik)
+    except (HttpError, KeyError):
+        return None
 
 
 def _close_on_or_before(bars: list[PriceBar], ref: date) -> float | None:
@@ -627,16 +650,19 @@ def _survival_capacity(
 
 def _quality(
     record: DataRecord, edgar: EdgarClient, bundle: CiqBundle, reference_date: date,
-    adj_leverage: Sourced[str],
+    adj_leverage: Sourced[str], *, fcf: Sourced[float], margin: Sourced[str],
+    trajectory: Sourced[str],
 ) -> Quality:
+    """``fcf`` / ``margin`` / ``trajectory`` arrive already resolved against the EDGAR fallback (CIQ
+    primary; EDGAR fills only an empty CIQ field) — assembled in :func:`assemble_mechanical`."""
     f = record.fundamentals
     net_lev = _sourced(f.net_leverage, source_ref="EDGAR XBRL net-debt/EBITDA (screen data-record)")
     fcf_sign = _sourced(f.fcf_sign, source_ref="EDGAR XBRL FCF sign (screen data-record)")
     liquidity = ciq_sheets.liquidity_covenant_flags(bundle)
     return Quality(
         fcf_sign=fcf_sign,
-        free_cash_flow=ciq_sheets.free_cash_flow(bundle),
-        margin_trend=ciq_sheets.margin_trend(bundle),
+        free_cash_flow=fcf,
+        margin_trend=margin,
         net_debt_to_ebitda=net_lev,
         net_debt_to_ebitda_adjusted=adj_leverage,
         survival_capacity=_survival_capacity(net_lev, adj_leverage, fcf_sign, liquidity),
@@ -647,7 +673,7 @@ def _quality(
             else Sourced.unknown(note="no CIK")
         ),
         liquidity_covenant_flags=liquidity,
-        multi_year_trajectory=ciq_sheets.multi_year_trajectory(bundle),
+        multi_year_trajectory=trajectory,
     )
 
 
@@ -687,13 +713,39 @@ def assemble_mechanical(
     drawdown = _drawdown_cause(record, edgar, http)
     adj_eps, adj_ev, adj_lev = _adjusted_facts(record, edgar, drawdown.revised_guidance)
     pe_recon = _pe_reconciliation(record, edgar, bundle, drawdown.revised_guidance)
+    # EDGAR fundamentals fallback: when the CIQ Financials subsheets are present-but-empty while CIQ
+    # multiples ARE populated, fill free_cash_flow / margin_trend / multi_year_trajectory from EDGAR
+    # XBRL. The "multiples present" signal is Financials→Multiples OR the comps Trading Multiples
+    # (either proves the workbook is pulled). NB for AORT only the comps reads PRESENT: its
+    # Financials→Multiples IS populated but a PRE-EXISTING `_multiples_close` gap (it knows only
+    # quarterly 'For Quarter Ending' headers, not AORT's annual 'For Year Ending') leaves it dark.
+    # CIQ multiples stay primary; a PRESENT CIQ field is never overridden (_prefer_ciq).
+    peer_comps = ciq_sheets.peer_comps(bundle)
+    ciq_fcf = ciq_sheets.free_cash_flow(bundle)
+    ciq_margin = ciq_sheets.margin_trend(bundle)
+    ciq_traj = ciq_sheets.multi_year_trajectory(bundle)
+    edgar_fb = edgar_fundamentals.build_fallback(
+        multiples=[ciq_sheets.ev_ebitda_current(bundle), peer_comps.trading_multiples],
+        ciq_fundamentals=[ciq_fcf, ciq_margin, ciq_traj],
+        facts_fn=lambda: _companyfacts_or_none(edgar, record.identity.cik),
+    )
+    fcf = _prefer_ciq(ciq_fcf, edgar_fb.free_cash_flow() if edgar_fb else None)
+    margin = _prefer_ciq(ciq_margin, edgar_fb.margin_trend() if edgar_fb else None)
+    trajectory = _prefer_ciq(ciq_traj, edgar_fb.multi_year_trajectory() if edgar_fb else None)
+    if edgar_fb is not None and edgar_fb.contributed:
+        # name fundamentals are now EDGAR-GAAP basis — flag the cross-source comparison on
+        # fundamental_deltas ONLY (trading_multiples is CIQ-vs-CIQ, so it stays unflagged).
+        peer_comps = edgar_fundamentals.flag_deltas_basis(peer_comps)
     mech = MechanicalLayer(
         valuation=_valuation(
             record, bundle, adj_eps, adj_ev, pe_note=pe_recon[1] if pe_recon else None
         ),
-        quality=_quality(record, edgar, bundle, reference_date, adj_lev),
+        quality=_quality(
+            record, edgar, bundle, reference_date, adj_lev,
+            fcf=fcf, margin=margin, trajectory=trajectory,
+        ),
         concentration=_concentration(bundle),
-        peer_comps=ciq_sheets.peer_comps(bundle),
+        peer_comps=peer_comps,
         drawdown_cause=drawdown,
         idiosyncratic_vs_shared=_idiosyncratic_vs_shared(
             record, store, graph, resolver, reference_date
