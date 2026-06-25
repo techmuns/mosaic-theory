@@ -24,6 +24,7 @@ import shutil
 import subprocess
 from datetime import UTC, datetime
 from pathlib import Path
+from typing import Any
 
 HERE = Path(__file__).resolve().parent
 ROOT = HERE.parent
@@ -39,7 +40,7 @@ OUT_DOSS = HERE / "dossiers"
 _MIRRORED = ("ranked_queue.jsonl", "decision_ledger.jsonl")
 
 
-def _jsonl(path: Path) -> list[dict]:
+def _jsonl(path: Path) -> list[dict[str, Any]]:
     return [json.loads(line) for line in path.read_text().splitlines() if line.strip()]
 
 
