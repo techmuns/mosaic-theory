@@ -78,8 +78,8 @@ _CHEAP_CUE = re.compile(
 
 # Verification-assertion tripwire: the dossier CITES, it never VERIFIES — flag prose asserting the
 # machine has verified/proven something (only the human can make that call). Honest negations
-# ("unverified", "cannot be verified") and benign domain terms ("proven track record", "confirmed
-# orders") are redacted FIRST, so the tripwire fires only on real over-assertion.
+# ("unverified", "cannot be verified", "not demonstrably") and benign terms ("proven track record",
+# "confirmed orders") are redacted FIRST, so the tripwire fires only on real over-assertion.
 _VERIFIED_BENIGN = re.compile(
     r"\bun(?:verified|confirmed|proven|substantiated)\b"
     r"|\b(?:cannot|can(?:no|')t|could ?n[o']?t|not)(?:\s+(?:yet|be|been))*\s+"
@@ -89,7 +89,11 @@ _VERIFIED_BENIGN = re.compile(
     r"|\bproven\s+(?:track record|model|playbook|formula|reserves?)\b"
     r"|\bestablished\s+(?:brand|player|leader|franchise|compan\w*|business|name|presence|\d{4})"
     r"|\bconfirmed\s+(?:orders?|bookings?|backlog|cases?|reservations?)\b"
-    r"|\bverified\s+(?:users?|accounts?|buyers?|customers?)\b",
+    r"|\bverified\s+(?:users?|accounts?|buyers?|customers?)\b"
+    # a NEGATED over-assertion adverb ('not demonstrably', 'never conclusively') is a HEDGE, not an
+    # over-claim — redact it so the tripwire fires only on POSITIVE "X is demonstrably true" prose.
+    r"|\b(?:not|never|no|n['’]?t)\s+(?:yet\s+)?(?:demonstrabl[ey]|definitively|conclusively|"
+    r"incontrovertibl[ey]|irrefutabl[ey]|certified)\b",
     re.IGNORECASE,
 )
 _VERIFIED_ASSERTION = re.compile(
@@ -219,7 +223,11 @@ SYNTHESIS_TOOL: dict[str, Any] = {
                     "properties": {
                         "name": {"type": "string", "description": "A SPECIFIC named company."},
                         "outcome": {"type": "string", "description": "recovered / went terminal."},
-                        "distinguishing_fact": {"type": "string"},
+                        "distinguishing_fact": {
+                            "type": "string",
+                            "description": "QUALITATIVE: the analogue pattern only; NO figures "
+                            "(caps/multiples/ratios live in peer_set / fundamental_deltas).",
+                        },
                         "source": {
                             "type": "string",
                             "description": f"A source_ref from input, or exactly '{_UNVERIFIED}'. "
@@ -228,7 +236,8 @@ SYNTHESIS_TOOL: dict[str, Any] = {
                     },
                     "required": ["name", "outcome", "distinguishing_fact", "source"],
                 },
-                "description": "3-6 named analogues for reasoning. Never numeric/aggregate.",
+                "description": "3-6 named QUALITATIVE analogues for reasoning. No figures — "
+                "caps/multiples/ratios live in peer_set / fundamental_deltas, not here.",
             },
             "decisive_question": {
                 "type": "object",
@@ -267,8 +276,11 @@ _SYSTEM = (
     "piece of decisive-question evidence MUST copy a source_ref verbatim from the supplied facts. "
     "(3) Give both cases honestly: the overshoot/mean-revert reading AND the terminal/value-trap "
     "reading. (4) Twin reference cases must be SPECIFIC NAMED companies; tag each source as a real "
-    "source_ref or exactly '[LLM-suggested, unverified]'; never a recovery rate, base rate, or "
-    "probability — analogues are for reasoning, not stats. (5) Surface the decisive question; do "
+    "source_ref or exactly '[LLM-suggested, unverified]'. Keep distinguishing_fact QUALITATIVE: "
+    "the analogue PATTERN only, with NO figures — caps / multiples / ratios live source-bound in "
+    "peer_set / fundamental_deltas, never restated in twin prose; never a recovery rate, base "
+    "rate, or probability — analogues are for reasoning, not stats. (5) Surface the decisive "
+    "question; do "
     "NOT answer it. (6) Never recommend, rate, score, or predict a direction — there is nowhere to "
     "put a verdict and it is not your job. "
     "(7) ANTI-BALANCE — SYMMETRIC, identical whether the name leans bullish or bearish: the "
