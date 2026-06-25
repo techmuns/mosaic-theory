@@ -18,6 +18,7 @@ from pydantic import BaseModel
 from vinci.dossier import assemble as dass
 from vinci.dossier import ciq, manual_store
 from vinci.dossier import ciq_sheets as cs
+from vinci.dossier import edgar_fundamentals as efb
 from vinci.dossier import mechanical as dm
 from vinci.dossier import render as dr
 from vinci.dossier import requirements as dreq
@@ -1499,3 +1500,140 @@ def test_synthesis_peer_comp_guardrail_precision_no_false_fire_on_brand_or_plura
         "PEER-COMP-BARE" in f
         for f in contract_flags("The name trades cheap versus the peer median.")
     )
+
+
+# --- EDGAR fundamentals fallback (fills EMPTY CIQ fundamentals; CIQ Multiples stays PRIMARY) ------
+
+
+def _edgar_facts(**by_concept: list[tuple[int, float]]) -> dict[str, typing.Any]:
+    """A minimal SEC companyfacts dict keyed by LOGICAL concept → [(fiscal_year, value), ...] annual
+    rows (mapped to each concept's first-priority us-gaap tag, so source_refs read the real tag)."""
+    from vinci.edgar.concepts import CONCEPT_ALIASES
+
+    us_gaap: dict[str, typing.Any] = {}
+    for concept, rows in by_concept.items():
+        us_gaap[CONCEPT_ALIASES[concept][0]] = {"units": {"USD": [
+            {"start": f"{y}-01-01", "end": f"{y}-12-31", "val": v, "filed": f"{y}-12-31",
+             "fy": y, "fp": "FY", "form": "10-K", "accn": f"{concept}-{y}"}
+            for (y, v) in rows
+        ]}}
+    return {"facts": {"us-gaap": us_gaap}}
+
+
+_FULL_FACTS = _edgar_facts(  # AORT-shaped: full coverage including D&A
+    revenue=[(2023, 300e6), (2024, 350e6), (2025, 400e6)],
+    operating_income=[(2023, 40e6), (2024, 50e6), (2025, 60e6)],
+    dep_amort=[(2023, 20e6), (2024, 22e6), (2025, 24e6)],
+    operating_cash_flow=[(2023, 50e6), (2024, 60e6), (2025, 70e6)],
+    capex=[(2023, 15e6), (2024, 18e6), (2025, 20e6)],
+)
+_NO_DNA_FACTS = _edgar_facts(  # CNXC-shaped: operating_income present, ZERO D&A datapoints
+    revenue=[(2023, 8e9), (2024, 9e9)],
+    operating_income=[(2023, 5e8), (2024, 6e8)],
+    operating_cash_flow=[(2023, 7e8), (2024, 8e8)],
+    capex=[(2023, 1e8), (2024, 1.2e8)],
+)
+
+
+def test_edgar_fallback_fires_only_when_multiples_present_and_a_ciq_field_empty() -> None:
+    """The trigger is the verified empty-subsheet signature: CIQ Multiples PRESENT (primary intact)
+    + a CIQ fundamentals field UNKNOWN. Multiples absent, or all fundamentals present, or no facts →
+    no fallback (and never a fabricated number)."""
+    pres = ds.Sourced.present(7.0, source_ref="CIQ Multiples")
+    unk = ds.Sourced.unknown(note="header-only subsheet")
+    assert efb.build_fallback(  # no CIQ multiples present → never fall back (wholly un-pulled name)
+        multiples=[unk, unk], ciq_fundamentals=[unk, unk], facts_fn=lambda: _FULL_FACTS) is None
+    assert efb.build_fallback(  # CIQ fundamentals all populated → no fallback needed
+        multiples=[pres], ciq_fundamentals=[pres, pres], facts_fn=lambda: _FULL_FACTS) is None
+    fired = efb.build_fallback(  # the trigger: a multiples signal present + a field empty + facts
+        multiples=[unk, pres], ciq_fundamentals=[pres, unk], facts_fn=lambda: _FULL_FACTS)
+    assert fired is not None
+    assert efb.build_fallback(  # no companyfacts (no CIK / fetch failed) → None, never fabricate
+        multiples=[pres], ciq_fundamentals=[unk, unk], facts_fn=lambda: None) is None
+
+
+def test_edgar_full_coverage_populates_fields_with_honest_edgar_source_refs() -> None:
+    ef = efb.EdgarFundamentals(_FULL_FACTS)
+    fcf, margin, traj = ef.free_cash_flow(), ef.margin_trend(), ef.multi_year_trajectory()
+    assert fcf.status is ds.SourceStatus.PRESENT and fcf.value == 50.0  # latest (70 − 20) $M
+    assert margin.status is ds.SourceStatus.PRESENT and "EBITDA margin" in (margin.value or "")
+    assert traj.status is ds.SourceStatus.PRESENT
+    assert all(k in (traj.value or "") for k in ("Revenue:", "EBITDA:", "FCF:"))
+    for s in (fcf, margin, traj):  # honestly tagged EDGAR, never a CIQ ref
+        assert (s.source_ref or "").startswith("EDGAR XBRL companyfacts")
+        assert "CIQ" not in (s.source_ref or "")
+
+
+def test_edgar_ebitda_is_fail_loud_unknown_when_dna_missing_the_cnxc_case() -> None:
+    ef = efb.EdgarFundamentals(_NO_DNA_FACTS)
+    # EBITDA needs operating_income + aligned D&A; with ZERO D&A the EBITDA-margin is UNKNOWN…
+    assert ef.margin_trend().status is ds.SourceStatus.UNKNOWN
+    # …never operating_income alone. Revenue + FCF still derive (no D&A needed) — partial, honest.
+    fcf, traj = ef.free_cash_flow(), ef.multi_year_trajectory()
+    assert fcf.status is ds.SourceStatus.PRESENT  # OCF − capex needs no D&A
+    assert traj.status is ds.SourceStatus.PRESENT and "Revenue:" in (traj.value or "")
+    assert "FCF:" in (traj.value or "") and "EBITDA:" not in (traj.value or "")  # EBITDA not faked
+
+
+def test_cross_source_basis_flag_lands_on_fundamental_deltas_only() -> None:
+    pc = ds.PeerComps(
+        peer_set=ds.Sourced.present("roster", source_ref="CIQ"),
+        comparability=ds.Sourced.present("dispersion", source_ref="CIQ"),
+        trading_multiples=ds.Sourced.present("name 7x vs peers", source_ref="CIQ TM"),
+        fundamental_deltas=ds.Sourced.present("name 20% vs peer-median 25%", source_ref="CIQ"),
+    )
+    flagged = efb.flag_deltas_basis(pc)
+    assert "EDGAR-GAAP basis" in (flagged.fundamental_deltas.value or "")  # flag carried here…
+    assert "EDGAR-GAAP basis" not in (flagged.trading_multiples.value or "")  # …not on multiples
+    assert flagged.trading_multiples == pc.trading_multiples  # multiples comparison untouched
+    # a MISSING/UNKNOWN fundamental_deltas has no comparison to caveat → flag is a no-op (no note)
+    none_pc = pc.model_copy(update={"fundamental_deltas": ds.Sourced.unknown(note="no comps")})
+    assert efb.flag_deltas_basis(none_pc).fundamental_deltas == none_pc.fundamental_deltas
+
+
+def test_financials_freq_prefers_filename_over_empty_income_statement() -> None:
+    """The real AORT root cause: its Quarterly export has an EMPTY Income Statement whose
+    'Period Type:' boilerplate reads 'Annual', so a content-only read mis-tagged the quarterly
+    workbook 'annual' — a freq='quarterly' request then silently fell back to the Annual workbook.
+    The FILENAME must win so the quarterly Multiples stay reachable."""
+    misleading = [["", "Period Type:", "Annual"]]  # the empty-export boilerplate
+    assert ciq._financials_freq("Artivion AORT Financials_Quarterly.xls", misleading) == "quarterly"
+    assert ciq._financials_freq("Artivion AORT Financials_Annual.xls", misleading) == "annual"
+    qrows = [["", "Period Type:", "Quarterly"]]  # an un-named export → read the verbatim cell
+    assert ciq._financials_freq("Financials.xls", qrows) == "quarterly"
+    assert ciq._financials_freq("Financials.xls", []) is None
+    # a company NAME containing 'quarterly'/'annual' must NOT override the '_Quarterly'/'_Annual'
+    # suffix (the match is anchored on the underscore, not a bare substring)
+    assert ciq._financials_freq("Quarterly Brands Financials_Annual.xls", []) == "annual"
+    assert ciq._financials_freq("Annual Corp Financials_Quarterly.xls", []) == "quarterly"
+
+
+def test_edgar_ebitda_requires_same_period_start_not_just_period_end() -> None:
+    """EBITDA = operating_income + D&A only when BOTH cover the SAME fiscal period. A
+    same-period_end pair of different durations (a fiscal-year-transition stub) must NOT be summed —
+    the misaligned period is dropped, never fabricated into a wrong EBITDA."""
+    def _r(start: str, end: str, val: float) -> dict[str, typing.Any]:
+        return {"start": start, "end": end, "val": val, "filed": end, "fy": int(end[:4]),
+                "fp": "FY", "form": "10-K", "accn": "x"}
+    facts = {"facts": {"us-gaap": {
+        "OperatingIncomeLoss": {"units": {"USD": [
+            _r("2023-01-01", "2023-12-31", 50e6), _r("2024-01-01", "2024-12-31", 60e6)]}},
+        "DepreciationDepletionAndAmortization": {"units": {"USD": [
+            _r("2023-01-01", "2023-12-31", 20e6),    # FY2023 aligned → EBITDA computable
+            _r("2024-07-01", "2024-12-31", 12e6)]}},  # FY2024: SAME end, 6-month start → must drop
+        "RevenueFromContractWithCustomerExcludingAssessedTax": {"units": {"USD": [
+            _r("2023-01-01", "2023-12-31", 300e6), _r("2024-01-01", "2024-12-31", 350e6)]}},
+    }}}
+    ef = efb.EdgarFundamentals(facts)
+    # only FY2023 EBITDA survives (FY2024 start-mismatched) → 1 margin point → UNKNOWN
+    assert ef.margin_trend().status is ds.SourceStatus.UNKNOWN
+    assert "EBITDA:" not in (ef.multi_year_trajectory().value or "")  # no fabricated FY2024 EBITDA
+
+
+def test_companyfacts_or_none_swallows_valueerror_from_a_bad_cik() -> None:
+    """A non-numeric CIK makes companyfacts → pad_cik → int() raise ValueError; the helper must
+    return None (never raise into the assembler), per its docstring contract."""
+    class _Edgar:
+        def companyfacts(self, cik: object) -> dict[str, typing.Any]:
+            raise ValueError("invalid literal for int()")
+    assert dm._companyfacts_or_none(_Edgar(), "N/A") is None  # type: ignore[arg-type]

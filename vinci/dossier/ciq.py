@@ -223,6 +223,23 @@ def period_type(income_rows: list[list[Any]]) -> str | None:
     return None
 
 
+def _financials_freq(name: str, income_rows: list[list[Any]]) -> str | None:
+    """The period type of a financials export. The FILENAME is authoritative — CIQ names them
+    '…Financials_Quarterly' / '…Financials_Annual', so we match the '_quarterly' / '_annual' token
+    (anchored on the underscore so a company NAME with 'quarterly'/'annual' can't false-match).
+    :func:`period_type` reads the Income Statement's "Period Type:" cell, which is unreliable when
+    that sheet is EMPTY — AORT's Quarterly export has an empty Income Statement whose boilerplate
+    reads "Annual", so a content-only read mis-tagged the quarterly workbook 'annual' and a
+    freq="quarterly" request silently fell back to the Annual workbook. Fall back to the verbatim
+    cell only for an un-named export."""
+    low = name.lower()
+    if "_quarterly" in low:
+        return "quarterly"
+    if "_annual" in low:
+        return "annual"
+    return period_type(income_rows)
+
+
 @dataclass(frozen=True)
 class CiqWorkbook:
     kind: str
@@ -260,7 +277,7 @@ class CiqBundle:
             if kind == "financials" and fmt in (CiqFormat.BIFF_XLS, CiqFormat.OOXML):
                 try:
                     cache[p] = read_sheets(p, fmt)
-                    freq = period_type(cache[p].get("Income Statement", []))
+                    freq = _financials_freq(name, cache[p].get("Income Statement", []))
                 except CiqParseError:
                     freq = None
             wbs.append(CiqWorkbook(kind=kind, path=p, fmt=fmt, freq=freq))
