@@ -4,17 +4,6 @@
 import { getDossier, getDossierIndex, getLedger, isBuyVerdict } from "../lib/snapshots.js";
 import { fmtPrice, fmtDate, fmtPct, escapeHtml, DASH } from "../lib/format.js";
 
-// One delegated listener (attached once at module load) flips any collapsible table's extra rows —
-// survives the view's innerHTML re-renders, nothing per-render to leak.
-document.addEventListener("click", (e) => {
-  const btn = e.target.closest(".row-toggle");
-  if (!btn) return;
-  const box = btn.closest(".collapsible");
-  if (!box) return;
-  const open = box.classList.toggle("expanded");
-  btn.textContent = open ? "Show fewer ▴" : `Show all ${box.dataset.total} ▾`;
-});
-
 export async function render(root, params, { item, frame }) {
   const ticker = (params[0] || "").trim().toUpperCase();
   if (!ticker) return renderIndex(root, item, frame);
@@ -240,7 +229,7 @@ function concentration(c) {
   return sec("Concentration", "Segment / customer / geographic exposure. Segment-EBITDA share is the decision-relevant profit view.",
     fact("Segments (revenue share)", c.segments) +
     fact("Segment EBITDA share", c.segment_ebitda, null, { hi: true }) +
-    customersFact("Customers", c.customers) +
+    fact("Customers", c.customers) +
     fact("Geographic", c.geographic));
 }
 
@@ -257,58 +246,6 @@ function peerFactTable(label, s, head, body, noteText) {
   const cite = s.source_ref ? `<span class="cite">${escapeHtml(s.source_ref)}</span>` : "";
   return `<div class="fact"><div class="fact-label">${escapeHtml(label)}</div>
     <div style="min-width:0;"><div style="overflow-x:auto;"><table class="data">${head}${body}</table></div>${note}${cite}</div></div>`;
-}
-
-// Same fact-row shell, but rows past `shown` (default 5) collapse behind a "Show all N" toggle (the
-// delegated .row-toggle listener flips .collapsible.expanded). `rows` is an array of "<tr>…" strings.
-function collapsibleFact(label, s, head, rows, shown, noteText) {
-  const total = rows.length;
-  const body = rows.map((r, i) => (i < shown ? r : r.replace("<tr", '<tr class="row-extra"'))).join("");
-  const toggle = total > shown
-    ? `<button class="row-toggle" type="button">Show all ${total} &#9662;</button>` : "";
-  const note = noteText ? `<div class="muted" style="font-size:11px; margin-top:5px;">${escapeHtml(noteText)}</div>` : "";
-  const cite = s.source_ref ? `<span class="cite">${escapeHtml(s.source_ref)}</span>` : "";
-  return `<div class="fact"><div class="fact-label">${escapeHtml(label)}</div>
-    <div style="min-width:0;"><div class="collapsible" data-total="${total}"><div style="overflow-x:auto;"><table class="data">${head}<tbody>${body}</tbody></table></div>${toggle}</div>${note}${cite}</div></div>`;
-}
-
-// Customers (CIQ business relationships) → a 2-column table: name | relationship, verbatim after the
-// " — " split (so CIQ's two column orders both render without mislabeling). The type word is bolded
-// by a fail-safe scan; a uniform per-row "· src: <filing>" is lifted once into the note. Falls back
-// to the plain fact() line if a row isn't the expected shape.
-const REL_TYPE = /\b(Customers?|Distributors?|Licens(?:ee|or)s?|Suppliers?|Vendors?|Resellers?|Partners?|Strategic Alliance|Creditors?|Less(?:or|ee)s?|Transfer Agents?|Auditors?|Investors?|Franchisees?)\b/;
-
-function parseCustomers(text) {
-  let s = String(text).trim(), note = "";
-  const more = s.match(/;?\s*…\(\+(\d+) more\)\s*$/);
-  if (more) { note = `+${more[1]} more (not pulled)`; s = s.slice(0, more.index).trim(); }
-  const rows = [];
-  for (const seg of s.split(";")) {
-    const t = seg.trim();
-    if (!t) continue;
-    const i = t.indexOf(" — ");
-    if (i < 0) return null;  // unexpected shape → fall back to the plain line
-    rows.push({ name: t.slice(0, i).trim(), rel: t.slice(i + 3).trim() });
-  }
-  if (!rows.length) return null;
-  // a uniform trailing "· src: X" (the company's own filing, repeated per row) → lift it to the note
-  const srcs = rows.map((r) => (r.rel.match(/·\s*src:\s*(.+)$/) || [])[1]);
-  if (srcs[0] && srcs.every((x) => x === srcs[0])) {
-    rows.forEach((r) => { r.rel = r.rel.replace(/\s*·\s*src:\s*.+$/, "").trim(); });
-    note = note ? `${note} · src: ${srcs[0]}` : `src: ${srcs[0]}`;
-  }
-  return { rows, note };
-}
-
-function customersFact(label, s) {
-  if (!s || s.status !== "present" || s.value == null) return fact(label, s);
-  const p = parseCustomers(s.value);
-  if (!p) return fact(label, s);
-  const head = `<thead><tr><th>Customer</th><th>Relationship</th></tr></thead>`;
-  const rows = p.rows.map((r) =>
-    `<tr><td style="white-space:nowrap; font-weight:500;">${escapeHtml(r.name)}</td>` +
-    `<td style="color:var(--ink-2);">${escapeHtml(r.rel).replace(REL_TYPE, "<b>$1</b>")}</td></tr>`);
-  return collapsibleFact(label, s, head, rows, 5, p.note);
 }
 
 function parsePeerMultiples(text) {
@@ -386,8 +323,8 @@ function peerRosterFact(label, s) {
   const p = parsePeerRoster(s.value);
   if (!p) return fact(label, s);
   const head = `<thead><tr><th>Peer</th><th class="num">Mkt cap</th><th>Business</th></tr></thead>`;
-  const rows = p.rows.map((r) => `<tr><td style="white-space:nowrap;">${escapeHtml(r.name)}</td><td class="num">${escapeHtml(r.cap)}</td><td style="color:var(--ink-2);">${escapeHtml(r.desc)}</td></tr>`);
-  return collapsibleFact(label, s, head, rows, 5, p.nameCap ? `the name: ${p.nameCap}` : "");
+  const body = `<tbody>${p.rows.map((r) => `<tr><td style="white-space:nowrap;">${escapeHtml(r.name)}</td><td class="num">${escapeHtml(r.cap)}</td><td style="color:var(--ink-2);">${escapeHtml(r.desc)}</td></tr>`).join("")}</tbody>`;
+  return peerFactTable(label, s, head, body, p.nameCap ? `the name: ${p.nameCap}` : "");
 }
 
 function peerComps(pc) {
