@@ -22,7 +22,7 @@ from __future__ import annotations
 import json
 import shutil
 import subprocess
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
@@ -78,7 +78,8 @@ def main() -> None:
 
     # DERIVED EDGAR-10-K exposure map → slim graph.json (edges + shared nodes + headline stats).
     # Authorized for the private/authed repo as a derived artifact (CLAUDE.md). git-ignored, so on a
-    # deploy it is absent until graph_coverage.json is committed; the graph screen degrades to UNKNOWN.
+    # deploy it is absent until graph_coverage.json is committed; the graph screen degrades to
+    # UNKNOWN.
     if GRAPH.exists():
         g = json.loads(GRAPH.read_text())
         slim = {
@@ -113,12 +114,16 @@ def main() -> None:
     uni_path = SNAP / "universe_snapshot.jsonl"
     uni = _jsonl(uni_path) if uni_path.exists() else []
     manifest = {
-        "generated_at": datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M UTC"),
+        "generated_at": datetime.now(UTC).strftime("%Y-%m-%d %H:%M UTC"),
         "source_commit": _git_sha(),
         "universe": {"count": len(uni), "as_of": (uni[0].get("as_of") if uni else None)},
         "screen": {
             "candidates": len(queue),
-            "as_of": (str(queue[0].get("screen_run_at"))[:10] if queue and queue[0].get("screen_run_at") else None),
+            "as_of": (
+                str(queue[0].get("screen_run_at"))[:10]
+                if queue and queue[0].get("screen_run_at")
+                else None
+            ),
         },
         # Queue summary counts so the overview reads two numbers from this ~200-byte file instead
         # of fetching + parsing the full ~440 KB ranked_queue.jsonl to show them. The full queue
