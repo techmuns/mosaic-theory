@@ -194,9 +194,16 @@ table.data { width: 100%; border-collapse: collapse; font-size: 13px; }
 table.data th { text-align: left; font-size: 11px; text-transform: uppercase; letter-spacing: 0.04em; color: var(--ink-3); font-weight: 600; padding: 8px 10px; border-bottom: 1px solid var(--line-2); white-space: nowrap; }
 table.data td { padding: 9px 10px; border-bottom: 1px solid var(--line); vertical-align: top; }
 table.data tr:hover td { background: var(--surface-2); }
+table.data b { font-weight: 600; color: var(--ink); }
 .mono { font-family: var(--mono); }
 .num { font-family: var(--mono); text-align: right; }
 .muted { color: var(--ink-3); }
+
+/* collapsible table rows — long lists (customers, peer roster) show the first few, expand the rest */
+.collapsible .row-extra { display: none; }
+.collapsible.expanded .row-extra { display: table-row; }
+.row-toggle { margin-top: 8px; font-size: 12px; color: var(--accent); background: none; border: 0; padding: 4px 0; cursor: pointer; font-weight: 600; }
+.row-toggle:hover { text-decoration: underline; }
 
 /* source-binding citation — the visual signature of the dossier */
 .cite { display: block; font-size: 11.5px; color: var(--ink-3); margin-top: 3px; }
