@@ -226,7 +226,7 @@ function quality(q) {
   if (!q) return "";
   return sec("Quality", "Durability: cash generation, margins, leverage, dilution, covenant flags.",
     fact("FCF sign", q.fcf_sign, signWord) +
-    fact("Free cash flow", q.free_cash_flow) +
+    fact("Free cash flow ($M)", q.free_cash_flow) +
     seriesTable("Margin trend", q.margin_trend) +
     fact("Net debt / EBITDA (GAAP)", q.net_debt_to_ebitda, mult) +
     fact("Net debt / EBITDA (covenant adj.)", q.net_debt_to_ebitda_adjusted) +
