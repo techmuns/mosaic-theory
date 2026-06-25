@@ -304,7 +304,20 @@ Each line: *what it does* — *verified how*.
     truncation regression: a verbose `evidence_balance` in FIRST position starved the structural fields
     for data-rich names (FUBO/MVST returned UNAVAILABLE) — moved it LAST (a truncated last field is
     non-blocking, flag-not-block) + capped it concise (≤25 words) + synthesis max_tokens 8192→16384. All
-    5 dossiers now assemble with a committed evidence_balance; BRBR/EPAM/FUBO/MVST re-run clean.* **NOT in
+    5 dossiers now assemble with a committed evidence_balance; BRBR/EPAM/FUBO/MVST re-run clean.*
+    *False-balance made DIRECTION-AGNOSTIC + SYMMETRIC (2026-06-25): rule 7 rewritten so the BODY's weight
+    must MATCH `evidence_balance` whether the name leans bull OR bear — the MAJORITY side complete, the
+    MINORITY carrying ONLY genuine counter-points each sized-as-outweighed (never suppressed, never padded
+    with neutral filler); + rule 7b (no-neutral-as-directional: a dossier-flagged unresolved fact counts as
+    NEITHER bull nor bear — it belongs in `key_unknowns`). `FALSE-BALANCE` now ALSO fires on a committed
+    STRONG lean over a near-symmetric body whose minority points aren't qualified-as-outweighed (the MVST
+    defect — a 'strongly-bearish' label with a ~5-bull/6-bear body), via a new `_OUTWEIGHED` qualifier-cue.
+    Verified — MVST re-run: dropping the neutral '0th-percentile' padding (5→4 bull, relocated to
+    `key_unknowns`) left an honest 'mixed' read with the FCF counter-point SURVIVING qualified; the
+    deterministic old-MVST shape (strong lean + unqualified symmetric body) fires the new flag; VRRM
+    re-assembled clean (mixed, 6 bull/7 bear, no FALSE-BALANCE). Test pins BOTH a bearish and a bullish
+    symmetric body; ruff + mypy --strict + pytest (197) green. PR #15 (#16 reverted the unrelated #14
+    frontend collapse).* **NOT in
     scope (still deferred): the SIC peer-cohort / single-name cross-section read — a new capability, not a
     surgical fix.**
   - **Peer-comps read — the CIQ Company Comparable Analysis, FRAMED to RESIST the consensus comp
