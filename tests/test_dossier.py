@@ -311,8 +311,10 @@ def test_verification_assertion_tripwire_flags_machine_claiming_it_verified() ->
         "bear_points": [
             {"claim": "Adjusted leverage cannot be verified from the parsed facts",
              "source_ref": "x"},
-            # FIX 2: a NEGATED over-assertion adverb is a hedge/derivation, not an over-claim
+            # FIX 2: a NEGATED over-assertion adverb is a hedge/derivation, not an over-claim —
+            # incl. contractions (the \B + mandatory-apostrophe arm: "doesn't conclusively")
             {"claim": "the equity is not demonstrably earning on a GAAP basis", "source_ref": "x"},
+            {"claim": "the thesis doesn't conclusively hold yet", "source_ref": "x"},
         ],
         "twin_reference_cases": [], "key_unknowns": [],
         "decisive_question": {
@@ -324,6 +326,7 @@ def test_verification_assertion_tripwire_flags_machine_claiming_it_verified() ->
     assert any("We verified" in f for f in vc)            # the over-assertion fires
     assert any("demonstrably underway" in f for f in vc)  # a POSITIVE 'demonstrably' still fires
     assert not any("not demonstrably" in f for f in vc)   # FIX 2: the negated hedge does NOT fire
+    assert not any("doesn't conclusively" in f for f in vc)  # contraction hedge does NOT fire
     assert not any("proven track record" in f for f in vc)  # benign domain term, not flagged
     assert not any("cannot be verified" in f for f in vc)   # honest negation, not flagged
 

@@ -90,9 +90,11 @@ _VERIFIED_BENIGN = re.compile(
     r"|\bestablished\s+(?:brand|player|leader|franchise|compan\w*|business|name|presence|\d{4})"
     r"|\bconfirmed\s+(?:orders?|bookings?|backlog|cases?|reservations?)\b"
     r"|\bverified\s+(?:users?|accounts?|buyers?|customers?)\b"
-    # a NEGATED over-assertion adverb ('not demonstrably', 'never conclusively') is a HEDGE, not an
-    # over-claim — redact it so the tripwire fires only on POSITIVE "X is demonstrably true" prose.
-    r"|\b(?:not|never|no|n['’]?t)\s+(?:yet\s+)?(?:demonstrabl[ey]|definitively|conclusively|"
+    # a NEGATED over-assertion adverb ('not demonstrably', 'never conclusively', "isn't/doesn't …")
+    # is a HEDGE, not an over-claim — redact so the tripwire fires only on a POSITIVE claim. The
+    # contraction arm uses \B (non-boundary) + a MANDATORY apostrophe so "isn't" matches but a stray
+    # "nt" ("point demonstrably") does NOT — that would wrongly redact a positive claim.
+    r"|(?:\b(?:not|never|no)|\Bn['’]t)\s+(?:yet\s+)?(?:demonstrabl[ey]|definitively|conclusively|"
     r"incontrovertibl[ey]|irrefutabl[ey]|certified)\b",
     re.IGNORECASE,
 )
