@@ -1587,3 +1587,16 @@ def test_cross_source_basis_flag_lands_on_fundamental_deltas_only() -> None:
     assert "EDGAR-GAAP basis" in (flagged.fundamental_deltas.value or "")  # flag carried here…
     assert "EDGAR-GAAP basis" not in (flagged.trading_multiples.value or "")  # …not on multiples
     assert flagged.trading_multiples == pc.trading_multiples  # multiples comparison untouched
+
+
+def test_financials_freq_prefers_filename_over_empty_income_statement() -> None:
+    """The real AORT root cause: its Quarterly export has an EMPTY Income Statement whose
+    'Period Type:' boilerplate reads 'Annual', so a content-only read mis-tagged the quarterly
+    workbook 'annual' — a freq='quarterly' request then silently fell back to the Annual workbook.
+    The FILENAME must win so the quarterly Multiples stay reachable."""
+    misleading = [["", "Period Type:", "Annual"]]  # the empty-export boilerplate
+    assert ciq._financials_freq("Artivion AORT Financials_Quarterly.xls", misleading) == "quarterly"
+    assert ciq._financials_freq("Artivion AORT Financials_Annual.xls", misleading) == "annual"
+    qrows = [["", "Period Type:", "Quarterly"]]  # an un-named export → read the verbatim cell
+    assert ciq._financials_freq("Financials.xls", qrows) == "quarterly"
+    assert ciq._financials_freq("Financials.xls", []) is None

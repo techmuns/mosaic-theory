@@ -129,6 +129,18 @@ function fmtPeriod(p) {
   return m ? `FY${m[1].slice(2)}` : p;
 }
 
+// Chronological sort key from a period label ("FY2018", "Dec-31-2024", "2024"): year*13 + month, so
+// columns order by time even when sub-series span different ranges (EDGAR revenue runs further back
+// than its EBITDA-margin). No parseable year → Infinity (sorts last). Stable on same-period ties.
+const _MONTHS = { jan: 1, feb: 2, mar: 3, apr: 4, may: 5, jun: 6,
+                  jul: 7, aug: 8, sep: 9, oct: 10, nov: 11, dec: 12 };
+function periodKey(p) {
+  const y = (String(p).match(/(\d{4})/) || [])[1];
+  if (!y) return Infinity;
+  const mm = (String(p).toLowerCase().match(/jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec/) || [])[0];
+  return Number(y) * 13 + (mm ? _MONTHS[mm] : 0);
+}
+
 function seriesTable(label, s) {
   if (!s || s.status !== "present" || s.value == null) return fact(label, s);  // honest UNKNOWN/MISSING
   let parsed;
@@ -136,6 +148,7 @@ function seriesTable(label, s) {
   if (!parsed.series.length) return fact(label, s);  // unparseable shape → raw-text fallback
   const periods = [];
   for (const sr of parsed.series) for (const p of sr.points) if (!periods.includes(p.period)) periods.push(p.period);
+  periods.sort((a, b) => periodKey(a) - periodKey(b));  // chronological columns across uneven sub-series
   const sup = (b) => (b ? `<sup class="muted">${escapeHtml(b)}</sup>` : "");
   const head = `<tr><th></th>${periods.map((p) => `<th class="num">${escapeHtml(fmtPeriod(p))}</th>`).join("")}</tr>`;
   const body = parsed.series.map((sr) => {

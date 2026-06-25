@@ -715,11 +715,9 @@ def assemble_mechanical(
     pe_recon = _pe_reconciliation(record, edgar, bundle, drawdown.revised_guidance)
     # EDGAR fundamentals fallback: when the CIQ Financials subsheets are present-but-empty while CIQ
     # multiples ARE populated, fill free_cash_flow / margin_trend / multi_year_trajectory from EDGAR
-    # XBRL. The "multiples present" signal is Financials→Multiples OR the comps Trading Multiples
-    # (either proves the workbook is pulled). NB for AORT only the comps reads PRESENT: its
-    # Financials→Multiples IS populated but a PRE-EXISTING `_multiples_close` gap (it knows only
-    # quarterly 'For Quarter Ending' headers, not AORT's annual 'For Year Ending') leaves it dark.
-    # CIQ multiples stay primary; a PRESENT CIQ field is never overridden (_prefer_ciq).
+    # XBRL. The "multiples present" signal is Financials→Multiples OR the comps Trading Multiples —
+    # either proves the workbook is pulled (both read PRESENT for AORT). CIQ multiples stay primary;
+    # a PRESENT CIQ field is never overridden (_prefer_ciq).
     peer_comps = ciq_sheets.peer_comps(bundle)
     ciq_fcf = ciq_sheets.free_cash_flow(bundle)
     ciq_margin = ciq_sheets.margin_trend(bundle)

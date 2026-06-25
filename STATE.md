@@ -371,10 +371,8 @@ Each line: *what it does* — *verified how*.
     while the Comparable-Analysis Trading Multiples ARE populated. New `edgar_fundamentals` module +
     a per-field hook in `assemble_mechanical`: when a CIQ fundamentals field is UNKNOWN (empty
     subsheet) AND a CIQ multiples signal is PRESENT (Financials→Multiples and/or the comps Trading
-    Multiples — for AORT only the comps reads PRESENT: the Financials→Multiples IS populated but a
-    PRE-EXISTING `_multiples_close` annual-'For Year Ending'-header gap leaves it unparsed),
-    `free_cash_flow` / `margin_trend` / `multi_year_trajectory` derive from EDGAR companyfacts (REUSING
-    `concepts.extract_points`, no new
+    Multiples — either proves the workbook is pulled), `free_cash_flow` / `margin_trend` /
+    `multi_year_trajectory` derive from EDGAR companyfacts (REUSING `concepts.extract_points`, no new
     XBRL layer). Fail-loud: **EBITDA = operating_income + aligned D&A** — a name with op-income but
     ZERO D&A datapoints (CNXC) yields **EBITDA UNKNOWN, never op-income alone** (mirrors
     `fundamental_snapshot`); FCF = OCF − capex. Each EDGAR field's `source_ref` reads `EDGAR XBRL
@@ -389,10 +387,22 @@ Each line: *what it does* — *verified how*.
     interest_expense alias, out of scope); fundamental_deltas carries the basis flag, trading_multiples
     does not. CNXC fail-loud (EBITDA UNKNOWN, Revenue+FCF still derive) proven by a deterministic test.
     ruff + mypy --strict (66) + pytest (201 offline) green; 5 dossier-test pins (trigger; full-coverage
-    fields + EDGAR refs; EBITDA fail-loud/CNXC; cross-source flag on fundamental_deltas only).* **Out
-    of scope (still owed): the CNXC D&A alias-list extension; filling the empty Financials→Multiples
-    HISTORY from EDGAR (multiples stay CIQ-primary); CIQ normalized/adjusted figures (not derivable
-    from raw XBRL).**
+    fields + EDGAR refs; EBITDA fail-loud/CNXC; cross-source flag on fundamental_deltas only).*
+    *Follow-on fixes (2026-06-25, verified on AORT + regression-pinned). ROOT CAUSE (corrected after a
+    wrong first pass — see git history): AORT's Financials_Quarterly export has an EMPTY Income
+    Statement whose verbatim 'Period Type:' boilerplate reads 'Annual', so `period_type` mis-tagged the
+    QUARTERLY workbook 'annual' and `workbook(freq='quarterly')` silently fell back to the Annual
+    workbook (annual Multiples). Fix: `_financials_freq` makes the FILENAME ('…_Quarterly' / '…_Annual')
+    authoritative, using `period_type` only for an un-named export. Now `freq='quarterly'` resolves to
+    the Quarterly workbook → `ev_ebitda` reads the QUARTERLY 'For Quarter Ending' Multiples (18.4x over
+    20 quarterly closes → 0%ile near-floor), was dark; and `module_present('Financials — Quarterly')`
+    reads True, so the stale 'pull CIQ' flag is gone at the root (no manifest_flags change needed).
+    Separately, frontend `seriesTable` sorts period columns chronologically (a `periodKey` year*13+month
+    key) so uneven EDGAR sub-series render FY11→FY25, not out-of-order. (The fundamentals stay
+    EDGAR-filled — both financials Income Statements are empty.) 1 dossier-test pin (freq-from-filename);
+    ruff + mypy --strict (66) + pytest (202 offline) + node --check green.* **Out of scope (still
+    owed): the CNXC D&A alias-list extension; CIQ normalized/adjusted figures (not derivable from raw
+    XBRL).**
   - **CIQ loader → workbook-aware addressing model (VRRM, 2026-06-19) — the prior loader couldn't
     reach the subsheets, so every CIQ section read MISSING.** CIQ Financials is ONE ~13-subsheet
     workbook (Income Statement / Cash Flow / Multiples / Segments / Capital Structure Details / …);
