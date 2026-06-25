@@ -151,6 +151,15 @@ _COMPARABILITY_ACK = re.compile(  # the peer-set COMPOSITION / comparability cav
     r"different (?:scale|model|business)|not (?:a )?clean|confidence|caveat|scrutin\w*)\b",
     re.IGNORECASE,
 )
+# A MINORITY-side point that is sized against the committed lean (rule 7) — framed as a genuine
+# counter-point OUTWEIGHED by the majority, not padding faking symmetry. Its presence on the
+# minority side suppresses the false-balance flag (the point is honestly qualified, not laundered).
+_OUTWEIGHED = re.compile(
+    r"\boutweigh\w*\b|what would have to be true|counter-?point|sized against|against the lean|"
+    r"\b(?:does not|doesn't|cannot|can't|insufficient to|not enough to)\s+"
+    r"(?:outweigh|offset|overturn|overcome|change|reverse)\b|secondary to|subordinate to",
+    re.IGNORECASE,
+)
 
 _POINT = {
     "type": "object",
@@ -183,7 +192,11 @@ SYNTHESIS_TOOL: dict[str, Any] = {
                 "WITH the peer-set composition AND the earned-vs-residual decomposition "
                 "(fundamental_deltas) — POSE whether the discount is EARNED (value trap) or "
                 "RESIDUAL (overshoot); never compute a residual or an implied upside, and never "
-                "read a HETEROGENEOUS peer set as a clean benchmark.",
+                "read a HETEROGENEOUS peer set as a clean benchmark. Every bull point must "
+                "SURVIVE SCRUTINY — genuine, load-bearing, never a neutral-as-bullish padding "
+                "of the count; when bull is the MINORITY under evidence_balance, frame each as a "
+                "counter-point OUTWEIGHED by the bear majority, never suppressing a genuine one "
+                "(rule 7).",
             },
             "bear_points": {
                 "type": "array",
@@ -193,7 +206,11 @@ SYNTHESIS_TOOL: dict[str, Any] = {
                 "in the claim whether it is the REAL signal or the consensus MISREAD, using the "
                 "paired reconciler in the SAME fact (margin % carries absolute EBITDA beside it; a "
                 "trailing multiple carries its forward or a 'trailing-only' blind-flag). The edge "
-                "diverges from the biased consensus read — do not reproduce it.",
+                "diverges from the biased consensus read — do not reproduce it. Every bear point "
+                "must SURVIVE SCRUTINY — genuine, load-bearing, never padding to inflate the "
+                "majority; when bear is the MINORITY under evidence_balance, frame each as a "
+                "counter-point OUTWEIGHED by the bull majority, never suppressing a genuine one "
+                "(rule 7).",
             },
             "twin_reference_cases": {
                 "type": "array",
@@ -254,10 +271,23 @@ _SYSTEM = (
     "probability — analogues are for reasoning, not stats. (5) Surface the decisive question; do "
     "NOT answer it. (6) Never recommend, rate, score, or predict a direction — there is nowhere to "
     "put a verdict and it is not your job. "
-    "(7) ANTI-BALANCE: do NOT default to symmetric bull/bear lists. evidence_balance is the LAST "
-    "field — ONE concise line (≤25 words: label + the single dominant reason, NOT a paragraph, do "
-    "not restate the points); a one-sided reality must produce a one-sided dossier, not laundered "
-    "into a balanced-looking list. "
+    "(7) ANTI-BALANCE — SYMMETRIC, identical whether the name leans bullish or bearish: the "
+    "BODY's weight must MATCH evidence_balance, never a balanced count. When the lean is "
+    "committed (strongly-bearish OR strongly-bullish), the MAJORITY side (the one the lean "
+    "names) is complete and rigorous; the MINORITY side carries ONLY genuine, load-bearing "
+    "counter-points, EACH framed as 'a genuine counter-point, OUTWEIGHED by <the dominant "
+    "majority fact>' or 'what would have to be true for the <minority> case' — sized "
+    "against the lean, NEVER padded with neutral filler to fake symmetry, and NEVER "
+    "suppressed when genuine (a real disconfirming fact SURVIVES, qualified). Both sides "
+    "must survive scrutiny: no redundant or padding claims, and do not inflate the majority "
+    "either. A one-sided reality shows a one-sided COUNT, not a laundered balanced list. "
+    "evidence_balance itself is ONE concise line (≤25 words: label + the single dominant "
+    "reason; not a paragraph; do not restate the points). "
+    "(7b) NO NEUTRAL-AS-DIRECTIONAL (both directions): a fact the dossier flags as "
+    "unresolved/neutral (e.g. a multiple at its own-history floor tagged 'trailing-only, "
+    "overshoot-vs-terminal unresolved') is counted as NEITHER a bull NOR a bear point — it "
+    "belongs in key_unknowns. Distinguish genuine directional evidence from neutral facts "
+    "on BOTH sides. "
     "(8) OPACITY-AS-SIGNAL: a MISSING expected disclosure (no segment breakout, no cash-runway "
     "visibility, an opaque structure, no forward guide, a survival_capacity leg UNKNOWN) is NOT "
     "neutral — surface it in key_unknowns as a BEARISH risk, not a neutral gap. "
@@ -438,9 +468,13 @@ def _validate(synth: Synthesis, mech: MechanicalLayer) -> tuple[Synthesis, list[
                 f"UNRECONCILED {where}: '{_snip(p.claim)}' — cites margin compression without the "
                 "absolute-EBITDA reconciliation (margin % can fall while EBITDA rises)"
             )
-    # G.2 false-balance: evidence_balance must be present + committed; a 'mixed' read over a
-    # lopsided bull/bear split is a one-sided case laundered to look balanced.
+    # G.2 false-balance (DIRECTION-AGNOSTIC): evidence_balance must be present + committed. Two
+    # laundering signatures, flagged the same whether the name leans bull or bear: (a) 'mixed' over
+    # a lopsided split; (b) a committed STRONG lean over a near-symmetric body whose MINORITY
+    # side isn't sized-as-outweighed (the MVST defect — a 'strongly-bearish' label with a 5-bull /
+    # 6-bear body). The flag sizes the minority; it never asks to delete a genuine counter-point.
     eb = (synth.evidence_balance or "").strip().lower()
+    lean = eb.split("—")[0]  # the label, before the dash-reason (so a reason can't flip the read)
     nb, nr = len(bull), len(bear)
     if not eb:
         flags.append(
@@ -451,6 +485,18 @@ def _validate(synth: Synthesis, mech: MechanicalLayer) -> tuple[Synthesis, list[
             f"FALSE-BALANCE? evidence_balance reads 'mixed' but the bull/bear split is lopsided "
             f"({nb} bull vs {nr} bear) — confirm genuinely mixed, not one-sided dressed as balanced"
         )
+    elif "strong" in lean and ("bear" in lean or "bull" in lean) and (nb + nr) >= 3:
+        lean_bear = "bear" in lean
+        maj_n, minority = (nr, bull) if lean_bear else (nb, bear)
+        near_symmetric = len(minority) > 0 and maj_n < 2 * len(minority)
+        if near_symmetric and not any(_OUTWEIGHED.search(p.claim) for p in minority):
+            side = "bull" if lean_bear else "bear"
+            flags.append(
+                f"FALSE-BALANCE? evidence_balance commits a strong lean but the body is "
+                f"near-symmetric ({nb} bull vs {nr} bear) and the minority {side}_points aren't "
+                "qualified-as-outweighed — size the minority against the lean (rule 7), or it "
+                "launders a one-sided case"
+            )
 
     # G.3 peer-comp contract: the comps facts are the CONSENSUS read the edge must RESIST. A
     # relative-valuation verdict ('cheap/rich vs peers') is only a signal WITH (a) the earned-vs-
