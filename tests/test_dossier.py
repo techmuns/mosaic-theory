@@ -149,9 +149,8 @@ def test_local_folder_store_missing_is_not_a_crash(tmp_path: Path) -> None:
     assert ciq.CiqBundle.from_files("FUBO", store.files("FUBO")).is_empty
 
 
-def test_drive_store_is_an_unimplemented_interface() -> None:
-    with pytest.raises(NotImplementedError):
-        manual_store.DriveStore().files("FUBO")
+# NOTE: DriveStore (the Google Drive CIQ adapter) is now IMPLEMENTED — its behavior is pinned in
+# tests/test_manual_store.py (offline, via a fake DriveApi seam). The old stub test was removed.
 
 
 def _u() -> typing.Any:
