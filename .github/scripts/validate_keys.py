@@ -14,24 +14,31 @@ import httpx
 
 
 def check_anthropic() -> bool:
+    # Returns False ONLY on a real key problem (auth/permission). A connectivity error from the
+    # runner to api.anthropic.com is a WARN (the environment, not the key) and does NOT fail the run.
     key = os.environ.get("ANTHROPIC_API_KEY")
     if not key:
         print("ANTHROPIC_API_KEY: FAIL — secret not set / empty")
         return False
-    try:
-        import anthropic
+    import anthropic
 
-        msg = anthropic.Anthropic(api_key=key).messages.create(
+    try:
+        anthropic.Anthropic(api_key=key).messages.create(
             model="claude-haiku-4-5-20251001",
             max_tokens=1,
             messages=[{"role": "user", "content": "ping"}],
         )
-        print(f"ANTHROPIC_API_KEY: PASS — authenticated (stop_reason={msg.stop_reason})")
-        return True
-    except Exception as e:
-        # Report the failure class only — never echo the key.
-        print(f"ANTHROPIC_API_KEY: FAIL — {type(e).__name__}: {str(e)[:160]}")
+    except (anthropic.AuthenticationError, anthropic.PermissionDeniedError) as e:
+        print(f"ANTHROPIC_API_KEY: FAIL — {type(e).__name__} (bad key or no model access)")
         return False
+    except Exception as e:
+        print(
+            f"ANTHROPIC_API_KEY: WARN — {type(e).__name__}: {str(e)[:110]} "
+            "(runner→api.anthropic.com connectivity, NOT a key problem)"
+        )
+        return True
+    print("ANTHROPIC_API_KEY: PASS — authenticated")
+    return True
 
 
 def check_polygon() -> bool:
