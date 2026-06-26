@@ -1,21 +1,23 @@
 #!/usr/bin/env python3
 """Assemble the static snapshot mirror the dashboard serves.
 
-Copies the lightweight committed snapshots (and DERIVED dossiers — never the raw
+Copies the lightweight committed snapshots and the DERIVED dossiers (never the raw
 CIQ workbooks) into ``frontend/``, and generates ``manifest.json`` (the cheap
 index: counts + dates that the UI can't otherwise derive without fetching the
 megabyte-scale candidate files). Run by Cloudflare Pages on every deploy, and
 locally for preview.
 
-It READS only committed snapshots under ``data/snapshots/`` (+ local
-``data/dossiers/`` when present) and WRITES only into ``frontend/snapshots/`` and
-``frontend/dossiers/`` (both git-ignored — regenerated, never committed). It is
-not a backend and runs no pipeline; it only mirrors existing artifacts.
+It READS only committed snapshots under ``data/snapshots/`` and committed dossiers
+under ``data/dossiers/``, and WRITES the ``frontend/snapshots/`` mirror (git-ignored
+— regenerated here every deploy) and the ``frontend/dossiers/`` mirror (committed
+for the authed deploy, but idempotently regenerated here too). It is not a backend
+and runs no pipeline; it only mirrors existing artifacts.
 
-LICENSING: only the DERIVED ``dossier.json`` is mirrored. The raw licensed CIQ
-exports in ``data/manual/ciq/`` are never read or copied here. ``data/dossiers/``
-is git-ignored, so on the deploy the dossier mirror is empty until the derived
-``dossier.json`` is committed to the PRIVATE repo (gated on private/authed).
+LICENSING: only the DERIVED ``dossier.json``/``dossier.md`` are mirrored — never the
+raw licensed CIQ in ``data/manual/ciq/``. ``data/dossiers/`` is committed to the
+PRIVATE/authed repo (verified: {value, source_ref} facts + synthesis + public 10-K
+phrases, no licensed CIQ); if the repo or deploy ever becomes public, the dossiers
+and ``frontend/dossiers/`` revert to git-ignored.
 """
 from __future__ import annotations
 
