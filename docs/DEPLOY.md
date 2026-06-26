@@ -48,7 +48,9 @@ and the origin is built to **fail closed**.
 
 ## Runbook (account-side — operator runs these)
 
-**Order matters: configure Access BEFORE the first production deploy is reachable.**
+**Order matters: configure Access + verify BLOCKER A BEFORE you share the URL.** (The
+fail-closed Function already 403s every request until the env vars are set, so a deploy
+that is merely *reachable* is not yet a leak — but the URL stays private until A passes.)
 
 1. **Create the Pages project (Git integration).** Cloudflare dashboard → Workers & Pages
    → Create → Pages → Connect to Git → select `techmuns/mosaic-theory`. Production branch
@@ -58,30 +60,47 @@ and the origin is built to **fail closed**.
    - Framework preset: **None**.
    - Build command: `python frontend/build.py`
    - Build output directory: `frontend`
-   - Root directory: `/` (repo root — `functions/` and `wrangler.toml` live here).
+   - Root directory: **leave BLANK** = the repository root (where `functions/`,
+     `wrangler.toml`, and `frontend/` all live). Do NOT set it to `frontend` — every other
+     field above is resolved relative to this, so the build command `python frontend/build.py`
+     and the `functions/` discovery only work when the root is the repo root.
    - Build env var `PYTHON_VERSION = 3.11` (build.py is stdlib-only; no `requirements.txt`).
    - Confirm the build log shows **Functions** compiled (it picks up `functions/_middleware.js`).
-3. **Cloudflare Access (Zero Trust) — the gate. Do this before sharing any URL.**
-   - Zero Trust → Settings → Authentication → add **Google** as a login method (IdP).
-   - Access → Applications → Add a **self-hosted** application covering the Pages
-     hostnames: the custom domain **and** `*.pages.dev` (so preview/prod URLs are both
-     protected — an unprotected `*.pages.dev` is a leak).
-   - Policy: **Allow** → match on your specific **emails** (or your Google Workspace
-     domain). Default action for everyone else: **Block**.
-   - Note the application's **Audience (AUD) tag** and your **team domain**
-     (`yourteam.cloudflareaccess.com`).
-4. **Wire the origin-side fail-closed gate** (defense-in-depth — see "How the gate works").
-   Pages → Settings → Environment variables (Production **and** Preview):
-   - `CF_ACCESS_TEAM_DOMAIN = yourteam.cloudflareaccess.com`
-   - `CF_ACCESS_AUD = <the AUD tag from step 3>`
+3. **Turn on Access for the PRODUCTION URL (the gate). Do this before sharing any URL.**
+   Cloudflare's one-click toggle protects *preview* URLs only; the production
+   `<project>.pages.dev` needs one extra step (remove the wildcard):
+   - Workers & Pages → your project → **Settings → Enable access policy**. This creates an
+     Access application/policy for your **preview** deployments.
+   - On that policy click **Manage** → it opens **Zero Trust → Access controls →
+     Applications → your project → Configure**. Under **Public hostname**, in the
+     **Subdomain** field **delete the `*` wildcard** and **Save**. Access now also covers the
+     production `<project>.pages.dev` (you should end up with two policies — production +
+     preview).
+   - **Who can log in:** open that application's **policy** → **Allow** with a rule like
+     **Emails** = your address(es); everyone else is blocked.
+   - **Login method:** **One-time PIN** works with **zero extra setup** — the allowed email
+     receives a 6-digit code. *(Google login is OPTIONAL and needs Google Cloud OAuth
+     credentials: Zero Trust → Settings → Authentication → add Google. It changes nothing
+     else — the Function validates the same Access JWT regardless of IdP — so add it later
+     if you want it.)*
+   - **Grab two values for step 4:** the application's **AUD** (Configure → **Additional
+     settings → Application Audience (AUD) Tag**) and your **team domain**
+     `<team>.cloudflareaccess.com` (Zero Trust → Settings; it's also in your Zero Trust
+     dashboard URL).
+4. **Wire the env vars so the fail-closed Function accepts the Access JWT** (see "How the
+   gate works"). Workers & Pages → your project → **Settings → Variables and Secrets**
+   (environment variables), **Production**:
+   - `CF_ACCESS_TEAM_DOMAIN = <team>.cloudflareaccess.com`
+   - `CF_ACCESS_AUD = <the production app's AUD Tag from step 3>`
    - *(optional)* `CF_ACCESS_ALLOWED_EMAILS = you@example.com,teammate@example.com`
-   Redeploy so the Function picks up the vars. **Until these are set the middleware
-   denies every request (403)** — the safe default.
-5. **BLOCKER A — verify auth rejection.** Incognito + `curl` against the prod URL, the
-   `*.pages.dev` URL, and `/dossiers/VRRM.json`. Each must return the Access/Google
-   challenge or `403`, never content. Then log in with an allowed Google account and
-   confirm the dashboard renders. **Do not announce/share the URL until A passes on all
-   three.**
+   Then **Deployments → Retry deployment** (or push a commit) so the Function picks them up.
+   **Until these are set the middleware denies every request (403)** — the safe default, so
+   the site is already non-leaking even before you finish.
+5. **BLOCKER A — verify auth rejection (the irreversible gate).** From incognito **and**
+   `curl`, hit the production URL, a preview URL, and a data path (`/dossiers/VRRM.json`,
+   `/snapshots/ranked_queue.jsonl`). Each must return the Access login challenge or `403` —
+   **never** content. Then log in with an allowed email and confirm the dashboard renders.
+   **Do not announce/share the URL until A passes on all three.**
 6. **Done — the deploy is live and authed.** Pushes to `main` auto-deploy; `build.py`
    re-mirrors the snapshots each time.
 
