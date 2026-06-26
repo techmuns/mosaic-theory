@@ -787,23 +787,15 @@ without starving the lead loop; each becomes a *real* widener only when its OWN 
   bind.) Follow-up hygiene (not a blocker): replace the weak test password with a strong secret.
 - **Verification harness (LLM bull/bear/judge)** — trigger: only if running the manual discriminator
   reveals it needs a structured bull/bear step. May never be needed; do not build speculatively.
-- **Drive adapter for the dossier-assembler — ✅ Google Drive `DriveStore` BUILT 2026-06-26**
-  (env-selected, local-execution; the operator chose Google Drive + keep running `vinci dossier`
-  locally, pulling CIQ from a Drive folder instead of a local one). `vinci/dossier/manual_store.py`:
-  `DriveStore` reads `<parent>/<TICKER>/` from Google Drive and **downloads to an ephemeral temp dir**
-  (never the repo tree; raw CIQ never committed), behind an injectable `DriveApi` seam; a
-  `make_manual_store(cfg)` selector reads `CIQ_STORE` (`local` default — unchanged behavior — vs
-  `drive`, needing `CIQ_DRIVE_FOLDER_ID` + `GOOGLE_APPLICATION_CREDENTIALS` + the optional `.[drive]`
-  extra: google-api-python-client/google-auth, lazy-imported, mypy-overridden). `assemble.py:155` now
-  calls the selector. *Verified: ruff + mypy --strict (66) + pytest green; 7 offline DriveStore tests
-  via a fake `DriveApi` (available/files-download-to-temp/dotfiles-skipped/missing-folder-empty/
-  location/selector-default-local/drive-needs-folder-id-fail-loud); the obsolete "DriveStore is
-  unimplemented" stub test removed.* **LIVE pull is GATED on the operator's Google setup** (a
-  read-only service account + the Drive API enabled + the folder shared with the SA + the env vars
-  set) — code is done, the end-to-end Drive fetch is the operator's to run. **NOT done (still
-  deferred): the cloud-compute move** (`dossier.yml` workflow + Pages dispatcher, `docs/CLOUD_DOSSIER_TRIGGER.md`
-  Phase 2) — assembly still runs locally; the DriveStore only changes WHERE CIQ comes from. Trigger
-  for that: when the manual loop's friction actually bites.
+- **Drive adapter for the dossier-assembler** — trigger: the local-folder assembler is proven and the
+  manual export→folder step is the real friction. A convenience, not a milestone. Design (review-only):
+  `docs/CLOUD_DOSSIER_TRIGGER.md`. **CORRECTION 2026-06-26:** an API-based Google-Drive `DriveStore`
+  (service-account) was built then **REVERTED — it was over-engineered and never validated end-to-end**,
+  and the operator's Google org blocks service-account keys (`iam.disableServiceAccountKeyCreation`). For
+  **LOCAL execution the right path is Google Drive for Desktop + the existing `LocalFolderStore`** — mount
+  Drive as a local folder, point the CIQ root at it (a symlink, or a small `CIQ_LOCAL_ROOT` knob); no API,
+  no key, no org policy, no new data path. The API `DriveStore` stays a deferred STUB, relevant only to a
+  future CLOUD run (no desktop there) — and only if/when that's actually built + tested.
 - **Close the ranker's coverage gaps** — wire **EV/EBITDA-pctile history** + **8-K/guidance TEXT
   events** (the latter also splits drawdown-character back into shape + cause and feeds the Tier-3
   LLM cause-pass, which then reads filing text instead of `LLM: —`). Trigger: **only if the gap
