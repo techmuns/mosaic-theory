@@ -788,7 +788,11 @@ without starving the lead loop; each becomes a *real* widener only when its OWN 
 - **Verification harness (LLM bull/bear/judge)** — trigger: only if running the manual discriminator
   reveals it needs a structured bull/bear step. May never be needed; do not build speculatively.
 - **Drive adapter for the dossier-assembler** — trigger: the local-folder assembler is proven and the
-  manual export→folder step is the real friction. A convenience, not a milestone.
+  manual export→folder step is the real friction. A convenience, not a milestone. **Design written +
+  audited 2026-06-26 (review-only, NOT built): `docs/CLOUD_DOSSIER_TRIGGER.md`** — the full
+  cloud-triggered flow (R2/Drive `DriveStore` → `dossier.yml` `workflow_dispatch` → Pages-Function
+  dispatcher → branch+PR publish), with the audit's must-resolve-before-build items (CIQ in
+  `llm_call.log`, ticker injection, publish-to-main irreversibility, the verdict-CLI boundary).
 - **Close the ranker's coverage gaps** — wire **EV/EBITDA-pctile history** + **8-K/guidance TEXT
   events** (the latter also splits drawdown-character back into shape + cause and feeds the Tier-3
   LLM cause-pass, which then reads filing text instead of `LLM: —`). Trigger: **only if the gap
