@@ -19,15 +19,21 @@ __pycache__/
 *.db-shm
 
 # Everything under data/ is git-ignored — the working DB, the EOD cache, and the LICENSED manual
-# CIQ exports (data/manual/ciq/, never committed) — EXCEPT the durable JSONL snapshots, which are
-# the committed provenance the scheduled jobs rebuild from.
+# CIQ exports (data/manual/ciq/, never committed) — EXCEPT (a) the durable JSONL snapshots and
+# (b) the DERIVED per-ticker dossiers (extracted {value, source_ref} facts + synthesis + verbatim
+# PUBLIC 10-K phrases, NOT reproduced licensed CIQ), which are committed provenance for the authed
+# deploy. The per-run llm_call.log is a regenerated debug artifact and stays ignored.
+# NOTE: if the repo or deploy ever becomes public, dossiers revert to git-ignored (see CLAUDE.md).
 data/*
 !data/snapshots/
+!data/dossiers/
+data/dossiers/*/llm_call.log
 
-# Frontend — generated snapshot mirror (rebuilt by frontend/build.py every deploy; never committed).
-# The DERIVED dossier.json is mirrored here for the viewer; raw CIQ in data/manual/ciq stays ignored.
+# Frontend — generated mirrors from frontend/build.py. frontend/snapshots/ stays ignored (regenerate
+# via build.py). frontend/dossiers/ IS committed — the pre-built DERIVED dossier.json the authed
+# viewer fetches, so a static serve works without a build step. Raw CIQ in data/manual/ciq stays
+# ignored regardless. (If the repo/deploy goes public, frontend/dossiers reverts to ignored.)
 frontend/snapshots/
-frontend/dossiers/
 node_modules/
 
 # OS

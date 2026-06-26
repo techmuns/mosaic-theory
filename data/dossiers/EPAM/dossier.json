@@ -1,0 +1,413 @@
+{
+  "ticker": "EPAM",
+  "name": "EPAM Systems, Inc.",
+  "cik": "0001352010",
+  "reference_date": "2026-06-22",
+  "rank": 6,
+  "mechanical": {
+    "valuation": {
+      "pe": {
+        "value": 10.902529761904763,
+        "source_ref": "EDGAR XBRL eps_diluted × EOD price (screen data-record, G3)",
+        "status": "present",
+        "note": null
+      },
+      "pe_percentile_5y": {
+        "value": 0.0007974481658692185,
+        "source_ref": "EDGAR/EOD P/E pctile vs ~5y (screen data-record)",
+        "status": "present",
+        "note": null
+      },
+      "ev_ebitda": {
+        "value": 4.0,
+        "source_ref": "CIQ Financials→Multiples 'TEV/LTM EBITDA' Close (latest) — current multiple",
+        "status": "present",
+        "note": "trailing only — no forward basis; cannot distinguish cheap-overshoot from cheap-terminal"
+      },
+      "ev_ebitda_percentile_5y": {
+        "value": 0.0,
+        "source_ref": "CIQ Financials→Multiples 'TEV/LTM EBITDA' Close — 19 quarters (partial last column excluded from the distribution)",
+        "status": "present",
+        "note": null
+      },
+      "ev_ebitda_adjusted_fwd": {
+        "value": null,
+        "source_ref": null,
+        "status": "unknown",
+        "note": "adjusted figure not in the 99.1 revised guidance"
+      },
+      "adjusted_eps": {
+        "value": null,
+        "source_ref": null,
+        "status": "unknown",
+        "note": "adjusted figure not in the 99.1 revised guidance"
+      },
+      "range_position": {
+        "value": "EV/EBITDA (TEV/LTM) 4.0x at 0%ile of 19 closes → near-floor; P/LTM EPS 10.9x",
+        "source_ref": "CIQ Financials→Multiples (Close; last col = current, excluded from history)",
+        "status": "present",
+        "note": null
+      }
+    },
+    "quality": {
+      "fcf_sign": {
+        "value": 1,
+        "source_ref": "EDGAR XBRL FCF sign (screen data-record)",
+        "status": "present",
+        "note": null
+      },
+      "free_cash_flow": {
+        "value": 692.9,
+        "source_ref": "CIQ Financials→Cash Flow 'Levered Free Cash Flow' [LTM 12 months Mar-31-2026]",
+        "status": "present",
+        "note": null
+      },
+      "margin_trend": {
+        "value": "EBITDA margin: Dec-31-2021 17% → Dec-31-2022 (R) 17% → Dec-31-2023 (R) 14% → Dec-31-2024 15% → Dec-31-2025 13% → Mar-31-2026 (LTM) 13%; gross margin: Dec-31-2021 34% → Dec-31-2022 (R) 33% → Dec-31-2023 (R) 31% → Dec-31-2024 31% → Dec-31-2025 29% → Mar-31-2026 (LTM) 29%; absolute EBITDA: Dec-31-2021 628 → Dec-31-2022 (R) 799 → Dec-31-2023 (R) 652 → Dec-31-2024 693 → Dec-31-2025 707 → Mar-31-2026 (LTM) 731; absolute revenue: Dec-31-2021 3,758 → Dec-31-2022 (R) 4,825 → Dec-31-2023 (R) 4,691 → Dec-31-2024 4,728 → Dec-31-2025 5,457 → Mar-31-2026 (LTM) 5,555  [R reclassified; margin % can fall while absolute EBITDA RISES — read them together]",
+        "source_ref": "CIQ Financials→Income Statement (margin % + absolute EBITDA reconciler)",
+        "status": "present",
+        "note": null
+      },
+      "net_debt_to_ebitda": {
+        "value": -1.5424166843557632,
+        "source_ref": "EDGAR XBRL net-debt/EBITDA (screen data-record)",
+        "status": "present",
+        "note": null
+      },
+      "net_debt_to_ebitda_adjusted": {
+        "value": null,
+        "source_ref": null,
+        "status": "unknown",
+        "note": "adjusted figure not in the 99.1 revised guidance"
+      },
+      "survival_capacity": {
+        "value": "net-debt/EBITDA -1.5x (GAAP) | FCF-positive → self-funding (no runway constraint) | nearest refinancing wall UNKNOWN (no maturity dates parsed — a risk)",
+        "source_ref": "EDGAR net-debt/EBITDA + FCF sign + CIQ Capital Structure (survival capacity)",
+        "status": "present",
+        "note": null
+      },
+      "interest_coverage": {
+        "value": null,
+        "source_ref": null,
+        "status": "unknown",
+        "note": "no period with both EBITDA and Interest Expense"
+      },
+      "share_count_trend": {
+        "value": "buying back (trailing ~1.7y): 56,935,370 (2024-07-31) → 52,244,451 (2026-04-30), -8.2%",
+        "source_ref": "EDGAR XBRL shares, trailing 2024-07-31..2026-04-30",
+        "status": "present",
+        "note": null
+      },
+      "liquidity_covenant_flags": {
+        "value": "Long Term Debt - Other (Other Borrowings) 0 @ NA; Operating Lease Liabilities (Capital Lease) 119 @ 4.800%; Revolving Credit Facility (Revolving Credit) 25 @ 4.500%",
+        "source_ref": "CIQ Financials→Capital Structure Details",
+        "status": "present",
+        "note": null
+      },
+      "multi_year_trajectory": {
+        "value": "Revenue: Dec-31-2021 3,758 → Dec-31-2022 (R) 4,825 → Dec-31-2023 (R) 4,691 → Dec-31-2024 4,728 → Dec-31-2025 5,457 → Mar-31-2026 (LTM) 5,555; EBITDA: Dec-31-2021 628 → Dec-31-2022 (R) 799 → Dec-31-2023 (R) 652 → Dec-31-2024 693 → Dec-31-2025 707 → Mar-31-2026 (LTM) 731; Revenue YoY (latest same-quarter): +7.6% (Q1 Mar-31-2026 vs Q1 Mar-31-2025); ROIC: Dec-31-2021 13.7% → Dec-31-2022 14.9% → Dec-31-2023 10.3% → Dec-31-2024 10.2% → Dec-31-2025 9.6% → Mar-31-2026 (LTM) 10.1%  [R reclassified; per-period values, never YoY'd across a basis]",
+        "source_ref": "CIQ Financials→Income Statement + Segments + Ratios (multi-year columns)",
+        "status": "present",
+        "note": null
+      }
+    },
+    "concentration": {
+      "segments": {
+        "value": "[12 months Dec-31-2025] Americas 3,166 (58%); Europe 2,291 (42%) of Total 5,457",
+        "source_ref": "CIQ Financials→Segments (Revenues, latest annual column)",
+        "status": "present",
+        "note": null
+      },
+      "segment_ebitda": {
+        "value": null,
+        "source_ref": null,
+        "status": "unknown",
+        "note": "Segments sheet has no 'EBITDA' section as expected"
+      },
+      "customers": {
+        "value": "AB Electrolux (publ) (OM:ELUX B) — Your Agency SA · Customer · src: Household Appliances; Actiris — Emakina Group SA · Customer · src: Human Resource and Employment Services; AG Insurance SA/NV — Emakina Group SA · Customer · src: Property and Casualty Insurance; Air Canada (TSX:AC) — Emakina Group SA · Customer · src: Passenger Airlines; Al Tayer Group — Emakina Group SA · Customer · src: Industrial Conglomerates; Alès Groupe S.A. — Emakina Group SA · Customer · src: Personal Care Products; Ansell Healthcare Europe N.V. — The Reference N.V. · Customer · src: Health Care Supplies; Ansell Limited (ASX:ANN) — Emakina Group SA · Customer · src: Health Care Supplies; Aquafin NV — Emakina Group SA · Customer · src: Environmental and Facilities Services; Arçelik Anonim Sirketi (IBSE:ARCLK) — Emakina Group SA · Customer · src: Household Appliances; Austrian Standards Plus GmbH — Emakina Group SA · Customer · src: Diversified Support Services; Automobiles Citroen SA — Your Agency SA · Customer · src: Automobile Manufacturers; AXA SA (ENXTPA:CS) — Emakina Group SA · Customer · src: Multi-line Insurance; Banca Monte dei Paschi di Siena S.p.A. (BIT:BMPS) — Emakina Group SA · Customer · src: Diversified Banks; Banque Stellantis France — Your Agency SA · Customer · src: Specialized Finance; Barilla Holding S.p.A. — Emakina Group SA · Customer · src: Packaged Foods and Meats; Basic Fit International B.V. — Emakina Group SA · Customer · src: Multi-Sector Holdings; Basic Fit International B.V. — Emakina.NL BV · Customer · src: Multi-Sector Holdings; Bayerische Motoren Werke Aktiengesellschaft (XTRA:BMW) — Emakina Group SA · Customer · src: Automobile Manufacturers; Beiersdorf Aktiengesellschaft (XTRA:BEI) — Emakina Group SA · Customer · src: Personal Care Products; Biotherm — Your Agency SA · Customer · src: Personal Care Products; Blocket AB — Doe Blomberg Gottberg Aktiebolag · Customer · src: Application Software; Blocket AB — Emakina Group SA · Customer · src: Application Software; Blue Band Group — Emakina Group SA · Customer · src: Hotels, Resorts and Cruise Lines; Blue Stores S.A. — Emakina Group SA · Customer · src: Apparel, Accessories and Luxury Goods; BNP Paribas Fortis SA (ENXTBR:017250539) — Emakina Belgique SA · Customer · src: Diversified Banks; BNP Paribas Fortis SA (ENXTBR:017250539) — Emakina Group SA · Customer · src: Diversified Banks; Bonduelle SCA (ENXTPA:BON) — Emakina.NL BV · Customer · src: Packaged Foods and Meats; Boucheron Holding S.A. — EMAKINA.FR SA · Customer · src: Multi-Sector Holdings; Boucheron S.A.S. — Emakina Group SA · Customer · src: Apparel, Accessories and Luxury Goods; …(+151 more)",
+        "source_ref": "CIQ Customers&Suppliers EPAM Systems Inc NYSE EPAM Customers.rtf",
+        "status": "present",
+        "note": null
+      },
+      "geographic": {
+        "value": "[12 months Dec-31-2025] United States 2,834 (52%); United Kingdom 597 (11%); Switzerland 438 (8%); Netherlands 230 (4%); Germany 233 (4%); Other Locations 1,124 (21%) of Total 5,457",
+        "source_ref": "CIQ Financials→Segments (Geographic Segment → Revenues, latest annual column)",
+        "status": "present",
+        "note": null
+      }
+    },
+    "peer_comps": {
+      "peer_set": {
+        "value": "10 peers — Amdocs Limited $5.6B — provides software and services to communications, (United States); Cognizant Technology Solutions Corporation $19.4B — provides consulting and technology, and outsourcing (United States); DXC Technology Company $1.4B — provides information technology services and solutions (United States); Globant S.A. $1.3B — provides technology services in the United States, (Luxembourg); Sopra Steria Group SA $3.0B — provides consulting, digital, and software development (France); Everforth $734M — provides information technology solutions for (United States); Nomura Research Institute $15.1B — engages in the provision of consulting, financial (Japan); Gartner $8.6B — provides business and technology insights for (United States); Accenture plc $77.7B — provides strategy and consulting, industry X, song, (D02 P820  Ireland); iSoftStone Information Technology $5.8B — provides information technology services in China and (China) | the name: $4.0B",
+        "source_ref": "CIQ Comparable Analysis→Financial Data + Business Description (roster + caps + business)",
+        "status": "present",
+        "note": null
+      },
+      "comparability": {
+        "value": "market caps span $734M–$77.7B (106x); the name is $4.0B → HETEROGENEOUS — low comparability: the peer median is anchored by businesses of differing scale/model; scrutinise comparability before reading any peer stat as a clean benchmark.",
+        "source_ref": "CIQ Comparable Analysis→Financial Data (market-cap dispersion) + Business Description",
+        "status": "present",
+        "note": null
+      },
+      "trading_multiples": {
+        "value": "TEV/Rev: name 0.6 vs peers Low 0.3 / Median 1 / Mean 1.1 / High 3.1; TEV/EBITDA: name 4.1 vs peers Low 2.3 / Median 5.5 / Mean 25.2 / High 199.3; P/E: name 11 vs peers Low 7.9 / Median 10.5 / Mean 35.5 / High 164.1; NTM TEV/Rev: name 0.56 vs peers Low 0.34 / Median 0.93 / Mean 1.09 / High 2.97; NTM TEV/EBITDA: name 3.37 vs peers Low 2.65 / Median 5.26 / Mean 8.42 / High 35.37; NTM P/E: name 5.76 vs peers Low 3.27 / Median 7.47 / Mean 14.74 / High 74.86  [LTM + NTM forward; NM = a real state (negative base), not missing]",
+        "source_ref": "CIQ Comparable Analysis→Trading Multiples (name row + Summary Statistics Low/Median/Mean/High)",
+        "status": "present",
+        "note": null
+      },
+      "fundamental_deltas": {
+        "value": "EBITDA margin name 13% vs peer-median 17%; rev growth name 14% vs peer-median 1%; EBITDA growth name 6% vs peer-median 2%; Debt/EBITDA name 0.4 vs peer-median 1.5; LT EPS growth name 10% vs peer-median 8%; beta name 1.4 vs peer-median 0.8  [justified-vs-residual inputs: is the discount EARNED (worse fundamentals) or RESIDUAL (unexplained)? the human judges — not computed here]",
+        "source_ref": "CIQ Comparable Analysis→Operating Statistics (name vs peer median: growth/margin/leverage/beta)",
+        "status": "present",
+        "note": null
+      }
+    },
+    "drawdown_cause": {
+      "shape": {
+        "value": "discrete gap-downs by 8-K item code — 2026-02-03 no 8-K matched; 2026-02-19 earnings (2.02); 2026-06-18 no 8-K matched",
+        "source_ref": "EDGAR 8-K item codes at the gap-down dates (not blanket-labelled earnings)",
+        "status": "present",
+        "note": null
+      },
+      "gap_down_dates": {
+        "value": [
+          "2026-02-03",
+          "2026-02-19",
+          "2026-06-18"
+        ],
+        "source_ref": "EOD gap-down detector (screen events)",
+        "status": "present",
+        "note": null
+      },
+      "filings": [
+        {
+          "gap_date": "2026-02-19",
+          "filing_date": "2026-02-19",
+          "form": "8-K",
+          "items": [
+            "2.02",
+            "9.01"
+          ],
+          "item_types": [
+            "2.02 Results of Operations and Financial Condition",
+            "9.01 Financial Statements and Exhibits"
+          ],
+          "accession": "0001352010-26-000010",
+          "url": "https://www.sec.gov/Archives/edgar/data/1352010/000135201026000010/epam-20260219.htm",
+          "events": [
+            "2.02 Results of Operations and Financial Condition: Results of Operations and Financial Condition. On February 19, 2026, EPAM Systems, Inc. (the “Company” or “EPAM”) issued a press release discussing its results of operations for the fourth quarter and the year ended December 31, 2025. A copy of the press release is attached as Exhibit 99.1 to this report and is incorporated by reference into this"
+          ]
+        }
+      ],
+      "revised_guidance": {
+        "value": null,
+        "source_ref": null,
+        "status": "unknown",
+        "note": "no revised-outlook 99.1 exhibit parsed for 8-Ks ['0001352010-26-000010']"
+      }
+    },
+    "idiosyncratic_vs_shared": {
+      "name_180d_return": {
+        "value": -0.6495838913334608,
+        "source_ref": "EOD EPAM 180d to 2026-06-22",
+        "status": "present",
+        "note": null
+      },
+      "market_180d_return": {
+        "value": 0.1776344426417633,
+        "source_ref": "EOD IWM 180d to 2026-06-22",
+        "status": "present",
+        "note": null
+      },
+      "rel_vs_market": {
+        "value": -0.8272183339752242,
+        "source_ref": "EOD name−IWM 180d (screen data-record, G2)",
+        "status": "present",
+        "note": null
+      },
+      "cohort": {
+        "value": null,
+        "source_ref": null,
+        "status": "unknown",
+        "note": "EPAM not in graph_coverage.json — no exposed cross-section to compare"
+      },
+      "read": {
+        "value": null,
+        "source_ref": null,
+        "status": "unknown",
+        "note": "no graph cohort to compare — see rel_vs_market for the name-vs-market read"
+      }
+    },
+    "consensus_context": {
+      "eps_trend": {
+        "value": "EPS (GAAP) FY 2026: 0↑/0↓ last mo",
+        "source_ref": "CIQ Estimates→Revisions (Last-Month breadth, FY)",
+        "status": "present",
+        "note": null
+      },
+      "revenue_trend": {
+        "value": "Revenue FY 2026: 0↑/0↓ last mo",
+        "source_ref": "CIQ Estimates→Revisions (Last-Month breadth, FY)",
+        "status": "present",
+        "note": null
+      },
+      "revision_history": {
+        "value": "Target price: mean $144.06 / median $139.00; LT growth: mean 10.5% / median 10.5%; Recommendation: Hold (3.00) (CIQ score, 1=buy … 5=sell)",
+        "source_ref": "CIQ Estimates→Consensus",
+        "status": "present",
+        "note": null
+      },
+      "surprise_history": {
+        "value": "GAAP-EPS surprise: FY2021 +2%, FY2022 +7%, FY2023 -4%, FY2024 -0%, FY2025 -2%; Revenue surprise: FY2021 +1%, FY2022 +0%, FY2023 +0%, FY2024 +1%, FY2025 +0% (fiscal-year, GAAP-EPS basis — adjusted basis is the 99.1 guide; +beat / −miss)",
+        "source_ref": "CIQ Estimates→Surprise (annual)",
+        "status": "present",
+        "note": null
+      }
+    },
+    "management_commentary": {
+      "value": "Earnings-call transcript on file — read EPAM Systems, Inc., Q1 2026 Earnings Call, May 07, 2026.rtf in full for management posture (pointer only; the machine does not curate or embed transcript content)",
+      "source_ref": "CIQ transcript EPAM Systems, Inc., Q1 2026 Earnings Call, May 07, 2026.rtf",
+      "status": "present",
+      "note": null
+    }
+  },
+  "synthesis": {
+    "evidence_balance": "mixed — net-cash, FCF-positive, still-growing franchise at its multiple floor, against a real idiosyncratic margin/ROIC erosion and missing forward basis.",
+    "bull_points": [
+      {
+        "claim": "Despite an EBITDA margin sliding from 17% (2021) to 13% (LTM Mar-2026), absolute EBITDA actually ROSE across the same span (628 → 731) on rising revenue (3,758 → 5,555) — the optical margin compression is the consensus MISREAD, not a shrinking profit pool.",
+        "source_ref": "CIQ Financials→Income Statement (margin % + absolute EBITDA reconciler)",
+        "cited": true
+      },
+      {
+        "claim": "The balance sheet is a NET-CASH position at net-debt/EBITDA -1.5x (GAAP), and the business is FCF-positive with ~$692.9M levered FCF, making it self-funding with no runway constraint — not a distressed de-rate.",
+        "source_ref": "EDGAR net-debt/EBITDA + FCF sign + CIQ Capital Structure (survival capacity)",
+        "cited": true
+      },
+      {
+        "claim": "Management is returning capital from a position of strength, reducing share count -8.2% (56.9M → 52.2M) over the trailing ~1.7 years — consistent with self-funded confidence rather than balance-sheet stress.",
+        "source_ref": "EDGAR XBRL shares, trailing 2024-07-31..2026-04-30",
+        "cited": true
+      },
+      {
+        "claim": "Revenue is still GROWING, not collapsing: +7.6% YoY (Q1 Mar-2026 vs Q1 Mar-2025) with LTM revenue at an all-time high (5,555), undercutting a pure-terminal reading.",
+        "source_ref": "CIQ Financials→Income Statement + Segments + Ratios (multi-year columns)",
+        "cited": true
+      },
+      {
+        "claim": "On the JUSTIFIED-vs-RESIDUAL question, the name's fundamentals are BETTER than the peer median on growth (rev 14% vs 1%, EBITDA 6% vs 2%) and leverage (Debt/EBITDA 0.4 vs 1.5), so the discount may be RESIDUAL/overshoot rather than fully EARNED — though margin (13% vs 17%) and beta (1.4 vs 0.8) cut the other way; the human judges, not computed here.",
+        "source_ref": "CIQ Comparable Analysis→Operating Statistics (name vs peer median: growth/margin/leverage/beta)",
+        "cited": true
+      },
+      {
+        "claim": "The forward (NTM) multiples sit BELOW the trailing ones — NTM TEV/EBITDA 3.37 vs LTM 4.1 and NTM P/E 5.76 vs LTM 11 — i.e. consensus models forward earnings growth, posing whether the trailing de-rate is an overshoot; but the peer set is HETEROGENEOUS so treat this as confidence-gated, not a clean benchmark.",
+        "source_ref": "CIQ Comparable Analysis→Trading Multiples (name row + Summary Statistics Low/Median/Mean/High)",
+        "cited": true
+      }
+    ],
+    "bear_points": [
+      {
+        "claim": "The margin compression is partly a REAL signal too: gross margin fell 34% → 29% and EBITDA margin 17% → 13% over five years, so the business is converting growing revenue at a structurally lower take rate even as absolute EBITDA edged up — a profitability-quality erosion, not pure optics.",
+        "source_ref": "CIQ Financials→Income Statement (margin % + absolute EBITDA reconciler)",
+        "cited": true
+      },
+      {
+        "claim": "ROIC has deteriorated from 13.7%/14.9% (2021/2022) to ~10.1% (LTM Mar-2026) — capital is earning materially less, a durable-quality concern beyond optics.",
+        "source_ref": "CIQ Financials→Income Statement + Segments + Ratios (multi-year columns)",
+        "cited": true
+      },
+      {
+        "claim": "The de-rate is sharply IDIOSYNCRATIC, not a market move: the name returned -65% over 180d while IWM rose +17.8%, an -82.7% relative gap — the market is pricing a name-specific problem.",
+        "source_ref": "EOD name−IWM 180d (screen data-record, G2)",
+        "cited": true
+      },
+      {
+        "claim": "Management itself flags rising macro uncertainty, North America underperformance, and lower second-half visibility with expected Q2 impact on larger discretionary programs — a forward-looking caution, not just trailing noise.",
+        "source_ref": "CIQ transcript EPAM Systems, Inc., Q1 2026 Earnings Call, May 07, 2026.rtf",
+        "cited": true
+      },
+      {
+        "claim": "Consensus is lukewarm at Hold (3.00) with a mean target of $144.06 and no positive estimate breadth — a genuine counter-point, OUTWEIGHED by the net-cash self-funding balance sheet and still-growing revenue, but a real overhang on the overshoot thesis.",
+        "source_ref": "CIQ Estimates→Consensus",
+        "cited": true
+      }
+    ],
+    "twin_reference_cases": [
+      {
+        "name": "Cognizant Technology Solutions",
+        "outcome": "recovered",
+        "distinguishing_fact": "Large IT-services provider that de-rated on growth/margin worries yet remained FCF-positive and grew through the cycle as demand normalised.",
+        "source": "[LLM-suggested, unverified]"
+      },
+      {
+        "name": "Accenture plc",
+        "outcome": "recovered",
+        "distinguishing_fact": "Consulting/IT-services leader that absorbed discretionary-spend air-pockets and repositioned around the AI build cycle while sustaining profitability.",
+        "source": "[LLM-suggested, unverified]"
+      },
+      {
+        "name": "DXC Technology",
+        "outcome": "went terminal",
+        "distinguishing_fact": "Legacy IT-services name where margin/ROIC erosion proved structural and the 'cheap multiple' was an earned value trap, not an overshoot.",
+        "source": "[LLM-suggested, unverified]"
+      },
+      {
+        "name": "Wipro",
+        "outcome": "recovered",
+        "distinguishing_fact": "Offshore-heavy services firm whose cyclical demand slump and margin dip mean-reverted without balance-sheet distress.",
+        "source": "[LLM-suggested, unverified]"
+      },
+      {
+        "name": "Globant S.A.",
+        "outcome": "went terminal",
+        "distinguishing_fact": "Digital-engineering peer where a sharp idiosyncratic de-rate reflected genuine deceleration as AI reshaped the services pricing model.",
+        "source": "[LLM-suggested, unverified]"
+      }
+    ],
+    "decisive_question": {
+      "question": "Is the 4.0x trailing EV/EBITDA (0th percentile of its own 5y history) a temporary OVERSHOOT on a still-growing, net-cash, FCF-positive franchise — or does it price an EARNED, durable erosion of services economics (margin/ROIC) as AI/tokenomics resets pricing and North America demand stalls?",
+      "evidence_for": [
+        {
+          "claim": "Absolute EBITDA rose (628 → 731) and revenue hit an all-time high (5,555) with +7.6% YoY growth, so the cash-earning engine is intact while the multiple sits at its own-history floor.",
+          "source_ref": "CIQ Financials→Income Statement + Segments + Ratios (multi-year columns)",
+          "cited": true
+        },
+        {
+          "claim": "Net-cash (-1.5x net-debt/EBITDA) and ~$692.9M levered FCF mean no forced-seller dynamic, giving time for any overshoot to mean-revert.",
+          "source_ref": "EDGAR net-debt/EBITDA + FCF sign + CIQ Capital Structure (survival capacity)",
+          "cited": true
+        }
+      ],
+      "evidence_against": [
+        {
+          "claim": "Gross margin (34% → 29%), EBITDA margin (17% → 13%) and ROIC (13.7% → 10.1%) all trend down over five years — consistent with a structural take-rate reset rather than a one-off dip.",
+          "source_ref": "CIQ Financials→Income Statement + Segments + Ratios (multi-year columns)",
+          "cited": true
+        },
+        {
+          "claim": "Management cites lower second-half visibility, North America underperformance, and an evolving AI tokenomics pricing construct 'for some quarters to come' — forward signals the cheapness may be earned.",
+          "source_ref": "CIQ transcript EPAM Systems, Inc., Q1 2026 Earnings Call, May 07, 2026.rtf",
+          "cited": true
+        }
+      ]
+    },
+    "key_unknowns": [
+      "No forward/adjusted EV/EBITDA or adjusted EPS in the revised guidance (both UNKNOWN) — the trailing 4.0x cannot be tested against a forward basis, leaving overshoot-vs-terminal unresolved (a bearish opacity gap).",
+      "Nearest refinancing/maturity wall UNKNOWN (no maturity dates parsed) — flagged as a risk even within a net-cash position.",
+      "Interest coverage UNKNOWN (no period with both EBITDA and interest expense).",
+      "No revised-guidance 99.1 exhibit was parsed for the Feb-2026 earnings 8-K — the actual revised outlook driving the gap-downs is not in evidence (bearish opacity).",
+      "Segment EBITDA is UNKNOWN (Segments sheet has no EBITDA breakout) — cannot see where profitability is eroding (Americas vs Europe).",
+      "Two of three gap-down dates (2026-02-03, 2026-06-18) had NO matching 8-K — the catalyst behind those discrete drops is unexplained.",
+      "No exposed graph cohort (EPAM not in coverage) — cannot place the idiosyncratic move against a peer cross-section beyond the name-vs-IWM read.",
+      "Estimate-revision breadth is 0↑/0↓ (no fresh analyst movement) — consensus has not re-marked to the new posture.",
+      "Peer set is HETEROGENEOUS (caps $734M–$77.7B, 106x span) — every peer multiple is a confidence-gated input, not a clean benchmark for residual-vs-earned."
+    ]
+  },
+  "flags": [
+    "EPS shown is GAAP-based and understates earnings power; company-adjusted (non-GAAP) EPS is not in the CIQ workbook — it lives in the earnings-release/transcript reconciliation (currently UNAVAILABLE) — not a ceiling on earnings power.",
+    "Net debt/EBITDA (-1.5x) is on consolidated GAAP EBITDA; management and credit covenants typically define leverage on adjusted EBITDA (a larger denominator → a lower ratio). That non-GAAP reconciliation lives in the earnings release/transcript (currently UNAVAILABLE) — do not read -1.5x as the covenant-basis leverage."
+  ],
+  "llm_model": "claude-opus-4-8",
+  "assembled_at": "2026-06-25T18:56:27.594329"
+}
