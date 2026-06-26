@@ -39,9 +39,18 @@ flag it. That incremental blur is the failure mode this whole project is built t
   not the easy case that was never in doubt. (The lookahead fix is the template.)
 - **Suite stays green** — ruff + `mypy --strict` clean; `pytest -m "not network"` passes. No red commit.
 - **Regression-test every bug fix** — a fix without a test that would have caught it isn't done.
-- **Work on a local branch, never directly on main; merge only when green.** Decision-path changes
-  (screen / ranker / ledger / scoring / freeze) also require a real shown run before merge — see
-  docs/engineering.md for the full workflow.
+- **Work on a local branch, never directly on main. The agent opens a PR and STOPS — it never merges
+  to main itself.** Green (ruff + `mypy --strict` + `pytest`) is *necessary but not sufficient*: a
+  human reviews and merges. Merge only on **explicit, per-PR** approval — a prior "yes" is never
+  standing permission for the next change. Decision-path changes (screen / ranker / ledger / scoring /
+  freeze) also require a real shown run before merge — see docs/engineering.md for the full workflow.
+- **Derived data artifacts may be auto-committed; code may not.** Regenerable, assemble-not-conclude
+  artifacts — snapshot JSONL, the scoring report, per-ticker `dossier.json`/`.md` — may be committed by
+  the pipeline / CI / a narrowly-scoped artifact step. **Never bundle a code change into an artifact
+  commit**, and never let an artifact path become a backdoor for logic changes.
+- **Don't build speculatively.** If a change can't be proven by a real run (data, creds, or environment
+  unavailable), do NOT write it — propose it and surface the blocker. Prefer the simplest working path
+  before writing any new code.
 - **Push when done** — commit, then push to origin. Unpushed work is a single point of failure.
   (Cloudflare Pages auto-deploy applies ONLY to a frontend reading committed snapshots — not backend.)
 
