@@ -71,7 +71,8 @@ def check_sec() -> bool:
         print(f"SEC_USER_AGENT: WARN — {type(e).__name__}: {str(e)[:160]}")
         return True
     tag = "secret set" if secret else "secret unset → default UA (fine; it's optional)"
-    print(f"SEC_USER_AGENT: {'PASS' if r.status_code == 200 else 'WARN'} — EDGAR HTTP {r.status_code} ({tag})")
+    status = "PASS" if r.status_code == 200 else "WARN"
+    print(f"SEC_USER_AGENT: {status} — EDGAR HTTP {r.status_code} ({tag})")
     return True
 
 
