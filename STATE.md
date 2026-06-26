@@ -657,8 +657,10 @@ Each line: *what it does* — *verified how*.
   snapshots + (locally) the DERIVED dossiers + graph into a **git-ignored** mirror, regenerated every
   build. **Merged to main CODE-ONLY (PR #3, `bb3dbae`, 2026-06-22):** committed = frontend source +
   non-licensed snapshots (ranked_queue, ledger, universe_stats); the DERIVED `dossier.json` +
-  `graph_coverage.json` stay **git-ignored / local-only** and raw CIQ is never committed — held for the
-  separately-gated deploy step (§4 CONDITIONAL). *Verified locally: `build.py` mirrored 301 queue /
+  `graph_coverage.json` were held **git-ignored / local-only** (raw CIQ is never committed) — pending
+  the separately-gated deploy step (§4 CONDITIONAL). **UPDATE 2026-06-26:** the commit half cleared —
+  `dossier.json` + `graph_coverage.json` now committed to the private repo (BLOCKER B re-verified
+  CIQ-free); only the authed Cloudflare deploy + BLOCKER A remain (§4/§5). *Verified locally: `build.py` mirrored 301 queue /
   1,727 universe / FUBO+VRRM dossiers / 339-edge graph; served on `:8731` → overview, dossier (full
   VRRM), and graph all render against local data, no console errors.* **No deploy is wired** —
   Cloudflare is unconnected (0 GitHub deployments / environments / webhooks), so the merge deployed
@@ -741,6 +743,11 @@ without starving the lead loop; each becomes a *real* widener only when its OWN 
   (EDGAR-10-K relationship/exposure only — verified clean 2026-06-22: zero licensed financials, only
   verbatim 10-K evidence + graph counts). Trigger: operator go-ahead **after both blockers confirm**.
   Until then the dashboard is **local-only**; nothing is deployed (Cloudflare currently unconnected).
+  **STATUS 2026-06-26:** the *commit* half is done ahead of the deploy — `dossier.json` (PR #22) +
+  `graph_coverage.json` now committed to the private repo, **BLOCKER B re-confirmed CIQ-free**. The
+  deploy + **BLOCKER A (the irreversible authed-URL gate) remain NOT cleared** — prove Access rejects
+  an unauthenticated fetch BEFORE wiring Cloudflare, since the committed data serves automatically
+  once the deploy is live.
 - **Verification harness (LLM bull/bear/judge)** — trigger: only if running the manual discriminator
   reveals it needs a structured bull/bear step. May never be needed; do not build speculatively.
 - **Drive adapter for the dossier-assembler** — trigger: the local-folder assembler is proven and the
@@ -934,12 +941,11 @@ Remaining:
    per `dossier requirements` to populate the dossier for subsequent names.)
 2. **Lightweight local frontend — DONE (2026-06-22, §2).** The read-only ops dashboard is built and
    **merged to main code-only** (PR #3); it runs locally against local data (renders committed
-   snapshots; never trades or logs via UI). **Remaining is a SEPARATE later-stage step (not done): the
-   Cloudflare deploy + committing the DERIVED licensed-adjacent artifacts** (`dossier.json`,
-   `graph_coverage.json`) to the private repo — **gated** on verifying the deploy is genuinely
-   private+authed (an unauthenticated request to the URL is rejected) and that `graph_coverage.json` is
-   CIQ-free (§4 CONDITIONAL). Until then those artifacts stay git-ignored / local-only and nothing is
-   deployed.
+   snapshots; never trades or logs via UI). **The DERIVED artifacts are now committed** to the private
+   repo — `dossier.json` (PR #22) + `graph_coverage.json` (2026-06-26), **BLOCKER B re-verified
+   CIQ-free**. **Remaining (not done): the Cloudflare deploy itself + BLOCKER A** — prove the deployed
+   URL rejects an unauthenticated request before it serves the committed data (the irreversible gate);
+   Cloudflare is still unconnected, so nothing is deployed (§4 CONDITIONAL).
 
 The ranker + dossier-assembler are built/verified (§2); the ranker's coverage-gap wire-ups
 (EV/EBITDA-pctile + 8-K/guidance text, which also re-splits drawdown-character and turns on the live
