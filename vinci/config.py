@@ -17,6 +17,7 @@ from __future__ import annotations
 import os
 from pathlib import Path
 
+from dotenv import load_dotenv
 from pydantic import BaseModel, Field
 
 # --- Exchanges --------------------------------------------------------------------------------
@@ -126,6 +127,24 @@ class Config(BaseModel, frozen=True):
 def get_config() -> Config:
     """Return the active config. (Override hook for tests / future env-driven config.)"""
     return Config()
+
+
+def load_local_env(env_path: Path | None = None) -> None:
+    """Populate ``os.environ`` from the repo-root ``.env`` — the ONE shared secret-loading path,
+    so every contributor on every laptop runs identically (12-factor config).
+
+    - **Local:** reads the git-ignored ``.env`` at the repo root (seed it once with
+      ``cp .env.example .env``). New required key → add it to the committed ``.env.example`` so
+      every laptop sees it on the next ``git pull``.
+    - **CI / GitHub Actions:** ``.env`` is git-ignored so none exists on the runner — this is a
+      no-op and the workflow's injected secrets are used. ``load_dotenv`` defaults to
+      ``override=False``, so an already-set var ALWAYS wins: a real CI secret is never clobbered.
+
+    Called once from the CLI entrypoint; importing the package as a library does NOT auto-load,
+    keeping tests hermetic.
+    """
+    path = env_path or (Path(__file__).resolve().parent.parent / ".env")
+    load_dotenv(path)  # override=False (default) → injected CI secrets win over any file
 
 
 def sec_user_agent() -> str:

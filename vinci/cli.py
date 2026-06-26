@@ -13,7 +13,7 @@ import sys
 from collections.abc import Sequence
 from datetime import date, datetime
 
-from vinci.config import get_config
+from vinci.config import get_config, load_local_env
 from vinci.edgar import EdgarClient
 from vinci.eod import PolygonEodClient, compute_price_features, ingest_prices
 from vinci.ledger import LedgerError, log_verdict
@@ -618,6 +618,7 @@ def build_parser() -> argparse.ArgumentParser:
 
 
 def main(argv: Sequence[str] | None = None) -> int:
+    load_local_env()  # local: read repo-root .env; CI: no-op (injected secrets win)
     parser = build_parser()
     args = parser.parse_args(argv)
     return int(args.func(args))

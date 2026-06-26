@@ -647,6 +647,15 @@ Each line: *what it does* — *verified how*.
   Cirrus); unit test. This is research-input only — see §3.*
 - **GitHub Actions cron** (`.github/workflows/weekly-screen.yml`, `monthly-score.yml`) — present.
   *Manual trigger preferred for now.*
+- **Local-secret loading — one shared path across laptops (`config.load_local_env`, 2026-06-26).**
+  `vinci`'s CLI `main()` auto-loads the git-ignored repo-root `.env` at startup (12-factor config:
+  `cp .env.example .env`, fill keys; `.env.example` is the committed contract that propagates new keys
+  on `git pull`). CI is unaffected — no `.env` exists on the runner so it is a no-op, and `override`
+  is False so an injected GitHub-Actions secret is never clobbered by a file. Fixes the smoking-gun
+  from the MVST dossier audit (a present-but-unloaded `.env` left Polygon absent → EOD block UNKNOWN).
+  *Verified: `mypy --strict` (66 files) + 208 tests green incl. 3 new `test_config.py` cases; real run
+  showed the default anchor loads a repo-root `.env`, flows through `python -m vinci`, and a
+  pre-set/CI value wins over the file. Onboarding steps added to docs/engineering.md.*
 - **Read-only ops dashboard** (`frontend/`, static; `frontend/build.py` snapshot mirror) — a
   no-backend viewer over the COMMITTED snapshots: overview + the **validation-gate spread** (honest
   0-resolved), ingestion/universe health, the overshoot screen, the **ranked queue with per-name

@@ -70,6 +70,23 @@ branches with verification environments.
 - **Secrets / data boundary:** see CLAUDE.md (Security). Not duplicated here.
 - **Commits:** focused, single-purpose, honest messages; push to origin when done.
 
+## Local setup (every laptop, every contributor)
+
+Secrets live in the environment (CLAUDE.md), loaded the SAME way on every machine so runs are
+reproducible across people and laptops (12-factor config):
+
+1. `git clone …` && `cd mosaic-theory`
+2. `python -m venv .venv && . .venv/bin/activate`
+3. `pip install -e ".[dev]"` — **re-run after any `git pull` that changes dependencies.**
+4. `cp .env.example .env`, then fill `POLYGON_API_KEY` / `ANTHROPIC_API_KEY` / `SEC_USER_AGENT`.
+   `.env` is git-ignored and per-laptop — it never leaves the machine, never enters git.
+
+`vinci` auto-loads the repo-root `.env` at startup (`config.load_local_env`) — no manual `source`
+step. In CI no `.env` exists (git-ignored) and GitHub Actions secrets are injected instead; the same
+code reads `os.environ` either way, and an injected secret is never overridden by a file. **The
+committed `.env.example` is the shared contract:** when a new required key is added, add it there so
+every laptop picks it up on the next `git pull`.
+
 ## Deferred — expand when the team grows / blast radius increases
 
 Stubs, intentionally not written yet (premature for a 2-person team; documented so the gap is visible and
