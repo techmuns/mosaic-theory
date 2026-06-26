@@ -679,6 +679,34 @@ Each line: *what it does* — *verified how*.
     per-tab renderer baseline, not this app.* All 5 dossiers were re-assembled so each carries
     peer_comps (now rendered as TABLES, NM preserved); BRBR's 'premium brand' drew 0 peer-comp
     guardrail false-fires (the narrowed _REL_VAL_CUE held live).
+  - **Authed Cloudflare deploy — gate built (Basic Auth), NOT YET SAFELY LIVE (2026-06-26).** The §4
+    CONDITIONAL authed Pages deploy has its in-repo pieces: **`wrangler.toml`** (declares
+    `pages_build_output_dir=frontend` + enables Pages Functions); **`functions/_middleware.js`** — a
+    **FAIL-CLOSED HTTP Basic Auth gate** that requires a credential matching the Pages env vars
+    `BASIC_AUTH_USER`/`BASIC_AUTH_PASS` (constant-time compared) on **every** request incl.
+    `/dossiers/*`, returns **401** otherwise, and **denies everything when the env vars are unset**; and
+    **`docs/DEPLOY.md`** — the operator runbook. **PIVOT (why Basic Auth, not Cloudflare Access):** the
+    Access-JWT design was built + tested first, but standing up Cloudflare Zero Trust/Access requires
+    account activation **and a payment method the operator declined**, so the gate was rewritten to Basic
+    Auth — no Zero Trust, no card, Pages Functions only. *Verified WITHOUT Cloudflare: `python
+    frontend/build.py` runs clean; `node --check` clean; a **13-case Basic-Auth allow/deny harness on the
+    real middleware** — correct user/pass (incl. a colon-bearing password + lowercase scheme) → serves;
+    missing/wrong-user/wrong-pass/empty/Bearer/malformed-base64/no-colon/UNCONFIGURED-env/partial-env →
+    all 401; the 401 carries `WWW-Authenticate: Basic`. The harness caught a REAL bug — an em-dash in the
+    `WWW-Authenticate` realm is an invalid HTTP header byte (Latin-1 only); fixed to ASCII (would have
+    500'd on Cloudflare).* **BLOCKER B — ✅ VERIFIED PASS 2026-06-26:** the operator committed
+    `data/graph_coverage.json` to `main` (with a `!data/graph_coverage.json` `.gitignore` exception); it
+    is **CIQ-free** — 339 edges of EDGAR-10-K relationship data (customer/supplier/manufacturer/
+    distributor/vendor) + verbatim 10-K `evidence`; the only financial words (`revenue/margin/multiple`)
+    occur **solely inside that public 10-K prose (37×, 0 in structured fields)**; aggregates are pure
+    graph counts. **NOT done — IRREVERSIBLE, operator-gated:** **BLOCKER A** (prove an unauthenticated
+    fetch returns 401, not content) is unverified, and the **first connect FAILED it** — the operator's
+    Pages project builds from `main`, but the gate (`functions/` + `wrangler.toml`) is on the feature
+    branch `claude/pull-latest-main-65bymt` and NOT on `main`, so the production deploy currently serves
+    the dossiers UNAUTHENTICATED (incognito shows the dashboard). **LESSON pinned in DEPLOY.md: the gate
+    MUST be on the production branch.** Fix sequence: take the deploy offline → merge the gate to `main` →
+    redeploy with `BASIC_AUTH_*` set → BLOCKER A. **Until BLOCKER A passes the dashboard is NOT safely
+    live.**
 - _Whole suite green (ruff + mypy --strict clean; `pytest -m "not network"` passes)._
 
 ## 3. FALSIFIED — tested and retired (NOT deferred)
@@ -743,11 +771,16 @@ without starving the lead loop; each becomes a *real* widener only when its OWN 
   (EDGAR-10-K relationship/exposure only — verified clean 2026-06-22: zero licensed financials, only
   verbatim 10-K evidence + graph counts). Trigger: operator go-ahead **after both blockers confirm**.
   Until then the dashboard is **local-only**; nothing is deployed (Cloudflare currently unconnected).
-  **STATUS 2026-06-26:** the *commit* half is done ahead of the deploy — `dossier.json` (PR #22) +
-  `graph_coverage.json` now committed to the private repo, **BLOCKER B re-confirmed CIQ-free**. The
-  deploy + **BLOCKER A (the irreversible authed-URL gate) remain NOT cleared** — prove Access rejects
-  an unauthenticated fetch BEFORE wiring Cloudflare, since the committed data serves automatically
-  once the deploy is live.
+  **STATUS 2026-06-26 — the COMMIT half is done; the DEPLOY + BLOCKER A are not.** `dossier.json`
+  (PR #22) + `graph_coverage.json` (PR #24) are committed to the private repo and **BLOCKER B is
+  CONFIRMED CIQ-free**. The gate is BUILT (§2): `wrangler.toml` + a FAIL-CLOSED Basic Auth
+  `functions/_middleware.js` (401 until `BASIC_AUTH_USER`/`PASS` set; **no Zero Trust / no card** —
+  pivoted from the first Access-JWT design the operator couldn't activate) + the `docs/DEPLOY.md`
+  runbook; verified by build.py + a 13-case harness. **BLOCKER A (the irreversible authed-URL gate)
+  remains NOT cleared** — and the first connect FAILED it: the gate was on a feature branch, not the
+  `main` production branch, so the live deploy served the dossiers unauthed. Fix = land the gate on
+  `main` → redeploy with creds → prove an unauthenticated fetch returns 401, not content. NOT safely
+  live.
 - **Verification harness (LLM bull/bear/judge)** — trigger: only if running the manual discriminator
   reveals it needs a structured bull/bear step. May never be needed; do not build speculatively.
 - **Drive adapter for the dossier-assembler** — trigger: the local-folder assembler is proven and the
@@ -942,10 +975,12 @@ Remaining:
 2. **Lightweight local frontend — DONE (2026-06-22, §2).** The read-only ops dashboard is built and
    **merged to main code-only** (PR #3); it runs locally against local data (renders committed
    snapshots; never trades or logs via UI). **The DERIVED artifacts are now committed** to the private
-   repo — `dossier.json` (PR #22) + `graph_coverage.json` (2026-06-26), **BLOCKER B re-verified
-   CIQ-free**. **Remaining (not done): the Cloudflare deploy itself + BLOCKER A** — prove the deployed
-   URL rejects an unauthenticated request before it serves the committed data (the irreversible gate);
-   Cloudflare is still unconnected, so nothing is deployed (§4 CONDITIONAL).
+   repo — `dossier.json` (PR #22) + `graph_coverage.json` (PR #24, 2026-06-26), **BLOCKER B verified
+   CIQ-free**. The authed-deploy gate is BUILT (§2): `wrangler.toml` + a FAIL-CLOSED Basic Auth
+   `functions/_middleware.js` (no Zero Trust / no card) + the `docs/DEPLOY.md` runbook. **Remaining
+   (not done): land the gate on the `main` production branch + redeploy with `BASIC_AUTH_*` + clear
+   BLOCKER A** (prove an unauthenticated fetch returns 401, not content) — the first connect FAILED
+   BLOCKER A because the gate was on a feature branch, not `main`, so the deploy served unauthed.
 
 The ranker + dossier-assembler are built/verified (§2); the ranker's coverage-gap wire-ups
 (EV/EBITDA-pctile + 8-K/guidance text, which also re-splits drawdown-character and turns on the live
