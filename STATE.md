@@ -657,8 +657,10 @@ Each line: *what it does* — *verified how*.
   snapshots + (locally) the DERIVED dossiers + graph into a **git-ignored** mirror, regenerated every
   build. **Merged to main CODE-ONLY (PR #3, `bb3dbae`, 2026-06-22):** committed = frontend source +
   non-licensed snapshots (ranked_queue, ledger, universe_stats); the DERIVED `dossier.json` +
-  `graph_coverage.json` stay **git-ignored / local-only** and raw CIQ is never committed — held for the
-  separately-gated deploy step (§4 CONDITIONAL). *Verified locally: `build.py` mirrored 301 queue /
+  `graph_coverage.json` were held **git-ignored / local-only** (raw CIQ is never committed) — pending
+  the separately-gated deploy step (§4 CONDITIONAL). **UPDATE 2026-06-26:** the commit half cleared —
+  `dossier.json` + `graph_coverage.json` now committed to the private repo (BLOCKER B re-verified
+  CIQ-free); only the authed Cloudflare deploy + BLOCKER A remain (§4/§5). *Verified locally: `build.py` mirrored 301 queue /
   1,727 universe / FUBO+VRRM dossiers / 339-edge graph; served on `:8731` → overview, dossier (full
   VRRM), and graph all render against local data, no console errors.* **No deploy is wired** —
   Cloudflare is unconnected (0 GitHub deployments / environments / webhooks), so the merge deployed
@@ -769,13 +771,16 @@ without starving the lead loop; each becomes a *real* widener only when its OWN 
   (EDGAR-10-K relationship/exposure only — verified clean 2026-06-22: zero licensed financials, only
   verbatim 10-K evidence + graph counts). Trigger: operator go-ahead **after both blockers confirm**.
   Until then the dashboard is **local-only**; nothing is deployed (Cloudflare currently unconnected).
-  *Gate BUILT 2026-06-26 (§2): `wrangler.toml` + a FAIL-CLOSED Basic Auth
+  **STATUS 2026-06-26 — the COMMIT half is done; the DEPLOY + BLOCKER A are not.** `dossier.json`
+  (PR #22) + `graph_coverage.json` (PR #24) are committed to the private repo and **BLOCKER B is
+  CONFIRMED CIQ-free**. The gate is BUILT (§2): `wrangler.toml` + a FAIL-CLOSED Basic Auth
   `functions/_middleware.js` (401 until `BASIC_AUTH_USER`/`PASS` set; **no Zero Trust / no card** —
   pivoted from the first Access-JWT design the operator couldn't activate) + the `docs/DEPLOY.md`
-  runbook; verified by build.py + a 13-case harness. **BLOCKER B PASSED** (graph CIQ-free, committed to
-  `main`). **BLOCKER A still open** and the first connect FAILED it — the gate was on a feature branch,
-  not the `main` production branch, so the deploy served the dossiers unauthed; fix = merge the gate to
-  `main` → redeploy with creds → verify BLOCKER A. NOT safely live.*
+  runbook; verified by build.py + a 13-case harness. **BLOCKER A (the irreversible authed-URL gate)
+  remains NOT cleared** — and the first connect FAILED it: the gate was on a feature branch, not the
+  `main` production branch, so the live deploy served the dossiers unauthed. Fix = land the gate on
+  `main` → redeploy with creds → prove an unauthenticated fetch returns 401, not content. NOT safely
+  live.
 - **Verification harness (LLM bull/bear/judge)** — trigger: only if running the manual discriminator
   reveals it needs a structured bull/bear step. May never be needed; do not build speculatively.
 - **Drive adapter for the dossier-assembler** — trigger: the local-folder assembler is proven and the
@@ -969,16 +974,13 @@ Remaining:
    per `dossier requirements` to populate the dossier for subsequent names.)
 2. **Lightweight local frontend — DONE (2026-06-22, §2).** The read-only ops dashboard is built and
    **merged to main code-only** (PR #3); it runs locally against local data (renders committed
-   snapshots; never trades or logs via UI). **Remaining is a SEPARATE later-stage step (not done): the
-   Cloudflare deploy + committing the DERIVED licensed-adjacent artifacts** (`dossier.json`,
-   `graph_coverage.json`) to the private repo — **gated** on verifying the deploy is genuinely
-   private+authed (an unauthenticated request to the URL is rejected) and that `graph_coverage.json` is
-   CIQ-free (§4 CONDITIONAL). Until then those artifacts stay git-ignored / local-only and nothing is
-   deployed. **Gate BUILT (2026-06-26, §2): `wrangler.toml`, a FAIL-CLOSED Basic Auth
-   `functions/_middleware.js` (no Zero Trust / no card), and the `docs/DEPLOY.md` runbook. BLOCKER B
-   PASSED (graph CIQ-free); BLOCKER A still open — the gate must be on the `main` production branch (the
-   first connect served unauthed because it wasn't): merge to `main` → redeploy with `BASIC_AUTH_*` →
-   verify BLOCKER A.**
+   snapshots; never trades or logs via UI). **The DERIVED artifacts are now committed** to the private
+   repo — `dossier.json` (PR #22) + `graph_coverage.json` (PR #24, 2026-06-26), **BLOCKER B verified
+   CIQ-free**. The authed-deploy gate is BUILT (§2): `wrangler.toml` + a FAIL-CLOSED Basic Auth
+   `functions/_middleware.js` (no Zero Trust / no card) + the `docs/DEPLOY.md` runbook. **Remaining
+   (not done): land the gate on the `main` production branch + redeploy with `BASIC_AUTH_*` + clear
+   BLOCKER A** (prove an unauthenticated fetch returns 401, not content) — the first connect FAILED
+   BLOCKER A because the gate was on a feature branch, not `main`, so the deploy served unauthed.
 
 The ranker + dossier-assembler are built/verified (§2); the ranker's coverage-gap wire-ups
 (EV/EBITDA-pctile + 8-K/guidance text, which also re-splits drawdown-character and turns on the live
