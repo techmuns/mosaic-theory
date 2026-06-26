@@ -15,7 +15,7 @@ import httpx
 
 def check_anthropic() -> bool:
     # Returns False ONLY on a real key problem (auth/permission). A connectivity error from the
-    # runner to api.anthropic.com is a WARN (the environment, not the key) and does NOT fail the run.
+    # runner to api.anthropic.com is a WARN (environment, not the key) — it does NOT fail the run.
     key = os.environ.get("ANTHROPIC_API_KEY")
     if not key:
         print("ANTHROPIC_API_KEY: FAIL — secret not set / empty")
