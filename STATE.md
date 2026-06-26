@@ -191,8 +191,10 @@ Each line: *what it does* — *verified how*.
   bound with accessions, shares 29.6M→342.4M +1055%; CIQ MISSING + flagged; graph cohort UNKNOWN — FUBO
   not in the graph) + a live verdict-free synthesis (claude-sonnet-4-6), every figure tracing to the
   mechanical layer; 11 dossier tests incl. the no-conclusion-field schema guard + the no-ledger import
-  guard. Writes `data/dossiers/<ticker>/{dossier.json,dossier.md,llm_call.log}` (git-ignored — may carry
-  licensed CIQ).*
+  guard. Writes `data/dossiers/<ticker>/{dossier.json,dossier.md,llm_call.log}`; the DERIVED
+  `dossier.json`+`dossier.md` are COMMITTED to this PRIVATE repo for the authed deploy (verified:
+  `{value, source_ref}` facts + synthesis + public 10-K phrases, no licensed CIQ), while `llm_call.log`
+  stays git-ignored (regenerated debug log). Revert dossiers to ignored if the repo/deploy goes public.*
   - **CIQ requirements manifest — ONE definition, two consumers (`vinci/dossier/requirements.py`,
     `dossier requirements` CLI).** The canonical list of manual CIQ inputs the assembler expects lives
     in a single `CIQ_MODULES` tuple; each module is a structured record — workbook-kind + the subsheets
