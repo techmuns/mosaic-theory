@@ -28,12 +28,6 @@ dev = [
     "ruff>=0.6",
     "mypy>=1.11",
 ]
-# Pulled in only when reading CIQ from a Google Drive folder (CIQ_STORE=drive). The local-folder
-# store (default) needs none of this; see vinci/dossier/manual_store.py + docs/CLOUD_DOSSIER_TRIGGER.md.
-drive = [
-    "google-api-python-client>=2.100",
-    "google-auth>=2.23",
-]
 
 [project.scripts]
 vinci = "vinci.cli:main"
@@ -59,12 +53,6 @@ strict = true
 warn_unused_ignores = true
 disallow_untyped_defs = true
 plugins = ["pydantic.mypy"]
-
-# The Google Drive SDK (optional '.[drive]' extra) ships no type stubs and is imported lazily,
-# only when CIQ_STORE=drive. Treat it as untyped so --strict stays clean without the libs installed.
-[[tool.mypy.overrides]]
-module = ["googleapiclient.*", "google.oauth2.*", "google.auth.*"]
-ignore_missing_imports = true
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
