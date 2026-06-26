@@ -677,6 +677,26 @@ Each line: *what it does* — *verified how*.
     per-tab renderer baseline, not this app.* All 5 dossiers were re-assembled so each carries
     peer_comps (now rendered as TABLES, NM preserved); BRBR's 'premium brand' drew 0 peer-comp
     guardrail false-fires (the narrowed _REL_VAL_CUE held live).
+  - **Authed Cloudflare deploy — repo-side scaffolding PREPARED, NOTHING DEPLOYED (2026-06-26).** The
+    §4 CONDITIONAL authed Pages deploy now has its in-repo pieces, so the account-side connect is the
+    only remaining work: **`wrangler.toml`** (declares `pages_build_output_dir=frontend` + enables Pages
+    Functions); **`functions/_middleware.js`** — a **FAIL-CLOSED Cloudflare Access JWT gate** that
+    validates the Google-login identity JWT against the team `…/cdn-cgi/access/certs` + the application
+    `aud` and **denies** (403) on missing/expired/wrong-aud/wrong-issuer/tampered/unknown-kid AND when
+    `CF_ACCESS_TEAM_DOMAIN`/`CF_ACCESS_AUD` are unset (deny-all by default) — **defense-in-depth BEHIND**
+    the account-side Access policy, so a disabled/misconfigured policy still fails closed; and
+    **`docs/DEPLOY.md`** — the operator runbook (account-side steps + the two hard pre-serve BLOCKERS +
+    **Access-FIRST** sequencing, since the dossiers are already committed). *Verified the parts testable
+    WITHOUT Cloudflare: `python frontend/build.py` runs clean (317 queue / 1,727 universe / 7 dossiers
+    mirrored, NO committed file dirtied, `graph.json` correctly absent → graph degrades to UNKNOWN);
+    `node --check` clean; and a **13-case allow/deny harness on the real middleware** (Node WebCrypto =
+    the Pages `crypto.subtle` API): a valid header- AND cookie-borne JWT → serves the asset, while
+    missing/expired/wrong-aud/wrong-issuer/tampered/unknown-kid/garbage/UNCONFIGURED-env/email-not-allowed/
+    future-iat → all 403.* **NOT done — operator-gated + IRREVERSIBLE:** Cloudflare is still unconnected
+    (no project, nothing deployed); **BLOCKER A** (prove an unauthenticated fetch returns a challenge/403,
+    not content) is unverifiable until a live deploy exists; **BLOCKER B** (graph CIQ-free) is NOT run
+    because `data/graph_coverage.json` is still absent → the graph stays git-ignored. **No licensed-derived
+    data is served anywhere; the dashboard remains local-only.**
 - _Whole suite green (ruff + mypy --strict clean; `pytest -m "not network"` passes)._
 
 ## 3. FALSIFIED — tested and retired (NOT deferred)
@@ -741,6 +761,11 @@ without starving the lead loop; each becomes a *real* widener only when its OWN 
   (EDGAR-10-K relationship/exposure only — verified clean 2026-06-22: zero licensed financials, only
   verbatim 10-K evidence + graph counts). Trigger: operator go-ahead **after both blockers confirm**.
   Until then the dashboard is **local-only**; nothing is deployed (Cloudflare currently unconnected).
+  *Repo-side scaffolding PREPARED 2026-06-26 (§2): `wrangler.toml` + a FAIL-CLOSED
+  `functions/_middleware.js` Access-JWT gate (deny-all until configured) + the `docs/DEPLOY.md`
+  runbook — verified by build.py + a 13-case middleware harness. The account-side connect (Pages
+  project, Access policy with Google IdP, env vars) and BOTH BLOCKERS remain operator-only; nothing
+  deployed.*
 - **Verification harness (LLM bull/bear/judge)** — trigger: only if running the manual discriminator
   reveals it needs a structured bull/bear step. May never be needed; do not build speculatively.
 - **Drive adapter for the dossier-assembler** — trigger: the local-folder assembler is proven and the
@@ -939,7 +964,9 @@ Remaining:
    `graph_coverage.json`) to the private repo — **gated** on verifying the deploy is genuinely
    private+authed (an unauthenticated request to the URL is rejected) and that `graph_coverage.json` is
    CIQ-free (§4 CONDITIONAL). Until then those artifacts stay git-ignored / local-only and nothing is
-   deployed.
+   deployed. **Repo-side scaffolding for that step is now prepared (2026-06-26, §2): `wrangler.toml`,
+   the FAIL-CLOSED `functions/_middleware.js` Access-JWT gate, and the `docs/DEPLOY.md` operator
+   runbook — the account-side Cloudflare connect + both BLOCKERS remain operator-only.**
 
 The ranker + dossier-assembler are built/verified (§2); the ranker's coverage-gap wire-ups
 (EV/EBITDA-pctile + 8-K/guidance text, which also re-splits drawdown-character and turns on the live

@@ -1,0 +1,22 @@
+# Cloudflare Pages configuration — the AUTHED read-only dashboard deploy.
+#
+# This file declares the static output directory and turns on Pages Functions so
+# functions/_middleware.js (the fail-closed authed gate) is compiled into the
+# deployment. The BUILD COMMAND itself is set in the Pages dashboard / CI, not here:
+#     Build command:      python frontend/build.py
+#     Build output dir:   frontend
+#     Root directory:     /            (repo root — where functions/ lives)
+#
+# For the Git-integrated Pages project the DASHBOARD project name is authoritative;
+# `name` below only matters for a direct `wrangler pages deploy --project-name=…`.
+# See docs/DEPLOY.md for the full runbook + the two hard pre-serve BLOCKERS.
+
+name = "nostra-vinci"
+pages_build_output_dir = "frontend"
+compatibility_date = "2025-06-01"
+
+# Access-gate configuration is supplied as Pages ENVIRONMENT VARIABLES (dashboard →
+# Settings → Environment variables), never committed here:
+#   CF_ACCESS_TEAM_DOMAIN, CF_ACCESS_AUD, (optional) CF_ACCESS_ALLOWED_EMAILS
+# The middleware fails CLOSED (serves nothing) until those are set AND a valid
+# Cloudflare Access identity JWT is presented.
