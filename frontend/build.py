@@ -80,9 +80,10 @@ def main() -> None:
     (OUT_DOSS / "index.json").write_text(json.dumps({"tickers": tickers}, indent=2))
 
     # DERIVED EDGAR-10-K exposure map → slim graph.json (edges + shared nodes + headline stats).
-    # Authorized for the private/authed repo as a derived artifact (CLAUDE.md). git-ignored, so on a
-    # deploy it is absent until graph_coverage.json is committed; the graph screen degrades to
-    # UNKNOWN.
+    # Authorized for the private/authed repo as a derived artifact (CLAUDE.md) and COMMITTED there
+    # (verbatim PUBLIC 10-K phrases + relationship-TYPE taxonomy only, no CIQ workbook data); the
+    # deploy regenerates graph.json from it. If absent (e.g. a public repo) the graph screen
+    # degrades to UNKNOWN.
     if GRAPH.exists():
         g = json.loads(GRAPH.read_text())
         slim = {
