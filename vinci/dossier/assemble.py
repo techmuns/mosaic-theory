@@ -19,7 +19,7 @@ from typing import Any
 from vinci.config import Config, get_config
 from vinci.dossier import ciq_sheets, requirements
 from vinci.dossier.ciq import CiqBundle
-from vinci.dossier.manual_store import ManualDataStore, make_manual_store
+from vinci.dossier.manual_store import LocalFolderStore, ManualDataStore
 from vinci.dossier.mechanical import assemble_mechanical
 from vinci.dossier.render import render_markdown
 from vinci.dossier.schemas import Dossier
@@ -152,7 +152,7 @@ def assemble_cohort(
     resolver = EntityResolver.from_config(cfg)
     _ = resolver.index  # preload once so worker threads only do read-only lookups
     graph = _load_graph(cfg)
-    manual = manual or make_manual_store(cfg)
+    manual = manual or LocalFolderStore.from_config(cfg)
     out_root = cfg.data_dir / "dossiers"
 
     def task(fin: Finalist) -> tuple[Dossier | None, str | None]:
