@@ -1,0 +1,28 @@
+name: validate-keys
+
+# On-demand check that the API-key SECRETS are set + valid in GitHub Actions, WITHOUT running
+# the pipeline. Cheap (one trivial ping per service), no commits, no side effects. Run it from the
+# Actions tab ("Run workflow") any time — e.g. after rotating a key. Required keys (Polygon,
+# Anthropic) failing turns the run red; SEC_USER_AGENT is optional and only reported.
+on:
+  workflow_dispatch: {}
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install minimal deps
+        run: python -m pip install --upgrade pip anthropic httpx
+      - name: Validate keys (values never printed)
+        env:
+          POLYGON_API_KEY: ${{ secrets.POLYGON_API_KEY }}
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          SEC_USER_AGENT: ${{ secrets.SEC_USER_AGENT }}
+        run: python .github/scripts/validate_keys.py
