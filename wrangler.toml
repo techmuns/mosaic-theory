@@ -15,8 +15,9 @@ name = "nostra-vinci"
 pages_build_output_dir = "frontend"
 compatibility_date = "2025-06-01"
 
-# Access-gate configuration is supplied as Pages ENVIRONMENT VARIABLES (dashboard →
-# Settings → Environment variables), never committed here:
-#   CF_ACCESS_TEAM_DOMAIN, CF_ACCESS_AUD, (optional) CF_ACCESS_ALLOWED_EMAILS
-# The middleware fails CLOSED (serves nothing) until those are set AND a valid
-# Cloudflare Access identity JWT is presented.
+# Auth-gate credentials are supplied as Pages ENVIRONMENT VARIABLES (dashboard →
+# Settings → Variables and Secrets), never committed here:
+#   BASIC_AUTH_USER, BASIC_AUTH_PASS  (store the password as an encrypted secret)
+# The middleware fails CLOSED (returns 401, serves nothing) until both are set and a
+# matching HTTP Basic Auth credential is presented. NO Cloudflare Zero Trust / Access
+# (and no payment method) is required.

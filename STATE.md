@@ -677,26 +677,34 @@ Each line: *what it does* — *verified how*.
     per-tab renderer baseline, not this app.* All 5 dossiers were re-assembled so each carries
     peer_comps (now rendered as TABLES, NM preserved); BRBR's 'premium brand' drew 0 peer-comp
     guardrail false-fires (the narrowed _REL_VAL_CUE held live).
-  - **Authed Cloudflare deploy — repo-side scaffolding PREPARED, NOTHING DEPLOYED (2026-06-26).** The
-    §4 CONDITIONAL authed Pages deploy now has its in-repo pieces, so the account-side connect is the
-    only remaining work: **`wrangler.toml`** (declares `pages_build_output_dir=frontend` + enables Pages
-    Functions); **`functions/_middleware.js`** — a **FAIL-CLOSED Cloudflare Access JWT gate** that
-    validates the Google-login identity JWT against the team `…/cdn-cgi/access/certs` + the application
-    `aud` and **denies** (403) on missing/expired/wrong-aud/wrong-issuer/tampered/unknown-kid AND when
-    `CF_ACCESS_TEAM_DOMAIN`/`CF_ACCESS_AUD` are unset (deny-all by default) — **defense-in-depth BEHIND**
-    the account-side Access policy, so a disabled/misconfigured policy still fails closed; and
-    **`docs/DEPLOY.md`** — the operator runbook (account-side steps + the two hard pre-serve BLOCKERS +
-    **Access-FIRST** sequencing, since the dossiers are already committed). *Verified the parts testable
-    WITHOUT Cloudflare: `python frontend/build.py` runs clean (317 queue / 1,727 universe / 7 dossiers
-    mirrored, NO committed file dirtied, `graph.json` correctly absent → graph degrades to UNKNOWN);
-    `node --check` clean; and a **13-case allow/deny harness on the real middleware** (Node WebCrypto =
-    the Pages `crypto.subtle` API): a valid header- AND cookie-borne JWT → serves the asset, while
-    missing/expired/wrong-aud/wrong-issuer/tampered/unknown-kid/garbage/UNCONFIGURED-env/email-not-allowed/
-    future-iat → all 403.* **NOT done — operator-gated + IRREVERSIBLE:** Cloudflare is still unconnected
-    (no project, nothing deployed); **BLOCKER A** (prove an unauthenticated fetch returns a challenge/403,
-    not content) is unverifiable until a live deploy exists; **BLOCKER B** (graph CIQ-free) is NOT run
-    because `data/graph_coverage.json` is still absent → the graph stays git-ignored. **No licensed-derived
-    data is served anywhere; the dashboard remains local-only.**
+  - **Authed Cloudflare deploy — gate built (Basic Auth), NOT YET SAFELY LIVE (2026-06-26).** The §4
+    CONDITIONAL authed Pages deploy has its in-repo pieces: **`wrangler.toml`** (declares
+    `pages_build_output_dir=frontend` + enables Pages Functions); **`functions/_middleware.js`** — a
+    **FAIL-CLOSED HTTP Basic Auth gate** that requires a credential matching the Pages env vars
+    `BASIC_AUTH_USER`/`BASIC_AUTH_PASS` (constant-time compared) on **every** request incl.
+    `/dossiers/*`, returns **401** otherwise, and **denies everything when the env vars are unset**; and
+    **`docs/DEPLOY.md`** — the operator runbook. **PIVOT (why Basic Auth, not Cloudflare Access):** the
+    Access-JWT design was built + tested first, but standing up Cloudflare Zero Trust/Access requires
+    account activation **and a payment method the operator declined**, so the gate was rewritten to Basic
+    Auth — no Zero Trust, no card, Pages Functions only. *Verified WITHOUT Cloudflare: `python
+    frontend/build.py` runs clean; `node --check` clean; a **13-case Basic-Auth allow/deny harness on the
+    real middleware** — correct user/pass (incl. a colon-bearing password + lowercase scheme) → serves;
+    missing/wrong-user/wrong-pass/empty/Bearer/malformed-base64/no-colon/UNCONFIGURED-env/partial-env →
+    all 401; the 401 carries `WWW-Authenticate: Basic`. The harness caught a REAL bug — an em-dash in the
+    `WWW-Authenticate` realm is an invalid HTTP header byte (Latin-1 only); fixed to ASCII (would have
+    500'd on Cloudflare).* **BLOCKER B — ✅ VERIFIED PASS 2026-06-26:** the operator committed
+    `data/graph_coverage.json` to `main` (with a `!data/graph_coverage.json` `.gitignore` exception); it
+    is **CIQ-free** — 339 edges of EDGAR-10-K relationship data (customer/supplier/manufacturer/
+    distributor/vendor) + verbatim 10-K `evidence`; the only financial words (`revenue/margin/multiple`)
+    occur **solely inside that public 10-K prose (37×, 0 in structured fields)**; aggregates are pure
+    graph counts. **NOT done — IRREVERSIBLE, operator-gated:** **BLOCKER A** (prove an unauthenticated
+    fetch returns 401, not content) is unverified, and the **first connect FAILED it** — the operator's
+    Pages project builds from `main`, but the gate (`functions/` + `wrangler.toml`) is on the feature
+    branch `claude/pull-latest-main-65bymt` and NOT on `main`, so the production deploy currently serves
+    the dossiers UNAUTHENTICATED (incognito shows the dashboard). **LESSON pinned in DEPLOY.md: the gate
+    MUST be on the production branch.** Fix sequence: take the deploy offline → merge the gate to `main` →
+    redeploy with `BASIC_AUTH_*` set → BLOCKER A. **Until BLOCKER A passes the dashboard is NOT safely
+    live.**
 - _Whole suite green (ruff + mypy --strict clean; `pytest -m "not network"` passes)._
 
 ## 3. FALSIFIED — tested and retired (NOT deferred)
@@ -761,11 +769,13 @@ without starving the lead loop; each becomes a *real* widener only when its OWN 
   (EDGAR-10-K relationship/exposure only — verified clean 2026-06-22: zero licensed financials, only
   verbatim 10-K evidence + graph counts). Trigger: operator go-ahead **after both blockers confirm**.
   Until then the dashboard is **local-only**; nothing is deployed (Cloudflare currently unconnected).
-  *Repo-side scaffolding PREPARED 2026-06-26 (§2): `wrangler.toml` + a FAIL-CLOSED
-  `functions/_middleware.js` Access-JWT gate (deny-all until configured) + the `docs/DEPLOY.md`
-  runbook — verified by build.py + a 13-case middleware harness. The account-side connect (Pages
-  project, Access policy with Google IdP, env vars) and BOTH BLOCKERS remain operator-only; nothing
-  deployed.*
+  *Gate BUILT 2026-06-26 (§2): `wrangler.toml` + a FAIL-CLOSED Basic Auth
+  `functions/_middleware.js` (401 until `BASIC_AUTH_USER`/`PASS` set; **no Zero Trust / no card** —
+  pivoted from the first Access-JWT design the operator couldn't activate) + the `docs/DEPLOY.md`
+  runbook; verified by build.py + a 13-case harness. **BLOCKER B PASSED** (graph CIQ-free, committed to
+  `main`). **BLOCKER A still open** and the first connect FAILED it — the gate was on a feature branch,
+  not the `main` production branch, so the deploy served the dossiers unauthed; fix = merge the gate to
+  `main` → redeploy with creds → verify BLOCKER A. NOT safely live.*
 - **Verification harness (LLM bull/bear/judge)** — trigger: only if running the manual discriminator
   reveals it needs a structured bull/bear step. May never be needed; do not build speculatively.
 - **Drive adapter for the dossier-assembler** — trigger: the local-folder assembler is proven and the
@@ -964,9 +974,11 @@ Remaining:
    `graph_coverage.json`) to the private repo — **gated** on verifying the deploy is genuinely
    private+authed (an unauthenticated request to the URL is rejected) and that `graph_coverage.json` is
    CIQ-free (§4 CONDITIONAL). Until then those artifacts stay git-ignored / local-only and nothing is
-   deployed. **Repo-side scaffolding for that step is now prepared (2026-06-26, §2): `wrangler.toml`,
-   the FAIL-CLOSED `functions/_middleware.js` Access-JWT gate, and the `docs/DEPLOY.md` operator
-   runbook — the account-side Cloudflare connect + both BLOCKERS remain operator-only.**
+   deployed. **Gate BUILT (2026-06-26, §2): `wrangler.toml`, a FAIL-CLOSED Basic Auth
+   `functions/_middleware.js` (no Zero Trust / no card), and the `docs/DEPLOY.md` runbook. BLOCKER B
+   PASSED (graph CIQ-free); BLOCKER A still open — the gate must be on the `main` production branch (the
+   first connect served unauthed because it wasn't): merge to `main` → redeploy with `BASIC_AUTH_*` →
+   verify BLOCKER A.**
 
 The ranker + dossier-assembler are built/verified (§2); the ranker's coverage-gap wire-ups
 (EV/EBITDA-pctile + 8-K/guidance text, which also re-splits drawdown-character and turns on the live
