@@ -49,35 +49,31 @@ function authorized(request, env) {
   if (!user || !pass) return false; // UNCONFIGURED ⇒ deny everything (the safe default)
 
   const header = (request.headers.get("Authorization") || "").trim();
-  const m = /^Basic\s+(.+)$/i.exec(header);
+  const m = /^Basic\s+(\S+)$/i.exec(header);
   if (!m) return false;
 
-  let decoded;
+  // Decode base64 to RAW BYTES (atob yields a Latin-1 string — one char per byte).
+  let provided;
   try {
-    decoded = atob(m[1]);
+    provided = Uint8Array.from(atob(m[1]), (c) => c.charCodeAt(0));
   } catch {
     return false; // malformed base64
   }
-  const sep = decoded.indexOf(":");
-  if (sep < 0) return false;
-  const u = decoded.slice(0, sep);
-  const p = decoded.slice(sep + 1);
-
-  // Evaluate BOTH legs (no && short-circuit) so a correct username can't be
-  // distinguished from a wrong one by timing.
-  return Boolean(timingSafeEqual(u, user) & timingSafeEqual(p, pass));
+  // Compare the WHOLE "user:pass" credential as UTF-8 bytes. Comparing the full string
+  // (rather than splitting on ':' and re-encoding each half) is correct for non-ASCII
+  // credentials AND for passwords containing ':' (only the username may not contain one,
+  // per the Basic Auth spec). Constant-time; both length and content folded in.
+  const expected = new TextEncoder().encode(`${user}:${pass}`);
+  return timingSafeEqual(provided, expected);
 }
 
-// Constant-time string comparison over UTF-8 bytes. Length difference is folded in
-// but the loop still runs the full length, so neither equality nor length leaks early.
+// Constant-time byte-array comparison. The length difference is folded in but the loop
+// still runs the full length, so neither equality nor length leaks early.
 function timingSafeEqual(a, b) {
-  const enc = new TextEncoder();
-  const ab = enc.encode(a);
-  const bb = enc.encode(b);
-  const len = Math.max(ab.length, bb.length);
-  let diff = ab.length ^ bb.length;
+  const len = Math.max(a.length, b.length);
+  let diff = a.length ^ b.length;
   for (let i = 0; i < len; i++) {
-    diff |= (ab[i] || 0) ^ (bb[i] || 0);
+    diff |= (a[i] || 0) ^ (b[i] || 0);
   }
   return diff === 0;
 }
