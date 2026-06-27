@@ -15,6 +15,7 @@ from datetime import date, timedelta
 from vinci.config import Config, get_config
 from vinci.edgar import EdgarClient
 from vinci.eod import PolygonEodClient, ingest_prices
+from vinci.progress import ProgressFn
 from vinci.scoring import score_ledger
 from vinci.screens import screen_universe
 from vinci.store import Store
@@ -32,6 +33,7 @@ def run_weekly(
     end: date,
     benchmark: str = "IWM",
     lookback_days: int = _SCREEN_LOOKBACK_DAYS,
+    progress: ProgressFn | None = None,
 ) -> dict[str, object]:
     """Weekly: refresh the universe's prices and lazily run Screen 2; persist candidates."""
     cfg = config or get_config()
@@ -44,7 +46,7 @@ def run_weekly(
             return {"status": "no universe in snapshots — run build-universe first"}
         _cands, stats = screen_universe(
             store, eod, edgar, reference_date=end, lookback_days=lookback_days,
-            staleness_days=cfg.price_staleness_days, benchmark=benchmark,
+            staleness_days=cfg.price_staleness_days, benchmark=benchmark, progress=progress,
         )
         store.export_snapshots(cfg.snapshots_dir)
     return {**stats, "ref": end.isoformat()}
@@ -57,6 +59,7 @@ def run_monthly(
     benchmark: str = "IWM",
     cost_bps: float = 25.0,
     lookback_days: int = _SCORE_LOOKBACK_DAYS,
+    progress: ProgressFn | None = None,
 ) -> dict[str, object]:
     """Monthly: refresh prices, score the decision ledger, and write the report to snapshots.
 
@@ -72,7 +75,7 @@ def run_monthly(
         store.rebuild_from_snapshots(cfg.snapshots_dir)
         universe = [s for s in store.iter_securities() if not s.internal_id.startswith("IDX-")]
         if universe:
-            ingest_prices(client, store, universe, start=start, end=as_of)
+            ingest_prices(client, store, universe, start=start, end=as_of, progress=progress)
             store.upsert_security(bench)
             ingest_prices(client, store, [bench], start=start, end=as_of)
         _scores, report = score_ledger(
