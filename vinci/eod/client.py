@@ -24,6 +24,7 @@ from pydantic import BaseModel
 
 from vinci.config import Config, get_config, require_env, sec_user_agent
 from vinci.netcache import CachedHttp, HttpError
+from vinci.progress import ProgressFn, ProgressReporter
 from vinci.schemas.data_record import Identity
 from vinci.schemas.market import PriceBar
 
@@ -71,20 +72,25 @@ def ingest_prices(
     *,
     start: date,
     end: date,
+    progress: ProgressFn | None = None,
 ) -> dict[str, int]:
     """Backfill/refresh EOD bars for ``securities`` over [start, end] into the store.
 
     Fails loud: a degraded day raises inside ``grouped_daily`` and aborts the whole refresh, so the
     store never ends up with a silent gap. Non-trading days (0 rows) are skipped. Returns a summary.
+    ``progress`` (opt-in) gets an ``EOD <done>/<total>`` line per step so a long pull is visible.
     """
     sym_to_id = {s.eod_symbol: s.internal_id for s in securities}
+    days = list(_trading_days(start, end))
+    reporter = ProgressReporter("EOD", len(days), emit=progress)
     days_fetched = 0
     bars_written = 0
     trading_days = 0
-    for day in _trading_days(start, end):
+    for day in days:
         days_fetched += 1
         raw = client.grouped_daily(day)
         if not raw:
+            reporter.tick(days_fetched, suffix=f"{bars_written:,} bars")
             continue  # non-trading day (holiday/weekend)
         trading_days += 1
         rows = [
@@ -102,6 +108,7 @@ def ingest_prices(
             if t in sym_to_id
         ]
         bars_written += store.write_prices(rows)
+        reporter.tick(days_fetched, suffix=f"{bars_written:,} bars")
     return {
         "days_fetched": days_fetched,
         "trading_days": trading_days,

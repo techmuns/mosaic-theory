@@ -12,6 +12,7 @@ from datetime import date, datetime, timedelta
 
 from vinci.edgar import EdgarClient
 from vinci.eod import EodClient, ingest_prices
+from vinci.progress import ProgressFn, ProgressReporter
 from vinci.schemas.candidate import CandidateRecord, GateResult
 from vinci.screens.assemble import build_price_record, enrich_with_fundamentals
 from vinci.screens.screen2 import (
@@ -34,6 +35,7 @@ def screen_universe(
     staleness_days: int,
     benchmark: str = "IWM",
     thresholds: Screen2Thresholds | None = None,
+    progress: ProgressFn | None = None,
 ) -> tuple[list[CandidateRecord], dict[str, int]]:
     """Refresh prices, lazily screen the universe, persist candidates; return them + stats."""
     th = thresholds or Screen2Thresholds()
@@ -46,7 +48,7 @@ def screen_universe(
         universe = [s for s in store.iter_securities() if not s.internal_id.startswith("IDX-")]
     start = reference_date - timedelta(days=lookback_days)
 
-    ingest_prices(eod, store, universe, start=start, end=reference_date)
+    ingest_prices(eod, store, universe, start=start, end=reference_date, progress=progress)
     bench = benchmark_identity(benchmark)
     store.upsert_security(bench)
     ingest_prices(eod, store, [bench], start=start, end=reference_date)
@@ -56,7 +58,9 @@ def screen_universe(
     store.clear_candidates()  # FULL replace — a re-screen is a clean snapshot, never an accretion
     candidates: list[CandidateRecord] = []
     g1_survivors = 0
-    for s in universe:
+    reporter = ProgressReporter("screen", len(universe), emit=progress, step=200)
+    for i, s in enumerate(universe, start=1):
+        reporter.tick(i, suffix=f"{g1_survivors} enriched")
         bars = store.get_price_history(s.internal_id)
         rec = build_price_record(
             s, price_bars=bars, benchmark_bars=bench_bars,

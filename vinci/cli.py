@@ -18,6 +18,7 @@ from vinci.edgar import EdgarClient
 from vinci.eod import PolygonEodClient, compute_price_features, ingest_prices
 from vinci.ledger import LedgerError, log_verdict
 from vinci.orchestrator import run_monthly, run_weekly
+from vinci.progress import stderr_reporter
 from vinci.rank import (
     RankWeights,
     StructuralDisqualifier,
@@ -74,7 +75,7 @@ def _cmd_refresh(args: argparse.Namespace) -> int:
     with Store(cfg.db_path) as store:
         for s in secs:
             store.upsert_security(s)
-        summary = ingest_prices(client, store, secs, start=start, end=end)
+        summary = ingest_prices(client, store, secs, start=start, end=end, progress=stderr_reporter)
     print(f"done: {summary}")
     return 0
 
@@ -133,6 +134,7 @@ def _cmd_screen(args: argparse.Namespace) -> int:
         cands, stats = screen_universe(
             store, eod, edgar, reference_date=ref, lookback_days=args.lookback_days,
             staleness_days=cfg.price_staleness_days, benchmark=args.benchmark,
+            progress=stderr_reporter,
         )
         store.export_snapshots(cfg.snapshots_dir)
     print(f"=== Screen 2 · {stats['universe']} names · ref {ref} · benchmark {args.benchmark} ===")
@@ -337,14 +339,16 @@ def _cmd_score(args: argparse.Namespace) -> int:
 def _cmd_run_weekly(args: argparse.Namespace) -> int:
     """Scheduled weekly job: refresh the universe + run the screen + export snapshots."""
     end = date.fromisoformat(args.end) if args.end else date.today()
-    print(f"weekly run: {run_weekly(end=end, benchmark=args.benchmark)}")
+    print(f"weekly run: {run_weekly(end=end, benchmark=args.benchmark, progress=stderr_reporter)}")
     return 0
 
 
 def _cmd_run_monthly(args: argparse.Namespace) -> int:
     """Scheduled monthly job: score the ledger + write the report + export snapshots."""
     as_of = date.fromisoformat(args.as_of) if args.as_of else date.today()
-    report = run_monthly(as_of=as_of, benchmark=args.benchmark, cost_bps=args.cost_bps)
+    report = run_monthly(
+        as_of=as_of, benchmark=args.benchmark, cost_bps=args.cost_bps, progress=stderr_reporter
+    )
     print(f"monthly run: spread={report['buy_avoid_spread']} pending={report['n_pending']}")
     return 0
 
