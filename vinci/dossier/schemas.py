@@ -122,6 +122,7 @@ class Quality(BaseModel):
     free_cash_flow: Sourced[float]
     margin_trend: Sourced[str]  # margin % PAIRED with the absolute EBITDA/revenue reconciler
     net_debt_to_ebitda: Sourced[float]  # GAAP consolidated EBITDA basis
+    net_debt_to_ocf: Sourced[float]  # OCF basis — leverage read that survives untaggable D&A
     net_debt_to_ebitda_adjusted: Sourced[str]  # covenant basis: net debt / FY-guide adjusted EBITDA
     # Solvency as ONE block (leverage + self-funding + nearest refinancing wall) so survival isn't
     # read as one metric among many; any leg UNKNOWN is itself a risk (opacity-as-signal).

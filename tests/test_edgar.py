@@ -131,6 +131,7 @@ def test_compute_fundamental_snapshot() -> None:
     assert snap.ebitda_annual.value == pytest.approx(250.0)
     assert snap.net_debt.value == pytest.approx(300.0)
     assert snap.net_leverage.value == pytest.approx(1.2)
+    assert snap.net_debt_to_ocf.value == pytest.approx(300.0 / 180.0)  # net debt 300 / OCF 180
     assert snap.eps_diluted_annual.value == pytest.approx(3.5)
     assert snap.as_of == date(2025, 2, 1)
 
@@ -184,6 +185,39 @@ def test_leverage_unknown_note_names_missing_debt_not_negative_ebitda() -> None:
     assert snap.net_leverage.coverage_status is CoverageStatus.UNKNOWN
     note = snap.net_leverage.note or ""
     assert "debt/cash not in XBRL" in note and "EBITDA<=0" not in note  # names the gap
+
+
+def test_net_debt_to_ocf_resolves_when_ebitda_is_untaggable() -> None:
+    """The MVST case: operating income IS tagged but NO D&A concept is, so GAAP net-debt/EBITDA is
+    UNKNOWN ('no EBITDA in XBRL') — never fabricated from partial D&A scraps. Yet net-debt/OCF
+    RESOLVES, because OCF is reliably tagged and already carries the D&A add-back EBITDA needs."""
+    facts = {
+        "facts": {
+            "us-gaap": {
+                "OperatingIncomeLoss": {
+                    "units": {"USD": [_flow("op", "2024-12-31", "2024-01-01", 7.0, "2025-02-01")]}
+                },
+                # NO Depreciation/Amortization concept at all — the MVST gap that breaks EBITDA
+                "NetCashProvidedByUsedInOperatingActivities": {
+                    "units": {
+                        "USD": [_flow("ocf", "2024-12-31", "2024-01-01", 120.0, "2025-02-01")]
+                    }
+                },
+                "LongTermDebtNoncurrent": {
+                    "units": {"USD": [_instant("2024-12-31", 250.0, "2025-02-01")]}
+                },
+                "CashAndCashEquivalentsAtCarryingValue": {
+                    "units": {"USD": [_instant("2024-12-31", 70.0, "2025-02-01")]}
+                },
+            }
+        }
+    }
+    snap = compute_fundamental_snapshot("x", facts)
+    # GAAP net-debt/EBITDA correctly UNKNOWN — D&A untaggable, the ratio is not fabricated
+    assert snap.net_leverage.coverage_status is CoverageStatus.UNKNOWN
+    assert "no EBITDA in XBRL" in (snap.net_leverage.note or "")
+    # ...but net-debt/OCF resolves: net debt (250 - 70 = 180) / OCF (120) = 1.5
+    assert snap.net_debt_to_ocf.value == pytest.approx(180.0 / 120.0)
 
 
 def test_all_unknown_snapshot_is_graceful() -> None:
