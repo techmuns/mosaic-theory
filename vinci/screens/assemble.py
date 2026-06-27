@@ -169,6 +169,7 @@ def enrich_with_fundamentals(
         fcf_sign=snap.fcf_sign,
         op_income_sign=snap.op_income_sign,
         net_leverage=snap.net_leverage,
+        net_debt_to_ocf=snap.net_debt_to_ocf,
     )
     return rec.model_copy(update={"fundamentals": fundamentals})
 

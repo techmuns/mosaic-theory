@@ -657,6 +657,10 @@ def _quality(
     primary; EDGAR fills only an empty CIQ field) — assembled in :func:`assemble_mechanical`."""
     f = record.fundamentals
     net_lev = _sourced(f.net_leverage, source_ref="EDGAR XBRL net-debt/EBITDA (screen data-record)")
+    net_ocf = _sourced(
+        f.net_debt_to_ocf,
+        source_ref="EDGAR XBRL net-debt/OCF (screen data-record) — OCF basis, not EBITDA",
+    )
     fcf_sign = _sourced(f.fcf_sign, source_ref="EDGAR XBRL FCF sign (screen data-record)")
     liquidity = ciq_sheets.liquidity_covenant_flags(bundle)
     return Quality(
@@ -664,6 +668,7 @@ def _quality(
         free_cash_flow=fcf,
         margin_trend=margin,
         net_debt_to_ebitda=net_lev,
+        net_debt_to_ocf=net_ocf,
         net_debt_to_ebitda_adjusted=adj_leverage,
         survival_capacity=_survival_capacity(net_lev, adj_leverage, fcf_sign, liquidity),
         interest_coverage=ciq_sheets.interest_coverage(bundle),

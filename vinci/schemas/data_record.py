@@ -17,7 +17,7 @@ from datetime import date
 
 from pydantic import BaseModel, Field
 
-from vinci.schemas.envelope import DataField
+from vinci.schemas.envelope import DataField, SourceTier
 
 
 class Identity(BaseModel, frozen=True):
@@ -66,6 +66,11 @@ class Fundamentals(BaseModel, frozen=True):
     fcf_sign: DataField[int]  # -1 / 0 / +1 (trailing FCF sign)
     op_income_sign: DataField[int]
     net_leverage: DataField[float]  # net debt / EBITDA
+    # OCF-basis leverage, carried alongside net_leverage. Defaulted so snapshots written before this
+    # field (committed candidate_records.jsonl) still load — they read UNKNOWN until a re-screen.
+    net_debt_to_ocf: DataField[float] = DataField.unknown(
+        source="EDGAR", tier=SourceTier.EDGAR, note="not in snapshot (pre-OCF-leverage screen)"
+    )
 
 
 class StressSignals(BaseModel, frozen=True):

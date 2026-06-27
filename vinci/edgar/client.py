@@ -63,6 +63,7 @@ class FundamentalSnapshot(BaseModel, frozen=True):
     op_income_sign: DataField[int]
     fcf_sign: DataField[int]
     net_leverage: DataField[float]
+    net_debt_to_ocf: DataField[float]  # net debt / operating cash flow — survives untaggable D&A
     ebitda_annual: DataField[float]  # operating income + D&A (for EV/EBITDA in step 5)
     net_debt: DataField[float]  # total debt - cash (for EV in step 5)
     eps_diluted_annual: DataField[float]  # for P/E in step 5
@@ -96,6 +97,7 @@ def all_unknown_snapshot(cik10: str) -> FundamentalSnapshot:
         op_income_sign=_unknown_i("no XBRL"),
         fcf_sign=_unknown_i("no XBRL"),
         net_leverage=_unknown_f("no XBRL"),
+        net_debt_to_ocf=_unknown_f("no XBRL"),
         ebitda_annual=_unknown_f("no XBRL"),
         net_debt=_unknown_f("no XBRL"),
         eps_diluted_annual=_unknown_f("no XBRL"),
@@ -151,6 +153,20 @@ def compute_fundamental_snapshot(cik10: str, facts: dict[str, Any]) -> Fundament
     else:
         net_lev = _present_f(net_debt_val / ebitda_val, net_debt.as_of)
 
+    # net debt / OCF — the leverage read that SURVIVES untaggable D&A (the MVST case): operating
+    # cash flow already contains the D&A add-back EBITDA needs, and OCF is reliably tagged. Same
+    # fail-loud discipline as net leverage: UNKNOWN naming the SPECIFIC missing input, not a guess.
+    if net_debt_val is None:
+        net_ocf = _unknown_f("no net-debt — debt/cash not in XBRL")
+    elif ocf is None:
+        net_ocf = _unknown_f("no operating cash flow in XBRL")
+    elif ocf.value <= 0:
+        net_ocf = _unknown_f("OCF<=0 (ratio meaningless)")
+    elif not net_debt.as_of:
+        net_ocf = _unknown_f("net-debt as-of date missing")
+    else:
+        net_ocf = _present_f(net_debt_val / ocf.value, net_debt.as_of)
+
     eps_df = _present_f(eps.value, eps.filed) if eps else _unknown_f("no diluted EPS")
     filed_dates = [p.filed for p in (op, da, ocf, capex, eps, ltd, dc, cash) if p]
     return FundamentalSnapshot(
@@ -158,6 +174,7 @@ def compute_fundamental_snapshot(cik10: str, facts: dict[str, Any]) -> Fundament
         op_income_sign=op_sign,
         fcf_sign=fcf_sign,
         net_leverage=net_lev,
+        net_debt_to_ocf=net_ocf,
         ebitda_annual=ebitda,
         net_debt=net_debt,
         eps_diluted_annual=eps_df,

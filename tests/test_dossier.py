@@ -167,8 +167,9 @@ def _minimal_mech() -> ds.MechanicalLayer:
         ),
         quality=ds.Quality(
             fcf_sign=_u(), free_cash_flow=_u(), margin_trend=_u(), net_debt_to_ebitda=_u(),
-            net_debt_to_ebitda_adjusted=_u(), survival_capacity=_u(), interest_coverage=_u(),
-            share_count_trend=_u(), liquidity_covenant_flags=_u(), multi_year_trajectory=_u(),
+            net_debt_to_ocf=_u(), net_debt_to_ebitda_adjusted=_u(), survival_capacity=_u(),
+            interest_coverage=_u(), share_count_trend=_u(), liquidity_covenant_flags=_u(),
+            multi_year_trajectory=_u(),
         ),
         concentration=ds.Concentration(
             segments=_u(), segment_ebitda=_u(), customers=_u(), geographic=_u()
