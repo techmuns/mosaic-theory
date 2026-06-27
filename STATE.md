@@ -248,7 +248,14 @@ Each line: *what it does* — *verified how*.
     `(flag, pe_note)`; the loss-making case names that the multiple rests on a NON-CURRENT positive EPS)
     — closing the gap where FUBO's 12.1x rendered clean while VRRM's 5.2x had a RESOLVED note. (4) The
     net-debt/EBITDA UNKNOWN note names the SPECIFIC missing input (a positive-EBITDA name reads
-    'no net-debt — debt/cash not in XBRL', not the misleading lumped 'EBITDA<=0 or missing'). *Verified:
+    'no net-debt — debt/cash not in XBRL', not the misleading lumped 'EBITDA<=0 or missing'); and a
+    sibling **net-debt/OCF (GAAP)** read (PR #34, merged 2026-06-27) resolves leverage when EBITDA is
+    untaggable in XBRL — the MVST case, where no clean total D&A is tagged so net-debt/EBITDA is UNKNOWN.
+    OCF carries the D&A add-back and is reliably tagged, computed from already-extracted components on the
+    same EDGAR provenance, fail-loud (UNKNOWN names no-OCF / OCF<=0 / no-net-debt), labelled 'OCF basis,
+    not EBITDA'; pure-display (no gate/ranker/scoring reads net-leverage). *Verified ruff + mypy --strict
+    (66) + pytest 209 incl. a MVST-shaped test (EBITDA UNKNOWN, net-debt/OCF resolves); real run shows
+    net-debt/OCF=1.5 where net-debt/EBITDA is UNKNOWN. Populates on a name's next screen run.* *Verified:
     VRRM 5→3 / EPAM 3→1 directional flags (the contradictory buy+sell on rating context gone, single
     'recommendation' remains); snippets clean ('…Phase…', '~$71M…'); MVST P/E → N/A; FUBO 12.1x renders
     with the amber distortion caveat (live screenshot + node render). Regression tests: rating-context
@@ -656,6 +663,15 @@ Each line: *what it does* — *verified how*.
   *Verified: `mypy --strict` (66 files) + 208 tests green incl. 3 new `test_config.py` cases; real run
   showed the default anchor loads a repo-root `.env`, flows through `python -m vinci`, and a
   pre-set/CI value wins over the file. Onboarding steps added to docs/engineering.md.*
+- **Progress observability on the long batch loops (`vinci/progress.py`, PR #33, merged 2026-06-27).**
+  `ingest_prices`, `screen_universe`, and `run_weekly`/`run_monthly` were silent, so a *slow* run was
+  indistinguishable from a *hung* one without `lsof`/`sample` forensics. An opt-in `ProgressReporter`
+  now emits `<label> <done>/<total> · <rate>/min · ETA <eta>` to **stderr** (stdout stays clean for the
+  parsable summary) on the first / every-step / final item; the `refresh`/`screen`/`run-weekly`/
+  `run-monthly` CLI commands wire it. Library default is silent (callers opt in), so it's decision-path-
+  and test-neutral. *Verified ruff + mypy --strict (67) + pytest 219 incl. 11 new cases; adversarially
+  reviewed (4 lenses) then mutation-tested — stripping the cadence gate / flipping the sink to stdout
+  each fail their pinning test.*
 - **Read-only ops dashboard** (`frontend/`, static; `frontend/build.py` snapshot mirror) — a
   no-backend viewer over the COMMITTED snapshots: overview + the **validation-gate spread** (honest
   0-resolved), ingestion/universe health, the overshoot screen, the **ranked queue with per-name
