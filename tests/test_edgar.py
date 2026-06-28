@@ -265,6 +265,9 @@ def test_net_debt_prefers_consolidated_total_over_partial_decomposition() -> Non
     artifact = compute_fundamental_snapshot("0001760689", _mvst_like_facts(with_combined_tag=False))
     assert artifact.net_debt.value == pytest.approx(13_227_000.0 - 126_129_000.0)  # −112_902_000
     assert artifact.net_debt.value is not None and artifact.net_debt.value < 0
+    # ...and the downstream net-debt/OCF inherits that negative sign — the −1.5x-style artifact the
+    # fix removes (here −2.8x on the illustrative $40M OCF). Both ends asserted ⇒ the full flip.
+    assert artifact.net_debt_to_ocf.value is not None and artifact.net_debt_to_ocf.value < 0
 
 
 def test_all_unknown_snapshot_is_graceful() -> None:
