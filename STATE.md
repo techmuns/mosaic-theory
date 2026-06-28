@@ -255,7 +255,22 @@ Each line: *what it does* — *verified how*.
     same EDGAR provenance, fail-loud (UNKNOWN names no-OCF / OCF<=0 / no-net-debt), labelled 'OCF basis,
     not EBITDA'; pure-display (no gate/ranker/scoring reads net-leverage). *Verified ruff + mypy --strict
     (66) + pytest 209 incl. a MVST-shaped test (EBITDA UNKNOWN, net-debt/OCF resolves); real run shows
-    net-debt/OCF=1.5 where net-debt/EBITDA is UNKNOWN. Populates on a name's next screen run.* *Verified:
+    net-debt/OCF=1.5 where net-debt/EBITDA is UNKNOWN. Populates on a name's next screen run.*
+    (4a) **net-debt EXTRACTION fix (2026-06-28, PR open — not merged)** — the −1.5x net-debt/OCF the OCF
+    work surfaced for MVST was an EXTRACTION ARTIFACT, not real net-cash. `compute_fundamental_snapshot`
+    summed only the two `LongTermDebt*` lines, so MVST's debt booked under convertible / notes /
+    short-term / subordinated tags was invisible (only $13.2M of ~$138.8M seen) → net-debt = 13.2 − 126.1
+    = **−$112.9M false net-cash**, which flipped BOTH net-debt/EBITDA and net-debt/OCF (they share the
+    numerator) negative. Fix: `concepts.py` adds a `total_debt` concept
+    (`DebtLongtermAndShorttermCombinedAmount`) tried FIRST — the filer's own consolidated long+short
+    total, so no partial-sum and no double-count — falling back to the noncurrent+current decomposition
+    only when it is absent. *Verified
+    on MVST's REAL tag values (from the SEC companyfacts diagnostic): net-debt −$112.9M → **+$12.6M**
+    (recovers $125.5M of debt), net-debt/OCF sign flips −→+; regression test (combined-tag present vs
+    absent) proves the sign flip AND that the combined total is used outright, never summed with the
+    $13.2M LongTermDebt line; ruff + mypy --strict (67) + pytest 221 green. The LIVE universe re-screen
+    (data.sec.gov is blocked in-container) is the operator's `run-weekly`; same screen-time-cache caveat
+    as below — the corrected net-debt lands on re-screen, not on dossier re-assembly.* *Verified:
     VRRM 5→3 / EPAM 3→1 directional flags (the contradictory buy+sell on rating context gone, single
     'recommendation' remains); snippets clean ('…Phase…', '~$71M…'); MVST P/E → N/A; FUBO 12.1x renders
     with the amber distortion caveat (live screenshot + node render). Regression tests: rating-context

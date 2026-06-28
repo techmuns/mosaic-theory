@@ -22,7 +22,7 @@ from typing import Any, cast
 from pydantic import BaseModel
 
 from vinci.config import Config, get_config
-from vinci.edgar.concepts import extract_points, latest_annual, latest_instant
+from vinci.edgar.concepts import ConceptPoint, extract_points, latest_annual, latest_instant
 from vinci.netcache import CachedHttp, HttpError
 from vinci.resolver.index import pad_cik
 from vinci.schemas.envelope import DataField, SourceTier
@@ -112,6 +112,7 @@ def compute_fundamental_snapshot(cik10: str, facts: dict[str, Any]) -> Fundament
     ocf = latest_annual(extract_points(facts, "operating_cash_flow"))
     capex = latest_annual(extract_points(facts, "capex"))
     eps = latest_annual(extract_points(facts, "eps_diluted"))
+    total_debt = latest_instant(extract_points(facts, "total_debt"))
     ltd = latest_instant(extract_points(facts, "long_term_debt"))
     dc = latest_instant(extract_points(facts, "debt_current"))
     cash = latest_instant(extract_points(facts, "cash"))
@@ -129,12 +130,25 @@ def compute_fundamental_snapshot(cik10: str, facts: dict[str, Any]) -> Fundament
     else:
         ebitda = _unknown_f("no operating_income/D&A")
 
-    debt_total = (ltd.value if ltd else 0.0) + (dc.value if dc else 0.0)
+    # Gross debt: PREFER the filer's own consolidated long-term+short-term total. The
+    # noncurrent+current decomposition sees only the two "LongTermDebt*" lines, so a filer that
+    # books debt under convertible / notes / short-term / subordinated concepts (the MVST case)
+    # gets a PARTIAL sum that understates gross debt and silently flips net-debt to a false
+    # net-cash. The combined tag is the filer's own total — no partial-sum, no double-count — so it
+    # wins outright; we fall back to the decomposition only when it is absent.
+    debt_pt: ConceptPoint | None
+    if total_debt is not None:
+        debt_pt, debt_total = total_debt, total_debt.value
+    elif ltd or dc:
+        debt_pt = max((p for p in (ltd, dc) if p is not None), key=lambda p: p.filed)
+        debt_total = (ltd.value if ltd else 0.0) + (dc.value if dc else 0.0)
+    else:
+        debt_pt, debt_total = None, 0.0
+
     net_debt_val: float | None = None
-    if (ltd or dc) and cash:
+    if debt_pt is not None and cash:
         net_debt_val = debt_total - cash.value
-        filed = max(p.filed for p in (ltd, dc, cash) if p)
-        net_debt = _present_f(debt_total - cash.value, filed)
+        net_debt = _present_f(debt_total - cash.value, max(debt_pt.filed, cash.filed))
     else:
         net_debt = _unknown_f("no debt/cash")
 
@@ -168,7 +182,7 @@ def compute_fundamental_snapshot(cik10: str, facts: dict[str, Any]) -> Fundament
         net_ocf = _present_f(net_debt_val / ocf.value, net_debt.as_of)
 
     eps_df = _present_f(eps.value, eps.filed) if eps else _unknown_f("no diluted EPS")
-    filed_dates = [p.filed for p in (op, da, ocf, capex, eps, ltd, dc, cash) if p]
+    filed_dates = [p.filed for p in (op, da, ocf, capex, eps, total_debt, ltd, dc, cash) if p]
     return FundamentalSnapshot(
         cik=cik10,
         op_income_sign=op_sign,

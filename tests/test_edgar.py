@@ -8,6 +8,7 @@ submissions).
 from __future__ import annotations
 
 from datetime import date
+from typing import Any
 
 import pytest
 
@@ -218,6 +219,52 @@ def test_net_debt_to_ocf_resolves_when_ebitda_is_untaggable() -> None:
     assert "no EBITDA in XBRL" in (snap.net_leverage.note or "")
     # ...but net-debt/OCF resolves: net debt (250 - 70 = 180) / OCF (120) = 1.5
     assert snap.net_debt_to_ocf.value == pytest.approx(180.0 / 120.0)
+
+
+def _mvst_like_facts(*, with_combined_tag: bool) -> dict[str, Any]:
+    """MVST's real debt/cash tag structure (from the SEC companyfacts diagnostic). MVST books most
+    of its debt under convertible / notes / short-term / subordinated concepts, so the only
+    ``LongTermDebt*`` line the decomposition can see is a small $13.2M term piece — while the
+    filer's own consolidated ``DebtLongtermAndShorttermCombinedAmount`` is $138.8M. The OCF here is
+    a round, illustrative $40M (present only so net-debt/OCF resolves and its SIGN is observable);
+    the figures actually under test are the real debt and cash values."""
+    gaap: dict[str, Any] = {
+        "LongTermDebt": {"units": {"USD": [_instant("2025-12-31", 13_227_000.0, "2026-02-15")]}},
+        "CashAndCashEquivalentsAtCarryingValue": {
+            "units": {"USD": [_instant("2026-03-31", 126_129_000.0, "2026-04-15")]}
+        },
+        "NetCashProvidedByUsedInOperatingActivities": {
+            "units": {"USD": [_flow("ocf", "2025-12-31", "2025-01-01", 40_000_000.0, "2026-02-15")]}
+        },
+    }
+    if with_combined_tag:
+        gaap["DebtLongtermAndShorttermCombinedAmount"] = {
+            "units": {"USD": [_instant("2026-03-31", 138_769_000.0, "2026-04-15")]}
+        }
+    return {"facts": {"us-gaap": gaap}}
+
+
+def test_net_debt_prefers_consolidated_total_over_partial_decomposition() -> None:
+    """Regression for the MVST net-cash ARTIFACT. The noncurrent+current decomposition saw only the
+    $13.2M ``LongTermDebt`` line and missed the ~$125M booked under convertible / notes /
+    short-term / subordinated tags, so net-debt = 13.2M − 126.1M = −$112.9M — a FALSE net-cash that
+    flipped net-debt/OCF to a misleading negative (the dossier's −1.5x). Preferring the filer's own
+    combined-debt tag ($138.8M) gives net-debt = 138.8M − 126.1M = +$12.6M."""
+    fixed = compute_fundamental_snapshot("0001760689", _mvst_like_facts(with_combined_tag=True))
+    # FIXED: the consolidated total wins → modestly net-levered, not net-cash.
+    assert fixed.net_debt.value == pytest.approx(138_769_000.0 - 126_129_000.0)  # +12_640_000
+    assert fixed.net_debt.value is not None and fixed.net_debt.value > 0
+    # No double-count: the combined total is used OUTRIGHT, never summed with the $13.2M
+    # LongTermDebt line (that would be $152.0M). net-debt == 12.64M ⇒ debt_total == 138.769M.
+    # Downstream net-debt/OCF now carries the correct (positive) sign.
+    assert fixed.net_debt_to_ocf.value == pytest.approx(12_640_000.0 / 40_000_000.0)
+    assert fixed.net_debt_to_ocf.value is not None and fixed.net_debt_to_ocf.value > 0
+
+    # The previously-broken path — blind to the combined tag, exactly what the old allowlist saw —
+    # reproduces the false net-cash, proving the combined tag is what flips the sign.
+    artifact = compute_fundamental_snapshot("0001760689", _mvst_like_facts(with_combined_tag=False))
+    assert artifact.net_debt.value == pytest.approx(13_227_000.0 - 126_129_000.0)  # −112_902_000
+    assert artifact.net_debt.value is not None and artifact.net_debt.value < 0
 
 
 def test_all_unknown_snapshot_is_graceful() -> None:

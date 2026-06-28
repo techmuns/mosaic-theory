@@ -41,6 +41,13 @@ CONCEPT_ALIASES: dict[str, list[str]] = {
         "DepreciationAmortizationAndAccretionNet",
         "DepreciationAndAmortization",
     ],
+    # Consolidated long-term + short-term debt as ONE filer-reported tag. Tried FIRST in
+    # compute_fundamental_snapshot, ahead of the noncurrent+current decomposition below, because the
+    # decomposition only sees the two "LongTermDebt*" lines: a filer that books debt under
+    # convertible / notes / short-term / subordinated concepts (the MVST case) is invisible to it,
+    # so the sum silently understates gross debt and net-debt flips to a false net-cash. This tag is
+    # the filer's own combined total — no partial-sum, no double-count.
+    "total_debt": ["DebtLongtermAndShorttermCombinedAmount"],
     "long_term_debt": ["LongTermDebtNoncurrent", "LongTermDebt"],
     "debt_current": ["LongTermDebtCurrent", "DebtCurrent"],
     "cash": [
