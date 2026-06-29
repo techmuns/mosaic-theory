@@ -292,7 +292,15 @@ Each line: *what it does* — *verified how*.
     each labelled and given the FULL transcript budget (NOT split — the split starved the latest call's
     Q&A), so quarter-over-quarter posture is visible (MVST: both Q1-26 + Q4-25 calls, was only the
     latest). +6 tests. The decode-guard, maturity header-label/window, and full-budget fixes came from
-    a 4-agent critical/high audit run before merge.* *Verified:
+    a 4-agent critical/high audit run before merge. FOLLOW-UP (PR #41, source-aware figure trace):
+    post-#38 the LLM cites management's transcript-disclosed figures ($48.2M GAAP profit, 536 MWh)
+    bound to the transcript ref, which ALL tripped UNTRACEABLE (the tracer checked the structured
+    layer only). `check_point` is now SOURCE-AWARE — a number cited to the TRANSCRIPT earns a soft
+    'TRANSCRIPT-FIGURE … verify against the call' note (the point is kept), while one cited to a
+    STRUCTURED ref that lacks it still hard-flags UNTRACEABLE (a real source-misbinding); this also
+    sharpens UNTRACEABLE to mean structured-data fabrication/misbinding. +1 test. Verified on the
+    stored MVST synthesis (68b2a7e): '$48.2M' → soft note, '536' (mis-bound to Income Statement) →
+    stays UNTRACEABLE, FALSE-BALANCE/UNRECONCILED unchanged.* *Verified:
     VRRM 5→3 / EPAM 3→1 directional flags (the contradictory buy+sell on rating context gone, single
     'recommendation' remains); snippets clean ('…Phase…', '~$71M…'); MVST P/E → N/A; FUBO 12.1x renders
     with the amber distortion caveat (live screenshot + node render). Regression tests: rating-context

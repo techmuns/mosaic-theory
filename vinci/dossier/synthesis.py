@@ -5,7 +5,8 @@ and forced through a tool whose schema is the verdict-free :class:`Synthesis` sh
 field for a conclusion, so it cannot render one. Its output is then validated, not trusted:
 
 - every bull/bear point must cite a ``source_ref`` that exists in the input (uncited → flagged);
-- every number must trace to a number present in the mechanical layer (untraceable → flagged);
+- every number must trace to the mechanical layer (untraceable → flagged), unless cited to the
+  earnings-call transcript, where a prose figure earns a soft 'verify against the call' note;
 - twin analogues must be source-bound or tagged ``[LLM-suggested, unverified]``, and never numeric;
 - the whole output is linted for directional/recommendation language and flagged for human review.
 
@@ -33,6 +34,12 @@ _UNVERIFIED = "[LLM-suggested, unverified]"
 # unit renderings an LLM uses for the same stored number (fraction↔%, raw↔K/M/B) — for number-trace
 _TRACE_SCALES = (1.0, 1e2, 1e-2, 1e3, 1e-3, 1e6, 1e-6, 1e9, 1e-9)
 _NUM = re.compile(r"-?\d[\d,]*\.?\d+|-?\d+")
+# A point's source_ref pointing at the earnings-call TRANSCRIPT (verbatim prose) rather than a
+# structured CIQ cell. A figure cited to the transcript is NOT in the mechanical layer's number
+# universe, so it earns a soft 'verify-against-the-call' note — NOT a hard UNTRACEABLE, which
+# means a number cited to STRUCTURED data that lacks it (a real misbinding/fabrication).
+# The canonical ref is `CIQ transcript(s): <names>` (ciq_sheets.management_commentary).
+_TRANSCRIPT_REF = re.compile(r"transcript", re.IGNORECASE)
 # recommendation / verdict language — flagged for human review (the dossier frames, never concludes)
 _DIRECTIONAL = re.compile(
     r"\b(buy|sell|overweight|underweight|recommend\w*|conviction|undervalued|overvalued|"
@@ -418,8 +425,19 @@ def _validate(synth: Synthesis, mech: MechanicalLayer) -> tuple[Synthesis, list[
                 f"MISMATCH {where}: '{_snip(p.claim, 55)}' asserts missing/UNKNOWN data yet cites "
                 "a PRESENT field — move to key_unknowns, don't source-bind it"
             )
+        ref_is_transcript = bool(_TRANSCRIPT_REF.search(p.source_ref))
         for n in _floats(p.claim):
-            if not _num_traces(n):
+            if _num_traces(n):
+                continue
+            if ref_is_transcript:
+                # the figure lives in the cited call's prose, not the structured layer — route it to
+                # human verification; don't brand a sourced number untraceable (that would gut a
+                # high-value transcript-only point, e.g. 'the GAAP profit is a non-cash artifact').
+                flags.append(
+                    f"TRANSCRIPT-FIGURE '{n:g}' in {where}: '{_snip(p.claim)}' — from the cited "
+                    "earnings call, not the structured facts; verify against the call"
+                )
+            else:
                 flags.append(f"UNTRACEABLE figure '{n:g}' in {where}: '{_snip(p.claim)}'")
         return p.model_copy(update={"cited": cited})
 
