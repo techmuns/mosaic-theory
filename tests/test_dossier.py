@@ -324,6 +324,10 @@ def test_directional_lint_exempts_reported_posture_not_verdicts() -> None:
         "this is a low-conviction long",
         "we recommend buying the stock",
         "our recommendation is to sell",  # narrow rec-arm must NOT swallow a genuine verdict
+        # the #45-audit CRITICAL holes: a verdict near analyst/consensus + "recommendation" wording
+        "Consensus aside, we buy now before any recommendation lands",  # was swallowed by broad arm
+        "Our recommendation is a buy (initiate now)",  # was swallowed by reversed arm
+        "Final recommendation: hold (await catalyst)",
         "our highest-conviction idea this year",
         "we rate it Outperform on the fundamentals",
     ]:
@@ -370,6 +374,10 @@ def test_unreconciled_accepts_falling_absolute_ebitda() -> None:
     negation = "EBITDA margin fell to 10%, a real deterioration, not just a falling margin"
     _, ok3, _ = syn.synthesize(_minimal_mech(), llm=_FakeLlm(pay(negation)), ticker="X", name="X")
     assert not any("UNRECONCILED" in f for f in ok3)
+    # #45-audit HIGH fix: weak tokens must NOT over-suppress (easily / to-2024 aren't reconciles)
+    weak = "EBITDA margin fell to 10%; absolute EBITDA gains are easily reversed next year"
+    _, bad2, _ = syn.synthesize(_minimal_mech(), llm=_FakeLlm(pay(weak)), ticker="X", name="X")
+    assert any("UNRECONCILED" in f for f in bad2)  # 'easily' is not a movement-verb reconciliation
 
 
 def test_claim_figures_skips_calendar_labels() -> None:
@@ -389,6 +397,9 @@ def test_twin_numbers_skips_proper_noun_digits() -> None:
     assert syn._twin_numbers("COVID-19 reopening analogue") == set()
     assert syn._twin_numbers("recovered 50% on the rebound") == {"50"}  # free-standing figure
     assert "3.2" in syn._twin_numbers("framed as a Phase 3.2 timing gap")  # free-standing decimal
+    # #45-audit fix: a UNIT-SUFFIXED figure must still be caught (old after.isalpha() dropped it)
+    assert syn._twin_numbers("traded at a 1.5x multiple") == {"1.5"}
+    assert syn._twin_numbers("a 200M run-rate and 50bps of margin") == {"200", "50"}
 
 
 def test_anchors_suppressed_when_claim_acknowledges_distortion() -> None:
@@ -408,10 +419,15 @@ def test_anchors_suppressed_when_claim_acknowledges_distortion() -> None:
             "decisive_question": {"question": "?", "evidence_for": [], "evidence_against": []},
             "twin_reference_cases": [], "key_unknowns": [],
         }
+    # #45-audit: ack-guard is negation-aware — 'NOT one-time' while anchoring on cheap P/E is the
+    # trap, so it MUST still flag
+    denied = "the P/E looks cheap here, and importantly this charge is not one-time"
     _, ack_flags, _ = syn.synthesize(mech, llm=_FakeLlm(pay(acks)), ticker="X", name="X")
     _, anc_flags, _ = syn.synthesize(mech, llm=_FakeLlm(pay(anchors)), ticker="X", name="X")
+    _, den_flags, _ = syn.synthesize(mech, llm=_FakeLlm(pay(denied)), ticker="X", name="X")
     assert not any("ANCHORS-ON-DISTORTED" in f for f in ack_flags)  # warns of distortion -> off
     assert any("ANCHORS-ON-DISTORTED" in f for f in anc_flags)      # trough-anchor -> still fires
+    assert any("ANCHORS-ON-DISTORTED" in f for f in den_flags)      # "not one-time" -> still fires
 
 
 def test_hetero_suppressed_when_gap_resolved_to_earned() -> None:
@@ -430,10 +446,15 @@ def test_hetero_suppressed_when_gap_resolved_to_earned() -> None:
             "decisive_question": {"question": "?", "evidence_for": [], "evidence_against": []},
             "twin_reference_cases": [], "key_unknowns": [],
         }
+    # #45-audit: negation-aware — 'NOT earned … cheap vs peers' IS the clean-benchmark misread the
+    # gate must catch, so it MUST still fire
+    denied = "the discount is not earned; it screens cheap vs the peer median"
     _, earned_flags, _ = syn.synthesize(mech, llm=_FakeLlm(pay(earned)), ticker="X", name="X")
     _, prem_flags, _ = syn.synthesize(mech, llm=_FakeLlm(pay(premium)), ticker="X", name="X")
+    _, den_flags, _ = syn.synthesize(mech, llm=_FakeLlm(pay(denied)), ticker="X", name="X")
     assert not any("HETEROGENEOUS-BENCHMARK" in f for f in earned_flags)  # earned/value-trap -> off
     assert any("HETEROGENEOUS-BENCHMARK" in f for f in prem_flags)        # directional -> fires
+    assert any("HETEROGENEOUS-BENCHMARK" in f for f in den_flags)         # 'not earned' -> fires
 
 
 def test_figure_trace_dedups_decisive_mirror() -> None:
@@ -452,6 +473,42 @@ def test_figure_trace_dedups_decisive_mirror() -> None:
     }
     _, flags, _ = syn.synthesize(_minimal_mech(), llm=_FakeLlm(payload), ticker="X", name="X")
     assert len([f for f in flags if "999" in f]) == 1  # decisive mirror deduped, not double-flagged
+
+
+def test_figure_trace_dedup_keys_on_signed_value_and_type() -> None:
+    """#45-audit HIGH fix: the dedup must NOT collapse +N/-N (distinct facts) or let a soft
+    TRANSCRIPT-FIGURE on one point swallow a hard UNTRACEABLE on another of the same magnitude."""
+    eod = "EOD name-IWM 180d"
+    tref = "CIQ transcript(s): Acme Q1 2026 Earnings Call.rtf"
+    mech = _minimal_mech().model_copy(
+        update={"management_commentary": ds.Sourced.present("posture", source_ref=tref)}
+    )
+    # +777 (bull) and -777 (decisive.against) are DIFFERENT facts — both must flag (no abs collapse)
+    sign = {
+        "bull_points": [{"claim": "headcount grew to 777 people", "source_ref": eod}],
+        "bear_points": [],
+        "decisive_question": {
+            "question": "?", "evidence_for": [],
+            "evidence_against": [{"claim": "margin fell 777 bps", "source_ref": eod}],
+        },
+        "twin_reference_cases": [], "key_unknowns": [],
+    }
+    _, f_sign, _ = syn.synthesize(mech, llm=_FakeLlm(sign), ticker="X", name="X")
+    assert len([f for f in f_sign if "777" in f]) == 2  # +777 and 777bps both flag
+    # a soft TRANSCRIPT-FIGURE (bull, transcript ref) must NOT suppress a hard UNTRACEABLE on a
+    # decisive structured-cited figure of the same value
+    xtype = {
+        "bull_points": [{"claim": "the call cited 678 in savings", "source_ref": tref}],
+        "bear_points": [],
+        "decisive_question": {
+            "question": "?", "evidence_for": [],
+            "evidence_against": [{"claim": "a 678 unit shortfall", "source_ref": eod}],
+        },
+        "twin_reference_cases": [], "key_unknowns": [],
+    }
+    _, f_xt, _ = syn.synthesize(mech, llm=_FakeLlm(xtype), ticker="X", name="X")
+    assert any("TRANSCRIPT-FIGURE '678'" in f for f in f_xt)  # soft note on the bull (transcript)
+    assert any("UNTRACEABLE figure '678'" in f for f in f_xt)  # hard flag on decisive — kept
 
 
 def test_anchors_on_distorted_pe_flags_bull_case_leaning_on_the_multiple() -> None:

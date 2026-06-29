@@ -350,8 +350,16 @@ Each line: *what it does* — *verified how*.
     letter-bound identifier digits (GLP-1) but keeps a free-standing figure (MVST 3.2). **render:** the
     ⚠ Flags section moves from the TOP to the BOTTOM (next to key_unknowns) — a closing 'what to
     verify' checklist, not the headline. *Verified deterministically (re-validating each stored
-    synthesis under the new code): 65 → 37 flags, 28 removed, 0 added, no genuine flag touched (CNXC
-    trough-anchor, MVST 536/48 misbindings, FUBO peer-comp preserved); FUBO 11→7, MVST 8→6. +8 tests;
+    synthesis under the new code): 65 → 40 flags, 25 removed, 0 added, no genuine flag touched (CNXC
+    trough-anchor, MVST 536/48 misbindings, FUBO peer-comp preserved); FUBO 11→7, MVST 8→6. A pre-merge
+    3-agent finder audit then caught + fixed bugs THIS cleanup had introduced: 2 CRITICAL (the broadened
+    `_RATING_CTX` consensus/reversed arms swallowed genuine "we buy … recommendation" / "recommendation
+    is a buy (…)" verdicts — re-tightened, longer-arm-first ordering); 2 HIGH (the figure-dedup keyed on
+    `abs()` collapsed ±N and let a soft note swallow a hard UNTRACEABLE — now keyed on signed value +
+    flag-type; `_ABS_RECON` `eas\w*`/`to \d` over-suppressed UNRECONCILED — narrowed); 3 MEDIUM
+    (`_twin_numbers` `after.isalpha()` dropped real `1.5x`/`200M` figures; `_DISTORTION_ACK`/
+    `_EARNED_RESOLVED` were negation-blind). The signed/cross-type dedup fix correctly RESTORED 3
+    genuine flags the abs-key was hiding (40 not 37). +~15 tests incl. the frozen adversarial battery;
     ruff + mypy --strict + pytest green. Lands on each name's next re-assembly.* FOLLOW-UP CANDIDATE
     (not built): the figure flags + leverage caveat could be MECHANICALLY RESOLVED from the
     transcript we already feed (cross-check the cited number against the call text → auto-repoint a
