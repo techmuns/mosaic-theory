@@ -291,6 +291,11 @@ class CiqBundle:
             return next((w for w in cands if w.freq == freq), None) or cands[0]
         return cands[0]
 
+    def all_workbooks(self, kind: str) -> tuple[CiqWorkbook, ...]:
+        """Every workbook of ``kind`` (vs :meth:`workbook`, which returns one) — for the
+        earnings-call transcripts, where a name commonly has more than one quarter on file."""
+        return tuple(w for w in self.workbooks if w.kind == kind)
+
     def sheet(self, kind: str, sheet_name: str, *, freq: str | None = None) -> list[list[Any]]:
         """Parsed rows at a (kind, sheet) address, or fail loud :class:`CiqUnavailableError`."""
         wb = self.workbook(kind, freq=freq)

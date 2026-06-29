@@ -441,8 +441,12 @@ def liquidity_covenant_flags(bundle: CiqBundle) -> Sourced[str]:
         typ = str(rows[i][1]).strip() if len(rows[i]) > 1 else ""
         principal = clean_num(rows[i][2]) if len(rows[i]) > 2 else None
         coupon = str(rows[i][3]).strip() if len(rows[i]) > 3 else ""
+        # col 5 = 'Maturity' (an Excel serial); surface it as 'Due YYYY' so _nearest_maturity can
+        # parse the nearest refinancing wall instead of failing loud UNKNOWN.
+        mdate = excel_date(clean_num(rows[i][5])) if len(rows[i]) > 5 else None
         amt = f"{principal:,.0f}" if principal is not None else "undrawn/–"
-        insts.append(f"{desc} ({typ}) {amt} @ {coupon}")
+        due = f" Due {mdate.year}" if mdate else ""
+        insts.append(f"{desc} ({typ}) {amt} @ {coupon}{due}")
     if not insts:
         return Sourced.unknown(note="no debt instruments parsed")
     return Sourced.present("; ".join(insts), source_ref="CIQ Financials→Capital Structure Details")
@@ -823,32 +827,42 @@ _SYNTHESIS_TRANSCRIPT_BUDGET = 12_000
 
 
 def transcript_for_synthesis(bundle: CiqBundle) -> str | None:
-    """A mechanically-bounded transcript slice for the synthesis LLM INPUT ONLY (never embedded in
-    the dossier): boilerplate stripped (operator intro / forward-looking-statements legalese /
-    estimates table / TOC, via ``_transcript_prose``), prepared-remarks + Q&A truncated to a fixed
-    char budget. A structural cut (sections + budget), NOT a topic/relevance selection —
-    name-agnostic (no per-name topics). None when there is no transcript or it can't be parsed."""
-    wb = bundle.workbook("transcript")
-    if wb is None:
+    """Mechanically-bounded transcript slices for the synthesis LLM INPUT ONLY (never embedded in
+    the dossier): boilerplate stripped (operator intro / forward-looking legalese / estimates / TOC,
+    via ``_transcript_prose``), prepared remarks + Q&A. ALL earnings-call transcripts on file are
+    included (so quarter-over-quarter posture is visible), each LABELLED by call and capped to an
+    EQUAL share of the char budget (so two calls don't double the prompt). A structural cut, NOT a
+    topic/relevance selection. None when there is no transcript or none can be parsed."""
+    wbs = bundle.all_workbooks("transcript")
+    if not wbs:
         return None
-    try:
-        return _transcript_prose(read_text(wb.path, wb.fmt))[:_SYNTHESIS_TRANSCRIPT_BUDGET]
-    except CiqParseError:
-        return None
+    per = max(1, _SYNTHESIS_TRANSCRIPT_BUDGET // len(wbs))
+    slices: list[str] = []
+    for wb in wbs:
+        try:
+            prose = _transcript_prose(read_text(wb.path, wb.fmt))[:per]
+        except CiqParseError:
+            continue
+        if prose.strip():
+            slices.append(f"--- {wb.path.name} ---\n{prose}")
+    return "\n\n".join(slices) if slices else None
 
 
 def management_commentary(bundle: CiqBundle) -> Sourced[str]:
-    """A POINTER to the earnings-call transcript — NOT an embedded or machine-selected excerpt. The
-    human reads it in full for management posture/tone; the machine points, it does not curate
+    """A POINTER to the earnings-call transcript(s) — NOT an embedded/machine-selected excerpt. The
+    human reads them in full for management posture/tone; the machine points, it does not curate
     transcript content (a machine-chosen 'salient extract' is the relevance judgment this project
-    forbids; the full embed is a duplicate that bloated the synthesis prompt)."""
-    wb = bundle.workbook("transcript")
-    if wb is None:
+    forbids; the full embed is a duplicate that bloated the synthesis prompt). All calls on file are
+    fed to the synthesis LLM (which cites them where a point rests on posture); this is the human's
+    full-read pointer to them."""
+    wbs = bundle.all_workbooks("transcript")
+    if not wbs:
         return Sourced.missing(note=f"no earnings-call transcript for {bundle.ticker} — pull it")
+    names = "; ".join(wb.path.name for wb in wbs)
     return Sourced.present(
-        f"Earnings-call transcript on file — read {wb.path.name} in full for management posture "
-        "(pointer only; the machine does not curate or embed transcript content)",
-        source_ref=f"CIQ transcript {wb.path.name}",
+        f"{len(wbs)} earnings-call transcript(s) on file — read in full for management posture: "
+        f"{names} (pointer only; the synthesis cites them, the machine does not curate an excerpt)",
+        source_ref=f"CIQ transcript(s): {names}",
     )
 
 

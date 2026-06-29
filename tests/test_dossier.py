@@ -639,6 +639,33 @@ def _est_bundle(sheets: _Sheets) -> ciq.CiqBundle:
     return ciq.CiqBundle(ticker="X", workbooks=(wb,), _cache={p: sheets})
 
 
+def test_liquidity_flags_surface_maturity_wall() -> None:
+    """The CIQ Capital Structure 'Maturity' column (an Excel serial) is surfaced as 'Due YYYY' so
+    _nearest_maturity reports the nearest refinancing wall instead of failing loud UNKNOWN."""
+    # maturity serials: 46170 -> 2026-05-28, 46418 -> 2027-01-31 (the 'Maturity' column = col 5)
+    rows = [
+        ["Description", "Type", "Principal", "Coupon", "Float", "Maturity", "Sr"],
+        ["Convertible Loan", "Term Loans", 13.0, "NA", "SOFR+9.75%", 46170.0, "Senior"],
+        ["Convertible Bond", "Bonds and Notes", 42.0, "3.0%", "NA", 46418.0, "Senior"],
+    ]
+    bundle = _fin_bundle({"Capital Structure Details": rows}, freq="annual")
+    liq = cs.liquidity_covenant_flags(bundle)
+    assert "Due 2026" in (liq.value or "") and "Due 2027" in (liq.value or "")
+    assert dm._nearest_maturity(liq) == "nearest maturity wall: 2026"
+
+
+def test_all_workbooks_lists_every_match() -> None:
+    """all_workbooks lists EVERY workbook of a kind (both earnings calls) where workbook() returns
+    one — so the synthesis can read more than the latest quarter on file."""
+    f = ciq.CiqFormat.UNKNOWN
+    t1 = ciq.CiqWorkbook(kind="transcript", path=Path("/fake/Q1.rtf"), fmt=f, freq=None)
+    t2 = ciq.CiqWorkbook(kind="transcript", path=Path("/fake/Q4.rtf"), fmt=f, freq=None)
+    fin = ciq.CiqWorkbook(kind="financials", path=Path("/fake/F.xls"), fmt=f, freq="annual")
+    b = ciq.CiqBundle(ticker="X", workbooks=(t1, t2, fin))
+    assert len(b.all_workbooks("transcript")) == 2 and b.workbook("transcript") is t1
+    assert b.all_workbooks("nope") == ()
+
+
 def _eps_pt(year: int, val: float) -> dict[str, typing.Any]:
     return {"end": f"{year}-12-31", "start": f"{year}-01-01", "val": val,
             "filed": f"{year + 1}-02-15", "fp": "FY", "form": "10-K"}
