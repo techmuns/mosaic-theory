@@ -487,20 +487,21 @@ def _eps_caveat_flags(record: DataRecord, bundle: CiqBundle, *, eps_resolved: bo
     return out
 
 
-def _leverage_basis_flag(record: DataRecord) -> str | None:
-    """Net debt/EBITDA is computed on CONSOLIDATED GAAP EBITDA. Management and credit covenants
-    typically define leverage on ADJUSTED EBITDA (a larger denominator → a lower ratio); that
-    non-GAAP reconciliation lives in the earnings release/transcript (UNAVAILABLE), so the
-    covenant-basis leverage is not surfaced. Flag the basis — neither is wrong, they differ by
-    denominator; the human must not read the GAAP ratio as the covenant ratio."""
-    lev = record.fundamentals.net_leverage
-    if not lev.is_known or lev.value is None:
+def _leverage_basis_flag(net_lev: Sourced[float]) -> str | None:
+    """The SHOWN net-debt/EBITDA (CIQ-reported or EDGAR GAAP EBITDA) is not the covenant
+    basis: management and credit covenants typically define leverage on ADJUSTED EBITDA (a larger
+    denominator → a lower ratio); that non-GAAP reconciliation lives in the earnings
+    release/transcript (UNAVAILABLE). Flag the basis so the human doesn't read the reported ratio as
+    the covenant ratio. Reads the RESOLVED ratio (the value the dossier actually shows), not the raw
+    EDGAR record — so the flagged number can never disagree with the net-debt/EBITDA field."""
+    if net_lev.status is not SourceStatus.PRESENT or net_lev.value is None:
         return None
     return (
-        f"Net debt/EBITDA ({lev.value:.1f}x) is on consolidated GAAP EBITDA; management and credit "
-        f"covenants typically define leverage on adjusted EBITDA (a larger denominator → a lower "
-        f"ratio). That non-GAAP reconciliation lives in the earnings release/transcript (currently "
-        f"UNAVAILABLE) — do not read {lev.value:.1f}x as the covenant-basis leverage."
+        f"Net debt/EBITDA ({net_lev.value:.1f}x) is on REPORTED EBITDA (CIQ / consolidated GAAP), "
+        f"not the covenant basis; management and credit covenants typically define leverage on "
+        f"adjusted EBITDA (a larger denominator → a lower ratio), reconciled in the earnings "
+        f"release/transcript (currently UNAVAILABLE) — do not read {net_lev.value:.1f}x as the "
+        f"covenant-basis leverage."
     )
 
 
@@ -616,20 +617,71 @@ def _nearest_maturity(liquidity: Sourced[str]) -> str:
     return f"nearest maturity wall: {years[0]}"
 
 
+def _net_debt_to_ebitda(
+    bundle: CiqBundle, edgar_net_lev: Sourced[float]
+) -> tuple[Sourced[float], Sourced[float]]:
+    """Net-debt/EBITDA via a DETERMINISTIC source hierarchy — no judge, no manual reconciliation.
+    CIQ is the depth-stage authority: its Balance Sheet classifies the scattered instrument debt
+    (convertible / notes / short-term / subordinated) that EDGAR XBRL under-captures, so CIQ Net
+    Debt ÷ CIQ LTM EBITDA wins outright when present. Else the EDGAR XBRL screen figure as a clearly
+    LABELLED breadth fallback (itself fail-loud when its inputs are missing/inconsistent). Returns
+    ``(net_debt_to_ebitda, ciq_net_debt)`` — the latter feeds the survival readout."""
+    ciq_nd = ciq_sheets.net_debt(bundle)
+    ciq_eb = ciq_sheets.ltm_ebitda(bundle)
+    if ciq_nd.status is SourceStatus.PRESENT and ciq_eb.status is SourceStatus.PRESENT:
+        assert ciq_nd.value is not None and ciq_eb.value is not None
+        if ciq_eb.value <= 0:
+            return Sourced.unknown(
+                note=f"CIQ EBITDA ${ciq_eb.value:,.0f}M <= 0 — ratio meaningless"
+            ), ciq_nd
+        # bind BOTH periods (the bracket shows whether EBITDA is the LTM column or a stale FY, and
+        # whether net debt is the same period) — never a bare 'LTM' label the value may not have.
+        nd_p = (ciq_nd.source_ref or "").split("[")[-1].rstrip("]")
+        eb_p = (ciq_eb.source_ref or "").split("[")[-1].rstrip("]")
+        return Sourced.present(
+            round(ciq_nd.value / ciq_eb.value, 1),
+            source_ref=(
+                f"CIQ Net Debt ${ciq_nd.value:,.0f}M [{nd_p}] ÷ "
+                f"CIQ EBITDA ${ciq_eb.value:,.0f}M [{eb_p}]"
+            ),
+        ), ciq_nd
+    if edgar_net_lev.status is SourceStatus.PRESENT:
+        # carry the caveat in the SOURCE_REF (shown on a PRESENT fact) — the note is dropped
+        # by the renderer for PRESENT, so a note-only caveat would vanish from the dossier.
+        caveat = "breadth estimate — may under-capture scattered debt; pull CIQ"
+        return edgar_net_lev.model_copy(update={
+            "source_ref": f"{edgar_net_lev.source_ref}; {caveat}",
+            "note": f"EDGAR XBRL {caveat}",
+        }), ciq_nd
+    return Sourced.unknown(
+        note=f"no CIQ Net Debt/EBITDA; EDGAR {edgar_net_lev.note or 'UNKNOWN'} — pull CIQ"
+    ), ciq_nd
+
+
 def _survival_capacity(
     net_lev: Sourced[float], adj_lev: Sourced[str], fcf_sign: Sourced[float],
-    liquidity: Sourced[str],
+    liquidity: Sourced[str], *, net_debt: Sourced[float] | None = None,
 ) -> Sourced[str]:
     """Solvency as ONE block — net leverage + self-funding (FCF sign) + nearest refinancing wall —
     so survival can't be read as one quality metric among many. Each leg is present or fail-loud
-    UNKNOWN (itself a risk). Uses only already-derived EDGAR/CIQ facts; no new data source."""
+    UNKNOWN (itself a risk). ``net_debt`` (CIQ, $M) lets a non-formable ratio still report the known
+    balance-sheet position — a net-cash name is not a 'solvency risk'. No new data source."""
     present = SourceStatus.PRESENT
     parts: list[str] = []
     if net_lev.status is present and net_lev.value is not None:
-        lev = f"net-debt/EBITDA {net_lev.value:.1f}x (GAAP)"
+        basis = "CIQ" if "CIQ" in (net_lev.source_ref or "") else "GAAP"
+        lev = f"net-debt/EBITDA {net_lev.value:.1f}x ({basis})"
+        if net_lev.value < 0:
+            lev += " → net cash"
         if adj_lev.status is present and adj_lev.value:
             lev += f"; {adj_lev.value}"
         parts.append(lev)
+    elif net_debt is not None and net_debt.status is present and net_debt.value is not None:
+        # ratio not formable, but the CIQ balance-sheet position IS known — show it rather than a
+        # bare 'solvency risk', which a net-cash name is not.
+        nd = net_debt.value
+        pos = f"net cash ${-nd:,.0f}M" if nd < 0 else f"net debt ${nd:,.0f}M"
+        parts.append(f"{pos} (CIQ); net-debt/EBITDA N/A ({net_lev.note or 'not derivable'})")
     else:
         parts.append(
             f"net-debt/EBITDA UNKNOWN ({net_lev.note or 'not derivable'}) — solvency risk"
@@ -644,7 +696,8 @@ def _survival_capacity(
     parts.append(_nearest_maturity(liquidity))
     return Sourced.present(
         " | ".join(parts),
-        source_ref="EDGAR net-debt/EBITDA + FCF sign + CIQ Capital Structure (survival capacity)",
+        source_ref="CIQ Net Debt ÷ CIQ LTM EBITDA (EDGAR XBRL breadth fallback) + FCF sign "
+        "+ CIQ Capital Structure (survival capacity)",
     )
 
 
@@ -656,7 +709,13 @@ def _quality(
     """``fcf`` / ``margin`` / ``trajectory`` arrive already resolved against the EDGAR fallback (CIQ
     primary; EDGAR fills only an empty CIQ field) — assembled in :func:`assemble_mechanical`."""
     f = record.fundamentals
-    net_lev = _sourced(f.net_leverage, source_ref="EDGAR XBRL net-debt/EBITDA (screen data-record)")
+    edgar_net_lev = _sourced(
+        f.net_leverage, source_ref="EDGAR XBRL net-debt/EBITDA (screen data-record)"
+    )
+    # CIQ-primary deterministic hierarchy: CIQ Net Debt ÷ CIQ LTM EBITDA wins; EDGAR is the labelled
+    # breadth fallback. ``ciq_nd`` (CIQ Net Debt) also feeds the survival readout when a ratio can't
+    # form. EDGAR net-debt under-captures scattered debt (the MVST case) — never the shown figure.
+    net_lev, ciq_nd = _net_debt_to_ebitda(bundle, edgar_net_lev)
     net_ocf = _sourced(
         f.net_debt_to_ocf,
         source_ref="EDGAR XBRL net-debt/OCF (screen data-record) — OCF basis, not EBITDA",
@@ -670,7 +729,9 @@ def _quality(
         net_debt_to_ebitda=net_lev,
         net_debt_to_ocf=net_ocf,
         net_debt_to_ebitda_adjusted=adj_leverage,
-        survival_capacity=_survival_capacity(net_lev, adj_leverage, fcf_sign, liquidity),
+        survival_capacity=_survival_capacity(
+            net_lev, adj_leverage, fcf_sign, liquidity, net_debt=ciq_nd
+        ),
         interest_coverage=ciq_sheets.interest_coverage(bundle),
         share_count_trend=(
             _share_count_trend(edgar, record.identity.cik, reference_date)
@@ -765,7 +826,10 @@ def assemble_mechanical(
     if pe_recon is not None:
         flags.append(pe_recon[0])
     flags += _eps_caveat_flags(record, bundle, eps_resolved=adj_eps.status is SourceStatus.PRESENT)
-    # the GAAP-leverage caveat is an open warning only while the covenant basis isn't shown
-    if adj_lev.status is not SourceStatus.PRESENT and (lev := _leverage_basis_flag(record)):
+    # the reported-leverage caveat is an open warning only while the covenant basis isn't shown;
+    # reads the RESOLVED ratio so the flag can't quote a different number than the field shows
+    if adj_lev.status is not SourceStatus.PRESENT and (
+        lev := _leverage_basis_flag(mech.quality.net_debt_to_ebitda)
+    ):
         flags.append(lev)
     return mech, flags
