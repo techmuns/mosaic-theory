@@ -53,14 +53,24 @@ _MISSING_CLAIM = re.compile(
     r"absent|undisclosed|MISSING|UNKNOWN)\b",
     re.IGNORECASE,
 )
-# analyst-RATING context: "buy"/"sell" here describe the CONSENSUS (a fact surfaced as context),
-# not the dossier concluding. Redact these spans before the directional lint so it stops flagging
-# both 'buy' and 'sell' on a single sentence that merely reports the sell-side rating.
+# analyst-RATING / external-posture context: a directional-looking token here REPORTS the consensus
+# or names a domain metric — it is NOT the dossier concluding. Redact these spans before the
+# directional lint. Covers buy/sell-side; a parenthetical rating ("Outperform (2.00)"); an
+# N=buy…sell scale; buy/sell before "scale"/"rating"; the CPG **buy-rate** velocity metric; a
+# {rating-word} + rating/recommendation ("Outperform rating", "Buy recommendation"); consensus/
+# analyst + recommendation; "recommendation (source)"; and conviction DESCRIBING an external/analyst
+# target — NOT a 'high/low-conviction <verdict>', which still flags. (Validated adversarially.)
 _RATING_CTX = re.compile(
     r"\b(?:buy|sell)-side\b"                                # sell-side / buy-side
     r"|\b(?:buy|sell|hold|outperform|underperform|overweight|underweight)\b\s*\([^)]*\)"
     r"|\b\d+\s*=\s*(?:buy|sell)\b"                          # 1=buy / 5=sell
-    r"|\b(?:buy|sell)\b(?=\s*(?:…|\.\.\.|scale|rating))",   # buy… / sell scale
+    r"|\b(?:buy|sell)\b(?=\s*(?:…|\.\.\.|scale|rating))"    # buy… / sell scale
+    r"|\b(?:buy|sell)[\s-]?rate\b"                          # CPG buy-rate metric (not a verdict)
+    r"|\b(?:buy|sell|hold|outperform|underperform|overweight|underweight)\s+(?:rating|recommendation)"
+    r"|\b(?:consensus|analysts?|sell-side|street)\s+\w{0,14}?\s?recommendation"
+    r"|\brecommendation\b(?=\s*\()"                         # "recommendation (CIQ …)" — reported
+    r"|\b(?:external|analysts?|consensus|target|street|sell-side)\b[^.]{0,25}\bconviction\b"
+    r"|\bconviction\b[^.]{0,25}\b(?:external|analysts?|consensus|target|street|sell-side)\b",
     re.IGNORECASE,
 )
 
@@ -122,11 +132,15 @@ _MARGIN_DROP = re.compile(
     r"|\b(compress|contract|erod|declin|fell|fall|shrink)\w*[^.]{0,25}\bmargin\b",
     re.IGNORECASE,
 )
-# the claim DID reconcile vs the RISING absolute EBITDA (a bare 'absolute'/'EBITDA <year>' is not)
+# the claim DID reconcile vs absolute EBITDA — RISING (the optical-misread defence) OR in DOLLARS in
+# EITHER direction: a bear point that CHECKED absolute EBITDA and found it fell ($103M→$79M) has
+# reconciled too. A bare 'absolute'/'EBITDA <year>' with no movement or $ is still not enough.
 _ABS_RECON = re.compile(
     r"\bEBITDA (?:rose|grew|grow\w*|up\b|higher|increas\w*|expand\w*|climb\w*|rising)"
     r"|\bEBITDA[^.]{0,25}→"
     r"|\babsolute (?:ebitda|dollar)\w*[^.]{0,35}(?:ros\w*|grew|up\b|higher|increas\w*|rising|→)"
+    r"|\babsolute\b[^.]{0,15}\bebitda\b[^.]{0,70}"
+    r"(?:\$\s?\d|\bfell\b|\bfallen\b|\bdrop\w*|\bdeclin\w*|\blower\b|→)"
     r"|EBITDA (?:in )?dollars|dollar EBITDA|\bscal(?:e|es|ed|ing)\b|operating leverage|reconcil\w*",
     re.IGNORECASE,
 )

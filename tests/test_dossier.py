@@ -297,6 +297,65 @@ def test_directional_lint_exempts_analyst_rating_context() -> None:
     assert syn._snip("short", 70) == "short"  # short claim unchanged
 
 
+def test_directional_lint_exempts_reported_posture_not_verdicts() -> None:
+    """Flag-noise reduction (validated across 10 dossiers). A directional token that REPORTS
+    consensus/analyst posture or names the CPG 'buy-rate' metric is redacted; a real verdict — incl.
+    'high/low-conviction <call>' — still flags. This is the adversarial probe battery, frozen."""
+    def fires(s: str) -> bool:
+        return bool(syn._DIRECTIONAL.search(syn._RATING_CTX.sub(" ", s)))
+    for reported in [  # reported external posture / domain metric -> NOT a conclusion
+        "existing households' buy-rate fell 2%",
+        "Consensus carries a Buy recommendation (CIQ 2.1)",
+        "the consensus recommendation is unchanged",
+        "the Outperform rating may be stale",
+        "a low-conviction external target of $11",
+        "the $5.50 target carries unknown conviction",
+        "analysts hold an Underweight rating",
+    ]:
+        assert not fires(reported), f"false-positive on reported posture: {reported!r}"
+    for verdict in [  # the dossier concluding -> MUST still flag (the core guardrail)
+        "BUY now, clearly undervalued",
+        "we expect the stock to outperform peers",
+        "this is a high-conviction long",
+        "this is a low-conviction long",
+        "we recommend buying the stock",
+        "our highest-conviction idea this year",
+        "we rate it Outperform on the fundamentals",
+    ]:
+        assert fires(verdict), f"MISSED a real verdict: {verdict!r}"
+
+
+def test_leverage_basis_flag_gated_on_magnitude() -> None:
+    """Flag-noise reduction: the reported-vs-covenant leverage caveat is immaterial below ~1x (incl.
+    net cash, a negative ratio) — suppressed there, kept for materially-levered names."""
+    mk = ds.Sourced.present
+    assert dm._leverage_basis_flag(mk(3.9, source_ref="x")) is not None  # levered -> flag
+    assert dm._leverage_basis_flag(mk(1.0, source_ref="x")) is not None  # boundary kept
+    assert dm._leverage_basis_flag(mk(0.0, source_ref="x")) is None      # unlevered -> silent
+    assert dm._leverage_basis_flag(mk(-1.0, source_ref="x")) is None     # net cash -> silent
+    assert dm._leverage_basis_flag(ds.Sourced.unknown(note="x")) is None
+
+
+def test_unreconciled_accepts_falling_absolute_ebitda() -> None:
+    """Flag-noise reduction: a bear point that reconciles margin compression against absolute EBITDA
+    in DOLLARS — even when absolute EBITDA FELL — is NOT flagged UNRECONCILED; a margin-compression
+    claim with no absolute-EBITDA check still is."""
+    reconciled = ("LTM EBITDA margin fell to 10% but absolute EBITDA has fallen from $103M to $79M "
+                  "— a real drop, not an optical effect")
+    bare = "LTM EBITDA margin fell to 10% on price competition, a clear deterioration"
+    def pay(claim: str) -> dict[str, typing.Any]:
+        return {
+            "bull_points": [],
+            "bear_points": [{"claim": claim, "source_ref": "EOD name-IWM 180d"}],
+            "decisive_question": {"question": "?", "evidence_for": [], "evidence_against": []},
+            "twin_reference_cases": [], "key_unknowns": [],
+        }
+    _, ok, _ = syn.synthesize(_minimal_mech(), llm=_FakeLlm(pay(reconciled)), ticker="X", name="X")
+    _, bad, _ = syn.synthesize(_minimal_mech(), llm=_FakeLlm(pay(bare)), ticker="X", name="X")
+    assert not any("UNRECONCILED" in f for f in ok)  # reconciled via $abs (falling) -> silent
+    assert any("UNRECONCILED" in f for f in bad)     # no absolute-EBITDA check -> flagged
+
+
 def test_anchors_on_distorted_pe_flags_bull_case_leaning_on_the_multiple() -> None:
     """When the mechanical P/E is marked distorted, a BULLISH claim that leans on that multiple/
     percentile as cheap/mean-reverting is flagged (the FUBO trap) — but NOT when the P/E is clean,
