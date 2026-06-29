@@ -331,6 +331,33 @@ Each line: *what it does* — *verified how*.
     holds: a real verdict — incl. 'high/low-conviction <call>', 'we recommend buying', 'we rate it
     Outperform' — STILL flags, frozen as an adversarial probe battery. +3 tests; ruff + mypy --strict
     + pytest green.*
+  - **Flag-noise cleanup — deeper pass after a 23-agent adversarial audit (2026-06-29).** The audit
+    (per-type classify → skeptic refute → completeness critic over all 10 dossiers, 65 flags) found
+    ~half were noise but OVERTURNED four first-pass calls, every one in the over-prune direction —
+    those reversals are honored here. **Cross-type:** a calendar/period guard (`_claim_figures`) skips
+    labels `_NUM` wrongly extracts (`FY21`→21, `90 days ago`→90), fixing both UNTRACEABLE and
+    TRANSCRIPT-FIGURE at the source; a decisive-mirror dedup drops the second fire when the decisive
+    question restates a bull/bear figure. **Per-type:** DIRECTIONAL also redacts `sell-off`/`sell-in`
+    and the reported-consensus `Buy (1.00) recommendation` / `recommendation … Outperform (2.00)`
+    forms; the leverage gate rises `<1x`→`<1.5x` (the IT 1.3x FP); `_ABS_RECON` also accepts
+    `slipped from 74 to 52` + a `not just a falling margin` disclaimer (the MVST UNRECONCILED FP the
+    earlier fix missed); the bare **EPS-GAAP-CAVEAT boilerplate is DROPPED** (fired 8/10; its fact
+    rides in a key_unknown; the EDGAR-vs-CIQ P/E conflict arm stays); ANCHORS-ON-DISTORTED-P/E
+    suppresses a claim that NAMES the distortion + pivots off it (VRRM FP) while KEEPING the
+    trough-anchor catch (CNXC) — the naive 'drop percentile' fix the audit rejected would have killed
+    CNXC; HETEROGENEOUS-BENCHMARK suppresses a gap RESOLVED to EARNED/value-trap (CNXC FP) while
+    keeping the directional 'NOT cheap/premium vs peers' fire (FUBO); TWIN-numeric ignores
+    letter-bound identifier digits (GLP-1) but keeps a free-standing figure (MVST 3.2). **render:** the
+    ⚠ Flags section moves from the TOP to the BOTTOM (next to key_unknowns) — a closing 'what to
+    verify' checklist, not the headline. *Verified deterministically (re-validating each stored
+    synthesis under the new code): 65 → 37 flags, 28 removed, 0 added, no genuine flag touched (CNXC
+    trough-anchor, MVST 536/48 misbindings, FUBO peer-comp preserved); FUBO 11→7, MVST 8→6. +8 tests;
+    ruff + mypy --strict + pytest green. Lands on each name's next re-assembly.* FOLLOW-UP CANDIDATE
+    (not built): the figure flags + leverage caveat could be MECHANICALLY RESOLVED from the
+    transcript we already feed (cross-check the cited number against the call text → auto-repoint a
+    misbinding / confirm a transcript figure; parse adjusted EBITDA via the existing `_ADJ_EBITDA` to
+    resolve the leverage basis like the P/E-RESOLVED path). The FRAMING flags (FALSE-BALANCE, ANCHORS,
+    PEER-COMP) are NOT mechanically resolvable — they police the LLM's reasoning, which is the human's.
   - **Verification-assertion tripwire + cited≠verified label (2026-06-24) — the dossier CITES, it
     never VERIFIES; the machine asserting it verified something is the one line it can't cross.** A
     new `VERIFICATION-CLAIM` guard flags any synthesis claim whose prose asserts the machine
