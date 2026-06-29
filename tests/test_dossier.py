@@ -303,9 +303,13 @@ def test_directional_lint_exempts_reported_posture_not_verdicts() -> None:
     'high/low-conviction <call>' — still flags. This is the adversarial probe battery, frozen."""
     def fires(s: str) -> bool:
         return bool(syn._DIRECTIONAL.search(syn._RATING_CTX.sub(" ", s)))
-    for reported in [  # reported external posture / domain metric -> NOT a conclusion
+    for reported in [  # reported external posture / domain/market term -> NOT a conclusion
         "existing households' buy-rate fell 2%",
+        "the drawdown is idiosyncratic, not a shared sell-off",  # market term
+        "a brand that absorbed a sharp sell-in scare and re-rated",  # CPG channel term
         "Consensus carries a Buy recommendation (CIQ 2.1)",
+        "Sell-side consensus carries a Buy (1.00) recommendation and a $17.00 target",
+        "recommendation sits at Outperform (2.00) with mean target $11.67",  # reversed-order rec
         "the consensus recommendation is unchanged",
         "the Outperform rating may be stale",
         "a low-conviction external target of $11",
@@ -319,6 +323,11 @@ def test_directional_lint_exempts_reported_posture_not_verdicts() -> None:
         "this is a high-conviction long",
         "this is a low-conviction long",
         "we recommend buying the stock",
+        "our recommendation is to sell",  # narrow rec-arm must NOT swallow a genuine verdict
+        # the #45-audit CRITICAL holes: a verdict near analyst/consensus + "recommendation" wording
+        "Consensus aside, we buy now before any recommendation lands",  # was swallowed by broad arm
+        "Our recommendation is a buy (initiate now)",  # was swallowed by reversed arm
+        "Final recommendation: hold (await catalyst)",
         "our highest-conviction idea this year",
         "we rate it Outperform on the fundamentals",
     ]:
@@ -330,7 +339,8 @@ def test_leverage_basis_flag_gated_on_magnitude() -> None:
     net cash, a negative ratio) — suppressed there, kept for materially-levered names."""
     mk = ds.Sourced.present
     assert dm._leverage_basis_flag(mk(3.9, source_ref="x")) is not None  # levered -> flag
-    assert dm._leverage_basis_flag(mk(1.0, source_ref="x")) is not None  # boundary kept
+    assert dm._leverage_basis_flag(mk(1.5, source_ref="x")) is not None  # boundary kept
+    assert dm._leverage_basis_flag(mk(1.3, source_ref="x")) is None      # modest -> silent (IT FP)
     assert dm._leverage_basis_flag(mk(0.0, source_ref="x")) is None      # unlevered -> silent
     assert dm._leverage_basis_flag(mk(-1.0, source_ref="x")) is None     # net cash -> silent
     assert dm._leverage_basis_flag(ds.Sourced.unknown(note="x")) is None
@@ -354,6 +364,151 @@ def test_unreconciled_accepts_falling_absolute_ebitda() -> None:
     _, bad, _ = syn.synthesize(_minimal_mech(), llm=_FakeLlm(pay(bare)), ticker="X", name="X")
     assert not any("UNRECONCILED" in f for f in ok)  # reconciled via $abs (falling) -> silent
     assert any("UNRECONCILED" in f for f in bad)     # no absolute-EBITDA check -> flagged
+    # the MVST form #42 missed: "slipped from 74 to 52" (no $, no arrow) — broadened _ABS_RECON
+    slipped = ("LTM EBITDA margin fell to 10%, but absolute EBITDA also slipped from 74 to 52 — a "
+               "real deterioration")
+    _, ok2, _ = syn.synthesize(_minimal_mech(), llm=_FakeLlm(pay(slipped)), ticker="X", name="X")
+    assert not any("UNRECONCILED" in f for f in ok2)
+    # the negation guard: a "not just a falling margin %" disclaimer is asserting deterioration, not
+    # citing bare margin compression — even with no absolute-EBITDA figure present
+    negation = "EBITDA margin fell to 10%, a real deterioration, not just a falling margin"
+    _, ok3, _ = syn.synthesize(_minimal_mech(), llm=_FakeLlm(pay(negation)), ticker="X", name="X")
+    assert not any("UNRECONCILED" in f for f in ok3)
+    # #45-audit HIGH fix: weak tokens must NOT over-suppress (easily / to-2024 aren't reconciles)
+    weak = "EBITDA margin fell to 10%; absolute EBITDA gains are easily reversed next year"
+    _, bad2, _ = syn.synthesize(_minimal_mech(), llm=_FakeLlm(pay(weak)), ticker="X", name="X")
+    assert any("UNRECONCILED" in f for f in bad2)  # 'easily' is not a movement-verb reconciliation
+
+
+def test_claim_figures_skips_calendar_labels() -> None:
+    """Flag-noise reduction: the figure-trace skips calendar/period labels _NUM would otherwise
+    extract (FY21->21, 90 days ago->90) and would wrongly flag; real figures pass through."""
+    figs = syn._claim_figures("Absolute revenue rose from 5,587 (FY21) to 9,954 LTM (FY25)")
+    assert 5587.0 in figs and 9954.0 in figs  # real figures kept
+    assert 21.0 not in figs and 25.0 not in figs  # FY21 / FY25 year labels dropped
+    assert syn._claim_figures("more macro uncertainty than 90 days ago") == []  # '90 days' dropped
+    assert 48.2 in syn._claim_figures("GAAP net profit of $48.2M was a non-cash artifact")  # kept
+
+
+def test_twin_numbers_skips_proper_noun_digits() -> None:
+    """Flag-noise reduction: a twin's numeric check ignores digits bound to letters in an identifier
+    (GLP-1), but still catches a free-standing figure (a stray multiple/rate)."""
+    assert syn._twin_numbers("a GLP-1 weight-loss demand shock") == set()  # proper-noun digit
+    assert syn._twin_numbers("COVID-19 reopening analogue") == set()
+    assert syn._twin_numbers("recovered 50% on the rebound") == {"50"}  # free-standing figure
+    assert "3.2" in syn._twin_numbers("framed as a Phase 3.2 timing gap")  # free-standing decimal
+    # #45-audit fix: a UNIT-SUFFIXED figure must still be caught (old after.isalpha() dropped it)
+    assert syn._twin_numbers("traded at a 1.5x multiple") == {"1.5"}
+    assert syn._twin_numbers("a 200M run-rate and 50bps of margin") == {"200", "50"}
+
+
+def test_anchors_suppressed_when_claim_acknowledges_distortion() -> None:
+    """Flag-noise reduction: ANCHORS-ON-DISTORTED-P/E suppresses a bull claim that itself NAMES the
+    distortion and pivots off it (the VRRM FP), but still fires on a trough-anchor that reads the
+    distorted multiple AS cheap (the CNXC catch)."""
+    val = _minimal_mech().valuation.model_copy(
+        update={"pe": ds.Sourced.present(112.0, source_ref="x", note="distorted")}
+    )
+    mech = _minimal_mech().model_copy(update={"valuation": val})
+    acks = ("the GAAP basis that distorts the headline P/E understates earnings; the forward adj "
+            "basis is far cheaper at the 0th percentile")
+    anchors = "the P/E sits at the 0th percentile, near its multi-year floor — a cheap entry"
+    def pay(claim: str) -> dict[str, typing.Any]:
+        return {
+            "bull_points": [{"claim": claim, "source_ref": "EOD name-IWM 180d"}], "bear_points": [],
+            "decisive_question": {"question": "?", "evidence_for": [], "evidence_against": []},
+            "twin_reference_cases": [], "key_unknowns": [],
+        }
+    # #45-audit: ack-guard is negation-aware — 'NOT one-time' while anchoring on cheap P/E is the
+    # trap, so it MUST still flag
+    denied = "the P/E looks cheap here, and importantly this charge is not one-time"
+    _, ack_flags, _ = syn.synthesize(mech, llm=_FakeLlm(pay(acks)), ticker="X", name="X")
+    _, anc_flags, _ = syn.synthesize(mech, llm=_FakeLlm(pay(anchors)), ticker="X", name="X")
+    _, den_flags, _ = syn.synthesize(mech, llm=_FakeLlm(pay(denied)), ticker="X", name="X")
+    assert not any("ANCHORS-ON-DISTORTED" in f for f in ack_flags)  # warns of distortion -> off
+    assert any("ANCHORS-ON-DISTORTED" in f for f in anc_flags)      # trough-anchor -> still fires
+    assert any("ANCHORS-ON-DISTORTED" in f for f in den_flags)      # "not one-time" -> still fires
+
+
+def test_hetero_suppressed_when_gap_resolved_to_earned() -> None:
+    """Flag-noise reduction: HETEROGENEOUS-BENCHMARK suppresses a bear claim that RESOLVES the peer
+    gap to EARNED/value-trap (the CNXC FP), but still fires on a directional 'NOT cheap / premium vs
+    peers' read (the FUBO catch)."""
+    pc = _minimal_mech().peer_comps.model_copy(
+        update={"comparability": ds.Sourced.present("HETEROGENEOUS peer set", source_ref="x")}
+    )
+    mech = _minimal_mech().model_copy(update={"peer_comps": pc})
+    earned = "the discount to peers is earned — a value trap, EBITDA margin below the peer median"
+    premium = "on the forward multiple it is NOT cheap, trading at a premium to the peer median"
+    def pay(claim: str) -> dict[str, typing.Any]:
+        return {
+            "bull_points": [], "bear_points": [{"claim": claim, "source_ref": "EOD name-IWM 180d"}],
+            "decisive_question": {"question": "?", "evidence_for": [], "evidence_against": []},
+            "twin_reference_cases": [], "key_unknowns": [],
+        }
+    # #45-audit: negation-aware — 'NOT earned … cheap vs peers' IS the clean-benchmark misread the
+    # gate must catch, so it MUST still fire
+    denied = "the discount is not earned; it screens cheap vs the peer median"
+    _, earned_flags, _ = syn.synthesize(mech, llm=_FakeLlm(pay(earned)), ticker="X", name="X")
+    _, prem_flags, _ = syn.synthesize(mech, llm=_FakeLlm(pay(premium)), ticker="X", name="X")
+    _, den_flags, _ = syn.synthesize(mech, llm=_FakeLlm(pay(denied)), ticker="X", name="X")
+    assert not any("HETEROGENEOUS-BENCHMARK" in f for f in earned_flags)  # earned/value-trap -> off
+    assert any("HETEROGENEOUS-BENCHMARK" in f for f in prem_flags)        # directional -> fires
+    assert any("HETEROGENEOUS-BENCHMARK" in f for f in den_flags)         # 'not earned' -> fires
+
+
+def test_figure_trace_dedups_decisive_mirror() -> None:
+    """Flag-noise reduction: the decisive question restates the bull/bear crux, so the SAME figure
+    would fire a second figure-trace flag — deduped to one."""
+    payload = {
+        "bull_points": [],
+        "bear_points": [{"claim": "cash fell to 999", "source_ref": "EOD name-IWM 180d"}],
+        "decisive_question": {
+            "question": "?", "evidence_for": [],
+            "evidence_against": [
+                {"claim": "cash dropped to 999 against the wall", "source_ref": "EOD name-IWM 180d"}
+            ],
+        },
+        "twin_reference_cases": [], "key_unknowns": [],
+    }
+    _, flags, _ = syn.synthesize(_minimal_mech(), llm=_FakeLlm(payload), ticker="X", name="X")
+    assert len([f for f in flags if "999" in f]) == 1  # decisive mirror deduped, not double-flagged
+
+
+def test_figure_trace_dedup_keys_on_signed_value_and_type() -> None:
+    """#45-audit HIGH fix: the dedup must NOT collapse +N/-N (distinct facts) or let a soft
+    TRANSCRIPT-FIGURE on one point swallow a hard UNTRACEABLE on another of the same magnitude."""
+    eod = "EOD name-IWM 180d"
+    tref = "CIQ transcript(s): Acme Q1 2026 Earnings Call.rtf"
+    mech = _minimal_mech().model_copy(
+        update={"management_commentary": ds.Sourced.present("posture", source_ref=tref)}
+    )
+    # +777 (bull) and -777 (decisive.against) are DIFFERENT facts — both must flag (no abs collapse)
+    sign = {
+        "bull_points": [{"claim": "headcount grew to 777 people", "source_ref": eod}],
+        "bear_points": [],
+        "decisive_question": {
+            "question": "?", "evidence_for": [],
+            "evidence_against": [{"claim": "margin fell 777 bps", "source_ref": eod}],
+        },
+        "twin_reference_cases": [], "key_unknowns": [],
+    }
+    _, f_sign, _ = syn.synthesize(mech, llm=_FakeLlm(sign), ticker="X", name="X")
+    assert len([f for f in f_sign if "777" in f]) == 2  # +777 and 777bps both flag
+    # a soft TRANSCRIPT-FIGURE (bull, transcript ref) must NOT suppress a hard UNTRACEABLE on a
+    # decisive structured-cited figure of the same value
+    xtype = {
+        "bull_points": [{"claim": "the call cited 678 in savings", "source_ref": tref}],
+        "bear_points": [],
+        "decisive_question": {
+            "question": "?", "evidence_for": [],
+            "evidence_against": [{"claim": "a 678 unit shortfall", "source_ref": eod}],
+        },
+        "twin_reference_cases": [], "key_unknowns": [],
+    }
+    _, f_xt, _ = syn.synthesize(mech, llm=_FakeLlm(xtype), ticker="X", name="X")
+    assert any("TRANSCRIPT-FIGURE '678'" in f for f in f_xt)  # soft note on the bull (transcript)
+    assert any("UNTRACEABLE figure '678'" in f for f in f_xt)  # hard flag on decisive — kept
 
 
 def test_anchors_on_distorted_pe_flags_bull_case_leaning_on_the_multiple() -> None:
@@ -1065,8 +1220,8 @@ def test_transcript_prose_anchors_past_legalese_and_carries_qa() -> None:
     assert all(s in prose for s in ("Question and Answer", "renewal", "constructive"))
 
 
-# --- item 1: adjusted-basis figures parse; the GAAP-EPS caveat downgrades when they're shown ----
-def test_adjusted_guidance_parse_and_eps_flag_downgrade() -> None:
+# --- item 1: adjusted-basis figures parse; the boilerplate GAAP-EPS caveat is now dropped ----
+def test_adjusted_guidance_parse_and_eps_caveat_dropped() -> None:
     text = (
         "revising its outlook to: Total Revenue of $985 million to $995 million; Adjusted EBITDA "
         "of $380 million to $385 million; Adjusted EPS of $1.19 to $1.25."
@@ -1074,11 +1229,13 @@ def test_adjusted_guidance_parse_and_eps_flag_downgrade() -> None:
     eb, eps = dm._ADJ_EBITDA.search(text), dm._ADJ_EPS.search(text)
     assert eb is not None and (float(eb.group(1)), float(eb.group(2))) == (380.0, 385.0)
     assert eps is not None and (float(eps.group(1)), float(eps.group(2))) == (1.19, 1.25)
+    # the bare 'GAAP EPS understates earnings power' caveat was DROPPED in the flag-noise audit
+    # (boilerplate; its only fact, adjusted-EPS-unavailable, already rides in a key_unknown), so it
+    # no longer fires whether or not the adjusted basis is resolved.
     rec, empty = _min_record(pe=5.5), ciq.CiqBundle(ticker="VRRM", workbooks=())
-    open_warn = dm._eps_caveat_flags(rec, empty, eps_resolved=False)  # adjusted basis absent
-    resolved = dm._eps_caveat_flags(rec, empty, eps_resolved=True)  # adjusted basis now shown
-    assert any("understates earnings power" in f for f in open_warn)  # open warning
-    assert not any("understates earnings power" in f for f in resolved)  # downgraded to a fact
+    for resolved in (False, True):
+        flags = dm._eps_caveat_flags(rec, empty, eps_resolved=resolved)
+        assert not any("understates earnings power" in f for f in flags)
 
 
 # --- item 2: geographic = the 'Geographic Segments' → 'Revenues' block, not the business one ----

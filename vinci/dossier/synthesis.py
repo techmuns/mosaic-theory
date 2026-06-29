@@ -34,6 +34,12 @@ _UNVERIFIED = "[LLM-suggested, unverified]"
 # unit renderings an LLM uses for the same stored number (fraction↔%, raw↔K/M/B) — for number-trace
 _TRACE_SCALES = (1.0, 1e2, 1e-2, 1e3, 1e-3, 1e6, 1e-6, 1e9, 1e-9)
 _NUM = re.compile(r"-?\d[\d,]*\.?\d+|-?\d+")
+# Calendar/period LABELS that _NUM would wrongly extract as figures and the trace then flags as
+# untraceable: 'FY21'/'FY25' (→21/25), 'Q1', 'fiscal 2025', '90 days ago' (→90), '8 quarters'. These
+# are not CLAIMED values — skip a number whose immediate context is a fiscal/quarter prefix or a
+# time-unit suffix. (Bare 4-digit years are NOT skipped — they collide with real $ figures.)
+_CAL_BEFORE = re.compile(r"(?:\bFY|\bfiscal\s*|\bQ)\s*$", re.IGNORECASE)
+_CAL_AFTER = re.compile(r"^\s*(?:days?|weeks?|months?|quarters?|qtrs?|years?)\b", re.IGNORECASE)
 # A point's source_ref pointing at the earnings-call TRANSCRIPT (verbatim prose) rather than a
 # structured CIQ cell. A figure cited to the transcript is NOT in the mechanical layer's number
 # universe, so it earns a soft 'verify-against-the-call' note — NOT a hard UNTRACEABLE, which
@@ -62,12 +68,17 @@ _MISSING_CLAIM = re.compile(
 # target — NOT a 'high/low-conviction <verdict>', which still flags. (Validated adversarially.)
 _RATING_CTX = re.compile(
     r"\b(?:buy|sell)-side\b"                                # sell-side / buy-side
+    # {rating} [(score)] rating/recommendation — BEFORE the bare-parenthetical arm so the longer
+    # "Buy (1.00) recommendation" wins over "Buy (1.00)" (else "recommendation" is orphaned).
+    r"|\b(?:buy|sell|hold|outperform|underperform|overweight|underweight)\b\s*"
+    r"(?:\([^)]*\)\s*)?(?:rating|recommendation)\b"
     r"|\b(?:buy|sell|hold|outperform|underperform|overweight|underweight)\b\s*\([^)]*\)"
     r"|\b\d+\s*=\s*(?:buy|sell)\b"                          # 1=buy / 5=sell
     r"|\b(?:buy|sell)\b(?=\s*(?:…|\.\.\.|scale|rating))"    # buy… / sell scale
     r"|\b(?:buy|sell)[\s-]?rate\b"                          # CPG buy-rate metric (not a verdict)
-    r"|\b(?:buy|sell|hold|outperform|underperform|overweight|underweight)\s+(?:rating|recommendation)"
-    r"|\b(?:consensus|analysts?|sell-side|street)\s+\w{0,14}?\s?recommendation"
+    r"|\b(?:buy|sell)-(?:off|in)\b"                         # sell-off/in, buy-in — market term
+    r"|\b(?:consensus|analysts?|sell-side|street)\s+(?:\w+\s+){0,2}recommendation\b"
+    r"|\brecommendation\b[^.]{0,30}\b(?:outperform|underperform|overweight|underweight)\b\s*\(\d"
     r"|\brecommendation\b(?=\s*\()"                         # "recommendation (CIQ …)" — reported
     r"|\b(?:external|analysts?|consensus|target|street|sell-side)\b[^.]{0,25}\bconviction\b"
     r"|\bconviction\b[^.]{0,25}\b(?:external|analysts?|consensus|target|street|sell-side)\b",
@@ -140,9 +151,15 @@ _ABS_RECON = re.compile(
     r"|\bEBITDA[^.]{0,25}→"
     r"|\babsolute (?:ebitda|dollar)\w*[^.]{0,35}(?:ros\w*|grew|up\b|higher|increas\w*|rising|→)"
     r"|\babsolute\b[^.]{0,15}\bebitda\b[^.]{0,70}"
-    r"(?:\$\s?\d|\bfell\b|\bfallen\b|\bdrop\w*|\bdeclin\w*|\blower\b|→)"
+    r"(?:\$\s?\d|\bfell\b|\bfallen\b|\bdrop\w*|\bdeclin\w*|\blower\b|\bslip\w*|\bslid\b|"
+    r"\beas(?:e|es|ed|ing)\b|→)"
     r"|EBITDA (?:in )?dollars|dollar EBITDA|\bscal(?:e|es|ed|ing)\b|operating leverage|reconcil\w*",
     re.IGNORECASE,
+)
+# a bear point that DISCLAIMS the margin-only read ("not just a falling margin %", "not optical") is
+# ASSERTING real deterioration, not citing bare margin compression — so don't G.1-flag it.
+_NOT_JUST_MARGIN = re.compile(
+    r"\bnot (?:just|merely|only|simply)\b[^.]{0,30}\bmargin\b|\bnot an? optical\b", re.IGNORECASE
 )
 
 # Peer-comp contract (the CIQ Company Comparable Analysis read the edge must RESIST, not echo). A
@@ -186,6 +203,27 @@ _OUTWEIGHED = re.compile(
     r"\b(?:does not|doesn't|cannot|can't|insufficient to|not enough to)\s+"
     r"(?:outweigh|offset|overturn|overcome|change|reverse)\b|secondary to|subordinate to",
     re.IGNORECASE,
+)
+# the claim ITSELF names the multiple as distorted and pivots off it (e.g. "the GAAP basis that
+# distorts the headline P/E ... forward adj basis far cheaper") — it WARNS about the distortion, the
+# opposite of anchoring on it as cheap. Suppress ANCHORS-ON-DISTORTED-P/E there (keeps the genuine
+# trough-anchor catch where the claim reads the distorted multiple AS cheap).
+_DISTORTION_ACK = re.compile(r"\bdistort\w*|\bnon-recurring\b|\bone-time\b|\bone-off\b|\banomal\w*",
+                             re.IGNORECASE)
+# …but NOT when negated ("the charge is NOT one-time", "not a one-off") — a claim asserting the hit
+# is PERMANENT while anchoring on the cheap multiple is the trap, so it must still flag.
+_DISTORTION_DENIED = re.compile(
+    r"\b(?:not|n['’]t|no)\b[^.]{0,14}?(?:distort\w*|non-recurring|one-time|one-off|anomal\w*)",
+    re.IGNORECASE,
+)
+# a peer-comp claim that RESOLVES the gap to the EARNED / value-trap side ("the discount is earned …
+# a value trap") cannot misread a heterogeneous median as a clean CHEAP signal — confidence-gating
+# the median only reinforces its bearish read. Suppress HETEROGENEOUS-BENCHMARK there — but NOT when
+# the claim DENIES it ("the discount is NOT earned … cheap vs peers"), which IS the clean-benchmark
+# misread the gate must catch.
+_EARNED_RESOLVED = re.compile(r"\b(earned|deserv\w*|value.?trap)\b", re.IGNORECASE)
+_EARNED_DENIED = re.compile(
+    r"\b(?:not|n['’]t|no)\b[^.]{0,14}?(?:earned|deserv\w*|value.?trap)", re.IGNORECASE
 )
 
 _POINT = {
@@ -403,6 +441,40 @@ def _floats(text: str) -> list[float]:
     return out
 
 
+def _claim_figures(text: str) -> list[float]:
+    """Numbers a claim CLAIMS as figures, excluding calendar/period LABELS (FY21, Q1, "90 days")
+    that _NUM extracts but the trace would wrongly flag. The number-trace runs over these, not
+    raw _floats."""
+    out: list[float] = []
+    for m in _NUM.finditer(text):
+        if _CAL_BEFORE.search(text[max(0, m.start() - 9):m.start()]):
+            continue  # FY21 / Q1 / fiscal 2025
+        if _CAL_AFTER.match(text[m.end():m.end() + 10]):
+            continue  # 90 days ago / 8 quarters
+        try:
+            out.append(float(m.group().replace(",", "")))
+        except ValueError:
+            continue
+    return out
+
+
+def _twin_numbers(text: str) -> set[str]:
+    """Digits a twin's prose CLAIMS as figures — excluding only an identifier fragment where a digit
+    is fused to a PRECEDING letter (Q4, B2B) or sits after a letter-hyphen (GLP-1, COVID-19). A
+    free-standing figure with a UNIT SUFFIX (1.5x, 200M, 50bps) or a bare decimal (a stray '3.2'
+    colliding with a real multiple) is STILL caught — only `before.isalpha()` is excluded, not
+    `after`, which would wrongly drop unit-suffixed figures."""
+    out: set[str] = set()
+    for m in _NUM.finditer(text):
+        before = text[m.start() - 1] if m.start() else " "
+        if before.isalpha():
+            continue  # Q4 / B2B — digit fused to a preceding letter is an identifier fragment
+        if before == "-" and m.start() >= 2 and text[m.start() - 2].isalpha():
+            continue  # GLP-1 / COVID-19
+        out.add(m.group().replace(",", "").lstrip("-"))
+    return out
+
+
 def _traces(ref: str, universe: set[str]) -> bool:
     return any(ref == u or ref in u or u in ref for u in universe)
 
@@ -427,7 +499,9 @@ def _validate(synth: Synthesis, mech: MechanicalLayer) -> tuple[Synthesis, list[
                     return True
         return False
 
-    def check_point(p: SourcedPoint, where: str) -> SourcedPoint:
+    flagged_figs: set[tuple[float, bool]] = set()  # (signed value, type) for decisive-mirror dedup
+
+    def check_point(p: SourcedPoint, where: str, *, dedup: bool = False) -> SourcedPoint:
         cited = _traces(p.source_ref, refs)
         if not cited:
             flags.append(f"UNCITED {where}: '{_snip(p.claim)}' (ref not in mechanical facts)")
@@ -440,9 +514,15 @@ def _validate(synth: Synthesis, mech: MechanicalLayer) -> tuple[Synthesis, list[
                 "a PRESENT field — move to key_unknowns, don't source-bind it"
             )
         ref_is_transcript = bool(_TRANSCRIPT_REF.search(p.source_ref))
-        for n in _floats(p.claim):
+        for n in _claim_figures(p.claim):
             if _num_traces(n):
                 continue
+            # key on SIGNED value + flag-type: don't let abs() collapse +N/-N (distinct facts) and
+            # don't let a soft TRANSCRIPT-FIGURE on one point suppress a hard UNTRACEABLE elsewhere.
+            key = (round(n, 2), ref_is_transcript)
+            if dedup and key in flagged_figs:
+                continue  # decisive mirror of an already-flagged bull/bear figure
+            flagged_figs.add(key)
             if ref_is_transcript:
                 # the figure lives in the cited call's prose, not the structured layer — route it to
                 # human verification; don't brand a sourced number untraceable (that would gut a
@@ -460,14 +540,16 @@ def _validate(synth: Synthesis, mech: MechanicalLayer) -> tuple[Synthesis, list[
     dq = synth.decisive_question
     dq = dq.model_copy(
         update={
-            "evidence_for": [check_point(p, "decisive.for") for p in dq.evidence_for],
-            "evidence_against": [check_point(p, "decisive.against") for p in dq.evidence_against],
+            "evidence_for": [check_point(p, "decisive.for", dedup=True) for p in dq.evidence_for],
+            "evidence_against": [
+                check_point(p, "decisive.against", dedup=True) for p in dq.evidence_against
+            ],
         }
     )
     for tw in synth.twin_reference_cases:
         if tw.source != _UNVERIFIED and not _traces(tw.source, refs):
             flags.append(f"TWIN '{tw.name}' source doesn't trace — should be tagged unverified")
-        numeric = _digit_strings(f"{tw.outcome} {tw.distinguishing_fact}")
+        numeric = _twin_numbers(f"{tw.outcome} {tw.distinguishing_fact}")
         if numeric:
             flags.append(f"TWIN '{tw.name}' has numbers {sorted(numeric)} — must be non-numeric")
     blob = " ".join(
@@ -485,6 +567,8 @@ def _validate(synth: Synthesis, mech: MechanicalLayer) -> tuple[Synthesis, list[
     if pe.note and "distort" in pe.note.lower():
         bullish = [(p, "bull_point") for p in bull] + [(p, "decisive.for") for p in dq.evidence_for]
         for p, where in bullish:
+            if _DISTORTION_ACK.search(p.claim) and not _DISTORTION_DENIED.search(p.claim):
+                continue  # the claim itself warns of the distortion + pivots off it — not anchoring
             if _PE_TERM.search(p.claim) and _CHEAP_CUE.search(p.claim):
                 flags.append(
                     f"ANCHORS-ON-DISTORTED-P/E {where}: '{_snip(p.claim)}' — the P/E is distorted "
@@ -509,7 +593,11 @@ def _validate(synth: Synthesis, mech: MechanicalLayer) -> tuple[Synthesis, list[
     # misread the fix targets (a margin % can fall while absolute EBITDA rises).
     g1 = [(x, "bear_point") for x in bear] + [(x, "decisive.against") for x in dq.evidence_against]
     for p, where in g1:
-        if _MARGIN_DROP.search(p.claim) and not _ABS_RECON.search(p.claim):
+        if (
+            _MARGIN_DROP.search(p.claim)
+            and not _ABS_RECON.search(p.claim)
+            and not _NOT_JUST_MARGIN.search(p.claim)
+        ):
             flags.append(
                 f"UNRECONCILED {where}: '{_snip(p.claim)}' — cites margin compression without the "
                 "absolute-EBITDA reconciliation (margin % can fall while EBITDA rises)"
@@ -568,7 +656,15 @@ def _validate(synth: Synthesis, mech: MechanicalLayer) -> tuple[Synthesis, list[
                 "verdict without the earned-vs-residual decomposition or the peer-set composition; "
                 "POSE justified-vs-residual, never the bare gap"
             )
-        if hetero and not _COMPARABILITY_ACK.search(p.claim):
+        # HETERO doesn't fire when the claim RESOLVES the gap to EARNED/value-trap — gating a
+        # heterogeneous median only reinforces a 'discount is earned' read, never misreads it as a
+        # clean CHEAP signal. Keeps the directional 'NOT cheap / premium vs peers' fires; drops the
+        # CNXC-style 'discount is earned, a value trap' false fire.
+        if (
+            hetero
+            and not _COMPARABILITY_ACK.search(p.claim)
+            and not (_EARNED_RESOLVED.search(p.claim) and not _EARNED_DENIED.search(p.claim))
+        ):
             flags.append(
                 f"HETEROGENEOUS-BENCHMARK {where}: '{_snip(p.claim)}' — leans on the peer set as a "
                 "clean benchmark, but comparability flags it HETEROGENEOUS; confidence-gate every "

@@ -465,12 +465,11 @@ def _eps_caveat_flags(record: DataRecord, bundle: CiqBundle, *, eps_resolved: bo
     if not pe.is_known and ciq_pe.status is not SourceStatus.PRESENT:
         return []  # no EPS-based multiple shown at all — nothing to caveat
     out: list[str] = []
-    if not eps_resolved:  # only an open warning while the adjusted basis is UNAVAILABLE
-        out.append(
-            "EPS shown is GAAP-based and understates earnings power; company-adjusted (non-GAAP) "
-            "EPS is not in the CIQ workbook — it lives in the earnings-release/transcript "
-            "reconciliation (currently UNAVAILABLE) — not a ceiling on earnings power."
-        )
+    # The bare 'GAAP EPS understates earnings power; adjusted not shown' caveat was DROPPED (2026-06
+    # flag-noise audit): pure boilerplate that fired on 8/10 names — its only fact (adjusted EPS
+    # UNAVAILABLE) already rides in a synthesis key_unknown, and asserting non-GAAP > GAAP with no
+    # non-GAAP figure in hand is itself a mild assemble-not-conclude violation. The substantive,
+    # source-bound EDGAR-vs-CIQ P/E conflict below stays.
     # the EDGAR-vs-CIQ P/E conflict: an open flag only while unresolved; when the adjusted EPS is
     # shown it folds into the resolved P/E reconciliation (_pe_reconciliation), not repeated here.
     if (
@@ -494,12 +493,13 @@ def _leverage_basis_flag(net_lev: Sourced[float]) -> str | None:
     release/transcript (UNAVAILABLE). Flag the basis so the human doesn't read the reported ratio as
     the covenant ratio. Reads the RESOLVED ratio (the value the dossier actually shows), not the raw
     EDGAR record — so the flagged number can never disagree with the net-debt/EBITDA field.
-    Gated on magnitude: below ~1x (incl. NET CASH, a negative ratio) there is effectively no
-    leverage, so the reported-vs-covenant-basis caveat is immaterial and only adds review noise —
-    the covenant basis only moves the read when the ratio is large enough to look levered."""
+    Gated on magnitude: below ~1.5x (incl. NET CASH) the reported ratio is already modest and the
+    reported-vs-covenant-basis caveat — which only pushes the ratio LOWER — is immaterial review
+    noise; it earns its place only when the reported ratio is large enough to look levered. (A 1.3x
+    name reads as 'modest' on its own; the caveat changes no judgment there.)"""
     if net_lev.status is not SourceStatus.PRESENT or net_lev.value is None:
         return None
-    if net_lev.value < 1.0:
+    if net_lev.value < 1.5:
         return None
     return (
         f"Net debt/EBITDA ({net_lev.value:.1f}x) is on REPORTED EBITDA (CIQ / consolidated GAAP), "

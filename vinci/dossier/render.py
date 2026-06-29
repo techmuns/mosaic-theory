@@ -50,6 +50,15 @@ def _fact(label: str, s: Sourced[Any], fmt: Callable[[Any], str] = str) -> str:
     return f"- **{label}:** _{s.status.value.upper()}_ — {s.note}"
 
 
+def _flags_section(d: Dossier) -> list[str]:
+    """Human-review flags render LOW (next to key_unknowns), not at the top — they are a closing
+    'what to verify' checklist, not the headline. The dossier assembles and cites; the verdict and
+    the flag-resolution are the human's."""
+    if not d.flags:
+        return []
+    return ["## ⚠ Flags (human review)", *[f"- {f}" for f in d.flags], ""]
+
+
 def render_markdown(d: Dossier) -> str:
     m = d.mechanical
     out: list[str] = [
@@ -62,9 +71,6 @@ def render_markdown(d: Dossier) -> str:
         "the human's, logged separately via the ledger with a frozen entry price.",
         "",
     ]
-    if d.flags:
-        out += ["## ⚠ Flags (human review)", *[f"- {f}" for f in d.flags], ""]
-
     out += ["## Mechanical layer (source-bound facts)", "", "### Valuation"]
     out += [
         _fact("P/E", m.valuation.pe, _mult),
@@ -147,7 +153,7 @@ def render_markdown(d: Dossier) -> str:
     ]
 
     if d.synthesis is None:
-        out += ["## Synthesis", "_Not produced (see flags)._", ""]
+        out += ["## Synthesis", "_Not produced (see flags)._", "", *_flags_section(d)]
         return "\n".join(out)
 
     s = d.synthesis
@@ -173,4 +179,5 @@ def render_markdown(d: Dossier) -> str:
     points("…evidence for", s.decisive_question.evidence_for)
     points("…evidence against", s.decisive_question.evidence_against)
     out += ["### Key unknowns", *[f"- {u}" for u in s.key_unknowns], ""]
+    out += _flags_section(d)
     return "\n".join(out)
