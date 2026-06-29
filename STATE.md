@@ -270,9 +270,14 @@ Each line: *what it does* — *verified how*.
     net-cash (no summing; overlapping tags would double-count). net-debt is DOSSIER-ONLY (traced: no
     ranker/screen/universe consumer), so the layer is correct. *Verified: MVST net-debt/EBITDA 3.9x
     (CIQ $200M ÷ $52M LTM), survival '3.9x (CIQ)'; guard fires for MVST+FUBO (convertible filers), not
-    5 clean filers (AORT $160M, EPAM −$872M net-cash, VRRM, BRBR, CNXC $4.5B); 5 regression tests
-    (EDGAR guard ×2, hierarchy ×2, survival); ruff + mypy --strict (67) + pytest green. Ships on
-    dossier re-assembly; the screen lands the guard on re-screen.* *Verified:
+    5 clean filers (AORT $160M, EPAM −$872M net-cash, VRRM, BRBR, CNXC $4.5B); 7 regression tests
+    (EDGAR guard ×4 incl. stale-witness/all-witness, hierarchy ×2, survival); ruff + mypy --strict
+    (67) + pytest green. Post-review hardening: render heading dropped the stale '(GAAP)' label;
+    `_leverage_basis_flag` now quotes the RESOLVED ratio (can't disagree with the field); the ratio
+    source_ref binds BOTH periods (no bare 'LTM'); the EDGAR-fallback caveat rides in the source_ref
+    (rendered) not just the note; the guard period-aligns the witness (drops since-repaid stale debt)
+    and `_bs_latest` falls back quarterly→annual on a missing row. Ships on dossier re-assembly; the
+    screen lands the guard on re-screen.* *Verified:
     VRRM 5→3 / EPAM 3→1 directional flags (the contradictory buy+sell on rating context gone, single
     'recommendation' remains); snippets clean ('…Phase…', '~$71M…'); MVST P/E → N/A; FUBO 12.1x renders
     with the amber distortion caveat (live screenshot + node render). Regression tests: rating-context

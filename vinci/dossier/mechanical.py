@@ -487,20 +487,21 @@ def _eps_caveat_flags(record: DataRecord, bundle: CiqBundle, *, eps_resolved: bo
     return out
 
 
-def _leverage_basis_flag(record: DataRecord) -> str | None:
-    """Net debt/EBITDA is computed on CONSOLIDATED GAAP EBITDA. Management and credit covenants
-    typically define leverage on ADJUSTED EBITDA (a larger denominator → a lower ratio); that
-    non-GAAP reconciliation lives in the earnings release/transcript (UNAVAILABLE), so the
-    covenant-basis leverage is not surfaced. Flag the basis — neither is wrong, they differ by
-    denominator; the human must not read the GAAP ratio as the covenant ratio."""
-    lev = record.fundamentals.net_leverage
-    if not lev.is_known or lev.value is None:
+def _leverage_basis_flag(net_lev: Sourced[float]) -> str | None:
+    """The SHOWN net-debt/EBITDA (CIQ-reported or EDGAR GAAP EBITDA) is not the covenant
+    basis: management and credit covenants typically define leverage on ADJUSTED EBITDA (a larger
+    denominator → a lower ratio); that non-GAAP reconciliation lives in the earnings
+    release/transcript (UNAVAILABLE). Flag the basis so the human doesn't read the reported ratio as
+    the covenant ratio. Reads the RESOLVED ratio (the value the dossier actually shows), not the raw
+    EDGAR record — so the flagged number can never disagree with the net-debt/EBITDA field."""
+    if net_lev.status is not SourceStatus.PRESENT or net_lev.value is None:
         return None
     return (
-        f"Net debt/EBITDA ({lev.value:.1f}x) is on consolidated GAAP EBITDA; management and credit "
-        f"covenants typically define leverage on adjusted EBITDA (a larger denominator → a lower "
-        f"ratio). That non-GAAP reconciliation lives in the earnings release/transcript (currently "
-        f"UNAVAILABLE) — do not read {lev.value:.1f}x as the covenant-basis leverage."
+        f"Net debt/EBITDA ({net_lev.value:.1f}x) is on REPORTED EBITDA (CIQ / consolidated GAAP), "
+        f"not the covenant basis; management and credit covenants typically define leverage on "
+        f"adjusted EBITDA (a larger denominator → a lower ratio), reconciled in the earnings "
+        f"release/transcript (currently UNAVAILABLE) — do not read {net_lev.value:.1f}x as the "
+        f"covenant-basis leverage."
     )
 
 
@@ -631,19 +632,26 @@ def _net_debt_to_ebitda(
         assert ciq_nd.value is not None and ciq_eb.value is not None
         if ciq_eb.value <= 0:
             return Sourced.unknown(
-                note=f"CIQ LTM EBITDA ${ciq_eb.value:,.0f}M <= 0 — ratio meaningless"
+                note=f"CIQ EBITDA ${ciq_eb.value:,.0f}M <= 0 — ratio meaningless"
             ), ciq_nd
-        period = (ciq_eb.source_ref or "").split("[")[-1].rstrip("]")
+        # bind BOTH periods (the bracket shows whether EBITDA is the LTM column or a stale FY, and
+        # whether net debt is the same period) — never a bare 'LTM' label the value may not have.
+        nd_p = (ciq_nd.source_ref or "").split("[")[-1].rstrip("]")
+        eb_p = (ciq_eb.source_ref or "").split("[")[-1].rstrip("]")
         return Sourced.present(
             round(ciq_nd.value / ciq_eb.value, 1),
             source_ref=(
-                f"CIQ Net Debt ${ciq_nd.value:,.0f}M ÷ CIQ LTM EBITDA "
-                f"${ciq_eb.value:,.0f}M [{period}]"
+                f"CIQ Net Debt ${ciq_nd.value:,.0f}M [{nd_p}] ÷ "
+                f"CIQ EBITDA ${ciq_eb.value:,.0f}M [{eb_p}]"
             ),
         ), ciq_nd
     if edgar_net_lev.status is SourceStatus.PRESENT:
+        # carry the caveat in the SOURCE_REF (shown on a PRESENT fact) — the note is dropped
+        # by the renderer for PRESENT, so a note-only caveat would vanish from the dossier.
+        caveat = "breadth estimate — may under-capture scattered debt; pull CIQ"
         return edgar_net_lev.model_copy(update={
-            "note": "EDGAR XBRL breadth estimate — may under-capture scattered debt; pull CIQ"
+            "source_ref": f"{edgar_net_lev.source_ref}; {caveat}",
+            "note": f"EDGAR XBRL {caveat}",
         }), ciq_nd
     return Sourced.unknown(
         note=f"no CIQ Net Debt/EBITDA; EDGAR {edgar_net_lev.note or 'UNKNOWN'} — pull CIQ"
@@ -818,7 +826,10 @@ def assemble_mechanical(
     if pe_recon is not None:
         flags.append(pe_recon[0])
     flags += _eps_caveat_flags(record, bundle, eps_resolved=adj_eps.status is SourceStatus.PRESENT)
-    # the GAAP-leverage caveat is an open warning only while the covenant basis isn't shown
-    if adj_lev.status is not SourceStatus.PRESENT and (lev := _leverage_basis_flag(record)):
+    # the reported-leverage caveat is an open warning only while the covenant basis isn't shown;
+    # reads the RESOLVED ratio so the flag can't quote a different number than the field shows
+    if adj_lev.status is not SourceStatus.PRESENT and (
+        lev := _leverage_basis_flag(mech.quality.net_debt_to_ebitda)
+    ):
         flags.append(lev)
     return mech, flags

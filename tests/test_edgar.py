@@ -214,6 +214,49 @@ def test_net_debt_witness_within_extracted_still_computes() -> None:
     assert snap.net_debt.is_known and snap.net_debt.value == pytest.approx(300e6)  # 450 - 150
 
 
+def test_net_debt_guard_ignores_stale_repaid_witness() -> None:
+    """Period alignment: an instrument tagged only in an OLD period (since repaid, its last value
+    persists at the stale date) must NOT over-fire the guard against a current, fully-captured
+    extraction — only witnesses at/after the captured-debt period count."""
+    facts = {
+        "facts": {
+            "us-gaap": {
+                "LongTermDebtNoncurrent": {
+                    "units": {"USD": [_instant("2026-03-31", 50e6, "2026-05-04")]}
+                },
+                "ConvertibleDebtNoncurrent": {  # big convertible last tagged 2023, since repaid
+                    "units": {"USD": [_instant("2023-12-31", 500e6, "2024-02-01")]}
+                },
+                "CashAndCashEquivalentsAtCarryingValue": {
+                    "units": {"USD": [_instant("2026-03-31", 30e6, "2026-05-04")]}
+                },
+            }
+        }
+    }
+    snap = compute_fundamental_snapshot("x", facts)
+    # the stale 2023 convertible (older than the 2026 extraction) is excluded → net-debt computes
+    assert snap.net_debt.is_known and snap.net_debt.value == pytest.approx(20e6)  # 50 - 30
+
+
+def test_net_debt_guard_fires_when_all_debt_is_witness_only() -> None:
+    """A filer with ALL debt under witness tags (no LongTermDebt/current) still fails loud
+    'under-captured' — not the misleading 'no debt/cash' that reads as debt-free."""
+    facts = {
+        "facts": {
+            "us-gaap": {
+                "ShortTermBorrowings": {
+                    "units": {"USD": [_instant("2026-03-31", 200e6, "2026-05-04")]}
+                },
+                "CashAndCashEquivalentsAtCarryingValue": {
+                    "units": {"USD": [_instant("2026-03-31", 50e6, "2026-05-04")]}
+                },
+            }
+        }
+    }
+    snap = compute_fundamental_snapshot("x", facts)
+    assert not snap.net_debt.is_known and "under-captured" in (snap.net_debt.note or "")
+
+
 def test_leverage_unknown_note_names_missing_debt_not_negative_ebitda() -> None:
     """The net-leverage UNKNOWN note names the SPECIFIC missing input. A positive-EBITDA name
     with no debt/cash line reads 'no net-debt …', NOT the misleading 'EBITDA<=0 …' (the MVST

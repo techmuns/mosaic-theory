@@ -466,25 +466,33 @@ def test_net_debt_to_ebitda_prefers_ciq(monkeypatch: pytest.MonkeyPatch) -> None
     """Deterministic source hierarchy: CIQ Net Debt ÷ CIQ LTM EBITDA wins outright over the EDGAR
     XBRL screen figure (which under-captures scattered debt). The MVST shape: 200 / 52 = 3.9x,
     never the EDGAR false net-cash; no judge, no manual reconciliation."""
-    monkeypatch.setattr(cs, "net_debt", lambda _b: ds.Sourced.present(199.9, source_ref="CIQ BS"))
     monkeypatch.setattr(
-        cs, "ltm_ebitda", lambda _b: ds.Sourced.present(51.9, source_ref="CIQ IS [LTM Mar-31-2026]")
+        cs, "net_debt",
+        lambda _b: ds.Sourced.present(199.9, source_ref="CIQ ... 'Net Debt' [Q1 Mar-31-2026]"),
+    )
+    monkeypatch.setattr(
+        cs, "ltm_ebitda",
+        lambda _b: ds.Sourced.present(51.9, source_ref="IS [LTM 12 months Mar-31-2026]"),
     )
     edgar = ds.Sourced.present(-1.5, source_ref="EDGAR XBRL (screen)")  # the false net-cash
     ratio, ciq_nd = dm._net_debt_to_ebitda(None, edgar)  # type: ignore[arg-type]
     assert ratio.status is ds.SourceStatus.PRESENT and ratio.value == pytest.approx(3.9, abs=0.05)
-    assert "CIQ Net Debt" in (ratio.source_ref or "") and "EDGAR" not in (ratio.source_ref or "")
+    src = ratio.source_ref or ""
+    assert "CIQ Net Debt" in src and "EDGAR" not in src
+    assert "[Q1 Mar-31-2026]" in src and "[LTM 12 months Mar-31-2026]" in src  # both periods bound
+    assert "LTM EBITDA" not in src  # no hardcoded 'LTM' label; the period bracket tells the truth
     assert ciq_nd.value == pytest.approx(199.9)  # fed to the survival readout
 
 
 def test_net_debt_to_ebitda_edgar_fallback_then_unknown(monkeypatch: pytest.MonkeyPatch) -> None:
-    """CIQ absent → the EDGAR XBRL figure as a LABELLED breadth fallback; CIQ + EDGAR both absent →
-    fail loud 'pull CIQ', never a fabricated ratio."""
+    """CIQ absent → the EDGAR XBRL figure as a LABELLED breadth fallback (the caveat rides in the
+    SOURCE_REF, which renders on a PRESENT fact, not only the note); both absent → fail loud."""
     monkeypatch.setattr(cs, "net_debt", lambda _b: ds.Sourced.unknown(note="no CIQ"))
     monkeypatch.setattr(cs, "ltm_ebitda", lambda _b: ds.Sourced.unknown(note="no CIQ"))
     edgar = ds.Sourced.present(2.5, source_ref="EDGAR XBRL (screen)")
     fallback, _ = dm._net_debt_to_ebitda(None, edgar)  # type: ignore[arg-type]
-    assert fallback.value == pytest.approx(2.5) and "breadth" in (fallback.note or "")
+    assert fallback.value == pytest.approx(2.5)
+    assert "pull CIQ" in (fallback.source_ref or "")  # caveat rendered via source_ref, not lost
     no_edgar = ds.Sourced.unknown(note="no EBITDA in XBRL")
     unk, _ = dm._net_debt_to_ebitda(None, no_edgar)  # type: ignore[arg-type]
     assert unk.status is ds.SourceStatus.UNKNOWN and "pull CIQ" in (unk.note or "")

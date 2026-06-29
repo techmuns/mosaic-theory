@@ -234,34 +234,51 @@ def interest_coverage(bundle: CiqBundle) -> Sourced[float]:
     )
 
 
+def _bs_period_header(rows: Rows) -> int | None:
+    """The CIQ Balance Sheet period row is labelled 'Balance Sheet as of:' (not 'Fiscal Period'), so
+    the generic header finder misses it and the period would render blank — find it explicitly."""
+    return next((i for i, r in enumerate(rows) if r and "as of" in str(r[0]).lower()), None)
+
+
 def _bs_latest(bundle: CiqBundle, label: str) -> Sourced[float]:
-    """Latest value ($M) of a CIQ Balance Sheet line, freshest period first (quarterly, else
-    annual). The Balance Sheet carries CIQ's own classified 'Total Debt' / 'Net Debt' totals — the
-    depth-stage authority; the partial EDGAR-XBRL debt tags under-capture instrument debt."""
-    rows: Rows | None = None
+    """Latest value ($M) of a CIQ Balance Sheet line, freshest period first — tries the QUARTERLY
+    sheet's row, then the ANNUAL sheet's (so label drift that drops the row from one granularity
+    doesn't fall through to the EDGAR breadth figure). The Balance Sheet carries CIQ's own
+    classified 'Total Debt'/'Net Debt' totals — the depth-stage authority the partial EDGAR-XBRL
+    tags under-capture."""
+    def pick(rows: Rows) -> Sourced[float] | None:
+        ri = _find_row(rows, label)
+        if ri is None:
+            return None
+        latest = _latest_col(rows, ri, _bs_period_header(rows))
+        if latest is None:
+            return None
+        _, value, period = latest
+        suffix = f" [{period}]" if period else " [latest]"
+        return Sourced.present(
+            round(value, 1), source_ref=f"CIQ Financials→Balance Sheet '{label}'{suffix}"
+        )
+
+    seen = False
     unavailable: Exception | None = None
     try:  # literal freqs (not a loop var) so the CIQ-manifest drift guard can see the address
         rows = bundle.sheet("financials", "Balance Sheet", freq="quarterly")
+        seen = True
+        if (got := pick(rows)) is not None:
+            return got
     except CiqUnavailableError as exc:
         unavailable = exc
-        try:
-            rows = bundle.sheet("financials", "Balance Sheet", freq="annual")
-        except CiqUnavailableError as exc2:
-            unavailable = exc2
-    if rows is None:
-        assert unavailable is not None  # both freqs raised — workbook or sheet absent
+    try:
+        rows = bundle.sheet("financials", "Balance Sheet", freq="annual")
+        seen = True
+        if (got := pick(rows)) is not None:
+            return got
+    except CiqUnavailableError as exc:
+        unavailable = exc
+    if not seen:
+        assert unavailable is not None  # neither sheet loaded — workbook or both sheets absent
         return _miss_or_unknown(bundle, "financials", unavailable)
-    ri = _find_row(rows, label)
-    if ri is None:
-        return Sourced.unknown(note=f"Balance Sheet has no '{label}' row")
-    latest = _latest_col(rows, ri, _period_header(rows))
-    if latest is None:
-        return Sourced.unknown(note=f"'{label}' has no value in any period")
-    _, value, period = latest
-    suffix = f" [{period}]" if period else " [latest]"
-    return Sourced.present(
-        round(value, 1), source_ref=f"CIQ Financials→Balance Sheet '{label}'{suffix}"
-    )
+    return Sourced.unknown(note=f"Balance Sheet has no '{label}' row (quarterly or annual)")
 
 
 def net_debt(bundle: CiqBundle) -> Sourced[float]:
