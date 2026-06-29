@@ -281,12 +281,18 @@ Each line: *what it does* — *verified how*.
     CIQ-sourced too (`ciq_sheets.ltm_ocf` → CIQ Net Debt ÷ CIQ 'Cash from Ops.' = MVST 4.4x) so it
     no longer shows a false net-cash next to the 3.9x EBITDA leverage; and the synthesis output
     decodes literal `\uXXXX` escapes (`_decode_escapes`) the LLM occasionally emits as text (opus put
-    a literal em-dash escape in evidence_balance). Also reconciled two key-unknowns from data already
-    in the pipeline: `liquidity_covenant_flags` surfaces the CIQ Capital-Structure 'Maturity' serial
-    as 'Due YYYY' so `_nearest_maturity` resolves the refinancing wall (MVST → 2026, was UNKNOWN); and
+    a literal em-dash escape in evidence_balance) — decoding ONLY printable BMP chars; lone surrogates
+    (0xD800–0xDFFF, which crash `model_dump_json`) and C0/C1 controls (which corrupt the committed
+    .json/.md) are left as the literal escape. Also reconciled two key-unknowns from data already
+    in the pipeline: `liquidity_covenant_flags` surfaces the CIQ Capital-Structure 'Maturity' column
+    (found by HEADER LABEL per ciq_extraction_notes rule #4, accepting a serial OR a date-string, and
+    sanity-windowed to [2000,2100] so a mis-aligned coupon/price can't fabricate a 'Due 1900' wall) as
+    'Due YYYY' so `_nearest_maturity` resolves the refinancing wall (MVST → 2026, was UNKNOWN); and
     `transcript_for_synthesis` now feeds ALL earnings-call transcripts (new `CiqBundle.all_workbooks`),
-    each labelled and budget-split, so quarter-over-quarter posture is visible (MVST: both Q1-26 +
-    Q4-25 calls, was only the latest). +5 tests.* *Verified:
+    each labelled and given the FULL transcript budget (NOT split — the split starved the latest call's
+    Q&A), so quarter-over-quarter posture is visible (MVST: both Q1-26 + Q4-25 calls, was only the
+    latest). +6 tests. The decode-guard, maturity header-label/window, and full-budget fixes came from
+    a 4-agent critical/high audit run before merge.* *Verified:
     VRRM 5→3 / EPAM 3→1 directional flags (the contradictory buy+sell on rating context gone, single
     'recommendation' remains); snippets clean ('…Phase…', '~$71M…'); MVST P/E → N/A; FUBO 12.1x renders
     with the amber distortion caveat (live screenshot + node render). Regression tests: rating-context
