@@ -974,6 +974,260 @@ momentum itself is replicable and is NOT the edge (§3 retired graph-momentum fo
 arbitraged, fails the first-principle filter). All are **FREQUENT** (themes always running) → all
 **PAPER-VALIDATABLE IN PARALLEL** against the baseline (per the §4 GOVERNOR — never capital, never
 single-threaded ahead of the lead loop).
+- **PHASE-0 SCOPING (theme DETECTION) — admissibility spec written + data-availability spike run;
+  spike returns NO-GO on existing data (2026-06-25). The detection/clustering layer is NOT built
+  (gated on the two checks below).** Before any clustering code, two Phase-0 deliverables. **(1)
+  Admissibility spec** (`docs/theme_admissibility.md`, **awaiting analyst a-priori review** — checklist
+  in-doc) — what makes a cluster an ADMISSIBLE THEME, specified a-priori like Edge-2's ranking axes:
+  four criteria — **nameable shared driver** (the discriminating gate: separates a driver-linked THEME
+  from a return-linked MOMENTUM BUCKET the naive baseline already captures; machine PROPOSES the
+  candidate driver, analyst JUDGES it real+nameable), **breadth** (a basket not a pair, no hardcoded
+  N), **coherence** (shared residual variance after stripping market **+ sector** beta — the G2
+  control discipline; NECESSARY but NOT SUFFICIENT — coherence without a nameable driver is a momentum
+  bucket; note the G2 sector leg is itself still unbuilt, §2 G2 caveat), **persistence**
+  (months-to-quarters; admits a theme EXISTS — the fork judges early-vs-late lifecycle). Structure:
+  2–4 are PASS/FAIL necessary-condition GATES (a SCREEN — themes are NOT ranked against each other), 1
+  is the discriminating gate. KEY DESIGN DECISION recorded: cluster on **ECONOMIC LINKAGE**
+  (supply-chain / end-market / input-cost / sub-sector), **NEVER price co-movement** (price-clustering
+  → driver-less blobs that fail criterion 1; price is criterion-3 CONFIRMATION only). **(2) Throwaway
+  spike** (script deleted; finding in `docs/theme_admissibility_spike.md`) — 28 unbiased
+  (deterministic-stride) overshoot names, SIC fetched live from EDGAR (28/28). **GO/NO-GO = NO-GO**:
+  the existing linkage data is too coarse / sparse / wrong-typed to cluster at theme-grade. **SIC** —
+  the only universe-wide datum, but **0% in every committed snapshot** (computed live at universe-build
+  on Axis 1 then discarded; CIK is 100% present, so the spike re-fetched live) — resolves to
+  **sub-sectors, not drivers**: SIC 7372 lumps 7 software names of utterly different drivers
+  (payments / cyber / insurtech / logistics-SaaS), SIC 2834 = "all pharma" **NOT** "GLP-1 names" (the
+  spec's exact warned failure, reproduced on real data); coarse map collapses 28 names → 6 sectors =
+  pure beta. **graph-exposure** is the wrong linkage TYPE (customer/supplier who-names-whom edges, not
+  end-market grouping) + sparse (~2% recall, `graph_coverage.json` git-ignored/absent). **CIQ
+  segments** are per-FINALIST + manual (0 dirs here), not universe-wide. **Polygon** is price =
+  criterion-3 confirmation, never the basis. SIC-clustering would build a dressed-up sector-momentum
+  screen — the exact failure mode the spec exists to avoid. **NEXT-MOVE candidate (a Phase-0.5 spike
+  on 10-K Item-1 "Business" end-market extraction) — SUPERSEDED by Phase-0.6 below**, because Item-1 is
+  still a company ATTRIBUTE and may hit the same cross-taxonomy wall as SIC; so the non-attribute basis
+  was tested first. *Docs-only change; suite green (ruff + mypy --strict 66 + pytest 204 offline).*
+  - **PHASE-0.6 — residual CO-MOVEMENT tested as the clustering basis: QUALIFIED GO (2026-06-25; a
+    DIFFERENT answer from the SIC NO-GO).** Throwaway spike (deleted; finding in
+    `theme_admissibility_spike.md` Part 2): 317 overshoot names, 6mo daily residual returns after
+    stripping market (IWM) **+** broad-sector beta (LOO coarse-sector cohort — both G2 legs), clustered
+    on residual correlation, SIC fetched live for the cross-taxonomy test. **Co-movement does what SIC
+    structurally CANNOT** — the tightest cluster (corr **0.81**) is RGTI/QUBT/QBTS (Rigetti / Quantum
+    Computing / D-Wave), **3 DIFFERENT SICs (7371/7372/7374) that SIC splits**, re-united as **"quantum
+    computing"** — a real nameable theme SIC dismembers. **BUT co-movement also admits the
+    momentum-bucket trap, visibly:** loosening τ to gain breadth merges distinct themes into a 13-name
+    blob (lithium + eVTOL + quantum + robotics + nuclear + AI-defense, 10 SICs, corr 0.36, **no single
+    driver**), and a spurious **RUN/FLGT/WLDN** (solar + genetics-labs + engineering, crosses 3 SICs,
+    **no driver at all**). So crossing taxonomy is **NECESSARY-NOT-SUFFICIENT** (blobs cross it too);
+    the **Criterion-1 driver-naming filter separates real themes from blobs — empirically vindicating
+    the spec's architecture** (Criterion 3 finds candidates, Criterion 1 validates). Failure mode is
+    **OPPOSITE SIC's**: SIC too RIGID (can never name a driver finer than the industry → defeats
+    Criterion 1 at the root); co-movement too LOOSE (admits blobs → but blobs Criterion 1 is built to
+    catch). **⇒ co-movement + Criterion-1 is a workable pairing where SIC + Criterion-1 was not.**
+    **CONCLUSION:** residual co-movement is a viable Phase-1 detection basis **on EXISTING data (the
+    already-built Polygon EOD — no new ingestion source)**, so **10-K Item-1 parsing is NOT required for
+    DETECTION** (it may at most assist driver-NAMING, i.e. support Criterion 1 — re-scope it that way if
+    at all). Conditions: **Criterion-1 driver-naming is LOAD-BEARING (not optional)** — without it the
+    detector ships blobs as themes; and Phase 1 needs a **more robust method than the throwaway** (broad
+    universe not just overshoot, longer/multiple windows, principled cluster selection, explicit
+    handling of the pervasive "speculative-beta" factor). **NEXT scoping step (before Phase 1):** re-run
+    the co-movement method on the **BROAD universe + a longer window** — does it surface cleaner
+    sector-spanning themes (AI-infra, GLP-1) when the winners are present, not only the distressed
+    speculative complex? *Method caveat: no `POLYGON_API_KEY` in this worktree and committed snapshots
+    hold only price FEATURES (not series), so the throwaway used free keyless Yahoo daily closes as a
+    vendor-agnostic stand-in for Polygon EOD — daily closes are daily closes; the residual-co-movement
+    answer is source-agnostic. Docs-only change; suite green: ruff + mypy --strict (66) + pytest (204
+    offline).* Edge 2 stays the lead horse (§4 GOVERNOR); this parallel scoping did not starve overshoot
+    verdict-logging.
+  - **PHASE-0.7 — the GATE (broad universe + REAL Polygon source): GO — upgrades the 0.6 QUALIFIED GO
+    (2026-06-25).** Tested whether 0.6 survives the universe themes actually live in AND the production
+    source. Throwaway (deleted; all caches incl. `data/cache` cleared; finding in
+    `theme_admissibility_spike.md` Part 3): **1,639 of the 1,727 broad `in_universe` names** (NOT the
+    overshoot screen), 12mo daily from **Polygon via the EXISTING `PolygonEodClient`** (key from `.env`
+    via `require_env`, Bearer header, **never printed/logged**; 252 days), R1=market+sector vs
+    R2=+size+vol; SIC live from EDGAR for the cross-taxonomy test; regime = IWM **+39%** (a stringent
+    risk-on year). **(1) FIDELITY:** Polygon reproduces Yahoo near-exactly — quantum RGTI↔QBTS **0.82
+    (Yahoo-0.6 was 0.81)**; vendor sensitivity negligible. **(2) RELIABILITY-AT-SCALE = YES** (the open
+    0.6 question): 48 clusters @τ0.5, **56% cross ≥2 SIC**, top ones cleanly **nameable** — **US housing
+    (14 SICs / 5 sectors: builders + lumber + flooring + furniture — the cross-taxonomy win SIC can't
+    produce), hotels+lodging (REIT + operator), staffing (5 SICs), shipping, regional banks, gold
+    miners, commodity chemicals, trucking** — MANY themes, not the lone-quantum case; and the
+    cross-taxonomy clusters are nameable, not the driver-less blobs the overshoot universe produced.
+    **(3) SPECULATIVE FALSE-DRIVER = handle-able, two independent ways** (the 0.6 chief risk): (a) the
+    broad universe **dilutes** it — the spec-beta complex was an OVERSHOOT artifact (distressed
+    small-caps are disproportionately speculative); broad top-clusters are sober macro themes. (b) the
+    **vol-factor strip MECHANICALLY DISSOLVES it** — at τ0.45 R1 still yields the 19-name spec blob
+    (quantum + robotics + nuclear + eVTOL, NO single driver); **R2(+vol) collapses it to exactly
+    RGTI/QUBT/QBTS** (real quantum survives, corr 0.82→0.79), while the real macro themes are robust to
+    the same strip (genuine, not size/vol artifacts). So the false-driver is removed **before**
+    driver-naming — Criterion-1 is never asked to reject "future tech." **⇒ GO: residual co-movement is
+    a viable Phase-1 detection basis on EXISTING data via the already-built Polygon EOD client (NO new
+    ingestion source); all three gating risks (fidelity / reliability / contamination) clear.** **Phase
+    1 is now JUSTIFIED to build:** the `theme_admissibility.md` four criteria, clustering on residual
+    co-movement (**market + sector + VOL stripped**) as Criterion-3-as-basis + **Criterion-1
+    driver-naming as the human gate**. Build conditions: pair clustering with the vol/speculative-factor
+    strip (the lever, not optional); a more robust method than the throwaway (principled cluster
+    selection not a single τ, multiple/longer windows, significance); decide the run-universe (broad for
+    theme discovery vs the overshoot set for "are these finalists a thematic co-derating?"). **Pre-req
+    unchanged: the analyst signs off the `theme_admissibility.md` a-priori review before Phase 1.**
+    10-K Item-1 parsing stays NOT-needed-for-detection (may at most assist driver-naming). **Scope
+    caveat:** the $10B ceiling excludes mega-cap theme leaders (NVDA/LLY), so AI-infra/GLP-1 surface
+    only as small/mid-cap expressions — the right universe for the overshoot fund. *Real Polygon quota
+    consumed (accepted); `.env` git-ignored, key never committed/logged. Docs-only repo change; suite
+    green: ruff + mypy --strict (66) + pytest (204 offline).* Edge 2 stays the lead horse (§4 GOVERNOR);
+    parallel scoping, did not starve overshoot verdict-logging.
+  - **PHASE-0.8 — the two load-bearing confounds RESOLVED: GO CONFIRMED (last pre-build spike;
+    2026-06-29).** The 0.7 GO rested on two things its single test couldn't isolate; both now tested,
+    both clear. Throwaway (deleted; all caches incl. `data/cache`; finding in
+    `theme_admissibility_spike.md` Part 4); existing Polygon client, key from env. **TEST 1 — vol-strip
+    SELECTIVITY (confound a):** is the strip selective, or does it just keep the tightest knot and kill
+    diffuse themes too? Applied R1→R2(+size+vol) to three groups: **HOUSING (diffuse real, vol-pctile
+    45)** survived — 22→18 connected @τ0.5, mean corr 0.37→0.35 (barely moved); **QUANTUM (tight real,
+    vol-pctile 95)** survived 3→3 (0.76→0.71); **the 19-name SPEC-BLOB (fake, vol-pctile 88)
+    DISSOLVED** — 19→[6,3,2,2,2,…], and the fragments are its real constituent themes (uranium-6 /
+    quantum-3 / eVTOL-2). **⇒ SELECTIVE, not a threshold-raiser** — the discriminator is VOLATILITY
+    (low-vol housing untouched; high-vol speculative GLUE removed, unbundling the risk-on amalgam into
+    nameable sub-themes). Confound (a) CLEARED. **TEST 2 — REGIME fragility (confound b):** do themes
+    recur in a different regime? A genuine drawdown window existed — **Window B 2021-11..2022-10, IWM
+    −29%** (vs the 0.7 +39%). Re-ran market+sector+vol clustering on it (1,409 names; recent IPOs
+    dropped): **HOUSING / GOLD / SHIPPING / HOTELS all RECUR** across the opposite regimes →
+    **not residual-artifacts of the risk-on window.** Caveats: **banks did NOT recur** (regime-specific
+    — reassuring, the method isn't mechanically re-finding identical clusters; bank co-movement genuinely
+    differed 2021-22 vs 2025-26), and **quantum was untestable** (IPO'd post-Window-B) → tight-high-vol
+    regime-robustness DEFERRED to Phase-1's multiple-windows condition, not assumed. Confound (b)
+    substantially CLEARED (diffuse themes). **⇒ GO CONFIRMED** — residual co-movement (market+sector+vol
+    stripped) + Criterion-1 driver-naming is a sound Phase-1 detection basis on existing data; the
+    vol-factor strip is selective + load-bearing (keep it). **Phase 1 remains gated only on the analyst's
+    a-priori sign-off of `theme_admissibility.md`** (the data-basis + method confounds are now resolved).
+    *Real Polygon quota consumed (accepted); key from env, never logged; `.env` git-ignored. Docs-only
+    repo change; suite green: ruff + mypy --strict (66) + pytest (204 offline).* Edge 2 stays the lead
+    horse (§4 GOVERNOR); parallel scoping, did not starve overshoot verdict-logging.
+  - **SIGN-OFF CHECKLIST WRITTEN (2026-06-29) — `docs/theme_admissibility_review.md`.** The walkable
+    analyst review the four spikes gated on: per-criterion (state · concrete judgeable question · real
+    spike evidence for/against), plus the **architecture revision** the spikes forced (co-movement-as-
+    basis + criterion-1 validation, overturning the spec's §3 "never cluster on price") and the **two
+    residual edges** surfaced for explicit acknowledgement — (1) the vol-strip is proven selective for
+    low-vol macro themes but UNPROVEN for high-vol event-driven ones (may MISS real GLP-1/AI-infra-class
+    themes); (2) emergent cross-taxonomy themes' regime-robustness is structurally FORWARD-only
+    (untestable by backtest) — plus the carried caveats (cap-ceiling-as-validation-question,
+    handful-not-56% real yield). **NOT self-approved** (machine proposes, human concludes). **Phase 1
+    stays gated on the HUMAN walking the checklist and ticking a FINAL DECISION box** — un-ticked = not
+    built. Docs-only; suite green (ruff + mypy --strict 66 + pytest 204 offline). Edge 2 stays lead.
+  - **THREE SIGN-OFF RESOLUTIONS RECORDED (2026-06-29) — `theme_admissibility.md` §7 (+ §2 amended).**
+    The a-priori review produced three analyst design decisions, now captured in the spec as Phase-1
+    build requirements + forward-validation items (NOT spike work — the four-spike arc is complete):
+    **(1) Strength/lifecycle signals** (resolves the "binary screen under-uses the machine" point, the
+    most important) — the layer must ALSO surface machine-assessed momentum/relative-strength, breadth
+    (expanding/contracting), crowding/over-extension as **human-judged INPUTS, never an auto-rank**
+    (admissibility stays binary; §2 amended). **(2) Emergent-theme validation** (resolves Residual Edge
+    2) — regime-robustness of quantum-class emergent themes is a **FORWARD** question via **analogy +
+    text/attention footprint**, never backtest. **(3) Unprompted high-vol path** (resolves Residual Edge
+    1) — a **separate detection path surfacing high-vol candidates UNPROMPTED** (guards silent
+    false-negatives), NOT a circular hand-picked check. **Cross-cutting:** all three lean on
+    **text/attention analysis** (a NEW news/transcript pipeline not in `vinci/`). **Phase 1 now gated
+    on: (a) the human's FINAL sign-off** (review-doc decision block, still un-ticked) **and (b) two
+    SCOPING decisions — text/attention in Phase 1 vs deferred to 1.5, and run-universe (broad vs
+    overshoot)** — both the human's, NOT decided here. Docs-only; suite green (ruff + mypy --strict 66 +
+    pytest 204 offline). Edge 2 stays the lead horse.
+  - **HOLDING-UNIVERSE study — sub-$10B-at-inception captured the theme return in all 6 themes tested
+    (2026-06-29; `theme_admissibility_spike.md` Part 5).** A DISTINCT axis from the 4 detection spikes:
+    does the **holding** bound (fund detects broad incl. mega leaders, but HOLDS sub-$10B) capture theme
+    returns, or do they concentrate above $10B? **Backward DESCRIPTIVE market-structure study — NOT a
+    backtest, NOT forward validation.** 6 themes × 3 types; cap measured **AT INCEPTION** (Polygon
+    point-in-time market_cap via the existing client; the cap-timing crux — NVDA Jan-2023 $352B vs today
+    $4.66T) not today's cap. **Finding: the sub-$10B-at-inception basket captured the theme return in
+    ALL SIX and BEAT the >$10B basket in 5/6** — incl. the HARD tech-emergence case (AI-infra enablers
+    VRT/CRDO/CLS/MOD/COHR/SMCI +1648% vs mega chips +955%, **6/6 grew through $10B**); defense sub +245%
+    vs primes +56%; uranium entirely sub-$10B (no >$10B names existed); housing/gold sub-captures.
+    **The feared "tech-emergence concentrates returns above the bound" hypothesis is REJECTED** — the
+    theme is broader than its mega leader, and the sub-$10B enablers start small and grow THROUGH the
+    bound (the bound catches them small, rides them up — ideal, not limiting). **REFRAME:** the binding
+    constraint is NOT the holding bound (structurally fine across types) but whether **DETECTION can ID
+    the sub-$10B enablers EARLY** — which the study ASSUMES (hindsight) and the forward track must prove.
+    **HONEST LIMITATION (prominent):** heavily hindsight-prone (constituents picked knowing who won →
+    sub-$10B return OVERSTATED), equal-weight buy-and-hold no-exit, small-n (GLP-1 noisiest/lottery),
+    one data glitch (Barrick GOLD→B ticker change, immaterial). **Suggestive structural evidence that
+    INFORMS the holding-ceiling decision (toward "viable across theme types, KEEP") — does NOT settle
+    it; the forward paper-track settles it** (do MY sub-$10B theme bets capture the return?). Existing
+    Polygon client, key from env never logged; throwaway + caches deleted; docs-only; suite green (ruff
+    + mypy --strict 66 + pytest 204 offline). Edge 2 stays the lead horse.
+  - **EARLY-DETECTION FORK test — naive text/attention does NOT discriminate sub-$10B enablers from
+    noise; it INVERTS (2026-06-29; `theme_admissibility_spike.md` Part 6).** The load-bearing test:
+    Part-5's enabler return requires entering EARLY (pre-run, sub-$10B), but co-movement detection is
+    structurally LATE; text/attention is the intended early mechanism. FORK = text surfaces enablers
+    early+discriminably → build the differentiated sub-$10B enabler edge; else → MEGACAP theme fallback.
+    Backward DESCRIPTIVE; AI-infra (sharpest case). WINNERS = Part-5 enablers (VRT/CRDO/MOD/COHR/CLS/
+    SMCI) vs LOSERS = sub-$10B loud-AI-text flops (C3.ai/BBAI/VERI/SOUN/REKR — losers INCLUDED, the
+    precision test). Signals measurable backward: EDGAR full-text theme-mention counts (disclosure) +
+    Polygon news volume. **Result — BOTH fail: (1) PRECISION inverts** — early-2022 EDGAR 'AI' mentions
+    winners mean 2.2 vs losers **15.6** (~7× louder); ALL 5 losers rank ABOVE all 6 winners; VRT (biggest
+    enabler +2225%) had **0** → a loudest-text screen buys the losers, skips every enabler; news volume
+    is coincident/lagging + size-confounded (loudest-news C3.ai flopped −8%). **(2) RECALL fails** —
+    winners' AI-text silent through their run. **WHY:** the enabler's real driver-phrase was "data center"
+    not "AI" (VRT 14/6/11 vs 0/0/1) — the enabler signal is a **SEMANTIC exposure-inference**
+    ("data-center power = AI capex"), NOT a keyword the company emits; keyword-emitters were the
+    self-promoting losers. **FORK VERDICT: lean MEGACAP fallback** — naive text is a theme-BUZZ detector,
+    not an enabler detector. **Door not closed:** condemns KEYWORD/VOLUME text, not SEMANTIC text; an LLM
+    EXPOSURE-CLASSIFIER (read business → judge theme-exposure, the fund's actual edge) is the UNTESTED
+    path that could revive the enabler edge (Phase-1.5+, harder, not a cheap screen). **LIMITATIONS:**
+    backward/judgment-heavy (some 'losers' SOUN/BBAI ran late on hype — reinforces 'text finds buzz';
+    durable enablers were text-silent), 2 text facets only (semantic untested), single theme. Informs
+    the build-WHICH-edge fork; forward track settles it. Existing Polygon client + EDGAR EFTS, key from
+    env never logged; throwaway + caches deleted; docs-only; suite green (ruff + mypy --strict 66 +
+    pytest 204 offline). Edge 2 stays the lead horse.
+  - **A+B TIMING test — enablers LAG megacap confirmation for explosive themes (capturable window), but
+    theme-type-specific + selection still unsolved (2026-06-29; `theme_admissibility_spike.md` Part 7).**
+    Tests the A+B model's load-bearing unknown: does megacap confirmation PRECEDE enabler re-rating (→
+    A-triggers-B works) or not? Backward DESCRIPTIVE. **Guard 1 (the crux): ONE mechanical pre-registered
+    rule, identical across themes** — baseline = Part-5 inception; **confirmation = first month the mega
+    leaders' MEDIAN return-from-baseline ≥ +30%** (sensitivity +20%/+50%). **Guard 2:** 5 themes (AI-infra,
+    GLP-1, defense, housing, gold). **Result (primary +30%): 4/5 LAG, housing PRECEDE.** AI-infra dramatic
+    — enablers had done **1%** of their run at NVDA confirmation (Feb-2023), **+1183% median capturable
+    post-confirmation**; GLP-1/defense/gold lag with ~+100% post-confirm; housing SYNCHRONOUS (cyclical,
+    no leader-first gap). **Guard-1 sensitivity (decisive honesty): robust LAG only for AI-infra & GLP-1
+    (all thresholds); defense & housing FLIP** (defense confirmation date swings 2022→2024→2025 — the
+    hand-picked-date risk, real) → **theme-TYPE-specific, not a universal lifecycle.** **Guard 3: the
+    timing window does NOT discriminate** — at confirmation, winners (VRT 0% frac) and losers (SOUN 13%)
+    are indistinguishable on price/timing → the window inherits Part-6's selection problem (still needs the
+    semantic discriminator). **A+B VERDICT:** timing leg HOLDS for the differentiated emergence/breakthrough
+    themes it targets (robust LAG, large capturable window) but (a) doesn't generalize (cyclicals
+    synchronous, choppy unstable → scope A+B to emergence/breakthrough themes) and (b) is
+    necessary-not-sufficient (enabler SELECTION within the window still needs Part-6's untested SEMANTIC
+    exposure-classifier). Net: A+B's timing + holding legs are supported; the unsolved piece is the same
+    semantic enabler-selection (Part 6) + forward proof. LIMITATIONS: mechanical rule is a modeling choice
+    (threshold-sensitive for defense/housing, robust for explosive themes), price-only confirmation,
+    backward/judgment-heavy. Informs the build; forward track settles it. Existing Polygon client, key from
+    env never logged; throwaway + caches deleted; docs-only; suite green (ruff + mypy --strict 66 + pytest
+    204 offline). Edge 2 stays the lead horse.
+  - **★ PHASE 1 UNLOCKED & SCOPED — analyst sign-off + four scoping/build decisions recorded (2026-06-29).**
+    The pre-build arc is complete (4 detection spikes + holding/fork/timing studies, Parts 1–7); the
+    analyst has decided all gates. **SIGN-OFF: APPROVE WITH CONDITIONS** (`theme_admissibility_review.md`
+    FINAL DECISION) — the four criteria + the co-movement-basis architecture revision are approved
+    a-priori; conditions carried as forward-validation watch-items (Edge-1 high-vol miss → unprompted
+    high-vol path; Edge-2 emergent regime-robustness forward-only via analogy+text-footprint; build the
+    sector-deconfounding leg properly, not the throwaway cohort-mean) + the three §7 resolutions.
+    **§3 AMENDED** (`theme_admissibility.md` §3.0): the original "cluster on linkage, NEVER price" is
+    SUPERSEDED — residual CO-MOVEMENT (market+sector+vol stripped) IS the basis + Criterion-1 as
+    blob-filter; the discipline survives (raw price-clustering ALONE still = momentum buckets), only the
+    absolute is overturned. **FOUR SCOPING/BUILD DECISIONS (analyst-set; this closes the previously-pending
+    scoping):**
+    **(1) Phase 1 = ALL THREE components** — co-movement detection + theme-type classification + the
+    **semantic exposure-classifier** (text/attention IS in Phase 1, NOT deferred to a 1.5).
+    **(2) SCOPED to EMERGENCE themes** — the A-triggers-B timing window is robust only there (Part 7;
+    cyclicals synchronous, choppy unstable); accept the theme-type-classification cost.
+    **(3) PARTICIPATION fork FIRST** — it rests on the more-proven legs (mechanical megacap confirmation +
+    semantic selection in the post-confirmation window); **ANTICIPATION deferred** until the classifier is
+    proven in participation. Build the classifier reusable; wire only participation now.
+    **(4) Detect BROAD (incl. mega-caps — needed for the confirmation signal); HOLD sub-$10B** (return
+    structurally capturable there, Part 5).
+    **⇒ Phase 1 is no longer gated — UNLOCKED to build, scoped as above.** The build = *mechanical megacap
+    confirmation on an emergence theme → triggers the semantic enabler-exposure search in the
+    post-confirmation window → human judges*; detect broad / hold sub-$10B; surface strength/lifecycle
+    signals as human-judged inputs (§7.1). **LOAD-BEARING OPEN PIECE (forward, not pre-build): the semantic
+    classifier's DISCRIMINABILITY** — Parts 1–5,7 proved detection/holding/timing; Parts 6–7 showed
+    SELECTION (enabler-vs-loser) is unsolved by naive text/timing and needs the semantic classifier, whose
+    discriminability only the forward paper-track can settle. Still gated on the §4 GOVERNOR
+    (validation-design-first, must not starve Edge-2 verdicts) before capital. *Docs-only; suite green
+    (ruff + mypy --strict 66 + pytest 204 offline).* Edge 2 stays the lead horse.
 - **Theme-anticipation via AI-native assembly — LEGITIMATE; differentiated ONLY IF AI-assembly beats
   the naive baseline (corrects a prior over-dismissal AND a prior over-claim).** Get in EARLY: if
   AI-assembly anticipates themes better-calibrated than macro-fund intuition, that is a real moat over
