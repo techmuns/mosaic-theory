@@ -235,6 +235,38 @@ def test_synthesis_guardrails_flag_uncited_directional_and_numeric_twins() -> No
     assert "fake-model-1" in log and "RAW OUTPUT" in log
 
 
+def test_transcript_figure_soft_flagged_structured_misbinding_hard_flagged() -> None:
+    """Source-aware figure trace. A number cited to the earnings-call TRANSCRIPT (prose, not in the
+    structured layer) earns a soft TRANSCRIPT-FIGURE 'verify against the call' note, NOT a hard
+    UNTRACEABLE — so a high-value transcript-only point survives. A number cited to a STRUCTURED
+    source the facts don't contain still hard-flags UNTRACEABLE (a real source-misbinding)."""
+    tref = "CIQ transcript(s): Acme, Inc., Q1 2026 Earnings Call.rtf"
+    # management_commentary PRESENT so the transcript citation traces (the point is cited)
+    mech = _minimal_mech().model_copy(
+        update={"management_commentary": ds.Sourced.present("posture", source_ref=tref)}
+    )
+    payload = {
+        "bull_points": [],
+        "bear_points": [
+            # 48.2 lives in the call, cited to the transcript -> soft note, point kept
+            {"claim": "The GAAP net profit of $48.2M is a non-cash fair-value artifact",
+             "source_ref": tref},
+            # 47.3 cited to a STRUCTURED EOD ref that doesn't contain it -> hard UNTRACEABLE
+            {"claim": "Reported volume of 47.3 thousand units", "source_ref": "EOD name-IWM 180d"},
+        ],
+        "decisive_question": {"question": "does it reverse?", "evidence_for": [],
+                              "evidence_against": []},
+        "twin_reference_cases": [], "key_unknowns": [],
+    }
+    _, flags, _ = syn.synthesize(mech, llm=_FakeLlm(payload), ticker="ACME", name="Acme")
+    # transcript-cited 48.2 -> soft 'verify' note, NOT untraceable (the point is preserved)
+    assert any("TRANSCRIPT-FIGURE '48.2'" in f and "verify against the call" in f for f in flags)
+    assert not any("UNTRACEABLE figure '48.2'" in f for f in flags)
+    # structured-cited 47.3 -> hard untraceable, NOT softened to a transcript note
+    assert any("UNTRACEABLE figure '47.3'" in f for f in flags)
+    assert not any("TRANSCRIPT-FIGURE '47.3'" in f for f in flags)
+
+
 def test_directional_lint_exempts_analyst_rating_context() -> None:
     """#1: 'buy'/'sell' that merely report the analyst rating (a Buy (1.00) recommendation, a
     1=buy…5=sell scale, the sell-side) are NOT directional-flagged; a real conclusion still is.
