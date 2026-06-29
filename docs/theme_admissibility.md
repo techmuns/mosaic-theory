@@ -1,6 +1,9 @@
 # Theme admissibility — the Phase-0 spec (a-priori, before code)
 
-> **Status: APPROVED WITH CONDITIONS (2026-06-29); §3 amended (§3.0); Phase 1 UNLOCKED & SCOPED.**
+> **Status: APPROVED WITH CONDITIONS (2026-06-29); §3 amended (§3.0); Phase 1 UNLOCKED & SCOPED.
+> Phase-1 STAGE 1 (Component A — co-movement detection + the sector-deconfounding leg) BUILT + verified
+> 2026-06-29 (`vinci/themes/`; reproduces the spike themes on real Polygon — see STATE.md §4). Stages
+> 2–4 (confirmation trigger / semantic exposure-classifier / pipeline composition) pending.**
 > _(Sign-off + the four scoping/build decisions: `theme_admissibility_review.md` FINAL DECISION + STATE.md
 > §7. §3.0 records the co-movement-basis amendment; §7 the conditions/resolutions. The remaining
 > open piece is forward, not pre-build: the semantic exposure-classifier's discriminability.)_
