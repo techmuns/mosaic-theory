@@ -584,13 +584,24 @@ def _parse(raw: dict[str, Any]) -> Synthesis:
 _LITERAL_UNICODE = re.compile(r"\\u([0-9a-fA-F]{4})")
 
 
+def _decode_one(m: re.Match[str]) -> str:
+    """Decode one literal ``\\uXXXX`` — but ONLY to a PRINTABLE BMP char. A lone surrogate
+    (0xD800–0xDFFF) crashes ``model_dump_json`` ('surrogates not allowed'); a C0/C1 control (NUL,
+    newline, bell) corrupts the committed dossier.json/.md. Those are left as the literal escape."""
+    cp = int(m.group(1), 16)
+    if 0xD800 <= cp <= 0xDFFF:
+        return m.group(0)
+    ch = chr(cp)
+    return ch if ch.isprintable() else m.group(0)
+
+
 def _decode_escapes(obj: Any) -> Any:
-    r"""Decode a literal ``\uXXXX`` that the LLM sometimes emits as TEXT (opus did, in
-    evidence_balance: 'mixed — a' showed the raw escape, not an em-dash). Recurses dicts/lists;
-    a real char has no backslash so it stays. Only ``\u`` + four hex digits decodes; a stray
-    ``\underway`` (non-hex) is left alone."""
+    r"""Decode a literal ``\uXXXX`` the LLM sometimes emits as TEXT (opus did, in evidence_balance:
+    'mixed — a' showed the raw escape, not an em-dash). Recurses dicts/lists; a real char has no
+    backslash so it stays. Only ``\u`` + four hex digits decoding to a PRINTABLE non-surrogate char
+    is decoded (see :func:`_decode_one`); a stray ``\underway`` (non-hex) is left alone."""
     if isinstance(obj, str):
-        return _LITERAL_UNICODE.sub(lambda m: chr(int(m.group(1), 16)), obj)
+        return _LITERAL_UNICODE.sub(_decode_one, obj)
     if isinstance(obj, dict):
         return {k: _decode_escapes(v) for k, v in obj.items()}
     if isinstance(obj, list):
@@ -611,9 +622,11 @@ def synthesize(
     )
     if transcript:
         user += (
-            "\n\n=== Earnings-call transcript (prepared remarks + Q&A, mechanically bounded) — "
-            "QUALITATIVE context for management posture/tone ONLY. Derive NO numbers from it; any "
-            "a point resting on it cites the 'CIQ transcript …' source_ref from the facts. ===\n"
+            "\n\n=== Earnings-call transcripts, each fenced by a '--- <call> ---' label. With the "
+            "latest and prior quarter both on file, COMPARE posture quarter-over-quarter where it "
+            "shifts. Prepared remarks + Q&A, mechanically bounded. QUALITATIVE management-posture "
+            "context ONLY. Derive NO numbers; a point resting on it cites the 'CIQ transcript' "
+            "source_ref from the facts. ===\n"
             + transcript
         )
     log_parts = [f"model: {llm.model}", "", "=== SYSTEM ===", _SYSTEM, "", "=== USER ===", user]

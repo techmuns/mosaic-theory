@@ -545,6 +545,10 @@ def test_synthesis_decodes_literal_unicode_escapes() -> None:
     assert syn._decode_escapes({"k": ["x \\u2019 y"]}) == {"k": ["x ’ y"]}  # recurses
     assert syn._decode_escapes("real — dash") == "real — dash"  # real char untouched
     assert syn._decode_escapes("\\underway") == "\\underway"  # non-hex \\u left alone
+    # a lone surrogate (would crash model_dump_json) and a C0 control (would corrupt the .json/.md)
+    # are LEFT as the literal escape, not decoded:
+    assert syn._decode_escapes("x \\ud83d y") == "x \\ud83d y"  # lone surrogate kept literal
+    assert syn._decode_escapes("x \\u0000 y") == "x \\u0000 y"  # NUL / C0 control kept literal
 
 
 def test_synthesis_fails_loud_when_llm_errors() -> None:
@@ -640,18 +644,35 @@ def _est_bundle(sheets: _Sheets) -> ciq.CiqBundle:
 
 
 def test_liquidity_flags_surface_maturity_wall() -> None:
-    """The CIQ Capital Structure 'Maturity' column (an Excel serial) is surfaced as 'Due YYYY' so
-    _nearest_maturity reports the nearest refinancing wall instead of failing loud UNKNOWN."""
-    # maturity serials: 46170 -> 2026-05-28, 46418 -> 2027-01-31 (the 'Maturity' column = col 5)
+    """'Maturity' is located by HEADER LABEL (not a fixed index) and surfaced as 'Due YYYY' so
+    _nearest_maturity reports the nearest wall; a mis-parsed garbage cell can't fabricate an
+    implausible 'Due 1900' (year window). Serials: 46170 = 2026-05-28, 46418 = 2027-01-31."""
+    # 'Maturity' deliberately at index 6 (not 5) — proves the header-label lookup, not a fixed col.
     rows = [
-        ["Description", "Type", "Principal", "Coupon", "Float", "Maturity", "Sr"],
-        ["Convertible Loan", "Term Loans", 13.0, "NA", "SOFR+9.75%", 46170.0, "Senior"],
-        ["Convertible Bond", "Bonds and Notes", 42.0, "3.0%", "NA", 46418.0, "Senior"],
+        ["Description", "Type", "Principal", "Coupon", "Float", "Currency", "Maturity"],
+        ["Convertible Loan", "Term Loans", 13.0, "NA", "SOFR+9.75%", "USD", 46170.0],
+        ["Convertible Bond", "Bonds and Notes", 42.0, "3.0%", "NA", "CNY", 46418.0],
+        ["Garbage serial", "x", 1.0, "NA", "NA", "NA", 5.0],  # serial 5 -> 1900, rejected
     ]
-    bundle = _fin_bundle({"Capital Structure Details": rows}, freq="annual")
-    liq = cs.liquidity_covenant_flags(bundle)
+    liq = cs.liquidity_covenant_flags(
+        _fin_bundle({"Capital Structure Details": rows}, freq="annual")
+    )
     assert "Due 2026" in (liq.value or "") and "Due 2027" in (liq.value or "")
+    assert "Due 1900" not in (liq.value or "")  # the year window rejects the garbage serial
     assert dm._nearest_maturity(liq) == "nearest maturity wall: 2026"
+
+
+def test_liquidity_flags_maturity_date_string() -> None:
+    """A Maturity cell rendered as a DATE STRING (not a serial) is still parsed — excel_date handles
+    it directly; the old clean_num wrapper would have dropped it to UNKNOWN."""
+    rows = [
+        ["Description", "Type", "Principal", "Coupon", "Maturity"],
+        ["Senior Notes", "Bonds and Notes", 500.0, "5.0%", "Jan-31-2028"],
+    ]
+    liq = cs.liquidity_covenant_flags(
+        _fin_bundle({"Capital Structure Details": rows}, freq="annual")
+    )
+    assert "Due 2028" in (liq.value or "")
 
 
 def test_all_workbooks_lists_every_match() -> None:

@@ -433,6 +433,9 @@ def liquidity_covenant_flags(bundle: CiqBundle) -> Sourced[str]:
     hdr = _find_row(rows, "Description")  # the latest FY section's instrument table
     if hdr is None:
         return Sourced.unknown(note="Capital Structure Details has no instrument table")
+    # locate the 'Maturity' column by its header LABEL — column order is not contractually fixed
+    # (ciq_extraction_notes rule #4), so a hardcoded index could read a coupon/price as a date.
+    mat_col = next((j for j, c in enumerate(rows[hdr]) if str(c).strip() == "Maturity"), None)
     insts: list[str] = []
     for i in range(hdr + 1, min(hdr + 12, len(rows))):
         desc = str(rows[i][0]).strip()
@@ -441,11 +444,14 @@ def liquidity_covenant_flags(bundle: CiqBundle) -> Sourced[str]:
         typ = str(rows[i][1]).strip() if len(rows[i]) > 1 else ""
         principal = clean_num(rows[i][2]) if len(rows[i]) > 2 else None
         coupon = str(rows[i][3]).strip() if len(rows[i]) > 3 else ""
-        # col 5 = 'Maturity' (an Excel serial); surface it as 'Due YYYY' so _nearest_maturity can
-        # parse the nearest refinancing wall instead of failing loud UNKNOWN.
-        mdate = excel_date(clean_num(rows[i][5])) if len(rows[i]) > 5 else None
+        # 'Maturity' is a serial OR a date string — excel_date handles both (clean_num would kill a
+        # date string). Plausibility-bound the year so a mis-parsed cell can't fabricate 'Due 1900'.
+        mdate = (
+            excel_date(rows[i][mat_col])
+            if mat_col is not None and mat_col < len(rows[i]) else None
+        )
         amt = f"{principal:,.0f}" if principal is not None else "undrawn/–"
-        due = f" Due {mdate.year}" if mdate else ""
+        due = f" Due {mdate.year}" if (mdate and 2000 <= mdate.year <= 2100) else ""
         insts.append(f"{desc} ({typ}) {amt} @ {coupon}{due}")
     if not insts:
         return Sourced.unknown(note="no debt instruments parsed")
@@ -830,17 +836,17 @@ def transcript_for_synthesis(bundle: CiqBundle) -> str | None:
     """Mechanically-bounded transcript slices for the synthesis LLM INPUT ONLY (never embedded in
     the dossier): boilerplate stripped (operator intro / forward-looking legalese / estimates / TOC,
     via ``_transcript_prose``), prepared remarks + Q&A. ALL earnings-call transcripts on file are
-    included (so quarter-over-quarter posture is visible), each LABELLED by call and capped to an
-    EQUAL share of the char budget (so two calls don't double the prompt). A structural cut, NOT a
-    topic/relevance selection. None when there is no transcript or none can be parsed."""
+    included (so quarter-over-quarter posture is visible), each LABELLED by call and capped to the
+    FULL char budget independently — so adding the prior quarter never truncates the latest call's
+    Q&A (the prompt scales with the ~2 quarters the operator uploads, not a halved split). A
+    structural cut, NOT a topic selection. None when there's no transcript or none parse."""
     wbs = bundle.all_workbooks("transcript")
     if not wbs:
         return None
-    per = max(1, _SYNTHESIS_TRANSCRIPT_BUDGET // len(wbs))
     slices: list[str] = []
     for wb in wbs:
         try:
-            prose = _transcript_prose(read_text(wb.path, wb.fmt))[:per]
+            prose = _transcript_prose(read_text(wb.path, wb.fmt))[:_SYNTHESIS_TRANSCRIPT_BUDGET]
         except CiqParseError:
             continue
         if prose.strip():
