@@ -1907,6 +1907,39 @@ single-threaded ahead of the lead loop).
     SCOPING decisions — text/attention in Phase 1 vs deferred to 1.5, and run-universe (broad vs
     overshoot)** — both the human's, NOT decided here. Docs-only; suite green (ruff + mypy --strict 66 +
     pytest 204 offline). Edge 2 stays the lead horse.
+  - **PHASE 1 / STAGE 1 — Component A (co-movement theme-detection candidate-generator) — BUILT +
+    VERIFIED (2026-06-29).** The first Phase-1 build (`vinci/themes/`, `vinci themes` CLI): residual
+    co-movement clustering that PROPOSES candidate themes for the human to judge — it assembles the
+    cluster + the candidate shared-linkage (the criterion-1 surface) + §7.1 strength/lifecycle signals,
+    and **concludes nothing** (no driver named, no theme ranked against another, no verdict — a schema
+    with no such field, AST-guarded like the ranker/dossier; imports no scoring/ledger). Pipeline:
+    broad `in_universe` (~1,727, mega/mid included — NOT the overshoot set) → 12mo daily Polygon (the
+    EXISTING `PolygonEodClient`, key from env, never logged) → **multi-factor residualization
+    (market + sector + size + vol)** → residual-correlation connected-components (PRINCIPLED selection:
+    a τ-band stability check + exact intra-cluster coherence, not a single hardcoded τ) → the
+    four-criteria SCREEN (breadth / coherence / persistence PASS-FAIL; criterion-1 nameable-driver is
+    the human's). **The genuinely new leg — the SECTOR de-confounding (G2's unbuilt sector leg, §2 G2
+    caveat) — built PROPERLY:** a leave-one-out broad-sector cohort factor whose loading is ESTIMATED
+    jointly by OLS (NOT the spikes' throwaway 1:1 cohort-mean subtraction), pure-Python (no numpy),
+    regression-tested. Fail-loud throughout (insufficient history → dropped + counted, never a
+    partial-window number; persistence un-evaluable on a too-short window → NOT-admitted, never a silent
+    pass). All thresholds face-validity, never forward-return-tuned. *VERIFIED — the COMMITTED module
+    reproduces the spike findings on real Polygon (ref 2026-06-17, 252 trading days, 1,713/1,727
+    covered): QUANTUM residual corr RGTI↔QBTS **0.82** / RGTI↔QUBT 0.72 / QUBT↔QBTS 0.73 (= the spike
+    numbers exactly); HOUSING is the cross-taxonomy cluster SIC dismembers (19 names / 12 SICs / 6
+    sectors — builders + lumber + flooring + furniture); the **vol-strip is SELECTIVE** — diffuse
+    low-vol housing SURVIVES (coh 0.36→0.37) while the speculative blob dissolves, the **uranium
+    sub-theme crystallising cleanly under R2** (DNN/UEC/URG/UUUU/EU/NXE); plus shipping / gold-miners /
+    regional-banks / hotels+lodging / staffing / commodity-chemicals / trucking, all nameable. Full CLI:
+    40 clusters → 35 admissible (persistence gate rejects 4 blips + 1 low-coherence). 16 theme
+    regression tests incl. the proper sector leg (β estimated, not 1), the vol-strip selectivity, the
+    gates, the no-conclusion schema guard, the no-forward-returns AST guard, and the
+    persistence-un-evaluable fail-loud case — the last from a pre-PR adversarial review (4 dimensions ×
+    verify) that confirmed exactly 1 real defect (a persistence auto-pass on a short window), now fixed.
+    ruff + mypy --strict (76) + pytest 253 offline green.* **Stages 2–4 PENDING (NOT built): Component C
+    confirmation trigger (Stage 2); the semantic exposure-classifier / text ingestion (Stage 3);
+    pipeline composition + forward paper-validation (Stage 4).** A PAPER-VALIDATION track; Edge 2 stays
+    the lead horse (§4 GOVERNOR) — this did not starve overshoot verdict-logging.
   - **HOLDING-UNIVERSE study — sub-$10B-at-inception captured the theme return in all 6 themes tested
     (2026-06-29; `theme_admissibility_spike.md` Part 5).** A DISTINCT axis from the 4 detection spikes:
     does the **holding** bound (fund detects broad incl. mega leaders, but HOLDS sub-$10B) capture theme

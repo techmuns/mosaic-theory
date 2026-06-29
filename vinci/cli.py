@@ -482,6 +482,33 @@ def _cmd_graph_exposure(args: argparse.Namespace) -> int:
     return 0
 
 
+def _cmd_themes(args: argparse.Namespace) -> int:
+    """Component A: residual co-movement theme detection on the broad universe (assembles, never
+    concludes).
+
+    PROPOSES candidate clusters + their candidate shared-linkage + §7.1 strength signals for the
+    analyst to judge (criterion 1). It does NOT name a driver, rank themes, confirm, or select.
+    """
+    from vinci.themes import FactorBasis, detect_themes, render_result
+
+    cfg = get_config()
+    cfg.ensure_dirs()
+    ref = date.fromisoformat(args.ref) if args.ref else None
+    basis = FactorBasis.MARKET_SECTOR if args.basis == "r1" else FactorBasis.FULL
+    result = detect_themes(
+        cfg, reference_date=ref, window_days=args.window_days, basis=basis,
+        min_breadth=args.min_breadth, max_names=args.max_names, progress=stderr_reporter,
+    )
+    print(render_result(result, top=args.top))
+    if not args.no_write:
+        out = cfg.snapshots_dir / "candidate_themes.jsonl"
+        with out.open("w") as f:
+            for t in result.candidate_themes:
+                f.write(t.model_dump_json() + "\n")
+        print(f"\nwrote {out} ({len(result.candidate_themes)} admissible candidate themes)")
+    return 0
+
+
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(prog="vinci", description=__doc__)
     sub = parser.add_subparsers(dest="command", required=True)
@@ -618,6 +645,38 @@ def build_parser() -> argparse.ArgumentParser:
     p_exp.add_argument("--entity", required=True, help="ticker or company name of the shocked node")
     p_exp.add_argument("--hops", type=int, default=2, help="reachability radius (default: 2)")
     p_exp.set_defaults(func=_cmd_graph_exposure)
+
+    p_themes = sub.add_parser(
+        "themes",
+        help="Component A: residual co-movement theme detection (proposes; never concludes)",
+    )
+    p_themes.add_argument(
+        "--ref", help="reference date YYYY-MM-DD (default: universe snapshot as_of)"
+    )
+    p_themes.add_argument(
+        "--window-days", type=int, default=365, dest="window_days",
+        help="trailing detection window in calendar days (default: 365 ≈ 12mo)",
+    )
+    p_themes.add_argument(
+        "--basis", choices=("r1", "r2"), default="r2",
+        help=(
+            "residualization basis: r1=market+sector, r2=+size+vol "
+            "(default; the vol-strip is the lever)"
+        ),
+    )
+    p_themes.add_argument(
+        "--min-breadth", type=int, default=3, dest="min_breadth",
+        help="cluster-size floor — a basket, not a pair (default: 3, face-validity)",
+    )
+    p_themes.add_argument(
+        "--max-names", type=int, dest="max_names", help="cap the universe (quick dev sample)"
+    )
+    p_themes.add_argument("--top", type=int, help="limit admissible themes printed (default: all)")
+    p_themes.add_argument(
+        "--no-write", action="store_true", dest="no_write",
+        help="print only; do not write candidate_themes.jsonl",
+    )
+    p_themes.set_defaults(func=_cmd_themes)
     return parser
 
 
