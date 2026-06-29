@@ -105,6 +105,34 @@ def all_unknown_snapshot(cik10: str) -> FundamentalSnapshot:
     )
 
 
+# Outstanding-debt instrument tags used ONLY as a consistency witness (see _max_outstanding_debt) —
+# the instruments the LongTermDebt+current extraction below does NOT read, so a large value here
+# means that extraction missed debt. NOT summed (the tags overlap; summing would double-count).
+_DEBT_WITNESS_TAGS: tuple[str, ...] = (
+    "ShortTermBorrowings", "ConvertibleDebt", "ConvertibleDebtCurrent", "ConvertibleDebtNoncurrent",
+    "NotesPayableCurrent", "NotesPayable", "SubordinatedDebtCurrent", "SubordinatedDebt",
+    "SecuredDebt", "SecuredDebtCurrent",
+)
+
+
+def _max_outstanding_debt(facts: dict[str, Any]) -> tuple[float, str] | None:
+    """Largest SINGLE outstanding-debt instrument balance a filer reports (latest instant of any
+    witness tag). A CONSISTENCY WITNESS only: if it exceeds the long-term+current extraction, that
+    extraction missed debt (the MVST case — convertible / notes / short-term tags), and the caller
+    fails loud rather than show a confident understated (often false net-cash) figure."""
+    us = facts.get("facts", {}).get("us-gaap", {})
+    best: tuple[float, str] | None = None
+    for tag in _DEBT_WITNESS_TAGS:
+        pts = us.get(tag, {}).get("units", {}).get("USD")
+        if not pts:
+            continue
+        latest = max(pts, key=lambda r: (r.get("end", ""), r.get("filed", "")))
+        val = latest.get("val")
+        if val is not None and (best is None or float(val) > best[0]):
+            best = (float(val), tag)
+    return best
+
+
 def compute_fundamental_snapshot(cik10: str, facts: dict[str, Any]) -> FundamentalSnapshot:
     """Pure: derive the non-distress signals + step-5 inputs from a ``companyfacts`` dict."""
     op = latest_annual(extract_points(facts, "operating_income"))
@@ -130,8 +158,20 @@ def compute_fundamental_snapshot(cik10: str, facts: dict[str, Any]) -> Fundament
         ebitda = _unknown_f("no operating_income/D&A")
 
     debt_total = (ltd.value if ltd else 0.0) + (dc.value if dc else 0.0)
+    # CONSISTENCY GUARD: the LongTermDebt+current extraction misses debt booked under convertible /
+    # notes / short-term / subordinated tags (the MVST case) — a partial sum that understates gross
+    # debt and flips net-debt to a FALSE net-cash. If a single such instrument exceeds the extracted
+    # total, fail loud (never a confident understated figure); CIQ's balance sheet is the authority.
+    witness = _max_outstanding_debt(facts)
+    undercaptured = bool((ltd or dc) and witness and witness[0] > debt_total * 1.10)
     net_debt_val: float | None = None
-    if (ltd or dc) and cash:
+    if undercaptured:
+        assert witness is not None
+        net_debt = _unknown_f(
+            f"EDGAR debt under-captured: {witness[1]} ${witness[0] / 1e6:,.0f}M alone exceeds the "
+            f"${debt_total / 1e6:,.0f}M long-term+current extracted — pull CIQ"
+        )
+    elif (ltd or dc) and cash:
         net_debt_val = debt_total - cash.value
         filed = max(p.filed for p in (ltd, dc, cash) if p)
         net_debt = _present_f(debt_total - cash.value, filed)

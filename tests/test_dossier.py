@@ -462,6 +462,53 @@ def test_survival_capacity_blocks_leverage_with_runway_and_wall() -> None:
     assert "UNKNOWN" in rv and "risk" in rv
 
 
+def test_net_debt_to_ebitda_prefers_ciq(monkeypatch: pytest.MonkeyPatch) -> None:
+    """Deterministic source hierarchy: CIQ Net Debt ÷ CIQ LTM EBITDA wins outright over the EDGAR
+    XBRL screen figure (which under-captures scattered debt). The MVST shape: 200 / 52 = 3.9x,
+    never the EDGAR false net-cash; no judge, no manual reconciliation."""
+    monkeypatch.setattr(cs, "net_debt", lambda _b: ds.Sourced.present(199.9, source_ref="CIQ BS"))
+    monkeypatch.setattr(
+        cs, "ltm_ebitda", lambda _b: ds.Sourced.present(51.9, source_ref="CIQ IS [LTM Mar-31-2026]")
+    )
+    edgar = ds.Sourced.present(-1.5, source_ref="EDGAR XBRL (screen)")  # the false net-cash
+    ratio, ciq_nd = dm._net_debt_to_ebitda(None, edgar)  # type: ignore[arg-type]
+    assert ratio.status is ds.SourceStatus.PRESENT and ratio.value == pytest.approx(3.9, abs=0.05)
+    assert "CIQ Net Debt" in (ratio.source_ref or "") and "EDGAR" not in (ratio.source_ref or "")
+    assert ciq_nd.value == pytest.approx(199.9)  # fed to the survival readout
+
+
+def test_net_debt_to_ebitda_edgar_fallback_then_unknown(monkeypatch: pytest.MonkeyPatch) -> None:
+    """CIQ absent → the EDGAR XBRL figure as a LABELLED breadth fallback; CIQ + EDGAR both absent →
+    fail loud 'pull CIQ', never a fabricated ratio."""
+    monkeypatch.setattr(cs, "net_debt", lambda _b: ds.Sourced.unknown(note="no CIQ"))
+    monkeypatch.setattr(cs, "ltm_ebitda", lambda _b: ds.Sourced.unknown(note="no CIQ"))
+    edgar = ds.Sourced.present(2.5, source_ref="EDGAR XBRL (screen)")
+    fallback, _ = dm._net_debt_to_ebitda(None, edgar)  # type: ignore[arg-type]
+    assert fallback.value == pytest.approx(2.5) and "breadth" in (fallback.note or "")
+    no_edgar = ds.Sourced.unknown(note="no EBITDA in XBRL")
+    unk, _ = dm._net_debt_to_ebitda(None, no_edgar)  # type: ignore[arg-type]
+    assert unk.status is ds.SourceStatus.UNKNOWN and "pull CIQ" in (unk.note or "")
+
+
+def test_survival_capacity_ciq_basis_and_net_cash_readout() -> None:
+    """The CIQ-sourced ratio is labelled '(CIQ)'; and when the ratio can't form but the CIQ net-debt
+    position IS known, the block shows it instead of a bare 'solvency risk' — a known balance sheet
+    is not a blind risk."""
+    present, unknown = ds.Sourced.present, ds.Sourced.unknown
+    sc = dm._survival_capacity(
+        present(3.9, source_ref="CIQ Net Debt $200M ÷ CIQ LTM EBITDA $52M"),
+        unknown(note="no guide"), present(1.0, source_ref="EDGAR"), unknown(note="no instruments"),
+    )
+    assert "net-debt/EBITDA 3.9x (CIQ)" in (sc.value or "")
+    sc2 = dm._survival_capacity(
+        unknown(note="no EBITDA in XBRL"), unknown(note="no guide"),
+        present(1.0, source_ref="EDGAR"), unknown(note="no instruments"),
+        net_debt=present(200.0, source_ref="CIQ BS"),
+    )
+    v2 = sc2.value or ""
+    assert "net debt $200M (CIQ)" in v2 and "N/A" in v2 and "solvency risk" not in v2
+
+
 def test_synthesis_fails_loud_when_llm_errors() -> None:
     """An LLM with no usable output → None synthesis + a flag, never a fabricated dossier."""
     class _BadLlm(LlmClient):

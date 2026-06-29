@@ -163,6 +163,57 @@ def test_leverage_unknown_when_ebitda_nonpositive() -> None:
     assert "EBITDA<=0" in (snap.net_leverage.note or "")  # the note names the real cause
 
 
+def test_net_debt_undercaptured_fails_loud() -> None:
+    """The MVST case: debt booked under ShortTermBorrowings / convertible tags the long-term+current
+    extraction never reads. A single such instrument exceeding the extracted total means the
+    extraction missed debt → net-debt fails loud, never a confident false net-cash of 13 - 126."""
+    facts = {
+        "facts": {
+            "us-gaap": {
+                "LongTermDebt": {"units": {"USD": [_instant("2026-03-31", 13.2e6, "2026-05-04")]}},
+                "ShortTermBorrowings": {
+                    "units": {"USD": [_instant("2026-03-31", 111.2e6, "2026-05-04")]}
+                },
+                "ConvertibleDebtCurrent": {
+                    "units": {"USD": [_instant("2026-03-31", 76.5e6, "2026-05-04")]}
+                },
+                "CashAndCashEquivalentsAtCarryingValue": {
+                    "units": {"USD": [_instant("2026-03-31", 126.1e6, "2026-05-04")]}
+                },
+            }
+        }
+    }
+    snap = compute_fundamental_snapshot("x", facts)
+    assert not snap.net_debt.is_known  # NOT a false net-cash of 13.2 - 126.1 = -112.9M
+    assert "under-captured" in (snap.net_debt.note or "")
+    assert "ShortTermBorrowings" in (snap.net_debt.note or "")  # names the largest witness
+    # net-leverage and net-debt/OCF share the numerator → they inherit UNKNOWN, not a false value
+    assert not snap.net_leverage.is_known and not snap.net_debt_to_ocf.is_known
+
+
+def test_net_debt_witness_within_extracted_still_computes() -> None:
+    """The guard fires ONLY on genuine under-capture: a debt witness that does NOT exceed the
+    long-term+current extraction (the clean common case) leaves net-debt computed as usual."""
+    facts = {
+        "facts": {
+            "us-gaap": {
+                "LongTermDebtNoncurrent": {
+                    "units": {"USD": [_instant("2024-12-31", 400e6, "2025-02-01")]}
+                },
+                "DebtCurrent": {"units": {"USD": [_instant("2024-12-31", 50e6, "2025-02-01")]}},
+                "ShortTermBorrowings": {  # present but well within the 450 extracted → no fire
+                    "units": {"USD": [_instant("2024-12-31", 100e6, "2025-02-01")]}
+                },
+                "CashAndCashEquivalentsAtCarryingValue": {
+                    "units": {"USD": [_instant("2024-12-31", 150e6, "2025-02-01")]}
+                },
+            }
+        }
+    }
+    snap = compute_fundamental_snapshot("x", facts)
+    assert snap.net_debt.is_known and snap.net_debt.value == pytest.approx(300e6)  # 450 - 150
+
+
 def test_leverage_unknown_note_names_missing_debt_not_negative_ebitda() -> None:
     """The net-leverage UNKNOWN note names the SPECIFIC missing input. A positive-EBITDA name
     with no debt/cash line reads 'no net-debt …', NOT the misleading 'EBITDA<=0 …' (the MVST

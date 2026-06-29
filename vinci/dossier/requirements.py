@@ -89,12 +89,17 @@ CIQ_MODULES: tuple[CiqModuleRequirement, ...] = (
         module="Financials — Annual",
         workbook_kind="financials",
         freq="annual",
-        sheets=("Income Statement", "Cash Flow", "Capital Structure Details", "Segments", "Ratios"),
+        sheets=(
+            "Income Statement", "Cash Flow", "Balance Sheet", "Capital Structure Details",
+            "Segments", "Ratios",
+        ),
         used_for=(
             "5y margin trend (margin_trend), FCF (free_cash_flow), interest coverage "
-            "(interest_coverage), capital-structure / covenant flags (liquidity_covenant_flags), "
-            "segment + geographic concentration (segments / segment_ebitda / geographic), and the "
-            "multi-year revenue/segment arc (multi_year_trajectory)"
+            "(interest_coverage), net-debt/EBITDA from CIQ Net/Total Debt + LTM EBITDA "
+            "(net_debt / total_debt / ltm_ebitda), capital-structure / covenant flags "
+            "(liquidity_covenant_flags), segment + geographic concentration (segments / "
+            "segment_ebitda / geographic), and the multi-year revenue/segment arc "
+            "(multi_year_trajectory)"
         ),
         granularity=Granularity.ANNUAL,
         lookback="5 fiscal years (export with Period Type: Annual)",
@@ -104,10 +109,11 @@ CIQ_MODULES: tuple[CiqModuleRequirement, ...] = (
         module="Financials — Quarterly",
         workbook_kind="financials",
         freq="quarterly",
-        sheets=("Multiples", "Income Statement"),
+        sheets=("Multiples", "Income Statement", "Balance Sheet"),
         used_for=(
             "valuation-range position / multiple percentiles (ev_ebitda_current, "
-            "ev_ebitda_percentile, range_position, pe_ltm_current) and the clean same-quarter YoY "
+            "ev_ebitda_percentile, range_position, pe_ltm_current), the freshest CIQ Net/Total "
+            "Debt for net-debt/EBITDA (net_debt / total_debt), and the clean same-quarter YoY "
             "revenue trajectory (margin_trend / multi_year_trajectory)"
         ),
         granularity=Granularity.QUARTERLY,

@@ -234,6 +234,68 @@ def interest_coverage(bundle: CiqBundle) -> Sourced[float]:
     )
 
 
+def _bs_latest(bundle: CiqBundle, label: str) -> Sourced[float]:
+    """Latest value ($M) of a CIQ Balance Sheet line, freshest period first (quarterly, else
+    annual). The Balance Sheet carries CIQ's own classified 'Total Debt' / 'Net Debt' totals — the
+    depth-stage authority; the partial EDGAR-XBRL debt tags under-capture instrument debt."""
+    rows: Rows | None = None
+    unavailable: Exception | None = None
+    try:  # literal freqs (not a loop var) so the CIQ-manifest drift guard can see the address
+        rows = bundle.sheet("financials", "Balance Sheet", freq="quarterly")
+    except CiqUnavailableError as exc:
+        unavailable = exc
+        try:
+            rows = bundle.sheet("financials", "Balance Sheet", freq="annual")
+        except CiqUnavailableError as exc2:
+            unavailable = exc2
+    if rows is None:
+        assert unavailable is not None  # both freqs raised — workbook or sheet absent
+        return _miss_or_unknown(bundle, "financials", unavailable)
+    ri = _find_row(rows, label)
+    if ri is None:
+        return Sourced.unknown(note=f"Balance Sheet has no '{label}' row")
+    latest = _latest_col(rows, ri, _period_header(rows))
+    if latest is None:
+        return Sourced.unknown(note=f"'{label}' has no value in any period")
+    _, value, period = latest
+    suffix = f" [{period}]" if period else " [latest]"
+    return Sourced.present(
+        round(value, 1), source_ref=f"CIQ Financials→Balance Sheet '{label}'{suffix}"
+    )
+
+
+def net_debt(bundle: CiqBundle) -> Sourced[float]:
+    """CIQ Net Debt ($M) — classified total debt minus cash & ST investments. The depth-stage
+    authority for leverage on a finalist; EDGAR-XBRL net-debt under-captures scattered instrument
+    debt (convertible / notes / short-term / subordinated tags) and can flip to a false net-cash."""
+    return _bs_latest(bundle, "Net Debt")
+
+
+def total_debt(bundle: CiqBundle) -> Sourced[float]:
+    """CIQ gross Total Debt ($M) — the classified balance-sheet total, for context alongside net."""
+    return _bs_latest(bundle, "Total Debt")
+
+
+def ltm_ebitda(bundle: CiqBundle) -> Sourced[float]:
+    """Latest consolidated EBITDA ($M) — the rightmost valued column of the Income Statement
+    'EBITDA' row (LTM/TTM if the workbook carries one, else the latest FY): the net-debt/EBITDA
+    denominator paired with CIQ Net Debt. Fail-loud UNKNOWN if the row is absent or empty."""
+    try:
+        rows = bundle.sheet("financials", "Income Statement", freq="annual")
+    except CiqUnavailableError as exc:
+        return _miss_or_unknown(bundle, "financials", exc)
+    ri = _find_row(rows, "EBITDA")
+    if ri is None:
+        return Sourced.unknown(note="Income Statement sheet has no 'EBITDA' row")
+    latest = _latest_col(rows, ri, _period_header(rows))
+    if latest is None:
+        return Sourced.unknown(note="EBITDA row has no value in any period")
+    _, value, period = latest
+    return Sourced.present(
+        round(value, 1), source_ref=f"CIQ Financials→Income Statement 'EBITDA' [{period}]"
+    )
+
+
 def _quarter_token(cell: Any) -> str | None:
     m = re.search(r"\bQ([1-4])\b", str(cell))
     return f"Q{m.group(1)}" if m else None
