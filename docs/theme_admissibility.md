@@ -188,8 +188,9 @@ with **Criterion-1 driver-naming as the blob-filter.** Why the change:
   themes that the coarse linkage data was blind to.
 - **The blobs are handled in two stages** (Part 4 vol-strip selectivity + Criterion 1): the **vol-strip
   dissolves the speculative-beta blobs** — proven *selective*, it broke the 19-name future-tech blob into
-  its real uranium/quantum/eVTOL sub-themes while leaving diffuse low-vol housing intact — and
-  **Criterion-1 driver-naming rejects whatever remains driver-less.**
+  smaller sub-clusters whose sizes match its real sub-themes (uranium / quantum / eVTOL — inferred from
+  the blob's membership) while leaving diffuse low-vol housing intact — and **Criterion-1 driver-naming
+  rejects whatever remains driver-less.**
 
 **The DISCIPLINE survives; only the absolute is overturned.** Raw price-clustering **ALONE** — *without*
 the vol-strip AND Criterion-1 — would still yield momentum buckets (§3.1's core point holds, and is the

@@ -1083,8 +1083,9 @@ single-threaded ahead of the lead loop).
     diffuse themes too? Applied R1→R2(+size+vol) to three groups: **HOUSING (diffuse real, vol-pctile
     45)** survived — 22→18 connected @τ0.5, mean corr 0.37→0.35 (barely moved); **QUANTUM (tight real,
     vol-pctile 95)** survived 3→3 (0.76→0.71); **the 19-name SPEC-BLOB (fake, vol-pctile 88)
-    DISSOLVED** — 19→[6,3,2,2,2,…], and the fragments are its real constituent themes (uranium-6 /
-    quantum-3 / eVTOL-2). **⇒ SELECTIVE, not a threshold-raiser** — the discriminator is VOLATILITY
+    DISSOLVED** — 19→[6,3,2,2,2,…] (fragment SIZES matching its real sub-themes — the blob holds exactly
+    6 uranium names / 3 quantum / eVTOL; size→theme mapping inferred from membership, not separately
+    printed). **⇒ SELECTIVE, not a threshold-raiser** — the discriminator is VOLATILITY
     (low-vol housing untouched; high-vol speculative GLUE removed, unbundling the risk-on amalgam into
     nameable sub-themes). Confound (a) CLEARED. **TEST 2 — REGIME fragility (confound b):** do themes
     recur in a different regime? A genuine drawdown window existed — **Window B 2021-11..2022-10, IWM
@@ -1145,7 +1146,8 @@ single-threaded ahead of the lead loop).
     the sub-$10B enablers EARLY** — which the study ASSUMES (hindsight) and the forward track must prove.
     **HONEST LIMITATION (prominent):** heavily hindsight-prone (constituents picked knowing who won →
     sub-$10B return OVERSTATED), equal-weight buy-and-hold no-exit, small-n (GLP-1 noisiest/lottery),
-    one data glitch (Barrick GOLD→B ticker change, immaterial). **Suggestive structural evidence that
+    one data glitch (anomalous GOLD-symbol cap — likely a ticker/listing change, not verified;
+    immaterial). **Suggestive structural evidence that
     INFORMS the holding-ceiling decision (toward "viable across theme types, KEEP") — does NOT settle
     it; the forward paper-track settles it** (do MY sub-$10B theme bets capture the return?). Existing
     Polygon client, key from env never logged; throwaway + caches deleted; docs-only; suite green (ruff

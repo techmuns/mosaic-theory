@@ -329,11 +329,14 @@ A threshold-raiser would have dissolved housing too; it didn't. The strip is **S
 
 The mechanism is **volatility, not correlation-tightness**: housing sits at the **45th** vol-pctile, so
 the high-vol factor is not its shared movement and the strip barely touches it; the blob sits at the
-**88th**, so the vol factor IS its shared movement. And the blob's "dissolution" is actually
-**RESOLUTION into its real constituent themes** — the fragments are **uranium** (DNN/UUUU/URG/NXE/UEC/EU,
-the 6), **quantum** (RGTI/QUBT/QBTS, the 3), and **eVTOL** (the 2s). The strip removed the spurious
-**cross-theme speculative glue** that the +39% risk-on regime had fused into one blob, leaving each real
-sub-theme standing. That is the ideal selective behaviour: preserve diffuse real themes, trim-but-keep
+**88th**, so the vol factor IS its shared movement. And the blob's "dissolution" looks like
+**RESOLUTION into its real constituent themes** — the **fragment SIZES** `[6,3,2,2,2,…]` line up with the
+blob's known membership, which contains **exactly 6 uranium names** (DNN/UUUU/URG/NXE/UEC/EU), the **3
+quantum** names (RGTI/QUBT/QBTS), and the **eVTOL** trio. *(The run reported the fragment sizes + the
+19-name membership; the size→sub-theme mapping is inferred from that membership, not separately printed —
+strong but not directly observed.)* On that reading the strip removed the spurious **cross-theme
+speculative glue** that the +39% risk-on regime had fused into one blob, leaving each real sub-theme
+standing. That is the ideal selective behaviour: preserve diffuse real themes, trim-but-keep
 tight real themes, and unbundle a risk-on amalgam into its nameable parts. **Confound (a) cleared.**
 
 ## TEST 2 — regime fragility: themes **RECUR** (confound b substantially CLEARED)
@@ -448,8 +451,9 @@ SEE the theme) while the **holdable expression — and, this study suggests, the
   descriptive only, not a strategy.
 - **Small n** per theme; **GLP-1 (n=5) is the noisiest** — lottery-like (ALT −83%, NVO −36%, HIMS/VKTX
   won); its "capture" is weak evidence.
-- **Data caveat:** Barrick (GOLD) cap_today glitched ($1.2B) from its 2025 GOLD→B ticker change;
-  excluding it moves the gold >$10B mean <2pp (immaterial).
+- **Data caveat:** Barrick (GOLD) returned an anomalous cap_today ($1.2B vs its true ~$40B+) — a
+  likely ticker/listing-change artifact for the `GOLD` symbol, **not verified here**; excluding it moves
+  the gold >$10B mean <2pp (immaterial).
 - **It does NOT settle the holding ceiling.** The **forward paper-track settles it**: do MY actual
   sub-$10B theme bets capture the return? This study **informs** that and generates the hypothesis — it
   is structural evidence pointing toward "the $10B holding bound is viable across theme types," **not** a
@@ -484,7 +488,7 @@ same-theme losers) hold.
 **Precision — FAILS, perfectly inverted.** Early-2022 EDGAR "artificial intelligence" filing-mentions:
 winners mean **2.2** (median 1.5); losers mean **15.6** (median 11) — the losers were **~7× louder**.
 Ranked by 2022 AI-mentions, **all five LOSERS rank above all six WINNERS**: SOUN(30), BBAI(20), VERI(11),
-AI(9), REKR(8), then SMCI(5), CRDO(4), COHR(2), MOD(1), CLS(1), **VRT(0)**. The biggest enabler (VRT,
+AI(9), REKR(8), then SMCI(5), CRDO(4), COHR(2), MOD(1), CLS(1), **VRT(0)**. A flagship enabler (VRT,
 **+2225%**) had **zero** AI-mentions; a 2022 "loudest-AI-text" screen buys exactly the five losers and
 skips every enabler. News volume doesn't save it: it is **coincident/lagging** (VRT 45→206, MOD 38→222
 as price ran in 2023, not before), **size-confounded**, and the loudest-news name (C3.ai, 672 in 2023)
