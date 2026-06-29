@@ -277,7 +277,11 @@ Each line: *what it does* — *verified how*.
     source_ref binds BOTH periods (no bare 'LTM'); the EDGAR-fallback caveat rides in the source_ref
     (rendered) not just the note; the guard period-aligns the witness (drops since-repaid stale debt)
     and `_bs_latest` falls back quarterly→annual on a missing row. Ships on dossier re-assembly; the
-    screen lands the guard on re-screen.* *Verified:
+    screen lands the guard on re-screen. FOLLOW-UP (post-re-assembly audit): net-debt/OCF is now
+    CIQ-sourced too (`ciq_sheets.ltm_ocf` → CIQ Net Debt ÷ CIQ 'Cash from Ops.' = MVST 4.4x) so it
+    no longer shows a false net-cash next to the 3.9x EBITDA leverage; and the synthesis output
+    decodes literal `\uXXXX` escapes (`_decode_escapes`) the LLM occasionally emits as text (opus put
+    a literal em-dash escape in evidence_balance). +3 tests.* *Verified:
     VRRM 5→3 / EPAM 3→1 directional flags (the contradictory buy+sell on rating context gone, single
     'recommendation' remains); snippets clean ('…Phase…', '~$71M…'); MVST P/E → N/A; FUBO 12.1x renders
     with the amber distortion caveat (live screenshot + node render). Regression tests: rating-context

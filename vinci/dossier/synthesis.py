@@ -581,6 +581,23 @@ def _parse(raw: dict[str, Any]) -> Synthesis:
     )
 
 
+_LITERAL_UNICODE = re.compile(r"\\u([0-9a-fA-F]{4})")
+
+
+def _decode_escapes(obj: Any) -> Any:
+    r"""Decode a literal ``\uXXXX`` that the LLM sometimes emits as TEXT (opus did, in
+    evidence_balance: 'mixed — a' showed the raw escape, not an em-dash). Recurses dicts/lists;
+    a real char has no backslash so it stays. Only ``\u`` + four hex digits decodes; a stray
+    ``\underway`` (non-hex) is left alone."""
+    if isinstance(obj, str):
+        return _LITERAL_UNICODE.sub(lambda m: chr(int(m.group(1), 16)), obj)
+    if isinstance(obj, dict):
+        return {k: _decode_escapes(v) for k, v in obj.items()}
+    if isinstance(obj, list):
+        return [_decode_escapes(v) for v in obj]
+    return obj
+
+
 def synthesize(
     mech: MechanicalLayer, *, llm: LlmClient, ticker: str, name: str, transcript: str | None = None
 ) -> tuple[Synthesis | None, list[str], str]:
@@ -616,5 +633,5 @@ def synthesize(
         log_parts += ["", "=== INCOMPLETE ===", note]
         flag = f"LLM synthesis UNAVAILABLE — {note} (likely truncated)"
         return None, [flag], "\n".join(log_parts)
-    synth, flags = _validate(_parse(raw), mech)
+    synth, flags = _validate(_parse(_decode_escapes(raw)), mech)
     return synth, flags, "\n".join(log_parts)

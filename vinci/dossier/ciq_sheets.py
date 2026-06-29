@@ -313,6 +313,27 @@ def ltm_ebitda(bundle: CiqBundle) -> Sourced[float]:
     )
 
 
+def ltm_ocf(bundle: CiqBundle) -> Sourced[float]:
+    """Latest operating cash flow ($M) — the rightmost valued column of the Cash Flow 'Cash from
+    Ops.' row (LTM/TTM when present, else latest FY). The net-debt/OCF denominator paired with CIQ
+    Net Debt; OCF carries the D&A add-back so it survives an untaggable-EBITDA name. Fail-loud
+    UNKNOWN if the row is absent or empty."""
+    try:
+        rows = bundle.sheet("financials", "Cash Flow", freq="annual")
+    except CiqUnavailableError as exc:
+        return _miss_or_unknown(bundle, "financials", exc)
+    ri = _find_row(rows, "Cash from Ops.")
+    if ri is None:
+        return Sourced.unknown(note="Cash Flow sheet has no 'Cash from Ops.' row")
+    latest = _latest_col(rows, ri, _period_header(rows))
+    if latest is None:
+        return Sourced.unknown(note="'Cash from Ops.' has no value in any period")
+    _, value, period = latest
+    return Sourced.present(
+        round(value, 1), source_ref=f"CIQ Financials→Cash Flow 'Cash from Ops.' [{period}]"
+    )
+
+
 def _quarter_token(cell: Any) -> str | None:
     m = re.search(r"\bQ([1-4])\b", str(cell))
     return f"Q{m.group(1)}" if m else None

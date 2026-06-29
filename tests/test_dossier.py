@@ -517,6 +517,36 @@ def test_survival_capacity_ciq_basis_and_net_cash_readout() -> None:
     assert "net debt $200M (CIQ)" in v2 and "N/A" in v2 and "solvency risk" not in v2
 
 
+def test_net_debt_to_ocf_prefers_ciq() -> None:
+    """net-debt/OCF uses the SAME CIQ net-debt as net-debt/EBITDA (CIQ Net Debt ÷ CIQ OCF), so the
+    two leverage rows can't disagree on whether net debt exists. MVST: 200 / 46 ~ 4.4x."""
+    nd = ds.Sourced.present(199.9, source_ref="CIQ ... 'Net Debt' [Q1 Mar-31-2026]")
+    ocf = ds.Sourced.present(45.9, source_ref="CIQ ... 'Cash from Ops.' [LTM Mar-31-2026]")
+    r = dm._net_debt_to_ocf(nd, ocf, ds.Sourced.present(-1.5, source_ref="EDGAR (false net-cash)"))
+    assert r.status is ds.SourceStatus.PRESENT and r.value == pytest.approx(4.4, abs=0.1)
+    src = r.source_ref or ""
+    assert "CIQ Net Debt" in src and "CIQ OCF" in src and "[Q1 Mar-31-2026]" in src
+
+
+def test_net_debt_to_ocf_edgar_fallback_then_unknown() -> None:
+    """CIQ absent → EDGAR figure as a labelled breadth fallback (caveat in the source_ref); both
+    absent → fail loud 'pull CIQ'."""
+    no = ds.Sourced.unknown(note="no CIQ")
+    fb = dm._net_debt_to_ocf(no, no, ds.Sourced.present(2.5, source_ref="EDGAR XBRL (screen)"))
+    assert fb.value == pytest.approx(2.5) and "pull CIQ" in (fb.source_ref or "")
+    unk = dm._net_debt_to_ocf(no, no, ds.Sourced.unknown(note="no net-debt"))
+    assert unk.status is ds.SourceStatus.UNKNOWN and "pull CIQ" in (unk.note or "")
+
+
+def test_synthesis_decodes_literal_unicode_escapes() -> None:
+    """opus occasionally emits a literal '\\u2014' as TEXT in a synthesis string; it must render as
+    the character, not the raw escape — while real chars and non-hex backslashes are left alone."""
+    assert syn._decode_escapes("mixed \\u2014 a turn") == "mixed — a turn"
+    assert syn._decode_escapes({"k": ["x \\u2019 y"]}) == {"k": ["x ’ y"]}  # recurses
+    assert syn._decode_escapes("real — dash") == "real — dash"  # real char untouched
+    assert syn._decode_escapes("\\underway") == "\\underway"  # non-hex \\u left alone
+
+
 def test_synthesis_fails_loud_when_llm_errors() -> None:
     """An LLM with no usable output → None synthesis + a flag, never a fabricated dossier."""
     class _BadLlm(LlmClient):
