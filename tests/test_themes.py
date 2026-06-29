@@ -38,9 +38,10 @@ from vinci.themes.schemas import (
     FactorBasis,
     StrengthSignals,
     ThemeMember,
+    Trajectory,
     WindowSpec,
 )
-from vinci.themes.signals import compute_strength_signals
+from vinci.themes.signals import _horizon_return, compute_strength_signals
 
 _THEMES_DIR = Path(__file__).resolve().parent.parent / "vinci" / "themes"
 
@@ -303,8 +304,10 @@ def test_strength_signals_present_and_fail_loud() -> None:
     sig = compute_strength_signals(
         ["A", "B", "C"], closes, market_closes=market, calendar=cal, reference_date=cal[-1]
     )
-    assert sig.momentum_median.is_known
-    assert sig.rel_strength_vs_market.is_known
+    # momentum + rel-strength are 1/3/6/12mo trajectories (shortest→longest), each horizon present
+    assert [lbl for lbl, _ in sig.momentum.ordered()] == ["1mo", "3mo", "6mo", "12mo"]
+    assert all(f.is_known for _, f in sig.momentum.ordered())
+    assert all(f.is_known for _, f in sig.rel_strength_vs_market.ordered())
     assert sig.crowding_overextension.is_known
     # too little history → UNKNOWN, never a partial-window number
     short = _cal(5)
@@ -313,6 +316,48 @@ def test_strength_signals_present_and_fail_loud() -> None:
         calendar=short, reference_date=short[-1],
     )
     assert not sig2.crowding_overextension.is_known
+    assert not sig2.momentum.h12mo.is_known  # 1 member < floor → UNKNOWN, not a fabricated value
+
+
+def test_horizon_return_fail_loud_on_short_coverage() -> None:
+    """A name without history spanning a horizon yields UNKNOWN for THAT horizon (fail-loud)."""
+    cal = _cal(252)
+    full = {d: 100.0 + i * 0.1 for i, d in enumerate(cal)}
+    ipo = {d: 50.0 + i * 0.2 for i, d in enumerate(cal) if i >= 252 - 80}  # only the last 80 days
+    assert all(_horizon_return(full, cal, n) is not None for n in (21, 63, 126, 252))
+    assert _horizon_return(ipo, cal, 21) is not None  # 1mo: covered
+    assert _horizon_return(ipo, cal, 63) is not None  # 3mo: covered (80 ≥ 63)
+    assert _horizon_return(ipo, cal, 126) is None  # 6mo: history doesn't span it → UNKNOWN
+    assert _horizon_return(ipo, cal, 252) is None  # 12mo: UNKNOWN
+
+
+def test_trajectory_reconciles_and_does_not_collapse() -> None:
+    """The 12mo horizon reconciles to the median full-window return; no collapse field."""
+    cal = _cal(252)
+    members = {
+        "A": {d: 100.0 * (1.0 + 0.001 * i) for i, d in enumerate(cal)},
+        "B": {d: 100.0 * (1.0 - 0.0005 * i) for i, d in enumerate(cal)},
+        "C": {d: 100.0 * (1.0 + 0.0002 * i) for i, d in enumerate(cal)},
+    }
+    market = {d: 100.0 * (1.0 + 0.0003 * i) for i, d in enumerate(cal)}
+    sig = compute_strength_signals(list(members), members, market_closes=market, calendar=cal,
+                                   reference_date=cal[-1])
+
+    def full_ret(c: dict[date, float]) -> float:
+        seq = [c[d] for d in cal if d in c]
+        return seq[-1] / seq[0] - 1.0
+
+    exp_mom = statistics.median(full_ret(c) for c in members.values())
+    assert sig.momentum.h12mo.value is not None
+    assert abs(sig.momentum.h12mo.value - exp_mom) < 1e-9  # 12mo = median full-window return
+    assert sig.rel_strength_vs_market.h12mo.value is not None
+    assert abs(sig.rel_strength_vs_market.h12mo.value - (exp_mom - full_ret(market))) < 1e-9
+
+    # HARD CONSTRAINT: the trajectory is exactly four horizons — no slope/composite/score/rank field
+    assert set(Trajectory.model_fields) == {"h1mo", "h3mo", "h6mo", "h12mo"}
+    for banned in ("slope", "score", "composite", "rank", "trend", "coef", "verdict"):
+        assert not hasattr(Trajectory, banned)
+        assert banned not in Trajectory.model_fields
 
 
 # --------------------------------------------------------------------------------------------------
