@@ -316,6 +316,21 @@ Each line: *what it does* — *verified how*.
     net-debt text. **Caveat:** the net-debt NOTE itself is computed at SCREEN time (cached in `vinci.db`),
     so dossier re-assembly reads the stale value — the `edgar/client.py` disambiguation lands on the next
     `run-weekly` (re-screen), not on re-assembly.*
+  - **Flag-review-noise reduction (2026-06-29) — keep only signal in the human-review flags.** A
+    10-dossier audit found ~12 review flags that were noise: three guardrails over-fired on name
+    shapes their first cases didn't cover (newly exposed, NOT regressions). (a) The DIRECTIONAL lint
+    tripped on the CPG 'buy-rate' velocity metric, a reported consensus 'recommendation' / 'Outperform
+    rating', and 'conviction' DESCRIBING an external/analyst target — `_RATING_CTX` now redacts those
+    reported-posture spans. (b) The leverage-basis caveat fired at ~0x and net cash (immaterial) —
+    `_leverage_basis_flag` now gates at `<1x` (incl. net cash), kept for materially-levered names.
+    (c) UNRECONCILED fired on bear points that DID reconcile via a FALLING dollar absolute-EBITDA —
+    `_ABS_RECON` now accepts an either-direction dollar reconciliation. All face-validity, never
+    forward-returns. *Verified on the real stored synthesis of all 10 recent dossiers: removes EXACTLY
+    12 noise flags (7 DIRECTIONAL / 3 UNRECONCILED / 2 leverage), adds 0, touches no genuine flag
+    (TRANSCRIPT-FIGURE/UNTRACEABLE/EPS/TWIN/FALSE-BALANCE survive). The core assemble-not-conclude line
+    holds: a real verdict — incl. 'high/low-conviction <call>', 'we recommend buying', 'we rate it
+    Outperform' — STILL flags, frozen as an adversarial probe battery. +3 tests; ruff + mypy --strict
+    + pytest green.*
   - **Verification-assertion tripwire + cited≠verified label (2026-06-24) — the dossier CITES, it
     never VERIFIES; the machine asserting it verified something is the one line it can't cross.** A
     new `VERIFICATION-CLAIM` guard flags any synthesis claim whose prose asserts the machine

@@ -493,8 +493,13 @@ def _leverage_basis_flag(net_lev: Sourced[float]) -> str | None:
     denominator → a lower ratio); that non-GAAP reconciliation lives in the earnings
     release/transcript (UNAVAILABLE). Flag the basis so the human doesn't read the reported ratio as
     the covenant ratio. Reads the RESOLVED ratio (the value the dossier actually shows), not the raw
-    EDGAR record — so the flagged number can never disagree with the net-debt/EBITDA field."""
+    EDGAR record — so the flagged number can never disagree with the net-debt/EBITDA field.
+    Gated on magnitude: below ~1x (incl. NET CASH, a negative ratio) there is effectively no
+    leverage, so the reported-vs-covenant-basis caveat is immaterial and only adds review noise —
+    the covenant basis only moves the read when the ratio is large enough to look levered."""
     if net_lev.status is not SourceStatus.PRESENT or net_lev.value is None:
+        return None
+    if net_lev.value < 1.0:
         return None
     return (
         f"Net debt/EBITDA ({net_lev.value:.1f}x) is on REPORTED EBITDA (CIQ / consolidated GAAP), "
