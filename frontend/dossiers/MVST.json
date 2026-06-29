@@ -295,63 +295,68 @@
     }
   },
   "synthesis": {
-    "evidence_balance": "strongly-bearish — a ~48% Q1 volume collapse drove adjusted EBITDA negative while the forward multiple already prices recovery above peers.",
+    "evidence_balance": "strongly-bearish — a 48% YoY revenue collapse and negative adjusted EBITDA reverse the turnaround into a Due-2026 leverage risk, only partly offset by positive FCF.",
     "bull_points": [
       {
-        "claim": "Absolute EBITDA inflected from deeply negative to positive across the trajectory (Dec-2021 -180 to Dec-2025 74, LTM Mar-2026 52), with gross margin climbing from -28% to ~35%, so the falling LTM margin % reads as the optical/consensus MISREAD of a real multi-year operational turn, not a terminal decline.",
+        "claim": "The multi-year arc is a genuine turnaround: EBITDA margin moved from -118% (Dec-2021) to +17% (Dec-2025) with absolute EBITDA swinging from -180 to +74, and gross margin from -28% to 36% — a real operational inflection, not an optical artifact.",
         "source_ref": "CIQ Financials→Income Statement (margin % + absolute EBITDA reconciler)",
         "cited": true
       },
       {
-        "claim": "The name is FCF-positive (Levered FCF +39.6 LTM), making it self-funding with no runway constraint per the survival_capacity read — a genuine signal the franchise is not in cash distress.",
+        "claim": "The name is genuinely self-funding: LTM levered free cash flow is positive at $39.6M with a positive FCF sign, so survival_capacity carries no runway constraint despite the de-rate.",
         "source_ref": "CIQ Financials→Cash Flow 'Levered Free Cash Flow' [LTM 12 months Mar-31-2026]",
         "cited": true
       },
       {
-        "claim": "Interest coverage of 10.6x (EBITDA ÷ interest) indicates the LTM earnings base comfortably services the debt, tempering the leverage-distress narrative.",
+        "claim": "Interest coverage is comfortable at 10.6x LTM EBITDA/interest, supporting the bond/loan stack rather than a distressed balance sheet.",
         "source_ref": "CIQ Financials→Income Statement EBITDA ÷ Interest Expense [LTM 12 months Mar-31-2026]",
         "cited": true
       },
       {
-        "claim": "Management frames the Q1 revenue dip as 'temporary,' tied to Phase 3.2 ramp timing and a Korea regulatory shift, with capacity (up to 2 GWh) expected to contribute a revenue ramp through 2026 — a posture that, if true, supports an overshoot reading rather than secular decline.",
-        "source_ref": "CIQ transcript(s): Microvast Holdings, Inc., Q1 2026 Earnings Call, May 11, 2026.rtf; Microvast Holdings, Inc., Q4 2025 Earnings Call, Mar 16, 2026.rtf",
+        "claim": "On the peer comp the discount question is alive but UNRESOLVED, not a clean signal: the name's NTM TEV/EBITDA of 17.19 sits below the peer mean of 43.3 and inside the Low 7.63–High 198.12 forward range, but the peer_set spans $34M–$275.0B (8063x dispersion) and is flagged HETEROGENEOUS, so the human must judge whether any peer discount is EARNED or RESIDUAL rather than read it as cheapness.",
+        "source_ref": "CIQ Comparable Analysis→Trading Multiples (name row + Summary Statistics Low/Median/Mean/High)",
         "cited": true
       }
     ],
     "bear_points": [
       {
-        "claim": "Revenue is rolling over, not just dipping: same-quarter Revenue YoY is -25.5% (Q1 Mar-2026 vs Q1 Mar-2024), and LTM revenue (372) has fallen below FY2025 (428) — the top-line is contracting, which is the REAL signal behind the falling LTM margin, not merely a fixed-cost-absorption optical effect.",
+        "claim": "Revenue has rolled over hard: Q1 Mar-31-2026 revenue fell 48% YoY (per management) and LTM revenue dropped to 372 from the Dec-2025 annual of 428, with same-quarter Revenue YoY at -25.5% — the turnaround top line is contracting, not compounding.",
         "source_ref": "CIQ Financials→Income Statement + Segments + Ratios (multi-year columns)",
         "cited": true
       },
       {
-        "claim": "On a forward (NTM) basis the name is NOT cheap: NTM TEV/EBITDA 17.19 sits ABOVE the peer median 12.9 and NTM P/E 55.1 is the peer-set HIGH — so the LTM TEV/EBITDA at its own-history 0%ile does not survive as a value signal once the forward basis is read, but POSE whether that NTM premium is EARNED given the peer set is heterogeneous.",
-        "source_ref": "CIQ Comparable Analysis→Trading Multiples (name row + Summary Statistics Low/Median/Mean/High)",
+        "claim": "The 14% LTM EBITDA margin is the OPTICAL read but the deterioration is REAL underneath: absolute EBITDA fell from 74 (Dec-2025) to 52 (LTM Mar-2026) as the top line shrank, and management disclosed YTD adjusted EBITDA of negative $5.5M versus positive $28.5M a year prior — the trailing margin masks a turn that is going the wrong way.",
+        "source_ref": "CIQ Financials→Income Statement (margin % + absolute EBITDA reconciler)",
         "cited": true
       },
       {
-        "claim": "The discount/premium decomposition leans EARNED (value-trap), not residual overshoot: name fundamentals are worse than peer median on every axis — EBITDA margin 4% vs 9%, rev growth -9% vs +2%, EBITDA growth -66% vs +2%, Debt/EBITDA 24.2 vs 1.8, beta 1.5 vs 1.1 — though comparability is HETEROGENEOUS so each peer stat is confidence-gated, not a clean benchmark.",
+        "claim": "Leverage is heavy and concentrated in a near-term wall: net-debt/EBITDA is 3.9x and net-debt/OCF 4.4x, while the capital structure carries multiple Convertible/term loans Due 2026 — a maturity wall coinciding with falling EBITDA.",
+        "source_ref": "CIQ Net Debt $200M [Q1 Mar-31-2026] ÷ CIQ EBITDA $52M [LTM 12 months Mar-31-2026]",
+        "cited": true
+      },
+      {
+        "claim": "The fundamental_deltas show the discount is at least partly EARNED, not pure overshoot: name EBITDA margin 4% vs peer-median 9%, rev growth -9% vs +2%, EBITDA growth -66% vs +2%, and Debt/EBITDA 24.2 vs peer-median 1.8 — worse on growth, margin and leverage simultaneously.",
         "source_ref": "CIQ Comparable Analysis→Operating Statistics (name vs peer median: growth/margin/leverage/beta)",
         "cited": true
       },
       {
-        "claim": "The Q1 GAAP net profit of $48.2M is an accounting artifact: management's own reconciliation shows it was driven by a $63.8M non-cash fair-value gain on warrant/convertible liabilities, with an underlying adjusted net LOSS of $14.6M and YTD adjusted EBITDA of NEGATIVE $5.5M versus +$28.5M prior year — the real operating economics deteriorated sharply QoQ.",
-        "source_ref": "CIQ transcript(s): Microvast Holdings, Inc., Q1 2026 Earnings Call, May 11, 2026.rtf; Microvast Holdings, Inc., Q4 2025 Earnings Call, Mar 16, 2026.rtf",
-        "cited": true
-      },
-      {
-        "claim": "A near-term refinancing wall: multiple Due-2026 facilities (Delayed Draw + Initial shareholder term loans, China bank-led facility) plus the nearest maturity wall flagged at 2026, against net-debt/EBITDA 3.9x — a structural risk if the operating base keeps shrinking.",
-        "source_ref": "CIQ Financials→Capital Structure Details",
-        "cited": true
-      },
-      {
-        "claim": "The stock fell -58.1% over 180d versus IWM +18.0% (relative -81.1%), driven by discrete gap-downs on consecutive earnings (8-K item 2.02 on 2026-03-17 and 2026-05-12) — an idiosyncratic, earnings-driven de-rating, not a market-wide move.",
+        "claim": "The stock is bleeding idiosyncratically: name 180d return -58.1% versus IWM +18.0%, an -81.1% relative — the market is pricing a name-specific problem, not a sector move.",
         "source_ref": "EOD name−IWM 180d (screen data-record, G2)",
         "cited": true
       },
       {
-        "claim": "Single-segment concentration (Batteries 100% of revenue) in a sector management itself describes as 'challenging' for near-term profitability — tariff frameworks, raw-material inflation, regional subsidy phase-out — leaves no diversified offset to the volume decline.",
+        "claim": "Two discrete earnings gap-downs (2026-03-17 and 2026-05-12, both Item 2.02 results) drove the de-rate, tying the collapse directly to reported results rather than sentiment.",
+        "source_ref": "EDGAR 8-K item codes at the gap-down dates (not blanket-labelled earnings)",
+        "cited": true
+      },
+      {
+        "claim": "Revenue is China/geopolitics-exposed and subsidy-dependent: 100% of revenue is the single Batteries segment, with management citing Korea regulatory shifts, EMEA platform delays, tariff frameworks and subsidy phaseout pressuring near-term profitability.",
         "source_ref": "CIQ Financials→Segments (Revenues, latest annual column)",
+        "cited": true
+      },
+      {
+        "claim": "The share count is diluting (+2.9% over ~1.7y to 333.2M), and consensus target price mean/median is $5.50 — a low-conviction external anchor against ongoing dilution.",
+        "source_ref": "EDGAR XBRL shares, trailing 2024-08-05..2026-05-04",
         "cited": true
       }
     ],
@@ -359,78 +364,78 @@
       {
         "name": "Romeo Power",
         "outcome": "went terminal",
-        "distinguishing_fact": "US-listed SPAC-era commercial EV battery-pack maker with customer-ramp/volume shortfalls and chronic operating losses that could not scale before capital ran short.",
+        "distinguishing_fact": "EV-battery pack maker with strong technology narrative and large named OEM relationships that could not convert volume ramp into durable cash generation as customer programs slipped.",
         "source": "[LLM-suggested, unverified]"
       },
       {
-        "name": "Microvast Holdings (self, 2022-2024 base)",
+        "name": "Microvast Holdings (2022 SPAC-era de-rate)",
         "outcome": "recovered",
-        "distinguishing_fact": "Same name's own multi-year arc from deeply negative EBITDA to positive on rising gross margin shows an operational turn is on the record, against which a single-year revenue contraction must be read.",
+        "distinguishing_fact": "Same company previously survived a severe de-rate by driving gross margin from negative to mid-30s and reaching FCF-positive self-funding — the precedent the bull turnaround leans on.",
         "source": "CIQ Financials→Income Statement (margin % + absolute EBITDA reconciler)"
-      },
-      {
-        "name": "Enovix",
-        "outcome": "recovered",
-        "distinguishing_fact": "US-listed advanced-battery developer that endured severe de-rating and ramp delays but retained funding and a differentiated technology pipeline through the trough.",
-        "source": "[LLM-suggested, unverified]"
-      },
-      {
-        "name": "Microvast Inc. (Chinese-linked supply chain, geo concentration)",
-        "outcome": "went terminal",
-        "distinguishing_fact": "Battery name with heavy China/EMEA revenue mix exposed to subsidy phase-out and tariff frameworks — the pattern where policy shifts strand a single-product franchise.",
-        "source": "[LLM-suggested, unverified]"
       },
       {
         "name": "QuantumScape",
         "outcome": "recovered",
-        "distinguishing_fact": "US-listed solid-state battery developer trading on a multi-year technology roadmap (here the all-solid-state milestones) rather than near-term earnings, sustaining valuation through delays.",
+        "distinguishing_fact": "Pre-revenue/early-revenue solid-state battery story whose equity persists on technology-milestone narrative and balance-sheet cash rather than current cash earnings.",
+        "source": "[LLM-suggested, unverified]"
+      },
+      {
+        "name": "Microvast Holdings (2022 SPAC-era de-rate)",
+        "outcome": "recovered",
+        "distinguishing_fact": "Heavy China manufacturing exposure plus a US capacity build straddling tariff/subsidy regimes — the dual-jurisdiction risk that repeatedly whipsaws the top line.",
+        "source": "CIQ Financials→Segments (Geographic Segment → Revenues, latest annual column)"
+      },
+      {
+        "name": "Proterra",
+        "outcome": "went terminal",
+        "distinguishing_fact": "Commercial-EV battery/powertrain supplier reliant on subsidy-driven fleet demand and a new-platform launch that ran out of runway before scale economics arrived.",
         "source": "[LLM-suggested, unverified]"
       }
     ],
     "decisive_question": {
-      "question": "Is the LTM revenue/EBITDA contraction a TEMPORARY Phase-3.2-ramp-and-Korea-regulatory timing trough that reverses as 2 GWh capacity comes online, or is it the start of a SECULAR volume decline in a single-segment business facing subsidy phase-out, tariffs and raw-material inflation?",
+      "question": "Is the LTM-Mar-2026 contraction (revenue -48% YoY, absolute EBITDA 74→52, adjusted EBITDA swinging negative) a temporary Phase-3.2-ramp/Korea-regulatory air-pocket that re-ramps through 2026, or the start of a structural demand/subsidy reversal that turns the 3.9x leverage into a Due-2026 maturity problem?",
       "evidence_for": [
         {
-          "claim": "Multi-year arc shows a genuine operational inflection (gross margin -28% to ~35%, absolute EBITDA -180 to +74 before the LTM dip to 52), consistent with a temporary trough on a rising base.",
-          "source_ref": "CIQ Financials→Income Statement (margin % + absolute EBITDA reconciler)",
+          "claim": "Management frames the Q1 dip as temporary and volume-driven (536MWh→274MWh) with Phase 3.2 adding up to 2GWh and a continued revenue ramp expected through 2026.",
+          "source_ref": "CIQ transcript(s): Microvast Holdings, Inc., Q1 2026 Earnings Call, May 11, 2026.rtf; Microvast Holdings, Inc., Q4 2025 Earnings Call, Mar 16, 2026.rtf",
           "cited": true
         },
         {
-          "claim": "Management attributes the volume drop to Korea regulatory shift and EMEA platform ramp-delays it expects to resolve, with Phase 3.2 capacity to drive a revenue ramp through 2026.",
-          "source_ref": "CIQ transcript(s): Microvast Holdings, Inc., Q1 2026 Earnings Call, May 11, 2026.rtf; Microvast Holdings, Inc., Q4 2025 Earnings Call, Mar 16, 2026.rtf",
+          "claim": "The balance sheet is self-funding with positive LTM FCF of $39.6M and 10.6x interest coverage, buying time for a re-ramp.",
+          "source_ref": "CIQ Financials→Cash Flow 'Levered Free Cash Flow' [LTM 12 months Mar-31-2026]",
           "cited": true
         }
       ],
       "evidence_against": [
         {
-          "claim": "Q1 volume nearly halved (~536 MWh to ~274 MWh) and YTD adjusted EBITDA swung to negative $5.5M from +$28.5M, with same-quarter revenue -25.5% YoY — the deterioration is steep and operating, not cosmetic.",
+          "claim": "Same-quarter Revenue YoY is -25.5% and LTM EBITDA already fell to 52 from the 74 annual, with YTD adjusted EBITDA negative $5.5M vs +$28.5M prior — the trajectory is bending down, not stabilizing.",
           "source_ref": "CIQ Financials→Income Statement + Segments + Ratios (multi-year columns)",
           "cited": true
         },
         {
-          "claim": "Forward multiples already price recovery: NTM TEV/EBITDA 17.19 exceeds the peer median 12.9 and NTM P/E 55.1 is the peer HIGH, leaving little margin of safety if the ramp slips.",
-          "source_ref": "CIQ Comparable Analysis→Trading Multiples (name row + Summary Statistics Low/Median/Mean/High)",
+          "claim": "Multiple Convertible and term loans are Due 2026 against 3.9x net-debt/EBITDA, so a delayed ramp collides with a maturity wall.",
+          "source_ref": "CIQ Financials→Capital Structure Details",
           "cited": true
         }
       ]
     },
     "key_unknowns": [
-      "Revised forward guidance is UNKNOWN — no revised-outlook 99.1 exhibit was parsed for either gap-down 8-K (0001628280-26-018235, 0001628280-26-033601); the absence of a forward guide on consecutive earnings drops is a BEARISH opacity signal, not neutral.",
-      "Forward/adjusted valuation anchors are UNKNOWN: ev_ebitda_adjusted_fwd and adjusted_eps are not in the 99.1 revised guidance, and P/E is genuinely NM (negative base) — the LTM TEV/EBITDA 10.0x is trailing-only and cannot by itself distinguish cheap-overshoot from cheap-terminal.",
-      "Segment EBITDA is UNKNOWN (Segments sheet has no EBITDA section) — with 100% single-segment revenue there is no profitability breakout to test where the volume decline bites; an expected disclosure gap, BEARISH-leaning.",
-      "net_debt_to_ebitda_adjusted is UNKNOWN — reported 3.9x rests on a depressed LTM EBITDA; the true refinancing-relevant leverage against the Due-2026 wall cannot be confirmed.",
-      "Consensus breadth is empty (FY2026 EPS 0↑/0↓, Revenue 0↑/0↓) and only a single $5.50 mean/median target is on file — thin analyst coverage limits the consensus cross-check.",
-      "Whether the school-bus KAF powertrain and all-solid-state programs are funded, revenue-generating, or still pre-commercial is unresolved — transcripts describe them as launches/dreams/milestones, with no order book in the source-bound facts.",
-      "The idiosyncratic-vs-shared cohort read is UNKNOWN (no US-listed exposed peers to price), so the -81.1% relative move can only be read name-vs-market, not vs a battery cohort."
+      "No revised forward guidance was parsed from either gap-down 8-K (revised_guidance UNKNOWN) and forward adjusted EV/EBITDA / adjusted EPS are not disclosed in the 99.1 revised guidance — the absence of a forward guide on a name that just gapped down twice is a BEARISH opacity signal, not neutral.",
+      "Segment EBITDA is UNKNOWN (Segments sheet has no EBITDA section) — with 100% single-segment revenue and no profitability breakout, the source of the EBITDA swing cannot be located; treat this missing disclosure as a bearish gap.",
+      "TEV/LTM EBITDA of 10.0x sits at the 0th percentile of its own 4-quarter history but is trailing-only with no forward basis — cannot distinguish cheap-overshoot from cheap-terminal; this is an unresolved neutral, for the human to resolve.",
+      "EPS and revenue revision breadth are 0↑/0↓ last month and no surprise data on adjusted basis — consensus is stale/absent, so the $5.50 target carries unknown conviction.",
+      "Customer concentration / revenue share per named customer is not quantified — the named roster gives no dependency percentages.",
+      "Exact size and refinancing status of the Due-2026 maturities relative to cash on hand is not disclosed — the net-debt figure is given but the maturity-by-maturity coverage is not."
     ]
   },
   "flags": [
     "Net debt/EBITDA (3.9x) is on REPORTED EBITDA (CIQ / consolidated GAAP), not the covenant basis; management and credit covenants typically define leverage on adjusted EBITDA (a larger denominator → a lower ratio), reconciled in the earnings release/transcript (currently UNAVAILABLE) — do not read 3.9x as the covenant-basis leverage.",
-    "UNTRACEABLE figure '48.2' in bear_point: 'The Q1 GAAP net profit of $48.2M is an accounting artifact:…'",
-    "UNTRACEABLE figure '536' in decisive.against: 'Q1 volume nearly halved (~536 MWh to ~274 MWh) and YTD adjusted…'",
-    "UNRECONCILED bear_point: 'Revenue is rolling over, not just dipping: same-quarter Revenue YoY…' — cites margin compression without the absolute-EBITDA reconciliation (margin % can fall while EBITDA rises)",
-    "FALSE-BALANCE? evidence_balance commits a strong lean but the body is near-symmetric (4 bull vs 7 bear) and the minority bull_points aren't qualified-as-outweighed — size the minority against the lean (rule 7), or it launders a one-sided case"
+    "UNTRACEABLE figure '48' in bear_point: 'Revenue has rolled over hard: Q1 Mar-31-2026 revenue fell 48% YoY…'",
+    "TRANSCRIPT-FIGURE '536' in decisive.for: 'Management frames the Q1 dip as temporary and volume-driven…' — from the cited earnings call, not the structured facts; verify against the call",
+    "TWIN 'Microvast Holdings (2022 SPAC-era de-rate)' has numbers ['30'] — must be non-numeric",
+    "DIRECTIONAL language 'conviction' — human review (dossier frames, not concludes)",
+    "UNRECONCILED bear_point: 'The 14% LTM EBITDA margin is the OPTICAL read but the deterioration…' — cites margin compression without the absolute-EBITDA reconciliation (margin % can fall while EBITDA rises)"
   ],
   "llm_model": "claude-opus-4-8",
-  "assembled_at": "2026-06-29T14:50:44.336261"
+  "assembled_at": "2026-06-29T15:59:20.380374"
 }
