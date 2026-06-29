@@ -76,20 +76,37 @@ class CandidateLinkage(BaseModel, frozen=True):
     shared_note: str  # a descriptive prompt for the analyst, NOT a named driver
 
 
+class Trajectory(BaseModel, frozen=True):
+    """A four-horizon (1/3/6/12mo) trailing trajectory the human reads as a SHAPE — accelerating off
+    a trailing low reads as an inflection, decelerating from a high as rolling over. It carries
+    DELIBERATELY no slope, composite, or rank field: collapsing the vector to one number re-destroys
+    the shape and crosses the dead-signal line (§7.1 — the machine PRESENTS four values; the human
+    judges the lifecycle stage). Each horizon is fail-loud (UNKNOWN on insufficient history)."""
+
+    h1mo: DataField[float]
+    h3mo: DataField[float]
+    h6mo: DataField[float]
+    h12mo: DataField[float]
+
+    def ordered(self) -> list[tuple[str, DataField[float]]]:
+        """The four horizons shortest→longest, so the sequence reads as a trajectory."""
+        return [("1mo", self.h1mo), ("3mo", self.h3mo), ("6mo", self.h6mo), ("12mo", self.h12mo)]
+
+
 class StrengthSignals(BaseModel, frozen=True):
     """§7.1 strength/lifecycle signals — INPUTS THE HUMAN JUDGES, never an auto-rank.
 
     Price-derivable, trailing-only, fail-loud (UNKNOWN on insufficient history — never a
-    partial-window number). There is deliberately **no composite and no score**: surfacing the
-    evidence is in scope; ordering themes by it is the dead-signal failure the boundary forbids
-    (§2 amendment, §7.1)."""
+    partial-window number). Momentum and relative-strength are presented as a 1/3/6/12mo TRAJECTORY
+    (a shape the human reads), NOT a single number — and deliberately with **no composite, no score,
+    no slope, no rank** (collapsing or ordering them is the dead-signal failure the boundary
+    forbids, §2 amendment / §7.1). Breadth and crowding are recent/current-state measures with no
+    natural multi-horizon trajectory, so they stay single values."""
 
-    momentum_median: DataField[float]  # cluster median trailing return
-    rel_strength_vs_market: DataField[float]  # median member return − IWM over the same window
-    # share of members at a fresh window-high recently (participation)
-    breadth_expanding: DataField[float]
-    # median distance above the trailing mean (over-extension)
-    crowding_overextension: DataField[float]
+    momentum: Trajectory  # median member trailing return at 1/3/6/12mo
+    rel_strength_vs_market: Trajectory  # median(member − IWM) at 1/3/6/12mo
+    breadth_expanding: DataField[float]  # share of members at a fresh window-high recently
+    crowding_overextension: DataField[float]  # median distance above its trailing mean
 
 
 class AdmissibilityReport(BaseModel, frozen=True):

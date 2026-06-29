@@ -8,7 +8,7 @@ output order is breadth (display only); NOT a quality ranking (themes are not ra
 from __future__ import annotations
 
 from vinci.schemas.envelope import DataField
-from vinci.themes.schemas import CandidateTheme, ThemeDetectionResult
+from vinci.themes.schemas import CandidateTheme, ThemeDetectionResult, Trajectory
 
 
 def _pct(df: DataField[float]) -> str:
@@ -17,6 +17,11 @@ def _pct(df: DataField[float]) -> str:
 
 def _num(df: DataField[float]) -> str:
     return f"{df.value:.2f}" if df.is_known and df.value is not None else f"UNKNOWN ({df.note})"
+
+
+def _traj(t: Trajectory) -> str:
+    """Render a four-horizon trajectory shortest→longest as a shape (no collapse to a number)."""
+    return "  ".join(f"{label} {_pct(field)}" for label, field in t.ordered())
 
 
 def render_theme(theme: CandidateTheme) -> str:
@@ -33,9 +38,10 @@ def render_theme(theme: CandidateTheme) -> str:
         f"   τ-stability: {theme.tau_stability or '—'}",
         f"   candidate linkage (criterion 1 — ANALYST judges): "
         f"{theme.candidate_linkage.shared_note}",
-        f"   strength/lifecycle signals (INPUTS, never an auto-rank): "
-        f"momentum {_pct(s.momentum_median)} · rel-strength {_pct(s.rel_strength_vs_market)} · "
-        f"breadth-expanding {_num(s.breadth_expanding)} · "
+        "   strength/lifecycle signals (INPUTS the human reads as a SHAPE — never an auto-rank):",
+        f"     momentum    {_traj(s.momentum)}",
+        f"     rel-vs-IWM  {_traj(s.rel_strength_vs_market)}",
+        f"     breadth-expanding {_num(s.breadth_expanding)} · "
         f"over-extension {_pct(s.crowding_overextension)}",
     ]
     if a.fail_reasons:

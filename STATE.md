@@ -1940,6 +1940,48 @@ single-threaded ahead of the lead loop).
     confirmation trigger (Stage 2); the semantic exposure-classifier / text ingestion (Stage 3);
     pipeline composition + forward paper-validation (Stage 4).** A PAPER-VALIDATION track; Edge 2 stays
     the lead horse (§4 GOVERNOR) — this did not starve overshoot verdict-logging.
+    - **Post-build verification DIAGNOSIS (2026-06-29) — two findings, NO Stage-1 code change.**
+      (1) **The §7.1 strength engine's first real output is CORRECT, not a bug.** Housing's
+      rel-strength −50.5% reconciles EXACTLY against raw Polygon: the signal is
+      median(member 12mo cumulative return) − IWM 12mo return; housing median **−11.5%** absolute
+      (PRGO −61% … MHO +37%) − IWM **+39.0%** ($208.55→$289.88) = **−50.5%** — housing is a genuine
+      laggard (flat-to-down while small-caps surged), decision-relevant. All four signals reconcile to
+      4dp vs hand-computed (momentum −11.5%; breadth 1/19 = 0.053; crowding +3.3%). NOTE it is a
+      TRAILING 12mo cumulative (same window as detection), not a short-horizon momentum — a possible
+      future §7.1 enhancement (add a shorter momentum lookback for lifecycle), NOT a defect. (2)
+      **IWM size-mismatch on mega-caps is MATERIAL — a STAGE-2 question, not a Stage-1 break.** This
+      window IWM (+39%) outran SPY / Russell-3000 (+24% / +24%) by **−15pp**, a constant shift IWM
+      adds to every rel-strength number. For the broad/mega-cap names a Stage-2 confirmation trigger
+      measures, the size tilt is decisive at the margin (NVDA rel +3% vs IWM but **+18% vs SPY**;
+      LLY +1.5% vs +16.5%) — benchmarking a mega-cap leader against a small-cap index under-credits it
+      exactly when the trigger should fire. Stage-1 is NOT affected: its detected themes are sub-$10B
+      (IWM size-matched), the spikes used IWM too, and R2 already strips the size factor from the
+      CLUSTERING (the −15pp rides only the presented strength signal, a human-judged input).
+      **PROPOSED (not built) — benchmark-per-universe in Stage 2:** sub-$10B holding-side signals stay
+      IWM-relative; the mega-cap confirmation trigger uses a broad-market benchmark (SPY / Russell
+      3000), size-matched to mega-caps. The spread is regime-dependent (inverts in a large-cap-led
+      year), so size-matching the benchmark to the measured universe is the robust design, not a
+      one-off adjustment. No Stage-1 module changed; suite stays green.
+    - **§7.1 strength engine → 1/3/6/12mo TRAJECTORY vector (2026-06-29; resolves the Finding-1 design
+      note). SIGNALS LAYER ONLY — detection / clustering / residualization / gates / linkage UNTOUCHED
+      + re-verified.** momentum + rel-strength-vs-IWM are now presented as a four-horizon SHAPE the
+      human reads (1mo now / 3mo quarter / 6mo half-year / 12mo trailing context — one horizon per
+      decision timescale; a 5th answers no new question), NOT a single number and with **NO
+      slope/composite/rank** (collapsing the vector re-destroys the shape + crosses the dead-signal
+      line — a `Trajectory` schema with no such field, test-pinned). Same formula (median member
+      window-return; rel = median − IWM), four windows; benchmark stays IWM (Finding-2's split is
+      Stage-2's concern, untouched). **Fail-loud PER HORIZON:** a name without history spanning a
+      horizon is UNKNOWN for it (real 1mo/3mo, UNKNOWN 6mo/12mo) — never a partial-window fabrication;
+      breadth/crowding stay single values (recent/current-state, no natural horizon). *Verified — the
+      committed CLI renders the shape; ALL FOUR horizons reconcile to 4dp by hand on housing (rel
+      1mo +10.2% / 3mo −7.1% / 6mo −22.6% / 12mo −48.1%), and the shape is decision-relevant: housing's
+      12mo −48% laggard is INFLECTING (1mo momentum +16%, rel +10%) — which the single 12mo hid. The
+      per-horizon guard also FIXED a latent partial-window fabrication the old single-12mo carried:
+      OPTU (a sub-12mo listing) was counted in the old 12mo; it is now UNKNOWN for 12mo (real 1/3/6mo),
+      shifting housing's 12mo rel −50.5%→−48.1% — the more-correct number. Detection re-run identical
+      (40 clusters → 35 admissible; housing 19-name/12-SIC + quantum unchanged, gate still passes); git
+      diff touches only render/schemas/signals. ruff + mypy --strict (76) + pytest 255 green; +3
+      trajectory tests (horizons+order, per-horizon fail-loud, no-collapse schema guard).*
   - **HOLDING-UNIVERSE study — sub-$10B-at-inception captured the theme return in all 6 themes tested
     (2026-06-29; `theme_admissibility_spike.md` Part 5).** A DISTINCT axis from the 4 detection spikes:
     does the **holding** bound (fund detects broad incl. mega leaders, but HOLDS sub-$10B) capture theme
