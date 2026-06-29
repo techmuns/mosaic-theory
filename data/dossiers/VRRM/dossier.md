@@ -1,18 +1,20 @@
 # Dossier — VERRA MOBILITY Corp (VRRM)
 
-_Finalist rank 3 · ref 2026-06-22 · assembled 2026-06-25 18:58 · LLM claude-opus-4-8_
+_Finalist rank 3 · ref 2026-06-22 · assembled 2026-06-29 16:19 · LLM claude-opus-4-8_
 
 > **Assembles and cites; never concludes.** There is no BUY/AVOID here — the verdict is the human's, logged separately via the ledger with a frozen entry price.
 
 ## ⚠ Flags (human review)
-- RESOLVED (P/E basis) — trailing GAAP P/E 5.2x is one-time-distorted: latest GAAP EPS 0.85 is ~3.1× the recent median 0.28, so 5.2x is not a meaningful 'cheap' read. Clean read: forward adjusted guide $1.19–$1.25 → ~3.6x at the current price; CIQ P/LTM 16.8x uses a different (lower) trailing EPS basis.
-- MISMATCH bear_point: 'GAAP-EPS surprises have been deeply negative (FY2023…' asserts missing/UNKNOWN data yet cites a PRESENT field — move to key_unknowns, don't source-bind it
-- DIRECTIONAL language 'fair value' — human review (dossier frames, not concludes)
+- RESOLVED (P/E basis) — trailing GAAP P/E 5.3x is one-time-distorted: latest GAAP EPS 0.85 is ~3.1× the recent median 0.28, so 5.3x is not a meaningful 'cheap' read. Clean read: forward adjusted guide $1.19–$1.25 → ~3.7x at the current price; CIQ P/LTM 16.8x uses a different (lower) trailing EPS basis.
+- UNTRACEABLE figure '13' in bull_point: 'Government Solutions — the largest revenue segment (47%) — showed…'
+- ANCHORS-ON-DISTORTED-P/E bull_point: 'EV/EBITDA sits at 8.5x at the 0th percentile of 19 quarterly closes —…' — the P/E is distorted (rests on a non-current/non-recurring EPS); don't read it as cheap
+- ANCHORS-ON-DISTORTED-P/E bull_point: 'On the consensus comp read the name screens well below a…' — the P/E is distorted (rests on a non-current/non-recurring EPS); don't read it as cheap
+- FALSE-BALANCE? evidence_balance commits a strong lean but the body is near-symmetric (7 bull vs 7 bear) and the minority bull_points aren't qualified-as-outweighed — size the minority against the lean (rule 7), or it launders a one-sided case
 
 ## Mechanical layer (source-bound facts)
 
 ### Valuation
-- **P/E:** 5.2x
+- **P/E:** 5.3x
   - ↳ `EDGAR XBRL eps_diluted × EOD price (screen data-record, G3)`
 - **P/E percentile (5y):** 1st %ile
   - ↳ `EDGAR/EOD P/E pctile vs ~5y (screen data-record)`
@@ -20,9 +22,9 @@ _Finalist rank 3 · ref 2026-06-22 · assembled 2026-06-25 18:58 · LLM claude-o
   - ↳ `CIQ Financials→Multiples 'TEV/LTM EBITDA' Close (latest) — current multiple`
 - **EV/EBITDA percentile (5y):** 0th %ile
   - ↳ `CIQ Financials→Multiples 'TEV/LTM EBITDA' Close — 19 quarters (partial last column excluded from the distribution)`
-- **EV/EBITDA (adjusted, forward):** ~4.4x (fwd, at current $4.42; EV $1,679M / FY26 adj-EBITDA $380–$385M)
+- **EV/EBITDA (adjusted, forward):** ~4.4x (fwd, at current $4.50; EV $1,692M / FY26 adj-EBITDA $380–$385M)
   - ↳ `EDGAR 8-K 0001193125-26-239351 Ex-99.1 — https://www.sec.gov/Archives/edgar/data/1682745/000119312526239351/d123116dex991.htm (adj-EBITDA) + EDGAR net debt + EOD price × shares`
-- **Adjusted EPS (earnings power):** FY26 guide $1.19–$1.25; adj P/E ~3.6x at $4.42 — earnings power above the GAAP basis
+- **Adjusted EPS (earnings power):** FY26 guide $1.19–$1.25; adj P/E ~3.7x at $4.50 — earnings power above the GAAP basis
   - ↳ `EDGAR 8-K 0001193125-26-239351 Ex-99.1 — https://www.sec.gov/Archives/edgar/data/1682745/000119312526239351/d123116dex991.htm`
 - **Range position:** EV/EBITDA (TEV/LTM) 8.5x at 0%ile of 19 closes → near-floor; P/LTM EPS 16.8x
   - ↳ `CIQ Financials→Multiples (Close; last col = current, excluded from history)`
@@ -34,17 +36,19 @@ _Finalist rank 3 · ref 2026-06-22 · assembled 2026-06-25 18:58 · LLM claude-o
   - ↳ `CIQ Financials→Cash Flow 'Levered Free Cash Flow' [LTM 12 months Mar-31-2026]`
 - **Margin trend:** EBITDA margin: Dec-31-2021 (R) 42% → Dec-31-2022 (R) 41% → Dec-31-2023 (R) 37% → Dec-31-2024 (R) 39% → Dec-31-2025 37% → Mar-31-2026 (LTM) 37%; gross margin: Dec-31-2021 (R) 64% → Dec-31-2022 (R) 63% → Dec-31-2023 (R) 62% → Dec-31-2024 (R) 61% → Dec-31-2025 58% → Mar-31-2026 (LTM) 57%; absolute EBITDA: Dec-31-2021 (R) 229 → Dec-31-2022 (R) 304 → Dec-31-2023 (R) 306 → Dec-31-2024 (R) 342 → Dec-31-2025 362 → Mar-31-2026 (LTM) 358; absolute revenue: Dec-31-2021 (R) 551 → Dec-31-2022 (R) 742 → Dec-31-2023 (R) 817 → Dec-31-2024 (R) 879 → Dec-31-2025 979 → Mar-31-2026 (LTM) 979  [R reclassified; margin % can fall while absolute EBITDA RISES — read them together]
   - ↳ `CIQ Financials→Income Statement (margin % + absolute EBITDA reconciler)`
-- **Net debt / EBITDA (GAAP):** 2.9x
-  - ↳ `EDGAR XBRL net-debt/EBITDA (screen data-record)`
+- **Net debt / EBITDA:** 2.9x
+  - ↳ `CIQ Net Debt $1,046M [Q1 Mar-31-2026] ÷ CIQ EBITDA $358M [LTM 12 months Mar-31-2026]`
+- **Net debt / OCF:** 4.5x
+  - ↳ `CIQ Net Debt $1,046M [Q1 Mar-31-2026] ÷ CIQ OCF $234M [LTM 12 months Mar-31-2026]`
 - **Net debt / EBITDA (fwd-adj):** ~2.6x fwd-adj (net debt $1,009M / FY26 adj-EBITDA $380–$385M)
   - ↳ `EDGAR 8-K 0001193125-26-239351 Ex-99.1 — https://www.sec.gov/Archives/edgar/data/1682745/000119312526239351/d123116dex991.htm (adj-EBITDA) + EDGAR net debt`
-- **Survival capacity (leverage + self-funding + wall):** net-debt/EBITDA 2.9x (GAAP); ~2.6x fwd-adj (net debt $1,009M / FY26 adj-EBITDA $380–$385M) | FCF-positive → self-funding (no runway constraint) | nearest maturity wall: 2028
-  - ↳ `EDGAR net-debt/EBITDA + FCF sign + CIQ Capital Structure (survival capacity)`
+- **Survival capacity (leverage + self-funding + wall):** net-debt/EBITDA 2.9x (CIQ); ~2.6x fwd-adj (net debt $1,009M / FY26 adj-EBITDA $380–$385M) | FCF-positive → self-funding (no runway constraint) | nearest maturity wall: 2028
+  - ↳ `CIQ Net Debt ÷ CIQ LTM EBITDA (EDGAR XBRL breadth fallback) + FCF sign + CIQ Capital Structure (survival capacity)`
 - **Interest coverage:** 5.6x
   - ↳ `CIQ Financials→Income Statement EBITDA ÷ Interest Expense [LTM 12 months Mar-31-2026]`
 - **Share-count trend:** buying back (trailing ~1.7y): 164,658,507 (2024-08-31) → 151,906,653 (2026-05-31), -7.7%
   - ↳ `EDGAR XBRL shares, trailing 2024-08-31..2026-05-31`
-- **Liquidity / covenant flags:** 2021 Term Loan Due 2028 (Term Loans) 687 @ 5.700%; Operating Lease (Capital Lease) 38 @ 6.500%; Revolving Credit Facility (Revolving Credit) undrawn/– @ NA; Senior Notes Due 2029 (Bonds and Notes) 350 @ 5.500%
+- **Liquidity / covenant flags:** 2021 Term Loan Due 2028 (Term Loans) 687 @ 5.700% Due 2028; Operating Lease (Capital Lease) 38 @ 6.500% Due 2037; Revolving Credit Facility (Revolving Credit) undrawn/– @ NA Due 2030; Senior Notes Due 2029 (Bonds and Notes) 350 @ 5.500% Due 2029
   - ↳ `CIQ Financials→Capital Structure Details`
 - **Multi-year trajectory (compounder vs melting ice):** Revenue: Dec-31-2021 (R) 551 → Dec-31-2022 (R) 742 → Dec-31-2023 (R) 817 → Dec-31-2024 (R) 879 → Dec-31-2025 979 → Mar-31-2026 (LTM) 979; EBITDA: Dec-31-2021 (R) 229 → Dec-31-2022 (R) 304 → Dec-31-2023 (R) 306 → Dec-31-2024 (R) 342 → Dec-31-2025 362 → Mar-31-2026 (LTM) 358; Revenue YoY (latest same-quarter): +0.1% (Q1 Mar-31-2026 vs Q1 Mar-31-2025); Commercial Services EBITDA: Dec-31-2021 (R) 160 → Dec-31-2022 (R) 209 → Dec-31-2023 (R) 242 → Dec-31-2024 (R) 268 → Dec-31-2025 283; Parking Solutions EBITDA: Dec-31-2021 (R) 3 → Dec-31-2022 (R) 14 → Dec-31-2023 (R) 15 → Dec-31-2024 (R) 12 → Dec-31-2025 11; Government Solutions EBITDA: Dec-31-2021 (R) 108 → Dec-31-2022 (R) 116 → Dec-31-2023 (R) 114 → Dec-31-2024 (R) 122 → Dec-31-2025 122; ROIC: Dec-31-2021 5.1% → Dec-31-2022 6.8% → Dec-31-2023 8.1% → Dec-31-2024 10.3% → Dec-31-2025 11.5% → Mar-31-2026 (LTM) 11.1%  [R reclassified; per-period values, never YoY'd across a basis]
   - ↳ `CIQ Financials→Income Statement + Segments + Ratios (multi-year columns)`
@@ -91,11 +95,11 @@ _Finalist rank 3 · ref 2026-06-22 · assembled 2026-06-25 18:58 · LLM claude-o
   - ↳ `EDGAR 8-K 0001193125-26-239351 Ex-99.1 — https://www.sec.gov/Archives/edgar/data/1682745/000119312526239351/d123116dex991.htm`
 
 ### Idiosyncratic vs shared (G2-vs-market compensation)
-- **Name 180d return:** -80.2%
+- **Name 180d return:** -80.0%
   - ↳ `EOD VRRM 180d to 2026-06-22`
-- **Market (IWM) 180d return:** 17.8%
+- **Market (IWM) 180d return:** 18.0%
   - ↳ `EOD IWM 180d to 2026-06-22`
-- **Relative vs market:** -98.0%
+- **Relative vs market:** -99.3%
   - ↳ `EOD name−IWM 180d (screen data-record, G2)`
 - **Cohort read:** _UNKNOWN_ — no graph cohort to compare — see rel_vs_market for the name-vs-market read
 - **Graph cohort:** _UNKNOWN_ — VRRM not in graph_coverage.json — no exposed cross-section to compare
@@ -111,81 +115,81 @@ _Finalist rank 3 · ref 2026-06-22 · assembled 2026-06-25 18:58 · LLM claude-o
   - ↳ `CIQ Estimates→Surprise (annual)`
 
 ### Management commentary (transcript POINTER — read the file; not a machine excerpt)
-- **Earnings call:** Earnings-call transcript on file — read Verra Mobility Corporation, Q1 2026 Earnings Call, May 06, 2026.rtf in full for management posture (pointer only; the machine does not curate or embed transcript content)
-  - ↳ `CIQ transcript Verra Mobility Corporation, Q1 2026 Earnings Call, May 06, 2026.rtf`
+- **Earnings call:** 2 earnings-call transcript(s) on file — read in full for management posture: Verra Mobility Corporation, Q1 2026 Earnings Call, May 06, 2026.rtf; Verra Mobility Corporation, Q4 2025 Earnings Call, Feb 24, 2026.rtf (pointer only; the synthesis cites them, the machine does not curate an excerpt)
+  - ↳ `CIQ transcript(s): Verra Mobility Corporation, Q1 2026 Earnings Call, May 06, 2026.rtf; Verra Mobility Corporation, Q4 2025 Earnings Call, Feb 24, 2026.rtf`
 
 ## Synthesis (LLM — framing for the human, every point source-bound)
 
-**Evidence balance:** mixed \u2014 a real >10%-customer loss plus CEO exit and stalled growth offset durable FCF, rising absolute EBITDA and a possibly-residual discount.
+**Evidence balance:** strongly-bearish — an outright termination of a >10%-revenue customer in the highest-margin segment, amid a CEO change and an idiosyncratic -80% move.
 
 ### Bull case (overshoot / mean-revert)
-- On forward adjusted economics the name trades ~4.4x EV/FY26-adj-EBITDA and ~3.6x adj-P/E at $4.42, materially below the GAAP optics that anchor consensus.
-  - ↳ `EDGAR 8-K 0001193125-26-239351 Ex-99.1 — https://www.sec.gov/Archives/edgar/data/1682745/000119312526239351/d123116dex991.htm`
-- The business is FCF-positive (LTM levered FCF $53.9M) and self-funding with no runway constraint and nearest maturity wall not until 2028 — there is no solvency clock forcing a terminal outcome.
-  - ↳ `EDGAR net-debt/EBITDA + FCF sign + CIQ Capital Structure (survival capacity)`
-- Absolute EBITDA has risen across the window (229→304→306→342→362, LTM 358) on rising revenue (551→979), so the falling EBITDA-margin % masks growing absolute profit — the headline margin compression is the OPTICAL read, not contracting dollars.
+- EV/EBITDA sits at 8.5x at the 0th percentile of 19 quarterly closes — a near-floor on its own history — and the forward adj basis is far cheaper at ~4.4x ($1,692M EV / FY26 adj-EBITDA $380-385M), implying earnings power above the GAAP basis that distorts the headline P/E.
+  - ↳ `EDGAR 8-K 0001193125-26-239351 Ex-99.1 — https://www.sec.gov/Archives/edgar/data/1682745/000119312526239351/d123116dex991.htm (adj-EBITDA) + EDGAR net debt + EOD price × shares`
+- Absolute EBITDA has RISEN over the trajectory (229→304→306→342→362, 358 LTM) even as the margin % drifted from 42% to 37% — a margin-% decline that masks growing absolute profit, the opposite of secular profit erosion.
   - ↳ `CIQ Financials→Income Statement (margin % + absolute EBITDA reconciler)`
-- ROIC has improved every year (5.1%→11.5%, LTM 11.1%) — capital efficiency is rising, not deteriorating.
-  - ↳ `CIQ Financials→Income Statement + Segments + Ratios (multi-year columns)`
-- Management is buying back stock (164.7M→151.9M shares, -7.7% over ~1.7y), a capital-return posture inconsistent with a distressed terminal name.
+- The business is self-funding: FCF-positive with $53.9M LTM levered FCF and a FY26 FCF guide of $140-150M, no runway constraint, nearest maturity wall not until 2028, and interest coverage of 5.6x.
+  - ↳ `CIQ Net Debt ÷ CIQ LTM EBITDA (EDGAR XBRL breadth fallback) + FCF sign + CIQ Capital Structure (survival capacity)`
+- Management is buying back stock, reducing share count -7.7% over ~1.7 years (164.7M→151.9M), with the FY26 guide assuming ~155M weighted shares — a buyer at de-rated levels.
   - ↳ `EDGAR XBRL shares, trailing 2024-08-31..2026-05-31`
-- Revised post-Avis FY26 guidance still holds revenue $985–995M, adj-EBITDA $380–385M and FCF $140–150M — the company's own forward outlook does not depict collapse.
-  - ↳ `EDGAR 8-K 0001193125-26-239351 Ex-99.1 — https://www.sec.gov/Archives/edgar/data/1682745/000119312526239351/d123116dex991.htm`
-- On the peer table the name shows a far higher EBITDA margin (37% vs peer-median 18%) and higher revenue growth (10% vs 8%) than the median, so its TEV/EBITDA discount (NTM 4.69 vs peer-median 8.33) is not obviously EARNED on those axes — POSE whether it is RESIDUAL overshoot; but the peer set is HETEROGENEOUS, so treat as a confidence-gated input, not a clean benchmark.
-  - ↳ `CIQ Comparable Analysis→Operating Statistics (name vs peer median: growth/margin/leverage/beta)`
+- Government Solutions — the largest revenue segment (47%) — showed strong booking momentum (~$71M trailing-12-month bookings, ~$13M new Q1 awards) with long-term recurring contracts including the signed $998M 5-year NYC contract, a leg unaffected by the Avis Commercial Services issue.
+  - ↳ `CIQ Financials→Segments (Revenues, latest annual column)`
+- On the consensus comp read the name screens well below a heterogeneous peer median on every metric (TEV/EBITDA 4.7 vs median 10.3; P/E 5.4 vs 15.6; NTM TEV/EBITDA 4.69 vs 8.33) — but whether this is RESIDUAL overshoot or EARNED requires decomposing the fundamental_deltas, which show a SUPERIOR margin (37% vs 18%), so the discount is not explained by profitability.
+  - ↳ `CIQ Comparable Analysis→Trading Multiples (name row + Summary Statistics Low/Median/Mean/High)`
+- Sell-side still rates the name a Buy (1.00) with a mean target $9.71 / median $6.00 against the de-rated price, posing the question of whether the market has overshot the analyst base case.
+  - ↳ `CIQ Estimates→Consensus`
 
 ### Bear case (terminal / value-trap)
-- A significant Commercial Services customer (Avis Budget, >10% of total revenue) issued a contract termination notice — a discrete, structural revenue loss, not a timing or optical artifact: this is a REAL signal.
+- The single most load-bearing fact: Avis Budget — a customer representing OVER 10% of total revenue — issued a contract termination notice (8.01 Other Events, 2026-05-26), a direct revenue loss in the highest-EBITDA-margin segment (Commercial Services is 68% of segment-EBITDA on 45% of revenue), not an optical or timing artifact.
+  - ↳ `EDGAR 8-K 0001193125-26-239351 Ex-99.1 — https://www.sec.gov/Archives/edgar/data/1682745/000119312526239351/d123116dex991.htm`
+- The drawdown is a sequence of THREE discrete idiosyncratic gap-downs by 8-K item code — Q4 earnings (2026-02-25), the Avis termination + revised guidance (2026-05-27), and a CEO/management change (2026-06-02, item 5.02) — each a real adverse event, not a single overreaction.
   - ↳ `EDGAR 8-K item codes at the gap-down dates (not blanket-labelled earnings)`
-- The CEO departed with an interim CEO appointed (5.02) immediately after the Avis shock, compounding execution/leadership uncertainty at the worst moment.
-  - ↳ `EDGAR 8-K item codes at the gap-down dates (not blanket-labelled earnings)`
-- The name has materially lagged the market (-80% 180d vs IWM +18%, -98% relative) — the drawdown is overwhelmingly idiosyncratic, not a shared-cohort selloff.
+- The name fell -80% over 180d while the IWM benchmark rose +18%, a -99% relative underperformance — an entirely idiosyncratic collapse, not a shared/sector drawdown.
   - ↳ `EOD name−IWM 180d (screen data-record, G2)`
-- Forward fundamentals are weak on the axes that justify a discount: LT EPS growth name 2% vs peer-median 10% and EBITDA growth 4% vs peer-median 9%, with higher leverage (Debt/EBITDA 3.0 vs 1.9) — inputs consistent with an EARNED discount / value-trap reading.
+- An interim CEO was appointed (Jonathan Keyser, item 5.02, 2026-06-01), and the prior call's framing of Avis as a 'short-term contract extension' with 'ongoing and constructive' negotiations was immediately followed by a termination notice — a leadership void at the moment of the largest customer loss.
+  - ↳ `EDGAR 8-K item codes at the gap-down dates (not blanket-labelled earnings)`
+- Forward fundamentals are weak relative to the peer set the consensus comps against: EBITDA growth 4% vs peer-median 9% and LT EPS growth 2% vs peer-median 10%, so a meaningful part of the discount may be EARNED (worse growth) rather than a pure overshoot.
   - ↳ `CIQ Comparable Analysis→Operating Statistics (name vs peer median: growth/margin/leverage/beta)`
-- Revision breadth is sharply negative — Revenue FY26 0↑/8↓ and EPS FY26 1↑/5↓ last month — analysts are cutting, the post-Avis cut not yet stabilized.
+- Estimate breadth is sharply negative — Revenue FY2026 revisions 0↑/8↓ and GAAP EPS 1↑/5↓ in the last month — and the GAAP-EPS surprise history is a string of large misses (FY2023 -32%, FY2024 -76%, FY2025 -11%).
   - ↳ `CIQ Estimates→Revisions (Last-Month breadth, FY)`
-- GAAP-EPS surprises have been deeply negative (FY2023 -32%, FY2024 -76%, FY2025 -11%), a multi-year pattern of missing the GAAP bar that undercuts reliance on the adjusted guide. ⚠ uncited
-  - ↳ `CIQ Estimates→Surprise (annual)`
-- Same-quarter revenue growth has stalled to +0.1% YoY (Q1 Mar-31-2026), and LTM EBITDA (358) has ticked below FY25 (362) — the growth engine was flattening even before the Avis loss flows through.
-  - ↳ `CIQ Financials→Income Statement + Segments + Ratios (multi-year columns)`
+- Leverage is elevated versus the peer set (Debt/EBITDA 3.0 vs peer-median 1.9; CIQ net-debt/EBITDA 2.9x, net-debt/OCF 4.5x), amplifying equity-value sensitivity if the Avis loss compresses EBITDA.
+  - ↳ `CIQ Comparable Analysis→Operating Statistics (name vs peer median: growth/margin/leverage/beta)`
 
 ### Twin reference cases
-- **Cimpress / Vistaprint** — recovered
-  - distinguished by: Sharp idiosyncratic de-rate on customer/margin fears while remaining FCF-positive and buying back stock; recovered as cash generation proved durable.
-  - source: [LLM-suggested, unverified]
-- **Conduent** — went terminal
-  - distinguished by: BPO/government-services contractor where customer-contract losses and stalled growth compounded into a persistent value-trap re-rate.
-  - source: [LLM-suggested, unverified]
 - **Sabre Corporation** — went terminal
-  - distinguished by: Levered travel-linked services name where a key customer/volume shock plus weak forward growth kept the multiple compressed despite optical cheapness.
+  - distinguished by: Travel-services provider with rental-car/airline-linked revenue and elevated leverage; demand-and-customer concentration shock compounded by debt left the equity persistently de-rated rather than mean-reverting.
   - source: [LLM-suggested, unverified]
-- **Genpact** — recovered
-  - distinguished by: Outsourcing-services peer that traded at a low multiple yet held margins and re-rated as recurring revenue visibility was confirmed.
+- **Conduent Incorporated** — went terminal
+  - distinguished by: Government/commercial outsourced-services mix with large-customer and government-contract dependence; lost-contract and renewal risk drove a durable, not transitory, re-rating.
   - source: [LLM-suggested, unverified]
-- **Avis Budget Group** — went terminal
-  - distinguished by: The terminating counterparty itself — cyclical travel/fleet exposure illustrates how concentrated customer dependence transmits demand shocks.
+- **Avis Budget Group** — recovered
+  - distinguished by: The named counterparty itself — a cyclical rental-car operator whose own travel-demand cycle drove deep drawdowns that later mean-reverted; relevant as the source of the customer-loss shock.
+  - source: CIQ Customers&Suppliers Verra Mobility Corporation NasdaqCM VRRM Customers.rtf
+- **Tyler Technologies** — recovered
+  - distinguished by: Government-software/enforcement platform business with sticky long-term municipal recurring contracts that supported durable re-rating — the durable-government-revenue analogue to VRRM's Government Solutions leg.
+  - source: [LLM-suggested, unverified]
+- **Gentherm / Dun & Bradstreet** — went terminal
+  - distinguished by: Mid-cap with a single dominant customer/contract concentration where the loss of that anchor was a step-down in earnings power, not a timing dip.
   - source: [LLM-suggested, unverified]
 
 ### Decisive question
-**Is the Avis termination a one-customer, ring-fenced revenue loss the durable Government Solutions and FCF base absorbs (overshoot), or the first crack in a flattening-growth, leadership-vacant franchise that justifies an EARNED discount (value trap)?**
+**Does the Avis termination (a >10%-of-revenue customer in the highest-margin segment) plus a CEO transition represent a permanent step-down in earnings power that justifies the de-rating, or has the -80% idiosyncratic move overshot a business that still guides FY26 adj-EBITDA of $380-385M and remains FCF-positive and self-funding?**
 
 ### …evidence for
-- Avis is identified as a single Commercial Services customer at >10% of revenue, while Government Solutions (47% of revenue, recurring long-term enforcement contracts) and the FCF-positive, self-funding balance sheet remain intact.
-  - ↳ `CIQ Financials→Segments (Revenues, latest annual column)`
-- Revised FY26 guidance — issued WITH the Avis termination known — still projects $985–995M revenue and $140–150M FCF, implying management sizes the loss as absorbable.
+- Avis represented over 10% of total revenue and issued an outright termination notice in Commercial Services, the segment producing 68% of segment-EBITDA — a concentrated loss in the most profitable leg.
   - ↳ `EDGAR 8-K 0001193125-26-239351 Ex-99.1 — https://www.sec.gov/Archives/edgar/data/1682745/000119312526239351/d123116dex991.htm`
+- Forward growth is structurally soft (EBITDA growth 4% vs peer-median 9%; LT EPS growth 2% vs peer-median 10%) and FY26 revenue revisions are 0↑/8↓, consistent with an earned, not transitory, discount.
+  - ↳ `CIQ Comparable Analysis→Operating Statistics (name vs peer median: growth/margin/leverage/beta)`
 
 ### …evidence against
-- Revenue growth had already stalled to +0.1% YoY and forward LT EPS growth (2%) trails peers (10%) — the Avis loss lands on an already-decelerating base.
-  - ↳ `CIQ Financials→Income Statement + Segments + Ratios (multi-year columns)`
-- An abrupt CEO departure / interim appointment landed days after the Avis disclosure, removing execution stability precisely when renewal/transformation depends on it.
-  - ↳ `EDGAR 8-K item codes at the gap-down dates (not blanket-labelled earnings)`
+- Management's revised FY26 guidance already incorporates the Avis termination yet still guides $985-995M revenue, $380-385M adj-EBITDA, $1.19-1.25 adj-EPS and $140-150M FCF — implying earnings power well above the price, with adj P/E ~3.7x.
+  - ↳ `EDGAR 8-K 0001193125-26-239351 Ex-99.1 — https://www.sec.gov/Archives/edgar/data/1682745/000119312526239351/d123116dex991.htm`
+- Government Solutions (47% of revenue) carries a signed $998M 5-year recurring NYC contract and ~$71M trailing bookings, a durable revenue leg untouched by the Commercial Services loss.
+  - ↳ `CIQ Financials→Segments (Revenues, latest annual column)`
 
 ### Key unknowns
-- Quantified revenue/EBITDA impact of the Avis termination beyond the '>10% of revenue' tag — timing of roll-off and whether other Commercial Services rental customers (Hertz, Enterprise) are at similar renewal risk is NOT disclosed (opacity = bearish risk).
-- Permanent CEO succession outcome and strategy continuity — only an interim CEO is named; the durability of the transformation/MOSAIC plan under new leadership is unknown.
-- Status of the unnamed '>10% customer operating under a short-term contract extension' referenced on the call vs the terminating Avis contract — whether these are the same relationship is unclear.
-- GAAP P/E (5.2x) rests on one-time-distorted EPS flagged as not a clean multiple; the trailing TEV/EBITDA at 0%ile is a near-floor optical reading whose overshoot-vs-terminal resolution is unresolved — belongs here, not as a directional point.
-- Peer set is HETEROGENEOUS (caps $430M–$15.9B, 37x span) — every peer multiple is a confidence-gated input, so the residual-vs-earned discount cannot be cleanly benchmarked.
-- Wide consensus target dispersion (mean $9.71 / median $6.00) signals unresolved disagreement on fair value post-Avis.
+- The Avis termination notice timing and any wind-down/transition period — the input does not disclose when revenue actually stops or whether the contract has a tail; the magnitude/timing of the EBITDA step-down is UNKNOWN.
+- The fate of the second concentrated customer relationship: the prior call described a >10% customer on a 'short-term contract extension' under 'ongoing and constructive' negotiations — whether the Avis terminator IS that same relationship, and the status of any other renewals, is not resolvable from the facts (OPACITY — bearish risk).
+- Why the CEO departed and whether the management change (item 5.02) is tied to the Avis loss or signals deeper problems — the 8-K names an interim CEO but discloses no reason or permanent-successor timeline.
+- No segment-level guidance for the post-Avis Commercial Services run-rate — the revised guide is consolidated only; the EBITDA-margin impact of losing the highest-margin customer is not broken out (OPACITY — bearish risk).
+- Peer set is flagged HETEROGENEOUS (caps span $430M-$15.9B, 37x); no clean comparable read, so the residual-vs-earned discount cannot be cleanly benchmarked — every peer multiple is a confidence-gated input only.
+- No exposed graph cohort (VRRM absent from graph_coverage) — idiosyncratic-vs-shared can only be read against IWM, not a peer cross-section.

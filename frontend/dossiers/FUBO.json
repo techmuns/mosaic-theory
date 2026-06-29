@@ -7,13 +7,13 @@
   "mechanical": {
     "valuation": {
       "pe": {
-        "value": 12.108108108108109,
+        "value": 13.391891891891893,
         "source_ref": "EDGAR XBRL eps_diluted × EOD price (screen data-record, G3)",
         "status": "present",
         "note": "distorted — P/E rests on a non-current positive EPS; latest annual EPS is negative (-0.54). Not a meaningful multiple — see the P/E-basis flag"
       },
       "pe_percentile_5y": {
-        "value": 0.0023923444976076554,
+        "value": 0.02390438247011952,
         "source_ref": "EDGAR/EOD P/E pctile vs ~5y (screen data-record)",
         "status": "present",
         "note": null
@@ -72,7 +72,13 @@
         "value": null,
         "source_ref": null,
         "status": "unknown",
-        "note": "EBITDA<=0 or missing debt/cash"
+        "note": "no CIQ Net Debt/EBITDA; EDGAR no net-debt — debt/cash not in XBRL — pull CIQ"
+      },
+      "net_debt_to_ocf": {
+        "value": null,
+        "source_ref": null,
+        "status": "unknown",
+        "note": "CIQ OCF $-489M <= 0 — ratio meaningless"
       },
       "net_debt_to_ebitda_adjusted": {
         "value": null,
@@ -81,8 +87,8 @@
         "note": "adjusted figure not in the 99.1 revised guidance"
       },
       "survival_capacity": {
-        "value": "net-debt/EBITDA UNKNOWN (EBITDA<=0 or missing debt/cash) — solvency risk | FCF-negative → burning cash; runway = cash ÷ burn (cash not derived — a risk) | nearest refinancing wall UNKNOWN (no maturity dates parsed — a risk)",
-        "source_ref": "EDGAR net-debt/EBITDA + FCF sign + CIQ Capital Structure (survival capacity)",
+        "value": "net debt $170M (CIQ); net-debt/EBITDA N/A (no CIQ Net Debt/EBITDA; EDGAR no net-debt — debt/cash not in XBRL — pull CIQ) | FCF-negative → burning cash; runway = cash ÷ burn (cash not derived — a risk) | nearest maturity wall: 2027",
+        "source_ref": "CIQ Net Debt ÷ CIQ LTM EBITDA (EDGAR XBRL breadth fallback) + FCF sign + CIQ Capital Structure (survival capacity)",
         "status": "present",
         "note": null
       },
@@ -99,7 +105,7 @@
         "note": null
       },
       "liquidity_covenant_flags": {
-        "value": "2029 Convertible Notes (Bonds and Notes) 178 @ 7.500%; Disney Note (Bonds and Notes) 145 @ 4.200%; Operating Lease Liabilities (Capital Lease) 33 @ 6.800%; Other Notes (Bonds and Notes) 0 @ 2.250%",
+        "value": "2029 Convertible Notes (Bonds and Notes) 178 @ 7.500% Due 2029; Disney Note (Bonds and Notes) 145 @ 4.200% Due 2031; Operating Lease Liabilities (Capital Lease) 33 @ 6.800%; Other Notes (Bonds and Notes) 0 @ 2.250% Due 2027",
         "source_ref": "CIQ Financials→Capital Structure Details",
         "status": "present",
         "note": null
@@ -227,19 +233,19 @@
     },
     "idiosyncratic_vs_shared": {
       "name_180d_return": {
-        "value": -0.7213930348258706,
+        "value": -0.7257462686567164,
         "source_ref": "EOD FUBO 180d to 2026-06-22",
         "status": "present",
         "note": null
       },
       "market_180d_return": {
-        "value": 0.1776344426417633,
+        "value": 0.1799295635313205,
         "source_ref": "EOD IWM 180d to 2026-06-22",
         "status": "present",
         "note": null
       },
       "rel_vs_market": {
-        "value": -0.8990274774676339,
+        "value": -0.8809111166811505,
         "source_ref": "EOD name−IWM 180d (screen data-record, G2)",
         "status": "present",
         "note": null
@@ -284,168 +290,168 @@
       }
     },
     "management_commentary": {
-      "value": "Earnings-call transcript on file — read FuboTV Inc., Q1 2026 Earnings Call, Feb 03, 2026.rtf in full for management posture (pointer only; the machine does not curate or embed transcript content)",
-      "source_ref": "CIQ transcript FuboTV Inc., Q1 2026 Earnings Call, Feb 03, 2026.rtf",
+      "value": "2 earnings-call transcript(s) on file — read in full for management posture: FuboTV Inc., Q1 2026 Earnings Call, Feb 03, 2026.rtf; FuboTV Inc., Q2 2026 Earnings Call, May 06, 2026.rtf (pointer only; the synthesis cites them, the machine does not curate an excerpt)",
+      "source_ref": "CIQ transcript(s): FuboTV Inc., Q1 2026 Earnings Call, Feb 03, 2026.rtf; FuboTV Inc., Q2 2026 Earnings Call, May 06, 2026.rtf",
       "status": "present",
       "note": null
     }
   },
   "synthesis": {
-    "evidence_balance": "strongly-bearish — idiosyncratic -90% relative collapse with cash burn and UNKNOWN runway/leverage/refinancing, against only a rising but unprofitable top line.",
+    "evidence_balance": "mixed — deep cash burn and an opaque 2027 runway offset a management-asserted adjusted-EBITDA ramp and contractual carriage step-up.",
     "bull_points": [
       {
-        "claim": "Revenue is on a sustained absolute uptrend (Oct-2022 3,419 → LTM Mar-2026 5,304), so the falling/zero gross-margin % is the optical misread, not a revenue-collapse signal — the absolute base is rising.",
-        "source_ref": "CIQ Financials→Income Statement (margin % + absolute EBITDA reconciler)",
+        "claim": "FUBO is FCF-negative at -$131.2M LTM, but management states pro forma trailing-12-month adjusted EBITDA crossed $100M in Q2 with a contractual carriage wholesale-fee step-up (95% in 2026 scaling to 99% by 2028) providing visibility toward a stated $300M adjusted-EBITDA target by 2028 and positive FCF guided in 2027-2028.",
+        "source_ref": "CIQ transcript(s): FuboTV Inc., Q1 2026 Earnings Call, Feb 03, 2026.rtf; FuboTV Inc., Q2 2026 Earnings Call, May 06, 2026.rtf",
         "cited": true
       },
       {
-        "claim": "ROIC has improved each period from -11.2% to -3.3% LTM, indicating the loss-making trajectory is narrowing rather than deepening.",
-        "source_ref": "CIQ Financials→Income Statement + Segments + Ratios (multi-year columns)",
-        "cited": true
-      },
-      {
-        "claim": "On NTM TEV/Rev the name (0.36) sits below the peer low (0.62), and the revenue-growth fundamental delta is favourable (name 22% vs peer-median 9%), posing whether the revenue discount is RESIDUAL (overshoot) rather than EARNED — though comparability is gated and beta is adverse.",
+        "claim": "On TEV/Rev the name trades 0.4 (LTM) / 0.36 (NTM) versus a peer Low of 0.7 / 0.62 and Median 1.9 / 2.07 — but the peer set spans $478M-$306.6B (642x) and is flagged HETEROGENEOUS, so the discount must be judged EARNED vs RESIDUAL, not read as a clean benchmark.",
         "source_ref": "CIQ Comparable Analysis→Trading Multiples (name row + Summary Statistics Low/Median/Mean/High)",
         "cited": true
       },
       {
-        "claim": "Consensus posture is constructive — target mean/median $17.00 and a Buy (1.00) recommendation — against a current name cap of $256M.",
-        "source_ref": "CIQ Estimates→Consensus",
+        "claim": "On the fundamental_deltas the name's revenue growth is 22% vs a peer-median 9% — a faster-growth input that POSES whether the steep TEV/Rev discount is RESIDUAL (overshoot) rather than fully EARNED, though leverage shows Debt/EBITDA NM vs peer-median 3.2 and beta 2.4 vs 1.4 cut the other way.",
+        "source_ref": "CIQ Comparable Analysis→Operating Statistics (name vs peer median: growth/margin/leverage/beta)",
         "cited": true
       },
       {
-        "claim": "Management posture cites the closed Hulu Live combination as adding scale, distribution and integration synergies (ad-tech migration, ESPN commerce flow) — a strategic offset to be weighed (tone only, no figures derived).",
-        "source_ref": "CIQ transcript FuboTV Inc., Q1 2026 Earnings Call, Feb 03, 2026.rtf",
+        "claim": "Gross margin moved 0%→0%→0%→0%→4% (LTM) while absolute revenue rose 3,419→5,304, the reconciler noting margin % can fall while absolute EBITDA RISES — the trajectory is improving, not deteriorating, on the reclassified basis.",
+        "source_ref": "CIQ Financials→Income Statement (margin % + absolute EBITDA reconciler)",
+        "cited": true
+      },
+      {
+        "claim": "ROIC improved across the multi-year columns from -11.2% to -3.3% (LTM), a narrowing-loss trajectory consistent with the post-Hulu-Live combination scale story.",
+        "source_ref": "CIQ Financials→Income Statement + Segments + Ratios (multi-year columns)",
+        "cited": true
+      },
+      {
+        "claim": "Consensus carries a Buy recommendation (CIQ score 1.00) with a mean/median target price of $17.00, materially above the implied de-rated level.",
+        "source_ref": "CIQ Estimates→Consensus",
         "cited": true
       }
     ],
     "bear_points": [
       {
-        "claim": "Levered FCF is negative at -131.2 and the FCF sign is negative — the company is burning cash, a real cash-generation signal not offset by any reconciler in the facts.",
-        "source_ref": "CIQ Financials→Cash Flow 'Levered Free Cash Flow' [LTM 12 months Mar-31-2026]",
-        "cited": true
-      },
-      {
-        "claim": "The headline P/E (12.1) is the optical MISREAD, not the real signal — it rests on a non-current positive EPS while the latest annual EPS is negative (-0.54), so the multiple is not meaningful.",
+        "claim": "The headline P/E of 13.4 is NOT the real signal — it is an optical MISREAD resting on a non-current positive EPS, while the latest annual EPS is negative (-0.54), so the trailing multiple is distorted and not meaningful.",
         "source_ref": "EDGAR XBRL eps_diluted × EOD price (screen data-record, G3)",
         "cited": true
       },
       {
-        "claim": "On the one forward profitability multiple that exists, NTM TEV/EBITDA (name 17.77) is a PREMIUM to the peer median (8.19), so the only clean forward EBITDA read is not cheap — undercutting the overshoot framing on EBITDA.",
+        "claim": "The 22% growth / RESIDUAL-overshoot read is undercut on the SAME forward metric: NTM TEV/EBITDA is 17.77 vs a peer Median of 8.19 and Mean 11.64 — on forward EBITDA the name is RICH, not cheap, which weighs toward the discount being EARNED.",
         "source_ref": "CIQ Comparable Analysis→Trading Multiples (name row + Summary Statistics Low/Median/Mean/High)",
         "cited": true
       },
       {
-        "claim": "Share count is diluting (+4.0% trailing ~1yr) and a reverse stock split was announced, compounding shareholder dilution risk.",
+        "claim": "FUBO is structurally cash-consumptive: LTM levered FCF is -$131.2M and operating cash flow is negative ($-489M), so the net-debt/OCF ratio is meaningless and the company is burning cash.",
+        "source_ref": "CIQ Financials→Cash Flow 'Levered Free Cash Flow' [LTM 12 months Mar-31-2026]",
+        "cited": true
+      },
+      {
+        "claim": "Survival capacity is incompletely evidenced: net debt is $170M, net-debt/EBITDA is N/A, and runway = cash ÷ burn is explicitly NOT derived (flagged a risk), against a nearest maturity wall of 2027.",
+        "source_ref": "CIQ Net Debt ÷ CIQ LTM EBITDA (EDGAR XBRL breadth fallback) + FCF sign + CIQ Capital Structure (survival capacity)",
+        "cited": true
+      },
+      {
+        "claim": "Shareholders are being diluted: diluted shares rose from 329.3M (2024-07-31) to 342.4M (2025-07-31), +4.0% in roughly one year, with a reverse stock split announced.",
         "source_ref": "EDGAR XBRL shares, trailing 2024-07-31..2025-07-31",
         "cited": true
       },
       {
-        "claim": "Beta is elevated (name 2.4 vs peer-median 1.4) and Debt/EBITDA is NM vs a peer-median 3.2 — the fundamental deltas show adverse risk legs that can make the revenue discount EARNED rather than residual.",
-        "source_ref": "CIQ Comparable Analysis→Operating Statistics (name vs peer median: growth/margin/leverage/beta)",
-        "cited": true
-      },
-      {
-        "claim": "The name fell -72.1% over 180d while the small-cap market rose +17.8%, a -89.9% relative underperformance — the de-rating is idiosyncratic, not a shared-market move.",
+        "claim": "Three discrete gap-downs (2026-02-03 earnings, 2026-03-26, 2026-05-06 earnings) drove a 180-day return of -72.6% versus the market's +18.0%, an idiosyncratic underperformance of -88.1% relative to IWM.",
         "source_ref": "EOD name−IWM 180d (screen data-record, G2)",
         "cited": true
       },
       {
-        "claim": "Gap-downs cluster on discrete earnings 8-Ks (2026-02-03 and 2026-05-06, both item 2.02), tying the collapse to results events.",
-        "source_ref": "EDGAR 8-K item codes at the gap-down dates (not blanket-labelled earnings)",
+        "claim": "Revenue is 100% concentrated in a single Streaming segment and 100% in the United States, with a key content provider (NBCUniversal) having ceased renewal engagement on the Fubo side per management.",
+        "source_ref": "CIQ Financials→Segments (Revenues, latest annual column)",
         "cited": true
       },
       {
-        "claim": "Revenue is 100% one segment (Streaming) and 100% US-geographic, with a key NBCUniversal/Comcast distribution renewal stalled per management — concentration plus content-rights risk.",
-        "source_ref": "CIQ Financials→Segments (Revenues, latest annual column)",
+        "claim": "Forward estimate breadth is negative-to-flat: Revenue FY2026 0 up / 1 down and EPS FY2026 0 up / 0 down in the last month, no positive revisions.",
+        "source_ref": "CIQ Estimates→Revisions (Last-Month breadth, FY)",
         "cited": true
       }
     ],
     "twin_reference_cases": [
       {
-        "name": "Roku Inc.",
+        "name": "Roku",
         "outcome": "recovered",
-        "distinguishing_fact": "US streaming-platform name that de-rated hard on profitability fears then stabilised as ad-monetization and scale narrative reasserted.",
+        "distinguishing_fact": "US streaming-platform name de-rated hard on growth-to-profitability fears, then stabilized as ad monetization and operating discipline improved.",
         "source": "[LLM-suggested, unverified]"
       },
       {
-        "name": "Chewy Inc.",
+        "name": "Chewy",
         "outcome": "recovered",
-        "distinguishing_fact": "Growth name that paired persistent GAAP losses with rising revenue and improving cash trajectory, eventually inflecting toward profitability.",
+        "distinguishing_fact": "Cash-consumptive high-growth subscription model that crossed into positive adjusted EBITDA and FCF as scale matured, validating a growth-then-profit narrative.",
+        "source": "[LLM-suggested, unverified]"
+      },
+      {
+        "name": "Chegg",
+        "outcome": "went terminal",
+        "distinguishing_fact": "Subscription consumer-media name whose core demand eroded as a dominant content/distribution partner dynamic shifted, leaving a structurally impaired model.",
         "source": "[LLM-suggested, unverified]"
       },
       {
         "name": "WeWork",
         "outcome": "went terminal",
-        "distinguishing_fact": "Cash-burning name with unresolved runway/refinancing visibility where dilution and solvency overwhelmed a scale-growth story.",
+        "distinguishing_fact": "Persistent cash burn against a near-term maturity wall with undisclosed runway eventually overwhelmed a scale-and-synergy growth story.",
         "source": "[LLM-suggested, unverified]"
       },
       {
-        "name": "Quibi",
-        "outcome": "went terminal",
-        "distinguishing_fact": "Streaming entrant dependent on content/distribution deals where loss of partner access undercut the subscriber thesis.",
-        "source": "[LLM-suggested, unverified]"
-      },
-      {
-        "name": "DISH Network",
-        "outcome": "went terminal",
-        "distinguishing_fact": "Pay-TV-exposed business pressured by content-carriage renewals and subscriber churn against a heavy debt load.",
+        "name": "Sirius XM Holdings",
+        "outcome": "recovered",
+        "distinguishing_fact": "Scaled US subscription-media platform that leaned on a durable distribution moat and content packaging to defend subscribers through churn pressure.",
         "source": "[LLM-suggested, unverified]"
       }
     ],
     "decisive_question": {
-      "question": "Does the post-Hulu-Live combined entity reach self-funding (positive FCF) before cash burn and dilution force a dilutive raise or solvency event?",
+      "question": "Does the Hulu + Live TV combination's contractual carriage step-up and synergy path convert FUBO's cash burn into the guided positive FCF and $300M adjusted EBITDA before the 2027 maturity wall and dilution erode equity value?",
       "evidence_for": [
         {
-          "claim": "ROIC improving each period to -3.3% LTM and revenue rising to 5,304 LTM suggest the loss trajectory is narrowing.",
-          "source_ref": "CIQ Financials→Income Statement + Segments + Ratios (multi-year columns)",
+          "claim": "Management states trailing-12-month pro forma adjusted EBITDA crossed $100M in Q2 with a contractual wholesale-fee step-up from 95% (2026) to 99% (2028) and positive FCF guided for 2027-2028.",
+          "source_ref": "CIQ transcript(s): FuboTV Inc., Q1 2026 Earnings Call, Feb 03, 2026.rtf; FuboTV Inc., Q2 2026 Earnings Call, May 06, 2026.rtf",
           "cited": true
         },
         {
-          "claim": "Favourable revenue-growth delta (name 22% vs peer-median 9%) is consistent with a still-scaling top line.",
-          "source_ref": "CIQ Comparable Analysis→Operating Statistics (name vs peer median: growth/margin/leverage/beta)",
+          "claim": "ROIC has narrowed from -11.2% to -3.3% and absolute revenue rose to 5,304 (LTM), consistent with improving combined-company economics.",
+          "source_ref": "CIQ Financials→Income Statement + Segments + Ratios (multi-year columns)",
           "cited": true
         }
       ],
       "evidence_against": [
         {
-          "claim": "Levered FCF is -131.2 and FCF sign negative — still burning cash.",
-          "source_ref": "CIQ Financials→Cash Flow 'Levered Free Cash Flow' [LTM 12 months Mar-31-2026]",
+          "claim": "The company is still burning cash with LTM levered FCF of -$131.2M against a 2027 maturity wall, and runway = cash ÷ burn is explicitly not derived.",
+          "source_ref": "CIQ Net Debt ÷ CIQ LTM EBITDA (EDGAR XBRL breadth fallback) + FCF sign + CIQ Capital Structure (survival capacity)",
           "cited": true
         },
         {
-          "claim": "Survival capacity is explicitly flagged: net-debt/EBITDA UNKNOWN, runway not derived, nearest refinancing wall UNKNOWN — solvency risk.",
-          "source_ref": "EDGAR net-debt/EBITDA + FCF sign + CIQ Capital Structure (survival capacity)",
-          "cited": false
-        },
-        {
-          "claim": "Share count diluting +4.0% trailing alongside an announced reverse split.",
-          "source_ref": "EDGAR XBRL shares, trailing 2024-07-31..2025-07-31",
+          "claim": "On forward EBITDA the name is RICH not cheap — NTM TEV/EBITDA 17.77 vs peer Median 8.19 — so the guided EBITDA ramp may already be priced, leaving little RESIDUAL cushion.",
+          "source_ref": "CIQ Comparable Analysis→Trading Multiples (name row + Summary Statistics Low/Median/Mean/High)",
           "cited": true
         }
       ]
     },
     "key_unknowns": [
-      "EV/EBITDA (LTM), EV/EBITDA percentile, adjusted EV/EBITDA fwd and adjusted EPS are all UNKNOWN (EBITDA<=0 / not in 99.1 guidance) — no clean enterprise-value or profitability multiple to anchor valuation.",
-      "Net-debt/EBITDA and net-debt/EBITDA adjusted are UNKNOWN — leverage cannot be assessed; with cash-burn this is a BEARISH opacity, not a neutral gap.",
-      "Cash runway is NOT derived and the nearest refinancing wall is UNKNOWN (no maturity dates parsed) — survival visibility missing; BEARISH opacity given negative FCF.",
-      "Interest coverage UNKNOWN (missing EBITDA or interest expense row) — debt-service capacity unverifiable.",
-      "Revised guidance from the 99.1 exhibits was NOT parsed for either earnings 8-K — forward outlook absent; a missing expected disclosure, treated as BEARISH.",
-      "Segment-level EBITDA UNKNOWN (no EBITDA section) — profitability of the single Streaming segment is opaque.",
-      "Surprise history UNKNOWN (no fiscal-year header) — cannot gauge beat/miss pattern behind the earnings gap-downs.",
-      "No graph cohort (FUBO absent from coverage) — idiosyncratic-vs-shared read relies solely on the name-vs-IWM relative.",
-      "Outcome of the stalled NBCUniversal/Comcast renewal and its subscriber impact is unresolved per management commentary.",
-      "TEV/LTM EBITDA has <4 quarters, so range_position and the 5y EBITDA percentile cannot be computed."
+      "Cash runway is not derivable: cash ÷ burn is explicitly not computed and flagged a risk, against a 2027 nearest maturity wall — an OPACITY-AS-SIGNAL bearish gap, not a neutral one.",
+      "TEV/LTM EBITDA, its 5y percentile, and range position are all UNKNOWN (<4 quarters of post-combination data), so no through-cycle valuation anchor exists — the headline P/E and its 2.4th-percentile reading are distorted, neither bull nor bear.",
+      "Adjusted EPS, forward adjusted EV/EBITDA, interest coverage, and net-debt/EBITDA are all UNKNOWN (not in the 99.1 revised guidance / missing income-statement rows) — leverage serviceability is opaque, a bearish disclosure gap.",
+      "No revised-guidance 99.1 exhibit was parsed for either gap-down 8-K, so the precise quantitative outlook that drove the discrete gap-downs is unverified from source.",
+      "Segment EBITDA is UNKNOWN (no EBITDA section on the Segments sheet), so profitability inside the 100%-Streaming/100%-US concentration cannot be decomposed.",
+      "No graph cohort is available (FUBO absent from coverage), so idiosyncratic-vs-shared is read only off rel_vs_market with no peer cross-section.",
+      "The durability of the NBCUniversal/Comcast non-renewal on the Fubo side and any future subscriber impact beyond the 'minimal incremental churn' management asserts is unresolved.",
+      "Whether the guided ad-monetization uplift from the Disney ad-server migration is real upside or just stabilization — explicitly raised by an analyst — remains qualitative and unquantified in source."
     ]
   },
   "flags": [
     "P/E may be distorted by non-recurring EPS — latest annual EPS -0.54 vs recent median -2.06; verify against normalized/forward EPS (CIQ)",
     "EPS shown is GAAP-based and understates earnings power; company-adjusted (non-GAAP) EPS is not in the CIQ workbook — it lives in the earnings-release/transcript reconciliation (currently UNAVAILABLE) — not a ceiling on earnings power.",
-    "MISMATCH decisive.against: 'Survival capacity is explicitly flagged:…' asserts missing/UNKNOWN data yet cites a PRESENT field — move to key_unknowns, don't source-bind it",
+    "TRANSCRIPT-FIGURE '95' in bull_point: 'FUBO is FCF-negative at -$131.2M LTM, but management states pro forma…' — from the cited earnings call, not the structured facts; verify against the call",
+    "TRANSCRIPT-FIGURE '95' in decisive.for: 'Management states trailing-12-month pro forma adjusted EBITDA crossed…' — from the cited earnings call, not the structured facts; verify against the call",
+    "DIRECTIONAL language 'buy' — human review (dossier frames, not concludes)",
     "DIRECTIONAL language 'recommendation' — human review (dossier frames, not concludes)",
-    "FALSE-BALANCE? evidence_balance commits a strong lean but the body is near-symmetric (5 bull vs 8 bear) and the minority bull_points aren't qualified-as-outweighed — size the minority against the lean (rule 7), or it launders a one-sided case",
-    "HETEROGENEOUS-BENCHMARK bear_point: 'On the one forward profitability multiple that exists, NTM TEV/EBITDA…' — leans on the peer set as a clean benchmark, but comparability flags it HETEROGENEOUS; confidence-gate every peer stat"
+    "HETEROGENEOUS-BENCHMARK bear_point: 'The 22% growth / RESIDUAL-overshoot read is undercut on the SAME…' — leans on the peer set as a clean benchmark, but comparability flags it HETEROGENEOUS; confidence-gate every peer stat",
+    "HETEROGENEOUS-BENCHMARK decisive.against: 'On forward EBITDA the name is RICH not cheap — NTM TEV/EBITDA 17.77…' — leans on the peer set as a clean benchmark, but comparability flags it HETEROGENEOUS; confidence-gate every peer stat"
   ],
   "llm_model": "claude-opus-4-8",
-  "assembled_at": "2026-06-25T18:57:15.439746"
+  "assembled_at": "2026-06-29T16:14:48.665055"
 }

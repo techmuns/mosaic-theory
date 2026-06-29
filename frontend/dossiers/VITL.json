@@ -1,0 +1,478 @@
+{
+  "ticker": "VITL",
+  "name": "Vital Farms, Inc.",
+  "cik": "0001579733",
+  "reference_date": "2026-06-22",
+  "rank": 4,
+  "mechanical": {
+    "valuation": {
+      "pe": {
+        "value": 7.770833333333333,
+        "source_ref": "EDGAR XBRL eps_diluted × EOD price (screen data-record, G3)",
+        "status": "present",
+        "note": null
+      },
+      "pe_percentile_5y": {
+        "value": 0.027888446215139442,
+        "source_ref": "EDGAR/EOD P/E pctile vs ~5y (screen data-record)",
+        "status": "present",
+        "note": null
+      },
+      "ev_ebitda": {
+        "value": 1.5,
+        "source_ref": "CIQ Financials→Multiples 'TEV/LTM EBITDA' Close (latest) — current multiple",
+        "status": "present",
+        "note": "trailing only — no forward basis; cannot distinguish cheap-overshoot from cheap-terminal"
+      },
+      "ev_ebitda_percentile_5y": {
+        "value": 0.0,
+        "source_ref": "CIQ Financials→Multiples 'TEV/LTM EBITDA' Close — 19 quarters (partial last column excluded from the distribution)",
+        "status": "present",
+        "note": null
+      },
+      "ev_ebitda_adjusted_fwd": {
+        "value": null,
+        "source_ref": null,
+        "status": "unknown",
+        "note": "adjusted figure not in the 99.1 revised guidance"
+      },
+      "adjusted_eps": {
+        "value": null,
+        "source_ref": null,
+        "status": "unknown",
+        "note": "adjusted figure not in the 99.1 revised guidance"
+      },
+      "range_position": {
+        "value": "EV/EBITDA (TEV/LTM) 1.5x at 0%ile of 19 closes → near-floor; P/LTM EPS 9.8x",
+        "source_ref": "CIQ Financials→Multiples (Close; last col = current, excluded from history)",
+        "status": "present",
+        "note": null
+      }
+    },
+    "quality": {
+      "fcf_sign": {
+        "value": -1,
+        "source_ref": "EDGAR XBRL FCF sign (screen data-record)",
+        "status": "present",
+        "note": null
+      },
+      "free_cash_flow": {
+        "value": -53.9,
+        "source_ref": "CIQ Financials→Cash Flow 'Levered Free Cash Flow' [LTM 12 months Mar-29-2026]",
+        "status": "present",
+        "note": null
+      },
+      "margin_trend": {
+        "value": "EBITDA margin: Dec-26-2021 (R) 1% → Dec-25-2022 (R) 3% → Dec-31-2023 9% → Dec-29-2024 13% → Dec-28-2025 14% → Mar-29-2026 (LTM) 10%; gross margin: Dec-26-2021 (R) 32% → Dec-25-2022 (R) 31% → Dec-31-2023 34% → Dec-29-2024 38% → Dec-28-2025 38% → Mar-29-2026 (LTM) 35%; absolute EBITDA: Dec-26-2021 (R) 4 → Dec-25-2022 (R) 10 → Dec-31-2023 41 → Dec-29-2024 77 → Dec-28-2025 103 → Mar-29-2026 (LTM) 79; absolute revenue: Dec-26-2021 (R) 261 → Dec-25-2022 (R) 362 → Dec-31-2023 472 → Dec-29-2024 606 → Dec-28-2025 759 → Mar-29-2026 (LTM) 784  [R reclassified; margin % can fall while absolute EBITDA RISES — read them together]",
+        "source_ref": "CIQ Financials→Income Statement (margin % + absolute EBITDA reconciler)",
+        "status": "present",
+        "note": null
+      },
+      "net_debt_to_ebitda": {
+        "value": 0.0,
+        "source_ref": "CIQ Net Debt $3M [Q1 Mar-29-2026] ÷ CIQ EBITDA $80M [LTM 12 months Mar-29-2026]",
+        "status": "present",
+        "note": null
+      },
+      "net_debt_to_ocf": {
+        "value": 0.3,
+        "source_ref": "CIQ Net Debt $3M [Q1 Mar-29-2026] ÷ CIQ OCF $10M [LTM 12 months Mar-29-2026]",
+        "status": "present",
+        "note": null
+      },
+      "net_debt_to_ebitda_adjusted": {
+        "value": null,
+        "source_ref": null,
+        "status": "unknown",
+        "note": "adjusted figure not in the 99.1 revised guidance"
+      },
+      "survival_capacity": {
+        "value": "net-debt/EBITDA 0.0x (CIQ) | FCF-negative → burning cash; runway = cash ÷ burn (cash not derived — a risk) | nearest maturity wall: 2029",
+        "source_ref": "CIQ Net Debt ÷ CIQ LTM EBITDA (EDGAR XBRL breadth fallback) + FCF sign + CIQ Capital Structure (survival capacity)",
+        "status": "present",
+        "note": null
+      },
+      "interest_coverage": {
+        "value": 99.4,
+        "source_ref": "CIQ Financials→Income Statement EBITDA ÷ Interest Expense [LTM 12 months Mar-29-2026]",
+        "status": "present",
+        "note": null
+      },
+      "share_count_trend": {
+        "value": "flat (trailing ~1.7y): 43,098,946 (2024-08-05) → 42,848,454 (2026-05-04), -0.6%",
+        "source_ref": "EDGAR XBRL shares, trailing 2024-08-05..2026-05-04",
+        "status": "present",
+        "note": null
+      },
+      "liquidity_covenant_flags": {
+        "value": "Finance Lease Liabilities (Capital Lease) 11 @ 6.730%; JPMorgan Credit Facility (Revolving Credit) undrawn/– @ NA Due 2029; Operating Lease Liabilities (Capital Lease) 43 @ 4.770%",
+        "source_ref": "CIQ Financials→Capital Structure Details",
+        "status": "present",
+        "note": null
+      },
+      "multi_year_trajectory": {
+        "value": "Revenue: Dec-26-2021 (R) 261 → Dec-25-2022 (R) 362 → Dec-31-2023 472 → Dec-29-2024 606 → Dec-28-2025 759 → Mar-29-2026 (LTM) 784; EBITDA: Dec-26-2021 (R) 4 → Dec-25-2022 (R) 10 → Dec-31-2023 41 → Dec-29-2024 77 → Dec-28-2025 103 → Mar-29-2026 (LTM) 79; Revenue YoY (latest same-quarter): +15.4% (Q1 Mar-29-2026 vs Q1 Mar-30-2025); ROIC: Dec-26-2021 0.0% → Dec-25-2022 1.7% → Dec-31-2023 10.8% → Dec-29-2024 15.8% → Dec-28-2025 15.9% → Mar-29-2026 (LTM) 11.6%  [R reclassified; per-period values, never YoY'd across a basis]",
+        "source_ref": "CIQ Financials→Income Statement + Segments + Ratios (multi-year columns)",
+        "status": "present",
+        "note": null
+      }
+    },
+    "concentration": {
+      "segments": {
+        "value": "[12 months Dec-28-2025] Eggs and Butter 759 (100%) of Total 759",
+        "source_ref": "CIQ Financials→Segments (Revenues, latest annual column)",
+        "status": "present",
+        "note": null
+      },
+      "segment_ebitda": {
+        "value": null,
+        "source_ref": null,
+        "status": "unknown",
+        "note": "Segments sheet has no 'EBITDA' section as expected"
+      },
+      "customers": {
+        "value": "Albertsons Companies, Inc. (NYSE:ACI) — Distributor · Food Retail · src: Vital Farms, Inc. (NasdaqGM:VITL) 2026 Form 10-K; Ben E. Keith Company — Distributor · Food Distributors · src: Vital Farms, Inc. (NasdaqGM:VITL) 2026 Form 10-K; Dot Foods, Inc. — Distributor · Air Freight and Logistics · src: Vital Farms, Inc. (NasdaqGM:VITL) 2026 Form 10-K; Gordon Food Service, Inc. — Distributor · Food Distributors · src: Vital Farms, Inc. (NasdaqGM:VITL) 2026 Form 10-K; Performance Food Group, Inc. — Distributor · Food Distributors · src: Vital Farms, Inc. (NasdaqGM:VITL) 2026 Form 10-K; Publix Super Markets, Inc. — Distributor · Food Retail · src: Vital Farms, Inc. (NasdaqGM:VITL) 2026 Form 10-K; Shamrock Foods Company — Distributor · Packaged Foods and Meats · src: Vital Farms, Inc. (NasdaqGM:VITL) 2026 Form 10-K; Sprouts Farmers Market, Inc. (NasdaqGS:SFM) — Distributor · Food Retail · src: Vital Farms, Inc. (NasdaqGM:VITL) 2026 Form 10-K; Sysco Corporation (NYSE:SYY) — Distributor · Food Distributors · src: Vital Farms, Inc. (NasdaqGM:VITL) 2026 Form 10-K; Target Corporation (NYSE:TGT) — Distributor · Consumer Staples Merchandise Retail · src: Vital Farms, Inc. (NasdaqGM:VITL) 2026 Form 10-K; The Kroger Co. (NYSE:KR) — Distributor · Food Retail · src: Vital Farms, Inc. (NasdaqGM:VITL) 2026 Form 10-K; United Natural Foods, Inc. (NYSE:UNFI) — Distributor · Food Distributors · src: Vital Farms, Inc. (NasdaqGM:VITL) 2026 Form 10-K; US Foods, Inc. — Distributor · Food Distributors · src: Vital Farms, Inc. (NasdaqGM:VITL) 2026 Form 10-K; Walmart Inc. (NasdaqGS:WMT) — Distributor · Consumer Staples Merchandise Retail · src: Vital Farms, Inc. (NasdaqGM:VITL) 2026 Form 10-K; Whole Foods Market, Inc. — Distributor · Food Retail · src: Vital Farms, Inc. (NasdaqGM:VITL) 2026 Form 10-K",
+        "source_ref": "CIQ Customers&Suppliers Vital Farms Inc NasdaqGM VITL Customers.rtf",
+        "status": "present",
+        "note": null
+      },
+      "geographic": {
+        "value": "[12 months Dec-28-2025] United States 759 (100%) of Total 759",
+        "source_ref": "CIQ Financials→Segments (Geographic Segment → Revenues, latest annual column)",
+        "status": "present",
+        "note": null
+      }
+    },
+    "peer_comps": {
+      "peer_set": {
+        "value": "10 peers — Cal-Maine Foods $3.8B — engages in the production, grading, packaging, (United States); The Simply Good Foods Company $1.2B — engages in the development, marketing, and sale of (United States); Mondelez International $78.0B — manufactures, markets, and sells snack food and (United States); The Kraft Heinz Company $28.1B — manufactures and markets food and beverage products in (United States); Freshpet $2.8B — manufactures, distributes, and markets natural fresh (United States); Utz Brands $683M — manufactures branded salty snacks in the United (United States); Oatly Group AB $281M — provides a range of plant-based dairy products in the (Sweden); BellRing Brands $1.3B — provides various nutrition products in the United (United States); The Hain Celestial Group $50M — manufactures, markets, and sells organic and natural (United States); Post Holdings $4.1B — operates as a consumer packaged goods holding company (United States) | the name: $480M",
+        "source_ref": "CIQ Comparable Analysis→Financial Data + Business Description (roster + caps + business)",
+        "status": "present",
+        "note": null
+      },
+      "comparability": {
+        "value": "market caps span $50M–$78.0B (1567x); the name is $480M → HETEROGENEOUS — low comparability: the peer median is anchored by businesses of differing scale/model; scrutinise comparability before reading any peer stat as a clean benchmark.",
+        "source_ref": "CIQ Comparable Analysis→Financial Data (market-cap dispersion) + Business Description",
+        "status": "present",
+        "note": null
+      },
+      "trading_multiples": {
+        "value": "TEV/Rev: name 0.6 vs peers Low 0.4 / Median 1.2 / Mean 1.4 / High 2.6; TEV/EBITDA: name 1.2 vs peers Low 2.7 / Median 7.2 / Mean 10.2 / High 23.2; P/E: name 10.7 vs peers Low 5.6 / Median 15.1 / Mean 15.1 / High 30.1; NTM TEV/Rev: name 0.62 vs peers Low 0.52 / Median 1.27 / Mean 1.41 / High 2.43; NTM TEV/EBITDA: name 70.81 vs peers Low 6.8 / Median 8.98 / Mean 10.98 / High 25.99; NTM P/E: name NM vs peers Low 7.85 / Median 11.36 / Mean 16.02 / High 41.44  [LTM + NTM forward; NM = a real state (negative base), not missing]",
+        "source_ref": "CIQ Comparable Analysis→Trading Multiples (name row + Summary Statistics Low/Median/Mean/High)",
+        "status": "present",
+        "note": null
+      },
+      "fundamental_deltas": {
+        "value": "EBITDA margin name 10% vs peer-median 15%; rev growth name 26% vs peer-median 4%; EBITDA growth name 6% vs peer-median -11%; Debt/EBITDA name 0.1 vs peer-median 3.8; LT EPS growth name – vs peer-median 3%; beta name 1.1 vs peer-median 0.5  [justified-vs-residual inputs: is the discount EARNED (worse fundamentals) or RESIDUAL (unexplained)? the human judges — not computed here]",
+        "source_ref": "CIQ Comparable Analysis→Operating Statistics (name vs peer median: growth/margin/leverage/beta)",
+        "status": "present",
+        "note": null
+      }
+    },
+    "drawdown_cause": {
+      "shape": {
+        "value": "discrete gap-downs by 8-K item code — 2026-02-26 earnings (2.02) + management change (5.02) + Reg-FD (7.01) + other event (8.01); 2026-05-07 earnings (2.02) + restructuring (2.05)",
+        "source_ref": "EDGAR 8-K item codes at the gap-down dates (not blanket-labelled earnings)",
+        "status": "present",
+        "note": null
+      },
+      "gap_down_dates": {
+        "value": [
+          "2026-02-26",
+          "2026-05-07"
+        ],
+        "source_ref": "EOD gap-down detector (screen events)",
+        "status": "present",
+        "note": null
+      },
+      "filings": [
+        {
+          "gap_date": "2026-02-26",
+          "filing_date": "2026-02-26",
+          "form": "8-K",
+          "items": [
+            "2.02",
+            "5.02",
+            "7.01",
+            "8.01",
+            "9.01"
+          ],
+          "item_types": [
+            "2.02 Results of Operations and Financial Condition",
+            "5.02 Departure/Election of Directors or Certain Officers",
+            "7.01 Regulation FD Disclosure",
+            "8.01 Other Events",
+            "9.01 Financial Statements and Exhibits"
+          ],
+          "accession": "0001193125-26-073373",
+          "url": "https://www.sec.gov/Archives/edgar/data/1579733/000119312526073373/vitl-20260220.htm",
+          "events": [
+            "2.02 Results of Operations and Financial Condition: Results of Operations and Financial Condition On February 26, 2026, Vital Farms, Inc. (the “Company”) issued a press release announcing its financial results for the fiscal year ended December 28, 2025. A copy of the earnings press release is furnished as Exhibit 99.1 to this Current Report on Form 8-K (this “Current Report”) and is incorporated herein by reference. The information provided under",
+            "5.02 Departure/Election of Directors or Certain Officers: Departure of Directors or Certain Officers; Appointment of Certain Officers; Compensatory Arrangement of Certain Officers. On February 20, 2026, Matthew O’Hayer, the Company’s founder, Executive Chairperson and a member of the Company's Board of Directors (the “Board”) informed the Company and the Board of his resignation as Executive Chairperson, as a member of the Board and as an employee, effec",
+            "7.01 Regulation FD Disclosure: Regulation FD Disclosure. A copy of the Company’s press releases announcing the foregoing are attached to this Current Report as Exhibits 99.1 and 99.2 and incorporated herein by reference. The information in this",
+            "8.01 Other Events: Other Events. On February 26, 2026, the Company announced that the Board has authorized and approved a plan to repurchase up to $100.0 million of shares (the “Stock Repurchase Program”) of the Company’s outstanding common stock, par value $0.0001 per share (“Common Stock”). Under the Stock Repurchase Program, the Company intends to repurchase shares of Common Stock from time to time, including, wi"
+          ]
+        },
+        {
+          "gap_date": "2026-05-07",
+          "filing_date": "2026-05-07",
+          "form": "8-K",
+          "items": [
+            "2.02",
+            "2.05",
+            "9.01"
+          ],
+          "item_types": [
+            "2.02 Results of Operations and Financial Condition",
+            "2.05 Costs Associated with Exit or Disposal Activities",
+            "9.01 Financial Statements and Exhibits"
+          ],
+          "accession": "0001193125-26-210294",
+          "url": "https://www.sec.gov/Archives/edgar/data/1579733/000119312526210294/vitl-20260501.htm",
+          "events": [
+            "2.02 Results of Operations and Financial Condition: Results of Operations and Financial Condition On May 7, 2026, Vital Farms, Inc. (the “Company”) issued a press release announcing its financial results for the fiscal quarter ended March 29, 2026. A copy of the press release is furnished as Exhibit 99.1 to this Current Report on Form 8-K (this “Current Report”) and is incorporated herein by reference. The information provided in this Form 8-K, inc",
+            "2.05 Costs Associated with Exit or Disposal Activities: Costs Associated with Exit or Disposal Activities. On May 1, 2026, management of the Company elected to wind down and discontinue its butter product offerings to focus on its core egg product categories, with such discontinuation expected to be substantially completed by the end of fiscal 2026. In connection with the discontinuation plan, the Company expects to incur butter inventory-related charg"
+          ]
+        }
+      ],
+      "revised_guidance": {
+        "value": null,
+        "source_ref": null,
+        "status": "unknown",
+        "note": "no revised-outlook 99.1 exhibit parsed for 8-Ks ['0001193125-26-073373', '0001193125-26-210294']"
+      }
+    },
+    "idiosyncratic_vs_shared": {
+      "name_180d_return": {
+        "value": -0.6915544675642595,
+        "source_ref": "EOD VITL 180d to 2026-06-22",
+        "status": "present",
+        "note": null
+      },
+      "market_180d_return": {
+        "value": 0.1799295635313205,
+        "source_ref": "EOD IWM 180d to 2026-06-22",
+        "status": "present",
+        "note": null
+      },
+      "rel_vs_market": {
+        "value": -0.839883241944031,
+        "source_ref": "EOD name−IWM 180d (screen data-record, G2)",
+        "status": "present",
+        "note": null
+      },
+      "cohort": {
+        "value": null,
+        "source_ref": null,
+        "status": "unknown",
+        "note": "VITL not in graph_coverage.json — no exposed cross-section to compare"
+      },
+      "read": {
+        "value": null,
+        "source_ref": null,
+        "status": "unknown",
+        "note": "no graph cohort to compare — see rel_vs_market for the name-vs-market read"
+      }
+    },
+    "consensus_context": {
+      "eps_trend": {
+        "value": "EPS (GAAP) FY 2026: 0↑/0↓ last mo",
+        "source_ref": "CIQ Estimates→Revisions (Last-Month breadth, FY)",
+        "status": "present",
+        "note": null
+      },
+      "revenue_trend": {
+        "value": "Revenue FY 2026: 0↑/0↓ last mo",
+        "source_ref": "CIQ Estimates→Revisions (Last-Month breadth, FY)",
+        "status": "present",
+        "note": null
+      },
+      "revision_history": {
+        "value": "Target price: mean $11.67 / median $11.00; Recommendation: Outperform (2.00) (CIQ score, 1=buy … 5=sell)",
+        "source_ref": "CIQ Estimates→Consensus",
+        "status": "present",
+        "note": null
+      },
+      "surprise_history": {
+        "value": "GAAP-EPS surprise: FY2021 +50%, FY2022 -33%, FY2023 +20%, FY2024 +5%, FY2025 -3%; Revenue surprise: FY2021 +2%, FY2022 +2%, FY2023 +1%, FY2024 +1%, FY2025 +0% (fiscal-year, GAAP-EPS basis — adjusted basis is the 99.1 guide; +beat / −miss)",
+        "source_ref": "CIQ Estimates→Surprise (annual)",
+        "status": "present",
+        "note": null
+      }
+    },
+    "management_commentary": {
+      "value": "2 earnings-call transcript(s) on file — read in full for management posture: Vital Farms, Inc., Q1 2026 Earnings Call, May 07, 2026.rtf; Vital Farms, Inc., Q4 2025 Earnings Call, Feb 26, 2026.rtf (pointer only; the synthesis cites them, the machine does not curate an excerpt)",
+      "source_ref": "CIQ transcript(s): Vital Farms, Inc., Q1 2026 Earnings Call, May 07, 2026.rtf; Vital Farms, Inc., Q4 2025 Earnings Call, Feb 26, 2026.rtf",
+      "status": "present",
+      "note": null
+    }
+  },
+  "synthesis": {
+    "evidence_balance": "mixed — a still-growing, unlevered franchise with loyal core demand against a real EBITDA roll-over, cash burn, lost premium-trial and an unfavorable forward multiple.",
+    "bull_points": [
+      {
+        "claim": "Revenue has compounded from $261M (2021) to $784M LTM Mar-29-2026 with latest same-quarter YoY of +15.4%, so this is a still-growing top line, not a structural revenue collapse.",
+        "source_ref": "CIQ Financials→Income Statement + Segments + Ratios (multi-year columns)",
+        "cited": true
+      },
+      {
+        "claim": "Absolute EBITDA rose from $4M (2021) to a peak of $103M (FY2025) and stands at $79M LTM, so the EBITDA-margin slip to 10% LTM is a margin-% effect with absolute EBITDA still far above its history — the % can fall while absolute EBITDA stays large.",
+        "source_ref": "CIQ Financials→Income Statement (margin % + absolute EBITDA reconciler)",
+        "cited": true
+      },
+      {
+        "claim": "The balance sheet is essentially unlevered (net-debt/EBITDA 0.0x, net-debt/OCF 0.3x) with interest coverage of 99.4x and the nearest maturity wall in 2029, so this is not a leverage-driven distress story.",
+        "source_ref": "CIQ Net Debt $3M [Q1 Mar-29-2026] ÷ CIQ EBITDA $80M [LTM 12 months Mar-29-2026]",
+        "cited": true
+      },
+      {
+        "claim": "On the fundamental deltas the name screens with far better revenue growth (26% vs peer-median 4%), positive EBITDA growth (6% vs peer-median -11%) and far lower leverage (Debt/EBITDA 0.1 vs 3.8) than the peer median, posing whether the discount is RESIDUAL rather than fully EARNED — the human must judge against the heterogeneous peer set.",
+        "source_ref": "CIQ Comparable Analysis→Operating Statistics (name vs peer median: growth/margin/leverage/beta)",
+        "cited": true
+      },
+      {
+        "claim": "Management frames 2026 explicitly as a 'low watermark for margins in this cycle' driven by temporary price-gap and oversupply dynamics, with cost actions (ECS staffing, feed, ~10% remote headcount cut, ~$75M CapEx reduction) expected to flow through in 2027 — a mean-revert posture rather than terminal demand loss.",
+        "source_ref": "CIQ transcript(s): Vital Farms, Inc., Q1 2026 Earnings Call, May 07, 2026.rtf; Vital Farms, Inc., Q4 2025 Earnings Call, Feb 26, 2026.rtf",
+        "cited": true
+      },
+      {
+        "claim": "Demand-side evidence cited by management is consistent with a pricing problem rather than brand erosion — existing consumers stayed loyal (buy-rate units per retained household +2% vs prior 8-quarter average) and a targeted price-gap narrowing at a top-10 customer lifted volume 18% in two weeks, plus distribution wins (TDP +15%–25% planned for 2026).",
+        "source_ref": "CIQ transcript(s): Vital Farms, Inc., Q1 2026 Earnings Call, May 07, 2026.rtf; Vital Farms, Inc., Q4 2025 Earnings Call, Feb 26, 2026.rtf",
+        "cited": true
+      },
+      {
+        "claim": "The board authorized a $100M share repurchase program and the share count has been flat-to-down (-0.6% over ~1.7y), so there is no dilution offsetting the de-rate and management is signalling capital-return intent.",
+        "source_ref": "EDGAR 8-K item codes at the gap-down dates (not blanket-labelled earnings)",
+        "cited": true
+      },
+      {
+        "claim": "Sell-side context remains constructive with an Outperform (2.00) consensus rating and mean target $11.67 versus a name implied by a $480M cap, a genuine gap between consensus posture and price action.",
+        "source_ref": "CIQ Estimates→Consensus",
+        "cited": true
+      }
+    ],
+    "bear_points": [
+      {
+        "claim": "LTM EBITDA margin has rolled over from a 14% FY2025 peak to 10% LTM and gross margin from 38% to 35%, and absolute LTM EBITDA has fallen from the $103M peak to $79M — here the margin-% decline is corroborated by a REAL drop in absolute EBITDA, so this is a genuine signal, not merely an optical %-compression.",
+        "source_ref": "CIQ Financials→Income Statement (margin % + absolute EBITDA reconciler)",
+        "cited": true
+      },
+      {
+        "claim": "The company is burning cash with levered FCF of -$53.9M LTM, so despite the unlevered balance sheet it is consuming liquidity and runway depends on a cash balance not derived in the facts.",
+        "source_ref": "CIQ Financials→Cash Flow 'Levered Free Cash Flow' [LTM 12 months Mar-29-2026]",
+        "cited": true
+      },
+      {
+        "claim": "Management's own thesis-critical claim that the brand still supports a premium is being repriced — new-household trial dropped from >55% to 50% as price gaps reached levels 'our brand could not sustain,' meaning the premium may be structurally smaller than the multi-year margin path assumed.",
+        "source_ref": "CIQ transcript(s): Vital Farms, Inc., Q1 2026 Earnings Call, May 07, 2026.rtf; Vital Farms, Inc., Q4 2025 Earnings Call, Feb 26, 2026.rtf",
+        "cited": true
+      },
+      {
+        "claim": "The de-rate is sharply idiosyncratic, not market-driven: the name is down 69% over 180 days while IWM rose 18%, an -84% relative move concentrated on the company's own news.",
+        "source_ref": "EOD name−IWM 180d (screen data-record, G2)",
+        "cited": true
+      },
+      {
+        "claim": "The drawdown sits on discrete company-specific 8-K events — a Feb-2026 founder/Executive-Chairperson departure (5.02) and a May-2026 decision to wind down and discontinue the entire butter product line (2.05 exit/disposal) — i.e. management turnover plus a product-line exit, not a one-off macro miss.",
+        "source_ref": "EDGAR 8-K item codes at the gap-down dates (not blanket-labelled earnings)",
+        "cited": true
+      },
+      {
+        "claim": "The business is single-segment and single-geography (Eggs and Butter 100%, United States 100%) — and one of those two products is now being discontinued — leaving narrow, commodity-exposed concentration with no diversification cushion.",
+        "source_ref": "CIQ Financials→Segments (Revenues, latest annual column)",
+        "cited": true
+      },
+      {
+        "claim": "The forward multiple disconfirms the cheap-on-trailing read: NTM TEV/EBITDA is 70.81 vs peer median 8.98 and NTM P/E is NM (a real negative-base state), so on a forward basis the name is NOT cheap — the 1.5x trailing EV/EBITDA reflects a peak-EBITDA denominator about to compress.",
+        "source_ref": "CIQ Comparable Analysis→Trading Multiples (name row + Summary Statistics Low/Median/Mean/High)",
+        "cited": true
+      },
+      {
+        "claim": "EBITDA margin is below the peer median (10% vs 15%), so part of the valuation discount is EARNED on profitability even before the 2026 margin reset lands.",
+        "source_ref": "CIQ Comparable Analysis→Operating Statistics (name vs peer median: growth/margin/leverage/beta)",
+        "cited": true
+      }
+    ],
+    "twin_reference_cases": [
+      {
+        "name": "Freshpet",
+        "outcome": "recovered",
+        "distinguishing_fact": "Single-category premium perishable-food brand that endured a growth/margin scare on heavy capacity build and promotional pressure, then re-rated as volume growth and capacity utilization normalized.",
+        "source": "[LLM-suggested, unverified]"
+      },
+      {
+        "name": "Beyond Meat",
+        "outcome": "went terminal",
+        "distinguishing_fact": "Premium-priced single-category food brand whose price premium proved unsustainable as trial decelerated and the category narrative deflated, with no margin recovery.",
+        "source": "[LLM-suggested, unverified]"
+      },
+      {
+        "name": "The Hain Celestial Group",
+        "outcome": "went terminal",
+        "distinguishing_fact": "Natural/organic packaged-food name where margin compression and repeated resets eroded the premium-brand thesis over multiple years.",
+        "source": "[LLM-suggested, unverified]"
+      },
+      {
+        "name": "Oatly Group AB",
+        "outcome": "went terminal",
+        "distinguishing_fact": "High-growth plant-based premium brand that out-built capacity ahead of demand, then saw growth and margins disappoint without a durable rebound.",
+        "source": "[LLM-suggested, unverified]"
+      },
+      {
+        "name": "Chipotle Mexican Grill",
+        "outcome": "recovered",
+        "distinguishing_fact": "Premium brand hit by a discrete, company-specific shock with loyal core customers, where targeted operational fixes restored traffic and the brand premium held.",
+        "source": "[LLM-suggested, unverified]"
+      }
+    ],
+    "decisive_question": {
+      "question": "Is the 2026 margin and velocity collapse a temporary, fixable price-gap/oversupply reset (mean-revert from a still-growing, unlevered franchise) or evidence that the brand's sustainable price premium — and thus its peak-EBITDA earning power — is structurally lower than the multi-year path implied?",
+      "evidence_for": [
+        {
+          "claim": "Management characterizes 2026 as a 'low watermark for margins' from temporary price gaps and oversupply, with loyal existing consumers (buy-rate +2%) and a targeted price-gap fix lifting one customer's volume 18% in two weeks.",
+          "source_ref": "CIQ transcript(s): Vital Farms, Inc., Q1 2026 Earnings Call, May 07, 2026.rtf; Vital Farms, Inc., Q4 2025 Earnings Call, Feb 26, 2026.rtf",
+          "cited": true
+        },
+        {
+          "claim": "Revenue is still growing (+15.4% latest same-quarter YoY) and the balance sheet is unlevered (net-debt/EBITDA 0.0x, coverage 99.4x), giving time for the cost program to land in 2027.",
+          "source_ref": "CIQ Financials→Income Statement + Segments + Ratios (multi-year columns)",
+          "cited": true
+        }
+      ],
+      "evidence_against": [
+        {
+          "claim": "New-household trial fell from >55% to 50% because price gaps reached levels 'our brand could not sustain,' and the forward multiple (NTM TEV/EBITDA 70.81, NTM P/E NM) implies the market expects sharp forward EBITDA compression rather than a clean trailing-cheap setup.",
+          "source_ref": "CIQ Comparable Analysis→Trading Multiples (name row + Summary Statistics Low/Median/Mean/High)",
+          "cited": true
+        },
+        {
+          "claim": "Absolute LTM EBITDA already fell from $103M to $79M and the company is FCF-negative (-$53.9M) while exiting an entire product line (butter) and losing its founder/Executive Chairperson — concrete deterioration, not just optics.",
+          "source_ref": "CIQ Financials→Cash Flow 'Levered Free Cash Flow' [LTM 12 months Mar-29-2026]",
+          "cited": true
+        }
+      ]
+    },
+    "key_unknowns": [
+      "Cash, cash-equivalents and marketable-securities balance is not derived in the source facts, so runway = cash ÷ burn against the -$53.9M LTM FCF cannot be computed — a BEARISH opacity given the negative FCF (survival_capacity explicitly flags cash 'not derived — a risk').",
+      "Revised 2026 guidance is UNKNOWN — no revised-outlook 99.1 exhibit was parsed for either gap-down 8-K, so the magnitude of the management-flagged margin reset is undisclosed in the facts (a missing expected forward disclosure, treated as a bearish gap).",
+      "Adjusted EBITDA, adjusted EPS and adjusted net-debt/EBITDA are all UNKNOWN — management speaks to non-GAAP measures but the adjusted figures are not in the supplied facts, so the forward NTM TEV/EBITDA of 70.81 cannot be reconciled to management's adjusted basis.",
+      "Segment-level EBITDA is UNKNOWN (no EBITDA section on the Segments sheet), so the profitability impact of discontinuing the butter line versus the core egg business cannot be isolated.",
+      "Consensus revision breadth is 0↑/0↓ last month for both EPS and revenue, so it is not yet clear whether sell-side estimates and the $11.67 target have been cut to reflect the May reset — the Outperform rating may be stale.",
+      "No exposed cohort/cross-section (VITL absent from graph_coverage), so the idiosyncratic read rests only on the name-vs-IWM relative, with no peer-of-shock comparison."
+    ]
+  },
+  "flags": [
+    "EPS shown is GAAP-based and understates earnings power; company-adjusted (non-GAAP) EPS is not in the CIQ workbook — it lives in the earnings-release/transcript reconciliation (currently UNAVAILABLE) — not a ceiling on earnings power.",
+    "Net debt/EBITDA (0.0x) is on REPORTED EBITDA (CIQ / consolidated GAAP), not the covenant basis; management and credit covenants typically define leverage on adjusted EBITDA (a larger denominator → a lower ratio), reconciled in the earnings release/transcript (currently UNAVAILABLE) — do not read 0.0x as the covenant-basis leverage.",
+    "TRANSCRIPT-FIGURE '75' in bull_point: 'Management frames 2026 explicitly as a 'low watermark for margins in…' — from the cited earnings call, not the structured facts; verify against the call",
+    "TRANSCRIPT-FIGURE '55' in bear_point: 'Management's own thesis-critical claim that the brand still supports…' — from the cited earnings call, not the structured facts; verify against the call",
+    "UNTRACEABLE figure '55' in decisive.against: 'New-household trial fell from >55% to 50% because price gaps reached…'",
+    "DIRECTIONAL language 'buy' — human review (dossier frames, not concludes)",
+    "DIRECTIONAL language 'outperform' — human review (dossier frames, not concludes)",
+    "UNRECONCILED bear_point: 'LTM EBITDA margin has rolled over from a 14% FY2025 peak to 10% LTM…' — cites margin compression without the absolute-EBITDA reconciliation (margin % can fall while EBITDA rises)",
+    "PEER-COMP-BARE bear_point: 'The forward multiple disconfirms the cheap-on-trailing read: NTM…' — presents cheap/rich vs peers as a verdict without the earned-vs-residual decomposition or the peer-set composition; POSE justified-vs-residual, never the bare gap",
+    "HETEROGENEOUS-BENCHMARK bear_point: 'The forward multiple disconfirms the cheap-on-trailing read: NTM…' — leans on the peer set as a clean benchmark, but comparability flags it HETEROGENEOUS; confidence-gate every peer stat"
+  ],
+  "llm_model": "claude-opus-4-8",
+  "assembled_at": "2026-06-29T16:18:39.677684"
+}
