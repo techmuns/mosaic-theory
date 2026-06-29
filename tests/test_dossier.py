@@ -517,6 +517,40 @@ def test_survival_capacity_ciq_basis_and_net_cash_readout() -> None:
     assert "net debt $200M (CIQ)" in v2 and "N/A" in v2 and "solvency risk" not in v2
 
 
+def test_net_debt_to_ocf_prefers_ciq() -> None:
+    """net-debt/OCF uses the SAME CIQ net-debt as net-debt/EBITDA (CIQ Net Debt ÷ CIQ OCF), so the
+    two leverage rows can't disagree on whether net debt exists. MVST: 200 / 46 ~ 4.4x."""
+    nd = ds.Sourced.present(199.9, source_ref="CIQ ... 'Net Debt' [Q1 Mar-31-2026]")
+    ocf = ds.Sourced.present(45.9, source_ref="CIQ ... 'Cash from Ops.' [LTM Mar-31-2026]")
+    r = dm._net_debt_to_ocf(nd, ocf, ds.Sourced.present(-1.5, source_ref="EDGAR (false net-cash)"))
+    assert r.status is ds.SourceStatus.PRESENT and r.value == pytest.approx(4.4, abs=0.1)
+    src = r.source_ref or ""
+    assert "CIQ Net Debt" in src and "CIQ OCF" in src and "[Q1 Mar-31-2026]" in src
+
+
+def test_net_debt_to_ocf_edgar_fallback_then_unknown() -> None:
+    """CIQ absent → EDGAR figure as a labelled breadth fallback (caveat in the source_ref); both
+    absent → fail loud 'pull CIQ'."""
+    no = ds.Sourced.unknown(note="no CIQ")
+    fb = dm._net_debt_to_ocf(no, no, ds.Sourced.present(2.5, source_ref="EDGAR XBRL (screen)"))
+    assert fb.value == pytest.approx(2.5) and "pull CIQ" in (fb.source_ref or "")
+    unk = dm._net_debt_to_ocf(no, no, ds.Sourced.unknown(note="no net-debt"))
+    assert unk.status is ds.SourceStatus.UNKNOWN and "pull CIQ" in (unk.note or "")
+
+
+def test_synthesis_decodes_literal_unicode_escapes() -> None:
+    """opus occasionally emits a literal '\\u2014' as TEXT in a synthesis string; it must render as
+    the character, not the raw escape — while real chars and non-hex backslashes are left alone."""
+    assert syn._decode_escapes("mixed \\u2014 a turn") == "mixed — a turn"
+    assert syn._decode_escapes({"k": ["x \\u2019 y"]}) == {"k": ["x ’ y"]}  # recurses
+    assert syn._decode_escapes("real — dash") == "real — dash"  # real char untouched
+    assert syn._decode_escapes("\\underway") == "\\underway"  # non-hex \\u left alone
+    # a lone surrogate (would crash model_dump_json) and a C0 control (would corrupt the .json/.md)
+    # are LEFT as the literal escape, not decoded:
+    assert syn._decode_escapes("x \\ud83d y") == "x \\ud83d y"  # lone surrogate kept literal
+    assert syn._decode_escapes("x \\u0000 y") == "x \\u0000 y"  # NUL / C0 control kept literal
+
+
 def test_synthesis_fails_loud_when_llm_errors() -> None:
     """An LLM with no usable output → None synthesis + a flag, never a fabricated dossier."""
     class _BadLlm(LlmClient):
@@ -607,6 +641,50 @@ def _est_bundle(sheets: _Sheets) -> ciq.CiqBundle:
     p = Path("/fake/Estimates.xls")
     wb = ciq.CiqWorkbook(kind="estimates", path=p, fmt=ciq.CiqFormat.BIFF_XLS, freq="quarterly")
     return ciq.CiqBundle(ticker="X", workbooks=(wb,), _cache={p: sheets})
+
+
+def test_liquidity_flags_surface_maturity_wall() -> None:
+    """'Maturity' is located by HEADER LABEL (not a fixed index) and surfaced as 'Due YYYY' so
+    _nearest_maturity reports the nearest wall; a mis-parsed garbage cell can't fabricate an
+    implausible 'Due 1900' (year window). Serials: 46170 = 2026-05-28, 46418 = 2027-01-31."""
+    # 'Maturity' deliberately at index 6 (not 5) — proves the header-label lookup, not a fixed col.
+    rows = [
+        ["Description", "Type", "Principal", "Coupon", "Float", "Currency", "Maturity"],
+        ["Convertible Loan", "Term Loans", 13.0, "NA", "SOFR+9.75%", "USD", 46170.0],
+        ["Convertible Bond", "Bonds and Notes", 42.0, "3.0%", "NA", "CNY", 46418.0],
+        ["Garbage serial", "x", 1.0, "NA", "NA", "NA", 5.0],  # serial 5 -> 1900, rejected
+    ]
+    liq = cs.liquidity_covenant_flags(
+        _fin_bundle({"Capital Structure Details": rows}, freq="annual")
+    )
+    assert "Due 2026" in (liq.value or "") and "Due 2027" in (liq.value or "")
+    assert "Due 1900" not in (liq.value or "")  # the year window rejects the garbage serial
+    assert dm._nearest_maturity(liq) == "nearest maturity wall: 2026"
+
+
+def test_liquidity_flags_maturity_date_string() -> None:
+    """A Maturity cell rendered as a DATE STRING (not a serial) is still parsed — excel_date handles
+    it directly; the old clean_num wrapper would have dropped it to UNKNOWN."""
+    rows = [
+        ["Description", "Type", "Principal", "Coupon", "Maturity"],
+        ["Senior Notes", "Bonds and Notes", 500.0, "5.0%", "Jan-31-2028"],
+    ]
+    liq = cs.liquidity_covenant_flags(
+        _fin_bundle({"Capital Structure Details": rows}, freq="annual")
+    )
+    assert "Due 2028" in (liq.value or "")
+
+
+def test_all_workbooks_lists_every_match() -> None:
+    """all_workbooks lists EVERY workbook of a kind (both earnings calls) where workbook() returns
+    one — so the synthesis can read more than the latest quarter on file."""
+    f = ciq.CiqFormat.UNKNOWN
+    t1 = ciq.CiqWorkbook(kind="transcript", path=Path("/fake/Q1.rtf"), fmt=f, freq=None)
+    t2 = ciq.CiqWorkbook(kind="transcript", path=Path("/fake/Q4.rtf"), fmt=f, freq=None)
+    fin = ciq.CiqWorkbook(kind="financials", path=Path("/fake/F.xls"), fmt=f, freq="annual")
+    b = ciq.CiqBundle(ticker="X", workbooks=(t1, t2, fin))
+    assert len(b.all_workbooks("transcript")) == 2 and b.workbook("transcript") is t1
+    assert b.all_workbooks("nope") == ()
 
 
 def _eps_pt(year: int, val: float) -> dict[str, typing.Any]:

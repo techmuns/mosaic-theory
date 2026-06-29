@@ -313,6 +313,27 @@ def ltm_ebitda(bundle: CiqBundle) -> Sourced[float]:
     )
 
 
+def ltm_ocf(bundle: CiqBundle) -> Sourced[float]:
+    """Latest operating cash flow ($M) — the rightmost valued column of the Cash Flow 'Cash from
+    Ops.' row (LTM/TTM when present, else latest FY). The net-debt/OCF denominator paired with CIQ
+    Net Debt; OCF carries the D&A add-back so it survives an untaggable-EBITDA name. Fail-loud
+    UNKNOWN if the row is absent or empty."""
+    try:
+        rows = bundle.sheet("financials", "Cash Flow", freq="annual")
+    except CiqUnavailableError as exc:
+        return _miss_or_unknown(bundle, "financials", exc)
+    ri = _find_row(rows, "Cash from Ops.")
+    if ri is None:
+        return Sourced.unknown(note="Cash Flow sheet has no 'Cash from Ops.' row")
+    latest = _latest_col(rows, ri, _period_header(rows))
+    if latest is None:
+        return Sourced.unknown(note="'Cash from Ops.' has no value in any period")
+    _, value, period = latest
+    return Sourced.present(
+        round(value, 1), source_ref=f"CIQ Financials→Cash Flow 'Cash from Ops.' [{period}]"
+    )
+
+
 def _quarter_token(cell: Any) -> str | None:
     m = re.search(r"\bQ([1-4])\b", str(cell))
     return f"Q{m.group(1)}" if m else None
@@ -412,6 +433,9 @@ def liquidity_covenant_flags(bundle: CiqBundle) -> Sourced[str]:
     hdr = _find_row(rows, "Description")  # the latest FY section's instrument table
     if hdr is None:
         return Sourced.unknown(note="Capital Structure Details has no instrument table")
+    # locate the 'Maturity' column by its header LABEL — column order is not contractually fixed
+    # (ciq_extraction_notes rule #4), so a hardcoded index could read a coupon/price as a date.
+    mat_col = next((j for j, c in enumerate(rows[hdr]) if str(c).strip() == "Maturity"), None)
     insts: list[str] = []
     for i in range(hdr + 1, min(hdr + 12, len(rows))):
         desc = str(rows[i][0]).strip()
@@ -420,8 +444,15 @@ def liquidity_covenant_flags(bundle: CiqBundle) -> Sourced[str]:
         typ = str(rows[i][1]).strip() if len(rows[i]) > 1 else ""
         principal = clean_num(rows[i][2]) if len(rows[i]) > 2 else None
         coupon = str(rows[i][3]).strip() if len(rows[i]) > 3 else ""
+        # 'Maturity' is a serial OR a date string — excel_date handles both (clean_num would kill a
+        # date string). Plausibility-bound the year so a mis-parsed cell can't fabricate 'Due 1900'.
+        mdate = (
+            excel_date(rows[i][mat_col])
+            if mat_col is not None and mat_col < len(rows[i]) else None
+        )
         amt = f"{principal:,.0f}" if principal is not None else "undrawn/–"
-        insts.append(f"{desc} ({typ}) {amt} @ {coupon}")
+        due = f" Due {mdate.year}" if (mdate and 2000 <= mdate.year <= 2100) else ""
+        insts.append(f"{desc} ({typ}) {amt} @ {coupon}{due}")
     if not insts:
         return Sourced.unknown(note="no debt instruments parsed")
     return Sourced.present("; ".join(insts), source_ref="CIQ Financials→Capital Structure Details")
@@ -802,32 +833,42 @@ _SYNTHESIS_TRANSCRIPT_BUDGET = 12_000
 
 
 def transcript_for_synthesis(bundle: CiqBundle) -> str | None:
-    """A mechanically-bounded transcript slice for the synthesis LLM INPUT ONLY (never embedded in
-    the dossier): boilerplate stripped (operator intro / forward-looking-statements legalese /
-    estimates table / TOC, via ``_transcript_prose``), prepared-remarks + Q&A truncated to a fixed
-    char budget. A structural cut (sections + budget), NOT a topic/relevance selection —
-    name-agnostic (no per-name topics). None when there is no transcript or it can't be parsed."""
-    wb = bundle.workbook("transcript")
-    if wb is None:
+    """Mechanically-bounded transcript slices for the synthesis LLM INPUT ONLY (never embedded in
+    the dossier): boilerplate stripped (operator intro / forward-looking legalese / estimates / TOC,
+    via ``_transcript_prose``), prepared remarks + Q&A. ALL earnings-call transcripts on file are
+    included (so quarter-over-quarter posture is visible), each LABELLED by call and capped to the
+    FULL char budget independently — so adding the prior quarter never truncates the latest call's
+    Q&A (the prompt scales with the ~2 quarters the operator uploads, not a halved split). A
+    structural cut, NOT a topic selection. None when there's no transcript or none parse."""
+    wbs = bundle.all_workbooks("transcript")
+    if not wbs:
         return None
-    try:
-        return _transcript_prose(read_text(wb.path, wb.fmt))[:_SYNTHESIS_TRANSCRIPT_BUDGET]
-    except CiqParseError:
-        return None
+    slices: list[str] = []
+    for wb in wbs:
+        try:
+            prose = _transcript_prose(read_text(wb.path, wb.fmt))[:_SYNTHESIS_TRANSCRIPT_BUDGET]
+        except CiqParseError:
+            continue
+        if prose.strip():
+            slices.append(f"--- {wb.path.name} ---\n{prose}")
+    return "\n\n".join(slices) if slices else None
 
 
 def management_commentary(bundle: CiqBundle) -> Sourced[str]:
-    """A POINTER to the earnings-call transcript — NOT an embedded or machine-selected excerpt. The
-    human reads it in full for management posture/tone; the machine points, it does not curate
+    """A POINTER to the earnings-call transcript(s) — NOT an embedded/machine-selected excerpt. The
+    human reads them in full for management posture/tone; the machine points, it does not curate
     transcript content (a machine-chosen 'salient extract' is the relevance judgment this project
-    forbids; the full embed is a duplicate that bloated the synthesis prompt)."""
-    wb = bundle.workbook("transcript")
-    if wb is None:
+    forbids; the full embed is a duplicate that bloated the synthesis prompt). All calls on file are
+    fed to the synthesis LLM (which cites them where a point rests on posture); this is the human's
+    full-read pointer to them."""
+    wbs = bundle.all_workbooks("transcript")
+    if not wbs:
         return Sourced.missing(note=f"no earnings-call transcript for {bundle.ticker} — pull it")
+    names = "; ".join(wb.path.name for wb in wbs)
     return Sourced.present(
-        f"Earnings-call transcript on file — read {wb.path.name} in full for management posture "
-        "(pointer only; the machine does not curate or embed transcript content)",
-        source_ref=f"CIQ transcript {wb.path.name}",
+        f"{len(wbs)} earnings-call transcript(s) on file — read in full for management posture: "
+        f"{names} (pointer only; the synthesis cites them, the machine does not curate an excerpt)",
+        source_ref=f"CIQ transcript(s): {names}",
     )
 
 

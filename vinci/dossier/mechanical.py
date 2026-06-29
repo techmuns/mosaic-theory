@@ -658,6 +658,36 @@ def _net_debt_to_ebitda(
     ), ciq_nd
 
 
+def _net_debt_to_ocf(
+    ciq_nd: Sourced[float], ciq_ocf: Sourced[float], edgar_net_ocf: Sourced[float]
+) -> Sourced[float]:
+    """Net-debt/OCF on the SAME CIQ net-debt basis as net-debt/EBITDA (so the two reads can't
+    disagree on whether net debt exists): CIQ Net Debt ÷ CIQ operating cash flow when both present,
+    else the EDGAR XBRL screen figure as a labelled breadth fallback, else UNKNOWN/'pull CIQ'."""
+    if ciq_nd.status is SourceStatus.PRESENT and ciq_ocf.status is SourceStatus.PRESENT:
+        assert ciq_nd.value is not None and ciq_ocf.value is not None
+        if ciq_ocf.value <= 0:
+            return Sourced.unknown(note=f"CIQ OCF ${ciq_ocf.value:,.0f}M <= 0 — ratio meaningless")
+        nd_p = (ciq_nd.source_ref or "").split("[")[-1].rstrip("]")
+        ocf_p = (ciq_ocf.source_ref or "").split("[")[-1].rstrip("]")
+        return Sourced.present(
+            round(ciq_nd.value / ciq_ocf.value, 1),
+            source_ref=(
+                f"CIQ Net Debt ${ciq_nd.value:,.0f}M [{nd_p}] ÷ "
+                f"CIQ OCF ${ciq_ocf.value:,.0f}M [{ocf_p}]"
+            ),
+        )
+    if edgar_net_ocf.status is SourceStatus.PRESENT:
+        caveat = "breadth estimate — may under-capture scattered debt; pull CIQ"
+        return edgar_net_ocf.model_copy(update={
+            "source_ref": f"{edgar_net_ocf.source_ref}; {caveat}",
+            "note": f"EDGAR XBRL {caveat}",
+        })
+    return Sourced.unknown(
+        note=f"no CIQ Net Debt/OCF; EDGAR {edgar_net_ocf.note or 'UNKNOWN'} — pull CIQ"
+    )
+
+
 def _survival_capacity(
     net_lev: Sourced[float], adj_lev: Sourced[str], fcf_sign: Sourced[float],
     liquidity: Sourced[str], *, net_debt: Sourced[float] | None = None,
@@ -716,10 +746,13 @@ def _quality(
     # breadth fallback. ``ciq_nd`` (CIQ Net Debt) also feeds the survival readout when a ratio can't
     # form. EDGAR net-debt under-captures scattered debt (the MVST case) — never the shown figure.
     net_lev, ciq_nd = _net_debt_to_ebitda(bundle, edgar_net_lev)
-    net_ocf = _sourced(
+    edgar_net_ocf = _sourced(
         f.net_debt_to_ocf,
         source_ref="EDGAR XBRL net-debt/OCF (screen data-record) — OCF basis, not EBITDA",
     )
+    # net-debt/OCF on the SAME CIQ net-debt basis as net-debt/EBITDA, so the two leverage rows can't
+    # disagree on whether net debt exists (EDGAR figure is the labelled breadth fallback).
+    net_ocf = _net_debt_to_ocf(ciq_nd, ciq_sheets.ltm_ocf(bundle), edgar_net_ocf)
     fcf_sign = _sourced(f.fcf_sign, source_ref="EDGAR XBRL FCF sign (screen data-record)")
     liquidity = ciq_sheets.liquidity_covenant_flags(bundle)
     return Quality(
