@@ -833,6 +833,61 @@ Each line: *what it does* — *verified how*.
     a blocker):** the live password was a weak test value (`nostra`) — replace with a strong secret +
     redeploy. The deploy auto-redeploys on push to `main`; `build.py` re-mirrors snapshots + the slimmed
     graph each time.
+  - **Dossier → PDF export (2026-06-30):** a **Download PDF** button on each per-ticker dossier header
+    triggers the browser's NATIVE print-to-PDF (`window.print()`) — **no library; the frontend stays
+    dependency-free** (no external CDN script pulled into the authed app, no rasterised output). A
+    `@media print` stylesheet turns the on-screen app into a clean report: strips the sidebar /
+    breadcrumb / the button itself, expands `.main` to full width, forces `print-color-adjust: exact`
+    so the flag / synthesis-fence / pill colours (which carry meaning) survive into the PDF, and
+    `break-inside: avoid` keeps facts / flags / filings / points from splitting across pages. A
+    module-level `beforeprint`/`afterprint` pair names the saved file (`<TICKER> · dossier · Nostra
+    Vinci`) then restores `document.title`, so a native Cmd+P gets the same filename — not just the
+    button. **Read-only / assemble-not-conclude preserved:** it prints what is already shown, renders no
+    new judgment, touches no decision path, and carries the "no verdict" framing into the export.
+    *Verified on a REAL served dossier (VRRM, full `build.py` mirror on `:8765`): the button renders
+    top-right of the header (desktop inline via `flex: 1 1 360px`; wraps below on a narrow viewport),
+    click → `window.print()` fired once, beforeprint set the title to "VRRM · dossier · Nostra Vinci" +
+    afterprint restored it; flipping the `@media print` rule live confirmed sidebar/breadcrumb/button →
+    `display:none`, `.main` max-width:none + padding:0, `.fact`/`.flag` break-inside:avoid, body white,
+    and the print-layout screenshot is a clean full-width report; 0 console errors.*
+    **Header de-duplication (same pass):** the dossier DETAIL page rendered TWO stacked header blocks —
+    the shared `frame()`'s generic "Dossier" h1 + its `does`/persistent "assembled facts · no verdict"
+    subtitles, then `renderDossier()`'s own ticker header repeating the same framing. `frame()` gained a
+    `bare` option; the detail render path passes `bare:true` so only the ticker header shows (the
+    breadcrumb already names the section, and the ticker subtitle carries the no-verdict framing). The
+    **dossier INDEX** keeps the full generic header (its only orientation). *Verified by loading the
+    fresh modules into detached containers: DETAIL → 1 header block, generic subtitles absent, ticker
+    header + Download-PDF button present; INDEX → generic header + subtitles kept, cards render.* Touches
+    `frontend/views/dossier.js` + `frontend/assets/styles.css` + `frontend/app.js`.
+    **Follow-ups (2026-06-30):** (1) the breadcrumb section label ("Dossier") is now a LINK to its index
+    (`#/dossier`) on a detail page — `frame()` links the middle crumb when `crumbExtra` is present and
+    keeps it plain text (current page) on the index; (2) the PDF left/right inset moved off `@page`
+    margins (which the print dialog's "Margins: None" overrides) into `.main` padding (`0 6mm`) so the
+    report never touches the page edge, `@page` keeping top/bottom only and surviving every dialog margin
+    setting per page. *Verified live: detail breadcrumb "Dossier" → `#/dossier` link, index breadcrumb
+    "Dossier" plain text; flipping `@media print` on → `.main` L/R padding 22.68px (= 6mm), max-width
+    none, breadcrumb display:none.*
+    **Print-density pass (2026-06-30) — a deep dossier exported to ~10 A4 pages, too long to review.**
+    Right-sized to ~6 pages with NO content dropped or summarised: a print-only `.main { zoom: 0.85 }`
+    scales the whole report (print is high-DPI, so type stays crisp); the on-screen reading spacing is
+    tightened for paper (`.fact` / `.card` / `.flag` / `.point` / `.filing` / table-cell padding +
+    section margins); and table-bearing fact rows go FULL-WIDTH via `.fact:has(table.data){display:block}`
+    (label above the table) so the peer-roster "Business" column stops wrapping into 5-6 short lines. The
+    zoom + padding density stay inside `@media print` (screen reading view unchanged). *Verified on the
+    real FUBO dossier (the 10-page case): measured print-layout height 11,194px → 6,963px ≈ 10 → ~6.2
+    pages (≈38% fewer, ~6-7 with Default dialog margins); the peer-roster table renders full-width with
+    1-2-line descriptions; a clean reload confirms screen unaffected by the print-only rules (sidebar
+    visible, `.main` zoom 1, `.fact` padding 9px). Diagnosis first ruled out mid-document blank space
+    (pages were 100% full; only the last overflowed) and over-long tables — the slack was screen-comfort
+    spacing + genuinely substantial content.*
+    **Full-width tables generalised to the screen too (2026-06-30, by request):** the
+    `.fact:has(table.data){display:block}` rule was moved OUT of `@media print` into the general dossier
+    CSS, so the 5 table-bearing facts (peer roster, trading multiples, fundamental deltas, margin-trend +
+    multi-year-trajectory series, graph cohort) render label-above-full-width **on screen and in the PDF
+    alike** — the squeeze hit on-screen too (worse on narrow viewports). Scalar facts keep the 210px
+    label-left grid. *Verified live (desktop, zoom 1): all 5 table-facts compute `display:block` with the
+    peer table at the full 906px content width; scalar facts stay `display:grid`; screenshot shows the
+    peer/margin/trajectory tables full-width with single-line descriptions.*
 - _Whole suite green (ruff + mypy --strict clean; `pytest -m "not network"` passes)._
 
 ## 3. FALSIFIED — tested and retired (NOT deferred)

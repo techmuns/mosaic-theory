@@ -122,16 +122,26 @@ function setActive(route) {
 }
 
 // --- shared sub-screen frame -------------------------------------------------
-export function frame(item, { crumbExtra = "", bodyHtml = "" } = {}) {
+// `bare` omits the generic header block (the section h1 + its subtitles) — used by the dossier DETAIL
+// page, where renderDossier() supplies its own ticker header (with the no-verdict framing) and the
+// breadcrumb already names the section, so the generic block is pure duplication. The dossier INDEX
+// keeps the full header — there it is the only orientation.
+export function frame(item, { crumbExtra = "", bodyHtml = "", bare = false } = {}) {
   const subtitle = item.does ? `<div class="subtitle">${escapeHtml(item.does)}</div>` : "";
   const persistent = item.route === "dossier"
     ? `<div class="subtitle muted">assembled facts · no verdict</div>` : "";
-  return `
-    <div class="breadcrumb"><a href="#/overview">Overview</a><span class="sep">/</span>${escapeHtml(item.label)}${crumbExtra}</div>
+  const headerBlock = bare ? "" : `
     <div class="header-block">
       <h1 class="page-h">${escapeHtml(item.label)}</h1>
       ${subtitle}${persistent}
-    </div>
+    </div>`;
+  // On a sub-page (crumbExtra present, e.g. a dossier detail) the section label is a MIDDLE crumb, so
+  // link it back to the section index; on a top-level page it is the current page → plain text.
+  const sectionCrumb = crumbExtra
+    ? `<a href="#/${item.route}">${escapeHtml(item.label)}</a>`
+    : escapeHtml(item.label);
+  return `
+    <div class="breadcrumb"><a href="#/overview">Overview</a><span class="sep">/</span>${sectionCrumb}${crumbExtra}</div>${headerBlock}
     ${bodyHtml}`;
 }
 

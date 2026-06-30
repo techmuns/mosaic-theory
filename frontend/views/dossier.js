@@ -4,23 +4,46 @@
 import { getDossier, getDossierIndex, getLedger, isBuyVerdict } from "../lib/snapshots.js";
 import { fmtPrice, fmtDate, fmtPct, escapeHtml, DASH } from "../lib/format.js";
 
+// PDF export uses the browser's native print-to-PDF (no library — the frontend stays dependency-free).
+// The browser derives the saved-file name from document.title, so on a dossier print we swap in a
+// meaningful name ("VRRM · dossier · Nostra Vinci") and restore it afterward. Wiring it to the
+// beforeprint/afterprint events (not the button) means a native Cmd+P gets the same filename. This
+// runs once: the module is import-cached, so the listeners are registered a single time.
+let _titleBeforePrint = null;
+window.addEventListener("beforeprint", () => {
+  const m = (location.hash || "").match(/#\/dossier\/([^/?#]+)/);
+  if (!m) return; // only rename for a single-ticker dossier print; leave every other page alone
+  let ticker;
+  try { ticker = decodeURIComponent(m[1]); } catch { ticker = m[1]; } // tolerate a malformed-escape hash
+  _titleBeforePrint = document.title;
+  document.title = `${ticker.toUpperCase()} · dossier · Nostra Vinci`;
+});
+window.addEventListener("afterprint", () => {
+  if (_titleBeforePrint != null) { document.title = _titleBeforePrint; _titleBeforePrint = null; }
+});
+
 export async function render(root, params, { item, frame }) {
   const ticker = (params[0] || "").trim().toUpperCase();
   if (!ticker) return renderIndex(root, item, frame);
 
   const crumb = ` <span class="sep">/</span> <span class="mono">${escapeHtml(ticker)}</span>`;
-  root.innerHTML = frame(item, { crumbExtra: crumb, bodyHtml: `<div class="notice">Loading dossier…</div>` });
+  // bare: the detail page's own ticker header replaces the generic "Dossier" header block (no duplication)
+  root.innerHTML = frame(item, { crumbExtra: crumb, bare: true, bodyHtml: `<div class="notice">Loading dossier…</div>` });
 
   const [d, led] = await Promise.all([getDossier(ticker), getLedger()]);
   if (!d) {
-    root.innerHTML = frame(item, { crumbExtra: crumb, bodyHtml: `
+    root.innerHTML = frame(item, { crumbExtra: crumb, bare: true, bodyHtml: `
       <div class="notice">No dossier assembled for <b>${escapeHtml(ticker)}</b> in this deploy.
       Assemble it via <span class="mono">python -m vinci dossier --ticker ${escapeHtml(ticker)}</span> (then commit the derived
       <span class="mono">dossier.json</span> to the private repo).</div>` });
     return;
   }
   const verdict = led.entries.find((e) => e.ticker === ticker) || null;
-  root.innerHTML = frame(item, { crumbExtra: crumb, bodyHtml: renderDossier(d, verdict) });
+  root.innerHTML = frame(item, { crumbExtra: crumb, bare: true, bodyHtml: renderDossier(d, verdict) });
+  // Export this dossier to PDF — the print stylesheet (@media print) strips the app chrome so the
+  // output is just the report. Read-only: it prints what is already shown, renders no new judgment.
+  const pdfBtn = root.querySelector("#ds-pdf");
+  if (pdfBtn) pdfBtn.addEventListener("click", () => window.print());
 }
 
 // --- dossier index (no ticker) ----------------------------------------------
@@ -187,16 +210,20 @@ function renderDossier(d, verdict) {
 }
 
 function header(d) {
-  return `<div class="header-block">
-    <h1 class="page-h"><span class="mono">${escapeHtml(d.ticker)}</span> · ${escapeHtml(d.name || "")}</h1>
-    <div class="subtitle">Assembled facts · <b>no verdict</b> — a source-bound mechanical layer plus a fenced framing. The BUY/AVOID call is the human's, logged via the CLI.</div>
-    <div class="ds-meta">
-      <span>Queue rank <span class="mono">#${d.rank ?? DASH}</span> <span class="muted">(ordering context, not a verdict on the name)</span></span>
-      <span>CIK <span class="mono">${escapeHtml(d.cik || DASH)}</span></span>
-      <span>Data as of <span class="mono">${fmtDate(d.reference_date)}</span></span>
-      <span>Assembled <span class="mono">${fmtDate(d.assembled_at)}</span> <span class="muted">(may predate newer filings)</span></span>
-      <span class="muted">${d.synthesis ? `synthesis: ${escapeHtml(d.llm_model || "llm")}` : "mechanical layer only"}</span>
+  return `<div class="header-block ds-header">
+    <div class="ds-header-main">
+      <h1 class="page-h"><span class="mono">${escapeHtml(d.ticker)}</span> · ${escapeHtml(d.name || "")}</h1>
+      <div class="subtitle">Assembled facts · <b>no verdict</b> — a source-bound mechanical layer plus a fenced framing. The BUY/AVOID call is the human's, logged via the CLI.</div>
+      <div class="ds-meta">
+        <span>Queue rank <span class="mono">#${d.rank ?? DASH}</span> <span class="muted">(ordering context, not a verdict on the name)</span></span>
+        <span>CIK <span class="mono">${escapeHtml(d.cik || DASH)}</span></span>
+        <span>Data as of <span class="mono">${fmtDate(d.reference_date)}</span></span>
+        <span>Assembled <span class="mono">${fmtDate(d.assembled_at)}</span> <span class="muted">(may predate newer filings)</span></span>
+        <span class="muted">${d.synthesis ? `synthesis: ${escapeHtml(d.llm_model || "llm")}` : "mechanical layer only"}</span>
+      </div>
     </div>
+    <button id="ds-pdf" class="ds-pdf-btn" type="button"
+      title="Export this dossier to PDF — opens your browser's print dialog; choose &ldquo;Save as PDF&rdquo;.">&#x2913; Download PDF</button>
   </div>`;
 }
 
