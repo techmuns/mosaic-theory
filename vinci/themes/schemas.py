@@ -172,3 +172,108 @@ class ThemeDetectionResult(BaseModel, frozen=True):
     candidate_themes: list[CandidateTheme]  # admissible only
     rejected: list[CandidateTheme]  # cleared clustering but failed a gate (kept for transparency)
     stats: DetectionStats
+
+
+# ==================================================================================================
+# Stage 2 — Components B (theme-type signals) + C (megacap confirmation). All PRESENTED,
+# human-judges; no auto-classification, no type verdict, no autonomous trigger. READ-ONLY /
+# confirmation-side: the >$10B leaders never enter detection or holding (A's $10B-capped universe
+# is untouched).
+# ==================================================================================================
+class MegaLeader(BaseModel, frozen=True):
+    """A >$10B name ASSEMBLED as a candidate theme leader — SIC-matched to the cluster AND
+    residually co-moving with it (the same co-movement test that defined the theme). The analyst
+    ratifies."""
+
+    ticker: str
+    name: str
+    cik: str
+    market_cap: float
+    sic: str | None
+    sector: str
+    residual_corr_to_cluster: float  # co-movement evidence: median residual corr with the cluster
+    source_ref: str  # cap basis + SIC provenance (so the analyst verifies)
+
+
+class LeaderSet(BaseModel, frozen=True):
+    """Candidate mega-cap leaders for a theme — the machine ASSEMBLES (breadth across the whole
+    market a human can't recall), the analyst RATIFIES (add/remove) as part of criterion-1
+    driver-naming. READ-ONLY / confirmation-side: these >$10B names never enter A's detection or the
+    holding book."""
+
+    rule: str  # the transparent mechanical designation rule
+    leaders: list[MegaLeader]
+    ratification_note: str  # 'analyst ratifies — add/remove as part of naming the driver'
+
+
+class PricePattern(BaseModel, frozen=True):
+    """B price-pattern: the designated leaders' vs the members' trajectory — leader-first (the
+    emergence signature: leaders re-rate BEFORE the sub-$10B members) vs synchronous (cyclical) vs
+    unstable (choppy). PRESENTED: the two trajectories + a mechanical read; the human judges the
+    type."""
+
+    leader_trajectory: Trajectory
+    member_trajectory: Trajectory
+    # leaders − members at each horizon (the lead-lag shape)
+    lead_minus_member: list[tuple[str, float]]
+    read: str  # a mechanical descriptor of the shape — NOT a type verdict
+
+
+class HistoricalAnalog(BaseModel, frozen=True):
+    """B historical-analog (§7.2): an LLM-ASSEMBLED reference class — past themes this pattern
+    resembles and how they resolved — PROPOSED for the human to weigh, source-bound, never a
+    verdict."""
+
+    reference_themes: list[str]
+    note: str
+    model: str | None
+    status: str  # 'assembled' | 'unavailable'
+
+
+class TypeSignals(BaseModel, frozen=True):
+    """Component B — theme-type SIGNALS the human judges AS PART OF criterion-1. No type verdict, no
+    auto-classification. When the signals are mixed, ``ambiguous`` is the explicit DEFER state."""
+
+    price_pattern: PricePattern
+    vol_strip_survived: bool  # from A — real theme (survived the vol strip) vs spec-beta-adjacent
+    vol_strip_note: str
+    historical_analog: HistoricalAnalog
+    ambiguous: bool  # the DEFER state: signals unclear → 'watch, do not fire' (do NOT force a type)
+    defer_note: str
+
+
+class ConfirmationCell(BaseModel, frozen=True):
+    """One basis of the confirmation grid (absolute, or excess vs a benchmark) + its threshold
+    reads."""
+
+    basis: str  # 'absolute' | 'vs IWM' | 'vs SPY'
+    # leaders' median return-from-baseline (excess of the benchmark for the vs-X bases)
+    value: float
+    # {'+20%': …, '+30%': …, '+50%': …} — does the signal clear that threshold
+    clears: dict[str, bool]
+
+
+class ConfirmationSignal(BaseModel, frozen=True):
+    """Component C — megacap confirmation: a SIGNAL the human reads to decide whether to fire the
+    enabler search; NOT an autonomous trigger (the dead-signal line — machine computes, human acts).
+    Scoped to human-judged-emergence themes; the grid surfaces the threshold × benchmark sensitivity
+    (Part-7 thresholds × Finding-2 dual benchmark) so no single fragile point drives the call."""
+
+    baseline_date: date
+    baseline_rationale: str
+    n_leaders: int
+    grid: list[ConfirmationCell]  # absolute / vs-IWM / vs-SPY, each at +20/+30/+50
+    scope_note: str
+
+
+class ThemeStage2(BaseModel, frozen=True):
+    """Stage-2 output for one Component-A candidate theme: the assembled leaders, the theme-type
+    signals (B), and the megacap confirmation signal (C) — all PRESENTED for the analyst to
+    judge."""
+
+    cluster_id: str
+    member_tickers: list[str]
+    candidate_linkage_note: str  # carried from A's criterion-1 surface
+    leader_set: LeaderSet
+    type_signals: TypeSignals
+    confirmation: ConfirmationSignal | None  # None when no co-moving mega-cap leader exists

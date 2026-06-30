@@ -509,6 +509,39 @@ def _cmd_themes(args: argparse.Namespace) -> int:
     return 0
 
 
+def _cmd_themes_stage2(args: argparse.Namespace) -> int:
+    """Components B+C: theme-type signals + megacap confirmation over A's candidate themes.
+
+    ASSEMBLES and PRESENTS: the candidate >$10B leaders (analyst ratifies), the theme-type signals
+    (price-pattern / vol-strip-survival / historical-analog / defer), and the confirmation grid
+    (Part-7 thresholds × Finding-2 dual benchmark). It renders no type verdict and fires nothing.
+    """
+    from vinci.themes.render import render_stage2
+    from vinci.themes.stage2 import analyze_stage2
+
+    cfg = get_config()
+    cfg.ensure_dirs()
+    ref = date.fromisoformat(args.ref) if args.ref else None
+    llm = None
+    if not args.no_llm:
+        from vinci.graph.llm import AnthropicLlmClient
+
+        try:
+            llm = AnthropicLlmClient.from_config(cfg)
+        except Exception as exc:  # noqa: BLE001 — degrade to no-analog, never crash the CLI
+            print(f"LLM unavailable ({exc}) — historical analog skipped")
+    results = analyze_stage2(
+        cfg, reference_date=ref, window_days=args.window_days, max_names=args.max_names,
+        llm=llm, progress=stderr_reporter,
+    )
+    print(f"=== Theme Stage 2 (B+C) · {len(results)} themes (A untouched; leaders read-only) ===\n")
+    shown = results if args.top is None else results[: args.top]
+    for s2 in shown:
+        print(render_stage2(s2))
+        print()
+    return 0
+
+
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(prog="vinci", description=__doc__)
     sub = parser.add_subparsers(dest="command", required=True)
@@ -677,6 +710,23 @@ def build_parser() -> argparse.ArgumentParser:
         help="print only; do not write candidate_themes.jsonl",
     )
     p_themes.set_defaults(func=_cmd_themes)
+
+    p_s2 = sub.add_parser(
+        "themes-stage2",
+        help="Components B+C: theme-type signals + megacap confirmation (proposes; never decides)",
+    )
+    p_s2.add_argument("--ref", help="reference date YYYY-MM-DD (default: universe snapshot as_of)")
+    p_s2.add_argument(
+        "--window-days", type=int, default=365, dest="window_days",
+        help="trailing window in calendar days (default: 365 ≈ 12mo)",
+    )
+    p_s2.add_argument("--max-names", type=int, dest="max_names", help="cap the universe (dev)")
+    p_s2.add_argument("--top", type=int, help="limit themes printed (default: all)")
+    p_s2.add_argument(
+        "--no-llm", action="store_true", dest="no_llm",
+        help="skip the LLM historical-analog (B); compute everything else",
+    )
+    p_s2.set_defaults(func=_cmd_themes_stage2)
     return parser
 
 
