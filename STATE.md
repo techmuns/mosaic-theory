@@ -2120,6 +2120,44 @@ single-threaded ahead of the lead loop).
       which almost none do). Highest-value next probe: a NARROW Hyp-C breadth exception would surface
       semicap + crypto-miners→AI for analyst judgment. Suite unchanged (diagnosis only; the B′-fix branch
       stays ruff+mypy+pytest green).
+    - **SEMANTIC-EXPOSURE PROBE (2026-06-30) — reasoning-from-disclosure DISCRIMINATES the driver and
+      SURFACES the enablers co-movement can't; strong evidence FOR Stage 3 as the EARLY-detection
+      mechanism. Probe only, no code change.** Tested the two breadth-scan leader-first PAIRS as live
+      cases for whether SEMANTIC exposure (not co-movement) is the right early basis — the temporal
+      tension being that co-movement is intrinsically LATE (needs consolidation) while the edge's value
+      is EARLY (Part-6 fork). **PART 1 — both are PAIR-BY-ARTIFACT, not thin themes:** semicap has ~10
+      sub-$10B pure-plays that FRAGMENT by sub-segment (VECO/ACLS pair + UCTT/ICHR pair + CAMT/COHU/KLIC/
+      AEHR/PLAB/PDFS each idiosyncratic — full-history, residualized, just don't co-move); crypto-miners'
+      real-AI names ALREADY GREW OUT (IREN $20.8B / WULF $13.8B / HUT $13.4B / CIFR $10.8B / APLD $13.0B /
+      RIOT $10.4B, all >$10B) leaving the sub-$10B co-moving pair CLSK/MARA = the BTC-beta LAGGARDS — so
+      co-movement fires too late AND clusters the wrong (beta) names. **PART 2 — the FENCED LLM (committed
+      AnthropicLlmClient Opus-4.8, source-bound to real 10-K/20-F text, verdict-free, reusing
+      synthesis.py's pattern) READS the disclosures and DISCRIMINATES SHARPLY, INVERTING co-movement (as
+      Part 6 showed keyword-text inverts):** CRYPTO driver-discrimination — **CIFR + WULF =
+      binding-contracts-with-terms** (CIFR: 15-yr AWS ~300MW + Fluidstack 300MW + 3.4GW pipeline; WULF:
+      Fluidstack 378+168MW 25-yr leases + Core42, 522MW contracted) vs **CLSK = committed-capacity, no
+      tenant** vs **MARA + IREN = aspirational-intent-only** (MARA AI 'early-stage evaluation'; IREN
+      states an HPC strategy, no named tenant in its 10-K). The REAL-AI names (CIFR/WULF, binding
+      hyperscaler MW) are exactly the ones that re-rated >$10B; the co-movement cluster (CLSK/MARA) is
+      the aspirational BTC-beta residue — co-movement CANNOT tell pivot from beta, disclosure-reasoning
+      CAN. SEMICAP exposure-completeness — the co-moving pair **VECO/ACLS read aspirational** (ACLS 98%
+      ion-implant / 55% power-EV — not the AI driver; VECO diversified, no AI revenue split), while the
+      genuinely AI-exposed names are **CAMT (~50% of revenue from AI-application production: HBM +
+      advanced packaging, quantified) and AEHR (AI burn-in, packaged-part $19.8M / 34%)** — both sub-$10B
+      and HOLDABLE, both flagged 'idiosyncratic / don't co-move' by detection. So exposure-reasoning
+      surfaces BETTER sub-$10B targets (CAMT/AEHR) than co-movement found (VECO/ACLS), and inverts the
+      signal. **VERDICT:** on both live cases semantic exposure-reasoning demonstrably does what
+      co-movement can't — (a) DISCRIMINATE real driver-exposure from beta/marketing, (b) SURFACE real
+      sub-$10B enablers that don't yet co-move. This RESOLVES Part 6's open fork ('semantic LLM-exposure
+      untested — the key open path') in FAVOUR of the semantic path, and points the early-detection
+      mechanism at **reasoning-from-disclosure, NOT co-movement.** *PROPOSED (NOT decided): Stage 3 (the
+      semantic exposure-classifier) is the validated next-build direction — as the PRIMARY EARLY-detection
+      basis (read the business → infer theme-exposure → source-bind → human judges), reusing synthesis.py's
+      fenced / cite-checked / verdict-free machinery, NOT merely enabler-selection inside an
+      already-confirmed theme. CAVEATS: a PROBE (n=5 miners + 6 semicap, latest-annual-only — IREN's
+      aspirational read is a timing artifact, its big deals postdate the filing); it proves
+      DETECTION-discrimination, NOT the forward edge (the paper track is the arbiter). Build-which-edge
+      stays the human's.* Suite unchanged (probe only; the B′-fix branch stays green).
   - **HOLDING-UNIVERSE study — sub-$10B-at-inception captured the theme return in all 6 themes tested
     (2026-06-29; `theme_admissibility_spike.md` Part 5).** A DISTINCT axis from the 4 detection spikes:
     does the **holding** bound (fund detects broad incl. mega leaders, but HOLDS sub-$10B) capture theme
