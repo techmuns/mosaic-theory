@@ -1,6 +1,6 @@
 # Dossier — ARTIVION, INC. (AORT)
 
-_Finalist rank 9 · ref 2026-06-22 · assembled 2026-06-30 08:47 · LLM claude-opus-4-8_
+_Finalist rank 9 · ref 2026-06-22 · assembled 2026-06-30 14:07 · LLM claude-opus-4-8_
 
 > **Assembles and cites; never concludes.** There is no BUY/AVOID here — the verdict is the human's, logged separately via the ledger with a frozen entry price.
 
@@ -95,10 +95,81 @@ _Finalist rank 9 · ref 2026-06-22 · assembled 2026-06-30 08:47 · LLM claude-o
 - **Earnings call:** 2 earnings-call transcript(s) on file — read in full for management posture: Artivion, Inc., Q1 2026 Earnings Call, May 07, 2026.rtf; Artivion, Inc., Q4 2025 Earnings Call, Feb 12, 2026.rtf (pointer only; the synthesis cites them, the machine does not curate an excerpt)
   - ↳ `CIQ transcript(s): Artivion, Inc., Q1 2026 Earnings Call, May 07, 2026.rtf; Artivion, Inc., Q4 2025 Earnings Call, Feb 12, 2026.rtf`
 
-## Synthesis
-_Not produced (see flags)._
+## Synthesis (LLM — framing for the human, every point source-bound)
+
+**Evidence balance:** mixed — rising absolute EBITDA, sub-2x stated leverage and double-digit growth offset a sharp idiosyncratic drawdown, a growth miss, dilution and thin FCF.
+
+### Bull case (overshoot / mean-revert)
+- EV/EBITDA at 18.4x sits at the 0th percentile of its own 20-quarter history (near-floor), and the P/E at 112x is explicitly flagged as distorted by an anomalous trailing EPS of 0.21 vs a recent median of -0.54, so the headline P/E is not a clean multiple.
+  - ↳ `EDGAR/EOD P/E pctile vs ~5y (screen data-record)`
+- Absolute EBITDA stepped up sharply in the FY2025 readings (29 → 63 → 56) on rising revenue (354 → 389 → 441), so the falling/low EBITDA margin % masks an absolute EBITDA that is RISING — the consensus margin-erosion read is the optical MISREAD, not the real signal.
+  - ↳ `EDGAR XBRL companyfacts OperatingIncomeLoss+D&A ÷ RevenueFromContractWithCustomerExcludingAssessedTax [FY2018–FY2025]`
+- Name fundamentals beat the peer median on growth — rev growth 18% vs 14%, EBITDA growth 42% vs 21% — with an in-line 13% EBITDA margin, so any TEV/EBITDA discount to the peer median (name 18.4 vs median 24.5; NTM 12.8 vs 17.59) is posed as possibly RESIDUAL rather than EARNED; the human must judge justified-vs-residual, with the caveat that name is EDGAR-GAAP vs peers on CIQ basis (a delta may be definitional).
+  - ↳ `CIQ Comparable Analysis→Operating Statistics (name vs peer median: growth/margin/leverage/beta)`
+- Net leverage fell to 1.8x at Q1 2026 from 4.0x a year prior per management, materially better than the 2.8x screen estimate and the 3.7x peer-comp figure, easing the leverage concern.
+  - ↳ `CIQ transcript(s): Artivion, Inc., Q1 2026 Earnings Call, May 07, 2026.rtf; Artivion, Inc., Q4 2025 Earnings Call, Feb 12, 2026.rtf`
+- Management reports Q1 2026 constant-currency revenue growth of 12% and adjusted EBITDA growth of 26%, with On-X +17%, tissue processing +23%, and a 130bp adjusted EBITDA margin improvement — a posture of continued double-digit growth, not secular decline.
+  - ↳ `CIQ transcript(s): Artivion, Inc., Q1 2026 Earnings Call, May 07, 2026.rtf; Artivion, Inc., Q4 2025 Earnings Call, Feb 12, 2026.rtf`
+- The drawdown shape is a single discrete 8-K gap-down event (2026-05-08, items 1.01 material agreement + 2.02 earnings) tied to a quarterly miss plus the Endospan option exercise, not a chain of deteriorating disclosures.
+  - ↳ `EDGAR 8-K item codes at the gap-down dates (not blanket-labelled earnings)`
+- Consensus target price mean is $42 / median $43, well above where the ~57% 180-day drawdown has left the name, indicating analysts have not re-rated to terminal.
+  - ↳ `CIQ Estimates→Consensus`
+
+### Bear case (terminal / value-trap)
+- The name has fallen 57% over 180 days vs IWM +18%, a ~70-point idiosyncratic relative underperformance, signalling the market is pricing a name-specific impairment rather than a sector move.
+  - ↳ `EOD name−IWM 180d (screen data-record, G2)`
+- Share count is diluting fast — +15.9% over ~1.7 years (41.9M → 48.5M) — eroding per-share value and consistent with equity-funded growth/acquisition needs.
+  - ↳ `EDGAR XBRL shares, trailing 2024-08-02..2026-05-01`
+- FY2025 GAAP free cash flow is barely positive at $0.8M, and the multi-year FCF series shows two consecutive negative years (FY2023 -16, FY2024 -16) before a thin recovery, so the FCF-positive 'self-funding' claim rests on a razor-thin margin.
+  - ↳ `EDGAR XBRL companyfacts NetCashProvidedByUsedInOperatingActivities − PaymentsToAcquirePropertyPlantAndEquipment [FY2025] ($M)`
+- On the peer-comp leverage delta the name screens worse than the peer median (Debt/EBITDA 3.7 vs 2.1) — a genuine EARNED-discount input on a trailing basis — though it is OUTWEIGHED by management's stated 1.8x Q1 net leverage and the rising absolute EBITDA that the margin-% optics obscure.
+  - ↳ `CIQ Comparable Analysis→Operating Statistics (name vs peer median: growth/margin/leverage/beta)`
+- Q1 stent-graft growth (10% cc) fell below the company's own expectations, with U.S. AMDS starter-set sales short and international (Middle East, LatAm -23%) soft — a genuine deceleration counter-point, OUTWEIGHED by On-X +17% / tissue +23% and management's intact double-digit-growth posture.
+  - ↳ `CIQ transcript(s): Artivion, Inc., Q1 2026 Earnings Call, May 07, 2026.rtf; Artivion, Inc., Q4 2025 Earnings Call, Feb 12, 2026.rtf`
+- EPS revisions skew negative (FY2026 GAAP 0 up / 2 down last month) and FY2025 posted a -9% GAAP EPS surprise (miss), the first miss in the recorded surprise history.
+  - ↳ `CIQ Estimates→Revisions (Last-Month breadth, FY)`
+
+### Twin reference cases
+- **Inari Medical** — recovered
+  - distinguished by: High-growth single-vertical medical-device name that sold off hard on a growth-deceleration quarter while underlying procedure adoption kept compounding.
+  - source: [LLM-suggested, unverified]
+- **Shockwave Medical** — recovered
+  - distinguished by: Differentiated cardiovascular device platform whose new-product launch curve and reorder pull-through ultimately validated the adoption thesis.
+  - source: [LLM-suggested, unverified]
+- **Natera** — recovered
+  - distinguished by: Persistently dilutive, thin-FCF medical name that compounded revenue through repeated share issuance before reaching self-funding.
+  - source: [LLM-suggested, unverified]
+- **Invacare** — went terminal
+  - distinguished by: Levered medical-device maker where a debt load and operational shortfalls outran a turnaround narrative into restructuring.
+  - source: [LLM-suggested, unverified]
+- **AngioDynamics** — went terminal
+  - distinguished by: Small/mid-cap device peer whose perpetual portfolio-transition story never converted into durable profitable growth.
+  - source: CIQ Comparable Analysis→Financial Data + Business Description (roster + caps + business)
+
+### Decisive question
+**Is the Q1 stent-graft/AMDS shortfall a timing problem (VAC-process and PMA-approval delays that reverse as accounts convert) or the start of a structural adoption stall — and does the Endospan acquisition de-risk or further lever the growth story?**
+
+### …evidence for
+- Management frames the AMDS miss as starter-set timing, citing encouraging reorder patterns in existing accounts and imminent PMA approval that removes the IRB barrier and the $100K stocking-cost friction — i.e., a timing problem.
+  - ↳ `CIQ transcript(s): Artivion, Inc., Q1 2026 Earnings Call, May 07, 2026.rtf; Artivion, Inc., Q4 2025 Earnings Call, Feb 12, 2026.rtf`
+- Absolute EBITDA and revenue stepped up sharply in the latest FY2025 readings, consistent with the underlying business still compounding through the quarter's noise.
+  - ↳ `EDGAR XBRL companyfacts OperatingIncomeLoss+D&A ÷ RevenueFromContractWithCustomerExcludingAssessedTax [FY2018–FY2025]`
+
+### …evidence against
+- Q1 stent-graft growth missed the company's own expectation across multiple geographies, and the same 8-K that disclosed it triggered the gap-down alongside the Endospan option exercise — raising the question of whether growth requires ongoing acquisition and dilution.
+  - ↳ `EDGAR 8-K item codes at the gap-down dates (not blanket-labelled earnings)`
+- Share count is up 15.9% in ~1.7 years and FY2025 FCF is only $0.8M after two negative years, so the growth story leans on dilution and thin internal cash generation.
+  - ↳ `EDGAR XBRL shares, trailing 2024-08-02..2026-05-01`
+
+### Key unknowns
+- Segment and geographic revenue/EBITDA breakouts are UNKNOWN (Segments sheet has no Revenues/EBITDA/Geographic section) — a missing expected disclosure that obscures where the stent-graft shortfall concentrates; treat as a bearish opacity risk.
+- Revised FY2026 guidance is UNKNOWN — no 99.1 revised-outlook exhibit was parsed for the gap-down 8-K, despite the call cutting off mid-outlook; a missing forward guide is a bearish opacity gap, not neutral.
+- Forward/adjusted EV/EBITDA and adjusted EPS are UNKNOWN (not in the 99.1 revised guidance), so the trailing 18.4x cannot be resolved as cheap-overshoot vs cheap-terminal — a neutral unresolved fact, not a directional one.
+- Interest coverage is UNKNOWN (income statement missing EBITDA or interest-expense row), leaving debt-servicing capacity unquantified beyond the disclosed 8.41% term loan and 7.16% revolver.
+- Reconciliation of the screen 2.8x / peer-comp 3.7x net-debt-to-EBITDA against management's stated 1.8x Q1 leverage — the basis difference (GAAP vs adjusted, period, scattered-debt under-capture) is unresolved.
+- EV/EBITDA at 0th percentile of own history is tagged trailing-only with overshoot-vs-terminal unresolved — a neutral fact for the human, not evidence either way.
+- Closing and integration economics of the Endospan acquisition (purchase price, financing structure, dilution) are not quantified in the supplied facts.
 
 ## ⚠ Flags (human review)
 - P/E may be distorted by non-recurring EPS — latest annual EPS 0.21 vs recent median -0.54; verify against normalized/forward EPS (CIQ)
 - Net debt/EBITDA (2.8x) is on REPORTED EBITDA (CIQ / consolidated GAAP), not the covenant basis; management and credit covenants typically define leverage on adjusted EBITDA (a larger denominator → a lower ratio), reconciled in the earnings release/transcript (currently UNAVAILABLE) — do not read 2.8x as the covenant-basis leverage.
-- LLM synthesis UNAVAILABLE — synthesis tool returned incomplete output — missing required field(s) ['bear_points'] (likely truncated)
