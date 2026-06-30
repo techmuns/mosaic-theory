@@ -1241,8 +1241,10 @@ single-threaded ahead of the lead loop).
       text ingestion (Stage 3 — the unsolved enabler-SELECTION from Part 6/7, where winners and losers
       look alike at confirmation); pipeline composition + enabler-search wiring + forward
       paper-validation (Stage 4).** Edge 2 stays the lead horse.
-    - **DIAGNOSTIC (2026-06-29) — why Stage 2 surfaced only cyclical themes: HYPOTHESIS A (the $10B
-      DETECTION ceiling), secondarily C (the breadth gate). NOT B (mislabeling). No code change.**
+    - **DIAGNOSTIC (2026-06-29; Part 3 RUN & COMPLETED 2026-06-30) — why Stage 2 surfaced only cyclical
+      themes: HYPOTHESIS A (the $10B DETECTION ceiling) primary, C (the breadth gate) secondary. NOT
+      B-as-framed; the live Part-3 run surfaced a DISTINCT leader-designation SIC-gate defect (B′). No
+      code change.**
       Tested the claim "no sub-$10B emergence theme exists" against the strong prior that emergence is
       always in play. **(0) signals.py backward-compat PROVEN** (the deferred Stage-1.5 check): housing's
       1/3/6/12mo momentum + rel-strength are IDENTICAL to 4dp post-`min_members` (1mo +0.1639/+0.1020 …
@@ -1258,17 +1260,27 @@ single-threaded ahead of the lead loop).
       emergence presence is NARROW: **quantum (RGTI $6.7B / QUBT $2.2B / QBTS $8.4B — DETECTED as a
       cluster)** + eVTOL/drones (JOBY $9.2B / ACHR $4B / AVAV $8.3B / RCAT / ONDS — but a 2-name pair
       JOBY/ACHR, breadth-FILTERED) + tiny nuclear-fuel (NNE $1.3B / LTBR $0.3B). Tally: sub-$10B 11 /
-      $10-50B 10 / >$50B 6+ (10 no-cap, mostly recent-IPO/foreign and also large). **(3)** quantum (the
-      one clearly-detected sub-$10B emergence theme) DID cluster — so the type-classifier (B) is NOT
-      filtering emergence AWAY; it is downstream of detection and only runs on what detection surfaces.
+      $10-50B 10 / >$50B 6+ (10 no-cap, mostly recent-IPO/foreign and also large). **(3) RUN-VERIFIED (Part 3, 2026-06-30 — reasoned-only on 06-29):** quantum (RGTI/QBTS/QUBT + INFQ;
+      coh 0.66, breadth 4 → ADMISSIBLE-size) IS a detected sub-$10B cluster. Component B reads it
+      **'no co-moving mega-cap leaders → cannot be read' (DEFER)**, NOT 'cyclical': the >$10B quantum
+      leader IONQ ($20B, SIC 7373) is EXCLUDED by leader-designation's EXACT 4-digit SIC match vs the
+      cluster's {7371,7372,7374} — a one-digit sibling miss inside the same 737x family. So B does not
+      mislabel emergence; a too-strict leader-SIC gate (B′) leaves the one detected sub-$10B emergence
+      theme un-confirmable (no leader → no leader-first/synchronous read).
       **VERDICT:** "no sub-$10B emergence theme" is an OVERSTATEMENT — quantum is a detected counterexample
       — but the STRUCTURAL truth is **HYPOTHESIS A**: the $10B DETECTION ceiling selects against MATURE
       emergence enablers, which grow into $10-50B by the time the theme is broadly detectable (AI-infra
       entirely above the band). **HYPOTHESIS C is secondary** (the earliest emergence themes are 2-name
-      pairs the breadth gate filters — eVTOL JOBY/ACHR, semicap VECO/ACLS). **NOT B.** *PROPOSED (NOT
+      pairs the breadth gate filters — eVTOL JOBY/ACHR, semicap VECO/ACLS coh 0.82, nuclear-fuel
+      NNE/LTBR). **NOT B-as-framed (no mislabel-to-cyclical); but B′ — the leader-designation EXACT-SIC
+      gate excluding IONQ — is a real defect the live Part-3 run surfaced.** *PROPOSED (NOT
       implemented): (A) raise the theme-DETECTION ceiling (e.g. ~$50B), SEPARATE from the sub-$10B HOLDING
       ceiling — "detect broad" must mean broader than $10B since the enablers grow out; the Stage-2 >$10B
       leader-slice already proves the machinery extends cleanly to that band, so DETECTION could reuse it.
+      (B′) LOOSEN leader-designation SIC-match from EXACT 4-digit to the 3-digit major group (or the
+      existing sector map) so IONQ 7373 matches the 737x quantum cluster — else a DETECTED sub-$10B
+      emergence theme silently DEFERs for lack of a leader (the live Part-3 finding, the load-bearing
+      new evidence vs the 06-29 reasoned pass).
       (C) a NARROW breadth-gate exception for high-coherence cross-taxonomy emergence PAIRS, gated on
       emergence-type signals (carefully — criterion 2: a pair is usually a relationship, not a theme).
       This REFINES the "detect broad / hold sub-$10B" scoping decision: the binding constraint is the
