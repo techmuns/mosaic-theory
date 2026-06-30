@@ -1,21 +1,8 @@
 # Dossier — FuboTV Inc. (FUBO)
 
-_Finalist rank 1 · ref 2026-06-22 · assembled 2026-06-29 17:33 · LLM claude-opus-4-8_
+_Finalist rank 1 · ref 2026-06-22 · assembled 2026-06-30 08:47 · LLM claude-opus-4-8_
 
 > **Assembles and cites; never concludes.** There is no BUY/AVOID here — the verdict is the human's, logged separately via the ledger with a frozen entry price.
-
-## ⚠ Flags (human review)
-- P/E may be distorted by non-recurring EPS — latest annual EPS -0.54 vs recent median -2.06; verify against normalized/forward EPS (CIQ)
-- EPS shown is GAAP-based and understates earnings power; company-adjusted (non-GAAP) EPS is not in the CIQ workbook — it lives in the earnings-release/transcript reconciliation (currently UNAVAILABLE) — not a ceiling on earnings power.
-- TRANSCRIPT-FIGURE '6.2' in bear_point: 'Subscribers slipped from ~6.2M to 5.7M North America by Q2 (versus…' — from the cited earnings call, not the structured facts; verify against the call
-- TRANSCRIPT-FIGURE '5.7' in bear_point: 'Subscribers slipped from ~6.2M to 5.7M North America by Q2 (versus…' — from the cited earnings call, not the structured facts; verify against the call
-- TRANSCRIPT-FIGURE '458.6' in bear_point: 'Cash fell from $458.6M (Q1) to $244M (Q2) in a single quarter against…' — from the cited earnings call, not the structured facts; verify against the call
-- TRANSCRIPT-FIGURE '95' in decisive.for: 'TTM pro forma adjusted EBITDA has already crossed $100M and…' — from the cited earnings call, not the structured facts; verify against the call
-- TRANSCRIPT-FIGURE '458.6' in decisive.against: 'Cash dropped from $458.6M to $244M in one quarter against a 2027…' — from the cited earnings call, not the structured facts; verify against the call
-- DIRECTIONAL language 'recommendation' — human review (dossier frames, not concludes)
-- DIRECTIONAL language 'sell' — human review (dossier frames, not concludes)
-- PEER-COMP-BARE bear_point: 'On the forward multiple the name is NOT cheap: NTM TEV/EBITDA is…' — presents cheap/rich vs peers as a verdict without the earned-vs-residual decomposition or the peer-set composition; POSE justified-vs-residual, never the bare gap
-- HETEROGENEOUS-BENCHMARK bear_point: 'On the forward multiple the name is NOT cheap: NTM TEV/EBITDA is…' — leans on the peer set as a clean benchmark, but comparability flags it HETEROGENEOUS; confidence-gate every peer stat
 
 ## Mechanical layer (source-bound facts)
 
@@ -108,83 +95,81 @@ _Finalist rank 1 · ref 2026-06-22 · assembled 2026-06-29 17:33 · LLM claude-o
 
 ## Synthesis (LLM — framing for the human, every point source-bound)
 
-**Evidence balance:** mixed — a rising absolute-EBITDA combination story collides with negative FCF, halving cash, subscriber attrition, and unmeasurable leverage near a 2027 wall.
+**Evidence balance:** mixed — chronic cash burn and dilution against narrowing losses, a forward-multiple premium, and unverified management profitability guidance pulling opposite directions.
 
 ### Bull case (overshoot / mean-revert)
-- Pro forma adjusted EBITDA crossed $100M on a trailing-12-month basis by Q2, with management reaffirming a path to at least $300M by fiscal 2028, indicating the absolute profit base is rising even as the GAAP picture remains loss-making.
-  - ↳ `CIQ transcript(s): FuboTV Inc., Q1 2026 Earnings Call, Feb 03, 2026.rtf; FuboTV Inc., Q2 2026 Earnings Call, May 06, 2026.rtf`
-- Absolute revenue rose continuously (3,419 → 5,304 LTM) while ROIC improved from -11.2% to -3.3%, so the gross-margin optic (0%→4%) is a rising-absolute story, not a deepening-loss one — read the % and absolute together.
-  - ↳ `CIQ Financials→Income Statement (margin % + absolute EBITDA reconciler)`
-- On TEV/Rev the name trades 0.4 LTM and 0.36 NTM versus a heterogeneous peer Low of 0.7/0.62 and Median 1.9/2.07 — but whether this gap is EARNED or RESIDUAL must be judged against the fundamental_deltas below, not read as cheapness on its own.
+- On the LTM forward revenue multiple the name trades at NTM TEV/Rev 0.36 against a peer Low of 0.62, Median 2.07, and High 8.42 — a steep discount that the human must decompose against fundamentals rather than accept at face value.
   - ↳ `CIQ Comparable Analysis→Trading Multiples (name row + Summary Statistics Low/Median/Mean/High)`
-- The name posts rev growth 22% versus peer-median 9% — a fundamental BETTER than peers, which argues a portion of the TEV/Rev discount may be RESIDUAL (overshoot) rather than fully earned; the human judges, not computed here.
+- On the decomposition inputs the discount looks partly RESIDUAL rather than fully EARNED: the name's revenue growth is 22% versus a peer-median 9% with a beta of 2.4 versus peer-median 1.4 — superior top-line growth alongside higher risk, the human judges which dominates.
   - ↳ `CIQ Comparable Analysis→Operating Statistics (name vs peer median: growth/margin/leverage/beta)`
-- Management states incremental churn from the NBCU/Comcast content loss was minimal at the combined business, with customers retaining that content via Hulu Live, supporting the resilience-of-the-bundle thesis.
+- Absolute revenue scaled steadily from 3,419 (Oct-2022) to 5,304 (LTM Mar-2026) while ROIC improved from -11.2% to -3.3%, so the operating loss is narrowing even as the headline stays negative — read the % alongside the rising absolute base.
+  - ↳ `CIQ Financials→Income Statement + Segments + Ratios (multi-year columns)`
+- Management states the post-combination contractual wholesale fee scales from 95% in 2026 to 99% by 2028, framed as visibility into adjusted-EBITDA expansion toward the $300M 2028 target and positive free cash flow in 2027-2028.
   - ↳ `CIQ transcript(s): FuboTV Inc., Q1 2026 Earnings Call, Feb 03, 2026.rtf; FuboTV Inc., Q2 2026 Earnings Call, May 06, 2026.rtf`
-- Sell-side consensus carries a Buy (1.00) recommendation and a $17.00 mean/median target, a posture sharply above where the stock has de-rated.
+- Sell-side consensus carries a Buy (1.00) recommendation and a mean/median target of $17.00 against the de-rated tape, a genuine counter to the terminal read.
   - ↳ `CIQ Estimates→Consensus`
 
 ### Bear case (terminal / value-trap)
-- LTM levered free cash flow is -$131.2M and the FCF sign is negative — the company is burning cash, and management's own positive-FCF promise sits out in fiscal 2027/2028, not now.
+- Free cash flow is -131.2 (LTM Mar-2026) with operating cash flow of -489M and the FCF sign negative — the business is burning cash, and on the cash leg this is the REAL signal, not an optical artifact.
   - ↳ `CIQ Financials→Cash Flow 'Levered Free Cash Flow' [LTM 12 months Mar-31-2026]`
-- On the forward multiple the name is NOT cheap: NTM TEV/EBITDA is 17.77 versus a peer Median of 8.19 and Mean 11.64 — so the headline TEV/Rev 'discount' is the optical MISREAD; on a forward-earnings basis the name trades at a PREMIUM to peers.
+- The single positive P/E of 13.4 sits at the 2.4th percentile of its ~5y range but is explicitly a MISREAD: it rests on a non-current positive EPS while latest annual EPS is -0.54, so the low percentile reflects a distorted basis, not cheapness.
+  - ↳ `EDGAR/EOD P/E pctile vs ~5y (screen data-record)`
+- On the forward EBITDA multiple the name is NOT cheap: NTM TEV/EBITDA is 17.77 versus a peer Median of 8.19 and Mean of 11.64 — a premium, undercutting any blanket 'cheap vs peers' read once the forward earnings leg is used.
   - ↳ `CIQ Comparable Analysis→Trading Multiples (name row + Summary Statistics Low/Median/Mean/High)`
-- EBITDA margin runs BELOW peer median by 11 points and Debt/EBITDA is NM versus peer-median 3.2, so much of any TEV/Rev discount is plausibly EARNED — worse margin and unmeasurable leverage are a value-trap signature, not a clean overshoot.
+- Part of the peer discount is EARNED, not residual: the name's EBITDA margin trails the peer-median by 11 points and Debt/EBITDA is NM against a peer-median 3.2, weaker profitability and unquantifiable leverage that justify some of the gap.
   - ↳ `CIQ Comparable Analysis→Operating Statistics (name vs peer median: growth/margin/leverage/beta)`
-- Beta of 2.4 versus peer-median 1.4 means the name carries materially more systematic risk than the comp set, amplifying downside in any drawdown.
-  - ↳ `CIQ Comparable Analysis→Operating Statistics (name vs peer median: growth/margin/leverage/beta)`
-- The stock fell 72.6% over 180 days while the small-cap market rose 18.0%, an 89-point relative underperformance that is overwhelmingly idiosyncratic, not a shared sell-off.
+- Revenue 100% concentrated in one Streaming segment and 100% in the United States, with no segment-EBITDA breakout — a single undiversified profit pool.
+  - ↳ `CIQ Financials→Segments (Revenues, latest annual column)`
+- The decline is idiosyncratic, not a market move: the name returned -72.6% over 180d while IWM returned +18.0%, a relative -89.0% — the market is repricing this name specifically.
   - ↳ `EOD name−IWM 180d (screen data-record, G2)`
-- The drawdown is built from discrete gap-downs on earnings dates (8-K item 2.02 on 2026-02-03 and 2026-05-06), tying the de-rating directly to reported results rather than market noise.
+- Three discrete gap-downs cluster on earnings 8-Ks (2026-02-03 and 2026-05-06 both item 2.02 Results of Operations), so the de-rating is anchored to reported results, not a transient shock.
   - ↳ `EDGAR 8-K item codes at the gap-down dates (not blanket-labelled earnings)`
-- Subscribers slipped from ~6.2M to 5.7M North America by Q2 (versus 5.9M prior year), so the 'growth North Star' narrative coexists with a sequential and year-over-year subscriber decline.
-  - ↳ `CIQ transcript(s): FuboTV Inc., Q1 2026 Earnings Call, Feb 03, 2026.rtf; FuboTV Inc., Q2 2026 Earnings Call, May 06, 2026.rtf`
-- Share count diluted +4.0% over ~1 year and management announced a reverse stock split, both signals of equity-base stress rather than self-funded growth.
+- Share count is diluting +4.0% over ~1y (329.3M to 342.4M), eroding per-share value while the company funds a cash-burning operation.
   - ↳ `EDGAR XBRL shares, trailing 2024-07-31..2025-07-31`
-- Cash fell from $458.6M (Q1) to $244M (Q2) in a single quarter against a negative-FCF base and a nearest maturity wall at 2027, sharpening the runway question.
-  - ↳ `CIQ transcript(s): FuboTV Inc., Q1 2026 Earnings Call, Feb 03, 2026.rtf; FuboTV Inc., Q2 2026 Earnings Call, May 06, 2026.rtf`
-- The headline P/E of 13.4 (sub-3rd-percentile over 5y) rests on a non-current positive EPS while the latest annual EPS is negative (-0.54) — the cheap-looking P/E is a distorted optic, not a real signal.
-  - ↳ `EDGAR XBRL eps_diluted × EOD price (screen data-record, G3)`
 
 ### Twin reference cases
-- **fuboTV (pre-Hulu standalone)** — recovered
-  - distinguished by: A perennially cash-burning vMVPD that survived by a transformational scale combination rather than by organic profitability — the pattern of rescue-by-merger.
-  - source: [LLM-suggested, unverified]
 - **Roku** — recovered
-  - distinguished by: A US streaming-platform name that de-rated hard on slowing growth and margin doubts, then re-rated as advertising monetization improved.
+  - distinguished by: US streaming platform that ran sustained operating losses while scaling revenue, with the market questioning a path to positive cash generation.
   - source: [LLM-suggested, unverified]
-- **Chicken Soup for the Soul Entertainment (Redbox)** — went terminal
-  - distinguished by: A streaming/media roll-up that levered into an acquisition while burning cash and hit a maturity/liquidity wall before the synergy story could pay off.
+- **Chewy** — recovered
+  - distinguished by: Cash-burning subscription-style growth name that re-rated once operating leverage converted top-line scale into positive EBITDA and free cash flow.
   - source: [LLM-suggested, unverified]
-- **Paramount Skydance** — recovered
-  - distinguished by: A legacy-media name carrying heavy losses and content-cost pressure that survived via a combination reshaping its scale and economics.
+- **Blue Apron** — went terminal
+  - distinguished by: Single-segment US consumer subscription model whose top-line growth never outran cash burn and chronic dilution.
   - source: [LLM-suggested, unverified]
-- **Quibi** — went terminal
-  - distinguished by: A subscription-video venture that could not stem subscriber attrition and consumed its cash before reaching self-sustaining scale.
+- **MoviePass / Helios and Matheson** — went terminal
+  - distinguished by: Subscription video venture that scaled users while burning cash and diluting shareholders into collapse with no profit pool.
+  - source: [LLM-suggested, unverified]
+- **fuboTV (pre-Hulu-Live-TV combination)** — recovered
+  - distinguished by: Same name's earlier standalone phase whose viability hinged on a transformative content/distribution combination changing the earnings profile.
   - source: [LLM-suggested, unverified]
 
 ### Decisive question
-**Will the pro-forma adjusted-EBITDA ramp (TTM $100M toward a $300M-by-2028 target) convert into actual positive free cash flow before the declining cash balance and the 2027/2029 maturities force dilutive or distressed financing?**
+**Does the post-combination contractual wholesale step-up and ad-server migration convert revenue scale into the positive free cash flow management guides for 2027-2028 before the cash burn and 2027 maturity force further dilution?**
 
 ### …evidence for
-- TTM pro forma adjusted EBITDA has already crossed $100M and management reaffirmed at least $300M by 2028 plus positive FCF in 2027/2028, with a contractual Hulu wholesale-fee step-up (95% in 2026 scaling to 99% by 2028) cited as visibility.
+- Management guides to positive free cash flow in fiscal 2027 and 2028 and a contractual wholesale fee scaling from 95% to 99% by 2028 underpinning adjusted-EBITDA expansion.
   - ↳ `CIQ transcript(s): FuboTV Inc., Q1 2026 Earnings Call, Feb 03, 2026.rtf; FuboTV Inc., Q2 2026 Earnings Call, May 06, 2026.rtf`
-- Absolute revenue and ROIC both trend favorably (revenue 3,419 → 5,304 LTM; ROIC -11.2% → -3.3%), consistent with a closing gap to profitability.
+- ROIC improved from -11.2% (Sep-2023) to -3.3% (LTM Mar-2026) on a rising absolute revenue base, consistent with narrowing losses.
   - ↳ `CIQ Financials→Income Statement + Segments + Ratios (multi-year columns)`
 
 ### …evidence against
-- Current LTM levered FCF is -$131.2M and operating cash flow is negative, so the positive-FCF target depends entirely on a future inflection not yet in the actuals.
+- LTM free cash flow is still -131.2 with operating cash flow -489M, so the business is currently burning cash, not generating it.
   - ↳ `CIQ Financials→Cash Flow 'Levered Free Cash Flow' [LTM 12 months Mar-31-2026]`
-- Cash dropped from $458.6M to $244M in one quarter against a 2027 nearest maturity wall, and a reverse split plus +4.0% dilution signal financing pressure on the equity.
-  - ↳ `CIQ transcript(s): FuboTV Inc., Q1 2026 Earnings Call, Feb 03, 2026.rtf; FuboTV Inc., Q2 2026 Earnings Call, May 06, 2026.rtf`
+- Net debt is $170M with the nearest maturity wall at 2027 and runway uncomputed because cash was not derived — a flagged risk.
+  - ↳ `CIQ Net Debt ÷ CIQ LTM EBITDA (EDGAR XBRL breadth fallback) + FCF sign + CIQ Capital Structure (survival capacity)`
 
 ### Key unknowns
-- No EV/EBITDA, EV/EBITDA percentile, or range position is computable — TEV/LTM EBITDA has <4 quarters of data, so the standard valuation anchor is absent.
-- Adjusted EPS and adjusted EV/EBITDA forward figures are NOT in the revised 99.1 guidance — a missing expected disclosure that obscures the forward earnings base (bearish opacity).
-- Net-debt/EBITDA, net-debt/OCF and interest coverage are all UNKNOWN (OCF negative, no EBITDA/interest row) — leverage serviceability cannot be assessed from the supplied facts (bearish opacity).
-- Cash runway is not derived (cash ÷ burn not computed) and the facts themselves flag this as a risk against a 2027 maturity wall — a survival-capacity leg left open.
-- No segment-level EBITDA exists (Segments sheet has no EBITDA section) and revenue is 100% one streaming segment / 100% US — no breakout to verify where profitability sits (bearish opacity).
-- The revised-guidance 99.1 exhibits for both gap-down 8-Ks were not parsed, so the exact magnitude/direction of any guidance change at the de-rating events is unverified.
-- Surprise history and the cohort/idiosyncratic-read fields are UNKNOWN — no exposed cross-section and no beat/miss record to contextualize the gap-downs.
-- Pro forma adjusted EBITDA, subscriber, and cash figures rest on management transcript commentary only; they are not independently in the source-bound financial records.
-- Comparability is explicitly HETEROGENEOUS (market caps span 642x; name $256M vs peers to $306.6B) — every peer multiple is a confidence-gated input, not a clean benchmark.
+- Cash balance and resulting runway are NOT derived in the facts (survival_capacity flags this as a risk), so days-to-zero against the -131.2 burn cannot be computed — a bearish opacity gap, though the Q2 transcript pointer cites $244M cash / >$200M year-end as management-stated and unverified here.
+- TEV/LTM EBITDA and its 5y percentile and range position are all UNKNOWN (<4 quarters of post-combination history), so the trailing valuation leg cannot be benchmarked.
+- Net-debt/EBITDA, net-debt/OCF, and interest coverage are all UNKNOWN — leverage and debt-service capacity are unquantifiable from the supplied facts (bearish opacity).
+- No revised-guidance 99.1 exhibit was parsed for either earnings 8-K, so the official forward guide is absent from the source-bound facts; only the transcript pointer carries forward targets.
+- Segment-EBITDA breakout is absent — the single Streaming segment's profitability is not disclosed.
+- Adjusted EPS and adjusted forward EV/EBITDA are not in the supplied facts, so the management adjusted framework cannot be reconciled to GAAP here.
+- Peer set is HETEROGENEOUS (caps span $478M to $306.6B, 642x) — every peer multiple is a confidence-gated input, not a clean benchmark, and the earned-vs-residual split of the discount is for the human to judge.
+
+## ⚠ Flags (human review)
+- P/E may be distorted by non-recurring EPS — latest annual EPS -0.54 vs recent median -2.06; verify against normalized/forward EPS (CIQ)
+- TRANSCRIPT-FIGURE '95' in bull_point: 'Management states the post-combination contractual wholesale fee…' — from the cited earnings call, not the structured facts; verify against the call
+- PEER-COMP-BARE bear_point: 'On the forward EBITDA multiple the name is NOT cheap: NTM TEV/EBITDA…' — presents cheap/rich vs peers as a verdict without the earned-vs-residual decomposition or the peer-set composition; POSE justified-vs-residual, never the bare gap
+- HETEROGENEOUS-BENCHMARK bear_point: 'On the forward EBITDA multiple the name is NOT cheap: NTM TEV/EBITDA…' — leans on the peer set as a clean benchmark, but comparability flags it HETEROGENEOUS; confidence-gate every peer stat

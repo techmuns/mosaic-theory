@@ -1,18 +1,8 @@
 # Dossier — BELLRING BRANDS, INC. (BRBR)
 
-_Finalist rank 2 · ref 2026-06-22 · assembled 2026-06-29 17:31 · LLM claude-opus-4-8_
+_Finalist rank 2 · ref 2026-06-22 · assembled 2026-06-30 08:47 · LLM claude-opus-4-8_
 
 > **Assembles and cites; never concludes.** There is no BUY/AVOID here — the verdict is the human's, logged separately via the ledger with a frozen entry price.
-
-## ⚠ Flags (human review)
-- EPS shown is GAAP-based and understates earnings power; company-adjusted (non-GAAP) EPS is not in the CIQ workbook — it lives in the earnings-release/transcript reconciliation (currently UNAVAILABLE) — not a ceiling on earnings power.
-- Net debt/EBITDA (3.8x) is on REPORTED EBITDA (CIQ / consolidated GAAP), not the covenant basis; management and credit covenants typically define leverage on adjusted EBITDA (a larger denominator → a lower ratio), reconciled in the earnings release/transcript (currently UNAVAILABLE) — do not read 3.8x as the covenant-basis leverage.
-- TRANSCRIPT-FIGURE '14' in bear_point: 'Management's own posture deteriorated sharply quarter-over-quarter —…' — from the cited earnings call, not the structured facts; verify against the call
-- TRANSCRIPT-FIGURE '27' in bear_point: 'Management disclosed the first decline in RTD-shake buy-rate per…' — from the cited earnings call, not the structured facts; verify against the call
-- TRANSCRIPT-FIGURE '15' in decisive.for: 'Volumes are growing strongly (Premier shake volumes +12% in Q2,…' — from the cited earnings call, not the structured facts; verify against the call
-- TRANSCRIPT-FIGURE '27' in decisive.against: 'Buy-rate per household declined for the first time in 5 years and 27%…' — from the cited earnings call, not the structured facts; verify against the call
-- DIRECTIONAL language 'sell' — human review (dossier frames, not concludes)
-- FALSE-BALANCE? evidence_balance commits a strong lean but the body is near-symmetric (6 bull vs 8 bear) and the minority bull_points aren't qualified-as-outweighed — size the minority against the lean (rule 7), or it launders a one-sided case
 
 ## Mechanical layer (source-bound facts)
 
@@ -112,77 +102,78 @@ _Finalist rank 2 · ref 2026-06-22 · assembled 2026-06-29 17:31 · LLM claude-o
 
 ## Synthesis (LLM — framing for the human, every point source-bound)
 
-**Evidence balance:** strongly-bearish — absolute EBITDA fell with the margin amid worsening guidance, earned peer discount, and a 5-year-first buy-rate decline.
+**Evidence balance:** strongly-bearish — absolute EBITDA falling two straight periods with peer-worst EBITDA/EPS growth and a -79% idiosyncratic drop make the cheap multiple look earned.
 
 ### Bull case (overshoot / mean-revert)
-- The de-rating is sharply idiosyncratic, not market-driven: BRBR fell ~66% over 180d while the small-cap IWM rose ~18%, leaving room for a mean-revert read IF the bottom-line shock proves cyclical rather than structural.
-  - ↳ `EOD name−IWM 180d (screen data-record, G2)`
-- Absolute revenue still rose to an LTM record (2,332) even as the EBITDA margin collapsed, evidencing demand is intact and the problem is profitability not top-line erosion.
-  - ↳ `CIQ Financials→Income Statement (margin % + absolute EBITDA reconciler)`
-- The business is self-funding and not in a runway crisis: FCF-positive at 182.7 with no maturity wall before 2030, so it can absorb a margin trough without forced action.
+- The EV/EBITDA multiple sits at the 0th percentile of 19 quarterly closes (7.5x TEV/LTM) and P/E at the ~3rd percentile of ~5y, a near-floor de-rating that POSES whether the move is an overshoot rather than a permanent re-rate.
+  - ↳ `CIQ Financials→Multiples 'TEV/LTM EBITDA' Close — 19 quarters (partial last column excluded from the distribution)`
+- The business is self-funding: FCF-positive at $182.7M LTM with no runway constraint and nearest maturity wall in 2030, so the de-rating is not driven by a near-term solvency cliff.
   - ↳ `CIQ Net Debt ÷ CIQ LTM EBITDA (EDGAR XBRL breadth fallback) + FCF sign + CIQ Capital Structure (survival capacity)`
-- Management frames the margin shock as competitive-promotional and input-cost-driven (whey/protein inflation, freight, an isolated $11M inventory charge) rather than a category-demand failure, with RTD shakes still cited up 8% — a temporary-overshoot narrative for the human to test.
-  - ↳ `CIQ transcript(s): BellRing Brands, Inc., Q1 2026 Earnings Call, Feb 03, 2026.rtf; BellRing Brands, Inc., Q2 2026 Earnings Call, May 05, 2026.rtf`
-- On TEV/EBITDA the name screens at 7.9 LTM / 7.78 NTM versus a heterogeneous peer set whose median is 6.2 LTM but 8.7 NTM — POSE for the human whether any forward discount is RESIDUAL (overshoot) or EARNED, recognising the peer set spans $111M–$36.4B and is NOT a clean benchmark.
-  - ↳ `CIQ Comparable Analysis→Trading Multiples (name row + Summary Statistics Low/Median/Mean/High)`
-- The company is buying back stock (-10.0% share count over ~1.7y), a capital-return posture inconsistent with a management view of terminal distress — a genuine supporting signal.
+- Absolute revenue has risen each period (1,247→2,332 LTM) even as the EBITDA margin % compressed, so the falling-margin optic coexists with a still-growing top line — read together, not as a collapse.
+  - ↳ `CIQ Financials→Income Statement (margin % + absolute EBITDA reconciler)`
+- On the peer comp, the name's TEV/EBITDA 7.9 vs peer median 6.2 and P/E 8.8 vs median 19.3 cannot be read as a clean discount because comparability is flagged HETEROGENEOUS (caps span $111M–$36.4B, 327x); whether the gap is EARNED or RESIDUAL is for the human to judge given the name's better rev growth (6% vs 4%) but worse margin (13% vs 16%) and leverage (3.9 vs 2.5).
+  - ↳ `CIQ Comparable Analysis→Operating Statistics (name vs peer median: growth/margin/leverage/beta)`
+- Management is buying back stock (share count down 10.0% over ~1.7y), a capital-return posture consistent with a self-funding model rather than distress.
   - ↳ `EDGAR XBRL shares, trailing 2024-07-31..2026-04-28`
 
 ### Bear case (terminal / value-trap)
-- The margin collapse is the REAL signal, not an optical %: EBITDA margin fell from 21% (FY24) to 13% LTM AND absolute EBITDA fell with it from 424 to 312 — the reconciler does NOT rescue this, the dollar EBITDA dropped alongside the percentage.
+- The EBITDA margin compression is NOT merely an optical %-decline: absolute EBITDA itself has FALLEN from the FY2024 peak 424 to 376 (FY2025) to 312 (LTM Mar-2026) — the reconciler beside the % confirms this is a REAL deterioration in dollar profit, not a denominator effect.
   - ↳ `CIQ Financials→Income Statement (margin % + absolute EBITDA reconciler)`
-- Management's own posture deteriorated sharply quarter-over-quarter — Q1 was a 'solid foundation' with 4-6% sales guidance, by Q2 results 'came in below our expectations,' guidance was cut to flat-to-up-2%, EBITDA margin outlook slashed to 14%, with protein-input inflation set to bite harder in Q3/Q4 — a worsening, not stabilising, trajectory.
-  - ↳ `CIQ transcript(s): BellRing Brands, Inc., Q1 2026 Earnings Call, Feb 03, 2026.rtf; BellRing Brands, Inc., Q2 2026 Earnings Call, May 05, 2026.rtf`
-- The fundamental discount looks EARNED, not residual: name EBITDA margin 13% vs peer-median 16%, EBITDA growth -31% vs -6%, LT EPS growth -7% vs +7%, and Debt/EBITDA 3.9 vs 2.5 — worse on margin, growth and leverage simultaneously, the signature of a value trap.
+- Peer fundamental_deltas show the discount looks largely EARNED: EBITDA growth -31% vs peer-median -6%, LT EPS growth -7% vs peer-median +7%, leverage 3.9 vs 2.5 — worse on the dimensions that justify a lower multiple, pointing toward value-trap rather than overshoot.
   - ↳ `CIQ Comparable Analysis→Operating Statistics (name vs peer median: growth/margin/leverage/beta)`
-- Leverage is elevated against a shrinking EBITDA base — net-debt/EBITDA 3.8x and net-debt/OCF 6.1x — so the denominator decay directly worsens the balance-sheet read even though maturities are distant.
+- Leverage is elevated at net-debt/EBITDA 3.8x and net-debt/OCF 6.1x with interest coverage only 4.0x, and the rising debt-to-EBITDA partly reflects the falling EBITDA denominator — a genuine, load-bearing risk, not optics.
   - ↳ `CIQ Net Debt $1,190M [FQ2/CQ1 Mar-31-2026] ÷ CIQ EBITDA $312M [LTM 12 months Mar-31-2026]`
-- Management disclosed the first decline in RTD-shake buy-rate per household in 5 years and 27% of category volume now sold on promotion (up 8pts YoY) — evidence the price-sensitive-consumer and promotional pressure may be structural to the category, not a passing event.
-  - ↳ `CIQ transcript(s): BellRing Brands, Inc., Q1 2026 Earnings Call, Feb 03, 2026.rtf; BellRing Brands, Inc., Q2 2026 Earnings Call, May 05, 2026.rtf`
-- A CEO retirement was announced mid-deterioration, with a national external search and transition by FY-end — leadership uncertainty layered onto a guide-down quarter.
-  - ↳ `CIQ transcript(s): BellRing Brands, Inc., Q1 2026 Earnings Call, Feb 03, 2026.rtf; BellRing Brands, Inc., Q2 2026 Earnings Call, May 05, 2026.rtf`
-- Consensus posture is unsupportive: Hold (3.00), mean target $13.69, and LT growth mean -7.2% / median -10.2% — the Street is modelling shrinkage, not recovery.
+- The stock fell 66% over 180d while the small-cap market rose 18% (rel -79%), an idiosyncratic, name-specific collapse rather than a shared macro drawdown.
+  - ↳ `EOD name−IWM 180d (screen data-record, G2)`
+- Consensus is structurally bearish: recommendation Hold (3.00), mean target $13.69, and LT growth mean -7.2% / median -10.2% — the Street models multi-year shrinkage, not recovery.
   - ↳ `CIQ Estimates→Consensus`
-- The business is single-segment (Protein-Based Consumer Goods 100%) and US-concentrated (88%), with no offsetting diversification to cushion a category-specific competitive shock.
-  - ↳ `CIQ Financials→Segments (Revenues, latest annual column)`
+- The CEO announced retirement effective on or before end of FY2026 with an external search underway, injecting leadership-transition uncertainty amid the competitive pressure described on the call.
+  - ↳ `CIQ transcript(s): BellRing Brands, Inc., Q1 2026 Earnings Call, Feb 03, 2026.rtf; BellRing Brands, Inc., Q2 2026 Earnings Call, May 05, 2026.rtf`
+- Management itself flagged more frequent promotional events from insurgent brands than expected and a Premier RTD consumption decline of 2% in Q1, evidencing real competitive erosion in the core franchise.
+  - ↳ `CIQ transcript(s): BellRing Brands, Inc., Q1 2026 Earnings Call, Feb 03, 2026.rtf; BellRing Brands, Inc., Q2 2026 Earnings Call, May 05, 2026.rtf`
 
 ### Twin reference cases
-- **The Simply Good Foods Company** — recovered
-  - distinguished by: Single-category protein/nutrition CPG that weathered competitive and consumer-shift pressure while remaining a focused brand operator — the closest-in-model analogue in the peer roster.
-  - source: CIQ Comparable Analysis→Financial Data + Business Description (roster + caps + business)
-- **Herbalife Ltd.** — went terminal
-  - distinguished by: Levered single-theme wellness name whose multiple compressed as growth stalled and debt loomed against a shrinking base — the leverage-meets-decline pattern.
-  - source: CIQ Comparable Analysis→Financial Data + Business Description (roster + caps + business)
-- **Beyond Meat** — went terminal
-  - distinguished by: Hot protein-trend brand that saw insurgent competition and value-seeking consumers compress margins after a high-growth run — the once-loved category darling losing pricing power.
-  - source: [LLM-suggested, unverified]
 - **Celsius Holdings** — recovered
-  - distinguished by: Functional-beverage growth brand that absorbed a sharp consumption/sell-in scare and re-rated once volume held and the category proved durable.
+  - distinguished by: High-growth single-category beverage brand that de-rated sharply on competitive/insurgent-entry fears yet held category leadership and re-rated as consumption reaccelerated.
   - source: [LLM-suggested, unverified]
 - **Medifast** — went terminal
-  - distinguished by: Single-product weight/nutrition brand whose demand driver eroded faster than management expected, with the de-rate proving structural rather than cyclical.
+  - distinguished by: Single-category nutrition/wellness brand whose consumption collapsed as the demand thesis shifted and competition compressed pricing, with a cheap-looking multiple that kept falling.
+  - source: [LLM-suggested, unverified]
+- **Herbalife** — went terminal
+  - distinguished by: Leveraged single-segment wellness/nutrition seller whose declining EBITDA made a low headline multiple a value trap rather than an overshoot (also appears in the peer set).
+  - source: CIQ Comparable Analysis→Financial Data + Business Description (roster + caps + business)
+- **Simply Good Foods** — recovered
+  - distinguished by: Protein/nutrition brand (Atkins/Quest) that absorbed competitive shake-category pressure while sustaining distribution gains and brand equity (also appears in the peer set).
+  - source: CIQ Comparable Analysis→Financial Data + Business Description (roster + caps + business)
+- **WW International** — went terminal
+  - distinguished by: Wellness brand whose franchise was structurally undercut by a shift in the underlying demand driver, with optically cheap multiples masking secular erosion.
   - source: [LLM-suggested, unverified]
 
 ### Decisive question
-**Is the margin collapse a temporary promotional/input-cost trough that normalises as insurgent competition moderates, or a structural reset of Premier's category pricing power that permanently lowers the earnings base?**
+**Is the EBITDA decline a transitory promotional/competitive trough that reverses as Premier's distribution, advertising and innovation ramp in 2H — or the start of permanent share/margin erosion as insurgent brands establish themselves in the RTD shake category?**
 
 ### …evidence for
-- Management states competitive intensity 'would gradually moderate over time' and that current results are 'below the long-term potential of the business,' framing the trough as recoverable.
+- Management frames the pressure as near-term transitional, citing record-high household penetration and repeat rates, a re-tested advertising campaign, and a 2H growth acceleration with two new shake lines launching late in the year.
   - ↳ `CIQ transcript(s): BellRing Brands, Inc., Q1 2026 Earnings Call, Feb 03, 2026.rtf; BellRing Brands, Inc., Q2 2026 Earnings Call, May 05, 2026.rtf`
-- Volumes are growing strongly (Premier shake volumes +12% in Q2, consumption outside club +15%) — the brand is gaining units, with the damage concentrated in price/mix not demand.
-  - ↳ `CIQ transcript(s): BellRing Brands, Inc., Q1 2026 Earnings Call, Feb 03, 2026.rtf; BellRing Brands, Inc., Q2 2026 Earnings Call, May 05, 2026.rtf`
+- Revenue continued to grow to 2,332 LTM and rev growth 6% beats the peer-median 4%, consistent with a still-expanding category rather than a shrinking franchise.
+  - ↳ `CIQ Comparable Analysis→Operating Statistics (name vs peer median: growth/margin/leverage/beta)`
 
 ### …evidence against
-- Buy-rate per household declined for the first time in 5 years and 27% of category volume is now promoted (up 8pts YoY), pointing to a structurally more value-driven consumer rather than a one-off promotional cycle.
-  - ↳ `CIQ transcript(s): BellRing Brands, Inc., Q1 2026 Earnings Call, Feb 03, 2026.rtf; BellRing Brands, Inc., Q2 2026 Earnings Call, May 05, 2026.rtf`
-- Protein-driven commodity inflation is running above plan and set to hit harder in Q3 and Q4, meaning the input-cost leg of the margin pressure is escalating, not abating, near-term.
-  - ↳ `CIQ transcript(s): BellRing Brands, Inc., Q1 2026 Earnings Call, Feb 03, 2026.rtf; BellRing Brands, Inc., Q2 2026 Earnings Call, May 05, 2026.rtf`
+- Absolute EBITDA has fallen for two straight periods (424→376→312) and EBITDA growth -31% vs peer-median -6% shows the profit deterioration is steeper than the peer group's.
+  - ↳ `CIQ Financials→Income Statement (margin % + absolute EBITDA reconciler)`
+- The Street models LT growth mean -7.2% / median -10.2% with a Hold rating and a $13.69 mean target, signalling consensus expects ongoing decline rather than a 2H inflection.
+  - ↳ `CIQ Estimates→Consensus`
 
 ### Key unknowns
-- Revised forward guidance exhibit (99.1) was NOT parsed for the May 8-K — the actual revised-outlook figures are MISSING; an expected disclosure absent at the guide-down event is a bearish opacity gap, not neutral.
-- Forward (NTM) adjusted EV/EBITDA and adjusted EPS are UNKNOWN ('adjusted figure not in the 99.1 revised guidance') — without a forward basis, the EV/EBITDA at 0%ile cannot be adjudicated cheap-overshoot vs cheap-terminal.
-- Adjusted net-debt/EBITDA is UNKNOWN — the true leverage on the company's own adjusted basis cannot be confirmed.
-- Segment EBITDA is UNKNOWN ('Segments sheet has no EBITDA section as expected') — cannot see profitability split of Premier vs Dymatize; a missing expected breakout is a bearish opacity flag.
-- No idiosyncratic cohort comparison available (BRBR not in graph coverage) — cannot benchmark the drawdown against a true peer cross-section.
-- Whether the named CEO successor and search outcome resolves the leadership uncertainty before the FY-end transition is unresolved.
-- EV/EBITDA at 7.5x sits at the 0%ile of its own 19-quarter history on a TRAILING-ONLY basis — a neutral fact the dossier flags as overshoot-vs-terminal unresolved, belonging here, not in bull or bear.
+- Forward (NTM) adjusted EBITDA and adjusted EPS are UNKNOWN — not in the 99.1 revised guidance — leaving the overshoot-vs-terminal question unresolvable on a forward basis; the EV/EBITDA is trailing-only (BEARISH opacity on the forward earnings power).
+- The revised-guidance 99.1 exhibit for the May-05-2026 (Q2) 8-K was NOT parsed, so the precise updated sales/EBITDA outlook driving the second gap-down is not in the facts (BEARISH — a missing expected disclosure at the de-rating catalyst).
+- Segment EBITDA is UNKNOWN (Segments sheet has no EBITDA section) and the company reports a single 100% Protein-Based Consumer Goods segment, so Premier vs Dymatize profit mix and where margin erosion concentrates is opaque (BEARISH opacity).
+- No idiosyncratic cohort comparison is available (BRBR not in graph coverage), limiting the read to name-vs-market relative return only.
+- Net-debt/EBITDA on an adjusted basis is UNKNOWN, so true covenant headroom against any leverage tests cannot be confirmed.
+- EPS and revenue estimate-revision breadth show 0↑/0↓ last month — stale or absent analyst movement around the latest de-rating, leaving forward direction unconfirmed.
+
+## ⚠ Flags (human review)
+- Net debt/EBITDA (3.8x) is on REPORTED EBITDA (CIQ / consolidated GAAP), not the covenant basis; management and credit covenants typically define leverage on adjusted EBITDA (a larger denominator → a lower ratio), reconciled in the earnings release/transcript (currently UNAVAILABLE) — do not read 3.8x as the covenant-basis leverage.
+- DIRECTIONAL language 'recommendation' — human review (dossier frames, not concludes)
+- VERIFICATION-CLAIM bear_point: 'The EBITDA margin compression is NOT merely an optical %-decline:…' — the dossier cites, it does not verify; confirm against the source (cited ≠ verified)
+- FALSE-BALANCE? evidence_balance commits a strong lean but the body is near-symmetric (5 bull vs 7 bear) and the minority bull_points aren't qualified-as-outweighed — size the minority against the lean (rule 7), or it launders a one-sided case

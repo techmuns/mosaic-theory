@@ -13,7 +13,7 @@
         "note": null
       },
       "pe_percentile_5y": {
-        "value": 0.014342629482071713,
+        "value": 0.014365522745411013,
         "source_ref": "EDGAR/EOD P/E pctile vs ~5y (screen data-record)",
         "status": "present",
         "note": null
@@ -228,7 +228,7 @@
         "note": null
       },
       "rel_vs_market": {
-        "value": -0.6582840352353441,
+        "value": -0.6830677700038631,
         "source_ref": "EOD name−IWM 180d (screen data-record, G2)",
         "status": "present",
         "note": null
@@ -280,77 +280,72 @@
     }
   },
   "synthesis": {
-    "evidence_balance": "mixed — a high-ROIC cash-generative franchise at its own valuation floor, but with revenue now contracting and fundamentals materially below peers.",
+    "evidence_balance": "mixed — a floor-percentile multiple and rising absolute EBITDA on a recurring base offset a genuine revenue rollover and four-year margin slide.",
     "bull_points": [
       {
-        "claim": "At 7.5x TEV/LTM EBITDA the name sits at the 0th percentile of its own 20-quarter history and P/E sits at the 1.4th percentile of ~5y — a multiple at its own-history floor that POSES (not answers) whether this is overshoot.",
+        "claim": "EV/EBITDA sits at the absolute 0th percentile of 20 trailing quarterly closes at 7.5x and P/E at the ~1.4th percentile of ~5y, a multiple at its own-history floor that POSES whether the de-rate is overshoot rather than terminal.",
         "source_ref": "CIQ Financials→Multiples 'TEV/LTM EBITDA' Close — 20 quarters (partial last column excluded from the distribution)",
         "cited": true
       },
       {
-        "claim": "Absolute EBITDA has RISEN through the margin compression — Dec-31-2021 1,148 → Mar-31-2026 (LTM) 1,337 — so the falling margin % is not a falling EBITDA dollar; the % is the optical read, the rising dollar is the reconciler.",
+        "claim": "Absolute EBITDA RISES across the window (1,148→1,314→1,274→1,309→1,311→1,337 LTM) and revenue grows to 6,474 LTM — read with the margin %, this is the consensus MISREAD of compression, not a collapsing earnings base.",
         "source_ref": "CIQ Financials→Income Statement (margin % + absolute EBITDA reconciler)",
         "cited": true
       },
       {
-        "claim": "The business throws off $1,064.2M levered FCF (LTM Mar-31-2026), consistent with a capital-light subscription model.",
+        "claim": "Levered FCF of $1,064.2M LTM and a self-described model that gets paid upfront and converts FCF in excess of net income supports the overshoot reading on a recurring subscription base.",
         "source_ref": "CIQ Financials→Cash Flow 'Levered Free Cash Flow' [LTM 12 months Mar-31-2026]",
         "cited": true
       },
       {
-        "claim": "Leverage is modest at 1.3x net-debt/EBITDA with 10.1x interest coverage and no maturity before 2028, indicating no near-term solvency pressure.",
-        "source_ref": "CIQ Net Debt $1,688M [Q1 Mar-31-2026] ÷ CIQ EBITDA $1,337M [LTM 12 months Mar-31-2026]",
-        "cited": true
-      },
-      {
-        "claim": "Management is shrinking the share count aggressively — 77.06M (2024-07-26) → 66.95M (2026-05-01), -13.1% — concentrating per-share economics.",
+        "claim": "The company is shrinking the share count -13.1% over ~1.8 years (77.1M→67.0M), an absolute-per-share tailwind independent of multiple.",
         "source_ref": "EDGAR XBRL shares, trailing 2024-07-26..2026-05-01",
         "cited": true
       },
       {
-        "claim": "ROIC has stayed high and even firmed — Dec-31-2024 18.2% → Mar-31-2026 (LTM) 19.4% — inconsistent with a structurally impaired franchise.",
+        "claim": "ROIC remains ~19.4% LTM (15.7%→20.6%→19.8%→18.2%→18.6%→19.4%) and interest coverage is 10.1x with net-debt/EBITDA only 1.3x — returns and balance sheet do not corroborate a terminal thesis.",
         "source_ref": "CIQ Financials→Income Statement + Segments + Ratios (multi-year columns)",
         "cited": true
       },
       {
-        "claim": "On the peer-comp consensus read the name trades below the heterogeneous peer median on every line (TEV/EBITDA 7.5 vs median 10.8; NTM TEV/EBITDA 6.59 vs 9.66; P/E 13 vs 16.4; NTM P/E 9.2 vs 12.76) — but whether that gap is EARNED or RESIDUAL must be decomposed against fundamental_deltas, not read as cheap.",
+        "claim": "On the peer COMPOSITION (10 data/analytics names, $751M–$119.1B, name $8.7B — heterogeneous), the name trades at 7.5x LTM / 6.59x NTM TEV/EBITDA vs peer medians 10.8x / 9.66x and NTM P/E 9.2 vs 12.76 median; the human must judge whether that gap is EARNED or RESIDUAL.",
         "source_ref": "CIQ Comparable Analysis→Trading Multiples (name row + Summary Statistics Low/Median/Mean/High)",
         "cited": true
       },
       {
-        "claim": "On the fundamental_deltas the name's LT EPS growth (14% vs peer-median 12%) and beta (0.9 vs 0.9) are AT OR ABOVE peers, posing whether the full discount is fully earned by the weaker growth/margin legs or partly residual — the human judges.",
+        "claim": "On the EARNED-vs-RESIDUAL inputs the name's LT EPS growth 14% slightly EXCEEDS the peer median 12% and beta matches at 0.9, partially offsetting the margin and growth shortfalls used to justify the discount.",
         "source_ref": "CIQ Comparable Analysis→Operating Statistics (name vs peer median: growth/margin/leverage/beta)",
         "cited": true
       }
     ],
     "bear_points": [
       {
-        "claim": "The de-rate is sharply idiosyncratic, not a market move: the name returned -49.9% over 180d while IWM returned +18.0%, a -65.8% relative gap concentrated on the name.",
-        "source_ref": "EOD name−IWM 180d (screen data-record, G2)",
-        "cited": true
-      },
-      {
-        "claim": "Top-line growth has stalled into a decline — revenue YoY -1.5% (Q1 Mar-31-2026 vs Q1 Mar-31-2025) — and LTM revenue 6,474 has slipped below FY2025's 6,497, so this is not merely margin optics: the dollar base is now contracting.",
+        "claim": "Same-quarter revenue is now DECLINING -1.5% YoY (Q1 Mar-31-2026 vs Q1 Mar-31-2025) and LTM revenue (6,474) has slipped below the Dec-2025 annual (6,497) — the top line has rolled over, which a near-floor multiple may be correctly pricing as deterioration rather than overshoot.",
         "source_ref": "CIQ Financials→Income Statement + Segments + Ratios (multi-year columns)",
         "cited": true
       },
       {
-        "claim": "The EBITDA-margin slide is real and multi-year — 24% (2021) → 20% (2025) — and on growth/margin fundamentals the name is materially worse than peers (EBITDA margin 21% vs peer-median 31%; rev growth 2% vs 8%; EBITDA growth 2% vs 7%), so much of the peer discount is EARNED, not a clean overshoot.",
-        "source_ref": "CIQ Comparable Analysis→Operating Statistics (name vs peer median: growth/margin/leverage/beta)",
+        "claim": "EBITDA margin has compressed every year from 24% to 20% (LTM 21%) — and while absolute EBITDA still rises, the trajectory of the % is a genuine structural-pressure signal the bull reconciler does not fully neutralise.",
+        "source_ref": "CIQ Financials→Income Statement (margin % + absolute EBITDA reconciler)",
         "cited": true
       },
       {
-        "claim": "Revenue estimate breadth is negative — FY2026 Revenue 0 up / 3 down last month — and the gap traces to a discrete 2026-02-03 earnings+Reg-FD 8-K, consistent with a fundamentals-driven reset rather than noise.",
+        "claim": "Management cites broad external pressures — DOGE federal cuts, tariffs, state/local/education funding, non-AI tech — producing extended buying cycles and CV growth of only 1% (4% ex-US-fed), confirming a tougher demand environment that is idiosyncratic and ongoing.",
+        "source_ref": "CIQ transcript(s): Gartner, Inc., Q1 2026 Earnings Call, May 05, 2026.rtf; Gartner, Inc., Q4 2025 Earnings Call, Feb 03, 2026.rtf",
+        "cited": true
+      },
+      {
+        "claim": "Revenue estimate revisions are negative (0↑/3↓ last month) and consensus is a Hold (3.00) against a $165 mean target, so the sell-side is not corroborating a clean overshoot.",
         "source_ref": "CIQ Estimates→Revisions (Last-Month breadth, FY)",
         "cited": true
       },
       {
-        "claim": "Revenue is heavily concentrated in one segment — Insights 5,073 (78%) of 6,497 — so any deceleration in the subscription/CV engine drives the whole result.",
-        "source_ref": "CIQ Financials→Segments (Revenues, latest annual column)",
+        "claim": "The drawdown is a discrete idiosyncratic gap-down on the 2026-02-03 earnings/Reg-FD 8-K, and the name returned -49.9% over 180d while the small-cap market rose +18.0% (-68.3% relative) — a name-specific repricing, not a sector wash-out.",
+        "source_ref": "EOD name−IWM 180d (screen data-record, G2)",
         "cited": true
       },
       {
-        "claim": "On the fundamental_deltas leverage is also worse than peers (Debt/EBITDA 2.4 vs peer-median 1.8), partly justifying the discount on the balance-sheet leg.",
+        "claim": "On EARNED-discount inputs the name underperforms peers on the fundamentals that justify a lower multiple: EBITDA margin 21% vs 31% median, revenue growth 2% vs 8%, EBITDA growth 2% vs 7%, and HIGHER leverage Debt/EBITDA 2.4 vs 1.8 — a value-trap reading of the discount.",
         "source_ref": "CIQ Comparable Analysis→Operating Statistics (name vs peer median: growth/margin/leverage/beta)",
         "cited": true
       }
@@ -359,86 +354,73 @@
       {
         "name": "Moody's Corporation",
         "outcome": "recovered",
-        "distinguishing_fact": "High-retention subscription/recurring-data franchise that de-rated on a cyclical demand pause yet held pricing power and re-rated as growth resumed.",
+        "distinguishing_fact": "Recurring subscription/analytics franchise that de-rated on a cyclical demand air-pocket and re-rated as the recurring base proved durable.",
+        "source": "[LLM-suggested, unverified]"
+      },
+      {
+        "name": "FactSet Research Systems Inc.",
+        "outcome": "recovered",
+        "distinguishing_fact": "Subscription data provider whose growth decelerated on enterprise budget tightening yet retained high renewal economics through the slowdown.",
         "source": "[LLM-suggested, unverified]"
       },
       {
         "name": "Verisk Analytics",
         "outcome": "recovered",
-        "distinguishing_fact": "Recurring-revenue analytics moat that absorbed a growth scare without structural erosion of its subscription base.",
+        "distinguishing_fact": "Data-analytics franchise that traded down on margin and growth worries but where pricing power on an entrenched product re-emerged.",
         "source": "[LLM-suggested, unverified]"
       },
       {
-        "name": "Gartner Inc",
-        "outcome": "recovered",
-        "distinguishing_fact": "Same name previously de-rated on a federal/government and macro demand shock, then re-accelerated contract value as decision-making normalized.",
-        "source": "[LLM-suggested, unverified]"
-      },
-      {
-        "name": "FactSet Research Systems",
-        "outcome": "recovered",
-        "distinguishing_fact": "Subscription financial-data provider that saw decelerating net new business and multiple compression but retained sticky customers.",
-        "source": "[LLM-suggested, unverified]"
-      },
-      {
-        "name": "Nielsen Holdings",
+        "name": "Gartner-adjacent IT-research peer Forrester Research",
         "outcome": "went terminal",
-        "distinguishing_fact": "Information/measurement franchise whose stalled organic growth and rising leverage led to a prolonged de-rate and eventual take-private rather than a re-rate.",
+        "distinguishing_fact": "Research-subscription model where extended buying cycles and stalled contract value persisted into a durable growth stall rather than a rebound.",
+        "source": "[LLM-suggested, unverified]"
+      },
+      {
+        "name": "Cognizant Technology Solutions",
+        "outcome": "recovered",
+        "distinguishing_fact": "IT services name de-rated sharply on decelerating demand and margin pressure, then stabilised once growth troughed without balance-sheet stress.",
         "source": "[LLM-suggested, unverified]"
       }
     ],
     "decisive_question": {
-      "question": "Is the contract-value/revenue stall a temporary geopolitical- and federal-driven deferral that re-accelerates (overshoot), or the start of a structural deceleration of the Insights subscription engine that earns the peer discount (value trap)?",
+      "question": "Is the slowdown in Contract Value and revenue a cyclical air-pocket driven by exogenous federal/tariff/funding shocks that normalise, or the onset of a durable structural growth stall in the core Insights subscription engine?",
       "evidence_for": [
         {
-          "claim": "Management frames the slowdown as client decisions slowing 'somewhat in March' due to the geopolitical environment, with CV growth said to have ACCELERATED in Q1 and expected to accelerate further.",
+          "claim": "Management attributes the slowdown to specific external forces (DOGE, tariffs, state/local funding, non-AI tech) and reports CV grew ~4% ex-US-federal, framing the weakness as exogenous and concentrated.",
           "source_ref": "CIQ transcript(s): Gartner, Inc., Q1 2026 Earnings Call, May 05, 2026.rtf; Gartner, Inc., Q4 2025 Earnings Call, Feb 03, 2026.rtf",
           "cited": true
         },
         {
-          "claim": "ROIC firmed to 19.4% LTM and absolute EBITDA rose to 1,337 LTM, inconsistent with a franchise in structural decay.",
-          "source_ref": "CIQ Financials→Income Statement + Segments + Ratios (multi-year columns)",
-          "cited": true
-        },
-        {
-          "claim": "LT EPS growth at 14% is above the peer median of 12%, suggesting the long-run earnings trajectory the market is pricing may exceed the implied discount.",
-          "source_ref": "CIQ Comparable Analysis→Operating Statistics (name vs peer median: growth/margin/leverage/beta)",
+          "claim": "Insights is 78% of revenue (5,073 of 6,497) and is described as subscription-based with strong retention and FCF in excess of net income, a base that can re-accelerate if the shocks fade.",
+          "source_ref": "CIQ Financials→Segments (Revenues, latest annual column)",
           "cited": true
         }
       ],
       "evidence_against": [
         {
-          "claim": "Revenue is already YoY -1.5% and LTM revenue has slipped below FY2025, so the deceleration has crossed into outright contraction at the reporting line.",
+          "claim": "Same-quarter revenue is already negative at -1.5% YoY and EBITDA margin has fallen four consecutive years (24%→20%), consistent with a structural rather than one-off deterioration.",
           "source_ref": "CIQ Financials→Income Statement + Segments + Ratios (multi-year columns)",
           "cited": true
         },
         {
-          "claim": "Forward revenue revisions are negative (FY2026 0 up / 3 down), and the consensus recommendation is a Hold (3.00), with management itself describing a 'much tougher selling environment' of deferred decision-making.",
+          "claim": "Revenue revisions are 0↑/3↓ and consensus sits at Hold (3.00), indicating analysts do not yet treat the slowdown as a transient air-pocket.",
           "source_ref": "CIQ Estimates→Revisions (Last-Month breadth, FY)",
-          "cited": true
-        },
-        {
-          "claim": "Margin and growth fundamentals are materially below peers (margin 21% vs 31%; rev growth 2% vs 8%), indicating much of the discount is earned.",
-          "source_ref": "CIQ Comparable Analysis→Operating Statistics (name vs peer median: growth/margin/leverage/beta)",
           "cited": true
         }
       ]
     },
     "key_unknowns": [
-      "FCF SIGN is UNKNOWN (no OCF/capex parsed) — although a positive levered FCF figure of 1,064.2 is reported, the survival_capacity leg flags runway as not formally assessable; treat the disclosure gap as a bearish risk, not a neutral one.",
-      "Forward/adjusted EV/EBITDA and adjusted EPS are UNKNOWN — the adjusted figure was not in the 99.1 revised guidance, so the trailing 7.5x cannot be cleanly tested against a forward basis to separate cheap-overshoot from cheap-terminal.",
-      "Revised guidance is UNKNOWN — no revised-outlook 99.1 exhibit was parsed for the 2026-02-03 8-K, so the magnitude of any forward cut behind the gap-down is not in the facts.",
-      "Segment EBITDA is UNKNOWN — no per-segment profitability, so the margin contribution of the 78% Insights concentration cannot be isolated.",
-      "No graph cohort/cross-section (IT not in graph_coverage) — the idiosyncratic read rests on name-vs-IWM only, with no peer-cohort comparison.",
-      "The EV/EBITDA at its own-history 0th percentile is explicitly trailing-only with overshoot-vs-terminal unresolved — a neutral fact for the human to resolve, not directional evidence."
+      "Revised forward guidance is UNKNOWN — no revised-outlook 99.1 exhibit was parsed for the 2026-02-03 8-K despite it being an earnings filing; absence of a forward guide on the gap-down event is a bearish opacity risk.",
+      "Adjusted EPS, forward adjusted EV/EBITDA, and adjusted net-debt/EBITDA are all UNKNOWN (not in the revised guidance), so the forward valuation basis used by management cannot be reconciled.",
+      "FCF sign is UNKNOWN (no OCF/capex breakout) — survival_capacity flags runway as not assessable, a bearish gap even though net-debt/EBITDA is 1.3x and nearest maturity wall is 2028.",
+      "Segment-level EBITDA is UNKNOWN (no EBITDA section on the Segments sheet), so the profitability of the 78% Insights segment versus Conferences/Consulting cannot be isolated.",
+      "No idiosyncratic-vs-shared cohort is available (IT absent from graph coverage), so the -68.3% relative move cannot be benchmarked against a peer cross-section.",
+      "Peer set is explicitly HETEROGENEOUS ($751M–$119.1B span, 159x); every peer multiple is a confidence-gated input, not a clean benchmark, and the EARNED-vs-RESIDUAL split of the discount is left for the human."
     ]
   },
   "flags": [
-    "EPS shown is GAAP-based and understates earnings power; company-adjusted (non-GAAP) EPS is not in the CIQ workbook — it lives in the earnings-release/transcript reconciliation (currently UNAVAILABLE) — not a ceiling on earnings power.",
-    "Net debt/EBITDA (1.3x) is on REPORTED EBITDA (CIQ / consolidated GAAP), not the covenant basis; management and credit covenants typically define leverage on adjusted EBITDA (a larger denominator → a lower ratio), reconciled in the earnings release/transcript (currently UNAVAILABLE) — do not read 1.3x as the covenant-basis leverage.",
-    "DIRECTIONAL language 'recommendation' — human review (dossier frames, not concludes)",
-    "UNRECONCILED bear_point: 'Top-line growth has stalled into a decline — revenue YoY -1.5% (Q1…' — cites margin compression without the absolute-EBITDA reconciliation (margin % can fall while EBITDA rises)"
+    "UNRECONCILED decisive.against: 'Same-quarter revenue is already negative at -1.5% YoY and EBITDA…' — cites margin compression without the absolute-EBITDA reconciliation (margin % can fall while EBITDA rises)"
   ],
   "llm_model": "claude-opus-4-8",
-  "assembled_at": "2026-06-29T16:15:59.722917"
+  "assembled_at": "2026-06-30T08:47:31.832969"
 }

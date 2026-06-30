@@ -1,17 +1,8 @@
 # Dossier — Concentrix Corp (CNXC)
 
-_Finalist rank 14 · ref 2026-06-22 · assembled 2026-06-29 16:12 · LLM claude-opus-4-8_
+_Finalist rank 14 · ref 2026-06-22 · assembled 2026-06-30 08:50 · LLM claude-opus-4-8_
 
 > **Assembles and cites; never concludes.** There is no BUY/AVOID here — the verdict is the human's, logged separately via the ledger with a frozen entry price.
-
-## ⚠ Flags (human review)
-- P/E may be distorted by non-recurring EPS — latest annual EPS -20.36 vs recent median 4.71; verify against normalized/forward EPS (CIQ)
-- EPS shown is GAAP-based and understates earnings power; company-adjusted (non-GAAP) EPS is not in the CIQ workbook — it lives in the earnings-release/transcript reconciliation (currently UNAVAILABLE) — not a ceiling on earnings power.
-- Net debt/EBITDA (4.4x) is on REPORTED EBITDA (CIQ / consolidated GAAP), not the covenant basis; management and credit covenants typically define leverage on adjusted EBITDA (a larger denominator → a lower ratio), reconciled in the earnings release/transcript (currently UNAVAILABLE) — do not read 4.4x as the covenant-basis leverage.
-- UNTRACEABLE figure '21' in bull_point: 'Absolute revenue has risen every year from 5,587 (FY21) to 9,954 LTM,…'
-- UNTRACEABLE figure '25' in decisive.for: 'Absolute revenue continues to rise (9,954 LTM vs 9,826 FY25) and the…'
-- ANCHORS-ON-DISTORTED-P/E bull_point: 'EV/EBITDA (TEV/LTM) sits at 5.1x at the 11th percentile of 19…' — the P/E is distorted (rests on a non-current/non-recurring EPS); don't read it as cheap
-- HETEROGENEOUS-BENCHMARK bear_point: 'The discount to peers is at least partly EARNED: the name's EBITDA…' — leans on the peer set as a clean benchmark, but comparability flags it HETEROGENEOUS; confidence-gate every peer stat
 
 ## Mechanical layer (source-bound facts)
 
@@ -94,7 +85,7 @@ _Finalist rank 14 · ref 2026-06-22 · assembled 2026-06-29 16:12 · LLM claude-
   - ↳ `EOD CNXC 180d to 2026-06-22`
 - **Market (IWM) 180d return:** 18.0%
   - ↳ `EOD IWM 180d to 2026-06-22`
-- **Relative vs market:** -59.7%
+- **Relative vs market:** -61.7%
   - ↳ `EOD name−IWM 180d (screen data-record, G2)`
 - **Cohort read:** _UNKNOWN_ — no graph cohort to compare — see rel_vs_market for the name-vs-market read
 - **Graph cohort:** _UNKNOWN_ — CNXC not in graph_coverage.json — no exposed cross-section to compare
@@ -115,68 +106,76 @@ _Finalist rank 14 · ref 2026-06-22 · assembled 2026-06-29 16:12 · LLM claude-
 
 ## Synthesis (LLM — framing for the human, every point source-bound)
 
-**Evidence balance:** mixed — cheap on its own multiple history with rising revenue and positive FCF, but high leverage, falling absolute EBITDA and declining ROIC keep the value-trap read live.
+**Evidence balance:** mixed — financing-driven de-rate and positive FCF offset by 4.4x leverage, rolling-over absolute EBITDA, and halved ROIC, leaving the AI-accretion thesis unproven.
 
 ### Bull case (overshoot / mean-revert)
-- EV/EBITDA (TEV/LTM) sits at 5.1x at the 11th percentile of 19 quarterly closes — near its own multi-year floor.
-  - ↳ `CIQ Financials→Multiples 'TEV/LTM EBITDA' Close — 19 quarters (partial last column excluded from the distribution)`
-- The business is FCF-positive at $517.1M LTM, making it self-funding with no runway constraint despite the leverage.
-  - ↳ `CIQ Financials→Cash Flow 'Levered Free Cash Flow' [LTM 12 months Feb-28-2026]`
-- Absolute revenue has risen every year from 5,587 (FY21) to 9,954 LTM, with revenue YoY +4.1% latest same-quarter — the top line is growing, not eroding.
-  - ↳ `CIQ Financials→Income Statement + Segments + Ratios (multi-year columns)`
-- Management is buying back stock, reducing share count -6.6% over trailing ~1.8 years (65.3M to 61.0M), a capital-return posture inconsistent with a survival crisis.
+- EV/EBITDA at 5.1x trailing sits at the 11th percentile of 19 quarterly closes (near its own-history floor), while absolute LTM EBITDA of 1,231 remains substantial and FCF is positive at 517.1 — i.e. the de-rate is not a collapse in cash generation.
+  - ↳ `CIQ Financials→Multiples 'TEV/LTM EBITDA' Close (latest) — current multiple`
+- Absolute revenue and EBITDA show a multi-year rising trajectory (revenue 5,587→9,954 LTM; EBITDA 832→1,231 LTM), so the falling EBITDA margin % (15%→12%) is partly an optical mix/scale effect, not a fall in absolute dollars earned.
+  - ↳ `CIQ Financials→Income Statement (margin % + absolute EBITDA reconciler)`
+- The gap-downs map to financing/securitization 8-K item codes (8.01 underwriting agreement; 1.01/2.03 securitization amendment), not to an earnings/guidance cut — a refinancing of the 6.65% 2026 notes into new 6.50% 2029 notes, which is balance-sheet management rather than a demand shock.
+  - ↳ `EDGAR 8-K item codes at the gap-down dates (not blanket-labelled earnings)`
+- On NTM forward multiples the name trades below the heterogeneous peer median (NTM TEV/EBITDA 4.54 vs median 5.26; NTM TEV/Rev 0.68 vs median 0.86) — POSE for the human whether this discount is EARNED or RESIDUAL once fundamentals are weighed; do not read the gap as clean upside given the peer set spans $103M–$32.0B.
+  - ↳ `CIQ Comparable Analysis→Trading Multiples (name row + Summary Statistics Low/Median/Mean/High)`
+- The company is buying back stock (-6.6% share count over ~1.8y) and the survival_capacity leg reads self-funding (FCF-positive, no runway constraint), consistent with a balance sheet under management rather than distress.
   - ↳ `EDGAR XBRL shares, trailing 2024-06-30..2026-03-31`
-- On the discount-to-peers question: the name trades at TEV/EBITDA 4.1x vs a heterogeneous peer median of 5.3x — but the human must judge whether that gap is EARNED (name's EBITDA margin 12% vs peer-median 17%, EBITDA growth -4% vs 0%, Debt/EBITDA 3.4 vs 2.0) or RESIDUAL/overshoot, since the fundamental deltas point to several worse metrics.
-  - ↳ `CIQ Comparable Analysis→Operating Statistics (name vs peer median: growth/margin/leverage/beta)`
 
 ### Bear case (terminal / value-trap)
-- EBITDA margin has compressed from 16% (FY22) to 12% LTM, but the paired reconciler shows absolute EBITDA also fell from a 1,295 peak (FY24) to 1,231 LTM — so this is a GENUINE signal, not merely an optical %-decline: both the ratio AND the absolute dollar figure are declining off the peak.
-  - ↳ `CIQ Financials→Income Statement (margin % + absolute EBITDA reconciler)`
-- Net-debt/EBITDA is 4.4x and net-debt/OCF is 7.6x with interest coverage of only 3.4x — a heavily levered balance sheet against a declining EBITDA base.
+- Net debt/EBITDA of 4.4x (CIQ) is more than double the peer median of 2.0, and net debt/OCF of 7.6x compounds it — the leverage is the REAL signal here, a load-bearing structural weakness rather than an optical artifact, with EBITDA flat-to-declining at the denominator.
   - ↳ `CIQ Net Debt $5,467M [Q1 Feb-28-2026] ÷ CIQ EBITDA $1,231M [LTM 12 months Feb-28-2026]`
-- ROIC has structurally deteriorated from 9.0% (FY22) to 3.9% LTM despite the revenue build — capital is generating progressively less return, signalling the growth is being bought, not earned.
+- The falling EBITDA margin (15%→12% LTM) and gross margin (35%→34% LTM) is a GENUINE deterioration even read against the reconciler: absolute EBITDA itself has now ROLLED OVER (1,295 FY24 → 1,266 FY25 → 1,231 LTM), so this is not merely a % optic — the dollar figure is declining too.
+  - ↳ `CIQ Financials→Income Statement (margin % + absolute EBITDA reconciler)`
+- Capital efficiency has structurally fallen — ROIC dropped from 8.8%/9.0% to 3.9% LTM — indicating the revenue growth was bought with dilutive capital/acquisitions rather than earned, a hallmark of a value trap not an overshoot.
   - ↳ `CIQ Financials→Income Statement + Segments + Ratios (multi-year columns)`
-- The name has fallen -42.6% over 180 days while the IWM benchmark rose +18.0%, a -59.7% relative underperformance — the de-rating is sharply idiosyncratic, not a market-wide move.
-  - ↳ `EOD name−IWM 180d (screen data-record, G2)`
-- The discount to peers is at least partly EARNED: the name's EBITDA margin (12%) trails the peer median (17%) and its EBITDA growth (-4%) trails the peer median (0%) with higher leverage (3.4 vs 2.0) — fundamental deltas consistent with a value trap rather than a clean overshoot.
+- On fundamentals the name is worse than peers across multiple legs (EBITDA margin 12% vs 17% median; EBITDA growth -4% vs 0%; Debt/EBITDA 3.4 vs 2.0), so a meaningful part of the peer discount is EARNED rather than residual — a value-trap risk the human must weigh, not a clean overshoot.
   - ↳ `CIQ Comparable Analysis→Operating Statistics (name vs peer median: growth/margin/leverage/beta)`
+- The name has underperformed the market by ~62 percentage points over 180d (-42.6% vs IWM +18.0%) — an idiosyncratic, not market-wide, repricing.
+  - ↳ `EOD name−IWM 180d (screen data-record, G2)`
+- Interest coverage of only 3.4x against a debt stack carrying 6.5–6.85% coupons means refinancing rolls debt at high fixed cost, pressuring the cushion as maturities (2026, 2028) come due.
+  - ↳ `CIQ Financials→Income Statement EBITDA ÷ Interest Expense [LTM 12 months Feb-28-2026]`
 
 ### Twin reference cases
-- **Teleperformance SE** — went terminal
-  - distinguished by: Same-industry CX/BPO incumbent de-rated on the secular fear that generative AI structurally shrinks the human-agent revenue pool; analogue for the bear AI-disruption thesis.
+- **Conduent** — went terminal
+  - distinguished by: Spun-out BPO/customer-experience outsourcer that levered up and saw margins grind lower amid commoditized contracts and weak ROIC — same structural pressure as a low-margin services roll-up.
+  - source: [LLM-suggested, unverified]
+- **Teleperformance SE** — recovered
+  - distinguished by: Direct CX-outsourcing peer that was sharply de-rated on AI-disruption fears yet kept generating cash and growing revenue — the same 'AI is a headwind vs tailwind' narrative crux.
+  - source: CIQ Comparable Analysis→Financial Data + Business Description (roster + caps + business)
+- **DXC Technology** — went terminal
+  - distinguished by: Acquisition-built IT/BPO services company that traded optically cheap for years while declining revenue quality and leverage made it a persistent value trap rather than an overshoot.
   - source: [LLM-suggested, unverified]
 - **Genpact Limited** — recovered
-  - distinguished by: BPO peer that repositioned toward higher-value AI-and-analytics-led work and held its multiple as the human-seat narrative reset; analogue for the bull transformation thesis.
-  - source: [LLM-suggested, unverified]
-- **Cognizant Technology Solutions** — recovered
-  - distinguished by: IT-services name that de-rated on growth and margin worries yet kept generating cash and buying back stock through the trough; analogue for self-funded mean-reversion.
-  - source: [LLM-suggested, unverified]
-- **DXC Technology** — went terminal
-  - distinguished by: Levered services roll-up where a leveraged balance sheet and structurally falling returns on capital persisted through repeated 'transformation' framing; analogue for the value-trap read.
-  - source: [LLM-suggested, unverified]
-- **Conduent** — went terminal
-  - distinguished by: BPO spinoff that stayed cheap for years as leverage and weak organic growth offset cost actions; analogue for cheap-but-terminal.
+  - distinguished by: Business-process peer that pivoted to higher-value digital/AI-enabled work and re-rated as the mix shift proved margin-accretive — the bull thesis Concentrix management is articulating.
+  - source: CIQ Comparable Analysis→Financial Data + Business Description (roster + caps + business)
+- **Sykes Enterprises** — went terminal
+  - distinguished by: Customer-engagement outsourcer whose labor-cost and offshore-mix margin pressure ultimately led to it being absorbed rather than independently re-rating.
   - source: [LLM-suggested, unverified]
 
 ### Decisive question
-**Is the AI/iX-Suite shift a genuine margin-accretive growth engine that reverses the EBITDA and ROIC decline, or is it cover for a CX/BPO model whose human-agent revenue base is structurally eroding while leverage stays high?**
+**Is the AI/iX-Suite mix shift genuinely margin-accretive at scale (overshoot that mean-reverts as deleveraging to <2.6x EBITDA lands), or is the margin/ROIC erosion structural and AI a net demand headwind for a levered commoditized-services book (value trap)?**
 
 ### …evidence for
-- Management states Technology wins are up >61% YoY, signed annual contract value for AI solutions more than doubled QoQ, and >40% of new business now includes their own technology, with exited-2025 AI revenue of over $60M reaching breakeven.
+- Management states larger transformative AI deals initially compress revenue and margin but are accretive once at scale, with AI-platform revenue exiting 2025 at over $60M annualized at breakeven and Technology wins up 61% YoY.
   - ↳ `CIQ transcript(s): Concentrix Corporation, Q1 2026 Earnings Call, Mar 24, 2026.rtf; Concentrix Corporation, Q4 2025 Earnings Call, Jan 13, 2026.rtf`
-- Absolute revenue continues to rise (9,954 LTM vs 9,826 FY25) and the name remains FCF-positive at $517.1M, giving room to fund the transition without external capital.
-  - ↳ `CIQ Financials→Cash Flow 'Levered Free Cash Flow' [LTM 12 months Feb-28-2026]`
+- Management committed to reducing net leverage to below 2.6x adjusted EBITDA by end of fiscal 2026 and reaffirmed $630–650M adjusted FCF, with restructuring expected to drive ~$40M annualized savings and H2 profitability growth.
+  - ↳ `CIQ transcript(s): Concentrix Corporation, Q1 2026 Earnings Call, Mar 24, 2026.rtf; Concentrix Corporation, Q4 2025 Earnings Call, Jan 13, 2026.rtf`
 
 ### …evidence against
-- Despite the revenue build, both EBITDA margin (16%→12%) and absolute EBITDA (1,295→1,231) are off their peaks and ROIC has fallen to 3.9%, so the 'accretive-at-scale' transition has not yet shown up in the consolidated numbers.
+- Absolute EBITDA has rolled over for two consecutive periods (1,295→1,266→1,231) and ROIC has more than halved to 3.9%, evidence the margin pressure is persisting rather than reverting.
   - ↳ `CIQ Financials→Income Statement + Segments + Ratios (multi-year columns)`
-- Management's own framing concedes the transformative AI deals 'might initially compress some existing revenue and margin' — an acknowledged near-term drag whose payoff timing is unverified.
-  - ↳ `CIQ transcript(s): Concentrix Corporation, Q1 2026 Earnings Call, Mar 24, 2026.rtf; Concentrix Corporation, Q4 2025 Earnings Call, Jan 13, 2026.rtf`
+- EBITDA growth is negative (-4%) versus a peer median of 0% while leverage runs 3.4x vs peer 2.0x, so the fundamentals do not yet corroborate the management mix-shift narrative.
+  - ↳ `CIQ Comparable Analysis→Operating Statistics (name vs peer median: growth/margin/leverage/beta)`
 
 ### Key unknowns
-- No adjusted forward EV/EBITDA, adjusted EPS, or adjusted net-debt/EBITDA in the revised 99.1 guidance — the forward-leverage and forward-margin picture is undisclosed (a bearish opacity gap given the 4.4x leverage).
-- No revised-guidance 99.1 exhibit was parsed for the gap-down 8-Ks, so the precise content/cause that drove the discrete gap-downs is not in the facts.
-- Segment EBITDA is UNKNOWN (Segments sheet has no EBITDA section) and revenue is reported as a single 100% 'Software & Programming' segment — no profitability breakout to test where margin erosion sits (bearish disclosure gap).
-- The drawdown shape is discrete gap-downs tied to a debt offering (8.01) and a securitization-facility amendment (1.01/2.03), not a labelled earnings miss — the market's specific objection is not pinned down in the facts.
-- No exposed graph cohort (CNXC absent from coverage) — cannot place the idiosyncratic move against a sector cross-section beyond the IWM relative read.
-- Whether the planned net-leverage reduction to below 2.6x adjusted EBITDA by end-FY2026 (management target) is on track cannot be verified from the supplied facts.
+- No adjusted forward EV/EBITDA or adjusted EPS in the revised guidance — the ev_ebitda_adjusted_fwd and adjusted_eps fields are UNKNOWN, so the forward multiple basis management speaks to cannot be independently checked (bearish opacity on the central deleveraging claim).
+- No revised-guidance 99.1 exhibit was parsed for the financing 8-Ks — revised_guidance is UNKNOWN, leaving the precise updated outlook undocumented in the source facts.
+- Segment EBITDA is UNKNOWN (no EBITDA section on the Segments sheet) and revenue reports as a single 100% 'Software & Programming' segment — no profitability breakout by line of business, so margin trajectory by mix cannot be verified (bearish opacity).
+- No idiosyncratic-vs-shared cohort (CNXC absent from graph coverage) — the relative read rests only on name-vs-IWM, with no peer cross-section to confirm whether the de-rate is name-specific.
+- EV/EBITDA is trailing-only with no forward basis on the screen multiple — the fact itself flags it 'cannot distinguish cheap-overshoot from cheap-terminal'; this is a NEUTRAL unresolved item for the human, not directional evidence.
+- GAAP P/E (6.7x) rests on a non-current positive EPS while latest annual EPS is negative (-20.36); the multiple is distorted and not meaningful — resolve which earnings basis is real before any valuation read.
+
+## ⚠ Flags (human review)
+- P/E may be distorted by non-recurring EPS — latest annual EPS -20.36 vs recent median 4.71; verify against normalized/forward EPS (CIQ)
+- Net debt/EBITDA (4.4x) is on REPORTED EBITDA (CIQ / consolidated GAAP), not the covenant basis; management and credit covenants typically define leverage on adjusted EBITDA (a larger denominator → a lower ratio), reconciled in the earnings release/transcript (currently UNAVAILABLE) — do not read 4.4x as the covenant-basis leverage.
+- TRANSCRIPT-FIGURE '630' in decisive.for: 'Management committed to reducing net leverage to below 2.6x adjusted…' — from the cited earnings call, not the structured facts; verify against the call
+- ANCHORS-ON-DISTORTED-P/E bull_point: 'EV/EBITDA at 5.1x trailing sits at the 11th percentile of 19…' — the P/E is distorted (rests on a non-current/non-recurring EPS); don't read it as cheap

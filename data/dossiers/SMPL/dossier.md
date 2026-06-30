@@ -1,20 +1,8 @@
 # Dossier — Simply Good Foods Co (SMPL)
 
-_Finalist rank 12 · ref 2026-06-22 · assembled 2026-06-29 16:17 · LLM claude-opus-4-8_
+_Finalist rank 12 · ref 2026-06-22 · assembled 2026-06-30 08:52 · LLM claude-opus-4-8_
 
 > **Assembles and cites; never concludes.** There is no BUY/AVOID here — the verdict is the human's, logged separately via the ledger with a frozen entry price.
-
-## ⚠ Flags (human review)
-- EPS shown is GAAP-based and understates earnings power; company-adjusted (non-GAAP) EPS is not in the CIQ workbook — it lives in the earnings-release/transcript reconciliation (currently UNAVAILABLE) — not a ceiling on earnings power.
-- Net debt/EBITDA (1.5x) is on REPORTED EBITDA (CIQ / consolidated GAAP), not the covenant basis; management and credit covenants typically define leverage on adjusted EBITDA (a larger denominator → a lower ratio), reconciled in the earnings release/transcript (currently UNAVAILABLE) — do not read 1.5x as the covenant-basis leverage.
-- TRANSCRIPT-FIGURE '32' in bear_point: 'The cut is guided forward, not just trailing: management lowered…' — from the cited earnings call, not the structured facts; verify against the call
-- TRANSCRIPT-FIGURE '213.3' in bear_point: 'A $249M non-cash impairment was taken against the OWYN and Atkins…' — from the cited earnings call, not the structured facts; verify against the call
-- TRANSCRIPT-FIGURE '159.7' in bear_point: 'A $249M non-cash impairment was taken against the OWYN and Atkins…' — from the cited earnings call, not the structured facts; verify against the call
-- TRANSCRIPT-FIGURE '23.4' in bear_point: 'The deterioration is broad across the portfolio: Atkins consumption…' — from the cited earnings call, not the structured facts; verify against the call
-- TRANSCRIPT-FIGURE '-32' in decisive.against: 'The FY2026 adjusted-EBITDA guide of $217–225M is a 22%-to-19% YoY…' — from the cited earnings call, not the structured facts; verify against the call
-- UNTRACEABLE figure '23.4' in decisive.against: 'Atkins consumption fell 23.4% on distribution losses and OWYN turned…'
-- TWIN 'Medifast' has numbers ['1'] — must be non-numeric
-- TWIN 'WW International (Weight Watchers)' has numbers ['1'] — must be non-numeric
 
 ## Mechanical layer (source-bound facts)
 
@@ -93,7 +81,7 @@ _Finalist rank 12 · ref 2026-06-22 · assembled 2026-06-29 16:17 · LLM claude-
   - ↳ `EOD SMPL 180d to 2026-06-22`
 - **Market (IWM) 180d return:** 18.0%
   - ↳ `EOD IWM 180d to 2026-06-22`
-- **Relative vs market:** -53.9%
+- **Relative vs market:** -56.8%
   - ↳ `EOD name−IWM 180d (screen data-record, G2)`
 - **Cohort read:** _UNKNOWN_ — no graph cohort to compare — see rel_vs_market for the name-vs-market read
 - **Graph cohort:** _UNKNOWN_ — SMPL not in graph_coverage.json — no exposed cross-section to compare
@@ -114,71 +102,89 @@ _Finalist rank 12 · ref 2026-06-22 · assembled 2026-06-29 16:17 · LLM claude-
 
 ## Synthesis (LLM — framing for the human, every point source-bound)
 
-**Evidence balance:** mixed — a self-funding, FCF-positive balance sheet and floor-level trailing multiple against a guided ~20% forward EBITDA decline, brand impairment, and broad-portfolio deterioration.
+**Evidence balance:** strongly-bearish — a hard guidance cut to a ~20% EBITDA decline plus a $249M brand impairment confirm real deterioration, not an optical overshoot.
 
 ### Bull case (overshoot / mean-revert)
-- EV/EBITDA sits at 6.0x and at the 0th percentile of 20 trailing quarterly closes, a near-floor on its own history, while P/E sits at the ~4th percentile of its 5-year range.
-  - ↳ `CIQ Financials→Multiples 'TEV/LTM EBITDA' Close (latest) — current multiple`
-- The business is FCF-positive at $125.5M LTM with net-debt/EBITDA of 1.5x, interest coverage of 12.3x, and no maturity wall until 2029 — self-funding with no runway constraint, so the de-rate is not a solvency event.
+- The balance sheet is self-funding — net-debt/EBITDA 1.5x, FCF-positive, nearest maturity wall not until 2029 — so this is not a runway-constrained survival story.
   - ↳ `CIQ Net Debt ÷ CIQ LTM EBITDA (EDGAR XBRL breadth fallback) + FCF sign + CIQ Capital Structure (survival capacity)`
-- Management is buying back stock aggressively into the de-rate — share count fell 9.6% over ~1.8 years and over 10% of shares were repurchased in the trailing 12 months — signalling that management itself reads the price as discounting the long-term opportunity.
-  - ↳ `EDGAR XBRL shares, trailing 2024-06-24..2026-04-07`
-- On the fundamental_deltas the name screens better than the heterogeneous peer median on margin (17% vs 14%), leverage (Debt/EBITDA 1.8 vs 3.4), LT EPS growth (3% vs -9%) and beta (0.2 vs 0.4); whether the discount to peers is EARNED or RESIDUAL is for the human to judge — not computed here.
+- Interest coverage is a comfortable 12.3x, leaving no near-term solvency pressure even after the EBITDA decline.
+  - ↳ `CIQ Financials→Income Statement EBITDA ÷ Interest Expense [LTM 12 months Feb-28-2026]`
+- On the leverage fundamental_delta the name screens materially LESS levered than peers (Debt/EBITDA 1.8 vs peer-median 3.4), arguing the peer discount on this leg is not earned by a worse balance sheet.
   - ↳ `CIQ Comparable Analysis→Operating Statistics (name vs peer median: growth/margin/leverage/beta)`
-- The drawdown shape is a discrete earnings gap-down (8-K item 2.02 on consecutive days), not a structural or distressed-filing pattern — consistent with a guidance-reset overshoot rather than terminal impairment of the franchise.
-  - ↳ `EDGAR 8-K item codes at the gap-down dates (not blanket-labelled earnings)`
+- On margin and forward growth fundamentals the name screens BETTER than peers (EBITDA margin 17% vs 14%; LT EPS growth 3% vs peer-median -9%), posing whether the peer-multiple discount is RESIDUAL/overshoot rather than EARNED — the human judges.
+  - ↳ `CIQ Comparable Analysis→Operating Statistics (name vs peer median: growth/margin/leverage/beta)`
+- Management is buying the discount aggressively — repurchasing over 10% of shares in the past 12 months and borrowing $150M to accelerate buybacks, with -9.6% share count over ~1.8y, signalling insider conviction the price discounts the long-term opportunity.
+  - ↳ `EDGAR XBRL shares, trailing 2024-06-24..2026-04-07`
+- Absolute EBITDA has compounded over the multi-year window (196→262 to FY25) even as margin % drifted, a reconciler showing the margin-compression narrative is not the whole picture.
+  - ↳ `CIQ Financials→Income Statement (margin % + absolute EBITDA reconciler)`
 
 ### Bear case (terminal / value-trap)
-- The cut is guided forward, not just trailing: management lowered FY2026 to $217–225M adjusted EBITDA (a year-over-year decline of 22% to 19%) with Q3 EBITDA guided down 38% to 32%, so the cheap trailing multiple sits atop a falling forward base — a value-trap risk.
+- Management cut FY26 guidance hard at Q2 to adjusted EBITDA $217–225M, a 22–19% year-over-year DECLINE, and the absolute EBITDA reconciler confirms the turn is real — LTM EBITDA already fell to 236 from FY25's 262, so the trailing-EBITDA strength is now rolling over, not optical.
   - ↳ `CIQ transcript(s): The Simply Good Foods Company, Q1 2026 Earnings Call, Jan 08, 2026.rtf; The Simply Good Foods Company, Q2 2026 Earnings Call, Apr 09, 2026.rtf`
-- The EBITDA margin % decline (20%→17% LTM) is corroborated by absolute EBITDA actually FALLING in the most recent LTM (262 → 236) and revenue rolling over (1,451 → 1,416) — so the margin compression is the REAL signal here, not an optical %-only artifact, since the reconciler moves the same direction.
+- The EV/EBITDA at 6.0x sitting at the 0th percentile of its own 5y range is a REAL signal of a regime break — but it is trailing-only, so it cannot by itself distinguish cheap-overshoot from cheap-terminal (flagged in the fact itself).
+  - ↳ `CIQ Financials→Multiples 'TEV/LTM EBITDA' Close — 20 quarters (partial last column excluded from the distribution)`
+- The falling margin trend is now a GENUINE signal not just an optical %: Q2 gross margin fell 460bps to 31.6% on cocoa/whey/tariff inflation, and LTM EBITDA margin slipped to 17% as absolute EBITDA turned DOWN to 236 — the % and the absolute now move the same direction.
   - ↳ `CIQ Financials→Income Statement (margin % + absolute EBITDA reconciler)`
-- A $249M non-cash impairment was taken against the OWYN and Atkins brand assets, producing a Q2 GAAP operating loss of $213.3M and net loss of $159.7M — a write-down of two of the three brands' carrying value.
+- A $249M non-cash impairment on the OWYN and Atkins brand assets was taken in Q2 — management's own write-down of the acquired growth brands, a real signal of impaired underlying value.
   - ↳ `CIQ transcript(s): The Simply Good Foods Company, Q1 2026 Earnings Call, Jan 08, 2026.rtf; The Simply Good Foods Company, Q2 2026 Earnings Call, Apr 09, 2026.rtf`
-- GAAP-EPS surprises have been chronically negative (FY2021 -42%, FY2024 -9%, FY2025 -36%), and FY2026 Q1 guidance was reaffirmed in January then sharply cut in April — a pattern of management estimates running ahead of delivery.
-  - ↳ `CIQ Estimates→Surprise (annual)`
-- The deterioration is broad across the portfolio: Atkins consumption down 23.4% on distribution losses, OWYN down 2.4% with further lost distribution coming, and Quest Bars softening — with a CEO change (Tanner out, Scalzo back) mid-de-rate underscoring execution failure.
-  - ↳ `CIQ transcript(s): The Simply Good Foods Company, Q1 2026 Earnings Call, Jan 08, 2026.rtf; The Simply Good Foods Company, Q2 2026 Earnings Call, Apr 09, 2026.rtf`
-- The stock fell 40% over 180 days while the IWM small-cap benchmark rose 18%, a 54-point relative underperformance — the drawdown is idiosyncratic to the name, not a market-wide move.
+- The decline is idiosyncratic, not market-driven: the name is down ~40% over 180d while IWM rose ~18%, a -57% relative gap, isolating the problem to SMPL's fundamentals.
   - ↳ `EOD name−IWM 180d (screen data-record, G2)`
+- The drawdown was a discrete gap-down on the Q2 earnings 8-K (item 2.02), pinning the de-rate to the reported results, not a transient macro move.
+  - ↳ `EDGAR 8-K item codes at the gap-down dates (not blanket-labelled earnings)`
+- Demand is deteriorating across the portfolio per the latest call: Q2 retail takeaway -6.4% YoY, OWYN consumption -2.4% (now facing lost distribution), Atkins -23.4%, and a CEO change with the new chief stating they are 'not pleased' and citing strategy/execution failures.
+  - ↳ `CIQ transcript(s): The Simply Good Foods Company, Q1 2026 Earnings Call, Jan 08, 2026.rtf; The Simply Good Foods Company, Q2 2026 Earnings Call, Apr 09, 2026.rtf`
+- Consensus posture confirms the weakness: a chronic GAAP-EPS miss history (FY2024 -9%, FY2025 -36%), a Hold rating, and revenue revisions running 0 up / 1 down last month.
+  - ↳ `CIQ Estimates→Surprise (annual)`
 
 ### Twin reference cases
-- **Medifast** — went terminal
-  - distinguished by: Weight-management/nutrition brand whose demand structurally eroded as GLP-1 drugs reshaped the category; an instructive analogue for the Atkins distribution-loss and GLP-1 overhang.
-  - source: [LLM-suggested, unverified]
 - **BellRing Brands** — recovered
-  - distinguished by: A focused high-protein nutritional-shake brand that rode the same category tailwind to durable growth; the bull-case picture of what Quest/OWYN done right looks like.
+  - distinguished by: Protein/nutritional-snacking pure-play that sustained category-tailwind growth and re-rated as branded high-protein demand mainstreamed.
+  - source: [LLM-suggested, unverified]
+- **Hain Celestial Group** — went terminal
+  - distinguished by: Natural/better-for-you portfolio that suffered repeated brand impairments, distribution losses and management turnover after acquired brands underperformed.
+  - source: [LLM-suggested, unverified]
+- **Utz Brands** — recovered
+  - distinguished by: Single-category branded-snack roll-up that worked through input-cost margin compression and leverage while protecting core brand velocity.
   - source: [LLM-suggested, unverified]
 - **Tupperware Brands** — went terminal
-  - distinguished by: A levered single-category consumer brand where a self-funding story unraveled as core demand and execution failed despite buybacks earlier on.
-  - source: [LLM-suggested, unverified]
-- **Central Garden & Pet** — recovered
-  - distinguished by: A branded consumer-staples roll-up that absorbed input-cost and margin compression, then rebuilt margin through productivity programs — the bull pathway management is invoking.
+  - distinguished by: Single-brand consumer franchise where a CEO return and turnaround framing could not arrest structural demand erosion.
   - source: [LLM-suggested, unverified]
 - **WW International (Weight Watchers)** — went terminal
-  - distinguished by: Weight-loss brand whose value proposition was disrupted by GLP-1 adoption and lost retail/consumer relevance — the terminal-read mirror to the GLP-1 thesis.
+  - distinguished by: Weight-management brand whose core proposition was disrupted by the rise of GLP-1 drugs — directly relevant to the Atkins weight-loss positioning here.
   - source: [LLM-suggested, unverified]
 
 ### Decisive question
-**Is the FY2026 EBITDA guide-down a one-time reset of an over-promised plan that a returning CEO can stabilize via productivity and Quest/OWYN distribution gains (overshoot), or the first leg of a structural demand erosion across all three brands worsened by GLP-1 (terminal)?**
+**Is the sub-floor de-rate an overshoot on a still-self-funding, category-tailwind franchise, or the early innings of a structural demand/margin decline that the guidance cut and brand impairment have only begun to price?**
 
 ### …evidence for
-- Management frames the category as still growing with powerful protein/health tailwinds, predominantly branded with limited private label, and retailers still allocating space — with Quest household penetration up 200bp YoY and Salty growing 14% in Q2.
-  - ↳ `CIQ transcript(s): The Simply Good Foods Company, Q1 2026 Earnings Call, Jan 08, 2026.rtf; The Simply Good Foods Company, Q2 2026 Earnings Call, Apr 09, 2026.rtf`
-- A fixed-cost reduction initiative (~$15M one-time) plus locked-in favorable cocoa pricing flowing into late Q4/FY2027 and guided Q4 gross-margin expansion suggest a self-help margin-recovery path.
-  - ↳ `CIQ transcript(s): The Simply Good Foods Company, Q1 2026 Earnings Call, Jan 08, 2026.rtf; The Simply Good Foods Company, Q2 2026 Earnings Call, Apr 09, 2026.rtf`
+- Leverage screens far below peers (1.8 vs 3.4) and coverage is 12.3x, so the discount is not earned by balance-sheet risk and the name can self-fund a turnaround.
+  - ↳ `CIQ Comparable Analysis→Operating Statistics (name vs peer median: growth/margin/leverage/beta)`
+- Management is acting on its overshoot view with 10%+ of shares repurchased in 12 months, signalling the price discounts the long-term opportunity.
+  - ↳ `EDGAR XBRL shares, trailing 2024-06-24..2026-04-07`
+- Forward LT EPS growth screens positive vs a negative peer median (3% vs -9%), posing the discount as potentially residual.
+  - ↳ `CIQ Comparable Analysis→Operating Statistics (name vs peer median: growth/margin/leverage/beta)`
 
 ### …evidence against
-- The FY2026 adjusted-EBITDA guide of $217–225M is a 22%-to-19% YoY decline with Q3 guided down 38%-32%, and the $249M impairment writes down OWYN and Atkins brand carrying value — a forward and structural deterioration, not a one-quarter blip.
+- Guidance was cut to a 22–19% YoY adjusted EBITDA DECLINE with Q3 EBITDA guided down 38–32%, and a $249M brand impairment booked — management is confirming, not denying, deterioration.
   - ↳ `CIQ transcript(s): The Simply Good Foods Company, Q1 2026 Earnings Call, Jan 08, 2026.rtf; The Simply Good Foods Company, Q2 2026 Earnings Call, Apr 09, 2026.rtf`
-- Atkins consumption fell 23.4% on distribution losses and OWYN turned negative with further distribution loss flagged, while absolute EBITDA and revenue both rolled over in the latest LTM — deterioration is reaching the formerly healthy parts of the portfolio.
-  - ↳ `CIQ Financials→Income Statement (margin % + absolute EBITDA reconciler)`
+- Demand is softening across all four brands with Atkins -23.4% and OWYN now facing lost distribution, amid a CEO change framed around strategy/execution failures.
+  - ↳ `CIQ transcript(s): The Simply Good Foods Company, Q1 2026 Earnings Call, Jan 08, 2026.rtf; The Simply Good Foods Company, Q2 2026 Earnings Call, Apr 09, 2026.rtf`
+- Trailing EV/EBITDA at the 0th percentile is trailing-only and cannot, by itself, separate overshoot from terminal — the cheapness is not self-validating.
+  - ↳ `CIQ Financials→Multiples 'TEV/LTM EBITDA' Close — 20 quarters (partial last column excluded from the distribution)`
 
 ### Key unknowns
-- The revised-guidance 99.1 exhibit was not parsed (revised_guidance status: unknown) — the structured forward outlook beyond what the transcript states is absent; an OPACITY-as-bearish gap given the company just reset guidance.
-- Forward EV/EBITDA on an ADJUSTED basis and adjusted EPS are UNKNOWN (not in the 99.1 revised guidance), so the trailing 6.0x cannot be confirmed against the now-lower forward base — the cheap-overshoot vs cheap-terminal distinction is unresolved on the company's own numbers.
-- Adjusted net-debt/EBITDA is UNKNOWN; transcript cites ~1.2x while CIQ shows 1.5x — the leverage read shifts with the lower guided EBITDA denominator.
-- Segment-level EBITDA is UNKNOWN (Segments sheet has no EBITDA section) and revenue is reported as a single 100% segment — no visibility into whether Quest profit offsets Atkins/OWYN losses, an opacity risk hiding intra-portfolio mix.
-- No exposed cross-section cohort (idiosyncratic_vs_shared.cohort/read UNKNOWN) — only the name-vs-IWM relative read is available.
-- Peer set is HETEROGENEOUS (caps $54M–$27.2B, 507x span); every peer multiple must be treated as confidence-gated, not a clean benchmark, before judging the discount as earned or residual.
-- Durability of the GLP-1 effect on Atkins demand is unresolved — management casts it as a tailwind for protein/muscle-retention but also concedes a consumer segment is shifting to GLP-1 drugs.
+- No forward adjusted EV/EBITDA or adjusted EPS in the revised 99.1 guidance — the adjusted (management-basis) valuation anchor the company itself guides on is MISSING, an opacity gap that blunts overshoot-vs-terminal adjudication.
+- No revised-outlook 99.1 exhibit was parsed for the Q2 8-K, so the exact revised guidance text is unverified beyond the transcript figures.
+- Segment EBITDA is UNKNOWN — single reported segment (100%) with no profitability split across Quest / Atkins / OWYN, so the market cannot see which brand carries the margin or whether the impaired brands are loss-making, a bearish disclosure gap.
+- Net-debt/EBITDA on an ADJUSTED basis is UNKNOWN; the transcript cites ~1.2x adjusted vs 1.5x on the CIQ trailing basis — the leverage read differs by basis.
+- No cohort / cross-section in graph_coverage, so the idiosyncratic-vs-shared read rests only on the name-vs-IWM relative, not a peer-group dispersion.
+- Durability of the GLP-1 thesis is unresolved: management frames protein as a beneficiary, but the Atkins weight-loss core may be a structural casualty — the pilot study result is not quantified.
+- Whether the Q2 takeaway slowdown (-6.4%) stabilises or accelerates into H2 is unknown; Q3 guide already implies a 14–11% sales decline.
+
+## ⚠ Flags (human review)
+- Net debt/EBITDA (1.5x) is on REPORTED EBITDA (CIQ / consolidated GAAP), not the covenant basis; management and credit covenants typically define leverage on adjusted EBITDA (a larger denominator → a lower ratio), reconciled in the earnings release/transcript (currently UNAVAILABLE) — do not read 1.5x as the covenant-basis leverage.
+- UNTRACEABLE figure '460' in bear_point: 'The falling margin trend is now a GENUINE signal not just an optical…'
+- TRANSCRIPT-FIGURE '-23.4' in bear_point: 'Demand is deteriorating across the portfolio per the latest call: Q2…' — from the cited earnings call, not the structured facts; verify against the call
+- TRANSCRIPT-FIGURE '32' in decisive.against: 'Guidance was cut to a 22–19% YoY adjusted EBITDA DECLINE with Q3…' — from the cited earnings call, not the structured facts; verify against the call
+- DIRECTIONAL language 'conviction' — human review (dossier frames, not concludes)
+- FALSE-BALANCE? evidence_balance commits a strong lean but the body is near-symmetric (6 bull vs 8 bear) and the minority bull_points aren't qualified-as-outweighed — size the minority against the lean (rule 7), or it launders a one-sided case

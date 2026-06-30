@@ -279,73 +279,63 @@
     }
   },
   "synthesis": {
-    "evidence_balance": "mixed — multi-year margin/ROIC erosion and a self-flagged H2-visibility cut offset a net-cash, FCF-positive, still-growing franchise at a trailing-multiple floor.",
+    "evidence_balance": "mixed — net-cash, FCF-positive, faster-than-peer growth offset by multi-year margin erosion and management-flagged worsening second-half demand visibility.",
     "bull_points": [
       {
-        "claim": "EV/EBITDA sits at 4.0x trailing — the absolute 0th-percentile floor across 19 quarterly closes — while the NTM TEV/EBITDA of 3.37x sits ABOVE that low, posing whether the de-rate is a mean-revertible overshoot rather than a permanent re-rating.",
-        "source_ref": "CIQ Financials→Multiples 'TEV/LTM EBITDA' Close — 19 quarters (partial last column excluded from the distribution)",
-        "cited": true
-      },
-      {
-        "claim": "P/E at 12.0x is at the 0.5-percentile of its own ~5-year range, a compression that POSES the overshoot reading against the trailing record.",
-        "source_ref": "EDGAR/EOD P/E pctile vs ~5y (screen data-record)",
-        "cited": true
-      },
-      {
-        "claim": "Absolute EBITDA RISES across the window (628→799→652→693→707→731 LTM) and revenue rises to 5,555 LTM even as the margin % compresses, so the margin-% decline is partly an OPTICAL misread — the dollar earnings base is growing, not shrinking.",
+        "claim": "Absolute EBITDA has RISEN across the de-rate window (628 in 2021 to 731 LTM Mar-2026) and absolute revenue grew to 5,555, so the falling margin % overstates deterioration — the business is larger, not shrinking.",
         "source_ref": "CIQ Financials→Income Statement (margin % + absolute EBITDA reconciler)",
         "cited": true
       },
       {
-        "claim": "The balance sheet is net cash at -1.0x net-debt/EBITDA with positive FCF of 692.9 and no maturity wall before 2030 — self-funding, no runway constraint that would force a terminal outcome.",
+        "claim": "The balance sheet is net cash (net-debt/EBITDA -1.0x) with FCF positive ($692.9M levered FCF LTM) and self-funding with no maturity wall until 2030 — there is no runway or solvency constraint.",
         "source_ref": "CIQ Net Debt ÷ CIQ LTM EBITDA (EDGAR XBRL breadth fallback) + FCF sign + CIQ Capital Structure (survival capacity)",
         "cited": true
       },
       {
-        "claim": "Management is buying back stock through the de-rate (-8.2% shares over trailing ~1.7y), a capital-return action inconsistent with a self-assessed terminal trajectory.",
-        "source_ref": "EDGAR XBRL shares, trailing 2024-07-31..2026-04-30",
-        "cited": true
-      },
-      {
-        "claim": "On the fundamental_deltas the name shows superior revenue growth (14% vs peer-median 1%), faster EBITDA growth (6% vs 2%) and far lower leverage (Debt/EBITDA 0.4 vs 1.5) — POSING whether the discount to peers is RESIDUAL (overshoot) rather than EARNED, though only against a heterogeneous peer set.",
+        "claim": "On the decomposition inputs the name grows faster than peers (rev growth 14% vs peer-median 1%; EBITDA growth 6% vs 2%; LT EPS growth 10% vs 8%) with far lower leverage (Debt/EBITDA 0.4 vs 1.5), so part of the peer discount is not explained by worse fundamentals — POSE whether the discount is RESIDUAL (overshoot) rather than EARNED; the heterogeneous peer set (caps $734M-$77.7B, 106x span) gates this as a confidence-gated input, not a clean benchmark.",
         "source_ref": "CIQ Comparable Analysis→Operating Statistics (name vs peer median: growth/margin/leverage/beta)",
         "cited": true
       },
       {
-        "claim": "Revenue grew +7.6% YoY in Q1 Mar-31-2026 and management cites pure AI-native revenue exceeding $125M in Q1 (up ~20% sequentially) with a $600M FY target, framing the demand backdrop as growing, not collapsing.",
+        "claim": "The company is buying back stock (share count -8.2% over ~1.7y, 56.9M to 52.2M), consistent with self-funded capital return rather than distress.",
+        "source_ref": "EDGAR XBRL shares, trailing 2024-07-31..2026-04-30",
+        "cited": true
+      },
+      {
+        "claim": "Revenue still grew +7.6% YoY in the latest same quarter (Q1 Mar-31-2026 vs Q1 Mar-31-2025), so the top line is expanding, not contracting, into the de-rate.",
+        "source_ref": "CIQ Financials→Income Statement + Segments + Ratios (multi-year columns)",
+        "cited": true
+      },
+      {
+        "claim": "Management frames the second-half visibility shortfall as a temporary shift in timing and direction, with AI-native pure revenue exceeding $125M in Q1 (~20% sequential growth) and a $600M full-year target line of sight, plus an accelerating large-deal pipeline not yet in the outlook.",
         "source_ref": "CIQ transcript(s): EPAM Systems, Inc., Q1 2026 Earnings Call, May 07, 2026.rtf; EPAM Systems, Inc., Q4 2025 Earnings Call, Feb 19, 2026.rtf",
         "cited": true
       }
     ],
     "bear_points": [
       {
-        "claim": "EBITDA margin compressed from 17% (2021) to 13% (LTM Mar-31-2026) and gross margin from 34% to 29% — a multi-year structural erosion that, while absolute EBITDA still rose, signals the business is converting growth at a falling rate; this is a REAL signal of margin pressure, not purely optical.",
+        "claim": "Both margin trend AND absolute EBITDA confirm operating deterioration is REAL, not just an optical % effect: EBITDA margin fell 17% (2021) to 13% (LTM) and gross margin 34% to 29%, while ROIC slid from 13.7% to ~10.1% — the per-unit profitability has genuinely eroded even as scale grew.",
         "source_ref": "CIQ Financials→Income Statement (margin % + absolute EBITDA reconciler)",
         "cited": true
       },
       {
-        "claim": "ROIC declined from 13.7%/14.9% (2021-22) to ~10.1% (LTM), indicating the capital-efficiency of the franchise has stepped down and not recovered — a durable quality deterioration, not a timing artifact.",
-        "source_ref": "CIQ Financials→Income Statement + Segments + Ratios (multi-year columns)",
-        "cited": true
-      },
-      {
-        "claim": "The stock fell -63.6% over 180d against IWM's +18.0% (-82.4% relative) — an idiosyncratic collapse, not a market-wide drawdown, indicating the market is pricing a company-specific deterioration.",
-        "source_ref": "EOD name−IWM 180d (screen data-record, G2)",
-        "cited": true
-      },
-      {
-        "claim": "Management's own Q1 2026 posture shifted MORE cautious quarter-over-quarter: from 'sentiment intact, no material change' in Q4 to 'more macro uncertainty than 90 days ago,' North America underperformance, 'lower visibility in the second half,' and expected Q2 impact — a self-flagged deceleration.",
+        "claim": "Management's own posture has WORSENED quarter-over-quarter: more macro uncertainty than 90 days ago, explicit North America underperformance, lower second-half visibility, and expected Q2 impact on larger discretionary programs — a deteriorating demand signal from the source.",
         "source_ref": "CIQ transcript(s): EPAM Systems, Inc., Q1 2026 Earnings Call, May 07, 2026.rtf; EPAM Systems, Inc., Q4 2025 Earnings Call, Feb 19, 2026.rtf",
         "cited": true
       },
       {
-        "claim": "The EBITDA-margin gap to peers is EARNED-leaning: the name's 13% EBITDA margin trails the peer-median 17%, so part of the discount reflects genuinely lower profitability — a value-trap input that must be weighed against the growth/leverage advantages, against a heterogeneous peer set.",
+        "claim": "On fundamentals that justify a discount, the name's EBITDA margin is 13% vs peer-median 17% and its beta is 1.4 vs peer-median 0.8 — a genuinely lower-margin, higher-volatility profile that EARNS part of the cheapness (value-trap risk).",
         "source_ref": "CIQ Comparable Analysis→Operating Statistics (name vs peer median: growth/margin/leverage/beta)",
         "cited": true
       },
       {
-        "claim": "Management flags 'tokenomics' and a 'genuinely new commercial construct' for AI engagements as a challenge to the services billing model, posing a structural revenue-model risk that the AI pivot could compress, not expand, the per-engagement economics.",
-        "source_ref": "CIQ transcript(s): EPAM Systems, Inc., Q1 2026 Earnings Call, May 07, 2026.rtf; EPAM Systems, Inc., Q4 2025 Earnings Call, Feb 19, 2026.rtf",
+        "claim": "The name has materially underperformed: -63.6% over 180d while the market (IWM) rose +18.0%, an -82.4% relative gap — an idiosyncratic, name-specific repricing rather than a broad sell-off.",
+        "source_ref": "EOD name−IWM 180d (screen data-record, G2)",
+        "cited": true
+      },
+      {
+        "claim": "GAAP-EPS surprises have turned negative recently (FY2023 -4%, FY2024 -0%, FY2025 -2%) after earlier beats, and consensus sits at Hold (3.00) — execution against estimates has been soft.",
+        "source_ref": "CIQ Estimates→Consensus",
         "cited": true
       }
     ],
@@ -353,78 +343,76 @@
       {
         "name": "Cognizant Technology Solutions",
         "outcome": "recovered",
-        "distinguishing_fact": "IT-services provider that de-rated on margin compression and growth slowdown fears, then stabilized as demand normalized and cost discipline returned — analogue for a services name whose margin % fell while the franchise endured.",
+        "distinguishing_fact": "Large IT-services provider that de-rated on margin compression and growth deceleration, then stabilized as demand normalized — analogue for cyclical-not-terminal services pressure.",
         "source": "[LLM-suggested, unverified]"
       },
       {
         "name": "Accenture plc",
         "outcome": "recovered",
-        "distinguishing_fact": "Large consulting/services peer that absorbed discretionary-spend pullbacks and a technology-transition cycle without structural impairment — pattern for a services leader re-rating through a demand-timing trough.",
+        "distinguishing_fact": "Consulting/services leader that absorbed discretionary-spend pullbacks and repositioned toward AI demand without structural impairment.",
         "source": "[LLM-suggested, unverified]"
       },
       {
         "name": "DXC Technology",
         "outcome": "went terminal",
-        "distinguishing_fact": "IT-services name where persistent margin erosion and revenue stagnation proved structural rather than cyclical, validating the value-trap reading for a cheap services multiple — analogue for the bear case.",
+        "distinguishing_fact": "Legacy IT-services firm where declining margins and eroding competitive position proved structural rather than cyclical, with persistent low multiples.",
         "source": "[LLM-suggested, unverified]"
       },
       {
-        "name": "Gartner",
+        "name": "Globant S.A.",
         "outcome": "recovered",
-        "distinguishing_fact": "Advisory/technology-insight provider that weathered a demand-visibility scare and re-rated as recurring engagement strength reasserted — pattern for a name whose pipeline endured a confidence dip.",
+        "distinguishing_fact": "Digital-engineering peer that sold off hard on growth deceleration fears yet retained an above-peer organic growth profile.",
         "source": "[LLM-suggested, unverified]"
       },
       {
-        "name": "Globant",
+        "name": "Wipro Limited",
         "outcome": "went terminal",
-        "distinguishing_fact": "Digital-engineering services name where an AI-disruption narrative and decelerating growth fed a sustained de-rate without recovery — analogue for the AI-cannibalization-of-services-billing risk.",
+        "distinguishing_fact": "Offshore-centric services name whose growth premium faded into a prolonged de-rate as AI/automation pressured the traditional labor-arbitrage model.",
         "source": "[LLM-suggested, unverified]"
       }
     ],
     "decisive_question": {
-      "question": "Is the second-half visibility shortfall a temporary, macro-driven timing pause in client decision-making (overshoot, mean-revert) or the leading edge of a structural impairment of EPAM's services-billing economics as AI/tokenomics reshape engagement value (value trap)?",
+      "question": "Is EPAM's second-half visibility shortfall a temporary, macro-driven timing shift in discretionary spend (overshoot), or the early signal of structural margin and growth erosion as AI/tokenomics reprice the services model (value trap)?",
       "evidence_for": [
         {
-          "claim": "Management frames the slowdown as 'a temporary shift in timing and direction' while the 'AI program pipeline and funding remains strong' and large-deal pipeline is accelerating beyond historical norms.",
+          "claim": "Management calls it a temporary shift in timing and direction, with AI-native pipeline and funding remaining strong and an accelerating large-deal pipeline not yet reflected in the outlook.",
           "source_ref": "CIQ transcript(s): EPAM Systems, Inc., Q1 2026 Earnings Call, May 07, 2026.rtf; EPAM Systems, Inc., Q4 2025 Earnings Call, Feb 19, 2026.rtf",
           "cited": true
         },
         {
-          "claim": "Absolute EBITDA and revenue are still rising into the LTM (731 EBITDA, 5,555 revenue) and the balance sheet is net cash with positive FCF — no forced-outcome pressure during the pause.",
-          "source_ref": "CIQ Financials→Income Statement (margin % + absolute EBITDA reconciler)",
+          "claim": "Revenue still grew +7.6% YoY in Q1 Mar-2026 and absolute EBITDA rose to 731 LTM, so cash earnings power is intact despite the margin-% decline.",
+          "source_ref": "CIQ Financials→Income Statement + Segments + Ratios (multi-year columns)",
           "cited": true
         }
       ],
       "evidence_against": [
         {
-          "claim": "Management itself raised caution QoQ — 'more macro uncertainty than 90 days ago,' North America underperformance and 'lower visibility in the second half' — and flags tokenomics as an unresolved commercial-model challenge.",
-          "source_ref": "CIQ transcript(s): EPAM Systems, Inc., Q1 2026 Earnings Call, May 07, 2026.rtf; EPAM Systems, Inc., Q4 2025 Earnings Call, Feb 19, 2026.rtf",
+          "claim": "EBITDA margin fell from 17% to 13% and gross margin from 34% to 29% across the period — a multi-year, sustained per-unit erosion, not a single-quarter dip.",
+          "source_ref": "CIQ Financials→Income Statement (margin % + absolute EBITDA reconciler)",
           "cited": true
         },
         {
-          "claim": "Multi-year margin (17%→13%) and ROIC (13.7%→10.1%) erosion predate the AI-timing scare, suggesting a structural component independent of the macro pause.",
-          "source_ref": "CIQ Financials→Income Statement + Segments + Ratios (multi-year columns)",
+          "claim": "Management itself flags more macro uncertainty than 90 days ago, North America underperformance, lower second-half visibility, and expected Q2 impact — posture worsened QoQ.",
+          "source_ref": "CIQ transcript(s): EPAM Systems, Inc., Q1 2026 Earnings Call, May 07, 2026.rtf; EPAM Systems, Inc., Q4 2025 Earnings Call, Feb 19, 2026.rtf",
           "cited": true
         }
       ]
     },
     "key_unknowns": [
-      "No forward/adjusted EV/EBITDA or adjusted EPS is in the revised 99.1 guidance — the trailing 4.0x cannot distinguish cheap-overshoot from cheap-terminal (note flags this explicitly).",
-      "No revised-guidance 99.1 exhibit was parsed for the Feb-2026 8-K, so the actual revised outlook driving the de-rate is UNDISCLOSED here — a missing expected disclosure to be treated as a bearish opacity risk.",
-      "Two of three gap-down dates (2026-02-03, 2026-06-18) had NO matching 8-K — the cause of those discrete drops is unexplained in the source set.",
-      "No segment-level EBITDA is disclosed (Segments sheet lacks an EBITDA section), so where margin erosion concentrates (Americas vs Europe) is opaque — a bearish disclosure gap.",
-      "Interest coverage is UNKNOWN (no period with both EBITDA and interest expense), though net-cash status reduces its weight.",
-      "No exposed graph cohort exists for EPAM, so the idiosyncratic-vs-shared read rests only on the name-vs-IWM relative.",
-      "Consensus revision breadth shows 0 up / 0 down last month for both EPS and revenue — no fresh analyst directional signal post-de-rate.",
-      "Peer set is HETEROGENEOUS (caps span $734M–$77.7B, 106x) so the EARNED-vs-RESIDUAL decomposition of the discount is confidence-gated, not a clean benchmark."
+      "No forward/adjusted EV/EBITDA or adjusted EPS in the revised 99.1 guidance — the trailing 4.0x EV/EBITDA at 0%ile cannot distinguish cheap-overshoot from cheap-terminal (overshoot-vs-terminal unresolved).",
+      "The revised guidance 99.1 exhibit was not parsed for the earnings 8-K — the actual magnitude of the outlook cut driving the gap-downs is undisclosed here (a MISSING expected disclosure; bearish-leaning opacity).",
+      "Two of three gap-down dates (2026-02-03, 2026-06-18) had NO matched 8-K — the specific catalysts behind those discrete declines are unexplained.",
+      "No segment-level EBITDA breakout (Segments sheet lacks an EBITDA section) — cannot see whether the margin erosion is geographic (Americas vs Europe) or company-wide.",
+      "Interest coverage is UNKNOWN (no period with both EBITDA and interest expense) — though net-cash status reduces its weight.",
+      "Estimate-revision breadth shows 0↑/0↓ last month for both EPS and revenue — no fresh analyst signal to confirm or refute the management caution.",
+      "No graph cohort exposed for EPAM — cannot benchmark the -63.6% drawdown against a comparable cross-section beyond the IWM relative read.",
+      "Peer set is HETEROGENEOUS (caps span 106x) — every peer multiple is a confidence-gated input, not a clean benchmark; the EARNED-vs-RESIDUAL split of the discount is unresolved and left for the human."
     ]
   },
   "flags": [
-    "EPS shown is GAAP-based and understates earnings power; company-adjusted (non-GAAP) EPS is not in the CIQ workbook — it lives in the earnings-release/transcript reconciliation (currently UNAVAILABLE) — not a ceiling on earnings power.",
-    "TRANSCRIPT-FIGURE '125' in bull_point: 'Revenue grew +7.6% YoY in Q1 Mar-31-2026 and management cites pure…' — from the cited earnings call, not the structured facts; verify against the call",
-    "TRANSCRIPT-FIGURE '90' in bear_point: 'Management's own Q1 2026 posture shifted MORE cautious…' — from the cited earnings call, not the structured facts; verify against the call",
-    "TRANSCRIPT-FIGURE '90' in decisive.against: 'Management itself raised caution QoQ — 'more macro uncertainty than…' — from the cited earnings call, not the structured facts; verify against the call"
+    "TRANSCRIPT-FIGURE '125' in bull_point: 'Management frames the second-half visibility shortfall as a temporary…' — from the cited earnings call, not the structured facts; verify against the call",
+    "UNRECONCILED decisive.against: 'EBITDA margin fell from 17% to 13% and gross margin from 34% to 29%…' — cites margin compression without the absolute-EBITDA reconciliation (margin % can fall while EBITDA rises)"
   ],
   "llm_model": "claude-opus-4-8",
-  "assembled_at": "2026-06-29T17:32:37.128734"
+  "assembled_at": "2026-06-30T08:47:26.229251"
 }
