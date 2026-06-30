@@ -277,3 +277,59 @@ class ThemeStage2(BaseModel, frozen=True):
     leader_set: LeaderSet
     type_signals: TypeSignals
     confirmation: ConfirmationSignal | None  # None when no co-moving mega-cap leader exists
+
+
+# --------------------------------------------------------------------------------------------------
+# Stage 3 — the SEMANTIC-PRIMARY exposure detector (a NEW early-detection path, parallel to A's
+# co-movement). Reads a name's recent DISCLOSURE STREAM and assembles its DISCLOSED exposure to one
+# driver — source-bound, the Part-6 keyword-vs-semantic discriminator baked into ``concreteness``.
+# Assemble-not-conclude: NO score / rank / theme-membership / buy verdict (the human judges).
+# --------------------------------------------------------------------------------------------------
+class ExposureConcreteness(StrEnum):
+    """How CONCRETE one disclosed exposure fact is — the Part-6 discriminator ('mentions AI' ≠
+    'binding AI exposure'; CLSK's tenant-less 'SVP of AI Data Centers' is intent, CAMT's quantified
+    50%-of-revenue HBM IS exposure). Graded, never a verdict."""
+
+    BINDING_CONTRACT = "binding-contract"  # signed agreement, named counterparty + terms (MW/years)
+    COMMITTED_CAPACITY = "committed-capacity"  # committed capex/MW/capacity, no binding revenue yet
+    QUANTIFIED_REVENUE = "quantified-revenue"  # a disclosed $ or % of revenue attributable to it
+    STATED_INTENT = "stated-intent"  # strategy / plan / 'exploring' — aspirational, no commitment
+    NONE = "none"  # no driver exposure disclosed in the cited text
+
+
+class ExposureFact(BaseModel, frozen=True):
+    """One disclosed exposure fact, source-bound to the filing it was read from (CLAUDE.md)."""
+
+    fact: str  # the disclosed business activity, paraphrased from the filing (no outside facts)
+    concreteness: ExposureConcreteness
+    source_ref: str  # the filing accession/ref the fact was read from (must trace to the stream)
+
+
+class ExposureBasis(StrEnum):
+    """The STRONGEST disclosed basis across the stream — a factual read of disclosure concreteness,
+    NOT a score/rank/membership verdict (assemble-not-conclude; pinned by the no-conclude guard).
+    REAL (FP bar) = binding-contract or quantified-revenue; committed/aspirational/none = not."""
+
+    BINDING_CONTRACTS = "binding-contracts-with-terms"
+    COMMITTED_CAPACITY = "committed-capacity-or-capex"
+    QUANTIFIED_REVENUE = "quantified-revenue-share"
+    ASPIRATIONAL = "aspirational-intent-only"
+    NONE_DISCLOSED = "no-theme-exposure-disclosed"
+
+
+class ExposureAssessment(BaseModel, frozen=True):
+    """A name's DISCLOSED exposure to ONE driver, assembled from its recent filing stream and
+    source-bound, for the analyst to judge. By construction carries NO score, NO rank, NO
+    theme-membership, NO buy/avoid verdict — ``exposure_basis`` is a factual characterization of
+    disclosure concreteness (the Part-6 discriminator), never a recommendation."""
+
+    ticker: str
+    cik: str
+    driver: str  # the driver assessed against (e.g. the AI-datacenter / compute buildout)
+    exposure_basis: ExposureBasis
+    disclosed_facts: list[ExposureFact]
+    primary_business: str  # what the filings say the business primarily IS today (source-grounded)
+    key_unknowns: list[str]
+    stream_refs: list[str]  # the filing refs read — the citable universe for this assessment
+    flags: list[str] = Field(default_factory=list)  # guardrail flags (uncited / over-claim / etc.)
+    model: str | None = None  # the LLM that produced it (logged; never feeds the ledger)

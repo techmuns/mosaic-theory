@@ -1380,6 +1380,45 @@ single-threaded ahead of the lead loop).
       aspirational read is a timing artifact, its big deals postdate the filing); it proves
       DETECTION-discrimination, NOT the forward edge (the paper track is the arbiter). Build-which-edge
       stays the human's.* Suite unchanged (probe only; the B′-fix branch stays green).
+    - **STAGE 3, BUILD 1 — the SEMANTIC-PRIMARY exposure detector (scale-discrimination test on the
+      AI-datacenter driver). Discrimination SURVIVES the flood at a 1% false-positive rate; a NEW
+      early-detection path PARALLEL to A's co-movement — detection/B/C/co-movement UNTOUCHED.** New
+      `vinci/themes/exposure.py` (+ `ExposureAssessment`/`ExposureFact` schemas, a `themes-exposure`
+      CLI, 8 tests). Reuses synthesis.py's ARCHITECTURE (fenced LLM, verdict-free tool, cite-check) NOT
+      its task: reads each name's RECENT DISCLOSURE STREAM (latest annual BUSINESS section + latest 10-Q
+      MD&A/subsequent-events + recent 8-Ks — the IREN lesson: confirming hyperscaler contracts arrive as
+      8-Ks, not the stale annual) and the fenced Opus-4.8 assembles source-bound exposure facts.
+      **`exposure_basis` is DERIVED from the CITED facts' max concreteness** (binding-contract >
+      quantified-revenue > committed-capacity > stated-intent > none), NOT trusted from the LLM — no
+      cited concrete fact → none (fail-loud; a mention is NOT exposure). Assemble-not-conclude: NO
+      score/rank/membership/buy field (schema-guarded). **GROUND TRUTH reproduced from the recent
+      stream:** the 4 binding/quantified reals surface (CIFR/WULF binding hyperscaler leases, CAMT
+      quantified ~50% HBM, IREN binding — the recent-stream reader FIXED the probe's annual-only IREN
+      miss), the 4 betas reject (CLSK/MARA/VECO/ACLS → aspirational/committed, not REAL). One principled
+      precision refinement (binding = a NAMED PAYING customer/tenant, not a development/financing JV — so
+      MARA's tenant-less Starwood JV reads committed, not binding): face-validity, NOT return-tuning.
+      **THE SCALE TEST (real Polygon/EDGAR/Opus-4.8, committed code):** the keyword FLOOD is massive —
+      **1358/1727 (79%) of the sub-$10B universe mention 'artificial intelligence' recently** (Part-6
+      inversion at scale: 'AI' is non-discriminating). Stratified scan of 261 = all 141 hardware/HPC-
+      phrase names (recall) + a random 120 of the 'AI/data-center'-only flood (FP denominator) + the 6
+      ground-truth. **RESULT — discrimination SURVIVES:** flagged REAL (binding+quantified) = 13/261
+      (5%); basis dist none 175 / aspirational 64 / committed 9 / binding 8 / quantified 5. **FALSE-
+      POSITIVE rate on the cheap-mention flood = 1/120 = 1%** (the lone flood flag is HIMX, a borderline
+      'image-sensors → AI market' over-attribution the human audits — it does NOT flag 300 names for
+      saying 'AI'). The 13 REAL are dominated by genuine AI-datacenter exposure — CORZ/RXT/BLZE binding
+      CoreWeave / GPU-cloud contracts, CAMT 50% HBM, WYFI/BTBT WhiteFiber HPC, DGXX colocation, TSSI rack
+      integration — with ~4 borderline (KOPN/FCEL/HIMX/LWLG) for the analyst to audit; 0 LLM errors
+      (fail-loud, none fabricated). **SCALE VERDICT: semantic discrimination SCALES** — it surfaces the
+      real enablers and rejects the 79%-'AI' flood at a 1% FP rate, producing a tractable, source-bound,
+      auditable flagged set. Strong evidence that semantic-primary detection is VIABLE as the early
+      mechanism (resolving Part-6's fork in its favour, at scale). ruff + mypy --strict (81) + pytest
+      (272; +8 exposure tests) green. *CAVEATS: a build-1 scale test (stratified 261 of 1383 candidates;
+      FP measured on a 120-name flood sample; ~30% of the REAL set is borderline-for-audit; AEHR
+      conservatively read aspirational; LLM stochastic at the margin). Proves DETECTION-discrimination at
+      scale, NOT the forward edge (the paper track is the arbiter). PROPOSED — build 2 (NOT built, GATED
+      on this passing, which it did): the FULL multi-driver universe scan (all ~1383 candidates ×
+      multiple drivers, batch infra) + a precision pass on borderline REAL flags (is the contract/revenue
+      driver-SPECIFIC?). Detection/B/C/co-movement untouched — semantic-primary is a parallel path.*
   - **HOLDING-UNIVERSE study — sub-$10B-at-inception captured the theme return in all 6 themes tested
     (2026-06-29; `theme_admissibility_spike.md` Part 5).** A DISTINCT axis from the 4 detection spikes:
     does the **holding** bound (fund detects broad incl. mega leaders, but HOLDS sub-$10B) capture theme
