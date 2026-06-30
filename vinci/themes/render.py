@@ -8,7 +8,7 @@ output order is breadth (display only); NOT a quality ranking (themes are not ra
 from __future__ import annotations
 
 from vinci.schemas.envelope import DataField
-from vinci.themes.schemas import CandidateTheme, ThemeDetectionResult, Trajectory
+from vinci.themes.schemas import CandidateTheme, ThemeDetectionResult, ThemeStage2, Trajectory
 
 
 def _pct(df: DataField[float]) -> str:
@@ -68,3 +68,54 @@ def render_result(result: ThemeDetectionResult, *, top: int | None = None) -> st
     shown = result.candidate_themes if top is None else result.candidate_themes[:top]
     out.extend(render_theme(t) for t in shown)
     return "\n".join(out)
+
+
+def render_stage2(s2: ThemeStage2) -> str:
+    """Render the Stage-2 surface (leaders + type signals + confirmation) for one theme."""
+    ls, ts, c = s2.leader_set, s2.type_signals, s2.confirmation
+    pp = ts.price_pattern
+    lines = [
+        f"══ {s2.cluster_id} · {len(s2.member_tickers)} sub-$10B members ══",
+        f"   members: {' '.join(s2.member_tickers)}",
+        "   ── SUB-STEP 0: megacap leaders (machine ASSEMBLES; analyst RATIFIES) ──",
+        f"   rule: {ls.rule}",
+    ]
+    if ls.leaders:
+        for ld in ls.leaders:
+            lines.append(
+                f"     {ld.ticker:<6} ${ld.market_cap / 1e9:>6.0f}B  SIC {ld.sic}  "
+                f"co-move {ld.residual_corr_to_cluster:+.2f}  {ld.name[:30]}"
+            )
+    else:
+        lines.append("     (no co-moving >$10B leader — confirmation does not apply)")
+    lines += [
+        "   ── COMPONENT B: theme-type signals "
+        "(the human judges type as part of naming the driver) ──",
+        f"     price-pattern: {pp.read}",
+        f"       leaders : {_traj(pp.leader_trajectory)}",
+        f"       members : {_traj(pp.member_trajectory)}",
+        f"       lead−member: {'  '.join(f'{lbl} {d:+.1%}' for lbl, d in pp.lead_minus_member)}",
+        f"     vol-strip survival: {'SURVIVED' if ts.vol_strip_survived else 'FRAGMENTED'} "
+        f"({ts.vol_strip_note})",
+        f"     historical analog ({ts.historical_analog.status}): "
+        f"{', '.join(ts.historical_analog.reference_themes) or '—'}",
+    ]
+    if ts.historical_analog.note:
+        lines.append(f"       note: {ts.historical_analog.note}")
+    lines.append(f"     TYPE STATE: {ts.defer_note}")
+    lines.append(
+        "   ── COMPONENT C: megacap confirmation SIGNAL "
+        "(human reads to decide; not autonomous) ──"
+    )
+    if c is not None and c.grid:
+        lines.append(f"     baseline {c.baseline_date} ({c.baseline_rationale})")
+        lines.append(f"     leaders: {c.n_leaders} · clears →   +20%    +30%    +50%")
+        for cell in c.grid:
+            marks = "   ".join(
+                "FIRE " if cell.clears[t] else "  -  " for t in ("+20%", "+30%", "+50%")
+            )
+            lines.append(f"       {cell.basis:<9} {cell.value:>+7.1%}   {marks}")
+        lines.append(f"     scope: {c.scope_note}")
+    else:
+        lines.append("     (not computed — no co-moving mega-cap leaders)")
+    return "\n".join(lines)

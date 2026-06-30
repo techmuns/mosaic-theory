@@ -61,9 +61,12 @@ def _horizon_return(closes: dict[date, float], calendar: list[date], n_days: int
 
 def _momentum_trajectory(
     members: list[str], closes_by_name: dict[str, dict[date, float]], calendar: list[date],
-    reference_date: date,
+    reference_date: date, *, min_members: int = _MIN_MEMBERS,
 ) -> Trajectory:
-    """Median member trailing return at each horizon — a shape, never collapsed to one number."""
+    """Median member trailing return at each horizon — a shape, never collapsed to one number.
+
+    ``min_members`` defaults to the strength-signal floor (2); Stage-2 passes 1 for the LEADER
+    trajectory, since a theme can have a single mega-cap leader (e.g. uranium = CCJ)."""
     f: dict[str, DataField[float]] = {}
     for label, n in _HORIZONS:
         rets = [
@@ -72,7 +75,7 @@ def _momentum_trajectory(
         ]
         f[label] = (
             _present(statistics.median(rets), reference_date)
-            if len(rets) >= _MIN_MEMBERS
+            if len(rets) >= min_members
             else _unknown(f"only {len(rets)} members with a {label} return")
         )
     return Trajectory(h1mo=f["1mo"], h3mo=f["3mo"], h6mo=f["6mo"], h12mo=f["12mo"])

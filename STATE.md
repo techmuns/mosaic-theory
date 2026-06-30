@@ -1982,6 +1982,43 @@ single-threaded ahead of the lead loop).
       (40 clusters → 35 admissible; housing 19-name/12-SIC + quantum unchanged, gate still passes); git
       diff touches only render/schemas/signals. ruff + mypy --strict (76) + pytest 255 green; +3
       trajectory tests (horizons+order, per-horizon fail-loud, no-collapse schema guard).*
+    - **STAGE 2 / Components B + C — theme-type signals + megacap confirmation (2026-06-29). READ-ONLY
+      over A; A's detection / clustering / residualization / gates / linkage UNTOUCHED + re-verified
+      (zero git diff on those files).** New `vinci/themes/{leaders,classify,confirmation,stage2}.py` +
+      a `themes-stage2` CLI. **SUB-STEP 0 — leader designation:** A's $10B-capped clusters contain NO
+      mega-caps, so the >$10B leaders (whose pattern B reads, whose run C confirms) are ASSEMBLED from
+      a read-only >$10B operating-co slice (reusing `build_universe`; A's universe untouched) — a
+      mega-cap is a candidate leader iff its SIC ∈ the cluster's classes AND it residually CO-MOVES
+      with the cluster (the same test that defined the theme); the machine assembles, the analyst
+      RATIFIES (criterion-1). Mega-caps never enter detection or holding. **Component B** (type signals
+      fused into criterion-1, NO auto-classification): leaders-vs-members price-pattern
+      (leader-first / synchronous / mixed via the trajectory machinery), vol-strip-survival (from A),
+      an LLM historical-analog (§7.2 reference class, source-bound, proposed), and an explicit DEFER
+      state ('TYPE-AMBIGUOUS → watch, do not fire') — the human judges type. **Component C** (megacap
+      confirmation SIGNAL the human reads to act, NOT an autonomous trigger): leaders' median
+      cumulative return-from-baseline at +20/+30/+50 × {absolute, vs-IWM, vs-SPY}, scoped to
+      human-judged-emergence. **FORWARD BASELINE chosen + recorded:** the start of A's trailing
+      detection window (contemporaneous, no hindsight inception; the live form of 'since first
+      surfaced in detection' — replaces Part-7's hindsight Part-5 inception). *VERIFIED on real Polygon
+      (committed CLI, 39 themes): leader designation surfaces the REAL mega-caps (housing
+      HD/LOW/DHI/PHM/NVR/TOL co-move 0.35-0.44; gold NEM/AEM/Barrick… 16 names 0.36-0.53; banks
+      PNC/USB/TFC… 15 names; shipping → NO co-moving leader → DEFER). B price-pattern DISCRIMINATES —
+      banks read SYNCHRONOUS (cyclical), others MIXED; leader-first is proven by unit test (no sub-$10B
+      EMERGENCE theme exists in A's current universe — the AI-infra enablers grew >$10B, the
+      Finding-2/Part-7 reason, recorded honestly). C confirmation reconciled BY HAND to 4dp (gold
+      leaders' median return-from-baseline +0.7175 = grid absolute; vs IWM +0.3275; vs SPY +0.4775).
+      The DUAL-BENCHMARK grid reproduces Finding-2's −15pp EXACTLY (vs SPY − vs IWM = +0.1499 = IWM
+      +39% − SPY +24%) and is DECISIVE at the margin — hotels confirm at +20% vs SPY (+34.1%) but NOT
+      vs IWM (+19.1%); banks read vs-IWM −4.4% (laggard) vs vs-SPY +10.6%. B.3 LLM analog (opus-4.8)
+      assembled a real housing reference class (2004-06 bubble / 2007-09 collapse / 2020-21 boom /
+      2022-23 rate-freeze / lumber 2021 / 2012-15 recovery) + what to check, proposed-not-concluded.
+      ruff + mypy --strict (80) + pytest (263; +9 Stage-2 tests: leader-designation, price-pattern
+      discrimination, defer, forward-baseline, dual-benchmark grid, no-conclusion schema guard) green.*
+      (signals.py gained a backward-compatible `min_members` param for the single-leader trajectory —
+      A's strength signals byte-unchanged.) **Stages 3-4 PENDING: the semantic exposure-classifier /
+      text ingestion (Stage 3 — the unsolved enabler-SELECTION from Part 6/7, where winners and losers
+      look alike at confirmation); pipeline composition + enabler-search wiring + forward
+      paper-validation (Stage 4).** Edge 2 stays the lead horse.
   - **HOLDING-UNIVERSE study — sub-$10B-at-inception captured the theme return in all 6 themes tested
     (2026-06-29; `theme_admissibility_spike.md` Part 5).** A DISTINCT axis from the 4 detection spikes:
     does the **holding** bound (fund detects broad incl. mega leaders, but HOLDS sub-$10B) capture theme
