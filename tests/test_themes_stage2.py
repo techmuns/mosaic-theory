@@ -71,6 +71,40 @@ def test_designate_leaders_needs_sic_and_comovement() -> None:
     assert ls.leaders[0].residual_corr_to_cluster > 0.5  # the co-movement evidence is surfaced
 
 
+def test_designate_leaders_sic_3digit_family_plus_comovement_guard() -> None:
+    """B' fix: 3-digit SIC family widens CANDIDATES; co-movement still gates membership.
+
+    Cluster SICs {7371, 7372} (quantum-like). A sibling 7373 (IONQ-shaped) that co-moves is
+    designated — the unblock. A sibling 7374 that does NOT co-move is admitted as a candidate by the
+    3-digit widening but REJECTED by the co-movement gate (the load-bearing safety check). An exact
+    7372 that co-moves still works; a different-group 8888 that co-moves is still excluded by SIC.
+    """
+    cal = _cal(120)
+    rng = Random(7)
+    theme = {d: rng.gauss(0, 0.02) for d in cal}
+    cluster = {f"C{i}": {d: theme[d] + rng.gauss(0, 0.008) for d in cal} for i in range(4)}
+    mega_resid = {
+        "IONQ": {d: theme[d] + rng.gauss(0, 0.01) for d in cal},  # 7373 sibling, co-moves → in
+        "SPUR": {d: rng.gauss(0, 0.02) for d in cal},  # 7374 sibling, independent → out (guard)
+        "EXACT": {d: theme[d] + rng.gauss(0, 0.01) for d in cal},  # 7372 exact, co-moves → in
+        "FAR": {d: theme[d] + rng.gauss(0, 0.01) for d in cal},  # 8888 co-moves, wrong family → out
+    }
+    mega = [
+        MegaCap("IONQ", "IONQ", "1", "IonQ", 2e10, "7373", "Technology"),
+        MegaCap("SPUR", "SPUR", "2", "Spurious", 5e11, "7374", "Technology"),
+        MegaCap("EXACT", "EXACT", "3", "Exact", 2e10, "7372", "Technology"),
+        MegaCap("FAR", "FAR", "4", "FarGroup", 2e10, "8888", "Other"),
+    ]
+    ctx = MegaContext(mega=mega, residuals=mega_resid, closes={},
+                      by_id={m.internal_id: m for m in mega})
+    ls = designate_leaders(list(cluster), cluster, ctx, {"7371", "7372"}, cal)
+    designated = {x.ticker for x in ls.leaders}
+    assert designated == {"IONQ", "EXACT"}      # both co-moving 737x names designated
+    assert "SPUR" not in designated  # 3-digit-sibling candidate, but co-movement guard rejects it
+    assert "FAR" not in designated   # co-moves, but SIC family 888 ≠ 737 → still excluded by SIC
+    assert all(x.residual_corr_to_cluster >= 0.30 for x in ls.leaders)  # the guard's floor holds
+
+
 # --------------------------------------------------------------------------------------------------
 # Component B — price-pattern discriminates leader-first (emergence) vs synchronous (cyclical)
 # --------------------------------------------------------------------------------------------------

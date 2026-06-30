@@ -5,7 +5,7 @@ the theme's LEADERS (whose pattern B reads and whose run C confirms) are >$10B (
 NVDA/AVGO; housing = DHI/LEN; gold = NEM/AEM). So Stage 2 ASSEMBLES the leaders from OUTSIDE A's
 universe, **read-only and confirmation-side only**: a >$10B operating-co slice (reusing the
 ``build_universe`` machinery), from which a mega-cap is designated a theme leader iff it BOTH
-(a) matches the cluster's SIC classes AND (b) residually CO-MOVES with the cluster — the same
+(a) shares the cluster's SIC 3-digit industry family AND (b) residually CO-MOVES with it — the same
 co-movement test that defined the theme, applied to the mega-cap band. The machine assembles
 (breadth across the whole market a human can't recall); the **analyst ratifies** the set as part of
 criterion-1 driver-naming. **A's detection and the sub-$10B holding book are NOT touched** — these
@@ -178,9 +178,12 @@ def designate_leaders(
 ) -> LeaderSet:
     """Designate the theme's candidate mega-cap leaders: SIC-matched AND residually co-moving.
 
-    Co-movement = the mega-cap's median residual correlation with the cluster members ≥
-    ``corr_floor`` (the same residual-correlation standard that defined the theme). Machine
-    assembles; analyst ratifies.
+    SIC match is on the **3-digit industry group**, not the exact 4-digit class — a face-validity
+    widening (NOT a return-tune): 7371/7372/7373/7374 are one "computer services" family, so IONQ
+    (7373) is a candidate for a 7371/7372/7374 quantum cluster. The widening is SAFE only because of
+    the SECOND gate, co-movement = the mega-cap's median residual correlation with the cluster
+    members ≥ ``corr_floor`` (the same residual-correlation standard that defined the theme), which
+    rejects same-family mega-caps not actually in the theme. Machine assembles; analyst ratifies.
     """
     pos = {d: i for i, d in enumerate(calendar)}
 
@@ -191,9 +194,15 @@ def designate_leaders(
     member_vecs = [
         aligned(cluster_residuals[m]) for m in cluster_member_ids if m in cluster_residuals
     ]
+    # FACE-VALIDITY SIC widening (NOT a return-tune): match the cluster's 3-DIGIT industry group,
+    # not the exact 4-digit class, so IONQ (7373) is a candidate for a 7371/7372/7374 quantum
+    # cluster (one "computer services" industry). This widens only the CANDIDATE pool; the
+    # co-movement gate below still requires demonstrated theme membership (median corr >=
+    # corr_floor) — so a same-group mega-cap that does NOT co-move is rejected as a false leader.
+    cluster_sic3 = {s[:3] for s in cluster_sics if s}
     leaders: list[MegaLeader] = []
     for m in ctx.mega:
-        if m.sic not in cluster_sics or m.internal_id not in ctx.residuals:
+        if m.sic is None or m.sic[:3] not in cluster_sic3 or m.internal_id not in ctx.residuals:
             continue
         ai, av = aligned(ctx.residuals[m.internal_id])
         corrs = [
@@ -216,9 +225,9 @@ def designate_leaders(
             )
     leaders.sort(key=lambda x: x.market_cap, reverse=True)
     rule = (
-        f">$10B operating-cos whose SIC ∈ the cluster's classes AND whose median residual "
-        f"correlation with the cluster ≥ {corr_floor:.2f} (the co-movement test that defined the "
-        f"theme)"
+        f">$10B operating-cos whose SIC shares the cluster's 3-digit industry group AND whose "
+        f"median residual correlation with the cluster ≥ {corr_floor:.2f} (the co-movement test "
+        f"that defined the theme — which filters same-group names not actually in it)"
     )
     return LeaderSet(
         rule=rule,
