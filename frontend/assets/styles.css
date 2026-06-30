@@ -213,6 +213,19 @@ table.data tr:hover td { background: var(--surface-2); }
 .error { background: var(--danger-bg); border: 1px solid #eecac6; color: var(--danger); border-radius: var(--r); padding: 12px 15px; font-size: 13px; }
 
 /* --- dossier viewer ------------------------------------------------------ */
+/* header carries the ticker block on the left and the Download-PDF action on the right */
+.ds-header { display: flex; align-items: flex-start; justify-content: space-between; gap: 18px; flex-wrap: wrap; }
+/* basis 360px is the wrap threshold: title + button share one row on desktop, button drops below on mobile */
+.ds-header-main { flex: 1 1 360px; min-width: 0; }
+.ds-pdf-btn {
+  flex: none; display: inline-flex; align-items: center; gap: 6px;
+  padding: 8px 14px; font-size: 12.5px; font-weight: 600; line-height: 1;
+  color: var(--ink-2); background: var(--surface);
+  border: 1px solid var(--line-2); border-radius: var(--r);
+  cursor: pointer; white-space: nowrap; font-family: var(--sans);
+}
+.ds-pdf-btn:hover { border-color: var(--accent); color: var(--accent); }
+
 .ds-meta { display: flex; gap: 18px; flex-wrap: wrap; align-items: baseline; margin-top: 8px; font-size: 12.5px; color: var(--ink-2); }
 .ds-meta .mono { color: var(--ink); }
 .ds-section { margin-bottom: 14px; }
@@ -224,6 +237,13 @@ table.data tr:hover td { background: var(--surface-2); }
 .fact-label { font-size: 12.5px; color: var(--ink-3); }
 .fact-val { font-size: 13px; color: var(--ink); line-height: 1.5; }
 .fact-val.hi { font-weight: 600; }
+
+/* table-bearing facts (peer roster, trading multiples, series, cohort) span the FULL width: the label
+   sits above the table instead of in the fixed 210px column, so wide descriptive columns (e.g. the peer
+   "Business" column) stop wrapping into many short lines — shorter and more readable, on screen and in
+   the PDF alike. */
+.fact:has(table.data) { display: block; }
+.fact:has(table.data) .fact-label { margin-bottom: 5px; }
 
 /* flags — resolved vs open */
 .flag { display: flex; gap: 10px; align-items: flex-start; padding: 10px 13px; border-radius: var(--r); font-size: 12.5px; margin-bottom: 8px; line-height: 1.5; }
@@ -261,4 +281,53 @@ table.data tr:hover td { background: var(--surface-2); }
   .sidebar { position: static; height: auto; }
   .grid.cols-3, .grid.cols-4 { grid-template-columns: 1fr 1fr; }
   .main { padding: 20px 18px 50px; }
+}
+
+/* --- print / "Download PDF" ---------------------------------------------- */
+/* The Download-PDF button calls window.print(); these rules turn the on-screen
+   app into a clean report: strip the nav chrome and the button itself, expand
+   the content column, keep atomic units from splitting across pages, and force
+   the meaningful background colours (flags, synthesis fence, pills) so the PDF
+   reads exactly like the screen. No on-screen layout is touched — print only. */
+/* top/bottom page margin only; left/right inset lives in .main padding (below) so it survives the print
+   dialog's "Margins: None" setting and stays consistent on every page */
+@page { margin: 12mm 0; }
+
+@media print {
+  html, body { background: #fff; }
+  .app { display: block; }
+  .sidebar { display: none !important; }
+  .breadcrumb { display: none; }
+  .ds-pdf-btn { display: none !important; }
+  /* slight left/right inset + scale the whole report to ~85%, so a dense dossier fits in noticeably
+     fewer pages (a deep finalist drops from ~10 to ~6-7) WITHOUT dropping, summarising, or re-laying
+     out any content — print is high-DPI so the type stays crisp at this scale. */
+  .main { max-width: none; padding: 0 6mm; zoom: 0.85; }
+
+  /* preserve the colour-coding — these backgrounds carry meaning, not decoration */
+  * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+
+  /* tighten the on-screen reading spacing for paper: the same rows/tables/sections, less whitespace
+     between them (the screen view is unchanged — these only apply to print). */
+  .card { padding: 11px 15px; box-shadow: none; }
+  .ds-section { margin-bottom: 9px; }
+  .header-block { margin-bottom: 12px; padding-bottom: 12px; }
+  .fact { padding: 4px 0; }
+  .cite { margin-top: 2px; }
+  table.data td, table.data th { padding: 4px 9px; }
+  .flag { padding: 7px 12px; margin-bottom: 6px; }
+  .point { padding: 5px 0; }
+  .filing { padding: 8px 12px; margin-bottom: 7px; }
+
+  /* (full-width table-bearing facts now apply everywhere — see the .fact:has(table.data) rule above) */
+
+  /* keep atomic units intact across page breaks; sections still flow naturally */
+  .fact, .filing, .point, .flag, .logged-verdict, table.data tr { break-inside: avoid; }
+  .ds-title { break-after: avoid; }
+
+  /* let wide tables flow to full width instead of being clipped by the scroll box */
+  div[style*="overflow-x:auto"] { overflow: visible !important; }
+
+  /* citation links print as plain ink — the ↳ ref text is what matters, not the colour */
+  a { color: var(--ink); text-decoration: none; }
 }
