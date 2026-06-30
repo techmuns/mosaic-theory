@@ -2019,6 +2019,39 @@ single-threaded ahead of the lead loop).
       text ingestion (Stage 3 — the unsolved enabler-SELECTION from Part 6/7, where winners and losers
       look alike at confirmation); pipeline composition + enabler-search wiring + forward
       paper-validation (Stage 4).** Edge 2 stays the lead horse.
+    - **DIAGNOSTIC (2026-06-29) — why Stage 2 surfaced only cyclical themes: HYPOTHESIS A (the $10B
+      DETECTION ceiling), secondarily C (the breadth gate). NOT B (mislabeling). No code change.**
+      Tested the claim "no sub-$10B emergence theme exists" against the strong prior that emergence is
+      always in play. **(0) signals.py backward-compat PROVEN** (the deferred Stage-1.5 check): housing's
+      1/3/6/12mo momentum + rel-strength are IDENTICAL to 4dp post-`min_members` (1mo +0.1639/+0.1020 …
+      12mo −0.0909/−0.4809) — **A byte-unchanged.** **(1) ALL clusters incl. sub-breadth:** 108
+      components ≥2 names; **68 are 2-name pairs the breadth gate filters**; the borderline ones are
+      overwhelmingly CYCLICAL (staffing / RV / offshore-drilling / refiners / net-lease-REIT / airlines /
+      insurance / banks) — a few early-emergence-ish (biotech modalities WVE/KYMR/GPCR coh 0.73 = a small
+      ADMISSIBLE cluster; semicap pair VECO/ACLS coh 0.82 = breadth-FILTERED). **(2) DECISIVE — current
+      caps of LIVE mid-2026 emergence enablers (Polygon, external check, not the detector's output):** the
+      AI-infra picks&shovels are **100% ABOVE** the $10B ceiling (VRT $122B, GEV $282B, COHR $74B, LITE
+      $68B, ALAB $64B, CRDO $46B, CLS $44B, NVT $28B, SMCI $17B, MOD $15B, POWL $11B — **zero** sub-$10B);
+      space (RKLB $63B) + nuclear leaders (CCJ $46B, OKLO $10B) + IONQ $20B also grew out. The sub-$10B
+      emergence presence is NARROW: **quantum (RGTI $6.7B / QUBT $2.2B / QBTS $8.4B — DETECTED as a
+      cluster)** + eVTOL/drones (JOBY $9.2B / ACHR $4B / AVAV $8.3B / RCAT / ONDS — but a 2-name pair
+      JOBY/ACHR, breadth-FILTERED) + tiny nuclear-fuel (NNE $1.3B / LTBR $0.3B). Tally: sub-$10B 11 /
+      $10-50B 10 / >$50B 6+ (10 no-cap, mostly recent-IPO/foreign and also large). **(3)** quantum (the
+      one clearly-detected sub-$10B emergence theme) DID cluster — so the type-classifier (B) is NOT
+      filtering emergence AWAY; it is downstream of detection and only runs on what detection surfaces.
+      **VERDICT:** "no sub-$10B emergence theme" is an OVERSTATEMENT — quantum is a detected counterexample
+      — but the STRUCTURAL truth is **HYPOTHESIS A**: the $10B DETECTION ceiling selects against MATURE
+      emergence enablers, which grow into $10-50B by the time the theme is broadly detectable (AI-infra
+      entirely above the band). **HYPOTHESIS C is secondary** (the earliest emergence themes are 2-name
+      pairs the breadth gate filters — eVTOL JOBY/ACHR, semicap VECO/ACLS). **NOT B.** *PROPOSED (NOT
+      implemented): (A) raise the theme-DETECTION ceiling (e.g. ~$50B), SEPARATE from the sub-$10B HOLDING
+      ceiling — "detect broad" must mean broader than $10B since the enablers grow out; the Stage-2 >$10B
+      leader-slice already proves the machinery extends cleanly to that band, so DETECTION could reuse it.
+      (C) a NARROW breadth-gate exception for high-coherence cross-taxonomy emergence PAIRS, gated on
+      emergence-type signals (carefully — criterion 2: a pair is usually a relationship, not a theme).
+      This REFINES the "detect broad / hold sub-$10B" scoping decision: the binding constraint is the
+      DETECTION ceiling, not the holding ceiling. Diagnostic only; no detection/B/C/universe change;
+      suite unchanged (Part 0 is a re-run).*
   - **HOLDING-UNIVERSE study — sub-$10B-at-inception captured the theme return in all 6 themes tested
     (2026-06-29; `theme_admissibility_spike.md` Part 5).** A DISTINCT axis from the 4 detection spikes:
     does the **holding** bound (fund detects broad incl. mega leaders, but HOLDS sub-$10B) capture theme
