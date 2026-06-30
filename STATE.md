@@ -1286,6 +1286,30 @@ single-threaded ahead of the lead loop).
       This REFINES the "detect broad / hold sub-$10B" scoping decision: the binding constraint is the
       DETECTION ceiling, not the holding ceiling. Diagnostic only; no detection/B/C/universe change;
       suite unchanged (Part 0 is a re-run).*
+    - **B′ FIX — leader-designation SIC match loosened EXACT-4-digit → 3-DIGIT industry group
+      (2026-06-30, branch `fix/theme-leader-sic-3digit`). The B′ defect the diagnostic surfaced is
+      fixed; A's detection + the cyclical leaders UNTOUCHED.** `designate_leaders` (leaders.py) now
+      matches a candidate's 3-digit SIC group, not the exact 4-digit class — FACE-VALIDITY (7371/7372/
+      7373/7374 are one "computer services" family), NOT a return-tune; git diff isolated to that gate +
+      its docstrings/rule. **SAFE because of the SECOND gate (co-movement ≥0.30), VERIFIED on real
+      Polygon — not assumed:** the widening makes 43 737x mega-caps quantum CANDIDATES (MSFT $2.8T, ORCL,
+      CRM, NOW, ADBE, INTU…); the co-movement gate REJECTS all 42 false leaders (median residual corr
+      −0.09…+0.09, all <0.30) and DESIGNATES only IONQ (+0.649) — the second gate filters what the
+      widening's breadth would otherwise admit. **THE UNBLOCK (real run): quantum (RGTI/QBTS/QUBT/INFQ),
+      previously silent-DEFERRED, now flows END-TO-END through B+C:** (1) IONQ designated leader (SIC
+      7373, $20B, residual corr +0.649); (2) Component B reads a REAL pattern — **MIXED/UNSTABLE
+      (choppy)**, not 'no leader → cannot be read' — leader/member 1/3/6/12mo trajectory reconciled to
+      4dp (leader 3mo +0.7144 / 6mo +0.1011 vs members +0.3728 / −0.1331 → no clean leader-first gap,
+      honestly choppy); (3) Component C confirmation grid — IONQ median +0.4377 from the forward baseline
+      = +0.0477 vs IWM / +0.1977 vs SPY (clears +20%/+30% ABSOLUTE only, neither benchmark-excess),
+      dual-benchmark spread +0.1499 = Finding-2's −15pp — every cell reconciled BY HAND to 4dp. The
+      participation edge has its FIRST testable sub-$10B emergence target (B presents, human judges — no
+      machine verdict). **VALIDATION:** cyclical leaders UNCHANGED — housing (DHI/HD/LOW/NVR/PHM/TOL),
+      gold (16: AEM/NEM/FNV/WPM/…), banks (15: PNC/USB/TFC/…) IDENTICAL to the 4-digit era, 3-digit added
+      ZERO new leaders; A's detection untouched (fix is downstream). Regression test pins 3-digit match +
+      the spurious-leader-REJECTED-by-co-movement guard. ruff + mypy --strict (80) + pytest (264; +1
+      guard) green. **Hypothesis A (detection ceiling) + Hypothesis C (breadth-gate exception) stay
+      recorded findings pending separate decisions — only B′ is fixed here.**
   - **HOLDING-UNIVERSE study — sub-$10B-at-inception captured the theme return in all 6 themes tested
     (2026-06-29; `theme_admissibility_spike.md` Part 5).** A DISTINCT axis from the 4 detection spikes:
     does the **holding** bound (fund detects broad incl. mega leaders, but HOLDS sub-$10B) capture theme
