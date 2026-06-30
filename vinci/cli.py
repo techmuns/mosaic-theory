@@ -542,6 +542,52 @@ def _cmd_themes_stage2(args: argparse.Namespace) -> int:
     return 0
 
 
+def _cmd_themes_exposure(args: argparse.Namespace) -> int:
+    """Stage-3 build-1: scan the sub-$10B universe for DISCLOSED exposure to ONE driver (the AI-
+    datacenter buildout), reading each name's recent filing stream through the fenced LLM. ASSEMBLES
+    a source-bound exposure assessment per name (basis DERIVED from cited facts; a mention is not
+    exposure); it never concludes/ranks/selects — the human audits the flagged set + each basis."""
+    from collections import Counter
+    from datetime import timedelta
+
+    from vinci.edgar import EdgarClient
+    from vinci.graph.llm import AnthropicLlmClient
+    from vinci.sec import build_efts_http, build_sec_http
+    from vinci.themes import detection as det
+    from vinci.themes.exposure import (
+        AI_DATACENTER_DRIVER,
+        DRIVER_PHRASES,
+        is_real_exposure,
+        scan_driver_exposure,
+    )
+
+    cfg = get_config()
+    cfg.ensure_dirs()
+    universe, snap = det.load_detection_universe(cfg)
+    if args.max_names:
+        universe = universe[: args.max_names]
+    names = [(n.ticker, str(n.cik).zfill(10)) for n in universe if n.cik]
+    ref = date.fromisoformat(args.ref) if args.ref else snap
+    startdt = (ref - timedelta(days=args.window_days)).isoformat()
+    matched, results = scan_driver_exposure(
+        names, driver=AI_DATACENTER_DRIVER, phrases=DRIVER_PHRASES,
+        edgar=EdgarClient.from_config(cfg), sec_http=build_sec_http(cfg),
+        efts_http=build_efts_http(cfg), llm=AnthropicLlmClient.from_config(cfg),
+        startdt=startdt, enddt=ref.isoformat(), max_workers=args.workers, progress=stderr_reporter,
+    )
+    dist = Counter(a.exposure_basis.value for a in results)
+    real = [a for a in results if is_real_exposure(a)]
+    print(f"\n=== Stage-3 exposure scan · AI-datacenter · {len(names)} names, "
+          f"{len(matched)} mention-candidates, {len(results)} assessed ===")
+    print(f"exposure_basis distribution: {dict(dist)}")
+    print(f"REAL (binding/quantified): {len(real)} — audit each disclosed-fact basis:\n")
+    for a in sorted(real, key=lambda x: x.exposure_basis.value):
+        fc = next((f for f in a.disclosed_facts if f.concreteness.value != "none"), None)
+        print(f"  {a.ticker:6} [{a.exposure_basis.value}] "
+              f"{(fc.concreteness.value + ': ' + fc.fact[:110]) if fc else ''}")
+    return 0
+
+
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(prog="vinci", description=__doc__)
     sub = parser.add_subparsers(dest="command", required=True)
@@ -727,6 +773,20 @@ def build_parser() -> argparse.ArgumentParser:
         help="skip the LLM historical-analog (B); compute everything else",
     )
     p_s2.set_defaults(func=_cmd_themes_stage2)
+
+    p_exp = sub.add_parser(
+        "themes-exposure",
+        help="Stage-3 build-1: semantic-primary exposure scan for the AI-datacenter driver "
+        "(assesses disclosed exposure from filings; never concludes)",
+    )
+    p_exp.add_argument("--ref", help="reference date YYYY-MM-DD (default: snapshot as_of)")
+    p_exp.add_argument(
+        "--window-days", type=int, default=290, dest="window_days",
+        help="recent disclosure window in days (default: 290 ≈ 9.5mo)",
+    )
+    p_exp.add_argument("--max-names", type=int, dest="max_names", help="cap the universe (dev)")
+    p_exp.add_argument("--workers", type=int, default=6, help="concurrent LLM workers (default: 6)")
+    p_exp.set_defaults(func=_cmd_themes_exposure)
     return parser
 
 
