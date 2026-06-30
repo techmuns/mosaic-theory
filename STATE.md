@@ -1310,6 +1310,38 @@ single-threaded ahead of the lead loop).
       the spurious-leader-REJECTED-by-co-movement guard. ruff + mypy --strict (80) + pytest (264; +1
       guard) green. **Hypothesis A (detection ceiling) + Hypothesis C (breadth-gate exception) stay
       recorded findings pending separate decisions — only B′ is fixed here.**
+    - **BREADTH emergence-target scan (2026-06-30) — across ~45 live emergence themes the binding
+      constraint is GATE 2 (co-movement/breadth), NOT the $10B ceiling (Hyp A); NO clean valid sub-$10B
+      leader-first target currently qualifies. Diagnosis only, no code change.** Enumerated TWO ways to
+      defeat enumeration bias: Direction-1 top-down web research (10 parallel agents, live mid-2026, all
+      sectors, ~250 enabler tickers) + Direction-2 bottom-up from the 108-component census; each theme
+      run through the B′-fixed 4 gates (caps from Polygon, B/C from committed code). **Scorecard pattern
+      (where ~45 themes fall out):** Gate-1 "grown out of $10B" is RARE (2: AI-compute/EMS, fusion) —
+      most themes DO have sub-$10B baskets (Part-5 holds). The wall is **Gate 2: ~29 themes' sub-$10B
+      enablers don't residually co-move at τ=0.50** (heterogeneous sub-segments / idiosyncratic
+      clinical-or-pre-revenue risk / <12mo IPO history), and **9 co-move only as breadth-FILTERED pairs**
+      (semicap VECO/ACLS, crypto-miners→AI CLSK/MARA, eVTOL JOBY/ACHR, gene-edit CRSP/BEAM, nuclear-fuel
+      LTBR/NNE, neuro CYTK/MLYS, hydrogen PLUG/BLDP, solar-inverters SEDG/ENPH, drones RCAT/UMAC). Of the
+      5 that cluster ≥3, quantum / uranium / RNA(WVE/KYMR/GPCR) read **MIXED** (choppy like quantum) and
+      precision-onc has no co-moving leader. **VERDICT — valid sub-$10B leader-first target right now:
+      effectively NONE.** Exactly one passes all four MECHANICAL gates — **solar modules/cells**
+      (CSIQ/DQ/JKS, leader FSLR leader-first, C +0.38 vs IWM / +0.53 vs SPY) — but it is a **US-vs-China
+      tariff DIVERGENCE** (FSLR protected, Chinese solar distressed), not an emergence lead-lag whose
+      sub-$10B names play the leader → the analyst would DECLINE (assemble-not-conclude working). Closest
+      runners-up are the two leader-first+confirming pairs breadth-filtered out: semicap VECO/ACLS (leader
+      LRCX) and crypto-miners→AI CLSK/MARA (leaders IREN/WULF/CIFR/RIOT) — each still needs human scrutiny
+      (real AI-semicap vs BTC/AI-pivot beta). **TWO GAPS:** the DETECTION gap (Dir-1 themes that never
+      cluster) is large, dominated by Gate-2 "no co-movement"; the RECOGNITION gap (census clusters not in
+      Dir-1) is small and almost all CYCLICAL (shipping/banks/housing/gold/REITs/education — correctly not
+      emergence; a few borderline growth-services EPAM/GLOB, BAH/SAIC, PLXS/BHE). **WHAT THIS INFORMS
+      (surface, do NOT decide A vs C vs Stage-3):** the participation edge is idle largely BY CONSTRUCTION
+      — emergence themes exist in breadth but their sub-$10B expressions don't form tradeable leader-first
+      baskets. Evidence points the binding constraint at **co-movement/breadth (Hyp C + a co-move/τ/
+      short-IPO-history question)**, NOT the ceiling (Hyp A unlocks only the 2-3 grown-out AI-infra-family
+      themes) and NOT yet Stage-3 (the semantic enabler-selector only bites once a theme clears gates 1-3,
+      which almost none do). Highest-value next probe: a NARROW Hyp-C breadth exception would surface
+      semicap + crypto-miners→AI for analyst judgment. Suite unchanged (diagnosis only; the B′-fix branch
+      stays ruff+mypy+pytest green).
   - **HOLDING-UNIVERSE study — sub-$10B-at-inception captured the theme return in all 6 themes tested
     (2026-06-29; `theme_admissibility_spike.md` Part 5).** A DISTINCT axis from the 4 detection spikes:
     does the **holding** bound (fund detects broad incl. mega leaders, but HOLDS sub-$10B) capture theme
