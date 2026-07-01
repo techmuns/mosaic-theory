@@ -194,7 +194,7 @@ function renderDossier(d, verdict) {
   const m = d.mechanical || {};
   return [
     header(d),
-    flagsSection(d.flags || []),
+    flagsSection(d.caveats || d.flags || []),  // d.flags = pre-split fallback for un-re-assembled JSONs
     valuation(m.valuation),
     quality(m.quality),
     concentration(m.concentration),
@@ -227,14 +227,16 @@ function header(d) {
   </div>`;
 }
 
-function flagsSection(flags) {
-  if (!flags.length) return "";
-  const rows = flags.map((f) => {
+function flagsSection(caveats) {
+  // Decision caveats only (d.caveats) — the machine-QA self-checks live in d.qa_flags (dev/JSON),
+  // deliberately kept out of this human view, matching the PDF/markdown render.
+  if (!caveats.length) return "";
+  const rows = caveats.map((f) => {
     const resolved = /^RESOLVED\b/i.test(f);
     return `<div class="flag ${resolved ? "resolved" : "open"}"><span class="fi">${resolved ? "✓" : "⚠"}</span><span>${escapeHtml(f)}</span></div>`;
   }).join("");
-  return `<div class="card ds-section"><div class="ds-title">Flags for human review</div>
-    <div class="subtitle muted ds-sub">Resolved (✓) vs open (⚠). Open flags need a human check; they are not conclusions.</div>${rows}</div>`;
+  return `<div class="card ds-section"><div class="ds-title">Analyst caveats — verify before the verdict</div>
+    <div class="subtitle muted ds-sub">Resolved (✓) vs open (⚠). Open caveats need a human check; they are not conclusions.</div>${rows}</div>`;
 }
 
 function valuation(v) {

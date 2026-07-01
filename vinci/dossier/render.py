@@ -51,12 +51,15 @@ def _fact(label: str, s: Sourced[Any], fmt: Callable[[Any], str] = str) -> str:
 
 
 def _flags_section(d: Dossier) -> list[str]:
-    """Human-review flags render LOW (next to key_unknowns), not at the top — they are a closing
-    'what to verify' checklist, not the headline. The dossier assembles and cites; the verdict and
-    the flag-resolution are the human's."""
-    if not d.flags:
+    """The human-facing CAVEATS render LOW (next to key_unknowns), not at the top — a closing 'what
+    to verify' checklist, not the headline. Only decision caveats show here (re-voiced, plus the
+    'pull CIQ …' incomplete-input notes); the machine-QA self-checks live in ``d.qa_flags`` (JSON /
+    dev only). The dossier assembles and cites; the verdict and the caveat-resolution are the
+    human's."""
+    if not d.caveats:
         return []
-    return ["## ⚠ Flags (human review)", *[f"- {f}" for f in d.flags], ""]
+    return ["## ⚠ Analyst caveats — verify before the verdict",
+            *[f"- {c}" for c in d.caveats], ""]
 
 
 def render_markdown(d: Dossier) -> str:

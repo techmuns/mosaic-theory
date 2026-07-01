@@ -950,7 +950,29 @@ Each line: *what it does* — *verified how*.
       DISAGREES (VRRM) or is ABSENT (can't cross-check). Operator re-assembly of MVST/VRRM/IT on #51
       confirmed Fix A (MVST → Microvast 11.1x, was Samsung SDI 38.4x; synthesis now fed the right
       name's multiples) + Fix B; pytest 251 green (integrity test extended: stale+agree→suppressed,
-      stale+comps-absent→soft-fire).
+      stale+comps-absent→soft-fire). **#51 MERGED (squash `8f7b670`); operator committed the 3
+      dossier artifacts into it.**
+  - **Dossier flags split by audience + body-tail concision (PR open — not merged, 2026-07-01).**
+    Acting on analyst claim-2 ("flags are mostly jargon"): the human-review block mixed machine-QA
+    guardrails (validator-speak — `UNCITED`/`UNTRACEABLE`/`TWIN`/`DIRECTIONAL`/…) with real decision
+    caveats. New `vinci/dossier/flags.py` classifies each emitted flag at the SCHEMA boundary
+    (`partition` → caveats + qa_flags; `revoice` strips the ALL-CAPS token + humanises the field
+    name, keeping the explanation) — **the guardrail-emission logic in `synthesis._validate` is
+    untouched, so no guardrail and none of its ~18 tests can regress.** `Dossier.flags` → `caveats`
+    (human PDF/web, re-voiced, incl. the visible `pull CIQ …` incomplete-input notes) + `qa_flags`
+    (dev/JSON only, FULLY hidden from the human view). DIRECTIONAL + VERIFICATION-CLAIM → qa
+    (machine-overstep self-checks); default for an unrecognised flag = caveat (fail toward
+    transparency). Wired through `schemas`/`assemble`/`render`/`cli` + `frontend/views/dossier.js`
+    (renders `d.caveats`, `d.flags` fallback for un-re-assembled JSONs). Plus a body-tail concision
+    pass — 4 assumed tails trimmed (comps "LTM+NTM forward", surprise "fiscal-year…99.1 guide",
+    survival "no runway constraint" / "runway=cash÷burn"), the ~9 load-bearing misread-guards KEPT
+    (NM-as-real-state, margin-%-vs-absolute-EBITDA, justified-vs-residual, opacity-as-signal, …).
+    Display-only; assemble-not-conclude intact. *Verified: ruff + mypy --strict (68) + pytest 254
+    incl. 3 new flag tests (partition routes QA out; re-voice strips the token keeps the
+    explanation; render shows caveats, hides QA). Cloud-validated on all 10 committed dossiers
+    (their raw flag strings partition correctly — MVST 1 caveat / 4 qa, VRRM 2/1, BRBR 2/2 with
+    DIRECTIONAL+VERIFICATION-CLAIM hidden; ~15 of ~34 flags routed to dev). Operator re-assembly is
+    the final rendered gate; committed `data/dossiers/*` + `frontend/dossiers/*` refresh then.*
 - _Whole suite green (ruff + mypy --strict clean; `pytest -m "not network"` passes)._
 
 ## 3. FALSIFIED — tested and retired (NOT deferred)

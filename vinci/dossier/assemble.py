@@ -18,6 +18,7 @@ from typing import Any
 
 from vinci.config import Config, get_config
 from vinci.dossier import ciq_sheets, requirements
+from vinci.dossier import flags as dossier_flags
 from vinci.dossier.ciq import CiqBundle
 from vinci.dossier.manual_store import LocalFolderStore, ManualDataStore
 from vinci.dossier.mechanical import assemble_mechanical
@@ -129,10 +130,14 @@ def assemble_one(
         flags += synth_flags
     else:
         flags.append("LLM synthesis skipped (no ANTHROPIC client) — mechanical layer only")
+    # split the emitted flags by audience: decision caveats → human PDF/web (re-voiced), machine
+    # QA self-checks → dev/JSON only (emission logic is untouched; classification is display-layer).
+    caveats, qa_flags = dossier_flags.partition(flags)
     dossier = Dossier(
         ticker=ticker, name=rec.identity.name, cik=rec.identity.cik,
         reference_date=fin.reference_date, rank=fin.rank, mechanical=mech, synthesis=synthesis,
-        flags=flags, llm_model=(llm.model if llm else None), assembled_at=datetime.now(),
+        caveats=caveats, qa_flags=qa_flags,
+        llm_model=(llm.model if llm else None), assembled_at=datetime.now(),
     )
     _write(dossier, llm_log, out_root)
     return dossier
