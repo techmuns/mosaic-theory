@@ -2695,3 +2695,22 @@ in parallel under the §4 GOVERNOR (validation-design-first, never starving the 
 Single-threading wastes validation's weeks-to-quarters latency; the 2-person failure mode is spreading
 thin and validating nothing — so every parallel edge carries its own validation design before any
 build, and capital still deploys only on whichever spread validates first.
+
+**THEME-ENABLER FORWARD-VALIDATION PROTOCOL — spec written a-priori (2026-07-01,
+`docs/theme_forward_validation.md`, DRAFT for analyst review).** The theme family's own validation
+design, the analogue of `theme_admissibility.md` (detection) written BEFORE any logging so its criteria
+can't be reverse-engineered from outcomes. It defines how the human-ratified early enablers from
+Stage-3 build-2 are scored forward: the PRIMARY measure is the **RATIFIED − PASSED-BUT-SURFACED spread**
+— the **BUY−AVOID spread transposed to themes** (does the analyst's SELECTION of enablers from the
+machine-surfaced committed-or-better tier beat holding the whole tier — the judgment-added-value test,
+which is the fund's actual edge, §1) — plus the **early-detection test** (log each enabler's forward
+co-movement-*onset* date; measure whether entering at ratification beat entering once it is obvious — the
+one test that validates the whole semantic-primary thesis). Entry clock = ratification date (you can only
+act on what you ratified — no hindsight); market-relative (IWM) and vs-mega-cap are SECONDARY context;
+requires BOTH legs logged (ratified AND passed) or there is no counterfactual (the same defect that keeps
+Edge-2's spread empty today, §2). **The theme paper-track is GATED on (a) this spec's analyst sign-off
+AND (b) the analyst's ratified committed-tier picks** (nothing to log until the human ratifies a set);
+the logging harness is the NEXT build, not built here. Dead-signal firewall: machine ASSEMBLES evidence →
+human RATIFIES the pick → protocol MEASURES forward; no code path turns a grade into a hold. Forward-only,
+never backtested, never tuned on returns. **Edge 2 stays the lead horse** (§4 GOVERNOR): this track is
+parallel, low-cadence, additive — it must not starve overshoot verdict-logging.
