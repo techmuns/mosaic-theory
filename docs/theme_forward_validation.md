@@ -1,7 +1,13 @@
 # Theme forward-validation — the Stage-4 protocol (a-priori, before logging)
 
-> **Status: DRAFT for analyst review (2026-07-01). A-priori — written BEFORE any theme-enabler
-> paper-hold is logged, so its criteria cannot be reverse-engineered from outcomes.** The analogue of
+> **Status: DRAFT for analyst review (2026-07-01; REVISED same day). A-priori — written BEFORE any
+> theme-enabler paper-hold is logged, so its criteria cannot be reverse-engineered from outcomes.**
+> **REVISION (2026-07-01):** the primary measure gained a **CO-PRIMARY control** — RATIFIED vs a NAIVE
+> BASELINE from the same surfaced set (§3–§4) — because RATIFIED−PASSED alone tests only whether the
+> analyst *sorted the tier* (partly guaranteed by competent disclosure-reading), not whether the
+> apparatus beats a replicable method (the fund's actual edge-filter, STATE.md §4). A **statistical-power
+> caveat** (§4) was added confronting the tiny sample. An amendment, not a redesign — every other measure
+> is preserved. The analogue of
 > `docs/theme_admissibility.md` (which specified what makes a cluster an admissible THEME before any
 > detection code) and of Edge-2's ranking axes (STATE.md §2 — face-validity, never return-tuned). Where
 > admissibility specified DETECTION, this specifies MEASUREMENT: once the analyst has ratified a set of
@@ -27,21 +33,37 @@ answers the one question the whole theme-edge arc reduces to:
 > **Did the analyst's SELECTION of early enablers — ratifying a subset of the machine-surfaced tier —
 > out-return the naive "hold the whole surfaced tier"?**
 
-That **RATIFIED − PASSED-BUT-SURFACED** spread is the **BUY−AVOID spread transposed to themes** (STATE.md
-§1: the fund's only proof-of-edge). It is the load-bearing measure because it isolates the fund's actual
-edge — **deep human judgment on finalists, fed by the funnel** (CLAUDE.md) — from the two things that are
-NOT the edge: "the theme went up" (market/momentum beta, replicable — STATE.md §7 THEME family) and
-"sub-$10B has more theme-beta" (a structural holding-bound question, STATE.md §7 holding-universe study).
-The theme family is an edge **ONLY IF AI-assembly beats a naive momentum baseline** (STATE.md §7); here
-the naive baseline is precise — *hold everything the machine graded committed-or-better* — and the human
-judgment is the edge **only if ratified beats passed.**
+That question has **TWO CO-PRIMARY measures** — because two different things must BOTH be true for the
+edge to be real, and each measure isolates one of them:
+
+- **RATIFIED − PASSED-BUT-SURFACED** — did the analyst *sort the surfaced tier* correctly (selection
+  WITHIN the tier). The **BUY−AVOID spread transposed to themes** (STATE.md §1, the fund's only
+  proof-of-edge).
+- **RATIFIED − a NAIVE BASELINE from the same surfaced set** — did the machine's semantic surfacing PLUS
+  the human's judgment *beat a replicable method* (equal-weighting the whole committed-or-better tier, or
+  a keyword/co-movement screen's picks). This is the fund's own edge-filter: a theme is an edge **ONLY IF
+  AI-assembly beats a NAIVE BASELINE** (STATE.md §4/§7 THEME family — momentum-adjacent, replicable
+  methods capture much of any theme move).
+
+**Why both, and why the second is not optional:** PASSED is a **QUALITY-SORTED** set — the analyst
+declined those names for reading thinner — so a positive RATIFIED−PASSED is **partly guaranteed by
+competent disclosure-reading** (table-stakes) and does NOT isolate the semantic-primary early-detection
+edge from generic 10-K-reading skill. Only RATIFIED − NAIVE isolates whether the whole apparatus beats a
+dumb alternative. **Both positive** = the edge is real (selection works AND the apparatus beats
+replicable). **Positive RATIFIED−PASSED with ~0 RATIFIED−NAIVE** = the analyst sorts well but the
+apparatus doesn't beat equal-weighting the surfaced names — a **partial-kill the protocol must surface**
+(§3–§4). Together they isolate the fund's actual edge — **deep human judgment on finalists, fed by the
+funnel** (CLAUDE.md) — from the two things that are NOT the edge: "the theme went up" (market/momentum
+beta, replicable — STATE.md §7) and "sub-$10B has more theme-beta" (a holding-bound question, STATE.md §7
+holding-universe study), both demoted to SECONDARY context (§3).
 
 A second, subordinate question validates the semantic-primary *mechanism* (§5): **did entering EARLY (at
 ratification, before the name co-moves) beat entering LATE (once it is obvious)?** That is the test the
 entire Stage-3 arc was built to justify (semantic-from-disclosure is early; co-movement is structurally
 late — STATE.md §4 build-1/2).
 
-Everything below serves these two measures. Nothing below lets the machine render either verdict.
+Everything below serves these measures (two co-primary edge tests + the early-detection mechanism).
+Nothing below lets the machine render any of these verdicts.
 
 ---
 
@@ -126,44 +148,71 @@ stamps let the protocol *measure* how early that was — rather than assuming it
 
 ## 3. The counterfactual — the load-bearing design choice
 
-What are the ratified enablers measured AGAINST? Three candidates, each answering a different question;
-the protocol needs a PRIMARY (the edge test) and secondaries (context).
+What are the ratified enablers measured AGAINST? The measure must isolate the EDGE — not generic
+disclosure-reading skill, not beta. There are **two CO-PRIMARY counterfactuals** (both must be positive
+for the edge to be real) and two SECONDARY context comparators. *(This §3 was REVISED 2026-07-01: the
+original made RATIFIED−PASSED the sole primary; the co-primary naive-baseline control was added because
+RATIFIED−PASSED alone does not isolate the fund's edge — see 3a.)*
 
-- **(a) vs a market benchmark (IWM, sub-$10B-matched)** — did they generate absolute / relative return.
-  Answers *did the tier make money vs the market*. **Necessary sanity floor, not the edge:** a rising
-  market lifts the whole tier; beta is not judgment. If the ratified basket cannot beat IWM at all, the
-  funnel surfaced junk — but beating IWM only proves theme-beta, which is replicable (STATE.md §7).
-- **(b) vs the NON-RATIFIED committed names (surfaced-but-PASSED)** — the true edge test. The machine
-  surfaced the whole committed-or-better tier; the human ratified some (BUY) and passed the rest (AVOID).
-  **RATIFIED − PASSED is the BUY−AVOID spread for themes.** If ratified out-returns passed, the human's
-  SELECTION added value over "hold everything the machine graded committed-or-better" — which is the
-  fund's actual edge (human judgment on finalists), and the theme family's kill criterion made concrete
-  (STATE.md §7: AI-assembly must beat a naive baseline; the baseline here is *the machine tier without
-  the human's selection*).
-- **(c) vs the theme's MEGA-CAP leaders** — did the early sub-$10B enablers capture MORE of the theme
-  move than the obvious large-caps. Answers the *"sub-$10B is higher theme-beta"* question deferred from
-  Stage 1 (STATE.md §7 holding-universe study: sub-$10B-at-inception captured more in 5/6 themes, but
-  hindsight-prone). **Secondary** — a structural holding-bound question, not the selection edge.
+### 3a. CO-PRIMARY 1 — vs the surfaced-but-PASSED names: did the human sort the tier?
 
-**RECOMMENDATION: (b) is PRIMARY. Argue:**
+The machine surfaced the whole committed-or-better tier; the human ratified some (BUY) and passed the
+rest (AVOID). **RATIFIED − PASSED is the BUY−AVOID spread for themes** (STATE.md §1). If ratified
+out-returns passed, the human's SELECTION added value *within* the surfaced tier.
 
-The fund's edge is **not** "themes go up" — that is (a), market/momentum beta, replicable and explicitly
-not the edge (STATE.md §3 retired graph-momentum for being replicable). It is **not** "sub-$10B carries
-more theme-beta" — that is (c), a fact about the *holding bound*, true or false independent of whether
-any *selection* skill exists. The fund's edge, stated in one line (CLAUDE.md §1), is **deep human
-judgment on a few finalists, fed by an AI funnel.** The only thing that proves *that* is showing the
-human's ratification — picking finalists out of the machine-surfaced tier — **beats holding the whole
-tier the machine surfaced.** That is (b), and it is the *same* measure the entire fund is gated on
-(STATE.md §1: the BUY−AVOID spread), transposed from single-name overshoot to theme enablers. If ratified
-does **not** beat passed, the human added nothing over the machine grade — either the grade was the whole
-signal (and the human is redundant) or the whole tier is momentum (and there is no edge). Only (b)
-distinguishes these. (a) and (c) are logged as **secondary context** — (a) as the did-the-tier-make-money
-floor, (c) as the holding-ceiling input (STATE.md §7) — but the **edge verdict rides on (b).**
+**But this measure does NOT, alone, isolate the fund's edge — the flaw this revision fixes.** PASSED is a
+**QUALITY-SORTED** set: the analyst declined those names *because they read thinner* (weaker
+grade-driving fact, softer driver-tie, more deferred terms). So a positive RATIFIED−PASSED spread is
+**partly GUARANTEED by competent disclosure-reading** — any diligent reader's kept names tend to
+out-read their discarded ones. That is **table-stakes**, not the semantic-primary early-detection edge.
+RATIFIED−PASSED answers "did the human sort the tier correctly" — necessary, but not sufficient. Hence
+CO-PRIMARY 2.
 
-**Consequence (restated because it is the single most common way this fails):** (b) requires the **AVOID
-leg to exist** — every surfaced committed-or-better name must be ratified-or-passed and logged (§1). No
-passed set → no counterfactual → the protocol measures beta, not judgment. This is the defect to design
-out from row one.
+### 3b. CO-PRIMARY 2 — vs a NAIVE BASELINE from the same surfaced set: did the apparatus beat a replicable method?
+
+The fund's own edge-filter, made concrete: a theme is an edge **ONLY IF AI-assembly beats a NAIVE
+BASELINE** (STATE.md §4/§7 — themes are momentum-adjacent; replicable methods capture much of any theme
+move). The naive baseline is the decision a DUMB method makes on the SAME surfaced set. Log at least two:
+
+- **(i) EQUAL-WEIGHT-THE-WHOLE-TIER** — hold all committed-or-better names equal-weighted, NO selection
+  (~56 for the AI-datacenter build-2 tier). The "machine surfaced, hold everything" baseline. RATIFIED
+  beating this shows the tier + the human's selection beats holding the surfaced tier blindly.
+- **(ii) A KEYWORD / CO-MOVEMENT SCREEN's picks** — what the replicable method the fund must beat would
+  hold: the top names by chain-keyword density (the dumb keyword screen, no semantic discrimination),
+  and/or the names already in Component A's co-movement cluster (the "late/obvious" replicable method,
+  §5). RATIFIED beating this shows semantic surfacing + human judgment beats what a cheap quant could run.
+
+**RATIFIED − NAIVE** (benchmark-adjusted, §4) is what isolates "the machine's semantic surfacing + the
+human's judgment beat a replicable method" — **THE fund's edge claim** (CLAUDE.md §1; STATE.md §4).
+
+### 3c. The logic — both must be positive; the partial-kill the protocol MUST surface
+
+- **RATIFIED − PASSED** isolates *the human sorted the tier* (selection within tier).
+- **RATIFIED − NAIVE** isolates *the whole apparatus (semantic surfacing + selection) beat a replicable
+  method* (the edge-filter).
+- **BOTH positive** = the edge is real: selection adds value within the tier AND the tier+selection beats
+  a dumb alternative.
+- **Positive RATIFIED−PASSED but ~0 RATIFIED−NAIVE** = the analyst sorts well, yet the whole apparatus
+  does not beat equal-weighting the surfaced names — a **PARTIAL-KILL**: the human-in-the-loop has skill,
+  but the semantic-primary apparatus adds nothing a keyword/equal-weight method wouldn't. This is the
+  single most likely way a plausible-looking edge is really just disclosure-reading riding a replicable
+  base — the protocol MUST be able to surface it, not hide it inside a positive RATIFIED−PASSED.
+
+### 3d. SECONDARY context (logged, not the edge verdict)
+
+- **vs a market benchmark (IWM, sub-$10B-matched)** — the did-the-tier-make-money floor; beating IWM only
+  proves theme-beta (replicable). If the ratified basket can't beat IWM at all, the funnel surfaced junk.
+- **vs the theme's MEGA-CAP leaders** — did the early sub-$10B enablers capture MORE theme move than the
+  obvious large-caps (the *"sub-$10B is higher theme-beta"* question, STATE.md §7 holding-universe study,
+  hindsight-prone). A holding-CEILING input, **not** the selection edge.
+
+### 3e. Consequence — both co-primaries require their control set LOGGED from row one
+
+RATIFIED−PASSED requires the **AVOID leg**: every surfaced committed-or-better name is ratified-OR-passed
+and logged (§1) — no passed set → no counterfactual → the measure is empty (the exact defect leaving
+Edge-2's spread empty today, STATE.md §2). RATIFIED−NAIVE requires the **naive baskets frozen at
+ratification time** (the whole tier + the keyword/co-movement picks, as of the ratification date) so the
+comparison is honest and never re-drawn later. Design both control sets in from row one.
 
 ---
 
@@ -179,16 +228,51 @@ Defined precisely so it cannot drift:
 - **Horizon — months-to-quarters** (STATE.md §7: theme rotations resolve over months-to-quarters).
   Evaluate at rolling checkpoints (e.g. 1 / 3 / 6 / 12 months) per name; the edge **accumulates forward
   over calendar time** exactly like the BUY−AVOID spread — it is not read off at a single fixed date.
-- **The DISCRIMINATION measure — the RATIFIED − PASSED spread** (the §3b selection-added-value test):
-  `mean(benchmark-adjusted fwd return | RATIFIED) − mean(benchmark-adjusted fwd return | PASSED)`,
-  accumulated as rows season. **Positive and large enough to be real, not noise** (the same
-  ≥2-quarters-of-resolved-observations bar as the capital gate, STATE.md §4) = the human's selection
-  discriminates. **~0** = the human added nothing over the machine tier (the grade was the signal).
-  **Negative** = the selection is anti-selective (worse than holding the tier) — a kill signal for the
-  human-in-the-loop claim, which the protocol must be willing to surface.
+- **The DISCRIMINATION measures — TWO CO-PRIMARY spreads** (both benchmark-adjusted, both accumulated as
+  rows season; **both must be positive** for the edge to be real — §3c):
+  - **RATIFIED − PASSED** (§3a, selection within the tier): `mean(adj. fwd return | RATIFIED) −
+    mean(adj. fwd return | PASSED)`. Positive = the human sorted the tier; ~0 = added nothing over the
+    grade; negative = anti-selective (sorted it backwards). *Partly guaranteed by disclosure-reading
+    skill — necessary, not sufficient (§3a).*
+  - **RATIFIED − NAIVE** (§3b, the apparatus beats a replicable method — the fund's edge-filter):
+    `mean(adj. fwd return | RATIFIED) − mean(adj. fwd return | NAIVE)` for EACH naive basket
+    (equal-weight-whole-tier; keyword/co-movement picks). Positive = the semantic apparatus + selection
+    beat the dumb method; **~0 = they did NOT — the PARTIAL-KILL (§3c)**, which the protocol must surface,
+    never bury inside a positive RATIFIED−PASSED.
+  Each counts as "large enough to be real, not noise" only against the ≥2-quarter resolved bar (STATE.md
+  §4) **AND** the power floor (§4-power below).
 
-"Captured the enabler return" is therefore **not** "the name went up" — it is "the ratified set beat the
-passed set, after the market is stripped, over months-to-quarters, accumulated forward."
+"Captured the enabler return" is therefore **not** "the name went up," and **not even** "the ratified set
+beat the passed set" alone — it is "ratified beat **both** the passed set **and** a naive baseline, after
+the market is stripped, over months-to-quarters, accumulated forward — subject to the power floor below."
+
+### 4-power. Statistical power — confront the tiny sample HONESTLY
+
+The sample is **small by construction**, and the protocol must say so BEFORE the first data point, so
+early results are not over-read (the fund's discipline everywhere: don't round thin evidence up to
+signal — CLAUDE.md; STATE.md §7 "the control says no"):
+
+- **The numbers.** A committed-or-better tier is ~56 names (AI-datacenter build-2); the analyst ratifies
+  perhaps **~10–20**; emergence themes confirm only **a few times a year**. So the spread accrues on a
+  **handful of names over quarters**, not thousands of observations.
+- **Names within a theme are NOT independent.** They co-move (that is what makes them a theme), so the
+  effective sample is far smaller than the name count — closer to **THEMES × QUARTERS** than to names. Ten
+  ratified names in one theme-quarter is ≈ ONE independent observation of "did selection work here," not ten.
+- **Therefore early results are DIRECTIONAL / ANECDOTAL, NOT statistically significant.** A positive (or
+  negative) spread on the first one or two themes is **consistent with noise** and must NOT be read as
+  validation OR kill. Small-cap cross-sectional return variance is large; a few names' idiosyncratic moves
+  swamp a real selection signal at this n.
+- **A pre-registered bar (rough, set NOW to prevent post-hoc over-reading).** Treat the spread as merely
+  **suggestive** until it has accumulated on the order of **≥8–12 independent THEME-QUARTERS spanning ≥4–5
+  distinct drivers** (so it is not one theme's idiosyncrasy), with the **sign consistent across drivers**
+  (not one blowout theme carrying the mean). Below that, report the number and its direction but label it
+  explicitly **UNPOWERED**. This is a floor for taking the spread seriously, not a significance test — the
+  honest posture is that real confidence needs **many themes over many quarters, likely multiple YEARS** at
+  the fund's theme-confirmation cadence. Both co-primary spreads (§4) and the early-detection gap (§5) are
+  subject to this same floor.
+- **Consequence for cadence.** Because the binding scarcity is theme-quarters, this track's value is
+  **cumulative and slow** — another reason it is parallel/low-cadence and must NEVER pull attention from
+  Edge-2's faster-seasoning overshoot verdicts (§6 GOVERNOR). It is a long accrual, not a quick read.
 
 ---
 
@@ -291,23 +375,29 @@ ledger that records them.
 The human reviews this doc for **a-priori sense** (STATE.md §7: criteria set before code, by
 face-validity). Confirm or correct each:
 
-1. **Is the RATIFIED − PASSED spread (§3b) the right PRIMARY edge test** — does measuring the human's
-   selection against the passed-but-surfaced tier correctly isolate *judgment added value*, as the theme
-   analogue of the BUY−AVOID spread? Or should (a) market-relative or (c) vs-mega-cap be primary?
-2. **Is ratification-date the right entry clock (§2)** — is "you can only act on what you ratified" the
-   correct honesty rule, and are the three comparator stamps (first-disclosure, onset, theme-confirmation)
-   the right set to test early-beats-late?
-3. **Is requiring the AVOID leg (log every surfaced committed+ name as ratified-or-passed) acceptable
-   analyst load** — it is what makes §3b measurable, but it is real work per theme; confirm the cadence
-   is bearable, or name a lighter passed-set sampling that still yields a valid counterfactual.
-4. **Is co-movement-onset (§5) the right operationalization of "became obvious"** — is "first appears in
-   Component A's cluster" the correct late-signal boundary, and is the null (never co-moves) outcome
-   handled right?
-5. **Are the horizon and "large enough to be real" bar (§4) right** — months-to-quarters checkpoints and
-   the ≥2-quarter resolved-observation bar, or does the analyst want different windows named now?
-6. **Is the governor boundary (§6) sufficient** to keep this from starving Edge-2 verdict-logging — is
+1. **Are the TWO CO-PRIMARY edge tests right** — RATIFIED−PASSED (§3a, selection *within* the tier) AND
+   RATIFIED−NAIVE (§3b, the apparatus beats a replicable method), with **both required positive** (§3c)?
+   In particular: is the diagnosis correct that **RATIFIED−PASSED ALONE is insufficient** because PASSED
+   is quality-sorted (a positive spread is partly guaranteed by disclosure-reading skill), and that the
+   naive-baseline control is what isolates the fund's edge-filter (STATE.md §4)?
+2. **Are the NAIVE BASELINES right (§3b)** — equal-weight-the-whole-tier + a keyword/co-movement screen's
+   picks — and is the **PARTIAL-KILL** case (positive RATIFIED−PASSED but ~0 RATIFIED−NAIVE = skill
+   riding a replicable base) the right thing for the protocol to surface?
+3. **Is the statistical-power posture right (§4-power)** — early results DIRECTIONAL, not significant; the
+   pre-registered **UNPOWERED floor** (~≥8–12 theme-quarters spanning ≥4–5 drivers, sign consistent across
+   drivers) before the spread is taken seriously? Correct and bearable, or different numbers named now?
+4. **Is ratification-date the right entry clock (§2)** — "you can only act on what you ratified," with
+   first-disclosure / onset / theme-confirmation as comparators to test early-beats-late?
+5. **Is requiring BOTH control sets logged acceptable analyst load (§3e)** — the AVOID leg (every surfaced
+   committed+ name ratified-or-passed) AND the naive baskets frozen at ratification — or name a lighter
+   sampling that still yields valid counterfactuals?
+6. **Is co-movement-onset (§5) the right operationalization of "became obvious"** — "first appears in
+   Component A's cluster," and the null (never co-moves) outcome handled right?
+7. **Are the horizon and resolved-observation bar (§4) right** — months-to-quarters checkpoints and the
+   ≥2-quarter resolved bar (on TOP of the §4-power floor), or different windows named now?
+8. **Is the governor boundary (§6) sufficient** to keep this from starving Edge-2 verdict-logging — is
    low-cadence/additive the right shape, and is the dead-signal firewall stated strongly enough?
-7. **Anything missing or over-built** — a measure that should be cut, or one this omits.
+9. **Anything missing or over-built** — a measure that should be cut, or one this omits.
 
 Until the analyst signs off **and** hands over a ratified committed-tier enabler set, the logging harness
 is **not** built. This doc is the contract those two gates are checked against.
