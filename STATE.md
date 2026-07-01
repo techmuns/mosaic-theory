@@ -2197,6 +2197,26 @@ single-threaded ahead of the lead loop).
       on this passing, which it did): the FULL multi-driver universe scan (all ~1383 candidates ×
       multiple drivers, batch infra) + a precision pass on borderline REAL flags (is the contract/revenue
       driver-SPECIFIC?). Detection/B/C/co-movement untouched — semantic-primary is a parallel path.*
+    - **STAGE-3 build-1 AUDIT-PREP + STABILITY finding (2026-06-30). Build-1's scan persisted only a
+      SUMMARY (not the full model_dump) — a PERSISTENCE GAP that blocked an independent citation audit
+      and forced a recovery re-run. Two findings + a remediation; no classifier/grading change.** **(1)
+      DRIFT / stability:** a full-persistence re-run of the 13 REAL names reproduced **10/13** grades —
+      the **9 CONFIDENT names are STABLE** (CORZ/RXT/BLZE/DGXX/TSSI/WYFI binding, BTBT/DUOT/CAMT quantified
+      all reproduced), but **3 of the 4 BORDERLINE flipped REAL→not-real** (KOPN binding→committed, LWLG
+      quantified→aspirational, HIMX quantified→none — the flood-FP confirmed a STOCHASTIC artifact). So
+      the ROBUST REAL set is ~9-10, NOT 13; the borderline flags are LLM-stochastic at the margin — a
+      real precision caveat on any single run (the confident/borderline split from build-1 held up). **(2)
+      Citation integrity:** all **55 graded facts across the 13 carry a real accession PRESENT in the
+      name's stream — 0 out-of-stream, 0 UNCITED, 0 fabrication** (the cite-check / source-binding holds).
+      Recovered citations are audit-grade (e.g. CORZ CoreWeave 16→590MW 10-K acc 0001628280-26-013305;
+      DGXX Cerebras 40MW/$1.1-2.5B 8-K acc 0001213900-26-053566; CAMT 50%-AI/HBM 20-F acc
+      0001178913-26-001561) and split ANNUAL vs RECENT-8K/10-Q — the recent-8K reads (RXT AMD, BLZE/WYFI,
+      DGXX, FCEL) are LOAD-BEARING (the IREN-lesson recent-stream reader earns its keep). **(3) REMEDIATION
+      (recorded, NOT built here): the scan should persist the full `ExposureAssessment.model_dump()`
+      (facts + concreteness + source_ref + stream_refs) so results are audit-grade WITHOUT a re-run.**
+      Audit-prep only — the build-1 CLAIM (its grades) is unchanged; the re-run only recovered citations +
+      measured drift. Exports: build1_13name_{stream_filings,audit_table}.csv + _rerun.json (scratchpad
+      handoff, not committed). Suite unchanged (no code touched).*
   - **HOLDING-UNIVERSE study — sub-$10B-at-inception captured the theme return in all 6 themes tested
     (2026-06-29; `theme_admissibility_spike.md` Part 5).** A DISTINCT axis from the 4 detection spikes:
     does the **holding** bound (fund detects broad incl. mega leaders, but HOLDS sub-$10B) capture theme
