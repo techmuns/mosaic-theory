@@ -1,23 +1,21 @@
 # Dossier — GARTNER INC (IT)
 
-_Finalist rank 8 · ref 2026-06-22 · assembled 2026-06-30 08:47 · LLM claude-opus-4-8_
+_Finalist rank 8 · ref 2026-06-22 · assembled 2026-07-01 18:37 · LLM claude-opus-4-8_
 
 > **Assembles and cites; never concludes.** There is no BUY/AVOID here — the verdict is the human's, logged separately via the ledger with a frozen entry price.
 
 ## Mechanical layer (source-bound facts)
 
 ### Valuation
+- **Cross-sectional (vs peers — the edge):** EV/EBITDA 7.5x vs peer median 10.8x (-31%); P/E 13x vs peer median 16.4x (-21%)
+  - ↳ `CIQ Comparable Analysis→Trading Multiples (name vs peer Median)`
 - **P/E:** 14.0x
   - ↳ `EDGAR XBRL eps_diluted × EOD price (screen data-record, G3)`
-- **P/E percentile (5y):** 1st %ile
-  - ↳ `EDGAR/EOD P/E pctile vs ~5y (screen data-record)`
 - **EV/EBITDA (GAAP TEV/LTM):** 7.5x
   - ↳ `CIQ Financials→Multiples 'TEV/LTM EBITDA' Close (latest) — current multiple`
-- **EV/EBITDA percentile (5y):** 0th %ile
-  - ↳ `CIQ Financials→Multiples 'TEV/LTM EBITDA' Close — 20 quarters (partial last column excluded from the distribution)`
 - **EV/EBITDA (adjusted, forward):** _UNKNOWN_ — adjusted figure not in the 99.1 revised guidance
 - **Adjusted EPS (earnings power):** _UNKNOWN_ — adjusted figure not in the 99.1 revised guidance
-- **Range position:** EV/EBITDA (TEV/LTM) 7.5x at 0%ile of 20 closes → near-floor; P/LTM EPS 13.0x
+- **Own-history range position:** EV/EBITDA (TEV/LTM) 7.5x as-of 2026-06-24 — trailing range 9.3–29.7x (median 22.7x) over 20 closes → 0%ile → near-floor; P/LTM EPS 13.0x
   - ↳ `CIQ Financials→Multiples (Close; last col = current, excluded from history)`
 
 ### Quality / durability
@@ -99,77 +97,74 @@ _Finalist rank 8 · ref 2026-06-22 · assembled 2026-06-30 08:47 · LLM claude-o
 
 ## Synthesis (LLM — framing for the human, every point source-bound)
 
-**Evidence balance:** mixed — a floor-percentile multiple and rising absolute EBITDA on a recurring base offset a genuine revenue rollover and four-year margin slide.
+**Evidence balance:** mixed — a durable cash-generative franchise at floor multiples, but the top line has actually stalled and the peer discount is partly earned.
 
 ### Bull case (overshoot / mean-revert)
-- EV/EBITDA sits at the absolute 0th percentile of 20 trailing quarterly closes at 7.5x and P/E at the ~1.4th percentile of ~5y, a multiple at its own-history floor that POSES whether the de-rate is overshoot rather than terminal.
-  - ↳ `CIQ Financials→Multiples 'TEV/LTM EBITDA' Close — 20 quarters (partial last column excluded from the distribution)`
-- Absolute EBITDA RISES across the window (1,148→1,314→1,274→1,309→1,311→1,337 LTM) and revenue grows to 6,474 LTM — read with the margin %, this is the consensus MISREAD of compression, not a collapsing earnings base.
-  - ↳ `CIQ Financials→Income Statement (margin % + absolute EBITDA reconciler)`
-- Levered FCF of $1,064.2M LTM and a self-described model that gets paid upfront and converts FCF in excess of net income supports the overshoot reading on a recurring subscription base.
-  - ↳ `CIQ Financials→Cash Flow 'Levered Free Cash Flow' [LTM 12 months Mar-31-2026]`
-- The company is shrinking the share count -13.1% over ~1.8 years (77.1M→67.0M), an absolute-per-share tailwind independent of multiple.
-  - ↳ `EDGAR XBRL shares, trailing 2024-07-26..2026-05-01`
-- ROIC remains ~19.4% LTM (15.7%→20.6%→19.8%→18.2%→18.6%→19.4%) and interest coverage is 10.1x with net-debt/EBITDA only 1.3x — returns and balance sheet do not corroborate a terminal thesis.
-  - ↳ `CIQ Financials→Income Statement + Segments + Ratios (multi-year columns)`
-- On the peer COMPOSITION (10 data/analytics names, $751M–$119.1B, name $8.7B — heterogeneous), the name trades at 7.5x LTM / 6.59x NTM TEV/EBITDA vs peer medians 10.8x / 9.66x and NTM P/E 9.2 vs 12.76 median; the human must judge whether that gap is EARNED or RESIDUAL.
+- On the forward basis the discount narrows further — NTM TEV/EBITDA 6.59x vs peer median 9.66x and NTM P/E 9.2x vs peer median 12.76x — so the cheapness is not merely a trailing artifact.
   - ↳ `CIQ Comparable Analysis→Trading Multiples (name row + Summary Statistics Low/Median/Mean/High)`
-- On the EARNED-vs-RESIDUAL inputs the name's LT EPS growth 14% slightly EXCEEDS the peer median 12% and beta matches at 0.9, partially offsetting the margin and growth shortfalls used to justify the discount.
+- The peer discount is only partially EARNED and partly RESIDUAL for the human to judge: Gartner's LT EPS growth of 14% actually EXCEEDS the peer-median 12% and beta matches at 0.9, even as margin (21% vs 31%) and near-term growth (2% vs 8%) run below — POSE whether a -31% EV/EBITDA gap is fully explained by those deltas or overshoots them.
   - ↳ `CIQ Comparable Analysis→Operating Statistics (name vs peer median: growth/margin/leverage/beta)`
+- The peer set is HETEROGENEOUS ($751M–$119.1B caps, 159x span, mixed data/credit/IT-services models), so 'cheap vs peer median' is a confidence-gated input rather than a clean benchmark and the median may not price Gartner's model.
+  - ↳ `CIQ Comparable Analysis→Financial Data (market-cap dispersion) + Business Description`
+- Absolute EBITDA is RISING through the de-rate — Dec-2021 1,148 → Mar-2026 (LTM) 1,337 — and absolute revenue is at a series high (6,474 LTM), so the falling margin % is not falling absolute profit.
+  - ↳ `CIQ Financials→Income Statement (margin % + absolute EBITDA reconciler)`
+- The business generates $1,064M levered free cash flow and ROIC of ~19.4% LTM (18%+ every year since 2022), consistent with a durable subscription franchise, not a wasting asset.
+  - ↳ `CIQ Financials→Cash Flow 'Levered Free Cash Flow' [LTM 12 months Mar-31-2026]`
+- Management deployed that cash to shrink the share count -13.1% over ~1.8 years (77.1M → 67.0M), and the CFO cited ~4% reduction in Q1 alone from $535M of buybacks — accretive into the de-rate.
+  - ↳ `EDGAR XBRL shares, trailing 2024-07-26..2026-05-01`
+- The drawdown traces to a single discrete gap-down on the 2026-02-03 earnings/Reg-FD 8-K rather than a cascade of solvency events, consistent with a sentiment/guidance reset.
+  - ↳ `EDGAR 8-K item codes at the gap-down dates (not blanket-labelled earnings)`
+- Management posture points to reacceleration: the CFO said Q1 contract-value growth accelerated from Q4 and raised full-year EBITDA/adjusted-EPS/FCF guidance, with the March slowdown attributed to a transient geopolitical pause.
+  - ↳ `CIQ transcript(s): Gartner, Inc., Q1 2026 Earnings Call, May 05, 2026.rtf; Gartner, Inc., Q4 2025 Earnings Call, Feb 03, 2026.rtf`
 
 ### Bear case (terminal / value-trap)
-- Same-quarter revenue is now DECLINING -1.5% YoY (Q1 Mar-31-2026 vs Q1 Mar-31-2025) and LTM revenue (6,474) has slipped below the Dec-2025 annual (6,497) — the top line has rolled over, which a near-floor multiple may be correctly pricing as deterioration rather than overshoot.
+- The core growth engine has stalled: LTM revenue actually DIPPED (6,497 → 6,474) with same-quarter revenue YoY at -1.5%, and consensus revenue revisions run 0↑/3↓ last month — the de-rate may price a real growth-terminal, not an overshoot.
   - ↳ `CIQ Financials→Income Statement + Segments + Ratios (multi-year columns)`
-- EBITDA margin has compressed every year from 24% to 20% (LTM 21%) — and while absolute EBITDA still rises, the trajectory of the % is a genuine structural-pressure signal the bull reconciler does not fully neutralise.
+- The margin trend is a genuine multi-year decline — EBITDA margin 24%→21% from 2021 to LTM — and this is the REAL signal on the margin leg even though absolute EBITDA rose, because the peer gap (21% vs 31%) makes the discount partly EARNED.
   - ↳ `CIQ Financials→Income Statement (margin % + absolute EBITDA reconciler)`
-- Management cites broad external pressures — DOGE federal cuts, tariffs, state/local/education funding, non-AI tech — producing extended buying cycles and CV growth of only 1% (4% ex-US-fed), confirming a tougher demand environment that is idiosyncratic and ongoing.
-  - ↳ `CIQ transcript(s): Gartner, Inc., Q1 2026 Earnings Call, May 05, 2026.rtf; Gartner, Inc., Q4 2025 Earnings Call, Feb 03, 2026.rtf`
-- Revenue estimate revisions are negative (0↑/3↓ last month) and consensus is a Hold (3.00) against a $165 mean target, so the sell-side is not corroborating a clean overshoot.
-  - ↳ `CIQ Estimates→Revisions (Last-Month breadth, FY)`
-- The drawdown is a discrete idiosyncratic gap-down on the 2026-02-03 earnings/Reg-FD 8-K, and the name returned -49.9% over 180d while the small-cap market rose +18.0% (-68.3% relative) — a name-specific repricing, not a sector wash-out.
-  - ↳ `EOD name−IWM 180d (screen data-record, G2)`
-- On EARNED-discount inputs the name underperforms peers on the fundamentals that justify a lower multiple: EBITDA margin 21% vs 31% median, revenue growth 2% vs 8%, EBITDA growth 2% vs 7%, and HIGHER leverage Debt/EBITDA 2.4 vs 1.8 — a value-trap reading of the discount.
+- On fundamentals the discount is at least partly EARNED, not pure overshoot: rev growth 2% vs peer 8%, EBITDA growth 2% vs peer 7%, and Debt/EBITDA 2.4 vs peer 1.8 all run worse than the peer median — a value-trap reading is available.
   - ↳ `CIQ Comparable Analysis→Operating Statistics (name vs peer median: growth/margin/leverage/beta)`
+- Revenue is heavily concentrated in one segment — Insights at 78% of total (5,073 of 6,497) — so any subscription/retention erosion in that single engine is not diversified away.
+  - ↳ `CIQ Financials→Segments (Revenues, latest annual column)`
+- Management itself flagged structural headwinds — DOGE-related U.S. federal pressure, extended buying cycles, deferred decision-making — and Q1 GTS new business was down 4% and GBS down 2% YoY, so the growth stall is not purely geopolitical noise.
+  - ↳ `CIQ transcript(s): Gartner, Inc., Q1 2026 Earnings Call, May 05, 2026.rtf; Gartner, Inc., Q4 2025 Earnings Call, Feb 03, 2026.rtf`
 
 ### Twin reference cases
 - **Moody's Corporation** — recovered
-  - distinguished by: Recurring subscription/analytics franchise that de-rated on a cyclical demand air-pocket and re-rated as the recurring base proved durable.
+  - distinguished by: Subscription/franchise information business that de-rated on a cyclical demand pause and re-rated as recurring revenue and pricing power reasserted.
   - source: [LLM-suggested, unverified]
 - **FactSet Research Systems Inc.** — recovered
-  - distinguished by: Subscription data provider whose growth decelerated on enterprise budget tightening yet retained high renewal economics through the slowdown.
+  - distinguished by: Recurring-subscription data platform that saw slowing net-new business and multiple compression on decelerating growth, then stabilized on retention.
   - source: [LLM-suggested, unverified]
-- **Verisk Analytics** — recovered
-  - distinguished by: Data-analytics franchise that traded down on margin and growth worries but where pricing power on an entrenched product re-emerged.
+- **Gartner Inc.** — recovered
+  - distinguished by: Same-name prior cycle: subscription-research franchise sold off on a demand-driven contract-value slowdown and later reaccelerated as engagement recovered.
   - source: [LLM-suggested, unverified]
-- **Gartner-adjacent IT-research peer Forrester Research** — went terminal
-  - distinguished by: Research-subscription model where extended buying cycles and stalled contract value persisted into a durable growth stall rather than a rebound.
+- **Cognizant Technology Solutions** — went terminal
+  - distinguished by: IT-services model where a persistent demand slowdown and margin drift proved structural rather than transient, leaving the multiple compressed.
   - source: [LLM-suggested, unverified]
-- **Cognizant Technology Solutions** — recovered
-  - distinguished by: IT services name de-rated sharply on decelerating demand and margin pressure, then stabilised once growth troughed without balance-sheet stress.
+- **Nielsen Holdings** — went terminal
+  - distinguished by: Legacy data/insights franchise whose flat-to-declining top line proved secular, and the low multiple was earned rather than an overshoot.
   - source: [LLM-suggested, unverified]
 
 ### Decisive question
-**Is the slowdown in Contract Value and revenue a cyclical air-pocket driven by exogenous federal/tariff/funding shocks that normalise, or the onset of a durable structural growth stall in the core Insights subscription engine?**
+**Is the sub-1%ile de-rate pricing a transient demand pause (geopolitical/federal) in a durable subscription franchise that reaccelerates, or a structural growth-and-margin decline that makes the peer discount EARNED?**
 
 ### …evidence for
-- Management attributes the slowdown to specific external forces (DOGE, tariffs, state/local funding, non-AI tech) and reports CV grew ~4% ex-US-federal, framing the weakness as exogenous and concentrated.
+- Contract-value growth accelerated in Q1 vs Q4 and management raised full-year EBITDA/EPS/FCF guidance, attributing the March softness to a transient geopolitical pause.
   - ↳ `CIQ transcript(s): Gartner, Inc., Q1 2026 Earnings Call, May 05, 2026.rtf; Gartner, Inc., Q4 2025 Earnings Call, Feb 03, 2026.rtf`
-- Insights is 78% of revenue (5,073 of 6,497) and is described as subscription-based with strong retention and FCF in excess of net income, a base that can re-accelerate if the shocks fade.
-  - ↳ `CIQ Financials→Segments (Revenues, latest annual column)`
+- Absolute EBITDA rose to a series-high 1,337 LTM and ROIC held at ~19.4%, and NTM multiples (6.59x EBITDA, 9.2x P/E) sit well below peers, consistent with an overshoot.
+  - ↳ `CIQ Comparable Analysis→Trading Multiples (name row + Summary Statistics Low/Median/Mean/High)`
 
 ### …evidence against
-- Same-quarter revenue is already negative at -1.5% YoY and EBITDA margin has fallen four consecutive years (24%→20%), consistent with a structural rather than one-off deterioration.
+- LTM revenue dipped year-on-year (-1.5% same-quarter) and revenue revisions are 0↑/3↓, indicating the top-line stall may be structural.
   - ↳ `CIQ Financials→Income Statement + Segments + Ratios (multi-year columns)`
-- Revenue revisions are 0↑/3↓ and consensus sits at Hold (3.00), indicating analysts do not yet treat the slowdown as a transient air-pocket.
-  - ↳ `CIQ Estimates→Revisions (Last-Month breadth, FY)`
+- Fundamental deltas run worse than peers on growth (2% vs 8%), EBITDA growth (2% vs 7%), margin (21% vs 31%) and leverage (2.4 vs 1.8), supporting a partly-EARNED discount.
+  - ↳ `CIQ Comparable Analysis→Operating Statistics (name vs peer median: growth/margin/leverage/beta)`
 
 ### Key unknowns
-- Revised forward guidance is UNKNOWN — no revised-outlook 99.1 exhibit was parsed for the 2026-02-03 8-K despite it being an earnings filing; absence of a forward guide on the gap-down event is a bearish opacity risk.
-- Adjusted EPS, forward adjusted EV/EBITDA, and adjusted net-debt/EBITDA are all UNKNOWN (not in the revised guidance), so the forward valuation basis used by management cannot be reconciled.
-- FCF sign is UNKNOWN (no OCF/capex breakout) — survival_capacity flags runway as not assessable, a bearish gap even though net-debt/EBITDA is 1.3x and nearest maturity wall is 2028.
-- Segment-level EBITDA is UNKNOWN (no EBITDA section on the Segments sheet), so the profitability of the 78% Insights segment versus Conferences/Consulting cannot be isolated.
-- No idiosyncratic-vs-shared cohort is available (IT absent from graph coverage), so the -68.3% relative move cannot be benchmarked against a peer cross-section.
-- Peer set is explicitly HETEROGENEOUS ($751M–$119.1B span, 159x); every peer multiple is a confidence-gated input, not a clean benchmark, and the EARNED-vs-RESIDUAL split of the discount is left for the human.
-
-## ⚠ Flags (human review)
-- UNRECONCILED decisive.against: 'Same-quarter revenue is already negative at -1.5% YoY and EBITDA…' — cites margin compression without the absolute-EBITDA reconciliation (margin % can fall while EBITDA rises)
+- EV/EBITDA is TRAILING-ONLY on the CIQ basis and at its 0%ile/near-floor — overshoot-vs-terminal is unresolved by the trailing multiple alone (neutral, not directional).
+- FCF sign is UNKNOWN (no OCF/capex disclosed) so cash runway is not directly assessable — an opacity BEARISH risk despite the reported $1,064M levered FCF.
+- Segment-level EBITDA is UNKNOWN (Segments sheet has no EBITDA section) — profitability of the 78%-weight Insights segment vs the rest cannot be isolated, a disclosure gap.
+- Adjusted EV/EBITDA-fwd, adjusted EPS, and net-debt/EBITDA(adjusted) are UNKNOWN — the 99.1 revised guidance figures were not parsed, so the forward basis rests on peer-file NTM only.
+- Revised FY guidance detail from the 2026-02-03 8-K was not parsed — the exact magnitude of the guidance reset that triggered the gap-down is not in the facts.
+- No exposed cohort/cross-section (IT absent from graph coverage) — idiosyncratic-vs-shared read rests only on name-vs-IWM (name -49.9% vs market +18.0%).
