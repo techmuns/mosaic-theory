@@ -57,12 +57,16 @@ AI_DATACENTER_DRIVER = (
     "edge/on-device AI (the opposite of a datacenter), NOT a 'broad AI market' adjacency."
 )
 
-# Broad pre-filter net. Part-6 lesson: the driver-text is 'data center'/'HPC', not just 'AI' — cast
-# WIDE so the SEMANTIC layer does the discrimination, not the keyword screen. 'artificial
-# intelligence' is included precisely to pull in the cheap-mention flood the test must survive.
+# DELIBERATELY BROAD pre-filter over the WHOLE AI-datacenter VALUE CHAIN's vocabulary (build 2): a
+# chain enabler describes its business in these terms even when it never says 'AI' (VRT-2022 said
+# 'data center'; a cooling co 'liquid cooling'; a power co 'switchgear'). Broad for RECALL — the
+# semantic layer then discriminates chain-specific from indirect/not-driver. Truly text-silent names
+# (zero chain vocabulary) are caught only by a full-universe scan — a reported recall-cost limit.
 DRIVER_PHRASES: tuple[str, ...] = (
-    "data center", "high-performance computing", "hyperscaler", "high bandwidth memory",
-    "advanced packaging", "colocation", "artificial intelligence", "GPU",
+    "data center", "hyperscaler", "colocation", "high-performance computing", "GPU", "accelerator",
+    "high bandwidth memory", "advanced packaging", "liquid cooling", "thermal management",
+    "data center power", "switchgear", "optical interconnect", "silicon photonics", "AI cloud",
+    "AI inference", "neocloud", "artificial intelligence",
 )
 
 _CONCRETE_RANK: dict[ExposureConcreteness, int] = {
@@ -109,6 +113,40 @@ def _effective_rank(conc: ExposureConcreteness, tie: DriverTie) -> int:
     if tie is DriverTie.INDIRECT:
         return min(r, _CONCRETE_RANK[ExposureConcreteness.COMMITTED_CAPACITY])
     return min(r, _CONCRETE_RANK[ExposureConcreteness.STATED_INTENT])
+
+
+# Which value-chain LAYER a disclosed fact names — a keyword-read PROVENANCE tag (not a grade) for
+# volume-by-layer aggregation. Most-specific layers first so 'HBM for data centers' tags HBM (not
+# colocation); 'GPU-as-a-service' tags AI-cloud (not chips).
+_CHAIN_LAYERS: tuple[tuple[str, tuple[str, ...]], ...] = (
+    ("HBM/memory", ("high bandwidth memory", "high-bandwidth memory", "hbm", "dram", "memory")),
+    ("packaging", ("advanced packaging", "packaging", "chiplet", "interposer", "hybrid bonding")),
+    ("optical/interconnect", ("optical", "photonic", "transceiver", "interconnect", "fiber")),
+    ("thermal/cooling", ("liquid cooling", "cooling", "thermal", "immersion", "heat rejection")),
+    ("AI-cloud", ("ai cloud", "gpu-as-a-service", "gpuaas", "neocloud", "inference")),
+    ("chips/GPU", ("gpu", "accelerator", "asic", "high-performance comput", "compute")),
+    ("power/electrical", ("power", "electrical", "grid", "switchgear", "transformer", "fuel cell",
+                          "megawatt", "energy")),
+    ("colocation/operator", ("colocation", "data center", "datacenter", "hosting", "campus")),
+)
+
+
+def chain_layer_of(text: str) -> str:
+    """A PROVENANCE tag (not a grade): which value-chain layer the disclosed fact names, by keyword
+    read — approximate (a fact spans layers; the human reads the fact), for by-layer volume. First
+    match wins; 'unspecified' if none of the chain vocabulary appears."""
+    t = text.lower()
+    for layer, kws in _CHAIN_LAYERS:
+        if any(k in t for k in kws):
+            return layer
+    return "unspecified"
+
+
+def grade_driving_fact(a: ExposureAssessment) -> ExposureFact | None:
+    """The disclosed fact whose EFFECTIVE grade (after the driver-tie gate) set the exposure_basis —
+    the human's first-read provenance. None when no fact credits any exposure (basis none)."""
+    graded = [f for f in a.disclosed_facts if _effective_rank(f.concreteness, f.driver_tie) > 0]
+    return max(graded, key=lambda f: _effective_rank(f.concreteness, f.driver_tie), default=None)
 
 
 # --------------------------------------------------------------------------------------------------
