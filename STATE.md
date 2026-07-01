@@ -1907,3 +1907,36 @@ the logging harness is the NEXT build, not built here. Dead-signal firewall: mac
 human RATIFIES the pick → protocol MEASURES forward; no code path turns a grade into a hold. Forward-only,
 never backtested, never tuned on returns. **Edge 2 stays the lead horse** (§4 GOVERNOR): this track is
 parallel, low-cadence, additive — it must not starve overshoot verdict-logging.
+
+**THEME-ENABLER FORWARD-VALIDATION HARNESS — BUILT (2026-07-01, `vinci/themes/forward.py` +
+`themes-forward` CLI + 10 tests; +2 committed-review-worksheet artifacts).** The Stage-4 logging harness
+implementing the revised protocol: an append-only ratification LEDGER + a forward MEASUREMENT layer that
+LOGS the analyst's dispositions and MEASURES them forward — it NEVER selects/ranks/scores/promotes a
+grade to a hold (the §6 dead-signal firewall — verified by a schema no-conclusion test). **Four
+components:** (1) the append-only `RatificationRecord` ledger (§1 schema; a correction is a NEW row,
+last-wins reads); (2) `freeze_baskets` — the immutable BUY (ratified) / AVOID (passed) / equal-weight-all
+naive baskets, GUARDED so a DIG-DEEPER or a missing disposition blocks the freeze; (3) the forward
+measurement (§4) — RATIFIED−PASSED (§3a) + RATIFIED−NAIVE(equal-weight, §3b-i), benchmark-adjusted (−IWM),
+**LAYER-AWARE (pooled AND per chain layer — pooling masks the thin-layer signal)**, with the §3c
+PARTIAL-KILL state surfaced first-class + the §4 POWER label on every spread (effective n = THEME-QUARTERS;
+below the ~≥8-theme-quarter / ≥4-driver floor → UNPOWERED, never "significant"); (4) the §5 early-detection
+onset — `update_onsets` forward-logs the co-movement onset date (append-only, read-only Component-A
+membership), `early_vs_late` splits ratification→onset (early) vs onset→forward (late), a never-co-mover
+is a logged null. Thin read-only adapters wrap the committed Polygon EOD + Component A (detection UNTOUCHED).
+**HONEST §3b-i CAVEAT recorded (a property, not a bug):** RATIFIED−NAIVE(equal-weight) = (n_passed/N)·
+RATIFIED−PASSED — a *scaled* RATIFIED−PASSED, so it shares that spread's sign and is a WEAK control; a
+strict PARTIAL-KILL is UNREACHABLE from §3b-i alone when both legs are present (the `apparatus_fraction`
+= n_passed/N surfaces the "~0" case for the human). **The keyword/co-movement naive baseline (§3b-ii) — the
+INDEPENDENT replicable control where the partial-kill test truly bites — is DEFERRED SECOND-PHASE** (needs
+Component A live-forward; the harness is built so it can be ADDED, recorded in `FrozenBaskets.deferred_controls`).
+**REAL LOGGING GATED on the analyst's dispositions:** the committed-review worksheet's dispositions are
+EMPTY at build time, so the harness was built + tested against the SCHEMA with FIXTURES and fabricates
+NOTHING — the CLI reports `56 pending → NOT READY TO FREEZE`. **Shown real (fixture) run:** ledger→freeze→
+layer-aware spreads (a thin thermal layer +31% RAT−PASSED vs an obvious chips layer +2% — the layer-aware
+point) → power UNPOWERED (1 driver, 3 theme-quarters) → onset-stamped early +38% vs late +0.4% (early beat
+late) + a never-co-mover logged null. Ledger/baskets outputs are NOT git-committed (fail-closed, same as
+the scan/worksheet outputs). ruff + mypy --strict (82) + pytest (**292**; +10 forward tests) green; diff =
+new `forward.py` + `themes-forward` CLI + tests + this note. **NEXT (gated): (a) the analyst's real
+dispositions → real logging + the frozen-basket freeze; (b) the §3b-ii live co-movement baseline
+(second-phase); (c) multi-driver, where the power floor is actually reachable.** Forward edge NOT claimed —
+the harness MEASURES; the forward paper track is the only arbiter. Edge 2 stays the lead horse.

@@ -1,0 +1,406 @@
+"""Stage-4 forward-validation harness — the append-only ratification LEDGER + the forward
+MEASUREMENT layer implementing ``docs/theme_forward_validation.md`` (the revised protocol).
+
+It LOGS the analyst's ratified/passed dispositions and MEASURES their forward performance vs the
+controls: the RATIFIED-PASSED spread (§3a, "did the human sort the tier") and the
+RATIFIED-NAIVE(equal-weight) spread (§3b-i, "did selecting beat holding the whole tier"), both
+POOLED AND broken out BY CHAIN LAYER (§4 — pooling masks the thin-layer signal). It surfaces the §3c
+PARTIAL-KILL state first-class and enforces the §4 power label on every spread.
+
+DEAD-SIGNAL FIREWALL (§6): NO code path here selects, ranks, scores, or promotes a grade to a hold.
+The machine ASSEMBLES + MEASURES; the human DECIDES. Forward-only — no backtest, no tuning on
+returns; spreads accrue over calendar time. Append-only — a correction is a NEW row, never a
+mutation.
+
+CAVEAT recorded (an honest property of §3b-i, not a bug): the equal-weight-all baseline is
+mathematically a *scaled* RATIFIED-PASSED — RATIFIED-NAIVE = (n_passed / N) * (RATIFIED-PASSED) — so
+it shares that spread's sign and is a WEAK control (it tests "did selecting beat not-selecting",
+correlated with §3a). A strict PARTIAL-KILL (RATIFIED-NAIVE <= 0 while RATIFIED-PASSED > 0) is thus
+UNREACHABLE with §3b-i when both legs are present; ``apparatus_fraction`` (= n_passed/N in scope)
+surfaces the "~0" case for the human to judge. The INDEPENDENT replicable control
+(keyword/co-movement, §3b-ii) — where the partial-kill test truly bites — is the SECOND-PHASE build
+(needs Component A
+live-forward), recorded as a deferred control, not built here.
+"""
+from __future__ import annotations
+
+import csv
+from collections.abc import Callable
+from datetime import date, timedelta
+from enum import StrEnum
+from pathlib import Path
+from typing import Protocol
+
+from pydantic import BaseModel
+
+from vinci.eod.client import EodClient
+
+# --------------------------------------------------------------------------------------------------
+# Schemas (§1) — the ratification record + the frozen baskets + the measurement report
+# --------------------------------------------------------------------------------------------------
+
+
+class Disposition(StrEnum):
+    RATIFIED = "ratified"       # the BUY leg
+    PASSED = "passed"           # the AVOID leg (§3a) — first-class control data, NOT a discard
+    DIG_DEEPER = "dig-deeper"   # temporary — MUST resolve before a basket freezes
+
+
+class RatificationRecord(BaseModel, frozen=True):
+    """One append-only ledger row (§1). The machine fields are the INPUT the human judged;
+    disposition + rationale + ratification_date are the HUMAN's. ``comovement_onset_date`` is logged
+    FORWARD (§5)."""
+
+    ticker: str
+    cik: str
+    driver: str
+    chain_layer: str
+    machine_grade: str
+    driver_tie: str
+    grade_fact: str
+    source_ref: str
+    disposition: Disposition
+    rationale: str
+    ratification_date: date
+    first_disclosure_date: date | None = None
+    theme_confirmation_date: date | None = None
+    comovement_onset_date: date | None = None
+
+
+class FrozenBaskets(BaseModel, frozen=True):
+    """The immutable frozen references (§3). Entry = each name's ratification date (§2)."""
+
+    driver: str
+    freeze_timestamp: str
+    ratified: tuple[str, ...]
+    passed: tuple[str, ...]
+    all_committed: tuple[str, ...]
+    entry_dates: dict[str, str]
+    layer_of: dict[str, str]
+    deferred_controls: tuple[str, ...] = (
+        "keyword/co-movement naive baseline (§3b-ii) — SECOND-PHASE: needs Component A "
+        "live-forward; the INDEPENDENT replicable control (isolates the classifier's contribution "
+        "vs the human's selection) that the equal-weight baseline is not. Build it so this can be "
+        "ADDED later.",
+    )
+
+
+# power floor (§4) — a-priori face-validity constants; NEVER tuned on returns
+MIN_THEME_QUARTERS = 8
+MIN_DRIVERS = 4
+
+
+class PowerLabel(BaseModel, frozen=True):
+    theme_quarters: int
+    drivers: int
+    sign_consistent: bool
+    label: str   # "UNPOWERED" | "POWERED-DIRECTIONAL" — NEVER "significant"
+    note: str
+
+
+class LayerSpread(BaseModel, frozen=True):
+    scope: str   # "POOLED" or a chain-layer name
+    n_ratified: int
+    n_passed: int
+    n_all: int
+    ratified_minus_passed: float | None   # §3a
+    ratified_minus_naive: float | None    # §3b-i (equal-weight-all)
+    apparatus_fraction: float | None    # RATIFIED−NAIVE / RATIFIED−PASSED — surfaces "~0" (§3c)
+    mean_ratified: float | None
+    state: str   # EDGE-DIRECTIONAL | PARTIAL-KILL | NO-SELECTION | INSUFFICIENT
+
+
+class SpreadReport(BaseModel, frozen=True):
+    driver: str
+    as_of: str
+    horizon_days: int
+    power: PowerLabel
+    pooled: LayerSpread
+    by_layer: tuple[LayerSpread, ...]
+    partial_kill_scopes: tuple[str, ...]   # §3c — surfaced first-class, never buried
+
+
+# --------------------------------------------------------------------------------------------------
+# Component 1 — the append-only ratification ledger (§1)
+# --------------------------------------------------------------------------------------------------
+def append_record(ledger_path: Path, rec: RatificationRecord) -> None:
+    """Append ONE JSONL row. Append-only: a correction is a new row, never a mutation."""
+    with open(ledger_path, "a") as fh:
+        fh.write(rec.model_dump_json() + "\n")
+
+
+def load_ledger(ledger_path: Path) -> list[RatificationRecord]:
+    if not ledger_path.exists():
+        return []
+    return [RatificationRecord.model_validate_json(ln)
+            for ln in ledger_path.read_text().splitlines() if ln.strip()]
+
+
+def current_dispositions(records: list[RatificationRecord]) -> dict[str, RatificationRecord]:
+    """Append-only READ: the LATEST row per ticker wins (a later correction supersedes; the file is
+    never mutated)."""
+    out: dict[str, RatificationRecord] = {}
+    for r in records:  # file order == append order → last wins
+        out[r.ticker] = r
+    return out
+
+
+_DISPOSITION_ALIASES = {
+    "ratified": Disposition.RATIFIED, "ratify": Disposition.RATIFIED,
+    "passed": Disposition.PASSED, "pass": Disposition.PASSED,
+    "dig-deeper": Disposition.DIG_DEEPER, "dig deeper": Disposition.DIG_DEEPER,
+    "dig_deeper": Disposition.DIG_DEEPER,
+}
+
+
+def records_from_worksheet(
+    csv_path: Path, *, driver: str, ratification_date: date,
+) -> tuple[list[RatificationRecord], int]:
+    """Build records from the analyst's dispositioned worksheet
+    (``committed_review_worksheet.csv``). Rows with an EMPTY disposition are NOT logged (pending the
+    analyst) — returns ``(records, n_pending)``. NEVER fabricates a disposition."""
+    records: list[RatificationRecord] = []
+    pending = 0
+    with open(csv_path) as fh:
+        for row in csv.DictReader(fh):
+            raw = (row.get("DISPOSITION") or "").strip().lower()
+            if not raw:
+                pending += 1
+                continue
+            disp = _DISPOSITION_ALIASES.get(raw)
+            if disp is None:
+                raise ValueError(f"{row.get('ticker')}: unrecognized DISPOSITION {raw!r}")
+            records.append(RatificationRecord(
+                ticker=row["ticker"], cik=row["cik"], driver=driver,
+                chain_layer=row["chain_layer"], machine_grade=row["machine_grade"],
+                driver_tie=row.get("grade_driver_tie", ""), grade_fact=row.get("grade_fact", ""),
+                source_ref=row.get("grade_accession", ""), disposition=disp,
+                rationale=(row.get("RATIONALE") or "").strip(),
+                ratification_date=ratification_date))
+    return records, pending
+
+
+# --------------------------------------------------------------------------------------------------
+# Component 2 — the frozen baskets (§3): BUY leg, AVOID leg, equal-weight naive baseline
+# --------------------------------------------------------------------------------------------------
+def freeze_baskets(
+    records: list[RatificationRecord], all_committed: list[str], *,
+    driver: str, freeze_timestamp: str, layer_of: dict[str, str],
+) -> FrozenBaskets:
+    """Freeze the immutable baskets. GUARD (§1): every committed name must be RATIFIED or PASSED — a
+    DIG-DEEPER or a missing disposition means the tier is NOT ready; raise (cannot freeze)."""
+    disp = current_dispositions(records)
+    missing = [t for t in all_committed if t not in disp]
+    unresolved = [t for t in all_committed
+                  if t in disp and disp[t].disposition is Disposition.DIG_DEEPER]
+    if missing or unresolved:
+        raise ValueError(
+            f"cannot freeze baskets: {len(missing)} un-dispositioned {missing[:6]} + "
+            f"{len(unresolved)} DIG-DEEPER {unresolved[:6]} — every name must be "
+            "RATIFIED/PASSED first")
+    ratified = tuple(t for t in all_committed if disp[t].disposition is Disposition.RATIFIED)
+    passed = tuple(t for t in all_committed if disp[t].disposition is Disposition.PASSED)
+    entry_dates = {t: disp[t].ratification_date.isoformat() for t in all_committed}
+    return FrozenBaskets(
+        driver=driver, freeze_timestamp=freeze_timestamp, ratified=ratified, passed=passed,
+        all_committed=tuple(all_committed), entry_dates=entry_dates, layer_of=layer_of)
+
+
+# --------------------------------------------------------------------------------------------------
+# Component 3 — the forward measurement (§4): LAYER-AWARE + §3c partial-kill + §4 power
+# --------------------------------------------------------------------------------------------------
+PriceFn = Callable[[str, date], float | None]  # (ticker, date) -> close, or None if no bar
+
+
+def _fwd_return(price_fn: PriceFn, ticker: str, entry: date, checkpoint: date) -> float | None:
+    p0 = price_fn(ticker, entry)
+    p1 = price_fn(ticker, checkpoint)
+    if p0 is None or p1 is None or p0 <= 0:
+        return None
+    return p1 / p0 - 1.0
+
+
+def _adj_return(price_fn: PriceFn, benchmark: str, ticker: str, entry: date,
+                checkpoint: date) -> float | None:
+    """Benchmark-adjusted forward return (§4): name return minus benchmark over the SAME window."""
+    r = _fwd_return(price_fn, ticker, entry, checkpoint)
+    b = _fwd_return(price_fn, benchmark, entry, checkpoint)
+    return None if r is None or b is None else r - b
+
+
+def _mean(xs: list[float]) -> float | None:
+    return sum(xs) / len(xs) if xs else None
+
+
+def classify_state(rmp: float | None, rmn: float | None, n_ratified: int) -> str:
+    """§3c states from the two co-primary spreads — SIGN-based, NO return-tuned threshold. EDGE
+    requires BOTH positive; PARTIAL-KILL = selection works (rmp>0) but the apparatus does not beat
+    naive (rmn<=0); NO-SELECTION = the human did not sort the tier (rmp<=0)."""
+    if n_ratified == 0 or rmp is None:
+        return "INSUFFICIENT"
+    if rmp <= 0:
+        return "NO-SELECTION"
+    if rmn is None:
+        return "INSUFFICIENT"
+    if rmn <= 0:
+        return "PARTIAL-KILL"
+    return "EDGE-DIRECTIONAL"
+
+
+def _spread(scope: str, scope_tickers: set[str], baskets: FrozenBaskets,
+            adj: dict[str, float]) -> LayerSpread:
+    rat = [adj[t] for t in baskets.ratified if t in scope_tickers and t in adj]
+    pas = [adj[t] for t in baskets.passed if t in scope_tickers and t in adj]
+    allc = [adj[t] for t in baskets.all_committed if t in scope_tickers and t in adj]
+    mr, mp, ma = _mean(rat), _mean(pas), _mean(allc)
+    rmp = None if mr is None or mp is None else mr - mp
+    rmn = None if mr is None or ma is None else mr - ma
+    frac = (rmn / rmp) if (rmp is not None and rmp > 0 and rmn is not None) else None
+    return LayerSpread(
+        scope=scope, n_ratified=len(rat), n_passed=len(pas), n_all=len(allc),
+        ratified_minus_passed=rmp, ratified_minus_naive=rmn, apparatus_fraction=frac,
+        mean_ratified=mr, state=classify_state(rmp, rmn, len(rat)))
+
+
+def _quarter_index(d: date) -> int:
+    return d.year * 4 + (d.month - 1) // 3
+
+
+def power_label(*, theme_quarters: int, drivers: int, sign_consistent: bool) -> PowerLabel:
+    """§4 power — effective sample = THEME-QUARTERS (names within a theme co-move → ~1 obs per
+    theme-quarter). Below the a-priori floor the spread is UNPOWERED / DIRECTIONAL, never
+    significant."""
+    powered = theme_quarters >= MIN_THEME_QUARTERS and drivers >= MIN_DRIVERS and sign_consistent
+    if powered:
+        return PowerLabel(
+            theme_quarters=theme_quarters, drivers=drivers, sign_consistent=True,
+            label="POWERED-DIRECTIONAL",
+            note=(f"{theme_quarters} theme-quarters across {drivers} drivers, sign-consistent "
+                  "— meets the a-priori floor; still a FORWARD-directional read, never a "
+                  "significance test"))
+    reasons = []
+    if theme_quarters < MIN_THEME_QUARTERS:
+        reasons.append(f"theme-quarters {theme_quarters}<{MIN_THEME_QUARTERS}")
+    if drivers < MIN_DRIVERS:
+        reasons.append(f"drivers {drivers}<{MIN_DRIVERS}")
+    if not sign_consistent:
+        reasons.append("sign not consistent across drivers")
+    return PowerLabel(
+        theme_quarters=theme_quarters, drivers=drivers, sign_consistent=sign_consistent,
+        label="UNPOWERED",
+        note=("DIRECTIONAL / ANECDOTAL — do NOT read as validation or kill ("
+              + "; ".join(reasons) + ")"))
+
+
+def measure_horizon(
+    baskets: FrozenBaskets, *, price_fn: PriceFn, horizon_days: int, as_of: date,
+    benchmark: str = "IWM", drivers: int = 1, sign_consistent: bool = True,
+) -> SpreadReport:
+    """One horizon's spreads (§4): POOLED + BY-LAYER (§4 — pooling masks the thin-layer signal),
+    each with the §3c state + apparatus_fraction, plus the first-class partial-kill scope list and
+    the §4 power label. Per name checkpoint = entry + horizon; names whose checkpoint is beyond
+    ``as_of``
+    (horizon not yet reached) are dropped from that horizon."""
+    adj: dict[str, float] = {}
+    for t in baskets.all_committed:
+        entry = date.fromisoformat(baskets.entry_dates[t])
+        checkpoint = entry + timedelta(days=horizon_days)
+        if checkpoint > as_of:
+            continue
+        a = _adj_return(price_fn, benchmark, t, entry, checkpoint)
+        if a is not None:
+            adj[t] = a
+    pooled = _spread("POOLED", set(baskets.all_committed), baskets, adj)
+    layers = sorted({baskets.layer_of[t] for t in baskets.all_committed})
+    by_layer = tuple(
+        _spread(lyr, {t for t in baskets.all_committed if baskets.layer_of[t] == lyr}, baskets, adj)
+        for lyr in layers)
+    partial_kill = tuple(ls.scope for ls in (pooled, *by_layer) if ls.state == "PARTIAL-KILL")
+    theme_quarters = (_quarter_index(as_of)
+                      - _quarter_index(date.fromisoformat(baskets.freeze_timestamp[:10])) + 1)
+    power = power_label(theme_quarters=max(0, theme_quarters), drivers=drivers,
+                        sign_consistent=sign_consistent)
+    return SpreadReport(
+        driver=baskets.driver, as_of=as_of.isoformat(), horizon_days=horizon_days, power=power,
+        pooled=pooled, by_layer=by_layer, partial_kill_scopes=partial_kill)
+
+
+def measure(
+    baskets: FrozenBaskets, *, price_fn: PriceFn, horizons_days: list[int], as_of: date,
+    benchmark: str = "IWM", drivers: int = 1, sign_consistent: bool = True,
+) -> list[SpreadReport]:
+    """The full forward measurement — one SpreadReport per horizon reached."""
+    return [measure_horizon(baskets, price_fn=price_fn, horizon_days=h, as_of=as_of,
+                            benchmark=benchmark, drivers=drivers, sign_consistent=sign_consistent)
+            for h in horizons_days]
+
+
+# --------------------------------------------------------------------------------------------------
+# Component 4 — the early-detection test (§5): forward-log co-movement onset; early vs late
+# --------------------------------------------------------------------------------------------------
+MembershipFn = Callable[[str, date], bool]  # (ticker, as_of) -> in Component A's theme cluster?
+
+
+def update_onsets(
+    records: list[RatificationRecord], ledger_path: Path, membership_fn: MembershipFn, *,
+    as_of: date,
+) -> list[RatificationRecord]:
+    """For each RATIFIED record with null onset, check Component A membership as of ``as_of``
+    (read-only); if now in the cluster, APPEND a new ledger row stamping ``comovement_onset_date``
+    (append-only). A name that never co-moves keeps null — a logged null, NOT an error. Returns the
+    new rows."""
+    new: list[RatificationRecord] = []
+    for r in current_dispositions(records).values():
+        if (r.disposition is Disposition.RATIFIED and r.comovement_onset_date is None
+                and membership_fn(r.ticker, as_of)):
+            updated = r.model_copy(update={"comovement_onset_date": as_of})
+            append_record(ledger_path, updated)
+            new.append(updated)
+    return new
+
+
+def early_vs_late(
+    record: RatificationRecord, *, price_fn: PriceFn, benchmark: str, forward_asof: date,
+) -> dict[str, object]:
+    """Benchmark-adjusted return ratification→onset (EARLY) vs onset→forward (LATE) for a ratified
+    enabler (§5). Onset null (never co-moved) → early spans ratification→forward, late is None (a
+    logged null). The semantic-primary thesis test: did EARLY entry beat entry once OBVIOUS."""
+    entry = record.ratification_date
+    if record.comovement_onset_date is None:
+        return {"ticker": record.ticker, "onset": None,
+                "early_adj": _adj_return(price_fn, benchmark, record.ticker, entry, forward_asof),
+                "late_adj": None, "note": "never co-moved (logged null)"}
+    onset = record.comovement_onset_date
+    return {"ticker": record.ticker, "onset": onset.isoformat(),
+            "early_adj": _adj_return(price_fn, benchmark, record.ticker, entry, onset),
+            "late_adj": _adj_return(price_fn, benchmark, record.ticker, onset, forward_asof),
+            "note": ""}
+
+
+# --------------------------------------------------------------------------------------------------
+# Live adapters — thin READ-ONLY wrappers over the committed pipeline (used once dispositions land)
+# --------------------------------------------------------------------------------------------------
+def eod_close_fn(eod: EodClient, *, backstep_days: int = 5) -> PriceFn:
+    """A PriceFn over the committed grouped-daily EOD (read-only). On a non-trading ``day`` it steps
+    back up to ``backstep_days`` to the nearest prior trading close. Returns None if no bar
+    (fail-soft — the name is dropped from that checkpoint, never fabricated)."""
+    def close_on(ticker: str, day: date) -> float | None:
+        for i in range(backstep_days + 1):
+            b = eod.grouped_daily(day - timedelta(days=i)).get(ticker)
+            if b is not None and b.close > 0:
+                return b.close
+        return None
+    return close_on
+
+
+class _HasMembers(Protocol):
+    members: list[str]
+
+
+def component_a_membership_fn(detect: Callable[[date], list[_HasMembers]]) -> MembershipFn:
+    """Wrap Component A (read-only): ``membership(ticker, as_of)`` = is the ticker in ANY admitted
+    theme's members when detection is run as of that date. ``detect(as_of)`` calls the committed
+    ``detect_themes`` — this harness NEVER modifies detection."""
+    def member(ticker: str, as_of: date) -> bool:
+        return any(ticker in th.members for th in detect(as_of))
+    return member

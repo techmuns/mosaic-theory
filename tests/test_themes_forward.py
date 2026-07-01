@@ -1,0 +1,220 @@
+"""Regression tests for the Stage-4 forward-validation harness (vinci/themes/forward.py).
+
+Offline / fixture-based (injected price + membership functions — no network, no real dispositions).
+Pins the load-bearing behaviour: the ledger is append-only (a correction is a new row, last wins);
+the worksheet loader NEVER fabricates a disposition (empty -> pending); a basket cannot freeze until
+every name is RATIFIED/PASSED (the DIG-DEEPER guard); spreads are computed BOTH pooled AND by chain
+layer (§4); the §3c partial-kill state is sign-based and (the honest §3b-i property) UNREACHABLE
+from the equal-weight baseline with both legs present; every report carries the §4 power label;
+onset is logged forward append-only, null for a never-co-mover; and the schemas cannot conclude.
+"""
+
+from __future__ import annotations
+
+from datetime import date
+from pathlib import Path
+
+import pytest
+
+from vinci.themes.forward import (
+    Disposition,
+    FrozenBaskets,
+    LayerSpread,
+    PowerLabel,
+    PriceFn,
+    RatificationRecord,
+    SpreadReport,
+    append_record,
+    classify_state,
+    current_dispositions,
+    early_vs_late,
+    freeze_baskets,
+    load_ledger,
+    measure_horizon,
+    power_label,
+    records_from_worksheet,
+    update_onsets,
+)
+
+
+def _rec(ticker: str, disp: Disposition, layer: str = "chips/GPU",
+         onset: date | None = None) -> RatificationRecord:
+    return RatificationRecord(
+        ticker=ticker, cik="1", driver="AI-DC", chain_layer=layer,
+        machine_grade="committed-capacity",
+        driver_tie="chain-layer-specific", grade_fact="f", source_ref="acc", disposition=disp,
+        rationale="r", ratification_date=date(2026, 1, 1), comovement_onset_date=onset)
+
+
+def _price_fn(prices: dict[tuple[str, str], float]) -> PriceFn:
+    def fn(ticker: str, day: date) -> float | None:
+        return prices.get((ticker, day.isoformat()))
+    return fn
+
+
+# ---- Component 1: the append-only ledger --------------------------------------------------------
+def test_ledger_append_only_last_wins(tmp_path: Path) -> None:
+    p = tmp_path / "ledger.jsonl"
+    append_record(p, _rec("AAA", Disposition.PASSED))
+    append_record(p, _rec("BBB", Disposition.RATIFIED))
+    append_record(p, _rec("AAA", Disposition.RATIFIED))  # a CORRECTION — new row, never a mutation
+    rows = load_ledger(p)
+    assert len(rows) == 3  # all three rows persist (append-only — nothing overwritten)
+    cur = current_dispositions(rows)
+    assert cur["AAA"].disposition is Disposition.RATIFIED  # the latest AAA row wins
+    assert cur["BBB"].disposition is Disposition.RATIFIED
+
+
+def test_records_from_worksheet_skips_empty_never_fabricates(tmp_path: Path) -> None:
+    csv = tmp_path / "ws.csv"
+    csv.write_text(
+        "chain_layer,ticker,cik,machine_grade,grade_driver_tie,grade_fact,grade_accession,"
+        "DISPOSITION,RATIONALE\n"
+        "chips/GPU,AAA,1,committed-capacity,chain-layer-specific,fact-a,acc-a,"
+        "RATIFIED,real enabler\n"
+        "power/electrical,BBB,2,committed-capacity,indirect,fact-b,acc-b,PASSED,generic power\n"
+        "HBM/memory,CCC,3,committed-capacity,chain-layer-specific,fact-c,acc-c,,\n")  # CCC pending
+    recs, pending = records_from_worksheet(csv, driver="AI-DC", ratification_date=date(2026, 1, 1))
+    assert pending == 1  # CCC has no disposition — pending, NOT fabricated
+    assert {r.ticker for r in recs} == {"AAA", "BBB"}
+    assert next(r for r in recs if r.ticker == "AAA").disposition is Disposition.RATIFIED
+    assert next(r for r in recs if r.ticker == "BBB").disposition is Disposition.PASSED
+
+
+# ---- Component 2: the frozen baskets + DIG-DEEPER guard -----------------------------------------
+def test_freeze_guard_blocks_until_all_resolved() -> None:
+    layer_of = {"AAA": "chips/GPU", "BBB": "power/electrical", "CCC": "HBM/memory"}
+    all_committed = ["AAA", "BBB", "CCC"]
+    # a DIG-DEEPER present → cannot freeze
+    recs = [_rec("AAA", Disposition.RATIFIED), _rec("BBB", Disposition.PASSED),
+            _rec("CCC", Disposition.DIG_DEEPER)]
+    with pytest.raises(ValueError, match="cannot freeze"):
+        freeze_baskets(recs, all_committed, driver="AI-DC", freeze_timestamp="2026-07-01T00:00:00",
+                       layer_of=layer_of)
+    # a MISSING disposition → cannot freeze
+    with pytest.raises(ValueError, match="cannot freeze"):
+        freeze_baskets(recs[:2], all_committed, driver="AI-DC",
+                       freeze_timestamp="2026-07-01T00:00:00", layer_of=layer_of)
+    # all resolved → freezes with the correct legs
+    recs2 = [_rec("AAA", Disposition.RATIFIED), _rec("BBB", Disposition.PASSED),
+             _rec("CCC", Disposition.RATIFIED)]
+    b = freeze_baskets(recs2, all_committed, driver="AI-DC", freeze_timestamp="2026-07-01T00:00:00",
+                       layer_of=layer_of)
+    assert b.ratified == ("AAA", "CCC") and b.passed == ("BBB",)
+    assert b.all_committed == ("AAA", "BBB", "CCC")
+    assert b.entry_dates["AAA"] == "2026-01-01"
+    assert b.deferred_controls  # the §3b-ii keyword/co-movement control recorded as deferred
+
+
+# ---- Component 3: layer-aware spreads, partial-kill, power --------------------------------------
+def test_classify_state_is_sign_based() -> None:
+    assert classify_state(0.05, 0.02, 2) == "EDGE-DIRECTIONAL"   # both positive
+    assert classify_state(0.05, -0.01, 2) == "PARTIAL-KILL"  # naive not beaten (§3c)
+    assert classify_state(0.05, 0.0, 2) == "PARTIAL-KILL"        # rmn == 0 counts as not-beaten
+    assert classify_state(-0.01, 0.9, 2) == "NO-SELECTION"       # human did not sort the tier
+    assert classify_state(0.05, 0.02, 0) == "INSUFFICIENT"       # no ratified names
+
+
+def _two_layer_baskets() -> FrozenBaskets:
+    layer_of = {"T1": "thermal/cooling", "T2": "thermal/cooling",
+                "C1": "chips/GPU", "C2": "chips/GPU"}
+    return FrozenBaskets(
+        driver="AI-DC", freeze_timestamp="2026-07-01T00:00:00", ratified=("T1", "C1"),
+        passed=("T2", "C2"), all_committed=("T1", "T2", "C1", "C2"),
+        entry_dates=dict.fromkeys(("T1", "T2", "C1", "C2"), "2026-01-01"), layer_of=layer_of)
+
+
+def test_measure_is_layer_aware_and_power_labelled() -> None:
+    b = _two_layer_baskets()
+    prices = {
+        ("IWM", "2026-01-01"): 100.0, ("IWM", "2026-04-01"): 110.0,   # benchmark +10%
+        ("T1", "2026-01-01"): 100.0, ("T1", "2026-04-01"): 130.0,     # +30% → adj +20%
+        ("T2", "2026-01-01"): 100.0, ("T2", "2026-04-01"): 105.0,     # +5%  → adj -5%
+        ("C1", "2026-01-01"): 100.0, ("C1", "2026-04-01"): 120.0,     # +20% → adj +10%
+        ("C2", "2026-01-01"): 100.0, ("C2", "2026-04-01"): 118.0,     # +18% → adj +8%
+    }
+    rep = measure_horizon(b, price_fn=_price_fn(prices), horizon_days=90, as_of=date(2026, 7, 1))
+    assert isinstance(rep, SpreadReport)
+    layers = {ls.scope: ls for ls in rep.by_layer}
+    assert set(layers) == {"thermal/cooling", "chips/GPU"}  # broken out BY LAYER (§4)
+    # the thin layer shows a bigger rat-passed spread than the obvious layer (the layer-aware point)
+    assert layers["thermal/cooling"].ratified_minus_passed is not None
+    assert layers["chips/GPU"].ratified_minus_passed is not None
+    assert (layers["thermal/cooling"].ratified_minus_passed
+            > layers["chips/GPU"].ratified_minus_passed)
+    # EVERY report carries the §4 power label; one driver / fresh freeze → UNPOWERED
+    assert rep.power.label == "UNPOWERED"
+    assert "DIRECTIONAL" in rep.power.note
+
+
+def test_equal_weight_partial_kill_unreachable_with_both_legs() -> None:
+    """The honest §3b-i property: with both legs present, RATIFIED-NAIVE(equal-weight) shares the
+    sign of RATIFIED-PASSED, so measure can NOT surface a strict partial-kill from the equal-weight
+    baseline. apparatus_fraction (= n_passed/N) surfaces the '~0' case for the human to judge."""
+    b = _two_layer_baskets()
+    prices = {
+        ("IWM", "2026-01-01"): 100.0, ("IWM", "2026-04-01"): 100.0,
+        ("T1", "2026-01-01"): 100.0, ("T1", "2026-04-01"): 120.0,
+        ("T2", "2026-01-01"): 100.0, ("T2", "2026-04-01"): 105.0,
+        ("C1", "2026-01-01"): 100.0, ("C1", "2026-04-01"): 112.0,
+        ("C2", "2026-01-01"): 100.0, ("C2", "2026-04-01"): 108.0,
+    }
+    rep = measure_horizon(b, price_fn=_price_fn(prices), horizon_days=90, as_of=date(2026, 7, 1))
+    assert rep.partial_kill_scopes == ()  # cannot fire from equal-weight with both legs present
+    # apparatus_fraction is populated where ratified-minus-passed > 0 (the human reads it for '~0')
+    assert rep.pooled.apparatus_fraction is not None
+
+
+def test_power_label_floor() -> None:
+    # below the floor → UNPOWERED (and the label vocabulary never says "significant")
+    lo = power_label(theme_quarters=2, drivers=1, sign_consistent=True)
+    assert lo.label == "UNPOWERED"
+    assert "significant" not in lo.label.lower()
+    # at the a-priori floor → POWERED-DIRECTIONAL (still directional, never a significance claim)
+    hi = power_label(theme_quarters=8, drivers=4, sign_consistent=True)
+    assert hi.label == "POWERED-DIRECTIONAL"
+    # sign inconsistency alone keeps it unpowered even with size
+    mix = power_label(theme_quarters=12, drivers=5, sign_consistent=False)
+    assert mix.label == "UNPOWERED"
+
+
+# ---- Component 4: early-detection onset ----------------------------------------------------------
+def test_onset_logged_forward_append_only(tmp_path: Path) -> None:
+    p = tmp_path / "ledger.jsonl"
+    recs = [_rec("AAA", Disposition.RATIFIED), _rec("BBB", Disposition.RATIFIED),
+            _rec("CCC", Disposition.PASSED)]
+    for r in recs:
+        append_record(p, r)
+    # AAA co-moves as of 2026-06-01; BBB never; CCC is PASSED (not tracked for onset)
+    def member(ticker: str, as_of: date) -> bool:
+        return ticker == "AAA"
+    new = update_onsets(load_ledger(p), p, member, as_of=date(2026, 6, 1))
+    assert [r.ticker for r in new] == ["AAA"]  # only the co-moving ratified name gets a new row
+    cur = current_dispositions(load_ledger(p))
+    assert cur["AAA"].comovement_onset_date == date(2026, 6, 1)  # stamped forward
+    assert cur["BBB"].comovement_onset_date is None  # never co-moved → logged null, not an error
+
+
+def test_early_vs_late_split_and_null() -> None:
+    prices = {
+        ("IWM", "2026-01-01"): 100.0, ("IWM", "2026-04-01"): 100.0, ("IWM", "2026-07-01"): 100.0,
+        ("AAA", "2026-01-01"): 100.0, ("AAA", "2026-04-01"): 130.0, ("AAA", "2026-07-01"): 140.0,
+    }
+    pf = _price_fn(prices)
+    # onset stamped → early (ratification→onset) and late (onset→forward) both computed
+    with_onset = _rec("AAA", Disposition.RATIFIED, onset=date(2026, 4, 1))
+    r1 = early_vs_late(with_onset, price_fn=pf, benchmark="IWM", forward_asof=date(2026, 7, 1))
+    assert r1["late_adj"] is not None and r1["onset"] == "2026-04-01"
+    # never co-moved → late is None, a logged null (not an error)
+    no_onset = _rec("AAA", Disposition.RATIFIED, onset=None)
+    r2 = early_vs_late(no_onset, price_fn=pf, benchmark="IWM", forward_asof=date(2026, 7, 1))
+    assert r2["late_adj"] is None and r2["onset"] is None
+
+
+# ---- the dead-signal firewall: the schemas cannot conclude --------------------------------------
+def test_schemas_cannot_conclude() -> None:
+    forbidden = ("score", "rank", "verdict", "recommend", "buy", "sell", "priority", "target")
+    for model in (RatificationRecord, FrozenBaskets, LayerSpread, SpreadReport, PowerLabel):
+        for name in model.model_fields:
+            for tok in forbidden:
+                assert tok not in name.lower(), f"{model.__name__}.{name}: verdict token {tok}"
