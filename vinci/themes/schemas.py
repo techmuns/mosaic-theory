@@ -297,11 +297,26 @@ class ExposureConcreteness(StrEnum):
     NONE = "none"  # no driver exposure disclosed in the cited text
 
 
+class DriverTie(StrEnum):
+    """How SPECIFICALLY a fact ties to an AI-datacenter VALUE-CHAIN layer
+    (GPU/HBM/packaging/thermal/power-delivered-to-AI-datacenters/optical/colocation/AI-cloud) — the
+    audit's driver-tie gate,
+    INDEPENDENT of concreteness: a terms-binding contract with only an INDIRECT tie is NOT real
+    exposure (e.g. a fuel-cell CEPA that binds but ties only generically to 'data center')."""
+
+    CHAIN_SPECIFIC = "chain-layer-specific"  # a named AI-datacenter value-chain layer
+    INDIRECT = "indirect"  # weak/generic tie: generic power/equipment 'for data center', no AI/GPU
+    NOT_DRIVER = "not-driver"  # NOT this driver: edge/on-device AI, 'broad AI market' adjacency
+
+
 class ExposureFact(BaseModel, frozen=True):
     """One disclosed exposure fact, source-bound to the filing it was read from (CLAUDE.md)."""
 
     fact: str  # the disclosed business activity, paraphrased from the filing (no outside facts)
+    # TYPE-APPROPRIATE strength (terms-binding / quantified+chain)
     concreteness: ExposureConcreteness
+    # how specifically it ties to the AI-datacenter value chain (separate gate)
+    driver_tie: DriverTie
     source_ref: str  # the filing accession/ref the fact was read from (must trace to the stream)
 
 

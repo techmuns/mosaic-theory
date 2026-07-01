@@ -547,8 +547,10 @@ def _cmd_themes_exposure(args: argparse.Namespace) -> int:
     datacenter buildout), reading each name's recent filing stream through the fenced LLM. ASSEMBLES
     a source-bound exposure assessment per name (basis DERIVED from cited facts; a mention is not
     exposure); it never concludes/ranks/selects — the human audits the flagged set + each basis."""
+    import json
     from collections import Counter
     from datetime import timedelta
+    from pathlib import Path
 
     from vinci.edgar import EdgarClient
     from vinci.graph.llm import AnthropicLlmClient
@@ -575,6 +577,10 @@ def _cmd_themes_exposure(args: argparse.Namespace) -> int:
         efts_http=build_efts_http(cfg), llm=AnthropicLlmClient.from_config(cfg),
         startdt=startdt, enddt=ref.isoformat(), max_workers=args.workers, progress=stderr_reporter,
     )
+    if args.out:  # audit-grade persistence — the full model_dump (facts + source_refs), no re-run
+        Path(args.out).write_text(
+            "\n".join(json.dumps(a.model_dump(mode="json")) for a in results))
+        print(f"wrote {len(results)} full assessments (audit-grade) → {args.out}")
     dist = Counter(a.exposure_basis.value for a in results)
     real = [a for a in results if is_real_exposure(a)]
     print(f"\n=== Stage-3 exposure scan · AI-datacenter · {len(names)} names, "
@@ -786,6 +792,7 @@ def build_parser() -> argparse.ArgumentParser:
     )
     p_exp.add_argument("--max-names", type=int, dest="max_names", help="cap the universe (dev)")
     p_exp.add_argument("--workers", type=int, default=6, help="concurrent LLM workers (default: 6)")
+    p_exp.add_argument("--out", help="write full model_dump JSONL (audit-grade persistence)")
     p_exp.set_defaults(func=_cmd_themes_exposure)
     return parser
 
