@@ -73,13 +73,15 @@ def render_markdown(d: Dossier) -> str:
     ]
     out += ["## Mechanical layer (source-bound facts)", "", "### Valuation"]
     out += [
+        # Lead with the CROSS-SECTIONAL read (the edge). The own-history percentile is near-0th for
+        # nearly every finalist (the screen selects drawdowns), so it barely discriminates — it is
+        # folded, with its RANGE + sample confidence, into the secondary own-history line below.
+        _fact("Cross-sectional (vs peers — the edge)", m.valuation.cross_sectional),
         _fact("P/E", m.valuation.pe, _mult),
-        _fact("P/E percentile (5y)", m.valuation.pe_percentile_5y, _pctile),
         _fact("EV/EBITDA (GAAP TEV/LTM)", m.valuation.ev_ebitda, _mult),
-        _fact("EV/EBITDA percentile (5y)", m.valuation.ev_ebitda_percentile_5y, _pctile),
         _fact("EV/EBITDA (adjusted, forward)", m.valuation.ev_ebitda_adjusted_fwd),
         _fact("Adjusted EPS (earnings power)", m.valuation.adjusted_eps),
-        _fact("Range position", m.valuation.range_position),
+        _fact("Own-history range position", m.valuation.range_position),
         "",
         "### Quality / durability",
         _fact("FCF sign", m.quality.fcf_sign, _signword),

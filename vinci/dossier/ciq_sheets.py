@@ -133,8 +133,16 @@ def ev_ebitda_percentile(bundle: CiqBundle) -> Sourced[float]:
     )
 
 
+# ~2y of quarterly closes — below this an own-history floor read is unreliable: it mirrors the P/E
+# percentile's ~2y bar (screens/assemble.py), and post-drawdown a handful of closes makes
+# "near-floor" near-tautological rather than informative.
+_MIN_CONFIDENT_CLOSES = 8
+
+
 def range_position(bundle: CiqBundle) -> Sourced[str]:
-    """Headline current multiples + EV/EBITDA range position (near-floor … near-ceiling)."""
+    """Own-history read: current TEV/LTM EBITDA + its trailing low–median–high RANGE and where in
+    it, WITH a sample-size confidence label. Below ~2y of closes the floor VERDICT is suppressed (a
+    floor read on a handful of points is unreliable and near-tautological post-drawdown)."""
     try:
         rows = bundle.sheet("financials", "Multiples", freq="quarterly")
     except CiqUnavailableError as exc:
@@ -144,11 +152,20 @@ def range_position(bundle: CiqBundle) -> Sourced[str]:
     if len(ev) < 4:
         return Sourced.unknown(note="TEV/LTM EBITDA Close has <4 quarters — no range position")
     cur, hist = ev[-1], ev[:-1]
+    lo, hi, med = min(hist), max(hist), statistics.median(hist)
     pct = sum(1 for h in hist if h <= cur) / len(hist)
-    band = next(b for t, b in _RANGE_BANDS if pct <= t)
+    if len(hist) < _MIN_CONFIDENT_CLOSES:
+        where = (
+            f"LOW-CONFIDENCE ({len(hist)} closes < {_MIN_CONFIDENT_CLOSES}q ≈2y) — floor read "
+            "unreliable"
+        )
+    else:
+        band = next(b for t, b in _RANGE_BANDS if pct <= t)
+        where = f"{pct:.0%}ile → {band}"
     tail = f"; P/LTM EPS {pe[-1]:.1f}x" if pe else ""
     return Sourced.present(
-        f"EV/EBITDA (TEV/LTM) {cur:.1f}x at {pct:.0%}ile of {len(hist)} closes → {band}{tail}",
+        f"EV/EBITDA (TEV/LTM) {cur:.1f}x — trailing range {lo:.1f}–{hi:.1f}x (median {med:.1f}x) "
+        f"over {len(hist)} closes → {where}{tail}",
         source_ref="CIQ Financials→Multiples (Close; last col = current, excluded from history)",
     )
 
@@ -978,6 +995,34 @@ def _comps_deltas(bundle: CiqBundle, src: str) -> Sourced[str]:
         "; ".join(bits) + "  [justified-vs-residual inputs: is the discount EARNED (worse "
         "fundamentals) or RESIDUAL (unexplained)? the human judges — not computed here]",
         source_ref=f"{src}→Operating Statistics (name vs peer median: growth/margin/leverage/beta)",
+    )
+
+
+def cross_sectional_valuation(bundle: CiqBundle) -> Sourced[str]:
+    """The CROSS-SECTIONAL read — the fund's edge: where the name's multiples sit vs the PEER
+    cross-section (not its own history). Name EV/EBITDA & P/E vs the peer MEDIAN, NUMBERS ONLY — the
+    earned-vs-residual framing and peer comparability live in the Peer-comps section (where the
+    inputs are), so a fixed 'is the discount earned or residual?' tail here would be identical on
+    every dossier and add no per-name value. A raw discount is not a verdict; the synthesis
+    PEER-COMP-BARE guardrail resists reading it as one. Reads the Comparable-Analysis sheet."""
+    try:
+        tm = bundle.sheet("comps", "Trading Multiples")
+    except CiqUnavailableError as exc:
+        return _miss_or_unknown(bundle, "comps", exc)
+    _hdr, _peers, tgt = _comps_layout(tm)
+    med = _find_row(tm, "Median")
+    if tgt is None or med is None:
+        return Sourced.unknown(note="Trading Multiples: no target row / Median statistic")
+    bits: list[str] = []
+    for lab, col in (("EV/EBITDA", 2), ("P/E", 4)):
+        nv, mv = _comps_cell(tm, tgt, col), _comps_cell(tm, med, col)
+        if isinstance(nv, (int, float)) and isinstance(mv, (int, float)) and mv:
+            bits.append(f"{lab} {nv:g}x vs peer median {mv:g}x ({nv / mv - 1:+.0%})")
+        else:
+            bits.append(f"{lab} {_tok(nv)} vs peer median {_tok(mv)}")
+    return Sourced.present(
+        "; ".join(bits),
+        source_ref="CIQ Comparable Analysis→Trading Multiples (name vs peer Median)",
     )
 
 
