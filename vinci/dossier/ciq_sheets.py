@@ -1000,9 +1000,11 @@ def _comps_deltas(bundle: CiqBundle, src: str) -> Sourced[str]:
 
 def cross_sectional_valuation(bundle: CiqBundle) -> Sourced[str]:
     """The CROSS-SECTIONAL read — the fund's edge: where the name's multiples sit vs the PEER
-    cross-section (not its own history). Name EV/EBITDA & P/E vs the peer MEDIAN, framed so a bare
-    gap is never read as signal — the earned-vs-residual split and peer comparability are the
-    human's call (see Peer comps). Reads the Comparable-Analysis Trading-Multiples sheet."""
+    cross-section (not its own history). Name EV/EBITDA & P/E vs the peer MEDIAN, NUMBERS ONLY — the
+    earned-vs-residual framing and peer comparability live in the Peer-comps section (where the
+    inputs are), so a fixed 'is the discount earned or residual?' tail here would be identical on
+    every dossier and add no per-name value. A raw discount is not a verdict; the synthesis
+    PEER-COMP-BARE guardrail resists reading it as one. Reads the Comparable-Analysis sheet."""
     try:
         tm = bundle.sheet("comps", "Trading Multiples")
     except CiqUnavailableError as exc:
@@ -1019,8 +1021,7 @@ def cross_sectional_valuation(bundle: CiqBundle) -> Sourced[str]:
         else:
             bits.append(f"{lab} {_tok(nv)} vs peer median {_tok(mv)}")
     return Sourced.present(
-        "; ".join(bits) + " — is the discount EARNED (worse fundamentals) or RESIDUAL? "
-        "(see Peer comps for the earned-vs-residual split + peer-set comparability)",
+        "; ".join(bits),
         source_ref="CIQ Comparable Analysis→Trading Multiples (name vs peer Median)",
     )
 

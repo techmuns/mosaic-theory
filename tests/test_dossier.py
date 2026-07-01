@@ -1104,7 +1104,8 @@ def test_range_position_rich_sample_shows_band_and_range() -> None:
 
 def test_cross_sectional_valuation_name_vs_peer_median() -> None:
     """The Valuation LEAD — the fund's edge: name EV/EBITDA & P/E vs the peer MEDIAN with the
-    discount, POSED as earned-vs-residual (never a bare verdict)."""
+    discount, NUMBERS ONLY — no fixed earned-vs-residual framing tail (that lives in Peer comps;
+    repeating it on every dossier is boilerplate that adds no per-name value)."""
     tm: list[list[typing.Any]] = [
         ["Company Name", "TEV/Rev", "TEV/EBITDA", "", "P/E", "", "NTM TEV/Rev", "NTM TEV/EBITDA",
          "NTM P/E"],
@@ -1123,7 +1124,8 @@ def test_cross_sectional_valuation_name_vs_peer_median() -> None:
     v = cx.value or ""
     assert "EV/EBITDA 7.5x vs peer median 10.8x (-31%)" in v
     assert "P/E 13x vs peer median 16.4x (-21%)" in v
-    assert "EARNED" in v and "RESIDUAL" in v
+    # numbers only — the repetitive earned-vs-residual framing tail is dropped (lives in Peer comps)
+    assert "EARNED" not in v and "RESIDUAL" not in v and "see Peer comps" not in v
 
 
 def test_segment_ebitda_section_surfaces_profit_share() -> None:
