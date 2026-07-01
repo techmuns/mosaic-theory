@@ -888,13 +888,14 @@ Each line: *what it does* — *verified how*.
     label-left grid. *Verified live (desktop, zoom 1): all 5 table-facts compute `display:block` with the
     peer table at the full 906px content width; scalar facts stay `display:grid`; screenshot shows the
     peer/margin/trajectory tables full-width with single-line descriptions.*
-  - **Dossier valuation re-centered on the cross-section (PR open — not merged, 2026-07-01).** Acting
+  - **Dossier valuation re-centered on the cross-section (MERGED as #48, 2026-07-01).** Acting
     on an equity-analyst review, validated from first principles: the Valuation block LED with an
     own-history multiple percentile that is ~0th for nearly every finalist (the screen selects
     drawdowns), so it barely discriminated, while the cross-sectional read (the fund's edge) was
     siloed in Peer comps. Fix (`vinci/dossier/{schemas,ciq_sheets,mechanical,render}.py`): (1) new
-    `cross_sectional_valuation` — name EV/EBITDA & P/E vs the peer MEDIAN with the discount, POSED
-    earned-vs-residual — now LEADS the Valuation section; (2) `range_position` carries the trailing
+    `cross_sectional_valuation` — name EV/EBITDA & P/E vs the peer MEDIAN with the discount, NUMBERS
+    ONLY (the repetitive "earned-vs-residual?" framing tail was dropped pre-merge as boilerplate that
+    duplicated Peer comps) — now LEADS the Valuation section; (2) `range_position` carries the trailing
     low–median–high RANGE + a sample-size CONFIDENCE label and SUPPRESSES the "near-floor" verdict
     below ~2y of closes (`_MIN_CONFIDENT_CLOSES=8`, mirroring the P/E percentile's ~2y bar); (3) the
     two bare "Nth %ile" render lines dropped (folded into the contextualized own-history line).
@@ -904,8 +905,22 @@ Each line: *what it does* — *verified how*.
     CIQ): the confidence gate fires ONLY on MVST (4 closes), band trusted on the 19–20-close names;
     the cross-sectional discount spans −83% (VITL) to +165% (MVST) — MVST reads own-history
     "near-floor" yet +165% RICH vs peers, the context the old lead masked. The FINAL rendered
-    re-assembly on the real CIQ workbooks is the operator's step (CIQ absent in-cloud).* PR 2
-    (EV/EBITDA cross-sheet reconciliation) + PR 3 (flag audience-split) follow.
+    re-assembly on the real CIQ workbooks is the operator's step (CIQ absent in-cloud).* Live
+    re-assembly (MVST/IT/AORT/VITL) confirmed the render; PR 3 (flag audience-split + body concision)
+    follows.
+  - **EV/EBITDA cross-sheet reconciliation caveat (PR open — not merged, 2026-07-01).** #48 put both
+    EV/EBITDA figures adjacent in the Valuation block, making a real inconsistency visible: CIQ
+    reports the name's EV/EBITDA on TWO sheets — Financials→Multiples TEV/LTM (own-history-range
+    basis) and Comparable-Analysis Trading-Multiples (cross-sectional-lead basis) — and they can
+    disagree by EBITDA/EV basis (MVST 10.0x vs 38.4x). Fix: `ciq_sheets.comps_ev_ebitda` exposes the
+    comps figure as a VALUE; `mechanical._ev_ebitda_conflict_flag` flags a material gap
+    (`_EV_EBITDA_CONFLICT_RATIO=1.25`, ~25%) with a "verify which basis applies" caveat naming BOTH
+    figures + the gap ratio; appended in `assemble_mechanical`. Display-only; the caveat POSES, never
+    concludes. *Verified: ruff + mypy --strict (67) + pytest 248 incl. 2 new tests (fires on the MVST
+    gap, quiet on a close pair / an absent side). Cloud-validated on the 10 committed dossiers (both
+    figures are in them): flag fires on MVST (3.84×), VRRM (1.81×), VITL (1.25×); quiet on AORT / BRBR
+    / EPAM / IT / SMPL (≤1.05×), CNXC (1.24×, just under), FUBO (one side absent). Operator re-assembly
+    on real CIQ is the final render step.*
 - _Whole suite green (ruff + mypy --strict clean; `pytest -m "not network"` passes)._
 
 ## 3. FALSIFIED — tested and retired (NOT deferred)

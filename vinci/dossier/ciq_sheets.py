@@ -1026,6 +1026,27 @@ def cross_sectional_valuation(bundle: CiqBundle) -> Sourced[str]:
     )
 
 
+def comps_ev_ebitda(bundle: CiqBundle) -> Sourced[float]:
+    """The name's LTM TEV/EBITDA from the Comparable-Analysis Trading-Multiples sheet, as a VALUE so
+    it can be reconciled against the Financials→Multiples TEV/LTM (``ev_ebitda_current``). The two
+    are the same concept computed by different CIQ sheets and can disagree by EBITDA/EV basis (the
+    MVST 10.0x vs 38.4x case)."""
+    try:
+        tm = bundle.sheet("comps", "Trading Multiples")
+    except CiqUnavailableError as exc:
+        return _miss_or_unknown(bundle, "comps", exc)
+    _hdr, _peers, tgt = _comps_layout(tm)
+    if tgt is None:
+        return Sourced.unknown(note="Trading Multiples: no target (name) row")
+    v = _comps_cell(tm, tgt, 2)  # col 2 = TEV/EBITDA (LTM)
+    if not isinstance(v, (int, float)):
+        return Sourced.unknown(note=f"Trading Multiples TEV/EBITDA not numeric ({_tok(v)})")
+    return Sourced.present(
+        round(float(v), 1),
+        source_ref="CIQ Comparable Analysis→Trading Multiples (name row, TEV/EBITDA LTM)",
+    )
+
+
 def peer_comps(bundle: CiqBundle) -> PeerComps:
     """Assemble the peer-comps section from the CIQ Company Comparable Analysis workbook: roster +
     market-cap/business dispersion + the name-vs-peer multiple gap (LTM + NTM) + the fundamental

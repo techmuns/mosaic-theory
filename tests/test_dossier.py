@@ -1128,6 +1128,48 @@ def test_cross_sectional_valuation_name_vs_peer_median() -> None:
     assert "EARNED" not in v and "RESIDUAL" not in v and "see Peer comps" not in v
 
 
+def test_comps_ev_ebitda_reads_target_tev_ebitda() -> None:
+    """The name's LTM TEV/EBITDA from the comps Trading-Multiples target row (col 2), as a value —
+    the input the reconciliation compares against the Financials→Multiples TEV/LTM."""
+    tm: list[list[typing.Any]] = [
+        ["Company Name", "TEV/Rev", "TEV/EBITDA", "", "P/E", "", "NTM TEV/Rev", "NTM TEV/EBITDA",
+         "NTM P/E"],
+        ["Peer A (X:A)", 3.0, 12.0, "", 20.0, "", 2.5, 10.0, 18.0],
+        ["", "", "", "", "", "", "", "", ""],
+        ["Target Co (X:TGT)", 2.0, 7.5, "", 13.0, "", 1.8, 6.5, 11.0],
+        ["Summary Statistics", "", "", "", "", "", "", "", ""],
+        ["Median", 3.0, 10.8, "", 16.4, "", 2.5, 9.5, 18.0],
+    ]
+    bundle = _FakeCompsBundle({("comps", "Trading Multiples"): tm})
+    r = cs.comps_ev_ebitda(typing.cast(ciq.CiqBundle, bundle))
+    assert r.status is ds.SourceStatus.PRESENT and r.value == pytest.approx(7.5)
+
+
+def test_ev_ebitda_conflict_flag_material_gap(monkeypatch: pytest.MonkeyPatch) -> None:
+    """The two CIQ EV/EBITDA sheets can disagree by basis (MVST: Financials 10.0x vs comps 38.4x).
+    A material gap (>=1.25x) → an explicit 'verify which basis' caveat naming BOTH figures; a close
+    pair → no flag; either absent → no flag (never a fabricated conflict)."""
+    def patch(fin: float | None, comp: float | None) -> None:
+        monkeypatch.setattr(
+            cs, "ev_ebitda_current",
+            lambda _b: ds.Sourced.present(fin, source_ref="fin") if fin is not None
+            else ds.Sourced.unknown(note="no fin"),
+        )
+        monkeypatch.setattr(
+            cs, "comps_ev_ebitda",
+            lambda _b: ds.Sourced.present(comp, source_ref="comp") if comp is not None
+            else ds.Sourced.unknown(note="no comp"),
+        )
+    patch(10.0, 38.4)  # the MVST gap
+    f = dm._ev_ebitda_conflict_flag(None)  # type: ignore[arg-type]
+    assert f is not None and "basis conflict" in f
+    assert "10.0x" in f and "38.4x" in f and "3.8" in f  # names BOTH figures + the gap ratio
+    patch(7.5, 7.6)  # close (1.01x) → no flag
+    assert dm._ev_ebitda_conflict_flag(None) is None  # type: ignore[arg-type]
+    patch(10.0, None)  # comps absent → no flag
+    assert dm._ev_ebitda_conflict_flag(None) is None  # type: ignore[arg-type]
+
+
 def test_segment_ebitda_section_surfaces_profit_share() -> None:
     """The Segments EBITDA section parses to EBITDA share — the decision-relevant concentration:
     a segment can be 45% of revenue but 68% of profit (the Avis-in-Commercial-Services case)."""

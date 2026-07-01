@@ -510,6 +510,34 @@ def _leverage_basis_flag(net_lev: Sourced[float]) -> str | None:
     )
 
 
+# max/min ratio above which the two CIQ EV/EBITDA sheets are flagged as materially disagreeing
+# (~25% apart) — a multiple gap that changes the read (the MVST 10.0x vs 38.4x case). Below it the
+# basis difference isn't decision-relevant.
+_EV_EBITDA_CONFLICT_RATIO = 1.25
+
+
+def _ev_ebitda_conflict_flag(bundle: CiqBundle) -> str | None:
+    """CIQ reports the name's EV/EBITDA on TWO sheets — Financials→Multiples (TEV/LTM,
+    ``ev_ebitda_current``, used for the own-history range) and Comparable-Analysis Trading-Multiples
+    (``comps_ev_ebitda``, used for the cross-sectional lead). They are the same concept on different
+    EBITDA/EV bases and can disagree materially (MVST 10.0x vs 38.4x). When they do, flag it so the
+    human verifies which basis applies rather than trusting either silently."""
+    fin = ciq_sheets.ev_ebitda_current(bundle)
+    comp = ciq_sheets.comps_ev_ebitda(bundle)
+    if fin.status is not SourceStatus.PRESENT or comp.status is not SourceStatus.PRESENT:
+        return None
+    assert fin.value is not None and comp.value is not None
+    lo, hi = sorted((fin.value, comp.value))
+    if lo <= 0 or hi / lo < _EV_EBITDA_CONFLICT_RATIO:
+        return None
+    return (
+        f"EV/EBITDA basis conflict — CIQ's Financials→Multiples reads {fin.value:.1f}x (TEV/LTM, "
+        f"the own-history-range basis) while its Comparable-Analysis sheet reads {comp.value:.1f}x "
+        f"(the cross-sectional-lead basis), a {hi / lo:.1f}× gap from different EBITDA/EV bases; "
+        "verify which basis applies before reading either multiple."
+    )
+
+
 # --- adjusted-basis multiples + leverage (from the 99.1 guide + EDGAR net-debt/shares + EOD) ----
 
 _NUM = r"(\d+(?:\.\d+)?)"  # a plain number — never swallow trailing punctuation (e.g. '1.25.')
@@ -871,4 +899,9 @@ def assemble_mechanical(
         lev := _leverage_basis_flag(mech.quality.net_debt_to_ebitda)
     ):
         flags.append(lev)
+    # the two CIQ EV/EBITDA sheets (own-history-range basis vs cross-sectional-lead basis) can
+    # disagree by EBITDA/EV basis — flag a material gap so the human verifies which applies (#48
+    # surfaced both figures adjacently, so the conflict is now visible in the Valuation block).
+    if (ev_conflict := _ev_ebitda_conflict_flag(bundle)) is not None:
+        flags.append(ev_conflict)
     return mech, flags
