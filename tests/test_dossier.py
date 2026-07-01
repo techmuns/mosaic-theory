@@ -162,8 +162,9 @@ def _minimal_mech() -> ds.MechanicalLayer:
     """A mech layer with two PRESENT facts (the name's & rel returns) — the rest UNKNOWN/MISSING."""
     return ds.MechanicalLayer(
         valuation=ds.Valuation(
-            pe=_u(), pe_percentile_5y=_u(), ev_ebitda=_u(), ev_ebitda_percentile_5y=_u(),
-            ev_ebitda_adjusted_fwd=_u(), adjusted_eps=_u(), range_position=_u(),
+            cross_sectional=_u(), pe=_u(), pe_percentile_5y=_u(), ev_ebitda=_u(),
+            ev_ebitda_percentile_5y=_u(), ev_ebitda_adjusted_fwd=_u(), adjusted_eps=_u(),
+            range_position=_u(),
         ),
         quality=ds.Quality(
             fcf_sign=_u(), free_cash_flow=_u(), margin_trend=_u(), net_debt_to_ebitda=_u(),
@@ -1070,6 +1071,59 @@ def test_missing_workbook_is_missing_absent_sheet_is_unknown() -> None:
     absent: list[list[typing.Any]] = [["For the Fiscal Period", "x"]]  # wb present, no Multiples
     r = cs.ev_ebitda_percentile(_fin_bundle({"Income Statement": absent}))
     assert r.status is ds.SourceStatus.UNKNOWN and "Multiples" in (r.note or "")
+
+
+def test_range_position_thin_sample_flags_low_confidence() -> None:
+    """A handful of quarterly closes (post-drawdown, <2y) → the floor VERDICT is suppressed and the
+    line reads LOW-CONFIDENCE, but the current multiple + trailing RANGE are still shown (the
+    analyst's 'floor %ile of 4 closes adds little' — a floor read on 3 points is unreliable)."""
+    mult: list[list[typing.Any]] = [
+        ["For Quarter Ending", "", 44377.0, 44469.0, 44561.0, 44651.0],
+        ["TEV/LTM EBITDA", "Close", 20.0, 18.0, 16.0, 10.0],  # history [20,18,16]; current 10.0
+    ]
+    rp = cs.range_position(_fin_bundle({"Multiples": mult}))
+    assert rp.status is ds.SourceStatus.PRESENT
+    v = rp.value or ""
+    assert "LOW-CONFIDENCE" in v and "3 closes" in v  # 3 historical closes < 8q ≈ 2y
+    assert "trailing range 16.0" in v and "median 18.0x" in v  # range gives the %ile its context
+    assert "near-floor" not in v  # the tautological floor verdict is suppressed on a thin sample
+
+
+def test_range_position_rich_sample_shows_band_and_range() -> None:
+    """With ≥2y of closes the floor band IS a meaningful verdict — shown alongside the range."""
+    mult: list[list[typing.Any]] = [
+        ["For Quarter Ending", "", 44000.0, 44100.0, 44200.0, 44300.0, 44400.0, 44500.0,
+         44600.0, 44700.0, 44800.0],
+        ["TEV/LTM EBITDA", "Close", 30.0, 28.0, 26.0, 24.0, 22.0, 20.0, 18.0, 16.0, 8.0],
+    ]
+    v = (cs.range_position(_fin_bundle({"Multiples": mult})).value) or ""
+    assert "8 closes" in v and "near-floor" in v  # 8 historical closes ≥ 8q → the band is trusted
+    assert "trailing range 16.0" in v and "30.0x" in v and "median 23.0x" in v
+    assert "LOW-CONFIDENCE" not in v
+
+
+def test_cross_sectional_valuation_name_vs_peer_median() -> None:
+    """The Valuation LEAD — the fund's edge: name EV/EBITDA & P/E vs the peer MEDIAN with the
+    discount, POSED as earned-vs-residual (never a bare verdict)."""
+    tm: list[list[typing.Any]] = [
+        ["Company Name", "TEV/Rev", "TEV/EBITDA", "", "P/E", "", "NTM TEV/Rev", "NTM TEV/EBITDA",
+         "NTM P/E"],
+        ["Peer A (X:A)", 3.0, 12.0, "", 20.0, "", 2.5, 10.0, 18.0],
+        ["Peer B (X:B)", 4.0, 16.0, "", 24.0, "", 3.5, 14.0, 22.0],
+        ["", "", "", "", "", "", "", "", ""],
+        ["Target Co (X:TGT)", 2.0, 7.5, "", 13.0, "", 1.8, 6.5, 11.0],
+        ["Summary Statistics", "", "", "", "", "", "", "", ""],
+        ["Low", 2.0, 7.5, "", 13.0, "", 1.8, 6.5, 11.0],
+        ["Median", 3.0, 10.8, "", 16.4, "", 2.5, 9.5, 18.0],
+        ["High", 4.0, 16.0, "", 24.0, "", 3.5, 14.0, 22.0],
+    ]
+    bundle = _FakeCompsBundle({("comps", "Trading Multiples"): tm})
+    cx = cs.cross_sectional_valuation(typing.cast(ciq.CiqBundle, bundle))
+    assert cx.status is ds.SourceStatus.PRESENT
+    v = cx.value or ""
+    assert "EV/EBITDA 7.5x vs peer median 10.8x (-31%)" in v
+    assert "P/E 13x vs peer median 16.4x (-21%)" in v
+    assert "EARNED" in v and "RESIDUAL" in v
 
 
 def test_segment_ebitda_section_surfaces_profit_share() -> None:

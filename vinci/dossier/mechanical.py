@@ -592,6 +592,7 @@ def _valuation(
             "cheap-terminal"
         })
     return Valuation(
+        cross_sectional=ciq_sheets.cross_sectional_valuation(bundle),
         pe=pe,
         pe_percentile_5y=_sourced(
             f.pe_pctile_vs_history, source_ref="EDGAR/EOD P/E pctile vs ~5y (screen data-record)"

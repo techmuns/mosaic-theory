@@ -888,6 +888,24 @@ Each line: *what it does* — *verified how*.
     label-left grid. *Verified live (desktop, zoom 1): all 5 table-facts compute `display:block` with the
     peer table at the full 906px content width; scalar facts stay `display:grid`; screenshot shows the
     peer/margin/trajectory tables full-width with single-line descriptions.*
+  - **Dossier valuation re-centered on the cross-section (PR open — not merged, 2026-07-01).** Acting
+    on an equity-analyst review, validated from first principles: the Valuation block LED with an
+    own-history multiple percentile that is ~0th for nearly every finalist (the screen selects
+    drawdowns), so it barely discriminated, while the cross-sectional read (the fund's edge) was
+    siloed in Peer comps. Fix (`vinci/dossier/{schemas,ciq_sheets,mechanical,render}.py`): (1) new
+    `cross_sectional_valuation` — name EV/EBITDA & P/E vs the peer MEDIAN with the discount, POSED
+    earned-vs-residual — now LEADS the Valuation section; (2) `range_position` carries the trailing
+    low–median–high RANGE + a sample-size CONFIDENCE label and SUPPRESSES the "near-floor" verdict
+    below ~2y of closes (`_MIN_CONFIDENT_CLOSES=8`, mirroring the P/E percentile's ~2y bar); (3) the
+    two bare "Nth %ile" render lines dropped (folded into the contextualized own-history line).
+    Display-only — no gate/ranker/scoring/ledger touched; assemble-not-conclude intact. *Verified:
+    ruff + mypy --strict (67) + pytest 246 incl. 3 new tests (thin→LOW-CONFIDENCE, rich→band+range,
+    cross-sectional discount). Cloud-validated on all 10 committed dossiers (derived data, no raw
+    CIQ): the confidence gate fires ONLY on MVST (4 closes), band trusted on the 19–20-close names;
+    the cross-sectional discount spans −83% (VITL) to +165% (MVST) — MVST reads own-history
+    "near-floor" yet +165% RICH vs peers, the context the old lead masked. The FINAL rendered
+    re-assembly on the real CIQ workbooks is the operator's step (CIQ absent in-cloud).* PR 2
+    (EV/EBITDA cross-sheet reconciliation) + PR 3 (flag audience-split) follow.
 - _Whole suite green (ruff + mypy --strict clean; `pytest -m "not network"` passes)._
 
 ## 3. FALSIFIED — tested and retired (NOT deferred)

@@ -102,15 +102,23 @@ class CohortMember(BaseModel):
 
 
 class Valuation(BaseModel):
-    """Multiples vs the name's own ~5y history + where in that range (G3 inputs + CIQ multiples)."""
+    """Multiples: the CROSS-SECTIONAL read (vs peers) LEADS; own-history range/percentile is
+    secondary — near-tautological post-drawdown, so it barely discriminates. CIQ multiples + G3."""
 
+    # The cross-sectional read (the fund's edge): where the name's multiples sit vs the PEER
+    # cross-section, NOT its own history. The screen selects drawdowns, so almost every finalist is
+    # at its OWN-history floor (~0th %ile) — a near-constant, non-discriminating metric; the
+    # cross-section is what varies across finalists and carries the signal. Leads the render.
+    cross_sectional: Sourced[str]
     pe: Sourced[float]
     pe_percentile_5y: Sourced[float]
     ev_ebitda: Sourced[float]  # GAAP TEV/LTM EBITDA (CIQ, trailing)
     ev_ebitda_percentile_5y: Sourced[float]
     ev_ebitda_adjusted_fwd: Sourced[str]  # forward EV / FY-guide adjusted EBITDA (alongside GAAP)
     adjusted_eps: Sourced[str]  # company-adjusted EPS from the 99.1 guide (earnings power, vs GAAP)
-    range_position: Sourced[str]  # near-floor / below-center / above-center / near-ceiling
+    # own-history: current multiple + trailing low–median–high RANGE + sample-size CONFIDENCE (a
+    # floor read on a handful of quarterly closes is unreliable — see range_position).
+    range_position: Sourced[str]
 
     model_config = {"frozen": True}
 
