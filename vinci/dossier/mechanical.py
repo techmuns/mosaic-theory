@@ -511,31 +511,67 @@ def _leverage_basis_flag(net_lev: Sourced[float]) -> str | None:
 
 
 # max/min ratio above which the two CIQ EV/EBITDA sheets are flagged as materially disagreeing
-# (~25% apart) — a multiple gap that changes the read (the MVST 10.0x vs 38.4x case). Below it the
-# basis difference isn't decision-relevant.
+# (~25% apart) — a multiple gap that changes the read. Below it the gap isn't decision-relevant.
 _EV_EBITDA_CONFLICT_RATIO = 1.25
+# days the Financials→Multiples latest Close may trail the assembly reference date before its
+# "current" multiple (and the own-history range/percentile built on it) is treated as STALE. A live
+# pull carries an intra-quarter Close within days of the reference; a wider gap means the latest
+# column is a clean prior quarter-end that predates any subsequent re-rate (VRRM: 2026-03-31 close,
+# 8.5x, vs a post-drawdown comps read of 4.7x). Half a quarter ≈ 45d cleanly separates the two.
+_STALE_CLOSE_DAYS = 45
 
 
-def _ev_ebitda_conflict_flag(bundle: CiqBundle) -> str | None:
-    """CIQ reports the name's EV/EBITDA on TWO sheets — Financials→Multiples (TEV/LTM,
-    ``ev_ebitda_current``, used for the own-history range) and Comparable-Analysis Trading-Multiples
-    (``comps_ev_ebitda``, used for the cross-sectional lead). They are the same concept on different
-    EBITDA/EV bases and can disagree materially (MVST 10.0x vs 38.4x). When they do, flag it so the
-    human verifies which basis applies rather than trusting either silently."""
+def _ev_ebitda_integrity_flag(bundle: CiqBundle, reference_date: date) -> str | None:
+    """CIQ reports the name's current EV/EBITDA on TWO sheets — Financials→Multiples (TEV/LTM,
+    ``ev_ebitda_current``, the own-history-range basis) and Comparable-Analysis Trading-Multiples
+    (``comps_ev_ebitda``, the cross-sectional lead). A material disagreement is a DATA-INTEGRITY
+    signal, not a stable 'basis difference': the usual causes are (1) a STALE Financials Close — its
+    last dated column predates the reference date and a since-then re-rate (VRRM), or (2) the two
+    sheets priced the name on different dates. Flag the specific cause when detectable, else a plain
+    cross-sheet gap; route to the human caveat tier so the operator verifies rather than trusting it
+    silently. (After the subject-by-ticker fix, the old MVST 10.0x-vs-38.4x 'conflict' — a comps row
+    mis-read as Samsung SDI — no longer fires; the correct Microvast comps read agrees.)"""
     fin = ciq_sheets.ev_ebitda_current(bundle)
     comp = ciq_sheets.comps_ev_ebitda(bundle)
-    if fin.status is not SourceStatus.PRESENT or comp.status is not SourceStatus.PRESENT:
+    fin_date = ciq_sheets.ev_ebitda_asof(bundle)
+    stale_days = (reference_date - fin_date).days if fin_date is not None else None
+    stale = stale_days is not None and stale_days > _STALE_CLOSE_DAYS
+
+    disagree = False
+    if fin.status is SourceStatus.PRESENT and comp.status is SourceStatus.PRESENT:
+        assert fin.value is not None and comp.value is not None
+        lo, hi = sorted((fin.value, comp.value))
+        disagree = lo > 0 and hi / lo >= _EV_EBITDA_CONFLICT_RATIO
+    if not stale and not disagree:
         return None
-    assert fin.value is not None and comp.value is not None
-    lo, hi = sorted((fin.value, comp.value))
-    if lo <= 0 or hi / lo < _EV_EBITDA_CONFLICT_RATIO:
-        return None
+
+    if stale:
+        assert fin_date is not None and stale_days is not None
+        head = (
+            f"EV/EBITDA stale-price caveat — CIQ's Financials→Multiples current TEV/LTM "
+            f"{_fmt_mult(fin)} is priced at its last Close {fin_date.isoformat()}, {stale_days}d "
+            f"before the {reference_date.isoformat()} reference; for a since-re-rated name this "
+            "'current' multiple AND the own-history range/percentile built on it are stale"
+        )
+        if disagree:
+            head += (
+                f". The Comparable-Analysis sheet reads {_fmt_mult(comp)} on a current price — "
+                "prefer that figure and re-pull the Financials multiple."
+            )
+        else:
+            head += " — read it as-of that date, not as today's multiple."
+        return head
     return (
-        f"EV/EBITDA basis conflict — CIQ's Financials→Multiples reads {fin.value:.1f}x (TEV/LTM, "
-        f"the own-history-range basis) while its Comparable-Analysis sheet reads {comp.value:.1f}x "
-        f"(the cross-sectional-lead basis), a {hi / lo:.1f}× gap from different EBITDA/EV bases; "
-        "verify which basis applies before reading either multiple."
+        f"EV/EBITDA cross-sheet gap — CIQ's Financials→Multiples reads {_fmt_mult(fin)} and its "
+        f"Comparable-Analysis sheet reads {_fmt_mult(comp)} on the same concept; verify which the "
+        "verdict should use (a stale Close, a different pricing date, or an EBITDA basis) before "
+        "reading either."
     )
+
+
+def _fmt_mult(s: Sourced[float]) -> str:
+    """A Sourced EV/EBITDA multiple → 'N.Nx', or '?' when it isn't a present number."""
+    return f"{s.value:.1f}x" if s.status is SourceStatus.PRESENT and s.value is not None else "?"
 
 
 # --- adjusted-basis multiples + leverage (from the 99.1 guide + EDGAR net-debt/shares + EOD) ----
@@ -899,9 +935,9 @@ def assemble_mechanical(
         lev := _leverage_basis_flag(mech.quality.net_debt_to_ebitda)
     ):
         flags.append(lev)
-    # the two CIQ EV/EBITDA sheets (own-history-range basis vs cross-sectional-lead basis) can
-    # disagree by EBITDA/EV basis — flag a material gap so the human verifies which applies (#48
-    # surfaced both figures adjacently, so the conflict is now visible in the Valuation block).
-    if (ev_conflict := _ev_ebitda_conflict_flag(bundle)) is not None:
-        flags.append(ev_conflict)
+    # data-integrity check on the name's current EV/EBITDA: a stale Financials Close (predates the
+    # reference date, so its "current" multiple + own-history range are stale) and/or a material gap
+    # vs the current comps figure — flag so the human verifies rather than trusting one silently.
+    if (ev_flag := _ev_ebitda_integrity_flag(bundle, reference_date)) is not None:
+        flags.append(ev_flag)
     return mech, flags

@@ -908,19 +908,40 @@ Each line: *what it does* — *verified how*.
     re-assembly on the real CIQ workbooks is the operator's step (CIQ absent in-cloud).* Live
     re-assembly (MVST/IT/AORT/VITL) confirmed the render; PR 3 (flag audience-split + body concision)
     follows.
-  - **EV/EBITDA cross-sheet reconciliation caveat (PR open — not merged, 2026-07-01).** #48 put both
-    EV/EBITDA figures adjacent in the Valuation block, making a real inconsistency visible: CIQ
-    reports the name's EV/EBITDA on TWO sheets — Financials→Multiples TEV/LTM (own-history-range
-    basis) and Comparable-Analysis Trading-Multiples (cross-sectional-lead basis) — and they can
-    disagree by EBITDA/EV basis (MVST 10.0x vs 38.4x). Fix: `ciq_sheets.comps_ev_ebitda` exposes the
-    comps figure as a VALUE; `mechanical._ev_ebitda_conflict_flag` flags a material gap
-    (`_EV_EBITDA_CONFLICT_RATIO=1.25`, ~25%) with a "verify which basis applies" caveat naming BOTH
-    figures + the gap ratio; appended in `assemble_mechanical`. Display-only; the caveat POSES, never
-    concludes. *Verified: ruff + mypy --strict (67) + pytest 248 incl. 2 new tests (fires on the MVST
-    gap, quiet on a close pair / an absent side). Cloud-validated on the 10 committed dossiers (both
-    figures are in them): flag fires on MVST (3.84×), VRRM (1.81×), VITL (1.25×); quiet on AORT / BRBR
-    / EPAM / IT / SMPL (≤1.05×), CNXC (1.24×, just under), FUBO (one side absent). Operator re-assembly
-    on real CIQ is the final render step.*
+  - **Comps subject mis-identification + stale-Close — valuation data-integrity (PR open — not
+    merged, 2026-07-01; folds in the retired #49 conflict-flag scope).** PR #49 had flagged the two
+    CIQ EV/EBITDA figures (Financials→Multiples TEV/LTM vs Comparable-Analysis Trading-Multiples) as
+    a "basis conflict" (MVST 10.0x vs 38.4x). **Validating #49 against the operator's raw CIQ
+    workbooks (in-session only, never committed) FALSIFIED that premise** and uncovered two real data
+    bugs the "conflict" was a symptom of:
+    - **Bug A — comps subject mis-identified.** `_comps_layout` picked the SUBJECT by a positional
+      "first company row after a gap" heuristic. A no-ticker peer (Proterra/Boston-Power for MVST)
+      breaks the contiguous block, so MVST resolved to **Samsung SDI** (a peer, 38.4x, $24.8B cap)
+      instead of **Microvast** (11.1x, $423M) — and dropped Microvast from its own dossier while
+      dropping Samsung SDI from the peer roster. The 38.4x "conflict" was this mis-read, not a basis
+      difference. **Fix:** `_comps_layout(rows, ticker)` now matches the subject by the bundle
+      ticker in the col-0 `(EXCH:SYMBOL)` paren (fallback: last company row before Summary Stats),
+      threaded through `peer_comps` / `_comps_multiples` / `_comps_deltas` /
+      `cross_sectional_valuation` / `comps_ev_ebitda`. After the fix MVST comps EV/EBITDA = 11.1x ≈
+      Financials 11.3x → the "conflict" is GONE (was a parse artifact); Samsung SDI is restored as a
+      peer.
+    - **Bug B — stale Financials Close.** For a recently-crashed name the Financials→Multiples "latest
+      Close" is a clean prior quarter-end that predates the drawdown: VRRM reads 8.5x "near-floor"
+      as-of **2026-03-31** (83d before the 2026-06-22 reference) vs a current comps 4.7x — and that
+      stale Close also drives the PR#48 own-history range/percentile. **Fix:** `range_position` now
+      renders the Close's as-of DATE; `ev_ebitda_asof` exposes it; the reworked
+      `mechanical._ev_ebitda_integrity_flag(bundle, reference_date)` fires a **stale-price caveat**
+      (names the date, the day-gap, and prefers the current comps figure) when the Close trails the
+      reference by > `_STALE_CLOSE_DAYS` (45), and otherwise a plain "cross-sheet gap — verify"
+      caveat (the inaccurate "different EBITDA/EV bases" wording is retired). Display-only; the caveat
+      POSES, never concludes. *Verified: ruff + mypy --strict (67) + pytest 251 incl. 5 tests
+      (subject-by-ticker picks the real name not the positional mis-pick + fallback; `ev_ebitda_asof`;
+      range_position renders as-of date; integrity flag → stale-price vs cross-sheet-gap vs quiet).
+      Re-ran the real MVST/VRRM/IT CIQ workbooks end-to-end: MVST cross-sectional now Microvast 11.1x
+      (was Samsung SDI 38.4x), no integrity flag; VRRM fires the stale-price caveat (8.5x@2026-03-31,
+      83d, prefer comps 4.7x); IT quiet (7.5x = 7.5x, fresh 2026-06-24 Close) — every case ties to the
+      name's real market cap.* PR #49 is superseded/folded here (its `comps_ev_ebitda` value-exposure
+      is kept and reused).
 - _Whole suite green (ruff + mypy --strict clean; `pytest -m "not network"` passes)._
 
 ## 3. FALSIFIED — tested and retired (NOT deferred)
