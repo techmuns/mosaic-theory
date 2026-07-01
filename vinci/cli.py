@@ -626,6 +626,65 @@ def _cmd_themes_exposure(args: argparse.Namespace) -> int:
     return 0
 
 
+def _cmd_themes_forward(args: argparse.Namespace) -> int:
+    """Stage-4 forward-validation harness: load the analyst's dispositioned committed-tier worksheet
+    into the append-only ratification ledger, report disposition status, and — once EVERY name is
+    RATIFIED/PASSED — freeze the baskets and (with --measure) measure the two co-primary spreads
+    forward, layer-aware + power-labelled. It LOGS + MEASURES human decisions; it never
+    selects/ranks/promotes a grade to a hold (§6 dead-signal firewall). Awaits real dispositions."""
+    import csv
+    from collections import Counter
+    from datetime import date
+    from pathlib import Path
+
+    from vinci.themes import forward as fwd
+
+    driver = "AI-datacenter value chain"
+    ws, ledger = Path(args.worksheet), Path(args.ledger)
+    with open(ws) as fh:
+        rows = list(csv.DictReader(fh))
+    all_committed = [r["ticker"] for r in rows]
+    layer_of = {r["ticker"]: r["chain_layer"] for r in rows}
+    ratify_date = date.fromisoformat(args.ratify_date) if args.ratify_date else date.today()
+    records, pending = fwd.records_from_worksheet(ws, driver=driver, ratification_date=ratify_date)
+    for rec in records:  # append-only: log each dispositioned row (a correction is a new row)
+        fwd.append_record(ledger, rec)
+    counts = Counter(r.disposition.value for r in records)
+    print(f"\n=== Stage-4 forward-validation harness · {driver} ===")
+    print(f"worksheet {ws}\nledger {ledger} (append-only)")
+    print(f"committed {len(all_committed)} · dispositioned {len(records)} {dict(counts)} · "
+          f"PENDING {pending}")
+    dig = [r.ticker for r in records if r.disposition is fwd.Disposition.DIG_DEEPER]
+    if pending or dig:
+        print(f"\nNOT READY — {pending} pending + {len(dig)} DIG-DEEPER; every name must be "
+              "RATIFIED/PASSED before freezing. Real logging + measurement await triage.")
+        return 0
+    freeze_ts = date.today().isoformat() + "T00:00:00"
+    baskets = fwd.freeze_baskets(records, all_committed, driver=driver, freeze_timestamp=freeze_ts,
+                                 layer_of=layer_of)
+    if args.baskets_out:
+        Path(args.baskets_out).write_text(baskets.model_dump_json(indent=1))
+    print(f"\nFROZEN: {len(baskets.ratified)} RATIFIED (BUY) · {len(baskets.passed)} PASSED "
+          f"(AVOID) · {len(baskets.all_committed)} equal-weight naive baseline (§3b-i)")
+    print(f"deferred control: {baskets.deferred_controls[0]}")
+    if not args.measure:
+        return 0
+    from vinci.eod.client import PolygonEodClient
+    price_fn = fwd.eod_close_fn(PolygonEodClient.from_config(get_config()))
+    as_of = date.fromisoformat(args.as_of) if args.as_of else date.today()
+    horizons = [int(h) for h in args.horizons.split(",")]
+    for rep in fwd.measure(baskets, price_fn=price_fn, horizons_days=horizons, as_of=as_of):
+        print(f"\n--- @ {rep.horizon_days}d (as_of {rep.as_of}) · POWER [{rep.power.label}] "
+              f"{rep.power.note} ---")
+        for ls in (rep.pooled, *rep.by_layer):
+            rmp = "n/a" if ls.ratified_minus_passed is None else f"{ls.ratified_minus_passed:+.1%}"
+            rmn = "n/a" if ls.ratified_minus_naive is None else f"{ls.ratified_minus_naive:+.1%}"
+            print(f"  {ls.scope:20} RAT-PASSED={rmp:>7} RAT-NAIVE={rmn:>7} [{ls.state}] "
+                  f"(n_rat={ls.n_ratified} n_pass={ls.n_passed})")
+        print(f"  partial-kill (§3c): {rep.partial_kill_scopes or '() none'}")
+    return 0
+
+
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(prog="vinci", description=__doc__)
     sub = parser.add_subparsers(dest="command", required=True)
@@ -826,6 +885,23 @@ def build_parser() -> argparse.ArgumentParser:
     p_exp.add_argument("--workers", type=int, default=6, help="concurrent LLM workers (default: 6)")
     p_exp.add_argument("--out", help="write full model_dump JSONL (audit-grade persistence)")
     p_exp.set_defaults(func=_cmd_themes_exposure)
+
+    p_fwd = sub.add_parser(
+        "themes-forward",
+        help="Stage-4 forward-validation: log dispositions, freeze baskets, measure spreads",
+    )
+    p_fwd.add_argument("--worksheet", required=True,
+                       help="committed_review_worksheet.csv (with the analyst's dispositions)")
+    p_fwd.add_argument("--ledger", required=True, help="append-only ratification ledger JSONL path")
+    p_fwd.add_argument("--ratify-date", dest="ratify_date",
+                       help="ratification date YYYY-MM-DD (default: today)")
+    p_fwd.add_argument("--baskets-out", dest="baskets_out", help="write frozen baskets JSON")
+    p_fwd.add_argument("--measure", action="store_true",
+                       help="after freeze, measure the spreads forward (Polygon EOD, read-only)")
+    p_fwd.add_argument("--as-of", dest="as_of", help="measurement as-of YYYY-MM-DD (default today)")
+    p_fwd.add_argument("--horizons", default="30,90,180,365",
+                       help="comma-separated forward horizons in days (default: 30,90,180,365)")
+    p_fwd.set_defaults(func=_cmd_themes_forward)
     return parser
 
 
