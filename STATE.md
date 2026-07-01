@@ -1514,6 +1514,60 @@ single-threaded ahead of the lead loop).
       (81) + pytest (276; +4 discriminator tests) green; git diff isolated to exposure.py grading +
       schemas + the --out one-liner + tests. **THIS refined classifier goes into the multi-layer
       scale-out (build 2), now GATED-OPEN.** Forward edge NOT claimed — detection-discrimination only.*
+    - **STAGE 3, BUILD 2 — the SEMANTIC-PRIMARY VALUE-CHAIN UNIVERSE SCAN (the scale-out of the
+      precision-fixed classifier). The whole sub-$10B universe on ONE composite driver — the AI-
+      datacenter VALUE CHAIN. The classifier reproduces the INDEPENDENT AUDIT on 13/13 EMBEDDED in the
+      1,550-name scan (REAL set == the audited 7 exactly), and the scale-out surfaces NEW cross-layer
+      enablers co-movement/keywords can't group. Detection/B/C/co-movement/universe/holding-ceiling
+      UNTOUCHED — semantic-primary is a parallel path.** exposure.py's pre-filter broadened 8→**18-term
+      value-chain vocabulary** (data-center/GPU/HBM/packaging/liquid-cooling/switchgear/optical/neocloud/
+      …) + new `chain_layer_of` (a keyword PROVENANCE tag, not a grade) + `grade_driving_fact` (the
+      basis-setting fact) + a WIDE-FUNNEL CLI (surfaces every name with ANY chain-attributable signal;
+      NO confidence/rank — the human triages legible provenance). **THE HARD SCOPE PROBLEM (wide funnel
+      vs pre-filter recall), resolved + MEASURED:** a broad pre-filter over 1,727 → **1,550 candidates
+      (90%)**; recall cost = **177 excluded (10%)**, spot-check of 15 = food/furniture/firearms/forms
+      (CALM/CAG/GT/RGR/MLKN…), **zero chain enablers** — the broad vocabulary caught the chain; truly
+      text-silent names (zero chain vocabulary) remain the one documented limitation (only a full-
+      universe scan catches them; the excluded tail suggests near-empty). Flood confirmed: **'artificial
+      intelligence' alone hits 1,508/1,727 (87%)** while chain-specific terms are rare (HBM 10, optical-
+      interconnect 5) — the exact discrimination problem the semantic layer exists to solve. **THE SCAN
+      (real EDGAR/Opus-4.8, committed code):** 1,550 candidates × the precision-fixed classifier, 6
+      workers, **full `model_dump` persisted INCREMENTALLY** (audit-grade + crash-safe/resumable), **0
+      scan errors, 0 fabrications** (every REAL fact carries a real accession in its stream). **THE
+      VOLUME (the first-class deliverable — the input to the DOWNSTREAM calibration decision, NOT decided
+      here):** WIDE funnel surfaced **450/1,550 (29%)** — by type: **binding 4 / quantified 3 (REAL = 7)
+      / committed 56 / aspirational-intent 387 / none 1,100**; by chain layer (of 450): chips/GPU 154,
+      colocation/operator 138, HBM/memory 80, power 42, optical 12, thermal 8, packaging 6, AI-cloud 5.
+      **VALIDATION — the scaled classifier reproduces the audit:** embedded in the 1,550-scan it lands
+      **13/13 of the audited names on the audited verdict THIS run** (the REAL set == the audit's exact 7
+      = CORZ/BLZE/DGXX/TSSI/WYFI/BTBT/CAMT; RXT/DUOT/KOPN/FCEL→committed, LWLG/HIMX→aspirational) and all
+      3 discriminators FIRE at scale (RXT 'GPUaaS Master Terms' framework→committed via terms-binding;
+      DUOT blended→committed via revenue; FCEL→committed via indirect driver-tie; HIMX edge/broad-AI→
+      aspirational). *Caveat: 13/13 is a CLEAN run — the precision-fix small-batch got 10/13; the
+      committed↔aspirational boundary is LLM-stochastic (report both honestly, do not claim determinism).*
+      **THE SCALE PAYOFF (why build-2 exists):** the scan surfaces NEW cross-layer enablers beyond the
+      13 — taxonomically scattered, semantically coherent, groupable ONLY by reasoning — e.g. ADEA
+      (hybrid-bonding/DBI packaging), COHU (active thermal management), AEHR (AI-chip burn-in test), CRK
+      (gas-to-datacenter power w/ NextEra), FRMI (hyperscale power+AI campus), NRGV/NUAI (new
+      colocation), OPTU (datacenter fiber NYC↔Ashburn), MXL (comms SoCs), WLDN (AI-datacenter power) —
+      many NOT-yet-co-moving (the early-detection payoff co-movement structurally misses). **THE
+      CALIBRATION DECISION (surfaced, DEFERRED — NOT decided here):** the ACTIONABLE tiers
+      (binding+quantified+committed = **63**) are TRACTABLE for full human review → the human IS the
+      triage, no machine layer needed there; the intent tier (**387** aspirational) is LARGE — IF the
+      human mines it, a calibration/triage layer becomes a MEASURED (not assumed) need. **LIMITATIONS
+      recorded:** (1) foreign issuers **18/450** read on staler info (20-F/40-F, no 8-K stream, e.g.
+      CAMT); (2) text-silent recall gap (the 10% excluded, near-empty on spot-check); (3) LLM boundary
+      stochasticity (13/13 vs 10/13); (4) build grades = OPTIMISTIC CEILING, the human-audit shaves.
+      Assemble-not-conclude throughout (NO score/rank/verdict/buy — schema-guarded); machine PROPOSES,
+      human JUDGES. ruff + mypy --strict (81) + pytest (**282**; +6 universe-scan-path tests: pre-filter
+      skip-errors both ways, chain-layer tagging, grade-driving-fact, the value-chain driver) green; git
+      diff isolated to exposure.py + cli.py + tests. Scan OUTPUT (JSONL/CSV) is NOT git-committed (not in
+      the enumerated committable set — fail-closed); persisted durably to scratchpad + a Desktop handoff
+      (scan_valuechain_1550.jsonl + surfaced_triage_450.csv + volume_report). **NEXT (gated on this
+      VOLUME): the calibration/triage layer IF the human opts to mine the 387 intent tier; MULTI-DRIVER
+      (robotics/GLP-1/nuclear) is a separate later build.** Forward edge NOT claimed — detection-
+      discrimination AT SCALE, not that exposed names outperform (the forward paper track is the only
+      arbiter). Edge 2 stays the lead horse (governor).*
   - **HOLDING-UNIVERSE study — sub-$10B-at-inception captured the theme return in all 6 themes tested
     (2026-06-29; `theme_admissibility_spike.md` Part 5).** A DISTINCT axis from the 4 detection spikes:
     does the **holding** bound (fund detects broad incl. mega leaders, but HOLDS sub-$10B) capture theme

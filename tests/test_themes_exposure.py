@@ -10,13 +10,22 @@ is flagged; the efts parser fails loud; and the assessment schema cannot conclud
 
 from __future__ import annotations
 
-from typing import Any
+from typing import Any, cast
 
 import pytest
 
 from vinci.graph.llm import LlmClient
-from vinci.netcache import HttpError
-from vinci.themes.exposure import assess_exposure, is_real_exposure, parse_efts_ciks
+from vinci.netcache import CachedHttp, HttpError
+from vinci.themes.exposure import (
+    AI_DATACENTER_DRIVER,
+    DRIVER_PHRASES,
+    assess_exposure,
+    chain_layer_of,
+    grade_driving_fact,
+    is_real_exposure,
+    mention_prefilter,
+    parse_efts_ciks,
+)
 from vinci.themes.schemas import ExposureAssessment, ExposureBasis, ExposureFact
 
 _STREAM = [
@@ -184,3 +193,82 @@ def test_exposure_schema_cannot_conclude() -> None:
     for n in fields:
         for tok in forbidden:
             assert tok not in n.lower(), f"field {n!r} smuggles a conclusion ({tok})"
+
+
+# ------------------------------------------------------------------------------------------------
+# Build 2 — the value-chain UNIVERSE-SCAN path (pre-filter resilience, layer/provenance, driver)
+# ------------------------------------------------------------------------------------------------
+class _FakeEfts:
+    """A minimal efts double: raises on any URL containing ``fail_substr`` (a chosen phrase), else
+    returns one in-batch hit for CIK 1. Duck-typed to CachedHttp (only ``get_json`` is used)."""
+
+    def __init__(self, fail_substr: str | None = None) -> None:
+        self.fail_substr = fail_substr
+        self.calls = 0
+
+    def get_json(self, url: str, *, ttl_seconds: int = 0) -> dict[str, Any]:
+        self.calls += 1
+        if self.fail_substr and self.fail_substr in url:
+            raise HttpError("simulated transient efts error")
+        return {"hits": {"total": {"value": 1}, "hits": [{"_source": {"ciks": ["1"]}}]}}
+
+
+def test_mention_prefilter_skip_errors_continues() -> None:
+    """A universe-scale scan WILL hit transient efts errors; skip_errors=True skips the erroring
+    batch×phrase and keeps scanning (a conservative recall gap, never a fabricated mention)."""
+    efts = cast(CachedHttp, _FakeEfts(fail_substr="thermal"))  # 'thermal management' phrase errors
+    matched = mention_prefilter(efts, ["0000000001"], ("data center", "thermal management"),
+                                startdt="2025-09-01", enddt="2026-06-30", skip_errors=True)
+    assert matched == {"0000000001": {"data center"}}  # good phrase kept, erroring one skipped
+
+
+def test_mention_prefilter_fail_loud_by_default() -> None:
+    """Default is fail-loud: a bad efts body/throttle raises, not a false 'no mentions'."""
+    efts = cast(CachedHttp, _FakeEfts(fail_substr="thermal"))
+    with pytest.raises(HttpError):
+        mention_prefilter(efts, ["0000000001"], ("thermal management",),
+                          startdt="2025-09-01", enddt="2026-06-30")
+
+
+def test_chain_layer_of_tags_disclosed_layer() -> None:
+    """The provenance tag: which value-chain layer a fact names (most-specific first; a keyword read
+    for by-layer volume, not a grade)."""
+    assert chain_layer_of("~50% of revenue from HBM and advanced packaging") == "HBM/memory"
+    assert chain_layer_of("liquid cooling systems for data centers") == "thermal/cooling"
+    assert chain_layer_of("switchgear and power delivered to data centers") == "power/electrical"
+    assert chain_layer_of("silicon photonics optical interconnect") == "optical/interconnect"
+    assert chain_layer_of("colocation data-center campus operator") == "colocation/operator"
+    assert chain_layer_of("we design GPUs and accelerators") == "chips/GPU"
+    assert chain_layer_of("GPU-as-a-service neocloud platform") == "AI-cloud"
+    assert chain_layer_of("we sell industrial floor paint") == "unspecified"
+
+
+def test_grade_driving_fact_returns_basis_setter() -> None:
+    """The human's first-read provenance is the fact that SET the basis (max effective rank) — the
+    binding lease, not the co-listed 'exploring' intent."""
+    payload = {"disclosed_facts": [
+        {"fact": "exploring AI opportunities", "concreteness": "stated-intent",
+         "driver_tie": "chain-layer-specific", "source_ref": "10-K 2025-11-01 (acc A2)"},
+        {"fact": "15-year 300 MW lease with a hyperscaler", "concreteness": "binding-contract",
+         "driver_tie": "chain-layer-specific", "source_ref": "8-K 2026-01-15 (acc A1)"}],
+        "primary_business": "x", "key_unknowns": []}
+    a = assess_exposure("X", "1", "AI-datacenter chain", _STREAM, llm=_MockLlm(payload))
+    f = grade_driving_fact(a)
+    assert f is not None and f.concreteness.value == "binding-contract"
+
+
+def test_grade_driving_fact_none_when_no_exposure() -> None:
+    a = assess_exposure("X", "1", "AI-datacenter chain", [], llm=_MockLlm({}))
+    assert grade_driving_fact(a) is None
+
+
+def test_value_chain_driver_and_prefilter_cover_the_chain() -> None:
+    """The build-2 driver is the whole VALUE CHAIN (upstream enablers in scope), and the pre-filter
+    was broadened to the chain's vocabulary — not just 'AI' (the wide-funnel requirement)."""
+    d = AI_DATACENTER_DRIVER.lower()
+    for layer in ("hbm", "packaging", "cooling", "power", "optical", "colocation", "cloud"):
+        assert layer in d, f"driver text missing chain layer: {layer}"
+    assert "upstream enablers" in d  # the CAMT scope decision
+    joined = " ".join(DRIVER_PHRASES).lower()
+    for term in ("data center", "liquid cooling", "optical interconnect", "high bandwidth memory"):
+        assert term in joined, f"pre-filter missing chain vocabulary: {term}"

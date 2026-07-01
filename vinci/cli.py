@@ -543,10 +543,12 @@ def _cmd_themes_stage2(args: argparse.Namespace) -> int:
 
 
 def _cmd_themes_exposure(args: argparse.Namespace) -> int:
-    """Stage-3 build-1: scan the sub-$10B universe for DISCLOSED exposure to ONE driver (the AI-
-    datacenter buildout), reading each name's recent filing stream through the fenced LLM. ASSEMBLES
-    a source-bound exposure assessment per name (basis DERIVED from cited facts; a mention is not
-    exposure); it never concludes/ranks/selects — the human audits the flagged set + each basis."""
+    """Stage-3 build-2: scan the sub-$10B universe for DISCLOSED exposure to ONE driver — the AI-
+    datacenter VALUE CHAIN (chips→HBM→packaging→thermal→power→optical→cloud) — reading each name's
+    recent filing stream through the fenced, precision-fixed classifier. WIDE funnel: surfaces every
+    name with ANY chain-attributable signal, with legible provenance (grade / driver-tie / layer
+    / verbatim fact + source_ref). Never concludes/ranks/selects — NO machine confidence score; the
+    human triages. The VOLUME (by type + chain layer) is the first-class output."""
     import json
     from collections import Counter
     from datetime import timedelta
@@ -559,9 +561,12 @@ def _cmd_themes_exposure(args: argparse.Namespace) -> int:
     from vinci.themes.exposure import (
         AI_DATACENTER_DRIVER,
         DRIVER_PHRASES,
+        chain_layer_of,
+        grade_driving_fact,
         is_real_exposure,
         scan_driver_exposure,
     )
+    from vinci.themes.schemas import ExposureBasis
 
     cfg = get_config()
     cfg.ensure_dirs()
@@ -581,16 +586,43 @@ def _cmd_themes_exposure(args: argparse.Namespace) -> int:
         Path(args.out).write_text(
             "\n".join(json.dumps(a.model_dump(mode="json")) for a in results))
         print(f"wrote {len(results)} full assessments (audit-grade) → {args.out}")
-    dist = Counter(a.exposure_basis.value for a in results)
-    real = [a for a in results if is_real_exposure(a)]
-    print(f"\n=== Stage-3 exposure scan · AI-datacenter · {len(names)} names, "
-          f"{len(matched)} mention-candidates, {len(results)} assessed ===")
-    print(f"exposure_basis distribution: {dict(dist)}")
-    print(f"REAL (binding/quantified): {len(real)} — audit each disclosed-fact basis:\n")
+
+    # THE VOLUME — the first-class deliverable (input to the DOWNSTREAM calibration decision, NOT
+    # decided here). WIDE funnel: every name with ANY chain-attributable signal (basis != none) is
+    # surfaced; the human triages by reading the legible provenance — NO machine confidence/rank.
+    tiers = [ExposureBasis.BINDING_CONTRACTS, ExposureBasis.QUANTIFIED_REVENUE,
+             ExposureBasis.COMMITTED_CAPACITY, ExposureBasis.ASPIRATIONAL]
+    dist = Counter(a.exposure_basis for a in results)
+    surfaced = [a for a in results if a.exposure_basis is not ExposureBasis.NONE_DISCLOSED]
+    layers = Counter(chain_layer_of(f.fact) for a in surfaced if (f := grade_driving_fact(a)))
+    errs = [a for a in results if any("error:" in fl.lower() for fl in a.flags)]
+    print("\n=== Stage-3 build-2 · AI-datacenter VALUE-CHAIN universe scan ===")
+    print(f"universe {len(names)} · {len(matched)} mention-candidates · {len(results)} assessed "
+          f"· {len(errs)} scan-errors (recall gap, logged)")
+    print(f"\nVOLUME by exposure-type — the wide funnel, {len(surfaced)} surfaced:")
+    for b in tiers:
+        print(f"  {b.value:32} {dist.get(b, 0)}")
+    print(f"  {'(no chain exposure disclosed)':32} {dist.get(ExposureBasis.NONE_DISCLOSED, 0)}")
+    print(f"\nVOLUME by chain layer — of the {len(surfaced)} surfaced:")
+    for layer, n in layers.most_common():
+        print(f"  {layer:22} {n}")
+    real = [a for a in surfaced if is_real_exposure(a)]
+    committed = [a for a in surfaced if a.exposure_basis is ExposureBasis.COMMITTED_CAPACITY]
+    print(f"\nREAL — binding/quantified ({len(real)}); contract-type flags are the NOISY tier "
+          "(weight for review), revenue-type verified more cleanly:")
     for a in sorted(real, key=lambda x: x.exposure_basis.value):
-        fc = next((f for f in a.disclosed_facts if f.concreteness.value != "none"), None)
-        print(f"  {a.ticker:6} [{a.exposure_basis.value}] "
-              f"{(fc.concreteness.value + ': ' + fc.fact[:110]) if fc else ''}")
+        f = grade_driving_fact(a)
+        if f:
+            print(f"  {a.ticker:6} [{a.exposure_basis.value}] <{chain_layer_of(f.fact)}> "
+                  f"{f.driver_tie.value}: {f.fact[:120]}")
+            print(f"         source: {f.source_ref}")
+    print(f"\nCOMMITTED-capacity — borderline, capex/MW toward the driver ({len(committed)}):")
+    for a in sorted(committed, key=lambda x: x.ticker):
+        f = grade_driving_fact(a)
+        if f:
+            print(f"  {a.ticker:6} <{chain_layer_of(f.fact)}> {f.driver_tie.value}: {f.fact[:105]}")
+    print(f"\n(+ {dist.get(ExposureBasis.ASPIRATIONAL, 0)} at the INTENT tier — surfaced, soft on "
+          "their face; full provenance in --out. Volume decides the downstream calibration need.)")
     return 0
 
 
