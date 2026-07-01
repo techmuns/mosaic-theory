@@ -711,8 +711,7 @@ def surprise_history(bundle: CiqBundle) -> Sourced[str]:
     if not parts:
         return Sourced.unknown(note="no EPS/Revenue surprise series in the Surprise sheet")
     return Sourced.present(
-        "; ".join(parts) + " (fiscal-year, GAAP-EPS basis — adjusted basis is the 99.1 guide; "
-        "+beat / −miss)",
+        "; ".join(parts) + " (GAAP-EPS basis; +beat / −miss)",
         source_ref="CIQ Estimates→Surprise (annual)",
     )
 
@@ -998,7 +997,7 @@ def _comps_multiples(bundle: CiqBundle, src: str) -> Sourced[str]:
         )
         bits.append(f"{lab}: name {_tok(_comps_cell(tm, tgt, col))} vs peers {peer_stats}")
     return Sourced.present(
-        "; ".join(bits) + "  [LTM + NTM forward; NM = a real state (negative base), not missing]",
+        "; ".join(bits) + "  [NM = a real state (negative base), not missing]",
         source_ref=f"{src}→Trading Multiples (name row + Summary Statistics Low/Median/Mean/High)",
     )
 

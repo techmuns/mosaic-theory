@@ -19,6 +19,7 @@ from vinci.dossier import assemble as dass
 from vinci.dossier import ciq, manual_store
 from vinci.dossier import ciq_sheets as cs
 from vinci.dossier import edgar_fundamentals as efb
+from vinci.dossier import flags as dflags
 from vinci.dossier import mechanical as dm
 from vinci.dossier import render as dr
 from vinci.dossier import requirements as dreq
@@ -1240,6 +1241,68 @@ def test_ev_ebitda_integrity_flag(monkeypatch: pytest.MonkeyPatch) -> None:
     assert f5 is not None and "stale-price caveat" in f5 and "prefer" not in f5
 
 
+def test_flags_partition_routes_qa_from_caveats() -> None:
+    """The audience-split: machine-QA self-checks (citation/twin/overstep/LLM-state) route to
+    qa_flags (dev/JSON only); decision caveats + the 'pull CIQ …' incomplete-input notes stay in
+    caveats. Unknown flags default to caveat (fail toward transparency — never silently hidden)."""
+    qa = [
+        "UNCITED bull_point: '...' (ref not in mechanical facts)",
+        "UNTRACEABLE figure '42' in bear_point: '...'",
+        "TWIN 'Acme' source doesn't trace — should be tagged unverified",
+        "DIRECTIONAL language 'buy' — human review (dossier frames, not concludes)",
+        "VERIFICATION-CLAIM bull_point: '...' — the dossier cites, it does not verify",
+        "evidence_balance MISSING — the synthesis must commit a balance read",
+        "LLM synthesis failed (no usable output)",
+    ]
+    caveat_src = [
+        "RESOLVED (P/E basis) — trailing GAAP P/E 5.0x is one-time-distorted: ...",
+        "EDGAR P/E (5.0x) conflicts ~3x with CIQ P/LTM EPS (1.7x) — ...",
+        "EV/EBITDA stale-price caveat — CIQ's Financials→Multiples current TEV/LTM 8.5x ...",
+        "pull CIQ 'Estimates Report' for MVST — consensus set; expected at data/manual/ciq/MVST",
+        "SOME-NEW-FLAG bull_point: '...' — a flag the classifier hasn't seen",  # unknown → caveat
+    ]
+    caveats, qa_flags = dflags.partition(qa + caveat_src)
+    assert qa_flags == qa  # every QA self-check routed out of the human view, unchanged
+    assert len(caveats) == len(caveat_src)  # every non-QA flag kept for the human
+    assert any("pull CIQ 'Estimates Report'" in c for c in caveats)  # incomplete-input visible
+    assert any("SOME-NEW-FLAG" in c for c in caveats)  # unknown flag defaults to visible
+
+
+def test_flags_revoice_strips_validator_token_keeps_explanation() -> None:
+    """Re-voicing swaps the ALL-CAPS token (and humanises the field name) for a plain lead while
+    keeping the post-'—' explanation; already-plain caveats pass through unchanged."""
+    raw = (
+        "ANCHORS-ON-DISTORTED-P/E bull_point: 'trades at 5x' — the P/E is distorted "
+        "(rests on a non-current/non-recurring EPS); don't read it as cheap"
+    )
+    out = dflags.revoice(raw)
+    assert "ANCHORS-ON-DISTORTED-P/E" not in out and "bull_point:" not in out
+    assert out.startswith("Distorted-P/E anchor (a bull point):")
+    assert "don't read it as cheap" in out  # the load-bearing explanation is retained
+    # FALSE-BALANCE? (no {where}) → plain lead; the two-sided detail is kept
+    fb = dflags.revoice("FALSE-BALANCE? evidence_balance reads 'mixed' but the split is lopsided")
+    assert fb.startswith("Possible false balance —") and "lopsided" in fb
+    # an already-plain caveat is untouched
+    plain = "EV/EBITDA stale-price caveat — priced at its last Close 2026-03-31"
+    assert dflags.revoice(plain) == plain
+
+
+def test_flags_section_renders_caveats_hides_qa() -> None:
+    """The human render shows only d.caveats (re-voiced) under the analyst-caveats heading; the
+    machine-QA self-checks in d.qa_flags never reach the human markdown."""
+    dossier = ds.Dossier(
+        ticker="X", name="X", cik="0", reference_date=date(2026, 6, 1), rank=1,
+        mechanical=_minimal_mech(), synthesis=None,
+        caveats=["Distorted-P/E anchor (a bull point): 'trades at 5x' — don't read it as cheap"],
+        qa_flags=["UNCITED bull_point: '...' (ref not in mechanical facts)"],
+        llm_model=None, assembled_at=datetime(2026, 6, 1, 12, 0),
+    )
+    md = dr.render_markdown(dossier)
+    assert "Analyst caveats — verify before the verdict" in md
+    assert "Distorted-P/E anchor" in md  # the re-voiced caveat renders
+    assert "UNCITED" not in md  # the QA self-check is absent from the human view
+
+
 def test_segment_ebitda_section_surfaces_profit_share() -> None:
     """The Segments EBITDA section parses to EBITDA share — the decision-relevant concentration:
     a segment can be 45% of revenue but 68% of profit (the Avis-in-Commercial-Services case)."""
@@ -1966,7 +2029,7 @@ def test_peer_comps_section_reaches_the_rendered_markdown() -> None:
     mech = _minimal_mech().model_copy(update={"peer_comps": _fake_peer_comps()})
     dossier = ds.Dossier(
         ticker="FUBO", name="fuboTV", cik="0001546296", reference_date=date(2026, 6, 1),
-        rank=1, mechanical=mech, synthesis=None, flags=[], llm_model=None,
+        rank=1, mechanical=mech, synthesis=None, caveats=[], qa_flags=[], llm_model=None,
         assembled_at=datetime(2026, 6, 1, 12, 0),
     )
     md = dr.render_markdown(dossier)

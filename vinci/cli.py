@@ -263,9 +263,9 @@ def _cmd_dossier(args: argparse.Namespace) -> int:
     print(f"=== dossier · {len(dossiers)} done · {len(errors)} error(s) · → {out}/<ticker>/ ===")
     for d in sorted(dossiers, key=lambda d: d.rank or 1_000_000):
         print(f"  {d.ticker:<6} rank {d.rank} · {'synth' if d.synthesis else 'NO-synth'} · "
-              f"{len(d.flags)} flag(s)")
-        for fl in d.flags:
-            print(f"      ⚠ {fl}")
+              f"{len(d.caveats)} caveat(s) · {len(d.qa_flags)} qa")
+        for c in d.caveats:
+            print(f"      ⚠ {c}")
     for e in errors:
         print(f"  ERROR {e}")
     return 0

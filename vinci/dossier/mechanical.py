@@ -798,8 +798,8 @@ def _survival_capacity(
         )
     if fcf_sign.status is present and fcf_sign.value is not None:
         parts.append(
-            "FCF-positive → self-funding (no runway constraint)" if fcf_sign.value > 0
-            else "FCF-negative → burning cash; runway = cash ÷ burn (cash not derived — a risk)"
+            "FCF-positive → self-funding" if fcf_sign.value > 0
+            else "FCF-negative → burning cash (cash not derived — a risk)"
         )
     else:
         parts.append("FCF sign UNKNOWN — runway not assessable (a risk)")

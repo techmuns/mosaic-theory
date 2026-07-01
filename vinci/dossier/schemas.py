@@ -296,7 +296,11 @@ class Dossier(BaseModel):
     rank: int | None  # position in the ranked queue — ordering context, never a verdict on the name
     mechanical: MechanicalLayer
     synthesis: Synthesis | None  # None if CIQ/inputs too thin or the synthesis was skipped
-    flags: list[str]  # e.g. "pull CIQ for FUBO and re-run", lint flags for human review
+    # Human-review flags split by audience (see vinci.dossier.flags): decision CAVEATS render in the
+    # human PDF/web view (re-voiced, incl. the "pull CIQ …" incomplete-input notes); qa_flags are
+    # the machine self-checks (citation/twin/overstep/LLM-state) — dev/JSON only, out of human view.
+    caveats: list[str]
+    qa_flags: list[str]
     llm_model: str | None
     assembled_at: datetime
 
