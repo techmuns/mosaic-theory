@@ -1128,6 +1128,118 @@ def test_cross_sectional_valuation_name_vs_peer_median() -> None:
     assert "EARNED" not in v and "RESIDUAL" not in v and "see Peer comps" not in v
 
 
+def test_comps_ev_ebitda_reads_target_tev_ebitda() -> None:
+    """The name's LTM TEV/EBITDA from the comps Trading-Multiples target row (col 2), as a value —
+    the input the reconciliation compares against the Financials→Multiples TEV/LTM."""
+    tm: list[list[typing.Any]] = [
+        ["Company Name", "TEV/Rev", "TEV/EBITDA", "", "P/E", "", "NTM TEV/Rev", "NTM TEV/EBITDA",
+         "NTM P/E"],
+        ["Peer A (X:A)", 3.0, 12.0, "", 20.0, "", 2.5, 10.0, 18.0],
+        ["", "", "", "", "", "", "", "", ""],
+        ["Target Co (X:TGT)", 2.0, 7.5, "", 13.0, "", 1.8, 6.5, 11.0],
+        ["Summary Statistics", "", "", "", "", "", "", "", ""],
+        ["Median", 3.0, 10.8, "", 16.4, "", 2.5, 9.5, 18.0],
+    ]
+    bundle = _FakeCompsBundle({("comps", "Trading Multiples"): tm})
+    r = cs.comps_ev_ebitda(typing.cast(ciq.CiqBundle, bundle))
+    assert r.status is ds.SourceStatus.PRESENT and r.value == pytest.approx(7.5)
+
+
+def test_comps_layout_matches_subject_by_ticker() -> None:
+    """The MVST failure mode: a no-ticker peer breaks the contiguous block, so the OLD positional
+    'first company row after a gap' heuristic pinned the WRONG company (Samsung SDI) as the subject
+    and dropped the real name. The subject must instead be matched by the bundle ticker in the col-0
+    '(EXCH:SYMBOL)' paren; the mis-pick becomes an ordinary peer; the real name's numbers render."""
+    tm: list[list[typing.Any]] = [
+        ["Company Name", "TEV/Rev", "TEV/EBITDA", "", "P/E"],
+        ["Peer One (X:P1)", 3.0, 12.0, "", 20.0],
+        ["Peer Two (X:P2)", 4.0, 13.0, "", 22.0],
+        ["Proterra Inc.", "", "", "", ""],          # no-ticker peer → false positional gap
+        ["Wrong Pick (X:WRONG)", 9.0, 38.4, "", 50.0],  # what the old heuristic picked as subject
+        ["Subject Co (X:SUBJ)", 2.0, 11.1, "", 13.0],   # the REAL subject — CIQ places it last
+        ["Summary Statistics", "", "", "", ""],
+        ["Median", 3.5, 12.5, "", 21.0],
+    ]
+    # ticker match → the real subject (row 5), NOT the positional first-after-gap (row 4)
+    _hdr, peers, tgt = cs._comps_layout(tm, "SUBJ")
+    assert tgt is not None and "Subject Co" in str(tm[tgt][0])
+    assert 4 in peers  # the old mis-pick is now an ordinary peer, not the subject
+    # the subject's OWN multiple renders (11.1x), never the mis-picked 38.4x
+    bundle = _FakeCompsBundle({("comps", "Trading Multiples"): tm}, ticker="SUBJ")
+    ev = cs.comps_ev_ebitda(typing.cast(ciq.CiqBundle, bundle))
+    assert ev.status is ds.SourceStatus.PRESENT and ev.value == pytest.approx(11.1)
+    xs = cs.cross_sectional_valuation(typing.cast(ciq.CiqBundle, bundle)).value or ""
+    assert "EV/EBITDA 11.1x" in xs and "38.4x" not in xs
+    # fallback: an unknown ticker still resolves to the LAST company row (CIQ convention)
+    _h, _p, tgt2 = cs._comps_layout(tm, "NOTHERE")
+    assert tgt2 is not None and "Subject Co" in str(tm[tgt2][0])
+
+
+def test_ev_ebitda_asof_returns_latest_dated_close() -> None:
+    """``ev_ebitda_asof`` reports the DATE of the latest TEV/LTM EBITDA Close — the input the
+    stale-price check compares against the reference date."""
+    mult: list[list[typing.Any]] = [
+        ["For Quarter Ending", "", 44377.0, 44469.0, 44561.0],  # 2021-06-30, 09-30, 12-31
+        ["TEV/LTM EBITDA", "Close", 20.0, 18.0, 10.0],
+    ]
+    assert cs.ev_ebitda_asof(_fin_bundle({"Multiples": mult})) == date(2021, 12, 31)
+
+
+def test_range_position_renders_asof_date() -> None:
+    """The own-history range carries the DATE its 'current' multiple is priced at — so a stale Close
+    (the VRRM case) is visible in the line, not read as today's multiple."""
+    mult: list[list[typing.Any]] = [
+        ["For Quarter Ending", "", 44377.0, 44469.0, 44561.0, 44651.0],
+        ["TEV/LTM EBITDA", "Close", 20.0, 18.0, 16.0, 10.0],
+    ]
+    v = cs.range_position(_fin_bundle({"Multiples": mult})).value or ""
+    assert "as-of 2022-03-31" in v  # 44651.0 → 2022-03-31, the latest Close date
+
+
+def test_ev_ebitda_integrity_flag(monkeypatch: pytest.MonkeyPatch) -> None:
+    """Data-integrity flag on the name's current EV/EBITDA. (1) A STALE Financials Close +
+    disagreeing comps → a stale-price caveat naming the date, the gap, and which to prefer; the old
+    'different EBITDA/EV' wording is gone. (2) A fresh but disagreeing pair → a plain cross-sheet
+    gap. (3) A fresh, agreeing pair → nothing. (4) A STALE Close whose staleness an agreeing present
+    comps confirms immaterial → SUPPRESSED (the MVST case; the inline as-of date still shows it).
+    (5) A stale Close with comps ABSENT → the soft stale caveat still fires (can't cross-check)."""
+    ref = date(2026, 6, 22)
+
+    def patch(fin: float | None, comp: float | None, asof: date | None) -> None:
+        monkeypatch.setattr(
+            cs, "ev_ebitda_current",
+            lambda _b: ds.Sourced.present(fin, source_ref="fin") if fin is not None
+            else ds.Sourced.unknown(note="no fin"),
+        )
+        monkeypatch.setattr(
+            cs, "comps_ev_ebitda",
+            lambda _b: ds.Sourced.present(comp, source_ref="comp") if comp is not None
+            else ds.Sourced.unknown(note="no comp"),
+        )
+        monkeypatch.setattr(cs, "ev_ebitda_asof", lambda _b: asof)
+
+    # (1) stale Close (83d) + disagreeing comps → stale-price caveat, names date/gap/prefer-comps
+    patch(8.5, 4.7, date(2026, 3, 31))
+    f = dm._ev_ebitda_integrity_flag(None, ref)  # type: ignore[arg-type]
+    assert f is not None and "stale-price caveat" in f
+    assert "2026-03-31" in f and "83d" in f and "4.7x" in f and "prefer" in f
+    assert "EBITDA/EV bases" not in f  # the inaccurate old wording is gone
+    # (2) fresh Close but the two sheets disagree → a plain cross-sheet gap (no stale claim)
+    patch(12.0, 7.0, date(2026, 6, 18))
+    f2 = dm._ev_ebitda_integrity_flag(None, ref)  # type: ignore[arg-type]
+    assert f2 is not None and "cross-sheet gap" in f2 and "stale-price caveat" not in f2
+    # (3) fresh Close + the two agree → no flag (never a fabricated conflict)
+    patch(11.3, 11.1, date(2026, 6, 18))
+    assert dm._ev_ebitda_integrity_flag(None, ref) is None  # type: ignore[arg-type]
+    # (4) stale Close (83d) but an agreeing present comps → staleness immaterial → SUPPRESSED (MVST)
+    patch(10.0, 11.1, date(2026, 3, 31))
+    assert dm._ev_ebitda_integrity_flag(None, ref) is None  # type: ignore[arg-type]
+    # (5) stale Close with comps ABSENT → can't confirm current → the soft stale caveat still fires
+    patch(10.0, None, date(2026, 3, 31))
+    f5 = dm._ev_ebitda_integrity_flag(None, ref)  # type: ignore[arg-type]
+    assert f5 is not None and "stale-price caveat" in f5 and "prefer" not in f5
+
+
 def test_segment_ebitda_section_surfaces_profit_share() -> None:
     """The Segments EBITDA section parses to EBITDA share — the decision-relevant concentration:
     a segment can be 45% of revenue but 68% of profit (the Avis-in-Commercial-Services case)."""
@@ -1757,10 +1869,11 @@ class _FakeCompsBundle:
     """A minimal CiqBundle stand-in serving the synthetic comp sheets (and raising the same
     fail-loud error for anything absent) — runs the extractor without a licensed workbook."""
 
-    ticker = "TEST"
-
-    def __init__(self, sheets: dict[tuple[str, str], list[list[typing.Any]]]) -> None:
+    def __init__(
+        self, sheets: dict[tuple[str, str], list[list[typing.Any]]], ticker: str = "TEST"
+    ) -> None:
         self._sheets = sheets
+        self.ticker = ticker
 
     def sheet(
         self, kind: str, sheet_name: str, *, freq: str | None = None

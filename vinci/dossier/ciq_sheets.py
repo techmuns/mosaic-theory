@@ -13,6 +13,7 @@ from __future__ import annotations
 import re
 import statistics
 from collections.abc import Callable
+from datetime import date
 from typing import Any
 
 from vinci.dossier.ciq import (
@@ -147,11 +148,13 @@ def range_position(bundle: CiqBundle) -> Sourced[str]:
         rows = bundle.sheet("financials", "Multiples", freq="quarterly")
     except CiqUnavailableError as exc:
         return _miss_or_unknown(bundle, "financials", exc)
-    ev = [v for _, v in _multiples_close(rows, "TEV/LTM EBITDA") if v is not None]
+    ev_pairs = [(d, v) for d, v in _multiples_close(rows, "TEV/LTM EBITDA") if v is not None]
     pe = [v for _, v in _multiples_close(rows, "P/LTM EPS") if v is not None]
-    if len(ev) < 4:
+    if len(ev_pairs) < 4:
         return Sourced.unknown(note="TEV/LTM EBITDA Close has <4 quarters — no range position")
+    ev = [v for _, v in ev_pairs]
     cur, hist = ev[-1], ev[:-1]
+    cur_date = ev_pairs[-1][0]
     lo, hi, med = min(hist), max(hist), statistics.median(hist)
     pct = sum(1 for h in hist if h <= cur) / len(hist)
     if len(hist) < _MIN_CONFIDENT_CLOSES:
@@ -162,10 +165,11 @@ def range_position(bundle: CiqBundle) -> Sourced[str]:
     else:
         band = next(b for t, b in _RANGE_BANDS if pct <= t)
         where = f"{pct:.0%}ile → {band}"
+    asof = f" as-of {cur_date.isoformat()}" if cur_date is not None else ""
     tail = f"; P/LTM EPS {pe[-1]:.1f}x" if pe else ""
     return Sourced.present(
-        f"EV/EBITDA (TEV/LTM) {cur:.1f}x — trailing range {lo:.1f}–{hi:.1f}x (median {med:.1f}x) "
-        f"over {len(hist)} closes → {where}{tail}",
+        f"EV/EBITDA (TEV/LTM) {cur:.1f}x{asof} — trailing range {lo:.1f}–{hi:.1f}x "
+        f"(median {med:.1f}x) over {len(hist)} closes → {where}{tail}",
         source_ref="CIQ Financials→Multiples (Close; last col = current, excluded from history)",
     )
 
@@ -184,6 +188,19 @@ def ev_ebitda_current(bundle: CiqBundle) -> Sourced[float]:
         round(ev[-1], 1),
         source_ref="CIQ Financials→Multiples 'TEV/LTM EBITDA' Close (latest) — current multiple",
     )
+
+
+def ev_ebitda_asof(bundle: CiqBundle) -> date | None:
+    """The DATE of the latest TEV/LTM EBITDA Close that ``ev_ebitda_current`` reports — so the
+    caller can judge whether that 'current' multiple is stale (its last Close predates the assembly
+    reference date). None when the Multiples sheet / a dated close is absent."""
+    try:
+        rows = bundle.sheet("financials", "Multiples", freq="quarterly")
+    except CiqUnavailableError:
+        return None
+    closes = _multiples_close(rows, "TEV/LTM EBITDA")
+    dated = [d for d, v in closes if v is not None and d is not None]
+    return dated[-1] if dated else None
 
 
 def pe_ltm_current(bundle: CiqBundle) -> Sourced[float]:
@@ -906,6 +923,16 @@ def _comps_short_name(full: str) -> str:
     return re.split(r",| \(", full.strip(), maxsplit=1)[0].strip() or full.strip()
 
 
+def _row_ticker(cell: Any) -> str | None:
+    """The exchange-qualified symbol from a comps company cell → its bare ticker, upper-cased:
+    'Microvast Holdings, Inc. (NasdaqCM:MVST)' → 'MVST', 'Samsung SDI Co., Ltd. (KOSE:A006400)' →
+    'A006400'. None when no '(EXCHANGE:SYMBOL)' paren is present (e.g. a private/defunct peer)."""
+    for grp in re.findall(r"\(([^)]*)\)", str(cell)):
+        if ":" in grp:
+            return grp.split(":")[-1].strip().upper() or None
+    return None
+
+
 def _comps_cell(rows: Rows, ri: int | None, ci: int) -> float | str | None:
     """A comps cell → rounded number, the literal 'NM' (a REAL not-meaningful state — a negative/
     near-zero base, never dropped), or None for true-blank/'-'. clean_num would lump NM into
@@ -917,22 +944,27 @@ def _comps_cell(rows: Rows, ri: int | None, ci: int) -> float | str | None:
     return clean_num(rows[ri][ci])
 
 
-def _comps_layout(rows: Rows) -> tuple[int | None, list[int], int | None]:
-    """(header_i, peer_indices, target_i): peers = the contiguous company block after the header;
-    the target = the first company row after the gap (before 'Summary Statistics'). A company row
-    has a '(' ticker paren in col 0."""
+def _comps_layout(rows: Rows, ticker: str) -> tuple[int | None, list[int], int | None]:
+    """(header_i, peer_indices, target_i) for a Comparable-Analysis sheet. The SUBJECT (target) is
+    identified by matching ``ticker`` against the '(EXCHANGE:SYMBOL)' paren in col 0 — authoritative
+    because CIQ interleaves the subject among the peers and separates it only by convention. The old
+    'first company row after a positional gap' heuristic mis-fired whenever a no-ticker peer (e.g. a
+    private/defunct comparable) broke the contiguous block — MVST resolved to Samsung SDI, not
+    Microvast. Fallback when the ticker isn't found: the LAST company row before 'Summary Stats'
+    (CIQ places the subject last), still robust to interior no-ticker peers. Peers = every other
+    ticker-bearing company row. A company row has a '(' paren in col 0."""
     hdr = _find_row(rows, "Company Name")
     if hdr is None:
         return None, [], None
     end = _find_row(rows, "Summary Statistics") or len(rows)
     company = [i for i in range(hdr + 1, end) if rows[i] and "(" in str(rows[i][0])]
-    peers: list[int] = []
-    target: int | None = None
-    for i in company:
-        if not peers or i == peers[-1] + 1:
-            peers.append(i)
-        elif target is None:
-            target = i
+    if not company:
+        return hdr, [], None
+    want = (ticker or "").strip().upper()
+    target = next((i for i in company if _row_ticker(rows[i][0]) == want), None)
+    if target is None:
+        target = company[-1]
+    peers = [i for i in company if i != target]
     return hdr, peers, target
 
 
@@ -954,7 +986,7 @@ def _comps_multiples(bundle: CiqBundle, src: str) -> Sourced[str]:
         tm = bundle.sheet("comps", "Trading Multiples")
     except CiqUnavailableError as exc:
         return _miss_or_unknown(bundle, "comps", exc)
-    _hdr, _peers, tgt = _comps_layout(tm)
+    _hdr, _peers, tgt = _comps_layout(tm, bundle.ticker)
     stat_row = {k: _find_row(tm, k) for k in ("Low", "Median", "Mean", "High")}
     if tgt is None and not any(stat_row.values()):
         return Sourced.unknown(note="Trading Multiples: no target row / summary block")
@@ -976,7 +1008,7 @@ def _comps_deltas(bundle: CiqBundle, src: str) -> Sourced[str]:
         op = bundle.sheet("comps", "Operating Statistics")
     except CiqUnavailableError as exc:
         return _miss_or_unknown(bundle, "comps", exc)
-    _hdr, peers, tgt = _comps_layout(op)
+    _hdr, peers, tgt = _comps_layout(op, bundle.ticker)
     if tgt is None:
         return Sourced.unknown(note="Operating Statistics: no target row")
     bits: list[str] = []
@@ -1009,7 +1041,7 @@ def cross_sectional_valuation(bundle: CiqBundle) -> Sourced[str]:
         tm = bundle.sheet("comps", "Trading Multiples")
     except CiqUnavailableError as exc:
         return _miss_or_unknown(bundle, "comps", exc)
-    _hdr, _peers, tgt = _comps_layout(tm)
+    _hdr, _peers, tgt = _comps_layout(tm, bundle.ticker)
     med = _find_row(tm, "Median")
     if tgt is None or med is None:
         return Sourced.unknown(note="Trading Multiples: no target row / Median statistic")
@@ -1026,6 +1058,27 @@ def cross_sectional_valuation(bundle: CiqBundle) -> Sourced[str]:
     )
 
 
+def comps_ev_ebitda(bundle: CiqBundle) -> Sourced[float]:
+    """The name's LTM TEV/EBITDA from the Comparable-Analysis Trading-Multiples sheet, as a VALUE so
+    it can be reconciled against the Financials→Multiples TEV/LTM (``ev_ebitda_current``). The two
+    are the same concept computed by different CIQ sheets and can disagree by EBITDA/EV basis (the
+    MVST 10.0x vs 38.4x case)."""
+    try:
+        tm = bundle.sheet("comps", "Trading Multiples")
+    except CiqUnavailableError as exc:
+        return _miss_or_unknown(bundle, "comps", exc)
+    _hdr, _peers, tgt = _comps_layout(tm, bundle.ticker)
+    if tgt is None:
+        return Sourced.unknown(note="Trading Multiples: no target (name) row")
+    v = _comps_cell(tm, tgt, 2)  # col 2 = TEV/EBITDA (LTM)
+    if not isinstance(v, (int, float)):
+        return Sourced.unknown(note=f"Trading Multiples TEV/EBITDA not numeric ({_tok(v)})")
+    return Sourced.present(
+        round(float(v), 1),
+        source_ref="CIQ Comparable Analysis→Trading Multiples (name row, TEV/EBITDA LTM)",
+    )
+
+
 def peer_comps(bundle: CiqBundle) -> PeerComps:
     """Assemble the peer-comps section from the CIQ Company Comparable Analysis workbook: roster +
     market-cap/business dispersion + the name-vs-peer multiple gap (LTM + NTM) + the fundamental
@@ -1037,7 +1090,7 @@ def peer_comps(bundle: CiqBundle) -> PeerComps:
     name_cap: float | None = None
     try:
         fd = bundle.sheet("comps", "Financial Data")
-        _hdr, peers, tgt = _comps_layout(fd)
+        _hdr, peers, tgt = _comps_layout(fd, bundle.ticker)
         for i in peers:
             nm = _comps_short_name(str(fd[i][0]))
             c = clean_num(fd[i][3]) if len(fd[i]) > 3 else None
@@ -1051,7 +1104,7 @@ def peer_comps(bundle: CiqBundle) -> PeerComps:
     desc: dict[str, str] = {}
     try:
         bd = bundle.sheet("comps", "Business Description")
-        _hdr, bpeers, _t = _comps_layout(bd)
+        _hdr, bpeers, _t = _comps_layout(bd, bundle.ticker)
         for i in bpeers:
             nm = _comps_short_name(str(bd[i][0]))
             full = str(bd[i][1]).strip() if len(bd[i]) > 1 else ""

@@ -888,13 +888,14 @@ Each line: *what it does* — *verified how*.
     label-left grid. *Verified live (desktop, zoom 1): all 5 table-facts compute `display:block` with the
     peer table at the full 906px content width; scalar facts stay `display:grid`; screenshot shows the
     peer/margin/trajectory tables full-width with single-line descriptions.*
-  - **Dossier valuation re-centered on the cross-section (PR open — not merged, 2026-07-01).** Acting
+  - **Dossier valuation re-centered on the cross-section (MERGED as #48, 2026-07-01).** Acting
     on an equity-analyst review, validated from first principles: the Valuation block LED with an
     own-history multiple percentile that is ~0th for nearly every finalist (the screen selects
     drawdowns), so it barely discriminated, while the cross-sectional read (the fund's edge) was
     siloed in Peer comps. Fix (`vinci/dossier/{schemas,ciq_sheets,mechanical,render}.py`): (1) new
-    `cross_sectional_valuation` — name EV/EBITDA & P/E vs the peer MEDIAN with the discount, POSED
-    earned-vs-residual — now LEADS the Valuation section; (2) `range_position` carries the trailing
+    `cross_sectional_valuation` — name EV/EBITDA & P/E vs the peer MEDIAN with the discount, NUMBERS
+    ONLY (the repetitive "earned-vs-residual?" framing tail was dropped pre-merge as boilerplate that
+    duplicated Peer comps) — now LEADS the Valuation section; (2) `range_position` carries the trailing
     low–median–high RANGE + a sample-size CONFIDENCE label and SUPPRESSES the "near-floor" verdict
     below ~2y of closes (`_MIN_CONFIDENT_CLOSES=8`, mirroring the P/E percentile's ~2y bar); (3) the
     two bare "Nth %ile" render lines dropped (folded into the contextualized own-history line).
@@ -904,8 +905,52 @@ Each line: *what it does* — *verified how*.
     CIQ): the confidence gate fires ONLY on MVST (4 closes), band trusted on the 19–20-close names;
     the cross-sectional discount spans −83% (VITL) to +165% (MVST) — MVST reads own-history
     "near-floor" yet +165% RICH vs peers, the context the old lead masked. The FINAL rendered
-    re-assembly on the real CIQ workbooks is the operator's step (CIQ absent in-cloud).* PR 2
-    (EV/EBITDA cross-sheet reconciliation) + PR 3 (flag audience-split) follow.
+    re-assembly on the real CIQ workbooks is the operator's step (CIQ absent in-cloud).* Live
+    re-assembly (MVST/IT/AORT/VITL) confirmed the render; PR 3 (flag audience-split + body concision)
+    follows.
+  - **Comps subject mis-identification + stale-Close — valuation data-integrity (PR open — not
+    merged, 2026-07-01; folds in the retired #49 conflict-flag scope).** PR #49 had flagged the two
+    CIQ EV/EBITDA figures (Financials→Multiples TEV/LTM vs Comparable-Analysis Trading-Multiples) as
+    a "basis conflict" (MVST 10.0x vs 38.4x). **Validating #49 against the operator's raw CIQ
+    workbooks (in-session only, never committed) FALSIFIED that premise** and uncovered two real data
+    bugs the "conflict" was a symptom of:
+    - **Bug A — comps subject mis-identified.** `_comps_layout` picked the SUBJECT by a positional
+      "first company row after a gap" heuristic. A no-ticker peer (Proterra/Boston-Power for MVST)
+      breaks the contiguous block, so MVST resolved to **Samsung SDI** (a peer, 38.4x, $24.8B cap)
+      instead of **Microvast** (11.1x, $423M) — and dropped Microvast from its own dossier while
+      dropping Samsung SDI from the peer roster. The 38.4x "conflict" was this mis-read, not a basis
+      difference. **Fix:** `_comps_layout(rows, ticker)` now matches the subject by the bundle
+      ticker in the col-0 `(EXCH:SYMBOL)` paren (fallback: last company row before Summary Stats),
+      threaded through `peer_comps` / `_comps_multiples` / `_comps_deltas` /
+      `cross_sectional_valuation` / `comps_ev_ebitda`. After the fix MVST comps EV/EBITDA = 11.1x ≈
+      Financials 11.3x → the "conflict" is GONE (was a parse artifact); Samsung SDI is restored as a
+      peer.
+    - **Bug B — stale Financials Close.** For a recently-crashed name the Financials→Multiples "latest
+      Close" is a clean prior quarter-end that predates the drawdown: VRRM reads 8.5x "near-floor"
+      as-of **2026-03-31** (83d before the 2026-06-22 reference) vs a current comps 4.7x — and that
+      stale Close also drives the PR#48 own-history range/percentile. **Fix:** `range_position` now
+      renders the Close's as-of DATE; `ev_ebitda_asof` exposes it; the reworked
+      `mechanical._ev_ebitda_integrity_flag(bundle, reference_date)` fires a **stale-price caveat**
+      (names the date, the day-gap, and prefers the current comps figure) when the Close trails the
+      reference by > `_STALE_CLOSE_DAYS` (45), and otherwise a plain "cross-sheet gap — verify"
+      caveat (the inaccurate "different EBITDA/EV bases" wording is retired). Display-only; the caveat
+      POSES, never concludes. *Verified: ruff + mypy --strict (67) + pytest 251 incl. 5 tests
+      (subject-by-ticker picks the real name not the positional mis-pick + fallback; `ev_ebitda_asof`;
+      range_position renders as-of date; integrity flag → stale-price vs cross-sheet-gap vs quiet).
+      Re-ran the real MVST/VRRM/IT CIQ workbooks end-to-end: MVST cross-sectional now Microvast 11.1x
+      (was Samsung SDI 38.4x), no integrity flag; VRRM fires the stale-price caveat (8.5x@2026-03-31,
+      83d, prefer comps 4.7x); IT quiet (7.5x = 7.5x, fresh 2026-06-24 Close) — every case ties to the
+      name's real market cap.* PR #49 is superseded/folded here (its `comps_ev_ebitda` value-exposure
+      is kept and reused).
+    - **Refinement (operator-validated, 2026-07-01):** the stale-price caveat now fires only on
+      MATERIAL staleness — `material_stale = stale and not (comps_present and not disagree)`. When a
+      present current comps figure AGREES with the stale Financials multiple the staleness is
+      immaterial (price didn't move) and the inline as-of date already discloses it, so the bottom
+      caveat is SUPPRESSED as noise (MVST: stale 10.0x vs comps 11.1x); it still fires when comps
+      DISAGREES (VRRM) or is ABSENT (can't cross-check). Operator re-assembly of MVST/VRRM/IT on #51
+      confirmed Fix A (MVST → Microvast 11.1x, was Samsung SDI 38.4x; synthesis now fed the right
+      name's multiples) + Fix B; pytest 251 green (integrity test extended: stale+agree→suppressed,
+      stale+comps-absent→soft-fire).
 - _Whole suite green (ruff + mypy --strict clean; `pytest -m "not network"` passes)._
 
 ## 3. FALSIFIED — tested and retired (NOT deferred)
