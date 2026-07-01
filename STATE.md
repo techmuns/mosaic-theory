@@ -1883,15 +1883,25 @@ build, and capital still deploys only on whichever spread validates first.
 `docs/theme_forward_validation.md`, DRAFT for analyst review).** The theme family's own validation
 design, the analogue of `theme_admissibility.md` (detection) written BEFORE any logging so its criteria
 can't be reverse-engineered from outcomes. It defines how the human-ratified early enablers from
-Stage-3 build-2 are scored forward: the PRIMARY measure is the **RATIFIED − PASSED-BUT-SURFACED spread**
-— the **BUY−AVOID spread transposed to themes** (does the analyst's SELECTION of enablers from the
-machine-surfaced committed-or-better tier beat holding the whole tier — the judgment-added-value test,
-which is the fund's actual edge, §1) — plus the **early-detection test** (log each enabler's forward
-co-movement-*onset* date; measure whether entering at ratification beat entering once it is obvious — the
-one test that validates the whole semantic-primary thesis). Entry clock = ratification date (you can only
-act on what you ratified — no hindsight); market-relative (IWM) and vs-mega-cap are SECONDARY context;
-requires BOTH legs logged (ratified AND passed) or there is no counterfactual (the same defect that keeps
-Edge-2's spread empty today, §2). **The theme paper-track is GATED on (a) this spec's analyst sign-off
+Stage-3 build-2 are scored forward. **REVISED 2026-07-01 (same day): added a CO-PRIMARY naive-baseline
+control + a statistical-power caveat.** There are now **TWO CO-PRIMARY measures, both required positive:**
+(1) **RATIFIED − PASSED** (does the analyst's selection beat the passed-but-surfaced names — selection
+within the tier; the BUY−AVOID spread transposed to themes, §1) and (2) **RATIFIED − NAIVE BASELINE**
+(does the apparatus beat a replicable method — equal-weight-the-whole-tier, or a keyword/co-movement
+screen's picks — the fund's edge-filter, §4/§7). The revision's point: **RATIFIED−PASSED ALONE does NOT
+isolate the edge** — PASSED is quality-sorted, so a positive spread is partly guaranteed by competent
+disclosure-reading (table-stakes); only RATIFIED−NAIVE isolates whether the semantic apparatus beats a
+dumb method. A positive RATIFIED−PASSED with ~0 RATIFIED−NAIVE is a **PARTIAL-KILL** the protocol must
+surface. Plus the **early-detection test** (log each enabler's forward co-movement-*onset* date; measure
+whether entering at ratification beat entering once it is obvious — the one test that validates the whole
+semantic-primary thesis). **STATISTICAL POWER confronted:** the sample is tiny (committed tier ~56, ~10–20
+ratified, a few themes/year; names within a theme co-move → effective n ≈ theme-quarters), so early
+results are DIRECTIONAL-anecdotal, NOT significant — a pre-registered UNPOWERED floor (~≥8–12
+theme-quarters spanning ≥4–5 drivers, sign consistent) guards against over-reading the first points. Entry
+clock = ratification date (you can only act on what you ratified — no hindsight); market-relative (IWM)
+and vs-mega-cap are SECONDARY context; requires BOTH control sets logged (the AVOID leg AND the naive
+baskets frozen at ratification) or there is no counterfactual (the same defect that keeps Edge-2's spread
+empty today, §2). **The theme paper-track is GATED on (a) this spec's analyst sign-off
 AND (b) the analyst's ratified committed-tier picks** (nothing to log until the human ratifies a set);
 the logging harness is the NEXT build, not built here. Dead-signal firewall: machine ASSEMBLES evidence →
 human RATIFIES the pick → protocol MEASURES forward; no code path turns a grade into a hold. Forward-only,
