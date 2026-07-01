@@ -2217,6 +2217,52 @@ single-threaded ahead of the lead loop).
       Audit-prep only — the build-1 CLAIM (its grades) is unchanged; the re-run only recovered citations +
       measured drift. Exports: build1_13name_{stream_filings,audit_table}.csv + _rerun.json (scratchpad
       handoff, not committed). Suite unchanged (no code touched).*
+    - **INDEPENDENT SOURCE AUDIT of build-1 (2026-07-01) — semantic-primary VALIDATED as a DIRECTION;
+      build-1's "13 REAL" is the OPTIMISTIC CEILING, the audited truth is 7 REAL / 4 borderline / 2
+      not-real; ZERO fabrications; a CHARACTERIZED, CORRECTABLE, human-catchable UPWARD bias.** The
+      load-bearing external check: an analyst source-verified each of the 13 build-1 REAL flags against
+      its actual EDGAR filing (price-blind, human-judged — NOT the classifier re-checking itself).
+      **Verdicts:** REAL (7) = CORZ, BLZE, DGXX, TSSI, WYFI, BTBT, CAMT; BORDERLINE (4) = RXT, DUOT,
+      KOPN, FCEL; NOT-REAL (2) = LWLG, HIMX. (Of the 9 confident+stable names: **7 REAL, 2 downgrade
+      (RXT, DUOT), 0 not-real**; every borderline/drifted name broke toward the LESS-generous run — the
+      re-run was closer to truth.) **ZERO fabrications** — every checkable grade-determining fact was
+      present in its filing (KOPN "Fabric AI" vs "StableX" = an inconsistency in Kopin's OWN filing, not
+      a classifier fabrication; 3 secondary/corroborating facts cited non-XBRL filings [DGXX 10-Q + SubQ
+      8-K; LWLG Dec-2025 offering] = unverifiable but NONE load-bearing). **THREE error modes, ALL
+      UPWARD (over-grades at the margin): (1) LABEL-AS-THING** — reads a document's label as its
+      substance (RXT "definitive GPUaaS Master Terms" is a FRAMEWORK, pricing subject to further
+      agreement, AMD only backstops unsold capacity under a cap — not contracted revenue; DUOT "Technology
+      Solutions revenue" is BLENDED, the real AI piece is a FUTURE GPUaaS build). **(2) INDIRECT
+      DRIVER-TIE** — real binding contract, stretched tie (FCEL binding CEPA up to 380MW fuel cells "for
+      data center applications" but POWER-equipment, generic "data center", only 30MW firm — terms-binding
+      ALONE would pass; the driver-tie fails). **(3) BROAD-AI OVER-ATTRIBUTION** — endpoint/adjacent AI
+      read as datacenter (HIMX = 80% display-driver ICs, "AI" = EDGE/endpoint [the OPPOSITE of datacenter];
+      datacenter/GPU/HBM/server all = 0 in its 20-F — the flood FP, confirmed). **PRECISION-FIX SPEC (the
+      3 type-appropriate discriminators):** NOT "named customer" — TSSI/WYFI/CORZ are REAL with ANONYMIZED
+      customers because the TERMS bind (min-volume/make-whole/TCV/prepayment/executed order forms); a
+      must-name rule would WRONGLY kill the EARLY, confidentiality-masked exposure the edge wants. (a)
+      CONTRACTS: terms-binding vs DEFERRED (framework/sole-option/"subject to further agreement") [RXT
+      fails]. (b) REVENUE: quantified + CHAIN-ATTRIBUTABLE vs blended/general [DUOT fails]. (c) DRIVER-TIE
+      SPECIFICITY (both types): AI-datacenter-CHAIN vs indirect (generic power / edge-endpoint / "broad AI")
+      [FCEL, HIMX fail]. **STABILITY ≠ CORRECTNESS:** FCEL was grade-STABLE across both runs yet audited
+      soft — a stable grade can still overstate. Build-1 grades = the OPTIMISTIC CEILING, not a point
+      estimate; the human/audit layer shaves the overstatements (machine-proposes / human-judges, working
+      as designed); the confidence/drift signal is DIRECTIONALLY calibrated but not perfect. **CAMT /
+      UPSTREAM-ENABLER SCOPE DECISION (analyst call):** CAMT REAL — ~50% HBM/advanced-packaging metrology
+      revenue is genuine quantified exposure to a critical, non-substitutable AI-datacenter input at the
+      semi-equipment LAYER. **DECISION: upstream enablers ARE IN SCOPE** (the edge's structural advantage —
+      real, non-obvious, under-covered, invisible to keyword/co-movement because they don't look like
+      datacenters). **CONSEQUENCE: the driver expands from "AI-datacenter" to the AI-datacenter VALUE CHAIN**
+      (chips → HBM/memory → packaging → thermal → power → optical → operator) — cross-layer exposure to ONE
+      driver, semantically coherent but taxonomically scattered, groupable ONLY by semantic reasoning
+      (semantic-primary in its strongest form). **VERDICT: semantic-primary VALIDATED as a direction** —
+      it discriminates real exposure from the 79% "we do AI" flood (7/9 confident REAL, 0 fabrications,
+      calibrated uncertainty) with a characterized correctable upward bias. **NEXT: precision-fix (the 3
+      discriminators) BEFORE the multi-layer scale-out, so the scale-out inherits the corrected classifier;
+      validation target = reproduce the audited 13 (the 7 REAL, RXT/DUOT/KOPN/FCEL→borderline,
+      LWLG/HIMX→not-real).** Forward edge NOT claimed — validates detection-DISCRIMINATION, not that exposed
+      names outperform (the forward paper track is the only arbiter). Audit is external/analyst-judged; no
+      code change.*
   - **HOLDING-UNIVERSE study — sub-$10B-at-inception captured the theme return in all 6 themes tested
     (2026-06-29; `theme_admissibility_spike.md` Part 5).** A DISTINCT axis from the 4 detection spikes:
     does the **holding** bound (fund detects broad incl. mega leaders, but HOLDS sub-$10B) capture theme
