@@ -2263,6 +2263,35 @@ single-threaded ahead of the lead loop).
       LWLG/HIMX→not-real).** Forward edge NOT claimed — validates detection-DISCRIMINATION, not that exposed
       names outperform (the forward paper track is the only arbiter). Audit is external/analyst-judged; no
       code change.*
+    - **PRECISION-FIX (2026-07-01) — 3 TYPE-APPROPRIATE discriminators correct the audit's 3 upward
+      error modes; the refined classifier reproduces the audit on 10/13 (11/13 on the load-bearing
+      REAL-vs-not-REAL binary), pulling build-1's 13-REAL optimistic ceiling down to ~6-7 REAL ≈ the
+      audited 7. Grading logic ONLY; detection/B/C/co-movement/universe UNTOUCHED.** exposure.py now
+      grades each fact on TWO INDEPENDENT axes: **concreteness** (TYPE-appropriate — binding = the TERMS
+      BIND [executed order form / min-volume / take-or-pay / make-whole / TCV / prepayment], NOT a
+      framework / 'subject to further agreement' / sole-option / backstop; quantified = quantified AND
+      CHAIN-ATTRIBUTABLE, NOT blended) and **driver_tie** (a SEPARATE gate: chain-layer-specific vs
+      indirect vs not-driver). The exposure_basis derives from the max EFFECTIVE rank — an INDIRECT tie
+      caps at committed-capacity, a NOT-DRIVER tie caps at stated-intent (new `_effective_rank`). New
+      `DriverTie` schema + a `--out` model_dump-JSONL persistence (audit-grade going forward, no re-run —
+      the audit-prep remediation). The driver is now the **AI-DATACENTER VALUE CHAIN**
+      (chips→HBM→packaging→thermal→power→optical→operator→AI-cloud; UPSTREAM ENABLERS IN SCOPE). Guard:
+      NEVER require a named customer — anonymized-but-terms-binding is REAL. **VALIDATION vs the audit's
+      13 (real run, committed code): 10/13 categorical, 11/13 REAL-vs-not-REAL. All 3 discriminators
+      demonstrably FIRE:** terms-binding downgrades RXT (framework) + DUOT (blended) to committed while
+      CORZ/BLZE/DGXX/WYFI stay binding-REAL; the **DRIVER-TIE gate INDEPENDENTLY catches FCEL** (terms
+      bind → committed via `indirect` — proving gate 1 is not subsumed by terms); the value-chain scope
+      keeps CAMT REAL (upstream, quantified+chain) and drops HIMX (edge/broad-AI → not-real); the
+      anonymity guard keeps WYFI REAL. **3 residual MISSES, reported honestly (NOT tuned away — that
+      would overfit the 13):** TSSI over-killed (audit REAL → borderline, a strict terms-read; the OTHER
+      anonymized case WYFI passed), KOPN over-graded (audit borderline → REAL, a $15M JDA read as
+      binding), LWLG committed-vs-aspirational (BOTH not-REAL — not even a binary miss). The misses are
+      marginal, STOCHASTIC terms-reads at the boundary — the human-audit layer still shaves them
+      (machine-proposes / human-judges). Regression tests pin each discriminator (indirect-tie caps,
+      not-driver caps, anonymized-but-binding stays REAL, missing-tie fail-closed). ruff + mypy --strict
+      (81) + pytest (276; +4 discriminator tests) green; git diff isolated to exposure.py grading +
+      schemas + the --out one-liner + tests. **THIS refined classifier goes into the multi-layer
+      scale-out (build 2), now GATED-OPEN.** Forward edge NOT claimed — detection-discrimination only.*
   - **HOLDING-UNIVERSE study — sub-$10B-at-inception captured the theme return in all 6 themes tested
     (2026-06-29; `theme_admissibility_spike.md` Part 5).** A DISTINCT axis from the 4 detection spikes:
     does the **holding** bound (fund detects broad incl. mega leaders, but HOLDS sub-$10B) capture theme

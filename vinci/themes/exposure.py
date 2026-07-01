@@ -34,6 +34,7 @@ from vinci.graph.llm import LlmClient, LlmError
 from vinci.netcache import CachedHttp, HttpError
 from vinci.progress import ProgressFn, ProgressReporter
 from vinci.themes.schemas import (
+    DriverTie,
     ExposureAssessment,
     ExposureBasis,
     ExposureConcreteness,
@@ -47,12 +48,13 @@ _ONE_WEEK = 7 * 24 * 3600
 # binding hyperscaler leases, CAMT ~50% HBM rev, AEHR 34% AI burn-in; BETA = CLSK/MARA aspirational,
 # VECO/ACLS ion-implant/diversified, and the flood of "we mention AI" names).
 AI_DATACENTER_DRIVER = (
-    "the AI-datacenter / compute buildout — building or repurposing datacenter capacity to host "
-    "GPU/AI/high-performance-compute workloads for third-party tenants, OR supplying the "
-    "equipment/subsystems specifically demanded by it (HBM, advanced packaging, datacenter "
-    "power/cooling/optical/interconnect) — grounded in DISCLOSED business activity (binding "
-    "contracts with named counterparties, quantified $/% revenue, committed MW/capacity), NOT a "
-    "passing mention of 'AI'."
+    "the AI-DATACENTER VALUE CHAIN — any layer of the chain that builds or supplies AI-datacenter "
+    "compute: chips/GPU → HBM & memory → advanced packaging → thermal/cooling → power DELIVERED TO "
+    "AI datacenters → optical interconnect → colocation/operator → AI-cloud. UPSTREAM ENABLERS ARE "
+    "IN SCOPE (e.g. HBM / advanced-packaging metrology with quantified revenue) — they need not be "
+    "datacenters themselves. Exposure must be CHAIN-SPECIFIC (a named layer) and grounded in "
+    "disclosed activity — NOT generic power/equipment that merely 'could' feed a datacenter, NOT "
+    "edge/on-device AI (the opposite of a datacenter), NOT a 'broad AI market' adjacency."
 )
 
 # Broad pre-filter net. Part-6 lesson: the driver-text is 'data center'/'HPC', not just 'AI' — cast
@@ -90,9 +92,23 @@ _DIRECTIONAL = re.compile(
 
 
 def is_real_exposure(a: ExposureAssessment) -> bool:
-    """REAL (binding contract / committed capacity / quantified revenue) vs aspirational/none — a
-    factual bucket of disclosure concreteness for the false-positive measurement, not a verdict."""
+    """REAL = a CONTRACTED (binding-contract) or QUANTIFIED (chain-attributable revenue) exposure
+    — a factual bucket of disclosure concreteness for the false-positive count, not a verdict."""
     return a.exposure_basis in _REAL
+
+
+def _effective_rank(conc: ExposureConcreteness, tie: DriverTie) -> int:
+    """The fact's effective grade AFTER the DRIVER-TIE gate (audit error-mode #2, a SEPARATE gate):
+    a terms-binding / quantified fact counts fully ONLY if it is CHAIN-SPECIFIC. An INDIRECT tie
+    caps it at committed-capacity (borderline — real activity, soft datacenter tie, e.g. a fuel-cell
+    CEPA 'for data center'); a NOT-DRIVER tie (edge/on-device, 'broad AI' adjacency) caps it at
+    stated-intent (a mention, not exposure to THIS driver)."""
+    r = _CONCRETE_RANK[conc]
+    if tie is DriverTie.CHAIN_SPECIFIC:
+        return r
+    if tie is DriverTie.INDIRECT:
+        return min(r, _CONCRETE_RANK[ExposureConcreteness.COMMITTED_CAPACITY])
+    return min(r, _CONCRETE_RANK[ExposureConcreteness.STATED_INTENT])
 
 
 # --------------------------------------------------------------------------------------------------
@@ -272,28 +288,57 @@ EXPOSURE_TOOL: dict[str, Any] = {
                 "items": {
                     "type": "object",
                     "properties": {
-                        "fact": {"type": "string", "description": "A SPECIFIC disclosed fact of "
-                                 "driver exposure — named customer/tenant, contracted MW/capacity, "
-                                 "$/% revenue, signed agreement + term. Paraphrase the filing; "
-                                 "use NO outside facts."},
+                        "fact": {
+                            "type": "string",
+                            "description": "A SPECIFIC disclosed fact of driver exposure — "
+                            "customer/tenant (named OR anonymized), contracted MW/capacity/TCV, "
+                            "$/% revenue, agreement + binding terms. Paraphrase the filing; use "
+                            "NO outside facts.",
+                        },
                         "concreteness": {
                             "type": "string",
                             "enum": [c.value for c in ExposureConcreteness],
-                            "description": "binding-contract (signed counterparty + terms) > "
-                            "quantified-revenue ($/% disclosed) > committed-capacity (MW/capex) > "
-                            "stated-intent (exploring) > none.",
+                            "description": "TYPE-APPROPRIATE strength. binding-contract = the "
+                            "TERMS BIND (executed order form / min-volume / take-or-pay / "
+                            "make-whole / quantified TCV / prepayment) — a FRAMEWORK, 'subject to "
+                            "further agreement', sole-OPTION or backstop-only is "
+                            "committed-capacity, NOT binding. quantified-revenue = a $/% BOTH "
+                            "quantified AND attributable to a specific chain layer — "
+                            "BLENDED/general revenue is committed-capacity. committed-capacity = "
+                            "committed MW/capex or real-but-not-contracted activity. stated-intent "
+                            "= strategy/exploring. none.",
                         },
-                        "source_ref": {"type": "string", "description": "Copy VERBATIM the "
-                                       "'(accession ...)' tag of the stream item it came from."},
+                        "driver_tie": {
+                            "type": "string",
+                            "enum": [t.value for t in DriverTie],
+                            "description": "The SEPARATE tie gate. chain-layer-specific = a "
+                            "named AI-datacenter value-chain layer (GPU/compute, HBM/memory, "
+                            "advanced packaging, thermal/cooling, power DELIVERED TO AI "
+                            "datacenters, optical interconnect, colocation/operator, AI-cloud). "
+                            "indirect = a generic/weak datacenter tie (generic power/equipment "
+                            "'for data center', no AI/GPU language). not-driver = edge/on-device "
+                            "AI (opposite of a datacenter) or a 'broad AI market' adjacency.",
+                        },
+                        "source_ref": {
+                            "type": "string",
+                            "description": "Copy VERBATIM the '(accession ...)' tag of the stream "
+                            "item it came from.",
+                        },
                     },
-                    "required": ["fact", "concreteness", "source_ref"],
+                    "required": ["fact", "concreteness", "driver_tie", "source_ref"],
                 },
             },
-            "primary_business": {"type": "string", "description": "What the filings say the "
-                                 "business primarily IS today — one short phrase, from the text."},
-            "key_unknowns": {"type": "array", "items": {"type": "string"},
-                             "description": "What the disclosure does NOT resolve (driver revenue "
-                             "not broken out, contract contingencies, mention-only no terms)."},
+            "primary_business": {
+                "type": "string",
+                "description": "What the filings say the business primarily IS today — one short "
+                "phrase, from the text.",
+            },
+            "key_unknowns": {
+                "type": "array",
+                "items": {"type": "string"},
+                "description": "What the disclosure does NOT resolve (driver revenue not broken "
+                "out, contract contingencies, mention-only no terms).",
+            },
         },
         "required": ["disclosed_facts", "primary_business", "key_unknowns"],
     },
@@ -305,17 +350,30 @@ _SYSTEM = (
     "supplied text — never your own memory, never the web. Ground every fact in the filings and "
     "copy the '(accession ...)' tag of the item it came from as source_ref. If something is not "
     "disclosed, put it in key_unknowns; do NOT infer or supply it. You do NOT recommend, rate, "
-    "score, predict direction, or decide theme membership or investment merit — there is no field "
-    "for that, it is the human's call. The KEY discipline: distinguish a passing MENTION of the "
-    "driver from real disclosed EXPOSURE. 'We are exploring AI', 'we appointed an SVP of AI', 'AI "
-    "is a tailwind' are STATED-INTENT, not exposure. Reserve binding-contract for a signed deal "
-    "where a NAMED CUSTOMER/TENANT commits to PAY for the driver service (MW leased to a named "
-    "tenant, a contracted $ revenue) — a JV / financing / strategic-development partnership with "
-    "no paying customer is committed-capacity AT MOST. quantified-revenue requires a disclosed $/% "
-    "of revenue ATTRIBUTABLE TO THE DRIVER (not general revenue, nor a non-driver segment such as "
-    "power devices). committed-capacity is committed MW/capex toward the driver, no customer yet. "
-    "A company describes its business plainly — judge the disclosed substance, not the "
-    "vocabulary."
+    "score, predict, or decide theme membership or investment merit — there is no verdict field; "
+    "the human judges. Grade EACH fact on TWO INDEPENDENT axes — concreteness (its strength) and "
+    "driver_tie (its specificity to the AI-datacenter VALUE CHAIN). A passing MENTION ('exploring "
+    "AI', 'appointed an SVP of AI', 'AI is a tailwind') is STATED-INTENT, not exposure. "
+    "CONCRETENESS is TYPE-APPROPRIATE. For a CONTRACT, grade binding-contract ONLY if the TERMS "
+    "BIND — an executed order form, a minimum-volume / take-or-pay / make-whole obligation, a "
+    "quantified total-contract-value, or a prepayment; a 'definitive'/'master' agreement whose "
+    "PRICING or VOLUME is 'subject to further agreement', or that grants only an OPTION or a "
+    "BACKSTOP, is committed-capacity AT MOST — the LABEL 'definitive' does not make the terms "
+    "bind. Do NOT require a NAMED customer: an ANONYMIZED counterparty with BINDING terms is fully "
+    "binding — penalize DEFERRED TERMS, never customer anonymity. For REVENUE, grade "
+    "quantified-revenue ONLY if the $/% is BOTH quantified AND attributable to a SPECIFIC chain "
+    "layer; BLENDED/general revenue ('supporting data center, AI and enterprise', not broken out) "
+    "is committed-capacity at most. DRIVER_TIE is the SEPARATE gate — even a terms-binding "
+    "contract is NOT real exposure if its tie is indirect. Grade chain-layer-specific ONLY for a "
+    "named AI-datacenter chain layer (GPU/compute, HBM/memory, advanced packaging, "
+    "thermal/cooling, power DELIVERED TO AI datacenters, optical interconnect, "
+    "colocation/operator, AI-cloud); grade indirect for a generic/weak datacenter tie (generic "
+    "power or equipment 'for data center applications' with NO AI/GPU language); grade not-driver "
+    "for edge/on-device AI (the OPPOSITE of a datacenter) or a 'broad AI market' adjacency. "
+    "UPSTREAM ENABLERS ARE IN SCOPE: a chip/HBM/packaging/thermal/power/optical supplier with "
+    "quantified chain-attributable revenue (e.g. ~50% from HBM/advanced-packaging) is "
+    "chain-layer-specific, even though it is not itself a datacenter. Judge the disclosed "
+    "substance, not the vocabulary."
 )
 
 
@@ -363,6 +421,10 @@ def assess_exposure(
             conc = ExposureConcreteness(str(item.get("concreteness", "none")))
         except ValueError:
             conc = ExposureConcreteness.NONE
+        try:
+            tie = DriverTie(str(item.get("driver_tie", "indirect")))
+        except ValueError:
+            tie = DriverTie.INDIRECT  # missing/invalid tie → conservative (caps at committed)
         ref = str(item.get("source_ref", ""))
         fact_text = str(item.get("fact", ""))
         cited = _ref_traces(ref, refs)
@@ -371,8 +433,10 @@ def assess_exposure(
             conc = ExposureConcreteness.NONE  # uncited fact can't credit the basis (fail-closed)
         if _DIRECTIONAL.search(fact_text):
             flags.append(f"DIRECTIONAL language in fact: '{fact_text[:60]}'")
-        facts.append(ExposureFact(fact=fact_text, concreteness=conc, source_ref=ref))
-        best = max(best, _CONCRETE_RANK[conc])
+        facts.append(
+            ExposureFact(fact=fact_text, concreteness=conc, driver_tie=tie, source_ref=ref)
+        )
+        best = max(best, _effective_rank(conc, tie))
     primary = str(raw.get("primary_business", ""))
     if _DIRECTIONAL.search(primary):
         flags.append(f"DIRECTIONAL language in primary_business: '{primary[:60]}'")
