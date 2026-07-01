@@ -2700,16 +2700,19 @@ build, and capital still deploys only on whichever spread validates first.
 `docs/theme_forward_validation.md`, DRAFT for analyst review).** The theme family's own validation
 design, the analogue of `theme_admissibility.md` (detection) written BEFORE any logging so its criteria
 can't be reverse-engineered from outcomes. It defines how the human-ratified early enablers from
-Stage-3 build-2 are scored forward. **REVISED 2026-07-01 (same day): added a CO-PRIMARY naive-baseline
-control + a statistical-power caveat.** There are now **TWO CO-PRIMARY measures, both required positive:**
-(1) **RATIFIED − PASSED** (does the analyst's selection beat the passed-but-surfaced names — selection
-within the tier; the BUY−AVOID spread transposed to themes, §1) and (2) **RATIFIED − NAIVE BASELINE**
-(does the apparatus beat a replicable method — equal-weight-the-whole-tier, or a keyword/co-movement
-screen's picks — the fund's edge-filter, §4/§7). The revision's point: **RATIFIED−PASSED ALONE does NOT
-isolate the edge** — PASSED is quality-sorted, so a positive spread is partly guaranteed by competent
-disclosure-reading (table-stakes); only RATIFIED−NAIVE isolates whether the semantic apparatus beats a
-dumb method. A positive RATIFIED−PASSED with ~0 RATIFIED−NAIVE is a **PARTIAL-KILL** the protocol must
-surface. Plus the **early-detection test** (log each enabler's forward co-movement-*onset* date; measure
+Stage-3 build-2 are scored forward. **REVISED TWICE 2026-07-01: rev-1 added a naive-baseline control;
+rev-2 (forced by the harness build) CORRECTED the control structure + added a power caveat.** The
+measures: (1) **RATIFIED − PASSED** — the LIVE measure (did the analyst sort the tier; the BUY−AVOID
+spread transposed, §1), but partly guaranteed by disclosure-reading skill (PASSED is quality-sorted) so
+NOT alone the edge; (2) **RATIFIED − a REPLICABLE SCREEN** (keyword/co-movement, from the WHOLE universe)
+— THE one independent edge-test (did the semantic apparatus beat a replicable method — the fund's
+edge-filter, §4/§7), and it is DEFERRED (needs Component A live-forward). **REV-2's correction:** the
+equal-weight-all-56 baseline is algebraically (n_passed/N)·(RATIFIED−PASSED) — a *scaled* RATIFIED−PASSED
+sharing its sign, adding NO independent info — so it is DEMOTED from "co-primary" to a weak sanity-check
+(`apparatus_fraction`); the §3c PARTIAL-KILL (positive RATIFIED−PASSED, ~0 RATIFIED−NAIVE) is
+**mathematically unreachable** from it and can come ONLY from the independent screen (§3b-ii). **HONEST
+CONSEQUENCE (§3f): with equal-weight demoted and §3b-ii deferred, there is NO live independent edge-test
+— only the partly-guaranteed 3a spread — so the forward verdict is MULTI-DRIVER + MULTI-YEAR gated.** Plus the **early-detection test** (log each enabler's forward co-movement-*onset* date; measure
 whether entering at ratification beat entering once it is obvious — the one test that validates the whole
 semantic-primary thesis). **STATISTICAL POWER confronted:** the sample is tiny (committed tier ~56, ~10–20
 ratified, a few themes/year; names within a theme co-move → effective n ≈ theme-quarters), so early

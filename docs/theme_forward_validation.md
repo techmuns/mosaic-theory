@@ -7,7 +7,17 @@
 > analyst *sorted the tier* (partly guaranteed by competent disclosure-reading), not whether the
 > apparatus beats a replicable method (the fund's actual edge-filter, STATE.md §4). A **statistical-power
 > caveat** (§4) was added confronting the tiny sample. An amendment, not a redesign — every other measure
-> is preserved. The analogue of
+> is preserved.
+> **REVISION 2 (2026-07-01, from the harness build):** the two "co-primary" controls were NOT
+> interchangeable. The equal-weight-all-56 baseline (§3b-i) is algebraically (n_passed/N)·(RATIFIED−
+> PASSED) — a *scaled* RATIFIED−PASSED that shares its sign and adds NO independent information — so it is
+> **DEMOTED to a weak sanity-check** (the §3c partial-kill is mathematically UNREACHABLE from it). The
+> keyword/co-movement screen (§3b-ii — a selection from the WHOLE universe, not a re-average of the 56)
+> is **ELEVATED to THE one independent edge-test, and it is DEFERRED** (needs Component A live-forward).
+> **Honest consequence: NO live independent edge-test exists until §3b-ii is built; the forward verdict
+> is MULTI-DRIVER + MULTI-YEAR gated** (§3, §4). Still an amendment, not a redesign — §1/§2/§5/§6/§7
+> unchanged.
+> The analogue of
 > `docs/theme_admissibility.md` (which specified what makes a cluster an admissible THEME before any
 > detection code) and of Edge-2's ranking axes (STATE.md §2 — face-validity, never return-tuned). Where
 > admissibility specified DETECTION, this specifies MEASUREMENT: once the analyst has ratified a set of
@@ -33,37 +43,42 @@ answers the one question the whole theme-edge arc reduces to:
 > **Did the analyst's SELECTION of early enablers — ratifying a subset of the machine-surfaced tier —
 > out-return the naive "hold the whole surfaced tier"?**
 
-That question has **TWO CO-PRIMARY measures** — because two different things must BOTH be true for the
-edge to be real, and each measure isolates one of them:
+That question has **ONE fully-live measure** and **ONE independent edge-test that is not yet available**
+— a distinction the harness build forced (see the §3 correction). Two different things must both be true
+for the edge to be real:
 
-- **RATIFIED − PASSED-BUT-SURFACED** — did the analyst *sort the surfaced tier* correctly (selection
-  WITHIN the tier). The **BUY−AVOID spread transposed to themes** (STATE.md §1, the fund's only
-  proof-of-edge).
-- **RATIFIED − a NAIVE BASELINE from the same surfaced set** — did the machine's semantic surfacing PLUS
-  the human's judgment *beat a replicable method* (equal-weighting the whole committed-or-better tier, or
-  a keyword/co-movement screen's picks). This is the fund's own edge-filter: a theme is an edge **ONLY IF
-  AI-assembly beats a NAIVE BASELINE** (STATE.md §4/§7 THEME family — momentum-adjacent, replicable
-  methods capture much of any theme move).
+- **RATIFIED − PASSED-BUT-SURFACED** *(LIVE)* — did the analyst *sort the surfaced tier* correctly
+  (selection WITHIN the tier). The BUY−AVOID spread transposed to themes (STATE.md §1). But PASSED is a
+  **QUALITY-SORTED** set, so a positive spread is **partly guaranteed by competent disclosure-reading**
+  (§3a) — necessary, not the fund's distinctive edge.
+- **RATIFIED − a REPLICABLE SCREEN's picks** *(the keyword / co-movement screen, §3b-ii)* — did the
+  semantic apparatus *beat a replicable method* (the fund's edge-filter, STATE.md §4: an edge ONLY IF
+  AI-assembly beats a naive baseline). **This is the ONE independent edge-test — and it is DEFERRED** (it
+  needs Component A running live-forward). Until it is built, the fund has NO live independent edge-test.
 
-**Why both, and why the second is not optional:** PASSED is a **QUALITY-SORTED** set — the analyst
-declined those names for reading thinner — so a positive RATIFIED−PASSED is **partly guaranteed by
-competent disclosure-reading** (table-stakes) and does NOT isolate the semantic-primary early-detection
-edge from generic 10-K-reading skill. Only RATIFIED − NAIVE isolates whether the whole apparatus beats a
-dumb alternative. **Both positive** = the edge is real (selection works AND the apparatus beats
-replicable). **Positive RATIFIED−PASSED with ~0 RATIFIED−NAIVE** = the analyst sorts well but the
-apparatus doesn't beat equal-weighting the surfaced names — a **partial-kill the protocol must surface**
-(§3–§4). Together they isolate the fund's actual edge — **deep human judgment on finalists, fed by the
-funnel** (CLAUDE.md) — from the two things that are NOT the edge: "the theme went up" (market/momentum
-beta, replicable — STATE.md §7) and "sub-$10B has more theme-beta" (a holding-bound question, STATE.md §7
-holding-universe study), both demoted to SECONDARY context (§3).
+**Why the equal-weight-all-56 baseline is NOT that test (the correction the harness forced).** The
+harness proved algebraically that RATIFIED − (equal-weight-all) = (n_passed / N) · (RATIFIED − PASSED) —
+a *scaled* RATIFIED−PASSED, sharing its sign and adding NO independent information. So it is **DEMOTED to
+a weak sanity-check** (reported as `apparatus_fraction`), NOT an independent control; the §3c partial-kill
+(positive RATIFIED−PASSED with ~0 RATIFIED−NAIVE) is **mathematically unreachable** from it. Only a
+selection from the WHOLE universe (§3b-ii) — not a re-average of the 56 — can produce the partial-kill.
+
+**The honest consequence, recorded so it is not over-read:** with equal-weight demoted and §3b-ii
+deferred, the ONLY live measure is RATIFIED−PASSED (selection-within-tier, partly guaranteed by
+disclosure-reading skill). The independent edge-test arrives only when §3b-ii is built, and a trustworthy
+verdict then needs the §4 power floor (≥4–5 drivers, ≥8–12 theme-quarters) on top. **The forward edge
+verdict is therefore MULTI-DRIVER and MULTI-YEAR gated** — early single-driver numbers are directional at
+best. These isolate the fund's actual edge — **deep human judgment on finalists, fed by the funnel**
+(CLAUDE.md) — from what is NOT the edge: "the theme went up" (beta) and "sub-$10B has more theme-beta" (a
+holding-bound question), both SECONDARY context (§3d).
 
 A second, subordinate question validates the semantic-primary *mechanism* (§5): **did entering EARLY (at
 ratification, before the name co-moves) beat entering LATE (once it is obvious)?** That is the test the
 entire Stage-3 arc was built to justify (semantic-from-disclosure is early; co-movement is structurally
 late — STATE.md §4 build-1/2).
 
-Everything below serves these measures (two co-primary edge tests + the early-detection mechanism).
-Nothing below lets the machine render any of these verdicts.
+Everything below serves these measures (the LIVE selection measure, the DEFERRED independent edge-test,
+and the early-detection mechanism). Nothing below lets the machine render any of these verdicts.
 
 ---
 
@@ -149,12 +164,13 @@ stamps let the protocol *measure* how early that was — rather than assuming it
 ## 3. The counterfactual — the load-bearing design choice
 
 What are the ratified enablers measured AGAINST? The measure must isolate the EDGE — not generic
-disclosure-reading skill, not beta. There are **two CO-PRIMARY counterfactuals** (both must be positive
-for the edge to be real) and two SECONDARY context comparators. *(This §3 was REVISED 2026-07-01: the
-original made RATIFIED−PASSED the sole primary; the co-primary naive-baseline control was added because
-RATIFIED−PASSED alone does not isolate the fund's edge — see 3a.)*
+disclosure-reading skill, not beta. There is **ONE live counterfactual (3a, RATIFIED−PASSED), ONE
+independent edge-test that is DEFERRED (3b-ii, the replicable screen), a DEMOTED sanity-check (3b-i,
+equal-weight), and two SECONDARY context comparators (3d).** *(REVISED twice on 2026-07-01: rev-1 added a
+naive-baseline control as "co-primary"; rev-2 — forced by the harness build — corrected that framing,
+because equal-weight and the replicable screen are NOT interchangeable; see 3b.)*
 
-### 3a. CO-PRIMARY 1 — vs the surfaced-but-PASSED names: did the human sort the tier?
+### 3a. THE LIVE MEASURE — vs the surfaced-but-PASSED names: did the human sort the tier?
 
 The machine surfaced the whole committed-or-better tier; the human ratified some (BUY) and passed the
 rest (AVOID). **RATIFIED − PASSED is the BUY−AVOID spread for themes** (STATE.md §1). If ratified
@@ -166,37 +182,55 @@ grade-driving fact, softer driver-tie, more deferred terms). So a positive RATIF
 **partly GUARANTEED by competent disclosure-reading** — any diligent reader's kept names tend to
 out-read their discarded ones. That is **table-stakes**, not the semantic-primary early-detection edge.
 RATIFIED−PASSED answers "did the human sort the tier correctly" — necessary, but not sufficient. Hence
-CO-PRIMARY 2.
+the need for an INDEPENDENT control (3b) — and, crucially, one that is NOT just a re-average of the same
+56 names (3b-i is exactly that and fails; only 3b-ii is independent).
 
-### 3b. CO-PRIMARY 2 — vs a NAIVE BASELINE from the same surfaced set: did the apparatus beat a replicable method?
+### 3b. The independent control: why equal-weight FAILS and the replicable screen is the real test
 
-The fund's own edge-filter, made concrete: a theme is an edge **ONLY IF AI-assembly beats a NAIVE
-BASELINE** (STATE.md §4/§7 — themes are momentum-adjacent; replicable methods capture much of any theme
-move). The naive baseline is the decision a DUMB method makes on the SAME surfaced set. Log at least two:
+The fund's own edge-filter: a theme is an edge **ONLY IF AI-assembly beats a NAIVE BASELINE** (STATE.md
+§4/§7 — themes are momentum-adjacent; replicable methods capture much of any theme move). But not every
+"naive baseline" is an INDEPENDENT control. The two candidates rev-1 treated as interchangeable are NOT:
 
-- **(i) EQUAL-WEIGHT-THE-WHOLE-TIER** — hold all committed-or-better names equal-weighted, NO selection
-  (~56 for the AI-datacenter build-2 tier). The "machine surfaced, hold everything" baseline. RATIFIED
-  beating this shows the tier + the human's selection beats holding the surfaced tier blindly.
-- **(ii) A KEYWORD / CO-MOVEMENT SCREEN's picks** — what the replicable method the fund must beat would
-  hold: the top names by chain-keyword density (the dumb keyword screen, no semantic discrimination),
-  and/or the names already in Component A's co-movement cluster (the "late/obvious" replicable method,
-  §5). RATIFIED beating this shows semantic surfacing + human judgment beats what a cheap quant could run.
+**3b-i. EQUAL-WEIGHT-THE-WHOLE-TIER — DEMOTED to a weak sanity-check (NOT an independent control).** Hold
+all committed-or-better names equal-weighted (~56). The harness build proved algebraically that this
+baseline is **not independent of RATIFIED−PASSED**:
 
-**RATIFIED − NAIVE** (benchmark-adjusted, §4) is what isolates "the machine's semantic surfacing + the
-human's judgment beat a replicable method" — **THE fund's edge claim** (CLAUDE.md §1; STATE.md §4).
+> RATIFIED − (equal-weight-all) = mean_ratified − mean(all) = **(n_passed / N) · (RATIFIED − PASSED)**
 
-### 3c. The logic — both must be positive; the partial-kill the protocol MUST surface
+Because the equal-weight basket IS the ratified ∪ passed set, RATIFIED−NAIVE(equal-weight) is just a
+POSITIVE SCALING (by the passed fraction) of RATIFIED−PASSED — it **shares that spread's sign and adds NO
+independent information.** Consequences: (a) it can never contradict RATIFIED−PASSED, so it is not a
+second edge-test; (b) the §3c partial-kill is **mathematically unreachable** from it whenever both legs
+are present. It stays in the harness ONLY as a reported quantity — `apparatus_fraction` (= n_passed/N), a
+selectivity / sign-consistency scale (how much the analyst's selection differs from holding everything) —
+**not an edge-test.**
 
-- **RATIFIED − PASSED** isolates *the human sorted the tier* (selection within tier).
-- **RATIFIED − NAIVE** isolates *the whole apparatus (semantic surfacing + selection) beat a replicable
-  method* (the edge-filter).
-- **BOTH positive** = the edge is real: selection adds value within the tier AND the tier+selection beats
-  a dumb alternative.
-- **Positive RATIFIED−PASSED but ~0 RATIFIED−NAIVE** = the analyst sorts well, yet the whole apparatus
-  does not beat equal-weighting the surfaced names — a **PARTIAL-KILL**: the human-in-the-loop has skill,
-  but the semantic-primary apparatus adds nothing a keyword/equal-weight method wouldn't. This is the
-  single most likely way a plausible-looking edge is really just disclosure-reading riding a replicable
-  base — the protocol MUST be able to surface it, not hide it inside a positive RATIFIED−PASSED.
+**3b-ii. THE REPLICABLE SCREEN (keyword / co-movement) — THE primary independent control, and DEFERRED.**
+What a cheap quant would actually hold, chosen from the WHOLE universe (not a re-average of the 56): the
+top names by chain-keyword density (the dumb keyword screen, no semantic discrimination), and/or the
+names already in Component A's co-movement cluster (the "late/obvious" replicable method, §5). Because it
+is a DIFFERENT selection, RATIFIED − (replicable screen) is **independent of RATIFIED−PASSED** — it can
+disagree with it, and it is the **only** baseline that can produce the §3c partial-kill. It isolates the
+fund's actual edge claim: *did the semantic apparatus beat a replicable method* (CLAUDE.md §1; STATE.md
+§4), not merely *did the human sort the tier*. **It is the DEFERRED SECOND-PHASE control** — it needs
+Component A running live-forward (a keyword screen + the co-movement detector run on a cadence over the
+paper-track window). **Until §3b-ii is built, the partial-kill test is UNAVAILABLE and the fund has no
+live independent edge-test.**
+
+### 3c. The logic — the edge needs BOTH, and the partial-kill can ONLY come from 3b-ii
+
+- **RATIFIED − PASSED (3a, LIVE)** isolates *the human sorted the tier* (selection within tier) —
+  necessary, partly guaranteed by disclosure-reading skill.
+- **RATIFIED − REPLICABLE-SCREEN (3b-ii, DEFERRED)** isolates *the whole apparatus beat a replicable
+  method* (the edge-filter) — the independent test.
+- **BOTH positive** = the edge is real: selection adds value within the tier AND the apparatus beats a
+  replicable alternative. **This verdict is UNAVAILABLE until 3b-ii is live.**
+- **Positive RATIFIED−PASSED but ~0 (or negative) RATIFIED−REPLICABLE-SCREEN** = the analyst sorts well,
+  yet the semantic apparatus adds nothing a cheap replicable method wouldn't — a **PARTIAL-KILL** (skill
+  riding a replicable base). The single most likely way a plausible-looking edge is really just
+  disclosure-reading, and the protocol's most important state to surface. **It can ONLY be produced by
+  the independent screen (3b-ii); it is mathematically unreachable from the equal-weight sanity-check
+  (3b-i — see the algebra above).** So today, with 3b-ii deferred, the partial-kill test cannot run.
 
 ### 3d. SECONDARY context (logged, not the edge verdict)
 
@@ -206,13 +240,27 @@ human's judgment beat a replicable method" — **THE fund's edge claim** (CLAUDE
   obvious large-caps (the *"sub-$10B is higher theme-beta"* question, STATE.md §7 holding-universe study,
   hindsight-prone). A holding-CEILING input, **not** the selection edge.
 
-### 3e. Consequence — both co-primaries require their control set LOGGED from row one
+### 3e. Consequence — log the control sets from row one; the independent one is not yet buildable
 
-RATIFIED−PASSED requires the **AVOID leg**: every surfaced committed-or-better name is ratified-OR-passed
-and logged (§1) — no passed set → no counterfactual → the measure is empty (the exact defect leaving
-Edge-2's spread empty today, STATE.md §2). RATIFIED−NAIVE requires the **naive baskets frozen at
-ratification time** (the whole tier + the keyword/co-movement picks, as of the ratification date) so the
-comparison is honest and never re-drawn later. Design both control sets in from row one.
+RATIFIED−PASSED (3a) requires the **AVOID leg**: every surfaced committed-or-better name is
+ratified-OR-passed and logged (§1) — no passed set → no counterfactual → the measure is empty (the exact
+defect leaving Edge-2's spread empty today, STATE.md §2). The equal-weight sanity-check (3b-i) is free —
+it is just the frozen tier. The **independent** control (3b-ii) requires the **replicable-screen basket
+frozen at ratification time** (the keyword screen's picks + the co-movement cluster membership, as of the
+ratification date, from the WHOLE universe), which needs Component A running live-forward — so it is the
+deferred second-phase build. Freeze the AVOID leg and the equal-weight tier now; the 3b-ii basket lands
+with the second-phase build.
+
+### 3f. THE HONEST CONSEQUENCE — no live independent edge-test; the verdict is multi-driver / multi-year gated
+
+State it plainly so early numbers are not over-read: **with equal-weight demoted (3b-i) and the replicable
+screen deferred (3b-ii), the forward track currently has NO available independent edge-test.**
+RATIFIED−PASSED (3a) is the only LIVE measure, and it is partly guaranteed by disclosure-reading skill
+(3a's own caveat) — a positive 3a alone does NOT establish the fund's edge. The independent edge-test
+(3b-ii) arrives only when Component A runs live-forward; and even then, a trustworthy verdict needs the §4
+power floor (≥4–5 drivers, ≥8–12 theme-quarters) on top. **So the forward edge verdict is MULTI-DRIVER
+and MULTI-YEAR gated.** Anything read before then — on one driver, on 3a alone, on a single-quarter spread
+— is DIRECTIONAL at best and must be labelled so (§4-power).
 
 ---
 
@@ -228,23 +276,26 @@ Defined precisely so it cannot drift:
 - **Horizon — months-to-quarters** (STATE.md §7: theme rotations resolve over months-to-quarters).
   Evaluate at rolling checkpoints (e.g. 1 / 3 / 6 / 12 months) per name; the edge **accumulates forward
   over calendar time** exactly like the BUY−AVOID spread — it is not read off at a single fixed date.
-- **The DISCRIMINATION measures — TWO CO-PRIMARY spreads** (both benchmark-adjusted, both accumulated as
-  rows season; **both must be positive** for the edge to be real — §3c):
-  - **RATIFIED − PASSED** (§3a, selection within the tier): `mean(adj. fwd return | RATIFIED) −
-    mean(adj. fwd return | PASSED)`. Positive = the human sorted the tier; ~0 = added nothing over the
-    grade; negative = anti-selective (sorted it backwards). *Partly guaranteed by disclosure-reading
-    skill — necessary, not sufficient (§3a).*
-  - **RATIFIED − NAIVE** (§3b, the apparatus beats a replicable method — the fund's edge-filter):
-    `mean(adj. fwd return | RATIFIED) − mean(adj. fwd return | NAIVE)` for EACH naive basket
-    (equal-weight-whole-tier; keyword/co-movement picks). Positive = the semantic apparatus + selection
-    beat the dumb method; **~0 = they did NOT — the PARTIAL-KILL (§3c)**, which the protocol must surface,
-    never bury inside a positive RATIFIED−PASSED.
+- **The DISCRIMINATION measures — ONE live spread, ONE demoted sanity-check, ONE deferred edge-test**
+  (all benchmark-adjusted, accumulated as rows season):
+  - **RATIFIED − PASSED** (§3a, **LIVE** — selection within the tier): `mean(adj. fwd return | RATIFIED)
+    − mean(adj. fwd return | PASSED)`. Positive = the human sorted the tier; ~0 = added nothing over the
+    grade; negative = anti-selective. *Partly guaranteed by disclosure-reading skill — necessary, NOT the
+    fund's distinctive edge (§3a).*
+  - **RATIFIED − EQUAL-WEIGHT-ALL** (§3b-i, **DEMOTED** sanity-check): mechanically = (n_passed/N)·
+    (RATIFIED−PASSED), so it shares 3a's sign and adds no independent information. Reported ONLY as the
+    `apparatus_fraction` selectivity scale — **not an edge-test**, and it can NOT produce the partial-kill.
+  - **RATIFIED − REPLICABLE-SCREEN** (§3b-ii, the **INDEPENDENT** edge-test — **DEFERRED**): `mean(adj.
+    fwd return | RATIFIED) − mean(adj. fwd return | keyword/co-movement screen from the WHOLE universe)`.
+    Positive = the semantic apparatus beat a replicable method; **~0 or negative = the PARTIAL-KILL
+    (§3c)**. This is the fund's edge claim — and it is UNAVAILABLE until Component A runs live-forward.
   Each counts as "large enough to be real, not noise" only against the ≥2-quarter resolved bar (STATE.md
   §4) **AND** the power floor (§4-power below).
 
 "Captured the enabler return" is therefore **not** "the name went up," and **not even** "the ratified set
-beat the passed set" alone — it is "ratified beat **both** the passed set **and** a naive baseline, after
-the market is stripped, over months-to-quarters, accumulated forward — subject to the power floor below."
+beat the passed set" alone — the fund's edge is "ratified beat a **replicable screen**" (§3b-ii), which is
+DEFERRED. Until then only the LIVE-but-partly-guaranteed 3a spread accrues, stripped of market beta, over
+months-to-quarters — subject to the power floor below and read as DIRECTIONAL only.
 
 ### 4-power. Statistical power — confront the tiny sample HONESTLY
 
@@ -268,8 +319,8 @@ signal — CLAUDE.md; STATE.md §7 "the control says no"):
   (not one blowout theme carrying the mean). Below that, report the number and its direction but label it
   explicitly **UNPOWERED**. This is a floor for taking the spread seriously, not a significance test — the
   honest posture is that real confidence needs **many themes over many quarters, likely multiple YEARS** at
-  the fund's theme-confirmation cadence. Both co-primary spreads (§4) and the early-detection gap (§5) are
-  subject to this same floor.
+  the fund's theme-confirmation cadence. The live 3a spread and (once built) the 3b-ii edge-test (§4),
+  and the early-detection gap (§5), are all subject to this same floor.
 - **Consequence for cadence.** Because the binding scarcity is theme-quarters, this track's value is
   **cumulative and slow** — another reason it is parallel/low-cadence and must NEVER pull attention from
   Edge-2's faster-seasoning overshoot verdicts (§6 GOVERNOR). It is a long accrual, not a quick read.
@@ -375,14 +426,15 @@ ledger that records them.
 The human reviews this doc for **a-priori sense** (STATE.md §7: criteria set before code, by
 face-validity). Confirm or correct each:
 
-1. **Are the TWO CO-PRIMARY edge tests right** — RATIFIED−PASSED (§3a, selection *within* the tier) AND
-   RATIFIED−NAIVE (§3b, the apparatus beats a replicable method), with **both required positive** (§3c)?
-   In particular: is the diagnosis correct that **RATIFIED−PASSED ALONE is insufficient** because PASSED
-   is quality-sorted (a positive spread is partly guaranteed by disclosure-reading skill), and that the
-   naive-baseline control is what isolates the fund's edge-filter (STATE.md §4)?
-2. **Are the NAIVE BASELINES right (§3b)** — equal-weight-the-whole-tier + a keyword/co-movement screen's
-   picks — and is the **PARTIAL-KILL** case (positive RATIFIED−PASSED but ~0 RATIFIED−NAIVE = skill
-   riding a replicable base) the right thing for the protocol to surface?
+1. **Is the CORRECTED control structure right** — RATIFIED−PASSED (§3a) is the LIVE-but-partly-guaranteed
+   selection-within-tier measure, and the equal-weight-all baseline (§3b-i) is DEMOTED to a weak
+   sanity-check because it algebraically equals (n_passed/N)·(RATIFIED−PASSED)? Is that demotion accepted,
+   and is RATIFIED−PASSED-alone correctly judged **insufficient** to establish the edge (PASSED is
+   quality-sorted, a positive spread partly guaranteed by disclosure-reading skill)?
+2. **Is the replicable screen (§3b-ii) accepted as THE primary independent edge-test, and its DEFERRAL
+   accepted** — the only baseline that can produce the PARTIAL-KILL (skill riding a replicable base),
+   requiring Component A live-forward — with the honest consequence (§3f) that **no live independent
+   edge-test exists until it is built, so the forward verdict is MULTI-DRIVER + MULTI-YEAR gated**?
 3. **Is the statistical-power posture right (§4-power)** — early results DIRECTIONAL, not significant; the
    pre-registered **UNPOWERED floor** (~≥8–12 theme-quarters spanning ≥4–5 drivers, sign consistent across
    drivers) before the spread is taken seriously? Correct and bearable, or different numbers named now?
