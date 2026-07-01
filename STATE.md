@@ -942,6 +942,15 @@ Each line: *what it does* — *verified how*.
       83d, prefer comps 4.7x); IT quiet (7.5x = 7.5x, fresh 2026-06-24 Close) — every case ties to the
       name's real market cap.* PR #49 is superseded/folded here (its `comps_ev_ebitda` value-exposure
       is kept and reused).
+    - **Refinement (operator-validated, 2026-07-01):** the stale-price caveat now fires only on
+      MATERIAL staleness — `material_stale = stale and not (comps_present and not disagree)`. When a
+      present current comps figure AGREES with the stale Financials multiple the staleness is
+      immaterial (price didn't move) and the inline as-of date already discloses it, so the bottom
+      caveat is SUPPRESSED as noise (MVST: stale 10.0x vs comps 11.1x); it still fires when comps
+      DISAGREES (VRRM) or is ABSENT (can't cross-check). Operator re-assembly of MVST/VRRM/IT on #51
+      confirmed Fix A (MVST → Microvast 11.1x, was Samsung SDI 38.4x; synthesis now fed the right
+      name's multiples) + Fix B; pytest 251 green (integrity test extended: stale+agree→suppressed,
+      stale+comps-absent→soft-fire).
 - _Whole suite green (ruff + mypy --strict clean; `pytest -m "not network"` passes)._
 
 ## 3. FALSIFIED — tested and retired (NOT deferred)

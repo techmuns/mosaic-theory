@@ -1197,11 +1197,12 @@ def test_range_position_renders_asof_date() -> None:
 
 
 def test_ev_ebitda_integrity_flag(monkeypatch: pytest.MonkeyPatch) -> None:
-    """Data-integrity flag on the name's current EV/EBITDA. (1) A STALE Financials Close — its last
-    dated column materially predates the reference date — fires a stale-price caveat naming the
-    date, the gap, and (when comps disagrees) which to prefer; the old 'different EBITDA/EV' wording
-    is gone (that premise was the MVST mis-ID, now fixed). (2) A fresh but disagreeing pair fires a
-    plain cross-sheet gap. (3) A fresh, agreeing pair fires nothing."""
+    """Data-integrity flag on the name's current EV/EBITDA. (1) A STALE Financials Close +
+    disagreeing comps → a stale-price caveat naming the date, the gap, and which to prefer; the old
+    'different EBITDA/EV' wording is gone. (2) A fresh but disagreeing pair → a plain cross-sheet
+    gap. (3) A fresh, agreeing pair → nothing. (4) A STALE Close whose staleness an agreeing present
+    comps confirms immaterial → SUPPRESSED (the MVST case; the inline as-of date still shows it).
+    (5) A stale Close with comps ABSENT → the soft stale caveat still fires (can't cross-check)."""
     ref = date(2026, 6, 22)
 
     def patch(fin: float | None, comp: float | None, asof: date | None) -> None:
@@ -1230,6 +1231,13 @@ def test_ev_ebitda_integrity_flag(monkeypatch: pytest.MonkeyPatch) -> None:
     # (3) fresh Close + the two agree → no flag (never a fabricated conflict)
     patch(11.3, 11.1, date(2026, 6, 18))
     assert dm._ev_ebitda_integrity_flag(None, ref) is None  # type: ignore[arg-type]
+    # (4) stale Close (83d) but an agreeing present comps → staleness immaterial → SUPPRESSED (MVST)
+    patch(10.0, 11.1, date(2026, 3, 31))
+    assert dm._ev_ebitda_integrity_flag(None, ref) is None  # type: ignore[arg-type]
+    # (5) stale Close with comps ABSENT → can't confirm current → the soft stale caveat still fires
+    patch(10.0, None, date(2026, 3, 31))
+    f5 = dm._ev_ebitda_integrity_flag(None, ref)  # type: ignore[arg-type]
+    assert f5 is not None and "stale-price caveat" in f5 and "prefer" not in f5
 
 
 def test_segment_ebitda_section_surfaces_profit_share() -> None:

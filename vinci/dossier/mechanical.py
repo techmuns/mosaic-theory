@@ -530,22 +530,32 @@ def _ev_ebitda_integrity_flag(bundle: CiqBundle, reference_date: date) -> str | 
     sheets priced the name on different dates. Flag the specific cause when detectable, else a plain
     cross-sheet gap; route to the human caveat tier so the operator verifies rather than trusting it
     silently. (After the subject-by-ticker fix, the old MVST 10.0x-vs-38.4x 'conflict' — a comps row
-    mis-read as Samsung SDI — no longer fires; the correct Microvast comps read agrees.)"""
+    mis-read as Samsung SDI — no longer fires; the correct Microvast comps read agrees.)
+
+    Staleness is only flagged when it MATTERS: if a present current comps figure AGREES with the
+    stale Financials multiple, the staleness is immaterial (the price didn't move) and the inline
+    as-of date on the range line already discloses it, so the bottom caveat is suppressed as noise
+    (MVST: stale 10.0x vs current comps 11.1x). It fires when comps DISAGREES (VRRM — the read
+    changes) or when comps is ABSENT (no way to confirm the stale price is still current)."""
     fin = ciq_sheets.ev_ebitda_current(bundle)
     comp = ciq_sheets.comps_ev_ebitda(bundle)
     fin_date = ciq_sheets.ev_ebitda_asof(bundle)
     stale_days = (reference_date - fin_date).days if fin_date is not None else None
     stale = stale_days is not None and stale_days > _STALE_CLOSE_DAYS
 
+    comps_present = comp.status is SourceStatus.PRESENT
     disagree = False
-    if fin.status is SourceStatus.PRESENT and comp.status is SourceStatus.PRESENT:
+    if fin.status is SourceStatus.PRESENT and comps_present:
         assert fin.value is not None and comp.value is not None
         lo, hi = sorted((fin.value, comp.value))
         disagree = lo > 0 and hi / lo >= _EV_EBITDA_CONFLICT_RATIO
-    if not stale and not disagree:
+    # a stale Close whose staleness a present, agreeing comps confirms immaterial adds nothing
+    # beyond the inline as-of date — suppress it; keep it when comps disagrees or is absent.
+    material_stale = stale and not (comps_present and not disagree)
+    if not material_stale and not disagree:
         return None
 
-    if stale:
+    if material_stale:
         assert fin_date is not None and stale_days is not None
         head = (
             f"EV/EBITDA stale-price caveat — CIQ's Financials→Multiples current TEV/LTM "
