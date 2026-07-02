@@ -37,6 +37,7 @@ _QA_MARKERS: tuple[str, ...] = (
     "VERIFICATION-CLAIM",
     "evidence_balance MISSING",
     "LLM synthesis",
+    "RULE-LEAK",  # R3 — an internal 'rule N' reference leaked into the output (dev QA lint)
 )
 
 # The validator-speak caveats carry a `{where}:` field name (which synthesis point tripped it).

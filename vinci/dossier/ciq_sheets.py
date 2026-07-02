@@ -26,6 +26,8 @@ from vinci.dossier.ciq import (
     read_text,
 )
 from vinci.dossier.schemas import (
+    FinRow,
+    FinTable,
     ImpliedRow,
     ImpliedValuation,
     PeerComps,
@@ -1876,11 +1878,15 @@ def credit_health(bundle: CiqBundle) -> Sourced[str]:
         return Sourced.unknown(note="Credit Health Panel: scale direction ambiguous — not rendered")
     scores = "/".join(_tok(_comps_cell(ch, tgt, c)) for c in (1, 2, 3, 4))
     name_rating = _issuer_rating(ch[tgt][7]) or "unrated"
-    peer_overall = [o for i in peers if (o := overall(i)) is not None]
-    med = f"{statistics.median(peer_overall):g}" if peer_overall else "–"
+
+    def dim_median(c: int) -> str:  # R1: peer median per dimension (not Overall only)
+        vals = [v for i in peers if isinstance((v := _comps_cell(ch, i, c)), (int, float))]
+        return f"{statistics.median(vals):g}" if vals else "–"
+
+    peer_med = "/".join(dim_median(c) for c in (1, 2, 3, 4))
     return Sourced.present(
         f"name Overall/Operational/Solvency/Liquidity {scores} (S&P issuer rating {name_rating}); "
-        f"peer-median Overall {med}; scale 1=strongest … 4=weakest (S&P-MI PD model)",
+        f"peer-median O/Op/S/L {peer_med}; scale 1=strongest … 4=weakest (S&P-MI PD model)",
         source_ref="CIQ Comparable Analysis→Credit Health Panel" + _comps_asof_suffix(bundle),
     )
 
@@ -1986,3 +1992,301 @@ def comps_market_cap(bundle: CiqBundle) -> Sourced[float]:
         source_ref="CIQ Comparable Analysis→Financial Data (name Market Capitalization Latest)"
         + _comps_asof_suffix(bundle),
     )
+
+
+# --- PR C: the FINANCIAL-SUMMARY appendix (C1 annual+estimates, C2 8-quarter, C3 balance-sheet).
+# Reuses the financials period/reclassified helpers; estimate columns come from Estimates→Trends
+# "Current" per FY; growth is NEVER computed across a basis change (renders "— (basis)").
+
+
+def _fin_short(cell: Any) -> str:
+    """A Financials period-header cell → a compact label: '12 months Dec-31-2022' → 'FY22';
+    '3 months Q1 Mar-31-2026' → 'Q1-26'; 'LTM …' → 'LTM'; a bare serial (Balance Sheet 'as of')
+    → 'FY25' (Dec) or 'Mar-26' (interim)."""
+    c = str(cell).replace("\n", " ").strip()
+    if "LTM" in c.upper():
+        return "LTM"
+    qm = re.search(r"\bQ(\d)\b", c)
+    ym = re.search(r"(\d{4})", c)
+    if "months" in c.lower() or qm:
+        yy = ym.group(1)[2:] if ym else "?"
+        return f"Q{qm.group(1)}-{yy}" if qm else f"FY{yy}"
+    d = excel_date(cell)
+    if d is not None:
+        return f"FY{d.year % 100:02d}" if d.month == 12 else f"{d:%b-%y}"
+    return f"FY{ym.group(1)[2:]}" if ym else (c[:8] or "?")
+
+
+def _fin_periods(hdr: list[Any]) -> list[tuple[int, str, bool, bool]]:
+    """(col, short_label, is_ltm, is_reclassified) for each non-empty period column of a header."""
+    return [
+        (j, _fin_short(hdr[j]), _is_ltm(hdr[j]), "Reclassified" in str(hdr[j]))
+        for j in range(1, len(hdr))
+        if str(hdr[j]).strip()
+    ]
+
+
+def _est_fy_current(rows: Rows | None, metric: str, fy_label: str) -> float | None:
+    """The Estimates→Trends 'Current' consensus for ``metric`` at the ``fy_label`` (e.g. 'FY 2026')
+    column — the FY-level E figure. None when the metric/period/Current row is absent."""
+    if rows is None:
+        return None
+    bi = _find_row(rows, metric)
+    header = _metric_block_header(rows, bi) if bi is not None else None
+    if bi is None or header is None:
+        return None
+    col = next((j for j, c in enumerate(header) if str(c).strip() == fy_label), None)
+    cur = next(
+        (rows[k] for k in range(bi + 1, min(bi + 9, len(rows)))
+         if str(rows[k][0]).strip() == "Current"),
+        None,
+    )
+    return clean_num(cur[col]) if cur is not None and col is not None and col < len(cur) else None
+
+
+def _fmt_m(v: float | None) -> str:  # $M figure → "444" / "-13" / "—"
+    return f"{v:,.0f}" if v is not None else "—"
+
+
+def _fmt_eps(v: float | None) -> str:  # per-share → "0.04" / "—"
+    return f"{v:.2f}" if v is not None else "—"
+
+
+_C1_ROWS: tuple[tuple[str, str, str, str], ...] = (  # (display, IS label, Estimates metric, fmt)
+    ("Revenue", "Total Revenue", "Revenue", "m"),
+    ("EBITDA", "EBITDA", "EBITDA", "m"),
+    ("EBIT", "EBIT", "EBIT", "m"),
+    ("Net income", "Net Income", "Net Income (GAAP)", "m"),
+    ("EPS (diluted)", "Diluted EPS Excl. Extra Items", "EPS Normalized", "e"),
+)
+_C1_CF: tuple[tuple[str, str], ...] = (
+    ("CFO", "Cash from Ops."), ("Capex", "Capital Expenditure"), ("FCF", "Levered Free Cash Flow"),
+)
+
+
+def financial_summary_annual(bundle: CiqBundle, *, as_of: str | None = None) -> Sourced[FinTable]:
+    """(C1 + C4) Annual actuals (last-4-FY + LTM, from Financials Income Statement + Cash Flow)
+    fused with FY2026E/FY2027E consensus (Estimates→Trends 'Current'). E cols marked; growth is
+    never computed across a Reclassified basis ('— (basis)'), and the actual→estimate boundary
+    reads 'E vs actual'. Core rows fail loud; supplementary rows render only if present."""
+    try:
+        inc = bundle.sheet("financials", "Income Statement", freq="annual")
+    except CiqUnavailableError as exc:
+        return _miss_or_unknown(bundle, "financials", exc)
+    hdr = _period_header(inc)
+    if hdr is None:
+        return Sourced.unknown(note="Income Statement (annual): no Fiscal Period header")
+    periods = _fin_periods(inc[hdr])
+    fy = [p for p in periods if not p[2]]
+    ltm = [p for p in periods if p[2]]
+    disp = fy[-4:] + ltm[:1]
+    if not disp:
+        return Sourced.unknown(note="Income Statement (annual): no period columns")
+    act_cols = [c for c, _s, _l, _r in disp]
+    bases = ["recl" if r else "act" for _c, _s, _l, r in disp] + ["est", "est"]
+    columns = [s + (" (R)" if r else "") for _c, s, _l, r in disp] + ["FY26E", "FY27E"]
+    est_fys = ("FY 2026", "FY 2027")
+    try:
+        tr: Rows | None = bundle.sheet("estimates", "Trends")
+    except CiqUnavailableError:
+        tr = None
+
+    def series(is_label: str, est_metric: str | None) -> list[float | None]:
+        ri = _find_row(inc, is_label)
+        act = [
+            clean_num(inc[ri][c]) if ri is not None and c < len(inc[ri]) else None for c in act_cols
+        ]
+        est = (
+            [_est_fy_current(tr, est_metric, fy) for fy in est_fys] if est_metric else [None, None]
+        )
+        return act + est
+
+    def growth(s: list[float | None]) -> list[str]:
+        out = ["—"]
+        for i in range(1, len(s)):
+            v, prev = s[i], s[i - 1]
+            if v is None or prev is None or not prev:
+                out.append("—")
+            elif bases[i] == "est" and bases[i - 1] != "est":
+                out.append(f"E vs actual {(v / prev - 1) * 100:+.0f}%")
+            elif bases[i] != bases[i - 1]:
+                out.append("— (basis)")
+            else:
+                out.append(f"{(v / prev - 1) * 100:+.0f}%")
+        return out
+
+    def margin(num: list[float | None], den: list[float | None]) -> list[str]:
+        return [
+            f"{n / d * 100:.0f}%" if n is not None and d is not None and d else "—"
+            for n, d in zip(num, den, strict=False)
+        ]
+
+    rev = series("Total Revenue", "Revenue")
+    if not any(v is not None for v in rev):
+        return Sourced.unknown(note="Income Statement (annual): no Total Revenue — core row absent")
+    ebitda = series("EBITDA", "EBITDA")
+    rows: list[FinRow] = [
+        FinRow(label="Revenue ($M)", cells=[_fmt_m(v) for v in rev]),
+        FinRow(label="Revenue growth", cells=growth(rev)),
+        FinRow(label="EBITDA ($M)", cells=[_fmt_m(v) for v in ebitda]),
+        FinRow(label="EBITDA margin", cells=margin(ebitda, rev)),
+    ]
+    for disp_lbl, is_lbl, est_metric, fmt in _C1_ROWS[2:]:
+        s = series(is_lbl, est_metric)
+        fn = _fmt_eps if fmt == "e" else _fmt_m
+        unit = "" if fmt == "e" else " ($M)"
+        rows.append(FinRow(label=disp_lbl + unit, cells=[fn(v) for v in s]))
+    # C4 cash-flow essentials (actuals only; no consensus E), matched by period label
+    try:
+        cf = bundle.sheet("financials", "Cash Flow", freq="annual")
+        cf_hdr = _period_header(cf)
+        cf_cols: dict[str, int] = (
+            {_fin_short(cf[cf_hdr][j]): j for j in range(1, len(cf[cf_hdr]))}
+            if cf_hdr is not None else {}
+        )
+
+        def cf_cell(ri: int | None, short: str) -> str:
+            j = cf_cols.get(short)
+            if ri is None or j is None or j >= len(cf[ri]):
+                return "—"
+            return _fmt_m(clean_num(cf[ri][j]))
+
+        for disp_lbl, cf_lbl in _C1_CF:
+            cf_ri = _find_row(cf, cf_lbl)
+            cells = [cf_cell(cf_ri, s) for _c, s, _l, _r in disp] + ["—", "—"]
+            if any(c != "—" for c in cells):
+                rows.append(FinRow(label=disp_lbl + " ($M)", cells=cells))
+    except CiqUnavailableError:
+        pass
+    est = as_of or "?"
+    note = f"E = consensus (Estimates→Trends 'Current'), as-of {est}; (R) = Reclassified basis"
+    return Sourced.present(
+        FinTable(columns=columns, rows=rows, note=note),
+        source_ref="CIQ Financials→Income Statement + Cash Flow (annual) + Estimates→Trends (FY E)",
+    )
+
+
+def _qmargin(num: list[float | None], den: list[float | None]) -> list[str]:
+    return [
+        f"{n / d * 100:.0f}%" if n is not None and d is not None and d else "—"
+        for n, d in zip(num, den, strict=False)
+    ]
+
+
+def financial_summary_quarterly(bundle: CiqBundle) -> Sourced[FinTable]:
+    """(C2) Trailing-8-quarter Income Statement — Revenue, gross margin %, EBITDA (if the quarterly
+    export carries it, else the row is omitted and noted), EBITDA margin %, QoQ %, YoY % (same-basis
+    ONLY — a Reclassified boundary reads '— (basis)'). Makes the Q1-2026 collapse visible."""
+    try:
+        rows = bundle.sheet("financials", "Income Statement", freq="quarterly")
+    except CiqUnavailableError as exc:
+        return _miss_or_unknown(bundle, "financials", exc)
+    hdr = _period_header(rows)
+    if hdr is None:
+        return Sourced.unknown(note="Income Statement (quarterly): no Fiscal Period header")
+    periods = _fin_periods(rows[hdr])[-8:]
+    if len(periods) < 2:
+        return Sourced.unknown(note="Income Statement (quarterly): fewer than 2 quarters")
+    cols = [c for c, _s, _l, _r in periods]
+    recl = [r for _c, _s, _l, r in periods]
+    columns = [s + (" (R)" if r else "") for _c, s, _l, r in periods]
+
+    def qrow(label: str) -> list[float | None]:
+        ri = _find_row(rows, label)
+        return [
+            clean_num(rows[ri][c]) if ri is not None and c < len(rows[ri]) else None for c in cols
+        ]
+
+    rev = qrow("Total Revenue")
+    if not any(v is not None for v in rev):
+        return Sourced.unknown(note="Income Statement (quarterly): no Total Revenue")
+    eb = qrow("EBITDA")
+    frows: list[FinRow] = [
+        FinRow(label="Revenue ($M)", cells=[_fmt_m(v) for v in rev]),
+        FinRow(label="Gross margin", cells=_qmargin(qrow("Gross Profit"), rev)),
+    ]
+    ebitda_note = ""
+    if any(v is not None for v in eb):
+        frows.append(FinRow(label="EBITDA ($M)", cells=[_fmt_m(v) for v in eb]))
+        frows.append(FinRow(label="EBITDA margin", cells=_qmargin(eb, rev)))
+    else:
+        ebitda_note = "EBITDA rows omitted — no quarterly EBITDA in this export. "
+    qoq = ["—"]
+    for i in range(1, len(rev)):
+        v, prev = rev[i], rev[i - 1]
+        if v is None or prev is None or not prev:
+            qoq.append("—")
+        elif recl[i] != recl[i - 1]:
+            qoq.append("— (basis)")
+        else:
+            qoq.append(f"{(v / prev - 1) * 100:+.0f}%")
+    yoy: list[str] = []
+    for i in range(len(rev)):
+        cur = rev[i]
+        prior = rev[i - 4] if i >= 4 else None
+        if cur is None or prior is None or not prior:
+            yoy.append("—")
+        elif recl[i] != recl[i - 4]:
+            yoy.append("— (basis)")
+        else:
+            yoy.append(f"{(cur / prior - 1) * 100:+.0f}%")
+    frows += [FinRow(label="Revenue QoQ", cells=qoq), FinRow(label="Revenue YoY", cells=yoy)]
+    return Sourced.present(
+        FinTable(columns=columns, rows=frows,
+                 note=ebitda_note + "QoQ/YoY same-basis only; (R) = Reclassified"),
+        source_ref="CIQ Financials→Income Statement (quarterly, trailing 8Q)",
+    )
+
+
+def _bs_posture_build(bs: Rows, freq: str) -> Sourced[str] | None:
+    """(C3) Build the posture string from ONE Balance Sheet grid, or None if cash is absent (so the
+    caller can fall through to the other freq). Split out so ``balance_sheet_posture`` can address
+    both freqs with string literals the CIQ-manifest drift guard can see."""
+    hdr = _bs_period_header(bs)
+
+    def latest(
+        label: str, bs: Rows = bs, hdr: int | None = hdr,
+    ) -> tuple[int, float, str] | None:
+        ri = _find_row(bs, label)
+        return _latest_col(bs, ri, hdr) if ri is not None else None
+
+    cash = latest("Total Cash & ST Investments")
+    if cash is None:
+        return None
+    pj = cash[0]
+    per = _fin_short(bs[hdr][pj]) if hdr is not None and pj < len(bs[hdr]) else "latest"
+    parts = [f"cash & ST inv {_fmt_m(cash[1])}"]
+    for lbl, key in (("total debt", "Total Debt"), ("net debt", "Net Debt")):
+        if (v := latest(key)) is not None:
+            parts.append(f"{lbl} {_fmt_m(v[1])}")
+    if (eq := latest("Total Common Equity") or latest("Total Equity")) is not None:
+        parts.append(f"equity {_fmt_m(eq[1])}")
+    tca, tcl = latest("Total Current Assets"), latest("Total Current Liabilities")
+    if tca is not None and tcl is not None:
+        parts.append(f"net working capital {_fmt_m(tca[1] - tcl[1])}")
+    parts.append("net-debt/EBITDA → see the Leverage & survival block (not recomputed)")
+    return Sourced.present(
+        f"as of {per} ($M): " + "; ".join(parts),
+        source_ref=f"CIQ Financials→Balance Sheet ({freq}, latest period)",
+    )
+
+
+def balance_sheet_posture(bundle: CiqBundle) -> Sourced[str]:
+    """(C3) Balance-sheet posture at the latest period (period-labelled): cash, total debt, net
+    debt, equity, net working capital (TCA − TCL). Net-debt/EBITDA is NOT recomputed — it cross-refs
+    the unified leverage block. Prefers the freshest (quarterly) Balance Sheet."""
+    unavailable: Exception | None = None
+    try:  # literal freqs (not a loop var) so the CIQ-manifest drift guard can see the address
+        if (got := _bs_posture_build(
+            bundle.sheet("financials", "Balance Sheet", freq="quarterly"), "quarterly")):
+            return got
+    except CiqUnavailableError as exc:
+        unavailable = exc
+    try:
+        if (got := _bs_posture_build(
+            bundle.sheet("financials", "Balance Sheet", freq="annual"), "annual")):
+            return got
+    except CiqUnavailableError as exc:
+        unavailable = exc
+    return _miss_or_unknown(
+        bundle, "financials", unavailable or CiqUnavailableError("Balance Sheet"))

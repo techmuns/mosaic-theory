@@ -370,6 +370,38 @@ def _implied_lines(iv: Any) -> list[str]:
     return out
 
 
+def _fin_table_lines(label: str, s: Sourced[Any]) -> list[str]:
+    """A Sourced[FinTable] → the shared markdown table (columns → header, each row's [label, *cells]
+    → a data row). UNKNOWN/MISSING falls back to the standard fact line."""
+    if s.status is not SourceStatus.PRESENT or not s.value:
+        return [_fact(label, s)]
+    ft = s.value
+    rows = [[r.label, *r.cells] for r in ft.rows]
+    return _table(label, s.source_ref, ft.columns, rows, ft.note)
+
+
+def _appendix_lines(m: MechanicalLayer) -> list[str]:
+    """The FINANCIAL-SUMMARY appendix (C1–C4) — rendered AFTER the twins, before the verdict footer.
+    C1/C2 are tables through the shared renderer (E columns marked + stamped); C3 is the posture
+    block + the BS↔bridge coherence gate. Absent for a pre-C dossier (back-compat → omitted)."""
+    fs = m.financial_summary
+    if fs is None:
+        return []
+    hdr = ("## APPENDIX — FINANCIAL SUMMARY (actuals + consensus estimates) "
+           f"— {_asof_header(fs.as_of)}")
+    out = ["", hdr, "### Annual (last-4-FY + LTM + FY26E/FY27E consensus)"]
+    out += _fin_table_lines("Annual financials ($M; E = consensus)", fs.annual)
+    out.append("### Trailing 8 quarters (the recent-quarter trajectory)")
+    out += _fin_table_lines("Quarterly financials", fs.quarterly)
+    out += [
+        "### Balance-sheet posture",
+        _fact("Posture", fs.balance_sheet),
+        _fact("Coherence — BS vs implied-valuation bridge", fs.coherence),
+        "",
+    ]
+    return out
+
+
 def _flags_section(d: Dossier) -> list[str]:
     """The human-facing CAVEATS render LOW (next to key_unknowns), not at the top — a closing 'what
     to verify' checklist, not the headline. Only decision caveats show here (re-voiced, plus the
@@ -468,6 +500,7 @@ def render_markdown(d: Dossier) -> str:
 
     if d.synthesis is None:
         out += ["## Synthesis", "_Not produced (see flags)._", "", *_flags_section(d)]
+        out += _appendix_lines(m)
         return "\n".join(out)
 
     s = d.synthesis
@@ -494,4 +527,5 @@ def render_markdown(d: Dossier) -> str:
     points("…evidence against", s.decisive_question.evidence_against)
     out += ["### Key unknowns", *[f"- {u}" for u in s.key_unknowns], ""]
     out += _flags_section(d)
+    out += _appendix_lines(m)  # C — the Financial-Summary appendix, after the twins
     return "\n".join(out)

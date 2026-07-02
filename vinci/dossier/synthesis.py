@@ -380,7 +380,9 @@ _SYSTEM = (
     "or assert an implied "
     "upside / 'X% mispriced' — there is no field for it. When comparability flags a HETEROGENEOUS "
     "peer set, treat every peer stat as a CONFIDENCE-GATED input, not a clean benchmark; and read "
-    "the trailing-vs-forward (LTM vs NTM) peer spread before leaning on any single multiple."
+    "the trailing-vs-forward (LTM vs NTM) peer spread before leaning on any single multiple. "
+    "(11) NEVER reference an internal rule, instruction, or their numbers ('rule 8', 'per rule 3') "
+    "in any output field — the reader sees only source-bound analysis, never the machinery."
 )
 
 
@@ -480,7 +482,19 @@ def _traces(ref: str, universe: set[str]) -> bool:
     return any(ref == u or ref in u or u in ref for u in universe)
 
 
-def _validate(synth: Synthesis, mech: MechanicalLayer) -> tuple[Synthesis, list[str]]:
+def _self_referential_twin(tw: TwinCase, ticker: str, name: str) -> bool:
+    """R2: True iff a twin names the SUBJECT itself WITHOUT an explicit resolved past period. A
+    valid twin is ANOTHER company, or the subject with a dated historical arc ('2022-2024')."""
+    words = [w for w in re.split(r"[ ,.]+", name.upper()) if len(w) > 3]
+    subj = {ticker.strip().upper(), *(words[:1])} - {""}
+    if not any(s in tw.name.upper() for s in subj):
+        return False
+    return not re.search(r"\b(19|20)\d\d\b", f"{tw.name} {tw.distinguishing_fact} {tw.outcome}")
+
+
+def _validate(
+    synth: Synthesis, mech: MechanicalLayer, ticker: str = "", name: str = ""
+) -> tuple[Synthesis, list[str]]:
     """Apply the guardrails: cite-check, number-trace, twin checks, directional lint → flags."""
     flags: list[str] = []
     refs = _refs_in(mech)
@@ -672,8 +686,29 @@ def _validate(synth: Synthesis, mech: MechanicalLayer) -> tuple[Synthesis, list[
                 "peer stat"
             )
 
+    # R2 twin-integrity guard: a twin naming the SUBJECT is invalid unless it cites an explicit
+    # resolved PAST period (a '2022-2024 arc'); drop the self-referential hallucinations (QA-only).
+    kept_twins = []
+    dropped = 0
+    for tw in synth.twin_reference_cases:
+        if _self_referential_twin(tw, ticker, name):
+            dropped += 1
+            flags.append(
+                f"TWIN self-referential '{tw.name}' suppressed — a twin must be ANOTHER "
+                "company, or the subject with an explicit resolved past period ('2022-2024 arc')"
+            )
+        else:
+            kept_twins.append(tw)
+    if dropped:
+        flags.append(f"TWIN {dropped} self-referential twin(s) suppressed")
+    # R3 internal-rule leak: any 'rule N' reference in the output is a leaked internal rule → QA.
+    for hit in sorted({m.group(0) for m in re.finditer(r"rule\s+\d+", blob, re.IGNORECASE)}):
+        flags.append(f"RULE-LEAK '{hit}' — internal rule reference leaked into synthesis output")
     validated = synth.model_copy(
-        update={"bull_points": bull, "bear_points": bear, "decisive_question": dq}
+        update={
+            "bull_points": bull, "bear_points": bear, "decisive_question": dq,
+            "twin_reference_cases": kept_twins,
+        }
     )
     return validated, flags
 
@@ -775,5 +810,5 @@ def synthesize(
         log_parts += ["", "=== INCOMPLETE ===", note]
         flag = f"LLM synthesis UNAVAILABLE — {note} (likely truncated)"
         return None, [flag], "\n".join(log_parts)
-    synth, flags = _validate(_parse(_decode_escapes(raw)), mech)
+    synth, flags = _validate(_parse(_decode_escapes(raw)), mech, ticker=ticker, name=name)
     return synth, flags, "\n".join(log_parts)
