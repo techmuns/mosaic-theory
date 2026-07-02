@@ -2948,9 +2948,10 @@ def test_financial_summary_annual_fuses_actuals_and_stamped_estimates() -> None:
     row = {r.label: r.cells for r in ft.rows}
     assert row["Revenue ($M)"] == ["300", "350", "400", "430", "440", "444", "520"]  # actuals + E
     assert row["EBITDA ($M)"][-2:] == ["62", "90"]  # FY26E/FY27E EBITDA from Trends 'Current'
-    # growth never spans the Reclassified basis, and the actual→estimate boundary is labelled
-    assert row["Revenue growth"][1] == "— (basis)"          # FY22(R) → FY23: no cross-basis growth
-    assert row["Revenue growth"][5].startswith("E vs actual")  # LTM → FY26E boundary
+    # growth never spans a basis change; the estimate boundary names its TRUE base (not "actual")
+    assert row["Revenue growth"][1] == "— (basis)"   # FY22(R) → FY23: no cross-basis growth
+    assert row["Revenue growth"][4] == "— (basis)"   # FY25 → LTM: FY↔ttm is not a like period
+    assert row["Revenue growth"][5].startswith("E vs LTM")  # FY26E's base IS the LTM, labelled so
     assert row["CFO ($M)"][:5] == ["30", "35", "40", "45", "46"]  # C4 cash-flow essentials
     assert "as-of 2026-05-15" in ft.note                    # estimate columns carry the as-of stamp
     # cross-block coherence: FY26E EBITDA IS the Trends 'Current' FY 2026 cell (62.1 → "62")
@@ -3099,3 +3100,106 @@ def test_internal_rule_leak_flagged_as_hidden_qa() -> None:
     assert "rule 8" in leak
     caveats, qa = dflags.partition(flags)
     assert leak in qa and leak not in caveats  # dev-only QA, not a human caveat
+
+
+# --- PR C audit fixes (post-review regressions): fail-loud coherence, same-quarter YoY, CF join,
+# --- posture as-of anchoring, FY↔LTM basis, R2 false-drop -----------------------------------------
+
+
+def test_bs_bridge_coherence_missing_debt_fails_loud_not_zero() -> None:
+    """(C3 fix) A bridge that OMITS the debt row must not read as a disagreement and must never
+    fabricate a '$0M' — the present cash leg reconciles, the absent debt leg is 'not cross-checked'.
+    (The pre-fix code rendered a false DISAGREE with a made-up debt $0M.)"""
+    bs: list[list[typing.Any]] = [
+        ["Balance Sheet as of:", "Mar-31-2026"],
+        ["Total Cash & ST Investments", 126.1], ["Total Debt", 326.0],
+    ]
+    b = _fin_bundle({"Balance Sheet": bs}, freq="quarterly")
+    iv = ds.ImpliedValuation(
+        implied_equity=ds.Sourced.unknown(note="n/a"),
+        bridge=ds.Sourced.present("TEV → equity: + cash $126.1M", source_ref="x"),  # NO debt row
+        market_cap=ds.Sourced.unknown(note="n/a"),
+        comparability_gate=ds.Sourced.unknown(note="n/a"),
+    )
+    v = dm._bs_bridge_coherence(b, iv).value or ""
+    assert "DISAGREE" not in v            # a missing bridge row is not a disagreement
+    assert "$0" not in v                  # never fabricate a zero for an ABSENT figure
+    assert "reconcile" in v and "not cross-checked" in v  # cash reconciles; debt honestly flagged
+
+
+def test_quarterly_yoy_requires_same_quarter_not_just_four_back() -> None:
+    """(C2 fix) YoY is same-quarter ONLY. A duplicated/restated quarter makes 'four back' land on
+    the WRONG quarter; the guard renders '—' rather than a cross-quarter number mislabelled 'YoY'.
+    (The pre-fix code computed Q1-26÷Q2-25 and called it YoY.)"""
+    q: list[list[typing.Any]] = [
+        ["For the Fiscal Period",
+         "3 months Q1 Mar-31-2025", "3 months Q2 Jun-30-2025", "3 months Q2 Jun-30-2025",
+         "3 months Q3 Sep-30-2025", "3 months Q4 Dec-31-2025", "3 months Q1 Mar-31-2026"],
+        ["Total Revenue", 90.0, 94.0, 94.0, 95.0, 96.0, 61.0],
+        ["Gross Profit", 30.0, 31.0, 31.0, 32.0, 33.0, 20.0],
+    ]
+    s = cs.financial_summary_quarterly(_fin_bundle({"Income Statement": q}, freq="quarterly"))
+    ft = s.value
+    assert ft is not None
+    qr = {r.label: r.cells for r in ft.rows}
+    assert ft.columns.count("Q2-25") == 2      # the duplicate is visible in the header
+    assert qr["Revenue YoY"][5] == "—"         # Q1-26 vs a Q2 four-back is NOT a YoY → suppressed
+
+
+def test_financial_summary_annual_cf_duplicate_column_drops_to_dash() -> None:
+    """(C4 fix) A DUPLICATE Cash-Flow fiscal-period column (a restated + an as-reported copy of one
+    year) is ambiguous → its CF cell drops to '—' (fail loud), never silently keeps whichever landed
+    last. The unambiguous years still match by (short, is_ltm) despite an IS/CF reclass gap."""
+    inc: list[list[typing.Any]] = [
+        ["For the Fiscal Period", "Reclassified 12 months Dec-31-2023", "12 months Dec-31-2024",
+         "12 months Dec-31-2025"],
+        ["Total Revenue", 350.0, 400.0, 430.0],
+    ]
+    cf: list[list[typing.Any]] = [  # FY23 as-reported (IS had it Reclassified) + FY24 TWICE
+        ["For the Fiscal Period", "12 months Dec-31-2023", "12 months Dec-31-2024",
+         "Reclassified 12 months Dec-31-2024", "12 months Dec-31-2025"],
+        ["Cash from Ops.", 35.0, 999.0, 40.0, 45.0],
+    ]
+    b = _fin_est_bundle({"Income Statement": inc, "Cash Flow": cf}, {"Trends": _c1_trends()})
+    ft = cs.financial_summary_annual(b, as_of="2026-05-15").value
+    assert ft is not None
+    cfo = {r.label: r.cells for r in ft.rows}["CFO ($M)"]
+    assert cfo[0] == "35"   # FY23: IS-reclassified vs CF-as-reported still matches by period id
+    assert cfo[1] == "—"    # FY24: duplicate CF column → ambiguous → fail loud, NOT 999 or 40
+    assert cfo[2] == "45"   # FY25: unambiguous
+
+
+def test_bs_posture_anchors_all_lines_to_the_cash_period() -> None:
+    """(C3 fix) Every posture line is read AT the cash column's period (one as-of). A partial latest
+    quarter (debt/TCL blank in the newest column) must NOT back-fill a stale prior-period value —
+    the line is omitted, and net working capital is never stitched across two dates."""
+    bs: list[list[typing.Any]] = [
+        ["Balance Sheet as of:", "Dec-31-2025", "Mar-31-2026"],
+        ["Total Cash & ST Investments", 120.0, 126.1],   # cash present in the latest (Mar-26)
+        ["Total Debt", 320.0, ""],                    # debt BLANK latest → omit, not stale Dec-25
+        ["Total Current Assets", 300.0, 310.0],
+        ["Total Current Liabilities", 150.0, ""],         # TCL blank latest → NWC omitted
+    ]
+    v = cs.balance_sheet_posture(_fin_bundle({"Balance Sheet": bs}, freq="quarterly")).value or ""
+    assert "as of Mar-26" in v and "cash & ST inv 126" in v  # anchored to the cash period
+    assert "total debt" not in v                             # stale Dec-25 debt NOT back-filled
+    assert "net working capital" not in v                    # never stitched across two dates
+
+
+def test_twin_guard_keeps_legitimate_peer_twins() -> None:
+    """(R2 fix) The self-referential guard must not DROP a legitimate other-company twin via a
+    substring ticker match ('BA' in 'Alibaba', 'KO' in 'Kohl's') or a shared generic/industry lead
+    ('General', 'First'/'Solar'). Whole-token matching + the denylist keep all four peers."""
+    cases = [
+        ("GE", "General Electric Company", "General Dynamics"),   # shared generic lead 'General'
+        ("BA", "The Boeing Company", "Alibaba Group"),            # 'BA' is a substring of 'aliBAba'
+        ("KO", "The Coca-Cola Company", "Kohl's Corporation"),    # 'KO' is a substring of 'KOhl's'
+        ("FSLR", "First Solar, Inc.", "Canadian Solar Inc."),     # shared industry word 'Solar'
+    ]
+    for ticker, name, peer in cases:
+        tw = ds.TwinCase(name=peer, outcome="went terminal", distinguishing_fact="x", source="fab")
+        assert syn._self_referential_twin(tw, ticker, name) is False, f"{peer} wrongly dropped"
+    # the true self-reference (subject named, no dated arc) is STILL caught
+    selfref = ds.TwinCase(name="Boeing, again", outcome="the same overshoot",
+                          distinguishing_fact="x", source="fab")
+    assert syn._self_referential_twin(selfref, "BA", "The Boeing Company") is True

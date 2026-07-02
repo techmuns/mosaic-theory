@@ -889,25 +889,33 @@ def _bs_bridge_coherence(bundle: CiqBundle, implied: ImpliedValuation) -> Source
     md = re.search(r"debt \$([\d,.]+)", br or "")
     bc = float(mc.group(1).replace(",", "")) if mc else None
     bd = float(md.group(1).replace(",", "")) if md else None
-    if bs_cash.value is None or bc is None:
-        return Sourced.unknown(note="coherence: BS or bridge cash absent — not cross-checked")
+    src = "CIQ Financials→Balance Sheet vs Comparable Analysis→Implied Valuation"
 
     def close(a: float | None, b: float | None) -> bool:
         return a is not None and b is not None and abs(a - b) <= max(1.0, abs(b) * 0.05)
 
-    src = "CIQ Financials→Balance Sheet vs Comparable Analysis→Implied Valuation"
-    ok = close(bs_cash.value, bc) and close(bs_debt.value, bd)
-    if ok and bs_debt.value is not None:
+    def money(v: float | None) -> str:  # an ABSENT figure is UNKNOWN — never a fabricated $0
+        return f"${v:,.0f}M" if v is not None else "UNKNOWN"
+
+    # Each leg (cash / debt) is cross-checkable ONLY when both its figures are present. An absent
+    # figure is UNKNOWN — it is never coerced to $0 and never read as a disagreement (fail loud):
+    # real CIQ bridges omit a row routinely; "$0" would fabricate a number the source never gave.
+    legs = (("cash", bs_cash.value, bc), ("debt", bs_debt.value, bd))
+    checkable = [(n, a, b) for n, a, b in legs if a is not None and b is not None]
+    if not checkable:
+        return Sourced.unknown(note="coherence: BS & bridge cash/debt absent — not cross-checked")
+    absent = [n for n, a, b in legs if a is None or b is None]
+    tail = f" ({'/'.join(absent)} not cross-checked — absent, not zero)" if absent else ""
+    if any(not close(a, b) for _n, a, b in checkable):
+        pairs = "; ".join(f"{n} BS {money(a)} vs bridge {money(b)}" for n, a, b in legs)
         return Sourced.present(
-            f"BS cash ${bs_cash.value:,.0f}M / debt ${bs_debt.value:,.0f}M reconcile with the "
-            f"implied-valuation bridge (cash ${bc:,.0f}M / debt ${bd or 0:,.0f}M).",
+            f"CAVEAT — the two CIQ sources DISAGREE: {pairs}; verify which the verdict should "
+            "use — neither is silently preferred.",
             source_ref=src,
         )
-    bd_bs = f"${bs_debt.value:,.0f}M" if bs_debt.value is not None else "UNKNOWN"
+    pairs = "; ".join(f"{n} BS {money(a)} / bridge {money(b)}" for n, a, b in checkable)
     return Sourced.present(
-        f"CAVEAT — the two CIQ sources DISAGREE: Balance Sheet cash ${bs_cash.value:,.0f}M / debt "
-        f"{bd_bs} vs implied bridge cash ${bc:,.0f}M / debt ${bd or 0:,.0f}M; verify which the "
-        "verdict should use — neither is silently preferred.",
+        f"{pairs} — reconcile with the implied-valuation bridge{tail}.",
         source_ref=src,
     )
 

@@ -482,12 +482,42 @@ def _traces(ref: str, universe: set[str]) -> bool:
     return any(ref == u or ref in u or u in ref for u in universe)
 
 
+# Corporate scaffolding + industry nouns SHARED across peers — never a unique identifier for the
+# subject, so they must not drive the self-referential match (else 'General'/'First' or an industry
+# word like 'Solar'/'Networks'/'Electric' would drop a legitimate peer twin). The guard errs toward
+# KEEPING: a leaked self-ref renders as a visible, rejectable analogue; a wrongly-dropped peer is a
+# silent loss the analyst never sees.
+_GENERIC_CO_WORDS: frozenset[str] = frozenset({
+    "THE", "INC", "CORP", "CORPORATION", "COMPANY", "GROUP", "HOLDINGS", "HOLDING", "LTD",
+    "LIMITED", "PLC", "CLASS", "COMMON", "GENERAL", "FIRST", "UNITED", "AMERICAN", "NATIONAL",
+    "GLOBAL",
+    "INTERNATIONAL", "BANK", "BANCORP", "FINANCIAL", "FINANCE", "CAPITAL", "TRUST", "INSURANCE",
+    "ENERGY", "SOLAR", "POWER", "MOTORS", "MOTOR", "AUTO", "AIRLINES", "AIRWAYS", "PHARMACEUTICALS",
+    "PHARMA", "THERAPEUTICS", "BIOSCIENCES", "TECHNOLOGIES", "TECHNOLOGY", "TECH", "SYSTEMS",
+    "SYSTEM", "NETWORKS", "NETWORK", "SOFTWARE", "SEMICONDUCTOR", "INDUSTRIES", "INDUSTRIAL",
+    "ENTERPRISES", "PARTNERS", "PROPERTIES", "REALTY", "RESOURCES", "MATERIALS", "MINING", "FOODS",
+    "BRANDS", "STORES", "RETAIL", "HEALTH", "HEALTHCARE", "MEDICAL", "COMMUNICATIONS", "MEDIA",
+    "ENTERTAINMENT", "GAMING", "SOLUTIONS", "SERVICES", "PRODUCTS", "MANUFACTURING", "ELECTRIC",
+    "ELECTRONICS", "ELECTRONIC", "DIGITAL", "DATA",
+})
+
+
 def _self_referential_twin(tw: TwinCase, ticker: str, name: str) -> bool:
     """R2: True iff a twin names the SUBJECT itself WITHOUT an explicit resolved past period. A
-    valid twin is ANOTHER company, or the subject with a dated historical arc ('2022-2024')."""
-    words = [w for w in re.split(r"[ ,.]+", name.upper()) if len(w) > 3]
-    subj = {ticker.strip().upper(), *(words[:1])} - {""}
-    if not any(s in tw.name.upper() for s in subj):
+    valid twin is ANOTHER company, or the subject with a dated arc ('2022-2024'). The subject is
+    matched by WHOLE-TOKEN equality on its ticker or a DISTINCTIVE name word (generic/industry
+    words and short tokens excluded) — NEVER a substring, so a short ticker inside another company
+    ('BA' in 'Alibaba', 'KO' in 'Kohl's') or a shared generic lead ('General', 'First') cannot
+    false-drop a legitimate peer twin. Errs toward keeping (a leaked self-ref stays visible)."""
+    tw_tokens = set(re.findall(r"[A-Z0-9]+", tw.name.upper()))
+    subj = {
+        w for w in re.findall(r"[A-Z0-9]+", name.upper())
+        if len(w) >= 4 and w not in _GENERIC_CO_WORDS
+    }
+    tkr = ticker.strip().upper()
+    if len(tkr) >= 3:  # a whole-token ticker match; short tickers (≤2) collide with common words
+        subj.add(tkr)
+    if not (subj & tw_tokens):
         return False
     return not re.search(r"\b(19|20)\d\d\b", f"{tw.name} {tw.distinguishing_fact} {tw.outcome}")
 

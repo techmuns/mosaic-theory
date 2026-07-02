@@ -2083,7 +2083,9 @@ def financial_summary_annual(bundle: CiqBundle, *, as_of: str | None = None) -> 
     if not disp:
         return Sourced.unknown(note="Income Statement (annual): no period columns")
     act_cols = [c for c, _s, _l, _r in disp]
-    bases = ["recl" if r else "act" for _c, _s, _l, r in disp] + ["est", "est"]
+    # LTM is its own basis (a ttm, not a fiscal year), so growth never spans the FY↔LTM boundary
+    # (overlapping, non-successor) — it reads "— (basis)"; the estimate boundary names its base.
+    bases = [("ltm" if lt else ("recl" if r else "act")) for _c, _s, lt, r in disp] + ["est", "est"]
     columns = [s + (" (R)" if r else "") for _c, s, _l, r in disp] + ["FY26E", "FY27E"]
     est_fys = ("FY 2026", "FY 2027")
     try:
@@ -2108,7 +2110,8 @@ def financial_summary_annual(bundle: CiqBundle, *, as_of: str | None = None) -> 
             if v is None or prev is None or not prev:
                 out.append("—")
             elif bases[i] == "est" and bases[i - 1] != "est":
-                out.append(f"E vs actual {(v / prev - 1) * 100:+.0f}%")
+                base_lbl = "LTM" if bases[i - 1] == "ltm" else "FY"  # the true base, not 'actual'
+                out.append(f"E vs {base_lbl} {(v / prev - 1) * 100:+.0f}%")
             elif bases[i] != bases[i - 1]:
                 out.append("— (basis)")
             else:
@@ -2136,24 +2139,34 @@ def financial_summary_annual(bundle: CiqBundle, *, as_of: str | None = None) -> 
         fn = _fmt_eps if fmt == "e" else _fmt_m
         unit = "" if fmt == "e" else " ($M)"
         rows.append(FinRow(label=disp_lbl + unit, cells=[fn(v) for v in s]))
-    # C4 cash-flow essentials (actuals only; no consensus E), matched by period label
+    # C4 cash-flow essentials (actuals only; no consensus E), matched to the displayed column by
+    # FISCAL-PERIOD identity (short, is_ltm) with collision detection — NOT the bare short, and NOT
+    # the Reclassified flag: CIQ tags a P&L reclassification on the Income Statement but not the
+    # Cash Flow for the SAME fiscal year, so a basis match would drop valid CF values (real
+    # case: MVST FY22/FY23). A genuine duplicate column (same (short, is_ltm) twice — a restated AND
+    # an as-reported copy) is ambiguous, so it drops to "—" (fail loud) rather than silently keeping
+    # whichever landed last in the lookup dict.
     try:
         cf = bundle.sheet("financials", "Cash Flow", freq="annual")
         cf_hdr = _period_header(cf)
-        cf_cols: dict[str, int] = (
-            {_fin_short(cf[cf_hdr][j]): j for j in range(1, len(cf[cf_hdr]))}
-            if cf_hdr is not None else {}
-        )
+        cf_map: dict[tuple[str, bool], int] = {}
+        cf_dupe: set[tuple[str, bool]] = set()
+        if cf_hdr is not None:
+            for cc, sh, lt, _cr in _fin_periods(cf[cf_hdr]):
+                key = (sh, lt)
+                if key in cf_map:
+                    cf_dupe.add(key)
+                cf_map[key] = cc
 
-        def cf_cell(ri: int | None, short: str) -> str:
-            j = cf_cols.get(short)
-            if ri is None or j is None or j >= len(cf[ri]):
+        def cf_cell(ri: int | None, key: tuple[str, bool]) -> str:
+            j = cf_map.get(key)
+            if ri is None or j is None or key in cf_dupe or j >= len(cf[ri]):
                 return "—"
             return _fmt_m(clean_num(cf[ri][j]))
 
         for disp_lbl, cf_lbl in _C1_CF:
             cf_ri = _find_row(cf, cf_lbl)
-            cells = [cf_cell(cf_ri, s) for _c, s, _l, _r in disp] + ["—", "—"]
+            cells = [cf_cell(cf_ri, (sh, lt)) for _c, sh, lt, _cr in disp] + ["—", "—"]
             if any(c != "—" for c in cells):
                 rows.append(FinRow(label=disp_lbl + " ($M)", cells=cells))
     except CiqUnavailableError:
@@ -2189,6 +2202,7 @@ def financial_summary_quarterly(bundle: CiqBundle) -> Sourced[FinTable]:
         return Sourced.unknown(note="Income Statement (quarterly): fewer than 2 quarters")
     cols = [c for c, _s, _l, _r in periods]
     recl = [r for _c, _s, _l, r in periods]
+    qtoks = [_quarter_token(rows[hdr][c]) for c in cols]  # Q1..Q4 per col, for the same-quarter YoY
     columns = [s + (" (R)" if r else "") for _c, s, _l, r in periods]
 
     def qrow(label: str) -> list[float | None]:
@@ -2224,7 +2238,10 @@ def financial_summary_quarterly(bundle: CiqBundle) -> Sourced[FinTable]:
     for i in range(len(rev)):
         cur = rev[i]
         prior = rev[i - 4] if i >= 4 else None
-        if cur is None or prior is None or not prior:
+        # YoY is same-quarter ONLY: col i and col i-4 must be the SAME fiscal quarter. A gap or a
+        # duplicated/restated column would otherwise put a cross-quarter number under a "YoY" label.
+        same_q = i >= 4 and qtoks[i] is not None and qtoks[i] == qtoks[i - 4]
+        if cur is None or prior is None or not prior or not same_q:
             yoy.append("—")
         elif recl[i] != recl[i - 4]:
             yoy.append("— (basis)")
@@ -2240,34 +2257,39 @@ def financial_summary_quarterly(bundle: CiqBundle) -> Sourced[FinTable]:
 
 def _bs_posture_build(bs: Rows, freq: str) -> Sourced[str] | None:
     """(C3) Build the posture string from ONE Balance Sheet grid, or None if cash is absent (so the
-    caller can fall through to the other freq). Split out so ``balance_sheet_posture`` can address
-    both freqs with string literals the CIQ-manifest drift guard can see."""
+    caller can fall through to the other freq). Every line is read AT THE CASH COLUMN's period — a
+    single as-of — so a partial latest quarter can't stitch a stale debt or a period-mixed net
+    working capital under one 'as of' label (as-of discipline): a line blank at that column is
+    omitted, never back-filled from an earlier period. Split out so ``balance_sheet_posture`` can
+    address both freqs with string literals the CIQ-manifest drift guard can see."""
     hdr = _bs_period_header(bs)
-
-    def latest(
-        label: str, bs: Rows = bs, hdr: int | None = hdr,
-    ) -> tuple[int, float, str] | None:
-        ri = _find_row(bs, label)
-        return _latest_col(bs, ri, hdr) if ri is not None else None
-
-    cash = latest("Total Cash & ST Investments")
-    if cash is None:
+    cash_ri = _find_row(bs, "Total Cash & ST Investments")
+    anchor = _latest_col(bs, cash_ri, hdr) if cash_ri is not None else None
+    if anchor is None:
         return None
-    pj = cash[0]
+    pj, cash_v, _ = anchor  # the ONE period every line below is reported at
+
+    def at(label: str) -> float | None:  # value at the ANCHOR column (not the row's own latest)
+        ri = _find_row(bs, label)
+        return clean_num(bs[ri][pj]) if ri is not None and pj < len(bs[ri]) else None
+
     per = _fin_short(bs[hdr][pj]) if hdr is not None and pj < len(bs[hdr]) else "latest"
-    parts = [f"cash & ST inv {_fmt_m(cash[1])}"]
+    parts = [f"cash & ST inv {_fmt_m(cash_v)}"]
     for lbl, key in (("total debt", "Total Debt"), ("net debt", "Net Debt")):
-        if (v := latest(key)) is not None:
-            parts.append(f"{lbl} {_fmt_m(v[1])}")
-    if (eq := latest("Total Common Equity") or latest("Total Equity")) is not None:
-        parts.append(f"equity {_fmt_m(eq[1])}")
-    tca, tcl = latest("Total Current Assets"), latest("Total Current Liabilities")
+        if (v := at(key)) is not None:
+            parts.append(f"{lbl} {_fmt_m(v)}")
+    eq = at("Total Common Equity")
+    if eq is None:
+        eq = at("Total Equity")
+    if eq is not None:
+        parts.append(f"equity {_fmt_m(eq)}")
+    tca, tcl = at("Total Current Assets"), at("Total Current Liabilities")
     if tca is not None and tcl is not None:
-        parts.append(f"net working capital {_fmt_m(tca[1] - tcl[1])}")
+        parts.append(f"net working capital {_fmt_m(tca - tcl)}")
     parts.append("net-debt/EBITDA → see the Leverage & survival block (not recomputed)")
     return Sourced.present(
         f"as of {per} ($M): " + "; ".join(parts),
-        source_ref=f"CIQ Financials→Balance Sheet ({freq}, latest period)",
+        source_ref=f"CIQ Financials→Balance Sheet ({freq}, {per})",
     )
 
 

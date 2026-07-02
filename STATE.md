@@ -1161,16 +1161,34 @@ Each line: *what it does* — *verified how*.
       extended to them (every GFM table carries the `<!-- ds-table -->` marker; C1 + C2 included).
     *Verified on the REAL MVST export (6 cases): (1) annual FY26E/FY27E marked + floor-stamped
     (≥2026-05-15), FY26E rev 444 / EBITDA 62 — coherent with the catalyst acceleration read; the
-    FY23(R)→FY24 growth reads "— (basis)", the LTM→FY26E reads "E vs actual +20%". (2) 8Q Q1-2026
-    collapse visible (96→61, QoQ −37%) with same-basis YoY guards ("— (basis)" across the
-    Reclassified quarters, a clean +9% where same-basis). (3) BS posture cash 126 / debt 326 / net
-    debt 200 RECONCILES with the bridge (126/326). (4) credit health all four peer-median dims
-    (2.5/2.5/3/3). (5) a synthetic self-referential twin dropped with its hidden QA flag. (6) every
-    appendix table via the shared renderer (2 tables = 2 markers). Frontend confirmed by a real
-    preview render — appendix sits after the twins / before the verdict, both tables + posture +
-    coherence render, no console errors (the injected preview artifact was reverted; the PR carries
-    code+tests only). ruff + mypy --strict (68) + `pytest -m "not network"` (288) green. On a branch
-    → PR; agent never merges.*
+    FY23(R)→FY24 growth reads "— (basis)", the FY25→LTM reads "— (basis)", the LTM→FY26E reads
+    "E vs LTM +20%" (naming its TRUE base). (2) 8Q Q1-2026 collapse visible (96→61, QoQ −37%) with
+    same-quarter/same-basis YoY guards ("— (basis)" across the Reclassified quarters, a clean +9%
+    where same-basis). (3) BS posture cash 126 / debt 326 / net debt 200 RECONCILES with the bridge
+    (126/326). (4) credit health all four peer-median dims (2.5/2.5/3/3). (5) a synthetic
+    self-referential twin dropped with its hidden QA flag. (6) every appendix table via the shared
+    renderer (2 tables = 2 markers). Frontend confirmed by a real preview render — appendix sits
+    after the twins / before the verdict, both tables + posture + coherence render, no console errors
+    (the injected preview artifact was reverted; the PR carries code+tests only).*
+    - **Post-review AUDIT hardening (3 parallel adversarial reviewers + empirical MVST probes; each
+      fix regression-pinned).** Six defects found and fixed before merge — none broke MVST (all were
+      latent on the specific export), but each corrupts the analyst's numbers on other inputs:
+      (a) **coherence fail-loud** — a bridge that omits the debt row no longer renders a false
+      "DISAGREE" with a fabricated "$0M"; the absent leg reads "not cross-checked" (a "never
+      fabricate" fix). (b) **quarterly YoY same-quarter guard** — a duplicated/gapped quarter no
+      longer produces a cross-quarter number mislabelled "YoY" (restores the check the pre-existing
+      `_quarterly_revenue_yoy` already had). (c) **cash-flow join** by fiscal-period identity
+      (short, is_ltm) + duplicate→"—" — NOT the bare short (collision) and NOT the reclass flag (CIQ
+      tags a P&L reclass on the IS but not the CF for the SAME year — real MVST FY22/FY23 — so a
+      basis match would drop valid CF). (d) **BS posture as-of anchoring** — every line read at the
+      cash column's period; a partial latest quarter no longer stitches a stale debt or a
+      period-mixed NWC under one "as of". (e) **FY↔LTM is its own basis** — growth never spans the
+      FY↔ttm boundary ("— (basis)"), and the estimate boundary names its true base ("E vs LTM"/"E vs
+      FY") not a misleading "E vs actual". (f) **R2 twin-guard false-DROP** — whole-token matching +
+      a generic/industry denylist, so a short ticker inside another name ("BA"⊂"Alibaba") or a shared
+      lead ("General"/"First"/"Solar") no longer silently drops a legitimate peer twin.
+    *ruff + mypy --strict (68) + `pytest -m "not network"` (293, incl. the 6 audit regressions) green.
+    Audited, fixed, and merged on explicit per-PR approval.*
 - _Whole suite green (ruff + mypy --strict clean; `pytest -m "not network"` passes)._
 
 ## 3. FALSIFIED — tested and retired (NOT deferred)
