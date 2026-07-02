@@ -383,8 +383,19 @@ def _ref_traces(ref: str, universe: set[str]) -> bool:
 
 
 _ACC_RE = re.compile(r"\d{10}-\d{2}-\d{6}")   # an EDGAR accession, e.g. 0001628280-26-013305
-_NUM_RE = re.compile(r"\b\d[\d,]*\.?\d*\b")
 _PROPER_RE = re.compile(r"\b[A-Z][A-Za-z0-9&.]{2,}\b")   # proper-noun-ish tokens (CoreWeave, HBM)
+# a FINANCIAL FIGURE — a $-amount, or a magnitude with a scale word. These (with company-specific
+# names) are the load-bearing, hard-to-fabricate tokens; a bare small integer or a YEAR carries no
+# such weight, so a '$' or a scale word is REQUIRED here (a bare '400' / '2026' is not a figure).
+_SCALE_WORDS: dict[str, int] = {
+    "k": 1_000, "thousand": 1_000, "m": 1_000_000, "mm": 1_000_000, "million": 1_000_000,
+    "b": 1_000_000_000, "bn": 1_000_000_000, "billion": 1_000_000_000,
+}
+_FIGURE_RE = re.compile(
+    r"\$\s*(\d[\d,]*(?:\.\d+)?)\s*(thousand|million|billion|mm|bn|k|m|b)?\b"       # $-prefixed
+    r"|(?<![\w$])(\d[\d,]*(?:\.\d+)?)\s*(thousand|million|billion|mm|bn|k|m|b)\b",  # scale-suffixed
+    re.IGNORECASE,
+)
 # common words that happen to be capitalized/numeric but do NOT discriminate a real fact from a
 # fabricated one (they appear in almost any filing) — excluded from the grounding check
 _GROUNDING_STOP = {
@@ -401,23 +412,65 @@ def _cited_filing_text(ref: str, by_accession: dict[str, str]) -> str | None:
     return by_accession.get(m.group(0)) if m else None
 
 
-def _fact_grounded(fact_text: str, filing_text: str) -> bool:
-    """FUZZY grounding: does the LLM's paraphrased ``fact``'s LOAD-BEARING content actually appear
-    in the cited filing? Extract the fact's distinctive tokens — proper-noun-ish names (a
-    counterparty / product) primarily, numbers as a fallback — and require >=half to appear
-    (substring) in the filing. A fact with NO distinctive tokens (a generic paraphrase) is not
-    checkable and passes (low-risk). A fact whose distinctive claims are absent is UNGROUNDED —
-    the audit's fact/accession-mismatch mode (a fabricated fact carrying a real accession), which
-    does NOT scale to hand-check at multi-theme volume; fail loud."""
+def _driver_vocab(spec: DriverSpec) -> frozenset[str]:
+    """The DRIVER'S OWN vocabulary (prefilter terms + provenance-tag keywords), tokenized to
+    lowercase words + singular stems. These are theme-GENERIC — the LLM writes them in BOTH a
+    positive claim AND its NEGATIVE reasoning ('… NOT tied to attritable UAVs, counter-UAS,
+    loitering munitions …'), so they cannot discriminate a real fact from a fabricated one here.
+    Excluded from the grounding tokens so a fact grounds on its COMPANY-specific tokens (a
+    counterparty, a $-figure), not the theme's own words — a fabricated counterparty / figure is
+    NEVER driver vocabulary, so it is still caught."""
+    words: set[str] = set()
+    kw_iter = (kw for _, kws in spec.provenance_tags for kw in kws)
+    for phrase in (*spec.prefilter_terms, *kw_iter):
+        for w in re.split(r"[\s/&.-]+", phrase.lower()):
+            if len(w) >= 2:
+                words.add(w)
+                words.add(w.rstrip("s"))   # UAV/UAVs, munition/munitions
+    return frozenset(words)
+
+
+def _figure_forms(mantissa: str, scale: str) -> set[str]:
+    """The comma-free digit forms a filing might carry for one financial figure: the bare mantissa
+    and, if a scale word is present, the scale-multiplied integer — so a fact's '$47,829K' /
+    '$9.5 million' matches a filing's '47,829' / '9.5 million' / raw integer. Comma variants are
+    covered by comma-stripping the filing side before matching."""
+    bare = mantissa.replace(",", "")
+    forms = {bare}
+    if scale and scale.lower() in _SCALE_WORDS:
+        # bare is regex-guaranteed a plain decimal (digits + at most one '.'), so float() is safe
+        forms.add(str(int(round(float(bare) * _SCALE_WORDS[scale.lower()]))))
+    return forms
+
+
+def _fact_grounded(
+    fact_text: str, filing_text: str, driver_vocab: frozenset[str] = frozenset()
+) -> bool:
+    """FUZZY grounding: does the LLM's paraphrased ``fact``'s LOAD-BEARING content appear in the
+    cited filing? The load-bearing, fabrication-resistant tokens are (1) COMPANY-specific proper
+    nouns (a counterparty / product / program) and (2) FINANCIAL FIGURES — NOT the driver's own
+    vocabulary (excluded via ``driver_vocab``; the LLM uses it in reasoning), NOT bare years/counts.
+    Figures match under scale-word + comma NORMALIZATION. Require >=half the distinctive tokens to
+    appear (substring); ADDITIONALLY a quantitative claim whose EVERY figure is absent fails closed
+    (a fabricated / mis-cited number). A fact with NO distinctive tokens is not checkable and passes
+    (low-risk). Ungrounded = the audit's fact/accession-mismatch mode (a fabricated fact carrying a
+    real accession), which does NOT scale to hand-check at multi-theme volume; fail loud."""
     fl = filing_text.lower()
-    propers = {p.lower() for p in _PROPER_RE.findall(fact_text)} - _GROUNDING_STOP
-    nums = {n.replace(",", "").rstrip(".") for n in _NUM_RE.findall(fact_text)}
-    nums = {n for n in nums if len(n) >= 2}  # drop single digits (too common to discriminate)
-    distinctive = propers or nums   # names first (fabrication-resistant); numbers only if no names
-    if not distinctive:
+    fl_nc = fl.replace(",", "")   # comma-normalized filing for figure matching
+    raw = {t.lower() for t in _PROPER_RE.findall(fact_text)} - _GROUNDING_STOP
+    propers = {p for p in raw if p not in driver_vocab and p.rstrip("s") not in driver_vocab}
+    figures: list[set[str]] = []
+    for m in _FIGURE_RE.finditer(fact_text):
+        mant, scale = m.group(1) or m.group(3) or "", m.group(2) or m.group(4) or ""
+        if len(mant.replace(",", "").replace(".", "")) >= 2:
+            figures.append(_figure_forms(mant, scale))
+    if not propers and not figures:
         return True
-    hits = sum(1 for d in distinctive if d in fl)
-    return hits / len(distinctive) >= 0.5
+    figure_hits = sum(any(f in fl_nc for f in forms) for forms in figures)
+    if figures and figure_hits == 0:
+        return False   # a quantitative claim whose every figure is absent — fail-closed
+    proper_hits = sum(1 for p in propers if p in fl)
+    return (proper_hits + figure_hits) / (len(propers) + len(figures)) >= 0.5
 
 
 def assess_exposure(
@@ -456,6 +509,7 @@ def assess_exposure(
 
     refs = set(stream_refs)
     by_accession = {m.group(0): text for ref, text in stream if (m := _ACC_RE.search(ref))}
+    driver_vocab = _driver_vocab(spec)   # driver's own words — excluded from grounding
     flags: list[str] = []
     facts: list[ExposureFact] = []
     best = 0
@@ -478,7 +532,7 @@ def assess_exposure(
             conc = ExposureConcreteness.NONE  # uncited fact can't credit the basis (fail-closed)
         else:
             filing_text = _cited_filing_text(ref, by_accession)
-            if filing_text is not None and not _fact_grounded(fact_text, filing_text):
+            if filing_text is not None and not _fact_grounded(fact_text, filing_text, driver_vocab):
                 flags.append(
                     f"UNGROUNDED fact-text (not found in cited filing): '{fact_text[:60]}'")
                 conc = ExposureConcreteness.NONE  # ungrounded fact can't credit the basis

@@ -364,6 +364,72 @@ def test_fact_text_grounding_passes_when_grounded() -> None:
     assert not any("UNGROUNDED" in f for f in a.flags)
 
 
+def test_grounding_accepts_scale_and_comma_number_drift() -> None:
+    """(a) FALSE-FAIL fix — number-format drift: a fact's '$47,829K' grounds against a filing's
+    '47,829' (reported in thousands) via scale-word + comma NORMALIZATION, instead of failing on
+    the surface-format mismatch (the FEIM case from the defense scan)."""
+    ref = "10-Q 2026-03-01 (accession 0001185185-26-000893)"
+    stream = [(ref, "Consolidated revenues were 47,829 for the nine months ended "
+                    "January 31, 2026.")]
+    payload = {"disclosed_facts": [
+        {"fact": "Consolidated revenues were $47,829K for the nine months ended January 31, 2026",
+         "concreteness": "committed-capacity", "driver_tie": "indirect", "source_ref": ref}],
+        "primary_business": "precision timing", "key_unknowns": []}
+    a = assess_exposure(DEFENSE_DEMAND_SHIFT, "FEIM", "1", stream, llm=_MockLlm(payload))
+    assert not any("UNGROUNDED" in f for f in a.flags)      # $47,829K ↔ 47,829 now grounds
+    assert a.exposure_basis is ExposureBasis.COMMITTED_CAPACITY
+
+
+def test_grounding_ignores_driver_vocabulary_in_negative_reasoning() -> None:
+    """(b) FALSE-FAIL fix — the LLM's NEGATIVE reasoning names the driver's OWN taxonomy ('… no tie
+    to attritable UAVs, counter-UAS, loitering munitions …'); those theme-generic tokens are
+    excluded so the fact grounds on its COMPANY-specific token (Wolfspeed), which IS in the filing
+    (the WOLF dual-use case — its 33-flag-dominant mode)."""
+    ref = "10-K 2025-08-01 (accession 0000895419-25-000110)"
+    stream = [(ref, "Wolfspeed's silicon carbide materials are used in military communications, "
+                    "radar and satellite applications.")]
+    payload = {"disclosed_facts": [
+        {"fact": "Wolfspeed materials are used in military communications, radar and satellite — a "
+                 "generic dual-use listing with no tie to attritable UAVs, counter-UAS, loitering "
+                 "munitions, defense autonomy/AI, or scaled munitions.",
+         "concreteness": "stated-intent", "driver_tie": "indirect", "source_ref": ref}],
+        "primary_business": "silicon carbide maker", "key_unknowns": []}
+    a = assess_exposure(DEFENSE_DEMAND_SHIFT, "WOLF", "1", stream, llm=_MockLlm(payload))
+    assert not any("UNGROUNDED" in f for f in a.flags)   # Wolfspeed grounds; UAV terms excluded
+
+
+def test_grounding_still_catches_fabricated_counterparty() -> None:
+    """(c) GENUINE-CATCH preserved: excluding driver vocabulary must NOT rescue a fabricated
+    counterparty — a made-up name is never driver vocab, so a 'binding loitering-munition contract
+    with Vortex Dynamics' whose counterparty is absent from the filing still fails closed (even
+    though the filing DOES carry the driver's vocabulary)."""
+    ref = "8-K 2026-02-01 (accession 0001628280-26-013305)"
+    stream = [(ref, "The Company manufactures loitering munitions and unmanned aerial systems.")]
+    payload = {"disclosed_facts": [
+        {"fact": "binding loitering-munition supply contract with Vortex Dynamics",
+         "concreteness": "binding-contract", "driver_tie": "driver-specific", "source_ref": ref}],
+        "primary_business": "x", "key_unknowns": []}
+    a = assess_exposure(DEFENSE_DEMAND_SHIFT, "X", "1", stream, llm=_MockLlm(payload))
+    assert any("UNGROUNDED" in f for f in a.flags)
+    assert a.exposure_basis is ExposureBasis.NONE_DISCLOSED  # fabricated counterparty → fail-closed
+
+
+def test_grounding_still_catches_fabricated_figure() -> None:
+    """(c) GENUINE-CATCH preserved: a quantitative claim whose EVERY figure is absent fails closed
+    even when a real company name grounds — a fabricated '$250 million order' is not rescued by the
+    real 'Kratos' (closes the figure-side fabrication hole a pooled proper-noun match would leave
+    open)."""
+    ref = "8-K 2026-02-01 (accession 0001628280-26-013305)"
+    stream = [(ref, "Kratos announced a new production order during the quarter.")]
+    payload = {"disclosed_facts": [
+        {"fact": "Kratos received a $250 million binding production order",
+         "concreteness": "binding-contract", "driver_tie": "driver-specific", "source_ref": ref}],
+        "primary_business": "x", "key_unknowns": []}
+    a = assess_exposure(DEFENSE_DEMAND_SHIFT, "X", "1", stream, llm=_MockLlm(payload))
+    assert any("UNGROUNDED" in f for f in a.flags)   # figure absent → fail-closed despite 'Kratos'
+    assert a.exposure_basis is ExposureBasis.NONE_DISCLOSED
+
+
 def test_ai_datacenter_spec_covers_the_chain() -> None:
     """AI-datacenter is one DriverSpec instance: its description spans the value chain (upstream
     enablers in scope) and its prefilter carries the chain vocabulary — not just 'AI'."""

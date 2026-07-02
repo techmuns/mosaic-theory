@@ -2877,3 +2877,37 @@ scratchpad — **scan output is DATA, fail-closed, NOT committed.** Suite green 
 files + pytest **305**). **Local only — nothing pushed, nothing merged, main untouched.** Forward edge NOT
 claimed (an exposure scan ASSEMBLES + TIERS + surfaces evidence; the human ratifies DIRECTION and logs the
 verdict). Edge 2 stays lead horse.
+
+**CITE-CHECK GROUNDING — diagnosed MISCALIBRATED, `_fact_grounded` hardened (2026-07-02,
+`feat/theme-multi-theme-refactor`).** The defense scan raised 33 `UNGROUNDED fact-text` flags across 30
+names. Re-fetched each cited filing (no LLM, no re-scan) and split them: **0 genuine catches** (not one
+was a fabricated positive exposure claim); **all 33 were false-fails or inert none-flags.** Two root
+causes: **(b) driver-vocabulary / negation-token drift (dominant, ~24)** — the LLM's fact string names the
+driver's OWN taxonomy in its NEGATIVE reasoning ('… a dual-use listing with NO tie to attritable UAVs,
+counter-UAS, loitering munitions'), and those theme-generic tokens (`uas`, `uavs`, `counter-uas`) polluted
+the distinctive-token set and were never in the filing, so the fact false-failed even though its
+COMPANY-specific token (Wolfspeed, FlackTek, Avient…) IS grounded; **(a) number-format / scale drift
+(FEIM `$47,829K` vs a filing's `47,829`; NVEC `$446,102`)** — real figures the substring check missed on
+comma/scale form. **The 5 that fell to NONE (WKC, WOLF, TWI, OIS, GOGO) were NOT wrongly demoted** — the
+LLM ITSELF graded each fact none/not-driver (dual-use SiC, generic connectivity, fuel logistics,
+wheels-for-military, oilfield-military); the grounding demotion (conc→none) was a NO-OP and the flag was
+cosmetic. **So the defense tier shape (2 REAL / 65 committed / 41 aspirational) STANDS — no hidden REAL
+name was lost to a false grounding.** **FIX (in `_fact_grounded`, the targeted change):** (i) exclude the
+driver's OWN vocabulary (`_driver_vocab(spec)` = prefilter + provenance-tag terms) from the grounding
+tokens — a fabricated counterparty/figure is NEVER driver vocab, so genuine-catch detection is preserved;
+(ii) NORMALIZE financial figures (scale words K/M/B/thousand/million/billion + comma) before matching;
+(iii) a quantitative claim whose EVERY figure is absent fails closed (closes the fabricated-figure hole a
+pooled proper-noun match would leave open). **4 regression tests** (number/scale drift now grounds; driver-
+vocab negation now grounds; a fabricated COUNTERPARTY and a fabricated FIGURE still fail closed). Re-run
+of the 33 through the fixed check (deterministic, chunk-grounded): **26 cut, 7 residual** — the residual 7
+(AMPX, AVAV×2, ESE, ONDS, OSS, USAR) are all real revenue figures sitting in financial statements BEYOND
+the extracted business/MD&A chunk the check sees (a truncation artifact, correctly conservative,
+harmless — all already surfaced at their tier). **Would-change-tier (no re-scan): 21 pinned; the 5
+NONE-drops STAY none; NO name enters REAL; at most ~1-4 aspirational→committed (NVEC likeliest, on its
+$446K R&D revenue) — within-noise, committed is not REAL.** So a full re-scan is NOT yet warranted (waits
+until it's worth ~$400). The check's value was NOT wrong tiers but 33 noise flags eroding the flag's
+signal; the fix restores it (33→7, the 7 legible). KNOWN LIMITATION (noted, not fixed — hold scope): the
+scan DISCARDS the pre-demotion concreteness (demotion overwrites conc→none), so the exact aspirational→
+committed count can't be settled without the LLM's original grade; a future artifact could preserve it in
+the flag. Suite green (ruff + mypy --strict 83 files + pytest **309**; +4 grounding tests). **Local only —
+nothing pushed, nothing merged, main untouched.**
