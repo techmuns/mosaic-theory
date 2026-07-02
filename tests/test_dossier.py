@@ -2923,23 +2923,23 @@ def _fin_est_bundle(annual: _Sheets, estimates: _Sheets) -> ciq.CiqBundle:
 
 
 def _c1_trends() -> list[list[typing.Any]]:
-    """Estimates→Trends with a Revenue AND an EBITDA block, each carrying FY 2026 + FY 2027 columns
-    (the two FY-level E figures C1 reads from the 'Current' snapshot)."""
+    """Estimates→Trends with Revenue, EBITDA, and the two D5a EPS blocks (GAAP + Normalized), each
+    carrying FY 2026 + FY 2027 (the FY-level E figures C1 reads from 'Current')."""
+    hdr = ["Company Level (USD)", "FQ2 2026", "FQ3 2026", "FY 2026", "FY 2027", "FQ1 2027"]
     return [
-        ["Revenue", "", "", "", "", ""],
-        ["Company Level (USD)", "FQ2 2026", "FQ3 2026", "FY 2026", "FY 2027", "FQ1 2027"],
-        ["Current", 100.0, 110.0, 444.4, 520.0, 50.0],
-        ["EBITDA", "", "", "", "", ""],
-        ["Company Level (USD)", "FQ2 2026", "FQ3 2026", "FY 2026", "FY 2027", "FQ1 2027"],
-        ["Current", 10.0, 11.0, 62.1, 90.0, 5.0],
+        ["Revenue", "", "", "", "", ""], hdr, ["Current", 100.0, 110.0, 444.4, 520.0, 50.0],
+        ["EBITDA", "", "", "", "", ""], hdr, ["Current", 10.0, 11.0, 62.1, 90.0, 5.0],
+        ["EPS (GAAP)", "", "", "", "", ""], hdr, ["Current", 0.0, 0.0, 0.18, 0.17, 0.0],
+        ["EPS Normalized", "", "", "", "", ""], hdr, ["Current", 0.0, 0.0, 0.04, 0.15, 0.0],
     ]
 
 
 def test_financial_summary_annual_fuses_actuals_and_stamped_estimates() -> None:
     """(C1/C4) The annual table = last-4-FY + LTM actuals + FY26E/FY27E consensus. E columns are
-    marked; growth never spans a basis change (Reclassified FY22→FY23 reads '— (basis)') and the
-    actual→estimate boundary reads 'E vs actual'. FY26E rev/EBITDA are the SAME Trends
-    'Current' cells the acceleration read consumes (cross-block coherence)."""
+    marked; growth never spans a basis change (Reclassified FY22→FY23 reads '— (basis)') and an FY
+    estimate's growth is vs the PRIOR FY (D5c: '+3% (vs FY25)'). EPS splits into same-basis
+    GAAP + Normalized rows (D5a). FY26E rev/EBITDA are the SAME Trends 'Current' cells the
+    acceleration read consumes (cross-block coherence)."""
     inc: list[list[typing.Any]] = [
         ["For the Fiscal Period", "Reclassified 12 months Dec-31-2022", "12 months Dec-31-2023",
          "12 months Dec-31-2024", "12 months Dec-31-2025", "LTM 12 months Mar-31-2026"],
@@ -2947,7 +2947,8 @@ def test_financial_summary_annual_fuses_actuals_and_stamped_estimates() -> None:
         ["EBITDA", 40.0, 45.0, 50.0, 55.0, 58.0],
         ["EBIT", 20.0, 25.0, 30.0, 33.0, 34.0],
         ["Net Income", 5.0, 8.0, 10.0, 12.0, 12.0],
-        ["Diluted EPS Excl. Extra Items", 0.05, 0.08, 0.10, 0.12, 0.12],
+        ["Diluted EPS", 0.05, 0.08, 0.10, 0.12, 0.12],  # D5a: GAAP diluted
+        ["Normalized Diluted EPS", 0.03, 0.06, 0.08, 0.10, 0.10],  # D5a: normalized
     ]
     cf: list[list[typing.Any]] = [
         ["For the Fiscal Period", "12 months Dec-31-2022", "12 months Dec-31-2023",
@@ -2969,7 +2970,11 @@ def test_financial_summary_annual_fuses_actuals_and_stamped_estimates() -> None:
     # growth never spans a basis change; the estimate boundary names its TRUE base (not "actual")
     assert row["Revenue growth"][1] == "— (basis)"   # FY22(R) → FY23: no cross-basis growth
     assert row["Revenue growth"][4] == "— (basis)"   # FY25 → LTM: FY↔ttm is not a like period
-    assert row["Revenue growth"][5].startswith("E vs LTM")  # FY26E's base IS the LTM, labelled so
+    assert row["Revenue growth"][5] == "+3% (vs FY25)"  # D5c: FY26E growth vs the PRIOR FY, not LTM
+    assert row["Revenue growth"][6] == "+17%"           # FY27E vs FY26E (est-vs-est, no label)
+    # D5a: EPS split into same-basis GAAP + Normalized rows; each reads its OWN basis (no borrowing)
+    assert row["EPS (GAAP, dil.)"] == ["0.05", "0.08", "0.10", "0.12", "0.12", "0.18", "0.17"]
+    assert row["EPS (Normalized)"] == ["0.03", "0.06", "0.08", "0.10", "0.10", "0.04", "0.15"]
     assert row["CFO ($M)"][:5] == ["30", "35", "40", "45", "46"]  # C4 cash-flow essentials
     assert "as-of 2026-05-15" in ft.note                    # estimate columns carry the as-of stamp
     # cross-block coherence: FY26E EBITDA IS the Trends 'Current' FY 2026 cell (62.1 → "62")
@@ -3242,3 +3247,23 @@ def test_twin_guard_keeps_legitimate_peer_twins() -> None:
     selfref = ds.TwinCase(name="Boeing, again", outcome="the same overshoot",
                           distinguishing_fact="x", source="fab")
     assert syn._self_referential_twin(selfref, "BA", "The Boeing Company") is True
+
+
+def test_d5a_eps_absent_basis_renders_dash_never_borrows() -> None:
+    """(D5a, condition c) GAAP EPS present but Normalized absent from Trends → the Normalized E cell
+    is '—' and NEVER borrows the GAAP figure; each row reads its OWN basis."""
+    inc: list[list[typing.Any]] = [
+        ["For the Fiscal Period", "12 months Dec-31-2024", "12 months Dec-31-2025"],
+        ["Total Revenue", 400.0, 430.0], ["EBITDA", 50.0, 74.0], ["Net Income", -196.0, -29.0],
+        ["Diluted EPS", -0.61, -0.09], ["Normalized Diluted EPS", -0.22, 0.00],
+    ]
+    trends: list[list[typing.Any]] = [  # EPS (GAAP) present, NO 'EPS Normalized' block
+        ["EPS (GAAP)", "", ""], ["Company Level (USD)", "FY 2026", "FY 2027"],
+        ["Current", 0.18, 0.17],
+    ]
+    ft = cs.financial_summary_annual(
+        _fin_est_bundle({"Income Statement": inc}, {"Trends": trends}), as_of="2026-05-15").value
+    assert ft is not None
+    row = {r.label: r.cells for r in ft.rows}
+    assert row["EPS (GAAP, dil.)"][-2:] == ["0.18", "0.17"]
+    assert row["EPS (Normalized)"][-2:] == ["—", "—"]  # absent → '—', not the borrowed 0.18

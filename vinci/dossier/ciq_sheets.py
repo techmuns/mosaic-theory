@@ -2062,7 +2062,12 @@ _C1_ROWS: tuple[tuple[str, str, str, str], ...] = (  # (display, IS label, Estim
     ("EBITDA", "EBITDA", "EBITDA", "m"),
     ("EBIT", "EBIT", "EBIT", "m"),
     ("Net income", "Net Income", "Net Income (GAAP)", "m"),
-    ("EPS (diluted)", "Diluted EPS Excl. Extra Items", "EPS Normalized", "e"),
+    # (D5a) EPS split — SAME-BASIS in every column: the GAAP row (actual 'Diluted EPS' + Trends
+    # 'EPS (GAAP)') pairs with GAAP Net income; the Normalized row uses 'Normalized Diluted EPS' +
+    # 'EPS Normalized'. Each series reads its OWN basis, so a basis absent from Trends renders "—"
+    # (via _fmt_eps(None)) and NEVER borrows the other.
+    ("EPS (GAAP, dil.)", "Diluted EPS", "EPS (GAAP)", "e"),
+    ("EPS (Normalized)", "Normalized Diluted EPS", "EPS Normalized", "e"),
 )
 _C1_CF: tuple[tuple[str, str], ...] = (
     ("CFO", "Cash from Ops."), ("Capex", "Capital Expenditure"), ("FCF", "Levered Free Cash Flow"),
@@ -2072,8 +2077,9 @@ _C1_CF: tuple[tuple[str, str], ...] = (
 def financial_summary_annual(bundle: CiqBundle, *, as_of: str | None = None) -> Sourced[FinTable]:
     """(C1 + C4) Annual actuals (last-4-FY + LTM, from Financials Income Statement + Cash Flow)
     fused with FY2026E/FY2027E consensus (Estimates→Trends 'Current'). E cols marked; growth is
-    never computed across a Reclassified basis ('— (basis)'), and the actual→estimate boundary
-    reads 'E vs actual'. Core rows fail loud; supplementary rows render only if present."""
+    never computed across a Reclassified basis ('— (basis)'), and an FY estimate's growth is vs the
+    PRIOR FISCAL YEAR ('+4% (vs FY25)'), not the overlapping LTM (D5c). EPS is split into same-basis
+    GAAP + Normalized rows (D5a). Core rows fail loud; supplementary rows render only if present."""
     try:
         inc = bundle.sheet("financials", "Income Statement", freq="annual")
     except CiqUnavailableError as exc:
@@ -2108,15 +2114,28 @@ def financial_summary_annual(bundle: CiqBundle, *, as_of: str | None = None) -> 
         )
         return act + est
 
+    fy_cols = [i for i, bb in enumerate(bases) if bb in ("act", "recl")]
+    prior_fy = fy_cols[-1] if fy_cols else None  # (D5c) the last FISCAL-YEAR actual — the E base
+
     def growth(s: list[float | None]) -> list[str]:
         out = ["—"]
         for i in range(1, len(s)):
+            if bases[i] == "est":
+                # (D5c) an FY estimate's growth is vs the PRIOR FISCAL YEAR (a like period), NOT the
+                # overlapping LTM: the first E col compares to the last FY actual, later E cols to
+                # the prior E col. The base FY is named ("+4% (vs FY25)").
+                j = i - 1 if bases[i - 1] == "est" else prior_fy
+                base = s[j] if j is not None else None
+                v = s[i]
+                if v is None or base is None or not base or j is None:
+                    out.append("—")
+                    continue
+                pct = f"{(v / base - 1) * 100:+.0f}%"
+                out.append(pct if bases[j] == "est" else f"{pct} (vs {columns[j].split()[0]})")
+                continue
             v, prev = s[i], s[i - 1]
             if v is None or prev is None or not prev:
                 out.append("—")
-            elif bases[i] == "est" and bases[i - 1] != "est":
-                base_lbl = "LTM" if bases[i - 1] == "ltm" else "FY"  # the true base, not 'actual'
-                out.append(f"E vs {base_lbl} {(v / prev - 1) * 100:+.0f}%")
             elif bases[i] != bases[i - 1]:
                 out.append("— (basis)")
             else:
