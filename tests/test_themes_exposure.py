@@ -20,7 +20,7 @@ import pytest
 
 from vinci.graph.llm import LlmClient
 from vinci.netcache import CachedHttp, HttpError
-from vinci.themes.drivers import AI_DATACENTER
+from vinci.themes.drivers import AI_DATACENTER, DEFENSE_DEMAND_SHIFT
 from vinci.themes.exposure import (
     assess_exposure,
     grade_driving_fact,
@@ -299,6 +299,21 @@ def test_classifier_is_driver_agnostic_no_ai_datacenter_leak() -> None:
         assert leak not in low, f"AI-datacenter leaked into a non-AI-datacenter prompt: {leak!r}"
     assert "glp-1" in low and "obesity" in low  # the toy driver IS present
     assert "driver-specific" in json.dumps(mock.last_tool)  # generic tie value, not chain-specific
+
+
+def test_defense_spec_runs_with_no_ai_datacenter_leak() -> None:
+    """Theme #2 (the refactor's proof-of-generalization): the analyst-approved DEFENSE spec runs
+    through the SAME driver-agnostic classifier — its DEFENSE / demand-shift taxonomy reaches the
+    LLM, with ZERO AI-datacenter leakage into the prompt."""
+    mock = _MockLlm({"disclosed_facts": [], "primary_business": "x", "key_unknowns": []})
+    assess_exposure(DEFENSE_DEMAND_SHIFT, "AVAV", "1", _STREAM, llm=mock)
+    prompt = mock.last_system + "\n" + mock.last_user + "\n" + json.dumps(mock.last_tool)
+    low = prompt.lower()
+    for leak in ("ai-datacenter", "value chain", "hbm", "advanced packaging", "hyperscaler",
+                 "colocation", "chain-layer"):
+        assert leak not in low, f"AI-datacenter leaked into the defense prompt: {leak!r}"
+    for term in ("attritable", "loitering", "counter-uas", "legacy", "tailwind"):
+        assert term in low, f"defense taxonomy missing from the prompt: {term!r}"
 
 
 def test_ai_datacenter_prompt_reproduces_load_bearing_content_minus_50pct() -> None:
