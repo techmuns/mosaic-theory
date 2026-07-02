@@ -1526,13 +1526,18 @@ def _comps_layout(rows: Rows, ticker: str) -> tuple[int | None, list[int], int |
     'first company row after a positional gap' heuristic mis-fired whenever a no-ticker peer (e.g. a
     private/defunct comparable) broke the contiguous block — MVST resolved to Samsung SDI, not
     Microvast. Fallback when the ticker isn't found: the LAST company row before 'Summary Stats'
-    (CIQ places the subject last), still robust to interior no-ticker peers. Peers = every other
-    ticker-bearing company row. A company row has a '(' paren in col 0."""
+    (CIQ places the subject last). Peers = the other ticker-bearing rows. A company row must
+    carry an '(EXCHANGE:SYMBOL)' ticker in col 0 — a BARE paren is NOT enough: sheets without a
+    'Summary Statistics' delimiter (Credit Health, Implied Valuation, Business Description) set
+    ``end = len(rows)`` and would otherwise pull a trailing prose row (the S&P disclaimer 'No
+    content (including ratings…') into the peer set — and via the ``company[-1]`` fallback even make
+    it the subject. Requiring a real ticker excludes such rows (verified on MVST: drops only the
+    disclaimer, no real peer, on every comps sheet)."""
     hdr = _find_row(rows, "Company Name")
     if hdr is None:
         return None, [], None
     end = _find_row(rows, "Summary Statistics") or len(rows)
-    company = [i for i in range(hdr + 1, end) if rows[i] and "(" in str(rows[i][0])]
+    company = [i for i in range(hdr + 1, end) if rows[i] and _row_ticker(rows[i][0]) is not None]
     if not company:
         return hdr, [], None
     want = (ticker or "").strip().upper()
