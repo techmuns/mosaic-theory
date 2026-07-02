@@ -558,15 +558,19 @@ def _cmd_themes_exposure(args: argparse.Namespace) -> int:
     from vinci.graph.llm import AnthropicLlmClient
     from vinci.sec import build_efts_http, build_sec_http
     from vinci.themes import detection as det
+    from vinci.themes.drivers import AI_DATACENTER
     from vinci.themes.exposure import (
-        AI_DATACENTER_DRIVER,
-        DRIVER_PHRASES,
-        chain_layer_of,
         grade_driving_fact,
         is_real_exposure,
+        provenance_tag_of,
         scan_driver_exposure,
     )
     from vinci.themes.schemas import ExposureBasis
+
+    _layers = AI_DATACENTER.provenance_tags  # theme's by-tag provenance map (chain layers here)
+
+    def _tag(fact_text: str) -> str:
+        return provenance_tag_of(fact_text, _layers)
 
     cfg = get_config()
     cfg.ensure_dirs()
@@ -577,7 +581,7 @@ def _cmd_themes_exposure(args: argparse.Namespace) -> int:
     ref = date.fromisoformat(args.ref) if args.ref else snap
     startdt = (ref - timedelta(days=args.window_days)).isoformat()
     matched, results = scan_driver_exposure(
-        names, driver=AI_DATACENTER_DRIVER, phrases=DRIVER_PHRASES,
+        AI_DATACENTER, names,
         edgar=EdgarClient.from_config(cfg), sec_http=build_sec_http(cfg),
         efts_http=build_efts_http(cfg), llm=AnthropicLlmClient.from_config(cfg),
         startdt=startdt, enddt=ref.isoformat(), max_workers=args.workers, progress=stderr_reporter,
@@ -594,7 +598,7 @@ def _cmd_themes_exposure(args: argparse.Namespace) -> int:
              ExposureBasis.COMMITTED_CAPACITY, ExposureBasis.ASPIRATIONAL]
     dist = Counter(a.exposure_basis for a in results)
     surfaced = [a for a in results if a.exposure_basis is not ExposureBasis.NONE_DISCLOSED]
-    layers = Counter(chain_layer_of(f.fact) for a in surfaced if (f := grade_driving_fact(a)))
+    layers = Counter(_tag(f.fact) for a in surfaced if (f := grade_driving_fact(a)))
     errs = [a for a in results if any("error:" in fl.lower() for fl in a.flags)]
     print("\n=== Stage-3 build-2 · AI-datacenter VALUE-CHAIN universe scan ===")
     print(f"universe {len(names)} · {len(matched)} mention-candidates · {len(results)} assessed "
@@ -613,14 +617,14 @@ def _cmd_themes_exposure(args: argparse.Namespace) -> int:
     for a in sorted(real, key=lambda x: x.exposure_basis.value):
         f = grade_driving_fact(a)
         if f:
-            print(f"  {a.ticker:6} [{a.exposure_basis.value}] <{chain_layer_of(f.fact)}> "
+            print(f"  {a.ticker:6} [{a.exposure_basis.value}] <{_tag(f.fact)}> "
                   f"{f.driver_tie.value}: {f.fact[:120]}")
             print(f"         source: {f.source_ref}")
     print(f"\nCOMMITTED-capacity — borderline, capex/MW toward the driver ({len(committed)}):")
     for a in sorted(committed, key=lambda x: x.ticker):
         f = grade_driving_fact(a)
         if f:
-            print(f"  {a.ticker:6} <{chain_layer_of(f.fact)}> {f.driver_tie.value}: {f.fact[:105]}")
+            print(f"  {a.ticker:6} <{_tag(f.fact)}> {f.driver_tie.value}: {f.fact[:105]}")
     print(f"\n(+ {dist.get(ExposureBasis.ASPIRATIONAL, 0)} at the INTENT tier — surfaced, soft on "
           "their face; full provenance in --out. Volume decides the downstream calibration need.)")
     return 0

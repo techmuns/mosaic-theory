@@ -34,6 +34,7 @@ from vinci.graph.llm import LlmClient, LlmError
 from vinci.netcache import CachedHttp, HttpError
 from vinci.progress import ProgressFn, ProgressReporter
 from vinci.themes.schemas import (
+    DriverSpec,
     DriverTie,
     ExposureAssessment,
     ExposureBasis,
@@ -44,30 +45,9 @@ from vinci.themes.schemas import (
 _EFTS = "https://efts.sec.gov/LATEST/search-index"
 _ONE_WEEK = 7 * 24 * 3600
 
-# The ONE driver for build 1 — ground truth established by the semantic probe (REAL = CIFR/WULF
-# binding hyperscaler leases, CAMT ~50% HBM rev, AEHR 34% AI burn-in; BETA = CLSK/MARA aspirational,
-# VECO/ACLS ion-implant/diversified, and the flood of "we mention AI" names).
-AI_DATACENTER_DRIVER = (
-    "the AI-DATACENTER VALUE CHAIN — any layer of the chain that builds or supplies AI-datacenter "
-    "compute: chips/GPU → HBM & memory → advanced packaging → thermal/cooling → power DELIVERED TO "
-    "AI datacenters → optical interconnect → colocation/operator → AI-cloud. UPSTREAM ENABLERS ARE "
-    "IN SCOPE (e.g. HBM / advanced-packaging metrology with quantified revenue) — they need not be "
-    "datacenters themselves. Exposure must be CHAIN-SPECIFIC (a named layer) and grounded in "
-    "disclosed activity — NOT generic power/equipment that merely 'could' feed a datacenter, NOT "
-    "edge/on-device AI (the opposite of a datacenter), NOT a 'broad AI market' adjacency."
-)
-
-# DELIBERATELY BROAD pre-filter over the WHOLE AI-datacenter VALUE CHAIN's vocabulary (build 2): a
-# chain enabler describes its business in these terms even when it never says 'AI' (VRT-2022 said
-# 'data center'; a cooling co 'liquid cooling'; a power co 'switchgear'). Broad for RECALL — the
-# semantic layer then discriminates chain-specific from indirect/not-driver. Truly text-silent names
-# (zero chain vocabulary) are caught only by a full-universe scan — a reported recall-cost limit.
-DRIVER_PHRASES: tuple[str, ...] = (
-    "data center", "hyperscaler", "colocation", "high-performance computing", "GPU", "accelerator",
-    "high bandwidth memory", "advanced packaging", "liquid cooling", "thermal management",
-    "data center power", "switchgear", "optical interconnect", "silicon photonics", "AI cloud",
-    "AI inference", "neocloud", "artificial intelligence",
-)
+# AI-datacenter's driver description + pre-filter vocabulary + layer tags moved to
+# ``vinci.themes.drivers.AI_DATACENTER`` (a DriverSpec). This module is driver-AGNOSTIC — it takes a
+# DriverSpec and contains NO theme-specific strings. (The build-1 "~50%" example was dropped there.)
 
 _CONCRETE_RANK: dict[ExposureConcreteness, int] = {
     ExposureConcreteness.NONE: 0,
@@ -103,42 +83,29 @@ def is_real_exposure(a: ExposureAssessment) -> bool:
 
 def _effective_rank(conc: ExposureConcreteness, tie: DriverTie) -> int:
     """The fact's effective grade AFTER the DRIVER-TIE gate (audit error-mode #2, a SEPARATE gate):
-    a terms-binding / quantified fact counts fully ONLY if it is CHAIN-SPECIFIC. An INDIRECT tie
-    caps it at committed-capacity (borderline — real activity, soft datacenter tie, e.g. a fuel-cell
-    CEPA 'for data center'); a NOT-DRIVER tie (edge/on-device, 'broad AI' adjacency) caps it at
-    stated-intent (a mention, not exposure to THIS driver)."""
+    a terms-binding / quantified fact counts fully ONLY if it is DRIVER-SPECIFIC. An INDIRECT tie
+    caps it at committed-capacity (borderline — real activity, only a generic/weak tie to the
+    driver); a NOT-DRIVER tie (an adjacent-but-distinct market) caps it at stated-intent (a mention,
+    not exposure to THIS driver). Driver-AGNOSTIC — what each tie MEANS is defined per-theme by the
+    DriverSpec's tie_taxonomy; this gate only reads the tie the LLM returned."""
     r = _CONCRETE_RANK[conc]
-    if tie is DriverTie.CHAIN_SPECIFIC:
+    if tie is DriverTie.DRIVER_SPECIFIC:
         return r
     if tie is DriverTie.INDIRECT:
         return min(r, _CONCRETE_RANK[ExposureConcreteness.COMMITTED_CAPACITY])
     return min(r, _CONCRETE_RANK[ExposureConcreteness.STATED_INTENT])
 
 
-# Which value-chain LAYER a disclosed fact names — a keyword-read PROVENANCE tag (not a grade) for
-# volume-by-layer aggregation. Most-specific layers first so 'HBM for data centers' tags HBM (not
-# colocation); 'GPU-as-a-service' tags AI-cloud (not chips).
-_CHAIN_LAYERS: tuple[tuple[str, tuple[str, ...]], ...] = (
-    ("HBM/memory", ("high bandwidth memory", "high-bandwidth memory", "hbm", "dram", "memory")),
-    ("packaging", ("advanced packaging", "packaging", "chiplet", "interposer", "hybrid bonding")),
-    ("optical/interconnect", ("optical", "photonic", "transceiver", "interconnect", "fiber")),
-    ("thermal/cooling", ("liquid cooling", "cooling", "thermal", "immersion", "heat rejection")),
-    ("AI-cloud", ("ai cloud", "gpu-as-a-service", "gpuaas", "neocloud", "inference")),
-    ("chips/GPU", ("gpu", "accelerator", "asic", "high-performance comput", "compute")),
-    ("power/electrical", ("power", "electrical", "grid", "switchgear", "transformer", "fuel cell",
-                          "megawatt", "energy")),
-    ("colocation/operator", ("colocation", "data center", "datacenter", "hosting", "campus")),
-)
-
-
-def chain_layer_of(text: str) -> str:
-    """A PROVENANCE tag (not a grade): which value-chain layer the disclosed fact names, by keyword
-    read — approximate (a fact spans layers; the human reads the fact), for by-layer volume. First
-    match wins; 'unspecified' if none of the chain vocabulary appears."""
+def provenance_tag_of(text: str, tags: tuple[tuple[str, tuple[str, ...]], ...]) -> str:
+    """A PROVENANCE tag (not a grade): which of the theme's sub-structure tags a disclosed fact
+    names, by a keyword read of ``tags`` (the DriverSpec's ``provenance_tags``, ordered
+    most-specific first — e.g. for AI-datacenter, the value-chain layers), for by-tag aggregation.
+    Approximate (a fact spans tags; the human reads the verbatim fact). First match wins;
+    'unspecified' if none match or the theme supplied no tags."""
     t = text.lower()
-    for layer, kws in _CHAIN_LAYERS:
+    for tag, kws in tags:
         if any(k in t for k in kws):
-            return layer
+            return tag
     return "unspecified"
 
 
@@ -341,7 +308,7 @@ EXPOSURE_TOOL: dict[str, Any] = {
                             "make-whole / quantified TCV / prepayment) — a FRAMEWORK, 'subject to "
                             "further agreement', sole-OPTION or backstop-only is "
                             "committed-capacity, NOT binding. quantified-revenue = a $/% BOTH "
-                            "quantified AND attributable to a specific chain layer — "
+                            "quantified AND attributable to a specific part of the driver — "
                             "BLENDED/general revenue is committed-capacity. committed-capacity = "
                             "committed MW/capex or real-but-not-contracted activity. stated-intent "
                             "= strategy/exploring. none.",
@@ -349,13 +316,12 @@ EXPOSURE_TOOL: dict[str, Any] = {
                         "driver_tie": {
                             "type": "string",
                             "enum": [t.value for t in DriverTie],
-                            "description": "The SEPARATE tie gate. chain-layer-specific = a "
-                            "named AI-datacenter value-chain layer (GPU/compute, HBM/memory, "
-                            "advanced packaging, thermal/cooling, power DELIVERED TO AI "
-                            "datacenters, optical interconnect, colocation/operator, AI-cloud). "
-                            "indirect = a generic/weak datacenter tie (generic power/equipment "
-                            "'for data center', no AI/GPU language). not-driver = edge/on-device "
-                            "AI (opposite of a datacenter) or a 'broad AI market' adjacency.",
+                            "description": "The SEPARATE tie gate — how specifically the fact ties "
+                            "to THE DRIVER (the user message defines what driver-specific / "
+                            "indirect / not-driver MEAN for this driver): driver-specific = tied "
+                            "to a NAMED "
+                            "element of the driver's structure; indirect = a generic/weak tie to "
+                            "the driver; not-driver = an adjacent-but-distinct market.",
                         },
                         "source_ref": {
                             "type": "string",
@@ -382,6 +348,10 @@ EXPOSURE_TOOL: dict[str, Any] = {
     },
 }
 
+# Driver-AGNOSTIC system prompt: the GENERAL grading rules (type-appropriate concreteness + the
+# two-axis structure). What driver-specific / indirect / not-driver MEAN for a theme is NOT here
+# — it is supplied per-theme by the DriverSpec (injected into the user message). No theme-specific
+# strings, no per-theme example facts.
 _SYSTEM = (
     "You read ONE company's recent SEC filing STREAM (latest annual + latest 10-Q + recent 8-Ks) "
     "and assemble its DISCLOSED exposure to a named driver, for a human analyst. Use ONLY the "
@@ -390,28 +360,21 @@ _SYSTEM = (
     "disclosed, put it in key_unknowns; do NOT infer or supply it. You do NOT recommend, rate, "
     "score, predict, or decide theme membership or investment merit — there is no verdict field; "
     "the human judges. Grade EACH fact on TWO INDEPENDENT axes — concreteness (its strength) and "
-    "driver_tie (its specificity to the AI-datacenter VALUE CHAIN). A passing MENTION ('exploring "
-    "AI', 'appointed an SVP of AI', 'AI is a tailwind') is STATED-INTENT, not exposure. "
-    "CONCRETENESS is TYPE-APPROPRIATE. For a CONTRACT, grade binding-contract ONLY if the TERMS "
-    "BIND — an executed order form, a minimum-volume / take-or-pay / make-whole obligation, a "
-    "quantified total-contract-value, or a prepayment; a 'definitive'/'master' agreement whose "
-    "PRICING or VOLUME is 'subject to further agreement', or that grants only an OPTION or a "
-    "BACKSTOP, is committed-capacity AT MOST — the LABEL 'definitive' does not make the terms "
-    "bind. Do NOT require a NAMED customer: an ANONYMIZED counterparty with BINDING terms is fully "
-    "binding — penalize DEFERRED TERMS, never customer anonymity. For REVENUE, grade "
-    "quantified-revenue ONLY if the $/% is BOTH quantified AND attributable to a SPECIFIC chain "
-    "layer; BLENDED/general revenue ('supporting data center, AI and enterprise', not broken out) "
-    "is committed-capacity at most. DRIVER_TIE is the SEPARATE gate — even a terms-binding "
-    "contract is NOT real exposure if its tie is indirect. Grade chain-layer-specific ONLY for a "
-    "named AI-datacenter chain layer (GPU/compute, HBM/memory, advanced packaging, "
-    "thermal/cooling, power DELIVERED TO AI datacenters, optical interconnect, "
-    "colocation/operator, AI-cloud); grade indirect for a generic/weak datacenter tie (generic "
-    "power or equipment 'for data center applications' with NO AI/GPU language); grade not-driver "
-    "for edge/on-device AI (the OPPOSITE of a datacenter) or a 'broad AI market' adjacency. "
-    "UPSTREAM ENABLERS ARE IN SCOPE: a chip/HBM/packaging/thermal/power/optical supplier with "
-    "quantified chain-attributable revenue (e.g. ~50% from HBM/advanced-packaging) is "
-    "chain-layer-specific, even though it is not itself a datacenter. Judge the disclosed "
-    "substance, not the vocabulary."
+    "driver_tie (its specificity to THE DRIVER, defined in the user message). A passing MENTION of "
+    "the driver (a strategy nod, an 'exploring' or 'well-positioned' remark, a title/appointment) "
+    "is STATED-INTENT, not exposure. CONCRETENESS is TYPE-APPROPRIATE. For a CONTRACT, grade "
+    "binding-contract ONLY if the TERMS BIND — an executed order form, a minimum-volume / "
+    "take-or-pay / make-whole obligation, a quantified total-contract-value, or a prepayment; a "
+    "'definitive'/'master' agreement whose PRICING or VOLUME is 'subject to further agreement', or "
+    "that grants only an OPTION or a BACKSTOP, is committed-capacity AT MOST — the LABEL "
+    "'definitive' does not make the terms bind. Do NOT require a NAMED customer: an ANONYMIZED "
+    "counterparty with BINDING terms is fully binding — penalize DEFERRED TERMS, never customer "
+    "anonymity. For REVENUE, grade quantified-revenue ONLY if the $/% is BOTH quantified AND "
+    "attributable to a SPECIFIC part of the driver; BLENDED/general revenue (not broken out to the "
+    "driver) is committed-capacity at most. DRIVER_TIE is the SEPARATE gate — even a terms-binding "
+    "contract is NOT real exposure if its tie is indirect. The user message defines what "
+    "driver-specific / indirect / not-driver MEAN for THIS driver; grade the fact's tie by that "
+    "definition. Judge the disclosed substance, not the vocabulary."
 )
 
 
@@ -419,29 +382,72 @@ def _ref_traces(ref: str, universe: set[str]) -> bool:
     return any(ref == u or ref in u or u in ref for u in universe)
 
 
+_ACC_RE = re.compile(r"\d{10}-\d{2}-\d{6}")   # an EDGAR accession, e.g. 0001628280-26-013305
+_NUM_RE = re.compile(r"\b\d[\d,]*\.?\d*\b")
+_PROPER_RE = re.compile(r"\b[A-Z][A-Za-z0-9&.]{2,}\b")   # proper-noun-ish tokens (CoreWeave, HBM)
+# common words that happen to be capitalized/numeric but do NOT discriminate a real fact from a
+# fabricated one (they appear in almost any filing) — excluded from the grounding check
+_GROUNDING_STOP = {
+    "the", "this", "that", "for", "with", "and", "our", "its", "company", "corp", "inc", "llc",
+    "corporation", "approximately", "including", "revenue", "agreement", "contract", "customer",
+    "products", "services", "million", "billion", "the company",
+}
+
+
+def _cited_filing_text(ref: str, by_accession: dict[str, str]) -> str | None:
+    """The filing text the fact cites, matched by accession (the LLM copies the '(accession ...)'
+    tag). None if the ref carries no accession or none matches the stream."""
+    m = _ACC_RE.search(ref)
+    return by_accession.get(m.group(0)) if m else None
+
+
+def _fact_grounded(fact_text: str, filing_text: str) -> bool:
+    """FUZZY grounding: does the LLM's paraphrased ``fact``'s LOAD-BEARING content actually appear
+    in the cited filing? Extract the fact's distinctive tokens — proper-noun-ish names (a
+    counterparty / product) primarily, numbers as a fallback — and require >=half to appear
+    (substring) in the filing. A fact with NO distinctive tokens (a generic paraphrase) is not
+    checkable and passes (low-risk). A fact whose distinctive claims are absent is UNGROUNDED —
+    the audit's fact/accession-mismatch mode (a fabricated fact carrying a real accession), which
+    does NOT scale to hand-check at multi-theme volume; fail loud."""
+    fl = filing_text.lower()
+    propers = {p.lower() for p in _PROPER_RE.findall(fact_text)} - _GROUNDING_STOP
+    nums = {n.replace(",", "").rstrip(".") for n in _NUM_RE.findall(fact_text)}
+    nums = {n for n in nums if len(n) >= 2}  # drop single digits (too common to discriminate)
+    distinctive = propers or nums   # names first (fabrication-resistant); numbers only if no names
+    if not distinctive:
+        return True
+    hits = sum(1 for d in distinctive if d in fl)
+    return hits / len(distinctive) >= 0.5
+
+
 def assess_exposure(
+    spec: DriverSpec,
     ticker: str,
     cik: str,
-    driver: str,
     stream: list[tuple[str, str]],
     *,
     llm: LlmClient,
 ) -> ExposureAssessment:
-    """Run the fenced LLM over the disclosure stream → a cite-checked, verdict-free assessment. The
-    ``exposure_basis`` is DERIVED from the CITED facts' max concreteness (not trusted from the LLM):
-    no cited concrete fact → ``no-theme-exposure-disclosed`` (fail-loud; a mention is not exposure).
-    Fail-loud — an empty stream or an LLM error yields a NONE assessment + a flag, never a
+    """Run the fenced LLM over the disclosure stream → a cite-checked, verdict-free assessment for
+    the driver defined by ``spec`` (theme-parameterized; AI-datacenter is one DriverSpec instance).
+    The ``exposure_basis`` is DERIVED from the CITED + GROUNDED facts' max concreteness (not trusted
+    from the LLM): no cited concrete fact → ``no-theme-exposure-disclosed`` (fail-loud; a mention is
+    not exposure). Cite-check is TWO-STAGE: the accession must trace to the stream AND the fact's
+    load-bearing text must be grounded in that filing (``_fact_grounded``) — an ungrounded fact is
+    fail-closed. An empty stream or an LLM error yields a NONE assessment + a flag, never a
     fabricated exposure."""
     stream_refs = [ref for ref, _ in stream]
     base = ExposureAssessment(
-        ticker=ticker, cik=cik, driver=driver, exposure_basis=ExposureBasis.NONE_DISCLOSED,
+        ticker=ticker, cik=cik, driver=spec.description,
+        exposure_basis=ExposureBasis.NONE_DISCLOSED,
         disclosed_facts=[], primary_business="", key_unknowns=[], stream_refs=stream_refs,
         model=llm.model,
     )
     if not stream:
         return base.model_copy(update={"flags": ["no recent filings fetched — cannot assess"]})
     fenced = "\n\n".join(f"=== {ref} ===\n{text}" for ref, text in stream)
-    user = (f"Company ticker: {ticker}. DRIVER to assess exposure to:\n{driver}\n\n"
+    user = (f"Company ticker: {ticker}. DRIVER to assess exposure to:\n{spec.description}\n\n"
+            f"HOW A FACT TIES TO THIS DRIVER (grade driver_tie by this):\n{spec.tie_taxonomy}\n\n"
             f"Recent filing stream (cite the '(accession ...)' tag; use ONLY this):\n\n{fenced}")
     try:
         raw = llm.extract(system=_SYSTEM, user=user, tool=EXPOSURE_TOOL)
@@ -449,6 +455,7 @@ def assess_exposure(
         return base.model_copy(update={"flags": [f"LLM error: {exc}"]})
 
     refs = set(stream_refs)
+    by_accession = {m.group(0): text for ref, text in stream if (m := _ACC_RE.search(ref))}
     flags: list[str] = []
     facts: list[ExposureFact] = []
     best = 0
@@ -469,6 +476,12 @@ def assess_exposure(
         if not cited:
             flags.append(f"UNCITED fact (ref not in stream): '{fact_text[:60]}'")
             conc = ExposureConcreteness.NONE  # uncited fact can't credit the basis (fail-closed)
+        else:
+            filing_text = _cited_filing_text(ref, by_accession)
+            if filing_text is not None and not _fact_grounded(fact_text, filing_text):
+                flags.append(
+                    f"UNGROUNDED fact-text (not found in cited filing): '{fact_text[:60]}'")
+                conc = ExposureConcreteness.NONE  # ungrounded fact can't credit the basis
         if _DIRECTIONAL.search(fact_text):
             flags.append(f"DIRECTIONAL language in fact: '{fact_text[:60]}'")
         facts.append(
@@ -491,10 +504,9 @@ def assess_exposure(
 # The universe scan (build 1 — the scale-discrimination test)
 # --------------------------------------------------------------------------------------------------
 def scan_driver_exposure(
+    spec: DriverSpec,
     names: list[tuple[str, str]],
     *,
-    driver: str,
-    phrases: tuple[str, ...],
     edgar: EdgarClient,
     sec_http: CachedHttp,
     efts_http: CachedHttp,
@@ -504,12 +516,13 @@ def scan_driver_exposure(
     max_workers: int = 8,
     progress: ProgressFn | None = None,
 ) -> tuple[dict[str, set[str]], list[ExposureAssessment]]:
-    """Scan the sub-$10B universe for exposure to ONE driver. Returns the prefilter (the keyword
-    flood) + the per-candidate assessments (the discrimination). The human reads the flagged
-    set + each one's disclosed-fact basis to audit the false-positive rate directly."""
+    """Scan the sub-$10B universe for exposure to ONE driver (``spec``). Returns the prefilter (the
+    keyword flood, from ``spec.prefilter_terms``) + the per-candidate assessments (the
+    discrimination). The human reads the flagged set + each one's disclosed-fact basis to audit the
+    false-positive rate directly."""
     ciks = [c for _, c in names]
     ticker_by_cik = {c: t for t, c in names}
-    matched = mention_prefilter(efts_http, ciks, phrases, startdt=startdt, enddt=enddt,
+    matched = mention_prefilter(efts_http, ciks, spec.prefilter_terms, startdt=startdt, enddt=enddt,
                                 skip_errors=True, progress=progress)
     candidates = sorted(matched)
     since = date.fromisoformat(startdt)
@@ -518,7 +531,7 @@ def scan_driver_exposure(
 
     def work(cik: str) -> ExposureAssessment:
         stream = recent_disclosure_stream(edgar, sec_http, cik, since=since)
-        return assess_exposure(ticker_by_cik[cik], cik, driver, stream, llm=llm)
+        return assess_exposure(spec, ticker_by_cik[cik], cik, stream, llm=llm)
 
     with cf.ThreadPoolExecutor(max_workers=max_workers) as ex:
         futures = {ex.submit(work, c): c for c in candidates}
@@ -528,7 +541,7 @@ def scan_driver_exposure(
                 out.append(fut.result())
             except Exception as exc:  # noqa: BLE001 — fail-loud per name, never drop silently
                 out.append(ExposureAssessment(
-                    ticker=ticker_by_cik[c], cik=c, driver=driver,
+                    ticker=ticker_by_cik[c], cik=c, driver=spec.description,
                     exposure_basis=ExposureBasis.NONE_DISCLOSED, disclosed_facts=[],
                     primary_business="", key_unknowns=[], stream_refs=[],
                     flags=[f"scan error: {type(exc).__name__}: {exc}"]))

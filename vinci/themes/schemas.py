@@ -286,9 +286,9 @@ class ThemeStage2(BaseModel, frozen=True):
 # Assemble-not-conclude: NO score / rank / theme-membership / buy verdict (the human judges).
 # --------------------------------------------------------------------------------------------------
 class ExposureConcreteness(StrEnum):
-    """How CONCRETE one disclosed exposure fact is — the Part-6 discriminator ('mentions AI' ≠
-    'binding AI exposure'; CLSK's tenant-less 'SVP of AI Data Centers' is intent, CAMT's quantified
-    50%-of-revenue HBM IS exposure). Graded, never a verdict."""
+    """How CONCRETE one disclosed exposure fact is — the Part-6 discriminator (a mere mention of the
+    driver ≠ binding exposure; a tenant-less 'we appointed an SVP of X' is intent, a quantified
+    share-of-revenue attributable to the driver IS exposure). Graded, never a verdict."""
 
     BINDING_CONTRACT = "binding-contract"  # signed agreement, named counterparty + terms (MW/years)
     COMMITTED_CAPACITY = "committed-capacity"  # committed capex/MW/capacity, no binding revenue yet
@@ -298,24 +298,24 @@ class ExposureConcreteness(StrEnum):
 
 
 class DriverTie(StrEnum):
-    """How SPECIFICALLY a fact ties to an AI-datacenter VALUE-CHAIN layer
-    (GPU/HBM/packaging/thermal/power-delivered-to-AI-datacenters/optical/colocation/AI-cloud) — the
-    audit's driver-tie gate,
-    INDEPENDENT of concreteness: a terms-binding contract with only an INDIRECT tie is NOT real
-    exposure (e.g. a fuel-cell CEPA that binds but ties only generically to 'data center')."""
+    """How SPECIFICALLY a fact ties to THE DRIVER (defined per-theme by a ``DriverSpec``) — the
+    audit's driver-tie gate, INDEPENDENT of concreteness: a terms-binding contract with only an
+    INDIRECT tie is NOT real exposure (e.g. a fuel-cell CEPA that binds but ties only generically to
+    'data center'). What driver-specific / indirect / not-driver MEAN is supplied by the theme's
+    ``DriverSpec.tie_taxonomy``, not hardcoded here."""
 
-    CHAIN_SPECIFIC = "chain-layer-specific"  # a named AI-datacenter value-chain layer
-    INDIRECT = "indirect"  # weak/generic tie: generic power/equipment 'for data center', no AI/GPU
-    NOT_DRIVER = "not-driver"  # NOT this driver: edge/on-device AI, 'broad AI market' adjacency
+    DRIVER_SPECIFIC = "driver-specific"  # tied to a named element of the driver's structure
+    INDIRECT = "indirect"  # weak/generic tie to the driver
+    NOT_DRIVER = "not-driver"  # NOT this driver: an adjacent-but-distinct market
 
 
 class ExposureFact(BaseModel, frozen=True):
     """One disclosed exposure fact, source-bound to the filing it was read from (CLAUDE.md)."""
 
     fact: str  # the disclosed business activity, paraphrased from the filing (no outside facts)
-    # TYPE-APPROPRIATE strength (terms-binding / quantified+chain)
+    # TYPE-APPROPRIATE strength (terms-binding / quantified+driver-attributable)
     concreteness: ExposureConcreteness
-    # how specifically it ties to the AI-datacenter value chain (separate gate)
+    # how specifically it ties to the driver (a separate gate; meaning per the theme's DriverSpec)
     driver_tie: DriverTie
     source_ref: str  # the filing accession/ref the fact was read from (must trace to the stream)
 
@@ -348,3 +348,26 @@ class ExposureAssessment(BaseModel, frozen=True):
     stream_refs: list[str]  # the filing refs read — the citable universe for this assessment
     flags: list[str] = Field(default_factory=list)  # guardrail flags (uncited / over-claim / etc.)
     model: str | None = None  # the LLM that produced it (logged; never feeds the ledger)
+
+
+class DriverSpec(BaseModel, frozen=True):
+    """A per-theme configuration that parameterizes the semantic exposure classifier for ANY driver.
+
+    The classifier code path (the generic system prompt + tool + the two-axis grading) is
+    driver-AGNOSTIC; a DriverSpec supplies everything driver-specific. AI-datacenter is ONE instance
+    (``vinci.themes.drivers.AI_DATACENTER``), NOT baked into the classifier.
+
+    OPEN FOR EXTENSION (do not block future themes): only the four fields below are required. A
+    demand-shaped theme supplies whatever ``prefilter_terms`` fit it — they need NOT be value-chain
+    terms. ``tie_taxonomy`` is FREE TEXT, so a theme defines driver-specific / indirect / not-driver
+    however its structure needs — sequential value-chain layers, parallel capability categories, or
+    a tailwind/headwind DIRECTION — none assumed here (the tie is not presumed positive).
+    ``provenance_tags`` is optional (() when a theme has no sub-structure to tag by). The schema is
+    deliberately ADDITIVE: a later theme adds a field it needs; it does not retrofit this one."""
+
+    key: str  # stable id, e.g. "ai-datacenter"
+    description: str  # what the driver IS + its exposure structure (the user-message driver text)
+    tie_taxonomy: str  # what driver-specific / indirect / not-driver MEAN for THIS driver
+    prefilter_terms: tuple[str, ...]  # pre-filter vocabulary (shape-agnostic; whatever fits)
+    # optional keyword→tag map for by-tag volume aggregation (e.g. chain layers); () if none
+    provenance_tags: tuple[tuple[str, tuple[str, ...]], ...] = ()

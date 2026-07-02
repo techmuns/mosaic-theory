@@ -2795,3 +2795,48 @@ detection/B/C/classifier/universe UNTOUCHED. ruff + mypy --strict (82) + pytest 
 tests: freeze path, undefined-not-0.0, the 2 diagnostics, forward-only, watchlist guard, onset) green.
 NOT built (out of scope): the §3b-ii keyword/co-movement control (needs Component A live-forward AND a
 BUY leg), the cross-universe monitor (separate step). Forward edge NOT claimed. Edge 2 stays lead horse.
+
+**MULTI-THEME REFACTOR of the exposure classifier + fact-text cite-check (2026-07-02,
+`feat/theme-multi-theme-refactor`, off the consolidated base). The classifier is now
+THEME-PARAMETERIZED — it runs on ANY driver via a `DriverSpec`; AI-datacenter is demoted from hardcoded
+to ONE instance. Behavior-preserving on AI-datacenter.** New `DriverSpec` schema (schemas.py) +
+`vinci/themes/drivers.py` (the `AI_DATACENTER` instance + a registry). Everything driver-specific — the
+driver description, the driver-tie taxonomy, the pre-filter terms, the by-tag provenance map — moved OUT
+of the classifier code path INTO the spec. `exposure.py`'s `_SYSTEM` prompt + `EXPOSURE_TOOL` are now
+GENERIC (the tie taxonomy is injected per-theme via the user message); `assess_exposure(spec, …)` +
+`scan_driver_exposure(spec, …)` + `provenance_tag_of(text, tags)` take the spec. The `DriverTie` value
+`chain-layer-specific` → `driver-specific` (an AI-datacenter-flavored label genericized — a rename,
+semantically identical). **The hardcoded "~50% from HBM/advanced-packaging" CAMT constant was DROPPED**
+(a specific fact that must not generalize). **The DriverSpec is deliberately OPEN** — 4 required fields;
+`prefilter_terms` shape-agnostic (a demand-shaped theme's terms need not be chain terms); `tie_taxonomy`
+free text (a theme defines the tie however — sequential layers, parallel categories, or a
+tailwind/headwind DIRECTION — none assumed; the tie is NOT presumed positive); `provenance_tags`
+optional. **CITE-CHECK now TWO-STAGE (the fact-text-grounding fix):** the accession must trace to the
+stream AND the fact's load-bearing text (proper-noun / number tokens) must be GROUNDED in that filing
+(`_fact_grounded`, fuzzy ≥½-token overlap) — an ungrounded fact fails closed (conc→NONE, flagged).
+Reason: multi-theme scales un-hand-checked volume; the manual 13-name audit that caught fact/accession
+mismatches will not scale. **REGRESSION — behavior-preserving on AI-datacenter (the deterministic proof
+is the pin):** a pinned prompt-equivalence test confirms the AI-datacenter path still carries EVERY
+load-bearing instruction the old hardcoded prompt had (type-appropriate concreteness rules + each
+value-chain layer + not-driver/upstream scope) with the ONLY deliberate change being the "~50%" drop; a
+toy DEMAND-shaped spec (GLP-1) runs through the SAME classifier with ZERO AI-datacenter leakage (pinned);
+the grading-fixture tests reproduce the build-2 grading cases through the parameterized path. **A LIVE
+spot-check on 4 highest-risk names reproduced the build-2 BASIS 3/4** — CAMT (whose "~50%" example was
+dropped) still grades quantified/driver-specific ✓, FCEL committed-via-indirect ✓, HIMX
+aspirational/not-real ✓; the 1 "diff" is CORZ quantified→binding, **both in the REAL tier** (CoreWeave
+discloses both a binding contract and quantified revenue; the LLM graded a different fact this run — a
+within-REAL sub-grade shift, documented LLM stochasticity, NOT a refactor change; the deterministic
+prompt-equivalence test proves the LLM INPUT is preserved, so run-to-run variance is the LLM's). All 4
+preserve REAL/not-REAL. ruff + mypy --strict (83 files) + pytest (**304**; 22 exposure tests incl. 5 new
+refactor/cite-check) green. Detection/B/C/forward-harness/universe UNTOUCHED. **PLANNING DECISIONS logged
+(NOT built now):** (a) **INTAKE RADAR** — the human proposes themes from a machine-assembled radar of
+LEADING INDICATORS (disclosure-language velocity / capex-commitment flow / policy catalysts — explicitly
+NOT price-momentum or news-volume, which are late/replicable); machine PROPOSES, human ADVANCES-or-PARKS;
+built + validated AFTER theme #2 (a second theme is needed to generalize the radar). (b) **THEME #2 = the
+demand-shaped defense COMPOSITIONAL SHIFT** (attritable / autonomy / cyber) — chosen to test whether
+reasoned decomposition GENERALIZES beyond supply chains, with two expected stresses — DIRECTION
+(tailwind vs headwind) and PARALLEL-vs-SEQUENTIAL categories — to be resolved BY EVIDENCE from theme #2,
+NOT pre-built (the DriverSpec is left open for exactly these). (c) **the consolidated branch
+(`feat/theme-edge-integrated`) is a LONG-LIVED base** — theme work stacks on it until a MERGE TRIGGER
+(the first RATIFIED enabler, or the viewer shipping). Forward edge NOT claimed — a refactor + cite-check
+hardening, behavior-preserving on the proven theme. Edge 2 stays lead horse.
