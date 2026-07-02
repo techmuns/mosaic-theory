@@ -2671,8 +2671,9 @@ def test_old_json_without_comps_blocks_falls_back() -> None:
         assembled_at=datetime(2026, 6, 1, 12, 0),
     )
     md = dr.render_markdown(dossier)
-    assert "### Leverage & survival" not in md  # the unified block is absent
-    assert "Survival capacity (leverage + self-funding + wall)" in md  # Quality leverage returns
+    assert "### Leverage & survival" in md  # (D1) the section header always renders
+    assert "both bases labeled" not in md  # NOT the unified block
+    assert "Survival capacity (leverage + self-funding + wall)" in md  # Quality leverage fallback
     assert "Fundamental deltas" in md  # the median-only line renders (no grid)
 
 
@@ -3123,7 +3124,7 @@ def test_self_referential_twin_dropped_as_hidden_qa_flag() -> None:
     drop_flag = next(f for f in flags if "self-referential 'Microvast (battery" in f)
     caveats, qa = dflags.partition(flags)
     assert drop_flag in qa and drop_flag not in caveats  # the drop is dev-only QA, hidden
-    assert any(f.startswith("TWIN 1 self-referential") for f in qa)  # the dev-only count line
+    assert any(f.startswith("TWIN 1 invalid twin(s) suppressed") for f in qa)  # dev-only count line
 
 
 def test_internal_rule_leak_flagged_as_hidden_qa() -> None:
@@ -3249,6 +3250,137 @@ def test_twin_guard_keeps_legitimate_peer_twins() -> None:
     assert syn._self_referential_twin(selfref, "BA", "The Boeing Company") is True
 
 
+# --- PR D Phase 2: facts-first restructure (D1), merged trajectory (D2), deterministic bull/bear
+# --- ordering (D3 + N1/N2/N3), caveat shape (D4), appendix riders (D5), twin rules (D6) ------
+
+
+def _synth_min(bull: list[typing.Any], bear: list[typing.Any]) -> ds.Synthesis:
+    return ds.Synthesis(
+        evidence_balance="Mixed.", bull_points=bull, bear_points=bear, twin_reference_cases=[],
+        decisive_question=ds.DecisiveQuestion(question="Does it reverse?", evidence_for=[],
+                                              evidence_against=[]),
+        key_unknowns=["CIQ not pulled"],
+    )
+
+
+def test_d1_section_order_facts_first() -> None:
+    """(D1) The rendered markdown is facts-first: caveats → drawdown & idiosyncrasy (clubbed) →
+    leverage & survival → trajectory → valuation → peer comps → concentration → synthesis (twins
+    LAST) → appendix → verdict footer."""
+    dossier = ds.Dossier(
+        ticker="X", name="X Co", cik="0", reference_date=date(2026, 6, 1), rank=1,
+        mechanical=_minimal_mech(), synthesis=_synth_min([], []),
+        caveats=["a caveat to verify"], qa_flags=[], llm_model="m",
+        assembled_at=datetime(2026, 6, 1, 12, 0),
+    )
+    md = dr.render_markdown(dossier)
+
+    def pos(s: str) -> int:
+        assert s in md, f"missing section: {s}"
+        return md.index(s)
+
+    assert (pos("Analyst caveats") < pos("Drawdown cause & idiosyncrasy")
+            < pos("### Leverage & survival") < pos("### Trajectory")
+            < pos("### Valuation & own-history") < pos("### Peer comps")
+            < pos("### Concentration") < pos("## Synthesis"))
+    assert (pos("### Bull case") < pos("### Bear case") < pos("### Decisive question")
+            < pos("### Key unknowns") < pos("### Twin reference cases"))
+    assert pos("### Twin reference cases") < pos("No BUY/AVOID here")  # verdict footer last
+    # (D1) management-commentary pointer relocated into the appendix zone
+    assert pos("## Synthesis") < pos("### Management commentary")
+
+
+def test_d2_trajectory_table_merges_both_parents_no_drift() -> None:
+    """(D2) 'Margin trend' + 'Multi-year trajectory' → ONE table (rev/EBITDA/margins/ROIC). Every
+    parent row survives; ROIC (whose source omits the (R) marker) still fills the (R) column
+    (period matched marker-insensitively); the footnote dedupes the repeated 'R reclassified'."""
+    mt = ("EBITDA margin: Dec-31-2022 (R) -68% → Dec-31-2023 -28% → Dec-31-2024 1%; "
+          "gross margin: Dec-31-2022 (R) 4% → Dec-31-2023 19% → Dec-31-2024 31%; "
+          "absolute EBITDA: Dec-31-2022 (R) -140 → Dec-31-2023 -85 → Dec-31-2024 5; "
+          "absolute revenue: Dec-31-2022 (R) 204 → Dec-31-2023 307 → Dec-31-2024 380  "
+          "[R reclassified; read margin % with absolute EBITDA]")
+    my = ("Revenue: Dec-31-2022 (R) 204 → Dec-31-2023 307 → Dec-31-2024 380; "
+          "EBITDA: Dec-31-2022 (R) -140 → Dec-31-2023 -85 → Dec-31-2024 5; "
+          "Revenue YoY (latest same-quarter): -25.5% (Q1 vs Q1); "
+          "ROIC: Dec-31-2022 -12.3% → Dec-31-2023 -8.7% → Dec-31-2024 -2.2%  "
+          "[R reclassified; per-period values]")
+    base = _minimal_mech()
+    q = base.quality.model_copy(update={
+        "margin_trend": ds.Sourced.present(mt, source_ref="CIQ IS"),
+        "multi_year_trajectory": ds.Sourced.present(my, source_ref="CIQ IS"),
+    })
+    md = "\n".join(dr._trajectory_table_lines(base.model_copy(update={"quality": q})))
+    for lbl in ("Revenue ($M)", "EBITDA ($M)", "EBITDA margin", "Gross margin", "ROIC"):
+        assert f"| {lbl} " in md, lbl                       # every parent row survived, merged
+    roic = next(ln for ln in md.splitlines() if ln.startswith("| ROIC "))
+    assert "-12.3%" in roic and "–" not in roic  # ROIC fills the (R) column
+    rev = next(ln for ln in md.splitlines() if ln.startswith("| Revenue ($M) "))
+    assert "204" in rev and "307" in rev and "380" in rev  # zero value drift vs the parents
+    assert md.count("R reclassified") == 1                 # (N6) footnote fragment deduped
+    assert "-25.5%" in md                                  # the same-quarter YoY footnote
+
+
+def test_d3_point_tier_classification_and_ordering() -> None:
+    """(D3 + N1/N2) tier from the claim (concession stripped first, N1); adjusted-EBITDA-negative
+    → T1 (N2); a multi-tier claim takes the HIGHEST tier; unclassifiable → 4.5; ties keep emission
+    order (stable)."""
+    tier = dr._point_tier
+    # N1: classify on the PRIMARY assertion — the T1 'Debt/EBITDA' sits after 'posing whether'/'but'
+    peer = ("screens BETTER than peer median — EBITDA margin 14% and EBITDA growth 21% — posing "
+            "whether the discount is residual; but Debt/EBITDA 5.8 vs 2.0")
+    assert tier(peer) == 2.0                                          # 'growth' (T2) wins
+    assert tier("GAAP profit is an illusion; adjusted EBITDA was negative $5.5M") == 1.0  # N2
+    assert tier("net-debt/EBITDA 3.9x against a falling margin") == 1.0  # highest tier wins
+    assert tier("a governance dispute with the board") == 4.5           # unclassifiable
+
+    class _P:
+        def __init__(self, claim: str, ref: str, cited: bool = True) -> None:
+            self.claim, self.source_ref, self.cited = claim, ref, cited
+
+    pts = [
+        _P("valuation looks cheap on every multiple", "CIQ Multiples"),   # T5
+        _P("levered free cash flow is positive", "CIQ Cash Flow"),        # T1
+        _P("net profit is non-operating", "CIQ transcript(s): call"),     # T3, transcript
+        _P("interest coverage is 10x", "CIQ IS"),                          # T1
+    ]
+    order = [p.claim[:8] for p, _t, _c in dr._ordered_points(pts)]
+    assert order == ["levered ", "interest", "net prof", "valuatio"]  # T1 → T3 → T5 (stable)
+
+
+def test_d4_caveat_full_sentence_four_part_shape() -> None:
+    """(D4) A guardrail caveat renders the FULL offending sentence (no mid-claim truncation) in the
+    what/where/why-it-matters/how-to-verify shape; a mechanical caveat stays one full bullet."""
+    claim = ("the name trades at a steep discount to its peer group on every multiple which "
+             "implies a mean-reversion opportunity the market is currently mispricing outright")
+    cav = (f"Bare peer-comparison (a bull point): '{claim}' — presents cheap/rich vs peers as a "
+           "verdict without the earned-vs-residual decomposition; POSE justified-vs-residual")
+    md = "\n".join(dr._caveat_block(cav))
+    assert claim in md                                          # untruncated, in full
+    assert "_where:_ a bull point" in md
+    assert "_why it matters:_" in md and "decomposition" in md
+    assert "_how to verify:_ POSE justified-vs-residual" in md
+    mech = dr._caveat_block("Net debt/EBITDA (3.9x) is on reported EBITDA — verify the basis.")
+    assert mech == ["- Net debt/EBITDA (3.9x) is on reported EBITDA — verify the basis."]
+
+
+def test_d4_synthesis_emits_full_claim_no_snip() -> None:
+    """(D4) The human guardrail caveats no longer _snip the claim — a long offending sentence
+    the caveat in full (truncation is retained only for the dev-only QA flags)."""
+    pc = _fake_peer_comps()  # comparability + a traceable trading-multiples source_ref (→ cited)
+    mech = _minimal_mech().model_copy(update={"peer_comps": pc})
+    long_claim = ("The name trades cheap versus its peer median on EV/EBITDA and on virtually all "
+                  "other trading multiples, a widening discount the market keeps on mispricing")
+    payload = {
+        "bull_points": [{"claim": long_claim, "source_ref": pc.trading_multiples.source_ref}],
+        "bear_points": [], "twin_reference_cases": [],
+        "decisive_question": {"question": "?", "evidence_for": [], "evidence_against": []},
+        "key_unknowns": [],
+    }
+    _synth, flags, _ = syn.synthesize(mech, llm=_FakeLlm(payload), ticker="FUBO", name="FuboTV")
+    bare = next((f for f in flags if f.startswith("PEER-COMP-BARE")), None)
+    assert bare is not None and long_claim in bare  # the full sentence, not a '…'-snipped prefix
+
+
 def test_d5a_eps_absent_basis_renders_dash_never_borrows() -> None:
     """(D5a, condition c) GAAP EPS present but Normalized absent from Trends → the Normalized E cell
     is '—' and NEVER borrows the GAAP figure; each row reads its OWN basis."""
@@ -3267,3 +3399,22 @@ def test_d5a_eps_absent_basis_renders_dash_never_borrows() -> None:
     row = {r.label: r.cells for r in ft.rows}
     assert row["EPS (GAAP, dil.)"][-2:] == ["0.18", "0.17"]
     assert row["EPS (Normalized)"][-2:] == ["—", "—"]  # absent → '—', not the borrowed 0.18
+
+
+def test_d6_twin_single_entity_guard() -> None:
+    """(D6a) A twin must be ONE company: a '/'-joined pair or a 'cohort' is DROPPED with a QA
+    flag; an '&' name (AT&T) is a legitimate single entity → FLAGGED for QA but RENDERED."""
+    def tw(n: str) -> ds.TwinCase:
+        return ds.TwinCase(name=n, outcome="terminal", distinguishing_fact="x",
+                           source="[LLM-suggested, unverified]")
+    synth = ds.Synthesis(
+        evidence_balance="", bull_points=[], bear_points=[],
+        twin_reference_cases=[tw("SunPower / First Solar cohort"), tw("AT&T"), tw("SolarEdge")],
+        decisive_question=ds.DecisiveQuestion(question="?", evidence_for=[], evidence_against=[]),
+        key_unknowns=[])
+    validated, flags = syn._validate(synth, _minimal_mech(), ticker="MVST",
+                                     name="Microvast Holdings, Inc.")
+    assert [t.name for t in validated.twin_reference_cases] == ["AT&T", "SolarEdge"]  # dropped
+    _, qa = dflags.partition(flags)
+    assert any("compound 'SunPower" in f for f in qa)      # the '/'+cohort drop is dev-only QA
+    assert any("ampersand-name 'AT&T'" in f for f in qa)   # AT&T flagged for QA but KEPT

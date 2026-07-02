@@ -1214,6 +1214,56 @@ Each line: *what it does* — *verified how*.
       number; unifying would churn the pinned B.1 formatter test for no numerical gain.
     *ruff + mypy --strict (68) + `pytest -m "not network"` (296) green; JS fixes node-verified. On a
     branch → PR; NOT merged (awaiting review).*
+  - **PR D — facts-first restructure + bull/bear ordering + caveat shape + C-riders (2026-07-02).**
+    A display/prompt-layer restructure of the dossier (render.py + flags via synthesis + dossier.js +
+    schemas), phase-gated (Phase-1 render preview → operator approval-with-notes → Phase-2 build).
+    - **D1 facts-first section order** (md + web/PDF agree): caveats FIRST → drawdown cause &
+      idiosyncrasy (CLUBBED) → leverage & survival (+ FCF + liquidity) → trajectory → valuation &
+      own-history → peer comps (+ implied) → catalyst → concentration → synthesis (balance → bull →
+      bear → decisive → unknowns → **twins LAST**) → appendix (+ the relocated management-commentary
+      pointer) → verdict footer. Old committed JSONs still render (optional-safe; an appendix umbrella
+      keeps the mgmt pointer from orphaning pre-C).
+    - **D2 merged trajectory table**: 'Margin trend' + 'Multi-year trajectory' (two free-text views,
+      parsed display-only) → ONE table (revenue · EBITDA · EBITDA margin · gross margin · ROIC) + the
+      same-quarter YoY footnote; zero value drift; ROIC (whose source omits the (R) marker) matched
+      marker-insensitively so it fills the reclassified columns; footnote fragments deduped (N6).
+    - **D3 deterministic bull/bear ordering** (render-side sort, NEVER a schema/LLM field): tier
+      taxonomy 1 solvency/cash · 2 revenue trajectory · 3 margin structure · 4 competitive/
+      concentration · 5 valuation & relative price action; within a tier structured-cited >
+      transcript-cited > LLM-suggested; multi-tier → HIGHEST tier; unclassifiable → 4.5 (never
+      dropped); ties → emission order (stable). **N1 concession-clause stripping** classifies on the
+      claim's PRIMARY assertion (text after 'though/but/however/offset by/posing whether/the human
+      must weigh' is dropped pre-classification). **The keyword map is declared in `render._TIER_KEYWORDS`
+      and set by FACE-VALIDITY only** (never tuned on outcomes). Tier tags are DEV-VIEW only.
+    - **D4 caveat shape**: a guardrail caveat renders the FULL offending sentence (synthesis no longer
+      `_snip`s the human caveats — truncation retained for the dev-only QA flags) in the what / where /
+      why-it-matters / how-to-verify shape; a mechanical / 'pull CIQ …' caveat stays one full bullet.
+    - **D5 appendix riders**: (a) EPS split into same-basis **EPS (GAAP, dil.)** (Trends 'EPS (GAAP)',
+      FY26E 0.18) + **EPS (Normalized)** (0.04) — a basis absent from Trends renders "—", never borrows
+      the other; (b) FCF row relabeled "FCF (levered, CIQ)" + "NOT CFO − capex" footnote (display-side);
+      (c) an FY estimate's growth is vs the **prior fiscal year** ("+4% (vs FY25)"), not the overlapping
+      LTM. **SCOPE AMENDMENT (spec self-contradiction, found-and-resolved):** the plan said "NO extractor
+      changes" but D5(a)/(c) require `ciq_sheets.financial_summary_annual` (the GAAP-EPS series isn't in
+      the assembled FinTable, and the growth cell is extractor-computed). Operator authorized a minimal,
+      contained `financial_summary_annual`-only change, ISOLATED as its own commit for independent
+      bisect; the "no extractor changes" line was in error for D5a/c. Everything else stays display/
+      prompt-layer.
+    - **D6 twin rules**: (a) single-entity guard — a twin name with '/' or 'cohort' is DROPPED (dev-only
+      qa_flag); an '&' name (AT&T, S&P) is a legitimate single entity → FLAGGED for QA but RENDERED;
+      (b) synthesis prompt gains a grounding PREFERENCE (peer roster / the name's own resolved arc →
+      prefer sourced twins over unsourced) — a preference, not a mandate; no outcome-direction steering.
+    - **D7 (maturity-wall quantification) DETACHED**: the capital-structure instruments are a flat
+      pre-joined string (`liquidity_covenant_flags`), not structured {amount, rate, due-year} fields —
+      per the conditional, NOT regex-parsed; D7 moves to the queued covenant/EDGAR PR.
+    *Verified on the REAL MVST export (6 cases): new section order end-to-end (md + web); ONE trajectory
+    table, values identical to the old pair; bull/bear in taxonomy order (the wall/cash points sort T1
+    ahead of the T5 relative-price point; the GAAP-illusion earnings-quality point sorts T1 via
+    'adjusted EBITDA was negative'); a long caveat un-truncated in the four-part shape; appendix EPS rows
+    0.18/0.04 labeled, FCF relabeled, growth '+4% (vs FY25)'; a synthetic compound twin dropped + an
+    '&'-named twin surviving with a QA flag. Frontend confirmed by a real preview render (no console
+    errors; the injected preview artifact reverted). ruff + mypy --strict (68) + `pytest -m "not network"`
+    green; the extractor D5a/c isolated in its own commit. On a branch → PR; NOT merged (awaiting review).
+    Reader-feedback points 3, 9, 10, 11 close with this restructure.*
 - _Whole suite green (ruff + mypy --strict clean; `pytest -m "not network"` passes)._
 
 ## 3. FALSIFIED — tested and retired (NOT deferred)
@@ -1324,9 +1374,10 @@ without starving the lead loop; each becomes a *real* widener only when its OWN 
     preemptively).
   - **PR B / C / D queue** (each its own scoped PR, per the same spec's phasing): **B** = comps-workbook
     changes — **DONE** (PR B + B.1); **C** = the Financial-Summary appendix build (actuals + consensus
-    fusion) + riders — **DONE** (this PR; the appendix originally slated under D landed here per the
-    user's C spec); **D** = the transcript-block full RESTRUCTURE (PR A did only the one-line relocation
-    to the bottom of the mechanical layer) — **remaining**. Buildable per §4's GOVERNOR.
+    fusion) + riders — **DONE**; **D** = the facts-first restructure (section reorder + merged trajectory
+    table + deterministic bull/bear ordering + caveat shape + appendix riders + twin rules) — **DONE**
+    (§2). Follow-ups spun out of D: **D7 maturity-wall quantification DETACHED** (needs structured
+    capital-structure instruments — today a flat string — so it rides the queued covenant/EDGAR PR).
 
 ### Edge-hypothesis ledger — the full inventory (record-only doc; the edges are gated, built per §4's GOVERNOR)
 

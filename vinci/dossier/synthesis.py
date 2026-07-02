@@ -341,7 +341,12 @@ _SYSTEM = (
     "source_ref or exactly '[LLM-suggested, unverified]'. Keep distinguishing_fact QUALITATIVE: "
     "the analogue PATTERN only, with NO figures — caps / multiples / ratios live source-bound in "
     "peer_set / fundamental_deltas, never restated in twin prose; never a recovery rate, base "
-    "rate, or probability — analogues are for reasoning, not stats. (5) Surface the decisive "
+    "rate, or probability — analogues are for reasoning, not stats. Each twin is ONE company, "
+    "never a '/'-joined pair or a cohort. (4b) GROUNDING PREFERENCE (a preference, NOT a mandate): "
+    "where the peer roster or the name's OWN resolved past arc already offers a valid analogue, "
+    "PREFER a source-bound twin over an '[LLM-suggested, unverified]' one — but never invent or "
+    "force one, and never let this steer the OUTCOME direction; an unsourced twin is fine when it "
+    "is the best genuine analogue. (5) Surface the decisive "
     "question; do "
     "NOT answer it. (6) Never recommend, rate, score, or predict a direction — there is nowhere to "
     "put a verdict and it is not your job. "
@@ -577,7 +582,7 @@ def _validate(
                     "earnings call, not the structured facts; verify against the call"
                 )
             else:
-                flags.append(f"UNTRACEABLE figure '{n:g}' in {where}: '{_snip(p.claim)}'")
+                flags.append(f"UNTRACEABLE figure '{n:g}' in {where}: '{p.claim}'")  # D4 full
         return p.model_copy(update={"cited": cited})
 
     bull = [check_point(p, "bull_point") for p in synth.bull_points]
@@ -616,7 +621,7 @@ def _validate(
                 continue  # the claim itself warns of the distortion + pivots off it — not anchoring
             if _PE_TERM.search(p.claim) and _CHEAP_CUE.search(p.claim):
                 flags.append(
-                    f"ANCHORS-ON-DISTORTED-P/E {where}: '{_snip(p.claim)}' — the P/E is distorted "
+                    f"ANCHORS-ON-DISTORTED-P/E {where}: '{p.claim}' — the P/E is distorted "
                     "(rests on a non-current/non-recurring EPS); don't read it as cheap"
                 )
 
@@ -644,7 +649,7 @@ def _validate(
             and not _NOT_JUST_MARGIN.search(p.claim)
         ):
             flags.append(
-                f"UNRECONCILED {where}: '{_snip(p.claim)}' — cites margin compression without the "
+                f"UNRECONCILED {where}: '{p.claim}' — cites margin compression without the "
                 "absolute-EBITDA reconciliation (margin % can fall while EBITDA rises)"
             )
     # G.2 false-balance (DIRECTION-AGNOSTIC): evidence_balance must be present + committed. Two
@@ -697,7 +702,7 @@ def _validate(
             continue
         if not _DECOMP_REF.search(p.claim) and not _COMPARABILITY_ACK.search(p.claim):
             flags.append(
-                f"PEER-COMP-BARE {where}: '{_snip(p.claim)}' — presents cheap/rich vs peers as a "
+                f"PEER-COMP-BARE {where}: '{p.claim}' — presents cheap/rich vs peers as a "
                 "verdict without the earned-vs-residual decomposition or the peer-set composition; "
                 "POSE justified-vs-residual, never the bare gap"
             )
@@ -711,26 +716,38 @@ def _validate(
             and not (_EARNED_RESOLVED.search(p.claim) and not _EARNED_DENIED.search(p.claim))
         ):
             flags.append(
-                f"HETEROGENEOUS-BENCHMARK {where}: '{_snip(p.claim)}' — leans on the peer set as a "
+                f"HETEROGENEOUS-BENCHMARK {where}: '{p.claim}' — leans on the peer set as a "
                 "clean benchmark, but comparability flags it HETEROGENEOUS; confidence-gate every "
                 "peer stat"
             )
 
     # R2 twin-integrity guard: a twin naming the SUBJECT is invalid unless it cites an explicit
     # resolved PAST period (a '2022-2024 arc'); drop the self-referential hallucinations (QA-only).
+    # D6a single-entity guard: a twin must be ONE company — a '/'-joined pair or a 'cohort' is not a
+    # single analogue → dropped; an '&' name (AT&T, S&P, Procter & Gamble) is a legitimate single
+    # entity → FLAGGED for QA but RENDERED (never false-positived into a drop).
     kept_twins = []
     dropped = 0
     for tw in synth.twin_reference_cases:
+        nm = tw.name
         if _self_referential_twin(tw, ticker, name):
             dropped += 1
             flags.append(
-                f"TWIN self-referential '{tw.name}' suppressed — a twin must be ANOTHER "
+                f"TWIN self-referential '{nm}' suppressed — a twin must be ANOTHER "
                 "company, or the subject with an explicit resolved past period ('2022-2024 arc')"
             )
+        elif "/" in nm or "cohort" in nm.lower():
+            dropped += 1
+            flags.append(
+                f"TWIN compound '{nm}' suppressed — a twin must be ONE company, not a "
+                "'/'-joined pair or a cohort"
+            )
         else:
+            if "&" in nm:
+                flags.append(f"TWIN ampersand-name '{nm}' — verify it is a single entity (kept)")
             kept_twins.append(tw)
     if dropped:
-        flags.append(f"TWIN {dropped} self-referential twin(s) suppressed")
+        flags.append(f"TWIN {dropped} invalid twin(s) suppressed")
     # R3 internal-rule leak: any 'rule N' reference in the output is a leaked internal rule → QA.
     for hit in sorted({m.group(0) for m in re.finditer(r"rule\s+\d+", blob, re.IGNORECASE)}):
         flags.append(f"RULE-LEAK '{hit}' — internal rule reference leaked into synthesis output")

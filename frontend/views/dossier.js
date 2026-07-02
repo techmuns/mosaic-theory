@@ -184,27 +184,136 @@ function seriesTable(label, s) {
   return dataTable(label, s.source_ref, cols, rows, note);
 }
 
+// (D3) deterministic render-side ordering of bull/bear points — MIRRORS render.py. Tier from the
+// claim text (concession clause stripped first) via a face-validity keyword map; highest tier wins;
+// ties keep emission order (stable). Human view shows NO tier tag (dev-only in the md).
+const _TIERKW = [
+  [1, ["free cash flow", "levered free cash", "fcf", "self-fund", "self fund", "cash generat",
+       "cash burn", "cash-negative", "interest coverage", "maturity", "wall", "covenant", "refinanc",
+       "liquidity", "going concern", "solven", "net-debt", "net debt", "total-debt", "total debt",
+       "debt/ebitda", "adjusted ebitda negative", "adjusted ebitda was negative", "turned negative",
+       "ebitda was negative"]],
+  [2, ["revenue", "top-line", "topline", "volume", "shipment", "bookings", "backlog", "orders",
+       "guide", "guidance", "deteriorat", "growth"]],
+  [3, ["margin", "gross profit", "operating leverage", "opex", "cost structure", "profitab",
+       "net profit", "non-operating", "earnings quality"]],
+  [4, ["peer", "competit", "customer", "concentrat", "market share", "moat", "supplier", "segment"]],
+  [5, ["valuation", "multiple", "p/e", "ev/ebitda", "discount", "re-rate", "rerate", "underperform",
+       "percentile", "%ile", "cheap", "expensive", "vs iwm", "relative"]],
+];
+const _CONCESSION = /\b(?:though|although|but|however|offset by|posing whether|the human must weigh)\b/i;
+function _pointTier(claim) {
+  const m = (claim || "").match(_CONCESSION);
+  const c = (m ? claim.slice(0, m.index) : claim || "").toLowerCase();
+  for (const [tier, kws] of _TIERKW) if (kws.some((k) => c.includes(k))) return tier;
+  return 4.5;  // unclassifiable → between competitive (4) and valuation (5); never dropped
+}
+function _citRank(p) {
+  const s = (p.source_ref || "").toLowerCase();
+  if (p.cited === false || s.includes("llm-suggested") || s.includes("unverified")) return 2;
+  return s.includes("transcript") ? 1 : 0;
+}
+function orderPoints(pts) {  // stable sort by (tier, citation-class, emission index)
+  return (pts || []).map((p, i) => ({ p, t: _pointTier(p.claim), c: _citRank(p), i }))
+    .sort((a, b) => a.t - b.t || a.c - b.c || a.i - b.i).map((x) => x.p);
+}
+
+// (D2) merge 'Margin trend' + 'Multi-year trajectory' into ONE table (reuse parseSeries). Rows keyed
+// by canonical label (revenue/EBITDA identical across the two → no drift); footnote fragments deduped.
+function trajectoryTable(q) {
+  const label = "Trajectory (revenue · EBITDA · margins · ROIC)";
+  const srcs = [q.margin_trend, q.multi_year_trajectory].filter((s) => s && s.status === "present" && s.value != null);
+  if (!srcs.length) return fact(label, q.margin_trend || q.multi_year_trajectory);
+  const byLabel = new Map(); const scalars = []; const notes = []; const periods = [];
+  for (const s of srcs) {
+    let parsed; try { parsed = parseSeries(s.value); } catch { continue; }
+    for (const sr of parsed.series) {
+      byLabel.set(sr.label.toLowerCase(), sr);  // later wins; revenue/EBITDA identical → no drift
+      for (const pt of sr.points) if (!periods.includes(pt.period)) periods.push(pt.period);
+    }
+    for (const sc of parsed.scalars || []) scalars.push(sc);
+    if (parsed.note) notes.push(parsed.note);
+  }
+  if (!byLabel.size) return fact(label, srcs[0]);
+  periods.sort((a, b) => periodKey(a) - periodKey(b));
+  const DISP = { "absolute revenue": "Revenue ($M)", "revenue": "Revenue ($M)",
+    "absolute ebitda": "EBITDA ($M)", "ebitda": "EBITDA ($M)", "ebitda margin": "EBITDA margin",
+    "gross margin": "Gross margin", "roic": "ROIC" };  // canonical labels (match render.py)
+  const order = Object.keys(DISP);
+  const seen = new Set(); const rows = [];
+  for (const key of order) {
+    if (!byLabel.has(key) || seen.has(DISP[key])) continue;
+    seen.add(DISP[key]);
+    const sr = byLabel.get(key);
+    const by = Object.fromEntries(sr.points.map((pt) => [String(pt.period).replace(/\s*\((?:R|LTM)\)/i, "").trim(), pt]));
+    rows.push({ label: DISP[key], cells: periods.map((per) => {
+      const k = String(per).replace(/\s*\((?:R|LTM)\)/i, "").trim();
+      return by[k] ? by[k].value + (by[k].basis ? ` (${by[k].basis})` : "") : DASH;
+    }) });
+  }
+  const frags = [];
+  for (const n of notes) for (const f of n.split(";")) { const t = f.trim(); if (t && !frags.includes(t)) frags.push(t); }
+  let note = scalars.map((x) => `${x.label}: ${x.value}`).join(" · ");
+  note = [note, frags.join("; ")].filter(Boolean).join(". ");
+  return dataTable(label, srcs[0].source_ref, periods.map(fmtPeriod), rows, note);
+}
+
 function renderDossier(d, verdict) {
   const m = d.mechanical || {};
   return [
     header(d),
-    flagsSection(d.caveats || d.flags || []),  // d.flags = pre-split fallback for un-re-assembled JSONs
-    valuation(m.valuation),
-    quality(m.quality, !!m.leverage_survival),  // B2: leverage moves to the unified block when present
-    leverageBlock(m),  // B2 unified leverage & survival ("" for a pre-B2 dossier.json)
-    concentration(m.concentration),
-    peerComps(m.peer_comps),  // B1: the per-peer grid renders inside
-    impliedBlock(m.implied_valuation),  // B3 CIQ implied valuation ("" for a pre-B3 dossier.json)
-    drawdownCause(m.drawdown_cause),
-    idioVsShared(m.idiosyncratic_vs_shared),
+    flagsSection(d.caveats || d.flags || []),      // D1: caveats first (what to verify)
+    drawdownIdio(m),                               // D1: drawdown cause + idiosyncrasy, clubbed
+    leverageSurvival(m),                           // D1: leverage & survival (+ FCF + liquidity)
+    trajectorySection(m.quality || {}),            // D2: merged trajectory table + share-count
+    valuation(m.valuation),                        // valuation & own-history
+    peerComps(m.peer_comps),                       // peer comps (per-peer grid inside)
+    impliedBlock(m.implied_valuation),             // implied valuation
     catalystPath(m.catalyst_path, m.consensus_context),
     m.catalyst_path ? "" : consensus(m.consensus_context),  // legacy fallback only for old JSON
-    sec("Management commentary", "Earnings-call transcript — a pointer for the human to read in full; never a machine-curated excerpt.",
-      fact("Transcript", m.management_commentary)),
-    synthesis(d.synthesis),
-    appendixBlock(m),  // C: financial-summary appendix — after the twins, before the verdict
+    concentration(m.concentration),
+    synthesis(d.synthesis),                        // D3 ordering + twins last
+    appendixBlock(m),                              // + management-commentary pointer (D1) + D5b
+    verdictFooter(),                               // D1: verdict footer
     loggedVerdict(verdict, d.ticker, d.reference_date),
   ].join("");
+}
+
+// (D1) drawdown cause + idiosyncrasy clubbed — what happened, and did it happen alone?
+function drawdownIdio(m) {
+  return drawdownCause(m.drawdown_cause) + idioVsShared(m.idiosyncratic_vs_shared);
+}
+
+// (D1) leverage & survival — the survival story in one place (+ FCF + liquidity). Falls back to the
+// pre-B2 Quality leverage lines when the unified block is absent.
+function leverageSurvival(m) {
+  const q = m.quality || {};
+  const block = m.leverage_survival ? leverageBlock(m) : sec("Leverage & survival",
+    "Cash generation, leverage bases, and the survival read.",
+    fact("Net debt / EBITDA (GAAP)", q.net_debt_to_ebitda, mult) +
+    fact("Net debt / OCF", q.net_debt_to_ocf, mult) +
+    fact("Net debt / EBITDA (covenant adj.)", q.net_debt_to_ebitda_adjusted) +
+    fact("Survival capacity", q.survival_capacity) +
+    fact("Interest coverage", q.interest_coverage, mult));
+  return block + sec("Cash & liquidity",
+    "Self-funding and the covenant/maturity flags — the survival inputs.",
+    fact("FCF sign", q.fcf_sign, signWord) +
+    fact("Free cash flow ($M)", q.free_cash_flow) +
+    fact("Liquidity / covenant flags", q.liquidity_covenant_flags));
+}
+
+// (D2/D1) trajectory — the merged table + the share-count trend.
+function trajectorySection(q) {
+  if (!q) return "";
+  return sec("Trajectory", "Revenue · EBITDA · margins · ROIC per period; the same-quarter YoY footnoted.",
+    trajectoryTable(q) + fact("Share-count trend", q.share_count_trend));
+}
+
+// (D1) verdict footer — the no-BUY/AVOID reminder closes the document (caveats opened it).
+function verdictFooter() {
+  return `<div class="card ds-section" style="text-align:center; color:var(--ink-2); font-size:12.5px;">
+    <b>No BUY/AVOID here — this dossier only assembles and cites.</b> The verdict is the human's,
+    logged separately via the ledger with a frozen entry price.</div>`;
 }
 
 function header(d) {
@@ -225,16 +334,36 @@ function header(d) {
   </div>`;
 }
 
+// (D4) a guardrail caveat is "Lead (a bull point): '<full claim>' — <explanation>". Parse it into the
+// what / where / why-it-matters / how-to-verify shape (offending sentence IN FULL). A mechanical /
+// 'pull CIQ …' caveat is already a complete advisory → one full-sentence bullet.
+const _CAVEAT_RE = /^(.*?)\(([^)]*?\bpoint[^)]*?)\):\s*'([\s\S]*?)'\s*—\s*([\s\S]*)$/;
+function caveatBlock(f) {
+  const resolved = /^RESOLVED\b/i.test(f);
+  const icon = resolved ? "✓" : "⚠";
+  const m = f.match(_CAVEAT_RE);
+  if (!m) {
+    return `<div class="flag ${resolved ? "resolved" : "open"}"><span class="fi">${icon}</span><span>${escapeHtml(f)}</span></div>`;
+  }
+  const why = m[4].trim(); const i = why.lastIndexOf("; ");
+  const whyText = i >= 0 ? why.slice(0, i).trim() : why;
+  const how = i >= 0 ? why.slice(i + 2).trim() : "";
+  return `<div class="flag open"><span class="fi">${icon}</span><span>
+    <b>${escapeHtml(m[1].trim())}</b> — ${escapeHtml(m[3].trim())}
+    <div class="muted" style="font-size:11.5px; margin-top:3px;"><i>where:</i> ${escapeHtml(m[2].trim())}</div>
+    <div class="muted" style="font-size:11.5px;"><i>why it matters:</i> ${escapeHtml(whyText)}</div>
+    ${how ? `<div class="muted" style="font-size:11.5px;"><i>how to verify:</i> ${escapeHtml(how)}</div>` : ""}
+  </span></div>`;
+}
+
 function flagsSection(caveats) {
   // Decision caveats only (d.caveats) — the machine-QA self-checks live in d.qa_flags (dev/JSON),
-  // deliberately kept out of this human view, matching the PDF/markdown render.
+  // deliberately kept out of this human view, matching the PDF/markdown render. (D4) each renders in
+  // the what/where/why/how-to-verify shape, the offending sentence IN FULL.
   if (!caveats.length) return "";
-  const rows = caveats.map((f) => {
-    const resolved = /^RESOLVED\b/i.test(f);
-    return `<div class="flag ${resolved ? "resolved" : "open"}"><span class="fi">${resolved ? "✓" : "⚠"}</span><span>${escapeHtml(f)}</span></div>`;
-  }).join("");
+  const rows = caveats.map(caveatBlock).join("");
   return `<div class="card ds-section"><div class="ds-title">Analyst caveats — verify before the verdict</div>
-    <div class="subtitle muted ds-sub">Resolved (✓) vs open (⚠). Open caveats need a human check; they are not conclusions.</div>${rows}</div>`;
+    <div class="subtitle muted ds-sub">Open caveats (⚠) need a human check before the verdict; they are not conclusions.</div>${rows}</div>`;
 }
 
 function valuation(v) {
@@ -250,24 +379,8 @@ function valuation(v) {
     fact("Own-history range position", v.range_position, null, { hi: true }));
 }
 
-function quality(q, hasLeverageBlock) {
-  if (!q) return "";
-  // B2: the leverage lines render HERE only when the unified block is absent (pre-B2 dossier.json).
-  const leverage = hasLeverageBlock ? "" : (
-    fact("Net debt / EBITDA (GAAP)", q.net_debt_to_ebitda, mult) +
-    fact("Net debt / OCF", q.net_debt_to_ocf, mult) +
-    fact("Net debt / EBITDA (covenant adj.)", q.net_debt_to_ebitda_adjusted) +
-    fact("Survival capacity", q.survival_capacity) +
-    fact("Interest coverage", q.interest_coverage, mult));
-  return sec("Quality", "Durability: cash generation, margins, leverage, dilution, covenant flags.",
-    fact("FCF sign", q.fcf_sign, signWord) +
-    fact("Free cash flow ($M)", q.free_cash_flow) +
-    seriesTable("Margin trend", q.margin_trend) +
-    leverage +
-    fact("Share-count trend", q.share_count_trend) +
-    fact("Liquidity / covenant flags", q.liquidity_covenant_flags) +
-    seriesTable("Multi-year trajectory", q.multi_year_trajectory));
-}
+// (D1/D2) `quality` split into leverageSurvival + trajectorySection (see renderDossier); the two
+// seriesTable calls merged into trajectoryTable. `seriesTable` is retained (catalyst path uses it).
 
 function concentration(c) {
   if (!c) return "";
@@ -520,17 +633,31 @@ function finTable(label, s) {
   return dataTable(label, s.source_ref, ft.columns || [], rows, ft.note || "");
 }
 
-// (C1–C4) FINANCIAL-SUMMARY appendix — actuals + consensus estimates; AFTER the twins, before the
-// verdict. Absent for a pre-C dossier.json (back-compat → ""). Every table routes through dataTable.
+// (D5b) relabel the levered-FCF row + footnote (display-only; the FinTable is rebuilt in place).
+function fcfRelabel(s) {
+  if (!s || s.status !== "present" || !s.value) return s;
+  const ft = s.value;
+  if (!(ft.rows || []).some((r) => r.label === "FCF ($M)")) return s;
+  const rows = ft.rows.map((r) => (r.label === "FCF ($M)" ? { ...r, label: "FCF (levered, CIQ)" } : r));
+  const fn = "FCF (levered, CIQ) = CIQ 'Levered Free Cash Flow', NOT CFO − capex";
+  return { ...s, value: { ...ft, rows, note: ft.note ? `${ft.note} · ${fn}` : fn } };
+}
+
+// (C1–C4 · D1) FINANCIAL-SUMMARY appendix — actuals + consensus estimates + the relocated
+// management-commentary pointer, AFTER the synthesis, before the verdict footer. The mgmt pointer
+// renders even for a pre-C dossier.json (no financial summary); every table routes through dataTable.
 function appendixBlock(m) {
   const fs = m.financial_summary;
-  if (!fs) return "";
+  const mgmt = fact("Management commentary (transcript POINTER — read the file; not a machine excerpt)",
+    m.management_commentary);
+  if (!fs) return sec("Appendix", "", mgmt);
   return sec(`Appendix — financial summary (actuals + consensus estimates) — ${asOfHeader(fs.as_of)}`,
     "Consensus (E) columns are marked + as-of-stamped; growth never spans a basis change (— basis); actuals fail loud on gaps. The machine assembles — no verdict.",
-    finTable("Annual ($M; E = consensus) — last-4-FY + LTM + FY26E/FY27E", fs.annual) +
+    finTable("Annual ($M; E = consensus) — last-4-FY + LTM + FY26E/FY27E", fcfRelabel(fs.annual)) +
     finTable("Trailing 8 quarters — the recent-quarter trajectory", fs.quarterly) +
     fact("Balance-sheet posture", fs.balance_sheet) +
-    fact("Coherence — balance sheet vs implied-valuation bridge", fs.coherence));
+    fact("Coherence — balance sheet vs implied-valuation bridge", fs.coherence) +
+    mgmt);
 }
 
 // (4a) horizon → metric × [FQ2, FQ3] table; zero-breadth-across-all-windows rows collapse to a line
@@ -678,9 +805,9 @@ function synthesis(s) {
   return `<div class="card ds-section"><div class="ds-title">Synthesis · framing</div>${fence}
     ${s.evidence_balance ? `<div style="margin:6px 0; padding:8px 11px; border:1px solid var(--line); border-left:3px solid var(--accent); border-radius:4px; font-size:13px; line-height:1.5;"><b>Evidence balance:</b> ${escapeHtml(s.evidence_balance)}</div>` : ""}
     <div class="ds-title" style="font-size:12px; margin-top:6px;">Bull — the overshoot case</div>
-    ${(s.bull_points || []).map((p) => point(p, "bull")).join("") || `<div class="muted">—</div>`}
+    ${orderPoints(s.bull_points).map((p) => point(p, "bull")).join("") || `<div class="muted">—</div>`}
     <div class="ds-title" style="font-size:12px; margin-top:14px;">Bear — the terminal-decline case</div>
-    ${(s.bear_points || []).map((p) => point(p, "bear")).join("") || `<div class="muted">—</div>`}
+    ${orderPoints(s.bear_points).map((p) => point(p, "bear")).join("") || `<div class="muted">—</div>`}
     <div class="ds-title" style="font-size:12px; margin-top:14px;">The decisive question</div>
     <div style="font-size:13.5px; font-weight:600; margin:4px 0 8px;">${escapeHtml(dq.question || DASH)}</div>
     <div class="muted" style="font-size:11px; text-transform:uppercase; letter-spacing:0.04em;">Evidence for</div>

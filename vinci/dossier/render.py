@@ -171,12 +171,7 @@ def _catalyst_section(m: MechanicalLayer) -> list[str]:
         out += _grouped_events_lines(cp.revision_events)
         sh = _fact("Surprise history (annual beat/miss)", m.consensus_context.surprise_history)
         out.append(sh)  # the one non-duplicate legacy fact, folded in
-    out += [
-        "",
-        "### Management commentary (transcript POINTER — read the file; not a machine excerpt)",
-        _fact("Earnings call", m.management_commentary),
-        "",
-    ]
+    out.append("")  # (D1) the management-commentary pointer moved OUT of here, into the appendix
     return out
 
 
@@ -390,6 +385,24 @@ def _fin_table_lines(label: str, s: Sourced[Any]) -> list[str]:
     return _table(label, s.source_ref, ft.columns, rows, ft.note)
 
 
+def _annual_with_fcf_label(s: Sourced[Any]) -> Sourced[Any]:
+    """(D5b) Display-only: relabel the levered-FCF row + footnote it — the appendix FCF is CIQ's
+    'Levered Free Cash Flow', NOT a CFO − capex derivation. No extractor change; the FinTable is
+    rebuilt in place (frozen-model copy)."""
+    if s.status is not SourceStatus.PRESENT or not s.value:
+        return s
+    ft = s.value
+    rows = [
+        r.model_copy(update={"label": "FCF (levered, CIQ)"}) if r.label == "FCF ($M)" else r
+        for r in ft.rows
+    ]
+    if rows == list(ft.rows):  # no FCF row to relabel → unchanged
+        return s
+    fcf_note = "FCF (levered, CIQ) = CIQ 'Levered Free Cash Flow', NOT CFO − capex"
+    note = f"{ft.note} · {fcf_note}" if ft.note else fcf_note
+    return s.model_copy(update={"value": ft.model_copy(update={"rows": rows, "note": note})})
+
+
 def _appendix_lines(m: MechanicalLayer) -> list[str]:
     """The FINANCIAL-SUMMARY appendix (C1–C4) — rendered AFTER the twins, before the verdict footer.
     C1/C2 are tables through the shared renderer (E columns marked + stamped); C3 is the posture
@@ -400,7 +413,8 @@ def _appendix_lines(m: MechanicalLayer) -> list[str]:
     hdr = ("## APPENDIX — FINANCIAL SUMMARY (actuals + consensus estimates) "
            f"— {_asof_header(fs.as_of)}")
     out = ["", hdr, "### Annual (last-4-FY + LTM + FY26E/FY27E consensus)"]
-    out += _fin_table_lines("Annual financials ($M; E = consensus)", fs.annual)
+    annual = _annual_with_fcf_label(fs.annual)  # D5b: FCF row relabeled + footnoted (display-only)
+    out += _fin_table_lines("Annual financials ($M; E = consensus)", annual)
     out.append("### Trailing 8 quarters (the recent-quarter trajectory)")
     out += _fin_table_lines("Quarterly financials", fs.quarterly)
     out += [
@@ -412,19 +426,264 @@ def _appendix_lines(m: MechanicalLayer) -> list[str]:
     return out
 
 
+def _mgmt_commentary_lines(m: MechanicalLayer) -> list[str]:
+    """(D1) The management-commentary pointer — relocated into the appendix zone (it is a transcript
+    POINTER, not a headline read: the human opens the file, the machine never excerpts it). Rendered
+    unconditionally so a pre-C dossier.json (no financial-summary appendix) still surfaces it."""
+    return [
+        "### Management commentary (transcript POINTER — read the file; not a machine excerpt)",
+        _fact("Earnings call", m.management_commentary),
+        "",
+    ]
+
+
+# (D4) a guardrail caveat is emitted as "Lead (a bull point): '<full claim>' — <explanation>". Parse
+# it into the structured shape; the offending sentence is shown IN FULL (synthesis no longer _snips
+# the human caveats — truncation is retained for the dev-only QA flags).
+_CAVEAT_RE = re.compile(
+    r"^(?P<lead>.*?)\((?P<where>[^)]*?\bpoint[^)]*?)\):\s*'(?P<what>.*?)'\s*—\s*(?P<why>.*)$",
+    re.DOTALL,
+)
+
+
+def _split_why_how(explanation: str) -> tuple[str, str]:
+    """(D4) A guardrail explanation ends with its actionable clause after the last ';'
+    ('… peer-set composition; POSE justified-vs-residual …') → (why-it-matters, how-to-verify)."""
+    if "; " in explanation:
+        head, _, tail = explanation.rpartition("; ")
+        return head.strip(), tail.strip()
+    return explanation.strip(), ""
+
+
+def _caveat_block(c: str) -> list[str]:
+    """(D4) A guardrail caveat renders in the what / where / why-it-matters / how-to-verify shape,
+    the offending sentence IN FULL. A mechanical / 'pull CIQ …' caveat is already a complete
+    advisory sentence, so it stays a single full-sentence bullet (no forced split)."""
+    m = _CAVEAT_RE.match(c)
+    if not m:
+        return [f"- {c}"]
+    why, how = _split_why_how(m.group("why").strip())
+    out = [
+        f"- **{m.group('lead').strip()}** — {m.group('what').strip()}",
+        f"  - _where:_ {m.group('where').strip()}",
+        f"  - _why it matters:_ {why}",
+    ]
+    if how:
+        out.append(f"  - _how to verify:_ {how}")
+    return out
+
+
 def _flags_section(d: Dossier) -> list[str]:
-    """The human-facing CAVEATS render LOW (next to key_unknowns), not at the top — a closing 'what
-    to verify' checklist, not the headline. Only decision caveats show here (re-voiced, plus the
-    'pull CIQ …' incomplete-input notes); the machine-QA self-checks live in ``d.qa_flags`` (JSON /
-    dev only). The dossier assembles and cites; the verdict and the caveat-resolution are the
-    human's."""
+    """(D1) The human-facing CAVEATS render at the TOP (right under the header) — the first thing
+    the human sees is what to verify before trusting anything below. Each renders in the D4
+    what/where/why-it-matters/how-to-verify shape, the offending sentence IN FULL. Only decision
+    caveats show here (re-voiced, plus the 'pull CIQ …' notes); the machine-QA self-checks live in
+    ``d.qa_flags`` (JSON / dev only). The dossier assembles and cites; the verdict is the human."""
     if not d.caveats:
         return []
-    return ["## ⚠ Analyst caveats — verify before the verdict",
-            *[f"- {c}" for c in d.caveats], ""]
+    out = ["## ⚠ Analyst caveats — verify before the verdict", ""]
+    for c in d.caveats:
+        out += _caveat_block(c)
+    out.append("")
+    return out
 
 
-def render_markdown(d: Dossier) -> str:
+# --- D2: the two trajectory views ('Margin trend' + 'Multi-year trajectory') are one story; merge
+# them into ONE table here — both are free-text extractor output (unchanged), PARSED here.
+_TRAJ_ROWS: tuple[tuple[str, tuple[str, ...]], ...] = (  # (display, source-series aliases)
+    ("Revenue ($M)", ("absolute revenue", "revenue")),
+    ("EBITDA ($M)", ("absolute ebitda", "ebitda")),
+    ("EBITDA margin", ("ebitda margin",)),
+    ("Gross margin", ("gross margin",)),
+    ("ROIC", ("roic",)),
+)
+
+
+def _parse_traj_series(text: str) -> tuple[dict[str, list[tuple[str, str]]], list[str], str]:
+    """Parse 'Label: period val → period val; Label2: …  [note]' → {label_lower: [(period, val)…]},
+    the ordered period list (from the first series), and the bracketed note. A segment with <2 '→'
+    steps (e.g. the same-quarter YoY line) is NOT a per-period series — skipped here, surfaced as a
+    footnote by the caller."""
+    note = ""
+    mnote = re.search(r"\s*\[([^\]]*)\]\s*$", text)
+    if mnote:
+        note, text = mnote.group(1).strip(), text[: mnote.start()]
+    out: dict[str, list[tuple[str, str]]] = {}
+    for seg in text.split("; "):
+        if ":" not in seg:
+            continue
+        label, rest = seg.split(":", 1)
+        steps = [s.strip() for s in rest.split(" → ") if s.strip()]
+        if len(steps) < 2:
+            continue
+        pairs = [
+            (mm.group("p").strip(), mm.group("v"))
+            for st in steps
+            if (mm := re.match(r"^(?P<p>.+?)\s+(?P<v>-?[\d,.]+%?)$", st))
+        ]
+        if pairs:
+            out[label.strip().lower()] = pairs
+    periods = [p for p, _ in next(iter(out.values()), [])]
+    return out, periods, note
+
+
+def _trajectory_table_lines(m: MechanicalLayer) -> list[str]:
+    """(D2) 'Margin trend' + 'Multi-year trajectory' merged into ONE trajectory table (revenue,
+    EBITDA, EBITDA margin, gross margin, ROIC) + the same-quarter YoY footnote. Every row the two
+    parents carried survives, markers ((R)/(LTM)) preserved, zero value drift (revenue/EBITDA are
+    identical in both). Falls back to the raw fact when neither field parses (old JSON safe)."""
+    mt, my = m.quality.margin_trend, m.quality.multi_year_trajectory
+    merged: dict[str, list[tuple[str, str]]] = {}
+    periods: list[str] = []
+    notes: list[str] = []
+    yoy = ""
+    for s in (mt, my):
+        if s.status is not SourceStatus.PRESENT or not s.value:
+            continue
+        parsed, per, note = _parse_traj_series(s.value)
+        merged.update(parsed)  # dup keys (revenue/EBITDA) are identical across the two → no drift
+        periods = periods or per
+        if note:
+            notes.append(note)
+        if not yoy and (ym := re.search(r"(Revenue YoY[^;\[]*)", s.value)):
+            yoy = ym.group(1).strip()
+    # match a row's value to a column by a period key NORMALISED of the day + the (R)/(LTM) marker:
+    # the extractor marks (R) on the income-statement series but NOT on ROIC, so a raw-string match
+    # would blank ROIC in the reclassified columns.
+    def _norm(p: str) -> str:
+        return re.sub(r"\s*\((?:R|LTM)\)", "", re.sub(r"-\d{1,2}-", "-", p)).strip()
+
+    rows: list[list[str]] = []
+    for disp, aliases in _TRAJ_ROWS:
+        series = next((merged[a] for a in aliases if a in merged), None)
+        if series is not None:
+            by_n = {_norm(p): v for p, v in series}
+            rows.append([disp, *[by_n.get(_norm(p), "–") for p in periods]])
+    if not rows or not periods:  # nothing parsed → fall back to the raw text (back-compat)
+        pick = mt if mt.status is SourceStatus.PRESENT else my
+        return [_fact("Trajectory (revenue · EBITDA · margins · ROIC)", pick)]
+    cols = [re.sub(r"-\d{1,2}-", "-", p) for p in periods]  # "Dec-31-2021"→"Dec-2021"; keep markers
+    # (N6) dedupe the footnote at the SEMICOLON-FRAGMENT level — both parent notes lead with
+    # "R reclassified", which would otherwise repeat when the two are concatenated.
+    frags = [f.strip() for n in notes for f in n.split(";") if f.strip()]
+    note = "; ".join(dict.fromkeys(frags))
+    note = f"{yoy}. {note}" if yoy else note
+    src = mt.source_ref if mt.status is SourceStatus.PRESENT else my.source_ref
+    return _table("Trajectory ($M · % — per period)", src, cols, rows, note)
+
+
+# --- D3: deterministic render-side ordering of bull/bear points. NEVER an LLM/schema field — the
+# tier is derived here from the claim text (face-validity keyword map) + the citation source_ref.
+# The claim is classified on its PRIMARY assertion — text after a concession marker (N1) is stripped
+# first. A point takes the HIGHEST tier (lowest number) whose keywords it matches (checked 1→5); a
+# point matching none → tier 4.5 (never dropped). Keyword map declared here + documented in STATE.
+_TIER_KEYWORDS: tuple[tuple[float, tuple[str, ...]], ...] = (
+    (1.0, ("free cash flow", "levered free cash", "fcf", "self-fund", "self fund", "cash generat",
+           "cash burn", "cash-negative", "interest coverage", "maturity", "wall", "covenant",
+           "refinanc", "liquidity", "going concern", "solven", "net-debt", "net debt", "total-debt",
+           "total debt", "debt/ebitda", "adjusted ebitda negative", "adjusted ebitda was negative",
+           "turned negative", "ebitda was negative")),
+    (2.0, ("revenue", "top-line", "topline", "volume", "shipment", "bookings", "backlog", "orders",
+           "guide", "guidance", "deteriorat", "growth")),
+    (3.0, ("margin", "gross profit", "operating leverage", "opex", "cost structure", "profitab",
+           "net profit", "non-operating", "earnings quality")),
+    (4.0, ("peer", "competit", "customer", "concentrat", "market share", "moat", "supplier",
+           "segment")),
+    (5.0, ("valuation", "multiple", "p/e", "ev/ebitda", "discount", "re-rate", "rerate",
+           "underperform", "percentile", "%ile", "cheap", "expensive", "vs iwm", "relative")),
+)
+_TIER_NAME: dict[float, str] = {  # (N3) dev-view labels only — never shown in the human view
+    1.0: "solvency/cash", 2.0: "revenue trajectory", 3.0: "margin structure",
+    4.0: "competitive/concentration", 4.5: "unclassified",
+    5.0: "valuation & relative price action",
+}
+_CITATION_CLASS = ("structured", "transcript", "LLM")  # rank 0/1/2 — the tiebreak within a tier
+# (N1) a claim's tier reflects its PRIMARY assertion; everything from the first concession marker on
+# is a hedge/counter it acknowledges, not what it argues — so classify on the text BEFORE it.
+_CONCESSION = re.compile(
+    r"\b(?:though|although|but|however|offset by|posing whether|the human must weigh)\b",
+    re.IGNORECASE,
+)
+
+
+def _strip_concession(claim: str) -> str:
+    m = _CONCESSION.search(claim)
+    return claim[: m.start()] if m else claim
+
+
+def _point_tier(claim: str) -> float:
+    c = _strip_concession(claim).lower()
+    for tier, kws in _TIER_KEYWORDS:
+        if any(k in c for k in kws):
+            return tier
+    return 4.5  # unclassifiable → between competitive (4) and valuation (5); never dropped
+
+
+def _citation_rank(source_ref: str, cited: bool) -> int:
+    s = (source_ref or "").lower()
+    if not cited or "llm-suggested" in s or "unverified" in s or "made-up" in s:
+        return 2  # LLM-suggested / unsourced
+    return 1 if "transcript" in s else 0  # transcript-cited vs structured-fact-cited
+
+
+def _ordered_points(pts: list[Any]) -> list[tuple[Any, float, int]]:
+    """(D3) Sort by (tier, citation-class, original emission index) — a STABLE sort, so ties keep
+    emission order and the render is deterministic. Ordering is WITHIN a case only (nothing nets
+    across bull vs bear). Returns (point, tier, citation_rank) so the dev view can show the tier."""
+    keyed = [
+        (p, _point_tier(p.claim), _citation_rank(p.source_ref, getattr(p, "cited", True)), i)
+        for i, p in enumerate(pts)
+    ]
+    keyed.sort(key=lambda t: (t[1], t[2], t[3]))
+    return [(p, tier, cr) for p, tier, cr, _ in keyed]
+
+
+def _synthesis_lines(d: Dossier, *, dev: bool) -> list[str]:
+    """(D1/D3) Synthesis in the facts-first order — evidence balance → bull → bear → decisive
+    question → key unknowns → twins (twins LAST). Bull/bear points are deterministically ordered
+    (D3, render-side); the [tier · citation-class] tag shows in the DEV view only."""
+    s = d.synthesis
+    assert s is not None
+    out = ["## Synthesis (LLM — framing for the human, every point source-bound)", ""]
+    if s.evidence_balance:
+        out += [f"**Evidence balance:** {s.evidence_balance}", ""]
+
+    def cite(p: Any, tag: str = "") -> str:
+        warn = "" if getattr(p, "cited", True) else " ⚠ uncited"
+        return f"- {p.claim}{tag}{warn}\n  - ↳ `{p.source_ref}`"
+
+    def ordered(title: str, pts: list[Any]) -> None:  # D3 — deterministic tier order
+        out.append(f"### {title}")
+        for p, tier, cr in _ordered_points(pts):
+            tag = f" `[T{tier:g} {_TIER_NAME[tier]} · {_CITATION_CLASS[cr]}]`" if dev else ""
+            out.append(cite(p, tag))
+        out.append("")
+
+    def plain(title: str, pts: list[Any]) -> None:  # emission order (decisive evidence)
+        out.append(f"### {title}")
+        out.extend(cite(p) for p in pts)
+        out.append("")
+
+    ordered("Bull case (overshoot / mean-revert)", s.bull_points)
+    ordered("Bear case (terminal / value-trap)", s.bear_points)
+    out += ["### Decisive question", f"**{s.decisive_question.question}**", ""]
+    plain("…evidence for", s.decisive_question.evidence_for)
+    plain("…evidence against", s.decisive_question.evidence_against)
+    out += ["### Key unknowns", *[f"- {u}" for u in s.key_unknowns], ""]
+    out.append("### Twin reference cases")  # (D1) twins move to the END of the synthesis
+    for t in s.twin_reference_cases:
+        out.append(f"- **{t.name}** — {t.outcome}")
+        out.append(f"  - distinguished by: {t.distinguishing_fact}")
+        out.append(f"  - source: {t.source}")
+    out.append("")
+    return out
+
+
+def render_markdown(d: Dossier, *, dev: bool = False) -> str:
+    """(D1) Facts-first restructure. Section order: header → caveats → mechanical layer [drawdown &
+    idiosyncrasy (clubbed) → leverage & survival → trajectory → valuation → peer comps → catalyst →
+    concentration] → synthesis → appendix (+ management-commentary pointer) → verdict footer. Old
+    committed JSONs still render (every field is optional-safe). ``dev`` shows the D3 tier tags."""
     m = d.mechanical
     out: list[str] = [
         f"# Dossier — {d.name} ({d.ticker})",
@@ -432,51 +691,14 @@ def render_markdown(d: Dossier) -> str:
         f"_Finalist rank {d.rank} · ref {d.reference_date} · assembled "
         f"{d.assembled_at:%Y-%m-%d %H:%M} · LLM {d.llm_model or 'none'}_",
         "",
-        "> **Assembles and cites; never concludes.** There is no BUY/AVOID here — the verdict is "
-        "the human's, logged separately via the ledger with a frozen entry price.",
-        "",
     ]
-    out += ["## Mechanical layer (source-bound facts)", "", "### Valuation"]
+    # (D1) CAVEATS FIRST — the first thing the human sees is what to verify before trusting below.
+    out += _flags_section(d)
+    out += ["## Mechanical layer (source-bound facts — assembles & cites, never concludes)", ""]
+
+    # (D1·§1) Drawdown cause & idiosyncrasy — CLUBBED: what happened, and did it happen alone?
+    out.append("### Drawdown cause & idiosyncrasy — what happened, and did it happen alone?")
     out += [
-        # Lead with the CROSS-SECTIONAL read (the edge). The own-history percentile is near-0th for
-        # nearly every finalist (the screen selects drawdowns), so it barely discriminates — it is
-        # folded, with its RANGE + sample confidence, into the secondary own-history line below.
-        _fact("Cross-sectional (vs peers — the edge)", m.valuation.cross_sectional),
-        _fact("P/E", m.valuation.pe, _mult),
-        _fact("EV/EBITDA (GAAP TEV/LTM)", m.valuation.ev_ebitda, _mult),
-        _fact("EV/EBITDA (adjusted, forward)", m.valuation.ev_ebitda_adjusted_fwd),
-        _fact("Adjusted EPS (earnings power)", m.valuation.adjusted_eps),
-        _fact("Own-history range position", m.valuation.range_position),
-        "",
-        "### Quality / durability",
-        _fact("FCF sign", m.quality.fcf_sign, _signword),
-        _fact("Free cash flow ($M)", m.quality.free_cash_flow),
-        _fact("Margin trend", m.quality.margin_trend),
-        # B2: the leverage lines render HERE only when the unified block is absent (old JSON).
-        *_quality_leverage_lines(m),
-        _fact("Share-count trend", m.quality.share_count_trend),
-        _fact("Liquidity / covenant flags", m.quality.liquidity_covenant_flags),
-        _fact("Multi-year trajectory (compounder vs melting ice)", m.quality.multi_year_trajectory),
-        "",
-        # B2 unified leverage & survival (present on a fresh assembly; absent → lines stayed above).
-        *(_leverage_block(m) if m.leverage_survival is not None else []),
-        "### Concentration",
-        _fact("Segments (revenue share)", m.concentration.segments),
-        _fact("Segments (EBITDA share — where profit sits)", m.concentration.segment_ebitda),
-        _fact("Customers", m.concentration.customers),
-        _fact("Geographic", m.concentration.geographic),
-        "",
-        "### Peer comps (CIQ Company Comparable Analysis — consensus comp, framed to RESIST)",
-        # B4: the roster + trading multiples route through the ONE shared table renderer.
-        *_roster_lines(m.peer_comps.peer_set),
-        _fact("Comparability (confidence gate)", m.peer_comps.comparability),
-        *_multiples_lines(m.peer_comps.trading_multiples),
-        # B1: the per-peer grid (medians as the footer) replaces the median-only deltas line.
-        *_peer_grid_or_deltas(m.peer_comps),
-        "",
-        # B3 CIQ implied valuation (posed; heterogeneity gate on its header; no computed %).
-        *(_implied_lines(m.implied_valuation) if m.implied_valuation is not None else []),
-        "### Drawdown cause",
         _fact("Shape", m.drawdown_cause.shape),
         _fact("Gap-down dates", m.drawdown_cause.gap_down_dates, _dates),
     ]
@@ -487,12 +709,10 @@ def render_markdown(d: Dossier) -> str:
             out.append(f"    - items: {', '.join(f.item_types) or '—'}")
             for ev in f.events:
                 out.append(f"    - {ev}")
-    out.append(
-        _fact("Revised guidance (catalyst 8-K Ex-99.1)", m.drawdown_cause.revised_guidance)
-    )
     out += [
+        _fact("Revised guidance (catalyst 8-K Ex-99.1)", m.drawdown_cause.revised_guidance),
         "",
-        "### Idiosyncratic vs shared (G2-vs-market compensation)",
+        "_Did it happen alone? (idiosyncratic vs shared — the G2-vs-market compensation):_",
         _fact("Name 180d return", m.idiosyncratic_vs_shared.name_180d_return, _pct),
         _fact("Market (IWM) 180d return", m.idiosyncratic_vs_shared.market_180d_return, _pct),
         _fact("Relative vs market", m.idiosyncratic_vs_shared.rel_vs_market, _pct),
@@ -506,36 +726,73 @@ def render_markdown(d: Dossier) -> str:
             out.append(f"  - [{cm.hops}h] {cm.ticker}: {ret} · via {cm.via}")
     else:
         out.append(_fact("Graph cohort", cohort))
+    out.append("")
+
+    # (D1·§2) Leverage & survival — the survival story in one place (+ FCF + liquidity).
+    if m.leverage_survival is not None:
+        out += _leverage_block(m)  # ### Leverage & survival (unified) …
+    else:  # pre-B2 JSON: the quality leverage lines under the same header
+        out += ["### Leverage & survival", *_quality_leverage_lines(m)]
+    out += [
+        _fact("FCF sign", m.quality.fcf_sign, _signword),
+        _fact("Free cash flow ($M)", m.quality.free_cash_flow),
+        _fact("Liquidity / covenant flags", m.quality.liquidity_covenant_flags),
+        "",
+    ]
+
+    # (D1·§3 · D2) Trajectory — the merged margin/multi-year table + share-count trend.
+    out.append("### Trajectory (revenue · EBITDA · margins · ROIC)")
+    out += _trajectory_table_lines(m)
+    out += [_fact("Share-count trend", m.quality.share_count_trend), ""]
+
+    # (D1·§4) Valuation & own-history.
+    out.append("### Valuation & own-history")
+    out += [
+        _fact("Cross-sectional (vs peers — the edge)", m.valuation.cross_sectional),
+        _fact("P/E", m.valuation.pe, _mult),
+        _fact("EV/EBITDA (GAAP TEV/LTM)", m.valuation.ev_ebitda, _mult),
+        _fact("EV/EBITDA (adjusted, forward)", m.valuation.ev_ebitda_adjusted_fwd),
+        _fact("Adjusted EPS (earnings power)", m.valuation.adjusted_eps),
+        _fact("Own-history range position", m.valuation.range_position),
+        "",
+    ]
+
+    # (D1·§5) Peer comps — roster + comparability + multiples + grid + implied valuation.
+    out.append("### Peer comps (CIQ Comparable Analysis — consensus comp, framed to RESIST)")
+    out += _roster_lines(m.peer_comps.peer_set)
+    out.append(_fact("Comparability (confidence gate)", m.peer_comps.comparability))
+    out += _multiples_lines(m.peer_comps.trading_multiples)
+    out += _peer_grid_or_deltas(m.peer_comps)
+    out.append("")
+    if m.implied_valuation is not None:
+        out += _implied_lines(m.implied_valuation)
+
+    # (D1·§6) Catalyst path (the management-commentary pointer moved to the appendix).
     out += _catalyst_section(m)
 
-    if d.synthesis is None:
-        out += ["## Synthesis", "_Not produced (see flags)._", "", *_flags_section(d)]
-        out += _appendix_lines(m)
-        return "\n".join(out)
+    # (D1·§7) Concentration.
+    out.append("### Concentration")
+    out += [
+        _fact("Segments (revenue share)", m.concentration.segments),
+        _fact("Segments (EBITDA share — where profit sits)", m.concentration.segment_ebitda),
+        _fact("Customers", m.concentration.customers),
+        _fact("Geographic", m.concentration.geographic),
+        "",
+    ]
 
-    s = d.synthesis
-    out += ["## Synthesis (LLM — framing for the human, every point source-bound)", ""]
-    if s.evidence_balance:
-        out += [f"**Evidence balance:** {s.evidence_balance}", ""]
+    # Synthesis — balance → bull → bear → decisive → unknowns → twins.
+    if d.synthesis is not None:
+        out += _synthesis_lines(d, dev=dev)
+    else:
+        out += ["## Synthesis", "_Not produced (see flags)._", ""]
 
-    def points(title: str, pts: list[Any]) -> None:
-        out.append(f"### {title}")
-        for p in pts:
-            warn = "" if p.cited else " ⚠ uncited"
-            out.append(f"- {p.claim}{warn}\n  - ↳ `{p.source_ref}`")
-        out.append("")
-
-    points("Bull case (overshoot / mean-revert)", s.bull_points)
-    points("Bear case (terminal / value-trap)", s.bear_points)
-    out.append("### Twin reference cases")
-    for t in s.twin_reference_cases:
-        out.append(f"- **{t.name}** — {t.outcome}")
-        out.append(f"  - distinguished by: {t.distinguishing_fact}")
-        out.append(f"  - source: {t.source}")
-    out += ["", "### Decisive question", f"**{s.decisive_question.question}**", ""]
-    points("…evidence for", s.decisive_question.evidence_for)
-    points("…evidence against", s.decisive_question.evidence_against)
-    out += ["### Key unknowns", *[f"- {u}" for u in s.key_unknowns], ""]
-    out += _flags_section(d)
-    out += _appendix_lines(m)  # C — the Financial-Summary appendix, after the twins
+    # (D1) appendix (+ the relocated management-commentary pointer), then the verdict footer.
+    appendix = _appendix_lines(m)
+    out += appendix if appendix else ["## Appendix", ""]
+    out += _mgmt_commentary_lines(m)
+    out += [
+        "---",
+        "> **No BUY/AVOID here — this dossier only assembles and cites.** The verdict is the "
+        "human's, logged separately via the ledger with a frozen entry price.",
+    ]
     return "\n".join(out)
