@@ -2840,3 +2840,40 @@ NOT pre-built (the DriverSpec is left open for exactly these). (c) **the consoli
 (`feat/theme-edge-integrated`) is a LONG-LIVED base** — theme work stacks on it until a MERGE TRIGGER
 (the first RATIFIED enabler, or the viewer shipping). Forward edge NOT claimed — a refactor + cite-check
 hardening, behavior-preserving on the proven theme. Edge 2 stays lead horse.
+
+**THEME #2 SCAN — DEFENSE demand-shift, the refactor's first real use / proof-of-generalization
+(2026-07-02, `feat/theme-multi-theme-refactor`; spec `99232e2`).** The `DEFENSE_DEMAND_SHIFT` DriverSpec
+(a DEMAND-shaped theme — PARALLEL capability categories, not a sequential chain) was added VERBATIM from
+the analyst-approved spec + registered; a toy-leak test confirms ZERO cross-theme string bleed. **The
+classifier ran UNCHANGED — no code edit, only a new spec** (the module-contract the refactor promised).
+Cost-gated first: the 21-term prefilter matched **1683/1727 (97%)** of the sub-$10B universe — only 44
+cut — because "defense"(1615) / "military"(1256) are near-ubiquitous mention-noise; **that 97% flood is
+itself finding-zero** (a demand-theme's vocabulary is generic, so the prefilter barely reduces; the
+semantic layer does all the discrimination). ~$421 Opus; ran 1683 names, 0 scan-errors, ~37/min.
+**TIER SHAPE (machine TIERS, never ranks): 2 binding-REAL / 0 quantified / 65 committed / 41 aspirational
+/ 1575 none.** 108 surfaced (basis≠none); the tie gate graded those **74 indirect / 23 not-driver / 11
+driver-specific**. vs AI-datacenter build-2 (7 REAL / 56 committed / 387 aspirational / 1100 none): **much
+thinner** — fewer REAL (2 vs 7), far fewer aspirational (41 vs 387), 94% none (vs 71%): the defense shift
+surfaces a SMALL concentrated tailwind set out of a huge generic-budget flood, not AI-datacenter's fat
+"we-do-AI" intent tail. REAL = **RCAT** (Teal Drones $9.5M U.S. Army SRR purchase order) + **SWMR**
+(Swarmer Master Supplier Agreement) — both attritable-air, both tailwind. **RESOLVES the two open
+questions from planning-decision (b):** (i) **DIRECTION (tailwind vs legacy) — text-encoding HELD, but
+under a WEAK test.** Of the 11 driver-specific names, **0 are legacy/exquisite-platform primes** — all
+tailwind (small-UAV / loitering / drone-swarm / defense-autonomy / shift-specific components: RCAT, SWMR,
+AVAV, ONDS, UMAC, LPTH, FEIM…); the tie gate capped 74 budget-exposed names at INDIRECT. **BUT the
+sub-$10B ceiling excludes the mega-cap exquisite primes (LMT/NOC/GD/RTX/BA), so those adversarial cases
+barely exist in-universe — direction-in-text was NOT hard-tested.** So DriverTie did NOT need a structured
+direction field THIS run; **keep the schema open** (a future all-cap or headwind-heavy theme may still
+force it). (A local report heuristic that "flagged possible legacy primes" was a substring bug — matched
+`manned` in UN-manned / `crewed` in UN-crewed, i.e. the tailwind side; fixed → 0 true legacy.) (ii)
+**PARALLEL-vs-SEQUENTIAL — confirmed shape mismatch.** **69% of surfaced names (74/108) span >1 provenance
+category** — a demand-shaped name sits in several at once (a drone maker is attritable-air +
+defense-autonomy + components), unlike a sequential chain where a name occupies ONE layer. By-category:
+defense-autonomy 48 / attritable-air 26 dominant, then counter-uas 7 / space-isr 6 / munitions-scale 6 /
+ew-cyber 4. **`provenance_tags` (first-match-wins, single tag) fit a parallel-category theme POORLY** — a
+parallel theme wants MULTI-tag provenance (finding for the schema/radar; NOT built now). Handoff (triage
+worksheet.csv/.md + facts.csv + scan JSONL) written git-ignored to `~/Desktop/mosaic_defense_scan/` +
+scratchpad — **scan output is DATA, fail-closed, NOT committed.** Suite green (ruff + mypy --strict 83
+files + pytest **305**). **Local only — nothing pushed, nothing merged, main untouched.** Forward edge NOT
+claimed (an exposure scan ASSEMBLES + TIERS + surfaces evidence; the human ratifies DIRECTION and logs the
+verdict). Edge 2 stays lead horse.
