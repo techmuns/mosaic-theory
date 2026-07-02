@@ -7,6 +7,7 @@ prints why; bull/bear points print their citation and an ⚠ when a guardrail fl
 
 from __future__ import annotations
 
+import math
 import re
 from collections import Counter
 from collections.abc import Callable
@@ -207,7 +208,10 @@ def _cap(v: float | None) -> str:  # $M → "$1.4B" / "$423M"
 
 
 def _pctc(v: float | None) -> str:  # fraction → "14%"; a value rounding to zero is "0%" (never -0%)
-    return f"{round(v * 100):d}%" if v is not None else "–"  # round()→int collapses -0.4% → 0%
+    # half-up (floor(x+0.5)) to MATCH the JS `Math.round` in dossier.js — Python's round() is
+    # banker's (half-to-even), which would disagree with the web/PDF at every x.5% (12.5% → 12/13).
+    # floor(x+0.5) also collapses a small negative (-0.4% → 0%), so never "-0%".
+    return f"{math.floor(v * 100 + 0.5):d}%" if v is not None else "–"
 
 
 def _ratioc(s: str | None) -> str:  # a ratio → one decimal ("2" → "2.0"); "NM"/"–" pass through
@@ -226,7 +230,10 @@ def _netdebt(v: float | None) -> str:  # $M net debt; NEGATIVE = net cash, label
 
 
 def _numc(v: float | None) -> str:  # a plain number cell → "550.7", or "–"
-    return f"{v:,.1f}" if v is not None else "–"
+    if v is None:
+        return "–"
+    v = round(v, 1) or 0.0  # collapse a signed near-zero (-0.04 → 0.0): never render "-0.0"
+    return f"{v:,.1f}"
 
 
 def _split_note(text: str) -> tuple[str, str]:
@@ -359,7 +366,10 @@ def _implied_lines(iv: Any) -> list[str]:
     ]
     eq = iv.implied_equity
     if eq.status is SourceStatus.PRESENT and eq.value:
-        cols = ["Basis", "Low", "Median", "Mean", "High"]
+        # the basis is the ROW LABEL (under `_table`'s prepended blank header), NOT a `cols` entry —
+        # listing it in `cols` too would make the header one column wider than each row, shifting
+        # every Low/Median/Mean/High value one header to the left in the rendered GFM table.
+        cols = ["Low", "Median", "Mean", "High"]
         trows = [
             [r.basis, _numc(r.low), _numc(r.median), _numc(r.mean), _numc(r.high)] for r in eq.value
         ]

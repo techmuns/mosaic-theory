@@ -444,12 +444,15 @@ function dataTable(label, cite, cols, rows, note) {
 
 // $M/%/number cell formatters for the B1 grid + B3 implied table
 // B.1 shared numeric formatters (ONE place): thousands-consistent, no negative-zero, net-cash
-const _thou = (v, d = 0) => v.toLocaleString(undefined, { minimumFractionDigits: d, maximumFractionDigits: d });
+// en-US pinned (not the runtime locale) so the web/PDF thousands separators match the Python .md.
+const _thou = (v, d = 0) => v.toLocaleString("en-US", { minimumFractionDigits: d, maximumFractionDigits: d });
 const _capC = (v) => (v == null ? DASH : (Math.abs(v) >= 1000 ? `$${_thou(v / 1000, 1)}B` : `$${_thou(v)}M`));
-const _pctC = (v) => (v == null ? DASH : `${Math.round(v * 100) || 0}%`);  // round→int; -0 collapses to 0
-const _ratioC = (s) => { if (s == null) return DASH; const n = Number(s); return Number.isNaN(n) ? String(s) : n.toFixed(1); };
+// NaN → dash (not a fabricated "0%"); Math.round is half-up, matching render._pctc's floor(x+0.5).
+const _pctC = (v) => (v == null || Number.isNaN(v) ? DASH : `${Math.round(v * 100) || 0}%`);
+// a blank/whitespace ratio → dash, NOT a fabricated "0.0" (Number("") === 0); "NM" passes through.
+const _ratioC = (s) => { const t = s == null ? "" : String(s).trim(); if (t === "") return DASH; const n = Number(t); return Number.isNaN(n) ? t : n.toFixed(1); };
 const _netDebtC = (v) => (v == null ? DASH : (v < 0 ? `${_thou(-v)} (net cash)` : _thou(v)));
-const _numC = (v) => (v == null ? DASH : _thou(v, 1));
+const _numC = (v) => (v == null ? DASH : _thou(v > -0.05 && v < 0 ? 0 : v, 1));  // small negative → "0.0", never "-0.0"
 
 // (B1) per-peer grid → the shared table; name row + median footer visually distinct
 function peerGridTable(s) {

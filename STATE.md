@@ -1189,6 +1189,31 @@ Each line: *what it does* — *verified how*.
       lead ("General"/"First"/"Solar") no longer silently drops a legitimate peer twin.
     *ruff + mypy --strict (68) + `pytest -m "not network"` (293, incl. the 6 audit regressions) green.
     Audited, fixed, and merged on explicit per-PR approval.*
+  - **Retro-AUDIT of the MERGED PRs #57 (PR B) and #58 (PR B.1) (2026-07-02).** 3 parallel adversarial
+    reviewers + empirical MVST probes over the comps extraction/math + the shared renderer/formatters.
+    Leverage/schema/wiring came back CLEAN (net-vs-total invariant, field-reuse, back-compat, manifest
+    all correct); all comps indices/medians/bridge verified correct against the real MVST export. Fixes
+    (own branch → PR, not merged):
+    - **CRITICAL — implied-EQUITY markdown table was column-MISALIGNED (#57).** `_implied_lines` listed
+      "Basis" in `cols` AND `r.basis` in the row, so with `_table`'s prepended blank header the header
+      was one column wider than each data row — every Low/Median/Mean/High rendered one header to the
+      LEFT in `dossier.md` (e.g. the High implied-equity $1,794.7M shown under "Mean"). The web view was
+      already correct; only the committed `.md` was wrong. Fix: `cols = [Low, Median, Mean, High]`, basis
+      is the row label. **Regression-pinned by a new column-alignment sweep over EVERY rendered table.**
+    - **MEDIUM (latent) — S&P disclaimer row admitted as a peer (#57).** `_comps_layout` treated any
+      `"("`-bearing row as a company; the Credit Health Panel (no "Summary Statistics" delimiter) pulled
+      the "No content (including ratings…" boilerplate into the peer set — benign today (None-filtered)
+      but a hazard via the `company[-1]` subject fallback. Fix: require a real `(EXCHANGE:SYMBOL)` ticker
+      (`_row_ticker is not None`); verified it drops ONLY the disclaimer, no real peer, on every sheet.
+    - **PY↔JS formatter parity (the "ONE shared formatter set" was two that drifted).** `_pctc` now uses
+      half-up (`floor(x+0.5)`) to match the web/PDF `Math.round` (they disagreed at every x.5% — 12.5% →
+      12 vs 13); `_numc` suppresses negative-zero; the JS `_ratioC` no longer fabricates "0.0" from a
+      blank (`Number("")===0`) and `_pctC` no longer masks NaN as "0%"; JS thousands pinned to en-US.
+      (0 MVST cells were actually diverging — latent, but real.) Node-verified parity + PY pins extended.
+    - **Not fixed (noted):** en-dash vs em-dash for empty cells (`.md` "–" vs web "—") — cosmetic, not a
+      number; unifying would churn the pinned B.1 formatter test for no numerical gain.
+    *ruff + mypy --strict (68) + `pytest -m "not network"` (296) green; JS fixes node-verified. On a
+    branch → PR; NOT merged (awaiting review).*
 - _Whole suite green (ruff + mypy --strict clean; `pytest -m "not network"` passes)._
 
 ## 3. FALSIFIED — tested and retired (NOT deferred)

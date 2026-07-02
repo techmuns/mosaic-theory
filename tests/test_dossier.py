@@ -2617,6 +2617,19 @@ def test_all_rendered_tables_route_through_the_shared_renderer() -> None:
     for lbl in ("Peer set", "Trading multiples", "Per-peer grid", "Implied EQUITY",
                 "Annual financials", "Quarterly financials"):  # incl. the C1/C2 appendix tables
         assert _re.search(_re.escape(lbl) + r"[^\n]*" + _re.escape(dr._TABLE_MARK), md), lbl
+    # every GFM table must be COLUMN-ALIGNED: header, separator, and each data row carry the SAME
+    # column count. A header one wider than its rows (the implied-equity 'Basis'-in-cols bug) shifts
+    # every value one header to the left in the rendered markdown.
+    lines = md.splitlines()
+    for i, ln in enumerate(lines):
+        if not ln.startswith("|---"):
+            continue
+        ncol = ln.count("|") - 1
+        assert lines[i - 1].count("|") - 1 == ncol, f"header≠separator cols:\n{lines[i - 1]}\n{ln}"
+        j = i + 1
+        while j < len(lines) and lines[j].startswith("|") and not lines[j].startswith("|---"):
+            assert lines[j].count("|") - 1 == ncol, f"row≠{ncol} cols:\n{lines[j]}"
+            j += 1
 
 
 def test_numeric_hygiene_shared_formatters() -> None:
@@ -2627,6 +2640,11 @@ def test_numeric_hygiene_shared_formatters() -> None:
     assert dr._pctc(0.14) == "14%" and dr._pctc(-0.0484) == "-5%"  # a real negative still shows
     assert dr._netdebt(-42108.4) == "42,108 (net cash)"  # CATL: negative net debt → net cash
     assert dr._netdebt(5058.0) == "5,058" and dr._netdebt(None) == "–"  # consistent thousands sep
+    # audit fix — half-up rounding (matches the JS Math.round): x.5% with an even integer part must
+    # round UP (12.5% → 13%, not banker's 12%), so the .md and the web/PDF never disagree on a %.
+    assert dr._pctc(0.125) == "13%" and dr._pctc(0.025) == "3%" and dr._pctc(0.005) == "1%"
+    # audit fix — _numc suppresses negative-zero (a small negative → "0.0", never "-0.0")
+    assert dr._numc(-0.04) == "0.0" and dr._numc(0.0) == "0.0" and dr._numc(-12.34) == "-12.3"
 
 
 def test_r1_as_of_sidecar_precedence_confirmed_present() -> None:
@@ -3049,6 +3067,27 @@ def test_credit_health_completes_all_four_peer_median_dims() -> None:
     v = s.value or ""
     assert "name Overall/Operational/Solvency/Liquidity 3/3/2/2" in v      # all four name dims
     assert "peer-median O/Op/S/L 2.5/2.5/2.5/2.5" in v                     # all four peer medians
+
+
+def test_comps_layout_excludes_a_bare_paren_disclaimer_row() -> None:
+    """(#57 audit) A trailing prose row with a BARE paren but NO 'EXCHANGE:SYMBOL' ticker — the S&P
+    'No content (including ratings…' boilerplate on the Credit Health Panel (which has no 'Summary
+    Statistics' delimiter, so end=len(rows)) — must NOT be admitted as a peer, must NOT become the
+    subject via the last-row fallback, and its stray numerics must NOT leak into a peer median."""
+    rows: list[list[typing.Any]] = [
+        ["Company Name", "Overall", "Op", "Solv", "Liq", "p", "u", "S&P Issuer Rating", "c", "i"],
+        ["Rated Co (NYSE:RA)", 1.0, 1.0, 1.0, 1.0, "", "", "A-", "US", "x"],
+        ["Distressed Co (NYSE:DI)", 4.0, 4.0, 4.0, 4.0, "", "", "-", "US", "x"],
+        ["Subj Co (NasdaqCM:SUBJ)", 3.0, 3.0, 2.0, 2.0, "", "", "-", "US", "x"],
+        # disclaimer: bare paren, no ticker, stray 9.0s in the dim cols, NO Summary-Statistics row
+        ["No content (including ratings) reproduced", 9.0, 9.0, 9.0, 9.0, "", "", "-", "", ""],
+    ]
+    _hdr, peers, target = cs._comps_layout(rows, "SUBJ")
+    assert not any("No content" in str(rows[i][0]) for i in peers)  # disclaimer is NOT a peer
+    assert target == 3 and "Subj Co" in str(rows[target][0])        # the real subject, not fallback
+    # end-to-end: the stray 9.0s never enter the medians — peers stay [1, 4] → median 2.5 (not 4)
+    s = cs.credit_health(_comps({("comps", "Credit Health Panel"): rows}))
+    assert "peer-median O/Op/S/L 2.5/2.5/2.5/2.5" in (s.value or "")
 
 
 def test_self_referential_twin_dropped_as_hidden_qa_flag() -> None:
