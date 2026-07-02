@@ -25,6 +25,7 @@ from vinci.dossier.schemas import (
     DrawdownCause,
     FilingRef,
     IdiosyncraticVsShared,
+    LeverageSurvival,
     MechanicalLayer,
     Quality,
     Sourced,
@@ -875,6 +876,21 @@ def _consensus(bundle: CiqBundle) -> ConsensusContext:
     )
 
 
+def _leverage_survival(quality: Quality, bundle: CiqBundle) -> LeverageSurvival:
+    """(B2) One unified leverage & survival block: the name's CIQ NET-debt/EBITDA + the comps
+    TOTAL-debt/EBITDA (name vs peer median) side by side, each basis LABELED — no net-vs-total
+    mixing; interest coverage + the survival line reused from Quality (moved, not duplicated); the
+    S&P-MI credit-health scores. The old Quality leverage lines render from HERE; a pre-B2
+    dossier.json falls back to the Quality lines."""
+    return LeverageSurvival(
+        net_debt_to_ebitda=quality.net_debt_to_ebitda,
+        total_debt_to_ebitda=ciq_sheets.comps_total_debt_ebitda(bundle),
+        interest_coverage=quality.interest_coverage,
+        survival=quality.survival_capacity,
+        credit_health=ciq_sheets.credit_health(bundle),
+    )
+
+
 def _catalyst_path(bundle: CiqBundle, reference_date: date) -> CatalystPath:
     """Assemble the horizon-matched estimates/guidance/revision view from the five new Estimates
     sheets. The workbook as-of (freshest embedded data date) is resolved ONCE and threaded into
@@ -882,13 +898,14 @@ def _catalyst_path(bundle: CiqBundle, reference_date: date) -> CatalystPath:
     is absent — a FRESH assembly always builds the block; raggedness lives one level down."""
     asof = ciq_sheets.estimates_as_of(bundle)
     aod = asof.value
-    stale_before = reference_date - timedelta(days=_STALE_CLOSE_DAYS)
     return CatalystPath(
         as_of=asof,
         horizon_read=ciq_sheets.horizon_read(bundle, as_of=aod),
         acceleration_read=ciq_sheets.acceleration_read(bundle, as_of=aod),
         cross_name_anchor=ciq_sheets.cross_name_anchor(bundle, as_of=aod),
-        guidance_bridge=ciq_sheets.guidance_bridge(bundle, as_of=aod, stale_before=stale_before),
+        guidance_bridge=ciq_sheets.guidance_bridge(
+            bundle, as_of=aod, reference_date=reference_date, stale_after_days=_STALE_CLOSE_DAYS
+        ),
         revision_events=ciq_sheets.revision_events(bundle, as_of=aod),
         consensus_stats=ciq_sheets.consensus_stats(bundle, as_of=aod),
     )
@@ -901,6 +918,8 @@ def _catalyst_stale_flag(catalyst: CatalystPath, reference_date: date) -> str | 
     (fail-quiet on absence; the sub-fields already read MISSING)."""
     aod = catalyst.as_of.value
     if not aod:
+        return None
+    if "operator-attested" in (catalyst.as_of.note or ""):  # R1: attested date trusted — no caveat
         return None
     if aod.startswith("≥"):  # FLOOR basis — no as-of stamp; freshness can't be evaluated on a bound
         return (
@@ -964,14 +983,15 @@ def assemble_mechanical(
     )
     if edgar_used:
         peer_comps = edgar_fundamentals.flag_deltas_basis(peer_comps)
+    quality = _quality(
+        record, edgar, bundle, reference_date, adj_lev,
+        fcf=fcf, margin=margin, trajectory=trajectory,
+    )
     mech = MechanicalLayer(
         valuation=_valuation(
             record, bundle, adj_eps, adj_ev, pe_note=pe_recon[1] if pe_recon else None
         ),
-        quality=_quality(
-            record, edgar, bundle, reference_date, adj_lev,
-            fcf=fcf, margin=margin, trajectory=trajectory,
-        ),
+        quality=quality,
         concentration=_concentration(bundle),
         peer_comps=peer_comps,
         drawdown_cause=drawdown,
@@ -980,6 +1000,10 @@ def assemble_mechanical(
         ),
         consensus_context=_consensus(bundle),
         catalyst_path=_catalyst_path(bundle, reference_date),
+        # B2 unified leverage & survival (both bases + credit health) + B3 CIQ implied valuation
+        # (posed; the comparability gate from peer_comps renders on its header).
+        leverage_survival=_leverage_survival(quality, bundle),
+        implied_valuation=ciq_sheets.implied_valuation(bundle, peer_comps.comparability),
         management_commentary=ciq_sheets.management_commentary(bundle),
     )
     flags: list[str] = []

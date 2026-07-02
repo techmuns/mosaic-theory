@@ -64,6 +64,8 @@ def test_dossier_schema_has_no_conclusion_field() -> None:
     expected = {
         ds.Synthesis, ds.SourcedPoint, ds.TwinCase, ds.DecisiveQuestion, ds.MechanicalLayer,
         ds.CatalystPath, ds.RevisionEvent,
+        # PR B — the no-conclusion walk must reach the comps blocks (no upside/discount field)
+        ds.PeerRow, ds.LeverageSurvival, ds.ImpliedRow, ds.ImpliedValuation,
     }
     assert expected <= models
     offenders: list[str] = []
@@ -1751,17 +1753,21 @@ def test_guidance_bridge_sign_aware_recency_and_stale_guide() -> None:
         ["Guidance", "-", "-", "-"],
     ]
     s = cs.guidance_bridge(
-        _est_bundle({"Guidance": guidance}), as_of=None, stale_before=date(2025, 1, 1)
+        _est_bundle({"Guidance": guidance}), as_of=None,
+        reference_date=date(2026, 1, 1), stale_after_days=45,
     )
     assert s.status is ds.SourceStatus.PRESENT
     v = s.value or ""
-    assert "Revenue: latest guide '290.0 - 310.0' for FY 2025 (dated 20" in v  # max-dated serial
+    assert "Revenue: latest guide '290.0 - 310.0' for FY 2025 (dated 20" in v  # range kept verbatim
     assert "actual ≥ guided floor 1/2 resolved" in v  # revenue-like; resolved-only (FY25 excluded)
     assert "most recent resolved: FY 2024 MISSED" in v  # Fix 2c — max-dated resolved is a miss
     assert "Capital Expenditure: latest guide '(120.00) - (150.00)'" in v
     assert "spend ≤ guided ceiling 1/1 resolved" in v  # Fix 2b — cost-like (negative) guide label
     assert "most recent resolved: FY 2023 MET" in v
-    assert "(stale guide — 2023-01-24)" in v  # Fix 3 — capex 2023 guide older than stale_before
+    # R3: '(stale — Nd old)' once, no duplicated date; capex 2023 guide is far older than 45d
+    import re as _re
+    assert _re.search(r"Capital Expenditure:.*\(stale — \d+d old\)", v)
+    assert "(stale guide —" not in v  # the old duplicated-date form is gone
     assert "Gross Margin" not in v  # present-but-empty block omitted, no flag
 
 
@@ -2308,6 +2314,7 @@ class _FakeCompsBundle:
     ) -> None:
         self._sheets = sheets
         self.ticker = ticker
+        self.workbooks: tuple[typing.Any, ...] = ()  # no AS_OF sidecar in the synthetic fixture
 
     def sheet(
         self, kind: str, sheet_name: str, *, freq: str | None = None
@@ -2319,6 +2326,9 @@ class _FakeCompsBundle:
 
     def workbook(self, kind: str, *, freq: str | None = None) -> None:
         return None
+
+    def has(self, kind: str) -> bool:
+        return any(k == kind for k, _s in self._sheets)
 
 
 def _fake_peer_comps() -> ds.PeerComps:
@@ -2339,7 +2349,7 @@ def test_peer_comps_field_is_present_on_the_mechanical_layer() -> None:
     assert "peer_comps" in ds.MechanicalLayer.model_fields
     assert ds.MechanicalLayer.model_fields["peer_comps"].annotation is ds.PeerComps
     assert set(ds.PeerComps.model_fields) == {
-        "peer_set", "comparability", "trading_multiples", "fundamental_deltas"
+        "peer_set", "comparability", "trading_multiples", "fundamental_deltas", "peer_grid",  # +B1
     }
 
 
@@ -2407,7 +2417,185 @@ def test_peer_comps_section_reaches_the_rendered_markdown() -> None:
     assert "### Peer comps" in md  # the section is wired into the mechanical-layer render
     assert "Roku" in md and "$306.6B" in md  # the roster + caps reach the page
     assert "name NM" in md  # NM survives all the way to the rendered artifact
-    assert "earned-vs-residual" in md  # the discount is POSED as a question, not concluded
+    # B1: the per-peer grid replaces the median-only deltas line — name vs peers + a median footer,
+    # rendered through the shared table renderer (no computed discount/delta).
+    assert "Per-peer grid" in md and "Peer median" in md and dr._TABLE_MARK in md
+
+
+# --- PR B: comps upgrades (per-peer grid B1, unified leverage B2, implied valuation B3, riders) ---
+
+
+def _comps(
+    sheets: dict[tuple[str, str], list[list[typing.Any]]], ticker: str = "SUBJ"
+) -> ciq.CiqBundle:
+    return typing.cast(ciq.CiqBundle, _FakeCompsBundle(sheets, ticker=ticker))
+
+
+def test_peer_grid_joins_by_ticker_sorts_by_cap_with_median_footer() -> None:
+    """(B1) The grid joins Financial Data (cap, net debt) to Operating Statistics (margins/growth/
+    Debt-EBITDA) BY TICKER even when the sheets differ in row order; sorted by cap desc, the subject
+    is flagged, NM is preserved, and a peer-median (peers-only) footer is appended."""
+    fd = [
+        ["Company Name", "", "", "Market Cap ($M)", "LTM Net Debt"],
+        ["Alpha Corp (NYSE:AL)", "", "", 5000.0, 100.0],
+        ["Beta Inc (NYSE:BE)", "", "", 1000.0, 50.0],
+        ["Subj Co (NasdaqCM:SUBJ)", "", "", 200.0, 30.0],
+    ]
+    op = [  # DIFFERENT row order than fd — the join must be by ticker, never positional
+        ["Company Name", "GM", "EBITDA", "EB", "NI", "Rg", "Eg", "e", "n", "dc", "Debt/EBITDA"],
+        ["Subj Co (NasdaqCM:SUBJ)", 0.3, 0.2, 0, 0, -0.1, 0, 0, 0, 0, 5.8],
+        ["Beta Inc (NYSE:BE)", 0.4, 0.1, 0, 0, 0.05, 0, 0, 0, 0, "NM"],
+        ["Alpha Corp (NYSE:AL)", 0.5, 0.25, 0, 0, 0.2, 0, 0, 0, 0, 1.5],
+    ]
+    rows = cs.peer_grid(_comps({
+        ("comps", "Financial Data"): fd, ("comps", "Operating Statistics"): op,
+    })).value or []
+    assert [r.name.split()[0] for r in rows] == ["Alpha", "Beta", "Subj", "Peer"]  # cap desc+footer
+    subj = next(r for r in rows if r.is_name)
+    assert subj.ebitda_margin == 0.2 and subj.debt_to_ebitda == "5.8"  # joined by ticker, not order
+    assert next(r for r in rows if r.name.startswith("Beta")).debt_to_ebitda == "NM"  # NM preserved
+    med = next(r for r in rows if r.is_median)
+    assert med.market_cap == 3000.0  # median of PEERS only (Alpha 5000, Beta 1000), not the name
+
+
+def _credit_sheet(rated_low: bool) -> list[list[typing.Any]]:
+    # rated A-/BBB+ peers score 1-2; unrated distressed peers score 4 → 1=best (rated_low=True)
+    lo, hi = (1.0, 4.0) if rated_low else (4.0, 1.0)
+    return [
+        ["Company Name", "Overall", "Op", "Solv", "Liq", "p", "u", "S&P Issuer Rating", "c", "i"],
+        ["Rated Co (NYSE:RA)", lo, lo, lo, lo, "", "", "A-", "US", "x"],
+        ["Distressed Co (NYSE:DI)", hi, hi, hi, hi, "", "", "-", "US", "x"],
+        ["Subj Co (NasdaqCM:SUBJ)", 3.0, 3.0, 2.0, 2.0, "", "", "-", "US", "x"],
+    ]
+
+
+def test_credit_health_scale_direction_verified_from_data() -> None:
+    """(B2) The credit scale direction is read FROM THE DATA: rated peers low, distressed high ⇒
+    '1=strongest…4=weakest' (labeled); if the correlation is absent the block reads UNKNOWN."""
+    ok = cs.credit_health(_comps({("comps", "Credit Health Panel"): _credit_sheet(rated_low=True)}))
+    assert ok.status is ds.SourceStatus.PRESENT
+    assert "1=strongest … 4=weakest" in (ok.value or "") and "3/3/2/2" in (ok.value or "")
+    # inverted (rated peers score HIGH) → correlation absent → UNKNOWN, not a guess
+    bad = cs.credit_health(
+        _comps({("comps", "Credit Health Panel"): _credit_sheet(rated_low=False)})
+    )
+    assert bad.status is ds.SourceStatus.UNKNOWN and "ambiguous" in (bad.note or "")
+
+
+def test_total_debt_ebitda_labels_the_comps_basis() -> None:
+    """(B2) Comps total-debt/EBITDA is LABELED as such (name vs peer median) — never mixed with the
+    CIQ net-debt basis. This is the fix for the net-vs-total 3.9x/5.8x incoherence."""
+    op = [
+        ["Company Name", "GM", "e", "b", "n", "r", "g", "x", "y", "z", "Debt/EBITDA"],
+        ["Peer A (NYSE:A)", 0, 0, 0, 0, 0, 0, 0, 0, 0, 2.0],
+        ["Peer B (NYSE:B)", 0, 0, 0, 0, 0, 0, 0, 0, 0, 4.0],
+        ["Subj Co (NasdaqCM:SUBJ)", 0, 0, 0, 0, 0, 0, 0, 0, 0, 5.8],
+    ]
+    v = cs.comps_total_debt_ebitda(_comps({("comps", "Operating Statistics"): op})).value or ""
+    assert "name 5.8x vs peer median 3.0x" in v and "comps TOTAL-debt/EBITDA basis" in v
+
+
+def test_implied_valuation_posed_no_percentage_anywhere() -> None:
+    """(B3) The implied-valuation block renders the CIQ implied-equity table + bridge + the name's
+    market cap adjacent, with the heterogeneity gate — and NO computed %/discount/upside."""
+    iv_sheet = [
+        ["Implied Valuation"], ["As-Of Date:", 46197.0],
+        ["Company Name", "LTM EBITDA", "NTM Revenue"],
+        ["Subj Co (NasdaqCM:SUBJ)", 51.9, 498.96],
+        ["= Implied Equity Value"],
+        ["High", 1794.7, 6521.08], ["Low", 212.5, 329.6],
+        ["Mean", 760.2, 1616.39], ["Median", 550.7, 1070.38],
+        ["+ Total Cash & ST Investments", 126.1, 126.1], ["- Total Debt", 326.0, 326.0],
+        ["/ Shares Outstanding", 333.16, 333.16],
+    ]
+    fd = [["Company Name", "", "", "Market Cap ($M)"], ["Subj Co (NasdaqCM:SUBJ)", "", "", 423.1]]
+    gate = ds.Sourced.present("caps span 641x → HETEROGENEOUS — low comparability", source_ref="x")
+    iv = cs.implied_valuation(
+        _comps({("comps", "Implied Valuation"): iv_sheet, ("comps", "Financial Data"): fd}), gate,
+    )
+    assert iv.market_cap.value == 423.1  # the name's ACTUAL cap, adjacent to the CIQ-implied values
+    rows = iv.implied_equity.value or []
+    ebitda = next(r for r in rows if r.basis == "LTM EBITDA")
+    assert ebitda.low == 212.5 and ebitda.median == 550.7 and ebitda.high == 1794.7
+    assert "126.1" in (iv.bridge.value or "") and "326.0" in (iv.bridge.value or "")  # bridge
+    # HARD FENCE: no schema field names a discount/upside, and no '%' in the rendered block
+    md = "\n".join(dr._implied_lines(iv))
+    assert "HETEROGENEOUS" in md and "%" not in md
+
+
+def test_as_of_sidecar_precedence(monkeypatch: typing.Any) -> None:
+    """R1: as-of precedence is workbook header > operator AS_OF sidecar (attested) > floor. The
+    Estimates export has no header, so a sidecar (when present) beats the event-date floor."""
+    est_no_header = {"Recent Changes": _recent_changes_fx(2)}
+    # (a) no sidecar → floor ('≥' + event date)
+    monkeypatch.setattr(cs, "_sidecar_as_of", lambda _b: None)
+    assert (cs.estimates_as_of(_est_bundle(est_no_header)).value or "").startswith("≥")
+    # (b) sidecar present → attested, precedence above the floor (no '≥', note says attested)
+    monkeypatch.setattr(cs, "_sidecar_as_of", lambda _b: date(2026, 6, 24))
+    a = cs.estimates_as_of(_est_bundle(est_no_header))
+    assert a.value == "2026-06-24" and "operator-attested" in (a.note or "")
+    # the staleness caveat downgrades to NONE for an attested date (trusted)
+    cp = ds.CatalystPath(as_of=a, horizon_read=_u(), acceleration_read=_u(), cross_name_anchor=_u(),
+                         guidance_bridge=_u(), revision_events=_u(), consensus_stats=_u())
+    assert dm._catalyst_stale_flag(cp, date(2027, 1, 1)) is None  # attested → no false caveat
+
+
+def test_entitlement_renders_undisclosed(monkeypatch: typing.Any) -> None:
+    """R2: a CIQ 'Entitlement Needed' name → 'undisclosed (CIQ entitlement)'; a revision broker
+    'Entitlement Needed' groups as 'broker undisclosed'."""
+    assert cs._undisclosed_name("Entitlement Needed") == "undisclosed (CIQ entitlement)"
+    assert cs._undisclosed_name("H.C. Wainwright") == "H.C. Wainwright"
+    rows = [["", ""], ["Change Type", "Date", "Broker", "Analyst", "Data Point", "Period",
+                       "Cur", "Pri", "After", "Before"],
+            ["Downward Revision", 46100.0, "Entitlement Needed", "-", "EBITDA", "FY 2026",
+             1.0, 2.0, 1.0, 2.0]]
+    ev = cs.revision_events(_est_bundle({"Recent Changes": rows}))
+    assert (ev.value or [])[0].broker == "broker undisclosed"
+
+
+def test_guidance_stale_note_once_and_point_guide_numeric() -> None:
+    """R3: a stale guide reads '(stale — Nd old)' ONCE (no duplicated date); a POINT guide renders
+    numeric (427.5), a RANGE verbatim."""
+    guidance = [
+        ["G"], ["", "FY 2026"], ["Revenue"], ["As Of Guidance"],
+        ["Guidance Date", 46097.0], ["Guidance", "427.516"], ["Actual/Latest"], ["Actual", "-"],
+    ]
+    v = cs.guidance_bridge(_est_bundle({"Guidance": guidance}), reference_date=date(2026, 7, 1),
+                           stale_after_days=45).value or ""
+    assert "latest guide 427.5 for FY 2026" in v  # point guide → numeric, not the raw '427.516'
+    import re as _re
+    assert _re.search(r"\(stale — \d+d old\)", v) and "(stale guide —" not in v  # once, no repeat
+
+
+def test_shared_table_renderer_marks_every_table(monkeypatch: typing.Any) -> None:
+    """B4: every dossier table routes through the ONE shared renderer — each emits ``_TABLE_MARK``,
+    so the count matches the number of table-bearing facts (grid + implied here)."""
+    fd = [["Company Name", "", "", "Market Cap ($M)", "Net Debt"],
+          ["Peer X (NYSE:PX)", "", "", 900.0, 40.0], ["Subj (NasdaqCM:SUBJ)", "", "", 200.0, 5.0]]
+    op = [["Company Name", "a", "b", "c", "d", "e", "f", "g", "h", "i", "Debt/EBITDA"],
+          ["Peer X (NYSE:PX)", 0, 0.3, 0, 0, 0, 0, 0, 0, 0, 2.0],
+          ["Subj (NasdaqCM:SUBJ)", 0, 0.2, 0, 0, 0, 0, 0, 0, 0, 3.0]]
+    pc = cs.peer_comps(
+        _comps({("comps", "Financial Data"): fd, ("comps", "Operating Statistics"): op})
+    )
+    md = "\n".join(dr._peer_grid_lines(pc.peer_grid))
+    assert md.count(dr._TABLE_MARK) == 1 and "| Cap |" in md  # the grid used the shared renderer
+
+
+def test_old_json_without_comps_blocks_falls_back() -> None:
+    """Back-compat: a dossier.json predating B1/B2/B3 (leverage_survival / implied_valuation absent,
+    peer_grid None) still renders — the Quality leverage lines + the median-only deltas line."""
+    mech = _minimal_mech()  # no leverage_survival / implied_valuation; peer_comps has no peer_grid
+    assert mech.leverage_survival is None and mech.implied_valuation is None
+    dossier = ds.Dossier(
+        ticker="X", name="X", cik="0", reference_date=date(2026, 6, 1), rank=1, mechanical=mech,
+        synthesis=None, caveats=[], qa_flags=[], llm_model=None,
+        assembled_at=datetime(2026, 6, 1, 12, 0),
+    )
+    md = dr.render_markdown(dossier)
+    assert "### Leverage & survival" not in md  # the unified block is absent
+    assert "Survival capacity (leverage + self-funding + wall)" in md  # Quality leverage returns
+    assert "Fundamental deltas" in md  # the median-only line renders (no grid)
 
 
 # --- Stage-3 synthesis peer-comp contract (G.3) — the consensus comp read, RESISTED ---------------

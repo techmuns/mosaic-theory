@@ -1065,6 +1065,44 @@ Each line: *what it does* — *verified how*.
     single 2026-05-15 H.C. Wainwright group; ladder trimmed; frontend tables via a real preview render,
     no console errors. ruff + mypy --strict (68) + `pytest -m "not network"` green. On a branch → PR;
     agent never merges. Artifacts re-assembled + committed by the operator post-merge (#51 precedent).*
+  - **PR B — comps-workbook upgrades (2026-07-02).** Consume four comps sheets the parser previously
+    read only partially — Financial Data, Operating Statistics, Credit Health Panel, Implied Valuation
+    (all validated against the real MVST export; row/column LABELS matched the contract, no deviation).
+    Scoped to `ciq_sheets`/`mechanical`/`render`/`schemas`/`flags` + `dossier.js` + tests; all comps
+    row-lookups key BY TICKER (the #51 discipline — the sheets differ in row order).
+    - **B1 per-peer grid** (`peer_grid`, `PeerRow`): one row per peer + the subject (visually distinct)
+      + a peers-only median footer — cap · EBITDA margin · rev/EBITDA growth · Debt/EBITDA · net debt,
+      sorted by cap; joins Financial Data ⨝ Operating Statistics by ticker; NM preserved. The
+      median-only `fundamental_deltas` line collapses into the footer (the field stays for synthesis).
+    - **B2 unified leverage & survival** (`LeverageSurvival`): ONE block, the CIQ NET-debt/EBITDA AND
+      the comps TOTAL-debt/EBITDA (name vs peer median) side by side, EACH BASIS LABELED — this retires
+      the net-vs-total 3.9x/5.8x incoherence permanently; + interest coverage, survival, and the S&P-MI
+      credit-health scores whose **scale direction is verified FROM THE DATA** (rated peers score low,
+      distressed high ⇒ 1=strongest…4=weakest; UNKNOWN if the correlation is absent). The Quality
+      leverage lines moved here (a pre-B2 dossier.json falls back to them — regression-pinned).
+    - **B3 implied valuation** (`ImpliedValuation`, POSED not concluded): CIQ's implied EQUITY table
+      (basis × Low/Median/Mean/High) + the TEV→equity bridge + the name's ACTUAL market cap adjacent,
+      with the heterogeneity gate verbatim on the header. **HARD FENCE: no computed %/delta/discount/
+      upside field anywhere** (no-conclusion schema-walk extended to B1/B2/B3; a test asserts no `%` in
+      the rendered block).
+    - **B4 table-style unification:** ONE shared table renderer (`render._table` with a `<!-- ds-table
+      -->` marker; frontend `dataTable`) — trading multiples, the B1 grid, margin/trajectory/surprise,
+      and the catalyst tables all route through it; the legacy frontend `catTable`/`seriesTable`-HTML
+      path is deleted. A grep-style test confirms every table carries the marker.
+    - **Riders:** R1 optional `data/manual/ciq/<T>/AS_OF` sidecar (precedence: workbook header >
+      operator-attested sidecar > floor; an attested date downgrades the staleness caveat to none —
+      three branches pinned). R2 any `Entitlement Needed` cell → "undisclosed (CIQ entitlement)"; a
+      revision broker → "broker undisclosed". R3 stale guide reads "(stale — Nd old)" once (no repeated
+      date); a point guide renders numeric (427.5), a range verbatim.
+    *Verified on the REAL MVST export (git-ignored): the per-peer grid (name row distinct, median
+    footer, NM intact); the unified leverage block with BOTH bases labeled + peer median + credit
+    scores scale-labeled; the implied table with the heterogeneity gate on its header and NO % anywhere;
+    every comps block stamped as-of 2026-06-24 from the header; the trading-multiples table in the
+    shared compact style; the AS_OF-sidecar precedence. Frontend confirmed by a real preview render
+    (grid name-row/median-footer styling, leverage/implied sections, no console errors). ruff + mypy
+    --strict (68) + `pytest -m "not network"` green; regression tests for B1/B2/B3 + R1/R2/R3 + B4 +
+    old-JSON fallback. On a branch → PR; the agent never merges. Operator re-assembles + commits the
+    artifacts post-merge (#51 precedent).*
 - _Whole suite green (ruff + mypy --strict clean; `pytest -m "not network"` passes)._
 
 ## 3. FALSIFIED — tested and retired (NOT deferred)
