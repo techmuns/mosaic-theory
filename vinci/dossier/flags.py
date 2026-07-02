@@ -16,15 +16,22 @@ incomplete-input notes) pass through unchanged.
 
 from __future__ import annotations
 
+import re
+
 # Leading tokens that mark a flag as machine-QA — dev/JSON only, hidden from the human PDF/web view.
 # DIRECTIONAL + VERIFICATION-CLAIM are QA (machine-overstep self-checks, operator-decided 2026-07):
 # the offending point is already in the doc; the flag is about the machine's discipline, not the
 # analyst's read. ``str.startswith`` takes this tuple directly.
+#
+# NOT hidden — UNTRACEABLE is a human CAVEAT (data-integrity): a figure cited to STRUCTURED data
+# that doesn't contain it (a source-misbinding/fabrication). Its source_ref LOOKS legitimate, so a
+# human can't catch it from the rendered citation — it must show. (Contrast TRANSCRIPT-FIGURE, whose
+# source_ref honestly reads "CIQ transcript(s): …" — the reader can verify via the visible citation,
+# so its soft "verify against the call" note stays QA to avoid noise.)
 _QA_MARKERS: tuple[str, ...] = (
     "UNCITED",
     "MISMATCH",
     "TRANSCRIPT-FIGURE",
-    "UNTRACEABLE",
     "TWIN ",
     "DIRECTIONAL",
     "VERIFICATION-CLAIM",
@@ -64,6 +71,14 @@ def revoice(flag: str) -> str:
     """Re-voice a decision caveat out of validator-speak: replace the ALL-CAPS token (and humanise
     the `{where}:` field name) with a plain lead, keeping the explanation. Already-plain caveats and
     the `pull CIQ …` incomplete-input notes match no token and pass through unchanged."""
+    # UNTRACEABLE has an infix ("figure 'N' in {where}: …") so it needs its own re-voice, not the
+    # simple TOKEN-{where} form below.
+    m = re.match(r"UNTRACEABLE figure '([^']*)' in (\S+?): (.*)", flag)
+    if m:
+        n, where, rest = m.groups()
+        human = _WHERE_HUMAN.get(where, where)
+        return (f"Untraceable figure {n} ({human}) — cited to structured data that does not "
+                f"contain it; verify the source before relying on it: {rest}")
     for token, label in _REVOICE_WHERE.items():
         if flag.startswith(token):
             rest = flag[len(token):].lstrip()

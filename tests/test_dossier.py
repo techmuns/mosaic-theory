@@ -1244,10 +1244,12 @@ def test_ev_ebitda_integrity_flag(monkeypatch: pytest.MonkeyPatch) -> None:
 def test_flags_partition_routes_qa_from_caveats() -> None:
     """The audience-split: machine-QA self-checks (citation/twin/overstep/LLM-state) route to
     qa_flags (dev/JSON only); decision caveats + the 'pull CIQ …' incomplete-input notes stay in
-    caveats. Unknown flags default to caveat (fail toward transparency — never silently hidden)."""
+    caveats. UNTRACEABLE is a DATA-INTEGRITY caveat (a figure mis-cited to STRUCTURED data that
+    lacks it — the source_ref looks legit, so the human must see it); TRANSCRIPT-FIGURE stays QA
+    (its 'CIQ transcript' source_ref is honest). Unknown flags default to caveat (transparency)."""
     qa = [
         "UNCITED bull_point: '...' (ref not in mechanical facts)",
-        "UNTRACEABLE figure '42' in bear_point: '...'",
+        "TRANSCRIPT-FIGURE '55' in bear_point: '...' — from the cited earnings call, verify",
         "TWIN 'Acme' source doesn't trace — should be tagged unverified",
         "DIRECTIONAL language 'buy' — human review (dossier frames, not concludes)",
         "VERIFICATION-CLAIM bull_point: '...' — the dossier cites, it does not verify",
@@ -1255,6 +1257,7 @@ def test_flags_partition_routes_qa_from_caveats() -> None:
         "LLM synthesis failed (no usable output)",
     ]
     caveat_src = [
+        "UNTRACEABLE figure '42' in bear_point: '...'",  # data-integrity: mis-cited to structured
         "RESOLVED (P/E basis) — trailing GAAP P/E 5.0x is one-time-distorted: ...",
         "EDGAR P/E (5.0x) conflicts ~3x with CIQ P/LTM EPS (1.7x) — ...",
         "EV/EBITDA stale-price caveat — CIQ's Financials→Multiples current TEV/LTM 8.5x ...",
@@ -1266,6 +1269,9 @@ def test_flags_partition_routes_qa_from_caveats() -> None:
     assert len(caveats) == len(caveat_src)  # every non-QA flag kept for the human
     assert any("pull CIQ 'Estimates Report'" in c for c in caveats)  # incomplete-input visible
     assert any("SOME-NEW-FLAG" in c for c in caveats)  # unknown flag defaults to visible
+    assert not any("UNTRACEABLE" in q for q in qa_flags)  # data-integrity is NOT hidden
+    unt = next(c for c in caveats if "ntraceable figure 42" in c)  # visible + re-voiced
+    assert "UNTRACEABLE" not in unt and "a bear point" in unt
 
 
 def test_flags_revoice_strips_validator_token_keeps_explanation() -> None:
