@@ -1,6 +1,6 @@
 # Dossier — Microvast Holdings, Inc. (MVST)
 
-_Finalist rank 272 · ref 2026-06-22 · assembled 2026-07-02 13:53 · LLM claude-opus-4-8_
+_Finalist rank 272 · ref 2026-06-22 · assembled 2026-07-02 15:06 · LLM claude-opus-4-8_
 
 > **Assembles and cites; never concludes.** There is no BUY/AVOID here — the verdict is the human's, logged separately via the ledger with a frozen entry price.
 
@@ -83,37 +83,54 @@ _Finalist rank 272 · ref 2026-06-22 · assembled 2026-07-02 13:53 · LLM claude
 - **Cohort read:** _UNKNOWN_ — no graph cohort to compare — see rel_vs_market for the name-vs-market read
 - **Graph cohort:** _UNKNOWN_ — MVST in graph but no US-listed exposed names to price
 
-### Catalyst path (estimates · guidance · revision events) — as-of 2026-05-15
-- **Horizon read (FQ — next-2Q revision breadth):** EPS Normalized FQ2 2026: 1m 0↑/0↓, 2m 0↑/0↓, 3m 0↑/0↓; EPS Normalized FQ3 2026: 1m 0↑/0↓, 2m 1↑/0↓, 3m 1↑/0↓; EPS (GAAP) FQ2 2026: 1m 0↑/0↓; EPS (GAAP) FQ3 2026: 1m 0↑/0↓; Revenue FQ2 2026: 1m 0↑/0↓, 2m 0↑/1↓, 3m 0↑/1↓; Revenue FQ3 2026: 1m 0↑/0↓, 2m 0↑/1↓, 3m 0↑/1↓; EBITDA FQ2 2026: 1m 0↑/0↓; EBITDA FQ3 2026: 1m 0↑/0↓; EBIT FQ2 2026: 1m 0↑/0↓, 2m 0↑/1↓, 3m 0↑/1↓; EBIT FQ3 2026: 1m 0↑/0↓, 2m 1↑/0↓, 3m 1↑/0↓; Interest Expense FQ2 2026: 1m 0↑/0↓, 2m 1↑/0↓, 3m 1↑/0↓; Interest Expense FQ3 2026: 1m 0↑/0↓, 2m 1↑/0↓, 3m 1↑/0↓; EBT (GAAP) FQ2 2026: 1m 0↑/0↓, 2m 0↑/1↓, 3m 0↑/1↓; EBT (GAAP) FQ3 2026: 1m 0↑/0↓, 2m 1↑/0↓, 3m 1↑/0↓; Net Income (GAAP) FQ2 2026: 1m 0↑/0↓, 2m 0↑/1↓, 3m 0↑/1↓  [as-of 2026-05-15]
-  - ↳ `CIQ Estimates→Revisions (next-2-FQ breadth; 1m/2m/3m Upward/Downward)`
-- **Acceleration read (monthly consensus path):** FY 2026 EPS Normalized: 0.24 (12m) → 0.29 (9m) → 0.20 (6m) → 0.06 (3m) → 0.06 (2m) → 0.04 (1m) → 0.04 (now); net -83% (12m→now); FY 2026 EPS (GAAP): 0.09 (12m) → 0.11 (9m) → 0.09 (6m) → 0.05 (3m) → 0.05 (2m) → 0.18 (1m) → 0.18 (now); net +100% (12m→now); FY 2026 Revenue: 609.0 (12m) → 593.9 (9m) → 544.2 (6m) → 480.5 (3m) → 480.5 (2m) → 444.4 (1m) → 444.4 (now); net -27% (12m→now); FY 2026 EBITDA: 129.7 (12m) → 146.5 (9m) → 146.5 (6m) → 62.1 (1m) → 62.1 (now); net -52% (12m→now) [3m, 2m n/a]; FY 2026 EBIT: 46.1 (12m) → 52.8 (9m) → 43.4 (6m) → 22.5 (3m) → 22.5 (2m) → 20.0 (1m) → 20.0 (now); net -57% (12m→now); FY 2026 Interest Expense: -13.7 (12m) → -4.61 (9m) → -4.81 (6m) → -5.02 (3m) → -5.02 (2m) → -4.91 (1m) → -4.91 (now); net -64% (12m→now); FY 2026 EBT (GAAP): 37.0 (12m) → 59.4 (9m) → 38.8 (6m) → 17.6 (3m) → 17.6 (2m) → 73.1 (1m) → 73.1 (now); net +98% (12m→now); FY 2026 Net Income (Excl. Excep): 92.7 (12m) → 92.6 (9m) → 21.4 (3m) → 21.4 (2m); net -77% (12m→2m) [6m n/a]; FY 2026 Net Income (GAAP): 33.4 (12m) → 42.3 (9m) → 32.9 (6m) → 17.6 (3m) → 17.6 (2m) → 70.1 (1m) → 70.1 (now); net +110% (12m→now)  [as-of 2026-05-15]
+### Catalyst path (estimates · guidance · revisions) — export date unverified (data ≥ 2026-05-15)
+- **Horizon read (FQ — next-2Q revision breadth)** — ↳ `CIQ Estimates→Revisions (next-2-FQ breadth; 1m/2m/3m Upward/Downward)`:
+  - EPS Normalized FQ3 2026: 1m 0↑/0↓, 2m 1↑/0↓, 3m 1↑/0↓
+  - Revenue FQ2 2026: 1m 0↑/0↓, 2m 0↑/1↓, 3m 0↑/1↓
+  - Revenue FQ3 2026: 1m 0↑/0↓, 2m 0↑/1↓, 3m 0↑/1↓
+  - EBIT FQ2 2026: 1m 0↑/0↓, 2m 0↑/1↓, 3m 0↑/1↓
+  - EBIT FQ3 2026: 1m 0↑/0↓, 2m 1↑/0↓, 3m 1↑/0↓
+  - Interest Expense FQ2 2026: 1m 0↑/0↓, 2m 1↑/0↓, 3m 1↑/0↓
+  - Interest Expense FQ3 2026: 1m 0↑/0↓, 2m 1↑/0↓, 3m 1↑/0↓
+  - EBT (GAAP) FQ2 2026: 1m 0↑/0↓, 2m 0↑/1↓, 3m 0↑/1↓
+  - EBT (GAAP) FQ3 2026: 1m 0↑/0↓, 2m 1↑/0↓, 3m 1↑/0↓
+  - Net Income (GAAP) FQ2 2026: 1m 0↑/0↓, 2m 0↑/1↓, 3m 0↑/1↓
+  - _no revisions in any window: EPS Normalized FQ2 2026, EPS (GAAP) FQ2 2026, EPS (GAAP) FQ3 2026, EBITDA FQ2 2026, EBITDA FQ3 2026_
+- **Acceleration read (monthly consensus path):** FY 2026 EPS Normalized: 0.24 (12m) → 0.29 (9m) → 0.20 (6m) → 0.06 (3m) → 0.06 (2m) → 0.04 (1m) → 0.04 (latest); net -83% (12m→latest) | FY 2026 EPS (GAAP): 0.09 (12m) → 0.11 (9m) → 0.09 (6m) → 0.05 (3m) → 0.05 (2m) → 0.18 (1m) → 0.18 (latest); net +100% (12m→latest) | FY 2026 Revenue: 609.0 (12m) → 593.9 (9m) → 544.2 (6m) → 480.5 (3m) → 480.5 (2m) → 444.4 (1m) → 444.4 (latest); net -27% (12m→latest) | FY 2026 EBITDA: 129.7 (12m) → 146.5 (9m) → 146.5 (6m) → 62.1 (1m) → 62.1 (latest); net -52% (12m→latest) [3m, 2m n/a] | FY 2026 EBIT: 46.1 (12m) → 52.8 (9m) → 43.4 (6m) → 22.5 (3m) → 22.5 (2m) → 20.0 (1m) → 20.0 (latest); net -57% (12m→latest) | FY 2026 Interest Expense: -13.7 (12m) → -4.61 (9m) → -4.81 (6m) → -5.02 (3m) → -5.02 (2m) → -4.91 (1m) → -4.91 (latest); improving (magnitude toward zero) (12m→latest) | FY 2026 EBT (GAAP): 37.0 (12m) → 59.4 (9m) → 38.8 (6m) → 17.6 (3m) → 17.6 (2m) → 73.1 (1m) → 73.1 (latest); net +98% (12m→latest) | FY 2026 Net Income (Excl. Excep): 92.7 (12m) → 92.6 (9m) → 21.4 (3m) → 21.4 (2m); net -77% (12m→2m) [6m n/a] | FY 2026 Net Income (GAAP): 33.4 (12m) → 42.3 (9m) → 32.9 (6m) → 17.6 (3m) → 17.6 (2m) → 70.1 (1m) → 70.1 (latest); net +110% (12m→latest)  [data ≥ 2026-05-15 · export date unverified]
   - ↳ `CIQ Estimates→Trends (current-FY consensus path; ragged, absent lookbacks n/a)`
-- **Cross-name anchor (NTM forward-multiple ladder):** NTM: TEV/REV 1.26 · TEV/EBITDA 7.54 · TEV/EBIT 17.55 · Price/Earnings 14.33 · PEG – | FY 2026: TEV/REV 1.42 · TEV/EBITDA 10.14 · TEV/EBIT 31.54 · Price/Earnings 32.25 · PEG – | FY 2027: TEV/REV 1.06 · TEV/EBITDA 4.26 · TEV/EBIT 9.17 · Price/Earnings 8.60 · PEG – | FY 2028: TEV/REV 0.83 · TEV/EBITDA 3.47 · TEV/EBIT 5.35 · Price/Earnings – · PEG – | FY 2029: TEV/REV 0.72 · TEV/EBITDA 2.89 · TEV/EBIT 4.17 · Price/Earnings – · PEG – | FY 2030: TEV/REV 0.63 · TEV/EBITDA 2.46 · TEV/EBIT 3.36 · Price/Earnings – · PEG – | FY 2031: TEV/REV 0.56 · TEV/EBITDA 2.11 · TEV/EBIT 2.78 · Price/Earnings – · PEG – | FY 2032: TEV/REV 0.50 · TEV/EBITDA 1.84 · TEV/EBIT 2.34 · Price/Earnings – · PEG – | FY 2033: TEV/REV 0.45 · TEV/EBITDA 1.61 · TEV/EBIT 2.00 · Price/Earnings – · PEG –  [as-of 2026-05-15]
-  - ↳ `CIQ Estimates→Multiples (forward-multiple ladder: NTM + FY26→FY33)`
-- **Guidance bridge (latest guide + delivery track-record):** Revenue: latest guide '427.516' for FY 2026 (dated 2026-03-16); actual ≥ guided floor 10/13 resolved periods; Capital Expenditure: latest guide '(180.00) - (210.00)' for FY 2023 (dated 2023-11-10); actual ≥ guided floor 4/4 resolved periods; Gross Margin %: latest guide '32.00 - 35.00' for FY 2025 (dated 2025-11-10); actual ≥ guided floor 4/4 resolved periods  [as-of 2026-05-15]
-  - ↳ `CIQ Estimates→Guidance (latest guide range+date + delivery track-record)`
-- **Consensus stats (target + ratings):** Target price: mean $5.50, median $5.50, high/low 6.00/5.00, N 2/2; Ratings: Buy 2, Outperform 0, Hold 0, Underperform 0, Sell 0, No Opinion 0  [as-of 2026-05-15]
+- **Cross-name anchor (NTM forward-multiple ladder)** — ↳ `CIQ Estimates→Multiples (forward-multiple ladder: NTM + FY26→FY33)`:
+  - NTM: TEV/REV 1.26 · TEV/EBITDA 7.54 · TEV/EBIT 17.55 · Price/Earnings 14.33 · PEG –
+  - FY 2026: TEV/REV 1.42 · TEV/EBITDA 10.14 · TEV/EBIT 31.54 · Price/Earnings 32.25 · PEG –
+  - FY 2027: TEV/REV 1.06 · TEV/EBITDA 4.26 · TEV/EBIT 9.17 · Price/Earnings 8.60 · PEG –
+  - FY 2028: TEV/REV 0.83 · TEV/EBITDA 3.47 · TEV/EBIT 5.35 · Price/Earnings – · PEG –
+  - _+5 later fiscal years in JSON_
+- **Guidance bridge (latest guide + track-record):** Revenue: latest guide '427.516' for FY 2026 (dated 2026-03-16) (stale guide — 2026-03-16); actual ≥ guided floor 10/13 resolved; most recent resolved: FY 2025 MISSED; Capital Expenditure: latest guide '(180.00) - (210.00)' for FY 2023 (dated 2023-11-10) (stale guide — 2023-11-10); spend ≤ guided ceiling 4/4 resolved; most recent resolved: FY 2023 MET; Gross Margin %: latest guide '32.00 - 35.00' for FY 2025 (dated 2025-11-10) (stale guide — 2025-11-10); actual ≥ guided floor 4/4 resolved; most recent resolved: FY 2024 MET  [data ≥ 2026-05-15 · export date unverified]
+  - ↳ `CIQ Estimates→Guidance (latest guide + sign-aware delivery track-record)`
+- **Consensus stats (target + ratings):** Target price: mean $5.50, median $5.50, high/low 6.00/5.00, N 2/2; Ratings: Buy 2, Outperform 0, Hold 0, Underperform 0, Sell 0, No Opinion 0  [data ≥ 2026-05-15 · export date unverified]
   - ↳ `CIQ Estimates→Consensus (target stats) + Trends Non-Periodic (ratings)`
-- **Revision-event log** (most recent first; 47 total) — ↳ `CIQ Estimates→Recent Changes (47 broker revision events)  [as-of 2026-05-15]`:
-  - 2026-05-15 · Upward Revision · H.C. Wainwright & Co. · EBT (GAAP) FY 2026: 59.42→75.69 (cons 70.43→73.06)
-  - 2026-05-15 · Initiation of Coverage · H.C. Wainwright & Co. · EBIT FQ2 2026: -→-0.92 (cons 0.62→-0.15)
-  - 2026-05-15 · Initiation of Coverage · H.C. Wainwright & Co. · EBT (GAAP) FQ2 2026: -→-1.74 (cons -0.6→-1.17)
-  - 2026-05-15 · Downward Revision · H.C. Wainwright & Co. · EBITDA FY 2026: 146.5→62.08 (cons -→62.08)
-  - 2026-05-15 · Initiation of Coverage · H.C. Wainwright & Co. · Net Income (GAAP) FQ2 2026: -→-1.74 (cons -0.6→-1.17)
-  - 2026-05-15 · Initiation of Coverage · H.C. Wainwright & Co. · EPS (GAAP) FQ2 2026: -→-0.01 (cons -→-0.01)
-  - 2026-05-15 · Upward Revision · H.C. Wainwright & Co. · EPS (GAAP) FY 2026: 0.11→0.18 (cons -→0.18)
-  - 2026-05-15 · Downward Revision · H.C. Wainwright & Co. · EBIT FY 2026: 63.58→21.96 (cons 17.96→19.96)
-  - 2026-05-15 · Upward Revision · H.C. Wainwright & Co. · Net Income (GAAP) FY 2026: 47.54→69.84 (cons 70.43→70.13)
-  - 2026-05-15 · Initiation of Coverage · H.C. Wainwright & Co. · Interest Expense FQ2 2026: -→-1.23 (cons -1.23→-1.23)
-  - _+37 more in JSON_
-#### Consensus context (legacy light facts)
-- **EPS trend:** EPS (GAAP) FY 2026: 0↑/0↓ last mo
-  - ↳ `CIQ Estimates→Revisions (Last-Month breadth, FY)`
-- **Revenue trend:** Revenue FY 2026: 0↑/0↓ last mo
-  - ↳ `CIQ Estimates→Revisions (Last-Month breadth, FY)`
-- **Revision history:** Target price: mean $5.50 / median $5.50
-  - ↳ `CIQ Estimates→Consensus`
-- **Surprise history (beat/miss):** GAAP-EPS surprise: FY2022 +0%, FY2023 +0%, FY2024 +0%, FY2025 +0%; Revenue surprise: FY2021 +3%, FY2022 +2%, FY2023 +3%, FY2024 +6%, FY2025 -8% (GAAP-EPS basis; +beat / −miss)
+- **Revision-event log** (47 events · 3 broker-days) — ↳ `CIQ Estimates→Recent Changes (47 broker revision events)  [data ≥ 2026-05-15 · export date unverified]`:
+  - **2026-05-15 · H.C. Wainwright & Co.** — Upward Revision×3, Initiation of Coverage×9, Downward Revision×6:
+    - Revenue FY 2026: 563.49→438.83 (cons 450.0→444.41)
+    - EBITDA FY 2026: 146.5→62.08 (cons -→62.08)
+    - EBIT FY 2026: 63.58→21.96 (cons 17.96→19.96)
+    - Net Income (GAAP) FY 2026: 47.54→69.84 (cons 70.43→70.13)
+    - EBT (GAAP) FY 2026: 59.42→75.69 (cons 70.43→73.06)
+    - _+13 more line items in JSON_
+  - **2026-05-11 · Entitlement Needed** — Upward Revision×5, Downward Revision×8:
+    - Net Income (GAAP) FY 2026: 17.63→70.43 (cons 17.63→70.43)
+    - EBT (GAAP) FY 2026: 17.63→70.43 (cons 17.63→70.43)
+    - Revenue FY 2026: 480.52→450.0 (cons 480.52→450.0)
+    - Revenue FQ2 2026: 103.21→95.91 (cons 103.21→95.91)
+    - EBIT FY 2026: 22.46→17.96 (cons 22.46→17.96)
+    - _+8 more line items in JSON_
+  - **2026-03-17 · Entitlement Needed** — Downward Revision×16:
+    - Net Income (Excl. Excep) FY 2026: 92.58→21.38 (cons -→21.38)
+    - Revenue FY 2026: 525.0→480.52 (cons 525.0→480.52)
+    - Net Income (Excl. Excep) FQ2 2026: 16.86→0.45 (cons -→0.45)
+    - Gross Margin % FY 2026: 34.0→27.9 (cons -→27.9)
+    - Gross Margin % FQ2 2026: 33.8→28.0 (cons -→28.0)
+    - _+11 more line items in JSON_
+- **Surprise history (annual beat/miss):** GAAP-EPS surprise: FY2022 +0%, FY2023 +0%, FY2024 +0%, FY2025 +0%; Revenue surprise: FY2021 +3%, FY2022 +2%, FY2023 +3%, FY2024 +6%, FY2025 -8% (GAAP-EPS basis; +beat / −miss)
   - ↳ `CIQ Estimates→Surprise (annual)`
 
 ### Management commentary (transcript POINTER — read the file; not a machine excerpt)
@@ -122,88 +139,88 @@ _Finalist rank 272 · ref 2026-06-22 · assembled 2026-07-02 13:53 · LLM claude
 
 ## Synthesis (LLM — framing for the human, every point source-bound)
 
-**Evidence balance:** strongly-bearish — revenue/volume collapsing (-48% YoY), adjusted EBITDA turned negative, and forward estimates cut ~50% into a 2026 maturity wall.
+**Evidence balance:** mixed — genuine structural margin turnaround and FCF-positivity offset by a real, deepening volume/EBITDA decline, deep cuts to forward operating estimates and a 2026 maturity wall.
 
 ### Bull case (overshoot / mean-revert)
-- The margin trajectory is a genuine turnaround, not an optical artifact: EBITDA margin ran -118% (2021) → 1% (2024) → 17% (2025) → 14% LTM alongside absolute EBITDA swinging from -180 to +52 LTM, so the improvement is real absolute-dollar profit, not a percentage illusion.
+- The multi-year margin trajectory is a genuine turnaround, not an optical artifact: EBITDA margin rose from -118% (2021) to +17% (2025) / 14% LTM, and the paired reconciler shows absolute EBITDA rising in lockstep from -$180M to +$74M (2025) / +$52M LTM — so the recent margin-% dip is volume-driven, not a signal that the business is deteriorating.
   - ↳ `CIQ Financials→Income Statement (margin % + absolute EBITDA reconciler)`
-- The name is self-funding with FCF-positive status and $39.6M LTM levered free cash flow, easing the terminal-liquidity fear even against a 2026 maturity wall.
+- The name is FCF-positive with $39.6M levered free cash flow LTM, making it self-funding rather than dependent on external capital.
   - ↳ `CIQ Financials→Cash Flow 'Levered Free Cash Flow' [LTM 12 months Mar-31-2026]`
-- Interest coverage of 10.6x LTM indicates the debt load is currently serviceable from EBITDA, tempering the leverage-distress reading.
+- Interest coverage of 10.6x LTM indicates the debt load is comfortably serviced from current EBITDA.
   - ↳ `CIQ Financials→Income Statement EBITDA ÷ Interest Expense [LTM 12 months Mar-31-2026]`
-- On fundamentals the name screens BETTER than the peer median on profitability and near-term EBITDA growth — EBITDA margin 14% vs peer-median 6% and EBITDA growth 21% vs peer-median 1% — posing whether the discount to peers is RESIDUAL (overshoot) rather than fully EARNED; but the peer set is HETEROGENEOUS ($34M–$275B caps) so this is a confidence-gated input, not a clean benchmark, and worse leverage (Debt/EBITDA 5.8 vs 2.0) and negative growth (-10% vs +1%) cut the other way.
+- On the fundamental_deltas the name screens BETTER than the peer median on operating quality — EBITDA margin 14% vs 6% and EBITDA growth 21% vs 1% — posing whether the discount is RESIDUAL (overshoot) rather than fully EARNED, though the human must weigh this against worse revenue growth and leverage in the same fact and the HETEROGENEOUS peer set.
   - ↳ `CIQ Comparable Analysis→Operating Statistics (name vs peer median: growth/margin/leverage/beta)`
-- The forward multiple ladder compresses sharply on consensus-modelled recovery — NTM TEV/EBITDA 7.46 vs peer-median 12.9 and FY2027 TEV/EBITDA 4.26 — a genuine counter to the trailing-only 10.0x optic, though it rests on estimates whose reliability is itself in question.
-  - ↳ `CIQ Comparable Analysis→Trading Multiples (name row + Summary Statistics Low/Median/Mean/High)`
-- Management's guidance track-record is credible: revenue actual ≥ guided floor in 10/13 resolved periods and gross-margin actual ≥ guided floor in 4/4, so the revised guide is not a serial over-promise.
-  - ↳ `CIQ Estimates→Guidance (latest guide range+date + delivery track-record)`
-- The two sell-side ratings on file are both Buy with a $5.50 mean target, indicating covering analysts do not read the de-rate as terminal.
+- GAAP-basis forward consensus was revised UP over the last year even as revenue was cut — FY26 EPS (GAAP) net +100%, EBT (GAAP) net +98% and Net Income (GAAP) net +110% (12m→latest) — a genuine positive path on the bottom-line GAAP measures.
+  - ↳ `CIQ Estimates→Trends (current-FY consensus path; ragged, absent lookbacks n/a)`
+- Coverage is small (N 2) but uniformly constructive — both analysts rate Buy with a $5.50 mean/median target versus a name at ~$423M cap — a genuine counter-signal the human must weigh against the thin coverage breadth.
   - ↳ `CIQ Estimates→Consensus (target stats) + Trends Non-Periodic (ratings)`
 
 ### Bear case (terminal / value-trap)
-- Revenue is now CONTRACTING, not ramping: LTM revenue fell to 372 from the 428 FY2025 peak, Q1 revenue dropped 48% YoY to $60.6M on volume collapsing from ~536 to ~274 MWh, and same-quarter revenue is -25.5% — the top line is rolling over, which is the load-bearing terminal signal.
+- Revenue is contracting hard: LTM revenue of $372M is below FY2025's $428M, with same-quarter revenue YoY at -25.5% (Q1 Mar-31-2026 vs Q1 Mar-31-2024) — the top line has rolled over, so the margin-% decline is being driven by a real volume collapse (management: Q1 revenue -48% YoY, volume ~536MWh→274MWh), not a benign mix effect.
   - ↳ `CIQ Financials→Income Statement + Segments + Ratios (multi-year columns)`
-- The Q1 GAAP net profit of $48.2M is an accounting illusion driven by a $63.8M non-cash fair-value gain on warrant/convertible liabilities; management's own adjusted figures show an adjusted net LOSS of $14.6M and YTD adjusted EBITDA of NEGATIVE $5.5M vs +$28.5M prior year — so the trailing 10.0x/11.1x EBITDA multiple flatters a business that turned adjusted-EBITDA negative most recently, making the 'cheap' optic a likely MISREAD.
-  - ↳ `CIQ transcript(s): Microvast Holdings, Inc., Q1 2026 Earnings Call, May 11, 2026.rtf; Microvast Holdings, Inc., Q4 2025 Earnings Call, Mar 16, 2026.rtf`
-- Consensus forward economics have been gutted across the revision cycle: FY2026 EPS Normalized -83% (12m→now), Revenue -27%, EBITDA -52% and EBIT -57%, so the forward-multiple compression the bull leans on rests on estimates already collapsing.
+- The absolute-EBITDA reconciler confirms deterioration is REAL, not optical: absolute EBITDA fell from $74M (2025) to $52M LTM — the falling margin % here is the true signal, not a consensus misread, because the dollar figure is falling alongside it.
+  - ↳ `CIQ Financials→Income Statement (margin % + absolute EBITDA reconciler)`
+- The forward revenue path was cut sharply — FY26 Revenue net -27% and FY26 EBITDA net -52% (12m→latest) — so the constructive GAAP-net-income revisions are being driven by non-operating items (warrant/convertible fair-value swings) rather than the operating business, which is being revised DOWN.
   - ↳ `CIQ Estimates→Trends (current-FY consensus path; ragged, absent lookbacks n/a)`
-- Leverage is elevated and worse than peers — net-debt/EBITDA 3.9x (CIQ) and Debt/EBITDA 5.8 vs peer-median 2.0 — against a business whose EBITDA base is shrinking, so the coverage cushion is deteriorating.
-  - ↳ `CIQ Comparable Analysis→Operating Statistics (name vs peer median: growth/margin/leverage/beta)`
-- The nearest maturity wall is 2026, coinciding with multiple term loans and shareholder convertible loans Due 2026, exactly as the adjusted-EBITDA base turns negative — a refinancing risk stacked on a weakening quarter.
-  - ↳ `CIQ Financials→Capital Structure Details`
-- The gross-margin decline to 31.6% in Q1 from 36.9% reflects lost fixed-cost absorption on falling volumes plus raw-material, tariff and freight pressure per management — a structural cost squeeze while volumes fall, not a one-off.
+- The $48.2M GAAP net profit in Q1 is a non-operating artifact: management states it rests on a $63.8M fair-value change of warrant/convertible liabilities, with the underlying adjusted result an adjusted net LOSS of $14.6M and YTD adjusted EBITDA of negative $5.5M versus +$28.5M a year prior.
   - ↳ `CIQ transcript(s): Microvast Holdings, Inc., Q1 2026 Earnings Call, May 11, 2026.rtf; Microvast Holdings, Inc., Q4 2025 Earnings Call, Mar 16, 2026.rtf`
-- The name has vastly underperformed its market cohort — -58% over 180d vs IWM +18%, a -82% relative gap — confirming the de-rate is idiosyncratic and not a shared sector swoon.
+- Leverage is elevated versus peers and on a shrinking base: net-debt/EBITDA 3.9x (CIQ) and Debt/EBITDA 5.8 vs peer-median 2.0 in fundamental_deltas — an EARNED component of the discount as the EBITDA denominator is now falling.
+  - ↳ `CIQ Comparable Analysis→Operating Statistics (name vs peer median: growth/margin/leverage/beta)`
+- A near-term maturity wall sits in 2026 with multiple term loans and convertible shareholder loans due that year, against net debt of $200M — a refinancing/dilution risk on top of ongoing share issuance (+2.9% trailing ~1.7y).
+  - ↳ `CIQ Financials→Capital Structure Details`
+- Revenue guidance delivery is weakening: the most recent resolved FY (2025) MISSED the guided floor, and management attributes the shortfall to Korea regulatory shifts plus EMEA platform ramp delays — regime factors, not one-offs.
+  - ↳ `CIQ Estimates→Guidance (latest guide + sign-aware delivery track-record)`
+- The name has a beta of 3.5 vs peer-median 1.1 and materially underperformed the market over 180d (-58% vs IWM +18%, rel -82%) — an idiosyncratic, not shared, drawdown.
   - ↳ `EOD name−IWM 180d (screen data-record, G2)`
-- Revenue is 100% single-segment (Batteries) and heavily China/Europe-weighted, with a Korea regulatory phaseout and EMEA platform delays cited by management as the direct volume-loss drivers — concentration with no diversifying offset.
-  - ↳ `CIQ Financials→Segments (Revenues, latest annual column)`
+- Revenue is 100% single-segment (Batteries / Battery Systems) with heavy geographic dependence on China (33%) and Europe (Italy 22% + France 18%) exactly where the disruptions are occurring — concentrated exposure to the regulatory/ramp shocks management cites.
+  - ↳ `CIQ Financials→Segments (Geographic Segment → Revenues, latest annual column)`
 
 ### Twin reference cases
+- **Amprius Technologies** — recovered
+  - distinguished by: US-listed lithium-ion battery maker in the same peer set, high-beta pre-scale story whose value hinges on capacity ramp landing on schedule.
+  - source: CIQ Comparable Analysis→Financial Data + Business Description (roster + caps + business)
+- **Leclanché SA** — went terminal
+  - distinguished by: Small-cap custom battery-systems maker in the peer set carrying a chronic capital-structure/refinancing overhang against a slim revenue base.
+  - source: CIQ Comparable Analysis→Financial Data + Business Description (roster + caps + business)
 - **QuantumScape** — went terminal
-  - distinguished by: Pre-revenue/early-commercial battery-tech SPAC that de-rated hard as the promised production ramp slipped repeatedly against cash burn — the analogue pattern of a next-gen cell/solid-state narrative outrunning shipped volume.
+  - distinguished by: SPAC-era battery-technology story leaning on a next-generation cell roadmap and patents while cash-burning ahead of commercial serial production.
   - source: [LLM-suggested, unverified]
 - **Romeo Power** — went terminal
-  - distinguished by: SPAC-listed commercial-EV battery-pack maker whose customer platforms stalled and volumes collapsed, exhausting a thin balance sheet into a maturity crunch — the analogue of platform-ramp delay plus leverage.
+  - distinguished by: US commercial-vehicle battery-pack SPAC that saw volumes and customer platforms slip and could not out-run its funding needs.
   - source: [LLM-suggested, unverified]
-- **Microvast (self, 2022-2024)** — recovered
-  - distinguished by: Same name's own prior swing from deeply negative EBITDA and margins to positive absolute EBITDA and gross margin — the analogue pattern of a genuine operating turn that could resume once ramp costs normalize.
-  - source: CIQ Financials→Income Statement (margin % + absolute EBITDA reconciler)
 - **Enovix** — recovered
-  - distinguished by: Battery cell maker that de-rated on ramp/timing execution but retained differentiated technology and eventual volume — the analogue of a demand-real, timing-driven overshoot rather than a demand-dead story.
-  - source: [LLM-suggested, unverified]
-- **Microbot / Workhorse** — went terminal
-  - distinguished by: Small-cap electrification story that kept diluting shares into a shrinking revenue base while promising a transformative new product line — the analogue of narrative pivot (here the KAF school-bus powertrain) amid contracting core sales.
+  - distinguished by: Battery maker whose equity re-rated when a delayed manufacturing-line ramp finally began converting to serial production and revenue.
   - source: [LLM-suggested, unverified]
 
 ### Decisive question
-**Is the recent revenue/volume collapse and swing to adjusted-EBITDA-negative a temporary ramp-and-regulatory air-pocket that reverses as Huzhou Phase 3.2 capacity and EMEA platforms reach SOP, or the start of a structural demand-and-margin decline into a levered 2026 maturity wall?**
+**Is the current revenue/EBITDA drop a TEMPORARY Phase 3.2 ramp + Korea/EMEA disruption trough that reverses as capacity comes online in 2026, or the start of a structural volume decline that leaves the company under-scaled against its 2026 maturities and elevated leverage?**
 
 ### …evidence for
-- Management frames the Q1 revenue dip as 'temporary,' tied to Korea regulatory shifts and EMEA platform-ramp delays that are beginning to resolve, with Phase 3.2 (up to 2 GWh) expected to reach SOP in 2026 and drive a revenue ramp.
+- Management frames the Q1 revenue dip as temporary and tied to Phase 3.2 ramp timing, expecting the new capacity (up to 2 GWh) to contribute to a continued revenue ramp through 2026 with SOP expected in 2026.
   - ↳ `CIQ transcript(s): Microvast Holdings, Inc., Q1 2026 Earnings Call, May 11, 2026.rtf; Microvast Holdings, Inc., Q4 2025 Earnings Call, Mar 16, 2026.rtf`
-- The multi-year turn is real in absolute dollars — absolute EBITDA -180 (2021) → +74 (2025) → +52 LTM and gross margin -28% → 35% — showing structural operating leverage when volumes are present.
+- The multi-year trajectory shows the business already crossed from deeply negative to positive EBITDA (-$180M in 2021 to +$74M in 2025) alongside rising gross margin to ~35%, evidence of a durable structural improvement beneath the recent dip.
   - ↳ `CIQ Financials→Income Statement (margin % + absolute EBITDA reconciler)`
-- The name is FCF-positive with $39.6M levered FCF and 10.6x interest coverage, providing a self-funding cushion to bridge the ramp.
+- The name remains FCF-positive ($39.6M LTM) with 10.6x interest coverage, giving it self-funding runway to bridge to the ramp.
   - ↳ `CIQ Financials→Cash Flow 'Levered Free Cash Flow' [LTM 12 months Mar-31-2026]`
 
 ### …evidence against
-- Q1 volume fell nearly in half (~536 to ~274 MWh) and revenue -48% YoY, with YTD adjusted EBITDA turning NEGATIVE $5.5M from +$28.5M — the base is deteriorating in the most recent print, not stabilizing.
-  - ↳ `CIQ transcript(s): Microvast Holdings, Inc., Q1 2026 Earnings Call, May 11, 2026.rtf; Microvast Holdings, Inc., Q4 2025 Earnings Call, Mar 16, 2026.rtf`
-- Consensus FY2026 EBITDA has been cut -52% and revenue -27% across the revision cycle, indicating the Street is marking down the recovery path, not just a single quarter.
+- Same-quarter revenue is down -25.5% YoY and LTM revenue ($372M) has fallen below FY2025 ($428M), with absolute EBITDA down to $52M from $74M — the trough is deepening, not stabilizing.
+  - ↳ `CIQ Financials→Income Statement + Segments + Ratios (multi-year columns)`
+- Forward operating consensus was cut hard (FY26 Revenue -27%, EBITDA -52%) and the most recent resolved FY guidance MISSED — the downgrade cycle is still running.
   - ↳ `CIQ Estimates→Trends (current-FY consensus path; ragged, absent lookbacks n/a)`
-- A 2026 maturity wall of term and convertible loans coincides with the weakening quarter, raising refinancing risk if the ramp does not arrive on schedule.
+- A 2026 maturity wall of multiple term loans and convertible shareholder loans sits against $200M net debt and 3.9x net-debt/EBITDA on a shrinking base, tightening the window in which the ramp must deliver.
   - ↳ `CIQ Financials→Capital Structure Details`
 
 ### Key unknowns
-- Cash runway / liquidity visibility against the 2026 maturity wall is not disclosed as a survival leg beyond the FCF-positive tag — OPACITY as a bearish risk given the wall coincides with adjusted-EBITDA turning negative.
-- No adjusted (forward) EV/EBITDA or adjusted EPS is in the revised 99.1 guidance, so the 'cheap' multiple cannot be tested on a clean forward, adjusted basis — a missing expected disclosure.
-- No revised-guidance 99.1 exhibit was parsed for either gap-down 8-K, so the exact magnitude and framing of the outlook cut behind the sharp de-rate is unknown.
-- The trailing EV/EBITDA range is LOW-CONFIDENCE (only 4 closes < 2y), so the 'at floor' read is unreliable and the overshoot-vs-terminal question is unresolved on valuation history alone.
-- No segment-level EBITDA is disclosed, so profitability of the core Batteries segment vs the new KAF school-bus initiative cannot be separated.
-- The new KAF electric-powertrain / 290Ah LFP product is early-stage with no shipped-volume, order-book, or revenue disclosure — a narrative catalyst with no quantified proof.
-- Only 2 brokers cover the name (both Buy), so consensus target and estimates are thin and easily skewed.
+- No forward EV/EBITDA on an adjusted basis and no adjusted EPS in the revised guidance — the trailing 10.0x cannot distinguish cheap-overshoot from cheap-terminal (own-history floor is LOW-CONFIDENCE, only 4 closes < 2y); this neutral trailing multiple belongs here, not in the directional cases.
+- No revised-outlook 99.1 exhibit was parsed for either gap-down 8-K — the actual updated guidance behind the two earnings-driven drawdowns is an expected disclosure that is MISSING; treat as a bearish opacity risk, not a neutral gap.
+- Segment EBITDA is UNKNOWN (no EBITDA section on the Segments sheet) and revenue is 100% one segment — no ability to see whether any product line is loss-making within the battery mix; a missing expected breakout, bearish-leaning.
+- The exact size, terms and refinancing plan for the 2026 maturity wall are not disclosed beyond principal amounts — no cash-runway-to-maturity visibility; opacity to be resolved before sizing survival capacity.
+- Export date on all consensus/catalyst data is UNVERIFIED (a floor ≥2026-05-15) with a known newer sibling export — the forward path and revision reads may be stale.
+- Whether the constructive GAAP net-income revisions are operating-driven or purely warrant/convertible fair-value swings (transcript shows a $63.8M fair-value item) — the human must separate real earnings power from non-cash accounting.
+- Peer set is HETEROGENEOUS (caps $34M–$275B, 8063x span) so no peer multiple is a clean benchmark; the earned-vs-residual split of the discount cannot be settled without a comparable-scale peer read.
 
 ## ⚠ Analyst caveats — verify before the verdict
 - Net debt/EBITDA (3.9x) is on REPORTED EBITDA (CIQ / consolidated GAAP), not the covenant basis; management and credit covenants typically define leverage on adjusted EBITDA (a larger denominator → a lower ratio), reconciled in the earnings release/transcript (currently UNAVAILABLE) — do not read 3.9x as the covenant-basis leverage.
-- Unreconciled margin-compression (a bear point): 'The gross-margin decline to 31.6% in Q1 from 36.9% reflects lost…' — cites margin compression without the absolute-EBITDA reconciliation (margin % can fall while EBITDA rises)
-- Possible false balance — evidence_balance commits a strong lean but the body is near-symmetric (7 bull vs 8 bear) and the minority bull_points aren't qualified-as-outweighed — size the minority against the lean (rule 7), or it launders a one-sided case
+- Catalyst-path as-of UNVERIFIABLE — the CIQ Estimates export carries no as-of stamp; its data is on/after 2026-05-15 (the latest embedded revision event), but the true export date is unknown, so freshness vs the 2026-06-22 reference cannot be confirmed. Re-pull, or corroborate against a dated sibling CIQ export.
+- Unreconciled margin-compression (a bear point): 'Revenue is contracting hard: LTM revenue of $372M is below FY2025's…' — cites margin compression without the absolute-EBITDA reconciliation (margin % can fall while EBITDA rises)
