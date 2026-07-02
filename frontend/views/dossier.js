@@ -201,8 +201,8 @@ function renderDossier(d, verdict) {
     peerComps(m.peer_comps),
     drawdownCause(m.drawdown_cause),
     idioVsShared(m.idiosyncratic_vs_shared),
-    catalystPath(m.catalyst_path),
-    consensus(m.consensus_context),
+    catalystPath(m.catalyst_path, m.consensus_context),
+    m.catalyst_path ? "" : consensus(m.consensus_context),  // legacy fallback only for old JSON
     sec("Management commentary", "Earnings-call transcript — a pointer for the human to read in full; never a machine-curated excerpt.",
       fact("Transcript", m.management_commentary)),
     synthesis(d.synthesis),
@@ -414,39 +414,163 @@ function idioVsShared(io) {
     `<div class="fact"><div class="fact-label">Graph cohort</div><div>${cohort}</div></div>`);
 }
 
-const EVENT_CAP = 10; // revision-event rows shown; the full list stays in dossier.json
+// --- catalyst path (the five CIQ Estimates sheets, horizon-matched). Fix 4: the string fields are
+// TABLE-rendered (reuse the margin-trend mini-table idiom) + curated (collapse/trim/group/cap); the
+// full data always stays in dossier.json. Returns "" for a pre-catalyst_path JSON (back-compat).
+const _CAT_GROUP_CAP = 3, _CAT_ITEMS = 5;
+const _LADDER_KEEP = ["NTM", "FY 2026", "FY 2027", "FY 2028"];
+const _LOOKBACKS = ["12m", "9m", "6m", "3m", "2m", "1m", "latest", "now"];
 
-// Catalyst path — the five newly-parsed CIQ Estimates sheets, horizon-matched. Returns "" for a
-// pre-catalyst_path dossier.json (older committed JSON has no such field) so the section is simply
-// omitted rather than erroring — the flags-PR back-compat precedent.
-function catalystPath(cp) {
-  if (!cp) return "";
-  const asof = cp.as_of && cp.as_of.status === "present" ? cp.as_of.value : "UNKNOWN";
-  const ev = cp.revision_events || {};
-  let log;
-  if (ev.status === "present" && Array.isArray(ev.value) && ev.value.length) {
-    const rows = ev.value.slice(0, EVENT_CAP).map((e) =>
-      `<li><span class="mono">${escapeHtml(e.date)}</span> · ${escapeHtml(e.change_type)} · ${escapeHtml(e.broker)} · <b>${escapeHtml(e.metric)}</b> ${escapeHtml(e.period)}: ${escapeHtml(e.broker_prior)}&rarr;${escapeHtml(e.broker_current)} <span class="muted">(cons ${escapeHtml(e.consensus_before)}&rarr;${escapeHtml(e.consensus_after)})</span></li>`).join("");
-    const more = ev.value.length > EVENT_CAP ? `<li class="muted">+${ev.value.length - EVENT_CAP} more in JSON</li>` : "";
-    const cite = ev.source_ref ? `<span class="cite">${escapeHtml(ev.source_ref)}</span>` : "";
-    log = `<div class="fact"><div class="fact-label">Revision-event log <span class="muted">(most recent first; ${ev.value.length} total)</span></div>
-      <ul class="event-log">${rows}${more}</ul>${cite}</div>`;
-  } else {
-    log = fact("Revision-event log", ev);
-  }
-  return sec(`Catalyst path — as-of ${escapeHtml(asof)}`,
-    "Horizon-matched estimates, guidance & revision events (CIQ Estimates). Native cadence — FQ horizon, monthly path, NTM anchor. Assembles and cites; renders no upside, fair value, or direction.",
-    fact("Horizon read (FQ — next-2Q revision breadth)", cp.horizon_read) +
-    fact("Acceleration read (monthly consensus path)", cp.acceleration_read) +
-    fact("Cross-name anchor (NTM forward-multiple ladder)", cp.cross_name_anchor) +
-    fact("Guidance bridge (latest guide + delivery track-record)", cp.guidance_bridge) +
-    fact("Consensus stats (target + ratings)", cp.consensus_stats) +
-    log);
+// strip the trailing "  [as-of …]" / "  [data ≥ …]" suffix an extractor appends (as-of is on the header)
+function catBody(v) {
+  const s = String(v);
+  const i = s.lastIndexOf("  [");
+  return i !== -1 && s.trimEnd().endsWith("]") ? s.slice(0, i) : s;
 }
 
+// floor-aware as-of: a "≥"-prefixed value is an unverified export FLOOR, never a plain as-of
+function catAsof(cp) {
+  const a = cp.as_of || {};
+  if (a.status !== "present" || !a.value) return "as-of UNKNOWN";
+  const v = String(a.value);
+  return v.startsWith("≥") ? `export date unverified (data ≥ ${v.slice(1)})` : `as-of ${v}`;
+}
+
+// a fact-row whose value IS a table — same wrapper as seriesTable, so it stays uniform + scrolls
+function catTable(label, cite, cols, rows, note) {
+  const head = `<tr><th></th>${cols.map((c) => `<th class="num">${escapeHtml(c)}</th>`).join("")}</tr>`;
+  const body = rows.map((r) =>
+    `<tr><td style="white-space:nowrap;">${escapeHtml(r.label)}</td>${r.cells.map((c) => `<td class="num">${escapeHtml(c)}</td>`).join("")}</tr>`).join("");
+  const noteHtml = note ? `<div class="muted" style="font-size:11px; margin-top:5px;">${escapeHtml(note)}</div>` : "";
+  const citeHtml = cite ? `<span class="cite">${escapeHtml(cite)}</span>` : "";
+  return `<div class="fact"><div class="fact-label">${escapeHtml(label)}</div>
+    <div style="min-width:0;"><div style="overflow-x:auto;"><table class="data"><thead>${head}</thead><tbody>${body}</tbody></table></div>${noteHtml}${citeHtml}</div></div>`;
+}
+
+// (4a) horizon → metric × [FQ2, FQ3] table; zero-breadth-across-all-windows rows collapse to a line
+function horizonTable(s) {
+  const label = "Horizon read (FQ — next-2Q revision breadth)";
+  if (!s || s.status !== "present" || !s.value) return fact(label, s);
+  const byMetric = new Map(), periods = [];
+  for (const seg of catBody(s.value).split("; ")) {
+    const t = seg.trim(), ci = t.indexOf(": ");
+    if (ci < 0) continue;
+    const head = t.slice(0, ci), pm = head.match(/\s(FQ\d\s*\d{4})$/);
+    if (!pm) continue;
+    const period = pm[1], metric = head.slice(0, head.length - period.length).trim();
+    if (!periods.includes(period)) periods.push(period);
+    if (!byMetric.has(metric)) byMetric.set(metric, {});
+    byMetric.get(metric)[period] = t.slice(ci + 2);
+  }
+  periods.sort();
+  const nonzero = [], zero = [];
+  for (const [metric, cells] of byMetric)
+    (Object.values(cells).some((c) => /[1-9]\d*[↑↓]/.test(c)) ? nonzero : zero).push(metric);
+  const rows = nonzero.map((m) => ({ label: m, cells: periods.map((p) => byMetric.get(m)[p] || DASH) }));
+  const note = zero.length ? `no revisions in any window: ${zero.join(", ")}` : "";
+  return catTable(label, s.source_ref, periods, rows, note);
+}
+
+const _baseMetric = (m) => m.replace(/\s*(Normalized|\(GAAP\)|\(Excl\. Excep\))/g, "").trim();
+
+// (4b) acceleration → metric rows × lookback columns + net; GAAP kept adjacent to Normalized
+function accelTable(s) {
+  const label = "Acceleration read (monthly consensus path)";
+  if (!s || s.status !== "present" || !s.value) return fact(label, s);
+  const entries = [];
+  for (const entry of catBody(s.value).split(" | ")) {
+    const semi = entry.indexOf("; "), chain = semi >= 0 ? entry.slice(0, semi) : entry;
+    const change = semi >= 0 ? entry.slice(semi + 2).trim() : "";
+    const ci = chain.indexOf(": ");
+    if (ci < 0) continue;
+    const metric = chain.slice(0, ci).replace(/^FY\s*\d{4}\s*/, "").trim(), pts = {};
+    for (const pair of chain.slice(ci + 2).split(" → ")) {
+      const m = pair.trim().match(/^(-?[\d.,]+)\s*\((\w+)\)$/);
+      if (m) pts[m[2]] = m[1];
+    }
+    entries.push({ metric, pts, change });
+  }
+  entries.sort((a, b) =>
+    _baseMetric(a.metric).localeCompare(_baseMetric(b.metric)) ||
+    (a.metric.includes("GAAP") ? 1 : 0) - (b.metric.includes("GAAP") ? 1 : 0));
+  const cols = _LOOKBACKS.filter((lb) => entries.some((e) => e.pts[lb] != null));
+  const rows = entries.map((e) => ({ label: e.metric, cells: [...cols.map((c) => e.pts[c] || DASH), e.change || DASH] }));
+  return catTable(label, s.source_ref, [...cols, "net"], rows, "");
+}
+
+// (4c) ladder → period × multiple table; NTM + FY26–FY28 only, later years noted (full in JSON)
+function ladderTable(s) {
+  const label = "Cross-name anchor (NTM forward-multiple ladder)";
+  if (!s || s.status !== "present" || !s.value) return fact(label, s);
+  const segs = catBody(s.value).split(" | ").map((x) => x.trim()).filter(Boolean);
+  const cols = [], rows = [];
+  let kept = 0;
+  for (const seg of segs) {
+    const ci = seg.indexOf(": ");
+    if (ci < 0) continue;
+    const period = seg.slice(0, ci).trim();
+    if (!_LADDER_KEEP.includes(period)) continue;
+    kept++;
+    const by = {};
+    for (const cell of seg.slice(ci + 2).split(" · ")) {
+      const m = cell.trim().match(/^(.+?)\s+(\S+)$/);
+      if (m) { if (!cols.includes(m[1])) cols.push(m[1]); by[m[1]] = m[2]; }
+    }
+    rows.push({ label: period, cells: cols.map((c) => by[c] || DASH), _by: by });
+  }
+  for (const r of rows) r.cells = cols.map((c) => r._by[c] || DASH);
+  const extra = segs.length - kept;
+  return catTable(label, s.source_ref, cols, rows, extra > 0 ? `+${extra} later fiscal years in JSON` : "");
+}
+
+const _absDelta = (e) => { const d = Math.abs(Number(e.broker_current) - Number(e.broker_prior)); return isNaN(d) ? -1 : d; };
+
+// (4d) revision events GROUPED by (date, broker): summary + material line items (largest |Δ| first);
+// cap 3 groups, rest noted. Full list in JSON.
+function eventGroups(s) {
+  const label = "Revision-event log";
+  if (!s || s.status !== "present" || !Array.isArray(s.value) || !s.value.length) return fact(label, s);
+  const events = s.value, groups = new Map();
+  for (const e of events) {
+    const k = `${e.date}|${e.broker}`;
+    if (!groups.has(k)) groups.set(k, []);
+    groups.get(k).push(e);
+  }
+  const keys = [...groups.keys()].sort().reverse(); // date|broker, most recent first
+  const blocks = keys.slice(0, _CAT_GROUP_CAP).map((k) => {
+    const evs = groups.get(k), [dt, broker] = k.split("|"), types = {};
+    for (const e of evs) types[e.change_type] = (types[e.change_type] || 0) + 1;
+    const summary = Object.entries(types).map(([t, n]) => (n > 1 ? `${t}×${n}` : t)).join(", ");
+    const items = [...evs].sort((a, b) => _absDelta(b) - _absDelta(a)).slice(0, _CAT_ITEMS).map((e) =>
+      `<li><b>${escapeHtml(e.metric)}</b> ${escapeHtml(e.period)}: ${escapeHtml(e.broker_prior)}&rarr;${escapeHtml(e.broker_current)} <span class="muted">(cons ${escapeHtml(e.consensus_before)}&rarr;${escapeHtml(e.consensus_after)})</span></li>`).join("");
+    const more = evs.length > _CAT_ITEMS ? `<li class="muted">+${evs.length - _CAT_ITEMS} more line items in JSON</li>` : "";
+    return `<div style="margin-top:7px;"><b>${escapeHtml(dt)} · ${escapeHtml(broker)}</b> <span class="muted">— ${escapeHtml(summary)}</span><ul class="event-log">${items}${more}</ul></div>`;
+  }).join("");
+  const moreGroups = keys.length > _CAT_GROUP_CAP ? `<div class="muted" style="font-size:12px; margin-top:4px;">+${keys.length - _CAT_GROUP_CAP} more broker-days in JSON</div>` : "";
+  const cite = s.source_ref ? `<span class="cite">${escapeHtml(s.source_ref)}</span>` : "";
+  return `<div class="fact"><div class="fact-label">${escapeHtml(label)} <span class="muted">(${events.length} events · ${keys.length} broker-days)</span></div><div>${blocks}${moreGroups}${cite}</div></div>`;
+}
+
+function catalystPath(cp, cc) {
+  if (!cp) return "";
+  // Fix 5: the legacy consensus facts are gone (duplicated by the reads); fold in the one
+  // non-duplicate — Surprise history.
+  const surprise = cc ? seriesTable("Surprise history (annual beat/miss)", cc.surprise_history) : "";
+  return sec(`Catalyst path — ${catAsof(cp)}`,
+    "Horizon-matched estimates, guidance & revision events (CIQ Estimates). Native cadence — FQ horizon, monthly path, NTM anchor. Assembles and cites; renders no upside, fair value, or direction.",
+    horizonTable(cp.horizon_read) +
+    accelTable(cp.acceleration_read) +
+    ladderTable(cp.cross_name_anchor) +
+    fact("Guidance bridge (latest guide + track-record)", cp.guidance_bridge) +
+    fact("Consensus stats (target + ratings)", cp.consensus_stats) +
+    eventGroups(cp.revision_events) +
+    surprise);
+}
+
+// Legacy fallback — ONLY rendered for a pre-catalyst_path dossier.json (no catalyst_path field).
 function consensus(cc) {
   if (!cc) return "";
-  return sec("Consensus context (legacy light facts)", "Light context for 'am I non-consensus' — never a driver; superseded by the catalyst path above.",
+  return sec("Consensus context", "Light context for 'am I non-consensus' — never a driver.",
     fact("EPS revisions", cc.eps_trend) +
     fact("Revenue revisions", cc.revenue_trend) +
     fact("Revision history", cc.revision_history) +

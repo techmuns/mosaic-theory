@@ -275,8 +275,9 @@ def test_transcript_figure_soft_flagged_structured_misbinding_hard_flagged() -> 
 
 def test_directional_lint_exempts_analyst_rating_context() -> None:
     """#1: 'buy'/'sell' that merely report the analyst rating (a Buy (1.00) recommendation, a
-    1=buy…5=sell scale, the sell-side) are NOT directional-flagged; a real conclusion still is.
-    #2: a long claim is quoted to a word boundary + '…', never mid-word."""
+    1=buy…5=sell scale, the sell-side, and — Fix 6 — the consensus_stats 'Ratings: Buy N' count
+    distribution) are NOT directional-flagged; a real conclusion still is. #2: a long claim is
+    quoted to a word boundary + '…', never mid-word."""
     base = {
         "twin_reference_cases": [], "key_unknowns": [],
         "decisive_question": {
@@ -286,7 +287,9 @@ def test_directional_lint_exempts_analyst_rating_context() -> None:
     rating = {
         **base,
         "bull_points": [{"claim": "Sell-side still carries a Buy (1.00) recommendation "
-                         "versus the current price", "source_ref": "x"}],
+                         "versus the current price", "source_ref": "x"},
+                        {"claim": "Consensus stats show Ratings: Buy 2, Outperform 0, Hold 0, "
+                         "Sell 0", "source_ref": "x"}],  # Fix 6 — rating-count distribution
         "bear_points": [{"claim": "The analyst recommendation is only Hold (3.00 on a "
                          "1=buy…5=sell scale), not an endorsement", "source_ref": "x"}],
     }
@@ -1656,10 +1659,10 @@ def test_acceleration_read_ragged_snapshots_never_interpolated() -> None:
     assert s.status is ds.SourceStatus.PRESENT
     v = s.value or ""
     assert "FY 2026 EBITDA:" in v and "146.5 (6m) → 62.1 (1m)" in v  # 3m/2m skipped, not filled
-    ebitda_seg = v.split("EBITDA:")[1].split("; FY 2026")[0]
+    ebitda_seg = v.split("EBITDA:")[1].split(" | ")[0]  # entries join with ' | ' (table-parseable)
     assert "(3m)" not in ebitda_seg and "(2m)" not in ebitda_seg  # no fabricated snapshot points
     assert "[3m, 2m n/a]" in ebitda_seg and "62.1 (now)" in ebitda_seg  # read FY col, not FQ2
-    assert "[as-of 2026-05-15]" in v
+    assert "[as-of 2026-05-15]" in v  # header basis (no '≥') → plain as-of suffix, 'now' labels
 
 
 def _revisions_fx() -> list[list[typing.Any]]:
@@ -1721,10 +1724,10 @@ def test_parse_range_handles_points_ranges_and_paren_negatives() -> None:
     assert cs._parse_range("-") is None and cs._parse_range("") is None
 
 
-def test_guidance_bridge_decodes_serials_and_counts_only_resolved() -> None:
-    """(d) GUIDANCE BRIDGE decodes serial dates + range strings (incl. paren-negatives), reports the
-    LATEST guide, and counts the track-record ONLY over periods with BOTH a guidance and an actual.
-    A present-but-empty metric block is omitted with no flag."""
+def test_guidance_bridge_sign_aware_recency_and_stale_guide() -> None:
+    """(d) + Fixes 2b/2c/3: decodes serials + ranges (paren-negatives); counts ONLY resolved;
+    revenue-like uses '≥ floor', cost-like (negative) uses '≤ ceiling'; surfaces the MOST-RECENT
+    resolved MET/MISSED; flags a guide older than stale_before. Empty block omitted."""
     guidance = [
         ["X > Estimates > Guidance", "", "", ""],
         ["", "FY 2023", "FY 2024", "FY 2025"],
@@ -1747,12 +1750,18 @@ def test_guidance_bridge_decodes_serials_and_counts_only_resolved() -> None:
         ["Guidance Date", "", "", ""],
         ["Guidance", "-", "-", "-"],
     ]
-    s = cs.guidance_bridge(_est_bundle({"Guidance": guidance}), as_of=None)
+    s = cs.guidance_bridge(
+        _est_bundle({"Guidance": guidance}), as_of=None, stale_before=date(2025, 1, 1)
+    )
     assert s.status is ds.SourceStatus.PRESENT
     v = s.value or ""
     assert "Revenue: latest guide '290.0 - 310.0' for FY 2025 (dated 20" in v  # max-dated serial
-    assert "actual ≥ guided floor 1/2 resolved periods" in v  # resolved-only (FY25 excluded)
-    assert "Capital Expenditure: latest guide '(120.00) - (150.00)'" in v and "1/1 resolved" in v
+    assert "actual ≥ guided floor 1/2 resolved" in v  # revenue-like; resolved-only (FY25 excluded)
+    assert "most recent resolved: FY 2024 MISSED" in v  # Fix 2c — max-dated resolved is a miss
+    assert "Capital Expenditure: latest guide '(120.00) - (150.00)'" in v
+    assert "spend ≤ guided ceiling 1/1 resolved" in v  # Fix 2b — cost-like (negative) guide label
+    assert "most recent resolved: FY 2023 MET" in v
+    assert "(stale guide — 2023-01-24)" in v  # Fix 3 — capex 2023 guide older than stale_before
     assert "Gross Margin" not in v  # present-but-empty block omitted, no flag
 
 
@@ -1772,8 +1781,10 @@ def _recent_changes_fx(n: int) -> list[list[typing.Any]]:
     return rows
 
 
-def test_estimates_as_of_and_event_log_ordering() -> None:
-    """as-of = the freshest embedded revision date; the log maps columns and sorts newest-first."""
+def test_estimates_as_of_floor_vs_header_wins_over_events() -> None:
+    """Fix 1: with NO As-Of header the as-of is a FLOOR ('≥' + max event date) + an 'unverified'
+    note; an explicit 'As-Of Date:' header WINS over the event date (the event never wins). Plus:
+    the event log maps columns and sorts newest-first."""
     b = _est_bundle({"Recent Changes": _recent_changes_fx(3)})
     asof = cs.estimates_as_of(b)
     ev = cs.revision_events(b)
@@ -1785,15 +1796,39 @@ def test_estimates_as_of_and_event_log_ordering() -> None:
     e0 = events[0]
     assert e0.metric == "EBITDA" and e0.period == "FY 2026"
     assert e0.broker_prior == "146.0" and e0.broker_current  # prior=col7, current=col6
-    assert asof.value == dates[0]  # as-of matches the freshest event date
+    # FLOOR basis: no As-Of header → '≥'-prefixed floor from the max event date + an unverified note
+    assert asof.value == "≥" + dates[0] and "unverified" in (asof.note or "")
+    # HEADER basis: an explicit 'As-Of Date:' (46197 → 2026-06-24) WINS; the event date is ignored
+    consensus = [["X > Estimates > Consensus", ""], ["As-Of Date:", 46197.0]]
+    hb = cs.estimates_as_of(
+        _est_bundle({"Consensus": consensus, "Recent Changes": _recent_changes_fx(3)})
+    )
+    assert hb.value == "2026-06-24" and not hb.value.startswith("≥")  # header, not the event floor
 
 
-def test_revision_event_log_render_caps_at_ten() -> None:
-    """The render caps the event log at 10 rows with a '+N more in JSON' note (full list kept)."""
-    ev = cs.revision_events(_est_bundle({"Recent Changes": _recent_changes_fx(12)}))
-    lines = dr._revision_events_lines(ev)
-    assert sum(1 for ln in lines if ln.strip().startswith("- 2")) == 10  # 10 dated rows shown
-    assert any("+2 more in JSON" in ln for ln in lines)
+def test_revision_events_render_groups_by_date_broker_and_caps() -> None:
+    """Fix 4d: the render GROUPS events by (date, broker) — many same-day same-broker events fold
+    to ONE group with a change-type summary + material line items (largest |Δ| first); items cap 5,
+    groups cap 3, the rest noted. Serials are decoded, never shown raw."""
+    rows: list[list[typing.Any]] = [
+        ["", "", ""],
+        ["Change Type", "Date", "Broker", "Analyst", "Data Point", "Period",
+         "Broker Value Current", "Broker Value Prior", "Consensus After", "Consensus Before"],
+    ]
+    for i, d in enumerate([1, 50, 3, 2, 4, 7]):  # |Δ| sizes; the 50 (M1) must sort first
+        rows.append(["Downward Revision", 46100.0, "HCW", "-", f"M{i}", "FY 2026",
+                     float(100 - d), 100.0, 0.0, 0.0])
+    lines = dr._grouped_events_lines(cs.revision_events(_est_bundle({"Recent Changes": rows})))
+    text = "\n".join(lines)
+    assert "6 events · 1 broker-days" in text and "46100" not in text  # one group, serial decoded
+    assert "Downward Revision×6" in next(ln for ln in lines if "· HCW" in ln)  # change-type summary
+    items = [ln for ln in lines if ln.strip().startswith("- M")]
+    assert items[0].strip().startswith("- M1")  # largest |Δ| first
+    assert len(items) == 5 and any("+1 more line items in JSON" in ln for ln in lines)  # item cap 5
+    # group cap: 12 distinct broker-days → 3 rendered + the rest noted
+    ml = "\n".join(dr._grouped_events_lines(cs.revision_events(_est_bundle(
+        {"Recent Changes": _recent_changes_fx(12)}))))
+    assert "12 events · 12 broker-days" in ml and "+9 more broker-days in JSON" in ml
 
 
 def test_consensus_stats_reads_target_and_ratings_skips_potential_upside() -> None:
@@ -1821,17 +1856,23 @@ def test_consensus_stats_reads_target_and_ratings_skips_potential_upside() -> No
     assert "Potential Upside" not in v and "386.73" not in v  # conclusion-shaped row skipped
 
 
-def test_catalyst_stale_flag_fires_only_past_the_shared_45d() -> None:
-    """The catalyst-path staleness caveat reuses the SHARED 45d knob: silent at exactly 45d, fires
-    at 46d. An UNKNOWN as-of never fires (fail-quiet on absence)."""
+def test_catalyst_stale_flag_header_hard_gate_floor_soft_caveat() -> None:
+    """Fix 1 staleness: on a HEADER basis the shared 45d knob is a hard gate (silent 45d, fire 46d);
+    on a FLOOR basis ('≥' as-of) it emits a SOFT 'unverifiable' caveat, not a false pass — even a
+    recent floor can't confirm the true export date. UNKNOWN as-of never fires."""
     cp = ds.CatalystPath(
         as_of=ds.Sourced.present("2026-05-15", source_ref="CIQ Estimates→Recent Changes"),
         horizon_read=_u(), acceleration_read=_u(), cross_name_anchor=_u(),
         guidance_bridge=_u(), revision_events=_u(), consensus_stats=_u(),
     )
-    assert dm._catalyst_stale_flag(cp, date(2026, 6, 29)) is None  # exactly 45d → silent
-    fired = dm._catalyst_stale_flag(cp, date(2026, 6, 30))  # 46d → fires
+    assert dm._catalyst_stale_flag(cp, date(2026, 6, 29)) is None  # header, exactly 45d → silent
+    fired = dm._catalyst_stale_flag(cp, date(2026, 6, 30))  # header, 46d → hard gate fires
     assert fired is not None and "staleness caveat" in fired and "2026-05-15" in fired
+    # FLOOR basis: unverifiable → soft caveat regardless of the (small) gap, not hard "staleness"
+    floor = cp.model_copy(update={"as_of": ds.Sourced.present(
+        "≥2026-05-15", source_ref="CIQ Estimates→Recent Changes")})
+    soft = dm._catalyst_stale_flag(floor, date(2026, 5, 20))  # only 5d, but still unverifiable
+    assert soft is not None and "UNVERIFIABLE" in soft and "staleness caveat" not in soft
     unknown = cp.model_copy(update={"as_of": _u()})
     assert dm._catalyst_stale_flag(unknown, date(2027, 1, 1)) is None  # no as-of → no fire
 
@@ -1857,7 +1898,8 @@ def test_old_dossier_without_catalyst_path_still_renders() -> None:
 
 def test_fresh_dossier_renders_catalyst_path_in_place_of_consensus_slot() -> None:
     """A dossier WITH catalyst_path renders the 'Catalyst path' section (as-of on the header) in
-    place of the old thin slot, with the legacy consensus facts relocated UNDER it."""
+    place of the old thin slot. Fix 5: the legacy 'Consensus context' block is GONE; Surprise folds
+    in. Fix 4d: events render GROUPED by (date · broker)."""
     cp = ds.CatalystPath(
         as_of=ds.Sourced.present("2026-05-15", source_ref="CIQ Estimates→Recent Changes"),
         horizon_read=ds.Sourced.present("EPS FQ2 2026: 1m 0↑/1↓", source_ref="CIQ→Revisions"),
@@ -1882,10 +1924,62 @@ def test_fresh_dossier_renders_catalyst_path_in_place_of_consensus_slot() -> Non
         assembled_at=datetime(2026, 6, 1, 12, 0),
     )
     md = dr.render_markdown(dossier)
-    assert "### Catalyst path (estimates · guidance · revision events) — as-of 2026-05-15" in md
+    assert "### Catalyst path (estimates · guidance · revisions) — as-of 2026-05-15" in md
     assert "146.5 (6m) → 62.1 (now)" in md
-    assert "Downward Revision · HCW · EBITDA FY 2026: 146.5→62.08" in md
-    assert "#### Consensus context (legacy light facts)" in md  # relocated under catalyst path
+    # events GROUPED (Fix 4d): a (date · broker) header, then the line item beneath it
+    assert "2026-05-15 · HCW" in md and "EBITDA FY 2026: 146.5→62.08" in md
+    # Fix 5: the legacy 'Consensus context' block is GONE; only Surprise history is folded in
+    assert "legacy light facts" not in md and "### Consensus context" not in md
+    assert "Surprise history (annual beat/miss)" in md
+
+
+def test_net_change_is_sign_aware() -> None:
+    """Fix 2a: positive series → signed %; negative series → magnitude direction; zero-crossing →
+    'crossed'. A bare signed % must never describe a shrinking expense as a 'decline'."""
+    assert cs._net_change(100.0, 150.0) == "net +50%"
+    assert "improving" in cs._net_change(-13.7, -4.9)  # expense magnitude toward zero
+    assert "worsening" in cs._net_change(-4.0, -13.0)  # magnitude away from zero
+    assert "crossed" in cs._net_change(-5.0, 3.0) and "crossed" in cs._net_change(5.0, -3.0)
+
+
+def test_acceleration_negative_series_reads_as_improvement_not_signed_pct() -> None:
+    """Fix 2a end-to-end: an all-negative interest-expense path renders 'improving', never a bare
+    signed % (which would misread the shrinking expense as a decline)."""
+    trends = [
+        ["Interest Expense", "", ""],
+        ["Company Level (USD)", "FY 2026", "FQ1 2027"],
+        ["Current", -4.9, -1.0],
+        ["12 months ago", -13.7, -3.0],
+    ]
+    v = cs.acceleration_read(_est_bundle({"Trends": trends})).value or ""
+    assert "Interest Expense:" in v and "-13.7 (12m) → -4.90 (now)" in v  # small vals → 2 decimals
+    assert "improving" in v and "net -" not in v  # never a bare signed % on a negative series
+
+
+def test_render_horizon_collapses_zero_breadth_rows() -> None:
+    """Fix 4a: non-zero breadth rows render individually; rows with zero breadth across ALL windows
+    collapse to one 'no revisions in any window' line, and the trailing as-of suffix is stripped."""
+    s = ds.Sourced.present(
+        "Revenue FQ2 2026: 1m 0↑/1↓, 2m 0↑/1↓; EPS FQ2 2026: 1m 0↑/0↓, 2m 0↑/0↓"
+        "  [as-of 2026-06-24]",
+        source_ref="CIQ Estimates→Revisions",
+    )
+    text = "\n".join(dr._horizon_lines(s))
+    assert "Revenue FQ2 2026:" in text  # non-zero row shown
+    assert "no revisions in any window: EPS FQ2 2026" in text  # zero row collapsed
+    assert "as-of" not in text  # suffix stripped (the as-of shows once on the section header)
+
+
+def test_render_ladder_trims_to_ntm_and_near_years() -> None:
+    """Fix 4c: the forward-multiple ladder renders NTM + FY26–FY28 only; later years are noted."""
+    s = ds.Sourced.present(
+        "NTM: P/E 14.33 | FY 2026: P/E 32.25 | FY 2027: P/E 8.60 | FY 2028: P/E 5.35 | "
+        "FY 2029: P/E 4.17 | FY 2030: P/E 3.36  [as-of 2026-06-24]",
+        source_ref="CIQ Estimates→Multiples",
+    )
+    text = "\n".join(dr._ladder_lines(s))
+    assert "NTM: P/E 14.33" in text and "FY 2028: P/E 5.35" in text
+    assert "FY 2029" not in text and "+2 later fiscal years in JSON" in text
 
 
 # --- truncation fail-loud (change 1) + transcript pointer (change 3) --------------------------
