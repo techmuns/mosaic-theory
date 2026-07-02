@@ -7,12 +7,18 @@ prints why; bull/bear points print their citation and an ⚠ when a guardrail fl
 
 from __future__ import annotations
 
+import re
+from collections import Counter
 from collections.abc import Callable
 from typing import Any
 
 from vinci.dossier.schemas import Dossier, MechanicalLayer, Sourced, SourceStatus
 
-_EVENT_CAP = 10  # revision-event rows shown in the human view; the full list stays in the JSON
+# Display curation for the catalyst path — the full data always stays in dossier.json; these only
+# cap/collapse/group the HUMAN view (the margin-trend mini-table idiom: curate display, not data).
+_GROUP_CAP = 3  # revision-event broker-day groups shown; the rest noted "+N in JSON"
+_ITEMS_PER_GROUP = 5  # material line items per group (largest |Δ| first)
+_LADDER_KEEP = ("NTM", "FY 2026", "FY 2027", "FY 2028")  # multiples shown; later years → JSON
 
 # --- display formatters (render boundary ONLY — the stored Sourced.value keeps full precision) ---
 # Screen-data-record fields arrive as raw DataField floats; format for legibility here, never at the
@@ -52,51 +58,119 @@ def _fact(label: str, s: Sourced[Any], fmt: Callable[[Any], str] = str) -> str:
     return f"- **{label}:** _{s.status.value.upper()}_ — {s.note}"
 
 
-def _revision_events_lines(s: Sourced[Any]) -> list[str]:
-    """The revision-event log: most-recent-first, capped at ``_EVENT_CAP`` with a '+N more in JSON'
-    note (the full list lives in dossier.json). UNKNOWN/MISSING falls back to the standard line."""
+def _body(value: str) -> str:
+    """Strip the trailing '  [as-of …]' / '  [data ≥ …]' suffix an extractor appends — the as-of is
+    shown once on the section header, not repeated on every curated line."""
+    i = value.rfind("  [")
+    return value[:i] if i != -1 and value.rstrip().endswith("]") else value
+
+
+def _asof_header(s: Sourced[Any]) -> str:
+    """The section-header as-of, floor-aware: a '≥'-prefixed value is an unverified export FLOOR,
+    never a plain as-of."""
     if s.status is not SourceStatus.PRESENT or not s.value:
-        return [_fact("Revision-event log", s)]
+        return "as-of UNKNOWN"
+    v = str(s.value)
+    return f"export date unverified (data ≥ {v[1:]})" if v.startswith("≥") else f"as-of {v}"
+
+
+def _horizon_lines(s: Sourced[Any]) -> list[str]:
+    """(4a) Horizon read: non-zero breadth rows first; rows with ZERO breadth across ALL windows
+    collapse to one line. The full grid stays in dossier.json."""
+    label = "Horizon read (FQ — next-2Q revision breadth)"
+    if s.status is not SourceStatus.PRESENT or not s.value:
+        return [_fact(label, s)]
+    nonzero: list[str] = []
+    zero: list[str] = []
+    for seg in (seg.strip() for seg in _body(str(s.value)).split("; ")):
+        if seg:
+            (nonzero if re.search(r"[1-9]\d*[↑↓]", seg) else zero).append(seg)
+    out = [f"- **{label}** — ↳ `{s.source_ref}`:"]
+    out += [f"  - {seg}" for seg in nonzero]
+    if zero:
+        labels = ", ".join(seg.split(":", 1)[0] for seg in zero)
+        out.append(f"  - _no revisions in any window: {labels}_")
+    return out
+
+
+def _ladder_lines(s: Sourced[Any]) -> list[str]:
+    """(4c) Forward-multiple ladder: NTM + FY26–FY28 only; later years noted, full in JSON."""
+    label = "Cross-name anchor (NTM forward-multiple ladder)"
+    if s.status is not SourceStatus.PRESENT or not s.value:
+        return [_fact(label, s)]
+    segs = [seg.strip() for seg in _body(str(s.value)).split(" | ") if seg.strip()]
+    kept = [seg for seg in segs if seg.split(":", 1)[0].strip() in _LADDER_KEEP]
+    out = [f"- **{label}** — ↳ `{s.source_ref}`:"]
+    out += [f"  - {seg}" for seg in kept]
+    if len(segs) - len(kept) > 0:
+        out.append(f"  - _+{len(segs) - len(kept)} later fiscal years in JSON_")
+    return out
+
+
+def _abs_delta(e: Any) -> float:
+    try:
+        return abs(float(e.broker_current) - float(e.broker_prior))
+    except (ValueError, TypeError):
+        return -1.0
+
+
+def _grouped_events_lines(s: Sourced[Any]) -> list[str]:
+    """(4d) Revision events GROUPED by (date, broker): a change-type summary + the material line
+    items (largest |Δ| first) per group; cap 3 groups, the rest noted. Full list in dossier.json."""
+    label = "Revision-event log"
+    if s.status is not SourceStatus.PRESENT or not s.value:
+        return [_fact(label, s)]
     events = s.value
-    out = [
-        f"- **Revision-event log** (most recent first; {len(events)} total) — ↳ `{s.source_ref}`:"
-    ]
-    for e in events[:_EVENT_CAP]:
-        out.append(
-            f"  - {e.date} · {e.change_type} · {e.broker} · {e.metric} {e.period}: "
-            f"{e.broker_prior}→{e.broker_current} (cons {e.consensus_before}→{e.consensus_after})"
+    groups: dict[tuple[str, str], list[Any]] = {}
+    for e in events:
+        groups.setdefault((e.date, e.broker), []).append(e)
+    keys = sorted(groups, key=lambda k: k[0], reverse=True)  # most-recent broker-day first
+    out = [f"- **{label}** ({len(events)} events · {len(keys)} broker-days) — ↳ `{s.source_ref}`:"]
+    for key in keys[:_GROUP_CAP]:
+        evs = groups[key]
+        summary = ", ".join(
+            f"{t}×{n}" if n > 1 else t for t, n in Counter(e.change_type for e in evs).items()
         )
-    if len(events) > _EVENT_CAP:
-        out.append(f"  - _+{len(events) - _EVENT_CAP} more in JSON_")
+        out.append(f"  - **{key[0]} · {key[1]}** — {summary}:")
+        for e in sorted(evs, key=_abs_delta, reverse=True)[:_ITEMS_PER_GROUP]:
+            out.append(
+                f"    - {e.metric} {e.period}: {e.broker_prior}→{e.broker_current} "
+                f"(cons {e.consensus_before}→{e.consensus_after})"
+            )
+        if len(evs) > _ITEMS_PER_GROUP:
+            out.append(f"    - _+{len(evs) - _ITEMS_PER_GROUP} more line items in JSON_")
+    if len(keys) > _GROUP_CAP:
+        out.append(f"  - _+{len(keys) - _GROUP_CAP} more broker-days in JSON_")
     return out
 
 
 def _catalyst_section(m: MechanicalLayer) -> list[str]:
-    """The Catalyst-path section — the horizon-matched estimates/guidance/revision view rendered IN
-    PLACE of the old thin 'Consensus context' slot, with the legacy consensus/surprise facts
-    relocated UNDER it and the transcript pointer kept LAST in the mechanical layer. A dossier.json
-    predating catalyst_path degrades to just the legacy facts (back-compat, like the flags PR)."""
+    """The Catalyst-path section — horizon-matched estimates/guidance/revision view IN PLACE of the
+    old thin 'Consensus context' slot. The legacy light facts are GONE (eps/revenue/revision-history
+    are duplicated by the catalyst reads); only the non-duplicate Surprise history is folded in. A
+    dossier.json predating catalyst_path degrades to the legacy consensus facts (back-compat)."""
     cp = m.catalyst_path
     out: list[str] = [""]
-    if cp is None:
-        out.append("### Consensus context")
-    else:
-        asof = cp.as_of.value if cp.as_of.status is SourceStatus.PRESENT else "UNKNOWN"
-        out.append(f"### Catalyst path (estimates · guidance · revision events) — as-of {asof}")
+    if cp is None:  # pre-catalyst_path JSON — the legacy fallback (only place these still render)
         out += [
-            _fact("Horizon read (FQ — next-2Q revision breadth)", cp.horizon_read),
-            _fact("Acceleration read (monthly consensus path)", cp.acceleration_read),
-            _fact("Cross-name anchor (NTM forward-multiple ladder)", cp.cross_name_anchor),
-            _fact("Guidance bridge (latest guide + delivery track-record)", cp.guidance_bridge),
-            _fact("Consensus stats (target + ratings)", cp.consensus_stats),
+            "### Consensus context",
+            _fact("EPS trend", m.consensus_context.eps_trend),
+            _fact("Revenue trend", m.consensus_context.revenue_trend),
+            _fact("Revision history", m.consensus_context.revision_history),
+            _fact("Surprise history (beat/miss)", m.consensus_context.surprise_history),
         ]
-        out += _revision_events_lines(cp.revision_events)
-        out.append("#### Consensus context (legacy light facts)")
+    else:
+        hdr = f"### Catalyst path (estimates · guidance · revisions) — {_asof_header(cp.as_of)}"
+        out.append(hdr)
+        out += _horizon_lines(cp.horizon_read)
+        out.append(_fact("Acceleration read (monthly consensus path)", cp.acceleration_read))
+        out += _ladder_lines(cp.cross_name_anchor)
+        out.append(_fact("Guidance bridge (latest guide + track-record)", cp.guidance_bridge))
+        out.append(_fact("Consensus stats (target + ratings)", cp.consensus_stats))
+        out += _grouped_events_lines(cp.revision_events)
+        sh = _fact("Surprise history (annual beat/miss)", m.consensus_context.surprise_history)
+        out.append(sh)  # the one non-duplicate legacy fact, folded in
     out += [
-        _fact("EPS trend", m.consensus_context.eps_trend),
-        _fact("Revenue trend", m.consensus_context.revenue_trend),
-        _fact("Revision history", m.consensus_context.revision_history),
-        _fact("Surprise history (beat/miss)", m.consensus_context.surprise_history),
         "",
         "### Management commentary (transcript POINTER — read the file; not a machine excerpt)",
         _fact("Earnings call", m.management_commentary),

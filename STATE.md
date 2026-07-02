@@ -1024,6 +1024,47 @@ Each line: *what it does* — *verified how*.
       declared `Trends` read), never positionally guessed; the target-price stats + NTM level block ARE
       in `Consensus` as specified. The operator re-assembles + commits the refreshed dossiers (per the
       #51 precedent); the assembled artifacts are NOT committed in this PR.
+  - **PR A.1 — catalyst-path integrity + readability fixes (2026-07-02).** Six fixes on the #55
+    catalyst path; scoped to `ciq_sheets`/`mechanical`/`render`/`flags`/`synthesis` + `dossier.js` +
+    tests (no new sheets, no schema change, no reorder beyond deleting the legacy block).
+    - **BUG 1 (#51-class as-of, load-bearing) → ROOT CAUSE:** `estimates_as_of` returned the max
+      Recent-Changes EVENT date (MVST 2026-05-15) presented as an authoritative as-of — but the CIQ
+      Estimates export carries NO as-of stamp (verified: the sibling Comparable-Analysis book stamps
+      `As-Of Date: 2026-06-24` on every sheet; Estimates has none), and Trends '1 month ago' already
+      reflects the 05-15 cut, so the true export is ≥ mid-June. The 05-15 as-of was a **false floor
+      read as a point** — the same class as #51's stale-Close (a dated column mistaken for "current").
+      **Fix:** prefer an explicit `As-Of Date:` header (scanned by label; implemented + tested for
+      generality); absent one, render a FLOOR — a `≥`-prefixed value + "export date unverified" note —
+      NEVER a plain as-of. Staleness keys off a header date (hard 45d gate) but emits a soft
+      "as-of UNVERIFIABLE" caveat on a floor (no false pass); lookback labels stay export-relative
+      ('latest', not 'now'). *Regression-pinned: header-wins-over-event; floor '≥'+note; soft-vs-hard
+      staleness at the boundary.*
+    - **BUG 2 (sign-blind reads):** (a) a negative/zero-crossing consensus path rendered a bare signed
+      % — misreading a shrinking interest expense (−13.7→−4.9) as a "−64% decline"; now direction
+      words ("improving (magnitude toward zero)"). (b) the guidance track-record used "≥ floor" for
+      ALL metrics; a cost-like (negative) guide (capex) now reads "≤ ceiling". (c) the track-record now
+      surfaces the MOST-RECENT resolved MET/MISSED (MVST Revenue FY2025 MISSED, previously buried in an
+      N/M count). *Regression-pinned incl. a sign-crossing series + the cost-semantic + recency.*
+    - **BUG 3 (guide staleness):** the latest guide now flags "(stale guide — DATE)" when older than
+      the shared 45d window vs the reference (MVST capex FY2023 guide surfaces it). *Pinned.*
+    - **READABILITY 4 (table renders + curation; JSON stays complete):** frontend now TABLE-renders
+      horizon (metric×FQ, zero-breadth rows collapsed), acceleration (metric×lookback + net, GAAP
+      adjacent to Normalized), and the multiples ladder (NTM+FY26–28, later years noted); revision
+      events GROUP by (date, broker) — MVST's ~18 same-day H.C. Wainwright rows collapse to one entry
+      (top line items by |Δ|), groups cap 3. Markdown applies the same collapse/trim/group curation.
+      *Pinned via render-layer unit tests (`_horizon_lines`/`_ladder_lines`/`_grouped_events_lines`).*
+    - **READABILITY 5:** the "Consensus context (legacy light facts)" section is DELETED (eps/revenue/
+      revision-history duplicated the catalyst reads); the one non-duplicate — Surprise history — is
+      folded into the catalyst path. A pre-catalyst_path `dossier.json` still renders the legacy
+      fallback (regression-pinned).
+    - **GUARDRAIL 6:** the DIRECTIONAL rating-context exemption (`synthesis._RATING_CTX` — the
+      exemption's real home, a surgical one-arm addition) now also exempts the `consensus_stats`
+      rating-count phrasing ("Ratings: Buy N"); a real "BUY, undervalued" conclusion still flags.
+    *Verified on the REAL MVST export (git-ignored): the floor as-of line + soft caveat; interest
+    expense reads "improving"; capex cost-semantics + stale-guide; horizon zero-rows collapsed; the
+    single 2026-05-15 H.C. Wainwright group; ladder trimmed; frontend tables via a real preview render,
+    no console errors. ruff + mypy --strict (68) + `pytest -m "not network"` green. On a branch → PR;
+    agent never merges. Artifacts re-assembled + committed by the operator post-merge (#51 precedent).*
 - _Whole suite green (ruff + mypy --strict clean; `pytest -m "not network"` passes)._
 
 ## 3. FALSIFIED — tested and retired (NOT deferred)

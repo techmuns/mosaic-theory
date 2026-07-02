@@ -818,12 +818,57 @@ def _fig(v: float) -> str:  # a consensus figure → 1 decimal at scale, 2 for s
     return f"{v:,.1f}" if abs(v) >= 10 else f"{v:,.2f}"
 
 
-def _lookback_lbl(months: int) -> str:
-    return "now" if months == 0 else f"{months}m"
+def _lookback_lbl(months: int, floor: bool = False) -> str:
+    """A CIQ snapshot lookback → label. ALWAYS months-before-EXPORT (never calendar-resolved). On a
+    floor basis (export date unverified) the newest snapshot reads 'latest', not 'now' — 'now' would
+    imply a known calendar anchor the floor does not have."""
+    if months == 0:
+        return "latest" if floor else "now"
+    return f"{months}m"
+
+
+def _is_floor(as_of: str | None) -> bool:
+    """True when the as-of is a FLOOR (export date unverified) — carried as a '≥'-prefixed value."""
+    return bool(as_of and as_of.startswith("≥"))
 
 
 def _asof_suffix(as_of: str | None) -> str:
-    return f"  [as-of {as_of}]" if as_of else ""
+    if not as_of:
+        return ""
+    if _is_floor(as_of):
+        return f"  [data ≥ {as_of[1:]} · export date unverified]"
+    return f"  [as-of {as_of}]"
+
+
+def _net_change(first: float, last: float) -> str:
+    """Sign-aware net-change phrase for a consensus path. A strictly-positive series → a signed %; a
+    negative or zero-crossing series → DIRECTION words, never a bare signed % (which misreads a
+    shrinking expense −13.7→−4.9 as a −64% 'decline' when it is an improvement)."""
+    if first > 0 and last > 0:
+        return f"net {(last / first - 1) * 100:+.0f}%"
+    if first < 0 and last < 0:
+        if abs(last) < abs(first):
+            return "improving (magnitude toward zero)"
+        if abs(last) > abs(first):
+            return "worsening (magnitude away from zero)"
+        return "flat"
+    if last > first:
+        return "improving (crossed zero)"
+    if last < first:
+        return "worsening (crossed zero)"
+    return "flat"
+
+
+def _scan_asof_header(rows: Rows) -> date | None:
+    """A decoded date from an explicit 'As-Of Date:' cell in a sheet's metadata rows (the sibling
+    comps book carries one on every sheet). Matched by LABEL, never positionally. None if absent."""
+    for r in rows[:14]:
+        for j, c in enumerate(r):
+            if isinstance(c, str) and c.strip().rstrip(":").strip().lower() == "as-of date":
+                d = excel_date(r[j + 1]) if j + 1 < len(r) else None
+                if d is not None:
+                    return d
+    return None
 
 
 def _parse_range(cell: Any) -> tuple[float, float] | None:
@@ -929,11 +974,32 @@ def _snapshot_path(rows: Rows, bi: int, col: int) -> list[tuple[int, float]]:
     return out
 
 
+def _estimates_header_asof(bundle: CiqBundle) -> date | None:
+    """An EXPLICIT 'As-Of Date:' header from the Estimates export (as the sibling comps book carries
+    on every sheet), scanned by LABEL — never positional. None when absent: the observed MVST
+    Estimates export has NO such stamp, so the caller falls back to a dated FLOOR. Checks the
+    Consensus sheet's metadata rows; a CIQ export that stamps its as-of does so uniformly."""
+    try:
+        rows = bundle.sheet("estimates", "Consensus")
+    except CiqUnavailableError:
+        return None
+    return _scan_asof_header(rows)
+
+
 def estimates_as_of(bundle: CiqBundle) -> Sourced[str]:
-    """The workbook's freshest embedded data date — the max Recent-Changes revision-event date. CIQ
-    Estimates exports carry no explicit as-of cell, so the newest datum bounds staleness (the
-    contract's as-of FALLBACK, labelled as such). Threaded into every catalyst-path source_ref and
-    driving the shared staleness caveat vs the reference date."""
+    """The workbook's as-of date. PREFER an explicit 'As-Of Date:' header (as the sibling comps book
+    carries); the observed MVST Estimates export has NONE, so fall back to a dated FLOOR — the max
+    Recent-Changes event date — carried as a ``≥``-prefixed value + floor note. A floor is never
+    presented as a plain as-of: the true export is on/after it (Trends '1 month ago' already shows
+    the latest event; a dated sibling CIQ export in the same pull is weeks newer). Staleness then
+    emits a soft 'as-of unverifiable' caveat instead of a false pass, and lookbacks stay
+    export-relative."""
+    header = _estimates_header_asof(bundle)
+    if header is not None:
+        return Sourced.present(
+            header.isoformat(),
+            source_ref="CIQ Estimates→Consensus 'As-Of Date' header (workbook as-of)",
+        )
     try:
         rows = bundle.sheet("estimates", "Recent Changes")
     except CiqUnavailableError as exc:
@@ -946,10 +1012,12 @@ def estimates_as_of(bundle: CiqBundle) -> Sourced[str]:
             if d is not None and (latest is None or d > latest):
                 latest = d
     if latest is None:
-        return Sourced.unknown(note="no dated revision events in Estimates→Recent Changes")
+        return Sourced.unknown(note="no As-Of header and no dated events in Estimates")
     return Sourced.present(
-        latest.isoformat(),
-        source_ref="CIQ Estimates→Recent Changes (latest embedded revision-event date)",
+        f"≥{latest.isoformat()}",
+        source_ref="CIQ Estimates→Recent Changes (latest embedded event — export date NOT stamped)",
+        note="export date unverified — a FLOOR (data on/after the latest embedded event); the true "
+        "export is later (a dated sibling CIQ export in the same pull is weeks newer)",
     )
 
 
@@ -963,6 +1031,7 @@ def acceleration_read(bundle: CiqBundle, *, as_of: str | None = None) -> Sourced
         rows = bundle.sheet("estimates", "Trends")
     except CiqUnavailableError as exc:
         return _miss_or_unknown(bundle, "estimates", exc)
+    floor = _is_floor(as_of)
     lines: list[str] = []
     for bi in _metric_starts(rows, _METRICS):
         metric = str(rows[bi][0]).strip()
@@ -976,22 +1045,26 @@ def acceleration_read(bundle: CiqBundle, *, as_of: str | None = None) -> Sourced
             continue
         if len(path) < 2:
             lb, val = path[0]
-            lines.append(f"{fy_label} {metric}: {_fig(val)} ({_lookback_lbl(lb)}) — level only")
+            at = _lookback_lbl(lb, floor)
+            lines.append(f"{fy_label} {metric}: {_fig(val)} ({at}) — level only")
             continue
-        chain = " → ".join(f"{_fig(v)} ({_lookback_lbl(lb)})" for lb, v in path)
+        chain = " → ".join(f"{_fig(v)} ({_lookback_lbl(lb, floor)})" for lb, v in path)
         oldest, newest = path[0][0], path[-1][0]
-        net = f"{(path[-1][1] / path[0][1] - 1) * 100:+.0f}%" if path[0][1] else "n/a"
-        span = f"{_lookback_lbl(oldest)}→{_lookback_lbl(newest)}"
+        # sign-aware: a bare signed % misreads a negative/zero-crossing series (see _net_change).
+        change = _net_change(path[0][1], path[-1][1])
+        span = f"{_lookback_lbl(oldest, floor)}→{_lookback_lbl(newest, floor)}"
         present = {lb for lb, _ in path}
         # note only INTERIOR holes (a lookback missing BETWEEN the oldest and newest present ones);
         # a lookback absent only at the recent end is disclosed by the span, not a fabricated gap.
         gaps = [lbl for lbl, lb in _LOOKBACK_ORDER if newest < lb < oldest and lb not in present]
         gap_note = f" [{', '.join(gaps)} n/a]" if gaps else ""
-        lines.append(f"{fy_label} {metric}: {chain}; net {net} ({span}){gap_note}")
+        lines.append(f"{fy_label} {metric}: {chain}; {change} ({span}){gap_note}")
     if not lines:
         return Sourced.unknown(note="no current-FY consensus snapshots in Estimates→Trends")
+    # join metric entries with ' | ' (NOT '; ' — each entry uses '; ' internally between chain and
+    # net-change, so ' | ' keeps entries cleanly separable for the metric×lookback table render).
     return Sourced.present(
-        "; ".join(lines) + _asof_suffix(as_of),
+        " | ".join(lines) + _asof_suffix(as_of),
         source_ref="CIQ Estimates→Trends (current-FY consensus path; ragged, absent lookbacks n/a)",
     )
 
@@ -1111,11 +1184,15 @@ def _guidance_rows(rows: Rows, bi: int, end: int) -> tuple[int | None, int | Non
     return gdate, guide, actual
 
 
-def guidance_bridge(bundle: CiqBundle, *, as_of: str | None = None) -> Sourced[str]:
-    """(d) GUIDANCE BRIDGE — per metric: the LATEST guide {range, date} + consensus-at-guide, and a
-    delivery track-record ('actual ≥ guided floor N of M resolved periods', counted ONLY where BOTH
-    a guidance range and an actual exist). A present-but-empty metric block is omitted with no flag.
-    The verbatim range string is kept; parens are negative."""
+def guidance_bridge(
+    bundle: CiqBundle, *, as_of: str | None = None, stale_before: date | None = None
+) -> Sourced[str]:
+    """(d) GUIDANCE BRIDGE — per metric: the LATEST guide {range, date} + a delivery track-record.
+    SIGN-AWARE: a revenue-like (positive) guide is met when actual ≥ floor; a cost-like (negative)
+    guide (e.g. capex) is met when spend ≤ ceiling — the semantic used is labelled. Counts ONLY
+    resolved periods (both a range AND an actual) and surfaces the MOST-RECENT resolved outcome
+    (MET/MISSED). A latest guide older than the shared staleness window (``stale_before``) is
+    flagged inline. Present-but-empty blocks omitted; verbatim range kept; parens are negative."""
     try:
         rows = bundle.sheet("estimates", "Guidance")
     except CiqUnavailableError as exc:
@@ -1131,31 +1208,42 @@ def guidance_bridge(bundle: CiqBundle, *, as_of: str | None = None) -> Sourced[s
         header = _nearest_period_header(rows, bi)
         if gdate is None or guide is None or header is None:
             continue
-        latest: tuple[date, str, str] | None = None
-        resolved = beat = 0
+        latest: tuple[date, str, str, bool] | None = None  # date, period, range, cost_like
+        recent: tuple[date, str, bool] | None = None  # date, period, met — most-recent resolved
+        resolved = met_n = 0
         for j in range(1, len(header)):
             rng = _parse_range(rows[guide][j]) if j < len(rows[guide]) else None
             if rng is None:
                 continue
+            cost_like = rng[1] < 0  # whole guide range non-positive → a spend/cost guide
             gd = excel_date(rows[gdate][j]) if j < len(rows[gdate]) else None
+            per_j = str(header[j]).strip()
             if gd is not None and (latest is None or gd > latest[0]):
-                latest = (gd, str(header[j]).strip(), str(rows[guide][j]).strip())
+                latest = (gd, per_j, str(rows[guide][j]).strip(), cost_like)
             av = _cell_at(rows, actual, j)
             if av is not None:
                 resolved += 1
-                beat += int(av >= rng[0])
+                met = av >= rng[0]  # ≥ floor (revenue) == ≤ ceiling (cost) in signed terms
+                met_n += int(met)
+                if gd is not None and (recent is None or gd > recent[0]):
+                    recent = (gd, per_j, met)
         if latest is None:
             continue
-        gd, per, rng_s = latest
+        gd, per, rng_s, cost_like = latest
         seg = f"{metric}: latest guide '{rng_s}' for {per} (dated {gd.isoformat()})"
+        if stale_before is not None and gd < stale_before:
+            seg += f" (stale guide — {gd.isoformat()})"
         if resolved:
-            seg += f"; actual ≥ guided floor {beat}/{resolved} resolved periods"
+            sem = "spend ≤ guided ceiling" if cost_like else "actual ≥ guided floor"
+            seg += f"; {sem} {met_n}/{resolved} resolved"
+            if recent is not None:
+                seg += f"; most recent resolved: {recent[1]} {'MET' if recent[2] else 'MISSED'}"
         lines.append(seg)
     if not lines:
         return Sourced.unknown(note="no parseable guidance ranges in Estimates→Guidance")
     return Sourced.present(
         "; ".join(lines) + _asof_suffix(as_of),
-        source_ref="CIQ Estimates→Guidance (latest guide range+date + delivery track-record)",
+        source_ref="CIQ Estimates→Guidance (latest guide + sign-aware delivery track-record)",
     )
 
 

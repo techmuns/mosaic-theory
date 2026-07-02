@@ -875,19 +875,20 @@ def _consensus(bundle: CiqBundle) -> ConsensusContext:
     )
 
 
-def _catalyst_path(bundle: CiqBundle) -> CatalystPath:
+def _catalyst_path(bundle: CiqBundle, reference_date: date) -> CatalystPath:
     """Assemble the horizon-matched estimates/guidance/revision view from the five new Estimates
     sheets. The workbook as-of (freshest embedded data date) is resolved ONCE and threaded into
     every sub-field's source_ref. Each sub-field independently reads UNKNOWN/MISSING when its sheet
     is absent — a FRESH assembly always builds the block; raggedness lives one level down."""
     asof = ciq_sheets.estimates_as_of(bundle)
     aod = asof.value
+    stale_before = reference_date - timedelta(days=_STALE_CLOSE_DAYS)
     return CatalystPath(
         as_of=asof,
         horizon_read=ciq_sheets.horizon_read(bundle, as_of=aod),
         acceleration_read=ciq_sheets.acceleration_read(bundle, as_of=aod),
         cross_name_anchor=ciq_sheets.cross_name_anchor(bundle, as_of=aod),
-        guidance_bridge=ciq_sheets.guidance_bridge(bundle, as_of=aod),
+        guidance_bridge=ciq_sheets.guidance_bridge(bundle, as_of=aod, stale_before=stale_before),
         revision_events=ciq_sheets.revision_events(bundle, as_of=aod),
         consensus_stats=ciq_sheets.consensus_stats(bundle, as_of=aod),
     )
@@ -901,6 +902,13 @@ def _catalyst_stale_flag(catalyst: CatalystPath, reference_date: date) -> str | 
     aod = catalyst.as_of.value
     if not aod:
         return None
+    if aod.startswith("≥"):  # FLOOR basis — no as-of stamp; freshness can't be evaluated on a bound
+        return (
+            f"Catalyst-path as-of UNVERIFIABLE — the CIQ Estimates export carries no as-of stamp; "
+            f"its data is on/after {aod[1:]} (the latest embedded revision event), but the true "
+            f"export date is unknown, so freshness vs the {reference_date.isoformat()} reference "
+            "cannot be confirmed. Re-pull, or corroborate against a dated sibling CIQ export."
+        )
     stale_days = (reference_date - date.fromisoformat(aod)).days
     if stale_days <= _STALE_CLOSE_DAYS:
         return None
@@ -971,7 +979,7 @@ def assemble_mechanical(
             record, store, graph, resolver, reference_date
         ),
         consensus_context=_consensus(bundle),
-        catalyst_path=_catalyst_path(bundle),
+        catalyst_path=_catalyst_path(bundle, reference_date),
         management_commentary=ciq_sheets.management_commentary(bundle),
     )
     flags: list[str] = []

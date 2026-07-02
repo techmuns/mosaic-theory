@@ -74,6 +74,7 @@ _RATING_CTX = re.compile(
     r"(?:\([^)]*\)\s*)?(?:rating|recommendation)\b"
     r"|\b(?:buy|sell|hold|outperform|underperform|overweight|underweight)\b\s*\([^)]*\)"
     r"|\b\d+\s*=\s*(?:buy|sell)\b"                          # 1=buy / 5=sell
+    r"|\b(?:buy|sell|hold|outperform|underperform)\s+\d{1,2}\b"  # rating-count "Buy 2"/"Sell 0"
     r"|\b(?:buy|sell)\b(?=\s*(?:…|\.\.\.|scale|rating))"    # buy… / sell scale
     r"|\b(?:buy|sell)[\s-]?rate\b"                          # CPG buy-rate metric (not a verdict)
     r"|\b(?:buy|sell)-(?:off|in)\b"                         # sell-off/in, buy-in — market term
