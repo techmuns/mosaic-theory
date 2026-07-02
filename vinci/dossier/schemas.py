@@ -236,18 +236,83 @@ class CatalystPath(BaseModel):
     model_config = {"frozen": True}
 
 
+class PeerRow(BaseModel):
+    """One row of the per-peer comparability grid (B1) — a peer, the subject (``is_name``), or the
+    synthetic peer-median footer (``is_median``). Every figure is CIQ-sourced; NO computed
+    delta/discount/upside field — the human compares the name row against the peers + median."""
+
+    name: str
+    ticker: str  # parsed EXCH:SYMBOL tail, or "" (undisclosed / no paren)
+    is_name: bool = False  # the subject — rendered visually distinct
+    is_median: bool = False  # the peer-median footer row
+    market_cap: float | None = None  # $M
+    ebitda_margin: float | None = None  # fraction
+    rev_growth_1y: float | None = None  # fraction
+    ebitda_growth_1y: float | None = None  # fraction
+    debt_to_ebitda: str | None = None  # total-debt basis; "NM" preserved, numeric kept as string
+    net_debt: float | None = None  # $M
+
+    model_config = {"frozen": True}
+
+
+class LeverageSurvival(BaseModel):
+    """Unified leverage & survival (B2) — ONE block, two LABELED bases, NO basis-mixing (retires the
+    net-vs-total 3.9x/5.8x incoherence). The name's CIQ NET-debt/EBITDA AND the comps TOTAL-debt/
+    EBITDA (with the peer median on the SAME total basis) sit side by side, each basis named; plus
+    interest coverage, the survival line, and the S&P-MI credit-health scores (scale labeled)."""
+
+    net_debt_to_ebitda: Sourced[float]  # name, CIQ NET basis
+    total_debt_to_ebitda: Sourced[str]  # name vs peer median, comps TOTAL basis (both labeled)
+    interest_coverage: Sourced[float]
+    survival: Sourced[str]  # FCF sign + nearest refinancing wall
+    credit_health: Sourced[str]  # name vs peer S&P-MI PD scores; scale labeled (1=strongest…4)
+
+    model_config = {"frozen": True}
+
+
+class ImpliedRow(BaseModel):
+    """One CIQ-computed implied-EQUITY row (a valuation basis × Low/Median/Mean/High). Third-party
+    (CIQ) output — NOT a machine conclusion; NO discount/upside field."""
+
+    basis: str  # "LTM EBITDA", "NTM Revenue", …
+    low: float | None = None
+    median: float | None = None
+    mean: float | None = None
+    high: float | None = None
+
+    model_config = {"frozen": True}
+
+
+class ImpliedValuation(BaseModel):
+    """CIQ's Implied-Valuation sheet (B3), POSED not concluded: the implied EQUITY value at peer
+    multiples (basis × Low/Median/Mean/High) + the TEV→equity bridge + the name's ACTUAL market cap
+    ADJACENT, for the human to compare. HARD FENCE: no computed %, delta, discount, or upside —
+    anywhere. The heterogeneity comparability gate renders verbatim on the header."""
+
+    implied_equity: Sourced[list[ImpliedRow]]  # CIQ-computed implied equity value per basis × stat
+    bridge: Sourced[str]  # + cash, − total debt (TEV → equity), CIQ figures
+    market_cap: Sourced[float]  # the name's ACTUAL market cap (adjacent, $M) — the human compares
+    comparability_gate: Sourced[str]  # the heterogeneity gate, rendered verbatim on the header
+
+    model_config = {"frozen": True}
+
+
 class PeerComps(BaseModel):
     """Comparable-company multiples FRAMED to RESIST the consensus comp read (CIQ Company Comparable
     Analysis). The peer-vs-name gap is never presentable without (a) the peer-set COMPOSITION — so
     the human judges comparability and can mentally re-draw the thesis-correct set — and (b) the
     fundamental DELTAS — so the discount is judged EARNED (value-trap) vs RESIDUAL (overshoot). The
     machine assembles + POSES the justified-vs-residual question; it NEVER re-draws the set,
-    computes a residual, or emits an implied upside (the Implied Valuation sheet is skipped)."""
+    computes a residual, or emits an implied upside."""
 
     peer_set: Sourced[str]  # roster: each peer's name + market cap + short business + HQ country
     comparability: Sourced[str]  # CONFIDENCE GATE: market-cap + business-model dispersion
     trading_multiples: Sourced[str]  # name's multiples vs peer High/Low/Mean/Median (LTM + NTM fwd)
     fundamental_deltas: Sourced[str]  # name vs peer median: growth / margin / leverage / beta
+    # B1 per-peer grid (rows + name + median footer). Optional-with-default for back-compat: a
+    # dossier.json predating B1 round-trips; a FRESH assembly always builds it. The median-only
+    # fundamental_deltas line above is retained (synthesis input) but the RENDER prefers this grid.
+    peer_grid: Sourced[list[PeerRow]] | None = None
 
     model_config = {"frozen": True}
 
@@ -267,6 +332,11 @@ class MechanicalLayer(BaseModel):
     # field must still round-trip (the flags-PR precedent). A FRESH assembly ALWAYS builds it — the
     # fail-loud lives one level down (each sub-field is UNKNOWN/MISSING when its sheet is absent).
     catalyst_path: CatalystPath | None = None
+    # B2 unified leverage & survival (both bases labeled + peer median + credit health) and B3 CIQ
+    # implied valuation (posed, no computed %). Optional-with-default for back-compat: old JSON
+    # round-trips (its Quality leverage lines render as the fallback); a FRESH assembly builds both.
+    leverage_survival: LeverageSurvival | None = None
+    implied_valuation: ImpliedValuation | None = None
     management_commentary: Sourced[str]  # earnings-call transcript — QUALITATIVE only, no numbers
 
     model_config = {"frozen": True}

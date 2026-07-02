@@ -179,6 +179,132 @@ def _catalyst_section(m: MechanicalLayer) -> list[str]:
     return out
 
 
+# --- B4: the ONE shared markdown table renderer (every dossier table routes through here) ---------
+_TABLE_MARK = "<!-- ds-table -->"  # marker a test greps to confirm a table used the shared renderer
+
+
+def _table(
+    label: str, cite: str | None, cols: list[str], rows: list[list[str]],
+    note: str = "", name_rows: frozenset[int] = frozenset(),
+) -> list[str]:
+    """The single shared markdown table renderer (B4). Emits a GFM table tagged with ``_TABLE_MARK``
+    so a test confirms every table routes here; ``name_rows`` indices are bolded (the subject)."""
+    head = f"- **{label}**" + (f" — ↳ `{cite}`" if cite else "") + f"  {_TABLE_MARK}"
+    out = [head, "", "| " + " | ".join([" ", *cols]) + " |", "|" + "---|" * (len(cols) + 1)]
+    for i, row in enumerate(rows):
+        out.append("| " + " | ".join(f"**{c}**" if i in name_rows else c for c in row) + " |")
+    if note:
+        out += ["", f"_{note}_"]
+    out.append("")
+    return out
+
+
+def _cap(v: float | None) -> str:  # $M → "$1.4B" / "$423M"
+    if v is None:
+        return "–"
+    return f"${v / 1000:.1f}B" if abs(v) >= 1000 else f"${v:.0f}M"
+
+
+def _pctc(v: float | None) -> str:  # a fraction → "14%", or "–"
+    return f"{v * 100:.0f}%" if v is not None else "–"
+
+
+def _usdc(v: float | None) -> str:  # a $M figure → "199", or "–"
+    return f"{v:,.0f}" if v is not None else "–"
+
+
+def _numc(v: float | None) -> str:  # a plain number cell → "550.7", or "–"
+    return f"{v:,.1f}" if v is not None else "–"
+
+
+def _peer_grid_lines(s: Sourced[Any]) -> list[str]:
+    """(B1) Per-peer comparability grid as a table: peers + the name (bolded) + the median footer;
+    cap · EBITDA margin · rev growth · EBITDA growth · Debt/EBITDA · net debt. No computed delta."""
+    label = "Per-peer grid (cap · margin · growth · leverage — name vs peers)"
+    if s.status is not SourceStatus.PRESENT or not s.value:
+        return [_fact(label, s)]
+    cols = ["Company", "Cap", "EBITDA mgn", "Rev g 1y", "EBITDA g 1y", "Debt/EBITDA", "Net debt $M"]
+    trows: list[list[str]] = []
+    name_rows: set[int] = set()
+    for i, r in enumerate(s.value):
+        if r.is_name:
+            name_rows.add(i)
+        tag = " · the name" if r.is_name else (" (peers)" if r.is_median else "")
+        trows.append([
+            r.name + tag, _cap(r.market_cap), _pctc(r.ebitda_margin), _pctc(r.rev_growth_1y),
+            _pctc(r.ebitda_growth_1y), (r.debt_to_ebitda or "–"), _usdc(r.net_debt),
+        ])
+    return _table(label, s.source_ref, cols, trows, name_rows=frozenset(name_rows))
+
+
+def _leverage_block(m: MechanicalLayer) -> list[str]:
+    """(B2) Unified leverage & survival — ALL leverage in ONE block, both bases LABELED (no
+    net-vs-total mixing) + OCF/fwd-adj + credit health. Replaces the scattered Quality leverage
+    lines (which fall back for a pre-B2 dossier.json)."""
+    lv = m.leverage_survival
+    assert lv is not None
+    return [
+        "### Leverage & survival (unified — both bases labeled, no net-vs-total mixing)",
+        _fact("Net debt / EBITDA (CIQ NET basis)", lv.net_debt_to_ebitda, _mult),
+        _fact("Total debt / EBITDA (comps — name vs peer median)", lv.total_debt_to_ebitda),
+        _fact("Net debt / OCF", m.quality.net_debt_to_ocf, _mult),
+        _fact("Net debt / EBITDA (fwd-adj covenant basis)", m.quality.net_debt_to_ebitda_adjusted),
+        _fact("Interest coverage", lv.interest_coverage, _mult),
+        _fact("Survival (self-funding + nearest wall)", lv.survival),
+        _fact("Credit health (S&P-MI scores — scale labeled)", lv.credit_health),
+        "",
+    ]
+
+
+def _quality_leverage_lines(m: MechanicalLayer) -> list[str]:
+    """The Quality leverage lines — rendered HERE only for a pre-B2 dossier.json; when the unified
+    leverage_survival block exists they move there (not duplicated)."""
+    if m.leverage_survival is not None:
+        return []
+    q = m.quality
+    return [
+        _fact("Net debt / EBITDA", q.net_debt_to_ebitda, _mult),
+        _fact("Net debt / OCF", q.net_debt_to_ocf, _mult),
+        _fact("Net debt / EBITDA (fwd-adj)", q.net_debt_to_ebitda_adjusted),
+        _fact("Survival capacity (leverage + self-funding + wall)", q.survival_capacity),
+        _fact("Interest coverage", q.interest_coverage, _mult),
+    ]
+
+
+def _peer_grid_or_deltas(pc: Any) -> list[str]:
+    """(B1) The per-peer grid (with median footer) when present; else the legacy median-only deltas
+    line (a pre-B1 fallback)."""
+    if pc.peer_grid is not None:
+        return _peer_grid_lines(pc.peer_grid)
+    return [_fact("Fundamental deltas (earned-vs-residual inputs)", pc.fundamental_deltas)]
+
+
+def _implied_lines(iv: Any) -> list[str]:
+    """(B3) CIQ implied valuation — POSED: the implied EQUITY table (basis × Low/Median/Mean/High) +
+    the bridge + the name's ACTUAL market cap adjacent. NO computed %/discount/upside; the
+    heterogeneity gate renders verbatim on the header."""
+    g = iv.comparability_gate
+    gate = g.value if g.status is SourceStatus.PRESENT else ""
+    out = [
+        "### Implied valuation (CIQ-computed at peer multiples — POSED, not concluded)",
+        f"> **Comparability gate:** {gate}" if gate else "",
+        "> _Composition first — the human judges earned vs residual (not a machine upside)._",
+        _fact("Name market cap ($M) — the ADJACENT fact to compare against", iv.market_cap),
+        _fact("Bridge (TEV → equity)", iv.bridge),
+    ]
+    eq = iv.implied_equity
+    if eq.status is SourceStatus.PRESENT and eq.value:
+        cols = ["Basis", "Low", "Median", "Mean", "High"]
+        trows = [
+            [r.basis, _numc(r.low), _numc(r.median), _numc(r.mean), _numc(r.high)] for r in eq.value
+        ]
+        out += _table("Implied EQUITY value ($M, CIQ)", eq.source_ref, cols, trows)
+    else:
+        out.append(_fact("Implied equity", eq))
+    out.append("")
+    return out
+
+
 def _flags_section(d: Dossier) -> list[str]:
     """The human-facing CAVEATS render LOW (next to key_unknowns), not at the top — a closing 'what
     to verify' checklist, not the headline. Only decision caveats show here (re-voiced, plus the
@@ -219,15 +345,14 @@ def render_markdown(d: Dossier) -> str:
         _fact("FCF sign", m.quality.fcf_sign, _signword),
         _fact("Free cash flow ($M)", m.quality.free_cash_flow),
         _fact("Margin trend", m.quality.margin_trend),
-        _fact("Net debt / EBITDA", m.quality.net_debt_to_ebitda, _mult),
-        _fact("Net debt / OCF", m.quality.net_debt_to_ocf, _mult),
-        _fact("Net debt / EBITDA (fwd-adj)", m.quality.net_debt_to_ebitda_adjusted),
-        _fact("Survival capacity (leverage + self-funding + wall)", m.quality.survival_capacity),
-        _fact("Interest coverage", m.quality.interest_coverage, _mult),
+        # B2: the leverage lines render HERE only when the unified block is absent (old JSON).
+        *_quality_leverage_lines(m),
         _fact("Share-count trend", m.quality.share_count_trend),
         _fact("Liquidity / covenant flags", m.quality.liquidity_covenant_flags),
         _fact("Multi-year trajectory (compounder vs melting ice)", m.quality.multi_year_trajectory),
         "",
+        # B2 unified leverage & survival (present on a fresh assembly; absent → lines stayed above).
+        *(_leverage_block(m) if m.leverage_survival is not None else []),
         "### Concentration",
         _fact("Segments (revenue share)", m.concentration.segments),
         _fact("Segments (EBITDA share — where profit sits)", m.concentration.segment_ebitda),
@@ -241,8 +366,11 @@ def render_markdown(d: Dossier) -> str:
             "Trading multiples (name vs peer Low/Median/Mean/High · LTM+NTM)",
             m.peer_comps.trading_multiples,
         ),
-        _fact("Fundamental deltas (earned-vs-residual inputs)", m.peer_comps.fundamental_deltas),
+        # B1: the per-peer grid (medians as the footer) replaces the median-only deltas line.
+        *_peer_grid_or_deltas(m.peer_comps),
         "",
+        # B3 CIQ implied valuation (posed; heterogeneity gate on its header; no computed %).
+        *(_implied_lines(m.implied_valuation) if m.implied_valuation is not None else []),
         "### Drawdown cause",
         _fact("Shape", m.drawdown_cause.shape),
         _fact("Gap-down dates", m.drawdown_cause.gap_down_dates, _dates),

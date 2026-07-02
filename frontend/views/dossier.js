@@ -164,6 +164,8 @@ function periodKey(p) {
   return Number(y) * 13 + (mm ? _MONTHS[mm] : 0);
 }
 
+// B4: series (margin/trajectory/surprise/trading-multiples) now route through the ONE shared
+// dataTable — parse the metric×period string into a grid, then render via dataTable (no legacy path).
 function seriesTable(label, s) {
   if (!s || s.status !== "present" || s.value == null) return fact(label, s);  // honest UNKNOWN/MISSING
   let parsed;
@@ -172,22 +174,14 @@ function seriesTable(label, s) {
   const periods = [];
   for (const sr of parsed.series) for (const p of sr.points) if (!periods.includes(p.period)) periods.push(p.period);
   periods.sort((a, b) => periodKey(a) - periodKey(b));  // chronological columns across uneven sub-series
-  const sup = (b) => (b ? `<sup class="muted">${escapeHtml(b)}</sup>` : "");
-  const head = `<tr><th></th>${periods.map((p) => `<th class="num">${escapeHtml(fmtPeriod(p))}</th>`).join("")}</tr>`;
-  const body = parsed.series.map((sr) => {
+  const cols = periods.map(fmtPeriod);
+  const rows = parsed.series.map((sr) => {
     const by = Object.fromEntries(sr.points.map((p) => [p.period, p]));
-    const cells = periods.map((p) => (by[p]
-      ? `<td class="num">${escapeHtml(by[p].value)}${sup(by[p].basis)}</td>` : `<td class="num">${DASH}</td>`)).join("");
-    return `<tr><td style="white-space:nowrap;">${escapeHtml(sr.label)}</td>${cells}</tr>`;
-  }).join("");
-  const scalars = parsed.scalars.map((x) =>
-    `<div class="muted" style="font-size:12px; margin-top:6px;">${escapeHtml(x.label)}: <b style="color:var(--ink);">${escapeHtml(x.value)}</b></div>`).join("");
-  const note = parsed.note ? `<div class="muted" style="font-size:11px; margin-top:5px;">${escapeHtml(parsed.note)}</div>` : "";
-  const cite = s.source_ref ? `<span class="cite">${escapeHtml(s.source_ref)}</span>` : "";
-  // a normal label-left / value-right fact ROW where the value IS the table — keeps it uniform with
-  // every other fact; the value cell clamps to its grid column (min-width:0) and scrolls if too wide.
-  return `<div class="fact"><div class="fact-label">${escapeHtml(label)}</div>
-    <div style="min-width:0;"><div style="overflow-x:auto;"><table class="data"><thead>${head}</thead><tbody>${body}</tbody></table></div>${scalars}${note}${cite}</div></div>`;
+    return { label: sr.label, cells: periods.map((p) => (by[p] ? by[p].value + (by[p].basis ? ` (${by[p].basis})` : "") : DASH)) };
+  });
+  let note = parsed.note || "";
+  if (parsed.scalars.length) note = (note ? note + " · " : "") + parsed.scalars.map((x) => `${x.label}: ${x.value}`).join(" · ");
+  return dataTable(label, s.source_ref, cols, rows, note);
 }
 
 function renderDossier(d, verdict) {
@@ -196,9 +190,11 @@ function renderDossier(d, verdict) {
     header(d),
     flagsSection(d.caveats || d.flags || []),  // d.flags = pre-split fallback for un-re-assembled JSONs
     valuation(m.valuation),
-    quality(m.quality),
+    quality(m.quality, !!m.leverage_survival),  // B2: leverage moves to the unified block when present
+    leverageBlock(m),  // B2 unified leverage & survival ("" for a pre-B2 dossier.json)
     concentration(m.concentration),
-    peerComps(m.peer_comps),
+    peerComps(m.peer_comps),  // B1: the per-peer grid renders inside
+    impliedBlock(m.implied_valuation),  // B3 CIQ implied valuation ("" for a pre-B3 dossier.json)
     drawdownCause(m.drawdown_cause),
     idioVsShared(m.idiosyncratic_vs_shared),
     catalystPath(m.catalyst_path, m.consensus_context),
@@ -253,17 +249,20 @@ function valuation(v) {
     fact("Own-history range position", v.range_position, null, { hi: true }));
 }
 
-function quality(q) {
+function quality(q, hasLeverageBlock) {
   if (!q) return "";
-  return sec("Quality", "Durability: cash generation, margins, leverage, dilution, covenant flags.",
-    fact("FCF sign", q.fcf_sign, signWord) +
-    fact("Free cash flow ($M)", q.free_cash_flow) +
-    seriesTable("Margin trend", q.margin_trend) +
+  // B2: the leverage lines render HERE only when the unified block is absent (pre-B2 dossier.json).
+  const leverage = hasLeverageBlock ? "" : (
     fact("Net debt / EBITDA (GAAP)", q.net_debt_to_ebitda, mult) +
     fact("Net debt / OCF", q.net_debt_to_ocf, mult) +
     fact("Net debt / EBITDA (covenant adj.)", q.net_debt_to_ebitda_adjusted) +
     fact("Survival capacity", q.survival_capacity) +
-    fact("Interest coverage", q.interest_coverage, mult) +
+    fact("Interest coverage", q.interest_coverage, mult));
+  return sec("Quality", "Durability: cash generation, margins, leverage, dilution, covenant flags.",
+    fact("FCF sign", q.fcf_sign, signWord) +
+    fact("Free cash flow ($M)", q.free_cash_flow) +
+    seriesTable("Margin trend", q.margin_trend) +
+    leverage +
     fact("Share-count trend", q.share_count_trend) +
     fact("Liquidity / covenant flags", q.liquidity_covenant_flags) +
     seriesTable("Multi-year trajectory", q.multi_year_trajectory));
@@ -378,7 +377,9 @@ function peerComps(pc) {
     peerRosterFact("Peer set (roster · caps · business)", pc.peer_set) +
     fact("Comparability (confidence gate)", pc.comparability, null, { hi: true }) +
     peerMultiplesFact("Trading multiples (name vs peer Low/Median/Mean/High · LTM+NTM)", pc.trading_multiples) +
-    peerDeltasFact("Fundamental deltas (earned-vs-residual inputs)", pc.fundamental_deltas));
+    // B1: the per-peer grid (name + median footer) replaces the median-only deltas line
+    (pc.peer_grid ? peerGridTable(pc.peer_grid)
+      : peerDeltasFact("Fundamental deltas (earned-vs-residual inputs)", pc.fundamental_deltas)));
 }
 
 function drawdownCause(dc) {
@@ -437,14 +438,73 @@ function catAsof(cp) {
 }
 
 // a fact-row whose value IS a table — same wrapper as seriesTable, so it stays uniform + scrolls
-function catTable(label, cite, cols, rows, note) {
+// B4: the ONE shared table renderer (the compact idiom). Every dossier table routes through here —
+// series (margin/trajectory/surprise/trading-multiples), the catalyst tables, and the B1/B3 grids.
+// A row may carry `cls` (e.g. "name-row"/"median-row") for the distinguished B1 rows.
+function dataTable(label, cite, cols, rows, note) {
   const head = `<tr><th></th>${cols.map((c) => `<th class="num">${escapeHtml(c)}</th>`).join("")}</tr>`;
   const body = rows.map((r) =>
-    `<tr><td style="white-space:nowrap;">${escapeHtml(r.label)}</td>${r.cells.map((c) => `<td class="num">${escapeHtml(c)}</td>`).join("")}</tr>`).join("");
+    `<tr${r.cls ? ` class="${r.cls}"` : ""}><td style="white-space:nowrap;">${escapeHtml(r.label)}</td>${r.cells.map((c) => `<td class="num">${escapeHtml(c)}</td>`).join("")}</tr>`).join("");
   const noteHtml = note ? `<div class="muted" style="font-size:11px; margin-top:5px;">${escapeHtml(note)}</div>` : "";
   const citeHtml = cite ? `<span class="cite">${escapeHtml(cite)}</span>` : "";
   return `<div class="fact"><div class="fact-label">${escapeHtml(label)}</div>
     <div style="min-width:0;"><div style="overflow-x:auto;"><table class="data"><thead>${head}</thead><tbody>${body}</tbody></table></div>${noteHtml}${citeHtml}</div></div>`;
+}
+
+// $M/%/number cell formatters for the B1 grid + B3 implied table
+const _capC = (v) => (v == null ? DASH : (Math.abs(v) >= 1000 ? `$${(v / 1000).toFixed(1)}B` : `$${v.toFixed(0)}M`));
+const _pctC = (v) => (v == null ? DASH : `${(v * 100).toFixed(0)}%`);
+const _usdC = (v) => (v == null ? DASH : v.toLocaleString(undefined, { maximumFractionDigits: 0 }));
+const _numC = (v) => (v == null ? DASH : v.toLocaleString(undefined, { maximumFractionDigits: 1 }));
+
+// (B1) per-peer grid → the shared table; name row + median footer visually distinct
+function peerGridTable(s) {
+  const label = "Per-peer grid (cap · margin · growth · leverage — name vs peers)";
+  if (!s || s.status !== "present" || !Array.isArray(s.value)) return fact(label, s);
+  const cols = ["Cap", "EBITDA mgn", "Rev g 1y", "EBITDA g 1y", "Debt/EBITDA", "Net debt $M"];
+  const rows = s.value.map((r) => ({
+    label: r.name + (r.is_name ? " · the name" : (r.is_median ? " (peers)" : "")),
+    cls: r.is_name ? "name-row" : (r.is_median ? "median-row" : ""),
+    cells: [_capC(r.market_cap), _pctC(r.ebitda_margin), _pctC(r.rev_growth_1y),
+            _pctC(r.ebitda_growth_1y), (r.debt_to_ebitda ?? DASH), _usdC(r.net_debt)],
+  }));
+  return dataTable(label, s.source_ref, cols, rows, "");
+}
+
+// (B2) unified leverage & survival — both bases labeled + credit health; "" when the block is absent
+function leverageBlock(m) {
+  const lv = m.leverage_survival;
+  if (!lv) return "";
+  return sec("Leverage & survival (unified — both bases labeled, no net-vs-total mixing)",
+    "One block, two labeled bases — this retires the net-vs-total leverage incoherence.",
+    fact("Net debt / EBITDA (CIQ NET basis)", lv.net_debt_to_ebitda, mult) +
+    fact("Total debt / EBITDA (comps — name vs peer median)", lv.total_debt_to_ebitda) +
+    fact("Net debt / OCF", m.quality.net_debt_to_ocf, mult) +
+    fact("Net debt / EBITDA (fwd-adj)", m.quality.net_debt_to_ebitda_adjusted) +
+    fact("Interest coverage", lv.interest_coverage, mult) +
+    fact("Survival (self-funding + nearest wall)", lv.survival) +
+    fact("Credit health (S&P-MI scores — scale labeled)", lv.credit_health));
+}
+
+// (B3) CIQ implied valuation — POSED: implied-equity table + bridge + name market cap; NO computed %
+function impliedBlock(iv) {
+  if (!iv) return "";
+  const g = iv.comparability_gate || {};
+  const gate = g.status === "present" ? g.value : "";
+  const eq = iv.implied_equity || {};
+  let table = fact("Implied equity", eq);
+  if (eq.status === "present" && Array.isArray(eq.value)) {
+    const rows = eq.value.map((r) => ({
+      label: r.basis, cells: [_numC(r.low), _numC(r.median), _numC(r.mean), _numC(r.high)],
+    }));
+    table = dataTable("Implied EQUITY value ($M, CIQ at peer multiples)", eq.source_ref,
+      ["Low", "Median", "Mean", "High"], rows, "");
+  }
+  return sec("Implied valuation — CIQ-computed at peer multiples, POSED not concluded",
+    (gate ? gate + " — " : "") + "composition first: the human judges earned vs residual (no machine upside).",
+    fact("Name market cap ($M) — the ADJACENT fact to compare against", iv.market_cap) +
+    fact("Bridge (TEV → equity)", iv.bridge) +
+    table);
 }
 
 // (4a) horizon → metric × [FQ2, FQ3] table; zero-breadth-across-all-windows rows collapse to a line
@@ -468,7 +528,7 @@ function horizonTable(s) {
     (Object.values(cells).some((c) => /[1-9]\d*[↑↓]/.test(c)) ? nonzero : zero).push(metric);
   const rows = nonzero.map((m) => ({ label: m, cells: periods.map((p) => byMetric.get(m)[p] || DASH) }));
   const note = zero.length ? `no revisions in any window: ${zero.join(", ")}` : "";
-  return catTable(label, s.source_ref, periods, rows, note);
+  return dataTable(label, s.source_ref, periods, rows, note);
 }
 
 const _baseMetric = (m) => m.replace(/\s*(Normalized|\(GAAP\)|\(Excl\. Excep\))/g, "").trim();
@@ -495,7 +555,7 @@ function accelTable(s) {
     (a.metric.includes("GAAP") ? 1 : 0) - (b.metric.includes("GAAP") ? 1 : 0));
   const cols = _LOOKBACKS.filter((lb) => entries.some((e) => e.pts[lb] != null));
   const rows = entries.map((e) => ({ label: e.metric, cells: [...cols.map((c) => e.pts[c] || DASH), e.change || DASH] }));
-  return catTable(label, s.source_ref, [...cols, "net"], rows, "");
+  return dataTable(label, s.source_ref, [...cols, "net"], rows, "");
 }
 
 // (4c) ladder → period × multiple table; NTM + FY26–FY28 only, later years noted (full in JSON)
@@ -520,7 +580,7 @@ function ladderTable(s) {
   }
   for (const r of rows) r.cells = cols.map((c) => r._by[c] || DASH);
   const extra = segs.length - kept;
-  return catTable(label, s.source_ref, cols, rows, extra > 0 ? `+${extra} later fiscal years in JSON` : "");
+  return dataTable(label, s.source_ref, cols, rows, extra > 0 ? `+${extra} later fiscal years in JSON` : "");
 }
 
 const _absDelta = (e) => { const d = Math.abs(Number(e.broker_current) - Number(e.broker_prior)); return isNaN(d) ? -1 : d; };

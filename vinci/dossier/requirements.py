@@ -177,13 +177,15 @@ CIQ_MODULES: tuple[CiqModuleRequirement, ...] = (
         freq=None,
         sheets=(
             "Financial Data", "Trading Multiples", "Operating Statistics", "Business Description",
+            "Credit Health Panel", "Implied Valuation",
         ),
         used_for=(
             "peer-set COMPOSITION + market-cap / business-model dispersion (peer_set / "
-            "comparability), the trailing-vs-forward peer-multiple spread (trading_multiples), and "
-            "the name-vs-peer fundamental DELTAS — growth / margin / leverage / beta "
-            "(fundamental_deltas). The Implied Valuation sheet is deliberately SKIPPED (the "
-            "consensus implied-upside trap — see ciq_extraction_notes.md); Valuation Chart is empty"
+            "comparability), the trailing-vs-forward peer-multiple spread (trading_multiples), the "
+            "fundamental DELTAS (fundamental_deltas) + the per-peer GRID (peer_grid); the unified "
+            "leverage block — comps total-debt/EBITDA (comps_total_debt_ebitda) + credit-health "
+            "scores (credit_health); and the CIQ IMPLIED VALUATION table posed for the human "
+            "(implied_valuation) — CIQ-computed, NO machine upside. Valuation Chart is empty"
         ),
         granularity=Granularity.SNAPSHOT,
         lookback="current — the latest comp set (LTM + NTM forward), current-only",

@@ -194,6 +194,9 @@ table.data { width: 100%; border-collapse: collapse; font-size: 13px; }
 table.data th { text-align: left; font-size: 11px; text-transform: uppercase; letter-spacing: 0.04em; color: var(--ink-3); font-weight: 600; padding: 8px 10px; border-bottom: 1px solid var(--line-2); white-space: nowrap; }
 table.data td { padding: 9px 10px; border-bottom: 1px solid var(--line); vertical-align: top; }
 table.data tr:hover td { background: var(--surface-2); }
+/* B1 per-peer grid: the subject row is distinct; the peer-median footer sits under a rule */
+table.data tr.name-row td { font-weight: 650; background: var(--surface-2); }
+table.data tr.median-row td { border-top: 1.5px solid var(--line-2); font-style: italic; color: var(--ink-2); }
 .mono { font-family: var(--mono); }
 .num { font-family: var(--mono); text-align: right; }
 .muted { color: var(--ink-3); }

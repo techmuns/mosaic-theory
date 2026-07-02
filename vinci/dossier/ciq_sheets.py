@@ -25,7 +25,15 @@ from vinci.dossier.ciq import (
     excel_date,
     read_text,
 )
-from vinci.dossier.schemas import PeerComps, RevisionEvent, Sourced
+from vinci.dossier.schemas import (
+    ImpliedRow,
+    ImpliedValuation,
+    PeerComps,
+    PeerRow,
+    RevisionEvent,
+    Sourced,
+    SourceStatus,
+)
 
 Rows = list[list[Any]]
 
@@ -1000,6 +1008,13 @@ def estimates_as_of(bundle: CiqBundle) -> Sourced[str]:
             header.isoformat(),
             source_ref="CIQ Estimates→Consensus 'As-Of Date' header (workbook as-of)",
         )
+    sidecar = _sidecar_as_of(bundle)  # R1: operator-attested date, precedence above the floor
+    if sidecar is not None:
+        return Sourced.present(
+            sidecar.isoformat(),
+            source_ref="operator AS_OF sidecar (data/manual/ciq/<TICKER>/AS_OF)",
+            note="operator-attested",
+        )
     try:
         rows = bundle.sheet("estimates", "Recent Changes")
     except CiqUnavailableError as exc:
@@ -1185,14 +1200,16 @@ def _guidance_rows(rows: Rows, bi: int, end: int) -> tuple[int | None, int | Non
 
 
 def guidance_bridge(
-    bundle: CiqBundle, *, as_of: str | None = None, stale_before: date | None = None
+    bundle: CiqBundle, *, as_of: str | None = None,
+    reference_date: date | None = None, stale_after_days: int = 45,
 ) -> Sourced[str]:
     """(d) GUIDANCE BRIDGE — per metric: the LATEST guide {range, date} + a delivery track-record.
     SIGN-AWARE: a revenue-like (positive) guide is met when actual ≥ floor; a cost-like (negative)
     guide (e.g. capex) is met when spend ≤ ceiling — the semantic used is labelled. Counts ONLY
     resolved periods (both a range AND an actual) and surfaces the MOST-RECENT resolved outcome
-    (MET/MISSED). A latest guide older than the shared staleness window (``stale_before``) is
-    flagged inline. Present-but-empty blocks omitted; verbatim range kept; parens are negative."""
+    (MET/MISSED). R3: a guide older than ``stale_after_days`` vs ``reference_date`` is flagged
+    '(stale — Nd old)' (age once, no date repeat); a point guide renders numeric, a range verbatim.
+    Present-but-empty blocks omitted; parens are negative."""
     try:
         rows = bundle.sheet("estimates", "Guidance")
     except CiqUnavailableError as exc:
@@ -1230,9 +1247,11 @@ def guidance_bridge(
         if latest is None:
             continue
         gd, per, rng_s, cost_like = latest
-        seg = f"{metric}: latest guide '{rng_s}' for {per} (dated {gd.isoformat()})"
-        if stale_before is not None and gd < stale_before:
-            seg += f" (stale guide — {gd.isoformat()})"
+        pr = _parse_range(rng_s)
+        gval = _fig(pr[0]) if (pr is not None and " - " not in rng_s) else f"'{rng_s}'"
+        seg = f"{metric}: latest guide {gval} for {per} (dated {gd.isoformat()})"
+        if reference_date is not None and (reference_date - gd).days > stale_after_days:
+            seg += f" (stale — {(reference_date - gd).days}d old)"  # R3: age once, no date repeat
         if resolved:
             sem = "spend ≤ guided ceiling" if cost_like else "actual ≥ guided floor"
             seg += f"; {sem} {met_n}/{resolved} resolved"
@@ -1266,7 +1285,9 @@ def revision_events(bundle: CiqBundle, *, as_of: str | None = None) -> Sourced[l
         out.append(
             RevisionEvent(
                 date=d.isoformat() if d is not None else c[1],
-                change_type=c[0], broker=c[2], metric=c[4], period=c[5],
+                # R2: an 'Entitlement Needed' broker is a placeholder — group as undisclosed
+                change_type=c[0], broker=("broker undisclosed" if _is_entitlement(c[2]) else c[2]),
+                metric=c[4], period=c[5],
                 broker_prior=c[7], broker_current=c[6],
                 consensus_before=c[9], consensus_after=c[8],
             )
@@ -1701,4 +1722,267 @@ def peer_comps(bundle: CiqBundle) -> PeerComps:
         comparability=comparability,
         trading_multiples=_comps_multiples(bundle, src),
         fundamental_deltas=_comps_deltas(bundle, src),
+        peer_grid=peer_grid(bundle),
+    )
+
+
+# --- PR B: as-of sidecar (R1), per-peer grid (B1), credit health + total-debt basis (B2),
+# --- implied valuation (B3). The comps workbook HAS an explicit As-Of header (unlike Estimates).
+
+
+def _is_entitlement(cell: Any) -> bool:
+    """R2: a CIQ 'Entitlement Needed' cell — a placeholder, not data (case-insensitive)."""
+    return str(cell).strip().lower() == "entitlement needed"
+
+
+def _undisclosed_name(name: str) -> str:
+    """R2: an 'Entitlement Needed' company/broker name → 'undisclosed (CIQ entitlement)'."""
+    return "undisclosed (CIQ entitlement)" if _is_entitlement(name) else name
+
+
+def _sidecar_as_of(bundle: CiqBundle) -> date | None:
+    """The operator-attested export date from an optional ``data/manual/ciq/<TICKER>/AS_OF`` file
+    (YYYY-MM-DD), derived from a workbook's folder — no loader change. None if absent/malformed."""
+    for wb in bundle.workbooks:
+        p = wb.path.parent / "AS_OF"
+        try:
+            if p.exists():
+                return date.fromisoformat(p.read_text().strip()[:10])
+        except (ValueError, OSError):
+            return None
+    return None
+
+
+def comps_as_of(bundle: CiqBundle) -> Sourced[str]:
+    """The comps workbook's as-of — an EXPLICIT 'As-Of Date:' header (present on every sheet; MVST
+    decodes to 2026-06-24), else the operator AS_OF sidecar (attested), else UNKNOWN. Header present
+    → plain as-of (the A.1 discipline)."""
+    try:
+        rows = bundle.sheet("comps", "Financial Data")
+    except CiqUnavailableError as exc:
+        return _miss_or_unknown(bundle, "comps", exc)
+    d = _scan_asof_header(rows)
+    if d is not None:
+        return Sourced.present(
+            d.isoformat(), source_ref="CIQ Comparable Analysis 'As-Of Date' header (workbook as-of)"
+        )
+    sc = _sidecar_as_of(bundle)
+    if sc is not None:
+        return Sourced.present(
+            sc.isoformat(), source_ref="operator AS_OF sidecar", note="operator-attested"
+        )
+    return Sourced.unknown(note="no As-Of header or AS_OF sidecar for the comps workbook")
+
+
+def _comps_asof_suffix(bundle: CiqBundle) -> str:
+    """' · as-of YYYY-MM-DD' stamped on every comps source_ref (with '· operator-attested' when the
+    date came from the sidecar). '' when neither header nor sidecar is present."""
+    a = comps_as_of(bundle)
+    if a.status is not SourceStatus.PRESENT or not a.value:
+        return ""
+    att = " · operator-attested" if (a.note and "operator-attested" in a.note) else ""
+    return f" · as-of {a.value}{att}"
+
+
+def _num_or_none(v: float | str | None) -> float | None:
+    return v if isinstance(v, (int, float)) else None
+
+
+def peer_grid(bundle: CiqBundle) -> Sourced[list[PeerRow]]:
+    """(B1) Per-peer comparability grid: one row per peer + the subject + a peer-median footer, from
+    Financial Data (cap, net debt) JOINED to Operating Statistics (margins/growth/Debt-EBITDA) BY
+    TICKER (row order differs per sheet). Sorted by market cap desc. No computed delta — the human
+    compares the name row against the peers + the median footer."""
+    try:
+        fd = bundle.sheet("comps", "Financial Data")
+        op = bundle.sheet("comps", "Operating Statistics")
+    except CiqUnavailableError as exc:
+        return _miss_or_unknown(bundle, "comps", exc)
+    fh, fpeers, ftgt = _comps_layout(fd, bundle.ticker)
+    _oh, opeers, otgt = _comps_layout(op, bundle.ticker)
+    if fh is None or not fpeers:
+        return Sourced.unknown(note="Financial Data: no Company Name header / peer rows")
+    op_by_tkr: dict[str, int] = {}
+    for i in ([otgt] if otgt is not None else []) + opeers:
+        if (t := _row_ticker(op[i][0])):
+            op_by_tkr[t] = i
+
+    def row_for(fi: int, is_name: bool) -> PeerRow:
+        tkr = _row_ticker(fd[fi][0]) or ""
+        oi = op_by_tkr.get(tkr)
+        de = _comps_cell(op, oi, 10) if oi is not None else None
+        return PeerRow(
+            name=_undisclosed_name(_comps_short_name(str(fd[fi][0]))), ticker=tkr, is_name=is_name,
+            market_cap=_num_or_none(_comps_cell(fd, fi, 3)),
+            net_debt=_num_or_none(_comps_cell(fd, fi, 4)),
+            ebitda_margin=_num_or_none(_comps_cell(op, oi, 2)) if oi is not None else None,
+            rev_growth_1y=_num_or_none(_comps_cell(op, oi, 5)) if oi is not None else None,
+            ebitda_growth_1y=_num_or_none(_comps_cell(op, oi, 6)) if oi is not None else None,
+            debt_to_ebitda=(_tok(de) if de is not None else None),
+        )
+
+    peers = [row_for(i, False) for i in fpeers]
+    rows: list[PeerRow] = list(peers)
+    if ftgt is not None:
+        rows.append(row_for(ftgt, True))
+    rows.sort(key=lambda r: (r.market_cap is None, -(r.market_cap or 0.0)))
+
+    def _med(vals: list[float | None]) -> float | None:
+        xs = [v for v in vals if v is not None]
+        return statistics.median(xs) if xs else None
+
+    de_nums = [v for i in opeers if isinstance((v := _comps_cell(op, i, 10)), (int, float))]
+    med_de = statistics.median(de_nums) if de_nums else None
+    rows.append(PeerRow(
+        name="Peer median", ticker="", is_median=True,
+        market_cap=_med([p.market_cap for p in peers]),
+        net_debt=_med([p.net_debt for p in peers]),
+        ebitda_margin=_med([p.ebitda_margin for p in peers]),
+        rev_growth_1y=_med([p.rev_growth_1y for p in peers]),
+        ebitda_growth_1y=_med([p.ebitda_growth_1y for p in peers]),
+        debt_to_ebitda=(f"{med_de:.1f}" if med_de is not None else None),
+    ))
+    return Sourced.present(
+        rows,
+        source_ref="CIQ Comparable Analysis→Financial Data + Operating Statistics (per-peer grid)"
+        + _comps_asof_suffix(bundle),
+    )
+
+
+def _issuer_rating(cell: Any) -> str:
+    """The S&P issuer rating cell → verbatim rating or '' when absent ('-'/blank/Entitlement)."""
+    s = str(cell).strip()
+    return "" if s in _UNAVAILABLE_CELLS or s.lower() == "entitlement needed" else s
+
+
+def credit_health(bundle: CiqBundle) -> Sourced[str]:
+    """(B2 leg) S&P-MI credit-health scores — name vs peers, scale LABELED. Scale direction is
+    verified FROM THE DATA (rated A-/BBB+ peers score low, unrated distressed peers score high ⇒
+    1=strongest…4=weakest); if that correlation is absent the block reads UNKNOWN, not a guess."""
+    try:
+        ch = bundle.sheet("comps", "Credit Health Panel")
+    except CiqUnavailableError as exc:
+        return _miss_or_unknown(bundle, "comps", exc)
+    _h, peers, tgt = _comps_layout(ch, bundle.ticker)
+    if tgt is None:
+        return Sourced.unknown(note="Credit Health Panel: no name row")
+
+    def overall(i: int) -> float | None:
+        return _num_or_none(_comps_cell(ch, i, 1))
+
+    rated = [o for i in peers if _issuer_rating(ch[i][7]) and (o := overall(i)) is not None]
+    unrated = [o for i in peers if not _issuer_rating(ch[i][7]) and (o := overall(i)) is not None]
+    if not (rated and unrated and statistics.mean(rated) < statistics.mean(unrated)):
+        return Sourced.unknown(note="Credit Health Panel: scale direction ambiguous — not rendered")
+    scores = "/".join(_tok(_comps_cell(ch, tgt, c)) for c in (1, 2, 3, 4))
+    name_rating = _issuer_rating(ch[tgt][7]) or "unrated"
+    peer_overall = [o for i in peers if (o := overall(i)) is not None]
+    med = f"{statistics.median(peer_overall):g}" if peer_overall else "–"
+    return Sourced.present(
+        f"name Overall/Operational/Solvency/Liquidity {scores} (S&P issuer rating {name_rating}); "
+        f"peer-median Overall {med}; scale 1=strongest … 4=weakest (S&P-MI PD model)",
+        source_ref="CIQ Comparable Analysis→Credit Health Panel" + _comps_asof_suffix(bundle),
+    )
+
+
+def comps_total_debt_ebitda(bundle: CiqBundle) -> Sourced[str]:
+    """(B2 leg) Name TOTAL-debt/EBITDA vs peer median, comps basis (Operating Statistics col).
+    LABELED total-debt basis — distinct from the CIQ NET-debt/EBITDA (Financials), NEVER mixed."""
+    try:
+        op = bundle.sheet("comps", "Operating Statistics")
+    except CiqUnavailableError as exc:
+        return _miss_or_unknown(bundle, "comps", exc)
+    _h, peers, tgt = _comps_layout(op, bundle.ticker)
+    if tgt is None:
+        return Sourced.unknown(note="Operating Statistics: no name row")
+    nv = _comps_cell(op, tgt, 10)
+    peer_vals = [v for i in peers if isinstance((v := _comps_cell(op, i, 10)), (int, float))]
+    med = statistics.median(peer_vals) if peer_vals else None
+    ns = f"{nv:.1f}x" if isinstance(nv, (int, float)) else _tok(nv)
+    ms = f"{med:.1f}x" if med is not None else "–"
+    return Sourced.present(
+        f"name {ns} vs peer median {ms} (comps TOTAL-debt/EBITDA basis)",
+        source_ref="CIQ Comparable Analysis→Operating Statistics (LTM Total Debt/EBITDA)"
+        + _comps_asof_suffix(bundle),
+    )
+
+
+def _iv_stat_rows(rows: Rows, start: int, end: int) -> dict[str, int | None]:
+    """The {High,Low,Mean,Median} row indices inside an Implied-Valuation section [start, end)."""
+    return {
+        k: next((i for i in range(start, end) if rows[i] and str(rows[i][0]).strip() == k), None)
+        for k in ("High", "Low", "Mean", "Median")
+    }
+
+
+def implied_valuation(bundle: CiqBundle, comparability_gate: Sourced[str]) -> ImpliedValuation:
+    """(B3) CIQ's Implied-Valuation sheet: the implied EQUITY value at peer multiples (basis ×
+    Low/Median/Mean/High) + the TEV→equity bridge + the name's ACTUAL market cap ADJACENT. POSED,
+    never concluded — no computed %/discount/upside. The heterogeneity gate is on its header."""
+    try:
+        iv = bundle.sheet("comps", "Implied Valuation")
+    except CiqUnavailableError as exc:
+        m: Sourced[Any] = _miss_or_unknown(bundle, "comps", exc)
+        return ImpliedValuation(
+            implied_equity=m, bridge=m, market_cap=m, comparability_gate=comparability_gate
+        )
+    suffix = _comps_asof_suffix(bundle)
+    hdr = _find_row(iv, "Company Name")
+    eq_hdr = _find_row(iv, "= Implied Equity Value")
+    shares_hdr = _find_row(iv, "/ Shares Outstanding")
+    if hdr is None or eq_hdr is None:
+        unk: Sourced[Any] = Sourced.unknown(note="Implied Valuation: no header / equity section")
+        return ImpliedValuation(
+            implied_equity=unk, bridge=unk, market_cap=comps_market_cap(bundle),
+            comparability_gate=comparability_gate,
+        )
+    bases = [str(c).strip() for c in iv[hdr][1:]]
+    stat = _iv_stat_rows(iv, eq_hdr, shares_hdr or len(iv))
+    eq_rows: list[ImpliedRow] = []
+    for j, basis in enumerate(bases, start=1):
+        if not basis:
+            continue
+        vals = {k: (_num_or_none(_comps_cell(iv, ri, j))) for k, ri in stat.items()}
+        if any(v is not None for v in vals.values()):
+            eq_rows.append(ImpliedRow(
+                basis=basis, low=vals["Low"], median=vals["Median"],
+                mean=vals["Mean"], high=vals["High"],
+            ))
+    equity = (
+        Sourced.present(eq_rows, source_ref="CIQ Comparable Analysis→Implied Valuation "
+                        "(= Implied Equity Value, basis × Low/Median/Mean/High)" + suffix)
+        if eq_rows else Sourced.unknown(note="Implied Valuation: no implied-equity rows")
+    )
+    cash_i, debt_i = _find_row(iv, "+ Total Cash & ST Investments"), _find_row(iv, "- Total Debt")
+    cash = _num_or_none(_comps_cell(iv, cash_i, 1)) if cash_i is not None else None
+    debt = _num_or_none(_comps_cell(iv, debt_i, 1)) if debt_i is not None else None
+    bridge: Sourced[str] = (
+        Sourced.present(
+            f"TEV→equity bridge: + cash {_usd(cash)}M, − total debt {_usd(debt)}M",
+            source_ref="CIQ Comparable Analysis→Implied Valuation (cash/debt bridge)" + suffix,
+        )
+        if cash is not None or debt is not None
+        else Sourced.unknown(note="Implied Valuation: no cash/debt bridge rows")
+    )
+    return ImpliedValuation(
+        implied_equity=equity, bridge=bridge, market_cap=comps_market_cap(bundle),
+        comparability_gate=comparability_gate,
+    )
+
+
+def comps_market_cap(bundle: CiqBundle) -> Sourced[float]:
+    """The name's ACTUAL market cap ($M) from Financial Data — the adjacent fact the human sets the
+    CIQ-implied equity values against (no computed discount)."""
+    try:
+        fd = bundle.sheet("comps", "Financial Data")
+    except CiqUnavailableError as exc:
+        return _miss_or_unknown(bundle, "comps", exc)
+    _h, _p, tgt = _comps_layout(fd, bundle.ticker)
+    mc = _num_or_none(_comps_cell(fd, tgt, 3)) if tgt is not None else None
+    if mc is None:
+        return Sourced.unknown(note="Financial Data: no market cap for the name")
+    return Sourced.present(
+        round(mc, 1),
+        source_ref="CIQ Comparable Analysis→Financial Data (name Market Capitalization Latest)"
+        + _comps_asof_suffix(bundle),
     )
