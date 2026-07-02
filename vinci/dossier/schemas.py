@@ -317,6 +317,44 @@ class PeerComps(BaseModel):
     model_config = {"frozen": True}
 
 
+class FinRow(BaseModel):
+    """One row of a financial-summary table — a label + pre-formatted display cells (one per col),
+    with '—'/'— (basis)' for a gap or a growth that would cross a reclassification basis. Strings so
+    the (R) markers + the actual→estimate boundary read exactly; each figure still traces."""
+
+    label: str
+    cells: list[str]
+
+    model_config = {"frozen": True}
+
+
+class FinTable(BaseModel):
+    """A financial-summary table — column headers + rows — BORN for the shared compact renderer
+    (columns → the header, each row's cells → a data row). No conclusion; assemble + cite."""
+
+    columns: list[str]
+    rows: list[FinRow]
+    note: str = ""
+
+    model_config = {"frozen": True}
+
+
+class FinancialSummary(BaseModel):
+    """The FINANCIAL-SUMMARY appendix (C1–C4): the fusion of CIQ Financials ACTUALS with Estimates
+    CONSENSUS, rendered after the twins. ``annual`` = last-4-FY + LTM + FY26E/FY27E (E cols marked
+    + stamped with ``as_of``); ``quarterly`` = trailing-8-Q (the Q1-2026 collapse made visible, YoY
+    same-basis only); ``balance_sheet`` = period-labelled posture; ``coherence`` = the BS↔implied-
+    bridge reconciliation (both sources shown on disagreement, never silently picked)."""
+
+    annual: Sourced[FinTable]  # C1 + C4 (CF essentials folded in)
+    quarterly: Sourced[FinTable]  # C2 — trailing 8 quarters
+    balance_sheet: Sourced[str]  # C3 — period-labelled posture block
+    coherence: Sourced[str]  # C3 — BS cash/debt vs the implied-valuation bridge
+    as_of: Sourced[str]  # the estimates as-of basis stamped on the E columns
+
+    model_config = {"frozen": True}
+
+
 class MechanicalLayer(BaseModel):
     """The deterministic, source-bound facts — the ONLY input the synthesis LLM is given."""
 
@@ -337,6 +375,9 @@ class MechanicalLayer(BaseModel):
     # round-trips (its Quality leverage lines render as the fallback); a FRESH assembly builds both.
     leverage_survival: LeverageSurvival | None = None
     implied_valuation: ImpliedValuation | None = None
+    # C — the Financial-Summary appendix (actuals + consensus fusion). Optional-with-default for
+    # back-compat: old JSON round-trips; a FRESH assembly builds it (sub-fields fail loud if empty).
+    financial_summary: FinancialSummary | None = None
     management_commentary: Sourced[str]  # earnings-call transcript — QUALITATIVE only, no numbers
 
     model_config = {"frozen": True}

@@ -66,6 +66,8 @@ def test_dossier_schema_has_no_conclusion_field() -> None:
         ds.CatalystPath, ds.RevisionEvent,
         # PR B — the no-conclusion walk must reach the comps blocks (no upside/discount field)
         ds.PeerRow, ds.LeverageSurvival, ds.ImpliedRow, ds.ImpliedValuation,
+        # PR C — the walk must reach the financial-summary appendix (a table of facts, no verdict)
+        ds.FinRow, ds.FinTable, ds.FinancialSummary,
     }
     assert expected <= models
     offenders: list[str] = []
@@ -2585,8 +2587,23 @@ def test_all_rendered_tables_route_through_the_shared_renderer() -> None:
         _comps({("comps", "Implied Valuation"): iv_sheet, ("comps", "Financial Data"): fd_iv}),
         gate,
     )
+    # PR C: attach the financial-summary appendix so its C1/C2 tables are enumerated too — every
+    # appendix table must route through the shared renderer, same as the comps tables.
+    fs = ds.FinancialSummary(
+        annual=ds.Sourced.present(
+            ds.FinTable(columns=["FY25", "FY26E"],
+                        rows=[ds.FinRow(label="Revenue ($M)", cells=["430", "444"])], note="n"),
+            source_ref="CIQ Financials (annual)"),
+        quarterly=ds.Sourced.present(
+            ds.FinTable(columns=["Q4-25", "Q1-26"],
+                        rows=[ds.FinRow(label="Revenue ($M)", cells=["96", "61"])], note="n"),
+            source_ref="CIQ Financials (quarterly)"),
+        balance_sheet=ds.Sourced.present("as of Mar-26 ($M): cash 126", source_ref="CIQ BS"),
+        coherence=ds.Sourced.present("BS cash / debt reconcile with the bridge.", source_ref="x"),
+        as_of=ds.Sourced.present("2026-05-15", source_ref="x"),
+    )
     mech = _minimal_mech().model_copy(update={
-        "peer_comps": _fake_peer_comps(), "implied_valuation": iv,
+        "peer_comps": _fake_peer_comps(), "implied_valuation": iv, "financial_summary": fs,
     })
     dossier = ds.Dossier(
         ticker="X", name="X", cik="0", reference_date=date(2026, 6, 1), rank=1, mechanical=mech,
@@ -2595,9 +2612,10 @@ def test_all_rendered_tables_route_through_the_shared_renderer() -> None:
     )
     md = dr.render_markdown(dossier)
     n_tables = sum(1 for ln in md.splitlines() if ln.startswith("|---"))
-    assert n_tables >= 4  # roster + trading multiples + per-peer grid + implied equity
+    assert n_tables >= 6  # roster + trading multiples + per-peer grid + implied equity + C1 + C2
     assert md.count(dr._TABLE_MARK) == n_tables  # NO table bypasses the shared renderer
-    for lbl in ("Peer set", "Trading multiples", "Per-peer grid", "Implied EQUITY"):
+    for lbl in ("Peer set", "Trading multiples", "Per-peer grid", "Implied EQUITY",
+                "Annual financials", "Quarterly financials"):  # incl. the C1/C2 appendix tables
         assert _re.search(_re.escape(lbl) + r"[^\n]*" + _re.escape(dr._TABLE_MARK), md), lbl
 
 
@@ -2872,3 +2890,316 @@ def test_companyfacts_or_none_swallows_valueerror_from_a_bad_cik() -> None:
         def companyfacts(self, cik: object) -> dict[str, typing.Any]:
             raise ValueError("invalid literal for int()")
     assert dm._companyfacts_or_none(_Edgar(), "N/A") is None  # type: ignore[arg-type]
+
+
+# --- PR C: the financial-summary appendix (C1 annual+E, C2 8Q, C3 BS posture) + riders R1/R2/R3 ---
+
+
+def _fin_est_bundle(annual: _Sheets, estimates: _Sheets) -> ciq.CiqBundle:
+    """A CiqBundle carrying an ANNUAL Financials workbook + an Estimates workbook — the two sources
+    C1 fuses (actuals from Income Statement/Cash Flow, FY-level consensus from Estimates→Trends)."""
+    pf, pe = Path("/fake/FinA.xls"), Path("/fake/Est.xls")
+    wf = ciq.CiqWorkbook(kind="financials", path=pf, fmt=ciq.CiqFormat.BIFF_XLS, freq="annual")
+    we = ciq.CiqWorkbook(kind="estimates", path=pe, fmt=ciq.CiqFormat.BIFF_XLS, freq="quarterly")
+    return ciq.CiqBundle(ticker="X", workbooks=(wf, we), _cache={pf: annual, pe: estimates})
+
+
+def _c1_trends() -> list[list[typing.Any]]:
+    """Estimates→Trends with a Revenue AND an EBITDA block, each carrying FY 2026 + FY 2027 columns
+    (the two FY-level E figures C1 reads from the 'Current' snapshot)."""
+    return [
+        ["Revenue", "", "", "", "", ""],
+        ["Company Level (USD)", "FQ2 2026", "FQ3 2026", "FY 2026", "FY 2027", "FQ1 2027"],
+        ["Current", 100.0, 110.0, 444.4, 520.0, 50.0],
+        ["EBITDA", "", "", "", "", ""],
+        ["Company Level (USD)", "FQ2 2026", "FQ3 2026", "FY 2026", "FY 2027", "FQ1 2027"],
+        ["Current", 10.0, 11.0, 62.1, 90.0, 5.0],
+    ]
+
+
+def test_financial_summary_annual_fuses_actuals_and_stamped_estimates() -> None:
+    """(C1/C4) The annual table = last-4-FY + LTM actuals + FY26E/FY27E consensus. E columns are
+    marked; growth never spans a basis change (Reclassified FY22→FY23 reads '— (basis)') and the
+    actual→estimate boundary reads 'E vs actual'. FY26E rev/EBITDA are the SAME Trends
+    'Current' cells the acceleration read consumes (cross-block coherence)."""
+    inc: list[list[typing.Any]] = [
+        ["For the Fiscal Period", "Reclassified 12 months Dec-31-2022", "12 months Dec-31-2023",
+         "12 months Dec-31-2024", "12 months Dec-31-2025", "LTM 12 months Mar-31-2026"],
+        ["Total Revenue", 300.0, 350.0, 400.0, 430.0, 440.0],
+        ["EBITDA", 40.0, 45.0, 50.0, 55.0, 58.0],
+        ["EBIT", 20.0, 25.0, 30.0, 33.0, 34.0],
+        ["Net Income", 5.0, 8.0, 10.0, 12.0, 12.0],
+        ["Diluted EPS Excl. Extra Items", 0.05, 0.08, 0.10, 0.12, 0.12],
+    ]
+    cf: list[list[typing.Any]] = [
+        ["For the Fiscal Period", "12 months Dec-31-2022", "12 months Dec-31-2023",
+         "12 months Dec-31-2024", "12 months Dec-31-2025", "LTM 12 months Mar-31-2026"],
+        ["Cash from Ops.", 30.0, 35.0, 40.0, 45.0, 46.0],
+        ["Capital Expenditure", -20.0, -22.0, -25.0, -28.0, -29.0],
+        ["Levered Free Cash Flow", 10.0, 13.0, 15.0, 17.0, 17.0],
+    ]
+    trends = _c1_trends()
+    b = _fin_est_bundle({"Income Statement": inc, "Cash Flow": cf}, {"Trends": trends})
+    s = cs.financial_summary_annual(b, as_of="2026-05-15")
+    assert s.status is ds.SourceStatus.PRESENT
+    ft = s.value
+    assert ft is not None
+    assert ft.columns == ["FY22 (R)", "FY23", "FY24", "FY25", "LTM", "FY26E", "FY27E"]  # E marked
+    row = {r.label: r.cells for r in ft.rows}
+    assert row["Revenue ($M)"] == ["300", "350", "400", "430", "440", "444", "520"]  # actuals + E
+    assert row["EBITDA ($M)"][-2:] == ["62", "90"]  # FY26E/FY27E EBITDA from Trends 'Current'
+    # growth never spans a basis change; the estimate boundary names its TRUE base (not "actual")
+    assert row["Revenue growth"][1] == "— (basis)"   # FY22(R) → FY23: no cross-basis growth
+    assert row["Revenue growth"][4] == "— (basis)"   # FY25 → LTM: FY↔ttm is not a like period
+    assert row["Revenue growth"][5].startswith("E vs LTM")  # FY26E's base IS the LTM, labelled so
+    assert row["CFO ($M)"][:5] == ["30", "35", "40", "45", "46"]  # C4 cash-flow essentials
+    assert "as-of 2026-05-15" in ft.note                    # estimate columns carry the as-of stamp
+    # cross-block coherence: FY26E EBITDA IS the Trends 'Current' FY 2026 cell (62.1 → "62")
+    assert cs._est_fy_current(trends, "EBITDA", "FY 2026") == 62.1
+    assert row["EBITDA ($M)"][-2] == "62"
+
+
+def test_financial_summary_quarterly_shows_collapse_and_basis_guarded_yoy() -> None:
+    """(C2) The trailing-8-Q table makes the Q1-2026 revenue collapse (96.4 → 60.6) VISIBLE via QoQ,
+    and the YoY is same-basis ONLY — a Reclassified quarter four back reads '— (basis)', a clean
+    same-basis pair computes a real %."""
+    q: list[list[typing.Any]] = [
+        ["For the Fiscal Period",
+         "3 months Q2 Jun-30-2024", "3 months Q3 Sep-30-2024",
+         "Reclassified 3 months Q4 Dec-31-2024", "3 months Q1 Mar-31-2025",
+         "3 months Q2 Jun-30-2025", "3 months Q3 Sep-30-2025",
+         "3 months Q4 Dec-31-2025", "3 months Q1 Mar-31-2026"],
+        ["Total Revenue", 80.0, 85.0, 90.0, 92.0, 94.0, 95.0, 96.4, 60.6],
+        ["Gross Profit", 20.0, 22.0, 24.0, 25.0, 26.0, 27.0, 27.0, 15.0],
+        ["EBITDA", 8.0, 9.0, 10.0, 11.0, 12.0, 12.0, 12.0, 3.0],
+    ]
+    s = cs.financial_summary_quarterly(_fin_bundle({"Income Statement": q}, freq="quarterly"))
+    assert s.status is ds.SourceStatus.PRESENT
+    ft = s.value
+    assert ft is not None
+    assert ft.columns[2] == "Q4-24 (R)" and ft.columns[-1] == "Q1-26"  # basis + collapse quarter
+    row = {r.label: r.cells for r in ft.rows}
+    assert row["Revenue ($M)"][-2:] == ["96", "61"]  # the collapse is visible in the row
+    assert row["Revenue QoQ"][-1].startswith("-")  # Q1-26 QoQ sharply negative (the collapse)
+    assert row["Revenue YoY"][6] == "— (basis)"  # Q4-25 vs Reclassified Q4-24 → basis-guard
+    assert row["Revenue YoY"][7].endswith("%") and "basis" not in row["Revenue YoY"][7]  # clean YoY
+    assert "EBITDA margin" in row  # quarterly EBITDA present → margin renders
+
+
+def test_financial_summary_quarterly_omits_ebitda_when_absent_and_says_so() -> None:
+    """(C2) When the quarterly export carries no EBITDA, the EBITDA rows are OMITTED and the note
+    says so — never a fabricated/blank EBITDA row."""
+    q: list[list[typing.Any]] = [
+        ["For the Fiscal Period", "3 months Q4 Dec-31-2025", "3 months Q1 Mar-31-2026"],
+        ["Total Revenue", 96.4, 60.6], ["Gross Profit", 27.0, 15.0],
+    ]
+    s = cs.financial_summary_quarterly(_fin_bundle({"Income Statement": q}, freq="quarterly"))
+    assert s.status is ds.SourceStatus.PRESENT
+    ft = s.value
+    assert ft is not None
+    assert not any("EBITDA" in r.label for r in ft.rows)   # omitted, not fabricated
+    assert "EBITDA rows omitted" in ft.note                # and the omission is stated
+
+
+def test_balance_sheet_posture_and_bridge_coherence_gate() -> None:
+    """(C3) The posture block is period-labelled (cash/debt/net debt/equity/NWC) and cross-refs
+    the leverage block (net-debt/EBITDA NOT recomputed). The coherence gate reconciles the BS
+    cash/debt with the implied-valuation bridge; on disagreement it renders BOTH — never silently
+    prefers one."""
+    bs: list[list[typing.Any]] = [
+        ["Balance Sheet as of:", "Dec-31-2025", "Mar-31-2026"],
+        ["Total Cash & ST Investments", 120.0, 126.1],
+        ["Total Debt", 320.0, 326.0],
+        ["Net Debt", 200.0, 199.9],
+        ["Total Common Equity", 50.0, 55.0],
+        ["Total Current Assets", 300.0, 310.0],
+        ["Total Current Liabilities", 150.0, 160.0],
+    ]
+    b = _fin_bundle({"Balance Sheet": bs}, freq="quarterly")
+    posture = cs.balance_sheet_posture(b)
+    assert posture.status is ds.SourceStatus.PRESENT
+    v = posture.value or ""
+    assert "as of Mar-26" in v                                    # freshest period, labelled
+    assert "cash & ST inv 126" in v and "total debt 326" in v and "net debt 200" in v
+    assert "net working capital 150" in v                         # TCA − TCL = 310 − 160
+    assert "not recomputed" in v                                  # cross-refs the leverage block
+    # coherence gate — bridge that AGREES (cash 126.1 / debt 326.0) reconciles
+    ok_iv = ds.ImpliedValuation(
+        implied_equity=ds.Sourced.unknown(note="n/a"),
+        bridge=ds.Sourced.present("TEV → equity: + cash $126.1M − debt $326.0M", source_ref="x"),
+        market_cap=ds.Sourced.unknown(note="n/a"),
+        comparability_gate=ds.Sourced.unknown(note="n/a"),
+    )
+    coh = dm._bs_bridge_coherence(b, ok_iv)
+    assert coh.status is ds.SourceStatus.PRESENT and "reconcile" in (coh.value or "")
+    # a bridge that DISAGREES (debt $500M) renders BOTH with a soft caveat — never silently picks
+    bad_iv = ok_iv.model_copy(update={
+        "bridge": ds.Sourced.present("TEV → equity: + cash $126.1M − debt $500.0M", source_ref="x"),
+    })
+    dis = dm._bs_bridge_coherence(b, bad_iv)
+    d = dis.value or ""
+    assert "DISAGREE" in d and "326" in d and "500" in d and "neither is silently preferred" in d
+
+
+def test_credit_health_completes_all_four_peer_median_dims() -> None:
+    """(R1) Credit health reports the name's four dimensions AND the peer median PER dimension (not
+    Overall only): peers score [1, 4] on each of O/Op/S/L → median 2.5 across the board."""
+    s = cs.credit_health(_comps({("comps", "Credit Health Panel"): _credit_sheet(rated_low=True)}))
+    assert s.status is ds.SourceStatus.PRESENT
+    v = s.value or ""
+    assert "name Overall/Operational/Solvency/Liquidity 3/3/2/2" in v      # all four name dims
+    assert "peer-median O/Op/S/L 2.5/2.5/2.5/2.5" in v                     # all four peer medians
+
+
+def test_self_referential_twin_dropped_as_hidden_qa_flag() -> None:
+    """(R2) A twin naming the SUBJECT with no resolved past period is a hallucinated self-comparison
+    — DROPPED at validation with a QA flag naming it. A dated self-arc ('2022-2024') and a
+    genuine other-company twin BOTH survive."""
+    payload = {
+        "bull_points": [{"claim": "revenue reaccelerated last quarter", "source_ref": "10-Q"}],
+        "bear_points": [],
+        "twin_reference_cases": [
+            {"name": "Microvast (battery-derating pattern)", "outcome": "went terminal",
+             "distinguishing_fact": "the same overshoot", "source": "fab"},  # self-ref → drop
+            {"name": "Microvast 2022-2024 arc", "outcome": "recovered off the 2022 low",
+             "distinguishing_fact": "a dated resolved period", "source": "fab"},  # keep
+            {"name": "SolarEdge", "outcome": "demand cliff", "distinguishing_fact": "x",
+             "source": "fab"},  # other co → keep
+        ],
+        "decisive_question": {"question": "does the cause reverse?", "evidence_for": [],
+                              "evidence_against": []},
+        "key_unknowns": [],
+    }
+    synth, flags, _ = syn.synthesize(
+        _minimal_mech(), llm=_FakeLlm(payload), ticker="MVST", name="Microvast Holdings, Inc."
+    )
+    assert synth is not None
+    kept = {t.name for t in synth.twin_reference_cases}
+    assert kept == {"Microvast 2022-2024 arc", "SolarEdge"}          # the self-ref twin was dropped
+    drop_flag = next(f for f in flags if "self-referential 'Microvast (battery" in f)
+    caveats, qa = dflags.partition(flags)
+    assert drop_flag in qa and drop_flag not in caveats  # the drop is dev-only QA, hidden
+    assert any(f.startswith("TWIN 1 self-referential") for f in qa)  # the dev-only count line
+
+
+def test_internal_rule_leak_flagged_as_hidden_qa() -> None:
+    """(R3) A synthesis field that leaks an internal 'rule N' reference is caught by the QA lint —
+    the reader must never see the machinery. The flag is dev-only (hidden from human caveats)."""
+    payload = {
+        "bull_points": [{"claim": "the balance sheet self-funds two years", "source_ref": "x"}],
+        "bear_points": [],
+        "twin_reference_cases": [],
+        "decisive_question": {"question": "does the cause reverse?", "evidence_for": [],
+                              "evidence_against": []},
+        "key_unknowns": ["whether the thesis survives rule 8 scrutiny"],  # leaked rule ref
+    }
+    _synth, flags, _ = syn.synthesize(
+        _minimal_mech(), llm=_FakeLlm(payload), ticker="X", name="X Co"
+    )
+    leak = next(f for f in flags if f.startswith("RULE-LEAK"))
+    assert "rule 8" in leak
+    caveats, qa = dflags.partition(flags)
+    assert leak in qa and leak not in caveats  # dev-only QA, not a human caveat
+
+
+# --- PR C audit fixes (post-review regressions): fail-loud coherence, same-quarter YoY, CF join,
+# --- posture as-of anchoring, FY↔LTM basis, R2 false-drop -----------------------------------------
+
+
+def test_bs_bridge_coherence_missing_debt_fails_loud_not_zero() -> None:
+    """(C3 fix) A bridge that OMITS the debt row must not read as a disagreement and must never
+    fabricate a '$0M' — the present cash leg reconciles, the absent debt leg is 'not cross-checked'.
+    (The pre-fix code rendered a false DISAGREE with a made-up debt $0M.)"""
+    bs: list[list[typing.Any]] = [
+        ["Balance Sheet as of:", "Mar-31-2026"],
+        ["Total Cash & ST Investments", 126.1], ["Total Debt", 326.0],
+    ]
+    b = _fin_bundle({"Balance Sheet": bs}, freq="quarterly")
+    iv = ds.ImpliedValuation(
+        implied_equity=ds.Sourced.unknown(note="n/a"),
+        bridge=ds.Sourced.present("TEV → equity: + cash $126.1M", source_ref="x"),  # NO debt row
+        market_cap=ds.Sourced.unknown(note="n/a"),
+        comparability_gate=ds.Sourced.unknown(note="n/a"),
+    )
+    v = dm._bs_bridge_coherence(b, iv).value or ""
+    assert "DISAGREE" not in v            # a missing bridge row is not a disagreement
+    assert "$0" not in v                  # never fabricate a zero for an ABSENT figure
+    assert "reconcile" in v and "not cross-checked" in v  # cash reconciles; debt honestly flagged
+
+
+def test_quarterly_yoy_requires_same_quarter_not_just_four_back() -> None:
+    """(C2 fix) YoY is same-quarter ONLY. A duplicated/restated quarter makes 'four back' land on
+    the WRONG quarter; the guard renders '—' rather than a cross-quarter number mislabelled 'YoY'.
+    (The pre-fix code computed Q1-26÷Q2-25 and called it YoY.)"""
+    q: list[list[typing.Any]] = [
+        ["For the Fiscal Period",
+         "3 months Q1 Mar-31-2025", "3 months Q2 Jun-30-2025", "3 months Q2 Jun-30-2025",
+         "3 months Q3 Sep-30-2025", "3 months Q4 Dec-31-2025", "3 months Q1 Mar-31-2026"],
+        ["Total Revenue", 90.0, 94.0, 94.0, 95.0, 96.0, 61.0],
+        ["Gross Profit", 30.0, 31.0, 31.0, 32.0, 33.0, 20.0],
+    ]
+    s = cs.financial_summary_quarterly(_fin_bundle({"Income Statement": q}, freq="quarterly"))
+    ft = s.value
+    assert ft is not None
+    qr = {r.label: r.cells for r in ft.rows}
+    assert ft.columns.count("Q2-25") == 2      # the duplicate is visible in the header
+    assert qr["Revenue YoY"][5] == "—"         # Q1-26 vs a Q2 four-back is NOT a YoY → suppressed
+
+
+def test_financial_summary_annual_cf_duplicate_column_drops_to_dash() -> None:
+    """(C4 fix) A DUPLICATE Cash-Flow fiscal-period column (a restated + an as-reported copy of one
+    year) is ambiguous → its CF cell drops to '—' (fail loud), never silently keeps whichever landed
+    last. The unambiguous years still match by (short, is_ltm) despite an IS/CF reclass gap."""
+    inc: list[list[typing.Any]] = [
+        ["For the Fiscal Period", "Reclassified 12 months Dec-31-2023", "12 months Dec-31-2024",
+         "12 months Dec-31-2025"],
+        ["Total Revenue", 350.0, 400.0, 430.0],
+    ]
+    cf: list[list[typing.Any]] = [  # FY23 as-reported (IS had it Reclassified) + FY24 TWICE
+        ["For the Fiscal Period", "12 months Dec-31-2023", "12 months Dec-31-2024",
+         "Reclassified 12 months Dec-31-2024", "12 months Dec-31-2025"],
+        ["Cash from Ops.", 35.0, 999.0, 40.0, 45.0],
+    ]
+    b = _fin_est_bundle({"Income Statement": inc, "Cash Flow": cf}, {"Trends": _c1_trends()})
+    ft = cs.financial_summary_annual(b, as_of="2026-05-15").value
+    assert ft is not None
+    cfo = {r.label: r.cells for r in ft.rows}["CFO ($M)"]
+    assert cfo[0] == "35"   # FY23: IS-reclassified vs CF-as-reported still matches by period id
+    assert cfo[1] == "—"    # FY24: duplicate CF column → ambiguous → fail loud, NOT 999 or 40
+    assert cfo[2] == "45"   # FY25: unambiguous
+
+
+def test_bs_posture_anchors_all_lines_to_the_cash_period() -> None:
+    """(C3 fix) Every posture line is read AT the cash column's period (one as-of). A partial latest
+    quarter (debt/TCL blank in the newest column) must NOT back-fill a stale prior-period value —
+    the line is omitted, and net working capital is never stitched across two dates."""
+    bs: list[list[typing.Any]] = [
+        ["Balance Sheet as of:", "Dec-31-2025", "Mar-31-2026"],
+        ["Total Cash & ST Investments", 120.0, 126.1],   # cash present in the latest (Mar-26)
+        ["Total Debt", 320.0, ""],                    # debt BLANK latest → omit, not stale Dec-25
+        ["Total Current Assets", 300.0, 310.0],
+        ["Total Current Liabilities", 150.0, ""],         # TCL blank latest → NWC omitted
+    ]
+    v = cs.balance_sheet_posture(_fin_bundle({"Balance Sheet": bs}, freq="quarterly")).value or ""
+    assert "as of Mar-26" in v and "cash & ST inv 126" in v  # anchored to the cash period
+    assert "total debt" not in v                             # stale Dec-25 debt NOT back-filled
+    assert "net working capital" not in v                    # never stitched across two dates
+
+
+def test_twin_guard_keeps_legitimate_peer_twins() -> None:
+    """(R2 fix) The self-referential guard must not DROP a legitimate other-company twin via a
+    substring ticker match ('BA' in 'Alibaba', 'KO' in 'Kohl's') or a shared generic/industry lead
+    ('General', 'First'/'Solar'). Whole-token matching + the denylist keep all four peers."""
+    cases = [
+        ("GE", "General Electric Company", "General Dynamics"),   # shared generic lead 'General'
+        ("BA", "The Boeing Company", "Alibaba Group"),            # 'BA' is a substring of 'aliBAba'
+        ("KO", "The Coca-Cola Company", "Kohl's Corporation"),    # 'KO' is a substring of 'KOhl's'
+        ("FSLR", "First Solar, Inc.", "Canadian Solar Inc."),     # shared industry word 'Solar'
+    ]
+    for ticker, name, peer in cases:
+        tw = ds.TwinCase(name=peer, outcome="went terminal", distinguishing_fact="x", source="fab")
+        assert syn._self_referential_twin(tw, ticker, name) is False, f"{peer} wrongly dropped"
+    # the true self-reference (subject named, no dated arc) is STILL caught
+    selfref = ds.TwinCase(name="Boeing, again", outcome="the same overshoot",
+                          distinguishing_fact="x", source="fab")
+    assert syn._self_referential_twin(selfref, "BA", "The Boeing Company") is True

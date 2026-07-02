@@ -202,6 +202,7 @@ function renderDossier(d, verdict) {
     sec("Management commentary", "Earnings-call transcript — a pointer for the human to read in full; never a machine-curated excerpt.",
       fact("Transcript", m.management_commentary)),
     synthesis(d.synthesis),
+    appendixBlock(m),  // C: financial-summary appendix — after the twins, before the verdict
     loggedVerdict(verdict, d.ticker, d.reference_date),
   ].join("");
 }
@@ -499,6 +500,34 @@ function impliedBlock(iv) {
     fact("Name market cap ($M) — the ADJACENT fact to compare against", iv.market_cap) +
     fact("Bridge (TEV → equity)", iv.bridge) +
     table);
+}
+
+// (C) as-of header, floor-aware — mirrors render._asof_header ('≥' = an unverified export floor)
+function asOfHeader(s) {
+  if (!s || s.status !== "present" || !s.value) return "as-of UNKNOWN";
+  const v = String(s.value);
+  return v.startsWith("≥") ? `export date unverified (data ≥ ${v.slice(1)})` : `as-of ${v}`;
+}
+
+// (C1/C2) a Sourced[FinTable] → the shared dataTable; UNKNOWN/MISSING falls through to a fact badge
+function finTable(label, s) {
+  if (!s || s.status !== "present" || !s.value) return fact(label, s);
+  const ft = s.value;
+  const rows = (ft.rows || []).map((r) => ({ label: r.label, cells: r.cells }));
+  return dataTable(label, s.source_ref, ft.columns || [], rows, ft.note || "");
+}
+
+// (C1–C4) FINANCIAL-SUMMARY appendix — actuals + consensus estimates; AFTER the twins, before the
+// verdict. Absent for a pre-C dossier.json (back-compat → ""). Every table routes through dataTable.
+function appendixBlock(m) {
+  const fs = m.financial_summary;
+  if (!fs) return "";
+  return sec(`Appendix — financial summary (actuals + consensus estimates) — ${asOfHeader(fs.as_of)}`,
+    "Consensus (E) columns are marked + as-of-stamped; growth never spans a basis change (— basis); actuals fail loud on gaps. The machine assembles — no verdict.",
+    finTable("Annual ($M; E = consensus) — last-4-FY + LTM + FY26E/FY27E", fs.annual) +
+    finTable("Trailing 8 quarters — the recent-quarter trajectory", fs.quarterly) +
+    fact("Balance-sheet posture", fs.balance_sheet) +
+    fact("Coherence — balance sheet vs implied-valuation bridge", fs.coherence));
 }
 
 // (4a) horizon → metric × [FQ2, FQ3] table; zero-breadth-across-all-windows rows collapse to a line

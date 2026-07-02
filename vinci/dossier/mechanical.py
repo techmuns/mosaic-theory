@@ -24,7 +24,9 @@ from vinci.dossier.schemas import (
     ConsensusContext,
     DrawdownCause,
     FilingRef,
+    FinancialSummary,
     IdiosyncraticVsShared,
+    ImpliedValuation,
     LeverageSurvival,
     MechanicalLayer,
     Quality,
@@ -876,6 +878,62 @@ def _consensus(bundle: CiqBundle) -> ConsensusContext:
     )
 
 
+def _bs_bridge_coherence(bundle: CiqBundle, implied: ImpliedValuation) -> Sourced[str]:
+    """(C3 coherence gate) The Balance-Sheet cash & total debt must reconcile with the
+    implied-valuation bridge (a DIFFERENT CIQ sheet). On disagreement, render BOTH with sources + a
+    soft caveat — never silently prefer one."""
+    bs_cash = ciq_sheets._bs_latest(bundle, "Total Cash & ST Investments")
+    bs_debt = ciq_sheets._bs_latest(bundle, "Total Debt")
+    br = implied.bridge.value if implied.bridge.status is SourceStatus.PRESENT else ""
+    mc = re.search(r"cash \$([\d,.]+)", br or "")
+    md = re.search(r"debt \$([\d,.]+)", br or "")
+    bc = float(mc.group(1).replace(",", "")) if mc else None
+    bd = float(md.group(1).replace(",", "")) if md else None
+    src = "CIQ Financials→Balance Sheet vs Comparable Analysis→Implied Valuation"
+
+    def close(a: float | None, b: float | None) -> bool:
+        return a is not None and b is not None and abs(a - b) <= max(1.0, abs(b) * 0.05)
+
+    def money(v: float | None) -> str:  # an ABSENT figure is UNKNOWN — never a fabricated $0
+        return f"${v:,.0f}M" if v is not None else "UNKNOWN"
+
+    # Each leg (cash / debt) is cross-checkable ONLY when both its figures are present. An absent
+    # figure is UNKNOWN — it is never coerced to $0 and never read as a disagreement (fail loud):
+    # real CIQ bridges omit a row routinely; "$0" would fabricate a number the source never gave.
+    legs = (("cash", bs_cash.value, bc), ("debt", bs_debt.value, bd))
+    checkable = [(n, a, b) for n, a, b in legs if a is not None and b is not None]
+    if not checkable:
+        return Sourced.unknown(note="coherence: BS & bridge cash/debt absent — not cross-checked")
+    absent = [n for n, a, b in legs if a is None or b is None]
+    tail = f" ({'/'.join(absent)} not cross-checked — absent, not zero)" if absent else ""
+    if any(not close(a, b) for _n, a, b in checkable):
+        pairs = "; ".join(f"{n} BS {money(a)} vs bridge {money(b)}" for n, a, b in legs)
+        return Sourced.present(
+            f"CAVEAT — the two CIQ sources DISAGREE: {pairs}; verify which the verdict should "
+            "use — neither is silently preferred.",
+            source_ref=src,
+        )
+    pairs = "; ".join(f"{n} BS {money(a)} / bridge {money(b)}" for n, a, b in checkable)
+    return Sourced.present(
+        f"{pairs} — reconcile with the implied-valuation bridge{tail}.",
+        source_ref=src,
+    )
+
+
+def _financial_summary(bundle: CiqBundle, implied: ImpliedValuation) -> FinancialSummary:
+    """(C) The Financial-Summary appendix — annual actuals+estimates (C1/C4), trailing-8-Q (C2), the
+    balance-sheet posture (C3), and the BS↔bridge coherence gate. Estimate columns inherit the
+    catalyst as-of (header > sidecar > floor)."""
+    asof = ciq_sheets.estimates_as_of(bundle)
+    return FinancialSummary(
+        annual=ciq_sheets.financial_summary_annual(bundle, as_of=asof.value),
+        quarterly=ciq_sheets.financial_summary_quarterly(bundle),
+        balance_sheet=ciq_sheets.balance_sheet_posture(bundle),
+        coherence=_bs_bridge_coherence(bundle, implied),
+        as_of=asof,
+    )
+
+
 def _leverage_survival(quality: Quality, bundle: CiqBundle) -> LeverageSurvival:
     """(B2) One unified leverage & survival block: the name's CIQ NET-debt/EBITDA + the comps
     TOTAL-debt/EBITDA (name vs peer median) side by side, each basis LABELED — no net-vs-total
@@ -987,6 +1045,7 @@ def assemble_mechanical(
         record, edgar, bundle, reference_date, adj_lev,
         fcf=fcf, margin=margin, trajectory=trajectory,
     )
+    implied_val = ciq_sheets.implied_valuation(bundle, peer_comps.comparability)
     mech = MechanicalLayer(
         valuation=_valuation(
             record, bundle, adj_eps, adj_ev, pe_note=pe_recon[1] if pe_recon else None
@@ -1003,7 +1062,9 @@ def assemble_mechanical(
         # B2 unified leverage & survival (both bases + credit health) + B3 CIQ implied valuation
         # (posed; the comparability gate from peer_comps renders on its header).
         leverage_survival=_leverage_survival(quality, bundle),
-        implied_valuation=ciq_sheets.implied_valuation(bundle, peer_comps.comparability),
+        implied_valuation=implied_val,
+        # C — Financial-Summary appendix (actuals + consensus), reconciled vs the implied bridge.
+        financial_summary=_financial_summary(bundle, implied_val),
         management_commentary=ciq_sheets.management_commentary(bundle),
     )
     flags: list[str] = []

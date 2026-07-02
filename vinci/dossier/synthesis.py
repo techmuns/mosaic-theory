@@ -380,7 +380,9 @@ _SYSTEM = (
     "or assert an implied "
     "upside / 'X% mispriced' — there is no field for it. When comparability flags a HETEROGENEOUS "
     "peer set, treat every peer stat as a CONFIDENCE-GATED input, not a clean benchmark; and read "
-    "the trailing-vs-forward (LTM vs NTM) peer spread before leaning on any single multiple."
+    "the trailing-vs-forward (LTM vs NTM) peer spread before leaning on any single multiple. "
+    "(11) NEVER reference an internal rule, instruction, or their numbers ('rule 8', 'per rule 3') "
+    "in any output field — the reader sees only source-bound analysis, never the machinery."
 )
 
 
@@ -480,7 +482,49 @@ def _traces(ref: str, universe: set[str]) -> bool:
     return any(ref == u or ref in u or u in ref for u in universe)
 
 
-def _validate(synth: Synthesis, mech: MechanicalLayer) -> tuple[Synthesis, list[str]]:
+# Corporate scaffolding + industry nouns SHARED across peers — never a unique identifier for the
+# subject, so they must not drive the self-referential match (else 'General'/'First' or an industry
+# word like 'Solar'/'Networks'/'Electric' would drop a legitimate peer twin). The guard errs toward
+# KEEPING: a leaked self-ref renders as a visible, rejectable analogue; a wrongly-dropped peer is a
+# silent loss the analyst never sees.
+_GENERIC_CO_WORDS: frozenset[str] = frozenset({
+    "THE", "INC", "CORP", "CORPORATION", "COMPANY", "GROUP", "HOLDINGS", "HOLDING", "LTD",
+    "LIMITED", "PLC", "CLASS", "COMMON", "GENERAL", "FIRST", "UNITED", "AMERICAN", "NATIONAL",
+    "GLOBAL",
+    "INTERNATIONAL", "BANK", "BANCORP", "FINANCIAL", "FINANCE", "CAPITAL", "TRUST", "INSURANCE",
+    "ENERGY", "SOLAR", "POWER", "MOTORS", "MOTOR", "AUTO", "AIRLINES", "AIRWAYS", "PHARMACEUTICALS",
+    "PHARMA", "THERAPEUTICS", "BIOSCIENCES", "TECHNOLOGIES", "TECHNOLOGY", "TECH", "SYSTEMS",
+    "SYSTEM", "NETWORKS", "NETWORK", "SOFTWARE", "SEMICONDUCTOR", "INDUSTRIES", "INDUSTRIAL",
+    "ENTERPRISES", "PARTNERS", "PROPERTIES", "REALTY", "RESOURCES", "MATERIALS", "MINING", "FOODS",
+    "BRANDS", "STORES", "RETAIL", "HEALTH", "HEALTHCARE", "MEDICAL", "COMMUNICATIONS", "MEDIA",
+    "ENTERTAINMENT", "GAMING", "SOLUTIONS", "SERVICES", "PRODUCTS", "MANUFACTURING", "ELECTRIC",
+    "ELECTRONICS", "ELECTRONIC", "DIGITAL", "DATA",
+})
+
+
+def _self_referential_twin(tw: TwinCase, ticker: str, name: str) -> bool:
+    """R2: True iff a twin names the SUBJECT itself WITHOUT an explicit resolved past period. A
+    valid twin is ANOTHER company, or the subject with a dated arc ('2022-2024'). The subject is
+    matched by WHOLE-TOKEN equality on its ticker or a DISTINCTIVE name word (generic/industry
+    words and short tokens excluded) — NEVER a substring, so a short ticker inside another company
+    ('BA' in 'Alibaba', 'KO' in 'Kohl's') or a shared generic lead ('General', 'First') cannot
+    false-drop a legitimate peer twin. Errs toward keeping (a leaked self-ref stays visible)."""
+    tw_tokens = set(re.findall(r"[A-Z0-9]+", tw.name.upper()))
+    subj = {
+        w for w in re.findall(r"[A-Z0-9]+", name.upper())
+        if len(w) >= 4 and w not in _GENERIC_CO_WORDS
+    }
+    tkr = ticker.strip().upper()
+    if len(tkr) >= 3:  # a whole-token ticker match; short tickers (≤2) collide with common words
+        subj.add(tkr)
+    if not (subj & tw_tokens):
+        return False
+    return not re.search(r"\b(19|20)\d\d\b", f"{tw.name} {tw.distinguishing_fact} {tw.outcome}")
+
+
+def _validate(
+    synth: Synthesis, mech: MechanicalLayer, ticker: str = "", name: str = ""
+) -> tuple[Synthesis, list[str]]:
     """Apply the guardrails: cite-check, number-trace, twin checks, directional lint → flags."""
     flags: list[str] = []
     refs = _refs_in(mech)
@@ -672,8 +716,29 @@ def _validate(synth: Synthesis, mech: MechanicalLayer) -> tuple[Synthesis, list[
                 "peer stat"
             )
 
+    # R2 twin-integrity guard: a twin naming the SUBJECT is invalid unless it cites an explicit
+    # resolved PAST period (a '2022-2024 arc'); drop the self-referential hallucinations (QA-only).
+    kept_twins = []
+    dropped = 0
+    for tw in synth.twin_reference_cases:
+        if _self_referential_twin(tw, ticker, name):
+            dropped += 1
+            flags.append(
+                f"TWIN self-referential '{tw.name}' suppressed — a twin must be ANOTHER "
+                "company, or the subject with an explicit resolved past period ('2022-2024 arc')"
+            )
+        else:
+            kept_twins.append(tw)
+    if dropped:
+        flags.append(f"TWIN {dropped} self-referential twin(s) suppressed")
+    # R3 internal-rule leak: any 'rule N' reference in the output is a leaked internal rule → QA.
+    for hit in sorted({m.group(0) for m in re.finditer(r"rule\s+\d+", blob, re.IGNORECASE)}):
+        flags.append(f"RULE-LEAK '{hit}' — internal rule reference leaked into synthesis output")
     validated = synth.model_copy(
-        update={"bull_points": bull, "bear_points": bear, "decisive_question": dq}
+        update={
+            "bull_points": bull, "bear_points": bear, "decisive_question": dq,
+            "twin_reference_cases": kept_twins,
+        }
     )
     return validated, flags
 
@@ -775,5 +840,5 @@ def synthesize(
         log_parts += ["", "=== INCOMPLETE ===", note]
         flag = f"LLM synthesis UNAVAILABLE — {note} (likely truncated)"
         return None, [flag], "\n".join(log_parts)
-    synth, flags = _validate(_parse(_decode_escapes(raw)), mech)
+    synth, flags = _validate(_parse(_decode_escapes(raw)), mech, ticker=ticker, name=name)
     return synth, flags, "\n".join(log_parts)

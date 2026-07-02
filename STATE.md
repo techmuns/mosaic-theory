@@ -1127,6 +1127,68 @@ Each line: *what it does* — *verified how*.
     unverified-export caveat is gone (sidecar removed after; data/ stays git-clean). Frontend
     confirmed by a real preview render (4 tables, no console errors). ruff + mypy --strict (68) +
     `pytest -m "not network"` green. On a branch → PR; agent never merges.*
+  - **PR C — Financial-Summary appendix (actuals + consensus fusion) + three riders (2026-07-02).**
+    A new **APPENDIX — FINANCIAL SUMMARY** section (rendered AFTER the twins, before the verdict
+    footer) plus riders R1–R3. Scope: `ciq_sheets`/`mechanical`/`render`/`schemas`/`flags`/
+    `synthesis` + `dossier.js` + tests. New schema: `FinancialSummary`/`FinTable`/`FinRow` (a table
+    of FACTS — the no-conclusion schema-walk now reaches them, asserted).
+    - **C1 annual + estimates** — last-4-FY + LTM actuals (Income Statement + Cash-Flow essentials,
+      C4) fused with **FY2026E/FY2027E consensus** (Estimates→Trends 'Current'). E columns are
+      marked + as-of-stamped (header > sidecar > floor); revenue growth is **NEVER computed across a
+      basis change** ("— (basis)") and the actual→estimate boundary reads "E vs actual". Core rows
+      fail-loud UNKNOWN; supplementary render-if-present.
+    - **C2 trailing-8-quarter** — Revenue, gross margin, EBITDA (+margin) *iff* the quarterly export
+      carries EBITDA else the rows are OMITTED and the note says so, QoQ, and **same-basis-only YoY**
+      (a Reclassified quarter four back reads "— (basis)").
+    - **C3 balance-sheet posture** (period-labelled) + the **BS↔bridge coherence gate**: the Balance
+      Sheet cash/debt must reconcile with the implied-valuation bridge (a DIFFERENT CIQ sheet); on
+      disagreement it renders BOTH with sources + a soft caveat — never silently prefers one.
+      Net-debt/EBITDA is NOT recomputed (cross-refs the leverage block).
+    - **R1 credit-health completion** — all four dimensions AND the **peer median per dimension**
+      (was Overall-only): "peer-median O/Op/S/L …".
+    - **R2 twin-integrity guard (bug → root cause → regression-pinned).** *Bug:* the LLM sometimes
+      emitted a "twin" that is the SUBJECT compared to itself — fluent self-referential noise. *Root
+      cause:* twin validation checked citations/numerics but never that a twin is ANOTHER entity.
+      *Fix:* a schema-level guard drops a twin naming the subject UNLESS it cites an explicit resolved
+      past period ('2022-2024 arc'); each drop emits a **dev-only QA flag** (hidden from the human
+      caveats). *Pinned:* a synthetic self-ref twin is dropped, a dated self-arc + a genuine
+      other-company twin both survive.
+    - **R3 internal-rule leak (bug → root cause → regression-pinned).** *Bug:* synthesis text could
+      leak an internal instruction reference ("per rule 8"). *Fix:* a `_SYSTEM` clause forbids it +
+      a QA lint flags any `rule \d+` in the rendered synthesis fields (dev-only). *Pinned:* a
+      "rule 8" leak is flagged and classified hidden-QA.
+    - **All appendix tables born through the shared compact renderer** — the B.1 enumeration test is
+      extended to them (every GFM table carries the `<!-- ds-table -->` marker; C1 + C2 included).
+    *Verified on the REAL MVST export (6 cases): (1) annual FY26E/FY27E marked + floor-stamped
+    (≥2026-05-15), FY26E rev 444 / EBITDA 62 — coherent with the catalyst acceleration read; the
+    FY23(R)→FY24 growth reads "— (basis)", the FY25→LTM reads "— (basis)", the LTM→FY26E reads
+    "E vs LTM +20%" (naming its TRUE base). (2) 8Q Q1-2026 collapse visible (96→61, QoQ −37%) with
+    same-quarter/same-basis YoY guards ("— (basis)" across the Reclassified quarters, a clean +9%
+    where same-basis). (3) BS posture cash 126 / debt 326 / net debt 200 RECONCILES with the bridge
+    (126/326). (4) credit health all four peer-median dims (2.5/2.5/3/3). (5) a synthetic
+    self-referential twin dropped with its hidden QA flag. (6) every appendix table via the shared
+    renderer (2 tables = 2 markers). Frontend confirmed by a real preview render — appendix sits
+    after the twins / before the verdict, both tables + posture + coherence render, no console errors
+    (the injected preview artifact was reverted; the PR carries code+tests only).*
+    - **Post-review AUDIT hardening (3 parallel adversarial reviewers + empirical MVST probes; each
+      fix regression-pinned).** Six defects found and fixed before merge — none broke MVST (all were
+      latent on the specific export), but each corrupts the analyst's numbers on other inputs:
+      (a) **coherence fail-loud** — a bridge that omits the debt row no longer renders a false
+      "DISAGREE" with a fabricated "$0M"; the absent leg reads "not cross-checked" (a "never
+      fabricate" fix). (b) **quarterly YoY same-quarter guard** — a duplicated/gapped quarter no
+      longer produces a cross-quarter number mislabelled "YoY" (restores the check the pre-existing
+      `_quarterly_revenue_yoy` already had). (c) **cash-flow join** by fiscal-period identity
+      (short, is_ltm) + duplicate→"—" — NOT the bare short (collision) and NOT the reclass flag (CIQ
+      tags a P&L reclass on the IS but not the CF for the SAME year — real MVST FY22/FY23 — so a
+      basis match would drop valid CF). (d) **BS posture as-of anchoring** — every line read at the
+      cash column's period; a partial latest quarter no longer stitches a stale debt or a
+      period-mixed NWC under one "as of". (e) **FY↔LTM is its own basis** — growth never spans the
+      FY↔ttm boundary ("— (basis)"), and the estimate boundary names its true base ("E vs LTM"/"E vs
+      FY") not a misleading "E vs actual". (f) **R2 twin-guard false-DROP** — whole-token matching +
+      a generic/industry denylist, so a short ticker inside another name ("BA"⊂"Alibaba") or a shared
+      lead ("General"/"First"/"Solar") no longer silently drops a legitimate peer twin.
+    *ruff + mypy --strict (68) + `pytest -m "not network"` (293, incl. the 6 audit regressions) green.
+    Audited, fixed, and merged on explicit per-PR approval.*
 - _Whole suite green (ruff + mypy --strict clean; `pytest -m "not network"` passes)._
 
 ## 3. FALSIFIED — tested and retired (NOT deferred)
@@ -1236,9 +1298,10 @@ without starving the lead loop; each becomes a *real* widener only when its OWN 
     native-cadence blocks prove insufficient for the human read in real use (monitor; don't build
     preemptively).
   - **PR B / C / D queue** (each its own scoped PR, per the same spec's phasing): **B** = comps-workbook
-    changes; **C** = section reordering; **D** = the transcript-block full restructure (PR A did only the
-    one-line relocation to the bottom of the mechanical layer) + appendix build. Buildable per §4's
-    GOVERNOR; none started.
+    changes — **DONE** (PR B + B.1); **C** = the Financial-Summary appendix build (actuals + consensus
+    fusion) + riders — **DONE** (this PR; the appendix originally slated under D landed here per the
+    user's C spec); **D** = the transcript-block full RESTRUCTURE (PR A did only the one-line relocation
+    to the bottom of the mechanical layer) — **remaining**. Buildable per §4's GOVERNOR.
 
 ### Edge-hypothesis ledger — the full inventory (record-only doc; the edges are gated, built per §4's GOVERNOR)
 
