@@ -199,22 +199,40 @@ def _table(
     return out
 
 
+# --- B.1 shared numeric formatters (ONE place): thousands-consistent, no negative-zero, net-cash
 def _cap(v: float | None) -> str:  # $M → "$1.4B" / "$423M"
     if v is None:
         return "–"
-    return f"${v / 1000:.1f}B" if abs(v) >= 1000 else f"${v:.0f}M"
+    return f"${v / 1000:,.1f}B" if abs(v) >= 1000 else f"${v:,.0f}M"
 
 
-def _pctc(v: float | None) -> str:  # a fraction → "14%", or "–"
-    return f"{v * 100:.0f}%" if v is not None else "–"
+def _pctc(v: float | None) -> str:  # fraction → "14%"; a value rounding to zero is "0%" (never -0%)
+    return f"{round(v * 100):d}%" if v is not None else "–"  # round()→int collapses -0.4% → 0%
 
 
-def _usdc(v: float | None) -> str:  # a $M figure → "199", or "–"
-    return f"{v:,.0f}" if v is not None else "–"
+def _ratioc(s: str | None) -> str:  # a ratio → one decimal ("2" → "2.0"); "NM"/"–" pass through
+    if s is None:
+        return "–"
+    try:
+        return f"{float(s):.1f}"
+    except (ValueError, TypeError):
+        return str(s)
+
+
+def _netdebt(v: float | None) -> str:  # $M net debt; NEGATIVE = net cash, labeled (CATL case)
+    if v is None:
+        return "–"
+    return f"{-v:,.0f} (net cash)" if v < 0 else f"{v:,.0f}"
 
 
 def _numc(v: float | None) -> str:  # a plain number cell → "550.7", or "–"
     return f"{v:,.1f}" if v is not None else "–"
+
+
+def _split_note(text: str) -> tuple[str, str]:
+    """Split a trailing '  [note]' off a value string → (body, note)."""
+    m = re.search(r"\s*\[([^\]]*)\]\s*$", text)
+    return (text[: m.start()].rstrip(), m.group(1)) if m else (text, "")
 
 
 def _peer_grid_lines(s: Sourced[Any]) -> list[str]:
@@ -223,7 +241,10 @@ def _peer_grid_lines(s: Sourced[Any]) -> list[str]:
     label = "Per-peer grid (cap · margin · growth · leverage — name vs peers)"
     if s.status is not SourceStatus.PRESENT or not s.value:
         return [_fact(label, s)]
-    cols = ["Company", "Cap", "EBITDA mgn", "Rev g 1y", "EBITDA g 1y", "Debt/EBITDA", "Net debt $M"]
+    # full-word headers (B.1 item 2); 6 value columns — the row LABEL is the company (the shared
+    # renderer prepends the empty label header), so the header count matches the cell count exactly.
+    cols = ["Cap", "EBITDA margin", "Rev growth (1y)", "EBITDA growth (1y)",
+            "Total debt/EBITDA", "Net debt ($M)"]
     trows: list[list[str]] = []
     name_rows: set[int] = set()
     for i, r in enumerate(s.value):
@@ -232,9 +253,53 @@ def _peer_grid_lines(s: Sourced[Any]) -> list[str]:
         tag = " · the name" if r.is_name else (" (peers)" if r.is_median else "")
         trows.append([
             r.name + tag, _cap(r.market_cap), _pctc(r.ebitda_margin), _pctc(r.rev_growth_1y),
-            _pctc(r.ebitda_growth_1y), (r.debt_to_ebitda or "–"), _usdc(r.net_debt),
+            _pctc(r.ebitda_growth_1y), _ratioc(r.debt_to_ebitda), _netdebt(r.net_debt),
         ])
     return _table(label, s.source_ref, cols, trows, name_rows=frozenset(name_rows))
+
+
+def _multiples_lines(s: Sourced[Any]) -> list[str]:
+    """(B4) Trading multiples → the shared table (multiple × Name/Low/Median/Mean/High)."""
+    label = "Trading multiples (name vs peer Low/Median/Mean/High · LTM+NTM)"
+    if s.status is not SourceStatus.PRESENT or not s.value:
+        return [_fact(label, s)]
+    body, note = _split_note(str(s.value))
+    rows: list[list[str]] = []
+    for seg in body.split(";"):
+        m = re.match(
+            r"\s*(.+?):\s*name\s+(\S+)\s+vs peers Low\s+(\S+)\s*/\s*Median\s+(\S+)\s*/\s*"
+            r"Mean\s+(\S+)\s*/\s*High\s+(\S+)",
+            seg,
+        )
+        if m:
+            rows.append(list(m.groups()))
+    if not rows:
+        return [_fact(label, s)]
+    return _table(label, s.source_ref, ["Name", "Low", "Median", "Mean", "High"], rows, note)
+
+
+def _roster_lines(s: Sourced[Any]) -> list[str]:
+    """(B4) Peer-set roster → the shared table (peer × mkt-cap/business); 'the name' as a footer."""
+    label = "Peer set (roster · caps · business)"
+    if s.status is not SourceStatus.PRESENT or not s.value:
+        return [_fact(label, s)]
+    text = str(s.value)
+    note = ""
+    nm = re.search(r"\|\s*the name:\s*(.+)$", text)
+    if nm:
+        note = f"the name: {nm.group(1).strip()}"
+        text = text[: nm.start()]
+    text = re.sub(r"^\s*\d+\s+peers\s+—\s*", "", text)
+    rows: list[list[str]] = []
+    for seg in text.split(";"):
+        m = re.match(r"\s*(.+?)\s+(\$[\d.,]+[BM])\s+—\s+(.*)", seg)
+        if m:
+            rows.append([m.group(1).strip(), m.group(2), m.group(3).strip()])
+        elif seg.strip():
+            rows.append([seg.strip(), "–", ""])
+    if not rows:
+        return [_fact(label, s)]
+    return _table(label, s.source_ref, ["Mkt cap", "Business"], rows, note)
 
 
 def _leverage_block(m: MechanicalLayer) -> list[str]:
@@ -360,12 +425,10 @@ def render_markdown(d: Dossier) -> str:
         _fact("Geographic", m.concentration.geographic),
         "",
         "### Peer comps (CIQ Company Comparable Analysis — consensus comp, framed to RESIST)",
-        _fact("Peer set (roster · caps · business)", m.peer_comps.peer_set),
+        # B4: the roster + trading multiples route through the ONE shared table renderer.
+        *_roster_lines(m.peer_comps.peer_set),
         _fact("Comparability (confidence gate)", m.peer_comps.comparability),
-        _fact(
-            "Trading multiples (name vs peer Low/Median/Mean/High · LTM+NTM)",
-            m.peer_comps.trading_multiples,
-        ),
+        *_multiples_lines(m.peer_comps.trading_multiples),
         # B1: the per-peer grid (medians as the footer) replaces the median-only deltas line.
         *_peer_grid_or_deltas(m.peer_comps),
         "",

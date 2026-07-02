@@ -282,15 +282,8 @@ function concentration(c) {
 // back to the plain-text fact() (never breaks, never alters a value). The NAME column is a FOCAL
 // highlight, not a verdict; the deltas carry NO better/worse colour because the earned-vs-residual
 // call is the human's, not the UI's. Comparability stays prose (a narrative gate, not a grid).
-const PC_NAME = 'class="num" style="background:rgba(47,111,222,.06); font-weight:600; color:var(--ink);"';
-const PC_PEER = 'class="num" style="color:var(--ink-2);"';
-
-function peerFactTable(label, s, head, body, noteText) {
-  const note = noteText ? `<div class="muted" style="font-size:11px; margin-top:5px;">${escapeHtml(noteText)}</div>` : "";
-  const cite = s.source_ref ? `<span class="cite">${escapeHtml(s.source_ref)}</span>` : "";
-  return `<div class="fact"><div class="fact-label">${escapeHtml(label)}</div>
-    <div style="min-width:0;"><div style="overflow-x:auto;"><table class="data">${head}${body}</table></div>${note}${cite}</div></div>`;
-}
+// B.1: the legacy peerFactTable + PC_NAME/PC_PEER are deleted — the peer roster/multiples/deltas
+// now route through the ONE shared dataTable (parsers below just build the rows).
 
 function parsePeerMultiples(text) {
   let s = String(text).trim(), note = "";
@@ -311,9 +304,8 @@ function peerMultiplesFact(label, s) {
   if (!s || s.status !== "present" || s.value == null) return fact(label, s);
   const p = parsePeerMultiples(s.value);
   if (!p) return fact(label, s);
-  const head = `<thead><tr><th>Multiple</th><th class="num">Name</th><th class="num">Low</th><th class="num">Median</th><th class="num">Mean</th><th class="num">High</th></tr></thead>`;
-  const body = `<tbody>${p.rows.map((r) => `<tr><td style="white-space:nowrap;">${escapeHtml(r.metric)}</td><td ${PC_NAME}>${escapeHtml(r.name)}</td><td ${PC_PEER}>${escapeHtml(r.low)}</td><td ${PC_PEER}>${escapeHtml(r.median)}</td><td ${PC_PEER}>${escapeHtml(r.mean)}</td><td ${PC_PEER}>${escapeHtml(r.high)}</td></tr>`).join("")}</tbody>`;
-  return peerFactTable(label, s, head, body, p.note);
+  const rows = p.rows.map((r) => ({ label: r.metric, cells: [r.name, r.low, r.median, r.mean, r.high] }));
+  return dataTable(label, s.source_ref, ["Name", "Low", "Median", "Mean", "High"], rows, p.note || "");
 }
 
 function parsePeerDeltas(text) {
@@ -335,9 +327,8 @@ function peerDeltasFact(label, s) {
   if (!s || s.status !== "present" || s.value == null) return fact(label, s);
   const p = parsePeerDeltas(s.value);
   if (!p) return fact(label, s);
-  const head = `<thead><tr><th>Metric</th><th class="num">Name</th><th class="num">Peer median</th></tr></thead>`;
-  const body = `<tbody>${p.rows.map((r) => `<tr><td style="white-space:nowrap;">${escapeHtml(r.metric)}</td><td ${PC_NAME}>${escapeHtml(r.name)}</td><td ${PC_PEER}>${escapeHtml(r.median)}</td></tr>`).join("")}</tbody>`;
-  return peerFactTable(label, s, head, body, p.note);
+  const rows = p.rows.map((r) => ({ label: r.metric, cells: [r.name, r.median] }));
+  return dataTable(label, s.source_ref, ["Name", "Peer median"], rows, p.note || "");
 }
 
 function parsePeerRoster(text) {
@@ -366,9 +357,8 @@ function peerRosterFact(label, s) {
   if (!s || s.status !== "present" || s.value == null) return fact(label, s);
   const p = parsePeerRoster(s.value);
   if (!p) return fact(label, s);
-  const head = `<thead><tr><th>Peer</th><th class="num">Mkt cap</th><th>Business</th></tr></thead>`;
-  const body = `<tbody>${p.rows.map((r) => `<tr><td style="white-space:nowrap;">${escapeHtml(r.name)}</td><td class="num">${escapeHtml(r.cap)}</td><td style="color:var(--ink-2);">${escapeHtml(r.desc)}</td></tr>`).join("")}</tbody>`;
-  return peerFactTable(label, s, head, body, p.nameCap ? `the name: ${p.nameCap}` : "");
+  const rows = p.rows.map((r) => ({ label: r.name, cells: [r.cap || DASH, r.desc] }));
+  return dataTable(label, s.source_ref, ["Mkt cap", "Business"], rows, p.nameCap ? `the name: ${p.nameCap}` : "");
 }
 
 function peerComps(pc) {
@@ -452,21 +442,25 @@ function dataTable(label, cite, cols, rows, note) {
 }
 
 // $M/%/number cell formatters for the B1 grid + B3 implied table
-const _capC = (v) => (v == null ? DASH : (Math.abs(v) >= 1000 ? `$${(v / 1000).toFixed(1)}B` : `$${v.toFixed(0)}M`));
-const _pctC = (v) => (v == null ? DASH : `${(v * 100).toFixed(0)}%`);
-const _usdC = (v) => (v == null ? DASH : v.toLocaleString(undefined, { maximumFractionDigits: 0 }));
-const _numC = (v) => (v == null ? DASH : v.toLocaleString(undefined, { maximumFractionDigits: 1 }));
+// B.1 shared numeric formatters (ONE place): thousands-consistent, no negative-zero, net-cash
+const _thou = (v, d = 0) => v.toLocaleString(undefined, { minimumFractionDigits: d, maximumFractionDigits: d });
+const _capC = (v) => (v == null ? DASH : (Math.abs(v) >= 1000 ? `$${_thou(v / 1000, 1)}B` : `$${_thou(v)}M`));
+const _pctC = (v) => (v == null ? DASH : `${Math.round(v * 100) || 0}%`);  // round→int; -0 collapses to 0
+const _ratioC = (s) => { if (s == null) return DASH; const n = Number(s); return Number.isNaN(n) ? String(s) : n.toFixed(1); };
+const _netDebtC = (v) => (v == null ? DASH : (v < 0 ? `${_thou(-v)} (net cash)` : _thou(v)));
+const _numC = (v) => (v == null ? DASH : _thou(v, 1));
 
 // (B1) per-peer grid → the shared table; name row + median footer visually distinct
 function peerGridTable(s) {
   const label = "Per-peer grid (cap · margin · growth · leverage — name vs peers)";
   if (!s || s.status !== "present" || !Array.isArray(s.value)) return fact(label, s);
-  const cols = ["Cap", "EBITDA mgn", "Rev g 1y", "EBITDA g 1y", "Debt/EBITDA", "Net debt $M"];
+  const cols = ["Cap", "EBITDA margin", "Rev growth (1y)", "EBITDA growth (1y)",
+                "Total debt/EBITDA", "Net debt ($M)"];  // B.1: full-word headers
   const rows = s.value.map((r) => ({
     label: r.name + (r.is_name ? " · the name" : (r.is_median ? " (peers)" : "")),
     cls: r.is_name ? "name-row" : (r.is_median ? "median-row" : ""),
     cells: [_capC(r.market_cap), _pctC(r.ebitda_margin), _pctC(r.rev_growth_1y),
-            _pctC(r.ebitda_growth_1y), (r.debt_to_ebitda ?? DASH), _usdC(r.net_debt)],
+            _pctC(r.ebitda_growth_1y), _ratioC(r.debt_to_ebitda), _netDebtC(r.net_debt)],
   }));
   return dataTable(label, s.source_ref, cols, rows, "");
 }

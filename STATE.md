@@ -1103,6 +1103,30 @@ Each line: *what it does* — *verified how*.
     --strict (68) + `pytest -m "not network"` green; regression tests for B1/B2/B3 + R1/R2/R3 + B4 +
     old-JSON fallback. On a branch → PR; the agent never merges. Operator re-assembles + commits the
     artifacts post-merge (#51 precedent).*
+  - **PR B.1 — table-unification completion + grid legibility (2026-07-02).** Display-only follow-up
+    (`render.py` + `dossier.js` + tests; no extractor/schema change).
+    - **B4 completed:** the Trading-multiples table AND the Peer-set roster now route through the ONE
+      shared table renderer (they were the last plain-text holdouts); the legacy frontend
+      `peerFactTable` + `PC_NAME`/`PC_PEER` path is DELETED. The unification test was rewritten to
+      ENUMERATE every GFM table in the rendered markdown and assert each carries the `<!-- ds-table
+      -->` marker — it fails before this fix (roster/multiples were `_fact` text) and passes after
+      (the test PR B needed). Also fixed a latent md-grid misalignment (the `cols` list included
+      "Company", double-counting the label column).
+    - **Grid headers:** full words — "EBITDA margin", "Rev growth (1y)", "EBITDA growth (1y)",
+      "Total debt/EBITDA", "Net debt ($M)" (md + frontend + PDF).
+    - **Numeric hygiene (ONE shared formatter set per layer):** ratios to one decimal (2.0 not 2);
+      negative-zero suppressed (`round()`→int, so −0.4% → 0%); a negative net-debt renders "(net
+      cash)" (CATL −42,108 → "42,108 (net cash)"); consistent thousands separators. Pinned incl. the
+      −0.4%→"0%" and CATL net-cash cases.
+    - **R1 CONFIRM:** the AS_OF-sidecar precedence (header > operator-attested sidecar > floor;
+      attested downgrades the staleness caveat to none) **had already shipped in PR B** — confirmed
+      present (`_sidecar_as_of`/`comps_as_of` + the three-branch test), no re-implementation needed.
+    *Verified on the REAL MVST export: the roster + trading-multiples + grid + implied all render as
+    tables in the shared compact idiom; the grid's full headers; CATL "42,108 (net cash)"; Cummins
+    "0%"; and — with an AS_OF sidecar placed — the catalyst as-of reads "operator-attested" and the
+    unverified-export caveat is gone (sidecar removed after; data/ stays git-clean). Frontend
+    confirmed by a real preview render (4 tables, no console errors). ruff + mypy --strict (68) +
+    `pytest -m "not network"` green. On a branch → PR; agent never merges.*
 - _Whole suite green (ruff + mypy --strict clean; `pytest -m "not network"` passes)._
 
 ## 3. FALSIFIED — tested and retired (NOT deferred)
