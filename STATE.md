@@ -2757,3 +2757,38 @@ new `forward.py` + `themes-forward` CLI + tests + this note. **NEXT (gated): (a)
 dispositions → real logging + the frozen-basket freeze; (b) the §3b-ii live co-movement baseline
 (second-phase); (c) multi-driver, where the power floor is actually reachable.** Forward edge NOT claimed —
 the harness MEASURES; the forward paper track is the only arbiter. Edge 2 stays the lead horse.
+
+**THEME-EDGE FORWARD TRACK — FROZEN on a ZERO-RATIFIED triage (2026-07-02, `feat/theme-forward-freeze`;
+scoped modification of `forward.py` + `themes-forward` CLI + 8 tests).** The analyst completed the
+committed-tier triage: **all 56 PASSED, ZERO RATIFIED** — the expected equilibrium of an early-detection
+edge meeting a 3:1 bar (exposure is either already-priced, not-yet-revenue, or not-attributable at the
+moment it is early enough to be non-consensus). **CENTRAL CORRECTNESS: the BUY leg is EMPTY, so
+RATIFIED−PASSED (the core edge-measure) and ALL RATIFIED-dependent spreads (incl. §3b-i equal-weight and
+§3b-ii keyword/co-movement) are UNDEFINED — emitted with a reason, NEVER computed, NEVER 0.0, never a
+silent skip** (`undefined_ratified_measures`; the empty-BUY freeze does NOT error — the DIG-DEEPER guard
+passes, all resolved). The harness freezes THREE cohorts (`freeze_baskets` extended): **BUY = ∅**, **NAIVE
+= all 56 equal-weight** (the apples-to-apples control for the disciplined hold-none), **WATCHLIST = the 5
+genuine-exposure names** (AEHR/MXL/ADEA/PENG/FRMI, each tagged with its verbatim re-underwrite trigger
+from `ai_datacenter_watchlist_triggers.md`), + an OPTIONAL **REAL-7 secondary** (CORZ/BLZE/DGXX/TSSI/
+WYFI/BTBT/CAMT, from the build-2 scan). **The only VALID measures are two beta-confounded DIAGNOSTICS,
+FORWARD-ONLY from the freeze date** (`measure_hold_none`): **(1) avoid-discipline** — NAIVE-56 vs
+hold-none, labelled AI-DATACENTER-BETA-CONFOUNDED / regime-dependent (was declining to buy the tier
+costly or vindicated — largely an AI-beta bet, NOT selection skill); **(2) exposure-carry (PRIMARY, the
+more informative)** — the 5 genuine-exposure names vs the 51 other PASSED, benchmark-adjusted
+divergence, PARTIALLY beta-controlled (both AI-labelled, so the common beta cancels — isolates whether
+the exposure GRADE carries forward info). Both are reported **layer-aware (thin thermal/packaging/
+optical/HBM vs obvious chips/power/colo — NOT pooled)** and under a prominent honesty label: *NOT a
+validation of the semantic-primary edge*. **The core RATIFIED−PASSED edge-measure remains UNDEFINED
+pending a future RATIFIED — which arrives via the watchlist re-underwrite loop** (a name's
+machine-checkable trigger fires → re-underwrite at the full 3:1 Buy bar; the 5 names + triggers are the
+actionable output, and the seed of a monitor across the whole surfaced set). **§5 onset baselines
+stamped** for the 5 (freeze-day = null / not-yet-co-moving, the expected early-enabler state; live
+read-only Component-A confirmation is a paper-track-cadence step, deferred). Real run shown on the actual
+56-name worksheet: cohorts frozen, spreads UNDEFINED, diagnostics defined + PENDING (freeze = today, 0
+days forward — the honest forward-only state), onset baselines + triggers, honesty label. Ledger + frozen
+baskets persisted LOCAL-only (git-ignored — `.gitignore` `forward_*_ledger.jsonl` / `forward_*_baskets.json`
+/ `data/forward/`; fail-closed like the scan output). `measure_horizon` (the future-RATIFIED path) +
+detection/B/C/classifier/universe UNTOUCHED. ruff + mypy --strict (82) + pytest (**300**; +8 empty-BUY
+tests: freeze path, undefined-not-0.0, the 2 diagnostics, forward-only, watchlist guard, onset) green.
+NOT built (out of scope): the §3b-ii keyword/co-movement control (needs Component A live-forward AND a
+BUY leg), the cross-universe monitor (separate step). Forward edge NOT claimed. Edge 2 stays lead horse.

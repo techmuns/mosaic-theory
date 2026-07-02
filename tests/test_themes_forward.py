@@ -17,8 +17,12 @@ from pathlib import Path
 import pytest
 
 from vinci.themes.forward import (
+    HOLD_NONE_HONESTY,
+    Diagnostic,
     Disposition,
     FrozenBaskets,
+    HoldNoneReport,
+    LayerSplit,
     LayerSpread,
     PowerLabel,
     PriceFn,
@@ -27,13 +31,17 @@ from vinci.themes.forward import (
     append_record,
     classify_state,
     current_dispositions,
+    diagnostic_avoid_discipline,
     early_vs_late,
     freeze_baskets,
     load_ledger,
+    measure_hold_none,
     measure_horizon,
     power_label,
     records_from_worksheet,
+    undefined_ratified_measures,
     update_onsets,
+    watchlist_onset_baselines,
 )
 
 
@@ -214,7 +222,118 @@ def test_early_vs_late_split_and_null() -> None:
 # ---- the dead-signal firewall: the schemas cannot conclude --------------------------------------
 def test_schemas_cannot_conclude() -> None:
     forbidden = ("score", "rank", "verdict", "recommend", "buy", "sell", "priority", "target")
-    for model in (RatificationRecord, FrozenBaskets, LayerSpread, SpreadReport, PowerLabel):
+    models = (RatificationRecord, FrozenBaskets, LayerSpread, SpreadReport, PowerLabel,
+              Diagnostic, LayerSplit, HoldNoneReport)
+    for model in models:
         for name in model.model_fields:
             for tok in forbidden:
                 assert tok not in name.lower(), f"{model.__name__}.{name}: verdict token {tok}"
+
+
+# ------------------------------------------------------------------------------------------------
+# Empty-BUY (zero-RATIFIED / hold-none) — the scoped modification for the all-PASSED triage
+# ------------------------------------------------------------------------------------------------
+def _passed(ticker: str, layer: str) -> RatificationRecord:
+    """A PASSED record whose ratification_date IS the freeze date (Component 1: hold-none entry)."""
+    return RatificationRecord(
+        ticker=ticker, cik="1", driver="AI-DC", chain_layer=layer,
+        machine_grade="committed-capacity", driver_tie="chain-layer-specific", grade_fact="f",
+        source_ref="acc", disposition=Disposition.PASSED, rationale="passed",
+        ratification_date=date(2026, 7, 2))
+
+
+def _empty_buy_baskets() -> FrozenBaskets:
+    """All PASSED, zero RATIFIED — the real triage reality; 4 names across thin + obvious layers."""
+    layer_of = {"A": "thermal/cooling", "B": "chips/GPU",
+                "C": "HBM/memory", "D": "power/electrical"}
+    recs = [_passed(t, layer_of[t]) for t in ("A", "B", "C", "D")]
+    return freeze_baskets(recs, ["A", "B", "C", "D"], driver="AI-DC",
+                          freeze_timestamp="2026-07-02T00:00:00", layer_of=layer_of,
+                          watchlist=["A", "C"], watchlist_triggers={"A": "t-A", "C": "t-C"})
+
+
+_HN_PRICES = {
+    ("IWM", "2026-07-02"): 100.0, ("IWM", "2026-09-30"): 110.0,   # benchmark +10%
+    ("A", "2026-07-02"): 100.0, ("A", "2026-09-30"): 150.0,       # +50% adj +40%
+    ("B", "2026-07-02"): 100.0, ("B", "2026-09-30"): 120.0,       # +20% adj +10%
+    ("C", "2026-07-02"): 100.0, ("C", "2026-09-30"): 130.0,       # +30% adj +20%
+    ("D", "2026-07-02"): 100.0, ("D", "2026-09-30"): 105.0,       # +5%  adj -5%
+}
+
+
+def test_empty_buy_freezes_without_error() -> None:
+    b = _empty_buy_baskets()
+    assert b.ratified == ()                       # empty BUY leg — does NOT error
+    assert set(b.passed) == {"A", "B", "C", "D"}
+    assert b.watchlist == ("A", "C") and b.watchlist_triggers == {"A": "t-A", "C": "t-C"}
+
+
+def test_watchlist_must_be_in_committed() -> None:
+    with pytest.raises(ValueError, match="not in the committed tier"):
+        freeze_baskets([_passed("A", "chips/GPU")], ["A"], driver="d",
+                       freeze_timestamp="2026-07-02T00:00:00", layer_of={"A": "chips/GPU"},
+                       watchlist=["ZZZ"])
+
+
+def test_undefined_ratified_measures_never_zero() -> None:
+    b = _empty_buy_baskets()
+    und = undefined_ratified_measures(b)
+    assert len(und) == 3 and all(reason for _, reason in und)  # each has a reason, never 0.0
+    assert any("RATIFIED-PASSED" in m for m, _ in und)
+    assert undefined_ratified_measures(b.model_copy(update={"ratified": ("A",)})) == ()  # BUY→none
+
+
+def test_hold_none_diagnostics_compute() -> None:
+    rep = measure_hold_none(_empty_buy_baskets(), exposure_names=["A", "C"],
+                            price_fn=_price_fn(_HN_PRICES), horizon_days=90,
+                            as_of=date(2026, 9, 30))
+    assert isinstance(rep, HoldNoneReport)
+    # DIAGNOSTIC 1 (avoid-discipline): NAIVE-4 raw mean = (50+20+30+5)/4 = 26.25%
+    assert rep.avoid_discipline.value == pytest.approx(0.2625, abs=1e-6)
+    assert "BETA-CONFOUNDED" in rep.avoid_discipline.confound
+    # DIAGNOSTIC 2 (exposure-carry): [A,C] adj 30% − [B,D] adj 2.5% = 27.5%
+    assert rep.exposure_carry.value == pytest.approx(0.275, abs=1e-6)
+    assert "PARTIALLY beta-controlled" in rep.exposure_carry.confound
+    # LAYER-AWARE (not pooled): thin [A,C] adj 30% vs obvious [B,D] adj 2.5%
+    assert rep.layer_split.thin_return == pytest.approx(0.30, abs=1e-6)
+    assert rep.layer_split.obvious_return == pytest.approx(0.025, abs=1e-6)
+    # RATIFIED-dependent spreads UNDEFINED, not 0.0; honesty label present
+    assert len(rep.undefined_measures) == 3
+    assert "UNDEFINED" in rep.honesty_label and "NOT a validation" in rep.honesty_label
+
+
+def test_forward_only_pending_at_freeze_and_ignores_pre_freeze() -> None:
+    b = _empty_buy_baskets()
+    # as_of == freeze → no horizon reached → pending (None), NOT 0.0
+    now = measure_hold_none(b, exposure_names=["A", "C"], price_fn=_price_fn(_HN_PRICES),
+                            horizon_days=90, as_of=date(2026, 7, 2))
+    assert now.avoid_discipline.value is None and now.avoid_discipline.n == 0
+    # a pre-freeze price is NEVER used: A at 2026-06-01 = 25 is ignored; entry = freeze (100)
+    pre = dict(_HN_PRICES)
+    pre[("A", "2026-06-01")] = 25.0
+    rep = measure_hold_none(b, exposure_names=["A", "C"], price_fn=_price_fn(pre),
+                            horizon_days=90, as_of=date(2026, 9, 30))
+    assert rep.layer_split.thin_return == pytest.approx(0.30, abs=1e-6)  # A = 150/100, not 150/25
+
+
+def test_forward_only_skips_entry_before_freeze() -> None:
+    b = FrozenBaskets(driver="d", freeze_timestamp="2026-07-02T00:00:00", ratified=(),
+                      passed=("A", "OLD"), all_committed=("A", "OLD"),
+                      entry_dates={"A": "2026-07-02", "OLD": "2026-06-01"},
+                      layer_of={"A": "chips/GPU", "OLD": "chips/GPU"})
+    prices = {("IWM", "2026-07-02"): 100.0, ("IWM", "2026-09-30"): 100.0,
+              ("A", "2026-07-02"): 100.0, ("A", "2026-09-30"): 120.0,
+              ("OLD", "2026-06-01"): 100.0, ("OLD", "2026-07-02"): 100.0,
+              ("OLD", "2026-09-30"): 200.0}
+    d1 = diagnostic_avoid_discipline(b, _price_fn(prices), horizon_days=90, as_of=date(2026, 9, 30))
+    assert d1.n == 1 and d1.value == pytest.approx(0.20, abs=1e-6)  # OLD (entry<freeze) skipped
+
+
+def test_watchlist_onset_baseline() -> None:
+    base = watchlist_onset_baselines(("A", "C"), lambda t, d: t == "A", as_of=date(2026, 7, 2))
+    assert base == {"A": "2026-07-02", "C": None}  # A already co-moving; C not-yet (the anchor)
+
+
+def test_hold_none_honesty_is_not_an_edge_verdict() -> None:
+    assert "UNDEFINED" in HOLD_NONE_HONESTY and "NOT a validation" in HOLD_NONE_HONESTY
+    assert "zero RATIFIED" in HOLD_NONE_HONESTY

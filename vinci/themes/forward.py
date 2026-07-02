@@ -31,7 +31,7 @@ from enum import StrEnum
 from pathlib import Path
 from typing import Protocol
 
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 from vinci.eod.client import EodClient
 
@@ -68,7 +68,12 @@ class RatificationRecord(BaseModel, frozen=True):
 
 
 class FrozenBaskets(BaseModel, frozen=True):
-    """The immutable frozen references (§3). Entry = each name's ratification date (§2)."""
+    """The immutable frozen references (§3). Entry = each name's ratification date (§2).
+
+    EMPTY-BUY reality (all committed PASSED, zero RATIFIED): ``ratified`` freezes as ``()`` and
+    does NOT error; every RATIFIED-dependent spread is then UNDEFINED (see ``measure_hold_none``).
+    ``watchlist`` + ``watchlist_triggers`` carry the re-underwrite cohort; ``real_tier`` is the
+    OPTIONAL looser secondary (build-2 REAL tier)."""
 
     driver: str
     freeze_timestamp: str
@@ -77,6 +82,10 @@ class FrozenBaskets(BaseModel, frozen=True):
     all_committed: tuple[str, ...]
     entry_dates: dict[str, str]
     layer_of: dict[str, str]
+    watchlist: tuple[str, ...] = ()  # genuine-exposure re-underwrite cohort
+    # ticker -> verbatim trigger text
+    watchlist_triggers: dict[str, str] = Field(default_factory=dict)
+    real_tier: tuple[str, ...] = ()  # OPTIONAL looser secondary (build-2 REAL-7)
     deferred_controls: tuple[str, ...] = (
         "keyword/co-movement naive baseline (§3b-ii) — SECOND-PHASE: needs Component A "
         "live-forward; the INDEPENDENT replicable control (isolates the classifier's contribution "
@@ -186,9 +195,14 @@ def records_from_worksheet(
 def freeze_baskets(
     records: list[RatificationRecord], all_committed: list[str], *,
     driver: str, freeze_timestamp: str, layer_of: dict[str, str],
+    watchlist: list[str] | None = None, watchlist_triggers: dict[str, str] | None = None,
+    real_tier: list[str] | None = None,
 ) -> FrozenBaskets:
-    """Freeze the immutable baskets. GUARD (§1): every committed name must be RATIFIED or PASSED — a
-    DIG-DEEPER or a missing disposition means the tier is NOT ready; raise (cannot freeze)."""
+    """Freeze the immutable baskets. GUARD (§1): every committed name must be RATIFIED or PASSED —
+    a DIG-DEEPER or a missing disposition means the tier is NOT ready; raise (cannot freeze). An
+    EMPTY BUY leg (zero RATIFIED — all PASSED) is VALID and does NOT error: ``ratified`` freezes as
+    ``()``. The optional ``watchlist`` (re-underwrite cohort, must be ⊆ committed) + verbatim
+    ``watchlist_triggers`` and the ``real_tier`` (a separate build-2 cohort) freeze alongside."""
     disp = current_dispositions(records)
     missing = [t for t in all_committed if t not in disp]
     unresolved = [t for t in all_committed
@@ -201,9 +215,15 @@ def freeze_baskets(
     ratified = tuple(t for t in all_committed if disp[t].disposition is Disposition.RATIFIED)
     passed = tuple(t for t in all_committed if disp[t].disposition is Disposition.PASSED)
     entry_dates = {t: disp[t].ratification_date.isoformat() for t in all_committed}
+    wl = tuple(watchlist or ())
+    unknown = [t for t in wl if t not in all_committed]
+    if unknown:  # a watchlist name must be a committed-tier name — fail loud, never silently drop
+        raise ValueError(f"watchlist names not in the committed tier: {unknown}")
     return FrozenBaskets(
         driver=driver, freeze_timestamp=freeze_timestamp, ratified=ratified, passed=passed,
-        all_committed=tuple(all_committed), entry_dates=entry_dates, layer_of=layer_of)
+        all_committed=tuple(all_committed), entry_dates=entry_dates, layer_of=layer_of,
+        watchlist=wl, watchlist_triggers=dict(watchlist_triggers or {}),
+        real_tier=tuple(real_tier or ()))
 
 
 # --------------------------------------------------------------------------------------------------
@@ -336,6 +356,191 @@ def measure(
 
 
 # --------------------------------------------------------------------------------------------------
+# Component 3 (EMPTY-BUY) — the zero-RATIFIED / hold-none measurement. RATIFIED-dependent
+# spreads are UNDEFINED (never 0.0); the two VALID beta-confounded diagnostics + the layer-aware
+# split accrue FORWARD-ONLY from the freeze date. NEVER an edge verdict.
+# --------------------------------------------------------------------------------------------------
+# thin-layer = where semantic-primary uniquely contributed; obvious-layer = a keyword screen
+# finds it
+THIN_LAYERS = ("HBM/memory", "packaging", "thermal/cooling", "optical/interconnect")
+OBVIOUS_LAYERS = ("chips/GPU", "power/electrical", "colocation/operator", "AI-cloud")
+
+HOLD_NONE_HONESTY = (
+    "No BUY leg exists (zero RATIFIED) -> the core edge-measure (RATIFIED-PASSED) and all "
+    "RATIFIED-dependent spreads are UNDEFINED and NOT computed. The outputs below are "
+    "AVOID-discipline and exposure-carry DIAGNOSTICS, beta-confounded, and are NOT a validation "
+    "of the semantic-primary edge."
+)
+
+
+class Diagnostic(BaseModel, frozen=True):
+    """One beta-confounded forward diagnostic (NOT an edge verdict). ``value`` is None until the
+    horizon is reached forward from the freeze date."""
+
+    name: str            # "avoid-discipline" | "exposure-carry"
+    horizon_days: int
+    value: float | None
+    n: int
+    confound: str        # the explicit beta-confound label — always carried
+    detail: str
+
+
+class LayerSplit(BaseModel, frozen=True):
+    """NAIVE-56 forward return split thin- vs obvious-layer (§4 layer-aware) — NOT pooled."""
+
+    horizon_days: int
+    thin_return: float | None
+    obvious_return: float | None
+    n_thin: int
+    n_obvious: int
+
+
+class HoldNoneReport(BaseModel, frozen=True):
+    """The empty-BUY (zero-RATIFIED) report: the UNDEFINED RATIFIED-dependent measures (never
+    computed), the two valid diagnostics, the layer split, the watchlist onset baselines, and the
+    honesty label."""
+
+    driver: str
+    as_of: str
+    freeze_timestamp: str
+    horizon_days: int
+    undefined_measures: tuple[tuple[str, str], ...]   # (measure, reason) — RATIFIED-dependent
+    avoid_discipline: Diagnostic
+    exposure_carry: Diagnostic
+    layer_split: LayerSplit
+    onset_baselines: dict[str, str | None]            # watchlist ticker -> onset iso, or None
+    honesty_label: str
+
+
+def undefined_ratified_measures(baskets: FrozenBaskets) -> tuple[tuple[str, str], ...]:
+    """When the BUY leg is empty (zero RATIFIED), EVERY RATIFIED-dependent spread is UNDEFINED —
+    return each with its reason. NEVER computed, NEVER 0.0 (fail-loud, never fabricate). () if a
+    BUY leg exists."""
+    if baskets.ratified:
+        return ()
+    reason = "no BUY leg — zero RATIFIED; requires a ratified cohort that does not exist"
+    return tuple((m, reason) for m in (
+        "RATIFIED-PASSED (§3a, the core edge-measure)",
+        "RATIFIED-NAIVE(equal-weight) (§3b-i)",
+        "RATIFIED vs keyword/co-movement screen (§3b-ii, deferred)",
+    ))
+
+
+def _cohort_fwd_mean(
+    tickers: tuple[str, ...] | list[str], baskets: FrozenBaskets, price_fn: PriceFn, *,
+    horizon_days: int, as_of: date, adjust: bool, benchmark: str,
+) -> tuple[float | None, int]:
+    """Mean forward return over a cohort, FORWARD-ONLY from the freeze date: entry = each name's
+    entry_date (= freeze for a hold-none posture); a name whose entry precedes the freeze is SKIPPED
+    (never a trailing/pre-freeze return); a name whose checkpoint (entry + horizon) is beyond
+    ``as_of`` is SKIPPED (horizon not yet reached). ``adjust`` subtracts the benchmark per name."""
+    freeze = date.fromisoformat(baskets.freeze_timestamp[:10])
+    vals: list[float] = []
+    for t in tickers:
+        entry = date.fromisoformat(baskets.entry_dates.get(t, baskets.freeze_timestamp[:10]))
+        if entry < freeze:
+            continue  # forward-only: never measure from before the freeze (anti-hindsight)
+        checkpoint = entry + timedelta(days=horizon_days)
+        if checkpoint > as_of:
+            continue  # horizon not yet reached — no forward data
+        v = (_adj_return(price_fn, benchmark, t, entry, checkpoint) if adjust
+             else _fwd_return(price_fn, t, entry, checkpoint))
+        if v is not None:
+            vals.append(v)
+    return _mean(vals), len(vals)
+
+
+def diagnostic_avoid_discipline(
+    baskets: FrozenBaskets, price_fn: PriceFn, *, horizon_days: int, as_of: date,
+    benchmark: str = "IWM",
+) -> Diagnostic:
+    """DIAGNOSTIC 1 — did declining to buy the committed tier cost or vindicate? NAIVE-56
+    equal-weight forward return vs hold-none (cash). Positive = costly (the tier rose), negative =
+    vindicated. BETA-CONFOUNDED: largely an AI-datacenter-beta / regime bet, NOT a test of
+    selection skill."""
+    raw, n = _cohort_fwd_mean(baskets.all_committed, baskets, price_fn, horizon_days=horizon_days,
+                              as_of=as_of, adjust=False, benchmark=benchmark)
+    adj, _ = _cohort_fwd_mean(baskets.all_committed, baskets, price_fn, horizon_days=horizon_days,
+                              as_of=as_of, adjust=True, benchmark=benchmark)
+    return Diagnostic(
+        name="avoid-discipline", horizon_days=horizon_days, value=raw, n=n,
+        confound=("AI-DATACENTER-BETA-CONFOUNDED + regime-dependent — tests whether declining to "
+                  "buy the committed tier was costly or vindicated in THIS window, largely an "
+                  "AI-beta bet, NOT selection skill"),
+        detail=(f"NAIVE-56 equal-weight forward return raw(vs cash)="
+                f"{'pending' if raw is None else f'{raw:+.1%}'}, vs {benchmark}="
+                f"{'pending' if adj is None else f'{adj:+.1%}'}"))
+
+
+def diagnostic_exposure_carry(
+    baskets: FrozenBaskets, exposure_names: list[str], price_fn: PriceFn, *,
+    horizon_days: int, as_of: date, benchmark: str = "IWM",
+) -> Diagnostic:
+    """DIAGNOSTIC 2 (the more informative) — does the machine's exposure GRADE carry forward info?
+    The genuine-exposure names vs the other PASSED names, benchmark-adjusted forward-return
+    DIVERGENCE. Both cohorts are AI-labelled, so the common AI-beta largely cancels — PARTIALLY
+    beta-controlled. Positive divergence = the real-vs-not exposure read carries forward info. NOT
+    an edge verdict."""
+    exp = set(exposure_names)
+    e_names = tuple(t for t in baskets.all_committed if t in exp)
+    o_names = tuple(t for t in baskets.all_committed if t not in exp)
+    me, ne = _cohort_fwd_mean(e_names, baskets, price_fn, horizon_days=horizon_days, as_of=as_of,
+                              adjust=True, benchmark=benchmark)
+    mo, no = _cohort_fwd_mean(o_names, baskets, price_fn, horizon_days=horizon_days, as_of=as_of,
+                              adjust=True, benchmark=benchmark)
+    div = None if me is None or mo is None else me - mo
+    return Diagnostic(
+        name="exposure-carry", horizon_days=horizon_days, value=div, n=ne + no,
+        confound=("PARTIALLY beta-controlled — both cohorts are AI-labelled so the common "
+                  "AI-beta largely cancels in the divergence; isolates whether the exposure GRADE "
+                  "(real vs not) carries forward info. The more informative of the two — still "
+                  "NOT an edge verdict"),
+        detail=(f"{len(e_names)} genuine-exposure {list(e_names)} adj="
+                f"{'pending' if me is None else f'{me:+.1%}'} (n={ne}) "
+                f"vs {len(o_names)} other-PASSED "
+                f"adj={'pending' if mo is None else f'{mo:+.1%}'} (n={no}); divergence="
+                f"{'pending' if div is None else f'{div:+.1%}'}"))
+
+
+def layer_split_naive(
+    baskets: FrozenBaskets, price_fn: PriceFn, *, horizon_days: int, as_of: date,
+    benchmark: str = "IWM",
+) -> LayerSplit:
+    """The §4 layer-aware split of NAIVE-56 forward return: thin-layer
+    (thermal/packaging/optical/HBM, where semantic-primary uniquely contributed) vs obvious-layer
+    (chips/power/colo). NOT pooled — pooling would mask the thin-layer slice."""
+    thin = tuple(t for t in baskets.all_committed if baskets.layer_of.get(t, "") in THIN_LAYERS)
+    obvious = tuple(
+        t for t in baskets.all_committed if baskets.layer_of.get(t, "") in OBVIOUS_LAYERS)
+    mt, nt = _cohort_fwd_mean(thin, baskets, price_fn, horizon_days=horizon_days, as_of=as_of,
+                              adjust=True, benchmark=benchmark)
+    mo, no = _cohort_fwd_mean(obvious, baskets, price_fn, horizon_days=horizon_days, as_of=as_of,
+                              adjust=True, benchmark=benchmark)
+    return LayerSplit(horizon_days=horizon_days, thin_return=mt, obvious_return=mo,
+                      n_thin=nt, n_obvious=no)
+
+
+def measure_hold_none(
+    baskets: FrozenBaskets, *, exposure_names: list[str], price_fn: PriceFn, horizon_days: int,
+    as_of: date, benchmark: str = "IWM", onset_baselines: dict[str, str | None] | None = None,
+) -> HoldNoneReport:
+    """The EMPTY-BUY (zero-RATIFIED) measurement. Emits the RATIFIED-dependent spreads as UNDEFINED
+    (never 0.0), plus the two VALID beta-confounded diagnostics + the layer-aware split, all
+    FORWARD-ONLY from the freeze date. Carries HOLD_NONE_HONESTY — NEVER an edge verdict."""
+    return HoldNoneReport(
+        driver=baskets.driver, as_of=as_of.isoformat(), freeze_timestamp=baskets.freeze_timestamp,
+        horizon_days=horizon_days, undefined_measures=undefined_ratified_measures(baskets),
+        avoid_discipline=diagnostic_avoid_discipline(baskets, price_fn, horizon_days=horizon_days,
+                                                     as_of=as_of, benchmark=benchmark),
+        exposure_carry=diagnostic_exposure_carry(baskets, exposure_names, price_fn,
+                                                 horizon_days=horizon_days, as_of=as_of,
+                                                 benchmark=benchmark),
+        layer_split=layer_split_naive(baskets, price_fn, horizon_days=horizon_days, as_of=as_of,
+                                      benchmark=benchmark),
+        onset_baselines=dict(onset_baselines or {}), honesty_label=HOLD_NONE_HONESTY)
+
+
+# --------------------------------------------------------------------------------------------------
 # Component 4 — the early-detection test (§5): forward-log co-movement onset; early vs late
 # --------------------------------------------------------------------------------------------------
 MembershipFn = Callable[[str, date], bool]  # (ticker, as_of) -> in Component A's theme cluster?
@@ -375,6 +580,18 @@ def early_vs_late(
             "early_adj": _adj_return(price_fn, benchmark, record.ticker, entry, onset),
             "late_adj": _adj_return(price_fn, benchmark, record.ticker, onset, forward_asof),
             "note": ""}
+
+
+def watchlist_onset_baselines(
+    watchlist: tuple[str, ...] | list[str], membership_fn: MembershipFn, *,
+    as_of: date,
+) -> dict[str, str | None]:
+    """Component-4 baseline for the re-underwrite cohort (§5, read-only): for each watchlist name,
+    the co-movement onset baseline = ``as_of`` if it is ALREADY in Component A's cluster (the
+    market has caught it), else None — not-yet-co-moving, the EXPECTED state for an early enabler
+    and the anchor against which future earliness is measured when its trigger fires. No spread,
+    just the anchor."""
+    return {t: (as_of.isoformat() if membership_fn(t, as_of) else None) for t in watchlist}
 
 
 # --------------------------------------------------------------------------------------------------

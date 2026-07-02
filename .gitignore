@@ -39,5 +39,11 @@ data/dossiers/*/llm_call.log
 frontend/snapshots/
 node_modules/
 
+# theme forward-validation harness runtime outputs — derived, LOCAL-only (fail-closed, like the
+# build-2 scan output): the ratification ledger + the frozen baskets are never committed.
+forward_*_ledger.jsonl
+forward_*_baskets.json
+data/forward/
+
 # OS
 .DS_Store
