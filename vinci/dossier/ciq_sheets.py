@@ -25,7 +25,7 @@ from vinci.dossier.ciq import (
     excel_date,
     read_text,
 )
-from vinci.dossier.schemas import PeerComps, Sourced
+from vinci.dossier.schemas import PeerComps, RevisionEvent, Sourced
 
 Rows = list[list[Any]]
 
@@ -783,6 +783,471 @@ def consensus_view(bundle: CiqBundle) -> Sourced[str]:
     if not parts:
         return Sourced.unknown(note="no Target Price/LT Growth/Recommendation rows in Consensus")
     return Sourced.present("; ".join(parts), source_ref="CIQ Estimates→Consensus")
+
+
+# --- catalyst path: the five previously-unparsed Estimates sheets (Revisions windows / Trends /
+# --- Guidance / Multiples / Recent Changes) — horizon-matched, native-cadence, no conclusions.
+#
+# Metric block labels observed in Trends/Revisions (Company-Level rows); absent ones are simply
+# skipped by the exact-match _find_row (never positionally guessed). "scan for more" per the notes.
+_METRICS: tuple[str, ...] = (
+    "Revenue", "EBITDA", "EBIT", "EBT (GAAP)", "EPS Normalized", "EPS (GAAP)",
+    "Net Income (GAAP)", "Net Income (Excl. Excep)", "Interest Expense",
+)
+_GUIDANCE_METRICS: tuple[str, ...] = (
+    "Revenue", "Capital Expenditure", "Gross Margin %", "EBITDA", "EPS Normalized",
+)
+_REV_WINDOWS: tuple[tuple[str, str], ...] = (
+    ("1m", "Last Month"), ("2m", "Last 2 Months"), ("3m", "Last 3 Months"),
+)
+# Trends snapshot row label → lookback in months (CIQ's fixed cadence). Ragged by design: a block
+# renders only the snapshots actually present — a hole is labelled n/a, NEVER interpolated.
+_SNAP_LOOKBACK: dict[str, int] = {
+    "Current": 0, "1 month ago": 1, "2 months ago": 2, "3 months ago": 3,
+    "6 months ago": 6, "9 months ago": 9, "12 months ago": 12,
+}
+_LOOKBACK_ORDER: tuple[tuple[str, int], ...] = (
+    ("12m", 12), ("9m", 9), ("6m", 6), ("3m", 3), ("2m", 2), ("1m", 1), ("now", 0),
+)
+_MULT_LADDER_ROWS: tuple[str, ...] = (
+    "NTM", "FY 2026", "FY 2027", "FY 2028", "FY 2029", "FY 2030", "FY 2031", "FY 2032", "FY 2033",
+)
+
+
+def _fig(v: float) -> str:  # a consensus figure → 1 decimal at scale, 2 for small (EPS) — no faking
+    return f"{v:,.1f}" if abs(v) >= 10 else f"{v:,.2f}"
+
+
+def _lookback_lbl(months: int) -> str:
+    return "now" if months == 0 else f"{months}m"
+
+
+def _asof_suffix(as_of: str | None) -> str:
+    return f"  [as-of {as_of}]" if as_of else ""
+
+
+def _parse_range(cell: Any) -> tuple[float, float] | None:
+    """A CIQ guidance range string → (low, high); parentheses mean NEGATIVE ("(120.00)" → -120.0);
+    a bare point ("427.516") → (v, v). None when not numeric ("-"/empty). The verbatim string is
+    kept in the source_ref by the caller — this only parses the bounds."""
+    s = str(cell).strip()
+    if not s or s in _UNAVAILABLE_CELLS:
+        return None
+
+    def _one(tok: str) -> float | None:
+        tok = tok.strip()
+        neg = tok.startswith("(") and tok.endswith(")")
+        try:
+            v = float(tok.strip("()").replace(",", ""))
+        except ValueError:
+            return None
+        return -v if neg else v
+
+    if " - " in s:
+        lo_s, hi_s = s.split(" - ", 1)
+        lo, hi = _one(lo_s), _one(hi_s)
+        return (min(lo, hi), max(lo, hi)) if lo is not None and hi is not None else None
+    v = _one(s)
+    return (v, v) if v is not None else None
+
+
+def _recent_changes_rows(rows: Rows) -> tuple[int, Rows] | None:
+    """(header_index, event_rows) for Recent Changes, matched by the 'Change Type' header (the sheet
+    leads with blank spacer rows). None if the header is absent."""
+    hi = _find_row(rows, "Change Type")
+    if hi is None:
+        return None
+    return hi, [r for r in rows[hi + 1:] if r and str(r[0]).strip()]
+
+
+def _metric_block_header(rows: Rows, bi: int) -> list[Any] | None:
+    """The period-column header row for a Trends/Revisions metric block at ``bi`` — the nearby row
+    carrying FQ…/FY… period labels (the 'NasdaqCM:…'/'Company Level' row)."""
+    for k in range(bi + 1, min(bi + 4, len(rows))):
+        if any(isinstance(c, str) and c.strip().startswith(("FQ", "FY")) for c in rows[k]):
+            return rows[k]
+    return None
+
+
+def _first_fy_col(header: list[Any]) -> int | None:
+    """The current-fiscal-year column — the FIRST 'FY …' period in the header."""
+    return next(
+        (j for j, c in enumerate(header) if isinstance(c, str) and c.strip().startswith("FY")), None
+    )
+
+
+def _first_fq_cols(header: list[Any], n: int = 2) -> list[int]:
+    """The next-N fiscal-quarter columns — the FIRST n 'FQ …' periods (the 180d verdict window)."""
+    fq = [j for j, c in enumerate(header) if isinstance(c, str) and c.strip().startswith("FQ")]
+    return fq[:n]
+
+
+def _nearest_period_header(rows: Rows, bi: int) -> list[Any] | None:
+    """The FY/FQ period header governing a Guidance metric block — the nearest such row above
+    ``bi``, else the sheet's first period-header row."""
+    for k in range(bi - 1, max(-1, bi - 6), -1):
+        if rows[k] and any(
+            isinstance(c, str) and c.strip().startswith(("FY", "FQ")) for c in rows[k]
+        ):
+            return rows[k]
+    return next(
+        (
+            r for r in rows
+            if r and any(isinstance(c, str) and c.strip().startswith(("FY", "FQ")) for c in r)
+        ),
+        None,
+    )
+
+
+def _metric_starts(rows: Rows, metrics: tuple[str, ...]) -> list[int]:
+    """Row indices where a metric block begins, in sheet order (exact-label match, never
+    positional). Absent metrics are skipped — ragged availability is by design."""
+    starts = [bi for m in metrics if (bi := _find_row(rows, m)) is not None]
+    return sorted(starts)
+
+
+def _snapshot_path(rows: Rows, bi: int, col: int) -> list[tuple[int, float]]:
+    """Present (lookback_months, value) Trends snapshots for the block at ``bi`` on column ``col``,
+    sorted OLDEST→newest. Only snapshots actually present are returned; a present-but-empty ('-') or
+    absent lookback is dropped, never interpolated. Stops at the next metric / a repeated lookback
+    (a second sub-series)."""
+    out: list[tuple[int, float]] = []
+    seen: set[int] = set()
+    for k in range(bi + 1, min(bi + 18, len(rows))):
+        lbl = str(rows[k][0]).strip() if rows[k] else ""
+        if lbl in _SNAP_LOOKBACK:
+            lb = _SNAP_LOOKBACK[lbl]
+            if lb in seen:
+                break
+            seen.add(lb)
+            v = clean_num(rows[k][col]) if col < len(rows[k]) else None
+            if v is not None:
+                out.append((lb, v))
+        elif lbl and k > bi + 1 and not lbl.startswith(("Company Level", "NasdaqCM")):
+            break
+    out.sort(key=lambda t: -t[0])
+    return out
+
+
+def estimates_as_of(bundle: CiqBundle) -> Sourced[str]:
+    """The workbook's freshest embedded data date — the max Recent-Changes revision-event date. CIQ
+    Estimates exports carry no explicit as-of cell, so the newest datum bounds staleness (the
+    contract's as-of FALLBACK, labelled as such). Threaded into every catalyst-path source_ref and
+    driving the shared staleness caveat vs the reference date."""
+    try:
+        rows = bundle.sheet("estimates", "Recent Changes")
+    except CiqUnavailableError as exc:
+        return _miss_or_unknown(bundle, "estimates", exc)
+    rc = _recent_changes_rows(rows)
+    latest: date | None = None
+    if rc is not None:
+        for r in rc[1]:
+            d = excel_date(r[1]) if len(r) > 1 else None
+            if d is not None and (latest is None or d > latest):
+                latest = d
+    if latest is None:
+        return Sourced.unknown(note="no dated revision events in Estimates→Recent Changes")
+    return Sourced.present(
+        latest.isoformat(),
+        source_ref="CIQ Estimates→Recent Changes (latest embedded revision-event date)",
+    )
+
+
+def acceleration_read(bundle: CiqBundle, *, as_of: str | None = None) -> Sourced[str]:
+    """(b) ACCELERATION READ — per-metric current-FY consensus PATH from Trends, across the
+    snapshots actually present (Current / N-months-ago), oldest→newest, with the net change. Ragged:
+    absent lookbacks are labelled n/a, never interpolated; a block with <2 snapshots renders
+    level-only (no 'path'). This surfaces the Edge-2 'stabilizing vs accelerating' evidence the old
+    FY-only breadth line hid (MVST FY26 EBITDA 146.5 → 62.1)."""
+    try:
+        rows = bundle.sheet("estimates", "Trends")
+    except CiqUnavailableError as exc:
+        return _miss_or_unknown(bundle, "estimates", exc)
+    lines: list[str] = []
+    for bi in _metric_starts(rows, _METRICS):
+        metric = str(rows[bi][0]).strip()
+        header = _metric_block_header(rows, bi)
+        fy = _first_fy_col(header) if header else None
+        if header is None or fy is None:
+            continue
+        fy_label = str(header[fy]).strip()
+        path = _snapshot_path(rows, bi, fy)
+        if not path:
+            continue
+        if len(path) < 2:
+            lb, val = path[0]
+            lines.append(f"{fy_label} {metric}: {_fig(val)} ({_lookback_lbl(lb)}) — level only")
+            continue
+        chain = " → ".join(f"{_fig(v)} ({_lookback_lbl(lb)})" for lb, v in path)
+        oldest, newest = path[0][0], path[-1][0]
+        net = f"{(path[-1][1] / path[0][1] - 1) * 100:+.0f}%" if path[0][1] else "n/a"
+        span = f"{_lookback_lbl(oldest)}→{_lookback_lbl(newest)}"
+        present = {lb for lb, _ in path}
+        # note only INTERIOR holes (a lookback missing BETWEEN the oldest and newest present ones);
+        # a lookback absent only at the recent end is disclosed by the span, not a fabricated gap.
+        gaps = [lbl for lbl, lb in _LOOKBACK_ORDER if newest < lb < oldest and lb not in present]
+        gap_note = f" [{', '.join(gaps)} n/a]" if gaps else ""
+        lines.append(f"{fy_label} {metric}: {chain}; net {net} ({span}){gap_note}")
+    if not lines:
+        return Sourced.unknown(note="no current-FY consensus snapshots in Estimates→Trends")
+    return Sourced.present(
+        "; ".join(lines) + _asof_suffix(as_of),
+        source_ref="CIQ Estimates→Trends (current-FY consensus path; ragged, absent lookbacks n/a)",
+    )
+
+
+def _revisions_windows(rows: Rows, bi: int, end: int) -> dict[str, dict[str, int]]:
+    """For a Revisions metric block [bi, end): {window(1m/2m/3m): {'Upward'|'Downward': row_index}}
+    — each window's own Upward/Downward rows located by label, never positionally."""
+    windows: dict[str, dict[str, int]] = {}
+    cur: str | None = None
+    for k in range(bi + 1, end):
+        lbl = str(rows[k][0]).strip() if rows[k] else ""
+        wk = next((w for w, name in _REV_WINDOWS if lbl == name), None)
+        if wk is not None:
+            cur = wk
+            windows[wk] = {}
+        elif cur is not None and lbl in ("Upward", "Downward"):
+            windows[cur][lbl] = k
+    return windows
+
+
+def horizon_read(bundle: CiqBundle, *, as_of: str | None = None) -> Sourced[str]:
+    """(a) HORIZON READ (FQ — the 180d verdict window): per metric, the next-2-FQ revision breadth
+    across ALL THREE windows (1m/2m/3m Upward↑/Downward↓). This is the quarterly grid the old
+    FY-only Last-Month line hid — e.g. the 2-month-window downward revisions on near quarters."""
+    try:
+        rows = bundle.sheet("estimates", "Revisions")
+    except CiqUnavailableError as exc:
+        return _miss_or_unknown(bundle, "estimates", exc)
+    starts = _metric_starts(rows, _METRICS)
+    lines: list[str] = []
+    for idx, bi in enumerate(starts):
+        end = starts[idx + 1] if idx + 1 < len(starts) else len(rows)
+        metric = str(rows[bi][0]).strip()
+        header = _metric_block_header(rows, bi)
+        windows = _revisions_windows(rows, bi, end)
+        fqs = _first_fq_cols(header) if header else []
+        if not header or not fqs or not windows:
+            continue
+        for col in fqs:
+            period = str(header[col]).strip()
+            parts: list[str] = []
+            for wk, _name in _REV_WINDOWS:
+                w = windows.get(wk)
+                if not w:
+                    continue
+                up = _cell_at(rows, w.get("Upward"), col)
+                dn = _cell_at(rows, w.get("Downward"), col)
+                if up is None and dn is None:
+                    continue
+                parts.append(f"{wk} {int(up or 0)}↑/{int(dn or 0)}↓")
+            if parts:
+                lines.append(f"{metric} {period}: " + ", ".join(parts))
+    if not lines:
+        return Sourced.unknown(note="no next-2-FQ revision breadth in Estimates→Revisions")
+    return Sourced.present(
+        "; ".join(lines) + _asof_suffix(as_of),
+        source_ref="CIQ Estimates→Revisions (next-2-FQ breadth; 1m/2m/3m Upward/Downward)",
+    )
+
+
+def _cell_at(rows: Rows, ri: int | None, col: int) -> float | None:
+    return clean_num(rows[ri][col]) if ri is not None and col < len(rows[ri]) else None
+
+
+def cross_name_anchor(bundle: CiqBundle, *, as_of: str | None = None) -> Sourced[str]:
+    """(c) CROSS-NAME ANCHOR (NTM) — the forward-multiple ladder from Estimates→Multiples: NTM +
+    FY26→FY33 across TEV/REV · TEV/EBITDA · TEV/EBIT · P/E · PEG ("-" → absent). The cross-sectional
+    read the human anchors against peers; the machine assembles the ladder, never a fair value."""
+    try:
+        rows = bundle.sheet("estimates", "Multiples")
+    except CiqUnavailableError as exc:
+        return _miss_or_unknown(bundle, "estimates", exc)
+    hi = next(
+        (i for i, r in enumerate(rows) if any(isinstance(c, str) and "TEV/REV" in c for c in r)),
+        None,
+    )
+    if hi is None:
+        return Sourced.unknown(note="no TEV/REV multiple header in Estimates→Multiples")
+    hdr = rows[hi]
+    cols = [(j, str(hdr[j]).strip()) for j in range(1, len(hdr)) if str(hdr[j]).strip()]
+    lines: list[str] = []
+    for label in _MULT_LADDER_ROWS:
+        ri = _find_row(rows, label)
+        if ri is None:
+            continue
+        cells = []
+        any_val = False
+        for j, name in cols:
+            v = clean_num(rows[ri][j]) if j < len(rows[ri]) else None
+            if v is not None:
+                any_val = True
+            cells.append(f"{name} {v:.2f}" if v is not None else f"{name} –")
+        if any_val:
+            lines.append(f"{label}: " + " · ".join(cells))
+    if not lines:
+        return Sourced.unknown(note="no NTM/FY multiple ladder rows in Estimates→Multiples")
+    return Sourced.present(
+        " | ".join(lines) + _asof_suffix(as_of),
+        source_ref="CIQ Estimates→Multiples (forward-multiple ladder: NTM + FY26→FY33)",
+    )
+
+
+def _guidance_rows(rows: Rows, bi: int, end: int) -> tuple[int | None, int | None, int | None]:
+    """(guidance-date, guidance-range, actual) row indices for a Guidance metric block [bi, end).
+    The As-Of 'Guidance Date'/'Guidance' rows precede the 'Actual/Latest' sub-block; 'Actual' is the
+    resolved outcome under it."""
+
+    def find(label: str, lo: int, hi: int) -> int | None:
+        return next(
+            (k for k in range(lo, hi) if rows[k] and str(rows[k][0]).strip() == label), None
+        )
+
+    actual_hdr = find("Actual/Latest", bi, end)
+    gdate = find("Guidance Date", bi, actual_hdr or end)
+    guide = find("Guidance", bi, actual_hdr or end)
+    actual = find("Actual", actual_hdr if actual_hdr is not None else bi, end)
+    return gdate, guide, actual
+
+
+def guidance_bridge(bundle: CiqBundle, *, as_of: str | None = None) -> Sourced[str]:
+    """(d) GUIDANCE BRIDGE — per metric: the LATEST guide {range, date} + consensus-at-guide, and a
+    delivery track-record ('actual ≥ guided floor N of M resolved periods', counted ONLY where BOTH
+    a guidance range and an actual exist). A present-but-empty metric block is omitted with no flag.
+    The verbatim range string is kept; parens are negative."""
+    try:
+        rows = bundle.sheet("estimates", "Guidance")
+    except CiqUnavailableError as exc:
+        return _miss_or_unknown(bundle, "estimates", exc)
+    starts = _metric_starts(rows, _GUIDANCE_METRICS)
+    if not starts:
+        return Sourced.unknown(note="no guidance metric blocks in Estimates→Guidance")
+    lines: list[str] = []
+    for idx, bi in enumerate(starts):
+        end = starts[idx + 1] if idx + 1 < len(starts) else len(rows)
+        metric = str(rows[bi][0]).strip()
+        gdate, guide, actual = _guidance_rows(rows, bi, end)
+        header = _nearest_period_header(rows, bi)
+        if gdate is None or guide is None or header is None:
+            continue
+        latest: tuple[date, str, str] | None = None
+        resolved = beat = 0
+        for j in range(1, len(header)):
+            rng = _parse_range(rows[guide][j]) if j < len(rows[guide]) else None
+            if rng is None:
+                continue
+            gd = excel_date(rows[gdate][j]) if j < len(rows[gdate]) else None
+            if gd is not None and (latest is None or gd > latest[0]):
+                latest = (gd, str(header[j]).strip(), str(rows[guide][j]).strip())
+            av = _cell_at(rows, actual, j)
+            if av is not None:
+                resolved += 1
+                beat += int(av >= rng[0])
+        if latest is None:
+            continue
+        gd, per, rng_s = latest
+        seg = f"{metric}: latest guide '{rng_s}' for {per} (dated {gd.isoformat()})"
+        if resolved:
+            seg += f"; actual ≥ guided floor {beat}/{resolved} resolved periods"
+        lines.append(seg)
+    if not lines:
+        return Sourced.unknown(note="no parseable guidance ranges in Estimates→Guidance")
+    return Sourced.present(
+        "; ".join(lines) + _asof_suffix(as_of),
+        source_ref="CIQ Estimates→Guidance (latest guide range+date + delivery track-record)",
+    )
+
+
+def revision_events(bundle: CiqBundle, *, as_of: str | None = None) -> Sourced[list[RevisionEvent]]:
+    """(e) REVISION-EVENT LOG — every Estimates→Recent-Changes row as a structured RevisionEvent,
+    most-recent-first. The FULL list is kept in JSON; the render caps display at 10. The only
+    direction is CIQ's own verbatim ``change_type``; broker/consensus values pass through verbatim
+    ("-" preserved), never coerced to a number."""
+    try:
+        rows = bundle.sheet("estimates", "Recent Changes")
+    except CiqUnavailableError as exc:
+        return _miss_or_unknown(bundle, "estimates", exc)
+    rc = _recent_changes_rows(rows)
+    if rc is None:
+        return Sourced.unknown(note="no 'Change Type' header in Estimates→Recent Changes")
+    out: list[RevisionEvent] = []
+    for r in rc[1]:
+        c = [str(x).strip() for x in r] + [""] * 10
+        d = excel_date(r[1]) if len(r) > 1 else None
+        out.append(
+            RevisionEvent(
+                date=d.isoformat() if d is not None else c[1],
+                change_type=c[0], broker=c[2], metric=c[4], period=c[5],
+                broker_prior=c[7], broker_current=c[6],
+                consensus_before=c[9], consensus_after=c[8],
+            )
+        )
+    if not out:
+        return Sourced.unknown(note="no revision events under the Recent-Changes header")
+    out.sort(key=lambda e: e.date, reverse=True)  # ISO dates sort chronologically
+    return Sourced.present(
+        out,
+        source_ref=f"CIQ Estimates→Recent Changes ({len(out)} broker revision events)"
+        + _asof_suffix(as_of),
+    )
+
+
+def _rating_distribution(bundle: CiqBundle) -> str | None:
+    """Analyst rating counts from Trends 'Non-Periodic Trends' (Buy/Outperform/Hold/…). NOTE: in the
+    real CIQ Estimates export the rating rows live in TRENDS, not Consensus as the module contract
+    assumed — read here by label (never positionally), Current column."""
+    try:
+        rows = bundle.sheet("estimates", "Trends")
+    except CiqUnavailableError:
+        return None
+    cats = ("Buy", "Outperform", "Hold", "Underperform", "Sell", "No Opinion")
+    out: list[str] = []
+    for r in rows:
+        base = re.sub(r"\s*\(\d+\)\s*$", "", str(r[0]).strip()) if r else ""
+        if base in cats:
+            v = clean_num(r[1]) if len(r) > 1 else None
+            if v is not None:
+                out.append(f"{base} {int(v)}")
+    return ", ".join(out) if out else None
+
+
+def consensus_stats(bundle: CiqBundle, *, as_of: str | None = None) -> Sourced[str]:
+    """(f) CONSENSUS STATS — the target-price stats row from Consensus (Mean/Median/High-Low/N) plus
+    the analyst rating distribution. CIQ's 'Potential Upside/Downside' is deliberately NOT read: it
+    is a conclusion-shaped, stale-target artifact — the human sees price + target and judges."""
+    try:
+        rows = bundle.sheet("estimates", "Consensus")
+    except CiqUnavailableError as exc:
+        return _miss_or_unknown(bundle, "estimates", exc)
+    parts: list[str] = []
+    tp = _find_row_prefix(rows, "Target Price")
+    if tp is not None:
+        r = rows[tp]
+        mean = clean_num(r[1]) if len(r) > 1 else None
+        med = clean_num(r[2]) if len(r) > 2 else None
+        hilo = str(r[3]).strip() if len(r) > 3 else ""
+        n = str(r[5]).strip() if len(r) > 5 else ""
+        seg: list[str] = []
+        if mean is not None:
+            seg.append(f"mean {_usd(mean)}")
+        if med is not None:
+            seg.append(f"median {_usd(med)}")
+        if hilo and hilo not in _UNAVAILABLE_CELLS:
+            seg.append(f"high/low {hilo}")
+        if n and n not in _UNAVAILABLE_CELLS:
+            seg.append(f"N {n}")
+        if seg:
+            parts.append("Target price: " + ", ".join(seg))
+    ratings = _rating_distribution(bundle)
+    if ratings:
+        parts.append("Ratings: " + ratings)
+    if not parts:
+        return Sourced.unknown(note="no Target Price / rating rows in Estimates→Consensus/Trends")
+    return Sourced.present(
+        "; ".join(parts) + _asof_suffix(as_of),
+        source_ref="CIQ Estimates→Consensus (target stats) + Trends Non-Periodic (ratings)",
+    )
 
 
 def _parse_business_relationships(raw: str) -> list[str] | None:

@@ -238,6 +238,10 @@ table.data tr:hover td { background: var(--surface-2); }
 .fact-val { font-size: 13px; color: var(--ink); line-height: 1.5; }
 .fact-val.hi { font-weight: 600; }
 
+/* catalyst-path revision-event log — a compact dated list (capped at 10; full list in the JSON) */
+.event-log { margin: 4px 0 0; padding-left: 18px; font-size: 12.5px; line-height: 1.55; }
+.event-log li { margin: 2px 0; }
+
 /* table-bearing facts (peer roster, trading multiples, series, cohort) span the FULL width: the label
    sits above the table instead of in the fixed 210px column, so wide descriptive columns (e.g. the peer
    "Business" column) stop wrapping into many short lines — shorter and more readable, on screen and in

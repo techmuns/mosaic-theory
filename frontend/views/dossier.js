@@ -201,6 +201,7 @@ function renderDossier(d, verdict) {
     peerComps(m.peer_comps),
     drawdownCause(m.drawdown_cause),
     idioVsShared(m.idiosyncratic_vs_shared),
+    catalystPath(m.catalyst_path),
     consensus(m.consensus_context),
     sec("Management commentary", "Earnings-call transcript — a pointer for the human to read in full; never a machine-curated excerpt.",
       fact("Transcript", m.management_commentary)),
@@ -413,9 +414,39 @@ function idioVsShared(io) {
     `<div class="fact"><div class="fact-label">Graph cohort</div><div>${cohort}</div></div>`);
 }
 
+const EVENT_CAP = 10; // revision-event rows shown; the full list stays in dossier.json
+
+// Catalyst path — the five newly-parsed CIQ Estimates sheets, horizon-matched. Returns "" for a
+// pre-catalyst_path dossier.json (older committed JSON has no such field) so the section is simply
+// omitted rather than erroring — the flags-PR back-compat precedent.
+function catalystPath(cp) {
+  if (!cp) return "";
+  const asof = cp.as_of && cp.as_of.status === "present" ? cp.as_of.value : "UNKNOWN";
+  const ev = cp.revision_events || {};
+  let log;
+  if (ev.status === "present" && Array.isArray(ev.value) && ev.value.length) {
+    const rows = ev.value.slice(0, EVENT_CAP).map((e) =>
+      `<li><span class="mono">${escapeHtml(e.date)}</span> · ${escapeHtml(e.change_type)} · ${escapeHtml(e.broker)} · <b>${escapeHtml(e.metric)}</b> ${escapeHtml(e.period)}: ${escapeHtml(e.broker_prior)}&rarr;${escapeHtml(e.broker_current)} <span class="muted">(cons ${escapeHtml(e.consensus_before)}&rarr;${escapeHtml(e.consensus_after)})</span></li>`).join("");
+    const more = ev.value.length > EVENT_CAP ? `<li class="muted">+${ev.value.length - EVENT_CAP} more in JSON</li>` : "";
+    const cite = ev.source_ref ? `<span class="cite">${escapeHtml(ev.source_ref)}</span>` : "";
+    log = `<div class="fact"><div class="fact-label">Revision-event log <span class="muted">(most recent first; ${ev.value.length} total)</span></div>
+      <ul class="event-log">${rows}${more}</ul>${cite}</div>`;
+  } else {
+    log = fact("Revision-event log", ev);
+  }
+  return sec(`Catalyst path — as-of ${escapeHtml(asof)}`,
+    "Horizon-matched estimates, guidance & revision events (CIQ Estimates). Native cadence — FQ horizon, monthly path, NTM anchor. Assembles and cites; renders no upside, fair value, or direction.",
+    fact("Horizon read (FQ — next-2Q revision breadth)", cp.horizon_read) +
+    fact("Acceleration read (monthly consensus path)", cp.acceleration_read) +
+    fact("Cross-name anchor (NTM forward-multiple ladder)", cp.cross_name_anchor) +
+    fact("Guidance bridge (latest guide + delivery track-record)", cp.guidance_bridge) +
+    fact("Consensus stats (target + ratings)", cp.consensus_stats) +
+    log);
+}
+
 function consensus(cc) {
   if (!cc) return "";
-  return sec("Consensus context", "Light context for 'am I non-consensus' — never a driver.",
+  return sec("Consensus context (legacy light facts)", "Light context for 'am I non-consensus' — never a driver; superseded by the catalyst path above.",
     fact("EPS revisions", cc.eps_trend) +
     fact("Revenue revisions", cc.revenue_trend) +
     fact("Revision history", cc.revision_history) +
