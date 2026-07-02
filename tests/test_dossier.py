@@ -2416,7 +2416,7 @@ def test_peer_comps_section_reaches_the_rendered_markdown() -> None:
     md = dr.render_markdown(dossier)
     assert "### Peer comps" in md  # the section is wired into the mechanical-layer render
     assert "Roku" in md and "$306.6B" in md  # the roster + caps reach the page
-    assert "name NM" in md  # NM survives all the way to the rendered artifact
+    assert "| NM |" in md  # NM survives to the rendered artifact — now a trading-multiples cell
     # B1: the per-peer grid replaces the median-only deltas line — name vs peers + a median footer,
     # rendered through the shared table renderer (no computed discount/delta).
     assert "Per-peer grid" in md and "Peer median" in md and dr._TABLE_MARK in md
@@ -2567,19 +2567,61 @@ def test_guidance_stale_note_once_and_point_guide_numeric() -> None:
     assert _re.search(r"\(stale — \d+d old\)", v) and "(stale guide —" not in v  # once, no repeat
 
 
-def test_shared_table_renderer_marks_every_table(monkeypatch: typing.Any) -> None:
-    """B4: every dossier table routes through the ONE shared renderer — each emits ``_TABLE_MARK``,
-    so the count matches the number of table-bearing facts (grid + implied here)."""
-    fd = [["Company Name", "", "", "Market Cap ($M)", "Net Debt"],
-          ["Peer X (NYSE:PX)", "", "", 900.0, 40.0], ["Subj (NasdaqCM:SUBJ)", "", "", 200.0, 5.0]]
-    op = [["Company Name", "a", "b", "c", "d", "e", "f", "g", "h", "i", "Debt/EBITDA"],
-          ["Peer X (NYSE:PX)", 0, 0.3, 0, 0, 0, 0, 0, 0, 0, 2.0],
-          ["Subj (NasdaqCM:SUBJ)", 0, 0.2, 0, 0, 0, 0, 0, 0, 0, 3.0]]
-    pc = cs.peer_comps(
-        _comps({("comps", "Financial Data"): fd, ("comps", "Operating Statistics"): op})
+def test_all_rendered_tables_route_through_the_shared_renderer() -> None:
+    """B.1 item 1: ENUMERATE every table in the rendered markdown — every GFM table (a '|---'
+    separator row) MUST carry the shared-renderer marker. The roster + trading multiples (plain
+    _fact text before B.1) now render as tables too. This FAILS before B.1 (they lacked the marker)
+    and PASSES after."""
+    import re as _re
+    iv_sheet = [
+        ["Implied Valuation"], ["Company Name", "LTM EBITDA"], ["Subj Co (NasdaqCM:SUBJ)", 51.9],
+        ["= Implied Equity Value"], ["High", 1794.7], ["Low", 212.5], ["Mean", 760.2],
+        ["Median", 550.7], ["+ Total Cash & ST Investments", 126.1], ["- Total Debt", 326.0],
+    ]
+    fd_iv = [["Company Name", "", "", "Market Cap ($M)"],
+             ["Subj Co (NasdaqCM:SUBJ)", "", "", 423.1]]
+    gate = ds.Sourced.present("caps span 641x → HETEROGENEOUS", source_ref="x")
+    iv = cs.implied_valuation(
+        _comps({("comps", "Implied Valuation"): iv_sheet, ("comps", "Financial Data"): fd_iv}),
+        gate,
     )
-    md = "\n".join(dr._peer_grid_lines(pc.peer_grid))
-    assert md.count(dr._TABLE_MARK) == 1 and "| Cap |" in md  # the grid used the shared renderer
+    mech = _minimal_mech().model_copy(update={
+        "peer_comps": _fake_peer_comps(), "implied_valuation": iv,
+    })
+    dossier = ds.Dossier(
+        ticker="X", name="X", cik="0", reference_date=date(2026, 6, 1), rank=1, mechanical=mech,
+        synthesis=None, caveats=[], qa_flags=[], llm_model=None,
+        assembled_at=datetime(2026, 6, 1, 12, 0),
+    )
+    md = dr.render_markdown(dossier)
+    n_tables = sum(1 for ln in md.splitlines() if ln.startswith("|---"))
+    assert n_tables >= 4  # roster + trading multiples + per-peer grid + implied equity
+    assert md.count(dr._TABLE_MARK) == n_tables  # NO table bypasses the shared renderer
+    for lbl in ("Peer set", "Trading multiples", "Per-peer grid", "Implied EQUITY"):
+        assert _re.search(_re.escape(lbl) + r"[^\n]*" + _re.escape(dr._TABLE_MARK), md), lbl
+
+
+def test_numeric_hygiene_shared_formatters() -> None:
+    """B.1 item 3 (ONE place): ratios to one decimal (2.0 not 2); NO negative-zero (-0.4% → 0%);
+    a negative net-debt is net cash, labeled (CATL); thousands separators consistent."""
+    assert dr._ratioc("2") == "2.0" and dr._ratioc("5.8") == "5.8" and dr._ratioc("NM") == "NM"
+    assert dr._pctc(-0.004) == "0%" and dr._pctc(0.0006) == "0%"  # both round to a POSITIVE zero
+    assert dr._pctc(0.14) == "14%" and dr._pctc(-0.0484) == "-5%"  # a real negative still shows
+    assert dr._netdebt(-42108.4) == "42,108 (net cash)"  # CATL: negative net debt → net cash
+    assert dr._netdebt(5058.0) == "5,058" and dr._netdebt(None) == "–"  # consistent thousands sep
+
+
+def test_r1_as_of_sidecar_precedence_confirmed_present() -> None:
+    """B.1 item 4: R1 (AS_OF sidecar precedence) SHIPPED in PR B — confirm the machinery is present
+    (the detailed three-branch behaviour is pinned by test_as_of_sidecar_precedence)."""
+    assert hasattr(cs, "_sidecar_as_of") and hasattr(cs, "comps_as_of")
+    # attested basis reads 'operator-attested' and downgrades the staleness caveat to none
+    cp = ds.CatalystPath(
+        as_of=ds.Sourced.present("2026-06-24", source_ref="sidecar", note="operator-attested"),
+        horizon_read=_u(), acceleration_read=_u(), cross_name_anchor=_u(),
+        guidance_bridge=_u(), revision_events=_u(), consensus_stats=_u(),
+    )
+    assert dm._catalyst_stale_flag(cp, date(2027, 1, 1)) is None
 
 
 def test_old_json_without_comps_blocks_falls_back() -> None:
