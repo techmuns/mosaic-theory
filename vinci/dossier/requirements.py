@@ -127,14 +127,24 @@ CIQ_MODULES: tuple[CiqModuleRequirement, ...] = (
         module="Estimates Report",
         workbook_kind="estimates",
         freq=None,
-        sheets=("Consensus", "Revisions", "Surprise"),
+        sheets=(
+            "Consensus", "Revisions", "Surprise", "Trends", "Guidance", "Multiples",
+            "Recent Changes",
+        ),
         used_for=(
             "forward consensus context (consensus_view), EPS & Revenue revision breadth "
-            "(eps_revisions / revenue_revisions), and annual EPS surprise / beat-miss history "
-            "(surprise_history)"
+            "(eps_revisions / revenue_revisions), annual EPS surprise / beat-miss history "
+            "(surprise_history), AND the horizon-matched catalyst-path view (catalyst_path): FQ "
+            "revision breadth (horizon_read), monthly consensus paths (acceleration_read), the "
+            "NTM forward-multiple ladder (cross_name_anchor), the guidance bridge + delivery "
+            "track-record (guidance_bridge), the broker revision-event log (revision_events), and "
+            "target/rating stats (consensus_stats)"
         ),
         granularity=Granularity.BOTH,
-        lookback="estimate revisions over the trailing 1–3 months; EPS surprise by fiscal year",
+        lookback=(
+            "estimate revisions over the trailing 1–3 months; monthly consensus snapshots to 12m; "
+            "EPS surprise + guidance track-record by fiscal year; forward multiples NTM→FY33"
+        ),
         required=True,
     ),
     CiqModuleRequirement(

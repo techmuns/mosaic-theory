@@ -992,6 +992,38 @@ Each line: *what it does* — *verified how*.
     stale subtitle + percentile rows gone); the flag reclassify by unit test + a no-UNTRACEABLE-leaks-
     to-qa invariant across all 10; ruff + mypy --strict (68) + pytest green; dossier.js node --check
     clean. On a branch → PR (the series is already on main).*
+  - **PR A — Catalyst path: the five previously-unparsed CIQ Estimates sheets, horizon-matched
+    (2026-07-02).** The Estimates workbook was already pulled but only Consensus / Revisions-FY /
+    Surprise were consumed; the **Trends / Guidance / Multiples / Recent-Changes / (deeper) Consensus**
+    sheets carried the Edge-2 revision-breadth evidence UNPARSED — MVST rendered "0↑/0↓" while its FY26
+    EBITDA consensus was cut **146.5 → 62.1** over six months. New mechanical block `catalyst_path`
+    (schema `CatalystPath` + `RevisionEvent`, **optional-with-default** so a pre-PR `dossier.json`
+    round-trips — the flags-PR precedent), assembled by seven extractors in `ciq_sheets.py` (as-of /
+    horizon-read / acceleration-read / cross-name-anchor / guidance-bridge / revision-events /
+    consensus-stats), wired in `mechanical._catalyst_path` + a **shared-45d** staleness caveat (reuses
+    `_STALE_CLOSE_DAYS`), declared in `CIQ_MODULES` (the AST coverage guard forced it), and rendered IN
+    PLACE of the thin "Consensus context" slot (legacy facts relocated under it; transcript pointer
+    stays last) in BOTH `render.py` and `frontend/views/dossier.js` (event log capped at 10 + "+N more
+    in JSON"). **Assemble-not-conclude held:** no field carries an upside / fair-value / direction (the
+    no-conclusion schema-walk was extended to `catalyst_path` + `RevisionEvent`); CIQ's
+    conclusion-shaped "Potential Upside/Downside" is deliberately NOT read; the guidance track-record is
+    a mechanical beat-count over **resolved-only** periods (both guidance AND actual present). *Verified
+    on the REAL MVST Estimates export (legacy BIFF `.xls`, git-ignored, never committed): the FY26
+    EBITDA path renders `146.5 (6m) → 62.1 (now)` with 2m/3m labelled n/a and NO fabricated points; the
+    FQ 2-month-window downward revisions the FY-only line hid; the guidance bridge with the 2026-03-16
+    date decoded; the multiples ladder NTM P/E 14.33 / FY26 32.25 / FY27 8.6; the dated H.C. Wainwright
+    EBITDA cut in the event log; as-of 2026-05-15 on the header, staleness silent at the current gap and
+    firing on a stale reference. The source-aware figure-tracer covers the new STRUCTURED refs (numbers
+    join the universe → citations trace; refs never match the transcript soft-note → a mis-cite still
+    hard-flags UNTRACEABLE). Frontend confirmed by a real preview render (section in place, legacy facts
+    under it, event log "+37 more", no console errors). ruff + mypy --strict (68) + `pytest -m "not
+    network"` green; 16 new synthetic-fixture tests. On a branch → PR; the agent never merges.*
+    - **Contract deviation REPORTED (not improvised):** sub-block (f)'s rating-distribution rows are
+      **not in `Consensus`** as the spec assumed — in the real export they live in `Trends`
+      ("Non-Periodic Trends": Buy/Outperform/Hold/…). Read from their ACTUAL location by label (a
+      declared `Trends` read), never positionally guessed; the target-price stats + NTM level block ARE
+      in `Consensus` as specified. The operator re-assembles + commits the refreshed dossiers (per the
+      #51 precedent); the assembled artifacts are NOT committed in this PR.
 - _Whole suite green (ruff + mypy --strict clean; `pytest -m "not network"` passes)._
 
 ## 3. FALSIFIED — tested and retired (NOT deferred)
@@ -1094,6 +1126,16 @@ without starving the lead loop; each becomes a *real* widener only when its OWN 
   hand-maintained tuple becomes a maintenance tax that scales with source count, and the registry
   inverts it so a new extractor registers itself. **Do NOT build it preemptively — build it when the
   2nd or 3rd new kind lands and the pattern is real.** Until then the AST guard is the binding.
+- **Catalyst-path follow-ups (recorded when PR A landed, 2026-07-02) — deferred, not chased.**
+  - **Unified monthly timeline** — PR A renders NATIVE-CADENCE blocks (FQ horizon / monthly
+    acceleration / NTM anchor) side-by-side; the single merged month-by-month timeline that overlays
+    revision breadth, guidance changes and consensus path on ONE axis is a follow-up, **trigger:** the
+    native-cadence blocks prove insufficient for the human read in real use (monitor; don't build
+    preemptively).
+  - **PR B / C / D queue** (each its own scoped PR, per the same spec's phasing): **B** = comps-workbook
+    changes; **C** = section reordering; **D** = the transcript-block full restructure (PR A did only the
+    one-line relocation to the bottom of the mechanical layer) + appendix build. Buildable per §4's
+    GOVERNOR; none started.
 
 ### Edge-hypothesis ledger — the full inventory (record-only doc; the edges are gated, built per §4's GOVERNOR)
 

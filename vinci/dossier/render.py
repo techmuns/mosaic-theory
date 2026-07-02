@@ -10,7 +10,9 @@ from __future__ import annotations
 from collections.abc import Callable
 from typing import Any
 
-from vinci.dossier.schemas import Dossier, Sourced, SourceStatus
+from vinci.dossier.schemas import Dossier, MechanicalLayer, Sourced, SourceStatus
+
+_EVENT_CAP = 10  # revision-event rows shown in the human view; the full list stays in the JSON
 
 # --- display formatters (render boundary ONLY — the stored Sourced.value keeps full precision) ---
 # Screen-data-record fields arrive as raw DataField floats; format for legibility here, never at the
@@ -48,6 +50,59 @@ def _fact(label: str, s: Sourced[Any], fmt: Callable[[Any], str] = str) -> str:
     if s.status is SourceStatus.PRESENT:
         return f"- **{label}:** {fmt(s.value)}\n  - ↳ `{s.source_ref}`"
     return f"- **{label}:** _{s.status.value.upper()}_ — {s.note}"
+
+
+def _revision_events_lines(s: Sourced[Any]) -> list[str]:
+    """The revision-event log: most-recent-first, capped at ``_EVENT_CAP`` with a '+N more in JSON'
+    note (the full list lives in dossier.json). UNKNOWN/MISSING falls back to the standard line."""
+    if s.status is not SourceStatus.PRESENT or not s.value:
+        return [_fact("Revision-event log", s)]
+    events = s.value
+    out = [
+        f"- **Revision-event log** (most recent first; {len(events)} total) — ↳ `{s.source_ref}`:"
+    ]
+    for e in events[:_EVENT_CAP]:
+        out.append(
+            f"  - {e.date} · {e.change_type} · {e.broker} · {e.metric} {e.period}: "
+            f"{e.broker_prior}→{e.broker_current} (cons {e.consensus_before}→{e.consensus_after})"
+        )
+    if len(events) > _EVENT_CAP:
+        out.append(f"  - _+{len(events) - _EVENT_CAP} more in JSON_")
+    return out
+
+
+def _catalyst_section(m: MechanicalLayer) -> list[str]:
+    """The Catalyst-path section — the horizon-matched estimates/guidance/revision view rendered IN
+    PLACE of the old thin 'Consensus context' slot, with the legacy consensus/surprise facts
+    relocated UNDER it and the transcript pointer kept LAST in the mechanical layer. A dossier.json
+    predating catalyst_path degrades to just the legacy facts (back-compat, like the flags PR)."""
+    cp = m.catalyst_path
+    out: list[str] = [""]
+    if cp is None:
+        out.append("### Consensus context")
+    else:
+        asof = cp.as_of.value if cp.as_of.status is SourceStatus.PRESENT else "UNKNOWN"
+        out.append(f"### Catalyst path (estimates · guidance · revision events) — as-of {asof}")
+        out += [
+            _fact("Horizon read (FQ — next-2Q revision breadth)", cp.horizon_read),
+            _fact("Acceleration read (monthly consensus path)", cp.acceleration_read),
+            _fact("Cross-name anchor (NTM forward-multiple ladder)", cp.cross_name_anchor),
+            _fact("Guidance bridge (latest guide + delivery track-record)", cp.guidance_bridge),
+            _fact("Consensus stats (target + ratings)", cp.consensus_stats),
+        ]
+        out += _revision_events_lines(cp.revision_events)
+        out.append("#### Consensus context (legacy light facts)")
+    out += [
+        _fact("EPS trend", m.consensus_context.eps_trend),
+        _fact("Revenue trend", m.consensus_context.revenue_trend),
+        _fact("Revision history", m.consensus_context.revision_history),
+        _fact("Surprise history (beat/miss)", m.consensus_context.surprise_history),
+        "",
+        "### Management commentary (transcript POINTER — read the file; not a machine excerpt)",
+        _fact("Earnings call", m.management_commentary),
+        "",
+    ]
+    return out
 
 
 def _flags_section(d: Dossier) -> list[str]:
@@ -144,18 +199,7 @@ def render_markdown(d: Dossier) -> str:
             out.append(f"  - [{cm.hops}h] {cm.ticker}: {ret} · via {cm.via}")
     else:
         out.append(_fact("Graph cohort", cohort))
-    out += [
-        "",
-        "### Consensus context",
-        _fact("EPS trend", m.consensus_context.eps_trend),
-        _fact("Revenue trend", m.consensus_context.revenue_trend),
-        _fact("Revision history", m.consensus_context.revision_history),
-        _fact("Surprise history (beat/miss)", m.consensus_context.surprise_history),
-        "",
-        "### Management commentary (transcript POINTER — read the file; not a machine excerpt)",
-        _fact("Earnings call", m.management_commentary),
-        "",
-    ]
+    out += _catalyst_section(m)
 
     if d.synthesis is None:
         out += ["## Synthesis", "_Not produced (see flags)._", "", *_flags_section(d)]

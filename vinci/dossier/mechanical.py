@@ -18,6 +18,7 @@ from typing import Any, TypeVar
 from vinci.dossier import ciq_sheets, edgar_fundamentals
 from vinci.dossier.ciq import CiqBundle
 from vinci.dossier.schemas import (
+    CatalystPath,
     CohortMember,
     Concentration,
     ConsensusContext,
@@ -874,6 +875,43 @@ def _consensus(bundle: CiqBundle) -> ConsensusContext:
     )
 
 
+def _catalyst_path(bundle: CiqBundle) -> CatalystPath:
+    """Assemble the horizon-matched estimates/guidance/revision view from the five new Estimates
+    sheets. The workbook as-of (freshest embedded data date) is resolved ONCE and threaded into
+    every sub-field's source_ref. Each sub-field independently reads UNKNOWN/MISSING when its sheet
+    is absent — a FRESH assembly always builds the block; raggedness lives one level down."""
+    asof = ciq_sheets.estimates_as_of(bundle)
+    aod = asof.value
+    return CatalystPath(
+        as_of=asof,
+        horizon_read=ciq_sheets.horizon_read(bundle, as_of=aod),
+        acceleration_read=ciq_sheets.acceleration_read(bundle, as_of=aod),
+        cross_name_anchor=ciq_sheets.cross_name_anchor(bundle, as_of=aod),
+        guidance_bridge=ciq_sheets.guidance_bridge(bundle, as_of=aod),
+        revision_events=ciq_sheets.revision_events(bundle, as_of=aod),
+        consensus_stats=ciq_sheets.consensus_stats(bundle, as_of=aod),
+    )
+
+
+def _catalyst_stale_flag(catalyst: CatalystPath, reference_date: date) -> str | None:
+    """Fire the SHARED staleness caveat (same 45d knob as the EV/EBITDA stale-Close check) when the
+    Estimates export's as-of trails the reference date by more than the constant — the revision
+    breadth / guidance / consensus below may predate a since-then re-rate. UNKNOWN as-of → no fire
+    (fail-quiet on absence; the sub-fields already read MISSING)."""
+    aod = catalyst.as_of.value
+    if not aod:
+        return None
+    stale_days = (reference_date - date.fromisoformat(aod)).days
+    if stale_days <= _STALE_CLOSE_DAYS:
+        return None
+    return (
+        f"Catalyst-path staleness caveat — the CIQ Estimates export is as-of {aod}, {stale_days}d "
+        f"before the {reference_date.isoformat()} reference; the revision breadth, guidance bridge "
+        "and consensus below may predate a since-then re-rate. Re-pull CIQ Estimates before "
+        "relying on the horizon/acceleration reads."
+    )
+
+
 def assemble_mechanical(
     record: DataRecord,
     *,
@@ -933,6 +971,7 @@ def assemble_mechanical(
             record, store, graph, resolver, reference_date
         ),
         consensus_context=_consensus(bundle),
+        catalyst_path=_catalyst_path(bundle),
         management_commentary=ciq_sheets.management_commentary(bundle),
     )
     flags: list[str] = []
@@ -950,4 +989,9 @@ def assemble_mechanical(
     # vs the current comps figure — flag so the human verifies rather than trusting one silently.
     if (ev_flag := _ev_ebitda_integrity_flag(bundle, reference_date)) is not None:
         flags.append(ev_flag)
+    # catalyst-path staleness: the Estimates export's as-of vs the reference date (shared 45d knob).
+    if mech.catalyst_path is not None and (
+        cat_flag := _catalyst_stale_flag(mech.catalyst_path, reference_date)
+    ):
+        flags.append(cat_flag)
     return mech, flags

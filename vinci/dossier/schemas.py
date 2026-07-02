@@ -197,6 +197,45 @@ class ConsensusContext(BaseModel):
     model_config = {"frozen": True}
 
 
+class RevisionEvent(BaseModel):
+    """One CIQ Estimates→Recent-Changes row: a dated broker revision. A RECORDED event — the only
+    direction it carries is CIQ's own verbatim ``change_type`` label; the machine adds no reading.
+    Every field is a string (verbatim cell text, ``-`` when absent) so a missing broker value can
+    never become a fabricated number."""
+
+    date: str  # ISO, decoded from the Excel serial
+    change_type: str  # CIQ's own verbatim label, e.g. "Downward Revision", "Initiation of Coverage"
+    broker: str
+    metric: str  # CIQ "Data Point", e.g. "EBITDA", "EPS Normalized"
+    period: str  # e.g. "FY 2026", "FQ2 2026"
+    broker_prior: str  # the broker's prior value ("-" if a new estimate)
+    broker_current: str  # the broker's revised value
+    consensus_before: str
+    consensus_after: str
+
+    model_config = {"frozen": True}
+
+
+class CatalystPath(BaseModel):
+    """Horizon-matched estimates / guidance / revision-event view (CIQ Estimates: Revisions, Trends,
+    Guidance, Multiples, Recent-Changes, Consensus). The Edge-2 revision-breadth evidence ASSEMBLED
+    and source-bound in NATIVE-CADENCE blocks — FQ horizon, monthly acceleration path, NTM anchor —
+    never concluded: no field holds a computed upside / fair value / attractiveness / direction; the
+    human reads the path and judges. ``as_of`` (the freshest embedded data date) threads into every
+    sub-field's source_ref and fires the shared staleness caveat vs the reference date. Each field
+    reads UNKNOWN/MISSING when its sheet/rows are absent — ragged by design, never faked."""
+
+    as_of: Sourced[str]  # workbook as-of date (ISO) — the freshest embedded data date
+    horizon_read: Sourced[str]  # a. FQ: next-2-FQ levels + 1/2/3-month revision breadth per metric
+    acceleration_read: Sourced[str]  # b. monthly path from Trends; deltas between present snapshots
+    cross_name_anchor: Sourced[str]  # c. NTM level + forward-multiple ladder (NTM + FY26→FY33)
+    guidance_bridge: Sourced[str]  # d. latest guide {range,date} + consensus + actual + track-rec
+    revision_events: Sourced[list[RevisionEvent]]  # e. Recent-Changes log; render caps 10, JSON all
+    consensus_stats: Sourced[str]  # f. target mean/median/hi-lo/N + rating distribution
+
+    model_config = {"frozen": True}
+
+
 class PeerComps(BaseModel):
     """Comparable-company multiples FRAMED to RESIST the consensus comp read (CIQ Company Comparable
     Analysis). The peer-vs-name gap is never presentable without (a) the peer-set COMPOSITION — so
@@ -223,6 +262,11 @@ class MechanicalLayer(BaseModel):
     drawdown_cause: DrawdownCause
     idiosyncratic_vs_shared: IdiosyncraticVsShared
     consensus_context: ConsensusContext
+    # Horizon-matched estimates/guidance/revision-event view (the five previously-unparsed CIQ
+    # Estimates sheets). Optional-with-default ONLY for back-compat: a dossier.json predating this
+    # field must still round-trip (the flags-PR precedent). A FRESH assembly ALWAYS builds it — the
+    # fail-loud lives one level down (each sub-field is UNKNOWN/MISSING when its sheet is absent).
+    catalyst_path: CatalystPath | None = None
     management_commentary: Sourced[str]  # earnings-call transcript — QUALITATIVE only, no numbers
 
     model_config = {"frozen": True}

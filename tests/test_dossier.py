@@ -59,8 +59,12 @@ def _reachable_models(root: type[BaseModel]) -> set[type[BaseModel]]:
 def test_dossier_schema_has_no_conclusion_field() -> None:
     """No field anywhere in the Dossier tree may name a verdict/score/direction/probability/etc."""
     models = _reachable_models(ds.Dossier)
-    # sanity: the walk actually reached the synthesis sub-models (else the guard is vacuous)
-    expected = {ds.Synthesis, ds.SourcedPoint, ds.TwinCase, ds.DecisiveQuestion, ds.MechanicalLayer}
+    # sanity: the walk actually reached the synthesis sub-models AND the new catalyst-path models
+    # (else the guard is vacuous — catalyst_path must be covered by the no-conclusion check too)
+    expected = {
+        ds.Synthesis, ds.SourcedPoint, ds.TwinCase, ds.DecisiveQuestion, ds.MechanicalLayer,
+        ds.CatalystPath, ds.RevisionEvent,
+    }
     assert expected <= models
     offenders: list[str] = []
     for model in models:
@@ -1615,6 +1619,273 @@ def test_surprise_history_parsed_and_gaap_labelled() -> None:
     assert s.status is ds.SourceStatus.PRESENT
     assert "GAAP-EPS surprise:" in (s.value or "") and "FY2024 -76%" in (s.value or "")
     assert "GAAP-EPS basis" in (s.value or "")  # basis distinguished from the adjusted guide
+
+
+# --- Catalyst path: the five newly-parsed CIQ Estimates sheets (PR A) -------------------------
+#
+# Synthetic fixtures ONLY — the licensed CIQ export is never committed. These pin the load-bearing
+# behaviours: FQ/FY column mapping, ragged-snapshot handling (never interpolated), serial-date and
+# paren-negative range decode, present-but-empty omission, track-record over resolved-only periods,
+# event-log ordering + render cap, and the shared staleness caveat at its boundary.
+
+
+def _trends_ragged() -> list[list[typing.Any]]:
+    """Trends with EBITDA MISSING its 2m & 3m snapshots (the real ragged shape) plus a Revenue block
+    — same FQ2 / FQ3 / FY-2026 / FQ1-2027 columns."""
+    return [
+        ["EBITDA", "", "", "", ""],
+        ["Company Level (USD)", "FQ2 2026", "FQ3 2026", "FY 2026", "FQ1 2027"],
+        ["Current", 10.0, 11.0, 62.1, 5.0],
+        ["1 month ago", 10.0, 11.0, 62.1, 5.0],
+        ["6 months ago", 20.0, 22.0, 146.5, 8.0],
+        ["9 months ago", 20.0, 22.0, 146.5, 8.0],
+        ["12 months ago", 25.0, 27.0, 129.7, 9.0],
+        ["Revenue", "", "", "", ""],
+        ["Company Level (USD)", "FQ2 2026", "FQ3 2026", "FY 2026", "FQ1 2027"],
+        ["Current", 100.0, 110.0, 444.4, 50.0],
+        ["3 months ago", 120.0, 130.0, 480.5, 60.0],
+        ["12 months ago", 150.0, 160.0, 609.0, 70.0],
+    ]
+
+
+def test_acceleration_read_ragged_snapshots_never_interpolated() -> None:
+    """(b) ACCELERATION READ walks the current-FY column across ONLY the snapshots present. EBITDA
+    missing 2m/3m renders 146.5(6m)→62.1(1m) with a '[3m, 2m n/a]' gap note and NO fabricated
+    points. Column mapping: it reads FY 2026 (62.1), not the FQ2 column (10.0)."""
+    s = cs.acceleration_read(_est_bundle({"Trends": _trends_ragged()}), as_of="2026-05-15")
+    assert s.status is ds.SourceStatus.PRESENT
+    v = s.value or ""
+    assert "FY 2026 EBITDA:" in v and "146.5 (6m) → 62.1 (1m)" in v  # 3m/2m skipped, not filled
+    ebitda_seg = v.split("EBITDA:")[1].split("; FY 2026")[0]
+    assert "(3m)" not in ebitda_seg and "(2m)" not in ebitda_seg  # no fabricated snapshot points
+    assert "[3m, 2m n/a]" in ebitda_seg and "62.1 (now)" in ebitda_seg  # read FY col, not FQ2
+    assert "[as-of 2026-05-15]" in v
+
+
+def _revisions_fx() -> list[list[typing.Any]]:
+    """A Revisions block with all three windows; FY 2026 (col3) carries a distinct downward count so
+    a mis-mapped read of the FY column instead of the FQ columns would show up."""
+    return [
+        ["EPS Normalized", "", "", "", ""],
+        ["NasdaqCM:X", "FQ2 2026", "FQ3 2026", "FY 2026", "FQ1 2027"],
+        ["Last Month", "", "", "", ""],
+        ["# of Analysts", 2, 2, 2, 2],
+        ["Upward", 0, 1, 0, 0],
+        ["Downward", 0, 0, 0, 0],
+        ["Last 2 Months", "", "", "", ""],
+        ["# of Analysts", 2, 2, 2, 2],
+        ["Upward", 0, 0, 0, 0],
+        ["Downward", 1, 2, 3, 0],
+        ["Last 3 Months", "", "", "", ""],
+        ["# of Analysts", 2, 2, 2, 2],
+        ["Upward", 0, 0, 0, 0],
+        ["Downward", 1, 2, 3, 0],
+    ]
+
+
+def test_horizon_read_maps_fq_columns_and_surfaces_2month_downgrades() -> None:
+    """(a) HORIZON READ shows the next-2-FQ breadth across all three windows; the 2-month-window
+    downward revisions the old FY-only line hid are surfaced. Column mapping: it reads the FQ
+    columns, never the FY-2026 column (whose 3↓ must therefore never appear)."""
+    s = cs.horizon_read(_est_bundle({"Revisions": _revisions_fx()}), as_of="2026-05-15")
+    assert s.status is ds.SourceStatus.PRESENT
+    v = s.value or ""
+    assert "EPS Normalized FQ2 2026:" in v and "2m 0↑/1↓" in v
+    assert "EPS Normalized FQ3 2026:" in v and "2m 0↑/2↓" in v
+    assert "3↓" not in v  # never reads the FY-2026 column (col3 Downward=3) — FQ mapping only
+
+
+def test_cross_name_anchor_renders_forward_multiple_ladder() -> None:
+    """(c) CROSS-NAME ANCHOR builds the NTM + FY ladder from Multiples; '-' renders absent."""
+    mult = [
+        ["X > Estimates > Multiples", "", "", "", "", ""],
+        ["Based on Market Price", "TEV/REV", "TEV/EBITDA", "TEV/EBIT", "Price/Earnings", "PEG"],
+        ["NTM", 1.26, 7.54, 17.55, 14.33, "-"],
+        ["FY 2026", 1.42, 10.14, 31.54, 32.25, "-"],
+        ["FY 2027", 1.06, 4.26, 9.17, 8.6, "-"],
+    ]
+    s = cs.cross_name_anchor(_est_bundle({"Multiples": mult}), as_of="2026-05-15")
+    assert s.status is ds.SourceStatus.PRESENT
+    v = s.value or ""
+    assert "NTM:" in v and "Price/Earnings 14.33" in v
+    assert "FY 2026:" in v and "Price/Earnings 32.25" in v
+    assert "FY 2027:" in v and "Price/Earnings 8.60" in v
+    assert "PEG –" in v  # '-' → absent, never 0
+
+
+def test_parse_range_handles_points_ranges_and_paren_negatives() -> None:
+    """Guidance range decode: bare point, range, and parentheses-as-negative."""
+    assert cs._parse_range("145.00 - 155.00") == (145.0, 155.0)
+    assert cs._parse_range("(120.00) - (150.00)") == (-150.0, -120.0)
+    assert cs._parse_range("427.516") == (427.516, 427.516)
+    assert cs._parse_range("-") is None and cs._parse_range("") is None
+
+
+def test_guidance_bridge_decodes_serials_and_counts_only_resolved() -> None:
+    """(d) GUIDANCE BRIDGE decodes serial dates + range strings (incl. paren-negatives), reports the
+    LATEST guide, and counts the track-record ONLY over periods with BOTH a guidance and an actual.
+    A present-but-empty metric block is omitted with no flag."""
+    guidance = [
+        ["X > Estimates > Guidance", "", "", ""],
+        ["", "FY 2023", "FY 2024", "FY 2025"],
+        ["Revenue", "", "", ""],
+        ["As Of Guidance", "", "", ""],
+        ["Guidance Date", 44900.0, 45300.0, 45600.0],
+        ["Consensus Estimate", 100.0, 200.0, 300.0],
+        ["Guidance", "95.0 - 105.0", "190.0 - 210.0", "290.0 - 310.0"],
+        ["Actual/Latest", "", "", ""],
+        ["Actual", 110.0, 150.0, "-"],  # FY23 beat; FY24 miss; FY25 unresolved (no actual)
+        ["Capital Expenditure", "", "", ""],
+        ["As Of Guidance", "", "", ""],
+        ["Guidance Date", 44950.0, "", ""],
+        ["Consensus Estimate", -100.0, "", ""],
+        ["Guidance", "(120.00) - (150.00)", "", ""],  # paren-negative → (-150, -120)
+        ["Actual/Latest", "", "", ""],
+        ["Actual", -130.0, "", ""],  # -130 ≥ -150 guided floor → met
+        ["Gross Margin %", "", "", ""],  # present-but-empty
+        ["As Of Guidance", "", "", ""],
+        ["Guidance Date", "", "", ""],
+        ["Guidance", "-", "-", "-"],
+    ]
+    s = cs.guidance_bridge(_est_bundle({"Guidance": guidance}), as_of=None)
+    assert s.status is ds.SourceStatus.PRESENT
+    v = s.value or ""
+    assert "Revenue: latest guide '290.0 - 310.0' for FY 2025 (dated 20" in v  # max-dated serial
+    assert "actual ≥ guided floor 1/2 resolved periods" in v  # resolved-only (FY25 excluded)
+    assert "Capital Expenditure: latest guide '(120.00) - (150.00)'" in v and "1/1 resolved" in v
+    assert "Gross Margin" not in v  # present-but-empty block omitted, no flag
+
+
+def _recent_changes_fx(n: int) -> list[list[typing.Any]]:
+    """A Recent-Changes sheet with n dated events in ASCENDING serial order (so the extractor's
+    most-recent-first sort is actually exercised)."""
+    rows: list[list[typing.Any]] = [
+        ["", "", ""],
+        ["Change Type", "Date", "Broker", "Analyst", "Data Point", "Period",
+         "Broker Value Current", "Broker Value Prior", "Consensus After", "Consensus Before"],
+    ]
+    for i in range(n):
+        rows.append([
+            "Downward Revision", 46100.0 + i, f"Broker {i}", "-", "EBITDA", "FY 2026",
+            62.0 - i, 146.0, 62.0 - i, 146.0,
+        ])
+    return rows
+
+
+def test_estimates_as_of_and_event_log_ordering() -> None:
+    """as-of = the freshest embedded revision date; the log maps columns and sorts newest-first."""
+    b = _est_bundle({"Recent Changes": _recent_changes_fx(3)})
+    asof = cs.estimates_as_of(b)
+    ev = cs.revision_events(b)
+    assert asof.status is ds.SourceStatus.PRESENT and ev.status is ds.SourceStatus.PRESENT
+    events = ev.value or []
+    assert len(events) == 3
+    dates = [e.date for e in events]
+    assert dates == sorted(dates, reverse=True)  # most-recent-first
+    e0 = events[0]
+    assert e0.metric == "EBITDA" and e0.period == "FY 2026"
+    assert e0.broker_prior == "146.0" and e0.broker_current  # prior=col7, current=col6
+    assert asof.value == dates[0]  # as-of matches the freshest event date
+
+
+def test_revision_event_log_render_caps_at_ten() -> None:
+    """The render caps the event log at 10 rows with a '+N more in JSON' note (full list kept)."""
+    ev = cs.revision_events(_est_bundle({"Recent Changes": _recent_changes_fx(12)}))
+    lines = dr._revision_events_lines(ev)
+    assert sum(1 for ln in lines if ln.strip().startswith("- 2")) == 10  # 10 dated rows shown
+    assert any("+2 more in JSON" in ln for ln in lines)
+
+
+def test_consensus_stats_reads_target_and_ratings_skips_potential_upside() -> None:
+    """(f) CONSENSUS STATS reads the target-price stats + rating distribution (from Trends, its real
+    home in this export) and NEVER reads CIQ's conclusion-shaped 'Potential Upside/Downside' row."""
+    consensus = [
+        ["X > Estimates > Consensus", "", "", "", "", ""],
+        ["NasdaqCM:X (USD)", "Mean", "Median", "High/Low", "Std. Dev.", "No. of Estimates."],
+        ["Target Price", 5.5, 5.5, "6.00/5.00", 0.5, "2/2"],
+        ["Potential Upside/Diff. from Target Price", "386.73 %/4.37", "", "", "", ""],
+    ]
+    trends = [
+        ["Non-Periodic Trends", "", ""],
+        ["NasdaqCM:X", "Current", "1 month ago"],
+        ["Recommendation", "Buy (1.00)", "Buy (1.00)"],
+        ["Buy (1)", 2.0, 2.0],
+        ["Outperform (2)", 0.0, 0.0],
+        ["Hold (3)", 1.0, 1.0],
+    ]
+    s = cs.consensus_stats(_est_bundle({"Consensus": consensus, "Trends": trends}), as_of=None)
+    assert s.status is ds.SourceStatus.PRESENT
+    v = s.value or ""
+    assert "Target price: mean $5.50, median $5.50" in v and "N 2/2" in v
+    assert "Buy 2" in v and "Hold 1" in v  # rating distribution pulled from Trends
+    assert "Potential Upside" not in v and "386.73" not in v  # conclusion-shaped row skipped
+
+
+def test_catalyst_stale_flag_fires_only_past_the_shared_45d() -> None:
+    """The catalyst-path staleness caveat reuses the SHARED 45d knob: silent at exactly 45d, fires
+    at 46d. An UNKNOWN as-of never fires (fail-quiet on absence)."""
+    cp = ds.CatalystPath(
+        as_of=ds.Sourced.present("2026-05-15", source_ref="CIQ Estimates→Recent Changes"),
+        horizon_read=_u(), acceleration_read=_u(), cross_name_anchor=_u(),
+        guidance_bridge=_u(), revision_events=_u(), consensus_stats=_u(),
+    )
+    assert dm._catalyst_stale_flag(cp, date(2026, 6, 29)) is None  # exactly 45d → silent
+    fired = dm._catalyst_stale_flag(cp, date(2026, 6, 30))  # 46d → fires
+    assert fired is not None and "staleness caveat" in fired and "2026-05-15" in fired
+    unknown = cp.model_copy(update={"as_of": _u()})
+    assert dm._catalyst_stale_flag(unknown, date(2027, 1, 1)) is None  # no as-of → no fire
+
+
+def test_old_dossier_without_catalyst_path_still_renders() -> None:
+    """Back-compat: a mechanical layer / dossier.json predating catalyst_path (field absent) parses
+    (defaults None) and renders the legacy 'Consensus context' slot — never crashes, never invents a
+    catalyst path (the flags-PR fallback precedent)."""
+    mech = _minimal_mech()
+    assert mech.catalyst_path is None  # constructing without the field works (default None)
+    blob = mech.model_dump()
+    blob.pop("catalyst_path", None)  # simulate a pre-PR JSON with the key entirely absent
+    restored = ds.MechanicalLayer.model_validate(blob)
+    assert restored.catalyst_path is None
+    dossier = ds.Dossier(
+        ticker="X", name="X", cik="0", reference_date=date(2026, 6, 1), rank=1,
+        mechanical=restored, synthesis=None, caveats=[], qa_flags=[],
+        llm_model=None, assembled_at=datetime(2026, 6, 1, 12, 0),
+    )
+    md = dr.render_markdown(dossier)
+    assert "### Consensus context" in md and "### Catalyst path" not in md
+
+
+def test_fresh_dossier_renders_catalyst_path_in_place_of_consensus_slot() -> None:
+    """A dossier WITH catalyst_path renders the 'Catalyst path' section (as-of on the header) in
+    place of the old thin slot, with the legacy consensus facts relocated UNDER it."""
+    cp = ds.CatalystPath(
+        as_of=ds.Sourced.present("2026-05-15", source_ref="CIQ Estimates→Recent Changes"),
+        horizon_read=ds.Sourced.present("EPS FQ2 2026: 1m 0↑/1↓", source_ref="CIQ→Revisions"),
+        acceleration_read=ds.Sourced.present(
+            "FY 2026 EBITDA: 146.5 (6m) → 62.1 (now)", source_ref="CIQ→Trends"
+        ),
+        cross_name_anchor=_u(), guidance_bridge=_u(),
+        revision_events=ds.Sourced.present(
+            [ds.RevisionEvent(
+                date="2026-05-15", change_type="Downward Revision", broker="HCW",
+                metric="EBITDA", period="FY 2026", broker_prior="146.5",
+                broker_current="62.08", consensus_before="-", consensus_after="62.08",
+            )],
+            source_ref="CIQ Estimates→Recent Changes (1 event)",
+        ),
+        consensus_stats=_u(),
+    )
+    mech = _minimal_mech().model_copy(update={"catalyst_path": cp})
+    dossier = ds.Dossier(
+        ticker="X", name="X", cik="0", reference_date=date(2026, 6, 1), rank=1,
+        mechanical=mech, synthesis=None, caveats=[], qa_flags=[], llm_model=None,
+        assembled_at=datetime(2026, 6, 1, 12, 0),
+    )
+    md = dr.render_markdown(dossier)
+    assert "### Catalyst path (estimates · guidance · revision events) — as-of 2026-05-15" in md
+    assert "146.5 (6m) → 62.1 (now)" in md
+    assert "Downward Revision · HCW · EBITDA FY 2026: 146.5→62.08" in md
+    assert "#### Consensus context (legacy light facts)" in md  # relocated under catalyst path
 
 
 # --- truncation fail-loud (change 1) + transcript pointer (change 3) --------------------------
