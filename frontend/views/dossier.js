@@ -241,14 +241,15 @@ function flagsSection(caveats) {
 
 function valuation(v) {
   if (!v) return "";
-  return sec("Valuation", "Multiples vs the name's own ~5y history, and where it sits in that range.",
+  // Mirrors the md render (PR #48): lead with the CROSS-SECTIONAL read (the edge); the own-history
+  // percentile barely discriminates across finalists, so it's folded into the range line below.
+  return sec("Valuation", "Cross-sectional vs peers (the edge); own-history range as secondary context.",
+    fact("Cross-sectional (vs peers — the edge)", v.cross_sectional, null, { hi: true }) +
     fact("P/E", v.pe, (x) => escapeHtml(Number(x).toFixed(1)) + "&times;") +
-    fact("P/E percentile", v.pe_percentile_5y, pctile) +
     fact("EV/EBITDA (TEV/LTM, GAAP)", v.ev_ebitda, mult) +
-    fact("EV/EBITDA percentile", v.ev_ebitda_percentile_5y, pctile) +
     fact("EV/adj-EBITDA (forward)", v.ev_ebitda_adjusted_fwd) +
     fact("Adjusted EPS (guide)", v.adjusted_eps) +
-    fact("Range position", v.range_position, null, { hi: true }));
+    fact("Own-history range position", v.range_position, null, { hi: true }));
 }
 
 function quality(q) {
@@ -258,6 +259,7 @@ function quality(q) {
     fact("Free cash flow ($M)", q.free_cash_flow) +
     seriesTable("Margin trend", q.margin_trend) +
     fact("Net debt / EBITDA (GAAP)", q.net_debt_to_ebitda, mult) +
+    fact("Net debt / OCF", q.net_debt_to_ocf, mult) +
     fact("Net debt / EBITDA (covenant adj.)", q.net_debt_to_ebitda_adjusted) +
     fact("Survival capacity", q.survival_capacity) +
     fact("Interest coverage", q.interest_coverage, mult) +

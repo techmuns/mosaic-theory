@@ -299,8 +299,11 @@ class Dossier(BaseModel):
     # Human-review flags split by audience (see vinci.dossier.flags): decision CAVEATS render in the
     # human PDF/web view (re-voiced, incl. the "pull CIQ …" incomplete-input notes); qa_flags are
     # the machine self-checks (citation/twin/overstep/LLM-state) — dev/JSON only, out of human view.
-    caveats: list[str]
-    qa_flags: list[str]
+    # Default empty: a flag-free dossier is a valid state, and it lets the schema round-trip
+    # JSON predating the audience split. (Analytical fields like cross_sectional stay REQUIRED —
+    # a missing computed value must fail loud, never silently default.)
+    caveats: list[str] = []
+    qa_flags: list[str] = []
     llm_model: str | None
     assembled_at: datetime
 

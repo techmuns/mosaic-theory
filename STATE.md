@@ -973,6 +973,25 @@ Each line: *what it does* — *verified how*.
     (their raw flag strings partition correctly — MVST 1 caveat / 4 qa, VRRM 2/1, BRBR 2/2 with
     DIRECTIONAL+VERIFICATION-CLAIM hidden; ~15 of ~34 flags routed to dev). Operator re-assembly is
     the final rendered gate; committed `data/dossiers/*` + `frontend/dossiers/*` refresh then.*
+  - **Post-merge audit of the analyst series (#47/#48/#51/#53) — 4-agent finder + fixes (2026-07-01).**
+    #51 (comps subject-by-ticker) verified CLEAN and robust: the `IT`/Gartner 2-letter substring
+    worst-case resolves both directions (`==` on the parsed `EXCH:SYMBOL`), every peer value matches
+    the committed dossiers across all 9 real workbooks, stale-Close dates no off-by-one. Actionable
+    findings fixed: (1, HIGH/fail-loud) `UNTRACEABLE` — a figure mis-cited to STRUCTURED data that
+    lacks it — had been swept into the hidden `qa_flags` by #53 and, keeping `cited=True`, rendered as
+    a normally-cited claim with NO human-visible warning; reclassified to a visible, re-voiced CAVEAT
+    (its source_ref LOOKS legit, so the human can't catch it from the citation). `TRANSCRIPT-FIGURE`
+    stays hidden (operator call — its `CIQ transcript` source_ref is honest, matching the earlier
+    "redundant noise" read). (2, HIGH) #48's `cross_sectional` (the edge, the md Valuation lead) was
+    never rendered in the web UI or the #47 PDF — `frontend/views/dossier.js valuation()` now mirrors
+    the md (leads with it, drops the folded own-history percentile rows, fixes the stale subtitle).
+    (3, HIGH) `net_debt_to_ocf` (sourced in all 10) was never rendered either (pre-existing) — row
+    added in `quality()`. (5, MED) `caveats`/`qa_flags` now default `[]` so JSON predating the split
+    round-trips; `cross_sectional` stays REQUIRED (fail-loud on a missing analytical value). *Verified:
+    frontend by a real headless-Chrome MVST render (cross_sectional value + Net-debt/OCF now show;
+    stale subtitle + percentile rows gone); the flag reclassify by unit test + a no-UNTRACEABLE-leaks-
+    to-qa invariant across all 10; ruff + mypy --strict (68) + pytest green; dossier.js node --check
+    clean. On a branch → PR (the series is already on main).*
 - _Whole suite green (ruff + mypy --strict clean; `pytest -m "not network"` passes)._
 
 ## 3. FALSIFIED — tested and retired (NOT deferred)
