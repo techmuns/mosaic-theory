@@ -113,6 +113,22 @@ def test_post_json_sends_the_filter_body_and_caches(tmp_path: Path) -> None:
     assert len(calls) == 2  # a different body is a distinct cache key → re-fetched
 
 
+def test_short_interest_points_fails_loud_when_limit_cap_is_hit(tmp_path: Path) -> None:
+    """(audit #63) The endpoint returns rows OLDEST-first and can't be server-sorted, so hitting the
+    `limit` cap means the NEWEST settlements were dropped — a stale 'latest' reported silently. When
+    the returned count reaches the cap, fail loud rather than fabricate a stale latest."""
+    def handler(request: httpx.Request) -> httpx.Response:
+        rows = [{**_MVST_ROWS[0], "settlementDate": f"2026-0{i}-15"} for i in range(1, 6)]  # 5 rows
+        return httpx.Response(200, json=rows)
+
+    http = _mock_finra(tmp_path, handler)
+    with pytest.raises(FinraLayoutError, match="limit cap"):
+        short_interest_points(http, "MVST", start=date(2026, 1, 1), end=date(2026, 7, 3), limit=5)
+    # under the cap → no raise, latest returned correctly (the default limit is generous)
+    ok = short_interest_points(http, "MVST", start=date(2026, 1, 1), end=date(2026, 7, 3), limit=50)
+    assert ok[0].settlement_date == "2026-05-15"  # latest of the 5 mock rows
+
+
 @pytest.mark.network
 def test_short_interest_points_real_mvst() -> None:
     """(F2, live) MVST's real settlement points from api.finra.org — June-2026 wall on file."""

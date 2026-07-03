@@ -102,12 +102,18 @@ def parse_short_interest(rows: list[dict[str, Any]]) -> list[ShortInterestPoint]
 
 
 def short_interest_points(
-    http: CachedHttp, symbol: str, *, start: date, end: date, limit: int = 8
+    http: CachedHttp, symbol: str, *, start: date, end: date, limit: int = 50
 ) -> list[ShortInterestPoint]:
     """The symbol's settlement points in ``[start, end]``, latest first (empty if none on file).
 
     Filtered server-side by ``symbolCode`` + ``settlementDate`` range (the endpoint ignores GET
-    query params — filtering is POST-only). Layout is pinned in :func:`parse_short_interest`."""
+    query params — filtering is POST-only). Layout is pinned in :func:`parse_short_interest`.
+
+    IMPORTANT — the endpoint returns rows OLDEST-first and can't be server-sorted (settlementDate is
+    a partition key), so ``limit`` truncates the NEWEST rows, not the oldest. ``limit`` MUST exceed
+    the window's settlement count (twice-monthly ⇒ ≤~9 in a 120-day window) or the reported "latest"
+    is silently STALE. We request a generous cap and FAIL LOUD if it is ever hit — a stale "latest"
+    settlement is a silent wrong number, never OK."""
     body: dict[str, Any] = {
         "limit": limit,
         "compareFilters": [
@@ -123,4 +129,12 @@ def short_interest_points(
     }
     raw = http.post_json(_ENDPOINT, json_body=body, ttl_seconds=_TTL_SECONDS)
     rows = raw if isinstance(raw, list) else raw.get("data", [])
+    if len(rows) >= limit:
+        # cap hit ⇒ the window overflowed it; the dropped rows are the NEWEST (oldest-first order),
+        # so the "latest" we'd report may be stale. Fail loud rather than fabricate a stale latest.
+        raise FinraLayoutError(
+            f"FINRA returned {len(rows)} rows at the limit cap ({limit}) for {symbol} over "
+            f"[{start.isoformat()}..{end.isoformat()}] — the window overflowed the cap and the API "
+            "returns oldest-first (unsortable), so the NEWEST settlement may be missing; widen it"
+        )
     return parse_short_interest(rows)

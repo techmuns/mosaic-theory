@@ -1306,6 +1306,12 @@ Each line: *what it does* — *verified how*.
     2 network-marked E3/E4 live pins); the no-conclusion walk extended to both new models. ruff + mypy
     --strict (68) + `pytest -m "not network"` green. On a
     branch → PR; NOT merged (awaiting review). Reader-feedback point 6 (survival completion) closes.*
+    **Post-merge audit fix (self-audit #62 → PR #65): the maturity-wall JS mirror bucketed by
+    `getUTCFullYear()` on a LOCAL-midnight Date, so a `YYYY-01-01` maturity mis-bucketed into "≤12m
+    prior-year" for any UTC-ahead viewer (IST/Europe/Asia) — the JS silently violated the pinned
+    calendar-year contract the Python test enforces. Fixed to bucket by the ISO date STRING
+    (timezone-free, matches `date.year`); also routed `_mM` through en-US thousands to match
+    `render._musd` for $1B+ totals. Verified under Asia/Calcutta + a browser render.**
   - **PR F — positioning inputs: EDGAR Form-4 insider activity + FINRA short interest (2026-07-03).**
     Two NEW free, DATED feeds slotted into the catalyst path — the objective inflection markers
     EDGE_THESIS names in the Edge-2 discriminator ("*multiple at floor; **short interest peaking;
@@ -1331,11 +1337,15 @@ Each line: *what it does* — *verified how*.
     — the honest picture) pinned to accession 0000947871-26-000620; F2 → "Short interest (FINRA,
     settle 2026-06-15): 26.3M sh (+22.9%) · DTC 5.7d" (DTC = 26,323,600 ÷ 4,607,454 screen ADV, vs
     FINRA's own 6.25 on its ADV). Frontend confirmed by a real preview render (both blocks in the
-    catalyst section, cited; injected artifact reverted, no artifact commit). +13 tests (11 offline
-    incl. the FINRA layout-pin + post_json cache, 2 network-marked live pins). The no-conclusion walk
-    already reaches CatalystPath → the two `Sourced[str]` positioning fields are covered (asserted).
-    ruff + mypy --strict (69) + `pytest -m "not network"` green. On a branch → PR; NOT merged
-    (awaiting review).*
+    catalyst section, cited; injected artifact reverted, no artifact commit). +14 tests (12 offline
+    incl. the FINRA layout-pin + post_json cache + the limit-cap guard, 2 network-marked live pins).
+    The no-conclusion walk already reaches CatalystPath → the two `Sourced[str]` positioning fields
+    are covered (asserted). **Post-audit fix (self-audit #63): FINRA's query API returns rows
+    OLDEST-first and can't be server-sorted, so the old `limit=8` silently DROPPED the newest
+    settlements once a window held ≥9 (latent — a 120-day window holds ~7 today); raised the cap to 50
+    AND fail loud (`FinraLayoutError`) if the cap is ever hit, so a stale settlement can never be
+    dressed as "the latest".** ruff + mypy --strict (69) + `pytest -m "not network"` green. On a
+    branch → PR; NOT merged (awaiting review).*
   - **PR G — implied expectations: price-inverted, multiples-space (2026-07-03).** Stacked on PR F
     (branched off `feat/positioning-inputs`, the post-F state — F was not yet merged). NO new
     extraction: every input is an ALREADY-ASSEMBLED field; deterministic arithmetic only.
