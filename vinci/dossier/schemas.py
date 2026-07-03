@@ -357,6 +357,21 @@ class CovenantPointer(BaseModel):
     model_config = {"frozen": True}
 
 
+class CovenantTerm(BaseModel):
+    """(E5) One named term extracted VERBATIM from a located agreement exhibit — the value exactly
+    as the document states it (a number, a formula like "$1.00 ÷ Conversion Rate", a date), bound to
+    the exhibit it came from, or UNKNOWN when the term is absent from the document. NEVER inferred,
+    computed, or estimated: a convertible whose stated conversion price is a *formula* renders the
+    formula, not a fabricated $/share. This is assembly-and-cite, not conclusion — there is no
+    verdict/risk field. The ``value`` is a :class:`Sourced` so PRESENT carries the exhibit ref and
+    UNKNOWN carries the reason it was absent."""
+
+    name: str  # the term, e.g. "Conversion price", "Initial term loan", "Maturity date"
+    value: Sourced[str]  # PRESENT ⇒ verbatim value + exhibit source_ref; else UNKNOWN (not guessed)
+
+    model_config = {"frozen": True}
+
+
 class CapitalStructure(BaseModel):
     """(E1–E5) The structured capital structure — per-instrument detail + summary aggregates + the
     survival reads that hang off it (the maturity wall's 8-Ks, covenant exhibit pointers, and the
@@ -371,7 +386,10 @@ class CapitalStructure(BaseModel):
     covenant_pointers: Sourced[str]  # (E4) accession-bound exhibit pointers — one-line summary
     # (H1) the structured, CIK-verified pointer rows (rendered as a table); optional for pre-H JSON.
     covenant_pointer_rows: Sourced[list[CovenantPointer]] | None = None
-    covenant_terms: Sourced[str]  # (E5) fenced Tier-2 extracted terms, or UNKNOWN
+    covenant_terms: Sourced[str]  # (E5) fenced Tier-2 extracted terms — one-line summary/UNKNOWN
+    # (H1d/E5) the structured per-term rows the fenced LLM extracted from the located exhibit(s),
+    # each a {value, source_ref} or UNKNOWN (rendered as a table); optional for pre-H1d JSON.
+    covenant_term_rows: Sourced[list[CovenantTerm]] | None = None
 
     model_config = {"frozen": True}
 

@@ -20,6 +20,7 @@ from vinci.config import Config, get_config
 from vinci.dossier import ciq_sheets, requirements
 from vinci.dossier import flags as dossier_flags
 from vinci.dossier.ciq import CiqBundle
+from vinci.dossier.covenant_extract import extract_covenant_terms
 from vinci.dossier.manual_store import LocalFolderStore, ManualDataStore
 from vinci.dossier.mechanical import assemble_mechanical
 from vinci.dossier.render import render_markdown
@@ -132,6 +133,21 @@ def assemble_one(
         flags += synth_flags
     else:
         flags.append("LLM synthesis skipped (no ANTHROPIC client) — mechanical layer only")
+    # (E5/H1d) FENCED Tier-2 covenant terms — extracted verbatim from the mechanically-located
+    # exhibit(s), each a {value, source_ref} or UNKNOWN. Runs only with an LLM client and only when
+    # the mechanical layer located an exhibit; model_copy since the mechanical models are frozen.
+    if llm is not None and mech.capital_structure is not None:
+        term_rows, terms_summary, cov_flags, cov_log = extract_covenant_terms(
+            mech.capital_structure, llm=llm, http=build_sec_http(cfg),
+            cik=rec.identity.cik or "", ticker=ticker, name=rec.identity.name,
+        )
+        flags += cov_flags
+        if cov_log:
+            llm_log = f"{llm_log}\n\n{cov_log}" if llm_log else cov_log
+        cs2 = mech.capital_structure.model_copy(
+            update={"covenant_terms": terms_summary, "covenant_term_rows": term_rows}
+        )
+        mech = mech.model_copy(update={"capital_structure": cs2})
     # split the emitted flags by audience: decision caveats → human PDF/web (re-voiced), machine
     # QA self-checks → dev/JSON only (emission logic is untouched; classification is display-layer).
     caveats, qa_flags = dossier_flags.partition(flags)
