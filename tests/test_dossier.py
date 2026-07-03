@@ -4243,3 +4243,28 @@ def test_d6_twin_single_entity_guard() -> None:
     _, qa = dflags.partition(flags)
     assert any("compound 'SunPower" in f for f in qa)      # the '/'+cohort drop is dev-only QA
     assert any("ampersand-name 'AT&T'" in f for f in qa)   # AT&T flagged for QA but KEPT
+
+
+def test_twin_outcome_marks_llm_claimed_but_leaves_sourced_plain() -> None:
+    """(H6) An '[LLM-suggested, unverified]' twin's outcome is the MODEL's claim → rendered
+    'outcome (LLM-claimed — verify)'; a roster/self-sourced twin renders plain. Deterministic,
+    render-side. Pins the QuantumScape shape (a common LLM-suggested EV/battery analogue)."""
+    qs = ds.TwinCase(name="QuantumScape", outcome="terminal — dilution spiral",
+                     distinguishing_fact="pre-revenue vs MVST shipping",
+                     source="[LLM-suggested, unverified]")
+    peer = ds.TwinCase(name="Amprius", outcome="recovered", distinguishing_fact="same peer set",
+                       source="CIQ peer roster (Comparable Analysis)")
+    assert dr._twin_outcome(qs) == "terminal — dilution spiral (LLM-claimed — verify)"
+    assert dr._twin_outcome(peer) == "recovered"  # sourced → plain, no suffix
+    # end-to-end through the synthesis render: the suffix appears on the QS line, not the peer line
+    synth = ds.Synthesis(
+        evidence_balance="", bull_points=[], bear_points=[], twin_reference_cases=[qs, peer],
+        decisive_question=ds.DecisiveQuestion(question="?", evidence_for=[], evidence_against=[]),
+        key_unknowns=[])
+    doss = ds.Dossier(
+        ticker="MVST", name="Microvast", cik="0", reference_date=date(2026, 6, 1), rank=1,
+        mechanical=_minimal_mech(), synthesis=synth, caveats=[], qa_flags=[], llm_model="m",
+        assembled_at=datetime(2026, 6, 1, 12, 0))
+    md = dr.render_markdown(doss)
+    assert "**QuantumScape** — terminal — dilution spiral (LLM-claimed — verify)" in md
+    assert "**Amprius** — recovered\n" in md and "Amprius** — recovered (LLM" not in md

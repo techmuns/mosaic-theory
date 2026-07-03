@@ -852,6 +852,15 @@ def _ordered_points(pts: list[Any]) -> list[tuple[Any, float, int]]:
     return [(p, tier, cr) for p, tier, cr, _ in keyed]
 
 
+def _twin_outcome(t: Any) -> str:
+    """(H6) The outcome on an '[LLM-suggested, unverified]' twin is the MODEL's claim, not a sourced
+    analogue — suffix it '(LLM-claimed — verify)' so the human checks it. A roster- or self-sourced
+    twin (a real source_ref) renders plain. Deterministic, render-side."""
+    src = (getattr(t, "source", "") or "").lower()
+    unverified = "llm-suggested" in src or "unverified" in src
+    return f"{t.outcome} (LLM-claimed — verify)" if unverified else t.outcome
+
+
 def _synthesis_lines(d: Dossier, *, dev: bool) -> list[str]:
     """(D1/D3) Synthesis in the facts-first order — evidence balance → bull → bear → decisive
     question → key unknowns → twins (twins LAST). Bull/bear points are deterministically ordered
@@ -886,7 +895,7 @@ def _synthesis_lines(d: Dossier, *, dev: bool) -> list[str]:
     out += ["### Key unknowns", *[f"- {u}" for u in s.key_unknowns], ""]
     out.append("### Twin reference cases")  # (D1) twins move to the END of the synthesis
     for t in s.twin_reference_cases:
-        out.append(f"- **{t.name}** — {t.outcome}")
+        out.append(f"- **{t.name}** — {_twin_outcome(t)}")
         out.append(f"  - distinguished by: {t.distinguishing_fact}")
         out.append(f"  - source: {t.source}")
     out.append("")

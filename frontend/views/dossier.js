@@ -932,8 +932,15 @@ function synthesis(s) {
   }
   const point = (p, cls) => `<div class="point ${cls}">${escapeHtml(p.claim)}${p.source_ref ? `<span class="cite">${escapeHtml(p.source_ref)}</span>` : ""}${p.cited === false ? ` <span class="uncited">⚠ uncited — does not trace to a mechanical fact</span>` : ""}</div>`;
   const dq = s.decisive_question || {};
+  // (H6) an '[LLM-suggested, unverified]' twin's outcome is the MODEL's claim → suffix "(LLM-claimed
+  // — verify)"; a roster/self-sourced twin renders plain. Deterministic, render-side.
+  const twinOutcome = (t) => {
+    const src = (t.source || "").toLowerCase();
+    const unverified = src.includes("llm-suggested") || src.includes("unverified");
+    return (t.outcome || "") + (unverified ? " (LLM-claimed — verify)" : "");
+  };
   const twins = (s.twin_reference_cases || []).map((t) => `
-    <div class="point"><b>${escapeHtml(t.name || "")}</b> — ${escapeHtml(t.outcome || "")}
+    <div class="point"><b>${escapeHtml(t.name || "")}</b> — ${escapeHtml(twinOutcome(t))}
       <div class="muted" style="font-size:12px; margin-top:3px;">distinguished by: ${escapeHtml(t.distinguishing_fact || "")}</div>
       <span class="cite">${escapeHtml(t.source || "")}</span></div>`).join("");
   return `<div class="card ds-section"><div class="ds-title">Synthesis · framing</div>${fence}
