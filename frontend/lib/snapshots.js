@@ -26,6 +26,7 @@ import { fmtMoney } from "./format.js";
 
 const SNAPSHOTS = "./snapshots"; // copied from data/snapshots/ at deploy (build.py)
 const DOSSIERS = "./dossiers"; // derived dossier.json only (committed to the PRIVATE repo when authed)
+const THEMES = "./themes"; // derived theme-edge display JSON (committed, like dossiers; build.py)
 
 async function _fetch(path) {
   const res = await fetch(path, { cache: "no-store" });
@@ -242,6 +243,33 @@ export async function getDossierIndex() {
 export async function getDossier(ticker) {
   try {
     return await _json(`${DOSSIERS}/${String(ticker).toUpperCase()}.json`);
+  } catch (e) {
+    if (e.status === 404) return null;
+    throw e;
+  }
+}
+
+// --- theme edge (read-only display JSON produced by build.py from the frozen freeze) -----------
+// getThemesIndex() -> { drivers: [{ slug, label, freezeDate, ratifiedCount, surfacedCount,
+//   frozenCount, watchlistCount, tierShape:{binding,quantified,committed,aspirational,none,
+//   surfaced,universe} }], crossDriver: { driversFrozen, totalRatified, totalWatchlist, line } | null }
+// Empty ({ drivers: [], crossDriver: null }) when no theme artifacts are committed to this deploy.
+export async function getThemesIndex() {
+  try {
+    const idx = await _json(`${THEMES}/index.json`);
+    return { drivers: Array.isArray(idx?.drivers) ? idx.drivers : [], crossDriver: idx?.crossDriver ?? null };
+  } catch (e) {
+    if (e.status === 404) return { drivers: [], crossDriver: null };
+    throw e;
+  }
+}
+
+// getThemeDriver(slug) -> the per-driver display object (cohorts, tierShape, names, watchlist +
+// triggers, avoidControls, realTier, forward:{cohorts, undefinedMeasures, diagnostics, honestyLabel,
+// powerNote}), or null if that driver is not committed.
+export async function getThemeDriver(slug) {
+  try {
+    return await _json(`${THEMES}/${String(slug).toLowerCase()}.json`);
   } catch (e) {
     if (e.status === 404) return null;
     throw e;

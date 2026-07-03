@@ -2,7 +2,8 @@
 // App shell — information architecture (nav), client-side router, and the
 // shared sub-screen frame. No backend; hash routing over a static mirror.
 //
-// The nav IS the fund pipeline in sequence. Each item carries a state:
+// The nav is organized into ZONES (Shared / Edge 2 · Overshoot / Theme edge),
+// then the validation gate, then Capital. Each item carries a state:
 //   live        — a functional read-only sub-screen (green dot)
 //   locked      — inert; clicking shows WHAT the stage will do + its TRIGGER
 //   conditional — built only if the manual loop reveals it is needed
@@ -12,10 +13,19 @@ import { escapeHtml } from "./lib/format.js";
 const GATE_DEF = "the BUY−AVOID spread that must prove positive before capital deploys";
 
 const NAV = [
-  { items: [{ route: "overview", label: "Overview", state: "home" }] },
+  {
+    label: "Shared",
+    items: [
+      { route: "overview", label: "Overview", state: "home" },
+      { route: "dossier", label: "Dossier", state: "live",
+        does: "Assembled facts · no verdict. A source-bound mechanical layer plus a fenced bull/bear framing — the framing, not the answer." },
+      { route: "decision-log", label: "Decision log", state: "live",
+        does: "The immutable, append-only ledger of logged verdicts — each a frozen leg of the BUY−AVOID spread. Displayed here; logged only via the CLI." },
+    ],
+  },
 
   {
-    label: "Research & decision loop",
+    label: "Edge 2 · Overshoot",
     items: [
       { route: "ingestion", label: "Ingestion & universe", state: "live",
         does: "Data freshness across the funnel — the resolved universe, the screen output, and the EOD price date the screen ran on. Honest staleness, point-in-time." },
@@ -30,15 +40,26 @@ const NAV = [
         does: "Orders the screen's candidates into a priority queue by structural profile. Orders, never decides — a lagging description of the setup, not a return prediction." },
       { route: "graph", label: "Cross-sector graph", state: "live",
         does: "Entity → exposed-names lookup with 10-K provenance. A research input only — it gates nothing and predicts nothing." },
-      { route: "dossier", label: "Dossier", state: "live",
-        does: "Assembled facts · no verdict. A source-bound mechanical layer plus a fenced bull/bear framing — the framing, not the answer." },
       { route: "verification", label: "Verification", state: "conditional",
         cond: {
           what: "A structured bull / bear / judge step over a finalist.",
           trigger: "Conditional · built only if operating the manual loop reveals it is needed. May never be built.",
         } },
-      { route: "decision-log", label: "Decision log", state: "live",
-        does: "The immutable, append-only ledger of logged verdicts — each a frozen leg of the BUY−AVOID spread. Displayed here; logged only via the CLI." },
+    ],
+  },
+
+  {
+    label: "Theme edge",
+    sublabel: "unvalidated research surface · watchlists, not buys",
+    items: [
+      { route: "themes", label: "Themes overview", state: "live",
+        does: "Theme-edge fund status across both drivers. 0 RATIFIED — the edge surfaces watchlists, not buys (yet)." },
+      { route: "themes/scan", label: "Scan · tiers", state: "live",
+        does: "Per-driver surfaced names, tiered by disclosure concreteness (binding / quantified / committed / aspirational). The machine tiers; it never ranks." },
+      { route: "themes/watchlist", label: "Watchlist · triggers", state: "live",
+        does: "The names to re-underwrite when a trigger fires — the manual-monitoring surface. Each carries its verbatim re-underwrite trigger." },
+      { route: "themes/forward", label: "Forward-track", state: "live",
+        does: "The validation-gate analogue: frozen cohorts, RATIFIED-dependent spreads UNDEFINED (zero RATIFIED), diagnostics pending forward. Not a validated edge." },
     ],
   },
 
@@ -67,20 +88,37 @@ const NAV = [
   },
 ];
 
-// View modules registered as they are built. A `live` route with no module yet
-// renders the consistent sub-screen frame with a "next pass" notice.
+// View modules registered as they are built, keyed by the BASE route (first hash
+// segment). A `live` route with no module yet renders the consistent sub-screen
+// frame with a "next pass" notice. The Theme-edge sub-routes (#/themes/scan …) all
+// resolve to the ONE `themes` module, which sub-routes on params[0].
 const VIEWS = {
-  overview: () => import("./views/overview.js"),
-  ingestion: () => import("./views/ingestion.js"),
-  "screen-overshoot": () => import("./views/screen-overshoot.js"),
-  ranker: () => import("./views/ranker.js"),
-  graph: () => import("./views/graph.js"),
-  "decision-log": () => import("./views/decision-log.js"),
-  dossier: () => import("./views/dossier.js"),
+  overview: () => import("./views/shared/overview.js"),
+  dossier: () => import("./views/shared/dossier.js"),
+  "decision-log": () => import("./views/shared/decision-log.js"),
+  ingestion: () => import("./views/edge2/ingestion.js"),
+  "screen-overshoot": () => import("./views/edge2/screen-overshoot.js"),
+  ranker: () => import("./views/edge2/ranker.js"),
+  graph: () => import("./views/edge2/graph.js"),
+  themes: () => import("./views/themes/index.js"),
 };
 
 const ITEMS = NAV.flatMap((g) => g.items || []);
-const find = (route) => ITEMS.find((i) => i.route === route);
+
+// Resolve the nav item for a full path by LONGEST route-prefix, so a sub-route
+// (#/themes/scan) highlights its own item while a detail path (#/dossier/TICKER)
+// still highlights its section. Path-segment aware: "themes" matches "themes/scan"
+// but not a hypothetical "themestuff".
+function resolveItem(route, params) {
+  const full = [route, ...params].join("/");
+  let best = null;
+  for (const it of ITEMS) {
+    if (it.route && (full === it.route || full.startsWith(it.route + "/"))) {
+      if (!best || it.route.length > best.route.length) best = it;
+    }
+  }
+  return best;
+}
 
 // --- sidebar -----------------------------------------------------------------
 function renderSidebar() {
@@ -185,17 +223,17 @@ function parseHash() {
 async function dispatch() {
   const root = document.getElementById("main");
   const { route, params } = parseHash();
-  const item = find(route);
+  const item = resolveItem(route, params);
 
   if (!item) { location.hash = "#/overview"; return; }
-  setActive(route);
+  setActive(item.route);
   window.scrollTo(0, 0);
 
   try {
     if (item.state === "locked") return renderLocked(root, item);
     if (item.state === "conditional") return renderConditional(root, item);
 
-    const loader = VIEWS[route];
+    const loader = VIEWS[route];   // base route (first hash segment) → the view module
     if (loader) {
       const mod = await loader();
       return mod.render(root, params, { item, frame });

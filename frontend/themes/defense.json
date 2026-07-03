@@ -1,0 +1,1502 @@
+{
+ "driver": "defense-demand-shift",
+ "slug": "defense",
+ "label": "Defense demand-shift",
+ "freezeDate": "2026-07-03",
+ "freezeTimestamp": "2026-07-03T00:00:00",
+ "ratifiedCount": 0,
+ "surfacedCount": 108,
+ "frozenCount": 108,
+ "watchlistCount": 3,
+ "tierShape": {
+  "binding": 2,
+  "quantified": 0,
+  "committed": 65,
+  "aspirational": 41,
+  "none": 1575,
+  "surfaced": 108,
+  "universe": 1683
+ },
+ "categories": [
+  {
+   "tag": "defense-autonomy",
+   "n": 48
+  },
+  {
+   "tag": "attritable-air",
+   "n": 26
+  },
+  {
+   "tag": "unspecified",
+   "n": 11
+  },
+  {
+   "tag": "counter-uas",
+   "n": 7
+  },
+  {
+   "tag": "space-isr",
+   "n": 6
+  },
+  {
+   "tag": "munitions-scale",
+   "n": 6
+  },
+  {
+   "tag": "ew-cyber",
+   "n": 4
+  }
+ ],
+ "names": [
+  {
+   "ticker": "RCAT",
+   "substructureTag": "attritable-air",
+   "driverTie": "driver-specific",
+   "grade": "binding-contract",
+   "basis": "binding",
+   "gradeFact": "Teal Drones received a $9.5 million purchase order for additional units under the U.S. Army's Short Range Reconnaissance Program of Record, with units expected to be delivered in Q2 2026 \u2014 a quantified, executed order for small tactical (attritable) UAS.",
+   "accession": "0001493152-26-022095",
+   "edgarUrl": "https://www.sec.gov/Archives/edgar/data/748268/000149315226022095/0001493152-26-022095-index.htm",
+   "rationale": "Direction PASSES (attritable-air: Army SRR PoR, $9.5M PO verified in 8-K 5/8/26 acc 0001493152-26-022095) but fails 3:1 \u2014 EV ~$1.2B post-$225M raise on ~$62M run-rate at 13% GM (Q1'26 10-Q), Customer A=56% of revenue single-program concentration, ~$27M/qtr operating burn, SRR ceiling undisclosed; priced-flow + program-dependency twin not ruled out (~1:1).",
+   "cohorts": [
+    "real"
+   ]
+  },
+  {
+   "ticker": "SWMR",
+   "substructureTag": "attritable-air",
+   "driverTie": "driver-specific",
+   "grade": "binding-contract",
+   "basis": "binding",
+   "gradeFact": "Swarmer Estonia entered into an Amended and Restated Master Supplier Agreement with Meta Bureau LLC for use of the Company's proprietary software in MB's quadcopter bombers and other unmanned aerial vehicles under three licenses; initial lump-sum license fees were set at approximately $2.5 million, with an initial one-year term that auto-renews for successive one-year periods (terminable on 30-days notice).",
+   "accession": "0001104659-26-079408",
+   "edgarUrl": "https://www.sec.gov/Archives/edgar/data/2092574/000110465926079408/0001104659-26-079408-index.htm",
+   "rationale": "Tailwind-side swarm-autonomy software is real (A&R MB MSA verified, 8-K 6/30/26) but unbankable: $486M cap vs $20,325 Q1'26 revenue (down YoY), negative gross margin, ASC 205-40 going-concern liquidity note, MSAs 30-day terminable with MB fees cut within ~6 weeks of signing, June ELOC on file; going-concern/flow-chasing twin confirmed \u2014 no underwritable path to 3:1.",
+   "cohorts": [
+    "real"
+   ]
+  },
+  {
+   "ticker": "ACHR",
+   "substructureTag": "defense-autonomy",
+   "driverTie": "driver-specific",
+   "grade": "committed-capacity",
+   "basis": "committed",
+   "gradeFact": "Archer is advancing a dual-use hybrid-electric, autonomous VTOL aircraft platform for both defense and commercial customers, jointly developed through a strategic partnership with Anduril Industries, intended to meet the vertical lift needs of the U.S. and its Allies. The aircraft is designed around low thermal and acoustic signature for next-generation defense use cases, combining Archer's VTOL development with Anduril's expertise in AI, missionization, and systems integration.",
+   "accession": "0001824502-26-000019",
+   "edgarUrl": "https://www.sec.gov/Archives/edgar/data/1824502/000182450226000019/0001824502-26-000019-index.htm",
+   "rationale": "Direction FAILS: commercial eVTOL developer with nascent defense mention \u2014 Anduril dual-use VTOL is 'intended to meet' language with zero binding defense terms, program of record, or defense revenue in FY25 10-K; $3.8B cap on $1.6M quarterly revenue is a commercial air-taxi bet, not shift exposure.",
+   "cohorts": []
+  },
+  {
+   "ticker": "AIN",
+   "substructureTag": "defense-autonomy",
+   "driverTie": "indirect",
+   "grade": "committed-capacity",
+   "basis": "committed",
+   "gradeFact": "AEC segment supplies advanced composite components for the JASSM (Joint Air-to-Surface Standoff Missile) program, listed among its significant programs.",
+   "accession": "0001628280-26-012906",
+   "edgarUrl": "https://www.sec.gov/Archives/edgar/data/819793/000162828026012906/0001628280-26-012906-index.htm",
+   "rationale": "Indirect: engineered-composites aerostructures (incl. hypersonics/CH-53K content) serve platform programs generically; no shift-category revenue breakout or named tailwind program in stream.",
+   "cohorts": []
+  },
+  {
+   "ticker": "AIR",
+   "substructureTag": "defense-autonomy",
+   "driverTie": "indirect",
+   "grade": "committed-capacity",
+   "basis": "committed",
+   "gradeFact": "Government sales are largely aviation-aftermarket in character: supply-chain logistics programs in support of the U.S. DoD and foreign governments, fleet management/operations of the U.S. Dept. of State fixed- and rotary-wing aircraft under the INL/A WASS contract, and two U.S. Navy multi-year contracts to support P-8A aircraft (a crewed commercial-derivative maritime patrol platform). These are legacy/crewed-platform sustainment, not the mass/attritable/autonomous side demand is shifting toward.",
+   "accession": "0001410578-25-001475",
+   "edgarUrl": "https://www.sec.gov/Archives/edgar/data/1750/000141057825001475/0001410578-25-001475-index.htm",
+   "rationale": "Indirect/legacy: aviation aftermarket parts/MRO tied to installed manned fleets \u2014 sustainment of legacy platforms, opposite side of the compositional shift.",
+   "cohorts": []
+  },
+  {
+   "ticker": "ALMU",
+   "substructureTag": "attritable-air",
+   "driverTie": "indirect",
+   "grade": "committed-capacity",
+   "basis": "committed",
+   "gradeFact": "June 2025 U.S. Navy contract for up to $1.3 million to accelerate development of high-speed photodetectors, with a major global interconnect manufacturer as proposed subcontractor and support from a top-tier government prime. General government photodetector R&D; no disclosed tie to attritable UAVs, counter-UAS, munitions-at-scale, EW/cyber, or a shift-specific component.",
+   "accession": "0001213900-25-086227",
+   "edgarUrl": "https://www.sec.gov/Archives/edgar/data/1828805/000121390025086227/0001213900-25-086227-index.htm",
+   "rationale": "Indirect: early-stage photodetector/SWIR sensor developer; enabling-component potential without named defense program, contract, or quantified shift revenue.",
+   "cohorts": []
+  },
+  {
+   "ticker": "ALNT",
+   "substructureTag": "unspecified",
+   "driverTie": "indirect",
+   "grade": "committed-capacity",
+   "basis": "committed",
+   "gradeFact": "Acquired SNC Manufacturing Co. (Jan 2024), a designer/manufacturer of electrical transformers serving customers in defense, industrial automation, alternative power generation and energy \u2014 a dual-use component supplier with defense as one of several markets; no shift-side use disclosed.",
+   "accession": "0001104659-26-024123",
+   "edgarUrl": "https://www.sec.gov/Archives/edgar/data/46129/000110465926024123/0001104659-26-024123-index.htm",
+   "rationale": "Indirect: precision motion components with generic defense end-market share; no shift-category program or breakout disclosed.",
+   "cohorts": []
+  },
+  {
+   "ticker": "ALSN",
+   "substructureTag": "unspecified",
+   "driverTie": "indirect",
+   "grade": "committed-capacity",
+   "basis": "committed",
+   "gradeFact": "Allison describes itself as the world's largest manufacturer of fully automatic transmissions for medium- and heavy-tactical U.S. defense vehicles, with defense end markets covering wheeled defense platforms, global tracked combat platforms and North America wheeled platforms.",
+   "accession": "0001193125-26-065627",
+   "edgarUrl": "https://www.sec.gov/Archives/edgar/data/1411207/000119312526065627/0001193125-26-065627-index.htm",
+   "rationale": "Indirect/legacy: automatic transmissions for tracked/wheeled legacy defense vehicles; exposure sits on the exquisite-platform side, no shift tie.",
+   "cohorts": []
+  },
+  {
+   "ticker": "AMPX",
+   "substructureTag": "attritable-air",
+   "driverTie": "indirect",
+   "grade": "committed-capacity",
+   "basis": "committed",
+   "gradeFact": "Amprius develops, manufactures and markets silicon-anode lithium-ion batteries whose batteries are primarily used for aviation applications including unmanned aerial systems (UAS) such as drones and high-altitude pseudo-satellites (HAPS). Batteries are an enabling component for UAS; however, the disclosure frames drones broadly across industrial and government sectors and does not isolate the attritable/military-drone side of the shift.",
+   "accession": "0001899287-26-000015",
+   "edgarUrl": "https://www.sec.gov/Archives/edgar/data/1899287/000189928726000015/0001899287-26-000015-index.htm",
+   "rationale": "Indirect near-miss: silicon-anode UAS batteries are genuine attritable-air enabling components, but no named defense counterparty/contract or defense revenue breakout in stream; capacity story unproven, blended book \u2014 can't attribute to tailwind side.",
+   "cohorts": [
+    "avoid-control"
+   ]
+  },
+  {
+   "ticker": "AMSC",
+   "substructureTag": "attritable-air",
+   "driverTie": "indirect",
+   "grade": "committed-capacity",
+   "basis": "committed",
+   "gradeFact": "Through its August 2024 acquisition of Megatran/NWL, AMSC produces engineered power conversion solutions for 'demanding industrial and military applications,' reported within the Grid segment. The disclosure gives no tie to attritable UAVs, counter-UAS, munitions-at-scale, EW/cyber, or any shift-specific component; the military use is generic dual-use power conversion.",
+   "accession": "0001437749-26-018542",
+   "edgarUrl": "https://www.sec.gov/Archives/edgar/data/880807/000143774926018542/0001437749-26-018542-index.htm",
+   "rationale": "Indirect: power electronics/superconductors with ship-protection (legacy naval) defense content; no attritable/autonomy/munitions-shift program disclosed.",
+   "cohorts": []
+  },
+  {
+   "ticker": "AMTM",
+   "substructureTag": "defense-autonomy",
+   "driverTie": "indirect",
+   "grade": "committed-capacity",
+   "basis": "committed",
+   "gradeFact": "Amentum discloses 'engineering advanced systems for the DOW' and 'RDT&E' initiatives, plus specialized R&D at the DOW Underwater Launch Test Facility under AUKUS and support for nuclear-powered submarine acquisition. These are legacy/exquisite-platform (submarine, launch test) engineering and sustainment services, not on the mass/attritable/autonomous tailwind side.",
+   "accession": "0001628280-25-053993",
+   "edgarUrl": "https://www.sec.gov/Archives/edgar/data/2011286/000162828025053993/0001628280-25-053993-index.htm",
+   "rationale": "Direction fail: engineering/technology services provider (legacy-prime flagged); generic government-services exposure, no shift-side product.",
+   "cohorts": []
+  },
+  {
+   "ticker": "AVAV",
+   "substructureTag": "attritable-air",
+   "driverTie": "driver-specific",
+   "grade": "committed-capacity",
+   "basis": "committed",
+   "gradeFact": "Autonomous Systems segment makes a family of Group 1-3 uncrewed aircraft systems (SUAS/MUAS) \u2014 Puma LE, Puma 3 AE, Puma VTOL, P550, Raven B, VAPOR 55 CLE, JUMP 20, T-20 \u2014 low-cost/mass-producible attritable UAVs for ISR and situational awareness.",
+   "accession": "0001104659-26-078906",
+   "edgarUrl": "https://www.sec.gov/Archives/edgar/data/1368622/000110465926078906/0001104659-26-078906-index.htm",
+   "rationale": "Purest tailwind portfolio in set (Switchblade LMS, Red Dragon OWA, C-UAS/IAMD, EW; funded backlog $1,183M +63%, FY26 10-K) but fails 3:1 even 54% off high: ~4.9x sales; SCDE segment adj-EBITDA \u2212$2.6M on $618.8M revenue; $241M Space goodwill impairment in year one post-BlueHalo; Item 4.02 non-reliance restatement 6/22/26 \u2014 consensus theme vehicle, priced + quality-of-earnings twin (~1.3:1).",
+   "cohorts": [
+    "watchlist"
+   ]
+  },
+  {
+   "ticker": "BAH",
+   "substructureTag": "defense-autonomy",
+   "driverTie": "driver-specific",
+   "grade": "committed-capacity",
+   "basis": "committed",
+   "gradeFact": "Booz Allen describes a 'scaled Defense Tech business' that builds secure AI-enabled defense tech products from prototype to mission deployment, uniting mission understanding with 'autonomous and tactical solutions, command and control systems, and intelligent warfighter systems.' Named products include Sit(x), EdgeExtend, and the Modular Detachment Kit, described as war-fighter ready.",
+   "accession": "0001628280-26-037521",
+   "edgarUrl": "https://www.sec.gov/Archives/edgar/data/1443646/000162828026037521/0001628280-26-037521-index.htm",
+   "rationale": "Direction FAILS per framework: services/consulting firm touching defense-AI generically \u2014 Defense Tech products (Sit(x), EdgeExtend, MDK) unquantified in FY26 10-K; revenue \u22126% to $11.2B on procurement slowdown/shutdown with VA=10% of revenue; ~9x earnings is a mean-reversion value thesis, not this theme.",
+   "cohorts": []
+  },
+  {
+   "ticker": "BBAI",
+   "substructureTag": "defense-autonomy",
+   "driverTie": "indirect",
+   "grade": "committed-capacity",
+   "basis": "committed",
+   "gradeFact": "Completed acquisition of Ask Sage, a platform-agnostic generative AI solution designed specifically to serve defense and intelligence customers; FedRAMP-authorized and certified for DoD IL5, IL6 and Top-Secret use; as of January 2026 used by more than 16,000 government teams, 100,000 Department of War users, and 2,500 companies.",
+   "accession": "0001836981-26-000018",
+   "edgarUrl": "https://www.sec.gov/Archives/edgar/data/1836981/000183698126000018/0001836981-26-000018-index.htm",
+   "rationale": "Indirect: defense-AI software (Ask Sage, edge autonomy) is category-adjacent but revenue is blended services-heavy with no shift-category breakout or binding tailwind contract quantified in stream; chronic dilution/flow profile.",
+   "cohorts": []
+  },
+  {
+   "ticker": "BKSY",
+   "substructureTag": "defense-autonomy",
+   "driverTie": "indirect",
+   "grade": "committed-capacity",
+   "basis": "committed",
+   "gradeFact": "BlackSky is a space-based technology company delivering real-time imagery, analytics and high-frequency monitoring, serving U.S. defense and intelligence agencies and international ministries of defense; its constellation delivers analytics autonomously without requiring a human in the loop, and its AI-enabled space-to-ground architecture serves national security decision-making.",
+   "accession": "0001753539-26-000032",
+   "edgarUrl": "https://www.sec.gov/Archives/edgar/data/1753539/000175353926000032/0001753539-26-000032-index.htm",
+   "rationale": "Indirect: space-ISR imagery/analytics is adjacent (space-isr) but graded indirect \u2014 no shift-side contract terms quantified in stream; sub-scale cash-burning micro-cap, can't clear twin.",
+   "cohorts": []
+  },
+  {
+   "ticker": "CDP",
+   "substructureTag": "defense-autonomy",
+   "driverTie": "indirect",
+   "grade": "committed-capacity",
+   "basis": "committed",
+   "gradeFact": "The company is a REIT that owns, operates and develops office properties and single-tenant data center shells located proximate to, or containing, key U.S. Government defense installations and missions; tenants include the USG and its defense contractors engaged in priority national security activities. This is landlord/real estate exposure to the defense sector broadly, not to any tailwind category of the compositional shift.",
+   "accession": "0000860546-26-000011",
+   "edgarUrl": "https://www.sec.gov/Archives/edgar/data/860546/000086054626000011/0000860546-26-000011-index.htm",
+   "rationale": "Direction fail: defense-adjacent REIT \u2014 landlord to USG/defense tenants; real-estate exposure to defense budgets, not shift-side systems.",
+   "cohorts": []
+  },
+  {
+   "ticker": "CSTM",
+   "substructureTag": "space-isr",
+   "driverTie": "indirect",
+   "grade": "committed-capacity",
+   "basis": "committed",
+   "gradeFact": "Constellium is a global leader in high value-added specialty rolled and extruded aluminum products serving, among others, the defense end-market; its Aerospace & Transportation segment supplies advanced aluminum alloy plates, sheets and extrusions to the aerospace, space and defense industries and is described as a leading supplier to land-based defense in North America and Europe.",
+   "accession": "0001563411-26-000057",
+   "edgarUrl": "https://www.sec.gov/Archives/edgar/data/1563411/000156341126000057/0001563411-26-000057-index.htm",
+   "rationale": "Indirect: aerospace aluminum rolled/extruded products; generic aero/defense mix, no shift-category program or breakout.",
+   "cohorts": []
+  },
+  {
+   "ticker": "CTS",
+   "substructureTag": "attritable-air",
+   "driverTie": "indirect",
+   "grade": "committed-capacity",
+   "basis": "committed",
+   "gradeFact": "CTS is a global manufacturer of sensors, connectivity components, and actuators (Sense/Connect/Move products), sold to OEMs and tier-one suppliers for aerospace and defense, industrial, medical, and transportation markets and the U.S. Government. Aerospace and Defense was 15% of consolidated net sales in 2025 (up from 14% in 2024 and 9% in 2023). No specific defense product, program, or shift-side category (UAVs, loitering munitions, counter-UAS, defense autonomy/AI, scaled munitions, EW/cyber, or a shift-specific component) is disclosed.",
+   "accession": "0001193125-26-067039",
+   "edgarUrl": "https://www.sec.gov/Archives/edgar/data/26058/000119312526067039/0001193125-26-067039-index.htm",
+   "rationale": "Indirect: sensors/actuators with modest defense mix; no named shift program or quantified tailwind revenue.",
+   "cohorts": []
+  },
+  {
+   "ticker": "DCI",
+   "substructureTag": "defense-autonomy",
+   "driverTie": "indirect",
+   "grade": "committed-capacity",
+   "basis": "committed",
+   "gradeFact": "The Industrial Solutions segment's Aerospace and Defense business unit supplies air, fuel, lubrication and hydraulic filtration for fixed-wing aircraft, helicopters (rotorcraft), ground defense vehicles and naval vessels/platforms. These are legacy crewed/exquisite platforms (aircraft, helicopters, ships) \u2014 filtration components for them, not attritable/autonomous/mass-produced systems.",
+   "accession": "0000029644-25-000098",
+   "edgarUrl": "https://www.sec.gov/Archives/edgar/data/29644/000002964425000098/0000029644-25-000098-index.htm",
+   "rationale": "Indirect/legacy: filtration for engine/mobile platforms \u2014 sustainment-side exposure, no shift-category tie.",
+   "cohorts": []
+  },
+  {
+   "ticker": "DCO",
+   "substructureTag": "defense-autonomy",
+   "driverTie": "indirect",
+   "grade": "committed-capacity",
+   "basis": "committed",
+   "gradeFact": "Ducommun's Structural Systems segment produces ammunition handling systems \u2014 feed and eject chutes, storage magazines and custom gun mounts \u2014 for fixed-wing and rotary-wing military aircraft and military ground vehicles. This is munitions-handling hardware but is disclosed as tied to legacy crewed aircraft and ground vehicles, not to scaled/expanded production of artillery, missiles or solid rocket motors (magazine depth).",
+   "accession": "0001628280-26-011952",
+   "edgarUrl": "https://www.sec.gov/Archives/edgar/data/30305/000162828026011952/0001628280-26-011952-index.htm",
+   "rationale": "Indirect near-miss: aerostructures/electronics with real missile-program content, but exposure is blended across legacy platforms with no shift breakout or named tailwind contract terms in stream.",
+   "cohorts": [
+    "avoid-control"
+   ]
+  },
+  {
+   "ticker": "EFOR",
+   "substructureTag": "attritable-air",
+   "driverTie": "indirect",
+   "grade": "committed-capacity",
+   "basis": "committed",
+   "gradeFact": "The Federal Government Segment (30% of 2025 consolidated revenues) delivers data & AI, cybersecurity, software/engineering, and enterprise platform IT solutions, and its team 'tackles highly complex challenges for customers in defense, intelligence, and national security.' This is generic IT-modernization services to federal defense/intelligence agencies, not the making or supplying of attritable UAVs, counter-UAS, defense autonomy weapons software, munitions, or shift-specific components.",
+   "accession": "0000890564-26-000013",
+   "edgarUrl": "https://www.sec.gov/Archives/edgar/data/890564/000089056426000013/0000890564-26-000013-index.htm",
+   "rationale": "Direction fail: IT consulting/digital-engineering services; generic federal exposure, no shift-side product.",
+   "cohorts": []
+  },
+  {
+   "ticker": "ENS",
+   "substructureTag": "attritable-air",
+   "driverTie": "indirect",
+   "grade": "committed-capacity",
+   "basis": "committed",
+   "gradeFact": "EnerSys' Specialty segment makes stored energy solutions for aerospace and defense applications, including 'portable power solutions for soldiers in the field,' and sells directly to government entities such as the United States, Germany and the United Kingdom. This is generic defense/military power supply, not tied to any named tailwind category (attritable UAVs, counter-UAS, autonomy, scaled munitions, EW/cyber, or a shift-specific component).",
+   "accession": "0001628280-26-036900",
+   "edgarUrl": "https://www.sec.gov/Archives/edgar/data/1289308/000162828026036900/0001628280-26-036900-index.htm",
+   "rationale": "Indirect: industrial/defense batteries and power systems serve platforms generically; no attritable/munitions-shift program quantified.",
+   "cohorts": []
+  },
+  {
+   "ticker": "ESE",
+   "substructureTag": "defense-autonomy",
+   "driverTie": "indirect",
+   "grade": "committed-capacity",
+   "basis": "committed",
+   "gradeFact": "The A&D segment's naval products include magnetic and electric field countermeasure (signature management) systems that prevent underwater mine and sensor detection, plus systems to reduce vibration/acoustic signatures and obscure a vessel's signature to enhance U.S. and UK Navy maritime survivability. These are countermeasure/survivability naval products for crewed surface ships and submarines, not attritable/mass/autonomous systems.",
+   "accession": "0001104659-25-117276",
+   "edgarUrl": "https://www.sec.gov/Archives/edgar/data/866706/000110465925117276/0001104659-25-117276-index.htm",
+   "rationale": "Indirect/legacy: naval survivability and A&D components tied to submarine/ship programs \u2014 exquisite-platform side; no shift-category exposure.",
+   "cohorts": []
+  },
+  {
+   "ticker": "FEIM",
+   "substructureTag": "ew-cyber",
+   "driverTie": "driver-specific",
+   "grade": "committed-capacity",
+   "basis": "committed",
+   "gradeFact": "FEI-Elcom designs and manufactures RF microwave modules, devices and subsystems up to 60 GHz (fast-switching, ultra-low phase noise synthesizers, up-down converters, receivers, tuners, oscillators) described as mission critical for the Electronic Warfare (EW) market, including signal intelligence (COMINT, MASINT, ELINT), threat simulation, electronic attack (EA) and electronic prevention (EP) systems.",
+   "accession": "0001185185-25-000806",
+   "edgarUrl": "https://www.sec.gov/Archives/edgar/data/39020/000118518525000806/0001185185-25-000806-index.htm",
+   "rationale": "Direction FAILS: precision time/frequency for satellite payloads and C4ISR is enabling/legacy-platform exposure; FEI-Elcom EW module tie is generic and unquantified; 9-mo revenue declining ($47.8M vs $49.8M) with ~$5M annualized NI against a $659M cap after a ~4x quantum/space narrative re-rate \u2014 flow twin, no shift-side contract.",
+   "cohorts": []
+  },
+  {
+   "ticker": "FLY",
+   "substructureTag": "defense-autonomy",
+   "driverTie": "indirect",
+   "grade": "committed-capacity",
+   "basis": "committed",
+   "gradeFact": "Through its SciTec acquisition, Firefly adds AI-enabled defense software proven in operations for missile warning and defense, ISR, space domain awareness, remote sensing/analysis, and autonomous command and control, including edge processing of satellite data to assist rapid decision making for warfighters; SciTec supports programs including Golden Dome with hardware/software for space-based interceptor missions.",
+   "accession": "0001193125-26-116309",
+   "edgarUrl": "https://www.sec.gov/Archives/edgar/data/1860160/000119312526116309/0001193125-26-116309-index.htm",
+   "rationale": "Indirect: orbital launch/lunar systems are space-access, not the demand-shift categories; development-stage economics with heavy burn \u2014 separate space thesis, not this theme.",
+   "cohorts": []
+  },
+  {
+   "ticker": "GHM",
+   "substructureTag": "space-isr",
+   "driverTie": "indirect",
+   "grade": "committed-capacity",
+   "basis": "committed",
+   "gradeFact": "Graham describes itself as a global leader in mission-critical fluid, power, heat transfer, vacuum, and advanced mixing technologies for the Defense, Energy & Process, and Space industries; its Defense equipment is used in nuclear/non-nuclear propulsion, power, fluid transfer, thermal management, and advanced mixing. Defense sales were 60% of total sales in fiscal 2026, with a total backlog of $532,637 thousand.",
+   "accession": "0001193125-26-260688",
+   "edgarUrl": "https://www.sec.gov/Archives/edgar/data/716314/000119312526260688/0001193125-26-260688-index.htm",
+   "rationale": "Indirect/legacy: cryogenic/fluid systems for Navy submarine and space programs \u2014 long-cycle exquisite-platform exposure, not shift-side.",
+   "cohorts": []
+  },
+  {
+   "ticker": "HXL",
+   "substructureTag": "defense-autonomy",
+   "driverTie": "indirect",
+   "grade": "committed-capacity",
+   "basis": "committed",
+   "gradeFact": "Carbon fiber and composite materials are used in structural components for military aircraft and rotorcraft, jet engine fan blades/casings, and space launch vehicles; key defense-related customers listed include Lockheed Martin, Northrop Grumman, General Dynamics, RTX and Leonardo.",
+   "accession": "0001193125-26-046377",
+   "edgarUrl": "https://www.sec.gov/Archives/edgar/data/717605/000119312526046377/0001193125-26-046377-index.htm",
+   "rationale": "Indirect: advanced composites for commercial/military airframes \u2014 platform-cyclical materials with no shift-category breakout.",
+   "cohorts": []
+  },
+  {
+   "ticker": "HYLN",
+   "substructureTag": "unspecified",
+   "driverTie": "indirect",
+   "grade": "committed-capacity",
+   "basis": "committed",
+   "gradeFact": "In July 2025 the Company was awarded a Phase II SBIR best-effort cost-plus-fixed-fee contract up to $1.5 million by the U.S. Department of the Navy's Office of Naval Research (ONR), building on prior ONR contracts (up to $16 million awarded in 2024 and two earlier contracts up to $2.4 million) to assess suitability of the KARNO Power Module for Navy vessels and stationary power applications; Company will provide R&D services through July 2026 with option to extend through July 2027.",
+   "accession": "0001628280-26-011278",
+   "edgarUrl": "https://www.sec.gov/Archives/edgar/data/1759631/000162828026011278/0001628280-26-011278-index.htm",
+   "rationale": "Indirect: linear-generator power modules; defense application exploratory, no program/contract; pre-commercial economics.",
+   "cohorts": []
+  },
+  {
+   "ticker": "IRDM",
+   "substructureTag": "defense-autonomy",
+   "driverTie": "indirect",
+   "grade": "quantified-revenue",
+   "basis": "committed",
+   "gradeFact": "The U.S. government (directly/indirectly) is Iridium's largest single customer, generating $257.0 million (29% of total revenue) in 2025, primarily under a multi-year fixed-price EMSS contract providing satellite airtime services to DoW and other federal subscribers (current annual rate $110.5M through September 2026). This is general defense/government satellite-airtime revenue, not tied to any attritable/mass/autonomous shift category.",
+   "accession": "0001418819-26-000009",
+   "edgarUrl": "https://www.sec.gov/Archives/edgar/data/1418819/000141881926000009/0001418819-26-000009-index.htm",
+   "rationale": "Indirect: L-band satcom/PNT services with quantified USG revenue \u2014 legacy-enabling connectivity, not shift-side systems; a comms-utility thesis, not this theme.",
+   "cohorts": []
+  },
+  {
+   "ticker": "JOBY",
+   "substructureTag": "counter-uas",
+   "driverTie": "indirect",
+   "grade": "committed-capacity",
+   "basis": "committed",
+   "gradeFact": "The company discloses it conducts a portion of its business pursuant to U.S. government contracts and lists risks about growing its relationship with the U.S. government and the Department of Defense, and about the government modifying or terminating existing contracts. No contract terms, counterparty details, product category (attritable air, counter-UAS, autonomy, munitions, EW), TCV, or defense revenue amounts are disclosed; the underlying product is a piloted eVTOL air taxi, not an attritable/autonomous mass-producible system.",
+   "accession": "0001819848-26-000160",
+   "edgarUrl": "https://www.sec.gov/Archives/edgar/data/1819848/000181984826000160/0001819848-26-000160-index.htm",
+   "rationale": "Direction fail: commercial eVTOL air-taxi developer (ACHR analogue); defense adjacency exploratory with no binding terms; counter-UAS category assignment spurious.",
+   "cohorts": []
+  },
+  {
+   "ticker": "KDK",
+   "substructureTag": "defense-autonomy",
+   "driverTie": "indirect",
+   "grade": "committed-capacity",
+   "basis": "committed",
+   "gradeFact": "Kodiak has recognized in aggregate approximately $30 million in revenue under contracts with the U.S. military to adapt the Kodiak Driver (its AI-powered autonomous ground-vehicle software) for military vehicles.",
+   "accession": "0001628280-26-016910",
+   "edgarUrl": "https://www.sec.gov/Archives/edgar/data/1853138/000162828026016910/0001628280-26-016910-index.htm",
+   "rationale": "Direction fail: commercial autonomous trucking; defense/ground-autonomy adjacency early with no quantified program; pre-scale economics.",
+   "cohorts": []
+  },
+  {
+   "ticker": "KMT",
+   "substructureTag": "defense-autonomy",
+   "driverTie": "indirect",
+   "grade": "committed-capacity",
+   "basis": "committed",
+   "gradeFact": "Kennametal lists Aerospace & Defense as one of its five end markets and serves it via metal cutting tooling used in the manufacture of airframes, aero engines, and ships \u2014 legacy/exquisite crewed platforms, not the attritable/mass/autonomous side of the shift.",
+   "accession": "0000055242-25-000068",
+   "edgarUrl": "https://www.sec.gov/Archives/edgar/data/55242/000005524225000068/0000055242-25-000068-index.htm",
+   "rationale": "Indirect/legacy: metal-cutting tooling with generic industrial/defense mix; no shift-category tie.",
+   "cohorts": []
+  },
+  {
+   "ticker": "KOPN",
+   "substructureTag": "defense-autonomy",
+   "driverTie": "indirect",
+   "grade": "committed-capacity",
+   "basis": "committed",
+   "gradeFact": "Kopin describes itself as a leader in microdisplay technologies and optical systems (AMLCD, LCOS, OLED, MicroLED) plus Application Specific Optical Solutions (ASOS), supplied to the U.S. Department of War for many years for soldier-centric systems, rotary and fixed wing aircraft, and it is developing products for armored vehicles and soldier-carried missile systems, used in applications like weapon sights and pilot helmets.",
+   "accession": "0001493152-26-016338",
+   "edgarUrl": "https://www.sec.gov/Archives/edgar/data/771266/000149315226016338/0001493152-26-016338-index.htm",
+   "rationale": "Indirect: microdisplays for soldier/weapon sights serve established programs; component-level legacy exposure, chronic losses, no shift breakout.",
+   "cohorts": []
+  },
+  {
+   "ticker": "KRMN",
+   "substructureTag": "defense-autonomy",
+   "driverTie": "indirect",
+   "grade": "committed-capacity",
+   "basis": "committed",
+   "gradeFact": "Karman describes itself as specializing in the rapid design, development and production of mission-critical, next-generation system solutions for launch vehicle, satellite, spacecraft, missile defense, hypersonic and Unmanned Aircraft Systems (UAS) customers, providing integrated payload protection, propulsion, and hydro/aerodynamic interstage system solutions across existing and emerging DoW and space programs.",
+   "accession": "0001193125-26-222116",
+   "edgarUrl": "https://www.sec.gov/Archives/edgar/data/2040127/000119312526222116/0001193125-26-222116-index.htm",
+   "rationale": "Indirect near-miss: payload-protection/propulsion/interstage content spans missiles and hypersonics (munitions-adjacent) but stream shows no shift-specific contract terms or category breakout, and the name has already re-rated as a discovered defense-supplier story \u2014 priced twin unresolved.",
+   "cohorts": [
+    "avoid-control"
+   ]
+  },
+  {
+   "ticker": "LASR",
+   "substructureTag": "counter-uas",
+   "driverTie": "indirect",
+   "grade": "committed-capacity",
+   "basis": "committed",
+   "gradeFact": "nLIGHT makes high energy CW and pulsed fiber lasers, fiber amplifiers, and beam combination and control systems for use in high-energy laser (HEL) systems for directed energy. It describes directed energy weapons using high-power fiber lasers as offering ultra-precise targeting, low cost per shot and a nearly unlimited magazine, and cites multi-hundred-kilowatt system demonstrations. Directed energy is a plausible counter-UAS defeat mechanism, but the filing does not name counter-UAS as the application.",
+   "accession": "0001124796-26-000012",
+   "edgarUrl": "https://www.sec.gov/Archives/edgar/data/1124796/000112479626000012/0001124796-26-000012-index.htm",
+   "rationale": "Indirect near-miss: high-energy lasers/beam control put it closest to counter-UAS directed energy of the light-pass set, but graded indirect \u2014 no quantified shift-side contract in stream, thin margins, and the DE narrative is already discovered; fails on underwritability, not direction.",
+   "cohorts": [
+    "avoid-control"
+   ]
+  },
+  {
+   "ticker": "LPTH",
+   "substructureTag": "attritable-air",
+   "driverTie": "driver-specific",
+   "grade": "committed-capacity",
+   "basis": "committed",
+   "gradeFact": "G5 Infrared, acquired February 2025, is a vertically-integrated manufacturer of high-performance infrared camera systems whose revenue and growth pipeline are driven by established multi-year contracts and multiple defense programs of record, explicitly including counter unmanned aerial systems (C-UAS) systems, plus shipboard long-range surveillance and border security.",
+   "accession": "0001654954-25-011130",
+   "edgarUrl": "https://www.sec.gov/Archives/edgar/data/889971/000165495425011130/0001654954-25-011130-index.htm",
+   "rationale": "Direction PASSES (G5 Infrared C-UAS programs of record + Lockheed missile-program optics verified in FY25 10-K) but fully priced: ~7x off lows to ~$963M cap on ~$77M annualized revenue, still \u2212$4.1M/qtr net loss, shares 44.7M\u219262.8M in ~8 months; C-UAS revenue never broken out; 3:1 fails badly \u2014 already-priced/dilution twin.",
+   "cohorts": []
+  },
+  {
+   "ticker": "MPTI",
+   "substructureTag": "attritable-air",
+   "driverTie": "indirect",
+   "grade": "quantified-revenue",
+   "basis": "committed",
+   "gradeFact": "Mtron designs and manufactures highly engineered frequency and spectrum control products (crystal oscillators, RF/microwave/millimeter-wave filters, solid-state power amplifiers, integrated microwave assemblies) whose primary market is aerospace and defense \u2014 65.2% of 2025 revenue was Aerospace and Defense. These are generic RF/timing components sold to OEMs; the filing does not tie them to any tailwind-side category (attritable UAVs, loitering munitions, counter-UAS, defense autonomy/AI, scaled munitions, EW/cyber, drone turbojets, seekers, or SRMs).",
+   "accession": "0001437749-26-009844",
+   "edgarUrl": "https://www.sec.gov/Archives/edgar/data/1902314/000143774926009844/0001437749-26-009844-index.htm",
+   "rationale": "Indirect: frequency/spectrum-control components into radar/avionics \u2014 legacy-platform electronics with quantified but generic defense revenue; no shift-category tie; small-cap already re-rated.",
+   "cohorts": []
+  },
+  {
+   "ticker": "MRAM",
+   "substructureTag": "unspecified",
+   "driverTie": "indirect",
+   "grade": "committed-capacity",
+   "basis": "committed",
+   "gradeFact": "Everspin entered an IDIQ Subcontract (S26-03-01) with Amentum Services under a Prime Contract issued by Naval Surface Warfare Center, Crane Division for the Microelectronics RDT&E program; the objective is for the U.S. government to have proven processes and manufacturing capability to produce new Toggle MRAM that the government will be able to purchase for use in 'strategic systems.' Structured as IDIQ with Firm Fixed Price Task Orders; Everspin's obligations include developing on-shore Toggle MRAM production capability and providing process/engineering services.",
+   "accession": "0001628280-26-028432",
+   "edgarUrl": "https://www.sec.gov/Archives/edgar/data/1438423/000162828026028432/0001628280-26-028432-index.htm",
+   "rationale": "Indirect: MRAM components with rad-tolerant adjacency; no defense program, contract, or shift-category revenue disclosed.",
+   "cohorts": []
+  },
+  {
+   "ticker": "MRCY",
+   "substructureTag": "ew-cyber",
+   "driverTie": "indirect",
+   "grade": "committed-capacity",
+   "basis": "committed",
+   "gradeFact": "Mercury describes itself as a technology company delivering mission-critical processing to the edge, with products deployed for applications including electronic warfare, weapons, and C4I (command, control, communications, and intelligence), selling to top U.S. and European defense prime contractors, the U.S. government, and commercial aerospace OEMs.",
+   "accession": "0001049521-25-000024",
+   "edgarUrl": "https://www.sec.gov/Archives/edgar/data/1049521/000104952125000024/0001049521-25-000024-index.htm",
+   "rationale": "Indirect: edge-processing modules/subsystems span legacy radar/EW platforms via primes; no shift-category breakout or named tailwind contract; turnaround thesis, not this theme.",
+   "cohorts": []
+  },
+  {
+   "ticker": "MRLN",
+   "substructureTag": "defense-autonomy",
+   "driverTie": "indirect",
+   "grade": "committed-capacity",
+   "basis": "committed",
+   "gradeFact": "Balance sheet shows accounts receivable of $1,342K and a contract loss provision of $738K as of March 31, 2026, indicating some customer-contract activity, but no revenue amount or program is attributed to any attritable/autonomous defense category; risk factors cite customer concentration and reliance on prime contractors.",
+   "accession": "0001213900-26-057138",
+   "edgarUrl": "https://www.sec.gov/Archives/edgar/data/2028707/000121390026057138/0001213900-26-057138-index.htm",
+   "rationale": "Indirect: autonomous-flight software is category-adjacent (defense autonomy) but pre-scale with no quantified shift contract in stream; can't underwrite.",
+   "cohorts": []
+  },
+  {
+   "ticker": "MTRN",
+   "substructureTag": "space-isr",
+   "driverTie": "indirect",
+   "grade": "committed-capacity",
+   "basis": "committed",
+   "gradeFact": "In Q1 2026, value-added sales rose 1% driven partly by a 12% volume increase in the aerospace and defense end market; this is blended, aggregated defense end-market growth not broken out to any shift category or product.",
+   "accession": "0001104657-26-000029",
+   "edgarUrl": "https://www.sec.gov/Archives/edgar/data/1104657/000110465726000029/0001104657-26-000029-index.htm",
+   "rationale": "Indirect: beryllium/specialty materials feed defense/space components generically; no shift-category program or breakout.",
+   "cohorts": []
+  },
+  {
+   "ticker": "MTUS",
+   "substructureTag": "munitions-scale",
+   "driverTie": "indirect",
+   "grade": "committed-capacity",
+   "basis": "committed",
+   "gradeFact": "The Company's SBQ steel end products include 'artillery and mortar bodies' (among a broad list of mechanical-power-transmission applications), sold into its aerospace & defense end-market.",
+   "accession": "0001193125-26-061042",
+   "edgarUrl": "https://www.sec.gov/Archives/edgar/data/1598428/000119312526061042/0001193125-26-061042-index.htm",
+   "rationale": "Indirect near-miss: SBQ steel with Army-funded munitions-adjacent capacity is genuine input-chain exposure, but book is blended specialty steel with no shift-side revenue breakout or contract terms in stream \u2014 input supplier, not category owner.",
+   "cohorts": [
+    "avoid-control"
+   ]
+  },
+  {
+   "ticker": "NEU",
+   "substructureTag": "munitions-scale",
+   "driverTie": "driver-specific",
+   "grade": "committed-capacity",
+   "basis": "committed",
+   "gradeFact": "AMPAC (a NewMarket subsidiary) manufactures and sells specialty materials primarily used in solid rocket motors for the aerospace and defense industries, and is described as a global leader in specialty materials for use in solid rocket motors for space launch and military defense applications.",
+   "accession": "0001282637-26-000005",
+   "edgarUrl": "https://www.sec.gov/Archives/edgar/data/1282637/000128263726000005/0001282637-26-000005-index.htm",
+   "rationale": "Best committed-capacity fact in set: $100M AMPAC line adding >50% AP capacity by end-2026 'in support of growing solid rocket motor demand,' sole-qualified US supplier for most DoW/NASA programs (FY25 10-K) \u2014 but specialty materials is $182M sales/$47M op profit (~7% of sales, ~8% of profit) inside a declining Afton core (op profit \u221212% YoY) at ~17-18x near ATH; materiality + priced/core-erosion twin fail 3:1. Revisit on segment separation or derate toward ~$600 with AP line ramping.",
+   "cohorts": [
+    "watchlist"
+   ]
+  },
+  {
+   "ticker": "NPK",
+   "substructureTag": "munitions-scale",
+   "driverTie": "indirect",
+   "grade": "quantified-revenue",
+   "basis": "committed",
+   "gradeFact": "The Defense segment manufactures 40mm ammunition, medium caliber cartridge cases (20mm, 25mm, 30mm, 40mm, 50mm), and performs Load, Assemble and Pack (LAP) operations, plus detonators, booster pellets, lead azide and other military energetic devices, primarily for the U.S. DOD and DOD prime contractors. This is conventional artillery/medium-caliber munitions manufacturing.",
+   "accession": "0001437749-26-008214",
+   "edgarUrl": "https://www.sec.gov/Archives/edgar/data/80172/000143774926008214/0001437749-26-008214-index.htm",
+   "rationale": "Indirect near-miss: Defense segment is a real ammunition producer (quantified revenue) but on legacy small/medium-cal programs with single-customer USG concentration and no disclosed shift-driven capacity expansion; conglomerate structure (housewares/safety) dilutes the leg.",
+   "cohorts": [
+    "avoid-control"
+   ]
+  },
+  {
+   "ticker": "OII",
+   "substructureTag": "space-isr",
+   "driverTie": "indirect",
+   "grade": "committed-capacity",
+   "basis": "committed",
+   "gradeFact": "Oceaneering describes itself as a global technology company delivering engineered services and products and robotic solutions to the offshore energy, defense, aerospace and manufacturing industries, with a segment (Aerospace and Defense Technologies / ADTech) that provides engineering and related manufacturing in defense and space exploration activities, principally to U.S. government agencies and their prime contractors.",
+   "accession": "0000073756-26-000016",
+   "edgarUrl": "https://www.sec.gov/Archives/edgar/data/73756/000007375626000016/0000073756-26-000016-index.htm",
+   "rationale": "Indirect: subsea robotics/offshore energy with a small defense unit (ADTech) serving established programs; no shift-category breakout.",
+   "cohorts": []
+  },
+  {
+   "ticker": "OLN",
+   "substructureTag": "defense-autonomy",
+   "driverTie": "indirect",
+   "grade": "committed-capacity",
+   "basis": "committed",
+   "gradeFact": "Olin's Winchester segment produces sporting ammunition, reloading components, small caliber military ammunition and components, industrial cartridges, clay targets, and contracted U.S. military project revenue; Winchester represented 26% of 2025 sales. This is conventional small-caliber ammunition, not the scaled munitions (artillery, missiles, solid rocket motors, magazine depth) or attritable/autonomous categories the driver targets.",
+   "accession": "0000074303-26-000027",
+   "edgarUrl": "https://www.sec.gov/Archives/edgar/data/74303/000007430326000027/0000074303-26-000027-index.htm",
+   "rationale": "Indirect: Winchester small-caliber ammunition is legacy munitions (commodity calibers, Lake City), not the magazine-depth missile/artillery shift; chemicals core dominates; no shift-side capacity/contract disclosed.",
+   "cohorts": []
+  },
+  {
+   "ticker": "ONDS",
+   "substructureTag": "attritable-air",
+   "driverTie": "driver-specific",
+   "grade": "committed-capacity",
+   "basis": "committed",
+   "gradeFact": "OAS develops and integrates Counter-UAS (CUAS) solutions designed to detect, track, and defeat small hostile drones threatening critical assets, facilities, borders and operations, with a focus on rapid response, autonomous operations, and scalable deployment for defense, homeland security, and public safety end users. CUAS is one of OAS's four priority Pillars.",
+   "accession": "0001213900-26-035981",
+   "edgarUrl": "https://www.sec.gov/Archives/edgar/data/1646188/000121390026035981/0001213900-26-035981-index.htm",
+   "rationale": "CUAS pillar language verified but LMS is 'expanding into' (aspirational) and no revenue-by-pillar exists; Q1'26 $50.1M revenue vs $4.2M PY is acquisition roll-up; weighted shares 69.9M (FY24) \u2192 ~496M today; headline Q1 'net income' is non-cash warrant/deal accounting; $3.9B cap = flow-chasing twin confirmed \u2014 tailwind exposure unattributable, can't underwrite.",
+   "cohorts": []
+  },
+  {
+   "ticker": "OPTX",
+   "substructureTag": "unspecified",
+   "driverTie": "indirect",
+   "grade": "committed-capacity",
+   "basis": "committed",
+   "gradeFact": "Syntec Optics is a vertically integrated manufacturer of optics and photonics components and sub-systems (opto-mechanicals, optical elements, diamond-turned optics, optics/electro-optics assembly, coating) and sells to customers in defense, medical, and consumer end-markets.",
+   "accession": "0001493152-26-023833",
+   "edgarUrl": "https://www.sec.gov/Archives/edgar/data/1866816/000149315226023833/0001493152-26-023833-index.htm",
+   "rationale": "Indirect: optics/photonics components with blended end markets; no named defense program or shift-category revenue.",
+   "cohorts": []
+  },
+  {
+   "ticker": "OSIS",
+   "substructureTag": "munitions-scale",
+   "driverTie": "indirect",
+   "grade": "committed-capacity",
+   "basis": "committed",
+   "gradeFact": "The Optoelectronics and Manufacturing division supplies specialized electronic components to third parties for defense and aerospace applications, including 'laser-guided munitions systems, range finders, and satellite navigation sensors,' and optoelectronic devices that convert optical signals into electrical signals.",
+   "accession": "0001410578-25-001887",
+   "edgarUrl": "https://www.sec.gov/Archives/edgar/data/1039065/000141057825001887/0001410578-25-001887-index.htm",
+   "rationale": "Indirect: security-screening and optoelectronics; munitions-scale category assignment unsupported \u2014 defense content is subsystem-level and generic, no shift tie.",
+   "cohorts": []
+  },
+  {
+   "ticker": "OSK",
+   "substructureTag": "defense-autonomy",
+   "driverTie": "indirect",
+   "grade": "committed-capacity",
+   "basis": "committed",
+   "gradeFact": "Under the Oshkosh Defense brand, the Transport segment designs, manufactures and sustains specialty vehicles and mobility systems for the U.S. DoD and approved foreign customers. Significant defense contracts are the Family of Heavy Tactical Vehicles (FHTV), Family of Medium Tactical Vehicles (FMTV) and Medium Caliber Weapons System (MCWS) \u2014 tactical wheeled vehicles/mobility platforms, not attritable/autonomous/mass-munition systems.",
+   "accession": "0001193125-26-054061",
+   "edgarUrl": "https://www.sec.gov/Archives/edgar/data/775158/000119312526054061/0001193125-26-054061-index.htm",
+   "rationale": "Indirect/legacy: tactical wheeled vehicles (JLTV franchise post-recompete loss) and access equipment \u2014 legacy-platform exposure; no shift-category program.",
+   "cohorts": []
+  },
+  {
+   "ticker": "PDYN",
+   "substructureTag": "attritable-air",
+   "driverTie": "indirect",
+   "grade": "committed-capacity",
+   "basis": "committed",
+   "gradeFact": "The company reports advanced UAVs, advanced UAV engineering services and precision-manufactured components among its offerings for defense and commercial/industrial markets.",
+   "accession": "0001193125-26-092443",
+   "edgarUrl": "https://www.sec.gov/Archives/edgar/data/1826681/000119312526092443/0001193125-26-092443-index.htm",
+   "rationale": "Indirect: early-stage embodied-AI/collaborative autonomy with UAV ambitions; no binding defense terms or revenue at scale; speculative flow profile.",
+   "cohorts": []
+  },
+  {
+   "ticker": "PKE",
+   "substructureTag": "munitions-scale",
+   "driverTie": "driver-specific",
+   "grade": "committed-capacity",
+   "basis": "committed",
+   "gradeFact": "Park is the exclusive North American distributor of ArianeGroup's RAYCARB C2B NG proprietary product, which is used to produce ablative composite materials for critical rocketry and missile systems; Park uses it in the production of its key ablative materials supplied into critical rocket and missile programs.",
+   "accession": "0001437749-26-018900",
+   "edgarUrl": "https://www.sec.gov/Archives/edgar/data/76267/000143774926018900/0001437749-26-018900-index.htm",
+   "rationale": "Direction PASSES (munitions-scale ablatives: Aerojet Rocketdyne 11.7% of FY26 sales, exclusive RAYCARB C2B NG channel, backlog +99% to $51.4M, new plant construction FY27 \u2014 all in FY26 10-K) but $704M EV = ~52x FY26 EBIT ($13.5M) at 5% off ATH after a 2.5x re-rate; a full multi-year missile ramp is priced (~1:1). Revisit on major derate with backlog intact.",
+   "cohorts": [
+    "watchlist"
+   ]
+  },
+  {
+   "ticker": "PLXS",
+   "substructureTag": "attritable-air",
+   "driverTie": "indirect",
+   "grade": "committed-capacity",
+   "basis": "committed",
+   "gradeFact": "Plexus is a contract manufacturer/EMS provider that designs, manufactures and services highly complex products for market-leading customers in the Aerospace/Defense, Healthcare/Life Sciences and Industrial sectors; Aerospace/Defense was 17% of net sales in fiscal 2025 (18% in 2024, 14% in 2023). No disclosure ties this defense revenue to attritable UAVs, loitering munitions, counter-UAS, defense autonomy/AI software, scaled munitions production, EW/cyber, or shift-specific components.",
+   "accession": "0000785786-25-000064",
+   "edgarUrl": "https://www.sec.gov/Archives/edgar/data/785786/000078578625000064/0000785786-25-000064-index.htm",
+   "rationale": "Indirect: EMS/contract manufacturing with A&D customer mix; builds to others' programs, no shift-category attribution possible.",
+   "cohorts": []
+  },
+  {
+   "ticker": "PSN",
+   "substructureTag": "counter-uas",
+   "driverTie": "indirect",
+   "grade": "committed-capacity",
+   "basis": "committed",
+   "gradeFact": "Federal Solutions segment represented 51% of revenue and 46% of adjusted EBITDA for fiscal 2025; the segment covers a broad mix including aviation modernization, space ground systems, environmental remediation, and border security in addition to EW/counter-UAS \u2014 driver-relevant revenue is not broken out.",
+   "accession": "0001193125-26-045495",
+   "edgarUrl": "https://www.sec.gov/Archives/edgar/data/275880/000119312526045495/0001193125-26-045495-index.htm",
+   "rationale": "Direction fail: government services/integration provider; counter-UAS work is program-services, not owned product; no shift-side product economics.",
+   "cohorts": []
+  },
+  {
+   "ticker": "QRVO",
+   "substructureTag": "ew-cyber",
+   "driverTie": "indirect",
+   "grade": "committed-capacity",
+   "basis": "committed",
+   "gradeFact": "In defense and aerospace, HPA supplies RF products and compound semiconductor foundry/assembly services to the U.S. government, U.S. defense primes and U.S. allies, focusing primarily on enabling phased array technologies for radar, electronic warfare and communications systems for defense applications.",
+   "accession": "0001628280-26-032873",
+   "edgarUrl": "https://www.sec.gov/Archives/edgar/data/1604778/000162828026032873/0001628280-26-032873-index.htm",
+   "rationale": "Indirect: RF semiconductors with defense/aero minority mix; EW adjacency generic, no shift-category breakout \u2014 consumer handset economics dominate.",
+   "cohorts": []
+  },
+  {
+   "ticker": "QUIK",
+   "substructureTag": "attritable-air",
+   "driverTie": "indirect",
+   "grade": "committed-capacity",
+   "basis": "committed",
+   "gradeFact": "The 10-K discloses that revenue from U.S. Government contracts depends on continued U.S. Government funding, and notes risk that funding for existing contracts may be canceled/diverted/delayed, indicating the Company holds U.S. Government contracts \u2014 but the filing does not identify these as tied to any named tailwind-side category (attritable UAVs, counter-UAS, defense autonomy, scaled munitions, EW/cyber).",
+   "accession": "0001437749-26-010089",
+   "edgarUrl": "https://www.sec.gov/Archives/edgar/data/882508/000143774926010089/0001437749-26-010089-index.htm",
+   "rationale": "Indirect: eFPGA IP/discrete FPGAs with rad-hard adjacency; no named shift program or quantified defense revenue.",
+   "cohorts": []
+  },
+  {
+   "ticker": "RDW",
+   "substructureTag": "defense-autonomy",
+   "driverTie": "indirect",
+   "grade": "committed-capacity",
+   "basis": "committed",
+   "gradeFact": "Redwire acquired Edge Autonomy Intermediate Holdings, LLC (renamed Redwire Defense Tech Intermediate Holdings, LLC) on June 13, 2025; the acquired business is referenced by the segment renaming ('Defense Tech') and the credit agreement carrying its name. Edge Autonomy is disclosed as a distinct acquired defense-technology business now integrated into a 'Defense Tech' reportable segment effective December 1, 2025.",
+   "accession": "0001819810-26-000063",
+   "edgarUrl": "https://www.sec.gov/Archives/edgar/data/1819810/000181981026000063/0001819810-26-000063-index.htm",
+   "rationale": "Indirect: space infrastructure/components roll-up; defense-space adjacency generic, no shift-category contract quantified; separate space thesis.",
+   "cohorts": []
+  },
+  {
+   "ticker": "SAIC",
+   "substructureTag": "defense-autonomy",
+   "driverTie": "indirect",
+   "grade": "quantified-revenue",
+   "basis": "committed",
+   "gradeFact": "SAIC describes itself as a leading provider of technical, engineering, and mission/enterprise IT services primarily to the U.S. government, with a Defense and Intelligence segment providing 'national security solutions' to the DoW and Intelligence Community; ~52% of total revenues attributable to the Department of War. This is generic defense-budget exposure, not tied to a named tailwind-side category of the compositional shift.",
+   "accession": "0001571123-26-000029",
+   "edgarUrl": "https://www.sec.gov/Archives/edgar/data/1571123/000157112326000029/0001571123-26-000029-index.htm",
+   "rationale": "Direction fail: government IT/engineering services (quantified but generic defense revenue); services firm touching defense-AI generically per framework.",
+   "cohorts": []
+  },
+  {
+   "ticker": "SARO",
+   "substructureTag": "defense-autonomy",
+   "driverTie": "indirect",
+   "grade": "committed-capacity",
+   "basis": "committed",
+   "gradeFact": "StandardAero operates two reportable segments (Engine Services and Component Repair Services) providing gas turbine engine aftermarket services \u2014 maintenance, repair and overhaul (MRO), on-wing/field service, asset management and engineering \u2014 across commercial aerospace, military and helicopter, and business aviation end markets. This is legacy-platform engine MRO/sustainment, not the mass/attritable/autonomous side demand is shifting toward.",
+   "accession": "0001193125-26-072618",
+   "edgarUrl": "https://www.sec.gov/Archives/edgar/data/2025410/000119312526072618/0001193125-26-072618-index.htm",
+   "rationale": "Indirect/legacy: engine MRO aftermarket \u2014 sustainment of legacy manned fleets, opposite side of the shift.",
+   "cohorts": []
+  },
+  {
+   "ticker": "SKYT",
+   "substructureTag": "attritable-air",
+   "driverTie": "indirect",
+   "grade": "committed-capacity",
+   "basis": "committed",
+   "gradeFact": "The company states it is a party to several significant U.S. Government (USG) contracts subject to unique risks, and cites the level and timing of U.S. government program funding and DoW procurement practices as risk factors. No detail identifies any of these programs as tied to the mass/attritable/autonomous side of defense demand (no UAVs, loitering munitions, counter-UAS, ISR autonomy software, scaled munitions production, EW/cyber, or shift-specific components disclosed).",
+   "accession": "0001819974-26-000009",
+   "edgarUrl": "https://www.sec.gov/Archives/edgar/data/1819974/000181997426000009/0001819974-26-000009-index.htm",
+   "rationale": "Indirect: US trusted foundry with rad-hard/ITAR adjacency is strategic but generic \u2014 no shift-category program or quantified tailwind revenue in stream; wafer-services economics.",
+   "cohorts": []
+  },
+  {
+   "ticker": "TATT",
+   "substructureTag": "defense-autonomy",
+   "driverTie": "indirect",
+   "grade": "committed-capacity",
+   "basis": "committed",
+   "gradeFact": "TAT provides OEM heat transfer/cooling solutions and MRO services for military aerospace and ground defense sectors, with defense customers including Lockheed Martin and the U.S. Armed Forces. Its disclosed defense work is thermal management, power/actuation, and MRO for aircraft and ground systems \u2014 legacy/exquisite crewed-platform and general defense supply, not the attritable/autonomous/mass-munitions tailwind side.",
+   "accession": "0001178913-26-001363",
+   "edgarUrl": "https://www.sec.gov/Archives/edgar/data/808439/000117891326001363/0001178913-26-001363-index.htm",
+   "rationale": "Indirect/legacy (foreign issuer): thermal management and MRO for legacy aviation platforms; no shift-category exposure.",
+   "cohorts": []
+  },
+  {
+   "ticker": "UMAC",
+   "substructureTag": "attritable-air",
+   "driverTie": "driver-specific",
+   "grade": "committed-capacity",
+   "basis": "committed",
+   "gradeFact": "The Company is onshoring manufacturing of critical drone components (motors, headsets, flight-controller-related electronics, and others) in the US and is expanding B2B sales to customers requiring an NDAA-compliant domestic supply chain, aligning with DoD procurement frameworks including the Blue UAS ecosystem. These are shift-specific enabling components for attritable UAVs, but disclosed as capability/strategy rather than a quantified defense contract.",
+   "accession": "0001683168-26-001730",
+   "edgarUrl": "https://www.sec.gov/Archives/edgar/data/1956955/000168316826001730/0001683168-26-001730-index.htm",
+   "rationale": "Attritable-components/NDAA-onshoring exposure is strategy-and-compliance, not contract: Blue UAS approvals \u2260 awarded volume, revenue blended consumer/commercial, Q1'26 $8.1M (4x jump via merger), headline 'net income' non-cash; ~$1.1B cap \u2248 34x sales retail-flow name \u2014 flow-chasing twin, nothing underwritable to 3:1.",
+   "cohorts": []
+  },
+  {
+   "ticker": "UUUU",
+   "substructureTag": "unspecified",
+   "driverTie": "indirect",
+   "grade": "committed-capacity",
+   "basis": "committed",
+   "gradeFact": "The Company entered a material definitive agreement (June 23, 2026) to acquire Vacuumschmelze GmbH (VAC) from Ara Partners; VAC is a magnetics/rare-earth magnet materials producer. The filing text discloses only the transaction structure, not any defense end-use, contracted defense volumes, or shift-category application.",
+   "accession": "0001062993-26-003385",
+   "edgarUrl": "https://www.sec.gov/Archives/edgar/data/1385849/000106299326003385/0001062993-26-003385-index.htm",
+   "rationale": "Indirect: uranium/REE processing is critical-minerals input-chain narrative, not a defense-shift product; no defense contract terms disclosed.",
+   "cohorts": []
+  },
+  {
+   "ticker": "VPG",
+   "substructureTag": "defense-autonomy",
+   "driverTie": "indirect",
+   "grade": "committed-capacity",
+   "basis": "committed",
+   "gradeFact": "The 2016 acquisition of Pacific Instruments (high-performance signal conditioning, data acquisition and control systems) sells primarily to 'the aerospace, commercial aviation and defense markets in the United States.' No disclosure links these systems to the mass/attritable/autonomous side of defense demand.",
+   "accession": "0001437749-26-005982",
+   "edgarUrl": "https://www.sec.gov/Archives/edgar/data/1487952/000143774926005982/0001437749-26-005982-index.htm",
+   "rationale": "Indirect: precision sensing components with small defense mix; no shift-category program or breakout.",
+   "cohorts": []
+  },
+  {
+   "ticker": "VSAT",
+   "substructureTag": "defense-autonomy",
+   "driverTie": "indirect",
+   "grade": "committed-capacity",
+   "basis": "committed",
+   "gradeFact": "The defense and advanced technologies segment includes an information security and cyber defense line offering Type 1 and HAIPE-compliant encryption solutions enabling military/government users to communicate securely, plus the MOJO expeditionary tactical gateway family \u2014 cyber/EW-adjacent defense products, but disclosed as encryption/networking, not as EW jamming or offensive cyber for the shift.",
+   "accession": "0001193125-26-248290",
+   "edgarUrl": "https://www.sec.gov/Archives/edgar/data/797721/000119312526248290/0001193125-26-248290-index.htm",
+   "rationale": "Indirect: satcom services/terminals (incl. legacy govt connectivity) \u2014 enabling comms on established programs; no shift-side product economics; leverage-heavy separate thesis.",
+   "cohorts": []
+  },
+  {
+   "ticker": "VVX",
+   "substructureTag": "counter-uas",
+   "driverTie": "indirect",
+   "grade": "committed-capacity",
+   "basis": "committed",
+   "gradeFact": "V2X is a provider of critical mission solutions primarily to defense customers, offering multi-domain high impact readiness, integrated supply chain management, assured communications, mission solutions, and platform renewal and modernization. This is government defense services generally, not tied to any tailwind category of the compositional shift (attritable air, counter-UAS, autonomy/AI, scaled munitions, EW/cyber, or shift-specific components).",
+   "accession": "0001601548-26-000015",
+   "edgarUrl": "https://www.sec.gov/Archives/edgar/data/1601548/000160154826000015/0001601548-26-000015-index.htm",
+   "rationale": "Direction fail: sustainment/logistics services contractor; counter-UAS category reflects program services, not owned product.",
+   "cohorts": []
+  },
+  {
+   "ticker": "YSS",
+   "substructureTag": "defense-autonomy",
+   "driverTie": "indirect",
+   "grade": "committed-capacity",
+   "basis": "committed",
+   "gradeFact": "York cites proprietary autonomous mission software (Multi-Mission Operations Center; Bastion ground software) enabling autonomous constellation planning and 'hands-off operations,' plus edge computing/flight control from its Emergent acquisition. This is spacecraft/constellation operations autonomy, not defense targeting/ISR-autonomy/mission software of the kind in the driver's 'defense autonomy & AI' category.",
+   "accession": "0001628280-26-019923",
+   "edgarUrl": "https://www.sec.gov/Archives/edgar/data/2086587/000162828026019923/0001628280-26-019923-index.htm",
+   "rationale": "Indirect: proliferated-LEO satellite prime is space-ISR-adjacent but graded indirect \u2014 no shift-category contract terms quantified in stream; post-IPO growth-burn profile, separate space thesis.",
+   "cohorts": []
+  },
+  {
+   "ticker": "AMBA",
+   "substructureTag": "defense-autonomy",
+   "driverTie": "not-driver",
+   "grade": "committed-capacity",
+   "basis": "aspirational",
+   "gradeFact": "Ambarella is a developer of low-power SoC semiconductors and software for edge and physical AI, including AI inference SoCs (CVflow, CV7/CV3/N1 families) that run object detection/classification/tracking, sensor fusion, path planning, and perceive-plan-act autonomy. These are described for automotive, security, robotics, industrial and consumer end markets \u2014 with no disclosed defense customer, defense program, or defense end-use.",
+   "accession": "0001193125-26-119321",
+   "edgarUrl": "https://www.sec.gov/Archives/edgar/data/1280263/000119312526119321/0001193125-26-119321-index.htm",
+   "rationale": "Direction fail: edge-AI SoC vendor with no named defense customer, program, or defense-specific application disclosed; grade fact flagged ungrounded \u2014 no shift exposure to underwrite.",
+   "cohorts": []
+  },
+  {
+   "ticker": "AVNT",
+   "substructureTag": "defense-autonomy",
+   "driverTie": "not-driver",
+   "grade": "committed-capacity",
+   "basis": "aspirational",
+   "gradeFact": "Defense is listed as one of Avient's end markets alongside consumer, packaging, healthcare, industrial, transportation, building and construction, telecommunications and energy; the defense business is associated in part with tenders and project-based work, leading to inconsistent order patterns. This is generic defense end-market participation by a materials formulator, with no disclosed tie to the compositional shift toward mass/attritable/autonomous systems.",
+   "accession": "0001122976-26-000039",
+   "edgarUrl": "https://www.sec.gov/Archives/edgar/data/1122976/000112297626000039/0001122976-26-000039-index.htm",
+   "rationale": "Direction fail: specialty polymers formulator; defense is an end-market mention (UHMWPE fiber fact flagged ungrounded in cited filing) with no shift-category product, program, or revenue tie.",
+   "cohorts": []
+  },
+  {
+   "ticker": "AVT",
+   "substructureTag": "attritable-air",
+   "driverTie": "not-driver",
+   "grade": "stated-intent",
+   "basis": "aspirational",
+   "gradeFact": "Avnet's Electronic Components group markets, sells, and distributes electronic components (semiconductors, IP&E, embedded) and lists 'defense and aerospace' as one of several end markets it serves (alongside industrial and automotive). No disclosure ties any of this activity to attritable UAVs, loitering munitions, counter-UAS, defense autonomy/AI software, scaled munitions production, EW/cyber, or shift-specific components.",
+   "accession": "0000008858-25-000028",
+   "edgarUrl": "https://www.sec.gov/Archives/edgar/data/8858/000000885825000028/0000008858-25-000028-index.htm",
+   "rationale": "Direction fail: broadline electronics distributor; 'defense and aerospace' is one of many listed end markets with no defense revenue breakout or shift-specific tie.",
+   "cohorts": []
+  },
+  {
+   "ticker": "AXTI",
+   "substructureTag": "unspecified",
+   "driverTie": "not-driver",
+   "grade": "binding-contract",
+   "basis": "aspirational",
+   "gradeFact": "Tongmei entered a Long-term Supply Agreement with Nanjing Casela Technologies for a fixed aggregate quantity of InP wafer substrates for calendar 2027, total price RMB 173,000,000 (~US$25.4M), with 50% prepayment and an 80% minimum-purchase/cancellation-fee obligation. This is a binding commercial substrate supply contract with no disclosed defense end-use or tie to the defense-demand shift.",
+   "accession": "0001437749-26-020978",
+   "edgarUrl": "https://www.sec.gov/Archives/edgar/data/1051627/000143774926020978/0001437749-26-020978-index.htm",
+   "rationale": "Direction fail: compound-semiconductor substrate maker (China-centric operations); no defense program, customer, or shift-category exposure disclosed.",
+   "cohorts": []
+  },
+  {
+   "ticker": "BB",
+   "substructureTag": "defense-autonomy",
+   "driverTie": "indirect",
+   "grade": "stated-intent",
+   "basis": "aspirational",
+   "gradeFact": "QNX is described as a 'preferred supplier of embedded systems for companies building ... aerospace and defence systems, and other mission-critical applications,' with QNX solutions positioned to enable 'physical AI systems, being autonomous systems that engage with and act in the real world.' This is a general capability statement listing defence as one of many end-markets, with no named defense customer, no attritable/mass/autonomous-munitions program, and no contract or revenue attributed to the shift.",
+   "accession": "0001070235-26-000039",
+   "edgarUrl": "https://www.sec.gov/Archives/edgar/data/1070235/000107023526000039/0001070235-26-000039-index.htm",
+   "rationale": "Indirect: QNX embedded/RTOS software with generic defense/embedded adjacency; no shift-category program, contract, or breakout.",
+   "cohorts": []
+  },
+  {
+   "ticker": "BHE",
+   "substructureTag": "attritable-air",
+   "driverTie": "indirect",
+   "grade": "stated-intent",
+   "basis": "aspirational",
+   "gradeFact": "Benchmark provides EMS and precision metal machining services and lists aerospace and defense (A&D) as one of five served markets (alongside advanced computing/communication, industrial, medical and semi-cap). It is a contract manufacturer/design partner to OEMs, not an owner/maker of any weapons or defense end-product; no attritable-UAV, loitering-munition, counter-UAS, defense-autonomy software, scaled munitions, or shift-specific component (turbojet/seeker/SRM) work is named.",
+   "accession": "0001193125-26-064849",
+   "edgarUrl": "https://www.sec.gov/Archives/edgar/data/863436/000119312526064849/0001193125-26-064849-index.htm",
+   "rationale": "Indirect: EMS/precision machining with A&D customer mix; builds to others' programs, no shift-category attribution.",
+   "cohorts": []
+  },
+  {
+   "ticker": "CDRE",
+   "substructureTag": "defense-autonomy",
+   "driverTie": "not-driver",
+   "grade": "committed-capacity",
+   "basis": "aspirational",
+   "gradeFact": "Cadre entered a Securities Purchase Agreement (Oct 28, 2025) via Safariland to acquire TYR Tactical and related companies, which manufacture advanced tactical gear \u2014 soft armor, tactical vests, plate carriers, ballistic plates and shields \u2014 for military, law enforcement and government agencies. This is body-armor/tactical wearables, not attritable/autonomous/munitions systems.",
+   "accession": "0001104659-25-105558",
+   "edgarUrl": "https://www.sec.gov/Archives/edgar/data/1860543/000110465925105558/0001104659-25-105558-index.htm",
+   "rationale": "Direction fail: body armor/EOD protective equipment is soldier-protection demand, not the attritable/autonomous compositional shift; no shift-category product in stream.",
+   "cohorts": []
+  },
+  {
+   "ticker": "CGNT",
+   "substructureTag": "defense-autonomy",
+   "driverTie": "not-driver",
+   "grade": "stated-intent",
+   "basis": "aspirational",
+   "gradeFact": "The filing lists a risk factor regarding implementation and use of artificial intelligence tools and technology, but this is a generic AI-usage risk with no disclosed application to defense targeting, ISR autonomy, or mission software on the tailwind side of the shift.",
+   "accession": "0001824814-26-000021",
+   "edgarUrl": "https://www.sec.gov/Archives/edgar/data/1824814/000182481426000021/0001824814-26-000021-index.htm",
+   "rationale": "Direction fail: investigative-analytics software (foreign issuer) serving intel/LE generically; services-type exposure with no shift-side product, program, or quantified defense tie.",
+   "cohorts": []
+  },
+  {
+   "ticker": "CMC",
+   "substructureTag": "defense-autonomy",
+   "driverTie": "not-driver",
+   "grade": "committed-capacity",
+   "basis": "aspirational",
+   "gradeFact": "CMC Impact Metals operations manufacture heat-treated, high-strength steel products including armor plate for military vehicles. This is a legacy/exquisite crewed-platform input (vehicle armor), not the mass/attritable/autonomous side the driver describes.",
+   "accession": "0000022444-25-000138",
+   "edgarUrl": "https://www.sec.gov/Archives/edgar/data/22444/000002244425000138/0000022444-25-000138-index.htm",
+   "rationale": "Direction fail: rebar/long-steel producer; legacy-infrastructure exposure with no defense product or shift tie \u2014 end-market mention only.",
+   "cohorts": []
+  },
+  {
+   "ticker": "DDD",
+   "substructureTag": "space-isr",
+   "driverTie": "indirect",
+   "grade": "stated-intent",
+   "basis": "aspirational",
+   "gradeFact": "3D Systems provides 3D printing / additive manufacturing solutions (printers, materials, software, services) and lists aerospace & defense as one of the 'mission-critical components for high-reliability industries' within its Industrial Solutions segment, alongside semiconductors and oil & gas \u2014 producing low-volume, high-value parts.",
+   "accession": "0001628280-26-015997",
+   "edgarUrl": "https://www.sec.gov/Archives/edgar/data/910638/000162828026015997/0001628280-26-015997-index.htm",
+   "rationale": "Indirect: additive-manufacturing platform with defense/space as minority verticals; no shift-category program or quantified exposure.",
+   "cohorts": []
+  },
+  {
+   "ticker": "ENVX",
+   "substructureTag": "defense-autonomy",
+   "driverTie": "indirect",
+   "grade": "stated-intent",
+   "basis": "aspirational",
+   "gradeFact": "Enovix describes itself as a high-performance silicon-anode lithium-ion battery company designing/manufacturing batteries for smartphones, smart eyewear, defense, industrial and emerging edge-AI applications; 'defense' is listed as one of several target end-markets for its energy-dense batteries.",
+   "accession": "0001828318-26-000006",
+   "edgarUrl": "https://www.sec.gov/Archives/edgar/data/1828318/000182831826000006/0001828318-26-000006-index.htm",
+   "rationale": "Indirect: silicon-anode batteries targeted at consumer first; UAS/defense adjacency aspirational, no defense contract or revenue disclosed.",
+   "cohorts": []
+  },
+  {
+   "ticker": "FET",
+   "substructureTag": "defense-autonomy",
+   "driverTie": "not-driver",
+   "grade": "committed-capacity",
+   "basis": "aspirational",
+   "gradeFact": "The Drilling and Completions segment designs, manufactures and supplies products for markets 'including applications in the oil and natural gas, renewable energy, defense and communications industries,' and its Subsea product line notes it is affected by 'government defense system initiatives' and sells subsea vehicles/products to naval and maritime research organizations. This is generic defense/naval exposure via subsea ROVs and components \u2014 not tied to the mass/attritable/autonomous tailwind side of the shift.",
+   "accession": "0001401257-26-000015",
+   "edgarUrl": "https://www.sec.gov/Archives/edgar/data/1401257/000140125726000015/0001401257-26-000015-index.htm",
+   "rationale": "Direction fail: oilfield equipment manufacturer; defense mention incidental, no product/program/contract tie to any shift category.",
+   "cohorts": []
+  },
+  {
+   "ticker": "FLR",
+   "substructureTag": "counter-uas",
+   "driverTie": "indirect",
+   "grade": "stated-intent",
+   "basis": "aspirational",
+   "gradeFact": "Fluor lists 'national security' among the growth markets it seeks to grow within its portfolio, and identifies itself as a service provider to the U.S. federal government (including the DOD) and governments abroad, operating a 'Mission Solutions' segment. No description ties this to attritable/mass/autonomous systems, munitions-at-scale, counter-UAS, EW/cyber, or shift-specific components.",
+   "accession": "0001124198-26-000007",
+   "edgarUrl": "https://www.sec.gov/Archives/edgar/data/1124198/000112419826000007/0001124198-26-000007-index.htm",
+   "rationale": "Direction fail: EPC/project-management services; counter-UAS category assignment reflects facility work at most \u2014 no shift-side product.",
+   "cohorts": []
+  },
+  {
+   "ticker": "FUL",
+   "substructureTag": "defense-autonomy",
+   "driverTie": "not-driver",
+   "grade": "stated-intent",
+   "basis": "aspirational",
+   "gradeFact": "The company lists 'aerospace and defense industries' / 'aerospace and defense products' among the many end-markets whose manufacturers use its adhesives, alongside consumer goods, construction, automobiles, solar, electronics, etc. No product, program, contract, revenue figure, or activity tied to defense (let alone the mass/attritable/autonomous side) is disclosed.",
+   "accession": "0001437749-26-001767",
+   "edgarUrl": "https://www.sec.gov/Archives/edgar/data/39368/000143774926001767/0001437749-26-001767-index.htm",
+   "rationale": "Direction fail: adhesives/sealants formulator; defense is a generic end market with no shift-category product or quantified exposure.",
+   "cohorts": []
+  },
+  {
+   "ticker": "GILT",
+   "substructureTag": "defense-autonomy",
+   "driverTie": "not-driver",
+   "grade": "committed-capacity",
+   "basis": "aspirational",
+   "gradeFact": "Gilat's SBS subsidiary produces the 'Sidewinder' IFC (in-flight connectivity) satellite terminal and must meet high-volume production/delivery demands; risks discussed relate to scaling production of this commercial satellite communications terminal \u2014 a satcom aviation connectivity product, not a defense attritable/autonomous/munitions system.",
+   "accession": "0001178913-26-000929",
+   "edgarUrl": "https://www.sec.gov/Archives/edgar/data/897322/000117891326000929/0001178913-26-000929-index.htm",
+   "rationale": "Direction fail: VSAT/satcom equipment (foreign issuer) is legacy-enabling connectivity; defense unit serves established programs, no attritable/autonomy/munitions-shift tie.",
+   "cohorts": []
+  },
+  {
+   "ticker": "ICHR",
+   "substructureTag": "defense-autonomy",
+   "driverTie": "not-driver",
+   "grade": "stated-intent",
+   "basis": "aspirational",
+   "gradeFact": "Ichor describes itself as a leader in the design, engineering and manufacturing of critical fluid delivery subsystems and components primarily for semiconductor capital equipment, 'as well as other industries such as defense/aerospace and medical.' Defense/aerospace is named only as a minor secondary end-market, with no products, categories, contracts, or customers on the mass/attritable/autonomous side of defense demand disclosed.",
+   "accession": "0001652535-26-000012",
+   "edgarUrl": "https://www.sec.gov/Archives/edgar/data/1652535/000165253526000012/0001652535-26-000012-index.htm",
+   "rationale": "Direction fail: semiconductor fluid-delivery subsystems; no defense exposure of any kind disclosed \u2014 scan artifact.",
+   "cohorts": []
+  },
+  {
+   "ticker": "IPGP",
+   "substructureTag": "counter-uas",
+   "driverTie": "indirect",
+   "grade": "stated-intent",
+   "basis": "aspirational",
+   "gradeFact": "In its 'Aerospace and Defense' end market, IPG lists directed-energy applications served by single-mode CW lasers (1-8 kW), CW 'low order' lasers (10-30 kW) and narrow-line amplifiers (3-4 kW). Directed energy is an adjacent counter-materiel/counter-UAS-relevant defense application, but the filing discloses only product categories and applications, with no named defense customer, contract, MW/TCV or driver-specific counter-UAS program.",
+   "accession": "0001111928-26-000040",
+   "edgarUrl": "https://www.sec.gov/Archives/edgar/data/1111928/000111192826000040/0001111928-26-000040-index.htm",
+   "rationale": "Indirect: fiber lasers are directed-energy-adjacent but business is overwhelmingly industrial (cutting/welding); defense DE content small and unquantified \u2014 no underwritable shift leg.",
+   "cohorts": []
+  },
+  {
+   "ticker": "KAI",
+   "substructureTag": "unspecified",
+   "driverTie": "not-driver",
+   "grade": "stated-intent",
+   "basis": "aspirational",
+   "gradeFact": "In the Flow Control segment, the company describes providing custom-engineered fluid-flow-control products, systems, and technologies used across the 'packaging, paper and tissue, food, energy, defense and numerous other industrial sectors' \u2014 'defense' is listed as one of many end-markets served, with no product, program, contract, revenue, or category tied to the defense-demand shift.",
+   "accession": "0000886346-26-000018",
+   "edgarUrl": "https://www.sec.gov/Archives/edgar/data/886346/000088634626000018/0000886346-26-000018-index.htm",
+   "rationale": "Direction fail: industrial-processing systems; no defense product, customer, or shift-category tie disclosed.",
+   "cohorts": []
+  },
+  {
+   "ticker": "KALU",
+   "substructureTag": "defense-autonomy",
+   "driverTie": "not-driver",
+   "grade": "committed-capacity",
+   "basis": "aspirational",
+   "gradeFact": "GE Products (6000-series aluminum) are used, among many industrial uses, to produce armor for military vehicles and ordnances. This is a generic defense end-use for a broad industrial product line; no tie to the mass/attritable/autonomous side of the demand shift, and 'defense' is one of numerous listed end uses.",
+   "accession": "0001193125-26-059575",
+   "edgarUrl": "https://www.sec.gov/Archives/edgar/data/811596/000119312526059575/0001193125-26-059575-index.htm",
+   "rationale": "Direction fail: semi-fabricated aluminum products; aero/defense is a generic end market with no shift-specific program or quantified exposure.",
+   "cohorts": []
+  },
+  {
+   "ticker": "KBR",
+   "substructureTag": "attritable-air",
+   "driverTie": "indirect",
+   "grade": "stated-intent",
+   "basis": "aspirational",
+   "gradeFact": "KBR describes itself as delivering science, technology, engineering and logistics support solutions to the U.S. federal government and allied governments; its government-facing segment is Mission Technology Solutions (MTS), and its glossary references C5ISR (Command, Control, Communications, Computers, Cyber, Intelligence, Surveillance and Reconnaissance). No disclosure ties this to attritable UAVs, loitering munitions, counter-UAS, defense-autonomy software products, scaled munitions production, or shift-specific components.",
+   "accession": "0001357615-26-000051",
+   "edgarUrl": "https://www.sec.gov/Archives/edgar/data/1357615/000135761526000051/0001357615-26-000051-index.htm",
+   "rationale": "Direction fail: government engineering/logistics services; generic defense exposure, no shift-side product.",
+   "cohorts": []
+  },
+  {
+   "ticker": "KN",
+   "substructureTag": "ew-cyber",
+   "driverTie": "indirect",
+   "grade": "stated-intent",
+   "basis": "aspirational",
+   "gradeFact": "In the Precision Devices (PD) segment, the Company states that 'global conflict has given rise to increasing defense spending on electronic warfare, including an increasing array of new technologies to address rapidly evolving threats and adversaries,' and cites rising demand for supply partners that can reliably and rapidly deliver custom solutions with strong domestic manufacturing footprints. This ties to the EW category of the shift, but only as a market-trend narrative, not a disclosed EW product line, program, or customer.",
+   "accession": "0001587523-26-000005",
+   "edgarUrl": "https://www.sec.gov/Archives/edgar/data/1587523/000158752326000005/0001587523-26-000005-index.htm",
+   "rationale": "Indirect: specialty capacitors/RF filters with medtech/defense mix; component-level generic exposure, no shift-category tie.",
+   "cohorts": []
+  },
+  {
+   "ticker": "MEC",
+   "substructureTag": "defense-autonomy",
+   "driverTie": "indirect",
+   "grade": "stated-intent",
+   "basis": "aspirational",
+   "gradeFact": "Among MEC's manufacturing capabilities is chemical agent resistant coating (CARC) painting, a coating associated with military/defense equipment, offered as one of many custom coating capabilities. No connection is disclosed to any tailwind-side category of the defense-demand shift.",
+   "accession": "0001104659-26-023496",
+   "edgarUrl": "https://www.sec.gov/Archives/edgar/data/1766368/000110465926023496/0001104659-26-023496-index.htm",
+   "rationale": "Indirect: contract metal fabrication with vehicle/defense customer mix; builds to others' programs, no shift attribution.",
+   "cohorts": []
+  },
+  {
+   "ticker": "MEI",
+   "substructureTag": "defense-autonomy",
+   "driverTie": "indirect",
+   "grade": "stated-intent",
+   "basis": "aspirational",
+   "gradeFact": "The Industrial segment manufactures products (exterior/interior lighting solutions, industrial safety radio remote controls, braided flexible cables, current-carrying laminated busbars, custom power-product assemblies such as PowerRail, high-current high-voltage flexible power cabling, powder-coated busbars) used across various markets and applications, one of which is listed as 'military.' No description of the specific military product, platform, or whether it is an attritable/autonomous/munitions-at-scale application.",
+   "accession": "0000065270-26-000031",
+   "edgarUrl": "https://www.sec.gov/Archives/edgar/data/65270/000006527026000031/0000065270-26-000031-index.htm",
+   "rationale": "Indirect: custom mechatronics for auto/industrial; defense mention incidental, no shift-category tie.",
+   "cohorts": []
+  },
+  {
+   "ticker": "MMS",
+   "substructureTag": "counter-uas",
+   "driverTie": "not-driver",
+   "grade": "stated-intent",
+   "basis": "aspirational",
+   "gradeFact": "Maximus provides technology modernization efforts for civilian, defense and national security, and health agencies, supporting customers in the increasingly complex cybersecurity and geopolitical landscape. This is generic government IT/tech-enabled services with 'defense and national security' listed as one agency category, with no disclosed tie to attritable systems, counter-UAS, defense autonomy weapons, munitions, EW, or shift-specific components.",
+   "accession": "0001032220-25-000053",
+   "edgarUrl": "https://www.sec.gov/Archives/edgar/data/1032220/000103222025000053/0001032220-25-000053-index.htm",
+   "rationale": "Direction fail: BPO/health-services contractor; counter-UAS category assignment is spurious \u2014 no defense-shift product or program exists here.",
+   "cohorts": []
+  },
+  {
+   "ticker": "MTRX",
+   "substructureTag": "attritable-air",
+   "driverTie": "not-driver",
+   "grade": "committed-capacity",
+   "basis": "aspirational",
+   "gradeFact": "The Process and Industrial Facilities segment engineers and constructs thermal vacuum test chambers for the aerospace and defense industries, among other industrial customers. This is a general fabrication/EPC service to aerospace and defense broadly, with no tie to attritable UAVs, loitering munitions, counter-UAS, defense autonomy/AI software, scaled munitions production, EW/cyber, or any shift-specific component; it is listed alongside chemicals, petrochemical, mining, cement, agriculture and wastewater as an industrial end-market.",
+   "accession": "0000866273-25-000069",
+   "edgarUrl": "https://www.sec.gov/Archives/edgar/data/866273/000086627325000069/0000866273-25-000069-index.htm",
+   "rationale": "Direction fail: energy-infrastructure E&C services; no defense-shift product, program, or quantified exposure.",
+   "cohorts": []
+  },
+  {
+   "ticker": "MYE",
+   "substructureTag": "defense-autonomy",
+   "driverTie": "not-driver",
+   "grade": "committed-capacity",
+   "basis": "aspirational",
+   "gradeFact": "Scepter brand manufactures military ammunition containers, including blow- or injection-molded products to safely store and transport large caliber ammunition, plus military-specified portable fuel and water canisters.",
+   "accession": "0001193125-26-092521",
+   "edgarUrl": "https://www.sec.gov/Archives/edgar/data/69488/000119312526092521/0001193125-26-092521-index.htm",
+   "rationale": "Direction fail: plastic/metal material-handling products; defense mention incidental, no shift-category tie.",
+   "cohorts": []
+  },
+  {
+   "ticker": "NN",
+   "substructureTag": "defense-autonomy",
+   "driverTie": "indirect",
+   "grade": "stated-intent",
+   "basis": "aspirational",
+   "gradeFact": "The Board maintains a 'Technology and National Defense' committee, and a director (Lisa Hook) was appointed to serve on it \u2014 a governance-level nod to national defense, with no disclosed product, contract, or activity tied to attritable/autonomous/munitions-scale systems.",
+   "accession": "0001554855-26-000146",
+   "edgarUrl": "https://www.sec.gov/Archives/edgar/data/1865631/000155485526000146/0001554855-26-000146-index.htm",
+   "rationale": "Indirect: terrestrial PNT/spectrum story; resilient-PNT defense adjacency aspirational, no program/contract; value driven by spectrum outcome, not the shift.",
+   "cohorts": []
+  },
+  {
+   "ticker": "NVEC",
+   "substructureTag": "defense-autonomy",
+   "driverTie": "indirect",
+   "grade": "stated-intent",
+   "basis": "aspirational",
+   "gradeFact": "The company states near-term potential MRAM applications include 'mission-critical storage such as military, industrial, and antitamper applications,' and next-generation MRAM development for antitamper applications. This is a generic 'military/antitamper' end-use aspiration with no products sold, no counterparty, and no connection to any tailwind category of the compositional shift.",
+   "accession": "0001376474-26-000348",
+   "edgarUrl": "https://www.sec.gov/Archives/edgar/data/724910/000137647426000348/0001376474-26-000348-index.htm",
+   "rationale": "Indirect: spintronic sensors/couplers with incidental defense uses; no program, contract, or shift-category tie.",
+   "cohorts": []
+  },
+  {
+   "ticker": "OSS",
+   "substructureTag": "attritable-air",
+   "driverTie": "indirect",
+   "grade": "stated-intent",
+   "basis": "aspirational",
+   "gradeFact": "OSS designs, manufactures, and markets specialized rugged high-performance compute, high speed switch fabrics, and storage systems targeting edge applications for AI/ML, sensor processing, sensor fusion, and autonomy, with special focus on platforms that MOVE \u2014 including unmanned aerial vehicles (UAVs) \u2014 where sensor processing, sensor fusion, AI, and ML are integrated. This ties to the shift's autonomy/AI and attritable-air categories at the enabling-component level, but the filing frames UAVs as one of many platform types (also planes, trucks, ships, submarines, mobile datacenters) and does not disclose that its UAV work is on the attritable/mass side rather than crewed/legacy.",
+   "accession": "0001193125-26-114051",
+   "edgarUrl": "https://www.sec.gov/Archives/edgar/data/1394056/000119312526114051/0001193125-26-114051-index.htm",
+   "rationale": "Indirect: rugged edge-compute for autonomous platforms is enabling-adjacent, but exposure is design-win/program-hopeful with no quantified shift contract; micro-cap with flagged legacy mix.",
+   "cohorts": []
+  },
+  {
+   "ticker": "PII",
+   "substructureTag": "unspecified",
+   "driverTie": "not-driver",
+   "grade": "committed-capacity",
+   "basis": "aspirational",
+   "gradeFact": "Polaris's commercial and government/defense businesses design and manufacture tactical defense vehicles \u2014 ATVs and side-by-side vehicles with modified features for military applications (DAGOR, Sportsman MV and MRZR models) providing mobility for up to five passengers.",
+   "accession": "0001628280-26-008033",
+   "edgarUrl": "https://www.sec.gov/Archives/edgar/data/931015/000162828026008033/0001628280-26-008033-index.htm",
+   "rationale": "Direction fail: powersports OEM; defense exposure is legacy light tactical vehicles (MRZR-type), a small adjacent line \u2014 not the attritable/autonomous shift.",
+   "cohorts": []
+  },
+  {
+   "ticker": "QUBT",
+   "substructureTag": "space-isr",
+   "driverTie": "indirect",
+   "grade": "stated-intent",
+   "basis": "aspirational",
+   "gradeFact": "QCi acquired Luminar Semiconductor, Inc. (LSI) in February 2026; LSI designs and manufactures photonic chip-scale devices (laser diodes, semiconductor optical amplifiers, avalanche photodiodes, PICs) serving customers in industries that include 'aerospace and defense.' The filing states acquiring LSI provides QCi with advanced semiconductors and related components 'in particular for Aerospace and Defense applications.'",
+   "accession": "0001213900-26-022417",
+   "edgarUrl": "https://www.sec.gov/Archives/edgar/data/1758009/000121390026022417/0001213900-26-022417-index.htm",
+   "rationale": "Indirect: quantum-photonics developer; space/defense adjacency aspirational with negligible revenue; retail-flow profile, no shift tie.",
+   "cohorts": []
+  },
+  {
+   "ticker": "ROG",
+   "substructureTag": "attritable-air",
+   "driverTie": "indirect",
+   "grade": "stated-intent",
+   "basis": "aspirational",
+   "gradeFact": "The AES segment sells circuit materials, ceramic substrate materials, busbars and cooling solutions for aerospace and defense applications described as antenna systems, communication systems and phased array radar systems. These are generic defense-electronics end-uses; no attritable UAV, loitering munition, counter-UAS, defense autonomy/AI, scaled munitions, or shift-specific component (turbojet, seeker, solid rocket motor) is named, and no tie to the mass/attritable/autonomous side of demand is disclosed.",
+   "accession": "0000084748-26-000007",
+   "edgarUrl": "https://www.sec.gov/Archives/edgar/data/84748/000008474826000007/0000084748-26-000007-index.htm",
+   "rationale": "Indirect: engineered circuit materials with A&D minority mix; component-level generic exposure, no shift-category breakout.",
+   "cohorts": []
+  },
+  {
+   "ticker": "SXI",
+   "substructureTag": "unspecified",
+   "driverTie": "indirect",
+   "grade": "stated-intent",
+   "basis": "aspirational",
+   "gradeFact": "Company lists 'military and defense' among secular growth markets it directs investments toward, and 'military'/'defense' appears as one of many end-markets served by the Electronics segment \u2014 a general strategy/end-market mention with no shift-specific product, contract, or revenue disclosed.",
+   "accession": "0001437749-25-024450",
+   "edgarUrl": "https://www.sec.gov/Archives/edgar/data/310354/000143774925024450/0001437749-25-024450-index.htm",
+   "rationale": "Indirect: diversified industrial segments with defense-electronics adjacency; no shift-category program or quantified exposure.",
+   "cohorts": []
+  },
+  {
+   "ticker": "SYNA",
+   "substructureTag": "attritable-air",
+   "driverTie": "not-driver",
+   "grade": "stated-intent",
+   "basis": "aspirational",
+   "gradeFact": "Synaptics' Veros family of wireless connectivity solutions (Wi-Fi, Bluetooth, GPS, GNSS, UWB, etc.) address broad IoT applications and the listed example applications include 'drones' among home automation, streamers, cameras, speakers, printers and wearables.",
+   "accession": "0000817720-25-000073",
+   "edgarUrl": "https://www.sec.gov/Archives/edgar/data/817720/000081772025000073/0000817720-25-000073-index.htm",
+   "rationale": "Direction fail: consumer/IoT edge semiconductors; no defense customer, program, or shift-category exposure disclosed.",
+   "cohorts": []
+  },
+  {
+   "ticker": "TIC",
+   "substructureTag": "defense-autonomy",
+   "driverTie": "not-driver",
+   "grade": "stated-intent",
+   "basis": "aspirational",
+   "gradeFact": "The Geospatial segment provides subscription-based geospatial software and analytic tools and data-collection/analytics offerings that support long-term monitoring and decision-making for customers including 'defense and intelligence agencies.' This is a mention of defense/intelligence as one end-customer of asset-management/mapping software, not autonomy/targeting/ISR mission software for the mass/attritable side.",
+   "accession": "0001628280-26-017015",
+   "edgarUrl": "https://www.sec.gov/Archives/edgar/data/2032966/000162828026017015/0001628280-26-017015-index.htm",
+   "rationale": "Direction fail: testing/inspection/certification and consulting services; generic government exposure, no shift-side product.",
+   "cohorts": []
+  },
+  {
+   "ticker": "TMC",
+   "substructureTag": "defense-autonomy",
+   "driverTie": "not-driver",
+   "grade": "stated-intent",
+   "basis": "aspirational",
+   "gradeFact": "TMC is a deep seabed minerals developer focused on collection, processing and refining of polymetallic nodules containing nickel, copper, cobalt, manganese and rare earth elements. The four metals and REEs are on the U.S. Department of Interior's 2025 List of Critical Minerals, with end-uses in strategic sectors including semiconductors and AI data centers, steel manufacturing, and the defense and marine industrial base.",
+   "accession": "0001104659-26-037863",
+   "edgarUrl": "https://www.sec.gov/Archives/edgar/data/1798562/000110465926037863/0001104659-26-037863-index.htm",
+   "rationale": "Direction fail: pre-revenue seabed-minerals developer; critical-minerals narrative is input-chain adjacency at best, no defense product or contract; going-concern-class risk profile.",
+   "cohorts": []
+  },
+  {
+   "ticker": "TPC",
+   "substructureTag": "defense-autonomy",
+   "driverTie": "not-driver",
+   "grade": "committed-capacity",
+   "basis": "aspirational",
+   "gradeFact": "Company builds military and other government facilities as part of its Civil segment heavy-civil construction (highways, bridges, tunnels, mass-transit, military facilities). This is construction of physical military infrastructure, not any category of the compositional shift toward attritable/autonomous/software-defined systems.",
+   "accession": "0000077543-26-000028",
+   "edgarUrl": "https://www.sec.gov/Archives/edgar/data/77543/000007754326000028/0000077543-26-000028-index.htm",
+   "rationale": "Direction fail: civil construction/CM contractor; defense exposure is facilities construction, not shift-side systems.",
+   "cohorts": []
+  },
+  {
+   "ticker": "TRNS",
+   "substructureTag": "attritable-air",
+   "driverTie": "indirect",
+   "grade": "stated-intent",
+   "basis": "aspirational",
+   "gradeFact": "Transcat lists 'aerospace and defense' as one of several highly regulated end-markets it serves, alongside life sciences, energy and utilities; defense is named as a customer sector for both its Service and Distribution segments. No activity tied to attritable UAVs, counter-UAS, defense autonomy/AI, scaled munitions, EW/cyber, or any shift-specific component is disclosed.",
+   "accession": "0001437749-26-018588",
+   "edgarUrl": "https://www.sec.gov/Archives/edgar/data/99302/000143774926018588/0001437749-26-018588-index.htm",
+   "rationale": "Indirect: calibration/compliance services with A&D customer mix; services exposure, no shift-side product.",
+   "cohorts": []
+  },
+  {
+   "ticker": "UAMY",
+   "substructureTag": "unspecified",
+   "driverTie": "not-driver",
+   "grade": "committed-capacity",
+   "basis": "aspirational",
+   "gradeFact": "The Company is an antimony miner/processor with a sole-source contract with the U.S. Defense Logistics Agency (DLA) for antimony metal ingots, and secured a new five-year sales contract with the DLA in 2025 alongside an industrial customer. Antimony is listed on all U.S. Government Critical Minerals Lists.",
+   "accession": "0001104659-26-032049",
+   "edgarUrl": "https://www.sec.gov/Archives/edgar/data/101538/000110465926032049/0001104659-26-032049-index.htm",
+   "rationale": "Direction fail: antimony/critical-minerals miner; munitions input-chain adjacency (primers/hardeners) is not a shift-category product and no defense contract terms disclosed; micro-cap flow name.",
+   "cohorts": []
+  },
+  {
+   "ticker": "USAR",
+   "substructureTag": "munitions-scale",
+   "driverTie": "indirect",
+   "grade": "stated-intent",
+   "basis": "aspirational",
+   "gradeFact": "The company's mission is to be a global leader in the supply of critical minerals and advanced materials, producing rare earth elements, oxides, metals and magnets \u2014 described as vital inputs to end markets including national security. Rare earth oxides, metals, alloys and permanent magnets are described as essential parts of radar systems, missile and fighter jet guidance systems, and lightweight precision aerospace components, among many other applications.",
+   "accession": "0001970622-26-000021",
+   "edgarUrl": "https://www.sec.gov/Archives/edgar/data/1970622/000197062226000021/0001970622-26-000021-index.htm",
+   "rationale": "Indirect: pre-commercial rare-earth mine-to-magnet build-out is input-chain/critical-minerals narrative (magnets feed drones/munitions eventually) but no offtake economics tied to shift categories in stream; pre-revenue execution risk, flow-heavy 2025 story.",
+   "cohorts": []
+  },
+  {
+   "ticker": "VTOL",
+   "substructureTag": "attritable-air",
+   "driverTie": "not-driver",
+   "grade": "stated-intent",
+   "basis": "aspirational",
+   "gradeFact": "Bristow describes its aviation services as including 'unmanned systems' among personnel transportation, SAR, medevac, fixed wing and ad-hoc helicopter services, but discloses no products, contracts, revenue or details tying this to attritable/military UAVs, counter-UAS, defense autonomy or scaled munitions.",
+   "accession": "0001525221-26-000013",
+   "edgarUrl": "https://www.sec.gov/Archives/edgar/data/1525221/000152522126000013/0001525221-26-000013-index.htm",
+   "rationale": "Direction fail: crewed helicopter services (offshore energy/SAR) \u2014 legacy vertical-flight exposure explicitly on the exquisite/manned side, not attritable/autonomous.",
+   "cohorts": []
+  }
+ ],
+ "watchlist": [
+  {
+   "ticker": "NEU",
+   "substructureTag": "munitions-scale",
+   "grade": "committed-capacity",
+   "gradeFact": "AMPAC (a NewMarket subsidiary) manufactures and sells specialty materials primarily used in solid rocket motors for the aerospace and defense industries, and is described as a global leader in specialty materials for use in solid rocket motors for space launch and military defense applications.",
+   "accession": "0001282637-26-000005",
+   "edgarUrl": "https://www.sec.gov/Archives/edgar/data/1282637/000128263726000005/0001282637-26-000005-index.htm",
+   "rationale": "Best committed-capacity fact in set: $100M AMPAC line adding >50% AP capacity by end-2026 'in support of growing solid rocket motor demand,' sole-qualified US supplier for most DoW/NASA programs (FY25 10-K) \u2014 but specialty materials is $182M sales/$47M op profit (~7% of sales, ~8% of profit) inside a declining Afton core (op profit \u221212% YoY) at ~17-18x near ATH; materiality + priced/core-erosion twin fail 3:1. Revisit on segment separation or derate toward ~$600 with AP line ramping.",
+   "trigger": "separation/disclosure-expansion of the specialty-materials segment, OR a derate toward ~$600 while the +50% ammonium-perchlorate line ramps through 2027."
+  },
+  {
+   "ticker": "AVAV",
+   "substructureTag": "attritable-air",
+   "grade": "committed-capacity",
+   "gradeFact": "Autonomous Systems segment makes a family of Group 1-3 uncrewed aircraft systems (SUAS/MUAS) \u2014 Puma LE, Puma 3 AE, Puma VTOL, P550, Raven B, VAPOR 55 CLE, JUMP 20, T-20 \u2014 low-cost/mass-producible attritable UAVs for ISR and situational awareness.",
+   "accession": "0001104659-26-078906",
+   "edgarUrl": "https://www.sec.gov/Archives/edgar/data/1368622/000110465926078906/0001104659-26-078906-index.htm",
+   "rationale": "Purest tailwind portfolio in set (Switchblade LMS, Red Dragon OWA, C-UAS/IAMD, EW; funded backlog $1,183M +63%, FY26 10-K) but fails 3:1 even 54% off high: ~4.9x sales; SCDE segment adj-EBITDA \u2212$2.6M on $618.8M revenue; $241M Space goodwill impairment in year one post-BlueHalo; Item 4.02 non-reliance restatement 6/22/26 \u2014 consensus theme vehicle, priced + quality-of-earnings twin (~1.3:1).",
+   "trigger": "SCDE (BlueHalo) segment fixed or shed AND multiple compresses further; watch the Item 4.02 restatement resolution."
+  },
+  {
+   "ticker": "PKE",
+   "substructureTag": "munitions-scale",
+   "grade": "committed-capacity",
+   "gradeFact": "Park is the exclusive North American distributor of ArianeGroup's RAYCARB C2B NG proprietary product, which is used to produce ablative composite materials for critical rocketry and missile systems; Park uses it in the production of its key ablative materials supplied into critical rocket and missile programs.",
+   "accession": "0001437749-26-018900",
+   "edgarUrl": "https://www.sec.gov/Archives/edgar/data/76267/000143774926018900/0001437749-26-018900-index.htm",
+   "rationale": "Direction PASSES (munitions-scale ablatives: Aerojet Rocketdyne 11.7% of FY26 sales, exclusive RAYCARB C2B NG channel, backlog +99% to $51.4M, new plant construction FY27 \u2014 all in FY26 10-K) but $704M EV = ~52x FY26 EBIT ($13.5M) at 5% off ATH after a 2.5x re-rate; a full multi-year missile ramp is priced (~1:1). Revisit on major derate with backlog intact.",
+   "trigger": "a major derate with backlog intact (the ablatives ramp is real but fully priced at ~52x trailing EBIT)."
+  }
+ ],
+ "avoidControls": [
+  {
+   "ticker": "LASR",
+   "substructureTag": "counter-uas",
+   "grade": "committed-capacity",
+   "gradeFact": "nLIGHT makes high energy CW and pulsed fiber lasers, fiber amplifiers, and beam combination and control systems for use in high-energy laser (HEL) systems for directed energy. It describes directed energy weapons using high-power fiber lasers as offering ultra-precise targeting, low cost per shot and a nearly unlimited magazine, and cites multi-hundred-kilowatt system demonstrations. Directed energy is a plausible counter-UAS defeat mechanism, but the filing does not name counter-UAS as the application.",
+   "accession": "0001124796-26-000012",
+   "edgarUrl": "https://www.sec.gov/Archives/edgar/data/1124796/000112479626000012/0001124796-26-000012-index.htm",
+   "rationale": "Indirect near-miss: high-energy lasers/beam control put it closest to counter-UAS directed energy of the light-pass set, but graded indirect \u2014 no quantified shift-side contract in stream, thin margins, and the DE narrative is already discovered; fails on underwritability, not direction."
+  },
+  {
+   "ticker": "MTUS",
+   "substructureTag": "munitions-scale",
+   "grade": "committed-capacity",
+   "gradeFact": "The Company's SBQ steel end products include 'artillery and mortar bodies' (among a broad list of mechanical-power-transmission applications), sold into its aerospace & defense end-market.",
+   "accession": "0001193125-26-061042",
+   "edgarUrl": "https://www.sec.gov/Archives/edgar/data/1598428/000119312526061042/0001193125-26-061042-index.htm",
+   "rationale": "Indirect near-miss: SBQ steel with Army-funded munitions-adjacent capacity is genuine input-chain exposure, but book is blended specialty steel with no shift-side revenue breakout or contract terms in stream \u2014 input supplier, not category owner."
+  },
+  {
+   "ticker": "NPK",
+   "substructureTag": "munitions-scale",
+   "grade": "quantified-revenue",
+   "gradeFact": "The Defense segment manufactures 40mm ammunition, medium caliber cartridge cases (20mm, 25mm, 30mm, 40mm, 50mm), and performs Load, Assemble and Pack (LAP) operations, plus detonators, booster pellets, lead azide and other military energetic devices, primarily for the U.S. DOD and DOD prime contractors. This is conventional artillery/medium-caliber munitions manufacturing.",
+   "accession": "0001437749-26-008214",
+   "edgarUrl": "https://www.sec.gov/Archives/edgar/data/80172/000143774926008214/0001437749-26-008214-index.htm",
+   "rationale": "Indirect near-miss: Defense segment is a real ammunition producer (quantified revenue) but on legacy small/medium-cal programs with single-customer USG concentration and no disclosed shift-driven capacity expansion; conglomerate structure (housewares/safety) dilutes the leg."
+  },
+  {
+   "ticker": "KRMN",
+   "substructureTag": "defense-autonomy",
+   "grade": "committed-capacity",
+   "gradeFact": "Karman describes itself as specializing in the rapid design, development and production of mission-critical, next-generation system solutions for launch vehicle, satellite, spacecraft, missile defense, hypersonic and Unmanned Aircraft Systems (UAS) customers, providing integrated payload protection, propulsion, and hydro/aerodynamic interstage system solutions across existing and emerging DoW and space programs.",
+   "accession": "0001193125-26-222116",
+   "edgarUrl": "https://www.sec.gov/Archives/edgar/data/2040127/000119312526222116/0001193125-26-222116-index.htm",
+   "rationale": "Indirect near-miss: payload-protection/propulsion/interstage content spans missiles and hypersonics (munitions-adjacent) but stream shows no shift-specific contract terms or category breakout, and the name has already re-rated as a discovered defense-supplier story \u2014 priced twin unresolved."
+  },
+  {
+   "ticker": "AMPX",
+   "substructureTag": "attritable-air",
+   "grade": "committed-capacity",
+   "gradeFact": "Amprius develops, manufactures and markets silicon-anode lithium-ion batteries whose batteries are primarily used for aviation applications including unmanned aerial systems (UAS) such as drones and high-altitude pseudo-satellites (HAPS). Batteries are an enabling component for UAS; however, the disclosure frames drones broadly across industrial and government sectors and does not isolate the attritable/military-drone side of the shift.",
+   "accession": "0001899287-26-000015",
+   "edgarUrl": "https://www.sec.gov/Archives/edgar/data/1899287/000189928726000015/0001899287-26-000015-index.htm",
+   "rationale": "Indirect near-miss: silicon-anode UAS batteries are genuine attritable-air enabling components, but no named defense counterparty/contract or defense revenue breakout in stream; capacity story unproven, blended book \u2014 can't attribute to tailwind side."
+  },
+  {
+   "ticker": "DCO",
+   "substructureTag": "defense-autonomy",
+   "grade": "committed-capacity",
+   "gradeFact": "Ducommun's Structural Systems segment produces ammunition handling systems \u2014 feed and eject chutes, storage magazines and custom gun mounts \u2014 for fixed-wing and rotary-wing military aircraft and military ground vehicles. This is munitions-handling hardware but is disclosed as tied to legacy crewed aircraft and ground vehicles, not to scaled/expanded production of artillery, missiles or solid rocket motors (magazine depth).",
+   "accession": "0001628280-26-011952",
+   "edgarUrl": "https://www.sec.gov/Archives/edgar/data/30305/000162828026011952/0001628280-26-011952-index.htm",
+   "rationale": "Indirect near-miss: aerostructures/electronics with real missile-program content, but exposure is blended across legacy platforms with no shift breakout or named tailwind contract terms in stream."
+  }
+ ],
+ "realTier": [
+  "RCAT",
+  "SWMR"
+ ],
+ "forward": {
+  "cohorts": {
+   "buy": 0,
+   "naive": 108,
+   "passed": 108,
+   "watchlist": 3,
+   "avoidControls": 6,
+   "realTier": 2
+  },
+  "undefinedMeasures": [
+   [
+    "RATIFIED-PASSED (\u00a73a, the core edge-measure)",
+    "no BUY leg \u2014 zero RATIFIED; requires a ratified cohort that does not exist"
+   ],
+   [
+    "RATIFIED-NAIVE(equal-weight) (\u00a73b-i)",
+    "no BUY leg \u2014 zero RATIFIED; requires a ratified cohort that does not exist"
+   ],
+   [
+    "RATIFIED vs keyword/co-movement screen (\u00a73b-ii, deferred)",
+    "no BUY leg \u2014 zero RATIFIED; requires a ratified cohort that does not exist"
+   ]
+  ],
+  "diagnostics": [
+   {
+    "name": "avoid-discipline",
+    "status": "PENDING",
+    "confound": "defense-demand-shift-BETA-CONFOUNDED + regime-dependent \u2014 was declining to buy the committed tier costly or vindicated in THIS window? Largely a defense-demand-shift-beta bet, NOT selection skill.",
+    "note": "0 days forward from freeze \u2014 accrues over calendar time."
+   },
+   {
+    "name": "exposure-carry",
+    "status": "PENDING",
+    "confound": "PARTIALLY beta-controlled \u2014 both cohorts are defense-demand-shift-labelled so the common defense-demand-shift-beta largely cancels in the divergence; isolates whether the exposure GRADE (real vs not) carries forward info. The more informative of the two \u2014 still NOT an edge verdict.",
+    "note": "genuine-exposure (watchlist) vs other-PASSED divergence; pending forward."
+   }
+  ],
+  "honestyLabel": "No BUY leg exists (zero RATIFIED) -> the core edge-measure (RATIFIED-PASSED) and all RATIFIED-dependent spreads are UNDEFINED and NOT computed. The outputs below are AVOID-discipline and exposure-carry DIAGNOSTICS, beta-confounded, and are NOT a validation of the semantic-primary edge.",
+  "powerNote": "UNPOWERED \u2014 DIRECTIONAL / ANECDOTAL: below the a-priori floor (needs >=8 theme-quarters across >=4 drivers, sign-consistent). A forward-directional read, never a significance test."
+ }
+}

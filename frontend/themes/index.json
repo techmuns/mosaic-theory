@@ -1,0 +1,46 @@
+{
+ "drivers": [
+  {
+   "slug": "ai-datacenter",
+   "label": "AI-datacenter",
+   "freezeDate": "2026-07-02",
+   "ratifiedCount": 0,
+   "surfacedCount": 450,
+   "frozenCount": 56,
+   "watchlistCount": 5,
+   "tierShape": {
+    "binding": 4,
+    "quantified": 3,
+    "committed": 56,
+    "aspirational": 387,
+    "none": 1100,
+    "surfaced": 450,
+    "universe": 1550
+   }
+  },
+  {
+   "slug": "defense",
+   "label": "Defense demand-shift",
+   "freezeDate": "2026-07-03",
+   "ratifiedCount": 0,
+   "surfacedCount": 108,
+   "frozenCount": 108,
+   "watchlistCount": 3,
+   "tierShape": {
+    "binding": 2,
+    "quantified": 0,
+    "committed": 65,
+    "aspirational": 41,
+    "none": 1575,
+    "surfaced": 108,
+    "universe": 1683
+   }
+  }
+ ],
+ "crossDriver": {
+  "driversFrozen": 2,
+  "totalRatified": 0,
+  "totalWatchlist": 8,
+  "line": "2 drivers frozen; exposure-carry diagnostic poolable but UNPOWERED (2 < 4 drivers)."
+ }
+}

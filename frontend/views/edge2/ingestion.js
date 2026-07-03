@@ -1,8 +1,8 @@
 // INGESTION & UNIVERSE — data freshness/health. Honest, point-in-time. NOT analytics: the only
 // universe detail is the builder's fail-closed gate-exclusion counts (a wrong count = a gate bug).
-import { getUniverseHealth, getRankedQueue, getUniverseStats, getSnapshotMeta } from "../lib/snapshots.js";
-import { fmtInt, fmtDate, DASH, escapeHtml } from "../lib/format.js";
-import { refreshBlock } from "../lib/ui.js";
+import { getUniverseHealth, getRankedQueue, getUniverseStats, getSnapshotMeta } from "../../lib/snapshots.js";
+import { fmtInt, fmtDate, DASH, escapeHtml } from "../../lib/format.js";
+import { refreshBlock } from "../../lib/ui.js";
 
 export async function render(root, _params, { item, frame }) {
   root.innerHTML = frame(item, { bodyHtml: `<div class="notice">Loading freshness…</div>` });
