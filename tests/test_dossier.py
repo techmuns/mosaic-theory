@@ -1322,6 +1322,141 @@ def test_covenant_extract_no_located_pointer_is_a_noop() -> None:
     assert summary.note == "(E5) no covenant exhibit located"
 
 
+# --- PR 3 · Commit A: pipeline core (P4 round-robin · governing · P1 digest · maturity) ---
+
+
+def _pr3_pointers() -> list[ds.CovenantPointer]:
+    """Two convertible-family pointers (base 2024 + amendment 2025) + a DISTINCT syndicated facility
+    (2022) — the shape that starved the syndicated under the old first-2 picker."""
+    return [
+        ds.CovenantPointer(family="Convertible Loan", filing="8-K", filing_date="2024-06-04",
+                           accession="0001760689-24-000021", exhibits=["wu_loanandsecuri.htm"]),
+        ds.CovenantPointer(family="Convertible Loan", filing="8-K", filing_date="2025-03-17",
+                           accession="0000947871-25-000313", exhibits=["ss_ex1001.htm"]),
+        ds.CovenantPointer(family="Loan Facilities Agreement", filing="8-K",
+                           filing_date="2022-09-29", accession="0001760689-22-000094",
+                           exhibits=["exhibit101-syndicatedloana.htm"]),
+    ]
+
+
+def test_p4_round_robin_extracts_every_family_before_amendments() -> None:
+    """(P4) The picker is a ROUND-ROBIN by family: every DISTINCT live-wall instrument's primary
+    exhibit is picked BEFORE any facility's second (amendment), so the syndicated facility can't be
+    starved by the convertible's original+amendment eating both slots."""
+    picked = ce._core_agreement_exhibits(_pr3_pointers())
+    fams = [p.family for p, _ in picked]
+    assert fams == ["Convertible Loan", "Loan Facilities Agreement", "Convertible Loan"]
+    assert fams.index("Loan Facilities Agreement") == 1  # syndicated slot 2, before the amendment
+    assert picked[1][1] == "exhibit101-syndicatedloana.htm"
+
+
+def test_governing_terms_amendment_overrides_base_and_kills_unknown_above_answer() -> None:
+    """(P5 core / FIX-1) Per-exhibit rows collapse to ONE governing value per (family, term): the
+    latest-dated PRESENT value wins (the amendment's May-2026 maturity overrides the base's
+    Nov-2025), a base PRESENT value is NEVER overridden by an amendment UNKNOWN, and each term
+    appears exactly once (no UNKNOWN row above the present answer)."""
+    base = "8-K 0001760689-24-000021 · wu_loanandsecuri.htm"
+    amd = "8-K 0000947871-25-000313 · ss_ex1001.htm"
+    rows = [
+        ds.CovenantTerm(name="Maturity date",
+                        value=ds.Sourced.present("Nov 28, 2025", source_ref=base)),
+        ds.CovenantTerm(name="Conversion price / mechanics",
+                        value=ds.Sourced.present("2 shares per $1.00 principal", source_ref=base)),
+        ds.CovenantTerm(name="Conversion price / mechanics",
+                        value=ds.Sourced.unknown(note=f"not stated in {amd}")),  # amendment: absent
+        ds.CovenantTerm(name="Maturity date",
+                        value=ds.Sourced.present("May 28, 2026", source_ref=amd)),
+    ]
+    gov = ce.governing_terms(rows, _pr3_pointers())
+    mat = [g for g in gov if g.term == "Maturity date"]
+    assert len(mat) == 1 and mat[0].value.value == "May 28, 2026"  # amendment governs
+    assert "0000947871-25-000313" in mat[0].amended_by
+    conv = [g for g in gov if g.term.startswith("Conversion")]
+    assert len(conv) == 1 and conv[0].value.status is ds.SourceStatus.PRESENT  # base survives
+    assert "2 shares" in str(conv[0].value.value)  # NOT the amendment UNKNOWN
+
+
+def test_p1_covenant_digest_is_term_to_value_derives_conversion_and_fails_honest() -> None:
+    """(P1/FIX-0) The synthesis digest is TERM→VALUE (never a pointer/count), leads the conversion
+    line with the derived $/share, chains 'amended by', fits the cap — and on extraction failure an
+    honest 'extraction failed' line, NEVER a 'see the table' pointer to data the LLM can't see."""
+    src = "8-K 0001760689-24-000021 · wu.htm"
+    gov = [
+        ce.GoverningTerm("Convertible Loan", "Conversion price / mechanics",
+                         ds.Sourced.present("Rate = two (2) shares of Common Stock per $1.00",
+                                            source_ref=src), src, ("0000947871-25-000313",)),
+        ce.GoverningTerm("Convertible Loan", "Interest / coupon rate",
+                         ds.Sourced.present("SOFR + 9.75% + 3.75% PIK", source_ref=src), src, ()),
+    ]
+    digest = ce.covenant_digest(gov, None, fail_reason=None)
+    assert "see the" not in digest.lower() and "of 20" not in digest  # not a pointer, not a count
+    assert "~$0.50/sh" in digest  # derived conversion price leads the line
+    assert "amended by 0000947871-25-000313" in digest and "9.75%" in digest
+    assert len(digest) <= ce._DIGEST_CAP + 60
+    fail = ce.covenant_digest([], None, fail_reason="all located exhibits failed to fetch")
+    assert fail.startswith("COVENANT DIGEST — extraction failed:") and "see the" not in fail.lower()
+
+
+def test_p1_derive_conversion_price_from_stated_rate() -> None:
+    """(P1) '$1.00 ÷ N shares' → $/share, tolerating the spelled-out 'two (2) shares' and a long
+    parenthetical between 'shares' and 'per $1.00'; '' (never a fabricated number) when unclear."""
+    assert "~$0.50/sh" in ce._derive_conversion("two (2) shares Common Stock per $1.00 principal")
+    assert "~$0.10/sh" in ce._derive_conversion("a rate of 10 shares per $1.00")
+    assert ce._derive_conversion(
+        "two (2) shares of Common Stock (subject to adjustment per Section 2.12.4) per $1.00") != ""
+    assert ce._derive_conversion("conversion price to be determined by the board") == ""
+
+
+class _FakeMaturityHttp:
+    """Fake SEC http for the maturity-event path: an index.json (get_json) with a primary 8-K body +
+    the body text (get_text). ``fail`` makes the body fetch raise (fail-loud path)."""
+
+    def __init__(self, *, body: str, fail: bool = False) -> None:
+        self._body, self._fail = body, fail
+
+    def get_json(self, url: str, ttl_seconds: object = None) -> dict[str, typing.Any]:
+        return {"directory": {"item": [{"name": "mvst-20260528.htm"}, {"name": "ex99-1.htm"}]}}
+
+    def get_text(self, url: str, ttl_seconds: object = None) -> str:
+        if self._fail:
+            raise RuntimeError("body fetch failed")
+        return self._body
+
+
+def test_p3_extract_maturity_event_verbatim_or_unknown() -> None:
+    """(P3/FIX-3) The fenced maturity-event extractor reads the maturity 8-K's PRIMARY body and
+    returns the verbatim resolution PRESENT (bound to '8-K <acc> (<date>)'), or a fail-loud UNKNOWN
+    when the body states none / the fetch fails — never a fabricated resolution."""
+    u = ds.Sourced[str].unknown(note="n/a")
+    cs = ds.CapitalStructure(
+        instruments=ds.Sourced.unknown(note="n/a"), summary=u, detail_as_of="d",
+        maturity_filings=ds.Sourced.present(
+            "8-K at maturity 2026-05-28: filed 2026-05-28 [0000947871-26-000585] 8.01 Other Events",
+            source_ref="EDGAR"),
+        covenant_pointers=u, covenant_terms=u)
+    http = _FakeMaturityHttp(body="Item 8.01. On May 28, 2026 the $25.0M principal was converted.")
+    ev, flags, _ = ce.extract_maturity_event(
+        cs, llm=_FakeLlm({"present": True,
+                          "verbatim": "On May 28, 2026 the $25.0M principal converted to common "
+                          "stock (Notice of Conversion)."}),
+        http=typing.cast(typing.Any, http), cik="0001760689", ticker="MVST", name="Microvast")
+    assert ev is not None and ev.status is ds.SourceStatus.PRESENT and not flags
+    assert "converted to common stock" in (ev.value or "")
+    assert ev.source_ref == "8-K 0000947871-26-000585 (2026-05-28)"
+    # body states none → UNKNOWN
+    ev2, _, _ = ce.extract_maturity_event(
+        cs, llm=_FakeLlm({"present": False}), http=typing.cast(typing.Any, http),
+        cik="0001760689", ticker="MVST", name="Microvast")
+    assert ev2 is not None and ev2.status is ds.SourceStatus.UNKNOWN
+    # fetch failure → UNKNOWN + flag (fail-loud)
+    ev3, flags3, _ = ce.extract_maturity_event(
+        cs, llm=_FakeLlm({"present": True, "verbatim": "x"}),
+        http=typing.cast(typing.Any, _FakeMaturityHttp(body="", fail=True)),
+        cik="0001760689", ticker="MVST", name="Microvast")
+    assert ev3 is not None and ev3.status is ds.SourceStatus.UNKNOWN
+    assert any("fetch failed" in f for f in flags3)
+
+
 @pytest.mark.network
 def test_maturity_8ks_real_mvst_anchors_the_may_2026_8k() -> None:
     """(E3, live) A trailing-12m instrument maturity on 2026-05-28 anchors MVST's 8-K filed that

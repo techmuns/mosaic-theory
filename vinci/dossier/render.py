@@ -489,6 +489,11 @@ def _capital_structure_lines(cs: Any, reference_date: date) -> list[str]:
         _fact("Capital-structure aggregates (latest quarter)", cs.summary),
         _fact("8-Ks at instrument maturities", cs.maturity_filings),
     ]
+    # (P3/FIX-3) the VERBATIM resolution at the maturity 8-K, when captured — replaces the pointer's
+    # "read for resolution" with the actual event (a pre-P3 dossier.json has no field → nothing).
+    mat_ev = getattr(cs, "maturity_event", None)
+    if mat_ev is not None and (mat_ev.status is not SourceStatus.PRESENT or mat_ev.value):
+        out.append(_fact("Maturity resolution (8-K verbatim)", mat_ev))
     out += _covenant_pointer_lines(cs)
     out += _covenant_term_lines(cs)
     out.append("")

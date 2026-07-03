@@ -20,11 +20,16 @@ from vinci.config import Config, get_config
 from vinci.dossier import ciq_sheets, requirements
 from vinci.dossier import flags as dossier_flags
 from vinci.dossier.ciq import CiqBundle
-from vinci.dossier.covenant_extract import extract_covenant_terms
+from vinci.dossier.covenant_extract import (
+    covenant_digest,
+    extract_covenant_terms,
+    extract_maturity_event,
+    governing_terms,
+)
 from vinci.dossier.manual_store import LocalFolderStore, ManualDataStore
 from vinci.dossier.mechanical import assemble_mechanical
 from vinci.dossier.render import render_markdown
-from vinci.dossier.schemas import Dossier
+from vinci.dossier.schemas import Dossier, Sourced, SourceStatus
 from vinci.dossier.synthesis import synthesize
 from vinci.edgar.client import EdgarClient
 from vinci.finra import build_finra_http
@@ -124,30 +129,48 @@ def assemble_one(
         )
     flags += mech_flags
     synthesis = None
-    llm_log = ""
+    logs: list[str] = []
+    term_rows = None  # (E5) per-exhibit rows — attached to mech AFTER synthesis (render only)
     if llm is not None:
-        synthesis, synth_flags, llm_log = synthesize(
+        # (P1/FIX-0) Tier-2 covenant + maturity extraction runs BEFORE synthesis so the LLM reasons
+        # with the ACTUAL governing terms via a term→value digest — never a pointer to unseen data.
+        # (P3) the maturity-resolution event is extracted here too and fed to synthesis + the wall.
+        if mech.capital_structure is not None:
+            http = build_sec_http(cfg)
+            cik0 = rec.identity.cik or ""
+            term_rows, _sum, cov_flags, cov_log = extract_covenant_terms(
+                mech.capital_structure, llm=llm, http=http, cik=cik0, ticker=ticker,
+                name=rec.identity.name)
+            maturity_event, mat_flags, mat_log = extract_maturity_event(
+                mech.capital_structure, llm=llm, http=http, cik=cik0, ticker=ticker,
+                name=rec.identity.name)
+            flags += cov_flags + mat_flags
+            logs += [lg for lg in (cov_log, mat_log) if lg]
+            ptrs = mech.capital_structure.covenant_pointer_rows
+            gov = (governing_terms(term_rows.value or [], ptrs.value)
+                   if term_rows is not None and ptrs is not None and ptrs.value else [])
+            mat_present = (maturity_event is not None
+                           and maturity_event.status is SourceStatus.PRESENT)
+            fail = (None if (gov or mat_present)
+                    else "no covenant terms extracted from located exhibits")
+            digest = covenant_digest(gov, maturity_event, fail_reason=fail)
+            cs_pre = mech.capital_structure.model_copy(update={
+                "covenant_terms": Sourced.present(digest, source_ref="fenced Tier-2 digest (P1)"),
+                "maturity_event": maturity_event})
+            mech = mech.model_copy(update={"capital_structure": cs_pre})
+        synthesis, synth_flags, synth_log = synthesize(
             mech, llm=llm, ticker=ticker, name=rec.identity.name,
             transcript=ciq_sheets.transcript_for_synthesis(bundle),
         )
         flags += synth_flags
+        logs.append(synth_log)
+        # (render) attach the structured per-exhibit rows AFTER synthesis (the LLM used the digest).
+        if term_rows is not None and mech.capital_structure is not None:
+            cs_post = mech.capital_structure.model_copy(update={"covenant_term_rows": term_rows})
+            mech = mech.model_copy(update={"capital_structure": cs_post})
     else:
         flags.append("LLM synthesis skipped (no ANTHROPIC client) — mechanical layer only")
-    # (E5/H1d) FENCED Tier-2 covenant terms — extracted verbatim from the mechanically-located
-    # exhibit(s), each a {value, source_ref} or UNKNOWN. Runs only with an LLM client and only when
-    # the mechanical layer located an exhibit; model_copy since the mechanical models are frozen.
-    if llm is not None and mech.capital_structure is not None:
-        term_rows, terms_summary, cov_flags, cov_log = extract_covenant_terms(
-            mech.capital_structure, llm=llm, http=build_sec_http(cfg),
-            cik=rec.identity.cik or "", ticker=ticker, name=rec.identity.name,
-        )
-        flags += cov_flags
-        if cov_log:
-            llm_log = f"{llm_log}\n\n{cov_log}" if llm_log else cov_log
-        cs2 = mech.capital_structure.model_copy(
-            update={"covenant_terms": terms_summary, "covenant_term_rows": term_rows}
-        )
-        mech = mech.model_copy(update={"capital_structure": cs2})
+    llm_log = "\n\n".join(lg for lg in logs if lg)
     # split the emitted flags by audience: decision caveats → human PDF/web (re-voiced), machine
     # QA self-checks → dev/JSON only (emission logic is untouched; classification is display-layer).
     caveats, qa_flags = dossier_flags.partition(flags)
