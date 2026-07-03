@@ -1341,9 +1341,11 @@ def test_covenant_pointers_real_mvst_cik_scoped_finds_wu_8k_no_cross_cik() -> No
 
 
 def test_point_tier_regex_catches_interposed_negative_ebitda() -> None:
-    """(R1) The tier regex tolerates words interposed between 'EBITDA' and 'negative' — 'adjusted
-    EBITDA of NEGATIVE $5.5M' is a solvency/cash claim (Tier 1), not unclassified (4.5). A plain
-    revenue-growth claim is unaffected."""
+    """(R1/H2) The tier regex tolerates words between 'EBITDA' and 'negative' — the draw's exact
+    EXACT phrasing 'adjusted EBITDA of NEGATIVE $5.5M' is a solvency/cash claim (Tier 1), not
+    unclassified (4.5), via the '(adjusted) EBITDA … negative' arm ('of' = the 1 interposed word). A
+    plain revenue-growth claim is unaffected."""
+    assert dr._point_tier("adjusted EBITDA of NEGATIVE $5.5M") == 1.0  # H2: exact string pinned
     assert dr._point_tier("adjusted EBITDA of NEGATIVE $5.5M in the quarter") == 1.0
     assert dr._point_tier("EBITDA turned negative this year") == 1.0
     assert dr._point_tier("revenue grew 20% year over year") != 1.0
@@ -1565,6 +1567,15 @@ _IE_TM = (  # trading_multiples: peer-median LTM (no prefix) + NTM
     "NTM TEV/Rev: name 1.25 vs peers Low 1.06 / Median 2.55 / Mean 3.64 / High 13.47; "
     "NTM TEV/EBITDA: name 7.46 vs peers Low 7.63 / Median 12.9 / Mean 43.3 / High 198.12")
 _IE_AR = "FY 2026 EBITDA: 129.7 (12m) → 146.5 (6m) → 62.1 (latest); net -52% [3m, 2m n/a]"
+# (H7) the Estimates→Trends sheet the DIRECT EBITDA anchors read (FY26E 62.1 / FY27E 147.7, latest
+# snapshot) — the single source of truth, distinct from the TEV÷ladder path.
+_IE_TRENDS = [
+    ["EBITDA", None, None],
+    ["Company Level", "FY 2026", "FY 2027"],
+    ["Current", 62.1, 147.7],
+    ["3 months ago", 146.5, 150.0],
+    ["12 months ago", 129.7, 160.0],
+]
 _IE_GATE = "market caps span $34M–$275.0B (8063x); the name is $423M → HETEROGENEOUS — low comp."
 _IE_MCAP_REF = (
     "CIQ Comparable Analysis→Financial Data (name Market Capitalization Latest) · as-of 2026-06-24")
@@ -1574,7 +1585,8 @@ _IE_BRIDGE = "TEV→equity bridge: + cash $126.10M, − total debt $326.00M"
 def _ie_inputs(
     *, cna: str = _IE_CNA, tm: str = _IE_TM, ar: str = _IE_AR, market_cap: float = 423.1,
     net_debt: float = 199.9, bridge: str = _IE_BRIDGE,
-) -> tuple[ds.PeerComps, ds.CatalystPath, ds.ImpliedValuation]:
+    trends: _Sheets | None = None,
+) -> tuple[ds.PeerComps, ds.CatalystPath, ds.ImpliedValuation, ciq.CiqBundle]:
     pc = ds.PeerComps(
         peer_set=_u(), comparability=ds.Sourced.present(_IE_GATE, source_ref="CIQ FD"),
         trading_multiples=ds.Sourced.present(tm, source_ref="CIQ→Trading Multiples"),
@@ -1593,7 +1605,8 @@ def _ie_inputs(
         bridge=ds.Sourced.present(bridge, source_ref="CIQ→Implied Valuation"),
         market_cap=ds.Sourced.present(market_cap, source_ref=_IE_MCAP_REF),
         comparability_gate=ds.Sourced.present(_IE_GATE, source_ref="CIQ FD"))
-    return pc, cp, iv
+    bundle = _est_bundle({"Trends": trends if trends is not None else _IE_TRENDS})
+    return pc, cp, iv, bundle
 
 
 def test_ie_parsers_read_the_assembled_fields() -> None:
@@ -1610,10 +1623,22 @@ def test_ie_parsers_read_the_assembled_fields() -> None:
     assert dm._ie_bridge_net_debt(_IE_BRIDGE) == 199.9
 
 
+def test_trends_fy_level_reads_the_named_year_latest_snapshot() -> None:
+    """(H7) The direct-Trends accessor returns the LATEST snapshot for a SPECIFIC fiscal year — FY26
+    AND next-FY FY27 (acceleration_read only reaches the first FY column), and None when the year or
+    metric is absent (fail-loud — never a fabricated level)."""
+    b = _est_bundle({"Trends": _IE_TRENDS})
+    assert cs.trends_fy_level(b, metric="EBITDA", fy_label="FY 2026") == 62.1
+    assert cs.trends_fy_level(b, metric="EBITDA", fy_label="FY 2027") == 147.7  # the next-FY column
+    assert cs.trends_fy_level(b, metric="EBITDA", fy_label="FY 2028") is None  # absent column
+    assert cs.trends_fy_level(b, metric="Revenue", fy_label="FY 2026") is None  # metric absent
+
+
 def test_ie_builder_triangle_anchors_and_identity() -> None:
-    """(G1/G3) TEV ÷ multiple for the fixed set → the verified triangle; the two NAME rows are the
-    identity; anchors = TEV ÷ ladder (NTM anchor ≡ the name-NTM identity); vintage + net-debt gates
-    pass; TEV is DERIVED and its source_ref states the simple-TEV basis + as-of."""
+    """(G1/G3/H7) TEV ÷ multiple for the fixed set → the triangle; the two NAME rows are the
+    identity; the EBITDA anchors are the DIRECT Estimates→Trends levels (H7, NOT TEV÷ladder — the
+    ladder FY26 lives only in the vintage-guard line); the REVENUE anchors keep the ladder basis to
+    substantiate the TEV/Rev † identity; vintage + net-debt gates pass; TEV is DERIVED."""
     ie = dm._implied_expectations(*_ie_inputs())
     assert ie is not None
     assert ie.tev.value == 623.0 and "simple-TEV basis" in (ie.tev.source_ref or "")
@@ -1625,10 +1650,14 @@ def test_ie_builder_triangle_anchors_and_identity() -> None:
     assert got["peer-median LTM TEV/Rev"] == 194.7
     assert {r.label for r in ie.rows if r.is_identity} == {
         "name NTM TEV/EBITDA", "name NTM TEV/Rev"}
-    # anchors 1dp so the NTM anchor prints IDENTICAL to the name-NTM identity row (both $82.6M)
-    assert "FY26E $61.4M · FY27E $146.2M · NTM $82.6M" in (ie.anchors.value or "")
-    # (audit) the parallel REVENUE anchors substantiate the TEV/Rev †: the NTM revenue anchor equals
-    # the name-NTM revenue implied level ($494.4M), so the identity is shown, not merely asserted
+    # (H7) EBITDA anchors = DIRECT Estimates→Trends latest (FY26E 62.1 / FY27E 147.7), NOT ladder;
+    # the ladder-derived FY26 ($61.4M) now appears ONLY in the vintage-guard line below.
+    assert "FY26E $62.1M · FY27E $147.7M" in (ie.anchors.value or "")
+    av = ie.anchors.value or ""
+    assert "direct consensus EBITDA" in av and "ladder" not in av
+    assert "$61.4M" in ie.coherence_note  # the ladder-derived FY26 lives in the vintage-guard line
+    # the parallel REVENUE anchors KEEP the ladder basis — they substantiate the TEV/Rev †: the NTM
+    # revenue anchor equals the name-NTM revenue implied level ($494.4M), shown not merely asserted
     assert ie.rev_anchors is not None
     assert "FY26E $438.7M · FY27E $587.7M · NTM $494.4M" in (ie.rev_anchors.value or "")
     assert got["name NTM TEV/Rev"] == 494.4  # == the NTM revenue anchor
@@ -1694,7 +1723,7 @@ def test_ie_render_table_identity_anchors_and_zero_percent_tokens() -> None:
     block = "\n".join(dr._implied_expectations_lines(v))
     assert dr._TABLE_MARK in block
     assert "$82.6M EBITDA †" in block and "$48.3M EBITDA" in block
-    assert "Consensus path anchors (EBITDA" in block and "FY26E $61.4M" in block
+    assert "Consensus path anchors (EBITDA" in block and "FY26E $62.1M" in block  # H7 direct
     # (audit) the revenue anchors line substantiates the TEV/Rev identity — NTM anchor == the row
     assert "Consensus path anchors (Revenue" in block and "NTM $494.4M" in block
     assert "TEV as-of 2026-06-24 · multiples as-of 2026-05-15" in block
@@ -1727,8 +1756,9 @@ def test_ie_absent_for_pre_g_valuation_and_when_market_cap_missing() -> None:
     """Back-compat + fail-soft: a pre-G Valuation (no implied_expectations) renders nothing; the
     builder returns None when market cap is absent (TEV underivable) — never a fabricated TEV."""
     assert dr._implied_expectations_lines(_minimal_mech().valuation) == []
-    pc, cp, iv = _ie_inputs()
-    assert dm._implied_expectations(pc, cp, iv.model_copy(update={"market_cap": _u()})) is None
+    pc, cp, iv, bundle = _ie_inputs()
+    assert dm._implied_expectations(
+        pc, cp, iv.model_copy(update={"market_cap": _u()}), bundle) is None
 
 
 def _eps_pt(year: int, val: float) -> dict[str, typing.Any]:

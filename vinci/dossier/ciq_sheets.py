@@ -1198,6 +1198,31 @@ def acceleration_read(bundle: CiqBundle, *, as_of: str | None = None) -> Sourced
     )
 
 
+def trends_fy_level(bundle: CiqBundle, *, metric: str, fy_label: str) -> float | None:
+    """(H7) The LATEST Trends consensus snapshot for a metric at a SPECIFIC fiscal-year column —
+    e.g. ``metric="EBITDA", fy_label="FY 2027"`` → the newest FY2027 EBITDA estimate. This is the
+    DIRECT consensus level (the single source of truth for the G anchors), NOT a price-inverted
+    ``TEV ÷ multiple`` derivation. None when the sheet/metric/column/snapshot is absent (fail-loud —
+    the caller renders n/a, never a fabricated level). Reads the newest present snapshot of the
+    block's column; ``acceleration_read`` reads only the FIRST FY column, so this covers next-FY."""
+    try:
+        rows = bundle.sheet("estimates", "Trends")
+    except CiqUnavailableError:
+        return None
+    bi = _find_row(rows, metric)
+    if bi is None:
+        return None
+    header = _metric_block_header(rows, bi)
+    if header is None:
+        return None
+    col = next((j for j, c in enumerate(header)
+                if isinstance(c, str) and c.strip() == fy_label), None)
+    if col is None:
+        return None
+    path = _snapshot_path(rows, bi, col)  # oldest→newest
+    return path[-1][1] if path else None  # the newest (latest) snapshot value
+
+
 def _revisions_windows(rows: Rows, bi: int, end: int) -> dict[str, dict[str, int]]:
     """For a Revisions metric block [bi, end): {window(1m/2m/3m): {'Upward'|'Downward': row_index}}
     — each window's own Upward/Downward rows located by label, never positionally."""

@@ -1380,14 +1380,15 @@ def _ie_bridge_net_debt(bridge: str | None) -> float | None:
 
 
 def _implied_expectations(
-    peer_comps: PeerComps, catalyst: CatalystPath, implied_val: ImpliedValuation
+    peer_comps: PeerComps, catalyst: CatalystPath, implied_val: ImpliedValuation, bundle: CiqBundle
 ) -> ImpliedExpectations | None:
-    """(G) Assemble price-inverted expectations from ALREADY-SOURCED fields (no workbook). TEV =
-    mcap + net debt (simple-TEV basis, labeled — the cell is not surfaced and carries a stale second
-    pricing vintage, so deriving from Latest-mcap is vintage-coherent). implied_level =
-    TEV ÷ multiple for the fixed set; consensus anchors are the same TEV ÷ the forward ladder (so
-    the NTM anchor IS the name-NTM identity row); a G5 residual (FY26 probe) certifies the vintages.
-    Returns None when TEV can't be derived (mcap / net debt absent) — the block won't render."""
+    """(G) Assemble price-inverted expectations from ALREADY-SOURCED fields. TEV = mcap + net debt
+    (simple-TEV basis — the cell is not surfaced and carries a stale second pricing vintage,
+    so deriving from Latest-mcap is vintage-coherent). implied_level = TEV ÷ multiple for the fixed
+    set. (H7) The EBITDA consensus anchors are the DIRECT Estimates→Trends latest levels (the single
+    source of truth), NOT TEV ÷ ladder — the ladder-derived FY26 lives ONLY in the vintage-guard
+    line; a G5 residual (FY26 probe) certifies the vintages. Returns None when TEV can't be derived
+    (mcap / net debt absent) — the block won't render."""
     mc, grid = implied_val.market_cap, peer_comps.peer_grid
     if (mc.status is not SourceStatus.PRESENT or mc.value is None
             or grid is None or grid.status is not SourceStatus.PRESENT):
@@ -1423,9 +1424,11 @@ def _implied_expectations(
                 label=label, metric=metric, multiple=mult, multiple_source=src,
                 implied_level=round(tev / mult, 1), is_identity=(kind == "ladder")))
 
-    # consensus anchors (FY26E/FY27E/NTM EBITDA levels) = the SAME TEV ÷ the forward ladder, so the
-    # NTM anchor equals the name-NTM identity row BY CONSTRUCTION. FY26E is ALSO directly sourced
-    # (acceleration_read) — that direct value is the independent probe the G5 guard checks against.
+    # (H7) The EBITDA consensus anchors are the DIRECT Estimates→Trends latest levels (FY26E/FY27E),
+    # the SINGLE SOURCE OF TRUTH — NOT TEV ÷ ladder. The ladder FY26 (`a26`) is kept ONLY for
+    # the G5 vintage-guard probe below. The parallel REVENUE anchors stay TEV ÷ ladder: they
+    # SUBSTANTIATE the TEV/Rev name-row identity (†, NTM rev anchor ≡ the name-NTM identity) —
+    # a different job than the consensus path, so they keep the ladder basis on purpose.
     def _anchor(period: str, key: str = "TEV/EBITDA") -> float | None:
         mo = _ie_ladder(cna, period, key)
         return (tev / mo) if (mo and mo > 0) else None  # UNROUNDED; 1dp only at display
@@ -1438,17 +1441,24 @@ def _implied_expectations(
             txt + f" (consensus {metric} = TEV ÷ forward ladder; NTM = the name-NTM identity)",
             source_ref=cna_src)
 
-    # anchors are UNROUNDED here (1dp only at display) so the NTM anchor prints the SAME as the
-    # name-NTM identity row (both TEV ÷ 7.54 = 82.6). The parallel REVENUE anchors substantiate the
-    # TEV/Rev name-row identity (†) — so it's shown, not merely asserted.
-    a26 = _anchor("FY 2026")  # the EBITDA FY26 anchor is kept for the G5 residual probe below
-    anchors = _anchor_line("TEV/EBITDA", "EBITDA")
-    rev_anchors = _anchor_line("TEV/REV", "Revenue")
+    def _direct_ebitda_anchors() -> Sourced[str]:
+        vals = [(lab, ciq_sheets.trends_fy_level(bundle, metric="EBITDA", fy_label=fy))
+                for lab, fy in (("FY26E", "FY 2026"), ("FY27E", "FY 2027"))]
+        if all(v is None for _, v in vals):
+            return Sourced.unknown(note="no direct FY26/FY27 EBITDA consensus in Estimates→Trends")
+        txt = " · ".join(f"{lab} {(f'${v:.1f}M') if v is not None else 'n/a'}" for lab, v in vals)
+        return Sourced.present(
+            txt + " (direct consensus EBITDA — CIQ Estimates→Trends latest snapshot)",
+            source_ref="CIQ Estimates→Trends (FY26/FY27 consensus EBITDA, latest snapshot)")
+
+    a26 = _anchor("FY 2026")  # LADDER-derived FY26 — kept ONLY for the G5 vintage-guard probe below
+    anchors = _direct_ebitda_anchors()  # (H7) direct Trends, the single source of truth
+    rev_anchors = _anchor_line("TEV/REV", "Revenue")  # ladder — substantiates TEV/Rev † identity
 
     # (G5) vintage-coherence: derived FY26 (TEV ÷ FY26 forward multiple, UNROUNDED) vs the DIRECT
-    # FY26 EBITDA consensus (acceleration_read). NTM consensus is not a sourced level, so FY26 — the
-    # nearest direct consensus — is the probe; the shared-TEV ladder certifies all horizons.
-    direct26 = _ie_consensus_latest(catalyst.acceleration_read.value, "FY 2026", "EBITDA")
+    # FY26 EBITDA consensus (Estimates→Trends latest — SAME source as the anchors). NTM is not a
+    # sourced level, so FY26 — the nearest direct consensus — is the probe; shared-TEV ladder certs.
+    direct26 = ciq_sheets.trends_fy_level(bundle, metric="EBITDA", fy_label="FY 2026")
     coherent, pct = True, 0.0
     if direct26 and direct26 > 0 and a26 is not None:
         pct = abs(a26 - direct26) / direct26
@@ -1541,7 +1551,8 @@ def assemble_mechanical(
     # (G) price-inverted expectations (multiples-space) attach to Valuation. Built from already-
     # assembled fields only (peer multiples + the forward ladder + the derived TEV) — no extraction.
     valuation = valuation.model_copy(
-        update={"implied_expectations": _implied_expectations(peer_comps, catalyst, implied_val)})
+        update={"implied_expectations":
+                _implied_expectations(peer_comps, catalyst, implied_val, bundle)})
     mech = MechanicalLayer(
         valuation=valuation,
         quality=quality,
