@@ -94,6 +94,24 @@ class CachedHttp:
     ) -> Any:
         return json.loads(self.get_text(url, ttl_seconds=ttl_seconds, params=params))
 
+    def post_json(
+        self,
+        url: str,
+        *,
+        json_body: dict[str, Any],
+        ttl_seconds: float | None = None,
+    ) -> Any:
+        """POST a JSON body and return the parsed JSON, cached by (url + body) — for query APIs
+        whose filters don't fit a GET (e.g. FINRA's ``compareFilters``). Same throttle/retry/fail-
+        loud path as GET; the cache key folds in the body so distinct queries don't collide."""
+        cache_key = f"{url}\n#POST#{json.dumps(json_body, sort_keys=True)}"
+        cached = self._read_cache(cache_key, ttl_seconds)
+        if cached is not None:
+            return json.loads(cached)
+        text = self._fetch_with_retries(url, json_body=json_body)
+        self._write_cache(cache_key, text)
+        return json.loads(text)
+
     def close(self) -> None:
         self._client.close()
 
@@ -141,13 +159,19 @@ class CachedHttp:
             time.sleep(wait)
         self._last_request_at = time.monotonic()
 
-    def _fetch_with_retries(self, url: str) -> str:
+    def _fetch_with_retries(
+        self, url: str, *, json_body: dict[str, Any] | None = None
+    ) -> str:
         backoff = 1.0
         last_exc: Exception | None = None
         for attempt in range(self._max_retries + 1):
             self._throttle()
             try:
-                resp = self._client.get(url)
+                resp = (
+                    self._client.post(url, json=json_body)
+                    if json_body is not None
+                    else self._client.get(url)
+                )
             except httpx.HTTPError as exc:  # transport-level (timeout, connection)
                 last_exc = exc
             else:

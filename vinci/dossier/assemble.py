@@ -26,6 +26,7 @@ from vinci.dossier.render import render_markdown
 from vinci.dossier.schemas import Dossier
 from vinci.dossier.synthesis import synthesize
 from vinci.edgar.client import EdgarClient
+from vinci.finra import build_finra_http
 from vinci.graph.exposure import ExposureGraph
 from vinci.graph.llm import LlmClient
 from vinci.rank import load_candidates_from_snapshot
@@ -117,7 +118,8 @@ def assemble_one(
     with Store(cfg.db_path) as store:
         mech, mech_flags = assemble_mechanical(
             rec, store=store, edgar=EdgarClient.from_config(cfg), http=build_sec_http(cfg),
-            graph=graph, resolver=resolver, bundle=bundle, reference_date=fin.reference_date,
+            finra=build_finra_http(cfg), graph=graph, resolver=resolver, bundle=bundle,
+            reference_date=fin.reference_date,
         )
     flags += mech_flags
     synthesis = None

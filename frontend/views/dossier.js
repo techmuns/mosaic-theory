@@ -839,7 +839,11 @@ function catalystPath(cp, cc) {
     fact("Guidance bridge (latest guide + track-record)", cp.guidance_bridge) +
     fact("Consensus stats (target + ratings)", cp.consensus_stats) +
     eventGroups(cp.revision_events) +
-    surprise);
+    surprise +
+    // (F) positioning inputs — free DATED feeds; only when present (pre-F JSON omits both fields).
+    // Counts / shares / dates only, no interpretation.
+    (cp.insider_activity ? fact("Insider activity (Form 4, 6m)", cp.insider_activity) : "") +
+    (cp.short_interest ? fact("Short interest (FINRA)", cp.short_interest) : ""));
 }
 
 // Legacy fallback — ONLY rendered for a pre-catalyst_path dossier.json (no catalyst_path field).

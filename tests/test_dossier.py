@@ -1246,6 +1246,155 @@ def test_fresh_capital_structure_renders_table_and_wall_in_place_of_liquidity() 
     assert "Liquidity / covenant flags" not in md
 
 
+# --- PR F: positioning inputs — EDGAR Form-4 insider activity + FINRA short interest -----------
+
+# One real-shaped Form 4 ownership XML with four non-derivative transactions across the code classes
+# the block partitions: open-market P (buy) / S (sell), routine grant A, and 'other' conversion C.
+_FORM4_XML = """<?xml version="1.0"?>
+<ownershipDocument>
+  <nonDerivativeTable>
+    <nonDerivativeTransaction>
+      <transactionCoding><transactionCode>P</transactionCode></transactionCoding>
+      <transactionAmounts><transactionShares><value>1000</value></transactionShares>
+        <transactionAcquiredDisposedCode><value>A</value></transactionAcquiredDisposedCode>
+      </transactionAmounts><transactionDate><value>2026-06-10</value></transactionDate>
+    </nonDerivativeTransaction>
+    <nonDerivativeTransaction>
+      <transactionCoding><transactionCode>S</transactionCode></transactionCoding>
+      <transactionAmounts><transactionShares><value>6403</value></transactionShares></transactionAmounts>
+    </nonDerivativeTransaction>
+    <nonDerivativeTransaction>
+      <transactionCoding><transactionCode>A</transactionCode></transactionCoding>
+      <transactionAmounts><transactionShares><value>15503</value></transactionShares></transactionAmounts>
+    </nonDerivativeTransaction>
+    <nonDerivativeTransaction>
+      <transactionCoding><transactionCode>C</transactionCode></transactionCoding>
+      <transactionAmounts><transactionShares><value>50000</value></transactionShares></transactionAmounts>
+    </nonDerivativeTransaction>
+  </nonDerivativeTable>
+</ownershipDocument>"""
+
+_SI_ROWS: list[dict[str, typing.Any]] = [
+    {"settlementDate": "2026-06-15", "currentShortPositionQuantity": 26323600,
+     "previousShortPositionQuantity": 21410534, "changePercent": 22.95,
+     "daysToCoverQuantity": 6.25},
+    {"settlementDate": "2026-05-29", "currentShortPositionQuantity": 21410534,
+     "previousShortPositionQuantity": 21608177, "changePercent": -0.91,
+     "daysToCoverQuantity": 4.35},
+]
+
+
+class _FakeForm4Http:
+    """A fake SEC http: one Form 4's index.json (get_json) + its ownership XML (get_text)."""
+
+    def __init__(self, index: dict[str, typing.Any], xml: str) -> None:
+        self._index, self._xml = index, xml
+
+    def get_json(self, url: str, ttl_seconds: float | None = None) -> dict[str, typing.Any]:
+        return self._index
+
+    def get_text(self, url: str, ttl_seconds: float | None = None) -> str:
+        return self._xml
+
+
+class _FakeFinra:
+    def __init__(self, rows: list[dict[str, typing.Any]]) -> None:
+        self._rows = rows
+
+    def post_json(
+        self, url: str, *, json_body: dict[str, typing.Any], ttl_seconds: float | None = None
+    ) -> list[dict[str, typing.Any]]:
+        return self._rows
+
+
+def _record_with_adv(adv_shares: float | None) -> sdr.DataRecord:
+    rec = _min_record(pe=5.0)
+    if adv_shares is None:
+        return rec
+    adv = DataField.present(
+        adv_shares, as_of=date(2026, 6, 26), source="EOD", tier=SourceTier.DERIVED)
+    return rec.model_copy(
+        update={"prices": rec.prices.model_copy(update={"adv_90d_shares": adv})})
+
+
+def test_insider_activity_partitions_open_market_routine_and_other_codes() -> None:
+    """(F1) Form 4 non-derivative codes are partitioned: open-market P/S drive the counts + net
+    shares (net = ΣP − ΣS); routine A/M/F are tallied separately; any other code (here a conversion
+    C) is LABELED, never dropped. Counts and dates only, source-bound to the latest accession."""
+    edgar = _FakeEdgar(filings=[Filing(
+        cik="0001760689", form="4", filing_date=date(2026, 6, 12),
+        accession="0000947871-26-000620", items=[], primary_doc="xslF345X06/ownership.xml")])
+    http = _FakeForm4Http({"directory": {"item": [{"name": "ownership.xml"}]}}, _FORM4_XML)
+    got = dm._insider_activity(
+        typing.cast(EdgarClient, edgar), typing.cast(typing.Any, http),
+        "0001760689", date(2026, 7, 3))
+    assert got.status is ds.SourceStatus.PRESENT
+    # P×1 / S×1 · net (1000 − 6403)/1000 = -5.4K · last 2026-06-12 · routine A×1 · other C×1
+    assert got.value == "P×1 / S×1 · net -5.4K sh · last 2026-06-12 · routine A×1 · other C×1"
+    assert "0000947871-26-000620" in (got.source_ref or "")
+
+
+def test_insider_activity_fail_loud_when_no_form4_in_window() -> None:
+    """(F1) No Form 4s in the trailing 6m → fail-loud UNKNOWN, never a fabricated 'no activity'."""
+    got = dm._insider_activity(
+        typing.cast(EdgarClient, _FakeEdgar()), typing.cast(typing.Any, _FakeForm4Http({}, "")),
+        "0001760689", date(2026, 7, 3))
+    assert got.status is ds.SourceStatus.UNKNOWN
+    assert "no Form 4" in (got.note or "")
+
+
+def test_short_interest_block_computes_dtc_against_the_screen_adv() -> None:
+    """(F2) Latest FINRA settlement → shares short + FINRA's Δ% + days-to-cover computed against the
+    SCREEN 90d ADV (not FINRA's ADV, no recompute). Dated; the DTC basis is in the citation."""
+    got = dm._short_interest(
+        typing.cast(typing.Any, _FakeFinra(_SI_ROWS)), _record_with_adv(4607454.0),
+        date(2026, 7, 3))
+    assert got.status is ds.SourceStatus.PRESENT
+    assert got.value == "Short interest (FINRA, settle 2026-06-15): 26.3M sh (+22.9%) · DTC 5.7d"
+    assert "screen 90d ADV" in (got.source_ref or "")  # DTC basis bound in the citation
+
+
+def test_short_interest_block_omits_dtc_when_screen_adv_unknown() -> None:
+    """(F2) DTC needs the screen ADV; when it's UNKNOWN the shares/Δ% still render and the DTC is
+    honestly omitted (never silently recomputed from FINRA's own ADV)."""
+    got = dm._short_interest(
+        typing.cast(typing.Any, _FakeFinra(_SI_ROWS)), _record_with_adv(None), date(2026, 7, 3))
+    assert got.status is ds.SourceStatus.PRESENT
+    assert "26.3M sh" in (got.value or "") and "DTC" not in (got.value or "")
+    assert "screen 90d ADV unavailable" in (got.source_ref or "")
+
+
+def test_short_interest_fail_loud_when_no_settlement_on_file() -> None:
+    """(F2) No settlement in the window → fail-loud UNKNOWN, never a faked zero."""
+    got = dm._short_interest(
+        typing.cast(typing.Any, _FakeFinra([])), _record_with_adv(4607454.0), date(2026, 7, 3))
+    assert got.status is ds.SourceStatus.UNKNOWN and "no FINRA short-interest" in (got.note or "")
+
+
+def test_positioning_fields_live_on_the_walked_catalyst_path() -> None:
+    """(F) The no-conclusion walk reaches CatalystPath (asserted above); these positioning fields
+    are therefore covered by the forbidden-token guard — assert they're actually present + optional
+    (so a pre-F dossier.json still validates)."""
+    fields = ds.CatalystPath.model_fields
+    assert "insider_activity" in fields and "short_interest" in fields
+    assert not fields["insider_activity"].is_required()  # optional → pre-F JSON round-trips
+    cp = ds.CatalystPath(
+        as_of=_u(), horizon_read=_u(), acceleration_read=_u(), cross_name_anchor=_u(),
+        guidance_bridge=_u(), revision_events=_u(), consensus_stats=_u())
+    assert cp.insider_activity is None and cp.short_interest is None  # default absent
+
+
+@pytest.mark.network
+def test_insider_activity_real_mvst() -> None:
+    """(F1, live) MVST's trailing-6m Form 4s — 18 on file incl. 3× on 2026-06-12; routine grants
+    dominate (no open-market buys). Pins the latest accession 0000947871-26-000620."""
+    edgar, http = EdgarClient.from_config(), build_sec_http()
+    got = dm._insider_activity(edgar, http, "0001760689", date(2026, 7, 3))
+    assert got.status is ds.SourceStatus.PRESENT
+    assert got.value is not None and got.value.startswith("P×") and "routine" in got.value
+    assert "0000947871-26-000620" in (got.source_ref or "")
+
+
 def _eps_pt(year: int, val: float) -> dict[str, typing.Any]:
     return {"end": f"{year}-12-31", "start": f"{year}-01-01", "val": val,
             "filed": f"{year + 1}-02-15", "fp": "FY", "form": "10-K"}

@@ -232,6 +232,11 @@ class CatalystPath(BaseModel):
     guidance_bridge: Sourced[str]  # d. latest guide {range,date} + consensus + actual + track-rec
     revision_events: Sourced[list[RevisionEvent]]  # e. Recent-Changes log; render caps 10, JSON all
     consensus_stats: Sourced[str]  # f. target mean/median/hi-lo/N + rating distribution
+    # (PR F) positioning inputs — free, DATED feeds (their own as-ofs, no export-floor). Optional so
+    # a pre-F dossier.json still validates; a fresh assembly always builds them (PRESENT/UNKNOWN).
+    # Counts / shares / dates only — no interpretation, no direction.
+    insider_activity: Sourced[str] | None = None  # g. EDGAR Form 4 (6m): open-market P/S + routine
+    short_interest: Sourced[str] | None = None  # h. FINRA settlement: shares short, Δ%, DTC vs ADV
 
     model_config = {"frozen": True}
 

@@ -1312,6 +1312,41 @@ Each line: *what it does* — *verified how*.
     calendar-year contract the Python test enforces. Fixed to bucket by the ISO date STRING
     (timezone-free, matches `date.year`); also routed `_mM` through en-US thousands to match
     `render._musd` for $1B+ totals. Verified under Asia/Calcutta + a browser render.**
+  - **PR F — positioning inputs: EDGAR Form-4 insider activity + FINRA short interest (2026-07-03).**
+    Two NEW free, DATED feeds slotted into the catalyst path — the objective inflection markers
+    EDGE_THESIS names in the Edge-2 discriminator ("*multiple at floor; **short interest peaking;
+    insiders beginning to buy***"). Face-validity basis, never tuned; the machine COUNTS and CITES,
+    it does not conclude.
+    - **F1 insider activity** (`mechanical._insider_activity`): trailing-6m Form 4s via the CIK
+      submissions feed; each raw ownership XML parsed for non-derivative codes — open-market **P/S**
+      drive the counts + net shares (net = ΣP − ΣS), routine **A/M/F** tallied separately, any other
+      code (e.g. a conversion **C**) LABELED not dropped. Renders "P×n / S×m · net ±K sh · last date
+      · routine … · other …", source-bound to the latest accession; fail-loud UNKNOWN when none on
+      file. Counts + dates only — no interpretation.
+    - **F2 short interest** (`vinci/finra.py` + `mechanical._short_interest`): FINRA's public query
+      API (`api.finra.org`, delayed, no entitlement) — latest settlement's shares short + FINRA's own
+      Δ% + days-to-cover computed against the SCREEN 90d ADV (no ADV recompute; the DTC basis is
+      bound in the citation). DATED as-of (no export-floor). The column layout is PINNED — a
+      renamed/dropped column raises `FinraLayoutError` (the STOP-AND-REPORT rule: never guess a
+      column). Filtering is POST-only (the endpoint ignores GET params), so `netcache.CachedHttp`
+      gained a cached `post_json` (GET path untouched). Both feeds registered in the input manifest
+      (`requirements.EDGAR_FREE_INPUTS` Form-4 entry updated to "now consumed"; new `FREE_FEED_INPUTS`
+      for FINRA — the don't-double-pull-from-CIQ rule).
+    *Verified on the REAL MVST export + LIVE EDGAR/FINRA: F1 → "P×0 / S×7 · net -121.0K sh · last
+    2026-06-12 · routine A×20 · other C×1" (18 Form 4s, incl. 3× on 2026-06-12; zero open-market buys
+    — the honest picture) pinned to accession 0000947871-26-000620; F2 → "Short interest (FINRA,
+    settle 2026-06-15): 26.3M sh (+22.9%) · DTC 5.7d" (DTC = 26,323,600 ÷ 4,607,454 screen ADV, vs
+    FINRA's own 6.25 on its ADV). Frontend confirmed by a real preview render (both blocks in the
+    catalyst section, cited; injected artifact reverted, no artifact commit). +14 tests (12 offline
+    incl. the FINRA layout-pin + post_json cache + the limit-cap guard, 2 network-marked live pins).
+    The no-conclusion walk already reaches CatalystPath → the two `Sourced[str]` positioning fields
+    are covered (asserted). **Post-audit fix (self-audit #63): FINRA's query API returns rows
+    OLDEST-first and can't be server-sorted, so the old `limit=8` silently DROPPED the newest
+    settlements once a window held ≥9 (latent — a 120-day window holds ~7 today); raised the cap to 50
+    AND fail loud (`FinraLayoutError`) if the cap is ever hit, so a stale settlement can never be
+    dressed as "the latest".** ruff + mypy --strict (69) + `pytest -m "not network"` green. On a
+    branch → PR; NOT merged (awaiting review).*
+- _Whole suite green (ruff + mypy --strict clean; `pytest -m "not network"` passes)._
 
 ## 3. FALSIFIED — tested and retired (NOT deferred)
 

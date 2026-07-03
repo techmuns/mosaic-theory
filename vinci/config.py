@@ -76,6 +76,9 @@ class PacingConfig(BaseModel, frozen=True):
     # Polygon Starter lifts the free-tier 5/min cap and gives 5y history; this is latency-bound
     # (~1s/call) anyway, so the throttle rarely engages. (Free tier was 5.0.)
     polygon_requests_per_min: float = 100.0
+    # FINRA's public query API (api.finra.org, delayed data) publishes no hard limit; pace it
+    # politely — the twice-monthly short-interest file is fetched once per name and cached.
+    finra_requests_per_sec: float = 4.0
     http_timeout_sec: float = 30.0
     max_retries: int = 4
 

@@ -12,6 +12,7 @@ from __future__ import annotations
 
 import re
 import statistics
+import xml.etree.ElementTree as ET
 from datetime import date, timedelta
 from typing import Any, TypeVar
 
@@ -38,13 +39,14 @@ from vinci.dossier.schemas import (
 )
 from vinci.edgar.client import EdgarClient
 from vinci.edgar.concepts import extract_points
+from vinci.finra import FinraLayoutError, short_interest_points
 from vinci.graph.exposure import ExposureGraph
 from vinci.graph.filings import html_to_text
 from vinci.netcache import CachedHttp, HttpError
 from vinci.resolver import EntityResolver, ResolutionError
 from vinci.resolver.index import pad_cik
 from vinci.schemas.data_record import DataRecord
-from vinci.schemas.envelope import DataField
+from vinci.schemas.envelope import CoverageStatus, DataField
 from vinci.schemas.market import PriceBar
 from vinci.store import Store
 
@@ -951,11 +953,125 @@ def _leverage_survival(quality: Quality, bundle: CiqBundle) -> LeverageSurvival:
     )
 
 
-def _catalyst_path(bundle: CiqBundle, reference_date: date) -> CatalystPath:
+# (F1) Form 4 non-derivative transaction codes: open-market P (purchase) / S (sale) are the
+# positioning SIGNAL; A (grant/award) / M (option exercise) / F (tax withholding) are routine comp
+# mechanics tallied SEPARATELY; anything else (C conversion, G gift, …) is bucketed as 'other' and
+# LABELED — never silently dropped (that would misstate the counts). Counts + dates only.
+_OPEN_MARKET_CODES = ("P", "S")
+_ROUTINE_CODES = ("A", "M", "F")
+
+
+def _form4_codes(http: CachedHttp, cik: str, accession: str) -> list[tuple[str, float]]:
+    """The (code, shares) of every non-derivative transaction in ONE Form 4 — parsed from the raw
+    ownership XML (never the xsl-styled view). Returns [] when the filing has no non-deriv table
+    or its doc can't be fetched (fail-soft per filing; the block still assembles from the rest)."""
+    accn = accession.replace("-", "")
+    try:
+        idx = http.get_json(_INDEX.format(cik=int(pad_cik(cik)), acc=accn), ttl_seconds=None)
+    except (HttpError, ValueError):
+        return []
+    names = [str(it.get("name", "")) for it in idx.get("directory", {}).get("item", [])]
+    xmlname = next(
+        (n for n in names if n.lower().endswith(".xml") and "ownership" in n.lower()),
+        next((n for n in names if n.lower().endswith(".xml")), None),
+    )
+    if not xmlname:
+        return []
+    try:
+        raw = http.get_text(
+            _ARCHIVE.format(cik=int(pad_cik(cik)), acc=accn, doc=xmlname), ttl_seconds=None)
+        root = ET.fromstring(raw)
+    except (HttpError, ET.ParseError, ValueError):
+        return []
+    out: list[tuple[str, float]] = []
+    for t in root.findall(".//nonDerivativeTransaction"):
+        code = (t.findtext(".//transactionCoding/transactionCode") or "").strip()
+        sh = t.findtext(".//transactionAmounts/transactionShares/value")
+        if code:
+            out.append((code, float(sh) if sh else 0.0))
+    return out
+
+
+def _insider_activity(
+    edgar: EdgarClient, http: CachedHttp, cik: str | None, reference_date: date
+) -> Sourced[str]:
+    """(F1) Trailing-6m insider activity from EDGAR Form 4 — open-market P/S counts + net P−S
+    shares, routine comp codes (A/M/F) tallied separately, any other code labeled. Counts and dates
+    ONLY (no interpretation), source-bound to the latest Form 4 accession; fail-loud UNKNOWN when
+    none are on file."""
+    if not cik:
+        return Sourced.unknown(note="no CIK for Form 4 lookup")
+    try:
+        filings = edgar.recent_filings(
+            cik, forms=("4",), since=reference_date - timedelta(days=182))
+    except HttpError as exc:
+        return Sourced.unknown(note=f"EDGAR Form 4 fetch failed: {exc}")
+    if not filings:
+        return Sourced.unknown(note="no Form 4 filings in the trailing 6m")
+    counts: dict[str, int] = {}
+    net = 0.0
+    for f in filings:
+        for code, sh in _form4_codes(http, cik, f.accession):
+            counts[code] = counts.get(code, 0) + 1
+            if code == "P":
+                net += sh
+            elif code == "S":
+                net -= sh
+    p, s = counts.get("P", 0), counts.get("S", 0)
+    last = max(f.filing_date for f in filings)
+    line = f"P×{p} / S×{s} · net {net / 1000:+.1f}K sh · last {last.isoformat()}"
+    routine = "/".join(f"{c}×{counts[c]}" for c in _ROUTINE_CODES if counts.get(c))
+    if routine:
+        line += f" · routine {routine}"
+    other = "/".join(
+        f"{c}×{n}" for c, n in sorted(counts.items())
+        if c not in _OPEN_MARKET_CODES and c not in _ROUTINE_CODES and n
+    )
+    if other:
+        line += f" · other {other}"
+    return Sourced.present(
+        line, source_ref=f"EDGAR Form 4 (latest {filings[0].accession}; {len(filings)} in 6m)")
+
+
+def _short_interest(finra: CachedHttp, record: DataRecord, reference_date: date) -> Sourced[str]:
+    """(F2) Latest FINRA settlement short interest — shares short + FINRA's own Δ% + days-to-cover
+    computed against the SCREEN data-record ADV (no ADV recompute). Dated as-of (no floor). A cross-
+    reference for the human, never a conclusion; fail-loud UNKNOWN when no settlement is on file."""
+    symbol = record.identity.ticker
+    try:
+        points = short_interest_points(
+            finra, symbol, start=reference_date - timedelta(days=120), end=reference_date)
+    except (HttpError, FinraLayoutError) as exc:
+        return Sourced.unknown(note=f"FINRA short interest unavailable: {exc}")
+    if not points:
+        return Sourced.unknown(note="no FINRA short-interest settlement in the trailing window")
+    latest = points[0]
+    line = f"{latest.shares_short / 1e6:.1f}M sh"
+    if latest.change_percent is not None:
+        line += f" ({latest.change_percent:+.1f}%)"
+    adv = record.prices.adv_90d_shares
+    if adv.coverage_status is CoverageStatus.PRESENT and adv.value:
+        line += f" · DTC {latest.shares_short / adv.value:.1f}d"
+        basis = f"DTC = {latest.shares_short:,} short ÷ {adv.value:,.0f} screen 90d ADV"
+    else:
+        basis = "screen 90d ADV unavailable — DTC omitted"
+    return Sourced.present(
+        f"Short interest (FINRA, settle {latest.settlement_date}): {line}",
+        source_ref=f"FINRA consolidated short interest (settle {latest.settlement_date}); {basis}")
+
+
+def _catalyst_path(
+    bundle: CiqBundle,
+    reference_date: date,
+    *,
+    insider_activity: Sourced[str] | None = None,
+    short_interest: Sourced[str] | None = None,
+) -> CatalystPath:
     """Assemble the horizon-matched estimates/guidance/revision view from the five new Estimates
     sheets. The workbook as-of (freshest embedded data date) is resolved ONCE and threaded into
     every sub-field's source_ref. Each sub-field independently reads UNKNOWN/MISSING when its sheet
-    is absent — a FRESH assembly always builds the block; raggedness lives one level down."""
+    is absent — a FRESH assembly always builds the block; raggedness lives one level down. The (F)
+    positioning inputs are assembled upstream (they need EDGAR/FINRA + the record), slotted in."""
     asof = ciq_sheets.estimates_as_of(bundle)
     aod = asof.value
     return CatalystPath(
@@ -968,6 +1084,8 @@ def _catalyst_path(bundle: CiqBundle, reference_date: date) -> CatalystPath:
         ),
         revision_events=ciq_sheets.revision_events(bundle, as_of=aod),
         consensus_stats=ciq_sheets.consensus_stats(bundle, as_of=aod),
+        insider_activity=insider_activity,
+        short_interest=short_interest,
     )
 
 
@@ -1113,6 +1231,7 @@ def assemble_mechanical(
     store: Store,
     edgar: EdgarClient,
     http: CachedHttp,
+    finra: CachedHttp,
     graph: ExposureGraph,
     resolver: EntityResolver,
     bundle: CiqBundle,
@@ -1168,7 +1287,13 @@ def assemble_mechanical(
             record, store, graph, resolver, reference_date
         ),
         consensus_context=_consensus(bundle),
-        catalyst_path=_catalyst_path(bundle, reference_date),
+        # (F) positioning inputs slotted into the catalyst path — free, DATED feeds: EDGAR Form 4
+        # insider activity + FINRA short interest (DTC vs the screen ADV). Counts/shares/dates only.
+        catalyst_path=_catalyst_path(
+            bundle, reference_date,
+            insider_activity=_insider_activity(edgar, http, record.identity.cik, reference_date),
+            short_interest=_short_interest(finra, record, reference_date),
+        ),
         # B2 unified leverage & survival (both bases + credit health) + B3 CIQ implied valuation
         # (posed; the comparability gate from peer_comps renders on its header).
         leverage_survival=_leverage_survival(quality, bundle),
