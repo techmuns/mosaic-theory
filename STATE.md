@@ -2944,3 +2944,18 @@ UNPOWERED**; it accrues forward, not now. Artifacts (`forward_defense_ledger.jso
 the scan output. +4 forward regression tests (demand-shaped schema; avoid-controls freeze + must-be-PASSED
 guard; category-aware `naive_by_layer`; driver-labelled confound). Suite green (ruff + mypy --strict 83 files +
 pytest **313**). **Local only — nothing pushed, nothing merged, main untouched.** Forward edge NOT claimed.
+
+**FIELD-NAME NEUTRALIZATION + CLI MULTI-COHORT (2026-07-03, `feat/theme-multi-theme-refactor`, after the
+rebase onto origin/main).** Two small forward-harness fixes. **(1) Neutral field names:**
+`RatificationRecord.chain_layer`→`substructure_tag`, `machine_grade`→`grade` (they hold a value-chain layer
+OR a demand-shaped capability category, not just AI-datacenter's) — with a pydantic `AliasChoices` **compat
+shim** so the reader accepts EITHER the new OR the legacy name. Both existing git-ignored freezes
+(ai-datacenter 56 + defense 108 ledger rows, written PRE-rename) still load unchanged — verified on the real
+on-disk artifacts, no re-freeze; new writes emit the neutral names. **(2) CLI multi-cohort:** `themes-forward`
+gains a `--driver` path with `--watchlist` / `--watchlist-triggers` (JSON) / `--avoid-controls` / `--real-tier`
++ a schema-flexible `layer_of` read (`chain_layer` OR `category` column), so a SECOND driver freezes in ONE
+command instead of a bespoke script — verified end-to-end: the CLI reproduces the defense script's freeze
+EXACTLY (driver, all 3 cohorts, verbatim triggers, 108/108, category `layer_of` identical). +2 forward tests
+(compat-load old+new field names; CLI multi-cohort freeze). Diff confined to `vinci/themes/forward.py` +
+`vinci/cli.py` + tests + this STATE note. Suite green (ruff + mypy --strict 85 files + pytest **410**; 24
+forward tests). **Local only — nothing pushed, nothing merged.**

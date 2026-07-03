@@ -637,18 +637,24 @@ def _cmd_themes_forward(args: argparse.Namespace) -> int:
     forward, layer-aware + power-labelled. It LOGS + MEASURES human decisions; it never
     selects/ranks/promotes a grade to a hold (§6 dead-signal firewall). Awaits real dispositions."""
     import csv
+    import json
     from collections import Counter
     from datetime import date
     from pathlib import Path
 
     from vinci.themes import forward as fwd
 
-    driver = "AI-datacenter value chain"
+    def _csv_list(s: str | None) -> list[str]:
+        return [t.strip() for t in (s or "").split(",") if t.strip()]
+
+    driver = args.driver
     ws, ledger = Path(args.worksheet), Path(args.ledger)
     with open(ws) as fh:
         rows = list(csv.DictReader(fh))
     all_committed = [r["ticker"] for r in rows]
-    layer_of = {r["ticker"]: r["chain_layer"] for r in rows}
+    # schema-flexible: the AI-datacenter worksheet has a 'chain_layer' column; a demand-shaped one
+    # (e.g. defense) has 'category' — either populates the neutral substructure tag
+    layer_of = {r["ticker"]: (r.get("chain_layer") or r.get("category", "")) for r in rows}
     ratify_date = date.fromisoformat(args.ratify_date) if args.ratify_date else date.today()
     records, pending = fwd.records_from_worksheet(ws, driver=driver, ratification_date=ratify_date)
     for rec in records:  # append-only: log each dispositioned row (a correction is a new row)
@@ -664,15 +670,29 @@ def _cmd_themes_forward(args: argparse.Namespace) -> int:
               "RATIFIED/PASSED before freezing. Real logging + measurement await triage.")
         return 0
     freeze_ts = date.today().isoformat() + "T00:00:00"
-    exposure = [t.strip() for t in (args.exposure_names or "").split(",") if t.strip()]
-    baskets = fwd.freeze_baskets(records, all_committed, driver=driver, freeze_timestamp=freeze_ts,
-                                 layer_of=layer_of, watchlist=exposure or None)
+    # cohorts (a SECOND driver now freezes in one command, no bespoke script): --watchlist is the
+    # genuine-exposure re-underwrite cohort (falls back to --exposure-names); it also serves as the
+    # exposure-carry (diagnostic-2) cohort. --avoid-controls / --real-tier / --watchlist-triggers
+    # (a JSON {ticker: trigger}) are optional.
+    watchlist = _csv_list(args.watchlist) or _csv_list(args.exposure_names)
+    avoid_controls = _csv_list(args.avoid_controls)
+    real_tier = _csv_list(args.real_tier)
+    triggers = json.loads(Path(args.watchlist_triggers).read_text()) if args.watchlist_triggers \
+        else None
+    baskets = fwd.freeze_baskets(
+        records, all_committed, driver=driver, freeze_timestamp=freeze_ts, layer_of=layer_of,
+        watchlist=watchlist or None, watchlist_triggers=triggers,
+        avoid_controls=avoid_controls or None, real_tier=real_tier or None)
     if args.baskets_out:
         Path(args.baskets_out).write_text(baskets.model_dump_json(indent=1))
     print(f"\nFROZEN: {len(baskets.ratified)} RATIFIED (BUY) · {len(baskets.passed)} PASSED "
           f"(AVOID) · {len(baskets.all_committed)} equal-weight naive baseline (§3b-i)")
     if baskets.watchlist:
         print(f"WATCHLIST (re-underwrite cohort): {list(baskets.watchlist)}")
+    if baskets.avoid_controls:
+        print(f"AVOID-CONTROLS (near-miss control, within PASSED): {list(baskets.avoid_controls)}")
+    if baskets.real_tier:
+        print(f"REAL-tier secondary: {list(baskets.real_tier)}")
     print(f"deferred control: {baskets.deferred_controls[0]}")
     if not args.measure:
         return 0
@@ -683,17 +703,17 @@ def _cmd_themes_forward(args: argparse.Namespace) -> int:
     if not baskets.ratified:  # EMPTY BUY (zero RATIFIED) — hold-none path, NEVER RATIFIED-dependent
         print("\n" + fwd.HOLD_NONE_HONESTY)
         for h in horizons:
-            hn = fwd.measure_hold_none(baskets, exposure_names=exposure, price_fn=price_fn,
+            hn = fwd.measure_hold_none(baskets, exposure_names=watchlist, price_fn=price_fn,
                                        horizon_days=h, as_of=as_of)
             print(f"\n--- @ {hn.horizon_days}d (as_of {hn.as_of}) ---")
             print(f"  UNDEFINED (zero RATIFIED, not computed): "
                   f"{[m for m, _ in hn.undefined_measures]}")
             print(f"  DIAGNOSTIC-1 avoid-discipline: {hn.avoid_discipline.detail}")
             print(f"  DIAGNOSTIC-2 exposure-carry (primary): {hn.exposure_carry.detail}")
-            lsp = hn.layer_split
-            tr = "pending" if lsp.thin_return is None else f"{lsp.thin_return:+.1%}"
-            ob = "pending" if lsp.obvious_return is None else f"{lsp.obvious_return:+.1%}"
-            print(f"  LAYER-AWARE: thin={tr} (n={lsp.n_thin}) vs obvious={ob} (n={lsp.n_obvious})")
+            print("  CATEGORY-AWARE naive_by_layer (driver-agnostic):")
+            for lr in hn.naive_by_layer:
+                val = "pending" if lr.mean_return is None else f"{lr.mean_return:+.1%}"
+                print(f"    {lr.layer:20} {val:>8} (n={lr.n})")
         return 0
     for rep in fwd.measure(baskets, price_fn=price_fn, horizons_days=horizons, as_of=as_of):
         print(f"\n--- @ {rep.horizon_days}d (as_of {rep.as_of}) · POWER [{rep.power.label}] "
@@ -925,7 +945,19 @@ def build_parser() -> argparse.ArgumentParser:
                        help="comma-separated forward horizons in days (default: 30,90,180,365)")
     p_fwd.add_argument("--exposure-names", dest="exposure_names",
                        help="comma tickers: the genuine-exposure watchlist / exposure-carry cohort "
-                            "(empty-BUY diagnostic 2)")
+                            "(empty-BUY diagnostic 2). Back-compat alias for --watchlist.")
+    p_fwd.add_argument("--driver", default="AI-datacenter value chain",
+                       help="driver label to freeze under (default: 'AI-datacenter value chain'; "
+                            "e.g. 'defense-demand-shift' for theme #2)")
+    p_fwd.add_argument("--watchlist",
+                       help="comma tickers: genuine-exposure re-underwrite cohort (also the "
+                            "exposure-carry cohort); must be ⊆ the committed tier")
+    p_fwd.add_argument("--watchlist-triggers", dest="watchlist_triggers",
+                       help="path to a JSON object {ticker: verbatim trigger} for the watchlist")
+    p_fwd.add_argument("--avoid-controls", dest="avoid_controls",
+                       help="comma tickers: near-miss control cohort; must be ⊆ the PASSED leg")
+    p_fwd.add_argument("--real-tier", dest="real_tier",
+                       help="comma tickers: looser REAL-tier secondary cohort (clearly labeled)")
     p_fwd.set_defaults(func=_cmd_themes_forward)
     return parser
 

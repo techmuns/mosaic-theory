@@ -49,9 +49,9 @@ from vinci.themes.forward import (
 def _rec(ticker: str, disp: Disposition, layer: str = "chips/GPU",
          onset: date | None = None) -> RatificationRecord:
     return RatificationRecord(
-        ticker=ticker, cik="1", driver="AI-DC", chain_layer=layer,
-        machine_grade="committed-capacity",
-        driver_tie="chain-layer-specific", grade_fact="f", source_ref="acc", disposition=disp,
+        ticker=ticker, cik="1", driver="AI-DC", substructure_tag=layer,
+        grade="committed-capacity",
+        driver_tie="driver-specific", grade_fact="f", source_ref="acc", disposition=disp,
         rationale="r", ratification_date=date(2026, 1, 1), comovement_onset_date=onset)
 
 
@@ -237,8 +237,8 @@ def test_schemas_cannot_conclude() -> None:
 def _passed(ticker: str, layer: str) -> RatificationRecord:
     """A PASSED record whose ratification_date IS the freeze date (Component 1: hold-none entry)."""
     return RatificationRecord(
-        ticker=ticker, cik="1", driver="AI-DC", chain_layer=layer,
-        machine_grade="committed-capacity", driver_tie="chain-layer-specific", grade_fact="f",
+        ticker=ticker, cik="1", driver="AI-DC", substructure_tag=layer,
+        grade="committed-capacity", driver_tie="driver-specific", grade_fact="f",
         source_ref="acc", disposition=Disposition.PASSED, rationale="passed",
         ratification_date=date(2026, 7, 2))
 
@@ -356,9 +356,27 @@ def test_records_from_worksheet_reads_demand_shaped_schema(tmp_path: Path) -> No
                                            ratification_date=date(2026, 7, 3))
     assert pending == 0 and {r.ticker for r in recs} == {"RCAT", "NEU"}
     rcat = next(r for r in recs if r.ticker == "RCAT")
-    assert rcat.chain_layer == "attritable-air"        # category -> chain_layer
-    assert rcat.machine_grade == "binding-contract"    # grade_concreteness -> machine_grade
+    assert rcat.substructure_tag == "attritable-air"   # category -> substructure_tag
+    assert rcat.grade == "binding-contract"            # grade_concreteness -> grade
     assert rcat.driver_tie == "driver-specific"         # driver_tie -> driver_tie
+
+
+def test_ratification_record_loads_legacy_and_new_field_names() -> None:
+    """BACK-COMPAT shim: ledgers frozen BEFORE the rename carry chain_layer / machine_grade; new
+    ones carry substructure_tag / grade. The reader accepts EITHER (AliasChoices), so BOTH existing
+    freezes (ai-datacenter + defense, git-ignored on disk) still load without re-freezing — and new
+    writes emit the neutral names."""
+    common = ('"ticker":"RCAT","cik":"1","driver":"defense-demand-shift",'
+              '"driver_tie":"driver-specific","grade_fact":"f","source_ref":"acc",'
+              '"disposition":"passed","rationale":"r","ratification_date":"2026-07-03"')
+    legacy = '{"chain_layer":"attritable-air","machine_grade":"binding-contract",' + common + "}"
+    new = '{"substructure_tag":"attritable-air","grade":"binding-contract",' + common + "}"
+    r_old = RatificationRecord.model_validate_json(legacy)   # pre-rename ledger row
+    r_new = RatificationRecord.model_validate_json(new)      # post-rename ledger row
+    assert r_old.substructure_tag == "attritable-air" == r_new.substructure_tag
+    assert r_old.grade == "binding-contract" == r_new.grade
+    dumped = r_old.model_dump_json()                         # new writes use the NEUTRAL names
+    assert '"substructure_tag"' in dumped and '"chain_layer"' not in dumped
 
 
 def _defense_baskets() -> FrozenBaskets:
@@ -413,3 +431,36 @@ def test_diagnostic_confound_names_the_driver() -> None:
     assert "defense-demand-shift" in d.confound        # driver-labelled, not hardcoded
     assert "AI-datacenter" not in d.confound
     assert "NAIVE-4" in d.detail                       # committed-tier size, not hardcoded 56
+
+
+def test_themes_forward_cli_multi_cohort(tmp_path: Path) -> None:
+    """FIX 2 — the themes-forward CLI freezes a SECOND driver in ONE command (was script-only):
+    --driver + --watchlist / --watchlist-triggers / --avoid-controls / --real-tier all land in the
+    frozen baskets, reading the demand-shaped ('category') worksheet schema."""
+    from vinci.cli import build_parser
+    ws = tmp_path / "ws.csv"
+    ws.write_text(
+        "category,ticker,cik,grade_concreteness,driver_tie,grade_fact,grade_accession,"
+        "DISPOSITION,RATIONALE\n"
+        "attritable-air,RCAT,1,binding-contract,driver-specific,Teal,acc,PASSED,priced\n"
+        "munitions-scale,NEU,2,committed-capacity,driver-specific,AP,acc,PASSED,rich\n"
+        "counter-uas,LASR,3,committed-capacity,indirect,c,acc,PASSED,nearmiss\n"
+        "defense-autonomy,DCO,4,committed-capacity,indirect,d,acc,PASSED,nearmiss\n")
+    trig = tmp_path / "trig.json"
+    trig.write_text('{"NEU": "separation OR a derate toward ~$600"}')
+    ledger, bk = tmp_path / "led.jsonl", tmp_path / "bk.json"
+    args = build_parser().parse_args([
+        "themes-forward", "--worksheet", str(ws), "--ledger", str(ledger), "--baskets-out", str(bk),
+        "--driver", "defense-demand-shift", "--watchlist", "NEU",
+        "--watchlist-triggers", str(trig), "--avoid-controls", "LASR,DCO", "--real-tier", "RCAT"])
+    assert args.func(args) == 0
+    b = FrozenBaskets.model_validate_json(bk.read_text())
+    assert b.driver == "defense-demand-shift"
+    assert b.ratified == () and len(b.passed) == 4       # empty-BUY freezes fine
+    assert b.watchlist == ("NEU",)
+    assert b.watchlist_triggers == {"NEU": "separation OR a derate toward ~$600"}
+    assert b.avoid_controls == ("LASR", "DCO")           # near-miss control cohort
+    assert b.real_tier == ("RCAT",)                       # looser secondary
+    assert set(b.layer_of.values()) == {"attritable-air", "munitions-scale", "counter-uas",
+                                        "defense-autonomy"}  # schema-flex 'category' -> layer_of
+    assert len(load_ledger(ledger)) == 4                 # one command, no bespoke script

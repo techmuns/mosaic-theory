@@ -31,7 +31,7 @@ from enum import StrEnum
 from pathlib import Path
 from typing import Protocol
 
-from pydantic import BaseModel, Field
+from pydantic import AliasChoices, BaseModel, ConfigDict, Field
 
 from vinci.eod.client import EodClient
 
@@ -46,16 +46,21 @@ class Disposition(StrEnum):
     DIG_DEEPER = "dig-deeper"   # temporary — MUST resolve before a basket freezes
 
 
-class RatificationRecord(BaseModel, frozen=True):
+class RatificationRecord(BaseModel):
     """One append-only ledger row (§1). The machine fields are the INPUT the human judged;
     disposition + rationale + ratification_date are the HUMAN's. ``comovement_onset_date`` is logged
-    FORWARD (§5)."""
+    FORWARD (§5). ``substructure_tag`` + ``grade`` are theme-AGNOSTIC (a value-chain layer for a
+    chain driver, a parallel capability category for a demand-shaped one). BACK-COMPAT: the reader
+    ALSO accepts the legacy names ``chain_layer`` / ``machine_grade`` so ledgers frozen before the
+    rename still load without re-freezing; new writes use the neutral names."""
+
+    model_config = ConfigDict(frozen=True, populate_by_name=True)
 
     ticker: str
     cik: str
     driver: str
-    chain_layer: str
-    machine_grade: str
+    substructure_tag: str = Field(validation_alias=AliasChoices("substructure_tag", "chain_layer"))
+    grade: str = Field(validation_alias=AliasChoices("grade", "machine_grade"))
     driver_tie: str
     grade_fact: str
     source_ref: str
@@ -185,13 +190,12 @@ def records_from_worksheet(
                 raise ValueError(f"{row.get('ticker')}: unrecognized DISPOSITION {raw!r}")
             records.append(RatificationRecord(
                 ticker=row["ticker"], cik=row["cik"], driver=driver,
-                # schema-flexible: the AI-datacenter worksheet uses chain_layer / machine_grade /
-                # grade_driver_tie; a demand-shaped worksheet (e.g. defense) uses category /
-                # grade_concreteness / driver_tie for the SAME three fields. ``chain_layer`` holds
-                # the theme's sub-structure tag (a value-chain layer OR a parallel capability
-                # category) — driver-agnostic.
-                chain_layer=row.get("chain_layer") or row.get("category", ""),
-                machine_grade=row.get("machine_grade") or row.get("grade_concreteness", ""),
+                # schema-flexible CSV read: the AI-datacenter worksheet columns are chain_layer /
+                # machine_grade / grade_driver_tie; a demand-shaped worksheet (e.g. defense) uses
+                # category / grade_concreteness / driver_tie for the SAME three fields. These fill
+                # the neutral record fields substructure_tag / grade / driver_tie.
+                substructure_tag=row.get("chain_layer") or row.get("category", ""),
+                grade=row.get("machine_grade") or row.get("grade_concreteness", ""),
                 driver_tie=row.get("grade_driver_tie") or row.get("driver_tie", ""),
                 grade_fact=row.get("grade_fact", ""),
                 source_ref=row.get("grade_accession", ""), disposition=disp,
