@@ -1206,6 +1206,16 @@ def test_point_tier_regex_catches_interposed_negative_ebitda() -> None:
     assert dr._point_tier("revenue grew 20% year over year") != 1.0
 
 
+def test_point_tier_turned_negative_requires_a_solvency_subject() -> None:
+    """(R1 audit) 'turned negative' is Tier-1 ONLY with a solvency/cash SUBJECT — a subject-less
+    'competitor guidance turned negative' no longer false-classifies as solvency. The real cases
+    (EBITDA / cash flow / FCF turned negative) still land Tier 1."""
+    assert dr._point_tier("cash flow turned negative in Q3") == 1.0  # scoped subject
+    assert dr._point_tier("free cash flow turned negative") == 1.0  # via the FCF keyword
+    assert dr._point_tier("EBITDA was strong; competitor guidance turned negative") != 1.0
+    assert dr._point_tier("market sentiment turned negative on the sector") != 1.0
+
+
 def test_self_referential_twin_requires_resolved_period_in_the_name() -> None:
     """(R2) A twin naming the subject itself is suppressed UNLESS the resolved period is in the twin
     NAME ('Microvast (2021–2025 arc)'); a bare self-name ('Microvast Holdings') is suppressed even
@@ -1474,6 +1484,11 @@ def test_ie_builder_triangle_anchors_and_identity() -> None:
         "name NTM TEV/EBITDA", "name NTM TEV/Rev"}
     # anchors 1dp so the NTM anchor prints IDENTICAL to the name-NTM identity row (both $82.6M)
     assert "FY26E $61.4M · FY27E $146.2M · NTM $82.6M" in (ie.anchors.value or "")
+    # (audit) the parallel REVENUE anchors substantiate the TEV/Rev †: the NTM revenue anchor equals
+    # the name-NTM revenue implied level ($494.4M), so the identity is shown, not merely asserted
+    assert ie.rev_anchors is not None
+    assert "FY26E $438.7M · FY27E $587.7M · NTM $494.4M" in (ie.rev_anchors.value or "")
+    assert got["name NTM TEV/Rev"] == 494.4  # == the NTM revenue anchor
     assert ie.vintage_coherent is True and ie.net_debt_reconciled is True
     assert "vintage-coherent" in ie.coherence_note and "%" not in ie.coherence_note
     assert ie.tev_as_of == "2026-06-24" and ie.multiples_as_of == "2026-05-15"
@@ -1536,7 +1551,9 @@ def test_ie_render_table_identity_anchors_and_zero_percent_tokens() -> None:
     block = "\n".join(dr._implied_expectations_lines(v))
     assert dr._TABLE_MARK in block
     assert "$82.6M EBITDA †" in block and "$48.3M EBITDA" in block
-    assert "Consensus path anchors" in block and "FY26E $61.4M" in block
+    assert "Consensus path anchors (EBITDA" in block and "FY26E $61.4M" in block
+    # (audit) the revenue anchors line substantiates the TEV/Rev identity — NTM anchor == the row
+    assert "Consensus path anchors (Revenue" in block and "NTM $494.4M" in block
     assert "TEV as-of 2026-06-24 · multiples as-of 2026-05-15" in block
     # REGRESSION (the audit bug): every table row must have the SAME cell count as the header row —
     # `_table` prepends a blank label column, so a 2-cell row under a 2-col header put the implied

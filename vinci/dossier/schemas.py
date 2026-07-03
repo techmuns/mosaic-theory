@@ -130,7 +130,10 @@ class ImpliedExpectations(BaseModel):
 
     rows: list[ImpliedExpectationRow]
     tev: Sourced[float]  # the derived TEV; source_ref states the simple-TEV formula + inputs' as-of
-    anchors: Sourced[str]  # consensus path anchors (FY26E/FY27E/NTM levels), rendered BESIDE rows
+    anchors: Sourced[str]  # consensus EBITDA path anchors (FY26E/FY27E/NTM), BESIDE the rows
+    # the parallel REVENUE anchors — substantiate the TEV/Rev name-row identity (the NTM revenue
+    # anchor = the name-NTM revenue implied level). Optional so a pre-fix dossier.json validates.
+    rev_anchors: Sourced[str] | None = None
     heterogeneity_gate: str  # the peer-comparability gate, VERBATIM (rendered on the header)
     tev_as_of: str  # the Financial-Data as-of the TEV inputs carry
     multiples_as_of: str  # the multiples-sheet as-of

@@ -475,6 +475,10 @@ def _implied_expectations_lines(v: Any) -> list[str]:
     out.append(
         "- **Consensus path anchors (EBITDA — juxtapose, do NOT difference):** "
         f"{ie.anchors.value}")
+    if ie.rev_anchors is not None:  # the parallel revenue anchors substantiate the TEV/Rev identity
+        out.append(
+            "- **Consensus path anchors (Revenue — juxtapose, do NOT difference):** "
+            f"{ie.rev_anchors.value}")
     out.append(f"  - _{'⚠ ' if not ie.vintage_coherent else ''}{ie.coherence_note}_")
     if not ie.net_debt_reconciled:
         out.append("  - _⚠ net-debt disagrees with the cash/debt bridge — see the TEV source_")
@@ -721,7 +725,9 @@ _TIER_KEYWORDS: tuple[tuple[float, tuple[str, ...]], ...] = (
            "cash burn", "cash-negative", "interest coverage", "maturity", "wall", "covenant",
            "refinanc", "liquidity", "going concern", "solven", "net-debt", "net debt", "total-debt",
            "total debt", "debt/ebitda", "adjusted ebitda negative", "adjusted ebitda was negative",
-           "turned negative", "ebitda was negative")),
+           # (R1 audit) the bare "turned negative" keyword was REMOVED — it matched a subject-less
+           # "competitor guidance turned negative"; the SCOPED _TIER_REGEX carries the real cases.
+           "ebitda was negative")),
     (2.0, ("revenue", "top-line", "topline", "volume", "shipment", "bookings", "backlog", "orders",
            "guide", "guidance", "deteriorat", "growth")),
     (3.0, ("margin", "gross profit", "operating leverage", "opex", "cost structure", "profitab",
@@ -755,8 +761,14 @@ def _strip_concession(claim: str) -> str:
 # words. Face-validity only (like the keyword map); checked BEFORE the keywords, highest-tier-first.
 _TIER_REGEX: tuple[tuple[float, re.Pattern[str]], ...] = (
     (1.0, re.compile(
+        # (adjusted) EBITDA ... negative — interposition-tolerant primary case (pins the R1 test)
         r"\b(?:adjusted\s+)?ebitda\b(?:\s+\w+){0,3}\s+negative\b"
-        r"|\bturned\s+negative\b|\bcash-negative\b", re.IGNORECASE)),
+        # "... turned negative" ONLY when the SUBJECT is a solvency/cash line (EBITDA above already
+        # covers "EBITDA turned negative"); a subject-less "competitor guidance turned negative" no
+        # longer false-matches tier-1. (R1 audit fix.)
+        r"|\b(?:cash[\s-]*flow|fcf|free\s+cash\s+flow|operating\s+(?:income|cash\s*flow)|ocf)\b"
+        r"(?:\s+\w+){0,3}\s+turned\s+negative\b"
+        r"|\bcash-negative\b", re.IGNORECASE)),
 )
 
 

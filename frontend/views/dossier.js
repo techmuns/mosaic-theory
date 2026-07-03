@@ -451,8 +451,11 @@ function impliedExpectations(ie) {
     <div class="muted" style="font-size:11px;">TEV as-of ${escapeHtml(ie.tev_as_of || "")} · multiples as-of ${escapeHtml(ie.multiples_as_of || "")}</div></div></div>`;
   const table = dataTable("Implied metric levels · fixed multiple set", ie.tev && ie.tev.source_ref,
     ["Multiple (× used)", "Implied level"], rows, "");
+  // the parallel REVENUE anchors substantiate the TEV/Rev name-row identity (†); only when present.
+  const revAnchors = (ie.rev_anchors && ie.rev_anchors.value)
+    ? `<div style="margin-top:4px;"><b>Consensus path anchors (Revenue — juxtapose, do NOT difference):</b> ${escapeHtml(ie.rev_anchors.value)}</div>` : "";
   const anchors = `<div class="fact"><div class="fact-label">Consensus path anchors (EBITDA — juxtapose, do NOT difference)</div>
-    <div style="min-width:0;">${escapeHtml((ie.anchors && ie.anchors.value) || "")}
+    <div style="min-width:0;">${escapeHtml((ie.anchors && ie.anchors.value) || "")}${revAnchors}
     <div class="muted" style="font-size:11px; margin-top:4px;">${ie.vintage_coherent ? "" : "⚠ "}${escapeHtml(ie.coherence_note || "")}</div>
     ${ie.net_debt_reconciled ? "" : `<div class="muted" style="font-size:11px;">⚠ net-debt input disagrees with the cash/debt bridge — see the TEV source</div>`}
     <div class="muted" style="font-size:11px;">Fixed multiple set (declared in code, no per-name curation): name NTM + peer-median NTM/LTM, on TEV/EBITDA and TEV/Rev.</div></div></div>`;
