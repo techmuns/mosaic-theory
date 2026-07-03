@@ -1472,7 +1472,8 @@ def test_ie_builder_triangle_anchors_and_identity() -> None:
     assert got["peer-median LTM TEV/Rev"] == 194.7
     assert {r.label for r in ie.rows if r.is_identity} == {
         "name NTM TEV/EBITDA", "name NTM TEV/Rev"}
-    assert "FY26E $61M · FY27E $146M · NTM $83M" in (ie.anchors.value or "")  # NTM ≈ 82.6 identity
+    # anchors 1dp so the NTM anchor prints IDENTICAL to the name-NTM identity row (both $82.6M)
+    assert "FY26E $61.4M · FY27E $146.2M · NTM $82.6M" in (ie.anchors.value or "")
     assert ie.vintage_coherent is True and ie.net_debt_reconciled is True
     assert "vintage-coherent" in ie.coherence_note and "%" not in ie.coherence_note
     assert ie.tev_as_of == "2026-06-24" and ie.multiples_as_of == "2026-05-15"
@@ -1535,8 +1536,15 @@ def test_ie_render_table_identity_anchors_and_zero_percent_tokens() -> None:
     block = "\n".join(dr._implied_expectations_lines(v))
     assert dr._TABLE_MARK in block
     assert "$82.6M EBITDA †" in block and "$48.3M EBITDA" in block
-    assert "Consensus path anchors" in block and "FY26E $61M" in block
+    assert "Consensus path anchors" in block and "FY26E $61.4M" in block
     assert "TEV as-of 2026-06-24 · multiples as-of 2026-05-15" in block
+    # REGRESSION (the audit bug): every table row must have the SAME cell count as the header row —
+    # `_table` prepends a blank label column, so a 2-cell row under a 2-col header put the implied
+    # level under the WRONG header. Header cells == data cells for every '|' row.
+    table_rows = [ln for ln in block.splitlines() if ln.startswith("|") and "---" not in ln]
+    counts = {ln.count("|") for ln in table_rows}
+    assert len(counts) == 1, f"table column mismatch — cell counts differ across rows: {counts}"
+    assert "| **name NTM TEV/EBITDA** | **7.54x** | **$82.6M EBITDA †** |" in block  # 3 cells
     body = block.replace(ie.heterogeneity_gate, "<GATE>")  # gate is verbatim, excluded from fence
     assert "%" not in body
     assert not re.search(r"\bupside\b|\bdiscount\b|\bimplied price\b|\bequity value\b|\bgap\b",

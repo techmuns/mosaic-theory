@@ -427,12 +427,17 @@ function flagsSection(caveats) {
 // differenced (no %, gap, upside, or implied price/equity). "" for a pre-G dossier.json.
 function impliedExpectations(ie) {
   if (!ie) return "";
+  // label (the multiple's name) + one cell PER column: dataTable prepends a blank <th> for the
+  // label, so cells.length must equal cols.length (here 2: multiple, implied level).
   const rows = (ie.rows || []).map((r) => ({
-    label: `${r.label} — ${r.multiple != null ? Number(r.multiple) + "×" : "NM"}`,
+    label: r.label,
     cls: r.is_identity ? "name" : "",
-    cells: [r.implied_level != null
-      ? `$${Number(r.implied_level).toFixed(1)}M ${r.metric}${r.is_identity ? " †" : ""}`
-      : `UNKNOWN — ${r.note || ""}`],
+    cells: [
+      r.multiple != null ? Number(r.multiple) + "×" : "NM",
+      r.implied_level != null
+        ? `$${Number(r.implied_level).toFixed(1)}M ${r.metric}${r.is_identity ? " †" : ""}`
+        : `UNKNOWN — ${r.note || ""}`,
+    ],
   }));
   const intro = `<div class="fact"><div class="fact-label">Implied expectations (price-inverted · multiples-space)</div>
     <div style="min-width:0;"><div class="muted" style="font-size:12px;">${escapeHtml(ie.heterogeneity_gate || "")}</div>

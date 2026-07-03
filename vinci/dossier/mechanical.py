@@ -1344,19 +1344,21 @@ def _implied_expectations(
     # (acceleration_read) — that direct value is the independent probe the G5 guard checks against.
     def _anchor(period: str) -> float | None:
         mo = _ie_ladder(cna, period, "TEV/EBITDA")
-        return round(tev / mo, 0) if (mo and mo > 0) else None
+        return (tev / mo) if (mo and mo > 0) else None  # UNROUNDED; 1dp only at display
 
+    # anchors are UNROUNDED here (rounded to 1dp only at display) so the NTM anchor prints the SAME
+    # to the name-NTM identity row (both are TEV ÷ 7.54 = 82.6) — same number, one precision.
     a26, a27, antm = _anchor("FY 2026"), _anchor("FY 2027"), _anchor("NTM")
     anchors_txt = " · ".join(
-        f"{lab} {(f'${v:.0f}M') if v is not None else 'n/a'}"
+        f"{lab} {(f'${v:.1f}M') if v is not None else 'n/a'}"
         for lab, v in (("FY26E", a26), ("FY27E", a27), ("NTM", antm)))
     anchors = Sourced.present(
         anchors_txt + " (consensus EBITDA = TEV ÷ forward ladder; NTM = the name-NTM identity)",
         source_ref=cna_src)
 
-    # (G5) vintage-coherence: derived FY26 (TEV ÷ FY26 forward multiple) vs the DIRECT FY26 EBITDA
-    # consensus (acceleration_read). NTM consensus is not a sourced level, so FY26 — the nearest
-    # direct consensus — the probe; the shared-TEV ladder makes FY26-coherence certify all horizons.
+    # (G5) vintage-coherence: derived FY26 (TEV ÷ FY26 forward multiple, UNROUNDED) vs the DIRECT
+    # FY26 EBITDA consensus (acceleration_read). NTM consensus is not a sourced level, so FY26 — the
+    # nearest direct consensus — is the probe; the shared-TEV ladder certifies all horizons.
     direct26 = _ie_consensus_latest(catalyst.acceleration_read.value, "FY 2026", "EBITDA")
     coherent, pct = True, 0.0
     if direct26 and direct26 > 0 and a26 is not None:
@@ -1366,10 +1368,10 @@ def _implied_expectations(
     # tokens (the value-space fence: nothing here is differenced into a percentage gap).
     if direct26 and a26 is not None:
         coherence_note = (
-            f"vintage-coherent: derived FY26 ${a26:.0f}M vs direct consensus ${direct26:.1f}M "
+            f"vintage-coherent: derived FY26 ${a26:.1f}M vs direct consensus ${direct26:.1f}M "
             f"(residual {pct:.3f} ≤ {_IE_TOL:.2f} tolerance)" if coherent else
             f"multiple-pricing vintage differs from TEV as-of — re-pull comps (derived FY26 "
-            f"${a26:.0f}M vs direct ${direct26:.1f}M, residual {pct:.3f} > {_IE_TOL:.2f})")
+            f"${a26:.1f}M vs direct ${direct26:.1f}M, residual {pct:.3f} > {_IE_TOL:.2f})")
     else:
         coherence_note = "vintage-coherence UNKNOWN — no direct FY26 EBITDA consensus to probe"
 

@@ -1361,13 +1361,18 @@ Each line: *what it does* — *verified how*.
       condition-b net-debt gate (net_debt vs the cash/debt bridge, C3 soft-caveat).
     *Verified on the REAL MVST export (values reproduced by synthetic fixtures — no artifact read):
     TEV $623.0M; the EBITDA triangle **identity $82.6M / peer-NTM $48.3M / peer-LTM $43.0M** (the
-    identity ≈ the NTM anchor by construction), the TEV/Rev trio $494.4M/$244.3M/$194.7M; consensus
-    anchors **FY26 $61M / FY27 $146M / NTM $83M**; vintage-coherent (residual 0.018 ≤ 0.10) and
-    net-debt reconciled (bridge 326.0 − 126.1 = 199.9). Frontend confirmed by a real preview render
-    (block in Valuation, order correct, zero % in the block; injected artifact reverted, no artifact
-    commit). +9 tests (parsers, triangle, both coherence branches, net-debt caveat, NM/negative
-    guard, block-scoped fence, G4 trace-coverage, back-compat) + the no-conclusion walk extended to
-    the two G models. ruff + mypy --strict (69) + `pytest -m "not network"` green. On a branch → PR;
+    identity = the NTM anchor EXACTLY by construction), the TEV/Rev trio $494.4M/$244.3M/$194.7M;
+    consensus anchors **FY26 $61.4M / FY27 $146.2M / NTM $82.6M** (1dp so the NTM anchor prints the
+    SAME as the identity row); vintage-coherent (residual 0.011 ≤ 0.10, on the UNROUNDED derived FY26)
+    and net-debt reconciled (bridge 326.0 − 126.1 = 199.9). Frontend confirmed by a real preview
+    render (block in Valuation, order correct, zero % in the block; injected artifact reverted, no
+    artifact commit). +9 tests (parsers, triangle, both coherence branches, net-debt caveat,
+    NM/negative guard, block-scoped fence, G4 trace-coverage, back-compat, + a table-column-alignment
+    regression) + the no-conclusion walk extended to the two G models. **Post-audit fix (self-audit
+    #64): the implied-metric table had 2 data cells under a 3-column header — every implied level
+    rendered under the WRONG "Multiple" header; split into label · multiple · level (Python + JS),
+    pinned by a column-count regression test.** ruff + mypy --strict (69) + `pytest -m "not network"`
+    green. On a branch → PR;
     NOT merged (awaiting review). **Reader-feedback point 2 (implied expectations / reverse-DCF)
     closes: perpetuity REFUTED as a method → the forward-multiple ladder (catalyst_path) + the CIQ
     implied-valuation (B3) + THIS price-inverted block are the standard — all POSED, none concluding

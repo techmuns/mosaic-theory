@@ -459,13 +459,15 @@ def _implied_expectations_lines(v: Any) -> list[str]:
         "residual; identity (†): at the name's own multiple the implied level IS consensus._",
         f"  - _TEV as-of {ie.tev_as_of} · multiples as-of {ie.multiples_as_of}_",
     ]
+    # rows carry the row-LABEL (the multiple's name) + one cell PER column — `_table` prepends a
+    # blank header for the label, so each row must have len(cols)+1 cells: [label, multiple, level].
     rows: list[list[str]] = []
     for r in ie.rows:
         mult = f"{r.multiple:g}x" if r.multiple is not None else "NM"
         level = (
             f"${r.implied_level:,.1f}M {r.metric}" + (" †" if r.is_identity else "")
             if r.implied_level is not None else f"UNKNOWN — {r.note}")
-        rows.append([f"{r.label} — {mult}", level])
+        rows.append([r.label, mult, level])
     name_rows = frozenset(i for i, r in enumerate(ie.rows) if r.is_identity)
     out += _table(
         "Implied metric levels · fixed multiple set", ie.tev.source_ref,
