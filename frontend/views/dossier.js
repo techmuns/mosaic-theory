@@ -109,6 +109,10 @@ function fact(label, s, fmt, { hi = false } = {}) {
 
 const sec = (title, sub, inner) => `<div class="card ds-section"><div class="ds-title">${escapeHtml(title)}</div>${sub ? `<div class="subtitle muted ds-sub">${escapeHtml(sub)}</div>` : ""}${inner}</div>`;
 const mult = (v) => escapeHtml(Number(v).toFixed(1)) + "&times;";
+// (H3) the comparability gate renders VERBATIM once (Peer comps head); the G + Implied-Valuation
+// headers cite it SHORT rather than repeating the full text. A non-heterogeneous gate stays verbatim.
+const gateShortref = (gate) => (gate || "").includes("HETEROGENEOUS")
+  ? "comparability: HETEROGENEOUS (see Peer comps gate)" : (gate || "");
 const pctile = (v) => escapeHtml((Number(v) * 100).toFixed(0)) + "<span class='muted'>th %ile vs ~5y</span>";
 const ret = (v) => fmtPct(v, { signed: true });
 const signWord = (v) => (v > 0 ? "positive" : v < 0 ? "negative" : "breakeven");
@@ -478,7 +482,7 @@ function impliedExpectations(ie) {
     ],
   }));
   const intro = `<div class="fact"><div class="fact-label">Implied expectations (price-inverted · multiples-space)</div>
-    <div style="min-width:0;"><div class="muted" style="font-size:12px;">${escapeHtml(ie.heterogeneity_gate || "")}</div>
+    <div style="min-width:0;"><div class="muted" style="font-size:12px;">${escapeHtml(gateShortref(ie.heterogeneity_gate || ""))}</div>
     <div class="muted" style="font-size:11px; margin-top:4px;">price-implied fundamental levels at stated multiples — the human judges earned vs residual; identity (†): at the name's own multiple the implied level IS consensus.</div>
     <div class="muted" style="font-size:11px;">TEV as-of ${escapeHtml(ie.tev_as_of || "")} · multiples as-of ${escapeHtml(ie.multiples_as_of || "")}</div></div></div>`;
   const table = dataTable("Implied metric levels · fixed multiple set", ie.tev && ie.tev.source_ref,
@@ -742,7 +746,7 @@ function impliedBlock(iv) {
       ["Low", "Median", "Mean", "High"], rows, "");
   }
   return sec("Implied valuation — CIQ-computed at peer multiples, POSED not concluded",
-    (gate ? gate + " — " : "") + "composition first: the human judges earned vs residual (no machine upside).",
+    (gate ? gateShortref(gate) + " — " : "") + "composition first: the human judges earned vs residual (no machine upside).",
     fact("Name market cap ($M) — the ADJACENT fact to compare against", iv.market_cap) +
     fact("Bridge (TEV → equity)", iv.bridge) +
     table);

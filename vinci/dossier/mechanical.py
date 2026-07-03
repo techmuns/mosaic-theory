@@ -698,17 +698,6 @@ def _valuation(
     )
 
 
-def _nearest_maturity(liquidity: Sourced[str]) -> str:
-    """The nearest refinancing wall — the earliest 'Due YYYY' in the instrument table, or fail-loud
-    UNKNOWN (itself a solvency-visibility risk per the synthesis's opacity-as-signal rule)."""
-    if liquidity.status is not SourceStatus.PRESENT or not liquidity.value:
-        return "nearest refinancing wall UNKNOWN (no instrument table — a risk)"
-    years = sorted(int(y) for y in re.findall(r"Due\s+(\d{4})(?!\d)", liquidity.value))
-    if not years:
-        return "nearest refinancing wall UNKNOWN (no maturity dates parsed — a risk)"
-    return f"nearest maturity wall: {years[0]}"
-
-
 def _net_debt_to_ebitda(
     bundle: CiqBundle, edgar_net_lev: Sourced[float]
 ) -> tuple[Sourced[float], Sourced[float]]:
@@ -782,12 +771,13 @@ def _net_debt_to_ocf(
 
 def _survival_capacity(
     net_lev: Sourced[float], adj_lev: Sourced[str], fcf_sign: Sourced[float],
-    liquidity: Sourced[str], *, net_debt: Sourced[float] | None = None,
+    *, net_debt: Sourced[float] | None = None,
 ) -> Sourced[str]:
-    """Solvency as ONE block — net leverage + self-funding (FCF sign) + nearest refinancing wall —
-    so survival can't be read as one quality metric among many. Each leg is present or fail-loud
-    UNKNOWN (itself a risk). ``net_debt`` (CIQ, $M) lets a non-formable ratio still report the known
-    balance-sheet position — a net-cash name is not a 'solvency risk'. No new data source."""
+    """Solvency as ONE block — net leverage + self-funding (FCF sign). Each leg is present or
+    fail-loud UNKNOWN (itself a risk). ``net_debt`` (CIQ, $M) lets a non-formable ratio still report
+    the known balance-sheet position — a net-cash name is not a 'solvency risk'. No new data source.
+    (H3) The nearest-maturity year is retired here — the month-precision E2 maturity wall (rendered
+    in the survival super-section) supersedes the coarse 'nearest maturity wall: YYYY' line."""
     present = SourceStatus.PRESENT
     parts: list[str] = []
     if net_lev.status is present and net_lev.value is not None:
@@ -815,11 +805,10 @@ def _survival_capacity(
         )
     else:
         parts.append("FCF sign UNKNOWN — runway not assessable (a risk)")
-    parts.append(_nearest_maturity(liquidity))
     return Sourced.present(
         " | ".join(parts),
         source_ref="CIQ Net Debt ÷ CIQ LTM EBITDA (EDGAR XBRL breadth fallback) + FCF sign "
-        "+ CIQ Capital Structure (survival capacity)",
+        "(survival capacity)",
     )
 
 
@@ -855,7 +844,7 @@ def _quality(
         net_debt_to_ocf=net_ocf,
         net_debt_to_ebitda_adjusted=adj_leverage,
         survival_capacity=_survival_capacity(
-            net_lev, adj_leverage, fcf_sign, liquidity, net_debt=ciq_nd
+            net_lev, adj_leverage, fcf_sign, net_debt=ciq_nd
         ),
         interest_coverage=ciq_sheets.interest_coverage(bundle),
         share_count_trend=(

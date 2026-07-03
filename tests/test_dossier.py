@@ -715,23 +715,21 @@ def test_synthesis_contract_requires_balance_and_treats_opacity_as_risk() -> Non
     assert not any(tok in "evidence_balance" for tok in _FORBIDDEN)  # not a verdict-shaped field
 
 
-def test_survival_capacity_blocks_leverage_with_runway_and_wall() -> None:
-    """Mechanism A.3: leverage is promoted to a SURVIVAL block — net-debt/EBITDA + self-funding +
-    nearest refinancing wall in one field; a missing leg fails loud as a risk."""
+def test_survival_capacity_blocks_leverage_with_runway() -> None:
+    """Mechanism A.3: leverage is promoted to a SURVIVAL block — net-debt/EBITDA + self-funding in
+    one field; a missing leg fails loud as a risk. (H3) The coarse 'nearest maturity wall' line
+    is retired — the month-precision E2 wall supersedes it in the survival super-section."""
     present, unknown = ds.Sourced.present, ds.Sourced.unknown
     sc = dm._survival_capacity(
         present(2.9, source_ref="EDGAR"), present("~2.6x fwd-adj", source_ref="99.1"),
         present(1.0, source_ref="EDGAR"),  # FCF sign +1 → self-funding
-        present("2021 Term Loan Due 2028 (Term Loans) 687 @ 5.7%", source_ref="CIQ"),
     )
     v = sc.value or ""
     assert "net-debt/EBITDA 2.9x" in v and "self-funding" in v
-    assert "nearest maturity wall: 2028" in v
+    assert "nearest maturity wall" not in v  # (H3) retired
     # a missing leg fails loud as a risk, never silently dropped
     risky = dm._survival_capacity(
-        unknown(note="no debt/cash"), unknown(note="no guide"), unknown(note="no FCF"),
-        unknown(note="no instruments"),
-    )
+        unknown(note="no debt/cash"), unknown(note="no guide"), unknown(note="no FCF"))
     rv = risky.value or ""
     assert "UNKNOWN" in rv and "risk" in rv
 
@@ -779,13 +777,12 @@ def test_survival_capacity_ciq_basis_and_net_cash_readout() -> None:
     present, unknown = ds.Sourced.present, ds.Sourced.unknown
     sc = dm._survival_capacity(
         present(3.9, source_ref="CIQ Net Debt $200M ÷ CIQ LTM EBITDA $52M"),
-        unknown(note="no guide"), present(1.0, source_ref="EDGAR"), unknown(note="no instruments"),
+        unknown(note="no guide"), present(1.0, source_ref="EDGAR"),
     )
     assert "net-debt/EBITDA 3.9x (CIQ)" in (sc.value or "")
     sc2 = dm._survival_capacity(
         unknown(note="no EBITDA in XBRL"), unknown(note="no guide"),
-        present(1.0, source_ref="EDGAR"), unknown(note="no instruments"),
-        net_debt=present(200.0, source_ref="CIQ BS"),
+        present(1.0, source_ref="EDGAR"), net_debt=present(200.0, source_ref="CIQ BS"),
     )
     v2 = sc2.value or ""
     assert "net debt $200M (CIQ)" in v2 and "N/A" in v2 and "solvency risk" not in v2
@@ -918,9 +915,9 @@ def _est_bundle(sheets: _Sheets) -> ciq.CiqBundle:
 
 
 def test_liquidity_flags_surface_maturity_wall() -> None:
-    """'Maturity' is located by HEADER LABEL (not a fixed index) and surfaced as 'Due YYYY' so
-    _nearest_maturity reports the nearest wall; a mis-parsed garbage cell can't fabricate an
-    implausible 'Due 1900' (year window). Serials: 46170 = 2026-05-28, 46418 = 2027-01-31."""
+    """'Maturity' is located by HEADER LABEL (not a fixed index) and surfaced as 'Due YYYY'; a
+    mis-parsed garbage cell can't fabricate an implausible 'Due 1900' (year window). Serials:
+    46170 = 2026-05-28, 46418 = 2027-01-31."""
     # 'Maturity' deliberately at index 6 (not 5) — proves the header-label lookup, not a fixed col.
     rows = [
         ["Description", "Type", "Principal", "Coupon", "Float", "Currency", "Maturity"],
@@ -933,7 +930,6 @@ def test_liquidity_flags_surface_maturity_wall() -> None:
     )
     assert "Due 2026" in (liq.value or "") and "Due 2027" in (liq.value or "")
     assert "Due 1900" not in (liq.value or "")  # the year window rejects the garbage serial
-    assert dm._nearest_maturity(liq) == "nearest maturity wall: 2026"
 
 
 def test_liquidity_flags_maturity_date_string() -> None:
@@ -1715,6 +1711,34 @@ def test_ie_net_debt_gate_soft_caveats_when_bridge_disagrees() -> None:
         *_ie_inputs(bridge="TEV→equity bridge: + cash $126.10M, − total debt $500.00M"))
     assert ie is not None and ie.net_debt_reconciled is False
     assert "⚠" in (ie.tev.source_ref or "") and "reconcile" in (ie.tev.source_ref or "")
+
+
+def test_h3_gate_shortref_and_dedupe_unknown_reasons() -> None:
+    """(H3) The gate is cited SHORT away from the Peer-comps head (verbatim only there);
+    and repeated UNKNOWN fact reasons fold to ONE line with the affected-fields list (no fact
+    suppressed). Pins the 99.1-shaped case (3 fields, one reason → 1 line)."""
+    assert (dr._gate_shortref("caps span 8063x → HETEROGENEOUS — low comp")
+            == "comparability: HETEROGENEOUS (see Peer comps gate)")
+    assert dr._gate_shortref("homogeneous peer set") == "homogeneous peer set"  # short → verbatim
+    # the G header cites the gate SHORT, never repeating the verbatim gate text
+    ie = dm._implied_expectations(*_ie_inputs())
+    v = _minimal_mech().valuation.model_copy(update={"implied_expectations": ie})
+    g_block = "\n".join(dr._implied_expectations_lines(v))
+    assert "comparability: HETEROGENEOUS (see Peer comps gate)" in g_block
+    assert "market caps span" not in g_block  # the verbatim gate is NOT repeated at the G header
+    # dedupe: 3 fields sharing one reason → a single line naming all three; a lone reason untouched
+    lines = [
+        "- **Net debt / EBITDA (fwd-adj):** _UNKNOWN_ — adjusted figure not in the 99.1 guidance",
+        "- **EV/EBITDA (adjusted, forward):** _UNKNOWN_ — adjusted figure not in the 99.1 guidance",
+        "- **Adjusted EPS:** _UNKNOWN_ — adjusted figure not in the 99.1 guidance",
+        "- **Solo:** _UNKNOWN_ — a unique reason (kept)",
+    ]
+    out = dr._dedupe_unknown_reasons(list(lines))
+    folded = [ln for ln in out if "not in the 99.1 guidance" in ln]
+    assert len(folded) == 1  # 3 renders → 1
+    assert "Net debt / EBITDA (fwd-adj) · EV/EBITDA (adjusted, forward) · Adjusted EPS" in folded[0]
+    assert any("Solo" in ln for ln in out)  # a non-repeated reason is left alone
+    assert len(out) == 2  # the two duplicate lines removed
 
 
 def test_ie_nm_or_negative_multiple_renders_unknown_not_a_synthetic_level() -> None:

@@ -70,6 +70,31 @@ def _fact(label: str, s: Sourced[Any], fmt: Callable[[Any], str] = str) -> str:
     return f"- **{label}:** _{s.status.value.upper()}_ — {s.note}"
 
 
+# (H3) an inline UNKNOWN/MISSING fact line — the only render shape the reason-dedup collapses.
+_UNKNOWN_FACT = re.compile(r"^- \*\*(.+?):\*\* _(UNKNOWN|MISSING)_ — (.+)$")
+
+
+def _dedupe_unknown_reasons(lines: list[str]) -> list[str]:
+    """(H3) Collapse repeated identical UNKNOWN/MISSING fact REASONS: the same note carried by ≥2
+    fields renders ONCE, at the first occurrence, with the affected-fields list (e.g. the three
+    'adjusted figure not in the 99.1 revised guidance' fields → one line). No fact is suppressed —
+    every affected field stays named in the list; only the duplicated reason text is folded. Matches
+    only inline `_fact` UNKNOWN lines (tables / synthesis points / caveats never match)."""
+    groups: dict[tuple[str, str], list[int]] = {}
+    for i, ln in enumerate(lines):
+        m = _UNKNOWN_FACT.match(ln)
+        if m:
+            groups.setdefault((m.group(2), m.group(3)), []).append(i)
+    drop: set[int] = set()
+    for (status, reason), idxs in groups.items():
+        if len(idxs) < 2:
+            continue
+        labels = [m.group(1) for i in idxs if (m := _UNKNOWN_FACT.match(lines[i]))]
+        lines[idxs[0]] = f"- **{' · '.join(labels)}:** _{status}_ — {reason}"
+        drop.update(idxs[1:])
+    return [ln for i, ln in enumerate(lines) if i not in drop]
+
+
 def _body(value: str) -> str:
     """Strip the trailing '  [as-of …]' / '  [data ≥ …]' suffix an extractor appends — the as-of is
     shown once on the section header, not repeated on every curated line."""
@@ -509,17 +534,26 @@ def _peer_grid_or_deltas(pc: Any) -> list[str]:
     return [_fact("Fundamental deltas (earned-vs-residual inputs)", pc.fundamental_deltas)]
 
 
+def _gate_shortref(gate: str) -> str:
+    """(H3) The comparability gate is rendered VERBATIM once — at the Peer comps head. The G and
+    Implied-Valuation headers cite it SHORT ('comparability: HETEROGENEOUS (see Peer comps gate)')
+    rather than repeat the full text. A non-heterogeneous gate is already short — kept verbatim."""
+    return ("comparability: HETEROGENEOUS (see Peer comps gate)"
+            if "HETEROGENEOUS" in (gate or "") else (gate or ""))
+
+
 def _implied_expectations_lines(v: Any) -> list[str]:
     """(G) Price-inverted expectations, MULTIPLES-space. Shared table: each stated multiple → the
     fundamental LEVEL price implies (TEV ÷ multiple); the consensus path anchors are juxtaposed
     BESIDE — never differenced (no %, gap, upside, or implied price/equity). The heterogeneity gate
-    rides the header VERBATIM; both pricing as-ofs are stamped; a vintage-mismatch caveat renders
-    when the TEV / multiples pricing-vintages diverge (G5). Nothing for a pre-G dossier.json."""
+    is cited SHORT on the header (verbatim once, at Peer comps — H3); both pricing as-ofs are
+    stamped; a vintage-mismatch caveat renders when the pricing-vintages diverge (G5)."""
     ie = getattr(v, "implied_expectations", None)
     if ie is None:
         return []
     out = [
-        f"- **Implied expectations (price-inverted · multiples-space)** — {ie.heterogeneity_gate}",
+        f"- **Implied expectations (price-inverted · multiples-space)** — "
+        f"{_gate_shortref(ie.heterogeneity_gate)}",
         "  - _price-implied fundamental levels at stated multiples — the human judges earned vs "
         "residual; identity (†): at the name's own multiple the implied level IS consensus._",
         f"  - _TEV as-of {ie.tev_as_of} · multiples as-of {ie.multiples_as_of}_",
@@ -562,7 +596,7 @@ def _implied_lines(iv: Any) -> list[str]:
     gate = g.value if g.status is SourceStatus.PRESENT else ""
     out = [
         "### Implied valuation (CIQ-computed at peer multiples — POSED, not concluded)",
-        f"> **Comparability gate:** {gate}" if gate else "",
+        f"> **Comparability gate:** {_gate_shortref(gate)}" if gate else "",  # (H3) short-ref
         "> _Composition first — the human judges earned vs residual (not a machine upside)._",
         _fact("Name market cap ($M) — the ADJACENT fact to compare against", iv.market_cap),
         _fact("Bridge (TEV → equity)", iv.bridge),
@@ -1040,4 +1074,4 @@ def render_markdown(d: Dossier, *, dev: bool = False) -> str:
         "> **No BUY/AVOID here — this dossier only assembles and cites.** The verdict is the "
         "human's, logged separately via the ledger with a frozen entry price.",
     ]
-    return "\n".join(out)
+    return "\n".join(_dedupe_unknown_reasons(out))  # (H3) fold repeated UNKNOWN reasons
