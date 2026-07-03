@@ -1265,7 +1265,8 @@ def _covenant_pointers(
             if h.accession in seen:
                 continue
             exs = [n for n in _exhibit_names(http, cik, h.accession)
-                   if _AGREEMENT_EXHIBIT_RE.search(n) and n.lower().endswith((".htm", ".txt"))]
+                   if _AGREEMENT_EXHIBIT_RE.search(n)
+                   and n.lower().endswith((".htm", ".html", ".txt"))]  # .html: some filers use it
             if not exs:  # a mention-only 8-K (no agreement exhibit) is NOT a pointer
                 continue
             seen.add(h.accession)

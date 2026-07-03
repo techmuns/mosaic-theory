@@ -70,15 +70,29 @@ def _fact(label: str, s: Sourced[Any], fmt: Callable[[Any], str] = str) -> str:
     return f"- **{label}:** _{s.status.value.upper()}_ — {s.note}"
 
 
+def _sourced_str(s: Sourced[Any]) -> str:
+    """(audit) A ``Sourced[str]`` as inline text: the value when PRESENT, else its note — NEVER the
+    bare word 'None' (which a raw ``{s.value}`` prints when the fact is UNKNOWN)."""
+    if s.status is SourceStatus.PRESENT and s.value is not None:
+        return str(s.value)
+    return s.note or "n/a"
+
+
 # (H3) an inline UNKNOWN/MISSING fact line — the only render shape the reason-dedup collapses.
 _UNKNOWN_FACT = re.compile(r"^- \*\*(.+?):\*\* _(UNKNOWN|MISSING)_ — (.+)$")
+# (audit) fold only DISTINCTIVE reasons. The fold is cross-section by design (the 99.1 case spans
+# Leverage + Valuation), so a SHORT generic note ("no XBRL", "no positive EPS/price") shared by two
+# UNRELATED fields would relocate one under the other's section. A long exact-match reason is
+# effectively unique to its root cause, so it folds; terse notes render in place, as before.
+_DEDUPE_MIN_REASON_LEN = 30
 
 
 def _dedupe_unknown_reasons(lines: list[str]) -> list[str]:
-    """(H3) Collapse repeated identical UNKNOWN/MISSING fact REASONS: the same note carried by ≥2
-    fields renders ONCE, at the first occurrence, with the affected-fields list (e.g. the three
-    'adjusted figure not in the 99.1 revised guidance' fields → one line). No fact is suppressed —
-    every affected field stays named in the list; only the duplicated reason text is folded. Matches
+    """(H3) Collapse repeated identical UNKNOWN/MISSING fact REASONS: the same DISTINCTIVE note
+    (≥ ``_DEDUPE_MIN_REASON_LEN`` chars) carried by ≥2 fields renders ONCE, at the first occurrence,
+    with the affected-fields list (e.g. the three 'adjusted figure not in the 99.1 revised guidance'
+    fields → one line). No fact is suppressed — every affected field stays named. A short/generic
+    reason is left in place (a coincidental cross-section collision must not move a fact). Matches
     only inline `_fact` UNKNOWN lines (tables / synthesis points / caveats never match)."""
     groups: dict[tuple[str, str], list[int]] = {}
     for i, ln in enumerate(lines):
@@ -87,7 +101,7 @@ def _dedupe_unknown_reasons(lines: list[str]) -> list[str]:
             groups.setdefault((m.group(2), m.group(3)), []).append(i)
     drop: set[int] = set()
     for (status, reason), idxs in groups.items():
-        if len(idxs) < 2:
+        if len(idxs) < 2 or len(reason) < _DEDUPE_MIN_REASON_LEN:
             continue
         labels = [m.group(1) for i in idxs if (m := _UNKNOWN_FACT.match(lines[i]))]
         lines[idxs[0]] = f"- **{' · '.join(labels)}:** _{status}_ — {reason}"
@@ -237,16 +251,26 @@ def _catalyst_section(m: MechanicalLayer) -> list[str]:
 _TABLE_MARK = "<!-- ds-table -->"  # marker a test greps to confirm a table used the shared renderer
 
 
+def _gfm_cell(c: str) -> str:
+    """(audit) Neutralise a value for a GFM table cell: a literal ``|`` opens a spurious column and
+    a newline shatters the row — escape the pipe and collapse any whitespace run to a single space.
+    The E5 covenant value/quote cells are VERBATIM filing text and can carry both."""
+    return re.sub(r"\s+", " ", str(c).replace("|", "\\|")).strip()
+
+
 def _table(
     label: str, cite: str | None, cols: list[str], rows: list[list[str]],
     note: str = "", name_rows: frozenset[int] = frozenset(),
 ) -> list[str]:
     """The single shared markdown table renderer (B4). Emits a GFM table tagged with ``_TABLE_MARK``
-    so a test confirms every table routes here; ``name_rows`` indices are bolded (the subject)."""
+    so a test confirms every table routes here; ``name_rows`` indices bold the subject. Every
+    cell is pipe/newline-sanitised (:func:`_gfm_cell`) so free-text (E5 verbatim) can't break it."""
     head = f"- **{label}**" + (f" — ↳ `{cite}`" if cite else "") + f"  {_TABLE_MARK}"
-    out = [head, "", "| " + " | ".join([" ", *cols]) + " |", "|" + "---|" * (len(cols) + 1)]
+    out = [head, "", "| " + " | ".join(_gfm_cell(c) for c in [" ", *cols]) + " |",
+           "|" + "---|" * (len(cols) + 1)]
     for i, row in enumerate(rows):
-        out.append("| " + " | ".join(f"**{c}**" if i in name_rows else c for c in row) + " |")
+        cells = (f"**{_gfm_cell(c)}**" if i in name_rows else _gfm_cell(c) for c in row)
+        out.append("| " + " | ".join(cells) + " |")
     if note:
         out += ["", f"_{note}_"]
     out.append("")
@@ -571,13 +595,15 @@ def _implied_expectations_lines(v: Any) -> list[str]:
     out += _table(
         "Implied metric levels · fixed multiple set", ie.tev.source_ref,
         ["Multiple (× used)", "Implied level"], rows, name_rows=name_rows)
+    # (audit) H7 made EBITDA anchors UNKNOWN-able (Trends may lack FY26/FY27) — show the NOTE, never
+    # the bare word "None". rev_anchors is always PRESENT (ladder) but is guarded the same way.
     out.append(
         "- **Consensus path anchors (EBITDA — juxtapose, do NOT difference):** "
-        f"{ie.anchors.value}")
+        f"{_sourced_str(ie.anchors)}")
     if ie.rev_anchors is not None:  # the parallel revenue anchors substantiate the TEV/Rev identity
         out.append(
             "- **Consensus path anchors (Revenue — juxtapose, do NOT difference):** "
-            f"{ie.rev_anchors.value}")
+            f"{_sourced_str(ie.rev_anchors)}")
     out.append(f"  - _{'⚠ ' if not ie.vintage_coherent else ''}{ie.coherence_note}_")
     if not ie.net_debt_reconciled:
         out.append("  - _⚠ net-debt disagrees with the cash/debt bridge — see the TEV source_")

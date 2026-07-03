@@ -490,8 +490,10 @@ function impliedExpectations(ie) {
   // the parallel REVENUE anchors substantiate the TEV/Rev name-row identity (†); only when present.
   const revAnchors = (ie.rev_anchors && ie.rev_anchors.value)
     ? `<div style="margin-top:4px;"><b>Consensus path anchors (Revenue — juxtapose, do NOT difference):</b> ${escapeHtml(ie.rev_anchors.value)}</div>` : "";
+  // (audit) H7 EBITDA anchors can be UNKNOWN (Trends may lack FY26/FY27) — show the note, not blank.
+  const anchorsTxt = (ie.anchors && ie.anchors.value) || (ie.anchors && ie.anchors.note) || "n/a";
   const anchors = `<div class="fact"><div class="fact-label">Consensus path anchors (EBITDA — juxtapose, do NOT difference)</div>
-    <div style="min-width:0;">${escapeHtml((ie.anchors && ie.anchors.value) || "")}${revAnchors}
+    <div style="min-width:0;">${escapeHtml(anchorsTxt)}${revAnchors}
     <div class="muted" style="font-size:11px; margin-top:4px;">${ie.vintage_coherent ? "" : "⚠ "}${escapeHtml(ie.coherence_note || "")}</div>
     ${ie.net_debt_reconciled ? "" : `<div class="muted" style="font-size:11px;">⚠ net-debt input disagrees with the cash/debt bridge — see the TEV source</div>`}
     <div class="muted" style="font-size:11px;">Fixed multiple set (declared in code, no per-name curation): name NTM + peer-median NTM/LTM, on TEV/EBITDA and TEV/Rev.</div></div></div>`;

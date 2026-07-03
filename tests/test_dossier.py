@@ -1175,6 +1175,24 @@ def test_covenant_pointers_reject_cross_cik_and_locate_the_wu_execution_8k() -> 
     assert notes.accession == "" and "no contract-level filing expected" in notes.note
 
 
+def test_audit_covenant_pointers_accept_html_named_agreement_exhibit() -> None:
+    """(audit PR68/69) An agreement exhibit named '…loanandsecurity.html' (some filers use the
+    5-letter extension) MUST be kept — the pre-fix '.htm'/'.txt'-only filter dropped it, flipping a
+    DOCUMENTED facility to 'undocumented' (opacity-as-signal inverted)."""
+    insts = [_inst("Convertible Loan With Shareholder", 12.0, "2026-05-28")]
+    indexes = {"000176068924000021": {"directory": {"item": [
+        {"name": "mvst-20240603.htm"}, {"name": "wu_loanandsecurity.html"}]}}}  # .html exhibit
+    edgar = _FakeEdgar(hits=[FtsHit(
+        accession="0001760689-24-000021", cik="0001760689", form="8-K",
+        file_date=date(2024, 6, 4), display_names=["Microvast"])])
+    got = dm._covenant_pointers(
+        typing.cast(EdgarClient, edgar), typing.cast(typing.Any, _FakeIndexHttp(indexes)),
+        "0001760689", insts)
+    assert got.status is ds.SourceStatus.PRESENT
+    wu = next(r for r in got.value if r.accession == "0001760689-24-000021")
+    assert any(e.endswith(".html") for e in wu.exhibits)  # the .html agreement exhibit is kept
+
+
 def test_capital_structure_covenant_terms_note_is_opacity_as_signal() -> None:
     """(E5) covenant TERMS stay UNKNOWN in the mechanical (deterministic, no-LLM) layer, but the
     note is informative: it says whether an exhibit was located (something to read) or whether the
@@ -1739,6 +1757,58 @@ def test_h3_gate_shortref_and_dedupe_unknown_reasons() -> None:
     assert "Net debt / EBITDA (fwd-adj) · EV/EBITDA (adjusted, forward) · Adjusted EPS" in folded[0]
     assert any("Solo" in ln for ln in out)  # a non-repeated reason is left alone
     assert len(out) == 2  # the two duplicate lines removed
+
+
+def test_audit_gfm_cell_sanitizes_pipe_and_newline() -> None:
+    """(audit PR68/69) A GFM table cell escapes a literal '|' and collapses newlines — a verbatim E5
+    covenant value/quote can carry both, which would otherwise open a spurious column or shatter the
+    row across physical lines."""
+    assert dr._gfm_cell("a | b") == r"a \| b"
+    assert dr._gfm_cell("line1\nline2") == "line1 line2"
+    assert dr._gfm_cell("  x\ty\n z ") == "x y z"
+    rows = [ds.CovenantTerm(name="Conversion", value=ds.Sourced.present(
+        "rate = SOFR | floor\n3%", source_ref="8-K x"))]
+    u = ds.Sourced[str].unknown(note="n/a")
+    cs = ds.CapitalStructure(
+        instruments=ds.Sourced.unknown(note="n/a"), summary=u, detail_as_of="d", maturity_filings=u,
+        covenant_pointers=ds.Sourced.present("x", source_ref="e"), covenant_pointer_rows=None,
+        covenant_terms=ds.Sourced.present("s", source_ref="f"),
+        covenant_term_rows=ds.Sourced.present(rows, source_ref="fenced"))
+    row = next(ln for ln in dr._covenant_term_lines(cs) if ln.startswith("| Conversion"))
+    assert "\n" not in row  # newline collapsed → the row stays on one physical line
+    assert r"\|" in row  # the literal pipe was escaped, not left to open a column
+    unescaped_bars = len(re.findall(r"(?<!\\)\|", row))  # only real column separators
+    assert unescaped_bars == 4  # 3 cells (label + value + source) → 4 separators
+
+
+def test_audit_dedupe_only_folds_distinctive_not_generic_reasons() -> None:
+    """(audit PR68/69) The cross-section reason-fold is limited to DISTINCTIVE reasons (≥30). A
+    SHORT generic reason shared by two UNRELATED fields is NOT folded — it must not relocate a fact
+    under another section's header."""
+    short = ["- **Field A:** _UNKNOWN_ — no XBRL data",
+             "- **Field B:** _UNKNOWN_ — no XBRL data"]
+    assert dr._dedupe_unknown_reasons(list(short)) == short  # short generic → untouched
+    reason = "the adjusted covenant figure is absent from the parsed 99.1 revised guidance"
+    assert len(reason) >= dr._DEDUPE_MIN_REASON_LEN
+    longl = [f"- **Field A:** _UNKNOWN_ — {reason}", f"- **Field B:** _UNKNOWN_ — {reason}"]
+    out = dr._dedupe_unknown_reasons(list(longl))
+    assert len(out) == 1 and "Field A · Field B" in out[0]  # distinctive → folded
+
+
+def test_audit_ie_anchors_unknown_renders_note_not_the_word_none() -> None:
+    """(audit PR68/69) H7 made EBITDA anchors UNKNOWN-able (Trends may lack FY26/FY27); the render
+    shows the NOTE, never the bare word 'None' (a raw {value} on an UNKNOWN Sourced)."""
+    assert (dr._sourced_str(ds.Sourced.unknown(note="no direct FY26/FY27 EBITDA consensus"))
+            == "no direct FY26/FY27 EBITDA consensus")
+    assert dr._sourced_str(ds.Sourced.present("FY26E $62.1M", source_ref="T")) == "FY26E $62.1M"
+    ie = dm._implied_expectations(*_ie_inputs())
+    assert ie is not None
+    ie2 = ie.model_copy(update={
+        "anchors": ds.Sourced[str].unknown(note="no direct FY26/FY27 EBITDA in Trends")})
+    v = _minimal_mech().valuation.model_copy(update={"implied_expectations": ie2})
+    block = "\n".join(dr._implied_expectations_lines(v))
+    assert "difference):** None" not in block  # the bug: bare 'None' rendered
+    assert "no direct FY26/FY27 EBITDA in Trends" in block  # the note is shown instead
 
 
 def test_ie_nm_or_negative_multiple_renders_unknown_not_a_synthetic_level() -> None:
