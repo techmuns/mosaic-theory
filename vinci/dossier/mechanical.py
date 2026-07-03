@@ -18,6 +18,8 @@ from typing import Any, TypeVar
 from vinci.dossier import ciq_sheets, edgar_fundamentals
 from vinci.dossier.ciq import CiqBundle
 from vinci.dossier.schemas import (
+    CapitalInstrument,
+    CapitalStructure,
     CatalystPath,
     CohortMember,
     Concentration,
@@ -997,6 +999,114 @@ def _catalyst_stale_flag(catalyst: CatalystPath, reference_date: date) -> str | 
     )
 
 
+# --- E1/E3/E4: structured capital structure + maturity-anchored 8-Ks + covenant pointers -----
+def _maturity_8ks(
+    edgar: EdgarClient, cik: str, instruments: list[CapitalInstrument], reference_date: date
+) -> Sourced[str]:
+    """(E3) 8-Ks filed within ±10d of any instrument maturity in the TRAILING 12m — where a
+    recently-matured facility's resolution would be disclosed. POINTERS only ('read for
+    resolution'); never an assumption of repayment or default."""
+    mats = sorted({
+        date.fromisoformat(i.maturity_date)
+        for i in instruments
+        if i.maturity_date
+        and reference_date - timedelta(days=365)
+        <= date.fromisoformat(i.maturity_date) <= reference_date
+    })
+    if not mats or not cik:
+        return Sourced.unknown(note="no trailing-12m instrument maturity to anchor an 8-K")
+    try:
+        filings = edgar.recent_filings(cik, forms=("8-K",), since=min(mats) - timedelta(days=11))
+    except HttpError as exc:
+        return Sourced.unknown(note=f"EDGAR 8-K fetch failed: {exc}")
+    lines: list[str] = []
+    seen: set[str] = set()
+    for m in mats:
+        for f in sorted(filings, key=lambda f: abs((f.filing_date - m).days)):
+            if abs((f.filing_date - m).days) > 10 or f.accession in seen:
+                continue
+            seen.add(f.accession)
+            items = ", ".join(item_labels(list(f.items))) or "—"
+            lines.append(
+                f"8-K at maturity {m.isoformat()}: filed {f.filing_date.isoformat()} "
+                f"[{f.accession}] {items} — read for resolution"
+            )
+    if not lines:
+        dates = ", ".join(m.isoformat() for m in mats)
+        return Sourced.unknown(note=f"no 8-K within ±10d of a trailing-12m maturity ({dates})")
+    return Sourced.present(
+        "; ".join(lines), source_ref="EDGAR 8-K submissions (±10d of instrument maturities)")
+
+
+def _covenant_pointers(
+    edgar: EdgarClient, http: CachedHttp, cik: str, instruments: list[CapitalInstrument]
+) -> Sourced[str]:
+    """(E4) Locate credit/loan/indenture exhibits — filed at EXECUTION and incorporated by reference
+    later, so scan the FILING HISTORY: the latest 10-K's exhibit index (material-contract ex-10.x) +
+    EDGAR full-text (efts) for the instrument-family descriptions. Accession-bound POINTERS; an
+    absence line for undocumented facilities (expected for the China bank loans)."""
+    if not cik:
+        return Sourced.unknown(note="no CIK")
+    pointers: list[str] = []
+    try:  # (1) latest 10-K exhibit index — the material-contract exhibits
+        tenks = edgar.recent_filings(cik, forms=("10-K",))
+        if tenks:
+            acc = tenks[0].accession
+            idx = http.get_json(
+                _INDEX.format(cik=int(pad_cik(cik)), acc=acc.replace("-", "")), ttl_seconds=None)
+            names = [str(it.get("name", "")) for it in idx.get("directory", {}).get("item", [])]
+            # substring-match 'ex10N' anywhere in the filename — CIQ/EDGAR prefix exhibit files with
+            # the ticker+date ('mvst20251231-ex1013.htm'), so a start-anchored match misses them.
+            exs = [n for n in names if re.search(r"ex-?10\d", n, re.IGNORECASE)]
+            if exs:
+                pointers.append(f"latest 10-K [{acc}] material-contract exhibits: {', '.join(exs)}")
+    except (HttpError, KeyError, ValueError):
+        pass
+    families = sorted(
+        {i.description.split(" With ")[0].split(" - ")[0].strip() for i in instruments})
+    for fam in families[:6]:  # (2) efts on each instrument-family description
+        try:
+            hits = edgar.fulltext_search(fam, forms="8-K")
+        except HttpError:
+            continue
+        if hits:
+            pointers.append(f"'{fam[:34]}' → efts {hits[0].accession} ({hits[0].form})")
+    if not pointers:
+        return Sourced.unknown(
+            note="no credit/loan/indenture exhibit located across filing history "
+            "(undocumented facility — expected for the bank term loans)")
+    return Sourced.present(
+        "; ".join(pointers), source_ref="EDGAR filing-history exhibit index + full-text search")
+
+
+def _capital_structure(
+    record: DataRecord, edgar: EdgarClient, http: CachedHttp, bundle: CiqBundle,
+    reference_date: date,
+) -> CapitalStructure:
+    """(E1+E3+E4) Assemble the structured capital structure: CIQ instruments + summary aggregates,
+    the maturity-anchored 8-Ks, and the covenant exhibit pointers. Covenant TERMS (E5, LLM) are
+    filled in the synthesis phase; UNKNOWN here."""
+    instruments, summary, detail_as_of = ciq_sheets.capital_structure_ciq(bundle)
+    insts = (instruments.value
+             if instruments.status is SourceStatus.PRESENT and instruments.value else [])
+    cik = record.identity.cik
+    pointers = _covenant_pointers(edgar, http, cik or "", insts)
+    # (E5, fenced) covenant TERMS are LLM-extractable ONLY from a located exhibit; the note is
+    # opacity-as-signal — it tells the human whether any exhibit exists to read (a Tier-1 pointer
+    # present) or whether the facility is wholly undocumented (extraction impossible, itself a
+    # fact).
+    terms_note = (
+        "(E5) named covenant terms extract in the LLM phase from the located exhibit(s) above"
+        if pointers.status is SourceStatus.PRESENT
+        else "(E5) no covenant exhibit located — no document to extract named terms from")
+    return CapitalStructure(
+        instruments=instruments, summary=summary, detail_as_of=detail_as_of,
+        maturity_filings=_maturity_8ks(edgar, cik or "", insts, reference_date),
+        covenant_pointers=pointers,
+        covenant_terms=Sourced.unknown(note=terms_note),
+    )
+
+
 def assemble_mechanical(
     record: DataRecord,
     *,
@@ -1065,6 +1175,8 @@ def assemble_mechanical(
         implied_valuation=implied_val,
         # C — Financial-Summary appendix (actuals + consensus), reconciled vs the implied bridge.
         financial_summary=_financial_summary(bundle, implied_val),
+        # E — structured capital structure (instruments + summary + maturity 8-Ks + pointers).
+        capital_structure=_capital_structure(record, edgar, http, bundle, reference_date),
         management_commentary=ciq_sheets.management_commentary(bundle),
     )
     flags: list[str] = []

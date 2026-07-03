@@ -524,7 +524,9 @@ def _self_referential_twin(tw: TwinCase, ticker: str, name: str) -> bool:
         subj.add(tkr)
     if not (subj & tw_tokens):
         return False
-    return not re.search(r"\b(19|20)\d\d\b", f"{tw.name} {tw.distinguishing_fact} {tw.outcome}")
+    # (R2) the resolved period must appear in the twin NAME itself ('Microvast (2021–2025 arc)') —
+    # a bare self-name ('Microvast Holdings') is suppressed even if a year hides in outcome/fact.
+    return not re.search(r"\b(19|20)\d\d\b", tw.name)
 
 
 def _validate(

@@ -26,6 +26,7 @@ from vinci.dossier.ciq import (
     read_text,
 )
 from vinci.dossier.schemas import (
+    CapitalInstrument,
     FinRow,
     FinTable,
     ImpliedRow,
@@ -500,6 +501,117 @@ def liquidity_covenant_flags(bundle: CiqBundle) -> Sourced[str]:
     if not insts:
         return Sourced.unknown(note="no debt instruments parsed")
     return Sourced.present("; ".join(insts), source_ref="CIQ Financials→Capital Structure Details")
+
+
+# --- E1: STRUCTURED capital structure (instruments + summary aggregates) -----------------------
+_CS_COLS = (  # Details-panel columns, located by header LABEL (order not contractually fixed)
+    "Description", "Type", "Principal Due", "Coupon", "Floating Rate", "Maturity",
+    "Seniority", "Secured", "Convertible", "Repayment Curren",
+)
+
+
+def _cs_detail_asof(rows: Rows) -> str:
+    """The Details panel's own filing note ('A 2025 filed Mar-16-2026') — the DETAIL is panel-dated,
+    so this is the detail-as-of (distinct from the latest-quarter total debt for reconciliation)."""
+    for r in rows[:12]:
+        for j, c in enumerate(r):
+            if str(c).strip().rstrip(":") == "Source" and j + 1 < len(r):
+                v = str(r[j + 1]).strip()
+                if v:
+                    return v
+    return ""
+
+
+def _capital_summary(bundle: CiqBundle) -> Sourced[str]:
+    """(E1) Capital-Structure-Summary aggregates (latest quarter) + the term-loan QoQ movement — the
+    reconciliation anchor: the itemized detail is panel-dated, the total debt is latest-quarter."""
+    try:
+        s = bundle.sheet("financials", "Capital Structure Summary", freq="annual")
+    except CiqUnavailableError:
+        return Sourced.unknown(note="Capital Structure Summary: unavailable")
+    hdrs = [r for r in s if r and "Fiscal Peri" in str(r[0])]
+    vcols = [j for j in range(1, len(hdrs[-1]))
+             if "months" in str(hdrs[-1][j]).lower()] if hdrs else []
+    if len(vcols) < 1:
+        return Sourced.unknown(note="Capital Structure Summary: no period columns")
+
+    def at(prefix: str, col: int) -> float | None:
+        i = _find_row_prefix(s, prefix)
+        return clean_num(s[i][col]) if i is not None and col < len(s[i]) else None
+
+    parts: list[str] = []
+    tl = at("Total Term Loans", vcols[-1])
+    tlp = at("Total Term Loans", vcols[-2]) if len(vcols) > 1 else None
+    if tl is not None:
+        qoq = f" ({tlp:,.1f}→{tl:,.1f} QoQ)" if tlp is not None else ""
+        parts.append(f"term loans {tl:,.1f}{qoq}")
+    for prefix, disp in (("Total Senior Bonds", "senior bonds"), ("Total Lease", "leases"),
+                         ("Total Principal Due", "total principal")):
+        v = at(prefix, vcols[-1])
+        if v is not None:
+            parts.append(f"{disp} {v:,.1f}")
+    td = at("Total Debt Outstanding", vcols[-1]) or at("Total Debt", vcols[-1])
+    if td is not None:
+        parts.append(f"total debt {td:,.1f} (latest quarter)")
+    if not parts:
+        return Sourced.unknown(note="Capital Structure Summary: no aggregates parsed")
+    return Sourced.present(
+        "; ".join(parts) + " ($M)", source_ref="CIQ Financials→Capital Structure Summary")
+
+
+def capital_structure_ciq(
+    bundle: CiqBundle,
+) -> tuple[Sourced[list[CapitalInstrument]], Sourced[str], str]:
+    """(E1) Structured capital structure from CIQ Financials→Capital Structure Details — the LATEST
+    per-fiscal-period panel, parsed by header LABEL (not a fixed index) — plus the Summary
+    aggregates. Returns (instruments, summary-line, detail-as-of). Maturity is decoded from the
+    serial to an ISO date, or None when the panel gives '-' (undated)."""
+    try:
+        det = bundle.sheet("financials", "Capital Structure Details", freq="annual")
+    except CiqUnavailableError as exc:
+        u: Sourced[Any] = _miss_or_unknown(bundle, "financials", exc)
+        return u, u, ""
+    hdr = _find_row(det, "Description")
+    if hdr is None:
+        u2: Sourced[Any] = Sourced.unknown(note="Capital Structure Details: no instrument table")
+        return u2, u2, ""
+    # normalise the non-breaking space CIQ uses in some headers ('Floating\xa0Rate') before matching
+    def _norm(c: Any) -> str:
+        return str(c).replace("\xa0", " ").strip()
+
+    col = {
+        name: next((j for j, c in enumerate(det[hdr]) if _norm(c).startswith(name)), None)
+        for name in _CS_COLS
+    }
+    detail_as_of = _cs_detail_asof(det)
+    insts: list[CapitalInstrument] = []
+    for i in range(hdr + 1, len(det)):
+        desc = str(det[i][0]).strip()
+        if not desc or desc == "Description" or desc.startswith("FY "):
+            break
+
+        def cell(name: str, ri: int = i) -> str:
+            j = col[name]
+            return str(det[ri][j]).strip() if j is not None and j < len(det[ri]) else ""
+
+        mat_j, prin_j = col["Maturity"], col["Principal Due"]
+        mdate = excel_date(det[i][mat_j]) if mat_j is not None and mat_j < len(det[i]) else None
+        principal = (clean_num(det[i][prin_j])
+                     if prin_j is not None and prin_j < len(det[i]) else None)
+        insts.append(CapitalInstrument(
+            description=desc, type=cell("Type"), principal_musd=principal,
+            coupon=cell("Coupon"), floating_rate=cell("Floating Rate"),
+            maturity_date=(mdate.isoformat() if mdate and 2000 <= mdate.year <= 2100 else None),
+            seniority=cell("Seniority"), secured=cell("Secured").lower() == "yes",
+            convertible="convert" in cell("Convertible").lower(),
+            currency=cell("Repayment Curren"),
+        ))
+    if not insts:
+        u3: Sourced[Any] = Sourced.unknown(note="Capital Structure Details: no instruments parsed")
+        return u3, u3, detail_as_of
+    instruments = Sourced.present(
+        insts, source_ref=f"CIQ Financials→Capital Structure Details ({detail_as_of})")
+    return instruments, _capital_summary(bundle), detail_as_of
 
 
 # --- concentration: Segments ------------------------------------------------------------------

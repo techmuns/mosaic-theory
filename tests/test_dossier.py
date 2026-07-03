@@ -8,6 +8,7 @@ discipline as the ranker's no-forward-returns AST guard.
 from __future__ import annotations
 
 import ast
+import re
 import typing
 from datetime import date, datetime
 from pathlib import Path
@@ -25,10 +26,17 @@ from vinci.dossier import render as dr
 from vinci.dossier import requirements as dreq
 from vinci.dossier import schemas as ds
 from vinci.dossier import synthesis as syn
-from vinci.edgar.client import EdgarClient, FundamentalSnapshot, all_unknown_snapshot
+from vinci.edgar.client import (
+    EdgarClient,
+    Filing,
+    FtsHit,
+    FundamentalSnapshot,
+    all_unknown_snapshot,
+)
 from vinci.graph.llm import AnthropicLlmClient, LlmClient, LlmError
 from vinci.schemas import data_record as sdr
 from vinci.schemas.envelope import DataField, SourceTier
+from vinci.sec import build_sec_http
 
 # A conclusion = verdict / recommendation / direction / score / rating / probability (or a synonym).
 # No dossier field may carry one: the LLM can't conclude because there is nowhere to put it.
@@ -68,6 +76,9 @@ def test_dossier_schema_has_no_conclusion_field() -> None:
         ds.PeerRow, ds.LeverageSurvival, ds.ImpliedRow, ds.ImpliedValuation,
         # PR C — the walk must reach the financial-summary appendix (a table of facts, no verdict)
         ds.FinRow, ds.FinTable, ds.FinancialSummary,
+        # PR E — the walk must reach the structured capital structure (instruments + wall/covenant
+        # pointers are FACTS, never a solvency verdict — no probability/risk/direction field)
+        ds.CapitalStructure, ds.CapitalInstrument,
     }
     assert expected <= models
     offenders: list[str] = []
@@ -944,6 +955,295 @@ def test_all_workbooks_lists_every_match() -> None:
     b = ciq.CiqBundle(ticker="X", workbooks=(t1, t2, fin))
     assert len(b.all_workbooks("transcript")) == 2 and b.workbook("transcript") is t1
     assert b.all_workbooks("nope") == ()
+
+
+# --- PR E: structured capital structure + month-precision maturity wall + covenant pointers ----
+# The panel format is real MVST (serials 46170=2026-05-28, 46366=2026-12-10, etc.); the values
+# reproduce the verified MVST pins (matured $25.0M / ≤12m $42.9M / 2027 $105.1M / undated $95.6M).
+
+_CS_DETAILS: list[list[typing.Any]] = [
+    ["Source", "A 2025 filed Mar-16-2026"],
+    # 'Floating\xa0Rate' carries the NON-BREAKING space CIQ emits — the column lookup must normalise
+    # it (else the floating-rate column is silently blank), and 'Principal Due (USD)' / 'Repayment
+    # Currency' are matched by PREFIX (the header carries a trailing qualifier).
+    ["Description", "Type", "Principal Due (USD)", "Coupon/Base Rate", "Floating\xa0Rate",
+     "Maturity", "Seniority", "Secured", "Convertible", "Repayment Currency"],
+    ["Convertible Loan With Shareholder - Initial Term Loan", "Term Loans", 12.0, "NA",
+     "SOFR + 9.750%", 46170.0, "Senior", "Yes", "Convertible", "USD"],
+    ["Loan Facilities Agreement With a Group of Lenders", "Term Loans", 42.9, "NA",
+     "New Benchmark", 46366.0, "Senior", "Yes", "No", "CNY"],
+    ["Notes Payable", "Bonds and Notes", 78.3, "NA", "NA", "-", "Senior", "No", "No", "USD"],
+    ["FY 2024", "", "", "", "", "", "", "", "", ""],  # next-panel row TERMINATES the latest panel
+]
+
+_CS_SUMMARY: list[list[typing.Any]] = [
+    ["Fiscal Period", "FY 2024 (12 months)", "FY 2025 (12 months)"],
+    ["Total Term Loans", 131.3, 215.2],
+    ["Total Senior Bonds and Notes", 100.0, 78.3],
+    ["Total Principal Due", 300.0, 326.0],
+    ["Total Debt Outstanding", 300.0, 326.0],
+]
+
+
+def test_capital_structure_ciq_parses_instruments_and_summary() -> None:
+    """(E1) The latest per-fiscal-period panel parses by header LABEL: the \\xa0 float header is
+    normalised (SOFR shows), serials decode to ISO, '-' is undated (None, never a fabricated date),
+    Secured=='Yes'→True and the Convertible column's 'Convertible'/'No' string maps to the bool. The
+    Summary aggregates carry the term-loan QoQ movement + the latest-quarter total debt."""
+    bundle = _fin_bundle(
+        {"Capital Structure Details": _CS_DETAILS, "Capital Structure Summary": _CS_SUMMARY},
+        freq="annual")
+    insts, summary, asof = cs.capital_structure_ciq(bundle)
+    assert asof == "A 2025 filed Mar-16-2026"
+    got = insts.value or []
+    assert len(got) == 3
+    loan, facility, notes = got
+    assert loan.description.startswith("Convertible Loan With Shareholder")
+    assert loan.type == "Term Loans" and loan.principal_musd == 12.0
+    assert loan.floating_rate == "SOFR + 9.750%"  # the \xa0 header normalisation worked
+    assert loan.maturity_date == "2026-05-28"  # serial 46170 decoded
+    assert loan.secured is True and loan.convertible is True and loan.currency == "USD"
+    assert facility.convertible is False and facility.maturity_date == "2026-12-10"
+    assert notes.maturity_date is None  # '-' is undated, NOT a fabricated date
+    assert notes.secured is False
+    s = summary.value or ""
+    assert "term loans 215.2" in s and "131.3→215.2 QoQ" in s
+    assert "total debt 326.0 (latest quarter)" in s and s.endswith("($M)")
+
+
+def _inst(
+    desc: str, principal: float | None, mat: str | None, **kw: typing.Any
+) -> ds.CapitalInstrument:
+    return ds.CapitalInstrument(
+        description=desc, type=kw.get("type", "Term Loans"), principal_musd=principal,
+        coupon=kw.get("coupon", ""), floating_rate=kw.get("floating_rate", ""), maturity_date=mat,
+        seniority="Senior", secured=kw.get("secured", True),
+        convertible=kw.get("convertible", False), currency=kw.get("currency", "USD"))
+
+
+def _mvst_capital_structure() -> ds.CapitalStructure:
+    """The verified MVST instrument set (synthetic — no licensed-workbook dependency), reproducing
+    the maturity-wall pins against a 2026-07-03 reference."""
+    insts = [
+        _inst("Convertible Loan - Delayed Draw", 13.0, "2026-05-28"),
+        _inst("Convertible Loan - Initial", 12.0, "2026-05-28"),
+        _inst("Loan Facilities Agreement", 42.9, "2026-12-10"),
+        _inst("Convertible Bond - CNY", 41.7, "2027-01-31", currency="CNY", convertible=True),
+        _inst("Long-term Loan Agreement", 13.9, "2027-06-19"),
+        _inst("Short-term Loan Agreements", 49.5, "2027-03-31"),
+        _inst("Notes Payable", 78.3, None, type="Bonds and Notes", secured=False),
+        _inst("Operating Lease Liabilities", 17.3, None, type="Capital Lease"),
+    ]
+    return ds.CapitalStructure(
+        instruments=ds.Sourced.present(insts, source_ref="CIQ→Capital Structure Details (A 2025)"),
+        summary=ds.Sourced.present("term loans 215.2 ($M)", source_ref="CIQ→Summary"),
+        detail_as_of="A 2025 filed Mar-16-2026",
+        maturity_filings=ds.Sourced.unknown(note="offline"),
+        covenant_pointers=ds.Sourced.unknown(note="offline"),
+        covenant_terms=ds.Sourced.unknown(note="offline"))
+
+
+def test_maturity_wall_groups_by_calendar_year_with_pins() -> None:
+    """(E2) Deterministic month-precision wall vs a 2026-07-03 reference: matured-pre-reference
+    ($25.0M, verify-the-8-K, NEVER 'repaid'/'defaulted'), due-this-ref-year ≤12m ($42.9M), later
+    years grouped ($105.1M in 2027), undated floor ($95.6M), and the itemized reconciliation
+    ($268.6M). Calendar-year grouping — a rolling-12m window would wrongly lump 2027-01..06 into
+    ≤12m. NO probability / risk / conclusion language."""
+    lines = dr._maturity_wall_lines(_mvst_capital_structure(), date(2026, 7, 3))
+    text = "\n".join(lines)
+    assert "matured (pre-reference): $25.0M" in text
+    assert "verify each against its 8-K (NEVER assume repaid or defaulted)" in text
+    assert "2026-05-28 (36d before ref): $13.0M" in text
+    assert "due ≤12m (through 2026): $42.9M" in text
+    assert "due 2027: $105.1M" in text  # 41.7 + 13.9 + 49.5, calendar-grouped
+    assert "undated (floor — no panel maturity): $95.6M" in text  # 78.3 + 17.3
+    assert "itemized $268.6M" in text
+    assert not re.search(r"\b(probabilit|likel|distress|risk of|we expect|default risk)\w*", text,
+                         re.IGNORECASE)
+
+
+def test_capital_structure_render_shows_table_not_flat_string() -> None:
+    """(E1) The instruments render as the shared-idiom table (marked), under the RENAMED
+    'Capital structure (instruments)' line — replacing the old flat liquidity string."""
+    out = "\n".join(dr._capital_structure_lines(_mvst_capital_structure(), date(2026, 7, 3)))
+    assert dr._TABLE_MARK in out
+    assert "Capital structure (instruments) — panel A 2025 filed Mar-16-2026" in out
+    assert "SOFR" not in out or "Convertible Bond - CNY" in out  # the table body renders rows
+
+
+# --- E3 / E4: EDGAR-anchored fetch — offline fixtures + network-marked live pins ---------------
+
+
+class _FakeEdgar:
+    """A duck-typed EdgarClient for the offline E3/E4 fixtures (only the two methods used)."""
+
+    def __init__(self, *, filings: list[Filing] | None = None,
+                 tenks: list[Filing] | None = None, hits: list[FtsHit] | None = None) -> None:
+        self._filings, self._tenks, self._hits = filings or [], tenks or [], hits or []
+
+    def recent_filings(self, cik: str, forms: tuple[str, ...] = ("8-K",),
+                       since: date | None = None) -> list[Filing]:
+        return self._tenks if "10-K" in forms else self._filings
+
+    def fulltext_search(self, phrase: str, forms: str = "8-K", startdt: date | None = None,
+                        enddt: date | None = None) -> list[FtsHit]:
+        return self._hits
+
+
+class _FakeHttp:
+    def __init__(self, index_json: dict[str, typing.Any]) -> None:
+        self._index = index_json
+
+    def get_json(self, url: str, ttl_seconds: int | None = None) -> dict[str, typing.Any]:
+        return self._index
+
+
+def test_maturity_8ks_offline_anchors_to_trailing_12m_maturity() -> None:
+    """(E3) An 8-K filed within ±10d of an instrument's maturity (in the trailing 12m of the
+    reference) is surfaced as a POINTER ('read for resolution') — never an assumption of repayment
+    or default. A maturity with no nearby 8-K yields a fail-loud UNKNOWN, not a fabricated line."""
+    insts = [_inst("Convertible Loan", 25.0, "2026-05-28")]
+    fake = _FakeEdgar(filings=[Filing(
+        cik="0001760689", form="8-K", filing_date=date(2026, 5, 28),
+        accession="0000947871-26-000585", items=["5.02", "8.01", "9.01"], primary_doc="a.htm")])
+    got = dm._maturity_8ks(typing.cast(EdgarClient, fake), "0001760689", insts, date(2026, 7, 3))
+    assert got.status is ds.SourceStatus.PRESENT
+    assert "8-K at maturity 2026-05-28" in (got.value or "")
+    assert "0000947871-26-000585" in (got.value or "")
+    assert "read for resolution" in (got.value or "")
+    empty = dm._maturity_8ks(typing.cast(EdgarClient, _FakeEdgar()), "0001760689", insts,
+                             date(2026, 7, 3))
+    assert empty.status is ds.SourceStatus.UNKNOWN and empty.value is None
+
+
+def test_covenant_pointers_offline_finds_10k_material_contract_exhibits() -> None:
+    """(E4) The latest 10-K's exhibit index is scanned for material-contract exhibits (ex-10.x,
+    substring-matched so a ticker-prefixed filename still hits) + efts on the instrument family. No
+    exhibit anywhere → an honest-absence UNKNOWN (expected for undocumented bank facilities)."""
+    insts = [_inst("Convertible Bond - CNY", 41.7, "2027-01-31", convertible=True)]
+    idx = {"directory": {"item": [
+        {"name": "mvst20251231-ex1013.htm"}, {"name": "mvst20251231-ex1021.htm"},
+        {"name": "mvst20251231.htm"}]}}
+    fake = _FakeEdgar(
+        tenks=[Filing(cik="0001760689", form="10-K", filing_date=date(2026, 3, 16),
+                      accession="0001628280-26-018264", items=[], primary_doc="mvst-10k.htm")],
+        hits=[FtsHit(accession="0001193125-05-034397", cik=None, form="8-K", file_date=None,
+                     display_names=[])])
+    got = dm._covenant_pointers(
+        typing.cast(EdgarClient, fake), typing.cast(typing.Any, _FakeHttp(idx)),
+        "0001760689", insts)
+    assert got.status is ds.SourceStatus.PRESENT
+    assert "0001628280-26-018264" in (got.value or "")
+    assert "mvst20251231-ex1013.htm" in (got.value or "")
+    assert "mvst20251231-ex1021.htm" in (got.value or "")
+    assert "efts" in (got.value or "")  # the family-description full-text pointer
+    absent = dm._covenant_pointers(
+        typing.cast(EdgarClient, _FakeEdgar()), typing.cast(typing.Any, _FakeHttp({})),
+        "0001760689", insts)
+    assert absent.status is ds.SourceStatus.UNKNOWN
+    assert "no credit/loan/indenture" in (absent.note or "")
+
+
+def test_capital_structure_covenant_terms_note_is_opacity_as_signal() -> None:
+    """(E5) covenant TERMS stay UNKNOWN in the mechanical (deterministic, no-LLM) layer, but the
+    note is informative: it says whether an exhibit was located (something to read) or whether the
+    facility is wholly undocumented (nothing to extract) — extraction is fenced to the LLM phase."""
+    bundle = _fin_bundle(
+        {"Capital Structure Details": _CS_DETAILS, "Capital Structure Summary": _CS_SUMMARY},
+        freq="annual")
+    rec = _min_record(pe=5.0)
+    idx = {"directory": {"item": [{"name": "mvst20251231-ex1013.htm"}]}}
+    with_ex = _FakeEdgar(
+        tenks=[Filing(cik="0001760689", form="10-K", filing_date=date(2026, 3, 16),
+                      accession="0001628280-26-018264", items=[], primary_doc="x.htm")])
+    cap = dm._capital_structure(
+        rec, typing.cast(EdgarClient, with_ex), typing.cast(typing.Any, _FakeHttp(idx)), bundle,
+        date(2026, 7, 3))
+    assert cap.instruments.status is ds.SourceStatus.PRESENT  # E1 assembly end-to-end
+    assert cap.covenant_terms.status is ds.SourceStatus.UNKNOWN
+    assert "extract in the LLM phase" in (cap.covenant_terms.note or "")
+    bare = dm._capital_structure(
+        rec, typing.cast(EdgarClient, _FakeEdgar()), typing.cast(typing.Any, _FakeHttp({})),
+        bundle, date(2026, 7, 3))
+    assert "no covenant exhibit located" in (bare.covenant_terms.note or "")
+
+
+@pytest.mark.network
+def test_maturity_8ks_real_mvst_anchors_the_may_2026_8k() -> None:
+    """(E3, live) A trailing-12m instrument maturity on 2026-05-28 anchors MVST's 8-K filed that
+    day. Pins accession 0000947871-26-000585."""
+    edgar = EdgarClient.from_config()
+    insts = [_inst("Convertible Loan", 25.0, "2026-05-28")]
+    got = dm._maturity_8ks(edgar, "0001760689", insts, date(2026, 7, 3))
+    assert got.status is ds.SourceStatus.PRESENT
+    assert "0000947871-26-000585" in (got.value or "")
+
+
+@pytest.mark.network
+def test_covenant_pointers_real_mvst_finds_10k_exhibits() -> None:
+    """(E4, live) MVST's latest 10-K material-contract exhibits. Pins ex1013/ex1021 in
+    0001628280-26-018264 (the efts family pointer also renders)."""
+    edgar, http = EdgarClient.from_config(), build_sec_http()
+    insts = [_inst("Convertible Bond", 41.7, "2027-01-31", convertible=True)]
+    got = dm._covenant_pointers(edgar, http, "0001760689", insts)
+    assert got.status is ds.SourceStatus.PRESENT
+    assert "0001628280-26-018264" in (got.value or "")
+    assert "ex1013" in (got.value or "") and "ex1021" in (got.value or "")
+
+
+# --- R1 / R2: keyword-tier interposition + self-twin year-in-name rule ------------------------
+
+
+def test_point_tier_regex_catches_interposed_negative_ebitda() -> None:
+    """(R1) The tier regex tolerates words interposed between 'EBITDA' and 'negative' — 'adjusted
+    EBITDA of NEGATIVE $5.5M' is a solvency/cash claim (Tier 1), not unclassified (4.5). A plain
+    revenue-growth claim is unaffected."""
+    assert dr._point_tier("adjusted EBITDA of NEGATIVE $5.5M in the quarter") == 1.0
+    assert dr._point_tier("EBITDA turned negative this year") == 1.0
+    assert dr._point_tier("revenue grew 20% year over year") != 1.0
+
+
+def test_self_referential_twin_requires_resolved_period_in_the_name() -> None:
+    """(R2) A twin naming the subject itself is suppressed UNLESS the resolved period is in the twin
+    NAME ('Microvast (2021–2025 arc)'); a bare self-name ('Microvast Holdings') is suppressed even
+    when a year hides in the outcome/fact. A genuine peer twin is never touched."""
+    bare = ds.TwinCase(name="Microvast Holdings", outcome="the 2021 SPAC listing de-rated",
+                       distinguishing_fact="x", source=syn._UNVERIFIED)
+    assert syn._self_referential_twin(bare, "MVST", "Microvast Holdings, Inc.") is True
+    arc = ds.TwinCase(name="Microvast (2021–2025 arc)", outcome="de-rated post-SPAC",
+                      distinguishing_fact="x", source=syn._UNVERIFIED)
+    assert syn._self_referential_twin(arc, "MVST", "Microvast Holdings, Inc.") is False
+    peer = ds.TwinCase(name="QuantumScape", outcome="pre-revenue battery peer",
+                       distinguishing_fact="x", source=syn._UNVERIFIED)
+    assert syn._self_referential_twin(peer, "MVST", "Microvast Holdings, Inc.") is False
+
+
+def test_leverage_survival_falls_back_to_legacy_liquidity_without_capital_structure() -> None:
+    """Back-compat: a pre-E dossier.json (capital_structure absent → None) renders the legacy
+    Quality.liquidity_covenant_flags line, not the structured table — never crashes."""
+    mech = _minimal_mech()
+    assert mech.capital_structure is None
+    dossier = ds.Dossier(
+        ticker="X", name="X", cik="0", reference_date=date(2026, 7, 3), rank=1,
+        mechanical=mech, synthesis=None, caveats=[], qa_flags=[], llm_model=None,
+        assembled_at=datetime(2026, 6, 1, 12, 0))
+    md = dr.render_markdown(dossier)
+    assert "Liquidity / covenant flags" in md
+    assert "Capital structure (instruments)" not in md
+
+
+def test_fresh_capital_structure_renders_table_and_wall_in_place_of_liquidity() -> None:
+    """A dossier WITH capital_structure renders the instruments table + maturity wall in the
+    Leverage & survival section, replacing the flat liquidity line."""
+    mech = _minimal_mech().model_copy(update={"capital_structure": _mvst_capital_structure()})
+    dossier = ds.Dossier(
+        ticker="X", name="X", cik="0", reference_date=date(2026, 7, 3), rank=1,
+        mechanical=mech, synthesis=None, caveats=[], qa_flags=[], llm_model=None,
+        assembled_at=datetime(2026, 6, 1, 12, 0))
+    md = dr.render_markdown(dossier)
+    assert "Capital structure (instruments)" in md and dr._TABLE_MARK in md
+    assert "matured (pre-reference): $25.0M" in md
+    assert "Liquidity / covenant flags" not in md
 
 
 def _eps_pt(year: int, val: float) -> dict[str, typing.Any]:
