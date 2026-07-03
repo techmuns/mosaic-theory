@@ -270,6 +270,42 @@ class LeverageSurvival(BaseModel):
     model_config = {"frozen": True}
 
 
+class CapitalInstrument(BaseModel):
+    """(E1) ONE debt instrument from CIQ's Capital-Structure-Details panel — verbatim fields, no
+    computed judgment. ``maturity_date`` is an ISO date (decoded from the Excel serial) or None when
+    the panel gives '-' (undated)."""
+
+    description: str
+    type: str  # "Term Loans", "Bonds and Notes", "Capital Lease", …
+    principal_musd: float | None
+    coupon: str  # "3.000% - 4.000%", "2.700%", "NA"
+    floating_rate: str  # "SOFR + 9.750%", "New Benchmark", "NA"
+    maturity_date: str | None  # ISO date, or None (undated)
+    seniority: str
+    secured: bool
+    convertible: bool
+    currency: str
+
+    model_config = {"frozen": True}
+
+
+class CapitalStructure(BaseModel):
+    """(E1–E5) The structured capital structure — per-instrument detail + summary aggregates + the
+    survival reads that hang off it (the maturity wall's 8-Ks, covenant exhibit pointers, and the
+    fenced Tier-2 covenant terms). It ASSEMBLES and CITES; there is no probability/risk/verdict
+    field. ``detail_as_of`` keeps the panel's own filing note (the detail is panel-dated, the total
+    debt is latest-quarter — the reconciliation names the gap)."""
+
+    instruments: Sourced[list[CapitalInstrument]]
+    summary: Sourced[str]  # aggregates + QoQ movement (term loans / bonds / leases / principal)
+    detail_as_of: str  # the panel's own "Source: A 2025 filed Mar-16-2026" note
+    maturity_filings: Sourced[str]  # (E3) 8-Ks filed at/near instrument maturities
+    covenant_pointers: Sourced[str]  # (E4) accession-bound exhibit pointers per instrument family
+    covenant_terms: Sourced[str]  # (E5) fenced Tier-2 extracted terms, or UNKNOWN
+
+    model_config = {"frozen": True}
+
+
 class ImpliedRow(BaseModel):
     """One CIQ-computed implied-EQUITY row (a valuation basis × Low/Median/Mean/High). Third-party
     (CIQ) output — NOT a machine conclusion; NO discount/upside field."""
@@ -375,6 +411,9 @@ class MechanicalLayer(BaseModel):
     # round-trips (its Quality leverage lines render as the fallback); a FRESH assembly builds both.
     leverage_survival: LeverageSurvival | None = None
     implied_valuation: ImpliedValuation | None = None
+    # (E1) structured capital structure — instruments + aggregates + survival reads. Optional-with-
+    # default for back-compat: old JSON falls back to Quality.liquidity_covenant_flags (the string).
+    capital_structure: CapitalStructure | None = None
     # C — the Financial-Summary appendix (actuals + consensus fusion). Optional-with-default for
     # back-compat: old JSON round-trips; a FRESH assembly builds it (sub-fields fail loud if empty).
     financial_summary: FinancialSummary | None = None

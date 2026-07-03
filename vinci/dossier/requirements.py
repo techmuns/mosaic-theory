@@ -91,7 +91,7 @@ CIQ_MODULES: tuple[CiqModuleRequirement, ...] = (
         freq="annual",
         sheets=(
             "Income Statement", "Cash Flow", "Balance Sheet", "Capital Structure Details",
-            "Segments", "Ratios",
+            "Capital Structure Summary", "Segments", "Ratios",
         ),
         used_for=(
             "5y margin trend (margin_trend), FCF (free_cash_flow), interest coverage "

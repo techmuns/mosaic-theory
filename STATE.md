@@ -1234,7 +1234,10 @@ Each line: *what it does* — *verified how*.
       dropped); ties → emission order (stable). **N1 concession-clause stripping** classifies on the
       claim's PRIMARY assertion (text after 'though/but/however/offset by/posing whether/the human
       must weigh' is dropped pre-classification). **The keyword map is declared in `render._TIER_KEYWORDS`
-      and set by FACE-VALIDITY only** (never tuned on outcomes). Tier tags are DEV-VIEW only.
+      and set by FACE-VALIDITY only** (never tuned on outcomes). Tier tags are DEV-VIEW only. *(PR-E R1
+      adds a `render._TIER_REGEX` layer checked BEFORE the keyword map — word-boundary patterns with
+      interposition tolerance, e.g. 'EBITDA … negative' with ≤3 words between; same face-validity
+      governance, same dev-view-only status, no outcome tuning.)*
     - **D4 caveat shape**: a guardrail caveat renders the FULL offending sentence (synthesis no longer
       `_snip`s the human caveats — truncation retained for the dev-only QA flags) in the what / where /
       why-it-matters / how-to-verify shape; a mechanical / 'pull CIQ …' caveat stays one full bullet.
@@ -1252,9 +1255,10 @@ Each line: *what it does* — *verified how*.
       qa_flag); an '&' name (AT&T, S&P) is a legitimate single entity → FLAGGED for QA but RENDERED;
       (b) synthesis prompt gains a grounding PREFERENCE (peer roster / the name's own resolved arc →
       prefer sourced twins over unsourced) — a preference, not a mandate; no outcome-direction steering.
-    - **D7 (maturity-wall quantification) DETACHED**: the capital-structure instruments are a flat
-      pre-joined string (`liquidity_covenant_flags`), not structured {amount, rate, due-year} fields —
-      per the conditional, NOT regex-parsed; D7 moves to the queued covenant/EDGAR PR.
+    - **D7 (maturity-wall quantification) DETACHED** here → **LANDED in PR E** (next entry): the flat
+      `liquidity_covenant_flags` string is replaced by structured `capital_structure` instruments +
+      a deterministic month-precision wall. Per the D conditional it was NOT regex-parsed inside D;
+      it moved to (and is delivered by) the survival-completion PR.
     *Verified on the REAL MVST export (6 cases): new section order end-to-end (md + web); ONE trajectory
     table, values identical to the old pair; bull/bear in taxonomy order (the wall/cash points sort T1
     ahead of the T5 relative-price point; the GAAP-illusion earnings-quality point sorts T1 via
@@ -1264,6 +1268,44 @@ Each line: *what it does* — *verified how*.
     errors; the injected preview artifact reverted). ruff + mypy --strict (68) + `pytest -m "not network"`
     green; the extractor D5a/c isolated in its own commit. On a branch → PR; NOT merged (awaiting review).
     Reader-feedback points 3, 9, 10, 11 close with this restructure.*
+  - **PR E — survival completion: structured capital structure + month-precision maturity wall +
+    covenant/8-K pointers (2026-07-03).** Closes the flat-string survival gap (D7 landed): the pre-
+    joined `liquidity_covenant_flags` string is replaced by structured, source-bound facts. Root cause
+    of the prior gap recorded: the 8-K fetch was **gap-down-anchored only**, so a facility maturing
+    with no price gap (the common case) was never linked to its resolution filing.
+    - **E1 structured instruments** (`CapitalInstrument`/`CapitalStructure` on the mechanical layer):
+      the latest CIQ Capital-Structure-Details panel parsed by header LABEL (the `\xa0` float header
+      normalised so SOFR shows; `Principal Due`/`Repayment Currency` prefix-matched; the `Convertible`
+      column's `Convertible`/`No` string → bool; `-` maturity is undated=None, never a fabricated
+      date) + the Summary aggregates (term-loan QoQ + latest-quarter total debt). Renders as the
+      shared-idiom table (RENAMED "Capital structure (instruments)"); a pre-E JSON falls back to the
+      legacy liquidity string.
+    - **E2 deterministic month-precision maturity wall**: calendar-year grouped vs the reference —
+      matured-pre-reference (resolution NOT in this data → "verify each against its 8-K; NEVER assume
+      repaid or defaulted"), due-≤12m (this ref year), later years, undated floor + an itemized
+      reconciliation to the latest-quarter aggregate. No probability / risk / conclusion language.
+    - **E3 maturity-anchored 8-K fetch**: extends the drawdown 8-K logic to fetch 8-Ks within ±10d of
+      ANY instrument maturity in the trailing 12m — POINTERS ("read for resolution"), never an
+      assumption. **E4 covenant pointers (Tier 1)**: the latest 10-K exhibit index (ex-10.x, substring-
+      matched) + EDGAR efts on the instrument-family description → accession-bound pointers, or an
+      honest-absence UNKNOWN. **E5 covenant terms (Tier 2, fenced)**: stays UNKNOWN in the deterministic
+      mechanical layer; the note is opacity-as-signal (whether an exhibit exists to read vs a wholly
+      undocumented facility) — extraction is fenced to the LLM phase. The no-conclusion walk now reaches
+      both new models (non-vacuous).
+    - **Riders — R1** D3 tier regex tolerates words interposed between 'EBITDA' and 'negative'
+      ("adjusted EBITDA of NEGATIVE $5.5M" → Tier 1, was 4.5); **R2** a self-referential twin is
+      suppressed UNLESS the resolved period is in the twin NAME ("Microvast (2021–2025 arc)"), a bare
+      "Microvast Holdings" suppressed even with a year hiding in the outcome; **R3** the frontend clubs
+      drawdown + idiosyncrasy under one section header to match the md.
+    *Verified on the REAL MVST export + LIVE EDGAR: 8 instruments parse (SOFR+9.750% floating shows,
+    CNY currency, serials→ISO, undated `-`→None); the wall pins reproduce exactly (matured $25.0M @
+    2026-05-28 / ≤12m $42.9M @ 2026-12-10 / 2027 $105.1M / undated $95.6M / reconciliation itemized
+    $268.6M); E3 hits accession 0000947871-26-000585 (filed 2026-05-28); E4 hits ex1013/ex1021 in
+    0001628280-26-018264 + an efts family pointer. Frontend confirmed by a real preview render (E1
+    table + E2 wall + R3 club; injected artifact reverted, no artifact commit). +12 tests (10 offline +
+    2 network-marked E3/E4 live pins); the no-conclusion walk extended to both new models. ruff + mypy
+    --strict (68) + `pytest -m "not network"` green. On a
+    branch → PR; NOT merged (awaiting review). Reader-feedback point 6 (survival completion) closes.*
 - _Whole suite green (ruff + mypy --strict clean; `pytest -m "not network"` passes)._
 
 ## 3. FALSIFIED — tested and retired (NOT deferred)

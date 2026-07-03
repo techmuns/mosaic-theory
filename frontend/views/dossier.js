@@ -264,7 +264,7 @@ function renderDossier(d, verdict) {
     header(d),
     flagsSection(d.caveats || d.flags || []),      // D1: caveats first (what to verify)
     drawdownIdio(m),                               // D1: drawdown cause + idiosyncrasy, clubbed
-    leverageSurvival(m),                           // D1: leverage & survival (+ FCF + liquidity)
+    leverageSurvival(m, d.reference_date),          // D1/E: leverage & survival + capital structure
     trajectorySection(m.quality || {}),            // D2: merged trajectory table + share-count
     valuation(m.valuation),                        // valuation & own-history
     peerComps(m.peer_comps),                       // peer comps (per-peer grid inside)
@@ -279,14 +279,71 @@ function renderDossier(d, verdict) {
   ].join("");
 }
 
-// (D1) drawdown cause + idiosyncrasy clubbed — what happened, and did it happen alone?
+// (D1/R3) drawdown cause + idiosyncrasy under ONE section header (matches the md) — what happened,
+// and did it happen alone?
 function drawdownIdio(m) {
-  return drawdownCause(m.drawdown_cause) + idioVsShared(m.idiosyncratic_vs_shared);
+  const dd = drawdownCause(m.drawdown_cause), io = idioVsShared(m.idiosyncratic_vs_shared);
+  if (!dd && !io) return "";
+  const divider = `<div class="ds-title" style="font-size:12px; margin-top:14px;">Did it happen alone? (idiosyncratic vs shared)</div>`;
+  return sec("Drawdown cause & idiosyncrasy — what happened, and did it happen alone?",
+    "The event(s) that broke the name, then whether it fell alone (idiosyncratic) or with its graph cohort.",
+    dd + (io ? divider + io : ""));
 }
 
-// (D1) leverage & survival — the survival story in one place (+ FCF + liquidity). Falls back to the
-// pre-B2 Quality leverage lines when the unified block is absent.
-function leverageSurvival(m) {
+// (E2) $M principal → "$25.0M" / "–"
+const _mM = (v) => (v == null ? DASH : `$${Number(v).toFixed(1)}M`);
+
+// (E2) deterministic month-precision maturity wall from the structured instruments (mirrors
+// render._maturity_wall_lines): matured-pre-reference / due this ref year / due later years / undated.
+function maturityWall(cs, refDate) {
+  const inst = cs.instruments;
+  if (!inst || inst.status !== "present" || !Array.isArray(inst.value)) return "";
+  const ref = new Date(refDate + "T00:00:00");
+  const matured = [], thisYear = [], later = [], undated = [];
+  for (const i of inst.value) {
+    if (!i.maturity_date) { undated.push(i); continue; }
+    const d = new Date(i.maturity_date + "T00:00:00");
+    (d < ref ? matured : d.getUTCFullYear() === ref.getUTCFullYear() ? thisYear : later).push([d, i]);
+  }
+  const sum = (xs) => xs.reduce((a, x) => a + ((Array.isArray(x) ? x[1] : x).principal_musd || 0), 0);
+  const li = [];
+  if (matured.length) {
+    li.push(`<li><b>matured (pre-reference): ${_mM(sum(matured))}</b> — resolution not in this data; verify each against its 8-K (never assume repaid/defaulted):<ul>` +
+      matured.sort((a, b) => a[0] - b[0]).map(([d, i]) => `<li>${i.maturity_date}: ${_mM(i.principal_musd)} ${escapeHtml(i.description.slice(0, 34))}</li>`).join("") + "</ul></li>");
+  }
+  if (thisYear.length) li.push(`<li>due ≤12m (through ${ref.getUTCFullYear()}): ${_mM(sum(thisYear))} — ${thisYear.map(([d, i]) => `${i.maturity_date} ${_mM(i.principal_musd)}`).join(", ")}</li>`);
+  const byYr = {};
+  for (const [d, i] of later) (byYr[d.getUTCFullYear()] ||= []).push([d, i]);
+  for (const yr of Object.keys(byYr).sort()) li.push(`<li>due ${yr}: ${_mM(sum(byYr[yr]))}</li>`);
+  if (undated.length) li.push(`<li>undated (floor — no panel maturity): ${_mM(sum(undated))} — ${undated.map((i) => `${escapeHtml(i.description.slice(0, 26))} ${_mM(i.principal_musd)}`).join(", ")}</li>`);
+  li.push(`<li class="muted"><i>reconciliation: itemized ${_mM(sum(inst.value))} (panel ${escapeHtml(cs.detail_as_of || "")}) vs the latest-quarter aggregates below — the gap is unitemized / newer term loans.</i></li>`);
+  return `<div class="fact"><div class="fact-label">Maturity wall (deterministic, vs ${escapeHtml(refDate)})</div><ul class="kv-list">${li.join("")}</ul></div>`;
+}
+
+// (E1/E2) structured capital structure — instruments table + maturity wall + the survival reads.
+function capitalStructure(cs, refDate) {
+  const inst = cs.instruments;
+  let table = fact("Capital structure (instruments)", inst);
+  if (inst && inst.status === "present" && Array.isArray(inst.value)) {
+    const cols = ["Type", "Principal", "Coupon", "Floating", "Maturity", "Sec", "Conv", "Cur"];
+    const rows = inst.value.map((i) => ({
+      label: i.description,
+      cells: [i.type, _mM(i.principal_musd), i.coupon || DASH, i.floating_rate || DASH,
+        i.maturity_date || "undated", i.secured ? "Y" : "N", i.convertible ? "Y" : "N", i.currency],
+    }));
+    table = dataTable(`Capital structure (instruments) — panel ${cs.detail_as_of || ""}`, inst.source_ref, cols, rows);
+  }
+  return sec("Capital structure & maturity wall", "Structured instruments, the month-precision maturity wall, and the covenant pointers.",
+    table + maturityWall(cs, refDate) +
+    fact("Aggregates (latest quarter)", cs.summary) +
+    fact("8-Ks at instrument maturities", cs.maturity_filings) +
+    fact("Covenant exhibit pointers", cs.covenant_pointers) +
+    fact("Covenant terms (Tier-2, fenced)", cs.covenant_terms));
+}
+
+// (D1) leverage & survival — the survival story in one place (+ FCF + capital structure). Falls back
+// to the pre-B2 Quality leverage lines + the flat liquidity string for an old dossier.json.
+function leverageSurvival(m, refDate) {
   const q = m.quality || {};
   const block = m.leverage_survival ? leverageBlock(m) : sec("Leverage & survival",
     "Cash generation, leverage bases, and the survival read.",
@@ -295,11 +352,10 @@ function leverageSurvival(m) {
     fact("Net debt / EBITDA (covenant adj.)", q.net_debt_to_ebitda_adjusted) +
     fact("Survival capacity", q.survival_capacity) +
     fact("Interest coverage", q.interest_coverage, mult));
-  return block + sec("Cash & liquidity",
-    "Self-funding and the covenant/maturity flags — the survival inputs.",
-    fact("FCF sign", q.fcf_sign, signWord) +
-    fact("Free cash flow ($M)", q.free_cash_flow) +
-    fact("Liquidity / covenant flags", q.liquidity_covenant_flags));
+  const cash = sec("Cash & liquidity", "Self-funding — the survival input.",
+    fact("FCF sign", q.fcf_sign, signWord) + fact("Free cash flow ($M)", q.free_cash_flow) +
+    (m.capital_structure ? "" : fact("Liquidity / covenant flags", q.liquidity_covenant_flags)));
+  return block + cash + (m.capital_structure ? capitalStructure(m.capital_structure, refDate) : "");
 }
 
 // (D2/D1) trajectory — the merged table + the share-count trend.
@@ -495,7 +551,7 @@ function drawdownCause(dc) {
       ${(f.events || []).map((e) => `<div class="fe">↳ ${escapeHtml(e)}</div>`).join("")}
       ${f.url ? `<div style="margin-top:5px;"><a href="${encodeURI(f.url)}" target="_blank" rel="noopener">EDGAR ${escapeHtml(f.accession || "")}</a></div>` : ""}
     </div>`).join("");
-  return sec("Drawdown cause", "Why the name fell — discrete event vs gradual bleed, with the 8-Ks at the gap-downs.",
+  return (  // (R3) body only — drawdownIdio wraps it in the shared section header
     fact("Shape", dc.shape) +
     fact("Gap-down dates", listFact(dc.gap_down_dates)) +
     fact("Revised guidance", dc.revised_guidance) +
@@ -511,7 +567,7 @@ function idioVsShared(io) {
           <td class="muted" style="font-size:11.5px;">${escapeHtml(c.via || "")}</td></tr>`).join("")}
       </tbody></table>${io.cohort.source_ref ? `<span class="cite">${escapeHtml(io.cohort.source_ref)}</span>` : ""}</div>`
     : `<div class="fact-val muted" style="margin-top:8px;"><span class="pill unresolved">${io.cohort?.status === "missing" ? "MISSING" : "UNKNOWN"}</span> ${escapeHtml(io.cohort?.note || "no graph cohort")}</div>`;
-  return sec("Idiosyncratic vs shared", "Did the name fall alone (idiosyncratic) or with its graph cohort (shared/thematic)? The graph is a research input — it gates nothing.",
+  return (  // (R3) body only — drawdownIdio wraps it in the shared section header
     fact("Read", io.read, null, { hi: true }) +
     fact("Name 180d return", io.name_180d_return, ret) +
     fact("Market (IWM) 180d", io.market_180d_return, ret) +

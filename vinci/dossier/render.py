@@ -11,6 +11,8 @@ import math
 import re
 from collections import Counter
 from collections.abc import Callable
+from datetime import date
+from itertools import groupby
 from typing import Any
 
 from vinci.dossier.schemas import Dossier, MechanicalLayer, Sourced, SourceStatus
@@ -323,6 +325,96 @@ def _leverage_block(m: MechanicalLayer) -> list[str]:
     ]
 
 
+def _musd(v: float | None) -> str:  # a $M principal → "$25.0M", or "–"
+    return f"${v:,.1f}M" if v is not None else "–"
+
+
+def _maturity_wall_lines(cs: Any, reference_date: date) -> list[str]:
+    """(E2) Deterministic month-precision maturity wall from the structured instruments, grouped vs
+    the reference date: matured-pre-reference (resolution not in this data — verify the 8-K, NEVER
+    assume repaid/defaulted) / due this reference year / due later years / undated (floor). No
+    probability, risk, or conclusion language."""
+    inst = cs.instruments
+    if inst.status is not SourceStatus.PRESENT or not inst.value:
+        return []
+    matured: list[tuple[date, Any]] = []
+    this_year: list[tuple[date, Any]] = []
+    later: list[tuple[date, Any]] = []
+    undated: list[Any] = []
+    for i in inst.value:
+        if i.maturity_date is None:
+            undated.append(i)
+            continue
+        d = date.fromisoformat(i.maturity_date)
+        (matured if d < reference_date else this_year if d.year == reference_date.year else later
+         ).append((d, i))
+    def dtot(xs: list[tuple[date, Any]]) -> float:
+        return sum(i.principal_musd or 0.0 for _d, i in xs)
+
+    def bykey(x: tuple[date, Any]) -> tuple[date, str]:  # sort a (date, instrument) pair stably
+        return (x[0], x[1].description)
+
+    out = [f"- **Maturity wall** (deterministic, vs the {reference_date.isoformat()} reference):"]
+    if matured:
+        out.append(
+            f"  - **matured (pre-reference): {_musd(dtot(matured))}** — resolution not in this "
+            "data; verify each against its 8-K (NEVER assume repaid or defaulted):")
+        for d, i in sorted(matured, key=bykey):
+            out.append(
+                f"    - {d.isoformat()} ({(reference_date - d).days}d before ref): "
+                f"{_musd(i.principal_musd)} {i.description[:34]}")
+    if this_year:
+        detail = ", ".join(
+            f"{d.isoformat()} {_musd(i.principal_musd)}" for d, i in sorted(this_year, key=bykey))
+        out.append(
+            f"  - due ≤12m (through {reference_date.year}): {_musd(dtot(this_year))} — {detail}")
+    for yr, grp in groupby(sorted(later, key=bykey), key=lambda x: x[0].year):
+        out.append(f"  - due {yr}: {_musd(dtot(list(grp)))}")
+    if undated:
+        detail = ", ".join(f"{i.description[:26]} {_musd(i.principal_musd)}" for i in undated)
+        undated_tot = sum(i.principal_musd or 0.0 for i in undated)
+        out.append(
+            f"  - undated (floor — no panel maturity): {_musd(undated_tot)} — {detail}")
+    itemized = sum(i.principal_musd or 0.0 for i in inst.value)
+    out.append(
+        f"  - _reconciliation: itemized {_musd(itemized)} (panel {cs.detail_as_of}) vs the "
+        f"latest-quarter aggregates below — the gap is unitemized / newer term loans; read the QoQ "
+        "movement in the aggregates line._"
+    )
+    return out
+
+
+def _capital_structure_lines(cs: Any, reference_date: date) -> list[str]:
+    """(E1/E2–E5) Capital structure — the structured instruments table (replacing the flat
+    liquidity_covenant_flags string), the month-precision maturity wall + reconciliation, then the
+    maturity-anchored 8-Ks, covenant exhibit pointers, and the fenced Tier-2 covenant terms."""
+    inst = cs.instruments
+    out: list[str] = []
+    if inst.status is SourceStatus.PRESENT and inst.value:
+        cols = ["Type", "Principal", "Coupon", "Floating", "Maturity", "Sec", "Conv", "Cur"]
+        rows = [
+            [i.description, i.type, _musd(i.principal_musd), i.coupon or "–",
+             i.floating_rate or "–",
+             i.maturity_date or "undated", "Y" if i.secured else "N", "Y" if i.convertible else "N",
+             i.currency]
+            for i in inst.value
+        ]
+        out += _table(
+            f"Capital structure (instruments) — panel {cs.detail_as_of}", inst.source_ref, cols,
+            rows)
+    else:
+        out.append(_fact("Capital structure (instruments)", inst))
+    out += _maturity_wall_lines(cs, reference_date)
+    out += [
+        _fact("Capital-structure aggregates (latest quarter)", cs.summary),
+        _fact("8-Ks at instrument maturities", cs.maturity_filings),
+        _fact("Covenant exhibit pointers", cs.covenant_pointers),
+        _fact("Covenant terms (Tier-2, fenced)", cs.covenant_terms),
+        "",
+    ]
+    return out
+
+
 def _quality_leverage_lines(m: MechanicalLayer) -> list[str]:
     """The Quality leverage lines — rendered HERE only for a pre-B2 dossier.json; when the unified
     leverage_survival block exists they move there (not duplicated)."""
@@ -611,10 +703,24 @@ def _strip_concession(claim: str) -> str:
     return claim[: m.start()] if m else claim
 
 
+# (R1) word-boundary regexes with INTERPOSITION tolerance — a substring keyword misses "adjusted
+# EBITDA OF negative $5.5M" (words between 'EBITDA' and 'negative'); allows ≤3 interposed
+# words. Face-validity only (like the keyword map); checked BEFORE the keywords, highest-tier-first.
+_TIER_REGEX: tuple[tuple[float, re.Pattern[str]], ...] = (
+    (1.0, re.compile(
+        r"\b(?:adjusted\s+)?ebitda\b(?:\s+\w+){0,3}\s+negative\b"
+        r"|\bturned\s+negative\b|\bcash-negative\b", re.IGNORECASE)),
+)
+
+
 def _point_tier(claim: str) -> float:
-    c = _strip_concession(claim).lower()
+    c = _strip_concession(claim)
+    cl = c.lower()
+    for tier, pat in _TIER_REGEX:  # R1 — interposition-tolerant patterns win first (highest tier)
+        if pat.search(c):
+            return tier
     for tier, kws in _TIER_KEYWORDS:
-        if any(k in c for k in kws):
+        if any(k in cl for k in kws):
             return tier
     return 4.5  # unclassifiable → between competitive (4) and valuation (5); never dropped
 
@@ -736,9 +842,13 @@ def render_markdown(d: Dossier, *, dev: bool = False) -> str:
     out += [
         _fact("FCF sign", m.quality.fcf_sign, _signword),
         _fact("Free cash flow ($M)", m.quality.free_cash_flow),
-        _fact("Liquidity / covenant flags", m.quality.liquidity_covenant_flags),
-        "",
     ]
+    # (E1/E2) structured capital structure + maturity wall replace the flat liquidity string; pre-E
+    # dossier.json falls back to the legacy Quality.liquidity_covenant_flags line.
+    if m.capital_structure is not None:
+        out += _capital_structure_lines(m.capital_structure, d.reference_date)
+    else:
+        out += [_fact("Liquidity / covenant flags", m.quality.liquidity_covenant_flags), ""]
 
     # (D1·§3 · D2) Trajectory — the merged margin/multi-year table + share-count trend.
     out.append("### Trajectory (revenue · EBITDA · margins · ROIC)")
