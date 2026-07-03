@@ -42,7 +42,7 @@ from vinci.dossier.schemas import (
     Valuation,
 )
 from vinci.edgar.client import EdgarClient
-from vinci.edgar.concepts import extract_points
+from vinci.edgar.concepts import extract_points, latest_instant
 from vinci.finra import FinraLayoutError, short_interest_points
 from vinci.graph.exposure import ExposureGraph
 from vinci.graph.filings import html_to_text
@@ -698,17 +698,6 @@ def _valuation(
     )
 
 
-def _nearest_maturity(liquidity: Sourced[str]) -> str:
-    """The nearest refinancing wall — the earliest 'Due YYYY' in the instrument table, or fail-loud
-    UNKNOWN (itself a solvency-visibility risk per the synthesis's opacity-as-signal rule)."""
-    if liquidity.status is not SourceStatus.PRESENT or not liquidity.value:
-        return "nearest refinancing wall UNKNOWN (no instrument table — a risk)"
-    years = sorted(int(y) for y in re.findall(r"Due\s+(\d{4})(?!\d)", liquidity.value))
-    if not years:
-        return "nearest refinancing wall UNKNOWN (no maturity dates parsed — a risk)"
-    return f"nearest maturity wall: {years[0]}"
-
-
 def _net_debt_to_ebitda(
     bundle: CiqBundle, edgar_net_lev: Sourced[float]
 ) -> tuple[Sourced[float], Sourced[float]]:
@@ -782,12 +771,13 @@ def _net_debt_to_ocf(
 
 def _survival_capacity(
     net_lev: Sourced[float], adj_lev: Sourced[str], fcf_sign: Sourced[float],
-    liquidity: Sourced[str], *, net_debt: Sourced[float] | None = None,
+    *, net_debt: Sourced[float] | None = None,
 ) -> Sourced[str]:
-    """Solvency as ONE block — net leverage + self-funding (FCF sign) + nearest refinancing wall —
-    so survival can't be read as one quality metric among many. Each leg is present or fail-loud
-    UNKNOWN (itself a risk). ``net_debt`` (CIQ, $M) lets a non-formable ratio still report the known
-    balance-sheet position — a net-cash name is not a 'solvency risk'. No new data source."""
+    """Solvency as ONE block — net leverage + self-funding (FCF sign). Each leg is present or
+    fail-loud UNKNOWN (itself a risk). ``net_debt`` (CIQ, $M) lets a non-formable ratio still report
+    the known balance-sheet position — a net-cash name is not a 'solvency risk'. No new data source.
+    (H3) The nearest-maturity year is retired here — the month-precision E2 maturity wall (rendered
+    in the survival super-section) supersedes the coarse 'nearest maturity wall: YYYY' line."""
     present = SourceStatus.PRESENT
     parts: list[str] = []
     if net_lev.status is present and net_lev.value is not None:
@@ -815,11 +805,10 @@ def _survival_capacity(
         )
     else:
         parts.append("FCF sign UNKNOWN — runway not assessable (a risk)")
-    parts.append(_nearest_maturity(liquidity))
     return Sourced.present(
         " | ".join(parts),
         source_ref="CIQ Net Debt ÷ CIQ LTM EBITDA (EDGAR XBRL breadth fallback) + FCF sign "
-        "+ CIQ Capital Structure (survival capacity)",
+        "(survival capacity)",
     )
 
 
@@ -855,7 +844,7 @@ def _quality(
         net_debt_to_ocf=net_ocf,
         net_debt_to_ebitda_adjusted=adj_leverage,
         survival_capacity=_survival_capacity(
-            net_lev, adj_leverage, fcf_sign, liquidity, net_debt=ciq_nd
+            net_lev, adj_leverage, fcf_sign, net_debt=ciq_nd
         ),
         interest_coverage=ciq_sheets.interest_coverage(bundle),
         share_count_trend=(
@@ -958,11 +947,10 @@ def _leverage_survival(quality: Quality, bundle: CiqBundle) -> LeverageSurvival:
 
 
 # (F1) Form 4 non-derivative transaction codes: open-market P (purchase) / S (sale) are the
-# positioning SIGNAL; A (grant/award) / M (option exercise) / F (tax withholding) are routine comp
-# mechanics tallied SEPARATELY; anything else (C conversion, G gift, …) is bucketed as 'other' and
+# positioning SIGNAL; A (grant/award) is surfaced as 'grants'; every other non-open-market code
+# (M option exercise, F tax withholding, C conversion, G gift, …) is bucketed as 'other' and
 # LABELED — never silently dropped (that would misstate the counts). Counts + dates only.
 _OPEN_MARKET_CODES = ("P", "S")
-_ROUTINE_CODES = ("A", "M", "F")
 
 
 def _form4_codes(http: CachedHttp, cik: str, accession: str) -> list[tuple[str, float]]:
@@ -1023,13 +1011,14 @@ def _insider_activity(
                 net -= sh
     p, s = counts.get("P", 0), counts.get("S", 0)
     last = max(f.filing_date for f in filings)
-    line = f"P×{p} / S×{s} · net {net / 1000:+.1f}K sh · last {last.isoformat()}"
-    routine = "/".join(f"{c}×{counts[c]}" for c in _ROUTINE_CODES if counts.get(c))
-    if routine:
-        line += f" · routine {routine}"
+    # (H5) PLAIN LABELS, sign-descriptors only (counts + net + dates) — no interpretive language.
+    # 'grants' = the A (award/grant) code; option-exercise (M) / tax-withheld (F) / conversions (C)
+    # etc. are preserved compactly under 'other' so nothing is silently dropped.
+    line = (f"Open-market buys {p} · sells {s} (net {net / 1000:+.1f}K sh) · "
+            f"grants {counts.get('A', 0)} · last {last.isoformat()}")
     other = "/".join(
         f"{c}×{n}" for c, n in sorted(counts.items())
-        if c not in _OPEN_MARKET_CODES and c not in _ROUTINE_CODES and n
+        if c not in _OPEN_MARKET_CODES and c != "A" and n
     )
     if other:
         line += f" · other {other}"
@@ -1037,9 +1026,12 @@ def _insider_activity(
         line, source_ref=f"EDGAR Form 4 (latest {filings[0].accession}; {len(filings)} in 6m)")
 
 
-def _short_interest(finra: CachedHttp, record: DataRecord, reference_date: date) -> Sourced[str]:
-    """(F2) Latest FINRA settlement short interest — shares short + FINRA's own Δ% + days-to-cover
-    computed against the SCREEN data-record ADV (no ADV recompute). Dated as-of (no floor). A cross-
+def _short_interest(
+    finra: CachedHttp, record: DataRecord, reference_date: date, *, shares_out: float | None = None
+) -> Sourced[str]:
+    """(F2/H5) Latest FINRA settlement short interest, sign-descriptors only: prior → latest with a
+    rising/falling trend + FINRA's own Δ%, the % of shares out (EDGAR XBRL count), days-to-cover vs
+    the SCREEN 90d ADV, and the latest-4 settlements as a mini-row. No interpretation — a cross-
     reference for the human, never a conclusion; fail-loud UNKNOWN when no settlement is on file."""
     symbol = record.identity.ticker
     try:
@@ -1050,18 +1042,41 @@ def _short_interest(finra: CachedHttp, record: DataRecord, reference_date: date)
     if not points:
         return Sourced.unknown(note="no FINRA short-interest settlement in the trailing window")
     latest = points[0]
-    line = f"{latest.shares_short / 1e6:.1f}M sh"
-    if latest.change_percent is not None:
-        line += f" ({latest.change_percent:+.1f}%)"
+    prior = points[1] if len(points) > 1 else None
+    # (H5) prior → latest with a rising/falling sign-descriptor (a plain comparison, not a verdict)
+    if prior is not None:
+        trend = ("rising" if latest.shares_short > prior.shares_short
+                 else "falling" if latest.shares_short < prior.shares_short else "flat")
+        line = f"{prior.shares_short / 1e6:.1f}M → {latest.shares_short / 1e6:.1f}M sh"
+        pct = f"{latest.change_percent:+.1f}%, " if latest.change_percent is not None else ""
+        line += f" ({pct}{trend})"
+    else:
+        line = f"{latest.shares_short / 1e6:.1f}M sh"
+        if latest.change_percent is not None:
+            line += f" ({latest.change_percent:+.1f}%)"
+    if shares_out and shares_out > 0:  # (H5) % of shares out, EDGAR XBRL count (omitted if absent)
+        line += f" · {latest.shares_short / shares_out * 100:.1f}% of shares out (EDGAR XBRL)"
     adv = record.prices.adv_90d_shares
     if adv.coverage_status is CoverageStatus.PRESENT and adv.value:
         line += f" · DTC {latest.shares_short / adv.value:.1f}d"
         basis = f"DTC = {latest.shares_short:,} short ÷ {adv.value:,.0f} screen 90d ADV"
     else:
         basis = "screen 90d ADV unavailable — DTC omitted"
+    # (H5) latest-4 settlements mini-row (dates + shares) — the recent trend, source-bound
+    mini = " · ".join(f"{pt.settlement_date} {pt.shares_short / 1e6:.1f}M" for pt in points[:4])
     return Sourced.present(
-        f"Short interest (FINRA, settle {latest.settlement_date}): {line}",
+        f"Short interest (FINRA, settle {latest.settlement_date}): {line} · recent: {mini}",
         source_ref=f"FINRA consolidated short interest (settle {latest.settlement_date}); {basis}")
+
+
+def _edgar_shares_outstanding(edgar: EdgarClient, cik: str | None) -> float | None:
+    """(H5) Latest EDGAR XBRL shares outstanding (dei cover-page, us-gaap fallback), or None when
+    absent — the denominator for short interest as a % of shares out (never faked when missing)."""
+    facts = _companyfacts_or_none(edgar, cik)
+    if not facts:
+        return None
+    pt = latest_instant(extract_points(facts, "shares"))
+    return pt.value if pt else None
 
 
 def _catalyst_path(
@@ -1085,6 +1100,9 @@ def _catalyst_path(
         cross_name_anchor=ciq_sheets.cross_name_anchor(bundle, as_of=aod),
         guidance_bridge=ciq_sheets.guidance_bridge(
             bundle, as_of=aod, reference_date=reference_date, stale_after_days=_STALE_CLOSE_DAYS
+        ),
+        guidance_bridge_rows=ciq_sheets.guidance_bridge_rows(
+            bundle, reference_date=reference_date, stale_after_days=_STALE_CLOSE_DAYS
         ),
         revision_events=ciq_sheets.revision_events(bundle, as_of=aod),
         consensus_stats=ciq_sheets.consensus_stats(bundle, as_of=aod),
@@ -1247,7 +1265,8 @@ def _covenant_pointers(
             if h.accession in seen:
                 continue
             exs = [n for n in _exhibit_names(http, cik, h.accession)
-                   if _AGREEMENT_EXHIBIT_RE.search(n) and n.lower().endswith((".htm", ".txt"))]
+                   if _AGREEMENT_EXHIBIT_RE.search(n)
+                   and n.lower().endswith((".htm", ".html", ".txt"))]  # .html: some filers use it
             if not exs:  # a mention-only 8-K (no agreement exhibit) is NOT a pointer
                 continue
             seen.add(h.accession)
@@ -1380,14 +1399,15 @@ def _ie_bridge_net_debt(bridge: str | None) -> float | None:
 
 
 def _implied_expectations(
-    peer_comps: PeerComps, catalyst: CatalystPath, implied_val: ImpliedValuation
+    peer_comps: PeerComps, catalyst: CatalystPath, implied_val: ImpliedValuation, bundle: CiqBundle
 ) -> ImpliedExpectations | None:
-    """(G) Assemble price-inverted expectations from ALREADY-SOURCED fields (no workbook). TEV =
-    mcap + net debt (simple-TEV basis, labeled — the cell is not surfaced and carries a stale second
-    pricing vintage, so deriving from Latest-mcap is vintage-coherent). implied_level =
-    TEV ÷ multiple for the fixed set; consensus anchors are the same TEV ÷ the forward ladder (so
-    the NTM anchor IS the name-NTM identity row); a G5 residual (FY26 probe) certifies the vintages.
-    Returns None when TEV can't be derived (mcap / net debt absent) — the block won't render."""
+    """(G) Assemble price-inverted expectations from ALREADY-SOURCED fields. TEV = mcap + net debt
+    (simple-TEV basis — the cell is not surfaced and carries a stale second pricing vintage,
+    so deriving from Latest-mcap is vintage-coherent). implied_level = TEV ÷ multiple for the fixed
+    set. (H7) The EBITDA consensus anchors are the DIRECT Estimates→Trends latest levels (the single
+    source of truth), NOT TEV ÷ ladder — the ladder-derived FY26 lives ONLY in the vintage-guard
+    line; a G5 residual (FY26 probe) certifies the vintages. Returns None when TEV can't be derived
+    (mcap / net debt absent) — the block won't render."""
     mc, grid = implied_val.market_cap, peer_comps.peer_grid
     if (mc.status is not SourceStatus.PRESENT or mc.value is None
             or grid is None or grid.status is not SourceStatus.PRESENT):
@@ -1423,9 +1443,11 @@ def _implied_expectations(
                 label=label, metric=metric, multiple=mult, multiple_source=src,
                 implied_level=round(tev / mult, 1), is_identity=(kind == "ladder")))
 
-    # consensus anchors (FY26E/FY27E/NTM EBITDA levels) = the SAME TEV ÷ the forward ladder, so the
-    # NTM anchor equals the name-NTM identity row BY CONSTRUCTION. FY26E is ALSO directly sourced
-    # (acceleration_read) — that direct value is the independent probe the G5 guard checks against.
+    # (H7) The EBITDA consensus anchors are the DIRECT Estimates→Trends latest levels (FY26E/FY27E),
+    # the SINGLE SOURCE OF TRUTH — NOT TEV ÷ ladder. The ladder FY26 (`a26`) is kept ONLY for
+    # the G5 vintage-guard probe below. The parallel REVENUE anchors stay TEV ÷ ladder: they
+    # SUBSTANTIATE the TEV/Rev name-row identity (†, NTM rev anchor ≡ the name-NTM identity) —
+    # a different job than the consensus path, so they keep the ladder basis on purpose.
     def _anchor(period: str, key: str = "TEV/EBITDA") -> float | None:
         mo = _ie_ladder(cna, period, key)
         return (tev / mo) if (mo and mo > 0) else None  # UNROUNDED; 1dp only at display
@@ -1438,17 +1460,24 @@ def _implied_expectations(
             txt + f" (consensus {metric} = TEV ÷ forward ladder; NTM = the name-NTM identity)",
             source_ref=cna_src)
 
-    # anchors are UNROUNDED here (1dp only at display) so the NTM anchor prints the SAME as the
-    # name-NTM identity row (both TEV ÷ 7.54 = 82.6). The parallel REVENUE anchors substantiate the
-    # TEV/Rev name-row identity (†) — so it's shown, not merely asserted.
-    a26 = _anchor("FY 2026")  # the EBITDA FY26 anchor is kept for the G5 residual probe below
-    anchors = _anchor_line("TEV/EBITDA", "EBITDA")
-    rev_anchors = _anchor_line("TEV/REV", "Revenue")
+    def _direct_ebitda_anchors() -> Sourced[str]:
+        vals = [(lab, ciq_sheets.trends_fy_level(bundle, metric="EBITDA", fy_label=fy))
+                for lab, fy in (("FY26E", "FY 2026"), ("FY27E", "FY 2027"))]
+        if all(v is None for _, v in vals):
+            return Sourced.unknown(note="no direct FY26/FY27 EBITDA consensus in Estimates→Trends")
+        txt = " · ".join(f"{lab} {(f'${v:.1f}M') if v is not None else 'n/a'}" for lab, v in vals)
+        return Sourced.present(
+            txt + " (direct consensus EBITDA — CIQ Estimates→Trends latest snapshot)",
+            source_ref="CIQ Estimates→Trends (FY26/FY27 consensus EBITDA, latest snapshot)")
+
+    a26 = _anchor("FY 2026")  # LADDER-derived FY26 — kept ONLY for the G5 vintage-guard probe below
+    anchors = _direct_ebitda_anchors()  # (H7) direct Trends, the single source of truth
+    rev_anchors = _anchor_line("TEV/REV", "Revenue")  # ladder — substantiates TEV/Rev † identity
 
     # (G5) vintage-coherence: derived FY26 (TEV ÷ FY26 forward multiple, UNROUNDED) vs the DIRECT
-    # FY26 EBITDA consensus (acceleration_read). NTM consensus is not a sourced level, so FY26 — the
-    # nearest direct consensus — is the probe; the shared-TEV ladder certifies all horizons.
-    direct26 = _ie_consensus_latest(catalyst.acceleration_read.value, "FY 2026", "EBITDA")
+    # FY26 EBITDA consensus (Estimates→Trends latest — SAME source as the anchors). NTM is not a
+    # sourced level, so FY26 — the nearest direct consensus — is the probe; shared-TEV ladder certs.
+    direct26 = ciq_sheets.trends_fy_level(bundle, metric="EBITDA", fy_label="FY 2026")
     coherent, pct = True, 0.0
     if direct26 and direct26 > 0 and a26 is not None:
         pct = abs(a26 - direct26) / direct26
@@ -1534,14 +1563,17 @@ def assemble_mechanical(
     catalyst = _catalyst_path(
         bundle, reference_date,
         insider_activity=_insider_activity(edgar, http, record.identity.cik, reference_date),
-        short_interest=_short_interest(finra, record, reference_date),
+        short_interest=_short_interest(
+            finra, record, reference_date,
+            shares_out=_edgar_shares_outstanding(edgar, record.identity.cik)),
     )
     valuation = _valuation(
         record, bundle, adj_eps, adj_ev, pe_note=pe_recon[1] if pe_recon else None)
     # (G) price-inverted expectations (multiples-space) attach to Valuation. Built from already-
     # assembled fields only (peer multiples + the forward ladder + the derived TEV) — no extraction.
     valuation = valuation.model_copy(
-        update={"implied_expectations": _implied_expectations(peer_comps, catalyst, implied_val)})
+        update={"implied_expectations":
+                _implied_expectations(peer_comps, catalyst, implied_val, bundle)})
     mech = MechanicalLayer(
         valuation=valuation,
         quality=quality,

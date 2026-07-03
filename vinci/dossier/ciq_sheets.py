@@ -14,7 +14,7 @@ import re
 import statistics
 from collections.abc import Callable
 from datetime import date
-from typing import Any
+from typing import Any, NamedTuple
 
 from vinci.dossier.ciq import (
     _UNAVAILABLE_CELLS,
@@ -29,6 +29,7 @@ from vinci.dossier.schemas import (
     CapitalInstrument,
     FinRow,
     FinTable,
+    GuidanceRow,
     ImpliedRow,
     ImpliedValuation,
     PeerComps,
@@ -1198,6 +1199,31 @@ def acceleration_read(bundle: CiqBundle, *, as_of: str | None = None) -> Sourced
     )
 
 
+def trends_fy_level(bundle: CiqBundle, *, metric: str, fy_label: str) -> float | None:
+    """(H7) The LATEST Trends consensus snapshot for a metric at a SPECIFIC fiscal-year column —
+    e.g. ``metric="EBITDA", fy_label="FY 2027"`` → the newest FY2027 EBITDA estimate. This is the
+    DIRECT consensus level (the single source of truth for the G anchors), NOT a price-inverted
+    ``TEV ÷ multiple`` derivation. None when the sheet/metric/column/snapshot is absent (fail-loud —
+    the caller renders n/a, never a fabricated level). Reads the newest present snapshot of the
+    block's column; ``acceleration_read`` reads only the FIRST FY column, so this covers next-FY."""
+    try:
+        rows = bundle.sheet("estimates", "Trends")
+    except CiqUnavailableError:
+        return None
+    bi = _find_row(rows, metric)
+    if bi is None:
+        return None
+    header = _metric_block_header(rows, bi)
+    if header is None:
+        return None
+    col = next((j for j, c in enumerate(header)
+                if isinstance(c, str) and c.strip() == fy_label), None)
+    if col is None:
+        return None
+    path = _snapshot_path(rows, bi, col)  # oldest→newest
+    return path[-1][1] if path else None  # the newest (latest) snapshot value
+
+
 def _revisions_windows(rows: Rows, bi: int, end: int) -> dict[str, dict[str, int]]:
     """For a Revisions metric block [bi, end): {window(1m/2m/3m): {'Upward'|'Downward': row_index}}
     — each window's own Upward/Downward rows located by label, never positionally."""
@@ -1313,25 +1339,29 @@ def _guidance_rows(rows: Rows, bi: int, end: int) -> tuple[int | None, int | Non
     return gdate, guide, actual
 
 
-def guidance_bridge(
-    bundle: CiqBundle, *, as_of: str | None = None,
-    reference_date: date | None = None, stale_after_days: int = 45,
-) -> Sourced[str]:
-    """(d) GUIDANCE BRIDGE — per metric: the LATEST guide {range, date} + a delivery track-record.
-    SIGN-AWARE: a revenue-like (positive) guide is met when actual ≥ floor; a cost-like (negative)
-    guide (e.g. capex) is met when spend ≤ ceiling — the semantic used is labelled. Counts ONLY
-    resolved periods (both a range AND an actual) and surfaces the MOST-RECENT resolved outcome
-    (MET/MISSED). R3: a guide older than ``stale_after_days`` vs ``reference_date`` is flagged
-    '(stale — Nd old)' (age once, no date repeat); a point guide renders numeric, a range verbatim.
-    Present-but-empty blocks omitted; parens are negative."""
-    try:
-        rows = bundle.sheet("estimates", "Guidance")
-    except CiqUnavailableError as exc:
-        return _miss_or_unknown(bundle, "estimates", exc)
-    starts = _metric_starts(rows, _GUIDANCE_METRICS)
-    if not starts:
-        return Sourced.unknown(note="no guidance metric blocks in Estimates→Guidance")
-    lines: list[str] = []
+class _GuidanceRead(NamedTuple):
+    """The per-metric guidance read the string AND the table both format from (single source, no
+    drift). Raw values; each formatter derives its own display (age phrasing, record phrasing)."""
+
+    metric: str
+    guide: str  # the guide display (numeric for a point, verbatim quoted for a range)
+    period: str  # the fiscal period the latest guide is FOR
+    dated: date  # the latest guide's date
+    stale_days: int | None  # days old when older than stale_after_days (else None = fresh)
+    cost_like: bool  # a spend/cost guide (met when spend ≤ ceiling) vs revenue-like (≥ floor)
+    resolved: int  # periods with both a range AND an actual
+    met_n: int  # of those, how many met
+    recent_period: str | None  # the most-recent RESOLVED period
+    recent_met: bool | None  # whether it met
+
+
+def _guidance_reads(
+    rows: Rows, starts: list[int], reference_date: date | None, stale_after_days: int
+) -> list[_GuidanceRead]:
+    """Per guidance-metric block: the latest guide + the sign-aware delivery record + most-recent
+    resolved outcome. Counts ONLY resolved periods (range AND actual); parens are negative; a
+    present-but-empty block yields no read. Shared by the string and the table (H4)."""
+    reads: list[_GuidanceRead] = []
     for idx, bi in enumerate(starts):
         end = starts[idx + 1] if idx + 1 < len(starts) else len(rows)
         metric = str(rows[bi][0]).strip()
@@ -1363,14 +1393,43 @@ def guidance_bridge(
         gd, per, rng_s, cost_like = latest
         pr = _parse_range(rng_s)
         gval = _fig(pr[0]) if (pr is not None and " - " not in rng_s) else f"'{rng_s}'"
-        seg = f"{metric}: latest guide {gval} for {per} (dated {gd.isoformat()})"
-        if reference_date is not None and (reference_date - gd).days > stale_after_days:
-            seg += f" (stale — {(reference_date - gd).days}d old)"  # R3: age once, no date repeat
-        if resolved:
-            sem = "spend ≤ guided ceiling" if cost_like else "actual ≥ guided floor"
-            seg += f"; {sem} {met_n}/{resolved} resolved"
-            if recent is not None:
-                seg += f"; most recent resolved: {recent[1]} {'MET' if recent[2] else 'MISSED'}"
+        stale = ((reference_date - gd).days if reference_date is not None
+                 and (reference_date - gd).days > stale_after_days else None)
+        reads.append(_GuidanceRead(
+            metric, gval, per, gd, stale, cost_like, resolved, met_n,
+            recent[1] if recent is not None else None, recent[2] if recent is not None else None))
+    return reads
+
+
+def guidance_bridge(
+    bundle: CiqBundle, *, as_of: str | None = None,
+    reference_date: date | None = None, stale_after_days: int = 45,
+) -> Sourced[str]:
+    """(d) GUIDANCE BRIDGE — per metric: the LATEST guide {range, date} + a delivery track-record.
+    SIGN-AWARE: a revenue-like (positive) guide is met when actual ≥ floor; a cost-like (negative)
+    guide (e.g. capex) is met when spend ≤ ceiling — the semantic used is labelled. Counts ONLY
+    resolved periods (both a range AND an actual) and surfaces the MOST-RECENT resolved outcome
+    (MET/MISSED). R3: a guide older than ``stale_after_days`` vs ``reference_date`` is flagged
+    '(stale — Nd old)' (age once, no date repeat); a point guide renders numeric, a range verbatim.
+    Present-but-empty blocks omitted; parens are negative."""
+    try:
+        rows = bundle.sheet("estimates", "Guidance")
+    except CiqUnavailableError as exc:
+        return _miss_or_unknown(bundle, "estimates", exc)
+    starts = _metric_starts(rows, _GUIDANCE_METRICS)
+    if not starts:
+        return Sourced.unknown(note="no guidance metric blocks in Estimates→Guidance")
+    lines: list[str] = []
+    for r in _guidance_reads(rows, starts, reference_date, stale_after_days):
+        seg = f"{r.metric}: latest guide {r.guide} for {r.period} (dated {r.dated.isoformat()})"
+        if r.stale_days is not None:
+            seg += f" (stale — {r.stale_days}d old)"  # R3: age once, no date repeat
+        if r.resolved:
+            sem = "spend ≤ guided ceiling" if r.cost_like else "actual ≥ guided floor"
+            seg += f"; {sem} {r.met_n}/{r.resolved} resolved"
+            if r.recent_period is not None:
+                seg += (f"; most recent resolved: {r.recent_period} "
+                        f"{'MET' if r.recent_met else 'MISSED'}")
         lines.append(seg)
     if not lines:
         return Sourced.unknown(note="no parseable guidance ranges in Estimates→Guidance")
@@ -1378,6 +1437,35 @@ def guidance_bridge(
         "; ".join(lines) + _asof_suffix(as_of),
         source_ref="CIQ Estimates→Guidance (latest guide + sign-aware delivery track-record)",
     )
+
+
+def guidance_bridge_rows(
+    bundle: CiqBundle, *, reference_date: date | None = None, stale_after_days: int = 45,
+) -> Sourced[list[GuidanceRow]]:
+    """(H4) The guidance bridge as structured rows for the TABLE — SAME reads as the flat string,
+    formatted per column (metric | latest guide | for | dated | age | record | most recent). UNKNOWN
+    when the sheet/blocks/ranges are absent (never a fabricated row)."""
+    try:
+        rows = bundle.sheet("estimates", "Guidance")
+    except CiqUnavailableError as exc:
+        s: Sourced[str] = _miss_or_unknown(bundle, "estimates", exc)
+        return Sourced.unknown(note=s.note or "Estimates→Guidance unavailable")
+    starts = _metric_starts(rows, _GUIDANCE_METRICS)
+    reads = _guidance_reads(rows, starts, reference_date, stale_after_days) if starts else []
+    if not reads:
+        return Sourced.unknown(note="no parseable guidance ranges in Estimates→Guidance")
+    out: list[GuidanceRow] = []
+    for r in reads:
+        age = f"{r.stale_days}d (stale)" if r.stale_days is not None else "fresh"
+        record = (f"{'spend ≤ ceiling' if r.cost_like else 'actual ≥ floor'} {r.met_n}/{r.resolved}"
+                  if r.resolved else "—")
+        recent = (f"{r.recent_period} {'MET' if r.recent_met else 'MISSED'}"
+                  if r.recent_period is not None else "—")
+        out.append(GuidanceRow(
+            metric=r.metric, latest_guide=r.guide, period=r.period, dated=r.dated.isoformat(),
+            age=age, record=record, most_recent=recent))
+    return Sourced.present(
+        out, source_ref="CIQ Estimates→Guidance (latest guide + sign-aware delivery track-record)")
 
 
 def revision_events(bundle: CiqBundle, *, as_of: str | None = None) -> Sourced[list[RevisionEvent]]:

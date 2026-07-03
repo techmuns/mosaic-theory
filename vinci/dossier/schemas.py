@@ -262,6 +262,23 @@ class RevisionEvent(BaseModel):
     model_config = {"frozen": True}
 
 
+class GuidanceRow(BaseModel):
+    """(H4) One guidance-metric row for the guidance-bridge TABLE — the latest guide, its period and
+    date, its age (fresh / Nd stale), the sign-aware delivery record (met/resolved), and the
+    most-recent resolved outcome. All display strings (``—`` when a leg is absent) — a RECORDED
+    track record, no reading added; the same data the flat ``guidance_bridge`` string carries."""
+
+    metric: str
+    latest_guide: str  # the guide value or range, verbatim
+    period: str  # the fiscal period the guide is FOR
+    dated: str  # ISO guide date
+    age: str  # "fresh" or "Nd (stale)" vs the reference date
+    record: str  # sign-aware "actual ≥ floor m/n" | "spend ≤ ceiling m/n" | "—" (unresolved)
+    most_recent: str  # "FY 2024 MISSED" | "—"
+
+    model_config = {"frozen": True}
+
+
 class CatalystPath(BaseModel):
     """Horizon-matched estimates / guidance / revision-event view (CIQ Estimates: Revisions, Trends,
     Guidance, Multiples, Recent-Changes, Consensus). The Edge-2 revision-breadth evidence ASSEMBLED
@@ -276,6 +293,8 @@ class CatalystPath(BaseModel):
     acceleration_read: Sourced[str]  # b. monthly path from Trends; deltas between present snapshots
     cross_name_anchor: Sourced[str]  # c. NTM level + forward-multiple ladder (NTM + FY26→FY33)
     guidance_bridge: Sourced[str]  # d. latest guide {range,date} + consensus + actual + track-rec
+    # (H4) the same guidance data as structured rows → a table; optional for pre-H4 JSON.
+    guidance_bridge_rows: Sourced[list[GuidanceRow]] | None = None
     revision_events: Sourced[list[RevisionEvent]]  # e. Recent-Changes log; render caps 10, JSON all
     consensus_stats: Sourced[str]  # f. target mean/median/hi-lo/N + rating distribution
     # (PR F) positioning inputs — free, DATED feeds (their own as-ofs, no export-floor). Optional so

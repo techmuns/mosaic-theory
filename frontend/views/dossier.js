@@ -109,6 +109,10 @@ function fact(label, s, fmt, { hi = false } = {}) {
 
 const sec = (title, sub, inner) => `<div class="card ds-section"><div class="ds-title">${escapeHtml(title)}</div>${sub ? `<div class="subtitle muted ds-sub">${escapeHtml(sub)}</div>` : ""}${inner}</div>`;
 const mult = (v) => escapeHtml(Number(v).toFixed(1)) + "&times;";
+// (H3) the comparability gate renders VERBATIM once (Peer comps head); the G + Implied-Valuation
+// headers cite it SHORT rather than repeating the full text. A non-heterogeneous gate stays verbatim.
+const gateShortref = (gate) => (gate || "").includes("HETEROGENEOUS")
+  ? "comparability: HETEROGENEOUS (see Peer comps gate)" : (gate || "");
 const pctile = (v) => escapeHtml((Number(v) * 100).toFixed(0)) + "<span class='muted'>th %ile vs ~5y</span>";
 const ret = (v) => fmtPct(v, { signed: true });
 const signWord = (v) => (v > 0 ? "positive" : v < 0 ? "negative" : "breakeven");
@@ -478,7 +482,7 @@ function impliedExpectations(ie) {
     ],
   }));
   const intro = `<div class="fact"><div class="fact-label">Implied expectations (price-inverted · multiples-space)</div>
-    <div style="min-width:0;"><div class="muted" style="font-size:12px;">${escapeHtml(ie.heterogeneity_gate || "")}</div>
+    <div style="min-width:0;"><div class="muted" style="font-size:12px;">${escapeHtml(gateShortref(ie.heterogeneity_gate || ""))}</div>
     <div class="muted" style="font-size:11px; margin-top:4px;">price-implied fundamental levels at stated multiples — the human judges earned vs residual; identity (†): at the name's own multiple the implied level IS consensus.</div>
     <div class="muted" style="font-size:11px;">TEV as-of ${escapeHtml(ie.tev_as_of || "")} · multiples as-of ${escapeHtml(ie.multiples_as_of || "")}</div></div></div>`;
   const table = dataTable("Implied metric levels · fixed multiple set", ie.tev && ie.tev.source_ref,
@@ -486,8 +490,10 @@ function impliedExpectations(ie) {
   // the parallel REVENUE anchors substantiate the TEV/Rev name-row identity (†); only when present.
   const revAnchors = (ie.rev_anchors && ie.rev_anchors.value)
     ? `<div style="margin-top:4px;"><b>Consensus path anchors (Revenue — juxtapose, do NOT difference):</b> ${escapeHtml(ie.rev_anchors.value)}</div>` : "";
+  // (audit) H7 EBITDA anchors can be UNKNOWN (Trends may lack FY26/FY27) — show the note, not blank.
+  const anchorsTxt = (ie.anchors && ie.anchors.value) || (ie.anchors && ie.anchors.note) || "n/a";
   const anchors = `<div class="fact"><div class="fact-label">Consensus path anchors (EBITDA — juxtapose, do NOT difference)</div>
-    <div style="min-width:0;">${escapeHtml((ie.anchors && ie.anchors.value) || "")}${revAnchors}
+    <div style="min-width:0;">${escapeHtml(anchorsTxt)}${revAnchors}
     <div class="muted" style="font-size:11px; margin-top:4px;">${ie.vintage_coherent ? "" : "⚠ "}${escapeHtml(ie.coherence_note || "")}</div>
     ${ie.net_debt_reconciled ? "" : `<div class="muted" style="font-size:11px;">⚠ net-debt input disagrees with the cash/debt bridge — see the TEV source</div>`}
     <div class="muted" style="font-size:11px;">Fixed multiple set (declared in code, no per-name curation): name NTM + peer-median NTM/LTM, on TEV/EBITDA and TEV/Rev.</div></div></div>`;
@@ -742,7 +748,7 @@ function impliedBlock(iv) {
       ["Low", "Median", "Mean", "High"], rows, "");
   }
   return sec("Implied valuation — CIQ-computed at peer multiples, POSED not concluded",
-    (gate ? gate + " — " : "") + "composition first: the human judges earned vs residual (no machine upside).",
+    (gate ? gateShortref(gate) + " — " : "") + "composition first: the human judges earned vs residual (no machine upside).",
     fact("Name market cap ($M) — the ADJACENT fact to compare against", iv.market_cap) +
     fact("Bridge (TEV → equity)", iv.bridge) +
     table);
@@ -904,7 +910,7 @@ function catalystPath(cp, cc) {
     horizonTable(cp.horizon_read) +
     accelTable(cp.acceleration_read) +
     ladderTable(cp.cross_name_anchor) +
-    fact("Guidance bridge (latest guide + track-record)", cp.guidance_bridge) +
+    guidanceBridge(cp) +
     fact("Consensus stats (target + ratings)", cp.consensus_stats) +
     eventGroups(cp.revision_events) +
     surprise +
@@ -912,6 +918,20 @@ function catalystPath(cp, cc) {
     // Counts / shares / dates only, no interpretation.
     (cp.insider_activity ? fact("Insider activity (Form 4, 6m)", cp.insider_activity) : "") +
     (cp.short_interest ? fact("Short interest (FINRA)", cp.short_interest) : ""));
+}
+
+// (H4) guidance bridge → table (metric | latest guide | for | dated | age | record | most recent);
+// old JSON (no guidance_bridge_rows) → the flat fact.
+function guidanceBridge(cp) {
+  const rs = cp.guidance_bridge_rows;
+  if (!rs || rs.status !== "present" || !Array.isArray(rs.value) || !rs.value.length)
+    return fact("Guidance bridge (latest guide + track-record)", cp.guidance_bridge);
+  const rows = rs.value.map((r) => ({
+    label: r.metric,
+    cells: [r.latest_guide, r.period, r.dated, r.age, r.record, r.most_recent],
+  }));
+  return dataTable("Guidance bridge (latest guide + sign-aware delivery track-record)", rs.source_ref,
+    ["Latest guide", "For", "Dated", "Age", "Record (met/resolved)", "Most recent"], rows, "");
 }
 
 // Legacy fallback — ONLY rendered for a pre-catalyst_path dossier.json (no catalyst_path field).
@@ -932,8 +952,15 @@ function synthesis(s) {
   }
   const point = (p, cls) => `<div class="point ${cls}">${escapeHtml(p.claim)}${p.source_ref ? `<span class="cite">${escapeHtml(p.source_ref)}</span>` : ""}${p.cited === false ? ` <span class="uncited">⚠ uncited — does not trace to a mechanical fact</span>` : ""}</div>`;
   const dq = s.decisive_question || {};
+  // (H6) an '[LLM-suggested, unverified]' twin's outcome is the MODEL's claim → suffix "(LLM-claimed
+  // — verify)"; a roster/self-sourced twin renders plain. Deterministic, render-side.
+  const twinOutcome = (t) => {
+    const src = (t.source || "").toLowerCase();
+    const unverified = src.includes("llm-suggested") || src.includes("unverified");
+    return (t.outcome || "") + (unverified ? " (LLM-claimed — verify)" : "");
+  };
   const twins = (s.twin_reference_cases || []).map((t) => `
-    <div class="point"><b>${escapeHtml(t.name || "")}</b> — ${escapeHtml(t.outcome || "")}
+    <div class="point"><b>${escapeHtml(t.name || "")}</b> — ${escapeHtml(twinOutcome(t))}
       <div class="muted" style="font-size:12px; margin-top:3px;">distinguished by: ${escapeHtml(t.distinguishing_fact || "")}</div>
       <span class="cite">${escapeHtml(t.source || "")}</span></div>`).join("");
   return `<div class="card ds-section"><div class="ds-title">Synthesis · framing</div>${fence}

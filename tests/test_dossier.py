@@ -715,23 +715,21 @@ def test_synthesis_contract_requires_balance_and_treats_opacity_as_risk() -> Non
     assert not any(tok in "evidence_balance" for tok in _FORBIDDEN)  # not a verdict-shaped field
 
 
-def test_survival_capacity_blocks_leverage_with_runway_and_wall() -> None:
-    """Mechanism A.3: leverage is promoted to a SURVIVAL block — net-debt/EBITDA + self-funding +
-    nearest refinancing wall in one field; a missing leg fails loud as a risk."""
+def test_survival_capacity_blocks_leverage_with_runway() -> None:
+    """Mechanism A.3: leverage is promoted to a SURVIVAL block — net-debt/EBITDA + self-funding in
+    one field; a missing leg fails loud as a risk. (H3) The coarse 'nearest maturity wall' line
+    is retired — the month-precision E2 wall supersedes it in the survival super-section."""
     present, unknown = ds.Sourced.present, ds.Sourced.unknown
     sc = dm._survival_capacity(
         present(2.9, source_ref="EDGAR"), present("~2.6x fwd-adj", source_ref="99.1"),
         present(1.0, source_ref="EDGAR"),  # FCF sign +1 → self-funding
-        present("2021 Term Loan Due 2028 (Term Loans) 687 @ 5.7%", source_ref="CIQ"),
     )
     v = sc.value or ""
     assert "net-debt/EBITDA 2.9x" in v and "self-funding" in v
-    assert "nearest maturity wall: 2028" in v
+    assert "nearest maturity wall" not in v  # (H3) retired
     # a missing leg fails loud as a risk, never silently dropped
     risky = dm._survival_capacity(
-        unknown(note="no debt/cash"), unknown(note="no guide"), unknown(note="no FCF"),
-        unknown(note="no instruments"),
-    )
+        unknown(note="no debt/cash"), unknown(note="no guide"), unknown(note="no FCF"))
     rv = risky.value or ""
     assert "UNKNOWN" in rv and "risk" in rv
 
@@ -779,13 +777,12 @@ def test_survival_capacity_ciq_basis_and_net_cash_readout() -> None:
     present, unknown = ds.Sourced.present, ds.Sourced.unknown
     sc = dm._survival_capacity(
         present(3.9, source_ref="CIQ Net Debt $200M ÷ CIQ LTM EBITDA $52M"),
-        unknown(note="no guide"), present(1.0, source_ref="EDGAR"), unknown(note="no instruments"),
+        unknown(note="no guide"), present(1.0, source_ref="EDGAR"),
     )
     assert "net-debt/EBITDA 3.9x (CIQ)" in (sc.value or "")
     sc2 = dm._survival_capacity(
         unknown(note="no EBITDA in XBRL"), unknown(note="no guide"),
-        present(1.0, source_ref="EDGAR"), unknown(note="no instruments"),
-        net_debt=present(200.0, source_ref="CIQ BS"),
+        present(1.0, source_ref="EDGAR"), net_debt=present(200.0, source_ref="CIQ BS"),
     )
     v2 = sc2.value or ""
     assert "net debt $200M (CIQ)" in v2 and "N/A" in v2 and "solvency risk" not in v2
@@ -918,9 +915,9 @@ def _est_bundle(sheets: _Sheets) -> ciq.CiqBundle:
 
 
 def test_liquidity_flags_surface_maturity_wall() -> None:
-    """'Maturity' is located by HEADER LABEL (not a fixed index) and surfaced as 'Due YYYY' so
-    _nearest_maturity reports the nearest wall; a mis-parsed garbage cell can't fabricate an
-    implausible 'Due 1900' (year window). Serials: 46170 = 2026-05-28, 46418 = 2027-01-31."""
+    """'Maturity' is located by HEADER LABEL (not a fixed index) and surfaced as 'Due YYYY'; a
+    mis-parsed garbage cell can't fabricate an implausible 'Due 1900' (year window). Serials:
+    46170 = 2026-05-28, 46418 = 2027-01-31."""
     # 'Maturity' deliberately at index 6 (not 5) — proves the header-label lookup, not a fixed col.
     rows = [
         ["Description", "Type", "Principal", "Coupon", "Float", "Currency", "Maturity"],
@@ -933,7 +930,6 @@ def test_liquidity_flags_surface_maturity_wall() -> None:
     )
     assert "Due 2026" in (liq.value or "") and "Due 2027" in (liq.value or "")
     assert "Due 1900" not in (liq.value or "")  # the year window rejects the garbage serial
-    assert dm._nearest_maturity(liq) == "nearest maturity wall: 2026"
 
 
 def test_liquidity_flags_maturity_date_string() -> None:
@@ -1179,6 +1175,24 @@ def test_covenant_pointers_reject_cross_cik_and_locate_the_wu_execution_8k() -> 
     assert notes.accession == "" and "no contract-level filing expected" in notes.note
 
 
+def test_audit_covenant_pointers_accept_html_named_agreement_exhibit() -> None:
+    """(audit PR68/69) An agreement exhibit named '…loanandsecurity.html' (some filers use the
+    5-letter extension) MUST be kept — the pre-fix '.htm'/'.txt'-only filter dropped it, flipping a
+    DOCUMENTED facility to 'undocumented' (opacity-as-signal inverted)."""
+    insts = [_inst("Convertible Loan With Shareholder", 12.0, "2026-05-28")]
+    indexes = {"000176068924000021": {"directory": {"item": [
+        {"name": "mvst-20240603.htm"}, {"name": "wu_loanandsecurity.html"}]}}}  # .html exhibit
+    edgar = _FakeEdgar(hits=[FtsHit(
+        accession="0001760689-24-000021", cik="0001760689", form="8-K",
+        file_date=date(2024, 6, 4), display_names=["Microvast"])])
+    got = dm._covenant_pointers(
+        typing.cast(EdgarClient, edgar), typing.cast(typing.Any, _FakeIndexHttp(indexes)),
+        "0001760689", insts)
+    assert got.status is ds.SourceStatus.PRESENT
+    wu = next(r for r in got.value if r.accession == "0001760689-24-000021")
+    assert any(e.endswith(".html") for e in wu.exhibits)  # the .html agreement exhibit is kept
+
+
 def test_capital_structure_covenant_terms_note_is_opacity_as_signal() -> None:
     """(E5) covenant TERMS stay UNKNOWN in the mechanical (deterministic, no-LLM) layer, but the
     note is informative: it says whether an exhibit was located (something to read) or whether the
@@ -1341,9 +1355,11 @@ def test_covenant_pointers_real_mvst_cik_scoped_finds_wu_8k_no_cross_cik() -> No
 
 
 def test_point_tier_regex_catches_interposed_negative_ebitda() -> None:
-    """(R1) The tier regex tolerates words interposed between 'EBITDA' and 'negative' — 'adjusted
-    EBITDA of NEGATIVE $5.5M' is a solvency/cash claim (Tier 1), not unclassified (4.5). A plain
-    revenue-growth claim is unaffected."""
+    """(R1/H2) The tier regex tolerates words between 'EBITDA' and 'negative' — the draw's exact
+    EXACT phrasing 'adjusted EBITDA of NEGATIVE $5.5M' is a solvency/cash claim (Tier 1), not
+    unclassified (4.5), via the '(adjusted) EBITDA … negative' arm ('of' = the 1 interposed word). A
+    plain revenue-growth claim is unaffected."""
+    assert dr._point_tier("adjusted EBITDA of NEGATIVE $5.5M") == 1.0  # H2: exact string pinned
     assert dr._point_tier("adjusted EBITDA of NEGATIVE $5.5M in the quarter") == 1.0
     assert dr._point_tier("EBITDA turned negative this year") == 1.0
     assert dr._point_tier("revenue grew 20% year over year") != 1.0
@@ -1474,9 +1490,10 @@ def _record_with_adv(adv_shares: float | None) -> sdr.DataRecord:
 
 
 def test_insider_activity_partitions_open_market_routine_and_other_codes() -> None:
-    """(F1) Form 4 non-derivative codes are partitioned: open-market P/S drive the counts + net
-    shares (net = ΣP − ΣS); routine A/M/F are tallied separately; any other code (here a conversion
-    C) is LABELED, never dropped. Counts and dates only, source-bound to the latest accession."""
+    """(F1/H5) Form 4 non-derivative codes → PLAIN LABELS: open-market buys/sells drive the counts +
+    net shares (net = ΣP − ΣS); grants = the A (award) code; any other code (here a conversion C) is
+    LABELED under 'other', never dropped. Sign-descriptors only, source-bound to the latest
+    accession."""
     edgar = _FakeEdgar(filings=[Filing(
         cik="0001760689", form="4", filing_date=date(2026, 6, 12),
         accession="0000947871-26-000620", items=[], primary_doc="xslF345X06/ownership.xml")])
@@ -1485,8 +1502,9 @@ def test_insider_activity_partitions_open_market_routine_and_other_codes() -> No
         typing.cast(EdgarClient, edgar), typing.cast(typing.Any, http),
         "0001760689", date(2026, 7, 3))
     assert got.status is ds.SourceStatus.PRESENT
-    # P×1 / S×1 · net (1000 − 6403)/1000 = -5.4K · last 2026-06-12 · routine A×1 · other C×1
-    assert got.value == "P×1 / S×1 · net -5.4K sh · last 2026-06-12 · routine A×1 · other C×1"
+    # buys 1 · sells 1 · net (1000 − 6403)/1000 = -5.4K · grants A×1 · last 2026-06-12 · other C×1
+    assert got.value == ("Open-market buys 1 · sells 1 (net -5.4K sh) · grants 1 · "
+                         "last 2026-06-12 · other C×1")
     assert "0000947871-26-000620" in (got.source_ref or "")
 
 
@@ -1500,24 +1518,50 @@ def test_insider_activity_fail_loud_when_no_form4_in_window() -> None:
 
 
 def test_short_interest_block_computes_dtc_against_the_screen_adv() -> None:
-    """(F2) Latest FINRA settlement → shares short + FINRA's Δ% + days-to-cover computed against the
-    SCREEN 90d ADV (not FINRA's ADV, no recompute). Dated; the DTC basis is in the citation."""
+    """(F2/H5) Latest FINRA settlement → prior→latest with a rising/falling descriptor + FINRA's
+    Δ% + % of shares out (EDGAR XBRL count) + days-to-cover vs the SCREEN 90d ADV (not FINRA's, no
+    recompute) + the latest-4 settlements mini-row. Dated; the DTC basis is in the citation."""
     got = dm._short_interest(
         typing.cast(typing.Any, _FakeFinra(_SI_ROWS)), _record_with_adv(4607454.0),
-        date(2026, 7, 3))
+        date(2026, 7, 3), shares_out=333_157_384.0)
     assert got.status is ds.SourceStatus.PRESENT
-    assert got.value == "Short interest (FINRA, settle 2026-06-15): 26.3M sh (+22.9%) · DTC 5.7d"
+    assert got.value == (
+        "Short interest (FINRA, settle 2026-06-15): 21.4M → 26.3M sh (+22.9%, rising) · "
+        "7.9% of shares out (EDGAR XBRL) · DTC 5.7d · "
+        "recent: 2026-06-15 26.3M · 2026-05-29 21.4M")
     assert "screen 90d ADV" in (got.source_ref or "")  # DTC basis bound in the citation
 
 
-def test_short_interest_block_omits_dtc_when_screen_adv_unknown() -> None:
-    """(F2) DTC needs the screen ADV; when it's UNKNOWN the shares/Δ% still render and the DTC is
-    honestly omitted (never silently recomputed from FINRA's own ADV)."""
+def test_short_interest_block_omits_dtc_and_pct_when_inputs_unknown() -> None:
+    """(F2/H5) DTC needs the screen ADV and the % needs the EDGAR share count; when either is absent
+    the shares/Δ%/trend still render and that leg is honestly omitted (never recomputed)."""
     got = dm._short_interest(
         typing.cast(typing.Any, _FakeFinra(_SI_ROWS)), _record_with_adv(None), date(2026, 7, 3))
     assert got.status is ds.SourceStatus.PRESENT
-    assert "26.3M sh" in (got.value or "") and "DTC" not in (got.value or "")
+    assert "21.4M → 26.3M sh (+22.9%, rising)" in (got.value or "")
+    assert "DTC" not in (got.value or "") and "of shares out" not in (got.value or "")
     assert "screen 90d ADV unavailable" in (got.source_ref or "")
+
+
+def test_positioning_strings_are_sign_descriptors_only_no_interpretation() -> None:
+    """(H5) The no-conclusion walk EXTENDED to the positioning strings: the insider + short-interest
+    lines carry sign-descriptors only (counts, +/-, %, rising/falling) — never interpretive.
+    Neither matches the synthesis directional regex, nor an interpretive-token list."""
+    edgar = _FakeEdgar(filings=[Filing(
+        cik="0001760689", form="4", filing_date=date(2026, 6, 12),
+        accession="0000947871-26-000620", items=[], primary_doc="xslF345X06/ownership.xml")])
+    http = _FakeForm4Http({"directory": {"item": [{"name": "ownership.xml"}]}}, _FORM4_XML)
+    insider = (dm._insider_activity(
+        typing.cast(EdgarClient, edgar), typing.cast(typing.Any, http),
+        "0001760689", date(2026, 7, 3)).value or "")
+    short = (dm._short_interest(
+        typing.cast(typing.Any, _FakeFinra(_SI_ROWS)), _record_with_adv(4607454.0),
+        date(2026, 7, 3), shares_out=333_157_384.0).value or "")
+    interpretive = ("bullish", "bearish", "concerning", "alarming", "squeeze", "conviction",
+                    "signal", "worrying", "red flag", "suggests", "implies", "warns")
+    for line in (insider, short):
+        assert not syn._DIRECTIONAL.search(line), line  # no buy/sell verdict / directional language
+        assert not any(t in line.lower() for t in interpretive), line
 
 
 def test_short_interest_fail_loud_when_no_settlement_on_file() -> None:
@@ -1542,12 +1586,13 @@ def test_positioning_fields_live_on_the_walked_catalyst_path() -> None:
 
 @pytest.mark.network
 def test_insider_activity_real_mvst() -> None:
-    """(F1, live) MVST's trailing-6m Form 4s — 18 on file incl. 3× on 2026-06-12; routine grants
-    dominate (no open-market buys). Pins the latest accession 0000947871-26-000620."""
+    """(F1/H5, live) MVST's trailing-6m Form 4s — 18 on file incl. 3× on 2026-06-12; grants dominate
+    (no open-market buys). Plain-label render; pins the latest accession 0000947871-26-000620."""
     edgar, http = EdgarClient.from_config(), build_sec_http()
     got = dm._insider_activity(edgar, http, "0001760689", date(2026, 7, 3))
     assert got.status is ds.SourceStatus.PRESENT
-    assert got.value is not None and got.value.startswith("P×") and "routine" in got.value
+    assert got.value is not None and got.value.startswith("Open-market buys 0 · sells ")
+    assert "grants " in got.value and "last " in got.value
     assert "0000947871-26-000620" in (got.source_ref or "")
 
 
@@ -1565,6 +1610,15 @@ _IE_TM = (  # trading_multiples: peer-median LTM (no prefix) + NTM
     "NTM TEV/Rev: name 1.25 vs peers Low 1.06 / Median 2.55 / Mean 3.64 / High 13.47; "
     "NTM TEV/EBITDA: name 7.46 vs peers Low 7.63 / Median 12.9 / Mean 43.3 / High 198.12")
 _IE_AR = "FY 2026 EBITDA: 129.7 (12m) → 146.5 (6m) → 62.1 (latest); net -52% [3m, 2m n/a]"
+# (H7) the Estimates→Trends sheet the DIRECT EBITDA anchors read (FY26E 62.1 / FY27E 147.7, latest
+# snapshot) — the single source of truth, distinct from the TEV÷ladder path.
+_IE_TRENDS = [
+    ["EBITDA", None, None],
+    ["Company Level", "FY 2026", "FY 2027"],
+    ["Current", 62.1, 147.7],
+    ["3 months ago", 146.5, 150.0],
+    ["12 months ago", 129.7, 160.0],
+]
 _IE_GATE = "market caps span $34M–$275.0B (8063x); the name is $423M → HETEROGENEOUS — low comp."
 _IE_MCAP_REF = (
     "CIQ Comparable Analysis→Financial Data (name Market Capitalization Latest) · as-of 2026-06-24")
@@ -1574,7 +1628,8 @@ _IE_BRIDGE = "TEV→equity bridge: + cash $126.10M, − total debt $326.00M"
 def _ie_inputs(
     *, cna: str = _IE_CNA, tm: str = _IE_TM, ar: str = _IE_AR, market_cap: float = 423.1,
     net_debt: float = 199.9, bridge: str = _IE_BRIDGE,
-) -> tuple[ds.PeerComps, ds.CatalystPath, ds.ImpliedValuation]:
+    trends: _Sheets | None = None,
+) -> tuple[ds.PeerComps, ds.CatalystPath, ds.ImpliedValuation, ciq.CiqBundle]:
     pc = ds.PeerComps(
         peer_set=_u(), comparability=ds.Sourced.present(_IE_GATE, source_ref="CIQ FD"),
         trading_multiples=ds.Sourced.present(tm, source_ref="CIQ→Trading Multiples"),
@@ -1593,7 +1648,8 @@ def _ie_inputs(
         bridge=ds.Sourced.present(bridge, source_ref="CIQ→Implied Valuation"),
         market_cap=ds.Sourced.present(market_cap, source_ref=_IE_MCAP_REF),
         comparability_gate=ds.Sourced.present(_IE_GATE, source_ref="CIQ FD"))
-    return pc, cp, iv
+    bundle = _est_bundle({"Trends": trends if trends is not None else _IE_TRENDS})
+    return pc, cp, iv, bundle
 
 
 def test_ie_parsers_read_the_assembled_fields() -> None:
@@ -1610,10 +1666,22 @@ def test_ie_parsers_read_the_assembled_fields() -> None:
     assert dm._ie_bridge_net_debt(_IE_BRIDGE) == 199.9
 
 
+def test_trends_fy_level_reads_the_named_year_latest_snapshot() -> None:
+    """(H7) The direct-Trends accessor returns the LATEST snapshot for a SPECIFIC fiscal year — FY26
+    AND next-FY FY27 (acceleration_read only reaches the first FY column), and None when the year or
+    metric is absent (fail-loud — never a fabricated level)."""
+    b = _est_bundle({"Trends": _IE_TRENDS})
+    assert cs.trends_fy_level(b, metric="EBITDA", fy_label="FY 2026") == 62.1
+    assert cs.trends_fy_level(b, metric="EBITDA", fy_label="FY 2027") == 147.7  # the next-FY column
+    assert cs.trends_fy_level(b, metric="EBITDA", fy_label="FY 2028") is None  # absent column
+    assert cs.trends_fy_level(b, metric="Revenue", fy_label="FY 2026") is None  # metric absent
+
+
 def test_ie_builder_triangle_anchors_and_identity() -> None:
-    """(G1/G3) TEV ÷ multiple for the fixed set → the verified triangle; the two NAME rows are the
-    identity; anchors = TEV ÷ ladder (NTM anchor ≡ the name-NTM identity); vintage + net-debt gates
-    pass; TEV is DERIVED and its source_ref states the simple-TEV basis + as-of."""
+    """(G1/G3/H7) TEV ÷ multiple for the fixed set → the triangle; the two NAME rows are the
+    identity; the EBITDA anchors are the DIRECT Estimates→Trends levels (H7, NOT TEV÷ladder — the
+    ladder FY26 lives only in the vintage-guard line); the REVENUE anchors keep the ladder basis to
+    substantiate the TEV/Rev † identity; vintage + net-debt gates pass; TEV is DERIVED."""
     ie = dm._implied_expectations(*_ie_inputs())
     assert ie is not None
     assert ie.tev.value == 623.0 and "simple-TEV basis" in (ie.tev.source_ref or "")
@@ -1625,10 +1693,14 @@ def test_ie_builder_triangle_anchors_and_identity() -> None:
     assert got["peer-median LTM TEV/Rev"] == 194.7
     assert {r.label for r in ie.rows if r.is_identity} == {
         "name NTM TEV/EBITDA", "name NTM TEV/Rev"}
-    # anchors 1dp so the NTM anchor prints IDENTICAL to the name-NTM identity row (both $82.6M)
-    assert "FY26E $61.4M · FY27E $146.2M · NTM $82.6M" in (ie.anchors.value or "")
-    # (audit) the parallel REVENUE anchors substantiate the TEV/Rev †: the NTM revenue anchor equals
-    # the name-NTM revenue implied level ($494.4M), so the identity is shown, not merely asserted
+    # (H7) EBITDA anchors = DIRECT Estimates→Trends latest (FY26E 62.1 / FY27E 147.7), NOT ladder;
+    # the ladder-derived FY26 ($61.4M) now appears ONLY in the vintage-guard line below.
+    assert "FY26E $62.1M · FY27E $147.7M" in (ie.anchors.value or "")
+    av = ie.anchors.value or ""
+    assert "direct consensus EBITDA" in av and "ladder" not in av
+    assert "$61.4M" in ie.coherence_note  # the ladder-derived FY26 lives in the vintage-guard line
+    # the parallel REVENUE anchors KEEP the ladder basis — they substantiate the TEV/Rev †: the NTM
+    # revenue anchor equals the name-NTM revenue implied level ($494.4M), shown not merely asserted
     assert ie.rev_anchors is not None
     assert "FY26E $438.7M · FY27E $587.7M · NTM $494.4M" in (ie.rev_anchors.value or "")
     assert got["name NTM TEV/Rev"] == 494.4  # == the NTM revenue anchor
@@ -1657,6 +1729,86 @@ def test_ie_net_debt_gate_soft_caveats_when_bridge_disagrees() -> None:
         *_ie_inputs(bridge="TEV→equity bridge: + cash $126.10M, − total debt $500.00M"))
     assert ie is not None and ie.net_debt_reconciled is False
     assert "⚠" in (ie.tev.source_ref or "") and "reconcile" in (ie.tev.source_ref or "")
+
+
+def test_h3_gate_shortref_and_dedupe_unknown_reasons() -> None:
+    """(H3) The gate is cited SHORT away from the Peer-comps head (verbatim only there);
+    and repeated UNKNOWN fact reasons fold to ONE line with the affected-fields list (no fact
+    suppressed). Pins the 99.1-shaped case (3 fields, one reason → 1 line)."""
+    assert (dr._gate_shortref("caps span 8063x → HETEROGENEOUS — low comp")
+            == "comparability: HETEROGENEOUS (see Peer comps gate)")
+    assert dr._gate_shortref("homogeneous peer set") == "homogeneous peer set"  # short → verbatim
+    # the G header cites the gate SHORT, never repeating the verbatim gate text
+    ie = dm._implied_expectations(*_ie_inputs())
+    v = _minimal_mech().valuation.model_copy(update={"implied_expectations": ie})
+    g_block = "\n".join(dr._implied_expectations_lines(v))
+    assert "comparability: HETEROGENEOUS (see Peer comps gate)" in g_block
+    assert "market caps span" not in g_block  # the verbatim gate is NOT repeated at the G header
+    # dedupe: 3 fields sharing one reason → a single line naming all three; a lone reason untouched
+    lines = [
+        "- **Net debt / EBITDA (fwd-adj):** _UNKNOWN_ — adjusted figure not in the 99.1 guidance",
+        "- **EV/EBITDA (adjusted, forward):** _UNKNOWN_ — adjusted figure not in the 99.1 guidance",
+        "- **Adjusted EPS:** _UNKNOWN_ — adjusted figure not in the 99.1 guidance",
+        "- **Solo:** _UNKNOWN_ — a unique reason (kept)",
+    ]
+    out = dr._dedupe_unknown_reasons(list(lines))
+    folded = [ln for ln in out if "not in the 99.1 guidance" in ln]
+    assert len(folded) == 1  # 3 renders → 1
+    assert "Net debt / EBITDA (fwd-adj) · EV/EBITDA (adjusted, forward) · Adjusted EPS" in folded[0]
+    assert any("Solo" in ln for ln in out)  # a non-repeated reason is left alone
+    assert len(out) == 2  # the two duplicate lines removed
+
+
+def test_audit_gfm_cell_sanitizes_pipe_and_newline() -> None:
+    """(audit PR68/69) A GFM table cell escapes a literal '|' and collapses newlines — a verbatim E5
+    covenant value/quote can carry both, which would otherwise open a spurious column or shatter the
+    row across physical lines."""
+    assert dr._gfm_cell("a | b") == r"a \| b"
+    assert dr._gfm_cell("line1\nline2") == "line1 line2"
+    assert dr._gfm_cell("  x\ty\n z ") == "x y z"
+    rows = [ds.CovenantTerm(name="Conversion", value=ds.Sourced.present(
+        "rate = SOFR | floor\n3%", source_ref="8-K x"))]
+    u = ds.Sourced[str].unknown(note="n/a")
+    cs = ds.CapitalStructure(
+        instruments=ds.Sourced.unknown(note="n/a"), summary=u, detail_as_of="d", maturity_filings=u,
+        covenant_pointers=ds.Sourced.present("x", source_ref="e"), covenant_pointer_rows=None,
+        covenant_terms=ds.Sourced.present("s", source_ref="f"),
+        covenant_term_rows=ds.Sourced.present(rows, source_ref="fenced"))
+    row = next(ln for ln in dr._covenant_term_lines(cs) if ln.startswith("| Conversion"))
+    assert "\n" not in row  # newline collapsed → the row stays on one physical line
+    assert r"\|" in row  # the literal pipe was escaped, not left to open a column
+    unescaped_bars = len(re.findall(r"(?<!\\)\|", row))  # only real column separators
+    assert unescaped_bars == 4  # 3 cells (label + value + source) → 4 separators
+
+
+def test_audit_dedupe_only_folds_distinctive_not_generic_reasons() -> None:
+    """(audit PR68/69) The cross-section reason-fold is limited to DISTINCTIVE reasons (≥30). A
+    SHORT generic reason shared by two UNRELATED fields is NOT folded — it must not relocate a fact
+    under another section's header."""
+    short = ["- **Field A:** _UNKNOWN_ — no XBRL data",
+             "- **Field B:** _UNKNOWN_ — no XBRL data"]
+    assert dr._dedupe_unknown_reasons(list(short)) == short  # short generic → untouched
+    reason = "the adjusted covenant figure is absent from the parsed 99.1 revised guidance"
+    assert len(reason) >= dr._DEDUPE_MIN_REASON_LEN
+    longl = [f"- **Field A:** _UNKNOWN_ — {reason}", f"- **Field B:** _UNKNOWN_ — {reason}"]
+    out = dr._dedupe_unknown_reasons(list(longl))
+    assert len(out) == 1 and "Field A · Field B" in out[0]  # distinctive → folded
+
+
+def test_audit_ie_anchors_unknown_renders_note_not_the_word_none() -> None:
+    """(audit PR68/69) H7 made EBITDA anchors UNKNOWN-able (Trends may lack FY26/FY27); the render
+    shows the NOTE, never the bare word 'None' (a raw {value} on an UNKNOWN Sourced)."""
+    assert (dr._sourced_str(ds.Sourced.unknown(note="no direct FY26/FY27 EBITDA consensus"))
+            == "no direct FY26/FY27 EBITDA consensus")
+    assert dr._sourced_str(ds.Sourced.present("FY26E $62.1M", source_ref="T")) == "FY26E $62.1M"
+    ie = dm._implied_expectations(*_ie_inputs())
+    assert ie is not None
+    ie2 = ie.model_copy(update={
+        "anchors": ds.Sourced[str].unknown(note="no direct FY26/FY27 EBITDA in Trends")})
+    v = _minimal_mech().valuation.model_copy(update={"implied_expectations": ie2})
+    block = "\n".join(dr._implied_expectations_lines(v))
+    assert "difference):** None" not in block  # the bug: bare 'None' rendered
+    assert "no direct FY26/FY27 EBITDA in Trends" in block  # the note is shown instead
 
 
 def test_ie_nm_or_negative_multiple_renders_unknown_not_a_synthetic_level() -> None:
@@ -1694,7 +1846,7 @@ def test_ie_render_table_identity_anchors_and_zero_percent_tokens() -> None:
     block = "\n".join(dr._implied_expectations_lines(v))
     assert dr._TABLE_MARK in block
     assert "$82.6M EBITDA †" in block and "$48.3M EBITDA" in block
-    assert "Consensus path anchors (EBITDA" in block and "FY26E $61.4M" in block
+    assert "Consensus path anchors (EBITDA" in block and "FY26E $62.1M" in block  # H7 direct
     # (audit) the revenue anchors line substantiates the TEV/Rev identity — NTM anchor == the row
     assert "Consensus path anchors (Revenue" in block and "NTM $494.4M" in block
     assert "TEV as-of 2026-06-24 · multiples as-of 2026-05-15" in block
@@ -1727,8 +1879,9 @@ def test_ie_absent_for_pre_g_valuation_and_when_market_cap_missing() -> None:
     """Back-compat + fail-soft: a pre-G Valuation (no implied_expectations) renders nothing; the
     builder returns None when market cap is absent (TEV underivable) — never a fabricated TEV."""
     assert dr._implied_expectations_lines(_minimal_mech().valuation) == []
-    pc, cp, iv = _ie_inputs()
-    assert dm._implied_expectations(pc, cp, iv.model_copy(update={"market_cap": _u()})) is None
+    pc, cp, iv, bundle = _ie_inputs()
+    assert dm._implied_expectations(
+        pc, cp, iv.model_copy(update={"market_cap": _u()}), bundle) is None
 
 
 def _eps_pt(year: int, val: float) -> dict[str, typing.Any]:
@@ -2566,6 +2719,48 @@ def test_guidance_bridge_sign_aware_recency_and_stale_guide() -> None:
     assert _re.search(r"Capital Expenditure:.*\(stale — \d+d old\)", v)
     assert "(stale guide —" not in v  # the old duplicated-date form is gone
     assert "Gross Margin" not in v  # present-but-empty block omitted, no flag
+
+
+def test_guidance_bridge_rows_structure_the_same_reads_as_the_string() -> None:
+    """(H4) guidance_bridge_rows carries the SAME reads as the flat string, structured for the table
+    (metric | latest guide | for | dated | age | record | most recent) — sign-aware record, stale
+    age, most-recent outcome. Present-but-empty block omitted; the render is a tagged table."""
+    guidance = [
+        ["X > Estimates > Guidance", "", "", ""],
+        ["", "FY 2023", "FY 2024", "FY 2025"],
+        ["Revenue", "", "", ""], ["As Of Guidance", "", "", ""],
+        ["Guidance Date", 44900.0, 45300.0, 45600.0],
+        ["Consensus Estimate", 100.0, 200.0, 300.0],
+        ["Guidance", "95.0 - 105.0", "190.0 - 210.0", "290.0 - 310.0"],
+        ["Actual/Latest", "", "", ""], ["Actual", 110.0, 150.0, "-"],
+        ["Capital Expenditure", "", "", ""], ["As Of Guidance", "", "", ""],
+        ["Guidance Date", 44950.0, "", ""], ["Consensus Estimate", -100.0, "", ""],
+        ["Guidance", "(120.00) - (150.00)", "", ""],
+        ["Actual/Latest", "", "", ""], ["Actual", -130.0, "", ""],
+        ["Gross Margin %", "", "", ""], ["As Of Guidance", "", "", ""],
+        ["Guidance Date", "", "", ""], ["Guidance", "-", "-", "-"],  # present-but-empty
+    ]
+    rows = cs.guidance_bridge_rows(
+        _est_bundle({"Guidance": guidance}), reference_date=date(2026, 1, 1), stale_after_days=45)
+    assert rows.status is ds.SourceStatus.PRESENT and rows.value is not None
+    by = {r.metric: r for r in rows.value}
+    assert "Gross Margin %" not in by  # present-but-empty omitted, never a fabricated row
+    rev = by["Revenue"]
+    assert rev.latest_guide == "'290.0 - 310.0'" and rev.period == "FY 2025"
+    assert rev.record == "actual ≥ floor 1/2" and rev.most_recent == "FY 2024 MISSED"
+    assert "stale" in rev.age
+    cap = by["Capital Expenditure"]
+    assert cap.record == "spend ≤ ceiling 1/1" and cap.most_recent == "FY 2023 MET"  # cost-like
+    # render is a tagged table with the H4 columns; a pre-H4 CatalystPath (no rows) falls back
+    cp = ds.CatalystPath(
+        as_of=_u(), horizon_read=_u(), acceleration_read=_u(), cross_name_anchor=_u(),
+        guidance_bridge=ds.Sourced.present("flat", source_ref="x"), guidance_bridge_rows=rows,
+        revision_events=_u(), consensus_stats=_u())
+    block = "\n".join(dr._guidance_bridge_lines(cp))
+    assert dr._TABLE_MARK in block and "Record (met/resolved)" in block
+    assert "FY 2024 MISSED" in block
+    cp_old = cp.model_copy(update={"guidance_bridge_rows": None})
+    assert "flat" in "\n".join(dr._guidance_bridge_lines(cp_old))  # old-JSON fallback to the string
 
 
 def _recent_changes_fx(n: int) -> list[list[typing.Any]]:
@@ -4213,3 +4408,28 @@ def test_d6_twin_single_entity_guard() -> None:
     _, qa = dflags.partition(flags)
     assert any("compound 'SunPower" in f for f in qa)      # the '/'+cohort drop is dev-only QA
     assert any("ampersand-name 'AT&T'" in f for f in qa)   # AT&T flagged for QA but KEPT
+
+
+def test_twin_outcome_marks_llm_claimed_but_leaves_sourced_plain() -> None:
+    """(H6) An '[LLM-suggested, unverified]' twin's outcome is the MODEL's claim → rendered
+    'outcome (LLM-claimed — verify)'; a roster/self-sourced twin renders plain. Deterministic,
+    render-side. Pins the QuantumScape shape (a common LLM-suggested EV/battery analogue)."""
+    qs = ds.TwinCase(name="QuantumScape", outcome="terminal — dilution spiral",
+                     distinguishing_fact="pre-revenue vs MVST shipping",
+                     source="[LLM-suggested, unverified]")
+    peer = ds.TwinCase(name="Amprius", outcome="recovered", distinguishing_fact="same peer set",
+                       source="CIQ peer roster (Comparable Analysis)")
+    assert dr._twin_outcome(qs) == "terminal — dilution spiral (LLM-claimed — verify)"
+    assert dr._twin_outcome(peer) == "recovered"  # sourced → plain, no suffix
+    # end-to-end through the synthesis render: the suffix appears on the QS line, not the peer line
+    synth = ds.Synthesis(
+        evidence_balance="", bull_points=[], bear_points=[], twin_reference_cases=[qs, peer],
+        decisive_question=ds.DecisiveQuestion(question="?", evidence_for=[], evidence_against=[]),
+        key_unknowns=[])
+    doss = ds.Dossier(
+        ticker="MVST", name="Microvast", cik="0", reference_date=date(2026, 6, 1), rank=1,
+        mechanical=_minimal_mech(), synthesis=synth, caveats=[], qa_flags=[], llm_model="m",
+        assembled_at=datetime(2026, 6, 1, 12, 0))
+    md = dr.render_markdown(doss)
+    assert "**QuantumScape** — terminal — dilution spiral (LLM-claimed — verify)" in md
+    assert "**Amprius** — recovered\n" in md and "Amprius** — recovered (LLM" not in md

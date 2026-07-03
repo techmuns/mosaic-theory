@@ -70,6 +70,45 @@ def _fact(label: str, s: Sourced[Any], fmt: Callable[[Any], str] = str) -> str:
     return f"- **{label}:** _{s.status.value.upper()}_ — {s.note}"
 
 
+def _sourced_str(s: Sourced[Any]) -> str:
+    """(audit) A ``Sourced[str]`` as inline text: the value when PRESENT, else its note — NEVER the
+    bare word 'None' (which a raw ``{s.value}`` prints when the fact is UNKNOWN)."""
+    if s.status is SourceStatus.PRESENT and s.value is not None:
+        return str(s.value)
+    return s.note or "n/a"
+
+
+# (H3) an inline UNKNOWN/MISSING fact line — the only render shape the reason-dedup collapses.
+_UNKNOWN_FACT = re.compile(r"^- \*\*(.+?):\*\* _(UNKNOWN|MISSING)_ — (.+)$")
+# (audit) fold only DISTINCTIVE reasons. The fold is cross-section by design (the 99.1 case spans
+# Leverage + Valuation), so a SHORT generic note ("no XBRL", "no positive EPS/price") shared by two
+# UNRELATED fields would relocate one under the other's section. A long exact-match reason is
+# effectively unique to its root cause, so it folds; terse notes render in place, as before.
+_DEDUPE_MIN_REASON_LEN = 30
+
+
+def _dedupe_unknown_reasons(lines: list[str]) -> list[str]:
+    """(H3) Collapse repeated identical UNKNOWN/MISSING fact REASONS: the same DISTINCTIVE note
+    (≥ ``_DEDUPE_MIN_REASON_LEN`` chars) carried by ≥2 fields renders ONCE, at the first occurrence,
+    with the affected-fields list (e.g. the three 'adjusted figure not in the 99.1 revised guidance'
+    fields → one line). No fact is suppressed — every affected field stays named. A short/generic
+    reason is left in place (a coincidental cross-section collision must not move a fact). Matches
+    only inline `_fact` UNKNOWN lines (tables / synthesis points / caveats never match)."""
+    groups: dict[tuple[str, str], list[int]] = {}
+    for i, ln in enumerate(lines):
+        m = _UNKNOWN_FACT.match(ln)
+        if m:
+            groups.setdefault((m.group(2), m.group(3)), []).append(i)
+    drop: set[int] = set()
+    for (status, reason), idxs in groups.items():
+        if len(idxs) < 2 or len(reason) < _DEDUPE_MIN_REASON_LEN:
+            continue
+        labels = [m.group(1) for i in idxs if (m := _UNKNOWN_FACT.match(lines[i]))]
+        lines[idxs[0]] = f"- **{' · '.join(labels)}:** _{status}_ — {reason}"
+        drop.update(idxs[1:])
+    return [ln for i, ln in enumerate(lines) if i not in drop]
+
+
 def _body(value: str) -> str:
     """Strip the trailing '  [as-of …]' / '  [data ≥ …]' suffix an extractor appends — the as-of is
     shown once on the section header, not repeated on every curated line."""
@@ -117,6 +156,22 @@ def _ladder_lines(s: Sourced[Any]) -> list[str]:
     if len(segs) - len(kept) > 0:
         out.append(f"  - _+{len(segs) - len(kept)} later fiscal years in JSON_")
     return out
+
+
+def _guidance_bridge_lines(cp: Any) -> list[str]:
+    """(H4) Guidance bridge as a table — metric | latest guide | for | dated | age | record | most
+    recent — each a RECORDED delivery fact, no reading added. A pre-H4 dossier.json (no rows) falls
+    back to the flat one-line string."""
+    rows_s = getattr(cp, "guidance_bridge_rows", None)
+    if rows_s is None or rows_s.status is not SourceStatus.PRESENT or not rows_s.value:
+        return [_fact("Guidance bridge (latest guide + track-record)", cp.guidance_bridge)]
+    cols = ["Latest guide", "For", "Dated", "Age", "Record (met/resolved)", "Most recent"]
+    rows = [
+        [r.metric, r.latest_guide, r.period, r.dated, r.age, r.record, r.most_recent]
+        for r in rows_s.value
+    ]
+    return _table("Guidance bridge (latest guide + sign-aware delivery track-record)",
+                  rows_s.source_ref, cols, rows)
 
 
 def _abs_delta(e: Any) -> float:
@@ -177,7 +232,7 @@ def _catalyst_section(m: MechanicalLayer) -> list[str]:
         out += _horizon_lines(cp.horizon_read)
         out.append(_fact("Acceleration read (monthly consensus path)", cp.acceleration_read))
         out += _ladder_lines(cp.cross_name_anchor)
-        out.append(_fact("Guidance bridge (latest guide + track-record)", cp.guidance_bridge))
+        out += _guidance_bridge_lines(cp)
         out.append(_fact("Consensus stats (target + ratings)", cp.consensus_stats))
         out += _grouped_events_lines(cp.revision_events)
         sh = _fact("Surprise history (annual beat/miss)", m.consensus_context.surprise_history)
@@ -196,16 +251,26 @@ def _catalyst_section(m: MechanicalLayer) -> list[str]:
 _TABLE_MARK = "<!-- ds-table -->"  # marker a test greps to confirm a table used the shared renderer
 
 
+def _gfm_cell(c: str) -> str:
+    """(audit) Neutralise a value for a GFM table cell: a literal ``|`` opens a spurious column and
+    a newline shatters the row — escape the pipe and collapse any whitespace run to a single space.
+    The E5 covenant value/quote cells are VERBATIM filing text and can carry both."""
+    return re.sub(r"\s+", " ", str(c).replace("|", "\\|")).strip()
+
+
 def _table(
     label: str, cite: str | None, cols: list[str], rows: list[list[str]],
     note: str = "", name_rows: frozenset[int] = frozenset(),
 ) -> list[str]:
     """The single shared markdown table renderer (B4). Emits a GFM table tagged with ``_TABLE_MARK``
-    so a test confirms every table routes here; ``name_rows`` indices are bolded (the subject)."""
+    so a test confirms every table routes here; ``name_rows`` indices bold the subject. Every
+    cell is pipe/newline-sanitised (:func:`_gfm_cell`) so free-text (E5 verbatim) can't break it."""
     head = f"- **{label}**" + (f" — ↳ `{cite}`" if cite else "") + f"  {_TABLE_MARK}"
-    out = [head, "", "| " + " | ".join([" ", *cols]) + " |", "|" + "---|" * (len(cols) + 1)]
+    out = [head, "", "| " + " | ".join(_gfm_cell(c) for c in [" ", *cols]) + " |",
+           "|" + "---|" * (len(cols) + 1)]
     for i, row in enumerate(rows):
-        out.append("| " + " | ".join(f"**{c}**" if i in name_rows else c for c in row) + " |")
+        cells = (f"**{_gfm_cell(c)}**" if i in name_rows else _gfm_cell(c) for c in row)
+        out.append("| " + " | ".join(cells) + " |")
     if note:
         out += ["", f"_{note}_"]
     out.append("")
@@ -493,17 +558,26 @@ def _peer_grid_or_deltas(pc: Any) -> list[str]:
     return [_fact("Fundamental deltas (earned-vs-residual inputs)", pc.fundamental_deltas)]
 
 
+def _gate_shortref(gate: str) -> str:
+    """(H3) The comparability gate is rendered VERBATIM once — at the Peer comps head. The G and
+    Implied-Valuation headers cite it SHORT ('comparability: HETEROGENEOUS (see Peer comps gate)')
+    rather than repeat the full text. A non-heterogeneous gate is already short — kept verbatim."""
+    return ("comparability: HETEROGENEOUS (see Peer comps gate)"
+            if "HETEROGENEOUS" in (gate or "") else (gate or ""))
+
+
 def _implied_expectations_lines(v: Any) -> list[str]:
     """(G) Price-inverted expectations, MULTIPLES-space. Shared table: each stated multiple → the
     fundamental LEVEL price implies (TEV ÷ multiple); the consensus path anchors are juxtaposed
     BESIDE — never differenced (no %, gap, upside, or implied price/equity). The heterogeneity gate
-    rides the header VERBATIM; both pricing as-ofs are stamped; a vintage-mismatch caveat renders
-    when the TEV / multiples pricing-vintages diverge (G5). Nothing for a pre-G dossier.json."""
+    is cited SHORT on the header (verbatim once, at Peer comps — H3); both pricing as-ofs are
+    stamped; a vintage-mismatch caveat renders when the pricing-vintages diverge (G5)."""
     ie = getattr(v, "implied_expectations", None)
     if ie is None:
         return []
     out = [
-        f"- **Implied expectations (price-inverted · multiples-space)** — {ie.heterogeneity_gate}",
+        f"- **Implied expectations (price-inverted · multiples-space)** — "
+        f"{_gate_shortref(ie.heterogeneity_gate)}",
         "  - _price-implied fundamental levels at stated multiples — the human judges earned vs "
         "residual; identity (†): at the name's own multiple the implied level IS consensus._",
         f"  - _TEV as-of {ie.tev_as_of} · multiples as-of {ie.multiples_as_of}_",
@@ -521,13 +595,15 @@ def _implied_expectations_lines(v: Any) -> list[str]:
     out += _table(
         "Implied metric levels · fixed multiple set", ie.tev.source_ref,
         ["Multiple (× used)", "Implied level"], rows, name_rows=name_rows)
+    # (audit) H7 made EBITDA anchors UNKNOWN-able (Trends may lack FY26/FY27) — show the NOTE, never
+    # the bare word "None". rev_anchors is always PRESENT (ladder) but is guarded the same way.
     out.append(
         "- **Consensus path anchors (EBITDA — juxtapose, do NOT difference):** "
-        f"{ie.anchors.value}")
+        f"{_sourced_str(ie.anchors)}")
     if ie.rev_anchors is not None:  # the parallel revenue anchors substantiate the TEV/Rev identity
         out.append(
             "- **Consensus path anchors (Revenue — juxtapose, do NOT difference):** "
-            f"{ie.rev_anchors.value}")
+            f"{_sourced_str(ie.rev_anchors)}")
     out.append(f"  - _{'⚠ ' if not ie.vintage_coherent else ''}{ie.coherence_note}_")
     if not ie.net_debt_reconciled:
         out.append("  - _⚠ net-debt disagrees with the cash/debt bridge — see the TEV source_")
@@ -546,7 +622,7 @@ def _implied_lines(iv: Any) -> list[str]:
     gate = g.value if g.status is SourceStatus.PRESENT else ""
     out = [
         "### Implied valuation (CIQ-computed at peer multiples — POSED, not concluded)",
-        f"> **Comparability gate:** {gate}" if gate else "",
+        f"> **Comparability gate:** {_gate_shortref(gate)}" if gate else "",  # (H3) short-ref
         "> _Composition first — the human judges earned vs residual (not a machine upside)._",
         _fact("Name market cap ($M) — the ADJACENT fact to compare against", iv.market_cap),
         _fact("Bridge (TEV → equity)", iv.bridge),
@@ -852,6 +928,15 @@ def _ordered_points(pts: list[Any]) -> list[tuple[Any, float, int]]:
     return [(p, tier, cr) for p, tier, cr, _ in keyed]
 
 
+def _twin_outcome(t: Any) -> str:
+    """(H6) The outcome on an '[LLM-suggested, unverified]' twin is the MODEL's claim, not a sourced
+    analogue — suffix it '(LLM-claimed — verify)' so the human checks it. A roster- or self-sourced
+    twin (a real source_ref) renders plain. Deterministic, render-side."""
+    src = (getattr(t, "source", "") or "").lower()
+    unverified = "llm-suggested" in src or "unverified" in src
+    return f"{t.outcome} (LLM-claimed — verify)" if unverified else t.outcome
+
+
 def _synthesis_lines(d: Dossier, *, dev: bool) -> list[str]:
     """(D1/D3) Synthesis in the facts-first order — evidence balance → bull → bear → decisive
     question → key unknowns → twins (twins LAST). Bull/bear points are deterministically ordered
@@ -886,7 +971,7 @@ def _synthesis_lines(d: Dossier, *, dev: bool) -> list[str]:
     out += ["### Key unknowns", *[f"- {u}" for u in s.key_unknowns], ""]
     out.append("### Twin reference cases")  # (D1) twins move to the END of the synthesis
     for t in s.twin_reference_cases:
-        out.append(f"- **{t.name}** — {t.outcome}")
+        out.append(f"- **{t.name}** — {_twin_outcome(t)}")
         out.append(f"  - distinguished by: {t.distinguishing_fact}")
         out.append(f"  - source: {t.source}")
     out.append("")
@@ -1015,4 +1100,4 @@ def render_markdown(d: Dossier, *, dev: bool = False) -> str:
         "> **No BUY/AVOID here — this dossier only assembles and cites.** The verdict is the "
         "human's, logged separately via the ledger with a frozen entry price.",
     ]
-    return "\n".join(out)
+    return "\n".join(_dedupe_unknown_reasons(out))  # (H3) fold repeated UNKNOWN reasons
