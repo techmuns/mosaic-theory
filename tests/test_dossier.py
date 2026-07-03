@@ -2627,6 +2627,48 @@ def test_guidance_bridge_sign_aware_recency_and_stale_guide() -> None:
     assert "Gross Margin" not in v  # present-but-empty block omitted, no flag
 
 
+def test_guidance_bridge_rows_structure_the_same_reads_as_the_string() -> None:
+    """(H4) guidance_bridge_rows carries the SAME reads as the flat string, structured for the table
+    (metric | latest guide | for | dated | age | record | most recent) — sign-aware record, stale
+    age, most-recent outcome. Present-but-empty block omitted; the render is a tagged table."""
+    guidance = [
+        ["X > Estimates > Guidance", "", "", ""],
+        ["", "FY 2023", "FY 2024", "FY 2025"],
+        ["Revenue", "", "", ""], ["As Of Guidance", "", "", ""],
+        ["Guidance Date", 44900.0, 45300.0, 45600.0],
+        ["Consensus Estimate", 100.0, 200.0, 300.0],
+        ["Guidance", "95.0 - 105.0", "190.0 - 210.0", "290.0 - 310.0"],
+        ["Actual/Latest", "", "", ""], ["Actual", 110.0, 150.0, "-"],
+        ["Capital Expenditure", "", "", ""], ["As Of Guidance", "", "", ""],
+        ["Guidance Date", 44950.0, "", ""], ["Consensus Estimate", -100.0, "", ""],
+        ["Guidance", "(120.00) - (150.00)", "", ""],
+        ["Actual/Latest", "", "", ""], ["Actual", -130.0, "", ""],
+        ["Gross Margin %", "", "", ""], ["As Of Guidance", "", "", ""],
+        ["Guidance Date", "", "", ""], ["Guidance", "-", "-", "-"],  # present-but-empty
+    ]
+    rows = cs.guidance_bridge_rows(
+        _est_bundle({"Guidance": guidance}), reference_date=date(2026, 1, 1), stale_after_days=45)
+    assert rows.status is ds.SourceStatus.PRESENT and rows.value is not None
+    by = {r.metric: r for r in rows.value}
+    assert "Gross Margin %" not in by  # present-but-empty omitted, never a fabricated row
+    rev = by["Revenue"]
+    assert rev.latest_guide == "'290.0 - 310.0'" and rev.period == "FY 2025"
+    assert rev.record == "actual ≥ floor 1/2" and rev.most_recent == "FY 2024 MISSED"
+    assert "stale" in rev.age
+    cap = by["Capital Expenditure"]
+    assert cap.record == "spend ≤ ceiling 1/1" and cap.most_recent == "FY 2023 MET"  # cost-like
+    # render is a tagged table with the H4 columns; a pre-H4 CatalystPath (no rows) falls back
+    cp = ds.CatalystPath(
+        as_of=_u(), horizon_read=_u(), acceleration_read=_u(), cross_name_anchor=_u(),
+        guidance_bridge=ds.Sourced.present("flat", source_ref="x"), guidance_bridge_rows=rows,
+        revision_events=_u(), consensus_stats=_u())
+    block = "\n".join(dr._guidance_bridge_lines(cp))
+    assert dr._TABLE_MARK in block and "Record (met/resolved)" in block
+    assert "FY 2024 MISSED" in block
+    cp_old = cp.model_copy(update={"guidance_bridge_rows": None})
+    assert "flat" in "\n".join(dr._guidance_bridge_lines(cp_old))  # old-JSON fallback to the string
+
+
 def _recent_changes_fx(n: int) -> list[list[typing.Any]]:
     """A Recent-Changes sheet with n dated events in ASCENDING serial order (so the extractor's
     most-recent-first sort is actually exercised)."""

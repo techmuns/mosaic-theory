@@ -904,7 +904,7 @@ function catalystPath(cp, cc) {
     horizonTable(cp.horizon_read) +
     accelTable(cp.acceleration_read) +
     ladderTable(cp.cross_name_anchor) +
-    fact("Guidance bridge (latest guide + track-record)", cp.guidance_bridge) +
+    guidanceBridge(cp) +
     fact("Consensus stats (target + ratings)", cp.consensus_stats) +
     eventGroups(cp.revision_events) +
     surprise +
@@ -912,6 +912,20 @@ function catalystPath(cp, cc) {
     // Counts / shares / dates only, no interpretation.
     (cp.insider_activity ? fact("Insider activity (Form 4, 6m)", cp.insider_activity) : "") +
     (cp.short_interest ? fact("Short interest (FINRA)", cp.short_interest) : ""));
+}
+
+// (H4) guidance bridge → table (metric | latest guide | for | dated | age | record | most recent);
+// old JSON (no guidance_bridge_rows) → the flat fact.
+function guidanceBridge(cp) {
+  const rs = cp.guidance_bridge_rows;
+  if (!rs || rs.status !== "present" || !Array.isArray(rs.value) || !rs.value.length)
+    return fact("Guidance bridge (latest guide + track-record)", cp.guidance_bridge);
+  const rows = rs.value.map((r) => ({
+    label: r.metric,
+    cells: [r.latest_guide, r.period, r.dated, r.age, r.record, r.most_recent],
+  }));
+  return dataTable("Guidance bridge (latest guide + sign-aware delivery track-record)", rs.source_ref,
+    ["Latest guide", "For", "Dated", "Age", "Record (met/resolved)", "Most recent"], rows, "");
 }
 
 // Legacy fallback — ONLY rendered for a pre-catalyst_path dossier.json (no catalyst_path field).

@@ -119,6 +119,22 @@ def _ladder_lines(s: Sourced[Any]) -> list[str]:
     return out
 
 
+def _guidance_bridge_lines(cp: Any) -> list[str]:
+    """(H4) Guidance bridge as a table — metric | latest guide | for | dated | age | record | most
+    recent — each a RECORDED delivery fact, no reading added. A pre-H4 dossier.json (no rows) falls
+    back to the flat one-line string."""
+    rows_s = getattr(cp, "guidance_bridge_rows", None)
+    if rows_s is None or rows_s.status is not SourceStatus.PRESENT or not rows_s.value:
+        return [_fact("Guidance bridge (latest guide + track-record)", cp.guidance_bridge)]
+    cols = ["Latest guide", "For", "Dated", "Age", "Record (met/resolved)", "Most recent"]
+    rows = [
+        [r.metric, r.latest_guide, r.period, r.dated, r.age, r.record, r.most_recent]
+        for r in rows_s.value
+    ]
+    return _table("Guidance bridge (latest guide + sign-aware delivery track-record)",
+                  rows_s.source_ref, cols, rows)
+
+
 def _abs_delta(e: Any) -> float:
     try:
         return abs(float(e.broker_current) - float(e.broker_prior))
@@ -177,7 +193,7 @@ def _catalyst_section(m: MechanicalLayer) -> list[str]:
         out += _horizon_lines(cp.horizon_read)
         out.append(_fact("Acceleration read (monthly consensus path)", cp.acceleration_read))
         out += _ladder_lines(cp.cross_name_anchor)
-        out.append(_fact("Guidance bridge (latest guide + track-record)", cp.guidance_bridge))
+        out += _guidance_bridge_lines(cp)
         out.append(_fact("Consensus stats (target + ratings)", cp.consensus_stats))
         out += _grouped_events_lines(cp.revision_events)
         sh = _fact("Surprise history (annual beat/miss)", m.consensus_context.surprise_history)

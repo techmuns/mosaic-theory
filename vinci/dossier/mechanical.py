@@ -1112,6 +1112,9 @@ def _catalyst_path(
         guidance_bridge=ciq_sheets.guidance_bridge(
             bundle, as_of=aod, reference_date=reference_date, stale_after_days=_STALE_CLOSE_DAYS
         ),
+        guidance_bridge_rows=ciq_sheets.guidance_bridge_rows(
+            bundle, reference_date=reference_date, stale_after_days=_STALE_CLOSE_DAYS
+        ),
         revision_events=ciq_sheets.revision_events(bundle, as_of=aod),
         consensus_stats=ciq_sheets.consensus_stats(bundle, as_of=aod),
         insider_activity=insider_activity,
