@@ -224,28 +224,61 @@ def _theme_display(baskets: dict[str, Any], ledger: list[dict[str, Any]],
         "honestyLabel": _HOLD_NONE_HONESTY,
         "powerNote": _POWER_NOTE,
     }
+    # frozen tier counts — the DRILLABLE buckets (every count here has per-name detail in names[]):
+    # firm = REAL (binding + quantified), partial = committed, early = aspirational. The magnitude
+    # words are the portfolio-altitude labels; the underlying grade tiers are unchanged.
+    frozen_tiers = {
+        "firm": sum(1 for n in names if n["basis"] in ("binding", "quantified")),
+        "partial": sum(1 for n in names if n["basis"] == "committed"),
+        "early": sum(1 for n in names if n["basis"] == "aspirational"),
+    }
     return {
         "driver": driver, "slug": slug, "label": label,
         "freezeDate": (baskets.get("freeze_timestamp") or "")[:10],
         "freezeTimestamp": baskets.get("freeze_timestamp", ""),
         "ratifiedCount": len(baskets.get("ratified", [])), "surfacedCount": surfaced,
         "frozenCount": frozen, "watchlistCount": len(baskets.get("watchlist", [])),
-        "tierShape": tier_shape, "categories": categories,
+        "tierShape": tier_shape, "frozenTiers": frozen_tiers, "categories": categories,
         "names": names, "watchlist": watchlist, "avoidControls": avoid_controls,
         "realTier": list(baskets.get("real_tier", [])), "forward": forward,
     }
 
 
+# a-priori power floor — mirrors vinci.themes.forward.MIN_DRIVERS (never tuned on returns)
+_MIN_THEMES = 4
+
+
 def _theme_index(summaries: list[dict[str, Any]]) -> dict[str, Any]:
     n = len(summaries)
+    total_buys = sum(s["ratifiedCount"] for s in summaries)
+    total_wl = sum(s["watchlistCount"] for s in summaries)
     return {
         "drivers": summaries,
         "crossDriver": {
-            "driversFrozen": n,
-            "totalRatified": sum(s["ratifiedCount"] for s in summaries),
-            "totalWatchlist": sum(s["watchlistCount"] for s in summaries),
-            "line": (f"{n} driver{'s' if n != 1 else ''} frozen; exposure-carry diagnostic poolable "
-                     f"but UNPOWERED ({n} < 4 drivers)."),
+            "driversFrozen": n, "totalRatified": total_buys, "totalWatchlist": total_wl,
+            "line": (f"{n} theme{'s' if n != 1 else ''} in snapshot; exposure-carry diagnostic poolable "
+                     f"but UNPOWERED ({n} < {_MIN_THEMES} themes)."),
+        },
+        # the POOLED forward state — cross-theme facts that live at the portfolio altitude (not per
+        # theme). On the snapshot day every horizon is 0 days forward → everything PENDING.
+        "pooledForward": {
+            "totalBuys": total_buys,
+            "totalWatchlist": total_wl,
+            "powerFloor": {
+                "themes": n, "needed": _MIN_THEMES,
+                "pct": min(100, round(100 * n / _MIN_THEMES)),
+                "label": f"{n} of ~{_MIN_THEMES}-{_MIN_THEMES + 1} themes — unpowered",
+            },
+            "undefinedMeasures": _UNDEFINED_MEASURES,
+            "honestyLabel": _HOLD_NONE_HONESTY,
+            "diagnostics": [
+                {"name": "exposure-carry", "status": "PENDING",
+                 "note": "genuine-exposure vs other-PASSED divergence, pooled across themes — PARTIALLY "
+                         "beta-controlled; the more informative of the two; pending forward."},
+                {"name": "avoid-discipline", "status": "PENDING",
+                 "note": "was declining to buy the committed tier costly or vindicated, pooled — "
+                         "beta-confounded; pending forward."},
+            ],
         },
     }
 
@@ -278,7 +311,8 @@ def build_themes(themes_srcs: list[Path]) -> list[str]:
         display = _theme_display(baskets, _jsonl(lp), _jsonl(sp) if sp else None)
         (OUT_THEMES / f"{display['slug']}.json").write_text(json.dumps(display, indent=1))
         summaries.append({k: display[k] for k in ("slug", "label", "freezeDate", "ratifiedCount",
-                          "surfacedCount", "frozenCount", "watchlistCount", "tierShape")})
+                          "surfacedCount", "frozenCount", "watchlistCount", "tierShape",
+                          "frozenTiers")})
     summaries.sort(key=lambda s: s["slug"])
     (OUT_THEMES / "index.json").write_text(json.dumps(_theme_index(summaries), indent=1))
     return [s["slug"] for s in summaries]

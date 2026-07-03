@@ -257,9 +257,13 @@ export async function getDossier(ticker) {
 export async function getThemesIndex() {
   try {
     const idx = await _json(`${THEMES}/index.json`);
-    return { drivers: Array.isArray(idx?.drivers) ? idx.drivers : [], crossDriver: idx?.crossDriver ?? null };
+    return {
+      drivers: Array.isArray(idx?.drivers) ? idx.drivers : [],
+      crossDriver: idx?.crossDriver ?? null,
+      pooledForward: idx?.pooledForward ?? null,
+    };
   } catch (e) {
-    if (e.status === 404) return { drivers: [], crossDriver: null };
+    if (e.status === 404) return { drivers: [], crossDriver: null, pooledForward: null };
     throw e;
   }
 }

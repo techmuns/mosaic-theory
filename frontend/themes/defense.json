@@ -17,6 +17,11 @@
   "surfaced": 108,
   "universe": 1683
  },
+ "frozenTiers": {
+  "firm": 2,
+  "partial": 65,
+  "early": 41
+ },
  "categories": [
   {
    "tag": "defense-autonomy",

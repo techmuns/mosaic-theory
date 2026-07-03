@@ -1,86 +1,76 @@
-// SURFACED NAMES (#/themes/scan) — per-driver surfaced/snapshot names, tiered by disclosure grade.
-// A scannable table with PROGRESSIVE DISCLOSURE: each row shows decision-relevant fields + a one-line
-// summary; the full grade fact + filing expand on row click. Driver = a dropdown (scales to N themes).
-// The machine TIERS; it never ranks.
-import { getThemesIndex, getThemeDriver } from "../../lib/snapshots.js";
+// TIER ALTITUDE (#/themes/<theme>/<tier>) — ONLY that theme's that-tier names, as the scannable
+// table: ticker, category, driver-tie, clean grade, one-line fact summary; the full grade fact +
+// EDGAR filing expand on ROW CLICK (progressive disclosure — never inline paragraphs). A filter box
+// + breadcrumb (Themes / <theme> / <tier>) + back. You never face more than one tier of one theme.
+import { getThemeDriver } from "../../lib/snapshots.js";
 import { fmtInt, escapeHtml, gradeLabel, GRADE_DEF } from "../../lib/format.js";
 
-let DRIVERS = [];
-const CACHE = {};      // slug -> driver json (immutable per page load)
-let SEL = null;
-let q = "";
-
-// tier → pill colour (buy=green REAL, unresolved=grey committed, conditional=amber aspirational)
+// magnitude bucket → the underlying grade tiers (unchanged; the tiers are the source of truth)
+const TIER_BASES = { firm: ["binding", "quantified"], partial: ["committed"], early: ["aspirational"] };
+const TIER_LABEL = { firm: "firm · REAL", partial: "partial · committed", early: "early · aspirational" };
 const BASIS_PILL = { binding: "buy", quantified: "buy", committed: "unresolved",
                      aspirational: "conditional", none: "locked" };
 const GRADE_KEY = `<div class="grade-key">${
   ["binding", "quantified", "committed", "aspirational", "none"].map((g) =>
     `<span class="gk"><b>${gradeLabel(g)}</b> — ${GRADE_DEF[g]}</span>`).join("")}</div>`;
 
+let NAMES = [];
+let q = "";
+
 function oneLine(s) {
   s = String(s || "").trim();
   return s.length <= 110 ? s : s.slice(0, 110).replace(/\s+\S*$/, "") + "…";
 }
+const crumb = (slug, label, tier) =>
+  `<div class="breadcrumb"><a href="#/overview">Overview</a><span class="sep">/</span>` +
+  `<a href="#/themes">Themes</a><span class="sep">/</span>` +
+  `<a href="#/themes/${escapeHtml(slug)}">${escapeHtml(label || slug)}</a>` +
+  `<span class="sep">/</span>${escapeHtml(TIER_LABEL[tier] || tier)}</div>`;
 
-export async function render(root, { item, frame }) {
+export async function render(root, _ctx, slug, tier) {
   q = "";
-  root.innerHTML = frame(item, { bodyHtml: `<div class="notice">Loading surfaced names…</div>` });
-  const idx = await getThemesIndex();
-  DRIVERS = idx.drivers;
-  if (!DRIVERS.length) {
-    root.innerHTML = frame(item, { bodyHtml: `<div class="notice">No theme artifacts committed to this deploy yet.</div>` });
+  root.innerHTML = `${crumb(slug, slug, tier)}<div class="notice">Loading names…</div>`;
+  const d = await getThemeDriver(slug);
+  if (!d) {
+    root.innerHTML = `${crumb(slug, slug, tier)}<div class="notice">Theme not found. <a href="#/themes">Back to portfolio</a>.</div>`;
     return;
   }
-  SEL = SEL && DRIVERS.some((d) => d.slug === SEL) ? SEL : DRIVERS[0].slug;
-  await ensure(SEL);
-  paint(root, item, frame);
+  const bases = TIER_BASES[tier];
+  if (!bases) {
+    root.innerHTML = `${crumb(slug, d.label, tier)}<div class="notice">The <b>${escapeHtml(tier)}</b> tier
+      has no per-name detail in the snapshot (unsurfaced / not carried forward).
+      <a href="#/themes/${escapeHtml(slug)}">Back to ${escapeHtml(d.label)}</a>.</div>`;
+    return;
+  }
+  NAMES = (d.names || []).filter((n) => bases.includes(n.basis));
+  paint(root, d, slug, tier);
 }
 
-async function ensure(slug) {
-  if (!CACHE[slug]) CACHE[slug] = await getThemeDriver(slug);
-  return CACHE[slug];
-}
-
-function paint(root, item, frame) {
-  const d = CACHE[SEL];
-  const t = d.tierShape || {};
-  const real = (t.binding || 0) + (t.quantified || 0);
-  const selector = `<select id="th-driver" class="filter-select" aria-label="driver">${
-    DRIVERS.map((dr) => `<option value="${escapeHtml(dr.slug)}" ${dr.slug === SEL ? "selected" : ""}>${escapeHtml(dr.label)}</option>`).join("")}</select>`;
-
-  const shape = `<div class="foot" style="margin-bottom:12px;">
-    ${fmtInt(d.frozenCount)} in snapshot · ${fmtInt(d.surfacedCount)} surfaced
-    (${fmtInt(real)} REAL / ${fmtInt(t.committed)} committed / ${fmtInt(t.aspirational)} aspirational /
-    ${t.none == null ? "—" : fmtInt(t.none)} no exposure of ${t.universe == null ? "—" : fmtInt(t.universe)} scanned)</div>`;
-
+function paint(root, d, slug, tier) {
   const controls = `
+    <div class="header-block" style="margin-bottom:14px;">
+      <h1 class="page-h">${escapeHtml(d.label)} · ${escapeHtml(TIER_LABEL[tier] || tier)}</h1>
+      <div class="subtitle muted">${fmtInt(NAMES.length)} name${NAMES.length !== 1 ? "s" : ""} · the machine tiers, it never ranks · click a row for the full grade fact + filing</div>
+    </div>
     <div style="display:flex; gap:12px; align-items:center; margin-bottom:12px; flex-wrap:wrap;">
-      <label class="foot" for="th-driver">Driver</label>${selector}
+      <a href="#/themes/${escapeHtml(slug)}" class="foot">← ${escapeHtml(d.label)}</a>
       <input id="th-q" type="search" placeholder="Filter ticker · category · fact…" autocomplete="off" value=""
         style="flex:1; min-width:180px; padding:8px 11px; border:1px solid var(--line-2); border-radius:8px; font-size:13px;" />
-      <span class="muted" style="font-size:12px;">the machine tiers · click a row for detail</span>
     </div>
-    ${GRADE_KEY}${shape}
+    ${GRADE_KEY}
     <table class="data"><thead><tr>
       <th>Ticker</th><th>Category</th><th>Driver tie</th><th>Grade</th><th>Grade fact</th>
     </tr></thead><tbody id="th-body"></tbody></table>`;
 
-  root.innerHTML = frame(item, { bodyHtml: controls });
+  root.innerHTML = crumb(slug, d.label, tier) + controls;
   rows();
   root.querySelector("#th-q").addEventListener("input", (e) => { q = e.target.value.toLowerCase(); rows(); });
-  root.querySelector("#th-driver").addEventListener("change", async (e) => {
-    SEL = e.target.value; q = "";
-    root.innerHTML = frame(item, { bodyHtml: `<div class="notice">Loading ${escapeHtml(SEL)}…</div>` });
-    await ensure(SEL);
-    paint(root, item, frame);
-  });
 }
 
 function rows() {
   const body = document.getElementById("th-body");
   if (!body) return;
-  const d = CACHE[SEL];
-  const names = (d.names || []).filter((n) => !q
+  const names = NAMES.filter((n) => !q
     || n.ticker.toLowerCase().includes(q)
     || (n.substructureTag || "").toLowerCase().includes(q)
     || (n.gradeFact || "").toLowerCase().includes(q));

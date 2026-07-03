@@ -17,6 +17,11 @@
   "surfaced": 450,
   "universe": 1550
  },
+ "frozenTiers": {
+  "firm": 0,
+  "partial": 56,
+  "early": 0
+ },
  "categories": [
   {
    "tag": "chips/GPU",

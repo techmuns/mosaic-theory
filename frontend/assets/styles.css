@@ -242,6 +242,29 @@ table.data tr.det .k { font-size: 11px; text-transform: uppercase; letter-spacin
 /* --- driver-filter dropdown (scales to N themes; replaces the pill row) --- */
 .filter-select { padding: 7px 10px; border: 1px solid var(--line-2); border-radius: 8px; font-size: 13px; font-family: var(--sans); background: var(--surface); color: var(--ink); }
 
+/* --- portfolio: power-floor progress bar + DRILLABLE tier counts (the counts ARE the affordance) --- */
+.power-bar { height: 8px; background: var(--surface-2); border: 1px solid var(--line-2); border-radius: 999px; overflow: hidden; max-width: 420px; }
+.power-fill { height: 100%; background: linear-gradient(90deg, #d7b15f, var(--conditional)); border-radius: 999px; }
+.tier-count { font-family: var(--mono); font-weight: 650; font-size: 16px; }
+a.tier-count { color: var(--accent); }
+a.tier-count:hover { text-decoration: underline; }
+.tier-count.zero { color: var(--ink-3); font-weight: 400; }
+
+/* --- watchlist: collapsible per-theme sections + COLLAPSED trigger-led rows (rationale on demand) --- */
+.wl-section { margin-bottom: 18px; }
+.wl-section > summary { cursor: pointer; font-size: 15px; font-weight: 650; padding: 6px 0; border-bottom: 1px solid var(--line); list-style: none; }
+.wl-section > summary::-webkit-details-marker { display: none; }
+.wl-section > summary::before { content: "▸"; color: var(--ink-3); font-size: 11px; margin-right: 6px; }
+.wl-section[open] > summary::before { content: "▾"; }
+.wl-section-body { margin-top: 10px; }
+.wl-row { border: 1px solid var(--line); border-radius: var(--r); padding: 10px 13px; margin-bottom: 8px; background: var(--surface); }
+.wl-top { display: flex; gap: 8px; align-items: baseline; flex-wrap: wrap; }
+.wl-trigger { margin-top: 7px; font-size: 13px; line-height: 1.5; color: var(--ink); border-left: 3px solid var(--conditional); padding-left: 11px; }
+.wl-trigger .k { display: block; font-size: 10.5px; text-transform: uppercase; letter-spacing: 0.05em; color: var(--conditional); font-weight: 600; margin-bottom: 3px; }
+.wl-why { margin-top: 8px; }
+.wl-why > summary { cursor: pointer; font-size: 11.5px; color: var(--ink-3); }
+.wl-why-body { margin-top: 6px; font-size: 12.5px; color: var(--ink-2); line-height: 1.5; }
+
 /* --- dossier viewer ------------------------------------------------------ */
 /* header carries the ticker block on the left and the Download-PDF action on the right */
 .ds-header { display: flex; align-items: flex-start; justify-content: space-between; gap: 18px; flex-wrap: wrap; }

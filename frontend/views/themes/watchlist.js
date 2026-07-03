@@ -1,7 +1,8 @@
-// WATCHLIST (#/themes/watchlist) — THE actionable surface: watchlist names grouped by theme, each
-// card LED by its verbatim re-underwrite trigger (the actionable part), with the disposition
-// rationale secondary/collapsible. The labeled AVOID-controls cohort is a separate section. The
-// manual-monitoring surface until the delta-scan automation lands — read-only, nothing fires.
+// WATCHLIST (#/themes/watchlist) — a FLAT cross-theme checklist (NOT a drill-down; the standing
+// monitoring surface, naturally bounded). Each name is a COLLAPSED row LED BY ITS VERBATIM TRIGGER
+// (ticker · category · the re-underwrite trigger); the disposition rationale is behind a "why it's on
+// the list" expand (collapsed by default) — the same trigger-led / rationale-on-demand principle as
+// the surfaced-names row collapse. Per-theme sections (collapsible); avoid-controls a separate section.
 import { getThemesIndex, getThemeDriver } from "../../lib/snapshots.js";
 import { fmtInt, escapeHtml, gradeLabel } from "../../lib/format.js";
 
@@ -15,40 +16,33 @@ export async function render(root, { item, frame }) {
   const drivers = await Promise.all(idx.drivers.map((d) => getThemeDriver(d.slug)));
 
   const intro = `<div class="banner-research">
-    <b>The manual-monitoring surface.</b> The names to re-underwrite the instant a trigger fires —
-    genuine tailwind-side exposure that failed only on price / materiality. <b>Read-only</b>: nothing
-    here fires automatically (the backend delta-scan that watches filings is a later build).</div>`;
+    <b>The manual-monitoring surface.</b> A flat cross-theme checklist — the names to re-underwrite the
+    instant a trigger fires. <b>Read-only</b>: nothing here fires automatically (the backend delta-scan
+    that watches filings is a later build). Each row is led by its verbatim trigger; the rationale is
+    behind “why it's on the list”.</div>`;
 
-  // each card is LED by the verbatim trigger; the rationale is collapsible below.
-  const nameBlock = (n) => `
-    <div class="card" style="margin-bottom:12px;">
-      <div style="display:flex; gap:10px; align-items:baseline; flex-wrap:wrap; margin-bottom:9px;">
-        <span class="mono" style="font-weight:650; font-size:15px;">${escapeHtml(n.ticker)}</span>
-        <span class="pill unresolved">${escapeHtml(gradeLabel(n.basis))}</span>
+  const wlRow = (n) => `
+    <div class="wl-row">
+      <div class="wl-top">
+        <b class="mono">${escapeHtml(n.ticker)}</b>
         <span class="muted" style="font-size:12px;">${escapeHtml(n.substructureTag || "")}</span>
-        ${n.edgarUrl ? `<a href="${encodeURI(n.edgarUrl)}" target="_blank" rel="noopener"
-          style="font-size:11.5px; margin-left:auto;">EDGAR ${escapeHtml(n.accession || "")}</a>` : ""}
+        <span class="pill unresolved" style="font-size:10px;">${escapeHtml(gradeLabel(n.basis))}</span>
+        ${n.edgarUrl ? `<a href="${encodeURI(n.edgarUrl)}" target="_blank" rel="noopener" style="font-size:11px; margin-left:auto;">EDGAR ${escapeHtml(n.accession || "")}</a>` : ""}
       </div>
-      <div style="background:var(--conditional-bg); border:1px solid #ecdcae; border-left:3px solid var(--conditional);
-        border-radius:var(--r); padding:12px 15px; font-size:13.5px; line-height:1.55; color:#5c451a;">
-        <span style="display:block; font-size:11px; text-transform:uppercase; letter-spacing:0.05em; color:#9a7a2e; font-weight:600; margin-bottom:5px;">Re-underwrite when</span>
-        ${escapeHtml(n.trigger || "—")}
-      </div>
-      ${n.rationale || n.gradeFact ? `<details style="margin-top:9px;">
-        <summary style="cursor:pointer; font-size:12px; color:var(--ink-3);">Why it's on the watchlist — disposition rationale</summary>
-        <div style="margin-top:7px; font-size:12.5px; color:var(--ink-2); line-height:1.5;">
-          ${n.rationale ? escapeHtml(n.rationale) : ""}${n.gradeFact ? `<div class="cite">${escapeHtml(n.gradeFact)}</div>` : ""}
-        </div></details>` : ""}
+      <div class="wl-trigger"><span class="k">re-underwrite when</span>${escapeHtml(n.trigger || "—")}</div>
+      ${n.rationale || n.gradeFact ? `<details class="wl-why">
+        <summary>why it's on the list</summary>
+        <div class="wl-why-body">${n.rationale ? escapeHtml(n.rationale) : ""}${n.gradeFact ? `<div class="cite">${escapeHtml(n.gradeFact)}</div>` : ""}</div>
+      </details>` : ""}
     </div>`;
 
   const avoidBlock = (d) => {
     if (!d.avoidControls || !d.avoidControls.length) return "";
     return `
-      <div class="card" style="background:var(--surface-2); margin-top:8px;">
+      <div class="card" style="background:var(--surface-2); margin-top:10px;">
         <h3>Avoid-controls · ${fmtInt(d.avoidControls.length)}</h3>
         <div class="subtitle muted" style="margin:2px 0 10px;">Highest-value near-misses inside the
-          PASSED leg — a labeled CONTROL cohort, NOT the watchlist. Tracks whether the human's PASS on
-          the strongest almost-buys held up forward; not a re-underwrite candidate.</div>
+          PASSED leg — a labeled CONTROL cohort, NOT the watchlist. Not a re-underwrite candidate.</div>
         <table class="data"><thead><tr><th>Ticker</th><th>Category</th><th>Grade</th><th>Rationale</th></tr></thead>
         <tbody>${d.avoidControls.map((a) => `
           <tr><td class="mono" style="font-weight:600;">${escapeHtml(a.ticker)}</td>
@@ -64,12 +58,13 @@ export async function render(root, { item, frame }) {
     if (!d) return "";
     const wl = d.watchlist || [];
     return `
-      <div style="margin-bottom:26px;">
-        <div style="font-size:16px; font-weight:650; margin:0 0 10px; padding-bottom:6px; border-bottom:1px solid var(--line);">
-          ${escapeHtml(meta.label)} <span class="muted" style="font-weight:400; font-size:13px;">· ${fmtInt(wl.length)} watchlist</span></div>
-        ${wl.length ? wl.map(nameBlock).join("") : `<div class="notice">No watchlist names for this driver.</div>`}
-        ${avoidBlock(d)}
-      </div>`;
+      <details class="wl-section" open>
+        <summary><b>${escapeHtml(meta.label)}</b> <span class="muted">· ${fmtInt(wl.length)} watchlist</span></summary>
+        <div class="wl-section-body">
+          ${wl.length ? wl.map(wlRow).join("") : `<div class="foot">none</div>`}
+          ${avoidBlock(d)}
+        </div>
+      </details>`;
   }).join("");
 
   root.innerHTML = frame(item, { bodyHtml: intro + sections });
