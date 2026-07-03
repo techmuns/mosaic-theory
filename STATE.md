@@ -1474,6 +1474,16 @@ Each line: *what it does* — *verified how*.
     formats, guidance rows, gate short-ref + dedup) — existing IE/survival/short-interest tests
     updated for the new shapes; the guidance STRING contract preserved. ruff + mypy --strict (70) +
     `pytest -m "not network"` green. On a branch → PR; NOT merged (awaiting review).*
+    **Post-audit fix (H1–H7 audit, 4 parallel review passes + real-run checks; math traced clean).
+    4 confirmed defects fixed on PR #69: (1) DISPLAY — a `|`/newline in a table cell shattered the
+    GFM table; `_table` now sanitises every cell (`_gfm_cell`), the E5 verbatim covenant value/quote
+    was the exposure (frontend HTML already immune); (2) EXTRACTION — a `.html`-named agreement
+    exhibit was dropped by the covenant-pointer `.htm`/`.txt`-only filter (documented facility →
+    "undocumented"); now accepts `.html` (H1 / PR #68 code, riding in #69); (3) DISPLAY — H7 made the
+    EBITDA anchors UNKNOWN-able but the render printed the bare word "None"; `_sourced_str` shows the
+    note (render + frontend); (4) HARDENING — the H3 cross-section reason-fold now fires only for
+    DISTINCTIVE reasons (≥30 chars) so a coincidental short-generic collision can't relocate a fact
+    (the 99.1 case still folds). +4 regression tests; gate green.**
 - _Whole suite green (ruff + mypy --strict clean; `pytest -m "not network"` passes)._
 
 ## 3. FALSIFIED — tested and retired (NOT deferred)
