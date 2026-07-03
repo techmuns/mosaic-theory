@@ -69,3 +69,29 @@ export function escapeHtml(s) {
     { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]
   ));
 }
+
+// The GRADE vocabulary — the classifier's real output + the analyst's working language. KEPT (never
+// renamed or collapsed — it is the source of truth), only rendered CLEAN from the short basis key.
+export const GRADE_LABEL = {
+  binding: "binding contract",
+  quantified: "quantified revenue",
+  committed: "committed capacity",
+  aspirational: "aspirational",
+  none: "no exposure",
+};
+// one-line definitions for the inline key/legend shown on any screen that uses grades
+export const GRADE_DEF = {
+  binding: "a signed agreement with binding terms",
+  quantified: "a $/% of revenue attributed to the driver",
+  committed: "committed capex / capacity, no paying customer yet",
+  aspirational: "stated intent — a mention, not exposure",
+  none: "no driver exposure disclosed",
+};
+export function gradeLabel(basis) {
+  return GRADE_LABEL[String(basis)] || String(basis || "");
+}
+// clean a RAW enum ("committed-capacity", "binding-contract", "stated-intent") for display — hyphens
+// to spaces, never shown as the raw string
+export function cleanGrade(s) {
+  return String(s || "").replace(/-/g, " ");
+}

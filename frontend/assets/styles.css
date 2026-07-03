@@ -216,6 +216,32 @@ table.data tr.median-row td { border-top: 1.5px solid var(--line-2); font-style:
 
 .error { background: var(--danger-bg); border: 1px solid #eecac6; color: var(--danger); border-radius: var(--r); padding: 12px 15px; font-size: 13px; }
 
+/* --- edge top-tabs (an edge's stages render as tabs across the content, not a 2nd rail) --- */
+.edge-head { margin-bottom: 16px; border-bottom: 1px solid var(--line); }
+.edge-head .page-h { margin-bottom: 10px; }
+.tabs { display: flex; gap: 4px; flex-wrap: wrap; }
+.tab { padding: 8px 13px; font-size: 13px; color: var(--ink-2); border-bottom: 2px solid transparent; margin-bottom: -1px; white-space: nowrap; }
+.tab:hover { color: var(--ink); text-decoration: none; }
+.tab.active { color: var(--accent); border-bottom-color: var(--accent); font-weight: 600; }
+.stage-sub { margin-bottom: 16px; max-width: 760px; }
+.stage-sub .subtitle { margin-top: 0; }
+
+/* --- grade key / legend — ONE inline line per screen that uses grade tiers --- */
+.grade-key { display: flex; flex-wrap: wrap; gap: 4px 14px; font-size: 11.5px; color: var(--ink-3); margin-bottom: 14px; padding: 9px 13px; background: var(--surface-2); border: 1px solid var(--line); border-radius: var(--r); }
+.grade-key .gk { white-space: nowrap; }
+.grade-key b { color: var(--ink-2); font-weight: 600; }
+
+/* --- expandable table row (progressive disclosure — detail behind the row) --- */
+table.data tr.exp { cursor: pointer; }
+table.data tr.exp:hover td { background: var(--surface-2); }
+table.data tr.exp .caret { color: var(--ink-3); font-size: 10px; display: inline-block; width: 11px; }
+table.data tr.exp.open .caret { transform: rotate(90deg); }
+table.data tr.det > td { background: var(--surface-2); padding: 4px 12px 14px 32px; font-size: 12.5px; color: var(--ink-2); line-height: 1.55; }
+table.data tr.det .k { font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em; color: var(--ink-3); display: block; margin: 6px 0 2px; }
+
+/* --- driver-filter dropdown (scales to N themes; replaces the pill row) --- */
+.filter-select { padding: 7px 10px; border: 1px solid var(--line-2); border-radius: 8px; font-size: 13px; font-family: var(--sans); background: var(--surface); color: var(--ink); }
+
 /* --- dossier viewer ------------------------------------------------------ */
 /* header carries the ticker block on the left and the Download-PDF action on the right */
 .ds-header { display: flex; align-items: flex-start; justify-content: space-between; gap: 18px; flex-wrap: wrap; }

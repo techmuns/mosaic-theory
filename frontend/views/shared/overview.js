@@ -67,8 +67,8 @@ export async function render(root) {
       <div>
         <h3 style="margin-bottom:6px;">Theme edge <span class="pill unresolved" style="margin-left:4px;">unvalidated · research</span></h3>
         <div style="font-size:13px; color:var(--ink-2);">
-          <b>${fmtInt(td?.driversFrozen ?? themes.drivers.length)} drivers frozen</b> ·
-          <b>${fmtInt(td?.totalRatified ?? 0)} RATIFIED</b> <span class="muted">(watchlists, not buys yet)</span> ·
+          <b>${fmtInt(td?.driversFrozen ?? themes.drivers.length)} drivers</b> in snapshot ·
+          <b>${fmtInt(td?.totalRatified ?? 0)} buys</b> <span class="muted">(watchlists, not buys yet)</span> ·
           <b>${fmtInt(td?.totalWatchlist ?? 0)} watchlist</b> names to re-underwrite
         </div>
       </div>

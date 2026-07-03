@@ -194,7 +194,7 @@ def _theme_display(baskets: dict[str, Any], ledger: list[dict[str, Any]],
     def _detail(t: str, extra: dict[str, Any]) -> dict[str, Any]:
         n = by_ticker.get(t, {})
         base = {k: n.get(k, "") for k in
-                ("substructureTag", "grade", "gradeFact", "accession", "edgarUrl", "rationale")}
+                ("substructureTag", "grade", "basis", "gradeFact", "accession", "edgarUrl", "rationale")}
         return {"ticker": t, **base, **extra}
 
     watchlist = [_detail(t, {"trigger": triggers.get(t, "")}) for t in baskets.get("watchlist", [])
