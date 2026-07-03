@@ -1516,6 +1516,124 @@ def test_fix2_cost_bound_note_in_covenant_block_and_flag_routed_to_qa() -> None:
     assert "not extracted this run" in md and "0001628280-26-018264" in md  # the un-read 10-K
 
 
+def test_audit_derive_conversion_no_fabrication_on_bond_convention_and_stray_matches() -> None:
+    """(audit M-1/M-4/M-5) The conversion derivation must NEVER fabricate or mis-scale a $/share.
+    M-1: the '$1,000 principal' BOND convention is $22.00/sh (1000 ÷ 45.4545), NOT $0.02 — the old
+    regex matched '$1' inside '$1,000' and mis-scaled by 1000× the exact dilution figure the digest
+    leads synthesis with. M-4/M-5: a cross-clause bridge or a comma-grouped share COUNT yields ''
+    (the LLM reads the verbatim), never a wrong number."""
+    m1 = ce._derive_conversion("conversion rate of 45.4545 shares per $1,000 principal amount")
+    assert "~$22.00/sh" in m1 and "$0.02" not in m1  # denomination CAPTURED, not assumed $1.00
+    assert "~$1.20/sh" in ce._derive_conversion("833.3333 shares per $1,000")
+    assert "~$0.50/sh" in ce._derive_conversion("two (2) shares per $1.00")  # legit per-$1 kept
+    # M-4 — a ';' clause break stops the 'shares'→'per' bridge (an unrelated 'per $1.00')
+    assert ce._derive_conversion("issued 5 shares under the plan; interest accrues per $1.00") == ""
+    # M-5 — a comma-grouped share COUNT is not a rate (boundary-anchored numerator)
+    assert ce._derive_conversion("1,250,000 shares issuable per $1.00 of par value") == ""
+
+
+def test_audit_covenant_digest_honest_on_empty_body_and_boundary_safe_truncation() -> None:
+    """(audit CC-1/CC-2/M-2) The digest never emits a bare header implying unseen data (the FIX-0
+    failure mode): an all-UNKNOWN governing set — or one with only non-decision terms (security) —
+    maps to an HONEST 'no survival-critical … terms' line, not a header alone. And a value truncates
+    on a whitespace boundary, so a dollar figure is never chopped mid-digit into a wrong number."""
+    src = "8-K 0001760689-24-000021 · wu.htm"
+    all_unknown = [ce.GoverningTerm("Convertible Loan", "Conversion price / mechanics",
+                                    ds.Sourced[str].unknown(note="not stated"), None, ())]
+    d1 = ce.covenant_digest(all_unknown, None, fail_reason=None)
+    assert "no survival-critical" in d1 and "not pending" in d1 and d1.count("\n") == 0
+    security = [ce.GoverningTerm("Convertible Loan", "Security / collateral / guarantors",
+                                 ds.Sourced.present("Guarantors: Holdco, Subco", source_ref=src),
+                                 src, ())]
+    assert "no survival-critical" in ce.covenant_digest(security, None, fail_reason=None)
+    long_val = ("Interest accrues at 9.00% per annum on the outstanding principal balance of "
+                "$5,000,000 payable quarterly in arrears")
+    dig = ce.covenant_digest(
+        [ce.GoverningTerm("Term Loan", "Interest / coupon rate",
+                          ds.Sourced.present(long_val, source_ref=src), src, ())], None,
+        fail_reason=None)
+    assert "…" in dig and "$5,000,00…" not in dig and "$5,00…" not in dig  # no mid-number cut
+
+
+def test_audit_governing_terms_no_fabricated_amendment_on_tied_or_empty_dates() -> None:
+    """(audit X-4) An 'amended by' chain is a REAL base→amendment claim — asserted ONLY on a true
+    chronology (distinct, non-empty filing dates). Two PRESENT rows with the SAME (or empty) date
+    cannot establish supersession, so no amendment is fabricated from input order; DISTINCT dates
+    still yield the real chain."""
+    ptrs = [ds.CovenantPointer(family="Term Loan", filing="8-K", filing_date="2025-01-01",
+                               accession="0001111111-25-000001", exhibits=["a.htm"]),
+            ds.CovenantPointer(family="Term Loan", filing="8-K", filing_date="2025-01-01",
+                               accession="0002222222-25-000002", exhibits=["b.htm"])]
+    rows = [ds.CovenantTerm(name="Principal", value=ds.Sourced.present(
+                "$50M", source_ref="8-K 0001111111-25-000001 · a.htm")),
+            ds.CovenantTerm(name="Principal", value=ds.Sourced.present(
+                "$300M", source_ref="8-K 0002222222-25-000002 · b.htm"))]
+    prin = next(g for g in ce.governing_terms(rows, ptrs) if g.term == "Principal")
+    assert prin.amended_by == ()  # tied dates → NO fabricated amendment chain
+    ptrs_empty = [p.model_copy(update={"filing_date": ""}) for p in ptrs]
+    assert next(g for g in ce.governing_terms(rows, ptrs_empty)
+                if g.term == "Principal").amended_by == ()  # empty dates likewise
+    ptrs_ok = [ptrs[0], ptrs[1].model_copy(update={"filing_date": "2025-06-01"})]
+    prin_ok = next(g for g in ce.governing_terms(rows, ptrs_ok) if g.term == "Principal")
+    assert prin_ok.amended_by == ("0002222222-25-000002",) and prin_ok.value.value == "$300M"
+
+
+def test_audit_contradiction_no_false_positive_when_all_covenant_values_unknown() -> None:
+    """(audit CC-3) contradiction_flags keys 'covenant present' on an actually-PRESENT term VALUE,
+    not merely the row CONTAINER: an all-UNKNOWN covenant_term_rows block is a genuine opacity gap,
+    so an honest 'conversion price must be read from the 8-K' about it is NOT a contradiction."""
+    u = ds.Sourced[str].unknown(note="x")
+    cs = ds.CapitalStructure(
+        instruments=u, summary=u, detail_as_of="d", maturity_filings=u, covenant_pointers=u,
+        covenant_terms=ds.Sourced.present("digest", source_ref="d"),
+        covenant_term_rows=ds.Sourced.present(  # container PRESENT, every VALUE UNKNOWN
+            [ds.CovenantTerm(name="Conversion price / mechanics",
+                             value=ds.Sourced[str].unknown(note="not stated in the exhibit"))],
+            source_ref="fenced"))
+    mech = _minimal_mech().model_copy(update={"capital_structure": cs})
+    f = syn.contradiction_flags(
+        _bear_synth(["The conversion price mechanics must be read from the 8-K exhibit"]), mech)
+    assert f == []  # genuine gap (all values UNKNOWN) → no false CONTRADICTION
+    cs2 = cs.model_copy(update={"covenant_term_rows": ds.Sourced.present(
+        [ds.CovenantTerm(name="Conversion price / mechanics",
+                         value=ds.Sourced.present("2 sh/$1.00", source_ref="8-K x"))],
+        source_ref="f")})
+    mech2 = _minimal_mech().model_copy(update={"capital_structure": cs2})
+    f2 = syn.contradiction_flags(
+        _bear_synth(["The conversion price mechanics must be read from the 8-K exhibit"]), mech2)
+    assert len(f2) == 1 and f2[0].startswith("CONTRADICTION")  # a PRESENT value still flags
+
+
+def test_audit_maturity_event_verbatim_is_single_line() -> None:
+    """(audit D-2) The stored maturity verbatim collapses whitespace so it renders as ONE markdown
+    list item — an embedded newline otherwise breaks the .md item (the web HTML collapses it), a
+    py↔js render divergence."""
+    u = ds.Sourced[str].unknown(note="n/a")
+    cs = ds.CapitalStructure(
+        instruments=u, summary=u, detail_as_of="d", covenant_pointers=u, covenant_terms=u,
+        maturity_filings=ds.Sourced.present(
+            "8-K at maturity 2026-05-28: filed 2026-05-28 [0000947871-26-000585] 8.01",
+            source_ref="EDGAR"))
+    ev, _f, _l = ce.extract_maturity_event(
+        cs, llm=_FakeLlm({"present": True,
+                          "verbatim": "On May 28, 2026 the\nprincipal was\n\nconverted to stock."}),
+        http=typing.cast(typing.Any, _FakeMaturityHttp(body="Item 8.01. Resolution.")),
+        cik="0001760689", ticker="MVST", name="Microvast")
+    assert ev is not None and ev.status is ds.SourceStatus.PRESENT
+    assert "\n" not in str(ev.value) and "  " not in str(ev.value)  # one clean, single-spaced line
+
+
+def test_audit_js_covenant_block_mirrors_fix2_not_extracted_line() -> None:
+    """(audit D-1) The web renderer (views/dossier.js) MUST mirror the Python FIX-2 covenant-
+    completeness line ('N located agreement exhibit(s) not extracted this run'), computed from the
+    same located−extracted accession set difference. Without it the web view silently drops a signal
+    the .md/PDF shows — the divergence the parity suite did not catch."""
+    import pathlib
+    js = pathlib.Path("frontend/views/dossier.js").read_text()
+    assert "not extracted this run" in js  # the FIX-2 transparency line now exists in JS
+    assert "!extracted.has(a)" in js  # the located−extracted set-difference logic is mirrored
+
+
 @pytest.mark.network
 def test_maturity_8ks_real_mvst_anchors_the_may_2026_8k() -> None:
     """(E3, live) A trailing-12m instrument maturity on 2026-05-28 anchors MVST's 8-K filed that

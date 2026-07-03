@@ -283,12 +283,19 @@ def governing_terms(
         grouped[key].append((dt, row.value))
     out: list[GoverningTerm] = []
     for fam, term in order:
-        dated = sorted(grouped[(fam, term)], key=lambda dv: dv[0])  # oldest → newest
+        dated = sorted(grouped[(fam, term)], key=lambda dv: dv[0])  # oldest→newest (stable on ties)
         present = [(dt, v) for dt, v in dated if v.status is SourceStatus.PRESENT]
         if present:
             gov = present[-1][1]  # latest PRESENT governs
             base_ref = present[0][1].source_ref
-            amended = tuple(_acc_of(v.source_ref) for _, v in present[1:] if _acc_of(v.source_ref))
+            # (X-4) an ``amended by`` chain is a REAL base→amendment relationship — assert it ONLY
+            # on a true chronology (distinct, non-empty dates). Tied/empty dates (filing_date may be
+            # '') can't establish supersession, so we do NOT fabricate the chain from the arbitrary
+            # input order — source-binding must not claim an amendment the dates don't show.
+            pdates = [dt for dt, _ in present]
+            ordered = all(pdates) and len(set(pdates)) == len(pdates)
+            amended = (tuple(_acc_of(v.source_ref) for _, v in present[1:] if _acc_of(v.source_ref))
+                       if ordered else ())
             out.append(GoverningTerm(fam, term, gov, base_ref, amended))
         else:
             out.append(GoverningTerm(fam, term, dated[-1][1], None, ()))
@@ -297,30 +304,53 @@ def governing_terms(
 
 _DIGEST_CAP = 1500  # (P1) hard char cap on the synthesis digest — quotes excluded, values truncated
 _DIGEST_VAL = 85  # per-value truncation — tuned so TWO facilities' key terms both fit the cap
+_MAT_DIGEST_VAL = 300  # (M-3) the maturity RESOLUTION is the single most decision-critical survival
+# fact and there is only one — give it room so the operative clause is not clipped away.
 # (P1) the survival-DECISION terms the synthesis reasons with — conversion (dilution), principal
 # (size), interest (cost), maturity (wall), the maintenance covenant (trip risk). Budget math: at 2
 # facilities × these 5 × ~115 chars + headers + maturity event ≈ 1.4k < the 1.5k cap. The verbose
 # events-of-default / security / agent / lender detail stays in the render table (not the digest).
 _DIGEST_TERMS = ("conversion", "principal", "interest", "coupon", "maturity", "covenant",
                  "liquidity")
-# matches "2 shares … per $1.00", "two (2) shares … per $1.00", "(2) shares … per $1.00" — the digit
-# may sit inside parentheses (a spelled-out number precedes it), so it is optionally paren-wrapped.
+# matches "N shares … per $D": N (optionally paren-wrapped; boundary-anchored so a comma-grouped
+# share COUNT like "1,250,000" cannot be misread as a rate) and the principal denomination D, which
+# is CAPTURED, not assumed $1.00 — a bond's "45.4545 shares per $1,000" is $22.00/sh, NOT $0.02. The
+# "shares"→"per" gap is bounded and stops at a clause break (';') so it never bridges an unrelated
+# clause (a decimal in a § number stays inside one clause, so '.' is NOT a stop). D is pinned by a
+# no-more-digits lookahead so "$1" cannot match inside "$1,000". Else → '' (LLM reads verbatim).
 _CONV_RATE_RE = re.compile(
-    r"\(?(\d+(?:\.\d+)?)\)?\s*shares?\b.{0,120}?per\s*\$?\s*1(?:\.00)?\b", re.IGNORECASE)
+    r"(?<![\d,.])\(?(\d{1,4}(?:\.\d+)?)\)?\s*shares?\b[^;]{0,80}?"
+    r"per\s*\$?\s*(1\.00|1,000|1000|100|1)(?![\d.,])", re.IGNORECASE)
 
 
 def _derive_conversion(value: str) -> str:
-    """(P1) A best-effort $/share from a stated conversion rate 'N shares … per $1.00' → $1.00 ÷ N,
-    so the synthesis reasons with the actual price. '' when the rate isn't cleanly stated (the LLM
-    then works from the verbatim mechanics) — never a fabricated number."""
+    """(P1) A best-effort $/share from a stated conversion rate 'N shares … per $D' → $D ÷ N, so the
+    synthesis reasons with the ACTUAL price (D is the captured principal denomination — $1.00 or the
+    $1,000 bond convention — never assumed). '' when the rate isn't cleanly stated (the LLM then
+    works from the verbatim mechanics) — never a fabricated or mis-scaled number."""
     m = _CONV_RATE_RE.search(value)
     if not m:
         return ""
     try:
         rate = float(m.group(1))
+        denom = float(m.group(2).replace(",", ""))
     except ValueError:
         return ""
-    return f" (⇒ ~${1.0 / rate:.2f}/sh at {rate:g} sh per $1.00)" if rate > 0 else ""
+    if rate <= 0 or denom <= 0:
+        return ""
+    return f" (⇒ ~${denom / rate:.2f}/sh at {m.group(1)} sh per ${m.group(2)})"
+
+
+def _clip(text: str, n: int) -> str:
+    """Truncate ``text`` to ≤``n`` chars WITHOUT splitting a token — back off to the last whitespace
+    before the cut, so a dollar/share figure is never chopped mid-digit into a corrupted number
+    ('$5,000,000' → '$5,00…'); append '…' to mark it. Whitespace (incl. newlines) is collapsed first
+    so the digest and the markdown list item stay single-line."""
+    s = " ".join(text.split())
+    if len(s) <= n:
+        return s
+    head = s[:n].rsplit(" ", 1)[0].rstrip()
+    return (head or s[:n].rstrip()) + "…"
 
 
 def covenant_digest(
@@ -334,7 +364,7 @@ def covenant_digest(
         return f"COVENANT DIGEST — extraction failed: {fail_reason} (terms UNKNOWN, not pending)."
     present = [g for g in governing if g.value.status is SourceStatus.PRESENT
                and any(k in g.term.lower() for k in _DIGEST_TERMS)]
-    lines = ["COVENANT & MATURITY DIGEST (governing terms; verbatim quotes omitted):"]
+    body: list[str] = []
     fams: list[str] = []
     for g in present:
         if g.family not in fams:
@@ -344,19 +374,24 @@ def covenant_digest(
         acc = _acc_of(gs[0].base_ref) if gs else ""
         amend = sorted({a for g in gs for a in g.amended_by})
         amend_s = f" · amended by {', '.join(amend)}" if amend else ""
-        lines.append(f"[{fam} · {acc}{amend_s}]")
+        body.append(f"[{fam} · {acc}{amend_s}]")
         for g in gs:
-            raw = str(g.value.value).replace("\n", " ")
+            raw = str(g.value.value)
             # (P1) lead the conversion line with the DERIVED $/share so it survives truncation, and
             # synthesis reasons with the actual price (dilution) — the verbatim mechanics follow.
             derived = _derive_conversion(raw) if "conversion" in g.term.lower() else ""
             val = (derived.strip().lstrip("(").rstrip(")") + " · " + raw) if derived else raw
-            if len(val) > _DIGEST_VAL:
-                val = val[:_DIGEST_VAL].rstrip() + "…"
-            lines.append(f"  {g.term}: {val}")
+            body.append(f"  {g.term}: {_clip(val, _DIGEST_VAL)}")  # (M-2) boundary-safe truncation
     if maturity_event is not None and maturity_event.status is SourceStatus.PRESENT:
-        ev = str(maturity_event.value).replace("\n", " ")[:_DIGEST_VAL * 2]
-        lines.append(f"Maturity event ({maturity_event.source_ref}): {ev}")
+        body.append(f"Maturity event ({maturity_event.source_ref}): "  # (M-3) boundary-safe + room
+                    f"{_clip(str(maturity_event.value), _MAT_DIGEST_VAL)}")
+    if not body:
+        # (CC-2) extraction ran but produced no survival-DECISION content — say so honestly; never a
+        # bare header implying data the LLM cannot see exists (the FIX-0 failure mode). Any located
+        # non-digest terms (security, events-of-default) remain in the covenant render table.
+        return ("COVENANT DIGEST — no survival-critical covenant/conversion/maturity terms found "
+                "(any located terms are in the covenant table; terms UNKNOWN/other, not pending).")
+    lines = ["COVENANT & MATURITY DIGEST (governing terms; verbatim quotes omitted):"] + body
     digest = "\n".join(lines)
     if len(digest) > _DIGEST_CAP:  # hard cap — drop trailing lines, never silently truncate a value
         kept: list[str] = []
@@ -440,7 +475,10 @@ def extract_maturity_event(
             [f"(P3) maturity-event LLM error — UNKNOWN: {src}: {exc}"], ""
     log = f"=== MATURITY EVENT: {src} ===\n{raw}"
     if raw.get("present") and str(raw.get("verbatim", "")).strip():
-        verbatim = str(raw["verbatim"]).strip()[:400]
+        # (D-2) collapse whitespace so the verbatim is ONE clean line in both the markdown list item
+        # and the digest — an embedded newline otherwise breaks the .md item (the web HTML collapses
+        # it), a py↔js render divergence.
+        verbatim = " ".join(str(raw["verbatim"]).split())[:400]
         return Sourced.present(verbatim, source_ref=src), [], log
     return (Sourced.unknown(note=f"(P3) 8-K body at {src} states no maturity-resolution event"),
             [], log)

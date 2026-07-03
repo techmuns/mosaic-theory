@@ -625,8 +625,9 @@ def _implied_expectations_lines(v: Any) -> list[str]:
     out += _table(
         "Implied metric levels · fixed multiple set", ie.tev.source_ref,
         ["Multiple (× used)", "Implied level"], rows, name_rows=name_rows)
-    # (audit) H7 made EBITDA anchors UNKNOWN-able (Trends may lack FY26/FY27) — show the NOTE, never
-    # the bare word "None". rev_anchors is always PRESENT (ladder) but is guarded the same way.
+    # (audit) H7/P8 made BOTH EBITDA and Revenue anchors UNKNOWN-able — they read the DIRECT
+    # Estimates→Trends levels (may lack FY26/FY27), so show the NOTE via _sourced_str, never bare
+    # "None". rev_anchors is guarded the same way (no longer the always-PRESENT ladder).
     out.append(
         "- **Consensus path anchors (EBITDA — juxtapose, do NOT difference):** "
         f"{_sourced_str(ie.anchors)}")

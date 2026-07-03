@@ -397,8 +397,12 @@ function governingTerms(rows, pointers) {
     list.sort((a, b) => (a[0] < b[0] ? -1 : a[0] > b[0] ? 1 : 0));  // oldest → newest
     const present = list.filter(([, v]) => v.status === "present");
     if (present.length) {
+      // (X-4) assert amendedBy only on a REAL chronology (distinct, non-empty dates); tied/empty
+      // dates can't establish supersession — don't fabricate the chain from input order (py parity).
+      const pdates = present.map(([dt]) => dt);
+      const ordered = pdates.every(Boolean) && new Set(pdates).size === pdates.length;
       return { fam, term, value: present[present.length - 1][1], baseRef: present[0][1].source_ref,
-        amendedBy: present.slice(1).map(([, v]) => _accOf(v.source_ref)).filter(Boolean) };
+        amendedBy: ordered ? present.slice(1).map(([, v]) => _accOf(v.source_ref)).filter(Boolean) : [] };
     }
     return { fam, term, value: list[list.length - 1][1], baseRef: null, amendedBy: [] };
   });
@@ -416,7 +420,7 @@ function covenantTerms(cs) {
   if (!gov.length) return fact("Covenant terms (Tier-2, fenced)", cs.covenant_terms);
   const families = [];
   gov.forEach((g) => { if (!families.includes(g.fam)) families.push(g.fam); });
-  return families.map((fam) => {
+  const tables = families.map((fam) => {
     const rows = gov.filter((g) => g.fam === fam).map((g) => {
       const v = g.value || {};
       if (v.status === "present") {
@@ -429,6 +433,19 @@ function covenantTerms(cs) {
     return dataTable(`Covenant terms — ${fam} (governing; Tier-2 fenced)`, rs.source_ref,
       ["Governing value (verbatim, or UNKNOWN)", "Source § (base · amended by)"], rows, "");
   }).join("");
+  // (FIX-2 · D-1) mirror the Python transparency line — located pointer accessions minus the ones
+  // the extraction actually read → "N located agreement exhibit(s) not extracted this run". Without
+  // it the web view silently drops a covenant-completeness signal the .md/PDF shows (py↔js parity).
+  const located = new Set(((ptrs && ptrs.value) || []).map((p) => p.accession).filter(Boolean));
+  const extracted = new Set(rs.value
+    .map((r) => _accOf((r.value && (r.value.source_ref || r.value.note)) || "")).filter(Boolean));
+  const missing = [...located].filter((a) => !extracted.has(a)).sort();
+  const note = missing.length
+    ? `<div class="muted" style="font-size:11.5px; margin-top:4px;"><i>${missing.length} located ` +
+      `agreement exhibit(s) not extracted this run (cost bound / fetch fail) — see the pointer ` +
+      `table: ${escapeHtml(missing.join(", "))}</i></div>`
+    : "";
+  return tables + note;
 }
 
 // (D1) leverage & survival — the survival story in one place (+ FCF + capital structure). Falls back

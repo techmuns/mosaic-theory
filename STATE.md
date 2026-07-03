@@ -1529,6 +1529,41 @@ Each line: *what it does* — *verified how*.
     maturity_event, P2 lint, py↔JS parity, e2e GAAP position, P5 governed render, FIX-2 QA routing).
     ruff + mypy --strict (70) + `pytest -m "not network"` (357) + `node --check` green. On a branch →
     PR; NOT merged (awaiting review).*
+    **Post-audit fix (PR #70 audit — 4 parallel finders across critical-code / extraction / math /
+    display + real-run reproductions; the artifact-leak gate passed — GitHub file list is 10
+    code+STATE files, zero `data/dossiers/`). 9 CONFIRMED defects fixed, all concentrated in the P1
+    digest path the FIX-0 reorder put on the critical line: (1) MATH/FABRICATION — `_CONV_RATE_RE`
+    matched "$1" inside "$1,000", mis-scaling the "N shares per $1,000" BOND convention by 1000×
+    ($0.02/sh vs the true $22.00) and front-loading that fabricated dilution figure into the digest;
+    the regex now CAPTURES the denomination ($D ÷ N) + is numerator-boundary-anchored + clause-break
+    (`;`) bounded → $22.00 (M-1/M-4/M-5); (2) MATH — the per-value (`_DIGEST_VAL`) and maturity
+    (`_MAT_DIGEST_VAL`, raised to 300) truncations cut mid-number ("$5,00…"); a new `_clip` backs off
+    to a whitespace boundary so a figure is never chopped mid-digit (M-2/M-3); (3) EXTRACTION/
+    RESILIENCE — `covenant_digest` emitted a bare header (implying unseen data — the FIX-0 failure
+    mode) when the governing set was all-UNKNOWN or non-decision-only; it now returns an honest "no
+    survival-critical … terms" line, and `assemble` keys the fail-reason on an actually-PRESENT term
+    (`gov_present`), not on `gov` being non-empty (CC-1/CC-2); (4) EXTRACTION/SOURCE-BINDING —
+    `governing_terms` fabricated an `amended by` chain on tied/empty filing dates; it now asserts the
+    chain ONLY on a real chronology (distinct, non-empty dates), mirrored into `dossier.js` for parity
+    (X-4); (5) CODE — `contradiction_flags` false-positived on an all-UNKNOWN covenant block (keyed on
+    the row CONTAINER, not a PRESENT value) → require a PRESENT term value (CC-3, QA-channel);
+    (6) DISPLAY/PARITY — the FIX-2 "N located exhibit(s) not extracted this run" completeness line was
+    Python-only; mirrored into `dossier.js` (D-1, live on MVST) + the maturity verbatim is
+    whitespace-collapsed at extraction so it's one clean line in both renderers (D-2); + the stale
+    `rev_anchors` "ladder/always-PRESENT" comment corrected (P8). +6 regression tests (each pins the
+    exact failing input — the $22-not-$0.02 bond case, boundary-safe truncation, honest empty digest,
+    tied-date non-amendment, all-UNKNOWN non-contradiction, JS FIX-2 mirror). REPORTED, not fixed
+    under audit (see §Next-steps): X-2 (two distinct facilities sharing a family label collapse —
+    needs an upstream per-facility identity, risky to refactor under audit), X-3 (maturity multi-8K:
+    only the first is read + acc↔date paired from independent scans — a design change), X-5
+    (`_MAX_EXHIBITS=4` drops a 5th distinct family — already loud-flagged, ACCEPTED cost bound), D-3
+    (`_citRank` "made-up" clause absent in JS — pre-existing + currently unreachable). Finders CLEARED
+    LLM-response handling, `_primary_body` scaffold filter, `_acc_of`, `_direct_anchors`, the
+    cs_pre/cs_post chain, schemas back-compat. Re-ran the REAL MVST assembly (160s, temp dir):
+    Key-Unknowns lint-clean, 0 contradiction flags, syndicated extracted, maturity present + one clean
+    line, conversion reasoned (no fabricated $/sh — MVST is a $25M loan, not a bond), the REAL
+    2024→2025 amendment chain preserved (distinct dates), direct EBITDA+Revenue anchors unchanged.
+    ruff + mypy --strict (70) + `pytest` (363) + `node --check` green. Rides on PR #70; NOT merged.**
 - _Whole suite green (ruff + mypy --strict clean; `pytest -m "not network"` passes)._
 
 ## 3. FALSIFIED — tested and retired (NOT deferred)
@@ -2089,6 +2124,24 @@ Then: operate the weekly loop and accumulate resolved verdicts.
 In PARALLEL (per §4's GOVERNOR, not instead): a validation design may be drafted for the next edge —
 event-assembly's obvious/non-obvious verdict tagging, theme-anticipation's naive-baseline benchmark —
 so long as it never diverts verdict throughput from the lead loop. Design first; build on greenlight.
+
+**Deferred audit follow-ups (PR #70 audit, 2026-07-03) — reported, not fixed under audit:**
+- **X-2 (covenant governing-term collapse):** two DISTINCT debt facilities that share a family label
+  (mechanical.py `_covenant_pointers` derives the family from `description.split(' With ')[0]` + adds
+  up to 2 efts hits per family) collapse in `governing_terms` — the later masks the earlier and a
+  false base→amendment is implied. X-4 removed the false-amendment SYMPTOM; the MASKING needs a
+  per-facility identity in the pointer key (upstream, needs its own PR + real-run validation — risky
+  to refactor mid-audit). Latent (MVST's families are genuinely distinct-or-amendment).
+- **X-3 (maturity multi-8K):** `extract_maturity_event` reads only the FIRST of possibly-several
+  maturity 8-Ks and pairs the first accession with the first `filed` date from independent scans of
+  the `;`-joined string — a wrong/UNKNOWN event if the resolution is in a later 8-K or the ordering
+  differs. Fix = parse the maturity string into structured `(acc, date)` and pick the resolution 8-K
+  (design change). MVST (single resolution 8-K) is correct today.
+- **X-5 (`_MAX_EXHIBITS=4`):** a 6th+ distinct debt family's primary exhibit is dropped — ACCEPTED
+  cost bound; already loud-flagged ("exhibit not extracted (cost bound)"), so fail-loud, not silent.
+- **D-3 (`_citRank` "made-up"):** `dossier.js` omits the Python `"made-up"` citation-rank clause —
+  pre-existing (not PR #70 code) + currently UNREACHABLE (no source_ref ever contains "made-up"), so
+  zero live impact; a 1-line JS parity add if/when a source_ref can carry that token.
 
 ## 6. Open items carried from the fossils (live, not being worked now)
 
