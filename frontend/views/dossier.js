@@ -2,7 +2,7 @@
 // Assembles facts · NO verdict. Every fact shows its ↳ citation (source-binding is the signature).
 // The synthesis is fenced as "the framing, not the answer." Read-only; verdicts are CLI-logged.
 import { getDossier, getDossierIndex, getLedger, isBuyVerdict } from "../lib/snapshots.js";
-import { fmtPrice, fmtDate, fmtPct, escapeHtml, DASH } from "../lib/format.js";
+import { fmtPrice, fmtDate, fmtStamp, fmtPct, escapeHtml, DASH } from "../lib/format.js";
 
 // PDF export uses the browser's native print-to-PDF (no library — the frontend stays dependency-free).
 // The browser derives the saved-file name from document.title, so on a dossier print we swap in a
@@ -387,7 +387,7 @@ function header(d) {
         <span>Queue rank <span class="mono">#${d.rank ?? DASH}</span> <span class="muted">(ordering context, not a verdict on the name)</span></span>
         <span>CIK <span class="mono">${escapeHtml(d.cik || DASH)}</span></span>
         <span>Data as of <span class="mono">${fmtDate(d.reference_date)}</span></span>
-        <span>Assembled <span class="mono">${fmtDate(d.assembled_at)}</span> <span class="muted">(may predate newer filings)</span></span>
+        <span>Assembled <span class="mono">${fmtStamp(d.assembled_at)}</span> <span class="muted">(may predate newer filings)</span></span>
         <span class="muted">${d.synthesis ? `synthesis: ${escapeHtml(d.llm_model || "llm")}` : "mechanical layer only"}</span>
       </div>
     </div>

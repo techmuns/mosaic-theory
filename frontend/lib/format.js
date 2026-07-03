@@ -40,6 +40,22 @@ export function fmtDate(iso) {
   return d.toLocaleDateString("en-US", { year: "numeric", month: "short", day: "numeric", timeZone: "UTC" });
 }
 
+// A full datetime stamp (date + HH:MM) for the assembly timestamp, so two same-day re-assemblies are
+// distinguishable. A tz-aware ISO (…Z / +hh:mm) renders in UTC and is labeled "UTC"; a legacy naive
+// ISO (no zone) preserves the stored wall-clock and is labeled "(local)" — never a false UTC claim.
+export function fmtStamp(iso) {
+  if (!iso) return DASH;
+  const s = String(iso);
+  const aware = /([zZ])|([+-]\d\d:?\d\d)$/.test(s);
+  const d = new Date(aware ? s : s + "Z"); // naive → read the stored wall-clock as UTC, label local
+  if (isNaN(d)) return DASH;
+  const t = d.toLocaleString("en-US", {
+    year: "numeric", month: "short", day: "numeric", hour: "2-digit", minute: "2-digit",
+    hour12: false, timeZone: "UTC",
+  });
+  return `${t} ${aware ? "UTC" : "(local)"}`;
+}
+
 // Whole days between two ISO dates (b - a). Positive => b is later.
 export function daysBetween(aIso, bIso) {
   const a = new Date(String(aIso).slice(0, 10) + "T00:00:00Z");

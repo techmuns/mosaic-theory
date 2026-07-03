@@ -1939,7 +1939,10 @@ Remaining:
    Auth gate (`functions/_middleware.js`, no Zero Trust / no card) was merged to `main` (PR #25), the
    `BASIC_AUTH_*` secrets set in the dashboard, and **BLOCKER A PASSED** (unauthenticated → 401, correct
    credential → 200). §4 CONDITIONAL satisfied; the §2 entry carries the full detail + the weak-test-
-   password hygiene follow-up.
+   password hygiene follow-up. **Dossier assembly stamp (2026-07-03): `assembled_at` is now UTC-aware
+   (`datetime.now(UTC)`) and rendered WITH a time + "UTC" (md `_fmt_assembled` + web `fmtStamp`) — so
+   two same-day re-assemblies are distinguishable and the timestamp is machine-comparable; a legacy
+   naive JSON stamp is honestly labeled "(local)" until the operator re-assembles.**
 
 The ranker + dossier-assembler are built/verified (§2); the ranker's coverage-gap wire-ups
 (EV/EBITDA-pctile + 8-K/guidance text, which also re-splits drawdown-character and turns on the live

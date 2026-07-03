@@ -550,6 +550,6 @@ class Dossier(BaseModel):
     caveats: list[str] = []
     qa_flags: list[str] = []
     llm_model: str | None
-    assembled_at: datetime
+    assembled_at: datetime  # UTC-aware build stamp (rendered with time + "UTC"); legacy JSONs naive
 
     model_config = {"frozen": True}

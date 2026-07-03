@@ -11,7 +11,7 @@ import math
 import re
 from collections import Counter
 from collections.abc import Callable
-from datetime import date
+from datetime import UTC, date, datetime
 from itertools import groupby
 from typing import Any
 
@@ -27,6 +27,15 @@ _LADDER_KEEP = ("NTM", "FY 2026", "FY 2027", "FY 2028")  # multiples shown; late
 # Screen-data-record fields arrive as raw DataField floats; format for legibility here, never at the
 # source, so the synthesis / number-trace still see the real number. CIQ-path fields are already
 # clean strings and pass through unformatted (default ``str``).
+
+
+def _fmt_assembled(dt: datetime) -> str:
+    """The assembly stamp with a time — so two same-day re-assemblies are distinguishable. A fresh
+    build is tz-aware UTC → rendered '… HH:MM UTC'; a legacy naive datetime (pre-UTC build) can't
+    have its zone recovered, so it's shown as-is with a '(local)' note, not a false UTC claim."""
+    if dt.tzinfo is not None:
+        return f"{dt.astimezone(UTC):%Y-%m-%d %H:%M} UTC"
+    return f"{dt:%Y-%m-%d %H:%M} (local)"
 
 
 def _ordinal(n: int) -> str:
@@ -854,7 +863,7 @@ def render_markdown(d: Dossier, *, dev: bool = False) -> str:
         f"# Dossier — {d.name} ({d.ticker})",
         "",
         f"_Finalist rank {d.rank} · ref {d.reference_date} · assembled "
-        f"{d.assembled_at:%Y-%m-%d %H:%M} · LLM {d.llm_model or 'none'}_",
+        f"{_fmt_assembled(d.assembled_at)} · LLM {d.llm_model or 'none'}_",
         "",
     ]
     # (D1) CAVEATS FIRST — the first thing the human sees is what to verify before trusting below.

@@ -10,7 +10,7 @@ from __future__ import annotations
 import ast
 import re
 import typing
-from datetime import date, datetime
+from datetime import UTC, date, datetime, timedelta, timezone
 from pathlib import Path
 
 import pytest
@@ -2053,6 +2053,16 @@ def test_render_formatters() -> None:
     assert dr._pctile(0.01036682615629984) == "1st %ile" and dr._pctile(0.0) == "0th %ile"
     assert dr._pct(-0.7263) == "-72.6%"
     assert dr._signword(1) == "positive" and dr._signword(-1) == "negative"
+
+
+def test_fmt_assembled_stamps_utc_and_flags_legacy_naive() -> None:
+    """The assembly stamp carries a TIME so two same-day re-assemblies are distinguishable. A fresh
+    UTC-aware build renders with 'UTC' (an offset datetime is converted to UTC first); a naive
+    datetime keeps its wall-clock and is honestly labeled '(local)', never a false UTC claim."""
+    assert dr._fmt_assembled(datetime(2026, 7, 3, 14, 22, tzinfo=UTC)) == "2026-07-03 14:22 UTC"
+    ist = timezone(timedelta(hours=5, minutes=30))
+    assert dr._fmt_assembled(datetime(2026, 7, 3, 19, 52, tzinfo=ist)) == "2026-07-03 14:22 UTC"
+    assert dr._fmt_assembled(datetime(2026, 7, 3, 14, 22)) == "2026-07-03 14:22 (local)"
 
 
 def test_render_formats_display_only_keeps_full_precision() -> None:
