@@ -1443,36 +1443,28 @@ def _implied_expectations(
                 label=label, metric=metric, multiple=mult, multiple_source=src,
                 implied_level=round(tev / mult, 1), is_identity=(kind == "ladder")))
 
-    # (H7) The EBITDA consensus anchors are the DIRECT Estimates→Trends latest levels (FY26E/FY27E),
-    # the SINGLE SOURCE OF TRUTH — NOT TEV ÷ ladder. The ladder FY26 (`a26`) is kept ONLY for
-    # the G5 vintage-guard probe below. The parallel REVENUE anchors stay TEV ÷ ladder: they
-    # SUBSTANTIATE the TEV/Rev name-row identity (†, NTM rev anchor ≡ the name-NTM identity) —
-    # a different job than the consensus path, so they keep the ladder basis on purpose.
+    # (H7/P8) BOTH the EBITDA and REVENUE consensus anchors are the DIRECT Estimates→Trends latest
+    # levels (FY26E/FY27E), the SINGLE SOURCE OF TRUTH — NOT TEV ÷ ladder. The ladder FY26 (a26) is
+    # kept ONLY for the G5 vintage-guard probe below (the ladder-derived figure now lives ONLY there
+    # for both metrics). The TEV/Rev name-row identity still stands in the table (is_identity row).
     def _anchor(period: str, key: str = "TEV/EBITDA") -> float | None:
         mo = _ie_ladder(cna, period, key)
         return (tev / mo) if (mo and mo > 0) else None  # UNROUNDED; 1dp only at display
 
-    def _anchor_line(key: str, metric: str) -> Sourced[str]:
-        vals = [(lab, _anchor(p, key)) for lab, p in
-                (("FY26E", "FY 2026"), ("FY27E", "FY 2027"), ("NTM", "NTM"))]
-        txt = " · ".join(f"{lab} {(f'${v:.1f}M') if v is not None else 'n/a'}" for lab, v in vals)
-        return Sourced.present(
-            txt + f" (consensus {metric} = TEV ÷ forward ladder; NTM = the name-NTM identity)",
-            source_ref=cna_src)
-
-    def _direct_ebitda_anchors() -> Sourced[str]:
-        vals = [(lab, ciq_sheets.trends_fy_level(bundle, metric="EBITDA", fy_label=fy))
+    def _direct_anchors(metric: str) -> Sourced[str]:
+        vals = [(lab, ciq_sheets.trends_fy_level(bundle, metric=metric, fy_label=fy))
                 for lab, fy in (("FY26E", "FY 2026"), ("FY27E", "FY 2027"))]
         if all(v is None for _, v in vals):
-            return Sourced.unknown(note="no direct FY26/FY27 EBITDA consensus in Estimates→Trends")
+            return Sourced.unknown(
+                note=f"no direct FY26/FY27 {metric} consensus in Estimates→Trends")
         txt = " · ".join(f"{lab} {(f'${v:.1f}M') if v is not None else 'n/a'}" for lab, v in vals)
         return Sourced.present(
-            txt + " (direct consensus EBITDA — CIQ Estimates→Trends latest snapshot)",
-            source_ref="CIQ Estimates→Trends (FY26/FY27 consensus EBITDA, latest snapshot)")
+            txt + f" (direct consensus {metric} — CIQ Estimates→Trends latest snapshot)",
+            source_ref=f"CIQ Estimates→Trends (FY26/FY27 consensus {metric}, latest snapshot)")
 
     a26 = _anchor("FY 2026")  # LADDER-derived FY26 — kept ONLY for the G5 vintage-guard probe below
-    anchors = _direct_ebitda_anchors()  # (H7) direct Trends, the single source of truth
-    rev_anchors = _anchor_line("TEV/REV", "Revenue")  # ladder — substantiates TEV/Rev † identity
+    anchors = _direct_anchors("EBITDA")  # (H7) direct Trends, the single source of truth
+    rev_anchors = _direct_anchors("Revenue")  # (P8) direct Trends — ladder only in the guard line
 
     # (G5) vintage-coherence: derived FY26 (TEV ÷ FY26 forward multiple, UNROUNDED) vs the DIRECT
     # FY26 EBITDA consensus (Estimates→Trends latest — SAME source as the anchors). NTM is not a

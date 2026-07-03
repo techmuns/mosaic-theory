@@ -108,6 +108,8 @@ function fact(label, s, fmt, { hi = false } = {}) {
 }
 
 const sec = (title, sub, inner) => `<div class="card ds-section"><div class="ds-title">${escapeHtml(title)}</div>${sub ? `<div class="subtitle muted ds-sub">${escapeHtml(sub)}</div>` : ""}${inner}</div>`;
+// (P7) a sub-heading WITHIN a card — used to club the three survival fragments under one Survival card.
+const subhead = (t) => `<div class="ds-title" style="font-size:12px; margin-top:14px;">${escapeHtml(t)}</div>`;
 const mult = (v) => escapeHtml(Number(v).toFixed(1)) + "&times;";
 // (H3) the comparability gate renders VERBATIM once (Peer comps head); the G + Implied-Valuation
 // headers cite it SHORT rather than repeating the full text. A non-heterogeneous gate stays verbatim.
@@ -338,7 +340,7 @@ function maturityWall(cs, refDate) {
 }
 
 // (E1/E2) structured capital structure — instruments table + maturity wall + the survival reads.
-function capitalStructure(cs, refDate) {
+function capitalStructureInner(cs, refDate) {
   const inst = cs.instruments;
   let table = fact("Capital structure (instruments)", inst);
   if (inst && inst.status === "present" && Array.isArray(inst.value)) {
@@ -350,12 +352,15 @@ function capitalStructure(cs, refDate) {
     }));
     table = dataTable(`Capital structure (instruments) — panel ${cs.detail_as_of || ""}`, inst.source_ref, cols, rows);
   }
-  return sec("Capital structure & maturity wall", "Structured instruments, the month-precision maturity wall, and the covenant pointers.",
+  // (P3) the verbatim maturity-resolution event, when captured (a pre-P3 JSON has no field → nothing)
+  const matEv = cs.maturity_event && (cs.maturity_event.status !== "present" || cs.maturity_event.value)
+    ? fact("Maturity resolution (8-K verbatim)", cs.maturity_event) : "";
+  return subhead("Capital structure & maturity wall") +
     table + maturityWall(cs, refDate) +
     fact("Aggregates (latest quarter)", cs.summary) +
-    fact("8-Ks at instrument maturities", cs.maturity_filings) +
+    fact("8-Ks at instrument maturities", cs.maturity_filings) + matEv +
     covenantPointers(cs) +
-    covenantTerms(cs));
+    covenantTerms(cs);
 }
 
 // (H1) covenant/contract pointers → table (CIK-verified execution filings); old JSON → flat fact.
@@ -372,39 +377,79 @@ function covenantPointers(cs) {
     ["Filing", "Date", "Accession / exhibit (or note)"], rows, "");
 }
 
-// (E5/H1d) fenced Tier-2 covenant terms → table (term | value verbatim/UNKNOWN | source · quote);
-// each value is {value, source_ref} bound to its exhibit, or a visible UNKNOWN. Old JSON → flat fact.
+// (P5, mirrors covenant_extract.governing_terms) collapse per-exhibit rows to ONE governing value
+// per (family, term): the latest-dated PRESENT value wins (amendment over base), base ref + an
+// "amended by" chain; grouped by family via the pointers' accession→(family, date) map.
+const _accOf = (s) => { const m = (s || "").match(/\b(\d{10}-\d{2}-\d{6})\b/); return m ? m[1] : ""; };
+function governingTerms(rows, pointers) {
+  const meta = {};
+  (pointers || []).forEach((p) => { if (p.accession) meta[p.accession] = [p.family, p.filing_date || ""]; });
+  const grouped = new Map(), order = [];
+  (rows || []).forEach((r) => {
+    const v = r.value || {};
+    const [fam, dt] = meta[_accOf(v.source_ref) || _accOf(v.note)] || ["(unmapped)", ""];
+    const key = fam + " " + r.name;
+    if (!grouped.has(key)) { grouped.set(key, { fam, term: r.name, list: [] }); order.push(key); }
+    grouped.get(key).list.push([dt, v]);
+  });
+  return order.map((key) => {
+    const { fam, term, list } = grouped.get(key);
+    list.sort((a, b) => (a[0] < b[0] ? -1 : a[0] > b[0] ? 1 : 0));  // oldest → newest
+    const present = list.filter(([, v]) => v.status === "present");
+    if (present.length) {
+      return { fam, term, value: present[present.length - 1][1], baseRef: present[0][1].source_ref,
+        amendedBy: present.slice(1).map(([, v]) => _accOf(v.source_ref)).filter(Boolean) };
+    }
+    return { fam, term, value: list[list.length - 1][1], baseRef: null, amendedBy: [] };
+  });
+}
+
+// (P5/E5) fenced Tier-2 covenant terms, TERM-GOVERNED → ONE table per family, each term collapsed to
+// its GOVERNING value (amendment over base), source citing the base § + "amended by". No UNKNOWN row
+// above a present answer. Old JSON (no rows) → flat fact.
 function covenantTerms(cs) {
   const rs = cs.covenant_term_rows;
   if (!rs || rs.status !== "present" || !Array.isArray(rs.value) || !rs.value.length)
     return fact("Covenant terms (Tier-2, fenced)", cs.covenant_terms);
-  const rows = rs.value.map((r) => {
-    const v = r.value || {};
-    if (v.status === "present") {
-      const q = v.note ? ` — ${v.note.slice(0, 160)}${v.note.length > 160 ? "…" : ""}` : "";
-      return { label: r.name, cells: [String(v.value), `${v.source_ref || DASH}${q}`] };
-    }
-    return { label: r.name, cells: ["UNKNOWN", v.note || "not stated"] };
-  });
-  return dataTable("Covenant terms (Tier-2, fenced — verbatim, source-bound)", rs.source_ref,
-    ["Value (verbatim, or UNKNOWN)", "Source (exhibit · verbatim quote)"], rows, "");
+  const ptrs = cs.covenant_pointer_rows;
+  const gov = governingTerms(rs.value, (ptrs && ptrs.value) || []);
+  if (!gov.length) return fact("Covenant terms (Tier-2, fenced)", cs.covenant_terms);
+  const families = [];
+  gov.forEach((g) => { if (!families.includes(g.fam)) families.push(g.fam); });
+  return families.map((fam) => {
+    const rows = gov.filter((g) => g.fam === fam).map((g) => {
+      const v = g.value || {};
+      if (v.status === "present") {
+        const src = (g.baseRef || v.source_ref || DASH) +
+          (g.amendedBy.length ? ` · amended by ${g.amendedBy.join(", ")}` : "");
+        return { label: g.term, cells: [String(v.value), src] };
+      }
+      return { label: g.term, cells: ["UNKNOWN", v.note || "not stated"] };
+    });
+    return dataTable(`Covenant terms — ${fam} (governing; Tier-2 fenced)`, rs.source_ref,
+      ["Governing value (verbatim, or UNKNOWN)", "Source § (base · amended by)"], rows, "");
+  }).join("");
 }
 
 // (D1) leverage & survival — the survival story in one place (+ FCF + capital structure). Falls back
 // to the pre-B2 Quality leverage lines + the flat liquidity string for an old dossier.json.
+// (P7) ONE Survival section clubbing the three fragments: leverage ratios · cash/FCF · instruments +
+// wall + covenant pointers/terms. leverageBlock/capitalStructureInner return INNER content (no card).
 function leverageSurvival(m, refDate) {
   const q = m.quality || {};
-  const block = m.leverage_survival ? leverageBlock(m) : sec("Leverage & survival",
-    "Cash generation, leverage bases, and the survival read.",
+  const leverage = m.leverage_survival ? leverageBlock(m) : (
     fact("Net debt / EBITDA (GAAP)", q.net_debt_to_ebitda, mult) +
     fact("Net debt / OCF", q.net_debt_to_ocf, mult) +
     fact("Net debt / EBITDA (covenant adj.)", q.net_debt_to_ebitda_adjusted) +
     fact("Survival capacity", q.survival_capacity) +
     fact("Interest coverage", q.interest_coverage, mult));
-  const cash = sec("Cash & liquidity", "Self-funding — the survival input.",
+  const cash = subhead("Cash & liquidity — self-funding, the survival input") +
     fact("FCF sign", q.fcf_sign, signWord) + fact("Free cash flow ($M)", q.free_cash_flow) +
-    (m.capital_structure ? "" : fact("Liquidity / covenant flags", q.liquidity_covenant_flags)));
-  return block + cash + (m.capital_structure ? capitalStructure(m.capital_structure, refDate) : "");
+    (m.capital_structure ? "" : fact("Liquidity / covenant flags", q.liquidity_covenant_flags));
+  const capital = m.capital_structure ? capitalStructureInner(m.capital_structure, refDate) : "";
+  return sec("Survival — leverage · cash/FCF · capital structure & maturity wall",
+    "One block: the leverage bases, self-funding, the month-precision wall, and the covenant "
+    + "pointers/terms.", leverage + cash + capital);
 }
 
 // (D2/D1) trajectory — the merged table + the share-count trend.
@@ -726,18 +771,18 @@ function peerGridTable(s) {
 }
 
 // (B2) unified leverage & survival — both bases labeled + credit health; "" when the block is absent
+// (P7) INNER leverage content (no card) — clubbed under the one Survival section by leverageSurvival.
 function leverageBlock(m) {
   const lv = m.leverage_survival;
   if (!lv) return "";
-  return sec("Leverage & survival (unified — both bases labeled, no net-vs-total mixing)",
-    "One block, two labeled bases — this retires the net-vs-total leverage incoherence.",
+  return subhead("Leverage & survival (both bases labeled, no net-vs-total mixing)") +
     fact("Net debt / EBITDA (CIQ NET basis)", lv.net_debt_to_ebitda, mult) +
     fact("Total debt / EBITDA (comps — name vs peer median)", lv.total_debt_to_ebitda) +
     fact("Net debt / OCF", m.quality.net_debt_to_ocf, mult) +
     fact("Net debt / EBITDA (fwd-adj)", m.quality.net_debt_to_ebitda_adjusted) +
     fact("Interest coverage", lv.interest_coverage, mult) +
     fact("Survival (self-funding + nearest wall)", lv.survival) +
-    fact("Credit health (S&P-MI scores — scale labeled)", lv.credit_health));
+    fact("Credit health (S&P-MI scores — scale labeled)", lv.credit_health);
 }
 
 // (B3) CIQ implied valuation — POSED: implied-equity table + bridge + name market cap; NO computed %

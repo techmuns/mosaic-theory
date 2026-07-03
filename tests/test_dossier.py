@@ -1457,6 +1457,65 @@ def test_p3_extract_maturity_event_verbatim_or_unknown() -> None:
     assert any("fetch failed" in f for f in flags3)
 
 
+# --- PR 3 · Commit C: render/policy (P5 governed table · FIX-2 caveat relocation) -----------------
+
+
+def _cs_two_family_terms() -> ds.CapitalStructure:
+    """A capital_structure whose covenant_term_rows span TWO families (convertible base+amendment +
+    a syndicated facility), with the convertible maturity amended — the P5 governed-merge shape."""
+    base, amd, synd = ("8-K 0001760689-24-000021 · w.htm", "8-K 0000947871-25-000313 · a.htm",
+                       "8-K 0001760689-22-000094 · s.htm")
+    rows = [
+        ds.CovenantTerm(name="Maturity date",
+                        value=ds.Sourced.present("Nov 28, 2025", source_ref=base)),
+        ds.CovenantTerm(name="Conversion price / mechanics",
+                        value=ds.Sourced.present("2 shares per $1.00", source_ref=base)),
+        ds.CovenantTerm(name="Maturity date",
+                        value=ds.Sourced.present("May 28, 2026", source_ref=amd)),
+        ds.CovenantTerm(name="Interest / coupon rate",
+                        value=ds.Sourced.present("SOFR + 6.5%", source_ref=synd)),
+    ]
+    u = ds.Sourced[str].unknown(note="n/a")
+    return ds.CapitalStructure(
+        instruments=ds.Sourced.unknown(note="n/a"), summary=u, detail_as_of="d", maturity_filings=u,
+        covenant_pointers=ds.Sourced.present("x", source_ref="e"),
+        covenant_pointer_rows=ds.Sourced.present(_pr3_pointers(), source_ref="efts"),
+        covenant_terms=ds.Sourced.present("digest", source_ref="d"),
+        covenant_term_rows=ds.Sourced.present(rows, source_ref="fenced"))
+
+
+def test_p5_covenant_render_is_one_governed_table_per_family() -> None:
+    """(P5/FIX-1) The covenant render is TERM-GOVERNED — ONE table per family, the maturity
+    shows the AMENDMENT's governing value with an 'amended by' cite, and no UNKNOWN row sits above a
+    present answer (the old per-exhibit shape is gone)."""
+    lines = dr._covenant_term_lines(_cs_two_family_terms())
+    md = "\n".join(lines)
+    assert md.count("Covenant terms — Convertible Loan (governing") == 1
+    assert md.count("Covenant terms — Loan Facilities Agreement (governing") == 1  # distinct family
+    mat = next(ln for ln in lines if ln.startswith("| Maturity date"))
+    assert "May 28, 2026" in mat and "amended by 0000947871-25-000313" in mat  # governing=amendment
+    assert "| UNKNOWN " not in md  # no UNKNOWN data cell — no UNKNOWN-above-answer (header exempt)
+
+
+def test_fix2_cost_bound_note_in_covenant_block_and_flag_routed_to_qa() -> None:
+    """(FIX-2) A Tier-2 cost-bound / fetch-fail note is a QA self-check (dev/JSON), NOT an analyst
+    caveat; the human sees ONE summary line INSIDE the covenant block for any located exhibit not
+    extracted this run."""
+    caveats, qa = dflags.partition([
+        "(E5) exhibit not extracted (cost bound): Loan Facilities·s.htm",
+        "(P3) maturity 8-K fetch failed — UNKNOWN: 8-K y"])
+    assert caveats == [] and len(qa) == 2  # both routed to QA, none to analyst caveats
+    # the covenant block surfaces a not-extracted summary when a pointer has no extracted rows
+    extra = _pr3_pointers() + [ds.CovenantPointer(
+        family="material contracts (10-K exhibit index)", filing="latest 10-K",
+        filing_date="2026-03-16",
+        accession="0001628280-26-018264", exhibits=["ex1013.htm"])]  # located but never extracted
+    cs = _cs_two_family_terms().model_copy(update={
+        "covenant_pointer_rows": ds.Sourced.present(extra, source_ref="efts")})
+    md = "\n".join(dr._covenant_term_lines(cs))
+    assert "not extracted this run" in md and "0001628280-26-018264" in md  # the un-read 10-K
+
+
 @pytest.mark.network
 def test_maturity_8ks_real_mvst_anchors_the_may_2026_8k() -> None:
     """(E3, live) A trailing-12m instrument maturity on 2026-05-28 anchors MVST's 8-K filed that
@@ -1852,14 +1911,18 @@ _IE_TM = (  # trading_multiples: peer-median LTM (no prefix) + NTM
     "NTM TEV/Rev: name 1.25 vs peers Low 1.06 / Median 2.55 / Mean 3.64 / High 13.47; "
     "NTM TEV/EBITDA: name 7.46 vs peers Low 7.63 / Median 12.9 / Mean 43.3 / High 198.12")
 _IE_AR = "FY 2026 EBITDA: 129.7 (12m) → 146.5 (6m) → 62.1 (latest); net -52% [3m, 2m n/a]"
-# (H7) the Estimates→Trends sheet the DIRECT EBITDA anchors read (FY26E 62.1 / FY27E 147.7, latest
-# snapshot) — the single source of truth, distinct from the TEV÷ladder path.
+# (H7/P8) the Estimates→Trends sheet the DIRECT EBITDA + REVENUE anchors read (latest snapshot) —
+# the single source of truth for BOTH metrics, distinct from the TEV÷ladder path.
 _IE_TRENDS = [
     ["EBITDA", None, None],
     ["Company Level", "FY 2026", "FY 2027"],
     ["Current", 62.1, 147.7],
     ["3 months ago", 146.5, 150.0],
     ["12 months ago", 129.7, 160.0],
+    ["Revenue", None, None],
+    ["Company Level", "FY 2026", "FY 2027"],
+    ["Current", 440.0, 580.0],
+    ["12 months ago", 500.0, 620.0],
 ]
 _IE_GATE = "market caps span $34M–$275.0B (8063x); the name is $423M → HETEROGENEOUS — low comp."
 _IE_MCAP_REF = (
@@ -1916,14 +1979,15 @@ def test_trends_fy_level_reads_the_named_year_latest_snapshot() -> None:
     assert cs.trends_fy_level(b, metric="EBITDA", fy_label="FY 2026") == 62.1
     assert cs.trends_fy_level(b, metric="EBITDA", fy_label="FY 2027") == 147.7  # the next-FY column
     assert cs.trends_fy_level(b, metric="EBITDA", fy_label="FY 2028") is None  # absent column
-    assert cs.trends_fy_level(b, metric="Revenue", fy_label="FY 2026") is None  # metric absent
+    assert cs.trends_fy_level(b, metric="Revenue", fy_label="FY 2026") == 440.0  # (P8) revenue too
+    assert cs.trends_fy_level(b, metric="EBIT", fy_label="FY 2026") is None  # absent metric block
 
 
 def test_ie_builder_triangle_anchors_and_identity() -> None:
-    """(G1/G3/H7) TEV ÷ multiple for the fixed set → the triangle; the two NAME rows are the
-    identity; the EBITDA anchors are the DIRECT Estimates→Trends levels (H7, NOT TEV÷ladder — the
-    ladder FY26 lives only in the vintage-guard line); the REVENUE anchors keep the ladder basis to
-    substantiate the TEV/Rev † identity; vintage + net-debt gates pass; TEV is DERIVED."""
+    """(G1/G3/H7/P8) TEV ÷ multiple for the fixed set → the triangle; the two NAME rows are the
+    identity; BOTH the EBITDA and REVENUE anchors are the DIRECT Estimates→Trends levels (H7/P8, NOT
+    TEV÷ladder — the ladder FY26 lives only in the vintage-guard line); the TEV/Rev † identity row
+    still stands in the table; vintage + net-debt gates pass; TEV is DERIVED."""
     ie = dm._implied_expectations(*_ie_inputs())
     assert ie is not None
     assert ie.tev.value == 623.0 and "simple-TEV basis" in (ie.tev.source_ref or "")
@@ -1941,11 +2005,13 @@ def test_ie_builder_triangle_anchors_and_identity() -> None:
     av = ie.anchors.value or ""
     assert "direct consensus EBITDA" in av and "ladder" not in av
     assert "$61.4M" in ie.coherence_note  # the ladder-derived FY26 lives in the vintage-guard line
-    # the parallel REVENUE anchors KEEP the ladder basis — they substantiate the TEV/Rev †: the NTM
-    # revenue anchor equals the name-NTM revenue implied level ($494.4M), shown not merely asserted
+    # (P8) REVENUE anchors are now DIRECT Estimates→Trends too (FY26E 440 / FY27E 580), NOT ladder;
+    # the TEV/Rev † identity row ($494.4M) still stands in the table above.
     assert ie.rev_anchors is not None
-    assert "FY26E $438.7M · FY27E $587.7M · NTM $494.4M" in (ie.rev_anchors.value or "")
-    assert got["name NTM TEV/Rev"] == 494.4  # == the NTM revenue anchor
+    rv = ie.rev_anchors.value or ""
+    assert "FY26E $440.0M · FY27E $580.0M" in rv and "direct consensus Revenue" in rv
+    assert "ladder" not in rv
+    assert got["name NTM TEV/Rev"] == 494.4  # the † identity row survives in the table
     assert ie.vintage_coherent is True and ie.net_debt_reconciled is True
     assert "vintage-coherent" in ie.coherence_note and "%" not in ie.coherence_note
     assert ie.tev_as_of == "2026-06-24" and ie.multiples_as_of == "2026-05-15"
@@ -2089,8 +2155,8 @@ def test_ie_render_table_identity_anchors_and_zero_percent_tokens() -> None:
     assert dr._TABLE_MARK in block
     assert "$82.6M EBITDA †" in block and "$48.3M EBITDA" in block
     assert "Consensus path anchors (EBITDA" in block and "FY26E $62.1M" in block  # H7 direct
-    # (audit) the revenue anchors line substantiates the TEV/Rev identity — NTM anchor == the row
-    assert "Consensus path anchors (Revenue" in block and "NTM $494.4M" in block
+    # (P8) the revenue anchors are direct Trends too (FY26E 440), no longer the ladder NTM identity
+    assert "Consensus path anchors (Revenue" in block and "FY26E $440.0M" in block
     assert "TEV as-of 2026-06-24 · multiples as-of 2026-05-15" in block
     # REGRESSION (the audit bug): every table row must have the SAME cell count as the header row —
     # `_table` prepends a blank label column, so a 2-cell row under a 2-col header put the implied
