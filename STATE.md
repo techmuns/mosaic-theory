@@ -1484,6 +1484,51 @@ Each line: *what it does* — *verified how*.
     note (render + frontend); (4) HARDENING — the H3 cross-section reason-fold now fires only for
     DISTINCTIVE reasons (≥30 chars) so a coincidental short-generic collision can't relocate a fact
     (the 99.1 case still folds). +4 regression tests; gate green.**
+  - **PR 3 (feat/dossier-integration) — synthesis-integration completion + contradiction lint
+    (2026-07-03), off the merged PR-2 main.** Three logically-isolated commits (each green in
+    isolation; --rebase merge to preserve them) + a STATE commit. **FIX-0 (the load-bearing find):
+    E5 covenant extraction ran AFTER `synthesize()` in `assemble_one` — at synthesis time
+    `covenant_term_rows` was `None` and `covenant_terms` still held the `(E5) extract in the LLM
+    phase` PLACEHOLDER, so the LLM was handed a pointer to a fact it could not see and wrote
+    "Covenant terms are UNKNOWN (extract pending)" while the finished JSON held 16 extracted values;
+    the "16 of 20 … see the table" line was a post-synthesis render digest.** Fix = reorder
+    extraction BEFORE synthesis + feed the model a curated term→value DIGEST. **Commit A (pipeline
+    core, `24bd99b`):** covenant + maturity extraction now run before `synthesize()`; P1
+    `covenant_digest` (curated survival terms, leads with the derived $/sh conversion, ≤1500-char
+    cap, and on failure emits an honest `extraction failed: <reason>` string — NEVER a pointer, so a
+    failed extract can't reintroduce FIX-0); P3 `extract_maturity_event` + `maturity_event: Sourced`
+    (a `_primary_body` picker skips index/header/metalinks/filingsummary/`^r\d+\.htm` scaffolding and
+    prefers the `8-k|form8` body — MVST resolves to the May-28 Notice of Conversion, not the
+    index-headers stub); P4 round-robin `_core_agreement_exhibits` (`_MAX_EXHIBITS=4`, distinct
+    live-wall families extracted before amendments). **Commit B (guards, `02df88a`):** P2
+    `contradiction_flags` — flags any synthesis pending/unread claim whose SUBJECT is a PRESENT
+    `covenant_term_rows`/`maturity_event` block (specific subjects only, never bare "8-K"); QA
+    channel ("CONTRADICTION"). P6 e2e pin asserts the GAAP-artifact point's rendered POSITION inside
+    the Tier-1 group on the committed JSON + a python↔JS classifier/sort PARITY test — which exposed
+    that **PR-E's R1 interposition-tolerant regex was NEVER mirrored into `views/dossier.js`** (GAAP
+    point was T1 in Python, T2 in JS); R1 now mirrored → zero divergence. **Commit C (render/policy,
+    `827eff7`):** P5 `governing_terms` collapses per-exhibit rows to ONE governing value per
+    (family, term) — latest-dated PRESENT wins, amendment supersedes base — rendered as per-family
+    governed tables (Python + JS byte-identical); P7 survival clubbed to ONE `### Leverage &
+    survival` section; P8 generalized `_direct_ebitda_anchors` → `_direct_anchors(metric)` so REVENUE
+    anchors read the DIRECT Estimates→Trends latest levels (not the ladder); FIX-2 routes the
+    `(E5)`/`(P3)` machine notes (cost bound / fetch fail) to the QA channel, out of the analyst
+    caveats. *Verified on REAL MVST fresh full assembly (166s; write to a TEMP dir — committed
+    `data/dossiers/MVST/` untouched): Key-Unknowns lint-clean (no covenant-pending) = **True** — the
+    FIX-0 target; the digest is now VISIBLE ("Minimum Liquidity covenant of not less than
+    $5,000,000"); CONTRADICTION QA flags on the fresh draw = **0**; synthesis REASONS with the
+    conversion — "A $25.0M shareholder convertible loan due 2026 was resolved by conversion into
+    common stock" + "Ongoing dilution (+2.9% … plus the $25M shareholder-loan conversion)"; all 4
+    core-agreement exhibits extracted incl. the **syndicated facility** (`exhibit101-syndicatedloana`);
+    `maturity_event` = the Notice of Conversion; EBITDA anchors `FY26E $62.1M · FY27E $147.7M` +
+    REVENUE anchors `FY26E $444.4M · FY27E $591.5M` (both direct consensus); analyst caveats 3 · QA 6
+    (cost-bound routed to QA); ONE survival section; the 3 leverage fields fold to ONE 99.1-blocked
+    UNKNOWN line; zero "extract pending" in the render. **Latency/cost delta:** the reorder is ~0
+    (extraction was already sequential — only its position moved); P4 adds ~46s by extracting 4
+    exhibits vs 2 (86s vs ~40s). +11 tests (round-robin, governing_terms, digest, derive_conversion,
+    maturity_event, P2 lint, py↔JS parity, e2e GAAP position, P5 governed render, FIX-2 QA routing).
+    ruff + mypy --strict (70) + `pytest -m "not network"` (357) + `node --check` green. On a branch →
+    PR; NOT merged (awaiting review).*
 - _Whole suite green (ruff + mypy --strict clean; `pytest -m "not network"` passes)._
 
 ## 3. FALSIFIED — tested and retired (NOT deferred)
