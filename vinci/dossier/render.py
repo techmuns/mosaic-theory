@@ -423,11 +423,30 @@ def _capital_structure_lines(cs: Any, reference_date: date) -> list[str]:
     out += [
         _fact("Capital-structure aggregates (latest quarter)", cs.summary),
         _fact("8-Ks at instrument maturities", cs.maturity_filings),
-        _fact("Covenant exhibit pointers", cs.covenant_pointers),
+    ]
+    out += _covenant_pointer_lines(cs)
+    out += [
         _fact("Covenant terms (Tier-2, fenced)", cs.covenant_terms),
         "",
     ]
     return out
+
+
+def _covenant_pointer_lines(cs: Any) -> list[str]:
+    """(H1) Covenant/contract pointers as a table — instrument family | filing | date | accession —
+    each an EXHIBIT-BEARING, CIK-verified execution filing (a generic BS line renders its 'no
+    contract-level filing' note). A pre-H dossier.json (no rows) falls back to the flat string."""
+    rows_s = getattr(cs, "covenant_pointer_rows", None)
+    if rows_s is None or rows_s.status is not SourceStatus.PRESENT or not rows_s.value:
+        return [_fact("Covenant exhibit pointers", cs.covenant_pointers)]
+    cols = ["Filing", "Date", "Accession / exhibit (or note)"]
+    rows = [
+        [r.family, r.filing, r.filing_date or "—",
+         (f"{r.accession} — {', '.join(r.exhibits[:3])}" if r.accession else r.note)]
+        for r in rows_s.value
+    ]
+    return _table("Covenant / contract pointers (CIK-verified execution filings)",
+                  rows_s.source_ref, cols, rows)
 
 
 def _quality_leverage_lines(m: MechanicalLayer) -> list[str]:

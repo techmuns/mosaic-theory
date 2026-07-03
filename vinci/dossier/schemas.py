@@ -340,6 +340,23 @@ class CapitalInstrument(BaseModel):
     model_config = {"frozen": True}
 
 
+class CovenantPointer(BaseModel):
+    """(H1) One located contract-level filing for an instrument family — the EXECUTION filing that
+    carries the agreement as an EXHIBIT, found by an efts full-text search SCOPED to the subject CIK
+    and verified to contain an agreement-class exhibit. A cross-CIK hit is rejected (the E4 bug: an
+    unscoped 'Convertible Bond' matched AXESSTEL 2005). A generic balance-sheet aggregate with no
+    discrete contract (Notes Payable, a lease) carries the honest ``note`` (no accession)."""
+
+    family: str  # the instrument family / class this pointer serves
+    filing: str  # "8-K" | "latest 10-K" | "—"
+    filing_date: str  # ISO, or ""
+    accession: str  # the accession the exhibit lives in, or "" (absent)
+    exhibits: list[str]  # located agreement-class exhibit filenames (feed the fenced E5 extract)
+    note: str = ""  # e.g. "no contract-level filing expected (aggregate line item)"
+
+    model_config = {"frozen": True}
+
+
 class CapitalStructure(BaseModel):
     """(E1–E5) The structured capital structure — per-instrument detail + summary aggregates + the
     survival reads that hang off it (the maturity wall's 8-Ks, covenant exhibit pointers, and the
@@ -351,7 +368,9 @@ class CapitalStructure(BaseModel):
     summary: Sourced[str]  # aggregates + QoQ movement (term loans / bonds / leases / principal)
     detail_as_of: str  # the panel's own "Source: A 2025 filed Mar-16-2026" note
     maturity_filings: Sourced[str]  # (E3) 8-Ks filed at/near instrument maturities
-    covenant_pointers: Sourced[str]  # (E4) accession-bound exhibit pointers per instrument family
+    covenant_pointers: Sourced[str]  # (E4) accession-bound exhibit pointers — one-line summary
+    # (H1) the structured, CIK-verified pointer rows (rendered as a table); optional for pre-H JSON.
+    covenant_pointer_rows: Sourced[list[CovenantPointer]] | None = None
     covenant_terms: Sourced[str]  # (E5) fenced Tier-2 extracted terms, or UNKNOWN
 
     model_config = {"frozen": True}

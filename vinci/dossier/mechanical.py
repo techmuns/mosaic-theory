@@ -25,6 +25,7 @@ from vinci.dossier.schemas import (
     CohortMember,
     Concentration,
     ConsensusContext,
+    CovenantPointer,
     DrawdownCause,
     FilingRef,
     FinancialSummary,
@@ -1159,45 +1160,123 @@ def _maturity_8ks(
         "; ".join(lines), source_ref="EDGAR 8-K submissions (±10d of instrument maturities)")
 
 
+# (H1) agreement-class whitelist — only an instrument backed by a DISCRETE contract gets a filing
+# lookup; a generic balance-sheet aggregate (Notes Payable, a lease) has no single agreement to
+# point at and renders an honest "no contract-level filing expected" note.
+_COVENANT_CLASS_RE = re.compile(
+    r"\b(loan|credit|facilit|indenture|convertible|agreement|bond)\b", re.IGNORECASE)
+# an EXECUTION filing carries the agreement as an EXHIBIT — a material-contract ex-10.x or a
+# filename naming the contract; a primary 8-K body ('mvst-20240603.htm') matches none of these.
+_AGREEMENT_EXHIBIT_RE = re.compile(
+    r"ex-?10\d|loan|credit|facilit|indenture|agreement|secur|pledge|guarant|warrant", re.IGNORECASE)
+
+
+def _covenant_query(desc: str) -> str:
+    """The canonical efts phrase for an instrument's agreement class — the CIQ label ('Convertible
+    Loan With Shareholder') rarely matches the filing's contract name ('Loan and Security
+    Agreement'), so query the class's standard agreement term instead of the raw label."""
+    d = desc.lower()
+    if "bond" in d and "loan" not in d:
+        return "Indenture"
+    if "credit" in d:
+        return "Credit Agreement"
+    if "facilit" in d and "loan" not in d:
+        return "Facility Agreement"
+    return "Loan Agreement"  # loan / convertible-loan / default
+
+
+def _exhibit_names(http: CachedHttp, cik: str, accession: str) -> list[str]:
+    """The document filenames in one filing's index.json ([] on any fetch/parse failure)."""
+    try:
+        idx = http.get_json(
+            _INDEX.format(cik=int(pad_cik(cik)), acc=accession.replace("-", "")), ttl_seconds=None)
+    except (HttpError, ValueError):
+        return []
+    return [str(it.get("name", "")) for it in idx.get("directory", {}).get("item", [])]
+
+
 def _covenant_pointers(
     edgar: EdgarClient, http: CachedHttp, cik: str, instruments: list[CapitalInstrument]
-) -> Sourced[str]:
-    """(E4) Locate credit/loan/indenture exhibits — filed at EXECUTION and incorporated by reference
-    later, so scan the FILING HISTORY: the latest 10-K's exhibit index (material-contract ex-10.x) +
-    EDGAR full-text (efts) for the instrument-family descriptions. Accession-bound POINTERS; an
-    absence line for undocumented facilities (expected for the China bank loans)."""
+) -> Sourced[list[CovenantPointer]]:
+    """(H1) Locate the EXECUTION filing (the 8-K/10-K carrying the agreement as an exhibit) for each
+    AGREEMENT-CLASS instrument, SCOPED to the subject CIK. efts full-text is queried with ciks=<CIK>
+    AND any cross-CIK hit is rejected (the E4 bug: an unscoped 'Convertible Bond' matched AXESSTEL's
+    2005 8-K). A generic BS line (Notes Payable, a lease) gets an honest 'no contract-level filing'
+    note. Deduped by accession; the located exhibit filenames feed the fenced E5 extraction."""
     if not cik:
-        return Sourced.unknown(note="no CIK")
-    pointers: list[str] = []
-    try:  # (1) latest 10-K exhibit index — the material-contract exhibits
+        return Sourced.unknown(note="no CIK for covenant-pointer lookup")
+    cik10 = pad_cik(cik)
+    rows: list[CovenantPointer] = []
+    seen: set[str] = set()
+
+    # (1) latest 10-K material-contract exhibits (ex-10.x) — contracts incorporated by reference
+    try:
         tenks = edgar.recent_filings(cik, forms=("10-K",))
         if tenks:
             acc = tenks[0].accession
-            idx = http.get_json(
-                _INDEX.format(cik=int(pad_cik(cik)), acc=acc.replace("-", "")), ttl_seconds=None)
-            names = [str(it.get("name", "")) for it in idx.get("directory", {}).get("item", [])]
-            # substring-match 'ex10N' anywhere in the filename — CIQ/EDGAR prefix exhibit files with
-            # the ticker+date ('mvst20251231-ex1013.htm'), so a start-anchored match misses them.
-            exs = [n for n in names if re.search(r"ex-?10\d", n, re.IGNORECASE)]
+            exs = [n for n in _exhibit_names(http, cik, acc) if re.search(r"ex-?10\d", n, re.I)]
             if exs:
-                pointers.append(f"latest 10-K [{acc}] material-contract exhibits: {', '.join(exs)}")
+                rows.append(CovenantPointer(
+                    family="material contracts (10-K exhibit index)", filing="latest 10-K",
+                    filing_date=tenks[0].filing_date.isoformat(), accession=acc, exhibits=exs))
+                seen.add(acc)
     except (HttpError, KeyError, ValueError):
         pass
-    families = sorted(
-        {i.description.split(" With ")[0].split(" - ")[0].strip() for i in instruments})
-    for fam in families[:6]:  # (2) efts on each instrument-family description
+
+    # (2) per whitelisted family — efts (ciks-scoped) → keep only EXHIBIT-BEARING execution 8-Ks
+    queries: dict[str, str] = {}  # family → canonical efts phrase
+    generic: list[str] = []
+    for i in instruments:
+        fam = i.description.split(" With ")[0].split(" - ")[0].strip()
+        if _COVENANT_CLASS_RE.search(i.description):
+            queries.setdefault(fam, _covenant_query(i.description))
+        elif fam not in generic:
+            generic.append(fam)
+    for fam, phrase in list(queries.items())[:6]:
         try:
-            hits = edgar.fulltext_search(fam, forms="8-K")
+            hits = edgar.fulltext_search(phrase, forms="8-K", ciks=cik10)
         except HttpError:
             continue
-        if hits:
-            pointers.append(f"'{fam[:34]}' → efts {hits[0].accession} ({hits[0].form})")
-    if not pointers:
+        added = 0
+        for h in hits:
+            if added >= 2:
+                break
+            # (H1a) DEFENSE-IN-DEPTH cross-CIK guard — reject any hit whose filer CIK ≠ the subject
+            if h.cik and pad_cik(h.cik) != cik10:
+                continue
+            if h.accession in seen:
+                continue
+            exs = [n for n in _exhibit_names(http, cik, h.accession)
+                   if _AGREEMENT_EXHIBIT_RE.search(n) and n.lower().endswith((".htm", ".txt"))]
+            if not exs:  # a mention-only 8-K (no agreement exhibit) is NOT a pointer
+                continue
+            seen.add(h.accession)
+            rows.append(CovenantPointer(
+                family=fam, filing="8-K",
+                filing_date=h.file_date.isoformat() if h.file_date else "",
+                accession=h.accession, exhibits=exs))
+            added += 1
+
+    # (3) generic balance-sheet aggregates — honest "no contract-level filing" note (not a pointer)
+    for fam in generic[:4]:
+        rows.append(CovenantPointer(
+            family=fam, filing="—", filing_date="", accession="", exhibits=[],
+            note="no contract-level filing expected (aggregate line item)"))
+
+    if not any(r.accession for r in rows):
         return Sourced.unknown(
-            note="no credit/loan/indenture exhibit located across filing history "
-            "(undocumented facility — expected for the bank term loans)")
+            note="no CIK-scoped agreement exhibit located across the filing history")
     return Sourced.present(
-        "; ".join(pointers), source_ref="EDGAR filing-history exhibit index + full-text search")
+        rows,
+        source_ref="EDGAR 10-K exhibit index + CIK-scoped efts (agreement-class, exhibit-bearing)")
+
+
+def _covenant_summary(rows_s: Sourced[list[CovenantPointer]]) -> str:
+    """A one-line summary of the located pointers (back-compat covenant_pointers string)."""
+    if rows_s.status is not SourceStatus.PRESENT or not rows_s.value:
+        return ""
+    located = [f"{r.family[:34]} [{r.accession}]" for r in rows_s.value if r.accession]
+    return "; ".join(located) if located else "no contract-level filing located"
 
 
 def _capital_structure(
@@ -1211,19 +1290,24 @@ def _capital_structure(
     insts = (instruments.value
              if instruments.status is SourceStatus.PRESENT and instruments.value else [])
     cik = record.identity.cik
-    pointers = _covenant_pointers(edgar, http, cik or "", insts)
+    pointer_rows = _covenant_pointers(edgar, http, cik or "", insts)
+    located = (pointer_rows.status is SourceStatus.PRESENT
+               and any(r.accession for r in (pointer_rows.value or [])))
+    summary_str = _covenant_summary(pointer_rows)
+    pointers_str = (Sourced.present(summary_str, source_ref=pointer_rows.source_ref or "efts")
+                    if located and summary_str else
+                    Sourced.unknown(note=pointer_rows.note or "no CIK-scoped agreement exhibit"))
     # (E5, fenced) covenant TERMS are LLM-extractable ONLY from a located exhibit; the note is
     # opacity-as-signal — it tells the human whether any exhibit exists to read (a Tier-1 pointer
     # present) or whether the facility is wholly undocumented (extraction impossible, itself a
     # fact).
     terms_note = (
         "(E5) named covenant terms extract in the LLM phase from the located exhibit(s) above"
-        if pointers.status is SourceStatus.PRESENT
-        else "(E5) no covenant exhibit located — no document to extract named terms from")
+        if located else "(E5) no covenant exhibit located — nothing to extract named terms from")
     return CapitalStructure(
         instruments=instruments, summary=summary, detail_as_of=detail_as_of,
         maturity_filings=_maturity_8ks(edgar, cik or "", insts, reference_date),
-        covenant_pointers=pointers,
+        covenant_pointers=pointers_str, covenant_pointer_rows=pointer_rows,
         covenant_terms=Sourced.unknown(note=terms_note),
     )
 
