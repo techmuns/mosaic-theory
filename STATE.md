@@ -1237,7 +1237,10 @@ Each line: *what it does* — *verified how*.
       and set by FACE-VALIDITY only** (never tuned on outcomes). Tier tags are DEV-VIEW only. *(PR-E R1
       adds a `render._TIER_REGEX` layer checked BEFORE the keyword map — word-boundary patterns with
       interposition tolerance, e.g. 'EBITDA … negative' with ≤3 words between; same face-validity
-      governance, same dev-view-only status, no outcome tuning.)*
+      governance, same dev-view-only status, no outcome tuning.)* *(Audit follow-up: the bare
+      'turned negative' — both the keyword and the regex alt — was SUBJECT-SCOPED to solvency/cash
+      lines (EBITDA/cash-flow/FCF/OCF), so a subject-less 'competitor guidance turned negative' no
+      longer false-classifies Tier-1; the real cases still land Tier-1.)*
     - **D4 caveat shape**: a guardrail caveat renders the FULL offending sentence (synthesis no longer
       `_snip`s the human caveats — truncation retained for the dev-only QA flags) in the what / where /
       why-it-matters / how-to-verify shape; a mechanical / 'pull CIQ …' caveat stays one full bullet.
@@ -1381,7 +1384,10 @@ Each line: *what it does* — *verified how*.
     regression) + the no-conclusion walk extended to the two G models. **Post-audit fix (self-audit
     #64): the implied-metric table had 2 data cells under a 3-column header — every implied level
     rendered under the WRONG "Multiple" header; split into label · multiple · level (Python + JS),
-    pinned by a column-count regression test.** ruff + mypy --strict (69) + `pytest -m "not network"`
+    pinned by a column-count regression test.** **Audit follow-up: added the parallel REVENUE
+    consensus anchors (FY26 $438.7M / FY27 $587.7M / NTM $494.4M = TEV ÷ the TEV/Rev ladder), so the
+    TEV/Rev name-row identity (†) is SUBSTANTIATED — the NTM revenue anchor equals the name-NTM
+    revenue implied level, shown not merely asserted.** ruff + mypy --strict (69) + `pytest -m "not network"`
     green. On a branch → PR;
     NOT merged (awaiting review). **Reader-feedback point 2 (implied expectations / reverse-DCF)
     closes: perpetuity REFUTED as a method → the forward-multiple ladder (catalyst_path) + the CIQ

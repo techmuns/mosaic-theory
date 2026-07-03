@@ -1342,19 +1342,24 @@ def _implied_expectations(
     # consensus anchors (FY26E/FY27E/NTM EBITDA levels) = the SAME TEV ÷ the forward ladder, so the
     # NTM anchor equals the name-NTM identity row BY CONSTRUCTION. FY26E is ALSO directly sourced
     # (acceleration_read) — that direct value is the independent probe the G5 guard checks against.
-    def _anchor(period: str) -> float | None:
-        mo = _ie_ladder(cna, period, "TEV/EBITDA")
+    def _anchor(period: str, key: str = "TEV/EBITDA") -> float | None:
+        mo = _ie_ladder(cna, period, key)
         return (tev / mo) if (mo and mo > 0) else None  # UNROUNDED; 1dp only at display
 
-    # anchors are UNROUNDED here (rounded to 1dp only at display) so the NTM anchor prints the SAME
-    # to the name-NTM identity row (both are TEV ÷ 7.54 = 82.6) — same number, one precision.
-    a26, a27, antm = _anchor("FY 2026"), _anchor("FY 2027"), _anchor("NTM")
-    anchors_txt = " · ".join(
-        f"{lab} {(f'${v:.1f}M') if v is not None else 'n/a'}"
-        for lab, v in (("FY26E", a26), ("FY27E", a27), ("NTM", antm)))
-    anchors = Sourced.present(
-        anchors_txt + " (consensus EBITDA = TEV ÷ forward ladder; NTM = the name-NTM identity)",
-        source_ref=cna_src)
+    def _anchor_line(key: str, metric: str) -> Sourced[str]:
+        vals = [(lab, _anchor(p, key)) for lab, p in
+                (("FY26E", "FY 2026"), ("FY27E", "FY 2027"), ("NTM", "NTM"))]
+        txt = " · ".join(f"{lab} {(f'${v:.1f}M') if v is not None else 'n/a'}" for lab, v in vals)
+        return Sourced.present(
+            txt + f" (consensus {metric} = TEV ÷ forward ladder; NTM = the name-NTM identity)",
+            source_ref=cna_src)
+
+    # anchors are UNROUNDED here (1dp only at display) so the NTM anchor prints the SAME as the
+    # name-NTM identity row (both TEV ÷ 7.54 = 82.6). The parallel REVENUE anchors substantiate the
+    # TEV/Rev name-row identity (†) — so it's shown, not merely asserted.
+    a26 = _anchor("FY 2026")  # the EBITDA FY26 anchor is kept for the G5 residual probe below
+    anchors = _anchor_line("TEV/EBITDA", "EBITDA")
+    rev_anchors = _anchor_line("TEV/REV", "Revenue")
 
     # (G5) vintage-coherence: derived FY26 (TEV ÷ FY26 forward multiple, UNROUNDED) vs the DIRECT
     # FY26 EBITDA consensus (acceleration_read). NTM consensus is not a sourced level, so FY26 — the
@@ -1385,9 +1390,9 @@ def _implied_expectations(
         + ("" if nd_ok else f"; ⚠ net-debt {net_debt:.1f} vs bridge {bridge_nd:.1f} — reconcile"))
     return ImpliedExpectations(
         rows=rows, tev=Sourced.present(round(tev, 1), source_ref=tev_src), anchors=anchors,
-        heterogeneity_gate=implied_val.comparability_gate.value or "", tev_as_of=tev_as_of,
-        multiples_as_of=mult_as_of, vintage_coherent=coherent, coherence_note=coherence_note,
-        net_debt_reconciled=nd_ok)
+        rev_anchors=rev_anchors, heterogeneity_gate=implied_val.comparability_gate.value or "",
+        tev_as_of=tev_as_of, multiples_as_of=mult_as_of, vintage_coherent=coherent,
+        coherence_note=coherence_note, net_debt_reconciled=nd_ok)
 
 
 def assemble_mechanical(
