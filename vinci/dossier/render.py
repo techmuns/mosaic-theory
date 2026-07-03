@@ -425,10 +425,8 @@ def _capital_structure_lines(cs: Any, reference_date: date) -> list[str]:
         _fact("8-Ks at instrument maturities", cs.maturity_filings),
     ]
     out += _covenant_pointer_lines(cs)
-    out += [
-        _fact("Covenant terms (Tier-2, fenced)", cs.covenant_terms),
-        "",
-    ]
+    out += _covenant_term_lines(cs)
+    out.append("")
     return out
 
 
@@ -446,6 +444,29 @@ def _covenant_pointer_lines(cs: Any) -> list[str]:
         for r in rows_s.value
     ]
     return _table("Covenant / contract pointers (CIK-verified execution filings)",
+                  rows_s.source_ref, cols, rows)
+
+
+def _covenant_term_lines(cs: Any) -> list[str]:
+    """(E5/H1d) Fenced Tier-2 covenant terms as a table — term | value (verbatim, or UNKNOWN) |
+    source (exhibit · quote). Each PRESENT value is bound to the exhibit it was read from; an absent
+    term is a visible UNKNOWN, never a guess. A pre-H1d dossier.json (no rows) falls back to the
+    flat one-line string."""
+    rows_s = getattr(cs, "covenant_term_rows", None)
+    if rows_s is None or rows_s.status is not SourceStatus.PRESENT or not rows_s.value:
+        return [_fact("Covenant terms (Tier-2, fenced)", cs.covenant_terms)]
+    cols = ["Value (verbatim, or UNKNOWN)", "Source (exhibit · verbatim quote)"]
+    rows = []
+    for r in rows_s.value:
+        v = r.value
+        if v.status is SourceStatus.PRESENT:
+            src = v.source_ref or "—"
+            if v.note:
+                src = f"{src} — {v.note[:160]}{'…' if len(v.note) > 160 else ''}"
+            rows.append([r.name, str(v.value), src])
+        else:
+            rows.append([r.name, "UNKNOWN", v.note or "not stated"])
+    return _table("Covenant terms (Tier-2, fenced — verbatim, source-bound)",
                   rows_s.source_ref, cols, rows)
 
 

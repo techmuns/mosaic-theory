@@ -344,7 +344,7 @@ function capitalStructure(cs, refDate) {
     fact("Aggregates (latest quarter)", cs.summary) +
     fact("8-Ks at instrument maturities", cs.maturity_filings) +
     covenantPointers(cs) +
-    fact("Covenant terms (Tier-2, fenced)", cs.covenant_terms));
+    covenantTerms(cs));
 }
 
 // (H1) covenant/contract pointers → table (CIK-verified execution filings); old JSON → flat fact.
@@ -359,6 +359,24 @@ function covenantPointers(cs) {
   }));
   return dataTable("Covenant / contract pointers (CIK-verified execution filings)", rs.source_ref,
     ["Filing", "Date", "Accession / exhibit (or note)"], rows, "");
+}
+
+// (E5/H1d) fenced Tier-2 covenant terms → table (term | value verbatim/UNKNOWN | source · quote);
+// each value is {value, source_ref} bound to its exhibit, or a visible UNKNOWN. Old JSON → flat fact.
+function covenantTerms(cs) {
+  const rs = cs.covenant_term_rows;
+  if (!rs || rs.status !== "present" || !Array.isArray(rs.value) || !rs.value.length)
+    return fact("Covenant terms (Tier-2, fenced)", cs.covenant_terms);
+  const rows = rs.value.map((r) => {
+    const v = r.value || {};
+    if (v.status === "present") {
+      const q = v.note ? ` — ${v.note.slice(0, 160)}${v.note.length > 160 ? "…" : ""}` : "";
+      return { label: r.name, cells: [String(v.value), `${v.source_ref || DASH}${q}`] };
+    }
+    return { label: r.name, cells: ["UNKNOWN", v.note || "not stated"] };
+  });
+  return dataTable("Covenant terms (Tier-2, fenced — verbatim, source-bound)", rs.source_ref,
+    ["Value (verbatim, or UNKNOWN)", "Source (exhibit · verbatim quote)"], rows, "");
 }
 
 // (D1) leverage & survival — the survival story in one place (+ FCF + capital structure). Falls back

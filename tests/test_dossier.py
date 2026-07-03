@@ -19,6 +19,7 @@ from pydantic import BaseModel
 from vinci.dossier import assemble as dass
 from vinci.dossier import ciq, manual_store
 from vinci.dossier import ciq_sheets as cs
+from vinci.dossier import covenant_extract as ce
 from vinci.dossier import edgar_fundamentals as efb
 from vinci.dossier import flags as dflags
 from vinci.dossier import mechanical as dm
@@ -1200,6 +1201,111 @@ def test_capital_structure_covenant_terms_note_is_opacity_as_signal() -> None:
         rec, typing.cast(EdgarClient, _FakeEdgar()), typing.cast(typing.Any, _FakeHttp({})),
         bundle, date(2026, 7, 3))
     assert "no covenant exhibit located" in (bare.covenant_terms.note or "")
+
+
+class _FakeExhibitHttp:
+    """A fake SEC http whose get_text returns fixed exhibit text (or raises, for fail-loud)."""
+
+    def __init__(self, *, fail: bool = False, text: str = "LOAN AND SECURITY AGREEMENT …") -> None:
+        self._fail, self._text = fail, text
+
+    def get_text(self, url: str, ttl_seconds: float | None = None) -> str:
+        if self._fail:
+            raise RuntimeError("simulated fetch failure")
+        return self._text
+
+
+def _pointer_rows() -> list[ds.CovenantPointer]:
+    """The located pointers the mechanical layer hands E5 — the Wu 8-K (loanandsecuri + guaranty),
+    the 10-K, and a Notes-Payable aggregate line (no accession — never extracted)."""
+    return [
+        ds.CovenantPointer(family="Convertible Loan", filing="8-K", filing_date="2024-06-04",
+                           accession="0001760689-24-000021",
+                           exhibits=["mvst-20240603.htm", "wu_microvast-loanandsecuri.htm",
+                                     "wu_microvast-guarantyagree.htm"]),
+        ds.CovenantPointer(family="material contracts (10-K exhibit index)", filing="latest 10-K",
+                           filing_date="2026-03-16", accession="0001628280-26-018264",
+                           exhibits=["mvst20251231-ex1013.htm"]),
+        ds.CovenantPointer(family="Notes Payable", filing="—", filing_date="—", accession="",
+                           exhibits=[],
+                           note="no contract-level filing expected (aggregate line item)"),
+    ]
+
+
+def _cs_with_pointers(rows: list[ds.CovenantPointer]) -> ds.CapitalStructure:
+    u = ds.Sourced[str].unknown(note="n/a")
+    return ds.CapitalStructure(
+        instruments=ds.Sourced.unknown(note="n/a"), summary=u, detail_as_of="2026-07-03",
+        maturity_filings=u, covenant_pointers=ds.Sourced.present("located", source_ref="efts"),
+        covenant_pointer_rows=ds.Sourced.present(rows, source_ref="efts"),
+        covenant_terms=ds.Sourced.unknown(note="(E5) pending"))
+
+
+def test_core_agreement_exhibits_prefers_the_loan_security_doc() -> None:
+    """(E5) The picker extracts the CORE agreement exhibit — the loan & security doc, NOT the
+    ancillary guaranty — and puts the loan/convertible family first (conversion price is the
+    deliverable). The Notes-Payable aggregate (no accession) is never picked."""
+    picked = ce._core_agreement_exhibits(_pointer_rows())
+    assert picked[0][0].family == "Convertible Loan"
+    assert picked[0][1] == "wu_microvast-loanandsecuri.htm"  # loan&security, not guaranty
+    assert all(fam.accession for fam, _ in picked)  # Notes Payable (no accession) excluded
+
+
+def test_covenant_extract_present_is_verbatim_source_bound_and_absent_is_unknown() -> None:
+    """(E5/H1d, cond. b) The fenced extraction renders each term as {value, source_ref} or UNKNOWN:
+    a stated conversion price is the VERBATIM formula bound to the exhibit it was read from (the
+    source_ref is MACHINE-set, not the model's), and a term the exhibit omits is a visible UNKNOWN —
+    never a fabricated $/share."""
+    payload = {"terms": [
+        {"name": "Conversion price / mechanics", "present": True,
+         "value": "$1.00 divided by the applicable Conversion Rate",
+         "quote": "“Conversion Price” means … an amount equal to $1.00 divided by the applicable "
+                  "Conversion Rate at such time."},
+        {"name": "Interest / coupon rate", "present": False, "value": "", "quote": ""},
+    ]}
+    cs_in = _cs_with_pointers([_pointer_rows()[0], _pointer_rows()[2]])  # one extractable exhibit
+    term_rows, summary, flags, log = ce.extract_covenant_terms(
+        cs_in, llm=_FakeLlm(payload), http=typing.cast(typing.Any, _FakeExhibitHttp()),
+        cik="0001760689", ticker="MVST", name="Microvast")
+    assert term_rows is not None and term_rows.status is ds.SourceStatus.PRESENT
+    conv = next(r for r in term_rows.value if r.name.startswith("Conversion"))
+    assert conv.value.status is ds.SourceStatus.PRESENT
+    assert conv.value.value == "$1.00 divided by the applicable Conversion Rate"  # verbatim formula
+    assert conv.value.source_ref == "8-K 0001760689-24-000021 · wu_microvast-loanandsecuri.htm"
+    assert "verbatim" in (conv.value.note or "")
+    intr = next(r for r in term_rows.value if r.name.startswith("Interest"))
+    assert intr.value.status is ds.SourceStatus.UNKNOWN and intr.value.value is None
+    assert "not stated" in (intr.value.note or "")
+    assert summary.status is ds.SourceStatus.PRESENT and "1 of 2" in (summary.value or "")
+    assert not flags and "COVENANT EXTRACT" in log
+
+
+def test_covenant_extract_fetch_failure_fails_loud_unknown_never_blank() -> None:
+    """(E5) A fetch failure degrades to UNKNOWN + a flag — the row set is never a silent blank and
+    never a fabricated value."""
+    cs_in = _cs_with_pointers([_pointer_rows()[0]])
+    term_rows, summary, flags, _ = ce.extract_covenant_terms(
+        cs_in, llm=_FakeLlm({"terms": []}),
+        http=typing.cast(typing.Any, _FakeExhibitHttp(fail=True)),
+        cik="0001760689", ticker="MVST", name="Microvast")
+    assert term_rows is None
+    assert summary.status is ds.SourceStatus.UNKNOWN
+    assert any("fetch failed" in f for f in flags)
+
+
+def test_covenant_extract_no_located_pointer_is_a_noop() -> None:
+    """(E5) With no located pointer rows (nothing to read), extraction returns the mechanical
+    covenant_terms unchanged and no rows — it never invents an extraction target."""
+    u = ds.Sourced[str].unknown(note="n/a")
+    cs_in = ds.CapitalStructure(
+        instruments=ds.Sourced.unknown(note="n/a"), summary=u, detail_as_of="2026-07-03",
+        maturity_filings=u, covenant_pointers=u, covenant_pointer_rows=None,
+        covenant_terms=ds.Sourced.unknown(note="(E5) no covenant exhibit located"))
+    term_rows, summary, flags, log = ce.extract_covenant_terms(
+        cs_in, llm=_FakeLlm({"terms": []}), http=typing.cast(typing.Any, _FakeExhibitHttp()),
+        cik="0001760689", ticker="MVST", name="Microvast")
+    assert term_rows is None and not flags and log == ""
+    assert summary.note == "(E5) no covenant exhibit located"
 
 
 @pytest.mark.network
