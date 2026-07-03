@@ -1331,11 +1331,15 @@ Each line: *what it does* — *verified how*.
     — the honest picture) pinned to accession 0000947871-26-000620; F2 → "Short interest (FINRA,
     settle 2026-06-15): 26.3M sh (+22.9%) · DTC 5.7d" (DTC = 26,323,600 ÷ 4,607,454 screen ADV, vs
     FINRA's own 6.25 on its ADV). Frontend confirmed by a real preview render (both blocks in the
-    catalyst section, cited; injected artifact reverted, no artifact commit). +13 tests (11 offline
-    incl. the FINRA layout-pin + post_json cache, 2 network-marked live pins). The no-conclusion walk
-    already reaches CatalystPath → the two `Sourced[str]` positioning fields are covered (asserted).
-    ruff + mypy --strict (69) + `pytest -m "not network"` green. On a branch → PR; NOT merged
-    (awaiting review).*
+    catalyst section, cited; injected artifact reverted, no artifact commit). +14 tests (12 offline
+    incl. the FINRA layout-pin + post_json cache + the limit-cap guard, 2 network-marked live pins).
+    The no-conclusion walk already reaches CatalystPath → the two `Sourced[str]` positioning fields
+    are covered (asserted). **Post-audit fix (self-audit #63): FINRA's query API returns rows
+    OLDEST-first and can't be server-sorted, so the old `limit=8` silently DROPPED the newest
+    settlements once a window held ≥9 (latent — a 120-day window holds ~7 today); raised the cap to 50
+    AND fail loud (`FinraLayoutError`) if the cap is ever hit, so a stale settlement can never be
+    dressed as "the latest".** ruff + mypy --strict (69) + `pytest -m "not network"` green. On a
+    branch → PR; NOT merged (awaiting review).*
 - _Whole suite green (ruff + mypy --strict clean; `pytest -m "not network"` passes)._
 
 ## 3. FALSIFIED — tested and retired (NOT deferred)
