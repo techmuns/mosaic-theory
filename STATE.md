@@ -1346,6 +1346,47 @@ Each line: *what it does* — *verified how*.
     AND fail loud (`FinraLayoutError`) if the cap is ever hit, so a stale settlement can never be
     dressed as "the latest".** ruff + mypy --strict (69) + `pytest -m "not network"` green. On a
     branch → PR; NOT merged (awaiting review).*
+  - **PR G — implied expectations: price-inverted, multiples-space (2026-07-03).** Stacked on PR F
+    (branched off `feat/positioning-inputs`, the post-F state — F was not yet merged). NO new
+    extraction: every input is an ALREADY-ASSEMBLED field; deterministic arithmetic only.
+    - **G1/G3 the block** (`Valuation.implied_expectations`, renders after cross-sectional, before
+      own-history): for a FIXED declared multiple set — name NTM TEV/EBITDA, peer-median NTM & LTM
+      TEV/EBITDA (+ the same trio on TEV/Rev) — `implied_level = TEV ÷ multiple`. TEV is **DERIVED**
+      (mcap + net debt = simple-TEV basis, labeled in the source_ref) since it is NOT surfaced as a
+      field: the workbook TEV cell carries a stale SECOND pricing vintage (Historical-Capitalization
+      TEV 872.8 @ ~$2.02) alongside the Latest mcap (423.1 @ $1.27), so deriving from Latest-mcap is
+      vintage-coherent by construction. Each row {multiple(source), implied_level, adjacent anchors};
+      NM/negative/absent multiple → UNKNOWN row (guarded division, never a synthetic multiple).
+      FENCE (block-scoped, NOT global — 'value' would trip `Sourced.value`): the two G models carry no
+      price/equity/value/upside/discount field; render has ZERO % or value-space tokens.
+    - **G2 render** (shared table): heterogeneity gate VERBATIM on the header + the framing line +
+      BOTH pricing as-ofs; anchors juxtaposed, NEVER differenced; footnote names the fixed set as
+      declared-in-code. **G4**: the block rides the full `mech.model_dump()` into the synthesis input
+      AND the number-trace universe automatically (no synthesis change) — asserted by a test.
+    - **G5 vintage-coherence guard** (this incident earned it): the residual |derived-FY26 −
+      direct-FY26 consensus| ÷ direct ≤ 0.10 (a DECIMAL, never a %); measured at FY26 — the nearest
+      DIRECTLY-sourced consensus EBITDA (NTM consensus is not a sourced level; the shared-TEV ladder
+      makes FY26-coherence certify all horizons). Within tolerance → render normally; beyond → a
+      "multiple-pricing vintage differs — re-pull comps" caveat + both as-ofs stamped. Plus the
+      condition-b net-debt gate (net_debt vs the cash/debt bridge, C3 soft-caveat).
+    *Verified on the REAL MVST export (values reproduced by synthetic fixtures — no artifact read):
+    TEV $623.0M; the EBITDA triangle **identity $82.6M / peer-NTM $48.3M / peer-LTM $43.0M** (the
+    identity = the NTM anchor EXACTLY by construction), the TEV/Rev trio $494.4M/$244.3M/$194.7M;
+    consensus anchors **FY26 $61.4M / FY27 $146.2M / NTM $82.6M** (1dp so the NTM anchor prints the
+    SAME as the identity row); vintage-coherent (residual 0.011 ≤ 0.10, on the UNROUNDED derived FY26)
+    and net-debt reconciled (bridge 326.0 − 126.1 = 199.9). Frontend confirmed by a real preview
+    render (block in Valuation, order correct, zero % in the block; injected artifact reverted, no
+    artifact commit). +9 tests (parsers, triangle, both coherence branches, net-debt caveat,
+    NM/negative guard, block-scoped fence, G4 trace-coverage, back-compat, + a table-column-alignment
+    regression) + the no-conclusion walk extended to the two G models. **Post-audit fix (self-audit
+    #64): the implied-metric table had 2 data cells under a 3-column header — every implied level
+    rendered under the WRONG "Multiple" header; split into label · multiple · level (Python + JS),
+    pinned by a column-count regression test.** ruff + mypy --strict (69) + `pytest -m "not network"`
+    green. On a branch → PR;
+    NOT merged (awaiting review). **Reader-feedback point 2 (implied expectations / reverse-DCF)
+    closes: perpetuity REFUTED as a method → the forward-multiple ladder (catalyst_path) + the CIQ
+    implied-valuation (B3) + THIS price-inverted block are the standard — all POSED, none concluding
+    an implied price or upside.***
 - _Whole suite green (ruff + mypy --strict clean; `pytest -m "not network"` passes)._
 
 ## 3. FALSIFIED — tested and retired (NOT deferred)

@@ -444,6 +444,47 @@ def _peer_grid_or_deltas(pc: Any) -> list[str]:
     return [_fact("Fundamental deltas (earned-vs-residual inputs)", pc.fundamental_deltas)]
 
 
+def _implied_expectations_lines(v: Any) -> list[str]:
+    """(G) Price-inverted expectations, MULTIPLES-space. Shared table: each stated multiple → the
+    fundamental LEVEL price implies (TEV ÷ multiple); the consensus path anchors are juxtaposed
+    BESIDE — never differenced (no %, gap, upside, or implied price/equity). The heterogeneity gate
+    rides the header VERBATIM; both pricing as-ofs are stamped; a vintage-mismatch caveat renders
+    when the TEV / multiples pricing-vintages diverge (G5). Nothing for a pre-G dossier.json."""
+    ie = getattr(v, "implied_expectations", None)
+    if ie is None:
+        return []
+    out = [
+        f"- **Implied expectations (price-inverted · multiples-space)** — {ie.heterogeneity_gate}",
+        "  - _price-implied fundamental levels at stated multiples — the human judges earned vs "
+        "residual; identity (†): at the name's own multiple the implied level IS consensus._",
+        f"  - _TEV as-of {ie.tev_as_of} · multiples as-of {ie.multiples_as_of}_",
+    ]
+    # rows carry the row-LABEL (the multiple's name) + one cell PER column — `_table` prepends a
+    # blank header for the label, so each row must have len(cols)+1 cells: [label, multiple, level].
+    rows: list[list[str]] = []
+    for r in ie.rows:
+        mult = f"{r.multiple:g}x" if r.multiple is not None else "NM"
+        level = (
+            f"${r.implied_level:,.1f}M {r.metric}" + (" †" if r.is_identity else "")
+            if r.implied_level is not None else f"UNKNOWN — {r.note}")
+        rows.append([r.label, mult, level])
+    name_rows = frozenset(i for i, r in enumerate(ie.rows) if r.is_identity)
+    out += _table(
+        "Implied metric levels · fixed multiple set", ie.tev.source_ref,
+        ["Multiple (× used)", "Implied level"], rows, name_rows=name_rows)
+    out.append(
+        "- **Consensus path anchors (EBITDA — juxtapose, do NOT difference):** "
+        f"{ie.anchors.value}")
+    out.append(f"  - _{'⚠ ' if not ie.vintage_coherent else ''}{ie.coherence_note}_")
+    if not ie.net_debt_reconciled:
+        out.append("  - _⚠ net-debt disagrees with the cash/debt bridge — see the TEV source_")
+    out.append(
+        "  - _Fixed multiple set (declared in code, no per-name curation): name NTM + peer-median "
+        "NTM/LTM, on TEV/EBITDA and TEV/Rev._")
+    out.append("")
+    return out
+
+
 def _implied_lines(iv: Any) -> list[str]:
     """(B3) CIQ implied valuation — POSED: the implied EQUITY table (basis × Low/Median/Mean/High) +
     the bridge + the name's ACTUAL market cap adjacent. NO computed %/discount/upside; the
@@ -861,10 +902,12 @@ def render_markdown(d: Dossier, *, dev: bool = False) -> str:
     out += _trajectory_table_lines(m)
     out += [_fact("Share-count trend", m.quality.share_count_trend), ""]
 
-    # (D1·§4) Valuation & own-history.
+    # (D1·§4) Valuation & own-history. (G) implied expectations slot in AFTER cross-sectional (the
+    # edge) and BEFORE the own-history reads.
     out.append("### Valuation & own-history")
+    out.append(_fact("Cross-sectional (vs peers — the edge)", m.valuation.cross_sectional))
+    out += _implied_expectations_lines(m.valuation)
     out += [
-        _fact("Cross-sectional (vs peers — the edge)", m.valuation.cross_sectional),
         _fact("P/E", m.valuation.pe, _mult),
         _fact("EV/EBITDA (GAAP TEV/LTM)", m.valuation.ev_ebitda, _mult),
         _fact("EV/EBITDA (adjusted, forward)", m.valuation.ev_ebitda_adjusted_fwd),

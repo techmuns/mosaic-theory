@@ -79,6 +79,9 @@ def test_dossier_schema_has_no_conclusion_field() -> None:
         # PR E — the walk must reach the structured capital structure (instruments + wall/covenant
         # pointers are FACTS, never a solvency verdict — no probability/risk/direction field)
         ds.CapitalStructure, ds.CapitalInstrument,
+        # PR G — the walk must reach the implied-expectations block (fundamentals-space; the block-
+        # scoped fence forbids price/equity/value/upside/discount fields — asserted separately)
+        ds.ImpliedExpectations, ds.ImpliedExpectationRow,
     }
     assert expected <= models
     offenders: list[str] = []
@@ -1393,6 +1396,179 @@ def test_insider_activity_real_mvst() -> None:
     assert got.status is ds.SourceStatus.PRESENT
     assert got.value is not None and got.value.startswith("P×") and "routine" in got.value
     assert "0000947871-26-000620" in (got.source_ref or "")
+
+
+# --- PR G: implied expectations (price-inverted, multiples-space) ------------------------------
+# MVST-shaped synthetic inputs (values I control; they reproduce the verified real triangle). TEV =
+# mcap 423.1 + net debt 199.9 = 623.0 → the identity/peer triangle 82.6 / 48.3 / 43.0.
+
+_IE_CNA = (  # cross_name_anchor: the name's OWN forward-multiple ladder
+    "NTM: TEV/REV 1.26 · TEV/EBITDA 7.54 · TEV/EBIT 17.55 | "
+    "FY 2026: TEV/REV 1.42 · TEV/EBITDA 10.14 · TEV/EBIT 31.54 | "
+    "FY 2027: TEV/REV 1.06 · TEV/EBITDA 4.26 · TEV/EBIT 9.17")
+_IE_TM = (  # trading_multiples: peer-median LTM (no prefix) + NTM
+    "TEV/Rev: name 1.7 vs peers Low 0.7 / Median 3.2 / Mean 5.8 / High 22; "
+    "TEV/EBITDA: name 11.1 vs peers Low 7.9 / Median 14.5 / Mean 18.5 / High 38.4; "
+    "NTM TEV/Rev: name 1.25 vs peers Low 1.06 / Median 2.55 / Mean 3.64 / High 13.47; "
+    "NTM TEV/EBITDA: name 7.46 vs peers Low 7.63 / Median 12.9 / Mean 43.3 / High 198.12")
+_IE_AR = "FY 2026 EBITDA: 129.7 (12m) → 146.5 (6m) → 62.1 (latest); net -52% [3m, 2m n/a]"
+_IE_GATE = "market caps span $34M–$275.0B (8063x); the name is $423M → HETEROGENEOUS — low comp."
+_IE_MCAP_REF = (
+    "CIQ Comparable Analysis→Financial Data (name Market Capitalization Latest) · as-of 2026-06-24")
+_IE_BRIDGE = "TEV→equity bridge: + cash $126.10M, − total debt $326.00M"
+
+
+def _ie_inputs(
+    *, cna: str = _IE_CNA, tm: str = _IE_TM, ar: str = _IE_AR, market_cap: float = 423.1,
+    net_debt: float = 199.9, bridge: str = _IE_BRIDGE,
+) -> tuple[ds.PeerComps, ds.CatalystPath, ds.ImpliedValuation]:
+    pc = ds.PeerComps(
+        peer_set=_u(), comparability=ds.Sourced.present(_IE_GATE, source_ref="CIQ FD"),
+        trading_multiples=ds.Sourced.present(tm, source_ref="CIQ→Trading Multiples"),
+        fundamental_deltas=_u(),
+        peer_grid=ds.Sourced.present(
+            [ds.PeerRow(name="X", ticker="X", is_name=True, market_cap=market_cap,
+                        net_debt=net_debt)],
+            source_ref="CIQ FD · as-of 2026-06-24"))
+    cp = ds.CatalystPath(
+        as_of=ds.Sourced.present("≥2026-05-15", source_ref="CIQ Estimates"),
+        horizon_read=_u(), acceleration_read=ds.Sourced.present(ar, source_ref="CIQ→Trends"),
+        cross_name_anchor=ds.Sourced.present(cna, source_ref="CIQ Estimates→Multiples"),
+        guidance_bridge=_u(), revision_events=_u(), consensus_stats=_u())
+    iv = ds.ImpliedValuation(
+        implied_equity=_u(),
+        bridge=ds.Sourced.present(bridge, source_ref="CIQ→Implied Valuation"),
+        market_cap=ds.Sourced.present(market_cap, source_ref=_IE_MCAP_REF),
+        comparability_gate=ds.Sourced.present(_IE_GATE, source_ref="CIQ FD"))
+    return pc, cp, iv
+
+
+def test_ie_parsers_read_the_assembled_fields() -> None:
+    """(G) The parsers cross-reference already-assembled STRINGS (no workbook): the name ladder, the
+    peer-median LTM vs NTM (distinguished by the exact segment label), the direct FY26 read, the
+    as-of stamp, and the bridge net-debt."""
+    assert dm._ie_ladder(_IE_CNA, "NTM", "TEV/EBITDA") == 7.54
+    assert dm._ie_ladder(_IE_CNA, "FY 2026", "TEV/EBITDA") == 10.14
+    assert dm._ie_peer_median(_IE_TM, "NTM TEV/EBITDA") == 12.9
+    assert dm._ie_peer_median(_IE_TM, "TEV/EBITDA") == 14.5  # the LTM one (no 'NTM' prefix)
+    assert dm._ie_peer_median(_IE_TM, "TEV/Rev") == 3.2
+    assert dm._ie_consensus_latest(_IE_AR, "FY 2026", "EBITDA") == 62.1
+    assert dm._ie_asof(_IE_MCAP_REF) == "2026-06-24"
+    assert dm._ie_bridge_net_debt(_IE_BRIDGE) == 199.9
+
+
+def test_ie_builder_triangle_anchors_and_identity() -> None:
+    """(G1/G3) TEV ÷ multiple for the fixed set → the verified triangle; the two NAME rows are the
+    identity; anchors = TEV ÷ ladder (NTM anchor ≡ the name-NTM identity); vintage + net-debt gates
+    pass; TEV is DERIVED and its source_ref states the simple-TEV basis + as-of."""
+    ie = dm._implied_expectations(*_ie_inputs())
+    assert ie is not None
+    assert ie.tev.value == 623.0 and "simple-TEV basis" in (ie.tev.source_ref or "")
+    got = {r.label: r.implied_level for r in ie.rows}
+    assert got["name NTM TEV/EBITDA"] == 82.6  # 623 / 7.54  (identity ≈ consensus NTM)
+    assert got["peer-median NTM TEV/EBITDA"] == 48.3  # 623 / 12.9
+    assert got["peer-median LTM TEV/EBITDA"] == 43.0  # 623 / 14.5
+    assert got["name NTM TEV/Rev"] == 494.4 and got["peer-median NTM TEV/Rev"] == 244.3
+    assert got["peer-median LTM TEV/Rev"] == 194.7
+    assert {r.label for r in ie.rows if r.is_identity} == {
+        "name NTM TEV/EBITDA", "name NTM TEV/Rev"}
+    # anchors 1dp so the NTM anchor prints IDENTICAL to the name-NTM identity row (both $82.6M)
+    assert "FY26E $61.4M · FY27E $146.2M · NTM $82.6M" in (ie.anchors.value or "")
+    assert ie.vintage_coherent is True and ie.net_debt_reconciled is True
+    assert "vintage-coherent" in ie.coherence_note and "%" not in ie.coherence_note
+    assert ie.tev_as_of == "2026-06-24" and ie.multiples_as_of == "2026-05-15"
+
+
+def test_ie_vintage_incoherent_fires_caveat_and_stamps_both_asofs() -> None:
+    """(G5) A STALE multiples vintage — the FY26 forward multiple no longer reproduces the direct
+    FY26 EBITDA consensus (residual > 0.10) → the row-caveat fires and BOTH as-ofs are stamped, so a
+    TEV / multiples pricing-vintage mismatch can't ship silently (the failure class that made my
+    spec's targets stale)."""
+    cna = _IE_CNA.replace("FY 2026: TEV/REV 1.42 · TEV/EBITDA 10.14",
+                          "FY 2026: TEV/REV 1.42 · TEV/EBITDA 5.00")  # derived FY26 623/5 = 124.6
+    ie = dm._implied_expectations(*_ie_inputs(cna=cna))
+    assert ie is not None and ie.vintage_coherent is False
+    assert "multiple-pricing vintage differs from TEV as-of — re-pull comps" in ie.coherence_note
+    assert ie.tev_as_of == "2026-06-24" and ie.multiples_as_of == "2026-05-15"
+
+
+def test_ie_net_debt_gate_soft_caveats_when_bridge_disagrees() -> None:
+    """(condition b) The net_debt input is coherence-gated against the cash/debt bridge; a mismatch
+    renders a soft caveat on the TEV source_ref (C3-pattern) rather than silently trusting it."""
+    ie = dm._implied_expectations(
+        *_ie_inputs(bridge="TEV→equity bridge: + cash $126.10M, − total debt $500.00M"))
+    assert ie is not None and ie.net_debt_reconciled is False
+    assert "⚠" in (ie.tev.source_ref or "") and "reconcile" in (ie.tev.source_ref or "")
+
+
+def test_ie_nm_or_negative_multiple_renders_unknown_not_a_synthetic_level() -> None:
+    """(G3) An NM / non-positive multiple → the row is UNKNOWN with a reason; division is guarded,
+    never a fabricated level and never a synthetic multiple."""
+    tm = _IE_TM.replace("NTM TEV/EBITDA: name 7.46 vs peers Low 7.63 / Median 12.9",
+                        "NTM TEV/EBITDA: name 7.46 vs peers Low 7.63 / Median NM")
+    ie = dm._implied_expectations(*_ie_inputs(tm=tm))
+    assert ie is not None
+    nm_row = next(r for r in ie.rows if r.label == "peer-median NTM TEV/EBITDA")
+    assert nm_row.implied_level is None and nm_row.note
+    cna = _IE_CNA.replace("TEV/EBITDA 7.54", "TEV/EBITDA -5.00")
+    neg = dm._implied_expectations(*_ie_inputs(cna=cna))
+    assert neg is not None
+    neg_row = next(r for r in neg.rows if r.label == "name NTM TEV/EBITDA")
+    assert neg_row.implied_level is None and "non-positive" in (neg_row.note or "")
+
+
+def test_ie_schema_is_fundamentals_space_only_block_scoped() -> None:
+    """(G3) The block's two models carry NO price/equity/value/upside/discount field. The check is
+    BLOCK-SCOPED — adding 'value' to the GLOBAL no-conclusion walk would false-flag Sourced.value
+    everywhere; here we assert only the two G models' own field names."""
+    forbidden = ("price", "equity", "value", "upside", "discount")
+    for model in (ds.ImpliedExpectations, ds.ImpliedExpectationRow):
+        for fname in model.model_fields:
+            assert not any(t in fname.lower() for t in forbidden), f"{model.__name__}.{fname}"
+
+
+def test_ie_render_table_identity_anchors_and_zero_percent_tokens() -> None:
+    """(G2) The shared table renders (identity † marked), the consensus anchors juxtaposed, both
+    as-ofs stamped — and ZERO percentage / value-space tokens anywhere in the block (the gate is
+    rendered verbatim, so it's excluded from the fence scan)."""
+    ie = dm._implied_expectations(*_ie_inputs())
+    v = _minimal_mech().valuation.model_copy(update={"implied_expectations": ie})
+    block = "\n".join(dr._implied_expectations_lines(v))
+    assert dr._TABLE_MARK in block
+    assert "$82.6M EBITDA †" in block and "$48.3M EBITDA" in block
+    assert "Consensus path anchors" in block and "FY26E $61.4M" in block
+    assert "TEV as-of 2026-06-24 · multiples as-of 2026-05-15" in block
+    # REGRESSION (the audit bug): every table row must have the SAME cell count as the header row —
+    # `_table` prepends a blank label column, so a 2-cell row under a 2-col header put the implied
+    # level under the WRONG header. Header cells == data cells for every '|' row.
+    table_rows = [ln for ln in block.splitlines() if ln.startswith("|") and "---" not in ln]
+    counts = {ln.count("|") for ln in table_rows}
+    assert len(counts) == 1, f"table column mismatch — cell counts differ across rows: {counts}"
+    assert "| **name NTM TEV/EBITDA** | **7.54x** | **$82.6M EBITDA †** |" in block  # 3 cells
+    body = block.replace(ie.heterogeneity_gate, "<GATE>")  # gate is verbatim, excluded from fence
+    assert "%" not in body
+    assert not re.search(r"\bupside\b|\bdiscount\b|\bimplied price\b|\bequity value\b|\bgap\b",
+                         body, re.IGNORECASE)
+
+
+def test_ie_flows_into_synthesis_trace_universe() -> None:
+    """(G4) The block rides the full mech dump into BOTH the synthesis input and the number-trace
+    universe — no synthesis code change. Its implied levels + derived TEV are traceable auto,
+    so an LLM citing them isn't false-flagged as untraceable."""
+    ie = dm._implied_expectations(*_ie_inputs())
+    mech = _minimal_mech()
+    mech = mech.model_copy(
+        update={"valuation": mech.valuation.model_copy(update={"implied_expectations": ie})})
+    nums = syn._floats(mech.model_dump_json())
+    assert 82.6 in nums and 623.0 in nums  # implied EBITDA level + the derived TEV are traceable
+
+
+def test_ie_absent_for_pre_g_valuation_and_when_market_cap_missing() -> None:
+    """Back-compat + fail-soft: a pre-G Valuation (no implied_expectations) renders nothing; the
+    builder returns None when market cap is absent (TEV underivable) — never a fabricated TEV."""
+    assert dr._implied_expectations_lines(_minimal_mech().valuation) == []
+    pc, cp, iv = _ie_inputs()
+    assert dm._implied_expectations(pc, cp, iv.model_copy(update={"market_cap": _u()})) is None
 
 
 def _eps_pt(year: int, val: float) -> dict[str, typing.Any]:
