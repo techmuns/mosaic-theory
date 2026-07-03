@@ -104,6 +104,34 @@ flag it. That incremental blur is the failure mode this whole project is built t
 - Fuller engineering conventions (reproducibility, re-run safety, as-of discipline, testing, code
   workflow) live in **docs/engineering.md**.
 
+## Build-loop contract (how a brief enters and a PR leaves)
+
+These govern the build LOOP itself. They are checklist, not aspiration — a build that skips one is
+incomplete regardless of code state.
+
+- **BRIEF CONTRACT — a build brief is malformed unless:**
+  - every asserted data value carries its as-of/vintage; drift-prone values are marked
+    **VERIFY-AT-BUILD** (never trusted from the brief);
+  - every verify-gate naming a data value declares its **supplying layer** (assembled field vs new
+    extraction) — the extractor boundary is checked at drafting, not discovered at build;
+  - every new guard ships a **positive AND a negative pin** — what it must reject, with a real
+    observed failure shape where one exists;
+  - any summary/digest destined for an LLM phase carries a **shape contract + one literal example**
+    (term → value → source_ref), never a pointer/count description.
+- **COMPLETION CONTRACT.** Every PR description ends with a per-brief-item disposition table —
+  **SHIPPED / PARTIAL / SKIPPED / STOPPED** (+ a one-line reason for anything not SHIPPED) — and the
+  real-run verify outputs. A build without this table is incomplete regardless of code state.
+- **TEST-LAYER RULE.** A behavior observed failing in the rendered artifact is regression-pinned
+  **end-to-end** (real committed JSON → render → assertion). Unit pins may accompany, never
+  substitute. A second production failure of a pinned behavior ⇒ the pin was at the wrong layer.
+- **INVARIANT RULE.** Every incident closes by shipping a machine check (lint / guard / coherence
+  test), or is recorded in STATE.md as consciously accepted risk. STATE.md keeps the table:
+  incident → invariant → shipped Y/N.
+- **PREVIEW RULE.** Render/layout PRs run a Phase-1 preview from committed JSON and **STOP for
+  approval**; data/extractor PRs go straight to build with real-run verification.
+- **OPERATOR-ACTION RULE.** Operator to-dos arising from builds/audits are appended to STATE.md
+  §Next-steps **by the build itself** — chat is not a ledger.
+
 ## Tone
 
 Terse rules, not prose. The *why* lives in STATE.md §7, docs/engineering.md, and the planning fossils.
