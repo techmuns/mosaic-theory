@@ -1436,6 +1436,44 @@ Each line: *what it does* — *verified how*.
     --strict (70) + `pytest -m "not network"` (326) green in isolation per commit. On a branch → PR;
     NOT merged (awaiting review). PR 2 (H2–H7: R1 verify, survival clubbing/dedup, guidance-bridge
     table, positioning display, twin-outcome rule, FY-E anchor) branches after PR 1 merges.*
+    **PR 1 MERGED (--rebase, commits preserved on origin/main): 5b0c646 (A) · 9fc8bd2 (B) ·
+    0a4970f (STATE).**
+  - **PR H (PR 2 of the split) — H2–H7 dossier polish (2026-07-03), off the merged PR-1 main.**
+    Five logically-isolated commits; each green. **H2 (R1 verify):** the draw phrasing "adjusted
+    EBITDA of NEGATIVE $5.5M" already classifies Tier-1 via the interposition-tolerant
+    '(adjusted) EBITDA … negative' regex arm ('of' = the 1 interposed word) — NO fix needed; pinned
+    the EXACT string. **H7 (FY-E anchor):** the G EBITDA consensus anchors switch from TEV÷ladder to
+    the DIRECT Estimates→Trends latest levels (single source of truth: FY26E $62.1M / FY27E $147.7M —
+    the spec's "148" rounded); new `ciq_sheets.trends_fy_level` reads a SPECIFIC FY column (accel-read
+    is FY-current only); the ladder-derived FY26 now lives ONLY in the vintage-guard line; the REVENUE
+    anchors keep the ladder basis (they substantiate the TEV/Rev † identity — a different job). **H6
+    (twin outcome):** an '[LLM-suggested, unverified]' twin's outcome renders "… (LLM-claimed —
+    verify)"; a roster/self-sourced twin renders plain (deterministic, render-side; MVST QuantumScape
+    + Romeo Power flagged, Amprius/Forsee/Leclanché plain). **H5 (positioning display):** short
+    interest → "prior → latest (±%, rising/falling) · X% of shares out (EDGAR XBRL count) · DTC ·
+    recent: latest-4 settlements" (new `_edgar_shares_outstanding`, dei+us-gaap; % omitted when
+    absent); insider → PLAIN LABELS "Open-market buys n · sells m (net ±K) · grants g · last date"
+    (grants = A code; M/F/C preserved under 'other'); sign-descriptors only — the no-conclusion walk
+    EXTENDED to these strings by a test asserting neither matches the directional regex nor an
+    interpretive-token list. **H4 (guidance-bridge table):** metric | latest guide | for | dated |
+    age | record | most-recent, via a new `GuidanceRow` + optional `guidance_bridge_rows`; the flat
+    string and the rows share one `_guidance_reads()` extraction (no drift, string contract
+    preserved). **H3 (survival clubbing + dedup):** retire the coarse "nearest maturity wall: YYYY"
+    line (delete the orphaned `_nearest_maturity`) — the month-precision E2 wall in the single
+    "### Leverage & survival" section supersedes it; a render-level dedup folds repeated identical
+    UNKNOWN reasons to ONE line with the affected-fields list (MVST 99.1 case: 3 renders → 1, no fact
+    suppressed); the heterogeneity gate renders verbatim ONCE (Peer-comps head) and short-ref
+    "comparability: HETEROGENEOUS (see Peer comps gate)" at the G + Implied-Valuation headers.
+    *Verified on REAL MVST (render of the committed dossier.json + live CIQ/EDGAR/FINRA): H7 anchors
+    "FY26E $62.1M · FY27E $147.7M (direct Trends)" with the ladder FY26 $61.4M in the vintage-guard
+    (residual 0.010); H6 QuantumScape "recovered (LLM-claimed — verify)"; H5 insider "buys 0 · sells 7
+    (net -121.0K) · grants 20 · last 2026-06-12 · other C×1" + short "21.4M → 26.3M sh (+22.9%, rising)
+    · 7.9% of shares out (EDGAR XBRL) · DTC …"; H4 guidance table (Revenue/Capex/GrossMargin, sign-aware
+    records, stale ages); H3 the 99.1 UNKNOWN once + gate short-ref'd. +~8 tests (trends_fy_level,
+    the exact-tier pin, twin QuantumScape, positioning no-interpretation guard + new SI/insider
+    formats, guidance rows, gate short-ref + dedup) — existing IE/survival/short-interest tests
+    updated for the new shapes; the guidance STRING contract preserved. ruff + mypy --strict (70) +
+    `pytest -m "not network"` green. On a branch → PR; NOT merged (awaiting review).*
 - _Whole suite green (ruff + mypy --strict clean; `pytest -m "not network"` passes)._
 
 ## 3. FALSIFIED — tested and retired (NOT deferred)
