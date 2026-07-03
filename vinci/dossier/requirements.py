@@ -216,12 +216,36 @@ EDGAR_FREE_INPUTS: tuple[EdgarFreeInput, ...] = (
     EdgarFreeInput(
         input="Form 4 (insider transactions)",
         why=(
-            "insider trades are free on EDGAR as Form 4; the dossier does not consume the CIQ "
-            "Insider Trading export — and CIQ's Transaction-Type column carries a direction-flip "
-            "trap (mechanical option-exercise sales look like discretionary selling), so prefer "
-            "Form 4 (ciq_extraction_notes.md)"
+            "insider trades are free on EDGAR as Form 4; the dossier assembles them itself (the "
+            "catalyst-path insider_activity block: 6m open-market P/S + net shares, routine "
+            "A/M/F tallied separately) and does NOT consume the CIQ Insider Trading export — CIQ's "
+            "Transaction-Type column has a direction-flip trap (option-exercise sales "
+            "look like discretionary selling), so prefer Form 4 (ciq_extraction_notes.md)"
         ),
-        edgar_source="EDGAR Form 4 (free)",
+        edgar_source="EDGAR Form 4 (free) — mechanical._insider_activity",
+    ),
+)
+
+
+class FreeFeedInput(BaseModel, frozen=True):
+    """A NON-EDGAR free feed the funnel pulls automatically — must NOT be manually uploaded."""
+
+    input: str  # the datum a human might be tempted to export from CIQ
+    why: str  # where the funnel already gets it free
+    free_source: str  # the free path the automated layer uses instead
+
+
+# Free feeds that are NOT EDGAR filings but are still pulled automatically (so, like the EDGAR-free
+# list, they must not be double-pulled from CIQ). The ONE manifest of non-EDGAR free inputs.
+FREE_FEED_INPUTS: tuple[FreeFeedInput, ...] = (
+    FreeFeedInput(
+        input="Short interest (aggregate, twice-monthly settlement)",
+        why=(
+            "the dossier reads consolidated equity short interest — shares short, change%, and "
+            "days-to-cover vs the screen 90d ADV — free from FINRA (catalyst-path short_interest "
+            "block); a CIQ short-interest export would double-pull the same public settlement data"
+        ),
+        free_source="FINRA consolidated equity short-interest query API (free, no entitlement)",
     ),
 )
 
@@ -296,6 +320,10 @@ def as_payload(ticker: str | None = None) -> dict[str, Any]:
             {"input": e.input, "why": e.why, "edgar_source": e.edgar_source}
             for e in EDGAR_FREE_INPUTS
         ],
+        "free_feed_do_not_upload": [
+            {"input": e.input, "why": e.why, "free_source": e.free_source}
+            for e in FREE_FEED_INPUTS
+        ],
     }
 
 
@@ -327,4 +355,8 @@ def render_checklist(ticker: str | None = None) -> str:
     for e in EDGAR_FREE_INPUTS:
         lines.append(f"  ✗ {e.input}")
         lines.append(f"      {e.why}  →  {e.edgar_source}")
+    lines += ["", "DO NOT upload — pulled FREE from other public feeds (don't double-pull):"]
+    for ff in FREE_FEED_INPUTS:
+        lines.append(f"  ✗ {ff.input}")
+        lines.append(f"      {ff.why}  →  {ff.free_source}")
     return "\n".join(lines)

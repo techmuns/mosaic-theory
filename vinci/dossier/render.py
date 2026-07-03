@@ -173,6 +173,12 @@ def _catalyst_section(m: MechanicalLayer) -> list[str]:
         out += _grouped_events_lines(cp.revision_events)
         sh = _fact("Surprise history (annual beat/miss)", m.consensus_context.surprise_history)
         out.append(sh)  # the one non-duplicate legacy fact, folded in
+        # (F) positioning inputs — free DATED feeds; rendered only when present (pre-F JSON
+        # has neither field → None → not rendered). Counts / shares / dates only, no interpretation.
+        if cp.insider_activity is not None:
+            out.append(_fact("Insider activity (Form 4, 6m)", cp.insider_activity))
+        if cp.short_interest is not None:
+            out.append(_fact("Short interest (FINRA)", cp.short_interest))
     out.append("")  # (D1) the management-commentary pointer moved OUT of here, into the appendix
     return out
 
