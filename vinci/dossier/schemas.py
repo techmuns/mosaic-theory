@@ -409,6 +409,10 @@ class CapitalStructure(BaseModel):
     # (H1d/E5) the structured per-term rows the fenced LLM extracted from the located exhibit(s),
     # each a {value, source_ref} or UNKNOWN (rendered as a table); optional for pre-H1d JSON.
     covenant_term_rows: Sourced[list[CovenantTerm]] | None = None
+    # (P3/FIX-3) the fenced VERBATIM resolution event at a maturity 8-K — Item 8.01/1.01/3.02
+    # (e.g. the 2026-05-28 Notice-of-Conversion: full principal → common stock). value = verbatim
+    # (≤400c), source_ref = "8-K <accession> (<date>)". Optional so a pre-P3 dossier.json validates.
+    maturity_event: Sourced[str] | None = None
 
     model_config = {"frozen": True}
 
