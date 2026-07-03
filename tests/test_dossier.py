@@ -1510,6 +1510,113 @@ def test_point_tier_turned_negative_requires_a_solvency_subject() -> None:
     assert dr._point_tier("market sentiment turned negative on the sector") != 1.0
 
 
+# --- PR 3 · Commit B: guards (P2 lint · P6 e2e position pin + py↔JS parity) ---
+
+
+def _mech_with_covenant_and_maturity() -> ds.MechanicalLayer:
+    """A minimal mech whose capital_structure carries covenant_term_rows AND maturity_event —
+    the post-FIX-0 state where a lingering 'pending' synthesis claim IS a contradiction."""
+    u = ds.Sourced[str].unknown(note="x")
+    cs = ds.CapitalStructure(
+        instruments=ds.Sourced.unknown(note="x"), summary=u, detail_as_of="d", maturity_filings=u,
+        covenant_pointers=u, covenant_terms=ds.Sourced.present("digest", source_ref="d"),
+        covenant_term_rows=ds.Sourced.present(
+            [ds.CovenantTerm(name="Conversion price / mechanics",
+                             value=ds.Sourced.present("2 sh/$1.00", source_ref="8-K x"))],
+            source_ref="fenced"),
+        maturity_event=ds.Sourced.present(
+            "Notice of Conversion: $25.0M principal → common stock",
+            source_ref="8-K y (2026-05-28)"))
+    return _minimal_mech().model_copy(update={"capital_structure": cs})
+
+
+def _bear_synth(unknowns: list[str], bears: tuple[str, ...] = ()) -> ds.Synthesis:
+    return ds.Synthesis(
+        evidence_balance="", bull_points=[],
+        bear_points=[ds.SourcedPoint(claim=b, source_ref="r") for b in bears],
+        twin_reference_cases=[],
+        decisive_question=ds.DecisiveQuestion(question="?", evidence_for=[], evidence_against=[]),
+        key_unknowns=list(unknowns))
+
+
+def test_p2_contradiction_lint_flags_present_blocks_but_not_genuine_gaps() -> None:
+    """(P2) The durable guard the FIX-0 incident earns: a synthesis pending-claim ('pending',
+    'must be read') is QA-flagged when its SUBJECT is a mechanical block that IS present
+    (covenant_term_rows / maturity_event). Pins BOTH incident shapes — and leaves a GENUINE opacity
+    gap (no 99.1 revised-guidance exhibit parsed) and a clean draw untouched."""
+    mech = _mech_with_covenant_and_maturity()
+    # shape 1 — covenant terms called pending, but covenant_term_rows IS present
+    f1 = syn.contradiction_flags(
+        _bear_synth(["Covenant terms are UNKNOWN (extract pending from located exhibits)"]), mech)
+    assert len(f1) == 1 and f1[0].startswith("CONTRADICTION") and "covenant" in f1[0].lower()
+    # shape 2 — the maturity/term-loan resolution called must-be-read, but maturity_event IS present
+    f2 = syn.contradiction_flags(_bear_synth(
+        [], bears=("The 2026-05-28 term loan resolution must be read from the 8-K",)), mech)
+    assert len(f2) == 1 and "maturity resolution" in f2[0]
+    # genuine opacity gap — revised_guidance really IS UNKNOWN → NOT flagged (specific subject)
+    f3 = syn.contradiction_flags(
+        _bear_synth(["No revised-outlook 99.1 exhibit was parsed for either earnings 8-K — "
+                     "revised forward guidance is UNKNOWN"]), mech)
+    assert f3 == []
+    # a clean draw that REASONS with the conversion (no pending claim) → not flagged
+    f4 = syn.contradiction_flags(_bear_synth(
+        [], bears=("Conversion at ~$0.50/sh implies ~50M shares, ~15% dilution",)), mech)
+    assert f4 == []
+    # the CONTRADICTION flag routes to the QA channel (dev/JSON only), never a human caveat
+    _caveats, qa = dflags.partition(f1)
+    assert qa == f1 and _caveats == []
+
+
+def test_p6_py_js_tier_classifier_parity() -> None:
+    """(P6) The JS point-tier classifier (views/dossier.js) MUST mirror render.py. PR-E's R1
+    interposition regex + the 'turned negative' audit were NEVER mirrored, so the web classified
+    the 'adjusted EBITDA of NEGATIVE $5.5M' GAAP point T2 (ordered #4) while the .md had it T1 (#2).
+    Structural parity: the JS Tier-1 keyword list and the R1 regex equal Python's."""
+    import json
+    import pathlib
+    js = pathlib.Path("frontend/views/dossier.js").read_text()
+    py_t1 = set(dr._TIER_KEYWORDS[0][1])
+    m = re.search(r"\[1,\s*\[(.*?)\]\]", js, re.DOTALL)
+    assert m is not None
+    js_t1 = set(re.findall(r'"([^"]+)"', m.group(1)))
+    assert js_t1 == py_t1, f"JS↔PY Tier-1 drift — PY-only={py_t1 - js_t1}, JS-only={js_t1 - py_t1}"
+    jm = re.search(r"const _TIER_RE = /(.*?)/i;", js)
+    assert jm is not None and jm.group(1) == dr._TIER_REGEX[0][1].pattern, \
+        "JS _TIER_RE must equal render.py _TIER_REGEX[0] (the R1 interposition mirror)"
+    # behavioural parity through node, when available (same fixtures → same tier)
+    import shutil
+    import subprocess
+    if shutil.which("node"):
+        fx = ["adjusted EBITDA of NEGATIVE $5.5M in Q1", "competitor guidance turned negative",
+              "operating cash flow turned negative", "revenue grew 20%", "EBITDA turned negative"]
+        block = js[js.index("const _TIERKW"):js.index("function _citRank")]
+        src = f"{block}\nconsole.log(JSON.stringify({json.dumps(fx)}.map(_pointTier)))"
+        out = subprocess.run(["node", "-e", src], capture_output=True, text=True, check=True)
+        assert json.loads(out.stdout) == [dr._point_tier(c) for c in fx]  # zero divergence
+
+
+def test_p6_gaap_artifact_point_ordered_in_the_tier1_group_e2e() -> None:
+    """(P6, sharpened) On the REAL committed MVST JSON, the GAAP-artifact bear point (an
+    'adjusted EBITDA of NEGATIVE …' in a GAAP-quality claim) renders WITHIN the Tier-1 group — no
+    lower-tier point ahead of it. This is the position the JS divergence mis-ordered (T2 → #4)."""
+    import pathlib
+    p = pathlib.Path("data/dossiers/MVST/dossier.json")
+    if not p.exists():
+        pytest.skip("no committed MVST dossier.json")
+    doss = ds.Dossier.model_validate_json(p.read_text())
+    if doss.synthesis is None:
+        pytest.skip("committed MVST dossier has no synthesis")
+    ordered = dr._ordered_points(list(doss.synthesis.bear_points))
+    gaap = next((i for i, (pt, _t, _c) in enumerate(ordered)
+                 if "GAAP" in pt.claim
+                 and ("fair-value" in pt.claim or "non-cash" in pt.claim)), None)
+    if gaap is None:
+        pytest.skip("committed MVST synthesis carries no GAAP-artifact bear point")
+    n_tier1 = sum(1 for _p, t, _c in ordered if t == 1.0)
+    assert dr._point_tier(ordered[gaap][0].claim) == 1.0  # it IS Tier-1
+    assert gaap < n_tier1, f"GAAP at #{gaap + 1} but only {n_tier1} Tier-1 — a lower tier leads it"
+
+
 def test_self_referential_twin_requires_resolved_period_in_the_name() -> None:
     """(R2) A twin naming the subject itself is suppressed UNLESS the resolved period is in the twin
     NAME ('Microvast (2021–2025 arc)'); a bare self-name ('Microvast Holdings') is suppressed even

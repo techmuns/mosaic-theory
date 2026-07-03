@@ -30,7 +30,7 @@ from vinci.dossier.manual_store import LocalFolderStore, ManualDataStore
 from vinci.dossier.mechanical import assemble_mechanical
 from vinci.dossier.render import render_markdown
 from vinci.dossier.schemas import Dossier, Sourced, SourceStatus
-from vinci.dossier.synthesis import synthesize
+from vinci.dossier.synthesis import contradiction_flags, synthesize
 from vinci.edgar.client import EdgarClient
 from vinci.finra import build_finra_http
 from vinci.graph.exposure import ExposureGraph
@@ -168,6 +168,10 @@ def assemble_one(
         if term_rows is not None and mech.capital_structure is not None:
             cs_post = mech.capital_structure.model_copy(update={"covenant_term_rows": term_rows})
             mech = mech.model_copy(update={"capital_structure": cs_post})
+        # (P2) contradiction lint — flag any synthesis pending-claim about a NOW-present block (the
+        # durable guard the FIX-0 incident earns); QA-channel.
+        if synthesis is not None:
+            flags += contradiction_flags(synthesis, mech)
     else:
         flags.append("LLM synthesis skipped (no ANTHROPIC client) — mechanical layer only")
     llm_log = "\n\n".join(lg for lg in logs if lg)

@@ -195,7 +195,7 @@ const _TIERKW = [
   [1, ["free cash flow", "levered free cash", "fcf", "self-fund", "self fund", "cash generat",
        "cash burn", "cash-negative", "interest coverage", "maturity", "wall", "covenant", "refinanc",
        "liquidity", "going concern", "solven", "net-debt", "net debt", "total-debt", "total debt",
-       "debt/ebitda", "adjusted ebitda negative", "adjusted ebitda was negative", "turned negative",
+       "debt/ebitda", "adjusted ebitda negative", "adjusted ebitda was negative",
        "ebitda was negative"]],
   [2, ["revenue", "top-line", "topline", "volume", "shipment", "bookings", "backlog", "orders",
        "guide", "guidance", "deteriorat", "growth"]],
@@ -205,11 +205,18 @@ const _TIERKW = [
   [5, ["valuation", "multiple", "p/e", "ev/ebitda", "discount", "re-rate", "rerate", "underperform",
        "percentile", "%ile", "cheap", "expensive", "vs iwm", "relative"]],
 ];
+// (R1, mirrored from render.py `_TIER_REGEX`) interposition-tolerant Tier-1: "(adjusted) EBITDA …
+// negative" (words may sit between, e.g. "EBITDA of NEGATIVE $5.5M"), a solvency/cash line "… turned
+// negative", or "cash-negative". Checked BEFORE the keyword map. Bare "turned negative" was removed
+// from the keywords (R1 audit) so a subject-less "guidance turned negative" no longer false-hits T1.
+const _TIER_RE = /\b(?:adjusted\s+)?ebitda\b(?:\s+\w+){0,3}\s+negative\b|\b(?:cash[\s-]*flow|fcf|free\s+cash\s+flow|operating\s+(?:income|cash\s*flow)|ocf)\b(?:\s+\w+){0,3}\s+turned\s+negative\b|\bcash-negative\b/i;
 const _CONCESSION = /\b(?:though|although|but|however|offset by|posing whether|the human must weigh)\b/i;
 function _pointTier(claim) {
   const m = (claim || "").match(_CONCESSION);
-  const c = (m ? claim.slice(0, m.index) : claim || "").toLowerCase();
-  for (const [tier, kws] of _TIERKW) if (kws.some((k) => c.includes(k))) return tier;
+  const c = m ? (claim || "").slice(0, m.index) : (claim || "");
+  if (_TIER_RE.test(c)) return 1;  // (R1) interposition-tolerant regex wins first, mirrors render.py
+  const cl = c.toLowerCase();
+  for (const [tier, kws] of _TIERKW) if (kws.some((k) => cl.includes(k))) return tier;
   return 4.5;  // unclassifiable → between competitive (4) and valuation (5); never dropped
 }
 function _citRank(p) {

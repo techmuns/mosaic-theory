@@ -861,3 +861,57 @@ def synthesize(
         return None, [flag], "\n".join(log_parts)
     synth, flags = _validate(_parse(_decode_escapes(raw)), mech, ticker=ticker, name=name)
     return synth, flags, "\n".join(log_parts)
+
+
+# (P2) pending-claim patterns — a synthesis line asserting a fact is not-yet-available.
+_PENDING_RE = re.compile(
+    r"not extracted|extract(?:ion)? pending|pending (?:from|extraction)|not (?:yet )?parsed|"
+    r"must be read|to be (?:read|extracted)|awaiting extraction|not captured|not in this data|"
+    r"read the .{0,30}(?:8-K|filing|exhibit|agreement)",
+    re.IGNORECASE,
+)
+# (P2) SUBJECT patterns — SPECIFIC to a mechanical block so a genuine opacity gap is NOT flagged
+# (e.g. "no 99.1 revised-guidance exhibit parsed" — revised_guidance really IS UNKNOWN; never bare
+# "8-K", which appears in many honest claims).
+_COVENANT_SUBJ = re.compile(
+    r"covenant term|covenant detail|conversion (?:price|rate|mechanic|term)", re.IGNORECASE)
+_MATURITY_SUBJ = re.compile(
+    r"notice of conversion|maturity (?:resolution|event)|term loan.{0,40}(?:convert|resol|repaid)|"
+    r"(?:convert|resol|repaid).{0,40}term loan|resolution of the .{0,30}loan",
+    re.IGNORECASE,
+)
+
+
+def contradiction_flags(synth: Synthesis, mech: MechanicalLayer) -> list[str]:
+    """(P2) The durable guard this incident earns: flag a synthesis pending-claim ('not extracted',
+    'must be read', …) whose SUBJECT is a mechanical block that IS present — the failure where a
+    pointer-shaped input made the LLM report as pending a fact the mechanical layer actually holds.
+    QA-channel; names the field. A pending-claim about a genuinely-UNKNOWN block (a real
+    opacity gap) is left alone — the subject match is specific, never a bare '8-K'."""
+    cs = mech.capital_structure
+    covenant_present = (cs is not None and cs.covenant_term_rows is not None
+                        and cs.covenant_term_rows.status is SourceStatus.PRESENT)
+    maturity_present = (cs is not None and cs.maturity_event is not None
+                        and cs.maturity_event.status is SourceStatus.PRESENT)
+    if not covenant_present and not maturity_present:
+        return []
+    texts: list[tuple[str, str]] = []
+    if synth.evidence_balance:
+        texts.append(("evidence_balance", synth.evidence_balance))
+    texts += [("bull_point", p.claim) for p in synth.bull_points]
+    texts += [("bear_point", p.claim) for p in synth.bear_points]
+    texts += [("key_unknown", u) for u in synth.key_unknowns]
+    texts.append(("decisive_question", synth.decisive_question.question))
+    texts += [("decisive.for", p.claim) for p in synth.decisive_question.evidence_for]
+    texts += [("decisive.against", p.claim) for p in synth.decisive_question.evidence_against]
+    flags: list[str] = []
+    for where, txt in texts:
+        if not _PENDING_RE.search(txt):
+            continue
+        if covenant_present and _COVENANT_SUBJ.search(txt):
+            flags.append(f"CONTRADICTION ({where}): synthesis calls covenant terms pending — "
+                         f"but covenant_term_rows IS present. Claim: “{_snip(txt)}”")
+        elif maturity_present and _MATURITY_SUBJ.search(txt):
+            flags.append(f"CONTRADICTION ({where}): synthesis calls the maturity resolution "
+                         f"pending/unread — but maturity_event IS present. Claim: “{_snip(txt)}”")
+    return flags
