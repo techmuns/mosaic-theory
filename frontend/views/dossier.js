@@ -291,29 +291,35 @@ function drawdownIdio(m) {
 }
 
 // (E2) $M principal → "$25.0M" / "–"
-const _mM = (v) => (v == null ? DASH : `$${Number(v).toFixed(1)}M`);
+// $M with en-US thousands separators, matching the Python render._musd (`f"${v:,.1f}M"`) so the
+// web/PDF thousands grouping matches the .md for a $1B+ bucket total (e.g. "$1,234.5M").
+const _mM = (v) => (v == null ? DASH : `$${Number(v).toLocaleString("en-US", { minimumFractionDigits: 1, maximumFractionDigits: 1 })}M`);
 
 // (E2) deterministic month-precision maturity wall from the structured instruments (mirrors
 // render._maturity_wall_lines): matured-pre-reference / due this ref year / due later years / undated.
 function maturityWall(cs, refDate) {
   const inst = cs.instruments;
   if (!inst || inst.status !== "present" || !Array.isArray(inst.value)) return "";
-  const ref = new Date(refDate + "T00:00:00");
+  // Bucket by the ISO date STRING (YYYY-MM-DD), NOT a local Date: `new Date("…T00:00:00")` is LOCAL
+  // midnight, so getUTCFullYear() rolls a Jan-1 maturity back a year for any UTC-ahead viewer (IST,
+  // Europe, Asia) — mis-bucketing "2027-01-01" into "≤12m 2026". ISO strings compare
+  // lexicographically = chronologically, timezone-free, and match the Python (date.year).
+  const refYear = String(refDate).slice(0, 4);
   const matured = [], thisYear = [], later = [], undated = [];
   for (const i of inst.value) {
     if (!i.maturity_date) { undated.push(i); continue; }
-    const d = new Date(i.maturity_date + "T00:00:00");
-    (d < ref ? matured : d.getUTCFullYear() === ref.getUTCFullYear() ? thisYear : later).push([d, i]);
+    const m = i.maturity_date;
+    (m < refDate ? matured : m.slice(0, 4) === refYear ? thisYear : later).push([m, i]);
   }
   const sum = (xs) => xs.reduce((a, x) => a + ((Array.isArray(x) ? x[1] : x).principal_musd || 0), 0);
   const li = [];
   if (matured.length) {
     li.push(`<li><b>matured (pre-reference): ${_mM(sum(matured))}</b> — resolution not in this data; verify each against its 8-K (never assume repaid/defaulted):<ul>` +
-      matured.sort((a, b) => a[0] - b[0]).map(([d, i]) => `<li>${i.maturity_date}: ${_mM(i.principal_musd)} ${escapeHtml(i.description.slice(0, 34))}</li>`).join("") + "</ul></li>");
+      matured.sort((a, b) => (a[0] < b[0] ? -1 : a[0] > b[0] ? 1 : 0)).map(([m, i]) => `<li>${i.maturity_date}: ${_mM(i.principal_musd)} ${escapeHtml(i.description.slice(0, 34))}</li>`).join("") + "</ul></li>");
   }
-  if (thisYear.length) li.push(`<li>due ≤12m (through ${ref.getUTCFullYear()}): ${_mM(sum(thisYear))} — ${thisYear.map(([d, i]) => `${i.maturity_date} ${_mM(i.principal_musd)}`).join(", ")}</li>`);
+  if (thisYear.length) li.push(`<li>due ≤12m (through ${refYear}): ${_mM(sum(thisYear))} — ${thisYear.map(([m, i]) => `${i.maturity_date} ${_mM(i.principal_musd)}`).join(", ")}</li>`);
   const byYr = {};
-  for (const [d, i] of later) (byYr[d.getUTCFullYear()] ||= []).push([d, i]);
+  for (const [m, i] of later) (byYr[m.slice(0, 4)] ||= []).push([m, i]);
   for (const yr of Object.keys(byYr).sort()) li.push(`<li>due ${yr}: ${_mM(sum(byYr[yr]))}</li>`);
   if (undated.length) li.push(`<li>undated (floor — no panel maturity): ${_mM(sum(undated))} — ${undated.map((i) => `${escapeHtml(i.description.slice(0, 26))} ${_mM(i.principal_musd)}`).join(", ")}</li>`);
   li.push(`<li class="muted"><i>reconciliation: itemized ${_mM(sum(inst.value))} (panel ${escapeHtml(cs.detail_as_of || "")}) vs the latest-quarter aggregates below — the gap is unitemized / newer term loans.</i></li>`);
