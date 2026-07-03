@@ -149,9 +149,14 @@ def assemble_one(
             ptrs = mech.capital_structure.covenant_pointer_rows
             gov = (governing_terms(term_rows.value or [], ptrs.value)
                    if term_rows is not None and ptrs is not None and ptrs.value else [])
+            # (CC-1) `gov` is non-empty even when every term is UNKNOWN (governing_terms emits one
+            # row per (family, term)); base the honest-failure reason on an actually-PRESENT term,
+            # so an all-UNKNOWN extraction yields the honest "extraction failed" digest, not a bare
+            # header.
+            gov_present = any(g.value.status is SourceStatus.PRESENT for g in gov)
             mat_present = (maturity_event is not None
                            and maturity_event.status is SourceStatus.PRESENT)
-            fail = (None if (gov or mat_present)
+            fail = (None if (gov_present or mat_present)
                     else "no covenant terms extracted from located exhibits")
             digest = covenant_digest(gov, maturity_event, fail_reason=fail)
             cs_pre = mech.capital_structure.model_copy(update={

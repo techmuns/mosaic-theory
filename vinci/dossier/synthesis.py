@@ -889,8 +889,13 @@ def contradiction_flags(synth: Synthesis, mech: MechanicalLayer) -> list[str]:
     QA-channel; names the field. A pending-claim about a genuinely-UNKNOWN block (a real
     opacity gap) is left alone — the subject match is specific, never a bare '8-K'."""
     cs = mech.capital_structure
+    # (CC-3) require an actually-PRESENT term VALUE, not merely the row CONTAINER being PRESENT: an
+    # all-UNKNOWN covenant_term_rows block is a genuine opacity gap, so an honest "must be read from
+    # the 8-K" about it is NOT a contradiction — keying on the container alone false-positives.
     covenant_present = (cs is not None and cs.covenant_term_rows is not None
-                        and cs.covenant_term_rows.status is SourceStatus.PRESENT)
+                        and cs.covenant_term_rows.status is SourceStatus.PRESENT
+                        and any(r.value.status is SourceStatus.PRESENT
+                                for r in (cs.covenant_term_rows.value or [])))
     maturity_present = (cs is not None and cs.maturity_event is not None
                         and cs.maturity_event.status is SourceStatus.PRESENT)
     if not covenant_present and not maturity_present:
