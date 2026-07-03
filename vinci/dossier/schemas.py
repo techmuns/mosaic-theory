@@ -101,6 +101,46 @@ class CohortMember(BaseModel):
     model_config = {"frozen": True}
 
 
+class ImpliedExpectationRow(BaseModel):
+    """(G) One row: a STATED multiple → the fundamental LEVEL price implies at it (implied_level =
+    TEV ÷ multiple). FUNDAMENTALS-SPACE ONLY — this model carries NO price/equity/value/upside/
+    discount field (the block-scoped no-conclusion check forbids those tokens). ``implied_level``
+    is a metric level in $M (EBITDA or revenue), NEVER a per-share price or an equity value; it is
+    UNKNOWN (with a ``note`` reason) when the multiple is NM / negative / absent. No % or gap — the
+    consensus anchors are juxtaposed by the container, never differenced."""
+
+    label: str  # e.g. "name NTM TEV/EBITDA"
+    metric: str  # "EBITDA" | "Revenue" — the fundamental axis
+    multiple: float | None  # the stated multiple used (x); None when NM/absent
+    multiple_source: str  # the source_ref the multiple was cross-referenced from
+    implied_level: float | None  # TEV ÷ multiple, $M of the metric; None ⇒ UNKNOWN (see note)
+    is_identity: bool = False  # the name's own NTM multiple — implied_level ≡ consensus
+    note: str | None = None  # the reason implied_level is UNKNOWN (guarded division / NM multiple)
+
+    model_config = {"frozen": True}
+
+
+class ImpliedExpectations(BaseModel):
+    """(G) Price-inverted expectations, MULTIPLES-space. At a FIXED, declared multiple set the block
+    reports the fundamental LEVEL price implies (``TEV ÷ multiple``), juxtaposed with the consensus
+    path anchors — NEVER differenced (no %, gap, upside, or implied price/equity). The human judges
+    earned-vs-residual. TEV is DERIVED from already-sourced Financial-Data fields (simple-TEV basis:
+    mcap + net debt [+ pref + minority when surfaced]), and vintage-coherence-gated against the
+    multiples sheet so a TEV / multiples pricing-vintage mismatch can't ship silently (G5)."""
+
+    rows: list[ImpliedExpectationRow]
+    tev: Sourced[float]  # the derived TEV; source_ref states the simple-TEV formula + inputs' as-of
+    anchors: Sourced[str]  # consensus path anchors (FY26E/FY27E/NTM levels), rendered BESIDE rows
+    heterogeneity_gate: str  # the peer-comparability gate, VERBATIM (rendered on the header)
+    tev_as_of: str  # the Financial-Data as-of the TEV inputs carry
+    multiples_as_of: str  # the multiples-sheet as-of
+    vintage_coherent: bool  # G5: |derived-FY26 − direct-FY26 consensus| / direct ≤ 10%
+    coherence_note: str  # the residual read (+ the re-pull caveat when not coherent)
+    net_debt_reconciled: bool  # (cond. b) net_debt agrees with the cash/debt bridge, in tolerance
+
+    model_config = {"frozen": True}
+
+
 class Valuation(BaseModel):
     """Multiples: the CROSS-SECTIONAL read (vs peers) LEADS; own-history range/percentile is
     secondary — near-tautological post-drawdown, so it barely discriminates. CIQ multiples + G3."""
@@ -119,6 +159,9 @@ class Valuation(BaseModel):
     # own-history: current multiple + trailing low–median–high RANGE + sample-size CONFIDENCE (a
     # floor read on a handful of quarterly closes is unreliable — see range_position).
     range_position: Sourced[str]
+    # (G) price-inverted expectations in multiples-space — renders AFTER cross_sectional, BEFORE the
+    # own-history range. Optional so a pre-G dossier.json validates; a fresh assembly builds it.
+    implied_expectations: ImpliedExpectations | None = None
 
     model_config = {"frozen": True}
 

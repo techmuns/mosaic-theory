@@ -422,12 +422,40 @@ function flagsSection(caveats) {
     <div class="subtitle muted ds-sub">Open caveats (⚠) need a human check before the verdict; they are not conclusions.</div>${rows}</div>`;
 }
 
+// (G) implied expectations — price-inverted, multiples-space. Mirrors the md: each stated multiple
+// → the fundamental level price implies (TEV ÷ multiple); consensus anchors juxtaposed, NEVER
+// differenced (no %, gap, upside, or implied price/equity). "" for a pre-G dossier.json.
+function impliedExpectations(ie) {
+  if (!ie) return "";
+  const rows = (ie.rows || []).map((r) => ({
+    label: `${r.label} — ${r.multiple != null ? Number(r.multiple) + "×" : "NM"}`,
+    cls: r.is_identity ? "name" : "",
+    cells: [r.implied_level != null
+      ? `$${Number(r.implied_level).toFixed(1)}M ${r.metric}${r.is_identity ? " †" : ""}`
+      : `UNKNOWN — ${r.note || ""}`],
+  }));
+  const intro = `<div class="fact"><div class="fact-label">Implied expectations (price-inverted · multiples-space)</div>
+    <div style="min-width:0;"><div class="muted" style="font-size:12px;">${escapeHtml(ie.heterogeneity_gate || "")}</div>
+    <div class="muted" style="font-size:11px; margin-top:4px;">price-implied fundamental levels at stated multiples — the human judges earned vs residual; identity (†): at the name's own multiple the implied level IS consensus.</div>
+    <div class="muted" style="font-size:11px;">TEV as-of ${escapeHtml(ie.tev_as_of || "")} · multiples as-of ${escapeHtml(ie.multiples_as_of || "")}</div></div></div>`;
+  const table = dataTable("Implied metric levels · fixed multiple set", ie.tev && ie.tev.source_ref,
+    ["Multiple (× used)", "Implied level"], rows, "");
+  const anchors = `<div class="fact"><div class="fact-label">Consensus path anchors (EBITDA — juxtapose, do NOT difference)</div>
+    <div style="min-width:0;">${escapeHtml((ie.anchors && ie.anchors.value) || "")}
+    <div class="muted" style="font-size:11px; margin-top:4px;">${ie.vintage_coherent ? "" : "⚠ "}${escapeHtml(ie.coherence_note || "")}</div>
+    ${ie.net_debt_reconciled ? "" : `<div class="muted" style="font-size:11px;">⚠ net-debt input disagrees with the cash/debt bridge — see the TEV source</div>`}
+    <div class="muted" style="font-size:11px;">Fixed multiple set (declared in code, no per-name curation): name NTM + peer-median NTM/LTM, on TEV/EBITDA and TEV/Rev.</div></div></div>`;
+  return intro + table + anchors;
+}
+
 function valuation(v) {
   if (!v) return "";
   // Mirrors the md render (PR #48): lead with the CROSS-SECTIONAL read (the edge); the own-history
   // percentile barely discriminates across finalists, so it's folded into the range line below.
+  // (G) implied expectations slot in AFTER cross-sectional, BEFORE the own-history reads.
   return sec("Valuation", "Cross-sectional vs peers (the edge); own-history range as secondary context.",
     fact("Cross-sectional (vs peers — the edge)", v.cross_sectional, null, { hi: true }) +
+    impliedExpectations(v.implied_expectations) +
     fact("P/E", v.pe, (x) => escapeHtml(Number(x).toFixed(1)) + "&times;") +
     fact("EV/EBITDA (TEV/LTM, GAAP)", v.ev_ebitda, mult) +
     fact("EV/adj-EBITDA (forward)", v.ev_ebitda_adjusted_fwd) +

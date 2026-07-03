@@ -29,9 +29,12 @@ from vinci.dossier.schemas import (
     FilingRef,
     FinancialSummary,
     IdiosyncraticVsShared,
+    ImpliedExpectationRow,
+    ImpliedExpectations,
     ImpliedValuation,
     LeverageSurvival,
     MechanicalLayer,
+    PeerComps,
     Quality,
     Sourced,
     SourceStatus,
@@ -1225,6 +1228,166 @@ def _capital_structure(
     )
 
 
+# --- (G) implied expectations: price-inverted, multiples-space ----------------------------------
+# Every input is an ALREADY-ASSEMBLED Sourced field — these parsers read those assembled values,
+# NEVER the workbook (no extraction; that would be an extractor change, out of scope). Deterministic
+# arithmetic only: implied_level = TEV ÷ multiple. TEV is DERIVED (mcap + net debt) since it's
+# not surfaced as a single field; the same two fields feed a vintage-coherence guard.
+_IE_TOL = 0.10  # G5 vintage-coherence tolerance AND (condition b) the net-debt reconciliation band
+
+# THE fixed, declared multiple set (no per-name curation). Each: (label, metric, kind, key). kind
+# 'ladder' = the name's OWN NTM forward multiple (catalyst cross_name_anchor); 'peer' = the peer
+# median (peer_comps trading_multiples). 'key' locates the number inside that assembled string.
+_IE_MULTIPLE_SET: tuple[tuple[str, str, str, str], ...] = (
+    ("name NTM TEV/EBITDA", "EBITDA", "ladder", "TEV/EBITDA"),
+    ("peer-median NTM TEV/EBITDA", "EBITDA", "peer", "NTM TEV/EBITDA"),
+    ("peer-median LTM TEV/EBITDA", "EBITDA", "peer", "TEV/EBITDA"),
+    ("name NTM TEV/Rev", "Revenue", "ladder", "TEV/REV"),
+    ("peer-median NTM TEV/Rev", "Revenue", "peer", "NTM TEV/Rev"),
+    ("peer-median LTM TEV/Rev", "Revenue", "peer", "TEV/Rev"),
+)
+
+
+def _ie_ladder(cna: str | None, period: str, key: str) -> float | None:
+    """A forward multiple from the cross_name_anchor ladder ('NTM: … TEV/EBITDA 7.54 …')."""
+    if not cna:
+        return None
+    seg = next((s for s in cna.split(" | ") if s.strip().startswith(period)), None)
+    if not seg:
+        return None
+    mo = re.search(rf"{re.escape(key)}\s+(-?\d+(?:\.\d+)?)", seg)
+    return float(mo.group(1)) if mo else None
+
+
+def _ie_peer_median(tm: str | None, label: str) -> float | None:
+    """The peer-median multiple for an EXACT trading_multiples segment label ('NM' → None)."""
+    if not tm:
+        return None
+    for seg in tm.split(";"):
+        lab, _, rest = seg.partition(":")
+        if lab.strip() == label:
+            mo = re.search(r"Median\s+(-?\d+(?:\.\d+)?|NM)", rest)
+            return float(mo.group(1)) if (mo and mo.group(1) != "NM") else None
+    return None
+
+
+def _ie_consensus_latest(ar: str | None, period: str, metric: str) -> float | None:
+    """The latest consensus level for period+metric from the acceleration_read path string."""
+    if not ar:
+        return None
+    seg = next((s for s in ar.split(" | ") if s.strip().startswith(f"{period} {metric}:")), None)
+    mo = re.search(r"(-?\d+(?:\.\d+)?)\s*\(latest\)", seg) if seg else None
+    return float(mo.group(1)) if mo else None
+
+
+def _ie_asof(source_ref: str | None) -> str:
+    """The '· as-of YYYY-MM-DD' an extractor stamps on its source_ref (else 'UNKNOWN')."""
+    mo = re.search(r"as-of\s+(\d{4}-\d{2}-\d{2})", source_ref or "")
+    return mo.group(1) if mo else "UNKNOWN"
+
+
+def _ie_bridge_net_debt(bridge: str | None) -> float | None:
+    """Net debt implied by the cash/debt bridge string (total debt − cash) — condition-b probe."""
+    if not bridge:
+        return None
+    cash = re.search(r"cash\s+\$?(-?\d+(?:\.\d+)?)", bridge)
+    debt = re.search(r"total debt\s+\$?(-?\d+(?:\.\d+)?)", bridge)
+    return float(debt.group(1)) - float(cash.group(1)) if (cash and debt) else None
+
+
+def _implied_expectations(
+    peer_comps: PeerComps, catalyst: CatalystPath, implied_val: ImpliedValuation
+) -> ImpliedExpectations | None:
+    """(G) Assemble price-inverted expectations from ALREADY-SOURCED fields (no workbook). TEV =
+    mcap + net debt (simple-TEV basis, labeled — the cell is not surfaced and carries a stale second
+    pricing vintage, so deriving from Latest-mcap is vintage-coherent). implied_level =
+    TEV ÷ multiple for the fixed set; consensus anchors are the same TEV ÷ the forward ladder (so
+    the NTM anchor IS the name-NTM identity row); a G5 residual (FY26 probe) certifies the vintages.
+    Returns None when TEV can't be derived (mcap / net debt absent) — the block won't render."""
+    mc, grid = implied_val.market_cap, peer_comps.peer_grid
+    if (mc.status is not SourceStatus.PRESENT or mc.value is None
+            or grid is None or grid.status is not SourceStatus.PRESENT):
+        return None
+    name_row = next((r for r in (grid.value or []) if getattr(r, "is_name", False)), None)
+    if name_row is None or name_row.net_debt is None:
+        return None
+    market_cap, net_debt = float(mc.value), float(name_row.net_debt)
+    tev = market_cap + net_debt
+    tev_as_of = _ie_asof(mc.source_ref)
+    mult_as_of = (
+        (catalyst.as_of.value or "UNKNOWN").lstrip("≥")
+        if catalyst.as_of.status is SourceStatus.PRESENT else "UNKNOWN")
+    cna = (catalyst.cross_name_anchor.value
+           if catalyst.cross_name_anchor.status is SourceStatus.PRESENT else None)
+    tm = (peer_comps.trading_multiples.value
+          if peer_comps.trading_multiples.status is SourceStatus.PRESENT else None)
+    cna_src = catalyst.cross_name_anchor.source_ref or "CIQ Estimates→Multiples"
+    tm_src = peer_comps.trading_multiples.source_ref or "CIQ Comparable Analysis→Trading Multiples"
+
+    rows: list[ImpliedExpectationRow] = []
+    for label, metric, kind, key in _IE_MULTIPLE_SET:
+        mult = _ie_ladder(cna, "NTM", key) if kind == "ladder" else _ie_peer_median(tm, key)
+        src = cna_src if kind == "ladder" else tm_src
+        if mult is None or mult <= 0:  # NM/negative/absent → UNKNOWN row, never a fake multiple
+            note = ("multiple NM/non-positive — no fundamental level implied" if mult is not None
+                    else "multiple absent from the assembled comps")
+            rows.append(ImpliedExpectationRow(
+                label=label, metric=metric, multiple=mult, multiple_source=src,
+                implied_level=None, is_identity=(kind == "ladder"), note=note))
+        else:
+            rows.append(ImpliedExpectationRow(
+                label=label, metric=metric, multiple=mult, multiple_source=src,
+                implied_level=round(tev / mult, 1), is_identity=(kind == "ladder")))
+
+    # consensus anchors (FY26E/FY27E/NTM EBITDA levels) = the SAME TEV ÷ the forward ladder, so the
+    # NTM anchor equals the name-NTM identity row BY CONSTRUCTION. FY26E is ALSO directly sourced
+    # (acceleration_read) — that direct value is the independent probe the G5 guard checks against.
+    def _anchor(period: str) -> float | None:
+        mo = _ie_ladder(cna, period, "TEV/EBITDA")
+        return round(tev / mo, 0) if (mo and mo > 0) else None
+
+    a26, a27, antm = _anchor("FY 2026"), _anchor("FY 2027"), _anchor("NTM")
+    anchors_txt = " · ".join(
+        f"{lab} {(f'${v:.0f}M') if v is not None else 'n/a'}"
+        for lab, v in (("FY26E", a26), ("FY27E", a27), ("NTM", antm)))
+    anchors = Sourced.present(
+        anchors_txt + " (consensus EBITDA = TEV ÷ forward ladder; NTM = the name-NTM identity)",
+        source_ref=cna_src)
+
+    # (G5) vintage-coherence: derived FY26 (TEV ÷ FY26 forward multiple) vs the DIRECT FY26 EBITDA
+    # consensus (acceleration_read). NTM consensus is not a sourced level, so FY26 — the nearest
+    # direct consensus — the probe; the shared-TEV ladder makes FY26-coherence certify all horizons.
+    direct26 = _ie_consensus_latest(catalyst.acceleration_read.value, "FY 2026", "EBITDA")
+    coherent, pct = True, 0.0
+    if direct26 and direct26 > 0 and a26 is not None:
+        pct = abs(a26 - direct26) / direct26
+        coherent = pct <= _IE_TOL
+    # the residual is stated as a DECIMAL fraction, never a percentage — the block carries zero '%'
+    # tokens (the value-space fence: nothing here is differenced into a percentage gap).
+    if direct26 and a26 is not None:
+        coherence_note = (
+            f"vintage-coherent: derived FY26 ${a26:.0f}M vs direct consensus ${direct26:.1f}M "
+            f"(residual {pct:.3f} ≤ {_IE_TOL:.2f} tolerance)" if coherent else
+            f"multiple-pricing vintage differs from TEV as-of — re-pull comps (derived FY26 "
+            f"${a26:.0f}M vs direct ${direct26:.1f}M, residual {pct:.3f} > {_IE_TOL:.2f})")
+    else:
+        coherence_note = "vintage-coherence UNKNOWN — no direct FY26 EBITDA consensus to probe"
+
+    # (condition b) net-debt coherence vs the cash/debt bridge — reconcile or soft-caveat (C3).
+    bridge_nd = _ie_bridge_net_debt(
+        implied_val.bridge.value if implied_val.bridge.status is SourceStatus.PRESENT else None)
+    nd_ok = bridge_nd is None or abs(bridge_nd - net_debt) <= _IE_TOL * max(1.0, abs(net_debt))
+    tev_src = (
+        f"TEV = mcap {market_cap:.1f} + net debt {net_debt:.1f} "
+        f"(CIQ Comparable Analysis→Financial Data, Latest, as-of {tev_as_of}) — simple-TEV basis"
+        + ("" if nd_ok else f"; ⚠ net-debt {net_debt:.1f} vs bridge {bridge_nd:.1f} — reconcile"))
+    return ImpliedExpectations(
+        rows=rows, tev=Sourced.present(round(tev, 1), source_ref=tev_src), anchors=anchors,
+        heterogeneity_gate=implied_val.comparability_gate.value or "", tev_as_of=tev_as_of,
+        multiples_as_of=mult_as_of, vintage_coherent=coherent, coherence_note=coherence_note,
+        net_debt_reconciled=nd_ok)
+
+
 def assemble_mechanical(
     record: DataRecord,
     *,
@@ -1275,10 +1438,21 @@ def assemble_mechanical(
         fcf=fcf, margin=margin, trajectory=trajectory,
     )
     implied_val = ciq_sheets.implied_valuation(bundle, peer_comps.comparability)
+    # (F) positioning inputs slotted into the catalyst path — free DATED feeds: EDGAR Form 4 insider
+    # activity + FINRA short interest (DTC vs the screen ADV). Counts/shares/dates only.
+    catalyst = _catalyst_path(
+        bundle, reference_date,
+        insider_activity=_insider_activity(edgar, http, record.identity.cik, reference_date),
+        short_interest=_short_interest(finra, record, reference_date),
+    )
+    valuation = _valuation(
+        record, bundle, adj_eps, adj_ev, pe_note=pe_recon[1] if pe_recon else None)
+    # (G) price-inverted expectations (multiples-space) attach to Valuation. Built from already-
+    # assembled fields only (peer multiples + the forward ladder + the derived TEV) — no extraction.
+    valuation = valuation.model_copy(
+        update={"implied_expectations": _implied_expectations(peer_comps, catalyst, implied_val)})
     mech = MechanicalLayer(
-        valuation=_valuation(
-            record, bundle, adj_eps, adj_ev, pe_note=pe_recon[1] if pe_recon else None
-        ),
+        valuation=valuation,
         quality=quality,
         concentration=_concentration(bundle),
         peer_comps=peer_comps,
@@ -1287,13 +1461,7 @@ def assemble_mechanical(
             record, store, graph, resolver, reference_date
         ),
         consensus_context=_consensus(bundle),
-        # (F) positioning inputs slotted into the catalyst path — free, DATED feeds: EDGAR Form 4
-        # insider activity + FINRA short interest (DTC vs the screen ADV). Counts/shares/dates only.
-        catalyst_path=_catalyst_path(
-            bundle, reference_date,
-            insider_activity=_insider_activity(edgar, http, record.identity.cik, reference_date),
-            short_interest=_short_interest(finra, record, reference_date),
-        ),
+        catalyst_path=catalyst,
         # B2 unified leverage & survival (both bases + credit health) + B3 CIQ implied valuation
         # (posed; the comparability gate from peer_comps renders on its header).
         leverage_survival=_leverage_survival(quality, bundle),
