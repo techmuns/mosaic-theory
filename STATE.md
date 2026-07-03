@@ -1393,6 +1393,49 @@ Each line: *what it does* — *verified how*.
     closes: perpetuity REFUTED as a method → the forward-multiple ladder (catalyst_path) + the CIQ
     implied-valuation (B3) + THIS price-inverted block are the standard — all POSED, none concluding
     an implied price or upside.***
+  - **PR H (PR 1 of a 2-way split) — covenant-pointer INTEGRITY fix + fenced Tier-2 covenant-term
+    extraction (2026-07-03).** Two isolated commits (`--rebase` merge, PR-D precedent), each green
+    on its own. **Root cause of the E4 pointer bug, recorded:** the efts full-text search was
+    (a) UNSCOPED — no `ciks=` — and (b) queried on GENERIC balance-sheet labels ("Convertible Bond",
+    "Notes Payable"). A generic phrase matches ANY filer, so MVST's "covenant exhibit pointer"
+    surfaced **AXESSTEL INC's 2005 8-K (`0001193125-05-034397`, a different CIK)** as if it were the
+    subject's execution filing. It stayed hidden because the approval probe read the summary STRING,
+    not the filer CIK behind it — **a method error: verify the pointer, not the prose.**
+    - **Commit A (H1a–c) — pointer integrity.** `EdgarClient.fulltext_search` gains `ciks=`
+      (10-digit zero-padded; a bare int returns empty from efts); `_covenant_pointers` REJECTS any
+      hit whose filer CIK differs (AXESSTEL dropped). An AGREEMENT-CLASS WHITELIST maps an
+      instrument's class to the filing's canonical contract phrase (`_covenant_query`: "Convertible
+      Loan With Shareholder" → query "Loan Agreement", which is what the filing actually names it);
+      a generic BS aggregate (Notes Payable, a lease) renders an honest "no contract-level filing
+      expected (aggregate line item)" note, never a pointer. EXHIBIT-VERIFIED: a kept pointer must
+      point to a filing that CONTAINS the agreement as an exhibit (per-accession index.json), not
+      merely mention it. Returns `Sourced[list[CovenantPointer]]` → source-bound table (family ·
+      filing · date · accession/exhibit-or-note), deduped per family; back-compat to the flat string.
+    - **Commit B (H1d/E5) — fenced covenant TERMS.** New `vinci/dossier/covenant_extract.py`: reads
+      the located exhibit(s) and extracts named terms — the CONVERSION PRICE / SHARE MECHANICS above
+      all — as `CovenantTerm {name, value: Sourced[str]}` rows, each verbatim + source-bound or an
+      explicit UNKNOWN. FENCES: verbatim only (never infer/compute — a stated FORMULA is rendered as
+      a formula, not a fabricated $/share); **machine-set `source_ref`** (the code sets it to the
+      exhibit actually fetched, so the model cannot invent a citation — it fills only the value + a
+      grep-able quote); fail-loud (fetch failure / >600K-char exhibit / LLM error → UNKNOWN + flag,
+      never a silent blank); assembly-and-cite (the tool schema has no verdict/risk field). Runs in
+      `assemble_one` after synthesis, LLM-gated, `model_copy` (frozen). Render + frontend show a
+      source-bound term table; pre-H1d JSON falls back to the flat `covenant_terms` line.
+    *Verified — Commit A on LIVE EDGAR: `_covenant_pointers` returns the latest-10-K ex1013/ex1021
+    (`0001628280-26-018264`), the 2024 Wu Loan & Security execution 8-K (`0001760689-24-000021`, with
+    `wu_microvast-loanandsecuri.htm`), the 2022 syndicated-loan 8-K; Notes Payable → aggregate note;
+    ZERO cross-CIK accessions (AXESSTEL gone). Commit B — REAL Opus 4.8 on the live Wu exhibit (the
+    deliverable, cond. b): Conversion = "$1.00 ÷ Conversion Rate; Rate = 2 shares per $1.00 principal;
+    partial-conversion min $100,000; 9.99% ownership blocker" (formula + rate, NOT a fabricated
+    $/share); principal $12M+$13M (Yang Wu 100%); interest Term SOFR + 9.75% + 3.75% PIK; min-liquidity
+    covenant $5M weekly — all source-bound to `wu_microvast-loanandsecuri.htm`. Cross-exhibit: the
+    2025-03-17 amendment 8-K surfaced maturity AMENDED Nov-28-2025 → May-28-2026, with conversion/
+    principal honestly UNKNOWN ("not stated in the amendment"). +6 tests (AXESSTEL cross-CIK rejection
+    pin, `_covenant_query` mapping, 4 E5: present-verbatim/absent-UNKNOWN source-bound, fetch-fail
+    fail-loud, no-pointer no-op, picker-prefers-loan-security) + 1 live network pin. ruff + mypy
+    --strict (70) + `pytest -m "not network"` (326) green in isolation per commit. On a branch → PR;
+    NOT merged (awaiting review). PR 2 (H2–H7: R1 verify, survival clubbing/dedup, guidance-bridge
+    table, positioning display, twin-outcome rule, FY-E anchor) branches after PR 1 merges.*
 - _Whole suite green (ruff + mypy --strict clean; `pytest -m "not network"` passes)._
 
 ## 3. FALSIFIED — tested and retired (NOT deferred)
