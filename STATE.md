@@ -1306,6 +1306,12 @@ Each line: *what it does* — *verified how*.
     2 network-marked E3/E4 live pins); the no-conclusion walk extended to both new models. ruff + mypy
     --strict (68) + `pytest -m "not network"` green. On a
     branch → PR; NOT merged (awaiting review). Reader-feedback point 6 (survival completion) closes.*
+    **Post-merge audit fix (self-audit #62 → PR #65): the maturity-wall JS mirror bucketed by
+    `getUTCFullYear()` on a LOCAL-midnight Date, so a `YYYY-01-01` maturity mis-bucketed into "≤12m
+    prior-year" for any UTC-ahead viewer (IST/Europe/Asia) — the JS silently violated the pinned
+    calendar-year contract the Python test enforces. Fixed to bucket by the ISO date STRING
+    (timezone-free, matches `date.year`); also routed `_mM` through en-US thousands to match
+    `render._musd` for $1B+ totals. Verified under Asia/Calcutta + a browser render.**
   - **PR F — positioning inputs: EDGAR Form-4 insider activity + FINRA short interest (2026-07-03).**
     Two NEW free, DATED feeds slotted into the catalyst path — the objective inflection markers
     EDGE_THESIS names in the Edge-2 discriminator ("*multiple at floor; **short interest peaking;
