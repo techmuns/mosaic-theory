@@ -1476,9 +1476,10 @@ def _record_with_adv(adv_shares: float | None) -> sdr.DataRecord:
 
 
 def test_insider_activity_partitions_open_market_routine_and_other_codes() -> None:
-    """(F1) Form 4 non-derivative codes are partitioned: open-market P/S drive the counts + net
-    shares (net = ΣP − ΣS); routine A/M/F are tallied separately; any other code (here a conversion
-    C) is LABELED, never dropped. Counts and dates only, source-bound to the latest accession."""
+    """(F1/H5) Form 4 non-derivative codes → PLAIN LABELS: open-market buys/sells drive the counts +
+    net shares (net = ΣP − ΣS); grants = the A (award) code; any other code (here a conversion C) is
+    LABELED under 'other', never dropped. Sign-descriptors only, source-bound to the latest
+    accession."""
     edgar = _FakeEdgar(filings=[Filing(
         cik="0001760689", form="4", filing_date=date(2026, 6, 12),
         accession="0000947871-26-000620", items=[], primary_doc="xslF345X06/ownership.xml")])
@@ -1487,8 +1488,9 @@ def test_insider_activity_partitions_open_market_routine_and_other_codes() -> No
         typing.cast(EdgarClient, edgar), typing.cast(typing.Any, http),
         "0001760689", date(2026, 7, 3))
     assert got.status is ds.SourceStatus.PRESENT
-    # P×1 / S×1 · net (1000 − 6403)/1000 = -5.4K · last 2026-06-12 · routine A×1 · other C×1
-    assert got.value == "P×1 / S×1 · net -5.4K sh · last 2026-06-12 · routine A×1 · other C×1"
+    # buys 1 · sells 1 · net (1000 − 6403)/1000 = -5.4K · grants A×1 · last 2026-06-12 · other C×1
+    assert got.value == ("Open-market buys 1 · sells 1 (net -5.4K sh) · grants 1 · "
+                         "last 2026-06-12 · other C×1")
     assert "0000947871-26-000620" in (got.source_ref or "")
 
 
@@ -1502,24 +1504,50 @@ def test_insider_activity_fail_loud_when_no_form4_in_window() -> None:
 
 
 def test_short_interest_block_computes_dtc_against_the_screen_adv() -> None:
-    """(F2) Latest FINRA settlement → shares short + FINRA's Δ% + days-to-cover computed against the
-    SCREEN 90d ADV (not FINRA's ADV, no recompute). Dated; the DTC basis is in the citation."""
+    """(F2/H5) Latest FINRA settlement → prior→latest with a rising/falling descriptor + FINRA's
+    Δ% + % of shares out (EDGAR XBRL count) + days-to-cover vs the SCREEN 90d ADV (not FINRA's, no
+    recompute) + the latest-4 settlements mini-row. Dated; the DTC basis is in the citation."""
     got = dm._short_interest(
         typing.cast(typing.Any, _FakeFinra(_SI_ROWS)), _record_with_adv(4607454.0),
-        date(2026, 7, 3))
+        date(2026, 7, 3), shares_out=333_157_384.0)
     assert got.status is ds.SourceStatus.PRESENT
-    assert got.value == "Short interest (FINRA, settle 2026-06-15): 26.3M sh (+22.9%) · DTC 5.7d"
+    assert got.value == (
+        "Short interest (FINRA, settle 2026-06-15): 21.4M → 26.3M sh (+22.9%, rising) · "
+        "7.9% of shares out (EDGAR XBRL) · DTC 5.7d · "
+        "recent: 2026-06-15 26.3M · 2026-05-29 21.4M")
     assert "screen 90d ADV" in (got.source_ref or "")  # DTC basis bound in the citation
 
 
-def test_short_interest_block_omits_dtc_when_screen_adv_unknown() -> None:
-    """(F2) DTC needs the screen ADV; when it's UNKNOWN the shares/Δ% still render and the DTC is
-    honestly omitted (never silently recomputed from FINRA's own ADV)."""
+def test_short_interest_block_omits_dtc_and_pct_when_inputs_unknown() -> None:
+    """(F2/H5) DTC needs the screen ADV and the % needs the EDGAR share count; when either is absent
+    the shares/Δ%/trend still render and that leg is honestly omitted (never recomputed)."""
     got = dm._short_interest(
         typing.cast(typing.Any, _FakeFinra(_SI_ROWS)), _record_with_adv(None), date(2026, 7, 3))
     assert got.status is ds.SourceStatus.PRESENT
-    assert "26.3M sh" in (got.value or "") and "DTC" not in (got.value or "")
+    assert "21.4M → 26.3M sh (+22.9%, rising)" in (got.value or "")
+    assert "DTC" not in (got.value or "") and "of shares out" not in (got.value or "")
     assert "screen 90d ADV unavailable" in (got.source_ref or "")
+
+
+def test_positioning_strings_are_sign_descriptors_only_no_interpretation() -> None:
+    """(H5) The no-conclusion walk EXTENDED to the positioning strings: the insider + short-interest
+    lines carry sign-descriptors only (counts, +/-, %, rising/falling) — never interpretive.
+    Neither matches the synthesis directional regex, nor an interpretive-token list."""
+    edgar = _FakeEdgar(filings=[Filing(
+        cik="0001760689", form="4", filing_date=date(2026, 6, 12),
+        accession="0000947871-26-000620", items=[], primary_doc="xslF345X06/ownership.xml")])
+    http = _FakeForm4Http({"directory": {"item": [{"name": "ownership.xml"}]}}, _FORM4_XML)
+    insider = (dm._insider_activity(
+        typing.cast(EdgarClient, edgar), typing.cast(typing.Any, http),
+        "0001760689", date(2026, 7, 3)).value or "")
+    short = (dm._short_interest(
+        typing.cast(typing.Any, _FakeFinra(_SI_ROWS)), _record_with_adv(4607454.0),
+        date(2026, 7, 3), shares_out=333_157_384.0).value or "")
+    interpretive = ("bullish", "bearish", "concerning", "alarming", "squeeze", "conviction",
+                    "signal", "worrying", "red flag", "suggests", "implies", "warns")
+    for line in (insider, short):
+        assert not syn._DIRECTIONAL.search(line), line  # no buy/sell verdict / directional language
+        assert not any(t in line.lower() for t in interpretive), line
 
 
 def test_short_interest_fail_loud_when_no_settlement_on_file() -> None:
@@ -1544,12 +1572,13 @@ def test_positioning_fields_live_on_the_walked_catalyst_path() -> None:
 
 @pytest.mark.network
 def test_insider_activity_real_mvst() -> None:
-    """(F1, live) MVST's trailing-6m Form 4s — 18 on file incl. 3× on 2026-06-12; routine grants
-    dominate (no open-market buys). Pins the latest accession 0000947871-26-000620."""
+    """(F1/H5, live) MVST's trailing-6m Form 4s — 18 on file incl. 3× on 2026-06-12; grants dominate
+    (no open-market buys). Plain-label render; pins the latest accession 0000947871-26-000620."""
     edgar, http = EdgarClient.from_config(), build_sec_http()
     got = dm._insider_activity(edgar, http, "0001760689", date(2026, 7, 3))
     assert got.status is ds.SourceStatus.PRESENT
-    assert got.value is not None and got.value.startswith("P×") and "routine" in got.value
+    assert got.value is not None and got.value.startswith("Open-market buys 0 · sells ")
+    assert "grants " in got.value and "last " in got.value
     assert "0000947871-26-000620" in (got.source_ref or "")
 
 

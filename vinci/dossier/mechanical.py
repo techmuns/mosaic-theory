@@ -42,7 +42,7 @@ from vinci.dossier.schemas import (
     Valuation,
 )
 from vinci.edgar.client import EdgarClient
-from vinci.edgar.concepts import extract_points
+from vinci.edgar.concepts import extract_points, latest_instant
 from vinci.finra import FinraLayoutError, short_interest_points
 from vinci.graph.exposure import ExposureGraph
 from vinci.graph.filings import html_to_text
@@ -958,11 +958,10 @@ def _leverage_survival(quality: Quality, bundle: CiqBundle) -> LeverageSurvival:
 
 
 # (F1) Form 4 non-derivative transaction codes: open-market P (purchase) / S (sale) are the
-# positioning SIGNAL; A (grant/award) / M (option exercise) / F (tax withholding) are routine comp
-# mechanics tallied SEPARATELY; anything else (C conversion, G gift, …) is bucketed as 'other' and
+# positioning SIGNAL; A (grant/award) is surfaced as 'grants'; every other non-open-market code
+# (M option exercise, F tax withholding, C conversion, G gift, …) is bucketed as 'other' and
 # LABELED — never silently dropped (that would misstate the counts). Counts + dates only.
 _OPEN_MARKET_CODES = ("P", "S")
-_ROUTINE_CODES = ("A", "M", "F")
 
 
 def _form4_codes(http: CachedHttp, cik: str, accession: str) -> list[tuple[str, float]]:
@@ -1023,13 +1022,14 @@ def _insider_activity(
                 net -= sh
     p, s = counts.get("P", 0), counts.get("S", 0)
     last = max(f.filing_date for f in filings)
-    line = f"P×{p} / S×{s} · net {net / 1000:+.1f}K sh · last {last.isoformat()}"
-    routine = "/".join(f"{c}×{counts[c]}" for c in _ROUTINE_CODES if counts.get(c))
-    if routine:
-        line += f" · routine {routine}"
+    # (H5) PLAIN LABELS, sign-descriptors only (counts + net + dates) — no interpretive language.
+    # 'grants' = the A (award/grant) code; option-exercise (M) / tax-withheld (F) / conversions (C)
+    # etc. are preserved compactly under 'other' so nothing is silently dropped.
+    line = (f"Open-market buys {p} · sells {s} (net {net / 1000:+.1f}K sh) · "
+            f"grants {counts.get('A', 0)} · last {last.isoformat()}")
     other = "/".join(
         f"{c}×{n}" for c, n in sorted(counts.items())
-        if c not in _OPEN_MARKET_CODES and c not in _ROUTINE_CODES and n
+        if c not in _OPEN_MARKET_CODES and c != "A" and n
     )
     if other:
         line += f" · other {other}"
@@ -1037,9 +1037,12 @@ def _insider_activity(
         line, source_ref=f"EDGAR Form 4 (latest {filings[0].accession}; {len(filings)} in 6m)")
 
 
-def _short_interest(finra: CachedHttp, record: DataRecord, reference_date: date) -> Sourced[str]:
-    """(F2) Latest FINRA settlement short interest — shares short + FINRA's own Δ% + days-to-cover
-    computed against the SCREEN data-record ADV (no ADV recompute). Dated as-of (no floor). A cross-
+def _short_interest(
+    finra: CachedHttp, record: DataRecord, reference_date: date, *, shares_out: float | None = None
+) -> Sourced[str]:
+    """(F2/H5) Latest FINRA settlement short interest, sign-descriptors only: prior → latest with a
+    rising/falling trend + FINRA's own Δ%, the % of shares out (EDGAR XBRL count), days-to-cover vs
+    the SCREEN 90d ADV, and the latest-4 settlements as a mini-row. No interpretation — a cross-
     reference for the human, never a conclusion; fail-loud UNKNOWN when no settlement is on file."""
     symbol = record.identity.ticker
     try:
@@ -1050,18 +1053,41 @@ def _short_interest(finra: CachedHttp, record: DataRecord, reference_date: date)
     if not points:
         return Sourced.unknown(note="no FINRA short-interest settlement in the trailing window")
     latest = points[0]
-    line = f"{latest.shares_short / 1e6:.1f}M sh"
-    if latest.change_percent is not None:
-        line += f" ({latest.change_percent:+.1f}%)"
+    prior = points[1] if len(points) > 1 else None
+    # (H5) prior → latest with a rising/falling sign-descriptor (a plain comparison, not a verdict)
+    if prior is not None:
+        trend = ("rising" if latest.shares_short > prior.shares_short
+                 else "falling" if latest.shares_short < prior.shares_short else "flat")
+        line = f"{prior.shares_short / 1e6:.1f}M → {latest.shares_short / 1e6:.1f}M sh"
+        pct = f"{latest.change_percent:+.1f}%, " if latest.change_percent is not None else ""
+        line += f" ({pct}{trend})"
+    else:
+        line = f"{latest.shares_short / 1e6:.1f}M sh"
+        if latest.change_percent is not None:
+            line += f" ({latest.change_percent:+.1f}%)"
+    if shares_out and shares_out > 0:  # (H5) % of shares out, EDGAR XBRL count (omitted if absent)
+        line += f" · {latest.shares_short / shares_out * 100:.1f}% of shares out (EDGAR XBRL)"
     adv = record.prices.adv_90d_shares
     if adv.coverage_status is CoverageStatus.PRESENT and adv.value:
         line += f" · DTC {latest.shares_short / adv.value:.1f}d"
         basis = f"DTC = {latest.shares_short:,} short ÷ {adv.value:,.0f} screen 90d ADV"
     else:
         basis = "screen 90d ADV unavailable — DTC omitted"
+    # (H5) latest-4 settlements mini-row (dates + shares) — the recent trend, source-bound
+    mini = " · ".join(f"{pt.settlement_date} {pt.shares_short / 1e6:.1f}M" for pt in points[:4])
     return Sourced.present(
-        f"Short interest (FINRA, settle {latest.settlement_date}): {line}",
+        f"Short interest (FINRA, settle {latest.settlement_date}): {line} · recent: {mini}",
         source_ref=f"FINRA consolidated short interest (settle {latest.settlement_date}); {basis}")
+
+
+def _edgar_shares_outstanding(edgar: EdgarClient, cik: str | None) -> float | None:
+    """(H5) Latest EDGAR XBRL shares outstanding (dei cover-page, us-gaap fallback), or None when
+    absent — the denominator for short interest as a % of shares out (never faked when missing)."""
+    facts = _companyfacts_or_none(edgar, cik)
+    if not facts:
+        return None
+    pt = latest_instant(extract_points(facts, "shares"))
+    return pt.value if pt else None
 
 
 def _catalyst_path(
@@ -1544,7 +1570,9 @@ def assemble_mechanical(
     catalyst = _catalyst_path(
         bundle, reference_date,
         insider_activity=_insider_activity(edgar, http, record.identity.cik, reference_date),
-        short_interest=_short_interest(finra, record, reference_date),
+        short_interest=_short_interest(
+            finra, record, reference_date,
+            shares_out=_edgar_shares_outstanding(edgar, record.identity.cik)),
     )
     valuation = _valuation(
         record, bundle, adj_eps, adj_ev, pe_note=pe_recon[1] if pe_recon else None)
