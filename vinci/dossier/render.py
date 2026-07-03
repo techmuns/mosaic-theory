@@ -15,6 +15,7 @@ from datetime import UTC, date, datetime
 from itertools import groupby
 from typing import Any
 
+from vinci.dossier.covenant_extract import governing_terms
 from vinci.dossier.schemas import Dossier, MechanicalLayer, Sourced, SourceStatus
 
 # Display curation for the catalyst path — the full data always stays in dossier.json; these only
@@ -518,26 +519,50 @@ def _covenant_pointer_lines(cs: Any) -> list[str]:
 
 
 def _covenant_term_lines(cs: Any) -> list[str]:
-    """(E5/H1d) Fenced Tier-2 covenant terms as a table — term | value (verbatim, or UNKNOWN) |
-    source (exhibit · quote). Each PRESENT value is bound to the exhibit it was read from; an absent
-    term is a visible UNKNOWN, never a guess. A pre-H1d dossier.json (no rows) falls back to the
-    flat one-line string."""
+    """(P5/E5) Fenced Tier-2 covenant terms, TERM-GOVERNED — ONE table per instrument family, each
+    term collapsed to its GOVERNING value (an amendment overrides the base), the source citing
+    the base § with an "amended by <accession>" chain. No UNKNOWN row is ordered above a present
+    answer (governing_terms takes the latest PRESENT). A pre-H1d dossier.json falls back to the flat
+    one-line string."""
     rows_s = getattr(cs, "covenant_term_rows", None)
     if rows_s is None or rows_s.status is not SourceStatus.PRESENT or not rows_s.value:
         return [_fact("Covenant terms (Tier-2, fenced)", cs.covenant_terms)]
-    cols = ["Value (verbatim, or UNKNOWN)", "Source (exhibit · verbatim quote)"]
-    rows = []
-    for r in rows_s.value:
-        v = r.value
-        if v.status is SourceStatus.PRESENT:
-            src = v.source_ref or "—"
-            if v.note:
-                src = f"{src} — {v.note[:160]}{'…' if len(v.note) > 160 else ''}"
-            rows.append([r.name, str(v.value), src])
-        else:
-            rows.append([r.name, "UNKNOWN", v.note or "not stated"])
-    return _table("Covenant terms (Tier-2, fenced — verbatim, source-bound)",
-                  rows_s.source_ref, cols, rows)
+    ptrs = getattr(cs, "covenant_pointer_rows", None)
+    gov = governing_terms(rows_s.value, ptrs.value if ptrs is not None and ptrs.value else [])
+    if not gov:
+        return [_fact("Covenant terms (Tier-2, fenced)", cs.covenant_terms)]
+    families: list[str] = []
+    for g in gov:
+        if g.family not in families:
+            families.append(g.family)
+    cols = ["Governing value (verbatim, or UNKNOWN)", "Source § (base · amended by)"]
+    out: list[str] = []
+    for fam in families:
+        rows: list[list[str]] = []
+        for g in (t for t in gov if t.family == fam):
+            v = g.value
+            if v.status is SourceStatus.PRESENT:
+                src = g.base_ref or v.source_ref or "—"
+                if g.amended_by:
+                    src += f" · amended by {', '.join(g.amended_by)}"
+                rows.append([g.term, str(v.value), src])
+            else:  # a term NO exhibit stated — one UNKNOWN row, never ABOVE a present answer (P5)
+                rows.append([g.term, "UNKNOWN", v.note or "not stated"])
+        out += _table(f"Covenant terms — {fam} (governing; Tier-2 fenced)", rows_s.source_ref,
+                      cols, rows)
+    # (FIX-2) ONE human line inside the covenant block for located agreement exhibits NOT extracted
+    # this run (cost bound / fetch fail) — the per-exhibit machine detail is a QA flag, not a
+    # caveat. Derived: located pointer accessions minus the accessions the extraction actually read.
+    located = {p.accession for p in (ptrs.value if ptrs is not None and ptrs.value else [])
+               if p.accession}
+    extracted = {m.group(1) for r in rows_s.value
+                 if (m := re.search(r"\b(\d{10}-\d{2}-\d{6})\b",
+                                 r.value.source_ref or r.value.note or ""))}
+    missing = sorted(located - extracted)
+    if missing:
+        out.append(f"- _{len(missing)} located agreement exhibit(s) not extracted this run "
+                   f"(cost bound / fetch fail) — see the pointer table: {', '.join(missing)}_")
+    return out
 
 
 def _quality_leverage_lines(m: MechanicalLayer) -> list[str]:

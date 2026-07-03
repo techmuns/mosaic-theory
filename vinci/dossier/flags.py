@@ -39,6 +39,8 @@ _QA_MARKERS: tuple[str, ...] = (
     "LLM synthesis",
     "RULE-LEAK",  # R3 — an internal 'rule N' reference leaked into the output (dev QA lint)
     "CONTRADICTION",  # P2 — synthesis calls a PRESENT mechanical block pending/unread (dev QA lint)
+    "(E5)",  # FIX-2 — Tier-2 covenant-extraction machine notes (cost bound / fetch fail) → dev, not
+    "(P3)",  # a decision caveat; the human-facing summary is one line INSIDE the covenant block.
 )
 
 # The validator-speak caveats carry a `{where}:` field name (which synthesis point tripped it).
