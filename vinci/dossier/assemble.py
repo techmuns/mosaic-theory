@@ -12,7 +12,7 @@ from __future__ import annotations
 import json
 from concurrent.futures import ThreadPoolExecutor
 from dataclasses import dataclass
-from datetime import date, datetime
+from datetime import UTC, date, datetime
 from pathlib import Path
 from typing import Any
 
@@ -139,7 +139,9 @@ def assemble_one(
         ticker=ticker, name=rec.identity.name, cik=rec.identity.cik,
         reference_date=fin.reference_date, rank=fin.rank, mechanical=mech, synthesis=synthesis,
         caveats=caveats, qa_flags=qa_flags,
-        llm_model=(llm.model if llm else None), assembled_at=datetime.now(),
+        # UTC-aware so the stamp is unambiguous and comparable across machines/timezones — it lets
+        # the human tell two same-day re-assemblies apart (rendered with time + "UTC").
+        llm_model=(llm.model if llm else None), assembled_at=datetime.now(UTC),
     )
     _write(dossier, llm_log, out_root)
     return dossier
