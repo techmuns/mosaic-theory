@@ -324,12 +324,19 @@ class EdgarClient:
         phrase: str,
         *,
         forms: str = "8-K",
+        ciks: str | None = None,
         startdt: str | None = None,
         enddt: str | None = None,
     ) -> list[FtsHit]:
-        """Search EDGAR full text for an exact phrase. Spaces → %20 (an efts requirement)."""
+        """Search EDGAR full text for an exact phrase. Spaces → %20 (an efts requirement).
+
+        ``ciks`` scopes the search to a single filer — pass the 10-digit ZERO-PADDED CIK (a bare
+        integer returns nothing; efts requires the padded form). Without it a phrase like
+        "Convertible Bond" matches ANY filer, so a covenant lookup MUST scope to the subject."""
         q = urllib.parse.quote(f'"{phrase}"')  # quote() => spaces become %20, not '+'
         url = f"{_EFTS}?q={q}&forms={forms}"
+        if ciks:
+            url += f"&ciks={pad_cik(ciks)}"  # 10-digit; a bare int yields an empty efts result
         if startdt and enddt:
             url += f"&startdt={startdt}&enddt={enddt}"
         data = cast(dict[str, Any], self._efts.get_json(url, ttl_seconds=_ONE_DAY))

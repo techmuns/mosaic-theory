@@ -343,8 +343,22 @@ function capitalStructure(cs, refDate) {
     table + maturityWall(cs, refDate) +
     fact("Aggregates (latest quarter)", cs.summary) +
     fact("8-Ks at instrument maturities", cs.maturity_filings) +
-    fact("Covenant exhibit pointers", cs.covenant_pointers) +
+    covenantPointers(cs) +
     fact("Covenant terms (Tier-2, fenced)", cs.covenant_terms));
+}
+
+// (H1) covenant/contract pointers → table (CIK-verified execution filings); old JSON → flat fact.
+function covenantPointers(cs) {
+  const rs = cs.covenant_pointer_rows;
+  if (!rs || rs.status !== "present" || !Array.isArray(rs.value) || !rs.value.length)
+    return fact("Covenant exhibit pointers", cs.covenant_pointers);
+  const rows = rs.value.map((r) => ({
+    label: r.family,
+    cells: [r.filing, r.filing_date || "—",
+      r.accession ? `${r.accession} — ${(r.exhibits || []).slice(0, 3).join(", ")}` : r.note],
+  }));
+  return dataTable("Covenant / contract pointers (CIK-verified execution filings)", rs.source_ref,
+    ["Filing", "Date", "Accession / exhibit (or note)"], rows, "");
 }
 
 // (D1) leverage & survival — the survival story in one place (+ FCF + capital structure). Falls back

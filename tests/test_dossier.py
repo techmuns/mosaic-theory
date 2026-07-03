@@ -1088,8 +1088,8 @@ class _FakeEdgar:
                        since: date | None = None) -> list[Filing]:
         return self._tenks if "10-K" in forms else self._filings
 
-    def fulltext_search(self, phrase: str, forms: str = "8-K", startdt: date | None = None,
-                        enddt: date | None = None) -> list[FtsHit]:
+    def fulltext_search(self, phrase: str, forms: str = "8-K", ciks: str | None = None,
+                        startdt: date | None = None, enddt: date | None = None) -> list[FtsHit]:
         return self._hits
 
 
@@ -1099,6 +1099,20 @@ class _FakeHttp:
 
     def get_json(self, url: str, ttl_seconds: int | None = None) -> dict[str, typing.Any]:
         return self._index
+
+
+class _FakeIndexHttp:
+    """A fake SEC http mapping an accession (no dashes) → its index.json — so a per-accession
+    exhibit lookup distinguishes the Wu 8-K, the 10-K, and a cross-CIK hit (H1 pointer test)."""
+
+    def __init__(self, by_accession: dict[str, dict[str, typing.Any]]) -> None:
+        self._by = by_accession
+
+    def get_json(self, url: str, ttl_seconds: int | None = None) -> dict[str, typing.Any]:
+        for accn, idx in self._by.items():
+            if accn in url:
+                return idx
+        return {"directory": {"item": []}}
 
 
 def test_maturity_8ks_offline_anchors_to_trailing_12m_maturity() -> None:
@@ -1119,32 +1133,49 @@ def test_maturity_8ks_offline_anchors_to_trailing_12m_maturity() -> None:
     assert empty.status is ds.SourceStatus.UNKNOWN and empty.value is None
 
 
-def test_covenant_pointers_offline_finds_10k_material_contract_exhibits() -> None:
-    """(E4) The latest 10-K's exhibit index is scanned for material-contract exhibits (ex-10.x,
-    substring-matched so a ticker-prefixed filename still hits) + efts on the instrument family. No
-    exhibit anywhere → an honest-absence UNKNOWN (expected for undocumented bank facilities)."""
-    insts = [_inst("Convertible Bond - CNY", 41.7, "2027-01-31", convertible=True)]
-    idx = {"directory": {"item": [
-        {"name": "mvst20251231-ex1013.htm"}, {"name": "mvst20251231-ex1021.htm"},
-        {"name": "mvst20251231.htm"}]}}
-    fake = _FakeEdgar(
+def test_covenant_query_maps_class_to_a_canonical_agreement_phrase() -> None:
+    """(H1b) The CIQ label rarely matches the filing's contract name, so query the class's canonical
+    agreement term — a loan → 'Loan Agreement' (surfaces the Wu 8-K), a bond → 'Indenture'."""
+    assert dm._covenant_query("Convertible Loan With Shareholder - Term Loan") == "Loan Agreement"
+    assert dm._covenant_query("Loan Facilities Agreement With Lenders") == "Loan Agreement"
+    assert dm._covenant_query("Convertible Bond - CNY") == "Indenture"
+
+
+def test_covenant_pointers_reject_cross_cik_and_locate_the_wu_execution_8k() -> None:
+    """(H1a-c) The load-bearing fix: efts is CIK-scoped AND a cross-CIK hit is REJECTED — AXESSTEL's
+    2005 8-K (0001193125-05-034397, a DIFFERENT filer) the old unscoped search matched for
+    'Convertible Bond' is dropped; only the subject's EXHIBIT-BEARING execution filing (the Wu Loan
+    & Security 8-K) is kept. A generic BS line (Notes Payable) renders a no-filing note."""
+    insts = [_inst("Convertible Loan With Shareholder - Initial Term Loan", 12.0, "2026-05-28"),
+             _inst("Notes Payable", 78.3, None, type="Bonds and Notes", secured=False)]
+    indexes = {
+        "000162828026018264": {"directory": {"item": [
+            {"name": "mvst20251231-ex1013.htm"}, {"name": "mvst20251231-ex1021.htm"},
+            {"name": "mvst20251231.htm"}]}},                                          # latest 10-K
+        "000176068924000021": {"directory": {"item": [
+            {"name": "mvst-20240603.htm"}, {"name": "wu_microvast-loanandsecuri.htm"},
+            {"name": "wu_microvast-guarantyagree.htm"}]}},                            # the Wu 8-K
+        "000119312505034397": {"directory": {"item": [{"name": "axesstel-ex101.htm"}]}},  # AXESSTEL
+    }
+    edgar = _FakeEdgar(
         tenks=[Filing(cik="0001760689", form="10-K", filing_date=date(2026, 3, 16),
-                      accession="0001628280-26-018264", items=[], primary_doc="mvst-10k.htm")],
-        hits=[FtsHit(accession="0001193125-05-034397", cik=None, form="8-K", file_date=None,
-                     display_names=[])])
+                      accession="0001628280-26-018264", items=[], primary_doc="x.htm")],
+        hits=[FtsHit(accession="0001193125-05-034397", cik="0001092492", form="8-K",
+                     file_date=date(2005, 2, 22), display_names=["AXESSTEL INC"]),
+              FtsHit(accession="0001760689-24-000021", cik="0001760689", form="8-K",
+                     file_date=date(2024, 6, 4), display_names=["Microvast"])])
     got = dm._covenant_pointers(
-        typing.cast(EdgarClient, fake), typing.cast(typing.Any, _FakeHttp(idx)),
+        typing.cast(EdgarClient, edgar), typing.cast(typing.Any, _FakeIndexHttp(indexes)),
         "0001760689", insts)
     assert got.status is ds.SourceStatus.PRESENT
-    assert "0001628280-26-018264" in (got.value or "")
-    assert "mvst20251231-ex1013.htm" in (got.value or "")
-    assert "mvst20251231-ex1021.htm" in (got.value or "")
-    assert "efts" in (got.value or "")  # the family-description full-text pointer
-    absent = dm._covenant_pointers(
-        typing.cast(EdgarClient, _FakeEdgar()), typing.cast(typing.Any, _FakeHttp({})),
-        "0001760689", insts)
-    assert absent.status is ds.SourceStatus.UNKNOWN
-    assert "no credit/loan/indenture" in (absent.note or "")
+    accs = {r.accession for r in got.value}
+    assert "0001193125-05-034397" not in accs  # cross-CIK AXESSTEL 2005 REJECTED (the bug it fixes)
+    assert "0001760689-24-000021" in accs  # the Wu execution 8-K located
+    assert "0001628280-26-018264" in accs  # the latest-10-K material-contract exhibits
+    wu = next(r for r in got.value if r.accession == "0001760689-24-000021")
+    assert any("loanandsecuri" in e for e in wu.exhibits)  # the E5 extraction target
+    notes = next(r for r in got.value if r.family == "Notes Payable")
+    assert notes.accession == "" and "no contract-level filing expected" in notes.note
 
 
 def test_capital_structure_covenant_terms_note_is_opacity_as_signal() -> None:
@@ -1183,15 +1214,21 @@ def test_maturity_8ks_real_mvst_anchors_the_may_2026_8k() -> None:
 
 
 @pytest.mark.network
-def test_covenant_pointers_real_mvst_finds_10k_exhibits() -> None:
-    """(E4, live) MVST's latest 10-K material-contract exhibits. Pins ex1013/ex1021 in
-    0001628280-26-018264 (the efts family pointer also renders)."""
+def test_covenant_pointers_real_mvst_cik_scoped_finds_wu_8k_no_cross_cik() -> None:
+    """(H1, live) CIK-scoped efts + exhibit verification on real MVST: the latest-10-K exhibits, the
+    2024 Wu Loan & Security 8-K (0001760689-24-000021), and ZERO cross-CIK accessions (the AXESSTEL
+    2005 hit the old unscoped search returned is gone)."""
     edgar, http = EdgarClient.from_config(), build_sec_http()
-    insts = [_inst("Convertible Bond", 41.7, "2027-01-31", convertible=True)]
+    insts = [_inst("Convertible Loan With Shareholder - Initial Term Loan", 12.0, "2026-05-28"),
+             _inst("Notes Payable", 78.3, None, type="Bonds and Notes", secured=False)]
     got = dm._covenant_pointers(edgar, http, "0001760689", insts)
     assert got.status is ds.SourceStatus.PRESENT
-    assert "0001628280-26-018264" in (got.value or "")
-    assert "ex1013" in (got.value or "") and "ex1021" in (got.value or "")
+    accs = [r.accession for r in got.value if r.accession]
+    assert "0001760689-24-000021" in accs  # the Wu execution 8-K
+    assert any("ex1013" in " ".join(r.exhibits) for r in got.value)  # latest-10-K exhibits
+    assert "0001193125-05-034397" not in accs  # AXESSTEL cross-CIK gone
+    assert all(a[:10] in ("0001760689", "0001628280", "0000947871")
+               for a in accs), f"cross-CIK accession leaked: {accs}"
 
 
 # --- R1 / R2: keyword-tier interposition + self-twin year-in-name rule ------------------------
