@@ -37,6 +37,7 @@ from vinci.themes.forward import (
     load_ledger,
     measure_hold_none,
     measure_horizon,
+    naive_by_layer,
     power_label,
     records_from_worksheet,
     undefined_ratified_measures,
@@ -337,3 +338,78 @@ def test_watchlist_onset_baseline() -> None:
 def test_hold_none_honesty_is_not_an_edge_verdict() -> None:
     assert "UNDEFINED" in HOLD_NONE_HONESTY and "NOT a validation" in HOLD_NONE_HONESTY
     assert "zero RATIFIED" in HOLD_NONE_HONESTY
+
+
+# ---- 2nd-driver generalization: demand-shaped schema + avoid-controls + category split ----------
+def test_records_from_worksheet_reads_demand_shaped_schema(tmp_path: Path) -> None:
+    """The defense worksheet uses category / grade_concreteness / driver_tie for the SAME fields the
+    AI-datacenter worksheet calls chain_layer / machine_grade / grade_driver_tie — the loader reads
+    either (driver-agnostic), so the 2nd driver freezes without a schema rewrite."""
+    csv = tmp_path / "defense_ws.csv"
+    csv.write_text(
+        "category,ticker,cik,grade_concreteness,driver_tie,grade_fact,grade_accession,"
+        "DISPOSITION,RATIONALE\n"
+        "attritable-air,RCAT,1,binding-contract,driver-specific,Teal $9.5M Army SRR,acc-r,"
+        "PASSED,real but priced\n"
+        "munitions-scale,NEU,2,committed-capacity,driver-specific,AP +50% line,acc-n,PASSED,rich\n")
+    recs, pending = records_from_worksheet(csv, driver="defense-demand-shift",
+                                           ratification_date=date(2026, 7, 3))
+    assert pending == 0 and {r.ticker for r in recs} == {"RCAT", "NEU"}
+    rcat = next(r for r in recs if r.ticker == "RCAT")
+    assert rcat.chain_layer == "attritable-air"        # category -> chain_layer
+    assert rcat.machine_grade == "binding-contract"    # grade_concreteness -> machine_grade
+    assert rcat.driver_tie == "driver-specific"         # driver_tie -> driver_tie
+
+
+def _defense_baskets() -> FrozenBaskets:
+    """Zero-RATIFIED defense-shaped freeze: parallel capability CATEGORIES (not chain layers), with
+    an avoid-controls near-miss cohort inside the PASSED leg."""
+    layer_of = {"RCAT": "attritable-air", "NEU": "munitions-scale",
+                "LASR": "counter-uas", "DCO": "defense-autonomy"}
+    recs = [_rec(t, Disposition.PASSED, layer_of[t]).model_copy(
+        update={"driver": "defense-demand-shift", "ratification_date": date(2026, 7, 3)})
+        for t in layer_of]
+    return freeze_baskets(recs, list(layer_of), driver="defense-demand-shift",
+                          freeze_timestamp="2026-07-03T00:00:00", layer_of=layer_of,
+                          watchlist=["NEU"], real_tier=["RCAT"],
+                          avoid_controls=["LASR", "DCO"])
+
+
+def test_avoid_controls_freeze_and_must_be_passed() -> None:
+    b = _defense_baskets()
+    assert b.avoid_controls == ("LASR", "DCO")          # labeled near-miss control cohort frozen
+    assert set(b.avoid_controls) <= set(b.passed)        # within the AVOID leg
+    # a RATIFIED (or unknown) name cannot be an avoid-control — fail loud
+    recs = [_rec("RCAT", Disposition.RATIFIED), _rec("NEU", Disposition.PASSED)]
+    with pytest.raises(ValueError, match="avoid_controls must be PASSED"):
+        freeze_baskets(recs, ["RCAT", "NEU"], driver="d", freeze_timestamp="2026-07-03T00:00:00",
+                       layer_of={"RCAT": "attritable-air", "NEU": "munitions-scale"},
+                       avoid_controls=["RCAT"])          # RCAT is RATIFIED, not PASSED
+
+
+def test_naive_by_layer_is_category_aware_and_driver_agnostic() -> None:
+    """The per-category NAIVE split works over defense's PARALLEL categories (not chain layers),
+    forward-only from the freeze date; benchmark-adjusted per name."""
+    b = _defense_baskets()
+    prices = {("IWM", "2026-07-03"): 100.0, ("IWM", "2026-10-01"): 100.0,
+              ("RCAT", "2026-07-03"): 100.0, ("RCAT", "2026-10-01"): 130.0,   # +30%
+              ("NEU", "2026-07-03"): 100.0, ("NEU", "2026-10-01"): 110.0,     # +10%
+              ("LASR", "2026-07-03"): 100.0, ("LASR", "2026-10-01"): 90.0,    # -10%
+              ("DCO", "2026-07-03"): 100.0, ("DCO", "2026-10-01"): 105.0}     # +5%
+    by = naive_by_layer(b, _price_fn(prices), horizon_days=90, as_of=date(2026, 10, 1))
+    got = {lr.layer: (lr.mean_return, lr.n) for lr in by}
+    assert set(got) == {"attritable-air", "munitions-scale", "counter-uas", "defense-autonomy"}
+    assert got["attritable-air"][0] == pytest.approx(0.30, abs=1e-6)  # RCAT alone
+    assert got["counter-uas"][0] == pytest.approx(-0.10, abs=1e-6)    # LASR alone
+    assert all(n == 1 for _, n in got.values())
+
+
+def test_diagnostic_confound_names_the_driver() -> None:
+    """The beta-confound is DRIVER-labelled (defense-beta, not AI-datacenter-beta), while keeping
+    the 'BETA-CONFOUNDED' marker + the correct committed-tier size in the detail."""
+    b = _defense_baskets()
+    d = diagnostic_avoid_discipline(b, _price_fn({}), horizon_days=90, as_of=date(2026, 7, 3))
+    assert "BETA-CONFOUNDED" in d.confound            # the marker the honesty label depends on
+    assert "defense-demand-shift" in d.confound        # driver-labelled, not hardcoded
+    assert "AI-datacenter" not in d.confound
+    assert "NAIVE-4" in d.detail                       # committed-tier size, not hardcoded 56

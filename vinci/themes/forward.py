@@ -86,6 +86,10 @@ class FrozenBaskets(BaseModel, frozen=True):
     # ticker -> verbatim trigger text
     watchlist_triggers: dict[str, str] = Field(default_factory=dict)
     real_tier: tuple[str, ...] = ()  # OPTIONAL looser secondary (build-2 REAL-7)
+    # labeled control cohort WITHIN the AVOID leg — the highest-value near-misses (best of PASSED);
+    # tracks whether the human's PASS on the strongest almost-buys held up forward. NOT the
+    # watchlist (those are genuine-exposure re-underwrite candidates); these are near-miss controls.
+    avoid_controls: tuple[str, ...] = ()
     deferred_controls: tuple[str, ...] = (
         "keyword/co-movement naive baseline (§3b-ii) — SECOND-PHASE: needs Component A "
         "live-forward; the INDEPENDENT replicable control (isolates the classifier's contribution "
@@ -181,8 +185,15 @@ def records_from_worksheet(
                 raise ValueError(f"{row.get('ticker')}: unrecognized DISPOSITION {raw!r}")
             records.append(RatificationRecord(
                 ticker=row["ticker"], cik=row["cik"], driver=driver,
-                chain_layer=row["chain_layer"], machine_grade=row["machine_grade"],
-                driver_tie=row.get("grade_driver_tie", ""), grade_fact=row.get("grade_fact", ""),
+                # schema-flexible: the AI-datacenter worksheet uses chain_layer / machine_grade /
+                # grade_driver_tie; a demand-shaped worksheet (e.g. defense) uses category /
+                # grade_concreteness / driver_tie for the SAME three fields. ``chain_layer`` holds
+                # the theme's sub-structure tag (a value-chain layer OR a parallel capability
+                # category) — driver-agnostic.
+                chain_layer=row.get("chain_layer") or row.get("category", ""),
+                machine_grade=row.get("machine_grade") or row.get("grade_concreteness", ""),
+                driver_tie=row.get("grade_driver_tie") or row.get("driver_tie", ""),
+                grade_fact=row.get("grade_fact", ""),
                 source_ref=row.get("grade_accession", ""), disposition=disp,
                 rationale=(row.get("RATIONALE") or "").strip(),
                 ratification_date=ratification_date))
@@ -196,13 +207,15 @@ def freeze_baskets(
     records: list[RatificationRecord], all_committed: list[str], *,
     driver: str, freeze_timestamp: str, layer_of: dict[str, str],
     watchlist: list[str] | None = None, watchlist_triggers: dict[str, str] | None = None,
-    real_tier: list[str] | None = None,
+    real_tier: list[str] | None = None, avoid_controls: list[str] | None = None,
 ) -> FrozenBaskets:
     """Freeze the immutable baskets. GUARD (§1): every committed name must be RATIFIED or PASSED —
     a DIG-DEEPER or a missing disposition means the tier is NOT ready; raise (cannot freeze). An
     EMPTY BUY leg (zero RATIFIED — all PASSED) is VALID and does NOT error: ``ratified`` freezes as
     ``()``. The optional ``watchlist`` (re-underwrite cohort, must be ⊆ committed) + verbatim
-    ``watchlist_triggers`` and the ``real_tier`` (a separate build-2 cohort) freeze alongside."""
+    ``watchlist_triggers``, the ``real_tier`` (a separate build-2 cohort), and the
+    ``avoid_controls`` (labeled near-miss control cohort, must be ⊆ the PASSED leg) freeze
+    alongside."""
     disp = current_dispositions(records)
     missing = [t for t in all_committed if t not in disp]
     unresolved = [t for t in all_committed
@@ -219,11 +232,15 @@ def freeze_baskets(
     unknown = [t for t in wl if t not in all_committed]
     if unknown:  # a watchlist name must be a committed-tier name — fail loud, never silently drop
         raise ValueError(f"watchlist names not in the committed tier: {unknown}")
+    ac = tuple(avoid_controls or ())
+    bad_ac = [t for t in ac if t not in passed]
+    if bad_ac:  # an avoid-control is a PASSED near-miss (the AVOID leg) — fail loud, never RATIFIED
+        raise ValueError(f"avoid_controls must be PASSED names (the AVOID leg): {bad_ac}")
     return FrozenBaskets(
         driver=driver, freeze_timestamp=freeze_timestamp, ratified=ratified, passed=passed,
         all_committed=tuple(all_committed), entry_dates=entry_dates, layer_of=layer_of,
         watchlist=wl, watchlist_triggers=dict(watchlist_triggers or {}),
-        real_tier=tuple(real_tier or ()))
+        real_tier=tuple(real_tier or ()), avoid_controls=ac)
 
 
 # --------------------------------------------------------------------------------------------------
@@ -386,7 +403,9 @@ class Diagnostic(BaseModel, frozen=True):
 
 
 class LayerSplit(BaseModel, frozen=True):
-    """NAIVE-56 forward return split thin- vs obvious-layer (§4 layer-aware) — NOT pooled."""
+    """NAIVE-56 forward return split thin- vs obvious-layer (§4 layer-aware) — NOT pooled. This
+    split is AI-datacenter-SPECIFIC (thin = where semantic-primary uniquely contributed); a
+    demand-shaped driver with no thin/obvious tiering uses ``naive_by_layer`` (per-category)."""
 
     horizon_days: int
     thin_return: float | None
@@ -395,10 +414,21 @@ class LayerSplit(BaseModel, frozen=True):
     n_obvious: int
 
 
+class LayerReturn(BaseModel, frozen=True):
+    """One layer/category's slice of the NAIVE forward return (§4 layer-aware, driver-AGNOSTIC): the
+    equal-weight forward return of the committed names carrying that ``layer_of`` value — a
+    value-chain layer for a chain driver, a parallel capability category for a demand-shaped one."""
+
+    layer: str
+    mean_return: float | None
+    n: int
+
+
 class HoldNoneReport(BaseModel, frozen=True):
     """The empty-BUY (zero-RATIFIED) report: the UNDEFINED RATIFIED-dependent measures (never
-    computed), the two valid diagnostics, the layer split, the watchlist onset baselines, and the
-    honesty label."""
+    computed), the two valid diagnostics, the (AI-datacenter) thin/obvious layer split, the
+    driver-agnostic per-category ``naive_by_layer`` breakdown, the watchlist onset baselines, and
+    the honesty label."""
 
     driver: str
     as_of: str
@@ -408,6 +438,7 @@ class HoldNoneReport(BaseModel, frozen=True):
     avoid_discipline: Diagnostic
     exposure_carry: Diagnostic
     layer_split: LayerSplit
+    naive_by_layer: tuple[LayerReturn, ...] = ()      # per-category (driver-agnostic) NAIVE split
     onset_baselines: dict[str, str | None]            # watchlist ticker -> onset iso, or None
     honesty_label: str
 
@@ -454,9 +485,9 @@ def diagnostic_avoid_discipline(
     baskets: FrozenBaskets, price_fn: PriceFn, *, horizon_days: int, as_of: date,
     benchmark: str = "IWM",
 ) -> Diagnostic:
-    """DIAGNOSTIC 1 — did declining to buy the committed tier cost or vindicate? NAIVE-56
-    equal-weight forward return vs hold-none (cash). Positive = costly (the tier rose), negative =
-    vindicated. BETA-CONFOUNDED: largely an AI-datacenter-beta / regime bet, NOT a test of
+    """DIAGNOSTIC 1 — did declining to buy the committed tier cost or vindicate? The NAIVE
+    (equal-weight-all) forward return vs hold-none (cash). Positive = costly (the tier rose),
+    negative = vindicated. BETA-CONFOUNDED: largely a driver-beta / regime bet, NOT a test of
     selection skill."""
     raw, n = _cohort_fwd_mean(baskets.all_committed, baskets, price_fn, horizon_days=horizon_days,
                               as_of=as_of, adjust=False, benchmark=benchmark)
@@ -464,10 +495,10 @@ def diagnostic_avoid_discipline(
                               as_of=as_of, adjust=True, benchmark=benchmark)
     return Diagnostic(
         name="avoid-discipline", horizon_days=horizon_days, value=raw, n=n,
-        confound=("AI-DATACENTER-BETA-CONFOUNDED + regime-dependent — tests whether declining to "
-                  "buy the committed tier was costly or vindicated in THIS window, largely an "
-                  "AI-beta bet, NOT selection skill"),
-        detail=(f"NAIVE-56 equal-weight forward return raw(vs cash)="
+        confound=(f"{baskets.driver}-BETA-CONFOUNDED + regime-dependent — tests whether declining "
+                  f"to buy the committed tier was costly or vindicated in THIS window, largely a "
+                  f"{baskets.driver}-beta bet, NOT selection skill"),
+        detail=(f"NAIVE-{len(baskets.all_committed)} equal-weight forward return raw(vs cash)="
                 f"{'pending' if raw is None else f'{raw:+.1%}'}, vs {benchmark}="
                 f"{'pending' if adj is None else f'{adj:+.1%}'}"))
 
@@ -491,10 +522,10 @@ def diagnostic_exposure_carry(
     div = None if me is None or mo is None else me - mo
     return Diagnostic(
         name="exposure-carry", horizon_days=horizon_days, value=div, n=ne + no,
-        confound=("PARTIALLY beta-controlled — both cohorts are AI-labelled so the common "
-                  "AI-beta largely cancels in the divergence; isolates whether the exposure GRADE "
-                  "(real vs not) carries forward info. The more informative of the two — still "
-                  "NOT an edge verdict"),
+        confound=(f"PARTIALLY beta-controlled — both cohorts are {baskets.driver}-labelled so the "
+                  f"common {baskets.driver}-beta largely cancels in the divergence; isolates "
+                  "whether the exposure GRADE (real vs not) carries forward info. The more "
+                  "informative of the two — still NOT an edge verdict"),
         detail=(f"{len(e_names)} genuine-exposure {list(e_names)} adj="
                 f"{'pending' if me is None else f'{me:+.1%}'} (n={ne}) "
                 f"vs {len(o_names)} other-PASSED "
@@ -520,12 +551,32 @@ def layer_split_naive(
                       n_thin=nt, n_obvious=no)
 
 
+def naive_by_layer(
+    baskets: FrozenBaskets, price_fn: PriceFn, *, horizon_days: int, as_of: date,
+    benchmark: str = "IWM",
+) -> tuple[LayerReturn, ...]:
+    """Driver-AGNOSTIC §4 layer-aware split: the NAIVE (equal-weight) benchmark-adjusted forward
+    return broken out by EACH distinct ``layer_of`` value — a value-chain layer for a chain driver,
+    a parallel capability CATEGORY for a demand-shaped one (defense: attritable-air,
+    defense-autonomy …). Forward-only from the freeze date; NOT pooled (pooling masks the
+    per-category slice). The generic complement to the thin/obvious ``layer_split_naive``."""
+    layers = sorted({baskets.layer_of.get(t, "unspecified") for t in baskets.all_committed})
+    out: list[LayerReturn] = []
+    for lyr in layers:
+        names = [t for t in baskets.all_committed if baskets.layer_of.get(t, "unspecified") == lyr]
+        m, n = _cohort_fwd_mean(names, baskets, price_fn, horizon_days=horizon_days, as_of=as_of,
+                                adjust=True, benchmark=benchmark)
+        out.append(LayerReturn(layer=lyr, mean_return=m, n=n))
+    return tuple(out)
+
+
 def measure_hold_none(
     baskets: FrozenBaskets, *, exposure_names: list[str], price_fn: PriceFn, horizon_days: int,
     as_of: date, benchmark: str = "IWM", onset_baselines: dict[str, str | None] | None = None,
 ) -> HoldNoneReport:
     """The EMPTY-BUY (zero-RATIFIED) measurement. Emits the RATIFIED-dependent spreads as UNDEFINED
-    (never 0.0), plus the two VALID beta-confounded diagnostics + the layer-aware split, all
+    (never 0.0), plus the two VALID beta-confounded diagnostics + the layer-aware split (both the
+    AI-datacenter thin/obvious view and the driver-agnostic per-category ``naive_by_layer``), all
     FORWARD-ONLY from the freeze date. Carries HOLD_NONE_HONESTY — NEVER an edge verdict."""
     return HoldNoneReport(
         driver=baskets.driver, as_of=as_of.isoformat(), freeze_timestamp=baskets.freeze_timestamp,
@@ -536,6 +587,8 @@ def measure_hold_none(
                                                  horizon_days=horizon_days, as_of=as_of,
                                                  benchmark=benchmark),
         layer_split=layer_split_naive(baskets, price_fn, horizon_days=horizon_days, as_of=as_of,
+                                      benchmark=benchmark),
+        naive_by_layer=naive_by_layer(baskets, price_fn, horizon_days=horizon_days, as_of=as_of,
                                       benchmark=benchmark),
         onset_baselines=dict(onset_baselines or {}), honesty_label=HOLD_NONE_HONESTY)
 
