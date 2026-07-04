@@ -1,8 +1,8 @@
-// THEME ALTITUDE (#/themes/<theme>) — one theme's detail: its tier counts (again the drill
-// affordance, scoped to this theme), its watchlist inline (short), and its per-theme forward detail
-// (this theme's snapshot cohorts). Still NO full name dump — the early/partial names are counts with
-// a "view" affordance (tap the count → the tier altitude). Self-rendered breadcrumb + back (below the
-// top tabs).
+// THEME ALTITUDE (#/themes/<theme>) — one theme's detail. The metric-card row LEADS with the WATCH
+// count (VERDICT · the analyst's actionable re-underwrite set — higher relevance than the scan tiers),
+// then the SCAN tiers firm/partial/early (the drill affordance, scoped to this theme). The NONE tier is
+// DROPPED — pure inventory; the "surfaced of scanned" subtitle already implies it. Then the watchlist
+// inline (short) + this theme's forward cohorts. No full name dump — tap a scan count → the tier altitude.
 import { getThemeDriver } from "../../lib/snapshots.js";
 import { fmtInt, fmtDate, DASH, escapeHtml } from "../../lib/format.js";
 
@@ -21,6 +21,7 @@ export async function render(root, _ctx, slug) {
   }
 
   const t = d.tierShape || {}, ft = d.frozenTiers || {}, f = d.forward || {}, c = f.cohorts || {};
+  const wl = d.watchlist || [];
   const head = `
     <div class="breadcrumb"><a href="#/overview">Overview</a><span class="sep">/</span><a href="#/themes">Themes</a><span class="sep">/</span>${escapeHtml(d.label)}</div>
     <div class="header-block">
@@ -35,14 +36,19 @@ export async function render(root, _ctx, slug) {
       : `<span class="tier-count zero">${n == null ? DASH : fmtInt(n)}</span>`;
     return `<div class="card metric"><h3>${tier}</h3><div class="value">${val}</div><div class="foot">${label}</div></div>`;
   };
+  // Lead with WATCH (verdict · analyst's re-underwrite candidates), then the scan tiers. NONE dropped.
+  const watchCard = `<div class="card metric verdict-card">
+      <h3>watch</h3>
+      <div class="value"><span class="tier-count">${fmtInt(wl.length)}</span></div>
+      <div class="foot">re-underwrite candidates · the analyst's call</div>
+    </div>`;
   const tiers = `<div class="grid cols-4" style="margin-bottom:16px;">
+    ${watchCard}
     ${tierCard("firm", ft.firm || 0, "binding / quantified — REAL")}
     ${tierCard("partial", ft.partial || 0, "committed capacity")}
     ${tierCard("early", ft.early || 0, "aspirational")}
-    ${tierCard("none", t.none, "no exposure · not in snapshot")}
   </div>`;
 
-  const wl = d.watchlist || [];
   const wlBlock = `
     <div class="card" style="margin-bottom:16px;">
       <h3>Watchlist · ${fmtInt(wl.length)}</h3>
