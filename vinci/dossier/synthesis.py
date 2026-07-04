@@ -526,7 +526,7 @@ def _self_referential_twin(tw: TwinCase, ticker: str, name: str) -> bool:
         return False
     # (R2) the resolved period must appear in the twin NAME itself ('Microvast (2021–2025 arc)') —
     # a bare self-name ('Microvast Holdings') is suppressed even if a year hides in outcome/fact.
-    return not re.search(r"\b(19|20)\d\d\b", tw.name)
+    return not re.search(r"\b(?:19|20)\d\d\b|\bFY\s?\d\d\b", tw.name, re.IGNORECASE)  # (K6) FY\d\d
 
 
 def _validate(
@@ -867,6 +867,7 @@ def synthesize(
 _PENDING_RE = re.compile(
     r"not extracted|extract(?:ion)? pending|pending (?:from|extraction)|not (?:yet )?parsed|"
     r"must be read|to be (?:read|extracted)|awaiting extraction|not captured|not in this data|"
+    r"not in the supplied facts|not restated|"  # (K6) additions; subject-matching unchanged
     r"read the .{0,30}(?:8-K|filing|exhibit|agreement)",
     re.IGNORECASE,
 )

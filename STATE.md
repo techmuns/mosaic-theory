@@ -2143,6 +2143,24 @@ so long as it never diverts verdict throughput from the lead loop. Design first;
   pre-existing (not PR #70 code) + currently UNREACHABLE (no source_ref ever contains "made-up"), so
   zero live impact; a 1-line JS parity add if/when a source_ref can carry that token.
 
+**D3 tier classifier — paraphrase-chasing is CAPPED (accepted residual, PR #71/curation, 2026-07-04).**
+The Tier-1 `_TIER_REGEX` now catches "(adjusted) EBITDA … negative", the survival-line "… turned
+negative" cases, "cash-negative", AND (K6 FINAL widening) "adjusted EBITDA within ~40 chars of a
+negative marker (`-$` / `(` / `negative`)". This is the LAST widening — a synthesis point that
+GAAP-qualifies a negative-EBITDA artifact in yet another paraphrase and slips to Tier-2 is an ACCEPTED
+residual, not a bug to chase; the point is already IN the doc (the tier only orders it), and endless
+regex paraphrase-matching is lower-value than the human's read. Widen no further without a new,
+repeatedly-observed shape.
+
+**QUEUED (not the curation PR — that's render-only): exhibit-class filter BEFORE Tier-2 extraction
+spend.** Exclude equity-comp / RSU award agreements at DISCOVERY (covenant-pointer stage), before the
+fenced Tier-2 LLM extraction runs on them. Observed waste (MVST): the RSU exhibit
+(`mvst20251231-ex1013.htm`, "Restricted Stock Unit Award Agreement") was located as a "material
+contracts (10-K exhibit index)" pointer and fully extracted as a covenant doc — 7 UNKNOWN covenant
+rows + 8 RSU-award rows, none survival-relevant (the curation now routes that whole family to the
+appendix, but the extraction spend already happened). Filter the exhibit class up front so the LLM
+never reads it. Extractor change → its own PR with real-run cost verification, not the render curation.
+
 ## 6. Open items carried from the fossils (live, not being worked now)
 
 - **Regulatory/counsel** — HK SFC Type 9 (**blocks running real LP money**; longest calendar lead),

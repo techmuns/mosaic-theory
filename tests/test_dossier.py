@@ -1063,11 +1063,11 @@ def test_maturity_wall_groups_by_calendar_year_with_pins() -> None:
 
 
 def test_capital_structure_render_shows_table_not_flat_string() -> None:
-    """(E1) The instruments render as the shared-idiom table (marked), under the RENAMED
-    'Capital structure (instruments)' line — replacing the old flat liquidity string."""
+    """(E1 · K1) The MAIN-body instruments render as the shared-idiom table (marked), under the
+    curated 'Live instruments — near-dated' label — replacing the old flat liquidity string."""
     out = "\n".join(dr._capital_structure_lines(_mvst_capital_structure(), date(2026, 7, 3)))
     assert dr._TABLE_MARK in out
-    assert "Capital structure (instruments) — panel A 2025 filed Mar-16-2026" in out
+    assert "Live instruments — near-dated (≤12m + 2027) — panel A 2025 filed Mar-16-2026" in out
     assert "SOFR" not in out or "Convertible Bond - CNY" in out  # the table body renders rows
 
 
@@ -1832,7 +1832,7 @@ def test_fresh_capital_structure_renders_table_and_wall_in_place_of_liquidity() 
         mechanical=mech, synthesis=None, caveats=[], qa_flags=[], llm_model=None,
         assembled_at=datetime(2026, 6, 1, 12, 0))
     md = dr.render_markdown(dossier)
-    assert "Capital structure (instruments)" in md and dr._TABLE_MARK in md
+    assert "Live instruments — near-dated" in md and dr._TABLE_MARK in md  # (K1) curated main table
     assert "matured (pre-reference): $25.0M" in md
     assert "Liquidity / covenant flags" not in md
 
@@ -2178,11 +2178,97 @@ def test_h3_gate_shortref_and_dedupe_unknown_reasons() -> None:
         "- **Solo:** _UNKNOWN_ — a unique reason (kept)",
     ]
     out = dr._dedupe_unknown_reasons(list(lines))
-    folded = [ln for ln in out if "not in the 99.1 guidance" in ln]
+    folded = [ln for ln in out if "99.1" in ln]  # (K6) 3 fields fold to the canonical 99.1 reason
     assert len(folded) == 1  # 3 renders → 1
     assert "Net debt / EBITDA (fwd-adj) · EV/EBITDA (adjusted, forward) · Adjusted EPS" in folded[0]
     assert any("Solo" in ln for ln in out)  # a non-repeated reason is left alone
     assert len(out) == 2  # the two duplicate lines removed
+
+
+def test_k6_99_1_unknown_reason_renders_once_on_real_mvst() -> None:
+    """(K6, pin restated per operator) The 99.1 revised-guidance UNKNOWN REASON folds to exactly ONE
+    render (all affected fields named); graph-cohort likewise. Pin: unknown-reason occurrences == 1
+    (NOT a grep of '99.1' — the drawdown 8-K's own 'Exhibit 99.1' filing text is legitimate)."""
+    import pathlib
+    p = pathlib.Path("data/dossiers/MVST/dossier.json")
+    if not p.exists():
+        pytest.skip("no committed MVST dossier.json")
+    md = dr.render_markdown(ds.Dossier.model_validate_json(p.read_text()))
+    unk = [ln for ln in md.splitlines()
+           if ln.startswith("- **") and "_UNKNOWN_" in ln and "99.1" in ln]
+    assert len(unk) == 1, f"99.1 unknown-reason occurrences must be 1, got {len(unk)}"
+    assert "Revised guidance" in unk[0] and "fwd-adj" in unk[0]  # all affected fields named
+    coh = [ln for ln in md.splitlines()
+           if ln.startswith("- **") and "_UNKNOWN_" in ln and "exposed" in ln]
+    assert len(coh) == 1  # graph-cohort folds to one too
+
+
+def test_k1_covenant_value_lead_extracts_the_decision_figure_before_clip() -> None:
+    """(K1 generalized · audit-hardened) EVERY curated covenant line leads with its extractable
+    VALUE before the ≤120c clip — RIGHT or ABSENT, never wrong. Anchored: a labelled/bps margin (no
+    bare '+' step-down or default premium), a test-anchored cadence, a maturity-anchored date, the
+    PIK acronym, a contiguous 1..k enumeration. Never fabricates."""
+    lead = dr._covenant_value_lead
+    # happy paths (real MVST shapes)
+    assert "~$0.50/sh" in lead("Conversion", "Conversion Rate = two (2) shares per $1.00 principal")
+    assert lead("Financial maintenance", "Liquidity as of Friday of each calendar week not less "
+                "than $5,000,000.") == "not less than $5,000,000 weekly"
+    assert lead(
+        "Interest / coupon", "Term SOFR + Applicable Margin; Applicable Margin = 9.75% per annum; "
+        "3.75% of interest paid in-kind (PIK Interest)") == "Term SOFR + 9.75% (+3.75% PIK)"
+    assert lead("Interest / coupon",
+                "Floating rate; RMB rate = one year LPR Plus 115 bps") == "Floating rate + 115 bps"
+    assert lead("Maturity", '"November 28, 2025" is deleted and replaced with "May 28, 2026".'
+                ) == "May 28, 2026"  # the amendment governs, not the deleted date
+    # audit-hardened: never present a WRONG value
+    step = "Term SOFR; the Applicable Margin is 5.50%, stepping to + 4.50% below 3.0x leverage."
+    assert "5.50%" in lead("Interest / coupon", step) and "4.50%" not in lead("Interest / coupon",
+                                                                              step)  # P1
+    assert lead("Maturity", "Commitment Termination Date is March 31, 2025 and the Maturity Date "
+                "is December 15, 2027.") == "December 15, 2027"  # P2: maturity-anchored, not first
+    assert "PIK" not in lead("Interest / coupon",
+                             "Term SOFR plus 7.00%. A 12.5% equity interest paid in kind.")  # P3
+    assert lead("Events of default", "1. Payment. 2. Covenant. 3. Insolvency. See Section 15."
+                ).startswith("3 enumerated")  # P4: 'Section 15.' doesn't inflate the count
+    assert lead("Financial maintenance", "not less than $10,000,000, tested as of the last day of "
+                "each fiscal quarter, and deliver a 13-week forecast each week."
+                ) == "not less than $10,000,000 quarterly"  # P5: the TEST cadence, not the forecast
+    assert lead("Interest / coupon", "The Notes bear interest at a fixed rate of 8.25% per annum."
+                ) == "8.25% fixed"  # P7
+    assert lead("Conversion", "price to be set by the board") == ""  # no fabrication
+
+
+def test_k3_credit_health_renders_mini_table_or_falls_back() -> None:
+    """(K3 · audit T1) Credit health parses the prose into a mini-table (dimension row-label | name
+    | peer), scale footnote; header and every data row have the SAME cell count (dimension is the
+    ROW LABEL, not a col — else scores shift left). Unparseable → the plain fact, no fab."""
+    import types
+    lv = types.SimpleNamespace(credit_health=ds.Sourced.present(
+        "name Overall/Operational/Solvency/Liquidity 3/3/2/2 (S&P issuer rating unrated); "
+        "peer-median O/Op/S/L 2.5/2.5/3/3; scale 1=strongest … 4=weakest (S&P-MI PD model)",
+        source_ref="CIQ Credit Health"))
+    md = "\n".join(dr._credit_health_lines(typing.cast(typing.Any, lv)))
+    assert dr._TABLE_MARK in md and "| Overall | 3 | 2.5 |" in md and "S&P-MI PD model" in md
+    tbl = [ln for ln in md.splitlines() if ln.startswith("|") and "---" not in ln]
+    assert len({ln.count("|") for ln in tbl}) == 1, "credit-health header/row column mismatch"
+    lv2 = types.SimpleNamespace(
+        credit_health=ds.Sourced.present("unrated; no panel", source_ref="x"))
+    assert dr._TABLE_MARK not in "\n".join(dr._credit_health_lines(typing.cast(typing.Any, lv2)))
+
+
+def test_audit_appendix_never_drops_relocated_facts() -> None:
+    """(audit C1) The capital-structure appendix renders the relocated 8-K/pointer/covenant facts
+    even when the instrument PANEL is empty — the old guard dropped them from the surface (in
+    neither the curated main NOR the appendix), a nothing-deleted violation."""
+    u = ds.Sourced[str].unknown(note="n/a")
+    cs = ds.CapitalStructure(
+        instruments=u, summary=u, detail_as_of="d",
+        maturity_filings=ds.Sourced.present("8-K 2026-05-28 at maturity", source_ref="EDGAR"),
+        covenant_pointers=ds.Sourced.present("Credit Agreement exhibit 10.1", source_ref="10-K"),
+        covenant_terms=ds.Sourced.present("liquidity not less than $50M weekly", source_ref="8-K"))
+    appx = "\n".join(dr._capital_structure_appendix_lines(cs))
+    for fact in ("8-K 2026-05-28 at maturity", "Credit Agreement exhibit 10.1", "$50M weekly"):
+        assert fact in appx, f"relocated fact dropped from appendix: {fact}"
 
 
 def test_audit_gfm_cell_sanitizes_pipe_and_newline() -> None:
@@ -4030,7 +4116,7 @@ def test_all_rendered_tables_route_through_the_shared_renderer() -> None:
     n_tables = sum(1 for ln in md.splitlines() if ln.startswith("|---"))
     assert n_tables >= 6  # roster + trading multiples + per-peer grid + implied equity + C1 + C2
     assert md.count(dr._TABLE_MARK) == n_tables  # NO table bypasses the shared renderer
-    for lbl in ("Peer set", "Trading multiples", "Per-peer grid", "Implied EQUITY",
+    for lbl in ("Peer set", "Trading multiples", "Per-peer grid", "Implied equity at peer-median",
                 "Annual financials", "Quarterly financials"):  # incl. the C1/C2 appendix tables
         assert _re.search(_re.escape(lbl) + r"[^\n]*" + _re.escape(dr._TABLE_MARK), md), lbl
     # every GFM table must be COLUMN-ALIGNED: header, separator, and each data row carry the SAME

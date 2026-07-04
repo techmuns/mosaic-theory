@@ -92,6 +92,11 @@ flag it. That incremental blur is the failure mode this whole project is built t
   verdict on a single high-stakes name is confident, fluent noise.
 - **Source-bind everything** — claims (especially in dossiers) point to the primary cell/filing, so the
   human verifies rather than trusts the summary.
+- **Machine-complete JSON, curated human surface.** `dossier.json` is machine-complete — every extracted
+  fact stays in it. The rendered PDF/web view is the HUMAN DECISION SURFACE: provenance (verbatim quotes,
+  accessions, reference/agreement terms, amendment chains) renders in the **appendix or on demand, never
+  inline in the main body**. Curating the surface never deletes a fact — a moved fact is present in the
+  appendix or the JSON. (The discipline/methodology language lives in `source_ref`s + JSON, not headers.)
 
 ## Stack & layout (orientation)
 
