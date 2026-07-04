@@ -814,7 +814,7 @@
  "forward": {
   "cohorts": {
    "buy": 0,
-   "naive": 450,
+   "naive": 56,
    "passed": 56,
    "watchlist": 5,
    "avoidControls": 0,
