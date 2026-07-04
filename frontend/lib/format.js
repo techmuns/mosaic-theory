@@ -95,3 +95,13 @@ export function gradeLabel(basis) {
 export function cleanGrade(s) {
   return String(s || "").replace(/-/g, " ");
 }
+
+// magnitude bucket — the coarse firm/partial/early grouping of the fine basis (the machine's SCAN
+// read). firm = binding|quantified (contracted/quantified) · partial = committed · early = aspirational.
+// One source of truth for the bucketing shared by the Overview table + the watchlist firmness tag.
+export const GRADE_BUCKET = {
+  binding: "firm", quantified: "firm", committed: "partial", aspirational: "early", none: "none",
+};
+export function gradeBucket(basis) {
+  return GRADE_BUCKET[String(basis)] || "none";
+}

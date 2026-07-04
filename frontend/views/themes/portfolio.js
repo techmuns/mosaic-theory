@@ -1,16 +1,21 @@
-// PORTFOLIO ALTITUDE (#/themes) — the theme-edge landing. The POOLED forward state (0 buys,
-// on-watch, power-floor progress, undefined-spread honesty + pending diagnostics) at the top — these
-// are cross-theme facts, so they live here, NOT in a per-driver tab. Then ONE ROW PER THEME with the
-// tier COUNTS (firm / partial / early / none) — the counts ARE the drill affordance (tap → that
-// theme's that-tier names). No individual names on this screen. N themes = N rows, scannable at 20.
+// PORTFOLIO ALTITUDE (#/themes) — the theme-edge landing. The POOLED forward state (0 buys, on-watch,
+// undefined-spread honesty + pending diagnostics) sits at the top — cross-theme facts, so they live
+// here, not in a per-driver tab. Then ONE ROW PER THEME, its counts split into TWO labeled blocks: the
+// VERDICT · analyst block (Buys, Watch — the analyst's call, primary) and the SCAN · machine read block
+// (Firm/Partial/Early/none — the machine's firmness read, muted inventory). The Scan counts ARE the
+// drill affordance (tap → that theme's that-tier names). No individual names here. N themes = N rows.
 import { getThemesIndex } from "../../lib/snapshots.js";
 import { fmtInt, fmtDate, DASH, escapeHtml } from "../../lib/format.js";
 
-const GRADE_KEY = `<div class="grade-key">
-  <span class="gk"><b>firm</b> — binding contract / quantified revenue (REAL)</span>
-  <span class="gk"><b>partial</b> — committed capacity, no paying customer yet</span>
-  <span class="gk"><b>early</b> — aspirational, a stated-intent mention</span>
-  <span class="gk"><b>none</b> — no exposure disclosed</span>
+// The verdict/scan key — the grade-vs-verdict distinction. VERDICT is the ANALYST's call; SCAN is the
+// MACHINE's read of firmness. The Buy bar is the fund's ≥2:1 reward-to-risk bar (never 3:1).
+const VS_KEY = `<div class="vs-key">
+  <div class="vs-key-row"><span class="vs-key-tag verdict">Verdict · analyst</span>
+    <span><b>Buys</b> cleared the fund's ≥2:1 bar (reward-to-risk) · <b>Watch</b> = real exposure that
+    failed only on price / materiality, carries a re-underwrite trigger</span></div>
+  <div class="vs-key-row"><span class="vs-key-tag scan">Scan · machine read</span>
+    <span><b>firm</b> = contracted / quantified · <b>partial</b> = real activity, not contracted ·
+    <b>early</b> = stated intent · <b>none</b> = no exposure disclosed</span></div>
 </div>`;
 
 export async function render(root, { item, frame }) {
@@ -67,21 +72,28 @@ export async function render(root, { item, frame }) {
       <tr>
         <td><a href="#/themes/${escapeHtml(d.slug)}" style="font-weight:650;">${escapeHtml(d.label)}</a>
           <div class="foot">snapshot ${fmtDate(d.freezeDate)} · ${fmtInt(d.surfacedCount)} surfaced of ${t.universe == null ? DASH : fmtInt(t.universe)} scanned</div></td>
-        <td class="num">${drill(d.slug, "firm", ft.firm || 0)}</td>
-        <td class="num">${drill(d.slug, "partial", ft.partial || 0)}</td>
-        <td class="num">${drill(d.slug, "early", ft.early || 0)}</td>
-        <td class="num muted">${t.none == null ? DASH : fmtInt(t.none)}</td>
-        <td class="num">${fmtInt(d.watchlistCount)}</td>
-        <td class="num">${fmtInt(d.ratifiedCount)}</td>
+        <td class="num v-num">${fmtInt(d.ratifiedCount)}</td>
+        <td class="num v-num">${fmtInt(d.watchlistCount)}</td>
+        <td class="num scan-num scan-first">${drill(d.slug, "firm", ft.firm || 0)}</td>
+        <td class="num scan-num">${drill(d.slug, "partial", ft.partial || 0)}</td>
+        <td class="num scan-num">${drill(d.slug, "early", ft.early || 0)}</td>
+        <td class="num scan-num muted">${t.none == null ? DASH : fmtInt(t.none)}</td>
       </tr>`;
   };
 
   const table = `
-    <table class="data"><thead><tr>
-      <th>Theme</th><th class="num">firm</th><th class="num">partial</th><th class="num">early</th>
-      <th class="num">none</th><th class="num">watch</th><th class="num">buys</th>
-    </tr></thead><tbody>${idx.drivers.map(row).join("")}</tbody></table>
-    <div class="foot" style="margin-top:8px;">Tap a theme to drill in · tap a tier count for that tier's names.</div>`;
+    <table class="data vs-table"><thead>
+      <tr>
+        <th rowspan="2">Theme</th>
+        <th class="grp grp-verdict" colspan="2">Verdict · analyst</th>
+        <th class="grp grp-scan scan-first" colspan="4">Scan · machine read</th>
+      </tr>
+      <tr>
+        <th class="num">Buys</th><th class="num">Watch</th>
+        <th class="num scan-first">Firm</th><th class="num">Partial</th><th class="num">Early</th><th class="num">None</th>
+      </tr>
+    </thead><tbody>${idx.drivers.map(row).join("")}</tbody></table>
+    <div class="foot" style="margin-top:8px;">Tap a Scan tier count for that tier's names · tap a theme to drill in.</div>`;
 
-  root.innerHTML = frame(item, { bodyHtml: strip + GRADE_KEY + table });
+  root.innerHTML = frame(item, { bodyHtml: strip + VS_KEY + table });
 }

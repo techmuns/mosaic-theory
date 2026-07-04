@@ -4,7 +4,7 @@
 // the list" expand (collapsed by default) — the same trigger-led / rationale-on-demand principle as
 // the surfaced-names row collapse. Per-theme sections (collapsible); avoid-controls a separate section.
 import { getThemesIndex, getThemeDriver } from "../../lib/snapshots.js";
-import { fmtInt, escapeHtml, gradeLabel } from "../../lib/format.js";
+import { fmtInt, escapeHtml, gradeLabel, gradeBucket } from "../../lib/format.js";
 
 export async function render(root, { item, frame }) {
   root.innerHTML = frame(item, { bodyHtml: `<div class="notice">Loading watchlist…</div>` });
@@ -26,7 +26,7 @@ export async function render(root, { item, frame }) {
       <div class="wl-top">
         <b class="mono">${escapeHtml(n.ticker)}</b>
         <span class="muted" style="font-size:12px;">${escapeHtml(n.substructureTag || "")}</span>
-        <span class="pill unresolved" style="font-size:10px;">${escapeHtml(gradeLabel(n.basis))}</span>
+        <span class="gt ${gradeBucket(n.basis)}">${escapeHtml(gradeBucket(n.basis))}</span>
         ${n.edgarUrl ? `<a href="${encodeURI(n.edgarUrl)}" target="_blank" rel="noopener" style="font-size:11px; margin-left:auto;">EDGAR ${escapeHtml(n.accession || "")}</a>` : ""}
       </div>
       <div class="wl-trigger"><span class="k">re-underwrite when</span>${escapeHtml(n.trigger || "—")}</div>

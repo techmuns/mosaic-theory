@@ -2764,7 +2764,7 @@ the harness MEASURES; the forward paper track is the only arbiter. Edge 2 stays 
 **THEME-EDGE FORWARD TRACK — FROZEN on a ZERO-RATIFIED triage (2026-07-02, `feat/theme-forward-freeze`;
 scoped modification of `forward.py` + `themes-forward` CLI + 8 tests).** The analyst completed the
 committed-tier triage: **all 56 PASSED, ZERO RATIFIED** — the expected equilibrium of an early-detection
-edge meeting a 3:1 bar (exposure is either already-priced, not-yet-revenue, or not-attributable at the
+edge meeting the fund's ≥2:1 bar (exposure is either already-priced, not-yet-revenue, or not-attributable at the
 moment it is early enough to be non-consensus). **CENTRAL CORRECTNESS: the BUY leg is EMPTY, so
 RATIFIED−PASSED (the core edge-measure) and ALL RATIFIED-dependent spreads (incl. §3b-i equal-weight and
 §3b-ii keyword/co-movement) are UNDEFINED — emitted with a reason, NEVER computed, NEVER 0.0, never a
@@ -2783,7 +2783,7 @@ the exposure GRADE carries forward info). Both are reported **layer-aware (thin 
 optical/HBM vs obvious chips/power/colo — NOT pooled)** and under a prominent honesty label: *NOT a
 validation of the semantic-primary edge*. **The core RATIFIED−PASSED edge-measure remains UNDEFINED
 pending a future RATIFIED — which arrives via the watchlist re-underwrite loop** (a name's
-machine-checkable trigger fires → re-underwrite at the full 3:1 Buy bar; the 5 names + triggers are the
+machine-checkable trigger fires → re-underwrite at the full ≥2:1 Buy bar; the 5 names + triggers are the
 actionable output, and the seed of a monitor across the whole surfaced set). **§5 onset baselines
 stamped** for the 5 (freeze-day = null / not-yet-co-moving, the expected early-enabler state; live
 read-only Component-A confirmation is a paper-track-cadence step, deferred). Real run shown on the actual
@@ -2959,3 +2959,57 @@ EXACTLY (driver, all 3 cohorts, verbatim triggers, 108/108, category `layer_of` 
 (compat-load old+new field names; CLI multi-cohort freeze). Diff confined to `vinci/themes/forward.py` +
 `vinci/cli.py` + tests + this STATE note. Suite green (ruff + mypy --strict 85 files + pytest **410**; 24
 forward tests). **Local only — nothing pushed, nothing merged.**
+
+**THEME-EDGE HONEST DISPLAY + VERDICT-LOOP ARCHITECTURE MAPPED (2026-07-04, `feat/theme-viewer`).**
+
+*Display (BUILT + verified in preview; frontend-only).* The Overview portfolio row now splits its counts
+into TWO labeled blocks with a divider — **Verdict · analyst** (Buys, Watch — the analyst's call, primary
+styling) and **Scan · machine read** (Firm/Partial/Early/none — the machine's firmness read, muted
+inventory) — the **grade-vs-verdict fix**: the classifier's firmness read is NOT a verdict, and the UI no
+longer lets the two blur. A one-line key states it (Buys cleared the fund's ≥2:1 bar; Watch = real exposure
+that failed only on price/materiality, carries a re-underwrite trigger; Scan firm=contracted/quantified ·
+partial=real-activity-not-contracted · early=stated-intent). Watchlist cards gain a color-coded
+**firm/partial/early firmness tag** (shared `gradeBucket` helper — one source of truth for the bucketing).
+Diff: `portfolio.js` + `watchlist.js` + `format.js` + `styles.css`. Viewer stays READ-ONLY.
+
+*Buy bar = the fund's ≥2:1 reward-to-risk bar (C1),* PLUS the qualitative discipline — real (not
+label-matched) exposure + a disconfirmation attempt + the value-trap twin ruled out + assumptions fresh,
+not stale. **The "3:1" that had appeared was an UNSPECIFIED IMPORT — never the analyst's specified bar —
+now corrected.** Viewer chrome says ≥2:1; the two "3:1" mentions in this §7 (the 2026-07-02 freeze note)
+corrected to ≥2:1. **INTEGRITY CAVEAT (flagged, NOT silently fixed):** the committed `defense.json` /
+`ai-datacenter.json` rationales STILL contain "3:1" (e.g. RCAT/AVAV "fails 3:1") — that is **source-bound
+analyst text frozen at the 2026-07-02/03 freeze**, and those JSON are BUILD ARTIFACTS derived from the
+git-ignored backend ledger; hand-editing them would falsify a frozen record and be regenerated away.
+Correcting the rationale text is a BACKEND re-freeze (out of the viewer's scope), and since the dispositions
+are robust to the correction it is a text-accuracy cleanup, not a verdict change. **Frozen verdicts
+UNCHANGED at 2:1 (verified):** RCAT's own reward/risk ~1:1 and AVAV's ~1.3:1 are both < 2:1 → both stay
+AVOID/not-buy; RCAT is `binding` (FIRM exposure) yet AVOID — the grade-vs-verdict point made concrete.
+
+*One unified BUY−AVOID spread — DESIGNED as the fund-level validation gate (C2); NOT yet built.* A1 mapped
+it. TODAY there are **TWO SEPARATE stores**, not one: (i) **Overshoot** — the SQLite decision ledger
+(`ledger/workflow.log_verdict` → a frozen `LedgerEntry`, KEYED to a screen `candidate_id`; scored by
+`scoring/harness.score_ledger` → `ScoreReport.buy_avoid_spread`, per-sector; mirrored to
+`decision_ledger.jsonl` for the read-only Decision log). (ii) **Theme edge** — git-ignored
+`forward_{driver}_*` JSONL (`themes/forward.RatificationRecord` is a TRIAGE disposition RATIFIED/PASSED, NOT
+a BUY/AVOID verdict; `measure_hold_none` is an exposure-carry DIAGNOSTIC, every RATIFIED-spread UNDEFINED at
+0 buys). Different store, schema, and scorer. The TARGET: ONE BUY−AVOID spread fed by BOTH edges, each
+verdict **tagged by source** (overshoot | theme · driver · trigger), filterable by source — the fund-level
+gate.
+
+*Theme-edge verdict-recording method — A2 STOPPED-FOR-REVIEW (C3); the loop stays OPEN.* The theme edge can
+freeze a triage but has NO path to a BUY: a watchlist trigger firing → re-underwrite → recorded verdict is
+its only route, and that recorder does not exist. The design is clear (a `log_theme_verdict` mirroring
+`log_verdict`, appending a source-tagged `LedgerEntry` to the SAME SQLite ledger so `score_ledger` yields
+one source-filterable spread), but the wiring is **non-trivial and modifies the append-only
+validation-gate schema**, so per the a-priori instruction it was NOT guessed. **Decisions the human must
+ratify BEFORE build:** (a) `LedgerEntry` schema change (append-only) — add `source`, make `candidate_id`
+optional (theme names are not screen candidates, so `store.get_candidate` fails), add `driver`+`trigger`;
+(b) is a theme AVOID the same `AVOID_TERMINAL` (value-trap twin) enum or a new verdict value; (c)
+price-freeze source — do theme names carry EOD bars in the Store for `close_as_of`, or a separate ingest;
+(d) source-tagged aggregation in `score_ledger`/`VerdictScore`/`ScoreReport` (a `spread_by_source`); (e)
+does the unified spread POOL both edges by default (filterable) or always separate. Until ratified, no theme
+BUY can be recorded and the theme-edge loop remains open. Viewer read-only + CLI-only logging unchanged.
+
+Suite green (ruff + mypy --strict 85 files + pytest **415**; no Python touched this task — display is
+frontend, the rest is STATE + the A1 map). **Local only — nothing pushed, nothing merged; deploy config
+(`functions/_middleware.js`, `wrangler.toml`) untouched.**
