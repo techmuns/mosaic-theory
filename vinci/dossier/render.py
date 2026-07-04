@@ -20,8 +20,7 @@ from vinci.dossier.schemas import Dossier, MechanicalLayer, Sourced, SourceStatu
 
 # Display curation for the catalyst path — the full data always stays in dossier.json; these only
 # cap/collapse/group the HUMAN view (the margin-trend mini-table idiom: curate display, not data).
-_GROUP_CAP = 3  # revision-event broker-day groups shown; the rest noted "+N in JSON"
-_ITEMS_PER_GROUP = 5  # material line items per group (largest |Δ| first)
+_GROUP_CAP = 6  # (T3) revision-event broker-day LINES shown; the rest counted "+N in JSON"
 _LADDER_KEEP = ("NTM", "FY 2026", "FY 2027", "FY 2028")  # multiples shown; later years → JSON
 
 # --- display formatters (render boundary ONLY — the stored Sourced.value keeps full precision) ---
@@ -193,16 +192,47 @@ def _guidance_bridge_lines(cp: Any) -> list[str]:
                   rows_s.source_ref, cols, rows)
 
 
-def _abs_delta(e: Any) -> float:
+# (T3) headline metric PRIORITY — each tuple is the substrings a metric must contain (all of them).
+_HEADLINE_PRIORITY: tuple[tuple[str, ...], ...] = (("ebitda",), ("revenue",), ("eps", "normal"))
+
+
+def _pct_delta(e: Any) -> float:
+    """(T3) |%Δ| of a revision — |current − prior| / |prior|; -1 when either side is non-numeric or
+    prior is 0. Cross-metric RAW deltas are unit-incoherent, so the headline ranks on |%Δ|, never
+    raw |Δ| (a big-number Revenue move would otherwise always outrank a bigger-% EBITDA cut)."""
     try:
-        return abs(float(e.broker_current) - float(e.broker_prior))
+        prior, cur = float(e.broker_prior), float(e.broker_current)
     except (ValueError, TypeError):
         return -1.0
+    return abs(cur - prior) / abs(prior) if prior else -1.0
+
+
+def _n1(x: Any) -> str:  # a revision value → 1-decimal, or verbatim when non-numeric ('-')
+    try:
+        return f"{float(x):.1f}"
+    except (ValueError, TypeError):
+        return str(x)
+
+
+def _revision_headline(evs: list[Any]) -> Any | None:
+    """(T3) The headline revision for a broker-day, by metric PRIORITY (EBITDA > Revenue >
+    EPS-Normalized) — the largest-|%Δ| revision of the first priority metric present; else the
+    largest-|%Δ| of ANY metric. None when no event carries a clean |%Δ|. Never raw |Δ|."""
+    numeric = [e for e in evs if _pct_delta(e) >= 0]
+    if not numeric:
+        return None
+    for kws in _HEADLINE_PRIORITY:
+        tier = [e for e in numeric if all(k in e.metric.lower() for k in kws)]
+        if tier:
+            return max(tier, key=_pct_delta)
+    return max(numeric, key=_pct_delta)
 
 
 def _grouped_events_lines(s: Sourced[Any]) -> list[str]:
-    """(4d) Revision events GROUPED by (date, broker): a change-type summary + the material line
-    items (largest |Δ| first) per group; cap 3 groups, the rest noted. Full list in dossier.json."""
+    """(4d · T3) Revision events COMPRESSED to ONE line per broker-day — date · broker · action mix
+    (n↑/n↓, initiations) · the headline revision (largest-|Δ|, EBITDA-preferred) · '+N items in
+    JSON'. Cap ``_GROUP_CAP`` broker-days, the remainder counted; the expanded per-item view is the
+    web on-demand tier + the JSON. Full list always in dossier.json."""
     label = "Revision-event log"
     if s.status is not SourceStatus.PRESENT or not s.value:
         return [_fact(label, s)]
@@ -212,19 +242,19 @@ def _grouped_events_lines(s: Sourced[Any]) -> list[str]:
         groups.setdefault((e.date, e.broker), []).append(e)
     keys = sorted(groups, key=lambda k: k[0], reverse=True)  # most-recent broker-day first
     out = [f"- **{label}** ({len(events)} events · {len(keys)} broker-days) — ↳ `{s.source_ref}`:"]
-    for key in keys[:_GROUP_CAP]:
-        evs = groups[key]
-        summary = ", ".join(
-            f"{t}×{n}" if n > 1 else t for t, n in Counter(e.change_type for e in evs).items()
-        )
-        out.append(f"  - **{key[0]} · {key[1]}** — {summary}:")
-        for e in sorted(evs, key=_abs_delta, reverse=True)[:_ITEMS_PER_GROUP]:
-            out.append(
-                f"    - {e.metric} {e.period}: {e.broker_prior}→{e.broker_current} "
-                f"(cons {e.consensus_before}→{e.consensus_after})"
-            )
-        if len(evs) > _ITEMS_PER_GROUP:
-            out.append(f"    - _+{len(evs) - _ITEMS_PER_GROUP} more line items in JSON_")
+    for dt, broker in keys[:_GROUP_CAP]:
+        evs = groups[(dt, broker)]
+        ct = Counter(e.change_type for e in evs)
+        ups = sum(n for t, n in ct.items() if "upward" in t.lower())
+        downs = sum(n for t, n in ct.items() if "downward" in t.lower())
+        inits = sum(n for t, n in ct.items() if "initiation" in t.lower())
+        mix = f"{ups}↑/{downs}↓" + (f", {inits} initiations" if inits else "")
+        head = _revision_headline(evs)
+        headline = (f" · {head.metric} {head.period} {_n1(head.broker_prior)}→"
+                    f"{_n1(head.broker_current)}" if head else "")
+        rest = len(evs) - (1 if head else 0)
+        out.append(f"  - **{dt} · {broker}** · {mix}{headline}"
+                   + (f" · +{rest} items in JSON" if rest > 0 else ""))
     if len(keys) > _GROUP_CAP:
         out.append(f"  - _+{len(keys) - _GROUP_CAP} more broker-days in JSON_")
     return out
@@ -534,11 +564,17 @@ def _near_dated(i: Any, ref: date) -> bool:
     return date.fromisoformat(i.maturity_date).year <= ref.year + 1
 
 
-def _clip120(s: str) -> str:
-    """(K1) Collapse whitespace + clip a verbatim clause to ≤120 chars for the curated main body —
-    the full verbatim lives in the appendix table + the JSON."""
+def _clip(s: str, n: int) -> tuple[str, bool]:
+    """Collapse whitespace + clip a verbatim clause to ≤``n`` chars (… when cut). Returns
+    ``(clipped, was_trimmed)`` — the caller adds a 'full verbatim in JSON' note only when trimmed.
+    The full verbatim lives in the appendix / JSON."""
     s = re.sub(r"\s+", " ", str(s)).strip()
-    return s if len(s) <= 120 else s[:119].rstrip() + "…"
+    return (s, False) if len(s) <= n else (s[:n - 1].rstrip() + "…", True)
+
+
+def _clip120(s: str) -> str:
+    """(K1) ≤120-char clause for the curated main body — full verbatim in the appendix + JSON."""
+    return _clip(s, 120)[0]
 
 
 # (K1) governing-term name → short label for the curated main-body covenant line (survival-critical
@@ -556,6 +592,17 @@ _DATE_RE = rf"(?:{_MONTHS})\s+\d{{1,2}},\s+\d{{4}}|\d{{4}}-\d{{2}}-\d{{2}}"
 
 _CADENCE = {"week": "weekly", "month": "monthly", "quarter": "quarterly", "day": "daily",
             "year": "annually"}
+
+
+def _labelled_rate(raw: str, label_re: str, val_re: str) -> str | None:
+    """(T2) A label-anchored component of an interest COMPOSITE: '' when the label is absent (the
+    component is absent), the value when the label is present AND the value is extractable, or None
+    when the label IS present but the value can't be read — the caller then renders NO lead (a
+    partial composite is misleading-by-omission)."""
+    if not re.search(label_re, raw, re.IGNORECASE):
+        return ""
+    m = re.search(val_re, raw, re.IGNORECASE)
+    return next((g for g in m.groups() if g), None) if m else None
 
 
 def _covenant_value_lead(label: str, raw: str) -> str:
@@ -578,19 +625,25 @@ def _covenant_value_lead(label: str, raw: str) -> str:
     if label == "Interest / coupon":
         base = re.search(r"\bTerm SOFR\b|\bSOFR\b|\bLPR\b|\bNew Benchmark\b|\bFloating rate\b",
                          raw, re.IGNORECASE)
-        # margin ONLY from a LABELLED margin or a bps SPREAD — a bare '+ N%' catches a step-down
-        # grid / default premium, and a bare '% default premium' is likewise excluded.
-        marg = re.search(r"(?:Applicable\s+)?Margin\s*(?:=|is|of|:)?\s*(\d+(?:\.\d+)?%|\d+\s*bps)"
-                         r"|\bPlus\s+(\d+\s*bps)", raw, re.IGNORECASE)
-        pik = re.search(r"(\d+(?:\.\d+)?%)[^.;]{0,40}?\bPIK\b", raw, re.IGNORECASE)  # PIK acronym
-        if base:
-            m = (marg.group(1) or marg.group(2)) if marg else ""
-            lead = f"{base.group(0)} + {m}" if m else base.group(0)
-            return f"{lead} (+{pik.group(1)} PIK)" if pik else lead
-        fixed = re.search(r"(?:fixed rate of|bears? interest at (?:a )?(?:fixed )?rate of|"
-                          r"interest at (?:a )?(?:fixed )?rate of)\s+(\d+(?:\.\d+)?%)",
-                          raw, re.IGNORECASE)
-        return f"{fixed.group(1)} fixed" if fixed else ""
+        if not base:  # fixed-rate fallback (no floating base)
+            fixed = re.search(r"(?:fixed rate of|bears? interest at (?:a )?(?:fixed )?rate of|"
+                              r"interest at (?:a )?(?:fixed )?rate of)\s+(\d+(?:\.\d+)?%)",
+                              raw, re.IGNORECASE)
+            return f"{fixed.group(1)} fixed" if fixed else ""
+        # (T2/audit) the rate is a COMPOSITE (margin/floor/PIK) — render the FULL LABELLED composite
+        # or NO lead (a partial is misleading-by-omission). Each component is LABEL-anchored: it
+        # accepts the parenthetical 'Margin (9.75%)' form but NEVER a bare '+ N%' step-down/default;
+        # a component whose label is present but whose value can't be read → no lead at all.
+        margin = _labelled_rate(raw, r"\bMargin\b|\bPlus\s+\d+\s*bps\b",
+                                r"(?:Applicable\s+)?Margin\b[^.;%\d]{0,4}(\d+(?:\.\d+)?%|\d+\s*bps)"
+                                r"|\bPlus\s+(\d+\s*bps)\b")
+        floor = _labelled_rate(raw, r"\bFloor\b", r"\bFloor\b[^.;%\d]{0,4}(\d+(?:\.\d+)?%)")
+        pik = _labelled_rate(raw, r"\bPIK\b", r"(\d+(?:\.\d+)?%)[^.;]{0,40}?\bPIK\b")
+        if margin is None or floor is None or pik is None:
+            return ""  # a labelled component was unextractable → full-composite-or-none
+        lead = base.group(0) + (f" + {margin}" if margin else "")
+        extras = [x for x in (f"Floor {floor}" if floor else "", f"+{pik} PIK" if pik else "") if x]
+        return lead + (f" ({', '.join(extras)})" if extras else "")
     if label == "Maturity":
         repl = re.search(rf"replaced with[^.;]*?({_DATE_RE})", raw, re.IGNORECASE)  # amendment wins
         anch = re.search(rf"(?:maturity\s*date|matur\w+)[^.;]{{0,40}}?({_DATE_RE})", raw,
@@ -684,7 +737,10 @@ def _capital_structure_appendix_lines(cs: Any) -> list[str]:
     flat facts when there was no structured panel; removed, so nothing is lost from the surface. The
     8-K/pointer/covenant `_fact`s below always render (UNKNOWN-safe). Relocated + kept in JSON."""
     inst = cs.instruments
-    out: list[str] = ["", "### Capital-structure provenance (full panel · pointers · terms)"]
+    # (T1) the ON-DEMAND / audit tier: the md keeps it in full under this marker; the web collapses
+    # it in a <details> that print excludes; the JSON is machine-complete. Nothing deleted.
+    out: list[str] = ["", "### Capital-structure provenance — on-demand (web collapsed · print-"
+                      "excluded · JSON) — full panel · pointers · terms"]
     if inst.status is SourceStatus.PRESENT and inst.value:
         out += _table(f"Capital structure — full instrument panel {cs.detail_as_of}",
                       inst.source_ref, _CS_COLS, [_instrument_row(i) for i in inst.value],
@@ -730,21 +786,43 @@ def _covenant_term_lines(cs: Any) -> list[str]:
     for g in gov:
         if g.family not in families:
             families.append(g.family)
-    cols = ["Governing value (verbatim, or UNKNOWN)", "Source § (base · amended by)"]
+    cols = ["Governing value (lead · clause ≤200c)", "Source §"]
     out: list[str] = []
     for fam in families:
+        fam_terms = [g for g in gov if g.family == fam]
+        # (T2) the family source lineage moves to the table FOOTER, not repeated on every row: the
+        # base accession/exhibit + the amendment-accession chain.
+        present_bases = [g.base_ref for g in fam_terms
+                         if g.value.status is SourceStatus.PRESENT and g.base_ref]
+        fam_base = present_bases[0] if present_bases else rows_s.source_ref
+        amend_accs = sorted({a for g in fam_terms for a in g.amended_by})
+        footer = ("Source §: " + str(fam_base)
+                  + (f" · amended by {', '.join(amend_accs)}" if amend_accs else ""))
         rows: list[list[str]] = []
-        for g in (t for t in gov if t.family == fam):
+        for g in fam_terms:
             v = g.value
-            if v.status is SourceStatus.PRESENT:
-                src = g.base_ref or v.source_ref or "—"
-                if g.amended_by:
-                    src += f" · amended by {', '.join(g.amended_by)}"
-                rows.append([g.term, str(v.value), src])
-            else:  # a term NO exhibit stated — one UNKNOWN row, never ABOVE a present answer (P5)
+            if v.status is not SourceStatus.PRESENT:  # UNKNOWN — one row, not above a present (P5)
                 rows.append([g.term, "UNKNOWN", v.note or "not stated"])
+                continue
+            # (T2) value = the extractable value-lead + a ≤200c clause; 'full verbatim in JSON' only
+            # when the clause was actually trimmed.
+            label = next((lbl for key, lbl in _SUMMARY_TERMS if key in g.term.lower()), None)
+            verbatim = str(v.value)
+            lead = _covenant_value_lead(label, verbatim) if label else ""
+            clause, trimmed = _clip(verbatim, 200)
+            cell = (f"{lead} · {clause}" if lead else clause) + (
+                " — full verbatim in JSON" if trimmed else "")
+            # source §: an off-family base (≠ the family footer) annotates inline; an amended row
+            # keeps its amendment ref; a plain base row points at the footer.
+            if g.base_ref and g.base_ref != fam_base:
+                ref = g.base_ref
+            elif g.amended_by:
+                ref = f"amended by {', '.join(g.amended_by)}"
+            else:
+                ref = "base (footer)"
+            rows.append([g.term, cell, ref])
         out += _table(f"Covenant terms — {fam} (governing; Tier-2 fenced)", rows_s.source_ref,
-                      cols, rows)
+                      cols, rows, note=footer)
     # (FIX-2) ONE human line inside the covenant block for located agreement exhibits NOT extracted
     # this run (cost bound / fetch fail) — the per-exhibit machine detail is a QA flag, not a
     # caveat. Derived: located pointer accessions minus the accessions the extraction actually read.

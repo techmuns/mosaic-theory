@@ -3317,28 +3317,150 @@ def test_estimates_as_of_floor_vs_header_wins_over_events() -> None:
 
 
 def test_revision_events_render_groups_by_date_broker_and_caps() -> None:
-    """Fix 4d: the render GROUPS events by (date, broker) — many same-day same-broker events fold
-    to ONE group with a change-type summary + material line items (largest |Δ| first); items cap 5,
-    groups cap 3, the rest noted. Serials are decoded, never shown raw."""
+    """(4d · T3) The render COMPRESSES to ONE line per broker-day: header count + an action mix
+    (n↑/n↓, initiations) + the largest-|Δ| headline + '+N items in JSON'; cap 6 broker-days, the
+    rest counted. Serials decoded, never shown raw."""
     rows: list[list[typing.Any]] = [
         ["", "", ""],
         ["Change Type", "Date", "Broker", "Analyst", "Data Point", "Period",
          "Broker Value Current", "Broker Value Prior", "Consensus After", "Consensus Before"],
     ]
-    for i, d in enumerate([1, 50, 3, 2, 4, 7]):  # |Δ| sizes; the 50 (M1) must sort first
+    for i, d in enumerate([1, 50, 3, 2, 4, 7]):  # |Δ| sizes; the 50 (M1) is the headline
         rows.append(["Downward Revision", 46100.0, "HCW", "-", f"M{i}", "FY 2026",
                      float(100 - d), 100.0, 0.0, 0.0])
     lines = dr._grouped_events_lines(cs.revision_events(_est_bundle({"Recent Changes": rows})))
     text = "\n".join(lines)
-    assert "6 events · 1 broker-days" in text and "46100" not in text  # one group, serial decoded
-    assert "Downward Revision×6" in next(ln for ln in lines if "· HCW" in ln)  # change-type summary
-    items = [ln for ln in lines if ln.strip().startswith("- M")]
-    assert items[0].strip().startswith("- M1")  # largest |Δ| first
-    assert len(items) == 5 and any("+1 more line items in JSON" in ln for ln in lines)  # item cap 5
-    # group cap: 12 distinct broker-days → 3 rendered + the rest noted
+    assert "6 events · 1 broker-days" in text and "46100" not in text  # header + serial decoded
+    bd = next(ln for ln in lines if "· HCW" in ln)
+    assert "0↑/6↓" in bd  # action mix (all downward, no initiations)
+    assert "M1 FY 2026 100.0→50.0" in bd  # headline = the largest |Δ|
+    assert "+5 items in JSON" in bd  # the remaining line items counted (one line per broker-day)
+    # group cap: 12 distinct broker-days → 6 rendered + the rest noted
     ml = "\n".join(dr._grouped_events_lines(cs.revision_events(_est_bundle(
         {"Recent Changes": _recent_changes_fx(12)}))))
-    assert "12 events · 12 broker-days" in ml and "+9 more broker-days in JSON" in ml
+    assert "12 events · 12 broker-days" in ml and "+6 more broker-days in JSON" in ml
+
+
+def _rev(m: str, p: typing.Any, c: typing.Any) -> ds.RevisionEvent:
+    return ds.RevisionEvent(
+        date="2026-05-15", change_type="Downward Revision", broker="X", metric=m, period="FY 2026",
+        broker_prior=str(p), broker_current=str(c), consensus_before="-", consensus_after="-")
+
+
+def test_t3_headline_priority_ebitda_over_revenue_and_pct_delta() -> None:
+    """(T3) The revision headline ranks on |%Δ| (NEVER raw |Δ| — cross-metric raw deltas are
+    unit-incoherent) with metric PRIORITY EBITDA > Revenue > EPS-Normalized. Pin: Revenue's raw |Δ|
+    dwarfs EBITDA's, yet EBITDA headlines (priority)."""
+    h = dr._revision_headline([_rev("Revenue", 1000, 500), _rev("EBITDA", 100, 50)])
+    assert h is not None and h.metric == "EBITDA"  # Revenue |Δ|=500 ≫ EBITDA |Δ|=50, EBITDA wins
+    h2 = dr._revision_headline([_rev("EBITDA", 100, 90), _rev("EBITDA", 100, 40),
+                                _rev("EBITDA", "-", 5)])  # 10% vs 60% vs excluded (non-numeric)
+    assert h2 is not None and h2.broker_current == "40"  # the largest |%Δ| within the metric
+    h3 = dr._revision_headline([_rev("EBIT", 100, 90), _rev("Net Income", 100, 20)])
+    assert h3 is not None and h3.metric == "Net Income"  # no priority metric → largest |%Δ| (80%)
+    assert dr._revision_headline([_rev("EBITDA", "-", "-")]) is None  # all non-numeric → None
+
+
+def test_t2_interest_lead_is_full_composite_or_absent() -> None:
+    """(T2/audit) A composite rate lead renders the FULL labelled composite (base + margin + floor +
+    PIK, the parenthetical margin form accepted) or NO lead — a partial is misleading-by-omission;
+    a bare '+ N%' step-down / default is never captured."""
+    lead = dr._covenant_value_lead
+    full = ("Term SOFR + Applicable Margin (9.75% per annum); 3.75% of interest paid in-kind "
+            "(PIK Interest); Floor = 3.00% per annum; Default Rate = Applicable Margin + 3.00%.")
+    assert lead("Interest / coupon", full) == "Term SOFR + 9.75% (Floor 3.00%, +3.75% PIK)"
+    assert lead("Interest / coupon", "Floating rate; RMB rate = LPR Plus 115 bps.") == \
+        "Floating rate + 115 bps"
+    # a labelled component present but unreadable → NO lead (full-composite-or-none)
+    assert lead("Interest / coupon",
+                "Term SOFR + Applicable Margin (to be set); Floor = 3.00%.") == ""
+    # a bare step-down '+ N%' is not captured; only the labelled 5.50% margin leads
+    step = "Term SOFR; the Applicable Margin is 5.50%, stepping to + 4.5%."
+    assert lead("Interest / coupon", step) == "Term SOFR + 5.50%"
+
+
+def test_t2_covenant_table_footer_source_and_value_lead_mvst() -> None:
+    """(T2) The covenant table slims: header names the ≤200c clause; the family source lineage moves
+    to the table FOOTER; a base row points at the footer; a trimmed clause notes 'full verbatim in
+    JSON'; the value-lead (conversion $/sh, the interest composite) leads its row."""
+    import pathlib
+    p = pathlib.Path("data/dossiers/MVST/dossier.json")
+    if not p.exists():
+        pytest.skip("no committed MVST dossier.json")
+    md = dr.render_markdown(ds.Dossier.model_validate_json(p.read_text()))
+    assert "Governing value (lead · clause ≤200c)" in md  # slimmed header
+    assert ("_Source §: 8-K 0001760689-24-000021 · wu_microvast-loanandsecuri.htm · amended by "
+            "0000947871-25-000313_") in md  # family lineage in the FOOTER
+    assert "| base (footer) |" in md and "full verbatim in JSON" in md
+    assert "⇒ ~$0.50/sh at 2 sh per $1.00 ·" in md
+    assert "Term SOFR + 9.75% (Floor 3.00%, +3.75% PIK) ·" in md  # the full interest composite
+
+
+def test_t3_revision_log_compression_pin_mvst() -> None:
+    """(T3, pin) MVST renders EXACTLY 3 compressed broker-day lines with the EBITDA-preferred
+    headline EBITDA FY26 146.5→62.1 on 2026-05-15."""
+    import pathlib
+    p = pathlib.Path("data/dossiers/MVST/dossier.json")
+    if not p.exists():
+        pytest.skip("no committed MVST dossier.json")
+    md = dr.render_markdown(ds.Dossier.model_validate_json(p.read_text()))
+    bd = [ln for ln in md.splitlines()
+          if ln.strip().startswith("- **2026-") and "↑/" in ln and "in JSON" in ln]
+    assert len(bd) == 3  # exactly 3 broker-day lines
+    assert any("2026-05-15" in ln and "EBITDA FY 2026 146.5→62.1" in ln for ln in bd)
+
+
+def test_t1_provenance_on_demand_marker_print_exclusion_and_nothing_deleted() -> None:
+    """(T1) The md marks the provenance section on-demand (kept in FULL — the md is the audit
+    surface); the WEB wraps it in a collapsed <details> and the print CSS excludes non-open details;
+    nothing-deleted — the full covenant verbatims + accessions stay in the md (and JSON)."""
+    import pathlib
+    md = dr.render_markdown(ds.Dossier.model_validate_json(
+        pathlib.Path("data/dossiers/MVST/dossier.json").read_text()))
+    assert "Capital-structure provenance — on-demand" in md
+    assert "RMB 800,000,000" in md and "0001760689-24-000021" in md  # verbatim + accession kept
+    js = pathlib.Path("frontend/views/dossier.js").read_text()
+    css = pathlib.Path("frontend/assets/styles.css").read_text()
+    assert "provenance" in js.lower() and "<details" in js  # web on-demand wrap
+    assert "details:not([open])" in css and "display: none" in css  # print-exclusion rule
+
+
+def test_t3_py_js_revision_headline_parity() -> None:
+    """(T3 · py↔js) The revision-headline PRIORITY + |%Δ| logic MUST stay identical in render.py and
+    dossier.js — mirror drift is the H2 lesson. Structural: the JS `_HEADLINE_PRIORITY` equals
+    Python's; behavioural (node): shared fixtures pick the same headline event on both engines."""
+    import json
+    import pathlib
+    import shutil
+    import subprocess
+    js = pathlib.Path("frontend/views/dossier.js").read_text()
+    m = re.search(r"_HEADLINE_PRIORITY\s*=\s*(\[\[.*?\]\])", js)
+    assert m is not None and json.loads(m.group(1)) == [list(t) for t in dr._HEADLINE_PRIORITY]
+    if not shutil.which("node"):
+        return
+    fx = [
+        [{"metric": "Revenue", "broker_prior": "1000", "broker_current": "500"},
+         {"metric": "EBITDA", "broker_prior": "100", "broker_current": "50"}],  # priority → EBITDA
+        [{"metric": "EBITDA", "broker_prior": "100", "broker_current": "90"},
+         {"metric": "EBITDA", "broker_prior": "100", "broker_current": "40"}],  # within → 60% move
+        [{"metric": "EBIT", "broker_prior": "100", "broker_current": "90"},
+         {"metric": "Net Income", "broker_prior": "100", "broker_current": "20"}],  # fallback
+        [{"metric": "EBITDA", "broker_prior": "-", "broker_current": "-"}],  # → null/None
+    ]
+    block = js[js.index("const _pctDelta"):js.index("}", js.index("return numeric.reduce")) + 1]
+    src = (block + "\nconst pick=g=>{const h=_revisionHeadline(g);"
+           "return h?[h.metric,h.broker_prior,h.broker_current]:null;};"
+           f"console.log(JSON.stringify({json.dumps(fx)}.map(pick)))")
+    out = subprocess.run(["node", "-e", src], capture_output=True, text=True, check=True)
+
+    def py_pick(g: list[dict[str, str]]) -> object:
+        evs = [ds.RevisionEvent(
+            date="d", change_type="Downward Revision", broker="X", metric=e["metric"],
+            period="FY 2026", broker_prior=e["broker_prior"], broker_current=e["broker_current"],
+            consensus_before="-", consensus_after="-") for e in g]
+        h = dr._revision_headline(evs)
+        return [h.metric, h.broker_prior, h.broker_current] if h else None
+    assert json.loads(out.stdout) == [py_pick(g) for g in fx]  # zero divergence
 
 
 def test_consensus_stats_reads_target_and_ratings_skips_potential_upside() -> None:
@@ -3436,8 +3558,8 @@ def test_fresh_dossier_renders_catalyst_path_in_place_of_consensus_slot() -> Non
     md = dr.render_markdown(dossier)
     assert "### Catalyst path (estimates · guidance · revisions) — as-of 2026-05-15" in md
     assert "146.5 (6m) → 62.1 (now)" in md
-    # events GROUPED (Fix 4d): a (date · broker) header, then the line item beneath it
-    assert "2026-05-15 · HCW" in md and "EBITDA FY 2026: 146.5→62.08" in md
+    # events COMPRESSED (T3): one line per broker-day with the action mix + the headline revision
+    assert "2026-05-15 · HCW" in md and "EBITDA FY 2026 146.5→62.1" in md
     # Fix 5: the legacy 'Consensus context' block is GONE; only Surprise history is folded in
     assert "legacy light facts" not in md and "### Consensus context" not in md
     assert "Surprise history (annual beat/miss)" in md
