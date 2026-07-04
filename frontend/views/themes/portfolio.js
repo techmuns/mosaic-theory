@@ -39,7 +39,7 @@ export async function render(root, { item, frame }) {
       <div class="ps-row">
         <div>
           <div class="ps-tag">Theme edge · unvalidated research surface</div>
-          <div style="margin-top:2px;"><b class="ps-buys">${fmtInt(pf.totalBuys ?? 0)} buys</b><span class="ps-sub">across ${nThemes} themes · ${fmtInt(pf.totalWatchlist ?? 0)} on watch · watchlists, not buys (yet)</span></div>
+          <div style="margin-top:2px;"><b class="ps-buys">${fmtInt(pf.totalBuys ?? 0)} Buys</b><span class="ps-sub">across ${nThemes} themes · ${fmtInt(pf.totalWatchlist ?? 0)} on watch</span></div>
         </div>
       </div>
       <details class="ps-why">
