@@ -2185,6 +2185,60 @@ def test_h3_gate_shortref_and_dedupe_unknown_reasons() -> None:
     assert len(out) == 2  # the two duplicate lines removed
 
 
+def test_k6_99_1_unknown_reason_renders_once_on_real_mvst() -> None:
+    """(K6, pin restated per operator) The 99.1 revised-guidance UNKNOWN REASON folds to exactly ONE
+    render (all affected fields named); graph-cohort likewise. Pin: unknown-reason occurrences == 1
+    (NOT a grep of '99.1' — the drawdown 8-K's own 'Exhibit 99.1' filing text is legitimate)."""
+    import pathlib
+    p = pathlib.Path("data/dossiers/MVST/dossier.json")
+    if not p.exists():
+        pytest.skip("no committed MVST dossier.json")
+    md = dr.render_markdown(ds.Dossier.model_validate_json(p.read_text()))
+    unk = [ln for ln in md.splitlines()
+           if ln.startswith("- **") and "_UNKNOWN_" in ln and "99.1" in ln]
+    assert len(unk) == 1, f"99.1 unknown-reason occurrences must be 1, got {len(unk)}"
+    assert "Revised guidance" in unk[0] and "fwd-adj" in unk[0]  # all affected fields named
+    coh = [ln for ln in md.splitlines()
+           if ln.startswith("- **") and "_UNKNOWN_" in ln and "exposed" in ln]
+    assert len(coh) == 1  # graph-cohort folds to one too
+
+
+def test_k1_covenant_value_lead_extracts_the_decision_figure_before_clip() -> None:
+    """(K1 generalized) EVERY curated covenant line leads with its extractable VALUE before the clip
+    clip, so the decision figure survives truncation wherever it sits in the clause. A governing
+    maturity takes the 'replaced with' date, not the deleted one. Never fabricates."""
+    assert "~$0.50/sh" in dr._covenant_value_lead(
+        "Conversion", "Conversion Rate = two (2) shares of Common Stock per $1.00 principal amount")
+    assert dr._covenant_value_lead(
+        "Financial maintenance", "Liquidity as of Friday of each calendar week not less than "
+        "$5,000,000.") == "not less than $5,000,000 weekly"
+    assert "SOFR" in dr._covenant_value_lead(
+        "Interest / coupon", "Term SOFR + Applicable Margin; Applicable Margin = 9.75% per annum; "
+        "3.75% of interest paid in-kind (PIK Interest)") and "9.75%" in dr._covenant_value_lead(
+        "Interest / coupon", "Applicable Margin = 9.75% per annum")
+    assert dr._covenant_value_lead(
+        "Maturity", '"November 28, 2025" is deleted and replaced with "May 28, 2026".'
+    ) == "May 28, 2026"  # the amendment governs, not the deleted date
+    assert "enumerated" in dr._covenant_value_lead(
+        "Events of default", "Events of Default: 1. X; 2. Y; 12. Z. Remedies include acceleration.")
+    assert dr._covenant_value_lead("Conversion", "price to be set by the board") == ""  # no fabric.
+
+
+def test_k3_credit_health_renders_mini_table_or_falls_back() -> None:
+    """(K3) Credit health parses the prose score line into a 4-row mini-table (dimension | name |
+    peer), with a scale footnote; an unparseable value → the plain fact (no fabrication)."""
+    import types
+    lv = types.SimpleNamespace(credit_health=ds.Sourced.present(
+        "name Overall/Operational/Solvency/Liquidity 3/3/2/2 (S&P issuer rating unrated); "
+        "peer-median O/Op/S/L 2.5/2.5/3/3; scale 1=strongest … 4=weakest (S&P-MI PD model)",
+        source_ref="CIQ Credit Health"))
+    out = "\n".join(dr._credit_health_lines(typing.cast(typing.Any, lv)))
+    assert dr._TABLE_MARK in out and "| Overall | 3 | 2.5 |" in out and "S&P-MI PD model" in out
+    lv2 = types.SimpleNamespace(
+        credit_health=ds.Sourced.present("unrated; no panel", source_ref="x"))
+    assert dr._TABLE_MARK not in "\n".join(dr._credit_health_lines(typing.cast(typing.Any, lv2)))
+
+
 def test_audit_gfm_cell_sanitizes_pipe_and_newline() -> None:
     """(audit PR68/69) A GFM table cell escapes a literal '|' and collapses newlines — a verbatim E5
     covenant value/quote can carry both, which would otherwise open a spurious column or shatter the

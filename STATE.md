@@ -2152,6 +2152,15 @@ residual, not a bug to chase; the point is already IN the doc (the tier only ord
 regex paraphrase-matching is lower-value than the human's read. Widen no further without a new,
 repeatedly-observed shape.
 
+**QUEUED (not the curation PR — that's render-only): exhibit-class filter BEFORE Tier-2 extraction
+spend.** Exclude equity-comp / RSU award agreements at DISCOVERY (covenant-pointer stage), before the
+fenced Tier-2 LLM extraction runs on them. Observed waste (MVST): the RSU exhibit
+(`mvst20251231-ex1013.htm`, "Restricted Stock Unit Award Agreement") was located as a "material
+contracts (10-K exhibit index)" pointer and fully extracted as a covenant doc — 7 UNKNOWN covenant
+rows + 8 RSU-award rows, none survival-relevant (the curation now routes that whole family to the
+appendix, but the extraction spend already happened). Filter the exhibit class up front so the LLM
+never reads it. Extractor change → its own PR with real-run cost verification, not the render curation.
+
 ## 6. Open items carried from the fossils (live, not being worked now)
 
 - **Regulatory/counsel** — HK SFC Type 9 (**blocks running real LP money**; longest calendar lead),

@@ -281,12 +281,12 @@ function renderDossier(d, verdict) {
     trajectorySection(m.quality || {}),            // D2: merged trajectory table + share-count
     valuation(m.valuation),                        // valuation & own-history
     peerComps(m.peer_comps),                       // peer comps (per-peer grid inside)
-    impliedBlock(m.implied_valuation),             // implied valuation
+    // (K4) implied valuation is DEMOTED to the appendix (reference-only) — no longer in the body.
     catalystPath(m.catalyst_path, m.consensus_context),
     m.catalyst_path ? "" : consensus(m.consensus_context),  // legacy fallback only for old JSON
     concentration(m.concentration),
     synthesis(d.synthesis),                        // D3 ordering + twins last
-    appendixBlock(m),                              // + management-commentary pointer (D1) + D5b
+    appendixBlock(m),                              // + cap-structure provenance (K1) + implied ref (K4) + mgmt pointer (D1) + D5b
     verdictFooter(),                               // D1: verdict footer
     loggedVerdict(verdict, d.ticker, d.reference_date),
   ].join("");
@@ -339,26 +339,157 @@ function maturityWall(cs, refDate) {
   return `<div class="fact"><div class="fact-label">Maturity wall (deterministic, vs ${escapeHtml(refDate)})</div><ul class="kv-list">${li.join("")}</ul></div>`;
 }
 
-// (E1/E2) structured capital structure — instruments table + maturity wall + the survival reads.
+// (E1/E2) instrument columns + one instrument → a {label, cells} row (mirrors render._CS_COLS /
+// _instrument_row); the description is the row LABEL, Principal is right-aligned by dataTable's .num.
+const _CS_COLS = ["Type", "Principal", "Coupon", "Floating", "Maturity", "Sec", "Conv", "Cur"];
+const instrumentRow = (i) => ({
+  label: i.description,
+  cells: [i.type, _mM(i.principal_musd), i.coupon || DASH, i.floating_rate || DASH,
+    i.maturity_date || "undated", i.secured ? "Y" : "N", i.convertible ? "Y" : "N", i.currency],
+});
+
+// (K1, mirrors covenant_extract._CONV_RATE_RE / _derive_conversion) a best-effort $/share from a
+// stated conversion rate "N shares … per $D" → $D ÷ N (D is the CAPTURED denomination — $1.00 or the
+// $1,000 bond convention — never assumed). "" when the rate isn't cleanly stated (the clause then
+// carries it) — never a fabricated or mis-scaled number.
+const _CONV_RATE_RE = /(?<![\d,.])\(?(\d{1,4}(?:\.\d+)?)\)?\s*shares?\b[^;]{0,80}?per\s*\$?\s*(1\.00|1,000|1000|100|1)(?![\d.,])/i;
+function _deriveConversion(value) {
+  const m = String(value).match(_CONV_RATE_RE);
+  if (!m) return "";
+  const rate = Number(m[1]), denom = Number(m[2].replace(/,/g, ""));
+  if (!(rate > 0) || !(denom > 0)) return "";
+  return ` (⇒ ~$${(denom / rate).toFixed(2)}/sh at ${m[1]} sh per $${m[2]})`;
+}
+
+// (K1) governing-term key → short label for the curated main-body covenant line (survival-critical
+// only). Mirrors render._SUMMARY_TERMS — matched against g.term.toLowerCase().
+const _SUMMARY_TERMS = [
+  ["financial-maintenance", "Financial maintenance"], ["conversion", "Conversion"],
+  ["interest", "Interest / coupon"], ["maturity date", "Maturity"],
+  ["mandatory prepayment", "Events of default"],
+];
+const _MONTHS_RE = "(?:January|February|March|April|May|June|July|August|September|October|November|December)";
+const _DATE_RE_SRC = `(?:${_MONTHS_RE})\\s+\\d{1,2},\\s+\\d{4}|\\d{4}-\\d{2}-\\d{2}`;
+
+// (K1, mirrors render._covenant_value_lead) the extractable VALUE a curated covenant line LEADS with,
+// before the ≤120c clip — so the decision figure survives truncation. "" when no clean value is
+// extractable (the clause alone then carries it). NEVER fabricates — each branch pulls a stated value.
+function covenantValueLead(label, raw) {
+  if (label === "Conversion") return _deriveConversion(raw).trim().replace(/^\(/, "").replace(/\)$/, "");
+  if (label === "Financial maintenance") {
+    const thr = raw.match(/not less than\s+\$[\d,]+(?:\.\d+)?/);
+    const freq = /each .{0,12}week|weekly|Friday/i.test(raw) ? "weekly" : "";
+    return thr ? `${thr[0]} ${freq}`.trim() : "";
+  }
+  if (label === "Interest / coupon") {
+    const base = raw.match(/\bTerm SOFR\b|\bSOFR\b|\bLPR\b|\bNew Benchmark\b|\bFloating rate\b/i);
+    const marg = raw.match(/(?:Margin\s*=\s*|Plus\s*|\+\s*)(\d+(?:\.\d+)?%|\d+\s*bps)/i);
+    const pik = raw.match(/(\d+(?:\.\d+)?%)[^.;]{0,30}?(?:in[\s-]*kind|PIK)/i);
+    const lead = [base ? base[0] : "", marg ? `+ ${marg[1]}` : ""].filter(Boolean).join(" ");
+    return (pik && lead ? `${lead} (+${pik[1]} PIK)` : lead).trim();
+  }
+  if (label === "Maturity") {
+    const repl = raw.match(new RegExp(`replaced with[^.;]*?(${_DATE_RE_SRC})`, "i"));  // amendment wins
+    if (repl) return repl[1];
+    const m = raw.match(new RegExp(_DATE_RE_SRC, "i"));
+    return m ? m[0] : "";
+  }
+  if (label === "Events of default") {
+    const nums = [...raw.matchAll(/(?:^|[^.\d])(\d{1,2})\.\s/g)].map((x) => Number(x[1]));
+    const acc = /acceler/i.test(raw) ? "; acceleration" : "";
+    return nums.length ? `${Math.max(...nums)} enumerated${acc}` : "";
+  }
+  return "";
+}
+
+// (K1, mirrors render._clip120) collapse whitespace + clip a verbatim clause to ≤120 chars for the
+// curated main body — the full verbatim lives in the appendix table + JSON.
+function clip120(s) {
+  s = String(s).replace(/\s+/g, " ").trim();
+  return s.length <= 120 ? s : s.slice(0, 119).replace(/\s+$/, "") + "…";
+}
+
+// (K1, mirrors render._covenant_summary_lines) CURATED covenant summary for the MAIN body — the
+// governing VALUES that drive survival (financial-maintenance / conversion / interest / maturity /
+// a 1-line events-of-default), each leading with its extractable value then a ≤120-char clause.
+// Debt families only — the RSU/equity-incentive family is appendix-only. Returns "" when there are no
+// governing rows (the appendix carries the full detail). Mirrors the per-family grouping in the md.
+function covenantSummary(cs) {
+  const rs = cs.covenant_term_rows;
+  if (!rs || rs.status !== "present" || !Array.isArray(rs.value) || !rs.value.length) return "";
+  const ptrs = cs.covenant_pointer_rows;
+  const gov = governingTerms(rs.value, (ptrs && ptrs.value) || []);
+  const fams = [];
+  for (const g of gov) {
+    const fl = (g.fam || "").toLowerCase();
+    if (fl.includes("material contract") || fl.includes("incentive")) continue;  // RSU exhibit → appendix-only
+    if (!fams.includes(g.fam)) fams.push(g.fam);
+  }
+  let out = "";
+  for (const fam of fams) {
+    const parts = [];
+    for (const g of gov.filter((t) => t.fam === fam)) {
+      const v = g.value || {};
+      if (v.status !== "present") continue;
+      const entry = _SUMMARY_TERMS.find(([key]) => (g.term || "").toLowerCase().includes(key));
+      if (!entry) continue;
+      const label = entry[1];
+      const raw = String(v.value);
+      const lead = covenantValueLead(label, raw);  // (K1) lead with the extractable value
+      const clause = lead ? `${lead} · ${clip120(raw)}` : clip120(raw);
+      parts.push(`<li><b>${escapeHtml(label)}:</b> ${escapeHtml(clause)}</li>`);
+    }
+    if (parts.length) {
+      out += `<div class="fact"><div class="fact-label">Covenants — ${escapeHtml(fam)} ` +
+        `<span class="muted">(governing values; full verbatim in appendix)</span></div>` +
+        `<ul class="kv-list">${parts.join("")}</ul></div>`;
+    }
+  }
+  return out;
+}
+
+// (E1/E2 · K1) capital structure — MAIN body (CURATED): the live near-dated tranches (maturity year
+// ≤ refYear+1) with their economics, the month-precision wall + reconciliation, the QoQ aggregates,
+// the maturity-resolution verbatim, and the curated covenant-values summary. The full instrument
+// panel, the 8-K/covenant pointer tables, and the full per-family covenant tables move to the
+// appendix (capitalStructureAppendix). Mirrors render._capital_structure_lines.
 function capitalStructureInner(cs, refDate) {
   const inst = cs.instruments;
   let table = fact("Capital structure (instruments)", inst);
   if (inst && inst.status === "present" && Array.isArray(inst.value)) {
-    const cols = ["Type", "Principal", "Coupon", "Floating", "Maturity", "Sec", "Conv", "Cur"];
-    const rows = inst.value.map((i) => ({
-      label: i.description,
-      cells: [i.type, _mM(i.principal_musd), i.coupon || DASH, i.floating_rate || DASH,
-        i.maturity_date || "undated", i.secured ? "Y" : "N", i.convertible ? "Y" : "N", i.currency],
-    }));
-    table = dataTable(`Capital structure (instruments) — panel ${cs.detail_as_of || ""}`, inst.source_ref, cols, rows);
+    // (K1) near-dated = maturity year ≤ refYear+1 (mirrors render._near_dated); undated → appendix.
+    const refYearNext = Number(String(refDate).slice(0, 4)) + 1;
+    const near = inst.value.filter((i) => i.maturity_date && Number(i.maturity_date.slice(0, 4)) <= refYearNext);
+    const moved = inst.value.length - near.length;
+    const note = moved ? `${moved} undated / later aggregate line item(s) in the appendix panel` : "";
+    table = dataTable(`Live instruments — near-dated (≤12m + ${refYearNext}) — panel ${cs.detail_as_of || ""}`,
+      inst.source_ref, _CS_COLS, near.map(instrumentRow), note);
   }
   // (P3) the verbatim maturity-resolution event, when captured (a pre-P3 JSON has no field → nothing)
   const matEv = cs.maturity_event && (cs.maturity_event.status !== "present" || cs.maturity_event.value)
     ? fact("Maturity resolution (8-K verbatim)", cs.maturity_event) : "";
   return subhead("Capital structure & maturity wall") +
     table + maturityWall(cs, refDate) +
-    fact("Aggregates (latest quarter)", cs.summary) +
-    fact("8-Ks at instrument maturities", cs.maturity_filings) + matEv +
+    fact("Aggregates (latest quarter)", cs.summary) + matEv +
+    covenantSummary(cs);  // (K1) curated per-family survival covenant VALUES; "" → appendix carries it
+}
+
+// (K1, mirrors render._capital_structure_appendix_lines) capital-structure PROVENANCE for the
+// appendix: the FULL instrument panel (incl. undated line items), the 8-K maturity-filing pointers,
+// the covenant/contract pointer table, and the full per-family governing covenant tables. Nothing is
+// deleted from the surface — relocated here + kept in JSON. "" when there's no panel and no terms.
+function capitalStructureAppendix(cs) {
+  const inst = cs.instruments;
+  const empty = !inst || inst.status !== "present" || !Array.isArray(inst.value) || !inst.value.length;
+  if (empty && !cs.covenant_term_rows) return "";
+  let panel = "";
+  if (inst && inst.status === "present" && Array.isArray(inst.value)) {
+    panel = dataTable(`Capital structure — full instrument panel ${cs.detail_as_of || ""}`,
+      inst.source_ref, _CS_COLS, inst.value.map(instrumentRow), "");
+  }
+  return subhead("Capital-structure provenance (full panel · pointers · terms)") +
+    panel +
+    fact("8-Ks at instrument maturities", cs.maturity_filings) +
     covenantPointers(cs) +
     covenantTerms(cs);
 }
@@ -550,12 +681,14 @@ function impliedExpectations(ie) {
         : `UNKNOWN — ${r.note || ""}`,
     ],
   }));
-  const intro = `<div class="fact"><div class="fact-label">Implied expectations (price-inverted · multiples-space)</div>
+  const intro = `<div class="fact"><div class="fact-label">What the current price implies (at stated multiples)</div>
     <div style="min-width:0;"><div class="muted" style="font-size:12px;">${escapeHtml(gateShortref(ie.heterogeneity_gate || ""))}</div>
     <div class="muted" style="font-size:11px; margin-top:4px;">price-implied fundamental levels at stated multiples — the human judges earned vs residual; identity (†): at the name's own multiple the implied level IS consensus.</div>
-    <div class="muted" style="font-size:11px;">TEV as-of ${escapeHtml(ie.tev_as_of || "")} · multiples as-of ${escapeHtml(ie.multiples_as_of || "")}</div></div></div>`;
-  const table = dataTable("Implied metric levels · fixed multiple set", ie.tev && ie.tev.source_ref,
-    ["Multiple (× used)", "Implied level"], rows, "");
+    <div class="muted" style="font-size:11px;">TEV as-of ${escapeHtml(ie.tev_as_of || "")} · multiples as-of ${escapeHtml(ie.multiples_as_of || "")}</div></div></div>`;  // (K4) human-facing rename
+  const table = dataTable("Price-implied levels (at each stated multiple)", ie.tev && ie.tev.source_ref,
+    ["Multiple (× used)", "Implied level"], rows, "");  // (K5) renamed
+  // (K4) reads-against line — juxtapose vs consensus, never subtract (avoids %/upside/gap/discount).
+  const readsAgainst = `<div class="muted" style="font-size:11px; margin-top:4px;">Reads AGAINST the consensus path anchors below — juxtapose the price-implied level vs consensus per metric; never subtract one from the other.</div>`;
   // the parallel REVENUE anchors substantiate the TEV/Rev name-row identity (†); only when present.
   const revAnchors = (ie.rev_anchors && ie.rev_anchors.value)
     ? `<div style="margin-top:4px;"><b>Consensus path anchors (Revenue — juxtapose, do NOT difference):</b> ${escapeHtml(ie.rev_anchors.value)}</div>` : "";
@@ -566,7 +699,7 @@ function impliedExpectations(ie) {
     <div class="muted" style="font-size:11px; margin-top:4px;">${ie.vintage_coherent ? "" : "⚠ "}${escapeHtml(ie.coherence_note || "")}</div>
     ${ie.net_debt_reconciled ? "" : `<div class="muted" style="font-size:11px;">⚠ net-debt input disagrees with the cash/debt bridge — see the TEV source</div>`}
     <div class="muted" style="font-size:11px;">Fixed multiple set (declared in code, no per-name curation): name NTM + peer-median NTM/LTM, on TEV/EBITDA and TEV/Rev.</div></div></div>`;
-  return intro + table + anchors;
+  return intro + table + readsAgainst + anchors;  // (K4) reads-against between the table and the anchors
 }
 
 function valuation(v) {
@@ -787,6 +920,27 @@ function peerGridTable(s) {
   return dataTable(label, s.source_ref, cols, rows, "");
 }
 
+// (K3, mirrors render._credit_health_lines / _CH_NAME_RE / _CH_PEER_RE) credit health as a 4-row
+// mini-table (dimension | name | peer median) parsed from the prose credit_health value, scale +
+// issuer-rating in the note. Falls back to the plain fact if the shape doesn't match — never a
+// fabricated score. Name/Peer are the `cells` (dataTable marks them .num → right-aligned); the
+// dimension is the row label; the "Dimension" header sits above the label column (matches the md).
+const _CH_DIMS = ["Overall", "Operational", "Solvency", "Liquidity"];
+const _CH_NAME_RE = /Overall\/Operational\/Solvency\/Liquidity\s+([\d.]+)\/([\d.]+)\/([\d.]+)\/([\d.]+)/;
+const _CH_PEER_RE = /peer-median\s+O\/Op\/S\/L\s+([\d.]+)\/([\d.]+)\/([\d.]+)\/([\d.]+)/;
+function creditHealth(lv) {
+  const ch = lv.credit_health;
+  if (!ch || ch.status !== "present" || ch.value == null) return fact("Credit health", ch);
+  const text = String(ch.value);
+  const nm = text.match(_CH_NAME_RE), pr = text.match(_CH_PEER_RE);
+  if (!nm || !pr) return fact("Credit health", ch);  // unknown shape → plain fact, never a fabricated table
+  const rows = _CH_DIMS.map((dim, i) => ({ label: dim, cells: [nm[i + 1], pr[i + 1]] }));
+  const scale = text.match(/scale\b.*/);
+  const rating = text.match(/\(([^)]*(?:issuer rating|unrated|rated)[^)]*)\)/);
+  const note = [rating ? rating[1] : "", scale ? scale[0] : ""].filter(Boolean).join(" · ");
+  return dataTable("Credit health", ch.source_ref, ["Dimension", "Name", "Peer median"], rows, note);
+}
+
 // (B2) unified leverage & survival — both bases labeled + credit health; "" when the block is absent
 // (P7) INNER leverage content (no card) — clubbed under the one Survival section by leverageSurvival.
 function leverageBlock(m) {
@@ -799,10 +953,13 @@ function leverageBlock(m) {
     fact("Net debt / EBITDA (fwd-adj)", m.quality.net_debt_to_ebitda_adjusted) +
     fact("Interest coverage", lv.interest_coverage, mult) +
     fact("Survival (self-funding + nearest wall)", lv.survival) +
-    fact("Credit health (S&P-MI scores — scale labeled)", lv.credit_health);
+    creditHealth(lv);  // (K3) 4-row mini-table; fail-soft to fact("Credit health", …)
 }
 
-// (B3) CIQ implied valuation — POSED: implied-equity table + bridge + name market cap; NO computed %
+// (B3 · K4) DEMOTED to the appendix, reference-only (mirrors render._implied_lines): implied EQUITY
+// at the peer-MEDIAN multiple for the 3 decision bases (LTM EBITDA · NTM EBITDA · NTM Revenue), with
+// the name's ACTUAL market cap adjacent. MEDIAN column only — full Low/Mean/High + all other bases
+// stay in JSON. No computed %/discount/upside; the heterogeneity gate renders short on the header.
 function impliedBlock(iv) {
   if (!iv) return "";
   const g = iv.comparability_gate || {};
@@ -810,14 +967,15 @@ function impliedBlock(iv) {
   const eq = iv.implied_equity || {};
   let table = fact("Implied equity", eq);
   if (eq.status === "present" && Array.isArray(eq.value)) {
-    const rows = eq.value.map((r) => ({
-      label: r.basis, cells: [_numC(r.low), _numC(r.median), _numC(r.mean), _numC(r.high)],
-    }));
-    table = dataTable("Implied EQUITY value ($M, CIQ at peer multiples)", eq.source_ref,
-      ["Low", "Median", "Mean", "High"], rows, "");
+    const keep = ["LTM EBITDA", "NTM EBITDA", "NTM Revenue"];  // (K4) the 3 decision bases only
+    const rows = eq.value.filter((r) => keep.some((k) => String(r.basis).includes(k)))
+      .map((r) => ({ label: r.basis, cells: [_numC(r.median)] }));  // (K4) MEDIAN column only
+    table = dataTable("Implied equity at peer-median ($M, CIQ)", eq.source_ref,
+      ["Implied equity (median)"], rows, "");
   }
-  return sec("Implied valuation — CIQ-computed at peer multiples, POSED not concluded",
-    (gate ? gateShortref(gate) + " — " : "") + "composition first: the human judges earned vs residual (no machine upside).",
+  return sec("Reference: CIQ implied equity at peer-median multiples",  // (K5) renamed + demoted
+    (gate ? gateShortref(gate) + " — " : "") + "Reference only — the human judges earned vs residual "
+    + "(not a machine upside); the full Low/Mean/High and all bases are in the JSON.",
     fact("Name market cap ($M) — the ADJACENT fact to compare against", iv.market_cap) +
     fact("Bridge (TEV → equity)", iv.bridge) +
     table);
@@ -848,21 +1006,28 @@ function fcfRelabel(s) {
   return { ...s, value: { ...ft, rows, note: ft.note ? `${ft.note} · ${fn}` : fn } };
 }
 
-// (C1–C4 · D1) FINANCIAL-SUMMARY appendix — actuals + consensus estimates + the relocated
-// management-commentary pointer, AFTER the synthesis, before the verdict footer. The mgmt pointer
-// renders even for a pre-C dossier.json (no financial summary); every table routes through dataTable.
+// (C1–C4 · D1 · K1 · K4) FINANCIAL-SUMMARY appendix — actuals + consensus estimates, then (K1) the
+// relocated capital-structure PROVENANCE (full instrument panel + 8-K/covenant pointers + full
+// per-family covenant tables), (K4) the demoted implied-valuation REFERENCE card, and the relocated
+// management-commentary pointer. Mirrors render_markdown's appendix order: financial summary →
+// cap-structure provenance → implied-valuation reference → mgmt pointer. Every table routes through
+// dataTable; the mgmt pointer renders even for a pre-C dossier.json (no financial summary).
 function appendixBlock(m) {
   const fs = m.financial_summary;
   const mgmt = fact("Management commentary (transcript POINTER — read the file; not a machine excerpt)",
     m.management_commentary);
-  if (!fs) return sec("Appendix", "", mgmt);
+  const cap = m.capital_structure ? capitalStructureAppendix(m.capital_structure) : "";  // (K1) provenance
+  const implied = impliedBlock(m.implied_valuation);  // (K4) reference-only card ("" for a pre-B3 JSON)
+  if (!fs) return sec("Appendix", "", cap + mgmt) + implied;
   return sec(`Appendix — financial summary (actuals + consensus estimates) — ${asOfHeader(fs.as_of)}`,
     "Consensus (E) columns are marked + as-of-stamped; growth never spans a basis change (— basis); actuals fail loud on gaps. The machine assembles — no verdict.",
     finTable("Annual ($M; E = consensus) — last-4-FY + LTM + FY26E/FY27E", fcfRelabel(fs.annual)) +
     finTable("Trailing 8 quarters — the recent-quarter trajectory", fs.quarterly) +
     fact("Balance-sheet posture", fs.balance_sheet) +
     fact("Coherence — balance sheet vs implied-valuation bridge", fs.coherence) +
-    mgmt);
+    cap +      // (K1) capital-structure provenance (subhead + full panel/pointers/terms)
+    mgmt) +
+    implied;   // (K4) implied-valuation reference as its own card, after the appendix card
 }
 
 // (4a) horizon → metric × [FQ2, FQ3] table; zero-breadth-across-all-windows rows collapse to a line

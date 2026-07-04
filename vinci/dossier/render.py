@@ -548,6 +548,41 @@ _SUMMARY_TERMS = (
 )
 
 
+_MONTHS = ("January|February|March|April|May|June|July|August|September|October|November|December")
+_DATE_RE = rf"(?:{_MONTHS})\s+\d{{1,2}},\s+\d{{4}}|\d{{4}}-\d{{2}}-\d{{2}}"
+
+
+def _covenant_value_lead(label: str, raw: str) -> str:
+    """(K1, generalized) The extractable VALUE a curated covenant line LEADS with, before the ≤120c
+    clip — so the decision figure survives truncation wherever it sits in the clause. Empty when no
+    clean value is extractable (the clause alone then carries it). NEVER fabricates — each branch
+    pulls a value the clause states (a governing maturity takes the 'replaced with' date)."""
+    if label == "Conversion":
+        return _derive_conversion(raw).strip().lstrip("(").rstrip(")")
+    if label == "Financial maintenance":
+        thr = re.search(r"not less than\s+\$[\d,]+(?:\.\d+)?", raw)
+        freq = "weekly" if re.search(r"each .{0,12}week|weekly|Friday", raw, re.IGNORECASE) else ""
+        return f"{thr.group(0)} {freq}".strip() if thr else ""
+    if label == "Interest / coupon":
+        base = re.search(r"\bTerm SOFR\b|\bSOFR\b|\bLPR\b|\bNew Benchmark\b|\bFloating rate\b",
+                         raw, re.IGNORECASE)
+        marg = re.search(r"(?:Margin\s*=\s*|Plus\s*|\+\s*)(\d+(?:\.\d+)?%|\d+\s*bps)", raw,
+                         re.IGNORECASE)
+        pik = re.search(r"(\d+(?:\.\d+)?%)[^.;]{0,30}?(?:in[\s-]*kind|PIK)", raw, re.IGNORECASE)
+        lead = " ".join(p for p in ((base.group(0) if base else ""),
+                                    (f"+ {marg.group(1)}" if marg else "")) if p)
+        return (f"{lead} (+{pik.group(1)} PIK)" if pik and lead else lead).strip()
+    if label == "Maturity":
+        repl = re.search(rf"replaced with[^.;]*?({_DATE_RE})", raw, re.IGNORECASE)  # amendment wins
+        m = repl or re.search(_DATE_RE, raw)
+        return m.group(1 if repl else 0) if m else ""
+    if label == "Events of default":
+        nums = [int(n) for n in re.findall(r"(?:^|[^.\d])(\d{1,2})\.\s", raw)]
+        acc = "; acceleration" if re.search(r"acceler", raw, re.IGNORECASE) else ""
+        return f"{max(nums)} enumerated{acc}" if nums else ""
+    return ""
+
+
 def _covenant_summary_lines(cs: Any) -> list[str]:
     """(K1) CURATED covenant summary for the MAIN body — the governing VALUES that drive survival
     (financial-maintenance / conversion / interest / maturity / a 1-line events-of-default), each a
@@ -576,16 +611,8 @@ def _covenant_summary_lines(cs: Any) -> list[str]:
             if label is None:
                 continue
             raw = str(g.value.value)
-            if label == "Conversion":
-                conv = _derive_conversion(raw).strip().lstrip("(").rstrip(")")
-                clause = f"{conv} · {_clip120(raw)}" if conv else _clip120(raw)
-            elif label == "Financial maintenance":  # (K6) lead with the threshold VALUE so it
-                thr = re.search(r"not less than\s+\$[\d,]+", raw)  # survives the clip (min-liq)
-                freq = "weekly" if re.search(r"each .{0,12}week|weekly|Friday", raw, re.I) else ""
-                lead = f"{thr.group(0)} {freq}".strip() if thr else ""
-                clause = f"{lead} · {_clip120(raw)}" if lead else _clip120(raw)
-            else:
-                clause = _clip120(raw)
+            lead = _covenant_value_lead(label, raw)  # (K1) lead with the extractable value
+            clause = f"{lead} · {_clip120(raw)}" if lead else _clip120(raw)
             parts.append(f"  - **{label}:** {clause}")
         if parts:
             out.append(f"- **Covenants — {fam}** (governing values; full verbatim in appendix):")
