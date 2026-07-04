@@ -2204,39 +2204,71 @@ def test_k6_99_1_unknown_reason_renders_once_on_real_mvst() -> None:
 
 
 def test_k1_covenant_value_lead_extracts_the_decision_figure_before_clip() -> None:
-    """(K1 generalized) EVERY curated covenant line leads with its extractable VALUE before the clip
-    clip, so the decision figure survives truncation wherever it sits in the clause. A governing
-    maturity takes the 'replaced with' date, not the deleted one. Never fabricates."""
-    assert "~$0.50/sh" in dr._covenant_value_lead(
-        "Conversion", "Conversion Rate = two (2) shares of Common Stock per $1.00 principal amount")
-    assert dr._covenant_value_lead(
-        "Financial maintenance", "Liquidity as of Friday of each calendar week not less than "
-        "$5,000,000.") == "not less than $5,000,000 weekly"
-    assert "SOFR" in dr._covenant_value_lead(
+    """(K1 generalized · audit-hardened) EVERY curated covenant line leads with its extractable
+    VALUE before the ≤120c clip — RIGHT or ABSENT, never wrong. Anchored: a labelled/bps margin (no
+    bare '+' step-down or default premium), a test-anchored cadence, a maturity-anchored date, the
+    PIK acronym, a contiguous 1..k enumeration. Never fabricates."""
+    lead = dr._covenant_value_lead
+    # happy paths (real MVST shapes)
+    assert "~$0.50/sh" in lead("Conversion", "Conversion Rate = two (2) shares per $1.00 principal")
+    assert lead("Financial maintenance", "Liquidity as of Friday of each calendar week not less "
+                "than $5,000,000.") == "not less than $5,000,000 weekly"
+    assert lead(
         "Interest / coupon", "Term SOFR + Applicable Margin; Applicable Margin = 9.75% per annum; "
-        "3.75% of interest paid in-kind (PIK Interest)") and "9.75%" in dr._covenant_value_lead(
-        "Interest / coupon", "Applicable Margin = 9.75% per annum")
-    assert dr._covenant_value_lead(
-        "Maturity", '"November 28, 2025" is deleted and replaced with "May 28, 2026".'
-    ) == "May 28, 2026"  # the amendment governs, not the deleted date
-    assert "enumerated" in dr._covenant_value_lead(
-        "Events of default", "Events of Default: 1. X; 2. Y; 12. Z. Remedies include acceleration.")
-    assert dr._covenant_value_lead("Conversion", "price to be set by the board") == ""  # no fabric.
+        "3.75% of interest paid in-kind (PIK Interest)") == "Term SOFR + 9.75% (+3.75% PIK)"
+    assert lead("Interest / coupon",
+                "Floating rate; RMB rate = one year LPR Plus 115 bps") == "Floating rate + 115 bps"
+    assert lead("Maturity", '"November 28, 2025" is deleted and replaced with "May 28, 2026".'
+                ) == "May 28, 2026"  # the amendment governs, not the deleted date
+    # audit-hardened: never present a WRONG value
+    step = "Term SOFR; the Applicable Margin is 5.50%, stepping to + 4.50% below 3.0x leverage."
+    assert "5.50%" in lead("Interest / coupon", step) and "4.50%" not in lead("Interest / coupon",
+                                                                              step)  # P1
+    assert lead("Maturity", "Commitment Termination Date is March 31, 2025 and the Maturity Date "
+                "is December 15, 2027.") == "December 15, 2027"  # P2: maturity-anchored, not first
+    assert "PIK" not in lead("Interest / coupon",
+                             "Term SOFR plus 7.00%. A 12.5% equity interest paid in kind.")  # P3
+    assert lead("Events of default", "1. Payment. 2. Covenant. 3. Insolvency. See Section 15."
+                ).startswith("3 enumerated")  # P4: 'Section 15.' doesn't inflate the count
+    assert lead("Financial maintenance", "not less than $10,000,000, tested as of the last day of "
+                "each fiscal quarter, and deliver a 13-week forecast each week."
+                ) == "not less than $10,000,000 quarterly"  # P5: the TEST cadence, not the forecast
+    assert lead("Interest / coupon", "The Notes bear interest at a fixed rate of 8.25% per annum."
+                ) == "8.25% fixed"  # P7
+    assert lead("Conversion", "price to be set by the board") == ""  # no fabrication
 
 
 def test_k3_credit_health_renders_mini_table_or_falls_back() -> None:
-    """(K3) Credit health parses the prose score line into a 4-row mini-table (dimension | name |
-    peer), with a scale footnote; an unparseable value → the plain fact (no fabrication)."""
+    """(K3 · audit T1) Credit health parses the prose into a mini-table (dimension row-label | name
+    | peer), scale footnote; header and every data row have the SAME cell count (dimension is the
+    ROW LABEL, not a col — else scores shift left). Unparseable → the plain fact, no fab."""
     import types
     lv = types.SimpleNamespace(credit_health=ds.Sourced.present(
         "name Overall/Operational/Solvency/Liquidity 3/3/2/2 (S&P issuer rating unrated); "
         "peer-median O/Op/S/L 2.5/2.5/3/3; scale 1=strongest … 4=weakest (S&P-MI PD model)",
         source_ref="CIQ Credit Health"))
-    out = "\n".join(dr._credit_health_lines(typing.cast(typing.Any, lv)))
-    assert dr._TABLE_MARK in out and "| Overall | 3 | 2.5 |" in out and "S&P-MI PD model" in out
+    md = "\n".join(dr._credit_health_lines(typing.cast(typing.Any, lv)))
+    assert dr._TABLE_MARK in md and "| Overall | 3 | 2.5 |" in md and "S&P-MI PD model" in md
+    tbl = [ln for ln in md.splitlines() if ln.startswith("|") and "---" not in ln]
+    assert len({ln.count("|") for ln in tbl}) == 1, "credit-health header/row column mismatch"
     lv2 = types.SimpleNamespace(
         credit_health=ds.Sourced.present("unrated; no panel", source_ref="x"))
     assert dr._TABLE_MARK not in "\n".join(dr._credit_health_lines(typing.cast(typing.Any, lv2)))
+
+
+def test_audit_appendix_never_drops_relocated_facts() -> None:
+    """(audit C1) The capital-structure appendix renders the relocated 8-K/pointer/covenant facts
+    even when the instrument PANEL is empty — the old guard dropped them from the surface (in
+    neither the curated main NOR the appendix), a nothing-deleted violation."""
+    u = ds.Sourced[str].unknown(note="n/a")
+    cs = ds.CapitalStructure(
+        instruments=u, summary=u, detail_as_of="d",
+        maturity_filings=ds.Sourced.present("8-K 2026-05-28 at maturity", source_ref="EDGAR"),
+        covenant_pointers=ds.Sourced.present("Credit Agreement exhibit 10.1", source_ref="10-K"),
+        covenant_terms=ds.Sourced.present("liquidity not less than $50M weekly", source_ref="8-K"))
+    appx = "\n".join(dr._capital_structure_appendix_lines(cs))
+    for fact in ("8-K 2026-05-28 at maturity", "Credit Agreement exhibit 10.1", "$50M weekly"):
+        assert fact in appx, f"relocated fact dropped from appendix: {fact}"
 
 
 def test_audit_gfm_cell_sanitizes_pipe_and_newline() -> None:

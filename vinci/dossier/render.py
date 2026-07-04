@@ -93,7 +93,7 @@ _DEDUPE_MIN_REASON_LEN = 30
 _UNKNOWN_TOPICS: tuple[tuple[re.Pattern[str], str, str], ...] = (
     (re.compile(r"99\.1|revised[- ]?(?:outlook|guidance)", re.IGNORECASE), "99.1",
      "no revised-outlook 99.1 exhibit parsed — the revised forward guidance is UNKNOWN"),
-    (re.compile(r"graph cohort|no (?:US-listed )?exposed|cohort to (?:compare|price)", re.I),
+    (re.compile(r"graph cohort|US-listed exposed names to price|cohort to (?:compare|price)", re.I),
      "graph-cohort", "MVST is in the graph but has no US-listed exposed names to price — UNKNOWN"),
 )
 
@@ -431,8 +431,10 @@ def _credit_health_lines(lv: Any) -> list[str]:
     rating = re.search(r"\(([^)]*(?:issuer rating|unrated|rated)[^)]*)\)", text)
     note = " · ".join(p for p in ((rating.group(1) if rating else ""),
                                   (scale.group(0) if scale else "")) if p)
-    return _table("Credit health", ch.source_ref, ["Dimension", "Name", "Peer median"], rows,
-                  note=note, num_cols=frozenset({1, 2}))
+    # (audit) the dimension is the ROW LABEL (the blank column `_table` prepends) — NOT a `col`,
+    # else the 3-cell rows sit under a 4-cell header and every score shifts one column left.
+    return _table("Credit health", ch.source_ref, ["Name", "Peer median"], rows,
+                  note=note, num_cols=frozenset({0, 1}))
 
 
 def _leverage_block(m: MechanicalLayer) -> list[str]:
@@ -552,34 +554,56 @@ _MONTHS = ("January|February|March|April|May|June|July|August|September|October|
 _DATE_RE = rf"(?:{_MONTHS})\s+\d{{1,2}},\s+\d{{4}}|\d{{4}}-\d{{2}}-\d{{2}}"
 
 
+_CADENCE = {"week": "weekly", "month": "monthly", "quarter": "quarterly", "day": "daily",
+            "year": "annually"}
+
+
 def _covenant_value_lead(label: str, raw: str) -> str:
-    """(K1, generalized) The extractable VALUE a curated covenant line LEADS with, before the ≤120c
-    clip — so the decision figure survives truncation wherever it sits in the clause. Empty when no
-    clean value is extractable (the clause alone then carries it). NEVER fabricates — each branch
-    pulls a value the clause states (a governing maturity takes the 'replaced with' date)."""
+    """(K1, generalized · audit-hardened) The extractable VALUE a curated covenant line LEADS with,
+    before the ≤120c clip — RIGHT or ABSENT, never wrong: each branch is ANCHORED (a labelled or
+    bps margin, a TEST-anchored cadence, a maturity-anchored date, the PIK acronym, a contiguous
+    1..k enumeration) so ambiguous prose yields '' and the clause alone carries it. NEVER
+    fabricates — a bare '+ N%', an unanchored date, an 'equity … paid in kind', or a stray section
+    number are all rejected rather than presented as the coupon / wall / PIK / EoD count."""
     if label == "Conversion":
         return _derive_conversion(raw).strip().lstrip("(").rstrip(")")
     if label == "Financial maintenance":
-        thr = re.search(r"not less than\s+\$[\d,]+(?:\.\d+)?", raw)
-        freq = "weekly" if re.search(r"each .{0,12}week|weekly|Friday", raw, re.IGNORECASE) else ""
-        return f"{thr.group(0)} {freq}".strip() if thr else ""
+        thr = re.search(r"not less than\s+\$[\d,]*\d(?:\.\d+)?", raw)  # end on a digit (no trail ,)
+        if not thr:
+            return ""
+        # cadence ONLY when anchored to the TEST ("as of/tested … each <unit>") — not a forecast
+        cad = re.search(r"(?:as of|tested)\b[^.;]{0,40}?\beach\s+(?:calendar\s+|fiscal\s+)?"
+                        r"(week|month|quarter|day|year)", raw, re.IGNORECASE)
+        return f"{thr.group(0)} {_CADENCE.get(cad.group(1).lower(), '') if cad else ''}".strip()
     if label == "Interest / coupon":
         base = re.search(r"\bTerm SOFR\b|\bSOFR\b|\bLPR\b|\bNew Benchmark\b|\bFloating rate\b",
                          raw, re.IGNORECASE)
-        marg = re.search(r"(?:Margin\s*=\s*|Plus\s*|\+\s*)(\d+(?:\.\d+)?%|\d+\s*bps)", raw,
-                         re.IGNORECASE)
-        pik = re.search(r"(\d+(?:\.\d+)?%)[^.;]{0,30}?(?:in[\s-]*kind|PIK)", raw, re.IGNORECASE)
-        lead = " ".join(p for p in ((base.group(0) if base else ""),
-                                    (f"+ {marg.group(1)}" if marg else "")) if p)
-        return (f"{lead} (+{pik.group(1)} PIK)" if pik and lead else lead).strip()
+        # margin ONLY from a LABELLED margin or a bps SPREAD — a bare '+ N%' catches a step-down
+        # grid / default premium, and a bare '% default premium' is likewise excluded.
+        marg = re.search(r"(?:Applicable\s+)?Margin\s*(?:=|is|of|:)?\s*(\d+(?:\.\d+)?%|\d+\s*bps)"
+                         r"|\bPlus\s+(\d+\s*bps)", raw, re.IGNORECASE)
+        pik = re.search(r"(\d+(?:\.\d+)?%)[^.;]{0,40}?\bPIK\b", raw, re.IGNORECASE)  # PIK acronym
+        if base:
+            m = (marg.group(1) or marg.group(2)) if marg else ""
+            lead = f"{base.group(0)} + {m}" if m else base.group(0)
+            return f"{lead} (+{pik.group(1)} PIK)" if pik else lead
+        fixed = re.search(r"(?:fixed rate of|bears? interest at (?:a )?(?:fixed )?rate of|"
+                          r"interest at (?:a )?(?:fixed )?rate of)\s+(\d+(?:\.\d+)?%)",
+                          raw, re.IGNORECASE)
+        return f"{fixed.group(1)} fixed" if fixed else ""
     if label == "Maturity":
         repl = re.search(rf"replaced with[^.;]*?({_DATE_RE})", raw, re.IGNORECASE)  # amendment wins
-        m = repl or re.search(_DATE_RE, raw)
-        return m.group(1 if repl else 0) if m else ""
+        anch = re.search(rf"(?:maturity\s*date|matur\w+)[^.;]{{0,40}}?({_DATE_RE})", raw,
+                         re.IGNORECASE)  # else a maturity-anchored date, not a random first date
+        m = repl or anch or re.search(_DATE_RE, raw)  # else first date (case-sensitive on months)
+        return m.group(1 if (repl or anch) else 0) if m else ""
     if label == "Events of default":
-        nums = [int(n) for n in re.findall(r"(?:^|[^.\d])(\d{1,2})\.\s", raw)]
-        acc = "; acceleration" if re.search(r"acceler", raw, re.IGNORECASE) else ""
-        return f"{max(nums)} enumerated{acc}" if nums else ""
+        nums = {int(n) for n in re.findall(r"(?<![\$\d.])\b(\d{1,2})\.\s", raw)}  # contiguous 1..k
+        k = 0
+        while k + 1 in nums:  # a section number / dollar figure can't inflate the count
+            k += 1
+        acc = "acceleration" if re.search(r"acceler", raw, re.IGNORECASE) else ""
+        return "; ".join(p for p in (f"{k} enumerated" if k >= 2 else "", acc) if p)
     return ""
 
 
@@ -655,11 +679,11 @@ def _capital_structure_appendix_lines(cs: Any) -> list[str]:
     """(K1) Capital-structure PROVENANCE for the appendix: the full instrument panel (incl. undated
     line items), the 8-K maturity-filing pointers, the covenant/contract pointer table, and the full
     per-family governing covenant tables (verbatim quotes, agent/governing-law/guaranty rows,
-    amendment chains). Nothing is deleted from the surface — relocated here + kept in JSON."""
+    amendment chains). Rendered whenever a capital_structure exists (render_markdown guards that) —
+    (audit C1) the old instruments-empty early-return DROPPED the relocated 8-K/pointer/covenant
+    flat facts when there was no structured panel; removed, so nothing is lost from the surface. The
+    8-K/pointer/covenant `_fact`s below always render (UNKNOWN-safe). Relocated + kept in JSON."""
     inst = cs.instruments
-    empty = inst.status is not SourceStatus.PRESENT or not inst.value
-    if empty and getattr(cs, "covenant_term_rows", None) is None:
-        return []
     out: list[str] = ["", "### Capital-structure provenance (full panel · pointers · terms)"]
     if inst.status is SourceStatus.PRESENT and inst.value:
         out += _table(f"Capital structure — full instrument panel {cs.detail_as_of}",
@@ -836,7 +860,9 @@ def _implied_lines(iv: Any) -> list[str]:
     eq = iv.implied_equity
     if eq.status is SourceStatus.PRESENT and eq.value:
         keep = ("LTM EBITDA", "NTM EBITDA", "NTM Revenue")  # (K4) the 3 decision bases only
-        rows = [[r.basis, _numc(r.median)] for r in eq.value if any(k in r.basis for k in keep)]
+        # (audit C4) word-boundary, not substring — so "NTM EBITDA" doesn't match "NTM EBITDAR"
+        rows = [[r.basis, _numc(r.median)] for r in eq.value
+                if any(re.match(rf"{re.escape(k)}\b", r.basis) for k in keep)]
         out += _table("Implied equity at peer-median ($M, CIQ)", eq.source_ref,
                       ["Implied equity (median)"], rows, num_cols=frozenset({0}))
     else:
