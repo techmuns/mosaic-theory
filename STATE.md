@@ -1638,6 +1638,13 @@ without starving the lead loop; each becomes a *real* widener only when its OWN 
   bind.) Follow-up hygiene (not a blocker): replace the weak test password with a strong secret.
 - **Verification harness (LLM bull/bear/judge)** — trigger: only if running the manual discriminator
   reveals it needs a structured bull/bear step. May never be needed; do not build speculatively.
+- **Theme-edge verdict recorder (A2 — LOCKED SPEC in §7, ratified 2026-07-04)** — the recorder that closes
+  the theme-edge loop (watchlist trigger → re-underwrite → source-tagged verdict → the ONE unified
+  BUY−AVOID spread). **Trigger:** build ALONGSIDE the monitor (the delta-scan that fires watchlist triggers)
+  OR when the first watchlist trigger actually approaches — NOT before. Rationale: A2 widens the append-only
+  ledger that Overshoot's LIVE spread depends on; build-to-evidence says do not touch the live validation
+  gate speculatively for a capability whose first use is quarters out. The loop staying OPEN (0 buys) is
+  honest today and the viewer says so.
 - **Drive adapter for the dossier-assembler** — trigger: the local-folder assembler is proven and the
   manual export→folder step is the real friction. A convenience, not a milestone. Design (review-only):
   `docs/CLOUD_DOSSIER_TRIGGER.md`. **CORRECTION 2026-06-26:** an API-based Google-Drive `DriveStore`
@@ -2976,12 +2983,13 @@ Diff: `portfolio.js` + `watchlist.js` + `format.js` + `styles.css`. Viewer stays
 label-matched) exposure + a disconfirmation attempt + the value-trap twin ruled out + assumptions fresh,
 not stale. **The "3:1" that had appeared was an UNSPECIFIED IMPORT — never the analyst's specified bar —
 now corrected.** Viewer chrome says ≥2:1; the two "3:1" mentions in this §7 (the 2026-07-02 freeze note)
-corrected to ≥2:1. **INTEGRITY CAVEAT (flagged, NOT silently fixed):** the committed `defense.json` /
+corrected to ≥2:1. **INTEGRITY DECISION — RATIFIED 2026-07-04: LEAVE AS-IS.** The committed `defense.json` /
 `ai-datacenter.json` rationales STILL contain "3:1" (e.g. RCAT/AVAV "fails 3:1") — that is **source-bound
-analyst text frozen at the 2026-07-02/03 freeze**, and those JSON are BUILD ARTIFACTS derived from the
-git-ignored backend ledger; hand-editing them would falsify a frozen record and be regenerated away.
-Correcting the rationale text is a BACKEND re-freeze (out of the viewer's scope), and since the dispositions
-are robust to the correction it is a text-accuracy cleanup, not a verdict change. **Frozen verdicts
+analyst text frozen at the 2026-07-02/03 freeze** (what the analyst wrote at the time), and those JSON are
+BUILD ARTIFACTS derived from the git-ignored backend ledger. **Do NOT re-freeze or rewrite** — the
+historical frozen text stays historical; the bar change is recorded **FORWARD only** (≥2:1 in STATE + the
+viewer key). Rewriting would falsify a frozen record (and regenerate away), and the dispositions are robust
+to the correction anyway — so it buys nothing. **Frozen verdicts
 UNCHANGED at 2:1 (verified):** RCAT's own reward/risk ~1:1 and AVAV's ~1.3:1 are both < 2:1 → both stay
 AVOID/not-buy; RCAT is `binding` (FIRM exposure) yet AVOID — the grade-vs-verdict point made concrete.
 
@@ -2996,19 +3004,27 @@ a BUY/AVOID verdict; `measure_hold_none` is an exposure-carry DIAGNOSTIC, every 
 verdict **tagged by source** (overshoot | theme · driver · trigger), filterable by source — the fund-level
 gate.
 
-*Theme-edge verdict-recording method — A2 STOPPED-FOR-REVIEW (C3); the loop stays OPEN.* The theme edge can
-freeze a triage but has NO path to a BUY: a watchlist trigger firing → re-underwrite → recorded verdict is
-its only route, and that recorder does not exist. The design is clear (a `log_theme_verdict` mirroring
-`log_verdict`, appending a source-tagged `LedgerEntry` to the SAME SQLite ledger so `score_ledger` yields
-one source-filterable spread), but the wiring is **non-trivial and modifies the append-only
-validation-gate schema**, so per the a-priori instruction it was NOT guessed. **Decisions the human must
-ratify BEFORE build:** (a) `LedgerEntry` schema change (append-only) — add `source`, make `candidate_id`
-optional (theme names are not screen candidates, so `store.get_candidate` fails), add `driver`+`trigger`;
-(b) is a theme AVOID the same `AVOID_TERMINAL` (value-trap twin) enum or a new verdict value; (c)
-price-freeze source — do theme names carry EOD bars in the Store for `close_as_of`, or a separate ingest;
-(d) source-tagged aggregation in `score_ledger`/`VerdictScore`/`ScoreReport` (a `spread_by_source`); (e)
-does the unified spread POOL both edges by default (filterable) or always separate. Until ratified, no theme
-BUY can be recorded and the theme-edge loop remains open. Viewer read-only + CLI-only logging unchanged.
+*Theme-edge verdict-recording method — A2 RATIFIED + LOCKED SPEC (2026-07-04); DEFERRED, not built
+(build-to-evidence).* The design is ratified but **deliberately NOT built** now. A2 WIDENS the append-only
+decision ledger that Overshoot's LIVE spread depends on; build-to-evidence says do not touch the live
+validation gate speculatively for a capability whose FIRST USE is quarters out (0 buys today = nothing has
+cleared the bar; the loop being "open" is the honest state, and the viewer says so). **UNLOCK TRIGGER:**
+implement ALONGSIDE the monitor build (the delta-scan that fires watchlist triggers) OR when the first
+watchlist trigger actually approaches — see §4. **THE LOCKED SPEC (implement verbatim):** (1) **`LedgerEntry`**
+— add `source` (theme · driver · trigger); make `candidate_id` **OPTIONAL** (theme names are not screen
+candidates, so `store.get_candidate` must NOT be required); add `driver` + `trigger`. **Append-only
+preserved — the schema is WIDENED, entries are never rewritten.** (2) **Verdict enum** — a theme AVOID is a
+**NEW value (e.g. `AVOID_PRICED`), NOT `AVOID_TERMINAL`**: a theme rejection (real exposure, but priced /
+immaterial / value-trap) is a different judgment than an overshoot being terminal; reusing `AVOID_TERMINAL`
+would be semantically wrong. (3) **Price freeze (NON-NEGOTIABLE anti-hindsight)** — entry price stamped **AT
+RECORD-TIME from real data**: reuse the Store's EOD bars if the theme name is already in price coverage, else
+ingest at record-time. **NEVER backfill or reconstruct a price after the fact** — a hindsight entry price
+silently poisons the spread. (4) **Scoring** — add source-tagged aggregation (`spread_by_source`) to
+`score_ledger` / `ScoreReport`, mirroring `spread_by_sector`. (5) **Pooling** — ONE unified BUY−AVOID spread,
+source-filterable: **unified by DEFAULT** (the honest fund-level gate; pooled reaches significance faster),
+with a source filter to see each edge's contribution. **The theme-edge loop stays OPEN until A2 is built**
+(watchlist trigger → re-underwrite → recorded verdict → the unified spread — the closing step, deferred to
+the monitor build). Viewer stays read-only + CLI-only logging.
 
 Suite green (ruff + mypy --strict 85 files + pytest **415**; no Python touched this task — display is
 frontend, the rest is STATE + the A1 map). **Local only — nothing pushed, nothing merged; deploy config
