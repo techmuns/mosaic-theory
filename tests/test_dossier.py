@@ -1063,11 +1063,11 @@ def test_maturity_wall_groups_by_calendar_year_with_pins() -> None:
 
 
 def test_capital_structure_render_shows_table_not_flat_string() -> None:
-    """(E1) The instruments render as the shared-idiom table (marked), under the RENAMED
-    'Capital structure (instruments)' line — replacing the old flat liquidity string."""
+    """(E1 · K1) The MAIN-body instruments render as the shared-idiom table (marked), under the
+    curated 'Live instruments — near-dated' label — replacing the old flat liquidity string."""
     out = "\n".join(dr._capital_structure_lines(_mvst_capital_structure(), date(2026, 7, 3)))
     assert dr._TABLE_MARK in out
-    assert "Capital structure (instruments) — panel A 2025 filed Mar-16-2026" in out
+    assert "Live instruments — near-dated (≤12m + 2027) — panel A 2025 filed Mar-16-2026" in out
     assert "SOFR" not in out or "Convertible Bond - CNY" in out  # the table body renders rows
 
 
@@ -1832,7 +1832,7 @@ def test_fresh_capital_structure_renders_table_and_wall_in_place_of_liquidity() 
         mechanical=mech, synthesis=None, caveats=[], qa_flags=[], llm_model=None,
         assembled_at=datetime(2026, 6, 1, 12, 0))
     md = dr.render_markdown(dossier)
-    assert "Capital structure (instruments)" in md and dr._TABLE_MARK in md
+    assert "Live instruments — near-dated" in md and dr._TABLE_MARK in md  # (K1) curated main table
     assert "matured (pre-reference): $25.0M" in md
     assert "Liquidity / covenant flags" not in md
 
@@ -2178,7 +2178,7 @@ def test_h3_gate_shortref_and_dedupe_unknown_reasons() -> None:
         "- **Solo:** _UNKNOWN_ — a unique reason (kept)",
     ]
     out = dr._dedupe_unknown_reasons(list(lines))
-    folded = [ln for ln in out if "not in the 99.1 guidance" in ln]
+    folded = [ln for ln in out if "99.1" in ln]  # (K6) 3 fields fold to the canonical 99.1 reason
     assert len(folded) == 1  # 3 renders → 1
     assert "Net debt / EBITDA (fwd-adj) · EV/EBITDA (adjusted, forward) · Adjusted EPS" in folded[0]
     assert any("Solo" in ln for ln in out)  # a non-repeated reason is left alone
@@ -4030,7 +4030,7 @@ def test_all_rendered_tables_route_through_the_shared_renderer() -> None:
     n_tables = sum(1 for ln in md.splitlines() if ln.startswith("|---"))
     assert n_tables >= 6  # roster + trading multiples + per-peer grid + implied equity + C1 + C2
     assert md.count(dr._TABLE_MARK) == n_tables  # NO table bypasses the shared renderer
-    for lbl in ("Peer set", "Trading multiples", "Per-peer grid", "Implied EQUITY",
+    for lbl in ("Peer set", "Trading multiples", "Per-peer grid", "Implied equity at peer-median",
                 "Annual financials", "Quarterly financials"):  # incl. the C1/C2 appendix tables
         assert _re.search(_re.escape(lbl) + r"[^\n]*" + _re.escape(dr._TABLE_MARK), md), lbl
     # every GFM table must be COLUMN-ALIGNED: header, separator, and each data row carry the SAME

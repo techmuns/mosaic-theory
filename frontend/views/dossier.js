@@ -211,7 +211,7 @@ const _TIERKW = [
 // negative" (words may sit between, e.g. "EBITDA of NEGATIVE $5.5M"), a solvency/cash line "… turned
 // negative", or "cash-negative". Checked BEFORE the keyword map. Bare "turned negative" was removed
 // from the keywords (R1 audit) so a subject-less "guidance turned negative" no longer false-hits T1.
-const _TIER_RE = /\b(?:adjusted\s+)?ebitda\b(?:\s+\w+){0,3}\s+negative\b|\b(?:cash[\s-]*flow|fcf|free\s+cash\s+flow|operating\s+(?:income|cash\s*flow)|ocf)\b(?:\s+\w+){0,3}\s+turned\s+negative\b|\bcash-negative\b/i;
+const _TIER_RE = /\b(?:adjusted\s+)?ebitda\b(?:\s+\w+){0,3}\s+negative\b|\badjusted\s+ebitda\b.{0,40}?(?:-\s*\$|\(|negative)|\b(?:cash[\s-]*flow|fcf|free\s+cash\s+flow|operating\s+(?:income|cash\s*flow)|ocf)\b(?:\s+\w+){0,3}\s+turned\s+negative\b|\bcash-negative\b/i;  /* (K6) mirrors render._TIER_REGEX[0] */
 const _CONCESSION = /\b(?:though|although|but|however|offset by|posing whether|the human must weigh)\b/i;
 function _pointTier(claim) {
   const m = (claim || "").match(_CONCESSION);
@@ -792,7 +792,7 @@ function peerGridTable(s) {
 function leverageBlock(m) {
   const lv = m.leverage_survival;
   if (!lv) return "";
-  return subhead("Leverage & survival (both bases labeled, no net-vs-total mixing)") +
+  return subhead("Leverage & survival") +  /* (K5) header humanized; net-vs-total discipline is per-row */
     fact("Net debt / EBITDA (CIQ NET basis)", lv.net_debt_to_ebitda, mult) +
     fact("Total debt / EBITDA (comps — name vs peer median)", lv.total_debt_to_ebitda) +
     fact("Net debt / OCF", m.quality.net_debt_to_ocf, mult) +

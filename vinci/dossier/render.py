@@ -15,7 +15,7 @@ from datetime import UTC, date, datetime
 from itertools import groupby
 from typing import Any
 
-from vinci.dossier.covenant_extract import governing_terms
+from vinci.dossier.covenant_extract import _derive_conversion, governing_terms
 from vinci.dossier.schemas import Dossier, MechanicalLayer, Sourced, SourceStatus
 
 # Display curation for the catalyst path — the full data always stays in dossier.json; these only
@@ -88,24 +88,42 @@ _UNKNOWN_FACT = re.compile(r"^- \*\*(.+?):\*\* _(UNKNOWN|MISSING)_ — (.+)$")
 _DEDUPE_MIN_REASON_LEN = 30
 
 
+# (K6) UNKNOWN reasons that describe the SAME underlying gap in DIFFERENT words fold to one render —
+# beyond the byte-identical H3 dedup. Each: (matcher, topic-key, canonical reason to render once).
+_UNKNOWN_TOPICS: tuple[tuple[re.Pattern[str], str, str], ...] = (
+    (re.compile(r"99\.1|revised[- ]?(?:outlook|guidance)", re.IGNORECASE), "99.1",
+     "no revised-outlook 99.1 exhibit parsed — the revised forward guidance is UNKNOWN"),
+    (re.compile(r"graph cohort|no (?:US-listed )?exposed|cohort to (?:compare|price)", re.I),
+     "graph-cohort", "MVST is in the graph but has no US-listed exposed names to price — UNKNOWN"),
+)
+
+
 def _dedupe_unknown_reasons(lines: list[str]) -> list[str]:
-    """(H3) Collapse repeated identical UNKNOWN/MISSING fact REASONS: the same DISTINCTIVE note
-    (≥ ``_DEDUPE_MIN_REASON_LEN`` chars) carried by ≥2 fields renders ONCE, at the first occurrence,
-    with the affected-fields list (e.g. the three 'adjusted figure not in the 99.1 revised guidance'
-    fields → one line). No fact is suppressed — every affected field stays named. A short/generic
-    reason is left in place (a coincidental cross-section collision must not move a fact). Matches
-    only inline `_fact` UNKNOWN lines (tables / synthesis points / caveats never match)."""
+    """(H3 · K6) Collapse repeated UNKNOWN/MISSING fact REASONS to ONE render (first occurrence),
+    with the affected-fields list. TWO triggers: (H3) a byte-identical DISTINCTIVE note
+    (≥ ``_DEDUPE_MIN_REASON_LEN`` chars) carried by ≥2 fields; (K6) two reasons for the SAME
+    gap in different words (a ``_UNKNOWN_TOPICS`` match — the 99.1 revised-guidance gap, the
+    graph-cohort gap) fold to one canonical line. No fact is suppressed — every affected field stays
+    named. Matches only inline `_fact` UNKNOWN lines (tables / synthesis points / caveats never)."""
     groups: dict[tuple[str, str], list[int]] = {}
+    canon: dict[tuple[str, str], str] = {}
     for i, ln in enumerate(lines):
         m = _UNKNOWN_FACT.match(ln)
-        if m:
-            groups.setdefault((m.group(2), m.group(3)), []).append(i)
+        if not m:
+            continue
+        status, reason = m.group(2), m.group(3)
+        topic = next((t for pat, t, _c in _UNKNOWN_TOPICS if pat.search(reason)), None)
+        key = (status, f"@{topic}" if topic else reason)
+        groups.setdefault(key, []).append(i)
+        if key not in canon:
+            canon[key] = next(c for _p, t, c in _UNKNOWN_TOPICS if t == topic) if topic else reason
     drop: set[int] = set()
-    for (status, reason), idxs in groups.items():
-        if len(idxs) < 2 or len(reason) < _DEDUPE_MIN_REASON_LEN:
+    for key, idxs in groups.items():
+        status, tag = key
+        if len(idxs) < 2 or (not tag.startswith("@") and len(tag) < _DEDUPE_MIN_REASON_LEN):
             continue
         labels = [m.group(1) for i in idxs if (m := _UNKNOWN_FACT.match(lines[i]))]
-        lines[idxs[0]] = f"- **{' · '.join(labels)}:** _{status}_ — {reason}"
+        lines[idxs[0]] = f"- **{' · '.join(labels)}:** _{status}_ — {canon[key]}"
         drop.update(idxs[1:])
     return [ln for i, ln in enumerate(lines) if i not in drop]
 
@@ -262,13 +280,17 @@ def _gfm_cell(c: str) -> str:
 def _table(
     label: str, cite: str | None, cols: list[str], rows: list[list[str]],
     note: str = "", name_rows: frozenset[int] = frozenset(),
+    num_cols: frozenset[int] = frozenset(),
 ) -> list[str]:
     """The single shared markdown table renderer (B4). Emits a GFM table tagged with ``_TABLE_MARK``
     so a test confirms every table routes here; ``name_rows`` indices bold the subject. Every
-    cell is pipe/newline-sanitised (:func:`_gfm_cell`) so free-text (E5 verbatim) can't break it."""
+    cell is pipe/newline-sanitised (:func:`_gfm_cell`) so free-text (E5 verbatim) can't break it.
+    ``num_cols`` (indices into ``cols``) right-align numeric columns (K2)."""
     head = f"- **{label}**" + (f" — ↳ `{cite}`" if cite else "") + f"  {_TABLE_MARK}"
+    # (K2) GFM alignment row — numeric cols right-align (`---:`); col 0 is the prepended blank cell.
+    aligns = ["---", *("---:" if i in num_cols else "---" for i in range(len(cols)))]
     out = [head, "", "| " + " | ".join(_gfm_cell(c) for c in [" ", *cols]) + " |",
-           "|" + "---|" * (len(cols) + 1)]
+           "|" + "|".join(aligns) + "|"]  # (K2) `---:` right-aligns; keep the `|---` table marker
     for i, row in enumerate(rows):
         cells = (f"**{_gfm_cell(c)}**" if i in name_rows else _gfm_cell(c) for c in row)
         out.append("| " + " | ".join(cells) + " |")
@@ -387,6 +409,32 @@ def _roster_lines(s: Sourced[Any]) -> list[str]:
     return _table(label, s.source_ref, ["Mkt cap", "Business"], rows, note)
 
 
+_CH_DIMS = ("Overall", "Operational", "Solvency", "Liquidity")
+_CH_NAME_RE = re.compile(
+    r"Overall/Operational/Solvency/Liquidity\s+([\d.]+)/([\d.]+)/([\d.]+)/([\d.]+)")
+_CH_PEER_RE = re.compile(r"peer-median\s+O/Op/S/L\s+([\d.]+)/([\d.]+)/([\d.]+)/([\d.]+)")
+
+
+def _credit_health_lines(lv: Any) -> list[str]:
+    """(K3) Credit health as a 4-row mini-table (dimension | name | peer median) parsed from the
+    prose ``credit_health`` value, with a scale footnote. Render-side only — no extractor change.
+    Falls back to the plain fact if the shape isn't as expected — never a fabricated score."""
+    ch = lv.credit_health
+    if ch.status is not SourceStatus.PRESENT or not ch.value:
+        return [_fact("Credit health", ch)]
+    text = str(ch.value)
+    nm, pr = _CH_NAME_RE.search(text), _CH_PEER_RE.search(text)
+    if not nm or not pr:  # unknown shape → the plain fact, not a fabricated table
+        return [_fact("Credit health", ch)]
+    rows = [[dim, nm.group(i + 1), pr.group(i + 1)] for i, dim in enumerate(_CH_DIMS)]
+    scale = re.search(r"scale\b.*", text)
+    rating = re.search(r"\(([^)]*(?:issuer rating|unrated|rated)[^)]*)\)", text)
+    note = " · ".join(p for p in ((rating.group(1) if rating else ""),
+                                  (scale.group(0) if scale else "")) if p)
+    return _table("Credit health", ch.source_ref, ["Dimension", "Name", "Peer median"], rows,
+                  note=note, num_cols=frozenset({1, 2}))
+
+
 def _leverage_block(m: MechanicalLayer) -> list[str]:
     """(B2) Unified leverage & survival — ALL leverage in ONE block, both bases LABELED (no
     net-vs-total mixing) + OCF/fwd-adj + credit health. Replaces the scattered Quality leverage
@@ -394,14 +442,14 @@ def _leverage_block(m: MechanicalLayer) -> list[str]:
     lv = m.leverage_survival
     assert lv is not None
     return [
-        "### Leverage & survival (unified — both bases labeled, no net-vs-total mixing)",
+        "### Leverage & survival",  # (K5) header humanized; the net-vs-total discipline is per-row
         _fact("Net debt / EBITDA (CIQ NET basis)", lv.net_debt_to_ebitda, _mult),
         _fact("Total debt / EBITDA (comps — name vs peer median)", lv.total_debt_to_ebitda),
         _fact("Net debt / OCF", m.quality.net_debt_to_ocf, _mult),
         _fact("Net debt / EBITDA (fwd-adj covenant basis)", m.quality.net_debt_to_ebitda_adjusted),
         _fact("Interest coverage", lv.interest_coverage, _mult),
         _fact("Survival (self-funding + nearest wall)", lv.survival),
-        _fact("Credit health (S&P-MI scores — scale labeled)", lv.credit_health),
+        *_credit_health_lines(lv),
         "",
     ]
 
@@ -465,36 +513,132 @@ def _maturity_wall_lines(cs: Any, reference_date: date) -> list[str]:
     return out
 
 
+_CS_COLS = ["Type", "Principal", "Coupon", "Floating", "Maturity", "Sec", "Conv", "Cur"]
+_CS_NUM = frozenset({1})  # (K2) the Principal column right-aligns
+
+
+def _instrument_row(i: Any) -> list[str]:
+    """One instrument → a table row (description is the row LABEL under ``_table``'s blank cell)."""
+    return [i.description, i.type, _musd(i.principal_musd), i.coupon or "–", i.floating_rate or "–",
+            i.maturity_date or "undated", "Y" if i.secured else "N", "Y" if i.convertible else "N",
+            i.currency]
+
+
+def _near_dated(i: Any, ref: date) -> bool:
+    """(K1) A live near-dated tranche for the MAIN body: matured / ≤ ref-year / the next year (≤12m
+    + 2027 for a 2026 reference). Undated line items (leases, notes payable) → the appendix."""
+    if i.maturity_date is None:
+        return False
+    return date.fromisoformat(i.maturity_date).year <= ref.year + 1
+
+
+def _clip120(s: str) -> str:
+    """(K1) Collapse whitespace + clip a verbatim clause to ≤120 chars for the curated main body —
+    the full verbatim lives in the appendix table + the JSON."""
+    s = re.sub(r"\s+", " ", str(s)).strip()
+    return s if len(s) <= 120 else s[:119].rstrip() + "…"
+
+
+# (K1) governing-term name → short label for the curated main-body covenant line (survival-critical
+# only; principal is in the instruments panel; security/guaranty/agent/law detail → appendix).
+_SUMMARY_TERMS = (
+    ("financial-maintenance", "Financial maintenance"), ("conversion", "Conversion"),
+    ("interest", "Interest / coupon"), ("maturity date", "Maturity"),
+    ("mandatory prepayment", "Events of default"),
+)
+
+
+def _covenant_summary_lines(cs: Any) -> list[str]:
+    """(K1) CURATED covenant summary for the MAIN body — the governing VALUES that drive survival
+    (financial-maintenance / conversion / interest / maturity / a 1-line events-of-default), each a
+    ≤120-char clause; the conversion line leads with the derived $/sh. Debt families only — the
+    RSU/equity-incentive family is appendix-only. Full per-family tables live in the appendix
+    + JSON; returns nothing (the appendix carries the detail) when there are no governing rows."""
+    rows_s = getattr(cs, "covenant_term_rows", None)
+    ptrs = getattr(cs, "covenant_pointer_rows", None)
+    if rows_s is None or rows_s.status is not SourceStatus.PRESENT or not rows_s.value:
+        return []
+    gov = governing_terms(rows_s.value, ptrs.value if ptrs is not None and ptrs.value else [])
+    fams: list[str] = []
+    for g in gov:
+        fl = g.family.lower()
+        if "material contract" in fl or "incentive" in fl:  # RSU/equity exhibit → appendix-only
+            continue
+        if g.family not in fams:
+            fams.append(g.family)
+    out: list[str] = []
+    for fam in fams:
+        parts: list[str] = []
+        for g in (t for t in gov if t.family == fam):
+            if g.value.status is not SourceStatus.PRESENT:
+                continue
+            label = next((lbl for key, lbl in _SUMMARY_TERMS if key in g.term.lower()), None)
+            if label is None:
+                continue
+            raw = str(g.value.value)
+            if label == "Conversion":
+                conv = _derive_conversion(raw).strip().lstrip("(").rstrip(")")
+                clause = f"{conv} · {_clip120(raw)}" if conv else _clip120(raw)
+            elif label == "Financial maintenance":  # (K6) lead with the threshold VALUE so it
+                thr = re.search(r"not less than\s+\$[\d,]+", raw)  # survives the clip (min-liq)
+                freq = "weekly" if re.search(r"each .{0,12}week|weekly|Friday", raw, re.I) else ""
+                lead = f"{thr.group(0)} {freq}".strip() if thr else ""
+                clause = f"{lead} · {_clip120(raw)}" if lead else _clip120(raw)
+            else:
+                clause = _clip120(raw)
+            parts.append(f"  - **{label}:** {clause}")
+        if parts:
+            out.append(f"- **Covenants — {fam}** (governing values; full verbatim in appendix):")
+            out += parts
+    return out
+
+
 def _capital_structure_lines(cs: Any, reference_date: date) -> list[str]:
-    """(E1/E2–E5) Capital structure — the structured instruments table (replacing the flat
-    liquidity_covenant_flags string), the month-precision maturity wall + reconciliation, then the
-    maturity-anchored 8-Ks, covenant exhibit pointers, and the fenced Tier-2 covenant terms."""
+    """(E1/E2–E5 · K1) Capital structure — MAIN body (curated): the live near-dated tranches (≤12m +
+    2027) with their economics, the month-precision maturity wall + reconciliation, the QoQ
+    aggregates, the maturity-resolution verbatim, and a CURATED covenant-values summary. The full
+    instrument panel, the 8-K/covenant pointer tables, and the full per-family covenant tables move
+    to the appendix (:func:`_capital_structure_appendix_lines`) — machine-complete JSON, curated
+    surface."""
     inst = cs.instruments
     out: list[str] = []
     if inst.status is SourceStatus.PRESENT and inst.value:
-        cols = ["Type", "Principal", "Coupon", "Floating", "Maturity", "Sec", "Conv", "Cur"]
-        rows = [
-            [i.description, i.type, _musd(i.principal_musd), i.coupon or "–",
-             i.floating_rate or "–",
-             i.maturity_date or "undated", "Y" if i.secured else "N", "Y" if i.convertible else "N",
-             i.currency]
-            for i in inst.value
-        ]
-        out += _table(
-            f"Capital structure (instruments) — panel {cs.detail_as_of}", inst.source_ref, cols,
-            rows)
+        near = [i for i in inst.value if _near_dated(i, reference_date)]
+        moved = len(inst.value) - len(near)
+        note = (f"{moved} undated / later aggregate line item(s) in the appendix panel"
+                if moved else "")
+        out += _table(f"Live instruments — near-dated (≤12m + {reference_date.year + 1}) — panel "
+                      f"{cs.detail_as_of}", inst.source_ref, _CS_COLS,
+                      [_instrument_row(i) for i in near], note=note, num_cols=_CS_NUM)
     else:
         out.append(_fact("Capital structure (instruments)", inst))
     out += _maturity_wall_lines(cs, reference_date)
-    out += [
-        _fact("Capital-structure aggregates (latest quarter)", cs.summary),
-        _fact("8-Ks at instrument maturities", cs.maturity_filings),
-    ]
-    # (P3/FIX-3) the VERBATIM resolution at the maturity 8-K, when captured — replaces the pointer's
-    # "read for resolution" with the actual event (a pre-P3 dossier.json has no field → nothing).
+    out.append(_fact("Capital-structure aggregates (latest quarter)", cs.summary))
+    # (P3/FIX-3) the VERBATIM resolution at the maturity 8-K, when captured (the 8-K pointer list
+    # itself is provenance → appendix). A pre-P3 dossier.json has no field → nothing.
     mat_ev = getattr(cs, "maturity_event", None)
     if mat_ev is not None and (mat_ev.status is not SourceStatus.PRESENT or mat_ev.value):
         out.append(_fact("Maturity resolution (8-K verbatim)", mat_ev))
+    out += _covenant_summary_lines(cs)
+    out.append("")
+    return out
+
+
+def _capital_structure_appendix_lines(cs: Any) -> list[str]:
+    """(K1) Capital-structure PROVENANCE for the appendix: the full instrument panel (incl. undated
+    line items), the 8-K maturity-filing pointers, the covenant/contract pointer table, and the full
+    per-family governing covenant tables (verbatim quotes, agent/governing-law/guaranty rows,
+    amendment chains). Nothing is deleted from the surface — relocated here + kept in JSON."""
+    inst = cs.instruments
+    empty = inst.status is not SourceStatus.PRESENT or not inst.value
+    if empty and getattr(cs, "covenant_term_rows", None) is None:
+        return []
+    out: list[str] = ["", "### Capital-structure provenance (full panel · pointers · terms)"]
+    if inst.status is SourceStatus.PRESENT and inst.value:
+        out += _table(f"Capital structure — full instrument panel {cs.detail_as_of}",
+                      inst.source_ref, _CS_COLS, [_instrument_row(i) for i in inst.value],
+                      num_cols=_CS_NUM)
+    out.append(_fact("8-Ks at instrument maturities", cs.maturity_filings))
     out += _covenant_pointer_lines(cs)
     out += _covenant_term_lines(cs)
     out.append("")
@@ -606,7 +750,7 @@ def _implied_expectations_lines(v: Any) -> list[str]:
     if ie is None:
         return []
     out = [
-        f"- **Implied expectations (price-inverted · multiples-space)** — "
+        f"- **What the current price implies (at stated multiples)** — "  # (K4) human-facing rename
         f"{_gate_shortref(ie.heterogeneity_gate)}",
         "  - _price-implied fundamental levels at stated multiples — the human judges earned vs "
         "residual; identity (†): at the name's own multiple the implied level IS consensus._",
@@ -623,8 +767,10 @@ def _implied_expectations_lines(v: Any) -> list[str]:
         rows.append([r.label, mult, level])
     name_rows = frozenset(i for i, r in enumerate(ie.rows) if r.is_identity)
     out += _table(
-        "Implied metric levels · fixed multiple set", ie.tev.source_ref,
+        "Price-implied levels (at each stated multiple)", ie.tev.source_ref,
         ["Multiple (× used)", "Implied level"], rows, name_rows=name_rows)
+    out.append("  - _Reads AGAINST the consensus path anchors below — juxtapose the price-implied "
+               "level vs consensus per metric; never subtract one from the other._")  # (K4)
     # (audit) H7/P8 made BOTH EBITDA and Revenue anchors UNKNOWN-able — they read the DIRECT
     # Estimates→Trends levels (may lack FY26/FY27), so show the NOTE via _sourced_str, never bare
     # "None". rev_anchors is guarded the same way (no longer the always-PRESENT ladder).
@@ -646,28 +792,26 @@ def _implied_expectations_lines(v: Any) -> list[str]:
 
 
 def _implied_lines(iv: Any) -> list[str]:
-    """(B3) CIQ implied valuation — POSED: the implied EQUITY table (basis × Low/Median/Mean/High) +
-    the bridge + the name's ACTUAL market cap adjacent. NO computed %/discount/upside; the
-    heterogeneity gate renders verbatim on the header."""
+    """(B3 · K4) DEMOTED to the appendix, reference-only: implied EQUITY at the peer-MEDIAN multiple
+    for the 3 decision bases (LTM EBITDA · NTM EBITDA · NTM Revenue), with the name's ACTUAL market
+    cap adjacent. MEDIAN column only — full Low/Mean/High + all other bases stay in the JSON.
+    No computed %/discount/upside; the heterogeneity gate renders short on the header."""
     g = iv.comparability_gate
     gate = g.value if g.status is SourceStatus.PRESENT else ""
     out = [
-        "### Implied valuation (CIQ-computed at peer multiples — POSED, not concluded)",
+        "### Reference: CIQ implied equity at peer-median multiples",  # (K4) renamed + demoted
         f"> **Comparability gate:** {_gate_shortref(gate)}" if gate else "",  # (H3) short-ref
-        "> _Composition first — the human judges earned vs residual (not a machine upside)._",
+        "> _Reference only — the human judges earned vs residual (not a machine upside); the full "
+        "Low/Mean/High and all bases are in the JSON._",
         _fact("Name market cap ($M) — the ADJACENT fact to compare against", iv.market_cap),
         _fact("Bridge (TEV → equity)", iv.bridge),
     ]
     eq = iv.implied_equity
     if eq.status is SourceStatus.PRESENT and eq.value:
-        # the basis is the ROW LABEL (under `_table`'s prepended blank header), NOT a `cols` entry —
-        # listing it in `cols` too would make the header one column wider than each row, shifting
-        # every Low/Median/Mean/High value one header to the left in the rendered GFM table.
-        cols = ["Low", "Median", "Mean", "High"]
-        trows = [
-            [r.basis, _numc(r.low), _numc(r.median), _numc(r.mean), _numc(r.high)] for r in eq.value
-        ]
-        out += _table("Implied EQUITY value ($M, CIQ)", eq.source_ref, cols, trows)
+        keep = ("LTM EBITDA", "NTM EBITDA", "NTM Revenue")  # (K4) the 3 decision bases only
+        rows = [[r.basis, _numc(r.median)] for r in eq.value if any(k in r.basis for k in keep)]
+        out += _table("Implied equity at peer-median ($M, CIQ)", eq.source_ref,
+                      ["Implied equity (median)"], rows, num_cols=frozenset({0}))
     else:
         out.append(_fact("Implied equity", eq))
     out.append("")
@@ -730,8 +874,8 @@ def _mgmt_commentary_lines(m: MechanicalLayer) -> list[str]:
     POINTER, not a headline read: the human opens the file, the machine never excerpts it). Rendered
     unconditionally so a pre-C dossier.json (no financial-summary appendix) still surfaces it."""
     return [
-        "### Management commentary (transcript POINTER — read the file; not a machine excerpt)",
-        _fact("Earnings call", m.management_commentary),
+        "### Management commentary",  # (K5) 'transcript pointer, not an excerpt' noted on the fact
+        _fact("Earnings call (transcript pointer — read the file)", m.management_commentary),
         "",
     ]
 
@@ -919,6 +1063,8 @@ _TIER_REGEX: tuple[tuple[float, re.Pattern[str]], ...] = (
     (1.0, re.compile(
         # (adjusted) EBITDA ... negative — interposition-tolerant primary case (pins the R1 test)
         r"\b(?:adjusted\s+)?ebitda\b(?:\s+\w+){0,3}\s+negative\b"
+        # (K6, FINAL widening) adjusted EBITDA within ~40 chars of a negative marker (-$/(/negative)
+        r"|\badjusted\s+ebitda\b.{0,40}?(?:-\s*\$|\(|negative)"
         # "... turned negative" ONLY when the SUBJECT is a solvency/cash line (EBITDA above already
         # covers "EBITDA turned negative"); a subject-less "competitor guidance turned negative" no
         # longer false-matches tier-1. (R1 audit fix.)
@@ -974,7 +1120,7 @@ def _synthesis_lines(d: Dossier, *, dev: bool) -> list[str]:
     (D3, render-side); the [tier · citation-class] tag shows in the DEV view only."""
     s = d.synthesis
     assert s is not None
-    out = ["## Synthesis (LLM — framing for the human, every point source-bound)", ""]
+    out = ["## Synthesis", ""]  # (K5) 'LLM framing, source-bound' discipline is in each cite
     if s.evidence_balance:
         out += [f"**Evidence balance:** {s.evidence_balance}", ""]
 
@@ -1024,7 +1170,7 @@ def render_markdown(d: Dossier, *, dev: bool = False) -> str:
     ]
     # (D1) CAVEATS FIRST — the first thing the human sees is what to verify before trusting below.
     out += _flags_section(d)
-    out += ["## Mechanical layer (source-bound facts — assembles & cites, never concludes)", ""]
+    out += ["## Mechanical layer", ""]  # (K5) methodology jargon lives in source_refs/JSON
 
     # (D1·§1) Drawdown cause & idiosyncrasy — CLUBBED: what happened, and did it happen alone?
     out.append("### Drawdown cause & idiosyncrasy — what happened, and did it happen alone?")
@@ -1094,14 +1240,13 @@ def render_markdown(d: Dossier, *, dev: bool = False) -> str:
     ]
 
     # (D1·§5) Peer comps — roster + comparability + multiples + grid + implied valuation.
-    out.append("### Peer comps (CIQ Comparable Analysis — consensus comp, framed to RESIST)")
+    out.append("### Peer comps")  # (K5) discipline framing lives in the block body + source_refs
     out += _roster_lines(m.peer_comps.peer_set)
     out.append(_fact("Comparability (confidence gate)", m.peer_comps.comparability))
     out += _multiples_lines(m.peer_comps.trading_multiples)
     out += _peer_grid_or_deltas(m.peer_comps)
     out.append("")
-    if m.implied_valuation is not None:
-        out += _implied_lines(m.implied_valuation)
+    # (K4) implied valuation is DEMOTED to the appendix (reference-only) — not in the main body.
 
     # (D1·§6) Catalyst path (the management-commentary pointer moved to the appendix).
     out += _catalyst_section(m)
@@ -1122,9 +1267,14 @@ def render_markdown(d: Dossier, *, dev: bool = False) -> str:
     else:
         out += ["## Synthesis", "_Not produced (see flags)._", ""]
 
-    # (D1) appendix (+ the relocated management-commentary pointer), then the verdict footer.
+    # (D1 · K1 · K4) appendix: financial summary → capital-structure provenance → implied-valuation
+    # reference → the relocated management-commentary pointer, then the verdict footer.
     appendix = _appendix_lines(m)
     out += appendix if appendix else ["## Appendix", ""]
+    if m.capital_structure is not None:
+        out += _capital_structure_appendix_lines(m.capital_structure)  # (K1) provenance
+    if m.implied_valuation is not None:
+        out += _implied_lines(m.implied_valuation)  # (K4) reference-only, demoted here
     out += _mgmt_commentary_lines(m)
     out += [
         "---",
