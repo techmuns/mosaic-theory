@@ -3369,6 +3369,12 @@ def test_t2_interest_lead_is_full_composite_or_absent() -> None:
     full = ("Term SOFR + Applicable Margin (9.75% per annum); 3.75% of interest paid in-kind "
             "(PIK Interest); Floor = 3.00% per annum; Default Rate = Applicable Margin + 3.00%.")
     assert lead("Interest / coupon", full) == "Term SOFR + 9.75% (Floor 3.00%, +3.75% PIK)"
+    # (audit) a re-assembly re-phrases the SAME terms: 'Floor (Term SOFR) = …' interposition + 'PIK
+    # Interest: N%' with PIK BEFORE the % — the composite must still extract in full (else the
+    # composite-or-none rule drops the whole interest lead, as it did on the re-assembled main).
+    rephrased = ("Term SOFR + Applicable Margin. Applicable Margin = 9.75% per annum. Floor "
+                 "(Term SOFR) = 3.00% per annum. PIK Interest: 3.75% of interest due paid in kind.")
+    assert lead("Interest / coupon", rephrased) == "Term SOFR + 9.75% (Floor 3.00%, +3.75% PIK)"
     assert lead("Interest / coupon", "Floating rate; RMB rate = LPR Plus 115 bps.") == \
         "Floating rate + 115 bps"
     # a labelled component present but unreadable → NO lead (full-composite-or-none)
