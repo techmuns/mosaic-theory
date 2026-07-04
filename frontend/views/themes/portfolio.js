@@ -24,13 +24,15 @@ export async function render(root, { item, frame }) {
   }
 
   const pf = idx.pooledForward || {};
-  const pw = pf.powerFloor || {};
   const cd = idx.crossDriver || {};
 
   // POOLED forward — ONE compact honest strip. The load-bearing honesty stays on the surface (0 buys,
-  // unpowered, spreads UNDEFINED · never 0.0, diagnostics pending, "unvalidated research surface"); the
-  // verbose enumeration (the per-measure list, diagnostic notes, the verbatim label) is detail-on-
-  // demand behind "methodology" — so the theme table, the decision surface, isn't pushed off-screen.
+  // spreads UNDEFINED · never 0.0, diagnostics pending, "unvalidated research surface"); the verbose
+  // enumeration (the per-measure list, diagnostic notes, the verbatim label) is detail-on-demand behind
+  // "methodology". No power-floor bar here — it restated the same "not readable yet" fact via the LEAST-
+  // binding gate (theme count), overstated readiness (50% while 0 buys / 0 days forward), and would
+  // saturate at scale; §4 power stays enforced in the backend, surfacing on the forward view once
+  // spreads are DEFINED. powerFloor is still carried in index.json for that later consumer.
   const nThemes = fmtInt(cd.driversFrozen ?? idx.drivers.length);
   const strip = `
     <div class="pooled-strip">
@@ -38,10 +40,6 @@ export async function render(root, { item, frame }) {
         <div>
           <div class="ps-tag">Theme edge · unvalidated research surface</div>
           <div style="margin-top:2px;"><b class="ps-buys">${fmtInt(pf.totalBuys ?? 0)} buys</b><span class="ps-sub">across ${nThemes} themes · ${fmtInt(pf.totalWatchlist ?? 0)} on watch · watchlists, not buys (yet)</span></div>
-        </div>
-        <div class="ps-power">
-          <div class="ps-power-label">Power floor · <b>${escapeHtml(pw.label || "")}</b></div>
-          <div class="power-bar" style="margin-left:auto;"><div class="power-fill" style="width:${pw.pct ?? 0}%;"></div></div>
         </div>
       </div>
       <details class="ps-why">
