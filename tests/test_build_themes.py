@@ -74,6 +74,35 @@ def test_eff_basis_caps_by_tie() -> None:
     assert _BUILD._eff_basis("binding-contract", "not-driver") == "aspirational"
 
 
+def test_naive_cohort_is_committed_tier_not_surfaced_universe() -> None:
+    """The NAIVE forward cohort = the equal-weight baseline over the WHOLE committed tier
+    (len(all_committed)), NOT the surfaced universe — mirrors the backend's NAIVE-N where
+    N = len(baskets.all_committed) (forward.py:505, cli.py:689). Regression: build.py fed `surfaced`
+    (scan breadth) into cohorts.naive, so a theme that froze a SUBSET of surfaced rendered an
+    ~8x-overstated cohort (ai-datacenter shipped naive=450 beside a 56-name committed tier)."""
+    baskets = {
+        "driver": "AI-datacenter value chain", "freeze_timestamp": "2026-07-03T00:00:00",
+        "ratified": [], "passed": ["A", "B"], "all_committed": ["A", "B"],
+        "watchlist": [], "avoid_controls": [], "real_tier": [],
+    }
+    ledger = [
+        {"ticker": t, "machine_grade": "committed-capacity", "driver_tie": "indirect",
+         "source_ref": "", "rationale": ""} for t in ("A", "B")
+    ]
+    # a WIDE scan: 8 names carry exposure, 2 disclose none → surfaced = 8; the frozen committed tier
+    # is only 2. The naive baseline must track the tier (2), never the universe (8).
+    scan = ([{"exposure_basis": "committed-capacity-or-capex"}] * 8
+            + [{"exposure_basis": "no-theme-exposure-disclosed"}] * 2)
+    disp = _BUILD._theme_display(baskets, ledger, scan)
+    assert disp["surfacedCount"] == 8   # scan breadth (legitimately the surfaced universe)
+    assert disp["frozenCount"] == 2     # the committed tier that was frozen
+    assert disp["forward"]["cohorts"]["naive"] == 2         # == len(all_committed), NOT surfaced
+    assert disp["forward"]["cohorts"]["naive"] != disp["surfacedCount"]
+    # fallback: a freeze predating the all_committed field → naive tracks the frozen ledger size
+    legacy = {k: v for k, v in baskets.items() if k != "all_committed"}
+    assert _BUILD._theme_display(legacy, ledger, scan)["forward"]["cohorts"]["naive"] == 2
+
+
 def test_edgar_url_shape() -> None:
     u = _BUILD._edgar_url("0001493152", "0001493152-26-022095")
     assert u == ("https://www.sec.gov/Archives/edgar/data/1493152/"

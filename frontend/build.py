@@ -36,7 +36,8 @@ ROOT = HERE.parent
 SNAP = ROOT / "data" / "snapshots"
 DOSS = ROOT / "data" / "dossiers"
 GRAPH = ROOT / "data" / "graph_coverage.json"  # DERIVED EDGAR-10-K exposure map (private-repo only)
-FORWARD = ROOT / "data" / "forward"  # git-ignored staging for the frozen theme-edge freeze artifacts
+FORWARD = ROOT / "data" / "forward"  # git-ignored staging for the frozen theme-edge freeze
+#                                      artifacts
 OUT_SNAP = HERE / "snapshots"
 OUT_DOSS = HERE / "dossiers"
 OUT_THEMES = HERE / "themes"  # COMMITTED display JSON (like dossiers) — the deployable theme copy
@@ -77,17 +78,18 @@ _DRIVER_SLUG: dict[str, tuple[str, str]] = {
 _CONC_RANK = {"none": 0, "stated-intent": 1, "committed-capacity": 2,
               "quantified-revenue": 3, "binding-contract": 4}
 _BASIS = {0: "none", 1: "aspirational", 2: "committed", 3: "quantified", 4: "binding"}
-# scan exposure_basis → tier bucket (the FULL theme exposure shape lives in the scan, not the freeze;
-# a freeze may scope a subset — ai-datacenter froze only its committed enablers, defense froze all 108)
+# scan exposure_basis → tier bucket (the FULL theme exposure shape lives in the scan, not the
+# freeze; a freeze may scope a subset — ai-datacenter froze only its committed enablers, defense
+# froze all 108)
 _SCAN_BASIS = {
     "binding-contracts-with-terms": "binding", "quantified-revenue-share": "quantified",
     "committed-capacity-or-capex": "committed", "aspirational-intent-only": "aspirational",
     "no-theme-exposure-disclosed": "none",
 }
 _ACC_RE = re.compile(r"\d{10}-\d{2}-\d{6}")
-# mirrors vinci.themes.forward — the zero-RATIFIED honesty label + the UNDEFINED-with-reason measures
-# + the §4 power-floor note. Kept as literals here so build.py stays stdlib-only (deploy-safe); a
-# regression test pins them equal to the backend's (tests/test_build_themes.py).
+# mirrors vinci.themes.forward — the zero-RATIFIED honesty label + the UNDEFINED-with-reason
+# measures + the §4 power-floor note. Kept as literals here so build.py stays stdlib-only
+# (deploy-safe); a regression test pins them equal to the backend's (tests/test_build_themes.py).
 _HOLD_NONE_HONESTY = (
     "No BUY leg exists (zero RATIFIED) -> the core edge-measure (RATIFIED-PASSED) and all "
     "RATIFIED-dependent spreads are UNDEFINED and NOT computed. The outputs below are "
@@ -101,8 +103,8 @@ _UNDEFINED_MEASURES = [
     ["RATIFIED vs keyword/co-movement screen (§3b-ii, deferred)", _UNDEFINED_REASON],
 ]
 _POWER_NOTE = (
-    "UNPOWERED — DIRECTIONAL / ANECDOTAL: below the a-priori floor (needs >=8 theme-quarters across "
-    ">=4 drivers, sign-consistent). A forward-directional read, never a significance test."
+    "UNPOWERED — DIRECTIONAL / ANECDOTAL: below the a-priori floor (needs >=8 theme-quarters "
+    "across >=4 drivers, sign-consistent). A forward-directional read, never a significance test."
 )
 
 
@@ -164,11 +166,13 @@ def _theme_display(baskets: dict[str, Any], ledger: list[dict[str, Any]],
         if basis in tier:
             tier[basis] += 1
         cats[tag] += 1
-        cohorts = ([c for c, s in (("watchlist", wl_set), ("avoid-control", ac_set), ("real", rt_set))
+        cohorts = ([c for c, s in
+                    (("watchlist", wl_set), ("avoid-control", ac_set), ("real", rt_set))
                     if r["ticker"] in s])
         names.append({
             "ticker": r["ticker"], "substructureTag": tag, "driverTie": tie, "grade": grade,
-            "basis": basis, "gradeFact": r.get("grade_fact", ""), "accession": _acc(r.get("source_ref", "")),
+            "basis": basis, "gradeFact": r.get("grade_fact", ""),
+            "accession": _acc(r.get("source_ref", "")),
             "edgarUrl": _edgar_url(r.get("cik"), r.get("source_ref", "")),
             "rationale": r.get("rationale", ""), "cohorts": cohorts,
         })
@@ -182,7 +186,9 @@ def _theme_display(baskets: dict[str, Any], ledger: list[dict[str, Any]],
     # (no none/universe) when no scan is present.
     frozen = len(ledger)
     if scan is not None:
-        sc: Counter[str] = Counter(_SCAN_BASIS.get(s.get("exposure_basis", ""), "none") for s in scan)
+        sc: Counter[str] = Counter(
+            _SCAN_BASIS.get(s.get("exposure_basis", ""), "none") for s in scan
+        )
         surfaced = len(scan) - sc["none"]
         tier_shape = {"binding": sc["binding"], "quantified": sc["quantified"],
                       "committed": sc["committed"], "aspirational": sc["aspirational"],
@@ -194,7 +200,8 @@ def _theme_display(baskets: dict[str, Any], ledger: list[dict[str, Any]],
     def _detail(t: str, extra: dict[str, Any]) -> dict[str, Any]:
         n = by_ticker.get(t, {})
         base = {k: n.get(k, "") for k in
-                ("substructureTag", "grade", "basis", "gradeFact", "accession", "edgarUrl", "rationale")}
+                ("substructureTag", "grade", "basis", "gradeFact", "accession", "edgarUrl",
+                 "rationale")}
         return {"ticker": t, **base, **extra}
 
     watchlist = [_detail(t, {"trigger": triggers.get(t, "")}) for t in baskets.get("watchlist", [])
@@ -202,8 +209,15 @@ def _theme_display(baskets: dict[str, Any], ledger: list[dict[str, Any]],
     avoid_controls = [_detail(t, {}) for t in baskets.get("avoid_controls", []) if t in by_ticker]
     categories = [{"tag": k, "n": v} for k, v in cats.most_common()]
 
+    # NAIVE cohort = the equal-weight baseline over the WHOLE committed tier — mirrors the
+    # backend's len(baskets.all_committed) (forward.py "NAIVE-N", cli.py:689). NOT `surfaced`
+    # (scan breadth): a theme that froze a SUBSET of the surfaced universe (ai-datacenter: 56
+    # committed of 450 surfaced) would otherwise render an ~8x-overstated NAIVE cohort next to
+    # the tier-scale buy/passed pills. Fall back to the frozen ledger size for a freeze that
+    # predates the all_committed field.
+    naive_n = len(baskets.get("all_committed") or []) or frozen
     forward = {
-        "cohorts": {"buy": len(baskets.get("ratified", [])), "naive": surfaced,
+        "cohorts": {"buy": len(baskets.get("ratified", [])), "naive": naive_n,
                     "passed": len(baskets.get("passed", [])),
                     "watchlist": len(baskets.get("watchlist", [])),
                     "avoidControls": len(ac_set), "realTier": len(rt_set)},
@@ -211,14 +225,14 @@ def _theme_display(baskets: dict[str, Any], ledger: list[dict[str, Any]],
         "diagnostics": [
             {"name": "avoid-discipline", "status": "PENDING",
              "confound": f"{driver}-BETA-CONFOUNDED + regime-dependent — was declining to buy the "
-                         f"committed tier costly or vindicated in THIS window? Largely a {driver}-beta "
-                         "bet, NOT selection skill.",
+                         f"committed tier costly or vindicated in THIS window? Largely a "
+                         f"{driver}-beta bet, NOT selection skill.",
              "note": "0 days forward from freeze — accrues over calendar time."},
             {"name": "exposure-carry", "status": "PENDING",
-             "confound": f"PARTIALLY beta-controlled — both cohorts are {driver}-labelled so the common "
-                         f"{driver}-beta largely cancels in the divergence; isolates whether the "
-                         "exposure GRADE (real vs not) carries forward info. The more informative of "
-                         "the two — still NOT an edge verdict.",
+             "confound": f"PARTIALLY beta-controlled — both cohorts are {driver}-labelled so the "
+                         f"common {driver}-beta largely cancels in the divergence; isolates "
+                         "whether the exposure GRADE (real vs not) carries forward info. The more "
+                         "informative of the two — still NOT an edge verdict.",
              "note": "genuine-exposure (watchlist) vs other-PASSED divergence; pending forward."},
         ],
         "honestyLabel": _HOLD_NONE_HONESTY,
@@ -256,8 +270,8 @@ def _theme_index(summaries: list[dict[str, Any]]) -> dict[str, Any]:
         "drivers": summaries,
         "crossDriver": {
             "driversFrozen": n, "totalRatified": total_buys, "totalWatchlist": total_wl,
-            "line": (f"{n} theme{'s' if n != 1 else ''} in snapshot; exposure-carry diagnostic poolable "
-                     f"but UNPOWERED ({n} < {_MIN_THEMES} themes)."),
+            "line": (f"{n} theme{'s' if n != 1 else ''} in snapshot; exposure-carry diagnostic "
+                     f"poolable but UNPOWERED ({n} < {_MIN_THEMES} themes)."),
         },
         # the POOLED forward state — cross-theme facts that live at the portfolio altitude (not per
         # theme). On the snapshot day every horizon is 0 days forward → everything PENDING.
@@ -273,8 +287,9 @@ def _theme_index(summaries: list[dict[str, Any]]) -> dict[str, Any]:
             "honestyLabel": _HOLD_NONE_HONESTY,
             "diagnostics": [
                 {"name": "exposure-carry", "status": "PENDING",
-                 "note": "genuine-exposure vs other-PASSED divergence, pooled across themes — PARTIALLY "
-                         "beta-controlled; the more informative of the two; pending forward."},
+                 "note": "genuine-exposure vs other-PASSED divergence, pooled across themes — "
+                         "PARTIALLY beta-controlled; the more informative of the two; pending "
+                         "forward."},
                 {"name": "avoid-discipline", "status": "PENDING",
                  "note": "was declining to buy the committed tier costly or vindicated, pooled — "
                          "beta-confounded; pending forward."},
@@ -285,10 +300,10 @@ def _theme_index(summaries: list[dict[str, Any]]) -> dict[str, Any]:
 
 def build_themes(themes_srcs: list[Path]) -> list[str]:
     """Transform each discovered freeze (one driver per src dir: forward_*_baskets.json + its
-    _ledger.jsonl (+ any *scan*.jsonl for the none count)) into COMMITTED frontend/themes/<slug>.json
-    + index.json. NON-DESTRUCTIVE: if NO source is found (the Cloudflare deploy — the source is
-    git-ignored), it leaves the committed output untouched and WARNs, so the Edge-2 frontend and any
-    prior theme commit still build/serve."""
+    _ledger.jsonl (+ any *scan*.jsonl for the none count)) into COMMITTED
+    frontend/themes/<slug>.json + index.json. NON-DESTRUCTIVE: if NO source is found (the Cloudflare
+    deploy — the source is git-ignored), it leaves the committed output untouched and WARNs, so the
+    Edge-2 frontend and any prior theme commit still build/serve."""
     pairs: list[tuple[Path, Path, Path | None]] = []
     for d in themes_srcs:
         if not d.exists():
@@ -319,11 +334,14 @@ def build_themes(themes_srcs: list[Path]) -> list[str]:
 
 
 def main(argv: list[str] | None = None) -> None:
-    ap = argparse.ArgumentParser(description="Assemble the static snapshot mirror the dashboard serves.")
+    ap = argparse.ArgumentParser(
+        description="Assemble the static snapshot mirror the dashboard serves."
+    )
     ap.add_argument("--themes-src", nargs="*", dest="themes_src", default=None,
                     help="dir(s) each holding ONE driver's frozen freeze (forward_*_baskets.json + "
-                         "_ledger.jsonl, + any *scan*.jsonl for the none count). Default: data/forward/. "
-                         "Absent → the committed frontend/themes/ is left untouched.")
+                         "_ledger.jsonl, + any *scan*.jsonl for the none count). "
+                         "Default: data/forward/. Absent → the committed frontend/themes/ is left "
+                         "untouched.")
     args = ap.parse_args(argv)
 
     for d in (OUT_SNAP, OUT_DOSS):
