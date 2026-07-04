@@ -20,8 +20,7 @@ from vinci.dossier.schemas import Dossier, MechanicalLayer, Sourced, SourceStatu
 
 # Display curation for the catalyst path — the full data always stays in dossier.json; these only
 # cap/collapse/group the HUMAN view (the margin-trend mini-table idiom: curate display, not data).
-_GROUP_CAP = 3  # revision-event broker-day groups shown; the rest noted "+N in JSON"
-_ITEMS_PER_GROUP = 5  # material line items per group (largest |Δ| first)
+_GROUP_CAP = 6  # (T3) revision-event broker-day LINES shown; the rest counted "+N in JSON"
 _LADDER_KEEP = ("NTM", "FY 2026", "FY 2027", "FY 2028")  # multiples shown; later years → JSON
 
 # --- display formatters (render boundary ONLY — the stored Sourced.value keeps full precision) ---
@@ -200,9 +199,28 @@ def _abs_delta(e: Any) -> float:
         return -1.0
 
 
+def _n1(x: Any) -> str:  # a revision value → 1-decimal, or verbatim when non-numeric ('-')
+    try:
+        return f"{float(x):.1f}"
+    except (ValueError, TypeError):
+        return str(x)
+
+
+def _revision_headline(evs: list[Any]) -> Any | None:
+    """(T3) The headline revision for a broker-day: the largest-|Δ| EBITDA revision (the fund's
+    decision metric), else the largest-|Δ| of any metric. None when no event carries a numeric Δ."""
+    numeric = [e for e in evs if _abs_delta(e) >= 0]
+    if not numeric:
+        return None
+    ebitda = [e for e in numeric if "ebitda" in e.metric.lower()]
+    return max(ebitda or numeric, key=_abs_delta)
+
+
 def _grouped_events_lines(s: Sourced[Any]) -> list[str]:
-    """(4d) Revision events GROUPED by (date, broker): a change-type summary + the material line
-    items (largest |Δ| first) per group; cap 3 groups, the rest noted. Full list in dossier.json."""
+    """(4d · T3) Revision events COMPRESSED to ONE line per broker-day — date · broker · action mix
+    (n↑/n↓, initiations) · the headline revision (largest-|Δ|, EBITDA-preferred) · '+N items in
+    JSON'. Cap ``_GROUP_CAP`` broker-days, the remainder counted; the expanded per-item view is the
+    web on-demand tier + the JSON. Full list always in dossier.json."""
     label = "Revision-event log"
     if s.status is not SourceStatus.PRESENT or not s.value:
         return [_fact(label, s)]
@@ -212,19 +230,19 @@ def _grouped_events_lines(s: Sourced[Any]) -> list[str]:
         groups.setdefault((e.date, e.broker), []).append(e)
     keys = sorted(groups, key=lambda k: k[0], reverse=True)  # most-recent broker-day first
     out = [f"- **{label}** ({len(events)} events · {len(keys)} broker-days) — ↳ `{s.source_ref}`:"]
-    for key in keys[:_GROUP_CAP]:
-        evs = groups[key]
-        summary = ", ".join(
-            f"{t}×{n}" if n > 1 else t for t, n in Counter(e.change_type for e in evs).items()
-        )
-        out.append(f"  - **{key[0]} · {key[1]}** — {summary}:")
-        for e in sorted(evs, key=_abs_delta, reverse=True)[:_ITEMS_PER_GROUP]:
-            out.append(
-                f"    - {e.metric} {e.period}: {e.broker_prior}→{e.broker_current} "
-                f"(cons {e.consensus_before}→{e.consensus_after})"
-            )
-        if len(evs) > _ITEMS_PER_GROUP:
-            out.append(f"    - _+{len(evs) - _ITEMS_PER_GROUP} more line items in JSON_")
+    for dt, broker in keys[:_GROUP_CAP]:
+        evs = groups[(dt, broker)]
+        ct = Counter(e.change_type for e in evs)
+        ups = sum(n for t, n in ct.items() if "upward" in t.lower())
+        downs = sum(n for t, n in ct.items() if "downward" in t.lower())
+        inits = sum(n for t, n in ct.items() if "initiation" in t.lower())
+        mix = f"{ups}↑/{downs}↓" + (f", {inits} initiations" if inits else "")
+        head = _revision_headline(evs)
+        headline = (f" · {head.metric} {head.period} {_n1(head.broker_prior)}→"
+                    f"{_n1(head.broker_current)}" if head else "")
+        rest = len(evs) - (1 if head else 0)
+        out.append(f"  - **{dt} · {broker}** · {mix}{headline}"
+                   + (f" · +{rest} items in JSON" if rest > 0 else ""))
     if len(keys) > _GROUP_CAP:
         out.append(f"  - _+{len(keys) - _GROUP_CAP} more broker-days in JSON_")
     return out
@@ -534,11 +552,17 @@ def _near_dated(i: Any, ref: date) -> bool:
     return date.fromisoformat(i.maturity_date).year <= ref.year + 1
 
 
-def _clip120(s: str) -> str:
-    """(K1) Collapse whitespace + clip a verbatim clause to ≤120 chars for the curated main body —
-    the full verbatim lives in the appendix table + the JSON."""
+def _clip(s: str, n: int) -> tuple[str, bool]:
+    """Collapse whitespace + clip a verbatim clause to ≤``n`` chars (… when cut). Returns
+    ``(clipped, was_trimmed)`` — the caller adds a 'full verbatim in JSON' note only when trimmed.
+    The full verbatim lives in the appendix / JSON."""
     s = re.sub(r"\s+", " ", str(s)).strip()
-    return s if len(s) <= 120 else s[:119].rstrip() + "…"
+    return (s, False) if len(s) <= n else (s[:n - 1].rstrip() + "…", True)
+
+
+def _clip120(s: str) -> str:
+    """(K1) ≤120-char clause for the curated main body — full verbatim in the appendix + JSON."""
+    return _clip(s, 120)[0]
 
 
 # (K1) governing-term name → short label for the curated main-body covenant line (survival-critical
@@ -684,7 +708,10 @@ def _capital_structure_appendix_lines(cs: Any) -> list[str]:
     flat facts when there was no structured panel; removed, so nothing is lost from the surface. The
     8-K/pointer/covenant `_fact`s below always render (UNKNOWN-safe). Relocated + kept in JSON."""
     inst = cs.instruments
-    out: list[str] = ["", "### Capital-structure provenance (full panel · pointers · terms)"]
+    # (T1) the ON-DEMAND / audit tier: the md keeps it in full under this marker; the web collapses
+    # it in a <details> that print excludes; the JSON is machine-complete. Nothing deleted.
+    out: list[str] = ["", "### Capital-structure provenance — on-demand (web collapsed · print-"
+                      "excluded · JSON) — full panel · pointers · terms"]
     if inst.status is SourceStatus.PRESENT and inst.value:
         out += _table(f"Capital structure — full instrument panel {cs.detail_as_of}",
                       inst.source_ref, _CS_COLS, [_instrument_row(i) for i in inst.value],
@@ -730,21 +757,43 @@ def _covenant_term_lines(cs: Any) -> list[str]:
     for g in gov:
         if g.family not in families:
             families.append(g.family)
-    cols = ["Governing value (verbatim, or UNKNOWN)", "Source § (base · amended by)"]
+    cols = ["Governing value (lead · clause ≤200c)", "Source §"]
     out: list[str] = []
     for fam in families:
+        fam_terms = [g for g in gov if g.family == fam]
+        # (T2) the family source lineage moves to the table FOOTER, not repeated on every row: the
+        # base accession/exhibit + the amendment-accession chain.
+        present_bases = [g.base_ref for g in fam_terms
+                         if g.value.status is SourceStatus.PRESENT and g.base_ref]
+        fam_base = present_bases[0] if present_bases else rows_s.source_ref
+        amend_accs = sorted({a for g in fam_terms for a in g.amended_by})
+        footer = ("Source §: " + str(fam_base)
+                  + (f" · amended by {', '.join(amend_accs)}" if amend_accs else ""))
         rows: list[list[str]] = []
-        for g in (t for t in gov if t.family == fam):
+        for g in fam_terms:
             v = g.value
-            if v.status is SourceStatus.PRESENT:
-                src = g.base_ref or v.source_ref or "—"
-                if g.amended_by:
-                    src += f" · amended by {', '.join(g.amended_by)}"
-                rows.append([g.term, str(v.value), src])
-            else:  # a term NO exhibit stated — one UNKNOWN row, never ABOVE a present answer (P5)
+            if v.status is not SourceStatus.PRESENT:  # UNKNOWN — one row, not above a present (P5)
                 rows.append([g.term, "UNKNOWN", v.note or "not stated"])
+                continue
+            # (T2) value = the extractable value-lead + a ≤200c clause; 'full verbatim in JSON' only
+            # when the clause was actually trimmed.
+            label = next((lbl for key, lbl in _SUMMARY_TERMS if key in g.term.lower()), None)
+            verbatim = str(v.value)
+            lead = _covenant_value_lead(label, verbatim) if label else ""
+            clause, trimmed = _clip(verbatim, 200)
+            cell = (f"{lead} · {clause}" if lead else clause) + (
+                " — full verbatim in JSON" if trimmed else "")
+            # source §: an off-family base (≠ the family footer) annotates inline; an amended row
+            # keeps its amendment ref; a plain base row points at the footer.
+            if g.base_ref and g.base_ref != fam_base:
+                ref = g.base_ref
+            elif g.amended_by:
+                ref = f"amended by {', '.join(g.amended_by)}"
+            else:
+                ref = "base (footer)"
+            rows.append([g.term, cell, ref])
         out += _table(f"Covenant terms — {fam} (governing; Tier-2 fenced)", rows_s.source_ref,
-                      cols, rows)
+                      cols, rows, note=footer)
     # (FIX-2) ONE human line inside the covenant block for located agreement exhibits NOT extracted
     # this run (cost bound / fetch fail) — the per-exhibit machine detail is a QA flag, not a
     # caveat. Derived: located pointer accessions minus the accessions the extraction actually read.

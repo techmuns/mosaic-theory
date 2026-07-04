@@ -424,6 +424,13 @@ function clip120(s) {
   return s.length <= 120 ? s : s.slice(0, 119).replace(/\s+$/, "") + "…";
 }
 
+// (T2, mirrors render._clip) collapse whitespace + clip a verbatim clause to ≤n chars (… when cut).
+// Returns [clipped, trimmed] — the caller appends a "full verbatim in JSON" note ONLY when trimmed.
+function clipTrim(s, n) {
+  s = String(s).replace(/\s+/g, " ").trim();
+  return s.length <= n ? [s, false] : [s.slice(0, n - 1).replace(/\s+$/, "") + "…", true];
+}
+
 // (K1, mirrors render._covenant_summary_lines) CURATED covenant summary for the MAIN body — the
 // governing VALUES that drive survival (financial-maintenance / conversion / interest / maturity /
 // a 1-line events-of-default), each leading with its extractable value then a ≤120-char clause.
@@ -503,11 +510,17 @@ function capitalStructureAppendix(cs) {
     panel = dataTable(`Capital structure — full instrument panel ${cs.detail_as_of || ""}`,
       inst.source_ref, _CS_COLS, inst.value.map(instrumentRow), "");
   }
-  return subhead("Capital-structure provenance (full panel · pointers · terms)") +
-    panel +
+  const inner = panel +
     fact("8-Ks at instrument maturities", cs.maturity_filings) +
     covenantPointers(cs) +
     covenantTerms(cs);
+  // (T1) the ON-DEMAND / audit tier: web collapses the provenance in a <details> that print excludes
+  // (styles.css @media print: details:not([open]){display:none}); the JSON stays machine-complete.
+  // Nothing deleted — the panel/pointers/terms are relocated here, not dropped. Mirrors the md marker
+  // in render._capital_structure_appendix_lines.
+  return `<details class="card ds-section">
+    <summary style="cursor:pointer; font-size:12.5px; font-weight:600; color:var(--ink-2);">Capital-structure provenance — on-demand (audit) <span class="muted" style="font-weight:400;">— full panel · pointers · terms (web collapsed · print-excluded · JSON)</span></summary>
+    <div style="margin-top:10px;">${inner}</div></details>`;
 }
 
 // (H1) covenant/contract pointers → table (CIK-verified execution filings); old JSON → flat fact.
@@ -567,18 +580,32 @@ function covenantTerms(cs) {
   if (!gov.length) return fact("Covenant terms (Tier-2, fenced)", cs.covenant_terms);
   const families = [];
   gov.forEach((g) => { if (!families.includes(g.fam)) families.push(g.fam); });
+  const cols = ["Governing value (lead · clause ≤200c)", "Source §"];
   const tables = families.map((fam) => {
-    const rows = gov.filter((g) => g.fam === fam).map((g) => {
+    const famTerms = gov.filter((g) => g.fam === fam);
+    // (T2) the family source lineage moves to the table FOOTER, not repeated on every row: the base
+    // accession/exhibit + the amendment-accession chain (mirrors render._covenant_term_lines footer).
+    const presentBases = famTerms
+      .filter((g) => (g.value || {}).status === "present" && g.baseRef).map((g) => g.baseRef);
+    const famBase = presentBases.length ? presentBases[0] : rs.source_ref;
+    const amendAccs = [...new Set(famTerms.flatMap((g) => g.amendedBy))].sort();
+    const footer = `Source §: ${famBase}` + (amendAccs.length ? ` · amended by ${amendAccs.join(", ")}` : "");
+    const rows = famTerms.map((g) => {
       const v = g.value || {};
-      if (v.status === "present") {
-        const src = (g.baseRef || v.source_ref || DASH) +
-          (g.amendedBy.length ? ` · amended by ${g.amendedBy.join(", ")}` : "");
-        return { label: g.term, cells: [String(v.value), src] };
-      }
-      return { label: g.term, cells: ["UNKNOWN", v.note || "not stated"] };
+      if (v.status !== "present") return { label: g.term, cells: ["UNKNOWN", v.note || "not stated"] };
+      // (T2) value = the extractable value-lead + a ≤200c clause; "full verbatim in JSON" only when trimmed.
+      const entry = _SUMMARY_TERMS.find(([key]) => (g.term || "").toLowerCase().includes(key));
+      const verbatim = String(v.value);
+      const lead = entry ? covenantValueLead(entry[1], verbatim) : "";
+      const [clause, trimmed] = clipTrim(verbatim, 200);
+      const cell = (lead ? `${lead} · ${clause}` : clause) + (trimmed ? " — full verbatim in JSON" : "");
+      // source §: an off-family base (≠ the family footer) annotates inline; an amended row keeps its
+      // amendment ref; a plain base row points at the footer.
+      const ref = (g.baseRef && g.baseRef !== famBase) ? g.baseRef
+        : g.amendedBy.length ? `amended by ${g.amendedBy.join(", ")}` : "base (footer)";
+      return { label: g.term, cells: [cell, ref] };
     });
-    return dataTable(`Covenant terms — ${fam} (governing; Tier-2 fenced)`, rs.source_ref,
-      ["Governing value (verbatim, or UNKNOWN)", "Source § (base · amended by)"], rows, "");
+    return dataTable(`Covenant terms — ${fam} (governing; Tier-2 fenced)`, rs.source_ref, cols, rows, footer);
   }).join("");
   // (FIX-2 · D-1) mirror the Python transparency line — located pointer accessions minus the ones
   // the extraction actually read → "N located agreement exhibit(s) not extracted this run". Without
@@ -876,7 +903,7 @@ function idioVsShared(io) {
 // --- catalyst path (the five CIQ Estimates sheets, horizon-matched). Fix 4: the string fields are
 // TABLE-rendered (reuse the margin-trend mini-table idiom) + curated (collapse/trim/group/cap); the
 // full data always stays in dossier.json. Returns "" for a pre-catalyst_path JSON (back-compat).
-const _CAT_GROUP_CAP = 3, _CAT_ITEMS = 5;
+const _GROUP_CAP = 6;  // (T3, mirrors render._GROUP_CAP) revision-event broker-day LINES shown; rest counted
 const _LADDER_KEEP = ["NTM", "FY 2026", "FY 2027", "FY 2028"];
 const _LOOKBACKS = ["12m", "9m", "6m", "3m", "2m", "1m", "latest", "now"];
 
@@ -1129,8 +1156,24 @@ function ladderTable(s) {
 
 const _absDelta = (e) => { const d = Math.abs(Number(e.broker_current) - Number(e.broker_prior)); return isNaN(d) ? -1 : d; };
 
-// (4d) revision events GROUPED by (date, broker): summary + material line items (largest |Δ| first);
-// cap 3 groups, rest noted. Full list in JSON.
+// (T3, mirrors render._n1) a revision value → 1-decimal, or verbatim when non-numeric ("-").
+const _n1 = (x) => { const f = Number(x); return isNaN(f) ? String(x) : f.toFixed(1); };
+
+// (T3, mirrors render._revision_headline) the headline revision for a broker-day: the largest-|Δ|
+// EBITDA revision (the fund's decision metric), else the largest-|Δ| of any metric. null when no
+// event carries a numeric Δ.
+function _revisionHeadline(evs) {
+  const numeric = evs.filter((e) => _absDelta(e) >= 0);
+  if (!numeric.length) return null;
+  const ebitda = numeric.filter((e) => e.metric.toLowerCase().includes("ebitda"));
+  return (ebitda.length ? ebitda : numeric).reduce((a, b) => (_absDelta(b) > _absDelta(a) ? b : a));
+}
+
+// (4d · T3) revision events COMPRESSED to ONE line per broker-day — date · broker · action mix
+// (n↑/n↓, initiations) · the headline revision (largest-|Δ|, EBITDA-preferred, 1-decimal) · "+N items
+// in JSON". Cap _GROUP_CAP broker-days, the remainder counted. The expanded per-item view (every
+// event) is the web ON-DEMAND tier — a collapsed <details> after the compressed lines — + the JSON.
+// Full list always in dossier.json. Mirrors render._grouped_events_lines.
 function eventGroups(s) {
   const label = "Revision-event log";
   if (!s || s.status !== "present" || !Array.isArray(s.value) || !s.value.length) return fact(label, s);
@@ -1141,18 +1184,33 @@ function eventGroups(s) {
     groups.get(k).push(e);
   }
   const keys = [...groups.keys()].sort().reverse(); // date|broker, most recent first
-  const blocks = keys.slice(0, _CAT_GROUP_CAP).map((k) => {
-    const evs = groups.get(k), [dt, broker] = k.split("|"), types = {};
-    for (const e of evs) types[e.change_type] = (types[e.change_type] || 0) + 1;
-    const summary = Object.entries(types).map(([t, n]) => (n > 1 ? `${t}×${n}` : t)).join(", ");
-    const items = [...evs].sort((a, b) => _absDelta(b) - _absDelta(a)).slice(0, _CAT_ITEMS).map((e) =>
-      `<li><b>${escapeHtml(e.metric)}</b> ${escapeHtml(e.period)}: ${escapeHtml(e.broker_prior)}&rarr;${escapeHtml(e.broker_current)} <span class="muted">(cons ${escapeHtml(e.consensus_before)}&rarr;${escapeHtml(e.consensus_after)})</span></li>`).join("");
-    const more = evs.length > _CAT_ITEMS ? `<li class="muted">+${evs.length - _CAT_ITEMS} more line items in JSON</li>` : "";
-    return `<div style="margin-top:7px;"><b>${escapeHtml(dt)} · ${escapeHtml(broker)}</b> <span class="muted">— ${escapeHtml(summary)}</span><ul class="event-log">${items}${more}</ul></div>`;
+  const lines = keys.slice(0, _GROUP_CAP).map((k) => {
+    const evs = groups.get(k), [dt, broker] = k.split("|");
+    let ups = 0, downs = 0, inits = 0;
+    for (const e of evs) {
+      const t = (e.change_type || "").toLowerCase();
+      if (t.includes("upward")) ups += 1;
+      if (t.includes("downward")) downs += 1;
+      if (t.includes("initiation")) inits += 1;
+    }
+    const mix = `${ups}↑/${downs}↓` + (inits ? `, ${inits} initiations` : "");
+    const head = _revisionHeadline(evs);
+    const headline = head ? ` · ${escapeHtml(head.metric)} ${escapeHtml(head.period)} ${_n1(head.broker_prior)}&rarr;${_n1(head.broker_current)}` : "";
+    const rest = evs.length - (head ? 1 : 0);
+    return `<div style="margin-top:5px;"><b>${escapeHtml(dt)} · ${escapeHtml(broker)}</b> <span class="muted">· ${escapeHtml(mix)}</span>${headline}${rest > 0 ? ` <span class="muted">· +${rest} items in JSON</span>` : ""}</div>`;
   }).join("");
-  const moreGroups = keys.length > _CAT_GROUP_CAP ? `<div class="muted" style="font-size:12px; margin-top:4px;">+${keys.length - _CAT_GROUP_CAP} more broker-days in JSON</div>` : "";
+  const moreGroups = keys.length > _GROUP_CAP ? `<div class="muted" style="font-size:12px; margin-top:4px;">+${keys.length - _GROUP_CAP} more broker-days in JSON</div>` : "";
+  // (T3) ON-DEMAND expansion: the full per-item list — every event (metric period prior→current),
+  // grouped by broker-day — collapsed in a <details>. This is the web on-demand tier of the moved facts.
+  const expanded = keys.map((k) => {
+    const evs = groups.get(k), [dt, broker] = k.split("|");
+    const items = evs.map((e) =>
+      `<li><b>${escapeHtml(e.metric)}</b> ${escapeHtml(e.period)}: ${escapeHtml(e.broker_prior)}&rarr;${escapeHtml(e.broker_current)} <span class="muted">(cons ${escapeHtml(e.consensus_before)}&rarr;${escapeHtml(e.consensus_after)})</span></li>`).join("");
+    return `<div style="margin-top:7px;"><b>${escapeHtml(dt)} · ${escapeHtml(broker)}</b><ul class="event-log">${items}</ul></div>`;
+  }).join("");
+  const details = `<details style="margin-top:6px;"><summary style="cursor:pointer; font-size:12px; color:var(--ink-2);">Expand all ${events.length} revisions per broker-day (on-demand)</summary><div>${expanded}</div></details>`;
   const cite = s.source_ref ? `<span class="cite">${escapeHtml(s.source_ref)}</span>` : "";
-  return `<div class="fact"><div class="fact-label">${escapeHtml(label)} <span class="muted">(${events.length} events · ${keys.length} broker-days)</span></div><div>${blocks}${moreGroups}${cite}</div></div>`;
+  return `<div class="fact"><div class="fact-label">${escapeHtml(label)} <span class="muted">(${events.length} events · ${keys.length} broker-days)</span></div><div>${lines}${moreGroups}${details}${cite}</div></div>`;
 }
 
 function catalystPath(cp, cc) {

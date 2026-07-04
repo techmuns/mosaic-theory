@@ -307,6 +307,10 @@ table.data tr.median-row td { border-top: 1.5px solid var(--line-2); font-style:
   .sidebar { display: none !important; }
   .breadcrumb { display: none; }
   .ds-pdf-btn { display: none !important; }
+  /* (T1) the ON-DEMAND / audit tier is EXCLUDED from the printed PDF: a collapsed <details> (e.g. the
+     capital-structure provenance, the revision-log expansion) drops out of the report. An <details open>
+     the reader expanded on screen still prints — that's intentional (they chose to see it). */
+  details:not([open]) { display: none !important; }
   /* slight left/right inset + scale the whole report to ~85%, so a dense dossier fits in noticeably
      fewer pages (a deep finalist drops from ~10 to ~6-7) WITHOUT dropping, summarising, or re-laying
      out any content — print is high-DPI so the type stays crisp at this scale. */

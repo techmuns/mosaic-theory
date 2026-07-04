@@ -92,11 +92,15 @@ flag it. That incremental blur is the failure mode this whole project is built t
   verdict on a single high-stakes name is confident, fluent noise.
 - **Source-bind everything** — claims (especially in dossiers) point to the primary cell/filing, so the
   human verifies rather than trusts the summary.
-- **Machine-complete JSON, curated human surface.** `dossier.json` is machine-complete — every extracted
-  fact stays in it. The rendered PDF/web view is the HUMAN DECISION SURFACE: provenance (verbatim quotes,
-  accessions, reference/agreement terms, amendment chains) renders in the **appendix or on demand, never
-  inline in the main body**. Curating the surface never deletes a fact — a moved fact is present in the
-  appendix or the JSON. (The discipline/methodology language lives in `source_ref`s + JSON, not headers.)
+- **Three-tier human surface (DESIGN RULE v2).** `dossier.json` is machine-complete — every extracted
+  fact stays in it. The rendered surface is THREE TIERS:
+  1. **MAIN BODY** — decision values; ALWAYS printed. The human's decision surface.
+  2. **ON-DEMAND** — context & audit (provenance: verbatim quotes, accessions, reference/agreement terms,
+     amendment chains, per-item revision detail): a collapsed `<details>` on web, **EXCLUDED from print**.
+  3. **JSON** — machine-complete, the full record behind every curated value.
+  The **Financial-Summary appendix is decision data → it STAYS in print** (it is not provenance). Provenance
+  appendices are the audit tier → on-demand. Curating never deletes a fact — a moved fact is reachable in
+  the expanded web on-demand tier or the JSON. (Discipline/methodology language lives in `source_ref`s + JSON.)
 
 ## Stack & layout (orientation)
 

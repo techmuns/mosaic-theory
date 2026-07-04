@@ -3317,28 +3317,28 @@ def test_estimates_as_of_floor_vs_header_wins_over_events() -> None:
 
 
 def test_revision_events_render_groups_by_date_broker_and_caps() -> None:
-    """Fix 4d: the render GROUPS events by (date, broker) — many same-day same-broker events fold
-    to ONE group with a change-type summary + material line items (largest |Δ| first); items cap 5,
-    groups cap 3, the rest noted. Serials are decoded, never shown raw."""
+    """(4d · T3) The render COMPRESSES to ONE line per broker-day: header count + an action mix
+    (n↑/n↓, initiations) + the largest-|Δ| headline + '+N items in JSON'; cap 6 broker-days, the
+    rest counted. Serials decoded, never shown raw."""
     rows: list[list[typing.Any]] = [
         ["", "", ""],
         ["Change Type", "Date", "Broker", "Analyst", "Data Point", "Period",
          "Broker Value Current", "Broker Value Prior", "Consensus After", "Consensus Before"],
     ]
-    for i, d in enumerate([1, 50, 3, 2, 4, 7]):  # |Δ| sizes; the 50 (M1) must sort first
+    for i, d in enumerate([1, 50, 3, 2, 4, 7]):  # |Δ| sizes; the 50 (M1) is the headline
         rows.append(["Downward Revision", 46100.0, "HCW", "-", f"M{i}", "FY 2026",
                      float(100 - d), 100.0, 0.0, 0.0])
     lines = dr._grouped_events_lines(cs.revision_events(_est_bundle({"Recent Changes": rows})))
     text = "\n".join(lines)
-    assert "6 events · 1 broker-days" in text and "46100" not in text  # one group, serial decoded
-    assert "Downward Revision×6" in next(ln for ln in lines if "· HCW" in ln)  # change-type summary
-    items = [ln for ln in lines if ln.strip().startswith("- M")]
-    assert items[0].strip().startswith("- M1")  # largest |Δ| first
-    assert len(items) == 5 and any("+1 more line items in JSON" in ln for ln in lines)  # item cap 5
-    # group cap: 12 distinct broker-days → 3 rendered + the rest noted
+    assert "6 events · 1 broker-days" in text and "46100" not in text  # header + serial decoded
+    bd = next(ln for ln in lines if "· HCW" in ln)
+    assert "0↑/6↓" in bd  # action mix (all downward, no initiations)
+    assert "M1 FY 2026 100.0→50.0" in bd  # headline = the largest |Δ|
+    assert "+5 items in JSON" in bd  # the remaining line items counted (one line per broker-day)
+    # group cap: 12 distinct broker-days → 6 rendered + the rest noted
     ml = "\n".join(dr._grouped_events_lines(cs.revision_events(_est_bundle(
         {"Recent Changes": _recent_changes_fx(12)}))))
-    assert "12 events · 12 broker-days" in ml and "+9 more broker-days in JSON" in ml
+    assert "12 events · 12 broker-days" in ml and "+6 more broker-days in JSON" in ml
 
 
 def test_consensus_stats_reads_target_and_ratings_skips_potential_upside() -> None:
@@ -3436,8 +3436,8 @@ def test_fresh_dossier_renders_catalyst_path_in_place_of_consensus_slot() -> Non
     md = dr.render_markdown(dossier)
     assert "### Catalyst path (estimates · guidance · revisions) — as-of 2026-05-15" in md
     assert "146.5 (6m) → 62.1 (now)" in md
-    # events GROUPED (Fix 4d): a (date · broker) header, then the line item beneath it
-    assert "2026-05-15 · HCW" in md and "EBITDA FY 2026: 146.5→62.08" in md
+    # events COMPRESSED (T3): one line per broker-day with the action mix + the headline revision
+    assert "2026-05-15 · HCW" in md and "EBITDA FY 2026 146.5→62.1" in md
     # Fix 5: the legacy 'Consensus context' block is GONE; only Surprise history is folded in
     assert "legacy light facts" not in md and "### Consensus context" not in md
     assert "Surprise history (annual beat/miss)" in md
