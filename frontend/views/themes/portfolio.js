@@ -27,35 +27,37 @@ export async function render(root, { item, frame }) {
   const pw = pf.powerFloor || {};
   const cd = idx.crossDriver || {};
 
-  // POOLED forward — the cross-theme state, prominent + honest.
-  const honest = `
-    <div class="card gate-card" style="margin-bottom:14px;">
-      <h3 class="g-label">Theme edge · unvalidated research surface</h3>
-      <div class="g-spread" style="font-size:32px;">${fmtInt(pf.totalBuys ?? 0)} buys</div>
-      <div class="g-status">
-        <b>${fmtInt(pf.totalBuys ?? 0)} buys across ${fmtInt(cd.driversFrozen ?? idx.drivers.length)} themes</b> —
-        the edge surfaces <b>watchlists, not buys</b> (yet). ${fmtInt(pf.totalWatchlist ?? 0)} names on watch.
+  // POOLED forward — ONE compact honest strip. The load-bearing honesty stays on the surface (0 buys,
+  // unpowered, spreads UNDEFINED · never 0.0, diagnostics pending, "unvalidated research surface"); the
+  // verbose enumeration (the per-measure list, diagnostic notes, the verbatim label) is detail-on-
+  // demand behind "methodology" — so the theme table, the decision surface, isn't pushed off-screen.
+  const nThemes = fmtInt(cd.driversFrozen ?? idx.drivers.length);
+  const strip = `
+    <div class="pooled-strip">
+      <div class="ps-row">
+        <div>
+          <div class="ps-tag">Theme edge · unvalidated research surface</div>
+          <div style="margin-top:2px;"><b class="ps-buys">${fmtInt(pf.totalBuys ?? 0)} buys</b><span class="ps-sub">across ${nThemes} themes · ${fmtInt(pf.totalWatchlist ?? 0)} on watch · watchlists, not buys (yet)</span></div>
+        </div>
+        <div class="ps-power">
+          <div class="ps-power-label">Power floor · <b>${escapeHtml(pw.label || "")}</b></div>
+          <div class="power-bar" style="margin-left:auto;"><div class="power-fill" style="width:${pw.pct ?? 0}%;"></div></div>
+        </div>
       </div>
-      <div style="margin-top:13px;">
-        <div class="foot" style="margin-bottom:5px;">Power floor · <b>${escapeHtml(pw.label || "")}</b></div>
-        <div class="power-bar"><div class="power-fill" style="width:${pw.pct ?? 0}%;"></div></div>
-      </div>
-    </div>`;
-
-  const pooled = `
-    <div class="card" style="border-left:3px solid var(--conditional); margin-bottom:16px;">
-      <h3>Pooled forward · buy-dependent spreads UNDEFINED</h3>
-      <div class="subtitle muted" style="margin:2px 0 8px;">Zero buys → no buy leg → every buy-dependent
-        spread is UNDEFINED and NOT computed. Never <b>0.0</b>.</div>
-      <ul class="kv-list" style="margin-bottom:10px;">${(pf.undefinedMeasures || []).map(([m, r]) =>
-        `<li><b>${escapeHtml(m)}</b> — <span class="muted">UNDEFINED: ${escapeHtml(r)}</span></li>`).join("")}
-      </ul>
-      <div class="foot" style="margin-bottom:6px;">Beta-confounded diagnostics — pooled across themes, 0 days forward → pending:</div>
-      ${(pf.diagnostics || []).map((d) => `
-        <div style="padding:4px 0;"><b>${escapeHtml(d.name)}</b>
-          <span class="pill unresolved">${escapeHtml(d.status || "PENDING")}</span>
-          <span class="foot"> ${escapeHtml(d.note || "")}</span></div>`).join("")}
-      <div class="cite">${escapeHtml(pf.honestyLabel || "")}</div>
+      <details class="ps-why">
+        <summary>Buy-dependent spreads <b>UNDEFINED</b> — zero buys, no buy leg (never 0.0) · diagnostics <b>pending</b> · methodology</summary>
+        <div class="ps-why-body">
+          <ul class="kv-list" style="margin-bottom:9px;">${(pf.undefinedMeasures || []).map(([m, r]) =>
+            `<li><b>${escapeHtml(m)}</b> — <span class="muted">UNDEFINED: ${escapeHtml(r)}</span></li>`).join("")}
+          </ul>
+          <div class="foot" style="margin-bottom:5px;">Beta-confounded diagnostics — pooled across themes, 0 days forward → pending:</div>
+          ${(pf.diagnostics || []).map((d) => `
+            <div style="padding:3px 0;"><b>${escapeHtml(d.name)}</b>
+              <span class="pill unresolved">${escapeHtml(d.status || "PENDING")}</span>
+              <span class="foot"> ${escapeHtml(d.note || "")}</span></div>`).join("")}
+          <div class="cite">${escapeHtml(pf.honestyLabel || "")}</div>
+        </div>
+      </details>
     </div>`;
 
   const drill = (slug, tier, n) => n > 0
@@ -83,5 +85,5 @@ export async function render(root, { item, frame }) {
     </tr></thead><tbody>${idx.drivers.map(row).join("")}</tbody></table>
     <div class="foot" style="margin-top:8px;">Tap a theme to drill in · tap a tier count for that tier's names.</div>`;
 
-  root.innerHTML = frame(item, { bodyHtml: honest + pooled + GRADE_KEY + table });
+  root.innerHTML = frame(item, { bodyHtml: strip + GRADE_KEY + table });
 }
