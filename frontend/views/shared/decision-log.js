@@ -1,7 +1,7 @@
 // DECISION LOG — the immutable, append-only ledger as a read-only list of frozen legs.
 // Displayed here; logged ONLY via the CLI. No edit / delete / write path exists.
-import { getLedger, isBuyVerdict } from "../lib/snapshots.js";
-import { fmtPrice, fmtDate, fmtInt, escapeHtml, DASH } from "../lib/format.js";
+import { getLedger, isBuyVerdict } from "../../lib/snapshots.js";
+import { fmtPrice, fmtDate, fmtInt, escapeHtml, DASH } from "../../lib/format.js";
 
 export async function render(root, _params, { item, frame }) {
   root.innerHTML = frame(item, { bodyHtml: `<div class="notice">Loading ledger…</div>` });

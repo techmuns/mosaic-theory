@@ -1,16 +1,16 @@
 // OVERVIEW — fund status at a glance. Read-only render of committed snapshots.
 import {
   getSpreadStatus, getUniverseHealth, getLedger,
-  getDossierIndex, getSnapshotMeta,
-} from "../lib/snapshots.js";
-import { fmtInt, fmtDate, DASH, escapeHtml } from "../lib/format.js";
+  getDossierIndex, getSnapshotMeta, getThemesIndex,
+} from "../../lib/snapshots.js";
+import { fmtInt, fmtDate, DASH, escapeHtml } from "../../lib/format.js";
 
 export async function render(root) {
   root.innerHTML = `<div class="notice">Loading fund status…</div>`;
 
-  const [spread, health, ledger, dossiers, meta] = await Promise.all([
+  const [spread, health, ledger, dossiers, meta, themes] = await Promise.all([
     getSpreadStatus(), getUniverseHealth(), getLedger(),
-    getDossierIndex(), getSnapshotMeta(),
+    getDossierIndex(), getSnapshotMeta(), getThemesIndex(),
   ]);
 
   const gateCard = `
@@ -60,6 +60,21 @@ export async function render(root) {
       <div class="t"><b>Next:</b> work finalists from the ranked queue into dossiers, then log BUY/AVOID verdicts (the CLI freezes the entry price). The spread needs <b>both legs</b> and calendar time — especially BUY legs — before it can show anything.</div>
     </div>`;
 
+  // Theme edge — a LIGHT summary; deep status lives in #/themes. Skipped if no theme artifacts.
+  const td = themes.crossDriver;
+  const themeCard = themes.drivers.length ? `
+    <div class="card" style="display:flex; justify-content:space-between; align-items:center; gap:16px; flex-wrap:wrap; margin-bottom:18px;">
+      <div>
+        <h3 style="margin-bottom:6px;">Theme edge <span class="pill unresolved" style="margin-left:4px;">unvalidated · research</span></h3>
+        <div style="font-size:13px; color:var(--ink-2);">
+          <b>${fmtInt(td?.driversFrozen ?? themes.drivers.length)} drivers</b> in snapshot ·
+          <b>${fmtInt(td?.totalRatified ?? 0)} buys</b> ·
+          <b>${fmtInt(td?.totalWatchlist ?? 0)} watchlist</b> names to re-underwrite
+        </div>
+      </div>
+      <a href="#/themes" style="font-weight:600; white-space:nowrap;">View theme edge →</a>
+    </div>` : "";
+
   root.innerHTML = `
     <div class="breadcrumb">Overview</div>
     <div class="header-block">
@@ -74,6 +89,7 @@ export async function render(root) {
     <div class="grid cols-4" style="margin-bottom:18px;">
       ${metrics}
     </div>
+    ${themeCard}
     <div style="margin-bottom:18px;">${chips}</div>
     ${cue}
 

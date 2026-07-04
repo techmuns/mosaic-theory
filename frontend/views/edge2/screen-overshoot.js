@@ -1,9 +1,9 @@
 // SCREEN · OVERSHOOT — THIS edge's admitted SET: the names that passed G1·G2·G3, with the
 // screening timestamp. Distinct from the ranker (which is cross-edge priority order); here the
 // question is "what passed this filter." Gate logic folds into a collapsible header. Read-only.
-import { getScreenAdmitted } from "../lib/snapshots.js";
-import { fmtInt, fmtDate, escapeHtml } from "../lib/format.js";
-import { refreshBlock } from "../lib/ui.js";
+import { getScreenAdmitted } from "../../lib/snapshots.js";
+import { fmtInt, fmtDate, escapeHtml } from "../../lib/format.js";
+import { refreshBlock } from "../../lib/ui.js";
 
 let ADMITTED = null;
 let q = "";

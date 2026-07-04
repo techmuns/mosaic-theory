@@ -1,8 +1,8 @@
 // CROSS-SECTOR GRAPH — entity → exposed-names lookup with 10-K provenance.
 // RESEARCH INPUT ONLY. The graph-as-signal is falsified; it gates nothing and
 // predicts nothing. Having client-side data must never imply it drives a decision.
-import { getGraphCoverage, getGraphExposure } from "../lib/snapshots.js";
-import { fmtInt, escapeHtml } from "../lib/format.js";
+import { getGraphCoverage, getGraphExposure } from "../../lib/snapshots.js";
+import { fmtInt, escapeHtml } from "../../lib/format.js";
 
 const BANNER = `
   <div class="banner-research">

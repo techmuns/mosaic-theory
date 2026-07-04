@@ -1,8 +1,8 @@
 // DOSSIER VIEWER — render the structured dossier.json into styled, source-bound sections.
 // Assembles facts · NO verdict. Every fact shows its ↳ citation (source-binding is the signature).
 // The synthesis is fenced as "the framing, not the answer." Read-only; verdicts are CLI-logged.
-import { getDossier, getDossierIndex, getLedger, isBuyVerdict } from "../lib/snapshots.js";
-import { fmtPrice, fmtDate, fmtStamp, fmtPct, escapeHtml, DASH } from "../lib/format.js";
+import { getDossier, getDossierIndex, getLedger, isBuyVerdict } from "../../lib/snapshots.js";
+import { fmtPrice, fmtDate, fmtStamp, fmtPct, escapeHtml, DASH } from "../../lib/format.js";
 
 // PDF export uses the browser's native print-to-PDF (no library — the frontend stays dependency-free).
 // The browser derives the saved-file name from document.title, so on a dossier print we swap in a

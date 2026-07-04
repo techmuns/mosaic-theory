@@ -1,9 +1,9 @@
 // RANKER — the priority queue as a sortable read-only table with per-name structural profiles +
 // a workflow state per row. Orders, never decides. Rows open the dossier. Sort/filter are purely
 // client-side, in place — the queue is fetched once and never re-fetched on sort/filter.
-import { getRankedQueue, getProcessedStates, getG3Reasons } from "../lib/snapshots.js";
-import { fmtScore, fmtMoney, fmtDate, fmtPct, escapeHtml, DASH } from "../lib/format.js";
-import { refreshBlock } from "../lib/ui.js";
+import { getRankedQueue, getProcessedStates, getG3Reasons } from "../../lib/snapshots.js";
+import { fmtScore, fmtMoney, fmtDate, fmtPct, escapeHtml, DASH } from "../../lib/format.js";
+import { refreshBlock } from "../../lib/ui.js";
 
 const AXES = ["idiosyncrasy", "depth", "character", "multiple"];
 const COLS = [

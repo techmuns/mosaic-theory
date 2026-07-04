@@ -1629,7 +1629,7 @@ def test_audit_js_covenant_block_mirrors_fix2_not_extracted_line() -> None:
     same located−extracted accession set difference. Without it the web view silently drops a signal
     the .md/PDF shows — the divergence the parity suite did not catch."""
     import pathlib
-    js = pathlib.Path("frontend/views/dossier.js").read_text()
+    js = pathlib.Path("frontend/views/shared/dossier.js").read_text()
     assert "not extracted this run" in js  # the FIX-2 transparency line now exists in JS
     assert "!extracted.has(a)" in js  # the located−extracted set-difference logic is mirrored
 
@@ -1751,7 +1751,7 @@ def test_p6_py_js_tier_classifier_parity() -> None:
     Structural parity: the JS Tier-1 keyword list and the R1 regex equal Python's."""
     import json
     import pathlib
-    js = pathlib.Path("frontend/views/dossier.js").read_text()
+    js = pathlib.Path("frontend/views/shared/dossier.js").read_text()
     py_t1 = set(dr._TIER_KEYWORDS[0][1])
     m = re.search(r"\[1,\s*\[(.*?)\]\]", js, re.DOTALL)
     assert m is not None
@@ -3369,6 +3369,12 @@ def test_t2_interest_lead_is_full_composite_or_absent() -> None:
     full = ("Term SOFR + Applicable Margin (9.75% per annum); 3.75% of interest paid in-kind "
             "(PIK Interest); Floor = 3.00% per annum; Default Rate = Applicable Margin + 3.00%.")
     assert lead("Interest / coupon", full) == "Term SOFR + 9.75% (Floor 3.00%, +3.75% PIK)"
+    # (audit) a re-assembly re-phrases the SAME terms: 'Floor (Term SOFR) = …' interposition + 'PIK
+    # Interest: N%' with PIK BEFORE the % — the composite must still extract in full (else the
+    # composite-or-none rule drops the whole interest lead, as it did on the re-assembled main).
+    rephrased = ("Term SOFR + Applicable Margin. Applicable Margin = 9.75% per annum. Floor "
+                 "(Term SOFR) = 3.00% per annum. PIK Interest: 3.75% of interest due paid in kind.")
+    assert lead("Interest / coupon", rephrased) == "Term SOFR + 9.75% (Floor 3.00%, +3.75% PIK)"
     assert lead("Interest / coupon", "Floating rate; RMB rate = LPR Plus 115 bps.") == \
         "Floating rate + 115 bps"
     # a labelled component present but unreadable → NO lead (full-composite-or-none)
@@ -3419,7 +3425,7 @@ def test_t1_provenance_on_demand_marker_print_exclusion_and_nothing_deleted() ->
         pathlib.Path("data/dossiers/MVST/dossier.json").read_text()))
     assert "Capital-structure provenance — on-demand" in md
     assert "RMB 800,000,000" in md and "0001760689-24-000021" in md  # verbatim + accession kept
-    js = pathlib.Path("frontend/views/dossier.js").read_text()
+    js = pathlib.Path("frontend/views/shared/dossier.js").read_text()
     css = pathlib.Path("frontend/assets/styles.css").read_text()
     assert "provenance" in js.lower() and "<details" in js  # web on-demand wrap
     assert "details:not([open])" in css and "display: none" in css  # print-exclusion rule
@@ -3433,7 +3439,7 @@ def test_t3_py_js_revision_headline_parity() -> None:
     import pathlib
     import shutil
     import subprocess
-    js = pathlib.Path("frontend/views/dossier.js").read_text()
+    js = pathlib.Path("frontend/views/shared/dossier.js").read_text()
     m = re.search(r"_HEADLINE_PRIORITY\s*=\s*(\[\[.*?\]\])", js)
     assert m is not None and json.loads(m.group(1)) == [list(t) for t in dr._HEADLINE_PRIORITY]
     if not shutil.which("node"):

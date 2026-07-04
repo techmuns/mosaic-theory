@@ -1,0 +1,854 @@
+{
+ "driver": "AI-datacenter value chain",
+ "slug": "ai-datacenter",
+ "label": "AI-datacenter",
+ "freezeDate": "2026-07-02",
+ "freezeTimestamp": "2026-07-02T00:00:00",
+ "ratifiedCount": 0,
+ "surfacedCount": 450,
+ "frozenCount": 56,
+ "watchlistCount": 5,
+ "tierShape": {
+  "binding": 4,
+  "quantified": 3,
+  "committed": 56,
+  "aspirational": 387,
+  "none": 1100,
+  "surfaced": 450,
+  "universe": 1550
+ },
+ "frozenTiers": {
+  "firm": 0,
+  "partial": 56,
+  "early": 0
+ },
+ "categories": [
+  {
+   "tag": "chips/GPU",
+   "n": 21
+  },
+  {
+   "tag": "power/electrical",
+   "n": 10
+  },
+  {
+   "tag": "colocation/operator",
+   "n": 7
+  },
+  {
+   "tag": "HBM/memory",
+   "n": 6
+  },
+  {
+   "tag": "optical/interconnect",
+   "n": 5
+  },
+  {
+   "tag": "packaging",
+   "n": 2
+  },
+  {
+   "tag": "AI-cloud",
+   "n": 2
+  },
+  {
+   "tag": "unspecified",
+   "n": 2
+  },
+  {
+   "tag": "thermal/cooling",
+   "n": 1
+  }
+ ],
+ "names": [
+  {
+   "ticker": "ABM",
+   "substructureTag": "power/electrical",
+   "driverTie": "indirect",
+   "grade": "committed-capacity",
+   "basis": "committed",
+   "gradeFact": "In 2024, ABM acquired Quality Uptime Services, Inc., an independent uninterrupted power supply (UPS) maintenance company providing customized preventive and emergency service programs for mission-critical data centers and other facilities across the United States. With the addition, ABM states it now offers comprehensive critical infrastructure solutions for data centers, including electrical testing, electrical switchgear maintenance, breaker testing, UPS service and maintenance, and battery and power distribution unit service and maintenance.",
+   "accession": "0000771497-25-000031",
+   "edgarUrl": "https://www.sec.gov/Archives/edgar/data/771497/000077149725000031/0000771497-25-000031-index.htm",
+   "rationale": "Facility maintenance/UPS servicing for datacenters generic; no AI-DC attribution. Indirect, no exposure.",
+   "cohorts": []
+  },
+  {
+   "ticker": "ACM",
+   "substructureTag": "chips/GPU",
+   "driverTie": "indirect",
+   "grade": "committed-capacity",
+   "basis": "committed",
+   "gradeFact": "Within its Facilities end market, AECOM lists 'Energy Efficient Facilities' and describes designs for new build construction or refurbishment projects 'such as office buildings, data centers and other facilities with high energy demands.' Data centers are named only as one example among general high-energy facilities; there is no AI/GPU/compute language and no quantified revenue attributable to this activity.",
+   "accession": "0000868857-25-000013",
+   "edgarUrl": "https://www.sec.gov/Archives/edgar/data/868857/000086885725000013/0000868857-25-000013-index.htm",
+   "rationale": "Data centers named as one example of 'high-energy facilities' in Facilities design; AI refs are internal design-tooling use. Indirect + not-driver, no quantified DC revenue.",
+   "cohorts": []
+  },
+  {
+   "ticker": "ADEA",
+   "substructureTag": "HBM/memory",
+   "driverTie": "chain-layer-specific",
+   "grade": "committed-capacity",
+   "basis": "committed",
+   "gradeFact": "Adeia's semiconductor IP portfolio covers hybrid bonding (Direct Bond Interconnect / DBI), advanced processing nodes, and advanced packaging solutions, which it states enable the next generation of logic and memory semiconductors 'powering the increasing demand for generative AI applications.' This ties the licensing portfolio to the advanced-packaging / memory layers of the AI-datacenter chain, though no AI-attributable revenue is quantified.",
+   "accession": "0001193125-26-076549",
+   "edgarUrl": "https://www.sec.gov/Archives/edgar/data/1803696/000119312526076549/0001193125-26-076549-index.htm",
+   "rationale": "RapidCool is genuine direct-to-chip liquid cooling (10-K 0001193125-26-076549, chain-relevant not label-mismatch) but launched tech with NO licensee/revenue; 'HBM' 0 hits, no HBM royalties; only concrete AI tie is fresh AMD litigation (contingent). Broad-AI twin live, no 3:1.",
+   "cohorts": [
+    "watchlist"
+   ]
+  },
+  {
+   "ticker": "AEHR",
+   "substructureTag": "chips/GPU",
+   "driverTie": "chain-layer-specific",
+   "grade": "committed-capacity",
+   "basis": "committed",
+   "gradeFact": "Through the acquisition of Incal Technology, the introduction of the High Power FOX-XP high-power packaged-part reliability/burn-in test solutions enables Aehr to deliver wafer-level test and burn-in and package-part burn-in for AI accelerators, GPUs, and high-performance computing (HPC) processors, positioning the company as a turn-key provider of reliability and testing for the AI market.",
+   "accession": "0001654954-25-008553",
+   "edgarUrl": "https://www.sec.gov/Archives/edgar/data/1040470/000165495425008553/0001654954-25-008553-index.htm",
+   "rationale": "Strongest real exposure -- Sonoma/Incal burn-in purpose-built for AI accelerators/GPUs/HPC (10-K 0001654954-25-008553; packaged-part 2%->34% FY25) but total rev DECLINED 11%, 9mo FY26 annualizes lower, 2 customers=54%, full AI-narrative multiple. Priced-in/flow-chasing twin live, no 3:1.",
+   "cohorts": [
+    "watchlist"
+   ]
+  },
+  {
+   "ticker": "AESI",
+   "substructureTag": "chips/GPU",
+   "driverTie": "indirect",
+   "grade": "committed-capacity",
+   "basis": "committed",
+   "gradeFact": "Through subsidiary ProjectCo, the Company entered a Global Framework Agreement with Caterpillar under which Caterpillar will reserve approximately 1.4 gigawatts of incremental power generation equipment, and ProjectCo commits to purchase the equipment based on its monthly demand forecast through Dec 31, 2030, for an initial aggregate purchase obligation of approximately $840 million, with a $5 million annual capacity deposit beginning 2027. The filing does not tie this reserved power-generation capacity to AI datacenters, GPU/compute, or any named datacenter counterparty; it describes generic mobile/power-generation equipment.",
+   "accession": "0001193125-26-099341",
+   "edgarUrl": "https://www.sec.gov/Archives/edgar/data/1984060/000119312526099341/0001193125-26-099341-index.htm",
+   "rationale": "Frac-sand producer; Caterpillar 1.4GW framework is an equipment PURCHASE for its own power, not datacenter-tied. Indirect-driver-tie, no AI-DC attribution.",
+   "cohorts": []
+  },
+  {
+   "ticker": "ALMU",
+   "substructureTag": "optical/interconnect",
+   "driverTie": "indirect",
+   "grade": "committed-capacity",
+   "basis": "committed",
+   "gradeFact": "In June 2025 Aeluma received a U.S. Navy contract of up to $1.3 million to accelerate development of high-speed photodetectors, which 'includes a major global interconnect manufacturer as a proposed subcontractor' and support from a government prime. High-speed photodetectors/optical interconnect can be a chain-relevant technology, but the contract is for defense/commercial photodetector development with no disclosed tie to AI-datacenter interconnect deployment or revenue.",
+   "accession": "0001213900-25-086227",
+   "edgarUrl": "https://www.sec.gov/Archives/edgar/data/1828805/000121390025086227/0001213900-25-086227-index.htm",
+   "rationale": "Developmental compound-semi photodetectors, govt R&D funded (DARPA/Navy); AI one of many verticals, Navy contract no AI-DC tie; ~$1.2M/qtr R&D revenue, pre-commercial. Broad-AI + not-driver, no real exposure.",
+   "cohorts": []
+  },
+  {
+   "ticker": "AMSC",
+   "substructureTag": "chips/GPU",
+   "driverTie": "indirect",
+   "grade": "committed-capacity",
+   "basis": "committed",
+   "gradeFact": "AMSC describes providing transformation, rectification, voltage management, and harmonic filtering solutions that help industrial and semiconductor facilities maintain stable, high-quality power for critical operations, including managing input power for semiconductor fabrication plants. This is a generic industrial/semiconductor-fab power tie, with no mention of AI datacenters, GPUs, compute, or AI-datacenter power delivery.",
+   "accession": "0001437749-26-018542",
+   "edgarUrl": "https://www.sec.gov/Archives/edgar/data/880807/000143774926018542/0001437749-26-018542-index.htm",
+   "rationale": "Grid/fab power systems, no AI-datacenter language or attributable revenue. Indirect, no real exposure.",
+   "cohorts": []
+  },
+  {
+   "ticker": "AOSL",
+   "substructureTag": "chips/GPU",
+   "driverTie": "indirect",
+   "grade": "committed-capacity",
+   "basis": "committed",
+   "gradeFact": "AOSL is a designer, developer and global supplier of a broad portfolio of power semiconductors (~2,800 products). Its product portfolio targets high-volume applications including personal computers, graphic cards, game consoles, and power supplies for computers, servers and telecommunications equipment.",
+   "accession": "0001628280-25-041297",
+   "edgarUrl": "https://www.sec.gov/Archives/edgar/data/1387467/000162828025041297/0001628280-25-041297-index.htm",
+   "rationale": "Power semis with generic 'data centers and servers' end-market mention, no AI/GPU attribution or quantification. Indirect-driver-tie, no 3:1.",
+   "cohorts": []
+  },
+  {
+   "ticker": "ASYS",
+   "substructureTag": "packaging",
+   "driverTie": "indirect",
+   "grade": "committed-capacity",
+   "basis": "committed",
+   "gradeFact": "Thermal Processing Solutions was 73% of 2025 consolidated net revenue and Semiconductor Fabrication Solutions 27%, but no portion of revenue is broken out or attributed specifically to AI/GPU/advanced-packaging for AI datacenters; the segments serve broad end markets (computers, servers, automotive, industrial, mobile, telecom, medical).",
+   "accession": "0001193125-25-314147",
+   "edgarUrl": "https://www.sec.gov/Archives/edgar/data/720500/000119312525314147/0001193125-25-314147-index.htm",
+   "rationale": "Reflow ovens for advanced packaging at OSATs (10-K 0001193125-25-314147) -- real but modest/unquantified AI tie ('hybrid bond' 0 hits, reflow != hybrid-bonding core); Fab Solutions -34%, margin compression, fresh $60M raise. Indirect + no 3:1.",
+   "cohorts": []
+  },
+  {
+   "ticker": "AXTI",
+   "substructureTag": "optical/interconnect",
+   "driverTie": "indirect",
+   "grade": "committed-capacity",
+   "basis": "committed",
+   "gradeFact": "Tongmei, AXT's subsidiary, entered a Long-term Supply Agreement with Nanjing Casela Technologies under which Casela is committed to purchase a fixed aggregate quantity of InP wafer substrates during Jan 1\u2013Dec 31, 2027 for a total price of RMB 173,000,000 (~US$25.4 million), delivered monthly. Casela must prepay 50% within 15 business days and pay the remaining 50% by Dec 31, 2026, must purchase at least 80% of the fixed quantity or pay a cancellation fee \u2014 binding terms (quantified TCV, minimum-volume, prepayment). The agreement, however, does not state that these InP substrates are destined for AI datacenters; the driver tie to AI-datacenter optical interconnect is not disclosed in the agreement itself.",
+   "accession": "0001437749-26-020978",
+   "edgarUrl": "https://www.sec.gov/Archives/edgar/data/1051627/000143774926020978/0001437749-26-020978-index.htm",
+   "rationale": "Casela InP supply agreement binding (8-K 0001437749-26-020978: RMB173M, take-or-pay) but SILENT on end-use -- InP multi-use (5G/sensing/telecom), AI tie only forward-looking in 10-K; commodity-substrate econ + China/Tongmei overhang. Indirect-driver-tie not ruled out, no 3:1.",
+   "cohorts": []
+  },
+  {
+   "ticker": "BDC",
+   "substructureTag": "optical/interconnect",
+   "driverTie": "indirect",
+   "grade": "committed-capacity",
+   "basis": "committed",
+   "gradeFact": "Data centers are named as a priority vertical market for the Smart Buildings Solutions within Smart Infrastructure Solutions; the segment provides end-to-end fiber and copper network systems used in applications such as data centers, supporting Internet Protocol convergence and cloud-based data centers.",
+   "accession": "0000913142-26-000009",
+   "edgarUrl": "https://www.sec.gov/Archives/edgar/data/913142/000091314226000009/0000913142-26-000009-index.htm",
+   "rationale": "Datacenter is one vertical among many (10-K 0000913142-26-000009) -- generic fiber/copper/power/cooling + Precision Optical transceivers ($281.7M acq); 0 hits hyperscale/GPU, unquantified, immaterial to $2.5B+ base. Indirect-driver-tie, no 3:1.",
+   "cohorts": []
+  },
+  {
+   "ticker": "BKH",
+   "substructureTag": "power/electrical",
+   "driverTie": "indirect",
+   "grade": "committed-capacity",
+   "basis": "committed",
+   "gradeFact": "Wyoming Electric offers a Large Power Contract Service (LPCS) tariff approved by the Wyoming Public Service Commission, providing a cost-based rate structure for customers with very large electric loads, described as 'typically data centers or other high-demand facilities.' The tariff is designed so that service to LPCS customers is fully self-supporting and does not shift costs to other customer classes.",
+   "accession": "0001193125-26-211037",
+   "edgarUrl": "https://www.sec.gov/Archives/edgar/data/1130464/000119312526211037/0001193125-26-211037-index.htm",
+   "rationale": "Utility; LPCS tariff 'typically data centers,' BCIS=crypto, no signed AI agreement. Indirect-driver-tie, no binding AI-DC exposure.",
+   "cohorts": []
+  },
+  {
+   "ticker": "CCOI",
+   "substructureTag": "chips/GPU",
+   "driverTie": "indirect",
+   "grade": "committed-capacity",
+   "basis": "committed",
+   "gradeFact": "Cogent describes itself as a facilities-based provider whose services include data center colocation space and power, operating data centers throughout North America and Europe that allow customers to collocate their equipment and access its network. No AI/GPU/AI-datacenter language is attached; the colocation and power described is generic and not tied to AI compute.",
+   "accession": "0001104659-26-017968",
+   "edgarUrl": "https://www.sec.gov/Archives/edgar/data/1158324/000110465926017968/0001104659-26-017968-index.htm",
+   "rationale": "Generic colo/optical; actually a SELLER of 10 datacenters ($225M) -- divesting, not a chain supplier. Indirect, no AI-attributable exposure.",
+   "cohorts": []
+  },
+  {
+   "ticker": "CDP",
+   "substructureTag": "colocation/operator",
+   "driverTie": "indirect",
+   "grade": "committed-capacity",
+   "basis": "committed",
+   "gradeFact": "The Company's Defense/IT Portfolio includes single-tenant data center shells developed in response to demand driven by advancements in cloud computing and Artificial Intelligence; the hub of the data center portfolio is in Northern Virginia, described as one of the largest data center markets in the world.",
+   "accession": "0000860546-26-000011",
+   "edgarUrl": "https://www.sec.gov/Archives/edgar/data/860546/000086054626000011/0000860546-26-000011-index.htm",
+   "rationale": "Datacenter shells 90.3% rental rev but not broken out; provides shell/land/basic-power only, no compute, no named AI tenant. Indirect, no attributable AI-DC exposure.",
+   "cohorts": []
+  },
+  {
+   "ticker": "CENX",
+   "substructureTag": "chips/GPU",
+   "driverTie": "chain-layer-specific",
+   "grade": "committed-capacity",
+   "basis": "committed",
+   "gradeFact": "Century's subsidiary CAKY sold its former Hawesville, KY site (approx. 750 acres) to Justified DataPower LLC (Purchaser) for $200 million cash plus a 6.8% non-dilutive minority equity interest in Raylan Data Holdings LLC, an affiliate of the Purchaser 'which is intended to develop and own a high-performance computing/artificial intelligence data center on the Property.' Century retains a right to require Raylan Data to repurchase the minority interest.",
+   "accession": "0001104659-26-009212",
+   "edgarUrl": "https://www.sec.gov/Archives/edgar/data/949157/000110465926009212/0001104659-26-009212-index.htm",
+   "rationale": "Sold Hawesville site to an AI-datacenter developer + passive 6.8% stake w/ put -- real-estate divest, not a supplier to the chain. No terms-binding AI-DC economics.",
+   "cohorts": []
+  },
+  {
+   "ticker": "CLSK",
+   "substructureTag": "chips/GPU",
+   "driverTie": "indirect",
+   "grade": "committed-capacity",
+   "basis": "committed",
+   "gradeFact": "Company holds a large portfolio of data centers and power assets with approximately 1,027 MW of total contracted power capacity as of September 30, 2025, across GA, TN, MS and WY. This capacity is currently deployed for bitcoin mining; none is disclosed as contracted or dedicated to AI-datacenter compute.",
+   "accession": "0001193125-25-297510",
+   "edgarUrl": "https://www.sec.gov/Archives/edgar/data/827876/000119312525297510/0001193125-25-297510-index.htm",
+   "rationale": "Bitcoin miner with AI/HPC pivot intent; Submer partnership not definitive, no executed AI lease. Stated-intent, no binding AI-DC exposure.",
+   "cohorts": []
+  },
+  {
+   "ticker": "CNXN",
+   "substructureTag": "HBM/memory",
+   "driverTie": "indirect",
+   "grade": "committed-capacity",
+   "basis": "committed",
+   "gradeFact": "The company lists integrated solution offerings including 'network, server, storage, and mission-critical onsite installation and support,' and offers products from vendors like Dell, HPE, Intel, and Lenovo \u2014 generic IT/data-center product reselling with no AI-datacenter (GPU/HBM/thermal/power/optical/colocation/AI-cloud) attribution or quantification.",
+   "accession": "0001104659-26-019108",
+   "edgarUrl": "https://www.sec.gov/Archives/edgar/data/1050377/000110465926019108/0001104659-26-019108-index.htm",
+   "rationale": "Dispositive -- 'we do not manufacture' (10-K 0001104659-26-019108), value-added RESELLER of Dell/HPE/Intel/Lenovo; AI/datacenter are product categories only. Textbook label-as-thing.",
+   "cohorts": []
+  },
+  {
+   "ticker": "COHU",
+   "substructureTag": "thermal/cooling",
+   "driverTie": "chain-layer-specific",
+   "grade": "committed-capacity",
+   "basis": "committed",
+   "gradeFact": "Cohu describes active thermal management (ATC) technology that optimizes yield through precise temperature control during test of high-performance processors including CPUs, GPUs, ASIC accelerators and network processors \u2014 thermal-test equipment tied to GPU/compute devices used in AI datacenters. No contract terms or driver-attributable revenue disclosed.",
+   "accession": "0001437749-26-004339",
+   "edgarUrl": "https://www.sec.gov/Archives/edgar/data/21535/000143774926004339/0001437749-26-004339-index.htm",
+   "rationale": "ATC is test-handler thermal control (temp control of processors DURING TEST per 10-K 0001437749-26-004339), not datacenter cooling -- label-as-thing; real tie is upstream ATE for HBM/GPU test, unquantified/blended, cyclical trough. No 3:1.",
+   "cohorts": []
+  },
+  {
+   "ticker": "CRK",
+   "substructureTag": "power/electrical",
+   "driverTie": "chain-layer-specific",
+   "grade": "committed-capacity",
+   "basis": "committed",
+   "gradeFact": "Company discloses a 'Data Center Opportunity' in which it is partnering with NextEra Energy Resources, LLC to provide natural gas for new power generation in the Western Haynesville to support hyperscaler data center development, with initial capacity of 2 gigawatts and potential expansion to 8 gigawatts.",
+   "accession": "0001193125-26-059001",
+   "edgarUrl": "https://www.sec.gov/Archives/edgar/data/23194/000119312526059001/0001193125-26-059001-index.htm",
+   "rationale": "Upstream gas; NextEra 'Data Center Opportunity' 2->8GW but no binding terms, fuel is generic, hyperscaler not AI-attributed. Indirect-driver-tie, no 3:1.",
+   "cohorts": []
+  },
+  {
+   "ticker": "DBRG",
+   "substructureTag": "colocation/operator",
+   "driverTie": "indirect",
+   "grade": "committed-capacity",
+   "basis": "committed",
+   "gradeFact": "The Company reports fee revenue of $87.3 million and total revenues of $72.2 million for the quarter ended March 31, 2026, derived from its investment-management business (fee revenue, carried interest allocation, principal investment income). No AI-datacenter chain layer revenue is broken out.",
+   "accession": "0001679688-26-000056",
+   "edgarUrl": "https://www.sec.gov/Archives/edgar/data/1679688/000167968826000056/0001679688-26-000056-index.htm",
+   "rationale": "Investment manager; AI appears as a risk factor only, no portfolio/contract attribution. Indirect, no attributable exposure.",
+   "cohorts": []
+  },
+  {
+   "ticker": "DCI",
+   "substructureTag": "unspecified",
+   "driverTie": "indirect",
+   "grade": "committed-capacity",
+   "basis": "committed",
+   "gradeFact": "The Life Sciences segment's Disk Drive business delivers products with advanced materials and absorbent technologies to control moisture and contaminants in microenvironments; disk drive filters 'work in the background to help protect critical components in cloud computing: streaming, storage, sharing and business-to-business interaction.' Key products include particle filters, chemical filters and relative humidity control. Life Sciences was 8.0% of fiscal 2025 net sales (Disk Drive is only one of several markets within it, not separately quantified).",
+   "accession": "0000029644-25-000098",
+   "edgarUrl": "https://www.sec.gov/Archives/edgar/data/29644/000002964425000098/0000029644-25-000098-index.htm",
+   "rationale": "Filtration -- Disk Drive filters 'cloud computing' generic; Life Sciences 8% of sales, Disk Drive a slice, immaterial legacy slice of $3.6B co. Indirect/negligible, no 3:1.",
+   "cohorts": []
+  },
+  {
+   "ticker": "DIOD",
+   "substructureTag": "unspecified",
+   "driverTie": "chain-layer-specific",
+   "grade": "committed-capacity",
+   "basis": "committed",
+   "gradeFact": "The Company states that its most significant full-year 2025 growth was driven by strength in the computing market for 'AI server-related applications,' alongside automotive and industrial end markets. No AI-server-specific revenue amount or percentage is broken out.",
+   "accession": "0001193125-26-044918",
+   "edgarUrl": "https://www.sec.gov/Archives/edgar/data/29002/000119312526044918/0001193125-26-044918-index.htm",
+   "rationale": "Names AI-server as a growth driver (10-K 0001193125-26-044918, real) but unquantified slice of blended 27% Computing segment (notebooks/HDDs/printers), generic commodity analog/discrete content; op margin trough 2.4% vs 15.1%. Indirect-driver-tie not ruled out, no 3:1.",
+   "cohorts": []
+  },
+  {
+   "ticker": "DUOT",
+   "substructureTag": "chips/GPU",
+   "driverTie": "chain-layer-specific",
+   "grade": "committed-capacity",
+   "basis": "committed",
+   "gradeFact": "Through subsidiary Duos Edge AI, the Company operates a colocation / edge data center platform, developing modular, rapidly deployable Edge Data Centers to bring compute capacity closer to end users, and expanding recurring revenue through colocation and infrastructure services. The company describes itself as operating in 'Data Center co-location facilities' as one of three major market segments.",
+   "accession": "0001079973-26-000405",
+   "edgarUrl": "https://www.sec.gov/Archives/edgar/data/1396536/000107997326000405/0001079973-26-000405-index.htm",
+   "rationale": "Edge-datacenter/GPUaaS micro-cap; $98.1M is DEBT not revenue, going-concern, edge Tier2-4. RXT/DUOT label-as-thing archetype.",
+   "cohorts": []
+  },
+  {
+   "ticker": "ECG",
+   "substructureTag": "colocation/operator",
+   "driverTie": "indirect",
+   "grade": "committed-capacity",
+   "basis": "committed",
+   "gradeFact": "The company identifies as a risk factor that it generates a significant portion of its revenues from data center and other similar high tech and advanced technology contracts.",
+   "accession": "0002015845-26-000010",
+   "edgarUrl": "https://www.sec.gov/Archives/edgar/data/2015845/000201584526000010/0002015845-26-000010-index.htm",
+   "rationale": "Construction; 'significant portion' from datacenter contracts but unquantified, generic construction end-market. Indirect-driver-tie, no 3:1.",
+   "cohorts": []
+  },
+  {
+   "ticker": "ENS",
+   "substructureTag": "chips/GPU",
+   "driverTie": "indirect",
+   "grade": "committed-capacity",
+   "basis": "committed",
+   "gradeFact": "The Energy Systems segment provides highly integrated power solutions and services (combining power conversion, power distribution, energy storage, and enclosures) to broadband, telecom, data center, and industrial customers; data centers are listed as one of the diverse end markets served. No AI/GPU language is used and data center is bundled with telecom/broadband/industrial.",
+   "accession": "0001628280-26-036900",
+   "edgarUrl": "https://www.sec.gov/Archives/edgar/data/1289308/000162828026036900/0001628280-26-036900-index.htm",
+   "rationale": "Datacenter is one bundled end-market for stored-energy/UPS; no AI-DC attribution or quantified revenue. Indirect, no 3:1.",
+   "cohorts": []
+  },
+  {
+   "ticker": "EOSE",
+   "substructureTag": "power/electrical",
+   "driverTie": "indirect",
+   "grade": "committed-capacity",
+   "basis": "committed",
+   "gradeFact": "The Company entered into a binding amended and restated term sheet with CCM Frontier (affiliate of Cerberus) and HBC to form a joint venture through 'Frontier Power USA Parent, LLC' relating to a 'frontier power platform,' with a $100 million initial contribution and a reference to a 'capacity reservation agreement.' The disclosure describes a power-platform JV; it does not state the power is delivered to AI datacenters, and definitive agreements are yet to be executed.",
+   "accession": "0000950103-26-009739",
+   "edgarUrl": "https://www.sec.gov/Archives/edgar/data/1805077/000095010326009739/0000950103-26-009739-index.htm",
+   "rationale": "Zinc BESS; AI/HPC framed as market tailwind narrative, no attributable AI-DC contract. Broad-AI/indirect, no 3:1.",
+   "cohorts": []
+  },
+  {
+   "ticker": "FCEL",
+   "substructureTag": "power/electrical",
+   "driverTie": "indirect",
+   "grade": "committed-capacity",
+   "basis": "committed",
+   "gradeFact": "On June 22, 2026, the Company entered into a Capital Equipment Purchase Agreement (CEPA) with Fit Energy USA LP to manufacture, sell and deliver carbonate fuel cell block systems (each 2.5 MW nameplate) for a total aggregate generating capacity of up to 380 MW across four phases. The fuel cell systems are intended to supply baseload electricity for data center applications.",
+   "accession": "0001104659-26-077042",
+   "edgarUrl": "https://www.sec.gov/Archives/edgar/data/886128/000110465926077042/0001104659-26-077042-index.htm",
+   "rationale": "Fit Energy CEPA 380MW 'intended for data center' but only 30MW phase-0 firm, generic no AI counterparty. FCEL indirect-driver-tie archetype, no 3:1.",
+   "cohorts": []
+  },
+  {
+   "ticker": "FIP",
+   "substructureTag": "chips/GPU",
+   "driverTie": "indirect",
+   "grade": "committed-capacity",
+   "basis": "committed",
+   "gradeFact": "FIP's Power and Gas business develops and operates a 485-megawatt power plant at the Long Ridge terminal in Ohio; Power and Gas accounted for 36% of total revenue for the year ended December 31, 2025. The disclosure describes it as generic power generation with no mention of AI datacenters, GPUs, or datacenter tenants.",
+   "accession": "0001899883-26-000015",
+   "edgarUrl": "https://www.sec.gov/Archives/edgar/data/1899883/000189988326000015/0001899883-26-000015-index.htm",
+   "rationale": "485MW power plant generic; sold Long Ridge to MARA ($1.5B) with no AI language. Indirect + divesting, no AI-DC exposure.",
+   "cohorts": []
+  },
+  {
+   "ticker": "FRMI",
+   "substructureTag": "chips/GPU",
+   "driverTie": "chain-layer-specific",
+   "grade": "committed-capacity",
+   "basis": "committed",
+   "gradeFact": "Fermi is developing Project Matador, a hyperscale power and AI infrastructure campus in the Texas Panhandle, designed to deliver up to 11 GW (expandable to ~17 GW) of private power generation capacity and support up to ~15 million square feet of AI-ready hyperscale compute infrastructure, with the objective of providing hyperscale and other compute-intensive tenants reliable, low-latency power and dedicated powered shell infrastructure. This is disclosed development activity as a colocation/powered-shell operator delivering power to AI datacenters, but the company is development-stage and has generated no revenue.",
+   "accession": "0002071778-26-000010",
+   "edgarUrl": "https://www.sec.gov/Archives/edgar/data/2071778/000207177826000010/0002071778-26-000010-index.htm",
+   "rationale": "Purpose-built 11-17GW AI-datacenter power campus but development-stage, ZERO revenue, NO executed leases (only 'negotiating'), CEO/CFO/proxy shakeup. Speculative/binary, no 3:1 -- AVOID control.",
+   "cohorts": [
+    "watchlist"
+   ]
+  },
+  {
+   "ticker": "GRC",
+   "substructureTag": "chips/GPU",
+   "driverTie": "indirect",
+   "grade": "committed-capacity",
+   "basis": "committed",
+   "gradeFact": "The Company's fire-suppression pumps are used for sprinkler back-up systems, standpipes, fog systems and deluge systems at hotels, banks, factories, airports, schools, public buildings, data centers, and hundreds of other types of facilities. 'Data centers' appears in a generic list of facilities served \u2014 no AI/GPU/compute language, no named datacenter customer, no revenue attribution.",
+   "accession": "0001193125-26-084820",
+   "edgarUrl": "https://www.sec.gov/Archives/edgar/data/42682/000119312526084820/0001193125-26-084820-index.htm",
+   "rationale": "Pumps; datacenter appears in a generic fire-suppression end-market list, no AI attribution. Indirect/negligible, no exposure.",
+   "cohorts": []
+  },
+  {
+   "ticker": "HIVE",
+   "substructureTag": "chips/GPU",
+   "driverTie": "indirect",
+   "grade": "committed-capacity",
+   "basis": "committed",
+   "gradeFact": "HIVE announced it signed a co-location letter of intent (the 'Boden LOI') with a Swedish technology company for an 8-to-10 year lease of its 32 MW facility in Boden, Sweden, contemplating a term of up to 10 years for a usable critical IT load of approximately 25 MW. The LOI is described as a co-location/leasing arrangement but is a non-binding letter of intent, and no AI/GPU compute purpose or pricing/TCV terms are stated in the supplied text.",
+   "accession": "0001062993-26-003340",
+   "edgarUrl": "https://www.sec.gov/Archives/edgar/data/1720424/000106299326003340/0001062993-26-003340-index.htm",
+   "rationale": "Bitcoin miner; Boden LOI non-binding, 320MW site with no AI tenant. Stated-intent, no binding AI-DC exposure.",
+   "cohorts": []
+  },
+  {
+   "ticker": "HNRG",
+   "substructureTag": "power/electrical",
+   "driverTie": "indirect",
+   "grade": "committed-capacity",
+   "basis": "committed",
+   "gradeFact": "Hallador is a vertically integrated independent power producer operating the 1,080 MW coal-fired Merom Power Plant, selling accredited capacity and wholesale energy to utilities and other energy market participants within the MISO system through PPAs and bilateral transactions. No AI-datacenter counterparty, tenant, or datacenter offtake is named or described.",
+   "accession": "0001104659-26-027174",
+   "edgarUrl": "https://www.sec.gov/Archives/edgar/data/788965/000110465926027174/0001104659-26-027174-index.htm",
+   "rationale": "Coal IPP; undisclosed 'offtake agreements,' 460MW turbine acq with no AI purpose. Indirect-driver-tie, no binding AI-DC exposure.",
+   "cohorts": []
+  },
+  {
+   "ticker": "KEEL",
+   "substructureTag": "chips/GPU",
+   "driverTie": "chain-layer-specific",
+   "grade": "committed-capacity",
+   "basis": "committed",
+   "gradeFact": "The Moses Lake, Washington development site is designed to support configurations aligned with the NVIDIA GB300 NVL72 reference architecture (72 GPUs per rack-scale system); the Company is designing a significant portion of its development portfolio to support next-generation NVIDIA Vera Rubin-class GPU platforms.",
+   "accession": "0001213900-26-037514",
+   "edgarUrl": "https://www.sec.gov/Archives/edgar/data/1812477/000121390026037514/0001213900-26-037514-index.htm",
+   "rationale": "Ex-Bitfarms; NVIDIA GB300 design-alignment but no executed tenant, sites still BTC mining. Stated-intent, no binding AI-DC exposure.",
+   "cohorts": []
+  },
+  {
+   "ticker": "KEX",
+   "substructureTag": "chips/GPU",
+   "driverTie": "indirect",
+   "grade": "committed-capacity",
+   "basis": "committed",
+   "gradeFact": "Kirby's KDS segment manufactures and remanufactures specialized equipment, including electric power generation equipment and specialized electrical distribution and control equipment 'for data centers,' among other industrial customers (oilfield service, railroad and other). No AI/GPU language is used, no data-center customer is named, and no data-center revenue or capacity is broken out.",
+   "accession": "0001193125-26-054016",
+   "edgarUrl": "https://www.sec.gov/Archives/edgar/data/56047/000119312526054016/0001193125-26-054016-index.htm",
+   "rationale": "Power-gen equipment 'for data centers' generic distributed-power; no AI/named customer/MW. Indirect-driver-tie, no 3:1.",
+   "cohorts": []
+  },
+  {
+   "ticker": "KGS",
+   "substructureTag": "chips/GPU",
+   "driverTie": "indirect",
+   "grade": "committed-capacity",
+   "basis": "committed",
+   "gradeFact": "On April 1, 2026 the Company completed the acquisition of DPS for aggregate cash consideration of $587 million plus 2,401,278 shares, adding power generation assets. The filing does not tie DPS power generation to AI datacenters, GPU/compute, or any named datacenter counterparty.",
+   "accession": "0001767042-26-000033",
+   "edgarUrl": "https://www.sec.gov/Archives/edgar/data/1767042/000176704226000033/0001767042-26-000033-index.htm",
+   "rationale": "DPS distributed-power acquisition generic; no AI-datacenter attribution or named counterparty. Indirect, no exposure.",
+   "cohorts": []
+  },
+  {
+   "ticker": "KOPN",
+   "substructureTag": "chips/GPU",
+   "driverTie": "chain-layer-specific",
+   "grade": "committed-capacity",
+   "basis": "committed",
+   "gradeFact": "On April 27, 2026, Kopin entered into a Joint Development and License Agreement (JDA) with Fabric AI, Inc. to collaborate on the development and commercialization of Kopin's interface for GPU-to-GPU connectivity, working together to develop a prototype and demonstration version of data communications chip technology (the Project Technology).",
+   "accession": "0001493152-26-019422",
+   "edgarUrl": "https://www.sec.gov/Archives/edgar/data/771266/000149315226019422/0001493152-26-019422-index.htm",
+   "rationale": "Fabric AI JDA (GPU-to-GPU, $5M initial PO / $15M contingent R&D) not AI-datacenter-attributable; tiny defense-microdisplay co. Indirect, no 3:1.",
+   "cohorts": []
+  },
+  {
+   "ticker": "MARA",
+   "substructureTag": "power/electrical",
+   "driverTie": "chain-layer-specific",
+   "grade": "committed-capacity",
+   "basis": "committed",
+   "gradeFact": "MARA disclosed a Strategic Agreement with Starwood Digital Ventures to develop, finance and operate AI and HPC infrastructure on select power-rich sites within its existing portfolio. MARA will contribute certain sites and retain up to a 50% interest in a newly formed JV; Starwood will lead EPC, secure hyperscale tenancy and operate the assets. The joint platform is expected to provide more than 1 GW of initial IT capacity, with a potential pathway to expand to more than 2.5 GW over time.",
+   "accession": "0001507605-26-000007",
+   "edgarUrl": "https://www.sec.gov/Archives/edgar/data/1507605/000150760526000007/0001507605-26-000007-index.htm",
+   "rationale": "Bitcoin miner AI/HPC pivot; Starwood JV >1GW intent + Exaion + Long Ridge but no executed hyperscale tenancy, no AI revenue (all 'expected'). Speculative AI option, no 3:1.",
+   "cohorts": []
+  },
+  {
+   "ticker": "MEI",
+   "substructureTag": "chips/GPU",
+   "driverTie": "indirect",
+   "grade": "committed-capacity",
+   "basis": "committed",
+   "gradeFact": "The Industrial segment manufactures current-carrying laminated busbars and devices, custom power-product assemblies (e.g., the PowerRail solution), high-current high-voltage flexible power cabling systems and powder-coated busbars used across markets that include data centers (listed among aerospace, commercial vehicles, industrial equipment, military, power conversion, telecommunications and transportation). No AI/GPU-specific language is used.",
+   "accession": "0000065270-26-000031",
+   "edgarUrl": "https://www.sec.gov/Archives/edgar/data/65270/000006527026000031/0000065270-26-000031-index.htm",
+   "rationale": "Busbars sit in Industrial segment with no AI-DC attribution or quantification. Indirect-driver-tie, no exposure.",
+   "cohorts": []
+  },
+  {
+   "ticker": "MRAM",
+   "substructureTag": "HBM/memory",
+   "driverTie": "indirect",
+   "grade": "committed-capacity",
+   "basis": "committed",
+   "gradeFact": "Everspin's STT-MRAM products targeting DRAM replacement (shipping in 1Gb density, DDR3/DDR4 derivative interfaces) are described as 'delivering significant value to SSD, Persistent Memory Cards, Fabric Accelerator, and other applications in the data center market,' enabling replacement of battery-backed DRAM. However, no AI/GPU language is used and no data-center-attributable revenue is quantified.",
+   "accession": "0001628280-26-014733",
+   "edgarUrl": "https://www.sec.gov/Archives/edgar/data/1438423/000162828026014733/0001628280-26-014733-index.htm",
+   "rationale": "STT-MRAM DRAM-replacement in SSDs/RAID (real niche, unquantified, NOT HBM, NOT AI-attributable); partners are storage-controller/FPGA/IP; niche cyclical defense/industrial memory. Indirect, no 3:1.",
+   "cohorts": []
+  },
+  {
+   "ticker": "MTRN",
+   "substructureTag": "HBM/memory",
+   "driverTie": "indirect",
+   "grade": "committed-capacity",
+   "basis": "committed",
+   "gradeFact": "Electronic Materials produces advanced chemicals, microelectronics packaging, precious/non-precious/specialty metal products including vapor deposition targets, frame lid assemblies, clad and precious metal pre-forms and high-temperature braze materials, used in high-performance logic, advanced memory, MEMS and power management integrated circuits, RF devices, data storage, display, and other applications within the semiconductor end market. This names materials feeding logic and advanced memory chips, but the filing does not tie these to AI-datacenter compute, GPUs, HBM, or advanced packaging for AI specifically.",
+   "accession": "0001104657-26-000011",
+   "edgarUrl": "https://www.sec.gov/Archives/edgar/data/1104657/000110465726000011/0001104657-26-000011-index.htm",
+   "rationale": "Advanced materials -- 'telecom and data center' is one generic list item; semi growth is precious-metal pass-through not AI; untraceable slice of $1.8B base. Indirect, no 3:1.",
+   "cohorts": []
+  },
+  {
+   "ticker": "MXL",
+   "substructureTag": "optical/interconnect",
+   "driverTie": "chain-layer-specific",
+   "grade": "committed-capacity",
+   "basis": "committed",
+   "gradeFact": "MaxLinear describes itself as a provider of communications SoCs used in broadband, mobile and wireline infrastructure, data center, and industrial and multi-market applications. Among the example devices it lists 'optical transceivers targeting hyperscale data centers' \u2014 a named optical-interconnect chain layer feeding data centers.",
+   "accession": "0001288469-26-000011",
+   "edgarUrl": "https://www.sec.gov/Archives/edgar/data/1288469/000128846926000011/0001288469-26-000011-index.htm",
+   "rationale": "Genuinely makes datacenter optical-DSP silicon 400G->1.6T (10-K 0001288469-26-000011) but NO 'Data Center' revenue line (blended in Infrastructure); rev ~30% below 2023 peak, 2 customers=28%, sub-scale vs Marvell/Broadcom. Priced-in twin live, no 3:1.",
+   "cohorts": [
+    "watchlist"
+   ]
+  },
+  {
+   "ticker": "NPO",
+   "substructureTag": "colocation/operator",
+   "driverTie": "indirect",
+   "grade": "committed-capacity",
+   "basis": "committed",
+   "gradeFact": "Semiconductor is the company's largest end market, accounting for $367.1 million of $1,143.3 million total third-party sales in 2025 (32.1%). This is disclosed as a general end-market figure and is not broken out by any AI-datacenter chain layer.",
+   "accession": "0001628280-26-009798",
+   "edgarUrl": "https://www.sec.gov/Archives/edgar/data/1164863/000162828026009798/0001628280-26-009798-index.htm",
+   "rationale": "Layer tag misfits (industrial/semi-services, not a colo operator; 10-Q 0001628280-26-009798); semiconductor 32.1% of sales but a broad end-market figure with zero AI-DC breakout. Indirect, no attributable exposure.",
+   "cohorts": []
+  },
+  {
+   "ticker": "NRGV",
+   "substructureTag": "colocation/operator",
+   "driverTie": "chain-layer-specific",
+   "grade": "committed-capacity",
+   "basis": "committed",
+   "gradeFact": "The Company entered into a strategic framework agreement with Crusoe to pursue modular data center projects, expected to enable phased deployments beginning in 2026, supporting phased deployment of Crusoe Spark modular AI factory units at its technology center in Snyder, Texas; the initial program is described as scalable up to 25 M[W] (text truncated).",
+   "accession": "0001828536-26-000022",
+   "edgarUrl": "https://www.sec.gov/Archives/edgar/data/1828536/000182853626000022/0001828536-26-000022-index.htm",
+   "rationale": "Crusoe framework agreement (modular AI-DC up to 25MW) but no binding terms/TCV, 'evaluating' entry, no revenue attributed. Indirect + non-binding, no 3:1.",
+   "cohorts": []
+  },
+  {
+   "ticker": "NUAI",
+   "substructureTag": "colocation/operator",
+   "driverTie": "chain-layer-specific",
+   "grade": "committed-capacity",
+   "basis": "committed",
+   "gradeFact": "The Company completed its acquisition of Texas Critical Data Centers LLC (TCDC) from SharonAI, Inc., financed in part by a $50 million senior secured convertible promissory note issued to SharonAI, which the Company subsequently prepaid in full in cash on April 24, 2026.",
+   "accession": "0001213900-26-047683",
+   "edgarUrl": "https://www.sec.gov/Archives/edgar/data/2028336/000121390026047683/0001213900-26-047683-index.htm",
+   "rationale": "Acquired Texas Critical Data Centers from SharonAI ($76M land) but no signed tenant/MW/TCV; revenue entirely nat-gas ($802K), flagship under development. Speculative/non-binding, no exposure.",
+   "cohorts": []
+  },
+  {
+   "ticker": "OPTU",
+   "substructureTag": "optical/interconnect",
+   "driverTie": "indirect",
+   "grade": "committed-capacity",
+   "basis": "committed",
+   "gradeFact": "In 2024 Lightpath acquired a fiber network between New York City and Ashburn, Virginia (a major datacenter hub), as well as a metro network in New York City and New Jersey, and provides ethernet, data transport, dark fiber and transport services. No AI/GPU/AI-datacenter language, contracted terms, or revenue attributable to AI-datacenter connectivity is disclosed.",
+   "accession": "0001702780-26-000013",
+   "edgarUrl": "https://www.sec.gov/Archives/edgar/data/1702780/000170278026000013/0001702780-26-000013-index.htm",
+   "rationale": "Distressed heavily-levered cable operator (Altice/Optimum); Lightpath hyperscaler fiber + NYC-Ashburn route generic/unquantified/immaterial vs balance sheet. Indirect + value-trap is base case, no 3:1.",
+   "cohorts": []
+  },
+  {
+   "ticker": "ORN",
+   "substructureTag": "colocation/operator",
+   "driverTie": "indirect",
+   "grade": "committed-capacity",
+   "basis": "committed",
+   "gradeFact": "Orion discloses it has completed over 40 data centers for 'world-class hyperscalers' and clients in partnership with leading general contractors, and positions itself as a trusted partner in this sector.",
+   "accession": "0001402829-26-000011",
+   "edgarUrl": "https://www.sec.gov/Archives/edgar/data/1402829/000140282926000011/0001402829-26-000011-index.htm",
+   "rationale": "Concrete construction; '40 datacenters for hyperscalers' is cumulative/historical, generic construction not a chain layer. Indirect-driver-tie, no attributable forward exposure.",
+   "cohorts": []
+  },
+  {
+   "ticker": "PENG",
+   "substructureTag": "HBM/memory",
+   "driverTie": "indirect",
+   "grade": "committed-capacity",
+   "basis": "committed",
+   "gradeFact": "The company operates an Integrated Memory segment (SMART Modular) and references memory market pricing/trends, but the filing does not attribute any quantified revenue to HBM or AI-datacenter memory specifically; memory is described generically.",
+   "accession": "0001616533-25-000061",
+   "edgarUrl": "https://www.sec.gov/Archives/edgar/data/1616533/000161653325000061/0001616533-25-000061-index.htm",
+   "rationale": "Most substantive Tier 2 -- genuine AI-infra integration (10-K 0001616533-25-000061: OriginAI GPU-cluster, Advanced Computing +17% to $648M) but 'HBM' 0 hits (SMART Modular=DRAM modules, grade mislabel), AI rev unquantified, 53% sales commodity memory+LED, moderate-margin integrator. Competitive-priced-in twin live, no 3:1.",
+   "cohorts": [
+    "watchlist"
+   ]
+  },
+  {
+   "ticker": "PSIX",
+   "substructureTag": "power/electrical",
+   "driverTie": "indirect",
+   "grade": "committed-capacity",
+   "basis": "committed",
+   "gradeFact": "In its Q1 2026 forward-looking statement risk factors, the Company references 'the timing and ultimate conversion of Power Systems orders into revenue, including data-center-related orders, and the volume and timing of related shipments,' indicating existence of data-center-related orders in its Power Systems backlog.",
+   "accession": "0001628280-26-033451",
+   "edgarUrl": "https://www.sec.gov/Archives/edgar/data/1137091/000162828026033451/0001628280-26-033451-index.htm",
+   "rationale": "'Data-center-related orders' in backlog but generic, no AI/named customer/MW. Indirect-driver-tie, no 3:1.",
+   "cohorts": []
+  },
+  {
+   "ticker": "PUMP",
+   "substructureTag": "power/electrical",
+   "driverTie": "indirect",
+   "grade": "committed-capacity",
+   "basis": "committed",
+   "gradeFact": "In December 2024 the Company formed subsidiary ProPetro Energy Solutions, LLC (PROPWR), which provides turnkey power generation services to oil and gas producers and for general industrial projects and data centers using mobile natural gas-fueled power generation equipment installed at customers' sites; PROPWR began revenue-generating activities during Q3 2025.",
+   "accession": "0001680247-26-000028",
+   "edgarUrl": "https://www.sec.gov/Archives/edgar/data/1680247/000168024726000028/0001680247-26-000028-index.htm",
+   "rationale": "Caterpillar GFA 1.5GW/$1.1B is an equipment PURCHASE, datacenters alongside oil&gas, no power-delivery contract/named DC. Indirect-driver-tie, no exposure.",
+   "cohorts": []
+  },
+  {
+   "ticker": "QUBT",
+   "substructureTag": "packaging",
+   "driverTie": "indirect",
+   "grade": "committed-capacity",
+   "basis": "committed",
+   "gradeFact": "In February 2026 the Company acquired Luminar Semiconductor, Inc. (LSI), which designs chip-scale devices (laser diodes, semiconductor optical amplifiers, avalanche photodiodes, photonic integrated circuits) with in-house III-V photonic semiconductor fabrication and advanced packaging, serving customers in aerospace and defense, sensing and instrumentation, and optical communications. The disclosed end-markets are not identified as AI-datacenter optical interconnect; no AI/GPU/datacenter language is attached, and no revenue is broken out to a datacenter chain layer.",
+   "accession": "0001213900-26-022417",
+   "edgarUrl": "https://www.sec.gov/Archives/edgar/data/1758009/000121390026022417/0001213900-26-022417-index.htm",
+   "rationale": "Developmental quantum-photonics; AI = edge hardware/broad HPC (opposite of datacenter), LSI/NHanced acqs are optical-comms/photonic-semi with no AI-DC tie; Q1'26 rev $3.7M gross loss, pre-commercial. Broad-AI + not-driver, no real exposure.",
+   "cohorts": []
+  },
+  {
+   "ticker": "RXT",
+   "substructureTag": "AI-cloud",
+   "driverTie": "chain-layer-specific",
+   "grade": "committed-capacity",
+   "basis": "committed",
+   "gradeFact": "Rackspace US, Inc. signed a definitive 'GPU-as-a-Service Agreement - Master Terms and Conditions' with Advanced Micro Devices, Inc. (AMD) relating to the phased deployment of AMD AI compute products (AMD Instinct GPUs such as MI355X, MI350P and future successor chips, and AMD EPYC CPUs) in Rackspace's global data centers. The agreement is a master terms-and-conditions framework governing phased deployment; no quantified TCV, minimum-volume, take-or-pay, or committed capacity is disclosed in the stream text.",
+   "accession": "0001810019-26-000059",
+   "edgarUrl": "https://www.sec.gov/Archives/edgar/data/1810019/000181001926000059/0001810019-26-000059-index.htm",
+   "rationale": "AMD GPUaaS is a Master T&C FRAMEWORK only (8-K 0001810019-26-000059: no TCV/committed capacity/attributable revenue); distressed levered managed-cloud operator mid-15%-restructuring. Label-as-thing not ruled out + value-trap base case, no 3:1.",
+   "cohorts": []
+  },
+  {
+   "ticker": "TH",
+   "substructureTag": "chips/GPU",
+   "driverTie": "indirect",
+   "grade": "committed-capacity",
+   "basis": "committed",
+   "gradeFact": "In 2025, Target expanded services into a newly created Workforce Hospitality Solutions segment 'as a result of contracts with Lithium Nevada in Q1, the new Data Center Community Contract in Q3 and related expansions, and the Power Community Contract in Q4 adding up to approximately 3,300 beds under management, of which approximately 1,300 beds are owned and managed.' The disclosure names a 'Data Center Community Contract' but does not identify the datacenter as AI-specific (no GPU/compute/AI language), nor does it break out beds or revenue attributable to that contract alone.",
+   "accession": "0001104659-26-026351",
+   "edgarUrl": "https://www.sec.gov/Archives/edgar/data/1712189/000110465926026351/0001104659-26-026351-index.htm",
+   "rationale": "Workforce LODGING for datacenter construction -- not a value-chain layer at all. Not-driver, no chain exposure.",
+   "cohorts": []
+  },
+  {
+   "ticker": "UCTT",
+   "substructureTag": "HBM/memory",
+   "driverTie": "indirect",
+   "grade": "committed-capacity",
+   "basis": "committed",
+   "gradeFact": "UCT is a developer and supplier of critical subsystems, components, parts, and ultra-high purity cleaning/analytical services primarily for the semiconductor industry (gas delivery systems, chemical delivery modules, precision robotics, process modules, weldments), sold to semiconductor OEMs and IDMs including memory and foundry customers. This is upstream semiconductor capital-equipment supply, but no AI-datacenter chain layer or AI-attributable revenue is broken out.",
+   "accession": "0001628280-26-010744",
+   "edgarUrl": "https://www.sec.gov/Archives/edgar/data/1275014/000162828026010744/0001628280-26-010744-index.htm",
+   "rationale": "WFE-subsystem supplier two steps removed (10-K 0001628280-26-010744); 58.7% two-customer concentration (AMAT+Lam), 'HBM'/AI is generic market-growth framing with zero UCT-attributable revenue (only 'data center' hit is its own internal IT). Indirect, no 3:1.",
+   "cohorts": []
+  },
+  {
+   "ticker": "VECO",
+   "substructureTag": "chips/GPU",
+   "driverTie": "indirect",
+   "grade": "committed-capacity",
+   "basis": "committed",
+   "gradeFact": "Veeco's Data Storage segment supplies systems used to manufacture magnetic heads for hard disk drives, described as an important part of large-capacity storage applications 'such as Data Centers.' This is a generic datacenter tie with no AI/GPU-specific language and no quantified revenue.",
+   "accession": "0001104659-26-019711",
+   "edgarUrl": "https://www.sec.gov/Archives/edgar/data/103145/000110465926019711/0001104659-26-019711-index.htm",
+   "rationale": "Advanced-packaging semi-cap; AI/HPC cited as demand driver only, unquantified, Axcelis merger pending. Indirect, no attributable revenue, no 3:1.",
+   "cohorts": []
+  },
+  {
+   "ticker": "WLDN",
+   "substructureTag": "power/electrical",
+   "driverTie": "chain-layer-specific",
+   "grade": "committed-capacity",
+   "basis": "committed",
+   "gradeFact": "Willdan lists 'AI data center power solutions' among the specific energy services it offers within its Energy segment.",
+   "accession": "0001104659-26-020767",
+   "edgarUrl": "https://www.sec.gov/Archives/edgar/data/1370450/000110465926020767/0001104659-26-020767-index.htm",
+   "rationale": "Lists 'AI data center power solutions' service line but no $/named contract/MW (customers=school district+SCE). Broad-AI/indirect, no attributable exposure.",
+   "cohorts": []
+  },
+  {
+   "ticker": "XMAX",
+   "substructureTag": "AI-cloud",
+   "driverTie": "indirect",
+   "grade": "committed-capacity",
+   "basis": "committed",
+   "gradeFact": "On April 6, 2026, newly-formed subsidiary XMax AI Inc. entered into an 'AI Inference Platform Deployment and Service Agreement' with Cloud Alliance Inc., under which the Service Provider will develop and deploy an AI inference platform to an AWS cloud environment for a total fixed service fee of US$400,000. XMax is the PAYING CUSTOMER (buying deployment services), not a supplier to the AI-datacenter chain, and the deployment runs on third-party (AWS) infrastructure.",
+   "accession": "0001493152-26-016828",
+   "edgarUrl": "https://www.sec.gov/Archives/edgar/data/1473334/000149315226016828/0001493152-26-016828-index.htm",
+   "rationale": "Furniture co pivoting to AI is a PAYING CUSTOMER of Cloud Alliance ($400K)+SuperX ($4.8M) on third-party AWS -- a buyer, not a chain supplier. No chain exposure.",
+   "cohorts": []
+  }
+ ],
+ "watchlist": [
+  {
+   "ticker": "AEHR",
+   "substructureTag": "chips/GPU",
+   "grade": "committed-capacity",
+   "basis": "committed",
+   "gradeFact": "Through the acquisition of Incal Technology, the introduction of the High Power FOX-XP high-power packaged-part reliability/burn-in test solutions enables Aehr to deliver wafer-level test and burn-in and package-part burn-in for AI accelerators, GPUs, and high-performance computing (HPC) processors, positioning the company as a turn-key provider of reliability and testing for the AI market.",
+   "accession": "0001654954-25-008553",
+   "edgarUrl": "https://www.sec.gov/Archives/edgar/data/1040470/000165495425008553/0001654954-25-008553-index.htm",
+   "rationale": "Strongest real exposure -- Sonoma/Incal burn-in purpose-built for AI accelerators/GPUs/HPC (10-K 0001654954-25-008553; packaged-part 2%->34% FY25) but total rev DECLINED 11%, 9mo FY26 annualizes lower, 2 customers=54%, full AI-narrative multiple. Priced-in/flow-chasing twin live, no 3:1.",
+   "trigger": "(a) total revenue inflects UP QoQ; OR (b) two-customer concentration drops materially (a third large AI-accelerator customer named); OR (c) a binding order/backlog quantifying AI-accelerator revenue. [FLAG: buy-ability GENUINELY OPEN pending the valuation-vs-ramp scenario]"
+  },
+  {
+   "ticker": "MXL",
+   "substructureTag": "optical/interconnect",
+   "grade": "committed-capacity",
+   "basis": "committed",
+   "gradeFact": "MaxLinear describes itself as a provider of communications SoCs used in broadband, mobile and wireline infrastructure, data center, and industrial and multi-market applications. Among the example devices it lists 'optical transceivers targeting hyperscale data centers' \u2014 a named optical-interconnect chain layer feeding data centers.",
+   "accession": "0001288469-26-000011",
+   "edgarUrl": "https://www.sec.gov/Archives/edgar/data/1288469/000128846926000011/0001288469-26-000011-index.htm",
+   "rationale": "Genuinely makes datacenter optical-DSP silicon 400G->1.6T (10-K 0001288469-26-000011) but NO 'Data Center' revenue line (blended in Infrastructure); rev ~30% below 2023 peak, 2 customers=28%, sub-scale vs Marvell/Broadcom. Priced-in twin live, no 3:1.",
+   "trigger": "(a) DC-optical / datacenter revenue broken out as a reportable line; OR (b) a named hyperscaler/OEM 800G/1.6T design win with attributable volume."
+  },
+  {
+   "ticker": "ADEA",
+   "substructureTag": "HBM/memory",
+   "grade": "committed-capacity",
+   "basis": "committed",
+   "gradeFact": "Adeia's semiconductor IP portfolio covers hybrid bonding (Direct Bond Interconnect / DBI), advanced processing nodes, and advanced packaging solutions, which it states enable the next generation of logic and memory semiconductors 'powering the increasing demand for generative AI applications.' This ties the licensing portfolio to the advanced-packaging / memory layers of the AI-datacenter chain, though no AI-attributable revenue is quantified.",
+   "accession": "0001193125-26-076549",
+   "edgarUrl": "https://www.sec.gov/Archives/edgar/data/1803696/000119312526076549/0001193125-26-076549-index.htm",
+   "rationale": "RapidCool is genuine direct-to-chip liquid cooling (10-K 0001193125-26-076549, chain-relevant not label-mismatch) but launched tech with NO licensee/revenue; 'HBM' 0 hits, no HBM royalties; only concrete AI tie is fresh AMD litigation (contingent). Broad-AI twin live, no 3:1.",
+   "trigger": "(a) first RapidCool licensee announced with royalty terms; OR (b) HBM / advanced-packaging royalty stream disclosed or broken out; OR (c) AMD litigation resolves into a licensing outcome."
+  },
+  {
+   "ticker": "PENG",
+   "substructureTag": "HBM/memory",
+   "grade": "committed-capacity",
+   "basis": "committed",
+   "gradeFact": "The company operates an Integrated Memory segment (SMART Modular) and references memory market pricing/trends, but the filing does not attribute any quantified revenue to HBM or AI-datacenter memory specifically; memory is described generically.",
+   "accession": "0001616533-25-000061",
+   "edgarUrl": "https://www.sec.gov/Archives/edgar/data/1616533/000161653325000061/0001616533-25-000061-index.htm",
+   "rationale": "Most substantive Tier 2 -- genuine AI-infra integration (10-K 0001616533-25-000061: OriginAI GPU-cluster, Advanced Computing +17% to $648M) but 'HBM' 0 hits (SMART Modular=DRAM modules, grade mislabel), AI rev unquantified, 53% sales commodity memory+LED, moderate-margin integrator. Competitive-priced-in twin live, no 3:1.",
+   "trigger": "(a) AI-infrastructure revenue quantified / broken out WITH margin; OR (b) margin expansion in Advanced Computing; OR (c) a multi-year hyperscaler contract with attributable TCV."
+  },
+  {
+   "ticker": "FRMI",
+   "substructureTag": "chips/GPU",
+   "grade": "committed-capacity",
+   "basis": "committed",
+   "gradeFact": "Fermi is developing Project Matador, a hyperscale power and AI infrastructure campus in the Texas Panhandle, designed to deliver up to 11 GW (expandable to ~17 GW) of private power generation capacity and support up to ~15 million square feet of AI-ready hyperscale compute infrastructure, with the objective of providing hyperscale and other compute-intensive tenants reliable, low-latency power and dedicated powered shell infrastructure. This is disclosed development activity as a colocation/powered-shell operator delivering power to AI datacenters, but the company is development-stage and has generated no revenue.",
+   "accession": "0002071778-26-000010",
+   "edgarUrl": "https://www.sec.gov/Archives/edgar/data/2071778/000207177826000010/0002071778-26-000010-index.htm",
+   "rationale": "Purpose-built 11-17GW AI-datacenter power campus but development-stage, ZERO revenue, NO executed leases (only 'negotiating'), CEO/CFO/proxy shakeup. Speculative/binary, no 3:1 -- AVOID control.",
+   "trigger": "(a) first executed AI-datacenter lease/PPA with a named tenant and binding terms; OR (b) financing close for the campus build; OR (c) management stabilization."
+  }
+ ],
+ "avoidControls": [],
+ "realTier": [
+  "CAMT",
+  "TSSI",
+  "BLZE",
+  "BTBT",
+  "CORZ",
+  "DGXX",
+  "WYFI"
+ ],
+ "forward": {
+  "cohorts": {
+   "buy": 0,
+   "naive": 56,
+   "passed": 56,
+   "watchlist": 5,
+   "avoidControls": 0,
+   "realTier": 7
+  },
+  "undefinedMeasures": [
+   [
+    "RATIFIED-PASSED (\u00a73a, the core edge-measure)",
+    "no BUY leg \u2014 zero RATIFIED; requires a ratified cohort that does not exist"
+   ],
+   [
+    "RATIFIED-NAIVE(equal-weight) (\u00a73b-i)",
+    "no BUY leg \u2014 zero RATIFIED; requires a ratified cohort that does not exist"
+   ],
+   [
+    "RATIFIED vs keyword/co-movement screen (\u00a73b-ii, deferred)",
+    "no BUY leg \u2014 zero RATIFIED; requires a ratified cohort that does not exist"
+   ]
+  ],
+  "diagnostics": [
+   {
+    "name": "avoid-discipline",
+    "status": "PENDING",
+    "confound": "AI-datacenter value chain-BETA-CONFOUNDED + regime-dependent \u2014 was declining to buy the committed tier costly or vindicated in THIS window? Largely a AI-datacenter value chain-beta bet, NOT selection skill.",
+    "note": "0 days forward from freeze \u2014 accrues over calendar time."
+   },
+   {
+    "name": "exposure-carry",
+    "status": "PENDING",
+    "confound": "PARTIALLY beta-controlled \u2014 both cohorts are AI-datacenter value chain-labelled so the common AI-datacenter value chain-beta largely cancels in the divergence; isolates whether the exposure GRADE (real vs not) carries forward info. The more informative of the two \u2014 still NOT an edge verdict.",
+    "note": "genuine-exposure (watchlist) vs other-PASSED divergence; pending forward."
+   }
+  ],
+  "honestyLabel": "No BUY leg exists (zero RATIFIED) -> the core edge-measure (RATIFIED-PASSED) and all RATIFIED-dependent spreads are UNDEFINED and NOT computed. The outputs below are AVOID-discipline and exposure-carry DIAGNOSTICS, beta-confounded, and are NOT a validation of the semantic-primary edge.",
+  "powerNote": "UNPOWERED \u2014 DIRECTIONAL / ANECDOTAL: below the a-priori floor (needs >=8 theme-quarters across >=4 drivers, sign-consistent). A forward-directional read, never a significance test."
+ }
+}

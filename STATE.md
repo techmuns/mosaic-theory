@@ -1638,6 +1638,13 @@ without starving the lead loop; each becomes a *real* widener only when its OWN 
   bind.) Follow-up hygiene (not a blocker): replace the weak test password with a strong secret.
 - **Verification harness (LLM bull/bear/judge)** — trigger: only if running the manual discriminator
   reveals it needs a structured bull/bear step. May never be needed; do not build speculatively.
+- **Theme-edge verdict recorder (A2 — LOCKED SPEC in §7, ratified 2026-07-04)** — the recorder that closes
+  the theme-edge loop (watchlist trigger → re-underwrite → source-tagged verdict → the ONE unified
+  BUY−AVOID spread). **Trigger:** build ALONGSIDE the monitor (the delta-scan that fires watchlist triggers)
+  OR when the first watchlist trigger actually approaches — NOT before. Rationale: A2 widens the append-only
+  ledger that Overshoot's LIVE spread depends on; build-to-evidence says do not touch the live validation
+  gate speculatively for a capability whose first use is quarters out. The loop staying OPEN (0 buys) is
+  honest today and the viewer says so.
 - **Drive adapter for the dossier-assembler** — trigger: the local-folder assembler is proven and the
   manual export→folder step is the real friction. A convenience, not a milestone. Design (review-only):
   `docs/CLOUD_DOSSIER_TRIGGER.md`. **CORRECTION 2026-06-26:** an API-based Google-Drive `DriveStore`
@@ -1907,6 +1914,445 @@ single-threaded ahead of the lead loop).
     SCOPING decisions — text/attention in Phase 1 vs deferred to 1.5, and run-universe (broad vs
     overshoot)** — both the human's, NOT decided here. Docs-only; suite green (ruff + mypy --strict 66 +
     pytest 204 offline). Edge 2 stays the lead horse.
+  - **PHASE 1 / STAGE 1 — Component A (co-movement theme-detection candidate-generator) — BUILT +
+    VERIFIED (2026-06-29).** The first Phase-1 build (`vinci/themes/`, `vinci themes` CLI): residual
+    co-movement clustering that PROPOSES candidate themes for the human to judge — it assembles the
+    cluster + the candidate shared-linkage (the criterion-1 surface) + §7.1 strength/lifecycle signals,
+    and **concludes nothing** (no driver named, no theme ranked against another, no verdict — a schema
+    with no such field, AST-guarded like the ranker/dossier; imports no scoring/ledger). Pipeline:
+    broad `in_universe` (~1,727, mega/mid included — NOT the overshoot set) → 12mo daily Polygon (the
+    EXISTING `PolygonEodClient`, key from env, never logged) → **multi-factor residualization
+    (market + sector + size + vol)** → residual-correlation connected-components (PRINCIPLED selection:
+    a τ-band stability check + exact intra-cluster coherence, not a single hardcoded τ) → the
+    four-criteria SCREEN (breadth / coherence / persistence PASS-FAIL; criterion-1 nameable-driver is
+    the human's). **The genuinely new leg — the SECTOR de-confounding (G2's unbuilt sector leg, §2 G2
+    caveat) — built PROPERLY:** a leave-one-out broad-sector cohort factor whose loading is ESTIMATED
+    jointly by OLS (NOT the spikes' throwaway 1:1 cohort-mean subtraction), pure-Python (no numpy),
+    regression-tested. Fail-loud throughout (insufficient history → dropped + counted, never a
+    partial-window number; persistence un-evaluable on a too-short window → NOT-admitted, never a silent
+    pass). All thresholds face-validity, never forward-return-tuned. *VERIFIED — the COMMITTED module
+    reproduces the spike findings on real Polygon (ref 2026-06-17, 252 trading days, 1,713/1,727
+    covered): QUANTUM residual corr RGTI↔QBTS **0.82** / RGTI↔QUBT 0.72 / QUBT↔QBTS 0.73 (= the spike
+    numbers exactly); HOUSING is the cross-taxonomy cluster SIC dismembers (19 names / 12 SICs / 6
+    sectors — builders + lumber + flooring + furniture); the **vol-strip is SELECTIVE** — diffuse
+    low-vol housing SURVIVES (coh 0.36→0.37) while the speculative blob dissolves, the **uranium
+    sub-theme crystallising cleanly under R2** (DNN/UEC/URG/UUUU/EU/NXE); plus shipping / gold-miners /
+    regional-banks / hotels+lodging / staffing / commodity-chemicals / trucking, all nameable. Full CLI:
+    40 clusters → 35 admissible (persistence gate rejects 4 blips + 1 low-coherence). 16 theme
+    regression tests incl. the proper sector leg (β estimated, not 1), the vol-strip selectivity, the
+    gates, the no-conclusion schema guard, the no-forward-returns AST guard, and the
+    persistence-un-evaluable fail-loud case — the last from a pre-PR adversarial review (4 dimensions ×
+    verify) that confirmed exactly 1 real defect (a persistence auto-pass on a short window), now fixed.
+    ruff + mypy --strict (76) + pytest 253 offline green.* **Stages 2–4 PENDING (NOT built): Component C
+    confirmation trigger (Stage 2); the semantic exposure-classifier / text ingestion (Stage 3);
+    pipeline composition + forward paper-validation (Stage 4).** A PAPER-VALIDATION track; Edge 2 stays
+    the lead horse (§4 GOVERNOR) — this did not starve overshoot verdict-logging.
+    - **Post-build verification DIAGNOSIS (2026-06-29) — two findings, NO Stage-1 code change.**
+      (1) **The §7.1 strength engine's first real output is CORRECT, not a bug.** Housing's
+      rel-strength −50.5% reconciles EXACTLY against raw Polygon: the signal is
+      median(member 12mo cumulative return) − IWM 12mo return; housing median **−11.5%** absolute
+      (PRGO −61% … MHO +37%) − IWM **+39.0%** ($208.55→$289.88) = **−50.5%** — housing is a genuine
+      laggard (flat-to-down while small-caps surged), decision-relevant. All four signals reconcile to
+      4dp vs hand-computed (momentum −11.5%; breadth 1/19 = 0.053; crowding +3.3%). NOTE it is a
+      TRAILING 12mo cumulative (same window as detection), not a short-horizon momentum — a possible
+      future §7.1 enhancement (add a shorter momentum lookback for lifecycle), NOT a defect. (2)
+      **IWM size-mismatch on mega-caps is MATERIAL — a STAGE-2 question, not a Stage-1 break.** This
+      window IWM (+39%) outran SPY / Russell-3000 (+24% / +24%) by **−15pp**, a constant shift IWM
+      adds to every rel-strength number. For the broad/mega-cap names a Stage-2 confirmation trigger
+      measures, the size tilt is decisive at the margin (NVDA rel +3% vs IWM but **+18% vs SPY**;
+      LLY +1.5% vs +16.5%) — benchmarking a mega-cap leader against a small-cap index under-credits it
+      exactly when the trigger should fire. Stage-1 is NOT affected: its detected themes are sub-$10B
+      (IWM size-matched), the spikes used IWM too, and R2 already strips the size factor from the
+      CLUSTERING (the −15pp rides only the presented strength signal, a human-judged input).
+      **PROPOSED (not built) — benchmark-per-universe in Stage 2:** sub-$10B holding-side signals stay
+      IWM-relative; the mega-cap confirmation trigger uses a broad-market benchmark (SPY / Russell
+      3000), size-matched to mega-caps. The spread is regime-dependent (inverts in a large-cap-led
+      year), so size-matching the benchmark to the measured universe is the robust design, not a
+      one-off adjustment. No Stage-1 module changed; suite stays green.
+    - **§7.1 strength engine → 1/3/6/12mo TRAJECTORY vector (2026-06-29; resolves the Finding-1 design
+      note). SIGNALS LAYER ONLY — detection / clustering / residualization / gates / linkage UNTOUCHED
+      + re-verified.** momentum + rel-strength-vs-IWM are now presented as a four-horizon SHAPE the
+      human reads (1mo now / 3mo quarter / 6mo half-year / 12mo trailing context — one horizon per
+      decision timescale; a 5th answers no new question), NOT a single number and with **NO
+      slope/composite/rank** (collapsing the vector re-destroys the shape + crosses the dead-signal
+      line — a `Trajectory` schema with no such field, test-pinned). Same formula (median member
+      window-return; rel = median − IWM), four windows; benchmark stays IWM (Finding-2's split is
+      Stage-2's concern, untouched). **Fail-loud PER HORIZON:** a name without history spanning a
+      horizon is UNKNOWN for it (real 1mo/3mo, UNKNOWN 6mo/12mo) — never a partial-window fabrication;
+      breadth/crowding stay single values (recent/current-state, no natural horizon). *Verified — the
+      committed CLI renders the shape; ALL FOUR horizons reconcile to 4dp by hand on housing (rel
+      1mo +10.2% / 3mo −7.1% / 6mo −22.6% / 12mo −48.1%), and the shape is decision-relevant: housing's
+      12mo −48% laggard is INFLECTING (1mo momentum +16%, rel +10%) — which the single 12mo hid. The
+      per-horizon guard also FIXED a latent partial-window fabrication the old single-12mo carried:
+      OPTU (a sub-12mo listing) was counted in the old 12mo; it is now UNKNOWN for 12mo (real 1/3/6mo),
+      shifting housing's 12mo rel −50.5%→−48.1% — the more-correct number. Detection re-run identical
+      (40 clusters → 35 admissible; housing 19-name/12-SIC + quantum unchanged, gate still passes); git
+      diff touches only render/schemas/signals. ruff + mypy --strict (76) + pytest 255 green; +3
+      trajectory tests (horizons+order, per-horizon fail-loud, no-collapse schema guard).*
+    - **STAGE 2 / Components B + C — theme-type signals + megacap confirmation (2026-06-29). READ-ONLY
+      over A; A's detection / clustering / residualization / gates / linkage UNTOUCHED + re-verified
+      (zero git diff on those files).** New `vinci/themes/{leaders,classify,confirmation,stage2}.py` +
+      a `themes-stage2` CLI. **SUB-STEP 0 — leader designation:** A's $10B-capped clusters contain NO
+      mega-caps, so the >$10B leaders (whose pattern B reads, whose run C confirms) are ASSEMBLED from
+      a read-only >$10B operating-co slice (reusing `build_universe`; A's universe untouched) — a
+      mega-cap is a candidate leader iff its SIC ∈ the cluster's classes AND it residually CO-MOVES
+      with the cluster (the same test that defined the theme); the machine assembles, the analyst
+      RATIFIES (criterion-1). Mega-caps never enter detection or holding. **Component B** (type signals
+      fused into criterion-1, NO auto-classification): leaders-vs-members price-pattern
+      (leader-first / synchronous / mixed via the trajectory machinery), vol-strip-survival (from A),
+      an LLM historical-analog (§7.2 reference class, source-bound, proposed), and an explicit DEFER
+      state ('TYPE-AMBIGUOUS → watch, do not fire') — the human judges type. **Component C** (megacap
+      confirmation SIGNAL the human reads to act, NOT an autonomous trigger): leaders' median
+      cumulative return-from-baseline at +20/+30/+50 × {absolute, vs-IWM, vs-SPY}, scoped to
+      human-judged-emergence. **FORWARD BASELINE chosen + recorded:** the start of A's trailing
+      detection window (contemporaneous, no hindsight inception; the live form of 'since first
+      surfaced in detection' — replaces Part-7's hindsight Part-5 inception). *VERIFIED on real Polygon
+      (committed CLI, 39 themes): leader designation surfaces the REAL mega-caps (housing
+      HD/LOW/DHI/PHM/NVR/TOL co-move 0.35-0.44; gold NEM/AEM/Barrick… 16 names 0.36-0.53; banks
+      PNC/USB/TFC… 15 names; shipping → NO co-moving leader → DEFER). B price-pattern DISCRIMINATES —
+      banks read SYNCHRONOUS (cyclical), others MIXED; leader-first is proven by unit test (no sub-$10B
+      EMERGENCE theme exists in A's current universe — the AI-infra enablers grew >$10B, the
+      Finding-2/Part-7 reason, recorded honestly). C confirmation reconciled BY HAND to 4dp (gold
+      leaders' median return-from-baseline +0.7175 = grid absolute; vs IWM +0.3275; vs SPY +0.4775).
+      The DUAL-BENCHMARK grid reproduces Finding-2's −15pp EXACTLY (vs SPY − vs IWM = +0.1499 = IWM
+      +39% − SPY +24%) and is DECISIVE at the margin — hotels confirm at +20% vs SPY (+34.1%) but NOT
+      vs IWM (+19.1%); banks read vs-IWM −4.4% (laggard) vs vs-SPY +10.6%. B.3 LLM analog (opus-4.8)
+      assembled a real housing reference class (2004-06 bubble / 2007-09 collapse / 2020-21 boom /
+      2022-23 rate-freeze / lumber 2021 / 2012-15 recovery) + what to check, proposed-not-concluded.
+      ruff + mypy --strict (80) + pytest (263; +9 Stage-2 tests: leader-designation, price-pattern
+      discrimination, defer, forward-baseline, dual-benchmark grid, no-conclusion schema guard) green.*
+      (signals.py gained a backward-compatible `min_members` param for the single-leader trajectory —
+      A's strength signals byte-unchanged.) **Stages 3-4 PENDING: the semantic exposure-classifier /
+      text ingestion (Stage 3 — the unsolved enabler-SELECTION from Part 6/7, where winners and losers
+      look alike at confirmation); pipeline composition + enabler-search wiring + forward
+      paper-validation (Stage 4).** Edge 2 stays the lead horse.
+    - **DIAGNOSTIC (2026-06-29; Part 3 RUN & COMPLETED 2026-06-30) — why Stage 2 surfaced only cyclical
+      themes: HYPOTHESIS A (the $10B DETECTION ceiling) primary, C (the breadth gate) secondary. NOT
+      B-as-framed; the live Part-3 run surfaced a DISTINCT leader-designation SIC-gate defect (B′). No
+      code change.**
+      Tested the claim "no sub-$10B emergence theme exists" against the strong prior that emergence is
+      always in play. **(0) signals.py backward-compat PROVEN** (the deferred Stage-1.5 check): housing's
+      1/3/6/12mo momentum + rel-strength are IDENTICAL to 4dp post-`min_members` (1mo +0.1639/+0.1020 …
+      12mo −0.0909/−0.4809) — **A byte-unchanged.** **(1) ALL clusters incl. sub-breadth:** 108
+      components ≥2 names; **68 are 2-name pairs the breadth gate filters**; the borderline ones are
+      overwhelmingly CYCLICAL (staffing / RV / offshore-drilling / refiners / net-lease-REIT / airlines /
+      insurance / banks) — a few early-emergence-ish (biotech modalities WVE/KYMR/GPCR coh 0.73 = a small
+      ADMISSIBLE cluster; semicap pair VECO/ACLS coh 0.82 = breadth-FILTERED). **(2) DECISIVE — current
+      caps of LIVE mid-2026 emergence enablers (Polygon, external check, not the detector's output):** the
+      AI-infra picks&shovels are **100% ABOVE** the $10B ceiling (VRT $122B, GEV $282B, COHR $74B, LITE
+      $68B, ALAB $64B, CRDO $46B, CLS $44B, NVT $28B, SMCI $17B, MOD $15B, POWL $11B — **zero** sub-$10B);
+      space (RKLB $63B) + nuclear leaders (CCJ $46B, OKLO $10B) + IONQ $20B also grew out. The sub-$10B
+      emergence presence is NARROW: **quantum (RGTI $6.7B / QUBT $2.2B / QBTS $8.4B — DETECTED as a
+      cluster)** + eVTOL/drones (JOBY $9.2B / ACHR $4B / AVAV $8.3B / RCAT / ONDS — but a 2-name pair
+      JOBY/ACHR, breadth-FILTERED) + tiny nuclear-fuel (NNE $1.3B / LTBR $0.3B). Tally: sub-$10B 11 /
+      $10-50B 10 / >$50B 6+ (10 no-cap, mostly recent-IPO/foreign and also large). **(3) RUN-VERIFIED (Part 3, 2026-06-30 — reasoned-only on 06-29):** quantum (RGTI/QBTS/QUBT + INFQ;
+      coh 0.66, breadth 4 → ADMISSIBLE-size) IS a detected sub-$10B cluster. Component B reads it
+      **'no co-moving mega-cap leaders → cannot be read' (DEFER)**, NOT 'cyclical': the >$10B quantum
+      leader IONQ ($20B, SIC 7373) is EXCLUDED by leader-designation's EXACT 4-digit SIC match vs the
+      cluster's {7371,7372,7374} — a one-digit sibling miss inside the same 737x family. So B does not
+      mislabel emergence; a too-strict leader-SIC gate (B′) leaves the one detected sub-$10B emergence
+      theme un-confirmable (no leader → no leader-first/synchronous read).
+      **VERDICT:** "no sub-$10B emergence theme" is an OVERSTATEMENT — quantum is a detected counterexample
+      — but the STRUCTURAL truth is **HYPOTHESIS A**: the $10B DETECTION ceiling selects against MATURE
+      emergence enablers, which grow into $10-50B by the time the theme is broadly detectable (AI-infra
+      entirely above the band). **HYPOTHESIS C is secondary** (the earliest emergence themes are 2-name
+      pairs the breadth gate filters — eVTOL JOBY/ACHR, semicap VECO/ACLS coh 0.82, nuclear-fuel
+      NNE/LTBR). **NOT B-as-framed (no mislabel-to-cyclical); but B′ — the leader-designation EXACT-SIC
+      gate excluding IONQ — is a real defect the live Part-3 run surfaced.** *PROPOSED (NOT
+      implemented): (A) raise the theme-DETECTION ceiling (e.g. ~$50B), SEPARATE from the sub-$10B HOLDING
+      ceiling — "detect broad" must mean broader than $10B since the enablers grow out; the Stage-2 >$10B
+      leader-slice already proves the machinery extends cleanly to that band, so DETECTION could reuse it.
+      (B′) LOOSEN leader-designation SIC-match from EXACT 4-digit to the 3-digit major group (or the
+      existing sector map) so IONQ 7373 matches the 737x quantum cluster — else a DETECTED sub-$10B
+      emergence theme silently DEFERs for lack of a leader (the live Part-3 finding, the load-bearing
+      new evidence vs the 06-29 reasoned pass).
+      (C) a NARROW breadth-gate exception for high-coherence cross-taxonomy emergence PAIRS, gated on
+      emergence-type signals (carefully — criterion 2: a pair is usually a relationship, not a theme).
+      This REFINES the "detect broad / hold sub-$10B" scoping decision: the binding constraint is the
+      DETECTION ceiling, not the holding ceiling. Diagnostic only; no detection/B/C/universe change;
+      suite unchanged (Part 0 is a re-run).*
+    - **B′ FIX — leader-designation SIC match loosened EXACT-4-digit → 3-DIGIT industry group
+      (2026-06-30, branch `fix/theme-leader-sic-3digit`). The B′ defect the diagnostic surfaced is
+      fixed; A's detection + the cyclical leaders UNTOUCHED.** `designate_leaders` (leaders.py) now
+      matches a candidate's 3-digit SIC group, not the exact 4-digit class — FACE-VALIDITY (7371/7372/
+      7373/7374 are one "computer services" family), NOT a return-tune; git diff isolated to that gate +
+      its docstrings/rule. **SAFE because of the SECOND gate (co-movement ≥0.30), VERIFIED on real
+      Polygon — not assumed:** the widening makes 43 737x mega-caps quantum CANDIDATES (MSFT $2.8T, ORCL,
+      CRM, NOW, ADBE, INTU…); the co-movement gate REJECTS all 42 false leaders (median residual corr
+      −0.09…+0.09, all <0.30) and DESIGNATES only IONQ (+0.649) — the second gate filters what the
+      widening's breadth would otherwise admit. **THE UNBLOCK (real run): quantum (RGTI/QBTS/QUBT/INFQ),
+      previously silent-DEFERRED, now flows END-TO-END through B+C:** (1) IONQ designated leader (SIC
+      7373, $20B, residual corr +0.649); (2) Component B reads a REAL pattern — **MIXED/UNSTABLE
+      (choppy)**, not 'no leader → cannot be read' — leader/member 1/3/6/12mo trajectory reconciled to
+      4dp (leader 3mo +0.7144 / 6mo +0.1011 vs members +0.3728 / −0.1331 → no clean leader-first gap,
+      honestly choppy); (3) Component C confirmation grid — IONQ median +0.4377 from the forward baseline
+      = +0.0477 vs IWM / +0.1977 vs SPY (clears +20%/+30% ABSOLUTE only, neither benchmark-excess),
+      dual-benchmark spread +0.1499 = Finding-2's −15pp — every cell reconciled BY HAND to 4dp. The
+      participation edge has its FIRST testable sub-$10B emergence target (B presents, human judges — no
+      machine verdict). **VALIDATION:** cyclical leaders UNCHANGED — housing (DHI/HD/LOW/NVR/PHM/TOL),
+      gold (16: AEM/NEM/FNV/WPM/…), banks (15: PNC/USB/TFC/…) IDENTICAL to the 4-digit era, 3-digit added
+      ZERO new leaders; A's detection untouched (fix is downstream). Regression test pins 3-digit match +
+      the spurious-leader-REJECTED-by-co-movement guard. ruff + mypy --strict (80) + pytest (264; +1
+      guard) green. **Hypothesis A (detection ceiling) + Hypothesis C (breadth-gate exception) stay
+      recorded findings pending separate decisions — only B′ is fixed here.**
+    - **BREADTH emergence-target scan (2026-06-30) — across ~45 live emergence themes the binding
+      constraint is GATE 2 (co-movement/breadth), NOT the $10B ceiling (Hyp A); NO clean valid sub-$10B
+      leader-first target currently qualifies. Diagnosis only, no code change.** Enumerated TWO ways to
+      defeat enumeration bias: Direction-1 top-down web research (10 parallel agents, live mid-2026, all
+      sectors, ~250 enabler tickers) + Direction-2 bottom-up from the 108-component census; each theme
+      run through the B′-fixed 4 gates (caps from Polygon, B/C from committed code). **Scorecard pattern
+      (where ~45 themes fall out):** Gate-1 "grown out of $10B" is RARE (2: AI-compute/EMS, fusion) —
+      most themes DO have sub-$10B baskets (Part-5 holds). The wall is **Gate 2: ~29 themes' sub-$10B
+      enablers don't residually co-move at τ=0.50** (heterogeneous sub-segments / idiosyncratic
+      clinical-or-pre-revenue risk / <12mo IPO history), and **9 co-move only as breadth-FILTERED pairs**
+      (semicap VECO/ACLS, crypto-miners→AI CLSK/MARA, eVTOL JOBY/ACHR, gene-edit CRSP/BEAM, nuclear-fuel
+      LTBR/NNE, neuro CYTK/MLYS, hydrogen PLUG/BLDP, solar-inverters SEDG/ENPH, drones RCAT/UMAC). Of the
+      5 that cluster ≥3, quantum / uranium / RNA(WVE/KYMR/GPCR) read **MIXED** (choppy like quantum) and
+      precision-onc has no co-moving leader. **VERDICT — valid sub-$10B leader-first target right now:
+      effectively NONE.** Exactly one passes all four MECHANICAL gates — **solar modules/cells**
+      (CSIQ/DQ/JKS, leader FSLR leader-first, C +0.38 vs IWM / +0.53 vs SPY) — but it is a **US-vs-China
+      tariff DIVERGENCE** (FSLR protected, Chinese solar distressed), not an emergence lead-lag whose
+      sub-$10B names play the leader → the analyst would DECLINE (assemble-not-conclude working). Closest
+      runners-up are the two leader-first+confirming pairs breadth-filtered out: semicap VECO/ACLS (leader
+      LRCX) and crypto-miners→AI CLSK/MARA (leaders IREN/WULF/CIFR/RIOT) — each still needs human scrutiny
+      (real AI-semicap vs BTC/AI-pivot beta). **TWO GAPS:** the DETECTION gap (Dir-1 themes that never
+      cluster) is large, dominated by Gate-2 "no co-movement"; the RECOGNITION gap (census clusters not in
+      Dir-1) is small and almost all CYCLICAL (shipping/banks/housing/gold/REITs/education — correctly not
+      emergence; a few borderline growth-services EPAM/GLOB, BAH/SAIC, PLXS/BHE). **WHAT THIS INFORMS
+      (surface, do NOT decide A vs C vs Stage-3):** the participation edge is idle largely BY CONSTRUCTION
+      — emergence themes exist in breadth but their sub-$10B expressions don't form tradeable leader-first
+      baskets. Evidence points the binding constraint at **co-movement/breadth (Hyp C + a co-move/τ/
+      short-IPO-history question)**, NOT the ceiling (Hyp A unlocks only the 2-3 grown-out AI-infra-family
+      themes) and NOT yet Stage-3 (the semantic enabler-selector only bites once a theme clears gates 1-3,
+      which almost none do). Highest-value next probe: a NARROW Hyp-C breadth exception would surface
+      semicap + crypto-miners→AI for analyst judgment. Suite unchanged (diagnosis only; the B′-fix branch
+      stays ruff+mypy+pytest green).
+    - **SEMANTIC-EXPOSURE PROBE (2026-06-30) — reasoning-from-disclosure DISCRIMINATES the driver and
+      SURFACES the enablers co-movement can't; strong evidence FOR Stage 3 as the EARLY-detection
+      mechanism. Probe only, no code change.** Tested the two breadth-scan leader-first PAIRS as live
+      cases for whether SEMANTIC exposure (not co-movement) is the right early basis — the temporal
+      tension being that co-movement is intrinsically LATE (needs consolidation) while the edge's value
+      is EARLY (Part-6 fork). **PART 1 — both are PAIR-BY-ARTIFACT, not thin themes:** semicap has ~10
+      sub-$10B pure-plays that FRAGMENT by sub-segment (VECO/ACLS pair + UCTT/ICHR pair + CAMT/COHU/KLIC/
+      AEHR/PLAB/PDFS each idiosyncratic — full-history, residualized, just don't co-move); crypto-miners'
+      real-AI names ALREADY GREW OUT (IREN $20.8B / WULF $13.8B / HUT $13.4B / CIFR $10.8B / APLD $13.0B /
+      RIOT $10.4B, all >$10B) leaving the sub-$10B co-moving pair CLSK/MARA = the BTC-beta LAGGARDS — so
+      co-movement fires too late AND clusters the wrong (beta) names. **PART 2 — the FENCED LLM (committed
+      AnthropicLlmClient Opus-4.8, source-bound to real 10-K/20-F text, verdict-free, reusing
+      synthesis.py's pattern) READS the disclosures and DISCRIMINATES SHARPLY, INVERTING co-movement (as
+      Part 6 showed keyword-text inverts):** CRYPTO driver-discrimination — **CIFR + WULF =
+      binding-contracts-with-terms** (CIFR: 15-yr AWS ~300MW + Fluidstack 300MW + 3.4GW pipeline; WULF:
+      Fluidstack 378+168MW 25-yr leases + Core42, 522MW contracted) vs **CLSK = committed-capacity, no
+      tenant** vs **MARA + IREN = aspirational-intent-only** (MARA AI 'early-stage evaluation'; IREN
+      states an HPC strategy, no named tenant in its 10-K). The REAL-AI names (CIFR/WULF, binding
+      hyperscaler MW) are exactly the ones that re-rated >$10B; the co-movement cluster (CLSK/MARA) is
+      the aspirational BTC-beta residue — co-movement CANNOT tell pivot from beta, disclosure-reasoning
+      CAN. SEMICAP exposure-completeness — the co-moving pair **VECO/ACLS read aspirational** (ACLS 98%
+      ion-implant / 55% power-EV — not the AI driver; VECO diversified, no AI revenue split), while the
+      genuinely AI-exposed names are **CAMT (~50% of revenue from AI-application production: HBM +
+      advanced packaging, quantified) and AEHR (AI burn-in, packaged-part $19.8M / 34%)** — both sub-$10B
+      and HOLDABLE, both flagged 'idiosyncratic / don't co-move' by detection. So exposure-reasoning
+      surfaces BETTER sub-$10B targets (CAMT/AEHR) than co-movement found (VECO/ACLS), and inverts the
+      signal. **VERDICT:** on both live cases semantic exposure-reasoning demonstrably does what
+      co-movement can't — (a) DISCRIMINATE real driver-exposure from beta/marketing, (b) SURFACE real
+      sub-$10B enablers that don't yet co-move. This RESOLVES Part 6's open fork ('semantic LLM-exposure
+      untested — the key open path') in FAVOUR of the semantic path, and points the early-detection
+      mechanism at **reasoning-from-disclosure, NOT co-movement.** *PROPOSED (NOT decided): Stage 3 (the
+      semantic exposure-classifier) is the validated next-build direction — as the PRIMARY EARLY-detection
+      basis (read the business → infer theme-exposure → source-bind → human judges), reusing synthesis.py's
+      fenced / cite-checked / verdict-free machinery, NOT merely enabler-selection inside an
+      already-confirmed theme. CAVEATS: a PROBE (n=5 miners + 6 semicap, latest-annual-only — IREN's
+      aspirational read is a timing artifact, its big deals postdate the filing); it proves
+      DETECTION-discrimination, NOT the forward edge (the paper track is the arbiter). Build-which-edge
+      stays the human's.* Suite unchanged (probe only; the B′-fix branch stays green).
+    - **STAGE 3, BUILD 1 — the SEMANTIC-PRIMARY exposure detector (scale-discrimination test on the
+      AI-datacenter driver). Discrimination SURVIVES the flood at a 1% false-positive rate; a NEW
+      early-detection path PARALLEL to A's co-movement — detection/B/C/co-movement UNTOUCHED.** New
+      `vinci/themes/exposure.py` (+ `ExposureAssessment`/`ExposureFact` schemas, a `themes-exposure`
+      CLI, 8 tests). Reuses synthesis.py's ARCHITECTURE (fenced LLM, verdict-free tool, cite-check) NOT
+      its task: reads each name's RECENT DISCLOSURE STREAM (latest annual BUSINESS section + latest 10-Q
+      MD&A/subsequent-events + recent 8-Ks — the IREN lesson: confirming hyperscaler contracts arrive as
+      8-Ks, not the stale annual) and the fenced Opus-4.8 assembles source-bound exposure facts.
+      **`exposure_basis` is DERIVED from the CITED facts' max concreteness** (binding-contract >
+      quantified-revenue > committed-capacity > stated-intent > none), NOT trusted from the LLM — no
+      cited concrete fact → none (fail-loud; a mention is NOT exposure). Assemble-not-conclude: NO
+      score/rank/membership/buy field (schema-guarded). **GROUND TRUTH reproduced from the recent
+      stream:** the 4 binding/quantified reals surface (CIFR/WULF binding hyperscaler leases, CAMT
+      quantified ~50% HBM, IREN binding — the recent-stream reader FIXED the probe's annual-only IREN
+      miss), the 4 betas reject (CLSK/MARA/VECO/ACLS → aspirational/committed, not REAL). One principled
+      precision refinement (binding = a NAMED PAYING customer/tenant, not a development/financing JV — so
+      MARA's tenant-less Starwood JV reads committed, not binding): face-validity, NOT return-tuning.
+      **THE SCALE TEST (real Polygon/EDGAR/Opus-4.8, committed code):** the keyword FLOOD is massive —
+      **1358/1727 (79%) of the sub-$10B universe mention 'artificial intelligence' recently** (Part-6
+      inversion at scale: 'AI' is non-discriminating). Stratified scan of 261 = all 141 hardware/HPC-
+      phrase names (recall) + a random 120 of the 'AI/data-center'-only flood (FP denominator) + the 6
+      ground-truth. **RESULT — discrimination SURVIVES:** flagged REAL (binding+quantified) = 13/261
+      (5%); basis dist none 175 / aspirational 64 / committed 9 / binding 8 / quantified 5. **FALSE-
+      POSITIVE rate on the cheap-mention flood = 1/120 = 1%** (the lone flood flag is HIMX, a borderline
+      'image-sensors → AI market' over-attribution the human audits — it does NOT flag 300 names for
+      saying 'AI'). The 13 REAL are dominated by genuine AI-datacenter exposure — CORZ/RXT/BLZE binding
+      CoreWeave / GPU-cloud contracts, CAMT 50% HBM, WYFI/BTBT WhiteFiber HPC, DGXX colocation, TSSI rack
+      integration — with ~4 borderline (KOPN/FCEL/HIMX/LWLG) for the analyst to audit; 0 LLM errors
+      (fail-loud, none fabricated). **SCALE VERDICT: semantic discrimination SCALES** — it surfaces the
+      real enablers and rejects the 79%-'AI' flood at a 1% FP rate, producing a tractable, source-bound,
+      auditable flagged set. Strong evidence that semantic-primary detection is VIABLE as the early
+      mechanism (resolving Part-6's fork in its favour, at scale). ruff + mypy --strict (81) + pytest
+      (272; +8 exposure tests) green. *CAVEATS: a build-1 scale test (stratified 261 of 1383 candidates;
+      FP measured on a 120-name flood sample; ~30% of the REAL set is borderline-for-audit; AEHR
+      conservatively read aspirational; LLM stochastic at the margin). Proves DETECTION-discrimination at
+      scale, NOT the forward edge (the paper track is the arbiter). PROPOSED — build 2 (NOT built, GATED
+      on this passing, which it did): the FULL multi-driver universe scan (all ~1383 candidates ×
+      multiple drivers, batch infra) + a precision pass on borderline REAL flags (is the contract/revenue
+      driver-SPECIFIC?). Detection/B/C/co-movement untouched — semantic-primary is a parallel path.*
+    - **STAGE-3 build-1 AUDIT-PREP + STABILITY finding (2026-06-30). Build-1's scan persisted only a
+      SUMMARY (not the full model_dump) — a PERSISTENCE GAP that blocked an independent citation audit
+      and forced a recovery re-run. Two findings + a remediation; no classifier/grading change.** **(1)
+      DRIFT / stability:** a full-persistence re-run of the 13 REAL names reproduced **10/13** grades —
+      the **9 CONFIDENT names are STABLE** (CORZ/RXT/BLZE/DGXX/TSSI/WYFI binding, BTBT/DUOT/CAMT quantified
+      all reproduced), but **3 of the 4 BORDERLINE flipped REAL→not-real** (KOPN binding→committed, LWLG
+      quantified→aspirational, HIMX quantified→none — the flood-FP confirmed a STOCHASTIC artifact). So
+      the ROBUST REAL set is ~9-10, NOT 13; the borderline flags are LLM-stochastic at the margin — a
+      real precision caveat on any single run (the confident/borderline split from build-1 held up). **(2)
+      Citation integrity:** all **55 graded facts across the 13 carry a real accession PRESENT in the
+      name's stream — 0 out-of-stream, 0 UNCITED, 0 fabrication** (the cite-check / source-binding holds).
+      Recovered citations are audit-grade (e.g. CORZ CoreWeave 16→590MW 10-K acc 0001628280-26-013305;
+      DGXX Cerebras 40MW/$1.1-2.5B 8-K acc 0001213900-26-053566; CAMT 50%-AI/HBM 20-F acc
+      0001178913-26-001561) and split ANNUAL vs RECENT-8K/10-Q — the recent-8K reads (RXT AMD, BLZE/WYFI,
+      DGXX, FCEL) are LOAD-BEARING (the IREN-lesson recent-stream reader earns its keep). **(3) REMEDIATION
+      (recorded, NOT built here): the scan should persist the full `ExposureAssessment.model_dump()`
+      (facts + concreteness + source_ref + stream_refs) so results are audit-grade WITHOUT a re-run.**
+      Audit-prep only — the build-1 CLAIM (its grades) is unchanged; the re-run only recovered citations +
+      measured drift. Exports: build1_13name_{stream_filings,audit_table}.csv + _rerun.json (scratchpad
+      handoff, not committed). Suite unchanged (no code touched).*
+    - **INDEPENDENT SOURCE AUDIT of build-1 (2026-07-01) — semantic-primary VALIDATED as a DIRECTION;
+      build-1's "13 REAL" is the OPTIMISTIC CEILING, the audited truth is 7 REAL / 4 borderline / 2
+      not-real; ZERO fabrications; a CHARACTERIZED, CORRECTABLE, human-catchable UPWARD bias.** The
+      load-bearing external check: an analyst source-verified each of the 13 build-1 REAL flags against
+      its actual EDGAR filing (price-blind, human-judged — NOT the classifier re-checking itself).
+      **Verdicts:** REAL (7) = CORZ, BLZE, DGXX, TSSI, WYFI, BTBT, CAMT; BORDERLINE (4) = RXT, DUOT,
+      KOPN, FCEL; NOT-REAL (2) = LWLG, HIMX. (Of the 9 confident+stable names: **7 REAL, 2 downgrade
+      (RXT, DUOT), 0 not-real**; every borderline/drifted name broke toward the LESS-generous run — the
+      re-run was closer to truth.) **ZERO fabrications** — every checkable grade-determining fact was
+      present in its filing (KOPN "Fabric AI" vs "StableX" = an inconsistency in Kopin's OWN filing, not
+      a classifier fabrication; 3 secondary/corroborating facts cited non-XBRL filings [DGXX 10-Q + SubQ
+      8-K; LWLG Dec-2025 offering] = unverifiable but NONE load-bearing). **THREE error modes, ALL
+      UPWARD (over-grades at the margin): (1) LABEL-AS-THING** — reads a document's label as its
+      substance (RXT "definitive GPUaaS Master Terms" is a FRAMEWORK, pricing subject to further
+      agreement, AMD only backstops unsold capacity under a cap — not contracted revenue; DUOT "Technology
+      Solutions revenue" is BLENDED, the real AI piece is a FUTURE GPUaaS build). **(2) INDIRECT
+      DRIVER-TIE** — real binding contract, stretched tie (FCEL binding CEPA up to 380MW fuel cells "for
+      data center applications" but POWER-equipment, generic "data center", only 30MW firm — terms-binding
+      ALONE would pass; the driver-tie fails). **(3) BROAD-AI OVER-ATTRIBUTION** — endpoint/adjacent AI
+      read as datacenter (HIMX = 80% display-driver ICs, "AI" = EDGE/endpoint [the OPPOSITE of datacenter];
+      datacenter/GPU/HBM/server all = 0 in its 20-F — the flood FP, confirmed). **PRECISION-FIX SPEC (the
+      3 type-appropriate discriminators):** NOT "named customer" — TSSI/WYFI/CORZ are REAL with ANONYMIZED
+      customers because the TERMS bind (min-volume/make-whole/TCV/prepayment/executed order forms); a
+      must-name rule would WRONGLY kill the EARLY, confidentiality-masked exposure the edge wants. (a)
+      CONTRACTS: terms-binding vs DEFERRED (framework/sole-option/"subject to further agreement") [RXT
+      fails]. (b) REVENUE: quantified + CHAIN-ATTRIBUTABLE vs blended/general [DUOT fails]. (c) DRIVER-TIE
+      SPECIFICITY (both types): AI-datacenter-CHAIN vs indirect (generic power / edge-endpoint / "broad AI")
+      [FCEL, HIMX fail]. **STABILITY ≠ CORRECTNESS:** FCEL was grade-STABLE across both runs yet audited
+      soft — a stable grade can still overstate. Build-1 grades = the OPTIMISTIC CEILING, not a point
+      estimate; the human/audit layer shaves the overstatements (machine-proposes / human-judges, working
+      as designed); the confidence/drift signal is DIRECTIONALLY calibrated but not perfect. **CAMT /
+      UPSTREAM-ENABLER SCOPE DECISION (analyst call):** CAMT REAL — ~50% HBM/advanced-packaging metrology
+      revenue is genuine quantified exposure to a critical, non-substitutable AI-datacenter input at the
+      semi-equipment LAYER. **DECISION: upstream enablers ARE IN SCOPE** (the edge's structural advantage —
+      real, non-obvious, under-covered, invisible to keyword/co-movement because they don't look like
+      datacenters). **CONSEQUENCE: the driver expands from "AI-datacenter" to the AI-datacenter VALUE CHAIN**
+      (chips → HBM/memory → packaging → thermal → power → optical → operator) — cross-layer exposure to ONE
+      driver, semantically coherent but taxonomically scattered, groupable ONLY by semantic reasoning
+      (semantic-primary in its strongest form). **VERDICT: semantic-primary VALIDATED as a direction** —
+      it discriminates real exposure from the 79% "we do AI" flood (7/9 confident REAL, 0 fabrications,
+      calibrated uncertainty) with a characterized correctable upward bias. **NEXT: precision-fix (the 3
+      discriminators) BEFORE the multi-layer scale-out, so the scale-out inherits the corrected classifier;
+      validation target = reproduce the audited 13 (the 7 REAL, RXT/DUOT/KOPN/FCEL→borderline,
+      LWLG/HIMX→not-real).** Forward edge NOT claimed — validates detection-DISCRIMINATION, not that exposed
+      names outperform (the forward paper track is the only arbiter). Audit is external/analyst-judged; no
+      code change.*
+    - **PRECISION-FIX (2026-07-01) — 3 TYPE-APPROPRIATE discriminators correct the audit's 3 upward
+      error modes; the refined classifier reproduces the audit on 10/13 (11/13 on the load-bearing
+      REAL-vs-not-REAL binary), pulling build-1's 13-REAL optimistic ceiling down to ~6-7 REAL ≈ the
+      audited 7. Grading logic ONLY; detection/B/C/co-movement/universe UNTOUCHED.** exposure.py now
+      grades each fact on TWO INDEPENDENT axes: **concreteness** (TYPE-appropriate — binding = the TERMS
+      BIND [executed order form / min-volume / take-or-pay / make-whole / TCV / prepayment], NOT a
+      framework / 'subject to further agreement' / sole-option / backstop; quantified = quantified AND
+      CHAIN-ATTRIBUTABLE, NOT blended) and **driver_tie** (a SEPARATE gate: chain-layer-specific vs
+      indirect vs not-driver). The exposure_basis derives from the max EFFECTIVE rank — an INDIRECT tie
+      caps at committed-capacity, a NOT-DRIVER tie caps at stated-intent (new `_effective_rank`). New
+      `DriverTie` schema + a `--out` model_dump-JSONL persistence (audit-grade going forward, no re-run —
+      the audit-prep remediation). The driver is now the **AI-DATACENTER VALUE CHAIN**
+      (chips→HBM→packaging→thermal→power→optical→operator→AI-cloud; UPSTREAM ENABLERS IN SCOPE). Guard:
+      NEVER require a named customer — anonymized-but-terms-binding is REAL. **VALIDATION vs the audit's
+      13 (real run, committed code): 10/13 categorical, 11/13 REAL-vs-not-REAL. All 3 discriminators
+      demonstrably FIRE:** terms-binding downgrades RXT (framework) + DUOT (blended) to committed while
+      CORZ/BLZE/DGXX/WYFI stay binding-REAL; the **DRIVER-TIE gate INDEPENDENTLY catches FCEL** (terms
+      bind → committed via `indirect` — proving gate 1 is not subsumed by terms); the value-chain scope
+      keeps CAMT REAL (upstream, quantified+chain) and drops HIMX (edge/broad-AI → not-real); the
+      anonymity guard keeps WYFI REAL. **3 residual MISSES, reported honestly (NOT tuned away — that
+      would overfit the 13):** TSSI over-killed (audit REAL → borderline, a strict terms-read; the OTHER
+      anonymized case WYFI passed), KOPN over-graded (audit borderline → REAL, a $15M JDA read as
+      binding), LWLG committed-vs-aspirational (BOTH not-REAL — not even a binary miss). The misses are
+      marginal, STOCHASTIC terms-reads at the boundary — the human-audit layer still shaves them
+      (machine-proposes / human-judges). Regression tests pin each discriminator (indirect-tie caps,
+      not-driver caps, anonymized-but-binding stays REAL, missing-tie fail-closed). ruff + mypy --strict
+      (81) + pytest (276; +4 discriminator tests) green; git diff isolated to exposure.py grading +
+      schemas + the --out one-liner + tests. **THIS refined classifier goes into the multi-layer
+      scale-out (build 2), now GATED-OPEN.** Forward edge NOT claimed — detection-discrimination only.*
+    - **STAGE 3, BUILD 2 — the SEMANTIC-PRIMARY VALUE-CHAIN UNIVERSE SCAN (the scale-out of the
+      precision-fixed classifier). The whole sub-$10B universe on ONE composite driver — the AI-
+      datacenter VALUE CHAIN. The classifier reproduces the INDEPENDENT AUDIT on 13/13 EMBEDDED in the
+      1,550-name scan (REAL set == the audited 7 exactly), and the scale-out surfaces NEW cross-layer
+      enablers co-movement/keywords can't group. Detection/B/C/co-movement/universe/holding-ceiling
+      UNTOUCHED — semantic-primary is a parallel path.** exposure.py's pre-filter broadened 8→**18-term
+      value-chain vocabulary** (data-center/GPU/HBM/packaging/liquid-cooling/switchgear/optical/neocloud/
+      …) + new `chain_layer_of` (a keyword PROVENANCE tag, not a grade) + `grade_driving_fact` (the
+      basis-setting fact) + a WIDE-FUNNEL CLI (surfaces every name with ANY chain-attributable signal;
+      NO confidence/rank — the human triages legible provenance). **THE HARD SCOPE PROBLEM (wide funnel
+      vs pre-filter recall), resolved + MEASURED:** a broad pre-filter over 1,727 → **1,550 candidates
+      (90%)**; recall cost = **177 excluded (10%)**, spot-check of 15 = food/furniture/firearms/forms
+      (CALM/CAG/GT/RGR/MLKN…), **zero chain enablers** — the broad vocabulary caught the chain; truly
+      text-silent names (zero chain vocabulary) remain the one documented limitation (only a full-
+      universe scan catches them; the excluded tail suggests near-empty). Flood confirmed: **'artificial
+      intelligence' alone hits 1,508/1,727 (87%)** while chain-specific terms are rare (HBM 10, optical-
+      interconnect 5) — the exact discrimination problem the semantic layer exists to solve. **THE SCAN
+      (real EDGAR/Opus-4.8, committed code):** 1,550 candidates × the precision-fixed classifier, 6
+      workers, **full `model_dump` persisted INCREMENTALLY** (audit-grade + crash-safe/resumable), **0
+      scan errors, 0 fabrications** (every REAL fact carries a real accession in its stream). **THE
+      VOLUME (the first-class deliverable — the input to the DOWNSTREAM calibration decision, NOT decided
+      here):** WIDE funnel surfaced **450/1,550 (29%)** — by type: **binding 4 / quantified 3 (REAL = 7)
+      / committed 56 / aspirational-intent 387 / none 1,100**; by chain layer (of 450): chips/GPU 154,
+      colocation/operator 138, HBM/memory 80, power 42, optical 12, thermal 8, packaging 6, AI-cloud 5.
+      **VALIDATION — the scaled classifier reproduces the audit:** embedded in the 1,550-scan it lands
+      **13/13 of the audited names on the audited verdict THIS run** (the REAL set == the audit's exact 7
+      = CORZ/BLZE/DGXX/TSSI/WYFI/BTBT/CAMT; RXT/DUOT/KOPN/FCEL→committed, LWLG/HIMX→aspirational) and all
+      3 discriminators FIRE at scale (RXT 'GPUaaS Master Terms' framework→committed via terms-binding;
+      DUOT blended→committed via revenue; FCEL→committed via indirect driver-tie; HIMX edge/broad-AI→
+      aspirational). *Caveat: 13/13 is a CLEAN run — the precision-fix small-batch got 10/13; the
+      committed↔aspirational boundary is LLM-stochastic (report both honestly, do not claim determinism).*
+      **THE SCALE PAYOFF (why build-2 exists):** the scan surfaces NEW cross-layer enablers beyond the
+      13 — taxonomically scattered, semantically coherent, groupable ONLY by reasoning — e.g. ADEA
+      (hybrid-bonding/DBI packaging), COHU (active thermal management), AEHR (AI-chip burn-in test), CRK
+      (gas-to-datacenter power w/ NextEra), FRMI (hyperscale power+AI campus), NRGV/NUAI (new
+      colocation), OPTU (datacenter fiber NYC↔Ashburn), MXL (comms SoCs), WLDN (AI-datacenter power) —
+      many NOT-yet-co-moving (the early-detection payoff co-movement structurally misses). **THE
+      CALIBRATION DECISION (surfaced, DEFERRED — NOT decided here):** the ACTIONABLE tiers
+      (binding+quantified+committed = **63**) are TRACTABLE for full human review → the human IS the
+      triage, no machine layer needed there; the intent tier (**387** aspirational) is LARGE — IF the
+      human mines it, a calibration/triage layer becomes a MEASURED (not assumed) need. **LIMITATIONS
+      recorded:** (1) foreign issuers **18/450** read on staler info (20-F/40-F, no 8-K stream, e.g.
+      CAMT); (2) text-silent recall gap (the 10% excluded, near-empty on spot-check); (3) LLM boundary
+      stochasticity (13/13 vs 10/13); (4) build grades = OPTIMISTIC CEILING, the human-audit shaves.
+      Assemble-not-conclude throughout (NO score/rank/verdict/buy — schema-guarded); machine PROPOSES,
+      human JUDGES. ruff + mypy --strict (81) + pytest (**282**; +6 universe-scan-path tests: pre-filter
+      skip-errors both ways, chain-layer tagging, grade-driving-fact, the value-chain driver) green; git
+      diff isolated to exposure.py + cli.py + tests. Scan OUTPUT (JSONL/CSV) is NOT git-committed (not in
+      the enumerated committable set — fail-closed); persisted durably to scratchpad + a Desktop handoff
+      (scan_valuechain_1550.jsonl + surfaced_triage_450.csv + volume_report). **NEXT (gated on this
+      VOLUME): the calibration/triage layer IF the human opts to mine the 387 intent tier; MULTI-DRIVER
+      (robotics/GLP-1/nuclear) is a separate later build.** Forward edge NOT claimed — detection-
+      discrimination AT SCALE, not that exposed names outperform (the forward paper track is the only
+      arbiter). Edge 2 stays the lead horse (governor).*
   - **HOLDING-UNIVERSE study — sub-$10B-at-inception captured the theme return in all 6 themes tested
     (2026-06-29; `theme_admissibility_spike.md` Part 5).** A DISTINCT axis from the 4 detection spikes:
     does the **holding** bound (fund detects broad incl. mega leaders, but HOLDS sub-$10B) capture theme
@@ -2256,3 +2702,330 @@ in parallel under the §4 GOVERNOR (validation-design-first, never starving the 
 Single-threading wastes validation's weeks-to-quarters latency; the 2-person failure mode is spreading
 thin and validating nothing — so every parallel edge carries its own validation design before any
 build, and capital still deploys only on whichever spread validates first.
+
+**THEME-ENABLER FORWARD-VALIDATION PROTOCOL — spec written a-priori (2026-07-01,
+`docs/theme_forward_validation.md`, DRAFT for analyst review).** The theme family's own validation
+design, the analogue of `theme_admissibility.md` (detection) written BEFORE any logging so its criteria
+can't be reverse-engineered from outcomes. It defines how the human-ratified early enablers from
+Stage-3 build-2 are scored forward. **REVISED TWICE 2026-07-01: rev-1 added a naive-baseline control;
+rev-2 (forced by the harness build) CORRECTED the control structure + added a power caveat.** The
+measures: (1) **RATIFIED − PASSED** — the LIVE measure (did the analyst sort the tier; the BUY−AVOID
+spread transposed, §1), but partly guaranteed by disclosure-reading skill (PASSED is quality-sorted) so
+NOT alone the edge; (2) **RATIFIED − a REPLICABLE SCREEN** (keyword/co-movement, from the WHOLE universe)
+— THE one independent edge-test (did the semantic apparatus beat a replicable method — the fund's
+edge-filter, §4/§7), and it is DEFERRED (needs Component A live-forward). **REV-2's correction:** the
+equal-weight-all-56 baseline is algebraically (n_passed/N)·(RATIFIED−PASSED) — a *scaled* RATIFIED−PASSED
+sharing its sign, adding NO independent info — so it is DEMOTED from "co-primary" to a weak sanity-check
+(`apparatus_fraction`); the §3c PARTIAL-KILL (positive RATIFIED−PASSED, ~0 RATIFIED−NAIVE) is
+**mathematically unreachable** from it and can come ONLY from the independent screen (§3b-ii). **HONEST
+CONSEQUENCE (§3f): with equal-weight demoted and §3b-ii deferred, there is NO live independent edge-test
+— only the partly-guaranteed 3a spread — so the forward verdict is MULTI-DRIVER + MULTI-YEAR gated.** Plus the **early-detection test** (log each enabler's forward co-movement-*onset* date; measure
+whether entering at ratification beat entering once it is obvious — the one test that validates the whole
+semantic-primary thesis). **STATISTICAL POWER confronted:** the sample is tiny (committed tier ~56, ~10–20
+ratified, a few themes/year; names within a theme co-move → effective n ≈ theme-quarters), so early
+results are DIRECTIONAL-anecdotal, NOT significant — a pre-registered UNPOWERED floor (~≥8–12
+theme-quarters spanning ≥4–5 drivers, sign consistent) guards against over-reading the first points. Entry
+clock = ratification date (you can only act on what you ratified — no hindsight); market-relative (IWM)
+and vs-mega-cap are SECONDARY context; requires BOTH control sets logged (the AVOID leg AND the naive
+baskets frozen at ratification) or there is no counterfactual (the same defect that keeps Edge-2's spread
+empty today, §2). **The theme paper-track is GATED on (a) this spec's analyst sign-off
+AND (b) the analyst's ratified committed-tier picks** (nothing to log until the human ratifies a set);
+the logging harness is the NEXT build, not built here. Dead-signal firewall: machine ASSEMBLES evidence →
+human RATIFIES the pick → protocol MEASURES forward; no code path turns a grade into a hold. Forward-only,
+never backtested, never tuned on returns. **Edge 2 stays the lead horse** (§4 GOVERNOR): this track is
+parallel, low-cadence, additive — it must not starve overshoot verdict-logging.
+
+**THEME-ENABLER FORWARD-VALIDATION HARNESS — BUILT (2026-07-01, `vinci/themes/forward.py` +
+`themes-forward` CLI + 10 tests; +2 committed-review-worksheet artifacts).** The Stage-4 logging harness
+implementing the revised protocol: an append-only ratification LEDGER + a forward MEASUREMENT layer that
+LOGS the analyst's dispositions and MEASURES them forward — it NEVER selects/ranks/scores/promotes a
+grade to a hold (the §6 dead-signal firewall — verified by a schema no-conclusion test). **Four
+components:** (1) the append-only `RatificationRecord` ledger (§1 schema; a correction is a NEW row,
+last-wins reads); (2) `freeze_baskets` — the immutable BUY (ratified) / AVOID (passed) / equal-weight-all
+naive baskets, GUARDED so a DIG-DEEPER or a missing disposition blocks the freeze; (3) the forward
+measurement (§4) — RATIFIED−PASSED (§3a) + RATIFIED−NAIVE(equal-weight, §3b-i), benchmark-adjusted (−IWM),
+**LAYER-AWARE (pooled AND per chain layer — pooling masks the thin-layer signal)**, with the §3c
+PARTIAL-KILL state surfaced first-class + the §4 POWER label on every spread (effective n = THEME-QUARTERS;
+below the ~≥8-theme-quarter / ≥4-driver floor → UNPOWERED, never "significant"); (4) the §5 early-detection
+onset — `update_onsets` forward-logs the co-movement onset date (append-only, read-only Component-A
+membership), `early_vs_late` splits ratification→onset (early) vs onset→forward (late), a never-co-mover
+is a logged null. Thin read-only adapters wrap the committed Polygon EOD + Component A (detection UNTOUCHED).
+**HONEST §3b-i CAVEAT recorded (a property, not a bug):** RATIFIED−NAIVE(equal-weight) = (n_passed/N)·
+RATIFIED−PASSED — a *scaled* RATIFIED−PASSED, so it shares that spread's sign and is a WEAK control; a
+strict PARTIAL-KILL is UNREACHABLE from §3b-i alone when both legs are present (the `apparatus_fraction`
+= n_passed/N surfaces the "~0" case for the human). **The keyword/co-movement naive baseline (§3b-ii) — the
+INDEPENDENT replicable control where the partial-kill test truly bites — is DEFERRED SECOND-PHASE** (needs
+Component A live-forward; the harness is built so it can be ADDED, recorded in `FrozenBaskets.deferred_controls`).
+**REAL LOGGING GATED on the analyst's dispositions:** the committed-review worksheet's dispositions are
+EMPTY at build time, so the harness was built + tested against the SCHEMA with FIXTURES and fabricates
+NOTHING — the CLI reports `56 pending → NOT READY TO FREEZE`. **Shown real (fixture) run:** ledger→freeze→
+layer-aware spreads (a thin thermal layer +31% RAT−PASSED vs an obvious chips layer +2% — the layer-aware
+point) → power UNPOWERED (1 driver, 3 theme-quarters) → onset-stamped early +38% vs late +0.4% (early beat
+late) + a never-co-mover logged null. Ledger/baskets outputs are NOT git-committed (fail-closed, same as
+the scan/worksheet outputs). ruff + mypy --strict (82) + pytest (**292**; +10 forward tests) green; diff =
+new `forward.py` + `themes-forward` CLI + tests + this note. **NEXT (gated): (a) the analyst's real
+dispositions → real logging + the frozen-basket freeze; (b) the §3b-ii live co-movement baseline
+(second-phase); (c) multi-driver, where the power floor is actually reachable.** Forward edge NOT claimed —
+the harness MEASURES; the forward paper track is the only arbiter. Edge 2 stays the lead horse.
+
+**THEME-EDGE FORWARD TRACK — FROZEN on a ZERO-RATIFIED triage (2026-07-02, `feat/theme-forward-freeze`;
+scoped modification of `forward.py` + `themes-forward` CLI + 8 tests).** The analyst completed the
+committed-tier triage: **all 56 PASSED, ZERO RATIFIED** — the expected equilibrium of an early-detection
+edge meeting the fund's ≥2:1 bar (exposure is either already-priced, not-yet-revenue, or not-attributable at the
+moment it is early enough to be non-consensus). **CENTRAL CORRECTNESS: the BUY leg is EMPTY, so
+RATIFIED−PASSED (the core edge-measure) and ALL RATIFIED-dependent spreads (incl. §3b-i equal-weight and
+§3b-ii keyword/co-movement) are UNDEFINED — emitted with a reason, NEVER computed, NEVER 0.0, never a
+silent skip** (`undefined_ratified_measures`; the empty-BUY freeze does NOT error — the DIG-DEEPER guard
+passes, all resolved). The harness freezes THREE cohorts (`freeze_baskets` extended): **BUY = ∅**, **NAIVE
+= all 56 equal-weight** (the apples-to-apples control for the disciplined hold-none), **WATCHLIST = the 5
+genuine-exposure names** (AEHR/MXL/ADEA/PENG/FRMI, each tagged with its verbatim re-underwrite trigger
+from `ai_datacenter_watchlist_triggers.md`), + an OPTIONAL **REAL-7 secondary** (CORZ/BLZE/DGXX/TSSI/
+WYFI/BTBT/CAMT, from the build-2 scan). **The only VALID measures are two beta-confounded DIAGNOSTICS,
+FORWARD-ONLY from the freeze date** (`measure_hold_none`): **(1) avoid-discipline** — NAIVE-56 vs
+hold-none, labelled AI-DATACENTER-BETA-CONFOUNDED / regime-dependent (was declining to buy the tier
+costly or vindicated — largely an AI-beta bet, NOT selection skill); **(2) exposure-carry (PRIMARY, the
+more informative)** — the 5 genuine-exposure names vs the 51 other PASSED, benchmark-adjusted
+divergence, PARTIALLY beta-controlled (both AI-labelled, so the common beta cancels — isolates whether
+the exposure GRADE carries forward info). Both are reported **layer-aware (thin thermal/packaging/
+optical/HBM vs obvious chips/power/colo — NOT pooled)** and under a prominent honesty label: *NOT a
+validation of the semantic-primary edge*. **The core RATIFIED−PASSED edge-measure remains UNDEFINED
+pending a future RATIFIED — which arrives via the watchlist re-underwrite loop** (a name's
+machine-checkable trigger fires → re-underwrite at the full ≥2:1 Buy bar; the 5 names + triggers are the
+actionable output, and the seed of a monitor across the whole surfaced set). **§5 onset baselines
+stamped** for the 5 (freeze-day = null / not-yet-co-moving, the expected early-enabler state; live
+read-only Component-A confirmation is a paper-track-cadence step, deferred). Real run shown on the actual
+56-name worksheet: cohorts frozen, spreads UNDEFINED, diagnostics defined + PENDING (freeze = today, 0
+days forward — the honest forward-only state), onset baselines + triggers, honesty label. Ledger + frozen
+baskets persisted LOCAL-only (git-ignored — `.gitignore` `forward_*_ledger.jsonl` / `forward_*_baskets.json`
+/ `data/forward/`; fail-closed like the scan output). `measure_horizon` (the future-RATIFIED path) +
+detection/B/C/classifier/universe UNTOUCHED. ruff + mypy --strict (82) + pytest (**300**; +8 empty-BUY
+tests: freeze path, undefined-not-0.0, the 2 diagnostics, forward-only, watchlist guard, onset) green.
+NOT built (out of scope): the §3b-ii keyword/co-movement control (needs Component A live-forward AND a
+BUY leg), the cross-universe monitor (separate step). Forward edge NOT claimed. Edge 2 stays lead horse.
+
+**MULTI-THEME REFACTOR of the exposure classifier + fact-text cite-check (2026-07-02,
+`feat/theme-multi-theme-refactor`, off the consolidated base). The classifier is now
+THEME-PARAMETERIZED — it runs on ANY driver via a `DriverSpec`; AI-datacenter is demoted from hardcoded
+to ONE instance. Behavior-preserving on AI-datacenter.** New `DriverSpec` schema (schemas.py) +
+`vinci/themes/drivers.py` (the `AI_DATACENTER` instance + a registry). Everything driver-specific — the
+driver description, the driver-tie taxonomy, the pre-filter terms, the by-tag provenance map — moved OUT
+of the classifier code path INTO the spec. `exposure.py`'s `_SYSTEM` prompt + `EXPOSURE_TOOL` are now
+GENERIC (the tie taxonomy is injected per-theme via the user message); `assess_exposure(spec, …)` +
+`scan_driver_exposure(spec, …)` + `provenance_tag_of(text, tags)` take the spec. The `DriverTie` value
+`chain-layer-specific` → `driver-specific` (an AI-datacenter-flavored label genericized — a rename,
+semantically identical). **The hardcoded "~50% from HBM/advanced-packaging" CAMT constant was DROPPED**
+(a specific fact that must not generalize). **The DriverSpec is deliberately OPEN** — 4 required fields;
+`prefilter_terms` shape-agnostic (a demand-shaped theme's terms need not be chain terms); `tie_taxonomy`
+free text (a theme defines the tie however — sequential layers, parallel categories, or a
+tailwind/headwind DIRECTION — none assumed; the tie is NOT presumed positive); `provenance_tags`
+optional. **CITE-CHECK now TWO-STAGE (the fact-text-grounding fix):** the accession must trace to the
+stream AND the fact's load-bearing text (proper-noun / number tokens) must be GROUNDED in that filing
+(`_fact_grounded`, fuzzy ≥½-token overlap) — an ungrounded fact fails closed (conc→NONE, flagged).
+Reason: multi-theme scales un-hand-checked volume; the manual 13-name audit that caught fact/accession
+mismatches will not scale. **REGRESSION — behavior-preserving on AI-datacenter (the deterministic proof
+is the pin):** a pinned prompt-equivalence test confirms the AI-datacenter path still carries EVERY
+load-bearing instruction the old hardcoded prompt had (type-appropriate concreteness rules + each
+value-chain layer + not-driver/upstream scope) with the ONLY deliberate change being the "~50%" drop; a
+toy DEMAND-shaped spec (GLP-1) runs through the SAME classifier with ZERO AI-datacenter leakage (pinned);
+the grading-fixture tests reproduce the build-2 grading cases through the parameterized path. **A LIVE
+spot-check on 4 highest-risk names reproduced the build-2 BASIS 3/4** — CAMT (whose "~50%" example was
+dropped) still grades quantified/driver-specific ✓, FCEL committed-via-indirect ✓, HIMX
+aspirational/not-real ✓; the 1 "diff" is CORZ quantified→binding, **both in the REAL tier** (CoreWeave
+discloses both a binding contract and quantified revenue; the LLM graded a different fact this run — a
+within-REAL sub-grade shift, documented LLM stochasticity, NOT a refactor change; the deterministic
+prompt-equivalence test proves the LLM INPUT is preserved, so run-to-run variance is the LLM's). All 4
+preserve REAL/not-REAL. ruff + mypy --strict (83 files) + pytest (**304**; 22 exposure tests incl. 5 new
+refactor/cite-check) green. Detection/B/C/forward-harness/universe UNTOUCHED. **PLANNING DECISIONS logged
+(NOT built now):** (a) **INTAKE RADAR** — the human proposes themes from a machine-assembled radar of
+LEADING INDICATORS (disclosure-language velocity / capex-commitment flow / policy catalysts — explicitly
+NOT price-momentum or news-volume, which are late/replicable); machine PROPOSES, human ADVANCES-or-PARKS;
+built + validated AFTER theme #2 (a second theme is needed to generalize the radar). (b) **THEME #2 = the
+demand-shaped defense COMPOSITIONAL SHIFT** (attritable / autonomy / cyber) — chosen to test whether
+reasoned decomposition GENERALIZES beyond supply chains, with two expected stresses — DIRECTION
+(tailwind vs headwind) and PARALLEL-vs-SEQUENTIAL categories — to be resolved BY EVIDENCE from theme #2,
+NOT pre-built (the DriverSpec is left open for exactly these). (c) **the consolidated branch
+(`feat/theme-edge-integrated`) is a LONG-LIVED base** — theme work stacks on it until a MERGE TRIGGER
+(the first RATIFIED enabler, or the viewer shipping). Forward edge NOT claimed — a refactor + cite-check
+hardening, behavior-preserving on the proven theme. Edge 2 stays lead horse.
+
+**THEME #2 SCAN — DEFENSE demand-shift, the refactor's first real use / proof-of-generalization
+(2026-07-02, `feat/theme-multi-theme-refactor`; spec `99232e2`).** The `DEFENSE_DEMAND_SHIFT` DriverSpec
+(a DEMAND-shaped theme — PARALLEL capability categories, not a sequential chain) was added VERBATIM from
+the analyst-approved spec + registered; a toy-leak test confirms ZERO cross-theme string bleed. **The
+classifier ran UNCHANGED — no code edit, only a new spec** (the module-contract the refactor promised).
+Cost-gated first: the 21-term prefilter matched **1683/1727 (97%)** of the sub-$10B universe — only 44
+cut — because "defense"(1615) / "military"(1256) are near-ubiquitous mention-noise; **that 97% flood is
+itself finding-zero** (a demand-theme's vocabulary is generic, so the prefilter barely reduces; the
+semantic layer does all the discrimination). ~$421 Opus; ran 1683 names, 0 scan-errors, ~37/min.
+**TIER SHAPE (machine TIERS, never ranks): 2 binding-REAL / 0 quantified / 65 committed / 41 aspirational
+/ 1575 none.** 108 surfaced (basis≠none); the tie gate graded those **74 indirect / 23 not-driver / 11
+driver-specific**. vs AI-datacenter build-2 (7 REAL / 56 committed / 387 aspirational / 1100 none): **much
+thinner** — fewer REAL (2 vs 7), far fewer aspirational (41 vs 387), 94% none (vs 71%): the defense shift
+surfaces a SMALL concentrated tailwind set out of a huge generic-budget flood, not AI-datacenter's fat
+"we-do-AI" intent tail. REAL = **RCAT** (Teal Drones $9.5M U.S. Army SRR purchase order) + **SWMR**
+(Swarmer Master Supplier Agreement) — both attritable-air, both tailwind. **RESOLVES the two open
+questions from planning-decision (b):** (i) **DIRECTION (tailwind vs legacy) — text-encoding HELD, but
+under a WEAK test.** Of the 11 driver-specific names, **0 are legacy/exquisite-platform primes** — all
+tailwind (small-UAV / loitering / drone-swarm / defense-autonomy / shift-specific components: RCAT, SWMR,
+AVAV, ONDS, UMAC, LPTH, FEIM…); the tie gate capped 74 budget-exposed names at INDIRECT. **BUT the
+sub-$10B ceiling excludes the mega-cap exquisite primes (LMT/NOC/GD/RTX/BA), so those adversarial cases
+barely exist in-universe — direction-in-text was NOT hard-tested.** So DriverTie did NOT need a structured
+direction field THIS run; **keep the schema open** (a future all-cap or headwind-heavy theme may still
+force it). (A local report heuristic that "flagged possible legacy primes" was a substring bug — matched
+`manned` in UN-manned / `crewed` in UN-crewed, i.e. the tailwind side; fixed → 0 true legacy.) (ii)
+**PARALLEL-vs-SEQUENTIAL — confirmed shape mismatch.** **69% of surfaced names (74/108) span >1 provenance
+category** — a demand-shaped name sits in several at once (a drone maker is attritable-air +
+defense-autonomy + components), unlike a sequential chain where a name occupies ONE layer. By-category:
+defense-autonomy 48 / attritable-air 26 dominant, then counter-uas 7 / space-isr 6 / munitions-scale 6 /
+ew-cyber 4. **`provenance_tags` (first-match-wins, single tag) fit a parallel-category theme POORLY** — a
+parallel theme wants MULTI-tag provenance (finding for the schema/radar; NOT built now). Handoff (triage
+worksheet.csv/.md + facts.csv + scan JSONL) written git-ignored to `~/Desktop/mosaic_defense_scan/` +
+scratchpad — **scan output is DATA, fail-closed, NOT committed.** Suite green (ruff + mypy --strict 83
+files + pytest **305**). **Local only — nothing pushed, nothing merged, main untouched.** Forward edge NOT
+claimed (an exposure scan ASSEMBLES + TIERS + surfaces evidence; the human ratifies DIRECTION and logs the
+verdict). Edge 2 stays lead horse.
+
+**CITE-CHECK GROUNDING — diagnosed MISCALIBRATED, `_fact_grounded` hardened (2026-07-02,
+`feat/theme-multi-theme-refactor`).** The defense scan raised 33 `UNGROUNDED fact-text` flags across 30
+names. Re-fetched each cited filing (no LLM, no re-scan) and split them: **0 genuine catches** (not one
+was a fabricated positive exposure claim); **all 33 were false-fails or inert none-flags.** Two root
+causes: **(b) driver-vocabulary / negation-token drift (dominant, ~24)** — the LLM's fact string names the
+driver's OWN taxonomy in its NEGATIVE reasoning ('… a dual-use listing with NO tie to attritable UAVs,
+counter-UAS, loitering munitions'), and those theme-generic tokens (`uas`, `uavs`, `counter-uas`) polluted
+the distinctive-token set and were never in the filing, so the fact false-failed even though its
+COMPANY-specific token (Wolfspeed, FlackTek, Avient…) IS grounded; **(a) number-format / scale drift
+(FEIM `$47,829K` vs a filing's `47,829`; NVEC `$446,102`)** — real figures the substring check missed on
+comma/scale form. **The 5 that fell to NONE (WKC, WOLF, TWI, OIS, GOGO) were NOT wrongly demoted** — the
+LLM ITSELF graded each fact none/not-driver (dual-use SiC, generic connectivity, fuel logistics,
+wheels-for-military, oilfield-military); the grounding demotion (conc→none) was a NO-OP and the flag was
+cosmetic. **So the defense tier shape (2 REAL / 65 committed / 41 aspirational) STANDS — no hidden REAL
+name was lost to a false grounding.** **FIX (in `_fact_grounded`, the targeted change):** (i) exclude the
+driver's OWN vocabulary (`_driver_vocab(spec)` = prefilter + provenance-tag terms) from the grounding
+tokens — a fabricated counterparty/figure is NEVER driver vocab, so genuine-catch detection is preserved;
+(ii) NORMALIZE financial figures (scale words K/M/B/thousand/million/billion + comma) before matching;
+(iii) a quantitative claim whose EVERY figure is absent fails closed (closes the fabricated-figure hole a
+pooled proper-noun match would leave open). **4 regression tests** (number/scale drift now grounds; driver-
+vocab negation now grounds; a fabricated COUNTERPARTY and a fabricated FIGURE still fail closed). Re-run
+of the 33 through the fixed check (deterministic, chunk-grounded): **26 cut, 7 residual** — the residual 7
+(AMPX, AVAV×2, ESE, ONDS, OSS, USAR) are all real revenue figures sitting in financial statements BEYOND
+the extracted business/MD&A chunk the check sees (a truncation artifact, correctly conservative,
+harmless — all already surfaced at their tier). **Would-change-tier (no re-scan): 21 pinned; the 5
+NONE-drops STAY none; NO name enters REAL; at most ~1-4 aspirational→committed (NVEC likeliest, on its
+$446K R&D revenue) — within-noise, committed is not REAL.** So a full re-scan is NOT yet warranted (waits
+until it's worth ~$400). The check's value was NOT wrong tiers but 33 noise flags eroding the flag's
+signal; the fix restores it (33→7, the 7 legible). KNOWN LIMITATION (noted, not fixed — hold scope): the
+scan DISCARDS the pre-demotion concreteness (demotion overwrites conc→none), so the exact aspirational→
+committed count can't be settled without the LLM's original grade; a future artifact could preserve it in
+the flag. Suite green (ruff + mypy --strict 83 files + pytest **309**; +4 grounding tests). **Local only —
+nothing pushed, nothing merged, main untouched.**
+
+**DEFENSE theme-#2 FROZEN into the Stage-4 forward harness — the 2nd driver's frozen record (2026-07-03,
+`feat/theme-multi-theme-refactor`).** Input: the analyst's 108-row dispositioned worksheet — validated at
+the gate (108 rows, 15-col schema intact, **all PASSED / 0 RATIFIED**, zero blank, zero DIG-DEEPER) before
+any write. **Harness generalized to be driver-agnostic** (was AI-datacenter-flavored): `records_from_worksheet`
+now schema-flexible (a demand-shaped worksheet's `category`/`grade_concreteness`/`driver_tie` map to the same
+fields the AI-datacenter one calls `chain_layer`/`machine_grade`/`grade_driver_tie`); a new **`avoid_controls`**
+cohort (labeled near-miss control ⊆ the PASSED leg); the two diagnostics' confound labels **driver-parameterized**
+(defense-beta, not hardcoded AI-datacenter-beta); a new **`naive_by_layer`** per-category split (driver-agnostic,
+complements the AI-datacenter-specific thin/obvious `layer_split`). **AI-datacenter freeze kept INTACT** —
+`avoid_controls` defaults `()`, so its frozen baskets still load; this ADDS defense, it does not replace it.
+**COHORTS frozen** (`freeze_baskets`, empty-BUY graceful): BUY(ratified)=**0** (empty, does not error) ·
+AVOID(passed)=**108** · **NAIVE-108** equal-weight (the hold-none control) · **WATCHLIST-3** = NEU / AVAV /
+PKE (re-underwrite cohort, each with its VERBATIM underwriting trigger) · **AVOID-CONTROLS-6** = LASR / MTUS /
+NPK / KRMN / AMPX / DCO (highest-value near-misses inside PASSED, a labeled control) · **REAL-tier-2** = RCAT /
+SWMR (looser secondary, the 2 binding names). NAIVE-108 category composition: defense-autonomy 48 /
+attritable-air 26 / unspecified 11 / counter-uas 7 / space-isr 6 / munitions-scale 6 / ew-cyber 4. **ZERO-RATIFIED
+emission** (mirrors AI-datacenter): every RATIFIED-dependent spread (RATIFIED−PASSED §3a, RATIFIED−NAIVE §3b-i,
+RATIFIED−screen §3b-ii) = **UNDEFINED-with-reason, never 0.0**; the two beta-confounded diagnostics
+(avoid-discipline; exposure-carry, PRIMARY = 3 genuine-exposure vs 105 other-PASSED) + the category-aware
+`naive_by_layer` accrue **forward-only from the freeze**; all **PENDING** (freeze = today → 0 days forward);
+under the HOLD_NONE honesty label (NOT an edge verdict). Onset baselines for the 3 watchlist = not-yet-stamped
+(None) — early enablers before co-movement; the live read-only Component-A confirmation is a paper-track-cadence
+step, deferred (mirrors AI-datacenter). **CROSS-DRIVER: both drivers now have frozen records** (ai-datacenter
+2026-07-02 NAIVE-56 + defense-demand-shift 2026-07-03 NAIVE-108, both zero-RATIFIED, both IWM-adjusted,
+forward-only). The **exposure-carry diagnostic is structurally POOLABLE across the two** (consistent
+protocol / genuine-exposure cohort defn / benchmark) — the first cross-theme evidence step; pooled cohort
+today = 8 genuine-exposure vs 156 other-committed — **BUT 0 days forward → all pending, and 2<4 drivers → still
+UNPOWERED**; it accrues forward, not now. Artifacts (`forward_defense_ledger.jsonl` 108 rows +
+`forward_defense_baskets.json`) **git-ignored** (scratchpad + `~/Desktop/mosaic_defense_scan/`), fail-closed like
+the scan output. +4 forward regression tests (demand-shaped schema; avoid-controls freeze + must-be-PASSED
+guard; category-aware `naive_by_layer`; driver-labelled confound). Suite green (ruff + mypy --strict 83 files +
+pytest **313**). **Local only — nothing pushed, nothing merged, main untouched.** Forward edge NOT claimed.
+
+**FIELD-NAME NEUTRALIZATION + CLI MULTI-COHORT (2026-07-03, `feat/theme-multi-theme-refactor`, after the
+rebase onto origin/main).** Two small forward-harness fixes. **(1) Neutral field names:**
+`RatificationRecord.chain_layer`→`substructure_tag`, `machine_grade`→`grade` (they hold a value-chain layer
+OR a demand-shaped capability category, not just AI-datacenter's) — with a pydantic `AliasChoices` **compat
+shim** so the reader accepts EITHER the new OR the legacy name. Both existing git-ignored freezes
+(ai-datacenter 56 + defense 108 ledger rows, written PRE-rename) still load unchanged — verified on the real
+on-disk artifacts, no re-freeze; new writes emit the neutral names. **(2) CLI multi-cohort:** `themes-forward`
+gains a `--driver` path with `--watchlist` / `--watchlist-triggers` (JSON) / `--avoid-controls` / `--real-tier`
++ a schema-flexible `layer_of` read (`chain_layer` OR `category` column), so a SECOND driver freezes in ONE
+command instead of a bespoke script — verified end-to-end: the CLI reproduces the defense script's freeze
+EXACTLY (driver, all 3 cohorts, verbatim triggers, 108/108, category `layer_of` identical). +2 forward tests
+(compat-load old+new field names; CLI multi-cohort freeze). Diff confined to `vinci/themes/forward.py` +
+`vinci/cli.py` + tests + this STATE note. Suite green (ruff + mypy --strict 85 files + pytest **410**; 24
+forward tests). **Local only — nothing pushed, nothing merged.**
+
+**THEME-EDGE HONEST DISPLAY + VERDICT-LOOP ARCHITECTURE MAPPED (2026-07-04, `feat/theme-viewer`).**
+
+*Display (BUILT + verified in preview; frontend-only).* The Overview portfolio row now splits its counts
+into TWO labeled blocks with a divider — **Verdict · analyst** (Buys, Watch — the analyst's call, primary
+styling) and **Scan · machine read** (Firm/Partial/Early/none — the machine's firmness read, muted
+inventory) — the **grade-vs-verdict fix**: the classifier's firmness read is NOT a verdict, and the UI no
+longer lets the two blur. A one-line key states it (Buys cleared the fund's ≥2:1 bar; Watch = real exposure
+that failed only on price/materiality, carries a re-underwrite trigger; Scan firm=contracted/quantified ·
+partial=real-activity-not-contracted · early=stated-intent). Watchlist cards gain a color-coded
+**firm/partial/early firmness tag** (shared `gradeBucket` helper — one source of truth for the bucketing).
+Diff: `portfolio.js` + `watchlist.js` + `format.js` + `styles.css`. Viewer stays READ-ONLY.
+
+*Buy bar = the fund's ≥2:1 reward-to-risk bar (C1),* PLUS the qualitative discipline — real (not
+label-matched) exposure + a disconfirmation attempt + the value-trap twin ruled out + assumptions fresh,
+not stale. **The "3:1" that had appeared was an UNSPECIFIED IMPORT — never the analyst's specified bar —
+now corrected.** Viewer chrome says ≥2:1; the two "3:1" mentions in this §7 (the 2026-07-02 freeze note)
+corrected to ≥2:1. **INTEGRITY DECISION — RATIFIED 2026-07-04: LEAVE AS-IS.** The committed `defense.json` /
+`ai-datacenter.json` rationales STILL contain "3:1" (e.g. RCAT/AVAV "fails 3:1") — that is **source-bound
+analyst text frozen at the 2026-07-02/03 freeze** (what the analyst wrote at the time), and those JSON are
+BUILD ARTIFACTS derived from the git-ignored backend ledger. **Do NOT re-freeze or rewrite** — the
+historical frozen text stays historical; the bar change is recorded **FORWARD only** (≥2:1 in STATE + the
+viewer key). Rewriting would falsify a frozen record (and regenerate away), and the dispositions are robust
+to the correction anyway — so it buys nothing. **Frozen verdicts
+UNCHANGED at 2:1 (verified):** RCAT's own reward/risk ~1:1 and AVAV's ~1.3:1 are both < 2:1 → both stay
+AVOID/not-buy; RCAT is `binding` (FIRM exposure) yet AVOID — the grade-vs-verdict point made concrete.
+
+*One unified BUY−AVOID spread — DESIGNED as the fund-level validation gate (C2); NOT yet built.* A1 mapped
+it. TODAY there are **TWO SEPARATE stores**, not one: (i) **Overshoot** — the SQLite decision ledger
+(`ledger/workflow.log_verdict` → a frozen `LedgerEntry`, KEYED to a screen `candidate_id`; scored by
+`scoring/harness.score_ledger` → `ScoreReport.buy_avoid_spread`, per-sector; mirrored to
+`decision_ledger.jsonl` for the read-only Decision log). (ii) **Theme edge** — git-ignored
+`forward_{driver}_*` JSONL (`themes/forward.RatificationRecord` is a TRIAGE disposition RATIFIED/PASSED, NOT
+a BUY/AVOID verdict; `measure_hold_none` is an exposure-carry DIAGNOSTIC, every RATIFIED-spread UNDEFINED at
+0 buys). Different store, schema, and scorer. The TARGET: ONE BUY−AVOID spread fed by BOTH edges, each
+verdict **tagged by source** (overshoot | theme · driver · trigger), filterable by source — the fund-level
+gate.
+
+*Theme-edge verdict-recording method — A2 RATIFIED + LOCKED SPEC (2026-07-04); DEFERRED, not built
+(build-to-evidence).* The design is ratified but **deliberately NOT built** now. A2 WIDENS the append-only
+decision ledger that Overshoot's LIVE spread depends on; build-to-evidence says do not touch the live
+validation gate speculatively for a capability whose FIRST USE is quarters out (0 buys today = nothing has
+cleared the bar; the loop being "open" is the honest state, and the viewer says so). **UNLOCK TRIGGER:**
+implement ALONGSIDE the monitor build (the delta-scan that fires watchlist triggers) OR when the first
+watchlist trigger actually approaches — see §4. **THE LOCKED SPEC (implement verbatim):** (1) **`LedgerEntry`**
+— add `source` (theme · driver · trigger); make `candidate_id` **OPTIONAL** (theme names are not screen
+candidates, so `store.get_candidate` must NOT be required); add `driver` + `trigger`. **Append-only
+preserved — the schema is WIDENED, entries are never rewritten.** (2) **Verdict enum** — a theme AVOID is a
+**NEW value (e.g. `AVOID_PRICED`), NOT `AVOID_TERMINAL`**: a theme rejection (real exposure, but priced /
+immaterial / value-trap) is a different judgment than an overshoot being terminal; reusing `AVOID_TERMINAL`
+would be semantically wrong. (3) **Price freeze (NON-NEGOTIABLE anti-hindsight)** — entry price stamped **AT
+RECORD-TIME from real data**: reuse the Store's EOD bars if the theme name is already in price coverage, else
+ingest at record-time. **NEVER backfill or reconstruct a price after the fact** — a hindsight entry price
+silently poisons the spread. (4) **Scoring** — add source-tagged aggregation (`spread_by_source`) to
+`score_ledger` / `ScoreReport`, mirroring `spread_by_sector`. (5) **Pooling** — ONE unified BUY−AVOID spread,
+source-filterable: **unified by DEFAULT** (the honest fund-level gate; pooled reaches significance faster),
+with a source filter to see each edge's contribution. **The theme-edge loop stays OPEN until A2 is built**
+(watchlist trigger → re-underwrite → recorded verdict → the unified spread — the closing step, deferred to
+the monitor build). Viewer stays read-only + CLI-only logging.
+
+Suite green (ruff + mypy --strict 85 files + pytest **415**; no Python touched this task — display is
+frontend, the rest is STATE + the A1 map). **Local only — nothing pushed, nothing merged; deploy config
+(`functions/_middleware.js`, `wrangler.toml`) untouched.**

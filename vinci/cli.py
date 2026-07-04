@@ -482,6 +482,251 @@ def _cmd_graph_exposure(args: argparse.Namespace) -> int:
     return 0
 
 
+def _cmd_themes(args: argparse.Namespace) -> int:
+    """Component A: residual co-movement theme detection on the broad universe (assembles, never
+    concludes).
+
+    PROPOSES candidate clusters + their candidate shared-linkage + §7.1 strength signals for the
+    analyst to judge (criterion 1). It does NOT name a driver, rank themes, confirm, or select.
+    """
+    from vinci.themes import FactorBasis, detect_themes, render_result
+
+    cfg = get_config()
+    cfg.ensure_dirs()
+    ref = date.fromisoformat(args.ref) if args.ref else None
+    basis = FactorBasis.MARKET_SECTOR if args.basis == "r1" else FactorBasis.FULL
+    result = detect_themes(
+        cfg, reference_date=ref, window_days=args.window_days, basis=basis,
+        min_breadth=args.min_breadth, max_names=args.max_names, progress=stderr_reporter,
+    )
+    print(render_result(result, top=args.top))
+    if not args.no_write:
+        out = cfg.snapshots_dir / "candidate_themes.jsonl"
+        with out.open("w") as f:
+            for t in result.candidate_themes:
+                f.write(t.model_dump_json() + "\n")
+        print(f"\nwrote {out} ({len(result.candidate_themes)} admissible candidate themes)")
+    return 0
+
+
+def _cmd_themes_stage2(args: argparse.Namespace) -> int:
+    """Components B+C: theme-type signals + megacap confirmation over A's candidate themes.
+
+    ASSEMBLES and PRESENTS: the candidate >$10B leaders (analyst ratifies), the theme-type signals
+    (price-pattern / vol-strip-survival / historical-analog / defer), and the confirmation grid
+    (Part-7 thresholds × Finding-2 dual benchmark). It renders no type verdict and fires nothing.
+    """
+    from vinci.themes.render import render_stage2
+    from vinci.themes.stage2 import analyze_stage2
+
+    cfg = get_config()
+    cfg.ensure_dirs()
+    ref = date.fromisoformat(args.ref) if args.ref else None
+    llm = None
+    if not args.no_llm:
+        from vinci.graph.llm import AnthropicLlmClient
+
+        try:
+            llm = AnthropicLlmClient.from_config(cfg)
+        except Exception as exc:  # noqa: BLE001 — degrade to no-analog, never crash the CLI
+            print(f"LLM unavailable ({exc}) — historical analog skipped")
+    results = analyze_stage2(
+        cfg, reference_date=ref, window_days=args.window_days, max_names=args.max_names,
+        llm=llm, progress=stderr_reporter,
+    )
+    print(f"=== Theme Stage 2 (B+C) · {len(results)} themes (A untouched; leaders read-only) ===\n")
+    shown = results if args.top is None else results[: args.top]
+    for s2 in shown:
+        print(render_stage2(s2))
+        print()
+    return 0
+
+
+def _cmd_themes_exposure(args: argparse.Namespace) -> int:
+    """Stage-3 build-2: scan the sub-$10B universe for DISCLOSED exposure to ONE driver — the AI-
+    datacenter VALUE CHAIN (chips→HBM→packaging→thermal→power→optical→cloud) — reading each name's
+    recent filing stream through the fenced, precision-fixed classifier. WIDE funnel: surfaces every
+    name with ANY chain-attributable signal, with legible provenance (grade / driver-tie / layer
+    / verbatim fact + source_ref). Never concludes/ranks/selects — NO machine confidence score; the
+    human triages. The VOLUME (by type + chain layer) is the first-class output."""
+    import json
+    from collections import Counter
+    from datetime import timedelta
+    from pathlib import Path
+
+    from vinci.edgar import EdgarClient
+    from vinci.graph.llm import AnthropicLlmClient
+    from vinci.sec import build_efts_http, build_sec_http
+    from vinci.themes import detection as det
+    from vinci.themes.drivers import AI_DATACENTER
+    from vinci.themes.exposure import (
+        grade_driving_fact,
+        is_real_exposure,
+        provenance_tag_of,
+        scan_driver_exposure,
+    )
+    from vinci.themes.schemas import ExposureBasis
+
+    _layers = AI_DATACENTER.provenance_tags  # theme's by-tag provenance map (chain layers here)
+
+    def _tag(fact_text: str) -> str:
+        return provenance_tag_of(fact_text, _layers)
+
+    cfg = get_config()
+    cfg.ensure_dirs()
+    universe, snap = det.load_detection_universe(cfg)
+    if args.max_names:
+        universe = universe[: args.max_names]
+    names = [(n.ticker, str(n.cik).zfill(10)) for n in universe if n.cik]
+    ref = date.fromisoformat(args.ref) if args.ref else snap
+    startdt = (ref - timedelta(days=args.window_days)).isoformat()
+    matched, results = scan_driver_exposure(
+        AI_DATACENTER, names,
+        edgar=EdgarClient.from_config(cfg), sec_http=build_sec_http(cfg),
+        efts_http=build_efts_http(cfg), llm=AnthropicLlmClient.from_config(cfg),
+        startdt=startdt, enddt=ref.isoformat(), max_workers=args.workers, progress=stderr_reporter,
+    )
+    if args.out:  # audit-grade persistence — the full model_dump (facts + source_refs), no re-run
+        Path(args.out).write_text(
+            "\n".join(json.dumps(a.model_dump(mode="json")) for a in results))
+        print(f"wrote {len(results)} full assessments (audit-grade) → {args.out}")
+
+    # THE VOLUME — the first-class deliverable (input to the DOWNSTREAM calibration decision, NOT
+    # decided here). WIDE funnel: every name with ANY chain-attributable signal (basis != none) is
+    # surfaced; the human triages by reading the legible provenance — NO machine confidence/rank.
+    tiers = [ExposureBasis.BINDING_CONTRACTS, ExposureBasis.QUANTIFIED_REVENUE,
+             ExposureBasis.COMMITTED_CAPACITY, ExposureBasis.ASPIRATIONAL]
+    dist = Counter(a.exposure_basis for a in results)
+    surfaced = [a for a in results if a.exposure_basis is not ExposureBasis.NONE_DISCLOSED]
+    layers = Counter(_tag(f.fact) for a in surfaced if (f := grade_driving_fact(a)))
+    errs = [a for a in results if any("error:" in fl.lower() for fl in a.flags)]
+    print("\n=== Stage-3 build-2 · AI-datacenter VALUE-CHAIN universe scan ===")
+    print(f"universe {len(names)} · {len(matched)} mention-candidates · {len(results)} assessed "
+          f"· {len(errs)} scan-errors (recall gap, logged)")
+    print(f"\nVOLUME by exposure-type — the wide funnel, {len(surfaced)} surfaced:")
+    for b in tiers:
+        print(f"  {b.value:32} {dist.get(b, 0)}")
+    print(f"  {'(no chain exposure disclosed)':32} {dist.get(ExposureBasis.NONE_DISCLOSED, 0)}")
+    print(f"\nVOLUME by chain layer — of the {len(surfaced)} surfaced:")
+    for layer, n in layers.most_common():
+        print(f"  {layer:22} {n}")
+    real = [a for a in surfaced if is_real_exposure(a)]
+    committed = [a for a in surfaced if a.exposure_basis is ExposureBasis.COMMITTED_CAPACITY]
+    print(f"\nREAL — binding/quantified ({len(real)}); contract-type flags are the NOISY tier "
+          "(weight for review), revenue-type verified more cleanly:")
+    for a in sorted(real, key=lambda x: x.exposure_basis.value):
+        f = grade_driving_fact(a)
+        if f:
+            print(f"  {a.ticker:6} [{a.exposure_basis.value}] <{_tag(f.fact)}> "
+                  f"{f.driver_tie.value}: {f.fact[:120]}")
+            print(f"         source: {f.source_ref}")
+    print(f"\nCOMMITTED-capacity — borderline, capex/MW toward the driver ({len(committed)}):")
+    for a in sorted(committed, key=lambda x: x.ticker):
+        f = grade_driving_fact(a)
+        if f:
+            print(f"  {a.ticker:6} <{_tag(f.fact)}> {f.driver_tie.value}: {f.fact[:105]}")
+    print(f"\n(+ {dist.get(ExposureBasis.ASPIRATIONAL, 0)} at the INTENT tier — surfaced, soft on "
+          "their face; full provenance in --out. Volume decides the downstream calibration need.)")
+    return 0
+
+
+def _cmd_themes_forward(args: argparse.Namespace) -> int:
+    """Stage-4 forward-validation harness: load the analyst's dispositioned committed-tier worksheet
+    into the append-only ratification ledger, report disposition status, and — once EVERY name is
+    RATIFIED/PASSED — freeze the baskets and (with --measure) measure the two co-primary spreads
+    forward, layer-aware + power-labelled. It LOGS + MEASURES human decisions; it never
+    selects/ranks/promotes a grade to a hold (§6 dead-signal firewall). Awaits real dispositions."""
+    import csv
+    import json
+    from collections import Counter
+    from datetime import date
+    from pathlib import Path
+
+    from vinci.themes import forward as fwd
+
+    def _csv_list(s: str | None) -> list[str]:
+        return [t.strip() for t in (s or "").split(",") if t.strip()]
+
+    driver = args.driver
+    ws, ledger = Path(args.worksheet), Path(args.ledger)
+    with open(ws) as fh:
+        rows = list(csv.DictReader(fh))
+    all_committed = [r["ticker"] for r in rows]
+    # schema-flexible: the AI-datacenter worksheet has a 'chain_layer' column; a demand-shaped one
+    # (e.g. defense) has 'category' — either populates the neutral substructure tag
+    layer_of = {r["ticker"]: (r.get("chain_layer") or r.get("category", "")) for r in rows}
+    ratify_date = date.fromisoformat(args.ratify_date) if args.ratify_date else date.today()
+    records, pending = fwd.records_from_worksheet(ws, driver=driver, ratification_date=ratify_date)
+    for rec in records:  # append-only: log each dispositioned row (a correction is a new row)
+        fwd.append_record(ledger, rec)
+    counts = Counter(r.disposition.value for r in records)
+    print(f"\n=== Stage-4 forward-validation harness · {driver} ===")
+    print(f"worksheet {ws}\nledger {ledger} (append-only)")
+    print(f"committed {len(all_committed)} · dispositioned {len(records)} {dict(counts)} · "
+          f"PENDING {pending}")
+    dig = [r.ticker for r in records if r.disposition is fwd.Disposition.DIG_DEEPER]
+    if pending or dig:
+        print(f"\nNOT READY — {pending} pending + {len(dig)} DIG-DEEPER; every name must be "
+              "RATIFIED/PASSED before freezing. Real logging + measurement await triage.")
+        return 0
+    freeze_ts = date.today().isoformat() + "T00:00:00"
+    # cohorts (a SECOND driver now freezes in one command, no bespoke script): --watchlist is the
+    # genuine-exposure re-underwrite cohort (falls back to --exposure-names); it also serves as the
+    # exposure-carry (diagnostic-2) cohort. --avoid-controls / --real-tier / --watchlist-triggers
+    # (a JSON {ticker: trigger}) are optional.
+    watchlist = _csv_list(args.watchlist) or _csv_list(args.exposure_names)
+    avoid_controls = _csv_list(args.avoid_controls)
+    real_tier = _csv_list(args.real_tier)
+    triggers = json.loads(Path(args.watchlist_triggers).read_text()) if args.watchlist_triggers \
+        else None
+    baskets = fwd.freeze_baskets(
+        records, all_committed, driver=driver, freeze_timestamp=freeze_ts, layer_of=layer_of,
+        watchlist=watchlist or None, watchlist_triggers=triggers,
+        avoid_controls=avoid_controls or None, real_tier=real_tier or None)
+    if args.baskets_out:
+        Path(args.baskets_out).write_text(baskets.model_dump_json(indent=1))
+    print(f"\nFROZEN: {len(baskets.ratified)} RATIFIED (BUY) · {len(baskets.passed)} PASSED "
+          f"(AVOID) · {len(baskets.all_committed)} equal-weight naive baseline (§3b-i)")
+    if baskets.watchlist:
+        print(f"WATCHLIST (re-underwrite cohort): {list(baskets.watchlist)}")
+    if baskets.avoid_controls:
+        print(f"AVOID-CONTROLS (near-miss control, within PASSED): {list(baskets.avoid_controls)}")
+    if baskets.real_tier:
+        print(f"REAL-tier secondary: {list(baskets.real_tier)}")
+    print(f"deferred control: {baskets.deferred_controls[0]}")
+    if not args.measure:
+        return 0
+    from vinci.eod.client import PolygonEodClient
+    price_fn = fwd.eod_close_fn(PolygonEodClient.from_config(get_config()))
+    as_of = date.fromisoformat(args.as_of) if args.as_of else date.today()
+    horizons = [int(h) for h in args.horizons.split(",")]
+    if not baskets.ratified:  # EMPTY BUY (zero RATIFIED) — hold-none path, NEVER RATIFIED-dependent
+        print("\n" + fwd.HOLD_NONE_HONESTY)
+        for h in horizons:
+            hn = fwd.measure_hold_none(baskets, exposure_names=watchlist, price_fn=price_fn,
+                                       horizon_days=h, as_of=as_of)
+            print(f"\n--- @ {hn.horizon_days}d (as_of {hn.as_of}) ---")
+            print(f"  UNDEFINED (zero RATIFIED, not computed): "
+                  f"{[m for m, _ in hn.undefined_measures]}")
+            print(f"  DIAGNOSTIC-1 avoid-discipline: {hn.avoid_discipline.detail}")
+            print(f"  DIAGNOSTIC-2 exposure-carry (primary): {hn.exposure_carry.detail}")
+            print("  CATEGORY-AWARE naive_by_layer (driver-agnostic):")
+            for lr in hn.naive_by_layer:
+                val = "pending" if lr.mean_return is None else f"{lr.mean_return:+.1%}"
+                print(f"    {lr.layer:20} {val:>8} (n={lr.n})")
+        return 0
+    for rep in fwd.measure(baskets, price_fn=price_fn, horizons_days=horizons, as_of=as_of):
+        print(f"\n--- @ {rep.horizon_days}d (as_of {rep.as_of}) · POWER [{rep.power.label}] "
+              f"{rep.power.note} ---")
+        for ls in (rep.pooled, *rep.by_layer):
+            rmp = "n/a" if ls.ratified_minus_passed is None else f"{ls.ratified_minus_passed:+.1%}"
+            rmn = "n/a" if ls.ratified_minus_naive is None else f"{ls.ratified_minus_naive:+.1%}"
+            print(f"  {ls.scope:20} RAT-PASSED={rmp:>7} RAT-NAIVE={rmn:>7} [{ls.state}] "
+                  f"(n_rat={ls.n_ratified} n_pass={ls.n_passed})")
+        print(f"  partial-kill (§3c): {rep.partial_kill_scopes or '() none'}")
+    return 0
+
+
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(prog="vinci", description=__doc__)
     sub = parser.add_subparsers(dest="command", required=True)
@@ -618,6 +863,102 @@ def build_parser() -> argparse.ArgumentParser:
     p_exp.add_argument("--entity", required=True, help="ticker or company name of the shocked node")
     p_exp.add_argument("--hops", type=int, default=2, help="reachability radius (default: 2)")
     p_exp.set_defaults(func=_cmd_graph_exposure)
+
+    p_themes = sub.add_parser(
+        "themes",
+        help="Component A: residual co-movement theme detection (proposes; never concludes)",
+    )
+    p_themes.add_argument(
+        "--ref", help="reference date YYYY-MM-DD (default: universe snapshot as_of)"
+    )
+    p_themes.add_argument(
+        "--window-days", type=int, default=365, dest="window_days",
+        help="trailing detection window in calendar days (default: 365 ≈ 12mo)",
+    )
+    p_themes.add_argument(
+        "--basis", choices=("r1", "r2"), default="r2",
+        help=(
+            "residualization basis: r1=market+sector, r2=+size+vol "
+            "(default; the vol-strip is the lever)"
+        ),
+    )
+    p_themes.add_argument(
+        "--min-breadth", type=int, default=3, dest="min_breadth",
+        help="cluster-size floor — a basket, not a pair (default: 3, face-validity)",
+    )
+    p_themes.add_argument(
+        "--max-names", type=int, dest="max_names", help="cap the universe (quick dev sample)"
+    )
+    p_themes.add_argument("--top", type=int, help="limit admissible themes printed (default: all)")
+    p_themes.add_argument(
+        "--no-write", action="store_true", dest="no_write",
+        help="print only; do not write candidate_themes.jsonl",
+    )
+    p_themes.set_defaults(func=_cmd_themes)
+
+    p_s2 = sub.add_parser(
+        "themes-stage2",
+        help="Components B+C: theme-type signals + megacap confirmation (proposes; never decides)",
+    )
+    p_s2.add_argument("--ref", help="reference date YYYY-MM-DD (default: universe snapshot as_of)")
+    p_s2.add_argument(
+        "--window-days", type=int, default=365, dest="window_days",
+        help="trailing window in calendar days (default: 365 ≈ 12mo)",
+    )
+    p_s2.add_argument("--max-names", type=int, dest="max_names", help="cap the universe (dev)")
+    p_s2.add_argument("--top", type=int, help="limit themes printed (default: all)")
+    p_s2.add_argument(
+        "--no-llm", action="store_true", dest="no_llm",
+        help="skip the LLM historical-analog (B); compute everything else",
+    )
+    p_s2.set_defaults(func=_cmd_themes_stage2)
+
+    p_exp = sub.add_parser(
+        "themes-exposure",
+        help="Stage-3 build-1: semantic-primary exposure scan for the AI-datacenter driver "
+        "(assesses disclosed exposure from filings; never concludes)",
+    )
+    p_exp.add_argument("--ref", help="reference date YYYY-MM-DD (default: snapshot as_of)")
+    p_exp.add_argument(
+        "--window-days", type=int, default=290, dest="window_days",
+        help="recent disclosure window in days (default: 290 ≈ 9.5mo)",
+    )
+    p_exp.add_argument("--max-names", type=int, dest="max_names", help="cap the universe (dev)")
+    p_exp.add_argument("--workers", type=int, default=6, help="concurrent LLM workers (default: 6)")
+    p_exp.add_argument("--out", help="write full model_dump JSONL (audit-grade persistence)")
+    p_exp.set_defaults(func=_cmd_themes_exposure)
+
+    p_fwd = sub.add_parser(
+        "themes-forward",
+        help="Stage-4 forward-validation: log dispositions, freeze baskets, measure spreads",
+    )
+    p_fwd.add_argument("--worksheet", required=True,
+                       help="committed_review_worksheet.csv (with the analyst's dispositions)")
+    p_fwd.add_argument("--ledger", required=True, help="append-only ratification ledger JSONL path")
+    p_fwd.add_argument("--ratify-date", dest="ratify_date",
+                       help="ratification date YYYY-MM-DD (default: today)")
+    p_fwd.add_argument("--baskets-out", dest="baskets_out", help="write frozen baskets JSON")
+    p_fwd.add_argument("--measure", action="store_true",
+                       help="after freeze, measure the spreads forward (Polygon EOD, read-only)")
+    p_fwd.add_argument("--as-of", dest="as_of", help="measurement as-of YYYY-MM-DD (default today)")
+    p_fwd.add_argument("--horizons", default="30,90,180,365",
+                       help="comma-separated forward horizons in days (default: 30,90,180,365)")
+    p_fwd.add_argument("--exposure-names", dest="exposure_names",
+                       help="comma tickers: the genuine-exposure watchlist / exposure-carry cohort "
+                            "(empty-BUY diagnostic 2). Back-compat alias for --watchlist.")
+    p_fwd.add_argument("--driver", default="AI-datacenter value chain",
+                       help="driver label to freeze under (default: 'AI-datacenter value chain'; "
+                            "e.g. 'defense-demand-shift' for theme #2)")
+    p_fwd.add_argument("--watchlist",
+                       help="comma tickers: genuine-exposure re-underwrite cohort (also the "
+                            "exposure-carry cohort); must be ⊆ the committed tier")
+    p_fwd.add_argument("--watchlist-triggers", dest="watchlist_triggers",
+                       help="path to a JSON object {ticker: verbatim trigger} for the watchlist")
+    p_fwd.add_argument("--avoid-controls", dest="avoid_controls",
+                       help="comma tickers: near-miss control cohort; must be ⊆ the PASSED leg")
+    p_fwd.add_argument("--real-tier", dest="real_tier",
+                       help="comma tickers: looser REAL-tier secondary cohort (clearly labeled)")
+    p_fwd.set_defaults(func=_cmd_themes_forward)
     return parser
 
 

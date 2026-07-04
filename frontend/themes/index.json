@@ -1,0 +1,93 @@
+{
+ "drivers": [
+  {
+   "slug": "ai-datacenter",
+   "label": "AI-datacenter",
+   "freezeDate": "2026-07-02",
+   "ratifiedCount": 0,
+   "surfacedCount": 450,
+   "frozenCount": 56,
+   "watchlistCount": 5,
+   "tierShape": {
+    "binding": 4,
+    "quantified": 3,
+    "committed": 56,
+    "aspirational": 387,
+    "none": 1100,
+    "surfaced": 450,
+    "universe": 1550
+   },
+   "frozenTiers": {
+    "firm": 0,
+    "partial": 56,
+    "early": 0
+   }
+  },
+  {
+   "slug": "defense",
+   "label": "Defense demand-shift",
+   "freezeDate": "2026-07-03",
+   "ratifiedCount": 0,
+   "surfacedCount": 108,
+   "frozenCount": 108,
+   "watchlistCount": 3,
+   "tierShape": {
+    "binding": 2,
+    "quantified": 0,
+    "committed": 65,
+    "aspirational": 41,
+    "none": 1575,
+    "surfaced": 108,
+    "universe": 1683
+   },
+   "frozenTiers": {
+    "firm": 2,
+    "partial": 65,
+    "early": 41
+   }
+  }
+ ],
+ "crossDriver": {
+  "driversFrozen": 2,
+  "totalRatified": 0,
+  "totalWatchlist": 8,
+  "line": "2 themes in snapshot; exposure-carry diagnostic poolable but UNPOWERED (2 < 4 themes)."
+ },
+ "pooledForward": {
+  "totalBuys": 0,
+  "totalWatchlist": 8,
+  "powerFloor": {
+   "themes": 2,
+   "needed": 4,
+   "pct": 50,
+   "label": "2 of ~4-5 themes \u2014 unpowered"
+  },
+  "undefinedMeasures": [
+   [
+    "RATIFIED-PASSED (\u00a73a, the core edge-measure)",
+    "no BUY leg \u2014 zero RATIFIED; requires a ratified cohort that does not exist"
+   ],
+   [
+    "RATIFIED-NAIVE(equal-weight) (\u00a73b-i)",
+    "no BUY leg \u2014 zero RATIFIED; requires a ratified cohort that does not exist"
+   ],
+   [
+    "RATIFIED vs keyword/co-movement screen (\u00a73b-ii, deferred)",
+    "no BUY leg \u2014 zero RATIFIED; requires a ratified cohort that does not exist"
+   ]
+  ],
+  "honestyLabel": "No BUY leg exists (zero RATIFIED) -> the core edge-measure (RATIFIED-PASSED) and all RATIFIED-dependent spreads are UNDEFINED and NOT computed. The outputs below are AVOID-discipline and exposure-carry DIAGNOSTICS, beta-confounded, and are NOT a validation of the semantic-primary edge.",
+  "diagnostics": [
+   {
+    "name": "exposure-carry",
+    "status": "PENDING",
+    "note": "genuine-exposure vs other-PASSED divergence, pooled across themes \u2014 PARTIALLY beta-controlled; the more informative of the two; pending forward."
+   },
+   {
+    "name": "avoid-discipline",
+    "status": "PENDING",
+    "note": "was declining to buy the committed tier costly or vindicated, pooled \u2014 beta-confounded; pending forward."
+   }
+  ]
+ }
+}

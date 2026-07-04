@@ -216,6 +216,94 @@ table.data tr.median-row td { border-top: 1.5px solid var(--line-2); font-style:
 
 .error { background: var(--danger-bg); border: 1px solid #eecac6; color: var(--danger); border-radius: var(--r); padding: 12px 15px; font-size: 13px; }
 
+/* --- edge top-tabs (an edge's stages render as tabs across the content, not a 2nd rail) --- */
+.edge-head { margin-bottom: 16px; border-bottom: 1px solid var(--line); }
+.edge-head .page-h { margin-bottom: 10px; }
+.tabs { display: flex; gap: 4px; flex-wrap: wrap; }
+.tab { padding: 8px 13px; font-size: 13px; color: var(--ink-2); border-bottom: 2px solid transparent; margin-bottom: -1px; white-space: nowrap; }
+.tab:hover { color: var(--ink); text-decoration: none; }
+.tab.active { color: var(--accent); border-bottom-color: var(--accent); font-weight: 600; }
+.stage-sub { margin-bottom: 16px; max-width: 760px; }
+.stage-sub .subtitle { margin-top: 0; }
+
+/* --- grade key / legend — ONE inline line per screen that uses grade tiers --- */
+.grade-key { display: flex; flex-wrap: wrap; gap: 4px 14px; font-size: 11.5px; color: var(--ink-3); margin-bottom: 14px; padding: 9px 13px; background: var(--surface-2); border: 1px solid var(--line); border-radius: var(--r); }
+.grade-key .gk { white-space: nowrap; }
+.grade-key b { color: var(--ink-2); font-weight: 600; }
+
+/* --- expandable table row (progressive disclosure — detail behind the row) --- */
+table.data tr.exp { cursor: pointer; }
+table.data tr.exp:hover td { background: var(--surface-2); }
+table.data tr.exp .caret { color: var(--ink-3); font-size: 10px; display: inline-block; width: 11px; }
+table.data tr.exp.open .caret { transform: rotate(90deg); }
+table.data tr.det > td { background: var(--surface-2); padding: 4px 12px 14px 32px; font-size: 12.5px; color: var(--ink-2); line-height: 1.55; }
+table.data tr.det .k { font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em; color: var(--ink-3); display: block; margin: 6px 0 2px; }
+
+/* --- driver-filter dropdown (scales to N themes; replaces the pill row) --- */
+.filter-select { padding: 7px 10px; border: 1px solid var(--line-2); border-radius: 8px; font-size: 13px; font-family: var(--sans); background: var(--surface); color: var(--ink); }
+
+/* --- portfolio: DRILLABLE tier counts (the counts ARE the affordance) --- */
+.tier-count { font-family: var(--mono); font-weight: 650; font-size: 16px; }
+a.tier-count { color: var(--accent); }
+a.tier-count:hover { text-decoration: underline; }
+.tier-count.zero { color: var(--ink-3); font-weight: 400; }
+
+/* --- B1: Overview verdict/scan split — two labeled column blocks (verdict primary, scan muted) --- */
+.vs-table th.num { text-align: right; }
+.vs-table th.grp { text-align: center; font-size: 10px; text-transform: uppercase; letter-spacing: 0.06em; font-weight: 700; padding-bottom: 2px; }
+.vs-table th.grp-verdict { color: var(--ink); }
+.vs-table th.grp-scan { color: var(--ink-3); font-weight: 600; }
+.vs-table .scan-first { border-left: 2px solid var(--line-2); }
+.vs-table td.v-num { font-weight: 650; font-size: 15px; color: var(--ink); }
+.vs-table td.scan-num { color: var(--ink-3); }
+.vs-table td.scan-num .tier-count { font-size: 13px; }
+.vs-key { font-size: 11.5px; color: var(--ink-2); background: var(--surface-2); border: 1px solid var(--line); border-radius: var(--r); padding: 9px 13px; margin-bottom: 14px; display: flex; flex-direction: column; gap: 6px; }
+.vs-key-row { display: flex; gap: 9px; align-items: baseline; flex-wrap: wrap; }
+.vs-key-tag { flex: none; font-size: 10px; text-transform: uppercase; letter-spacing: 0.05em; font-weight: 700; padding: 1px 8px; border-radius: 999px; }
+.vs-key-tag.verdict { background: #eaf1fb; color: #185fa5; }
+.vs-key-tag.scan { background: var(--surface); color: var(--ink-3); border: 1px solid var(--line-2); }
+.vs-key b { color: var(--ink); font-weight: 600; }
+
+/* --- B2: watchlist firmness bucket tag (firm/partial/early), color-coded by firmness --- */
+.gt { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em; padding: 1px 7px; border-radius: 999px; white-space: nowrap; }
+.gt.firm { background: var(--live-bg); color: #16713e; }
+.gt.partial { background: var(--conditional-bg); color: var(--conditional); }
+.gt.early { background: var(--surface-2); color: var(--ink-3); border: 1px solid var(--line-2); }
+.gt.none { background: var(--surface-2); color: var(--ink-3); }
+
+/* --- theme detail: the WATCH card leads as verdict/primary (accent), the scan tiers follow --- */
+.card.metric.verdict-card { border-left: 3px solid var(--accent); }
+.card.metric.verdict-card h3 { color: var(--accent); }
+.card.metric.verdict-card .tier-count { color: var(--accent); }
+
+/* --- compact pooled/honest strip (portfolio header) — headline honesty visible, detail on demand --- */
+.pooled-strip { border: 1px solid #ecdcae; background: linear-gradient(180deg, #fffdf7, #fcfaf2); border-radius: var(--r); padding: 12px 16px; margin-bottom: 16px; }
+.ps-row { display: flex; justify-content: space-between; align-items: center; gap: 16px 20px; flex-wrap: wrap; }
+.ps-tag { font-size: 10px; text-transform: uppercase; letter-spacing: 0.07em; color: var(--conditional); font-weight: 700; }
+.ps-buys { font-size: 21px; font-family: var(--mono); font-weight: 650; letter-spacing: -0.01em; }
+.ps-sub { font-size: 12.5px; color: var(--ink-2); margin-left: 8px; }
+.ps-why { margin-top: 11px; border-top: 1px solid #efe6cf; padding-top: 9px; }
+.ps-why > summary { cursor: pointer; font-size: 12px; color: var(--ink-2); list-style: none; }
+.ps-why > summary::-webkit-details-marker { display: none; }
+.ps-why > summary::before { content: "▸"; color: var(--ink-3); margin-right: 5px; }
+.ps-why[open] > summary::before { content: "▾"; }
+.ps-why-body { margin-top: 10px; }
+
+/* --- watchlist: collapsible per-theme sections + COLLAPSED trigger-led rows (rationale on demand) --- */
+.wl-section { margin-bottom: 18px; }
+.wl-section > summary { cursor: pointer; font-size: 15px; font-weight: 650; padding: 6px 0; border-bottom: 1px solid var(--line); list-style: none; }
+.wl-section > summary::-webkit-details-marker { display: none; }
+.wl-section > summary::before { content: "▸"; color: var(--ink-3); font-size: 11px; margin-right: 6px; }
+.wl-section[open] > summary::before { content: "▾"; }
+.wl-section-body { margin-top: 10px; }
+.wl-row { border: 1px solid var(--line); border-radius: var(--r); padding: 10px 13px; margin-bottom: 8px; background: var(--surface); }
+.wl-top { display: flex; gap: 8px; align-items: baseline; flex-wrap: wrap; }
+.wl-trigger { margin-top: 7px; font-size: 13px; line-height: 1.5; color: var(--ink); border-left: 3px solid var(--conditional); padding-left: 11px; }
+.wl-trigger .k { display: block; font-size: 10.5px; text-transform: uppercase; letter-spacing: 0.05em; color: var(--conditional); font-weight: 600; margin-bottom: 3px; }
+.wl-why { margin-top: 8px; }
+.wl-why > summary { cursor: pointer; font-size: 11.5px; color: var(--ink-3); }
+.wl-why-body { margin-top: 6px; font-size: 12.5px; color: var(--ink-2); line-height: 1.5; }
+
 /* --- dossier viewer ------------------------------------------------------ */
 /* header carries the ticker block on the left and the Download-PDF action on the right */
 .ds-header { display: flex; align-items: flex-start; justify-content: space-between; gap: 18px; flex-wrap: wrap; }

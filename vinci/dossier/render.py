@@ -637,8 +637,12 @@ def _covenant_value_lead(label: str, raw: str) -> str:
         margin = _labelled_rate(raw, r"\bMargin\b|\bPlus\s+\d+\s*bps\b",
                                 r"(?:Applicable\s+)?Margin\b[^.;%\d]{0,4}(\d+(?:\.\d+)?%|\d+\s*bps)"
                                 r"|\bPlus\s+(\d+\s*bps)\b")
-        floor = _labelled_rate(raw, r"\bFloor\b", r"\bFloor\b[^.;%\d]{0,4}(\d+(?:\.\d+)?%)")
-        pik = _labelled_rate(raw, r"\bPIK\b", r"(\d+(?:\.\d+)?%)[^.;]{0,40}?\bPIK\b")
+        # (audit) tolerate an interposition ('Floor (Term SOFR) = 3.00%') and PIK on EITHER side of
+        # the % ('PIK Interest: 3.75%' or '3.75% … (PIK)') — a re-assembly re-phrases these and the
+        # composite-or-none rule would otherwise drop the WHOLE interest lead.
+        floor = _labelled_rate(raw, r"\bFloor\b", r"\bFloor\b[^.;%]{0,25}?(\d+(?:\.\d+)?%)")
+        pik = _labelled_rate(raw, r"\bPIK\b", r"\bPIK\b[^.;]{0,40}?(\d+(?:\.\d+)?%)"
+                             r"|(\d+(?:\.\d+)?%)[^.;]{0,40}?\bPIK\b")
         if margin is None or floor is None or pik is None:
             return ""  # a labelled component was unextractable → full-composite-or-none
         lead = base.group(0) + (f" + {margin}" if margin else "")
