@@ -192,11 +192,19 @@ def _guidance_bridge_lines(cp: Any) -> list[str]:
                   rows_s.source_ref, cols, rows)
 
 
-def _abs_delta(e: Any) -> float:
+# (T3) headline metric PRIORITY — each tuple is the substrings a metric must contain (all of them).
+_HEADLINE_PRIORITY: tuple[tuple[str, ...], ...] = (("ebitda",), ("revenue",), ("eps", "normal"))
+
+
+def _pct_delta(e: Any) -> float:
+    """(T3) |%Δ| of a revision — |current − prior| / |prior|; -1 when either side is non-numeric or
+    prior is 0. Cross-metric RAW deltas are unit-incoherent, so the headline ranks on |%Δ|, never
+    raw |Δ| (a big-number Revenue move would otherwise always outrank a bigger-% EBITDA cut)."""
     try:
-        return abs(float(e.broker_current) - float(e.broker_prior))
+        prior, cur = float(e.broker_prior), float(e.broker_current)
     except (ValueError, TypeError):
         return -1.0
+    return abs(cur - prior) / abs(prior) if prior else -1.0
 
 
 def _n1(x: Any) -> str:  # a revision value → 1-decimal, or verbatim when non-numeric ('-')
@@ -207,13 +215,17 @@ def _n1(x: Any) -> str:  # a revision value → 1-decimal, or verbatim when non-
 
 
 def _revision_headline(evs: list[Any]) -> Any | None:
-    """(T3) The headline revision for a broker-day: the largest-|Δ| EBITDA revision (the fund's
-    decision metric), else the largest-|Δ| of any metric. None when no event carries a numeric Δ."""
-    numeric = [e for e in evs if _abs_delta(e) >= 0]
+    """(T3) The headline revision for a broker-day, by metric PRIORITY (EBITDA > Revenue >
+    EPS-Normalized) — the largest-|%Δ| revision of the first priority metric present; else the
+    largest-|%Δ| of ANY metric. None when no event carries a clean |%Δ|. Never raw |Δ|."""
+    numeric = [e for e in evs if _pct_delta(e) >= 0]
     if not numeric:
         return None
-    ebitda = [e for e in numeric if "ebitda" in e.metric.lower()]
-    return max(ebitda or numeric, key=_abs_delta)
+    for kws in _HEADLINE_PRIORITY:
+        tier = [e for e in numeric if all(k in e.metric.lower() for k in kws)]
+        if tier:
+            return max(tier, key=_pct_delta)
+    return max(numeric, key=_pct_delta)
 
 
 def _grouped_events_lines(s: Sourced[Any]) -> list[str]:
@@ -582,6 +594,17 @@ _CADENCE = {"week": "weekly", "month": "monthly", "quarter": "quarterly", "day":
             "year": "annually"}
 
 
+def _labelled_rate(raw: str, label_re: str, val_re: str) -> str | None:
+    """(T2) A label-anchored component of an interest COMPOSITE: '' when the label is absent (the
+    component is absent), the value when the label is present AND the value is extractable, or None
+    when the label IS present but the value can't be read — the caller then renders NO lead (a
+    partial composite is misleading-by-omission)."""
+    if not re.search(label_re, raw, re.IGNORECASE):
+        return ""
+    m = re.search(val_re, raw, re.IGNORECASE)
+    return next((g for g in m.groups() if g), None) if m else None
+
+
 def _covenant_value_lead(label: str, raw: str) -> str:
     """(K1, generalized · audit-hardened) The extractable VALUE a curated covenant line LEADS with,
     before the ≤120c clip — RIGHT or ABSENT, never wrong: each branch is ANCHORED (a labelled or
@@ -602,19 +625,25 @@ def _covenant_value_lead(label: str, raw: str) -> str:
     if label == "Interest / coupon":
         base = re.search(r"\bTerm SOFR\b|\bSOFR\b|\bLPR\b|\bNew Benchmark\b|\bFloating rate\b",
                          raw, re.IGNORECASE)
-        # margin ONLY from a LABELLED margin or a bps SPREAD — a bare '+ N%' catches a step-down
-        # grid / default premium, and a bare '% default premium' is likewise excluded.
-        marg = re.search(r"(?:Applicable\s+)?Margin\s*(?:=|is|of|:)?\s*(\d+(?:\.\d+)?%|\d+\s*bps)"
-                         r"|\bPlus\s+(\d+\s*bps)", raw, re.IGNORECASE)
-        pik = re.search(r"(\d+(?:\.\d+)?%)[^.;]{0,40}?\bPIK\b", raw, re.IGNORECASE)  # PIK acronym
-        if base:
-            m = (marg.group(1) or marg.group(2)) if marg else ""
-            lead = f"{base.group(0)} + {m}" if m else base.group(0)
-            return f"{lead} (+{pik.group(1)} PIK)" if pik else lead
-        fixed = re.search(r"(?:fixed rate of|bears? interest at (?:a )?(?:fixed )?rate of|"
-                          r"interest at (?:a )?(?:fixed )?rate of)\s+(\d+(?:\.\d+)?%)",
-                          raw, re.IGNORECASE)
-        return f"{fixed.group(1)} fixed" if fixed else ""
+        if not base:  # fixed-rate fallback (no floating base)
+            fixed = re.search(r"(?:fixed rate of|bears? interest at (?:a )?(?:fixed )?rate of|"
+                              r"interest at (?:a )?(?:fixed )?rate of)\s+(\d+(?:\.\d+)?%)",
+                              raw, re.IGNORECASE)
+            return f"{fixed.group(1)} fixed" if fixed else ""
+        # (T2/audit) the rate is a COMPOSITE (margin/floor/PIK) — render the FULL LABELLED composite
+        # or NO lead (a partial is misleading-by-omission). Each component is LABEL-anchored: it
+        # accepts the parenthetical 'Margin (9.75%)' form but NEVER a bare '+ N%' step-down/default;
+        # a component whose label is present but whose value can't be read → no lead at all.
+        margin = _labelled_rate(raw, r"\bMargin\b|\bPlus\s+\d+\s*bps\b",
+                                r"(?:Applicable\s+)?Margin\b[^.;%\d]{0,4}(\d+(?:\.\d+)?%|\d+\s*bps)"
+                                r"|\bPlus\s+(\d+\s*bps)\b")
+        floor = _labelled_rate(raw, r"\bFloor\b", r"\bFloor\b[^.;%\d]{0,4}(\d+(?:\.\d+)?%)")
+        pik = _labelled_rate(raw, r"\bPIK\b", r"(\d+(?:\.\d+)?%)[^.;]{0,40}?\bPIK\b")
+        if margin is None or floor is None or pik is None:
+            return ""  # a labelled component was unextractable → full-composite-or-none
+        lead = base.group(0) + (f" + {margin}" if margin else "")
+        extras = [x for x in (f"Floor {floor}" if floor else "", f"+{pik} PIK" if pik else "") if x]
+        return lead + (f" ({', '.join(extras)})" if extras else "")
     if label == "Maturity":
         repl = re.search(rf"replaced with[^.;]*?({_DATE_RE})", raw, re.IGNORECASE)  # amendment wins
         anch = re.search(rf"(?:maturity\s*date|matur\w+)[^.;]{{0,40}}?({_DATE_RE})", raw,

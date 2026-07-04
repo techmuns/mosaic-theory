@@ -372,6 +372,17 @@ const _MONTHS_RE = "(?:January|February|March|April|May|June|July|August|Septemb
 const _DATE_RE_SRC = `(?:${_MONTHS_RE})\\s+\\d{1,2},\\s+\\d{4}|\\d{4}-\\d{2}-\\d{2}`;
 const _CADENCE = { week: "weekly", month: "monthly", quarter: "quarterly", day: "daily", year: "annually" };
 
+// (T2, mirrors render._labelled_rate) a label-anchored component of an interest COMPOSITE: "" when
+// the label is absent (the component is absent), the value when the label is present AND the value is
+// extractable, or null when the label IS present but the value can't be read — the caller then
+// renders NO lead (a partial composite is misleading-by-omission).
+function _labelledRate(raw, labelRe, valRe) {
+  if (!labelRe.test(raw)) return "";
+  const m = raw.match(valRe);
+  if (!m) return null;
+  return m.slice(1).find(Boolean) || null;
+}
+
 // (K1, mirrors render._covenant_value_lead · audit-hardened) the extractable VALUE a curated covenant
 // line LEADS with, before the ≤120c clip — RIGHT or ABSENT, never wrong: each branch is ANCHORED (a
 // labelled or bps margin, a TEST-anchored cadence, a maturity-anchored date, the PIK acronym, a
@@ -389,17 +400,22 @@ function covenantValueLead(label, raw) {
   }
   if (label === "Interest / coupon") {
     const base = raw.match(/\bTerm SOFR\b|\bSOFR\b|\bLPR\b|\bNew Benchmark\b|\bFloating rate\b/i);
-    // margin ONLY from a LABELLED margin or a bps SPREAD — a bare "+ N%" catches a step-down
-    // grid / default premium, and a bare "% default premium" is likewise excluded.
-    const marg = raw.match(/(?:Applicable\s+)?Margin\s*(?:=|is|of|:)?\s*(\d+(?:\.\d+)?%|\d+\s*bps)|\bPlus\s+(\d+\s*bps)/i);
-    const pik = raw.match(/(\d+(?:\.\d+)?%)[^.;]{0,40}?\bPIK\b/i);  // PIK acronym
-    if (base) {
-      const mrg = marg ? (marg[1] || marg[2]) : "";
-      const lead = mrg ? `${base[0]} + ${mrg}` : base[0];
-      return pik ? `${lead} (+${pik[1]} PIK)` : lead;
+    if (!base) {  // fixed-rate fallback (no floating base)
+      const fixed = raw.match(/(?:fixed rate of|bears? interest at (?:a )?(?:fixed )?rate of|interest at (?:a )?(?:fixed )?rate of)\s+(\d+(?:\.\d+)?%)/i);
+      return fixed ? `${fixed[1]} fixed` : "";
     }
-    const fixed = raw.match(/(?:fixed rate of|bears? interest at (?:a )?(?:fixed )?rate of|interest at (?:a )?(?:fixed )?rate of)\s+(\d+(?:\.\d+)?%)/i);
-    return fixed ? `${fixed[1]} fixed` : "";
+    // (T2/audit) the rate is a COMPOSITE (margin/floor/PIK) — render the FULL LABELLED composite or
+    // NO lead (a partial is misleading-by-omission). Each component is LABEL-anchored: it accepts the
+    // parenthetical "Margin (9.75%)" form but NEVER a bare "+ N%" step-down/default; a component whose
+    // label is present but whose value can't be read → no lead at all.
+    const margin = _labelledRate(raw, /\bMargin\b|\bPlus\s+\d+\s*bps\b/i,
+      /(?:Applicable\s+)?Margin\b[^.;%\d]{0,4}(\d+(?:\.\d+)?%|\d+\s*bps)|\bPlus\s+(\d+\s*bps)\b/i);
+    const floor = _labelledRate(raw, /\bFloor\b/i, /\bFloor\b[^.;%\d]{0,4}(\d+(?:\.\d+)?%)/i);
+    const pik = _labelledRate(raw, /\bPIK\b/i, /(\d+(?:\.\d+)?%)[^.;]{0,40}?\bPIK\b/i);
+    if (margin === null || floor === null || pik === null) return "";  // labelled component unextractable → full-composite-or-none
+    const lead = base[0] + (margin ? ` + ${margin}` : "");
+    const extras = [floor ? `Floor ${floor}` : "", pik ? `+${pik} PIK` : ""].filter(Boolean);
+    return lead + (extras.length ? ` (${extras.join(", ")})` : "");
   }
   if (label === "Maturity") {
     const repl = raw.match(new RegExp(`replaced with[^.;]*?(${_DATE_RE_SRC})`, "i"));  // amendment wins
@@ -1154,19 +1170,34 @@ function ladderTable(s) {
   return dataTable(label, s.source_ref, cols, rows, extra > 0 ? `+${extra} later fiscal years in JSON` : "");
 }
 
-const _absDelta = (e) => { const d = Math.abs(Number(e.broker_current) - Number(e.broker_prior)); return isNaN(d) ? -1 : d; };
+// (T3, mirrors render._pct_delta) |%Δ| of a revision — |current − prior| / |prior|; -1 when either
+// side is non-numeric or prior is 0. Cross-metric RAW deltas are unit-incoherent, so the headline
+// ranks on |%Δ|, never raw |Δ| (a big-number Revenue move would otherwise always outrank a bigger-%
+// EBITDA cut).
+const _pctDelta = (e) => {
+  const prior = Number(e.broker_prior), cur = Number(e.broker_current);
+  if (isNaN(prior) || isNaN(cur) || prior === 0) return -1;
+  return Math.abs(cur - prior) / Math.abs(prior);
+};
 
 // (T3, mirrors render._n1) a revision value → 1-decimal, or verbatim when non-numeric ("-").
 const _n1 = (x) => { const f = Number(x); return isNaN(f) ? String(x) : f.toFixed(1); };
 
-// (T3, mirrors render._revision_headline) the headline revision for a broker-day: the largest-|Δ|
-// EBITDA revision (the fund's decision metric), else the largest-|Δ| of any metric. null when no
-// event carries a numeric Δ.
+// (T3, mirrors render._HEADLINE_PRIORITY) headline metric PRIORITY — each tuple is the substrings a
+// metric must contain (ALL of them): EBITDA > Revenue > EPS-Normalized.
+const _HEADLINE_PRIORITY = [["ebitda"], ["revenue"], ["eps", "normal"]];
+
+// (T3, mirrors render._revision_headline) the headline revision for a broker-day, by metric PRIORITY
+// (EBITDA > Revenue > EPS-Normalized) — the largest-|%Δ| revision of the first priority metric
+// present; else the largest-|%Δ| of ANY metric. null when no event carries a clean |%Δ|. Never raw |Δ|.
 function _revisionHeadline(evs) {
-  const numeric = evs.filter((e) => _absDelta(e) >= 0);
+  const numeric = evs.filter((e) => _pctDelta(e) >= 0);
   if (!numeric.length) return null;
-  const ebitda = numeric.filter((e) => e.metric.toLowerCase().includes("ebitda"));
-  return (ebitda.length ? ebitda : numeric).reduce((a, b) => (_absDelta(b) > _absDelta(a) ? b : a));
+  for (const kws of _HEADLINE_PRIORITY) {
+    const tier = numeric.filter((e) => kws.every((k) => e.metric.toLowerCase().includes(k)));
+    if (tier.length) return tier.reduce((a, b) => (_pctDelta(b) > _pctDelta(a) ? b : a));
+  }
+  return numeric.reduce((a, b) => (_pctDelta(b) > _pctDelta(a) ? b : a));
 }
 
 // (4d · T3) revision events COMPRESSED to ONE line per broker-day — date · broker · action mix
