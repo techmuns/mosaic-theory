@@ -54,8 +54,7 @@ const EDGES = [
     stages: [
       // Just two top tabs: the portfolio landing + the standing watchlist. Surfaced-names and
       // forward-performance are now DRILL-DOWNS from the landing (#/themes/<theme>[/<tier>]), not tabs.
-      { route: "themes", label: "Overview",
-        does: "Theme-edge portfolio — 0 buys, watchlists not buys (yet). Tap a theme, or a tier count, to drill in." },
+      { route: "themes", label: "Overview" },
       { route: "themes/watchlist", label: "Watchlist",
         does: "The names to re-underwrite when a trigger fires — a flat cross-theme monitoring surface. Each row is led by its verbatim trigger." },
     ],
