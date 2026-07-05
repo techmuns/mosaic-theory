@@ -11,7 +11,8 @@ import json
 import sqlite3
 import sys
 from collections.abc import Sequence
-from datetime import date, datetime
+from datetime import UTC, date, datetime
+from pathlib import Path
 
 from vinci.config import get_config, load_local_env
 from vinci.edgar import EdgarClient
@@ -586,10 +587,32 @@ def _cmd_themes_exposure(args: argparse.Namespace) -> int:
         efts_http=build_efts_http(cfg), llm=AnthropicLlmClient.from_config(cfg),
         startdt=startdt, enddt=ref.isoformat(), max_workers=args.workers, progress=stderr_reporter,
     )
+    dumped = [a.model_dump(mode="json") for a in results]  # ONE dump — --out + history share bytes
     if args.out:  # audit-grade persistence — the full model_dump (facts + source_refs), no re-run
-        Path(args.out).write_text(
-            "\n".join(json.dumps(a.model_dump(mode="json")) for a in results))
+        Path(args.out).write_text("\n".join(json.dumps(r) for r in dumped))
         print(f"wrote {len(results)} full assessments (audit-grade) → {args.out}")
+    if not args.no_scan_history:  # ALWAYS-ON history (independent of --out) — a re-scan must never
+        # clobber the prior scan; the monitor/delta-scan diffs against these snapshots.
+        import subprocess
+
+        from vinci.themes.scan_history import record_snapshot
+
+        try:  # sha is metadata for the manifest — unavailable is a logged None, not a failure
+            git_sha: str | None = subprocess.run(
+                ["git", "rev-parse", "--short", "HEAD"],
+                capture_output=True, text=True, check=True, timeout=5,
+            ).stdout.strip() or None
+        except (OSError, subprocess.SubprocessError):
+            git_sha = None
+        history_root = args.scan_history_dir or Path("data/scan_history")
+        # "ai-datacenter" literal mirrors the existing AI_DATACENTER hardcoding above — both get
+        # replaced together when themes-exposure grows a --driver param (scanner fork, not here).
+        snap_path = record_snapshot(
+            dumped, driver_slug="ai-datacenter", driver_desc=AI_DATACENTER.description,
+            history_root=history_root, now=datetime.now(UTC), git_sha=git_sha,
+            n_scanned=len(names))
+        print(f"scan-history snapshot → {snap_path}")
+        print(f"manifest + {(history_root / 'manifest.jsonl').read_text().splitlines()[-1]}")
 
     # THE VOLUME — the first-class deliverable (input to the DOWNSTREAM calibration decision, NOT
     # decided here). WIDE funnel: every name with ANY chain-attributable signal (basis != none) is
@@ -926,6 +949,14 @@ def build_parser() -> argparse.ArgumentParser:
     p_exp.add_argument("--max-names", type=int, dest="max_names", help="cap the universe (dev)")
     p_exp.add_argument("--workers", type=int, default=6, help="concurrent LLM workers (default: 6)")
     p_exp.add_argument("--out", help="write full model_dump JSONL (audit-grade persistence)")
+    p_exp.add_argument(
+        "--scan-history-dir", type=Path, dest="scan_history_dir",
+        help="scan-history archive root (default: data/scan_history; git-ignored)",
+    )
+    p_exp.add_argument(
+        "--no-scan-history", action="store_true", dest="no_scan_history",
+        help="skip the always-on timestamped history snapshot",
+    )
     p_exp.set_defaults(func=_cmd_themes_exposure)
 
     p_fwd = sub.add_parser(
