@@ -2607,6 +2607,21 @@ rows + 8 RSU-award rows, none survival-relevant (the curation now routes that wh
 appendix, but the extraction spend already happened). Filter the exhibit class up front so the LLM
 never reads it. Extractor change → its own PR with real-run cost verification, not the render curation.
 
+**Theme-viewer post-merge operator follow-ups (PR #74 audit, 2026-07-04):**
+- **Theme freeze-regen (mechanical, operator-only).** The audit hand-corrected ONE deterministic value
+  (`ai-datacenter.json` `cohorts.naive` 450→56) to match the fixed `build.py`. Re-run
+  `build.py --themes-src data/forward` from the local (git-ignored) freeze to reproduce it from source and
+  refresh anything else — cannot be done in a worktree (freeze absent). Mechanical (no LLM), so distinct
+  from the dossier re-assembly, which stays operator-only for a different (fabrication-risk) reason.
+- **`chain-layer-specific` tie-gate parity gap (`build.py._eff_basis`, reported not fixed).** build.py
+  FULL-ranks the non-`DriverTie`-enum tie `chain-layer-specific`; the backend's `DriverTie(...)` parse
+  fails → INDIRECT fallback → caps at committed. HARMLESS today (all 16 ai-datacenter names are grade-2 →
+  `committed` under either rule) but UNPINNED (the parity test `test_tie_gate_matches_backend` iterates
+  enum members only, never this raw string). Resolve deliberately: (a) promote it to a real `DriverTie`
+  enum member + backend rank if it is a deliberate full-rank tie, or (b) let it fall to the backend's
+  INDIRECT cap — then pin whichever with a parity case. Author's call (you wrote both the ledger tie and
+  the build.py full-rank).
+
 ## 6. Open items carried from the fossils (live, not being worked now)
 
 - **Regulatory/counsel** — HK SFC Type 9 (**blocks running real LP money**; longest calendar lead),
@@ -3029,3 +3044,24 @@ the monitor build). Viewer stays read-only + CLI-only logging.
 Suite green (ruff + mypy --strict 85 files + pytest **415**; no Python touched this task — display is
 frontend, the rest is STATE + the A1 map). **Local only — nothing pushed, nothing merged; deploy config
 (`functions/_middleware.js`, `wrangler.toml`) untouched.**
+
+**PR #74 MERGED (2026-07-04, squash `1860ea1`) + post-merge audit — 4 finders (honesty · frontend/cross-func ·
+theme-pipeline · ruff), adjudicated + verified.** Supersedes the "nothing merged" status above: the display +
+honest verdict/scan surface is LIVE on the authed deploy. THREE defects fixed under audit, one reported:
+- **T2 covenant interest composite — a REAL main regression (`render.py`).** The operator's on-main MVST
+  re-assembly (`437c521`) re-phrased the covenants (`Floor (Term SOFR) = 3.00%` interposition + `PIK
+  Interest: 3.75%` PIK-before-%); PR#73's floor/PIK regexes matched neither, so the composite-or-none rule
+  silently DROPPED the whole interest lead on the covenant decision surface. Widened floor
+  (interposition-tolerant) + bidirectional PIK. **Invariant shipped:** unit pin in `test_dossier.py`. (The
+  "pre-existing red" the PR flagged was this — confirmed a main regression, not out of scope.)
+- **NAIVE cohort ~8x overstatement (`build.py` + `ai-datacenter.json`).** `cohorts.naive` was fed `surfaced`
+  (scan breadth, 450) not `len(all_committed)` (the committed tier, 56 = the backend's NAIVE-N,
+  forward.py/cli.py:689) — a universe-scale count contradicting the tier-scale buy/passed pills beside it.
+  Fixed to mirror the backend; the one stale committed value corrected 450→56 (see §5 freeze-regen).
+  **Invariant shipped:** `test_naive_cohort_is_committed_tier_not_surfaced_universe`. defense unaffected
+  (froze all 108 surfaced, so `naive=surfaced=108` was already correct there).
+- **17 ruff E501 in `build.py`** the PR body's "ruff ✓" missed — reflowed, AST-verified byte-identical
+  strings (no behavior change).
+- **REPORTED (latent, accepted-for-now): `chain-layer-specific` tie-gate parity gap** — see §5.
+Gate after fixes: ruff + mypy --strict (86) + pytest **457** (audit +2 regression pins) + node --check
+(15 JS) green.
