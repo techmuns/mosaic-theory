@@ -3065,3 +3065,31 @@ honest verdict/scan surface is LIVE on the authed deploy. THREE defects fixed un
 - **REPORTED (latent, accepted-for-now): `chain-layer-specific` tie-gate parity gap** — see §5.
 Gate after fixes: ruff + mypy --strict (86) + pytest **457** (audit +2 regression pins) + node --check
 (15 JS) green.
+
+**SCAN-HISTORY PERSISTENCE — themes-exposure scans are now NON-OVERWRITING (2026-07-04,
+`feat/scan-history`, backend-only; NO viewer/frontend change, nothing deploys).** The scanner-prep
+finding (PR #74 rebase report) was that a re-scan CLOBBERED the prior scan: `scan_driver_exposure` is
+pure, and the CLI's only persistence was the operator-named `--out` full overwrite — the monitor/
+delta-scan has nothing to diff against. FIXED: every `themes-exposure` run now ALSO writes a
+timestamped, immutable snapshot to a git-ignored history, keyed by driver, with a manifest index.
+**Design:** new `vinci/themes/scan_history.py` (stdlib-only; no network, no vinci imports) —
+`record_snapshot(dumped, …)` writes `data/scan_history/<driver_slug>/<UTC %Y%m%dT%H%M%SZ>__<short
+sha|nosha>.jsonl` with bytes IDENTICAL to the `--out` writer (drop-in replacement for any reader);
+path collision (same second + sha) gets a `__1`/`__2`/… suffix — an existing snapshot is NEVER
+overwritten; write errors propagate loud. Each write appends ONE line to
+`data/scan_history/manifest.jsonl`: `{ts (ISO-Z), driver_slug, driver_desc, git_sha, path (relative),
+n_records, n_scanned, tier_counts (by exposure_basis)}`. **ALWAYS-ON** — independent of `--out`
+(`--out` unchanged, still written byte-identically from the SAME single `model_dump` pass);
+`--scan-history-dir` relocates the root, `--no-scan-history` skips (debug). `.gitignore` gains an
+explicit `data/scan_history/` (already under `data/*`; fail-closed clarity — scan output is DATA,
+never committed). +4 network-free tests (`tests/test_scan_history.py`): additive two-scan (first
+snapshot's bytes untouched), collision→suffix-never-overwrite, manifest counts/fields, archive-bytes ==
+--out-writer. (A CLI-level themes-exposure test was SKIPPED — the command has no cheap fixture; it
+needs config+universe+EDGAR+LLM stubs, ~7 monkeypatches. The 6-line wiring is covered by a shown real
+dry-run instead.) **FINDING (recorded, NOT acted on — hold-scope): `themes-exposure` is still
+AI-DATACENTER-HARDCODED** — it imports `AI_DATACENTER` (`vinci/cli.py:562`) and scans it
+(`cli.py:585`); there is no `--driver`. The defense theme-#2 scan was a bespoke script, not this
+command. **Driver-parameterizing `themes-exposure` is the scanner-fork's FIRST sub-task** (the
+`driver_slug="ai-datacenter"` literal in the history call is marked to be replaced by the same param).
+Suite green (ruff + mypy --strict + pytest **461** = 457 baseline +4). Local branch off origin/main
+(`f2d7db2`); pushed for review; NOT merged.

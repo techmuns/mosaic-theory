@@ -45,5 +45,9 @@ forward_*_ledger.jsonl
 forward_*_baskets.json
 data/forward/
 
+# scan-history archive (themes-exposure) — timestamped scan snapshots + manifest. DATA, never
+# committed (already covered by data/*; explicit here for fail-closed clarity).
+data/scan_history/
+
 # OS
 .DS_Store
