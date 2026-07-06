@@ -952,9 +952,16 @@ _UNQUANTIFIED_RE = re.compile(  # 'the revenue impact is not quantified in the f
     r"no (?:disclosed |stated |specific )?(?:figure|number|range|dollar|magnitude)",
     re.IGNORECASE,
 )
-_SURVIVAL_SAFE_RE = re.compile(  # survival framed safe while the 10-Q states SUBSTANTIAL DOUBT
+_SURVIVAL_SAFE_RE = re.compile(  # survival framed safe while the 10-Q states SUBSTANTIAL DOUBT.
+    # A genuine denial NAMES the thing denied: 'no/not-a going-concern', 'no substantial doubt', or
+    # a going-concern PREDICATE (doubt/risk/…) negated by a DENIAL word (apply/present/material/…).
+    # That denial-word whitelist is the GATE keeping benign gap-acks quiet ('going-concern plans are
+    # NOT synthesized/extracted/read' — those verbs aren't denials). REPLACES the old bare
+    # 'going-concern … {0,15} not' proximity arm that over-matched them (the incident) while
+    # RECOVERING the genuine 'going-concern <predicate> is/does not <denial>' class it also carried.
     r"no going[- ]concern|not a going[- ]concern|no substantial doubt|"
-    r"going[- ]concern\b.{0,15}\bnot|"
+    r"going[- ]concern\b[^.]{0,25}?\bnot\b[^.]{0,15}?\b"
+    r"(?:appl(?:y|ies|icable)|warranted|present|material|issue|concern|risk|problem|threat)\b|"
     r"survival (?:is )?(?:not (?:at|a)\b|assured|secure)|no solvency (?:risk|concern)|"
     r"comfortably (?:solvent|funded|capitalized)",
     re.IGNORECASE,
