@@ -33,12 +33,12 @@ export async function render(root, _params, { item, frame }) {
 
   const controls = `
     <div style="display:flex; gap:14px; align-items:center; margin-bottom:12px;">
-      <input id="ss-q" type="search" placeholder="Filter ticker, name, or sector…" autocomplete="off" value=""
+      <input id="ss-q" type="search" placeholder="Filter ticker, name, or industry…" autocomplete="off" value=""
         style="flex:1; min-width:200px; padding:8px 11px; border:1px solid var(--line-2); border-radius:8px; font-size:13px;" />
       <span class="muted" style="font-size:12px;">admitted set · sorted A→Z (order-agnostic)</span>
     </div>
     <table class="data"><thead><tr>
-      <th>Ticker</th><th>Name</th><th>Sector</th><th>Band</th><th>G1 · drawdown</th><th>G2 · idiosyncratic</th><th>G3 · multiple</th>
+      <th>Ticker</th><th>Name</th><th>Industry</th><th>Band</th><th>G1 · drawdown</th><th>G2 · idiosyncratic</th><th>G3 · multiple</th>
     </tr></thead><tbody id="ss-body"></tbody></table>`;
 
   root.innerHTML = frame(item, { bodyHtml: cards + clusterRollup(ADMITTED) + controls + refreshBlock() });
@@ -49,12 +49,12 @@ export async function render(root, _params, { item, frame }) {
 function renderRows() {
   const body = document.getElementById("ss-body");
   if (!body) return;
-  const rows = q ? ADMITTED.filter((r) => r.ticker.toLowerCase().includes(q) || (r.name || "").toLowerCase().includes(q) || (r.sector || "").toLowerCase().includes(q)) : ADMITTED;
+  const rows = q ? ADMITTED.filter((r) => r.ticker.toLowerCase().includes(q) || (r.name || "").toLowerCase().includes(q) || (r.sector || "").toLowerCase().includes(q) || (r.industry || "").toLowerCase().includes(q)) : ADMITTED;
   body.innerHTML = rows.map((r) => `
     <tr>
       <td><a class="mono" style="font-weight:600;" href="#/dossier/${escapeHtml(r.ticker)}">${escapeHtml(r.ticker)}</a></td>
       <td class="muted" style="font-size:12px;">${escapeHtml((r.name || "").slice(0, 42))}</td>
-      <td class="muted" style="font-size:12px;"><span style="display:inline-block; max-width:90px; line-height:1.25;">${escapeHtml(r.sector || "—")}</span></td>
+      <td class="muted" style="font-size:12px;"><span style="display:inline-block; max-width:104px; line-height:1.25;">${escapeHtml(r.industry || "—")}</span></td>
       <td><span class="pill live">${escapeHtml(r.depthBand)}</span></td>
       <td>${escapeHtml(r.depthLabel || "")}</td>
       <td>${escapeHtml(r.idioLabel || "")}</td>
@@ -62,37 +62,52 @@ function renderRows() {
     </tr>`).join("") || `<tr><td colspan="7" class="muted" style="padding:18px;">No admitted names match the filter.</td></tr>`;
 }
 
-// CROSS-SECTIONAL CLUSTERS — a selection-time roll-up of the admitted set by coarse SEC-SIC sector.
+// CROSS-SECTIONAL CLUSTERS — a selection-time, TWO-LEVEL roll-up of the admitted set: coarse SEC-SIC
+// sector (the scannable headline) → its finer sub-industries (what the sector actually splits into).
 // Its job is de-confounding + concentration visibility: G2 strips MARKET beta (name vs IWM) but NOT
-// sector, so a name that fell WITH its whole sector still lands here looking idiosyncratic. A large
-// cluster asks "did the GROUP fall, not the name?" — read by the human, gating/weighting/sorting
-// NOTHING. Coarse SIC is a business classification, NOT a peer cohort and NOT a sector-adjusted
-// control. The 'Unknown' bucket (blank/unmapped SIC) is shown explicitly — coverage stays honest.
+// sector, so a name that fell WITH its group still lands here looking idiosyncratic. A large cluster
+// asks "did the GROUP fall, not the name?" — and the sub-industries tell you if it's ONE shared
+// driver or several. Read by the human, gating/weighting/sorting NOTHING. SIC is a business
+// classification, NOT a peer cohort, NOT a sector-adjusted control, and NOT a driver/theme (that is
+// the theme edge). 'Unknown' (blank/unmapped SIC) is shown explicitly — coverage stays honest.
 function clusterRollup(names) {
   if (!names || !names.length) return "";
-  const counts = new Map();
-  for (const n of names) {
-    const s = n.sector || "Unknown";
-    counts.set(s, (counts.get(s) || 0) + 1);
-  }
   const total = names.length;
   const pct = (n) => Math.round((n / total) * 100);
-  // largest first; Unknown always sorts last so it reads as a coverage note, not a cluster
-  const entries = [...counts.entries()].sort((a, b) =>
-    (a[0] === "Unknown") - (b[0] === "Unknown") || b[1] - a[1] || a[0].localeCompare(b[0]));
-  const chips = entries.map(([sec, n]) => {
-    const cls = sec === "Unknown" ? "chip" : "chip accent";
-    return `<span class="${cls}">${escapeHtml(sec)} <b>${fmtInt(n)}</b> <span class="muted">${pct(n)}%</span></span>`;
+  // group by sector → { total, industries:Map }
+  const bySector = new Map();
+  for (const n of names) {
+    const sec = n.sector || "Unknown";
+    const ind = n.industry || "Unknown";
+    if (!bySector.has(sec)) bySector.set(sec, { total: 0, ind: new Map() });
+    const g = bySector.get(sec);
+    g.total += 1;
+    g.ind.set(ind, (g.ind.get(ind) || 0) + 1);
+  }
+  const byCount = (a, b) => (a[0] === "Unknown") - (b[0] === "Unknown") || b[1] - a[1] || a[0].localeCompare(b[0]);
+  const sectors = [...bySector.entries()].sort((a, b) =>
+    (a[0] === "Unknown") - (b[0] === "Unknown") || b[1].total - a[1].total || a[0].localeCompare(b[0]));
+  const rows = sectors.map(([sec, g]) => {
+    const chips = [...g.ind.entries()].sort(byCount).map(([ind, c]) => {
+      // the coarse-fallback bucket (industry == sector) reads as "the rest"; don't double up "Other"/"Unknown"
+      const label = ind !== sec ? ind : (sec === "Other" || sec === "Unknown" ? sec : `Other ${sec}`);
+      const cls = ind === "Unknown" ? "chip" : "chip accent";
+      return `<span class="${cls}" style="font-size:11.5px; padding:3px 9px;">${escapeHtml(label)} <b>${fmtInt(c)}</b></span>`;
+    }).join("");
+    return `<div style="display:flex; gap:14px; align-items:baseline; padding:8px 0; border-top:1px solid var(--line);">
+      <div style="flex:none; width:150px; font-size:13px;"><b>${escapeHtml(sec)}</b> <span class="muted">${fmtInt(g.total)} · ${pct(g.total)}%</span></div>
+      <div class="chips" style="flex:1;">${chips}</div>
+    </div>`;
   }).join("");
-  const top = entries.find(([s]) => s !== "Unknown") || entries[0];
+  const top = sectors.find(([s]) => s !== "Unknown") || sectors[0];
   const lead = top
-    ? `Largest cluster: <b>${escapeHtml(top[0])}</b> — ${fmtInt(top[1])} of ${fmtInt(total)} (${pct(top[1])}%).`
+    ? `Largest sector: <b>${escapeHtml(top[0])}</b> — ${fmtInt(top[1].total)} of ${fmtInt(total)} (${pct(top[1].total)}%); its sub-industries below show whether that is one shared driver or several.`
     : "";
   return `
     <div class="card" style="margin-bottom:16px;">
-      <h3>Cross-sectional clusters <span class="muted" style="font-weight:400; text-transform:none; letter-spacing:0;">— coarse SEC-SIC sector over the ${fmtInt(total)} admitted</span></h3>
-      <div class="subtitle muted" style="margin:6px 0 11px;">Business classification (SEC SIC) — <b>not a peer cohort, not a sector-adjusted control</b>. G2 strips <i>market</i> beta, not sector, so a large cluster asks: did the <b>group</b> fall, not the name? Assemble / inform — it gates, weights, and sorts nothing.</div>
-      ${lead ? `<div style="font-size:13px; margin-bottom:11px;">${lead}</div>` : ""}
-      <div class="chips">${chips}</div>
+      <h3>Cross-sectional clusters <span class="muted" style="font-weight:400; text-transform:none; letter-spacing:0;">— sector → sub-industry, over the ${fmtInt(total)} admitted</span></h3>
+      <div class="subtitle muted" style="margin:6px 0 9px;">Business classification (SEC SIC) — <b>not a peer cohort, not a sector-adjusted control</b>. G2 strips <i>market</i> beta, not sector, so a large cluster asks: did the <b>group</b> fall, not the name? Assemble / inform — it gates, weights, and sorts nothing.</div>
+      ${lead ? `<div style="font-size:13px; margin-bottom:2px;">${lead}</div>` : ""}
+      ${rows}
     </div>`;
 }
