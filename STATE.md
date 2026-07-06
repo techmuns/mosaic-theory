@@ -335,7 +335,9 @@ Each line: *what it does* — *verified how*.
     unchanged (199.9; credit unrated 3/3/2/2 via Tier-2). ruff + mypy --strict (87) + pytest 470 (+6: bridge
     thousands-aware, `_parse_money` round-trip ≥$1,000M, disagreement-still-fires, Tier-1 rescue, ambiguous-
     refuses, IG boundary). No artifact commits — operator re-assembles VRRM/MVST post-merge; the Avis 'not
-    quantified' Key Unknown that still renders is the RC-1 parser gap (out of scope).*
+    quantified' Key Unknown that still renders was the RC-1 parser gap — **now CLOSED by RC-1** (the release
+    parser extracts the Avis event impact −$135–145M, and the `event_impact_vs_key_unknown` contradiction
+    lint flags a synthesis 'not quantified' claim as untenable; §5).*
   - **Flag-review-noise reduction (2026-06-29) — keep only signal in the human-review flags.** A
     10-dossier audit found ~12 review flags that were noise: three guardrails over-fired on name
     shapes their first cases didn't cover (newly exposed, NOT regressions). (a) The DIRECTIONAL lint
@@ -2574,11 +2576,25 @@ two-name analysis (mid/small-caps, opposite directions) mapped against this inve
 
 ## 5. Next steps (ordered, current)
 
-**RC-1 primary-source text extraction — IN PROGRESS (feat/primary-source-text, 2026-07-06).** DETERMINISTIC
-(anchored, never LLM) parsers of the EX-99.1 release (A, `vinci/edgar/release_parse.py`, committed) and the
-10-Q/10-K sections (B, `vinci/edgar/filing_sections.py`), verified on the REAL cached filings, pinned on
-committed public-domain EDGAR excerpts (CI-verifiable, no network). Consumers (C) + wiring are next, gated
-by an operator checkpoint.
+**RC-1 primary-source text extraction — BUILT + VERIFIED, PR OPEN (feat/primary-source-text, 2026-07-06).**
+DETERMINISTIC (anchored, never LLM) parsers of the EX-99.1 release (A, `vinci/edgar/release_parse.py`) and
+the 10-Q/10-K sections (B, `vinci/edgar/filing_sections.py`), verified on the REAL cached filings, pinned on
+committed public-domain EDGAR excerpts (CI-verifiable, no network).
+- **C — consumers + wiring, BUILT + VERIFIED end-to-end on real EDGAR+CIQ for MVST & VRRM** (the survival
+  CONTRAST PAIR): a resilient `_primary_source` assembly (`mechanical.py`) fetches the recent 8-K EX-99.1s +
+  the latest 10-Q, parses them, runs FOUR cross-source derivations (`vinci/edgar/primary_source.py`), and
+  attaches a `PrimarySource` to the mechanical layer — any fetch/parse miss → honest UNKNOWN + QA flag, never
+  an abort. **MVST:** self-funding **MIXED** (two-input: latest-Q OCF<0 ∧ LTM FCF>0, superseding the committed
+  one-input line); going-concern **SUBSTANTIAL DOUBT** leads; wall **AGREES** (panel same-window $109.6M CIQ
+  principal, exclusive +12m boundary, vs filing $111.2M repayment; +$1.7M PIK); triangulation 3.9x/5.8x/**~18.7x**
+  (LTM adj EBITDA $10.7M computed end-to-end = FY 44.7 − prior-Q 28.5 + Q1 −5.5)/covenant-UNKNOWN + 28.6/36.2%
+  margins; guide **VENDOR-ECHO** (CIQ 427.516 ≈ release FY25 actual 427.5). **VRRM:** self-funding **YES**;
+  going-concern **checked-absence**; guide cross-source **VERIFIED** (CIQ 985–995 vs release 985–995); NYCDOT
+  15.2%; the Avis **event impact** (revenue −$135–145M, segment profit −$120–125M) renders in drawdown-cause.
+  Render adds a `### Primary-source cross-checks` block; synthesis feeds a curated term→value→source_ref
+  digest (VERBATIMS EXCLUDED) + three contradiction-lint subjects (event_impact_vs_key_unknown,
+  going_concern_vs_survival_framing, filing_wall_vs_panel). Offline: LTM production-path pin + digest/lint/
+  render pins; live paths network-marked. ruff + mypy --strict + pytest 498 (not network).
 - **KNOWN LIMITATION (record):** deterministic coverage is PARTIAL beyond the pinned names — release/filing
   phrasing varies across the universe; every miss renders **fail-loud UNKNOWN** ('no anchored pattern
   matched'), never a guess. **QUEUED:** an *LLM-fenced escalation tier* for release/section parsing — built
@@ -2588,12 +2604,18 @@ by an operator checkpoint.
   (parser state=`not_stated`, a known). The near-term-wall reconciliation concern was **MVST-class** (the
   $111.2M ≤12m + going-concern), not VRRM. VRRM concentration is **NYCDOT 15.2%/15.4% EXACT** (a single
   Government Solutions customer), not a bare >10% floor — extracted as the disclosed value.
-- **RETRACTION (MVST wall — RC-1 checkpoint, 2026-07-06):** the earlier "filing understates the panel ~2×"
-  claim is **WITHDRAWN** — it was a window mismatch + double-count. Like-for-like over the FILING window
-  (balance date + 12m), the filing's **$111.2M ≤12m AGREES with the CIQ panel same-window sum $111.3M**
-  (26.7 + 42.9 + 41.7) within tolerance — the filing **cross-validates** the panel, not diverges. Commit C's
-  surface-2 is a same-window COHERENCE check (agreement line; a divergence path fires only when the sums
-  differ ≥ tolerance). The going-concern / OCF-mixed / concentration / adjusted-EBITDA-basis findings STAND.
+- **RETRACTION (MVST wall — RC-1 checkpoint, 2026-07-06; figure corrected at build):** the earlier "filing
+  understates the panel ~2×" claim is **WITHDRAWN** — a window mismatch + double-count. Like-for-like over the
+  FILING window `[balance, balance+12m)` EXCLUSIVE (balance = the 10-Q's OWN period end 2026-03-31, threaded
+  via `Filing.report_date` — a later 10-K's instant would shift the window and drop the $41.7M bond), the
+  filing's **$111.2M ≤12m AGREES with the CIQ panel same-window PRINCIPAL $109.6M** (41.7 + 42.9 + 13.0 + 12.0;
+  the $49.5M facility maturing AT +12m is excluded) within tolerance (1.4%). *(The interim "$111.3M" panel
+  figure was ITSELF mixed-basis — it folded the filing's $26.7M convertible REPAYMENT into a CIQ-PRINCIPAL sum;
+  the clean same-layer principal is $109.6M, and the convertible delta $25.0M→$26.7M is surfaced as +$1.7M
+  accrued PIK, never forced to match. This is the DERIVED-PIN source-layer rule the incident earned.)* The
+  filing **cross-validates** the panel; a divergence path fires only ≥ tolerance, with a ±7d-boundary
+  safety-valve naming a possible window-convention artifact. Going-concern / OCF-mixed / concentration /
+  adjusted-EBITDA-basis findings STAND.
 
 The **dossier-assembler is built and verified (§2)** — the queue-top now flows ranker → `dossier`.
 Remaining:
