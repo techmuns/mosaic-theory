@@ -473,7 +473,7 @@ def _leverage_block(m: MechanicalLayer) -> list[str]:
     lines (which fall back for a pre-B2 dossier.json)."""
     lv = m.leverage_survival
     assert lv is not None
-    return [
+    lines = [
         "### Leverage & survival",  # (K5) header humanized; the net-vs-total discipline is per-row
         _fact("Net debt / EBITDA (CIQ NET basis)", lv.net_debt_to_ebitda, _mult),
         _fact("Total debt / EBITDA (comps — name vs peer median)", lv.total_debt_to_ebitda),
@@ -481,9 +481,78 @@ def _leverage_block(m: MechanicalLayer) -> list[str]:
         _fact("Net debt / EBITDA (fwd-adj covenant basis)", m.quality.net_debt_to_ebitda_adjusted),
         _fact("Interest coverage", lv.interest_coverage, _mult),
         _fact("Survival (self-funding + nearest wall)", lv.survival),
-        *_credit_health_lines(lv),
-        "",
     ]
+    # (RC-1 C) the two-input self-funding read SUPERSEDES the one-input survival claim above —
+    # placed adjacent so the correction is unmissable (MVST 'self-funding' is actually MIXED).
+    ps = m.primary_source
+    if ps is not None and ps.self_funding.status is SourceStatus.PRESENT:
+        lines.append(_fact("Self-funding — two-input read (supersedes the line above)",
+                           ps.self_funding))
+    return [*lines, *_credit_health_lines(lv), ""]
+
+
+def _event_impact_lines(m: MechanicalLayer) -> list[str]:
+    """(RC-1 C) Event-impact quantifications parsed from the 8-K EX-99.1 (the Avis class: 'expects
+    the termination to reduce … revenue by ~$135–145M') — rendered in the drawdown-cause section as
+    quantified effect. Deduped; each source-bound. Empty for a pre-RC-1 JSON or a name with none."""
+    ps = m.primary_source
+    if ps is None:
+        return []
+    out: list[str] = []
+    seen: set[tuple[str, str, float | None, float | None]] = set()
+    for r in ps.releases:
+        for ei in r.event_impacts:
+            key = (ei.metric, ei.effect, ei.low, ei.high)
+            if key in seen:
+                continue
+            seen.add(key)
+            if not out:
+                out.append("- **Event-impact quantifications (8-K EX-99.1, verbatim-bound):**")
+            rng = (f"${ei.low:,.0f}–{ei.high:,.0f}M" if ei.low is not None and ei.high is not None
+                   else "unquantified")
+            out.append(f"  - {ei.effect} {ei.metric} by {rng} ({ei.period}) — [`{ei.source_ref}`]")
+    return out
+
+
+def _primary_source_block(m: MechanicalLayer) -> list[str]:
+    """(RC-1 C) Primary-source cross-checks — the four cross-source derivations over the actual 8-K
+    releases + latest 10-Q vs the CIQ/EDGAR panel. Decision data → MAIN BODY. Going-concern LEADS
+    unsoftened when doubt is stated, else the CHECKED-ABSENCE ('none in latest 10-Q'). Empty for a
+    pre-RC-1 dossier.json (primary_source absent)."""
+    ps = m.primary_source
+    if ps is None:
+        return []
+    fil = ps.filing
+    out = ["### Primary-source cross-checks (8-K releases + latest 10-Q vs CIQ panel)", ""]
+    gc = fil.going_concern if fil is not None else None
+    if gc is not None and gc.substantial_doubt:  # doubt LEADS, unsoftened
+        out += [f"- **⚠ Going concern — SUBSTANTIAL DOUBT:** {gc.verbatim}",
+                f"  - management's plans: {gc.plans or '— none stated'}",
+                f"  - ↳ `{gc.source_ref}`"]
+    elif fil is not None:  # CHECKED-ABSENCE (not silence): the parser looked and found none
+        out.append(f"- **Going-concern language:** none in latest 10-Q — checked, absent "
+                   f"[`{fil.source_ref}`]")
+    else:
+        out.append("- **Going-concern language:** _UNKNOWN_ — latest 10-Q not parsed")
+    out.append(_fact("Wall coherence — filing ≤12m vs CIQ panel (same window)", ps.wall_coherence))
+    tri_val = ps.basis_triangulation.value
+    if tri_val is not None:  # multi-line → bold header + sub-bullets
+        tri = tri_val.split("\n")
+        out.append(f"- **{tri[0]}**")
+        out += [f"  - {row.strip()}" for row in tri[1:] if row.strip()]
+        out.append(f"  - ↳ `{ps.basis_triangulation.source_ref}`")
+    out.append(_fact("Guide verification — CIQ guide vs release", ps.guide_verification))
+    cc = fil.concentration if fil is not None else None
+    if cc is not None and cc.customers:
+        out.append("- **Customer concentration (latest 10-Q):**")
+        for c in cc.customers:
+            kind = " _(disclosed floor)_" if c.value_kind == "floor" else ""
+            prior = f" (prior {c.prior_pct:.1f}%)" if c.prior_pct is not None else ""
+            out.append(f"  - {c.name}: {c.pct:.1f}%{kind}{prior}")
+        if cc.terms:
+            out.append(f"  - order terms: {cc.terms}")
+        out.append(f"  - ↳ `{cc.source_ref}`")
+    return [*out, ""]
 
 
 def _musd(v: float | None) -> str:  # a $M principal → "$25.0M", or "–"
@@ -1320,8 +1389,9 @@ def render_markdown(d: Dossier, *, dev: bool = False) -> str:
             out.append(f"    - items: {', '.join(f.item_types) or '—'}")
             for ev in f.events:
                 out.append(f"    - {ev}")
+    out.append(_fact("Revised guidance (catalyst 8-K Ex-99.1)", m.drawdown_cause.revised_guidance))
+    out += _event_impact_lines(m)  # (RC-1 C) Avis-class event-impact quantifications
     out += [
-        _fact("Revised guidance (catalyst 8-K Ex-99.1)", m.drawdown_cause.revised_guidance),
         "",
         "_Did it happen alone? (idiosyncratic vs shared — the G2-vs-market compensation):_",
         _fact("Name 180d return", m.idiosyncratic_vs_shared.name_180d_return, _pct),
@@ -1354,6 +1424,9 @@ def render_markdown(d: Dossier, *, dev: bool = False) -> str:
         out += _capital_structure_lines(m.capital_structure, d.reference_date)
     else:
         out += [_fact("Liquidity / covenant flags", m.quality.liquidity_covenant_flags), ""]
+    # (RC-1 C) primary-source cross-checks — filings vs CIQ panel (self-funding lives in leverage
+    # above; wall / triangulation / guide / going-concern / concentration here).
+    out += _primary_source_block(m)
 
     # (D1·§3 · D2) Trajectory — the merged margin/multi-year table + share-count trend.
     out.append("### Trajectory (revenue · EBITDA · margins · ROIC)")

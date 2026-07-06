@@ -25,11 +25,22 @@ _KEYWORDS = re.compile(
 )
 
 
+_WS = re.compile(r"[      ﻿]")
+
+
+def normalize_text(text: str) -> str:
+    """Fold non-breaking / narrow / unicode spaces to a plain space so downstream ANCHORED parsers
+    see consistent whitespace (an EDGAR press release renders '$44.7\xa0million' with a nbsp, which
+    a ``\\s`` in a regex does NOT match). Shared here — every consumer (covenant / release / section
+    parsers) reads normalized text, never a parser-local fix."""
+    return _WS.sub(" ", text)
+
+
 def html_to_text(html: str) -> str:
     soup = BeautifulSoup(html, "html.parser")
     for tag in soup(["script", "style"]):
         tag.decompose()
-    return soup.get_text(" ", strip=True)
+    return normalize_text(soup.get_text(" ", strip=True))
 
 
 def relevant_excerpts(text: str, *, max_chars: int = 24_000) -> str:

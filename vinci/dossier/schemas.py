@@ -18,7 +18,7 @@ import enum
 from datetime import date, datetime
 from typing import Generic, TypeVar
 
-from pydantic import BaseModel, model_validator
+from pydantic import BaseModel, Field, model_validator
 
 T = TypeVar("T")
 
@@ -506,6 +506,197 @@ class FinancialSummary(BaseModel):
     model_config = {"frozen": True}
 
 
+# --- RC-1 (A): primary-source release extraction — 8-K EX-99.1, DETERMINISTIC / anchored ----------
+
+
+class GuidanceItem(BaseModel):
+    """(RC-1 A) One company guidance/outlook metric from a 99.1 press release — a range, or a
+    QUALITATIVE-only marker when the outlook names the metric but states NO number (MVST's
+    '2026 … continued revenue growth' is qualitative). Verbatim-bound, no reading added."""
+
+    metric: str  # revenue | adjusted ebitda | adjusted eps | gross margin | free cash flow
+    period: str  # e.g. "2026"
+    low: float | None  # range low ($M; $/sh for EPS; % for margin). None when QUALITATIVE
+    high: float | None  # range high. None when a single value or QUALITATIVE
+    qualitative: bool  # True ⇒ named in the outlook with NO number (fail-loud honest, not a guess)
+    verbatim: str  # the outlook sentence, ≤200c
+    source_ref: str  # accession + exhibit
+
+    model_config = {"frozen": True}
+
+
+class ReconciliationValue(BaseModel):
+    """(RC-1 A) One non-GAAP reconciliation ACTUAL from a 99.1 — adjusted EBITDA / net income / EPS
+    for a period, sign-aware ('negative $5.5 million' ⇒ -5.5). Verbatim-bound; never a guess."""
+
+    metric: str  # "adjusted ebitda" | "adjusted net income" | "adjusted eps"
+    period: str
+    value: float  # $M (or $/share for EPS); NEGATIVE for a loss
+    verbatim: str
+    source_ref: str
+
+    model_config = {"frozen": True}
+
+
+class OneOffItem(BaseModel):
+    """(RC-1 A) One one-off item from a 99.1 — an impairment / charge / write-down: the amount + the
+    verbatim description ('$32.5M inventory impairment … ESS components'). Bound to the exhibit."""
+
+    amount: float  # $M
+    description: str  # verbatim, ≤200c
+    verbatim: str
+    source_ref: str
+
+    model_config = {"frozen": True}
+
+
+class EventImpact(BaseModel):
+    """(RC-1 A) One event-impact quantification from a 99.1 — the Avis class: a named event 'expects
+    to reduce {metric} by $A to $B'. Direction + range, verbatim-bound; no reading added."""
+
+    metric: str  # e.g. "revenue" | "segment profit"
+    effect: str  # "reduce" | "increase" — the event's effect on the metric (a RECORDED verb)
+    low: float | None  # $M
+    high: float | None
+    period: str  # e.g. "2026 annualized"
+    verbatim: str
+    source_ref: str
+
+    model_config = {"frozen": True}
+
+
+class ReleaseExtract(BaseModel):
+    """(RC-1 A) The DETERMINISTIC extraction of ONE 8-K EX-99.1 earnings/guidance exhibit: guidance,
+    non-GAAP reconciliation actuals, one-offs, and event-impact quantifications — every item
+    source-bound to the exhibit. ``qa_flags`` carries fail-loud markers ('no anchored pattern
+    matched') — a miss is UNKNOWN + a QA note, never an analyst caveat, never a guessed number."""
+
+    source_ref: str  # accession + exhibit URL
+    guidance: list[GuidanceItem] = Field(default_factory=list)
+    reconciliation: list[ReconciliationValue] = Field(default_factory=list)
+    one_offs: list[OneOffItem] = Field(default_factory=list)
+    event_impacts: list[EventImpact] = Field(default_factory=list)
+    qa_flags: list[str] = Field(default_factory=list)
+
+    model_config = {"frozen": True}
+
+
+# --- RC-1 (B): filing-section extraction — 10-Q/10-K, DETERMINISTIC / anchored --------------------
+
+
+class GoingConcern(BaseModel):
+    """(RC-1 B) The going-concern / liquidity note: whether the filing raises SUBSTANTIAL DOUBT, the
+    verbatim sentence (≤400c), and a one-line summary of management's plans. Bound to the filing."""
+
+    substantial_doubt: bool  # True ⇒ the filing states 'substantial doubt about … going concern'
+    verbatim: str  # the substantial-doubt sentence, verbatim, ≤400c
+    plans: str  # management's plans one-liner ('' when the note states none)
+    source_ref: str
+
+    model_config = {"frozen": True}
+
+
+class DebtTranche(BaseModel):
+    """(RC-1 B) One named near-term debt tranche from the debt footnote — filing-basis, verbatim."""
+
+    name: str  # e.g. "bond payable", "convertible loan"
+    amount: float  # $M
+    maturity: str  # verbatim maturity, e.g. "January 2027" ('' when absent)
+    verbatim: str
+    source_ref: str
+
+    model_config = {"frozen": True}
+
+
+class MaturityWall(BaseModel):
+    """(RC-1 B) The FILING-BASIS near-term maturity schedule (distinct from the CIQ panel): the
+    total due within 12 months + named tranches, verbatim-bound — for the divergence. TWO-STATE:
+    ``state='located'`` (a ≤12m-wall statement found) vs ``state='not_stated'`` (a debt section is
+    present but states NO near-term wall — a value-free KNOWN, not an unknown; avoids the
+    thousands-units trap of a composition table). No debt section located at all ⇒ this is None."""
+
+    within_12m_total: float | None  # $M due within the next 12 months; None when state='not_stated'
+    tranches: list[DebtTranche] = Field(default_factory=list)
+    state: str = "located"  # "located" | "not_stated"
+    note: str = ""  # the value-free note when state='not_stated'
+    verbatim: str
+    source_ref: str
+
+    model_config = {"frozen": True}
+
+
+class ConcentrationCustomer(BaseModel):
+    """(RC-1 B) One customer's revenue concentration % (+ the prior-period %), verbatim from the
+    concentration note."""
+
+    name: str  # e.g. "Customer A", "City of New York Department of Transportation"
+    pct: float  # % of revenue, current period (a disclosed FLOOR when value_kind == 'floor')
+    prior_pct: float | None  # the prior-period %, when the note gives a comparative
+    value_kind: str = "exact"  # "exact" (a stated %) | "floor" ('exceeded N%' — a disclosed floor)
+
+    model_config = {"frozen": True}
+
+
+class CustomerConcentration(BaseModel):
+    """(RC-1 B) The customer-concentration disclosure: the named customers' %s, the top-5 % when
+    stated, and any PO / minimum-volume order-terms language. Bound to the filing."""
+
+    customers: list[ConcentrationCustomer] = Field(default_factory=list)
+    top5_pct: float | None
+    terms: str  # PO / minimum-volume / take-or-pay language ('' when none)
+    source_ref: str
+
+    model_config = {"frozen": True}
+
+
+class Commitment(BaseModel):
+    """(RC-1 B) One purchase/capital commitment: amount, the portion due ≤12 months, + verbatim."""
+
+    kind: str  # "purchase" | "capital"
+    amount: float  # $M
+    within_12m: float | None  # $M due within 12 months, when stated
+    verbatim: str
+    source_ref: str
+
+    model_config = {"frozen": True}
+
+
+class FilingSectionExtract(BaseModel):
+    """(RC-1 B) The DETERMINISTIC heading/anchor-targeted extraction of a 10-Q/10-K: going-concern,
+    the filing-basis maturity wall, customer concentration, and purchase/capital commitments — each
+    source-bound. ``qa_flags`` fail loud on a miss ('no anchored pattern matched'), not a guess."""
+
+    source_ref: str
+    going_concern: GoingConcern | None = None
+    maturity_wall: MaturityWall | None = None
+    concentration: CustomerConcentration | None = None
+    commitments: list[Commitment] = Field(default_factory=list)
+    qa_flags: list[str] = Field(default_factory=list)
+
+    model_config = {"frozen": True}
+
+
+# --- RC-1 (C): the primary-source layer — parsed extracts + DERIVED cross-source surfaces ---------
+
+
+class PrimarySource(BaseModel):
+    """(RC-1 C) The primary-source layer — parsed EX-99.1 release(s) + latest 10-Q sections, plus
+    the DERIVED cross-source render surfaces (survival self-funding, same-window wall coherence,
+    EBITDA-basis triangulation, guide verification). Assembly-time + source-bound; a fetch/parse
+    miss is UNKNOWN + a QA note, never an abort, never an analyst caveat. Each derived line is a
+    Sourced[str] whose components name their source LAYER (filing vs CIQ panel vs release)."""
+
+    releases: list[ReleaseExtract] = Field(default_factory=list)
+    filing: FilingSectionExtract | None = None
+    self_funding: Sourced[str]        # two-input read: latest-Q OCF sign AND LTM FCF (MIXED / fund)
+    wall_coherence: Sourced[str]      # same-window filing-vs-panel coherence, tranche-matched
+    basis_triangulation: Sourced[str]  # EBITDA/margin bases table — every leverage row labeled
+    guide_verification: Sourced[str]  # CIQ guide vs release guide (vendor-echo / cross-source)
+    qa_flags: list[str] = Field(default_factory=list)
+
+    model_config = {"frozen": True}
+
+
 class MechanicalLayer(BaseModel):
     """The deterministic, source-bound facts — the ONLY input the synthesis LLM is given."""
 
@@ -532,6 +723,9 @@ class MechanicalLayer(BaseModel):
     # C — the Financial-Summary appendix (actuals + consensus fusion). Optional-with-default for
     # back-compat: old JSON round-trips; a FRESH assembly builds it (sub-fields fail loud if empty).
     financial_summary: FinancialSummary | None = None
+    # (RC-1 C) primary-source extraction (99.1 release + 10-Q sections) + derived cross-source
+    # surfaces. Optional-with-default for back-compat: old JSON round-trips (no primary-source).
+    primary_source: PrimarySource | None = None
     management_commentary: Sourced[str]  # earnings-call transcript — QUALITATIVE only, no numbers
 
     model_config = {"frozen": True}
