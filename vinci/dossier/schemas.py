@@ -18,7 +18,7 @@ import enum
 from datetime import date, datetime
 from typing import Generic, TypeVar
 
-from pydantic import BaseModel, model_validator
+from pydantic import BaseModel, Field, model_validator
 
 T = TypeVar("T")
 
@@ -502,6 +502,81 @@ class FinancialSummary(BaseModel):
     balance_sheet: Sourced[str]  # C3 — period-labelled posture block
     coherence: Sourced[str]  # C3 — BS cash/debt vs the implied-valuation bridge
     as_of: Sourced[str]  # the estimates as-of basis stamped on the E columns
+
+    model_config = {"frozen": True}
+
+
+# --- RC-1 (A): primary-source release extraction — 8-K EX-99.1, DETERMINISTIC / anchored ----------
+
+
+class GuidanceItem(BaseModel):
+    """(RC-1 A) One company guidance/outlook metric from a 99.1 press release — a range, or a
+    QUALITATIVE-only marker when the outlook names the metric but states NO number (MVST's
+    '2026 … continued revenue growth' is qualitative). Verbatim-bound, no reading added."""
+
+    metric: str  # revenue | adjusted ebitda | adjusted eps | gross margin | free cash flow
+    period: str  # e.g. "2026"
+    low: float | None  # range low ($M; $/sh for EPS; % for margin). None when QUALITATIVE
+    high: float | None  # range high. None when a single value or QUALITATIVE
+    qualitative: bool  # True ⇒ named in the outlook with NO number (fail-loud honest, not a guess)
+    verbatim: str  # the outlook sentence, ≤200c
+    source_ref: str  # accession + exhibit
+
+    model_config = {"frozen": True}
+
+
+class ReconciliationValue(BaseModel):
+    """(RC-1 A) One non-GAAP reconciliation ACTUAL from a 99.1 — adjusted EBITDA / net income / EPS
+    for a period, sign-aware ('negative $5.5 million' ⇒ -5.5). Verbatim-bound; never a guess."""
+
+    metric: str  # "adjusted ebitda" | "adjusted net income" | "adjusted eps"
+    period: str
+    value: float  # $M (or $/share for EPS); NEGATIVE for a loss
+    verbatim: str
+    source_ref: str
+
+    model_config = {"frozen": True}
+
+
+class OneOffItem(BaseModel):
+    """(RC-1 A) One one-off item from a 99.1 — an impairment / charge / write-down: the amount + the
+    verbatim description ('$32.5M inventory impairment … ESS components'). Bound to the exhibit."""
+
+    amount: float  # $M
+    description: str  # verbatim, ≤200c
+    verbatim: str
+    source_ref: str
+
+    model_config = {"frozen": True}
+
+
+class EventImpact(BaseModel):
+    """(RC-1 A) One event-impact quantification from a 99.1 — the Avis class: a named event 'expects
+    to reduce {metric} by $A to $B'. Direction + range, verbatim-bound; no reading added."""
+
+    metric: str  # e.g. "revenue" | "segment profit"
+    direction: str  # "reduce" | "increase"
+    low: float | None  # $M
+    high: float | None
+    period: str  # e.g. "2026 annualized"
+    verbatim: str
+    source_ref: str
+
+    model_config = {"frozen": True}
+
+
+class ReleaseExtract(BaseModel):
+    """(RC-1 A) The DETERMINISTIC extraction of ONE 8-K EX-99.1 earnings/guidance exhibit: guidance,
+    non-GAAP reconciliation actuals, one-offs, and event-impact quantifications — every item
+    source-bound to the exhibit. ``qa_flags`` carries fail-loud markers ('no anchored pattern
+    matched') — a miss is UNKNOWN + a QA note, never an analyst caveat, never a guessed number."""
+
+    source_ref: str  # accession + exhibit URL
+    guidance: list[GuidanceItem] = Field(default_factory=list)
+    reconciliation: list[ReconciliationValue] = Field(default_factory=list)
+    one_offs: list[OneOffItem] = Field(default_factory=list)
+    event_impacts: list[EventImpact] = Field(default_factory=list)
+    qa_flags: list[str] = Field(default_factory=list)
 
     model_config = {"frozen": True}
 
