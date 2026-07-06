@@ -1713,6 +1713,24 @@ Each line: *what it does* — *verified how*.
   not a design flaw.** Operationally: efts throws transient 500s under the request burst → the harness
   fails LOUD (never fabricates); a cache-first re-run resumes (idempotent, monotonic) — the retrocast
   completed via that recovery. On a feat/theme-assay branch; PR opened, NOT merged.**
+  **— ADDENDUM (2026-07-06, deeper-history re-run; the INCONCLUSIVE record above stays — it was TRUE
+  under the 5y constraint):** operator upgraded the Polygon plan; EOD now reaches 2018-01-02 (verified:
+  SPY & IWM both 61/61 bars across Q1-2018). Re-running the SAME 4 cases (efts fully cache-first, ZERO
+  LLM; **+104 pre-2021 grouped-daily bars fetched fresh; NO cache purge — the prior polygon cache held
+  only valid `OK` bars (2021-09-30→2026-07-02), and the old plan's pre-2021 gaps were 403s that netcache
+  never persisted, so zero poison existed**) makes the pre-re-rate windows evaluable and FLIPS the
+  verdict to **`PASS (survives — early-window premise NOT falsified)`**. Evidence: **defense-demand-shift
+  @ 2023-01-01 has a ≥2 consecutive EARLY run under ALL 4 combos** (flat20/flat30 × medrise/sloperise →
+  runs 2/3/2/3) — rising new-filer velocity (521→425→419→366) while basket excess vs IWM AND SPY stayed
+  flat-to-negative through 2021 (+0%/+0%, −10%/−14%, −16%/−25%, −17%/−37%: activity rose BEFORE price),
+  then the basket re-rated NARRATIVE (+22–33%) in 2022. **ai-datacenter @ 2022-07-01** = one isolated
+  EARLY quarter (2022Q1, +7%/+9%, medrise combos only, run 1). The 2026 (post-re-rate) cases are
+  UNCHANGED (ai-dc 1/2, defense 0/0 — their windows were already inside the 5y history), and their EARLY
+  quarters (2025Q1/2026Q1) sit MID-re-rate, not a clean pre-move signal. Residual honesty (median-of-
+  available, n disclosed, NO substitution): defense-2023 early quarters rest on n=7/10 priced members
+  (short-history: DRS IPO-2022 = 2/16 quarter-ends, DPRO 7/16, POWWP 8/16); ai-dc-2022 on n=4–5/10 (many
+  AI-DC names IPO'd 2021+) — every quarter ≥ the 3-member median floor, no smoothing. **The earliness
+  premise SURVIVES on evidence; deeper price history was indeed the unlock. Still NOT merged.**
 - _Whole suite green (ruff + mypy --strict clean; `pytest -m "not network"` passes)._
 
 ## 3. FALSIFIED — tested and retired (NOT deferred)
@@ -2785,6 +2803,11 @@ for the 2022/2023 8-quarter baselines; only then is a PASS/FALSIFIED evaluable. 
 brief — do NOT auto-build): 8-K $-commitment extraction + an attention/search prior + a *weighted*
 form-family split, AND the deeper price history. Op note: the retrocast fails LOUD on transient efts
 500s under load — re-run cache-first (idempotent) to resume; it completed on that recovery.
+**— UPDATE (2026-07-06):** the operator upgraded Polygon (EOD → 2018); the deeper-history re-run
+resolved the price gap and the verdict is now **PASS** — defense-demand-shift had a ≥2q EARLY run
+(all 4 combos) before its 2022 re-rate. **The kill criterion is NOT triggered — the harness SURVIVES
+on evidence.** The price-history blocker is lifted; v1 (8-K $-commitment + attention prior + weighted
+form-family split) remains a fresh brief, NOT auto-built. Full detail in the §2 addendum.
 
 **Deferred audit follow-ups (PR #70 audit, 2026-07-03) — reported, not fixed under audit:**
 - **X-2 (covenant governing-term collapse):** two DISTINCT debt facilities that share a family label
