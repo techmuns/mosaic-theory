@@ -20,7 +20,7 @@ import pytest
 
 from vinci.graph.llm import LlmClient
 from vinci.netcache import CachedHttp, HttpError
-from vinci.themes.drivers import AI_DATACENTER, DEFENSE_DEMAND_SHIFT
+from vinci.themes.drivers import AI_DATACENTER, DEFENSE_DEMAND_SHIFT, DRIVER_SPECS
 from vinci.themes.exposure import (
     assess_exposure,
     grade_driving_fact,
@@ -440,3 +440,27 @@ def test_ai_datacenter_spec_covers_the_chain() -> None:
     joined = " ".join(AI_DATACENTER.prefilter_terms).lower()
     for term in ("data center", "liquid cooling", "optical interconnect", "high bandwidth memory"):
         assert term in joined, f"pre-filter missing chain vocabulary: {term}"
+
+
+def test_themes_exposure_driver_required_and_resolves(
+    capsys: pytest.CaptureFixture[str],
+) -> None:
+    """--driver is REQUIRED + choices-gated (fail-loud, no default); each valid key round-trips
+    through the parser to its DRIVER_SPECS entry; an unknown key errors naming both keys."""
+    from vinci.cli import build_parser
+
+    parser = build_parser()
+
+    with pytest.raises(SystemExit):  # unknown driver → argparse exit
+        parser.parse_args(["themes-exposure", "--driver", "not-a-theme"])
+    err = capsys.readouterr().err
+    assert "ai-datacenter" in err and "defense-demand-shift" in err  # error names both keys
+
+    with pytest.raises(SystemExit):  # missing --driver → required, no silent default
+        parser.parse_args(["themes-exposure"])
+
+    for key in DRIVER_SPECS:  # each valid key round-trips to the right spec
+        args = parser.parse_args(["themes-exposure", "--driver", key])
+        assert args.driver == key
+        assert DRIVER_SPECS[args.driver].key == key
+    assert set(DRIVER_SPECS) == {"ai-datacenter", "defense-demand-shift"}
