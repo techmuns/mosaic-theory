@@ -151,9 +151,16 @@ class Store:
         )
         self._conn.commit()
 
-    def clear_universe(self, as_of: date) -> None:
-        """Drop any prior universe snapshot for ``as_of`` — a rebuild is a clean snapshot."""
-        self._conn.execute("DELETE FROM universe_snapshot WHERE as_of = ?", (_iso(as_of),))
+    def clear_universe(self) -> None:
+        """Drop the ENTIRE universe snapshot — a rebuild is a clean, single-generation snapshot (a
+        FULL replace across ALL ``as_of``), not an accretion. The prior behaviour cleared only the
+        rebuild's own ``as_of``, so on a persistent DB an earlier generation survived and layered on
+        top (``run_weekly`` reloads an older snapshot, then ``build_universe`` writes today's → both
+        lingered, doubling the exported ``universe_snapshot`` with duplicate ``internal_id``s across
+        ``as_of``). Clearing all guarantees the stored/exported universe is exactly the latest
+        build's; consumers read the single generation via ``latest_universe`` (MAX ``as_of``). Same
+        clean-snapshot discipline as ``clear_candidates``."""
+        self._conn.execute("DELETE FROM universe_snapshot")
         self._conn.commit()
 
     def clear_candidates(self) -> None:

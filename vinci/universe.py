@@ -95,7 +95,8 @@ def build_universe(
 
     stats: Counter[str] = Counter()
     with Store(cfg.db_path) as store:
-        store.clear_universe(reference_date)  # a rebuild is a clean snapshot, not an accretion
+        store.clear_universe()  # FULL replace — a rebuild is a clean snapshot, not an accretion
+        # (was clear-only-`reference_date`, which left prior as_of generations on a persistent DB)
         for ident in resolver.iter_universe(band.exchanges):
             stats["considered"] += 1
             close = closes.get(ident.eod_symbol)
