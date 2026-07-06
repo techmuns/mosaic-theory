@@ -2661,6 +2661,21 @@ committed public-domain EDGAR excerpts (CI-verifiable, no network).
   filing **cross-validates** the panel; a divergence path fires only ≥ tolerance, with a ±7d-boundary
   safety-valve naming a possible window-convention artifact. Going-concern / OCF-mixed / concentration /
   adjusted-EBITDA-basis findings STAND.
+- **IC DISPOSITIONS CLOSED BY RC-1 (evidence = the real-data derivations + render + lint, §5 gate run):**
+  (a) MVST survival read materially DARKENS — self-funding **MIXED** (not the committed one-input
+  "self-funding"), going-concern **SUBSTANTIAL DOUBT** stated, adjusted leverage **~18.7x** on the
+  company-defined LTM EBITDA ($10.7M) — all rendered, source-bound. (b) VRRM materially CLEANS — **no**
+  ≤12m wall (filing states none, a KNOWN), **no** going-concern doubt (checked-absence), guide
+  cross-source **VERIFIED**, and the Avis impact is now **QUANTIFIED** (−$135–145M rev / −$120–125M
+  seg-profit) — closing the prior "Avis not quantified" Key-Unknown gap: the digest feeds the number and
+  the `event_impact_vs_key_unknown` lint makes a residual "not quantified" claim extinct (QA). (c) The
+  MVST wall retraction is CLOSED with the corrected same-layer figure ($109.6M panel principal AGREES
+  $111.2M filing). NYCDOT 15.2% exact STANDS.
+- **MERGE-HYGIENE CONVENTION (recorded at the RC-1 merge):** a **linear isolation branch** (no
+  sync-merge) → **rebase** onto main before merge (the #61 precedent — preserves clean SHAs). A branch
+  that **carries a sync-merge** (like this one, which merged origin/main to resolve divergence) → **merge
+  commit**, NOT rebase (a rebase would flatten the sync-merge and re-mint the verified SHAs), NOT squash
+  (squash loses the isolated-commit bisect granularity the brief required).
 
 The **dossier-assembler is built and verified (§2)** — the queue-top now flows ranker → `dossier`.
 Remaining:
