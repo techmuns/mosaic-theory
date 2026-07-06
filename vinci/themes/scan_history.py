@@ -15,7 +15,7 @@ from __future__ import annotations
 
 import json
 from collections import Counter
-from datetime import datetime
+from datetime import datetime, timedelta
 from pathlib import Path
 from typing import Any
 
@@ -38,6 +38,9 @@ def record_snapshot(
     replacement for any downstream reader. NON-OVERWRITING: a path collision (same second +
     sha) gets a ``__1``/``__2``/… suffix — an existing snapshot is never touched. Any write
     error propagates loud; a silently missing snapshot would fake history."""
+    if now.tzinfo is None or now.utcoffset() != timedelta(0):  # aware-UTC only — the filename's
+        # literal 'Z' would otherwise falsely imply UTC (verification obs A). Fail before any write.
+        raise ValueError("record_snapshot requires an aware UTC datetime")
     tier_counts = Counter(str(r["exposure_basis"]) for r in dumped)  # missing key = fail loud
     subdir = history_root / driver_slug
     subdir.mkdir(parents=True, exist_ok=True)

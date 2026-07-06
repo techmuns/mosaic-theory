@@ -35,6 +35,7 @@ from vinci.schemas.ledger import Confidence, Verdict
 from vinci.scoring import score_ledger
 from vinci.screens import screen_universe
 from vinci.store import Store
+from vinci.themes.drivers import DRIVER_SPECS
 from vinci.universe import build_universe
 
 
@@ -544,9 +545,9 @@ def _cmd_themes_stage2(args: argparse.Namespace) -> int:
 
 
 def _cmd_themes_exposure(args: argparse.Namespace) -> int:
-    """Stage-3 build-2: scan the sub-$10B universe for DISCLOSED exposure to ONE driver — the AI-
-    datacenter VALUE CHAIN (chips→HBM→packaging→thermal→power→optical→cloud) — reading each name's
-    recent filing stream through the fenced, precision-fixed classifier. WIDE funnel: surfaces every
+    """Stage-3: scan the sub-$10B universe for DISCLOSED exposure to ONE driver — selected by
+    ``--driver`` from the DRIVER_SPECS registry — reading each name's recent filing stream through
+    the fenced, precision-fixed classifier. WIDE funnel: surfaces every
     name with ANY chain-attributable signal, with legible provenance (grade / driver-tie / layer
     / verbatim fact + source_ref). Never concludes/ranks/selects — NO machine confidence score; the
     human triages. The VOLUME (by type + chain layer) is the first-class output."""
@@ -559,7 +560,6 @@ def _cmd_themes_exposure(args: argparse.Namespace) -> int:
     from vinci.graph.llm import AnthropicLlmClient
     from vinci.sec import build_efts_http, build_sec_http
     from vinci.themes import detection as det
-    from vinci.themes.drivers import AI_DATACENTER
     from vinci.themes.exposure import (
         grade_driving_fact,
         is_real_exposure,
@@ -568,7 +568,9 @@ def _cmd_themes_exposure(args: argparse.Namespace) -> int:
     )
     from vinci.themes.schemas import ExposureBasis
 
-    _layers = AI_DATACENTER.provenance_tags  # theme's by-tag provenance map (chain layers here)
+    spec = DRIVER_SPECS[args.driver]  # --driver is REQUIRED + choices-gated; fail-loud, no default
+    print(f"driver={spec.key}")
+    _layers = spec.provenance_tags  # theme's by-tag provenance map (chain layers here)
 
     def _tag(fact_text: str) -> str:
         return provenance_tag_of(fact_text, _layers)
@@ -582,7 +584,7 @@ def _cmd_themes_exposure(args: argparse.Namespace) -> int:
     ref = date.fromisoformat(args.ref) if args.ref else snap
     startdt = (ref - timedelta(days=args.window_days)).isoformat()
     matched, results = scan_driver_exposure(
-        AI_DATACENTER, names,
+        spec, names,
         edgar=EdgarClient.from_config(cfg), sec_http=build_sec_http(cfg),
         efts_http=build_efts_http(cfg), llm=AnthropicLlmClient.from_config(cfg),
         startdt=startdt, enddt=ref.isoformat(), max_workers=args.workers, progress=stderr_reporter,
@@ -605,10 +607,8 @@ def _cmd_themes_exposure(args: argparse.Namespace) -> int:
         except (OSError, subprocess.SubprocessError):
             git_sha = None
         history_root = args.scan_history_dir or Path("data/scan_history")
-        # "ai-datacenter" literal mirrors the existing AI_DATACENTER hardcoding above — both get
-        # replaced together when themes-exposure grows a --driver param (scanner fork, not here).
         snap_path = record_snapshot(
-            dumped, driver_slug="ai-datacenter", driver_desc=AI_DATACENTER.description,
+            dumped, driver_slug=spec.key, driver_desc=spec.description,
             history_root=history_root, now=datetime.now(UTC), git_sha=git_sha,
             n_scanned=len(names))
         print(f"scan-history snapshot → {snap_path}")
@@ -623,7 +623,7 @@ def _cmd_themes_exposure(args: argparse.Namespace) -> int:
     surfaced = [a for a in results if a.exposure_basis is not ExposureBasis.NONE_DISCLOSED]
     layers = Counter(_tag(f.fact) for a in surfaced if (f := grade_driving_fact(a)))
     errs = [a for a in results if any("error:" in fl.lower() for fl in a.flags)]
-    print("\n=== Stage-3 build-2 · AI-datacenter VALUE-CHAIN universe scan ===")
+    print(f"\n=== Stage-3 · {spec.key} exposure scan ===")
     print(f"universe {len(names)} · {len(matched)} mention-candidates · {len(results)} assessed "
           f"· {len(errs)} scan-errors (recall gap, logged)")
     print(f"\nVOLUME by exposure-type — the wide funnel, {len(surfaced)} surfaced:")
@@ -938,8 +938,12 @@ def build_parser() -> argparse.ArgumentParser:
 
     p_exp = sub.add_parser(
         "themes-exposure",
-        help="Stage-3 build-1: semantic-primary exposure scan for the AI-datacenter driver "
-        "(assesses disclosed exposure from filings; never concludes)",
+        help="Stage-3: semantic-primary exposure scan for a theme driver (--driver; assesses "
+        "disclosed exposure from filings; never concludes)",
+    )
+    p_exp.add_argument(
+        "--driver", required=True, choices=sorted(DRIVER_SPECS),
+        help="theme driver to scan (from the DRIVER_SPECS registry; REQUIRED — no default)",
     )
     p_exp.add_argument("--ref", help="reference date YYYY-MM-DD (default: snapshot as_of)")
     p_exp.add_argument(

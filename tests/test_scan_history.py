@@ -5,8 +5,10 @@ indexed in the manifest, and byte-identical to the CLI's --out writer. Network-f
 from __future__ import annotations
 
 import json
-from datetime import UTC, datetime
+from datetime import UTC, datetime, timedelta, timezone
 from pathlib import Path
+
+import pytest
 
 from vinci.themes.scan_history import record_snapshot
 
@@ -71,3 +73,22 @@ def test_archive_bytes_match_the_out_writer(tmp_path: Path) -> None:
     expected = "\n".join(json.dumps(r) for r in DUMPED)
     assert p.read_text() == expected
     assert not p.read_text().endswith("\n")
+
+
+def test_utc_guard_rejects_naive_and_nonutc(tmp_path: Path) -> None:
+    """UTC guard (verification obs A): a naive or non-UTC `now` fails LOUD before any write; a real
+    UTC now passes — the filename's literal 'Z' is only truthful for aware-UTC input."""
+    manifest = tmp_path / "manifest.jsonl"
+    with pytest.raises(ValueError, match="aware UTC"):  # naive
+        record_snapshot(DUMPED, driver_slug="x", driver_desc="d", history_root=tmp_path,
+                        now=datetime(2026, 7, 4, 12, 0, 0), git_sha="s", n_scanned=1)
+    with pytest.raises(ValueError, match="aware UTC"):  # tz = +05:30
+        record_snapshot(DUMPED, driver_slug="x", driver_desc="d", history_root=tmp_path,
+                        now=datetime(2026, 7, 4, 12, 0, 0,
+                                     tzinfo=timezone(timedelta(hours=5, minutes=30))),
+                        git_sha="s", n_scanned=1)
+    assert not manifest.exists()  # both rejections failed BEFORE any side effect
+    p = record_snapshot(DUMPED, driver_slug="x", driver_desc="d", history_root=tmp_path,
+                        now=datetime(2026, 7, 4, 12, 0, 0, tzinfo=UTC),
+                        git_sha="s", n_scanned=1)
+    assert p.exists() and manifest.exists()  # an aware UTC now passes

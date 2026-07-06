@@ -3093,3 +3093,29 @@ command. **Driver-parameterizing `themes-exposure` is the scanner-fork's FIRST s
 `driver_slug="ai-datacenter"` literal in the history call is marked to be replaced by the same param).
 Suite green (ruff + mypy --strict + pytest **461** = 457 baseline +4). Local branch off origin/main
 (`f2d7db2`); pushed for review; NOT merged.
+
+**DRIVER-PARAMETERIZE `themes-exposure` (2026-07-06, `feat/driver-param`, backend-only; NO frontend,
+nothing deploys).** FINDING CLOSED (recorded in scan-history PR #76): `themes-exposure` was
+AI-datacenter-HARDCODED (imported `AI_DATACENTER`, no `--driver`). Now driver-parameterized via
+`DRIVER_SPECS`: **`--driver` is REQUIRED + choices-gated** (`choices=sorted(DRIVER_SPECS)` =
+`ai-datacenter` | `defense-demand-shift`), **NO default** — fail-loud beats silently scanning the wrong
+theme; the old implicit invocation now errors listing both keys. `spec = DRIVER_SPECS[args.driver]`
+threads through `scan_driver_exposure`, the provenance-tag `_layers`, the scan header, and
+`record_snapshot(driver_slug=spec.key, driver_desc=spec.description)` — deleting the `"ai-datacenter"`
+literal and closing the scan-history rider. A `driver=<key>` line prints at scan start; `--help` + the
+scan header are now driver-generic. **Defense is now CLI-reproducible**
+(`themes-exposure --driver defense-demand-shift`) instead of a bespoke script. **Behavioral parity with
+the bespoke defense script is ASSUMED via the shared `exposure.py` engine (same `assess_exposure` path)
+— to be CONFIRMED on the first real defense re-scan, NOT claimed now** (the scan is network + LLM per
+name, not runnable in the suite; no cheap smoke path — `--max-names` still hits EDGAR + the LLM).
+DriverSpec text in `drivers.py` UNTOUCHED (tie_taxonomy is verbatim analyst-owned).
+**RIDERS (from the scan-history verification):** **A (false-Z) FIXED + pinned** — `record_snapshot` now
+rejects a naive/non-UTC `now` with a loud `ValueError` (tzinfo present + `utcoffset()==0`) BEFORE any
+write, so the filename's literal `Z` is only ever truthful (the CLI already passed `datetime.now(UTC)`
+→ behavior there unchanged); pinned by `test_utc_guard_rejects_naive_and_nonutc`. **B (TOCTOU
+check-then-write on collision) ACCEPTED** — the single-process CLI scans one theme at a time;
+`exists()`-then-suffix is the spec's own algorithm and same-second+sha collisions are vanishingly rare.
+**C (git-sha read from the CLI cwd) ACCEPTED** — metadata-only; the scan's first step
+(`load_detection_universe`) already requires the repo cwd, so a wrong-cwd run dies before the sha read.
++2 network-free tests. Suite green (ruff + mypy --strict 87 + pytest **463** = 461 baseline +2). Local
+branch off `origin/main` (`acb1d20`); NOT merged.
