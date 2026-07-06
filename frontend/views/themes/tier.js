@@ -50,7 +50,7 @@ function paint(root, d, slug, tier) {
   const controls = `
     <div class="header-block" style="margin-bottom:14px;">
       <h1 class="page-h">${escapeHtml(d.label)} · ${escapeHtml(TIER_LABEL[tier] || tier)}</h1>
-      <div class="subtitle muted">${fmtInt(NAMES.length)} name${NAMES.length !== 1 ? "s" : ""} · the machine tiers, it never ranks · click a row for the full grade fact + filing</div>
+      <div class="subtitle muted">Click a row for the full grade fact + filing</div>
     </div>
     <div style="display:flex; gap:12px; align-items:center; margin-bottom:12px; flex-wrap:wrap;">
       <a href="#/themes/${escapeHtml(slug)}" class="foot">← ${escapeHtml(d.label)}</a>

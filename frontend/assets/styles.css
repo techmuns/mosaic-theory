@@ -194,6 +194,7 @@ table.data { width: auto; max-width: 100%; border-collapse: collapse; font-size:
 table.data th { text-align: left; font-size: 11px; text-transform: uppercase; letter-spacing: 0.04em; color: var(--ink-3); font-weight: 600; padding: 8px 10px; border-bottom: 1px solid var(--line-2); white-space: nowrap; }
 table.data th.num { text-align: right; } /* (K2) numeric header aligns to its right-aligned column */
 table.data td { padding: 9px 10px; border-bottom: 1px solid var(--line); vertical-align: top; }
+table.data td.mono { white-space: nowrap; } /* keep tickers (incl. the ▸ caret) on one line — never wrap a 4-char name */
 table.data tr:hover td { background: var(--surface-2); }
 /* B1 per-peer grid: the subject row is distinct; the peer-median footer sits under a rule */
 table.data tr.name-row td { font-weight: 650; background: var(--surface-2); }
@@ -249,6 +250,10 @@ a.tier-count:hover { text-decoration: underline; }
 .tier-count.zero { color: var(--ink-3); font-weight: 400; }
 
 /* --- B1: Overview verdict/scan split — two labeled column blocks (verdict primary, scan muted) --- */
+/* fill the window: the Theme column absorbs the slack so the number columns stay grouped on the right
+   (scoped to .vs-table — other data tables keep the K2 content-sized width) */
+table.data.vs-table { width: 100%; }
+.vs-table td:first-child, .vs-table th:first-child { width: 100%; }
 .vs-table th.num { text-align: right; }
 .vs-table th.grp { text-align: center; font-size: 10px; text-transform: uppercase; letter-spacing: 0.06em; font-weight: 700; padding-bottom: 2px; }
 .vs-table th.grp-verdict { color: var(--ink); }
