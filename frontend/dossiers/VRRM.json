@@ -124,8 +124,8 @@
           "note": null
         },
         "rev_anchors": {
-          "value": "FY26E $985.5M · FY27E $942.1M · NTM $979.8M (consensus Revenue = TEV ÷ forward ladder; NTM = the name-NTM identity)",
-          "source_ref": "CIQ Estimates→Multiples (forward-multiple ladder: NTM + FY26→FY33)",
+          "value": "FY26E $988.8M · FY27E $947.5M (direct consensus Revenue — CIQ Estimates→Trends latest snapshot)",
+          "source_ref": "CIQ Estimates→Trends (FY26/FY27 consensus Revenue, latest snapshot)",
           "status": "present",
           "note": null
         },
@@ -3624,8 +3624,8 @@
         "note": null
       },
       "covenant_terms": {
-        "value": "0 of 7 named terms extracted verbatim from 1 located exhibit(s); see the covenant-terms table for each {value, source_ref}.",
-        "source_ref": "fenced Tier-2 extraction",
+        "value": "COVENANT DIGEST — extraction failed: no covenant terms extracted from located exhibits (terms UNKNOWN, not pending).",
+        "source_ref": "fenced Tier-2 digest (P1)",
         "status": "present",
         "note": null
       },
@@ -3698,7 +3698,8 @@
         "source_ref": "fenced Tier-2 extraction (verbatim, source-bound)",
         "status": "present",
         "note": null
-      }
+      },
+      "maturity_event": null
     },
     "financial_summary": {
       "annual": {
@@ -3977,182 +3978,184 @@
     }
   },
   "synthesis": {
-    "evidence_balance": "mixed — a real, self-funding cash franchise with rising absolute EBITDA, but a permanent >10% customer loss plus abrupt CEO exit and hard forward cuts.",
+    "evidence_balance": "mixed — a concrete >10%-revenue customer loss and still-falling forward estimates offset a self-funding, high-margin, guidance-reaffirming franchise trading near its floor.",
     "bull_points": [
       {
-        "claim": "Absolute EBITDA has RISEN across the multi-year window (229→304→306→342→362; LTM 358) even as the margin % drifted from 42% to 37%, so the margin-erosion optic masks steadily growing EBITDA dollars.",
+        "claim": "Absolute EBITDA has risen steadily ($229M FY21 → $304M → $306M → $342M → $362M FY25, $358M LTM) even as the margin % slipped, so the trailing 37% margin reflects mix, not deteriorating profit dollars.",
         "source_ref": "CIQ Financials→Income Statement (margin % + absolute EBITDA reconciler)",
         "cited": true
       },
       {
-        "claim": "The business is FCF-positive ($53.9M LTM) and self-funding, with interest coverage of 5.6x, so the de-rating is not a liquidity/solvency event.",
-        "source_ref": "CIQ Financials→Cash Flow 'Levered Free Cash Flow' [LTM 12 months Mar-31-2026]",
+        "claim": "The business self-funds: FCF is positive ($53.9M LTM), interest coverage is 5.6x, and net-debt/EBITDA of 2.9x eases to ~2.6x on forward adjusted EBITDA — no immediate solvency pressure.",
+        "source_ref": "CIQ Net Debt ÷ CIQ LTM EBITDA (EDGAR XBRL breadth fallback) + FCF sign (survival capacity)",
         "cited": true
       },
       {
-        "claim": "Management is buying back stock into the drawdown — share count fell 7.7% over ~1.7 years (164.7M→151.9M) — consistent with a temporary-overshoot posture, not distress.",
-        "source_ref": "EDGAR XBRL shares, trailing 2024-08-31..2026-05-31",
-        "cited": true
-      },
-      {
-        "claim": "Fresh FY26 guidance issued AFTER the Avis termination still holds Adjusted EBITDA $380–385M, Adjusted EPS $1.19–1.25 and FCF $140–150M — earnings power above the one-time-distorted GAAP basis and implying an adj P/E ~3.7x at $4.50.",
+        "claim": "Management post-Avis reaffirmed a fresh FY26 guide (revenue $985–995M, adj-EBITDA $380–385M, adj-EPS $1.19–1.25, FCF $140–150M) that already incorporates the termination notice.",
         "source_ref": "EDGAR 8-K 0001193125-26-239351 Ex-99.1 — https://www.sec.gov/Archives/edgar/data/1682745/000119312526239351/d123116dex991.htm",
         "cited": true
       },
       {
-        "claim": "The name's OWN EV/EBITDA multiple sits at the 0th percentile of its 19-quarter history (8.5x vs 10.4–23.2x range, median 13.6x), a compression against its own arc, not merely against peers.",
-        "source_ref": "CIQ Financials→Multiples (Close; last col = current, excluded from history)",
+        "claim": "On the forward adjusted basis the name trades ~4.4x EV/EBITDA and ~3.7x adj-P/E at the current price, well below the trailing prints — an earnings-power gap versus the depressed GAAP optics.",
+        "source_ref": "EDGAR 8-K 0001193125-26-239351 Ex-99.1 — https://www.sec.gov/Archives/edgar/data/1682745/000119312526239351/d123116dex991.htm (adj-EBITDA) + EDGAR net debt + EOD price × shares",
         "cited": true
       },
       {
-        "claim": "On a headline peer-median basis VRRM's EBITDA margin (37%) is roughly double the peer median (18%) and revenue growth (10%) exceeds the peer median (8%), which POSES whether the discount is RESIDUAL (overshoot) rather than fully EARNED — but the peer set spans $430M–$15.9B (37x) and is flagged HETEROGENEOUS, so the median is a confidence-gated input, not a clean benchmark, and the trailing/forward split (LTM TEV/EBITDA median 10.3x vs NTM 8.33x) must be read before leaning on it.",
+        "claim": "The company delivered on its guided EBITDA/EPS floors 3/3 (EPS) and 8/10 (revenue/EBITDA), most recently MET for FY25, suggesting the revised guide is not a low-credibility number.",
+        "source_ref": "CIQ Estimates→Guidance (latest guide + sign-aware delivery track-record)",
+        "cited": true
+      },
+      {
+        "claim": "The peer discount (EV/EBITDA 4.7x vs peer median 10.3x; P/E 5.4x vs 15.6x) sits atop a name with a SUPERIOR margin (37% vs peer-median 18%) and comparable revenue growth (10% vs 8%) — posing whether the gap is EARNED or RESIDUAL overshoot, though the peer set spans $430M–$15.9B so this is a confidence-gated input, not a clean benchmark.",
         "source_ref": "CIQ Comparable Analysis→Operating Statistics (name vs peer median: growth/margin/leverage/beta)",
         "cited": true
       },
       {
-        "claim": "Consensus recommendation is Buy (1.00) and one broker (CJS) raised its rating to Outperform and target to $12 on 2026-06-09 after the drawdown, signalling at least some sell-side conviction the sell-off overshot.",
-        "source_ref": "CIQ Estimates→Consensus",
+        "claim": "Government Solutions — 47% of revenue — is a recurring, long-contract enforcement business (NYC contract value $998M/5yr signed Dec-2025; ~$71M TTM bookings) that management frames as the durable growth engine.",
+        "source_ref": "CIQ transcript(s): Verra Mobility Corporation, Q1 2026 Earnings Call, May 06, 2026.rtf; Verra Mobility Corporation, Q4 2025 Earnings Call, Feb 24, 2026.rtf",
+        "cited": true
+      },
+      {
+        "claim": "The company is buying back stock (share count -7.7% over ~1.7 years, 164.7M → 151.9M) — a capital-return posture inconsistent with distress.",
+        "source_ref": "EDGAR XBRL shares, trailing 2024-08-31..2026-05-31",
         "cited": true
       }
     ],
     "bear_points": [
       {
-        "claim": "A significant Commercial Services customer (Avis Budget) that represented OVER 10% of total revenue served a contract termination notice, a permanent loss of a top customer rather than a timing wobble.",
-        "source_ref": "8.01 Other Events: Other Events. On May 26, 2026, the Company announced that it received a termination notice from Avis Budget regarding Avis Budget's contract with the Company. Avis Budget is one of the Company's significant Commercial Services customers and represented over 10% of the Company's total revenue for the three months ended March 31, 2026 and year ended December 31, 2025",
-        "cited": false
-      },
-      {
-        "claim": "The CEO departed abruptly (Interim CEO Jonathan Keyser appointed 2026-06-01) days after the Avis loss — a management-change gap-down (item 5.02) layered on top of the customer loss, signalling deeper disruption than a single contract.",
-        "source_ref": "5.02 Departure/Election of Directors or Certain Officers: Departure of Directors or Certain Officers; Election of Directors; Appointment of Certain Officers; Compensatory Arrangements of Certain Officers. On June 1, 2026, Verra Mobility Corporation (the “Company”) announced that the Board of Directors of the Company (the “Company”) approved the appointment of Jonathan Keyser as the Interim President and Chief Executive Officer of the Company, effective May",
-        "cited": false
-      },
-      {
-        "claim": "Forward earnings power is being revised DOWN hard, not just optically: FY26 consensus EBITDA fell -16% (453→382) and EPS(GAAP) -29% over the 12m→latest path, and FY27E EBITDA ($333M) is guided BELOW FY25 actual ($362M) — a real deceleration, and the trailing 5.4x P/E rests on a flagged one-time-distorted EPS, not a clean multiple.",
-        "source_ref": "CIQ Estimates→Trends (current-FY consensus path; ragged, absent lookbacks n/a)",
+        "claim": "Avis Budget — a Commercial Services customer representing over 10% of total revenue — delivered a contract TERMINATION notice, a concrete recurring-revenue loss and the direct trigger of the May gap-down.",
+        "source_ref": "https://www.sec.gov/Archives/edgar/data/1682745/000119312526239351/d123116d8k.htm",
         "cited": true
       },
       {
-        "claim": "Estimate breadth is overwhelmingly negative — Revenue FY26 0↑/8↓ and EPS 1↑/5↓ last month — confirming analysts still cutting, not stabilising.",
-        "source_ref": "CIQ Estimates→Revisions (Last-Month breadth, FY)",
-        "cited": true
-      },
-      {
-        "claim": "Leverage is above the peer median on the comps basis (total-debt/EBITDA 3.0x vs peer median 1.9x; net-debt/EBITDA 2.9x), a genuine EARNED component of the discount, and LT EPS growth (2%) trails the peer median (10%).",
-        "source_ref": "CIQ Comparable Analysis→Operating Statistics (name vs peer median: growth/margin/leverage/beta)",
-        "cited": true
-      },
-      {
-        "claim": "Short interest is rising sharply — 5.0M→7.7M shares (+54.9%) into the settle 2026-06-15 — indicating growing conviction on the downside among short sellers.",
-        "source_ref": "FINRA consolidated short interest (settle 2026-06-15); DTC = 7,741,661 short ÷ 6,057,193 screen 90d ADV",
-        "cited": true
-      },
-      {
-        "claim": "The stock lost roughly 80% over 180 days while the small-cap benchmark rose ~18% (rel -102pts), an overwhelmingly idiosyncratic collapse concentrated in three discrete gap-downs on named adverse events.",
+        "claim": "The drawdown is idiosyncratic, not market beta: the name fell -80% over 180d while the small-cap index rose +18%, a ~-102% relative move — the market is pricing a name-specific impairment, not a sector swoon.",
         "source_ref": "EOD name−IWM 180d (screen data-record, G2)",
         "cited": true
       },
       {
-        "claim": "Gross margin is deteriorating quarter-over-quarter (61%→60%→58%→55%→55% across Q1-25 to Q1-26), a structural cost/mix pressure independent of the Avis event.",
+        "claim": "The gap-downs stack a self-reinforcing cluster: Feb earnings, the May Avis termination, then a June CEO departure with an interim appointment — leadership instability atop a demand shock.",
+        "source_ref": "EDGAR 8-K item codes at the gap-down dates (not blanket-labelled earnings)",
+        "cited": true
+      },
+      {
+        "claim": "Forward consensus is being cut hard and broadly: FY26 EBITDA consensus fell -16% (453→382) and GAAP EPS -29% (12m→latest), with revenue revisions running 0↑/8↓ last month — the estimate path is still descending, so the low trailing multiple sits on a shrinking forward base.",
+        "source_ref": "CIQ Estimates→Trends (current-FY consensus path; ragged, absent lookbacks n/a)",
+        "cited": true
+      },
+      {
+        "claim": "Growth quality is deteriorating beneath the stable margin: FY27E revenue is guided DOWN -4% and FY27E EBITDA falls to $333M, while LT EPS growth (2%) trails the peer median (10%) — the discount may be EARNED, not residual.",
+        "source_ref": "CIQ Comparable Analysis→Operating Statistics (name vs peer median: growth/margin/leverage/beta)",
+        "cited": true
+      },
+      {
+        "claim": "Leverage is above the peer set (total-debt/EBITDA 3.0x vs peer-median 1.9x), amplifying the equity impact of any further EBITDA erosion from customer losses.",
+        "source_ref": "CIQ Comparable Analysis→Operating Statistics (LTM Total Debt/EBITDA) · as-of 2026-06-24",
+        "cited": true
+      },
+      {
+        "claim": "The Q1-26 top line already went flat (revenue +0.1% YoY; -13% QoQ) and gross margin has slid from 61% to 55% over five quarters — momentum was fading before the Avis loss compounds it.",
         "source_ref": "CIQ Financials→Income Statement (quarterly, trailing 8Q)",
+        "cited": true
+      },
+      {
+        "claim": "Short interest is rising fast (+54.9% to 7.7M shares, 5.1% of float) — the market is adding conviction to the bear thesis, not covering.",
+        "source_ref": "FINRA consolidated short interest (settle 2026-06-15); DTC = 7,741,661 short ÷ 6,057,193 screen 90d ADV",
         "cited": true
       }
     ],
     "twin_reference_cases": [
       {
-        "name": "TaskUs",
+        "name": "Dun & Bradstreet",
         "outcome": "recovered",
-        "distinguishing_fact": "Same roster: an outsourced-services name that de-rated on customer-concentration fears yet kept growing revenue and EBITDA, later re-rating as churn worries proved overstated.",
-        "source": "CIQ Comparable Analysis→Financial Data + Business Description (roster + caps + business)"
+        "distinguishing_fact": "Recurring-data/enforcement-adjacent franchise that de-rated hard on leverage and slowing organic growth, yet self-funded through FCF while retaining a sticky contract base.",
+        "source": "[LLM-suggested, unverified]"
       },
       {
         "name": "Concentrix Corporation",
         "outcome": "went terminal",
-        "distinguishing_fact": "Same roster: a levered services provider whose EBITDA growth turned negative amid client attrition, staying cheap as the discount proved earned rather than an overshoot.",
-        "source": "CIQ Comparable Analysis→Financial Data + Business Description (roster + caps + business)"
+        "distinguishing_fact": "A same-roster peer whose de-rate accompanied negative EBITDA growth and elevated leverage — the pattern where a customer/demand shock proves structural rather than optical.",
+        "source": "CIQ Comparable Analysis→Financial Data + Operating Statistics (per-peer grid) · as-of 2026-06-24"
+      },
+      {
+        "name": "Cardtronics",
+        "outcome": "recovered",
+        "distinguishing_fact": "Infrastructure-services name concentrated in a few large customers that gapped down on a marquee contract loss, then stabilised as recurring municipal/enterprise volume proved durable.",
+        "source": "[LLM-suggested, unverified]"
       },
       {
         "name": "Conduent",
         "outcome": "went terminal",
-        "distinguishing_fact": "Government/commercial BPO reliant on a few large contracts; a headline contract loss plus leadership churn triggered a de-rate that persisted as customer losses recurred.",
+        "distinguishing_fact": "Government/BPO processor where customer attrition plus management turnover compounded into a persistent revenue slide that the low multiple never arrested.",
         "source": "[LLM-suggested, unverified]"
       },
       {
-        "name": "Gartner",
+        "name": "Verra Mobility (own FY23–FY24 arc)",
         "outcome": "recovered",
-        "distinguishing_fact": "High-margin recurring-revenue franchise that gapped down on a single customer/growth scare; self-funding cash flow and buybacks bridged to a re-rate once growth stabilised.",
-        "source": "[LLM-suggested, unverified]"
-      },
-      {
-        "name": "Envestnet",
-        "outcome": "recovered",
-        "distinguishing_fact": "Recurring, sticky platform with elevated leverage that de-rated on a growth/management wobble, then re-rated as cash generation and client retention held.",
-        "source": "[LLM-suggested, unverified]"
+        "distinguishing_fact": "The name's own prior period of depressed GAAP EPS and negative earnings surprises coexisted with rising absolute EBITDA and ROIC — an optical-vs-fundamental divergence that later normalised.",
+        "source": "CIQ Financials→Income Statement + Segments + Ratios (multi-year columns)"
       }
     ],
     "decisive_question": {
-      "question": "Is the Avis termination a one-off dent in a still-growing, cash-generative franchise (overshoot), or the first crack in a structurally decelerating, customer-concentrated business now also missing a permanent CEO (value trap)?",
+      "question": "Is the Avis termination plus fading Commercial Services momentum a one-time revenue reset that the fresh guide already fully absorbs (overshoot), or the first leg of a structural demand/contract-erosion cycle that keeps compounding through FY27 (value trap)?",
       "evidence_for": [
         {
-          "claim": "Fresh post-termination FY26 guidance still holds Adjusted EBITDA $380–385M and FCF $140–150M, implying the lost contract does not break the earnings base.",
+          "claim": "Management issued a revised, post-Avis FY26 guide with intact double-digit adj-EBITDA margin economics ($380–385M adj-EBITDA, $140–150M FCF), framing the loss as absorbed.",
           "source_ref": "EDGAR 8-K 0001193125-26-239351 Ex-99.1 — https://www.sec.gov/Archives/edgar/data/1682745/000119312526239351/d123116dex991.htm",
           "cited": true
         },
         {
-          "claim": "Government Solutions bookings were strong (~$71M trailing-12m new bookings) with long-term recurring contracts providing forward revenue visibility, per management.",
-          "source_ref": "CIQ transcript(s): Verra Mobility Corporation, Q1 2026 Earnings Call, May 06, 2026.rtf; Verra Mobility Corporation, Q4 2025 Earnings Call, Feb 24, 2026.rtf",
+          "claim": "Absolute EBITDA and ROIC rose through FY25 (EBITDA $362M; ROIC 11.5%) and Government Solutions bookings remain healthy — core franchise economics were intact pre-shock.",
+          "source_ref": "CIQ Financials→Income Statement + Segments + Ratios (multi-year columns)",
           "cited": true
         },
         {
-          "claim": "Absolute EBITDA rose through the period (to LTM 358) and the business remains FCF-positive and buying back stock, inconsistent with terminal decline.",
-          "source_ref": "CIQ Financials→Income Statement (margin % + absolute EBITDA reconciler)",
+          "claim": "The guided-floor delivery record (EPS 3/3, revenue/EBITDA 8/10, FY25 MET) lends credibility that the revised numbers are achievable, not aspirational.",
+          "source_ref": "CIQ Estimates→Guidance (latest guide + sign-aware delivery track-record)",
           "cited": true
         }
       ],
       "evidence_against": [
         {
-          "claim": "FY27E EBITDA ($333M) is guided below FY25 actual ($362M), and FY26 consensus EBITDA has been cut -16%, evidencing forward deceleration rather than a one-time dent.",
+          "claim": "FY27E revenue is guided DOWN -4% and FY27E EBITDA drops to $333M — the impairment extends beyond FY26, implying the erosion is not a single reset.",
           "source_ref": "CIQ Estimates→Trends (current-FY consensus path; ragged, absent lookbacks n/a)",
           "cited": true
         },
         {
-          "claim": "The lost customer alone represented over 10% of total revenue, a permanent structural revenue hole in the Commercial Services segment.",
-          "source_ref": "8.01 Other Events: Other Events. On May 26, 2026, the Company announced that it received a termination notice from Avis Budget regarding Avis Budget's contract with the Company. Avis Budget is one of the Company's significant Commercial Services customers and represented over 10% of the Company's total revenue for the three months ended March 31, 2026 and year ended December 31, 2025",
-          "cited": false
+          "claim": "Commercial Services revenue was already declining ~4% YoY on prior-period fleet-management churn before Avis, indicating a pre-existing attrition trend in the affected segment.",
+          "source_ref": "CIQ transcript(s): Verra Mobility Corporation, Q1 2026 Earnings Call, May 06, 2026.rtf; Verra Mobility Corporation, Q4 2025 Earnings Call, Feb 24, 2026.rtf",
+          "cited": true
         },
         {
-          "claim": "The abrupt CEO departure immediately after the customer loss compounds execution risk during the exact window renewals and cost transformation must be managed.",
-          "source_ref": "5.02 Departure/Election of Directors or Certain Officers: Departure of Directors or Certain Officers; Election of Directors; Appointment of Certain Officers; Compensatory Arrangements of Certain Officers. On June 1, 2026, Verra Mobility Corporation (the “Company”) approved the appointment of Jonathan Keyser as the Interim President and Chief Executive Officer of the Company, effective May",
-          "cited": false
+          "claim": "A CEO departure landed days after the Avis notice, and rising short interest (+54.9%) signals the market expects further downside, not stabilisation.",
+          "source_ref": "EDGAR 8-K item codes at the gap-down dates (not blanket-labelled earnings)",
+          "cited": true
         }
       ]
     },
     "key_unknowns": [
-      "Whether the Avis contract termination takes effect immediately or after a wind-down, and how much of the >10% revenue is actually at risk in FY26 vs FY27 — the 8-K does not quantify the timing or the recapture.",
-      "Whether the interim CEO becomes permanent and the strategic direction (MOSAIC margin plan, transformation cost savings) survives the transition — no permanent-CEO disclosure or search timeline is given.",
-      "The status of the OTHER >10% Commercial Services relationship management flagged as operating on a short-term extension under ongoing renewal negotiation — outcome unknown and a second concentration risk.",
-      "Named debt-covenant terms are UNKNOWN (covenant_terms not extracted); cushion vs the 2028 term loan / 2029 notes at reduced EBITDA is not disclosed.",
-      "Credit Health panel not rendered (status unknown), leaving refinancing/rating context opaque.",
-      "The peer set is flagged HETEROGENEOUS (caps $430M–$15.9B, 37x span) so the entire peer-median comp read is confidence-gated — no clean benchmark exists to decompose earned-vs-residual discount.",
-      "TEV/net-debt is internally unreconciled (net-debt 1046.3 vs bridge -54.6 flagged 'reconcile'), so leverage and EV-based multiples carry a data-integrity caveat.",
-      "Export date on the CIQ estimates/multiples data is unverified (a floor ≥2026-06-09); the true snapshot may be weeks staler than the price."
+      "Whether the >10%-of-revenue Avis relationship terminates fully or is partially retained/transitioned — the magnitude and timing of the actual revenue/EBITDA loss is not quantified in the facts.",
+      "The separate Commercial Services customer noted as operating under a short-term extension (>10% of revenue) — renewal outcome is unresolved and represents a second undisclosed concentration risk.",
+      "Permanence and strategic direction of the interim-CEO transition — no permanent appointment or stated strategy change is disclosed (leadership opacity is a bearish risk, not neutral).",
+      "Credit Health Panel not rendered and covenant terms extraction FAILED — no covenant headroom visibility against 3.0x leverage (a missing survival-capacity leg to be read as a risk, not a neutral gap).",
+      "The trailing P/E of 5.4x rests on a one-time-distorted EPS and the EV/EBITDA at 0%ile of its own 5y range is 'trailing-only' — the overshoot-vs-terminal read on these multiples is itself unresolved.",
+      "Net-debt figure flagged as unreconciled ($1,046.3M simple-TEV basis vs -$54.6M bridge) — the precise leverage input needs reconciliation before leaning on it.",
+      "FY27+ EBITDA trajectory beyond the guided FY26 — whether the -4% FY27 revenue guide marks a floor or continued decline is not resolved in the supplied data."
     ]
   },
   "caveats": [
     "RESOLVED (P/E basis) — trailing GAAP P/E 5.3x is one-time-distorted: latest GAAP EPS 0.85 is ~3.1× the recent median 0.28, so 5.3x is not a meaningful 'cheap' read. Clean read: forward adjusted guide $1.19–$1.25 → ~3.7x at the current price; CIQ P/LTM 16.8x uses a different (lower) trailing EPS basis.",
     "EV/EBITDA stale-price caveat — CIQ's Financials→Multiples current TEV/LTM 8.5x is priced at its last Close 2026-03-31, 83d before the 2026-06-22 reference; for a since-re-rated name this 'current' multiple AND the own-history range/percentile built on it are stale. The Comparable-Analysis sheet reads 4.7x on a current price — prefer that figure and re-pull the Financials multiple.",
     "Catalyst-path as-of UNVERIFIABLE — the CIQ Estimates export carries no as-of stamp; its data is on/after 2026-06-09 (the latest embedded revision event), but the true export date is unknown, so freshness vs the 2026-06-22 reference cannot be confirmed. Re-pull, or corroborate against a dated sibling CIQ export.",
-    "Unreconciled margin-compression (a bear point): 'Gross margin is deteriorating quarter-over-quarter (61%→60%→58%→55%→55% across Q1-25 to Q1-26), a structural cost/mix pressure independent of the Avis event.' — cites margin compression without the absolute-EBITDA reconciliation (margin % can fall while EBITDA rises)",
-    "(E5) covenant exhibit too large for single-pass extraction (684229 chars) — extract by hand: 8-K 0001564590-21-015880 · vrrm-ex101_62.htm",
-    "(E5) covenant exhibit too large for single-pass extraction (705724 chars) — extract by hand: 8-K 0001564590-20-006447 · vrrm-ex101_6.htm"
+    "Distorted-P/E anchor (a bull point): 'On the forward adjusted basis the name trades ~4.4x EV/EBITDA and ~3.7x adj-P/E at the current price, well below the trailing prints — an earnings-power gap versus the depressed GAAP optics.' — the P/E is distorted (rests on a non-current/non-recurring EPS); don't read it as cheap",
+    "Distorted-P/E anchor (a bull point): 'The peer discount (EV/EBITDA 4.7x vs peer median 10.3x; P/E 5.4x vs 15.6x) sits atop a name with a SUPERIOR margin (37% vs peer-median 18%) and comparable revenue growth (10% vs 8%) — posing whether the gap is EARNED or RESIDUAL overshoot, though the peer set spans $430M–$15.9B so this is a confidence-gated input, not a clean benchmark.' — the P/E is distorted (rests on a non-current/non-recurring EPS); don't read it as cheap",
+    "Unreconciled margin-compression (a bear point): 'Growth quality is deteriorating beneath the stable margin: FY27E revenue is guided DOWN -4% and FY27E EBITDA falls to $333M, while LT EPS growth (2%) trails the peer median (10%) — the discount may be EARNED, not residual.' — cites margin compression without the absolute-EBITDA reconciliation (margin % can fall while EBITDA rises)"
   ],
   "qa_flags": [
-    "UNCITED bear_point: 'A significant Commercial Services customer (Avis Budget) that…' (ref not in mechanical facts)",
-    "UNCITED bear_point: 'The CEO departed abruptly (Interim CEO Jonathan Keyser appointed…' (ref not in mechanical facts)",
-    "UNCITED decisive.against: 'The lost customer alone represented over 10% of total revenue, a…' (ref not in mechanical facts)",
-    "UNCITED decisive.against: 'The abrupt CEO departure immediately after the customer loss…' (ref not in mechanical facts)",
+    "(E5) covenant exhibit too large for single-pass extraction (705724 chars) — extract by hand: 8-K 0001564590-20-006447 · vrrm-ex101_6.htm",
+    "(E5) covenant exhibit too large for single-pass extraction (684229 chars) — extract by hand: 8-K 0001564590-21-015880 · vrrm-ex101_62.htm",
     "DIRECTIONAL language 'conviction' — human review (dossier frames, not concludes)",
-    "DIRECTIONAL language 'outperform' — human review (dossier frames, not concludes)"
+    "TWIN ampersand-name 'Dun & Bradstreet' — verify it is a single entity (kept)"
   ],
   "llm_model": "claude-opus-4-8",
-  "assembled_at": "2026-07-03T12:21:06.231598Z"
+  "assembled_at": "2026-07-06T06:20:28.182708Z"
 }
