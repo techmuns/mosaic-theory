@@ -464,3 +464,27 @@ def test_themes_forward_cli_multi_cohort(tmp_path: Path) -> None:
     assert set(b.layer_of.values()) == {"attritable-air", "munitions-scale", "counter-uas",
                                         "defense-autonomy"}  # schema-flex 'category' -> layer_of
     assert len(load_ledger(ledger)) == 4                 # one command, no bespoke script
+
+
+def test_themes_forward_driver_required_and_choices_gated(
+    capsys: pytest.CaptureFixture[str],
+) -> None:
+    """--driver on themes-forward is REQUIRED + choices-gated — the same fail-loud gate
+    themes-exposure adopted (no silent default). Missing errors; an unknown key errors naming both
+    keys; each valid key parses. Parser-level; the freeze/forward logic is unchanged."""
+    from vinci.cli import build_parser
+    from vinci.themes.drivers import DRIVER_SPECS
+
+    parser = build_parser()
+    base = ["themes-forward", "--worksheet", "w.csv", "--ledger", "l.jsonl"]
+
+    with pytest.raises(SystemExit):  # missing --driver → required (no silent default)
+        parser.parse_args(base)
+
+    with pytest.raises(SystemExit):  # unknown key → argparse choices error
+        parser.parse_args([*base, "--driver", "not-a-theme"])
+    err = capsys.readouterr().err
+    assert "ai-datacenter" in err and "defense-demand-shift" in err  # names both keys
+
+    for key in DRIVER_SPECS:  # each valid key parses
+        assert parser.parse_args([*base, "--driver", key]).driver == key

@@ -3119,3 +3119,17 @@ check-then-write on collision) ACCEPTED** — the single-process CLI scans one t
 (`load_detection_universe`) already requires the repo cwd, so a wrong-cwd run dies before the sha read.
 +2 network-free tests. Suite green (ruff + mypy --strict 87 + pytest **463** = 461 baseline +2). Local
 branch off `origin/main` (`acb1d20`); NOT merged.
+
+**SIBLING FAIL-LOUD — `themes-forward --driver` (2026-07-06, `feat/forward-driver-loud`, backend-only,
+nothing deploys).** Closes the `feat/driver-param` reviewer observation: `themes-forward`'s `--driver`
+had a silent default (`"AI-datacenter value chain"`); now **`required=True, choices=sorted(DRIVER_SPECS)`**
+— the same fail-loud gate `themes-exposure` adopted (no default; unknown key errors naming both keys).
+Arg-only: `args.driver` is a plain freeze LABEL (passed to `records_from_worksheet` / `freeze_baskets`,
+NO registry lookup) so freeze/forward logic is UNTOUCHED — the value it stores is now a canonical key
+(`ai-datacenter` | `defense-demand-shift`) instead of the free-text default. **DOWNSTREAM (minor,
+future, out of scope):** the AI-datacenter forward's NEXT re-freeze stores `driver="ai-datacenter"` not
+`"AI-datacenter value chain"`, which `frontend/build.py`'s `_DRIVER_SLUG` explicit key won't match — the
+slugify fallback yields the SAME slug (`ai-datacenter`) but a lowercased display label; add an
+`"ai-datacenter"` entry to `_DRIVER_SLUG` on that re-freeze if the exact display label matters. (Defense
+already uses its key, so no divergence there.) +1 parser test. Suite green (ruff + mypy --strict +
+pytest **464** = 463 +1). Local off `origin/main` (`530d727`); NOT merged.
