@@ -57,6 +57,19 @@ Each line: *what it does* — *verified how*.
     diagnosis). Axis 2's fail-closed-on-missing also sweeps recently-delisted names the 90-day price
     gate still admitted (an as-of-now vs as-of-date asymmetry, acceptable for a forward-tradeable
     universe).
+  - **SIC now PERSISTED per-name (2026-07-06) — was a dead write.** The EDGAR SIC fetched for the
+    Axis-1 gate (`resolver.sic_for(cik)`) was used then discarded (`[0]`), so `sic` was NULL in every
+    committed security/issuer (0/2296). `universe.py` now enriches the identity with the already-fetched
+    `(sic, sic_description)` before `store.upsert_security` — `securities.sic`/`issuers.sic` already
+    round-trip, so no schema/store change. Enables a DERIVED coarse **sector** downstream via the
+    existing `sectors.sector_for_sic` (assemble/inform ONLY — never a screen/rank/verdict input; the
+    deferred SIC-peer-cohort §G2 caveat is untouched). *Verified: (1) a `build_universe` regression pin
+    (monkeypatched clients) asserts the fetched SIC persists onto the stored security + derives its
+    bucket; (2) `sectors` pins (7372→Technology, 2834→Health Care, blank/None→Unknown, never guessed);
+    (3) a REAL run — NCNO+BILL both real SIC 7372→Technology (they cluster), AAPL 3571 / NVDA 3674→
+    Technology, blank→Unknown — resolve→enrich→persist→round-trip→sector on live EDGAR. ruff + mypy
+    --strict (vinci) + pins green. Committed `securities.jsonl` repopulates on the operator's next
+    `build-universe`.*
 - **Screen 2 + gates** (`vinci/screens`) — G1 drawdown ≤−30% (capped at −85% terminal floor) / G2
   idiosyncratic **vs the IWM market index** (NOT a sector cohort — see caveat) / G3 multiple vs ~5y
   floor (`_PE_WINDOW_DAYS=1825`); PASS/FAIL/UNKNOWN, recall-favoring — *`screen` / `run-weekly` → 317

@@ -2,16 +2,23 @@
 
 from __future__ import annotations
 
+from collections.abc import Iterator
 from datetime import date
 from pathlib import Path
 
-from vinci.config import UniverseConfig
+import pytest
+
+from vinci import universe as uni
+from vinci.config import Config, UniverseConfig
 from vinci.eod.client import RawBar
+from vinci.schemas.data_record import Identity
 from vinci.schemas.envelope import DataField, SourceTier
+from vinci.sectors import sector_for_sic
 from vinci.store import Store
 from vinci.universe import (
     admit_security_type,
     benchmark_identity,
+    build_universe,
     latest_close_and_adv,
     recent_share_periods,
 )
@@ -77,3 +84,66 @@ def test_latest_universe_picks_most_recent_snapshot(tmp_path: Path) -> None:
         assert store.latest_universe(date(2026, 6, 12)) == ["B"]  # newest at/before
         assert store.latest_universe(date(2026, 3, 1)) == ["A"]  # earlier as-of
         assert store.latest_universe(date(2025, 1, 1)) == []  # nothing yet
+
+
+def test_build_universe_persists_fetched_sic_onto_identity(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """Regression: the SIC fetched for the Axis-1 gate must be PERSISTED onto the stored identity —
+    was a dead write (fetched, gated on, then discarded via ``[0]``), so every committed security
+    carried ``sic=None`` and the coarse-sector view was blank. The resolver yields UN-enriched
+    identities (``sic=None``); the builder must attach the gate's SIC.
+    """
+    ref = date(2026, 6, 12)
+    unenriched = Identity(
+        internal_id="SEC-0000000001-ACME", issuer_id="ISS-0000000001", cik="0000000001",
+        ticker="ACME", mic="XNAS", exchange="Nasdaq", eod_symbol="ACME",
+        name="Acme Software Inc.", sic=None, sic_description=None,
+    )
+
+    class _FakeResolver:
+        @classmethod
+        def from_config(cls, cfg: object) -> _FakeResolver:
+            return cls()
+
+        def iter_universe(self, exchanges: object) -> Iterator[Identity]:
+            yield unenriched
+
+        def sic_for(self, cik: str) -> tuple[str, str]:
+            return ("7372", "Services-Prepackaged Software")  # operating-co software → admitted
+
+    class _FakeEod:
+        @classmethod
+        def from_config(cls, cfg: object) -> _FakeEod:
+            return cls()
+
+        def grouped_daily(self, day: date) -> dict[str, RawBar]:
+            if day == ref:  # one in-band close; $-vol 10M clears the $3M ADV floor
+                bar = RawBar(ticker="ACME", open=100, high=101, low=99, close=100, volume=100_000)
+                return {"ACME": bar}
+            return {}
+
+        def security_types(self) -> dict[str, str]:
+            return {"ACME": "CS"}  # common stock → passes the Axis-2 allowlist
+
+    class _FakeEdgar:
+        @classmethod
+        def from_config(cls, cfg: object) -> _FakeEdgar:
+            return cls()
+
+        def shares_outstanding_by_cik(self, periods: object) -> dict[str, float]:
+            return {"0000000001": 5_000_000.0}  # cap = 100 × 5M = $500M (small/mid band)
+
+    monkeypatch.setattr(uni, "EntityResolver", _FakeResolver)
+    monkeypatch.setattr(uni, "PolygonEodClient", _FakeEod)
+    monkeypatch.setattr(uni, "EdgarClient", _FakeEdgar)
+
+    cfg = Config(data_dir=tmp_path)
+    stats = build_universe(cfg, reference_date=ref, share_periods=["CY2026Q1I"])
+    assert stats["in_universe"] == 1
+
+    with Store(cfg.db_path) as store:
+        secs = list(store.iter_securities())
+    assert len(secs) == 1
+    assert secs[0].sic == "7372"  # the dead write is fixed — the fetched SIC persists at rest
+    assert sector_for_sic(secs[0].sic) == "Technology"  # → the coarse bucket the roll-up uses
