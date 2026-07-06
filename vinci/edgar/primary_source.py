@@ -121,11 +121,12 @@ def basis_triangulation(
     cross-check)."""
     adj = (f"~{round(net_debt / ltm_adjusted_ebitda, 1)}x"
            if net_debt is not None and ltm_adjusted_ebitda else "UNKNOWN")
+    ltm_lbl = f"${ltm_adjusted_ebitda}M" if ltm_adjusted_ebitda is not None else "LTM unavailable"
     rows = [
         "EBITDA-basis triangulation (each leverage basis-labeled):",
         f"  net debt / EBITDA (CIQ, GAAP basis): {net_debt_ebitda_ciq or 'UNKNOWN'}",
         f"  total debt / EBITDA (CIQ comps, GAAP basis): {total_debt_ebitda_comps or 'UNKNOWN'}",
-        f"  net debt / company-adjusted LTM EBITDA (${ltm_adjusted_ebitda}M): {adj}",
+        f"  net debt / company-adjusted LTM EBITDA ({ltm_lbl}): {adj}",
         "  covenant basis: UNKNOWN (not disclosed)",
     ]
     if gaap_gross_margin is not None and impairment is not None and revenue:

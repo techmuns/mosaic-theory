@@ -1809,6 +1809,46 @@ def test_p2_contradiction_lint_flags_present_blocks_but_not_genuine_gaps() -> No
     assert qa == f1 and _caveats == []
 
 
+def test_rc1_primary_source_digest_shape_verbatims_excluded() -> None:
+    """(RC-1 C) The synthesis digest is term → value → source_ref with VERBATIMS EXCLUDED: both
+    going-concern states, the QUALITATIVE guide marker, and the quantified event impact appear; the
+    verbatim going-concern sentence does NOT."""
+    dig = syn._primary_source_digest(_primary_source_fixture(doubt=False))
+    assert "term → value → source_ref" in dig and "verbatims EXCLUDED" in dig
+    assert "going-concern: none stated (checked, absent)" in dig  # the checked-absence state
+    assert "event impact: reduce revenue 135.0–145.0 (2026 annualized)" in dig
+    assert "→ 8-K x EX-99.1" in dig  # a source_ref terminates the line
+    dig2 = syn._primary_source_digest(_primary_source_fixture(doubt=True))
+    assert "going-concern: SUBSTANTIAL DOUBT stated" in dig2
+    assert "raise substantial doubt" not in dig2.lower()  # the verbatim SENTENCE is excluded
+
+
+def test_rc1_contradiction_lint_primary_source_subjects() -> None:
+    """(RC-1 C) The three new lint subjects each fire against a PRESENT primary-source fact: an
+    event impact the 8-K QUANTIFIES can't be called 'not quantified' (VRRM Avis Key-Unknown
+    extinction); a survival-safe framing can't survive a 10-Q SUBSTANTIAL DOUBT; a wall claimed to
+    diverge can't survive a filing that AGREES with the CIQ panel. Faithful claims do NOT flag."""
+    doubt = _minimal_mech().model_copy(
+        update={"primary_source": _primary_source_fixture(doubt=True)})
+    avis = _minimal_mech().model_copy(
+        update={"primary_source": _primary_source_fixture(doubt=False)})
+    f1 = syn.contradiction_flags(
+        _bear_synth(["The revenue impact of the Avis termination is not quantified in the facts"]),
+        avis)
+    assert any("event impact unquantified" in f for f in f1)
+    f2 = syn.contradiction_flags(
+        _bear_synth([], bears=("Liquidity is adequate — there is no going-concern risk",)), doubt)
+    assert any("SUBSTANTIAL DOUBT" in f for f in f2)
+    f3 = syn.contradiction_flags(
+        _bear_synth([], bears=("The 10-Q maturity wall understates the CIQ panel by ~2x",)), avis)
+    assert any("AGREES with the CIQ panel" in f for f in f3)
+    # faithful claims — the quantified impact acknowledged, doubt acknowledged — do NOT flag
+    clean = syn.contradiction_flags(_bear_synth(
+        ["The Avis revenue impact is ~$135–145M (quantified in the 8-K)"],
+        bears=("Going-concern doubt is stated; survival hinges on refinancing",)), avis)
+    assert clean == []
+
+
 def test_p6_py_js_tier_classifier_parity() -> None:
     """(P6) The JS point-tier classifier (views/dossier.js) MUST mirror render.py. PR-E's R1
     interposition regex + the 'turned negative' audit were NEVER mirrored, so the web classified

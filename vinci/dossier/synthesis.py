@@ -23,6 +23,7 @@ from typing import Any
 from vinci.dossier.schemas import (
     DecisiveQuestion,
     MechanicalLayer,
+    PrimarySource,
     SourcedPoint,
     SourceStatus,
     Synthesis,
@@ -822,17 +823,79 @@ def _decode_escapes(obj: Any) -> Any:
     return obj
 
 
+def _primary_source_digest(ps: PrimarySource) -> str:
+    """(RC-1 C) A term → value → source_ref digest of the primary-source cross-checks for the LLM
+    synthesis phase — VERBATIMS EXCLUDED (provenance is on-demand, never LLM input). Both
+    going-concern states are facts (SUBSTANTIAL DOUBT stated vs none-stated-checked); a filing that
+    STATES no near-term wall is NOT_STATED-as-KNOWN (not UNKNOWN); a QUALITATIVE guide is marked.
+    One literal example:
+      event impact: reduce revenue 135.0–145.0 (2026 annualized) → 8-K 0001193125-26-239351 EX-99.1
+    """
+    out = ["=== PRIMARY-SOURCE CROSS-CHECKS (8-K EX-99.1 + latest 10-Q) — "
+           "term → value → source_ref; verbatims EXCLUDED ==="]
+
+    def emit(term: str, s: Any) -> None:
+        if s.status is SourceStatus.PRESENT and s.value:
+            out.append(f"{term}: {str(s.value).replace(chr(10), ' · ')} → {s.source_ref}")
+
+    emit("self-funding (two-input read)", ps.self_funding)
+    emit("wall coherence (filing ≤12m vs CIQ panel)", ps.wall_coherence)
+    emit("EBITDA-basis triangulation", ps.basis_triangulation)
+    emit("guide verification", ps.guide_verification)
+    fil = ps.filing
+    if fil is not None:
+        gc = fil.going_concern
+        if gc is not None:
+            state = ("SUBSTANTIAL DOUBT stated" if gc.substantial_doubt
+                     else "none stated (checked, absent)")
+            out.append(f"going-concern: {state}{'; plans present' if gc.plans else ''} "
+                       f"→ {gc.source_ref}")
+        mw = fil.maturity_wall
+        if mw is not None:
+            val = (f"${mw.within_12m_total}M due ≤12m" if mw.within_12m_total is not None
+                   else "NOT_STATED — filing states no near-term maturity (KNOWN, not UNKNOWN)")
+            out.append(f"maturity wall (filing basis): {val} → {fil.source_ref}")
+        cc = fil.concentration
+        for c in (cc.customers if cc is not None else []):
+            kind = " (disclosed FLOOR)" if c.value_kind == "floor" else ""
+            prior = f" (prior {c.prior_pct}%)" if c.prior_pct is not None else ""
+            out.append(f"customer concentration: {c.name} {c.pct}%{kind}{prior} "
+                       f"→ {cc.source_ref if cc is not None else ''}")
+    recent = ps.releases[:4]  # the trailing ~year of releases — the LTM window + recent trend
+    if len(ps.releases) > len(recent):
+        out.append(f"(note: {len(ps.releases) - len(recent)} older release(s) omitted from the "
+                   "digest — the four most recent are shown; full set in the JSON)")
+    for r in recent:
+        for g in r.guidance:
+            v = "QUALITATIVE (no number stated)" if g.qualitative else f"{g.low}–{g.high}"
+            out.append(f"guidance ({g.metric} {g.period}): {v} → {g.source_ref}")
+        for rv in r.reconciliation:
+            out.append(f"reconciliation ({rv.metric} {rv.period}): {rv.value} → {rv.source_ref}")
+        for oo in r.one_offs:
+            out.append(f"one-off charge: ${oo.amount}M {oo.description[:44]} → {oo.source_ref}")
+        for ei in r.event_impacts:
+            rng = f"{ei.low}–{ei.high}" if ei.low is not None else "unquantified"
+            out.append(f"event impact: {ei.effect} {ei.metric} {rng} ({ei.period}) "
+                       f"→ {ei.source_ref}")
+    return "\n".join(out)
+
+
 def synthesize(
     mech: MechanicalLayer, *, llm: LlmClient, ticker: str, name: str, transcript: str | None = None
 ) -> tuple[Synthesis | None, list[str], str]:
     """Run the fenced synthesis → (synthesis|None, flags, log). Fail-loud, never fabricates. The
     ``transcript`` (a mechanically-bounded slice — NOT embedded in the dossier) is QUALITATIVE
     context only; no numbers are derived from it and points still bind to the mechanical facts."""
-    facts = json.dumps(mech.model_dump(), indent=2, default=str)
+    # (RC-1 C) the raw primary_source (releases/filing) carries VERBATIMS — provenance, not input.
+    # Exclude it from the dump and feed the curated term→value→source_ref digest instead. Its
+    # source_refs still live in `mech`, so a cited primary-source ref traces through validation.
+    facts = json.dumps(mech.model_dump(exclude={"primary_source"}), indent=2, default=str)
     user = (
         f"Name: {name} ({ticker}). The ONLY facts you may use — each carries a source_ref to copy "
         f"verbatim when you cite it:\n\n{facts}"
     )
+    if mech.primary_source is not None:
+        user += "\n\n" + _primary_source_digest(mech.primary_source)
     if transcript:
         user += (
             "\n\n=== Earnings-call transcripts, each fenced by a '--- <call> ---' label. With the "
@@ -881,6 +944,27 @@ _MATURITY_SUBJ = re.compile(
     r"(?:convert|resol|repaid).{0,40}term loan|resolution of the .{0,30}loan",
     re.IGNORECASE,
 )
+# (RC-1 C) primary-source contradiction subjects — a synthesis claim that conflicts with a PRESENT
+# primary-source fact. Direct factual conflicts (not pending-shaped), each subject-specific.
+_UNQUANTIFIED_RE = re.compile(  # 'the revenue impact is not quantified in the facts' — but it IS
+    r"not (?:been )?quantif|un-?quantif|(?:magnitude|impact|size|amount|scale)\s"
+    r"(?:is |remains |are )?(?:unclear|unknown|not (?:clear|known|disclosed|quantif))|"
+    r"no (?:disclosed |stated |specific )?(?:figure|number|range|dollar|magnitude)",
+    re.IGNORECASE,
+)
+_SURVIVAL_SAFE_RE = re.compile(  # survival framed safe while the 10-Q states SUBSTANTIAL DOUBT
+    r"no going[- ]concern|not a going[- ]concern|no substantial doubt|"
+    r"going[- ]concern\b.{0,15}\bnot|"
+    r"survival (?:is )?(?:not (?:at|a)\b|assured|secure)|no solvency (?:risk|concern)|"
+    r"comfortably (?:solvent|funded|capitalized)",
+    re.IGNORECASE,
+)
+_WALL_DIVERGE_RE = re.compile(  # claims the filing wall / CIQ panel diverge while they AGREE
+    r"(?:wall|panel|maturit\w+|filing)\b.{0,45}(?:understate|overstate|diverge|conflict|mismatch|"
+    r"discrepan|disagree|contradict|inconsist)|(?:understate|overstate|diverge|conflict|mismatch|"
+    r"discrepan|disagree|contradict|inconsist)\w*\b.{0,45}(?:wall|panel|maturit\w+)",
+    re.IGNORECASE,
+)
 
 
 def contradiction_flags(synth: Synthesis, mech: MechanicalLayer) -> list[str]:
@@ -899,7 +983,17 @@ def contradiction_flags(synth: Synthesis, mech: MechanicalLayer) -> list[str]:
                                 for r in (cs.covenant_term_rows.value or [])))
     maturity_present = (cs is not None and cs.maturity_event is not None
                         and cs.maturity_event.status is SourceStatus.PRESENT)
-    if not covenant_present and not maturity_present:
+    # (RC-1 C) primary-source signals — a synthesis claim conflicting with these PRESENT facts is a
+    # contradiction. quantified: an event impact the 8-K states a $ range for (Avis); gc_doubt: the
+    # 10-Q states substantial doubt; wall_agrees: the filing wall cross-validates the CIQ panel.
+    ps = mech.primary_source
+    quantified = {ei.metric.lower() for r in (ps.releases if ps is not None else [])
+                  for ei in r.event_impacts if ei.low is not None}
+    gc = ps.filing.going_concern if ps is not None and ps.filing is not None else None
+    gc_doubt = gc is not None and gc.substantial_doubt
+    wall_agrees = (ps is not None and ps.wall_coherence.status is SourceStatus.PRESENT
+                   and "AGREES" in (ps.wall_coherence.value or ""))
+    if not (covenant_present or maturity_present or quantified or gc_doubt or wall_agrees):
         return []
     texts: list[tuple[str, str]] = []
     if synth.evidence_balance:
@@ -912,12 +1006,22 @@ def contradiction_flags(synth: Synthesis, mech: MechanicalLayer) -> list[str]:
     texts += [("decisive.against", p.claim) for p in synth.decisive_question.evidence_against]
     flags: list[str] = []
     for where, txt in texts:
-        if not _PENDING_RE.search(txt):
-            continue
-        if covenant_present and _COVENANT_SUBJ.search(txt):
-            flags.append(f"CONTRADICTION ({where}): synthesis calls covenant terms pending — "
-                         f"but covenant_term_rows IS present. Claim: “{_snip(txt)}”")
-        elif maturity_present and _MATURITY_SUBJ.search(txt):
-            flags.append(f"CONTRADICTION ({where}): synthesis calls the maturity resolution "
-                         f"pending/unread — but maturity_event IS present. Claim: “{_snip(txt)}”")
+        low = txt.lower()
+        if _PENDING_RE.search(txt):  # (P2) pending-claim about a PRESENT block
+            if covenant_present and _COVENANT_SUBJ.search(txt):
+                flags.append(f"CONTRADICTION ({where}): synthesis calls covenant terms pending — "
+                             f"but covenant_term_rows IS present. Claim: “{_snip(txt)}”")
+            elif maturity_present and _MATURITY_SUBJ.search(txt):
+                flags.append(f"CONTRADICTION ({where}): calls the maturity resolution pending — "
+                             f"but maturity_event IS present. Claim: “{_snip(txt)}”")
+        # (RC-1 C) primary-source contradictions — a claim that conflicts with a PRESENT filing fact
+        if quantified and _UNQUANTIFIED_RE.search(txt) and any(mt in low for mt in quantified):
+            flags.append(f"CONTRADICTION ({where}): calls the event impact unquantified — but the "
+                         f"8-K EX-99.1 states its $ range. Claim: “{_snip(txt)}”")
+        if gc_doubt and _SURVIVAL_SAFE_RE.search(txt):
+            flags.append(f"CONTRADICTION ({where}): frames survival safe — but the latest 10-Q "
+                         f"states SUBSTANTIAL DOUBT (going concern). Claim: “{_snip(txt)}”")
+        if wall_agrees and _WALL_DIVERGE_RE.search(txt):
+            flags.append(f"CONTRADICTION ({where}): claims the wall/panel diverge — but the filing "
+                         f"AGREES with the CIQ panel (same window). Claim: “{_snip(txt)}”")
     return flags
