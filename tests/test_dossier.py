@@ -1849,6 +1849,44 @@ def test_rc1_contradiction_lint_primary_source_subjects() -> None:
     assert clean == []
 
 
+def test_survival_lint_no_proximity_overmatch() -> None:
+    """(incident closure) The going_concern_vs_survival guard no longer PROXIMITY-over-matches, yet
+    still catches the genuine 'going-concern <predicate> is/does not <denial>' class. The dropped
+    bare '.{0,15} not' arm fired on benign gap-acknowledgments; the predicate-keyed replacement is
+    gated on a DENIAL-word whitelist — fires on real denials, quiet on 'plans not synthesized'."""
+    # (i) MUST-NOT-FIRE — benign gap-acknowledgments (the negated verb is NOT a denial word)
+    benign = "the specifics of the going-concern 'plans' are not synthesized here and must be read"
+    assert not syn._SURVIVAL_SAFE_RE.search(benign)  # the exact MVST-draw sentence
+    for quiet in (
+        "the going-concern plans are not extracted",
+        "going-concern mitigation plans are not read into the summary",
+        "the going-concern plans, which address the liquidity risk, are not synthesized",
+    ):
+        assert not syn._SURVIVAL_SAFE_RE.search(quiet), quiet
+    # (ii) MUST-FIRE — genuine denials: the no/not-a arms AND the recovered predicate-keyed class
+    for denial in (
+        "there is no going-concern risk",
+        "this is not a going concern for the business",
+        "there is no substantial doubt about the company continuing",
+        "survival is not at risk given the liquidity runway",
+        "the balance sheet is comfortably solvent",
+        "the going-concern doubt does not apply after the raise",
+        "going-concern risk is not present given the runway",
+        "the going-concern warning is not material",
+        "the going-concern qualification is not warranted given the recent financing",
+    ):
+        assert syn._SURVIVAL_SAFE_RE.search(denial), denial
+    # end-to-end vs a 10-Q SUBSTANTIAL DOUBT: the benign KU yields NO going-concern contradiction,
+    # a real denial still does — the guard fires on denials, stays quiet on gap acknowledgments.
+    doubt = _minimal_mech().model_copy(
+        update={"primary_source": _primary_source_fixture(doubt=True)})
+    assert not any("SUBSTANTIAL DOUBT" in f
+                   for f in syn.contradiction_flags(_bear_synth([benign]), doubt))
+    # a recovered predicate-keyed denial fires the contradiction end-to-end
+    assert any("SUBSTANTIAL DOUBT" in f for f in syn.contradiction_flags(
+        _bear_synth([], bears=("the going-concern doubt does not apply after the raise",)), doubt))
+
+
 def test_p6_py_js_tier_classifier_parity() -> None:
     """(P6) The JS point-tier classifier (views/dossier.js) MUST mirror render.py. PR-E's R1
     interposition regex + the 'turned negative' audit were NEVER mirrored, so the web classified
