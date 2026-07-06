@@ -2588,6 +2588,12 @@ by an operator checkpoint.
   (parser state=`not_stated`, a known). The near-term-wall reconciliation concern was **MVST-class** (the
   $111.2M ≤12m + going-concern), not VRRM. VRRM concentration is **NYCDOT 15.2%/15.4% EXACT** (a single
   Government Solutions customer), not a bare >10% floor — extracted as the disclosed value.
+- **RETRACTION (MVST wall — RC-1 checkpoint, 2026-07-06):** the earlier "filing understates the panel ~2×"
+  claim is **WITHDRAWN** — it was a window mismatch + double-count. Like-for-like over the FILING window
+  (balance date + 12m), the filing's **$111.2M ≤12m AGREES with the CIQ panel same-window sum $111.3M**
+  (26.7 + 42.9 + 41.7) within tolerance — the filing **cross-validates** the panel, not diverges. Commit C's
+  surface-2 is a same-window COHERENCE check (agreement line; a divergence path fires only when the sums
+  differ ≥ tolerance). The going-concern / OCF-mixed / concentration / adjusted-EBITDA-basis findings STAND.
 
 The **dossier-assembler is built and verified (§2)** — the queue-top now flows ranker → `dossier`.
 Remaining:
