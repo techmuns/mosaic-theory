@@ -1345,6 +1345,9 @@ class _GuidanceRead(NamedTuple):
 
     metric: str
     guide: str  # the guide display (numeric for a point, verbatim quoted for a range)
+    guide_num: float | None  # the raw point-guide float behind `guide` (None for a range) —
+    # consumers read the STRUCTURED value, never re-parse the display (the parsers-not-strings rule)
+    guide_range: tuple[float, float] | None  # the (low, high) of a RANGE guide (None for a point)
     period: str  # the fiscal period the latest guide is FOR
     dated: date  # the latest guide's date
     stale_days: int | None  # days old when older than stale_after_days (else None = fresh)
@@ -1392,11 +1395,13 @@ def _guidance_reads(
             continue
         gd, per, rng_s, cost_like = latest
         pr = _parse_range(rng_s)
-        gval = _fig(pr[0]) if (pr is not None and " - " not in rng_s) else f"'{rng_s}'"
+        gnum = pr[0] if (pr is not None and " - " not in rng_s) else None
+        grange = (pr[0], pr[1]) if (pr is not None and " - " in rng_s) else None
+        gval = _fig(gnum) if gnum is not None else f"'{rng_s}'"
         stale = ((reference_date - gd).days if reference_date is not None
                  and (reference_date - gd).days > stale_after_days else None)
         reads.append(_GuidanceRead(
-            metric, gval, per, gd, stale, cost_like, resolved, met_n,
+            metric, gval, gnum, grange, per, gd, stale, cost_like, resolved, met_n,
             recent[1] if recent is not None else None, recent[2] if recent is not None else None))
     return reads
 
@@ -1437,6 +1442,27 @@ def guidance_bridge(
         "; ".join(lines) + _asof_suffix(as_of),
         source_ref="CIQ Estimates→Guidance (latest guide + sign-aware delivery track-record)",
     )
+
+
+def revenue_guide_lohi(
+    bundle: CiqBundle, *, reference_date: date | None = None
+) -> tuple[float | None, float | None]:
+    """The latest CIQ FY-revenue guide as (low, high) — a POINT guide reads (v, v), a RANGE reads
+    (lo, hi), absent reads (None, None). The cross-source input for guide verification (a point
+    echoing the prior-FY actual = vendor artifact; a range matching the release = VERIFIED).
+    Reuses the guidance-bridge reads (single source; a STRUCTURED value, not a display re-parse)."""
+    try:
+        rows = bundle.sheet("estimates", "Guidance")
+    except CiqUnavailableError:
+        return (None, None)
+    for r in _guidance_reads(rows, _metric_starts(rows, _GUIDANCE_METRICS), reference_date, 45):
+        if "revenue" not in r.metric.lower():
+            continue
+        if r.guide_num is not None:
+            return (r.guide_num, r.guide_num)
+        if r.guide_range is not None:
+            return r.guide_range
+    return (None, None)
 
 
 def guidance_bridge_rows(
@@ -2143,6 +2169,25 @@ def comps_total_debt_ebitda(bundle: CiqBundle) -> Sourced[str]:
         source_ref="CIQ Comparable Analysis→Operating Statistics (LTM Total Debt/EBITDA)"
         + _comps_asof_suffix(bundle),
     )
+
+
+def comps_total_debt_ebitda_value(bundle: CiqBundle) -> Sourced[float]:
+    """The name's TOTAL-debt/EBITDA as a structured float (the triangulation input) — the SAME comps
+    cell as :func:`comps_total_debt_ebitda`, exposed structured so consumers never re-parse its
+    display string (the parsers-not-strings rule)."""
+    try:
+        op = bundle.sheet("comps", "Operating Statistics")
+    except CiqUnavailableError as exc:
+        return _miss_or_unknown(bundle, "comps", exc)
+    _h, _peers, tgt = _comps_layout(op, bundle.ticker)
+    if tgt is None:
+        return Sourced.unknown(note="Operating Statistics: no name row")
+    nv = _comps_cell(op, tgt, 10)
+    if not isinstance(nv, (int, float)):
+        return Sourced.unknown(note="Operating Statistics: name total-debt/EBITDA non-numeric")
+    return Sourced.present(
+        float(nv), source_ref="CIQ Comparable Analysis→Operating Statistics (LTM Total Debt/EBITDA)"
+        + _comps_asof_suffix(bundle))
 
 
 def _iv_stat_rows(rows: Rows, start: int, end: int) -> dict[str, int | None]:

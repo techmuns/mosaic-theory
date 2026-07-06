@@ -121,24 +121,51 @@ _GROSS_MARGIN = re.compile(
     r"gross\s+margin\s+(?:of\s+|(?:decreased|increased|declined)\s+to\s+|was\s+)?([\d.]+)\s*%",
     re.I,
 )
+# headline reported revenue (a GAAP actual, period-labeled) — the cross-source input for guide
+# verification (a CIQ FY guide that merely echoes this prior-FY actual is a vendor artifact). The
+# (?! … to) tail rejects a guidance range ('revenue of $985 million to $995 million').
+_REVENUE = re.compile(
+    r"(?:full[- ]year|total|quarterly|net)?\s*revenue\s+of\s+(?:a\s+record\s+)?"
+    r"\$?\s*([\d,.]+)\s*(?:million|billion)(?!\s+to\b)",  # unit mandatory — else a greedy
+    re.I,  # number backtracks to a truncated match ('98' ⊂ '985 million to')
+)
 
 
 def _reconciliation(text: str, src: str, period: str) -> list[ReconciliationValue]:
     out: list[ReconciliationValue] = []
-    seen: set[str] = set()  # keep the PRIMARY (current-period) value per normalized metric
-    for m in _RECON.finditer(text):
-        if "compared to" in text[max(0, m.start() - 26):m.start()].lower():
-            continue  # a comparison ('compared to … $44.8 million in 2024'), not the current actual
+    seen: set[tuple[str, str]] = set()  # (metric, period) — current actual AND prior-year comp
+    for m in _RECON.finditer(text):  # both captured, period-labeled, NEVER conflated
+        is_comparison = "compared to" in text[max(0, m.start() - 26):m.start()].lower()
         metric_raw, sign, num = m.group(1), (m.group(2) or "").lower(), m.group(3)
         val, metric = _money(num), _norm_metric(m.group(1))
-        if val is None or metric in seen:
+        if val is None:
             continue
-        seen.add(metric)
         if "negative" in sign or "loss" in metric_raw.lower():
             val = -abs(val)
+        # a 'compared to …' clause is the PRIOR-YEAR value — period from the trailing 'in {period}',
+        # which must differ from the release period (else skip: never conflate prior with current).
+        p = (_period_near(text, m.start(), m.end()) if is_comparison
+             else (period or _period_near(text, m.start(), m.end())))
+        if (is_comparison and (not p or p == period)) or (metric, p) in seen:
+            continue
+        seen.add((metric, p))
         out.append(ReconciliationValue(
-            metric=metric, period=period or _period_near(text, m.start(), m.end()),
-            value=val, verbatim=_verbatim(text, m.start(), m.end()), source_ref=src,
+            metric=metric, period=p, value=val,
+            verbatim=_verbatim(text, m.start(), m.end()), source_ref=src,
+        ))
+    for m in _REVENUE.finditer(text):  # headline revenue actual (same current/prior discipline)
+        val = _money(m.group(1))
+        if val is None:
+            continue
+        is_comparison = "compared to" in text[max(0, m.start() - 26):m.start()].lower()
+        p = (_period_near(text, m.start(), m.end()) if is_comparison
+             else (period or _period_near(text, m.start(), m.end())))
+        if (is_comparison and (not p or p == period)) or ("revenue", p) in seen:
+            continue
+        seen.add(("revenue", p))
+        out.append(ReconciliationValue(
+            metric="revenue", period=p, value=val,
+            verbatim=_verbatim(text, m.start(), m.end()), source_ref=src,
         ))
     gm = next((mm for mm in _GROSS_MARGIN.finditer(text)
                if "adjusted" not in text[max(0, mm.start() - 12):mm.start()].lower()), None)

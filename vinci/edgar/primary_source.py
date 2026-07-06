@@ -43,6 +43,18 @@ def _plus_12m(d: date) -> date:
         return d.replace(year=d.year + 1, day=28)
 
 
+def panel_convertible_principal(panel: list[PanelInstrument], balance: date) -> float | None:
+    """The panel's convertible-LOAN principal maturing in the SAME [balance, +12m) window — matched
+    to the filing's convertible-loan repayment tranche (the +PIK delta). Excludes the convertible
+    BOND ('convertible' AND 'loan' in the name). None if there is no in-window convertible loan."""
+    end = _plus_12m(balance)
+    conv = [i.principal_musd for i in panel
+            if i.principal_musd is not None and i.maturity is not None
+            and balance <= i.maturity < end
+            and "convertible" in i.name.lower() and "loan" in i.name.lower()]
+    return round(sum(conv), 1) if conv else None
+
+
 def wall_coherence(
     filing_within_12m: float | None,
     panel: list[PanelInstrument],
@@ -141,12 +153,20 @@ def guide_verification(
     instead. Cross-source VERIFIED when the CIQ and release ranges match. Else a mismatch flag."""
     if ciq_low is None:
         return f"guide verification ({metric}): CIQ guide UNKNOWN — not cross-checked"
-    if prior_fy_actual is not None and abs(ciq_low - prior_fy_actual) < 0.001 and (
-            ciq_high is None or abs(ciq_high - prior_fy_actual) < 0.001):
+    # VENDOR-ECHO: the CIQ guide equals the prior-FY actual within source-rounding (0.1% relative) —
+    # a stale carry-forward. Relative (not absolute-3dp) so a cross-source prior actual (the release
+    # rounds $427.516→$427.5) still detects the echo. A point guide has ciq_high == ciq_low or None.
+    _echo = False
+    if prior_fy_actual is not None and prior_fy_actual != 0:
+        _rel, pa = 0.001, abs(prior_fy_actual)  # 0.1% relative — source-rounding, not coincidence
+        _echo = (abs(ciq_low - prior_fy_actual) / pa < _rel
+                 and (ciq_high is None or abs(ciq_high - prior_fy_actual) / pa < _rel))
+    if _echo:
         tail = ("release outlook QUALITATIVE-only — render the qualitative growth line"
                 if release_qualitative else "verify vs release")
-        return (f"guide verification ({metric}): CIQ FY guide {ciq_low} == prior-FY actual "
-                f"{prior_fy_actual} (3dp) → VENDOR-ECHO flag (stale artifact); {tail}")
+        return (f"guide verification ({metric}): CIQ FY guide {ciq_low} ≈ prior-FY actual "
+                f"{prior_fy_actual} (within source-rounding) → VENDOR-ECHO flag (stale "
+                f"carry-forward); {tail}")
     if release_qualitative and release_low is None:
         return (f"guide verification ({metric}): CIQ {ciq_low}–{ciq_high} vs release QUALITATIVE "
                 "→ plausibility flag; render the qualitative growth line")

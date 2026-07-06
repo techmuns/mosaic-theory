@@ -67,10 +67,14 @@ def test_release_parse_mvst_q1_26() -> None:
     """Q1-26 pins: adj EBITDA −5.5 and adj net loss −14.6 ('was $14.6 million', sign from 'loss');
     the 'compared to … Q1 2025' comparisons ($19.3M profit, $28.5M) are NOT taken as current."""
     ex = rp.parse_release(_MVST_Q1, source_ref=_SRC)
-    ebitda = _by(ex.reconciliation, metric="adjusted ebitda")
-    assert ebitda is not None and ebitda.value == -5.5 and ebitda.period == "Q1 2026"
-    ni = _by(ex.reconciliation, metric="adjusted net income")
+    ebitda = _by(ex.reconciliation, metric="adjusted ebitda", period="Q1 2026")
+    assert ebitda is not None and ebitda.value == -5.5
+    ni = _by(ex.reconciliation, metric="adjusted net income", period="Q1 2026")
     assert ni is not None and ni.value == -14.6  # a NET LOSS ⇒ negative, from 'was $14.6 million'
+    # the prior-year-Q comparison is captured DISTINCTLY (period-labeled, never conflated) — this is
+    # the LTM input: LTM adj EBITDA = FY 44.7 − prior-Q 28.5 + current-Q (−5.5) = 10.7 → the 18.7x.
+    prior = _by(ex.reconciliation, metric="adjusted ebitda", period="Q1 2025")
+    assert prior is not None and prior.value == 28.5
 
 
 _VRRM_AVIS = (

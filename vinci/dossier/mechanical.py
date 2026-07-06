@@ -12,6 +12,7 @@ from __future__ import annotations
 
 import re
 import statistics
+import time
 import xml.etree.ElementTree as ET
 from datetime import date, timedelta
 from typing import Any, TypeVar
@@ -28,6 +29,7 @@ from vinci.dossier.schemas import (
     CovenantPointer,
     DrawdownCause,
     FilingRef,
+    FilingSectionExtract,
     FinancialSummary,
     IdiosyncraticVsShared,
     ImpliedExpectationRow,
@@ -36,16 +38,19 @@ from vinci.dossier.schemas import (
     LeverageSurvival,
     MechanicalLayer,
     PeerComps,
+    PrimarySource,
     Quality,
+    ReleaseExtract,
     Sourced,
     SourceStatus,
     Valuation,
 )
+from vinci.edgar import filing_sections, primary_source, release_parse
 from vinci.edgar.client import EdgarClient
 from vinci.edgar.concepts import extract_points, latest_instant
 from vinci.finra import FinraLayoutError, short_interest_points
 from vinci.graph.exposure import ExposureGraph
-from vinci.graph.filings import html_to_text
+from vinci.graph.filings import html_to_text, normalize_text
 from vinci.netcache import CachedHttp, HttpError
 from vinci.resolver import EntityResolver, ResolutionError
 from vinci.resolver.index import pad_cik
@@ -1540,6 +1545,184 @@ def _implied_expectations(
         coherence_note=coherence_note, net_debt_reconciled=nd_ok)
 
 
+_PS_TTL = 24 * 3600  # primary-source fetch cache TTL (seconds)
+
+
+def _ltm_adj_ebitda(releases: list[ReleaseExtract]) -> float | None:
+    """LTM adjusted EBITDA = FY + latest-Q − prior-year-Q, from the release recon values (the parser
+    captures the prior-year comparison distinctly, period-labeled). None unless all three periods
+    are present — never a partial guess (fail-loud)."""
+    vals: dict[str, float] = {}
+    for r in releases:
+        for rv in r.reconciliation:
+            if rv.metric == "adjusted ebitda":
+                vals.setdefault(rv.period, rv.value)
+    quarters = [p for p in vals if re.fullmatch(r"Q[1-4]\s+20\d\d", p)]
+    if not quarters:
+        return None
+    cur = max(quarters, key=lambda p: (int(p[3:7]), int(p[1])))  # latest (year, quarter)
+    yr, qn = int(cur[3:7]), int(cur[1])
+    prior, fy = f"Q{qn} {yr - 1}", str(yr - 1)  # prior-year same quarter; the completed FY
+    if prior not in vals or fy not in vals:
+        return None
+    return round(vals[fy] - vals[prior] + vals[cur], 1)
+
+
+def _latest_quarter_ocf_positive(facts: dict[str, Any] | None) -> bool | None:
+    """Sign of the latest SINGLE-QUARTER operating cash flow (EDGAR) — the first self-funding input.
+    Single-quarter = duration ≤ ~100 days (excludes 6/9-month YTD durations). None = unavailable."""
+    if not facts:
+        return None
+    pts = [p for p in extract_points(facts, "operating_cash_flow")
+           if p.period_start is not None and (p.period_end - p.period_start).days <= 100]
+    return max(pts, key=lambda p: (p.period_end, p.filed)).value > 0 if pts else None
+
+
+def _latest_balance_date(facts: dict[str, Any] | None) -> date | None:
+    """The maturity-wall 'as of' — the most recent instant (balance-sheet) period_end in EDGAR."""
+    if not facts:
+        return None
+    instants = [p.period_end for concept in ("long_term_debt", "debt_current")
+                for p in extract_points(facts, concept) if p.is_instant]
+    return max(instants) if instants else None
+
+
+def _fy_reconciliation(releases: list[ReleaseExtract]) -> dict[str, float]:
+    """The FULL-YEAR (bare 20YY period) recon values keyed by metric — the margin/revenue inputs."""
+    out: dict[str, float] = {}
+    for r in releases:
+        for rv in r.reconciliation:
+            if re.fullmatch(r"20\d\d", rv.period):
+                out.setdefault(rv.metric, rv.value)
+    return out
+
+
+def _fy_impairment(releases: list[ReleaseExtract]) -> float | None:
+    """The FY one-off impairment amount ($M) — the margin cross-check numerator."""
+    for r in releases:
+        for oo in r.one_offs:
+            if "impair" in oo.description.lower():
+                return oo.amount
+    return None
+
+
+def _release_revenue_guide(
+    releases: list[ReleaseExtract],
+) -> tuple[float | None, float | None, bool]:
+    """The most-recent release's revenue guide as (low, high, qualitative) — the cross-source
+    comparison for guide verification. Releases are most-recent first; the first with a revenue
+    guide wins (a QUALITATIVE-only outlook signals a numeric CIQ guide has no corroboration)."""
+    for r in releases:
+        for g in r.guidance:
+            if g.metric == "revenue":
+                return (g.low, g.high, g.qualitative)
+    return (None, None, False)
+
+
+def _primary_source(
+    record: DataRecord, edgar: EdgarClient, http: CachedHttp,
+    bundle: CiqBundle, reference_date: date, mech: MechanicalLayer,
+) -> tuple[PrimarySource, float]:
+    """(RC-1 C) Fetch the primary-source filings (recent 8-K EX-99.1 releases + the latest 10-Q),
+    parse them, and run the four cross-source derivations over them + the CIQ/EDGAR mechanical
+    layer. RESILIENT: any fetch/parse miss becomes an honest UNKNOWN line + a QA flag — the assembly
+    NEVER aborts. Returns (PrimarySource, fetch-latency seconds) so the caller reports the delta."""
+    t0 = time.perf_counter()
+    cik = record.identity.cik
+    qa: list[str] = []
+    releases: list[ReleaseExtract] = []
+    filing: FilingSectionExtract | None = None
+    filing_as_of: date | None = None  # the parsed 10-Q's period end — the maturity-wall 'as of'
+    # (1) recent 8-K EX-99.1 earnings/event releases (one failing exhibit never drops the rest) -
+    if cik:
+        try:
+            for f in edgar.recent_filings(cik, forms=("8-K",))[:10]:
+                if not (set(f.items) & {"2.02", "8.01"}):
+                    continue
+                try:
+                    for url in release_parse.exhibit_991_urls(http, cik, f.accession):
+                        txt = normalize_text(html_to_text(http.get_text(url, ttl_seconds=_PS_TTL)))
+                        releases.append(release_parse.parse_release(
+                            txt, source_ref=f"8-K {f.accession} EX-99.1"))
+                except Exception as exc:
+                    qa.append(f"primary-source: EX-99.1 fetch/parse failed for 8-K {f.accession} "
+                              f"({type(exc).__name__})")
+        except Exception as exc:
+            qa.append(f"primary-source: 8-K enumeration failed ({type(exc).__name__})")
+    # (2) latest 10-Q filing sections ------------------------------------------------------------
+    if cik:
+        try:
+            qs = edgar.recent_filings(cik, forms=("10-Q",))
+            if qs and qs[0].primary_doc:
+                url = filing_sections.filing_url(cik, qs[0].accession, qs[0].primary_doc)
+                txt = normalize_text(html_to_text(http.get_text(url, ttl_seconds=_PS_TTL)))
+                filing = filing_sections.parse_filing_sections(
+                    txt, source_ref=f"10-Q {qs[0].accession}")
+                filing_as_of = qs[0].report_date  # the maturity-wall 'as of' — panel window base
+        except Exception as exc:
+            qa.append(f"primary-source: latest 10-Q fetch/parse failed ({type(exc).__name__})")
+    latency = time.perf_counter() - t0
+    facts = _companyfacts_or_none(edgar, cik)
+    # (3) derivations over structured inputs (never re-parsing a display string) -----------------
+    fcf = ciq_sheets.free_cash_flow(bundle)
+    fcf_sign = fcf.value > 0 if fcf.value is not None else None
+    self_fund = primary_source.self_funding(_latest_quarter_ocf_positive(facts), fcf_sign)
+    # wall coherence — filing ≤12m vs CIQ panel same-window, tranche-matched, exclusive boundary.
+    # Balance = the 10-Q's OWN period end (the wall's 'as of'), NOT the latest companyfacts instant
+    # (which can be a later 10-K, shifting the window and dropping the 41.7M convertible bond).
+    balance = filing_as_of or _latest_balance_date(facts)
+    cs_layer = mech.capital_structure
+    instruments = (cs_layer.instruments.value
+                   if cs_layer is not None and cs_layer.instruments.value is not None else [])
+    panel = [primary_source.PanelInstrument(
+                i.description, i.principal_musd,
+                date.fromisoformat(i.maturity_date) if i.maturity_date else None)
+             for i in instruments]
+    wall_qa: list[str] = []
+    mw = filing.maturity_wall if filing is not None else None
+    if balance is not None:
+        filing_conv = next((t.amount for t in (mw.tranches if mw else [])
+                            if "convert" in t.name.lower()), None)
+        wall_line, wall_qa = primary_source.wall_coherence(
+            mw.within_12m_total if mw else None, panel, balance=balance,
+            filing_convertible=filing_conv,
+            panel_convertible_principal=primary_source.panel_convertible_principal(panel, balance))
+    else:
+        wall_line = "wall coherence: UNKNOWN — no EDGAR balance-sheet date"
+    qa += wall_qa
+    # basis triangulation — each leverage row basis-labeled; FY margins from the release
+    nde = mech.leverage_survival.net_debt_to_ebitda if mech.leverage_survival is not None else None
+    tde = ciq_sheets.comps_total_debt_ebitda_value(bundle)
+    net_debt = ciq_sheets.net_debt(bundle)
+    fy = _fy_reconciliation(releases)
+    tri = primary_source.basis_triangulation(
+        f"{nde.value}x" if nde is not None and nde.status is SourceStatus.PRESENT else None,
+        f"{tde.value}x" if tde.status is SourceStatus.PRESENT else None,
+        net_debt.value if net_debt.status is SourceStatus.PRESENT else None,
+        _ltm_adj_ebitda(releases),
+        gaap_gross_margin=fy.get("gross margin"), impairment=_fy_impairment(releases),
+        revenue=fy.get("revenue"))
+    # guide verification — CIQ revenue guide (point OR range) vs the release guide + prior-FY actual
+    ciq_lo, ciq_hi = ciq_sheets.revenue_guide_lohi(bundle, reference_date=reference_date)
+    rel_lo, rel_hi, rel_qual = _release_revenue_guide(releases)
+    guide = primary_source.guide_verification(
+        "revenue", ciq_lo, ciq_hi,
+        prior_fy_actual=fy.get("revenue"), release_qualitative=rel_qual,
+        release_low=rel_lo, release_high=rel_hi)
+    ps = PrimarySource(
+        releases=releases, filing=filing,
+        self_funding=Sourced.present(
+            self_fund, source_ref="EDGAR latest-Q OCF sign + CIQ LTM FCF sign"),
+        wall_coherence=Sourced.present(
+            wall_line, source_ref="10-Q maturity wall vs CIQ capital panel (same window)"),
+        basis_triangulation=Sourced.present(
+            tri, source_ref="CIQ leverage bases + release LTM adj-EBITDA/margins"),
+        guide_verification=Sourced.present(
+            guide, source_ref="CIQ revenue guide vs release actual/outlook"),
+        qa_flags=qa)
+    return ps, latency
+
+
 def assemble_mechanical(
     record: DataRecord,
     *,
@@ -1627,7 +1810,15 @@ def assemble_mechanical(
         capital_structure=_capital_structure(record, edgar, http, bundle, reference_date),
         management_commentary=ciq_sheets.management_commentary(bundle),
     )
-    flags: list[str] = []
+    # (RC-1 C) primary-source layer — fetch 8-K EX-99.1 releases + the latest 10-Q, parse, and run
+    # the four cross-source derivations over them + this mechanical layer. Resilient: a fetch/parse
+    # miss becomes an UNKNOWN line + QA flag, never an abort. Attached via model_copy (frozen).
+    primary, ps_latency = _primary_source(record, edgar, http, bundle, reference_date, mech)
+    mech = mech.model_copy(update={"primary_source": primary})
+    flags: list[str] = list(primary.qa_flags)
+    flags.append(f"primary-source: {len(primary.releases)} EX-99.1 release(s) + "
+                 f"{'1' if primary.filing is not None else '0'} 10-Q parsed "
+                 f"(+{ps_latency:.1f}s fetch)")
     if pe_recon is not None:
         flags.append(pe_recon[0])
     flags += _eps_caveat_flags(record, bundle, eps_resolved=adj_eps.status is SourceStatus.PRESENT)

@@ -54,6 +54,7 @@ class Filing(BaseModel, frozen=True):
     accession: str
     items: list[str]  # 8-K item codes, e.g. ["2.02", "9.01"]
     primary_doc: str | None
+    report_date: date | None = None  # the period the filing reports ON (10-Q/K balance-sheet as-of)
 
 
 class FundamentalSnapshot(BaseModel, frozen=True):
@@ -360,6 +361,7 @@ class EdgarClient:
             if since and fdate < since:
                 continue
             items_raw = recent.get("items", [""] * n)[i] or ""
+            rdate_raw = recent.get("reportDate", [""] * n)[i] or ""
             out.append(
                 Filing(
                     cik=cik10,
@@ -368,6 +370,7 @@ class EdgarClient:
                     accession=recent["accessionNumber"][i],
                     items=[x.strip() for x in items_raw.split(",") if x.strip()],
                     primary_doc=recent.get("primaryDocument", [None] * n)[i],
+                    report_date=date.fromisoformat(rdate_raw) if rdate_raw else None,
                 )
             )
         return out

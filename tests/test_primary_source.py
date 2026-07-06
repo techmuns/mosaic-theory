@@ -6,7 +6,45 @@ from __future__ import annotations
 
 from datetime import date
 
+import pytest
+
+from vinci.dossier import mechanical as mech
 from vinci.edgar import primary_source as ps
+from vinci.edgar import release_parse as rp
+
+# committed REAL-TEXT fixtures (public-domain EDGAR excerpts) — the assembly helpers derive offline.
+_FY25 = (
+    "Microvast Reports 2025 Financial Results • Full Year revenue of $427.5 million, up 12.6% "
+    "compared to $379.8 million in 2024 • Gross margin decreased to 28.6%, compared to 31.5% in "
+    "2024, from a $32.5 million inventory impairment charge related to ESS components. • Non-GAAP "
+    "adjusted EBITDA of positive $44.7 million, compared to Non-GAAP adjusted EBITDA of negative "
+    "$44.8 million in 2024. 2026 Outlook • we expect continued revenue growth in 2026."
+)
+_Q1_26 = (
+    "Microvast Reports First Quarter 2026 Financial Results • Non-GAAP adjusted EBITDA of negative "
+    "$5.5 million in Q1 2026, compared to non-GAAP adjusted EBITDA of $28.5 million in Q1 2025."
+)
+
+
+def test_ltm_adj_ebitda_production_path() -> None:
+    """The 18.7x LTM input computed END-TO-END from the parsed releases (not fed): LTM adjusted
+    EBITDA = FY 44.7 − prior-Q 28.5 + current-Q (−5.5) = 10.7 — the parser now captures the
+    prior-year comparison distinctly, so the whole chain is deterministic from real text."""
+    releases = [rp.parse_release(_FY25, source_ref="fy"), rp.parse_release(_Q1_26, source_ref="q1")]
+    assert mech._ltm_adj_ebitda(releases) == 10.7
+    # the FY margin inputs also come straight off the parse (no re-derivation)
+    fy = mech._fy_reconciliation(releases)
+    assert fy["gross margin"] == 28.6 and fy["revenue"] == 427.5
+    assert mech._fy_impairment(releases) == 32.5
+    # a missing leg is fail-loud, never a partial guess
+    assert mech._ltm_adj_ebitda([rp.parse_release(_Q1_26, source_ref="q1")]) is None
+
+
+def test_release_revenue_guide_prefers_most_recent() -> None:
+    """The guide-verify cross-source input = the most-recent release's revenue guide; a qualitative
+    outlook (MVST FY25) yields (None, None, True), a numeric revised guide yields the range."""
+    assert mech._release_revenue_guide([rp.parse_release(_FY25, source_ref="fy")]) == (None, None,
+                                                                                       True)
 
 _MVST_PANEL = [
     ps.PanelInstrument("Convertible Bond", 41.7, date(2027, 1, 31)),
@@ -73,3 +111,33 @@ def test_guide_verification_vendor_echo_and_cross_source_verified() -> None:
     assert "VENDOR-ECHO" in mvst and "427.516" in mvst and "QUALITATIVE" in mvst
     vrrm = ps.guide_verification("revenue", 985.0, 995.0, release_low=985.0, release_high=995.0)
     assert "cross-source VERIFIED" in vrrm and "985" in vrrm and "995" in vrrm
+
+
+@pytest.mark.network
+def test_primary_source_assembly_mvst_live() -> None:
+    """(live) End-to-end assembly on MVST over real EDGAR filings + the CIQ bundle — the four
+    derivations, production-path. Needs the git-ignored CIQ folder + EDGAR; skips when absent."""
+    import json
+    from pathlib import Path
+    from types import SimpleNamespace
+
+    from vinci.dossier.ciq import CiqBundle
+    from vinci.dossier.manual_store import LocalFolderStore
+    from vinci.dossier.schemas import MechanicalLayer
+    from vinci.edgar.client import EdgarClient
+    from vinci.sec import build_sec_http
+
+    folder, doss = Path("data/manual/ciq"), Path("data/dossiers/MVST/dossier.json")
+    if not (folder / "MVST").exists() or not doss.exists():
+        pytest.skip("MVST CIQ folder / committed dossier absent (git-ignored)")
+    d = json.loads(doss.read_text())
+    layer = MechanicalLayer.model_validate(d["mechanical"])
+    bundle = CiqBundle.from_files("MVST", LocalFolderStore(folder).files("MVST"))
+    http = build_sec_http()
+    rec = SimpleNamespace(identity=SimpleNamespace(cik=str(d["cik"]), ticker="MVST"))
+    primary, _lat = mech._primary_source(
+        rec, EdgarClient(http), http, bundle, date.fromisoformat(d["reference_date"]), layer)  # type: ignore[arg-type]
+    assert "MIXED" in primary.self_funding.value  # latest-Q OCF < 0
+    assert "AGREES" in primary.wall_coherence.value and "109.6" in primary.wall_coherence.value
+    assert "~18.7x" in primary.basis_triangulation.value  # LTM 10.7 computed end-to-end
+    assert "VENDOR-ECHO" in primary.guide_verification.value
