@@ -1076,6 +1076,66 @@ def test_capital_structure_render_shows_table_not_flat_string() -> None:
     assert "SOFR" not in out or "Convertible Bond - CNY" in out  # the table body renders rows
 
 
+def _primary_source_fixture(*, doubt: bool) -> ds.PrimarySource:
+    """A representative RC-1 primary-source layer for the render pins: doubt=True → MVST-shaped
+    (going-concern LEADS, Customer A/B); doubt=False → VRRM (checked-absence, NYCDOT + Avis)."""
+    gc = ds.GoingConcern(
+        substantial_doubt=doubt,
+        verbatim=("These conditions raise substantial doubt about the Company's ability to "
+                  "continue as a going concern.") if doubt else "",
+        plans="obtain funding through operations; refinance near-term facilities" if doubt else "",
+        source_ref="10-Q GC")
+    cust = ([ds.ConcentrationCustomer(name="Customer A", pct=52.0, prior_pct=31.0),
+             ds.ConcentrationCustomer(name="Customer B", pct=18.0, prior_pct=16.0)] if doubt
+            else [ds.ConcentrationCustomer(name="City of New York Department of Transportation",
+                                           pct=15.2, prior_pct=15.4)])
+    fil = ds.FilingSectionExtract(
+        source_ref="10-Q 0001628280-26-033590", going_concern=gc,
+        concentration=ds.CustomerConcentration(
+            customers=cust, top5_pct=None,
+            terms="purchase orders subject to cancellation" if doubt else "", source_ref="10-Q c"))
+    rel = ds.ReleaseExtract(source_ref="8-K x EX-99.1", event_impacts=(
+        [] if doubt else [ds.EventImpact(
+            metric="revenue", effect="reduce", low=135.0, high=145.0, period="2026 annualized",
+            verbatim="expects to reduce revenue", source_ref="8-K x EX-99.1")]))
+    p = ds.Sourced.present
+    return ds.PrimarySource(
+        releases=[rel], filing=fil,
+        self_funding=p("self-funding: MIXED — latest-Q OCF < 0, LTM FCF > 0", source_ref="x"),
+        wall_coherence=p("wall coherence — filing cross-validates panel: panel same-window $109.6M "
+                         "vs filing $111.2M — 1.4% < 5% tol → AGREES.", source_ref="x"),
+        basis_triangulation=p("EBITDA-basis triangulation (each leverage basis-labeled):\n"
+                              "  net debt / company-adjusted LTM EBITDA ($10.7M): ~18.7x\n"
+                              "  covenant basis: UNKNOWN (not disclosed)", source_ref="x"),
+        guide_verification=p("guide verification (revenue): CIQ 427.516 → VENDOR-ECHO flag",
+                             source_ref="x"),
+        qa_flags=[])
+
+
+def test_primary_source_render_surfaces_and_supersede() -> None:
+    """(RC-1 C render) The cross-checks block renders going-concern LEADING, wall coherence AGREES,
+    the triangulation, guide VENDOR-ECHO, concentration; the two-input self-funding SUPERSEDES the
+    survival line; the Avis event impact renders in the drawdown section; and the doubt=False path
+    renders the CHECKED-ABSENCE + the NYCDOT exact concentration."""
+    lv = ds.LeverageSurvival(net_debt_to_ebitda=_u(), total_debt_to_ebitda=_u(),
+                             interest_coverage=_u(), survival=_u(), credit_health=_u())
+    m = _minimal_mech().model_copy(update={
+        "primary_source": _primary_source_fixture(doubt=True), "leverage_survival": lv})
+    block = "\n".join(dr._primary_source_block(m))
+    assert "SUBSTANTIAL DOUBT" in block and "going concern" in block.lower()
+    assert "109.6" in block and "AGREES" in block
+    assert "~18.7x" in block and "covenant basis: UNKNOWN" in block and "VENDOR-ECHO" in block
+    assert "Customer A: 52.0% (prior 31.0%)" in block
+    lev = "\n".join(dr._leverage_block(m))
+    assert "supersedes the line above" in lev and "MIXED" in lev  # adjacent to the one-input claim
+    m2 = _minimal_mech().model_copy(update={"primary_source": _primary_source_fixture(doubt=False)})
+    block2 = "\n".join(dr._primary_source_block(m2))
+    assert "none in latest 10-Q — checked, absent" in block2
+    assert "City of New York Department of Transportation: 15.2% (prior 15.4%)" in block2
+    ei = "\n".join(dr._event_impact_lines(m2))
+    assert "reduce revenue by $135–145M" in ei and "2026 annualized" in ei
+
+
 # --- E3 / E4: EDGAR-anchored fetch — offline fixtures + network-marked live pins ---------------
 
 
