@@ -159,7 +159,7 @@ function renderRows() {
         <td class="num muted">${r.rank}</td>
         <td><span class="mono" style="font-weight:600;">${escapeHtml(r.ticker)}</span>${sunk ? " ⛔" : ""}
           <div class="muted" style="font-size:11.5px;">${escapeHtml((r.name || "").slice(0, 40))}</div>${flag}</td>
-        <td class="muted" style="font-size:12px; white-space:nowrap;">${escapeHtml(r.sector || "—")}</td>
+        <td class="muted" style="font-size:12px;"><span style="display:inline-block; max-width:90px; line-height:1.25;">${escapeHtml(r.sector || "—")}</span></td>
         <td>${STATE_BADGE[stateOf(r.ticker)] || ""}</td>
         <td class="num" style="font-weight:600;">${fmtScore(r.score)}</td>
         <td><span class="pill ${sunk ? "unresolved" : "live"}">${escapeHtml(r.depthBand)}</span>${gated}</td>

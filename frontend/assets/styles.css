@@ -194,6 +194,8 @@ table.data { width: auto; max-width: 100%; border-collapse: collapse; font-size:
 table.data th { text-align: left; font-size: 11px; text-transform: uppercase; letter-spacing: 0.04em; color: var(--ink-3); font-weight: 600; padding: 8px 10px; border-bottom: 1px solid var(--line-2); white-space: nowrap; }
 table.data th.num { text-align: right; } /* (K2) numeric header aligns to its right-aligned column */
 table.data td { padding: 9px 10px; border-bottom: 1px solid var(--line); vertical-align: top; }
+/* the ranker packs the most columns — tighten its cell gutters so all fit without a page h-scroll */
+#rk-table th, #rk-table td { padding-left: 6px; padding-right: 6px; }
 table.data td.mono { white-space: nowrap; } /* keep tickers (incl. the ▸ caret) on one line — never wrap a 4-char name */
 table.data tr:hover td { background: var(--surface-2); }
 /* B1 per-peer grid: the subject row is distinct; the peer-median footer sits under a rule */

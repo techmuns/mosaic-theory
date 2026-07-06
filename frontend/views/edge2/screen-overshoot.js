@@ -54,7 +54,7 @@ function renderRows() {
     <tr>
       <td><a class="mono" style="font-weight:600;" href="#/dossier/${escapeHtml(r.ticker)}">${escapeHtml(r.ticker)}</a></td>
       <td class="muted" style="font-size:12px;">${escapeHtml((r.name || "").slice(0, 42))}</td>
-      <td class="muted" style="font-size:12px; white-space:nowrap;">${escapeHtml(r.sector || "—")}</td>
+      <td class="muted" style="font-size:12px;"><span style="display:inline-block; max-width:90px; line-height:1.25;">${escapeHtml(r.sector || "—")}</span></td>
       <td><span class="pill live">${escapeHtml(r.depthBand)}</span></td>
       <td>${escapeHtml(r.depthLabel || "")}</td>
       <td>${escapeHtml(r.idioLabel || "")}</td>
