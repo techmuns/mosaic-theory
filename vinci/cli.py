@@ -981,9 +981,9 @@ def build_parser() -> argparse.ArgumentParser:
     p_fwd.add_argument("--exposure-names", dest="exposure_names",
                        help="comma tickers: the genuine-exposure watchlist / exposure-carry cohort "
                             "(empty-BUY diagnostic 2). Back-compat alias for --watchlist.")
-    p_fwd.add_argument("--driver", default="AI-datacenter value chain",
-                       help="driver label to freeze under (default: 'AI-datacenter value chain'; "
-                            "e.g. 'defense-demand-shift' for theme #2)")
+    p_fwd.add_argument("--driver", required=True, choices=sorted(DRIVER_SPECS),
+                       help="driver to freeze under (from the DRIVER_SPECS registry; REQUIRED — no "
+                            "default, the same fail-loud gate as themes-exposure)")
     p_fwd.add_argument("--watchlist",
                        help="comma tickers: genuine-exposure re-underwrite cohort (also the "
                             "exposure-carry cohort); must be ⊆ the committed tier")
