@@ -8,6 +8,7 @@ import { refreshBlock } from "../../lib/ui.js";
 const AXES = ["idiosyncrasy", "depth", "character", "multiple"];
 const COLS = [
   { key: "rank", label: "#", num: true }, { key: "ticker", label: "Ticker" },
+  { key: "industry", label: "Industry" },  // DERIVED SIC sub-industry — assemble/inform, not a rank input
   { key: "state", label: "Workflow" },
   { key: "score", label: "Score", num: true }, { key: "depthBand", label: "Band" },
   { key: "idiosyncrasy", label: "Idio (vs mkt)", num: true }, { key: "depth", label: "Depth (52w)", num: true },
@@ -50,7 +51,7 @@ export async function render(root, _params, { item, frame }) {
 
   const controls = `
     <div style="display:flex; gap:14px; align-items:center; flex-wrap:wrap; margin-bottom:12px;">
-      <input id="rk-q" type="search" placeholder="Filter ticker or name…" autocomplete="off" value=""
+      <input id="rk-q" type="search" placeholder="Filter ticker, name, or industry…" autocomplete="off" value=""
         style="flex:1; min-width:200px; padding:8px 11px; border:1px solid var(--line-2); border-radius:8px; font-size:13px;" />
       <label style="font-size:12.5px; color:var(--ink-2); display:flex; gap:6px; align-items:center; cursor:pointer;">
         <input id="rk-hide" type="checkbox" /> hide structurally-sunk (${DATA.counts.demoted})
@@ -104,7 +105,7 @@ function renderRows() {
   const body = document.getElementById("rk-body");
   if (!body) return;
   let rows = DATA.rows.slice();
-  if (state.q) rows = rows.filter((r) => r.ticker.toLowerCase().includes(state.q) || (r.name || "").toLowerCase().includes(state.q));
+  if (state.q) rows = rows.filter((r) => r.ticker.toLowerCase().includes(state.q) || (r.name || "").toLowerCase().includes(state.q) || (r.sector || "").toLowerCase().includes(state.q) || (r.industry || "").toLowerCase().includes(state.q));
   if (state.hideSunk) rows = rows.filter((r) => !r.structurallyDisqualified);
 
   rows.sort((a, b) => {
@@ -158,6 +159,7 @@ function renderRows() {
         <td class="num muted">${r.rank}</td>
         <td><span class="mono" style="font-weight:600;">${escapeHtml(r.ticker)}</span>${sunk ? " ⛔" : ""}
           <div class="muted" style="font-size:11.5px;">${escapeHtml((r.name || "").slice(0, 40))}</div>${flag}</td>
+        <td class="muted" style="font-size:12px;"><span style="display:inline-block; max-width:92px; line-height:1.25;">${escapeHtml(r.industry || "—")}</span></td>
         <td>${STATE_BADGE[stateOf(r.ticker)] || ""}</td>
         <td class="num" style="font-weight:600;">${fmtScore(r.score)}</td>
         <td><span class="pill ${sunk ? "unresolved" : "live"}">${escapeHtml(r.depthBand)}</span>${gated}</td>

@@ -48,7 +48,7 @@ export async function render(root, { item, frame }) {
         </div>
       </div>
       <details class="ps-why">
-        <summary>Buy-dependent spreads <b>UNDEFINED</b> — zero buys, no buy leg (never 0.0) · diagnostics <b>pending</b> · methodology</summary>
+        <summary>Spread not measurable yet — no Buy verdicts, so no buy leg (<b>UNDEFINED</b>, never 0.0) · diagnostics not ready · methodology</summary>
         <div class="ps-why-body">
           <ul class="kv-list" style="margin-bottom:9px;">${(pf.undefinedMeasures || []).map(([m, r]) =>
             `<li><b>${escapeHtml(m)}</b> — <span class="muted">UNDEFINED: ${escapeHtml(r)}</span></li>`).join("")}

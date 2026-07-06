@@ -53,7 +53,7 @@ a { color: var(--accent); text-decoration: none; }
 a:hover { text-decoration: underline; }
 
 /* --- app shell: sidebar + main ------------------------------------------- */
-.app { display: grid; grid-template-columns: 268px 1fr; min-height: 100vh; }
+.app { display: grid; grid-template-columns: 236px 1fr; min-height: 100vh; }
 
 .sidebar {
   background: var(--nav-bg);
@@ -66,9 +66,8 @@ a:hover { text-decoration: underline; }
   overflow-y: auto;
 }
 
-.brand { padding: 4px 20px 18px; border-bottom: 1px solid var(--nav-line); margin-bottom: 10px; }
+.brand { padding: 4px 20px 14px; border-bottom: 1px solid var(--nav-line); margin-bottom: 10px; }
 .brand .mark { font-weight: 650; font-size: 15px; color: #fff; letter-spacing: 0.2px; }
-.brand .sub { font-size: 11.5px; color: var(--nav-ink-2); margin-top: 3px; }
 
 .nav-group { margin: 14px 0 4px; }
 .nav-group > .label {
@@ -194,6 +193,9 @@ table.data { width: auto; max-width: 100%; border-collapse: collapse; font-size:
 table.data th { text-align: left; font-size: 11px; text-transform: uppercase; letter-spacing: 0.04em; color: var(--ink-3); font-weight: 600; padding: 8px 10px; border-bottom: 1px solid var(--line-2); white-space: nowrap; }
 table.data th.num { text-align: right; } /* (K2) numeric header aligns to its right-aligned column */
 table.data td { padding: 9px 10px; border-bottom: 1px solid var(--line); vertical-align: top; }
+/* the ranker packs the most columns — tighten its cell gutters so all fit without a page h-scroll */
+#rk-table th, #rk-table td { padding-left: 6px; padding-right: 6px; }
+table.data td.mono { white-space: nowrap; } /* keep tickers (incl. the ▸ caret) on one line — never wrap a 4-char name */
 table.data tr:hover td { background: var(--surface-2); }
 /* B1 per-peer grid: the subject row is distinct; the peer-median footer sits under a rule */
 table.data tr.name-row td { font-weight: 650; background: var(--surface-2); }
@@ -249,6 +251,10 @@ a.tier-count:hover { text-decoration: underline; }
 .tier-count.zero { color: var(--ink-3); font-weight: 400; }
 
 /* --- B1: Overview verdict/scan split — two labeled column blocks (verdict primary, scan muted) --- */
+/* fill the window: the Theme column absorbs the slack so the number columns stay grouped on the right
+   (scoped to .vs-table — other data tables keep the K2 content-sized width) */
+table.data.vs-table { width: 100%; }
+.vs-table td:first-child, .vs-table th:first-child { width: 100%; }
 .vs-table th.num { text-align: right; }
 .vs-table th.grp { text-align: center; font-size: 10px; text-transform: uppercase; letter-spacing: 0.06em; font-weight: 700; padding-bottom: 2px; }
 .vs-table th.grp-verdict { color: var(--ink); }

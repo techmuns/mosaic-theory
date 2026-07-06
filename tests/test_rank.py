@@ -506,3 +506,27 @@ def test_ranker_reads_no_forward_returns() -> None:
                 for alias in node.names:
                     hit = any(alias.name.startswith(f) for f in forbidden)
                     assert not hit, f"{src.name} imports {alias.name} — ranker reads no returns"
+
+
+# --- the sector fence: coarse SIC sector is assemble/inform, never a scoring/gate input -----------
+def test_sector_never_enters_the_scorer_or_the_gate() -> None:
+    """``vinci.sectors`` must NOT be imported by the ranker (``vinci.rank``) or the screen gate
+    (``vinci.screens``). The coarse sector is a derived view attached in the CLI writer for the
+    human-facing cluster roll-up; the moment it reaches a weight / threshold / sort it becomes a
+    dressed-up sector-momentum screen — the exact trap Edge-3 was falsified into. This fences it.
+    """
+    root = Path(__file__).resolve().parent.parent / "vinci"
+    scanned: set[str] = set()
+    for pkg in ("rank", "screens"):
+        for src in (root / pkg).glob("*.py"):
+            scanned.add(src.name)
+            for node in ast.walk(ast.parse(src.read_text())):
+                if isinstance(node, ast.ImportFrom) and node.module is not None:
+                    bad = node.module == "vinci.sectors" or node.module.startswith("vinci.sectors.")
+                    assert not bad, f"{src.name} imports {node.module} — sector must not gate/score"
+                if isinstance(node, ast.Import):
+                    for alias in node.names:
+                        assert not alias.name.startswith("vinci.sectors"), (
+                            f"{src.name} imports {alias.name} — sector must not gate/score"
+                        )
+    assert {"ranker.py", "screen2.py"} <= scanned  # sanity: the scorer + gate files were scanned

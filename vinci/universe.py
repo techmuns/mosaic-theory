@@ -120,7 +120,7 @@ def build_universe(
             # Axis 1 — issuer BUSINESS type (EDGAR SIC). A BLANK/unknown SIC is excluded, not
             # admitted: a blank SIC is exactly how a BDC/fund slips a denylist (`None` is never `in`
             # the exclude set — CION, OTF). Then drop the confirmed fund/shell codes.
-            sic = resolver.sic_for(ident.cik)[0]
+            sic, sic_desc = resolver.sic_for(ident.cik)
             if sic is None:
                 stats["unknown_sic"] += 1  # cannot confirm operating-co → excluded, not admitted
                 continue
@@ -139,6 +139,11 @@ def build_universe(
                 stats["unknown_type" if ptype is None else "non_common_equity"] += 1
                 continue
             stats["in_universe"] += 1
+            # Persist the SIC we ALREADY fetched (above, for the Axis-1 gate) onto the identity so
+            # it flows into the committed securities/issuers snapshots — was a dead write (fetched,
+            # gated on, then discarded via [0]). The coarse SECTOR is derived downstream
+            # (sectors.sector_for_sic); SIC itself is never a screen/rank/verdict input.
+            ident = ident.model_copy(update={"sic": sic, "sic_description": sic_desc})
             store.upsert_security(ident, first_seen=reference_date)
             store.record_universe(
                 as_of=reference_date,
