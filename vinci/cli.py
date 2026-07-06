@@ -35,6 +35,9 @@ from vinci.schemas.ledger import Confidence, Verdict
 from vinci.scoring import score_ledger
 from vinci.screens import screen_universe
 from vinci.store import Store
+from vinci.themes.assay import PriceCloseFn
+from vinci.themes.assay_candidates import CANDIDATE_SPECS
+from vinci.themes.assay_schemas import AssayCard, CandidateSpec
 from vinci.themes.drivers import DRIVER_SPECS
 from vinci.universe import build_universe
 
@@ -763,6 +766,122 @@ def _cmd_themes_forward(args: argparse.Namespace) -> int:
     return 0
 
 
+def _make_price_fn(eod: PolygonEodClient) -> PriceCloseFn:
+    """As-of close lookup over Polygon grouped-daily, backstepping up to 5 days to the nearest
+    trading day. None on no data (non-trading OR before the plan history window) - never faked."""
+    from datetime import timedelta
+
+    cache: dict[date, dict[str, float]] = {}
+
+    def closes_on(day: date) -> dict[str, float]:
+        for back in range(6):
+            d = day - timedelta(days=back)
+            if d not in cache:
+                cache[d] = {t: b.close for t, b in eod.grouped_daily(d).items()}
+            if cache[d]:
+                return cache[d]
+        return {}
+
+    def price_fn(ticker: str, day: date) -> float | None:
+        return closes_on(day).get(ticker)
+
+    return price_fn
+
+
+def _snapshot_assay(card: AssayCard, candidate: CandidateSpec, history_root: Path) -> None:
+    """Archive the card's quarters via ``scan_history.record_snapshot`` (reused AS-IS). Each quarter
+    is a record tagged ``exposure_basis=<reference-combo quadrant>`` so the manifest tier_counts
+    summarize the quadrant distribution (contract requires an ``exposure_basis`` key per record)."""
+    import subprocess
+
+    from vinci.themes.assay import _REFERENCE_COMBO
+    from vinci.themes.scan_history import record_snapshot
+
+    dumped = [{**qr.model_dump(mode="json"),
+               "exposure_basis": qr.quadrant_by_combo.get(_REFERENCE_COMBO, "UNKNOWN")}
+              for qr in card.quarters]
+    try:
+        git_sha: str | None = subprocess.run(
+            ["git", "rev-parse", "--short", "HEAD"],
+            capture_output=True, text=True, check=True, timeout=5).stdout.strip() or None
+    except (OSError, subprocess.SubprocessError):
+        git_sha = None
+    record_snapshot(dumped, driver_slug=candidate.key, driver_desc=candidate.note,
+                    history_root=history_root, now=datetime.now(UTC), git_sha=git_sha,
+                    n_scanned=len(card.quarters))
+
+
+def _cmd_themes_assay(args: argparse.Namespace) -> int:
+    """Earliness assay v0 for ONE candidate at an as-of. Deterministic reads only (EDGAR full-text +
+    Polygon); ZERO LLM. Prints the markdown card + JSON path; snapshots the quarters to history."""
+    from vinci.sec import build_efts_http, build_sec_http
+    from vinci.themes import assay
+
+    cfg = get_config()
+    cfg.ensure_dirs()
+    candidate = CANDIDATE_SPECS[args.candidate]
+    card = assay.assay_candidate(
+        candidate, date.fromisoformat(args.as_of), args.quarters,
+        efts=build_efts_http(cfg), sec_http=build_sec_http(cfg),
+        edgar=EdgarClient.from_config(cfg),
+        price_fn=_make_price_fn(PolygonEodClient.from_config(cfg)),
+        cache_root=args.cache_dir or Path("data/assay_cache"), max_pages=args.max_pages)
+    jpath = assay.emit(card, args.out_dir or Path("data/assay"))
+    _snapshot_assay(card, candidate, args.history_dir or Path("data/assay_history"))
+    print(assay.render_markdown(card))
+    print(f"card -> {jpath}")
+    return 0
+
+
+def _cmd_themes_assay_retrocast(args: argparse.Namespace) -> int:
+    """Run the four control retrocasts, print each full card, then the pre-committed kill-criterion
+    verdict. Sanctioned network (EDGAR + Polygon only, ZERO LLM). Expected-vs-actual is PRINTED
+    evidence, NEVER auto-acted-on."""
+    from vinci.sec import build_efts_http, build_sec_http
+    from vinci.themes import assay
+
+    cfg = get_config()
+    cfg.ensure_dirs()
+    efts, sec_http = build_efts_http(cfg), build_sec_http(cfg)
+    edgar = EdgarClient.from_config(cfg)
+    price_fn = _make_price_fn(PolygonEodClient.from_config(cfg))
+    cache_root = args.cache_dir or Path("data/assay_cache")
+    out_dir = args.out_dir or Path("data/assay")
+    hist = args.history_dir or Path("data/assay_history")
+    # 2026 as-ofs approximate the frozen-basket freeze_timestamps (AI-DC 2026-07-02, defense
+    # 2026-07-03); those files are git-ignored/off-repo, so these are the DOCUMENTED approximations.
+    cases = [
+        ("ai-datacenter", "2026-06-01", "PRICED at as-of"),
+        ("defense-demand-shift", "2026-06-15", "PRICED at as-of"),
+        ("ai-datacenter", "2022-07-01", "EARLY residence in-window"),
+        ("defense-demand-shift", "2023-01-01", "EARLY residence in-window"),
+    ]
+    print("=" * 92)
+    print("EARLINESS-ASSAY v0 RETROCAST - FALSIFY-OR-SURVIVE. Zero LLM; EDGAR full-text + Polygon.")
+    print("KILL CRITERION (pre-committed, verbatim):")
+    print(f"  {assay.KILL_CRITERION}")
+    print("=" * 92)
+    cards: list[AssayCard] = []
+    for key, asof_s, expected in cases:
+        candidate = CANDIDATE_SPECS[key]
+        print(f"\n----- {key} @ {asof_s}  (expected: {expected}) -----")
+        card = assay.assay_candidate(
+            candidate, date.fromisoformat(asof_s), args.quarters, efts=efts, sec_http=sec_http,
+            edgar=edgar, price_fn=price_fn, cache_root=cache_root, max_pages=args.max_pages)
+        cards.append(card)
+        assay.emit(card, out_dir)
+        _snapshot_assay(card, candidate, hist)
+        print(assay.render_markdown(card))
+    verdict, evidence = assay.kill_verdict(cards)
+    print("\n" + "=" * 92)
+    print("KILL-CRITERION VERDICT (printed evidence; never auto-acted-on):")
+    for e in evidence or ["(no >=2q EARLY residence recorded under any combo)"]:
+        print(f"  + {e}")
+    print(f"\n  >>> {verdict}")
+    print("=" * 92)
+    return 0
+
+
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(prog="vinci", description=__doc__)
     sub = parser.add_subparsers(dest="command", required=True)
@@ -1007,6 +1126,37 @@ def build_parser() -> argparse.ArgumentParser:
     p_fwd.add_argument("--real-tier", dest="real_tier",
                        help="comma tickers: looser REAL-tier secondary cohort (clearly labeled)")
     p_fwd.set_defaults(func=_cmd_themes_forward)
+
+    p_assay = sub.add_parser(
+        "themes-assay",
+        help="Earliness assay v0: velocity x price quadrant retrocast for ONE candidate (zero LLM)")
+    p_assay.add_argument("--candidate", required=True, choices=sorted(CANDIDATE_SPECS),
+                         help="candidate theme key (from the CANDIDATE_SPECS registry)")
+    p_assay.add_argument("--as-of", dest="as_of", required=True, help="as-of date YYYY-MM-DD")
+    p_assay.add_argument("--quarters", type=int, default=16, help="lookback quarters (default: 16)")
+    p_assay.add_argument("--max-pages", type=int, default=8, dest="max_pages",
+                         help="efts page cap per term-quarter (default: 8; cap => loud degrade)")
+    p_assay.add_argument("--out-dir", type=Path, dest="out_dir",
+                         help="card output dir (default: data/assay)")
+    p_assay.add_argument("--cache-dir", type=Path, dest="cache_dir",
+                         help="efts velocity cache dir (default: data/assay_cache)")
+    p_assay.add_argument("--history-dir", type=Path, dest="history_dir",
+                         help="scan-history archive root (default: data/assay_history)")
+    p_assay.set_defaults(func=_cmd_themes_assay)
+
+    p_retro = sub.add_parser(
+        "themes-assay-retrocast",
+        help="Run the four control retrocasts + print the pre-committed kill-criterion verdict")
+    p_retro.add_argument("--quarters", type=int, default=16, help="lookback quarters (default: 16)")
+    p_retro.add_argument("--max-pages", type=int, default=8, dest="max_pages",
+                         help="efts page cap per term-quarter (default: 8)")
+    p_retro.add_argument("--out-dir", type=Path, dest="out_dir",
+                         help="card output dir (default: data/assay)")
+    p_retro.add_argument("--cache-dir", type=Path, dest="cache_dir",
+                         help="efts velocity cache dir (default: data/assay_cache)")
+    p_retro.add_argument("--history-dir", type=Path, dest="history_dir",
+                         help="scan-history archive root (default: data/assay_history)")
+    p_retro.set_defaults(func=_cmd_themes_assay_retrocast)
     return parser
 
 

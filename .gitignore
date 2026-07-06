@@ -49,5 +49,11 @@ data/forward/
 # committed (already covered by data/*; explicit here for fail-closed clarity).
 data/scan_history/
 
+# earliness-assay v0 harness runtime outputs — derived, LOCAL-only (already covered by data/*;
+# explicit for fail-closed clarity). Cards, the efts velocity cache, and the quarter-snapshot archive.
+data/assay/
+data/assay_cache/
+data/assay_history/
+
 # OS
 .DS_Store

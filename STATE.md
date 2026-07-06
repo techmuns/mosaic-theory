@@ -1661,6 +1661,58 @@ Each line: *what it does* — *verified how*.
     line, conversion reasoned (no fabricated $/sh — MVST is a $25M loan, not a bond), the REAL
     2024→2025 amendment chain preserved (distinct dates), direct EBITDA+Revenue anchors unchanged.
     ruff + mypy --strict (70) + `pytest` (363) + `node --check` green. Rides on PR #70; NOT merged.**
+- **Earliness-assay v0 harness (`vinci/themes/assay.py` + `assay_schemas.py` + `assay_candidates.py`;
+  CLI `themes-assay` / `themes-assay-retrocast`) — FALSIFY-OR-SURVIVE, ZERO LLM, backend-only (nothing
+  deploys).** A deterministic retrocast that places each quarter of a candidate theme in a velocity×price
+  QUADRANT and measures EARLY residence — to test the fund's *earliness* premise (that a theme is
+  observable in disclosure BEFORE the basket re-rates) before any capital or extraction is built on it.
+  **Two axes, point-in-time:** (x) disclosed-activity velocity — new filers first-mentioning the driver's
+  terms per quarter (EDGAR full-text search, `from`-paginated, cache-first; a page cap degrades LOUDLY to
+  a lower bound, never silently); (y) an obvious basket's median excess re-rating vs IWM AND SPY (Polygon
+  grouped-daily, as-of only; a missing close is `None`→UNKNOWN, never a silent 0.0). Each quarter →
+  {EARLY / PRICED / QUIET / NARRATIVE / UNKNOWN} under a **boundary sensitivity grid** (2 price-flat
+  thresholds × 2 activity-rising tests = 4 combos); EARLY residence (longest consecutive run) is measured
+  per combo. Output is an **`AssayCard` — assemble-not-conclude: NO score / rank / verdict field** (pinned
+  by a schema-walk guard + an AST no-ledger/no-scoring import guard; `rank` added to the forbidden set —
+  a quadrant is a factual label, not a ranking). **THE_BASKET_RULE (verbatim, printed on every card):**
+  "At as-of, rank filers by DISTINCT filings mentioning ANY of the candidate's terms over the trailing 8
+  quarters (EDGAR full-text). Map CIK->ticker (SEC company_tickers). Keep common stocks whose as-of market
+  cap (XBRL cover-page shares x Polygon close) is $100M-$10B (the Component-A cap band). Take the top 10 by
+  mention count. Purely mechanical + ex-ante: no discretion, no forward information, no price used in
+  selection." **KILL CRITERION (pre-committed, verbatim):** "If the retrocasts show that NEITHER
+  ai-datacenter NOR defense-demand-shift had >=2 consecutive quarters of EARLY-quadrant residence before
+  their re-rates - under ANY boundary combo in the sensitivity grid - the early-window premise is
+  falsified and the assay build STOPS at this harness." **v0 limitations (recorded honestly):** (1) NO
+  commitment/"money" read — velocity is *mention presence*, not disclosed $ commitment; 8-K commitment
+  extraction is **v1**; (2) NO attention/search prior — **v1**; (3) the 8-K-family vs 10-K-family mention
+  split is **PRINTED, not weighted** in v0; (4) **ZERO LLM** by construction; (5) point-in-time ticker map
+  (SEC publishes only the CURRENT CIK↔ticker — noted in a card caveat). Quarters snapshot to
+  `data/assay_history/` (reusing `scan_history.record_snapshot`, tagged `exposure_basis=<reference-combo
+  quadrant>`); cards to `data/assay/`; efts velocity cache to `data/assay_cache/` — all git-ignored,
+  LOCAL-only. Verified: ruff + `mypy --strict vinci` (90) clean; +15 network-free tests (quadrant/
+  residence math incl. the ≥2q-EARLY positive control under EVERY combo, the already-priced negative
+  control, the price-gap→UNKNOWN case; the no-conclude schema+AST guard; the driver-terms identity; the
+  efts cache round-trip; +4 REGRESSIONS below). **Adversarial review (3 lenses × verify-refute, 5
+  confirmed / 4 refuted) caught and FIXED pre-merge three real defects, each now pinned by an
+  end-to-end regression:** (i) efts pages are 100 hits, not 10 — the by-10 step overlapped pages and
+  inflated `cik_counts`/form-splits ~8× (now steps by 100 and stops by position-vs-total, mirroring
+  `exposure.py`); (ii) a cik-less efts hit truncated pagination silently WITHOUT setting `capped`
+  (same fix — the stop no longer reads the CIK-filtered row count); (iii) a share-frame LOOKAHEAD —
+  basket cap-banding read XBRL shares disclosed AFTER as_of (now reuses `universe.recent_share_periods`'
+  40-day filing-lag gate → no forward information, per THE_BASKET_RULE). **Live 4-case retrocast
+  (2026-07-06, real EDGAR+Polygon, ZERO LLM): VERDICT = `INCONCLUSIVE — price axis gapped; the kill
+  criterion cannot be evaluated` (correctly NOT a false FALSIFICATION).** flat20_medrise EARLY
+  residence (longest run / total): ai-datacenter@2026-06-01 = 1/2, defense@2026-06-15 = 0/0 (both
+  POST-re-rate → priced), ai-datacenter@2022-07-01 = 0/0, defense@2023-01-01 = 0/0 — **but both
+  pre-re-rate (EARLY-expected) windows are ENTIRELY price-gapped** (Polygon's ~5y history can't reach
+  the 2016-2020 8-quarter baselines), so a ≥2q EARLY run could be neither observed NOR ruled out. The
+  VELOCITY axis validated cleanly (rich efts back to 2018; sensible point-in-time baskets — VRT/RIOT/
+  KULR for 2022 AI-datacenter, ONDS/RDW/AVAV for 2026 defense; loud lower-bound flags on 34-44 capped
+  term-quarters/case). **Assay v0 SURVIVES (not falsified); it neither confirms nor kills the
+  earliness premise — the binding constraint is PRICE HISTORY (a v1 unlock: deeper EOD back to ~2016),
+  not a design flaw.** Operationally: efts throws transient 500s under the request burst → the harness
+  fails LOUD (never fabricates); a cache-first re-run resumes (idempotent, monotonic) — the retrocast
+  completed via that recovery. On a feat/theme-assay branch; PR opened, NOT merged.**
 - _Whole suite green (ruff + mypy --strict clean; `pytest -m "not network"` passes)._
 
 ## 3. FALSIFIED — tested and retired (NOT deferred)
@@ -2723,6 +2775,16 @@ Then: operate the weekly loop and accumulate resolved verdicts.
 In PARALLEL (per §4's GOVERNOR, not instead): a validation design may be drafted for the next edge —
 event-assembly's obvious/non-obvious verdict tagging, theme-anticipation's naive-baseline benchmark —
 so long as it never diverts verdict throughput from the lead loop. Design first; build on greenlight.
+
+**Earliness-assay v0 — OPERATOR ACTION (from the feat/theme-assay build):** the FALSIFY-OR-SURVIVE
+retrocast RAN 2026-07-06 → **INCONCLUSIVE (price axis gapped)**: the harness SURVIVES (not falsified),
+but cannot yet confirm the earliness premise because the pre-re-rate (EARLY-expected) windows for both
+themes fall BEFORE Polygon's ~5y price history. **The kill criterion is NOT triggered — the assay
+build does NOT stop.** The unlock to a CONCLUSIVE re-run is **deeper EOD price history (back to ~2016)**
+for the 2022/2023 8-quarter baselines; only then is a PASS/FALSIFIED evaluable. v1 scope (a fresh
+brief — do NOT auto-build): 8-K $-commitment extraction + an attention/search prior + a *weighted*
+form-family split, AND the deeper price history. Op note: the retrocast fails LOUD on transient efts
+500s under load — re-run cache-first (idempotent) to resume; it completed on that recovery.
 
 **Deferred audit follow-ups (PR #70 audit, 2026-07-03) — reported, not fixed under audit:**
 - **X-2 (covenant governing-term collapse):** two DISTINCT debt facilities that share a family label
