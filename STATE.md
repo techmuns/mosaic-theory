@@ -70,6 +70,20 @@ Each line: *what it does* — *verified how*.
     Technology, blank→Unknown — resolve→enrich→persist→round-trip→sector on live EDGAR. ruff + mypy
     --strict (vinci) + pins green. Committed `securities.jsonl` repopulates on the operator's next
     `build-universe`.*
+  - **`universe_snapshot` accretion — FIXED 2026-07-06 (regression-pinned; same class as the re-screen
+    accretion below).** Surfaced during the first post-persist rebuild on the operator's persistent DB:
+    `build_universe` called `store.clear_universe(reference_date)` (clear only the rebuild's OWN
+    `as_of`), so an EARLIER generation survived and the export layered on top — `run_weekly` reloads
+    last build's snapshot (as_of 06-17), then `build_universe` writes today's (07-06) → the committed
+    `universe_snapshot.jsonl` doubled to 3,487 rows with 1,677 duplicate `internal_id`s across two
+    `as_of`. Reads still resolved (`latest_universe` = MAX `as_of`), but the committed artifact bloats
+    every rebuild. **Fix:** `clear_universe()` is now a FULL replace (`DELETE FROM universe_snapshot`,
+    all generations) — a rebuild is a clean single-generation snapshot, exactly as `clear_candidates`
+    does for the screen. **Regression-pinned:** `test_clear_universe_is_a_full_replace` records a day-1
+    generation, rebuilds at day-2 (clear + record), asserts ONLY day-2 remains (day-1 gone) — fails on
+    the old per-`as_of` clear, passes on the fix. *The live 3,487-row accretion was cleaned via
+    `clear_universe` before the 07-06 snapshot commit; this code fix generalises that so it can't recur.
+    ruff + mypy --strict (87) + pytest green.*
   - **Sector cluster-count roll-up on the Overshoot screen + ranker (2026-07-06) — assemble/inform,
     gates NOTHING.** Building on the SIC persist above: the `rank` CLI writer attaches a DERIVED coarse
     `sector` per name (`sectors.sector_for_sic(identity.sic)`) into `ranked_queue.jsonl` — computed in

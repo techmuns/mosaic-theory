@@ -221,6 +221,28 @@ def test_clear_candidates_is_a_full_replace(store: Store) -> None:
     assert store.get_candidate(cand.candidate_id) is None
 
 
+def test_clear_universe_is_a_full_replace(store: Store) -> None:
+    # a universe REBUILD is a clean snapshot: clear_universe() is a FULL replace across ALL as_of,
+    # so a prior generation never lingers. The old per-as_of clear let an earlier build's rows
+    # survive on a persistent DB (run_weekly reloads last build's snapshot, then build_universe
+    # writes today's → both lingered), doubling the exported universe_snapshot with duplicate
+    # internal_ids across as_of. Simulate a rebuild (day1 → clear → day2); ONLY day2 may remain.
+    ident = _identity()
+    store.upsert_security(ident, first_seen=AS_OF)
+    cap = DataField.present(1.6e9, as_of=AS_OF, source="DERIVED", tier=SourceTier.DERIVED)
+    day1, day2 = date(2026, 6, 17), date(2026, 7, 6)
+    store.record_universe(
+        as_of=day1, internal_id=ident.internal_id, in_universe=True, market_cap=cap
+    )
+    store.clear_universe()  # rebuild = FULL replace (old clear(day2) left the day1 generation)
+    store.record_universe(
+        as_of=day2, internal_id=ident.internal_id, in_universe=True, market_cap=cap
+    )
+    assert store.get_universe(day1) == []                    # prior generation gone (no accretion)
+    assert store.get_universe(day2) == [ident.internal_id]   # only the rebuilt generation remains
+    assert store.latest_universe(day2) == [ident.internal_id]
+
+
 def test_ledger_append_get_iter_and_no_dup(store: Store) -> None:
     ident = _identity()
     store.upsert_security(ident, first_seen=AS_OF)
