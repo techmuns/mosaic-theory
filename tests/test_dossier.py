@@ -2048,6 +2048,17 @@ _IE_MCAP_REF = (
 _IE_BRIDGE = "TEV→equity bridge: + cash $126.10M, − total debt $326.00M"
 
 
+def _iv(bridge: str = "", *, cash: float | None = None,
+        debt: float | None = None) -> ds.ImpliedValuation:
+    """A minimal ImpliedValuation for the bridge probes: STRUCTURED floats are the load-bearing
+    path; the display string is present for the legacy _parse_money fallback (structured absent)."""
+    u: ds.Sourced[typing.Any] = ds.Sourced.unknown(note="n/a")
+    return ds.ImpliedValuation(
+        implied_equity=u, bridge=(ds.Sourced.present(bridge, source_ref="x") if bridge else u),
+        bridge_cash=cash, bridge_debt=debt, market_cap=u, comparability_gate=u,
+    )
+
+
 def _ie_inputs(
     *, cna: str = _IE_CNA, tm: str = _IE_TM, ar: str = _IE_AR, market_cap: float = 423.1,
     net_debt: float = 199.9, bridge: str = _IE_BRIDGE,
@@ -2086,7 +2097,7 @@ def test_ie_parsers_read_the_assembled_fields() -> None:
     assert dm._ie_peer_median(_IE_TM, "TEV/Rev") == 3.2
     assert dm._ie_consensus_latest(_IE_AR, "FY 2026", "EBITDA") == 62.1
     assert dm._ie_asof(_IE_MCAP_REF) == "2026-06-24"
-    assert dm._ie_bridge_net_debt(_IE_BRIDGE) == 199.9
+    assert dm._ie_bridge_net_debt(_iv(_IE_BRIDGE, cash=126.1, debt=326.0)) == 199.9
 
 
 def test_trends_fy_level_reads_the_named_year_latest_snapshot() -> None:
@@ -4817,6 +4828,112 @@ def test_bs_bridge_coherence_missing_debt_fails_loud_not_zero() -> None:
     assert "DISAGREE" not in v            # a missing bridge row is not a disagreement
     assert "$0" not in v                  # never fabricate a zero for an ABSENT figure
     assert "reconcile" in v and "not cross-checked" in v  # cash reconciles; debt honestly flagged
+
+
+# --- PR 6 (bridge-parse + credit-health): structured floats, shared parser, tiered credit scale ---
+
+
+def test_ie_bridge_net_debt_reads_structured_floats_thousands_aware() -> None:
+    """(P1/P2a-b) Net debt from the bridge reads the STRUCTURED floats — a thousands value
+    ($1,101.80M) no longer truncates to 1. VRRM: 1101.8 − 55.6 = 1046.2 (was −54.6 via the
+    comma-blind regex → a FALSE reconcile caveat); MVST unchanged 199.9. The string-only fallback
+    (shared _parse_money) yields the SAME value."""
+    vrrm = "TEV→equity bridge: + cash $55.60M, − total debt $1,101.80M"
+    mvst = "TEV→equity bridge: + cash $126.10M, − total debt $326.00M"
+
+    def nd(iv: ds.ImpliedValuation) -> float:
+        return round(dm._ie_bridge_net_debt(iv) or 0.0, 1)
+
+    assert nd(_iv(vrrm, cash=55.6, debt=1101.8)) == 1046.2      # structured primary path
+    assert nd(_iv(mvst, cash=126.1, debt=326.0)) == 199.9
+    assert nd(_iv(vrrm)) == 1046.2   # string-only fallback (was 1 − 55.6 = −54.6 before the fix)
+    assert nd(_iv(mvst)) == 199.9
+
+
+def test_parse_money_roundtrips_thousands_and_handles_edges() -> None:
+    """(P2c) The ONE shared money parser round-trips money()-formatted values ≥ $1,000M (the comma
+    case the thousands-blind regex broke), and handles $/M/(paren-negative)/absent."""
+    def money(v: int) -> str:  # mirrors the _bs_bridge_coherence display formatter f"${v:,.0f}M"
+        return f"${v:,.0f}M"
+
+    for v in (1000, 1101, 5678, 12345, 1000000):
+        assert dm._parse_money(money(v)) == float(v)           # comma-aware round-trip
+    assert dm._parse_money("$1,101.80M") == 1101.8             # the literal VRRM debt figure
+    assert dm._parse_money("$55.60M") == 55.6
+    assert dm._parse_money("(120.00)") == -120.0               # parenthetical negative
+    assert dm._parse_money("—") is None
+    assert dm._parse_money("") is None
+    assert dm._parse_money(None) is None
+
+
+def test_bridge_reconcile_gate_still_fires_on_structured_disagreement() -> None:
+    """(P2d) The fix must NOT weaken the reconcile gate: a genuine BS-vs-bridge disagreement ≥ the
+    5% band STILL fires the soft caveat, from the STRUCTURED bridge floats (a thousands debt, never
+    the display string). Agreement stays silent."""
+    bs: list[list[typing.Any]] = [
+        ["Balance Sheet as of:", "Mar-31-2026"],
+        ["Total Cash & ST Investments", 55.6], ["Total Debt", 1101.8],
+    ]
+    b = _fin_bundle({"Balance Sheet": bs}, freq="quarterly")
+    agree = _iv("+ cash $55.60M, − total debt $1,101.80M", cash=55.6, debt=1101.8)
+    assert "DISAGREE" not in (dm._bs_bridge_coherence(b, agree).value or "")  # agree → silent
+    disagree = _iv("+ cash $55.60M, − total debt $1,500.00M", cash=55.6, debt=1500.0)
+    d = dm._bs_bridge_coherence(b, disagree).value or ""
+    assert "DISAGREE" in d and "1,102" in d and "1,500" in d  # both rendered, not truncated
+
+
+def _credit_sheet_quality_roster() -> list[list[typing.Any]]:
+    # A quality roster (the VRRM premise): the UNRATED peers are STRONG (not weak), so rated-mean >
+    # unrated-mean and the rated-vs-unrated fallback reads falsely ambiguous; the scale is instead
+    # verified WITHIN the rated set — an IG peer (BBB+) scores stronger than a sub-IG peer (BB).
+    return [
+        ["Company Name", "Overall", "Op", "Solv", "Liq", "p", "u", "S&P Issuer Rating", "c", "i"],
+        ["IG Peer (NYSE:IG)", 2.0, 2.0, 2.0, 2.0, "", "", "BBB+", "US", "x"],
+        ["SubIG Peer (NYSE:SB)", 4.0, 4.0, 4.0, 4.0, "", "", "BB", "US", "x"],
+        ["Strong Unrated (NYSE:SU)", 1.0, 1.0, 1.0, 1.0, "", "", "-", "US", "x"],
+        ["Subj Co (NasdaqCM:SUBJ)", 3.0, 2.0, 4.0, 2.0, "", "", "BB-", "US", "x"],
+    ]
+
+
+def test_credit_health_tier1_monotonicity_rescues_quality_roster() -> None:
+    """(P3) On a quality roster the UNRATED peers score strong, so the rated-vs-unrated fallback
+    reads falsely ambiguous (rated-mean 3.0 > unrated-mean 1.0 → old code UNKNOWN). Tier-1 (IG 2.0 ≤
+    sub-IG 4.0 within the rated set) verifies the scale and the panel RENDERS — name BB- 3/2/4/2,
+    all four peer-median dims. (unrated ≠ weak.)"""
+    s = cs.credit_health(_comps({("comps", "Credit Health Panel"): _credit_sheet_quality_roster()}))
+    assert s.status is ds.SourceStatus.PRESENT
+    v = s.value or ""
+    assert "name Overall/Operational/Solvency/Liquidity 3/2/4/2" in v   # name BB- shape (VRRM-like)
+    assert "S&P issuer rating BB-" in v
+    assert "peer-median O/Op/S/L 2/2/2/2" in v                          # all four medians present
+    assert "1=strongest … 4=weakest" in v
+
+
+def _credit_sheet_inverted_rated() -> list[list[typing.Any]]:
+    # IG scores WORSE than sub-IG (inverted) AND rated > unrated → BOTH tiers fail.
+    return [
+        ["Company Name", "Overall", "Op", "Solv", "Liq", "p", "u", "S&P Issuer Rating", "c", "i"],
+        ["IG Peer (NYSE:IG)", 4.0, 4.0, 4.0, 4.0, "", "", "BBB+", "US", "x"],
+        ["SubIG Peer (NYSE:SB)", 2.0, 2.0, 2.0, 2.0, "", "", "BB", "US", "x"],
+        ["Strong Unrated (NYSE:SU)", 1.0, 1.0, 1.0, 1.0, "", "", "-", "US", "x"],
+        ["Subj Co (NasdaqCM:SUBJ)", 3.0, 3.0, 3.0, 3.0, "", "", "BB-", "US", "x"],
+    ]
+
+
+def test_credit_health_refuses_when_no_tier_verifies_direction() -> None:
+    """(P3) When Tier-1 is inverted (IG scores WORSE than sub-IG) and the rated-vs-unrated fallback
+    also fails, the scale direction is unverified → UNKNOWN, never a guessed direction."""
+    s = cs.credit_health(_comps({("comps", "Credit Health Panel"): _credit_sheet_inverted_rated()}))
+    assert s.status is ds.SourceStatus.UNKNOWN and "ambiguous" in (s.note or "")
+
+
+def test_is_investment_grade_boundary() -> None:
+    """(P3) IG classifier boundary: BBB and up are IG, BB and down sub-IG; unparseable → None."""
+    assert cs._is_investment_grade("BBB-") is True and cs._is_investment_grade("A-") is True
+    assert cs._is_investment_grade("AAA") is True
+    assert cs._is_investment_grade("BB+") is False and cs._is_investment_grade("B") is False
+    assert cs._is_investment_grade("CCC") is False and cs._is_investment_grade("D") is False
+    assert cs._is_investment_grade("") is None and cs._is_investment_grade("NR") is None
 
 
 def test_quarterly_yoy_requires_same_quarter_not_just_four_back() -> None:

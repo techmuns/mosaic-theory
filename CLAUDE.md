@@ -92,6 +92,11 @@ flag it. That incremental blur is the failure mode this whole project is built t
   verdict on a single high-stakes name is confident, fluent noise.
 - **Source-bind everything** — claims (especially in dossiers) point to the primary cell/filing, so the
   human verifies rather than trusts the summary.
+- **Parsers consume structured values, never rendered strings — display formatting is never
+  load-bearing.** An extractor that produces a display string ALSO exposes its structured value(s); every
+  consumer reads the structured value. If a string-parse is truly unavoidable it goes through ONE shared,
+  tested helper — never an ad-hoc regex. (A thousands-blind re-parse of a `$1,101.80M` display string read
+  it as `1` and fired a false reconcile caveat; two divergent parsers of the same string is the bug class.)
 - **Three-tier human surface (DESIGN RULE v2).** `dossier.json` is machine-complete — every extracted
   fact stays in it. The rendered surface is THREE TIERS:
   1. **MAIN BODY** — decision values; ALWAYS printed. The human's decision surface.

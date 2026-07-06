@@ -875,17 +875,41 @@ def _consensus(bundle: CiqBundle) -> ConsensusContext:
     )
 
 
+def _parse_money(s: str | None) -> float | None:
+    """The ONE money-string → float parser (comma/$/M-aware, (paren)-negative). Preferred path is
+    ALWAYS a structured schema float; this is the SINGLE sanctioned fallback when a rendered string
+    must be parsed (DESIGN RULE). The comma-blind regex truncated '$1,101.80M' → 1."""
+    if not s:
+        return None
+    t = s.strip()
+    neg = t.startswith("(") and t.endswith(")")
+    t = t.strip("()").replace(",", "").replace("$", "").rstrip("Mm ").strip()
+    try:
+        v = float(t)
+    except ValueError:
+        return None
+    return -v if neg else v
+
+
 def _bs_bridge_coherence(bundle: CiqBundle, implied: ImpliedValuation) -> Sourced[str]:
     """(C3 coherence gate) The Balance-Sheet cash & total debt must reconcile with the
     implied-valuation bridge (a DIFFERENT CIQ sheet). On disagreement, render BOTH with sources + a
     soft caveat — never silently prefer one."""
     bs_cash = ciq_sheets._bs_latest(bundle, "Total Cash & ST Investments")
     bs_debt = ciq_sheets._bs_latest(bundle, "Total Debt")
+    # LOAD-BEARING: the STRUCTURED bridge floats (DESIGN RULE — never re-parse the display string).
+    # The fallback parses the render string via the shared _parse_money() only for a legacy bridge
+    # predating the structured fields (bridge_cash/debt None but the string carries a figure).
     br = implied.bridge.value if implied.bridge.status is SourceStatus.PRESENT else ""
-    mc = re.search(r"cash \$([\d,.]+)", br or "")
-    md = re.search(r"debt \$([\d,.]+)", br or "")
-    bc = float(mc.group(1).replace(",", "")) if mc else None
-    bd = float(md.group(1).replace(",", "")) if md else None
+
+    def _leg(structured: float | None, label: str) -> float | None:
+        if structured is not None:
+            return structured
+        m = re.search(rf"{label} \$([\d,.]+)", br or "")
+        return _parse_money(m.group(1)) if m else None
+
+    bc = _leg(implied.bridge_cash, "cash")
+    bd = _leg(implied.bridge_debt, "debt")
     src = "CIQ Financials→Balance Sheet vs Comparable Analysis→Implied Valuation"
 
     def close(a: float | None, b: float | None) -> bool:
@@ -1400,13 +1424,19 @@ def _ie_asof(source_ref: str | None) -> str:
     return mo.group(1) if mo else "UNKNOWN"
 
 
-def _ie_bridge_net_debt(bridge: str | None) -> float | None:
-    """Net debt implied by the cash/debt bridge string (total debt − cash) — condition-b probe."""
-    if not bridge:
-        return None
-    cash = re.search(r"cash\s+\$?(-?\d+(?:\.\d+)?)", bridge)
-    debt = re.search(r"total debt\s+\$?(-?\d+(?:\.\d+)?)", bridge)
-    return float(debt.group(1)) - float(cash.group(1)) if (cash and debt) else None
+def _ie_bridge_net_debt(implied: ImpliedValuation) -> float | None:
+    """Net debt implied by the cash/debt bridge (total debt − cash) — condition-b probe. Reads the
+    STRUCTURED schema floats (DESIGN RULE); the old thousands-blind regex on the display string
+    truncated '$1,101.80M' → 1 and fired a FALSE reconcile caveat. Legacy fallback parses the render
+    string via the shared _parse_money() only when a structured field is absent."""
+    cash, debt = implied.bridge_cash, implied.bridge_debt
+    if (cash is None or debt is None) and implied.bridge.status is SourceStatus.PRESENT:
+        br = implied.bridge.value or ""
+        if cash is None and (m := re.search(r"cash \$([\d,.]+)", br)):
+            cash = _parse_money(m.group(1))
+        if debt is None and (m := re.search(r"total debt \$([\d,.]+)", br)):
+            debt = _parse_money(m.group(1))
+    return debt - cash if (cash is not None and debt is not None) else None
 
 
 def _implied_expectations(
@@ -1497,8 +1527,7 @@ def _implied_expectations(
         coherence_note = "vintage-coherence UNKNOWN — no direct FY26 EBITDA consensus to probe"
 
     # (condition b) net-debt coherence vs the cash/debt bridge — reconcile or soft-caveat (C3).
-    bridge_nd = _ie_bridge_net_debt(
-        implied_val.bridge.value if implied_val.bridge.status is SourceStatus.PRESENT else None)
+    bridge_nd = _ie_bridge_net_debt(implied_val)
     nd_ok = bridge_nd is None or abs(bridge_nd - net_debt) <= _IE_TOL * max(1.0, abs(net_debt))
     tev_src = (
         f"TEV = mcap {market_cap:.1f} + net debt {net_debt:.1f} "
