@@ -145,6 +145,11 @@ incomplete regardless of code state.
 - **TEST-LAYER RULE.** A behavior observed failing in the rendered artifact is regression-pinned
   **end-to-end** (real committed JSON → render → assertion). Unit pins may accompany, never
   substitute. A second production failure of a pinned behavior ⇒ the pin was at the wrong layer.
+  **Never pin an LLM-COMPOSED string** (synthesis text, an LLM-extracted covenant/twin composite):
+  it reworders on every re-assembly, so an exact-string pin is guaranteed to rot the committed
+  artifact. LLM-adjacent tests assert **deterministic ANCHORS** (the components present,
+  order/phrasing-free — "components-present-together IS the composite-or-absent rule"), **structure**,
+  and **guard behavior**. *Facts are stable; framing is weather — and weather applies to CI.*
 - **INVARIANT RULE.** Every incident closes by shipping a machine check (lint / guard / coherence
   test), or is recorded in STATE.md as consciously accepted risk. STATE.md keeps the table:
   incident → invariant → shipped Y/N.
@@ -152,6 +157,12 @@ incomplete regardless of code state.
   approval**; data/extractor PRs go straight to build with real-run verification.
 - **OPERATOR-ACTION RULE.** Operator to-dos arising from builds/audits are appended to STATE.md
   §Next-steps **by the build itself** — chat is not a ledger.
+- **ARTIFACT-PASS RULE.** The standing post-merge artifact pass (re-assemble dossiers → build frontend
+  → commit `data/dossiers/*` + `frontend/dossiers/*` → push) runs the **FULL offline suite green
+  BEFORE pushing** — an artifact commit is **not exempt from green-main**, because tests read the
+  committed artifacts (a re-assembled dossier can turn a pinned test red). Verifying the rendered
+  surface is necessary but **not sufficient**; run `pytest -m "not network"` on the freshly-committed
+  artifacts too.
 
 ## Tone
 
