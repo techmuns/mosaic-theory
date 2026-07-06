@@ -51,7 +51,7 @@ export async function render(root, _params, { item, frame }) {
 
   const controls = `
     <div style="display:flex; gap:14px; align-items:center; flex-wrap:wrap; margin-bottom:12px;">
-      <input id="rk-q" type="search" placeholder="Filter ticker or name…" autocomplete="off" value=""
+      <input id="rk-q" type="search" placeholder="Filter ticker, name, or sector…" autocomplete="off" value=""
         style="flex:1; min-width:200px; padding:8px 11px; border:1px solid var(--line-2); border-radius:8px; font-size:13px;" />
       <label style="font-size:12.5px; color:var(--ink-2); display:flex; gap:6px; align-items:center; cursor:pointer;">
         <input id="rk-hide" type="checkbox" /> hide structurally-sunk (${DATA.counts.demoted})
@@ -105,7 +105,7 @@ function renderRows() {
   const body = document.getElementById("rk-body");
   if (!body) return;
   let rows = DATA.rows.slice();
-  if (state.q) rows = rows.filter((r) => r.ticker.toLowerCase().includes(state.q) || (r.name || "").toLowerCase().includes(state.q));
+  if (state.q) rows = rows.filter((r) => r.ticker.toLowerCase().includes(state.q) || (r.name || "").toLowerCase().includes(state.q) || (r.sector || "").toLowerCase().includes(state.q));
   if (state.hideSunk) rows = rows.filter((r) => !r.structurallyDisqualified);
 
   rows.sort((a, b) => {

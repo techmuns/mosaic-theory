@@ -33,7 +33,7 @@ export async function render(root, _params, { item, frame }) {
 
   const controls = `
     <div style="display:flex; gap:14px; align-items:center; margin-bottom:12px;">
-      <input id="ss-q" type="search" placeholder="Filter ticker or name…" autocomplete="off" value=""
+      <input id="ss-q" type="search" placeholder="Filter ticker, name, or sector…" autocomplete="off" value=""
         style="flex:1; min-width:200px; padding:8px 11px; border:1px solid var(--line-2); border-radius:8px; font-size:13px;" />
       <span class="muted" style="font-size:12px;">admitted set · sorted A→Z (order-agnostic)</span>
     </div>
@@ -49,7 +49,7 @@ export async function render(root, _params, { item, frame }) {
 function renderRows() {
   const body = document.getElementById("ss-body");
   if (!body) return;
-  const rows = q ? ADMITTED.filter((r) => r.ticker.toLowerCase().includes(q) || (r.name || "").toLowerCase().includes(q)) : ADMITTED;
+  const rows = q ? ADMITTED.filter((r) => r.ticker.toLowerCase().includes(q) || (r.name || "").toLowerCase().includes(q) || (r.sector || "").toLowerCase().includes(q)) : ADMITTED;
   body.innerHTML = rows.map((r) => `
     <tr>
       <td><a class="mono" style="font-weight:600;" href="#/dossier/${escapeHtml(r.ticker)}">${escapeHtml(r.ticker)}</a></td>
