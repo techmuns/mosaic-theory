@@ -1121,12 +1121,23 @@ def _catalyst_stale_flag(catalyst: CatalystPath, reference_date: date) -> str | 
         return None
     if "operator-attested" in (catalyst.as_of.note or ""):  # R1: attested date trusted — no caveat
         return None
-    if aod.startswith("≥"):  # FLOOR basis — no as-of stamp; freshness can't be evaluated on a bound
+    if aod.startswith("≥"):  # FLOOR basis — a lower bound on the (un-stamped) export date
+        # A floor F is a lower bound on the true export date E: an export cannot embed a revision
+        # event dated after itself, so E >= F. Hence worst-case staleness (R - E) <= (R - F). When
+        # even that worst case is within tolerance the data is PROVABLY fresh — no caveat (a floor
+        # at/after the reference means the export post-dates the screen: fresher still). The floor
+        # nature is never hidden: each read keeps its "≥F · export date unverified" suffix. The
+        # caveat fires ONLY when the bound cannot rule out staleness.
+        floor = date.fromisoformat(aod[1:])
+        worst_case_stale = (reference_date - floor).days
+        if worst_case_stale <= _STALE_CLOSE_DAYS:
+            return None
         return (
             f"Catalyst-path as-of UNVERIFIABLE — the CIQ Estimates export carries no as-of stamp; "
-            f"its data is on/after {aod[1:]} (the latest embedded revision event), but the true "
-            f"export date is unknown, so freshness vs the {reference_date.isoformat()} reference "
-            "cannot be confirmed. Re-pull, or corroborate against a dated sibling CIQ export."
+            f"its data is on/after {aod[1:]} (the latest embedded revision event), so it is up to "
+            f"{worst_case_stale}d before the {reference_date.isoformat()} reference — beyond the "
+            f"{_STALE_CLOSE_DAYS}d tolerance — and the true export date is unknown, so freshness "
+            "cannot be confirmed. Re-pull CIQ Estimates, or attest the export date (AS_OF sidecar)."
         )
     stale_days = (reference_date - date.fromisoformat(aod)).days
     if stale_days <= _STALE_CLOSE_DAYS:

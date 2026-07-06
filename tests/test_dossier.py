@@ -3494,10 +3494,15 @@ def test_consensus_stats_reads_target_and_ratings_skips_potential_upside() -> No
     assert "Potential Upside" not in v and "386.73" not in v  # conclusion-shaped row skipped
 
 
-def test_catalyst_stale_flag_header_hard_gate_floor_soft_caveat() -> None:
-    """Fix 1 staleness: on a HEADER basis the shared 45d knob is a hard gate (silent 45d, fire 46d);
-    on a FLOOR basis ('≥' as-of) it emits a SOFT 'unverifiable' caveat, not a false pass — even a
-    recent floor can't confirm the true export date. UNKNOWN as-of never fires."""
+def test_catalyst_stale_flag_header_hard_gate_floor_bound_caveat() -> None:
+    """Fix 1 staleness: on a HEADER basis the shared 45d knob is a hard gate (silent 45d, fire 46d).
+    On a FLOOR basis ('≥' as-of) the floor UPPER-BOUNDS staleness — the true export E >= floor F, so
+    worst-case staleness is (R - F). A floor WITHIN the 45d window is PROVABLY fresh → silent (the
+    '≥F · export date unverified' suffix on each read still flags the un-stamped vintage); a floor
+    BEYOND it cannot rule out staleness → soft 'UNVERIFIABLE' caveat carrying the worst-case bound.
+    A floor at/after the reference means the export post-dates the screen → fresher → silent.
+    UNKNOWN as-of never fires. Supersedes the prior 'any floor fires' rule: a recent floor bounds
+    staleness even though it can't pin the exact export date."""
     cp = ds.CatalystPath(
         as_of=ds.Sourced.present("2026-05-15", source_ref="CIQ Estimates→Recent Changes"),
         horizon_read=_u(), acceleration_read=_u(), cross_name_anchor=_u(),
@@ -3506,11 +3511,23 @@ def test_catalyst_stale_flag_header_hard_gate_floor_soft_caveat() -> None:
     assert dm._catalyst_stale_flag(cp, date(2026, 6, 29)) is None  # header, exactly 45d → silent
     fired = dm._catalyst_stale_flag(cp, date(2026, 6, 30))  # header, 46d → hard gate fires
     assert fired is not None and "staleness caveat" in fired and "2026-05-15" in fired
-    # FLOOR basis: unverifiable → soft caveat regardless of the (small) gap, not hard "staleness"
-    floor = cp.model_copy(update={"as_of": ds.Sourced.present(
-        "≥2026-05-15", source_ref="CIQ Estimates→Recent Changes")})
-    soft = dm._catalyst_stale_flag(floor, date(2026, 5, 20))  # only 5d, but still unverifiable
+
+    def floor(f: str) -> ds.CatalystPath:
+        return cp.model_copy(update={"as_of": ds.Sourced.present(
+            f, source_ref="CIQ Estimates→Recent Changes")})
+
+    # FLOOR within tolerance → PROVABLY FRESH (worst-case staleness ≤ 45d) → silent:
+    assert dm._catalyst_stale_flag(floor("≥2026-05-15"), date(2026, 5, 20)) is None   # 5d gap
+    assert dm._catalyst_stale_flag(floor("≥2026-05-15"), date(2026, 6, 22)) is None  # MVST 38d
+    assert dm._catalyst_stale_flag(floor("≥2026-06-09"), date(2026, 6, 22)) is None  # VRRM 13d
+    assert dm._catalyst_stale_flag(floor("≥2026-05-15"), date(2026, 6, 29)) is None   # exactly 45d
+    # FLOOR at/after the reference → export post-dates the screen → fresher still → silent:
+    assert dm._catalyst_stale_flag(floor("≥2026-06-23"), date(2026, 6, 22)) is None   # floor > ref
+    # FLOOR beyond tolerance → cannot rule out staleness → soft UNVERIFIABLE caveat WITH the bound:
+    soft = dm._catalyst_stale_flag(floor("≥2026-05-15"), date(2026, 6, 30))  # 46d worst case
     assert soft is not None and "UNVERIFIABLE" in soft and "staleness caveat" not in soft
+    assert "46d" in soft  # the worst-case staleness bound is stated, not a bare 'unverifiable'
+
     unknown = cp.model_copy(update={"as_of": _u()})
     assert dm._catalyst_stale_flag(unknown, date(2027, 1, 1)) is None  # no as-of → no fire
 
