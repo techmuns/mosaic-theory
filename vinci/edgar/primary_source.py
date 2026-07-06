@@ -149,22 +149,26 @@ def guide_verification(
     release_low: float | None = None,
     release_high: float | None = None,
 ) -> str:
-    """Cross-check the CIQ guide against the release-parsed guide. VENDOR-ECHO when the CIQ guide
-    equals the prior-FY actual (3dp) — a stale artifact; render the release's qualitative line
-    instead. Cross-source VERIFIED when the CIQ and release ranges match. Else a mismatch flag."""
+    """Cross-check the CIQ guide against the release-parsed guide. VENDOR-ECHO requires BOTH: CIQ
+    guide ≈ prior-FY actual (0.1% relative, source-rounding) AND the release gives NO corroborating
+    number for this metric (absent or QUALITATIVE) — a stale carry-forward the primary source does
+    not confirm. Cross-source VERIFIED when the CIQ and release ranges match; else a mismatch."""
     if ciq_low is None:
         return f"guide verification ({metric}): CIQ guide UNKNOWN — not cross-checked"
-    # VENDOR-ECHO: the CIQ guide equals the prior-FY actual within source-rounding (0.1% relative) —
-    # a stale carry-forward. Relative (not absolute-3dp) so a cross-source prior actual (the release
-    # rounds $427.516→$427.5) still detects the echo. A point guide has ciq_high == ciq_low or None.
+    # VENDOR-ECHO — TWO CONJUNCTS: (1) CIQ guide ≈ prior-FY actual within source-rounding (0.1% rel;
+    # the release rounds $427.516→$427.5, so relative not absolute-3dp); AND (2) the release states
+    # NO number for this metric (release_low is None) or only a QUALITATIVE outlook. A numeric
+    # release guide equal to the prior actual is RELEASE-VERIFIED, not a stale echo — corroboration
+    # SUPPRESSES the flag (it falls through to cross-source VERIFIED below).
     _echo = False
-    if prior_fy_actual is not None and prior_fy_actual != 0:
+    if (prior_fy_actual is not None and prior_fy_actual != 0
+            and (release_low is None or release_qualitative)):
         _rel, pa = 0.001, abs(prior_fy_actual)  # 0.1% relative — source-rounding, not coincidence
         _echo = (abs(ciq_low - prior_fy_actual) / pa < _rel
                  and (ciq_high is None or abs(ciq_high - prior_fy_actual) / pa < _rel))
     if _echo:
         tail = ("release outlook QUALITATIVE-only — render the qualitative growth line"
-                if release_qualitative else "verify vs release")
+                if release_qualitative else "release states no outlook here — uncorroborated")
         return (f"guide verification ({metric}): CIQ FY guide {ciq_low} ≈ prior-FY actual "
                 f"{prior_fy_actual} (within source-rounding) → VENDOR-ECHO flag (stale "
                 f"carry-forward); {tail}")

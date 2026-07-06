@@ -104,13 +104,27 @@ def test_basis_triangulation_labels_are_part_of_each_pin() -> None:
 
 
 def test_guide_verification_vendor_echo_and_cross_source_verified() -> None:
-    """MVST: CIQ FY26 revenue guide 427.516 == prior-FY actual 427.516 (3dp) → VENDOR-ECHO + the
-    release QUALITATIVE-only line. VRRM: CIQ 985–995 vs release 985–995 → cross-source VERIFIED."""
+    """MVST: CIQ FY26 revenue guide 427.516 ≈ prior-FY actual 427.516 AND the release outlook is
+    QUALITATIVE → VENDOR-ECHO. VRRM: CIQ 985–995 vs release 985–995 → cross-source VERIFIED."""
     mvst = ps.guide_verification("revenue", 427.516, 427.516,
                                  prior_fy_actual=427.516, release_qualitative=True)
     assert "VENDOR-ECHO" in mvst and "427.516" in mvst and "QUALITATIVE" in mvst
     vrrm = ps.guide_verification("revenue", 985.0, 995.0, release_low=985.0, release_high=995.0)
     assert "cross-source VERIFIED" in vrrm and "985" in vrrm and "995" in vrrm
+
+
+def test_guide_verification_echo_requires_conjunct_release_verified_suppresses() -> None:
+    """GATE 2 (adjudicated): VENDOR-ECHO needs BOTH conjuncts. A NUMERIC release guide equal to the
+    prior-FY actual is RELEASE-VERIFIED, not a stale echo — the corroboration SUPPRESSES the flag;
+    tolerance-alone must NOT fire. When the release outlook is ABSENT (no number, not qualitative)
+    the echo still fires, tailed 'uncorroborated'."""
+    # tolerance MATCHES (100 ≈ prior 100) but the release NUMERICALLY confirms 100 → VERIFIED
+    suppressed = ps.guide_verification("revenue", 100.0, 100.0, prior_fy_actual=100.0,
+                                       release_low=100.0, release_high=100.0)
+    assert "VENDOR-ECHO" not in suppressed and "cross-source VERIFIED" in suppressed
+    # release outlook ABSENT (no number, not qualitative) + echo → still flags, uncorroborated
+    absent = ps.guide_verification("revenue", 50.0, 50.0, prior_fy_actual=50.0)
+    assert "VENDOR-ECHO" in absent and "uncorroborated" in absent
 
 
 @pytest.mark.network
