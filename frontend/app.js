@@ -169,7 +169,6 @@ function renderSidebar() {
   document.getElementById("sidebar").innerHTML = `
     <div class="brand">
       <div class="mark">Nostra Vinci</div>
-      <div class="sub">research &amp; decision ops · read-only</div>
     </div>
     <div class="nav-group"><div class="label">Shared</div>${SHARED.map(sharedItem).join("")}</div>
     <div class="nav-group"><div class="label">Edges</div>${EDGES.map(edgeItem).join("")}</div>
