@@ -8,6 +8,7 @@ import { refreshBlock } from "../../lib/ui.js";
 const AXES = ["idiosyncrasy", "depth", "character", "multiple"];
 const COLS = [
   { key: "rank", label: "#", num: true }, { key: "ticker", label: "Ticker" },
+  { key: "sector", label: "Sector" },  // DERIVED coarse SIC sector — assemble/inform, not a rank input
   { key: "state", label: "Workflow" },
   { key: "score", label: "Score", num: true }, { key: "depthBand", label: "Band" },
   { key: "idiosyncrasy", label: "Idio (vs mkt)", num: true }, { key: "depth", label: "Depth (52w)", num: true },
@@ -158,6 +159,7 @@ function renderRows() {
         <td class="num muted">${r.rank}</td>
         <td><span class="mono" style="font-weight:600;">${escapeHtml(r.ticker)}</span>${sunk ? " ⛔" : ""}
           <div class="muted" style="font-size:11.5px;">${escapeHtml((r.name || "").slice(0, 40))}</div>${flag}</td>
+        <td class="muted" style="font-size:12px; white-space:nowrap;">${escapeHtml(r.sector || "—")}</td>
         <td>${STATE_BADGE[stateOf(r.ticker)] || ""}</td>
         <td class="num" style="font-weight:600;">${fmtScore(r.score)}</td>
         <td><span class="pill ${sunk ? "unresolved" : "live"}">${escapeHtml(r.depthBand)}</span>${gated}</td>

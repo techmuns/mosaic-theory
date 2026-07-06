@@ -70,6 +70,24 @@ Each line: *what it does* — *verified how*.
     Technology, blank→Unknown — resolve→enrich→persist→round-trip→sector on live EDGAR. ruff + mypy
     --strict (vinci) + pins green. Committed `securities.jsonl` repopulates on the operator's next
     `build-universe`.*
+  - **Sector cluster-count roll-up on the Overshoot screen + ranker (2026-07-06) — assemble/inform,
+    gates NOTHING.** Building on the SIC persist above: the `rank` CLI writer attaches a DERIVED coarse
+    `sector` per name (`sectors.sector_for_sic(identity.sic)`) into `ranked_queue.jsonl` — computed in
+    the WRITER, never in `ranker.py`/`screen2.py` (an AST fence test asserts neither imports
+    `vinci.sectors`; the `sector` field on `RankedCandidate` defaults None so the scorer stays pure).
+    `screen-overshoot.js` gains a **cross-sectional cluster card** (coarse-sector cluster sizes over the
+    admitted set + largest-cluster callout + explicit `Unknown` bucket) and a per-name Sector column;
+    the ranker gains a sortable Sector column; `snapshots.js` threads `sector`. Purpose = DE-CONFOUNDING
+    (G2 strips MARKET beta, not sector — a large cluster asks "did the GROUP fall, not the name?") +
+    concentration visibility at SELECTION time (spread_by_sector is post-hoc / ledger-only / empty).
+    Captioned "business classification (SEC SIC), NOT a peer cohort / NOT a sector-adjusted control";
+    never a gate/weight/sort — the deferred SIC-peer-cohort §G2 caveat is untouched. *Verified: emit
+    plumbing (292/292 ranked rows carry `sector`); AST fence + offline suite (475) green; REAL preview
+    over the 317 admitted names (sectors live-resolved into the git-ignored mirror) → Technology 98
+    (31%) / Health Care 83 (26%) / Materials 40 / … 0 Unknown; cluster card + both columns render,
+    sortable, 0 console errors. Committed `ranked_queue.jsonl` carries real sectors on the operator's
+    next full pipeline run (needs PR1's populated candidates upstream). Render PR — Phase-1 preview
+    shown, STOP for approval per PREVIEW RULE.*
 - **Screen 2 + gates** (`vinci/screens`) — G1 drawdown ≤−30% (capped at −85% terminal floor) / G2
   idiosyncratic **vs the IWM market index** (NOT a sector cohort — see caveat) / G3 multiple vs ~5y
   floor (`_PE_WINDOW_DAYS=1825`); PASS/FAIL/UNKNOWN, recall-favoring — *`screen` / `run-weekly` → 317

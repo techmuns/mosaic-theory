@@ -38,10 +38,10 @@ export async function render(root, _params, { item, frame }) {
       <span class="muted" style="font-size:12px;">admitted set · sorted A→Z (order-agnostic)</span>
     </div>
     <table class="data"><thead><tr>
-      <th>Ticker</th><th>Name</th><th>Band</th><th>G1 · drawdown</th><th>G2 · idiosyncratic</th><th>G3 · multiple</th>
+      <th>Ticker</th><th>Name</th><th>Sector</th><th>Band</th><th>G1 · drawdown</th><th>G2 · idiosyncratic</th><th>G3 · multiple</th>
     </tr></thead><tbody id="ss-body"></tbody></table>`;
 
-  root.innerHTML = frame(item, { bodyHtml: cards + controls + refreshBlock() });
+  root.innerHTML = frame(item, { bodyHtml: cards + clusterRollup(ADMITTED) + controls + refreshBlock() });
   renderRows();
   root.querySelector("#ss-q").addEventListener("input", (e) => { q = e.target.value.toLowerCase(); renderRows(); });
 }
@@ -54,9 +54,45 @@ function renderRows() {
     <tr>
       <td><a class="mono" style="font-weight:600;" href="#/dossier/${escapeHtml(r.ticker)}">${escapeHtml(r.ticker)}</a></td>
       <td class="muted" style="font-size:12px;">${escapeHtml((r.name || "").slice(0, 42))}</td>
+      <td class="muted" style="font-size:12px; white-space:nowrap;">${escapeHtml(r.sector || "—")}</td>
       <td><span class="pill live">${escapeHtml(r.depthBand)}</span></td>
       <td>${escapeHtml(r.depthLabel || "")}</td>
       <td>${escapeHtml(r.idioLabel || "")}</td>
       <td${r.multipleUnknown ? ' class="muted" style="font-style:italic;"' : ""}>${escapeHtml(r.multipleLabel || "")}</td>
-    </tr>`).join("") || `<tr><td colspan="6" class="muted" style="padding:18px;">No admitted names match the filter.</td></tr>`;
+    </tr>`).join("") || `<tr><td colspan="7" class="muted" style="padding:18px;">No admitted names match the filter.</td></tr>`;
+}
+
+// CROSS-SECTIONAL CLUSTERS — a selection-time roll-up of the admitted set by coarse SEC-SIC sector.
+// Its job is de-confounding + concentration visibility: G2 strips MARKET beta (name vs IWM) but NOT
+// sector, so a name that fell WITH its whole sector still lands here looking idiosyncratic. A large
+// cluster asks "did the GROUP fall, not the name?" — read by the human, gating/weighting/sorting
+// NOTHING. Coarse SIC is a business classification, NOT a peer cohort and NOT a sector-adjusted
+// control. The 'Unknown' bucket (blank/unmapped SIC) is shown explicitly — coverage stays honest.
+function clusterRollup(names) {
+  if (!names || !names.length) return "";
+  const counts = new Map();
+  for (const n of names) {
+    const s = n.sector || "Unknown";
+    counts.set(s, (counts.get(s) || 0) + 1);
+  }
+  const total = names.length;
+  const pct = (n) => Math.round((n / total) * 100);
+  // largest first; Unknown always sorts last so it reads as a coverage note, not a cluster
+  const entries = [...counts.entries()].sort((a, b) =>
+    (a[0] === "Unknown") - (b[0] === "Unknown") || b[1] - a[1] || a[0].localeCompare(b[0]));
+  const chips = entries.map(([sec, n]) => {
+    const cls = sec === "Unknown" ? "chip" : "chip accent";
+    return `<span class="${cls}">${escapeHtml(sec)} <b>${fmtInt(n)}</b> <span class="muted">${pct(n)}%</span></span>`;
+  }).join("");
+  const top = entries.find(([s]) => s !== "Unknown") || entries[0];
+  const lead = top
+    ? `Largest cluster: <b>${escapeHtml(top[0])}</b> — ${fmtInt(top[1])} of ${fmtInt(total)} (${pct(top[1])}%).`
+    : "";
+  return `
+    <div class="card" style="margin-bottom:16px;">
+      <h3>Cross-sectional clusters <span class="muted" style="font-weight:400; text-transform:none; letter-spacing:0;">— coarse SEC-SIC sector over the ${fmtInt(total)} admitted</span></h3>
+      <div class="subtitle muted" style="margin:6px 0 11px;">Business classification (SEC SIC) — <b>not a peer cohort, not a sector-adjusted control</b>. G2 strips <i>market</i> beta, not sector, so a large cluster asks: did the <b>group</b> fall, not the name? Assemble / inform — it gates, weights, and sorts nothing.</div>
+      ${lead ? `<div style="font-size:13px; margin-bottom:11px;">${lead}</div>` : ""}
+      <div class="chips">${chips}</div>
+    </div>`;
 }
