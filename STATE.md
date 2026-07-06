@@ -1039,6 +1039,22 @@ Each line: *what it does* — *verified how*.
       "as-of UNVERIFIABLE" caveat on a floor (no false pass); lookback labels stay export-relative
       ('latest', not 'now'). *Regression-pinned: header-wins-over-event; floor '≥'+note; soft-vs-hard
       staleness at the boundary.*
+    - **REFINED (PR #79, 2026-07-06) — a recent floor PROVES freshness; the "any floor → UNVERIFIABLE"
+      rule was over-conservative.** The floor `≥F` is a lower bound on the true export date E (E ≥ F),
+      hence an UPPER bound on staleness (R − E ≤ R − F). When R − F ≤ 45d even the worst case is within
+      tolerance → the data is provably fresh → the caveat is SUPPRESSED (the `≥F · export date
+      unverified` suffix on each read still flags the un-stamped vintage — no info lost); it fires only
+      when R − F > 45d, now stating the worst-case bound. A floor at/after the reference (export
+      post-dates the screen) is fresher still. This **REVERSED a deliberately-pinned test** (a 5d floor
+      no longer fires) — the test was updated + expanded (MVST/VRRM-real, F≥R edge, >45d bound). Also
+      DROPPED the caveat's "corroborate against a dated sibling CIQ export" advice: file mtimes show the
+      sibling comps export can be days newer than the estimates (MVST/VRRM estimates 06-19 vs comps
+      06-24), so it is not a reliable corroborator → replaced with the AS_OF sidecar. *Adversarially
+      verified (3 reviewers: the bound arithmetic is sound; the design reversal is the human call).
+      Verified on the real MVST/VRRM/EPAM/AORT exports (ref 2026-06-22): all four now SILENT (worst-case
+      38 / 13 / 4 / −1 d ≤ 45); a synthetic 113d floor still fires with the "113d" bound. ruff + mypy
+      --strict (87) + pytest 464 green. Incident→invariant: the expanded floor-bound test
+      `test_catalyst_stale_flag_header_hard_gate_floor_bound_caveat`.*
     - **BUG 2 (sign-blind reads):** (a) a negative/zero-crossing consensus path rendered a bare signed
       % — misreading a shrinking interest expense (−13.7→−4.9) as a "−64% decline"; now direction
       words ("improving (magnitude toward zero)"). (b) the guidance track-record used "≥ floor" for
