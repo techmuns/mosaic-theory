@@ -83,6 +83,11 @@ def test_dossier_schema_has_no_conclusion_field() -> None:
         # PR G — the walk must reach the implied-expectations block (fundamentals-space; the block-
         # scoped fence forbids price/equity/value/upside/discount fields — asserted separately)
         ds.ImpliedExpectations, ds.ImpliedExpectationRow,
+        # RC-1 — the walk must reach the primary-source extracts + derived surfaces: FACTS /
+        # verbatims, no verdict field (EventImpact carries 'effect', not the forbidden 'direction')
+        ds.PrimarySource, ds.ReleaseExtract, ds.GuidanceItem, ds.ReconciliationValue,
+        ds.OneOffItem, ds.EventImpact, ds.FilingSectionExtract, ds.GoingConcern, ds.DebtTranche,
+        ds.MaturityWall, ds.ConcentrationCustomer, ds.CustomerConcentration, ds.Commitment,
     }
     assert expected <= models
     offenders: list[str] = []

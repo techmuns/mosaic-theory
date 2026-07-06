@@ -90,7 +90,7 @@ def test_release_parse_vrrm_avis() -> None:
     reduce 120–125, 2026 annualized) AND the revised guide (revenue 985–995, adj EBITDA 380–385)."""
     ex = rp.parse_release(_VRRM_AVIS, source_ref=_SRC)
     rev_i = _by(ex.event_impacts, metric="revenue")
-    assert rev_i is not None and rev_i.direction == "reduce"
+    assert rev_i is not None and rev_i.effect == "reduce"
     assert (rev_i.low, rev_i.high) == (135.0, 145.0)
     seg_i = _by(ex.event_impacts, metric="segment profit")
     assert seg_i is not None and (seg_i.low, seg_i.high) == (120.0, 125.0)

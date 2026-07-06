@@ -274,7 +274,7 @@ def _event_impacts(text: str, src: str) -> list[EventImpact]:
         direction = "increase" if d.startswith(("increas", "rais", "improv")) else "reduce"
         period_m = re.search(r"(20\d\d\s+annualized|annualized|20\d\d)", phrase, re.I)
         out.append(EventImpact(
-            metric=_impact_metric(phrase), direction=direction, low=low, high=high,
+            metric=_impact_metric(phrase), effect=direction, low=low, high=high,
             period=period_m.group(1).strip() if period_m else "",
             verbatim=_verbatim(text, m.start(), m.end()), source_ref=src,
         ))

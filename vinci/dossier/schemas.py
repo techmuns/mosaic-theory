@@ -555,7 +555,7 @@ class EventImpact(BaseModel):
     to reduce {metric} by $A to $B'. Direction + range, verbatim-bound; no reading added."""
 
     metric: str  # e.g. "revenue" | "segment profit"
-    direction: str  # "reduce" | "increase"
+    effect: str  # "reduce" | "increase" — the event's effect on the metric (a RECORDED verb)
     low: float | None  # $M
     high: float | None
     period: str  # e.g. "2026 annualized"
@@ -676,6 +676,27 @@ class FilingSectionExtract(BaseModel):
     model_config = {"frozen": True}
 
 
+# --- RC-1 (C): the primary-source layer — parsed extracts + DERIVED cross-source surfaces ---------
+
+
+class PrimarySource(BaseModel):
+    """(RC-1 C) The primary-source layer — parsed EX-99.1 release(s) + latest 10-Q sections, plus
+    the DERIVED cross-source render surfaces (survival self-funding, same-window wall coherence,
+    EBITDA-basis triangulation, guide verification). Assembly-time + source-bound; a fetch/parse
+    miss is UNKNOWN + a QA note, never an abort, never an analyst caveat. Each derived line is a
+    Sourced[str] whose components name their source LAYER (filing vs CIQ panel vs release)."""
+
+    releases: list[ReleaseExtract] = Field(default_factory=list)
+    filing: FilingSectionExtract | None = None
+    self_funding: Sourced[str]        # two-input read: latest-Q OCF sign AND LTM FCF (MIXED / fund)
+    wall_coherence: Sourced[str]      # same-window filing-vs-panel coherence, tranche-matched
+    basis_triangulation: Sourced[str]  # EBITDA/margin bases table — every leverage row labeled
+    guide_verification: Sourced[str]  # CIQ guide vs release guide (vendor-echo / cross-source)
+    qa_flags: list[str] = Field(default_factory=list)
+
+    model_config = {"frozen": True}
+
+
 class MechanicalLayer(BaseModel):
     """The deterministic, source-bound facts — the ONLY input the synthesis LLM is given."""
 
@@ -702,6 +723,9 @@ class MechanicalLayer(BaseModel):
     # C — the Financial-Summary appendix (actuals + consensus fusion). Optional-with-default for
     # back-compat: old JSON round-trips; a FRESH assembly builds it (sub-fields fail loud if empty).
     financial_summary: FinancialSummary | None = None
+    # (RC-1 C) primary-source extraction (99.1 release + 10-Q sections) + derived cross-source
+    # surfaces. Optional-with-default for back-compat: old JSON round-trips (no primary-source).
+    primary_source: PrimarySource | None = None
     management_commentary: Sourced[str]  # earnings-call transcript — QUALITATIVE only, no numbers
 
     model_config = {"frozen": True}
