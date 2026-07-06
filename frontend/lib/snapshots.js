@@ -122,6 +122,8 @@ export async function getRankedQueue() {
       rank: r.rank,
       ticker: r.ticker,
       name: r.name,
+      sector: r.sector ?? null, // DERIVED coarse SIC sector — groups the cluster roll-up
+      industry: r.industry ?? null, // DERIVED finer sub-industry — the per-name display + sub-breakdown
       score: r.priority_score,
       depthBand: r.depth_band,
       quality: r.quality,
@@ -361,6 +363,7 @@ export async function getScreenAdmitted() {
       const mUnknown = r.axes.multiple?.coverage === "unknown";
       return {
         ticker: r.ticker, name: r.name, depthBand: r.depthBand,
+        sector: r.sector ?? null, industry: r.industry ?? null,
         depthLabel: r.axes.depth?.label, idioLabel: r.axes.idiosyncrasy?.label,
         // G3 UNKNOWN → the specific per-name reason (negative earnings vs XBRL gap), never a slash-menu
         multipleLabel: mUnknown ? (g3[r.ticker] || "multiple unavailable") : r.axes.multiple?.label,

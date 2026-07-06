@@ -95,6 +95,11 @@ class RankedCandidate(BaseModel, frozen=True):
     liquidity_tier: LiquidityTier
     adv_usd: float
     market_cap: float | None  # size, joined from the universe snapshot (None if unresolved)
+    # DERIVED SIC sector + finer sub-industry (sectors.sector_for_sic / industry_for_sic) —
+    # assemble/inform ONLY, NOT a rank input; filled by the CLI writer, never by the scorer. The
+    # sector groups the cluster roll-up; the industry is the per-name display + the sub-breakdown.
+    sector: str | None = None
+    industry: str | None = None
     volume_state: str  # Tier-2 read, e.g. "exhausted (0.68×)" / "heavy distribution (12.4×)"
     cause_class: CauseClass  # Tier-3 annotation (UNCLASSIFIED by default)
     structurally_disqualified: bool  # a deterministic 8-K structural signal fired → sunk

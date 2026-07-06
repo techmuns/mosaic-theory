@@ -70,6 +70,38 @@ Each line: *what it does* — *verified how*.
     Technology, blank→Unknown — resolve→enrich→persist→round-trip→sector on live EDGAR. ruff + mypy
     --strict (vinci) + pins green. Committed `securities.jsonl` repopulates on the operator's next
     `build-universe`.*
+  - **Sector cluster-count roll-up on the Overshoot screen + ranker (2026-07-06) — assemble/inform,
+    gates NOTHING.** Building on the SIC persist above: the `rank` CLI writer attaches a DERIVED coarse
+    `sector` per name (`sectors.sector_for_sic(identity.sic)`) into `ranked_queue.jsonl` — computed in
+    the WRITER, never in `ranker.py`/`screen2.py` (an AST fence test asserts neither imports
+    `vinci.sectors`; the `sector` field on `RankedCandidate` defaults None so the scorer stays pure).
+    `screen-overshoot.js` gains a **cross-sectional cluster card** (coarse-sector cluster sizes over the
+    admitted set + largest-cluster callout + explicit `Unknown` bucket) and a per-name Sector column;
+    the ranker gains a sortable Sector column; `snapshots.js` threads `sector`. Purpose = DE-CONFOUNDING
+    (G2 strips MARKET beta, not sector — a large cluster asks "did the GROUP fall, not the name?") +
+    concentration visibility at SELECTION time (spread_by_sector is post-hoc / ledger-only / empty).
+    Captioned "business classification (SEC SIC), NOT a peer cohort / NOT a sector-adjusted control";
+    never a gate/weight/sort — the deferred SIC-peer-cohort §G2 caveat is untouched. *Verified: emit
+    plumbing (292/292 ranked rows carry `sector`); AST fence + offline suite (475) green; REAL preview
+    over the 317 admitted names (sectors live-resolved into the git-ignored mirror) → Technology 98
+    (31%) / Health Care 83 (26%) / Materials 40 / … 0 Unknown; cluster card + both columns render,
+    sortable, 0 console errors. Committed `ranked_queue.jsonl` carries real sectors on the operator's
+    next full pipeline run (needs PR1's populated candidates upstream). Render PR — Phase-1 preview
+    shown, STOP for approval per PREVIEW RULE.*
+    **Sub-industry refinement (2026-07-06) — coarse sector was too generic ("Technology 98" reveals
+    nothing).** Added `sectors.industry_for_sic` — a curated deterministic 4-digit-SIC → ~52 readable
+    sub-industries (Software / Semiconductors / Biotech / Pharma / Hospitals / Gold Mining / …), same
+    fail-honest discipline, FALLING BACK to the coarse sector so it is never *less* informative; it is
+    the same assemble/inform lens (the AST fence already forbids `vinci.sectors` in the scorer/gate,
+    covers it). The `rank` writer now emits `industry` beside `sector`; the per-name column shows the
+    **sub-industry** (replaces the sector column) and the cluster roll-up is **TWO-LEVEL** (coarse
+    sector → its sub-industries); the filter matches sector+industry. Honest ceiling recorded: SIC tops
+    out at sub-industry, NOT the co-movement DRIVER (that is the theme edge) — do not push SIC further.
+    *Verified: `industry_for_sic` pins (7372→Software, 2836→Biotech, 8062→Hospitals, unmapped→coarse
+    fallback, blank→Unknown); ruff + mypy --strict + offline suite (479) green; REAL preview over the
+    317 admitted → Technology 98 splits Software 36 / IT Services 28 / Semis… and Health Care 83 splits
+    Pharma 38 / Devices 18 / Biotech 13 / Hospitals 3 / Diagnostics 7 (+ a Gold Mining 18 cluster);
+    both columns fit (ranker no h-scroll), search "biotech"→13, 0 console errors.*
 - **Screen 2 + gates** (`vinci/screens`) — G1 drawdown ≤−30% (capped at −85% terminal floor) / G2
   idiosyncratic **vs the IWM market index** (NOT a sector cohort — see caveat) / G3 multiple vs ~5y
   floor (`_PE_WINDOW_DAYS=1825`); PASS/FAIL/UNKNOWN, recall-favoring — *`screen` / `run-weekly` → 317
