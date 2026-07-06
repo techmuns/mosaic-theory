@@ -116,6 +116,16 @@ Each line: *what it does* — *verified how*.
     317 admitted → Technology 98 splits Software 36 / IT Services 28 / Semis… and Health Care 83 splits
     Pharma 38 / Devices 18 / Biotech 13 / Hospitals 3 / Diagnostics 7 (+ a Gold Mining 18 cluster);
     both columns fit (ranker no h-scroll), search "biotech"→13, 0 console errors.*
+    **Screen focus (2026-07-06):** the redundant per-name TABLE was removed from the Screen (it lives
+    on the Ranker in priority order) — the Screen is now purely the cross-sectional cluster roll-up +
+    count + gate logic; the two prose "metric" cards ("This view" / "Disposition") were dropped
+    (repetitive; folded into a count headline + the gate note). **DEFERRED — cluster TREEMAP / heatmap
+    view (NOT built):** a Clusters↔Treemap toggle (hand-rolled dependency-free SVG, sized by cluster
+    count, coloured by sector) was scoped + approved-in-principle (treemap over stacked-bars), then
+    deferred by the operator. Rationale: the chip roll-up already conveys the exact counts; the treemap
+    adds gestalt (area/colour concentration) but is a moderate build for marginal value today. **Unlock
+    trigger:** revisit when the admitted set / sector count grows enough that the chip roll-up gets
+    unwieldy (i.e. eyeballing concentration across the chips stops being easy).
 - **Screen 2 + gates** (`vinci/screens`) — G1 drawdown ≤−30% (capped at −85% terminal floor) / G2
   idiosyncratic **vs the IWM market index** (NOT a sector cohort — see caveat) / G3 multiple vs ~5y
   floor (`_PE_WINDOW_DAYS=1825`); PASS/FAIL/UNKNOWN, recall-favoring — *`screen` / `run-weekly` → 317
