@@ -2826,6 +2826,39 @@ committed public-domain EDGAR excerpts (CI-verifiable, no network).
   that **carries a sync-merge** (like this one, which merged origin/main to resolve divergence) → **merge
   commit**, NOT rebase (a rebase would flatten the sync-merge and re-mint the verified SHAs), NOT squash
   (squash loses the isolated-commit bisect granularity the brief required).
+- **INCIDENT (post-RC-1 IC-response draw) — TWO linked guard/test failures, both CLOSED** (PR
+  "post-artifact guard + test robustness" — 2 isolated-green commits + docs).
+  **(A) GUARD FALSE-POSITIVE — going_concern_vs_survival_framing proximity over-match.** The MVST draw
+  tripped the survival contradiction lint with a SPURIOUS entry: `_SURVIVAL_SAFE_RE` had a bare
+  proximity arm `going[- ]concern\b.{0,15}\bnot` matching ANY "not" within 15 chars of "going-concern"
+  — including the benign gap-acknowledgment KU *"the specifics of the going-concern 'plans' are not
+  synthesized here and must be read"*. **Fix:** dropped the arm; a genuine denial must NAME the thing
+  denied (surviving arms: no/not-a going-concern · no substantial doubt · survival not-at/assured ·
+  solvent). **Invariant:** `test_survival_lint_no_proximity_overmatch` (MUST-NOT-FIRE benign / MUST-FIRE
+  5 denials / end-to-end). *(Coverage note: "going concern is not a concern" no longer caught — rare;
+  accepted trade.)* Artifact `dc53455` ships that ONE documented-spurious qa CONTRADICTION in the MVST
+  `dossier.json` dev/JSON channel ONLY — human surface unaffected; the next routine assembly clears it.
+  **(B) RED-MAIN — LLM-string pin × artifact refresh (the red pin SWAPPED between the two re-assemblies).**
+  Each post-RC-1 re-assembly left main's OFFLINE SUITE RED via a DIFFERENT LLM-composed covenant-string
+  pin: at **3859ef9**, `test_t1_provenance` was RED — the principal re-rendered as "RMB [800,000,000.00]"
+  so the exact "RMB 800,000,000" pin was absent (the interest clause was NOT yet reworded there;
+  `test_t2` was GREEN). At **dc53455**, `test_t2_covenant` was RED — the re-assembly reworded the
+  interest clause, dropping the exact composite lead "Term SOFR + 9.75% (Floor 3.00%, +3.75% PIK)" (by
+  then the amount rendered "RMB 800,000,000.00 yuan", so `test_t1` was GREEN). Same failure class — an
+  EXACT LLM-composed covenant string pinned against an artifact the LLM re-words/re-formats on every
+  re-assembly — different pin each draw. **DUAL OWNERSHIP:** (1) the artifact-pass template lacked a
+  full-suite gate — the render was verified but `pytest` was NOT, so both reds slipped in; (2) the
+  original "pin the exact phrasing" test instruction seeded the brittle pins. **Fix:** BOTH covenant
+  tests re-assert the T2 INTENT via deterministic anchors — `test_t2` (interest RATE via the machine
+  floating_rate + conversion value-lead) and `test_t1` (amount → digits + accession, which had reddened
+  at 3859ef9); a suite audit confirmed no other LLM-string covenant pins remain. **The fix PR was itself
+  adversarially audited** (6 confirmed findings), which tightened it: the lint arm-drop was replaced by a
+  predicate-keyed arm that recovers the genuine 'going-concern <predicate> is/does not <denial>' class it
+  had over-dropped, and two `next()`/`.index()` crash-paths + a still-LLM-prose interest anchor in the
+  covenant test were hardened. **BOTH RULES SHIPPED (CLAUDE.md):** TEST-LAYER (never pin an LLM-composed
+  string — assert anchors; *facts stable, framing weather, and weather applies to CI*) + ARTIFACT-PASS
+  (the standing artifact pass runs the FULL offline suite before pushing — not exempt from green-main).
+  No artifact re-run — `dc53455`'s values are verified present and the human surface correct.
 
 The **dossier-assembler is built and verified (§2)** — the queue-top now flows ranker → `dossier`.
 Remaining:
