@@ -581,6 +581,101 @@ class ReleaseExtract(BaseModel):
     model_config = {"frozen": True}
 
 
+# --- RC-1 (B): filing-section extraction — 10-Q/10-K, DETERMINISTIC / anchored --------------------
+
+
+class GoingConcern(BaseModel):
+    """(RC-1 B) The going-concern / liquidity note: whether the filing raises SUBSTANTIAL DOUBT, the
+    verbatim sentence (≤400c), and a one-line summary of management's plans. Bound to the filing."""
+
+    substantial_doubt: bool  # True ⇒ the filing states 'substantial doubt about … going concern'
+    verbatim: str  # the substantial-doubt sentence, verbatim, ≤400c
+    plans: str  # management's plans one-liner ('' when the note states none)
+    source_ref: str
+
+    model_config = {"frozen": True}
+
+
+class DebtTranche(BaseModel):
+    """(RC-1 B) One named near-term debt tranche from the debt footnote — filing-basis, verbatim."""
+
+    name: str  # e.g. "bond payable", "convertible loan"
+    amount: float  # $M
+    maturity: str  # verbatim maturity, e.g. "January 2027" ('' when absent)
+    verbatim: str
+    source_ref: str
+
+    model_config = {"frozen": True}
+
+
+class MaturityWall(BaseModel):
+    """(RC-1 B) The FILING-BASIS near-term maturity schedule (distinct from the CIQ panel): the
+    total due within 12 months + named tranches, verbatim-bound — for the divergence. TWO-STATE:
+    ``state='located'`` (a ≤12m-wall statement found) vs ``state='not_stated'`` (a debt section is
+    present but states NO near-term wall — a value-free KNOWN, not an unknown; avoids the
+    thousands-units trap of a composition table). No debt section located at all ⇒ this is None."""
+
+    within_12m_total: float | None  # $M due within the next 12 months; None when state='not_stated'
+    tranches: list[DebtTranche] = Field(default_factory=list)
+    state: str = "located"  # "located" | "not_stated"
+    note: str = ""  # the value-free note when state='not_stated'
+    verbatim: str
+    source_ref: str
+
+    model_config = {"frozen": True}
+
+
+class ConcentrationCustomer(BaseModel):
+    """(RC-1 B) One customer's revenue concentration % (+ the prior-period %), verbatim from the
+    concentration note."""
+
+    name: str  # e.g. "Customer A", "City of New York Department of Transportation"
+    pct: float  # % of revenue, current period (a disclosed FLOOR when value_kind == 'floor')
+    prior_pct: float | None  # the prior-period %, when the note gives a comparative
+    value_kind: str = "exact"  # "exact" (a stated %) | "floor" ('exceeded N%' — a disclosed floor)
+
+    model_config = {"frozen": True}
+
+
+class CustomerConcentration(BaseModel):
+    """(RC-1 B) The customer-concentration disclosure: the named customers' %s, the top-5 % when
+    stated, and any PO / minimum-volume order-terms language. Bound to the filing."""
+
+    customers: list[ConcentrationCustomer] = Field(default_factory=list)
+    top5_pct: float | None
+    terms: str  # PO / minimum-volume / take-or-pay language ('' when none)
+    source_ref: str
+
+    model_config = {"frozen": True}
+
+
+class Commitment(BaseModel):
+    """(RC-1 B) One purchase/capital commitment: amount, the portion due ≤12 months, + verbatim."""
+
+    kind: str  # "purchase" | "capital"
+    amount: float  # $M
+    within_12m: float | None  # $M due within 12 months, when stated
+    verbatim: str
+    source_ref: str
+
+    model_config = {"frozen": True}
+
+
+class FilingSectionExtract(BaseModel):
+    """(RC-1 B) The DETERMINISTIC heading/anchor-targeted extraction of a 10-Q/10-K: going-concern,
+    the filing-basis maturity wall, customer concentration, and purchase/capital commitments — each
+    source-bound. ``qa_flags`` fail loud on a miss ('no anchored pattern matched'), not a guess."""
+
+    source_ref: str
+    going_concern: GoingConcern | None = None
+    maturity_wall: MaturityWall | None = None
+    concentration: CustomerConcentration | None = None
+    commitments: list[Commitment] = Field(default_factory=list)
+    qa_flags: list[str] = Field(default_factory=list)
+
+    model_config = {"frozen": True}
+
+
 class MechanicalLayer(BaseModel):
     """The deterministic, source-bound facts — the ONLY input the synthesis LLM is given."""
 

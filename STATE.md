@@ -2574,6 +2574,21 @@ two-name analysis (mid/small-caps, opposite directions) mapped against this inve
 
 ## 5. Next steps (ordered, current)
 
+**RC-1 primary-source text extraction — IN PROGRESS (feat/primary-source-text, 2026-07-06).** DETERMINISTIC
+(anchored, never LLM) parsers of the EX-99.1 release (A, `vinci/edgar/release_parse.py`, committed) and the
+10-Q/10-K sections (B, `vinci/edgar/filing_sections.py`), verified on the REAL cached filings, pinned on
+committed public-domain EDGAR excerpts (CI-verifiable, no network). Consumers (C) + wiring are next, gated
+by an operator checkpoint.
+- **KNOWN LIMITATION (record):** deterministic coverage is PARTIAL beyond the pinned names — release/filing
+  phrasing varies across the universe; every miss renders **fail-loud UNKNOWN** ('no anchored pattern
+  matched'), never a guess. **QUEUED:** an *LLM-fenced escalation tier* for release/section parsing — built
+  ONLY on coverage evidence from future finalists, never preemptively (adjudication 0).
+- **IC-VRRM-6 disposition — RESOLVED BY EVIDENCE (not by build):** the VRRM Q1-26 10-Q confirms a LONG-DATED
+  composition (Term Loan $685M / Senior Notes $350M / Amended Revolver $26M) with **NO ≤12m maturity wall**
+  (parser state=`not_stated`, a known). The near-term-wall reconciliation concern was **MVST-class** (the
+  $111.2M ≤12m + going-concern), not VRRM. VRRM concentration is **NYCDOT 15.2%/15.4% EXACT** (a single
+  Government Solutions customer), not a bare >10% floor — extracted as the disclosed value.
+
 The **dossier-assembler is built and verified (§2)** — the queue-top now flows ranker → `dossier`.
 Remaining:
 

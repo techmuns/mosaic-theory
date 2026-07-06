@@ -132,6 +132,10 @@ incomplete regardless of code state.
     observed failure shape where one exists;
   - any summary/digest destined for an LLM phase carries a **shape contract + one literal example**
     (term → value → source_ref), never a pointer/count description.
+  - **VOCABULARY.** In a brief, **"anchored" = DETERMINISTIC** (heading/regex, CI-pinnable on committed
+    real-text fixtures); **"LLM-fenced" = an LLM extraction phase**. Bare **"fenced" is MALFORMED** — it
+    conflates the two. Use structured-value determinism where the facts are numeric/verbatim (regex
+    fidelity beats paraphrase risk); reserve LLM-fenced for a coverage-evidenced escalation tier.
 - **COMPLETION CONTRACT.** Every PR description ends with a per-brief-item disposition table —
   **SHIPPED / PARTIAL / SKIPPED / STOPPED** (+ a one-line reason for anything not SHIPPED) — and the
   real-run verify outputs. A build without this table is incomplete regardless of code state.
