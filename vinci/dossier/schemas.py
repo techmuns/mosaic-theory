@@ -437,7 +437,11 @@ class ImpliedValuation(BaseModel):
     anywhere. The heterogeneity comparability gate renders verbatim on the header."""
 
     implied_equity: Sourced[list[ImpliedRow]]  # CIQ-computed implied equity value per basis × stat
-    bridge: Sourced[str]  # + cash, − total debt (TEV → equity), CIQ figures
+    bridge: Sourced[str]  # + cash, − total debt (TEV → equity), CIQ figures — RENDER-ONLY display
+    # STRUCTURED bridge components ($M) — the LOAD-BEARING values consumers read (never re-parse the
+    # display string; DESIGN RULE). None when the CIQ row is absent. Default None = back-compat.
+    bridge_cash: float | None = None  # "+ Total Cash & ST Investments" ($M)
+    bridge_debt: float | None = None  # "- Total Debt" ($M)
     market_cap: Sourced[float]  # the name's ACTUAL market cap (adjacent, $M) — the human compares
     comparability_gate: Sourced[str]  # the heterogeneity gate, rendered verbatim on the header
 

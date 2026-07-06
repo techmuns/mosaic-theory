@@ -2062,10 +2062,27 @@ def _issuer_rating(cell: Any) -> str:
     return "" if s in _UNAVAILABLE_CELLS or s.lower() == "entitlement needed" else s
 
 
+def _is_investment_grade(rating: str) -> bool | None:
+    """An S&P long-term issuer rating → True (investment-grade, BBB- and up), False (sub-IG / high
+    yield, BB+ and down), or None when not a parseable letter grade. Used to verify the credit-scale
+    direction WITHIN the rated set (IG should score stronger) — robust on a quality roster where an
+    'unrated' peer does NOT imply weak."""
+    m = re.match(r"[A-Da-d]+", rating.strip())
+    if not m:
+        return None
+    letters = m.group(0).upper()
+    if letters in {"AAA", "AA", "A", "BBB"}:
+        return True
+    if letters in {"BB", "B", "CCC", "CC", "C", "D"}:
+        return False
+    return None
+
+
 def credit_health(bundle: CiqBundle) -> Sourced[str]:
     """(B2 leg) S&P-MI credit-health scores — name vs peers, scale LABELED. Scale direction is
-    verified FROM THE DATA (rated A-/BBB+ peers score low, unrated distressed peers score high ⇒
-    1=strongest…4=weakest); if that correlation is absent the block reads UNKNOWN, not a guess."""
+    verified FROM THE DATA, TIERED (1=strongest…4=weakest): (1) within the rated set, IG peers score
+    ≤ sub-IG peers (robust on a quality roster where 'unrated' ≠ weak); (2) fallback rated-score <
+    unrated-score; (3) else UNKNOWN — never a guessed direction."""
     try:
         ch = bundle.sheet("comps", "Credit Health Panel")
     except CiqUnavailableError as exc:
@@ -2077,9 +2094,19 @@ def credit_health(bundle: CiqBundle) -> Sourced[str]:
     def overall(i: int) -> float | None:
         return _num_or_none(_comps_cell(ch, i, 1))
 
-    rated = [o for i in peers if _issuer_rating(ch[i][7]) and (o := overall(i)) is not None]
-    unrated = [o for i in peers if not _issuer_rating(ch[i][7]) and (o := overall(i)) is not None]
-    if not (rated and unrated and statistics.mean(rated) < statistics.mean(unrated)):
+    # Peer Overall scores paired with issuer rating (verbatim; '' = unrated).
+    scored = [(_issuer_rating(ch[i][7]), o) for i in peers if (o := overall(i)) is not None]
+    ig = [o for r, o in scored if _is_investment_grade(r) is True]
+    sub_ig = [o for r, o in scored if _is_investment_grade(r) is False]
+    rated = [o for r, o in scored if r]
+    unrated = [o for r, o in scored if not r]
+    # TIERED scale-direction verification — a quality roster's 'unrated' peers are NOT weak, so the
+    # rated-vs-unrated split can read falsely ambiguous; verify WITHIN the rated set first.
+    direction_ok = (
+        (len(ig) >= 1 and len(sub_ig) >= 1 and statistics.mean(ig) <= statistics.mean(sub_ig))
+        or (bool(rated) and bool(unrated) and statistics.mean(rated) < statistics.mean(unrated))
+    )
+    if not direction_ok:
         return Sourced.unknown(note="Credit Health Panel: scale direction ambiguous — not rendered")
     scores = "/".join(_tok(_comps_cell(ch, tgt, c)) for c in (1, 2, 3, 4))
     name_rating = _issuer_rating(ch[tgt][7]) or "unrated"
@@ -2176,8 +2203,8 @@ def implied_valuation(bundle: CiqBundle, comparability_gate: Sourced[str]) -> Im
         else Sourced.unknown(note="Implied Valuation: no cash/debt bridge rows")
     )
     return ImpliedValuation(
-        implied_equity=equity, bridge=bridge, market_cap=comps_market_cap(bundle),
-        comparability_gate=comparability_gate,
+        implied_equity=equity, bridge=bridge, bridge_cash=cash, bridge_debt=debt,
+        market_cap=comps_market_cap(bundle), comparability_gate=comparability_gate,
     )
 
 

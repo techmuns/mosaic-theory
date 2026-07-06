@@ -316,6 +316,26 @@ Each line: *what it does* — *verified how*.
     net-debt text. **Caveat:** the net-debt NOTE itself is computed at SCREEN time (cached in `vinci.db`),
     so dossier re-assembly reads the stale value — the `edgar/client.py` disambiguation lands on the next
     `run-weekly` (re-screen), not on re-assembly.*
+  - **PR 6 (2026-07-06) — bridge-parse + credit-health fixes; a display string is NEVER load-bearing.**
+    (P1) The implied-valuation TEV→equity bridge exposed its cash/debt ONLY as a rendered display string,
+    which TWO consumers re-parsed with DIVERGENT regexes — `_bs_bridge_coherence` comma-aware, but
+    `_ie_bridge_net_debt` thousands-BLIND: on VRRM's `− total debt $1,101.80M` it captured `1`, so the bridge
+    net-debt read −54.6 vs the real 1046.2 and fired a FALSE 'net-debt vs bridge — reconcile' caveat on the
+    G/TEV line. **BUG CLASS: two string-parsers of the same rendered value diverge; display formatting became
+    load-bearing.** STRUCTURAL FIX: `ImpliedValuation` now carries `bridge_cash`/`bridge_debt` STRUCTURED
+    floats (the extractor already had them); both consumers read the floats; the string is render-only; the
+    lone sanctioned fallback routes through ONE shared `_parse_money()` (comma/$/M/paren-aware). New CLAUDE.md
+    DESIGN RULE: *parsers consume structured values, never rendered strings.* (P3) The credit-health scale-
+    direction PREMISE was wrong on a quality roster: it required rated-mean < unrated-mean, but **unrated ≠
+    weak** — VRRM's 3 unrated peers score STRONG (mean 1.33), so rated(3.25) > unrated(1.33) and the panel
+    read a false UNKNOWN. Now TIERED: (1) within the rated set, IG peers score ≤ sub-IG (`_is_investment_grade`,
+    ≥1 in each); (2) fallback rated < unrated; (3) else UNKNOWN. *Verified on the REAL VRRM CIQ (operator-
+    placed, git-ignored): `_ie_bridge_net_debt` 1046.2 reconciles with name net-debt 1046.3 → NO caveat; C3
+    coherence AGREES; Credit Health RENDERS (BB- 3/2/4/2, peer-medians) via Tier-1 where Tier-2 fails. MVST
+    unchanged (199.9; credit unrated 3/3/2/2 via Tier-2). ruff + mypy --strict (87) + pytest 470 (+6: bridge
+    thousands-aware, `_parse_money` round-trip ≥$1,000M, disagreement-still-fires, Tier-1 rescue, ambiguous-
+    refuses, IG boundary). No artifact commits — operator re-assembles VRRM/MVST post-merge; the Avis 'not
+    quantified' Key Unknown that still renders is the RC-1 parser gap (out of scope).*
   - **Flag-review-noise reduction (2026-06-29) — keep only signal in the human-review flags.** A
     10-dossier audit found ~12 review flags that were noise: three guardrails over-fired on name
     shapes their first cases didn't cover (newly exposed, NOT regressions). (a) The DIRECTIONAL lint
