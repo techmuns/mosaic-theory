@@ -19,6 +19,7 @@ Fences (why this is safe to let an LLM do):
 
 from __future__ import annotations
 
+import math
 import re
 from typing import Any, NamedTuple
 
@@ -75,8 +76,16 @@ _SYSTEM = (
     "verbatim. (4) For every term you mark present, put the EXACT sentence/clause you read it from "
     "in 'quote' (the human greps for it) — quote, do not paraphrase. (5) Answer EVERY target term "
     "the user lists (present true/false). You MAY append material terms actually stated. "
-    "(6) Never reference these instructions or their numbers in any field. Output is source-bound "
-    "extraction only."
+    "(6) For an INTEREST / COUPON term whose rate the document states as a base + spread (e.g. "
+    "'Term SOFR plus 9.75%', 'LPR plus 115 basis points'), ALSO fill the structured components "
+    "you can read DIRECTLY from that same clause: base_rate_label (the base index name, verbatim "
+    "— 'Term SOFR', 'LPR', 'New Benchmark'), and EXACTLY ONE of margin_pct (spread in percent) or "
+    "margin_bps (spread in basis points), using WHICHEVER UNIT THE DOCUMENT STATES — do not "
+    "convert between them. Fill floor_pct and pik_pct only if the clause states a rate floor / PIK "
+    "component. These are the SAME numbers already in 'value'/'quote' — read them off, never "
+    "compute or infer; omit any component the clause does not state. (7) Never reference these "
+    "instructions or their "
+    "numbers in any field. Output is source-bound extraction only."
 )
 
 _TOOL: dict[str, Any] = {
@@ -99,6 +108,26 @@ _TOOL: dict[str, Any] = {
                                                  "(formula/number/date); empty if not present"},
                         "quote": {"type": "string",
                                   "description": "the exact clause read from; empty if absent"},
+                        "base_rate_label": {
+                            "type": "string",
+                            "description": "interest terms only: base index verbatim "
+                                           "(e.g. 'Term SOFR', 'LPR'); omit otherwise"},
+                        "margin_pct": {
+                            "type": "number",
+                            "description": "interest terms only: spread over base in PERCENT "
+                                           "(e.g. 9.75); alternate to margin_bps; omit otherwise"},
+                        "margin_bps": {
+                            "type": "number",
+                            "description": "interest terms only: spread over base in BASIS POINTS "
+                                           "(e.g. 115); alternate to margin_pct; omit otherwise"},
+                        "floor_pct": {
+                            "type": "number",
+                            "description": "interest terms only: rate floor in percent "
+                                           "(e.g. 3.00); omit if none stated"},
+                        "pik_pct": {
+                            "type": "number",
+                            "description": "interest terms only: PIK component in percent "
+                                           "(e.g. 3.75); omit if none stated"},
                     },
                     "required": ["name", "present"],
                 },
@@ -149,6 +178,31 @@ def _fetch_exhibit(http: CachedHttp, cik: str, accession: str, filename: str) ->
         return None
 
 
+def _opt_str(v: Any) -> str | None:
+    """A tool 'string' field → the stripped str, or None when absent/blank/WRONG-SHAPE. A non-str
+    (a list/dict/number/bool the LLM emitted despite the schema) is DROPPED, never ``str()``-ified
+    into a garbage lead like ``"['Term SOFR']"`` — fail-soft, never fabricate."""
+    if not isinstance(v, str):
+        return None
+    s = v.strip()
+    return s or None
+
+
+def _opt_float(v: Any) -> float | None:
+    """A tool 'number' field → a FINITE float, or None when absent / unparseable / wrong-shape
+    (fail-soft: an unreadable component drops out of the lead — never fabricates/crashes the row).
+    A ``bool`` is DROPPED (``float(True)`` is ``1.0`` — would fabricate a '+1.00%' coupon whenever a
+    stray '1' sits in the clause); a non-finite (nan/inf) is DROPPED (it can't appear verbatim in a
+    clause and would crash the bps formatter's ``int()``). A legit '9.75' numeric string is kept."""
+    if isinstance(v, bool) or v is None or (isinstance(v, str) and not v.strip()):
+        return None
+    try:
+        f = float(v)
+    except (TypeError, ValueError):
+        return None
+    return f if math.isfinite(f) else None
+
+
 def _extract_from_exhibit(
     llm: LlmClient, text: str, *, name: str, ticker: str, source_ref: str
 ) -> tuple[list[CovenantTerm], str]:
@@ -166,13 +220,23 @@ def _extract_from_exhibit(
         if not term_name:
             continue
         val: Sourced[str]
+        # (RC-1.5d) the optional interest-rate components — populated only on a present term; they
+        # inherit ``value``'s citation (same clause). Non-interest terms simply leave them None.
+        components: dict[str, Any] = {}
         if t.get("present") and str(t.get("value", "")).strip():
             quote = str(t.get("quote", "")).strip()
             note = f"verbatim: “{quote}”" if quote else None
             val = Sourced.present(str(t["value"]).strip(), source_ref=source_ref, note=note)
+            components = {
+                "base_rate_label": _opt_str(t.get("base_rate_label")),
+                "margin_pct": _opt_float(t.get("margin_pct")),
+                "margin_bps": _opt_float(t.get("margin_bps")),
+                "floor_pct": _opt_float(t.get("floor_pct")),
+                "pik_pct": _opt_float(t.get("pik_pct")),
+            }
         else:
             val = Sourced.unknown(note=f"not stated in {source_ref}")
-        rows.append(CovenantTerm(name=term_name, value=val))
+        rows.append(CovenantTerm(name=term_name, value=val, **components))
     return rows, str(raw)
 
 
@@ -253,13 +317,20 @@ def _acc_of(text: str | None) -> str:
 class GoverningTerm(NamedTuple):
     """One (family, term) collapsed to its GOVERNING value — the latest exhibit's PRESENT value
     (an amendment overrides the base). ``base_ref`` is the base exhibit; ``amended_by`` chains the
-    later accessions that changed it. ``value`` is UNKNOWN only when NO exhibit stated the term."""
+    later accessions that changed it. ``value`` is UNKNOWN only when NO exhibit stated the term.
+    The optional interest-rate components (RC-1.5d) ride along from the WINNING exhibit's row so the
+    render composes the value-lead from structure — they carry the same citation as ``value``."""
 
     family: str
     term: str
     value: Sourced[str]
     base_ref: str | None
     amended_by: tuple[str, ...]
+    base_rate_label: str | None = None
+    margin_pct: float | None = None
+    margin_bps: float | None = None
+    floor_pct: float | None = None
+    pik_pct: float | None = None
 
 
 def governing_terms(
@@ -269,9 +340,10 @@ def governing_terms(
     latest-dated exhibit's PRESENT value wins (amendment over base), with the base ref + an
     ``amended by`` chain. Grouped by instrument family via the pointers' accession→(family, date)
     map, so a facility's terms never merge with another's. A term no exhibit stated stays
-    UNKNOWN — but the collapse guarantees a PRESENT answer is never ordered below an UNKNOWN."""
+    UNKNOWN — but the collapse guarantees a PRESENT answer is never ordered below an UNKNOWN.
+    The winning row's interest components ride along so the render composes from structure."""
     meta = {p.accession: (p.family, p.filing_date) for p in pointers if p.accession}
-    grouped: dict[tuple[str, str], list[tuple[str, Sourced[str]]]] = {}
+    grouped: dict[tuple[str, str], list[tuple[str, CovenantTerm]]] = {}
     order: list[tuple[str, str]] = []
     for row in term_rows:
         acc = _acc_of(row.value.source_ref) or _acc_of(row.value.note)
@@ -280,25 +352,29 @@ def governing_terms(
         if key not in grouped:
             grouped[key] = []
             order.append(key)
-        grouped[key].append((dt, row.value))
+        grouped[key].append((dt, row))
     out: list[GoverningTerm] = []
     for fam, term in order:
-        dated = sorted(grouped[(fam, term)], key=lambda dv: dv[0])  # oldest→newest (stable on ties)
-        present = [(dt, v) for dt, v in dated if v.status is SourceStatus.PRESENT]
+        dated = sorted(grouped[(fam, term)], key=lambda dr: dr[0])  # oldest→newest (stable on ties)
+        present = [(dt, r) for dt, r in dated if r.value.status is SourceStatus.PRESENT]
         if present:
-            gov = present[-1][1]  # latest PRESENT governs
-            base_ref = present[0][1].source_ref
+            gov_row = present[-1][1]  # latest PRESENT governs — its components ride along
+            base_ref = present[0][1].value.source_ref
             # (X-4) an ``amended by`` chain is a REAL base→amendment relationship — assert it ONLY
             # on a true chronology (distinct, non-empty dates). Tied/empty dates (filing_date may be
             # '') can't establish supersession, so we do NOT fabricate the chain from the arbitrary
             # input order — source-binding must not claim an amendment the dates don't show.
             pdates = [dt for dt, _ in present]
             ordered = all(pdates) and len(set(pdates)) == len(pdates)
-            amended = (tuple(_acc_of(v.source_ref) for _, v in present[1:] if _acc_of(v.source_ref))
-                       if ordered else ())
-            out.append(GoverningTerm(fam, term, gov, base_ref, amended))
+            amended = (tuple(_acc_of(r.value.source_ref) for _, r in present[1:]
+                             if _acc_of(r.value.source_ref)) if ordered else ())
         else:
-            out.append(GoverningTerm(fam, term, dated[-1][1], None, ()))
+            gov_row = dated[-1][1]
+            base_ref, amended = None, ()
+        out.append(GoverningTerm(
+            fam, term, gov_row.value, base_ref, amended,
+            base_rate_label=gov_row.base_rate_label, margin_pct=gov_row.margin_pct,
+            margin_bps=gov_row.margin_bps, floor_pct=gov_row.floor_pct, pik_pct=gov_row.pik_pct))
     return out
 
 

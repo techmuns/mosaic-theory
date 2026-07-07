@@ -78,8 +78,10 @@ def test_dossier_schema_has_no_conclusion_field() -> None:
         # PR C — the walk must reach the financial-summary appendix (a table of facts, no verdict)
         ds.FinRow, ds.FinTable, ds.FinancialSummary,
         # PR E — the walk must reach the structured capital structure (instruments + wall/covenant
-        # pointers are FACTS, never a solvency verdict — no probability/risk/direction field)
-        ds.CapitalStructure, ds.CapitalInstrument,
+        # pointers are FACTS, never a solvency verdict — no probability/risk/direction field);
+        # RC-1.5d — CovenantTerm's new rate components (margin_pct/bps, floor_pct, pik_pct) are
+        # numeric FACTS, not conclusions — the guard must reach it to prove none is verdict-shaped
+        ds.CapitalStructure, ds.CapitalInstrument, ds.CovenantTerm,
         # PR G — the walk must reach the implied-expectations block (fundamentals-space; the block-
         # scoped fence forbids price/equity/value/upside/discount fields — asserted separately)
         ds.ImpliedExpectations, ds.ImpliedExpectationRow,
@@ -2359,36 +2361,28 @@ def test_k6_99_1_unknown_reason_renders_once_on_real_mvst() -> None:
 
 def test_k1_covenant_value_lead_extracts_the_decision_figure_before_clip() -> None:
     """(K1 generalized · audit-hardened) EVERY curated covenant line leads with its extractable
-    VALUE before the ≤120c clip — RIGHT or ABSENT, never wrong. Anchored: a labelled/bps margin (no
-    bare '+' step-down or default premium), a test-anchored cadence, a maturity-anchored date, the
-    PIK acronym, a contiguous 1..k enumeration. Never fabricates."""
+    VALUE before the ≤120c clip — RIGHT or ABSENT, never wrong. Anchored: a test-anchored cadence, a
+    maturity-anchored date, a contiguous 1..k enumeration. Never fabricates. (RC-1.5d: the INTEREST
+    lead now composes from structured rate components, NOT a clause re-parse — pinned in
+    test_rc15d_interest_lead_composed_from_structure; a bare (label, raw) interest call ⇒ '')."""
     lead = dr._covenant_value_lead
     # happy paths (real MVST shapes)
     assert "~$0.50/sh" in lead("Conversion", "Conversion Rate = two (2) shares per $1.00 principal")
     assert lead("Financial maintenance", "Liquidity as of Friday of each calendar week not less "
                 "than $5,000,000.") == "not less than $5,000,000 weekly"
-    assert lead(
-        "Interest / coupon", "Term SOFR + Applicable Margin; Applicable Margin = 9.75% per annum; "
-        "3.75% of interest paid in-kind (PIK Interest)") == "Term SOFR + 9.75% (+3.75% PIK)"
-    assert lead("Interest / coupon",
-                "Floating rate; RMB rate = one year LPR Plus 115 bps") == "Floating rate + 115 bps"
     assert lead("Maturity", '"November 28, 2025" is deleted and replaced with "May 28, 2026".'
                 ) == "May 28, 2026"  # the amendment governs, not the deleted date
     # audit-hardened: never present a WRONG value
-    step = "Term SOFR; the Applicable Margin is 5.50%, stepping to + 4.50% below 3.0x leverage."
-    assert "5.50%" in lead("Interest / coupon", step) and "4.50%" not in lead("Interest / coupon",
-                                                                              step)  # P1
     assert lead("Maturity", "Commitment Termination Date is March 31, 2025 and the Maturity Date "
                 "is December 15, 2027.") == "December 15, 2027"  # P2: maturity-anchored, not first
-    assert "PIK" not in lead("Interest / coupon",
-                             "Term SOFR plus 7.00%. A 12.5% equity interest paid in kind.")  # P3
     assert lead("Events of default", "1. Payment. 2. Covenant. 3. Insolvency. See Section 15."
                 ).startswith("3 enumerated")  # P4: 'Section 15.' doesn't inflate the count
     assert lead("Financial maintenance", "not less than $10,000,000, tested as of the last day of "
                 "each fiscal quarter, and deliver a 13-week forecast each week."
                 ) == "not less than $10,000,000 quarterly"  # P5: the TEST cadence, not the forecast
-    assert lead("Interest / coupon", "The Notes bear interest at a fixed rate of 8.25% per annum."
-                ) == "8.25% fixed"  # P7
+    # (RC-1.5d) a bare interest call with NO structured term ⇒ no lead (the clause carries it); the
+    # fixed-rate lead is now an accepted residual (lapses to the clause) — no '8.25% fixed' compose.
+    assert lead("Interest / coupon", "The Notes bear interest at a fixed rate of 8.25%.") == ""
     assert lead("Conversion", "price to be set by the board") == ""  # no fabrication
 
 
@@ -3515,28 +3509,186 @@ def test_t3_headline_priority_ebitda_over_revenue_and_pct_delta() -> None:
     assert dr._revision_headline([_rev("EBITDA", "-", "-")]) is None  # all non-numeric → None
 
 
-def test_t2_interest_lead_is_full_composite_or_absent() -> None:
-    """(T2/audit) A composite rate lead renders the FULL labelled composite (base + margin + floor +
-    PIK, the parenthetical margin form accepted) or NO lead — a partial is misleading-by-omission;
-    a bare '+ N%' step-down / default is never captured."""
-    lead = dr._covenant_value_lead
-    full = ("Term SOFR + Applicable Margin (9.75% per annum); 3.75% of interest paid in-kind "
-            "(PIK Interest); Floor = 3.00% per annum; Default Rate = Applicable Margin + 3.00%.")
-    assert lead("Interest / coupon", full) == "Term SOFR + 9.75% (Floor 3.00%, +3.75% PIK)"
-    # (audit) a re-assembly re-phrases the SAME terms: 'Floor (Term SOFR) = …' interposition + 'PIK
-    # Interest: N%' with PIK BEFORE the % — the composite must still extract in full (else the
-    # composite-or-none rule drops the whole interest lead, as it did on the re-assembled main).
-    rephrased = ("Term SOFR + Applicable Margin. Applicable Margin = 9.75% per annum. Floor "
-                 "(Term SOFR) = 3.00% per annum. PIK Interest: 3.75% of interest due paid in kind.")
-    assert lead("Interest / coupon", rephrased) == "Term SOFR + 9.75% (Floor 3.00%, +3.75% PIK)"
-    assert lead("Interest / coupon", "Floating rate; RMB rate = LPR Plus 115 bps.") == \
-        "Floating rate + 115 bps"
-    # a labelled component present but unreadable → NO lead (full-composite-or-none)
-    assert lead("Interest / coupon",
-                "Term SOFR + Applicable Margin (to be set); Floor = 3.00%.") == ""
-    # a bare step-down '+ N%' is not captured; only the labelled 5.50% margin leads
-    step = "Term SOFR; the Applicable Margin is 5.50%, stepping to + 4.5%."
-    assert lead("Interest / coupon", step) == "Term SOFR + 5.50%"
+# (RC-1.5d) shared fixtures for the interest value-lead: each is a covenant term row (structured
+# rate components + the verbatim clause) → the expected [lead, qa]. Drives BOTH the Python unit pin
+# and the py↔js parity pin, fed through the real governing_terms collapse (so the field-propagation
+# crux is exercised, not a hand-built GoverningTerm).
+_RC15D_INTEREST_FIXTURES: list[dict[str, object]] = [
+    # (a) pct composite: base + margin_pct + floor + PIK → the full parenthetical lead
+    {"name": "Interest / coupon rate",
+     "value": "Term SOFR plus 9.75% per annum, subject to a 3.00% floor; 3.75% of interest paid "
+              "in kind (PIK).",
+     "base_rate_label": "Term SOFR", "margin_pct": 9.75, "floor_pct": 3.0, "pik_pct": 3.75,
+     "lead": "Term SOFR + 9.75% (Floor 3.00%, +3.75% PIK)", "qa": ""},
+    # (b) bps margin — the LIVE syndicated instrument's shape; bps renders AS DISCLOSED (no convert)
+    {"name": "Interest / coupon rate",
+     "value": "Interest equal to one-year LPR plus 115 basis points.",
+     "base_rate_label": "LPR", "margin_bps": 115.0,
+     "lead": "LPR + 115 bps", "qa": ""},
+    # (c) incomplete — base present but NO margin → no lead (complete-or-absent); clause carries it
+    {"name": "Interest / coupon rate",
+     "value": "Term SOFR plus the Applicable Margin (to be set at closing).",
+     "base_rate_label": "Term SOFR",
+     "lead": "", "qa": ""},
+    # (d1) consistency guard — margin_pct's digits ABSENT from the clause (a slip) → no lead + QA
+    {"name": "Interest / coupon rate",
+     "value": "Term SOFR plus 9.50% per annum.",
+     "base_rate_label": "Term SOFR", "margin_pct": 9.75,
+     "lead": "", "qa": "rate component 9.75 not stated in the clause — lead suppressed"},
+    # (d2) both a pct AND a bps margin → ambiguous, lead suppressed + QA
+    {"name": "Interest / coupon rate",
+     "value": "Term SOFR plus 9.75% (equivalently 975 basis points).",
+     "base_rate_label": "Term SOFR", "margin_pct": 9.75, "margin_bps": 975.0,
+     "lead": "", "qa": "both a percent and a bps margin given — ambiguous, lead suppressed"},
+    # (e) pre-RC-1.5d JSON — NO structured components at all → no lead, the clause renders, no crash
+    {"name": "Interest / coupon rate",
+     "value": "Term SOFR plus 9.75%, 3.00% floor, 3.75% PIK.",
+     "lead": "", "qa": ""},
+    # (f) eighth-of-a-point coupon (X.125/X.625) — the EXACT decimal, NOT a lossy 2dp round: pins
+    # the formatter fidelity + py↔js parity (f"{v:.2f}" mis-rounds 9.125→'9.12' and diverges from JS
+    # toFixed(2)→'9.13'; _fmt_pct/fmtPct render the shortest exact decimal on both engines)
+    {"name": "Interest / coupon rate",
+     "value": "Term SOFR plus 9.125% per annum, subject to a 3.625% floor; 2.125% PIK.",
+     "base_rate_label": "Term SOFR", "margin_pct": 9.125, "floor_pct": 3.625, "pik_pct": 2.125,
+     "lead": "Term SOFR + 9.125% (Floor 3.625%, +2.125% PIK)", "qa": ""},
+    # (g) a 0.125 component — exactly representable, the .2f/toFixed(2) half-even-vs-half-up tie
+    {"name": "Interest / coupon rate",
+     "value": "Fixed spread of 0.125% over the base LPR rate.",
+     "base_rate_label": "LPR", "margin_pct": 0.125,
+     "lead": "LPR + 0.125%", "qa": ""},
+]
+
+_RC15D_SRC = "Credit Agreement 0001111111-25-000001 ex10-1.htm"
+
+
+def _rc15d_row(fx: dict[str, object]) -> ds.CovenantTerm:
+    """The CovenantTerm a fixture describes (structured components + the verbatim clause)."""
+    keys = ("base_rate_label", "margin_pct", "margin_bps", "floor_pct", "pik_pct")
+    comp = {k: fx[k] for k in keys if k in fx}
+    val = ds.Sourced.present(str(fx["value"]), source_ref=_RC15D_SRC)
+    return ds.CovenantTerm(name=str(fx["name"]), value=val, **comp)
+
+
+def _rc15d_gov(fx: dict[str, object]) -> ce.GoverningTerm:
+    """The ONE GoverningTerm a fixture collapses to, THROUGH the real governing_terms — so the test
+    exercises the component-propagation crux, not a hand-built GoverningTerm."""
+    gov = ce.governing_terms([_rc15d_row(fx)], [])
+    assert len(gov) == 1
+    return gov[0]
+
+
+def test_rc15d_interest_lead_composed_from_structure() -> None:
+    """(RC-1.5d) The interest value-lead is COMPOSED from CovenantTerm's structured rate parts —
+    the string-parser (_labelled_rate) is deleted. Complete-or-absent holds (base + one margin
+    required); the component-consistency guard suppresses a lead whose digits are absent from the
+    clause, or that carries BOTH a pct and a bps margin (a slip must never headline the row); bps
+    renders AS DISCLOSED (no pct conversion). Pre-RC-1.5d JSON (no components) lapses to the raw
+    clause, no crash. Components propagate through the real governing_terms collapse (the crux)."""
+    for fx in _RC15D_INTEREST_FIXTURES:
+        gov = _rc15d_gov(fx)
+        raw = str(gov.value.value)
+        assert dr._compose_interest_lead(gov, raw) == (fx["lead"], fx["qa"]), fx["value"]
+        # the interest branch of _covenant_value_lead delegates to the same composition (lead only)
+        assert dr._covenant_value_lead("Interest / coupon", raw, gov) == fx["lead"]
+    # propagation crux: a present interest row's components survive the collapse onto the gov term
+    gov_a = _rc15d_gov(_RC15D_INTEREST_FIXTURES[0])
+    assert (gov_a.base_rate_label, gov_a.margin_pct, gov_a.floor_pct, gov_a.pik_pct) == (
+        "Term SOFR", 9.75, 3.0, 3.75)
+    # back-compat: the pre-RC-1.5d fixture (no structured keys) collapses to None components
+    bc = next(fx for fx in _RC15D_INTEREST_FIXTURES
+              if not any(k in fx for k in ("base_rate_label", "margin_pct", "margin_bps")))
+    gov_e = _rc15d_gov(bc)
+    assert gov_e.base_rate_label is None and gov_e.margin_pct is None
+
+
+def test_rc15d_interest_lead_py_js_parity() -> None:
+    """(RC-1.5d · py↔js) render._compose_interest_lead and dossier.js composeInterestLead MUST agree
+    on every fixture — the composed lead AND the QA note — feeding the SAME covenant_term_rows JSON
+    through each engine's governing_terms collapse (mirror drift is the H2 lesson). Structural: the
+    JS carries composeInterestLead and no longer carries the deleted _labelledRate string-parser."""
+    import json
+    import pathlib
+    import shutil
+    import subprocess
+    js = pathlib.Path("frontend/views/shared/dossier.js").read_text()
+    assert "function composeInterestLead(" in js  # the structured composer exists
+    assert "_labelledRate" not in js  # the deleted string-parser mirror is gone
+    py_out = [list(dr._compose_interest_lead(_rc15d_gov(fx), str(_rc15d_gov(fx).value.value)))
+              for fx in _RC15D_INTEREST_FIXTURES]
+    assert py_out == [[fx["lead"], fx["qa"]] for fx in _RC15D_INTEREST_FIXTURES]  # matches spec
+    if not shutil.which("node"):
+        return
+    rows = [_rc15d_row(fx).model_dump(mode="json") for fx in _RC15D_INTEREST_FIXTURES]
+    # the two JS surfaces the render call site composes from: the collapse (_accOf + governingTerms)
+    # and the composer (clauseNumbers … composeInterestLead), sliced by their function boundaries.
+    collapse = js[js.index("const _accOf"):js.index("function covenantTerms")]
+    composer = js[js.index("function clauseNumbers"):js.index("function covenantValueLead")]
+    driver = ("const out=" + json.dumps(rows) + ".map((r)=>{"
+              "const g=governingTerms([r],[])[0];"
+              "return composeInterestLead(g,String(g.value.value));});"
+              "console.log(JSON.stringify(out));")
+    # governingTerms keys its Map on a fam+separator+term string where the separator is a literal
+    # NUL char (behaviour-identical to Python's tuple key). node -e rejects a NUL in argv, so
+    # replace it with its JS unicode escape (parses to the same NUL) so the grouping, and thus
+    # the composed lead, is unchanged.
+    node_src = (collapse + "\n" + composer + "\n" + driver).replace(chr(0), "\\u0000")
+    out = subprocess.run(["node", "-e", node_src], capture_output=True, text=True, check=True)
+    assert json.loads(out.stdout) == py_out  # zero py↔js divergence on lead AND qa
+
+
+def test_rc15d_optional_field_coercion_rejects_wrong_shapes() -> None:
+    """(RC-1.5d · adversarial-audit) The extractor's fail-soft coercers DROP wrong-shape LLM output
+    rather than fabricate a lead or crash the render. _opt_float rejects: a bool (float(True)==1.0
+    would headline a fabricated '+1.00%' coupon when a stray '1' sits in the clause), a non-finite
+    (nan/inf would crash the bps int() formatter and abort the dossier render), and unparseable
+    junk. _opt_str rejects a non-str (a list would str()-ify into a garbage "['Term SOFR']" lead).
+    Legit numeric strings / numbers / plain strings still pass (the deterministic path intact)."""
+    of, ostr = ce._opt_float, ce._opt_str
+    assert of(True) is None and of(False) is None  # bool → dropped, never 1.0 / 0.0
+    assert of(float("nan")) is None and of(float("inf")) is None and of(float("-inf")) is None
+    assert of("n/a") is None and of(None) is None and of("") is None and of("  ") is None  # junk
+    assert of("9.75") == 9.75 and of(9.75) == 9.75 and of(115) == 115.0 and of(0) == 0.0  # legit
+    assert ostr(["Term SOFR"]) is None and ostr({"x": 1}) is None and ostr(9.75) is None  # non-str
+    assert ostr(True) is None and ostr(None) is None and ostr("") is None and ostr("   ") is None
+    assert ostr("Term SOFR") == "Term SOFR" and ostr("  LPR  ") == "LPR"  # legit strings kept
+    # root-fix reachability: _opt_float gates non-finite, model_dump_json coerces stray nan/inf to
+    # null — so a non-finite component never reaches _compose_interest_lead from the extract path or
+    # a committed dossier.json, and the bps int() formatter is never handed one.
+
+
+def test_rc15d_non_finite_component_suppressed_no_crash_py_js() -> None:
+    """(RC-1.5d · audit fix #2, defence-in-depth) Even if a non-finite rate component reaches the
+    composer directly (bypassing the _opt_float root gate), _compose_interest_lead AND
+    composeInterestLead SUPPRESS the lead with a QA note and NEVER crash — the bps int() formatter
+    is never handed a nan/inf. Byte-identical QA note in both engines."""
+    import json
+    import pathlib
+    import shutil
+    import subprocess
+    qa = "a rate component is not a finite number — lead suppressed"
+    clause = "Term SOFR plus 9.75%."
+
+    def gov(**k: object) -> ce.GoverningTerm:
+        row = ds.CovenantTerm(name="Interest / coupon rate",
+                              value=ds.Sourced.present(clause, source_ref=_RC15D_SRC), **k)
+        return ce.governing_terms([row], [])[0]
+    for bad in (float("nan"), float("inf"), float("-inf")):
+        # non-finite in the REQUIRED margin slot → no lead + QA, no crash
+        assert dr._compose_interest_lead(gov(base_rate_label="Term SOFR", margin_pct=bad),
+                                         clause) == ("", qa)
+        # non-finite in an OPTIONAL slot (floor) with a valid margin → still suppressed, no crash
+        assert dr._compose_interest_lead(
+            gov(base_rate_label="Term SOFR", margin_pct=9.75, floor_pct=bad), clause) == ("", qa)
+    if not shutil.which("node"):
+        return
+    js = pathlib.Path("frontend/views/shared/dossier.js").read_text()
+    composer = js[js.index("function clauseNumbers"):js.index("function covenantValueLead")]
+    driver = ("const T=(m)=>({baseRateLabel:'Term SOFR',marginPct:m});"
+              "console.log(JSON.stringify([NaN,Infinity,-Infinity].map("
+              "(m)=>composeInterestLead(T(m),'Term SOFR plus 9.75%.'))));")
+    out = subprocess.run(["node", "-e", composer + "\n" + driver],
+                         capture_output=True, text=True, check=True)
+    assert json.loads(out.stdout) == [["", qa]] * 3  # JS: same QA, no crash, byte-identical to py
 
 
 def test_t2_covenant_table_footer_source_and_value_lead_mvst() -> None:

@@ -2859,6 +2859,54 @@ committed public-domain EDGAR excerpts (CI-verifiable, no network).
   string — assert anchors; *facts stable, framing weather, and weather applies to CI*) + ARTIFACT-PASS
   (the standing artifact pass runs the FULL offline suite before pushing — not exempt from green-main).
   No artifact re-run — `dc53455`'s values are verified present and the human surface correct.
+- **RC-1.5 RIDER (d) — covenant value-lead COMPOSED FROM STRUCTURE; the string-parser DELETED (the
+  render-layer instance of the banned class, CLOSED).** `_labelled_rate` regex-parsed the LLM-composed
+  interest clause — the render-layer instance of the "parsers consume structured values, never rendered
+  strings" class (PR-6 + finding-B's class). **FIX (isolated commit / PR):** `CovenantTerm` gains FIVE
+  OPTIONAL numeric components `{base_rate_label, margin_pct, margin_bps, floor_pct, pik_pct}` (NOT
+  `Sourced` — they inherit the parent clause's citation), emitted by the Tier-2 extractor; they ride the
+  `governing_terms` collapse onto `GoverningTerm` (the propagation crux — mirrored in `dossier.js`); then
+  `render._compose_interest_lead` + `dossier.js composeInterestLead` compose the lead FROM those fields
+  (py↔js byte-parity), and `_labelled_rate`/`_labelledRate` are deleted. **COMPONENT-CONSISTENCY GUARD**
+  (a local figure-tracer): each numeric's digits must appear in the parent clause AND the two margin units
+  are mutually exclusive — a mismatch OR both-margins ⇒ NO lead + a dev/audit-tier ⚠ QA note (a
+  transcription slip must never headline the row). Units render **AS DISCLOSED** (bps stays bps — no
+  normalization). Verified on real renders: pct composite `Term SOFR + 9.75% (Floor 3.00%, +3.75% PIK)`,
+  the LIVE bps instrument `LPR + 115 bps`, the guard suppressing a slipped 9.75-vs-9.50 figure with the
+  QA note.
+  - **BACK-COMPAT:** the composed lead needs the new fields, so on **pre-RC-1.5d committed JSON (no
+    components) the interest lead LAPSES to the raw clause** — verified MVST/VRRM render clean, the
+    SOFR/LPR covenant rows carry the clause; the composed nicety returns on the operator's next
+    re-assembly. No crash.
+  - **FIXED-RATE = ACCEPTED RESIDUAL:** the 5 fields model base+margin (SOFR-pct / LPR-bps); a fixed-rate
+    coupon has no base/margin → lapses to the raw clause (the instrument panel's coupon column carries the
+    fixed rate). Extend with a `fixed_pct` field only on evidence, not speculatively.
+  - **TRIAGE — severity correctly MINOR:** the complete-or-absent fence held and the #90-hardened `test_t2`
+    covenant test guards the values via deterministic anchors; fixed for the CLASS (delete the string-parse)
+    NOT the instance (regex widening — the D3 precedent caps that). Post-conversion the affected historical
+    row is superseded (the live covenant surface is the syndicated facility).
+  - **Invariants (INVARIANT RULE):** `test_rc15d_interest_lead_composed_from_structure` (compose + guard +
+    propagation-through-collapse + back-compat) and `test_rc15d_interest_lead_py_js_parity` (node: lead AND
+    qa byte-identical); `CovenantTerm` added to the no-conclusion schema-guard coverage set. TWO obsolete
+    tests that pinned the deleted string-parser (`test_k1`'s interest asserts + the whole
+    `test_t2_interest_lead_is_full_composite_or_absent`) are replaced by these structured pins — the brief's
+    "test_k1 survives" was inaccurate for its interest block. GATE: ruff · mypy --strict (93 files) · pytest
+    525 offline green · node parity.
+  - **ADVERSARIAL AUDIT of the rider (5 CONFIRMED defects in the NEW code, all fixed before PR):**
+    (1) `f"{v:.2f}"` vs JS `toFixed(2)` both MIS-ROUND an eighth-of-a-point coupon (`6.125%`→`6.12`) AND
+    round oppositely (py half-even `6.12` vs JS half-up `6.13`) — a decision-surface fidelity slip + the
+    H2 mirror-drift hazard; fixed by `_fmt_pct`/`fmtPct` (shortest exact decimal, pad ≥2, byte-identical),
+    pinned by eighth (`9.125`) + `0.125` fixtures. (2) `_fmt_bps` CRASHED on a non-finite component
+    (`int(nan)`→ValueError) aborting the whole render; (3) `_opt_float(True)==1.0` FABRICATED a `+1.00%`
+    coupon; (4/5) `_opt_str` str()-ified a wrong-shape list into a garbage lead — fixed at the ROOT by
+    tightening `_opt_float` (bool + `math.isfinite` gates) / `_opt_str` (isinstance gate) to fail-soft,
+    pinned by `test_rc15d_optional_field_coercion_rejects_wrong_shapes`. (2) ALSO earned a compose-level
+    DEFENCE-IN-DEPTH (merge gate G2b): `_compose_interest_lead`/`composeInterestLead` treat a non-finite
+    component that reaches them directly as guard-suppressed → no lead + a byte-identical QA note, never
+    the crashing `int()` — pinned py+node by `test_rc15d_non_finite_component_suppressed_no_crash_py_js`.
+    **ACCEPTED-LATENT (PLAUSIBLE, not reached):** `_fmt_bps` else-branch `str(v)` vs JS `String(v)` diverge
+    only at exponential magnitudes (`1e-7`/`1e21` bps) — impossible for a real covenant rate, and the
+    finite gate removes the inf case.
 
 The **dossier-assembler is built and verified (§2)** — the queue-top now flows ranker → `dossier`.
 Remaining:

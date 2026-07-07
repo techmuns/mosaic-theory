@@ -387,6 +387,18 @@ class CovenantTerm(BaseModel):
 
     name: str  # the term, e.g. "Conversion price", "Initial term loan", "Maturity date"
     value: Sourced[str]  # PRESENT ⇒ verbatim value + exhibit source_ref; else UNKNOWN (not guessed)
+    # (RC-1.5d) OPTIONAL structured interest-rate components for interest-type terms — the
+    # deterministic scalars behind the verbatim clause, so the value-lead composes from structure
+    # instead of re-parsing the LLM-composed string. NOT Sourced: they inherit ``value``'s citation
+    # (same clause, same exhibit). None on every non-interest term and on pre-RC-1.5d JSON. A render
+    # composes a lead only when required components are present AND each numeric's digits appear in
+    # the parent clause (a transcription slip must never headline the row). margin_pct/margin_bps
+    # are mutually-exclusive alternates — units render AS DISCLOSED, never normalized.
+    base_rate_label: str | None = None  # e.g. "Term SOFR", "LPR", "New Benchmark"
+    margin_pct: float | None = None  # spread over the base, in percent (e.g. 9.75)
+    margin_bps: float | None = None  # spread over base, in bps (e.g. 115) — alternate to margin_pct
+    floor_pct: float | None = None  # rate floor, in percent (e.g. 3.00)
+    pik_pct: float | None = None  # PIK component, in percent (e.g. 3.75)
 
     model_config = {"frozen": True}
 

@@ -15,7 +15,7 @@ from datetime import UTC, date, datetime
 from itertools import groupby
 from typing import Any
 
-from vinci.dossier.covenant_extract import _derive_conversion, governing_terms
+from vinci.dossier.covenant_extract import GoverningTerm, _derive_conversion, governing_terms
 from vinci.dossier.schemas import Dossier, MechanicalLayer, Sourced, SourceStatus
 
 # Display curation for the catalyst path — the full data always stays in dossier.json; these only
@@ -663,24 +663,86 @@ _CADENCE = {"week": "weekly", "month": "monthly", "quarter": "quarterly", "day":
             "year": "annually"}
 
 
-def _labelled_rate(raw: str, label_re: str, val_re: str) -> str | None:
-    """(T2) A label-anchored component of an interest COMPOSITE: '' when the label is absent (the
-    component is absent), the value when the label is present AND the value is extractable, or None
-    when the label IS present but the value can't be read — the caller then renders NO lead (a
-    partial composite is misleading-by-omission)."""
-    if not re.search(label_re, raw, re.IGNORECASE):
-        return ""
-    m = re.search(val_re, raw, re.IGNORECASE)
-    return next((g for g in m.groups() if g), None) if m else None
+def _clause_numbers(raw: str) -> list[float]:
+    """(RC-1.5d) Every number stated in the clause, as floats (thousands-commas stripped) — the
+    consistency guard checks each structured rate component against this set so a transcription slip
+    can never headline the row."""
+    out: list[float] = []
+    for tok in re.findall(r"\d+(?:\.\d+)?", raw.replace(",", "")):
+        try:
+            out.append(float(tok))
+        except ValueError:  # pragma: no cover — the regex only yields parseable tokens
+            continue
+    return out
 
 
-def _covenant_value_lead(label: str, raw: str) -> str:
+def _num_in_clause(v: float, nums: list[float]) -> bool:
+    """True iff ``v`` appears among the clause's numbers (format-tolerant: 3.0 matches '3.00')."""
+    return any(abs(v - n) < 1e-6 for n in nums)
+
+
+def _fmt_bps(v: float) -> str:
+    """A bps value AS DISCLOSED — integer when whole ('115'), else the decimal ('112.5'). No
+    normalization to percent (the brief: bps stays bps). ``v`` is finite (``_opt_float`` gates
+    non-finite out) and in a realistic bps range, so ``str`` never uses exponential notation."""
+    return str(int(v)) if v == int(v) else str(v)
+
+
+def _fmt_pct(v: float) -> str:
+    """A percent rate component AS DISCLOSED — the value's EXACT shortest decimal, padded to a
+    MINIMUM of 2 decimals: 3.0→'3.00', 9.75→'9.75', 6.125→'6.125' (an eighth-of-a-point coupon).
+    NEVER a lossy 2-decimal round (``f"{6.125:.2f}"`` is '6.12', mis-rounding a decision rate AND
+    diverging from JS ``toFixed(2)`` which yields '6.13' — the H2 mirror-drift hazard). py/JS
+    byte-identical: both use the shortest round-trip repr. ``v`` is finite, 0–100% (``_opt_float``
+    gates non-finite), so ``repr`` never uses exponential notation."""
+    intpart, _, frac = repr(v).partition(".")
+    frac = (frac + "00")[:2] if len(frac) <= 2 else frac
+    return f"{intpart}.{frac}"
+
+
+def _compose_interest_lead(term: GoverningTerm | None, raw: str) -> tuple[str, str]:
+    """(RC-1.5d) The interest value-lead COMPOSED FROM STRUCTURE — never re-parsed from the clause.
+    Returns ``(lead, qa)``: the composed lead (e.g. 'Term SOFR + 9.75% (Floor 3.00%, +3.75% PIK)')
+    or '' when the components are absent/incomplete, plus a QA note when the consistency guard
+    tripped (else ''). REQUIRED: ``base_rate_label`` + exactly one of ``margin_pct``/``margin_bps``;
+    ``floor_pct``/``pik_pct`` optional. COMPONENT-CONSISTENCY GUARD: each numeric component's digits
+    must appear in the parent clause; a mismatch OR both margins present ⇒ no lead + QA (a slip must
+    never headline the row). Units render AS DISCLOSED (bps stays bps). A ``term`` of None (a
+    pre-RC-1.5d JSON, no components) ⇒ no lead — the clause carries it, no crash."""
+    if term is None:
+        return "", ""
+    base = (term.base_rate_label or "").strip()
+    m_pct, m_bps = term.margin_pct, term.margin_bps
+    if not base or (m_pct is None and m_bps is None):
+        return "", ""  # required components absent → clause alone
+    if m_pct is not None and m_bps is not None:
+        return "", "both a percent and a bps margin given — ambiguous, lead suppressed"
+    nums = _clause_numbers(raw)
+    for comp in (m_pct, m_bps, term.floor_pct, term.pik_pct):
+        if comp is None:
+            continue
+        if not math.isfinite(comp):  # defence-in-depth: a non-finite never headlines, never crashes
+            return "", "a rate component is not a finite number — lead suppressed"
+        if not _num_in_clause(comp, nums):
+            return "", f"rate component {_fmt_bps(comp)} not stated in the clause — lead suppressed"
+    if m_pct is not None:
+        margin = f"{_fmt_pct(m_pct)}%"
+    else:
+        assert m_bps is not None  # exactly one margin present (guarded above)
+        margin = f"{_fmt_bps(m_bps)} bps"
+    extras = [x for x in (
+        f"Floor {_fmt_pct(term.floor_pct)}%" if term.floor_pct is not None else "",
+        f"+{_fmt_pct(term.pik_pct)}% PIK" if term.pik_pct is not None else "") if x]
+    lead = f"{base} + {margin}" + (f" ({', '.join(extras)})" if extras else "")
+    return lead, ""
+
+
+def _covenant_value_lead(label: str, raw: str, term: GoverningTerm | None = None) -> str:
     """(K1, generalized · audit-hardened) The extractable VALUE a curated covenant line LEADS with,
-    before the ≤120c clip — RIGHT or ABSENT, never wrong: each branch is ANCHORED (a labelled or
-    bps margin, a TEST-anchored cadence, a maturity-anchored date, the PIK acronym, a contiguous
-    1..k enumeration) so ambiguous prose yields '' and the clause alone carries it. NEVER
-    fabricates — a bare '+ N%', an unanchored date, an 'equity … paid in kind', or a stray section
-    number are all rejected rather than presented as the coupon / wall / PIK / EoD count."""
+    before the ≤120c clip — RIGHT or ABSENT, never wrong. The interest lead is COMPOSED FROM the
+    term's structured rate components (RC-1.5d) — no clause re-parse; the other branches stay
+    ANCHORED on the verbatim clause (a TEST-anchored cadence, a maturity-anchored date, a contiguous
+    1..k enumeration) so ambiguous prose yields '' and the clause carries it. NEVER fabricates."""
     if label == "Conversion":
         return _derive_conversion(raw).strip().lstrip("(").rstrip(")")
     if label == "Financial maintenance":
@@ -692,31 +754,7 @@ def _covenant_value_lead(label: str, raw: str) -> str:
                         r"(week|month|quarter|day|year)", raw, re.IGNORECASE)
         return f"{thr.group(0)} {_CADENCE.get(cad.group(1).lower(), '') if cad else ''}".strip()
     if label == "Interest / coupon":
-        base = re.search(r"\bTerm SOFR\b|\bSOFR\b|\bLPR\b|\bNew Benchmark\b|\bFloating rate\b",
-                         raw, re.IGNORECASE)
-        if not base:  # fixed-rate fallback (no floating base)
-            fixed = re.search(r"(?:fixed rate of|bears? interest at (?:a )?(?:fixed )?rate of|"
-                              r"interest at (?:a )?(?:fixed )?rate of)\s+(\d+(?:\.\d+)?%)",
-                              raw, re.IGNORECASE)
-            return f"{fixed.group(1)} fixed" if fixed else ""
-        # (T2/audit) the rate is a COMPOSITE (margin/floor/PIK) — render the FULL LABELLED composite
-        # or NO lead (a partial is misleading-by-omission). Each component is LABEL-anchored: it
-        # accepts the parenthetical 'Margin (9.75%)' form but NEVER a bare '+ N%' step-down/default;
-        # a component whose label is present but whose value can't be read → no lead at all.
-        margin = _labelled_rate(raw, r"\bMargin\b|\bPlus\s+\d+\s*bps\b",
-                                r"(?:Applicable\s+)?Margin\b[^.;%\d]{0,4}(\d+(?:\.\d+)?%|\d+\s*bps)"
-                                r"|\bPlus\s+(\d+\s*bps)\b")
-        # (audit) tolerate an interposition ('Floor (Term SOFR) = 3.00%') and PIK on EITHER side of
-        # the % ('PIK Interest: 3.75%' or '3.75% … (PIK)') — a re-assembly re-phrases these and the
-        # composite-or-none rule would otherwise drop the WHOLE interest lead.
-        floor = _labelled_rate(raw, r"\bFloor\b", r"\bFloor\b[^.;%]{0,25}?(\d+(?:\.\d+)?%)")
-        pik = _labelled_rate(raw, r"\bPIK\b", r"\bPIK\b[^.;]{0,40}?(\d+(?:\.\d+)?%)"
-                             r"|(\d+(?:\.\d+)?%)[^.;]{0,40}?\bPIK\b")
-        if margin is None or floor is None or pik is None:
-            return ""  # a labelled component was unextractable → full-composite-or-none
-        lead = base.group(0) + (f" + {margin}" if margin else "")
-        extras = [x for x in (f"Floor {floor}" if floor else "", f"+{pik} PIK" if pik else "") if x]
-        return lead + (f" ({', '.join(extras)})" if extras else "")
+        return _compose_interest_lead(term, raw)[0]  # composed from structure; fixed-rate → clause
     if label == "Maturity":
         repl = re.search(rf"replaced with[^.;]*?({_DATE_RE})", raw, re.IGNORECASE)  # amendment wins
         anch = re.search(rf"(?:maturity\s*date|matur\w+)[^.;]{{0,40}}?({_DATE_RE})", raw,
@@ -761,7 +799,7 @@ def _covenant_summary_lines(cs: Any) -> list[str]:
             if label is None:
                 continue
             raw = str(g.value.value)
-            lead = _covenant_value_lead(label, raw)  # (K1) lead with the extractable value
+            lead = _covenant_value_lead(label, raw, g)  # (K1) lead with the extractable value
             clause = f"{lead} · {_clip120(raw)}" if lead else _clip120(raw)
             parts.append(f"  - **{label}:** {clause}")
         if parts:
@@ -881,10 +919,16 @@ def _covenant_term_lines(cs: Any) -> list[str]:
             # when the clause was actually trimmed.
             label = next((lbl for key, lbl in _SUMMARY_TERMS if key in g.term.lower()), None)
             verbatim = str(v.value)
-            lead = _covenant_value_lead(label, verbatim) if label else ""
+            # (RC-1.5d) the interest lead composes from structure and carries a QA note when the
+            # consistency guard trips (a slipped/ambiguous rate component → clause alone + QA); the
+            # QA note is an audit-tier annotation (this appendix table is on-demand, not main body).
+            if label == "Interest / coupon":
+                lead, qa = _compose_interest_lead(g, verbatim)
+            else:
+                lead, qa = (_covenant_value_lead(label, verbatim, g) if label else ""), ""
             clause, trimmed = _clip(verbatim, 200)
             cell = (f"{lead} · {clause}" if lead else clause) + (
-                " — full verbatim in JSON" if trimmed else "")
+                " — full verbatim in JSON" if trimmed else "") + (f" — ⚠ QA: {qa}" if qa else "")
             # source §: an off-family base (≠ the family footer) annotates inline; an amended row
             # keeps its amendment ref; a plain base row points at the footer.
             if g.base_ref and g.base_ref != fam_base:
