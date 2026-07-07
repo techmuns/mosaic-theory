@@ -145,6 +145,9 @@ incomplete regardless of code state.
 - **TEST-LAYER RULE.** A behavior observed failing in the rendered artifact is regression-pinned
   **end-to-end** (real committed JSON → render → assertion). Unit pins may accompany, never
   substitute. A second production failure of a pinned behavior ⇒ the pin was at the wrong layer.
+  **PER ASSERTION, not per test:** the no-LLM-string-pin rule binds each INDIVIDUAL assertion — one
+  test may mix deterministic pins with a brittle one (test_t2 pinned the interest rate deterministically
+  yet reddened on its conversion sub-assertion), so a class sweep must scan ASSERTIONS, never test names.
   **Never pin an LLM-COMPOSED string** (synthesis text, an LLM-extracted covenant/twin composite):
   it reworders on every re-assembly, so an exact-string pin is guaranteed to rot the committed
   artifact. LLM-adjacent tests assert **deterministic ANCHORS** (the components present,

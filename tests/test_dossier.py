@@ -1597,6 +1597,13 @@ def test_audit_derive_conversion_no_fabrication_on_bond_convention_and_stray_mat
     assert ce._derive_conversion("issued 5 shares under the plan; interest accrues per $1.00") == ""
     # M-5 — a comma-grouped share COUNT is not a rate (boundary-anchored numerator)
     assert ce._derive_conversion("1,250,000 shares issuable per $1.00 of par value") == ""
+    # (RC-1.5 artifact-pass regression) the CURRENT MVST fresh-draw phrasing states the rate ACROSS
+    # SENTENCES ("$1.00 divided by … Conversion Rate: two (2) shares"), so no "shares per $"
+    # bridge → "" (the raw clause carries it), NOT a fabricated $/sh — the exact rewording that
+    # reddened test_t2's old literal-token pin.
+    assert ce._derive_conversion(
+        '"Conversion Price" means at any time an amount equal to $1.00 divided by the applicable '
+        'Conversion Rate at such time. Conversion Rate: two (2) shares of Common Stock') == ""
 
 
 def test_audit_covenant_digest_honest_on_empty_body_and_boundary_safe_truncation() -> None:
@@ -3701,7 +3708,8 @@ def test_t2_covenant_table_footer_source_and_value_lead_mvst() -> None:
     p = pathlib.Path("data/dossiers/MVST/dossier.json")
     if not p.exists():
         pytest.skip("no committed MVST dossier.json")
-    md = dr.render_markdown(ds.Dossier.model_validate_json(p.read_text()))
+    d = ds.Dossier.model_validate_json(p.read_text())
+    md = dr.render_markdown(d)
     assert "Governing value (lead · clause ≤200c)" in md  # slimmed header
     assert ("_Source §: 8-K 0001760689-24-000021 · wu_microvast-loanandsecuri.htm · amended by "
             "0000947871-25-000313_") in md  # family lineage in the FOOTER
@@ -3711,16 +3719,33 @@ def test_t2_covenant_table_footer_source_and_value_lead_mvst() -> None:
     def _row(label, extra=""):  # first PRESENT covenant row for `label` (with `extra`), else None
         return next((ln for ln in lines if ln.startswith("| " + label + " |")
                      and "UNKNOWN" not in ln and extra in ln), None)
-    # (value-lead) the conversion row's render-COMPOSED value (⇒ ~$0.50/sh) leads, before the
-    # clause, via the render " · " separator
+    # (value-lead · guard-conditional — TEST-LAYER, PER ASSERTION) the conversion row is
+    # DETERMINISTICALLY present + base-footer sourced; the derived $/sh leads ONLY when
+    # _derive_conversion parses THIS draw's clause. LLM wording varies: an "N shares per $D" clause
+    # parses → the $/sh leads before the ' · ' sep; a cross-sentence "$1.00 divided by … Conversion
+    # Rate: N shares" does NOT bridge → raw clause, NO fabricated $/sh (anti-fabrication). We
+    # DROP the reworded literal tokens ("$0.50/sh"/"2 sh"/"$1.00") and re-derive from the governing
+    # verbatim, so any future rewording is covered without a red.
     conv = _row("Conversion price / mechanics")
     assert conv is not None, "no PRESENT Conversion-price covenant row"
-    assert all(t in conv for t in ("$0.50/sh", "2 sh", "$1.00"))
-    assert conv.index("$0.50") < conv.index(" · ")  # value-lead precedes the composed clause sep
-    # (deterministic) the interest COVENANT row is PRESENT (non-UNKNOWN, footer); its lead is
-    # EMPTY for this clause phrasing (_labelled_rate can't parse 'Margin means 9.75%'), so the row
-    # tokens are LLM prose — per the TEST-LAYER rule assert the RATE via the deterministic machine-
-    # extracted instrument floating_rate, not the phrasing-dependent clause tokens.
+    assert "base (footer)" in conv  # deterministic: present + base-sourced
+    cs = d.mechanical.capital_structure
+    assert cs is not None and cs.covenant_term_rows is not None
+    ptrs = (list(cs.covenant_pointer_rows.value)
+            if cs.covenant_pointer_rows and cs.covenant_pointer_rows.value else [])
+    gov = ce.governing_terms(list(cs.covenant_term_rows.value), ptrs)
+    conv_gov = next((g for g in gov if "conversion" in g.term.lower()
+                     and g.value.status is ds.SourceStatus.PRESENT), None)
+    assert conv_gov is not None, "no PRESENT governing conversion term"
+    derived = dr._derive_conversion(str(conv_gov.value.value)).strip().lstrip("(").rstrip(")")
+    cell = conv.split(" | ")[1]  # the value cell (lead · clause); " | " is the GFM col delimiter
+    if derived:  # clause parsed → the derived $/sh IS the value-lead, before the clause separator
+        assert " · " in cell and cell.split(" · ", 1)[0] == derived
+    else:  # cross-sentence clause → raw clause carries it, NO fabricated $/sh value-lead
+        assert "/sh" not in cell.split(" · ", 1)[0]
+    # (deterministic) the interest COVENANT row is PRESENT (non-UNKNOWN, footer). Its lead now
+    # COMPOSES from RC-1.5d structured components, but that composite is clause/LLM-adjacent — per
+    # TEST-LAYER assert the RATE via the deterministic machine-extracted instrument floating_rate.
     intr = _row("Interest / coupon rate", "SOFR")
     assert intr is not None and "base (footer)" in intr
     assert "SOFR + 9.750%" in md  # instrument floating_rate — deterministic, not the LLM clause
