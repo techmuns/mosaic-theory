@@ -372,24 +372,62 @@ const _MONTHS_RE = "(?:January|February|March|April|May|June|July|August|Septemb
 const _DATE_RE_SRC = `(?:${_MONTHS_RE})\\s+\\d{1,2},\\s+\\d{4}|\\d{4}-\\d{2}-\\d{2}`;
 const _CADENCE = { week: "weekly", month: "monthly", quarter: "quarterly", day: "daily", year: "annually" };
 
-// (T2, mirrors render._labelled_rate) a label-anchored component of an interest COMPOSITE: "" when
-// the label is absent (the component is absent), the value when the label is present AND the value is
-// extractable, or null when the label IS present but the value can't be read — the caller then
-// renders NO lead (a partial composite is misleading-by-omission).
-function _labelledRate(raw, labelRe, valRe) {
-  if (!labelRe.test(raw)) return "";
-  const m = raw.match(valRe);
-  if (!m) return null;
-  return m.slice(1).find(Boolean) || null;
+// (RC-1.5d, mirrors render._clause_numbers / _num_in_clause / _fmt_bps) the consistency-guard helpers:
+// every number stated in the clause (thousands-commas stripped), a format-tolerant membership test
+// (3.0 matches "3.00"), and a bps value AS DISCLOSED (integer when whole; never normalized to pct).
+function clauseNumbers(raw) {
+  return (String(raw).replace(/,/g, "").match(/\d+(?:\.\d+)?/g) || []).map(Number);
+}
+function numInClause(v, nums) { return nums.some((n) => Math.abs(v - n) < 1e-6); }
+function fmtBps(v) { return v === Math.trunc(v) ? String(Math.trunc(v)) : String(v); }
+// (RC-1.5d, mirrors render._fmt_pct) a percent component AS DISCLOSED — the value's EXACT shortest
+// decimal, padded to a MINIMUM of 2 decimals (3.0→"3.00", 6.125→"6.125"). NEVER toFixed(2): that
+// mis-rounds an eighth-of-a-point coupon (6.125→"6.13") AND diverges from Python's :.2f ("6.12") —
+// the H2 mirror-drift hazard. Shortest round-trip repr keeps py↔js byte-identical.
+function fmtPct(v) {
+  const s = String(v);
+  const dot = s.indexOf(".");
+  const intpart = dot < 0 ? s : s.slice(0, dot);
+  let frac = dot < 0 ? "" : s.slice(dot + 1);
+  frac = frac.length <= 2 ? (frac + "00").slice(0, 2) : frac;
+  return `${intpart}.${frac}`;
 }
 
-// (K1, mirrors render._covenant_value_lead · audit-hardened) the extractable VALUE a curated covenant
-// line LEADS with, before the ≤120c clip — RIGHT or ABSENT, never wrong: each branch is ANCHORED (a
-// labelled or bps margin, a TEST-anchored cadence, a maturity-anchored date, the PIK acronym, a
-// contiguous 1..k enumeration) so ambiguous prose yields "" and the clause alone carries it. NEVER
-// fabricates — a bare "+ N%", an unanchored date, an "equity … paid in kind", or a stray section
-// number are all rejected rather than presented as the coupon / wall / PIK / EoD count.
-function covenantValueLead(label, raw) {
+// (RC-1.5d, mirrors render._compose_interest_lead) the interest value-lead COMPOSED FROM STRUCTURE —
+// never re-parsed from the clause. Returns [lead, qa]: the composed lead (e.g.
+// "Term SOFR + 9.75% (Floor 3.00%, +3.75% PIK)") or "" when components are absent/incomplete, plus a
+// QA note when the consistency guard tripped (else ""). REQUIRED: baseRateLabel + exactly one of
+// marginPct/marginBps; floorPct/pikPct optional. GUARD: each numeric's digits must appear in the
+// parent clause; a mismatch OR both margins present ⇒ no lead + QA (a slip must never headline the
+// row). Units render AS DISCLOSED (bps stays bps). term == null (pre-RC-1.5d JSON) ⇒ no lead, no crash.
+function composeInterestLead(term, raw) {
+  if (!term) return ["", ""];
+  const base = (term.baseRateLabel || "").trim();
+  const mPct = term.marginPct, mBps = term.marginBps;
+  if (!base || (mPct == null && mBps == null)) return ["", ""];  // required components absent → clause
+  if (mPct != null && mBps != null)
+    return ["", "both a percent and a bps margin given — ambiguous, lead suppressed"];
+  const nums = clauseNumbers(raw);
+  for (const comp of [mPct, mBps, term.floorPct, term.pikPct]) {
+    if (comp == null) continue;
+    if (!Number.isFinite(comp))  // defence-in-depth: a non-finite never headlines, never crashes
+      return ["", "a rate component is not a finite number — lead suppressed"];
+    if (!numInClause(comp, nums))
+      return ["", `rate component ${fmtBps(comp)} not stated in the clause — lead suppressed`];
+  }
+  const margin = mPct != null ? `${fmtPct(mPct)}%` : `${fmtBps(mBps)} bps`;
+  const extras = [
+    term.floorPct != null ? `Floor ${fmtPct(term.floorPct)}%` : "",
+    term.pikPct != null ? `+${fmtPct(term.pikPct)}% PIK` : ""].filter(Boolean);
+  const lead = `${base} + ${margin}` + (extras.length ? ` (${extras.join(", ")})` : "");
+  return [lead, ""];
+}
+
+// (K1, mirrors render._covenant_value_lead) the extractable VALUE a curated covenant line LEADS with,
+// before the ≤120c clip — RIGHT or ABSENT, never wrong. The interest lead is COMPOSED FROM the term's
+// structured rate components (RC-1.5d) — no clause re-parse; the other branches stay ANCHORED on the
+// verbatim clause so ambiguous prose yields "" and the clause alone carries it. NEVER fabricates.
+function covenantValueLead(label, raw, term) {
   if (label === "Conversion") return _deriveConversion(raw).trim().replace(/^\(/, "").replace(/\)$/, "");
   if (label === "Financial maintenance") {
     const thr = raw.match(/not less than\s+\$[\d,]*\d(?:\.\d+)?/);  // end on a digit (no trailing ,)
@@ -398,25 +436,7 @@ function covenantValueLead(label, raw) {
     const cad = raw.match(/(?:as of|tested)\b[^.;]{0,40}?\beach\s+(?:calendar\s+|fiscal\s+)?(week|month|quarter|day|year)/i);
     return `${thr[0]} ${cad ? (_CADENCE[cad[1].toLowerCase()] || "") : ""}`.trim();
   }
-  if (label === "Interest / coupon") {
-    const base = raw.match(/\bTerm SOFR\b|\bSOFR\b|\bLPR\b|\bNew Benchmark\b|\bFloating rate\b/i);
-    if (!base) {  // fixed-rate fallback (no floating base)
-      const fixed = raw.match(/(?:fixed rate of|bears? interest at (?:a )?(?:fixed )?rate of|interest at (?:a )?(?:fixed )?rate of)\s+(\d+(?:\.\d+)?%)/i);
-      return fixed ? `${fixed[1]} fixed` : "";
-    }
-    // (T2/audit) the rate is a COMPOSITE (margin/floor/PIK) — render the FULL LABELLED composite or
-    // NO lead (a partial is misleading-by-omission). Each component is LABEL-anchored: it accepts the
-    // parenthetical "Margin (9.75%)" form but NEVER a bare "+ N%" step-down/default; a component whose
-    // label is present but whose value can't be read → no lead at all.
-    const margin = _labelledRate(raw, /\bMargin\b|\bPlus\s+\d+\s*bps\b/i,
-      /(?:Applicable\s+)?Margin\b[^.;%\d]{0,4}(\d+(?:\.\d+)?%|\d+\s*bps)|\bPlus\s+(\d+\s*bps)\b/i);
-    const floor = _labelledRate(raw, /\bFloor\b/i, /\bFloor\b[^.;%\d]{0,4}(\d+(?:\.\d+)?%)/i);
-    const pik = _labelledRate(raw, /\bPIK\b/i, /(\d+(?:\.\d+)?%)[^.;]{0,40}?\bPIK\b/i);
-    if (margin === null || floor === null || pik === null) return "";  // labelled component unextractable → full-composite-or-none
-    const lead = base[0] + (margin ? ` + ${margin}` : "");
-    const extras = [floor ? `Floor ${floor}` : "", pik ? `+${pik} PIK` : ""].filter(Boolean);
-    return lead + (extras.length ? ` (${extras.join(", ")})` : "");
-  }
+  if (label === "Interest / coupon") return composeInterestLead(term, raw)[0];  // composed from structure
   if (label === "Maturity") {
     const repl = raw.match(new RegExp(`replaced with[^.;]*?(${_DATE_RE_SRC})`, "i"));  // amendment wins
     const anch = raw.match(new RegExp(`(?:maturity\\s*date|matur\\w+)[^.;]{0,40}?(${_DATE_RE_SRC})`, "i"));  // else a maturity-anchored date, not a random first date
@@ -473,7 +493,7 @@ function covenantSummary(cs) {
       if (!entry) continue;
       const label = entry[1];
       const raw = String(v.value);
-      const lead = covenantValueLead(label, raw);  // (K1) lead with the extractable value
+      const lead = covenantValueLead(label, raw, g);  // (K1) lead with the extractable value
       const clause = lead ? `${lead} · ${clip120(raw)}` : clip120(raw);
       parts.push(`<li><b>${escapeHtml(label)}:</b> ${escapeHtml(clause)}</li>`);
     }
@@ -566,21 +586,29 @@ function governingTerms(rows, pointers) {
     const [fam, dt] = meta[_accOf(v.source_ref) || _accOf(v.note)] || ["(unmapped)", ""];
     const key = fam + " " + r.name;
     if (!grouped.has(key)) { grouped.set(key, { fam, term: r.name, list: [] }); order.push(key); }
-    grouped.get(key).list.push([dt, v]);
+    grouped.get(key).list.push([dt, r]);  // (RC-1.5d) store the whole row — components ride along
   });
   return order.map((key) => {
     const { fam, term, list } = grouped.get(key);
     list.sort((a, b) => (a[0] < b[0] ? -1 : a[0] > b[0] ? 1 : 0));  // oldest → newest
-    const present = list.filter(([, v]) => v.status === "present");
+    const present = list.filter(([, r]) => (r.value || {}).status === "present");
+    let govRow, baseRef, amendedBy;
     if (present.length) {
       // (X-4) assert amendedBy only on a REAL chronology (distinct, non-empty dates); tied/empty
       // dates can't establish supersession — don't fabricate the chain from input order (py parity).
       const pdates = present.map(([dt]) => dt);
       const ordered = pdates.every(Boolean) && new Set(pdates).size === pdates.length;
-      return { fam, term, value: present[present.length - 1][1], baseRef: present[0][1].source_ref,
-        amendedBy: ordered ? present.slice(1).map(([, v]) => _accOf(v.source_ref)).filter(Boolean) : [] };
+      govRow = present[present.length - 1][1];  // latest PRESENT governs — components ride along
+      baseRef = present[0][1].value.source_ref;
+      amendedBy = ordered ? present.slice(1).map(([, r]) => _accOf(r.value.source_ref)).filter(Boolean) : [];
+    } else {
+      govRow = list[list.length - 1][1];
+      baseRef = null; amendedBy = [];
     }
-    return { fam, term, value: list[list.length - 1][1], baseRef: null, amendedBy: [] };
+    return { fam, term, value: govRow.value, baseRef, amendedBy,
+      baseRateLabel: govRow.base_rate_label ?? null, marginPct: govRow.margin_pct ?? null,
+      marginBps: govRow.margin_bps ?? null, floorPct: govRow.floor_pct ?? null,
+      pikPct: govRow.pik_pct ?? null };
   });
 }
 
@@ -612,9 +640,14 @@ function covenantTerms(cs) {
       // (T2) value = the extractable value-lead + a ≤200c clause; "full verbatim in JSON" only when trimmed.
       const entry = _SUMMARY_TERMS.find(([key]) => (g.term || "").toLowerCase().includes(key));
       const verbatim = String(v.value);
-      const lead = entry ? covenantValueLead(entry[1], verbatim) : "";
+      // (RC-1.5d) the interest lead composes from structure and carries a QA note when the
+      // consistency guard trips; the QA note is an audit-tier annotation (this table is on-demand).
+      let lead, qa;
+      if (entry && entry[1] === "Interest / coupon") { [lead, qa] = composeInterestLead(g, verbatim); }
+      else { lead = entry ? covenantValueLead(entry[1], verbatim, g) : ""; qa = ""; }
       const [clause, trimmed] = clipTrim(verbatim, 200);
-      const cell = (lead ? `${lead} · ${clause}` : clause) + (trimmed ? " — full verbatim in JSON" : "");
+      const cell = (lead ? `${lead} · ${clause}` : clause) + (trimmed ? " — full verbatim in JSON" : "")
+        + (qa ? ` — ⚠ QA: ${qa}` : "");
       // source §: an off-family base (≠ the family footer) annotates inline; an amended row keeps its
       // amendment ref; a plain base row points at the footer.
       const ref = (g.baseRef && g.baseRef !== famBase) ? g.baseRef
