@@ -3728,6 +3728,63 @@ def test_rc15d_non_finite_component_suppressed_no_crash_py_js() -> None:
     assert json.loads(out.stdout) == [["", qa]] * 3  # JS: same QA, no crash, byte-identical to py
 
 
+def test_frontend_modules_load_as_esm_and_render_smoke() -> None:
+    """(HOTFIX gate — MODULE-LOAD integrity, the gate #92 lacked). Node dynamically imports EVERY
+    frontend module (lib/ + views/) asserting no throw — catching a top-level import/declaration
+    COLLISION like the #92 `fmtPct` (a local coupon formatter re-declaring lib/format.js's imported
+    signed-% `fmtPct`) that took the live dossier view down ('Identifier fmtPct has already been
+    declared'), which slice-based function-parity tests AND `node --check` both missed. Then it
+    renders the committed MVST dossier via renderDossier, asserting a non-error HTML string carrying
+    the composed 'LPR + 115 bps' lead. A fixture module with an import+const collision MUST fail
+    this smoke (the pinned failure shape) — function-level parity is not load-level integrity."""
+    import json
+    import pathlib
+    import shutil
+    import subprocess
+    import urllib.parse
+    if not shutil.which("node"):
+        pytest.skip("node unavailable")
+    if not pathlib.Path("data/dossiers/MVST/dossier.json").exists():
+        pytest.skip("no committed MVST dossier.json")
+    driver = r"""
+import { readFileSync, readdirSync, statSync } from "node:fs";
+import { pathToFileURL } from "node:url";
+import path from "node:path";
+const stub = new Proxy(function(){}, { get: () => stub, apply: () => stub, construct: () => ({}) });
+for (const g of ["window","document","location"]) { try { globalThis[g] = stub; } catch {} }
+function walk(dir){ let out=[]; for(const e of readdirSync(dir)){ const p=path.join(dir,e);
+  if(statSync(p).isDirectory()) out=out.concat(walk(p));
+  else if(p.endsWith(".js")) out.push(p);}
+  return out;}
+const mods = walk("frontend/lib").concat(walk("frontend/views"));
+const failed = [];
+for (const m of mods) { try { await import(pathToFileURL(path.resolve(m)).href); }
+  catch (e) { failed.push([m, e.name + ": " + e.message.slice(0, 80)]); } }
+const dj = pathToFileURL(path.resolve("frontend/views/shared/dossier.js")).href;
+const { renderDossier } = await import(dj);
+const html = renderDossier(JSON.parse(readFileSync("data/dossiers/MVST/dossier.json")), null);
+console.log(JSON.stringify({nmods: mods.length, failed,
+  render_ok: typeof html === "string" && html.length > 0,
+  has_lpr: html.includes("LPR + 115 bps")}));
+"""
+    out = subprocess.run(["node", "--input-type=module", "-e", driver],
+                         capture_output=True, text=True, check=True)
+    res = json.loads(out.stdout)
+    assert res["failed"] == [], f"frontend modules failed to load: {res['failed']}"
+    assert res["nmods"] >= 10, f"module walk found too few modules: {res['nmods']}"
+    assert res["render_ok"] and res["has_lpr"], f"dossier render smoke failed: {res}"
+    # (pin the failure shape) an import+const collision — the #92 bug class — MUST fail the load,
+    # or this gate is theatre: a data:-URL module importing the real fmtPct + re-declaring it.
+    fmt = pathlib.Path("frontend/lib/format.js").resolve().as_uri()
+    fixture = f'import {{ fmtPct }} from "{fmt}";\nconst fmtPct = 1;\nexport const x = 1;\n'
+    data_url = "data:text/javascript," + urllib.parse.quote(fixture)
+    probe = (f'import({json.dumps(data_url)}).then(()=>console.log("LOADED"))'
+             f'.catch((e)=>console.log("THREW:"+e.name));')
+    fx = subprocess.run(["node", "--input-type=module", "-e", probe],
+                        capture_output=True, text=True, check=True)
+    assert "THREW:SyntaxError" in fx.stdout, f"collision fixture must fail, got {fx.stdout!r}"
+
+
 def test_t2_covenant_table_footer_source_and_value_lead_mvst() -> None:
     """(T2) The covenant table slims: header names the ≤200c clause; the family source lineage moves
     to the table FOOTER; a base row points at the footer; a trimmed clause notes 'full verbatim in

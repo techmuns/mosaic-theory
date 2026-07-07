@@ -271,8 +271,8 @@ function trajectoryTable(q) {
   return dataTable(label, srcs[0].source_ref, periods.map(fmtPeriod), rows, note);
 }
 
-function renderDossier(d, verdict) {
-  const m = d.mechanical || {};
+export function renderDossier(d, verdict) {  // exported for the module-load smoke test (renders the
+  const m = d.mechanical || {};              // committed dossier JSON to HTML in node, no DOM/fetch)
   return [
     header(d),
     flagsSection(d.caveats || d.flags || []),      // D1: caveats first (what to verify)
@@ -384,7 +384,9 @@ function fmtBps(v) { return v === Math.trunc(v) ? String(Math.trunc(v)) : String
 // decimal, padded to a MINIMUM of 2 decimals (3.0→"3.00", 6.125→"6.125"). NEVER toFixed(2): that
 // mis-rounds an eighth-of-a-point coupon (6.125→"6.13") AND diverges from Python's :.2f ("6.12") —
 // the H2 mirror-drift hazard. Shortest round-trip repr keeps py↔js byte-identical.
-function fmtPct(v) {
+// Named fmtPctExact (NOT fmtPct): lib/format.js already exports a SIGNED-DISPLAY fmtPct this module
+// imports at the top — two names, two semantics (exact coupon repr vs signed % display), never merged.
+function fmtPctExact(v) {
   const s = String(v);
   const dot = s.indexOf(".");
   const intpart = dot < 0 ? s : s.slice(0, dot);
@@ -415,10 +417,10 @@ function composeInterestLead(term, raw) {
     if (!numInClause(comp, nums))
       return ["", `rate component ${fmtBps(comp)} not stated in the clause — lead suppressed`];
   }
-  const margin = mPct != null ? `${fmtPct(mPct)}%` : `${fmtBps(mBps)} bps`;
+  const margin = mPct != null ? `${fmtPctExact(mPct)}%` : `${fmtBps(mBps)} bps`;
   const extras = [
-    term.floorPct != null ? `Floor ${fmtPct(term.floorPct)}%` : "",
-    term.pikPct != null ? `+${fmtPct(term.pikPct)}% PIK` : ""].filter(Boolean);
+    term.floorPct != null ? `Floor ${fmtPctExact(term.floorPct)}%` : "",
+    term.pikPct != null ? `+${fmtPctExact(term.pikPct)}% PIK` : ""].filter(Boolean);
   const lead = `${base} + ${margin}` + (extras.length ? ` (${extras.join(", ")})` : "");
   return [lead, ""];
 }
