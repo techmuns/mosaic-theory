@@ -16,11 +16,15 @@ recorded v0 basis is new_filers (window-relative) + quadrant_by_combo + residenc
 the v1 calendar-anchored definition is ``new_filers_anchored`` + ``quadrant_by_combo_anchored`` +
 ``residence_by_combo_anchored``. The anchored definition is computed ALONGSIDE and its adoption is
 PENDING OPERATOR SANCTION — nothing here reclassifies the recorded v0 verdict.
+
+v2 rebuilds the velocity axis around CONTRAST (signals a new-listing wave cannot produce): analyst
+term TIERS (``specific_terms`` / ``context_terms``, DRAFT — PENDING ANALYST RATIFICATION) and an
+INCUMBENCY read (``IncumbentRead``) — headline = incumbent CIK first-mentions on SPECIFIC terms.
 """
 
 from __future__ import annotations
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, model_validator
 
 
 class CandidateSpec(BaseModel, frozen=True):
@@ -32,6 +36,17 @@ class CandidateSpec(BaseModel, frozen=True):
     terms: tuple[str, ...]
     note: str
     is_placebo: bool = False
+    # v2 DRAFT analyst tiers (PENDING ANALYST RATIFICATION) — a PARTITION of ``terms``. specific =
+    # incumbent-specific headline terms; context = broad/context terms. Enforced to partition below.
+    specific_terms: tuple[str, ...] = ()
+    context_terms: tuple[str, ...] = ()
+
+    @model_validator(mode="after")
+    def _tiers_partition_terms(self) -> CandidateSpec:
+        if (self.specific_terms or self.context_terms) and (
+                set(self.specific_terms) | set(self.context_terms) != set(self.terms)):
+            raise ValueError(f"{self.key}: specific+context tiers must partition `terms` exactly")
+        return self
 
 
 class BasketMember(BaseModel, frozen=True):
@@ -58,6 +73,25 @@ class TermContribution(BaseModel, frozen=True):
     new_filers: int
 
 
+class IncumbentRead(BaseModel, frozen=True):
+    """One quarter's v2 incumbency read. HEADLINE = ``incumbent_specific`` (incumbent CIK first-
+    mentions on SPECIFIC-tier terms, anchored basis) — immune to new-listing flow by construction.
+    Raw integers; a 0 is a real 0, never smoothed. ``incumbency_unknown`` = first-mention CIKs whose
+    data.sec.gov submissions were absent (a fail-loud gap, never guessed). The 8-K/10-K split of
+    incumbent-specific first-mentions; specific_form_unknown counts CIKs whose first-mention form
+    was unavailable (a pre-v2 cached read — honestly bucketed, not fabricated)."""
+
+    incumbent_specific: int  # HEADLINE — the listing-flow-immune series
+    incumbent_context: int
+    new_listings: int  # non-incumbent anchored first-mentions (new-registrant flow)
+    anchored_specific: int  # total anchored-new on SPECIFIC (= incumbent + new-listing + unknown)
+    specific_8k: int  # 8-K-family split of incumbent-specific first-mentions
+    specific_10k: int  # 10-K-family split
+    specific_form_unknown: int  # first-mention form unavailable (pre-v2 cached read)
+    incumbency_unknown: int  # first-mention CIKs with absent submissions (NOT classified)
+    top_terms: tuple[TermContribution, ...] = ()  # SPECIFIC terms carrying incumbent first-mentions
+
+
 class QuarterRead(BaseModel, frozen=True):
     """One quarter's two-axis read. Every price field is ``float | None``; ``None`` ⇒ a reason in
     ``data_gaps`` (insufficient/absent data is never smoothed to 0.0)."""
@@ -77,6 +111,7 @@ class QuarterRead(BaseModel, frozen=True):
     top_terms: tuple[TermContribution, ...] = ()  # decomposition (anchored-new attribution)
     placebo_ratio: float | None = None  # theme/placebo anchored-filers (None-safe)
     derated_early: bool = False  # excess vs BOTH benchmarks < −20% (a DERATED-EARLY annotation)
+    incumbent: IncumbentRead | None = None  # v2 incumbency read (None ⇒ tiers not defined)
     data_gaps: list[str] = Field(default_factory=list)
 
 
@@ -106,4 +141,6 @@ class AssayCard(BaseModel, frozen=True):
     residence_by_combo_symmetric: dict[str, Residence]  # ±band flat (reported-only, no verdict)
     divergence_age_quarters: int | None
     is_placebo: bool = False
+    specific_terms: tuple[str, ...] = ()  # v2 DRAFT tiers (echoed; PENDING RATIFICATION)
+    context_terms: tuple[str, ...] = ()
     caveats: list[str] = Field(default_factory=list)

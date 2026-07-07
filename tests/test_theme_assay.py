@@ -30,6 +30,8 @@ from vinci.themes.assay_candidates import CANDIDATE_SPECS, PLACEBO_KEY
 from vinci.themes.assay_schemas import (
     AssayCard,
     BasketMember,
+    CandidateSpec,
+    IncumbentRead,
     QuarterRead,
     Residence,
     TermContribution,
@@ -167,8 +169,8 @@ def _reachable_models(root: type[BaseModel]) -> set[type[BaseModel]]:
 def test_assay_card_has_no_conclusion_field() -> None:
     """No field anywhere in the AssayCard tree may name a verdict/score/rank/direction/prob."""
     models = _reachable_models(AssayCard)
-    # non-vacuous: the walk must reach the quarter/basket/residence models AND the v1 decomposition
-    assert {QuarterRead, BasketMember, Residence, TermContribution} <= models
+    # non-vacuous: reach the quarter/basket/residence models, the v1 decomposition, v2 incumbency
+    assert {QuarterRead, BasketMember, Residence, TermContribution, IncumbentRead} <= models
     offenders = [
         f"{m.__name__}.{f}"
         for m in models
@@ -471,3 +473,112 @@ def test_assay_retry_loop_recovers_then_fails_loud(
 
     with pytest.raises(HttpError, match="missing read.*BADQ"):
         _assay_with_retries(always_fail, label="t", attempts=2)
+
+
+# ================================================================================================
+# 7. v2 — incumbency rule, tiers, contrast criterion, placebo-null, anchored-headline render
+# ================================================================================================
+
+
+def test_is_incumbent_decision_rule() -> None:
+    """Incumbent iff filing history began >=8 quarters before the first-mention quarter; >1000
+    filings (older archive pages) ⇒ incumbent; absent submissions ⇒ None (fail-loud UNKNOWN)."""
+    fmq = (2021, 1)  # first-mention 2021Q1; cutoff = 2019Q1 (8 quarters earlier)
+    assert assay.is_incumbent("2005-06-01", False, fmq) is True  # oldest well before cutoff
+    assert assay.is_incumbent("2019-01-15", False, fmq) is True  # exactly 8 quarters before
+    assert assay.is_incumbent("2019-04-15", False, fmq) is False  # 2019Q2 = only 7 quarters before
+    assert assay.is_incumbent("2020-05-01", False, fmq) is False  # recent history → not incumbent
+    assert assay.is_incumbent("2021-01-01", True, fmq) is True  # >1000 filings ⇒ incumbent
+    assert assay.is_incumbent(None, False, fmq) is None  # no submissions ⇒ UNKNOWN, not guessed
+
+
+class _SubHttp:
+    """A data.sec.gov double: returns a fixed submissions payload, or raises a chosen error."""
+
+    def __init__(
+        self, payload: dict[str, Any] | None = None, *, raise_msg: str | None = None
+    ) -> None:
+        self.payload = payload or {}
+        self.raise_msg = raise_msg
+
+    def get_json(self, url: str, *, ttl_seconds: int = 0) -> dict[str, Any]:
+        if self.raise_msg:
+            from vinci.netcache import HttpError
+            raise HttpError(self.raise_msg)
+        return self.payload
+
+
+def test_filing_history_parses_submissions_and_handles_404() -> None:
+    """oldest = min filingDate in filings.recent; has_older = filings.files non-empty; a 404 ⇒
+    (None, False) (UNKNOWN); a non-404 HttpError PROPAGATES (throttle/5xx → the retry loop)."""
+    from vinci.netcache import HttpError
+    recent = _SubHttp(
+        {"filings": {"recent": {"filingDate": ["2018-01-01", "2005-06-01"]}, "files": []}})
+    assert assay.filing_history(cast(CachedHttp, recent), "0000000001") == ("2005-06-01", False)
+    older = _SubHttp({"filings": {"recent": {"filingDate": ["2020-01-01"]}, "files": [{"n": "x"}]}})
+    assert assay.filing_history(cast(CachedHttp, older), "0000000001") == ("2020-01-01", True)
+    not_found = _SubHttp(raise_msg="Non-retryable 404 from https://data.sec.gov/submissions/CIK...")
+    assert assay.filing_history(cast(CachedHttp, not_found), "0001") == (None, False)  # 404→UNKNOWN
+    throttled = _SubHttp(raise_msg="Exhausted retries for https://data.sec.gov/submissions/CIK...")
+    with pytest.raises(HttpError):  # a 5xx/throttle must PROPAGATE to the self-healing retry loop
+        assay.filing_history(cast(CachedHttp, throttled), "0001")
+
+
+def test_tiers_partition_and_placebo_all_specific() -> None:
+    """Every candidate's specific+context PARTITION its terms (disjoint union); the placebo is
+    ALL-SPECIFIC; a malformed tier assignment fails LOUD at construction."""
+    for c in CANDIDATE_SPECS.values():
+        assert set(c.specific_terms) | set(c.context_terms) == set(c.terms)
+        assert not (set(c.specific_terms) & set(c.context_terms))  # disjoint tiers
+    placebo = CANDIDATE_SPECS[PLACEBO_KEY]
+    assert set(placebo.specific_terms) == set(placebo.terms) and placebo.context_terms == ()
+    with pytest.raises(ValueError, match="partition"):  # context term not in terms → fail loud
+        CandidateSpec(
+            key="x", terms=("a", "b"), note="n", specific_terms=("a",), context_terms=("c",))
+
+
+def test_contrast_criterion_math() -> None:
+    """The pre-committed contrast criterion, mechanical: passes on a real theme run above its own
+    trailing median (>=floor) while the placebo is not; fails the floor; blocked by a co-rising
+    placebo; CONFOUNDED when the placebo itself qualifies."""
+    idx = list(range(12))
+    passing = [3, 3, 3, 3, 3, 3, 3, 3, 6, 7, 3, 3]  # idx8,9 above trailing median, >=floor 3
+    flat_placebo = [2] * 12
+    assert assay.contrast_verdict(passing, flat_placebo, idx)[0].startswith("CONTRAST SHOWN")
+    below_floor = [1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 1, 1]  # above median but < floor 3
+    assert assay.contrast_verdict(below_floor, [0] * 12, idx)[0].startswith("NO CONTRAST")
+    # placebo above its OWN median (but below floor) in the same quarters → theme blocked
+    co_rise = [1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 1, 1]
+    assert assay.contrast_verdict(passing, co_rise, idx)[0].startswith("NO CONTRAST")
+    # placebo ITSELF qualifies (above median AND >=floor, 2 consecutive) → CONFOUNDED
+    assert assay.contrast_verdict([3] * 12, passing, idx)[0].startswith("CONFOUNDED")
+
+
+def _v2_quarter(*, anch: int, inc_spec: int) -> QuarterRead:
+    ic = IncumbentRead(
+        incumbent_specific=inc_spec, incumbent_context=2, new_listings=10, anchored_specific=6,
+        specific_8k=1, specific_10k=3, specific_form_unknown=0, incumbency_unknown=0,
+        top_terms=(TermContribution(term="drone", new_filers=inc_spec),))
+    return QuarterRead(
+        quarter="2021Q1", new_filers=99, new_filers_anchored=anch, total_mentions=50,
+        mentions_8k_family=5, mentions_10k_family=5, basket_excess_iwm=0.0, basket_excess_spy=0.0,
+        quadrant_by_combo=dict.fromkeys(assay.COMBOS, "EARLY"),
+        quadrant_by_combo_anchored=dict.fromkeys(assay.COMBOS, "EARLY"), rising_median_4q=3.0,
+        rising_slope_4q=1.0, incumbent=ic)
+
+
+def test_v2_render_anchored_headline_incumbency_and_tiers() -> None:
+    """The v2 card leads with the ANCHORED filer column (headline), window-relative is the legacy
+    column, and it renders the incumbency block + DRAFT tiers + incumbent decomposition."""
+    res = {c: Residence(longest_early_run=1, total_early_quarters=1) for c in assay.COMBOS}
+    card = AssayCard(
+        candidate_key="x", as_of="2021-01-01", quarters=(_v2_quarter(anch=7, inc_spec=4),),
+        basket=(), basket_rule="rule", residence_by_combo=res, residence_by_combo_anchored=res,
+        residence_by_combo_symmetric=res, divergence_age_quarters=None,
+        specific_terms=("drone", "missile"), context_terms=("defense",))
+    md = assay.render_markdown(card)
+    assert "v2 —" in md
+    assert md.index("new(anch)") < md.index("new(win)")  # anchored is the HEADLINE column
+    assert "Incumbency (v2 HEADLINE" in md and "DRAFT tiers" in md
+    assert "carrying incumbent first-mentions" in md
+    assert "| 2021Q1 | 4 | 2 | 10 | 6 |" in md  # inc-spec inc-ctx new-listings anch-spec
