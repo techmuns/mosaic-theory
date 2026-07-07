@@ -16,16 +16,24 @@ from __future__ import annotations
 import ast
 import re
 import typing
+from collections import Counter
 from datetime import date
 from pathlib import Path
 from typing import Any, cast
 
+import pytest
 from pydantic import BaseModel
 
 from vinci.netcache import CachedHttp
 from vinci.themes import assay
-from vinci.themes.assay_candidates import CANDIDATE_SPECS
-from vinci.themes.assay_schemas import AssayCard, BasketMember, QuarterRead, Residence
+from vinci.themes.assay_candidates import CANDIDATE_SPECS, PLACEBO_KEY
+from vinci.themes.assay_schemas import (
+    AssayCard,
+    BasketMember,
+    QuarterRead,
+    Residence,
+    TermContribution,
+)
 from vinci.themes.drivers import DRIVER_SPECS
 from vinci.universe import recent_share_periods
 
@@ -159,7 +167,8 @@ def _reachable_models(root: type[BaseModel]) -> set[type[BaseModel]]:
 def test_assay_card_has_no_conclusion_field() -> None:
     """No field anywhere in the AssayCard tree may name a verdict/score/rank/direction/prob."""
     models = _reachable_models(AssayCard)
-    assert {QuarterRead, BasketMember, Residence} <= models  # the walk is non-vacuous
+    # non-vacuous: the walk must reach the quarter/basket/residence models AND the v1 decomposition
+    assert {QuarterRead, BasketMember, Residence, TermContribution} <= models
     offenders = [
         f"{m.__name__}.{f}"
         for m in models
@@ -193,12 +202,15 @@ def test_assay_modules_import_no_ledger_or_scoring() -> None:
 
 
 def test_candidate_terms_track_driver_prefilter_terms() -> None:
-    """Each candidate's ``terms`` ARE the matching driver's ``prefilter_terms`` (imported by
-    identity in assay_candidates.py) - the assay and the exposure scan then cannot drift apart."""
-    assert set(CANDIDATE_SPECS) == {"ai-datacenter", "defense-demand-shift"}
-    for key, cand in CANDIDATE_SPECS.items():
-        assert cand.terms  # non-empty
-        assert cand.terms == DRIVER_SPECS[key].prefilter_terms
+    """Each THEME candidate's ``terms`` ARE the matching driver's ``prefilter_terms`` (imported by
+    identity) - the assay + exposure scan cannot drift. The placebo is a validation instrument
+    (is_placebo, hand-authored terms, NO DriverSpec to borrow from)."""
+    themes = {k: c for k, c in CANDIDATE_SPECS.items() if not c.is_placebo}
+    assert set(themes) == {"ai-datacenter", "defense-demand-shift"}
+    for key, cand in themes.items():
+        assert cand.terms and cand.terms == DRIVER_SPECS[key].prefilter_terms
+    placebo = CANDIDATE_SPECS[PLACEBO_KEY]
+    assert placebo.is_placebo and placebo.terms and PLACEBO_KEY not in DRIVER_SPECS
 
 
 # ================================================================================================
@@ -313,3 +325,149 @@ def test_share_periods_are_point_in_time_no_lookahead() -> None:
     assert "CY2022Q2I" not in keys  # qe 2022-06-30, disclosed ~Aug 2022 — postdates as_of
     assert "CY2022Q3I" not in keys  # qe 2022-09-30 — a full quarter in the FUTURE
     assert keys[-1] == "CY2022Q1I"  # latest admitted = the last plausibly-filed quarter
+
+
+# ================================================================================================
+# 6. v1 — anchored filers, ratio, decomposition, warrant exclusion, DERATED, CLI retry loop
+# ================================================================================================
+
+
+def test_anchored_vs_window_relative_filers() -> None:
+    """Window-relative BURNS IN a filer already active pre-window; the calendar-anchored 12q
+    definition (fixed lookback) does not — the exact burn-in fix v1 adds."""
+    # window 2020Q1..Q4; A active since 2019Q1 (pre-window, within 12q); B new 2020Q2; C new 2020Q4
+    cik_sets: dict[tuple[int, int], set[str]] = {
+        (2019, 1): {"A"}, (2019, 2): set(), (2019, 3): set(), (2019, 4): set(),
+        (2020, 1): {"A"}, (2020, 2): {"A", "B"}, (2020, 3): {"A"}, (2020, 4): {"A", "C"},
+    }
+    win = [(2020, 1), (2020, 2), (2020, 3), (2020, 4)]
+    wr = assay.window_relative_new_filers(cik_sets, win)
+    an = assay.anchored_new_filers(cik_sets, win, lookback=12)
+    assert wr[(2020, 1)] == 1 and wr[(2020, 3)] == 0  # A burns in at the window start
+    assert an[(2020, 1)] == 0  # A seen 2019Q1 (within 12q) → NOT new under the anchored rule
+    assert an[(2020, 2)] == 1 and an[(2020, 4)] == 1  # only the genuinely-new B, C
+    assert assay.anchored_new_ciks(cik_sets, (2020, 2), lookback=12) == {"B"}
+
+
+def test_theme_placebo_ratio_none_safe() -> None:
+    assert assay.theme_placebo_ratio(10, 5) == 2.0
+    assert assay.theme_placebo_ratio(0, 5) == 0.0
+    assert assay.theme_placebo_ratio(7, 0) is None  # placebo = 0 → None, never ZeroDivisionError
+    assert assay.theme_placebo_ratio(0, 0) is None
+
+
+class _TermEfts:
+    """efts double keyed by the quoted phrase in the URL: returns a fixed CIK list per term."""
+
+    def __init__(self, by_term: dict[str, list[str]]) -> None:
+        self.by_term = by_term
+
+    def get_json(self, url: str, *, ttl_seconds: int = 0) -> dict[str, Any]:
+        import urllib.parse
+        m = re.search(r"[?&]q=([^&]+)", url)
+        phrase = urllib.parse.unquote(m.group(1)).strip('"') if m else ""
+        hits = [{"_source": {"ciks": [c], "file_date": "2021-01-01", "file_type": "8-K"}}
+                for c in self.by_term.get(phrase, [])]
+        return {"hits": {"total": {"value": len(hits)}, "hits": hits}}
+
+
+def test_per_term_decomposition_aggregation(tmp_path: Path) -> None:
+    """Decomposition = per term, how many of the quarter's NEW ciks mentioned it (aggregation from
+    the cached reads); sorted desc, zero-contribution terms dropped."""
+    terms = ("data center", "gpu", "cooling")
+    efts = cast(CachedHttp, _TermEfts(
+        {"data center": ["1", "2", "3"], "gpu": ["2", "3"], "cooling": ["9"]}))
+    new_ciks = {"0000000001", "0000000002", "0000000003"}  # CIKs are zfilled to 10 by _efts_page
+    contrib = assay.per_term_new_contribution(
+        terms, (2021, 1), new_ciks, efts=efts, cache_root=tmp_path, max_pages=1)
+    assert [(t.term, t.new_filers) for t in contrib] == [("data center", 3), ("gpu", 2)]  # cool:0
+
+
+def test_warrant_unit_right_exclusion() -> None:
+    """Warrant/unit/right excluded: metadata-primary (Polygon type). The type-absent suffix fallback
+    fires ONLY on a >=5-char bare-class-letter shape (LIDRW/CORZR/SHAZW), so 4-char common stocks
+    ending W/U/R (SNOW, PLTR, ...) are KEPT — and it is DISABLED entirely on a metadata outage."""
+    assert assay.is_warrant_unit_right("LIDRW", "WARRANT")[0] is True  # metadata primary
+    assert assay.is_warrant_unit_right("SNOW", "CS")[0] is False  # metadata says common → kept
+    # type-absent suffix fallback: the real >=5-char rights/warrants ARE excluded (regression pins)
+    for t in ("LIDRW", "CORZR", "SHAZW"):
+        ex, why = assay.is_warrant_unit_right(t, None)
+        assert ex is True and "suffix" in why, t
+    # NEGATIVE PINS (audit fix): 4-char common stocks ending W/U/R must NOT be excluded
+    for t in ("SNOW", "PLTR", "PANW", "VIEW", "FOUR", "AAPL"):
+        assert assay.is_warrant_unit_right(t, None)[0] is False, t
+    # OUTAGE: suffix_fallback=False disables the guess (no common mass-excluded on an outage)
+    assert assay.is_warrant_unit_right("LIDRW", None, suffix_fallback=False)[0] is False
+    # build_basket: metadata drops a warrant, keeps the common
+    counts: Counter[str] = Counter({"0000000001": 100, "0000000002": 90})
+    ct = {"0000000001": "GOODW", "0000000002": "GOOD"}
+    members, drops = assay.build_basket(
+        counts, ct, {"0000000001": 1e8, "0000000002": 1e8}, {"GOODW": 5.0, "GOOD": 5.0},
+        price_date="2022-01-01", security_types={"GOODW": "WARRANT", "GOOD": "CS"})
+    assert [m.ticker for m in members] == ["GOOD"]  # the warrant is dropped, the common kept
+    assert any("warrant/unit/right" in d for d in drops)
+    # OUTAGE build: security_types=None disables the suffix fallback → a >=5-char W-suffix ticker is
+    # KEPT (metadata is the only authority and there is none), rather than mass-excluded on a guess.
+    kept, _ = assay.build_basket(
+        Counter({"0000000001": 100}), {"0000000001": "ABCDW"}, {"0000000001": 1e8},
+        {"ABCDW": 5.0}, price_date="2022-01-01", security_types=None)
+    assert [m.ticker for m in kept] == ["ABCDW"]
+
+
+def test_derated_early_flag() -> None:
+    assert assay._derated(-0.25, -0.30) is True  # both < −20%
+    assert assay._derated(-0.10, -0.30) is False  # iwm not < −20%
+    assert assay._derated(-0.25, -0.10) is False  # spy not < −20%
+    assert assay._derated(0.30, 0.30) is False  # priced up, not derated
+    assert assay._derated(None, -0.30) is False  # a price gap is never derated
+
+
+def _tiny_card(*, derated: bool, excess: float) -> AssayCard:
+    qr = QuarterRead(
+        quarter="2021Q1", new_filers=5, new_filers_anchored=4, total_mentions=10,
+        mentions_8k_family=1, mentions_10k_family=1, basket_excess_iwm=excess,
+        basket_excess_spy=excess, quadrant_by_combo=dict.fromkeys(assay.COMBOS, "EARLY"),
+        quadrant_by_combo_anchored=dict.fromkeys(assay.COMBOS, "EARLY"), rising_median_4q=3.0,
+        rising_slope_4q=1.0, top_terms=(TermContribution(term="t", new_filers=2),),
+        derated_early=derated)
+    res = {c: Residence(longest_early_run=1, total_early_quarters=1) for c in assay.COMBOS}
+    return AssayCard(
+        candidate_key="x", as_of="2021-01-01", quarters=(qr,), basket=(), basket_rule="rule",
+        residence_by_combo=res, residence_by_combo_anchored=res, residence_by_combo_symmetric=res,
+        divergence_age_quarters=None)
+
+
+def test_render_annotates_derated_early() -> None:
+    """An EARLY + DERATED quarter renders a † on the reference-combo quadrant + a footnote; a
+    non-derated EARLY quarter does not."""
+    md = assay.render_markdown(_tiny_card(derated=True, excess=-0.30))
+    assert "EARLY†" in md and "DERATED-EARLY" in md
+    assert "EARLY†" not in assay.render_markdown(_tiny_card(derated=False, excess=0.05))
+
+
+def test_assay_retry_loop_recovers_then_fails_loud(
+    monkeypatch: pytest.MonkeyPatch, tmp_path: Path
+) -> None:
+    """The CLI self-healing loop retries transient efts 5xx (cache-first) and returns once a build
+    succeeds; on exhaustion it fails LOUD naming the missing read."""
+    from vinci.cli import _assay_with_retries
+    from vinci.netcache import HttpError
+
+    monkeypatch.setattr("time.sleep", lambda *_: None)  # no real backoff wait in the test
+    card = _tiny_card(derated=False, excess=0.0)
+    calls = {"n": 0}
+
+    def build() -> AssayCard:
+        calls["n"] += 1
+        if calls["n"] < 3:
+            raise HttpError("500 from https://efts.sec.gov/LATEST/search-index?q=%22x%22&from=100")
+        return card
+
+    assert _assay_with_retries(build, label="t", attempts=5) is card
+    assert calls["n"] == 3  # failed twice, then succeeded — cache-first resumption
+
+    def always_fail() -> AssayCard:
+        raise HttpError("500 from https://efts.sec.gov/LATEST/search-index?q=%22BADQ%22")
+
+    with pytest.raises(HttpError, match="missing read.*BADQ"):
+        _assay_with_retries(always_fail, label="t", attempts=2)

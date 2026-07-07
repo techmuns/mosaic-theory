@@ -10,7 +10,7 @@ import argparse
 import json
 import sqlite3
 import sys
-from collections.abc import Sequence
+from collections.abc import Callable, Sequence
 from datetime import UTC, date, datetime
 from pathlib import Path
 
@@ -36,7 +36,7 @@ from vinci.scoring import score_ledger
 from vinci.screens import screen_universe
 from vinci.store import Store
 from vinci.themes.assay import PriceCloseFn
-from vinci.themes.assay_candidates import CANDIDATE_SPECS
+from vinci.themes.assay_candidates import CANDIDATE_SPECS, PLACEBO_KEY
 from vinci.themes.assay_schemas import AssayCard, CandidateSpec
 from vinci.themes.drivers import DRIVER_SPECS
 from vinci.universe import build_universe
@@ -811,21 +811,68 @@ def _snapshot_assay(card: AssayCard, candidate: CandidateSpec, history_root: Pat
                     n_scanned=len(card.quarters))
 
 
+def _assay_with_retries(
+    build: Callable[[], AssayCard], *, label: str, attempts: int = 6
+) -> AssayCard:
+    """Self-healing wrapper for a cache-first assay build (step 7): retry on a TRANSIENT efts 5xx
+    (the harness caches every successful read, so each retry resumes further). Fail LOUD with the
+    exact missing read when attempts exhaust — never a silent partial."""
+    import time
+
+    from vinci.netcache import HttpError
+
+    backoff, last = 20.0, ""
+    for i in range(1, attempts + 1):
+        try:
+            return build()
+        except HttpError as exc:
+            last = str(exc)
+            pause = "" if i == attempts else f" in {backoff:.0f}s"
+            print(f"  [{label}] attempt {i}/{attempts} hit a transient read error; "
+                  f"cache-first retry{pause} ...", file=sys.stderr)
+            if i < attempts:
+                time.sleep(backoff)
+                backoff = min(backoff * 1.5, 90.0)
+    raise HttpError(
+        f"assay '{label}' FAILED after {attempts} cache-first attempts; missing read: {last}")
+
+
+def _price_and_types(eod: PolygonEodClient) -> tuple[PriceCloseFn, dict[str, str] | None]:
+    """(price_fn, security_types) from one Polygon client. security_types is best-effort — on a
+    reference-pull failure, warrant detection falls back to ticker-suffix only (logged, never
+    silent)."""
+    from vinci.netcache import HttpError
+
+    try:
+        sec_types: dict[str, str] | None = {t: ty for t, ty in eod.security_types().items() if ty}
+    except HttpError as exc:
+        print(f"  security_types unavailable ({exc}); warrant detection falls back to suffix-only",
+              file=sys.stderr)
+        sec_types = None
+    return _make_price_fn(eod), sec_types
+
+
 def _cmd_themes_assay(args: argparse.Namespace) -> int:
-    """Earliness assay v0 for ONE candidate at an as-of. Deterministic reads only (EDGAR full-text +
-    Polygon); ZERO LLM. Prints the markdown card + JSON path; snapshots the quarters to history."""
+    """Earliness assay v1 for ONE candidate at an as-of. Deterministic reads only (EDGAR full-text +
+    Polygon); ZERO LLM. Self-healing (cache-first retries on transient efts 5xx). Prints the card +
+    JSON path; snapshots the quarters to history."""
     from vinci.sec import build_efts_http, build_sec_http
     from vinci.themes import assay
 
     cfg = get_config()
     cfg.ensure_dirs()
     candidate = CANDIDATE_SPECS[args.candidate]
-    card = assay.assay_candidate(
-        candidate, date.fromisoformat(args.as_of), args.quarters,
-        efts=build_efts_http(cfg), sec_http=build_sec_http(cfg),
-        edgar=EdgarClient.from_config(cfg),
-        price_fn=_make_price_fn(PolygonEodClient.from_config(cfg)),
-        cache_root=args.cache_dir or Path("data/assay_cache"), max_pages=args.max_pages)
+    efts, sec_http = build_efts_http(cfg), build_sec_http(cfg)
+    edgar = EdgarClient.from_config(cfg)
+    price_fn, sec_types = _price_and_types(PolygonEodClient.from_config(cfg))
+    cache_root = args.cache_dir or Path("data/assay_cache")
+    placebo_terms = None if candidate.is_placebo else CANDIDATE_SPECS[PLACEBO_KEY].terms
+    card = _assay_with_retries(
+        lambda: assay.assay_candidate(
+            candidate, date.fromisoformat(args.as_of), args.quarters, efts=efts, sec_http=sec_http,
+            edgar=edgar, price_fn=price_fn, cache_root=cache_root, max_pages=args.max_pages,
+            security_types=sec_types, placebo_terms=placebo_terms),
+        label=f"{args.candidate}@{args.as_of}")
     jpath = assay.emit(card, args.out_dir or Path("data/assay"))
     _snapshot_assay(card, candidate, args.history_dir or Path("data/assay_history"))
     print(assay.render_markdown(card))
@@ -835,8 +882,11 @@ def _cmd_themes_assay(args: argparse.Namespace) -> int:
 
 def _cmd_themes_assay_retrocast(args: argparse.Namespace) -> int:
     """Run the four control retrocasts, print each full card, then the pre-committed kill-criterion
-    verdict. Sanctioned network (EDGAR + Polygon only, ZERO LLM). Expected-vs-actual is PRINTED
-    evidence, NEVER auto-acted-on."""
+    verdict under BOTH velocity definitions (RECORDED window-relative + v1 anchored) side by side.
+    Sanctioned network (EDGAR + Polygon only, ZERO LLM). Self-healing (cache-first retries). The
+    anchored verdict is printed ALONGSIDE, NEVER adopted; a disagreement is reported LOUD."""
+    from functools import partial
+
     from vinci.sec import build_efts_http, build_sec_http
     from vinci.themes import assay
 
@@ -844,10 +894,11 @@ def _cmd_themes_assay_retrocast(args: argparse.Namespace) -> int:
     cfg.ensure_dirs()
     efts, sec_http = build_efts_http(cfg), build_sec_http(cfg)
     edgar = EdgarClient.from_config(cfg)
-    price_fn = _make_price_fn(PolygonEodClient.from_config(cfg))
+    price_fn, sec_types = _price_and_types(PolygonEodClient.from_config(cfg))
     cache_root = args.cache_dir or Path("data/assay_cache")
     out_dir = args.out_dir or Path("data/assay")
     hist = args.history_dir or Path("data/assay_history")
+    placebo_terms = CANDIDATE_SPECS[PLACEBO_KEY].terms
     # 2026 as-ofs approximate the frozen-basket freeze_timestamps (AI-DC 2026-07-02, defense
     # 2026-07-03); those files are git-ignored/off-repo, so these are the DOCUMENTED approximations.
     cases = [
@@ -857,7 +908,7 @@ def _cmd_themes_assay_retrocast(args: argparse.Namespace) -> int:
         ("defense-demand-shift", "2023-01-01", "EARLY residence in-window"),
     ]
     print("=" * 92)
-    print("EARLINESS-ASSAY v0 RETROCAST - FALSIFY-OR-SURVIVE. Zero LLM; EDGAR full-text + Polygon.")
+    print("EARLINESS-ASSAY v1 RETROCAST - FALSIFY-OR-SURVIVE. Zero LLM; EDGAR full-text + Polygon.")
     print("KILL CRITERION (pre-committed, verbatim):")
     print(f"  {assay.KILL_CRITERION}")
     print("=" * 92)
@@ -865,19 +916,35 @@ def _cmd_themes_assay_retrocast(args: argparse.Namespace) -> int:
     for key, asof_s, expected in cases:
         candidate = CANDIDATE_SPECS[key]
         print(f"\n----- {key} @ {asof_s}  (expected: {expected}) -----")
-        card = assay.assay_candidate(
-            candidate, date.fromisoformat(asof_s), args.quarters, efts=efts, sec_http=sec_http,
-            edgar=edgar, price_fn=price_fn, cache_root=cache_root, max_pages=args.max_pages)
+        build = partial(
+            assay.assay_candidate, candidate, date.fromisoformat(asof_s), args.quarters,
+            efts=efts, sec_http=sec_http, edgar=edgar, price_fn=price_fn, cache_root=cache_root,
+            max_pages=args.max_pages, security_types=sec_types, placebo_terms=placebo_terms)
+        card = _assay_with_retries(build, label=f"{key}@{asof_s}")
         cards.append(card)
         assay.emit(card, out_dir)
         _snapshot_assay(card, candidate, hist)
         print(assay.render_markdown(card))
-    verdict, evidence = assay.kill_verdict(cards)
+    v_rec, e_rec = assay.kill_verdict(cards)
+    v_anch, e_anch = assay.kill_verdict(cards, anchored=True)
     print("\n" + "=" * 92)
-    print("KILL-CRITERION VERDICT (printed evidence; never auto-acted-on):")
-    for e in evidence or ["(no >=2q EARLY residence recorded under any combo)"]:
+    print("KILL-CRITERION VERDICT (printed evidence; never auto-acted-on)")
+    print("\n-- RECORDED (window-relative v0 basis — THE recorded verdict):")
+    for e in e_rec or ["(no >=2q EARLY residence under any combo)"]:
         print(f"  + {e}")
-    print(f"\n  >>> {verdict}")
+    print(f"  >>> {v_rec}")
+    print("\n-- ANCHORED (v1 velocity — PENDING SANCTION; printed alongside, NOT adopted):")
+    for e in e_anch or ["(no >=2q EARLY residence under any combo)"]:
+        print(f"  + {e}")
+    print(f"  >>> {v_anch}")
+    rec_cls, anch_cls = v_rec.split()[0], v_anch.split()[0]
+    print("\n" + "=" * 92)
+    if rec_cls == anch_cls:
+        print(f"AGREEMENT: RECORDED and ANCHORED verdicts AGREE ({rec_cls}). Anchored adoption "
+              "still PENDING OPERATOR SANCTION.")
+    else:
+        print(f"!!! DISAGREEMENT: RECORDED={rec_cls} vs ANCHORED={anch_cls}. Anchored adoption "
+              "STOPPED — operator must sanction; the RECORDED verdict stands.")
     print("=" * 92)
     return 0
 
