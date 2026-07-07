@@ -2930,6 +2930,24 @@ committed public-domain EDGAR excerpts (CI-verifiable, no network).
   catches "adjusted EBITDA NEGATIVE" (Tier-1) but not the vaguer "adjusted result was a loss" (Tier-3) — a
   FACE-VALIDITY call on bear-point PRIORITIZATION, deferred; the relayer makes the test phrasing-robust
   either way, so this is a quality question, not a CI blocker.
+- **INCIDENT (HOTFIX) — live dossier view DOWN, import/const name collision from the #92 audit fix;
+  CLOSED.** The deployed dashboard's dossier view threw `SyntaxError: Identifier 'fmtPct' has already
+  been declared` — the whole ES module failed to load. Root cause: #92's eighth-coupon rounding fix
+  added a LOCAL `function fmtPct` to `views/shared/dossier.js`, which already `import`s a DIFFERENT
+  `fmtPct` (the SIGNED-% display formatter) from `lib/format.js` — two bindings, one module scope.
+  **FIX:** renamed the #92 formatter to `fmtPctExact` (+ its 3 covenant-composer call sites); the
+  import + its display call sites untouched; two names, two semantics (exact coupon repr vs signed-%
+  display), never merged. Python `_fmt_pct` unchanged (parity compares outputs, not names). **GATE GAP
+  — SPEC-SIDE OWNERSHIP:** #92's validation was FUNCTION-LEVEL parity — the node tests extract a SLICE
+  of `dossier.js` and run it in isolation, so they never loaded the module with its top-of-file
+  `import`; and `node --check` parses in script mode and does NOT flag the import/declaration dup
+  (verified: `node --check` exits 0 on the broken file). Function-level parity is not load-level
+  integrity. **INVARIANT (INVARIANT RULE):** `test_frontend_modules_load_as_esm_and_render_smoke` —
+  node dynamically imports EVERY frontend module (lib/ + views/) asserting no throw (browser globals
+  Proxy-stubbed), renders the committed MVST dossier via the now-exported `renderDossier` asserting the
+  composed `LPR + 115 bps` lead is present, and PINS the failure shape (a fixture module with an
+  import+const collision MUST fail the smoke). No artifact change — the data was correct; only the
+  view module failed to load.
 
 The **dossier-assembler is built and verified (§2)** — the queue-top now flows ranker → `dossier`.
 Remaining:
