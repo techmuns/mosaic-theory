@@ -74,7 +74,11 @@ _TOP_TERMS = 5  # decomposition: how many top contributing terms to list per qua
 _DERATE_THRESHOLD = -0.20  # excess vs BOTH benchmarks below this ⇒ DERATED-EARLY annotation
 _CAP_QOQ_FLAG_X = 5.0  # print-only sanity: a member cap moving >5x in one QoQ step is flagged
 _WUR_TYPES = {"WARRANT", "UNIT", "RIGHT", "RIGHTS"}  # Polygon security types excluded from baskets
-_WUR_SUFFIX: tuple[str, ...] = ("WS", "RT", "W", "U", "R")  # warrant/unit/right suffix fallback
+# Bare class-letter suffixes for the type-ABSENT fallback. Required shape: a base ticker + a class
+# letter (len >= 5, the LIDRW/CORZR/SHAZW pattern) — so 4-char common stocks ending W/U/R (SNOW,
+# PLTR, PANW, ...) are NOT wrongly excluded. Metadata (Polygon type) is the authoritative primary.
+_WUR_SUFFIX: tuple[str, ...] = ("W", "U", "R")
+_WUR_SUFFIX_MINLEN = 5
 
 Quadrant = str  # "EARLY" | "PRICED" | "QUIET" | "NARRATIVE" | "UNKNOWN"
 
@@ -362,16 +366,20 @@ def theme_placebo_ratio(theme_new: int, placebo_new: int) -> float | None:
     return theme_new / placebo_new if placebo_new else None
 
 
-def is_warrant_unit_right(ticker: str, sec_type: str | None) -> tuple[bool, str]:
-    """(exclude?, reason) for a warrant/unit/right class. Metadata-PRIMARY (Polygon security type);
-    a conservative ticker-suffix fallback fires ONLY when the type is absent (delisted/unknown), and
-    every suffix hit is logged loudly so a false exclusion is visible, never silent."""
+def is_warrant_unit_right(
+    ticker: str, sec_type: str | None, *, suffix_fallback: bool = True
+) -> tuple[bool, str]:
+    """(exclude?, reason) for a warrant/unit/right class. Metadata-PRIMARY (Polygon security type).
+    A conservative ticker-suffix fallback fires ONLY when THIS ticker's type is absent AND
+    ``suffix_fallback`` is on: a bare class letter (W/U/R) on a >=5-char shape (so 4-char common
+    stocks ending W/U/R — SNOW, PLTR — are KEPT). On a full metadata OUTAGE the caller passes
+    ``suffix_fallback=False`` so no common is mass-excluded on a guess. Every hit is logged."""
     if sec_type and sec_type.upper() in _WUR_TYPES:
         return True, f"polygon type={sec_type.upper()}"
-    if sec_type is None:
+    if suffix_fallback and sec_type is None:
         for suf in _WUR_SUFFIX:
-            if ticker.endswith(suf) and len(ticker) >= len(suf) + 3:
-                return True, f"ticker suffix -{suf} (no polygon type)"
+            if ticker.endswith(suf) and len(ticker) >= _WUR_SUFFIX_MINLEN:
+                return True, f"ticker suffix -{suf} (no polygon type; >=5-char class shape)"
     return False, ""
 
 
@@ -402,8 +410,11 @@ def build_basket(
     shares_source: str = "xbrl_cover_page (recent_share_periods)",
 ) -> tuple[list[BasketMember], list[str]]:
     """Top-10 obvious basket by mention count, cap-banded ($100M-$10B); warrant/unit/right classes
-    are EXCLUDED (metadata-primary, suffix-fallback). ``close_at`` = {ticker: as-of close}. Returns
-    (members, drops); each drop carries a logged reason (never a silent gap)."""
+    are EXCLUDED (metadata-primary; a conservative suffix fallback for a type-absent ticker, SKIPPED
+    entirely when ``security_types is None`` — a full metadata outage — so no common is dropped
+    on a guess). ``close_at`` = {ticker: as-of close}. Returns (members, drops); each drop carries a
+    logged reason (never a silent gap)."""
+    apply_suffix = security_types is not None  # a full outage (None) disables the suffix guess
     sec_types = security_types or {}
     members: list[BasketMember] = []
     drops: list[str] = []
@@ -414,7 +425,8 @@ def build_basket(
         if not ticker:
             drops.append(f"CIK {cik} (n={n}): no ticker in company_tickers (private/foreign)")
             continue
-        wur, why = is_warrant_unit_right(ticker, sec_types.get(ticker))
+        wur, why = is_warrant_unit_right(
+            ticker, sec_types.get(ticker), suffix_fallback=apply_suffix)
         if wur:
             drops.append(f"{ticker} (CIK {cik}, n={n}): warrant/unit/right excluded [{why}]")
             continue
@@ -548,15 +560,20 @@ def assay_candidate(
     baseline_date = quarter_end(*baseline_yq)
     qends = [quarter_end(yy, qq) for (yy, qq) in qs]
 
-    # print-only cap sanity: flag any member whose computed cap moves >5x in one QoQ step
+    # print-only cap sanity: flag a member whose cap moves >5x between CALENDAR-ADJACENT priced
+    # quarter-ends (share_count is constant, so it is really a >5x QoQ price move — a data glitch).
+    # caps is aligned 1:1 to qends (None for a price gap), so a gap-straddling pair is skipped, not
+    # mislabeled a single-quarter move.
     flagged: list[BasketMember] = []
     for m in basket:
         flag: str | None = None
         if m.share_count is not None:
             sc = m.share_count
-            caps = [sc * p for qe in qends if (p := price_fn(m.ticker, qe)) is not None]
+            caps = [sc * p if (p := price_fn(m.ticker, qe)) is not None else None for qe in qends]
             for a, b in zip(caps, caps[1:], strict=False):
-                if a > 0 and b > 0 and max(a, b) / min(a, b) > _CAP_QOQ_FLAG_X:
+                if a is None or b is None or a <= 0 or b <= 0:
+                    continue
+                if max(a, b) / min(a, b) > _CAP_QOQ_FLAG_X:
                     flag = f"cap moved >{_CAP_QOQ_FLAG_X:.0f}x QoQ (price glitch? sanity-only)"
                     break
         flagged.append(m.model_copy(update={"cap_qoq_flag": flag}) if flag else m)

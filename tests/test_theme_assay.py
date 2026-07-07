@@ -384,13 +384,21 @@ def test_per_term_decomposition_aggregation(tmp_path: Path) -> None:
 
 
 def test_warrant_unit_right_exclusion() -> None:
-    """Warrant/unit/right excluded: metadata-primary (Polygon type), suffix-fallback ONLY when the
-    type is absent; a common ending in W is KEPT when its metadata says CS."""
-    assert assay.is_warrant_unit_right("LIDRW", "WARRANT")[0] is True  # metadata
-    ex, why = assay.is_warrant_unit_right("LIDRW", None)  # suffix fallback (type absent)
-    assert ex is True and "suffix" in why
-    assert assay.is_warrant_unit_right("SNOW", "CS")[0] is False  # common ending in W, metadata=CS
-    assert assay.is_warrant_unit_right("AAPL", None)[0] is False
+    """Warrant/unit/right excluded: metadata-primary (Polygon type). The type-absent suffix fallback
+    fires ONLY on a >=5-char bare-class-letter shape (LIDRW/CORZR/SHAZW), so 4-char common stocks
+    ending W/U/R (SNOW, PLTR, ...) are KEPT — and it is DISABLED entirely on a metadata outage."""
+    assert assay.is_warrant_unit_right("LIDRW", "WARRANT")[0] is True  # metadata primary
+    assert assay.is_warrant_unit_right("SNOW", "CS")[0] is False  # metadata says common → kept
+    # type-absent suffix fallback: the real >=5-char rights/warrants ARE excluded (regression pins)
+    for t in ("LIDRW", "CORZR", "SHAZW"):
+        ex, why = assay.is_warrant_unit_right(t, None)
+        assert ex is True and "suffix" in why, t
+    # NEGATIVE PINS (audit fix): 4-char common stocks ending W/U/R must NOT be excluded
+    for t in ("SNOW", "PLTR", "PANW", "VIEW", "FOUR", "AAPL"):
+        assert assay.is_warrant_unit_right(t, None)[0] is False, t
+    # OUTAGE: suffix_fallback=False disables the guess (no common mass-excluded on an outage)
+    assert assay.is_warrant_unit_right("LIDRW", None, suffix_fallback=False)[0] is False
+    # build_basket: metadata drops a warrant, keeps the common
     counts: Counter[str] = Counter({"0000000001": 100, "0000000002": 90})
     ct = {"0000000001": "GOODW", "0000000002": "GOOD"}
     members, drops = assay.build_basket(
@@ -398,6 +406,12 @@ def test_warrant_unit_right_exclusion() -> None:
         price_date="2022-01-01", security_types={"GOODW": "WARRANT", "GOOD": "CS"})
     assert [m.ticker for m in members] == ["GOOD"]  # the warrant is dropped, the common kept
     assert any("warrant/unit/right" in d for d in drops)
+    # OUTAGE build: security_types=None disables the suffix fallback → a >=5-char W-suffix ticker is
+    # KEPT (metadata is the only authority and there is none), rather than mass-excluded on a guess.
+    kept, _ = assay.build_basket(
+        Counter({"0000000001": 100}), {"0000000001": "ABCDW"}, {"0000000001": 1e8},
+        {"ABCDW": 5.0}, price_date="2022-01-01", security_types=None)
+    assert [m.ticker for m in kept] == ["ABCDW"]
 
 
 def test_derated_early_flag() -> None:

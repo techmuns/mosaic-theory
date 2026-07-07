@@ -1763,8 +1763,9 @@ Each line: *what it does* — *verified how*.
   RECORDED (window-relative v0 basis): `PASS (RECORDED: survives — early-window premise NOT
   falsified)`. ANCHORED (v1 velocity, PENDING SANCTION): `PASS (ANCHORED: survives — early-window
   premise NOT falsified)`. **AGREEMENT: verdicts AGREE (PASS); anchored adoption remains PENDING
-  OPERATOR SANCTION.** The RECORDED residence is byte-identical to the merged v0 record (v1 did NOT
-  reclassify any recorded case — no warrants in the recorded baskets); the anchored velocity clears
+  OPERATOR SANCTION.** The RECORDED residence matches the v0 record (merged #86) EXACTLY — the
+  window-relative mechanism is unchanged and v1 reclassified no recorded case (no warrants in the
+  recorded baskets, so the warrant-exclusion fix cannot move them); the anchored velocity clears
   ≥2q EARLY on the SAME cases (defense-demand-shift @ 2023-01-01: RECORDED flat20_medrise 2/2,
   flat20_sloperise 3/3 → ANCHORED 5/5, 5/6 — the burn-in fix LENGTHENS the runs, itself a claim to
   sanction, not adopt).
@@ -1784,6 +1785,18 @@ Each line: *what it does* — *verified how*.
   not demonstrated theme-SPECIFIC anticipation. A CONTROL-SAYS-NO caveat for any live use.** On
   `feat/assay-v1`; PR opened, NOT merged. Anchored adoption + velocity-confound remediation are v2
   briefs, PENDING OPERATOR SANCTION.**
+  **— AUDIT (2026-07-07, 6-lens adversarial review of PR #91, each finding double-verified): 1 real
+  fix.** The warrant/unit/right ticker-suffix fallback was UNSOUND — bare single-letter W/U/R with a
+  len>=4 gate false-positived on common stocks (SNOW ends W, PLTR ends R), and on a Polygon
+  security-type OUTAGE (security_types=None) it was applied to EVERY ticker, mass-excluding commons.
+  FIX: bare-letter suffix now requires the >=5-char base+class-letter shape (keeps the real cases —
+  LIDRW/CORZR/SHAZW len-5 — drops the 4-char common false-positives) AND is DISABLED entirely on a
+  metadata outage (metadata is the only authority; no common excluded on a guess). Proven
+  non-regressive: re-running ai-datacenter@2026-06-01 left the basket + recorded quadrants/residence
+  byte-identical (CORZR/SHAZW still excluded). +negative pins (SNOW/PLTR/PANW kept) + an outage pin.
+  Two low fixes: the cap-QoQ sanity flag now compares only CALENDAR-ADJACENT priced quarter-ends (was
+  mislabeling a gap-straddling move 'QoQ'); STATE wording "byte-identical to the merged v0 record"
+  tightened to a precise numeric-match statement. All else the audit raised was refuted or cosmetic.**
 - _Whole suite green (ruff + mypy --strict clean; `pytest -m "not network"` passes)._
 
 ## 3. FALSIFIED — tested and retired (NOT deferred)
