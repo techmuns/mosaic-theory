@@ -2907,6 +2907,29 @@ committed public-domain EDGAR excerpts (CI-verifiable, no network).
     **ACCEPTED-LATENT (PLAUSIBLE, not reached):** `_fmt_bps` else-branch `str(v)` vs JS `String(v)` diverge
     only at exponential magnitudes (`1e-7`/`1e21` bps) — impossible for a real covenant rate, and the
     finite gate removes the inf case.
+- **INCIDENT (artifact-pass, post-#92) — TEST-LAYER class recurred across passes, both CLOSED; the p6
+  pin was an LLM-string pin IN DISGUISE.** The standing artifact pass (re-assemble MVST+VRRM → suite →
+  commit) reddened on a fresh draw TWICE: (1) `test_t2`'s conversion sub-assertion pinned LLM-reworded
+  literals (`$0.50/sh`/`2 sh`/`$1.00`) — the draw restructured the clause to "$1.00 divided by …
+  Conversion Rate: two (2) shares" so `_derive_conversion` correctly returned "" → fixed in **PR #94**
+  (guard-conditional re-derive + an assertion-level sweep). (2) `test_p6`'s `_point_tier(claim)==1.0` —
+  the draw phrased the GAAP-artifact recon "adjusted result was a loss" (Tier-3) vs the earlier "adjusted
+  EBITDA of NEGATIVE $X" (Tier-1); a **classifier result on LLM text** is a disguised LLM-string pin the
+  literal-token sweep MISSED → fixed in **PR fix/p6-invariant-relayer** (invariant-only e2e: monotonic
+  non-decreasing tiers on BOTH committed dossiers, py==JS `orderPoints` mirror, + a cited EX-99.1-recon
+  bear point EXISTS — no tier pinned). **DUAL OWNERSHIP:** (i) SPEC side — the sweep criterion (operator
+  prompt + #94) enumerated LITERAL-token forms, so a classifier/derivation-on-LLM-text pin slipped the
+  net; broadened now to "*truth depends on LLM text through ANY function*". (ii) INTERNAL-CONSISTENCY
+  side — the p6 pin (this specific claim IS Tier-1) contradicted the recorded stop-chasing / accepted-
+  residual adjudication (don't chase LLM phrasing; assert anchors) — two internal artifacts in conflict,
+  latent until a fresh draw exposed it. **INVARIANT (INVARIANT RULE):** `test_p6_ordered_points_monotonic_
+  tiers_and_recon_present_e2e` + the CLAUDE.md TEST-LAYER sharpening (classifier/deriver/formatter-on-LLM
+  = disguised pin; a LIVING-artifact e2e asserts phrasing-independent invariants only, value pins → frozen
+  fixtures). **OPEN DESIGN QUESTION — QUEUED (§Next-steps), NOT built here:** should a "GAAP profit is a
+  fair-value artifact, reconciled adjusted result = a loss" claim classify **Tier-1**? Today `_point_tier`
+  catches "adjusted EBITDA NEGATIVE" (Tier-1) but not the vaguer "adjusted result was a loss" (Tier-3) — a
+  FACE-VALIDITY call on bear-point PRIORITIZATION, deferred; the relayer makes the test phrasing-robust
+  either way, so this is a quality question, not a CI blocker.
 
 The **dossier-assembler is built and verified (§2)** — the queue-top now flows ranker → `dossier`.
 Remaining:

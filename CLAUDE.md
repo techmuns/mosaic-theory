@@ -152,7 +152,14 @@ incomplete regardless of code state.
   it reworders on every re-assembly, so an exact-string pin is guaranteed to rot the committed
   artifact. LLM-adjacent tests assert **deterministic ANCHORS** (the components present,
   order/phrasing-free — "components-present-together IS the composite-or-absent rule"), **structure**,
-  and **guard behavior**. *Facts are stable; framing is weather — and weather applies to CI.*
+  and **guard behavior**. **A classifier / derivation / formatter result on LLM text is an LLM-string
+  pin IN DISGUISE** — `_point_tier(claim)==1`, `_derive_conversion(clause)=="…"`, `fmt(x)=="…"` red on
+  a reword exactly like a literal `in`; the sweep criterion is *does the assertion's truth depend on
+  LLM-composed text through ANY function* (classifier/deriver/formatter), not just literal tokens.
+  **An e2e test on a LIVING committed artifact asserts PHRASING-INDEPENDENT INVARIANTS only** (presence
+  + citation, monotonic/structural ordering, guard behavior); a VALUE-level pin (a specific tier, a
+  specific $/sh, an exact composite) lives on a FROZEN fixture, never on the re-drawn artifact.
+  *Facts are stable; framing is weather — and weather applies to CI.*
 - **INVARIANT RULE.** Every incident closes by shipping a machine check (lint / guard / coherence
   test), or is recorded in STATE.md as consciously accepted risk. STATE.md keeps the table:
   incident → invariant → shipped Y/N.

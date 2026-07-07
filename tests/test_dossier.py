@@ -1924,26 +1924,56 @@ def test_p6_py_js_tier_classifier_parity() -> None:
         assert json.loads(out.stdout) == [dr._point_tier(c) for c in fx]  # zero divergence
 
 
-def test_p6_gaap_artifact_point_ordered_in_the_tier1_group_e2e() -> None:
-    """(P6, sharpened) On the REAL committed MVST JSON, the GAAP-artifact bear point (an
-    'adjusted EBITDA of NEGATIVE …' in a GAAP-quality claim) renders WITHIN the Tier-1 group — no
-    lower-tier point ahead of it. This is the position the JS divergence mis-ordered (T2 → #4)."""
+def test_p6_ordered_points_monotonic_tiers_and_recon_present_e2e() -> None:
+    """(P6, relayered — TEST-LAYER invariant-only) On the LIVING committed dossiers, assert the
+    PHRASING-INDEPENDENT invariants _ordered_points guards — NOT any LLM claim's tier. Pinning a
+    specific claim's tier is a classifier result on LLM text (an LLM-string pin IN DISGUISE): it
+    reddened when a fresh draw phrased the GAAP-artifact recon 'the reconciled adjusted result was a
+    loss' (Tier-3) vs the earlier 'adjusted EBITDA of NEGATIVE $X' (Tier-1). (a) _ordered_points
+    yields MONOTONIC non-decreasing tiers within each bull/bear case, on BOTH committed dossiers,
+    py==JS (the orderPoints mirror). (b) a cited bear point citing the EX-99.1 reconciliation EXISTS
+    on MVST (presence, phrasing-independent — no tier pinned). Tier VALUES stay pinned at the
+    deterministic layer on frozen fixtures (test_point_tier_* / the classifier-parity test)."""
+    import json
     import pathlib
-    p = pathlib.Path("data/dossiers/MVST/dossier.json")
-    if not p.exists():
-        pytest.skip("no committed MVST dossier.json")
-    doss = ds.Dossier.model_validate_json(p.read_text())
-    if doss.synthesis is None:
-        pytest.skip("committed MVST dossier has no synthesis")
-    ordered = dr._ordered_points(list(doss.synthesis.bear_points))
-    gaap = next((i for i, (pt, _t, _c) in enumerate(ordered)
-                 if "GAAP" in pt.claim
-                 and ("fair-value" in pt.claim or "non-cash" in pt.claim)), None)
-    if gaap is None:
-        pytest.skip("committed MVST synthesis carries no GAAP-artifact bear point")
-    n_tier1 = sum(1 for _p, t, _c in ordered if t == 1.0)
-    assert dr._point_tier(ordered[gaap][0].claim) == 1.0  # it IS Tier-1
-    assert gaap < n_tier1, f"GAAP at #{gaap + 1} but only {n_tier1} Tier-1 — a lower tier leads it"
+    import shutil
+    import subprocess
+    tickers = [t for t in ("MVST", "VRRM")
+               if pathlib.Path(f"data/dossiers/{t}/dossier.json").exists()]
+    if not tickers:
+        pytest.skip("no committed dossier.json")
+    js = pathlib.Path("frontend/views/shared/dossier.js").read_text()
+    order_block = js[js.index("const _TIERKW"):js.index("function trajectoryTable")]
+    have_node = shutil.which("node") is not None
+
+    def js_order(pts: list[typing.Any]) -> list[str]:  # the JS orderPoints mirror → ordered claims
+        rows = [{"claim": p.claim, "source_ref": p.source_ref, "cited": getattr(p, "cited", True)}
+                for p in pts]
+        driver = ("const O=orderPoints(" + json.dumps(rows)
+                  + ");console.log(JSON.stringify(O.map((p)=>p.claim)));")
+        out = subprocess.run(["node", "-e", order_block + "\n" + driver],
+                             capture_output=True, text=True, check=True)
+        return list(json.loads(out.stdout))
+
+    for t in tickers:
+        doss = ds.Dossier.model_validate_json(
+            pathlib.Path(f"data/dossiers/{t}/dossier.json").read_text())
+        if doss.synthesis is None:
+            continue
+        for case in (list(doss.synthesis.bull_points), list(doss.synthesis.bear_points)):
+            ordered = dr._ordered_points(case)
+            tiers = [tier for _p, tier, _cr in ordered]
+            # (a) invariant: the sort key leads with tier → tiers are non-decreasing WITHIN the case
+            assert tiers == sorted(tiers), f"{t}: non-monotonic tiers {tiers}"
+            if have_node:  # py==JS: the JS orderPoints mirror yields the SAME claim ordering
+                py_claims = [p.claim for p, _t, _cr in ordered]
+                assert js_order(case) == py_claims, f"{t}: py↔js order drift"
+        # (b) presence: a cited bear point citing the EX-99.1 recon exists (MVST — the P6 subject),
+        # phrasing-independent, no tier pinned
+        if t == "MVST":
+            recon = [p for p in doss.synthesis.bear_points
+                     if "EX-99.1" in (p.source_ref or "") and getattr(p, "cited", False)]
+            assert recon, "MVST: no cited EX-99.1-reconciliation bear point"
 
 
 def test_self_referential_twin_requires_resolved_period_in_the_name() -> None:
