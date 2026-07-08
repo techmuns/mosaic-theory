@@ -524,6 +524,20 @@ def test_filing_history_parses_submissions_and_handles_404() -> None:
         assay.filing_history(cast(CachedHttp, throttled), "0001")
 
 
+def test_filing_history_hardens_malformed_submissions() -> None:
+    """Malformed submissions (blank filingDate, null recent/filings) → UNKNOWN, a fail-loud gap,
+    NEVER an opaque date.fromisoformat("") or AttributeError crash."""
+    blank = _SubHttp({"filings": {"recent": {"filingDate": ["", "2020-01-01"]}, "files": []}})
+    assert assay.filing_history(cast(CachedHttp, blank), "0001") == ("2020-01-01", False)
+    all_blank = _SubHttp({"filings": {"recent": {"filingDate": ["", ""]}, "files": []}})
+    assert assay.filing_history(cast(CachedHttp, all_blank), "0001") == (None, False)
+    null_recent = _SubHttp({"filings": {"recent": None, "files": [{"n": "x"}]}})
+    assert assay.filing_history(cast(CachedHttp, null_recent), "0001") == (None, True)
+    null_filings = _SubHttp({"filings": None})
+    assert assay.filing_history(cast(CachedHttp, null_filings), "0001") == (None, False)
+    assert assay.filing_history(cast(CachedHttp, _SubHttp({})), "0001") == (None, False)
+
+
 def test_tiers_partition_and_placebo_all_specific() -> None:
     """Every candidate's specific+context PARTITION its terms (disjoint union); the placebo is
     ALL-SPECIFIC; a malformed tier assignment fails LOUD at construction."""

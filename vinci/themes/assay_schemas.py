@@ -83,8 +83,10 @@ class IncumbentRead(BaseModel, frozen=True):
 
     incumbent_specific: int  # HEADLINE — the listing-flow-immune series
     incumbent_context: int
-    new_listings: int  # non-incumbent anchored first-mentions (new-registrant flow)
-    anchored_specific: int  # total anchored-new on SPECIFIC (= incumbent + new-listing + unknown)
+    new_listings: int  # non-incumbent anchored first-mentions, ALL terms (new-registrant flow)
+    # anchored_specific is the SPECIFIC-tier anchored-new count; its split is incumbent_specific +
+    # non-incumbent-on-specific + incumbency_unknown; new_listings (all-tier) is NOT part of it.
+    anchored_specific: int  # total anchored-new CIKs on the SPECIFIC tier
     specific_8k: int  # 8-K-family split of incumbent-specific first-mentions
     specific_10k: int  # 10-K-family split
     specific_form_unknown: int  # first-mention form unavailable (pre-v2 cached read)

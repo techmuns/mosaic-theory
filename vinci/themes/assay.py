@@ -415,7 +415,8 @@ def filing_history(sec_http: CachedHttp, cik10: str) -> tuple[str | None, bool]:
     submissions, cached via the SEC CachedHttp (SEC UA + throttle reused; NO parallel client).
     ``has_older`` (``filings.files`` non-empty) means >1000 filings — a long history, incumbent
     regardless of the recent window's oldest date. A 404 (no submissions record for the CIK) returns
-    (None, False) → incumbency UNKNOWN (fail-loud gap, never guessed); throttle/5xx PROPAGATES."""
+    (None, False) → incumbency UNKNOWN (fail-loud gap, never guessed); throttle/5xx PROPAGATES.
+    Malformed submissions (null recent, blank filingDate) → UNKNOWN too, never a crash."""
     try:
         data = cast(dict[str, Any], sec_http.get_json(
             _SUBMISSIONS.format(cik=cik10), ttl_seconds=_ONE_WEEK))
@@ -423,8 +424,12 @@ def filing_history(sec_http: CachedHttp, cik10: str) -> tuple[str | None, bool]:
         if "404" in str(exc):
             return None, False  # no submissions for this CIK → UNKNOWN, not a fabricated status
         raise
-    filings = data.get("filings", {}) if isinstance(data, dict) else {}
-    dates = filings.get("recent", {}).get("filingDate") or []
+    filings = data.get("filings") if isinstance(data, dict) else None
+    if not isinstance(filings, dict):
+        return None, False  # malformed/empty submissions → UNKNOWN, never a crash or a guess
+    recent = filings.get("recent")
+    raw = recent.get("filingDate") if isinstance(recent, dict) else None
+    dates = [d for d in (raw or []) if d]  # drop blank → UNKNOWN, never fromisoformat("")
     return (min(dates) if dates else None), bool(filings.get("files"))
 
 

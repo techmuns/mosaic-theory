@@ -1844,9 +1844,10 @@ Each line: *what it does* — *verified how*.
   generic defense/military, which are CONTEXT-tier): a real improvement over v1's generic-term
   dominance. **(9e) RECORDED/ANCHORED kill verdict UNCHANGED** — PASS (RECORDED) / PASS (ANCHORED),
   AGREE; v2 did not touch the EARLY-residence verdict. **DISPOSITION — CONFOUNDED (not Phase-B, not
-  the scope-stop reduced-ship):** the incumbency machinery WORKS (incumbents correctly separated from
-  listing flow — Apple in / Cipher-Mining-2020-SPAC out; the incumbent-specific decomposition surfaces
-  shift-specific terms), BUT its NULL is broken — the placebo boilerplate baseline is not flat noise
+  the scope-stop reduced-ship):** the incumbency machinery reads as intended ON THE SHOWN EVIDENCE (the
+  (9d) incumbent-specific decomposition surfaces shift-specific terms — missile/seeker/drone/munitions,
+  not the generic CONTEXT terms a listing wave produces), BUT its NULL is broken — the placebo
+  boilerplate baseline is not flat noise
   (it self-qualifies with counts dwarfing the themes), so per the pre-committed criterion contrast
   CANNOT be claimed either way. Contrast-based Phase-B is BLOCKED pending a CLEAN null (the anchored-
   new-on-boilerplate series carries structure it should not — likely quarterly-filer / phrase-coverage
@@ -1854,6 +1855,16 @@ Each line: *what it does* — *verified how*.
   incumbency-contrast velocity axis is DEFERRED until the machinery/null is revisited (a v3 brief).
   The control did its job: it said no to the CONTROL ITSELF. On `feat/assay-v2`; PR to be opened, NOT
   merged.**
+- _Pre-merge audit (3 independent reviewers): NO critical/high bug — incumbency boundary, contrast
+  criterion (fuzz-verified), recorded-basis byte-identity, no-lookahead, zero-LLM all confirmed.
+  Corrected 2 accuracy defects + 1 latent crash: (i) the `anchored_specific` schema comment falsely
+  asserted `= incumbent + new_listings + unknown` — `new_listings` is an ALL-tier gauge, not the
+  SPECIFIC-tier partition's middle term (comment fixed; the counts were already correct); (ii) removed
+  the unsupported "Apple in / Cipher-Mining-2020-SPAC out" worked-example — per-CIK in/out is emitted
+  by NO card, so the machinery claim now rests only on the (9d) decomposition, which IS shown; (iii)
+  hardened `filing_history` vs blank `filingDate` / null `recent` (opaque fromisoformat/AttributeError
+  crash → UNKNOWN), regression-pinned. ACCEPTED, no fix: the same-date 8-K/10-K form-split tie is
+  prefilter-order-deterministic and affects only the split, never the headline `incumbent_specific`._
 - _Whole suite green (ruff + mypy --strict clean; `pytest -m "not network"` passes)._
 
 ## 3. FALSIFIED — tested and retired (NOT deferred)
