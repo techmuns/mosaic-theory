@@ -908,9 +908,11 @@ def _cmd_themes_assay_retrocast(args: argparse.Namespace) -> int:
         ("defense-demand-shift", "2023-01-01", "EARLY residence in-window"),
     ]
     print("=" * 92)
-    print("EARLINESS-ASSAY v1 RETROCAST - FALSIFY-OR-SURVIVE. Zero LLM; EDGAR full-text + Polygon.")
-    print("KILL CRITERION (pre-committed, verbatim):")
+    print("EARLINESS-ASSAY v2 RETROCAST - CONTRAST axis. Zero LLM; EDGAR + Polygon + subs.")
+    print("KILL CRITERION (v0/v1, pre-committed, verbatim):")
     print(f"  {assay.KILL_CRITERION}")
+    print("CONTRAST CRITERION (v2, pre-committed, verbatim):")
+    print(f"  {assay.CONTRAST_CRITERION}")
     print("=" * 92)
     cards: list[AssayCard] = []
     for key, asof_s, expected in cases:
@@ -945,6 +947,55 @@ def _cmd_themes_assay_retrocast(args: argparse.Namespace) -> int:
     else:
         print(f"!!! DISAGREEMENT: RECORDED={rec_cls} vs ANCHORED={anch_cls}. Anchored adoption "
               "STOPPED — operator must sanction; the RECORDED verdict stands.")
+    print("=" * 92)
+
+    # --- v2 CONTRAST criterion (pre-committed, mechanical) ---
+    card_by = {(c.candidate_key, c.as_of): c for c in cards}
+    placebo_incspec: dict[str, int] = {}  # merged placebo incumbent-specific (2018Q2..2023Q1)
+    for pa in ("2022-01-01", "2023-01-01"):
+        pbuild = partial(
+            assay.assay_candidate, CANDIDATE_SPECS[PLACEBO_KEY], date.fromisoformat(pa),
+            args.quarters,
+            efts=efts, sec_http=sec_http, edgar=edgar, price_fn=price_fn, cache_root=cache_root,
+            max_pages=args.max_pages, security_types=sec_types)
+        for qr in _assay_with_retries(pbuild, label=f"placebo@{pa}").quarters:
+            if qr.incumbent is not None:
+                placebo_incspec[qr.quarter] = qr.incumbent.incumbent_specific
+    positives = [("defense-demand-shift", "2023-01-01", "2021Q4"),
+                 ("ai-datacenter", "2022-07-01", None)]
+    print("\nCONTRAST VERDICT (v2, mechanical; incumbent-specific first-mentions)")
+    contrast_any = confounded = False
+    for key, asof_s, cutoff in positives:
+        card = card_by[key, asof_s]
+        theme = [qr.incumbent.incumbent_specific
+                 for qr in card.quarters if qr.incumbent is not None]
+        pser = [placebo_incspec.get(qr.quarter, -1) for qr in card.quarters]
+        win = "through " + cutoff if cutoff else "full window"
+        print(f"\n-- {key} @ {asof_s} (pre-re-rate: {win}) --")
+        if -1 in pser or len(theme) != len(card.quarters):
+            print("  >>> INCONCLUSIVE — placebo incumbent-specific does not cover the window")
+            continue
+        pre_idx = [i for i, qr in enumerate(card.quarters)
+                   if cutoff is None or qr.quarter <= cutoff]
+        verdict, ev = assay.contrast_verdict(theme, pser, pre_idx)
+        print(f"  theme incumbent-specific:   {theme}")
+        print(f"  placebo incumbent-specific: {pser}")
+        for e in ev:
+            print(f"  + {e}")
+        print(f"  >>> {verdict}")
+        contrast_any = contrast_any or verdict.startswith("CONTRAST SHOWN")
+        confounded = confounded or verdict.startswith("CONFOUNDED")
+    print("\n" + "=" * 92)
+    if confounded:
+        print("CONTRAST OUTCOME: CONFOUNDED — the placebo incumbent-specific itself qualifies; "
+              "the machinery cannot support a contrast claim. Revisit tiers/incumbency first.")
+    elif contrast_any:
+        print("CONTRAST OUTCOME: >=1 positive control shows CONTRAST. Velocity axis -> Phase B "
+              "(gate open PENDING ANALYST TIER RATIFICATION).")
+    else:
+        print("CONTRAST OUTCOME: NO positive control shows contrast. SCOPE-STOP ENGAGED — velocity "
+              "axis DEMOTED to a diagnostic, further velocity-axis iteration is BARRED, and "
+              "the assay ships reduced (price-axis PRICED-gate + decomposition + human reading).")
     print("=" * 92)
     return 0
 

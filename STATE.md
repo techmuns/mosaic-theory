@@ -1797,6 +1797,74 @@ Each line: *what it does* — *verified how*.
   Two low fixes: the cap-QoQ sanity flag now compares only CALENDAR-ADJACENT priced quarter-ends (was
   mislabeling a gap-straddling move 'QoQ'); STATE wording "byte-identical to the merged v0 record"
   tightened to a precise numeric-match statement. All else the audit raised was refuted or cosmetic.**
+- **Earliness-assay v2 — CONTRAST velocity axis (`feat/assay-v2`; ZERO LLM, backend-only, nothing
+  deploys). v1's controls showed the velocity axis measures LISTING-WAVE flow (theme/placebo ratio
+  0.77–1.00; generic terms dominate); v2 rebuilds it around signals a new-listing wave CANNOT
+  produce.** **OPERATOR SANCTIONS (2026-07-07, verbatim):** (1) "Calendar-anchored first-mentions
+  ADOPTED as the headline filer basis for all future cards; window-relative prints as a legacy column;
+  recorded v0/v1 bases preserved unrewritten." (2) "v2 velocity-axis redesign SANCTIONED with the
+  pre-committed SCOPE-STOP below." **WHAT CHANGED:** (a) analyst term TIERS on `CandidateSpec`
+  (`specific_terms` / `context_terms`, additive; `terms` = their union, DRIVER_SPECS identity kept;
+  a partition validator fails loud); (b) INCUMBENCY via data.sec.gov/submissions (NEW source, cached
+  through the shared SEC CachedHttp — no parallel client): a first-mention CIK is an INCUMBENT if its
+  EDGAR filing history began ≥8 quarters before its first-mention quarter (oldest `filings.recent`
+  date ≤ cutoff OR `filings.files` older-archive pages exist / >1000 filings); HEADLINE = incumbent
+  first-mentions on SPECIFIC-tier terms (anchored basis), immune to listing flow by construction, +
+  incumbent-on-context / new-listing / 8-K-vs-10-K-family splits + incumbent decomposition; (c) cards
+  lead with the anchored HEADLINE column (window-relative = legacy), retain the ratio / DERATED /
+  symmetric rows and the side-by-side RECORDED/ANCHORED verdict; (d) CLI retrocast evaluates the
+  contrast criterion mechanically. **DRAFT TIERS (verbatim, PENDING ANALYST RATIFICATION — not for
+  live use):** defense-demand-shift CONTEXT = {defense, military, warfighter, autonomy, ISR}, SPECIFIC
+  = the other 16 prefilter terms; ai-datacenter CONTEXT = {artificial intelligence, data center,
+  accelerator, thermal management, switchgear}, SPECIFIC = the other 13; placebo-boilerplate = ALL
+  SPECIFIC (the machinery null). **PRE-COMMITTED CONTRAST CRITERION + SCOPE-STOP (verbatim):** "CONTRAST
+  is shown for a case if >=2 consecutive pre-re-rate quarters have incumbent-specific first-mentions
+  strictly above that series' own trailing-4q median, with an absolute floor of >=3 in each such
+  quarter, WHILE the placebo incumbent-specific series in those quarters is NOT above its own
+  trailing-4q median. Pre-re-rate windows: defense-demand-shift@2023-01-01 = quarters through 2021Q4;
+  ai-datacenter@2022-07-01 = its full window. SCOPE-STOP: if NEITHER positive control shows contrast,
+  the velocity axis is DEMOTED to a printed diagnostic, further velocity-axis iteration is BARRED, and
+  the assay ships reduced - price-axis PRICED-gate + decomposition + human reading. If the placebo
+  incumbent series ITSELF shows a qualifying run, the incumbency machinery is confounded - report
+  loudly; contrast cannot be claimed either way." +5 network-free tests (incumbency rule, submissions
+  parse + 404/5xx, tier partition, contrast math, anchored-headline render); ruff + `mypy --strict
+  vinci` clean; suite 525 passed (1 pre-existing `test_t2`, unrelated).
+  **ACCEPTANCE RUN (2026-07-07, live EDGAR + Polygon + data.sec.gov, ZERO LLM; all 4 commands OK on
+  attempt 1; ~11.5k submissions cached). VERDICT = `CONFOUNDED` (the third pre-committed path).**
+  Readouts (verbatim): **(9a) HEADLINE incumbent-specific series** — defense-demand-shift@2023-01-01
+  (2019Q2..2023Q1) = [40,45,56,89,43,44,52,103,86,59,39,87,51,32,34,71]; ai-datacenter@2022-07-01
+  (2018Q4..2022Q3) = [17,28,25,17,21,40,15,21,30,57,40,24,30,40,20,15]. **(9b) PLACEBO incumbent-
+  specific = NOT a flat null** — [171,171,134,190,173,161,113,166,167,169,122,136,150,149,102,168]:
+  it DWARFS both themes (100-190 vs 17-103) AND self-qualifies (quarter indices [4,8,9,13,15] /
+  [5,6,10,11,15]). **(9c) CONTRAST VERDICT (verbatim), BOTH positive controls:** "CONFOUNDED — the
+  placebo series itself qualifies; contrast cannot be claimed either way." OUTCOME: "CONFOUNDED — the
+  placebo incumbent-specific itself qualifies; the machinery cannot support a contrast claim. Revisit
+  tiers/incumbency first." **(9d) INCUMBENT decomposition** — defense-2023 incumbent first-mentions
+  (2021) are led by missile/seeker/drone/munitions/artillery/UAV — the SHIFT-SPECIFIC terms (NOT the
+  generic defense/military, which are CONTEXT-tier): a real improvement over v1's generic-term
+  dominance. **(9e) RECORDED/ANCHORED kill verdict UNCHANGED** — PASS (RECORDED) / PASS (ANCHORED),
+  AGREE; v2 did not touch the EARLY-residence verdict. **DISPOSITION — CONFOUNDED (not Phase-B, not
+  the scope-stop reduced-ship):** the incumbency machinery reads as intended ON THE SHOWN EVIDENCE (the
+  (9d) incumbent-specific decomposition surfaces shift-specific terms — missile/seeker/drone/munitions,
+  not the generic CONTEXT terms a listing wave produces), BUT its NULL is broken — the placebo
+  boilerplate baseline is not flat noise
+  (it self-qualifies with counts dwarfing the themes), so per the pre-committed criterion contrast
+  CANNOT be claimed either way. Contrast-based Phase-B is BLOCKED pending a CLEAN null (the anchored-
+  new-on-boilerplate series carries structure it should not — likely quarterly-filer / phrase-coverage
+  effects); the anchored-headline + DRAFT-tier sanctions stand recorded, but reliance on the
+  incumbency-contrast velocity axis is DEFERRED until the machinery/null is revisited (a v3 brief).
+  The control did its job: it said no to the CONTROL ITSELF. On `feat/assay-v2`; PR to be opened, NOT
+  merged.**
+- _Pre-merge audit (3 independent reviewers): NO critical/high bug — incumbency boundary, contrast
+  criterion (fuzz-verified), recorded-basis byte-identity, no-lookahead, zero-LLM all confirmed.
+  Corrected 2 accuracy defects + 1 latent crash: (i) the `anchored_specific` schema comment falsely
+  asserted `= incumbent + new_listings + unknown` — `new_listings` is an ALL-tier gauge, not the
+  SPECIFIC-tier partition's middle term (comment fixed; the counts were already correct); (ii) removed
+  the unsupported "Apple in / Cipher-Mining-2020-SPAC out" worked-example — per-CIK in/out is emitted
+  by NO card, so the machinery claim now rests only on the (9d) decomposition, which IS shown; (iii)
+  hardened `filing_history` vs blank `filingDate` / null `recent` (opaque fromisoformat/AttributeError
+  crash → UNKNOWN), regression-pinned. ACCEPTED, no fix: the same-date 8-K/10-K form-split tie is
+  prefilter-order-deterministic and affects only the split, never the headline `incumbent_specific`._
 - _Whole suite green (ruff + mypy --strict clean; `pytest -m "not network"` passes)._
 
 ## 3. FALSIFIED — tested and retired (NOT deferred)

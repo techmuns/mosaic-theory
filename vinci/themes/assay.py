@@ -30,6 +30,7 @@ from vinci.themes.assay_schemas import (
     AssayCard,
     BasketMember,
     CandidateSpec,
+    IncumbentRead,
     QuarterRead,
     Residence,
     TermContribution,
@@ -55,6 +56,19 @@ KILL_CRITERION = (
     "consecutive quarters of EARLY-quadrant residence before their re-rates - under ANY "
     "boundary combo in the sensitivity grid - the early-window premise is falsified and the "
     "assay build STOPS at this harness."
+)
+
+# -- v2 pre-committed CONTRAST criterion + SCOPE-STOP (printed VERBATIM in the retrocast + STATE) --
+CONTRAST_CRITERION = (
+    "CONTRAST is shown for a case if >=2 consecutive pre-re-rate quarters have incumbent-specific "
+    "first-mentions strictly above that series' own trailing-4q median, with an absolute floor of "
+    ">=3 in each such quarter, WHILE the placebo incumbent-specific series in those quarters is "
+    "NOT above its own trailing-4q median. Pre-re-rate windows: defense-demand-shift@2023-01-01 = "
+    "quarters through 2021Q4; ai-datacenter@2022-07-01 = its full window. SCOPE-STOP: if NEITHER "
+    "positive control shows contrast, the velocity axis is DEMOTED to a diagnostic, further "
+    "velocity-axis iteration is BARRED, and the assay ships reduced - price-axis PRICED-gate + "
+    "decomposition + human reading. If the placebo incumbent series ITSELF shows a qualifying run, "
+    "the incumbency machinery is confounded - report loudly; contrast cannot be claimed either way."
 )
 
 # -- boundary sensitivity grid: price-flat threshold x activity-rising test --
@@ -169,6 +183,7 @@ def term_quarter_read(
         return cast(dict[str, Any], json.loads(path.read_text()))
     startdt, enddt = quarter_start(y, q).isoformat(), quarter_end(y, q).isoformat()
     first_dates: dict[str, str] = {}
+    first_forms: dict[str, str] = {}  # v2: form-family of each CIK's EARLIEST mention
     cik_counts: Counter[str] = Counter()
     forms: Counter[str] = Counter()
     total = 0
@@ -180,12 +195,13 @@ def term_quarter_read(
             cik_counts[cik] += 1
             if cik not in first_dates or (fdate and fdate < first_dates[cik]):
                 first_dates[cik] = fdate
+                first_forms[cik] = fam
         if (page + 1) * 100 >= total:  # stop by POSITION vs total — cik-less hits never truncate
             break
     else:
         capped = True  # ran the full page cap without reaching total → enumeration is a LOWER BOUND
     out = {"first_dates": first_dates, "cik_counts": dict(cik_counts), "total": total,
-           "forms": dict(forms), "capped": capped}
+           "forms": dict(forms), "capped": capped, "first_forms": first_forms}
     path.write_text(json.dumps(out))
     return out
 
@@ -384,6 +400,136 @@ def is_warrant_unit_right(
 
 
 # ==================================================================================================
+# v2 incumbency (data.sec.gov/submissions, cached via the shared SEC CachedHttp) + tiers + contrast
+# ==================================================================================================
+_SUBMISSIONS = "https://data.sec.gov/submissions/CIK{cik}.json"
+_INCUMBENT_LAG_Q = 8  # incumbent if history began >=8 quarters before the first-mention quarter
+
+
+def _qidx(y: int, q: int) -> int:
+    return y * 4 + (q - 1)
+
+
+def filing_history(sec_http: CachedHttp, cik10: str) -> tuple[str | None, bool]:
+    """(oldest filing date in ``filings.recent``, has-older-archive-pages) from data.sec.gov
+    submissions, cached via the SEC CachedHttp (SEC UA + throttle reused; NO parallel client).
+    ``has_older`` (``filings.files`` non-empty) means >1000 filings — a long history, incumbent
+    regardless of the recent window's oldest date. A 404 (no submissions record for the CIK) returns
+    (None, False) → incumbency UNKNOWN (fail-loud gap, never guessed); throttle/5xx PROPAGATES.
+    Malformed submissions (null recent, blank filingDate) → UNKNOWN too, never a crash."""
+    try:
+        data = cast(dict[str, Any], sec_http.get_json(
+            _SUBMISSIONS.format(cik=cik10), ttl_seconds=_ONE_WEEK))
+    except HttpError as exc:
+        if "404" in str(exc):
+            return None, False  # no submissions for this CIK → UNKNOWN, not a fabricated status
+        raise
+    filings = data.get("filings") if isinstance(data, dict) else None
+    if not isinstance(filings, dict):
+        return None, False  # malformed/empty submissions → UNKNOWN, never a crash or a guess
+    recent = filings.get("recent")
+    raw = recent.get("filingDate") if isinstance(recent, dict) else None
+    dates = [d for d in (raw or []) if d]  # drop blank → UNKNOWN, never fromisoformat("")
+    return (min(dates) if dates else None), bool(filings.get("files"))
+
+
+def is_incumbent(oldest_date: str | None, has_older: bool, fmq: tuple[int, int]) -> bool | None:
+    """Incumbent iff filing history began >= ``_INCUMBENT_LAG_Q`` quarters before the first-mention
+    quarter ``fmq``. ``has_older`` (>1000 filings) ⇒ incumbent. ``oldest_date`` absent with no older
+    pages ⇒ None (submissions missing — a fail-loud gap, never a guessed status)."""
+    if has_older:
+        return True
+    if oldest_date is None:
+        return None
+    return _qidx(*fmq) - _qidx(*quarter_of(date.fromisoformat(oldest_date))) >= _INCUMBENT_LAG_Q
+
+
+_TermQReads = dict[str, dict[tuple[int, int], dict[str, Any]]]  # {term: {(y,q): term_quarter_read}}
+
+
+def _tier_cik_sets(
+    reads: _TermQReads, tier_terms: tuple[str, ...], quarters: list[tuple[int, int]]
+) -> dict[tuple[int, int], set[str]]:
+    """Union CIK set per quarter over a TIER's terms (from the cached per-term reads)."""
+    out: dict[tuple[int, int], set[str]] = {}
+    for q in quarters:
+        s: set[str] = set()
+        for t in tier_terms:
+            s |= set(reads[t][q]["cik_counts"].keys())
+        out[q] = s
+    return out
+
+
+def _spec_first_form(
+    reads: _TermQReads, spec_terms: tuple[str, ...], q: tuple[int, int], cik: str
+) -> str | None:
+    """Form-family of a CIK's EARLIEST specific-term mention in quarter q (for the 8-K/10-K split).
+    None if unavailable (a pre-v2 cache lacks ``first_forms`` — honestly bucketed, not faked)."""
+    best_date: str | None = None
+    best_form: str | None = None
+    for t in spec_terms:
+        d = reads[t][q]["first_dates"].get(cik)
+        if d and (best_date is None or d < best_date):
+            best_date, best_form = d, reads[t][q].get("first_forms", {}).get(cik)
+    return best_form
+
+
+def _incumbent_decomp(
+    reads: _TermQReads, spec_terms: tuple[str, ...], q: tuple[int, int], inc_ciks: set[str],
+    top: int = _TOP_TERMS,
+) -> tuple[TermContribution, ...]:
+    """Which SPECIFIC terms carry the incumbent first-mentions in q (aggregation over cache)."""
+    contrib = [TermContribution(term=t, new_filers=c) for t in spec_terms
+               if (c := len(set(reads[t][q]["cik_counts"].keys()) & inc_ciks))]
+    contrib.sort(key=lambda x: (-x.new_filers, x.term))
+    return tuple(contrib[:top])
+
+
+def _above_trailing_median(series: list[int], i: int) -> bool | None:
+    """Is series[i] strictly above its own trailing-4q median? None if <4 priors (undefined)."""
+    if i < 4:
+        return None
+    return series[i] > statistics.median(series[i - 4:i])
+
+
+def _has_consecutive_run(idx: list[int], k: int) -> bool:
+    """True if the sorted unique indices contain a run of >=k consecutive integers."""
+    s = sorted(set(idx))
+    run = 1 if s else 0
+    for a, b in zip(s, s[1:], strict=False):
+        run = run + 1 if b == a + 1 else 1
+        if run >= k:
+            return True
+    return run >= k
+
+
+def contrast_verdict(
+    theme_incspec: list[int], placebo_incspec: list[int], pre_re_rate_idx: list[int], *,
+    floor: int = 3,
+) -> tuple[str, list[str]]:
+    """The PRE-COMMITTED contrast criterion (mechanical), for ONE positive control. theme/placebo
+    incumbent-specific series are aligned per quarter; ``pre_re_rate_idx`` = the pre-re-rate quarter
+    indices. If the placebo series ITSELF shows a qualifying >=2q run → CONFOUNDED (loud)."""
+    ev: list[str] = []
+    p_self = [i for i in range(len(placebo_incspec))
+              if _above_trailing_median(placebo_incspec, i) and placebo_incspec[i] >= floor]
+    if _has_consecutive_run(p_self, 2):
+        ev.append(f"placebo self-qualifying quarter indices: {sorted(set(p_self))}")
+        return ("CONFOUNDED — the placebo series itself qualifies; contrast cannot "
+                "be claimed either way"), ev
+    qual: list[int] = []
+    for i in pre_re_rate_idx:
+        if (_above_trailing_median(theme_incspec, i) and theme_incspec[i] >= floor
+                and not _above_trailing_median(placebo_incspec, i)):
+            qual.append(i)
+            ev.append(f"idx {i}: theme inc-spec={theme_incspec[i]} > its trailing-4q median "
+                      f"(floor>={floor}); placebo={placebo_incspec[i]} NOT above trailing median")
+    if _has_consecutive_run(qual, 2):
+        return "CONTRAST SHOWN — >=2 consecutive pre-re-rate quarters meet the criterion", ev
+    return "NO CONTRAST — no >=2 consecutive pre-re-rate quarters meet the criterion", ev
+
+
+# ==================================================================================================
 # Basket construction + pricing (network via injected clients)
 # ==================================================================================================
 def company_ticker_map(sec_http: CachedHttp) -> dict[str, str]:
@@ -509,6 +655,7 @@ def assay_candidate(
     cik_first: dict[str, str] = {}  # RECORDED: earliest-mention date per CIK within the window
     cik_counts: Counter[str] = Counter()  # basket mention counts (trailing 8 quarters)
     cik_sets: dict[tuple[int, int], set[str]] = {}  # v1: CIK set per quarter (window+lookback)
+    reads_by_term_q: _TermQReads = {}  # v2: per-term per-quarter reads (tier + incumbency)
     total_by_q: dict[tuple[int, int], int] = dict.fromkeys(qs, 0)
     f8_by_q: dict[tuple[int, int], int] = dict.fromkeys(qs, 0)
     f10_by_q: dict[tuple[int, int], int] = dict.fromkeys(qs, 0)
@@ -516,6 +663,7 @@ def assay_candidate(
     for term in candidate.terms:
         for y, q in ext_qs:
             r = term_quarter_read(efts, cache_root, term, y, q, max_pages=max_pages)
+            reads_by_term_q.setdefault(term, {})[y, q] = r
             cik_sets.setdefault((y, q), set()).update(r["cik_counts"].keys())
             if (y, q) not in window:
                 continue
@@ -544,6 +692,37 @@ def assay_candidate(
         placebo_sets = cik_sets_by_quarter(
             placebo_terms, ext_qs, efts=efts, cache_root=cache_root, max_pages=max_pages)
         placebo_by_q = anchored_new_filers(placebo_sets, qs)
+
+    # v2 INCUMBENCY (data.sec.gov/submissions, cached) — HEADLINE = incumbent first-mentions on
+    # SPECIFIC-tier terms (anchored basis), immune to new-listing flow by construction.
+    spec_sets = _tier_cik_sets(reads_by_term_q, candidate.specific_terms, ext_qs)
+    ctx_sets = _tier_cik_sets(reads_by_term_q, candidate.context_terms, ext_qs)
+    anew_spec = {qt: anchored_new_ciks(spec_sets, qt) for qt in qs}
+    anew_ctx = {qt: anchored_new_ciks(ctx_sets, qt) for qt in qs}
+    anew_all = {qt: anchored_new_ciks(cik_sets, qt) for qt in qs}
+    need = set().union(*anew_spec.values(), *anew_ctx.values(), *anew_all.values())
+    hist = {c: filing_history(sec_http, c) for c in sorted(need)}  # cached submissions, one per CIK
+    incumbent_reads: dict[tuple[int, int], IncumbentRead] = {}
+    for qt in qs:
+        spec_status = {c: is_incumbent(*hist[c], qt) for c in anew_spec[qt]}
+        inc_spec = {c for c, s in spec_status.items() if s is True}
+        f8 = f10 = funk = 0
+        for c in inc_spec:
+            fm = _spec_first_form(reads_by_term_q, candidate.specific_terms, qt, c)
+            if fm == "8k":
+                f8 += 1
+            elif fm == "10k":
+                f10 += 1
+            else:
+                funk += 1
+        incumbent_reads[qt] = IncumbentRead(
+            incumbent_specific=len(inc_spec),
+            incumbent_context=sum(is_incumbent(*hist[c], qt) is True for c in anew_ctx[qt]),
+            new_listings=sum(is_incumbent(*hist[c], qt) is False for c in anew_all[qt]),
+            anchored_specific=len(anew_spec[qt]), specific_8k=f8, specific_10k=f10,
+            specific_form_unknown=funk,
+            incumbency_unknown=sum(1 for s in spec_status.values() if s is None),
+            top_terms=_incumbent_decomp(reads_by_term_q, candidate.specific_terms, qt, inc_spec))
 
     ct = company_ticker_map(sec_http)
     # POINT-IN-TIME: reuse the universe helper's 40-day filing-lag gate so basket cap-banding never
@@ -623,7 +802,7 @@ def assay_candidate(
             basket_excess_iwm=ex_iwm, basket_excess_spy=ex_spy, quadrant_by_combo=quad,
             quadrant_by_combo_anchored=quad_anch, rising_median_4q=med, rising_slope_4q=slope,
             top_terms=top_terms, placebo_ratio=pr, derated_early=_derated(ex_iwm, ex_spy),
-            data_gaps=gaps))
+            incumbent=incumbent_reads[y, q], data_gaps=gaps))
 
     residence = {c: early_residence([r.quadrant_by_combo[c] for r in reads]) for c in COMBOS}
     residence_anch = {
@@ -644,6 +823,14 @@ def assay_candidate(
         "RISING-TEST inputs (median, slope) are over the trailing 4q EXCLUSIVE of the current "
         "quarter (velocity[i-4:i]).",
         "SYMMETRIC ±band residence is REPORTED-ONLY (|excess| < threshold); fed to NO verdict.",
+        "v2 INCUMBENCY (data.sec.gov/submissions, cached): HEADLINE = incumbent first-mentions on "
+        f"SPECIFIC-tier terms (anchored). Incumbent = filing history began >= {_INCUMBENT_LAG_Q}q "
+        "before the first-mention quarter. First-mention is within the 12q lookback, so an "
+        "incumbent re-engaging after >12q of silence counts as NEW; for incumbents that "
+        "re-engagement is itself shift evidence.",
+        "v2 TIERS are DRAFT — PENDING ANALYST RATIFICATION (not adopted for live use).",
+        "v2 incumbent 8-K/10-K form-split has an UNKNOWN bucket for first-mentions from a pre-v2 "
+        "efts cache (no per-CIK first-form recorded); honest, never fabricated.",
     ]
     if placebo_by_q:
         caveats.append("RATIO = theme anchored-filers / placebo anchored-filers "
@@ -660,7 +847,9 @@ def assay_candidate(
         candidate_key=candidate.key, as_of=as_of.isoformat(), quarters=tuple(reads),
         basket=tuple(basket), basket_rule=THE_BASKET_RULE, residence_by_combo=residence,
         residence_by_combo_anchored=residence_anch, residence_by_combo_symmetric=residence_sym,
-        divergence_age_quarters=div_age, is_placebo=candidate.is_placebo, caveats=caveats)
+        divergence_age_quarters=div_age, is_placebo=candidate.is_placebo,
+        specific_terms=candidate.specific_terms, context_terms=candidate.context_terms,
+        caveats=caveats)
 
 
 def kill_verdict(cards: list[AssayCard], *, anchored: bool = False) -> tuple[str, list[str]]:
@@ -696,17 +885,47 @@ def kill_verdict(cards: list[AssayCard], *, anchored: bool = False) -> tuple[str
     )
 
 
+def _render_incumbency(card: AssayCard) -> list[str]:
+    """The v2 incumbency block: the listing-flow-immune HEADLINE (incumbent-specific series) + the
+    context/new-listing/form splits + which SPECIFIC terms carry the incumbent first-mentions."""
+    if not any(r.incumbent for r in card.quarters):
+        return ["", "## Incumbency (v2)", "", "_(no tiers defined for this candidate)_"]
+    out = ["", "## Incumbency (v2 HEADLINE — incumbent first-mentions on SPECIFIC terms, anchored)",
+           "", "| quarter | inc-specific | inc-context | new-listings | anch-specific | 8-K | 10-K "
+           "| form-unk | inc-unknown |", "|---|---|---|---|---|---|---|---|---|"]
+    for r in card.quarters:
+        ic = r.incumbent
+        if ic is None:
+            continue
+        out.append(
+            f"| {r.quarter} | {ic.incumbent_specific} | {ic.incumbent_context} | {ic.new_listings} "
+            f"| {ic.anchored_specific} | {ic.specific_8k} | {ic.specific_10k} "
+            f"| {ic.specific_form_unknown} | {ic.incumbency_unknown} |")
+    out += ["", "_inc-specific = HEADLINE (listing-flow-immune); inc-unknown = submissions absent "
+            "(NOT classified); form-unk = first-mention form from a pre-v2 cache (honest unk)._",
+            "", "## Top SPECIFIC terms carrying incumbent first-mentions (per quarter)", ""]
+    inc_lines: list[str] = []
+    for r in card.quarters:
+        if r.incumbent and r.incumbent.top_terms:
+            inc_lines.append(f"- {r.quarter}: " + ", ".join(
+                f"{t.term} ({t.new_filers})" for t in r.incumbent.top_terms))
+    out += inc_lines or ["_(no incumbent first-mentions on specific terms in-window)_"]
+    return out
+
+
 def render_markdown(card: AssayCard) -> str:
-    """The human-facing card: quarterly table (BOTH filer definitions + classifier inputs + ratio +
-    DERATED), per-term decomposition, basket + cap provenance, residence THREE ways, caveats."""
+    """The human-facing card: quarterly table (anchored HEADLINE + window-relative + classifier
+    inputs + ratio + DERATED), the v2 INCUMBENCY block + DRAFT tiers + incumbent decomposition, the
+    anchored decomposition, basket + cap provenance, residence THREE ways, caveats."""
     kind = "placebo · VALIDATION INSTRUMENT" if card.is_placebo else "theme"
-    out = [f"# Earliness assay v1 — {card.candidate_key} ({kind}, as-of {card.as_of})", "",
+    out = [f"# Earliness assay v2 — {card.candidate_key} ({kind}, as-of {card.as_of})", "",
            f"**Basket rule:** {card.basket_rule}", "",
+           f"**DRAFT tiers (PENDING RATIFICATION):** SPECIFIC = {list(card.specific_terms)}; "
+           f"CONTEXT = {list(card.context_terms)}", "",
            "## Quarterly read (velocity x price)", "",
-           "new(win) = window-relative RECORDED v0 basis · new(anch) = calendar-anchored 12q (v1, "
-           "PENDING) · ratio = theme/placebo anchored filers · med4q/slope4q = rising-test "
-           "inputs over velocity[i-4:i]", "",
-           "| quarter | new(win) | new(anch) | ratio | mentions | 8-K | 10-K | med4q | slope4q "
+           "new(anch) = calendar-anchored 12q HEADLINE (v2) · new(win) = window-relative legacy "
+           "column · ratio = theme/placebo anchored · med4q/slope4q over velocity[i-4:i]", "",
+           "| quarter | new(anch) | new(win) | ratio | mentions | 8-K | 10-K | med4q | slope4q "
            "| vs IWM | vs SPY | quad rec | quad anch |",
            "|---|---|---|---|---|---|---|---|---|---|---|---|---|"]
     for r in card.quarters:
@@ -720,12 +939,13 @@ def render_markdown(card: AssayCard) -> str:
             qr += "†"
         qa = r.quadrant_by_combo_anchored[_REFERENCE_COMBO]
         out.append(
-            f"| {r.quarter} | {r.new_filers} | {r.new_filers_anchored} | {ratio} "
+            f"| {r.quarter} | {r.new_filers_anchored} | {r.new_filers} | {ratio} "
             f"| {r.total_mentions} | {r.mentions_8k_family} | {r.mentions_10k_family} "
             f"| {med} | {slp} | {ei} | {es} | {qr} | {qa} |")
-    out += ["", "_quad = ref combo (flat20_medrise); † = DERATED-EARLY (excess < −20% vs BOTH). "
-            "Rising inputs are trailing 4q EXCLUSIVE of the current quarter._",
-            "", "## Top terms driving new filers (anchored, per quarter)", ""]
+    out += ["", "_new(anch) is the v2 HEADLINE; new(win) is legacy (RECORDED v0 basis). quad = ref "
+            "combo; † = DERATED-EARLY (excess < −20% vs BOTH). Rising inputs trailing exclusive._"]
+    out += _render_incumbency(card)
+    out += ["", "## Top terms driving new filers (anchored, per quarter)", ""]
     term_lines = [f"- {r.quarter}: " + ", ".join(f"{t.term} ({t.new_filers})" for t in r.top_terms)
                   for r in card.quarters if r.top_terms]
     out += term_lines or ["_(no anchored new filers in-window)_"]
