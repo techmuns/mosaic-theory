@@ -913,6 +913,8 @@ def _cmd_themes_assay_retrocast(args: argparse.Namespace) -> int:
     print(f"  {assay.KILL_CRITERION}")
     print("CONTRAST CRITERION (v2, pre-committed, verbatim):")
     print(f"  {assay.CONTRAST_CRITERION}")
+    print("FINAL CRITERION (v2.1, pre-committed, verbatim):")
+    print(f"  {assay.FINAL_CRITERION}")
     print("=" * 92)
     cards: list[AssayCard] = []
     for key, asof_s, expected in cases:
@@ -952,6 +954,7 @@ def _cmd_themes_assay_retrocast(args: argparse.Namespace) -> int:
     # --- v2 CONTRAST criterion (pre-committed, mechanical) ---
     card_by = {(c.candidate_key, c.as_of): c for c in cards}
     placebo_incspec: dict[str, int] = {}  # merged placebo incumbent-specific (2018Q2..2023Q1)
+    gated_placebo: dict[str, int] = {}  # v2.1 merged GATED placebo incumbent-specific
     for pa in ("2022-01-01", "2023-01-01"):
         pbuild = partial(
             assay.assay_candidate, CANDIDATE_SPECS[PLACEBO_KEY], date.fromisoformat(pa),
@@ -961,6 +964,7 @@ def _cmd_themes_assay_retrocast(args: argparse.Namespace) -> int:
         for qr in _assay_with_retries(pbuild, label=f"placebo@{pa}").quarters:
             if qr.incumbent is not None:
                 placebo_incspec[qr.quarter] = qr.incumbent.incumbent_specific
+                gated_placebo[qr.quarter] = qr.incumbent.gated_incumbent_specific
     positives = [("defense-demand-shift", "2023-01-01", "2021Q4"),
                  ("ai-datacenter", "2022-07-01", None)]
     print("\nCONTRAST VERDICT (v2, mechanical; incumbent-specific first-mentions)")
@@ -996,6 +1000,41 @@ def _cmd_themes_assay_retrocast(args: argparse.Namespace) -> int:
         print("CONTRAST OUTCOME: NO positive control shows contrast. SCOPE-STOP ENGAGED — velocity "
               "axis DEMOTED to a diagnostic, further velocity-axis iteration is BARRED, and "
               "the assay ships reduced (price-axis PRICED-gate + decomposition + human reading).")
+    print("=" * 92)
+
+    # --- v2.1 FINAL criterion (filing-continuity-GATED series; pre-committed, mechanical) ---
+    print("\nFINAL VERDICT (v2.1, mechanical; filing-continuity-GATED incumbent-specific)")
+    gated_any = gated_confounded = False
+    for key, asof_s, cutoff in positives:
+        card = card_by[key, asof_s]
+        gtheme = [qr.incumbent.gated_incumbent_specific
+                  for qr in card.quarters if qr.incumbent is not None]
+        gpser = [gated_placebo.get(qr.quarter, -1) for qr in card.quarters]
+        win = "through " + cutoff if cutoff else "full window"
+        print(f"\n-- {key} @ {asof_s} (pre-re-rate: {win}) --")
+        if -1 in gpser or len(gtheme) != len(card.quarters):
+            print("  >>> INCONCLUSIVE — gated placebo does not cover the window")
+            continue
+        pre_idx = [i for i, qr in enumerate(card.quarters)
+                   if cutoff is None or qr.quarter <= cutoff]
+        verdict, ev = assay.contrast_verdict(gtheme, gpser, pre_idx)
+        print(f"  gated theme incumbent-specific:   {gtheme}")
+        print(f"  gated placebo incumbent-specific: {gpser}")
+        for e in ev:
+            print(f"  + {e}")
+        print(f"  >>> {verdict}")
+        gated_any = gated_any or verdict.startswith("CONTRAST SHOWN")
+        gated_confounded = gated_confounded or verdict.startswith("CONFOUNDED")
+    print("\n" + "=" * 92)
+    if gated_confounded or not gated_any:
+        why = ("the GATED placebo still self-qualifies (criterion i failed)" if gated_confounded
+               else "NO positive control shows contrast on the gated series")
+        print("FINAL OUTCOME: SCOPE-STOP EXECUTES FINALLY — " + why + ". Velocity axis DEMOTED "
+              "to a printed diagnostic, velocity-axis iteration BARRED; the assay ships reduced "
+              "(price-axis PRICED-gate + decomposition + human reading).")
+    else:
+        print("FINAL OUTCOME: CONTRAST SHOWN on the gated series — velocity axis PROMOTED to "
+              "evidential; Phase-B cards carry it (PENDING ANALYST TIER RATIFICATION).")
     print("=" * 92)
     return 0
 

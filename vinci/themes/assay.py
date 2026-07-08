@@ -71,6 +71,16 @@ CONTRAST_CRITERION = (
     "the incumbency machinery is confounded - report loudly; contrast cannot be claimed either way."
 )
 
+# -- v2.1 pre-committed FINAL criterion (continuity gate; VERBATIM in retrocast + STATE) --
+FINAL_CRITERION = (
+    "(i) The gated placebo incumbent-specific series must show NO self-qualifying run (same run "
+    "definition as v2). (ii) If and only if the placebo is clean, the identical contrast criterion "
+    "applies to the gated theme series on the two positive controls. (iii) If the placebo STILL "
+    "self-qualifies OR neither positive control shows contrast, the SCOPE-STOP EXECUTES FINALLY: "
+    "velocity axis demoted to printed diagnostic, further velocity iteration BARRED, assay ships "
+    "reduced (price-gate + decomposition + human reading)."
+)
+
 # -- boundary sensitivity grid: price-flat threshold x activity-rising test --
 _PRICE_FLAT: dict[str, float] = {"flat20": 0.20, "flat30": 0.30}  # excess < threshold => price-flat
 _ACTIVITY: tuple[str, ...] = ("medrise", "sloperise")  # > trailing-4q median | positive 4q slope
@@ -404,6 +414,7 @@ def is_warrant_unit_right(
 # ==================================================================================================
 _SUBMISSIONS = "https://data.sec.gov/submissions/CIK{cik}.json"
 _INCUMBENT_LAG_Q = 8  # incumbent if history began >=8 quarters before the first-mention quarter
+_CONTINUITY_Q = 4  # v2.1 gate: first-mention COUNTS only if the CIK filed in each prior 4q
 
 
 def _qidx(y: int, q: int) -> int:
@@ -442,6 +453,46 @@ def is_incumbent(oldest_date: str | None, has_older: bool, fmq: tuple[int, int])
     if oldest_date is None:
         return None
     return _qidx(*fmq) - _qidx(*quarter_of(date.fromisoformat(oldest_date))) >= _INCUMBENT_LAG_Q
+
+
+def filed_quarters(sec_http: CachedHttp, cik10: str) -> tuple[frozenset[tuple[int, int]], bool]:
+    """(calendar quarters with >=1 filing in ``filings.recent``, has-older-archive-pages) from the
+    SAME cached data.sec.gov submissions JSON as ``filing_history`` — a cache HIT for a seen CIK
+    (zero fresh network). Absent / malformed / 404 → (empty, False): the gate reads UNKNOWN,
+    never fabricates continuity. Throttle/5xx PROPAGATES."""
+    try:
+        data = cast(dict[str, Any], sec_http.get_json(
+            _SUBMISSIONS.format(cik=cik10), ttl_seconds=_ONE_WEEK))
+    except HttpError as exc:
+        if "404" in str(exc):
+            return frozenset(), False
+        raise
+    filings = data.get("filings") if isinstance(data, dict) else None
+    if not isinstance(filings, dict):
+        return frozenset(), False
+    recent = filings.get("recent")
+    raw = recent.get("filingDate") if isinstance(recent, dict) else None
+    qs = frozenset(quarter_of(date.fromisoformat(d)) for d in (raw or []) if d)
+    return qs, bool(filings.get("files"))
+
+
+def continuity_ok(
+    filed_qs: frozenset[tuple[int, int]], has_older: bool, mention_q: tuple[int, int]
+) -> bool | None:
+    """v2.1 filing-continuity gate. True iff the CIK filed in EACH of the ``_CONTINUITY_Q`` calendar
+    quarters immediately before ``mention_q``, PROVABLE from the cached ``recent`` window. None
+    (UNKNOWN) when ``recent`` cannot reach back that far AND older-archive pages exist — a fail-loud
+    coverage gap, NEVER assumed continuous. A first mention that COUNTS can then only mean first
+    ADOPTION, never first appearance / re-engagement."""
+    preceding = [add_quarters(*mention_q, -k) for k in range(1, _CONTINUITY_Q + 1)]
+    if not filed_qs:
+        return None  # no dated filings in the recent window → cannot decide → UNKNOWN
+    floor = min(_qidx(*yq) for yq in filed_qs)  # earliest quarter the recent window covers
+    if any(pq not in filed_qs for pq in preceding if _qidx(*pq) >= floor):
+        return False  # a real gap INSIDE the covered window → not continuous
+    if all(_qidx(*pq) >= floor for pq in preceding):
+        return True  # all 4 preceding quarters covered AND present → continuous adopter
+    return None if has_older else False  # uncovered + has_older → UNKNOWN; else real gap
 
 
 _TermQReads = dict[str, dict[tuple[int, int], dict[str, Any]]]  # {term: {(y,q): term_quarter_read}}
@@ -702,6 +753,7 @@ def assay_candidate(
     anew_all = {qt: anchored_new_ciks(cik_sets, qt) for qt in qs}
     need = set().union(*anew_spec.values(), *anew_ctx.values(), *anew_all.values())
     hist = {c: filing_history(sec_http, c) for c in sorted(need)}  # cached submissions, one per CIK
+    fq_cache: dict[str, tuple[frozenset[tuple[int, int]], bool]] = {}  # v2.1 gate reads, cache-HIT
     incumbent_reads: dict[tuple[int, int], IncumbentRead] = {}
     for qt in qs:
         spec_status = {c: is_incumbent(*hist[c], qt) for c in anew_spec[qt]}
@@ -715,6 +767,12 @@ def assay_candidate(
                 f10 += 1
             else:
                 funk += 1
+        # v2.1 filing-continuity gate on the incumbent-specific set (cache-HIT submissions per CIK)
+        gate: list[bool | None] = []
+        for c in inc_spec:
+            if c not in fq_cache:
+                fq_cache[c] = filed_quarters(sec_http, c)
+            gate.append(continuity_ok(*fq_cache[c], qt))
         incumbent_reads[qt] = IncumbentRead(
             incumbent_specific=len(inc_spec),
             incumbent_context=sum(is_incumbent(*hist[c], qt) is True for c in anew_ctx[qt]),
@@ -722,6 +780,8 @@ def assay_candidate(
             anchored_specific=len(anew_spec[qt]), specific_8k=f8, specific_10k=f10,
             specific_form_unknown=funk,
             incumbency_unknown=sum(1 for s in spec_status.values() if s is None),
+            gated_incumbent_specific=sum(1 for g in gate if g is True),
+            gate_unknown=sum(1 for g in gate if g is None),
             top_terms=_incumbent_decomp(reads_by_term_q, candidate.specific_terms, qt, inc_spec))
 
     ct = company_ticker_map(sec_http)
@@ -828,6 +888,10 @@ def assay_candidate(
         "before the first-mention quarter. First-mention is within the 12q lookback, so an "
         "incumbent re-engaging after >12q of silence counts as NEW; for incumbents that "
         "re-engagement is itself shift evidence.",
+        "v2.1 CONTINUITY GATE (cached submissions, zero fresh network on seen CIKs): an incumbent "
+        "first-mention COUNTS in the gated HEADLINE only if the CIK filed in EACH of the prior "
+        f"{_CONTINUITY_Q} quarters — first mention then means first ADOPTION, not appearance / "
+        "re-engagement. gate-unk = cached recent cannot reach back (UNDECIDABLE, never assumed).",
         "v2 TIERS are DRAFT — PENDING ANALYST RATIFICATION (not adopted for live use).",
         "v2 incumbent 8-K/10-K form-split has an UNKNOWN bucket for first-mentions from a pre-v2 "
         "efts cache (no per-CIK first-form recorded); honest, never fabricated.",
@@ -886,23 +950,26 @@ def kill_verdict(cards: list[AssayCard], *, anchored: bool = False) -> tuple[str
 
 
 def _render_incumbency(card: AssayCard) -> list[str]:
-    """The v2 incumbency block: the listing-flow-immune HEADLINE (incumbent-specific series) + the
-    context/new-listing/form splits + which SPECIFIC terms carry the incumbent first-mentions."""
+    """The incumbency block: the v2.1 GATED headline (continuity-gated incumbent-specific) alongside
+    the v2 series + context/new-listing/form splits + the SPECIFIC-term decomposition."""
     if not any(r.incumbent for r in card.quarters):
         return ["", "## Incumbency (v2)", "", "_(no tiers defined for this candidate)_"]
-    out = ["", "## Incumbency (v2 HEADLINE — incumbent first-mentions on SPECIFIC terms, anchored)",
-           "", "| quarter | inc-specific | inc-context | new-listings | anch-specific | 8-K | 10-K "
-           "| form-unk | inc-unknown |", "|---|---|---|---|---|---|---|---|---|"]
+    out = ["", "## Incumbency (v2.1 HEADLINE — GATED incumbent first-mentions on SPECIFIC terms)",
+           "", "| quarter | inc-specific | gated | gate-unk | inc-context | new-listings "
+           "| anch-specific | 8-K | 10-K | form-unk | inc-unknown |",
+           "|---|---|---|---|---|---|---|---|---|---|---|"]
     for r in card.quarters:
         ic = r.incumbent
         if ic is None:
             continue
         out.append(
-            f"| {r.quarter} | {ic.incumbent_specific} | {ic.incumbent_context} | {ic.new_listings} "
+            f"| {r.quarter} | {ic.incumbent_specific} | {ic.gated_incumbent_specific} "
+            f"| {ic.gate_unknown} | {ic.incumbent_context} | {ic.new_listings} "
             f"| {ic.anchored_specific} | {ic.specific_8k} | {ic.specific_10k} "
             f"| {ic.specific_form_unknown} | {ic.incumbency_unknown} |")
-    out += ["", "_inc-specific = HEADLINE (listing-flow-immune); inc-unknown = submissions absent "
-            "(NOT classified); form-unk = first-mention form from a pre-v2 cache (honest unk)._",
+    out += ["", "_gated = v2.1 HEADLINE (filed in EACH prior 4q ⇒ first ADOPTION, not first "
+            "appearance/re-engagement); gate-unk = continuity UNDECIDABLE from cached recent (fail-"
+            "loud, never assumed); inc-specific = v2 series (kept); inc-unknown = subs absent._",
             "", "## Top SPECIFIC terms carrying incumbent first-mentions (per quarter)", ""]
     inc_lines: list[str] = []
     for r in card.quarters:
