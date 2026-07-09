@@ -2072,9 +2072,10 @@ def test_stock_info_line_renders_present_and_omits_unknown() -> None:
 
 def test_vrrm_brief_stock_info_panel_present_and_cited() -> None:
     """(Phase-2 e2e) VRRM's committed Brief carries the market-data stock-info line, source-bound
-    (the ↳ cite follows it). Presence + citation + CMP-present only — phrasing/value-independent so
-    a re-draw of the living artifact can't rot it (specific values pinned on the frozen fixture)."""
+    (via an endnote [n] marker — A2). Presence + citation + CMP-present only — phrasing/value-
+    independent so a re-draw of the living artifact can't rot it (values on the frozen fixture)."""
     import pathlib
+    import re as _re
     p = pathlib.Path("data/dossiers/VRRM/dossier.json")
     if not p.exists():
         pytest.skip("no committed VRRM dossier.json")
@@ -2085,7 +2086,36 @@ def test_vrrm_brief_stock_info_panel_present_and_cited() -> None:
     idx = next((i for i, ln in enumerate(lines) if "**Stock info:**" in ln), None)
     assert idx is not None, "no Stock-info line in VRRM Brief"
     assert "CMP $" in lines[idx]  # VRRM has committed EOD bars
-    assert "↳" in lines[idx + 1], "stock-info line is not source-bound"
+    assert _re.search(r"\[\d+\]", lines[idx]), "stock-info not source-bound (no endnote [n])"
+
+
+def test_endnotes_complete_on_every_committed_dossier() -> None:
+    """(A2) The endnote system is COMPLETE on every committed dossier that loads: ZERO inline ↳
+    remain, a single document-end '# Sources' list exists, every [n] marker in the body resolves
+    to a Source entry (1..len), and the list is deduped (a repeated source_ref → one). This is the
+    safety net that reddens if ANY citation emitter is not routed through _cite / _cite_inline."""
+    import pathlib
+    import re as _re
+    checked = 0
+    for jp in sorted(pathlib.Path("data/dossiers").glob("*/dossier.json")):
+        try:
+            d = ds.Dossier.model_validate_json(jp.read_text())
+        except Exception:  # noqa: BLE001 — a dossier predating a required field is not this test's job
+            continue
+        t = jp.parent.name
+        lines = dr.render_markdown(d).splitlines()
+        assert "↳" not in "\n".join(lines), f"{t}: a stray inline ↳ escaped the endnote registry"
+        si = next((i for i, ln in enumerate(lines) if ln == "# Sources"), None)
+        srcs = [ln for ln in lines[si:] if _re.match(r"^\[\d+\] `", ln)] if si is not None else []
+        body = "\n".join(lines[:si]) if si is not None else "\n".join(lines)
+        markers = {int(m) for m in _re.findall(r"\[(\d+)\]", body)}
+        if markers:
+            assert si is not None, f"{t}: [n] markers but no # Sources list"
+            assert all(1 <= n <= len(srcs) for n in markers), f"{t}: an [n] marker doesn't resolve"
+        refs = [m.group(1) for ln in srcs if (m := _re.match(r"^\[\d+\] `(.*)`$", ln))]
+        assert len(refs) == len(set(refs)), f"{t}: duplicate source in the Sources list"
+        checked += 1
+    assert checked >= 2, "expected at least MVST + VRRM committed + loadable"
 
 
 def test_self_referential_twin_requires_resolved_period_in_the_name() -> None:

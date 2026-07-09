@@ -7,6 +7,7 @@ prints why; bull/bear points print their citation and an ⚠ when a guardrail fl
 
 from __future__ import annotations
 
+import contextvars
 import math
 import re
 from collections import Counter
@@ -64,9 +65,55 @@ def _dates(v: Any) -> str:  # list of ISO dates → comma-joined, not a Python l
     return ", ".join(str(x) for x in v)
 
 
+# --- (A2) source-ref ENDNOTES: every citation registers into a per-document table and renders as a
+# numbered [n] marker; the single Sources list is emitted once at document end. The table is a
+# ContextVar reset at the top of render_markdown, so the assemble batch's worker threads never share
+# it (each thread has its own context; a pooled thread is reset per render). Outside a render (a
+# unit test calling an emitter) the table is None → the inline "↳ `ref`" fallback keeps working.
+_ENDNOTES: contextvars.ContextVar[list[str] | None] = contextvars.ContextVar(
+    "_dossier_endnotes", default=None)
+
+
+def _ref_n(source_ref: str) -> int:
+    """Register ``source_ref`` (deduped) into the endnote table → its 1-based number."""
+    table = _ENDNOTES.get()
+    assert table is not None  # callers guard: only invoked inside a render
+    if source_ref not in table:
+        table.append(source_ref)
+    return table.index(source_ref) + 1
+
+
+def _cite(source_ref: str | None) -> str:
+    """(A2) A SUB-LINE citation → its ` [n]` marker in a render, else the "↳ `ref`" sub-line. A
+    missing ref (never on a PRESENT fact — the validator enforces it) emits no cite."""
+    if not source_ref:
+        return ""
+    if _ENDNOTES.get() is None:
+        return f"\n  - ↳ `{source_ref}`"
+    return f" [{_ref_n(source_ref)}]"
+
+
+def _cite_inline(source_ref: str | None) -> str:
+    """(A2) An INLINE citation (header/list-lead) → bare ``[n]`` or "↳ `ref`" (fallback)."""
+    if not source_ref:
+        return ""
+    if _ENDNOTES.get() is None:
+        return f"↳ `{source_ref}`"
+    return f"[{_ref_n(source_ref)}]"
+
+
+def _sources_section() -> list[str]:
+    """(A2) The single document-end Sources list — every distinct source_ref in first-cited order.
+    Empty when nothing was cited. Rendered once by :func:`render_markdown` at the very end."""
+    table = _ENDNOTES.get()
+    if not table:
+        return []
+    return ["", "# Sources", "", *[f"[{i}] `{ref}`" for i, ref in enumerate(table, 1)]]
+
+
 def _fact(label: str, s: Sourced[Any], fmt: Callable[[Any], str] = str) -> str:
     if s.status is SourceStatus.PRESENT:
-        return f"- **{label}:** {fmt(s.value)}\n  - ↳ `{s.source_ref}`"
+        return f"- **{label}:** {fmt(s.value)}{_cite(s.source_ref)}"
     return f"- **{label}:** _{s.status.value.upper()}_ — {s.note}"
 
 
@@ -154,7 +201,7 @@ def _horizon_lines(s: Sourced[Any]) -> list[str]:
     for seg in (seg.strip() for seg in _body(str(s.value)).split("; ")):
         if seg:
             (nonzero if re.search(r"[1-9]\d*[↑↓]", seg) else zero).append(seg)
-    out = [f"- **{label}** — ↳ `{s.source_ref}`:"]
+    out = [f"- **{label}** — {_cite_inline(s.source_ref)}:"]
     out += [f"  - {seg}" for seg in nonzero]
     if zero:
         labels = ", ".join(seg.split(":", 1)[0] for seg in zero)
@@ -169,7 +216,7 @@ def _ladder_lines(s: Sourced[Any]) -> list[str]:
         return [_fact(label, s)]
     segs = [seg.strip() for seg in _body(str(s.value)).split(" | ") if seg.strip()]
     kept = [seg for seg in segs if seg.split(":", 1)[0].strip() in _LADDER_KEEP]
-    out = [f"- **{label}** — ↳ `{s.source_ref}`:"]
+    out = [f"- **{label}** — {_cite_inline(s.source_ref)}:"]
     out += [f"  - {seg}" for seg in kept]
     if len(segs) - len(kept) > 0:
         out.append(f"  - _+{len(segs) - len(kept)} later fiscal years in JSON_")
@@ -241,7 +288,8 @@ def _grouped_events_lines(s: Sourced[Any]) -> list[str]:
     for e in events:
         groups.setdefault((e.date, e.broker), []).append(e)
     keys = sorted(groups, key=lambda k: k[0], reverse=True)  # most-recent broker-day first
-    out = [f"- **{label}** ({len(events)} events · {len(keys)} broker-days) — ↳ `{s.source_ref}`:"]
+    out = [f"- **{label}** ({len(events)} events · {len(keys)} broker-days) "
+           f"— {_cite_inline(s.source_ref)}:"]
     for dt, broker in keys[:_GROUP_CAP]:
         evs = groups[(dt, broker)]
         ct = Counter(e.change_type for e in evs)
@@ -316,7 +364,7 @@ def _table(
     so a test confirms every table routes here; ``name_rows`` indices bold the subject. Every
     cell is pipe/newline-sanitised (:func:`_gfm_cell`) so free-text (E5 verbatim) can't break it.
     ``num_cols`` (indices into ``cols``) right-align numeric columns (K2)."""
-    head = f"- **{label}**" + (f" — ↳ `{cite}`" if cite else "") + f"  {_TABLE_MARK}"
+    head = f"- **{label}**" + (f" — {_cite_inline(cite)}" if cite else "") + f"  {_TABLE_MARK}"
     # (K2) GFM alignment row — numeric cols right-align (`---:`); col 0 is the prepended blank cell.
     aligns = ["---", *("---:" if i in num_cols else "---" for i in range(len(cols)))]
     out = [head, "", "| " + " | ".join(_gfm_cell(c) for c in [" ", *cols]) + " |",
@@ -510,7 +558,8 @@ def _event_impact_lines(m: MechanicalLayer) -> list[str]:
                 out.append("- **Event-impact quantifications (8-K EX-99.1, verbatim-bound):**")
             rng = (f"${ei.low:,.0f}–{ei.high:,.0f}M" if ei.low is not None and ei.high is not None
                    else "unquantified")
-            out.append(f"  - {ei.effect} {ei.metric} by {rng} ({ei.period}) — [`{ei.source_ref}`]")
+            out.append(f"  - {ei.effect} {ei.metric} by {rng} ({ei.period}) "
+                       f"— {_cite_inline(ei.source_ref)}")
     return out
 
 
@@ -526,32 +575,29 @@ def _primary_source_block(m: MechanicalLayer) -> list[str]:
     out = ["### Primary-source cross-checks (8-K releases + latest 10-Q vs CIQ panel)", ""]
     gc = fil.going_concern if fil is not None else None
     if gc is not None and gc.substantial_doubt:  # doubt LEADS, unsoftened
-        out += [f"- **⚠ Going concern — SUBSTANTIAL DOUBT:** {gc.verbatim}",
-                f"  - management's plans: {gc.plans or '— none stated'}",
-                f"  - ↳ `{gc.source_ref}`"]
+        out += [f"- **⚠ Going concern — SUBSTANTIAL DOUBT:** {gc.verbatim}{_cite(gc.source_ref)}",
+                f"  - management's plans: {gc.plans or '— none stated'}"]
     elif fil is not None:  # CHECKED-ABSENCE (not silence): the parser looked and found none
         out.append(f"- **Going-concern language:** none in latest 10-Q — checked, absent "
-                   f"[`{fil.source_ref}`]")
+                   f"{_cite_inline(fil.source_ref)}")
     else:
         out.append("- **Going-concern language:** _UNKNOWN_ — latest 10-Q not parsed")
     out.append(_fact("Wall coherence — filing ≤12m vs CIQ panel (same window)", ps.wall_coherence))
     tri_val = ps.basis_triangulation.value
     if tri_val is not None:  # multi-line → bold header + sub-bullets
         tri = tri_val.split("\n")
-        out.append(f"- **{tri[0]}**")
+        out.append(f"- **{tri[0]}**{_cite(ps.basis_triangulation.source_ref)}")
         out += [f"  - {row.strip()}" for row in tri[1:] if row.strip()]
-        out.append(f"  - ↳ `{ps.basis_triangulation.source_ref}`")
     out.append(_fact("Guide verification — CIQ guide vs release", ps.guide_verification))
     cc = fil.concentration if fil is not None else None
     if cc is not None and cc.customers:
-        out.append("- **Customer concentration (latest 10-Q):**")
+        out.append(f"- **Customer concentration (latest 10-Q):**{_cite(cc.source_ref)}")
         for c in cc.customers:
             kind = " _(disclosed floor)_" if c.value_kind == "floor" else ""
             prior = f" (prior {c.prior_pct:.1f}%)" if c.prior_pct is not None else ""
             out.append(f"  - {c.name}: {c.pct:.1f}%{kind}{prior}")
         if cc.terms:
             out.append(f"  - order terms: {cc.terms}")
-        out.append(f"  - ↳ `{cc.source_ref}`")
     return [*out, ""]
 
 
@@ -1378,7 +1424,7 @@ def _synthesis_lines(d: Dossier, *, dev: bool) -> list[str]:
 
     def cite(p: Any, tag: str = "") -> str:
         warn = "" if getattr(p, "cited", True) else " ⚠ uncited"
-        return f"- {p.claim}{tag}{warn}\n  - ↳ `{p.source_ref}`"
+        return f"- {p.claim}{tag}{warn}{_cite(p.source_ref)}"
 
     def ordered(title: str, pts: list[Any]) -> None:  # D3 — deterministic tier order
         out.append(f"### {title}")
@@ -1432,7 +1478,7 @@ def _going_concern_brief(m: MechanicalLayer) -> str | None:
         return None
     ref = fil.source_ref or "latest 10-Q"
     state = "⚠ SUBSTANTIAL DOUBT stated" if gc.substantial_doubt else "not flagged"
-    return f"- **Going concern:** {state}\n  - ↳ `{ref}`"
+    return f"- **Going concern:** {state}{_cite(ref)}"
 
 
 def _brief_verify_first(caveats: list[str], limit: int = 2) -> list[str]:
@@ -1459,7 +1505,7 @@ def _brief_case_lines(s: Any) -> list[str]:
 
     def top3(pts: list[Any]) -> list[str]:
         top = [p for p, _tier, _cr in _ordered_points(pts)][:3]
-        return [f"- {p.claim}\n  - ↳ `{p.source_ref}`" for p in top]
+        return [f"- {p.claim}{_cite(p.source_ref)}" for p in top]
 
     out += ["_Bull — overshoot:_", *(top3(s.bull_points) or ["- —"])]
     out += ["_Bear — terminal:_", *(top3(s.bear_points) or ["- —"])]
@@ -1509,8 +1555,8 @@ def _stock_info_line(si: StockInfo) -> list[str]:
         parts.append(f"mkt cap {_fmt_cap(si.market_cap.value)}")
     if not parts:
         return []
-    return [f"- **Stock info:** {' · '.join(parts)}",
-            "  - ↳ `EOD close/52-wk · EDGAR XBRL shares · CIQ book value + market cap`"]
+    return [f"- **Stock info:** {' · '.join(parts)}"
+            f"{_cite('EOD close/52-wk · EDGAR XBRL shares · CIQ book value + market cap')}"]
 
 
 def _customer_concentration(m: MechanicalLayer) -> str | None:
@@ -1532,7 +1578,7 @@ def _customer_concentration(m: MechanicalLayer) -> str | None:
         # if either of the top-2 is a disclosed floor, their sum is itself a floor (≥)
         t2 = "≥" if any(x.value_kind == "floor" for x in top[:2]) else ""
         line += f" · top-2 ~{t2}{round(sum((x.pct or 0.0) for x in top[:2]))}%"
-    return f"- **Customer concentration:** {line} of revenue\n  - ↳ `{fil.source_ref}`"
+    return f"- **Customer concentration:** {line} of revenue{_cite(fil.source_ref)}"
 
 
 def _brief_financials(m: MechanicalLayer) -> list[str]:
@@ -1660,6 +1706,7 @@ def render_markdown(d: Dossier, *, dev: bool = False) -> str:
     concentration] → synthesis → appendix (+ management-commentary pointer) → verdict footer. Old
     committed JSONs still render (every field is optional-safe). ``dev`` shows the D3 tier tags."""
     m = d.mechanical
+    _ENDNOTES.set([])  # (A2) fresh per-document endnote table (ContextVar, thread-safe per render)
     out: list[str] = [
         f"# Dossier — {d.name} ({d.ticker})",
         "",
@@ -1690,8 +1737,8 @@ def render_markdown(d: Dossier, *, dev: bool = False) -> str:
             # (B1) parsed release drivers ARE the informative cause — they supersede the item-code
             # boilerplate; non-earnings 8-Ks (no match) still show their source-bound events.
             if f.drivers is not None and f.drivers.status is SourceStatus.PRESENT:
-                out.append(f"    - **what the results showed:** {f.drivers.value}")
-                out.append(f"      - ↳ `{f.drivers.source_ref}`")
+                out.append(f"    - **what the results showed:** {f.drivers.value}"
+                           f"{_cite(f.drivers.source_ref)}")
             else:
                 for ev in f.events:
                     out.append(f"    - {ev}")
@@ -1796,4 +1843,5 @@ def render_markdown(d: Dossier, *, dev: bool = False) -> str:
         "> **No BUY/AVOID here — this dossier only assembles and cites.** The verdict is the "
         "human's, logged separately via the ledger with a frozen entry price.",
     ]
+    out += _sources_section()  # (A2) the single document-end Sources list — every [n] resolves here
     return "\n".join(_dedupe_unknown_reasons(out))  # (H3) fold repeated UNKNOWN reasons
