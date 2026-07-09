@@ -1490,11 +1490,16 @@ def _customer_concentration(m: MechanicalLayer) -> str | None:
     if not custs or fil is None:
         return None
     top = sorted(custs, key=lambda x: x.pct or 0.0, reverse=True)
-    line = f"top customer {round(top[0].pct or 0.0)}%"
+    # a disclosed floor ('exceeded N%', value_kind='floor') keeps its ≥ qualifier — the source said
+    # "more than N%", never an exact N% (source-fidelity: the human sees what the filing stated).
+    t0 = "≥" if top[0].value_kind == "floor" else ""
+    line = f"top customer {t0}{round(top[0].pct or 0.0)}%"
     if top[0].prior_pct is not None:
         line += f" (from {round(top[0].prior_pct)}%)"
     if len(top) > 1:
-        line += f" · top-2 ~{round(sum((x.pct or 0.0) for x in top[:2]))}%"
+        # if either of the top-2 is a disclosed floor, their sum is itself a floor (≥)
+        t2 = "≥" if any(x.value_kind == "floor" for x in top[:2]) else ""
+        line += f" · top-2 ~{t2}{round(sum((x.pct or 0.0) for x in top[:2]))}%"
     return f"- **Customer concentration:** {line} of revenue\n  - ↳ `{fil.source_ref}`"
 
 
@@ -1510,7 +1515,10 @@ def _brief_financials(m: MechanicalLayer) -> list[str]:
     rows = [[r.label, *r.cells] for r in tbl.rows if r.label in want]
     if not rows or not tbl.columns:
         return []
-    num_cols = frozenset(range(1, len(tbl.columns) + 1))
+    # num_cols are 0-based indices into cols (the period columns) — _table prepends the label cell
+    # itself. range(len) right-aligns EVERY period; range(1, len+1) left off column 0 and wasted
+    # index len (the first period rendered left-aligned).
+    num_cols = frozenset(range(len(tbl.columns)))
     return _table("Financial snapshot", fs.annual.source_ref, list(tbl.columns), rows,
                   num_cols=num_cols)
 

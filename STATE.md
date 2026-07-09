@@ -2908,8 +2908,24 @@ Recommendation/Target slot is the HUMAN's ("not yet logged"); consensus, the imp
   3. **DEFERRED — Phase-3 dependency-free SVG charts** (P/E own-history band, ROIC trend, rev/EBITDA
      trend). UNLOCK: after the Brief structure is human-reviewed on #98 (don't build charts onto a layout
      that may still change in review).
-  4. **OPS — the `~/.mosaic_gh_token` file is STALE** (returns 401 from the GitHub API); the push + PR used
-     the osxkeychain-cached credential instead. Refresh the token file before the next token-dependent run.
+  4. **OPS — token file REFRESHED (2026-07-09).** The old `~/.mosaic_gh_token` had gone stale (401); the
+     user supplied a new repo-scoped token, written + verified (GET /user → 200). (The push + PR had used
+     the osxkeychain-cached credential as the fallback.)
+- **AUDIT (2026-07-09, post-open) — #98 audited against code; 4 MINOR defects fixed, 0 blockers.** Two
+  adversarial sub-agents (render.py + dossier.js) + empirical renders of all 10 committed dossiers and the
+  live frontend (MVST full-field · IT/AORT missing-field). CLEAN: None-safety (the 9 non-re-assembled
+  dossiers render — new fields fail-honest; the 7 that fail to LOAD do so on the PRE-EXISTING required
+  `valuation.cross_sectional`, NOT a #98 regression), the machine-never-concludes guardrail, and md↔web
+  parity. FIXED, each with a regression pin, suite green: (a) `render.py _brief_financials` num_cols
+  off-by-one — the first period column left-aligned instead of right (e2e alignment pin); (b) `render.py
+  _customer_concentration` dropped a disclosed `value_kind='floor'` ≥ qualifier (unit pin; latent — MVST
+  customers are 'exact'); (c) `dossier.js` menu-chosen PDF scope (`ds-print-*`) was never cleared → a later
+  native Cmd+P printed the wrong scope (now cleared on `afterprint`); (d) `dossier.js` per-render global
+  click listener leaked one stale listener per navigation (now a once-registered module-scoped listener).
+  key_ratios / B1 drawdown drivers / customer-concentration values re-verified against the real CIQ Ratios
+  sheet + committed artifact; `dossier.md` re-rendered (deterministic — the one alignment line).
+  Incident→invariant: (a)→alignment e2e pin, (b)→floor unit pin [both shipped]; (c)/(d) web-only, verified
+  live in the preview (afterprint clears scope; menu opens/closes; no console errors on MVST/IT/AORT).
 
 **RC-1 primary-source text extraction — BUILT + VERIFIED, PR OPEN (feat/primary-source-text, 2026-07-06).**
 DETERMINISTIC (anchored, never LLM) parsers of the EX-99.1 release (A, `vinci/edgar/release_parse.py`) and

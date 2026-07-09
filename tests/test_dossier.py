@@ -1987,6 +1987,52 @@ def test_p6_ordered_points_monotonic_tiers_and_recon_present_e2e() -> None:
             assert recon, "MVST: no cited EX-99.1-reconciliation bear point"
 
 
+def test_brief_financial_snapshot_right_aligns_all_period_columns() -> None:
+    """(audit fix) The Brief 'Financial snapshot' table right-aligns EVERY period column. The
+    num_cols off-by-one (range(1, len+1) instead of range(len)) left the FIRST period column
+    left-aligned. e2e on the committed MVST artifact, phrasing-independent (alignment structure,
+    no value pinned). Pre-fix: cells[1] == '---' → this fails."""
+    import pathlib
+    p = pathlib.Path("data/dossiers/MVST/dossier.json")
+    if not p.exists():
+        pytest.skip("no committed MVST dossier.json")
+    md = dr.render_markdown(ds.Dossier.model_validate_json(p.read_text()))
+    lines = md.splitlines()
+    head_i = next((i for i, ln in enumerate(lines)
+                   if "**Financial snapshot**" in ln and dr._TABLE_MARK in ln), None)
+    assert head_i is not None, "no Financial-snapshot ds-table in the MVST Brief"
+    align = next(ln for ln in lines[head_i + 1:head_i + 6] if ln.startswith("|-"))
+    cells = [c.strip() for c in align.strip().strip("|").split("|")]
+    assert cells[0] == "---", f"label column should stay left-aligned: {cells}"
+    assert len(cells) >= 3, f"expected label + >=2 period columns: {cells}"
+    assert all(c == "---:" for c in cells[1:]), f"every period column must right-align: {cells}"
+
+
+def test_customer_concentration_floor_keeps_ge_qualifier() -> None:
+    """(audit fix) A disclosed customer FLOOR (value_kind='floor', a filing's 'exceeded N%') renders
+    with its ≥ qualifier — never as an exact N%; an all-exact set carries no qualifier. Source
+    fidelity: the human sees what the filing stated, not a spuriously exact number."""
+    base = _primary_source_fixture(doubt=True)
+    assert base.filing is not None and base.filing.concentration is not None
+
+    def _mech_with(custs: list[ds.ConcentrationCustomer]) -> ds.MechanicalLayer:
+        conc = base.filing.concentration.model_copy(update={"customers": custs})
+        fil = base.filing.model_copy(update={"concentration": conc})
+        ps = base.model_copy(update={"filing": fil})
+        return _minimal_mech().model_copy(update={"primary_source": ps})
+
+    floor = _mech_with([
+        ds.ConcentrationCustomer(name="A", pct=52.0, prior_pct=31.0, value_kind="floor"),
+        ds.ConcentrationCustomer(name="B", pct=18.0, prior_pct=16.0)])
+    line = dr._customer_concentration(floor)
+    assert line is not None and "top customer ≥52%" in line and "top-2 ~≥70%" in line
+    exact = _mech_with([
+        ds.ConcentrationCustomer(name="A", pct=52.0, prior_pct=31.0),
+        ds.ConcentrationCustomer(name="B", pct=18.0, prior_pct=16.0)])
+    line2 = dr._customer_concentration(exact)
+    assert line2 is not None and "top customer 52%" in line2 and "≥" not in line2
+
+
 def test_self_referential_twin_requires_resolved_period_in_the_name() -> None:
     """(R2) A twin naming the subject itself is suppressed UNLESS the resolved period is in the twin
     NAME ('Microvast (2021–2025 arc)'); a bare self-name ('Microvast Holdings') is suppressed even

@@ -20,6 +20,22 @@ window.addEventListener("beforeprint", () => {
 });
 window.addEventListener("afterprint", () => {
   if (_titleBeforePrint != null) { document.title = _titleBeforePrint; _titleBeforePrint = null; }
+  // Clear any menu-chosen PDF scope so a later native Cmd+P falls back to the on-screen tier — the
+  // print CSS relies on ds-print-* being ABSENT for that fallback, and nothing else clears it.
+  document.body.classList.remove("ds-print-full", "ds-print-brief");
+});
+
+// One document-level listener, registered ONCE (the module is import-cached), closes an open PDF
+// scope-menu on any outside click. Registering it per-render (inside render()) would leak a stale
+// listener on every dossier navigation, each closing over a now-detached menu. The toggle button
+// calls stopPropagation, so this never fires on the button itself.
+document.addEventListener("click", () => {
+  const menu = document.querySelector("#ds-pdf-menu");
+  if (menu && !menu.hidden) {
+    menu.hidden = true;
+    const btn = document.querySelector("#ds-pdf");
+    if (btn) btn.setAttribute("aria-expanded", "false");
+  }
 });
 
 export async function render(root, params, { item, frame }) {
@@ -58,7 +74,9 @@ export async function render(root, params, { item, frame }) {
       pdfMenu.hidden = !pdfMenu.hidden;
       pdfBtn.setAttribute("aria-expanded", String(!pdfMenu.hidden));
     });
-    document.addEventListener("click", () => { pdfMenu.hidden = true; pdfBtn.setAttribute("aria-expanded", "false"); });
+    // (outside-click closes the menu via the once-registered module-scoped document listener near
+    // the top of this file — NOT re-added here per-render, which leaked one stale listener per
+    // dossier navigation, each closing over a now-detached menu.)
     pdfMenu.querySelectorAll("button").forEach((b) => b.addEventListener("click", () => {
       pdfMenu.hidden = true;
       const full = b.dataset.scope === "full";
