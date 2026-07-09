@@ -568,10 +568,11 @@ def test_contrast_criterion_math() -> None:
     assert assay.contrast_verdict([3] * 12, passing, idx)[0].startswith("CONFOUNDED")
 
 
-def _v2_quarter(*, anch: int, inc_spec: int) -> QuarterRead:
+def _v2_quarter(*, anch: int, inc_spec: int, gated: int = 0, gate_unk: int = 0) -> QuarterRead:
     ic = IncumbentRead(
         incumbent_specific=inc_spec, incumbent_context=2, new_listings=10, anchored_specific=6,
         specific_8k=1, specific_10k=3, specific_form_unknown=0, incumbency_unknown=0,
+        gated_incumbent_specific=gated, gate_unknown=gate_unk,
         top_terms=(TermContribution(term="drone", new_filers=inc_spec),))
     return QuarterRead(
         quarter="2021Q1", new_filers=99, new_filers_anchored=anch, total_mentions=50,
@@ -586,13 +587,66 @@ def test_v2_render_anchored_headline_incumbency_and_tiers() -> None:
     column, and it renders the incumbency block + DRAFT tiers + incumbent decomposition."""
     res = {c: Residence(longest_early_run=1, total_early_quarters=1) for c in assay.COMBOS}
     card = AssayCard(
-        candidate_key="x", as_of="2021-01-01", quarters=(_v2_quarter(anch=7, inc_spec=4),),
+        candidate_key="x", as_of="2021-01-01",
+        quarters=(_v2_quarter(anch=7, inc_spec=4, gated=3, gate_unk=1),),
         basket=(), basket_rule="rule", residence_by_combo=res, residence_by_combo_anchored=res,
         residence_by_combo_symmetric=res, divergence_age_quarters=None,
         specific_terms=("drone", "missile"), context_terms=("defense",))
     md = assay.render_markdown(card)
     assert "v2 —" in md
     assert md.index("new(anch)") < md.index("new(win)")  # anchored is the HEADLINE column
-    assert "Incumbency (v2 HEADLINE" in md and "DRAFT tiers" in md
+    assert "Incumbency (v2.1 HEADLINE" in md and "DRAFT tiers" in md
     assert "carrying incumbent first-mentions" in md
-    assert "| 2021Q1 | 4 | 2 | 10 | 6 |" in md  # inc-spec inc-ctx new-listings anch-spec
+    # inc-spec | gated | gate-unk | inc-ctx | new-listings | anch-spec
+    assert "| 2021Q1 | 4 | 3 | 1 | 2 | 10 | 6 |" in md
+
+
+def test_continuity_ok_gate_math() -> None:
+    """v2.1 continuity gate (pure): filing in EACH prior 4q → True; one covered gap → False (even
+    with older pages); the exact boundary quarter counts; recent that can't reach back + older pages
+    → None (UNKNOWN); no data → None. Never fabricates continuity."""
+    m = (2021, 1)  # preceding quarters: 2020Q4, 2020Q3, 2020Q2, 2020Q1
+    assert assay.continuity_ok(
+        frozenset({(2020, 1), (2020, 2), (2020, 3), (2020, 4), (2021, 1)}), False, m) is True
+    assert assay.continuity_ok(  # 2020Q3 missing inside the covered window → real gap
+        frozenset({(2020, 1), (2020, 2), (2020, 4), (2021, 1)}), False, m) is False
+    assert assay.continuity_ok(  # oldest recent == earliest needed quarter → covered, exact
+        frozenset({(2020, 1), (2020, 2), (2020, 3), (2020, 4)}), False, m) is True
+    unc = frozenset({(2020, 3), (2020, 4)})  # floor=2020Q3; 2020Q1/Q2 not in the recent window
+    assert assay.continuity_ok(unc, True, m) is None  # older pages exist → UNDECIDABLE
+    assert assay.continuity_ok(unc, False, m) is False  # no older pages → recent is all → real gap
+    assert assay.continuity_ok(  # a covered gap beats has_older
+        frozenset({(2020, 1), (2020, 2), (2020, 4), (2021, 1)}), True, m) is False
+    assert assay.continuity_ok(frozenset(), True, m) is None  # no dated filings → UNKNOWN
+
+
+def test_filed_quarters_parses_recent_and_handles_404() -> None:
+    """filed_quarters buckets filings.recent.filingDate into calendar quarters + reads has_older;
+    404 / malformed → (empty, False) (UNKNOWN, never a crash or a fabricated set); a throttle/5xx
+    PROPAGATES to the retry loop."""
+    from vinci.netcache import HttpError
+    d = _SubHttp({"filings": {"recent": {"filingDate": ["2020-02-10", "2020-05-01", "2020-05-30"]},
+                              "files": [{"n": "x"}]}})
+    assert assay.filed_quarters(cast(CachedHttp, d), "0001") == (
+        frozenset({(2020, 1), (2020, 2)}), True)
+    nf = _SubHttp(raise_msg="Non-retryable 404 from https://data.sec.gov/submissions/CIK...")
+    assert assay.filed_quarters(cast(CachedHttp, nf), "0001") == (frozenset(), False)
+    bad = _SubHttp({"filings": None})
+    assert assay.filed_quarters(cast(CachedHttp, bad), "0001") == (frozenset(), False)
+    throttled = _SubHttp(raise_msg="Exhausted retries for https://data.sec.gov/submissions/CIK...")
+    with pytest.raises(HttpError):
+        assay.filed_quarters(cast(CachedHttp, throttled), "0001")
+
+
+def test_gated_placebo_collapse_property() -> None:
+    """Gate-collapse property: a placebo-like population of incumbent CIKs that file only
+    SPORADICALLY (a gap in the prior 4q ⇒ first mention = re-engagement, not adoption) collapses to
+    ZERO under the gate, while a continuously-filing population survives intact — the thing a
+    listing / boilerplate wave cannot fake."""
+    m = (2021, 2)  # preceding: 2021Q1, 2020Q4, 2020Q3, 2020Q2
+    sporadic = [frozenset({(2018, 1), (2020, 2), (2020, 3), (2020, 4), (2021, 2)})  # 2021Q1 gap
+                for _ in range(50)]
+    assert sum(assay.continuity_ok(fq, False, m) is True for fq in sporadic) == 0
+    continuous = [frozenset({(2020, 2), (2020, 3), (2020, 4), (2021, 1), (2021, 2)})
+                  for _ in range(50)]
+    assert sum(assay.continuity_ok(fq, False, m) is True for fq in continuous) == 50

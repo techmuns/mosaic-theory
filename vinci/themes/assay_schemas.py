@@ -91,6 +91,11 @@ class IncumbentRead(BaseModel, frozen=True):
     specific_10k: int  # 10-K-family split
     specific_form_unknown: int  # first-mention form unavailable (pre-v2 cached read)
     incumbency_unknown: int  # first-mention CIKs with absent submissions (NOT classified)
+    # v2.1 filing-continuity gate: a first mention COUNTS only if the CIK filed in EACH of the prior
+    # 4 quarters ⇒ first ADOPTION, not first appearance / re-engagement. gate_unknown = inc-specific
+    # CIKs whose continuity is UNKNOWN (cached recent window can't reach back — a fail-loud gap).
+    gated_incumbent_specific: int = 0  # v2.1 HEADLINE — the continuity-gated inc-specific series
+    gate_unknown: int = 0  # inc-specific CIKs with UNDECIDABLE continuity (never assumed)
     top_terms: tuple[TermContribution, ...] = ()  # SPECIFIC terms carrying incumbent first-mentions
 
 
