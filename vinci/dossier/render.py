@@ -16,7 +16,7 @@ from itertools import groupby
 from typing import Any
 
 from vinci.dossier.covenant_extract import GoverningTerm, _derive_conversion, governing_terms
-from vinci.dossier.schemas import Dossier, MechanicalLayer, Sourced, SourceStatus
+from vinci.dossier.schemas import Dossier, MechanicalLayer, Sourced, SourceStatus, StockInfo
 
 # Display curation for the catalyst path — the full data always stays in dossier.json; these only
 # cap/collapse/group the HUMAN view (the margin-trend mini-table idiom: curate display, not data).
@@ -1403,6 +1403,253 @@ def _synthesis_lines(d: Dossier, *, dev: bool) -> list[str]:
     return out
 
 
+# --- (Brief) first-cut tier -------------------------------------------------------------------
+# Leads the dossier with the machine's assembled READ (evidence_balance), the decisive question, a
+# compact decision-data strip, and only the DECISION-THREATENING caveats. It assembles from existing
+# fields and renders NO verdict — the machine never concludes. The human's logged verdict is a
+# ledger/frontend concern (this static md never renders a logged verdict, so the Brief omits it too;
+# the web mirror shows it as a read-only status chip). Mirrors brief() in frontend dossier.js.
+
+# Caveats worth surfacing on the Brief: the ones that threaten the DECISION (leverage basis,
+# going-concern, wall/liquidity, dilution…). Freshness/plumbing caveats (parse counts, export-date
+# floors, as-of stamps) stay in the full caveats block below, off the Brief.
+_BRIEF_DECISION_KW = re.compile(
+    r"leverage|covenant|going.?concern|maturity|wall|liquidity|dilut|solven|"
+    r"\bbasis\b|runway|refinanc|\bcash\b", re.IGNORECASE)
+
+
+def _going_concern_brief(m: MechanicalLayer) -> str | None:
+    """The going-concern flag as one Brief line, source-bound. ``None`` when the primary-source
+    filing (or its going-concern read) is absent — never a fabricated 'not flagged'."""
+    ps = m.primary_source
+    fil = ps.filing if ps is not None else None
+    gc = fil.going_concern if fil is not None else None
+    if gc is None or fil is None:
+        return None
+    ref = fil.source_ref or "latest 10-Q"
+    state = "⚠ SUBSTANTIAL DOUBT stated" if gc.substantial_doubt else "not flagged"
+    return f"- **Going concern:** {state}\n  - ↳ `{ref}`"
+
+
+def _brief_verify_first(caveats: list[str], limit: int = 2) -> list[str]:
+    """Only DECISION-THREATENING caveats (lead clause), never freshness/plumbing ones."""
+    out: list[str] = []
+    for c in caveats:
+        if not _BRIEF_DECISION_KW.search(c):
+            continue
+        lead = re.split(r";|\s+—\s+", c, maxsplit=1)[0].strip()
+        if len(lead) > 120:
+            lead = lead[:117].rstrip() + "…"
+        out.append(lead)
+        if len(out) >= limit:
+            break
+    return out
+
+
+def _brief_case_lines(s: Any) -> list[str]:
+    """THE CASE, condensed — top-3 bull / top-3 bear (same evidence-weighted order as Analysis) +
+    top-3 key unknowns. The FULL synthesis stays in the Analysis tier; source-bound here too."""
+    if s is None or (not s.bull_points and not s.bear_points):
+        return []
+    out: list[str] = ["**The case** _(top points; the full bull/bear is in Analysis)_", ""]
+
+    def top3(pts: list[Any]) -> list[str]:
+        top = [p for p, _tier, _cr in _ordered_points(pts)][:3]
+        return [f"- {p.claim}\n  - ↳ `{p.source_ref}`" for p in top]
+
+    out += ["_Bull — overshoot:_", *(top3(s.bull_points) or ["- —"])]
+    out += ["_Bear — terminal:_", *(top3(s.bear_points) or ["- —"])]
+    uks = list(s.key_unknowns)[:3]
+    if uks:
+        out += ["_Key unknowns:_", *[f"- {u}" for u in uks]]
+    out.append("")
+    return out
+
+
+def _brief_oneliner(desc: str) -> str:
+    """First sentence of a CIQ business description ('{Co}, Inc. engages in …'), abbreviation-aware
+    so the split doesn't stop at 'Inc.'/'Corp.'; capped for the teaser."""
+    sent = ""
+    for piece in re.split(r"(?<=\.)\s+", desc):
+        sent = f"{sent} {piece}".strip() if sent else piece
+        if not re.search(r"\b(Inc|Corp|Ltd|Co|LLC|LP|plc|Ltda|S\.A|N\.V)\.$", sent):
+            break
+    return sent if len(sent) <= 220 else sent[:220].rsplit(" ", 1)[0] + "…"
+
+
+def _fmt_cap(v: float) -> str:
+    return f"${v / 1000:.1f}B" if v >= 1000 else f"${round(v)}M"  # v in $M
+
+
+def _fmt_shares(v: float) -> str:  # raw share count → "151.9M" / "1.2B"
+    return f"{v / 1e9:.1f}B" if v >= 1e9 else f"{v / 1e6:.1f}M"
+
+
+def _stock_info_line(si: StockInfo) -> list[str]:
+    """(Brief teaser) the market-data box — CMP · 52-wk range · shares · book value/sh · cap.
+    Each field is fail-honest: a value with no source is simply omitted (never fabricated). One
+    combined ↳ names the sources (EOD / EDGAR / CIQ); the per-field source_ref lives in JSON."""
+    p = SourceStatus.PRESENT
+    parts: list[str] = []
+    if si.price.status is p and si.price.value is not None:
+        asof = f" ({si.as_of.isoformat()})" if si.as_of is not None else ""
+        parts.append(f"CMP ${si.price.value:,.2f}{asof}")
+    if (si.low_52w.status is p and si.low_52w.value is not None
+            and si.high_52w.status is p and si.high_52w.value is not None):
+        parts.append(f"52-wk ${si.low_52w.value:,.2f}–${si.high_52w.value:,.2f}")
+    if si.shares_out.status is p and si.shares_out.value is not None:
+        parts.append(f"shares {_fmt_shares(si.shares_out.value)}")
+    if si.book_value_ps.status is p and si.book_value_ps.value is not None:
+        parts.append(f"book value/sh ${si.book_value_ps.value:,.2f}")
+    if si.market_cap.status is p and si.market_cap.value is not None:
+        parts.append(f"mkt cap {_fmt_cap(si.market_cap.value)}")
+    if not parts:
+        return []
+    return [f"- **Stock info:** {' · '.join(parts)}",
+            "  - ↳ `EOD close/52-wk · EDGAR XBRL shares · CIQ book value + market cap`"]
+
+
+def _customer_concentration(m: MechanicalLayer) -> str | None:
+    """The top-customer % (a concentration RISK) from the 10-Q — NOT the raw customer names."""
+    ps = m.primary_source
+    fil = ps.filing if ps is not None else None
+    conc = fil.concentration if fil is not None else None
+    custs = [c for c in (conc.customers if conc is not None else []) if c.pct is not None]
+    if not custs or fil is None:
+        return None
+    top = sorted(custs, key=lambda x: x.pct or 0.0, reverse=True)
+    # a disclosed floor ('exceeded N%', value_kind='floor') keeps its ≥ qualifier — the source said
+    # "more than N%", never an exact N% (source-fidelity: the human sees what the filing stated).
+    t0 = "≥" if top[0].value_kind == "floor" else ""
+    line = f"top customer {t0}{round(top[0].pct or 0.0)}%"
+    if top[0].prior_pct is not None:
+        line += f" (from {round(top[0].prior_pct)}%)"
+    if len(top) > 1:
+        # if either of the top-2 is a disclosed floor, their sum is itself a floor (≥)
+        t2 = "≥" if any(x.value_kind == "floor" for x in top[:2]) else ""
+        line += f" · top-2 ~{t2}{round(sum((x.pct or 0.0) for x in top[:2]))}%"
+    return f"- **Customer concentration:** {line} of revenue\n  - ↳ `{fil.source_ref}`"
+
+
+def _brief_financials(m: MechanicalLayer) -> list[str]:
+    """The Motilal-style financials snapshot — the key income-statement rows (un-truncated), as a
+    table; the full statement stays in the Appendix."""
+    fs = m.financial_summary
+    if fs is None or fs.annual.status is not SourceStatus.PRESENT or fs.annual.value is None:
+        return []
+    tbl = fs.annual.value
+    want = {"Revenue ($M)", "Revenue growth", "EBITDA ($M)", "EBITDA margin",
+            "EBIT ($M)", "Net income ($M)", "EPS (GAAP, dil.)", "FCF ($M)"}
+    rows = [[r.label, *r.cells] for r in tbl.rows if r.label in want]
+    if not rows or not tbl.columns:
+        return []
+    # num_cols are 0-based indices into cols (the period columns) — _table prepends the label cell
+    # itself. range(len) right-aligns EVERY period; range(1, len+1) left off column 0 and wasted
+    # index len (the first period rendered left-aligned).
+    num_cols = frozenset(range(len(tbl.columns)))
+    return _table("Financial snapshot", fs.annual.source_ref, list(tbl.columns), rows,
+                  num_cols=num_cols)
+
+
+def _brief_lines(d: Dossier) -> list[str]:
+    """(Brief) the market-standard first cut in 8 sections — teaser → setup → company → case →
+    financial snapshot → valuation → catalyst → verify. Machine-assembled + source-bound; the
+    Recommendation / Target slot is the HUMAN's. Mirrors briefTier() in the frontend dossier.js."""
+    m = d.mechanical
+    s = d.synthesis
+    out: list[str] = ["# Brief — first cut", ""]
+    # 1 — TEASER: identity · GICS · cap · one-liner · the human's Recommendation/Target · read
+    gics = (d.industry.value if d.industry is not None and d.industry.status is SourceStatus.PRESENT
+            else d.sector)
+    cap = m.implied_valuation.market_cap if m.implied_valuation is not None else None
+    cap_s = (f"cap {_fmt_cap(cap.value)}"
+             if cap is not None and cap.status is SourceStatus.PRESENT and cap.value is not None
+             else "")
+    meta = " · ".join(x for x in [d.exchange, gics, cap_s] if x)
+    out.append(f"**{d.ticker} · {d.name}**")
+    if meta:
+        out.append(f"_{meta}_")
+    bd = d.business_description
+    if bd is not None and bd.status is SourceStatus.PRESENT and bd.value is not None:
+        out.append(_brief_oneliner(bd.value))
+    if m.stock_info is not None:
+        out += _stock_info_line(m.stock_info)
+    out += ["", "**Recommendation / Target:** _not yet logged — the human's call "
+            "(Buy / Avoid + target)_"]
+    if s is not None and s.evidence_balance:
+        out += ["", f"**Machine read** _(not a verdict)_ — {s.evidence_balance}"]
+    out.append("")
+    # 2 — SETUP: why it's a candidate + the decisive question + decision data
+    out.append("## The setup")
+    io = m.idiosyncratic_vs_shared
+    if io is not None:
+        dd, idio = io.name_180d_return, io.rel_vs_market
+        if dd.status is SourceStatus.PRESENT:
+            line = f"Fell {_pct(dd.value)} over 180d"
+            if idio.status is SourceStatus.PRESENT:
+                line += f", idiosyncratic ({_pct(idio.value)} vs market)"
+            out.append(line + " — an overshoot candidate.")
+        elif idio.status is SourceStatus.PRESENT:
+            out.append(
+                f"Idiosyncratic {_pct(idio.value)} vs market over 180d — an overshoot candidate.")
+    if s is not None and s.decisive_question is not None and s.decisive_question.question:
+        out.append(f"**Decisive question:** {s.decisive_question.question}")
+    strip: list[str] = []
+    if io is not None:
+        strip.append(_fact("Idiosyncratic (vs market, 180d)", io.rel_vs_market, _pct))
+    if m.quality is not None:
+        strip.append(_fact("Net debt / EBITDA", m.quality.net_debt_to_ebitda, _mult))
+        strip.append(_fact("Free cash flow", m.quality.fcf_sign, _signword))
+    gc = _going_concern_brief(m)
+    if gc is not None:
+        strip.append(gc)
+    out += ["", *strip, ""] if strip else [""]
+    # 3 — COMPANY & BUSINESS: segments · geography · customer concentration (not names)
+    out.append("## Company & business")
+    if m.concentration is not None:
+        out += [_fact("Segments", m.concentration.segments),
+                _fact("Geography", m.concentration.geographic)]
+    cc = _customer_concentration(m)
+    if cc is not None:
+        out.append(cc)
+    out.append("")
+    # 4 — THE CASE: condensed bull/bear + key unknowns
+    out += ["## The case", *_brief_case_lines(s)]
+    # 5 — FINANCIAL SNAPSHOT: un-truncated key financials + the ratios panel
+    out.append("## Financial snapshot")
+    out += _brief_financials(m)
+    if m.key_ratios is not None:
+        out.append(_fact("Key ratios (latest)", m.key_ratios))
+    out.append("")
+    # 6 — VALUATION: cross-sectional + own-history + the multiple ladder + the implied ladder
+    out.append("## Valuation")
+    if m.valuation is not None:
+        out += [_fact("Valuation (vs peers)", m.valuation.cross_sectional),
+                _fact("Own-history range", m.valuation.range_position)]
+    if m.peer_comps is not None:
+        out.append(_fact("Comparability", m.peer_comps.comparability))
+    if m.catalyst_path is not None:
+        out += _ladder_lines(m.catalyst_path.cross_name_anchor)
+    if m.implied_valuation is not None:
+        out += _implied_lines(m.implied_valuation)
+    out.append("")
+    # 7 — CATALYST & CONSENSUS: the street's forward view (context, never a machine driver/target)
+    cp = m.catalyst_path
+    if cp is not None:
+        out += ["## Catalyst & consensus",
+                _fact("Consensus (target · ratings)", cp.consensus_stats)]
+        if cp.insider_activity is not None:
+            out.append(_fact("Insider activity (6m)", cp.insider_activity))
+        if cp.short_interest is not None:
+            out.append(_fact("Short interest", cp.short_interest))
+        out.append("")
+    # 8 — VERIFY FIRST: the decision-threatening caveats
+    vf = _brief_verify_first(d.caveats)
+    if vf:
+        out += ["## Verify first", "; ".join(vf), ""]
+    return out
+
+
 def render_markdown(d: Dossier, *, dev: bool = False) -> str:
     """(D1) Facts-first restructure. Section order: header → caveats → mechanical layer [drawdown &
     idiosyncrasy (clubbed) → leverage & survival → trajectory → valuation → peer comps → catalyst →
@@ -1416,7 +1663,12 @@ def render_markdown(d: Dossier, *, dev: bool = False) -> str:
         f"{_fmt_assembled(d.assembled_at)} · LLM {d.llm_model or 'none'}_",
         "",
     ]
-    # (D1) CAVEATS FIRST — the first thing the human sees is what to verify before trusting below.
+    # (3-tier) BRIEF — first cut: the machine READ + decisive question + decision data + condensed
+    # case + valuation snapshot. Assembles, never concludes; the logged verdict is a ledger concern.
+    out += _brief_lines(d)
+    # (3-tier) ANALYSIS — the full dossier: caveats → mechanical layer → FULL synthesis.
+    out += ["# Analysis — full dossier", ""]
+    # (D1) CAVEATS — what to verify before trusting the evidence below.
     out += _flags_section(d)
     out += ["## Mechanical layer", ""]  # (K5) methodology jargon lives in source_refs/JSON
 
@@ -1427,12 +1679,18 @@ def render_markdown(d: Dossier, *, dev: bool = False) -> str:
         _fact("Gap-down dates", m.drawdown_cause.gap_down_dates, _dates),
     ]
     if m.drawdown_cause.filings:
-        out.append("- **8-Ks at the gap-downs (cause from item codes + parsed filing text):**")
+        out.append("- **Gap-downs — what the results showed (parsed EX-99.1) + the 8-K:**")
         for f in m.drawdown_cause.filings:
             out.append(f"  - gap {f.gap_date} → {f.filing_date} [`{f.accession}`]({f.url})")
             out.append(f"    - items: {', '.join(f.item_types) or '—'}")
-            for ev in f.events:
-                out.append(f"    - {ev}")
+            # (B1) parsed release drivers ARE the informative cause — they supersede the item-code
+            # boilerplate; non-earnings 8-Ks (no match) still show their source-bound events.
+            if f.drivers is not None and f.drivers.status is SourceStatus.PRESENT:
+                out.append(f"    - **what the results showed:** {f.drivers.value}")
+                out.append(f"      - ↳ `{f.drivers.source_ref}`")
+            else:
+                for ev in f.events:
+                    out.append(f"    - {ev}")
     out.append(_fact("Revised guidance (catalyst 8-K Ex-99.1)", m.drawdown_cause.revised_guidance))
     out += _event_impact_lines(m)  # (RC-1 C) Avis-class event-impact quantifications
     out += [
@@ -1519,10 +1777,11 @@ def render_markdown(d: Dossier, *, dev: bool = False) -> str:
     else:
         out += ["## Synthesis", "_Not produced (see flags)._", ""]
 
-    # (D1 · K1 · K4) appendix: financial summary → capital-structure provenance → implied-valuation
-    # reference → the relocated management-commentary pointer, then the verdict footer.
+    # (3-tier) APPENDIX — data & audit: financial summary → capital-structure provenance →
+    # implied-valuation reference → management-commentary pointer, then the verdict footer.
+    out += ["# Appendix — data & audit", ""]
     appendix = _appendix_lines(m)
-    out += appendix if appendix else ["## Appendix", ""]
+    out += appendix if appendix else ["## Financial summary", ""]
     if m.capital_structure is not None:
         out += _capital_structure_appendix_lines(m.capital_structure)  # (K1) provenance
     if m.implied_valuation is not None:

@@ -658,6 +658,17 @@ def test_consensus_reproduction_guardrails_unreconciled_and_false_balance() -> N
                            {"claim": "c", "source_ref": "x"}]}
     _, f4, _ = syn.synthesize(_minimal_mech(), llm=_FakeLlm(lop), ticker="X", name="X")
     assert any("FALSE-BALANCE" in f for f in f4)
+    # (regression) 'mixed' in the dash-REASON, not the LABEL — a bearish read '… eroding, mixed cash
+    # generation' over a lopsided bear split must NOT trip FALSE-BALANCE (the check reads the label;
+    # this is the MVST re-assembly false positive that fired on a mid-sentence 'mixed').
+    reason_mixed = {
+        **base,
+        "evidence_balance": "strongly-bearish — a wall against eroding, mixed cash generation",
+        "bull_points": [{"claim": "a", "source_ref": "x"}, {"claim": "b", "source_ref": "x"}],
+        "bear_points": [{"claim": f"bear {i}", "source_ref": "x"} for i in range(7)],
+    }
+    _, f5, _ = syn.synthesize(_minimal_mech(), llm=_FakeLlm(reason_mixed), ticker="X", name="X")
+    assert not any("FALSE-BALANCE" in f for f in f5)
 
 
 def test_false_balance_flags_strong_lean_with_symmetric_body_both_directions() -> None:
@@ -1974,6 +1985,96 @@ def test_p6_ordered_points_monotonic_tiers_and_recon_present_e2e() -> None:
             recon = [p for p in doss.synthesis.bear_points
                      if "EX-99.1" in (p.source_ref or "") and getattr(p, "cited", False)]
             assert recon, "MVST: no cited EX-99.1-reconciliation bear point"
+
+
+def test_brief_financial_snapshot_right_aligns_all_period_columns() -> None:
+    """(audit fix) The Brief 'Financial snapshot' table right-aligns EVERY period column. The
+    num_cols off-by-one (range(1, len+1) instead of range(len)) left the FIRST period column
+    left-aligned. e2e on the committed MVST artifact, phrasing-independent (alignment structure,
+    no value pinned). Pre-fix: cells[1] == '---' → this fails."""
+    import pathlib
+    p = pathlib.Path("data/dossiers/MVST/dossier.json")
+    if not p.exists():
+        pytest.skip("no committed MVST dossier.json")
+    md = dr.render_markdown(ds.Dossier.model_validate_json(p.read_text()))
+    lines = md.splitlines()
+    head_i = next((i for i, ln in enumerate(lines)
+                   if "**Financial snapshot**" in ln and dr._TABLE_MARK in ln), None)
+    assert head_i is not None, "no Financial-snapshot ds-table in the MVST Brief"
+    align = next(ln for ln in lines[head_i + 1:head_i + 6] if ln.startswith("|-"))
+    cells = [c.strip() for c in align.strip().strip("|").split("|")]
+    assert cells[0] == "---", f"label column should stay left-aligned: {cells}"
+    assert len(cells) >= 3, f"expected label + >=2 period columns: {cells}"
+    assert all(c == "---:" for c in cells[1:]), f"every period column must right-align: {cells}"
+
+
+def test_customer_concentration_floor_keeps_ge_qualifier() -> None:
+    """(audit fix) A disclosed customer FLOOR (value_kind='floor', a filing's 'exceeded N%') renders
+    with its ≥ qualifier — never as an exact N%; an all-exact set carries no qualifier. Source
+    fidelity: the human sees what the filing stated, not a spuriously exact number."""
+    base = _primary_source_fixture(doubt=True)
+    assert base.filing is not None and base.filing.concentration is not None
+
+    def _mech_with(custs: list[ds.ConcentrationCustomer]) -> ds.MechanicalLayer:
+        conc = base.filing.concentration.model_copy(update={"customers": custs})
+        fil = base.filing.model_copy(update={"concentration": conc})
+        ps = base.model_copy(update={"filing": fil})
+        return _minimal_mech().model_copy(update={"primary_source": ps})
+
+    floor = _mech_with([
+        ds.ConcentrationCustomer(name="A", pct=52.0, prior_pct=31.0, value_kind="floor"),
+        ds.ConcentrationCustomer(name="B", pct=18.0, prior_pct=16.0)])
+    line = dr._customer_concentration(floor)
+    assert line is not None and "top customer ≥52%" in line and "top-2 ~≥70%" in line
+    exact = _mech_with([
+        ds.ConcentrationCustomer(name="A", pct=52.0, prior_pct=31.0),
+        ds.ConcentrationCustomer(name="B", pct=18.0, prior_pct=16.0)])
+    line2 = dr._customer_concentration(exact)
+    assert line2 is not None and "top customer 52%" in line2 and "≥" not in line2
+
+
+def test_stock_info_line_renders_present_and_omits_unknown() -> None:
+    """(Phase-2) The Brief stock-info line renders each PRESENT field and OMITS an UNKNOWN one
+    (fail-honest — never a fabricated placeholder); all-UNKNOWN → no line. Value pin on a FROZEN
+    fixture (the redraw-safe layer for specific values)."""
+    import datetime as _dt
+    p, u = ds.Sourced.present, ds.Sourced.unknown
+    si = ds.StockInfo(
+        price=p(4.22, source_ref="EOD"), high_52w=p(25.83, source_ref="EOD"),
+        low_52w=p(3.40, source_ref="EOD"), shares_out=p(151906653.0, source_ref="EDGAR"),
+        book_value_ps=p(1.79, source_ref="CIQ"), market_cap=p(668.4, source_ref="CIQ"),
+        as_of=_dt.date(2026, 7, 8))
+    body = " ".join(dr._stock_info_line(si))
+    assert "CMP $4.22 (2026-07-08)" in body
+    assert "52-wk $3.40–$25.83" in body
+    assert "shares 151.9M" in body and "book value/sh $1.79" in body and "mkt cap $668M" in body
+    # fail-honest: an UNKNOWN price/book → those chunks drop; the rest still render
+    si2 = si.model_copy(update={"price": u(note="no bars"), "book_value_ps": u(note="no CIQ")})
+    body2 = " ".join(dr._stock_info_line(si2))
+    assert "CMP" not in body2 and "book value/sh" not in body2
+    assert "52-wk $3.40–$25.83" in body2 and "shares 151.9M" in body2
+    # all-UNKNOWN → the whole line is omitted (no empty box)
+    allu = ds.StockInfo(price=u(note="x"), high_52w=u(note="x"), low_52w=u(note="x"),
+                        shares_out=u(note="x"), book_value_ps=u(note="x"), market_cap=u(note="x"))
+    assert dr._stock_info_line(allu) == []
+
+
+def test_vrrm_brief_stock_info_panel_present_and_cited() -> None:
+    """(Phase-2 e2e) VRRM's committed Brief carries the market-data stock-info line, source-bound
+    (the ↳ cite follows it). Presence + citation + CMP-present only — phrasing/value-independent so
+    a re-draw of the living artifact can't rot it (specific values pinned on the frozen fixture)."""
+    import pathlib
+    p = pathlib.Path("data/dossiers/VRRM/dossier.json")
+    if not p.exists():
+        pytest.skip("no committed VRRM dossier.json")
+    d = ds.Dossier.model_validate_json(p.read_text())
+    if d.mechanical.stock_info is None:
+        pytest.skip("VRRM not re-assembled with stock_info yet")
+    lines = dr.render_markdown(d).splitlines()
+    idx = next((i for i, ln in enumerate(lines) if "**Stock info:**" in ln), None)
+    assert idx is not None, "no Stock-info line in VRRM Brief"
+    assert "CMP $" in lines[idx]  # VRRM has committed EOD bars
+    assert "↳" in lines[idx + 1], "stock-info line is not source-bound"
 
 
 def test_self_referential_twin_requires_resolved_period_in_the_name() -> None:

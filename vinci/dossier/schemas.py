@@ -86,6 +86,10 @@ class FilingRef(BaseModel):
     accession: str
     url: str
     events: list[str]  # per-item catalyst from the body, or "UNKNOWN — read <acc> by hand"
+    # (B1) the parsed EX-99.1 drivers joined by accession — WHAT the results showed (adjusted
+    # EBITDA/NI/EPS + one-offs + forward outlook), the informative cause that replaces the item-code
+    # boilerplate. None until the join runs, or when no parsed release matched the gap's 8-K.
+    drivers: Sourced[str] | None = None
 
     model_config = {"frozen": True}
 
@@ -709,6 +713,23 @@ class PrimarySource(BaseModel):
     model_config = {"frozen": True}
 
 
+class StockInfo(BaseModel):
+    """(Phase-2) The market-data 'stock info' box — CMP + 52-week range (EOD price features), shares
+    outstanding (EDGAR XBRL), book value/share + market cap (CIQ). Each value is source-bound and
+    fail-honest: UNKNOWN when its source is absent, never a fabricated number. Assemble/inform
+    context for the Brief teaser — never a gate/rank input."""
+
+    price: Sourced[float]          # last EOD close — the current market price (CMP)
+    high_52w: Sourced[float]       # 52-week high (EOD; UNKNOWN without ~a year of bars)
+    low_52w: Sourced[float]        # 52-week low (EOD)
+    shares_out: Sourced[float]     # shares outstanding — EDGAR XBRL (raw count)
+    book_value_ps: Sourced[float]  # book value / share — CIQ Balance Sheet
+    market_cap: Sourced[float]     # market cap in $M — CIQ (from the implied-val bridge)
+    as_of: date | None = None      # the EOD price's as-of date (the latest bar used)
+
+    model_config = {"frozen": True}
+
+
 class MechanicalLayer(BaseModel):
     """The deterministic, source-bound facts — the ONLY input the synthesis LLM is given."""
 
@@ -739,6 +760,12 @@ class MechanicalLayer(BaseModel):
     # surfaces. Optional-with-default for back-compat: old JSON round-trips (no primary-source).
     primary_source: PrimarySource | None = None
     management_commentary: Sourced[str]  # earnings-call transcript — QUALITATIVE only, no numbers
+    # (Phase-2) the Motilal-style key-ratios panel — latest RoE / RoCE / RoA + total-debt/equity +
+    # current ratio + dividend, from the CIQ Ratios sheet. Optional-with-default for back-compat.
+    key_ratios: Sourced[str] | None = None
+    # (Phase-2) the market-data 'stock info' box — CMP + 52-week range + shares + book value + cap,
+    # each source-bound (EOD / EDGAR / CIQ). Optional-with-default for back-compat.
+    stock_info: StockInfo | None = None
 
     model_config = {"frozen": True}
 
@@ -821,5 +848,13 @@ class Dossier(BaseModel):
     qa_flags: list[str] = []
     llm_model: str | None
     assembled_at: datetime  # UTC-aware build stamp (rendered with time + "UTC"); legacy JSONs naive
+    # (teaser/company) Brief-teaser + company-overview context: the SIC-derived coarse sector (the
+    # CIQ-GICS fallback), the CIQ GICS Primary Industry Classification (source-bound), the exchange,
+    # and the CIQ subject business description. Assemble/inform only — never a gate/rank input.
+    # Default None so committed JSON predating these fields still round-trips.
+    sector: str | None = None
+    industry: Sourced[str] | None = None
+    exchange: str | None = None
+    business_description: Sourced[str] | None = None
 
     model_config = {"frozen": True}

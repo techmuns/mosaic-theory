@@ -191,6 +191,20 @@ CIQ_MODULES: tuple[CiqModuleRequirement, ...] = (
         lookback="current — the latest comp set (LTM + NTM forward), current-only",
         required=False,
     ),
+    CiqModuleRequirement(
+        module="Public Company Profile (tearsheet)",
+        workbook_kind="profile",
+        freq=None,
+        sheets=(),  # a text tearsheet, not a workbook with subsheets
+        used_for=(
+            "the CIQ GICS Primary Industry Classification for the Brief teaser (gics_industry) — "
+            "the analyst-standard sector/industry label, finer than SIC; degrades to the SIC "
+            "sector when the profile is absent"
+        ),
+        granularity=Granularity.SNAPSHOT,
+        lookback="current — the Public Company Profile tearsheet, current-only",
+        required=False,
+    ),
 )
 
 # Inputs that must NOT be manually uploaded — the funnel already pulls them FREE from EDGAR. Pulling

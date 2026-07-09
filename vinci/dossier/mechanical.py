@@ -17,6 +17,7 @@ import xml.etree.ElementTree as ET
 from datetime import date, timedelta
 from typing import Any, TypeVar
 
+from vinci.config import get_config
 from vinci.dossier import ciq_sheets, edgar_fundamentals
 from vinci.dossier.ciq import CiqBundle
 from vinci.dossier.schemas import (
@@ -40,14 +41,17 @@ from vinci.dossier.schemas import (
     PeerComps,
     PrimarySource,
     Quality,
+    ReconciliationValue,
     ReleaseExtract,
     Sourced,
     SourceStatus,
+    StockInfo,
     Valuation,
 )
 from vinci.edgar import filing_sections, primary_source, release_parse
 from vinci.edgar.client import EdgarClient
 from vinci.edgar.concepts import extract_points, latest_instant
+from vinci.eod import compute_price_features
 from vinci.finra import FinraLayoutError, short_interest_points
 from vinci.graph.exposure import ExposureGraph
 from vinci.graph.filings import html_to_text, normalize_text
@@ -275,7 +279,7 @@ def _drawdown_cause(record: DataRecord, edgar: EdgarClient, http: CachedHttp) ->
             for gd in gaps
         ]
         shape = Sourced.present(
-            "discrete gap-downs by 8-K item code — " + "; ".join(parts),
+            "discrete gap-downs — " + "; ".join(parts),
             source_ref="EDGAR 8-K item codes at the gap-down dates (not blanket-labelled earnings)",
         )
     else:
@@ -300,6 +304,95 @@ def _drawdown_cause(record: DataRecord, edgar: EdgarClient, http: CachedHttp) ->
             else Sourced.unknown(note="no catalyst 8-K to follow for a revised-guidance exhibit")
         ),
     )
+
+
+# --- (B1) informative drawdown: join each gap-down's 8-K to its parsed EX-99.1 drivers -----------
+_DRIVER_METRICS = ("adjusted ebitda", "adjusted net income", "adjusted eps")
+_METRIC_SHORT = {
+    "adjusted ebitda": "adj EBITDA",
+    "adjusted net income": "adj net income",
+    "adjusted eps": "adj EPS",
+}
+
+
+def _acc_of(source_ref: str) -> str | None:
+    """The EDGAR accession embedded in a release source_ref ('8-K 0001628280-26-033601 EX-99.1')."""
+    m = re.search(r"(\d{10}-\d{2}-\d{6})", source_ref)
+    return m.group(1) if m else None
+
+
+def _period_key(period: str) -> tuple[int, int]:
+    """Sort key for a period: (year, quarter) — 'Q1 2026' → (2026, 1), '2025' → (2025, 0)."""
+    ym = re.search(r"(\d{4})", period)
+    qm = re.search(r"Q(\d)", period)
+    return (int(ym.group(1)) if ym else 0, int(qm.group(1)) if qm else 0)
+
+
+def _fmt_driver(metric: str, value: float) -> str:
+    """$M for EBITDA/NI, $/sh for EPS; sign-aware ('-$5.5M', '$44.7M', '-$0.04')."""
+    if "eps" in metric:
+        return f"-${abs(value):.2f}" if value < 0 else f"${value:.2f}"
+    return f"-${abs(value):,.1f}M" if value < 0 else f"${value:,.1f}M"
+
+
+def _compose_gap_drivers(release: ReleaseExtract) -> Sourced[str] | None:
+    """WHAT the results showed — the latest-period adjusted EBITDA / net income / EPS (with the
+    prior-period contrast), one-off charges, and the forward outlook — from an already-parsed
+    EX-99.1, source-bound to the exhibit. None when the exhibit parsed no drivers. Deterministic
+    formatting of STORED values (no new number, no conclusion)."""
+    parts: list[str] = []
+    by_metric: dict[str, list[ReconciliationValue]] = {}
+    for rc in release.reconciliation:
+        by_metric.setdefault(rc.metric, []).append(rc)
+    for metric in _DRIVER_METRICS:
+        items = sorted(by_metric.get(metric, []), key=lambda x: _period_key(x.period), reverse=True)
+        if not items:
+            continue
+        latest = items[0]
+        s = f"{_METRIC_SHORT[metric]} {latest.period} {_fmt_driver(metric, latest.value)}"
+        # the prior contrast must match the period TYPE (annual vs quarterly) — an FY result pairs
+        # with the prior FY, a quarter with the prior-year quarter, never FY vs Q4.
+        latest_q = "Q" in latest.period.upper()
+        prior = next(
+            (i for i in items[1:]
+             if i.period != latest.period and ("Q" in i.period.upper()) == latest_q),
+            None,
+        )
+        if prior is not None:
+            s += f" (vs {_fmt_driver(metric, prior.value)} {prior.period})"
+        parts.append(s)
+    for o in release.one_offs:
+        desc = o.description[:48].rsplit(" ", 1)[0] if len(o.description) > 48 else o.description
+        parts.append(f"${o.amount:,.1f}M {desc}")
+    for g in release.guidance:
+        outlook = "qualitative" if g.qualitative else f"{g.low}–{g.high}"
+        parts.append(f"{g.period} {g.metric} outlook: {outlook}")
+    if not parts:
+        return None
+    return Sourced.present("; ".join(parts), source_ref=release.source_ref)
+
+
+def _enrich_drawdown_drivers(mech: MechanicalLayer, primary: PrimarySource) -> MechanicalLayer:
+    """(B1) Join each gap-down's 8-K accession to its parsed EX-99.1 release, attaching the driver
+    summary to the FilingRef — the informative cause that replaces item-code boilerplate. Assemble/
+    inform: it re-presents already-parsed facts, source-bound; renders no new conclusion."""
+    dc = mech.drawdown_cause
+    if not dc.filings:
+        return mech
+    rel_by_acc: dict[str, ReleaseExtract] = {}
+    for r in primary.releases:
+        acc = _acc_of(r.source_ref)
+        if acc is not None:
+            rel_by_acc[acc] = r
+    new_filings = [
+        f.model_copy(update={"drivers": _compose_gap_drivers(rel_by_acc[f.accession])})
+        if f.accession in rel_by_acc else f
+        for f in dc.filings
+    ]
+    if new_filings == list(dc.filings):
+        return mech
+    new_dc = dc.model_copy(update={"filings": new_filings})
+    return mech.model_copy(update={"drawdown_cause": new_dc})
 
 
 # --- idiosyncratic vs shared (graph cohort + EOD window returns) -------------------------------
@@ -1723,6 +1816,35 @@ def _primary_source(
     return ps, latency
 
 
+def _stock_info(
+    record: DataRecord, store: Store, edgar: EdgarClient, bundle: CiqBundle,
+    reference_date: date, market_cap: Sourced[float],
+) -> StockInfo:
+    """(Phase-2) The market-data 'stock info' box: CMP + 52-week range (EOD price features), shares
+    outstanding (EDGAR XBRL), book value/share + market cap (CIQ). Each value is source-bound; a
+    missing source stays UNKNOWN — never fabricated. Assemble/inform only: no gate, no conclusion.
+    The 52-week high/low defer to UNKNOWN without ~a year of bars (the price-features rule)."""
+    bars = store.get_price_history(record.identity.internal_id)
+    cap_val = market_cap.value if market_cap.status is SourceStatus.PRESENT else None
+    feats = compute_price_features(
+        bars, reference_date=reference_date,
+        staleness_days=get_config().price_staleness_days, market_cap=cap_val)
+    sym = record.identity.eod_symbol
+    shares = _edgar_shares_outstanding(edgar, record.identity.cik)
+    return StockInfo(
+        price=_sourced(feats.last, source_ref=f"EOD {sym} last close"),
+        high_52w=_sourced(feats.high_52w, source_ref=f"EOD {sym} 52-week high"),
+        low_52w=_sourced(feats.low_52w, source_ref=f"EOD {sym} 52-week low"),
+        shares_out=(
+            Sourced.present(float(shares), source_ref="EDGAR XBRL shares outstanding")
+            if shares and shares > 0
+            else Sourced.unknown(note="no EDGAR XBRL share count")),
+        book_value_ps=ciq_sheets.book_value_per_share(bundle),
+        market_cap=market_cap,
+        as_of=feats.last.as_of,
+    )
+
+
 def assemble_mechanical(
     record: DataRecord,
     *,
@@ -1748,6 +1870,7 @@ def assemble_mechanical(
     # either proves the workbook is pulled (both read PRESENT for AORT). CIQ multiples stay primary;
     # a PRESENT CIQ field is never overridden (_prefer_ciq).
     peer_comps = ciq_sheets.peer_comps(bundle)
+    key_ratios = ciq_sheets.key_ratios(bundle)  # (Phase-2) CIQ Ratios panel: RoE/RoCE/D:E/dividend
     ciq_fcf = ciq_sheets.free_cash_flow(bundle)
     ciq_margin = ciq_sheets.margin_trend(bundle)
     ciq_traj = ciq_sheets.multi_year_trajectory(bundle)
@@ -1809,12 +1932,16 @@ def assemble_mechanical(
         # E — structured capital structure (instruments + summary + maturity 8-Ks + pointers).
         capital_structure=_capital_structure(record, edgar, http, bundle, reference_date),
         management_commentary=ciq_sheets.management_commentary(bundle),
+        key_ratios=key_ratios,  # (Phase-2) the Motilal-style CIQ Ratios panel
+        stock_info=_stock_info(  # (Phase-2) CMP + 52wk range + shares + book value + cap
+            record, store, edgar, bundle, reference_date, implied_val.market_cap),
     )
     # (RC-1 C) primary-source layer — fetch 8-K EX-99.1 releases + the latest 10-Q, parse, and run
     # the four cross-source derivations over them + this mechanical layer. Resilient: a fetch/parse
     # miss becomes an UNKNOWN line + QA flag, never an abort. Attached via model_copy (frozen).
     primary, ps_latency = _primary_source(record, edgar, http, bundle, reference_date, mech)
     mech = mech.model_copy(update={"primary_source": primary})
+    mech = _enrich_drawdown_drivers(mech, primary)  # (B1) gap-downs → parsed EX-99.1 drivers
     flags: list[str] = list(primary.qa_flags)
     flags.append(f"primary-source: {len(primary.releases)} EX-99.1 release(s) + "
                  f"{'1' if primary.filing is not None else '0'} 10-Q parsed "

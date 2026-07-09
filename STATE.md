@@ -2876,6 +2876,73 @@ two-name analysis (mid/small-caps, opposite directions) mapped against this inve
 
 ## 5. Next steps (ordered, current)
 
+**DOSSIER first-cut BRIEF redesign — BUILT + VERIFIED, PR OPEN (#98, feat/dossier-brief, 2026-07-09).**
+The per-ticker dossier is now a THREE-TIER surface — **Brief / Analysis / Appendix** (client-side tabs +
+PDF-scope dropdown), md↔web parity held. The **Brief** is reworked from a card into a market-standard
+institutional first-cut memo (8 sections: teaser → setup → company & business → the case → financial
+snapshot → valuation → catalyst & consensus → verify-first), modelled on a real sell-side report (Motilal
+Oswal) adapted to the fund's discipline. **Guardrail held:** the machine renders NO verdict — the
+Recommendation/Target slot is the HUMAN's ("not yet logged"); consensus, the implied-value ladder, and the
+"machine read" are context, never a conclusion.
+- **New assembled fields** (schemas.py, default None → other dossiers stay fail-honest): `sector` (SIC map),
+  `industry` (CIQ GICS via `ciq_sheets.gics_industry`, SIC fallback), `exchange`, `business_description`
+  (CIQ subject row), `MechanicalLayer.key_ratios` (CIQ Ratios sheet), `FilingRef.drivers` (B1 join).
+  `requirements.CIQ_MODULES` gained the `profile` workbook; the coherence test stays green.
+- **B1 informative drawdown:** `mechanical._enrich_drawdown_drivers` joins each gap-down 8-K → its parsed
+  EX-99.1 drivers; MVST renders `adj EBITDA 2025 $44.7M (vs -$44.8M 2024); adj net income $13.0M (vs
+  -$84.6M); $32.5M inventory impairment`.
+- **Customers → concentration** (top-customer %, not raw names — names are analytically noise).
+- **False-balance QA-check FIX + regression test:** `synthesis.py` read the whole evidence_balance string
+  ("…eroding, mixed cash generation") and fired a spurious FALSE-BALANCE caveat; now reads the LABEL
+  (`lean`), not the substring. `test_dossier.py` pins it — reverting lean→eb fails the pin.
+- **VERIFIED (real-run, MVST):** ratios `RoE -9.3%; RoCE 1.5%; RoA 1.2%; D/E 0.70; current 0.96; div none`;
+  GICS `Construction Machinery & Heavy Transportation Equipment` (vs SIC's coarse "Technology"); the
+  spurious caveat is GONE from the re-assembled artifact. ruff + mypy --strict (93) + full pytest
+  (not network) green; **ARTIFACT-PASS** green on the re-assembled MVST artifact. Commits: code + artifacts
+  SEPARATE (never bundle code into an artifact commit).
+- **OPERATOR TO-DOs (this build):**
+  1. **Re-assemble the other 9 committed dossiers** (AORT, BRBR, CNXC, EPAM, FUBO, IT, SMPL, VITL, VRRM) —
+     only MVST carries the new fields today; the standing artifact pass back-fills the cohort.
+  2. **DEFERRED — Phase-2 stock-info panel** (price / 52-wk range / shares / book value). UNLOCK: EOD is
+     thin for MVST specifically; build when a finalist has a full EOD history to render.
+  3. **DEFERRED — Phase-3 dependency-free SVG charts** (P/E own-history band, ROIC trend, rev/EBITDA
+     trend). UNLOCK: after the Brief structure is human-reviewed on #98 (don't build charts onto a layout
+     that may still change in review).
+  4. **OPS — token file REFRESHED (2026-07-09).** The old `~/.mosaic_gh_token` had gone stale (401); the
+     user supplied a new repo-scoped token, written + verified (GET /user → 200). (The push + PR had used
+     the osxkeychain-cached credential as the fallback.)
+- **AUDIT (2026-07-09, post-open) — #98 audited against code; 4 MINOR defects fixed, 0 blockers.** Two
+  adversarial sub-agents (render.py + dossier.js) + empirical renders of all 10 committed dossiers and the
+  live frontend (MVST full-field · IT/AORT missing-field). CLEAN: None-safety (the 9 non-re-assembled
+  dossiers render — new fields fail-honest; the 7 that fail to LOAD do so on the PRE-EXISTING required
+  `valuation.cross_sectional`, NOT a #98 regression), the machine-never-concludes guardrail, and md↔web
+  parity. FIXED, each with a regression pin, suite green: (a) `render.py _brief_financials` num_cols
+  off-by-one — the first period column left-aligned instead of right (e2e alignment pin); (b) `render.py
+  _customer_concentration` dropped a disclosed `value_kind='floor'` ≥ qualifier (unit pin; latent — MVST
+  customers are 'exact'); (c) `dossier.js` menu-chosen PDF scope (`ds-print-*`) was never cleared → a later
+  native Cmd+P printed the wrong scope (now cleared on `afterprint`); (d) `dossier.js` per-render global
+  click listener leaked one stale listener per navigation (now a once-registered module-scoped listener).
+  key_ratios / B1 drawdown drivers / customer-concentration values re-verified against the real CIQ Ratios
+  sheet + committed artifact; `dossier.md` re-rendered (deterministic — the one alignment line).
+  Incident→invariant: (a)→alignment e2e pin, (b)→floor unit pin [both shipped]; (c)/(d) web-only, verified
+  live in the preview (afterprint clears scope; menu opens/closes; no console errors on MVST/IT/AORT).
+- **PHASE-2 STOCK-INFO PANEL — BUILT + VERIFIED on VRRM (added to #98, 2026-07-09).** The Motilal-style
+  market-data box on the Brief teaser: CMP + 52-week range (EOD price features), shares outstanding
+  (EDGAR XBRL), book value/share + market cap (CIQ) — each source-bound and fail-honest (a field with no
+  source is omitted; all-UNKNOWN → no line). New `StockInfo` schema + `MechanicalLayer.stock_info`
+  (default None → back-compat), `mechanical._stock_info` (wraps the EXISTING `compute_price_features` +
+  `_edgar_shares_outstanding` + new `ciq_sheets.book_value_per_share`), rendered in md (`_stock_info_line`)
+  + web (`stockInfoLine`, parity + a `.brief-stock` style). **EOD unblocked:** the `prices` table was
+  EMPTY in this env (the committed dossiers' EOD reads predate it); pulled VRRM 2025-05-01..2026-07-08
+  (297 bars, `POLYGON_API_KEY` from `.env`) via `vinci refresh`. **VERIFIED (real VRRM):** CMP $4.22
+  (2026-07-08) · 52-wk $3.40–$25.73 · shares 151.9M · book value/sh $1.79 · mkt cap $668M — internally
+  consistent (price × shares ≈ CIQ cap), a genuine distressed name (Verra Mobility, ~83% off its 52w
+  high; the pipeline also fired a stale-CIQ-multiple caveat, correctly preferring the fresh EOD price).
+  A full VRRM re-assembly landed it + the Brief fields (exchange Nasdaq, GICS). Pins: a frozen-fixture
+  render pin (fail-honest) + a phrasing-independent e2e presence/citation pin on committed VRRM. ruff +
+  mypy --strict + full pytest green; md↔web parity + no console errors verified in preview. **MVST stays
+  EOD-thin** (no bars pulled) → its CMP/52wk render fail-honest UNKNOWN, correctly.
+
 **RC-1 primary-source text extraction — BUILT + VERIFIED, PR OPEN (feat/primary-source-text, 2026-07-06).**
 DETERMINISTIC (anchored, never LLM) parsers of the EX-99.1 release (A, `vinci/edgar/release_parse.py`) and
 the 10-Q/10-K sections (B, `vinci/edgar/filing_sections.py`), verified on the REAL cached filings, pinned on
