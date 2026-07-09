@@ -2876,6 +2876,41 @@ two-name analysis (mid/small-caps, opposite directions) mapped against this inve
 
 ## 5. Next steps (ordered, current)
 
+**DOSSIER first-cut BRIEF redesign — BUILT + VERIFIED, PR OPEN (#98, feat/dossier-brief, 2026-07-09).**
+The per-ticker dossier is now a THREE-TIER surface — **Brief / Analysis / Appendix** (client-side tabs +
+PDF-scope dropdown), md↔web parity held. The **Brief** is reworked from a card into a market-standard
+institutional first-cut memo (8 sections: teaser → setup → company & business → the case → financial
+snapshot → valuation → catalyst & consensus → verify-first), modelled on a real sell-side report (Motilal
+Oswal) adapted to the fund's discipline. **Guardrail held:** the machine renders NO verdict — the
+Recommendation/Target slot is the HUMAN's ("not yet logged"); consensus, the implied-value ladder, and the
+"machine read" are context, never a conclusion.
+- **New assembled fields** (schemas.py, default None → other dossiers stay fail-honest): `sector` (SIC map),
+  `industry` (CIQ GICS via `ciq_sheets.gics_industry`, SIC fallback), `exchange`, `business_description`
+  (CIQ subject row), `MechanicalLayer.key_ratios` (CIQ Ratios sheet), `FilingRef.drivers` (B1 join).
+  `requirements.CIQ_MODULES` gained the `profile` workbook; the coherence test stays green.
+- **B1 informative drawdown:** `mechanical._enrich_drawdown_drivers` joins each gap-down 8-K → its parsed
+  EX-99.1 drivers; MVST renders `adj EBITDA 2025 $44.7M (vs -$44.8M 2024); adj net income $13.0M (vs
+  -$84.6M); $32.5M inventory impairment`.
+- **Customers → concentration** (top-customer %, not raw names — names are analytically noise).
+- **False-balance QA-check FIX + regression test:** `synthesis.py` read the whole evidence_balance string
+  ("…eroding, mixed cash generation") and fired a spurious FALSE-BALANCE caveat; now reads the LABEL
+  (`lean`), not the substring. `test_dossier.py` pins it — reverting lean→eb fails the pin.
+- **VERIFIED (real-run, MVST):** ratios `RoE -9.3%; RoCE 1.5%; RoA 1.2%; D/E 0.70; current 0.96; div none`;
+  GICS `Construction Machinery & Heavy Transportation Equipment` (vs SIC's coarse "Technology"); the
+  spurious caveat is GONE from the re-assembled artifact. ruff + mypy --strict (93) + full pytest
+  (not network) green; **ARTIFACT-PASS** green on the re-assembled MVST artifact. Commits: code + artifacts
+  SEPARATE (never bundle code into an artifact commit).
+- **OPERATOR TO-DOs (this build):**
+  1. **Re-assemble the other 9 committed dossiers** (AORT, BRBR, CNXC, EPAM, FUBO, IT, SMPL, VITL, VRRM) —
+     only MVST carries the new fields today; the standing artifact pass back-fills the cohort.
+  2. **DEFERRED — Phase-2 stock-info panel** (price / 52-wk range / shares / book value). UNLOCK: EOD is
+     thin for MVST specifically; build when a finalist has a full EOD history to render.
+  3. **DEFERRED — Phase-3 dependency-free SVG charts** (P/E own-history band, ROIC trend, rev/EBITDA
+     trend). UNLOCK: after the Brief structure is human-reviewed on #98 (don't build charts onto a layout
+     that may still change in review).
+  4. **OPS — the `~/.mosaic_gh_token` file is STALE** (returns 401 from the GitHub API); the push + PR used
+     the osxkeychain-cached credential instead. Refresh the token file before the next token-dependent run.
+
 **RC-1 primary-source text extraction — BUILT + VERIFIED, PR OPEN (feat/primary-source-text, 2026-07-06).**
 DETERMINISTIC (anchored, never LLM) parsers of the EX-99.1 release (A, `vinci/edgar/release_parse.py`) and
 the 10-Q/10-K sections (B, `vinci/edgar/filing_sections.py`), verified on the REAL cached filings, pinned on
