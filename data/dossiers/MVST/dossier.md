@@ -140,7 +140,7 @@ Net debt/EBITDA (3.9x) is on REPORTED EBITDA (CIQ / consolidated GAAP), not the 
     - items: 2.02 Results of Operations and Financial Condition
     - **what the results showed:** adj EBITDA Q1 2026 -$5.5M (vs $28.5M Q1 2025); adj net income Q1 2026 -$14.6M (vs $19.3M Q1 2025); adj EPS Q1 2026 -$0.04; 2026 revenue outlook: qualitative
       - ↳ `8-K 0001628280-26-033601 EX-99.1`
-- **Revised guidance (catalyst 8-K Ex-99.1) · Net debt / EBITDA (fwd-adj covenant basis) · EV/EBITDA (adjusted, forward) · Adjusted EPS (earnings power):** _UNKNOWN_ — no revised-outlook 99.1 exhibit parsed — the revised forward guidance is UNKNOWN
+- **Revised guidance · Net debt / EBITDA (fwd-adj covenant basis) · EV/EBITDA (adjusted, forward) · Adjusted EPS (earnings power):** _UNKNOWN_ — no revised-outlook 99.1 exhibit parsed — the revised forward guidance is UNKNOWN
 
 _Did it happen alone? (idiosyncratic vs shared — the G2-vs-market compensation):_
 - **Name 180d return:** _UNKNOWN_ — name has no bars over the window
@@ -525,7 +525,7 @@ _QoQ/YoY same-basis only; (R) = Reclassified_
 | Notes Payable | — | — | no contract-level filing expected (aggregate line item) |
 | Operating Lease Liabilities | — | — | no contract-level filing expected (aggregate line item) |
 
-- **Covenant terms — Convertible Loan (governing; Tier-2 fenced)** — ↳ `fenced Tier-2 extraction (verbatim, source-bound)`  <!-- ds-table -->
+- **Covenant terms — Convertible Loan (governing agreement)** — ↳ `fenced Tier-2 extraction (verbatim, source-bound)`  <!-- ds-table -->
 
 |  | Governing value (lead · clause ≤200c) | Source § |
 |---|---|---|
@@ -539,7 +539,7 @@ _QoQ/YoY same-basis only; (R) = Reclassified_
 
 _Source §: 8-K 0001760689-24-000021 · wu_microvast-loanandsecuri.htm · amended by 0000947871-25-000313_
 
-- **Covenant terms — Loan Facilities Agreement (governing; Tier-2 fenced)** — ↳ `fenced Tier-2 extraction (verbatim, source-bound)`  <!-- ds-table -->
+- **Covenant terms — Loan Facilities Agreement (governing agreement)** — ↳ `fenced Tier-2 extraction (verbatim, source-bound)`  <!-- ds-table -->
 
 |  | Governing value (lead · clause ≤200c) | Source § |
 |---|---|---|
@@ -554,7 +554,7 @@ _Source §: 8-K 0001760689-24-000021 · wu_microvast-loanandsecuri.htm · amende
 
 _Source §: 8-K 0001760689-22-000094 · exhibit101-syndicatedloana.htm_
 
-- **Covenant terms — material contracts (10-K exhibit index) (governing; Tier-2 fenced)** — ↳ `fenced Tier-2 extraction (verbatim, source-bound)`  <!-- ds-table -->
+- **Covenant terms — material contracts (10-K exhibit index) (governing agreement)** — ↳ `fenced Tier-2 extraction (verbatim, source-bound)`  <!-- ds-table -->
 
 |  | Governing value (lead · clause ≤200c) | Source § |
 |---|---|---|
