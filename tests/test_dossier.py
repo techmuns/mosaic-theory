@@ -658,6 +658,17 @@ def test_consensus_reproduction_guardrails_unreconciled_and_false_balance() -> N
                            {"claim": "c", "source_ref": "x"}]}
     _, f4, _ = syn.synthesize(_minimal_mech(), llm=_FakeLlm(lop), ticker="X", name="X")
     assert any("FALSE-BALANCE" in f for f in f4)
+    # (regression) 'mixed' in the dash-REASON, not the LABEL — a bearish read '… eroding, mixed cash
+    # generation' over a lopsided bear split must NOT trip FALSE-BALANCE (the check reads the label;
+    # this is the MVST re-assembly false positive that fired on a mid-sentence 'mixed').
+    reason_mixed = {
+        **base,
+        "evidence_balance": "strongly-bearish — a wall against eroding, mixed cash generation",
+        "bull_points": [{"claim": "a", "source_ref": "x"}, {"claim": "b", "source_ref": "x"}],
+        "bear_points": [{"claim": f"bear {i}", "source_ref": "x"} for i in range(7)],
+    }
+    _, f5, _ = syn.synthesize(_minimal_mech(), llm=_FakeLlm(reason_mixed), ticker="X", name="X")
+    assert not any("FALSE-BALANCE" in f for f in f5)
 
 
 def test_false_balance_flags_strong_lean_with_symmetric_body_both_directions() -> None:

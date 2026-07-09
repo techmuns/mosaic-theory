@@ -39,6 +39,7 @@ from vinci.rank import load_candidates_from_snapshot
 from vinci.resolver import EntityResolver
 from vinci.schemas.candidate import CandidateRecord
 from vinci.sec import build_sec_http
+from vinci.sectors import sector_for_sic
 from vinci.store import Store
 
 
@@ -187,6 +188,12 @@ def assemble_one(
         ticker=ticker, name=rec.identity.name, cik=rec.identity.cik,
         reference_date=fin.reference_date, rank=fin.rank, mechanical=mech, synthesis=synthesis,
         caveats=caveats, qa_flags=qa_flags,
+        # (teaser/company) SIC-derived sector/sub-industry + exchange + CIQ subject business desc —
+        # assemble/inform context for the Brief teaser, never a gate/rank input.
+        sector=sector_for_sic(rec.identity.sic),  # SIC coarse sector — the CIQ-GICS fallback
+        industry=ciq_sheets.gics_industry(bundle),  # CIQ GICS Primary Industry Classification
+        exchange=rec.identity.exchange,
+        business_description=ciq_sheets.business_description(bundle),
         # UTC-aware so the stamp is unambiguous and comparable across machines/timezones — it lets
         # the human tell two same-day re-assemblies apart (rendered with time + "UTC").
         llm_model=(llm.model if llm else None), assembled_at=datetime.now(UTC),

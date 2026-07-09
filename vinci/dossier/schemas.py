@@ -86,6 +86,10 @@ class FilingRef(BaseModel):
     accession: str
     url: str
     events: list[str]  # per-item catalyst from the body, or "UNKNOWN — read <acc> by hand"
+    # (B1) the parsed EX-99.1 drivers joined by accession — WHAT the results showed (adjusted
+    # EBITDA/NI/EPS + one-offs + forward outlook), the informative cause that replaces the item-code
+    # boilerplate. None until the join runs, or when no parsed release matched the gap's 8-K.
+    drivers: Sourced[str] | None = None
 
     model_config = {"frozen": True}
 
@@ -739,6 +743,9 @@ class MechanicalLayer(BaseModel):
     # surfaces. Optional-with-default for back-compat: old JSON round-trips (no primary-source).
     primary_source: PrimarySource | None = None
     management_commentary: Sourced[str]  # earnings-call transcript — QUALITATIVE only, no numbers
+    # (Phase-2) the Motilal-style key-ratios panel — latest RoE / RoCE / RoA + total-debt/equity +
+    # current ratio + dividend, from the CIQ Ratios sheet. Optional-with-default for back-compat.
+    key_ratios: Sourced[str] | None = None
 
     model_config = {"frozen": True}
 
@@ -821,5 +828,13 @@ class Dossier(BaseModel):
     qa_flags: list[str] = []
     llm_model: str | None
     assembled_at: datetime  # UTC-aware build stamp (rendered with time + "UTC"); legacy JSONs naive
+    # (teaser/company) Brief-teaser + company-overview context: the SIC-derived coarse sector (the
+    # CIQ-GICS fallback), the CIQ GICS Primary Industry Classification (source-bound), the exchange,
+    # and the CIQ subject business description. Assemble/inform only — never a gate/rank input.
+    # Default None so committed JSON predating these fields still round-trips.
+    sector: str | None = None
+    industry: Sourced[str] | None = None
+    exchange: str | None = None
+    business_description: Sourced[str] | None = None
 
     model_config = {"frozen": True}

@@ -667,7 +667,9 @@ def _validate(
         flags.append(
             "evidence_balance MISSING — the synthesis must commit a balance read, never default it"
         )
-    elif "mixed" in eb and (nb + nr) >= 3 and (min(nb, nr) == 0 or max(nb, nr) > 2 * min(nb, nr)):
+    # 'mixed' must be read from the LABEL (lean), never the whole string — else a reason clause like
+    # '… eroding, mixed cash generation' (a bearish read) trips the flag on a mid-sentence word.
+    elif "mixed" in lean and (nb + nr) >= 3 and (min(nb, nr) == 0 or max(nb, nr) > 2 * min(nb, nr)):
         flags.append(
             f"FALSE-BALANCE? evidence_balance reads 'mixed' but the bull/bear split is lopsided "
             f"({nb} bull vs {nr} bear) — confirm genuinely mixed, not one-sided dressed as balanced"

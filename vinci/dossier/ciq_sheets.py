@@ -1885,6 +1885,88 @@ def comps_ev_ebitda(bundle: CiqBundle) -> Sourced[float]:
     )
 
 
+def business_description(bundle: CiqBundle) -> Sourced[str]:
+    """The SUBJECT's own business description — the CIQ Business Description sheet TARGET row that
+    :func:`peer_comps` reads for peers but drops for the name. Full text stored; the Brief teaser
+    derives the one-liner (first sentence) at render. Fail-loud UNKNOWN if the sheet or subject row
+    is absent — never a fabricated blurb."""
+    try:
+        bd = bundle.sheet("comps", "Business Description")
+    except CiqUnavailableError as exc:
+        return _miss_or_unknown(bundle, "comps", exc)
+    _hdr, _peers, tgt = _comps_layout(bd, bundle.ticker)
+    if tgt is None or len(bd[tgt]) < 2:
+        return Sourced.unknown(note="no subject business-description row in the comps workbook")
+    full = str(bd[tgt][1]).strip()
+    if not full:
+        return Sourced.unknown(note="subject business-description cell is empty")
+    return Sourced.present(
+        full, source_ref="CIQ Comparable Analysis→Business Description (subject row)")
+
+
+def gics_industry(bundle: CiqBundle) -> Sourced[str]:
+    """CIQ's GICS Primary Industry Classification from the Public Company Profile tearsheet — the
+    analyst-standard classification, finer + more accurate than the SIC sector (e.g. MVST →
+    'Construction Machinery & Heavy Transportation Equipment', not SIC's 'Technology'). Fail-loud
+    UNKNOWN if no profile or the row is absent — the caller falls back to the SIC sector."""
+    prof = bundle.workbook("profile")
+    if prof is None:
+        return Sourced.unknown(note="no CIQ Public Company Profile — SIC-sector fallback")
+    try:
+        from striprtf.striprtf import rtf_to_text
+        text = rtf_to_text(prof.path.read_text(errors="ignore"))  # type: ignore[no-untyped-call]
+    except (OSError, ValueError) as exc:
+        return Sourced.unknown(note=f"CIQ profile unreadable ({exc}) — SIC-sector fallback")
+    lines = [ln.strip() for ln in text.splitlines() if ln.strip()]
+    for i, ln in enumerate(lines[:25]):
+        if ln.startswith("Primary Industry Classification") and i + 1 < len(lines):
+            val = lines[i + 1].rstrip("|").strip()
+            if val:
+                return Sourced.present(
+                    val, source_ref="CIQ Public Company Profile→Primary Industry Classification")
+    return Sourced.unknown(note="no Primary Industry Classification in the CIQ profile")
+
+
+def key_ratios(bundle: CiqBundle) -> Sourced[str]:
+    """The Motilal-style 'Ratios' panel — latest-period RoE / RoCE / RoA, total-debt/equity, current
+    ratio, and dividend status — from the CIQ Ratios sheet. Each a STORED CIQ value (never computed
+    here); fail-loud UNKNOWN when the sheet is absent. Latest = the rightmost numeric column."""
+    try:
+        rs = bundle.sheet("financials", "Ratios", freq="annual")
+    except CiqUnavailableError as exc:
+        return _miss_or_unknown(bundle, "financials", exc)
+
+    def latest(label: str) -> float | None:
+        for r in rs:
+            if r and str(r[0]).strip() == label:
+                for c in reversed(r[1:]):
+                    v = clean_num(c)
+                    if v is not None:
+                        return v
+        return None
+
+    def has_row(label: str) -> bool:
+        return any(r and str(r[0]).strip() == label for r in rs)
+
+    parts: list[str] = []
+    for label, name, is_pct in (
+        ("Return on Equity %", "RoE", True),
+        ("Return on Capital %", "RoCE", True),
+        ("Return on Assets %", "RoA", True),
+        ("Total Debt/Equity", "total debt/equity", False),
+        ("Current Ratio", "current ratio", False),
+    ):
+        v = latest(label)
+        if v is not None:
+            parts.append(f"{name} {v * 100:.1f}%" if is_pct else f"{name} {v:.2f}")
+    if has_row("Dividend per Share") and latest("Dividend per Share") is None:
+        parts.append("dividend: none")
+    if not parts:
+        return Sourced.unknown(note="no key ratios found in the CIQ Ratios sheet")
+    return Sourced.present(
+        "; ".join(parts) + " (latest)", source_ref="CIQ Financials→Ratios (latest period)")
+
+
 def peer_comps(bundle: CiqBundle) -> PeerComps:
     """Assemble the peer-comps section from the CIQ Company Comparable Analysis workbook: roster +
     market-cap/business dispersion + the name-vs-peer multiple gap (LTM + NTM) + the fundamental
