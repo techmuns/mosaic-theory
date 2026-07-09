@@ -59,7 +59,7 @@ _Key unknowns:_
 - **Financial snapshot** — ↳ `CIQ Financials→Income Statement + Cash Flow (annual) + Estimates→Trends (FY E)`  <!-- ds-table -->
 
 |  | FY22 (R) | FY23 (R) | FY24 | FY25 | LTM | FY26E | FY27E |
-|---|---|---:|---:|---:|---:|---:|---:|
+|---|---:|---:|---:|---:|---:|---:|---:|
 | Revenue ($M) | 204 | 307 | 380 | 428 | 372 | 444 | 592 |
 | Revenue growth | — | +50% | — (basis) | +13% | — (basis) | +4% (vs FY25) | +33% |
 | EBITDA ($M) | -140 | -85 | 5 | 74 | 52 | 62 | 148 |
