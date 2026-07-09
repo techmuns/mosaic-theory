@@ -888,11 +888,11 @@ def _covenant_term_lines(cs: Any) -> list[str]:
     one-line string."""
     rows_s = getattr(cs, "covenant_term_rows", None)
     if rows_s is None or rows_s.status is not SourceStatus.PRESENT or not rows_s.value:
-        return [_fact("Covenant terms (Tier-2, fenced)", cs.covenant_terms)]
+        return [_fact("Covenant terms (from the filed agreement)", cs.covenant_terms)]
     ptrs = getattr(cs, "covenant_pointer_rows", None)
     gov = governing_terms(rows_s.value, ptrs.value if ptrs is not None and ptrs.value else [])
     if not gov:
-        return [_fact("Covenant terms (Tier-2, fenced)", cs.covenant_terms)]
+        return [_fact("Covenant terms (from the filed agreement)", cs.covenant_terms)]
     families: list[str] = []
     for g in gov:
         if g.family not in families:
@@ -938,7 +938,7 @@ def _covenant_term_lines(cs: Any) -> list[str]:
             else:
                 ref = "base (footer)"
             rows.append([g.term, cell, ref])
-        out += _table(f"Covenant terms — {fam} (governing; Tier-2 fenced)", rows_s.source_ref,
+        out += _table(f"Covenant terms — {fam} (governing agreement)", rows_s.source_ref,
                       cols, rows, note=footer)
     # (FIX-2) ONE human line inside the covenant block for located agreement exhibits NOT extracted
     # this run (cost bound / fetch fail) — the per-exhibit machine detail is a QA flag, not a
@@ -1271,8 +1271,12 @@ def _trajectory_table_lines(m: MechanicalLayer) -> list[str]:
 _TIER_KEYWORDS: tuple[tuple[float, tuple[str, ...]], ...] = (
     (1.0, ("free cash flow", "levered free cash", "fcf", "self-fund", "self fund", "cash generat",
            "cash burn", "cash-negative", "interest coverage", "maturity", "wall", "covenant",
-           "refinanc", "liquidity", "going concern", "solven", "net-debt", "net debt", "total-debt",
-           "total debt", "debt/ebitda", "adjusted ebitda negative", "adjusted ebitda was negative",
+           # (A4) BOTH "going concern" and "going-concern" — the hyphen variant was missed, sinking
+           # a stated going-concern to 'unclassified' at the bottom (the codebase idiom double-lists
+           # variants, cf. net-debt / net debt below).
+           "refinanc", "liquidity", "going concern", "going-concern", "solven", "net-debt",
+           "net debt", "total-debt", "total debt", "debt/ebitda", "adjusted ebitda negative",
+           "adjusted ebitda was negative",
            # (R1 audit) the bare "turned negative" keyword was REMOVED — it matched a subject-less
            # "competitor guidance turned negative"; the SCOPED _TIER_REGEX carries the real cases.
            "ebitda was negative")),
@@ -1691,7 +1695,7 @@ def render_markdown(d: Dossier, *, dev: bool = False) -> str:
             else:
                 for ev in f.events:
                     out.append(f"    - {ev}")
-    out.append(_fact("Revised guidance (catalyst 8-K Ex-99.1)", m.drawdown_cause.revised_guidance))
+    out.append(_fact("Revised guidance", m.drawdown_cause.revised_guidance))
     out += _event_impact_lines(m)  # (RC-1 C) Avis-class event-impact quantifications
     out += [
         "",

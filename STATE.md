@@ -2942,6 +2942,19 @@ Recommendation/Target slot is the HUMAN's ("not yet logged"); consensus, the imp
   render pin (fail-honest) + a phrasing-independent e2e presence/citation pin on committed VRRM. ruff +
   mypy --strict + full pytest green; md↔web parity + no console errors verified in preview. **MVST stays
   EOD-thin** (no bars pulled) → its CMP/52wk render fail-honest UNKNOWN, correctly.
+- **A4 + A3 render cleanups — SHIPPED (2026-07-09, feat/dossier-render-cleanup, stacked on #98).**
+  **A4:** the `_TIER_KEYWORDS` space/hyphen miss is fixed — "going-concern" (hyphen) double-listed with
+  "going concern" (space) in BOTH renderers (the codebase idiom, cf. net-debt/net debt), + a deterministic
+  classifier pin (a bare hyphenated going-concern now lands Tier-1, not 'unclassified' at the bottom).
+  MVST already sorted going-concern FIRST via other tier-1 keywords, so zero committed-artifact churn —
+  the fix closes the latent recurrence. The `evidence_balance`-lean sort was intentionally NOT built (a
+  debatable behavior change, not a bug; the Brief already leads with the lean). **A3:** de-jargoned the
+  covenant labels ("Tier-2, fenced" → "from the filed agreement"; "governing; Tier-2 fenced" → "governing
+  agreement") and "Revised guidance (catalyst 8-K Ex-99.1)" → "Revised guidance" (matching the already-clean
+  JS), both renderers; MVST/VRRM `.md` re-rendered (deterministic — labels only). The `fenced Tier-2`
+  **source_ref** is DATA (`covenant_extract.py`) → deferred to the B-phase re-assembly. ruff + mypy + full
+  pytest green; web verified (no "Tier-2 fenced" on the surface, no console errors). **STILL OPEN:** A2
+  (endnotes), B2 (per-peer valuation grid), cohort re-assembly; Phase-3 charts deferred behind them.
 
 **RC-1 primary-source text extraction — BUILT + VERIFIED, PR OPEN (feat/primary-source-text, 2026-07-06).**
 DETERMINISTIC (anchored, never LLM) parsers of the EX-99.1 release (A, `vinci/edgar/release_parse.py`) and

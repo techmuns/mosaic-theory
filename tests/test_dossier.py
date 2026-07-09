@@ -1772,6 +1772,17 @@ def test_point_tier_turned_negative_requires_a_solvency_subject() -> None:
     assert dr._point_tier("market sentiment turned negative on the sector") != 1.0
 
 
+def test_point_tier_going_concern_hyphen_and_space_both_tier1() -> None:
+    """(A4) A stated going-concern classifies Tier-1 (solvency/cash) whether written 'going-concern'
+    (hyphen) or 'going concern' (space). The hyphen variant was previously missed by the space-only
+    keyword — so a claim carrying ONLY that phrase sank to 'unclassified' at the bottom of the
+    Analysis bull/bear list. Deterministic classifier pin on FIXED strings (not committed text)."""
+    assert dr._point_tier("Substantial doubt about going-concern was raised in the 10-Q") == 1.0
+    assert dr._point_tier("Substantial doubt about going concern was raised in the 10-Q") == 1.0
+    # a bare hyphen phrase with no OTHER tier-1 keyword must still land Tier-1 (the real regression)
+    assert dr._point_tier("The auditor flagged going-concern") == 1.0
+
+
 # --- PR 3 · Commit B: guards (P2 lint · P6 e2e position pin + py↔JS parity) ---
 
 
