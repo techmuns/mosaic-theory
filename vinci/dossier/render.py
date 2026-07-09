@@ -16,7 +16,7 @@ from itertools import groupby
 from typing import Any
 
 from vinci.dossier.covenant_extract import GoverningTerm, _derive_conversion, governing_terms
-from vinci.dossier.schemas import Dossier, MechanicalLayer, Sourced, SourceStatus
+from vinci.dossier.schemas import Dossier, MechanicalLayer, Sourced, SourceStatus, StockInfo
 
 # Display curation for the catalyst path — the full data always stays in dossier.json; these only
 # cap/collapse/group the HUMAN view (the margin-trend mini-table idiom: curate display, not data).
@@ -1481,6 +1481,34 @@ def _fmt_cap(v: float) -> str:
     return f"${v / 1000:.1f}B" if v >= 1000 else f"${round(v)}M"  # v in $M
 
 
+def _fmt_shares(v: float) -> str:  # raw share count → "151.9M" / "1.2B"
+    return f"{v / 1e9:.1f}B" if v >= 1e9 else f"{v / 1e6:.1f}M"
+
+
+def _stock_info_line(si: StockInfo) -> list[str]:
+    """(Brief teaser) the market-data box — CMP · 52-wk range · shares · book value/sh · cap.
+    Each field is fail-honest: a value with no source is simply omitted (never fabricated). One
+    combined ↳ names the sources (EOD / EDGAR / CIQ); the per-field source_ref lives in JSON."""
+    p = SourceStatus.PRESENT
+    parts: list[str] = []
+    if si.price.status is p and si.price.value is not None:
+        asof = f" ({si.as_of.isoformat()})" if si.as_of is not None else ""
+        parts.append(f"CMP ${si.price.value:,.2f}{asof}")
+    if (si.low_52w.status is p and si.low_52w.value is not None
+            and si.high_52w.status is p and si.high_52w.value is not None):
+        parts.append(f"52-wk ${si.low_52w.value:,.2f}–${si.high_52w.value:,.2f}")
+    if si.shares_out.status is p and si.shares_out.value is not None:
+        parts.append(f"shares {_fmt_shares(si.shares_out.value)}")
+    if si.book_value_ps.status is p and si.book_value_ps.value is not None:
+        parts.append(f"book value/sh ${si.book_value_ps.value:,.2f}")
+    if si.market_cap.status is p and si.market_cap.value is not None:
+        parts.append(f"mkt cap {_fmt_cap(si.market_cap.value)}")
+    if not parts:
+        return []
+    return [f"- **Stock info:** {' · '.join(parts)}",
+            "  - ↳ `EOD close/52-wk · EDGAR XBRL shares · CIQ book value + market cap`"]
+
+
 def _customer_concentration(m: MechanicalLayer) -> str | None:
     """The top-customer % (a concentration RISK) from the 10-Q — NOT the raw customer names."""
     ps = m.primary_source
@@ -1544,6 +1572,8 @@ def _brief_lines(d: Dossier) -> list[str]:
     bd = d.business_description
     if bd is not None and bd.status is SourceStatus.PRESENT and bd.value is not None:
         out.append(_brief_oneliner(bd.value))
+    if m.stock_info is not None:
+        out += _stock_info_line(m.stock_info)
     out += ["", "**Recommendation / Target:** _not yet logged — the human's call "
             "(Buy / Avoid + target)_"]
     if s is not None and s.evidence_balance:

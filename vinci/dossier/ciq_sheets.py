@@ -1967,6 +1967,25 @@ def key_ratios(bundle: CiqBundle) -> Sourced[str]:
         "; ".join(parts) + " (latest)", source_ref="CIQ Financials→Ratios (latest period)")
 
 
+def book_value_per_share(bundle: CiqBundle) -> Sourced[float]:
+    """(Phase-2) Latest book value per share from the CIQ Balance Sheet — a STORED CIQ value (never
+    computed here). Fail-loud UNKNOWN when the sheet or the row is absent. Latest = the rightmost
+    numeric column (annual)."""
+    try:
+        bs = bundle.sheet("financials", "Balance Sheet", freq="annual")
+    except CiqUnavailableError as exc:
+        return _miss_or_unknown(bundle, "financials", exc)
+    for r in bs:
+        if r and str(r[0]).strip() == "Book Value/Share":
+            for c in reversed(r[1:]):
+                v = clean_num(c)
+                if v is not None:
+                    return Sourced.present(
+                        v, source_ref="CIQ Financials→Balance Sheet→Book Value/Share (latest)")
+            break
+    return Sourced.unknown(note="no Book Value/Share row in the CIQ Balance Sheet")
+
+
 def peer_comps(bundle: CiqBundle) -> PeerComps:
     """Assemble the peer-comps section from the CIQ Company Comparable Analysis workbook: roster +
     market-cap/business dispersion + the name-vs-peer multiple gap (LTM + NTM) + the fundamental

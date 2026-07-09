@@ -2033,6 +2033,50 @@ def test_customer_concentration_floor_keeps_ge_qualifier() -> None:
     assert line2 is not None and "top customer 52%" in line2 and "≥" not in line2
 
 
+def test_stock_info_line_renders_present_and_omits_unknown() -> None:
+    """(Phase-2) The Brief stock-info line renders each PRESENT field and OMITS an UNKNOWN one
+    (fail-honest — never a fabricated placeholder); all-UNKNOWN → no line. Value pin on a FROZEN
+    fixture (the redraw-safe layer for specific values)."""
+    import datetime as _dt
+    p, u = ds.Sourced.present, ds.Sourced.unknown
+    si = ds.StockInfo(
+        price=p(4.22, source_ref="EOD"), high_52w=p(25.83, source_ref="EOD"),
+        low_52w=p(3.40, source_ref="EOD"), shares_out=p(151906653.0, source_ref="EDGAR"),
+        book_value_ps=p(1.79, source_ref="CIQ"), market_cap=p(668.4, source_ref="CIQ"),
+        as_of=_dt.date(2026, 7, 8))
+    body = " ".join(dr._stock_info_line(si))
+    assert "CMP $4.22 (2026-07-08)" in body
+    assert "52-wk $3.40–$25.83" in body
+    assert "shares 151.9M" in body and "book value/sh $1.79" in body and "mkt cap $668M" in body
+    # fail-honest: an UNKNOWN price/book → those chunks drop; the rest still render
+    si2 = si.model_copy(update={"price": u(note="no bars"), "book_value_ps": u(note="no CIQ")})
+    body2 = " ".join(dr._stock_info_line(si2))
+    assert "CMP" not in body2 and "book value/sh" not in body2
+    assert "52-wk $3.40–$25.83" in body2 and "shares 151.9M" in body2
+    # all-UNKNOWN → the whole line is omitted (no empty box)
+    allu = ds.StockInfo(price=u(note="x"), high_52w=u(note="x"), low_52w=u(note="x"),
+                        shares_out=u(note="x"), book_value_ps=u(note="x"), market_cap=u(note="x"))
+    assert dr._stock_info_line(allu) == []
+
+
+def test_vrrm_brief_stock_info_panel_present_and_cited() -> None:
+    """(Phase-2 e2e) VRRM's committed Brief carries the market-data stock-info line, source-bound
+    (the ↳ cite follows it). Presence + citation + CMP-present only — phrasing/value-independent so
+    a re-draw of the living artifact can't rot it (specific values pinned on the frozen fixture)."""
+    import pathlib
+    p = pathlib.Path("data/dossiers/VRRM/dossier.json")
+    if not p.exists():
+        pytest.skip("no committed VRRM dossier.json")
+    d = ds.Dossier.model_validate_json(p.read_text())
+    if d.mechanical.stock_info is None:
+        pytest.skip("VRRM not re-assembled with stock_info yet")
+    lines = dr.render_markdown(d).splitlines()
+    idx = next((i for i, ln in enumerate(lines) if "**Stock info:**" in ln), None)
+    assert idx is not None, "no Stock-info line in VRRM Brief"
+    assert "CMP $" in lines[idx]  # VRRM has committed EOD bars
+    assert "↳" in lines[idx + 1], "stock-info line is not source-bound"
+
+
 def test_self_referential_twin_requires_resolved_period_in_the_name() -> None:
     """(R2) A twin naming the subject itself is suppressed UNLESS the resolved period is in the twin
     NAME ('Microvast (2021–2025 arc)'); a bare self-name ('Microvast Holdings') is suppressed even

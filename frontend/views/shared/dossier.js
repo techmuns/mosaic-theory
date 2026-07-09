@@ -428,6 +428,23 @@ function firstSentence(text, cap = 220) {
 
 const fmtCap = (v) => (v >= 1000 ? `$${(v / 1000).toFixed(1)}B` : `$${Math.round(v)}M`);  // v in $M
 
+function fmtShares(v) { return v >= 1e9 ? `${(v / 1e9).toFixed(1)}B` : `${(v / 1e6).toFixed(1)}M`; }
+
+// Stock-info box — CMP · 52-week range · shares · book value/sh · market cap. Each field is
+// fail-honest (omitted when its source is absent). Mirrors render.py _stock_info_line.
+function stockInfoLine(m) {
+  const si = m.stock_info; if (!si) return "";
+  const ok = (f) => f && f.status === "present" && f.value != null;
+  const parts = [];
+  if (ok(si.price)) parts.push(`CMP $${si.price.value.toFixed(2)}${si.as_of ? ` (${si.as_of})` : ""}`);
+  if (ok(si.low_52w) && ok(si.high_52w)) parts.push(`52-wk $${si.low_52w.value.toFixed(2)}–$${si.high_52w.value.toFixed(2)}`);
+  if (ok(si.shares_out)) parts.push(`shares ${fmtShares(si.shares_out.value)}`);
+  if (ok(si.book_value_ps)) parts.push(`book value/sh $${si.book_value_ps.value.toFixed(2)}`);
+  if (ok(si.market_cap)) parts.push(`mkt cap ${fmtCap(si.market_cap.value)}`);
+  if (!parts.length) return "";
+  return `<div class="brief-stock"><span class="brief-vlab">Stock info</span> ${escapeHtml(parts.join(" · "))}</div>`;
+}
+
 // 1 — TEASER (at-a-glance): identity · GICS industry · cap · the human's Recommendation/Target slot ·
 // the machine read. The verdict slot is filled only from the ledger — never by the machine.
 function teaserCard(d, verdict, m) {
@@ -447,6 +464,7 @@ function teaserCard(d, verdict, m) {
     <div class="brief-idn"><span class="mono">${escapeHtml(d.ticker)}</span> · ${escapeHtml(d.name || "")}</div>
     ${meta ? `<div class="brief-meta">${escapeHtml(meta)}</div>` : ""}
     ${one ? `<div class="brief-oneliner">${escapeHtml(one)}</div>` : ""}
+    ${stockInfoLine(m)}
     <div class="brief-verdict"><span class="brief-vlab">Recommendation / Target</span> ${vslot}</div>
     ${read}</div>`;
 }

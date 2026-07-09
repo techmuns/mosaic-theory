@@ -2926,6 +2926,22 @@ Recommendation/Target slot is the HUMAN's ("not yet logged"); consensus, the imp
   sheet + committed artifact; `dossier.md` re-rendered (deterministic — the one alignment line).
   Incident→invariant: (a)→alignment e2e pin, (b)→floor unit pin [both shipped]; (c)/(d) web-only, verified
   live in the preview (afterprint clears scope; menu opens/closes; no console errors on MVST/IT/AORT).
+- **PHASE-2 STOCK-INFO PANEL — BUILT + VERIFIED on VRRM (added to #98, 2026-07-09).** The Motilal-style
+  market-data box on the Brief teaser: CMP + 52-week range (EOD price features), shares outstanding
+  (EDGAR XBRL), book value/share + market cap (CIQ) — each source-bound and fail-honest (a field with no
+  source is omitted; all-UNKNOWN → no line). New `StockInfo` schema + `MechanicalLayer.stock_info`
+  (default None → back-compat), `mechanical._stock_info` (wraps the EXISTING `compute_price_features` +
+  `_edgar_shares_outstanding` + new `ciq_sheets.book_value_per_share`), rendered in md (`_stock_info_line`)
+  + web (`stockInfoLine`, parity + a `.brief-stock` style). **EOD unblocked:** the `prices` table was
+  EMPTY in this env (the committed dossiers' EOD reads predate it); pulled VRRM 2025-05-01..2026-07-08
+  (297 bars, `POLYGON_API_KEY` from `.env`) via `vinci refresh`. **VERIFIED (real VRRM):** CMP $4.22
+  (2026-07-08) · 52-wk $3.40–$25.73 · shares 151.9M · book value/sh $1.79 · mkt cap $668M — internally
+  consistent (price × shares ≈ CIQ cap), a genuine distressed name (Verra Mobility, ~83% off its 52w
+  high; the pipeline also fired a stale-CIQ-multiple caveat, correctly preferring the fresh EOD price).
+  A full VRRM re-assembly landed it + the Brief fields (exchange Nasdaq, GICS). Pins: a frozen-fixture
+  render pin (fail-honest) + a phrasing-independent e2e presence/citation pin on committed VRRM. ruff +
+  mypy --strict + full pytest green; md↔web parity + no console errors verified in preview. **MVST stays
+  EOD-thin** (no bars pulled) → its CMP/52wk render fail-honest UNKNOWN, correctly.
 
 **RC-1 primary-source text extraction — BUILT + VERIFIED, PR OPEN (feat/primary-source-text, 2026-07-06).**
 DETERMINISTIC (anchored, never LLM) parsers of the EX-99.1 release (A, `vinci/edgar/release_parse.py`) and

@@ -713,6 +713,23 @@ class PrimarySource(BaseModel):
     model_config = {"frozen": True}
 
 
+class StockInfo(BaseModel):
+    """(Phase-2) The market-data 'stock info' box — CMP + 52-week range (EOD price features), shares
+    outstanding (EDGAR XBRL), book value/share + market cap (CIQ). Each value is source-bound and
+    fail-honest: UNKNOWN when its source is absent, never a fabricated number. Assemble/inform
+    context for the Brief teaser — never a gate/rank input."""
+
+    price: Sourced[float]          # last EOD close — the current market price (CMP)
+    high_52w: Sourced[float]       # 52-week high (EOD; UNKNOWN without ~a year of bars)
+    low_52w: Sourced[float]        # 52-week low (EOD)
+    shares_out: Sourced[float]     # shares outstanding — EDGAR XBRL (raw count)
+    book_value_ps: Sourced[float]  # book value / share — CIQ Balance Sheet
+    market_cap: Sourced[float]     # market cap in $M — CIQ (from the implied-val bridge)
+    as_of: date | None = None      # the EOD price's as-of date (the latest bar used)
+
+    model_config = {"frozen": True}
+
+
 class MechanicalLayer(BaseModel):
     """The deterministic, source-bound facts — the ONLY input the synthesis LLM is given."""
 
@@ -746,6 +763,9 @@ class MechanicalLayer(BaseModel):
     # (Phase-2) the Motilal-style key-ratios panel — latest RoE / RoCE / RoA + total-debt/equity +
     # current ratio + dividend, from the CIQ Ratios sheet. Optional-with-default for back-compat.
     key_ratios: Sourced[str] | None = None
+    # (Phase-2) the market-data 'stock info' box — CMP + 52-week range + shares + book value + cap,
+    # each source-bound (EOD / EDGAR / CIQ). Optional-with-default for back-compat.
+    stock_info: StockInfo | None = None
 
     model_config = {"frozen": True}
 

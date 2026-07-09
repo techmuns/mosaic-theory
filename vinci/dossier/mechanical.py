@@ -17,6 +17,7 @@ import xml.etree.ElementTree as ET
 from datetime import date, timedelta
 from typing import Any, TypeVar
 
+from vinci.config import get_config
 from vinci.dossier import ciq_sheets, edgar_fundamentals
 from vinci.dossier.ciq import CiqBundle
 from vinci.dossier.schemas import (
@@ -44,11 +45,13 @@ from vinci.dossier.schemas import (
     ReleaseExtract,
     Sourced,
     SourceStatus,
+    StockInfo,
     Valuation,
 )
 from vinci.edgar import filing_sections, primary_source, release_parse
 from vinci.edgar.client import EdgarClient
 from vinci.edgar.concepts import extract_points, latest_instant
+from vinci.eod import compute_price_features
 from vinci.finra import FinraLayoutError, short_interest_points
 from vinci.graph.exposure import ExposureGraph
 from vinci.graph.filings import html_to_text, normalize_text
@@ -1813,6 +1816,35 @@ def _primary_source(
     return ps, latency
 
 
+def _stock_info(
+    record: DataRecord, store: Store, edgar: EdgarClient, bundle: CiqBundle,
+    reference_date: date, market_cap: Sourced[float],
+) -> StockInfo:
+    """(Phase-2) The market-data 'stock info' box: CMP + 52-week range (EOD price features), shares
+    outstanding (EDGAR XBRL), book value/share + market cap (CIQ). Each value is source-bound; a
+    missing source stays UNKNOWN — never fabricated. Assemble/inform only: no gate, no conclusion.
+    The 52-week high/low defer to UNKNOWN without ~a year of bars (the price-features rule)."""
+    bars = store.get_price_history(record.identity.internal_id)
+    cap_val = market_cap.value if market_cap.status is SourceStatus.PRESENT else None
+    feats = compute_price_features(
+        bars, reference_date=reference_date,
+        staleness_days=get_config().price_staleness_days, market_cap=cap_val)
+    sym = record.identity.eod_symbol
+    shares = _edgar_shares_outstanding(edgar, record.identity.cik)
+    return StockInfo(
+        price=_sourced(feats.last, source_ref=f"EOD {sym} last close"),
+        high_52w=_sourced(feats.high_52w, source_ref=f"EOD {sym} 52-week high"),
+        low_52w=_sourced(feats.low_52w, source_ref=f"EOD {sym} 52-week low"),
+        shares_out=(
+            Sourced.present(float(shares), source_ref="EDGAR XBRL shares outstanding")
+            if shares and shares > 0
+            else Sourced.unknown(note="no EDGAR XBRL share count")),
+        book_value_ps=ciq_sheets.book_value_per_share(bundle),
+        market_cap=market_cap,
+        as_of=feats.last.as_of,
+    )
+
+
 def assemble_mechanical(
     record: DataRecord,
     *,
@@ -1901,6 +1933,8 @@ def assemble_mechanical(
         capital_structure=_capital_structure(record, edgar, http, bundle, reference_date),
         management_commentary=ciq_sheets.management_commentary(bundle),
         key_ratios=key_ratios,  # (Phase-2) the Motilal-style CIQ Ratios panel
+        stock_info=_stock_info(  # (Phase-2) CMP + 52wk range + shares + book value + cap
+            record, store, edgar, bundle, reference_date, implied_val.market_cap),
     )
     # (RC-1 C) primary-source layer — fetch 8-K EX-99.1 releases + the latest 10-Q, parse, and run
     # the four cross-source derivations over them + this mechanical layer. Resilient: a fetch/parse
