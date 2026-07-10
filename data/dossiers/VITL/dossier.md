@@ -1,21 +1,21 @@
 # Dossier — Vital Farms, Inc. (VITL)
 
-_Finalist rank 3 · ref 2026-07-06 · assembled 2026-07-10 04:34 UTC · LLM claude-opus-4-8_
+_Finalist rank 3 · ref 2026-07-06 · assembled 2026-07-10 07:04 UTC · LLM claude-opus-4-8_
 
 # Brief — first cut
 
 **VITL · Vital Farms, Inc.**
 _Nasdaq · Packaged Foods and Meats · cap $480M_
 Vital Farms, Inc., a food company, packages, markets, and distributes shell eggs, butter, and other products in the United States.
-- **Stock info:** shares 42.8M · book value/sh $7.52 · mkt cap $480M [1]
+- **Stock info:** CMP $12.32 (2026-07-08) · 52-wk $7.95–$53.12 · shares 42.8M · book value/sh $7.52 · mkt cap $480M [1]
 
 **Recommendation / Target:** _not yet logged — the human's call (Buy / Avoid + target)_
 
-**Machine read** _(not a verdict)_ — mixed — pristine balance sheet and intact revenue growth collide with a ~97% forward-EBITDA collapse, cash burn, and an expensive forward multiple.
+**Machine read** _(not a verdict)_ — strongly-bearish — forward EBITDA gutted -97% to ~$4M with cash burn and a founder exit; the low trailing multiple is optical, not cheap.
 
 ## The setup
-Idiosyncratic -74.0% vs market over 180d — an overshoot candidate.
-**Decisive question:** Is the Q1-26 margin/EBITDA collapse a one-off cost/commodity + butter-wind-down shock that normalizes back toward the FY27 recovery path, or the start of a durable margin reset that makes the forward earnings base (and thus the elevated forward multiple) permanent?
+Fell -57.3% over 180d, idiosyncratic (-74.0% vs market) — an overshoot candidate.
+**Decisive question:** Is the FY26 earnings collapse a transient trough driven by the butter wind-down plus an input/margin shock that reverses as the restructuring completes, or the start of a durable impairment of the core egg franchise's economics?
 
 - **Idiosyncratic (vs market, 180d):** -74.0% [2]
 - **Net debt / EBITDA:** 0.0x [3]
@@ -30,17 +30,17 @@ Idiosyncratic -74.0% vs market over 180d — an overshoot candidate.
 **The case** _(top points; the full bull/bear is in Analysis)_
 
 _Bull — overshoot:_
-- The name carries near-zero leverage (net-debt/EBITDA 0.0x; total-debt/EBITDA 0.1x vs peer median 3.8x) with interest coverage 99.4x — a balance sheet far stronger than the leverage-laden peer set, reducing terminal/solvency risk. [8]
-- Credit-health model scores the name stronger than peers (Overall/Operational/Solvency 2/2/2 vs peer-median 3/3/3), consistent with a cash-generative core rather than a distressed structure. [9]
-- Absolute revenue has compounded from $362M (FY22) to $784M (LTM) and EBITDA from $10M to $79M — a still-growing franchise, not a decliner; the falling LTM margin % (14%→10%) reflects a discrete Q1-26 collapse layered on genuine multi-year absolute growth. [10]
+- The balance sheet is nearly unlevered — net-debt/EBITDA 0.0x and total-debt/EBITDA 0.1x vs peer-median 3.8x — so a value-trap-via-leverage failure mode that afflicts the peer set does not apply here. [8]
+- The credit-health panel scores the name stronger than peers (Overall/Operational/Solvency 2/2/2 vs peer-median 3/3/3), a genuine offset to distress framing. [9]
+- Absolute EBITDA has scaled from $4M (FY21) to $103M (FY25) alongside revenue rising $261M→$759M, so the LTM margin dip to 10% from 14% is a level that still sits far above the early trajectory — the % fall coincides with EBITDA still absolutely large ($79M LTM). [10]
 _Bear — terminal:_
-- The business is FCF-negative (LTM levered FCF -$53.9M) and burning cash while capex runs at $100M LTM against $10M OCF — the low-leverage optic does not offset an active cash burn. [11]
-- The headline 'EV/EBITDA 1.2x vs peer median 7.2x' is an OPTICAL MISREAD, not the real signal: it is trailing-only, and on a forward basis NTM TEV/EBITDA is 70.81x vs peer median 8.98x — i.e. the name is EXPENSIVE, not cheap, once the guidance cut is reflected. [12]
-- Company adjusted-EBITDA guidance for next-fy was slashed from 105.0–115.0 (Feb) to 0.0–10.0 (May), a near-total withdrawal of the profit outlook within ~10 weeks. [13]
+- The company is burning cash — LTM FCF -$53.9M with latest-Q OCF also negative — so neither leg self-funds, a load-bearing concern given cash is not derived. [11]
+- Management guided next-FY adjusted EBITDA down to 0.0–10.0 from the 105.0–115.0 given just months earlier, a self-inflicted collapse in the forward outlook. [12]
+- Sell-side conviction has broken — multiple brokers (William Blair, Craig-Hallum, Telsey) cut from Buy (1.00) to Hold (3.00) on 2026-05-08 with target prices slashed (e.g., 26.0→11.0), and the horizon breadth is uniformly downward (e.g., Revenue FQ2 0↑/9↓). [13]
 _Key unknowns:_
-- Cash runway is not directly derived: the name is FCF-negative (-$53.9M LTM) with only $51M cash and ~$100M LTM capex — the survival_capacity note flags cash 'not derived — a risk'; how many quarters of burn the balance sheet funds is unresolved and is a bearish opacity, not a neutral gap.
-- No segment-level EBITDA disclosure (Segments sheet has no EBITDA section) — cannot isolate whether the core egg business is profitable ex-butter; a missing expected breakout that skews bearish.
-- Forward/adjusted valuation basis is missing: adjusted EPS and adjusted forward EV/EBITDA are 'not in the 99.1 revised guidance', so the true forward multiple cannot be cleanly triangulated beyond the 70.81x NTM GAAP figure.
+- Cash runway is not derived despite FCF -$53.9M and negative latest-Q OCF — the actual months of self-funding capacity at current burn is undisclosed (a bearish opacity risk).
+- No forward/adjusted EV/EBITDA basis and no adjusted-EPS figure were in the revised 99.1 guidance, so cheap-overshoot vs cheap-terminal on a forward basis cannot be distinguished (trailing-only multiple, unresolved — neither bull nor bear).
+- Segment-level EBITDA is unavailable (Segments sheet has no EBITDA section), so the profitability drag from butter vs the core egg business cannot be isolated.
 
 ## Financial snapshot
 - **Financial snapshot** — [14]  <!-- ds-table -->
@@ -87,29 +87,19 @@ _Key unknowns:_
 - **Insider activity (6m):** Open-market buys 13 · sells 5 (net -4.4K sh) · grants 21 · last 2026-06-12 · other F×20 [24]
 - **Short interest:** Short interest (FINRA, settle 2026-06-15): 11.4M → 11.4M sh (-0.1%, falling) · 26.6% of shares out (EDGAR XBRL) · DTC 3.5d · recent: 2026-06-15 11.4M · 2026-05-29 11.4M · 2026-05-15 13.7M · 2026-04-30 14.1M [25]
 
-## Verify first
-Bare peer-comparison (a bear point): 'The headline 'EV/EBITDA 1.2x vs peer median 7.2x' is an OPTICAL MISREAD, not th…; Heterogeneous-peer benchmark (a bear point): 'The headline 'EV/EBITDA 1.2x vs peer median 7.2x' is an OPTICAL MISREAD…
-
 # Analysis — full dossier
 
 ## ⚠ Analyst caveats — verify before the verdict
 
-- primary-source: 6 EX-99.1 release(s) + 1 10-Q parsed (+5.4s fetch)
+- primary-source: 6 EX-99.1 release(s) + 1 10-Q parsed (+0.6s fetch)
 - EV/EBITDA stale-price caveat — CIQ's Financials→Multiples current TEV/LTM 1.5x is priced at its last Close 2026-03-31, 97d before the 2026-07-06 reference; for a since-re-rated name this 'current' multiple AND the own-history range/percentile built on it are stale. The Comparable-Analysis sheet reads 1.2x on a current price — prefer that figure and re-pull the Financials multiple.
-- **Unreconciled margin-compression** — Q1-26 gross margin fell to 28% from 39% a year earlier and EBITDA margin to 1% from 15%, showing the profitability break is real and steep, not a reclassification artifact.
+- **Unreconciled margin-compression** — Gross margin cratered to 28% in Q1-26 from 39% a year earlier, and quarterly EBITDA margin fell to 1% from 15%, showing the profitability erosion is current, not merely projected.
   - _where:_ a bear point
   - _why it matters:_ cites margin compression without the absolute-EBITDA reconciliation (margin % can fall while EBITDA rises)
-- **Unreconciled margin-compression** — Q1-26 gross margin fell to 28% (from 39%) and EBITDA margin to 1% (from 15%), a magnitude of compression consistent with a structural cost/pricing reset rather than a rounding wobble.
+- **Unreconciled margin-compression** — Q1-26 gross margin fell to 28.3% and adjusted EBITDA to $5.0M, showing current-period economics — not just projections — have already deteriorated sharply.
   - _where:_ a decisive-against point
   - _why it matters:_ cites margin compression without the absolute-EBITDA reconciliation (margin % can fall while EBITDA rises)
-- **Bare peer-comparison** — The headline 'EV/EBITDA 1.2x vs peer median 7.2x' is an OPTICAL MISREAD, not the real signal: it is trailing-only, and on a forward basis NTM TEV/EBITDA is 70.81x vs peer median 8.98x — i.e. the name is EXPENSIVE, not cheap, once the guidance cut is reflected.
-  - _where:_ a bear point
-  - _why it matters:_ presents cheap/rich vs peers as a verdict without the earned-vs-residual decomposition or the peer-set composition
-  - _how to verify:_ POSE justified-vs-residual, never the bare gap
-- **Heterogeneous-peer benchmark** — The headline 'EV/EBITDA 1.2x vs peer median 7.2x' is an OPTICAL MISREAD, not the real signal: it is trailing-only, and on a forward basis NTM TEV/EBITDA is 70.81x vs peer median 8.98x — i.e. the name is EXPENSIVE, not cheap, once the guidance cut is reflected.
-  - _where:_ a bear point
-  - _why it matters:_ leans on the peer set as a clean benchmark, but comparability flags it HETEROGENEOUS
-  - _how to verify:_ confidence-gate every peer stat
+- Possible false balance — evidence_balance commits a strong lean but the body is near-symmetric (6 bull vs 8 bear) and the minority bull_points aren't qualified-as-outweighed — size the minority against the lean (rule 7), or it launders a one-sided case
 
 ## Mechanical layer
 
@@ -122,11 +112,11 @@ Bare peer-comparison (a bear point): 'The headline 'EV/EBITDA 1.2x vs peer media
     - **what the results showed:** adj EBITDA 2025 $29.2M; Fiscal 2026 revenue outlook: 900.0–920.0; next-fy adjusted ebitda outlook: 105.0–115.0 [28]
   - gap 2026-05-07 → 2026-05-07 [`0001193125-26-210294`](https://www.sec.gov/Archives/edgar/data/1579733/000119312526210294/vitl-20260501.htm)
     - items: 2.02 Results of Operations and Financial Condition, 2.05 Costs Associated with Exit or Disposal Activities, 9.01 Financial Statements and Exhibits
-    - **what the results showed:** adj EBITDA Q1 2026 $5.0M; 2026 revenue outlook: 775.0–800.0; next-fy adjusted ebitda outlook: 0.0–10.0 [13]
+    - **what the results showed:** adj EBITDA Q1 2026 $5.0M; 2026 revenue outlook: 775.0–800.0; next-fy adjusted ebitda outlook: 0.0–10.0 [12]
 - **Revised guidance · Net debt / EBITDA (fwd-adj covenant basis) · EV/EBITDA (adjusted, forward) · Adjusted EPS (earnings power):** _UNKNOWN_ — no revised-outlook 99.1 exhibit parsed — the revised forward guidance is UNKNOWN
 
 _Did it happen alone? (idiosyncratic vs shared — the G2-vs-market compensation):_
-- **Name 180d return:** _UNKNOWN_ — name has no bars over the window
+- **Name 180d return:** -57.3% [29]
 - **Market (IWM) 180d return:** _UNKNOWN_ — IWM benchmark bars unavailable
 - **Relative vs market:** -74.0% [2]
 - **Cohort read:** _UNKNOWN_ — no graph cohort to compare — see rel_vs_market for the name-vs-market read
@@ -135,10 +125,10 @@ _Did it happen alone? (idiosyncratic vs shared — the G2-vs-market compensation
 ### Leverage & survival
 - **Net debt / EBITDA (CIQ NET basis):** 0.0x [3]
 - **Total debt / EBITDA (comps — name vs peer median):** name 0.1x vs peer median 3.8x (comps TOTAL-debt/EBITDA basis) [8]
-- **Net debt / OCF:** 0.3x [29]
-- **Interest coverage:** 99.4x [30]
-- **Survival (self-funding + nearest wall):** net-debt/EBITDA 0.0x (CIQ) | FCF-negative → burning cash (cash not derived — a risk) [31]
-- **Self-funding — two-input read (supersedes the line above):** self-funding: MIXED — latest-Q OCF < 0, LTM FCF < 0 (both must be positive to self-fund) [32]
+- **Net debt / OCF:** 0.3x [30]
+- **Interest coverage:** 99.4x [31]
+- **Survival (self-funding + nearest wall):** net-debt/EBITDA 0.0x (CIQ) | FCF-negative → burning cash (cash not derived — a risk) [32]
+- **Self-funding — two-input read (supersedes the line above):** self-funding: MIXED — latest-Q OCF < 0, LTM FCF < 0 (both must be positive to self-fund) [33]
 - **Credit health** — [9]  <!-- ds-table -->
 
 |  | Name | Peer median |
@@ -153,7 +143,7 @@ _S&P issuer rating unrated · scale 1=strongest … 4=weakest (S&P-MI PD model)_
 
 - **FCF sign:** negative [4]
 - **Free cash flow ($M):** -53.9 [11]
-- **Live instruments — near-dated (≤12m + 2027) — panel A 2025 filed Feb-26-2026** — [33]  <!-- ds-table -->
+- **Live instruments — near-dated (≤12m + 2027) — panel A 2025 filed Feb-26-2026** — [34]  <!-- ds-table -->
 
 |  | Type | Principal | Coupon | Floating | Maturity | Sec | Conv | Cur |
 |---|---|---:|---|---|---|---|---|---|
@@ -164,18 +154,18 @@ _3 undated / later aggregate line item(s) in the appendix panel_
   - due 2029: $0.0M
   - undated (floor — no panel maturity): $53.5M — Finance Lease Liabilities $10.8M, Operating Lease Liabilitie $42.7M
   - _reconciliation: itemized $53.5M (panel A 2025 filed Feb-26-2026) vs the latest-quarter aggregates below — the gap is unitemized / newer term loans; read the QoQ movement in the aggregates line._
-- **Capital-structure aggregates (latest quarter):** leases 54.2; total principal 54.2; total debt 54.2 (latest quarter) ($M) [34]
+- **Capital-structure aggregates (latest quarter):** leases 54.2; total principal 54.2; total debt 54.2 (latest quarter) ($M) [35]
 
 ### Primary-source cross-checks (8-K releases + latest 10-Q vs CIQ panel)
 
 - **Going-concern language:** none in latest 10-Q — checked, absent [7]
-- **Wall coherence — filing ≤12m vs CIQ panel (same window):** wall coherence: UNKNOWN — filing states no ≤12m figure [35]
-- **EBITDA-basis triangulation (each leverage basis-labeled):** [36]
+- **Wall coherence — filing ≤12m vs CIQ panel (same window):** wall coherence: UNKNOWN — filing states no ≤12m figure [36]
+- **EBITDA-basis triangulation (each leverage basis-labeled):** [37]
   - net debt / EBITDA (CIQ, GAAP basis): 0.0x
   - total debt / EBITDA (CIQ comps, GAAP basis): 0.1x
   - net debt / company-adjusted LTM EBITDA ($6.7M): ~0.4x
   - covenant basis: UNKNOWN (not disclosed)
-- **Guide verification — CIQ guide vs release:** guide verification (revenue): CIQ 775.0–800.0 vs release 775.0–800.0 → cross-source VERIFIED [37]
+- **Guide verification — CIQ guide vs release:** guide verification (revenue): CIQ 775.0–800.0 vs release 775.0–800.0 → cross-source VERIFIED [38]
 - **Customer concentration (latest 10-Q):** [7]
   - Customer A: 22.0% (prior 23.0%)
   - Customer B: 12.0%
@@ -195,14 +185,14 @@ _3 undated / later aggregate line item(s) in the appendix panel_
 
 _Revenue YoY (latest same-quarter): +15.4% (Q1 Mar-29-2026 vs Q1 Mar-30-2025). R reclassified; margin % can fall while absolute EBITDA RISES — read them together; per-period values, never YoY'd across a basis_
 
-- **Share-count trend:** flat (trailing ~1.7y): 43,098,946 (2024-08-05) → 42,848,454 (2026-05-04), -0.6% [38]
+- **Share-count trend:** flat (trailing ~1.7y): 43,098,946 (2024-08-05) → 42,848,454 (2026-05-04), -0.6% [39]
 
 ### Valuation & own-history
 - **Cross-sectional (vs peers — the edge):** EV/EBITDA 1.2x vs peer median 7.2x (-83%); P/E 10.7x vs peer median 15.1x (-29%) [16]
 - **What the current price implies (at stated multiples)** — comparability: HETEROGENEOUS (see Peer comps gate)
   - _price-implied fundamental levels at stated multiples — the human judges earned vs residual; identity (†): at the name's own multiple the implied level IS consensus._
   - _TEV as-of 2026-06-29 · multiples as-of 2026-05-28_
-- **Price-implied levels (at each stated multiple)** — [39]  <!-- ds-table -->
+- **Price-implied levels (at each stated multiple)** — [40]  <!-- ds-table -->
 
 |  | Multiple (× used) | Implied level |
 |---|---|---|
@@ -219,12 +209,12 @@ _Revenue YoY (latest same-quarter): +15.4% (Q1 Mar-29-2026 vs Q1 Mar-30-2025). R
   - _vintage-coherent: derived FY26 $4.1M vs direct consensus $4.0M (residual 0.000 ≤ 0.10 tolerance)_
   - _Fixed multiple set (declared in code, no per-name curation): name NTM + peer-median NTM/LTM, on TEV/EBITDA and TEV/Rev._
 
-- **P/E:** 8.9x [40]
-- **EV/EBITDA (GAAP TEV/LTM):** 1.5x [41]
+- **P/E:** 8.9x [41]
+- **EV/EBITDA (GAAP TEV/LTM):** 1.5x [42]
 - **Own-history range position:** EV/EBITDA (TEV/LTM) 1.5x as-of 2026-03-31 — trailing range 1.9–110.6x (median 3.9x) over 19 closes → 0%ile → near-floor; P/LTM EPS 9.8x [17]
 
 ### Peer comps
-- **Peer set (roster · caps · business)** — [42]  <!-- ds-table -->
+- **Peer set (roster · caps · business)** — [43]  <!-- ds-table -->
 
 |  | Mkt cap | Business |
 |---|---|---|
@@ -242,7 +232,7 @@ _Revenue YoY (latest same-quarter): +15.4% (Q1 Mar-29-2026 vs Q1 Mar-30-2025). R
 _the name: $480M_
 
 - **Comparability (confidence gate):** market caps span $50M–$78.0B (1567x); the name is $480M → HETEROGENEOUS — low comparability: the peer median is anchored by businesses of differing scale/model; scrutinise comparability before reading any peer stat as a clean benchmark. [18]
-- **Trading multiples (name vs peer Low/Median/Mean/High · LTM+NTM)** — [12]  <!-- ds-table -->
+- **Trading multiples (name vs peer Low/Median/Mean/High · LTM+NTM)** — [44]  <!-- ds-table -->
 
 |  | Name | Low | Median | Mean | High |
 |---|---|---|---|---|---|
@@ -255,7 +245,7 @@ _the name: $480M_
 
 _NM = a real state (negative base), not missing_
 
-- **Per-peer grid (cap · valuation · margin · growth · leverage — name vs peers)** — [43]  <!-- ds-table -->
+- **Per-peer grid (cap · valuation · margin · growth · leverage — name vs peers)** — [45]  <!-- ds-table -->
 
 |  | Cap | TEV/EBITDA | TEV/Rev | P/E | EBITDA margin | Rev growth (1y) | Total debt/EBITDA | Net debt ($M) |
 |---|---|---|---|---|---|---|---|---|
@@ -275,7 +265,7 @@ _NM = a real state (negative base), not missing_
 
 
 ### Catalyst path (estimates · guidance · revisions) — export date unverified (data ≥ 2026-05-28)
-- **Horizon read (FQ — next-2Q revision breadth)** — [44]:
+- **Horizon read (FQ — next-2Q revision breadth)** — [46]:
   - EPS Normalized FQ2 2026: 1m 0↑/0↓, 2m 0↑/7↓, 3m 0↑/7↓
   - EPS Normalized FQ3 2026: 1m 0↑/0↓, 2m 0↑/7↓, 3m 0↑/7↓
   - Revenue FQ2 2026: 1m 0↑/0↓, 2m 0↑/9↓, 3m 0↑/9↓
@@ -291,13 +281,13 @@ _NM = a real state (negative base), not missing_
   - Net Income (Excl. Excep) FQ2 2026: 1m 0↑/0↓, 2m 0↑/7↓, 3m 0↑/7↓
   - Net Income (Excl. Excep) FQ3 2026: 1m 0↑/0↓, 2m 0↑/7↓, 3m 0↑/7↓
   - Net Income (GAAP) FQ2 2026: 1m 0↑/0↓, 2m 0↑/9↓, 3m 0↑/9↓
-- **Acceleration read (monthly consensus path):** FY 2026 EPS Normalized: 1.55 (12m) → 1.61 (9m) → 1.71 (6m) → 1.17 (3m) → 0.95 (2m) → -0.42 (1m) → -0.42 (latest); worsening (crossed zero) (12m→latest) | FY 2026 EPS (GAAP): 1.55 (12m) → 1.63 (9m) → 1.70 (6m) → 1.15 (3m) → 0.88 (2m) → -0.42 (1m) → -0.42 (latest); worsening (crossed zero) (12m→latest) | FY 2026 Revenue: 889.5 (12m) → 927.4 (9m) → 939.1 (6m) → 898.3 (3m) → 878.0 (2m) → 777.8 (1m) → 777.8 (latest); net -13% (12m→latest) | FY 2026 EBITDA: 122.7 (12m) → 131.1 (9m) → 134.5 (6m) → 101.8 (3m) → 85.9 (2m) → 4.05 (1m) → 4.05 (latest); net -97% (12m→latest) | FY 2026 EBIT: 90.5 (12m) → 96.2 (9m) → 103.3 (6m) → 71.5 (3m) → 56.5 (2m) → -24.8 (1m) → -24.8 (latest); worsening (crossed zero) (12m→latest) | FY 2026 Interest Expense: -0.85 (12m) → -0.93 (9m) → -0.97 (6m) → -0.88 (3m) → -0.83 (2m) → -1.20 (1m) → -1.20 (latest); worsening (magnitude away from zero) (12m→latest) | FY 2026 EBT (GAAP): 93.3 (12m) → 97.2 (9m) → 104.0 (6m) → 70.3 (3m) → 55.6 (2m) → -26.5 (1m) → -26.5 (latest); worsening (crossed zero) (12m→latest) | FY 2026 Net Income (Excl. Excep): 71.3 (12m) → 75.0 (9m) → 78.9 (6m) → 53.0 (3m) → 41.9 (2m) → -18.7 (1m) → -18.7 (latest); worsening (crossed zero) (12m→latest) | FY 2026 Net Income (GAAP): 71.2 (12m) → 74.1 (9m) → 78.7 (6m) → 52.6 (3m) → 41.6 (2m) → -18.8 (1m) → -18.8 (latest); worsening (crossed zero) (12m→latest)  [data ≥ 2026-05-28 · export date unverified] [45]
+- **Acceleration read (monthly consensus path):** FY 2026 EPS Normalized: 1.55 (12m) → 1.61 (9m) → 1.71 (6m) → 1.17 (3m) → 0.95 (2m) → -0.42 (1m) → -0.42 (latest); worsening (crossed zero) (12m→latest) | FY 2026 EPS (GAAP): 1.55 (12m) → 1.63 (9m) → 1.70 (6m) → 1.15 (3m) → 0.88 (2m) → -0.42 (1m) → -0.42 (latest); worsening (crossed zero) (12m→latest) | FY 2026 Revenue: 889.5 (12m) → 927.4 (9m) → 939.1 (6m) → 898.3 (3m) → 878.0 (2m) → 777.8 (1m) → 777.8 (latest); net -13% (12m→latest) | FY 2026 EBITDA: 122.7 (12m) → 131.1 (9m) → 134.5 (6m) → 101.8 (3m) → 85.9 (2m) → 4.05 (1m) → 4.05 (latest); net -97% (12m→latest) | FY 2026 EBIT: 90.5 (12m) → 96.2 (9m) → 103.3 (6m) → 71.5 (3m) → 56.5 (2m) → -24.8 (1m) → -24.8 (latest); worsening (crossed zero) (12m→latest) | FY 2026 Interest Expense: -0.85 (12m) → -0.93 (9m) → -0.97 (6m) → -0.88 (3m) → -0.83 (2m) → -1.20 (1m) → -1.20 (latest); worsening (magnitude away from zero) (12m→latest) | FY 2026 EBT (GAAP): 93.3 (12m) → 97.2 (9m) → 104.0 (6m) → 70.3 (3m) → 55.6 (2m) → -26.5 (1m) → -26.5 (latest); worsening (crossed zero) (12m→latest) | FY 2026 Net Income (Excl. Excep): 71.3 (12m) → 75.0 (9m) → 78.9 (6m) → 53.0 (3m) → 41.9 (2m) → -18.7 (1m) → -18.7 (latest); worsening (crossed zero) (12m→latest) | FY 2026 Net Income (GAAP): 71.2 (12m) → 74.1 (9m) → 78.7 (6m) → 52.6 (3m) → 41.6 (2m) → -18.8 (1m) → -18.8 (latest); worsening (crossed zero) (12m→latest)  [data ≥ 2026-05-28 · export date unverified] [47]
 - **Cross-name anchor (NTM forward-multiple ladder)** — [19]:
   - NTM: TEV/REV 0.62 · TEV/EBITDA 70.81 · TEV/EBIT – · Price/Earnings – · PEG – · P/BV –
   - FY 2026: TEV/REV 0.62 · TEV/EBITDA 119.07 · TEV/EBIT – · Price/Earnings – · PEG – · P/BV 1.31
   - FY 2027: TEV/REV 0.57 · TEV/EBITDA 9.98 · TEV/EBIT 16.35 · Price/Earnings 22.53 · PEG – · P/BV 1.20
   - FY 2028: TEV/REV 0.53 · TEV/EBITDA 6.87 · TEV/EBIT 13.86 · Price/Earnings 22.84 · PEG – · P/BV 1.05
-- **Guidance bridge (latest guide + sign-aware delivery track-record)** — [46]  <!-- ds-table -->
+- **Guidance bridge (latest guide + sign-aware delivery track-record)** — [48]  <!-- ds-table -->
 
 |  | Latest guide | For | Dated | Age | Record (met/resolved) | Most recent |
 |---|---|---|---|---|---|---|
@@ -307,7 +297,7 @@ _NM = a real state (negative base), not missing_
 | Gross Margin % | 35.0 | FY 2027 | 2023-11-02 | 977d (stale) | actual ≥ floor 2/2 | FY 2022 MET |
 
 - **Consensus stats (target + ratings):** Target price: mean $11.67, median $11.00, high/low 16.00/10.00, N 9/9; Ratings: Buy 2, Outperform 1, Hold 8, Underperform 0, Sell 0, No Opinion 0, Buy 1, Outperform 0, Hold 1, Underperform 0, Sell 0  [data ≥ 2026-05-28 · export date unverified] [23]
-- **Revision-event log** (250 events · 11 broker-days) — [47]:
+- **Revision-event log** (250 events · 11 broker-days) — [13]:
   - **2026-05-28 · broker undisclosed** · 2↑/0↓, 2 initiations · EBITDA FY 2026 4.4→4.4 · +3 items in JSON
   - **2026-05-08 · Needham & Company** · 0↑/35↓ · EBITDA FQ2 2026 16.7→-19.0 · +34 items in JSON
   - **2026-05-08 · Mizuho Securities USA LLC** · 0↑/14↓ · Revenue FQ2 2026 222.0→215.0 · +13 items in JSON
@@ -315,74 +305,76 @@ _NM = a real state (negative base), not missing_
   - **2026-05-08 · William Blair & Company L.L.C.** · 0↑/22↓ · EBITDA FQ2 2026 14.2→-14.5 · +21 items in JSON
   - **2026-05-08 · Craig-Hallum Capital Group LLC** · 2↑/28↓ · EBITDA FQ2 2026 13.8→-14.7 · +29 items in JSON
   - _+5 more broker-days in JSON_
-- **Surprise history (annual beat/miss):** GAAP-EPS surprise: FY2021 +50%, FY2022 -33%, FY2023 +20%, FY2024 +5%, FY2025 -3%; Revenue surprise: FY2021 +2%, FY2022 +2%, FY2023 +1%, FY2024 +1%, FY2025 +0% (GAAP-EPS basis; +beat / −miss) [48]
+- **Surprise history (annual beat/miss):** GAAP-EPS surprise: FY2021 +50%, FY2022 -33%, FY2023 +20%, FY2024 +5%, FY2025 -3%; Revenue surprise: FY2021 +2%, FY2022 +2%, FY2023 +1%, FY2024 +1%, FY2025 +0% (GAAP-EPS basis; +beat / −miss) [49]
 - **Insider activity (Form 4, 6m):** Open-market buys 13 · sells 5 (net -4.4K sh) · grants 21 · last 2026-06-12 · other F×20 [24]
 - **Short interest (FINRA):** Short interest (FINRA, settle 2026-06-15): 11.4M → 11.4M sh (-0.1%, falling) · 26.6% of shares out (EDGAR XBRL) · DTC 3.5d · recent: 2026-06-15 11.4M · 2026-05-29 11.4M · 2026-05-15 13.7M · 2026-04-30 14.1M [25]
 
 ### Concentration
 - **Segments (revenue share):** [12 months Dec-28-2025] Eggs and Butter 759 (100%) of Total 759 [5]
 - **Segments (EBITDA share — where profit sits):** _UNKNOWN_ — Segments sheet has no 'EBITDA' section as expected
-- **Customers:** Albertsons Companies, Inc. (NYSE:ACI) — Distributor · Food Retail · src: Vital Farms, Inc. (NasdaqGM:VITL) 2026 Form 10-K; Ben E. Keith Company — Distributor · Food Distributors · src: Vital Farms, Inc. (NasdaqGM:VITL) 2026 Form 10-K; Dot Foods, Inc. — Distributor · Air Freight and Logistics · src: Vital Farms, Inc. (NasdaqGM:VITL) 2026 Form 10-K; Gordon Food Service, Inc. — Distributor · Food Distributors · src: Vital Farms, Inc. (NasdaqGM:VITL) 2026 Form 10-K; Performance Food Group, Inc. — Distributor · Food Distributors · src: Vital Farms, Inc. (NasdaqGM:VITL) 2026 Form 10-K; Publix Super Markets, Inc. — Distributor · Food Retail · src: Vital Farms, Inc. (NasdaqGM:VITL) 2026 Form 10-K; Shamrock Foods Company — Distributor · Packaged Foods and Meats · src: Vital Farms, Inc. (NasdaqGM:VITL) 2026 Form 10-K; Sprouts Farmers Market, Inc. (NasdaqGS:SFM) — Distributor · Food Retail · src: Vital Farms, Inc. (NasdaqGM:VITL) 2026 Form 10-K; Sysco Corporation (NYSE:SYY) — Distributor · Food Distributors · src: Vital Farms, Inc. (NasdaqGM:VITL) 2026 Form 10-K; Target Corporation (NYSE:TGT) — Distributor · Consumer Staples Merchandise Retail · src: Vital Farms, Inc. (NasdaqGM:VITL) 2026 Form 10-K; The Kroger Co. (NYSE:KR) — Distributor · Food Retail · src: Vital Farms, Inc. (NasdaqGM:VITL) 2026 Form 10-K; United Natural Foods, Inc. (NYSE:UNFI) — Distributor · Food Distributors · src: Vital Farms, Inc. (NasdaqGM:VITL) 2026 Form 10-K; US Foods, Inc. — Distributor · Food Distributors · src: Vital Farms, Inc. (NasdaqGM:VITL) 2026 Form 10-K; Walmart Inc. (NasdaqGS:WMT) — Distributor · Consumer Staples Merchandise Retail · src: Vital Farms, Inc. (NasdaqGM:VITL) 2026 Form 10-K; Whole Foods Market, Inc. — Distributor · Food Retail · src: Vital Farms, Inc. (NasdaqGM:VITL) 2026 Form 10-K [49]
+- **Customers:** Albertsons Companies, Inc. (NYSE:ACI) — Distributor · Food Retail · src: Vital Farms, Inc. (NasdaqGM:VITL) 2026 Form 10-K; Ben E. Keith Company — Distributor · Food Distributors · src: Vital Farms, Inc. (NasdaqGM:VITL) 2026 Form 10-K; Dot Foods, Inc. — Distributor · Air Freight and Logistics · src: Vital Farms, Inc. (NasdaqGM:VITL) 2026 Form 10-K; Gordon Food Service, Inc. — Distributor · Food Distributors · src: Vital Farms, Inc. (NasdaqGM:VITL) 2026 Form 10-K; Performance Food Group, Inc. — Distributor · Food Distributors · src: Vital Farms, Inc. (NasdaqGM:VITL) 2026 Form 10-K; Publix Super Markets, Inc. — Distributor · Food Retail · src: Vital Farms, Inc. (NasdaqGM:VITL) 2026 Form 10-K; Shamrock Foods Company — Distributor · Packaged Foods and Meats · src: Vital Farms, Inc. (NasdaqGM:VITL) 2026 Form 10-K; Sprouts Farmers Market, Inc. (NasdaqGS:SFM) — Distributor · Food Retail · src: Vital Farms, Inc. (NasdaqGM:VITL) 2026 Form 10-K; Sysco Corporation (NYSE:SYY) — Distributor · Food Distributors · src: Vital Farms, Inc. (NasdaqGM:VITL) 2026 Form 10-K; Target Corporation (NYSE:TGT) — Distributor · Consumer Staples Merchandise Retail · src: Vital Farms, Inc. (NasdaqGM:VITL) 2026 Form 10-K; The Kroger Co. (NYSE:KR) — Distributor · Food Retail · src: Vital Farms, Inc. (NasdaqGM:VITL) 2026 Form 10-K; United Natural Foods, Inc. (NYSE:UNFI) — Distributor · Food Distributors · src: Vital Farms, Inc. (NasdaqGM:VITL) 2026 Form 10-K; US Foods, Inc. — Distributor · Food Distributors · src: Vital Farms, Inc. (NasdaqGM:VITL) 2026 Form 10-K; Walmart Inc. (NasdaqGS:WMT) — Distributor · Consumer Staples Merchandise Retail · src: Vital Farms, Inc. (NasdaqGM:VITL) 2026 Form 10-K; Whole Foods Market, Inc. — Distributor · Food Retail · src: Vital Farms, Inc. (NasdaqGM:VITL) 2026 Form 10-K [50]
 - **Geographic:** [12 months Dec-28-2025] United States 759 (100%) of Total 759 [6]
 
 ## Synthesis
 
-**Evidence balance:** mixed — pristine balance sheet and intact revenue growth collide with a ~97% forward-EBITDA collapse, cash burn, and an expensive forward multiple.
+**Evidence balance:** strongly-bearish — forward EBITDA gutted -97% to ~$4M with cash burn and a founder exit; the low trailing multiple is optical, not cheap.
 
 ### Bull case (overshoot / mean-revert)
-- The name carries near-zero leverage (net-debt/EBITDA 0.0x; total-debt/EBITDA 0.1x vs peer median 3.8x) with interest coverage 99.4x — a balance sheet far stronger than the leverage-laden peer set, reducing terminal/solvency risk. [8]
-- Credit-health model scores the name stronger than peers (Overall/Operational/Solvency 2/2/2 vs peer-median 3/3/3), consistent with a cash-generative core rather than a distressed structure. [9]
-- Absolute revenue has compounded from $362M (FY22) to $784M (LTM) and EBITDA from $10M to $79M — a still-growing franchise, not a decliner; the falling LTM margin % (14%→10%) reflects a discrete Q1-26 collapse layered on genuine multi-year absolute growth. [10]
-- Latest same-quarter revenue still grew +15.4% YoY (Q1 Mar-29-2026 vs Q1 Mar-30-2025), so the top line kept expanding through the very quarter that triggered the second gap-down. [50]
-- On fundamental_deltas the name shows superior revenue growth (26% vs peer-median 4%) and positive EBITDA growth (6% vs peer-median -11%), posing whether the -83% EV/EBITDA discount to the HETEROGENEOUS peer set is RESIDUAL (overshoot) rather than fully EARNED — a question for the human, not a computed residual. [51]
-- The May gap-down was driven partly by a discrete, self-inflicted strategic action — winding down the butter line to focus on core eggs — with butter-inventory charges, an event distinct from secular demand loss. [13]
+- The balance sheet is nearly unlevered — net-debt/EBITDA 0.0x and total-debt/EBITDA 0.1x vs peer-median 3.8x — so a value-trap-via-leverage failure mode that afflicts the peer set does not apply here. [8]
+- The credit-health panel scores the name stronger than peers (Overall/Operational/Solvency 2/2/2 vs peer-median 3/3/3), a genuine offset to distress framing. [9]
+- Absolute EBITDA has scaled from $4M (FY21) to $103M (FY25) alongside revenue rising $261M→$759M, so the LTM margin dip to 10% from 14% is a level that still sits far above the early trajectory — the % fall coincides with EBITDA still absolutely large ($79M LTM). [10]
+- Revenue growth is genuinely superior to the cohort — name 26% vs peer-median 4% one-year — a fundamental the human must weigh when judging whether the discount is earned. [51]
+- Revenue is still growing +15.4% YoY in the latest quarter (Q1 Mar-29-2026 vs Q1 Mar-30-2025), indicating top-line demand persists through the de-rating. [52]
+- The reported EV/EBITDA discount to peers (1.2x vs median 7.2x) is a CONSENSUS comp read gated by a HETEROGENEOUS peer set spanning $50M–$78.0B caps (1567x) against a $480M name, so whether the gap is earned or residual is unresolved and cannot be read as a clean benchmark. [18]
 
 ### Bear case (terminal / value-trap)
-- The business is FCF-negative (LTM levered FCF -$53.9M) and burning cash while capex runs at $100M LTM against $10M OCF — the low-leverage optic does not offset an active cash burn. [11]
-- The headline 'EV/EBITDA 1.2x vs peer median 7.2x' is an OPTICAL MISREAD, not the real signal: it is trailing-only, and on a forward basis NTM TEV/EBITDA is 70.81x vs peer median 8.98x — i.e. the name is EXPENSIVE, not cheap, once the guidance cut is reflected. [12]
-- Company adjusted-EBITDA guidance for next-fy was slashed from 105.0–115.0 (Feb) to 0.0–10.0 (May), a near-total withdrawal of the profit outlook within ~10 weeks. [13]
-- Q1-26 gross margin fell to 28% from 39% a year earlier and EBITDA margin to 1% from 15%, showing the profitability break is real and steep, not a reclassification artifact. [52]
-- The name is 100% concentrated in a single Eggs-and-Butter segment and 100% US, with customer A at 22% — no diversification cushion against the egg-category shock now underway. [5]
-- Brokers cut wholesale on 2026-05-08 — William Blair, Craig-Hallum and Telsey all moved Buy→Hold and target prices were slashed (e.g. 26.0→11.0), with FQ2/FQ3 revision breadth uniformly downward (0 up / 7–9 down). [44]
-- The founder/Executive Chairperson resigned from all roles alongside the February results, a governance/leadership discontinuity coinciding with the first gap-down. [28]
-- FY26 consensus EBITDA collapsed from $122.7M (12m ago) to $4.05M (latest), a net -97% cut, and EPS crossed zero (1.55 → -0.42) — the earnings base the discount rests on has effectively evaporated, not merely compressed. [45]
+- The company is burning cash — LTM FCF -$53.9M with latest-Q OCF also negative — so neither leg self-funds, a load-bearing concern given cash is not derived. [11]
+- Management guided next-FY adjusted EBITDA down to 0.0–10.0 from the 105.0–115.0 given just months earlier, a self-inflicted collapse in the forward outlook. [12]
+- Sell-side conviction has broken — multiple brokers (William Blair, Craig-Hallum, Telsey) cut from Buy (1.00) to Hold (3.00) on 2026-05-08 with target prices slashed (e.g., 26.0→11.0), and the horizon breadth is uniformly downward (e.g., Revenue FQ2 0↑/9↓). [13]
+- Gross margin cratered to 28% in Q1-26 from 39% a year earlier, and quarterly EBITDA margin fell to 1% from 15%, showing the profitability erosion is current, not merely projected. [53]
+- The business is single-segment and single-geography (Eggs and Butter 100%, United States 100%), concentrating the entire enterprise on one product category now being restructured. [5]
+- The gap-downs were driven by structural events, not a one-off print: a founder/Executive-Chairperson resignation (item 5.02) and a decision to wind down the entire butter product line (item 2.05) with exit charges. [26]
+- The de-rating is driven by a collapse in forward earnings power, not an optical trailing artifact: FY26 consensus EBITDA has been cut from $122.7M (12m ago) to $4.05M (latest), a net -97% path — this is the REAL signal, and it is why the NTM TEV/EBITDA is 70.81x (not cheap) despite the trailing 1.2x. [47]
+- Consensus FY26 EPS crossed zero (from +1.55 to -0.42) and net income went to -$18.8M, so the low trailing P/E of ~10.7x rests on backward earnings the forward set no longer supports — the trailing multiple is the consensus MISREAD, not the signal. [47]
 
 ### Decisive question
-**Is the Q1-26 margin/EBITDA collapse a one-off cost/commodity + butter-wind-down shock that normalizes back toward the FY27 recovery path, or the start of a durable margin reset that makes the forward earnings base (and thus the elevated forward multiple) permanent?**
+**Is the FY26 earnings collapse a transient trough driven by the butter wind-down plus an input/margin shock that reverses as the restructuring completes, or the start of a durable impairment of the core egg franchise's economics?**
 
 ### …evidence for
-- Consensus already models a sharp FY27 recovery — EBITDA rebounding to $48.3M and EPS to $0.52 — implying the Street treats FY26 as a trough rather than a new normal. [53]
-- The butter discontinuation is an explicit management choice to concentrate on the core egg categories with completion expected by end of FY26, framing the disruption as transitional. [13]
-- Revenue still grew +15.4% YoY into Q1-26, indicating the demand engine remained intact even as margins broke. [50]
+- Consensus already models a sharp rebound beyond the trough — FY27E EBITDA $48.3M vs FY26E $4.0M, and FY27 forward TEV/EBITDA of 9.98x implies the market prices recovery a year out. [54]
+- The butter exit is explicitly a refocus onto core egg categories, expected substantially complete by end of fiscal 2026, framing the hit as bounded and self-imposed rather than demand-driven. [12]
+- Revenue guidance was cross-source VERIFIED at 775.0–800.0 and the company has met its revenue floor 7/7 times, so top-line delivery discipline is intact. [48]
 
 ### …evidence against
-- Q1-26 gross margin fell to 28% (from 39%) and EBITDA margin to 1% (from 15%), a magnitude of compression consistent with a structural cost/pricing reset rather than a rounding wobble. [52]
-- FY26 revenue guidance was cut from 900.0–920.0 (Feb) to 775.0–800.0 (May) — the top line itself was revised down, not only margin, weakening the pure-'cost blip' reading. [13]
-- Every next-two-quarter estimate line shows uniformly downward revision breadth (0 up / 7–9 down), signaling analysts do not yet see stabilization. [44]
+- The most recent EBITDA guide was MISSED (FY 2025), and the forward adjusted-EBITDA outlook collapsed to 0.0–10.0, signalling the profit shortfall may be deeper than a bounded restructuring charge. [48]
+- Q1-26 gross margin fell to 28.3% and adjusted EBITDA to $5.0M, showing current-period economics — not just projections — have already deteriorated sharply. [12]
+- The founder and Executive Chairperson resigned concurrent with the first gap-down, removing continuity at the top just as the core strategy is being reset. [26]
 
 ### Key unknowns
-- Cash runway is not directly derived: the name is FCF-negative (-$53.9M LTM) with only $51M cash and ~$100M LTM capex — the survival_capacity note flags cash 'not derived — a risk'; how many quarters of burn the balance sheet funds is unresolved and is a bearish opacity, not a neutral gap.
-- No segment-level EBITDA disclosure (Segments sheet has no EBITDA section) — cannot isolate whether the core egg business is profitable ex-butter; a missing expected breakout that skews bearish.
-- Forward/adjusted valuation basis is missing: adjusted EPS and adjusted forward EV/EBITDA are 'not in the 99.1 revised guidance', so the true forward multiple cannot be cleanly triangulated beyond the 70.81x NTM GAAP figure.
-- Covenant terms are UNKNOWN (extraction failed) and the JPMorgan revolver is undrawn but its covenant basis is undisclosed — leverage looks benign but the constraint set is opaque, a bearish risk.
-- The peer set is flagged HETEROGENEOUS (market caps span $50M–$78.0B, 1567x); every peer multiple must be treated as a confidence-gated input, so no discount-to-median can be read as a clean benchmark.
-- TEV/multiples vintage: export date is unverified (a floor ≥ 2026-05-28) and the TEV panel is as-of 2026-06-29 — reconcile whether the forward multiples reflect the fully cut FY26 numbers.
-- The 52-week price range and current price are unavailable (no price bars), and rel-vs-market is -74% over 180d — the absolute drawdown depth cannot be sized from the supplied facts.
-- Management posture on margin recovery and butter-wind-down cadence lives only in the two earnings-call transcripts on file, which must be read in full — not machine-curated here.
+- Cash runway is not derived despite FCF -$53.9M and negative latest-Q OCF — the actual months of self-funding capacity at current burn is undisclosed (a bearish opacity risk).
+- No forward/adjusted EV/EBITDA basis and no adjusted-EPS figure were in the revised 99.1 guidance, so cheap-overshoot vs cheap-terminal on a forward basis cannot be distinguished (trailing-only multiple, unresolved — neither bull nor bear).
+- Segment-level EBITDA is unavailable (Segments sheet has no EBITDA section), so the profitability drag from butter vs the core egg business cannot be isolated.
+- Covenant terms on the JPMorgan revolver are UNKNOWN (extraction failed) — covenant-basis leverage headroom is undisclosed (bearish opacity).
+- No revised-outlook 99.1 exhibit was parsed, so the precise bridge from prior to new guidance is not source-anchored beyond the summary figures.
+- The market 180d benchmark and any exposed cohort are unavailable, so idiosyncratic-vs-shared can only be read via the name-vs-IWM relative (-74%).
+- The as-of export date is unverified (a floor ≥ 2026-05-28); the true export is likely weeks newer, so consensus figures may be staler than the underlying data.
 
 ### Twin reference cases
-- **Freshpet** — recovered
-  - distinguished by: High-growth premium natural-food single-category name that endured a margin/cash-burn scare during a capacity build-out, then re-rated as volume growth persisted and margins recovered.
+- **Oatly Group AB** — went terminal
+  - distinguished by: In-roster branded better-for-you food name whose growth story de-rated into negative EBITDA margin as the premium-positioning thesis broke down.
   - source: CIQ Comparable Analysis→Financial Data + Business Description (roster + caps + business)
 - **The Hain Celestial Group** — went terminal
-  - distinguished by: Organic/natural packaged-food name whose margins and estimates eroded persistently, leaving a low-multiple business that stayed cheap as fundamentals kept deteriorating — a value-trap pattern.
+  - distinguished by: In-roster organic/natural food name that shrank (negative revenue growth) with margin compression, illustrating how a natural-foods premium brand can slide into a value trap.
   - source: CIQ Comparable Analysis→Financial Data + Business Description (roster + caps + business)
-- **Oatly Group AB** — went terminal
-  - distinguished by: Premium plant-based single-theme name that grew revenue but never converted to durable EBITDA, staying cash-negative through repeated guidance resets.
+- **Freshpet** — recovered
+  - distinguished by: In-roster premium single-category consumer name that endured heavy capex and cash burn during a growth build-out before profitability inflected upward.
   - source: CIQ Comparable Analysis→Financial Data + Business Description (roster + caps + business)
-- **Cal-Maine Foods** — recovered
-  - distinguished by: US egg producer whose earnings swing violently with commodity egg cycles; sharp trough compressions have historically reversed as the cycle normalized rather than proving terminal.
-  - source: CIQ Comparable Analysis→Financial Data + Business Description (roster + caps + business)
+- **Beyond Meat** — went terminal (LLM-claimed — verify)
+  - distinguished by: Premium better-for-you food disruptor whose high-growth narrative reversed into margin collapse and sustained cash burn once category demand faltered.
+  - source: [LLM-suggested, unverified]
+- **SunOpta** — recovered (LLM-claimed — verify)
+  - distinguished by: Natural/organic food name that discontinued a non-core product line to refocus on its core category and stabilized after the restructuring.
+  - source: [LLM-suggested, unverified]
 
 # Appendix — data & audit
 
@@ -408,7 +400,7 @@ _NM = a real state (negative base), not missing_
 _E = consensus (Estimates→Trends 'Current'), as-of ≥2026-05-28; (R) = Reclassified basis · FCF (levered, CIQ) = CIQ 'Levered Free Cash Flow', NOT CFO − capex_
 
 ### Trailing 8 quarters (the recent-quarter trajectory)
-- **Quarterly financials** — [52]  <!-- ds-table -->
+- **Quarterly financials** — [53]  <!-- ds-table -->
 
 |  | Q2-24 | Q3-24 | Q4-24 | Q1-25 | Q2-25 | Q3-25 | Q4-25 | Q1-26 |
 |---|---|---|---|---|---|---|---|---|
@@ -422,12 +414,12 @@ _E = consensus (Estimates→Trends 'Current'), as-of ≥2026-05-28; (R) = Reclas
 _QoQ/YoY same-basis only; (R) = Reclassified_
 
 ### Balance-sheet posture
-- **Posture:** as of Q1-26 ($M): cash & ST inv 51; total debt 54; net debt 3; equity 331; net working capital 91; net-debt/EBITDA → see the Leverage & survival block (not recomputed) [54]
-- **Coherence — BS vs implied-valuation bridge:** cash BS $51M / bridge $51M; debt BS $54M / bridge $54M — reconcile with the implied-valuation bridge. [55]
+- **Posture:** as of Q1-26 ($M): cash & ST inv 51; total debt 54; net debt 3; equity 331; net working capital 91; net-debt/EBITDA → see the Leverage & survival block (not recomputed) [55]
+- **Coherence — BS vs implied-valuation bridge:** cash BS $51M / bridge $51M; debt BS $54M / bridge $54M — reconcile with the implied-valuation bridge. [56]
 
 
 ### Capital-structure provenance — on-demand (web collapsed · print-excluded · JSON) — full panel · pointers · terms
-- **Capital structure — full instrument panel A 2025 filed Feb-26-2026** — [33]  <!-- ds-table -->
+- **Capital structure — full instrument panel A 2025 filed Feb-26-2026** — [34]  <!-- ds-table -->
 
 |  | Type | Principal | Coupon | Floating | Maturity | Sec | Conv | Cur |
 |---|---|---:|---|---|---|---|---|---|
@@ -437,7 +429,7 @@ _QoQ/YoY same-basis only; (R) = Reclassified_
 
 - **8-Ks at instrument maturities:** _UNKNOWN_ — no trailing-12m instrument maturity to anchor an 8-K
 - **Covenant exhibit pointers:** _UNKNOWN_ — no CIK-scoped agreement exhibit located across the filing history
-- **Covenant terms (from the filed agreement):** COVENANT DIGEST — extraction failed: no covenant terms extracted from located exhibits (terms UNKNOWN, not pending). [56]
+- **Covenant terms (from the filed agreement):** COVENANT DIGEST — extraction failed: no covenant terms extracted from located exhibits (terms UNKNOWN, not pending). [57]
 
 ### Reference: CIQ implied equity at peer-median multiples
 > **Comparability gate:** comparability: HETEROGENEOUS (see Peer comps gate)
@@ -454,7 +446,7 @@ _QoQ/YoY same-basis only; (R) = Reclassified_
 
 
 ### Management commentary
-- **Earnings call (transcript pointer — read the file):** 2 earnings-call transcript(s) on file — read in full for management posture: Vital Farms, Inc., Q1 2026 Earnings Call, May 07, 2026.rtf; Vital Farms, Inc., Q4 2025 Earnings Call, Feb 26, 2026.rtf (pointer only; the synthesis cites them, the machine does not curate an excerpt) [57]
+- **Earnings call (transcript pointer — read the file):** 2 earnings-call transcript(s) on file — read in full for management posture: Vital Farms, Inc., Q1 2026 Earnings Call, May 07, 2026.rtf; Vital Farms, Inc., Q4 2025 Earnings Call, Feb 26, 2026.rtf (pointer only; the synthesis cites them, the machine does not curate an excerpt) [58]
 
 ---
 > **No BUY/AVOID here — this dossier only assembles and cites.** The verdict is the human's, logged separately via the ledger with a frozen entry price.
@@ -472,8 +464,8 @@ _QoQ/YoY same-basis only; (R) = Reclassified_
 [9] `CIQ Comparable Analysis→Credit Health Panel · as-of 2026-06-29`
 [10] `CIQ Financials→Income Statement (margin % + absolute EBITDA reconciler)`
 [11] `CIQ Financials→Cash Flow 'Levered Free Cash Flow' [LTM 12 months Mar-29-2026]`
-[12] `CIQ Comparable Analysis→Trading Multiples (name row + Summary Statistics Low/Median/Mean/High)`
-[13] `8-K 0001193125-26-210294 EX-99.1`
+[12] `8-K 0001193125-26-210294 EX-99.1`
+[13] `CIQ Estimates→Recent Changes (250 broker revision events)  [data ≥ 2026-05-28 · export date unverified]`
 [14] `CIQ Financials→Income Statement + Cash Flow (annual) + Estimates→Trends (FY E)`
 [15] `CIQ Financials→Ratios (latest period)`
 [16] `CIQ Comparable Analysis→Trading Multiples (name vs peer Median)`
@@ -489,32 +481,33 @@ _QoQ/YoY same-basis only; (R) = Reclassified_
 [26] `EDGAR 8-K item codes at the gap-down dates (not blanket-labelled earnings)`
 [27] `EOD gap-down detector (screen events)`
 [28] `8-K 0001193125-26-073373 EX-99.1`
-[29] `CIQ Net Debt $3M [Q1 Mar-29-2026] ÷ CIQ OCF $10M [LTM 12 months Mar-29-2026]`
-[30] `CIQ Financials→Income Statement EBITDA ÷ Interest Expense [LTM 12 months Mar-29-2026]`
-[31] `CIQ Net Debt ÷ CIQ LTM EBITDA (EDGAR XBRL breadth fallback) + FCF sign (survival capacity)`
-[32] `EDGAR latest-Q OCF sign + CIQ LTM FCF sign`
-[33] `CIQ Financials→Capital Structure Details (A 2025 filed Feb-26-2026)`
-[34] `CIQ Financials→Capital Structure Summary`
-[35] `10-Q maturity wall vs CIQ capital panel (same window)`
-[36] `CIQ leverage bases + release LTM adj-EBITDA/margins`
-[37] `CIQ revenue guide vs release actual/outlook`
-[38] `EDGAR XBRL shares, trailing 2024-08-05..2026-05-04`
-[39] `TEV = mcap 479.5 + net debt 2.8 (CIQ Comparable Analysis→Financial Data, Latest, as-of 2026-06-29) — simple-TEV basis`
-[40] `EDGAR XBRL eps_diluted × EOD price (screen data-record, G3)`
-[41] `CIQ Financials→Multiples 'TEV/LTM EBITDA' Close (latest) — current multiple`
-[42] `CIQ Comparable Analysis→Financial Data + Business Description (roster + caps + business)`
-[43] `CIQ Comparable Analysis→Financial Data + Operating Statistics (per-peer grid) · as-of 2026-06-29`
-[44] `CIQ Estimates→Revisions (next-2-FQ breadth; 1m/2m/3m Upward/Downward)`
-[45] `CIQ Estimates→Trends (current-FY consensus path; ragged, absent lookbacks n/a)`
-[46] `CIQ Estimates→Guidance (latest guide + sign-aware delivery track-record)`
-[47] `CIQ Estimates→Recent Changes (250 broker revision events)  [data ≥ 2026-05-28 · export date unverified]`
-[48] `CIQ Estimates→Surprise (annual)`
-[49] `CIQ Customers&Suppliers Vital Farms Inc NasdaqGM VITL Customers.rtf`
-[50] `CIQ Financials→Income Statement + Segments + Ratios (multi-year columns)`
+[29] `EOD VITL 180d to 2026-07-06`
+[30] `CIQ Net Debt $3M [Q1 Mar-29-2026] ÷ CIQ OCF $10M [LTM 12 months Mar-29-2026]`
+[31] `CIQ Financials→Income Statement EBITDA ÷ Interest Expense [LTM 12 months Mar-29-2026]`
+[32] `CIQ Net Debt ÷ CIQ LTM EBITDA (EDGAR XBRL breadth fallback) + FCF sign (survival capacity)`
+[33] `EDGAR latest-Q OCF sign + CIQ LTM FCF sign`
+[34] `CIQ Financials→Capital Structure Details (A 2025 filed Feb-26-2026)`
+[35] `CIQ Financials→Capital Structure Summary`
+[36] `10-Q maturity wall vs CIQ capital panel (same window)`
+[37] `CIQ leverage bases + release LTM adj-EBITDA/margins`
+[38] `CIQ revenue guide vs release actual/outlook`
+[39] `EDGAR XBRL shares, trailing 2024-08-05..2026-05-04`
+[40] `TEV = mcap 479.5 + net debt 2.8 (CIQ Comparable Analysis→Financial Data, Latest, as-of 2026-06-29) — simple-TEV basis`
+[41] `EDGAR XBRL eps_diluted × EOD price (screen data-record, G3)`
+[42] `CIQ Financials→Multiples 'TEV/LTM EBITDA' Close (latest) — current multiple`
+[43] `CIQ Comparable Analysis→Financial Data + Business Description (roster + caps + business)`
+[44] `CIQ Comparable Analysis→Trading Multiples (name row + Summary Statistics Low/Median/Mean/High)`
+[45] `CIQ Comparable Analysis→Financial Data + Operating Statistics (per-peer grid) · as-of 2026-06-29`
+[46] `CIQ Estimates→Revisions (next-2-FQ breadth; 1m/2m/3m Upward/Downward)`
+[47] `CIQ Estimates→Trends (current-FY consensus path; ragged, absent lookbacks n/a)`
+[48] `CIQ Estimates→Guidance (latest guide + sign-aware delivery track-record)`
+[49] `CIQ Estimates→Surprise (annual)`
+[50] `CIQ Customers&Suppliers Vital Farms Inc NasdaqGM VITL Customers.rtf`
 [51] `CIQ Comparable Analysis→Operating Statistics (name vs peer median: growth/margin/leverage/beta)`
-[52] `CIQ Financials→Income Statement (quarterly, trailing 8Q)`
-[53] `CIQ Estimates→Trends (FY26/FY27 consensus Revenue, latest snapshot)`
-[54] `CIQ Financials→Balance Sheet (quarterly, Q1-26)`
-[55] `CIQ Financials→Balance Sheet vs Comparable Analysis→Implied Valuation`
-[56] `fenced Tier-2 digest (P1)`
-[57] `CIQ transcript(s): Vital Farms, Inc., Q1 2026 Earnings Call, May 07, 2026.rtf; Vital Farms, Inc., Q4 2025 Earnings Call, Feb 26, 2026.rtf`
+[52] `CIQ Financials→Income Statement + Segments + Ratios (multi-year columns)`
+[53] `CIQ Financials→Income Statement (quarterly, trailing 8Q)`
+[54] `CIQ Estimates→Trends (FY26/FY27 consensus EBITDA, latest snapshot)`
+[55] `CIQ Financials→Balance Sheet (quarterly, Q1-26)`
+[56] `CIQ Financials→Balance Sheet vs Comparable Analysis→Implied Valuation`
+[57] `fenced Tier-2 digest (P1)`
+[58] `CIQ transcript(s): Vital Farms, Inc., Q1 2026 Earnings Call, May 07, 2026.rtf; Vital Farms, Inc., Q4 2025 Earnings Call, Feb 26, 2026.rtf`

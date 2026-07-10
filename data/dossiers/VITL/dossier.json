@@ -531,10 +531,10 @@
     },
     "idiosyncratic_vs_shared": {
       "name_180d_return": {
-        "value": null,
-        "source_ref": null,
-        "status": "unknown",
-        "note": "name has no bars over the window"
+        "value": -0.5725699067909453,
+        "source_ref": "EOD VITL 180d to 2026-07-06",
+        "status": "present",
+        "note": null
       },
       "market_180d_return": {
         "value": null,
@@ -4189,22 +4189,22 @@
     },
     "stock_info": {
       "price": {
-        "value": null,
-        "source_ref": null,
-        "status": "unknown",
-        "note": "no price bars"
+        "value": 12.32,
+        "source_ref": "EOD VITL last close",
+        "status": "present",
+        "note": null
       },
       "high_52w": {
-        "value": null,
-        "source_ref": null,
-        "status": "unknown",
-        "note": "no price bars"
+        "value": 53.125,
+        "source_ref": "EOD VITL 52-week high",
+        "status": "present",
+        "note": null
       },
       "low_52w": {
-        "value": null,
-        "source_ref": null,
-        "status": "unknown",
-        "note": "no price bars"
+        "value": 7.95,
+        "source_ref": "EOD VITL 52-week low",
+        "status": "present",
+        "note": null
       },
       "shares_out": {
         "value": 42848454.0,
@@ -4224,172 +4224,177 @@
         "status": "present",
         "note": null
       },
-      "as_of": null
+      "as_of": "2026-07-08"
     }
   },
   "synthesis": {
-    "evidence_balance": "mixed — pristine balance sheet and intact revenue growth collide with a ~97% forward-EBITDA collapse, cash burn, and an expensive forward multiple.",
+    "evidence_balance": "strongly-bearish — forward EBITDA gutted -97% to ~$4M with cash burn and a founder exit; the low trailing multiple is optical, not cheap.",
     "bull_points": [
       {
-        "claim": "Absolute revenue has compounded from $362M (FY22) to $784M (LTM) and EBITDA from $10M to $79M — a still-growing franchise, not a decliner; the falling LTM margin % (14%→10%) reflects a discrete Q1-26 collapse layered on genuine multi-year absolute growth.",
+        "claim": "Absolute EBITDA has scaled from $4M (FY21) to $103M (FY25) alongside revenue rising $261M→$759M, so the LTM margin dip to 10% from 14% is a level that still sits far above the early trajectory — the % fall coincides with EBITDA still absolutely large ($79M LTM).",
         "source_ref": "CIQ Financials→Income Statement (margin % + absolute EBITDA reconciler)",
         "cited": true
       },
       {
-        "claim": "Latest same-quarter revenue still grew +15.4% YoY (Q1 Mar-29-2026 vs Q1 Mar-30-2025), so the top line kept expanding through the very quarter that triggered the second gap-down.",
-        "source_ref": "CIQ Financials→Income Statement + Segments + Ratios (multi-year columns)",
-        "cited": true
-      },
-      {
-        "claim": "The name carries near-zero leverage (net-debt/EBITDA 0.0x; total-debt/EBITDA 0.1x vs peer median 3.8x) with interest coverage 99.4x — a balance sheet far stronger than the leverage-laden peer set, reducing terminal/solvency risk.",
-        "source_ref": "CIQ Comparable Analysis→Operating Statistics (LTM Total Debt/EBITDA) · as-of 2026-06-29",
-        "cited": true
-      },
-      {
-        "claim": "On fundamental_deltas the name shows superior revenue growth (26% vs peer-median 4%) and positive EBITDA growth (6% vs peer-median -11%), posing whether the -83% EV/EBITDA discount to the HETEROGENEOUS peer set is RESIDUAL (overshoot) rather than fully EARNED — a question for the human, not a computed residual.",
+        "claim": "Revenue growth is genuinely superior to the cohort — name 26% vs peer-median 4% one-year — a fundamental the human must weigh when judging whether the discount is earned.",
         "source_ref": "CIQ Comparable Analysis→Operating Statistics (name vs peer median: growth/margin/leverage/beta)",
         "cited": true
       },
       {
-        "claim": "Credit-health model scores the name stronger than peers (Overall/Operational/Solvency 2/2/2 vs peer-median 3/3/3), consistent with a cash-generative core rather than a distressed structure.",
-        "source_ref": "CIQ Comparable Analysis→Credit Health Panel · as-of 2026-06-29",
+        "claim": "The balance sheet is nearly unlevered — net-debt/EBITDA 0.0x and total-debt/EBITDA 0.1x vs peer-median 3.8x — so a value-trap-via-leverage failure mode that afflicts the peer set does not apply here.",
+        "source_ref": "CIQ Comparable Analysis→Operating Statistics (LTM Total Debt/EBITDA) · as-of 2026-06-29",
         "cited": true
       },
       {
-        "claim": "The May gap-down was driven partly by a discrete, self-inflicted strategic action — winding down the butter line to focus on core eggs — with butter-inventory charges, an event distinct from secular demand loss.",
-        "source_ref": "8-K 0001193125-26-210294 EX-99.1",
+        "claim": "Revenue is still growing +15.4% YoY in the latest quarter (Q1 Mar-29-2026 vs Q1 Mar-30-2025), indicating top-line demand persists through the de-rating.",
+        "source_ref": "CIQ Financials→Income Statement + Segments + Ratios (multi-year columns)",
+        "cited": true
+      },
+      {
+        "claim": "The reported EV/EBITDA discount to peers (1.2x vs median 7.2x) is a CONSENSUS comp read gated by a HETEROGENEOUS peer set spanning $50M–$78.0B caps (1567x) against a $480M name, so whether the gap is earned or residual is unresolved and cannot be read as a clean benchmark.",
+        "source_ref": "CIQ Comparable Analysis→Financial Data (market-cap dispersion) + Business Description",
+        "cited": true
+      },
+      {
+        "claim": "The credit-health panel scores the name stronger than peers (Overall/Operational/Solvency 2/2/2 vs peer-median 3/3/3), a genuine offset to distress framing.",
+        "source_ref": "CIQ Comparable Analysis→Credit Health Panel · as-of 2026-06-29",
         "cited": true
       }
     ],
     "bear_points": [
       {
-        "claim": "FY26 consensus EBITDA collapsed from $122.7M (12m ago) to $4.05M (latest), a net -97% cut, and EPS crossed zero (1.55 → -0.42) — the earnings base the discount rests on has effectively evaporated, not merely compressed.",
+        "claim": "The de-rating is driven by a collapse in forward earnings power, not an optical trailing artifact: FY26 consensus EBITDA has been cut from $122.7M (12m ago) to $4.05M (latest), a net -97% path — this is the REAL signal, and it is why the NTM TEV/EBITDA is 70.81x (not cheap) despite the trailing 1.2x.",
         "source_ref": "CIQ Estimates→Trends (current-FY consensus path; ragged, absent lookbacks n/a)",
         "cited": true
       },
       {
-        "claim": "The headline 'EV/EBITDA 1.2x vs peer median 7.2x' is an OPTICAL MISREAD, not the real signal: it is trailing-only, and on a forward basis NTM TEV/EBITDA is 70.81x vs peer median 8.98x — i.e. the name is EXPENSIVE, not cheap, once the guidance cut is reflected.",
-        "source_ref": "CIQ Comparable Analysis→Trading Multiples (name row + Summary Statistics Low/Median/Mean/High)",
+        "claim": "Consensus FY26 EPS crossed zero (from +1.55 to -0.42) and net income went to -$18.8M, so the low trailing P/E of ~10.7x rests on backward earnings the forward set no longer supports — the trailing multiple is the consensus MISREAD, not the signal.",
+        "source_ref": "CIQ Estimates→Trends (current-FY consensus path; ragged, absent lookbacks n/a)",
         "cited": true
       },
       {
-        "claim": "Company adjusted-EBITDA guidance for next-fy was slashed from 105.0–115.0 (Feb) to 0.0–10.0 (May), a near-total withdrawal of the profit outlook within ~10 weeks.",
-        "source_ref": "8-K 0001193125-26-210294 EX-99.1",
-        "cited": true
-      },
-      {
-        "claim": "The business is FCF-negative (LTM levered FCF -$53.9M) and burning cash while capex runs at $100M LTM against $10M OCF — the low-leverage optic does not offset an active cash burn.",
+        "claim": "The company is burning cash — LTM FCF -$53.9M with latest-Q OCF also negative — so neither leg self-funds, a load-bearing concern given cash is not derived.",
         "source_ref": "CIQ Financials→Cash Flow 'Levered Free Cash Flow' [LTM 12 months Mar-29-2026]",
         "cited": true
       },
       {
-        "claim": "Q1-26 gross margin fell to 28% from 39% a year earlier and EBITDA margin to 1% from 15%, showing the profitability break is real and steep, not a reclassification artifact.",
+        "claim": "The gap-downs were driven by structural events, not a one-off print: a founder/Executive-Chairperson resignation (item 5.02) and a decision to wind down the entire butter product line (item 2.05) with exit charges.",
+        "source_ref": "EDGAR 8-K item codes at the gap-down dates (not blanket-labelled earnings)",
+        "cited": true
+      },
+      {
+        "claim": "Management guided next-FY adjusted EBITDA down to 0.0–10.0 from the 105.0–115.0 given just months earlier, a self-inflicted collapse in the forward outlook.",
+        "source_ref": "8-K 0001193125-26-210294 EX-99.1",
+        "cited": true
+      },
+      {
+        "claim": "Gross margin cratered to 28% in Q1-26 from 39% a year earlier, and quarterly EBITDA margin fell to 1% from 15%, showing the profitability erosion is current, not merely projected.",
         "source_ref": "CIQ Financials→Income Statement (quarterly, trailing 8Q)",
         "cited": true
       },
       {
-        "claim": "Brokers cut wholesale on 2026-05-08 — William Blair, Craig-Hallum and Telsey all moved Buy→Hold and target prices were slashed (e.g. 26.0→11.0), with FQ2/FQ3 revision breadth uniformly downward (0 up / 7–9 down).",
-        "source_ref": "CIQ Estimates→Revisions (next-2-FQ breadth; 1m/2m/3m Upward/Downward)",
+        "claim": "Sell-side conviction has broken — multiple brokers (William Blair, Craig-Hallum, Telsey) cut from Buy (1.00) to Hold (3.00) on 2026-05-08 with target prices slashed (e.g., 26.0→11.0), and the horizon breadth is uniformly downward (e.g., Revenue FQ2 0↑/9↓).",
+        "source_ref": "CIQ Estimates→Recent Changes (250 broker revision events)  [data ≥ 2026-05-28 · export date unverified]",
         "cited": true
       },
       {
-        "claim": "The founder/Executive Chairperson resigned from all roles alongside the February results, a governance/leadership discontinuity coinciding with the first gap-down.",
-        "source_ref": "8-K 0001193125-26-073373 EX-99.1",
-        "cited": true
-      },
-      {
-        "claim": "The name is 100% concentrated in a single Eggs-and-Butter segment and 100% US, with customer A at 22% — no diversification cushion against the egg-category shock now underway.",
+        "claim": "The business is single-segment and single-geography (Eggs and Butter 100%, United States 100%), concentrating the entire enterprise on one product category now being restructured.",
         "source_ref": "CIQ Financials→Segments (Revenues, latest annual column)",
         "cited": true
       }
     ],
     "twin_reference_cases": [
       {
-        "name": "Freshpet",
-        "outcome": "recovered",
-        "distinguishing_fact": "High-growth premium natural-food single-category name that endured a margin/cash-burn scare during a capacity build-out, then re-rated as volume growth persisted and margins recovered.",
+        "name": "Oatly Group AB",
+        "outcome": "went terminal",
+        "distinguishing_fact": "In-roster branded better-for-you food name whose growth story de-rated into negative EBITDA margin as the premium-positioning thesis broke down.",
         "source": "CIQ Comparable Analysis→Financial Data + Business Description (roster + caps + business)"
       },
       {
         "name": "The Hain Celestial Group",
         "outcome": "went terminal",
-        "distinguishing_fact": "Organic/natural packaged-food name whose margins and estimates eroded persistently, leaving a low-multiple business that stayed cheap as fundamentals kept deteriorating — a value-trap pattern.",
+        "distinguishing_fact": "In-roster organic/natural food name that shrank (negative revenue growth) with margin compression, illustrating how a natural-foods premium brand can slide into a value trap.",
         "source": "CIQ Comparable Analysis→Financial Data + Business Description (roster + caps + business)"
       },
       {
-        "name": "Oatly Group AB",
-        "outcome": "went terminal",
-        "distinguishing_fact": "Premium plant-based single-theme name that grew revenue but never converted to durable EBITDA, staying cash-negative through repeated guidance resets.",
-        "source": "CIQ Comparable Analysis→Financial Data + Business Description (roster + caps + business)"
-      },
-      {
-        "name": "Cal-Maine Foods",
+        "name": "Freshpet",
         "outcome": "recovered",
-        "distinguishing_fact": "US egg producer whose earnings swing violently with commodity egg cycles; sharp trough compressions have historically reversed as the cycle normalized rather than proving terminal.",
+        "distinguishing_fact": "In-roster premium single-category consumer name that endured heavy capex and cash burn during a growth build-out before profitability inflected upward.",
         "source": "CIQ Comparable Analysis→Financial Data + Business Description (roster + caps + business)"
+      },
+      {
+        "name": "Beyond Meat",
+        "outcome": "went terminal",
+        "distinguishing_fact": "Premium better-for-you food disruptor whose high-growth narrative reversed into margin collapse and sustained cash burn once category demand faltered.",
+        "source": "[LLM-suggested, unverified]"
+      },
+      {
+        "name": "SunOpta",
+        "outcome": "recovered",
+        "distinguishing_fact": "Natural/organic food name that discontinued a non-core product line to refocus on its core category and stabilized after the restructuring.",
+        "source": "[LLM-suggested, unverified]"
       }
     ],
     "decisive_question": {
-      "question": "Is the Q1-26 margin/EBITDA collapse a one-off cost/commodity + butter-wind-down shock that normalizes back toward the FY27 recovery path, or the start of a durable margin reset that makes the forward earnings base (and thus the elevated forward multiple) permanent?",
+      "question": "Is the FY26 earnings collapse a transient trough driven by the butter wind-down plus an input/margin shock that reverses as the restructuring completes, or the start of a durable impairment of the core egg franchise's economics?",
       "evidence_for": [
         {
-          "claim": "Consensus already models a sharp FY27 recovery — EBITDA rebounding to $48.3M and EPS to $0.52 — implying the Street treats FY26 as a trough rather than a new normal.",
-          "source_ref": "CIQ Estimates→Trends (FY26/FY27 consensus Revenue, latest snapshot)",
+          "claim": "Consensus already models a sharp rebound beyond the trough — FY27E EBITDA $48.3M vs FY26E $4.0M, and FY27 forward TEV/EBITDA of 9.98x implies the market prices recovery a year out.",
+          "source_ref": "CIQ Estimates→Trends (FY26/FY27 consensus EBITDA, latest snapshot)",
           "cited": true
         },
         {
-          "claim": "The butter discontinuation is an explicit management choice to concentrate on the core egg categories with completion expected by end of FY26, framing the disruption as transitional.",
+          "claim": "The butter exit is explicitly a refocus onto core egg categories, expected substantially complete by end of fiscal 2026, framing the hit as bounded and self-imposed rather than demand-driven.",
           "source_ref": "8-K 0001193125-26-210294 EX-99.1",
           "cited": true
         },
         {
-          "claim": "Revenue still grew +15.4% YoY into Q1-26, indicating the demand engine remained intact even as margins broke.",
-          "source_ref": "CIQ Financials→Income Statement + Segments + Ratios (multi-year columns)",
+          "claim": "Revenue guidance was cross-source VERIFIED at 775.0–800.0 and the company has met its revenue floor 7/7 times, so top-line delivery discipline is intact.",
+          "source_ref": "CIQ Estimates→Guidance (latest guide + sign-aware delivery track-record)",
           "cited": true
         }
       ],
       "evidence_against": [
         {
-          "claim": "Q1-26 gross margin fell to 28% (from 39%) and EBITDA margin to 1% (from 15%), a magnitude of compression consistent with a structural cost/pricing reset rather than a rounding wobble.",
-          "source_ref": "CIQ Financials→Income Statement (quarterly, trailing 8Q)",
+          "claim": "The most recent EBITDA guide was MISSED (FY 2025), and the forward adjusted-EBITDA outlook collapsed to 0.0–10.0, signalling the profit shortfall may be deeper than a bounded restructuring charge.",
+          "source_ref": "CIQ Estimates→Guidance (latest guide + sign-aware delivery track-record)",
           "cited": true
         },
         {
-          "claim": "FY26 revenue guidance was cut from 900.0–920.0 (Feb) to 775.0–800.0 (May) — the top line itself was revised down, not only margin, weakening the pure-'cost blip' reading.",
+          "claim": "Q1-26 gross margin fell to 28.3% and adjusted EBITDA to $5.0M, showing current-period economics — not just projections — have already deteriorated sharply.",
           "source_ref": "8-K 0001193125-26-210294 EX-99.1",
           "cited": true
         },
         {
-          "claim": "Every next-two-quarter estimate line shows uniformly downward revision breadth (0 up / 7–9 down), signaling analysts do not yet see stabilization.",
-          "source_ref": "CIQ Estimates→Revisions (next-2-FQ breadth; 1m/2m/3m Upward/Downward)",
+          "claim": "The founder and Executive Chairperson resigned concurrent with the first gap-down, removing continuity at the top just as the core strategy is being reset.",
+          "source_ref": "EDGAR 8-K item codes at the gap-down dates (not blanket-labelled earnings)",
           "cited": true
         }
       ]
     },
     "key_unknowns": [
-      "Cash runway is not directly derived: the name is FCF-negative (-$53.9M LTM) with only $51M cash and ~$100M LTM capex — the survival_capacity note flags cash 'not derived — a risk'; how many quarters of burn the balance sheet funds is unresolved and is a bearish opacity, not a neutral gap.",
-      "No segment-level EBITDA disclosure (Segments sheet has no EBITDA section) — cannot isolate whether the core egg business is profitable ex-butter; a missing expected breakout that skews bearish.",
-      "Forward/adjusted valuation basis is missing: adjusted EPS and adjusted forward EV/EBITDA are 'not in the 99.1 revised guidance', so the true forward multiple cannot be cleanly triangulated beyond the 70.81x NTM GAAP figure.",
-      "Covenant terms are UNKNOWN (extraction failed) and the JPMorgan revolver is undrawn but its covenant basis is undisclosed — leverage looks benign but the constraint set is opaque, a bearish risk.",
-      "The peer set is flagged HETEROGENEOUS (market caps span $50M–$78.0B, 1567x); every peer multiple must be treated as a confidence-gated input, so no discount-to-median can be read as a clean benchmark.",
-      "TEV/multiples vintage: export date is unverified (a floor ≥ 2026-05-28) and the TEV panel is as-of 2026-06-29 — reconcile whether the forward multiples reflect the fully cut FY26 numbers.",
-      "The 52-week price range and current price are unavailable (no price bars), and rel-vs-market is -74% over 180d — the absolute drawdown depth cannot be sized from the supplied facts.",
-      "Management posture on margin recovery and butter-wind-down cadence lives only in the two earnings-call transcripts on file, which must be read in full — not machine-curated here."
+      "Cash runway is not derived despite FCF -$53.9M and negative latest-Q OCF — the actual months of self-funding capacity at current burn is undisclosed (a bearish opacity risk).",
+      "No forward/adjusted EV/EBITDA basis and no adjusted-EPS figure were in the revised 99.1 guidance, so cheap-overshoot vs cheap-terminal on a forward basis cannot be distinguished (trailing-only multiple, unresolved — neither bull nor bear).",
+      "Segment-level EBITDA is unavailable (Segments sheet has no EBITDA section), so the profitability drag from butter vs the core egg business cannot be isolated.",
+      "Covenant terms on the JPMorgan revolver are UNKNOWN (extraction failed) — covenant-basis leverage headroom is undisclosed (bearish opacity).",
+      "No revised-outlook 99.1 exhibit was parsed, so the precise bridge from prior to new guidance is not source-anchored beyond the summary figures.",
+      "The market 180d benchmark and any exposed cohort are unavailable, so idiosyncratic-vs-shared can only be read via the name-vs-IWM relative (-74%).",
+      "The as-of export date is unverified (a floor ≥ 2026-05-28); the true export is likely weeks newer, so consensus figures may be staler than the underlying data."
     ]
   },
   "caveats": [
-    "primary-source: 6 EX-99.1 release(s) + 1 10-Q parsed (+5.4s fetch)",
+    "primary-source: 6 EX-99.1 release(s) + 1 10-Q parsed (+0.6s fetch)",
     "EV/EBITDA stale-price caveat — CIQ's Financials→Multiples current TEV/LTM 1.5x is priced at its last Close 2026-03-31, 97d before the 2026-07-06 reference; for a since-re-rated name this 'current' multiple AND the own-history range/percentile built on it are stale. The Comparable-Analysis sheet reads 1.2x on a current price — prefer that figure and re-pull the Financials multiple.",
-    "Unreconciled margin-compression (a bear point): 'Q1-26 gross margin fell to 28% from 39% a year earlier and EBITDA margin to 1% from 15%, showing the profitability break is real and steep, not a reclassification artifact.' — cites margin compression without the absolute-EBITDA reconciliation (margin % can fall while EBITDA rises)",
-    "Unreconciled margin-compression (a decisive-against point): 'Q1-26 gross margin fell to 28% (from 39%) and EBITDA margin to 1% (from 15%), a magnitude of compression consistent with a structural cost/pricing reset rather than a rounding wobble.' — cites margin compression without the absolute-EBITDA reconciliation (margin % can fall while EBITDA rises)",
-    "Bare peer-comparison (a bear point): 'The headline 'EV/EBITDA 1.2x vs peer median 7.2x' is an OPTICAL MISREAD, not the real signal: it is trailing-only, and on a forward basis NTM TEV/EBITDA is 70.81x vs peer median 8.98x — i.e. the name is EXPENSIVE, not cheap, once the guidance cut is reflected.' — presents cheap/rich vs peers as a verdict without the earned-vs-residual decomposition or the peer-set composition; POSE justified-vs-residual, never the bare gap",
-    "Heterogeneous-peer benchmark (a bear point): 'The headline 'EV/EBITDA 1.2x vs peer median 7.2x' is an OPTICAL MISREAD, not the real signal: it is trailing-only, and on a forward basis NTM TEV/EBITDA is 70.81x vs peer median 8.98x — i.e. the name is EXPENSIVE, not cheap, once the guidance cut is reflected.' — leans on the peer set as a clean benchmark, but comparability flags it HETEROGENEOUS; confidence-gate every peer stat"
+    "Unreconciled margin-compression (a bear point): 'Gross margin cratered to 28% in Q1-26 from 39% a year earlier, and quarterly EBITDA margin fell to 1% from 15%, showing the profitability erosion is current, not merely projected.' — cites margin compression without the absolute-EBITDA reconciliation (margin % can fall while EBITDA rises)",
+    "Unreconciled margin-compression (a decisive-against point): 'Q1-26 gross margin fell to 28.3% and adjusted EBITDA to $5.0M, showing current-period economics — not just projections — have already deteriorated sharply.' — cites margin compression without the absolute-EBITDA reconciliation (margin % can fall while EBITDA rises)",
+    "Possible false balance — evidence_balance commits a strong lean but the body is near-symmetric (6 bull vs 8 bear) and the minority bull_points aren't qualified-as-outweighed — size the minority against the lean (rule 7), or it launders a one-sided case"
   ],
   "qa_flags": [
-    "DIRECTIONAL language 'buy' — human review (dossier frames, not concludes)"
+    "DIRECTIONAL language 'conviction' — human review (dossier frames, not concludes)",
+    "VERIFICATION-CLAIM decisive.for: 'Revenue guidance was cross-source VERIFIED at 775.0–800.0 and the…' — the dossier cites, it does not verify; confirm against the source (cited ≠ verified)"
   ],
   "llm_model": "claude-opus-4-8",
-  "assembled_at": "2026-07-10T04:34:14.609873Z",
+  "assembled_at": "2026-07-10T07:04:29.854951Z",
   "sector": "Consumer Staples",
   "industry": {
     "value": "Packaged Foods and Meats",

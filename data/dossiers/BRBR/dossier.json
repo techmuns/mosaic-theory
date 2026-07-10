@@ -507,10 +507,10 @@
     },
     "idiosyncratic_vs_shared": {
       "name_180d_return": {
-        "value": null,
-        "source_ref": null,
-        "status": "unknown",
-        "note": "name has no bars over the window"
+        "value": -0.4164859002169198,
+        "source_ref": "EOD BRBR 180d to 2026-07-06",
+        "status": "present",
+        "note": null
       },
       "market_180d_return": {
         "value": null,
@@ -3639,7 +3639,7 @@
         "note": null
       },
       "covenant_terms": {
-        "value": "COVENANT & MATURITY DIGEST (governing terms; verbatim quotes omitted):\n[Revolving Credit Facility · 0001772016-21-000029]\n  Principal / commitment amount: up to $636,200,000 (2021 Refinancing Term Loans); Schedule I: Credit Suisse AG,…\n  Interest / coupon rate: In respect of Term B Loans, 3.00% per annum for Base Rate Loans and 4.00% per annum…",
+        "value": "COVENANT & MATURITY DIGEST (governing terms; verbatim quotes omitted):\n[Revolving Credit Facility · 0001772016-21-000029]\n  Principal / commitment amount: aggregate principal amount up to $636,200,000 (Schedule I: Total 2021 Refinancing…\n  Interest / coupon rate: in respect of Term B Loans, 3.00% per annum for Base Rate Loans and 4.00% per annum…",
         "source_ref": "fenced Tier-2 digest (P1)",
         "status": "present",
         "note": null
@@ -3663,7 +3663,7 @@
           {
             "name": "Principal / commitment amount",
             "value": {
-              "value": "up to $636,200,000 (2021 Refinancing Term Loans); Schedule I: Credit Suisse AG, Cayman Islands Branch $636,200,000; Total $636,200,000",
+              "value": "aggregate principal amount up to $636,200,000 (Schedule I: Total 2021 Refinancing Term Commitments $636,200,000)",
               "source_ref": "8-K 0001772016-21-000029 · ex10-1_amend2creditagmt.htm",
               "status": "present",
               "note": "verbatim: “the Borrower requests that the 2021 Refinancing Term Lenders make Term Loans in an aggregate principal amount up to $636,200,000 on the Amendment No. 2 Effective Date (the “2021 Refinancing Term Loans”)”"
@@ -3677,7 +3677,7 @@
           {
             "name": "Interest / coupon rate",
             "value": {
-              "value": "In respect of Term B Loans, 3.00% per annum for Base Rate Loans and 4.00% per annum for Eurodollar Rate Loans; Eurodollar Rate floor: not less than 0.75% per annum for Term Loans (1.00% per annum for Revolving Credit Loans)",
+              "value": "in respect of Term B Loans, 3.00% per annum for Base Rate Loans and 4.00% per annum for Eurodollar Rate Loans",
               "source_ref": "8-K 0001772016-21-000029 · ex10-1_amend2creditagmt.htm",
               "status": "present",
               "note": "verbatim: “Clause (a) of the defined term “Applicable Rate” ... amended and restated ... to read as follows: “(a) in respect of Term B Loans, 3.00% per annum for Base Rate Loans and 4.00% per annum for Eurodollar Rate Loans and””"
@@ -3719,10 +3719,10 @@
           {
             "name": "Security / collateral / guarantors",
             "value": {
-              "value": "2021 Refinancing Term Loans are secured by the Collateral Documents and guaranteed pursuant to the Loan Documents; Liens and guaranties under the Collateral Agreement reaffirmed. Guarantors/Loan Parties executing: BellRing Brands, LLC (Borrower); Dymatize Enterprises, LLC; Premier Nutrition Company, LLC; Supreme Protein, LLC; TA/DEI-A Acquisition Corp.",
+              "value": "2021 Refinancing Term Loans are secured by the Collateral Documents and guaranteed pursuant to the Loan Documents; each Loan Party reaffirms each Lien granted to the Administrative Agent for the benefit of the Secured Parties and the guaranties made pursuant to the Collateral Agreement. Guarantors executing: Dymatize Enterprises, LLC; Premier Nutrition Company, LLC; Supreme Protein, LLC; TA/DEI-A Acquisition Corp.",
               "source_ref": "8-K 0001772016-21-000029 · ex10-1_amend2creditagmt.htm",
               "status": "present",
-              "note": "verbatim: “Each Loan Party party hereto hereby (i) acknowledges and agrees that all of its pledges, grants of security interests and Liens and other obligations under the Collateral Agreement and the other Loan Documents to which it is a party are reaffirmed and remain in full force and effect ... (ii) reaffirms (x) each Lien granted by it to the Administrative Agent for the benefit of the Secured Parties and (y) the guaranties made by it pursuant to the Collateral Agreement ... Each Loan Party hereby acknowledges and agrees that the 2021 Refinancing Term Loans incurred on the Amendment No. 2 Effective Date constitute Obligations and, without limiting the foregoing, are secured by the Collateral Documents, and are guaranteed pursuant to the Loan Documents.”"
+              "note": "verbatim: “Each Loan Party hereby acknowledges and agrees that the 2021 Refinancing Term Loans incurred on the Amendment No. 2 Effective Date constitute Obligations and, without limiting the foregoing, are secured by the Collateral Documents, and are guaranteed pursuant to the Loan Documents.”"
             },
             "base_rate_label": null,
             "margin_pct": null,
@@ -3733,10 +3733,52 @@
           {
             "name": "Mandatory prepayment / events of default",
             "value": {
-              "value": "Repricing premium of 1.00% of aggregate principal amount of Term B Loans repriced/refinanced/amended upon a Repricing Event within 6 months after Amendment No. 2 Effective Date; prepayment of Existing Term Loans in amount equal to aggregate principal of 2021 Refinancing Term Loans; conditions require no Default or Event of Default. (Note: full mandatory prepayment / events of default provisions are governed by the Amended Credit Agreement, not restated in this Amendment.)",
+              "value": "Repricing Event premium: within 6 months after Amendment No. 2 Effective Date, 1.00% of aggregate principal amount of Term B Loans repriced/refinanced or subject to amendment (Section 2.05(b)(ix)). Also, condition/representation of no Default or Event of Default; Event of Default and Default are defined terms carried from the Amended Credit Agreement but no specific events of default enumerated in this Amendment.",
               "source_ref": "8-K 0001772016-21-000029 · ex10-1_amend2creditagmt.htm",
               "status": "present",
-              "note": "verbatim: “This Amendment constitutes notice by the Borrower to the Administrative Agent of prepayment of the Existing Term Loans in the amount equal to the aggregate principal amount of the 2021 Refinancing Term Loans on the Amendment No. 2 Effective Date ... [Repricing/Section 2.05(b)(ix)] If on or before the date that is 6 months after the Amendment No. 2 Effective Date, there occurs any ... Repricing Event, then ... the Borrower shall pay ... an amount equal to 1.00% of the aggregate principal amount of the Term B Loans so repriced or refinanced ... [Section 5(a)] no Default or Event of Default shall exist on the Amendment No. 2 Effective Date ... [Section 4(f)] No event has occurred and is continuing that would constitute an Event of Default or a Default”"
+              "note": "verbatim: “If on or before the date that is 6 months after the Amendment No. 2 Effective Date, there occurs any (i) prepayment or repayment of Term B Loans ... (any such transaction or event ..., a “Repricing Event”), then, simultaneously with the consummation of such Repricing Event, the Borrower shall pay ... an amount equal to 1.00% of the aggregate principal amount of the Term B Loans so repriced or refinanced”"
+            },
+            "base_rate_label": null,
+            "margin_pct": null,
+            "margin_bps": null,
+            "floor_pct": null,
+            "pik_pct": null
+          },
+          {
+            "name": "Prepayment notice of Existing Term Loans",
+            "value": {
+              "value": "notice of prepayment of the Existing Term Loans in the amount equal to the aggregate principal amount of the 2021 Refinancing Term Loans on the Amendment No. 2 Effective Date",
+              "source_ref": "8-K 0001772016-21-000029 · ex10-1_amend2creditagmt.htm",
+              "status": "present",
+              "note": "verbatim: “This Amendment constitutes notice by the Borrower to the Administrative Agent of prepayment of the Existing Term Loans in the amount equal to the aggregate principal amount of the 2021 Refinancing Term Loans on the Amendment No. 2 Effective Date”"
+            },
+            "base_rate_label": null,
+            "margin_pct": null,
+            "margin_bps": null,
+            "floor_pct": null,
+            "pik_pct": null
+          },
+          {
+            "name": "Revolving Credit Loan floor",
+            "value": {
+              "value": "Eurodollar Rate floor: Revolving Credit Loans 1.00% per annum; Term Loans 0.75% per annum",
+              "source_ref": "8-K 0001772016-21-000029 · ex10-1_amend2creditagmt.htm",
+              "status": "present",
+              "note": "verbatim: “at no time will the Eurodollar Rate be deemed to be (i) in the case of Revolving Credit Loans, less than 1.00% per annum and (ii) in the case of Term Loans, less than 0.75% per annum.”"
+            },
+            "base_rate_label": null,
+            "margin_pct": null,
+            "margin_bps": null,
+            "floor_pct": null,
+            "pik_pct": null
+          },
+          {
+            "name": "Governing law",
+            "value": {
+              "value": "State of New York",
+              "source_ref": "8-K 0001772016-21-000029 · ex10-1_amend2creditagmt.htm",
+              "status": "present",
+              "note": "verbatim: “THIS AMENDMENT ... SHALL BE GOVERNED BY, AND CONSTRUED IN ACCORDANCE WITH, THE LAW OF THE STATE OF NEW YORK.”"
             },
             "base_rate_label": null,
             "margin_pct": null,
@@ -3835,118 +3877,6 @@
               "source_ref": null,
               "status": "unknown",
               "note": "not stated in 8-K 0001193125-19-270862 · d812149dex101.htm"
-            },
-            "base_rate_label": null,
-            "margin_pct": null,
-            "margin_bps": null,
-            "floor_pct": null,
-            "pik_pct": null
-          },
-          {
-            "name": "Redemption Right (unit-for-share exchange mechanics)",
-            "value": {
-              "value": "Each Member (other than Pubco) may cause the Company to redeem its Nonvoting Common Units; Redeeming Member entitled to receive the Share Settlement or the Cash Settlement, at the Company's option (as determined by the Board).",
-              "source_ref": "8-K 0001193125-19-270862 · d812149dex101.htm",
-              "status": "present",
-              "note": "verbatim: “Subject to the provisions set forth in this Section 9.01, each Member (other than Pubco) shall be entitled to cause the Company to redeem (a “ Redemption ”) its Nonvoting Common Units (the “ Redemption Right ”) at any time (subject to any applicable lock-up agreements).”"
-            },
-            "base_rate_label": null,
-            "margin_pct": null,
-            "margin_bps": null,
-            "floor_pct": null,
-            "pik_pct": null
-          },
-          {
-            "name": "Share Settlement",
-            "value": {
-              "value": "a number of shares of Class A Common Stock equal to the number of Redeemed Units, subject to adjustment as set forth in Section 9.01(e)",
-              "source_ref": "8-K 0001193125-19-270862 · d812149dex101.htm",
-              "status": "present",
-              "note": "verbatim: ““ Share Settlement ” means a number of shares of Class A Common Stock equal to the number of Redeemed Units, subject to adjustment as set forth in Section 9.01(e).”"
-            },
-            "base_rate_label": null,
-            "margin_pct": null,
-            "margin_bps": null,
-            "floor_pct": null,
-            "pik_pct": null
-          },
-          {
-            "name": "Cash Settlement / Redeemed Units Equivalent",
-            "value": {
-              "value": "Cash Settlement = immediately available funds in U.S. dollars equal to the Redeemed Units Equivalent, which = (a) the Share Settlement multiplied by (b) the Common Unit Redemption Price",
-              "source_ref": "8-K 0001193125-19-270862 · d812149dex101.htm",
-              "status": "present",
-              "note": "verbatim: ““ Cash Settlement ” means immediately available funds in U.S. dollars in an amount equal to the Redeemed Units Equivalent. ... “ Redeemed Units Equivalent ” means the product of (a) the Share Settlement and (b) the Common Unit Redemption Price.”"
-            },
-            "base_rate_label": null,
-            "margin_pct": null,
-            "margin_bps": null,
-            "floor_pct": null,
-            "pik_pct": null
-          },
-          {
-            "name": "Common Unit Redemption Price",
-            "value": {
-              "value": "arithmetic average of the volume weighted average prices for a share of Class A Common Stock ... for each of the five (5) consecutive full Trading Days ending on and including the last full Trading Day immediately prior to the Redemption Date",
-              "source_ref": "8-K 0001193125-19-270862 · d812149dex101.htm",
-              "status": "present",
-              "note": "verbatim: ““ Common Unit Redemption Price ” means the arithmetic average of the volume weighted average prices for a share of Class A Common Stock on the principal U.S. securities exchange or automated or electronic quotation system on which the Class A Common Stock is traded or quoted, as reported by Bloomberg, L.P. or its successor, for each of the five (5) consecutive full Trading Days ending on and including the last full Trading Day immediately prior to the Redemption Date, subject to appropriate and equitable adjustment for any stock splits, reverse splits, stock dividends or similar events affecting the Class A Common Stock.”"
-            },
-            "base_rate_label": null,
-            "margin_pct": null,
-            "margin_bps": null,
-            "floor_pct": null,
-            "pik_pct": null
-          },
-          {
-            "name": "Units issued (Nonvoting Common Units)",
-            "value": {
-              "value": "97,474,180 Nonvoting Common Units (reclassified, held by Holdings) plus 39,428,571 Nonvoting Common Units issued to Pubco; one Voting Common Unit issued to Pubco",
-              "source_ref": "8-K 0001193125-19-270862 · d812149dex101.htm",
-              "status": "present",
-              "note": "verbatim: “All limited liability company interests in the Company outstanding as of immediately prior to the Effective Time, all of which are held by Holdings, shall be reclassified into 97,474,180 Nonvoting Common Units, and the Company hereby issues 39,428,571 Nonvoting Common Units to Pubco”"
-            },
-            "base_rate_label": null,
-            "margin_pct": null,
-            "margin_bps": null,
-            "floor_pct": null,
-            "pik_pct": null
-          },
-          {
-            "name": "Term / duration",
-            "value": {
-              "value": "perpetual existence unless sooner dissolved",
-              "source_ref": "8-K 0001193125-19-270862 · d812149dex101.htm",
-              "status": "present",
-              "note": "verbatim: “The Company shall have perpetual existence unless sooner dissolved and its affairs wound up as provided in Article XI.”"
-            },
-            "base_rate_label": null,
-            "margin_pct": null,
-            "margin_bps": null,
-            "floor_pct": null,
-            "pik_pct": null
-          },
-          {
-            "name": "Governing law",
-            "value": {
-              "value": "State of Delaware",
-              "source_ref": "8-K 0001193125-19-270862 · d812149dex101.htm",
-              "status": "present",
-              "note": "verbatim: “This Agreement shall be governed by and construed in accordance with the laws of the State of Delaware, without regard to the conflicts of law rules of such State that would result in the application of the laws of any other State.”"
-            },
-            "base_rate_label": null,
-            "margin_pct": null,
-            "margin_bps": null,
-            "floor_pct": null,
-            "pik_pct": null
-          },
-          {
-            "name": "Tax Distributions",
-            "value": {
-              "value": "quarterly cash tax distributions pro rata per Economic Percentage Interest, up to each Member's Assumed Tax Liability (Tax Rate multiplied by allocated estimated or actual taxable income)",
-              "source_ref": "8-K 0001193125-19-270862 · d812149dex101.htm",
-              "status": "present",
-              "note": "verbatim: “the Company, subject to availability of sufficient cash, shall make quarterly cash distributions ... to each Economic Member pro rata, in accordance with the Member’s Economic Percentage Interest ... until each Member has received an amount at least equal to its Assumed Tax Liability”"
             },
             "base_rate_label": null,
             "margin_pct": null,
@@ -4280,7 +4210,7 @@
         "note": null
       },
       "guide_verification": {
-        "value": "guide verification (revenue): CIQ 2325.0–2365.0 vs release None–None → MISMATCH flag",
+        "value": "guide verification (revenue): CIQ 2325.0–2365.0 vs release NO NUMERIC OUTLOOK → not cross-checked",
         "source_ref": "CIQ revenue guide vs release actual/outlook",
         "status": "present",
         "note": null
@@ -4301,22 +4231,22 @@
     },
     "stock_info": {
       "price": {
-        "value": null,
-        "source_ref": null,
-        "status": "unknown",
-        "note": "no price bars"
+        "value": 13.18,
+        "source_ref": "EOD BRBR last close",
+        "status": "present",
+        "note": null
       },
       "high_52w": {
-        "value": null,
-        "source_ref": null,
-        "status": "unknown",
-        "note": "no price bars"
+        "value": 59.095,
+        "source_ref": "EOD BRBR 52-week high",
+        "status": "present",
+        "note": null
       },
       "low_52w": {
-        "value": null,
-        "source_ref": null,
-        "status": "unknown",
-        "note": "no price bars"
+        "value": 7.82,
+        "source_ref": "EOD BRBR 52-week low",
+        "status": "present",
+        "note": null
       },
       "shares_out": {
         "value": 116277850.0,
@@ -4336,76 +4266,81 @@
         "status": "present",
         "note": null
       },
-      "as_of": null
+      "as_of": "2026-07-08"
     }
   },
   "synthesis": {
-    "evidence_balance": "strongly-bearish — a genuine ~41% forward EBITDA reset with falling absolute EBITDA, rising leverage on negative equity, and one-sided downward revisions.",
+    "evidence_balance": "strongly-bearish — a broad, sustained FY26 earnings reset (EBITDA -41%) atop elevated leverage and a largely earned peer discount.",
     "bull_points": [
       {
-        "claim": "The stock is FCF-positive with $182.7M LTM levered free cash flow, meaning the business self-funds even after the earnings shock — a survival marker at odds with a terminal read.",
-        "source_ref": "CIQ Financials→Cash Flow 'Levered Free Cash Flow' [LTM 12 months Mar-31-2026]",
+        "claim": "On the consensus comp read the name screens cheap on earnings — P/E 8.8x vs peer median 19.3x (-54%) — but the peer set is HETEROGENEOUS (caps span $111M–$36.4B, 327x) so this is a confidence-gated input, not a clean benchmark; the human must judge whether the discount is EARNED or RESIDUAL.",
+        "source_ref": "CIQ Comparable Analysis→Trading Multiples (name vs peer Median)",
         "cited": true
       },
       {
-        "claim": "Absolute revenue still GREW to $2,332M LTM from $2,317M FY25 — the top line is not collapsing even as the margin % compressed.",
-        "source_ref": "CIQ Financials→Income Statement (margin % + absolute EBITDA reconciler)",
-        "cited": true
-      },
-      {
-        "claim": "Management has delivered against its own guide, meeting the EBITDA floor 7/7 times resolved and revenue floor 9/11, with FY25 MET on both.",
-        "source_ref": "CIQ Estimates→Guidance (latest guide + sign-aware delivery track-record)",
-        "cited": true
-      },
-      {
-        "claim": "The company is buying back stock, reducing share count ~10% over ~1.7 years (129.2M → 116.3M), signalling capital returns rather than distress preservation.",
-        "source_ref": "EDGAR XBRL shares, trailing 2024-07-31..2026-04-28",
-        "cited": true
-      },
-      {
-        "claim": "On the peer grid BRBR's TEV/EBITDA (7.9x) sits BELOW higher-margin large-caps like Hershey (17.7x) and Kenvue (12.2x), posing whether the P/E discount to a peer median of 19.3x is RESIDUAL rather than fully EARNED — but the peer set spans $111M–$36.4B (327x) and is HETEROGENEOUS, so this is a confidence-gated input, not a clean benchmark.",
+        "claim": "On the trailing-vs-forward peer spread the name sits BELOW peers on both LTM (7.9x vs 6.2x median is a premium on EBITDA, but P/E -54%) and NTM TEV/EBITDA (7.78x vs peer median 8.7x) and NTM P/E (8.78x vs peer median 10.97x) — posing whether the earnings discount is a residual overshoot rather than fully earned.",
         "source_ref": "CIQ Comparable Analysis→Trading Multiples (name row + Summary Statistics Low/Median/Mean/High)",
         "cited": true
       },
       {
-        "claim": "Interest coverage of 4.0x on LTM EBITDA gives headroom against the 7% senior notes, and the near-term maturity wall is not present (all debt matures 2030), so there is no imminent refinancing cliff.",
-        "source_ref": "CIQ Financials→Income Statement EBITDA ÷ Interest Expense [LTM 12 months Mar-31-2026]",
+        "claim": "The business is self-funding on an LTM basis — LTM Levered FCF +$182.7M and FCF sign positive — supporting solvency rather than terminal distress.",
+        "source_ref": "CIQ Financials→Cash Flow 'Levered Free Cash Flow' [LTM 12 months Mar-31-2026]",
+        "cited": true
+      },
+      {
+        "claim": "Absolute EBITDA has grown structurally over the cycle (227 → 234 → 316 → 424 in FY24, now 312 LTM) and revenue has compounded from 1,247 to 2,332, so the recent margin-% compression sits on a far larger absolute base than 2021 — a % can fall while the dollar base is materially higher.",
+        "source_ref": "CIQ Financials→Income Statement (margin % + absolute EBITDA reconciler)",
+        "cited": true
+      },
+      {
+        "claim": "Management has a clean guidance-delivery record — EBITDA actual ≥ guided floor 7/7 resolved and revenue ≥ floor 9/11, most recent FY2025 MET — arguing the reset guide (EBITDA 315–335) is credible rather than a first of serial cuts.",
+        "source_ref": "CIQ Estimates→Guidance (latest guide + sign-aware delivery track-record)",
+        "cited": true
+      },
+      {
+        "claim": "The company is buying back stock (129.2M → 116.3M shares, -10.0% over ~1.7y) and interest coverage is 4.0x, consistent with a self-funding capital posture.",
+        "source_ref": "EDGAR XBRL shares, trailing 2024-07-31..2026-04-28",
         "cited": true
       }
     ],
     "bear_points": [
       {
-        "claim": "Consensus FY26 EBITDA has been cut from $536.4M (12m ago) to $318.6M (latest), a -41% collapse, with EPS Normalized down -54% — this is a genuine forward-estimate reset, not an optical trailing artifact, and it is the REAL signal.",
+        "claim": "Forward consensus has collapsed across the board — FY26 EBITDA cut -41% (536.4 → 318.6), EPS Normalized -51% (2.53 → 1.25), revenue -9% (12m → latest) — so the low trailing multiple is partly the market pricing a genuine earnings reset, not purely optical cheapness.",
         "source_ref": "CIQ Estimates→Trends (current-FY consensus path; ragged, absent lookbacks n/a)",
         "cited": true
       },
       {
-        "claim": "EBITDA margin fell to 13% LTM from 21% FY24, and here the reconciler CONFIRMS the signal rather than rebutting it: absolute EBITDA also FELL, from $424M FY24 to $312M LTM — the % decline is real deterioration, not a mix illusion.",
+        "claim": "The EBITDA-margin % decline is NOT merely optical: absolute EBITDA has also fallen from the FY24 peak (424 → 376 FY25 → 312 LTM) alongside margin compressing 21% → 16% → 13%, so both the ratio AND the dollar base are shrinking off the peak — this is the REAL signal on the recent leg, not a % artifact.",
         "source_ref": "CIQ Financials→Income Statement (margin % + absolute EBITDA reconciler)",
         "cited": true
       },
       {
-        "claim": "The most recent quarter shows gross margin at 27% and EBITDA margin at 12%, the weakest in the trailing 8-quarter set — the deterioration is accelerating into the latest print, not stabilising.",
-        "source_ref": "CIQ Financials→Income Statement (quarterly, trailing 8Q)",
-        "cited": true
-      },
-      {
-        "claim": "Net-debt/EBITDA of 3.8x (and total-debt/EBITDA 3.9x vs peer median 2.5x) is elevated and MECHANICALLY WORSENS as EBITDA falls; with book equity negative at -$498M, the leverage is real and rising, not optical.",
-        "source_ref": "CIQ Comparable Analysis→Operating Statistics (LTM Total Debt/EBITDA) · as-of 2026-06-24",
-        "cited": true
-      },
-      {
-        "claim": "The fundamental deltas EARN much of the discount: EBITDA growth -31% vs peer median -6%, LT EPS growth -7% vs peer median +7%, margin 13% vs 16%, leverage 3.9x vs 2.5x — worse on growth, margin AND leverage.",
+        "claim": "On the fundamental_deltas the peer discount looks substantially EARNED — name EBITDA margin 13% vs peer 16%, EBITDA growth -31% vs peer -6%, Debt/EBITDA 3.9 vs peer 2.5, LT EPS growth -7% vs peer +7% — worse on margin, growth and leverage points toward value-trap risk, not clean overshoot.",
         "source_ref": "CIQ Comparable Analysis→Operating Statistics (name vs peer median: growth/margin/leverage/beta)",
         "cited": true
       },
       {
-        "claim": "The near-term revision breadth is one-sided down: FQ3/FQ4 2026 EBITDA ran 0↑/11↓ and 0↑/10↓, with consensus target price cut and LT growth turned negative (mean -7.2%), showing analysts still marking down not stabilising.",
-        "source_ref": "CIQ Estimates→Revisions (next-2-FQ breadth; 1m/2m/3m Upward/Downward)",
+        "claim": "Leverage is elevated at net-debt/EBITDA 3.8x (and total-debt/EBITDA 3.9x vs peer median 2.5x), with equity book value negative (-$4.28/sh), so a further EBITDA leg down tightens the credit picture materially.",
+        "source_ref": "CIQ Net Debt $1,190M [FQ2/CQ1 Mar-31-2026] ÷ CIQ EBITDA $312M [LTM 12 months Mar-31-2026]",
         "cited": true
       },
       {
-        "claim": "The 2026-05-05 gap-down was an earnings event (8-K item 2.02), tying the de-rating directly to fundamental results rather than a technical or macro dislocation.",
+        "claim": "Sell-side conviction has broken — recommendation now Hold (3.00), consensus target mean $13.69 barely above the $13.18 price, LT growth mean -7.2%, with brokers cutting targets from as high as $34/$35 to $10–$13.",
+        "source_ref": "CIQ Estimates→Consensus",
+        "cited": true
+      },
+      {
+        "claim": "Short interest is rising sharply — 11.9M → 15.8M shares (+33.1%), 13.6% of shares outstanding — signalling growing bearish positioning into the reset.",
+        "source_ref": "FINRA consolidated short interest (settle 2026-06-15); DTC = 15,839,200 short ÷ 5,445,993 screen 90d ADV",
+        "cited": true
+      },
+      {
+        "claim": "The drawdown is idiosyncratic and severe — the name is down 41.6% over 180d and -56.3% relative to market — with the decisive gap-down tied to the May-05 earnings release (8-K item 2.02), not a shared sector move.",
+        "source_ref": "EOD name−IWM 180d (screen data-record, G2)",
+        "cited": true
+      },
+      {
+        "claim": "The gap-down driver is confirmed as the Q2 earnings print rather than a transient non-narrative item.",
         "source_ref": "EDGAR 8-K item codes at the gap-down dates (not blanket-labelled earnings)",
         "cited": true
       }
@@ -4414,81 +4349,85 @@
       {
         "name": "The Simply Good Foods Company",
         "outcome": "recovered",
-        "distinguishing_fact": "Same active-nutrition / protein-snack niche and a comparable small-cap single-segment profile; a branded nutrition name that traded through a margin and demand scare and re-rated as volumes held.",
+        "distinguishing_fact": "Nearest in-roster analogue — a similarly-sized single-category active-nutrition/protein brand that de-rated on a growth/margin scare and re-rated once volume held; the pattern to test is whether BRBR's demand is intact or structurally impaired.",
         "source": "CIQ Comparable Analysis→Financial Data + Business Description (roster + caps + business)"
       },
       {
         "name": "Herbalife Ltd.",
         "outcome": "went terminal",
-        "distinguishing_fact": "A similarly levered small-cap nutrition name whose depressed multiple persisted as a structurally-earned discount rather than mean-reverting — the value-trap analogue in the same roster.",
+        "distinguishing_fact": "In-roster nutrition peer carrying elevated leverage and negative/declining equity value where the low multiple proved a value trap as the debt load, not the discount, drove the equity story — the leverage-overhang cautionary pattern.",
         "source": "CIQ Comparable Analysis→Financial Data + Business Description (roster + caps + business)"
       },
       {
         "name": "The Campbell's Company",
         "outcome": "recovered",
-        "distinguishing_fact": "A packaged-food peer that absorbed input-cost and gross-margin compression while remaining FCF-positive and self-funding through the trough.",
+        "distinguishing_fact": "In-roster packaged-food name that traded at a depressed multiple through a margin trough and mean-reverted as gross-margin normalized — the earned-discount-that-later-faded pattern.",
         "source": "CIQ Comparable Analysis→Financial Data + Business Description (roster + caps + business)"
       },
       {
-        "name": "Nu Skin Enterprises",
+        "name": "Medifast",
         "outcome": "went terminal",
-        "distinguishing_fact": "A wellness/nutrition name where declining revenue and a sub-10% EBITDA margin cemented a low multiple that never recovered — demand erosion, not overshoot.",
-        "source": "CIQ Comparable Analysis→Financial Data + Business Description (roster + caps + business)"
+        "distinguishing_fact": "Single-brand consumer-nutrition franchise where a rapid demand deceleration turned an optically cheap stock into a durable de-rate — the concentration-plus-demand-cliff pattern to rule out here.",
+        "source": "[LLM-suggested, unverified]"
       },
       {
-        "name": "Bausch Health",
+        "name": "WW International",
         "outcome": "went terminal",
-        "distinguishing_fact": "A single-category consumer-health business carrying high leverage against a shrinking EBITDA base and negative book equity, where the debt load dominated the equity story.",
+        "distinguishing_fact": "High-leverage single-category wellness name whose FCF could not outrun a structural revenue erosion — the pattern where self-funding today is insufficient if the top line is secularly impaired.",
         "source": "[LLM-suggested, unverified]"
       }
     ],
     "decisive_question": {
-      "question": "Is the ~41% forward EBITDA reset a one-time margin/gross-margin shock that stabilises near the guided $315–335M FY26 floor (overshoot), or the first leg of a durable demand/margin erosion that keeps EBITDA falling and mechanically lifts leverage (value trap)?",
+      "question": "Is the sharp FY26 earnings reset a one-time margin/demand air-pocket that stabilizes near the reset guide (overshoot), or the first leg of a structural erosion in this single protein-based franchise (value trap)?",
       "evidence_for": [
         {
-          "claim": "Management still guides FY26 EBITDA to $315–335M and has met the EBITDA floor 7/7 times resolved, implying the shock may bottom near the guide rather than compound.",
+          "claim": "The reset guide has a perfect delivery record backing it — EBITDA actual ≥ floor 7/7, most recent FY2025 MET — suggesting 315–335 may hold rather than fall further.",
           "source_ref": "CIQ Estimates→Guidance (latest guide + sign-aware delivery track-record)",
           "cited": true
         },
         {
-          "claim": "Absolute revenue continued to grow to $2,332M LTM and the business remains FCF-positive at $182.7M, consistent with a margin reset on an intact top line.",
-          "source_ref": "CIQ Financials→Cash Flow 'Levered Free Cash Flow' [LTM 12 months Mar-31-2026]",
+          "claim": "LTM FCF is positive at $182.7M and revenue is still growing (6% vs peer 4%), consistent with a demand base that is decelerating, not collapsing.",
+          "source_ref": "CIQ Comparable Analysis→Operating Statistics (name vs peer median: growth/margin/leverage/beta)",
           "cited": true
         }
       ],
       "evidence_against": [
         {
-          "claim": "The latest quarter's gross margin (27%) and EBITDA margin (12%) are the weakest in eight quarters, and forward FQ3/FQ4 revision breadth is entirely downward — no sign of a bottom yet.",
-          "source_ref": "CIQ Financials→Income Statement (quarterly, trailing 8Q)",
+          "claim": "The magnitude and breadth of the cut argue structural — FY26 EBITDA -41%, gross margin guided down to ~27% from ~30%+, and EBITDA growth -31% vs peers -6%.",
+          "source_ref": "CIQ Estimates→Trends (current-FY consensus path; ragged, absent lookbacks n/a)",
           "cited": true
         },
         {
-          "claim": "Consensus LT growth has flipped negative (mean -7.2% / median -10.2%) and the rating sits at Hold, signalling analysts model persistent, not transitory, erosion.",
-          "source_ref": "CIQ Estimates→Consensus",
+          "claim": "Quarterly EBITDA margin has decayed through the year (23%/21%/22% FY24 → 12% latest FY26Q), showing sustained rather than single-quarter deterioration.",
+          "source_ref": "CIQ Financials→Income Statement (quarterly, trailing 8Q)",
           "cited": true
         }
       ]
     },
     "key_unknowns": [
-      "The revised FY26 outlook / EX-99.1 guidance figures were NOT parsed for the 2026-05-05 8-K, and the CIQ revenue guide (2325–2365) is flagged as a MISMATCH vs the release — the actual company outlook that drove the gap-down is not confirmed (opacity = bearish risk).",
-      "Company-adjusted LTM EBITDA and adjusted EPS are UNKNOWN (not in the 99.1 revised guidance), so the covenant-basis leverage and true margin picture cannot be triangulated — a missing expected disclosure.",
-      "Covenant terms / covenant leverage basis are UNKNOWN and the maturity wall is 'NOT_STATED' in the filing; whether headroom exists against covenants at 3.8–3.9x cannot be verified.",
-      "Self-funding is MIXED on a two-input read: latest-quarter OCF is NEGATIVE while LTM FCF is positive — both must be positive to self-fund, so intra-year cash generation may be deteriorating.",
-      "Segment EBITDA is UNKNOWN (Segments sheet has no EBITDA section) and revenue is 100% one segment (Protein-Based Consumer Goods), giving no line-of-business visibility into where the margin damage sits.",
-      "The forward EV/EBITDA is trailing-only with no forward-adjusted basis, so the 0th-percentile trailing multiple cannot itself distinguish cheap-overshoot from cheap-terminal.",
-      "No price bars / 52-week range and no name 180d return are available; only the -56.3% relative-to-market read exists, limiting the drawdown-context read.",
-      "Customer concentration (Walmart, Amazon, Costco, Sam's) is disclosed as a roster but with no percentage-of-sales breakout — concentration magnitude is not quantified."
+      "Current TEV/LTM EBITDA is trailing-only with no forward-adjusted basis in the revised 99.1 guidance — cannot cleanly distinguish cheap-overshoot from cheap-terminal (adjusted EPS and adjusted EBITDA both UNKNOWN).",
+      "No revised-outlook 99.1 exhibit was parsed for the May-05 8-K and the release carries NO NUMERIC OUTLOOK, so the guide could not be cross-checked against actual/outlook — an opacity gap on the single most decisive datapoint (bearish risk).",
+      "Self-funding is MIXED on cross-check: latest-quarter OCF is negative while LTM FCF is positive — both must be positive to self-fund, so intra-year cash generation is a live risk.",
+      "Segment EBITDA is UNKNOWN (Segments sheet has no EBITDA section) and revenue is 100% one segment (Protein-Based Consumer Goods) — no breakout to locate where the margin damage sits (bearish opacity).",
+      "Covenant basis and net-debt/company-adjusted-EBITDA are UNKNOWN; the 10-Q states no ≤12m maturity but covenant headroom against a falling EBITDA base is not disclosed.",
+      "Credit Health panel not rendered (scale direction ambiguous) — no independent credit signal to corroborate the 3.8x leverage read.",
+      "Market 180d return and cohort are UNKNOWN (IWM bars unavailable; BRBR absent from graph coverage) — only the name-vs-market relative is available, limiting the shared-vs-idiosyncratic read.",
+      "Export date is unverified (a floor ≥ 2026-05-14) while the price is as-of 2026-07-08 — consensus figures may lag the current tape.",
+      "Peer set is HETEROGENEOUS (caps 327x span); every peer multiple is a confidence-gated input, so the earned-vs-residual decomposition of the P/E discount cannot rest on the peer median as a clean benchmark."
     ]
   },
   "caveats": [
-    "primary-source: 1 EX-99.1 release(s) + 1 10-Q parsed (+2.0s fetch)",
+    "primary-source: 1 EX-99.1 release(s) + 1 10-Q parsed (+0.1s fetch)",
     "Net debt/EBITDA (3.8x) is on REPORTED EBITDA (CIQ / consolidated GAAP), not the covenant basis; management and credit covenants typically define leverage on adjusted EBITDA (a larger denominator → a lower ratio), reconciled in the earnings release/transcript (currently UNAVAILABLE) — do not read 3.8x as the covenant-basis leverage.",
     "Catalyst-path as-of UNVERIFIABLE — the CIQ Estimates export carries no as-of stamp; its data is on/after 2026-05-14 (the latest embedded revision event), so it is up to 53d before the 2026-07-06 reference — beyond the 45d tolerance — and the true export date is unknown, so freshness cannot be confirmed. Re-pull CIQ Estimates, or attest the export date (AS_OF sidecar).",
-    "Possible false balance — evidence_balance commits a strong lean but the body is near-symmetric (6 bull vs 7 bear) and the minority bull_points aren't qualified-as-outweighed — size the minority against the lean (rule 7), or it launders a one-sided case"
+    "Possible false balance — evidence_balance commits a strong lean but the body is near-symmetric (6 bull vs 8 bear) and the minority bull_points aren't qualified-as-outweighed — size the minority against the lean (rule 7), or it launders a one-sided case"
   ],
-  "qa_flags": [],
+  "qa_flags": [
+    "DIRECTIONAL language 'recommendation' — human review (dossier frames, not concludes)",
+    "DIRECTIONAL language 'conviction' — human review (dossier frames, not concludes)"
+  ],
   "llm_model": "claude-opus-4-8",
-  "assembled_at": "2026-07-10T04:22:24.233296Z",
+  "assembled_at": "2026-07-10T06:56:18.264668Z",
   "sector": "Consumer Staples",
   "industry": {
     "value": "Personal Care Products",

@@ -488,10 +488,10 @@
     },
     "idiosyncratic_vs_shared": {
       "name_180d_return": {
-        "value": null,
-        "source_ref": null,
-        "status": "unknown",
-        "note": "name has no bars over the window"
+        "value": -0.6285714285714286,
+        "source_ref": "EOD MVST 180d to 2026-07-06",
+        "status": "present",
+        "note": null
       },
       "market_180d_return": {
         "value": null,
@@ -1453,7 +1453,7 @@
         "note": null
       },
       "covenant_terms": {
-        "value": "COVENANT & MATURITY DIGEST (governing terms; verbatim quotes omitted):\n[Convertible Loan · 0001760689-24-000021 · amended by 0000947871-25-000313]\n  Conversion price / mechanics: ⇒ ~$0.50/sh at 2 sh per $1.00 · \"Conversion Price\" means at any time an amount equal…\n  Principal / commitment amount: Initial Term Loan Commitment: $12,000,000; Delayed Draw Term Loan Commitment:…\n  Interest / coupon rate: Term SOFR plus 9.75% per annum (Applicable Margin), with 3.75% of interest payable…\n  Maturity date: May 28, 2026 (clause (a) of Maturity Date; replacing “November 28, 2025”)\n  Financial-maintenance covenants: Minimum Liquidity: not less than $5,000,000 as of Friday of each calendar week…\n[Loan Facilities Agreement · 0001760689-22-000094]\n  Principal / commitment amount: RMB 800,000,000.00 yuan (Eight hundred million). Initial Commitments per Annex I:…\n  Interest / coupon rate: Floating rate: one-year LPR published by the National Interbank Funding Center Plus…\n  Default Interest Rate: Late Default Interest Rate: 150% of applicable Interest Rate; Misappropriation…\n  Maturity date: December 10, 2026 (5-year Loan Term)\n  Financial-maintenance covenants: Financial indicators clause present but left blank ([/]). Related covenants stated:…\n… (+1 lower-priority terms in the table)",
+        "value": "COVENANT & MATURITY DIGEST (governing terms; verbatim quotes omitted):\n[Convertible Loan · 0001760689-24-000021 · amended by 0000947871-25-000313]\n  Conversion price / mechanics: “Conversion Price” means at any time an amount equal to $1.00 divided by the…\n  Principal / commitment amount: Initial Term Loan Commitments: $12,000,000; Delayed Draw Term Loan Commitments:…\n  Interest / coupon rate: Term SOFR for the applicable Interest Period plus the Applicable Margin (9.75% per…\n  Maturity date: clause (a) of the definition of “Maturity Date” amended to “May 28, 2026”…\n  Financial-maintenance covenants: Minimum Liquidity: not permit Liquidity of Borrower and its Subsidiaries, as of…\n[Loan Facilities Agreement · 0001760689-22-000094]\n  Principal / commitment amount: RMB 800,000,000.00 yuan (Eight hundred million yuan)\n  Interest / coupon rate: Floating rate: one-year LPR published by the National Interbank Funding Center plus…\n  Default interest rate: Late Default Interest Rate: 150% of applicable Interest Rate; Misappropriation…\n  Maturity date: December 10, 2026 (5 years total)\n  Financial-maintenance covenants: Financial indicator covenant present but specific indicators not stated (field…\n… (+1 lower-priority terms in the table)",
         "source_ref": "fenced Tier-2 digest (P1)",
         "status": "present",
         "note": null
@@ -1505,7 +1505,7 @@
           {
             "name": "Maturity date",
             "value": {
-              "value": "May 28, 2026 (clause (a) of Maturity Date; replacing “November 28, 2025”)",
+              "value": "clause (a) of the definition of “Maturity Date” amended to “May 28, 2026” (previously “November 28, 2025”)",
               "source_ref": "8-K 0000947871-25-000313 · ss4588423_ex1001.htm",
               "status": "present",
               "note": "verbatim: ““November 28, 2025” in clause (a) of the definition of “ Maturity Date ” is deleted and replaced with “May 28, 2026”.”"
@@ -1533,10 +1533,10 @@
           {
             "name": "Security / collateral / guarantors",
             "value": {
-              "value": "Guarantors: Microvast Holdings, Inc. (Holdings), Microvast Advanced Materials Inc., Microvast Advanced Membrane Inc., Microvast Energy, Inc., Microvast Power Solutions, Inc., Microvast GmbH. Agent/Collateral Agent: Acquiom Agency Services LLC. Liens securing the Obligations ratified and confirmed.",
+              "value": "Liens securing the Obligations ratified and confirmed; ACQUIOM AGENCY SERVICES LLC as collateral agent; Guarantors: Microvast Holdings, Inc.; Microvast Advanced Materials Inc.; Microvast Advanced Membrane Inc.; Microvast Energy, Inc.; Microvast Power Solutions, Inc.; Microvast GmbH",
               "source_ref": "8-K 0000947871-25-000313 · ss4588423_ex1001.htm",
               "status": "present",
-              "note": "verbatim: “each of the Subsidiaries of Holdings listed as a “Guarantor” on the signature pages hereto ... GUARANTORS : MICROVAST HOLDINGS, INC. , as Holdings and a Guarantor ... MICROVAST ADVANCED MATERIALS INC. , as a Guarantor ... MICROVAST ADVANCED MEMBRANE INC. , as a Guarantor ... MICROVAST ENERGY, INC. , as a Guarantor ... MICROVAST POWER SOLUTIONS, INC. , as a Guarantor ... MICROVAST GMBH , as a Guarantor; [Loan Party] agrees that this Amendment in no way acts as a release or relinquishment of the Liens and rights securing payment of the Obligations and that the Liens and rights securing payment of the Obligations are hereby ratified and confirmed by each Loan Party in all respects”"
+              "note": "verbatim: “each Loan Party … agrees that this Amendment in no way acts as a release or relinquishment of the Liens and rights securing payment of the Obligations and that the Liens and rights securing payment of the Obligations are hereby ratified and confirmed by each Loan Party in all respects; … GUARANTORS : MICROVAST HOLDINGS, INC., as Holdings and a Guarantor … MICROVAST ADVANCED MATERIALS INC., as a Guarantor … MICROVAST ADVANCED MEMBRANE INC., as a Guarantor … MICROVAST ENERGY, INC., as a Guarantor … MICROVAST POWER SOLUTIONS, INC., as a Guarantor … MICROVAST GMBH, as a Guarantor”"
             },
             "base_rate_label": null,
             "margin_pct": null,
@@ -1547,10 +1547,10 @@
           {
             "name": "Mandatory prepayment / events of default",
             "value": {
-              "value": "No independent event-of-default or mandatory-prepayment provision stated; Amendment references existing Default/Event of Default (as defined in the Loan Agreement) as a condition/representation only",
+              "value": "Effectiveness/representation condition that no Default or Event of Default has occurred or is continuing; no mandatory prepayment terms stated (Events of Default otherwise defined in the underlying Loan Agreement, not restated here)",
               "source_ref": "8-K 0000947871-25-000313 · ss4588423_ex1001.htm",
               "status": "present",
-              "note": "verbatim: “no Default or Event of Default shall have occurred and be continuing or shall be caused by this Amendment; ... there exists no Default or Event of Default, in each case, after giving effect to this Amendment.”"
+              "note": "verbatim: “no Default or Event of Default shall have occurred and be continuing or shall be caused by this Amendment; … there exists no Default or Event of Default, in each case, after giving effect to this Amendment.”"
             },
             "base_rate_label": null,
             "margin_pct": null,
@@ -1575,7 +1575,7 @@
           {
             "name": "Principal / commitment amount",
             "value": {
-              "value": "RMB 800,000,000.00 yuan (Eight hundred million). Initial Commitments per Annex I: Bank of China, Huzhou Branch RMB 250 million; China Construction Bank, Huzhou Branch RMB 250 million; Bank of Huzhou, Co. RMB 150 million; China Zheshang Bank, Huzhou Branch RMB 150 million",
+              "value": "RMB 800,000,000.00 yuan (Eight hundred million yuan)",
               "source_ref": "8-K 0001760689-22-000094 · exhibit101-syndicatedloana.htm",
               "status": "present",
               "note": "verbatim: “All the Lenders agree to make available to the Borrower a medium / long-term loan facility in an aggregate amount up to RMB [800,000,000.00] yuan (In words: RMB [Eight hundred million] yuan) in accordance with the terms hereof.”"
@@ -1589,7 +1589,7 @@
           {
             "name": "Interest / coupon rate",
             "value": {
-              "value": "Floating rate: one-year LPR published by the National Interbank Funding Center Plus 115 bps, reset every 12 months (each anniversary of the first disbursement date)",
+              "value": "Floating rate: one-year LPR published by the National Interbank Funding Center plus 115 bps",
               "source_ref": "8-K 0001760689-22-000094 · exhibit101-syndicatedloana.htm",
               "status": "present",
               "note": "verbatim: “the applicable rate for the first period (from the first actual disbursement date to the end of the first floating period) will be the latest √ one year / x 5+ year LPR published by the National Interbank Funding Center one Business Day before the first actual disbursement date  √Plus x Minus (chose one) 115 bps”"
@@ -1601,12 +1601,12 @@
             "pik_pct": null
           },
           {
-            "name": "Default Interest Rate",
+            "name": "Default interest rate",
             "value": {
               "value": "Late Default Interest Rate: 150% of applicable Interest Rate; Misappropriation Default Interest Rate: 200% of applicable Interest Rate",
               "source_ref": "8-K 0001760689-22-000094 · exhibit101-syndicatedloana.htm",
               "status": "present",
-              "note": "verbatim: “If the Borrower fails to pay any amount due and payable in accordance with this Contract, interest shall accrue on such due and unpaid amount at a rate of [150% of applicable Interest Rate] (“ Late Default Interest Rate ”)... If the Borrower misappropriates any proceeds of any Loan , interest shall accrue on such misappropriated proceeds of Loan at a rate of [200% of applicable Interest Rate] (“ Misappropriation Default Interest Rate ”)”"
+              "note": "verbatim: “If the Borrower fails to pay any amount due and payable in accordance with this Contract, interest shall accrue on such due and unpaid amount at a rate of [150% of applicable Interest Rate] (“Late Default Interest Rate”)... If the Borrower misappropriates any proceeds of any Loan, interest shall accrue on such misappropriated proceeds of Loan at a rate of [200% of applicable Interest Rate] (“Misappropriation Default Interest Rate”)”"
             },
             "base_rate_label": null,
             "margin_pct": null,
@@ -1617,10 +1617,10 @@
           {
             "name": "Maturity date",
             "value": {
-              "value": "December 10, 2026 (5-year Loan Term)",
+              "value": "December 10, 2026 (5 years total)",
               "source_ref": "8-K 0001760689-22-000094 · exhibit101-syndicatedloana.htm",
               "status": "present",
-              "note": "verbatim: “Term of the loans under this Contract is a period commencing from (and including) the first Disbursement Date / Effective Date ending on (and including) [December 10, 2026], [5] years in total (“ Loan Term ’)”"
+              "note": "verbatim: “Term of the loans under this Contract is a period commencing from (and including) the first Disbursement Date / Effective Date ending on (and including) [December 10, 2026], [5] years in total (“Loan Term’).”"
             },
             "base_rate_label": null,
             "margin_pct": null,
@@ -1631,7 +1631,7 @@
           {
             "name": "Financial-maintenance covenants",
             "value": {
-              "value": "Financial indicators clause present but left blank ([/]). Related covenants stated: '3) the Borrower shall ensure that the final total financing balance for the Project does not exceed RMB 800 million, and the final proportion of equity funds is not less than 45%'; and 'The Borrower shall ensure that the equity fund of the Project in an amount of RMB 500 million is in place before the disbursement of Loans'",
+              "value": "Financial indicator covenant present but specific indicators not stated (field marked [/]); Borrower undertakes final total financing balance for the Project does not exceed RMB 800 million and final proportion of equity funds is not less than 45%",
               "source_ref": "8-K 0001760689-22-000094 · exhibit101-syndicatedloana.htm",
               "status": "present",
               "note": "verbatim: “9. Financial indicator The Borrower shall meet the following financial indicators: [/]”"
@@ -1645,7 +1645,7 @@
           {
             "name": "Security / collateral / guarantors",
             "value": {
-              "value": "Mortgagor/Pledgor: Microvast Power Systems Co., Ltd. Mortgage Contract: three mortgage contracts (#HuKai 2022 C113, C114, C115) dated 1 September 2022. Guarantor and Guarantee Contract left blank ([/]); Pledge Contract left blank ([/]). Security Documents = Guarantee Contract/Maximum Guarantee Contract, Mortgage Contract/Maximum Mortgage Contract and/or Pledge Contract/Maximum Pledge Contract. Covenant: '1) The property and equipment of the Project will be mortgaged to the syndicate when they are available for the mortgage'",
+              "value": "Mortgage under three Mortgage Contracts (#HuKai 2022 C113, C114, C115 dated 1 September 2022); Mortgagor and Pledgor = Microvast Power Systems Co., Ltd.; Guarantor = [/] (not stated); Security Documents = Guarantee Contract/Maximum Guarantee Contract, Mortgage Contract/Maximum Mortgage Contract and/or Pledge Contract/Maximum Pledge Contract",
               "source_ref": "8-K 0001760689-22-000094 · exhibit101-syndicatedloana.htm",
               "status": "present",
               "note": "verbatim: “Mortgage Contract means three mortgage contracts (with contract NO. of # HuKai 2022 C113, #HuKai 2022 C114 ,# HuKai 2022 C115 respectively) signed by the Mortgagor and the Agent on 1 September 2022. Mortgagor means [Microvast Power Systems Co., Ltd.]”"
@@ -1659,10 +1659,10 @@
           {
             "name": "Mandatory prepayment / events of default",
             "value": {
-              "value": "Events of Default (Art. 15.1): (1) Misrepresentation; (2) Breach of covenants/other obligations; (3) Payment default; (4) Material payment default (two consecutive/three total); (5) Misappropriation of loans; (6) Cross default (RMB 1000 or more); (7) Insolvency (RMB 1,000,000 or more thresholds); (8) Liquidation/bankruptcy events; (9) Enforcement events (assets RMB 30,000,000 or more sealed/frozen not released within 90 Business Days); (10) Failure to meet financial indicators; (11) Material Adverse Effect; (12) Invalidity of Finance Documents. Remedies (Art. 15.2) include declaring acceleration of Outstanding Loans. Compulsory prepayment on change of control (Art. 7.4): 'The Agent (acting on instructions of all Lenders) shall, after giving at least 10 Business Days' prior notice to the Borrower, require the Borrower to prepay the loans and cancel the Total Commitments'. Change-in-law prepayment (Art. 11).",
+              "value": "Events of Default listed in Article 15.1 (misrepresentation, breach, payment default, misappropriation, cross default, insolvency, bankruptcy, enforcement events, financial indicators, Material Adverse Effect, invalidity of Finance Documents); Remedies in Art 15.2 include acceleration. Compulsory cancellation/prepayment on change of control (Art 7.4) and change in law (Art 11); voluntary prepayment min RMB 30,000,000 in multiples of RMB 30,000,000 (Art 7.1)",
               "source_ref": "8-K 0001760689-22-000094 · exhibit101-syndicatedloana.htm",
               "status": "present",
-              "note": "verbatim: “15.1 Event of Default Any of the following circumstances constitutes an Event of Default : 1. Misrepresentation ... 2. Breach of contract or other obligations ... 3. Payment default ... 6. Cross default The Borrower fails to repay any due Indebtedness with a total amount of RMB [1000] yuan or more. ... 12. Invalidity of Finance Documents The Finance Documents become invalid or unenforceable.”"
+              "note": "verbatim: “15.1 Event of Default Any of the following circumstances constitutes an Event of Default : 1. Misrepresentation... 2. Breach of contract or other obligations... 3. Payment default... 6. Cross default The Borrower fails to repay any due Indebtedness with a total amount of RMB [1000] yuan or more... 15.2 Remedies of Syndicate Banks... (4) declaring acceleration of all or part of the Outstanding Loans”"
             },
             "base_rate_label": null,
             "margin_pct": null,
@@ -1769,12 +1769,124 @@
             "pik_pct": null
           },
           {
+            "name": "Vesting schedule",
+            "value": {
+              "value": "One-third on each of the first, second, and third anniversaries of the Grant Date",
+              "source_ref": "latest 10-K 0001628280-26-018264 · mvst20251231-ex1013.htm",
+              "status": "present",
+              "note": "verbatim: “one-third of the RSUs shall vest, if at all, on each of the vesting dates set forth above (each, a “Vesting Date”), subject to the Participant’s continued employment with the Company or Affiliate through the applicable Vesting Date.”"
+            },
+            "base_rate_label": null,
+            "margin_pct": null,
+            "margin_bps": null,
+            "floor_pct": null,
+            "pik_pct": null
+          },
+          {
+            "name": "Settlement",
+            "value": {
+              "value": "One Share per vested RSU (or cash equal to Fair Market Value of a Share on the applicable Vesting Date), by the Settlement Date (no later than March 15 of the year following vesting)",
+              "source_ref": "latest 10-K 0001628280-26-018264 · mvst20251231-ex1013.htm",
+              "status": "present",
+              "note": "verbatim: “The Company shall deliver to the Participant one Share, or at the option of the Company, pay the Participant the cash value as set forth in this Section 3, in settlement of each outstanding RSU that has vested ... but in no event later than March 15 of the year following (i) or (ii), as applicable (the “Settlement Date”)”"
+            },
+            "base_rate_label": null,
+            "margin_pct": null,
+            "margin_bps": null,
+            "floor_pct": null,
+            "pik_pct": null
+          },
+          {
+            "name": "Forfeiture on termination",
+            "value": {
+              "value": "Unvested RSUs forfeited on any termination; all RSUs (vested-unsettled and unvested) forfeited on termination for Cause",
+              "source_ref": "latest 10-K 0001628280-26-018264 · mvst20251231-ex1013.htm",
+              "status": "present",
+              "note": "verbatim: “all unvested RSUs granted to the Participant pursuant to this Agreement shall be forfeited and cancelled for no consideration upon the Participant’s Termination of Employment for any reason. Notwithstanding the foregoing, upon the Participant’s Termination of Employment for Cause ... all RSUs granted hereunder, whether vested but not settled or unvested shall be forfeited and cancelled for no consideration.”"
+            },
+            "base_rate_label": null,
+            "margin_pct": null,
+            "margin_bps": null,
+            "floor_pct": null,
+            "pik_pct": null
+          },
+          {
+            "name": "Change in Control",
+            "value": {
+              "value": "Unvested RSUs treated per the Plan; vested-unsettled RSUs settled immediately prior to the Change in Control",
+              "source_ref": "latest 10-K 0001628280-26-018264 · mvst20251231-ex1013.htm",
+              "status": "present",
+              "note": "verbatim: “In the event of a Change in Control prior to the final Vesting Date, all unvested RSUs shall be treated in accordance with the Plan. Any vested RSUs that have yet to be settled shall be settled immediately prior to the Change in Control.”"
+            },
+            "base_rate_label": null,
+            "margin_pct": null,
+            "margin_bps": null,
+            "floor_pct": null,
+            "pik_pct": null
+          },
+          {
+            "name": "Dividend Equivalents",
+            "value": {
+              "value": "Credited with Dividend Equivalents, converted into additional RSUs; subject to same vesting/settlement terms as the corresponding Award",
+              "source_ref": "latest 10-K 0001628280-26-018264 · mvst20251231-ex1013.htm",
+              "status": "present",
+              "note": "verbatim: “The Participant shall be credited with Dividend Equivalents equal to the dividends the Participant would have received if the Participant had been the owner of a number of Shares equal to the number of RSUs credited to the Participant on such dividend payment date.”"
+            },
+            "base_rate_label": null,
+            "margin_pct": null,
+            "margin_bps": null,
+            "floor_pct": null,
+            "pik_pct": null
+          },
+          {
+            "name": "Transfer restrictions",
+            "value": {
+              "value": "Non-transferable except by will or laws of descent and distribution",
+              "source_ref": "latest 10-K 0001628280-26-018264 · mvst20251231-ex1013.htm",
+              "status": "present",
+              "note": "verbatim: “The RSUs granted hereby are not assignable or transferable, in whole or in part, and may not, directly or indirectly, be offered, transferred, sold, pledged, assigned, alienated, hypothecated or otherwise disposed of or encumbered ... other than by will or by the laws of descent and distribution to the estate of the Participant upon the Participant’s death”"
+            },
+            "base_rate_label": null,
+            "margin_pct": null,
+            "margin_bps": null,
+            "floor_pct": null,
+            "pik_pct": null
+          },
+          {
+            "name": "Clawback",
+            "value": {
+              "value": "Subject to clawback/recoupment per applicable law and Company policy",
+              "source_ref": "latest 10-K 0001628280-26-018264 · mvst20251231-ex1013.htm",
+              "status": "present",
+              "note": "verbatim: “The RSUs subject to this Agreement shall be subject to clawback or recoupment, as mandated by applicable law, rules or regulations or as approved by the Board or Committee or by any policy adopted by the Company and approved by the Board as in effect from time to time.”"
+            },
+            "base_rate_label": null,
+            "margin_pct": null,
+            "margin_bps": null,
+            "floor_pct": null,
+            "pik_pct": null
+          },
+          {
+            "name": "Governing law",
+            "value": {
+              "value": "State of Delaware",
+              "source_ref": "latest 10-K 0001628280-26-018264 · mvst20251231-ex1013.htm",
+              "status": "present",
+              "note": "verbatim: “This Agreement shall be governed by and construed in accordance with the law of the State of Delaware regardless of the application of rules of conflict of law that would apply the laws of any other jurisdiction.”"
+            },
+            "base_rate_label": null,
+            "margin_pct": null,
+            "margin_bps": null,
+            "floor_pct": null,
+            "pik_pct": null
+          },
+          {
             "name": "Conversion price / mechanics",
             "value": {
-              "value": "\"Conversion Price\" means at any time an amount equal to $1.00 divided by the applicable Conversion Rate at such time. Conversion Rate: two (2) shares of Common Stock (subject to adjustment) per $1.00 principal amount of the Loans. Partial-conversion minimum: $100,000 principal amount, or an integral multiple of $100,000 in excess thereof.",
+              "value": "“Conversion Price” means at any time an amount equal to $1.00 divided by the applicable Conversion Rate at such time. Conversion Rate: two (2) shares of Common Stock (subject to adjustment by the Borrower as provided in Section 2.12.4) per $1.00 principal amount of the Loans. Partial-conversion minimum: $100,000 principal amount, or an integral multiple of $100,000 in excess thereof.",
               "source_ref": "8-K 0001760689-24-000021 · wu_microvast-loanandsecuri.htm",
               "status": "present",
-              "note": "verbatim: ““Conversion Price” means at any time an amount equal to $1.00 divided by the applicable Conversion Rate at such time. [...] a Lender will have the right, at such Lender’s option, to convert all or any portion (if the portion to be converted is $100,000 principal amount, or an integral multiple of $100,000 in excess thereof) of its Loans at any time prior to the Close of Business on the Scheduled Trading Day immediately preceding the Maturity Date, at a rate (the “Conversion Rate”) of two (2) shares of Common Stock (subject to adjustment by the Borrower as provided in Section 2.12.4 ) per $1.00 principal amount of the Loans (the “Conversion Obligation”).”"
+              "note": "verbatim: ““Conversion Price” means at any time an amount equal to $1.00 divided by the applicable Conversion Rate at such time. ... a Lender will have the right, at such Lender’s option, to convert all or any portion (if the portion to be converted is $100,000 principal amount, or an integral multiple of $100,000 in excess thereof) of its Loans at any time prior to the Close of Business on the Scheduled Trading Day immediately preceding the Maturity Date, at a rate (the “Conversion Rate”) of two (2) shares of Common Stock (subject to adjustment by the Borrower as provided in Section 2.12.4) per $1.00 principal amount of the Loans (the “Conversion Obligation”).”"
             },
             "base_rate_label": null,
             "margin_pct": null,
@@ -1785,10 +1897,10 @@
           {
             "name": "Principal / commitment amount",
             "value": {
-              "value": "Initial Term Loan Commitment: $12,000,000; Delayed Draw Term Loan Commitment: $13,000,000 (Total Loan Commitment $25,000,000 per Annex I)",
+              "value": "Initial Term Loan Commitments: $12,000,000; Delayed Draw Term Loan Commitments: $13,000,000 (aggregate $25,000,000 per Annex I)",
               "source_ref": "8-K 0001760689-24-000021 · wu_microvast-loanandsecuri.htm",
               "status": "present",
-              "note": "verbatim: “The aggregate principal amount of the Initial Term Loan Commitments on the Closing Date is $12,000,000. [...] The aggregate principal amount of the Delayed Draw Term Loan Commitments on the Closing Date is $13,000,000. [Annex I: YANG WU $12,000,000.00 100.00% $13,000,000.00 100.00% TOTALS: $12,000,000 100.00% $13,000,000 100.00%]”"
+              "note": "verbatim: “The aggregate principal amount of the Initial Term Loan Commitments on the Closing Date is $12,000,000. ... The aggregate principal amount of the Delayed Draw Term Loan Commitments on the Closing Date is $13,000,000. [Annex I: YANG WU $12,000,000.00 / $13,000,000.00; TOTALS: $12,000,000 / $13,000,000]”"
             },
             "base_rate_label": null,
             "margin_pct": null,
@@ -1799,10 +1911,10 @@
           {
             "name": "Interest / coupon rate",
             "value": {
-              "value": "Term SOFR plus 9.75% per annum (Applicable Margin), with 3.75% of interest payable in-kind (PIK Interest); Floor of 3.00% per annum; Default Rate = Applicable Margin increased by 3.00% per annum",
+              "value": "Term SOFR for the applicable Interest Period plus the Applicable Margin (9.75% per annum), with 3.75% paid in-kind (PIK Interest); Floor of 3.00% per annum; Default Rate = Applicable Margin increased by 3.00% per annum",
               "source_ref": "8-K 0001760689-24-000021 · wu_microvast-loanandsecuri.htm",
               "status": "present",
-              "note": "verbatim: “The Borrower promises to pay interest on the unpaid principal amount of each Loan for the period commencing on the date of such Loan until such Loan is paid in full at a rate per annum equal to the sum of Term SOFR for the applicable Interest Period then in effect plus the Applicable Margin from time to time in effect; provided that, the Borrower shall pay 3.75% of the interest due on each Loan on each interest payment date in-kind rather than in cash. [...] “Applicable Margin” means 9.75% per annum. [...] “Floor” means a rate of interest equal to 3.00% per annum.”"
+              "note": "verbatim: “The Borrower promises to pay interest on the unpaid principal amount of each Loan ... at a rate per annum equal to the sum of Term SOFR for the applicable Interest Period then in effect plus the Applicable Margin from time to time in effect; provided that, the Borrower shall pay 3.75% of the interest due on each Loan on each interest payment date in-kind rather than in cash. ... (such amount, the “PIK Interest”). ... “Applicable Margin” means 9.75% per annum. ... “Floor” means a rate of interest equal to 3.00% per annum.”"
             },
             "base_rate_label": "Term SOFR",
             "margin_pct": 9.75,
@@ -1813,7 +1925,7 @@
           {
             "name": "Maturity date",
             "value": {
-              "value": "Earliest to occur of (a) November 28, 2025, and (b) the date on which the Obligations are accelerated or terminated pursuant to the terms of this Agreement",
+              "value": "the earliest to occur of (a) November 28, 2025, and (b) the date on which the Obligations are accelerated or terminated pursuant to the terms of this Agreement",
               "source_ref": "8-K 0001760689-24-000021 · wu_microvast-loanandsecuri.htm",
               "status": "present",
               "note": "verbatim: ““Maturity Date” means the earliest to occur of (a) November 28, 2025, and (b) the date on which the Obligations are accelerated or terminated pursuant to the terms of this Agreement; provided that, if such date is not a Business Day, the Maturity Date shall be deemed to be the immediately preceding Business Day.”"
@@ -1827,10 +1939,10 @@
           {
             "name": "Financial-maintenance covenants",
             "value": {
-              "value": "Minimum Liquidity: not less than $5,000,000 as of Friday of each calendar week (Liquidity Testing Date), from the Closing Date until the Maturity Date",
+              "value": "Minimum Liquidity: not permit Liquidity of Borrower and its Subsidiaries, as of Friday of each calendar week (Liquidity Testing Date), to be less than $5,000,000 (from Closing Date until Maturity Date)",
               "source_ref": "8-K 0001760689-24-000021 · wu_microvast-loanandsecuri.htm",
               "status": "present",
-              "note": "verbatim: “From the Closing Date until the Maturity Date, not permit Liquidity of the Borrower and its Subsidiaries, as of Friday of each calendar week (each, a “Liquidity Testing Date”), to be less than $5,000,000.”"
+              "note": "verbatim: “7.13.1 Minimum Liquidity. From the Closing Date until the Maturity Date, not permit Liquidity of the Borrower and its Subsidiaries, as of Friday of each calendar week (each, a “Liquidity Testing Date”), to be less than $5,000,000.”"
             },
             "base_rate_label": null,
             "margin_pct": null,
@@ -1841,10 +1953,10 @@
           {
             "name": "Security / collateral / guarantors",
             "value": {
-              "value": "First priority (subject to Permitted Liens) security interest in substantially all assets (Collateral) other than Excluded Property; Guarantors include Microvast Holdings, Inc. and subsidiary Guarantors (Microvast Advanced Materials Inc., Microvast Advanced Membrane Inc., Microvast Energy, Inc., Microvast Power Solutions, Inc.)",
+              "value": "Guarantors: Microvast Holdings, Inc. and Subsidiary Guarantors (Microvast Advanced Materials Inc., Microvast Advanced Membrane Inc., Microvast Energy, Inc., Microvast Power Solutions, Inc.). Collateral: continuing and unconditional first priority (subject to Permitted Liens) security interest in and to any and all property of each Loan Party, other than Excluded Property.",
               "source_ref": "8-K 0001760689-24-000021 · wu_microvast-loanandsecuri.htm",
               "status": "present",
-              "note": "verbatim: “As security for the payment of the Obligations, each of the Borrower and each Subsidiary Guarantor (and, solely in the case of the Pledged Equity consisting of the Equity Interests of the Borrower, Holdings) does hereby pledge, grant, collaterally assign and deliver to Agent, for the ratable benefit of the Lenders, [...] a continuing and unconditional first priority (subject to any Permitted Liens) security interest in and to any and all property of such Loan Party, other than the Excluded Property, of any kind or description [...] (all of which property, along with the products and proceeds therefrom [...] are individually and collectively referred to as the “Collateral”)”"
+              "note": "verbatim: “As security for the payment of the Obligations, each of the Borrower and each Subsidiary Guarantor (and, solely in the case of the Pledged Equity consisting of the Equity Interests of the Borrower, Holdings) does hereby pledge, grant, collaterally assign and deliver to Agent, for the ratable benefit of the Lenders, ... a continuing and unconditional first priority (subject to any Permitted Liens) security interest in and to any and all property of such Loan Party, other than the Excluded Property, of any kind or description ... (all of which property, along with the products and proceeds therefrom, are individually and collectively referred to as the “Collateral”).”"
             },
             "base_rate_label": null,
             "margin_pct": null,
@@ -1855,10 +1967,10 @@
           {
             "name": "Mandatory prepayment / events of default",
             "value": {
-              "value": "Mandatory prepayments (Section 2.9.2): 100% of Net Cash Proceeds from debt issuances, dispositions, casualty/condemnation events, extraordinary receipts; 100% of principal + Obligations immediately upon a Change of Control. Events of Default (Section 8.1): non-payment; cross-default on other Debt; bankruptcy/insolvency; breach of covenants; false representations; ERISA events; judgments; invalidity of Loan Documents/Liens; Change of Control; certain material events.",
+              "value": "Mandatory prepayment (Section 2.9.2): 100% of Net Cash Proceeds from Debt issuances, Dispositions, Casualty/Condemnation Events, and Extraordinary Receipts; and immediately upon a Change of Control, 100% of principal and all other Obligations outstanding. Events of Default (Section 8.1): includes non-payment; cross-default on other Debt; bankruptcy/insolvency; breach of covenants; false representations; ERISA events; judgments; invalidity of Loan Documents/Liens; Change of Control; and certain material events.",
               "source_ref": "8-K 0001760689-24-000021 · wu_microvast-loanandsecuri.htm",
               "status": "present",
-              "note": "verbatim: “Borrower shall prepay the Term Loans [...] (iii) [...] an amount equal to 100% of such Net Cash Proceeds; (iv) [...] resulting from a Disposition [...] an amount equal to 100% of such Net Cash Proceeds; (v) immediately upon a Change of Control, an amount equal to 100% of the principal amount of the Loans and all other Obligations then outstanding; [...] (vii) [...] resulting from a Casualty/Condemnation Event [...] 100% [...]; (viii) [...] resulting from an Extraordinary Receipt [...] 100% [...]. [...] “Event of Default” means any of the events described in Section 8.1 . [8.1.1 Non-Payment; 8.1.2 Default Under Other Debt; 8.1.3 Bankruptcy; Insolvency; 8.1.4 Breach of Certain Covenants; 8.1.5 Representations and Warranties; 8.1.6 Pension Plans; 8.1.7 Judgments; 8.1.8 Invalidity of Loan Documents; 8.1.9 Invalidity of Liens; 8.1.10 Change of Control; 8.1.11 Certain Material Events]”"
+              "note": "verbatim: “2.9.2 Mandatory Prepayment. (a) Borrower shall prepay the Term Loans ... (iii) concurrently with the receipt ... of any Net Cash Proceeds from any issuances ... an amount equal to 100% of such Net Cash Proceeds; (iv) ... a Disposition ... 100% of such Net Cash Proceeds; (v) immediately upon a Change of Control, an amount equal to 100% of the principal amount of the Loans and all other Obligations then outstanding; ... (vii) ... a Casualty/Condemnation Event ... 100%; and (viii) ... an Extraordinary Receipt ... 100%. ... 8.1 Events of Default. Each of the following shall constitute an “Event of Default” under this Agreement: [8.1.1 Non-Payment Obligations; 8.1.2 Default Under Other Debt; 8.1.3 Bankruptcy; Insolvency; 8.1.4 Breach of Certain Covenants; 8.1.5 Representations and Warranties; 8.1.6 Pension Plans; 8.1.7 Judgments; 8.1.8 Invalidity of Loan Documents; 8.1.9 Invalidity of Liens; 8.1.10 Change of Control; 8.1.11 Certain Material Events]”"
             },
             "base_rate_label": null,
             "margin_pct": null,
@@ -2584,22 +2696,22 @@
     },
     "stock_info": {
       "price": {
-        "value": null,
-        "source_ref": null,
-        "status": "unknown",
-        "note": "no price bars"
+        "value": 1.08,
+        "source_ref": "EOD MVST last close",
+        "status": "present",
+        "note": null
       },
       "high_52w": {
-        "value": null,
-        "source_ref": null,
-        "status": "unknown",
-        "note": "no price bars"
+        "value": 7.12,
+        "source_ref": "EOD MVST 52-week high",
+        "status": "present",
+        "note": null
       },
       "low_52w": {
-        "value": null,
-        "source_ref": null,
-        "status": "unknown",
-        "note": "no price bars"
+        "value": 1.035,
+        "source_ref": "EOD MVST 52-week low",
+        "status": "present",
+        "note": null
       },
       "shares_out": {
         "value": 333157384.0,
@@ -2619,177 +2731,161 @@
         "status": "present",
         "note": null
       },
-      "as_of": null
+      "as_of": "2026-07-08"
     }
   },
   "synthesis": {
-    "evidence_balance": "strongly-bearish — stated going-concern doubt plus a ~$111M near-term maturity wall against $126M cash outweighs the trailing operating inflection.",
+    "evidence_balance": "strongly-bearish — stated going-concern doubt with a near-term maturity wall against thin cash while adjusted EBITDA has turned negative and revenue is contracting.",
     "bull_points": [
       {
-        "claim": "On a trailing basis the name shows a discount to a battery/power peer set — TEV/EBITDA 11.1x vs peer median 14.5x — but the peer set is HETEROGENEOUS (caps $34M-$275.0B), so this is a confidence-gated consensus framing, not a clean benchmark; the human must judge whether the gap is EARNED or RESIDUAL.",
-        "source_ref": "CIQ Comparable Analysis→Trading Multiples (name vs peer Median)",
-        "cited": true
-      },
-      {
-        "claim": "On the justified-vs-residual decomposition the name carries a HIGHER EBITDA margin (14% vs peer-median 6%) and FASTER EBITDA growth (21% vs 1%), which argues the discount is not fully earned on profitability — a possible overshoot the human must weigh against its worse revenue growth and leverage.",
-        "source_ref": "CIQ Comparable Analysis→Operating Statistics (name vs peer median: growth/margin/leverage/beta)",
-        "cited": true
-      },
-      {
-        "claim": "The multi-year arc is a genuine turnaround: EBITDA margin moved -118% (FY21) → 1% (FY24) → 17% (FY25) → 14% LTM and absolute EBITDA -180 → +52, so the low % is not a collapse but a normalization off a rising absolute base.",
+        "claim": "Gross margin has climbed a full multi-year arc from -28% (FY21) to 35-36% (FY25/LTM) and absolute EBITDA turned from -$180M (FY21) to +$74M (FY25), showing the model reached genuine operating profitability, not just an optical improvement.",
         "source_ref": "CIQ Financials→Income Statement (margin % + absolute EBITDA reconciler)",
         "cited": true
       },
       {
-        "claim": "The name generated positive LTM levered free cash flow of $39.6M, a real inflection from years of cash burn.",
+        "claim": "The name is FCF-positive on an LTM basis (+$39.6M levered FCF) after years of deep cash burn, a material inflection in cash generation.",
         "source_ref": "CIQ Financials→Cash Flow 'Levered Free Cash Flow' [LTM 12 months Mar-31-2026]",
         "cited": true
       },
       {
-        "claim": "Interest coverage of 10.6x LTM indicates the current debt load is serviceable out of EBITDA.",
+        "claim": "On fundamental_deltas the name shows a HIGHER EBITDA margin (14% vs peer-median 6%) and faster EBITDA growth (21% vs 1%), so the discount to the peer-median EV/EBITDA is at least partly RESIDUAL rather than fully earned — but the human must judge this against the HETEROGENEOUS peer set before treating it as a clean overshoot signal.",
+        "source_ref": "CIQ Comparable Analysis→Operating Statistics (name vs peer median: growth/margin/leverage/beta)",
+        "cited": true
+      },
+      {
+        "claim": "Interest coverage of 10.6x (LTM EBITDA ÷ interest) indicates the current debt load is serviceable out of operating earnings.",
         "source_ref": "CIQ Financials→Income Statement EBITDA ÷ Interest Expense [LTM 12 months Mar-31-2026]",
         "cited": true
       },
       {
-        "claim": "The $25.0M shareholder convertible loan maturing 2026-05-28 was resolved by conversion into equity rather than a cash default, removing one near-term maturity.",
+        "claim": "The $25.0M shareholder convertible maturing 2026-05-28 was resolved by conversion to equity rather than a cash default, removing a near-term maturity from the wall.",
         "source_ref": "8-K 0000947871-26-000585 (2026-05-28)",
         "cited": true
       }
     ],
     "bear_points": [
       {
-        "claim": "The latest 10-Q states SUBSTANTIAL DOUBT about going concern — the single most load-bearing terminal signal, overriding optical valuation cheapness.",
+        "claim": "The latest 10-Q states SUBSTANTIAL DOUBT about going concern (with plans present), the single most load-bearing terminal-risk fact in the file.",
         "source_ref": "10-Q 0001628280-26-033590",
         "cited": true
       },
       {
-        "claim": "A $111.2M maturity wall is due within 12 months against only $126M cash, and the wall cross-validates the CIQ panel — a genuine near-term liquidity/refinancing risk.",
-        "source_ref": "10-Q 0001628280-26-033590",
-        "cited": true
-      },
-      {
-        "claim": "The trailing EV/EBITDA of 10.0x is trailing-only with NO forward basis, so it cannot by itself distinguish cheap-overshoot from cheap-terminal; the reconciler is the forward ladder (NTM TEV/EBITDA 7.54x), not the trailing print — the trailing number is not the real signal.",
-        "source_ref": "CIQ Financials→Multiples 'TEV/LTM EBITDA' Close (latest) — current multiple",
-        "cited": true
-      },
-      {
-        "claim": "The low headline leverage understates risk: net debt/company-adjusted LTM EBITDA ($10.7M) is ~18.7x and covenant-basis leverage is UNDISCLOSED, so the 3.9x CIQ figure is the optical read while the adjusted basis is the harsher signal.",
+        "claim": "The reported EBITDA margin improvement is heavily flattered by one-offs: a $32.5M inventory impairment sits inside the numbers and company-adjusted LTM EBITDA is only ~$10.7M, pushing net-debt/adjusted-EBITDA to ~18.7x — the 3.9x GAAP-basis leverage is the optical MISREAD, the adjusted ~18.7x is closer to the real signal.",
         "source_ref": "CIQ leverage bases + release LTM adj-EBITDA/margins",
-        "cited": false
-      },
-      {
-        "claim": "Customer concentration jumped to 52.0% for Customer A (from 31.0%) with the single Batteries segment 100% of revenue — a real dependency/fragility, not an optical artifact.",
-        "source_ref": "10-Q 0001628280-26-033590",
         "cited": true
       },
       {
-        "claim": "Revenue is contracting sharply — Q1-26 $61M vs Q4-25 $96M (-37% QoQ) and LTM revenue YoY -25.5% — the profitability inflection is unwinding on the top line.",
-        "source_ref": "CIQ Financials→Income Statement (quarterly, trailing 8Q)",
-        "cited": true
-      },
-      {
-        "claim": "Adjusted EBITDA swung to -$5.5M in Q1 2026 from +$28.5M a year earlier, and adjusted net income to -$14.6M from +$19.3M — the recent quarter reverses the turnaround narrative.",
+        "claim": "The most recent quarter reversed the profitability story: Q1 2026 adjusted EBITDA was -$5.5M (vs +$28.5M Q1 2025) and adjusted net income -$14.6M (vs +$19.3M), so the trailing margin recovery is already rolling over.",
         "source_ref": "8-K 0001628280-26-033601 EX-99.1",
         "cited": true
       },
       {
-        "claim": "FY26 consensus has been cut hard — Revenue 609 → 444 (-27%) and EBITDA 129.7 → 62.1 (-52%) over the revision window — and the most recent resolved revenue guide MISSED.",
-        "source_ref": "CIQ Estimates→Trends (current-FY consensus path; ragged, absent lookbacks n/a)",
+        "claim": "Revenue is contracting sharply — Q1-26 revenue $61M vs $116M in Q1-25, a -37% QoQ and a -25.5% same-quarter YoY decline — the top line is deteriorating, not mean-reverting up.",
+        "source_ref": "CIQ Financials→Income Statement (quarterly, trailing 8Q)",
         "cited": true
       },
       {
-        "claim": "Self-funding is only MIXED, not established: latest-quarter OCF is negative even though LTM FCF is positive, so the self-funding leg does not fully hold in the most recent period.",
+        "claim": "A $111.2M maturity wall is due within 12 months on a filing basis against only $126M cash, a tight liquidity bridge for a going-concern name.",
+        "source_ref": "10-Q 0001628280-26-033590",
+        "cited": true
+      },
+      {
+        "claim": "Customer concentration spiked to 52.0% for Customer A (from 31.0% prior), a severe single-customer dependency that amplifies revenue fragility.",
+        "source_ref": "10-Q 0001628280-26-033590",
+        "cited": true
+      },
+      {
+        "claim": "The self-funding read is MIXED, not clean: latest-quarter OCF is negative even though LTM FCF is positive — both must be positive to self-fund, so recent cash generation has turned.",
         "source_ref": "EDGAR latest-Q OCF sign + CIQ LTM FCF sign",
         "cited": true
       },
       {
-        "claim": "Rising short interest (+22.9% to 26.3M shares, 7.9% of float) alongside continued dilution (+2.9% shares) and 7 insider sells vs 0 buys signals negative positioning.",
-        "source_ref": "FINRA consolidated short interest (settle 2026-06-15); DTC = 26,323,600 short ÷ 4,571,432 screen 90d ADV",
+        "claim": "Consensus estimates have been cut hard — FY26 EBITDA -52% and FY26 revenue -27% (12m→latest) — confirming a deteriorating forward path, not a temporary overshoot.",
+        "source_ref": "CIQ Estimates→Trends (current-FY consensus path; ragged, absent lookbacks n/a)",
         "cited": true
       }
     ],
     "twin_reference_cases": [
       {
-        "name": "Amprius Technologies",
-        "outcome": "went terminal",
-        "distinguishing_fact": "A same-roster small-cap lithium-ion maker still burning at the EBITDA line while growing revenue fast — the pattern of a battery growth story not yet self-funding.",
-        "source": "CIQ Comparable Analysis→Financial Data + Business Description (roster + caps + business)"
-      },
-      {
-        "name": "Leclanché SA",
-        "outcome": "went terminal",
-        "distinguishing_fact": "A same-roster small battery-systems maker with deeply negative EBITDA margin and thin equity value — the pattern of a sub-scale battery integrator chronically unable to reach profitability.",
-        "source": "CIQ Comparable Analysis→Financial Data + Business Description (roster + caps + business)"
-      },
-      {
         "name": "Romeo Power",
         "outcome": "went terminal",
-        "distinguishing_fact": "A SPAC-era commercial-EV battery-pack integrator that reached going-concern doubt with a near-term liquidity wall and heavy customer concentration before failing.",
+        "distinguishing_fact": "EV/commercial-vehicle battery maker that reached going-concern doubt with heavy customer concentration and a cash wall it could not clear.",
+        "source": "[LLM-suggested, unverified]"
+      },
+      {
+        "name": "Proterra",
+        "outcome": "went terminal",
+        "distinguishing_fact": "Commercial-EV battery/powertrain supplier that showed improving gross margins yet filed for bankruptcy under a liquidity wall it could not refinance.",
+        "source": "[LLM-suggested, unverified]"
+      },
+      {
+        "name": "Plug Power",
+        "outcome": "recovered",
+        "distinguishing_fact": "Clean-energy hardware name that carried going-concern-style doubt and dilution yet remained a going concern by repeatedly accessing equity/refinancing capital.",
         "source": "[LLM-suggested, unverified]"
       }
     ],
     "decisive_question": {
-      "question": "Can the company refinance or convert the ~$111M near-term maturity wall and restore positive operating cash flow before liquidity runs out — i.e. is the going-concern doubt curable, making the discount a RESIDUAL overshoot, or terminal, making it EARNED?",
+      "question": "Can the near-term maturity wall be refinanced/converted and operating cash generation be restored before the going-concern doubt becomes terminal — i.e. is the collapse a survivable liquidity squeeze on a genuinely profitable business, or a value trap on a business whose profitability was one-off-flattered and is now contracting?",
       "evidence_for": [
         {
-          "claim": "LTM levered FCF is positive at $39.6M and interest coverage is 10.6x, showing the current cash-generative capacity to service and possibly refinance debt.",
+          "claim": "LTM FCF is positive (+$39.6M) and interest coverage is 10.6x, consistent with a business that can service debt from operations.",
           "source_ref": "CIQ Financials→Cash Flow 'Levered Free Cash Flow' [LTM 12 months Mar-31-2026]",
           "cited": true
         },
         {
-          "claim": "The $25.0M shareholder convertible was resolved via conversion to equity rather than cash repayment, a precedent for non-cash resolution of maturities.",
+          "claim": "The $25.0M shareholder convertible maturing in May 2026 was resolved by conversion to equity rather than a cash outflow, evidence a friendly capital source is willing to convert rather than force repayment.",
           "source_ref": "8-K 0000947871-26-000585 (2026-05-28)",
           "cited": true
         },
         {
-          "claim": "Higher EBITDA margin (14% vs 6%) and faster EBITDA growth (21% vs 1%) than the peer median support the operating case if the top line stabilizes.",
-          "source_ref": "CIQ Comparable Analysis→Operating Statistics (name vs peer median: growth/margin/leverage/beta)",
+          "claim": "Gross margin and absolute EBITDA rose across a multi-year arc, indicating underlying unit economics that improved rather than a purely accounting move.",
+          "source_ref": "CIQ Financials→Income Statement (margin % + absolute EBITDA reconciler)",
           "cited": true
         }
       ],
       "evidence_against": [
         {
-          "claim": "The 10-Q explicitly states SUBSTANTIAL DOUBT about the ability to continue as a going concern.",
+          "claim": "The 10-Q states SUBSTANTIAL DOUBT about going concern.",
           "source_ref": "10-Q 0001628280-26-033590",
           "cited": true
         },
         {
-          "claim": "$111.2M is due within 12 months against $126M cash, a tight coverage margin.",
-          "source_ref": "10-Q 0001628280-26-033590",
+          "claim": "Company-adjusted LTM EBITDA is only ~$10.7M implying ~18.7x net leverage once one-offs are stripped, and Q1-26 adjusted EBITDA already turned negative (-$5.5M).",
+          "source_ref": "CIQ leverage bases + release LTM adj-EBITDA/margins",
           "cited": true
         },
         {
-          "claim": "Latest-quarter OCF is negative and Q1-26 adjusted EBITDA turned to -$5.5M, so the cash-generation leg that would fund refinancing is deteriorating.",
-          "source_ref": "8-K 0001628280-26-033601 EX-99.1",
+          "claim": "A $111.2M wall is due within 12 months against $126M cash while latest-quarter OCF is negative.",
+          "source_ref": "10-Q 0001628280-26-033590",
           "cited": true
         }
       ]
     },
     "key_unknowns": [
-      "Cash-runway visibility beyond the $126M cash / $111M near-term wall is not quantified — the going-concern plans exist but their sufficiency is not disclosed (bearish opacity).",
-      "Covenant-basis leverage and the financial-maintenance covenant thresholds (e.g. Minimum Liquidity $5M) headroom are UNKNOWN/undisclosed — cannot assess breach risk (bearish opacity).",
-      "No forward adjusted EBITDA or adjusted EPS in the revised guidance, and the 2026 revenue outlook is QUALITATIVE-only (no number) — forward valuation basis is missing.",
-      "Segment-level EBITDA is not broken out (only 100% Batteries revenue), so profitability by product/geography is opaque (bearish opacity).",
-      "Whether Customer A's jump to 52% concentration is a durable order or a one-period distortion is unresolved.",
-      "The 5-year multiple-percentile floor read is LOW-CONFIDENCE (only 4 closes < 8q), so 'at the floor' cannot be relied on as either overshoot or terminal signal.",
-      "Management posture on refinancing and demand is in transcripts on file but not excerpted here — must be read in full.",
-      "The peer set is HETEROGENEOUS (8063x cap span), so every peer multiple is a confidence-gated input, not a clean benchmark."
+      "Covenant basis leverage and the minimum-liquidity covenant threshold are UNKNOWN/undisclosed — whether the name is in or near breach cannot be judged (bearish opacity given going-concern status).",
+      "No numeric FY26 revenue guidance was given — the outlook is QUALITATIVE-only, and the CIQ 427.5 'guide' is a stale vendor-echo of prior-year actual, leaving no verified forward guide (bearish disclosure gap).",
+      "Adjusted forward EV/EBITDA, adjusted EPS and net-debt/adjusted-EBITDA are not in the revised 99.1 guidance — the forward valuation basis is missing.",
+      "Segment-level EBITDA is not disclosed (single reported segment); profitability by product/geography cannot be assessed.",
+      "The refinancing/repayment plan for the $111.2M near-term wall is not quantified in the supplied facts beyond the resolved $25M conversion.",
+      "The trailing EV/EBITDA multiple (10.0x at the 0th percentile of a 4-close, <2y history) is flagged low-confidence and trailing-only — it cannot distinguish cheap-overshoot from cheap-terminal and is treated as neutral, not directional.",
+      "Peer set is HETEROGENEOUS (market caps span $34M–$275.0B, 8063x); every peer multiple and the residual-vs-earned discount read is confidence-gated, not a clean benchmark.",
+      "IWM/market 180d benchmark and exposed-cohort returns are unavailable — idiosyncratic-vs-shared drawdown attribution is incomplete."
     ]
   },
   "caveats": [
     "primary-source: 4 EX-99.1 release(s) + 1 10-Q parsed (+0.3s fetch)",
     "Net debt/EBITDA (3.9x) is on REPORTED EBITDA (CIQ / consolidated GAAP), not the covenant basis; management and credit covenants typically define leverage on adjusted EBITDA (a larger denominator → a lower ratio), reconciled in the earnings release/transcript (currently UNAVAILABLE) — do not read 3.9x as the covenant-basis leverage.",
     "Catalyst-path as-of UNVERIFIABLE — the CIQ Estimates export carries no as-of stamp; its data is on/after 2026-05-15 (the latest embedded revision event), so it is up to 52d before the 2026-07-06 reference — beyond the 45d tolerance — and the true export date is unknown, so freshness cannot be confirmed. Re-pull CIQ Estimates, or attest the export date (AS_OF sidecar).",
-    "Possible false balance — evidence_balance commits a strong lean but the body is near-symmetric (6 bull vs 10 bear) and the minority bull_points aren't qualified-as-outweighed — size the minority against the lean (rule 7), or it launders a one-sided case"
+    "Possible false balance — evidence_balance commits a strong lean but the body is near-symmetric (5 bull vs 8 bear) and the minority bull_points aren't qualified-as-outweighed — size the minority against the lean (rule 7), or it launders a one-sided case"
   ],
   "qa_flags": [
-    "MISMATCH bear_point: 'The low headline leverage understates risk: net…' asserts missing/UNKNOWN data yet cites a PRESENT field — move to key_unknowns, don't source-bind it",
-    "TWIN self-referential 'Microvast Holdings, Inc.' suppressed — a twin must be ANOTHER company, or the subject with an explicit resolved past period ('2022-2024 arc')",
-    "TWIN self-referential 'Microvast (post-turnaround inflection cohort analogue)' suppressed — a twin must be ANOTHER company, or the subject with an explicit resolved past period ('2022-2024 arc')",
+    "TWIN self-referential 'Microvast Holdings' suppressed — a twin must be ANOTHER company, or the subject with an explicit resolved past period ('2022-2024 arc')",
+    "TWIN self-referential 'Microvast Holdings' suppressed — a twin must be ANOTHER company, or the subject with an explicit resolved past period ('2022-2024 arc')",
     "TWIN 2 invalid twin(s) suppressed"
   ],
   "llm_model": "claude-opus-4-8",
-  "assembled_at": "2026-07-10T05:03:55.146030Z",
+  "assembled_at": "2026-07-10T07:06:48.016414Z",
   "sector": "Technology",
   "industry": {
     "value": "Construction Machinery and Heavy Transportation Equipment",

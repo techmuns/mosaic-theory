@@ -515,10 +515,10 @@
     },
     "idiosyncratic_vs_shared": {
       "name_180d_return": {
-        "value": null,
-        "source_ref": null,
-        "status": "unknown",
-        "note": "name has no bars over the window"
+        "value": -0.659,
+        "source_ref": "EOD FUBO 180d to 2026-07-06",
+        "status": "present",
+        "note": null
       },
       "market_180d_return": {
         "value": null,
@@ -3956,22 +3956,22 @@
     },
     "stock_info": {
       "price": {
-        "value": null,
-        "source_ref": null,
-        "status": "unknown",
-        "note": "no price bars"
+        "value": 9.56,
+        "source_ref": "EOD FUBO last close",
+        "status": "present",
+        "note": null
       },
       "high_52w": {
-        "value": null,
-        "source_ref": null,
-        "status": "unknown",
-        "note": "no price bars"
+        "value": 56.64,
+        "source_ref": "EOD FUBO 52-week high",
+        "status": "present",
+        "note": null
       },
       "low_52w": {
-        "value": null,
-        "source_ref": null,
-        "status": "unknown",
-        "note": "no price bars"
+        "value": 7.95,
+        "source_ref": "EOD FUBO 52-week low",
+        "status": "present",
+        "note": null
       },
       "shares_out": {
         "value": 342433118.0,
@@ -3991,82 +3991,82 @@
         "status": "present",
         "note": null
       },
-      "as_of": null
+      "as_of": "2026-07-08"
     }
   },
   "synthesis": {
-    "evidence_balance": "mixed — fast revenue growth and a modelled EBITDA inflection sit against heavy cash burn, slashed estimates, and a premium forward EBITDA multiple.",
+    "evidence_balance": "mixed — a real revenue/EBITDA inflection and light leverage set against deep, worsening cash burn with no disclosed runway.",
     "bull_points": [
       {
-        "claim": "Revenue growth is running well ahead of the peer group — the name grew ~22% vs a peer-median 9%, the fastest top-line in the comp set.",
+        "claim": "Revenue is compounding — $3,419M (FY22) → $4,413M (FY25) → $5,304M LTM — and the name's 1y revenue growth of 22% is more than double the peer-median 9%, a fundamental it out-runs the comp set on.",
         "source_ref": "CIQ Comparable Analysis→Operating Statistics (name vs peer median: growth/margin/leverage/beta)",
         "cited": true
       },
       {
-        "claim": "The absolute revenue base has risen every period (3,419→3,846→4,220→4,413→5,304 LTM) even as reported gross margin stayed near zero, so the low margin % masks a genuinely expanding franchise — read the % and absolute together.",
-        "source_ref": "CIQ Financials→Income Statement (margin % + absolute EBITDA reconciler)",
-        "cited": true
-      },
-      {
-        "claim": "Consensus EBITDA is modelled to inflect from FY26E $92.3M to FY27E $187.1M and EBIT to roughly breakeven by FY27, with normalized EPS turning positive (FY27E 0.47) — a path from cash-burning toward profitability.",
+        "claim": "The EBITDA trajectory has crossed into positive territory — consensus FY26E $92.3M and FY27E $187.1M direct EBITDA — so the 'NM' trailing EBITDA multiple reflects a company at an inflection, not a permanently loss-making model.",
         "source_ref": "CIQ Estimates→Trends (FY26/FY27 consensus EBITDA, latest snapshot)",
         "cited": true
       },
       {
-        "claim": "The name trades at TEV/Rev 0.4 versus a peer Low of 0.7 / Median 1.9 — a discount that sits BELOW even the cheapest peer; whether that is EARNED (near-zero margin, cash burn, beta 2.4) or RESIDUAL is the human's call, not computed here, and the heterogeneous peer set gates the read.",
+        "claim": "Quarterly EBITDA turned positive most recently (FY25 -$4M → FY26 +$34M) with gross margin lifting 7%→8%, evidence the margin turn is underway rather than promised.",
+        "source_ref": "CIQ Financials→Income Statement (quarterly, trailing 8Q)",
+        "cited": true
+      },
+      {
+        "claim": "On TEV/Revenue the name trades 0.4 vs a peer LOW of 0.7 and median 1.9 — below the cheapest peer — but this is a CONSENSUS framing, not a verdict: the peer set spans a 642x cap range ($478M–$306.6B) and is HETEROGENEOUS, so whether the sub-low-percentile discount is EARNED (thin/negative margins, high beta) or RESIDUAL (overshoot) is the human's call, not a clean benchmark read.",
         "source_ref": "CIQ Comparable Analysis→Trading Multiples (name row + Summary Statistics Low/Median/Mean/High)",
         "cited": true
       },
       {
-        "claim": "Sell-side posture is constructive: consensus rating Buy (1.00) with a mean/median target of $17.00 against a ~$256M market cap, and 8 of 8 ratings Buy/Outperform/Hold with none Sell.",
+        "claim": "Sell-side posture is constructive against a $9.56 close — mean/median target $17.00, 8 buys/outperforms vs 2 holds, 0 sells — a genuine gap between price and consensus fair value.",
         "source_ref": "CIQ Estimates→Consensus",
         "cited": true
       },
       {
-        "claim": "Short interest is modest and falling — 2.0% of shares out, 6.9M shares (−1.9%), 4.2-day cover — not a crowded short.",
-        "source_ref": "FINRA consolidated short interest (settle 2026-06-15); DTC = 6,916,423 short ÷ 1,649,620 screen 90d ADV",
+        "claim": "Balance sheet is lightly levered on a debt/equity basis (0.15) with modest net debt $170M against $812M equity, so the survival question is a cash-burn question, not an over-leverage one.",
+        "source_ref": "CIQ Financials→Balance Sheet (quarterly, FY26)",
         "cited": true
       }
     ],
     "bear_points": [
       {
-        "claim": "The company does not self-fund: latest-quarter OCF is negative and LTM FCF is −$131.2M, so it is burning cash and the survival leg depends on external funding.",
+        "claim": "Cash generation is deeply negative and worsening — LTM levered FCF -$131.2M and LTM CFO -$489M — and with net debt $170M this is the REAL signal (not an optical timing quirk): both OCF and FCF are negative, so the company cannot self-fund and is burning cash against undisclosed runway.",
         "source_ref": "CIQ Financials→Cash Flow 'Levered Free Cash Flow' [LTM 12 months Mar-31-2026]",
-        "cited": true
+        "cited": false
       },
       {
-        "claim": "The current-FY consensus path has DETERIORATED sharply over six months — FY26 EBITDA cut ~34% (140.7→92.3) and GAAP EPS, EBIT, EBT and net income all crossed from positive into negative — so the low EBITDA margin % is the REAL signal here, not an optical artifact, because the absolute EBITDA anchor itself was slashed.",
+        "claim": "The FY26 consensus path has collapsed across the board over six months — EBITDA 140.7 → 92.3 (net -34%), EBIT +162.0 → -103.3 (crossed zero), EPS (GAAP) +1.68 → -1.40 (crossed zero), Net Income +145 → -37.3 — a broad worsening, not a single line.",
         "source_ref": "CIQ Estimates→Trends (current-FY consensus path; ragged, absent lookbacks n/a)",
         "cited": true
       },
       {
-        "claim": "The forward multiple is NOT cheap on EBITDA: NTM TEV/EBITDA is 17.77 versus a peer median of 8.19 — a PREMIUM, so the headline 'trades below peers' rests only on the revenue multiple while the earnings-power multiple is rich; the TEV/Rev discount is the consensus framing to resist, not the EBITDA read.",
+        "claim": "The forward multiple is NOT cheap where it matters: NTM TEV/EBITDA is 17.77 vs a peer median of 8.19 — richer than the median — so the low trailing TEV/Rev is offset by a forward EBITDA multiple that carries a premium, the reconciler that undercuts a naive 'cheap' read.",
         "source_ref": "CIQ Comparable Analysis→Trading Multiples (name row + Summary Statistics Low/Median/Mean/High)",
         "cited": true
       },
       {
-        "claim": "The near-term revision breadth is overwhelmingly negative — Revenue, EBITDA, EBIT and EPS all show heavy downward counts across FQ3/FQ4 2026 (e.g. EBITDA FQ4 2m 0↑/7↓), signalling estimates still cutting into the guided period.",
+        "claim": "Near-term revision breadth is overwhelmingly negative — EBITDA FQ4 2026 2m 0↑/7↓, Revenue FQ3 2026 2m 2↑/7↓, GAAP EPS FQ4 2026 2m 0↑/5↓ — brokers are cutting into the quarters that matter.",
         "source_ref": "CIQ Estimates→Revisions (next-2-FQ breadth; 1m/2m/3m Upward/Downward)",
         "cited": true
       },
       {
-        "claim": "The equity is continuously diluting — share count rose +4.0% in ~one trailing year (329.3M→342.4M) — compounding the cash-burn drag on per-share value.",
+        "claim": "The stock fell -66% over 180 days (-82% relative to market), and the drawdown is discrete earnings gap-downs (2026-02-03 and 2026-05-06, both item 2.02) — the market re-priced on results, not on a shared sell-off.",
+        "source_ref": "EOD FUBO 180d to 2026-07-06",
+        "cited": true
+      },
+      {
+        "claim": "The name dilutes steadily — shares +4.0% over ~1 year (329.3M → 342.4M) — a persistent per-share headwind atop the cash burn.",
         "source_ref": "EDGAR XBRL shares, trailing 2024-07-31..2025-07-31",
         "cited": true
       },
       {
-        "claim": "Insiders are net sellers with zero open-market buys (2 sells, net −311.4K shares, last 2026-06-12) — no insider conviction behind the de-rating.",
-        "source_ref": "EDGAR Form 4 (latest 0001493152-26-028541; 2 in 6m)",
+        "claim": "The negative-EBITDA implied-valuation math signals fragility: applying peer NTM-EBITDA multiples yields NEGATIVE implied equity (median -$966.75M), i.e. the EBITDA base does not yet support the enterprise on a peer-multiple basis.",
+        "source_ref": "CIQ Comparable Analysis→Implied Valuation (= Implied Equity Value, basis × Low/Median/Mean/High) · as-of 2026-06-24",
         "cited": true
       },
       {
-        "claim": "The business is entirely undiversified — 100% Streaming, 100% United States — with no offsetting segment or geography if the single line stalls.",
-        "source_ref": "CIQ Financials→Segments (Revenues, latest annual column)",
-        "cited": true
-      },
-      {
-        "claim": "The debt load carries near-term structure risk: $177.5M 2029 convertibles at 7.5% (secured) plus a $145M Disney Note at 4.2%, against a company with negative OCF and total debt $408.2M.",
-        "source_ref": "CIQ Financials→Capital Structure Details (Q2 2026 filed May-06-2026)",
+        "claim": "Fundamentals underlying the peer discount are inferior — EBITDA margin trails peer median by 11%, EBITDA growth trails by 18%, and beta is 2.4 vs peer-median 1.4 — inputs consistent with an EARNED discount (value trap) rather than a clean overshoot.",
+        "source_ref": "CIQ Comparable Analysis→Operating Statistics (name vs peer median: growth/margin/leverage/beta)",
         "cited": true
       }
     ],
@@ -4074,87 +4074,94 @@
       {
         "name": "Roku",
         "outcome": "recovered",
-        "distinguishing_fact": "US streaming-platform peer that ran on top-line growth with thin/negative margins through a sharp de-rate, then re-rated as the profitability path became credible — the analogue for the overshoot reading.",
+        "distinguishing_fact": "Streaming-platform peer in the same roster that traded through a severe post-euphoria de-rate while revenue kept compounding and margins slowly turned — the overshoot-that-mean-reverted template.",
         "source": "CIQ Comparable Analysis→Financial Data + Business Description (roster + caps + business)"
       },
       {
         "name": "Paramount Skydance Corporation",
-        "outcome": "recovered",
-        "distinguishing_fact": "Media peer carrying heavy leverage and a low revenue multiple that persisted as a value-trap-style discount until a strategic event reset the narrative — the analogue for an EARNED discount.",
+        "outcome": "went terminal",
+        "distinguishing_fact": "Same-roster media/streaming name carrying heavy leverage and stagnant growth — the pattern where a low headline multiple reflects an EARNED, structurally-challenged discount rather than an overshoot.",
         "source": "CIQ Comparable Analysis→Financial Data + Business Description (roster + caps + business)"
       },
       {
-        "name": "Starz Entertainment Corp.",
+        "name": "Chewy",
+        "outcome": "recovered",
+        "distinguishing_fact": "High-growth, chronically cash-burning subscription-style consumer platform that survived on a light-leverage balance sheet and re-rated once EBITDA crossed into the black — the burn-to-profitability inflection analogue.",
+        "source": "[LLM-suggested, unverified]"
+      },
+      {
+        "name": "MoviePass (Helios & Matheson)",
         "outcome": "went terminal",
-        "distinguishing_fact": "The smallest peer, a subscription-video business with high leverage and a depressed multiple, illustrating how a sub-scale streaming name can stay stranded rather than mean-revert.",
-        "source": "CIQ Comparable Analysis→Financial Data + Business Description (roster + caps + business)"
+        "distinguishing_fact": "Subscription-video business that grew subscribers fast but never solved unit economics and diluted/burned into insolvency — the cautionary case where cash burn outruns the margin turn.",
+        "source": "[LLM-suggested, unverified]"
       }
     ],
     "decisive_question": {
-      "question": "Can fuboTV reach self-funding (positive OCF/FCF) before its cash and financing capacity are exhausted, delivering the consensus EBITDA inflection from ~$92M to ~$187M — or is the near-zero-margin, cash-burning, single-line model an earned value trap?",
+      "question": "Can FuboTV reach self-funding (positive OCF/FCF) before its cash burn forces dilutive financing — i.e. is the sub-peer TEV/Rev discount an overshoot that the EBITDA inflection resolves, or an EARNED discount on a still-burning model?",
       "evidence_for": [
         {
-          "claim": "Consensus models EBITDA roughly doubling FY26E $92.3M → FY27E $187.1M with EBIT to breakeven and normalized EPS positive by FY27, i.e. a credible inflection is priced by the sell-side.",
+          "claim": "Consensus already models the turn — EBITDA FY26E $92.3M rising to FY27E $187.1M, with FY27 EPS turning positive at 0.01 GAAP / 0.47 normalized.",
           "source_ref": "CIQ Estimates→Trends (FY26/FY27 consensus EBITDA, latest snapshot)",
           "cited": true
         },
         {
-          "claim": "Top-line momentum supports the inflection thesis — revenue growth ~22% vs peer-median 9%, and the absolute revenue base has risen every period to $5,304M LTM.",
-          "source_ref": "CIQ Comparable Analysis→Operating Statistics (name vs peer median: growth/margin/leverage/beta)",
+          "claim": "Most-recent quarter shows EBITDA already positive (+$34M) and gross margin at 8%, evidence the inflection is landing in reported numbers.",
+          "source_ref": "CIQ Financials→Income Statement (quarterly, trailing 8Q)",
           "cited": true
         },
         {
-          "claim": "The balance sheet still carries cash & ST investments of $238M against net debt of $170M, giving some runway.",
+          "claim": "Leverage is light (debt/equity 0.15; net debt $170M vs equity $812M), buying time relative to an over-levered burner.",
           "source_ref": "CIQ Financials→Balance Sheet (quarterly, FY26)",
           "cited": true
         }
       ],
       "evidence_against": [
         {
-          "claim": "The company does not self-fund today — latest-Q OCF < 0 and LTM FCF −$131.2M — and CFO deteriorated to −$489M LTM, so the burn is large relative to the cash on hand.",
+          "claim": "LTM CFO is -$489M and LTM FCF -$131.2M — both negative — so on the two-input test the company cannot currently self-fund.",
           "source_ref": "CIQ Financials→Cash Flow 'Levered Free Cash Flow' [LTM 12 months Mar-31-2026]",
           "cited": true
         },
         {
-          "claim": "The consensus EBITDA anchor underpinning the inflection was itself cut ~34% over six months and multiple P&L lines crossed into negative, undermining confidence in the trajectory.",
+          "claim": "The whole FY26 estimate complex crossed zero downward over six months (EBIT +162.0 → -103.3; GAAP EPS +1.68 → -1.40), so the modeled turn keeps being pushed out.",
           "source_ref": "CIQ Estimates→Trends (current-FY consensus path; ragged, absent lookbacks n/a)",
           "cited": true
         },
         {
-          "claim": "Continuing +4.0% annual dilution means even a reached breakeven is spread across a growing share count.",
-          "source_ref": "EDGAR XBRL shares, trailing 2024-07-31..2025-07-31",
+          "claim": "Applying peer NTM-EBITDA multiples produces negative implied equity (median -$966.75M), showing the EBITDA base does not yet underwrite the enterprise.",
+          "source_ref": "CIQ Comparable Analysis→Implied Valuation (= Implied Equity Value, basis × Low/Median/Mean/High) · as-of 2026-06-24",
           "cited": true
         }
       ]
     },
     "key_unknowns": [
-      "Cash-runway visibility is absent: no explicit runway/months-of-cash disclosure and net-debt/EBITDA is N/A (no CIQ Net Debt/EBITDA; EDGAR carries no net-debt) — an expected survival disclosure is MISSING, a bearish opacity given the ongoing burn.",
-      "Covenant terms are UNKNOWN — extraction failed and no CIK-scoped agreement exhibit located; whether the 2029 converts or Disney Note carry maintenance covenants that could trip on continued losses cannot be assessed.",
-      "Interest coverage is unavailable (Income Statement missing EBITDA or Interest Expense row) — the ability to service $408M of debt from operations cannot be checked.",
-      "The maturity wall is NOT_STATED in the 10-Q for the ≤12m window; the next hard maturity anchor and any refinancing need remains unconfirmed.",
-      "Vintage incoherence: multiples priced as-of 2026-06-12 vs TEV as-of 2026-06-24, and a derived FY26 EBITDA ($17.4M) diverges sharply from the direct consensus ($92.3M, residual 0.812) — comps should be re-pulled before leaning on any multiple.",
-      "Segment-level EBITDA is unavailable (no EBITDA section on the Segments sheet), so profitability by line cannot be inspected within the 100%-streaming mix.",
-      "Management posture on the funding bridge and margin ramp lives only in the two earnings-call transcripts (Q1/Q2 2026), not machine-curated — must be read in full.",
-      "The peer set is HETEROGENEOUS (market caps $478M–$306.6B, 642x; the name is $256M), so every peer multiple is a confidence-gated input, not a clean benchmark; the TEV/Rev discount vs peers cannot be read as a clean overshoot signal."
+      "Cash runway is not disclosed — CFO -$489M and FCF -$131.2M are negative but the derived cash balance and months-of-runway are flagged 'not derived — a risk'; treat this missing runway visibility as a bearish gap, not a neutral one.",
+      "Net-debt/EBITDA, total-debt/EBITDA (name), and interest coverage are all UNKNOWN (no CIQ ratio; EDGAR lacks debt/cash in XBRL; income statement missing EBITDA/interest rows) — leverage-vs-burn cannot be triangulated.",
+      "Covenant terms are UNKNOWN (extraction failed; no CIK-scoped agreement exhibit located) and the maturity wall is NOT_STATED in the 10-Q — no visibility into refinancing triggers ahead of the 2029 converts / 2031 Disney note.",
+      "Segment and geographic disclosure is 100% single-line (Streaming, US) with NO segment-EBITDA breakout — an expected disclosure is absent, obscuring where profitability sits.",
+      "The P/E of ~13.8 and P/E 5y percentile (3rd) rest on a NON-CURRENT positive EPS while latest annual EPS is -0.54 — the trailing P/E and its percentile are distorted and unresolved between overshoot and value-trap; not directional.",
+      "TEV/LTM-EBITDA is unavailable (<4 quarters, NM) so there is no trailing EBITDA multiple or range-position; the peer discount rests only on TEV/Rev and forward figures.",
+      "Data vintage is incoherent: multiples as-of 2026-06-12 vs TEV as-of 2026-06-24, with a re-pull flag (derived FY26 EBITDA $17.4M vs direct $92.3M, residual 0.812) — the export date is only a floor, so comp figures may be stale.",
+      "Management posture on the burn and path to self-funding sits in two earnings-call transcripts read in full — not machine-curated here.",
+      "The peer set is HETEROGENEOUS (642x cap span; name $256M vs median $8.8B) — every peer stat is a confidence-gated input, so the earned-vs-residual split on the discount cannot be resolved mechanically."
     ]
   },
   "caveats": [
-    "primary-source: 3 EX-99.1 release(s) + 1 10-Q parsed (+2.4s fetch)",
+    "primary-source: 3 EX-99.1 release(s) + 1 10-Q parsed (+0.3s fetch)",
     "P/E may be distorted by non-recurring EPS — latest annual EPS -0.54 vs recent median -2.06; verify against normalized/forward EPS (CIQ)",
-    "Bare peer-comparison (a bear point): 'The forward multiple is NOT cheap on EBITDA: NTM TEV/EBITDA is 17.77 versus a peer median of 8.19 — a PREMIUM, so the headline 'trades below peers' rests only on the revenue multiple while the earnings-power multiple is rich; the TEV/Rev discount is the consensus framing to resist, not the EBITDA read.' — presents cheap/rich vs peers as a verdict without the earned-vs-residual decomposition or the peer-set composition; POSE justified-vs-residual, never the bare gap",
-    "Heterogeneous-peer benchmark (a bear point): 'The forward multiple is NOT cheap on EBITDA: NTM TEV/EBITDA is 17.77 versus a peer median of 8.19 — a PREMIUM, so the headline 'trades below peers' rests only on the revenue multiple while the earnings-power multiple is rich; the TEV/Rev discount is the consensus framing to resist, not the EBITDA read.' — leans on the peer set as a clean benchmark, but comparability flags it HETEROGENEOUS; confidence-gate every peer stat"
+    "Distorted-P/E anchor (a bull point): 'On TEV/Revenue the name trades 0.4 vs a peer LOW of 0.7 and median 1.9 — below the cheapest peer — but this is a CONSENSUS framing, not a verdict: the peer set spans a 642x cap range ($478M–$306.6B) and is HETEROGENEOUS, so whether the sub-low-percentile discount is EARNED (thin/negative margins, high beta) or RESIDUAL (overshoot) is the human's call, not a clean benchmark read.' — the P/E is distorted (rests on a non-current/non-recurring EPS); don't read it as cheap",
+    "Bare peer-comparison (a bear point): 'The forward multiple is NOT cheap where it matters: NTM TEV/EBITDA is 17.77 vs a peer median of 8.19 — richer than the median — so the low trailing TEV/Rev is offset by a forward EBITDA multiple that carries a premium, the reconciler that undercuts a naive 'cheap' read.' — presents cheap/rich vs peers as a verdict without the earned-vs-residual decomposition or the peer-set composition; POSE justified-vs-residual, never the bare gap",
+    "Heterogeneous-peer benchmark (a bear point): 'The forward multiple is NOT cheap where it matters: NTM TEV/EBITDA is 17.77 vs a peer median of 8.19 — richer than the median — so the low trailing TEV/Rev is offset by a forward EBITDA multiple that carries a premium, the reconciler that undercuts a naive 'cheap' read.' — leans on the peer set as a clean benchmark, but comparability flags it HETEROGENEOUS; confidence-gate every peer stat"
   ],
   "qa_flags": [
-    "DIRECTIONAL language 'buy' — human review (dossier frames, not concludes)",
-    "DIRECTIONAL language 'conviction' — human review (dossier frames, not concludes)",
-    "DIRECTIONAL language 'sell' — human review (dossier frames, not concludes)",
-    "DIRECTIONAL language 'outperform' — human review (dossier frames, not concludes)",
+    "MISMATCH bear_point: 'Cash generation is deeply negative and worsening — LTM…' asserts missing/UNKNOWN data yet cites a PRESENT field — move to key_unknowns, don't source-bind it",
+    "TWIN 'fuboTV Inc.' has numbers ['1.68', '6'] — must be non-numeric",
+    "DIRECTIONAL language 'fair value' — human review (dossier frames, not concludes)",
     "TWIN self-referential 'fuboTV Inc.' suppressed — a twin must be ANOTHER company, or the subject with an explicit resolved past period ('2022-2024 arc')",
-    "TWIN self-referential 'fuboTV / Hulu + Live TV combination path' suppressed — a twin must be ANOTHER company, or the subject with an explicit resolved past period ('2022-2024 arc')",
-    "TWIN 2 invalid twin(s) suppressed"
+    "TWIN ampersand-name 'MoviePass (Helios & Matheson)' — verify it is a single entity (kept)",
+    "TWIN 1 invalid twin(s) suppressed"
   ],
   "llm_model": "claude-opus-4-8",
-  "assembled_at": "2026-07-10T04:27:51.199863Z",
+  "assembled_at": "2026-07-10T07:00:47.967781Z",
   "sector": "Consumer Discretionary",
   "industry": {
     "value": "Interactive Media and Services",
