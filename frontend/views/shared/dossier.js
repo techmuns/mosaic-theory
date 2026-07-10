@@ -139,11 +139,16 @@ function citeMark(sourceRef) {
   if (!sourceRef) return "";  // a PRESENT fact always has a ref; guard defensively (no marker if absent)
   return `<sup class="cite-n" data-ref="${escapeHtml(sourceRef)}">[?]</sup>`;  // numbered by withEndnotes
 }
+// (review #9) ONE definition of the citeMark placeholder shape, parsed by BOTH withEndnotes and
+// auditCitesInline — so a change to citeMark's markup can't leave one consumer's ad-hoc regex stale
+// ("two divergent parsers of one string" is the documented bug class). A FRESH /g regex per call (no
+// shared lastIndex across .replace). Capture group 1 = the (already HTML-escaped) source_ref.
+const citePlaceholders = () => /<sup class="cite-n" data-ref="([^"]*)">\[\?\]<\/sup>/g;
 function withEndnotes(prefix, fn) {
   // (L2) tier-prefix the markers ([B4]/[A4]/[X4]) so they stay UNAMBIGUOUS when all tiers print
   // together in a "Full dossier" PDF, while each tab / print-scope keeps its own self-contained list.
   const order = [];
-  const body = fn().replace(/<sup class="cite-n" data-ref="([^"]*)">\[\?\]<\/sup>/g, (_m, ref) => {
+  const body = fn().replace(citePlaceholders(), (_m, ref) => {
     let i = order.indexOf(ref);  // ref is already HTML-escaped (from citeMark) — dedup by exact string
     if (i < 0) { order.push(ref); i = order.length - 1; }
     return `<sup class="cite-n" title="${ref}">[${prefix}${i + 1}]</sup>`;
@@ -157,8 +162,7 @@ function withEndnotes(prefix, fn) {
 // shown) rather than as endnotes, so they leave no orphan [n] Sources entry with no visible marker in
 // a printed "Full" dossier. Converts only this block's cite placeholders; the main body still endnotes.
 function auditCitesInline(html) {
-  return html.replace(/<sup class="cite-n" data-ref="([^"]*)">\[\?\]<\/sup>/g,
-    (_m, ref) => ` <span class="cite">${ref}</span>`);
+  return html.replace(citePlaceholders(), (_m, ref) => ` <span class="cite">${ref}</span>`);
 }
 
 // --- a single Sourced fact: value + [n] cite, or honest UNKNOWN/MISSING --
@@ -1276,7 +1280,7 @@ function idioVsShared(io) {
         ${io.cohort.value.map((c) => `<tr><td class="mono">${escapeHtml(c.ticker || "")}</td><td class="num">${c.hops ?? DASH}</td>
           <td class="num">${c.ret_180d == null ? DASH : fmtPct(c.ret_180d, { signed: true })}</td>
           <td class="muted" style="font-size:11.5px;">${escapeHtml(c.via || "")}</td></tr>`).join("")}
-      </tbody></table>${citeMark(io.cohort.source_ref)}</div>`
+      </tbody></table><div class="muted" style="font-size:11.5px; margin-top:4px;">source: ${escapeHtml(io.cohort.source_ref || "")}</div></div>`
     : `<div class="fact-val muted" style="margin-top:8px;"><span class="pill unresolved">${io.cohort?.status === "missing" ? "MISSING" : "UNKNOWN"}</span> ${escapeHtml(io.cohort?.note || "no graph cohort")}</div>`;
   return (  // (R3) body only — drawdownIdio wraps it in the shared section header
     fact("Read", io.read, null, { hi: true }) +
@@ -1330,7 +1334,10 @@ const _capC = (v) => (v == null ? DASH : (Math.abs(v) >= 1000 ? `$${_thou(v / 10
 // NaN → dash (not a fabricated "0%"); Math.round is half-up, matching render._pctc's floor(x+0.5).
 const _pctC = (v) => (v == null || Number.isNaN(v) ? DASH : `${Math.round(v * 100) || 0}%`);
 // a blank/whitespace ratio → dash, NOT a fabricated "0.0" (Number("") === 0); "NM" passes through.
-const _ratioC = (s) => { const t = s == null ? "" : String(s).trim(); if (t === "") return DASH; const n = Number(t); return Number.isNaN(n) ? t : n.toFixed(1); };
+// half-up at 1dp (Math.round(n*10)/10) to MATCH render._ratioc's floor(x*10+0.5)/10 — a bare toFixed
+// disagreed with the Python .md at a quarter-tie (7.25 → 7.3 vs banker's 7.2); Math.round(n*10) ===
+// floor(n*10+0.5) on the same IEEE double, so the two renderers now format identically.
+const _ratioC = (s) => { const t = s == null ? "" : String(s).trim(); if (t === "") return DASH; const n = Number(t); return Number.isNaN(n) ? t : (Math.round(n * 10) / 10).toFixed(1); };
 const _netDebtC = (v) => (v == null ? DASH : (v < 0 ? `${_thou(-v)} (net cash)` : _thou(v)));
 const _numC = (v) => (v == null ? DASH : _thou(v > -0.05 && v < 0 ? 0 : v, 1));  // small negative → "0.0", never "-0.0"
 
@@ -1674,10 +1681,14 @@ function synthesis(s) {
     const unverified = src.includes("llm-suggested") || src.includes("unverified");
     return (t.outcome || "") + (unverified ? " (LLM-claimed — verify)" : "");
   };
+  // (review #5/#8) twin source rendered INLINE, matching the md renderer's "- source: …" line —
+  // NOT citeMark → an LLM-suggested/unverified twin never becomes a numbered # Sources entry (a
+  // Sources list is for primary cells, not "[LLM-suggested, unverified]"), and the two renderers
+  // agree (neither lists a twin source in its endnotes).
   const twins = (s.twin_reference_cases || []).map((t) => `
     <div class="point"><b>${escapeHtml(t.name || "")}</b> — ${escapeHtml(twinOutcome(t))}
       <div class="muted" style="font-size:12px; margin-top:3px;">distinguished by: ${escapeHtml(t.distinguishing_fact || "")}</div>
-      ${citeMark(t.source)}</div>`).join("");
+      <div class="muted" style="font-size:12px; margin-top:3px;">source: ${escapeHtml(t.source || "")}</div></div>`).join("");
   return `<div class="card ds-section"><div class="ds-title">Synthesis · framing</div>${fence}
     ${s.evidence_balance ? `<div style="margin:6px 0; padding:8px 11px; border:1px solid var(--line); border-left:3px solid var(--accent); border-radius:4px; font-size:13px; line-height:1.5;"><b>Evidence balance:</b> ${escapeHtml(s.evidence_balance)}</div>` : ""}
     <div class="ds-title" style="font-size:12px; margin-top:6px;">Bull — the overshoot case</div>

@@ -1781,6 +1781,17 @@ def _tok(v: float | str | None) -> str:
     return f"{v:g}" if isinstance(v, (int, float)) else "–"
 
 
+def _peer_col_median(rows: Rows, peer_indices: list[int], ci: int) -> float | None:
+    """The ONE peer-median primitive: median of the NUMERIC per-peer cells in column ``ci`` (skips
+    'NM'/blank; ``_comps_cell``→``clean_num`` already excludes bool). Shared by the cross-sectional
+    headline (:func:`cross_sectional_valuation`) and the per-peer grid footer (``peer_grid``'s
+    ``_med_mult``) so the two can never drift — the divergence review-finding L1 set out to remove.
+    Callers apply the ``:g`` display themselves (the headline round-trips it to float; the footer
+    keeps the token)."""
+    xs = [v for i in peer_indices if isinstance((v := _comps_cell(rows, i, ci)), int | float)]
+    return statistics.median(xs) if xs else None
+
+
 def _fmt_cap(m: float | None) -> str:
     if m is None:
         return "?"
@@ -1852,22 +1863,26 @@ def cross_sectional_valuation(bundle: CiqBundle) -> Sourced[str]:
         return Sourced.unknown(note="Trading Multiples: no target row / peer rows")
     bits: list[str] = []
     for lab, col in (("EV/EBITDA", 2), ("P/E", 4)):
-        # (L1) peer median SELF-COMPUTED from the per-peer rows (same source + method as the grid
-        # footer's _med_mult) — NOT CIQ's opaque summary "Median" row — so the headline "peer
-        # median" here and the per-peer grid agree, verifiable from the shown peers. 1dp display.
-        # (CIQ's own Low/Median/Mean/High stay in the labeled multiples table.)
+        # (L1) peer median SELF-COMPUTED from the per-peer rows via the shared _peer_col_median
+        # primitive — the SAME source + peer set the grid footer's _med_mult uses — NOT CIQ's opaque
+        # summary "Median" row, so the headline "peer median" and the grid agree, verifiable from
+        # the shown peers. (CIQ's own Low/Median/Mean/High stay in the labeled table.)
         nv = _comps_cell(tm, tgt, col)
-        pv = [v for i in peers if isinstance((v := _comps_cell(tm, i, col)), int | float)]
         # round-trip the median through the SAME :g→float path the grid stores it as, so the 1dp
         # display matches the grid footer exactly at .5 boundaries (float(median) alone can differ).
-        mv = float(f"{statistics.median(pv):g}") if pv else None
+        m = _peer_col_median(tm, peers, col)
+        mv = float(f"{m:g}") if m is not None else None
         if isinstance(nv, (int, float)) and mv:
             bits.append(f"{lab} {nv:g}x vs peer median {mv:.1f}x ({nv / mv - 1:+.0%})")
         else:
             bits.append(f"{lab} {_tok(nv)} vs peer median {_tok(mv)}")
+    # source_ref MUST stay byte-identical to the string the synthesis copies into its valuation
+    # bull-point (review-finding: a distinct label splits endnote dedup → duplicate Sources rows).
+    # Self-computation is a methodology detail (in the code + the value matches the grid), not a
+    # source change — the primary source is unchanged: the CIQ Trading-Multiples peer set.
     return Sourced.present(
         "; ".join(bits),
-        source_ref="CIQ Comparable Analysis→Trading Multiples (name vs self-computed peer median)",
+        source_ref="CIQ Comparable Analysis→Trading Multiples (name vs peer Median)",
     )
 
 
@@ -2168,8 +2183,8 @@ def peer_grid(bundle: CiqBundle) -> Sourced[list[PeerRow]]:
     def _med_mult(ci: int) -> str | None:  # median of the numeric per-peer multiples for the footer
         if tm is None:
             return None
-        xs = [v for i in tpeers if isinstance((v := _comps_cell(tm, i, ci)), int | float)]
-        return f"{statistics.median(xs):g}" if xs else None
+        m = _peer_col_median(tm, tpeers, ci)  # shared primitive with the cross-sectional headline
+        return f"{m:g}" if m is not None else None
 
     def row_for(fi: int, is_name: bool) -> PeerRow:
         tkr = _row_ticker(fd[fi][0]) or ""

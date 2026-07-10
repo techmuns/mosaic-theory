@@ -178,7 +178,8 @@ def guide_verification(
     if release_low is None:  # release stated no numeric guide — nothing to cross-check
         return (f"guide verification ({metric}): CIQ {ciq_low}–{ciq_high} vs release "
                 "NO NUMERIC OUTLOOK → not cross-checked")
-    if release_low is not None and abs(ciq_low - release_low) < 0.01 and abs(
+    # release_low is now narrowed to a float by the early return above (no redundant None re-check).
+    if abs(ciq_low - release_low) < 0.01 and abs(
             (ciq_high or 0.0) - (release_high or 0.0)) < 0.01:
         return (f"guide verification ({metric}): CIQ {ciq_low}–{ciq_high} vs release "
                 f"{release_low}–{release_high} → cross-source VERIFIED")
