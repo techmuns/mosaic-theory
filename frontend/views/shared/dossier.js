@@ -671,6 +671,11 @@ function ownHistoryExhibit(m) {
   const W = 560, rowH = 44, padT = 42, padB = 34, labelW = 70, gutW = 92;
   const H = padT + bands.length * rowH + padB, tx0 = labelW + 10, tx1 = W - gutW;
   const mid = (tx0 + tx1) / 2;
+  // mirror range_position's _MIN_CONFIDENT_CLOSES (ciq_sheets.py): below 8 closes the own-history floor
+  // read is unreliable, so DE-ESCALATE the marker to neutral + tag it — the chart must never read MORE
+  // confident than the string it derives from (which prints an explicit LOW-CONFIDENCE caveat).
+  const LOW_CONF_CLOSES = 8;
+  const anyLowConf = bands.some((b) => b.n_closes < LOW_CONF_CLOSES);
   const rows = bands.map((b, i) => {
     const cy = padT + i * rowH + 6;
     // (adjust) LOG axis when all values > 0 — tames a range blown out by an outlier (e.g. a P/E from a
@@ -685,7 +690,8 @@ function ownHistoryExhibit(m) {
     // convention: ▼ below its range = red (down), ▲ above = green (up); within range = neutral accent.
     // (Direction is a FACT — below/above its own history; the human still judges cheap-vs-dear.)
     const outLow = b.current < b.low, outHigh = b.current > b.high;
-    const col = outLow ? "var(--danger)" : outHigh ? "var(--live)" : "var(--accent)";
+    const lowConf = b.n_closes < LOW_CONF_CLOSES;  // few closes → neutral grey, not a confident red/green
+    const col = lowConf ? "var(--ink-3)" : outLow ? "var(--danger)" : outHigh ? "var(--live)" : "var(--accent)";
     const caret = outLow ? "▼ " : outHigh ? "▲ " : "";
     const conn = outLow ? `<line x1="${cxp}" y1="${cy}" x2="${bx0}" y2="${cy}" stroke="${col}" stroke-width="1" stroke-dasharray="2 2" opacity="0.6"/>`
       : outHigh ? `<line x1="${bx1}" y1="${cy}" x2="${cxp}" y2="${cy}" stroke="${col}" stroke-width="1" stroke-dasharray="2 2" opacity="0.6"/>` : "";
@@ -700,7 +706,7 @@ function ownHistoryExhibit(m) {
       <text x="${bx1}" y="${cy + 18}" font-size="8" text-anchor="middle" fill="var(--ink-3)">${b.high.toFixed(1)}</text>
       <circle cx="${cxp}" cy="${cy}" r="4.5" fill="${col}" stroke="var(--surface)" stroke-width="1.2"/>
       <text x="${cxp}" y="${cy - 9}" font-size="9.5" text-anchor="${vAnc}" fill="${col}" font-weight="600">${caret}${b.current.toFixed(1)}x</text>
-      <text x="${W - 2}" y="${cy + 3}" font-size="8.5" text-anchor="end" fill="var(--ink-2)">${Math.round(b.percentile * 100)}%ile</text>`;
+      <text x="${W - 2}" y="${cy + 3}" font-size="8.5" text-anchor="end" fill="var(--ink-2)">${Math.round(b.percentile * 100)}%ile${lowConf ? "*" : ""}</text>`;
   }).join("");
   return `<div class="ds-exhibit" style="margin:8px 0 10px;">
     <svg viewBox="0 0 ${W} ${H}" width="100%" style="max-width:520px; display:block;" role="img" aria-label="Valuation multiples vs their own trailing range">
@@ -708,6 +714,7 @@ function ownHistoryExhibit(m) {
       <text x="0" y="29" font-size="9.5" fill="var(--ink-3)">● current vs low–median–high · log axis · ${bands[0].n_closes} quarterly closes${bands[0].as_of ? " · as-of " + escapeHtml(bands[0].as_of) : ""}</text>
       ${rows}
     </svg>
+    ${anyLowConf ? `<div class="muted" style="font-size:10px; margin-top:1px;">* fewer than ${LOW_CONF_CLOSES} closes — low-confidence read (a floor on a handful of points is near-tautological post-drawdown); direction shown in neutral, not red/green.</div>` : ""}
     <div class="muted" style="font-size:10.5px; margin-top:1px;">Source: CIQ Financials→Multiples (quarterly closes; current excluded from the trailing range).</div>
   </div>`;
 }

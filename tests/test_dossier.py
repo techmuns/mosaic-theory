@@ -3033,6 +3033,81 @@ def test_range_position_renders_asof_date() -> None:
     assert "as-of 2022-03-31" in v  # 44651.0 → 2022-03-31, the latest Close date
 
 
+def test_own_history_bands_structured_current_vs_trailing() -> None:
+    """(P3, #105) The STRUCTURED own-history bands the multiple-band chart consumes — current vs the
+    TRAILING low/median/high (current EXCLUDED) + percentile + n_closes, for EV/EBITDA and P/E.
+    Shares _own_history_band with range_position's string, so the two can't drift."""
+    mult: list[list[typing.Any]] = [
+        ["For Quarter Ending", "", 44000.0, 44100.0, 44200.0, 44300.0, 44400.0],
+        ["TEV/LTM EBITDA", "Close", 30.0, 28.0, 26.0, 24.0, 10.0],
+        ["P/LTM EPS", "Close", 40.0, 38.0, 36.0, 34.0, 20.0],
+    ]
+    s = cs.own_history_bands(_fin_bundle({"Multiples": mult}))
+    assert s.status is ds.SourceStatus.PRESENT
+    band = {b.metric: b for b in (s.value or [])}
+    assert set(band) == {"EV/EBITDA (TEV/LTM)", "P/LTM EPS"}
+    ev = band["EV/EBITDA (TEV/LTM)"]
+    # current 10 EXCLUDED from the [30,28,26,24] history → low 24 / high 30 / median 27
+    assert (ev.current, ev.low, ev.high, ev.median) == (10.0, 24.0, 30.0, 27.0)
+    assert (ev.percentile, ev.n_closes) == (0.0, 4)  # current below the entire trailing range
+
+
+def test_own_history_bands_skip_thin_metric_and_unknown_when_none() -> None:
+    """(P3, #105) A metric with <4 closes is SKIPPED (not fabricated); a P/E-only ≥4 band still
+    renders (that name's sole own-history surface); no metric ≥4 → UNKNOWN, never an empty chart."""
+    mixed: list[list[typing.Any]] = [
+        ["For Quarter Ending", "", 44000.0, 44100.0, 44200.0, 44300.0],
+        ["TEV/LTM EBITDA", "Close", 30.0, 28.0, 26.0, ""],  # 3 closes → skipped
+        ["P/LTM EPS", "Close", 40.0, 38.0, 36.0, 20.0],  # 4 closes → the only band
+    ]
+    s = cs.own_history_bands(_fin_bundle({"Multiples": mixed}))
+    assert s.status is ds.SourceStatus.PRESENT
+    assert [b.metric for b in (s.value or [])] == ["P/LTM EPS"]  # EV/EBITDA thin → skipped
+    thin: list[list[typing.Any]] = [
+        ["For Quarter Ending", "", 44000.0, 44100.0, 44200.0],
+        ["TEV/LTM EBITDA", "Close", 30.0, 28.0, 26.0],
+        ["P/LTM EPS", "Close", 40.0, 38.0, 36.0],
+    ]
+    assert cs.own_history_bands(_fin_bundle({"Multiples": thin})).status is ds.SourceStatus.UNKNOWN
+
+
+def test_roic_trend_structured_series_preserves_fraction() -> None:
+    """(P3, #105) The STRUCTURED per-period ROIC series the ROIC chart consumes — the RAW FRACTION
+    (0.05, not 5.0); the chart applies ×100 once. Shares _trajectory_series with the trajectory
+    string. <2 points or a missing row → UNKNOWN, never a one-point 'trend'."""
+    rat: list[list[typing.Any]] = [
+        ["For the Fiscal Period", "12 months Dec-31-2022", "12 months Dec-31-2023",
+         "12 months Dec-31-2024"],
+        ["Return on Capital %", 0.05, 0.08, 0.11],
+    ]
+    s = cs.roic_trend(_fin_bundle({"Ratios": rat}, "annual"))
+    assert s.status is ds.SourceStatus.PRESENT
+    assert [p.value for p in (s.value or [])] == [0.05, 0.08, 0.11]  # RAW fractions, not ×100
+    assert all("202" in p.period for p in (s.value or []))  # period carries its fiscal year
+    unk = ds.SourceStatus.UNKNOWN
+    no_roic: list[list[typing.Any]] = [
+        ["For the Fiscal Period", "12 months Dec-31-2022", "12 months Dec-31-2023"],
+        ["Return on Assets %", 0.03, 0.04],
+    ]
+    assert cs.roic_trend(_fin_bundle({"Ratios": no_roic}, "annual")).status is unk
+    single: list[list[typing.Any]] = [
+        ["For the Fiscal Period", "12 months Dec-31-2022"], ["Return on Capital %", 0.05],
+    ]
+    assert cs.roic_trend(_fin_bundle({"Ratios": single}, "annual")).status is unk
+
+
+def test_own_history_chart_low_confidence_threshold_matches_string() -> None:
+    """(P3, #105) The own-history CHART de-escalates its marker below the SAME close count the
+    range_position STRING caveats (_MIN_CONFIDENT_CLOSES) — pinned so the thresholds can't drift.
+    A chart reading MORE confident than its caveated sibling is exactly the failure this guards."""
+    src = Path("frontend/views/shared/dossier.js").read_text()
+    m = re.search(r"LOW_CONF_CLOSES = (\d+)", src)
+    assert m, "ownHistoryExhibit must define LOW_CONF_CLOSES"
+    assert int(m.group(1)) == cs._MIN_CONFIDENT_CLOSES  # JS threshold == the Python string's
+    # the de-escalation is wired (neutral marker + '*' tag + footnote) — phrasing-independent
+    assert "anyLowConf" in src and "low-confidence" in src.lower()
+
+
 def test_ev_ebitda_integrity_flag(monkeypatch: pytest.MonkeyPatch) -> None:
     """Data-integrity flag on the name's current EV/EBITDA. (1) A STALE Financials Close +
     disagreeing comps → a stale-price caveat naming the date, the gap, and which to prefer; the old
