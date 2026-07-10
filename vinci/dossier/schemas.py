@@ -325,6 +325,11 @@ class PeerRow(BaseModel):
     ebitda_growth_1y: float | None = None  # fraction
     debt_to_ebitda: str | None = None  # total-debt basis; "NM" preserved, numeric kept as string
     net_debt: float | None = None  # $M
+    # (B2) per-peer LTM valuation multiples from CIQ Trading Multiples — the point of a per-peer
+    # comparison. Strings so "NM"/"-" survive; None when the Trading-Multiples sheet/row is absent.
+    tev_ebitda: str | None = None  # LTM TEV/EBITDA
+    tev_rev: str | None = None  # LTM TEV/Revenue
+    pe: str | None = None  # LTM P/E
 
     model_config = {"frozen": True}
 

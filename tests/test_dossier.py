@@ -4687,6 +4687,57 @@ def test_peer_grid_joins_by_ticker_sorts_by_cap_with_median_footer() -> None:
     assert med.market_cap == 3000.0  # median of PEERS only (Alpha 5000, Beta 1000), not the name
 
 
+def test_peer_grid_valuation_multiples_from_trading_multiples() -> None:
+    """(B2) The grid joins the CIQ Trading-Multiples sheet BY TICKER → LTM TEV/EBITDA (col 2),
+    TEV/Rev (col 1), P/E (col 4); "NM" preserved; the median footer carries medians. An absent
+    Trading-Multiples sheet leaves the multiples None (fail-honest) and the grid still builds."""
+    fd = [
+        ["Company Name", "", "", "Market Cap ($M)", "LTM Net Debt"],
+        ["Alpha Corp (NYSE:AL)", "", "", 5000.0, 100.0],
+        ["Beta Inc (NYSE:BE)", "", "", 1000.0, 50.0],
+        ["Subj Co (NasdaqCM:SUBJ)", "", "", 200.0, 30.0],
+    ]
+    op = [
+        ["Company Name", "GM", "EBITDA", "EB", "NI", "Rg", "Eg", "e", "n", "dc", "Debt/EBITDA"],
+        ["Alpha Corp (NYSE:AL)", 0.5, 0.25, 0, 0, 0.2, 0, 0, 0, 0, 1.5],
+        ["Beta Inc (NYSE:BE)", 0.4, 0.1, 0, 0, 0.05, 0, 0, 0, 0, 2.0],
+        ["Subj Co (NasdaqCM:SUBJ)", 0.3, 0.2, 0, 0, -0.1, 0, 0, 0, 0, 5.8],
+    ]
+    tm = [  # col1=TEV/Rev, col2=TEV/EBITDA, col4=P/E — different row order (join must be by ticker)
+        ["Company Name", "TEV/Rev", "TEV/EBITDA", "", "P/E"],
+        ["Beta Inc (NYSE:BE)", 1.5, 6.0, "", "NM"],
+        ["Subj Co (NasdaqCM:SUBJ)", 3.0, 12.0, "", 20.0],
+        ["Alpha Corp (NYSE:AL)", 2.0, 8.0, "", 16.0],
+    ]
+    base = {("comps", "Financial Data"): fd, ("comps", "Operating Statistics"): op}
+    rows = cs.peer_grid(_comps({**base, ("comps", "Trading Multiples"): tm})).value or []
+    subj = next(r for r in rows if r.is_name)
+    assert subj.tev_ebitda == "12" and subj.tev_rev == "3" and subj.pe == "20"  # joined by ticker
+    assert next(r for r in rows if r.name.startswith("Beta")).pe == "NM"  # NM preserved, not 0
+    assert next(r for r in rows if r.is_median).tev_ebitda == "7"  # median of PEERS (8, 6) = 7
+    # fail-honest: no Trading-Multiples sheet → multiples None, the grid still builds
+    rows2 = cs.peer_grid(_comps(base)).value or []
+    assert all(r.tev_ebitda is None and r.tev_rev is None and r.pe is None for r in rows2)
+    assert next(r for r in rows2 if r.is_name).market_cap == 200.0
+
+
+def test_peer_grid_renders_valuation_columns_e2e() -> None:
+    """(B2 e2e) The per-peer grid carries the valuation columns (TEV/EBITDA, TEV/Rev, P/E) on
+    committed VRRM — presence of the headers, phrasing/value-independent."""
+    import pathlib
+    p = pathlib.Path("data/dossiers/VRRM/dossier.json")
+    if not p.exists():
+        pytest.skip("no committed VRRM dossier.json")
+    d = ds.Dossier.model_validate_json(p.read_text())
+    pg = d.mechanical.peer_comps.peer_grid if d.mechanical.peer_comps else None
+    if pg is None or pg.status is not ds.SourceStatus.PRESENT or not any(
+            r.tev_ebitda is not None for r in (pg.value or [])):
+        pytest.skip("VRRM peer_grid not re-assembled with B2 multiples yet")
+    md = dr.render_markdown(d)
+    for col in ("TEV/EBITDA", "TEV/Rev", "P/E"):
+        assert col in md, f"peer grid missing the {col} column"
+
+
 def _credit_sheet(rated_low: bool) -> list[list[typing.Any]]:
     # rated A-/BBB+ peers score 1-2; unrated distressed peers score 4 → 1=best (rated_low=True)
     lo, hi = (1.0, 4.0) if rated_low else (4.0, 1.0)
