@@ -593,7 +593,7 @@ function revEbitdaExhibit(fsa) {
   for (let t = 0; t <= 4; t++) {
     const yy = y0 + (plotH / 4) * t, valL = yMaxL * (1 - t / 4);
     grid += `<line x1="${x0}" y1="${yy}" x2="${x1}" y2="${yy}" stroke="var(--line)"/><text x="${x0 - 6}" y="${yy + 3}" font-size="9.5" text-anchor="end" fill="var(--ink-3)">${Math.round(valL)}</text>`;
-    if (t % 2 === 0) grid += `<text x="${x1 + 6}" y="${yy + 3}" font-size="9.5" fill="var(--warn)">${yMaxR * (1 - t / 4)}%</text>`;
+    if (t % 2 === 0) grid += `<text x="${x1 + 6}" y="${yy + 3}" font-size="9.5" fill="var(--ink-2)">${yMaxR * (1 - t / 4)}%</text>`;
   }
 
   const bars = cols.map((c, i) => {
@@ -605,10 +605,10 @@ function revEbitdaExhibit(fsa) {
   }).join("");
 
   const pts = marg.map((p, i) => (p != null ? `${cx(i)},${syR(p)}` : null)).filter(Boolean).join(" ");
-  const line = `<polyline points="${pts}" fill="none" stroke="var(--warn)" stroke-width="1.8"/>`;
-  const dots = marg.map((p, i) => (p != null ? `<circle cx="${cx(i)}" cy="${syR(p)}" r="2.6" fill="var(--warn)"/><text x="${cx(i)}" y="${syR(p) - 6}" font-size="8.5" text-anchor="middle" fill="var(--warn)">${Math.round(p)}%</text>` : "")).join("");
+  const line = `<polyline points="${pts}" fill="none" stroke="var(--ink-2)" stroke-width="1.8"/>`;
+  const dots = marg.map((p, i) => (p != null ? `<circle cx="${cx(i)}" cy="${syR(p)}" r="2.6" fill="var(--ink-2)"/><text x="${cx(i)}" y="${syR(p) - 6}" font-size="8.5" text-anchor="middle" fill="var(--ink-2)">${Math.round(p)}%</text>` : "")).join("");
 
-  const lg = `<g font-size="10" fill="var(--ink-2)"><rect x="${x0}" y="${H - 15}" width="9" height="9" fill="var(--accent)" rx="1"/><text x="${x0 + 13}" y="${H - 7}">Revenue ($M)</text><rect x="${x0 + 92}" y="${H - 15}" width="9" height="9" fill="var(--live)" rx="1"/><text x="${x0 + 105}" y="${H - 7}">EBITDA ($M)</text><line x1="${x0 + 186}" y1="${H - 10}" x2="${x0 + 201}" y2="${H - 10}" stroke="var(--warn)" stroke-width="1.8"/><circle cx="${x0 + 193}" cy="${H - 10}" r="2.4" fill="var(--warn)"/><text x="${x0 + 206}" y="${H - 7}">EBITDA margin (%)</text></g>`;
+  const lg = `<g font-size="10" fill="var(--ink-2)"><rect x="${x0}" y="${H - 15}" width="9" height="9" fill="var(--accent)" rx="1"/><text x="${x0 + 13}" y="${H - 7}">Revenue ($M)</text><rect x="${x0 + 92}" y="${H - 15}" width="9" height="9" fill="var(--live)" rx="1"/><text x="${x0 + 105}" y="${H - 7}">EBITDA ($M)</text><line x1="${x0 + 186}" y1="${H - 10}" x2="${x0 + 201}" y2="${H - 10}" stroke="var(--ink-2)" stroke-width="1.8"/><circle cx="${x0 + 193}" cy="${H - 10}" r="2.4" fill="var(--ink-2)"/><text x="${x0 + 206}" y="${H - 7}">EBITDA margin (%)</text></g>`;
 
   return `<div class="ds-exhibit" style="margin:4px 0 12px;">
     <svg viewBox="0 0 ${W} ${H}" width="100%" style="max-width:660px; display:block;" role="img" aria-label="Revenue, EBITDA and EBITDA-margin trend">
@@ -640,6 +640,59 @@ function financialSnapshot(m) {
 
 // 6 — VALUATION: cross-sectional read (the edge) + comparability gate + the implied-value REFERENCE
 // ladder (peer-median implied equity per basis, juxtaposed vs cap — never a single machine target).
+// (Phase-3) Own-history valuation bands — where the CURRENT multiple sits vs its trailing quarterly
+// range (low–median–high + percentile), a compact bullet-style range bar per metric. Dependency-free
+// SVG; consumes the STRUCTURED own_history bands (never re-parses range_position's string). The axis
+// INCLUDES current, so a multiple below its trailing floor (0%ile) shows the marker left of the bar.
+// Fail-honest: no structured bands (pre-P3 dossier / no Multiples sheet) → no chart.
+function ownHistoryExhibit(m) {
+  const oh = m.valuation && m.valuation.own_history;
+  if (!oh || oh.status !== "present" || !Array.isArray(oh.value) || !oh.value.length) return "";
+  const bands = oh.value;
+  const W = 560, rowH = 44, padT = 42, padB = 34, labelW = 70, gutW = 92;
+  const H = padT + bands.length * rowH + padB, tx0 = labelW + 10, tx1 = W - gutW;
+  const mid = (tx0 + tx1) / 2;
+  const rows = bands.map((b, i) => {
+    const cy = padT + i * rowH + 6;
+    // (adjust) LOG axis when all values > 0 — tames a range blown out by an outlier (e.g. a P/E from a
+    // near-zero-EPS quarter), a standard multiples convention; linear fallback guards a non-positive.
+    const useLog = b.low > 0 && b.high > 0 && b.median > 0 && b.current > 0;
+    const tf = (v) => (useLog ? Math.log(v) : v);
+    const t0 = tf(Math.min(b.low, b.current)), tspan = (tf(Math.max(b.high, b.current)) - t0) || 1;
+    const sx = (v) => tx0 + ((tf(v) - t0) / tspan) * (tx1 - tx0);
+    const bx0 = sx(b.low), bx1 = sx(b.high), mx = sx(b.median), cxp = sx(b.current);
+    const label = b.metric.replace(" (TEV/LTM)", "").replace("P/LTM EPS", "P/E");
+    // current OUTSIDE its trailing range → dashed connector + a DIRECTIONAL ▼/▲ marker in the universal
+    // convention: ▼ below its range = red (down), ▲ above = green (up); within range = neutral accent.
+    // (Direction is a FACT — below/above its own history; the human still judges cheap-vs-dear.)
+    const outLow = b.current < b.low, outHigh = b.current > b.high;
+    const col = outLow ? "var(--danger)" : outHigh ? "var(--live)" : "var(--accent)";
+    const caret = outLow ? "▼ " : outHigh ? "▲ " : "";
+    const conn = outLow ? `<line x1="${cxp}" y1="${cy}" x2="${bx0}" y2="${cy}" stroke="${col}" stroke-width="1" stroke-dasharray="2 2" opacity="0.6"/>`
+      : outHigh ? `<line x1="${bx1}" y1="${cy}" x2="${cxp}" y2="${cy}" stroke="${col}" stroke-width="1" stroke-dasharray="2 2" opacity="0.6"/>` : "";
+    const vAnc = cxp < mid ? "start" : "end";  // (adjust) value beside the marker, on the roomy side
+    return `
+      <text x="${labelW}" y="${cy + 3}" font-size="11" text-anchor="end" fill="var(--ink)" font-weight="600">${escapeHtml(label)}</text>
+      ${conn}
+      <rect x="${bx0}" y="${cy - 5}" width="${Math.max(2, bx1 - bx0)}" height="10" rx="5" fill="var(--surface-2)" stroke="var(--line-2)"/>
+      <line x1="${mx}" y1="${cy - 7}" x2="${mx}" y2="${cy + 7}" stroke="var(--ink-3)" stroke-width="1.5"/>
+      <text x="${bx0}" y="${cy + 18}" font-size="8" text-anchor="middle" fill="var(--ink-3)">${b.low.toFixed(1)}</text>
+      <text x="${mx}" y="${cy + 18}" font-size="8" text-anchor="middle" fill="var(--ink-3)">${b.median.toFixed(1)}</text>
+      <text x="${bx1}" y="${cy + 18}" font-size="8" text-anchor="middle" fill="var(--ink-3)">${b.high.toFixed(1)}</text>
+      <circle cx="${cxp}" cy="${cy}" r="4.5" fill="${col}" stroke="var(--surface)" stroke-width="1.2"/>
+      <text x="${cxp}" y="${cy - 9}" font-size="9.5" text-anchor="${vAnc}" fill="${col}" font-weight="600">${caret}${b.current.toFixed(1)}x</text>
+      <text x="${W - 2}" y="${cy + 3}" font-size="8.5" text-anchor="end" fill="var(--ink-2)">${Math.round(b.percentile * 100)}%ile</text>`;
+  }).join("");
+  return `<div class="ds-exhibit" style="margin:8px 0 10px;">
+    <svg viewBox="0 0 ${W} ${H}" width="100%" style="max-width:520px; display:block;" role="img" aria-label="Valuation multiples vs their own trailing range">
+      <text x="0" y="15" font-size="12" font-weight="600" fill="var(--ink)">Multiple vs its own trailing range</text>
+      <text x="0" y="29" font-size="9.5" fill="var(--ink-3)">● current vs low–median–high · log axis · ${bands[0].n_closes} quarterly closes${bands[0].as_of ? " · as-of " + escapeHtml(bands[0].as_of) : ""}</text>
+      ${rows}
+    </svg>
+    <div class="muted" style="font-size:10.5px; margin-top:1px;">Source: CIQ Financials→Multiples (quarterly closes; current excluded from the trailing range).</div>
+  </div>`;
+}
+
 function valuationCard(m) {
   const cross = (m.valuation && m.valuation.cross_sectional) ? fact("Valuation (vs peers)", m.valuation.cross_sectional) : "";
   const comp = (m.peer_comps && m.peer_comps.comparability) ? fact("Comparability", m.peer_comps.comparability) : "";
@@ -658,7 +711,7 @@ function valuationCard(m) {
       ${citeMark(iv.implied_equity.source_ref)}</div>`;
   }
   if (!cross && !comp && !rng && !mladder && !impl) return "";
-  return `<div class="card ds-section"><div class="ds-title">Valuation <span class="muted" style="font-weight:400; text-transform:none; letter-spacing:0;">— multiples across years + cross-sectional; full detail in Analysis</span></div>${cross}${comp}${rng}${mladder}${impl}</div>`;
+  return `<div class="card ds-section"><div class="ds-title">Valuation <span class="muted" style="font-weight:400; text-transform:none; letter-spacing:0;">— multiples across years + cross-sectional; full detail in Analysis</span></div>${cross}${comp}${rng}${ownHistoryExhibit(m)}${mladder}${impl}</div>`;
 }
 
 // 7 — CATALYST & CONSENSUS: the forward/street view — consensus target + ratings, positioning
@@ -1086,10 +1139,41 @@ function leverageSurvival(m, refDate) {
 }
 
 // (D2/D1) trajectory — the merged table + the share-count trend.
+// (Phase-3) ROIC (return on capital) trend — a dependency-free line of the per-period ROIC, from the
+// STRUCTURED roic_trend series (never re-parsing the trajectory string). Values are fractions → ×100
+// for the % display. Zero baseline when the series crosses zero (a distressed name). Fail-honest:
+// no structured series → no chart (the trajectory table still renders).
+function roicTrendExhibit(q) {
+  const rt = q && q.roic_trend;
+  if (!rt || rt.status !== "present" || !Array.isArray(rt.value) || rt.value.length < 2) return "";
+  const pts = rt.value.map((p) => ({ period: p.period, v: p.value * 100 }));
+  const W = 560, H = 168, padL = 34, padR = 14, padT = 40, padB = 32;
+  const x0 = padL, x1 = W - padR, y1 = H - padB, plotW = x1 - x0, plotH = y1 - padT;
+  const vals = pts.map((p) => p.v);
+  let vmin = Math.min(0, ...vals), vmax = Math.max(0, ...vals);
+  if (vmin === vmax) { vmax += 1; vmin -= 1; }
+  const gap = (vmax - vmin) * 0.14; vmin -= gap; vmax += gap;
+  const px = (i) => x0 + (i / (pts.length - 1)) * plotW;
+  const py = (v) => y1 - ((v - vmin) / (vmax - vmin)) * plotH;
+  const abbr = (p) => "'" + ((p.match(/\d{4}/) || [""])[0]).slice(2) + (/LTM/.test(p) ? "L" : "");
+  const zY = (vmin < 0 && vmax > 0) ? py(0) : null;
+  const zeroLine = zY != null ? `<line x1="${x0}" y1="${zY}" x2="${x1}" y2="${zY}" stroke="var(--line-2)" stroke-dasharray="3 2"/>` : "";
+  const line = `<polyline points="${pts.map((p, i) => `${px(i)},${py(p.v)}`).join(" ")}" fill="none" stroke="var(--accent)" stroke-width="1.8"/>`;
+  const dots = pts.map((p, i) => `<circle cx="${px(i)}" cy="${py(p.v)}" r="3" fill="var(--accent)"/><text x="${px(i)}" y="${py(p.v) - 7}" font-size="8.5" text-anchor="middle" fill="var(--ink)">${p.v.toFixed(1)}%</text><text x="${px(i)}" y="${y1 + 14}" font-size="8.5" text-anchor="middle" fill="var(--ink-3)">${escapeHtml(abbr(p.period))}</text>`).join("");
+  const yticks = `<text x="${x0 - 5}" y="${py(vmax) + 3}" font-size="8.5" text-anchor="end" fill="var(--ink-3)">${Math.round(vmax)}%</text><text x="${x0 - 5}" y="${py(vmin) + 3}" font-size="8.5" text-anchor="end" fill="var(--ink-3)">${Math.round(vmin)}%</text>`;
+  return `<div class="ds-exhibit" style="margin:4px 0 10px;">
+    <svg viewBox="0 0 ${W} ${H}" width="100%" style="max-width:520px; display:block;" role="img" aria-label="ROIC (return on capital) trend">
+      <text x="0" y="15" font-size="12" font-weight="600" fill="var(--ink)">ROIC trend <tspan fill="var(--ink-3)" font-weight="400">— return on capital, per fiscal period</tspan></text>
+      ${zeroLine}${yticks}${line}${dots}
+    </svg>
+    <div class="muted" style="font-size:10.5px; margin-top:1px;">Source: CIQ Financials→Ratios (Return on Capital %, per fiscal-period columns).</div>
+  </div>`;
+}
+
 function trajectorySection(q) {
   if (!q) return "";
   return sec("Trajectory", "Revenue · EBITDA · margins · ROIC per period; the same-quarter YoY footnoted.",
-    trajectoryTable(q) + fact("Share-count trend", q.share_count_trend));
+    roicTrendExhibit(q) + trajectoryTable(q) + fact("Share-count trend", q.share_count_trend));
 }
 
 // (D1) verdict footer — the no-BUY/AVOID reminder closes the document (caveats opened it).
