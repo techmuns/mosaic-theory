@@ -766,11 +766,13 @@ function ownHistoryExhibit(m) {
   // MORE confident than the string it derives from (which prints an explicit LOW-CONFIDENCE caveat).
   const LOW_CONF_CLOSES = 8;
   const anyLowConf = bands.some((b) => b.n_closes < LOW_CONF_CLOSES);
-  const W = 760, H = 234, cy0 = 56, cy1 = 208;  // panels share this chart-area y-band
+  // a single metric keeps a NORMAL panel width (not stretched full-bleed — that breaks the familiar
+  // line aspect); the exhibit just renders narrower. Two metrics sit side-by-side.
+  const single = bands.length === 1;
+  const W = single ? 430 : 760, H = 234, cy0 = 56, cy1 = 208;  // panels share this chart-area y-band
   const halo = 'paint-order="stroke" stroke="var(--surface)" stroke-width="2.6"';
   const yr = (s) => { const y = /(\d{4})/.exec(s || ""); return y ? "'" + y[1].slice(2) : ""; };
-  // 1 metric → one wide panel; 2 → EV/EBITDA left, P/E right
-  const geo = bands.length === 1 ? [[70, 720]] : [[70, 372], [452, 748]];
+  const geo = single ? [[70, 372]] : [[70, 372], [452, 748]];
 
   const panel = (b, x0, x1) => {
     const label = b.metric.replace(" (TEV/LTM)", "").replace("P/LTM EPS", "P/E");
@@ -800,14 +802,15 @@ function ownHistoryExhibit(m) {
     return s;
   };
 
-  return `<div class="ds-exhibit" style="margin:8px 0 12px;">
-    <svg viewBox="0 0 ${W} ${H}" width="100%" style="max-width:760px; display:block;" role="img" aria-label="Valuation multiples vs their own trailing range">
+  // no inline "Source:" caption — the Multiples source is already cited at the card level (range_position's
+  // endnote → the tier's Sources list). Exhibits cite via endnotes, never a duplicate inline caption.
+  return `<div class="ds-exhibit" style="margin:18px 0 16px;">
+    <svg viewBox="0 0 ${W} ${H}" width="100%" style="max-width:${W}px; display:block;" role="img" aria-label="Valuation multiples vs their own trailing range">
       <text x="0" y="18" font-size="13" font-weight="600" fill="var(--ink)">Multiple vs its own trailing range</text>
-      <text x="0" y="33" font-size="9.5" fill="var(--ink-3)">the multiple over its quarterly closes (log-scaled) · avg / min / max = trailing history, current excluded${bands[0].as_of ? " · as-of " + escapeHtml(bands[0].as_of) : ""}</text>
+      <text x="0" y="34" font-size="9.5" fill="var(--ink-3)">each quarter's close vs its trailing average &amp; range · log scale${bands[0].as_of ? " · as-of " + escapeHtml(bands[0].as_of) : ""}</text>
       ${bands.map((b, i) => panel(b, geo[i][0], geo[i][1])).join("")}
     </svg>
-    ${anyLowConf ? `<div class="muted" style="font-size:10px; margin-top:1px;">* fewer than ${LOW_CONF_CLOSES} closes — low-confidence read; current shown in neutral, not red/green.</div>` : ""}
-    <div class="muted" style="font-size:10.5px; margin-top:1px;">Source: CIQ Financials→Multiples (quarterly closes; avg / min / max exclude the current).</div>
+    ${anyLowConf ? `<div class="muted" style="font-size:10px; margin-top:2px;">* fewer than ${LOW_CONF_CLOSES} closes — low-confidence read; current shown in neutral, not red/green.</div>` : ""}
   </div>`;
 }
 

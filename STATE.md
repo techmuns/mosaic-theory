@@ -3161,6 +3161,13 @@ Recommendation/Target slot is the HUMAN's ("not yet logged"); consensus, the imp
   (grey current + footnote). Artifacts: own_history SURGICALLY re-derived (deterministic; synthesis +
   every other field byte-identical; NO LLM re-run). Verified VRRM (2 panels, de-rating below floor),
   MVST (sparse grey), AORT (confident red ▼); ruff + mypy --strict + pytest(not network) green.
+  **Polish pass (review):** humanized the exhibit subtitle; a SINGLE-metric name keeps a normal panel
+  width (W=430, not full-bleed 760 — full-bleed broke the familiar line aspect); +breathing room
+  (margin 18/16). **Incident→invariant — inline exhibit source captions:** three exhibits (rev/EBITDA,
+  own-history, ROIC) each grew an inline `Source: …` caption instead of citing via an endnote → SHIPPED
+  a `>Source:`-scan guard (`test_exhibits_cite_via_endnotes_not_inline_source_caption`) + a CLAUDE.md
+  rule (exhibits cite via endnotes → Sources list, never an inline caption; the sibling table/fact
+  already cites the data). All three captions removed; sources now resolve in the Sources list.
 
 **RC-1 primary-source text extraction — BUILT + VERIFIED, PR OPEN (feat/primary-source-text, 2026-07-06).**
 DETERMINISTIC (anchored, never LLM) parsers of the EX-99.1 release (A, `vinci/edgar/release_parse.py`) and

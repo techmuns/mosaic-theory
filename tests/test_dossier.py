@@ -6335,3 +6335,15 @@ def test_exhibit_module_static_contract_no_node() -> None:
     dj = Path("frontend/views/shared/dossier.js").read_text()
     assert 'from "../../lib/exhibit.js"' in dj
     assert "barDomain(" in dj and "lineDomain(" in dj and "linScale(" in dj
+
+
+def test_exhibits_cite_via_endnotes_not_inline_source_caption() -> None:
+    """(RULE) An SVG exhibit's provenance goes to the tier's Sources list via a citeMark endnote —
+    NEVER an inline 'Source: …' caption under the chart. The exhibit's data is already cited by its
+    sibling table/fact (financial_summary / range_position / trajectory), so a caption duplicates
+    the source in the wrong tier. Regressed on rev/EBITDA, own-history AND ROIC — each grew one — so
+    guard it: a citeMark renders '[n]', never a '>Source:' label."""
+    src = Path("frontend/views/shared/dossier.js").read_text()
+    assert ">Source:" not in src, (
+        "an exhibit inlines a 'Source:' caption — remove it; the sibling table/fact's citeMark "
+        "carries the source to the Sources list (see revEbitdaExhibit for the pattern)")
