@@ -237,7 +237,9 @@ function seriesTable(label, s) {
 const _TIERKW = [
   [1, ["free cash flow", "levered free cash", "fcf", "self-fund", "self fund", "cash generat",
        "cash burn", "cash-negative", "interest coverage", "maturity", "wall", "covenant", "refinanc",
-       "liquidity", "going concern", "solven", "net-debt", "net debt", "total-debt", "total debt",
+       // (A4) BOTH space + hyphen — the hyphen variant was missed (parity with render.py)
+       "liquidity", "going concern", "going-concern", "solven", "net-debt", "net debt",
+       "total-debt", "total debt",
        "debt/ebitda", "adjusted ebitda negative", "adjusted ebitda was negative",
        "ebitda was negative"]],
   [2, ["revenue", "top-line", "topline", "volume", "shipment", "bookings", "backlog", "orders",
@@ -911,10 +913,10 @@ function governingTerms(rows, pointers) {
 function covenantTerms(cs) {
   const rs = cs.covenant_term_rows;
   if (!rs || rs.status !== "present" || !Array.isArray(rs.value) || !rs.value.length)
-    return fact("Covenant terms (Tier-2, fenced)", cs.covenant_terms);
+    return fact("Covenant terms (from the filed agreement)", cs.covenant_terms);
   const ptrs = cs.covenant_pointer_rows;
   const gov = governingTerms(rs.value, (ptrs && ptrs.value) || []);
-  if (!gov.length) return fact("Covenant terms (Tier-2, fenced)", cs.covenant_terms);
+  if (!gov.length) return fact("Covenant terms (from the filed agreement)", cs.covenant_terms);
   const families = [];
   gov.forEach((g) => { if (!families.includes(g.fam)) families.push(g.fam); });
   const cols = ["Governing value (lead · clause ≤200c)", "Source §"];
@@ -947,7 +949,7 @@ function covenantTerms(cs) {
         : g.amendedBy.length ? `amended by ${g.amendedBy.join(", ")}` : "base (footer)";
       return { label: g.term, cells: [cell, ref] };
     });
-    return dataTable(`Covenant terms — ${fam} (governing; Tier-2 fenced)`, rs.source_ref, cols, rows, footer);
+    return dataTable(`Covenant terms — ${fam} (governing agreement)`, rs.source_ref, cols, rows, footer);
   }).join("");
   // (FIX-2 · D-1) mirror the Python transparency line — located pointer accessions minus the ones
   // the extraction actually read → "N located agreement exhibit(s) not extracted this run". Without
