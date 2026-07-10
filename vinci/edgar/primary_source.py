@@ -175,6 +175,9 @@ def guide_verification(
     if release_qualitative and release_low is None:
         return (f"guide verification ({metric}): CIQ {ciq_low}–{ciq_high} vs release QUALITATIVE "
                 "→ plausibility flag; render the qualitative growth line")
+    if release_low is None:  # release stated no numeric guide — nothing to cross-check
+        return (f"guide verification ({metric}): CIQ {ciq_low}–{ciq_high} vs release "
+                "NO NUMERIC OUTLOOK → not cross-checked")
     if release_low is not None and abs(ciq_low - release_low) < 0.01 and abs(
             (ciq_high or 0.0) - (release_high or 0.0)) < 0.01:
         return (f"guide verification ({metric}): CIQ {ciq_low}–{ciq_high} vs release "

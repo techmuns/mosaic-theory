@@ -2963,8 +2963,8 @@ Recommendation/Target slot is the HUMAN's ("not yet logged"); consensus, the imp
   scope gets its OWN Sources list (a `[n]` on the Brief tab can't resolve into a hidden Analysis tab),
   via a `withEndnotes()` wrapper + a two-pass numberer (markers are monotonic in READING order even
   though cards pre-compute cites out of DOM order); `[n]` is a `<sup>` with a hover-tooltip of the ref.
-  **VERIFIED:** md — MVST (56 src) / VRRM (65), ZERO stray ↳, every [n] resolves, deduped, pinned by
-  `test_endnotes_complete_on_every_committed_dossier` (the safety net — it caught the stock-info line);
+  **VERIFIED:** md — every committed dossier renders with ZERO stray ↳, every [n] resolves, deduped,
+  pinned by `test_endnotes_complete_on_every_committed_dossier` (the safety net — it caught stock-info);
   web — MVST/VRRM/AORT render with 0 `.cite` spans, 0 `↳`, 0 `[?]` placeholders, per-tier Sources
   (maxMark == source count), sequential first-occurrences, no console errors. MVST/VRRM `.md` re-rendered.
   ruff + mypy --strict + full pytest green.
