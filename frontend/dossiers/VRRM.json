@@ -7,8 +7,8 @@
   "mechanical": {
     "valuation": {
       "cross_sectional": {
-        "value": "EV/EBITDA 4.7x vs peer median 10.3x (-54%); P/E 5.4x vs peer median 15.6x (-65%)",
-        "source_ref": "CIQ Comparable Analysis→Trading Multiples (name vs peer Median)",
+        "value": "EV/EBITDA 4.7x vs peer median 10.3x (-54%); P/E 5.4x vs peer median 15.7x (-65%)",
+        "source_ref": "CIQ Comparable Analysis→Trading Multiples (name vs self-computed peer median)",
         "status": "present",
         "note": null
       },

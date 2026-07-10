@@ -59,7 +59,7 @@ _Key unknowns:_
 - **Key ratios (latest):** RoE 45.9%; RoCE 11.1%; RoA 9.2%; total debt/equity 4.05; current ratio 1.89; dividend: none (latest) [15]
 
 ## Valuation
-- **Valuation (vs peers):** EV/EBITDA 4.7x vs peer median 10.3x (-54%); P/E 5.4x vs peer median 15.6x (-65%) [16]
+- **Valuation (vs peers):** EV/EBITDA 4.7x vs peer median 10.3x (-54%); P/E 5.4x vs peer median 15.7x (-65%) [16]
 - **Own-history range:** EV/EBITDA (TEV/LTM) 8.5x as-of 2026-03-31 — trailing range 10.4–23.2x (median 13.6x) over 19 closes → 0%ile → near-floor; P/LTM EPS 16.8x [17]
 - **Comparability:** market caps span $430M–$15.9B (37x); the name is $668M → HETEROGENEOUS — low comparability: the peer median is anchored by businesses of differing scale/model; scrutinise comparability before reading any peer stat as a clean benchmark. [18]
 - **Cross-name anchor (NTM forward-multiple ladder)** — [19]:
@@ -193,7 +193,7 @@ _Revenue YoY (latest same-quarter): +0.1% (Q1 Mar-31-2026 vs Q1 Mar-31-2025). R 
 - **Share-count trend:** buying back (trailing ~1.7y): 164,658,507 (2024-08-31) → 151,906,653 (2026-05-31), -7.7% [41]
 
 ### Valuation & own-history
-- **Cross-sectional (vs peers — the edge):** EV/EBITDA 4.7x vs peer median 10.3x (-54%); P/E 5.4x vs peer median 15.6x (-65%) [16]
+- **Cross-sectional (vs peers — the edge):** EV/EBITDA 4.7x vs peer median 10.3x (-54%); P/E 5.4x vs peer median 15.7x (-65%) [16]
 - **What the current price implies (at stated multiples)** — comparability: HETEROGENEOUS (see Peer comps gate)
   - _price-implied fundamental levels at stated multiples — the human judges earned vs residual; identity (†): at the name's own multiple the implied level IS consensus._
   - _TEV as-of 2026-06-24 · multiples as-of 2026-06-09_
@@ -496,7 +496,7 @@ _Source §: 8-K 0001564590-18-024644 · vrrm-ex1010_20.htm_
 [13] `CIQ Estimates→Trends (current-FY consensus path; ragged, absent lookbacks n/a)`
 [14] `CIQ Financials→Income Statement + Cash Flow (annual) + Estimates→Trends (FY E)`
 [15] `CIQ Financials→Ratios (latest period)`
-[16] `CIQ Comparable Analysis→Trading Multiples (name vs peer Median)`
+[16] `CIQ Comparable Analysis→Trading Multiples (name vs self-computed peer median)`
 [17] `CIQ Financials→Multiples (Close; last col = current, excluded from history)`
 [18] `CIQ Comparable Analysis→Financial Data (market-cap dispersion) + Business Description`
 [19] `CIQ Estimates→Multiples (forward-multiple ladder: NTM + FY26→FY33)`
