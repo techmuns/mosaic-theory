@@ -2991,6 +2991,25 @@ Recommendation/Target slot is the HUMAN's ("not yet logged"); consensus, the imp
   exercise the whole cohort). MVST's fresh synthesis tripped a legitimate audit-tier QA flag (possible
   false-balance, 6 bull vs 10 bear + strong lean — a DIFFERENT check from the fixed `mixed`-label one;
   that regression test still passes) + a CIQ-freshness caveat — the guardrails working, not bugs.
+- **REVIEW FOLLOW-UPS L1–L4 + /review FIXES — SHIPPED (2026-07-10, feat/dossier-review-followups #103,
+  stacked on #102).** M1 (#102): `guide_verification` — a release stating NO numeric guide reads "not
+  cross-checked", not a false MISMATCH (+ pin). L1–L4 (#103): peer-median self-computed (unified with the
+  grid), tier-prefixed web endnote markers ([B/A/X n]), print-safe inline audit cites, robust endnote pin.
+  Then a max-effort **/review** (10 finder angles) over the whole open stack found 11 issues, ALL fixed on
+  #103: **#1** (my L1 re-derive REGRESSION) a reworded `cross_sectional.source_ref` split endnote dedup →
+  TWO near-identical Sources rows (AORT/BRBR/CNXC) — reverted the ref to the exact string the synthesis
+  copies (value fix stays); **#2** `_ratioC`(web, half-up) vs `_ratioc`(md, banker's) rendered a quarter-tie
+  differently (MVST/VITL grid medians 3.2 vs 3.3 — LIVE, not latent) → both half-up via identical IEEE ops,
+  matching the `_pctc` convention; **#3** `_ENDNOTES` ContextVar never reset → `@_endnote_scope` (finally);
+  **#5/#8** "[LLM-suggested, unverified]" twin promoted to the web Sources list → twin/cohort sources render
+  inline on BOTH renderers (never a Sources entry); **#7** the peer median duplicated `_med_mult` → one
+  shared `_peer_col_median`; **#4/#6/#9/#10** test-quality. Code + artifacts in SEPARATE commits (511f798 /
+  7956b4b); ruff + mypy --strict + full pytest green; preview parity confirmed (grid 3.3 == .md, 0
+  "LLM-suggested" in any Sources list, twins inline, no [?] leaks, console clean).
+  **Incident→invariant (shipped Y):** #3→fallback-after-render pin; #7→headline==grid pin; #4→orphan-Sources
+  completeness pin (robust to a filing `[2024]`); #6/#9/#10→node-free static guard on dossier.js.
+  **Residual (accepted):** #1 source_ref↔synthesis dedup + #2/#8 md↔web parity have no node-free behavioural
+  pin here (node absent → the node-gated parity tests skip); covered when node is present.
   **REMAINING (whole redesign):** only Phase-3 charts (approach logged: web/PDF SVG + a structured-series
   extraction, since charting the rendered-string tables would break the parsers rule).
 
