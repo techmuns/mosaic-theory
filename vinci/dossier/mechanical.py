@@ -793,6 +793,7 @@ def _valuation(
         ev_ebitda_adjusted_fwd=adj_ev,
         adjusted_eps=adj_eps,
         range_position=ciq_sheets.range_position(bundle),
+        own_history=ciq_sheets.own_history_bands(bundle),  # (P3) structured bands for the chart
     )
 
 
@@ -952,6 +953,7 @@ def _quality(
         ),
         liquidity_covenant_flags=liquidity,
         multi_year_trajectory=trajectory,
+        roic_trend=ciq_sheets.roic_trend(bundle),  # (P3) structured ROIC series for the chart
     )
 
 

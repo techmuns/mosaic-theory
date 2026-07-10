@@ -200,12 +200,13 @@ table.data tr:hover td { background: var(--surface-2); }
 /* B1 per-peer grid: the subject row is distinct; the peer-median footer sits under a rule */
 table.data tr.name-row td { font-weight: 650; background: var(--surface-2); }
 table.data tr.median-row td { border-top: 1.5px solid var(--line-2); font-style: italic; color: var(--ink-2); }
-/* (Phase-3) denser DOSSIER tables (compress vertical gaps) + a consensus/forward-FY column tint that
-   matches the exhibit's shaded estimate region — so the E columns read as consensus at a glance. */
+/* (Phase-3) denser DOSSIER tables (compress vertical gaps) + a consensus/forward-FY column tint. The
+   tint is NEUTRAL grey (--surface-2), matching the exhibit's shaded estimate region — amber would
+   conflate with the app's "conditional" STATUS color; a forward estimate is neither a caution nor a
+   status, just not-yet-actual. (Normal row-hover already covers .est-col, so no special hover rule.) */
 .ds-section table.data td { padding-top: 5px; padding-bottom: 5px; }
 .ds-section table.data th { padding-top: 6px; padding-bottom: 6px; }
-table.data th.est-col, table.data td.est-col { background: var(--conditional-bg); }
-table.data tr:hover td.est-col { background: var(--conditional-bg); }
+table.data th.est-col, table.data td.est-col { background: var(--surface-2); }
 .mono { font-family: var(--mono); }
 .num { font-family: var(--mono); text-align: right; }
 .muted { color: var(--ink-3); }

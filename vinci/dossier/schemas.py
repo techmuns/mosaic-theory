@@ -148,6 +148,23 @@ class ImpliedExpectations(BaseModel):
     model_config = {"frozen": True}
 
 
+class OwnHistoryBand(BaseModel):
+    """(Phase-3) One own-history valuation band — the CURRENT multiple vs its trailing quarterly
+    close range (low/median/high) + percentile. The STRUCTURED series behind range_position's
+    display string, so a chart consumes it without re-parsing the string (parsers rule)."""
+
+    metric: str  # "EV/EBITDA (TEV/LTM)" | "P/LTM EPS"
+    current: float
+    low: float
+    high: float
+    median: float
+    percentile: float  # 0..1 — fraction of trailing history ≤ current
+    n_closes: int  # trailing closes, current excluded (matches range_position's "over N closes")
+    as_of: str | None = None
+
+    model_config = {"frozen": True}
+
+
 class Valuation(BaseModel):
     """Multiples: the CROSS-SECTIONAL read (vs peers) LEADS; own-history range/percentile is
     secondary — near-tautological post-drawdown, so it barely discriminates. CIQ multiples + G3."""
@@ -166,9 +183,23 @@ class Valuation(BaseModel):
     # own-history: current multiple + trailing low–median–high RANGE + sample-size CONFIDENCE (a
     # floor read on a handful of quarterly closes is unreliable — see range_position).
     range_position: Sourced[str]
+    # (Phase-3) STRUCTURED own-history bands (current vs trailing low/median/high + %ile) behind
+    # range_position's string, for the band chart. Optional → pre-P3 round-trips; a fresh assembly
+    # builds it (shares range_position's computation, so the two can't drift).
+    own_history: Sourced[list[OwnHistoryBand]] | None = None
     # (G) price-inverted expectations in multiples-space — renders AFTER cross_sectional, BEFORE the
     # own-history range. Optional so a pre-G dossier.json validates; a fresh assembly builds it.
     implied_expectations: ImpliedExpectations | None = None
+
+    model_config = {"frozen": True}
+
+
+class TrendPoint(BaseModel):
+    """(Phase-3) One point of a per-period metric trend — a period label + its numeric value. The
+    STRUCTURED series behind a multi-period display string, so a chart never re-parses it."""
+
+    period: str
+    value: float
 
     model_config = {"frozen": True}
 
@@ -189,6 +220,9 @@ class Quality(BaseModel):
     share_count_trend: Sourced[str]
     liquidity_covenant_flags: Sourced[str]
     multi_year_trajectory: Sourced[str]  # 5y arc of revenue/EBITDA/segment-EBITDA/ROIC (per period)
+    # (Phase-3) STRUCTURED per-period ROIC series — the numbers behind multi_year_trajectory's ROIC
+    # arc, for the ROIC-trend chart. Optional → pre-P3 round-trips; shares _trajectory_row's read.
+    roic_trend: Sourced[list[TrendPoint]] | None = None
 
     model_config = {"frozen": True}
 

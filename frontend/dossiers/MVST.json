@@ -54,6 +54,23 @@
         "status": "present",
         "note": null
       },
+      "own_history": {
+        "value": [
+          {
+            "metric": "EV/EBITDA (TEV/LTM)",
+            "current": 9.977753,
+            "low": 15.803395,
+            "high": 66.923428,
+            "median": 24.9331825,
+            "percentile": 0.0,
+            "n_closes": 4,
+            "as_of": "2026-03-31"
+          }
+        ],
+        "source_ref": "CIQ Financials→Multiples (Close; last col = current, excluded from history)",
+        "status": "present",
+        "note": null
+      },
       "implied_expectations": {
         "rows": [
           {
@@ -201,6 +218,37 @@
       "multi_year_trajectory": {
         "value": "Revenue: Dec-31-2021 152 → Dec-31-2022 (R) 204 → Dec-31-2023 (R) 307 → Dec-31-2024 380 → Dec-31-2025 428 → Mar-31-2026 (LTM) 372; EBITDA: Dec-31-2021 -180 → Dec-31-2022 (R) -140 → Dec-31-2023 (R) -85 → Dec-31-2024 5 → Dec-31-2025 74 → Mar-31-2026 (LTM) 52; Revenue YoY (latest same-quarter): -25.5% (Q1 Mar-31-2026 vs Q1 Mar-31-2024); ROIC: Dec-31-2021 -24.5% → Dec-31-2022 -12.3% → Dec-31-2023 -8.7% → Dec-31-2024 -2.2% → Dec-31-2025 3.3% → Mar-31-2026 (LTM) 1.5%  [R reclassified; per-period values, never YoY'd across a basis]",
         "source_ref": "CIQ Financials→Income Statement + Segments + Ratios (multi-year columns)",
+        "status": "present",
+        "note": null
+      },
+      "roic_trend": {
+        "value": [
+          {
+            "period": "Dec-31-2021",
+            "value": -0.244788
+          },
+          {
+            "period": "Dec-31-2022",
+            "value": -0.123159
+          },
+          {
+            "period": "Dec-31-2023",
+            "value": -0.086828
+          },
+          {
+            "period": "Dec-31-2024",
+            "value": -0.021511
+          },
+          {
+            "period": "Dec-31-2025",
+            "value": 0.033478
+          },
+          {
+            "period": "Mar-31-2026 (LTM)",
+            "value": 0.015155
+          }
+        ],
+        "source_ref": "CIQ Financials→Ratios (Return on Capital %, multi-year columns)",
         "status": "present",
         "note": null
       }

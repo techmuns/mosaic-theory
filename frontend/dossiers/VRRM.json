@@ -54,6 +54,33 @@
         "status": "present",
         "note": null
       },
+      "own_history": {
+        "value": [
+          {
+            "metric": "EV/EBITDA (TEV/LTM)",
+            "current": 8.493199,
+            "low": 10.422118,
+            "high": 23.220795,
+            "median": 13.621933,
+            "percentile": 0.0,
+            "n_closes": 19,
+            "as_of": "2026-03-31"
+          },
+          {
+            "metric": "P/LTM EPS",
+            "current": 16.811764,
+            "low": 28.155594,
+            "high": 278.762349,
+            "median": 50.092986,
+            "percentile": 0.0,
+            "n_closes": 17,
+            "as_of": "2026-03-31"
+          }
+        ],
+        "source_ref": "CIQ Financials→Multiples (Close; last col = current, excluded from history)",
+        "status": "present",
+        "note": null
+      },
       "implied_expectations": {
         "rows": [
           {
@@ -201,6 +228,37 @@
       "multi_year_trajectory": {
         "value": "Revenue: Dec-31-2021 (R) 551 → Dec-31-2022 (R) 742 → Dec-31-2023 (R) 817 → Dec-31-2024 (R) 879 → Dec-31-2025 979 → Mar-31-2026 (LTM) 979; EBITDA: Dec-31-2021 (R) 229 → Dec-31-2022 (R) 304 → Dec-31-2023 (R) 306 → Dec-31-2024 (R) 342 → Dec-31-2025 362 → Mar-31-2026 (LTM) 358; Revenue YoY (latest same-quarter): +0.1% (Q1 Mar-31-2026 vs Q1 Mar-31-2025); Commercial Services EBITDA: Dec-31-2021 (R) 160 → Dec-31-2022 (R) 209 → Dec-31-2023 (R) 242 → Dec-31-2024 (R) 268 → Dec-31-2025 283; Parking Solutions EBITDA: Dec-31-2021 (R) 3 → Dec-31-2022 (R) 14 → Dec-31-2023 (R) 15 → Dec-31-2024 (R) 12 → Dec-31-2025 11; Government Solutions EBITDA: Dec-31-2021 (R) 108 → Dec-31-2022 (R) 116 → Dec-31-2023 (R) 114 → Dec-31-2024 (R) 122 → Dec-31-2025 122; ROIC: Dec-31-2021 5.1% → Dec-31-2022 6.8% → Dec-31-2023 8.1% → Dec-31-2024 10.3% → Dec-31-2025 11.5% → Mar-31-2026 (LTM) 11.1%  [R reclassified; per-period values, never YoY'd across a basis]",
         "source_ref": "CIQ Financials→Income Statement + Segments + Ratios (multi-year columns)",
+        "status": "present",
+        "note": null
+      },
+      "roic_trend": {
+        "value": [
+          {
+            "period": "Dec-31-2021",
+            "value": 0.051159
+          },
+          {
+            "period": "Dec-31-2022",
+            "value": 0.068276
+          },
+          {
+            "period": "Dec-31-2023",
+            "value": 0.081015
+          },
+          {
+            "period": "Dec-31-2024",
+            "value": 0.103111
+          },
+          {
+            "period": "Dec-31-2025",
+            "value": 0.115085
+          },
+          {
+            "period": "Mar-31-2026 (LTM)",
+            "value": 0.110524
+          }
+        ],
+        "source_ref": "CIQ Financials→Ratios (Return on Capital %, multi-year columns)",
         "status": "present",
         "note": null
       }

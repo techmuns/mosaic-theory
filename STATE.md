@@ -3025,10 +3025,35 @@ Recommendation/Target slot is the HUMAN's ("not yet logged"); consensus, the imp
   Artifact re-derive (9 dossiers): ZERO cell/note drift, NO .md change (values chart-only); code +
   artifacts SEPARATE commits (a297cc0 / 4d00838). ruff + mypy --strict + full pytest green; preview
   verified (exhibit renders, CSS vars resolve, estimate region + column tint, table intact, console clean).
-  **REMAINING (whole redesign): Phase-3 3b** — the P/E own-history BAND (needs the own-history range
-  low/high/median exposed structured — `range_position` computes them but stores only the display string)
-  + the ROIC TREND (needs a multi-period ROIC series extracted — none stored today; not in the annual
-  financial-summary rows). Both are extraction-gated data builds, then the two SVG exhibits.
+- **PHASE-3 CHARTS 3b — BUILT + VERIFIED, PR OPEN (feat/dossier-charts-3b, stacked on #104, 2026-07-10).**
+  The last two exhibits + their structured extractions. **P/E own-history BAND** (`ownHistoryExhibit`) — a
+  bullet-style range bar per multiple (trailing low–median–high + current marker, LOG axis so a P/E blown
+  out by a near-zero-EPS quarter still reads); fed by `OwnHistoryBand` + `valuation.own_history` via a
+  shared `_own_history_band` that `range_position` now also uses (its string BYTE-IDENTICAL on all 10).
+  **ROIC TREND** (`roicTrendExhibit`) — a per-period ROIC line (fraction ×100), zero-baseline for a
+  distressed name; fed by `TrendPoint` + `quality.roic_trend` via a shared `_trajectory_series` that
+  `_trajectory_row` now formats (trajectory string unchanged). Both series default None → pre-P3
+  round-trips; both let the charts read STRUCTURED values, never re-parse a display string (the parsers
+  rule the STATE note anticipated). Present on 9/10 (AORT CIQ-thin → fail-honest UNKNOWN). **Color audit
+  (this build):** the directional marker follows the universal convention — ▼ below its own range = red,
+  ▲ above = green, within = neutral accent (was an unintuitive amber; direction is a fact, the human
+  judges cheap-vs-dear); estimate/forward columns → neutral grey (amber conflated with the app's
+  "conditional" STATUS color); the rev/EBITDA margin line → neutral grey (amber conflated with "warning").
+  Swept the other views — no status-color-on-data ambiguity elsewhere. Code + artifacts SEPARATE commits
+  (844446d / 118aaf4). ruff + mypy --strict + full pytest green; no range_position/trajectory drift, .md
+  unchanged; preview verified (both exhibits render, colors correct, console clean, charts match tables).
+  **CHART-ROBUSTNESS PASS (post-review, JS-only):** the rev/EBITDA exhibit's fixed 0–50% right axis +
+  positive-only left axis broke on real edge cases — MVST runs to −68% margin with NEGATIVE EBITDA bars,
+  FUBO/MVST ROIC is all-negative, VITL EV/EBITDA spans 1.9→110x. Rebuilt as TWO PANELS (bars $M · margin
+  %), each AUTO-SCALED to its own data with a zero baseline (no shared/clamped axis), + haloed labels so
+  every figure is readable over the bars. ROIC chart already auto-scaled (verified all-negative FUBO);
+  P/E band log axis verified on VITL's 58× range; haloed the ROIC labels too. Verified across MVST
+  (neg)/VRRM (high)/FUBO (tiny)/VITL (extreme) — all render + match their tables, console clean.
+  **Incident→invariant:** the range_position/trajectory byte-identical checks are the anti-drift pins
+  (verified in the re-derive; a full-suite e2e pin would need node for the JS charts — accepted residual).
+  **REMAINING (whole redesign): NONE — Phase-3 complete.** The dossier redesign (Brief 3-tier → A/B
+  render passes → endnotes → peer valuation → cohort → primary-source → L1–L4 review fixes → Phase-3
+  charts 3a+3b) is fully built; #99–#103 merged, #104 (3a) + 3b PR open for review.
 
 **RC-1 primary-source text extraction — BUILT + VERIFIED, PR OPEN (feat/primary-source-text, 2026-07-06).**
 DETERMINISTIC (anchored, never LLM) parsers of the EX-99.1 release (A, `vinci/edgar/release_parse.py`) and

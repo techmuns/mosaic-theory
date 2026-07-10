@@ -32,11 +32,13 @@ from vinci.dossier.schemas import (
     GuidanceRow,
     ImpliedRow,
     ImpliedValuation,
+    OwnHistoryBand,
     PeerComps,
     PeerRow,
     RevisionEvent,
     Sourced,
     SourceStatus,
+    TrendPoint,
 )
 
 Rows = list[list[Any]]
@@ -152,38 +154,75 @@ def ev_ebitda_percentile(bundle: CiqBundle) -> Sourced[float]:
 _MIN_CONFIDENT_CLOSES = 8
 
 
+_OWN_HISTORY_SRC = "CIQ Financials→Multiples (Close; last col = current, excluded from history)"
+# (Phase-3) the own-history metrics: (display metric, Multiples-sheet row label)
+_OWN_HISTORY_METRICS = (("EV/EBITDA (TEV/LTM)", "TEV/LTM EBITDA"), ("P/LTM EPS", "P/LTM EPS"))
+
+
+def _own_history_band(metric: str, pairs: list[tuple[Any, float]]) -> OwnHistoryBand | None:
+    """(Phase-3) The current multiple vs its TRAILING close range (current EXCLUDED from history) —
+    the ONE own-history stat, shared by range_position (its string) and own_history_bands (the
+    structured chart data) so the two can't drift. None when <4 closes (no meaningful range)."""
+    if len(pairs) < 4:
+        return None
+    vals = [v for _, v in pairs]
+    cur, hist = vals[-1], vals[:-1]
+    d = pairs[-1][0]
+    return OwnHistoryBand(
+        metric=metric, current=cur, low=min(hist), high=max(hist),
+        median=statistics.median(hist), percentile=sum(1 for h in hist if h <= cur) / len(hist),
+        n_closes=len(hist), as_of=d.isoformat() if d is not None else None,
+    )
+
+
 def range_position(bundle: CiqBundle) -> Sourced[str]:
     """Own-history read: current TEV/LTM EBITDA + its trailing low–median–high RANGE and where in
     it, WITH a sample-size confidence label. Below ~2y of closes the floor VERDICT is suppressed (a
-    floor read on a handful of points is unreliable and near-tautological post-drawdown)."""
+    floor read on a handful of points is unreliable, near-tautological post-drawdown). Numbers come
+    from the shared _own_history_band, so this string can't drift from the own_history chart."""
     try:
         rows = bundle.sheet("financials", "Multiples", freq="quarterly")
     except CiqUnavailableError as exc:
         return _miss_or_unknown(bundle, "financials", exc)
     ev_pairs = [(d, v) for d, v in _multiples_close(rows, "TEV/LTM EBITDA") if v is not None]
     pe = [v for _, v in _multiples_close(rows, "P/LTM EPS") if v is not None]
-    if len(ev_pairs) < 4:
+    b = _own_history_band("EV/EBITDA (TEV/LTM)", ev_pairs)
+    if b is None:
         return Sourced.unknown(note="TEV/LTM EBITDA Close has <4 quarters — no range position")
-    ev = [v for _, v in ev_pairs]
-    cur, hist = ev[-1], ev[:-1]
-    cur_date = ev_pairs[-1][0]
-    lo, hi, med = min(hist), max(hist), statistics.median(hist)
-    pct = sum(1 for h in hist if h <= cur) / len(hist)
-    if len(hist) < _MIN_CONFIDENT_CLOSES:
+    cur, lo, hi, med, pct, n = b.current, b.low, b.high, b.median, b.percentile, b.n_closes
+    if n < _MIN_CONFIDENT_CLOSES:
         where = (
-            f"LOW-CONFIDENCE ({len(hist)} closes < {_MIN_CONFIDENT_CLOSES}q ≈2y) — floor read "
+            f"LOW-CONFIDENCE ({n} closes < {_MIN_CONFIDENT_CLOSES}q ≈2y) — floor read "
             "unreliable"
         )
     else:
-        band = next(b for t, b in _RANGE_BANDS if pct <= t)
+        band = next(bnd for t, bnd in _RANGE_BANDS if pct <= t)
         where = f"{pct:.0%}ile → {band}"
-    asof = f" as-of {cur_date.isoformat()}" if cur_date is not None else ""
+    asof = f" as-of {b.as_of}" if b.as_of is not None else ""
     tail = f"; P/LTM EPS {pe[-1]:.1f}x" if pe else ""
     return Sourced.present(
         f"EV/EBITDA (TEV/LTM) {cur:.1f}x{asof} — trailing range {lo:.1f}–{hi:.1f}x "
-        f"(median {med:.1f}x) over {len(hist)} closes → {where}{tail}",
-        source_ref="CIQ Financials→Multiples (Close; last col = current, excluded from history)",
+        f"(median {med:.1f}x) over {n} closes → {where}{tail}",
+        source_ref=_OWN_HISTORY_SRC,
     )
+
+
+def own_history_bands(bundle: CiqBundle) -> Sourced[list[OwnHistoryBand]]:
+    """(Phase-3) STRUCTURED own-history bands for EV/EBITDA + P/E — current vs trailing low/median/
+    high + percentile — the numbers behind range_position's string, for the own-history band chart.
+    Shares _own_history_band with range_position (no drift). UNKNOWN if no metric has ≥4 closes."""
+    try:
+        rows = bundle.sheet("financials", "Multiples", freq="quarterly")
+    except CiqUnavailableError as exc:
+        return _miss_or_unknown(bundle, "financials", exc)
+    bands: list[OwnHistoryBand] = []
+    for metric, label in _OWN_HISTORY_METRICS:
+        pairs = [(d, v) for d, v in _multiples_close(rows, label) if v is not None]
+        if (band := _own_history_band(metric, pairs)) is not None:
+            bands.append(band)
+    if not bands:
+        return Sourced.unknown(note="no multiple has ≥4 quarterly closes — no own-history band")
+    return Sourced.present(bands, source_ref=_OWN_HISTORY_SRC)
 
 
 def ev_ebitda_current(bundle: CiqBundle) -> Sourced[float]:
@@ -737,19 +776,45 @@ def _fmt_pct(v: float) -> str:
     return f"{v * 100:.1f}%"
 
 
+def _trajectory_series(rows: Rows, ri: int | None, hdr: int | None) -> list[tuple[str, float]]:
+    """The multi-period (period-label, value) pairs for a row — the ONE extraction shared by
+    _trajectory_row (its display string) and roic_trend (the structured chart series), so they can't
+    drift. Empty when <2 points (a single point is not a trajectory)."""
+    if ri is None or hdr is None:
+        return []
+    pairs = [
+        (_period_label(rows[hdr][j]) if j < len(rows[hdr]) else f"c{j}", v)
+        for j in range(1, len(rows[ri]))
+        if (v := clean_num(rows[ri][j])) is not None
+    ]
+    return pairs if len(pairs) >= 2 else []
+
+
 def _trajectory_row(
     rows: Rows, ri: int | None, hdr: int | None, fmt: Callable[[float], str] = _fmt_num
 ) -> str | None:
     """The multi-period series for a row: 'period value' per column, basis marked — NEVER YoY'd
-    across (the human sees growth-vs-decline; cross-basis growth is not computed)."""
-    if ri is None or hdr is None:
-        return None
-    parts = [
-        f"{_period_label(rows[hdr][j]) if j < len(rows[hdr]) else f'c{j}'} {fmt(v)}"
-        for j in range(1, len(rows[ri]))
-        if (v := clean_num(rows[ri][j])) is not None
-    ]
-    return " → ".join(parts) if len(parts) >= 2 else None
+    across (the human sees growth-vs-decline; cross-basis growth is not computed). Formats the one
+    shared _trajectory_series, so this string can't drift from the roic_trend chart."""
+    pairs = _trajectory_series(rows, ri, hdr)
+    return " → ".join(f"{p} {fmt(v)}" for p, v in pairs) if pairs else None
+
+
+def roic_trend(bundle: CiqBundle) -> Sourced[list[TrendPoint]]:
+    """(Phase-3) STRUCTURED per-period ROIC (Return on Capital %) series from CIQ Ratios (annual) —
+    the numbers behind multi_year_trajectory's 'ROIC: …' arc, for the ROIC-trend chart. Shares
+    _trajectory_series with that string (no drift). UNKNOWN if the row/sheet is absent."""
+    try:
+        rat = bundle.sheet("financials", "Ratios", freq="annual")
+    except CiqUnavailableError as exc:
+        return _miss_or_unknown(bundle, "financials", exc)
+    pairs = _trajectory_series(rat, _find_row(rat, "Return on Capital %"), _period_header(rat))
+    if not pairs:
+        return Sourced.unknown(note="Ratios: no multi-year Return on Capital % row")
+    return Sourced.present(
+        [TrendPoint(period=p, value=v) for p, v in pairs],
+        source_ref="CIQ Financials→Ratios (Return on Capital %, multi-year columns)",
+    )
 
 
 def multi_year_trajectory(bundle: CiqBundle) -> Sourced[str]:

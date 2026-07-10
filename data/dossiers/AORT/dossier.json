@@ -54,6 +54,23 @@
         "status": "present",
         "note": null
       },
+      "own_history": {
+        "value": [
+          {
+            "metric": "EV/EBITDA (TEV/LTM)",
+            "current": 18.442284,
+            "low": 22.554517,
+            "high": 41.791383,
+            "median": 31.678973499999998,
+            "percentile": 0.0,
+            "n_closes": 20,
+            "as_of": "2026-06-24"
+          }
+        ],
+        "source_ref": "CIQ Financials→Multiples (Close; last col = current, excluded from history)",
+        "status": "present",
+        "note": null
+      },
       "implied_expectations": {
         "rows": [
           {
@@ -203,6 +220,12 @@
         "source_ref": "EDGAR XBRL companyfacts revenue / operating_income+D&A / operating_cash_flow−capex (annual)",
         "status": "present",
         "note": null
+      },
+      "roic_trend": {
+        "value": null,
+        "source_ref": null,
+        "status": "unknown",
+        "note": "Ratios: no multi-year Return on Capital % row"
       }
     },
     "concentration": {

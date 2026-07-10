@@ -54,6 +54,12 @@
         "status": "unknown",
         "note": "TEV/LTM EBITDA Close has <4 quarters — no range position"
       },
+      "own_history": {
+        "value": null,
+        "source_ref": null,
+        "status": "unknown",
+        "note": "no multiple has ≥4 quarterly closes — no own-history band"
+      },
       "implied_expectations": {
         "rows": [
           {
@@ -201,6 +207,29 @@
       "multi_year_trajectory": {
         "value": "Revenue: Oct-01-2022 3,419 → Sep-30-2023 3,846 → Sep-28-2024 4,220 → Sep-27-2025 4,413 → Mar-31-2026 (LTM) 5,304; ROIC: Sep-30-2023 -11.2% → Sep-28-2024 -10.9% → Sep-27-2025 -10.7% → Mar-31-2026 (LTM) -3.3%  [R reclassified; per-period values, never YoY'd across a basis]",
         "source_ref": "CIQ Financials→Income Statement + Segments + Ratios (multi-year columns)",
+        "status": "present",
+        "note": null
+      },
+      "roic_trend": {
+        "value": [
+          {
+            "period": "Sep-30-2023",
+            "value": -0.1119
+          },
+          {
+            "period": "Sep-28-2024",
+            "value": -0.108681
+          },
+          {
+            "period": "Sep-27-2025",
+            "value": -0.107303
+          },
+          {
+            "period": "Mar-31-2026 (LTM)",
+            "value": -0.033363
+          }
+        ],
+        "source_ref": "CIQ Financials→Ratios (Return on Capital %, multi-year columns)",
         "status": "present",
         "note": null
       }
