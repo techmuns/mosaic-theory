@@ -3105,6 +3105,11 @@ def test_own_history_bands_structured_current_vs_trailing() -> None:
     # current 10 EXCLUDED from the [30,28,26,24] history → low 24 / high 30 / median 27
     assert (ev.current, ev.low, ev.high, ev.median) == (10.0, 24.0, 30.0, 27.0)
     assert (ev.percentile, ev.n_closes) == (0.0, 4)  # current below the entire trailing range
+    # (Phase-3b line chart) mean of history + the FULL (date, multiple) close path — current is the
+    # LAST series point; mean/min/max are over history (current excluded), like low/high.
+    assert ev.mean == 27.0  # mean([30, 28, 26, 24])
+    assert [v for _, v in ev.series] == [30.0, 28.0, 26.0, 24.0, 10.0]  # full path, current last
+    assert ev.series[-1][1] == ev.current and len(ev.series) == ev.n_closes + 1
 
 
 def test_own_history_bands_skip_thin_metric_and_unknown_when_none() -> None:

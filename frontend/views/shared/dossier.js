@@ -3,7 +3,7 @@
 // The synthesis is fenced as "the framing, not the answer." Read-only; verdicts are CLI-logged.
 import { getDossier, getDossierIndex, getLedger, isBuyVerdict } from "../../lib/snapshots.js";
 import { fmtPrice, fmtDate, fmtStamp, fmtPct, escapeHtml, DASH } from "../../lib/format.js";
-import { barDomain, lineDomain, linScale, logScale, labelAnchor, barLabelY, EXHIBIT } from "../../lib/exhibit.js";
+import { barDomain, lineDomain, linScale, logScale, barLabelY, EXHIBIT } from "../../lib/exhibit.js";
 
 // PDF export uses the browser's native print-to-PDF (no library — the frontend stays dependency-free).
 // The browser derives the saved-file name from document.title, so on a dossier print we swap in a
@@ -750,62 +750,64 @@ function financialSnapshot(m) {
 
 // 6 — VALUATION: cross-sectional read (the edge) + comparability gate + the implied-value REFERENCE
 // ladder (peer-median implied equity per basis, juxtaposed vs cap — never a single machine target).
-// (Phase-3) Own-history valuation bands — where the CURRENT multiple sits vs its trailing quarterly
-// range (low–median–high + percentile), a compact bullet-style range bar per metric. Dependency-free
-// SVG; consumes the STRUCTURED own_history bands (never re-parses range_position's string). The axis
-// INCLUDES current, so a multiple below its trailing floor (0%ile) shows the marker left of the bar.
-// Fail-honest: no structured bands (pre-P3 dossier / no Multiples sheet) → no chart.
+// (Phase-3b) Own-history valuation exhibit — the institutional "multiple band": a TIME-SERIES LINE of
+// each multiple over its trailing quarterly closes, with mean / min / max reference levels and the
+// current value labelled at the right end. Consumes the STRUCTURED own_history series (never re-parses
+// range_position's string); log-scaled where positive (tames a P/E blown out by a near-zero-EPS
+// quarter). EV/EBITDA + P/E side-by-side (one wide panel when a name has only one). Fail-honest: no
+// structured series (pre-line dossier / no Multiples sheet) → no chart, the string still shows.
 function ownHistoryExhibit(m) {
   const oh = m.valuation && m.valuation.own_history;
-  if (!oh || oh.status !== "present" || !Array.isArray(oh.value) || !oh.value.length) return "";
-  const bands = oh.value;
-  const W = 560, rowH = 44, padT = 42, padB = 34, labelW = 70, gutW = 92;
-  const H = padT + bands.length * rowH + padB, tx0 = labelW + 10, tx1 = W - gutW;
-  const mid = (tx0 + tx1) / 2;
-  // mirror range_position's _MIN_CONFIDENT_CLOSES (ciq_sheets.py): below 8 closes the own-history floor
-  // read is unreliable, so DE-ESCALATE the marker to neutral + tag it — the chart must never read MORE
-  // confident than the string it derives from (which prints an explicit LOW-CONFIDENCE caveat).
+  if (!oh || oh.status !== "present" || !Array.isArray(oh.value)) return "";
+  const bands = oh.value.filter((b) => Array.isArray(b.series) && b.series.length >= 2);
+  if (!bands.length) return "";
+  // mirror range_position's _MIN_CONFIDENT_CLOSES (ciq_sheets.py): below 8 closes the floor read is
+  // unreliable, so the current marker de-escalates to neutral + a footnote — the chart must never read
+  // MORE confident than the string it derives from (which prints an explicit LOW-CONFIDENCE caveat).
   const LOW_CONF_CLOSES = 8;
   const anyLowConf = bands.some((b) => b.n_closes < LOW_CONF_CLOSES);
-  const rows = bands.map((b, i) => {
-    const cy = padT + i * rowH + 6;
-    // (adjust) LOG axis when all values > 0 — tames a range blown out by an outlier (e.g. a P/E from a
-    // near-zero-EPS quarter), a standard multiples convention; linear fallback guards a non-positive.
-    const useLog = b.low > 0 && b.high > 0 && b.median > 0 && b.current > 0;
-    const dlo = Math.min(b.low, b.current), dhi = Math.max(b.high, b.current);  // axis includes current
-    const sx = (useLog && logScale(dlo, dhi, tx0, tx1)) || linScale(dlo, dhi, tx0, tx1);
-    const bx0 = sx(b.low), bx1 = sx(b.high), mx = sx(b.median), cxp = sx(b.current);
+  const W = 760, H = 234, cy0 = 56, cy1 = 208;  // panels share this chart-area y-band
+  const halo = 'paint-order="stroke" stroke="var(--surface)" stroke-width="2.6"';
+  const yr = (s) => { const y = /(\d{4})/.exec(s || ""); return y ? "'" + y[1].slice(2) : ""; };
+  // 1 metric → one wide panel; 2 → EV/EBITDA left, P/E right
+  const geo = bands.length === 1 ? [[70, 720]] : [[70, 372], [452, 748]];
+
+  const panel = (b, x0, x1) => {
     const label = b.metric.replace(" (TEV/LTM)", "").replace("P/LTM EPS", "P/E");
-    // current OUTSIDE its trailing range → dashed connector + a DIRECTIONAL ▼/▲ marker in the universal
-    // convention: ▼ below its range = red (down), ▲ above = green (up); within range = neutral accent.
-    // (Direction is a FACT — below/above its own history; the human still judges cheap-vs-dear.)
-    const outLow = b.current < b.low, outHigh = b.current > b.high;
-    const lowConf = b.n_closes < LOW_CONF_CLOSES;  // few closes → neutral grey, not a confident red/green
-    const col = lowConf ? "var(--ink-3)" : outLow ? "var(--danger)" : outHigh ? "var(--live)" : "var(--accent)";
-    const caret = outLow ? "▼ " : outHigh ? "▲ " : "";
-    const conn = outLow ? `<line x1="${cxp}" y1="${cy}" x2="${bx0}" y2="${cy}" stroke="${col}" stroke-width="1" stroke-dasharray="2 2" opacity="0.6"/>`
-      : outHigh ? `<line x1="${bx1}" y1="${cy}" x2="${cxp}" y2="${cy}" stroke="${col}" stroke-width="1" stroke-dasharray="2 2" opacity="0.6"/>` : "";
-    const vAnc = labelAnchor(cxp, mid);  // value beside the marker, on the roomier side of the panel
-    return `
-      <text x="${labelW}" y="${cy + 3}" font-size="11" text-anchor="end" fill="var(--ink)" font-weight="600">${escapeHtml(label)}</text>
-      ${conn}
-      <rect x="${bx0}" y="${cy - 5}" width="${Math.max(2, bx1 - bx0)}" height="10" rx="5" fill="var(--surface-2)" stroke="var(--line-2)"/>
-      <line x1="${mx}" y1="${cy - 7}" x2="${mx}" y2="${cy + 7}" stroke="var(--ink-3)" stroke-width="1.5"/>
-      <text x="${bx0}" y="${cy + 18}" font-size="8" text-anchor="middle" fill="var(--ink-3)">${b.low.toFixed(1)}</text>
-      <text x="${mx}" y="${cy + 18}" font-size="8" text-anchor="middle" fill="var(--ink-3)">${b.median.toFixed(1)}</text>
-      <text x="${bx1}" y="${cy + 18}" font-size="8" text-anchor="middle" fill="var(--ink-3)">${b.high.toFixed(1)}</text>
-      <circle cx="${cxp}" cy="${cy}" r="4.5" fill="${col}" stroke="var(--surface)" stroke-width="1.2"/>
-      <text x="${cxp}" y="${cy - 9}" font-size="9.5" text-anchor="${vAnc}" fill="${col}" font-weight="600">${caret}${b.current.toFixed(1)}x</text>
-      <text x="${W - 2}" y="${cy + 3}" font-size="8.5" text-anchor="end" fill="var(--ink-2)">${Math.round(b.percentile * 100)}%ile${lowConf ? "*" : ""}</text>`;
-  }).join("");
-  return `<div class="ds-exhibit" style="margin:8px 0 10px;">
-    <svg viewBox="0 0 ${W} ${H}" width="100%" style="max-width:520px; display:block;" role="img" aria-label="Valuation multiples vs their own trailing range">
-      <text x="0" y="15" font-size="12" font-weight="600" fill="var(--ink)">Multiple vs its own trailing range</text>
-      <text x="0" y="29" font-size="9.5" fill="var(--ink-3)">● current vs low–median–high · log axis · ${bands[0].n_closes} quarterly closes${bands[0].as_of ? " · as-of " + escapeHtml(bands[0].as_of) : ""}</text>
-      ${rows}
+    const lowConf = b.n_closes < LOW_CONF_CLOSES;
+    const pts = b.series.filter((p) => p && p[1] != null);
+    const vals = pts.map((p) => p[1]).concat([b.low, b.high, b.mean]);  // refs stay in-domain
+    const useLog = vals.every((v) => v > 0);  // multiples convention; linear guards a non-positive
+    let dlo = Math.min(...vals), dhi = Math.max(...vals);
+    if (useLog) { dlo *= 0.92; dhi *= 1.08; } else { const p = (dhi - dlo) * 0.08 || 1; dlo -= p; dhi += p; }
+    const sc = (useLog && logScale(dlo, dhi, cy1, cy0)) || linScale(dlo, dhi, cy1, cy0);
+    const px = (i) => x0 + (i / (pts.length - 1)) * (x1 - x0);
+    // trailing-history reference levels: min / avg / max — neutral grey (avg dashed), value at the y-axis
+    const ref = (v, dash, tag) => `<line x1="${x0}" y1="${sc(v)}" x2="${x1}" y2="${sc(v)}" stroke="var(--line-2)"${dash ? ' stroke-dasharray="3 3"' : ""}/><text x="${x0 - 5}" y="${sc(v) + 3}" font-size="8.5" text-anchor="end" fill="var(--ink-3)">${tag}</text>`;
+    let s = `<text x="${x0}" y="${cy0 - 12}" font-size="11.5" font-weight="600" fill="var(--ink-2)">${escapeHtml(label)}</text>`;
+    s += `<text x="${x1}" y="${cy0 - 12}" font-size="8.5" text-anchor="end" fill="var(--ink-3)">${Math.round(b.percentile * 100)}%ile${lowConf ? "*" : ""} · ${b.n_closes}q</text>`;
+    s += ref(b.high, false, b.high.toFixed(1)) + ref(b.mean, true, "avg " + b.mean.toFixed(1)) + ref(b.low, false, b.low.toFixed(1));
+    s += `<polyline points="${pts.map((p, i) => `${px(i)},${sc(p[1])}`).join(" ")}" fill="none" stroke="var(--accent)" stroke-width="1.6"/>`;
+    // current = the last close: DIRECTIONAL color (below/above its own trailing range is a FACT) + value;
+    // neutral grey when low-confidence. The human still judges cheap-vs-dear.
+    const ci = pts.length - 1, cx = px(ci), cyv = sc(b.current);
+    const col = lowConf ? "var(--ink-3)" : b.current < b.low ? "var(--danger)" : b.current > b.high ? "var(--live)" : "var(--accent)";
+    const caret = b.current < b.low ? "▼" : b.current > b.high ? "▲" : "●";
+    s += `<circle cx="${cx}" cy="${cyv}" r="3.5" fill="${col}" stroke="var(--surface)" stroke-width="1.2"/>`;
+    s += `<text x="${cx}" y="${cyv - 8}" font-size="10.5" text-anchor="end" fill="${col}" font-weight="700" ${halo}>${caret} ${b.current.toFixed(1)}x</text>`;
+    s += `<text x="${x0}" y="${cy1 + 15}" font-size="8.5" fill="var(--ink-3)">${escapeHtml(yr(pts[0][0]))}</text>`;
+    s += `<text x="${x1}" y="${cy1 + 15}" font-size="8.5" text-anchor="end" fill="var(--ink-3)">${escapeHtml(yr(pts[ci][0]))}</text>`;
+    return s;
+  };
+
+  return `<div class="ds-exhibit" style="margin:8px 0 12px;">
+    <svg viewBox="0 0 ${W} ${H}" width="100%" style="max-width:760px; display:block;" role="img" aria-label="Valuation multiples vs their own trailing range">
+      <text x="0" y="18" font-size="13" font-weight="600" fill="var(--ink)">Multiple vs its own trailing range</text>
+      <text x="0" y="33" font-size="9.5" fill="var(--ink-3)">the multiple over its quarterly closes (log-scaled) · avg / min / max = trailing history, current excluded${bands[0].as_of ? " · as-of " + escapeHtml(bands[0].as_of) : ""}</text>
+      ${bands.map((b, i) => panel(b, geo[i][0], geo[i][1])).join("")}
     </svg>
-    ${anyLowConf ? `<div class="muted" style="font-size:10px; margin-top:1px;">* fewer than ${LOW_CONF_CLOSES} closes — low-confidence read (a floor on a handful of points is near-tautological post-drawdown); direction shown in neutral, not red/green.</div>` : ""}
-    <div class="muted" style="font-size:10.5px; margin-top:1px;">Source: CIQ Financials→Multiples (quarterly closes; current excluded from the trailing range).</div>
+    ${anyLowConf ? `<div class="muted" style="font-size:10px; margin-top:1px;">* fewer than ${LOW_CONF_CLOSES} closes — low-confidence read; current shown in neutral, not red/green.</div>` : ""}
+    <div class="muted" style="font-size:10.5px; margin-top:1px;">Source: CIQ Financials→Multiples (quarterly closes; avg / min / max exclude the current).</div>
   </div>`;
 }
 

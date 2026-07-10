@@ -168,10 +168,14 @@ def _own_history_band(metric: str, pairs: list[tuple[Any, float]]) -> OwnHistory
     vals = [v for _, v in pairs]
     cur, hist = vals[-1], vals[:-1]
     d = pairs[-1][0]
+    # full (date, multiple) close path for the line (current = last point; dates label the x-axis).
+    # mean/min/max are over history (current excluded), like low/high.
+    series = [(p.isoformat() if p is not None else "", v) for p, v in pairs]
     return OwnHistoryBand(
         metric=metric, current=cur, low=min(hist), high=max(hist),
         median=statistics.median(hist), percentile=sum(1 for h in hist if h <= cur) / len(hist),
         n_closes=len(hist), as_of=d.isoformat() if d is not None else None,
+        mean=statistics.mean(hist), series=series,
     )
 
 
