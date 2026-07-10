@@ -1327,15 +1327,16 @@ const _numC = (v) => (v == null ? DASH : _thou(v > -0.05 && v < 0 ? 0 : v, 1)); 
 
 // (B1) per-peer grid → the shared table; name row + median footer visually distinct
 function peerGridTable(s) {
-  const label = "Per-peer grid (cap · margin · growth · leverage — name vs peers)";
+  const label = "Per-peer grid (cap · valuation · margin · growth · leverage — name vs peers)";
   if (!s || s.status !== "present" || !Array.isArray(s.value)) return fact(label, s);
-  const cols = ["Cap", "EBITDA margin", "Rev growth (1y)", "EBITDA growth (1y)",
-                "Total debt/EBITDA", "Net debt ($M)"];  // B.1: full-word headers
+  const cols = ["Cap", "TEV/EBITDA", "TEV/Rev", "P/E", "EBITDA margin", "Rev growth (1y)",
+                "Total debt/EBITDA", "Net debt ($M)"];  // B2: valuation multiples lead (≤8 cols)
   const rows = s.value.map((r) => ({
     label: r.name + (r.is_name ? " · the name" : (r.is_median ? " (peers)" : "")),
     cls: r.is_name ? "name-row" : (r.is_median ? "median-row" : ""),
-    cells: [_capC(r.market_cap), _pctC(r.ebitda_margin), _pctC(r.rev_growth_1y),
-            _pctC(r.ebitda_growth_1y), _ratioC(r.debt_to_ebitda), _netDebtC(r.net_debt)],
+    cells: [_capC(r.market_cap), _ratioC(r.tev_ebitda), _ratioC(r.tev_rev), _ratioC(r.pe),
+            _pctC(r.ebitda_margin), _pctC(r.rev_growth_1y), _ratioC(r.debt_to_ebitda),
+            _netDebtC(r.net_debt)],
   }));
   return dataTable(label, s.source_ref, cols, rows, "");
 }

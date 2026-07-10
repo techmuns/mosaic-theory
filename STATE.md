@@ -2967,8 +2967,19 @@ Recommendation/Target slot is the HUMAN's ("not yet logged"); consensus, the imp
   `test_endnotes_complete_on_every_committed_dossier` (the safety net — it caught the stock-info line);
   web — MVST/VRRM/AORT render with 0 `.cite` spans, 0 `↳`, 0 `[?]` placeholders, per-tier Sources
   (maxMark == source count), sequential first-occurrences, no console errors. MVST/VRRM `.md` re-rendered.
-  ruff + mypy --strict + full pytest green. **STILL OPEN:** B2 (per-peer valuation grid), cohort
-  re-assembly; Phase-3 charts deferred behind them.
+  ruff + mypy --strict + full pytest green.
+- **B2 PER-PEER VALUATION — SHIPPED (2026-07-10, feat/dossier-peer-valuation, stacked on A2).** The
+  per-peer grid gains the LTM valuation multiples that were the point of a per-peer comparison:
+  **TEV/EBITDA · TEV/Rev · P/E**, joined from the CIQ Trading-Multiples sheet BY TICKER (cols 2/1/4) —
+  the sheet `_comps_layout` already located but `peer_grid` dropped. `PeerRow` gains `tev_ebitda`/
+  `tev_rev`/`pe` (strings, "NM" preserved, None when the sheet/row is absent — the read is OPTIONAL so
+  the grid still builds without it). Grid re-ordered to lead with valuation and capped at **8 columns**
+  for print (EBITDA growth dropped from the render, kept in JSON). Both renderers. **VERIFIED (real):**
+  VRRM name TEV/EBITDA 4.7 / TEV/Rev 1.8 / P/E 5.4 vs peer-median 10.3 / 2.0 / 15.65 (the discount is
+  now visible per-peer); MVST Samsung-SDI P/E "NM" preserved. Pins: a deterministic extraction pin
+  (join + NM + median + fail-honest absence) + an e2e render-column pin on committed VRRM. VRRM
+  re-assembled + frontend-mirrored; ruff + mypy + full pytest green; web grid verified in the preview
+  (A2 endnotes intact, no console errors). **STILL OPEN:** cohort re-assembly; Phase-3 charts behind it.
 
 **RC-1 primary-source text extraction — BUILT + VERIFIED, PR OPEN (feat/primary-source-text, 2026-07-06).**
 DETERMINISTIC (anchored, never LLM) parsers of the EX-99.1 release (A, `vinci/edgar/release_parse.py`) and

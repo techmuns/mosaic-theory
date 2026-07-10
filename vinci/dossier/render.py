@@ -421,14 +421,16 @@ def _split_note(text: str) -> tuple[str, str]:
 
 
 def _peer_grid_lines(s: Sourced[Any]) -> list[str]:
-    """(B1) Per-peer comparability grid as a table: peers + the name (bolded) + the median footer;
-    cap · EBITDA margin · rev growth · EBITDA growth · Debt/EBITDA · net debt. No computed delta."""
-    label = "Per-peer grid (cap · margin · growth · leverage — name vs peers)"
+    """(B1/B2) Per-peer comparability grid: peers + the name (bolded) + the median footer;
+    cap · TEV/EBITDA · TEV/Rev · P/E · margin · rev growth · Debt/EBITDA · net debt. No computed
+    delta — the human compares the name row against the peers + the median. (EBITDA growth stays in
+    the JSON; the grid is capped at 8 value columns for print — the valuation multiples lead.)"""
+    label = "Per-peer grid (cap · valuation · margin · growth · leverage — name vs peers)"
     if s.status is not SourceStatus.PRESENT or not s.value:
         return [_fact(label, s)]
-    # full-word headers (B.1 item 2); 6 value columns — the row LABEL is the company (the shared
-    # renderer prepends the empty label header), so the header count matches the cell count exactly.
-    cols = ["Cap", "EBITDA margin", "Rev growth (1y)", "EBITDA growth (1y)",
+    # full-word headers; 8 value columns — the row LABEL is the company (the shared renderer adds
+    # the empty label header), so the header count matches the cell count exactly.
+    cols = ["Cap", "TEV/EBITDA", "TEV/Rev", "P/E", "EBITDA margin", "Rev growth (1y)",
             "Total debt/EBITDA", "Net debt ($M)"]
     trows: list[list[str]] = []
     name_rows: set[int] = set()
@@ -437,8 +439,9 @@ def _peer_grid_lines(s: Sourced[Any]) -> list[str]:
             name_rows.add(i)
         tag = " · the name" if r.is_name else (" (peers)" if r.is_median else "")
         trows.append([
-            r.name + tag, _cap(r.market_cap), _pctc(r.ebitda_margin), _pctc(r.rev_growth_1y),
-            _pctc(r.ebitda_growth_1y), _ratioc(r.debt_to_ebitda), _netdebt(r.net_debt),
+            r.name + tag, _cap(r.market_cap), _ratioc(r.tev_ebitda), _ratioc(r.tev_rev),
+            _ratioc(r.pe), _pctc(r.ebitda_margin), _pctc(r.rev_growth_1y),
+            _ratioc(r.debt_to_ebitda), _netdebt(r.net_debt),
         ])
     return _table(label, s.source_ref, cols, trows, name_rows=frozenset(name_rows))
 

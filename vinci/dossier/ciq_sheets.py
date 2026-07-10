@@ -2132,6 +2132,10 @@ def peer_grid(bundle: CiqBundle) -> Sourced[list[PeerRow]]:
         op = bundle.sheet("comps", "Operating Statistics")
     except CiqUnavailableError as exc:
         return _miss_or_unknown(bundle, "comps", exc)
+    try:  # (B2) valuation multiples are OPTIONAL — absent Trading-Multiples → cells stay None
+        tm: Rows | None = bundle.sheet("comps", "Trading Multiples")
+    except CiqUnavailableError:
+        tm = None
     fh, fpeers, ftgt = _comps_layout(fd, bundle.ticker)
     _oh, opeers, otgt = _comps_layout(op, bundle.ticker)
     if fh is None or not fpeers:
@@ -2140,6 +2144,25 @@ def peer_grid(bundle: CiqBundle) -> Sourced[list[PeerRow]]:
     for i in ([otgt] if otgt is not None else []) + opeers:
         if (t := _row_ticker(op[i][0])):
             op_by_tkr[t] = i
+    tpeers: list[int] = []
+    tm_by_tkr: dict[str, int] = {}
+    if tm is not None:  # (B2) join the per-peer LTM multiples by ticker (like Operating Stats)
+        _th, tpeers, ttgt = _comps_layout(tm, bundle.ticker)
+        for i in ([ttgt] if ttgt is not None else []) + tpeers:
+            if (t := _row_ticker(tm[i][0])):
+                tm_by_tkr[t] = i
+
+    def _mult(tkr: str, ci: int) -> str | None:  # a per-peer LTM multiple token ("NM"/num), or None
+        ti = tm_by_tkr.get(tkr)
+        if tm is None or ti is None:
+            return None
+        return _tok(v) if (v := _comps_cell(tm, ti, ci)) is not None else None
+
+    def _med_mult(ci: int) -> str | None:  # median of the numeric per-peer multiples for the footer
+        if tm is None:
+            return None
+        xs = [v for i in tpeers if isinstance((v := _comps_cell(tm, i, ci)), int | float)]
+        return f"{statistics.median(xs):g}" if xs else None
 
     def row_for(fi: int, is_name: bool) -> PeerRow:
         tkr = _row_ticker(fd[fi][0]) or ""
@@ -2153,6 +2176,7 @@ def peer_grid(bundle: CiqBundle) -> Sourced[list[PeerRow]]:
             rev_growth_1y=_num_or_none(_comps_cell(op, oi, 5)) if oi is not None else None,
             ebitda_growth_1y=_num_or_none(_comps_cell(op, oi, 6)) if oi is not None else None,
             debt_to_ebitda=(_tok(de) if de is not None else None),
+            tev_ebitda=_mult(tkr, 2), tev_rev=_mult(tkr, 1), pe=_mult(tkr, 4),  # (B2) LTM multiples
         )
 
     peers = [row_for(i, False) for i in fpeers]
@@ -2175,6 +2199,7 @@ def peer_grid(bundle: CiqBundle) -> Sourced[list[PeerRow]]:
         rev_growth_1y=_med([p.rev_growth_1y for p in peers]),
         ebitda_growth_1y=_med([p.ebitda_growth_1y for p in peers]),
         debt_to_ebitda=(f"{med_de:.1f}" if med_de is not None else None),
+        tev_ebitda=_med_mult(2), tev_rev=_med_mult(1), pe=_med_mult(4),  # (B2) LTM multiple medians
     ))
     return Sourced.present(
         rows,
