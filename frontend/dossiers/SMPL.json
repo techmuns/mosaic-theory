@@ -8,7 +8,7 @@
     "valuation": {
       "cross_sectional": {
         "value": "EV/EBITDA 6x vs peer median 7.8x (-24%); P/E NM vs peer median 14.6",
-        "source_ref": "CIQ Comparable Analysis→Trading Multiples (name vs self-computed peer median)",
+        "source_ref": "CIQ Comparable Analysis→Trading Multiples (name vs peer Median)",
         "status": "present",
         "note": null
       },

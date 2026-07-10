@@ -246,7 +246,7 @@ _NM = a real state (negative base), not missing_
 | USANA Health Sciences | $354M | 2.9 | 0.3 | 39.8 | 9% | 6% | 0.2 | 149 (net cash) |
 | Nu Skin Enterprises | $250M | 2.2 | 0.2 | 4.8 | 9% | -14% | 1.9 | 103 |
 | FitLife Brands | $111M | 11.2 | 1.7 | 19.7 | 15% | 42% | 3.1 | 41 |
-| Peer median (peers) | $1.2B | 6.2 | 1.1 | 19.3 | 16% | 4% | 2.5 | 1,037 |
+| Peer median (peers) | $1.2B | 6.3 | 1.2 | 19.3 | 16% | 4% | 2.5 | 1,037 |
 
 
 
@@ -314,14 +314,14 @@ _NM = a real state (negative base), not missing_
 - The company is buying back stock (129.2M → 116.3M shares, -10.0% over ~1.7y) and interest coverage is 4.0x, consistent with a self-funding capital posture. [8]
 - Absolute EBITDA has grown structurally over the cycle (227 → 234 → 316 → 424 in FY24, now 312 LTM) and revenue has compounded from 1,247 to 2,332, so the recent margin-% compression sits on a far larger absolute base than 2021 — a % can fall while the dollar base is materially higher. [9]
 - Management has a clean guidance-delivery record — EBITDA actual ≥ guided floor 7/7 resolved and revenue ≥ floor 9/11, most recent FY2025 MET — arguing the reset guide (EBITDA 315–335) is credible rather than a first of serial cuts. [45]
-- On the consensus comp read the name screens cheap on earnings — P/E 8.8x vs peer median 19.3x (-54%) — but the peer set is HETEROGENEOUS (caps span $111M–$36.4B, 327x) so this is a confidence-gated input, not a clean benchmark; the human must judge whether the discount is EARNED or RESIDUAL. [49]
+- On the consensus comp read the name screens cheap on earnings — P/E 8.8x vs peer median 19.3x (-54%) — but the peer set is HETEROGENEOUS (caps span $111M–$36.4B, 327x) so this is a confidence-gated input, not a clean benchmark; the human must judge whether the discount is EARNED or RESIDUAL. [14]
 - On the trailing-vs-forward peer spread the name sits BELOW peers on both LTM (7.9x vs 6.2x median is a premium on EBITDA, but P/E -54%) and NTM TEV/EBITDA (7.78x vs peer median 8.7x) and NTM P/E (8.78x vs peer median 10.97x) — posing whether the earnings discount is a residual overshoot rather than fully earned. [42]
 
 ### Bear case (terminal / value-trap)
 - On the fundamental_deltas the peer discount looks substantially EARNED — name EBITDA margin 13% vs peer 16%, EBITDA growth -31% vs peer -6%, Debt/EBITDA 3.9 vs peer 2.5, LT EPS growth -7% vs peer +7% — worse on margin, growth and leverage points toward value-trap risk, not clean overshoot. [10]
 - Leverage is elevated at net-debt/EBITDA 3.8x (and total-debt/EBITDA 3.9x vs peer median 2.5x), with equity book value negative (-$4.28/sh), so a further EBITDA leg down tightens the credit picture materially. [3]
 - Forward consensus has collapsed across the board — FY26 EBITDA cut -41% (536.4 → 318.6), EPS Normalized -51% (2.53 → 1.25), revenue -9% (12m → latest) — so the low trailing multiple is partly the market pricing a genuine earnings reset, not purely optical cheapness. [11]
-- Sell-side conviction has broken — recommendation now Hold (3.00), consensus target mean $13.69 barely above the $13.18 price, LT growth mean -7.2%, with brokers cutting targets from as high as $34/$35 to $10–$13. [50]
+- Sell-side conviction has broken — recommendation now Hold (3.00), consensus target mean $13.69 barely above the $13.18 price, LT growth mean -7.2%, with brokers cutting targets from as high as $34/$35 to $10–$13. [49]
 - The EBITDA-margin % decline is NOT merely optical: absolute EBITDA has also fallen from the FY24 peak (424 → 376 FY25 → 312 LTM) alongside margin compressing 21% → 16% → 13%, so both the ratio AND the dollar base are shrinking off the peak — this is the REAL signal on the recent leg, not a % artifact. [9]
 - Short interest is rising sharply — 11.9M → 15.8M shares (+33.1%), 13.6% of shares outstanding — signalling growing bearish positioning into the reset. [23]
 - The gap-down driver is confirmed as the Q2 earnings print rather than a transient non-narrative item. [24]
@@ -336,7 +336,7 @@ _NM = a real state (negative base), not missing_
 
 ### …evidence against
 - The magnitude and breadth of the cut argue structural — FY26 EBITDA -41%, gross margin guided down to ~27% from ~30%+, and EBITDA growth -31% vs peers -6%. [11]
-- Quarterly EBITDA margin has decayed through the year (23%/21%/22% FY24 → 12% latest FY26Q), showing sustained rather than single-quarter deterioration. [51]
+- Quarterly EBITDA margin has decayed through the year (23%/21%/22% FY24 → 12% latest FY26Q), showing sustained rather than single-quarter deterioration. [50]
 
 ### Key unknowns
 - Current TEV/LTM EBITDA is trailing-only with no forward-adjusted basis in the revised 99.1 guidance — cannot cleanly distinguish cheap-overshoot from cheap-terminal (adjusted EPS and adjusted EBITDA both UNKNOWN).
@@ -390,7 +390,7 @@ _NM = a real state (negative base), not missing_
 _E = consensus (Estimates→Trends 'Current'), as-of ≥2026-05-14; (R) = Reclassified basis · FCF (levered, CIQ) = CIQ 'Levered Free Cash Flow', NOT CFO − capex_
 
 ### Trailing 8 quarters (the recent-quarter trajectory)
-- **Quarterly financials** — [51]  <!-- ds-table -->
+- **Quarterly financials** — [50]  <!-- ds-table -->
 
 |  | FY24 | FY24 | FY24 | FY25 | FY25 | FY25 | FY25 | FY26 |
 |---|---|---|---|---|---|---|---|---|
@@ -404,8 +404,8 @@ _E = consensus (Estimates→Trends 'Current'), as-of ≥2026-05-14; (R) = Reclas
 _QoQ/YoY same-basis only; (R) = Reclassified_
 
 ### Balance-sheet posture
-- **Posture:** as of FY26 ($M): cash & ST inv 33; total debt 1,222; net debt 1,190; equity -498; net working capital 455; net-debt/EBITDA → see the Leverage & survival block (not recomputed) [52]
-- **Coherence — BS vs implied-valuation bridge:** cash BS $33M / bridge $33M; debt BS $1,222M / bridge $1,222M — reconcile with the implied-valuation bridge. [53]
+- **Posture:** as of FY26 ($M): cash & ST inv 33; total debt 1,222; net debt 1,190; equity -498; net working capital 455; net-debt/EBITDA → see the Leverage & survival block (not recomputed) [51]
+- **Coherence — BS vs implied-valuation bridge:** cash BS $33M / bridge $33M; debt BS $1,222M / bridge $1,222M — reconcile with the implied-valuation bridge. [52]
 
 
 ### Capital-structure provenance — on-demand (web collapsed · print-excluded · JSON) — full panel · pointers · terms
@@ -418,7 +418,7 @@ _QoQ/YoY same-basis only; (R) = Reclassified_
 | Revolving Credit Facility | Revolving Credit | $250.0M | 5.820% | Various Benchmarks | 2030-08-22 | Y | N |  |
 
 - **8-Ks at instrument maturities:** _UNKNOWN_ — no trailing-12m instrument maturity to anchor an 8-K
-- **Covenant / contract pointers (CIK-verified execution filings)** — [54]  <!-- ds-table -->
+- **Covenant / contract pointers (CIK-verified execution filings)** — [53]  <!-- ds-table -->
 
 |  | Filing | Date | Accession / exhibit (or note) |
 |---|---|---|---|
@@ -427,7 +427,7 @@ _QoQ/YoY same-basis only; (R) = Reclassified_
 | 7.00% Senior Notes Maturing in March 2030 | — | — | no contract-level filing expected (aggregate line item) |
 | Operating Lease Liabilities | — | — | no contract-level filing expected (aggregate line item) |
 
-- **Covenant terms — Revolving Credit Facility (governing agreement)** — [55]  <!-- ds-table -->
+- **Covenant terms — Revolving Credit Facility (governing agreement)** — [54]  <!-- ds-table -->
 
 |  | Governing value (lead · clause ≤200c) | Source § |
 |---|---|---|
@@ -460,7 +460,7 @@ _Source §: 8-K 0001772016-21-000029 · ex10-1_amend2creditagmt.htm_
 
 
 ### Management commentary
-- **Earnings call (transcript pointer — read the file):** 2 earnings-call transcript(s) on file — read in full for management posture: BellRing Brands, Inc., Q1 2026 Earnings Call, Feb 03, 2026.rtf; BellRing Brands, Inc., Q2 2026 Earnings Call, May 05, 2026.rtf (pointer only; the synthesis cites them, the machine does not curate an excerpt) [56]
+- **Earnings call (transcript pointer — read the file):** 2 earnings-call transcript(s) on file — read in full for management posture: BellRing Brands, Inc., Q1 2026 Earnings Call, Feb 03, 2026.rtf; BellRing Brands, Inc., Q2 2026 Earnings Call, May 05, 2026.rtf (pointer only; the synthesis cites them, the machine does not curate an excerpt) [55]
 
 ---
 > **No BUY/AVOID here — this dossier only assembles and cites.** The verdict is the human's, logged separately via the ledger with a frozen entry price.
@@ -480,7 +480,7 @@ _Source §: 8-K 0001772016-21-000029 · ex10-1_amend2creditagmt.htm_
 [11] `CIQ Estimates→Trends (current-FY consensus path; ragged, absent lookbacks n/a)`
 [12] `CIQ Financials→Income Statement + Cash Flow (annual) + Estimates→Trends (FY E)`
 [13] `CIQ Financials→Ratios (latest period)`
-[14] `CIQ Comparable Analysis→Trading Multiples (name vs self-computed peer median)`
+[14] `CIQ Comparable Analysis→Trading Multiples (name vs peer Median)`
 [15] `CIQ Financials→Multiples (Close; last col = current, excluded from history)`
 [16] `CIQ Comparable Analysis→Financial Data (market-cap dispersion) + Business Description`
 [17] `CIQ Estimates→Multiples (forward-multiple ladder: NTM + FY26→FY33)`
@@ -515,11 +515,10 @@ _Source §: 8-K 0001772016-21-000029 · ex10-1_amend2creditagmt.htm_
 [46] `CIQ Estimates→Recent Changes (250 broker revision events)  [data ≥ 2026-05-14 · export date unverified]`
 [47] `CIQ Estimates→Surprise (annual)`
 [48] `CIQ Customers&Suppliers BellRing Brands Inc NYSE BRBR Customers.rtf`
-[49] `CIQ Comparable Analysis→Trading Multiples (name vs peer Median)`
-[50] `CIQ Estimates→Consensus`
-[51] `CIQ Financials→Income Statement (quarterly, trailing 8Q)`
-[52] `CIQ Financials→Balance Sheet (quarterly, FY26)`
-[53] `CIQ Financials→Balance Sheet vs Comparable Analysis→Implied Valuation`
-[54] `EDGAR 10-K exhibit index + CIK-scoped efts (agreement-class, exhibit-bearing)`
-[55] `fenced Tier-2 extraction (verbatim, source-bound)`
-[56] `CIQ transcript(s): BellRing Brands, Inc., Q1 2026 Earnings Call, Feb 03, 2026.rtf; BellRing Brands, Inc., Q2 2026 Earnings Call, May 05, 2026.rtf`
+[49] `CIQ Estimates→Consensus`
+[50] `CIQ Financials→Income Statement (quarterly, trailing 8Q)`
+[51] `CIQ Financials→Balance Sheet (quarterly, FY26)`
+[52] `CIQ Financials→Balance Sheet vs Comparable Analysis→Implied Valuation`
+[53] `EDGAR 10-K exhibit index + CIK-scoped efts (agreement-class, exhibit-bearing)`
+[54] `fenced Tier-2 extraction (verbatim, source-bound)`
+[55] `CIQ transcript(s): BellRing Brands, Inc., Q1 2026 Earnings Call, Feb 03, 2026.rtf; BellRing Brands, Inc., Q2 2026 Earnings Call, May 05, 2026.rtf`

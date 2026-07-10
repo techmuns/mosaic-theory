@@ -496,7 +496,7 @@ _Source §: 8-K 0001564590-18-024644 · vrrm-ex1010_20.htm_
 [13] `CIQ Estimates→Trends (current-FY consensus path; ragged, absent lookbacks n/a)`
 [14] `CIQ Financials→Income Statement + Cash Flow (annual) + Estimates→Trends (FY E)`
 [15] `CIQ Financials→Ratios (latest period)`
-[16] `CIQ Comparable Analysis→Trading Multiples (name vs self-computed peer median)`
+[16] `CIQ Comparable Analysis→Trading Multiples (name vs peer Median)`
 [17] `CIQ Financials→Multiples (Close; last col = current, excluded from history)`
 [18] `CIQ Comparable Analysis→Financial Data (market-cap dispersion) + Business Description`
 [19] `CIQ Estimates→Multiples (forward-multiple ladder: NTM + FY26→FY33)`

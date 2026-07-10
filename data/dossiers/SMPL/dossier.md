@@ -255,7 +255,7 @@ _NM = a real state (negative base), not missing_
 | John B. Sanfilippo & Son | $985M | 8.4 | 0.9 | 14.8 | 10% | 5% | 0.8 | 102 |
 | Utz Brands | $651M | 22.9 | 1.5 | NM | 7% | 2% | 10.6 | 965 |
 | The Hain Celestial Group | $54M | 6.2 | 0.4 | NM | 6% | -10% | 6.1 | 550 |
-| Peer median (peers) | $2.0B | 7.8 | 1.3 | 14.6 | 14% | 0% | 3.4 | 757 |
+| Peer median (peers) | $2.0B | 7.9 | 1.3 | 14.6 | 14% | 0% | 3.4 | 757 |
 
 
 
@@ -460,7 +460,7 @@ _QoQ/YoY same-basis only; (R) = Reclassified_
 [12] `CIQ Estimates→Revisions (next-2-FQ breadth; 1m/2m/3m Upward/Downward)`
 [13] `CIQ Financials→Income Statement + Cash Flow (annual) + Estimates→Trends (FY E)`
 [14] `CIQ Financials→Ratios (latest period)`
-[15] `CIQ Comparable Analysis→Trading Multiples (name vs self-computed peer median)`
+[15] `CIQ Comparable Analysis→Trading Multiples (name vs peer Median)`
 [16] `CIQ Financials→Multiples (Close; last col = current, excluded from history)`
 [17] `CIQ Comparable Analysis→Financial Data (market-cap dispersion) + Business Description`
 [18] `CIQ Estimates→Multiples (forward-multiple ladder: NTM + FY26→FY33)`

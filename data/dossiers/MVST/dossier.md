@@ -279,7 +279,7 @@ _NM = a real state (negative base), not missing_
 | **Microvast Holdings · the name** | **$423M** | **11.1** | **1.7** | **NM** | **14%** | **-10%** | **5.8** | **200** |
 | Leclanché SA | $167M | NM | 11.2 | NM | -265% | 32% | NM | 100 |
 | Forsee Power S.A. | $34M | NM | 0.7 | NM | -10% | -21% | NM | 63 |
-| Peer median (peers) | $19.7B | 14.5 | 3.2 | 39.0 | 6% | 1% | 2.0 | 1,031 |
+| Peer median (peers) | $19.7B | 14.5 | 3.3 | 39.0 | 6% | 1% | 2.0 | 1,031 |
 
 
 

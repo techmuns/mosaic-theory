@@ -333,7 +333,7 @@ _NM = a real state (negative base), not missing_
 - Absolute EBITDA has held near cycle-high levels ($1,295M FY24 → $1,266M FY25 → $1,231M LTM) even as the margin % slipped, so the top-line business has not collapsed. [35]
 - Revenue has kept growing (FY24 $9,619M → FY25 $9,826M → LTM $9,954M, +4.1% latest same-quarter YoY), inconsistent with a terminal top-line unwind. [49]
 - The fundamental_deltas show the name only modestly behind the peer median on growth (rev 4% vs 5%, LT EPS 8% vs 7%) while trailing more on margin (12% vs 17%) and leverage (3.4 vs 2.0) — posing whether the multiple discount is fully EARNED by those gaps or partly RESIDUAL overshoot. [50]
-- On TEV/EBITDA the name trades 4.1x vs a peer median of 5.3x (-23%), but comparability is flagged HETEROGENEOUS (caps $103M–$32.0B, 311x span), so this discount is a confidence-gated input, not a clean benchmark; the human must judge whether it is EARNED or RESIDUAL against the fundamental deltas. [51]
+- On TEV/EBITDA the name trades 4.1x vs a peer median of 5.3x (-23%), but comparability is flagged HETEROGENEOUS (caps $103M–$32.0B, 311x span), so this discount is a confidence-gated input, not a clean benchmark; the human must judge whether it is EARNED or RESIDUAL against the fundamental deltas. [14]
 - The company is buying back stock (61.0M vs 64.8M shares, -5.9% over ~1.7y) and analysts still carry a mean target of $41.25 / median $39.00 with a Buy-tilted rating mix, versus a $21.38 close. [36]
 
 ### Bear case (terminal / value-trap)
@@ -407,7 +407,7 @@ _NM = a real state (negative base), not missing_
 _E = consensus (Estimates→Trends 'Current'), as-of ≥2026-06-05; (R) = Reclassified basis · FCF (levered, CIQ) = CIQ 'Levered Free Cash Flow', NOT CFO − capex_
 
 ### Trailing 8 quarters (the recent-quarter trajectory)
-- **Quarterly financials** — [52]  <!-- ds-table -->
+- **Quarterly financials** — [51]  <!-- ds-table -->
 
 |  | Q2-24 (R) | Q3-24 (R) | Q4-24 (R) | Q1-25 (R) | Q2-25 | Q3-25 | Q4-25 | Q1-26 |
 |---|---|---|---|---|---|---|---|---|
@@ -421,8 +421,8 @@ _E = consensus (Estimates→Trends 'Current'), as-of ≥2026-06-05; (R) = Reclas
 _QoQ/YoY same-basis only; (R) = Reclassified_
 
 ### Balance-sheet posture
-- **Posture:** as of Q1-26 ($M): cash & ST inv 223; total debt 5,689; net debt 5,467; equity 2,788; net working capital 466; net-debt/EBITDA → see the Leverage & survival block (not recomputed) [53]
-- **Coherence — BS vs implied-valuation bridge:** cash BS $223M / bridge $223M; debt BS $5,689M / bridge $5,689M — reconcile with the implied-valuation bridge. [54]
+- **Posture:** as of Q1-26 ($M): cash & ST inv 223; total debt 5,689; net debt 5,467; equity 2,788; net working capital 466; net-debt/EBITDA → see the Leverage & survival block (not recomputed) [52]
+- **Coherence — BS vs implied-valuation bridge:** cash BS $223M / bridge $223M; debt BS $5,689M / bridge $5,689M — reconcile with the implied-valuation bridge. [53]
 
 
 ### Capital-structure provenance — on-demand (web collapsed · print-excluded · JSON) — full panel · pointers · terms
@@ -440,8 +440,8 @@ _QoQ/YoY same-basis only; (R) = Reclassified_
 | Sellers Note | Bonds and Notes | – | 2.000% | NA | 2025-09-25 | N | N | EUR |
 | Senior Unsecured Revolving Credit Facility | Revolving Credit | – | NA | Benchmark | 2030-04-11 | N | N | USD |
 
-- **8-Ks at instrument maturities:** 8-K at maturity 2025-09-25: filed 2025-09-25 [0001803599-25-000143] 2.02 Results of Operations and Financial Condition, 9.01 Financial Statements and Exhibits — read for resolution [55]
-- **Covenant / contract pointers (CIK-verified execution filings)** — [56]  <!-- ds-table -->
+- **8-Ks at instrument maturities:** 8-K at maturity 2025-09-25: filed 2025-09-25 [0001803599-25-000143] 2.02 Results of Operations and Financial Condition, 9.01 Financial Statements and Exhibits — read for resolution [54]
+- **Covenant / contract pointers (CIK-verified execution filings)** — [55]  <!-- ds-table -->
 
 |  | Filing | Date | Accession / exhibit (or note) |
 |---|---|---|---|
@@ -451,7 +451,7 @@ _QoQ/YoY same-basis only; (R) = Reclassified_
 | 6.850% Senior Notes Due 2033 | — | — | no contract-level filing expected (aggregate line item) |
 | Operating Lease | — | — | no contract-level filing expected (aggregate line item) |
 
-- **Covenant terms — Credit Facility (governing agreement)** — [57]  <!-- ds-table -->
+- **Covenant terms — Credit Facility (governing agreement)** — [56]  <!-- ds-table -->
 
 |  | Governing value (lead · clause ≤200c) | Source § |
 |---|---|---|
@@ -485,7 +485,7 @@ _Source §: 8-K 0001803599-23-000177 · exhibit41indenture.htm_
 
 
 ### Management commentary
-- **Earnings call (transcript pointer — read the file):** 2 earnings-call transcript(s) on file — read in full for management posture: Concentrix Corporation, Q1 2026 Earnings Call, Mar 24, 2026.rtf; Concentrix Corporation, Q4 2025 Earnings Call, Jan 13, 2026.rtf (pointer only; the synthesis cites them, the machine does not curate an excerpt) [58]
+- **Earnings call (transcript pointer — read the file):** 2 earnings-call transcript(s) on file — read in full for management posture: Concentrix Corporation, Q1 2026 Earnings Call, Mar 24, 2026.rtf; Concentrix Corporation, Q4 2025 Earnings Call, Jan 13, 2026.rtf (pointer only; the synthesis cites them, the machine does not curate an excerpt) [57]
 
 ---
 > **No BUY/AVOID here — this dossier only assembles and cites.** The verdict is the human's, logged separately via the ledger with a frozen entry price.
@@ -505,7 +505,7 @@ _Source §: 8-K 0001803599-23-000177 · exhibit41indenture.htm_
 [11] `EDGAR latest-Q OCF sign + CIQ LTM FCF sign`
 [12] `CIQ Financials→Income Statement + Cash Flow (annual) + Estimates→Trends (FY E)`
 [13] `CIQ Financials→Ratios (latest period)`
-[14] `CIQ Comparable Analysis→Trading Multiples (name vs self-computed peer median)`
+[14] `CIQ Comparable Analysis→Trading Multiples (name vs peer Median)`
 [15] `CIQ Financials→Multiples (Close; last col = current, excluded from history)`
 [16] `CIQ Comparable Analysis→Financial Data (market-cap dispersion) + Business Description`
 [17] `CIQ Estimates→Multiples (forward-multiple ladder: NTM + FY26→FY33)`
@@ -542,11 +542,10 @@ _Source §: 8-K 0001803599-23-000177 · exhibit41indenture.htm_
 [48] `CIQ Customers&Suppliers Concentrix Corporation NasdaqGS CNXC Customers.rtf`
 [49] `CIQ Financials→Income Statement + Segments + Ratios (multi-year columns)`
 [50] `CIQ Comparable Analysis→Operating Statistics (name vs peer median: growth/margin/leverage/beta)`
-[51] `CIQ Comparable Analysis→Trading Multiples (name vs peer Median)`
-[52] `CIQ Financials→Income Statement (quarterly, trailing 8Q)`
-[53] `CIQ Financials→Balance Sheet (quarterly, Q1-26)`
-[54] `CIQ Financials→Balance Sheet vs Comparable Analysis→Implied Valuation`
-[55] `EDGAR 8-K submissions (±10d of instrument maturities)`
-[56] `EDGAR 10-K exhibit index + CIK-scoped efts (agreement-class, exhibit-bearing)`
-[57] `fenced Tier-2 extraction (verbatim, source-bound)`
-[58] `CIQ transcript(s): Concentrix Corporation, Q1 2026 Earnings Call, Mar 24, 2026.rtf; Concentrix Corporation, Q4 2025 Earnings Call, Jan 13, 2026.rtf`
+[51] `CIQ Financials→Income Statement (quarterly, trailing 8Q)`
+[52] `CIQ Financials→Balance Sheet (quarterly, Q1-26)`
+[53] `CIQ Financials→Balance Sheet vs Comparable Analysis→Implied Valuation`
+[54] `EDGAR 8-K submissions (±10d of instrument maturities)`
+[55] `EDGAR 10-K exhibit index + CIK-scoped efts (agreement-class, exhibit-bearing)`
+[56] `fenced Tier-2 extraction (verbatim, source-bound)`
+[57] `CIQ transcript(s): Concentrix Corporation, Q1 2026 Earnings Call, Mar 24, 2026.rtf; Concentrix Corporation, Q4 2025 Earnings Call, Jan 13, 2026.rtf`

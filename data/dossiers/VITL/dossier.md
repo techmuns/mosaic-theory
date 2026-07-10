@@ -260,7 +260,7 @@ _NM = a real state (negative base), not missing_
 | **Vital Farms · the name** | **$480M** | **1.2** | **0.6** | **10.7** | **10%** | **26%** | **0.1** | **3** |
 | Oatly Group AB | $281M | NM | 0.9 | NM | -2% | 9% | NM | 498 |
 | The Hain Celestial Group | $50M | 6.1 | 0.4 | NM | 6% | -10% | 6.1 | 550 |
-| Peer median (peers) | $2.1B | 7.2 | 1.2 | 15.1 | 15% | 4% | 3.8 | 757 |
+| Peer median (peers) | $2.1B | 7.2 | 1.3 | 15.1 | 15% | 4% | 3.8 | 757 |
 
 
 
