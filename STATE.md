@@ -2979,7 +2979,20 @@ Recommendation/Target slot is the HUMAN's ("not yet logged"); consensus, the imp
   now visible per-peer); MVST Samsung-SDI P/E "NM" preserved. Pins: a deterministic extraction pin
   (join + NM + median + fail-honest absence) + an e2e render-column pin on committed VRRM. VRRM
   re-assembled + frontend-mirrored; ruff + mypy + full pytest green; web grid verified in the preview
-  (A2 endnotes intact, no console errors). **STILL OPEN:** cohort re-assembly; Phase-3 charts behind it.
+  (A2 endnotes intact, no console errors).
+- **COHORT RE-ASSEMBLY (CIQ-only) — DONE (2026-07-10, feat/dossier-cohort, stacked on B2).** Re-assembled
+  AORT/BRBR/CNXC/EPAM/FUBO/IT/SMPL/VITL (+ MVST for consistency) on the current pipeline. **FIXES the 7
+  that failed to load** on the required `valuation.cross_sectional` (fresh assembly) and back-fills every
+  field they lacked: sector/industry (CIQ-GICS)/exchange/business-desc, key ratios, B2 per-peer multiples,
+  A2 endnotes in the .md. CIQ-only (no EOD pull), so EOD-dependent fields (price/52wk/drawdown/stock-info
+  price) render fail-honest UNKNOWN — correct (the prices table holds no bars for these names; the
+  operator can pull bars + re-assemble for full data later). All 10 committed dossiers now load + render;
+  frontend mirror updated; full offline suite green (ARTIFACT-PASS — endnote-completeness + B2 pins now
+  exercise the whole cohort). MVST's fresh synthesis tripped a legitimate audit-tier QA flag (possible
+  false-balance, 6 bull vs 10 bear + strong lean — a DIFFERENT check from the fixed `mixed`-label one;
+  that regression test still passes) + a CIQ-freshness caveat — the guardrails working, not bugs.
+  **REMAINING (whole redesign):** only Phase-3 charts (approach logged: web/PDF SVG + a structured-series
+  extraction, since charting the rendered-string tables would break the parsers rule).
 
 **RC-1 primary-source text extraction — BUILT + VERIFIED, PR OPEN (feat/primary-source-text, 2026-07-06).**
 DETERMINISTIC (anchored, never LLM) parsers of the EX-99.1 release (A, `vinci/edgar/release_parse.py`) and
