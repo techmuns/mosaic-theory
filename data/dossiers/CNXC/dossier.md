@@ -58,7 +58,7 @@ _Key unknowns:_
 - **Key ratios (latest):** RoE -38.9%; RoCE 3.9%; RoA 3.2%; total debt/equity 2.04; current ratio 1.18 (latest) [13]
 
 ## Valuation
-- **Valuation (vs peers):** EV/EBITDA 4.1x vs peer median 5.3x (-23%); P/E NM vs peer median 9 [14]
+- **Valuation (vs peers):** EV/EBITDA 4.1x vs peer median 5.3x (-23%); P/E NM vs peer median 9.05 [14]
 - **Own-history range:** EV/EBITDA (TEV/LTM) 5.1x as-of 2026-03-31 — trailing range 4.4–12.8x (median 6.9x) over 19 closes → 11%ile → near-floor; P/LTM EPS 8.8x [15]
 - **Comparability:** market caps span $103M–$32.0B (311x); the name is $1.5B → HETEROGENEOUS — low comparability: the peer median is anchored by businesses of differing scale/model; scrutinise comparability before reading any peer stat as a clean benchmark. [16]
 - **Cross-name anchor (NTM forward-multiple ladder)** — [17]:
@@ -195,7 +195,7 @@ _Revenue YoY (latest same-quarter): +4.1% (Q1 Feb-28-2026 vs Q1 Feb-29-2024). R 
 - **Share-count trend:** buying back (trailing ~1.7y): 64,818,749 (2024-09-30) → 61,018,350 (2026-06-30), -5.9% [36]
 
 ### Valuation & own-history
-- **Cross-sectional (vs peers — the edge):** EV/EBITDA 4.1x vs peer median 5.3x (-23%); P/E NM vs peer median 9 [14]
+- **Cross-sectional (vs peers — the edge):** EV/EBITDA 4.1x vs peer median 5.3x (-23%); P/E NM vs peer median 9.05 [14]
 - **What the current price implies (at stated multiples)** — comparability: HETEROGENEOUS (see Peer comps gate)
   - _price-implied fundamental levels at stated multiples — the human judges earned vs residual; identity (†): at the name's own multiple the implied level IS consensus._
   - _TEV as-of 2026-06-25 · multiples as-of 2026-06-05_

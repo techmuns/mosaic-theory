@@ -45,7 +45,7 @@ _Key unknowns:_
 - **Key ratios (latest):** _UNKNOWN_ — no key ratios found in the CIQ Ratios sheet
 
 ## Valuation
-- **Valuation (vs peers):** EV/EBITDA 18.4x vs peer median 24.5x (-25%); P/E 91.4x vs peer median 30.7x (+198%) [7]
+- **Valuation (vs peers):** EV/EBITDA 18.4x vs peer median 24.6x (-25%); P/E 91.4x vs peer median 30.7x (+198%) [7]
 - **Own-history range:** EV/EBITDA (TEV/LTM) 18.4x as-of 2026-06-24 — trailing range 22.6–41.8x (median 31.7x) over 20 closes → 0%ile → near-floor; P/LTM EPS 91.4x [10]
 - **Comparability:** market caps span $39M–$66.1B (1682x); the name is $1.1B → HETEROGENEOUS — low comparability: the peer median is anchored by businesses of differing scale/model; scrutinise comparability before reading any peer stat as a clean benchmark. [11]
 - **Cross-name anchor (NTM forward-multiple ladder)** — [12]:
@@ -182,7 +182,7 @@ _EDGAR GAAP basis, $M; margin % can fall while absolute EBITDA RISES — read th
 - **Share-count trend:** diluting (trailing ~1.7y): 41,893,465 (2024-08-02) → 48,543,350 (2026-05-01), +15.9% [33]
 
 ### Valuation & own-history
-- **Cross-sectional (vs peers — the edge):** EV/EBITDA 18.4x vs peer median 24.5x (-25%); P/E 91.4x vs peer median 30.7x (+198%) [7]
+- **Cross-sectional (vs peers — the edge):** EV/EBITDA 18.4x vs peer median 24.6x (-25%); P/E 91.4x vs peer median 30.7x (+198%) [7]
 - **What the current price implies (at stated multiples)** — comparability: HETEROGENEOUS (see Peer comps gate)
   - _price-implied fundamental levels at stated multiples — the human judges earned vs residual; identity (†): at the name's own multiple the implied level IS consensus._
   - _TEV as-of 2026-06-25 · multiples as-of 2026-06-23_

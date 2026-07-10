@@ -58,7 +58,7 @@ _Key unknowns:_
 - **Key ratios (latest):** RoE -6.4%; RoCE 6.5%; RoA 5.8%; total debt/equity 0.30; current ratio 5.06; dividend: none (latest) [14]
 
 ## Valuation
-- **Valuation (vs peers):** EV/EBITDA 6x vs peer median 7.8x (-23%); P/E NM vs peer median 14.6 [15]
+- **Valuation (vs peers):** EV/EBITDA 6x vs peer median 7.8x (-24%); P/E NM vs peer median 14.6 [15]
 - **Own-history range:** EV/EBITDA (TEV/LTM) 6.0x as-of 2026-06-24 — trailing range 6.1–23.2x (median 16.3x) over 20 closes → 0%ile → near-floor; P/LTM EPS 16.0x [16]
 - **Comparability:** market caps span $54M–$27.2B (507x); the name is $1.1B → HETEROGENEOUS — low comparability: the peer median is anchored by businesses of differing scale/model; scrutinise comparability before reading any peer stat as a clean benchmark. [17]
 - **Cross-name anchor (NTM forward-multiple ladder)** — [18]:
@@ -183,7 +183,7 @@ _R reclassified; margin % can fall while absolute EBITDA RISES — read them tog
 - **Share-count trend:** buying back (trailing ~1.7y): 100,221,529 (2024-10-18) → 88,460,545 (2026-07-02), -11.7% [40]
 
 ### Valuation & own-history
-- **Cross-sectional (vs peers — the edge):** EV/EBITDA 6x vs peer median 7.8x (-23%); P/E NM vs peer median 14.6 [15]
+- **Cross-sectional (vs peers — the edge):** EV/EBITDA 6x vs peer median 7.8x (-24%); P/E NM vs peer median 14.6 [15]
 - **What the current price implies (at stated multiples)** — comparability: HETEROGENEOUS (see Peer comps gate)
   - _price-implied fundamental levels at stated multiples — the human judges earned vs residual; identity (†): at the name's own multiple the implied level IS consensus._
   - _TEV as-of 2026-06-25 · multiples as-of 2026-06-03_
@@ -255,7 +255,7 @@ _NM = a real state (negative base), not missing_
 | John B. Sanfilippo & Son | $985M | 8.4 | 0.9 | 14.8 | 10% | 5% | 0.8 | 102 |
 | Utz Brands | $651M | 22.9 | 1.5 | NM | 7% | 2% | 10.6 | 965 |
 | The Hain Celestial Group | $54M | 6.2 | 0.4 | NM | 6% | -10% | 6.1 | 550 |
-| Peer median (peers) | $2.0B | 7.8 | 1.3 | 14.6 | 14% | 0% | 3.4 | 757 |
+| Peer median (peers) | $2.0B | 7.9 | 1.3 | 14.6 | 14% | 0% | 3.4 | 757 |
 
 
 

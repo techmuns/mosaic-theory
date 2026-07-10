@@ -2096,26 +2096,71 @@ def test_endnotes_complete_on_every_committed_dossier() -> None:
     safety net that reddens if ANY citation emitter is not routed through _cite / _cite_inline."""
     import pathlib
     import re as _re
-    checked = 0
-    for jp in sorted(pathlib.Path("data/dossiers").glob("*/dossier.json")):
-        try:
-            d = ds.Dossier.model_validate_json(jp.read_text())
-        except Exception:  # noqa: BLE001 — a dossier predating a required field is not this test's job
-            continue
+    committed = sorted(pathlib.Path("data/dossiers").glob("*/dossier.json"))
+    assert len(committed) >= 2, "expected at least MVST + VRRM committed"
+    for jp in committed:
         t = jp.parent.name
+        # (L4) load must SUCCEED — a corrupt/stale committed dossier fails LOUD here, never a silent
+        # `continue` that would shrink coverage invisibly.
+        d = ds.Dossier.model_validate_json(jp.read_text())
         lines = dr.render_markdown(d).splitlines()
         assert "↳" not in "\n".join(lines), f"{t}: a stray inline ↳ escaped the endnote registry"
         si = next((i for i, ln in enumerate(lines) if ln == "# Sources"), None)
         srcs = [ln for ln in lines[si:] if _re.match(r"^\[\d+\] `", ln)] if si is not None else []
-        body = "\n".join(lines[:si]) if si is not None else "\n".join(lines)
-        markers = {int(m) for m in _re.findall(r"\[(\d+)\]", body)}
-        if markers:
-            assert si is not None, f"{t}: [n] markers but no # Sources list"
-            assert all(1 <= n <= len(srcs) for n in markers), f"{t}: an [n] marker doesn't resolve"
+        # (L4) strip inline-code spans (source_refs + verbatim filing text live in backticks) before
+        # the marker scan, so a filing quote like `[123]` can't false-positive as an unresolved [n].
+        raw = "\n".join(lines[:si]) if si is not None else "\n".join(lines)
+        body = _re.sub(r"`[^`]*`", "", raw)
+        referenced = {int(m) for m in _re.findall(r"\[(\d+)\]", body)}
+        # (review #4) every Source ENTRY must be cited by an in-body [i] marker (orphan-Sources — an
+        # entry with no visible marker; the print-orphan L3 guards). ROBUST: a non-marker bracketed
+        # int in free text (a filing "[2024]") only ADDS to `referenced`, never false-fails. A [n]
+        # marker is a table index by construction, so n>len is only filing text (no separate check).
+        for i in range(1, len(srcs) + 1):
+            assert i in referenced, f"{t}: Source [{i}] is listed but never cited in the body"
         refs = [m.group(1) for ln in srcs if (m := _re.match(r"^\[\d+\] `(.*)`$", ln))]
         assert len(refs) == len(set(refs)), f"{t}: duplicate source in the Sources list"
-        checked += 1
-    assert checked >= 2, "expected at least MVST + VRRM committed + loadable"
+
+
+def test_endnote_scope_restores_fallback_after_a_render() -> None:
+    """(review #3) @_endnote_scope resets the _ENDNOTES ContextVar after render_markdown, so a
+    direct emitter OUTSIDE a render still gets the documented '↳ `ref`' fallback — was a stale '[n]'
+    leaking into the leftover table (order-dependent pollution). Fallback holds BEFORE and AFTER a
+    render; INSIDE the scope it numbers (proving the scope activates)."""
+    import pathlib
+    before = dr._cite("CIQ x")
+    d = ds.Dossier.model_validate_json(
+        sorted(pathlib.Path("data/dossiers").glob("*/dossier.json"))[0].read_text())
+    _ = dr.render_markdown(d)
+    after = dr._cite("CIQ x")
+    assert before == after == "\n  - ↳ `CIQ x`"  # fallback both sides — no [n] leak post-render
+    assert dr._endnote_scope(lambda: dr._cite_inline("CIQ y"))() == "[1]"  # scope numbers
+
+
+def test_web_cite_machinery_static_invariants_no_node() -> None:
+    """(review #6/#9/#10) dossier.js's web cite machinery ships UNVERIFIED when node is absent (the
+    node-gated parity tests skip), so pin its structural contracts by source inspection — NODE-FREE:
+      #9  the citeMark placeholder is parsed in exactly ONE place (citePlaceholders), called by BOTH
+          withEndnotes and auditCitesInline — no second ad-hoc parser that can drift from citeMark;
+      #10 no citeMark sits INSIDE a print-excluded <details>…</details> literal (its [n] marker is
+          hidden by the print CSS → an orphan Sources entry in a Full PDF — the L3 bug).
+    (Behavioural numbering is still checked by the node-gated parity tests when node is present.)"""
+    import pathlib
+    import re as _re
+    src = pathlib.Path("frontend/views/shared/dossier.js").read_text()
+    # #9 — the placeholder REGEX source exists exactly once (inside citePlaceholders); both call it.
+    assert src.count(r'data-ref="([^"]*)">\[\?\]<\/sup>') == 1, "cite regex must live in one place"
+    assert src.count("const citePlaceholders =") == 1, "citePlaceholders must be defined once"
+    assert src.count("citePlaceholders()") >= 2, "withEndnotes + auditCitesInline must both call it"
+    # citeMark's EMITTED placeholder matches the parser's expected shape (emitter↔parser contract)
+    assert 'class="cite-n" data-ref="${escapeHtml(sourceRef)}">[?]</sup>' in src
+    # #10 — no citeMark inside a print-excluded <details>…</details> literal (place the cite OUTSIDE
+    # the details, as the revision-log does, or route it via auditCitesInline as the cap-struct one
+    # does). Catches direct embeds. Strip full-line // comments first — prose mentioning "<details>"
+    # (e.g. the L3 doc-comment) is not a real tag and would over-match.
+    code = "\n".join(ln for ln in src.splitlines() if not ln.lstrip().startswith("//"))
+    for seg in _re.findall(r"<details\b.*?</details>", code, _re.S):
+        assert "citeMark(" not in seg, "a citeMark in a <details> literal orphans in print (#10)"
 
 
 def test_self_referential_twin_requires_resolved_period_in_the_name() -> None:
@@ -2894,7 +2939,10 @@ def test_range_position_rich_sample_shows_band_and_range() -> None:
 def test_cross_sectional_valuation_name_vs_peer_median() -> None:
     """The Valuation LEAD — the fund's edge: name EV/EBITDA & P/E vs the peer MEDIAN with the
     discount, NUMBERS ONLY — no fixed earned-vs-residual framing tail (that lives in Peer comps;
-    repeating it on every dossier is boilerplate that adds no per-name value)."""
+    repeating it on every dossier is boilerplate). (L1) the peer median is SELF-COMPUTED from the
+    per-peer rows (verifiable, agreeing with the grid footer), NOT CIQ's opaque summary 'Median'
+    row: the fixture's CIQ Median (10.8/16.4) is set DIFFERENT from the peer median (14/22) to
+    prove we use the peer rows."""
     tm: list[list[typing.Any]] = [
         ["Company Name", "TEV/Rev", "TEV/EBITDA", "", "P/E", "", "NTM TEV/Rev", "NTM TEV/EBITDA",
          "NTM P/E"],
@@ -2911,8 +2959,8 @@ def test_cross_sectional_valuation_name_vs_peer_median() -> None:
     cx = cs.cross_sectional_valuation(typing.cast(ciq.CiqBundle, bundle))
     assert cx.status is ds.SourceStatus.PRESENT
     v = cx.value or ""
-    assert "EV/EBITDA 7.5x vs peer median 10.8x (-31%)" in v
-    assert "P/E 13x vs peer median 16.4x (-21%)" in v
+    assert "EV/EBITDA 7.5x vs peer median 14.0x (-46%)" in v  # median([12,16]), NOT CIQ's 10.8 row
+    assert "P/E 13x vs peer median 22.0x (-41%)" in v  # median([20,24]), NOT CIQ's 16.4 row
     # numbers only — the repetitive earned-vs-residual framing tail is dropped (lives in Peer comps)
     assert "EARNED" not in v and "RESIDUAL" not in v and "see Peer comps" not in v
 
@@ -4719,6 +4767,37 @@ def test_peer_grid_valuation_multiples_from_trading_multiples() -> None:
     rows2 = cs.peer_grid(_comps(base)).value or []
     assert all(r.tev_ebitda is None and r.tev_rev is None and r.pe is None for r in rows2)
     assert next(r for r in rows2 if r.is_name).market_cap == 200.0
+
+
+def test_cross_sectional_headline_median_equals_grid_footer() -> None:
+    """(review #7) The Valuation-headline peer median and the per-peer grid-footer median are the
+    SAME number for one bundle — both route through the single _peer_col_median primitive, so they
+    cannot drift (L1's goal). Feed ONE bundle to both and assert agreement: EV/EBITDA peers (8, 6)
+    → median 7; P/E peers (16, NM→excl) → median 16 on BOTH sides."""
+    fd = [
+        ["Company Name", "", "", "Market Cap ($M)", "LTM Net Debt"],
+        ["Alpha Corp (NYSE:AL)", "", "", 5000.0, 100.0],
+        ["Beta Inc (NYSE:BE)", "", "", 1000.0, 50.0],
+        ["Subj Co (NasdaqCM:SUBJ)", "", "", 200.0, 30.0],
+    ]
+    op = [
+        ["Company Name", "GM", "EBITDA", "EB", "NI", "Rg", "Eg", "e", "n", "dc", "Debt/EBITDA"],
+        ["Alpha Corp (NYSE:AL)", 0.5, 0.25, 0, 0, 0.2, 0, 0, 0, 0, 1.5],
+        ["Beta Inc (NYSE:BE)", 0.4, 0.1, 0, 0, 0.05, 0, 0, 0, 0, 2.0],
+        ["Subj Co (NasdaqCM:SUBJ)", 0.3, 0.2, 0, 0, -0.1, 0, 0, 0, 0, 5.8],
+    ]
+    tm = [
+        ["Company Name", "TEV/Rev", "TEV/EBITDA", "", "P/E"],
+        ["Beta Inc (NYSE:BE)", 1.5, 6.0, "", "NM"],
+        ["Subj Co (NasdaqCM:SUBJ)", 3.0, 12.0, "", 20.0],
+        ["Alpha Corp (NYSE:AL)", 2.0, 8.0, "", 16.0],
+    ]
+    sheets = {("comps", "Financial Data"): fd, ("comps", "Operating Statistics"): op,
+              ("comps", "Trading Multiples"): tm}
+    headline = cs.cross_sectional_valuation(_comps(sheets)).value or ""
+    med = next(r for r in (cs.peer_grid(_comps(sheets)).value or []) if r.is_median)
+    assert "peer median 7.0x" in headline and med.tev_ebitda == "7"  # EV/EBITDA: both = median(8,6)
+    assert "peer median 16.0x" in headline and med.pe == "16"  # P/E: both = median(16), NM excluded
 
 
 def test_peer_grid_renders_valuation_columns_e2e() -> None:

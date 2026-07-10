@@ -58,7 +58,7 @@ _Key unknowns:_
 - **Key ratios (latest):** RoCE 25.6%; RoA 18.5%; current ratio 2.52; dividend: none (latest) [13]
 
 ## Valuation
-- **Valuation (vs peers):** EV/EBITDA 7.9x vs peer median 6.2x (+27%); P/E 8.8x vs peer median 19.3x (-54%) [14]
+- **Valuation (vs peers):** EV/EBITDA 7.9x vs peer median 6.2x (+26%); P/E 8.8x vs peer median 19.3x (-54%) [14]
 - **Own-history range:** EV/EBITDA (TEV/LTM) 7.5x as-of 2026-06-22 — trailing range 8.8–27.9x (median 20.0x) over 19 closes → 0%ile → near-floor; P/LTM EPS 7.9x [15]
 - **Comparability:** market caps span $111M–$36.4B (327x); the name is $1.3B → HETEROGENEOUS — low comparability: the peer median is anchored by businesses of differing scale/model; scrutinise comparability before reading any peer stat as a clean benchmark. [16]
 - **Cross-name anchor (NTM forward-multiple ladder)** — [17]:
@@ -174,7 +174,7 @@ _R reclassified; margin % can fall while absolute EBITDA RISES — read them tog
 - **Share-count trend:** buying back (trailing ~1.7y): 129,242,457 (2024-07-31) → 116,277,850 (2026-04-28), -10.0% [8]
 
 ### Valuation & own-history
-- **Cross-sectional (vs peers — the edge):** EV/EBITDA 7.9x vs peer median 6.2x (+27%); P/E 8.8x vs peer median 19.3x (-54%) [14]
+- **Cross-sectional (vs peers — the edge):** EV/EBITDA 7.9x vs peer median 6.2x (+26%); P/E 8.8x vs peer median 19.3x (-54%) [14]
 - **What the current price implies (at stated multiples)** — comparability: HETEROGENEOUS (see Peer comps gate)
   - _price-implied fundamental levels at stated multiples — the human judges earned vs residual; identity (†): at the name's own multiple the implied level IS consensus._
   - _TEV as-of 2026-06-24 · multiples as-of 2026-05-14_
@@ -246,7 +246,7 @@ _NM = a real state (negative base), not missing_
 | USANA Health Sciences | $354M | 2.9 | 0.3 | 39.8 | 9% | 6% | 0.2 | 149 (net cash) |
 | Nu Skin Enterprises | $250M | 2.2 | 0.2 | 4.8 | 9% | -14% | 1.9 | 103 |
 | FitLife Brands | $111M | 11.2 | 1.7 | 19.7 | 15% | 42% | 3.1 | 41 |
-| Peer median (peers) | $1.2B | 6.2 | 1.1 | 19.3 | 16% | 4% | 2.5 | 1,037 |
+| Peer median (peers) | $1.2B | 6.3 | 1.2 | 19.3 | 16% | 4% | 2.5 | 1,037 |
 
 
 

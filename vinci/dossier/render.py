@@ -8,13 +8,14 @@ prints why; bull/bear points print their citation and an ⚠ when a guardrail fl
 from __future__ import annotations
 
 import contextvars
+import functools
 import math
 import re
 from collections import Counter
 from collections.abc import Callable
 from datetime import UTC, date, datetime
 from itertools import groupby
-from typing import Any
+from typing import Any, ParamSpec
 
 from vinci.dossier.covenant_extract import GoverningTerm, _derive_conversion, governing_terms
 from vinci.dossier.schemas import Dossier, MechanicalLayer, Sourced, SourceStatus, StockInfo
@@ -109,6 +110,24 @@ def _sources_section() -> list[str]:
     if not table:
         return []
     return ["", "# Sources", "", *[f"[{i}] `{ref}`" for i, ref in enumerate(table, 1)]]
+
+
+_P = ParamSpec("_P")
+
+
+def _endnote_scope(fn: Callable[_P, str]) -> Callable[_P, str]:
+    """(A2) Run ``fn`` with a FRESH endnote table, then RESTORE the prior value (None outside a
+    render) in a ``finally`` — so the documented "↳ `ref`" fallback keeps holding for a direct
+    emitter call AFTER a render, and an exception mid-render can't leak a stale table onto a pooled
+    worker thread. ``reset(token)`` (not ``set(None)``) restores exactly the pre-render value."""
+    @functools.wraps(fn)
+    def wrapper(*args: _P.args, **kwargs: _P.kwargs) -> str:
+        token = _ENDNOTES.set([])
+        try:
+            return fn(*args, **kwargs)
+        finally:
+            _ENDNOTES.reset(token)
+    return wrapper
 
 
 def _fact(label: str, s: Sourced[Any], fmt: Callable[[Any], str] = str) -> str:
@@ -396,7 +415,10 @@ def _ratioc(s: str | None) -> str:  # a ratio → one decimal ("2" → "2.0"); "
     if s is None:
         return "–"
     try:
-        return f"{float(s):.1f}"
+        # half-up at 1dp (floor(x*10+0.5)/10) to MATCH dossier.js _ratioC + the _pctc convention —
+        # Python :.1f is banker's (half-to-even), disagreeing with the web/PDF at a quarter-tie
+        # (7.25 → 7.2 vs 7.3). floor(x*10+0.5) == JS Math.round(x*10) on the same IEEE double.
+        return f"{math.floor(float(s) * 10 + 0.5) / 10:.1f}"
     except (ValueError, TypeError):
         return str(s)
 
@@ -1703,13 +1725,14 @@ def _brief_lines(d: Dossier) -> list[str]:
     return out
 
 
+@_endnote_scope
 def render_markdown(d: Dossier, *, dev: bool = False) -> str:
     """(D1) Facts-first restructure. Section order: header → caveats → mechanical layer [drawdown &
     idiosyncrasy (clubbed) → leverage & survival → trajectory → valuation → peer comps → catalyst →
     concentration] → synthesis → appendix (+ management-commentary pointer) → verdict footer. Old
-    committed JSONs still render (every field is optional-safe). ``dev`` shows the D3 tier tags."""
+    committed JSONs still render (every field is optional-safe). ``dev`` shows the D3 tier tags.
+    The fresh per-document endnote table + its reset are handled by ``@_endnote_scope``."""
     m = d.mechanical
-    _ENDNOTES.set([])  # (A2) fresh per-document endnote table (ContextVar, thread-safe per render)
     out: list[str] = [
         f"# Dossier — {d.name} ({d.ticker})",
         "",
