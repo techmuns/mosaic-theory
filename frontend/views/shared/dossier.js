@@ -769,7 +769,8 @@ function ownHistoryExhibit(m) {
   // a single metric keeps a NORMAL panel width (not stretched full-bleed — that breaks the familiar
   // line aspect); the exhibit just renders narrower. Two metrics sit side-by-side.
   const single = bands.length === 1;
-  const W = single ? 430 : 760, H = 234, cy0 = 56, cy1 = 208;  // panels share this chart-area y-band
+  // cy0 leaves a clear gap under the subtitle so the panel-header row (metric + %ile) never crowds it.
+  const W = single ? 430 : 760, H = 240, cy0 = 62, cy1 = 214;  // panels share this chart-area y-band
   const halo = 'paint-order="stroke" stroke="var(--surface)" stroke-width="2.6"';
   const yr = (s) => { const y = /(\d{4})/.exec(s || ""); return y ? "'" + y[1].slice(2) : ""; };
   const geo = single ? [[70, 372]] : [[70, 372], [452, 748]];
@@ -807,7 +808,7 @@ function ownHistoryExhibit(m) {
   return `<div class="ds-exhibit" style="margin:18px 0 16px;">
     <svg viewBox="0 0 ${W} ${H}" width="100%" style="max-width:${W}px; display:block;" role="img" aria-label="Valuation multiples vs their own trailing range">
       <text x="0" y="18" font-size="13" font-weight="600" fill="var(--ink)">Multiple vs its own trailing range</text>
-      <text x="0" y="34" font-size="9.5" fill="var(--ink-3)">each quarter's close vs its trailing average &amp; range · log scale${bands[0].as_of ? " · as-of " + escapeHtml(bands[0].as_of) : ""}</text>
+      <text x="0" y="32" font-size="9.5" fill="var(--ink-3)">each quarter's close vs its trailing average &amp; range · log scale${bands[0].as_of ? " · as-of " + escapeHtml(bands[0].as_of) : ""}</text>
       ${bands.map((b, i) => panel(b, geo[i][0], geo[i][1])).join("")}
     </svg>
     ${anyLowConf ? `<div class="muted" style="font-size:10px; margin-top:2px;">* fewer than ${LOW_CONF_CLOSES} closes — low-confidence read; current shown in neutral, not red/green.</div>` : ""}
