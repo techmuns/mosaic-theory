@@ -1,5 +1,5 @@
 // DOSSIER VIEWER — render the structured dossier.json into styled, source-bound sections.
-// Assembles facts · NO verdict. Every fact shows its ↳ citation (source-binding is the signature).
+// Assembles facts · NO verdict. Every fact shows its [n] citation (source-binding is the signature).
 // The synthesis is fenced as "the framing, not the answer." Read-only; verdicts are CLI-logged.
 import { getDossier, getDossierIndex, getLedger, isBuyVerdict } from "../../lib/snapshots.js";
 import { fmtPrice, fmtDate, fmtStamp, fmtPct, escapeHtml, DASH } from "../../lib/format.js";
@@ -129,7 +129,30 @@ python3 frontend/build.py                                # mirror into this dash
     </details>`;
 }
 
-// --- a single Sourced fact: value + ↳ source_ref, or honest UNKNOWN/MISSING --
+// (A2) PER-TIER endnotes — each cite becomes a numbered [n] marker (a superscript with a hover
+// tooltip) resolving to that tier's own Sources list at its end. Per-tier, NOT one global list: the
+// tabs + PDF-scope dropdown must each be self-contained (a [n] on the Brief tab can't resolve into a
+// hidden Analysis tab; a "Brief" PDF lists only the Brief's sources). citeMark emits a placeholder;
+// withEndnotes numbers them in READING order (two-pass) so the [n] are monotonic down the page even
+// though cards may pre-compute their cites out of DOM order.
+function citeMark(sourceRef) {
+  if (!sourceRef) return "";  // a PRESENT fact always has a ref; guard defensively (no marker if absent)
+  return `<sup class="cite-n" data-ref="${escapeHtml(sourceRef)}">[?]</sup>`;  // numbered by withEndnotes
+}
+function withEndnotes(fn) {
+  const order = [];
+  const body = fn().replace(/<sup class="cite-n" data-ref="([^"]*)">\[\?\]<\/sup>/g, (_m, ref) => {
+    let i = order.indexOf(ref);  // ref is already HTML-escaped (from citeMark) — dedup by exact string
+    if (i < 0) { order.push(ref); i = order.length - 1; }
+    return `<sup class="cite-n" title="${ref}">[${i + 1}]</sup>`;
+  });
+  if (!order.length) return body;
+  const items = order.map((r, i) =>
+    `<li><span class="src-n">[${i + 1}]</span> <span class="mono">${r}</span></li>`).join("");
+  return body + `<div class="card ds-section ds-sources"><div class="ds-title">Sources</div><ol>${items}</ol></div>`;
+}
+
+// --- a single Sourced fact: value + [n] cite, or honest UNKNOWN/MISSING --
 function fact(label, s, fmt, { hi = false } = {}) {
   s = s || {};
   const present = s.status === "present" && s.value != null;
@@ -141,7 +164,7 @@ function fact(label, s, fmt, { hi = false } = {}) {
       <div class="fact-val muted"><span class="pill unresolved">${badge}</span> ${escapeHtml(s.note || "")}</div></div>`;
   }
   const val = fmt ? fmt(s.value) : escapeHtml(String(s.value)); // fmt() returns safe formatted text
-  const cite = s.source_ref ? `<span class="cite">${escapeHtml(s.source_ref)}</span>` : "";
+  const cite = citeMark(s.source_ref);
   // a note ON a present value is a caveat (e.g. a distorted P/E that must not read as a clean multiple)
   const caveat = s.note ? `<div class="fact-caveat">⚠ ${escapeHtml(s.note)}</div>` : "";
   return `<div class="fact"><div class="fact-label">${escapeHtml(label)}</div>
@@ -320,10 +343,12 @@ export function renderDossier(d, verdict) {  // exported for the module-load smo
   // tabs are client-side chrome (default Brief, no re-fetch). Mirrors the # Brief / # Analysis /
   // # Appendix top-level sections in render.py. The machine still never concludes — the Brief leads
   // with the assembled READ, never a verdict.
+  // (A2) each tier renders inside withEndnotes(): its cites become [n] markers + a per-tier Sources
+  // list at its end (self-contained per tab / per PDF scope).
   return header(d) + tierTabs() + `<div class="ds-tiers">
-    <section class="ds-tier on" data-tier="brief">${briefTier(d, verdict, m)}</section>
-    <section class="ds-tier" data-tier="analysis">${analysisTier(d, m)}</section>
-    <section class="ds-tier" data-tier="appendix">${appendixTier(d, verdict, m)}</section>
+    <section class="ds-tier on" data-tier="brief">${withEndnotes(() => briefTier(d, verdict, m))}</section>
+    <section class="ds-tier" data-tier="analysis">${withEndnotes(() => analysisTier(d, m))}</section>
+    <section class="ds-tier" data-tier="appendix">${withEndnotes(() => appendixTier(d, verdict, m))}</section>
   </div>`;
 }
 
@@ -497,7 +522,7 @@ function companyCard(m) {
     const top = custs.slice().sort((a, b) => b.pct - a.pct);
     const top2 = top.slice(0, 2).reduce((s, x) => s + x.pct, 0);
     const val = `top customer <span class="mono">${Math.round(top[0].pct)}%</span>${top[0].prior_pct != null ? ` <span class="muted">(from ${Math.round(top[0].prior_pct)}%)</span>` : ""}${top.length > 1 ? ` · top-2 ~<span class="mono">${Math.round(top2)}%</span>` : ""} of revenue`;
-    concLine = `<div class="fact"><div class="fact-label">Customer concentration</div><div class="fact-val">${val}${fil.source_ref ? `<span class="cite">${escapeHtml(fil.source_ref)}</span>` : ""}</div></div>`;
+    concLine = `<div class="fact"><div class="fact-label">Customer concentration</div><div class="fact-val">${val}${citeMark(fil.source_ref)}</div></div>`;
   }
   const rows = [
     (c.segments && c.segments.status === "present") ? fact("Segments", c.segments) : "",
@@ -512,7 +537,7 @@ function companyCard(m) {
 // top-3 key unknowns. The FULL bull/bear lives in the Analysis synthesis; source-bound throughout.
 function briefCase(s) {
   if (!s || (!(s.bull_points || []).length && !(s.bear_points || []).length)) return "";
-  const pt = (p, cls) => `<div class="point ${cls}">${escapeHtml(p.claim)}${p.source_ref ? `<span class="cite">${escapeHtml(p.source_ref)}</span>` : ""}</div>`;
+  const pt = (p, cls) => `<div class="point ${cls}">${escapeHtml(p.claim)}${citeMark(p.source_ref)}</div>`;
   const bulls = orderPoints(s.bull_points).slice(0, 3).map((p) => pt(p, "bull")).join("") || `<div class="muted">—</div>`;
   const bears = orderPoints(s.bear_points).slice(0, 3).map((p) => pt(p, "bear")).join("") || `<div class="muted">—</div>`;
   const uks = (s.key_unknowns || []).slice(0, 3);
@@ -537,7 +562,7 @@ function financialSnapshot(m) {
   const ratios = (m.key_ratios && m.key_ratios.status === "present") ? fact("Key ratios (latest)", m.key_ratios) : "";
   return `<div class="card ds-section"><div class="ds-title">Financial snapshot <span class="muted" style="font-weight:400; text-transform:none; letter-spacing:0;">— full table in Appendix</span></div>
     <table class="data">${`<thead>${head}</thead><tbody>${body}</tbody>`}</table>
-    ${fsa.source_ref ? `<span class="cite">${escapeHtml(fsa.source_ref)}</span>` : ""}${ratios}</div>`;
+    ${citeMark(fsa.source_ref)}${ratios}</div>`;
 }
 
 // 6 — VALUATION: cross-sectional read (the edge) + comparability gate + the implied-value REFERENCE
@@ -557,7 +582,7 @@ function valuationCard(m) {
       `<tr><td>${escapeHtml(r.basis)}</td><td class="num mono">${r.median != null ? fmtCap(r.median) : "—"}</td></tr>`).join("");
     impl = `<div style="margin-top:10px;"><div class="muted" style="font-size:11.5px; margin-bottom:4px;">Implied equity at the peer-median multiple — <b>reference, not a target</b> (the human sets the target); juxtapose vs market cap${capOk ? ` <span class="mono">${fmtCap(iv.market_cap.value)}</span>` : ""}, never difference.</div>
       <table class="data"><thead><tr><th>Basis</th><th class="num">Peer-median implied equity</th></tr></thead><tbody>${rows}</tbody></table>
-      ${iv.implied_equity.source_ref ? `<span class="cite">${escapeHtml(iv.implied_equity.source_ref)}</span>` : ""}</div>`;
+      ${citeMark(iv.implied_equity.source_ref)}</div>`;
   }
   if (!cross && !comp && !rng && !mladder && !impl) return "";
   return `<div class="card ds-section"><div class="ds-title">Valuation <span class="muted" style="font-weight:400; text-transform:none; letter-spacing:0;">— multiples across years + cross-sectional; full detail in Analysis</span></div>${cross}${comp}${rng}${mladder}${impl}</div>`;
@@ -1224,8 +1249,8 @@ function drawdownCause(dc) {
       <div class="fh">${escapeHtml(f.form || "8-K")} · filed ${fmtDate(f.filing_date)} <span class="muted">(for the ${escapeHtml(f.gap_date || "")} gap-down)</span></div>
       <div class="muted" style="font-size:11.5px; margin-top:2px;">items: ${escapeHtml((f.item_types || f.items || []).join(" · "))}</div>
       ${(f.drivers && f.drivers.status === "present")
-        ? `<div class="fe"><b>what the results showed:</b> ${escapeHtml(f.drivers.value)}<span class="cite">${escapeHtml(f.drivers.source_ref || "")}</span></div>`
-        : (f.events || []).map((e) => `<div class="fe">↳ ${escapeHtml(e)}</div>`).join("")}
+        ? `<div class="fe"><b>what the results showed:</b> ${escapeHtml(f.drivers.value)}${citeMark(f.drivers.source_ref)}</div>`
+        : (f.events || []).map((e) => `<div class="fe">${escapeHtml(e)}</div>`).join("")}
       ${f.url ? `<div style="margin-top:5px;"><a href="${encodeURI(f.url)}" target="_blank" rel="noopener">EDGAR ${escapeHtml(f.accession || "")}</a></div>` : ""}
     </div>`).join("");
   return (  // (R3) body only — drawdownIdio wraps it in the shared section header
@@ -1242,7 +1267,7 @@ function idioVsShared(io) {
         ${io.cohort.value.map((c) => `<tr><td class="mono">${escapeHtml(c.ticker || "")}</td><td class="num">${c.hops ?? DASH}</td>
           <td class="num">${c.ret_180d == null ? DASH : fmtPct(c.ret_180d, { signed: true })}</td>
           <td class="muted" style="font-size:11.5px;">${escapeHtml(c.via || "")}</td></tr>`).join("")}
-      </tbody></table>${io.cohort.source_ref ? `<span class="cite">${escapeHtml(io.cohort.source_ref)}</span>` : ""}</div>`
+      </tbody></table>${citeMark(io.cohort.source_ref)}</div>`
     : `<div class="fact-val muted" style="margin-top:8px;"><span class="pill unresolved">${io.cohort?.status === "missing" ? "MISSING" : "UNKNOWN"}</span> ${escapeHtml(io.cohort?.note || "no graph cohort")}</div>`;
   return (  // (R3) body only — drawdownIdio wraps it in the shared section header
     fact("Read", io.read, null, { hi: true }) +
@@ -1283,7 +1308,7 @@ function dataTable(label, cite, cols, rows, note) {
   const body = rows.map((r) =>
     `<tr${r.cls ? ` class="${r.cls}"` : ""}><td style="white-space:nowrap;">${escapeHtml(r.label)}</td>${r.cells.map((c) => `<td class="num">${escapeHtml(c)}</td>`).join("")}</tr>`).join("");
   const noteHtml = note ? `<div class="muted" style="font-size:11px; margin-top:5px;">${escapeHtml(note)}</div>` : "";
-  const citeHtml = cite ? `<span class="cite">${escapeHtml(cite)}</span>` : "";
+  const citeHtml = citeMark(cite);
   return `<div class="fact"><div class="fact-label">${escapeHtml(label)}</div>
     <div style="min-width:0;"><div style="overflow-x:auto;"><table class="data"><thead>${head}</thead><tbody>${body}</tbody></table></div>${noteHtml}${citeHtml}</div></div>`;
 }
@@ -1576,7 +1601,7 @@ function eventGroups(s) {
     return `<div style="margin-top:7px;"><b>${escapeHtml(dt)} · ${escapeHtml(broker)}</b><ul class="event-log">${items}</ul></div>`;
   }).join("");
   const details = `<details style="margin-top:6px;"><summary style="cursor:pointer; font-size:12px; color:var(--ink-2);">Expand all ${events.length} revisions per broker-day (on-demand)</summary><div>${expanded}</div></details>`;
-  const cite = s.source_ref ? `<span class="cite">${escapeHtml(s.source_ref)}</span>` : "";
+  const cite = citeMark(s.source_ref);
   return `<div class="fact"><div class="fact-label">${escapeHtml(label)} <span class="muted">(${events.length} events · ${keys.length} broker-days)</span></div><div>${lines}${moreGroups}${details}${cite}</div></div>`;
 }
 
@@ -1625,12 +1650,12 @@ function consensus(cc) {
 }
 
 function synthesis(s) {
-  const fence = `<div class="synth-fence"><b>The framing, not the answer.</b> A verdict-free bull/bear structure for the human to reason about — there is no recommendation, score, direction, or probability anywhere in it, by design. The human decides and logs BUY/AVOID via the CLI. <b>Citations (↳) locate each claim in a source for you to verify — cited is not verified.</b></div>`;
+  const fence = `<div class="synth-fence"><b>The framing, not the answer.</b> A verdict-free bull/bear structure for the human to reason about — there is no recommendation, score, direction, or probability anywhere in it, by design. The human decides and logs BUY/AVOID via the CLI. <b>Citations [n] locate each claim in a numbered source (listed at the end of each tab) for you to verify — cited is not verified.</b></div>`;
   if (!s) {
     return `<div class="card ds-section"><div class="ds-title">Synthesis</div>${fence}
       <div class="notice">Synthesis not assembled — mechanical layer only (CIQ inputs too thin, or the LLM step was skipped). The facts above stand on their own.</div></div>`;
   }
-  const point = (p, cls) => `<div class="point ${cls}">${escapeHtml(p.claim)}${p.source_ref ? `<span class="cite">${escapeHtml(p.source_ref)}</span>` : ""}${p.cited === false ? ` <span class="uncited">⚠ uncited — does not trace to a mechanical fact</span>` : ""}</div>`;
+  const point = (p, cls) => `<div class="point ${cls}">${escapeHtml(p.claim)}${citeMark(p.source_ref)}${p.cited === false ? ` <span class="uncited">⚠ uncited — does not trace to a mechanical fact</span>` : ""}</div>`;
   const dq = s.decisive_question || {};
   // (H6) an '[LLM-suggested, unverified]' twin's outcome is the MODEL's claim → suffix "(LLM-claimed
   // — verify)"; a roster/self-sourced twin renders plain. Deterministic, render-side.
@@ -1642,7 +1667,7 @@ function synthesis(s) {
   const twins = (s.twin_reference_cases || []).map((t) => `
     <div class="point"><b>${escapeHtml(t.name || "")}</b> — ${escapeHtml(twinOutcome(t))}
       <div class="muted" style="font-size:12px; margin-top:3px;">distinguished by: ${escapeHtml(t.distinguishing_fact || "")}</div>
-      <span class="cite">${escapeHtml(t.source || "")}</span></div>`).join("");
+      ${citeMark(t.source)}</div>`).join("");
   return `<div class="card ds-section"><div class="ds-title">Synthesis · framing</div>${fence}
     ${s.evidence_balance ? `<div style="margin:6px 0; padding:8px 11px; border:1px solid var(--line); border-left:3px solid var(--accent); border-radius:4px; font-size:13px; line-height:1.5;"><b>Evidence balance:</b> ${escapeHtml(s.evidence_balance)}</div>` : ""}
     <div class="ds-title" style="font-size:12px; margin-top:6px;">Bull — the overshoot case</div>

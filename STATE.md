@@ -2953,8 +2953,22 @@ Recommendation/Target slot is the HUMAN's ("not yet logged"); consensus, the imp
   agreement") and "Revised guidance (catalyst 8-K Ex-99.1)" → "Revised guidance" (matching the already-clean
   JS), both renderers; MVST/VRRM `.md` re-rendered (deterministic — labels only). The `fenced Tier-2`
   **source_ref** is DATA (`covenant_extract.py`) → deferred to the B-phase re-assembly. ruff + mypy + full
-  pytest green; web verified (no "Tier-2 fenced" on the surface, no console errors). **STILL OPEN:** A2
-  (endnotes), B2 (per-peer valuation grid), cohort re-assembly; Phase-3 charts deferred behind them.
+  pytest green; web verified (no "Tier-2 fenced" on the surface, no console errors).
+- **A2 ENDNOTES — SHIPPED both surfaces (2026-07-10, feat/dossier-endnotes, off main post-#98).** The
+  plan under-estimated this ~4×: not 3 shared emitters but ~14 scattered cite sites in render.py + 11 in
+  dossier.js (↳ sub-line, ↳ inline-header, bracketed `[\`ref\`]`, the stock-info line, `.cite` spans).
+  Every inline citation is now a numbered `[n]` marker + a document-end **Sources** list. **md:** a
+  thread-safe `_ENDNOTES` ContextVar registry (the assemble batch renders across threads) + `_cite` /
+  `_cite_inline` helpers; ONE global list (linear doc). **web:** a PER-TIER design — each tab / PDF
+  scope gets its OWN Sources list (a `[n]` on the Brief tab can't resolve into a hidden Analysis tab),
+  via a `withEndnotes()` wrapper + a two-pass numberer (markers are monotonic in READING order even
+  though cards pre-compute cites out of DOM order); `[n]` is a `<sup>` with a hover-tooltip of the ref.
+  **VERIFIED:** md — MVST (56 src) / VRRM (65), ZERO stray ↳, every [n] resolves, deduped, pinned by
+  `test_endnotes_complete_on_every_committed_dossier` (the safety net — it caught the stock-info line);
+  web — MVST/VRRM/AORT render with 0 `.cite` spans, 0 `↳`, 0 `[?]` placeholders, per-tier Sources
+  (maxMark == source count), sequential first-occurrences, no console errors. MVST/VRRM `.md` re-rendered.
+  ruff + mypy --strict + full pytest green. **STILL OPEN:** B2 (per-peer valuation grid), cohort
+  re-assembly; Phase-3 charts deferred behind them.
 
 **RC-1 primary-source text extraction — BUILT + VERIFIED, PR OPEN (feat/primary-source-text, 2026-07-06).**
 DETERMINISTIC (anchored, never LLM) parsers of the EX-99.1 release (A, `vinci/edgar/release_parse.py`) and
