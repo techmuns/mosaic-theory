@@ -2,18 +2,24 @@
   "ticker": "CNXC",
   "name": "Concentrix Corp",
   "cik": "0001803599",
-  "reference_date": "2026-06-22",
-  "rank": 14,
+  "reference_date": "2026-07-06",
+  "rank": 10,
   "mechanical": {
     "valuation": {
+      "cross_sectional": {
+        "value": "EV/EBITDA 4.1x vs peer median 5.3x (-23%); P/E NM vs peer median 9",
+        "source_ref": "CIQ Comparable Analysis→Trading Multiples (name vs peer Median)",
+        "status": "present",
+        "note": null
+      },
       "pe": {
-        "value": 6.738544474393531,
+        "value": 6.361185983827494,
         "source_ref": "EDGAR XBRL eps_diluted × EOD price (screen data-record, G3)",
         "status": "present",
         "note": "distorted — P/E rests on a non-current positive EPS; latest annual EPS is negative (-20.36). Not a meaningful multiple — see the P/E-basis flag"
       },
       "pe_percentile_5y": {
-        "value": 0.022603978300180832,
+        "value": 0.007207207207207207,
         "source_ref": "EDGAR/EOD P/E pctile vs ~5y (screen data-record)",
         "status": "present",
         "note": null
@@ -43,10 +49,92 @@
         "note": "adjusted figure not in the 99.1 revised guidance"
       },
       "range_position": {
-        "value": "EV/EBITDA (TEV/LTM) 5.1x at 11%ile of 19 closes → near-floor; P/LTM EPS 8.8x",
+        "value": "EV/EBITDA (TEV/LTM) 5.1x as-of 2026-03-31 — trailing range 4.4–12.8x (median 6.9x) over 19 closes → 11%ile → near-floor; P/LTM EPS 8.8x",
         "source_ref": "CIQ Financials→Multiples (Close; last col = current, excluded from history)",
         "status": "present",
         "note": null
+      },
+      "implied_expectations": {
+        "rows": [
+          {
+            "label": "name NTM TEV/EBITDA",
+            "metric": "EBITDA",
+            "multiple": 4.54,
+            "multiple_source": "CIQ Estimates→Multiples (forward-multiple ladder: NTM + FY26→FY33)",
+            "implied_level": 1529.8,
+            "is_identity": true,
+            "note": null
+          },
+          {
+            "label": "peer-median NTM TEV/EBITDA",
+            "metric": "EBITDA",
+            "multiple": 5.26,
+            "multiple_source": "CIQ Comparable Analysis→Trading Multiples (name row + Summary Statistics Low/Median/Mean/High)",
+            "implied_level": 1320.4,
+            "is_identity": false,
+            "note": null
+          },
+          {
+            "label": "peer-median LTM TEV/EBITDA",
+            "metric": "EBITDA",
+            "multiple": 5.3,
+            "multiple_source": "CIQ Comparable Analysis→Trading Multiples (name row + Summary Statistics Low/Median/Mean/High)",
+            "implied_level": 1310.5,
+            "is_identity": false,
+            "note": null
+          },
+          {
+            "label": "name NTM TEV/Rev",
+            "metric": "Revenue",
+            "multiple": 0.68,
+            "multiple_source": "CIQ Estimates→Multiples (forward-multiple ladder: NTM + FY26→FY33)",
+            "implied_level": 10214.0,
+            "is_identity": true,
+            "note": null
+          },
+          {
+            "label": "peer-median NTM TEV/Rev",
+            "metric": "Revenue",
+            "multiple": 0.86,
+            "multiple_source": "CIQ Comparable Analysis→Trading Multiples (name row + Summary Statistics Low/Median/Mean/High)",
+            "implied_level": 8076.2,
+            "is_identity": false,
+            "note": null
+          },
+          {
+            "label": "peer-median LTM TEV/Rev",
+            "metric": "Revenue",
+            "multiple": 0.9,
+            "multiple_source": "CIQ Comparable Analysis→Trading Multiples (name row + Summary Statistics Low/Median/Mean/High)",
+            "implied_level": 7717.2,
+            "is_identity": false,
+            "note": null
+          }
+        ],
+        "tev": {
+          "value": 6945.5,
+          "source_ref": "TEV = mcap 1478.8 + net debt 5466.7 (CIQ Comparable Analysis→Financial Data, Latest, as-of 2026-06-25) — simple-TEV basis",
+          "status": "present",
+          "note": null
+        },
+        "anchors": {
+          "value": "FY26E $1499.9M · FY27E $1571.7M (direct consensus EBITDA — CIQ Estimates→Trends latest snapshot)",
+          "source_ref": "CIQ Estimates→Trends (FY26/FY27 consensus EBITDA, latest snapshot)",
+          "status": "present",
+          "note": null
+        },
+        "rev_anchors": {
+          "value": "FY26E $10119.6M · FY27E $10359.8M (direct consensus Revenue — CIQ Estimates→Trends latest snapshot)",
+          "source_ref": "CIQ Estimates→Trends (FY26/FY27 consensus Revenue, latest snapshot)",
+          "status": "present",
+          "note": null
+        },
+        "heterogeneity_gate": "market caps span $103M–$32.0B (311x); the name is $1.5B → HETEROGENEOUS — low comparability: the peer median is anchored by businesses of differing scale/model; scrutinise comparability before reading any peer stat as a clean benchmark.",
+        "tev_as_of": "2026-06-25",
+        "multiples_as_of": "2026-06-05",
+        "vintage_coherent": true,
+        "coherence_note": "vintage-coherent: derived FY26 $1500.1M vs direct consensus $1499.9M (residual 0.000 ≤ 0.10 tolerance)",
+        "net_debt_reconciled": true
       }
     },
     "quality": {
@@ -87,8 +175,8 @@
         "note": "adjusted figure not in the 99.1 revised guidance"
       },
       "survival_capacity": {
-        "value": "net-debt/EBITDA 4.4x (CIQ) | FCF-positive → self-funding (no runway constraint) | nearest maturity wall: 2025",
-        "source_ref": "CIQ Net Debt ÷ CIQ LTM EBITDA (EDGAR XBRL breadth fallback) + FCF sign + CIQ Capital Structure (survival capacity)",
+        "value": "net-debt/EBITDA 4.4x (CIQ) | FCF-positive → self-funding",
+        "source_ref": "CIQ Net Debt ÷ CIQ LTM EBITDA (EDGAR XBRL breadth fallback) + FCF sign (survival capacity)",
         "status": "present",
         "note": null
       },
@@ -99,8 +187,8 @@
         "note": null
       },
       "share_count_trend": {
-        "value": "buying back (trailing ~1.8y): 65,328,966 (2024-06-30) → 61,004,826 (2026-03-31), -6.6%",
-        "source_ref": "EDGAR XBRL shares, trailing 2024-06-30..2026-03-31",
+        "value": "buying back (trailing ~1.7y): 64,818,749 (2024-09-30) → 61,018,350 (2026-06-30), -5.9%",
+        "source_ref": "EDGAR XBRL shares, trailing 2024-09-30..2026-06-30",
         "status": "present",
         "note": null
       },
@@ -157,7 +245,7 @@
         "note": null
       },
       "trading_multiples": {
-        "value": "TEV/Rev: name 0.7 vs peers Low 0.4 / Median 0.9 / Mean 1.2 / High 2.6; TEV/EBITDA: name 4.1 vs peers Low 3.4 / Median 5.3 / Mean 6.1 / High 10.6; P/E: name NM vs peers Low 4.3 / Median 9 / Mean 10.6 / High 17.2; NTM TEV/Rev: name 0.68 vs peers Low 0.43 / Median 0.86 / Mean 1.19 / High 2.68; NTM TEV/EBITDA: name 4.54 vs peers Low 3.55 / Median 5.26 / Mean 5.81 / High 9.27; NTM P/E: name 2 vs peers Low 1.64 / Median 6.88 / Mean 7.69 / High 15.41  [LTM + NTM forward; NM = a real state (negative base), not missing]",
+        "value": "TEV/Rev: name 0.7 vs peers Low 0.4 / Median 0.9 / Mean 1.2 / High 2.6; TEV/EBITDA: name 4.1 vs peers Low 3.4 / Median 5.3 / Mean 6.1 / High 10.6; P/E: name NM vs peers Low 4.3 / Median 9 / Mean 10.6 / High 17.2; NTM TEV/Rev: name 0.68 vs peers Low 0.43 / Median 0.86 / Mean 1.19 / High 2.68; NTM TEV/EBITDA: name 4.54 vs peers Low 3.55 / Median 5.26 / Mean 5.81 / High 9.27; NTM P/E: name 2 vs peers Low 1.64 / Median 6.88 / Mean 7.69 / High 15.41  [NM = a real state (negative base), not missing]",
         "source_ref": "CIQ Comparable Analysis→Trading Multiples (name row + Summary Statistics Low/Median/Mean/High)",
         "status": "present",
         "note": null
@@ -167,11 +255,198 @@
         "source_ref": "CIQ Comparable Analysis→Operating Statistics (name vs peer median: growth/margin/leverage/beta)",
         "status": "present",
         "note": null
+      },
+      "peer_grid": {
+        "value": [
+          {
+            "name": "HCL Technologies Limited",
+            "ticker": "HCLTECH",
+            "is_name": false,
+            "is_median": false,
+            "market_cap": 31975.4,
+            "ebitda_margin": 0.198,
+            "rev_growth_1y": 0.0595,
+            "ebitda_growth_1y": -0.0028,
+            "debt_to_ebitda": "0.2",
+            "net_debt": -2655.0,
+            "tev_ebitda": "9.8",
+            "tev_rev": "2",
+            "pe": "17.2"
+          },
+          {
+            "name": "Fiserv",
+            "ticker": "FISV",
+            "is_name": false,
+            "is_median": false,
+            "market_cap": 25697.5,
+            "ebitda_margin": 0.397,
+            "rev_growth_1y": 0.0187,
+            "ebitda_growth_1y": -0.0864,
+            "debt_to_ebitda": "3.4",
+            "net_debt": 28479.0,
+            "tev_ebitda": "6.3",
+            "tev_rev": "2.6",
+            "pe": "8.2"
+          },
+          {
+            "name": "Wipro Limited",
+            "ticker": "507685",
+            "is_name": false,
+            "is_median": false,
+            "market_cap": 19397.5,
+            "ebitda_margin": 0.185,
+            "rev_growth_1y": 0.0397,
+            "ebitda_growth_1y": -0.0037,
+            "debt_to_ebitda": "1.1",
+            "net_debt": -3610.5,
+            "tev_ebitda": "8.4",
+            "tev_rev": "1.6",
+            "pe": "13.9"
+          },
+          {
+            "name": "Genpact Limited",
+            "ticker": "G",
+            "is_name": false,
+            "is_median": false,
+            "market_cap": 4836.0,
+            "ebitda_margin": 0.168,
+            "rev_growth_1y": 0.0639,
+            "ebitda_growth_1y": 0.055,
+            "debt_to_ebitda": "1.9",
+            "net_debt": 827.8,
+            "tev_ebitda": "6",
+            "tev_rev": "1.1",
+            "pe": "8.8"
+          },
+          {
+            "name": "ExlService Holdings",
+            "ticker": "EXLS",
+            "is_name": false,
+            "is_median": false,
+            "market_cap": 4024.3,
+            "ebitda_margin": 0.173,
+            "rev_growth_1y": 0.1335,
+            "ebitda_growth_1y": 0.1508,
+            "debt_to_ebitda": "1.3",
+            "net_debt": 266.9,
+            "tev_ebitda": "10.6",
+            "tev_rev": "2",
+            "pe": "16.8"
+          },
+          {
+            "name": "Teleperformance SE",
+            "ticker": "TEP",
+            "is_name": false,
+            "is_median": false,
+            "market_cap": 3393.3,
+            "ebitda_margin": 0.157,
+            "rev_growth_1y": -0.0069,
+            "ebitda_growth_1y": 0.0113,
+            "debt_to_ebitda": "2.7",
+            "net_debt": 4512.7,
+            "tev_ebitda": "3.8",
+            "tev_rev": "0.7",
+            "pe": "6.1"
+          },
+          {
+            "name": "Concentrix Corporation",
+            "ticker": "CNXC",
+            "is_name": true,
+            "is_median": false,
+            "market_cap": 1478.8,
+            "ebitda_margin": 0.124,
+            "rev_growth_1y": 0.0381,
+            "ebitda_growth_1y": -0.0395,
+            "debt_to_ebitda": "3.4",
+            "net_debt": 5466.7,
+            "tev_ebitda": "4.1",
+            "tev_rev": "0.7",
+            "pe": "NM"
+          },
+          {
+            "name": "Capita plc",
+            "ticker": "CPI",
+            "is_name": false,
+            "is_median": false,
+            "market_cap": 477.9,
+            "ebitda_margin": 0.083,
+            "rev_growth_1y": -0.0451,
+            "ebitda_growth_1y": -0.312,
+            "debt_to_ebitda": "3.2",
+            "net_debt": 607.0,
+            "tev_ebitda": "3.6",
+            "tev_rev": "0.4",
+            "pe": "NM"
+          },
+          {
+            "name": "TaskUs",
+            "ticker": "TASK",
+            "is_name": false,
+            "is_median": false,
+            "market_cap": 446.9,
+            "ebitda_margin": 0.181,
+            "rev_growth_1y": 0.1595,
+            "ebitda_growth_1y": 0.2296,
+            "debt_to_ebitda": "2.2",
+            "net_debt": 395.7,
+            "tev_ebitda": "3.4",
+            "tev_rev": "0.7",
+            "pe": "4.3"
+          },
+          {
+            "name": "IBEX Limited",
+            "ticker": "IBEX",
+            "is_name": false,
+            "is_median": false,
+            "market_cap": 400.6,
+            "ebitda_margin": 0.124,
+            "rev_growth_1y": 0.1704,
+            "ebitda_growth_1y": 0.1677,
+            "debt_to_ebitda": "0.6",
+            "net_debt": 45.6,
+            "tev_ebitda": "4.4",
+            "tev_rev": "0.7",
+            "pe": "9.3"
+          },
+          {
+            "name": "TTEC Holdings",
+            "ticker": "TTEC",
+            "is_name": false,
+            "is_median": false,
+            "market_cap": 102.7,
+            "ebitda_margin": 0.086,
+            "rev_growth_1y": -0.0306,
+            "ebitda_growth_1y": -0.0097,
+            "debt_to_ebitda": "4.4",
+            "net_debt": 884.6,
+            "tev_ebitda": "4.6",
+            "tev_rev": "0.5",
+            "pe": "NM"
+          },
+          {
+            "name": "Peer median",
+            "ticker": "",
+            "is_name": false,
+            "is_median": true,
+            "market_cap": 3708.8,
+            "ebitda_margin": 0.17049999999999998,
+            "rev_growth_1y": 0.0496,
+            "ebitda_growth_1y": 0.0042499999999999994,
+            "debt_to_ebitda": "2.0",
+            "net_debt": 501.35,
+            "tev_ebitda": "5.3",
+            "tev_rev": "0.9",
+            "pe": "9.05"
+          }
+        ],
+        "source_ref": "CIQ Comparable Analysis→Financial Data + Operating Statistics (per-peer grid) · as-of 2026-06-25",
+        "status": "present",
+        "note": null
       }
     },
     "drawdown_cause": {
       "shape": {
-        "value": "discrete gap-downs by 8-K item code — 2026-01-28 no 8-K matched; 2026-02-11 other event (8.01); 2026-02-12 other event (8.01); 2026-03-24 material agreement (1.01)",
+        "value": "discrete gap-downs — 2026-01-28 no 8-K matched; 2026-02-11 other event (8.01); 2026-02-12 other event (8.01); 2026-03-24 material agreement (1.01); 2026-06-30 earnings (2.02)",
         "source_ref": "EDGAR 8-K item codes at the gap-down dates (not blanket-labelled earnings)",
         "status": "present",
         "note": null
@@ -181,7 +456,8 @@
           "2026-01-28",
           "2026-02-11",
           "2026-02-12",
-          "2026-03-24"
+          "2026-03-24",
+          "2026-06-30"
         ],
         "source_ref": "EOD gap-down detector (screen events)",
         "status": "present",
@@ -204,7 +480,8 @@
           "url": "https://www.sec.gov/Archives/edgar/data/1803599/000180359926000068/cnxc-20260212.htm",
           "events": [
             "8.01 Other Events: Other Events. On February 12, 2026, Concentrix Corporation (the “Company”) entered into an underwriting agreement (the “Underwriting Agreement”) with BofA Securities, Inc. and J.P. Morgan Securities LLC, as representatives of the several underwriters named in Schedule 1 thereto, to issue and sell (the “Offering”) $600 million principal amount of its 6.500% Senior Notes due 2029 (the “Notes”). The "
-          ]
+          ],
+          "drivers": null
         },
         {
           "gap_date": "2026-02-12",
@@ -222,7 +499,8 @@
           "url": "https://www.sec.gov/Archives/edgar/data/1803599/000180359926000068/cnxc-20260212.htm",
           "events": [
             "8.01 Other Events: Other Events. On February 12, 2026, Concentrix Corporation (the “Company”) entered into an underwriting agreement (the “Underwriting Agreement”) with BofA Securities, Inc. and J.P. Morgan Securities LLC, as representatives of the several underwriters named in Schedule 1 thereto, to issue and sell (the “Offering”) $600 million principal amount of its 6.500% Senior Notes due 2029 (the “Notes”). The "
-          ]
+          ],
+          "drivers": null
         },
         {
           "gap_date": "2026-03-24",
@@ -243,31 +521,51 @@
           "events": [
             "1.01 Entry into a Material Definitive Agreement: Entry into a Material Definitive Agreement. On March 20, 2026, Concentrix Corporation (the “Company”), as servicer, entered into an amendment (the “Amendment”) to its accounts receivable securitization facility (as amended, the “Securitization Facility”) by and among Concentrix Receivables, Inc., a subsidiary of the Company, as borrower, PNC Bank, National Association, as administrative agent, and",
             "2.03 Item 2.03: Creation of a Direct Financial Obligation or an Obligation under an Off-Balance Sheet Arrangement of a Registrant. The information set forth in"
-          ]
+          ],
+          "drivers": null
+        },
+        {
+          "gap_date": "2026-06-30",
+          "filing_date": "2026-06-29",
+          "form": "8-K",
+          "items": [
+            "2.02",
+            "9.01"
+          ],
+          "item_types": [
+            "2.02 Results of Operations and Financial Condition",
+            "9.01 Financial Statements and Exhibits"
+          ],
+          "accession": "0001803599-26-000133",
+          "url": "https://www.sec.gov/Archives/edgar/data/1803599/000180359926000133/cnxc-20260629.htm",
+          "events": [
+            "2.02 Results of Operations and Financial Condition: Results of Operations and Financial Condition. On June 29, 2026, Concentrix Corporation (the “Company” or “Concentrix”) issued a press release reporting its financial results for the second quarter ended May 31, 2026. A copy of the press release is furnished as Exhibit 99.1 hereto and is incorporated in this"
+          ],
+          "drivers": null
         }
       ],
       "revised_guidance": {
         "value": null,
         "source_ref": null,
         "status": "unknown",
-        "note": "no revised-outlook 99.1 exhibit parsed for 8-Ks ['0001803599-26-000068', '0001803599-26-000068']"
+        "note": "no revised-outlook 99.1 exhibit parsed for 8-Ks ['0001803599-26-000068', '0001803599-26-000068', '0001803599-26-000133']"
       }
     },
     "idiosyncratic_vs_shared": {
       "name_180d_return": {
-        "value": -0.4260014391940513,
-        "source_ref": "EOD CNXC 180d to 2026-06-22",
+        "value": -0.4539519701562136,
+        "source_ref": "EOD CNXC 180d to 2026-07-06",
         "status": "present",
         "note": null
       },
       "market_180d_return": {
-        "value": 0.1799295635313205,
-        "source_ref": "EOD IWM 180d to 2026-06-22",
-        "status": "present",
-        "note": null
+        "value": null,
+        "source_ref": null,
+        "status": "unknown",
+        "note": "IWM benchmark bars unavailable"
       },
       "rel_vs_market": {
-        "value": -0.6167783230262919,
+        "value": -0.6145430380104027,
         "source_ref": "EOD name−IWM 180d (screen data-record, G2)",
         "status": "present",
         "note": null
@@ -305,154 +603,1972 @@
         "note": null
       },
       "surprise_history": {
-        "value": "GAAP-EPS surprise: FY2021 +5%, FY2022 -3%, FY2023 -13%, FY2024 +24%, FY2025 +0%; Revenue surprise: FY2021 +0%, FY2022 -1%, FY2023 +0%, FY2024 +0%, FY2025 +0% (fiscal-year, GAAP-EPS basis — adjusted basis is the 99.1 guide; +beat / −miss)",
+        "value": "GAAP-EPS surprise: FY2021 +5%, FY2022 -3%, FY2023 -13%, FY2024 +24%, FY2025 +0%; Revenue surprise: FY2021 +0%, FY2022 -1%, FY2023 +0%, FY2024 +0%, FY2025 +0% (GAAP-EPS basis; +beat / −miss)",
         "source_ref": "CIQ Estimates→Surprise (annual)",
         "status": "present",
         "note": null
       }
+    },
+    "catalyst_path": {
+      "as_of": {
+        "value": "≥2026-06-05",
+        "source_ref": "CIQ Estimates→Recent Changes (latest embedded event — export date NOT stamped)",
+        "status": "present",
+        "note": "export date unverified — a FLOOR (data on/after the latest embedded event); the true export is later (a dated sibling CIQ export in the same pull is weeks newer)"
+      },
+      "horizon_read": {
+        "value": "EPS Normalized FQ2 2026: 1m 0↑/0↓, 2m 0↑/0↓, 3m 0↑/2↓; EPS Normalized FQ3 2026: 1m 0↑/0↓, 2m 0↑/0↓, 3m 1↑/1↓; EPS (GAAP) FQ2 2026: 1m 0↑/0↓, 2m 0↑/0↓, 3m 0↑/1↓; EPS (GAAP) FQ3 2026: 1m 0↑/0↓, 2m 0↑/0↓, 3m 1↑/0↓; Revenue FQ2 2026: 1m 0↑/1↓, 2m 0↑/1↓, 3m 1↑/1↓; Revenue FQ3 2026: 1m 0↑/1↓, 2m 0↑/1↓, 3m 0↑/2↓; EBITDA FQ2 2026: 1m 1↑/0↓, 2m 1↑/0↓, 3m 0↑/0↓; EBITDA FQ3 2026: 1m 0↑/1↓, 2m 0↑/1↓, 3m 0↑/0↓; EBIT FQ2 2026: 1m 0↑/0↓, 2m 0↑/0↓, 3m 1↑/1↓; EBIT FQ3 2026: 1m 0↑/0↓, 2m 0↑/0↓, 3m 1↑/1↓; Interest Expense FQ2 2026: 1m 0↑/0↓, 2m 0↑/0↓, 3m 0↑/0↓; Interest Expense FQ3 2026: 1m 0↑/0↓, 2m 0↑/0↓, 3m 0↑/0↓; EBT (GAAP) FQ2 2026: 1m 0↑/1↓, 2m 0↑/1↓, 3m 0↑/1↓; EBT (GAAP) FQ3 2026: 1m 0↑/1↓, 2m 0↑/1↓, 3m 1↑/0↓; Net Income (Excl. Excep) FQ2 2026: 1m 0↑/0↓, 2m 0↑/0↓, 3m 0↑/2↓; Net Income (Excl. Excep) FQ3 2026: 1m 0↑/0↓, 2m 0↑/0↓, 3m 1↑/1↓; Net Income (GAAP) FQ2 2026: 1m 0↑/0↓, 2m 0↑/0↓, 3m 0↑/3↓; Net Income (GAAP) FQ3 2026: 1m 0↑/0↓, 2m 0↑/0↓, 3m 0↑/1↓  [data ≥ 2026-06-05 · export date unverified]",
+        "source_ref": "CIQ Estimates→Revisions (next-2-FQ breadth; 1m/2m/3m Upward/Downward)",
+        "status": "present",
+        "note": null
+      },
+      "acceleration_read": {
+        "value": "FY 2026 EPS Normalized: 12.5 (12m) → 12.5 (9m) → 12.2 (6m) → 12.0 (3m) → 11.7 (2m) → 11.7 (1m) → 11.7 (latest); net -7% (12m→latest) | FY 2026 EPS (GAAP): 6.09 (12m) → 5.18 (9m) → 5.37 (6m) → 4.98 (3m) → 4.00 (2m) → 4.00 (1m) → 4.00 (latest); net -34% (12m→latest) | FY 2026 Revenue: 9,874.4 (12m) → 10,084.6 (9m) → 10,117.1 (6m) → 10,167.8 (3m) → 10,119.6 (2m) → 10,119.6 (1m) → 10,119.6 (latest); net +2% (12m→latest) | FY 2026 EBITDA: 1,611.6 (12m) → 1,600.6 (9m) → 1,583.7 (6m) → 1,477.8 (3m) → 1,500.0 (2m) → 1,500.0 (1m) → 1,499.9 (latest); net -7% (12m→latest) | FY 2026 EBIT: 1,381.3 (12m) → 1,348.4 (9m) → 1,314.3 (6m) → 1,268.3 (3m) → 1,268.3 (2m) → 1,268.3 (1m) → 1,268.3 (latest); net -8% (12m→latest) | FY 2026 Interest Expense: -243.0 (12m) → -271.9 (9m) → -268.5 (6m) → -298.5 (3m) → -283.7 (2m) → -283.7 (1m) → -283.7 (latest); worsening (magnitude away from zero) (12m→latest) | FY 2026 EBT (GAAP): 550.4 (12m) → 518.0 (9m) → 491.1 (6m) → 399.8 (3m) → 345.4 (2m) → 345.4 (1m) → 345.5 (latest); net -37% (12m→latest) | FY 2026 Net Income (Excl. Excep): 797.1 (12m) → 775.5 (9m) → 763.8 (6m) → 740.5 (3m) → 707.2 (2m) → 707.2 (1m) → 707.2 (latest); net -11% (12m→latest) | FY 2026 Net Income (GAAP): 388.3 (12m) → 330.4 (9m) → 314.6 (6m) → 303.1 (3m) → 248.6 (2m) → 248.6 (1m) → 248.6 (latest); net -36% (12m→latest)  [data ≥ 2026-06-05 · export date unverified]",
+        "source_ref": "CIQ Estimates→Trends (current-FY consensus path; ragged, absent lookbacks n/a)",
+        "status": "present",
+        "note": null
+      },
+      "cross_name_anchor": {
+        "value": "NTM: TEV/REV 0.68 · TEV/EBITDA 4.54 · TEV/EBIT 5.36 · Price/Earnings 2.00 · PEG 0.26 | FY 2026: TEV/REV 0.69 · TEV/EBITDA 4.63 · TEV/EBIT 5.48 · Price/Earnings 2.07 · PEG 0.27 | FY 2027: TEV/REV 0.67 · TEV/EBITDA 4.42 · TEV/EBIT 5.19 · Price/Earnings 1.89 · PEG 0.25  [data ≥ 2026-06-05 · export date unverified]",
+        "source_ref": "CIQ Estimates→Multiples (forward-multiple ladder: NTM + FY26→FY33)",
+        "status": "present",
+        "note": null
+      },
+      "guidance_bridge": {
+        "value": "Revenue: latest guide '2,460.00 - 2,485.00' for FQ2 2026 (dated 2026-03-24) (stale — 104d old); actual ≥ guided floor 21/25 resolved; most recent resolved: FQ1 2026 MET; Capital Expenditure: latest guide '(200.70) - (254.50)' for FY 2026 (dated 2026-01-13) (stale — 174d old); EPS Normalized: latest guide '2.57 - 2.69' for FQ2 2026 (dated 2026-03-24) (stale — 104d old); actual ≥ guided floor 11/12 resolved; most recent resolved: FQ1 2026 MET  [data ≥ 2026-06-05 · export date unverified]",
+        "source_ref": "CIQ Estimates→Guidance (latest guide + sign-aware delivery track-record)",
+        "status": "present",
+        "note": null
+      },
+      "guidance_bridge_rows": {
+        "value": [
+          {
+            "metric": "Revenue",
+            "latest_guide": "'2,460.00 - 2,485.00'",
+            "period": "FQ2 2026",
+            "dated": "2026-03-24",
+            "age": "104d (stale)",
+            "record": "actual ≥ floor 21/25",
+            "most_recent": "FQ1 2026 MET"
+          },
+          {
+            "metric": "Capital Expenditure",
+            "latest_guide": "'(200.70) - (254.50)'",
+            "period": "FY 2026",
+            "dated": "2026-01-13",
+            "age": "174d (stale)",
+            "record": "—",
+            "most_recent": "—"
+          },
+          {
+            "metric": "EPS Normalized",
+            "latest_guide": "'2.57 - 2.69'",
+            "period": "FQ2 2026",
+            "dated": "2026-03-24",
+            "age": "104d (stale)",
+            "record": "actual ≥ floor 11/12",
+            "most_recent": "FQ1 2026 MET"
+          }
+        ],
+        "source_ref": "CIQ Estimates→Guidance (latest guide + sign-aware delivery track-record)",
+        "status": "present",
+        "note": null
+      },
+      "revision_events": {
+        "value": [
+          {
+            "date": "2026-06-05",
+            "change_type": "Downward Revision",
+            "broker": "Barrington Research Associates, Inc.",
+            "metric": "Revenue",
+            "period": "FY 2026",
+            "broker_prior": "10108.13",
+            "broker_current": "10108.1",
+            "consensus_before": "10119.58",
+            "consensus_after": "10119.57"
+          },
+          {
+            "date": "2026-06-05",
+            "change_type": "Downward Revision",
+            "broker": "Barrington Research Associates, Inc.",
+            "metric": "EBITDA",
+            "period": "FY 2026",
+            "broker_prior": "1533.63",
+            "broker_current": "1533.6",
+            "consensus_before": "1499.95",
+            "consensus_after": "1499.94"
+          },
+          {
+            "date": "2026-06-05",
+            "change_type": "Upward Revision",
+            "broker": "Barrington Research Associates, Inc.",
+            "metric": "EBT (GAAP)",
+            "period": "FY 2026",
+            "broker_prior": "345.45",
+            "broker_current": "345.5",
+            "consensus_before": "345.45",
+            "consensus_after": "345.5"
+          },
+          {
+            "date": "2026-06-05",
+            "change_type": "Downward Revision",
+            "broker": "Barrington Research Associates, Inc.",
+            "metric": "Revenue",
+            "period": "FQ2 2026",
+            "broker_prior": "2473.11",
+            "broker_current": "2473.1",
+            "consensus_before": "2473.43",
+            "consensus_after": "2473.43"
+          },
+          {
+            "date": "2026-06-05",
+            "change_type": "Upward Revision",
+            "broker": "Barrington Research Associates, Inc.",
+            "metric": "EBITDA",
+            "period": "FQ2 2026",
+            "broker_prior": "355.57",
+            "broker_current": "355.6",
+            "consensus_before": "352.59",
+            "consensus_after": "352.6"
+          },
+          {
+            "date": "2026-06-05",
+            "change_type": "Downward Revision",
+            "broker": "Barrington Research Associates, Inc.",
+            "metric": "EBT (GAAP)",
+            "period": "FQ2 2026",
+            "broker_prior": "54.55",
+            "broker_current": "54.5",
+            "consensus_before": "54.55",
+            "consensus_after": "54.5"
+          },
+          {
+            "date": "2026-03-26",
+            "change_type": "Downward Revision",
+            "broker": "broker undisclosed",
+            "metric": "EPS Normalized",
+            "period": "FY 2026",
+            "broker_prior": "11.9",
+            "broker_current": "11.82",
+            "consensus_before": "11.99",
+            "consensus_after": "11.98"
+          },
+          {
+            "date": "2026-03-26",
+            "change_type": "Downward Revision",
+            "broker": "broker undisclosed",
+            "metric": "Target Price",
+            "period": "Non-periodic",
+            "broker_prior": "52.0",
+            "broker_current": "40.0",
+            "consensus_before": "48.6",
+            "consensus_after": "46.2"
+          },
+          {
+            "date": "2026-03-25",
+            "change_type": "Downward Revision",
+            "broker": "broker undisclosed",
+            "metric": "EPS Normalized",
+            "period": "FQ2 2026",
+            "broker_prior": "2.68",
+            "broker_current": "2.64",
+            "consensus_before": "2.7",
+            "consensus_after": "2.69"
+          },
+          {
+            "date": "2026-03-25",
+            "change_type": "Downward Revision",
+            "broker": "broker undisclosed",
+            "metric": "EPS (GAAP)",
+            "period": "FQ2 2026",
+            "broker_prior": "0.83",
+            "broker_current": "0.77",
+            "consensus_before": "0.74",
+            "consensus_after": "0.71"
+          },
+          {
+            "date": "2026-03-25",
+            "change_type": "Downward Revision",
+            "broker": "broker undisclosed",
+            "metric": "LT Growth",
+            "period": "Non-periodic",
+            "broker_prior": "7.52",
+            "broker_current": "6.3",
+            "consensus_before": "8.26",
+            "consensus_after": "7.65"
+          },
+          {
+            "date": "2026-03-25",
+            "change_type": "Downward Revision",
+            "broker": "broker undisclosed",
+            "metric": "Net Income (GAAP)",
+            "period": "FY 2026",
+            "broker_prior": "306.41",
+            "broker_current": "238.12",
+            "consensus_before": "282.77",
+            "consensus_after": "248.63"
+          },
+          {
+            "date": "2026-03-25",
+            "change_type": "Downward Revision",
+            "broker": "broker undisclosed",
+            "metric": "ROE %",
+            "period": "FY 2026",
+            "broker_prior": "24.92",
+            "broker_current": "24.3",
+            "consensus_before": "24.92",
+            "consensus_after": "24.3"
+          },
+          {
+            "date": "2026-03-25",
+            "change_type": "Downward Revision",
+            "broker": "broker undisclosed",
+            "metric": "CFPS",
+            "period": "FY 2026",
+            "broker_prior": "14.57",
+            "broker_current": "14.34",
+            "consensus_before": "14.57",
+            "consensus_after": "14.34"
+          },
+          {
+            "date": "2026-03-25",
+            "change_type": "Downward Revision",
+            "broker": "broker undisclosed",
+            "metric": "Target Price",
+            "period": "Non-periodic",
+            "broker_prior": "47.0",
+            "broker_current": "32.0",
+            "consensus_before": "51.6",
+            "consensus_after": "48.6"
+          },
+          {
+            "date": "2026-03-25",
+            "change_type": "Downward Revision",
+            "broker": "broker undisclosed",
+            "metric": "EPS (GAAP)",
+            "period": "FY 2026",
+            "broker_prior": "5.0",
+            "broker_current": "3.93",
+            "consensus_before": "4.54",
+            "consensus_after": "4.0"
+          },
+          {
+            "date": "2026-03-25",
+            "change_type": "Downward Revision",
+            "broker": "broker undisclosed",
+            "metric": "CFPS",
+            "period": "FQ2 2026",
+            "broker_prior": "3.94",
+            "broker_current": "3.73",
+            "consensus_before": "3.94",
+            "consensus_after": "3.73"
+          },
+          {
+            "date": "2026-03-25",
+            "change_type": "Downward Revision",
+            "broker": "broker undisclosed",
+            "metric": "EPS Normalized",
+            "period": "FY 2026",
+            "broker_prior": "11.74",
+            "broker_current": "11.51",
+            "consensus_before": "12.04",
+            "consensus_after": "11.99"
+          },
+          {
+            "date": "2026-03-25",
+            "change_type": "Downward Revision",
+            "broker": "broker undisclosed",
+            "metric": "Net Income (Excl. Excep)",
+            "period": "FQ2 2026",
+            "broker_prior": "164.66",
+            "broker_current": "160.66",
+            "consensus_before": "161.54",
+            "consensus_after": "160.2"
+          },
+          {
+            "date": "2026-03-25",
+            "change_type": "Downward Revision",
+            "broker": "broker undisclosed",
+            "metric": "Net Income (GAAP)",
+            "period": "FQ2 2026",
+            "broker_prior": "51.12",
+            "broker_current": "47.12",
+            "consensus_before": "46.01",
+            "consensus_after": "44.02"
+          },
+          {
+            "date": "2026-03-25",
+            "change_type": "Upward Revision",
+            "broker": "broker undisclosed",
+            "metric": "EBIT",
+            "period": "FQ2 2026",
+            "broker_prior": "296.62",
+            "broker_current": "301.75",
+            "consensus_before": "295.35",
+            "consensus_after": "297.07"
+          },
+          {
+            "date": "2026-03-25",
+            "change_type": "Upward Revision",
+            "broker": "broker undisclosed",
+            "metric": "Revenue",
+            "period": "FQ2 2026",
+            "broker_prior": "2471.79",
+            "broker_current": "2475.39",
+            "consensus_before": "2472.23",
+            "consensus_after": "2473.43"
+          },
+          {
+            "date": "2026-03-25",
+            "change_type": "Upward Revision",
+            "broker": "broker undisclosed",
+            "metric": "EBITDA",
+            "period": "FQ2 2026",
+            "broker_prior": "351.95",
+            "broker_current": "356.2",
+            "consensus_before": "351.17",
+            "consensus_after": "352.59"
+          },
+          {
+            "date": "2026-03-25",
+            "change_type": "Downward Revision",
+            "broker": "broker undisclosed",
+            "metric": "EBT (Excl. Excep)",
+            "period": "FY 2026",
+            "broker_prior": "981.08",
+            "broker_current": "977.75",
+            "consensus_before": "994.9",
+            "consensus_after": "986.33"
+          },
+          {
+            "date": "2026-03-25",
+            "change_type": "Downward Revision",
+            "broker": "broker undisclosed",
+            "metric": "Net Income (Excl. Excep)",
+            "period": "FY 2026",
+            "broker_prior": "720.11",
+            "broker_current": "697.86",
+            "consensus_before": "740.29",
+            "consensus_after": "734.73"
+          },
+          {
+            "date": "2026-03-25",
+            "change_type": "Downward Revision",
+            "broker": "broker undisclosed",
+            "metric": "EBIT",
+            "period": "FY 2026",
+            "broker_prior": "1272.29",
+            "broker_current": "1271.24",
+            "consensus_before": "1268.67",
+            "consensus_after": "1268.32"
+          },
+          {
+            "date": "2026-03-25",
+            "change_type": "Downward Revision",
+            "broker": "broker undisclosed",
+            "metric": "Revenue",
+            "period": "FY 2026",
+            "broker_prior": "10175.01",
+            "broker_current": "10141.51",
+            "consensus_before": "10167.81",
+            "consensus_after": "10159.43"
+          },
+          {
+            "date": "2026-03-25",
+            "change_type": "Downward Revision",
+            "broker": "broker undisclosed",
+            "metric": "EBITDA",
+            "period": "FY 2026",
+            "broker_prior": "1493.93",
+            "broker_current": "1488.43",
+            "consensus_before": "1501.79",
+            "consensus_after": "1499.95"
+          },
+          {
+            "date": "2026-03-25",
+            "change_type": "Downward Revision",
+            "broker": "Barrington Research Associates, Inc.",
+            "metric": "Net Income (GAAP)",
+            "period": "FY 2026",
+            "broker_prior": "299.83",
+            "broker_current": "259.13",
+            "consensus_before": "303.12",
+            "consensus_after": "282.77"
+          },
+          {
+            "date": "2026-03-25",
+            "change_type": "Downward Revision",
+            "broker": "Barrington Research Associates, Inc.",
+            "metric": "Interest Expense",
+            "period": "FY 2026",
+            "broker_prior": "-257.0",
+            "broker_current": "-268.82",
+            "consensus_before": "-298.5",
+            "consensus_after": "-283.66"
+          },
+          {
+            "date": "2026-03-25",
+            "change_type": "Downward Revision",
+            "broker": "Barrington Research Associates, Inc.",
+            "metric": "Net Income (Excl. Excep)",
+            "period": "FY 2026",
+            "broker_prior": "714.4",
+            "broker_current": "713.73",
+            "consensus_before": "740.46",
+            "consensus_after": "740.29"
+          },
+          {
+            "date": "2026-03-25",
+            "change_type": "Upward Revision",
+            "broker": "Barrington Research Associates, Inc.",
+            "metric": "EBIT",
+            "period": "FY 2026",
+            "broker_prior": "1267.72",
+            "broker_current": "1268.91",
+            "consensus_before": "1268.27",
+            "consensus_after": "1268.67"
+          },
+          {
+            "date": "2026-03-25",
+            "change_type": "Downward Revision",
+            "broker": "Barrington Research Associates, Inc.",
+            "metric": "EBT (GAAP)",
+            "period": "FY 2026",
+            "broker_prior": "399.78",
+            "broker_current": "345.45",
+            "consensus_before": "399.78",
+            "consensus_after": "345.45"
+          },
+          {
+            "date": "2026-03-25",
+            "change_type": "Downward Revision",
+            "broker": "Barrington Research Associates, Inc.",
+            "metric": "EPS Normalized",
+            "period": "FQ2 2026",
+            "broker_prior": "2.74",
+            "broker_current": "2.63",
+            "consensus_before": "2.72",
+            "consensus_after": "2.7"
+          },
+          {
+            "date": "2026-03-25",
+            "change_type": "Downward Revision",
+            "broker": "Barrington Research Associates, Inc.",
+            "metric": "EPS (GAAP)",
+            "period": "FY 2026",
+            "broker_prior": "4.95",
+            "broker_current": "4.07",
+            "consensus_before": "4.98",
+            "consensus_after": "4.54"
+          },
+          {
+            "date": "2026-03-25",
+            "change_type": "Downward Revision",
+            "broker": "Barrington Research Associates, Inc.",
+            "metric": "Target Price",
+            "period": "Non-periodic",
+            "broker_prior": "62.0",
+            "broker_current": "38.0",
+            "consensus_before": "56.4",
+            "consensus_after": "51.6"
+          },
+          {
+            "date": "2026-03-25",
+            "change_type": "Downward Revision",
+            "broker": "Barrington Research Associates, Inc.",
+            "metric": "EPS (GAAP)",
+            "period": "FQ2 2026",
+            "broker_prior": "1.1",
+            "broker_current": "0.64",
+            "consensus_before": "0.97",
+            "consensus_after": "0.74"
+          },
+          {
+            "date": "2026-03-25",
+            "change_type": "Downward Revision",
+            "broker": "Barrington Research Associates, Inc.",
+            "metric": "Gross Margin %",
+            "period": "FQ2 2026",
+            "broker_prior": "35.2",
+            "broker_current": "34.2",
+            "consensus_before": "34.6",
+            "consensus_after": "34.1"
+          },
+          {
+            "date": "2026-03-25",
+            "change_type": "Downward Revision",
+            "broker": "Barrington Research Associates, Inc.",
+            "metric": "Gross Margin %",
+            "period": "FY 2026",
+            "broker_prior": "35.5",
+            "broker_current": "35.0",
+            "consensus_before": "34.75",
+            "consensus_after": "34.5"
+          },
+          {
+            "date": "2026-03-25",
+            "change_type": "Downward Revision",
+            "broker": "Barrington Research Associates, Inc.",
+            "metric": "EBIT",
+            "period": "FQ2 2026",
+            "broker_prior": "300.39",
+            "broker_current": "295.35",
+            "consensus_before": "297.04",
+            "consensus_after": "295.35"
+          },
+          {
+            "date": "2026-03-25",
+            "change_type": "Downward Revision",
+            "broker": "Barrington Research Associates, Inc.",
+            "metric": "EBT (GAAP)",
+            "period": "FQ2 2026",
+            "broker_prior": "89.4",
+            "broker_current": "54.55",
+            "consensus_before": "89.4",
+            "consensus_after": "54.55"
+          },
+          {
+            "date": "2026-03-25",
+            "change_type": "Downward Revision",
+            "broker": "Barrington Research Associates, Inc.",
+            "metric": "EBITDA",
+            "period": "FQ2 2026",
+            "broker_prior": "355.69",
+            "broker_current": "355.57",
+            "consensus_before": "346.0",
+            "consensus_after": "351.17"
+          },
+          {
+            "date": "2026-03-25",
+            "change_type": "Downward Revision",
+            "broker": "broker undisclosed",
+            "metric": "EBITDA",
+            "period": "FQ2 2026",
+            "broker_prior": "392.24",
+            "broker_current": "351.95",
+            "consensus_before": "346.0",
+            "consensus_after": "351.17"
+          },
+          {
+            "date": "2026-03-25",
+            "change_type": "Downward Revision",
+            "broker": "Barrington Research Associates, Inc.",
+            "metric": "Revenue",
+            "period": "FQ2 2026",
+            "broker_prior": "2513.57",
+            "broker_current": "2473.11",
+            "consensus_before": "2485.72",
+            "consensus_after": "2472.23"
+          },
+          {
+            "date": "2026-03-25",
+            "change_type": "Downward Revision",
+            "broker": "Barrington Research Associates, Inc.",
+            "metric": "Net Income (Excl. Excep)",
+            "period": "FQ2 2026",
+            "broker_prior": "166.56",
+            "broker_current": "160.26",
+            "consensus_before": "163.64",
+            "consensus_after": "161.54"
+          },
+          {
+            "date": "2026-03-25",
+            "change_type": "Downward Revision",
+            "broker": "Barrington Research Associates, Inc.",
+            "metric": "Revenue",
+            "period": "FY 2026",
+            "broker_prior": "10108.2",
+            "broker_current": "10108.13",
+            "consensus_before": "10167.83",
+            "consensus_after": "10167.81"
+          },
+          {
+            "date": "2026-03-25",
+            "change_type": "Upward Revision",
+            "broker": "Barrington Research Associates, Inc.",
+            "metric": "EBITDA",
+            "period": "FY 2026",
+            "broker_prior": "1490.1",
+            "broker_current": "1533.63",
+            "consensus_before": "1477.8",
+            "consensus_after": "1501.79"
+          },
+          {
+            "date": "2026-03-25",
+            "change_type": "Downward Revision",
+            "broker": "broker undisclosed",
+            "metric": "EBITDA",
+            "period": "FY 2026",
+            "broker_prior": "1585.46",
+            "broker_current": "1493.93",
+            "consensus_before": "1477.8",
+            "consensus_after": "1501.79"
+          },
+          {
+            "date": "2026-03-25",
+            "change_type": "Downward Revision",
+            "broker": "Barrington Research Associates, Inc.",
+            "metric": "Net Income (GAAP)",
+            "period": "FQ2 2026",
+            "broker_prior": "67.05",
+            "broker_current": "40.91",
+            "consensus_before": "59.08",
+            "consensus_after": "46.01"
+          },
+          {
+            "date": "2026-03-25",
+            "change_type": "Downward Revision",
+            "broker": "Barrington Research Associates, Inc.",
+            "metric": "Interest Expense",
+            "period": "FQ2 2026",
+            "broker_prior": "-64.5",
+            "broker_current": "-67.0",
+            "consensus_before": "-75.3",
+            "consensus_after": "-71.15"
+          },
+          {
+            "date": "2026-03-24",
+            "change_type": "Downward Revision",
+            "broker": "broker undisclosed",
+            "metric": "EBIT",
+            "period": "FY 2026",
+            "broker_prior": "1267.2",
+            "broker_current": "1264.8",
+            "consensus_before": "1269.07",
+            "consensus_after": "1268.27"
+          },
+          {
+            "date": "2026-03-24",
+            "change_type": "Downward Revision",
+            "broker": "broker undisclosed",
+            "metric": "EBT (Excl. Excep)",
+            "period": "FY 2026",
+            "broker_prior": "1023.6",
+            "broker_current": "994.9",
+            "consensus_before": "1002.34",
+            "consensus_after": "994.9"
+          },
+          {
+            "date": "2026-03-24",
+            "change_type": "Downward Revision",
+            "broker": "broker undisclosed",
+            "metric": "Net Income (Excl. Excep)",
+            "period": "FY 2026",
+            "broker_prior": "729.9",
+            "broker_current": "710.1",
+            "consensus_before": "745.41",
+            "consensus_after": "740.46"
+          },
+          {
+            "date": "2026-03-24",
+            "change_type": "Downward Revision",
+            "broker": "broker undisclosed",
+            "metric": "Depreciation & Amortization",
+            "period": "FQ2 2026",
+            "broker_prior": "55.8",
+            "broker_current": "51.9",
+            "consensus_before": "55.8",
+            "consensus_after": "51.9"
+          },
+          {
+            "date": "2026-03-24",
+            "change_type": "Downward Revision",
+            "broker": "broker undisclosed",
+            "metric": "Revenue",
+            "period": "FY 2026",
+            "broker_prior": "10127.2",
+            "broker_current": "10109.1",
+            "consensus_before": "10172.35",
+            "consensus_after": "10167.83"
+          },
+          {
+            "date": "2026-03-24",
+            "change_type": "Downward Revision",
+            "broker": "broker undisclosed",
+            "metric": "EBITDA",
+            "period": "FY 2026",
+            "broker_prior": "1495.1",
+            "broker_current": "1477.8",
+            "consensus_before": "1493.04",
+            "consensus_after": "1477.8"
+          },
+          {
+            "date": "2026-03-24",
+            "change_type": "Downward Revision",
+            "broker": "broker undisclosed",
+            "metric": "Gross Margin %",
+            "period": "FY 2026",
+            "broker_prior": "34.1",
+            "broker_current": "34.0",
+            "consensus_before": "34.8",
+            "consensus_after": "34.75"
+          },
+          {
+            "date": "2026-03-24",
+            "change_type": "Downward Revision",
+            "broker": "broker undisclosed",
+            "metric": "EPS Normalized",
+            "period": "FQ2 2026",
+            "broker_prior": "2.79",
+            "broker_current": "2.63",
+            "consensus_before": "2.76",
+            "consensus_after": "2.72"
+          },
+          {
+            "date": "2026-03-24",
+            "change_type": "Downward Revision",
+            "broker": "broker undisclosed",
+            "metric": "EPS Normalized",
+            "period": "FY 2026",
+            "broker_prior": "12.04",
+            "broker_current": "11.73",
+            "consensus_before": "12.1",
+            "consensus_after": "12.04"
+          },
+          {
+            "date": "2026-03-24",
+            "change_type": "Downward Revision",
+            "broker": "broker undisclosed",
+            "metric": "Target Price",
+            "period": "Non-periodic",
+            "broker_prior": "80.0",
+            "broker_current": "55.0",
+            "consensus_before": "61.4",
+            "consensus_after": "56.4"
+          },
+          {
+            "date": "2026-03-24",
+            "change_type": "Downward Revision",
+            "broker": "broker undisclosed",
+            "metric": "Effective Tax Rate %",
+            "period": "FY 2026",
+            "broker_prior": "25.0",
+            "broker_current": "24.9",
+            "consensus_before": "25.0",
+            "consensus_after": "24.95"
+          },
+          {
+            "date": "2026-03-24",
+            "change_type": "Downward Revision",
+            "broker": "broker undisclosed",
+            "metric": "Interest Expense",
+            "period": "FY 2026",
+            "broker_prior": "-273.6",
+            "broker_current": "-298.5",
+            "consensus_before": "-265.3",
+            "consensus_after": "-298.5"
+          },
+          {
+            "date": "2026-03-24",
+            "change_type": "Downward Revision",
+            "broker": "broker undisclosed",
+            "metric": "Depreciation & Amortization",
+            "period": "FY 2026",
+            "broker_prior": "227.9",
+            "broker_current": "212.9",
+            "consensus_before": "227.9",
+            "consensus_after": "212.9"
+          },
+          {
+            "date": "2026-03-24",
+            "change_type": "Downward Revision",
+            "broker": "broker undisclosed",
+            "metric": "EBITDA",
+            "period": "FY 2026",
+            "broker_prior": "1585.46",
+            "broker_current": "1493.93",
+            "consensus_before": "1493.04",
+            "consensus_after": "1477.8"
+          },
+          {
+            "date": "2026-03-24",
+            "change_type": "Downward Revision",
+            "broker": "broker undisclosed",
+            "metric": "EBT (Excl. Excep)",
+            "period": "FY 2026",
+            "broker_prior": "1022.32",
+            "broker_current": "981.08",
+            "consensus_before": "1002.34",
+            "consensus_after": "994.9"
+          },
+          {
+            "date": "2026-03-24",
+            "change_type": "Downward Revision",
+            "broker": "Barrington Research Associates, Inc.",
+            "metric": "EBITDA",
+            "period": "FY 2026",
+            "broker_prior": "1504.89",
+            "broker_current": "1490.1",
+            "consensus_before": "1493.04",
+            "consensus_after": "1477.8"
+          },
+          {
+            "date": "2026-03-24",
+            "change_type": "Downward Revision",
+            "broker": "broker undisclosed",
+            "metric": "EBITDA",
+            "period": "FQ2 2026",
+            "broker_prior": "392.24",
+            "broker_current": "351.95",
+            "consensus_before": "353.58",
+            "consensus_after": "346.0"
+          },
+          {
+            "date": "2026-03-24",
+            "change_type": "Initiation of Coverage",
+            "broker": "Barrington Research Associates, Inc.",
+            "metric": "EBITDA",
+            "period": "FQ2 2026",
+            "broker_prior": "-",
+            "broker_current": "355.69",
+            "consensus_before": "353.58",
+            "consensus_after": "346.0"
+          },
+          {
+            "date": "2026-03-24",
+            "change_type": "Initiation of Coverage",
+            "broker": "Barrington Research Associates, Inc.",
+            "metric": "Interest Expense",
+            "period": "FQ2 2026",
+            "broker_prior": "-",
+            "broker_current": "-64.5",
+            "consensus_before": "-66.85",
+            "consensus_after": "-75.3"
+          },
+          {
+            "date": "2026-03-24",
+            "change_type": "Upward Revision",
+            "broker": "Barrington Research Associates, Inc.",
+            "metric": "Interest Expense",
+            "period": "FY 2026",
+            "broker_prior": "-273.0",
+            "broker_current": "-257.0",
+            "consensus_before": "-265.3",
+            "consensus_after": "-298.5"
+          },
+          {
+            "date": "2026-03-24",
+            "change_type": "Downward Revision",
+            "broker": "broker undisclosed",
+            "metric": "EBT (Excl. Excep)",
+            "period": "FQ2 2026",
+            "broker_prior": "238.2",
+            "broker_current": "223.8",
+            "consensus_before": "238.2",
+            "consensus_after": "223.8"
+          },
+          {
+            "date": "2026-03-24",
+            "change_type": "Downward Revision",
+            "broker": "broker undisclosed",
+            "metric": "Net Income (Excl. Excep)",
+            "period": "FQ2 2026",
+            "broker_prior": "169.9",
+            "broker_current": "159.7",
+            "consensus_before": "167.04",
+            "consensus_after": "163.64"
+          },
+          {
+            "date": "2026-03-24",
+            "change_type": "Downward Revision",
+            "broker": "broker undisclosed",
+            "metric": "Interest Expense",
+            "period": "FQ2 2026",
+            "broker_prior": "-69.2",
+            "broker_current": "-75.3",
+            "consensus_before": "-66.85",
+            "consensus_after": "-75.3"
+          },
+          {
+            "date": "2026-03-24",
+            "change_type": "Downward Revision",
+            "broker": "broker undisclosed",
+            "metric": "Revenue",
+            "period": "FQ2 2026",
+            "broker_prior": "2477.8",
+            "broker_current": "2471.8",
+            "consensus_before": "2487.72",
+            "consensus_after": "2485.72"
+          },
+          {
+            "date": "2026-03-24",
+            "change_type": "Downward Revision",
+            "broker": "broker undisclosed",
+            "metric": "EBITDA",
+            "period": "FQ2 2026",
+            "broker_prior": "353.1",
+            "broker_current": "346.0",
+            "consensus_before": "353.58",
+            "consensus_after": "346.0"
+          },
+          {
+            "date": "2026-03-24",
+            "change_type": "Downward Revision",
+            "broker": "broker undisclosed",
+            "metric": "EBIT",
+            "period": "FQ2 2026",
+            "broker_prior": "297.3",
+            "broker_current": "294.1",
+            "consensus_before": "298.1",
+            "consensus_after": "297.04"
+          },
+          {
+            "date": "2026-03-18",
+            "change_type": "Downward Revision",
+            "broker": "broker undisclosed",
+            "metric": "EPS Normalized",
+            "period": "FQ2 2026",
+            "broker_prior": "2.96",
+            "broker_current": "2.84",
+            "consensus_before": "2.74",
+            "consensus_after": "2.76"
+          },
+          {
+            "date": "2026-03-16",
+            "change_type": "Downward Revision",
+            "broker": "broker undisclosed",
+            "metric": "Target Price",
+            "period": "Non-periodic",
+            "broker_prior": "56.0",
+            "broker_current": "52.0",
+            "consensus_before": "62.2",
+            "consensus_after": "61.4"
+          },
+          {
+            "date": "2026-03-16",
+            "change_type": "Downward Revision",
+            "broker": "broker undisclosed",
+            "metric": "EPS Normalized",
+            "period": "FY 2026",
+            "broker_prior": "12.26",
+            "broker_current": "11.9",
+            "consensus_before": "12.17",
+            "consensus_after": "12.1"
+          }
+        ],
+        "source_ref": "CIQ Estimates→Recent Changes (79 broker revision events)  [data ≥ 2026-06-05 · export date unverified]",
+        "status": "present",
+        "note": null
+      },
+      "consensus_stats": {
+        "value": "Target price: mean $41.25, median $39.00, high/low 55.00/32.00, N 4/4; Ratings: Buy 2, Outperform 1, Hold 1, Underperform 0, Sell 0, No Opinion 0  [data ≥ 2026-06-05 · export date unverified]",
+        "source_ref": "CIQ Estimates→Consensus (target stats) + Trends Non-Periodic (ratings)",
+        "status": "present",
+        "note": null
+      },
+      "insider_activity": {
+        "value": "Open-market buys 4 · sells 1 (net -5994.5K sh) · grants 17 · last 2026-07-09 · other F×22",
+        "source_ref": "EDGAR Form 4 (latest 0001604279-26-000003; 36 in 6m)",
+        "status": "present",
+        "note": null
+      },
+      "short_interest": {
+        "value": "Short interest (FINRA, settle 2026-06-15): 10.4M → 10.1M sh (-3.0%, falling) · 16.5% of shares out (EDGAR XBRL) · DTC 5.5d · recent: 2026-06-15 10.1M · 2026-05-29 10.4M · 2026-05-15 10.5M · 2026-04-30 11.1M",
+        "source_ref": "FINRA consolidated short interest (settle 2026-06-15); DTC = 10,056,672 short ÷ 1,842,229 screen 90d ADV",
+        "status": "present",
+        "note": null
+      }
+    },
+    "leverage_survival": {
+      "net_debt_to_ebitda": {
+        "value": 4.4,
+        "source_ref": "CIQ Net Debt $5,467M [Q1 Feb-28-2026] ÷ CIQ EBITDA $1,231M [LTM 12 months Feb-28-2026]",
+        "status": "present",
+        "note": null
+      },
+      "total_debt_to_ebitda": {
+        "value": "name 3.4x vs peer median 2.0x (comps TOTAL-debt/EBITDA basis)",
+        "source_ref": "CIQ Comparable Analysis→Operating Statistics (LTM Total Debt/EBITDA) · as-of 2026-06-25",
+        "status": "present",
+        "note": null
+      },
+      "interest_coverage": {
+        "value": 3.4,
+        "source_ref": "CIQ Financials→Income Statement EBITDA ÷ Interest Expense [LTM 12 months Feb-28-2026]",
+        "status": "present",
+        "note": null
+      },
+      "survival": {
+        "value": "net-debt/EBITDA 4.4x (CIQ) | FCF-positive → self-funding",
+        "source_ref": "CIQ Net Debt ÷ CIQ LTM EBITDA (EDGAR XBRL breadth fallback) + FCF sign (survival capacity)",
+        "status": "present",
+        "note": null
+      },
+      "credit_health": {
+        "value": "name Overall/Operational/Solvency/Liquidity 4/4/4/4 (S&P issuer rating BBB-); peer-median O/Op/S/L 3/3/3/3; scale 1=strongest … 4=weakest (S&P-MI PD model)",
+        "source_ref": "CIQ Comparable Analysis→Credit Health Panel · as-of 2026-06-25",
+        "status": "present",
+        "note": null
+      }
+    },
+    "implied_valuation": {
+      "implied_equity": {
+        "value": [
+          {
+            "basis": "LTM Total Revenue",
+            "low": -1944.0,
+            "median": 3537.3,
+            "mean": 6675.8,
+            "high": 20112.6
+          },
+          {
+            "basis": "LTM EBITDA",
+            "low": -1234.3,
+            "median": 1082.5,
+            "mean": 2032.2,
+            "high": 7622.5
+          },
+          {
+            "basis": "LTM EBIT",
+            "low": -2741.6,
+            "median": -473.3,
+            "mean": -480.6,
+            "high": 2058.3
+          },
+          {
+            "basis": "NTM Revenue (Capital IQ)",
+            "low": -1129.26,
+            "median": 3241.4,
+            "mean": 6630.21,
+            "high": 21680.69
+          },
+          {
+            "basis": "NTM EBITDA (Capital IQ)",
+            "low": -29.93,
+            "median": 2572.56,
+            "mean": 3422.13,
+            "high": 8717.74
+          },
+          {
+            "basis": "NTM EPS (Capital IQ)",
+            "low": 1211.3,
+            "median": 5084.88,
+            "mean": 5684.09,
+            "high": 11396.35
+          }
+        ],
+        "source_ref": "CIQ Comparable Analysis→Implied Valuation (= Implied Equity Value, basis × Low/Median/Mean/High) · as-of 2026-06-25",
+        "status": "present",
+        "note": null
+      },
+      "bridge": {
+        "value": "TEV→equity bridge: + cash $222.70M, − total debt $5,689.40M",
+        "source_ref": "CIQ Comparable Analysis→Implied Valuation (cash/debt bridge) · as-of 2026-06-25",
+        "status": "present",
+        "note": null
+      },
+      "bridge_cash": 222.7,
+      "bridge_debt": 5689.4,
+      "market_cap": {
+        "value": 1478.8,
+        "source_ref": "CIQ Comparable Analysis→Financial Data (name Market Capitalization Latest) · as-of 2026-06-25",
+        "status": "present",
+        "note": null
+      },
+      "comparability_gate": {
+        "value": "market caps span $103M–$32.0B (311x); the name is $1.5B → HETEROGENEOUS — low comparability: the peer median is anchored by businesses of differing scale/model; scrutinise comparability before reading any peer stat as a clean benchmark.",
+        "source_ref": "CIQ Comparable Analysis→Financial Data (market-cap dispersion) + Business Description",
+        "status": "present",
+        "note": null
+      }
+    },
+    "capital_structure": {
+      "instruments": {
+        "value": [
+          {
+            "description": "6.600% Senior Notes Due 2028",
+            "type": "Bonds and Notes",
+            "principal_musd": 800.0,
+            "coupon": "6.600%",
+            "floating_rate": "NA",
+            "maturity_date": null,
+            "seniority": "Senior",
+            "secured": false,
+            "convertible": false,
+            "currency": "USD"
+          },
+          {
+            "description": "6.650% Senior Notes Due 2026",
+            "type": "Bonds and Notes",
+            "principal_musd": 800.0,
+            "coupon": "6.650%",
+            "floating_rate": "NA",
+            "maturity_date": null,
+            "seniority": "Senior",
+            "secured": false,
+            "convertible": false,
+            "currency": "USD"
+          },
+          {
+            "description": "6.850% Senior Notes Due 2033",
+            "type": "Bonds and Notes",
+            "principal_musd": 550.0,
+            "coupon": "6.850%",
+            "floating_rate": "NA",
+            "maturity_date": null,
+            "seniority": "Senior",
+            "secured": false,
+            "convertible": false,
+            "currency": "USD"
+          },
+          {
+            "description": "Credit Facility - Term Loan Component",
+            "type": "Term Loans",
+            "principal_musd": 1965.6,
+            "coupon": "NA",
+            "floating_rate": "Benchmark",
+            "maturity_date": null,
+            "seniority": "Senior",
+            "secured": false,
+            "convertible": false,
+            "currency": "USD"
+          },
+          {
+            "description": "Operating Lease",
+            "type": "Capital Lease",
+            "principal_musd": 898.2,
+            "coupon": "6.920%",
+            "floating_rate": "NA",
+            "maturity_date": null,
+            "seniority": "Senior",
+            "secured": true,
+            "convertible": false,
+            "currency": "USD"
+          },
+          {
+            "description": "Other Loans",
+            "type": "Term Loans",
+            "principal_musd": null,
+            "coupon": "NA",
+            "floating_rate": "NA",
+            "maturity_date": null,
+            "seniority": "Senior",
+            "secured": false,
+            "convertible": false,
+            "currency": "USD"
+          },
+          {
+            "description": "Securitization Facility",
+            "type": "Other Borrowings",
+            "principal_musd": 537.0,
+            "coupon": "NA",
+            "floating_rate": "Various Benchmarks",
+            "maturity_date": "2028-03-20",
+            "seniority": "Senior",
+            "secured": true,
+            "convertible": false,
+            "currency": "USD"
+          },
+          {
+            "description": "Sellers Note",
+            "type": "Bonds and Notes",
+            "principal_musd": null,
+            "coupon": "2.000%",
+            "floating_rate": "NA",
+            "maturity_date": "2025-09-25",
+            "seniority": "Senior",
+            "secured": false,
+            "convertible": false,
+            "currency": "EUR"
+          },
+          {
+            "description": "Senior Unsecured Revolving Credit Facility",
+            "type": "Revolving Credit",
+            "principal_musd": null,
+            "coupon": "NA",
+            "floating_rate": "Benchmark",
+            "maturity_date": "2030-04-11",
+            "seniority": "Senior",
+            "secured": false,
+            "convertible": false,
+            "currency": "USD"
+          }
+        ],
+        "source_ref": "CIQ Financials→Capital Structure Details (A 2025 filed Jan-28-2026)",
+        "status": "present",
+        "note": null
+      },
+      "summary": {
+        "value": "term loans 1,956.2 (1,965.6→1,956.2 QoQ); senior bonds 2,150.0; leases 939.1; total principal 5,700.9; total debt 5,689.4 (latest quarter) ($M)",
+        "source_ref": "CIQ Financials→Capital Structure Summary",
+        "status": "present",
+        "note": null
+      },
+      "detail_as_of": "A 2025 filed Jan-28-2026",
+      "maturity_filings": {
+        "value": "8-K at maturity 2025-09-25: filed 2025-09-25 [0001803599-25-000143] 2.02 Results of Operations and Financial Condition, 9.01 Financial Statements and Exhibits — read for resolution",
+        "source_ref": "EDGAR 8-K submissions (±10d of instrument maturities)",
+        "status": "present",
+        "note": null
+      },
+      "covenant_pointers": {
+        "value": "Credit Facility [0001803599-23-000177]",
+        "source_ref": "EDGAR 10-K exhibit index + CIK-scoped efts (agreement-class, exhibit-bearing)",
+        "status": "present",
+        "note": null
+      },
+      "covenant_pointer_rows": {
+        "value": [
+          {
+            "family": "Credit Facility",
+            "filing": "8-K",
+            "filing_date": "2023-08-02",
+            "accession": "0001803599-23-000177",
+            "exhibits": [
+              "exhibit41indenture.htm"
+            ],
+            "note": ""
+          },
+          {
+            "family": "6.600% Senior Notes Due 2028",
+            "filing": "—",
+            "filing_date": "",
+            "accession": "",
+            "exhibits": [],
+            "note": "no contract-level filing expected (aggregate line item)"
+          },
+          {
+            "family": "6.650% Senior Notes Due 2026",
+            "filing": "—",
+            "filing_date": "",
+            "accession": "",
+            "exhibits": [],
+            "note": "no contract-level filing expected (aggregate line item)"
+          },
+          {
+            "family": "6.850% Senior Notes Due 2033",
+            "filing": "—",
+            "filing_date": "",
+            "accession": "",
+            "exhibits": [],
+            "note": "no contract-level filing expected (aggregate line item)"
+          },
+          {
+            "family": "Operating Lease",
+            "filing": "—",
+            "filing_date": "",
+            "accession": "",
+            "exhibits": [],
+            "note": "no contract-level filing expected (aggregate line item)"
+          }
+        ],
+        "source_ref": "EDGAR 10-K exhibit index + CIK-scoped efts (agreement-class, exhibit-bearing)",
+        "status": "present",
+        "note": null
+      },
+      "covenant_terms": {
+        "value": "COVENANT & MATURITY DIGEST (governing terms; verbatim quotes omitted):\n[Credit Facility · 0001803599-23-000177]\n  Principal / commitment amount: unlimited aggregate principal amount, issuable from time to time in one or more…\n  Interest / coupon rate: Rate to be established per series pursuant to Section 3.01(d); not fixed in the base…\n  Maturity date: To be established per series pursuant to Section 3.01(c); not fixed in the base…\n  Financial-maintenance covenants: No ongoing financial-maintenance ratio (e.g., leverage/coverage) covenant.…",
+        "source_ref": "fenced Tier-2 digest (P1)",
+        "status": "present",
+        "note": null
+      },
+      "covenant_term_rows": {
+        "value": [
+          {
+            "name": "Conversion price / mechanics",
+            "value": {
+              "value": null,
+              "source_ref": null,
+              "status": "unknown",
+              "note": "not stated in 8-K 0001803599-23-000177 · exhibit41indenture.htm"
+            },
+            "base_rate_label": null,
+            "margin_pct": null,
+            "margin_bps": null,
+            "floor_pct": null,
+            "pik_pct": null
+          },
+          {
+            "name": "Principal / commitment amount",
+            "value": {
+              "value": "unlimited aggregate principal amount, issuable from time to time in one or more series (specific series amounts to be set forth in a Company Order, Officer's Certificate or supplemental indenture per Section 3.01(b))",
+              "source_ref": "8-K 0001803599-23-000177 · exhibit41indenture.htm",
+              "status": "present",
+              "note": "verbatim: “The aggregate principal amount of Securities which may be authenticated and delivered under this Indenture is unlimited. The Securities may be issued from time to time in one or more series.”"
+            },
+            "base_rate_label": null,
+            "margin_pct": null,
+            "margin_bps": null,
+            "floor_pct": null,
+            "pik_pct": null
+          },
+          {
+            "name": "Interest / coupon rate",
+            "value": {
+              "value": "Rate to be established per series pursuant to Section 3.01(d); not fixed in the base indenture (form of note titled \"% Note Due\", interest payable semi-annually). Day-count: 360-day year of twelve 30-day months.",
+              "source_ref": "8-K 0001803599-23-000177 · exhibit41indenture.htm",
+              "status": "present",
+              "note": "verbatim: “the rate or rates at which the Securities of the series shall bear interest, if any, or the method by which such rate or rates shall be determined ... (Section 3.01(d)); Except as otherwise specified pursuant to Section 3.01 for Securities of any series, interest on the Securities of each series shall be computed on the basis of a 360-day year of twelve 30-day months.”"
+            },
+            "base_rate_label": null,
+            "margin_pct": null,
+            "margin_bps": null,
+            "floor_pct": null,
+            "pik_pct": null
+          },
+          {
+            "name": "Maturity date",
+            "value": {
+              "value": "To be established per series pursuant to Section 3.01(c); not fixed in the base indenture (form of note captioned \"Note Due ______\")",
+              "source_ref": "8-K 0001803599-23-000177 · exhibit41indenture.htm",
+              "status": "present",
+              "note": "verbatim: “the dates on which or periods during which the Securities of the series may be issued, and the dates on, or the range of dates within, which the principal of, and premium, if any, on, the Securities of such series are or may be payable or the method by which such date or dates shall be determined or extended (Section 3.01(c))”"
+            },
+            "base_rate_label": null,
+            "margin_pct": null,
+            "margin_bps": null,
+            "floor_pct": null,
+            "pik_pct": null
+          },
+          {
+            "name": "Financial-maintenance covenants",
+            "value": {
+              "value": "No ongoing financial-maintenance ratio (e.g., leverage/coverage) covenant. Incurrence-type limit: Exempted Debt may not exceed 15% of Consolidated Tangible Assets (Sections 6.09 and 6.10). Restrictions on Liens (6.09) and on Sale and Lease-back Transactions (6.10); Change of Control Offer (6.08); Compliance Certificate annually within 120 days of fiscal year end (6.05).",
+              "source_ref": "8-K 0001803599-23-000177 · exhibit41indenture.htm",
+              "status": "present",
+              "note": "verbatim: “Notwithstanding the foregoing, the Company or any Restricted Subsidiary may create or assume Liens in addition to those permitted by this Section 6.09 ... provided that at the time of and after giving effect to the creation or assumption of such Liens ... Exempted Debt does not exceed 15% of Consolidated Tangible Assets of the Company and its Subsidiaries.”"
+            },
+            "base_rate_label": null,
+            "margin_pct": null,
+            "margin_bps": null,
+            "floor_pct": null,
+            "pik_pct": null
+          },
+          {
+            "name": "Security / collateral / guarantors",
+            "value": {
+              "value": "Base indenture provides no standing collateral or guarantee; whether Securities are secured (3.01(s)) or guaranteed (3.01(z)) is to be established per series. Negative pledge under Section 6.09 may require equal and ratable securing of the Securities if certain Liens are incurred.",
+              "source_ref": "8-K 0001803599-23-000177 · exhibit41indenture.htm",
+              "status": "present",
+              "note": "verbatim: “whether the Securities of such series shall be secured (Section 3.01(s)); whether the payment of principal of, and premium, if any, or interest on, the Securities of the series will be guaranteed by any other Person (Section 3.01(z)); add guarantees or co-obligors with respect to the Securities (Section 14.01(g)); secure the Securities including to add collateral ... (Section 14.01(h))”"
+            },
+            "base_rate_label": null,
+            "margin_pct": null,
+            "margin_bps": null,
+            "floor_pct": null,
+            "pik_pct": null
+          },
+          {
+            "name": "Mandatory prepayment / events of default",
+            "value": {
+              "value": "Events of Default (Section 7.01): (a) interest default 30-day grace; (b) principal/premium default; (d) other covenant default, 90 days after notice; (e) involuntary bankruptcy 90-day; (f) voluntary bankruptcy; (g) failure to purchase upon Change of Control Offer under 6.08; (h) cross-default/cross-acceleration on Indebtedness aggregating in excess of $400,000,000. Change of Control Offer (Section 6.08): purchase at 101% of principal plus accrued and unpaid interest upon a Change of Control Triggering Event.",
+              "source_ref": "8-K 0001803599-23-000177 · exhibit41indenture.htm",
+              "status": "present",
+              "note": "verbatim: “The term \"Event of Default\" ... shall mean one of the following described events ... (a) the failure of the Company to pay any installment of interest ... continued unremedied for a period of 30 calendar days; (b) the failure of the Company to pay the principal of, and premium, if any ...; (d) the failure ... to perform any covenants or agreements ... not remedied for a period of 90 calendar days after written notice ...; (e)/(f) bankruptcy/insolvency events; (g) a failure to purchase the series of Securities tendered ... in respect of a Change of Control Offer as required under Section 6.08; (h) a default under any ... Indebtedness ... aggregates in excess of $400,000,000”"
+            },
+            "base_rate_label": null,
+            "margin_pct": null,
+            "margin_bps": null,
+            "floor_pct": null,
+            "pik_pct": null
+          },
+          {
+            "name": "Change of Control repurchase price",
+            "value": {
+              "value": "101% of aggregate principal amount plus accrued and unpaid interest (Change of Control Triggering Event = Change of Control + Ratings Event)",
+              "source_ref": "8-K 0001803599-23-000177 · exhibit41indenture.htm",
+              "status": "present",
+              "note": "verbatim: “the Company shall make an offer to each Holder of Securities of that series to purchase all or any part ... at a purchase price in cash equal to 101% of the aggregate principal amount thereof, plus accrued and unpaid interest, if any, to, but not including, the date of purchase”"
+            },
+            "base_rate_label": null,
+            "margin_pct": null,
+            "margin_bps": null,
+            "floor_pct": null,
+            "pik_pct": null
+          },
+          {
+            "name": "Denominations",
+            "value": {
+              "value": "Minimum denominations of $2,000 and multiples of $1,000 in excess thereof",
+              "source_ref": "8-K 0001803599-23-000177 · exhibit41indenture.htm",
+              "status": "present",
+              "note": "verbatim: “the Securities of such series shall be issuable only as Securities in minimum denominations of $2,000 and multiples of $1,000 in excess thereof, and shall be payable only in U.S. Dollars.”"
+            },
+            "base_rate_label": null,
+            "margin_pct": null,
+            "margin_bps": null,
+            "floor_pct": null,
+            "pik_pct": null
+          },
+          {
+            "name": "Governing law",
+            "value": {
+              "value": "State of New York",
+              "source_ref": "8-K 0001803599-23-000177 · exhibit41indenture.htm",
+              "status": "present",
+              "note": "verbatim: “This Indenture and the Securities shall be deemed to be contracts made under the law of the State of New York, and for all purposes shall be governed by and construed in accordance with the law of said State (without regard to conflicts of laws principles thereof).”"
+            },
+            "base_rate_label": null,
+            "margin_pct": null,
+            "margin_bps": null,
+            "floor_pct": null,
+            "pik_pct": null
+          },
+          {
+            "name": "Trustee",
+            "value": {
+              "value": "U.S. Bank Trust Company, National Association",
+              "source_ref": "8-K 0001803599-23-000177 · exhibit41indenture.htm",
+              "status": "present",
+              "note": "verbatim: “U.S. BANK TRUST COMPANY, NATIONAL ASSOCIATION, as trustee (the \"Trustee\")”"
+            },
+            "base_rate_label": null,
+            "margin_pct": null,
+            "margin_bps": null,
+            "floor_pct": null,
+            "pik_pct": null
+          }
+        ],
+        "source_ref": "fenced Tier-2 extraction (verbatim, source-bound)",
+        "status": "present",
+        "note": null
+      },
+      "maturity_event": {
+        "value": null,
+        "source_ref": null,
+        "status": "unknown",
+        "note": "(P3) 8-K body at 8-K 0001803599-25-000143 (2025-09-25) states no maturity-resolution event"
+      }
+    },
+    "financial_summary": {
+      "annual": {
+        "value": {
+          "columns": [
+            "FY22",
+            "FY23 (R)",
+            "FY24 (R)",
+            "FY25",
+            "LTM",
+            "FY26E",
+            "FY27E"
+          ],
+          "rows": [
+            {
+              "label": "Revenue ($M)",
+              "cells": [
+                "6,324",
+                "7,115",
+                "9,619",
+                "9,826",
+                "9,954",
+                "10,120",
+                "10,360"
+              ]
+            },
+            {
+              "label": "Revenue growth",
+              "cells": [
+                "—",
+                "— (basis)",
+                "+35%",
+                "— (basis)",
+                "— (basis)",
+                "+3% (vs FY25)",
+                "+2%"
+              ]
+            },
+            {
+              "label": "EBITDA ($M)",
+              "cells": [
+                "981",
+                "1,045",
+                "1,295",
+                "1,266",
+                "1,231",
+                "1,500",
+                "1,572"
+              ]
+            },
+            {
+              "label": "EBITDA margin",
+              "cells": [
+                "16%",
+                "15%",
+                "13%",
+                "13%",
+                "12%",
+                "15%",
+                "15%"
+              ]
+            },
+            {
+              "label": "EBIT ($M)",
+              "cells": [
+                "672",
+                "657",
+                "589",
+                "605",
+                "572",
+                "1,268",
+                "1,339"
+              ]
+            },
+            {
+              "label": "Net income ($M)",
+              "cells": [
+                "435",
+                "314",
+                "251",
+                "-1,279",
+                "-1,328",
+                "249",
+                "412"
+              ]
+            },
+            {
+              "label": "EPS (GAAP, dil.)",
+              "cells": [
+                "8.28",
+                "5.70",
+                "3.71",
+                "-20.36",
+                "-21.33",
+                "4.00",
+                "6.74"
+              ]
+            },
+            {
+              "label": "EPS (Normalized)",
+              "cells": [
+                "7.70",
+                "4.72",
+                "2.59",
+                "3.41",
+                "2.91",
+                "11.71",
+                "12.84"
+              ]
+            },
+            {
+              "label": "CFO ($M)",
+              "cells": [
+                "601",
+                "678",
+                "667",
+                "807",
+                "722",
+                "—",
+                "—"
+              ]
+            },
+            {
+              "label": "Capex ($M)",
+              "cells": [
+                "-140",
+                "-180",
+                "-239",
+                "-234",
+                "-238",
+                "—",
+                "—"
+              ]
+            },
+            {
+              "label": "FCF ($M)",
+              "cells": [
+                "505",
+                "476",
+                "632",
+                "705",
+                "517",
+                "—",
+                "—"
+              ]
+            }
+          ],
+          "note": "E = consensus (Estimates→Trends 'Current'), as-of ≥2026-06-05; (R) = Reclassified basis"
+        },
+        "source_ref": "CIQ Financials→Income Statement + Cash Flow (annual) + Estimates→Trends (FY E)",
+        "status": "present",
+        "note": null
+      },
+      "quarterly": {
+        "value": {
+          "columns": [
+            "Q2-24 (R)",
+            "Q3-24 (R)",
+            "Q4-24 (R)",
+            "Q1-25 (R)",
+            "Q2-25",
+            "Q3-25",
+            "Q4-25",
+            "Q1-26"
+          ],
+          "rows": [
+            {
+              "label": "Revenue ($M)",
+              "cells": [
+                "2,381",
+                "2,387",
+                "2,448",
+                "2,372",
+                "2,417",
+                "2,483",
+                "2,553",
+                "2,500"
+              ]
+            },
+            {
+              "label": "Gross margin",
+              "cells": [
+                "36%",
+                "36%",
+                "36%",
+                "36%",
+                "35%",
+                "34%",
+                "34%",
+                "34%"
+              ]
+            },
+            {
+              "label": "EBITDA ($M)",
+              "cells": [
+                "358",
+                "366",
+                "209",
+                "349",
+                "330",
+                "334",
+                "252",
+                "315"
+              ]
+            },
+            {
+              "label": "EBITDA margin",
+              "cells": [
+                "15%",
+                "15%",
+                "9%",
+                "15%",
+                "14%",
+                "13%",
+                "10%",
+                "13%"
+              ]
+            },
+            {
+              "label": "Revenue QoQ",
+              "cells": [
+                "—",
+                "+0%",
+                "+3%",
+                "-3%",
+                "— (basis)",
+                "+3%",
+                "+3%",
+                "-2%"
+              ]
+            },
+            {
+              "label": "Revenue YoY",
+              "cells": [
+                "—",
+                "—",
+                "—",
+                "—",
+                "— (basis)",
+                "— (basis)",
+                "— (basis)",
+                "— (basis)"
+              ]
+            }
+          ],
+          "note": "QoQ/YoY same-basis only; (R) = Reclassified"
+        },
+        "source_ref": "CIQ Financials→Income Statement (quarterly, trailing 8Q)",
+        "status": "present",
+        "note": null
+      },
+      "balance_sheet": {
+        "value": "as of Q1-26 ($M): cash & ST inv 223; total debt 5,689; net debt 5,467; equity 2,788; net working capital 466; net-debt/EBITDA → see the Leverage & survival block (not recomputed)",
+        "source_ref": "CIQ Financials→Balance Sheet (quarterly, Q1-26)",
+        "status": "present",
+        "note": null
+      },
+      "coherence": {
+        "value": "cash BS $223M / bridge $223M; debt BS $5,689M / bridge $5,689M — reconcile with the implied-valuation bridge.",
+        "source_ref": "CIQ Financials→Balance Sheet vs Comparable Analysis→Implied Valuation",
+        "status": "present",
+        "note": null
+      },
+      "as_of": {
+        "value": "≥2026-06-05",
+        "source_ref": "CIQ Estimates→Recent Changes (latest embedded event — export date NOT stamped)",
+        "status": "present",
+        "note": "export date unverified — a FLOOR (data on/after the latest embedded event); the true export is later (a dated sibling CIQ export in the same pull is weeks newer)"
+      }
+    },
+    "primary_source": {
+      "releases": [],
+      "filing": {
+        "source_ref": "10-Q 0001803599-26-000136",
+        "going_concern": null,
+        "maturity_wall": {
+          "within_12m_total": null,
+          "tranches": [],
+          "state": "not_stated",
+          "note": "no near-term wall stated in filing — composition table present; see CIQ panel",
+          "verbatim": "",
+          "source_ref": "10-Q 0001803599-26-000136"
+        },
+        "concentration": null,
+        "commitments": [],
+        "qa_flags": [
+          "no anchored pattern matched — customer concentration: 10-Q 0001803599-26-000136"
+        ]
+      },
+      "self_funding": {
+        "value": "self-funding: MIXED — latest-Q OCF < 0, LTM FCF > 0 (both must be positive to self-fund)",
+        "source_ref": "EDGAR latest-Q OCF sign + CIQ LTM FCF sign",
+        "status": "present",
+        "note": null
+      },
+      "wall_coherence": {
+        "value": "wall coherence: UNKNOWN — filing states no ≤12m figure",
+        "source_ref": "10-Q maturity wall vs CIQ capital panel (same window)",
+        "status": "present",
+        "note": null
+      },
+      "basis_triangulation": {
+        "value": "EBITDA-basis triangulation (each leverage basis-labeled):\n  net debt / EBITDA (CIQ, GAAP basis): 4.4x\n  total debt / EBITDA (CIQ comps, GAAP basis): 3.4x\n  net debt / company-adjusted LTM EBITDA (LTM unavailable): UNKNOWN\n  covenant basis: UNKNOWN (not disclosed)",
+        "source_ref": "CIQ leverage bases + release LTM adj-EBITDA/margins",
+        "status": "present",
+        "note": null
+      },
+      "guide_verification": {
+        "value": "guide verification (revenue): CIQ 2460.0–2485.0 vs release NO NUMERIC OUTLOOK → not cross-checked",
+        "source_ref": "CIQ revenue guide vs release actual/outlook",
+        "status": "present",
+        "note": null
+      },
+      "qa_flags": []
     },
     "management_commentary": {
       "value": "2 earnings-call transcript(s) on file — read in full for management posture: Concentrix Corporation, Q1 2026 Earnings Call, Mar 24, 2026.rtf; Concentrix Corporation, Q4 2025 Earnings Call, Jan 13, 2026.rtf (pointer only; the synthesis cites them, the machine does not curate an excerpt)",
       "source_ref": "CIQ transcript(s): Concentrix Corporation, Q1 2026 Earnings Call, Mar 24, 2026.rtf; Concentrix Corporation, Q4 2025 Earnings Call, Jan 13, 2026.rtf",
       "status": "present",
       "note": null
+    },
+    "key_ratios": {
+      "value": "RoE -38.9%; RoCE 3.9%; RoA 3.2%; total debt/equity 2.04; current ratio 1.18 (latest)",
+      "source_ref": "CIQ Financials→Ratios (latest period)",
+      "status": "present",
+      "note": null
+    },
+    "stock_info": {
+      "price": {
+        "value": 21.38,
+        "source_ref": "EOD CNXC last close",
+        "status": "present",
+        "note": null
+      },
+      "high_52w": {
+        "value": 62.14,
+        "source_ref": "EOD CNXC 52-week high",
+        "status": "present",
+        "note": null
+      },
+      "low_52w": {
+        "value": 19.12,
+        "source_ref": "EOD CNXC 52-week low",
+        "status": "present",
+        "note": null
+      },
+      "shares_out": {
+        "value": 61018350.0,
+        "source_ref": "EDGAR XBRL shares outstanding",
+        "status": "present",
+        "note": null
+      },
+      "book_value_ps": {
+        "value": 45.85,
+        "source_ref": "CIQ Financials→Balance Sheet→Book Value/Share (latest)",
+        "status": "present",
+        "note": null
+      },
+      "market_cap": {
+        "value": 1478.8,
+        "source_ref": "CIQ Comparable Analysis→Financial Data (name Market Capitalization Latest) · as-of 2026-06-25",
+        "status": "present",
+        "note": null
+      },
+      "as_of": "2026-07-08"
     }
   },
   "synthesis": {
-    "evidence_balance": "mixed — financing-driven de-rate and positive FCF offset by 4.4x leverage, rolling-over absolute EBITDA, and halved ROIC, leaving the AI-accretion thesis unproven.",
+    "evidence_balance": "mixed — growing revenue and positive LTM FCF sit against a large GAAP loss, falling absolute EBITDA, high leverage and deep estimate cuts.",
     "bull_points": [
       {
-        "claim": "EV/EBITDA at 5.1x trailing sits at the 11th percentile of 19 quarterly closes (near its own-history floor), while absolute LTM EBITDA of 1,231 remains substantial and FCF is positive at 517.1 — i.e. the de-rate is not a collapse in cash generation.",
-        "source_ref": "CIQ Financials→Multiples 'TEV/LTM EBITDA' Close (latest) — current multiple",
+        "claim": "The name generates positive levered free cash flow of $517.1M on the LTM, i.e. it is self-funding on a full-year basis despite the drawdown.",
+        "source_ref": "CIQ Financials→Cash Flow 'Levered Free Cash Flow' [LTM 12 months Feb-28-2026]",
         "cited": true
       },
       {
-        "claim": "Absolute revenue and EBITDA show a multi-year rising trajectory (revenue 5,587→9,954 LTM; EBITDA 832→1,231 LTM), so the falling EBITDA margin % (15%→12%) is partly an optical mix/scale effect, not a fall in absolute dollars earned.",
+        "claim": "Absolute EBITDA has held near cycle-high levels ($1,295M FY24 → $1,266M FY25 → $1,231M LTM) even as the margin % slipped, so the top-line business has not collapsed.",
         "source_ref": "CIQ Financials→Income Statement (margin % + absolute EBITDA reconciler)",
         "cited": true
       },
       {
-        "claim": "The gap-downs map to financing/securitization 8-K item codes (8.01 underwriting agreement; 1.01/2.03 securitization amendment), not to an earnings/guidance cut — a refinancing of the 6.65% 2026 notes into new 6.50% 2029 notes, which is balance-sheet management rather than a demand shock.",
-        "source_ref": "EDGAR 8-K item codes at the gap-down dates (not blanket-labelled earnings)",
+        "claim": "Revenue has kept growing (FY24 $9,619M → FY25 $9,826M → LTM $9,954M, +4.1% latest same-quarter YoY), inconsistent with a terminal top-line unwind.",
+        "source_ref": "CIQ Financials→Income Statement + Segments + Ratios (multi-year columns)",
         "cited": true
       },
       {
-        "claim": "On NTM forward multiples the name trades below the heterogeneous peer median (NTM TEV/EBITDA 4.54 vs median 5.26; NTM TEV/Rev 0.68 vs median 0.86) — POSE for the human whether this discount is EARNED or RESIDUAL once fundamentals are weighed; do not read the gap as clean upside given the peer set spans $103M–$32.0B.",
-        "source_ref": "CIQ Comparable Analysis→Trading Multiples (name row + Summary Statistics Low/Median/Mean/High)",
+        "claim": "On TEV/EBITDA the name trades 4.1x vs a peer median of 5.3x (-23%), but comparability is flagged HETEROGENEOUS (caps $103M–$32.0B, 311x span), so this discount is a confidence-gated input, not a clean benchmark; the human must judge whether it is EARNED or RESIDUAL against the fundamental deltas.",
+        "source_ref": "CIQ Comparable Analysis→Trading Multiples (name vs peer Median)",
         "cited": true
       },
       {
-        "claim": "The company is buying back stock (-6.6% share count over ~1.8y) and the survival_capacity leg reads self-funding (FCF-positive, no runway constraint), consistent with a balance sheet under management rather than distress.",
-        "source_ref": "EDGAR XBRL shares, trailing 2024-06-30..2026-03-31",
+        "claim": "The fundamental_deltas show the name only modestly behind the peer median on growth (rev 4% vs 5%, LT EPS 8% vs 7%) while trailing more on margin (12% vs 17%) and leverage (3.4 vs 2.0) — posing whether the multiple discount is fully EARNED by those gaps or partly RESIDUAL overshoot.",
+        "source_ref": "CIQ Comparable Analysis→Operating Statistics (name vs peer median: growth/margin/leverage/beta)",
+        "cited": true
+      },
+      {
+        "claim": "The company holds an S&P issuer rating of BBB- (investment grade) with a covenant digest showing no ongoing financial-maintenance ratio covenant, reducing near-term forced-deleveraging risk.",
+        "source_ref": "CIQ Comparable Analysis→Credit Health Panel · as-of 2026-06-25",
+        "cited": true
+      },
+      {
+        "claim": "The filing states no near-term maturity wall (NOT_STATED, a known fact, not a gap), so the leverage is not paired with an imminent refinancing cliff on the filing basis.",
+        "source_ref": "10-Q 0001803599-26-000136",
+        "cited": true
+      },
+      {
+        "claim": "The company is buying back stock (61.0M vs 64.8M shares, -5.9% over ~1.7y) and analysts still carry a mean target of $41.25 / median $39.00 with a Buy-tilted rating mix, versus a $21.38 close.",
+        "source_ref": "EDGAR XBRL shares, trailing 2024-09-30..2026-06-30",
         "cited": true
       }
     ],
     "bear_points": [
       {
-        "claim": "Net debt/EBITDA of 4.4x (CIQ) is more than double the peer median of 2.0, and net debt/OCF of 7.6x compounds it — the leverage is the REAL signal here, a load-bearing structural weakness rather than an optical artifact, with EBITDA flat-to-declining at the denominator.",
-        "source_ref": "CIQ Net Debt $5,467M [Q1 Feb-28-2026] ÷ CIQ EBITDA $1,231M [LTM 12 months Feb-28-2026]",
+        "claim": "GAAP net income has gone deeply negative (FY25 -$1,279M, LTM -$1,328M; EPS -$20.36 / -$21.33), so the headline P/E of 6.4x is distorted and NM — the trailing multiple is NOT the real signal; the loss is.",
+        "source_ref": "EDGAR XBRL eps_diluted × EOD price (screen data-record, G3)",
         "cited": true
       },
       {
-        "claim": "The falling EBITDA margin (15%→12% LTM) and gross margin (35%→34% LTM) is a GENUINE deterioration even read against the reconciler: absolute EBITDA itself has now ROLLED OVER (1,295 FY24 → 1,266 FY25 → 1,231 LTM), so this is not merely a % optic — the dollar figure is declining too.",
+        "claim": "The falling EBITDA margin (16% FY22 → 13% FY25 → 12% LTM) is here a REAL signal not merely an optical %: absolute EBITDA also fell ($1,295M FY24 → $1,231M LTM) rather than rising, so the % decline is corroborated by the dollar decline.",
         "source_ref": "CIQ Financials→Income Statement (margin % + absolute EBITDA reconciler)",
         "cited": true
       },
       {
-        "claim": "Capital efficiency has structurally fallen — ROIC dropped from 8.8%/9.0% to 3.9% LTM — indicating the revenue growth was bought with dilutive capital/acquisitions rather than earned, a hallmark of a value trap not an overshoot.",
-        "source_ref": "CIQ Financials→Income Statement + Segments + Ratios (multi-year columns)",
+        "claim": "Leverage is high and worse than peers: net-debt/EBITDA 4.4x and total-debt/EBITDA 3.4x vs peer median 2.0x, with interest coverage only 3.4x — an earned reason for a valuation discount, not overshoot.",
+        "source_ref": "CIQ Comparable Analysis→Operating Statistics (LTM Total Debt/EBITDA) · as-of 2026-06-25",
         "cited": true
       },
       {
-        "claim": "On fundamentals the name is worse than peers across multiple legs (EBITDA margin 12% vs 17% median; EBITDA growth -4% vs 0%; Debt/EBITDA 3.4 vs 2.0), so a meaningful part of the peer discount is EARNED rather than residual — a value-trap risk the human must weigh, not a clean overshoot.",
-        "source_ref": "CIQ Comparable Analysis→Operating Statistics (name vs peer median: growth/margin/leverage/beta)",
+        "claim": "Self-funding is only MIXED on a triangulated basis: latest-quarter operating cash flow was negative even though LTM FCF was positive — both must be positive to call it self-funding.",
+        "source_ref": "EDGAR latest-Q OCF sign + CIQ LTM FCF sign",
         "cited": true
       },
       {
-        "claim": "The name has underperformed the market by ~62 percentage points over 180d (-42.6% vs IWM +18.0%) — an idiosyncratic, not market-wide, repricing.",
+        "claim": "Forward estimates have been cut hard: FY26 GAAP EPS -34% and FY26 GAAP net income -36% over the trend window, with the mean target price itself slashed (e.g. one broker $80 → $55, another $62 → $38).",
+        "source_ref": "CIQ Estimates→Trends (current-FY consensus path; ragged, absent lookbacks n/a)",
+        "cited": true
+      },
+      {
+        "claim": "The stock has fallen -45.4% over 180 days and -61.5% relative to the market, with return-on-capital deteriorating (ROIC 8.8% FY21 → 3.9% LTM) — a persistent, name-specific de-rating, not a market move.",
         "source_ref": "EOD name−IWM 180d (screen data-record, G2)",
         "cited": true
       },
       {
-        "claim": "Interest coverage of only 3.4x against a debt stack carrying 6.5–6.85% coupons means refinancing rolls debt at high fixed cost, pressuring the cushion as maturities (2026, 2028) come due.",
-        "source_ref": "CIQ Financials→Income Statement EBITDA ÷ Interest Expense [LTM 12 months Feb-28-2026]",
+        "claim": "The drawdown is a sequence of discrete gap-downs including two tied to debt issuance/securitization amendments and an earnings print, i.e. de-ratings around balance-sheet and results events rather than one transient shock.",
+        "source_ref": "EDGAR 8-K item codes at the gap-down dates (not blanket-labelled earnings)",
         "cited": true
       }
     ],
     "twin_reference_cases": [
       {
-        "name": "Conduent",
+        "name": "Teleperformance SE",
         "outcome": "went terminal",
-        "distinguishing_fact": "Spun-out BPO/customer-experience outsourcer that levered up and saw margins grind lower amid commoditized contracts and weak ROIC — same structural pressure as a low-margin services roll-up.",
-        "source": "[LLM-suggested, unverified]"
+        "distinguishing_fact": "Same customer-experience/BPO model in the peer set, de-rated on AI-disruption and margin fears while still cash-generative — the direct read-across for whether the discount is structural.",
+        "source": "CIQ Comparable Analysis→Financial Data + Business Description (roster + caps + business)"
       },
       {
-        "name": "Teleperformance SE",
-        "outcome": "recovered",
-        "distinguishing_fact": "Direct CX-outsourcing peer that was sharply de-rated on AI-disruption fears yet kept generating cash and growing revenue — the same 'AI is a headwind vs tailwind' narrative crux.",
+        "name": "Capita plc",
+        "outcome": "went terminal",
+        "distinguishing_fact": "Levered outsourcer in the roster with shrinking revenue and compressing EBITDA growth trading at a low multiple — the value-trap pattern of leverage plus decline.",
         "source": "CIQ Comparable Analysis→Financial Data + Business Description (roster + caps + business)"
+      },
+      {
+        "name": "ExlService Holdings",
+        "outcome": "recovered",
+        "distinguishing_fact": "Peer that pivoted BPO toward higher-value data/AI services and re-rated on double-digit growth — the pattern of what escaping a commoditizing-services discount looks like.",
+        "source": "CIQ Comparable Analysis→Financial Data + Business Description (roster + caps + business)"
+      },
+      {
+        "name": "Conduent Inc.",
+        "outcome": "went terminal",
+        "distinguishing_fact": "Post-spin business-process outsourcer carrying heavy leverage into a low-growth core that stayed structurally cheap rather than mean-reverting.",
+        "source": "[LLM-suggested, unverified]"
       },
       {
         "name": "DXC Technology",
         "outcome": "went terminal",
-        "distinguishing_fact": "Acquisition-built IT/BPO services company that traded optically cheap for years while declining revenue quality and leverage made it a persistent value trap rather than an overshoot.",
-        "source": "[LLM-suggested, unverified]"
-      },
-      {
-        "name": "Genpact Limited",
-        "outcome": "recovered",
-        "distinguishing_fact": "Business-process peer that pivoted to higher-value digital/AI-enabled work and re-rated as the mix shift proved margin-accretive — the bull thesis Concentrix management is articulating.",
-        "source": "CIQ Comparable Analysis→Financial Data + Business Description (roster + caps + business)"
-      },
-      {
-        "name": "Sykes Enterprises",
-        "outcome": "went terminal",
-        "distinguishing_fact": "Customer-engagement outsourcer whose labor-cost and offshore-mix margin pressure ultimately led to it being absorbed rather than independently re-rating.",
+        "distinguishing_fact": "Large IT/BPO services roll-up where debt and secular pressure on legacy services kept the multiple depressed despite recurring cash flow.",
         "source": "[LLM-suggested, unverified]"
       }
     ],
     "decisive_question": {
-      "question": "Is the AI/iX-Suite mix shift genuinely margin-accretive at scale (overshoot that mean-reverts as deleveraging to <2.6x EBITDA lands), or is the margin/ROIC erosion structural and AI a net demand headwind for a levered commoditized-services book (value trap)?",
+      "question": "Is the compressing margin plus falling absolute EBITDA the leading edge of a secular, AI-driven decline in the CX/BPO model (value trap, discount EARNED), or a cyclical trough against still-growing revenue and self-funding cash flow (overshoot, discount RESIDUAL)?",
       "evidence_for": [
         {
-          "claim": "Management states larger transformative AI deals initially compress revenue and margin but are accretive once at scale, with AI-platform revenue exiting 2025 at over $60M annualized at breakeven and Technology wins up 61% YoY.",
-          "source_ref": "CIQ transcript(s): Concentrix Corporation, Q1 2026 Earnings Call, Mar 24, 2026.rtf; Concentrix Corporation, Q4 2025 Earnings Call, Jan 13, 2026.rtf",
+          "claim": "Both margin % AND absolute EBITDA fell together ($1,295M FY24 → $1,231M LTM), and ROIC halved (8.8% → 3.9%), consistent with structural erosion.",
+          "source_ref": "CIQ Financials→Income Statement + Segments + Ratios (multi-year columns)",
           "cited": true
         },
         {
-          "claim": "Management committed to reducing net leverage to below 2.6x adjusted EBITDA by end of fiscal 2026 and reaffirmed $630–650M adjusted FCF, with restructuring expected to drive ~$40M annualized savings and H2 profitability growth.",
-          "source_ref": "CIQ transcript(s): Concentrix Corporation, Q1 2026 Earnings Call, Mar 24, 2026.rtf; Concentrix Corporation, Q4 2025 Earnings Call, Jan 13, 2026.rtf",
+          "claim": "EBITDA growth is negative (-4%) versus a flat peer median (0%), and leverage (3.4x vs 2.0x) plus low coverage (3.4x) limit the runway to absorb further decline.",
+          "source_ref": "CIQ Comparable Analysis→Operating Statistics (name vs peer median: growth/margin/leverage/beta)",
           "cited": true
         }
       ],
       "evidence_against": [
         {
-          "claim": "Absolute EBITDA has rolled over for two consecutive periods (1,295→1,266→1,231) and ROIC has more than halved to 3.9%, evidence the margin pressure is persisting rather than reverting.",
+          "claim": "Revenue is still rising (LTM $9,954M, +4.1% same-quarter YoY) and consensus models FY26/FY27 revenue growth of +3%/+2% with EBITDA margin recovering to 15%.",
           "source_ref": "CIQ Financials→Income Statement + Segments + Ratios (multi-year columns)",
           "cited": true
         },
         {
-          "claim": "EBITDA growth is negative (-4%) versus a peer median of 0% while leverage runs 3.4x vs peer 2.0x, so the fundamentals do not yet corroborate the management mix-shift narrative.",
-          "source_ref": "CIQ Comparable Analysis→Operating Statistics (name vs peer median: growth/margin/leverage/beta)",
+          "claim": "The guidance delivery track-record is strong (revenue actual ≥ floor 21/25 resolved; normalized EPS 11/12; most recent FQ1 2026 MET), arguing the operating base is intact enough to defend estimates.",
+          "source_ref": "CIQ Estimates→Guidance (latest guide + sign-aware delivery track-record)",
           "cited": true
         }
       ]
     },
     "key_unknowns": [
-      "No adjusted forward EV/EBITDA or adjusted EPS in the revised guidance — the ev_ebitda_adjusted_fwd and adjusted_eps fields are UNKNOWN, so the forward multiple basis management speaks to cannot be independently checked (bearish opacity on the central deleveraging claim).",
-      "No revised-guidance 99.1 exhibit was parsed for the financing 8-Ks — revised_guidance is UNKNOWN, leaving the precise updated outlook undocumented in the source facts.",
-      "Segment EBITDA is UNKNOWN (no EBITDA section on the Segments sheet) and revenue reports as a single 100% 'Software & Programming' segment — no profitability breakout by line of business, so margin trajectory by mix cannot be verified (bearish opacity).",
-      "No idiosyncratic-vs-shared cohort (CNXC absent from graph coverage) — the relative read rests only on name-vs-IWM, with no peer cross-section to confirm whether the de-rate is name-specific.",
-      "EV/EBITDA is trailing-only with no forward basis on the screen multiple — the fact itself flags it 'cannot distinguish cheap-overshoot from cheap-terminal'; this is a NEUTRAL unresolved item for the human, not directional evidence.",
-      "GAAP P/E (6.7x) rests on a non-current positive EPS while latest annual EPS is negative (-20.36); the multiple is distorted and not meaningful — resolve which earnings basis is real before any valuation read."
+      "No forward/adjusted EV/EBITDA or adjusted EPS was in the revised guidance, so the trailing 5.1x cannot be resolved into cheap-overshoot vs cheap-terminal on a forward basis — an unresolved neutral, and the missing adjusted disclosure itself is a bearish opacity flag.",
+      "Segment EBITDA is not disclosed (Segments sheet has no EBITDA section) and revenue is 100% one segment, so profitability by business line is opaque — a bearish gap, not a neutral one.",
+      "The June 29/30 earnings release carried NO NUMERIC OUTLOOK, so the stale FQ2 guide (104d old) could not be cross-checked and forward direction is unverified — a bearish disclosure gap.",
+      "Covenant basis and net-debt/company-adjusted EBITDA are UNKNOWN (not disclosed); with 4.4x reported leverage the absence of a disclosed covenant leverage basis is a bearish opacity flag.",
+      "The FY25/LTM GAAP net loss (-$1,279M / -$1,328M) is far larger than the operating decline implies — the driver (likely impairment) is not in the supplied facts and must be resolved.",
+      "The peer set is HETEROGENEOUS (cap span 311x); every peer stat, including the -23% EV/EBITDA discount, must be confidence-gated rather than read as a clean benchmark.",
+      "Export date on the CIQ estimates/guidance pull is unverified (a floor ≥ 2026-06-05); the true export is stated to be weeks newer, so revision recency may understate more recent cuts.",
+      "Insider net selling of ~6.0M shares alongside buybacks — the two point in opposite directions and the net signal is unresolved."
     ]
   },
-  "flags": [
+  "caveats": [
+    "primary-source: 0 EX-99.1 release(s) + 1 10-Q parsed (+0.2s fetch)",
     "P/E may be distorted by non-recurring EPS — latest annual EPS -20.36 vs recent median 4.71; verify against normalized/forward EPS (CIQ)",
-    "Net debt/EBITDA (4.4x) is on REPORTED EBITDA (CIQ / consolidated GAAP), not the covenant basis; management and credit covenants typically define leverage on adjusted EBITDA (a larger denominator → a lower ratio), reconciled in the earnings release/transcript (currently UNAVAILABLE) — do not read 4.4x as the covenant-basis leverage.",
-    "TRANSCRIPT-FIGURE '630' in decisive.for: 'Management committed to reducing net leverage to below 2.6x adjusted…' — from the cited earnings call, not the structured facts; verify against the call",
-    "ANCHORS-ON-DISTORTED-P/E bull_point: 'EV/EBITDA at 5.1x trailing sits at the 11th percentile of 19…' — the P/E is distorted (rests on a non-current/non-recurring EPS); don't read it as cheap"
+    "Net debt/EBITDA (4.4x) is on REPORTED EBITDA (CIQ / consolidated GAAP), not the covenant basis; management and credit covenants typically define leverage on adjusted EBITDA (a larger denominator → a lower ratio), reconciled in the earnings release/transcript (currently UNAVAILABLE) — do not read 4.4x as the covenant-basis leverage."
+  ],
+  "qa_flags": [
+    "DIRECTIONAL language 'buy' — human review (dossier frames, not concludes)"
   ],
   "llm_model": "claude-opus-4-8",
-  "assembled_at": "2026-06-30T08:50:02.968855"
+  "assembled_at": "2026-07-10T06:57:47.536385Z",
+  "sector": "Technology",
+  "industry": {
+    "value": "Data Processing and Outsourced Services",
+    "source_ref": "CIQ Public Company Profile→Primary Industry Classification",
+    "status": "present",
+    "note": null
+  },
+  "exchange": "Nasdaq",
+  "business_description": {
+    "value": "Concentrix Corporation designs, builds, and runs integrated customer experience (CX) solutions worldwide. It provides CX process optimization, technology innovation and design engineering, front- and back-office automation, analytics, and business transformation services to clients in various industry verticals comprising technology and consumer electronics; retail, travel, and e-commerce; communications and media; banking, financial services, and insurance; and healthcare. The company also offers customer lifecycle management; CX and user experience strategy and design; data analytics, enterprise intelligence, artificial intelligence readiness, and actionable insights; digital operations, such as B2B sales, performance marketing, customer loyalty, trust and safety, collections, and financial compliance; and GenAI and agentic AI technologies. In addition, it provides digital transformation services that designs and engineer CX solutions to enable efficient customer self-service and build customer loyalty; customer engagement solutions and services that address the entirety of the customer lifecycle; and AI technology that can intelligently act on customer intent to improve customer experience with non-human engagement. Further, the company offers self-service GenAI and agentic AI assistants for applications in data analysis, language translations, and internal chatbots; voice of the customer and analytics solutions to gather and analyze customer feedback; analytics and consulting solutions that synthesize data and provide professional insight to improve clients’ customer experience strategies; specialized support to specific industry verticals; and back office services that support clients in non-customer facing areas. It serves technology and consumer electronics, retail, travel and e-commerce, communications and media, banking, financial services and insurance, healthcare, and other industries. The company was founded in 2004 and is based in Newark, California.",
+    "source_ref": "CIQ Comparable Analysis→Business Description (subject row)",
+    "status": "present",
+    "note": null
+  }
 }

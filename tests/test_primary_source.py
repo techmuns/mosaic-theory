@@ -127,6 +127,17 @@ def test_guide_verification_echo_requires_conjunct_release_verified_suppresses()
     assert "VENDOR-ECHO" in absent and "uncorroborated" in absent
 
 
+def test_guide_verification_no_release_guide_is_not_a_mismatch() -> None:
+    """(review M1) A release that states NO numeric guide (release_low None, NOT qualitative, NOT a
+    vendor-echo) reads 'not cross-checked' — NOT a false MISMATCH, and never puts the None low/high
+    into the string (was a fabricated 'release None–None → MISMATCH flag')."""
+    r = ps.guide_verification("revenue", 2325.0, 2365.0, release_low=None, release_high=None)
+    assert "not cross-checked" in r and "MISMATCH" not in r and "None" not in r
+    # a prior-FY actual far from the CIQ guide is NOT an echo → still falls here, not to MISMATCH
+    r2 = ps.guide_verification("revenue", 2325.0, 2365.0, prior_fy_actual=1900.0, release_low=None)
+    assert "not cross-checked" in r2 and "None" not in r2
+
+
 @pytest.mark.network
 def test_primary_source_assembly_mvst_live() -> None:
     """(live) End-to-end assembly on MVST over real EDGAR filings + the CIQ bundle — the four
