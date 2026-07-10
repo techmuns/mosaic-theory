@@ -54,6 +54,33 @@
         "status": "present",
         "note": null
       },
+      "own_history": {
+        "value": [
+          {
+            "metric": "EV/EBITDA (TEV/LTM)",
+            "current": 1.466638,
+            "low": 1.870272,
+            "high": 110.561,
+            "median": 3.880202,
+            "percentile": 0.0,
+            "n_closes": 19,
+            "as_of": "2026-03-31"
+          },
+          {
+            "metric": "P/LTM EPS",
+            "current": 9.805562,
+            "low": 24.166779,
+            "high": 206.0,
+            "median": 36.570983,
+            "percentile": 0.0,
+            "n_closes": 15,
+            "as_of": "2026-03-31"
+          }
+        ],
+        "source_ref": "CIQ Financials→Multiples (Close; last col = current, excluded from history)",
+        "status": "present",
+        "note": null
+      },
       "implied_expectations": {
         "rows": [
           {
@@ -201,6 +228,37 @@
       "multi_year_trajectory": {
         "value": "Revenue: Dec-26-2021 (R) 261 → Dec-25-2022 (R) 362 → Dec-31-2023 472 → Dec-29-2024 606 → Dec-28-2025 759 → Mar-29-2026 (LTM) 784; EBITDA: Dec-26-2021 (R) 4 → Dec-25-2022 (R) 10 → Dec-31-2023 41 → Dec-29-2024 77 → Dec-28-2025 103 → Mar-29-2026 (LTM) 79; Revenue YoY (latest same-quarter): +15.4% (Q1 Mar-29-2026 vs Q1 Mar-30-2025); ROIC: Dec-26-2021 0.0% → Dec-25-2022 1.7% → Dec-31-2023 10.8% → Dec-29-2024 15.8% → Dec-28-2025 15.9% → Mar-29-2026 (LTM) 11.6%  [R reclassified; per-period values, never YoY'd across a basis]",
         "source_ref": "CIQ Financials→Income Statement + Segments + Ratios (multi-year columns)",
+        "status": "present",
+        "note": null
+      },
+      "roic_trend": {
+        "value": [
+          {
+            "period": "Dec-26-2021",
+            "value": 0.00022
+          },
+          {
+            "period": "Dec-25-2022",
+            "value": 0.016734
+          },
+          {
+            "period": "Dec-31-2023",
+            "value": 0.108173
+          },
+          {
+            "period": "Dec-29-2024",
+            "value": 0.157853
+          },
+          {
+            "period": "Dec-28-2025",
+            "value": 0.159457
+          },
+          {
+            "period": "Mar-29-2026 (LTM)",
+            "value": 0.115888
+          }
+        ],
+        "source_ref": "CIQ Financials→Ratios (Return on Capital %, multi-year columns)",
         "status": "present",
         "note": null
       }
