@@ -610,8 +610,9 @@ function revEbitdaExhibit(fsa) {
   // ---- RIGHT panel: EBITDA margin (%) line, own zero line (handles a negative margin) ----
   const rx0 = 412, rx1 = 748, slotR = (rx1 - rx0) / n, cxR = (i) => rx0 + slotR * i + slotR / 2;
   // margin line: honest zero-anchored domain — pads beyond zero only on a side with real data (no
-  // phantom "-3%" under an all-positive margin). Empty fallback keeps an all-null-margin panel valid.
-  const { lo: mLo, hi: mHi } = lineDomain(marg, { padFrac: 0.2, minPad: 2 }) || { lo: 0, hi: 2 };
+  // phantom "-3%" under an all-positive margin). minSpan guards an all-zero-margin degenerate ([0,0] →
+  // a divide-by-zero scale); the || fallback keeps an all-null-margin panel valid.
+  const { lo: mLo, hi: mHi } = lineDomain(marg, { padFrac: 0.2, minPad: 2, minSpan: 2 }) || { lo: 0, hi: 2 };
   const sMR = linScale(mLo, mHi, cy1, cy0), zeroR = sMR(0);
   let right = estShade(rx1, cxR, slotR) + `<text x="${rx0}" y="${cy0 - 9}" font-size="11.5" font-weight="600" fill="var(--ink-2)">EBITDA margin (%)</text><line x1="${rx0}" y1="${zeroR}" x2="${rx1}" y2="${zeroR}" stroke="var(--line-2)" stroke-dasharray="3 2"/><text x="${rx0 - 4}" y="${cy0 + 3}" font-size="10.5" text-anchor="end" fill="var(--ink-3)">${Math.round(mHi)}%</text>`;
   if (mLo < -0.5) right += `<text x="${rx0 - 4}" y="${cy1 + 3}" font-size="10.5" text-anchor="end" fill="var(--ink-3)">${Math.round(mLo)}%</text>`;
@@ -1172,7 +1173,9 @@ function roicTrendExhibit(q) {
   // honest zero-anchored domain (shared with the margin panel): 0 is always shown (the value-creation
   // threshold) but the axis pads beyond zero only on a side that has real data — an all-positive ROIC
   // no longer draws a phantom negative tick (the bug the margin panel had). minSpan guards a flat run.
-  const { lo: vmin, hi: vmax } = lineDomain(vals, { padFrac: 0.14, minSpan: 2 });
+  // (|| fallback: parity with the margin caller — a non-finite series can't reach here since the guard
+  // above requires ≥2 points and TrendPoint.value is a required float, but never destructure null.)
+  const { lo: vmin, hi: vmax } = lineDomain(vals, { padFrac: 0.14, minSpan: 2 }) || { lo: -1, hi: 1 };
   const px = (i) => x0 + (i / (pts.length - 1)) * plotW;
   const py = linScale(vmin, vmax, y1, padT);
   const abbr = (p) => "'" + ((p.match(/\d{4}/) || [""])[0]).slice(2) + (/LTM/.test(p) ? "L" : "");

@@ -6020,6 +6020,7 @@ r.line = {{ allPos: lineDomain([13, 16], {{ padFrac: 0.2, minPad: 2 }}),
   mixed: lineDomain([-68, 25], {{ padFrac: 0.2, minPad: 2 }}),
   allNeg: lineDomain([-30, -5], {{ padFrac: 0.14 }}),
   flatPos: lineDomain([8, 8], {{ padFrac: 0.14, minSpan: 2 }}),
+  allZero: lineDomain([0, 0], {{ padFrac: 0.2, minPad: 2, minSpan: 2 }}),
   empty: lineDomain([], {{}}) }};
 const s = linScale(0, 100, 200, 0);
 r.lin = {{ at0: s(0), at50: s(50), at100: s(100), degenerate: linScale(5, 5, 0, 10)(5) }};
@@ -6053,6 +6054,8 @@ console.log(JSON.stringify(r));
     assert r["line"]["mixed"]["lo"] == pytest.approx(-86.6)
     assert r["line"]["mixed"]["hi"] == pytest.approx(43.6)
     assert r["line"]["flatPos"]["lo"] == 0 and r["line"]["flatPos"]["hi"] == pytest.approx(9.12)
+    # minSpan guards an all-zero (degenerate) series → a real span, never a divide-by-zero [0,0]
+    assert r["line"]["allZero"] == {"lo": -1, "hi": 1}
     assert r["line"]["empty"] is None
     # linScale maps domain->range (degenerate domain -> range midpoint, never divide-by-zero)
     assert r["lin"] == {"at0": 200, "at50": 100, "at100": 0, "degenerate": 5}
@@ -6063,6 +6066,44 @@ console.log(JSON.stringify(r));
     assert r["log"]["mid"] == pytest.approx(1.0)
     # sign-aware placement: label ABOVE a positive bar / BELOW a negative one
     assert r["label"] == {"left": "start", "right": "end", "pos": 96, "neg": 111}
+
+
+def test_roic_trend_exhibit_no_phantom_negative_tick_e2e() -> None:
+    """(#106, TEST-LAYER RULE) e2e WIRING pin: render a committed dossier whose ROIC is all-positive
+    through renderDossier and assert its roicTrend SVG never dips below zero — no phantom negative
+    tick / interior zero-line. Catches roicTrendExhibit reverting to inline zero-padding, which the
+    primitive-level lineDomain test would NOT. Phrasing-independent: the invariant is asserted only
+    WHEN the committed series is all-positive (derived from the artifact, not hard-coded)."""
+    import json
+    import shutil
+    import subprocess
+    if not shutil.which("node"):
+        pytest.skip("node unavailable")
+    doss = Path("data/dossiers/VRRM/dossier.json")
+    if not doss.exists():
+        pytest.skip("no committed VRRM dossier")
+    mech = json.loads(doss.read_text()).get("mechanical", {})
+    rt = (mech.get("quality", {}) or {}).get("roic_trend")
+    if not rt or rt.get("status") != "present" or not all(p["value"] > 0 for p in rt["value"]):
+        pytest.skip("VRRM roic_trend absent or not all-positive — invariant N/A")
+    dj = Path("frontend/views/shared/dossier.js").resolve().as_uri()
+    driver = f"""
+const handler = {{ get: () => stub, apply: () => stub, construct: () => ({{}}) }};
+const stub = new Proxy(function(){{}}, handler);
+for (const g of ["window","document","location"]) {{ try {{ globalThis[g] = stub; }} catch {{}} }}
+import {{ readFileSync }} from "node:fs";
+const {{ renderDossier }} = await import("{dj}");
+const html = renderDossier(JSON.parse(readFileSync("data/dossiers/VRRM/dossier.json")), null);
+const m = html.match(/<svg[^>]*aria-label="ROIC \\(return on capital\\) trend"[\\s\\S]*?<\\/svg>/);
+console.log(JSON.stringify({{ found: !!m, svg: m ? m[0] : "" }}));
+"""
+    out = subprocess.run(["node", "--input-type=module", "-e", driver],
+                         capture_output=True, text=True, check=True)
+    res = json.loads(out.stdout)
+    assert res["found"], "VRRM roicTrend exhibit did not render"
+    # the invariant: an all-positive ROIC series draws NO negative percentage anywhere (the phantom
+    # tick was "-2%"); the axis floors at 0.
+    assert not re.search(r"-\d+(\.\d+)?%", res["svg"]), "phantom negative tick on all-positive ROIC"
 
 
 def test_exhibit_module_static_contract_no_node() -> None:
