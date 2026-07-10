@@ -5990,3 +5990,153 @@ def test_twin_outcome_marks_llm_claimed_but_leaves_sourced_plain() -> None:
     md = dr.render_markdown(doss)
     assert "**QuantumScape** — terminal — dilution spiral (LLM-claimed — verify)" in md
     assert "**Amprius** — recovered\n" in md and "Amprius** — recovered (LLM" not in md
+
+
+def test_exhibit_primitives_edge_cases_node() -> None:
+    """(refactor) lib/exhibit.js — the shared exhibit primitives — pinned across the scenarios the
+    hand-rolled per-exhibit math kept getting wrong: the coarse nice-ceiling that jumped 592->1000
+    and compressed the bars; the phantom zero-side tick on an all-positive margin / all-negative
+    ROIC; the Math.min(...[])->Infinity empty trap; the log non-positive fallback; sign-aware label
+    placement. Node-gated (browser engine); a static test pins the contract when node is off."""
+    import json
+    import shutil
+    import subprocess
+    if not shutil.which("node"):
+        pytest.skip("node unavailable")
+    url = Path("frontend/lib/exhibit.js").resolve().as_uri()
+    driver = f"""
+import {{ nums, extent, niceCeil, linScale, logScale, barDomain, lineDomain, labelAnchor,
+  barLabelY }} from "{url}";
+const r = {{}};
+r.niceCeil = {{ c592: niceCeil(592), c651: niceCeil(651), c979: niceCeil(979),
+  c1077: niceCeil(1077), c1000: niceCeil(1000), c1001: niceCeil(1001),
+  c6: niceCeil(6), c0: niceCeil(0), cneg: niceCeil(-5) }};
+r.extent = {{ empty: extent([]), nulls: extent([null, null]), single: extent([5]),
+  mixed: extent([3, null, -2, NaN, 7]), notArray: extent(null) }};
+r.bar = {{ allPos: barDomain([204, 592]), mixed: barDomain([-140, 592]),
+  allNeg: barDomain([-200, -50]), single: barDomain([500]),
+  empty: barDomain([]), allZero: barDomain([0, 0]) }};
+r.line = {{ allPos: lineDomain([13, 16], {{ padFrac: 0.2, minPad: 2 }}),
+  mixed: lineDomain([-68, 25], {{ padFrac: 0.2, minPad: 2 }}),
+  allNeg: lineDomain([-30, -5], {{ padFrac: 0.14 }}),
+  flatPos: lineDomain([8, 8], {{ padFrac: 0.14, minSpan: 2 }}),
+  allZero: lineDomain([0, 0], {{ padFrac: 0.2, minPad: 2, minSpan: 2 }}),
+  empty: lineDomain([], {{}}) }};
+const s = linScale(0, 100, 200, 0);
+r.lin = {{ at0: s(0), at50: s(50), at100: s(100), degenerate: linScale(5, 5, 0, 10)(5) }};
+r.log = {{ positive: logScale(1, 100, 0, 100) != null, nonPositive: logScale(-1, 100, 0, 100),
+  zeroLo: logScale(0, 100, 0, 100), mid: logScale(1, 100, 0, 2)(10) }};
+r.label = {{ left: labelAnchor(10, 50), right: labelAnchor(90, 50),
+  pos: barLabelY(100, false), neg: barLabelY(100, true) }};
+console.log(JSON.stringify(r));
+"""
+    out = subprocess.run(["node", "--input-type=module", "-e", driver],
+                         capture_output=True, text=True, check=True)
+    r = json.loads(out.stdout)
+
+    # niceCeil — FINE steps: 592→600 (not 1000, the compressed-bars bug); guards 0/negative → 1
+    assert r["niceCeil"] == {"c592": 600, "c651": 700, "c979": 1000, "c1077": 1100,
+                             "c1000": 1000, "c1001": 1100, "c6": 6, "c0": 1, "cneg": 1}
+    # extent — empty/all-null/non-array -> null (never Infinity from Math.min(...[])); NaN filtered
+    assert r["extent"] == {"empty": None, "nulls": None, "single": [5, 5],
+                           "mixed": [-2, 7], "notArray": None}
+    # barDomain — always spans zero; empty -> null; all-zero -> [0,1] not [0,0]
+    assert r["bar"]["allPos"] == {"lo": 0, "hi": 700}
+    assert r["bar"]["mixed"] == {"lo": -180, "hi": 700}
+    assert r["bar"]["allNeg"] == {"lo": -250, "hi": 0}
+    assert r["bar"]["single"] == {"lo": 0, "hi": 600}
+    assert r["bar"]["empty"] is None
+    assert r["bar"]["allZero"] == {"lo": 0, "hi": 1}
+    # lineDomain — THE phantom-tick regression pins: an all-positive series floors at EXACTLY 0 (no
+    # phantom negative); an all-negative series caps at EXACTLY 0 (no phantom positive).
+    assert r["line"]["allPos"]["lo"] == 0 and r["line"]["allPos"]["hi"] == pytest.approx(19.2)
+    assert r["line"]["allNeg"]["hi"] == 0 and r["line"]["allNeg"]["lo"] == pytest.approx(-34.2)
+    assert r["line"]["mixed"]["lo"] == pytest.approx(-86.6)
+    assert r["line"]["mixed"]["hi"] == pytest.approx(43.6)
+    assert r["line"]["flatPos"]["lo"] == 0 and r["line"]["flatPos"]["hi"] == pytest.approx(9.12)
+    # minSpan guards an all-zero (degenerate) series → a real span, never a divide-by-zero [0,0]
+    assert r["line"]["allZero"] == {"lo": -1, "hi": 1}
+    assert r["line"]["empty"] is None
+    # linScale maps domain->range (degenerate domain -> range midpoint, never divide-by-zero)
+    assert r["lin"] == {"at0": 200, "at50": 100, "at100": 0, "degenerate": 5}
+    # logScale: a fn for a positive domain, null otherwise (caller falls back to linear); the
+    # log-midpoint of 1..100 is 10 -> range midpoint
+    assert r["log"]["positive"] is True
+    assert r["log"]["nonPositive"] is None and r["log"]["zeroLo"] is None
+    assert r["log"]["mid"] == pytest.approx(1.0)
+    # sign-aware placement: label ABOVE a positive bar / BELOW a negative one
+    assert r["label"] == {"left": "start", "right": "end", "pos": 96, "neg": 111}
+
+
+def test_roic_trend_exhibit_no_phantom_negative_tick_e2e() -> None:
+    """(#106, TEST-LAYER RULE) e2e WIRING pin: render a committed dossier whose ROIC is all-positive
+    through renderDossier and assert its roicTrend SVG never dips below zero — no phantom negative
+    tick / interior zero-line. Catches roicTrendExhibit reverting to inline zero-padding, which the
+    primitive-level lineDomain test would NOT. Phrasing-independent: the invariant is asserted only
+    WHEN the committed series is all-positive (derived from the artifact, not hard-coded)."""
+    import json
+    import shutil
+    import subprocess
+    if not shutil.which("node"):
+        pytest.skip("node unavailable")
+    doss = Path("data/dossiers/VRRM/dossier.json")
+    if not doss.exists():
+        pytest.skip("no committed VRRM dossier")
+    mech = json.loads(doss.read_text()).get("mechanical", {})
+    rt = (mech.get("quality", {}) or {}).get("roic_trend")
+    if not rt or rt.get("status") != "present" or not all(p["value"] > 0 for p in rt["value"]):
+        pytest.skip("VRRM roic_trend absent or not all-positive — invariant N/A")
+    dj = Path("frontend/views/shared/dossier.js").resolve().as_uri()
+    driver = f"""
+const handler = {{ get: () => stub, apply: () => stub, construct: () => ({{}}) }};
+const stub = new Proxy(function(){{}}, handler);
+for (const g of ["window","document","location"]) {{ try {{ globalThis[g] = stub; }} catch {{}} }}
+import {{ readFileSync }} from "node:fs";
+const {{ renderDossier }} = await import("{dj}");
+const html = renderDossier(JSON.parse(readFileSync("data/dossiers/VRRM/dossier.json")), null);
+const m = html.match(/<svg[^>]*aria-label="ROIC \\(return on capital\\) trend"[\\s\\S]*?<\\/svg>/);
+console.log(JSON.stringify({{ found: !!m, svg: m ? m[0] : "" }}));
+"""
+    out = subprocess.run(["node", "--input-type=module", "-e", driver],
+                         capture_output=True, text=True, check=True)
+    res = json.loads(out.stdout)
+    assert res["found"], "VRRM roicTrend exhibit did not render"
+    # the invariant: an all-positive ROIC series draws NO negative percentage anywhere (the phantom
+    # tick was "-2%"); the axis floors at 0.
+    assert not re.search(r"-\d+(\.\d+)?%", res["svg"]), "phantom negative tick on all-positive ROIC"
+
+
+def test_exhibit_module_static_contract_no_node() -> None:
+    """(refactor) When node is absent the primitive pins above skip — so pin lib/exhibit.js's
+    CONTRACT by source inspection, NODE-FREE (mirrors the web-cite static backstop): the exports the
+    exhibits consume, the fail-loud / honest-axis rules, and the no-CONCLUDE guardrail — this module
+    ships NO trendline / regression / extrapolation / projection primitive (a fitted or forward mark
+    would be the machine concluding). Catches a rename or a guardrail edit even without node."""
+    src = Path("frontend/lib/exhibit.js").read_text()
+    # the public surface the exhibits import — a silent rename here breaks a chart
+    for name in ["export const nums", "export function extent", "export function niceCeil",
+                 "export function linScale", "export function logScale",
+                 "export function barDomain", "export function lineDomain",
+                 "export const labelAnchor", "export const barLabelY"]:
+        assert name in src, f"exhibit.js must export {name!r} (an exhibit imports it)"
+    # fail-loud: extent returns null (never Infinity) when there are no values
+    assert "return v.length ? [Math.min(...v), Math.max(...v)] : null" in src
+    # honest LINE axis — pad beyond zero ONLY on a real side, both directions
+    assert "if (rHi > 0) hi += pad" in src and "if (rLo < 0) lo -= pad" in src
+    # honest BAR axis — one-sided nice ceiling, so the domain always spans zero
+    assert "hi > 0 ? niceCeil(hi * head)" in src and "lo < 0 ? -niceCeil(-lo * head)" in src
+    # the FINE nice-steps that fixed 592→1000 (not the coarse 1/2/2.5/5/10 grid)
+    assert "1.1, 1.2, 1.5, 1.8" in src
+    # no-conclude guardrail: the note NAMES the forbidden primitives ...
+    low = src.lower()
+    assert "deliberately absent" in low
+    for banned in ("trendline", "regression", "extrapolat", "projection"):
+        assert banned in low, f"the no-conclude note must name {banned!r} as forbidden"
+    # ... AND the module actually ships none of them (guard against a later well-meaning addition)
+    for banned_fn in ("export function trendline", "export function regress",
+                      "export function forecast", "export function project", "export function fit"):
+        assert banned_fn not in src, f"exhibit.js must NOT export {banned_fn!r} (concluding)"
+    # the wiring is real: dossier.js imports this module and drives the exhibits through it
+    dj = Path("frontend/views/shared/dossier.js").read_text()
+    assert 'from "../../lib/exhibit.js"' in dj
+    assert "barDomain(" in dj and "lineDomain(" in dj and "linScale(" in dj
