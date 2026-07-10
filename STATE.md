@@ -3068,6 +3068,19 @@ Recommendation/Target slot is the HUMAN's ("not yet logged"); consensus, the imp
   residual" above is now DISCHARGED — `test_exhibit_primitives_edge_cases_node` (node-gated) pins the
   primitive math, + `test_exhibit_module_static_contract_no_node` (node-free) pins the export + guardrail
   contract when node is absent. ruff + mypy --strict + pytest(not network) green; browser verified.
+  **3-PR REVIEW-RESPONSE + ordered merge (2026-07-10):** a /review of the #104→#105→#106 stack (3
+  parallel agents + adversarial re-verify) confirmed the rendering bugs self-heal within the stack
+  (#104 negative-EBITDA exhibit → #105's auto-scaled rebuild; #105 roicTrend phantom tick → #106) and
+  surfaced the DURABLE gaps, all fixed before merge: (1) EXTRACTION PINS for the parsers-rule structured
+  feed that shipped untested — financial_summary_annual values/is_estimate (#104), own_history_bands +
+  roic_trend positive+negative pins (#105); (2) CHART-vs-STRING confidence discipline (#105) — the
+  own-history chart drew a confident red ▼ at ≥4 closes while range_position's string caveats below
+  `_MIN_CONFIDENT_CLOSES=8`; ownHistoryExhibit now de-escalates below 8 closes (neutral marker + %ile* +
+  footnote), coherence-test-pinned to the Python threshold (no drift); (3) #106 — an e2e roicTrend render
+  pin (TEST-LAYER RULE: the primitive pin alone missed a wiring revert) + margin `minSpan` / roicTrend
+  null-fallback robustness. Merged to main IN ORDER: #104 (5fd72d9) → #105 (df42f6e) → #106. Suite green
+  at each gate. **Incident→invariant:** chart-out-confidents-string → a JS↔Python confidence-threshold
+  coherence test SHIPPED.
 
 **RC-1 primary-source text extraction — BUILT + VERIFIED, PR OPEN (feat/primary-source-text, 2026-07-06).**
 DETERMINISTIC (anchored, never LLM) parsers of the EX-99.1 release (A, `vinci/edgar/release_parse.py`) and
