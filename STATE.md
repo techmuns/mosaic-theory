@@ -3042,6 +3042,13 @@ Recommendation/Target slot is the HUMAN's ("not yet logged"); consensus, the imp
   Swept the other views — no status-color-on-data ambiguity elsewhere. Code + artifacts SEPARATE commits
   (844446d / 118aaf4). ruff + mypy --strict + full pytest green; no range_position/trajectory drift, .md
   unchanged; preview verified (both exhibits render, colors correct, console clean, charts match tables).
+  **CHART-ROBUSTNESS PASS (post-review, JS-only):** the rev/EBITDA exhibit's fixed 0–50% right axis +
+  positive-only left axis broke on real edge cases — MVST runs to −68% margin with NEGATIVE EBITDA bars,
+  FUBO/MVST ROIC is all-negative, VITL EV/EBITDA spans 1.9→110x. Rebuilt as TWO PANELS (bars $M · margin
+  %), each AUTO-SCALED to its own data with a zero baseline (no shared/clamped axis), + haloed labels so
+  every figure is readable over the bars. ROIC chart already auto-scaled (verified all-negative FUBO);
+  P/E band log axis verified on VITL's 58× range; haloed the ROIC labels too. Verified across MVST
+  (neg)/VRRM (high)/FUBO (tiny)/VITL (extreme) — all render + match their tables, console clean.
   **Incident→invariant:** the range_position/trajectory byte-identical checks are the anti-drift pins
   (verified in the re-derive; a full-suite e2e pin would need node for the JS charts — accepted residual).
   **REMAINING (whole redesign): NONE — Phase-3 complete.** The dossier redesign (Brief 3-tier → A/B

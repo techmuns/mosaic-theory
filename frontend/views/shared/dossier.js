@@ -577,44 +577,56 @@ function revEbitdaExhibit(fsa) {
   const marg = cols.map((_c, i) =>
     (rev[i] != null && ebitda[i] != null && rev[i]) ? (ebitda[i] / rev[i]) * 100 : null);
 
-  const W = 760, H = 300, padL = 44, padR = 40, padT = 44, padB = 56;
-  const x0 = padL, x1 = W - padR, y0 = padT, y1 = H - padB, plotH = y1 - y0, slot = (x1 - x0) / n;
-  const bw = Math.min(24, slot * 0.30), cx = (i) => x0 + slot * i + slot / 2;
-  const dataMax = Math.max(...rev.filter((x) => x != null), ...ebitda.filter((x) => x != null), 1);
-  const niceMax = (mx) => { const p = 10 ** Math.floor(Math.log10(mx)), f = mx / p;
+  // TWO PANELS so the $M bars and the % margin NEVER share a scale — a negative EBITDA / margin (MVST
+  // ran to −68%) would clamp + overlap a single dual axis. Each panel AUTO-SCALES to its own data and
+  // draws its own zero baseline; a haloed label keeps every figure readable over the bars.
+  const W = 760, H = 328, padL = 42, padR = 14, x0 = padL, x1 = W - padR, slot = (x1 - x0) / n;
+  const bw = Math.min(22, slot * 0.30), cx = (i) => x0 + slot * i + slot / 2;
+  const by0 = 44, by1 = 194, my0 = 214, my1 = 274;  // bars panel · margin panel (y-bounds)
+  const nums = (a) => a.filter((x) => x != null);
+  const niceMax = (mx) => { if (mx <= 0) return 1; const p = 10 ** Math.floor(Math.log10(mx)), f = mx / p;
     return (f <= 1 ? 1 : f <= 2 ? 2 : f <= 2.5 ? 2.5 : f <= 5 ? 5 : 10) * p; };
-  const yMaxL = niceMax(dataMax), yMaxR = 50;  // $M (left) · margin % 0–50 (right, where margins live)
-  const syL = (val) => y1 - (val / yMaxL) * plotH, syR = (pct) => y1 - (pct / yMaxR) * plotH;
+  const halo = 'paint-order="stroke" stroke="var(--surface)" stroke-width="2.6"';
 
-  const firstE = isE.findIndex((b) => b);
-  const estReg = firstE >= 0 ? `<rect x="${cx(firstE) - slot / 2}" y="${y0}" width="${x1 - (cx(firstE) - slot / 2)}" height="${plotH}" fill="var(--surface-2)" opacity="0.7"/><line x1="${cx(firstE) - slot / 2}" y1="${y0}" x2="${cx(firstE) - slot / 2}" y2="${y1}" stroke="var(--line-2)" stroke-dasharray="3 3"/><text x="${cx(firstE) - slot / 2 + 5}" y="${y0 + 11}" font-size="9.5" fill="var(--ink-3)" font-style="italic">consensus (E)</text>` : "";
+  // bars panel ($M) — auto-scaled incl. a negative EBITDA, zero baseline
+  const hiL = niceMax(Math.max(...nums(rev), ...nums(ebitda), 1));
+  const barMin = Math.min(0, ...nums(ebitda)), loL = barMin < 0 ? -niceMax(-barMin) : 0;
+  const sB = (val) => by1 - ((val - loL) / (hiL - loL)) * (by1 - by0), baseB = sB(0);
+  // margin panel (%) — auto-scaled incl. zero + a negative margin
+  const mv = nums(marg);
+  let mLo = Math.min(0, ...mv), mHi = Math.max(0, ...mv);
+  const mpad = Math.max((mHi - mLo) * 0.2, 2); mLo -= mpad; mHi += mpad;
+  const sM = (val) => my1 - ((val - mLo) / (mHi - mLo)) * (my1 - my0), zeroM = sM(0);
 
-  let grid = "";
-  for (let t = 0; t <= 4; t++) {
-    const yy = y0 + (plotH / 4) * t, valL = yMaxL * (1 - t / 4);
-    grid += `<line x1="${x0}" y1="${yy}" x2="${x1}" y2="${yy}" stroke="var(--line)"/><text x="${x0 - 6}" y="${yy + 3}" font-size="9.5" text-anchor="end" fill="var(--ink-3)">${Math.round(valL)}</text>`;
-    if (t % 2 === 0) grid += `<text x="${x1 + 6}" y="${yy + 3}" font-size="9.5" fill="var(--ink-2)">${yMaxR * (1 - t / 4)}%</text>`;
-  }
+  const firstE = isE.findIndex((b) => b), eX = firstE >= 0 ? cx(firstE) - slot / 2 : null;
+  const estReg = eX != null ? `<rect x="${eX}" y="${by0}" width="${x1 - eX}" height="${by1 - by0}" fill="var(--surface-2)" opacity="0.7"/><rect x="${eX}" y="${my0}" width="${x1 - eX}" height="${my1 - my0}" fill="var(--surface-2)" opacity="0.7"/><line x1="${eX}" y1="${by0}" x2="${eX}" y2="${my1}" stroke="var(--line-2)" stroke-dasharray="3 3"/><text x="${eX + 5}" y="${by0 + 11}" font-size="9.5" fill="var(--ink-3)" font-style="italic">consensus (E)</text>` : "";
+
+  let baxis = `<line x1="${x0}" y1="${baseB}" x2="${x1}" y2="${baseB}" stroke="var(--line-2)"/><text x="${x0 - 5}" y="${by0 + 3}" font-size="9" text-anchor="end" fill="var(--ink-3)">${Math.round(hiL)}</text><text x="${x0 - 5}" y="${baseB + 3}" font-size="9" text-anchor="end" fill="var(--ink-3)">0</text>`;
+  if (loL < 0) baxis += `<text x="${x0 - 5}" y="${by1 + 3}" font-size="9" text-anchor="end" fill="var(--ink-3)">${Math.round(loL)}</text>`;
 
   const bars = cols.map((c, i) => {
     const op = isE[i] ? 0.5 : 1, rx = cx(i) - bw - 1, ex = cx(i) + 1;
-    const rb = rev[i] != null ? `<rect x="${rx}" y="${syL(rev[i])}" width="${bw}" height="${y1 - syL(rev[i])}" fill="var(--accent)" opacity="${op}" rx="1.5"/><text x="${rx + bw / 2}" y="${syL(rev[i]) - 4}" font-size="8.5" text-anchor="middle" fill="var(--ink-2)">${Math.round(rev[i])}</text>` : "";
-    const eb = ebitda[i] != null ? `<rect x="${ex}" y="${syL(ebitda[i])}" width="${bw}" height="${y1 - syL(ebitda[i])}" fill="var(--live)" opacity="${op}" rx="1.5"/>` : "";
-    const xl = `<text x="${cx(i)}" y="${y1 + 14}" font-size="9.5" text-anchor="middle" fill="${isE[i] ? "var(--ink-3)" : "var(--ink-2)"}">${escapeHtml(String(c))}</text>`;
-    return rb + eb + xl;
+    let s = "";
+    if (rev[i] != null) { const yv = sB(rev[i]); s += `<rect x="${rx}" y="${Math.min(yv, baseB)}" width="${bw}" height="${Math.max(1, Math.abs(yv - baseB))}" fill="var(--accent)" opacity="${op}" rx="1.5"/><text x="${rx + bw / 2}" y="${yv - 3}" font-size="8" text-anchor="middle" fill="var(--ink-2)" ${halo}>${Math.round(rev[i])}</text>`; }
+    if (ebitda[i] != null) { const yv = sB(ebitda[i]), neg = ebitda[i] < 0; s += `<rect x="${ex}" y="${Math.min(yv, baseB)}" width="${bw}" height="${Math.max(1, Math.abs(yv - baseB))}" fill="var(--live)" opacity="${op}" rx="1.5"/><text x="${ex + bw / 2}" y="${neg ? yv + 9 : yv - 3}" font-size="8" text-anchor="middle" fill="var(--ink-3)" ${halo}>${Math.round(ebitda[i])}</text>`; }
+    s += `<text x="${cx(i)}" y="${my1 + 15}" font-size="9" text-anchor="middle" fill="${isE[i] ? "var(--ink-3)" : "var(--ink-2)"}">${escapeHtml(String(c))}</text>`;
+    return s;
   }).join("");
 
-  const pts = marg.map((p, i) => (p != null ? `${cx(i)},${syR(p)}` : null)).filter(Boolean).join(" ");
-  const line = `<polyline points="${pts}" fill="none" stroke="var(--ink-2)" stroke-width="1.8"/>`;
-  const dots = marg.map((p, i) => (p != null ? `<circle cx="${cx(i)}" cy="${syR(p)}" r="2.6" fill="var(--ink-2)"/><text x="${cx(i)}" y="${syR(p) - 6}" font-size="8.5" text-anchor="middle" fill="var(--ink-2)">${Math.round(p)}%</text>` : "")).join("");
+  let maxis = `<line x1="${x0}" y1="${zeroM}" x2="${x1}" y2="${zeroM}" stroke="var(--line-2)" stroke-dasharray="3 2"/><text x="${x0 - 5}" y="${my0 + 3}" font-size="8.5" text-anchor="end" fill="var(--ink-3)">${Math.round(mHi)}%</text>`;
+  if (mLo < -0.5) maxis += `<text x="${x0 - 5}" y="${my1 + 3}" font-size="8.5" text-anchor="end" fill="var(--ink-3)">${Math.round(mLo)}%</text>`;
+  const mpts = marg.map((p, i) => (p != null ? `${cx(i)},${sM(p)}` : null)).filter(Boolean).join(" ");
+  const mline = `<polyline points="${mpts}" fill="none" stroke="var(--ink-2)" stroke-width="1.6"/>`;
+  const mdots = marg.map((p, i) => (p != null ? `<circle cx="${cx(i)}" cy="${sM(p)}" r="2.4" fill="var(--ink-2)"/><text x="${cx(i)}" y="${sM(p) - 6}" font-size="8.5" text-anchor="middle" fill="var(--ink)" font-weight="600" ${halo}>${Math.round(p)}%</text>` : "")).join("");
+  const mlabel = `<text x="${x0}" y="${my0 - 3}" font-size="9" fill="var(--ink-3)">EBITDA margin (%)</text>`;
 
-  const lg = `<g font-size="10" fill="var(--ink-2)"><rect x="${x0}" y="${H - 15}" width="9" height="9" fill="var(--accent)" rx="1"/><text x="${x0 + 13}" y="${H - 7}">Revenue ($M)</text><rect x="${x0 + 92}" y="${H - 15}" width="9" height="9" fill="var(--live)" rx="1"/><text x="${x0 + 105}" y="${H - 7}">EBITDA ($M)</text><line x1="${x0 + 186}" y1="${H - 10}" x2="${x0 + 201}" y2="${H - 10}" stroke="var(--ink-2)" stroke-width="1.8"/><circle cx="${x0 + 193}" cy="${H - 10}" r="2.4" fill="var(--ink-2)"/><text x="${x0 + 206}" y="${H - 7}">EBITDA margin (%)</text></g>`;
+  const lg = `<g font-size="10" fill="var(--ink-2)"><rect x="${x0}" y="${H - 12}" width="9" height="9" fill="var(--accent)" rx="1"/><text x="${x0 + 13}" y="${H - 4}">Revenue ($M)</text><rect x="${x0 + 92}" y="${H - 12}" width="9" height="9" fill="var(--live)" rx="1"/><text x="${x0 + 105}" y="${H - 4}">EBITDA ($M)</text><line x1="${x0 + 186}" y1="${H - 7}" x2="${x0 + 201}" y2="${H - 7}" stroke="var(--ink-2)" stroke-width="1.6"/><circle cx="${x0 + 193}" cy="${H - 7}" r="2.2" fill="var(--ink-2)"/><text x="${x0 + 206}" y="${H - 4}">EBITDA margin (%)</text></g>`;
 
   return `<div class="ds-exhibit" style="margin:4px 0 12px;">
     <svg viewBox="0 0 ${W} ${H}" width="100%" style="max-width:660px; display:block;" role="img" aria-label="Revenue, EBITDA and EBITDA-margin trend">
-      <text x="${x0}" y="18" font-size="12.5" font-weight="600" fill="var(--ink)">Revenue, EBITDA &amp; margin</text>
-      <text x="${x0}" y="32" font-size="10" fill="var(--ink-3)">${escapeHtml(String(cols[0] || ""))}–${escapeHtml(String(cols[n - 1] || ""))} · $M (left axis) · margin % (right axis)</text>
-      ${estReg}${grid}${bars}${line}${dots}${lg}
+      <text x="${x0}" y="16" font-size="12.5" font-weight="600" fill="var(--ink)">Revenue, EBITDA &amp; margin</text>
+      <text x="${x0}" y="30" font-size="10" fill="var(--ink-3)">${escapeHtml(String(cols[0] || ""))}–${escapeHtml(String(cols[n - 1] || ""))} · bars = $M · line = margin % (each panel its own scale)</text>
+      ${estReg}${baxis}${bars}${maxis}${mlabel}${mline}${mdots}${lg}
     </svg>
     <div class="muted" style="font-size:10.5px; margin-top:1px;">Source: CIQ Financials + Estimates→Trends. E columns are <b>consensus</b>, not a Nostra Vinci forecast.</div>
   </div>`;
@@ -1159,7 +1171,8 @@ function roicTrendExhibit(q) {
   const zY = (vmin < 0 && vmax > 0) ? py(0) : null;
   const zeroLine = zY != null ? `<line x1="${x0}" y1="${zY}" x2="${x1}" y2="${zY}" stroke="var(--line-2)" stroke-dasharray="3 2"/>` : "";
   const line = `<polyline points="${pts.map((p, i) => `${px(i)},${py(p.v)}`).join(" ")}" fill="none" stroke="var(--accent)" stroke-width="1.8"/>`;
-  const dots = pts.map((p, i) => `<circle cx="${px(i)}" cy="${py(p.v)}" r="3" fill="var(--accent)"/><text x="${px(i)}" y="${py(p.v) - 7}" font-size="8.5" text-anchor="middle" fill="var(--ink)">${p.v.toFixed(1)}%</text><text x="${px(i)}" y="${y1 + 14}" font-size="8.5" text-anchor="middle" fill="var(--ink-3)">${escapeHtml(abbr(p.period))}</text>`).join("");
+  const halo = 'paint-order="stroke" stroke="var(--surface)" stroke-width="2.6"';  // readable over the line
+  const dots = pts.map((p, i) => `<circle cx="${px(i)}" cy="${py(p.v)}" r="3" fill="var(--accent)"/><text x="${px(i)}" y="${py(p.v) - 7}" font-size="8.5" text-anchor="middle" fill="var(--ink)" ${halo}>${p.v.toFixed(1)}%</text><text x="${px(i)}" y="${y1 + 14}" font-size="8.5" text-anchor="middle" fill="var(--ink-3)">${escapeHtml(abbr(p.period))}</text>`).join("");
   const yticks = `<text x="${x0 - 5}" y="${py(vmax) + 3}" font-size="8.5" text-anchor="end" fill="var(--ink-3)">${Math.round(vmax)}%</text><text x="${x0 - 5}" y="${py(vmin) + 3}" font-size="8.5" text-anchor="end" fill="var(--ink-3)">${Math.round(vmin)}%</text>`;
   return `<div class="ds-exhibit" style="margin:4px 0 10px;">
     <svg viewBox="0 0 ${W} ${H}" width="100%" style="max-width:520px; display:block;" role="img" aria-label="ROIC (return on capital) trend">
