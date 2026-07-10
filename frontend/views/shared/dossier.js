@@ -562,6 +562,64 @@ function briefCase(s) {
     </div>${uk}</div>`;
 }
 
+// (Phase-3) Revenue + EBITDA bars ($M) + EBITDA-margin % line — the institutional financial-trend
+// exhibit as a dependency-free inline SVG (theme-aware via CSS vars; prints with the Brief). Consumes
+// the STRUCTURED `values` + `is_estimate` (NEVER the display cells — parsers rule); estimate columns
+// are shaded + reduced-opacity + labelled CONSENSUS (never the machine's own forecast). Fail-honest:
+// absent structured series (a pre-P3 dossier.json) → no chart, the table below still renders.
+function revEbitdaExhibit(fsa) {
+  const v = fsa && fsa.value;
+  if (!v || !Array.isArray(v.rows) || !Array.isArray(v.columns)) return "";
+  const cols = v.columns, isE = v.is_estimate || [];
+  const rowVals = (lbl) => ((v.rows.find((r) => r.label === lbl) || {}).values) || [];
+  const rev = rowVals("Revenue ($M)"), ebitda = rowVals("EBITDA ($M)"), n = cols.length;
+  if (!n || !rev.some((x) => x != null)) return "";  // no structured series → skip (the table stays)
+  const marg = cols.map((_c, i) =>
+    (rev[i] != null && ebitda[i] != null && rev[i]) ? (ebitda[i] / rev[i]) * 100 : null);
+
+  const W = 760, H = 300, padL = 44, padR = 40, padT = 44, padB = 56;
+  const x0 = padL, x1 = W - padR, y0 = padT, y1 = H - padB, plotH = y1 - y0, slot = (x1 - x0) / n;
+  const bw = Math.min(24, slot * 0.30), cx = (i) => x0 + slot * i + slot / 2;
+  const dataMax = Math.max(...rev.filter((x) => x != null), ...ebitda.filter((x) => x != null), 1);
+  const niceMax = (mx) => { const p = 10 ** Math.floor(Math.log10(mx)), f = mx / p;
+    return (f <= 1 ? 1 : f <= 2 ? 2 : f <= 2.5 ? 2.5 : f <= 5 ? 5 : 10) * p; };
+  const yMaxL = niceMax(dataMax), yMaxR = 50;  // $M (left) · margin % 0–50 (right, where margins live)
+  const syL = (val) => y1 - (val / yMaxL) * plotH, syR = (pct) => y1 - (pct / yMaxR) * plotH;
+
+  const firstE = isE.findIndex((b) => b);
+  const estReg = firstE >= 0 ? `<rect x="${cx(firstE) - slot / 2}" y="${y0}" width="${x1 - (cx(firstE) - slot / 2)}" height="${plotH}" fill="var(--surface-2)" opacity="0.7"/><line x1="${cx(firstE) - slot / 2}" y1="${y0}" x2="${cx(firstE) - slot / 2}" y2="${y1}" stroke="var(--line-2)" stroke-dasharray="3 3"/><text x="${cx(firstE) - slot / 2 + 5}" y="${y0 + 11}" font-size="9.5" fill="var(--ink-3)" font-style="italic">consensus (E)</text>` : "";
+
+  let grid = "";
+  for (let t = 0; t <= 4; t++) {
+    const yy = y0 + (plotH / 4) * t, valL = yMaxL * (1 - t / 4);
+    grid += `<line x1="${x0}" y1="${yy}" x2="${x1}" y2="${yy}" stroke="var(--line)"/><text x="${x0 - 6}" y="${yy + 3}" font-size="9.5" text-anchor="end" fill="var(--ink-3)">${Math.round(valL)}</text>`;
+    if (t % 2 === 0) grid += `<text x="${x1 + 6}" y="${yy + 3}" font-size="9.5" fill="var(--warn)">${yMaxR * (1 - t / 4)}%</text>`;
+  }
+
+  const bars = cols.map((c, i) => {
+    const op = isE[i] ? 0.5 : 1, rx = cx(i) - bw - 1, ex = cx(i) + 1;
+    const rb = rev[i] != null ? `<rect x="${rx}" y="${syL(rev[i])}" width="${bw}" height="${y1 - syL(rev[i])}" fill="var(--accent)" opacity="${op}" rx="1.5"/><text x="${rx + bw / 2}" y="${syL(rev[i]) - 4}" font-size="8.5" text-anchor="middle" fill="var(--ink-2)">${Math.round(rev[i])}</text>` : "";
+    const eb = ebitda[i] != null ? `<rect x="${ex}" y="${syL(ebitda[i])}" width="${bw}" height="${y1 - syL(ebitda[i])}" fill="var(--live)" opacity="${op}" rx="1.5"/>` : "";
+    const xl = `<text x="${cx(i)}" y="${y1 + 14}" font-size="9.5" text-anchor="middle" fill="${isE[i] ? "var(--ink-3)" : "var(--ink-2)"}">${escapeHtml(String(c))}</text>`;
+    return rb + eb + xl;
+  }).join("");
+
+  const pts = marg.map((p, i) => (p != null ? `${cx(i)},${syR(p)}` : null)).filter(Boolean).join(" ");
+  const line = `<polyline points="${pts}" fill="none" stroke="var(--warn)" stroke-width="1.8"/>`;
+  const dots = marg.map((p, i) => (p != null ? `<circle cx="${cx(i)}" cy="${syR(p)}" r="2.6" fill="var(--warn)"/><text x="${cx(i)}" y="${syR(p) - 6}" font-size="8.5" text-anchor="middle" fill="var(--warn)">${Math.round(p)}%</text>` : "")).join("");
+
+  const lg = `<g font-size="10" fill="var(--ink-2)"><rect x="${x0}" y="${H - 15}" width="9" height="9" fill="var(--accent)" rx="1"/><text x="${x0 + 13}" y="${H - 7}">Revenue ($M)</text><rect x="${x0 + 92}" y="${H - 15}" width="9" height="9" fill="var(--live)" rx="1"/><text x="${x0 + 105}" y="${H - 7}">EBITDA ($M)</text><line x1="${x0 + 186}" y1="${H - 10}" x2="${x0 + 201}" y2="${H - 10}" stroke="var(--warn)" stroke-width="1.8"/><circle cx="${x0 + 193}" cy="${H - 10}" r="2.4" fill="var(--warn)"/><text x="${x0 + 206}" y="${H - 7}">EBITDA margin (%)</text></g>`;
+
+  return `<div class="ds-exhibit" style="margin:4px 0 12px;">
+    <svg viewBox="0 0 ${W} ${H}" width="100%" style="max-width:660px; display:block;" role="img" aria-label="Revenue, EBITDA and EBITDA-margin trend">
+      <text x="${x0}" y="18" font-size="12.5" font-weight="600" fill="var(--ink)">Revenue, EBITDA &amp; margin</text>
+      <text x="${x0}" y="32" font-size="10" fill="var(--ink-3)">${escapeHtml(String(cols[0] || ""))}–${escapeHtml(String(cols[n - 1] || ""))} · $M (left axis) · margin % (right axis)</text>
+      ${estReg}${grid}${bars}${line}${dots}${lg}
+    </svg>
+    <div class="muted" style="font-size:10.5px; margin-top:1px;">Source: CIQ Financials + Estimates→Trends. E columns are <b>consensus</b>, not a Nostra Vinci forecast.</div>
+  </div>`;
+}
+
 // 5 — FINANCIAL SNAPSHOT: revenue / EBITDA / EBITDA-margin trajectory (from financial_summary.annual).
 function financialSnapshot(m) {
   const fsa = (m.financial_summary || {}).annual;
@@ -570,10 +628,12 @@ function financialSnapshot(m) {
     "EBITDA margin", "EBIT ($M)", "Net income ($M)", "EPS (GAAP, dil.)", "FCF ($M)"];
   const rows = (fsa.value.rows || []).filter((r) => want.includes(r.label));
   if (!cols.length || !rows.length) return "";
-  const head = `<tr><th></th>${cols.map((c) => `<th class="num">${escapeHtml(String(c))}</th>`).join("")}</tr>`;
-  const body = rows.map((r) => `<tr><td>${escapeHtml(r.label)}</td>${(r.cells || []).map((c) => `<td class="num mono">${escapeHtml(String(c))}</td>`).join("")}</tr>`).join("");
+  const isE = fsa.value.is_estimate || [], ec = (i) => (isE[i] ? " est-col" : "");  // (P3) shade E cols
+  const head = `<tr><th></th>${cols.map((c, i) => `<th class="num${ec(i)}">${escapeHtml(String(c))}</th>`).join("")}</tr>`;
+  const body = rows.map((r) => `<tr><td>${escapeHtml(r.label)}</td>${(r.cells || []).map((c, i) => `<td class="num mono${ec(i)}">${escapeHtml(String(c))}</td>`).join("")}</tr>`).join("");
   const ratios = (m.key_ratios && m.key_ratios.status === "present") ? fact("Key ratios (latest)", m.key_ratios) : "";
   return `<div class="card ds-section"><div class="ds-title">Financial snapshot <span class="muted" style="font-weight:400; text-transform:none; letter-spacing:0;">— full table in Appendix</span></div>
+    ${revEbitdaExhibit(fsa)}
     <table class="data">${`<thead>${head}</thead><tbody>${body}</tbody>`}</table>
     ${citeMark(fsa.source_ref)}${ratios}</div>`;
 }
@@ -1316,10 +1376,11 @@ function catAsof(cp) {
 // B4: the ONE shared table renderer (the compact idiom). Every dossier table routes through here —
 // series (margin/trajectory/surprise/trading-multiples), the catalyst tables, and the B1/B3 grids.
 // A row may carry `cls` (e.g. "name-row"/"median-row") for the distinguished B1 rows.
-function dataTable(label, cite, cols, rows, note) {
-  const head = `<tr><th></th>${cols.map((c) => `<th class="num">${escapeHtml(c)}</th>`).join("")}</tr>`;
+function dataTable(label, cite, cols, rows, note, estimate = []) {
+  const ec = (i) => (estimate[i] ? " est-col" : "");  // (P3) shade consensus / forward-FY columns
+  const head = `<tr><th></th>${cols.map((c, i) => `<th class="num${ec(i)}">${escapeHtml(c)}</th>`).join("")}</tr>`;
   const body = rows.map((r) =>
-    `<tr${r.cls ? ` class="${r.cls}"` : ""}><td style="white-space:nowrap;">${escapeHtml(r.label)}</td>${r.cells.map((c) => `<td class="num">${escapeHtml(c)}</td>`).join("")}</tr>`).join("");
+    `<tr${r.cls ? ` class="${r.cls}"` : ""}><td style="white-space:nowrap;">${escapeHtml(r.label)}</td>${r.cells.map((c, i) => `<td class="num${ec(i)}">${escapeHtml(c)}</td>`).join("")}</tr>`).join("");
   const noteHtml = note ? `<div class="muted" style="font-size:11px; margin-top:5px;">${escapeHtml(note)}</div>` : "";
   const citeHtml = citeMark(cite);
   return `<div class="fact"><div class="fact-label">${escapeHtml(label)}</div>
@@ -1433,7 +1494,7 @@ function finTable(label, s) {
   if (!s || s.status !== "present" || !s.value) return fact(label, s);
   const ft = s.value;
   const rows = (ft.rows || []).map((r) => ({ label: r.label, cells: r.cells }));
-  return dataTable(label, s.source_ref, ft.columns || [], rows, ft.note || "");
+  return dataTable(label, s.source_ref, ft.columns || [], rows, ft.note || "", ft.is_estimate || []);
 }
 
 // (D5b) relabel the levered-FCF row + footnote (display-only; the FinTable is rebuilt in place).

@@ -5338,6 +5338,15 @@ def test_financial_summary_annual_fuses_actuals_and_stamped_estimates() -> None:
     # cross-block coherence: FY26E EBITDA IS the Trends 'Current' FY 2026 cell (62.1 → "62")
     assert cs._est_fy_current(trends, "EBITDA", "FY 2026") == 62.1
     assert row["EBITDA ($M)"][-2] == "62"
+    # (P3, #104) the STRUCTURED series the Revenue/EBITDA chart consumes — parsers rule: RAW numbers
+    # behind the cells, aligned to columns, estimate columns flagged; derived rows carry none.
+    assert ft.is_estimate == [False, False, False, False, False, True, True]  # only FY26E/FY27E
+    assert len(ft.is_estimate) == len(ft.columns)
+    rv = {r.label: r.values for r in ft.rows}
+    assert rv["Revenue ($M)"] == [300.0, 350.0, 400.0, 430.0, 440.0, 444.4, 520.0]
+    assert rv["EBITDA ($M)"] == [40.0, 45.0, 50.0, 55.0, 58.0, 62.1, 90.0]
+    assert len(rv["Revenue ($M)"]) == len(ft.columns)  # aligned to columns
+    assert rv["Revenue growth"] == [] and rv["EBITDA margin"] == []  # derived → no series
 
 
 def test_financial_summary_quarterly_shows_collapse_and_basis_guarded_yoy() -> None:

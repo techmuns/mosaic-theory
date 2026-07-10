@@ -3648,6 +3648,15 @@
                 "784",
                 "778",
                 "847"
+              ],
+              "values": [
+                362.05,
+                471.857,
+                606.307,
+                759.444,
+                784.41,
+                777.82,
+                846.92
               ]
             },
             {
@@ -3660,7 +3669,8 @@
                 "— (basis)",
                 "+2% (vs FY25)",
                 "+9%"
-              ]
+              ],
+              "values": []
             },
             {
               "label": "EBITDA ($M)",
@@ -3672,6 +3682,15 @@
                 "79",
                 "4",
                 "48"
+              ],
+              "values": [
+                9.74,
+                41.179,
+                76.645,
+                102.885,
+                79.484,
+                4.05,
+                48.33
               ]
             },
             {
@@ -3684,7 +3703,8 @@
                 "10%",
                 "1%",
                 "6%"
-              ]
+              ],
+              "values": []
             },
             {
               "label": "EBIT ($M)",
@@ -3696,6 +3716,15 @@
                 "64",
                 "-25",
                 "30"
+              ],
+              "values": [
+                4.299,
+                33.254,
+                63.552,
+                88.373,
+                64.272,
+                -24.77,
+                29.5
               ]
             },
             {
@@ -3708,6 +3737,15 @@
                 "48",
                 "-19",
                 "24"
+              ],
+              "values": [
+                1.251,
+                25.566,
+                53.388,
+                66.282,
+                47.859,
+                -18.79,
+                24.01
               ]
             },
             {
@@ -3720,6 +3758,15 @@
                 "1.05",
                 "-0.42",
                 "0.52"
+              ],
+              "values": [
+                0.03,
+                0.59,
+                1.18,
+                1.44,
+                1.05,
+                -0.42,
+                0.52
               ]
             },
             {
@@ -3732,6 +3779,15 @@
                 "0.92",
                 "-0.42",
                 "0.50"
+              ],
+              "values": [
+                0.074126,
+                0.467283,
+                0.935399,
+                1.239295,
+                0.916774,
+                -0.42,
+                0.5
               ]
             },
             {
@@ -3744,7 +3800,8 @@
                 "10",
                 "—",
                 "—"
-              ]
+              ],
+              "values": []
             },
             {
               "label": "Capex ($M)",
@@ -3756,7 +3813,8 @@
                 "-100",
                 "—",
                 "—"
-              ]
+              ],
+              "values": []
             },
             {
               "label": "FCF ($M)",
@@ -3768,10 +3826,20 @@
                 "-54",
                 "—",
                 "—"
-              ]
+              ],
+              "values": []
             }
           ],
-          "note": "E = consensus (Estimates→Trends 'Current'), as-of ≥2026-05-28; (R) = Reclassified basis"
+          "note": "E = consensus (Estimates→Trends 'Current'), as-of ≥2026-05-28; (R) = Reclassified basis",
+          "is_estimate": [
+            false,
+            false,
+            false,
+            false,
+            false,
+            true,
+            true
+          ]
         },
         "source_ref": "CIQ Financials→Income Statement + Cash Flow (annual) + Estimates→Trends (FY E)",
         "status": "present",
@@ -3801,7 +3869,8 @@
                 "199",
                 "214",
                 "187"
-              ]
+              ],
+              "values": []
             },
             {
               "label": "Gross margin",
@@ -3814,7 +3883,8 @@
                 "38%",
                 "36%",
                 "28%"
-              ]
+              ],
+              "values": []
             },
             {
               "label": "EBITDA ($M)",
@@ -3827,7 +3897,8 @@
                 "25",
                 "26",
                 "2"
-              ]
+              ],
+              "values": []
             },
             {
               "label": "EBITDA margin",
@@ -3840,7 +3911,8 @@
                 "12%",
                 "12%",
                 "1%"
-              ]
+              ],
+              "values": []
             },
             {
               "label": "Revenue QoQ",
@@ -3853,7 +3925,8 @@
                 "+8%",
                 "+7%",
                 "-12%"
-              ]
+              ],
+              "values": []
             },
             {
               "label": "Revenue YoY",
@@ -3866,10 +3939,12 @@
                 "+37%",
                 "+29%",
                 "+15%"
-              ]
+              ],
+              "values": []
             }
           ],
-          "note": "QoQ/YoY same-basis only; (R) = Reclassified"
+          "note": "QoQ/YoY same-basis only; (R) = Reclassified",
+          "is_estimate": []
         },
         "source_ref": "CIQ Financials→Income Statement (quarterly, trailing 8Q)",
         "status": "present",

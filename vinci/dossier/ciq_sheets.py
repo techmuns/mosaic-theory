@@ -2572,17 +2572,20 @@ def financial_summary_annual(bundle: CiqBundle, *, as_of: str | None = None) -> 
     if not any(v is not None for v in rev):
         return Sourced.unknown(note="Income Statement (annual): no Total Revenue — core row absent")
     ebitda = series("EBITDA", "EBITDA")
+    # (Phase-3) raw numeric rows ALSO expose their structured series (`values`) — the chart consumes
+    # these, never the display cells (parsers rule). Derived display rows (growth, margin) stay
+    # cells-only — a consumer (the chart) derives them from the raw series (margin = EBITDA/Rev).
     rows: list[FinRow] = [
-        FinRow(label="Revenue ($M)", cells=[_fmt_m(v) for v in rev]),
+        FinRow(label="Revenue ($M)", cells=[_fmt_m(v) for v in rev], values=rev),
         FinRow(label="Revenue growth", cells=growth(rev)),
-        FinRow(label="EBITDA ($M)", cells=[_fmt_m(v) for v in ebitda]),
+        FinRow(label="EBITDA ($M)", cells=[_fmt_m(v) for v in ebitda], values=ebitda),
         FinRow(label="EBITDA margin", cells=margin(ebitda, rev)),
     ]
     for disp_lbl, is_lbl, est_metric, fmt in _C1_ROWS[2:]:
         s = series(is_lbl, est_metric)
         fn = _fmt_eps if fmt == "e" else _fmt_m
         unit = "" if fmt == "e" else " ($M)"
-        rows.append(FinRow(label=disp_lbl + unit, cells=[fn(v) for v in s]))
+        rows.append(FinRow(label=disp_lbl + unit, cells=[fn(v) for v in s], values=s))
     # C4 cash-flow essentials (actuals only; no consensus E), matched to the displayed column by
     # FISCAL-PERIOD identity (short, is_ltm) with collision detection — NOT the bare short, and NOT
     # the Reclassified flag: CIQ tags a P&L reclassification on the Income Statement but not the
@@ -2618,7 +2621,8 @@ def financial_summary_annual(bundle: CiqBundle, *, as_of: str | None = None) -> 
     est = as_of or "?"
     note = f"E = consensus (Estimates→Trends 'Current'), as-of {est}; (R) = Reclassified basis"
     return Sourced.present(
-        FinTable(columns=columns, rows=rows, note=note),
+        FinTable(columns=columns, rows=rows, note=note,
+                 is_estimate=[b == "est" for b in bases]),  # (P3) structural consensus-E flag
         source_ref="CIQ Financials→Income Statement + Cash Flow (annual) + Estimates→Trends (FY E)",
     )
 

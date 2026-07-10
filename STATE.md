@@ -3010,8 +3010,25 @@ Recommendation/Target slot is the HUMAN's ("not yet logged"); consensus, the imp
   completeness pin (robust to a filing `[2024]`); #6/#9/#10→node-free static guard on dossier.js.
   **Residual (accepted):** #1 source_ref↔synthesis dedup + #2/#8 md↔web parity have no node-free behavioural
   pin here (node absent → the node-gated parity tests skip); covered when node is present.
-  **REMAINING (whole redesign):** only Phase-3 charts (approach logged: web/PDF SVG + a structured-series
-  extraction, since charting the rendered-string tables would break the parsers rule).
+- **PHASE-3 CHARTS 3a — BUILT + VERIFIED, PR OPEN (#104, feat/dossier-charts-3a off main, 2026-07-10).**
+  The first financial-trend exhibit + the structured-series extraction it required (the parsers rule:
+  the FinTable cells are DISPLAY STRINGS, so charting them would re-parse rendered strings). **Extractor:**
+  `FinRow.values: list[float|None]` (the numeric behind each cell — 741.598 behind "742") on the raw
+  rows, + `FinTable.is_estimate: list[bool]` (structural per-column consensus flag from the builder's
+  `bases`); both default [] → pre-P3 round-trips; both close the "expose structured value(s)" gap the
+  FinTable had (display-strings-only). **Render (web/PDF, dependency-free SVG):** `revEbitdaExhibit()` —
+  Revenue + EBITDA bars ($M) + EBITDA-margin % line, dual axis, direct data labels, themed via CSS vars;
+  consensus columns shaded + reduced-opacity + labelled "consensus (E)" + a source line "not a Nostra
+  Vinci forecast" (machine-never-concludes, rendered). Fail-honest (no structured series → no chart, the
+  table stays; AORT has no annual → no exhibit). **Tables:** denser dossier rows (9→5px) + forward-FY
+  columns tinted (var(--conditional-bg)) across Brief + Appendix via the structural is_estimate.
+  Artifact re-derive (9 dossiers): ZERO cell/note drift, NO .md change (values chart-only); code +
+  artifacts SEPARATE commits (a297cc0 / 4d00838). ruff + mypy --strict + full pytest green; preview
+  verified (exhibit renders, CSS vars resolve, estimate region + column tint, table intact, console clean).
+  **REMAINING (whole redesign): Phase-3 3b** — the P/E own-history BAND (needs the own-history range
+  low/high/median exposed structured — `range_position` computes them but stores only the display string)
+  + the ROIC TREND (needs a multi-period ROIC series extracted — none stored today; not in the annual
+  financial-summary rows). Both are extraction-gated data builds, then the two SVG exhibits.
 
 **RC-1 primary-source text extraction — BUILT + VERIFIED, PR OPEN (feat/primary-source-text, 2026-07-06).**
 DETERMINISTIC (anchored, never LLM) parsers of the EX-99.1 release (A, `vinci/edgar/release_parse.py`) and
