@@ -3054,6 +3054,20 @@ Recommendation/Target slot is the HUMAN's ("not yet logged"); consensus, the imp
   **REMAINING (whole redesign): NONE — Phase-3 complete.** The dossier redesign (Brief 3-tier → A/B
   render passes → endnotes → peer valuation → cohort → primary-source → L1–L4 review fixes → Phase-3
   charts 3a+3b) is fully built; #99–#103 merged, #104 (3a) + 3b PR open for review.
+  **EXHIBIT-PRIMITIVES REFACTOR — BUILT + VERIFIED, PR OPEN (refactor/exhibit-primitives, stacked on 3b,
+  2026-07-10).** The 3 exhibits each re-derived their own axis/scale/domain/label math inline — the
+  duplication where the axis-rounding (592→1000), phantom-zero-tick, and Math.min(...[])→Infinity bugs
+  recurred. Extracted to `frontend/lib/exhibit.js` (pure ESM, node-testable): extent/nums guards, a FINE
+  niceCeil, linScale/logScale, barDomain (bars span 0), lineDomain (pads beyond 0 only on a real side),
+  labelAnchor/barLabelY. No-conclude guardrail encoded in the module header (DELIBERATELY no trendline/
+  regression/extrapolation/projection primitive — a forward point may only come from a cited estimate
+  series). revEbitda + ownHistory BYTE-IDENTICAL (rendered all 9 real dossiers before/after via node, diff
+  clean); roicTrend changes ONLY its axis — same phantom-zero-tick bug the margin panel had, now floors at
+  0 (VRRM −2%→0%) / caps at 0 (FUBO +2%→0%), every data label/point preserved.
+  **Incident→invariant CLOSED:** the "a full-suite e2e pin would need node for the JS charts — accepted
+  residual" above is now DISCHARGED — `test_exhibit_primitives_edge_cases_node` (node-gated) pins the
+  primitive math, + `test_exhibit_module_static_contract_no_node` (node-free) pins the export + guardrail
+  contract when node is absent. ruff + mypy --strict + pytest(not network) green; browser verified.
 
 **RC-1 primary-source text extraction — BUILT + VERIFIED, PR OPEN (feat/primary-source-text, 2026-07-06).**
 DETERMINISTIC (anchored, never LLM) parsers of the EX-99.1 release (A, `vinci/edgar/release_parse.py`) and
