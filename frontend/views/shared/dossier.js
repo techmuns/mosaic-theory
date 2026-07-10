@@ -3,6 +3,7 @@
 // The synthesis is fenced as "the framing, not the answer." Read-only; verdicts are CLI-logged.
 import { getDossier, getDossierIndex, getLedger, isBuyVerdict } from "../../lib/snapshots.js";
 import { fmtPrice, fmtDate, fmtStamp, fmtPct, escapeHtml, DASH } from "../../lib/format.js";
+import { barDomain, lineDomain, linScale, logScale, labelAnchor, barLabelY } from "../../lib/exhibit.js";
 
 // PDF export uses the browser's native print-to-PDF (no library — the frontend stays dependency-free).
 // The browser derives the saved-file name from document.title, so on a dossier print we swap in a
@@ -581,12 +582,8 @@ function revEbitdaExhibit(fsa) {
   // margin panel RIGHT, each AUTO-SCALED to its own data with its own zero baseline so no scale is ever
   // shared/clamped (a negative EBITDA or margin — MVST — renders correctly). Haloed labels read over bars.
   const W = 760, H = 276, cy0 = 54, cy1 = 234;  // both panels share the chart-area y-band (+15% taller)
-  const nums = (a) => a.filter((x) => x != null);
-  // TIGHT axis ceiling: round up to a FINE nice-step (1,1.1,1.2,1.5,1.8,2,2.5,3,3.5,4,5,6,7,8,9,10) — the
-  // old 1/2/2.5/5/10 grid jumped 592→1000, compressing the bars into empty space. ×1.1 first so the
-  // tallest bar's value label has headroom. General: tight + label-safe for any magnitude/scenario.
-  const niceCeil = (mx) => { if (mx <= 0) return 1; const p = 10 ** Math.floor(Math.log10(mx)), f = mx / p;
-    return ([1, 1.1, 1.2, 1.5, 1.8, 2, 2.5, 3, 3.5, 4, 5, 6, 7, 8, 9].find((s) => s >= f) || 10) * p; };
+  // scales / honest domains / nice-ceiling come from lib/exhibit.js (shared + node-tested) — barDomain
+  // spans zero with a fine ceiling + label headroom; lineDomain pads beyond zero only on a real side.
   const halo = 'paint-order="stroke" stroke="var(--surface)" stroke-width="2.8"';
   const abbr = (c) => String(c).replace(" (R)", "");
   const firstE = isE.findIndex((b) => b);
@@ -598,27 +595,24 @@ function revEbitdaExhibit(fsa) {
   // ---- LEFT panel: Revenue + EBITDA bars ($M), zero baseline (handles a negative EBITDA) ----
   const lx0 = 44, lx1 = 366, slotL = (lx1 - lx0) / n, cxL = (i) => lx0 + slotL * i + slotL / 2;
   const bwL = Math.min(16, slotL * 0.4);
-  const hiL = niceCeil(Math.max(...nums(rev), ...nums(ebitda), 1) * 1.1);
-  const ebMin = Math.min(0, ...nums(ebitda)), loL = ebMin < 0 ? -niceCeil(-ebMin * 1.1) : 0;
-  const sBL = (val) => cy1 - ((val - loL) / (hiL - loL)) * (cy1 - cy0), baseL = sBL(0);
+  const { lo: loL, hi: hiL } = barDomain([...rev, ...ebitda]);  // spans 0; fine ceiling + 1.1 headroom
+  const sBL = linScale(loL, hiL, cy1, cy0), baseL = sBL(0);
   let left = estShade(lx1, cxL, slotL) + `<text x="${lx0}" y="${cy0 - 9}" font-size="11.5" font-weight="600" fill="var(--ink-2)">Revenue &amp; EBITDA ($M)</text><line x1="${lx0}" y1="${baseL}" x2="${lx1}" y2="${baseL}" stroke="var(--line-2)"/><text x="${lx0 - 4}" y="${cy0 + 3}" font-size="10.5" text-anchor="end" fill="var(--ink-3)">${Math.round(hiL)}</text><text x="${lx0 - 4}" y="${baseL + 3}" font-size="10.5" text-anchor="end" fill="var(--ink-3)">0</text>`;
   if (loL < 0) left += `<text x="${lx0 - 4}" y="${cy1 + 3}" font-size="10.5" text-anchor="end" fill="var(--ink-3)">${Math.round(loL)}</text>`;
   left += cols.map((c, i) => {
     const op = isE[i] ? 0.5 : 1, rx = cxL(i) - bwL - 1, ex = cxL(i) + 1;
     let s = "";
     if (rev[i] != null) { const yv = sBL(rev[i]); s += `<rect x="${rx}" y="${Math.min(yv, baseL)}" width="${bwL}" height="${Math.max(1, Math.abs(yv - baseL))}" fill="var(--accent)" opacity="${op}" rx="1"/><text x="${rx + bwL / 2}" y="${yv - 4}" font-size="9.5" text-anchor="middle" fill="var(--ink-2)" ${halo}>${Math.round(rev[i])}</text>`; }
-    if (ebitda[i] != null) { const yv = sBL(ebitda[i]), neg = ebitda[i] < 0; s += `<rect x="${ex}" y="${Math.min(yv, baseL)}" width="${bwL}" height="${Math.max(1, Math.abs(yv - baseL))}" fill="var(--live)" opacity="${op}" rx="1"/><text x="${ex + bwL / 2}" y="${neg ? yv + 11 : yv - 4}" font-size="9.5" text-anchor="middle" fill="var(--ink-3)" ${halo}>${Math.round(ebitda[i])}</text>`; }
+    if (ebitda[i] != null) { const yv = sBL(ebitda[i]), neg = ebitda[i] < 0; s += `<rect x="${ex}" y="${Math.min(yv, baseL)}" width="${bwL}" height="${Math.max(1, Math.abs(yv - baseL))}" fill="var(--live)" opacity="${op}" rx="1"/><text x="${ex + bwL / 2}" y="${barLabelY(yv, neg)}" font-size="9.5" text-anchor="middle" fill="var(--ink-3)" ${halo}>${Math.round(ebitda[i])}</text>`; }
     return s;
   }).join("") + xTicks(cxL);
 
   // ---- RIGHT panel: EBITDA margin (%) line, own zero line (handles a negative margin) ----
   const rx0 = 412, rx1 = 748, slotR = (rx1 - rx0) / n, cxR = (i) => rx0 + slotR * i + slotR / 2;
-  const mv = nums(marg);
-  const mRealLo = mv.length ? Math.min(...mv) : 0, mRealHi = mv.length ? Math.max(...mv) : 0;
-  let mLo = Math.min(0, mRealLo), mHi = Math.max(0, mRealHi);
-  const mpad = Math.max((mHi - mLo) * 0.2, 2);
-  mHi += mpad; if (mRealLo < 0) mLo -= mpad;  // pad below zero ONLY when a margin is actually negative
-  const sMR = (val) => cy1 - ((val - mLo) / (mHi - mLo)) * (cy1 - cy0), zeroR = sMR(0);
+  // margin line: honest zero-anchored domain — pads beyond zero only on a side with real data (no
+  // phantom "-3%" under an all-positive margin). Empty fallback keeps an all-null-margin panel valid.
+  const { lo: mLo, hi: mHi } = lineDomain(marg, { padFrac: 0.2, minPad: 2 }) || { lo: 0, hi: 2 };
+  const sMR = linScale(mLo, mHi, cy1, cy0), zeroR = sMR(0);
   let right = estShade(rx1, cxR, slotR) + `<text x="${rx0}" y="${cy0 - 9}" font-size="11.5" font-weight="600" fill="var(--ink-2)">EBITDA margin (%)</text><line x1="${rx0}" y1="${zeroR}" x2="${rx1}" y2="${zeroR}" stroke="var(--line-2)" stroke-dasharray="3 2"/><text x="${rx0 - 4}" y="${cy0 + 3}" font-size="10.5" text-anchor="end" fill="var(--ink-3)">${Math.round(mHi)}%</text>`;
   if (mLo < -0.5) right += `<text x="${rx0 - 4}" y="${cy1 + 3}" font-size="10.5" text-anchor="end" fill="var(--ink-3)">${Math.round(mLo)}%</text>`;
   const mpts = marg.map((p, i) => (p != null ? `${cxR(i)},${sMR(p)}` : null)).filter(Boolean).join(" ");
@@ -681,9 +675,8 @@ function ownHistoryExhibit(m) {
     // (adjust) LOG axis when all values > 0 — tames a range blown out by an outlier (e.g. a P/E from a
     // near-zero-EPS quarter), a standard multiples convention; linear fallback guards a non-positive.
     const useLog = b.low > 0 && b.high > 0 && b.median > 0 && b.current > 0;
-    const tf = (v) => (useLog ? Math.log(v) : v);
-    const t0 = tf(Math.min(b.low, b.current)), tspan = (tf(Math.max(b.high, b.current)) - t0) || 1;
-    const sx = (v) => tx0 + ((tf(v) - t0) / tspan) * (tx1 - tx0);
+    const dlo = Math.min(b.low, b.current), dhi = Math.max(b.high, b.current);  // axis includes current
+    const sx = (useLog && logScale(dlo, dhi, tx0, tx1)) || linScale(dlo, dhi, tx0, tx1);
     const bx0 = sx(b.low), bx1 = sx(b.high), mx = sx(b.median), cxp = sx(b.current);
     const label = b.metric.replace(" (TEV/LTM)", "").replace("P/LTM EPS", "P/E");
     // current OUTSIDE its trailing range → dashed connector + a DIRECTIONAL ▼/▲ marker in the universal
@@ -695,7 +688,7 @@ function ownHistoryExhibit(m) {
     const caret = outLow ? "▼ " : outHigh ? "▲ " : "";
     const conn = outLow ? `<line x1="${cxp}" y1="${cy}" x2="${bx0}" y2="${cy}" stroke="${col}" stroke-width="1" stroke-dasharray="2 2" opacity="0.6"/>`
       : outHigh ? `<line x1="${bx1}" y1="${cy}" x2="${cxp}" y2="${cy}" stroke="${col}" stroke-width="1" stroke-dasharray="2 2" opacity="0.6"/>` : "";
-    const vAnc = cxp < mid ? "start" : "end";  // (adjust) value beside the marker, on the roomy side
+    const vAnc = labelAnchor(cxp, mid);  // value beside the marker, on the roomier side of the panel
     return `
       <text x="${labelW}" y="${cy + 3}" font-size="11" text-anchor="end" fill="var(--ink)" font-weight="600">${escapeHtml(label)}</text>
       ${conn}
@@ -1176,11 +1169,12 @@ function roicTrendExhibit(q) {
   const W = 560, H = 168, padL = 34, padR = 14, padT = 40, padB = 32;
   const x0 = padL, x1 = W - padR, y1 = H - padB, plotW = x1 - x0, plotH = y1 - padT;
   const vals = pts.map((p) => p.v);
-  let vmin = Math.min(0, ...vals), vmax = Math.max(0, ...vals);
-  if (vmin === vmax) { vmax += 1; vmin -= 1; }
-  const gap = (vmax - vmin) * 0.14; vmin -= gap; vmax += gap;
+  // honest zero-anchored domain (shared with the margin panel): 0 is always shown (the value-creation
+  // threshold) but the axis pads beyond zero only on a side that has real data — an all-positive ROIC
+  // no longer draws a phantom negative tick (the bug the margin panel had). minSpan guards a flat run.
+  const { lo: vmin, hi: vmax } = lineDomain(vals, { padFrac: 0.14, minSpan: 2 });
   const px = (i) => x0 + (i / (pts.length - 1)) * plotW;
-  const py = (v) => y1 - ((v - vmin) / (vmax - vmin)) * plotH;
+  const py = linScale(vmin, vmax, y1, padT);
   const abbr = (p) => "'" + ((p.match(/\d{4}/) || [""])[0]).slice(2) + (/LTM/.test(p) ? "L" : "");
   const zY = (vmin < 0 && vmax > 0) ? py(0) : null;
   const zeroLine = zY != null ? `<line x1="${x0}" y1="${zY}" x2="${x1}" y2="${zY}" stroke="var(--line-2)" stroke-dasharray="3 2"/>` : "";
