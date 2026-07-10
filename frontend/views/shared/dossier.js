@@ -139,17 +139,26 @@ function citeMark(sourceRef) {
   if (!sourceRef) return "";  // a PRESENT fact always has a ref; guard defensively (no marker if absent)
   return `<sup class="cite-n" data-ref="${escapeHtml(sourceRef)}">[?]</sup>`;  // numbered by withEndnotes
 }
-function withEndnotes(fn) {
+function withEndnotes(prefix, fn) {
+  // (L2) tier-prefix the markers ([B4]/[A4]/[X4]) so they stay UNAMBIGUOUS when all tiers print
+  // together in a "Full dossier" PDF, while each tab / print-scope keeps its own self-contained list.
   const order = [];
   const body = fn().replace(/<sup class="cite-n" data-ref="([^"]*)">\[\?\]<\/sup>/g, (_m, ref) => {
     let i = order.indexOf(ref);  // ref is already HTML-escaped (from citeMark) — dedup by exact string
     if (i < 0) { order.push(ref); i = order.length - 1; }
-    return `<sup class="cite-n" title="${ref}">[${i + 1}]</sup>`;
+    return `<sup class="cite-n" title="${ref}">[${prefix}${i + 1}]</sup>`;
   });
   if (!order.length) return body;
   const items = order.map((r, i) =>
-    `<li><span class="src-n">[${i + 1}]</span> <span class="mono">${r}</span></li>`).join("");
+    `<li><span class="src-n">[${prefix}${i + 1}]</span> <span class="mono">${r}</span></li>`).join("");
   return body + `<div class="card ds-section ds-sources"><div class="ds-title">Sources</div><ol>${items}</ol></div>`;
+}
+// (L3) An on-demand audit <details> is print-EXCLUDED; render ITS provenance cites INLINE (source_ref
+// shown) rather than as endnotes, so they leave no orphan [n] Sources entry with no visible marker in
+// a printed "Full" dossier. Converts only this block's cite placeholders; the main body still endnotes.
+function auditCitesInline(html) {
+  return html.replace(/<sup class="cite-n" data-ref="([^"]*)">\[\?\]<\/sup>/g,
+    (_m, ref) => ` <span class="cite">${ref}</span>`);
 }
 
 // --- a single Sourced fact: value + [n] cite, or honest UNKNOWN/MISSING --
@@ -346,9 +355,9 @@ export function renderDossier(d, verdict) {  // exported for the module-load smo
   // (A2) each tier renders inside withEndnotes(): its cites become [n] markers + a per-tier Sources
   // list at its end (self-contained per tab / per PDF scope).
   return header(d) + tierTabs() + `<div class="ds-tiers">
-    <section class="ds-tier on" data-tier="brief">${withEndnotes(() => briefTier(d, verdict, m))}</section>
-    <section class="ds-tier" data-tier="analysis">${withEndnotes(() => analysisTier(d, m))}</section>
-    <section class="ds-tier" data-tier="appendix">${withEndnotes(() => appendixTier(d, verdict, m))}</section>
+    <section class="ds-tier on" data-tier="brief">${withEndnotes("B", () => briefTier(d, verdict, m))}</section>
+    <section class="ds-tier" data-tier="analysis">${withEndnotes("A", () => analysisTier(d, m))}</section>
+    <section class="ds-tier" data-tier="appendix">${withEndnotes("X", () => appendixTier(d, verdict, m))}</section>
   </div>`;
 }
 
@@ -874,9 +883,9 @@ function capitalStructureAppendix(cs) {
   // (styles.css @media print: details:not([open]){display:none}); the JSON stays machine-complete.
   // Nothing deleted — the panel/pointers/terms are relocated here, not dropped. Mirrors the md marker
   // in render._capital_structure_appendix_lines.
-  return `<details class="card ds-section">
+  return auditCitesInline(`<details class="card ds-section">
     <summary style="cursor:pointer; font-size:12.5px; font-weight:600; color:var(--ink-2);">Capital-structure provenance — on-demand (audit) <span class="muted" style="font-weight:400;">— full panel · pointers · terms (web collapsed · print-excluded · JSON)</span></summary>
-    <div style="margin-top:10px;">${inner}</div></details>`;
+    <div style="margin-top:10px;">${inner}</div></details>`);
 }
 
 // (H1) covenant/contract pointers → table (CIK-verified execution filings); old JSON → flat fact.

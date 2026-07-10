@@ -2096,26 +2096,27 @@ def test_endnotes_complete_on_every_committed_dossier() -> None:
     safety net that reddens if ANY citation emitter is not routed through _cite / _cite_inline."""
     import pathlib
     import re as _re
-    checked = 0
-    for jp in sorted(pathlib.Path("data/dossiers").glob("*/dossier.json")):
-        try:
-            d = ds.Dossier.model_validate_json(jp.read_text())
-        except Exception:  # noqa: BLE001 — a dossier predating a required field is not this test's job
-            continue
+    committed = sorted(pathlib.Path("data/dossiers").glob("*/dossier.json"))
+    assert len(committed) >= 2, "expected at least MVST + VRRM committed"
+    for jp in committed:
         t = jp.parent.name
+        # (L4) load must SUCCEED — a corrupt/stale committed dossier fails LOUD here, never a silent
+        # `continue` that would shrink coverage invisibly.
+        d = ds.Dossier.model_validate_json(jp.read_text())
         lines = dr.render_markdown(d).splitlines()
         assert "↳" not in "\n".join(lines), f"{t}: a stray inline ↳ escaped the endnote registry"
         si = next((i for i, ln in enumerate(lines) if ln == "# Sources"), None)
         srcs = [ln for ln in lines[si:] if _re.match(r"^\[\d+\] `", ln)] if si is not None else []
-        body = "\n".join(lines[:si]) if si is not None else "\n".join(lines)
+        # (L4) strip inline-code spans (source_refs + verbatim filing text live in backticks) before
+        # the marker scan, so a filing quote like `[123]` can't false-positive as an unresolved [n].
+        raw = "\n".join(lines[:si]) if si is not None else "\n".join(lines)
+        body = _re.sub(r"`[^`]*`", "", raw)
         markers = {int(m) for m in _re.findall(r"\[(\d+)\]", body)}
         if markers:
             assert si is not None, f"{t}: [n] markers but no # Sources list"
             assert all(1 <= n <= len(srcs) for n in markers), f"{t}: an [n] marker doesn't resolve"
         refs = [m.group(1) for ln in srcs if (m := _re.match(r"^\[\d+\] `(.*)`$", ln))]
         assert len(refs) == len(set(refs)), f"{t}: duplicate source in the Sources list"
-        checked += 1
-    assert checked >= 2, "expected at least MVST + VRRM committed + loadable"
 
 
 def test_self_referential_twin_requires_resolved_period_in_the_name() -> None:
@@ -2894,7 +2895,10 @@ def test_range_position_rich_sample_shows_band_and_range() -> None:
 def test_cross_sectional_valuation_name_vs_peer_median() -> None:
     """The Valuation LEAD — the fund's edge: name EV/EBITDA & P/E vs the peer MEDIAN with the
     discount, NUMBERS ONLY — no fixed earned-vs-residual framing tail (that lives in Peer comps;
-    repeating it on every dossier is boilerplate that adds no per-name value)."""
+    repeating it on every dossier is boilerplate). (L1) the peer median is SELF-COMPUTED from the
+    per-peer rows (verifiable, agreeing with the grid footer), NOT CIQ's opaque summary 'Median'
+    row: the fixture's CIQ Median (10.8/16.4) is set DIFFERENT from the peer median (14/22) to
+    prove we use the peer rows."""
     tm: list[list[typing.Any]] = [
         ["Company Name", "TEV/Rev", "TEV/EBITDA", "", "P/E", "", "NTM TEV/Rev", "NTM TEV/EBITDA",
          "NTM P/E"],
@@ -2911,8 +2915,8 @@ def test_cross_sectional_valuation_name_vs_peer_median() -> None:
     cx = cs.cross_sectional_valuation(typing.cast(ciq.CiqBundle, bundle))
     assert cx.status is ds.SourceStatus.PRESENT
     v = cx.value or ""
-    assert "EV/EBITDA 7.5x vs peer median 10.8x (-31%)" in v
-    assert "P/E 13x vs peer median 16.4x (-21%)" in v
+    assert "EV/EBITDA 7.5x vs peer median 14.0x (-46%)" in v  # median([12,16]), NOT CIQ's 10.8 row
+    assert "P/E 13x vs peer median 22.0x (-41%)" in v  # median([20,24]), NOT CIQ's 16.4 row
     # numbers only — the repetitive earned-vs-residual framing tail is dropped (lives in Peer comps)
     assert "EARNED" not in v and "RESIDUAL" not in v and "see Peer comps" not in v
 

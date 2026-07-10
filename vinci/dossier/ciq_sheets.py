@@ -1847,20 +1847,27 @@ def cross_sectional_valuation(bundle: CiqBundle) -> Sourced[str]:
         tm = bundle.sheet("comps", "Trading Multiples")
     except CiqUnavailableError as exc:
         return _miss_or_unknown(bundle, "comps", exc)
-    _hdr, _peers, tgt = _comps_layout(tm, bundle.ticker)
-    med = _find_row(tm, "Median")
-    if tgt is None or med is None:
-        return Sourced.unknown(note="Trading Multiples: no target row / Median statistic")
+    _hdr, peers, tgt = _comps_layout(tm, bundle.ticker)
+    if tgt is None or not peers:
+        return Sourced.unknown(note="Trading Multiples: no target row / peer rows")
     bits: list[str] = []
     for lab, col in (("EV/EBITDA", 2), ("P/E", 4)):
-        nv, mv = _comps_cell(tm, tgt, col), _comps_cell(tm, med, col)
-        if isinstance(nv, (int, float)) and isinstance(mv, (int, float)) and mv:
-            bits.append(f"{lab} {nv:g}x vs peer median {mv:g}x ({nv / mv - 1:+.0%})")
+        # (L1) peer median SELF-COMPUTED from the per-peer rows (same source + method as the grid
+        # footer's _med_mult) — NOT CIQ's opaque summary "Median" row — so the headline "peer
+        # median" here and the per-peer grid agree, verifiable from the shown peers. 1dp display.
+        # (CIQ's own Low/Median/Mean/High stay in the labeled multiples table.)
+        nv = _comps_cell(tm, tgt, col)
+        pv = [v for i in peers if isinstance((v := _comps_cell(tm, i, col)), int | float)]
+        # round-trip the median through the SAME :g→float path the grid stores it as, so the 1dp
+        # display matches the grid footer exactly at .5 boundaries (float(median) alone can differ).
+        mv = float(f"{statistics.median(pv):g}") if pv else None
+        if isinstance(nv, (int, float)) and mv:
+            bits.append(f"{lab} {nv:g}x vs peer median {mv:.1f}x ({nv / mv - 1:+.0%})")
         else:
             bits.append(f"{lab} {_tok(nv)} vs peer median {_tok(mv)}")
     return Sourced.present(
         "; ".join(bits),
-        source_ref="CIQ Comparable Analysis→Trading Multiples (name vs peer Median)",
+        source_ref="CIQ Comparable Analysis→Trading Multiples (name vs self-computed peer median)",
     )
 
 
