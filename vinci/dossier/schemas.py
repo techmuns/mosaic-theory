@@ -496,6 +496,11 @@ class FinRow(BaseModel):
 
     label: str
     cells: list[str]
+    # (Phase-3 charts) the STRUCTURED numeric behind each display cell (None for a "—"/non-numeric
+    # cell), parallel to `cells`, so a chart consumes structured series and NEVER re-parses the
+    # display strings (parsers rule). Populated for the raw numeric rows; default [] round-trips a
+    # pre-Phase-3 dossier.json (a consumer treats absent/empty as "no structured series").
+    values: list[float | None] = Field(default_factory=list)
 
     model_config = {"frozen": True}
 
@@ -507,6 +512,10 @@ class FinTable(BaseModel):
     columns: list[str]
     rows: list[FinRow]
     note: str = ""
+    # (Phase-3 charts) STRUCTURED per-column consensus-estimate flag (parallel to `columns`) — a
+    # chart/table marks E cols as CONSENSUS (never the machine's forecast), not from the label
+    # suffix (display formatting must not be load-bearing). Default [] round-trips a pre-P3 JSON.
+    is_estimate: list[bool] = Field(default_factory=list)
 
     model_config = {"frozen": True}
 
