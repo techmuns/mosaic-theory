@@ -654,14 +654,14 @@ function revEbitdaExhibit(fsa) {
   </div>`;
 }
 
-// 5b — RETURN RATIOS: RoE / RoCE / RoA over the CIQ Ratios fiscal-period columns — the Motilal
-// Exhibit-10 return-ratio arc. Consumes the STRUCTURED return_ratios FinTable (the three %-rows' `values`,
-// raw decimals ×100), never the display cells (parsers rule). TWO PANELS grouped by SCALE — RoE alone
-// (it can run 10× the others when equity is small/negative, e.g. Gartner) and RoCE + RoA together
-// (asset/capital returns, always comparable) — each on its OWN honest axis, so no series is crushed
-// (mirrors revEbitdaExhibit's two-panel split). ACTUALS ONLY — no consensus shading (CIQ has no forward
-// ratio columns on this basis) and NO trendline/extrapolation (no-conclude). The YoY table below carries
-// every ratio row. Fail-honest: a panel with no data is dropped; the survivor takes the full width.
+// 5b — RETURN RATIOS: RoE / RoCE / RoA over the CIQ Ratios fiscal-period columns. SHARES THE EXACT
+// design frame of revEbitdaExhibit — canvas 760×276, the cy0/cy1 y-band, title/panel-title/axis/point-
+// label fonts, slot centering, and the bottom legend — so every Financial-Snapshot exhibit reads as ONE
+// system. TWO panels grouped by SCALE — RoE alone (it can run 10× the others when equity is small, e.g.
+// Gartner) | RoCE + RoA together — each on its OWN honest axis, mirroring revEbitda's two-panel split.
+// Consumes the STRUCTURED `values` (×100, never a cell re-parse). ACTUALS ONLY — no consensus shade, no
+// extrapolation (no-conclude). Fail-honest: a panel with no data drops and the survivor renders at a
+// single-panel width (NOT stretched); the YoY table below carries every ratio row.
 function returnRatiosExhibit(rr) {
   if (!rr || rr.status !== "present" || !rr.value || !Array.isArray(rr.value.rows)) return "";
   const cols = rr.value.columns || [];
@@ -672,47 +672,54 @@ function returnRatiosExhibit(rr) {
     return (Array.isArray(vals) && vals.some((v) => v != null)) ? vals.map((v) => (v == null ? null : v * 100)) : null;
   };
   const roe = pts("RoE %"), roce = pts("RoCE %"), roa = pts("RoA %");
-  const H = 212, padT = 46, padB = 40, halo = 'paint-order="stroke" stroke="var(--surface)" stroke-width="2.6"';
-  // one mini line-panel over [px0,px1]: its own zero-anchored % axis, lines + dots, and a de-collided
-  // CURRENT-value label per line in the panel's right gutter (the trailing label a line chart shows;
-  // the YoY table holds the full per-period history at precision). A null series is skipped.
+  const H = 276, cy0 = 54, cy1 = 234, n = cols.length;  // same canvas + y-band as revEbitdaExhibit
+  const halo = 'paint-order="stroke" stroke="var(--surface)" stroke-width="2.8"';
+  // one line-panel over [px0,px1] — same frame as revEbitda's margin panel: slot-centred x, own honest
+  // domain (lineDomain, identical params), hi/lo % axis labels, a dashed zero line when the range spans
+  // it, and per-point value labels (font 10 wt600 haloed). Multi-series: the HIGHER value at each column
+  // labels above, the lower below, so a close RoCE/RoA pair separates.
   const panel = (series, px0, px1, title) => {
-    const present = series.filter((s) => s.pts);
-    if (!present.length) return "";
-    const y1 = H - padB;
-    const all = present.flatMap((s) => s.pts).filter((v) => v != null);
-    const { lo, hi } = lineDomain(all, { padFrac: 0.14, minSpan: 4 }) || { lo: -1, hi: 1 };
-    const px = (i) => px0 + (i / (cols.length - 1)) * (px1 - px0);
-    const py = linScale(lo, hi, y1, padT);
-    const zY = (lo < 0 && hi > 0) ? py(0) : null;
-    const zeroLine = zY != null ? `<line x1="${px0}" y1="${zY}" x2="${px1}" y2="${zY}" stroke="var(--line-2)" stroke-dasharray="3 2"/>` : "";
-    const yt = (v) => `<text x="${px0 - 6}" y="${py(v) + 3}" font-size="9" text-anchor="end" fill="var(--ink-3)">${Math.round(v)}%</text>`;
-    const yticks = yt(hi) + yt(lo) + (zY != null ? `<text x="${px0 - 6}" y="${zY + 3}" font-size="9" text-anchor="end" fill="var(--ink-3)">0</text>` : "");
-    const xlabels = cols.map((c, i) => `<text x="${px(i)}" y="${y1 + 15}" font-size="9" text-anchor="middle" fill="var(--ink-3)">${escapeHtml(String(c))}</text>`).join("");
-    const draw = present.map((s) => {
-      const seg = s.pts.map((v, i) => (v == null ? null : `${px(i)},${py(v)}`)).filter(Boolean).join(" ");
-      const dots = s.pts.map((v, i) => (v == null ? "" : `<circle cx="${px(i)}" cy="${py(v)}" r="2.4" fill="${s.color}"/>`)).join("");
-      return `<polyline points="${seg}" fill="none" stroke="${s.color}" stroke-width="1.8"/>${dots}`;
-    }).join("");
-    const ends = present.map((s) => { const li = s.pts.reduce((a, v, i) => (v != null ? i : a), -1); return li < 0 ? null : { x: px(li), y0: py(s.pts[li]), y: py(s.pts[li]), color: s.color, t: `${s.pts[li].toFixed(1)}%` }; })
-      .filter(Boolean).sort((a, b) => a.y - b.y);
-    for (let i = 1; i < ends.length; i++) if (ends[i].y < ends[i - 1].y + 11) ends[i].y = ends[i - 1].y + 11;
-    const endLabels = ends.map((e) => `<line x1="${e.x + 3}" y1="${e.y0}" x2="${e.x + 6}" y2="${e.y + 3}" stroke="${e.color}" stroke-width="0.6"/><text x="${e.x + 7}" y="${e.y + 3}" font-size="9" text-anchor="start" fill="${e.color}" font-weight="600" ${halo}>${e.t}</text>`).join("");
-    const legend = present.map((s, li) => `<g transform="translate(${px0 + li * 56}, ${H - 6})"><line x1="0" y1="-3.5" x2="14" y2="-3.5" stroke="${s.color}" stroke-width="1.8"/><circle cx="7" cy="-3.5" r="2.4" fill="${s.color}"/><text x="18" y="0" font-size="10" fill="var(--ink-2)">${s.label}</text></g>`).join("");
-    const ttl = `<text x="${px0}" y="34" font-size="11" font-weight="600" fill="var(--ink-2)">${title}</text>`;
-    return ttl + zeroLine + yticks + xlabels + draw + endLabels + legend;
+    const shown = series.filter((s) => s.pts);
+    if (!shown.length) return "";
+    const slot = (px1 - px0) / n, cx = (i) => px0 + slot * i + slot / 2;
+    const all = shown.flatMap((s) => s.pts).filter((v) => v != null);
+    const { lo, hi } = lineDomain(all, { padFrac: 0.2, minPad: 2, minSpan: 2 }) || { lo: 0, hi: 2 };
+    const sc = linScale(lo, hi, cy1, cy0);
+    let g = `<text x="${px0}" y="${cy0 - 9}" font-size="11.5" font-weight="600" fill="var(--ink-2)">${title}</text>`;
+    g += `<text x="${px0 - 4}" y="${cy0 + 3}" font-size="10.5" text-anchor="end" fill="var(--ink-3)">${Math.round(hi)}%</text>`;
+    g += `<text x="${px0 - 4}" y="${cy1 + 3}" font-size="10.5" text-anchor="end" fill="var(--ink-3)">${Math.round(lo)}%</text>`;
+    if (lo < 0 && hi > 0) g += `<line x1="${px0}" y1="${sc(0)}" x2="${px1}" y2="${sc(0)}" stroke="var(--line-2)" stroke-dasharray="3 2"/>`;
+    g += cols.map((c, i) => `<text x="${cx(i)}" y="${cy1 + 16}" font-size="10" text-anchor="middle" fill="var(--ink-2)">${escapeHtml(String(c))}</text>`).join("");
+    shown.forEach((s) => {
+      const seg = s.pts.map((v, i) => (v == null ? null : `${cx(i)},${sc(v)}`)).filter(Boolean).join(" ");
+      g += `<polyline points="${seg}" fill="none" stroke="${s.color}" stroke-width="2"/>`;
+      g += s.pts.map((v, i) => {
+        if (v == null) return "";
+        const top = shown.every((o) => o.pts[i] == null || v >= o.pts[i]);  // highest at column → above
+        return `<circle cx="${cx(i)}" cy="${sc(v)}" r="3" fill="${s.color}"/><text x="${cx(i)}" y="${top ? sc(v) - 7 : sc(v) + 14}" font-size="10" text-anchor="middle" fill="${s.color}" font-weight="600" ${halo}>${Math.round(v)}%</text>`;
+      }).join("");
+    });
+    return g;
   };
   const roeS = [{ label: "RoE", color: "var(--ink)", pts: roe }];
   const capS = [{ label: "RoCE", color: "var(--accent)", pts: roce }, { label: "RoA", color: "var(--ink-2)", pts: roa }];
-  let body = "", W = 620;
-  if (roe && (roce || roa)) body = panel(roeS, 44, 250, "RoE %") + panel(capS, 372, 566, "RoCE · RoA %");
-  else if (roe) { body = panel(roeS, 44, 480, "RoE %"); W = 540; }
-  else if (roce || roa) { body = panel(capS, 44, 480, "RoCE · RoA %"); W = 540; }
+  const legendSeries = [...roeS, ...capS].filter((s) => s.pts);
+  let body = "", W = 760, note = "";
+  if (roe && (roce || roa)) {
+    body = panel(roeS, 44, 366, "RoE %") + panel(capS, 412, 748, "RoCE · RoA %");
+    note = `<text x="${W - 4}" y="${cy0 - 9}" font-size="10" text-anchor="end" fill="var(--ink-3)" font-style="italic">actuals — no forward ratio estimates</text>`;
+  } else if (roe) { body = panel(roeS, 44, 366, "RoE %"); W = 430; }
+  else if (roce || roa) { body = panel(capS, 44, 366, "RoCE · RoA %"); W = 430; }
   else return "";
-  return `<div class="ds-exhibit" style="margin:6px 0 12px;">
-    <svg viewBox="0 0 ${W} ${H}" width="100%" style="max-width:${W === 620 ? 640 : 560}px; display:block;" role="img" aria-label="Return ratios (RoE; RoCE and RoA) per fiscal period">
-      <text x="0" y="16" font-size="13" font-weight="600" fill="var(--ink)">Return ratios <tspan fill="var(--ink-3)" font-weight="400">— per fiscal period (actual)</tspan></text>
-      ${body}
+  // bottom legend — same mark + typography as revEbitda's (a line + dot per series, font 11.5 --ink-2)
+  const lg = `<g font-size="11.5" fill="var(--ink-2)">${legendSeries.map((s, i) => {
+    const lx = 44 + i * 78;
+    return `<line x1="${lx}" y1="${H - 8}" x2="${lx + 18}" y2="${H - 8}" stroke="${s.color}" stroke-width="2"/><circle cx="${lx + 9}" cy="${H - 8}" r="2.6" fill="${s.color}"/><text x="${lx + 24}" y="${H - 5}">${s.label}</text>`;
+  }).join("")}</g>`;
+  return `<div class="ds-exhibit" style="margin:18px 0 16px;">
+    <svg viewBox="0 0 ${W} ${H}" width="100%" style="max-width:${W}px; display:block;" role="img" aria-label="Return ratios (RoE; RoCE and RoA) per fiscal period">
+      <text x="44" y="22" font-size="15" font-weight="600" fill="var(--ink)">Return ratios</text>
+      ${note}${body}${lg}
     </svg>
   </div>`;
 }

@@ -3248,8 +3248,12 @@ def test_return_ratios_exhibit_two_panel_static_no_node() -> None:
     src = Path("frontend/views/shared/dossier.js").read_text()
     assert "function returnRatiosExhibit" in src
     # two panels grouped by SCALE — RoE on its own axis, RoCE + RoA sharing one
-    assert 'panel(roeS, 44, 250, "RoE %")' in src and 'panel(capS, 372, 566, "RoCE · RoA %")' in src
+    assert 'panel(roeS, 44, 366, "RoE %")' in src and 'panel(capS, 412, 748, "RoCE · RoA %")' in src
     assert 'pts("RoE %")' in src and "v * 100" in src  # structured values, ×100 (no re-parse)
+    # SHARES revEbitdaExhibit's design frame (canvas + y-band) — both carry these tokens so the
+    # Financial-Snapshot exhibits stay one visual system (a drift here is the inconsistency bug).
+    assert "const H = 276, cy0 = 54, cy1 = 234" in src  # return-ratios frame
+    assert "const W = 760, H = 276, cy0 = 54, cy1 = 234" in src  # revEbitda frame (same y-band)
     # wired into the snapshot as the replacement for the latest-only fact, with a fallback
     assert "returnRatiosExhibit(rr)" in src
     assert 'finTable("Return ratios — per fiscal period", rr)' in src
