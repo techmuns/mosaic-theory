@@ -1,17 +1,16 @@
 # Dossier — ARTIVION, INC. (AORT)
 
-_Finalist rank 19 · ref 2026-07-06 · assembled 2026-07-10 06:54 UTC · LLM claude-opus-4-8_
+_Assembled facts, no verdict · data as of 2026-07-06 · assembled 2026-07-10 06:54 UTC · claude-opus-4-8_
 
 # Brief — first cut
 
-**AORT · ARTIVION, INC.**
-_NYSE · Health Care Equipment · cap $1.1B_
 Artivion, Inc. manufactures, processes, and distributes medical devices and implantable human tissues worldwide.
-- **Stock info:** CMP $23.58 (2026-07-08) · 52-wk $19.16–$48.25 · shares 48.5M · mkt cap $1.1B [1]
+
+**Mixed** — growing absolute EBITDA and above-peer growth collide with a -78% forward-EPS collapse, worse-than-peer leverage, and negative forward FCF.
 
 **Recommendation / Target:** _not yet logged — the human's call (Buy / Avoid + target)_
 
-**Machine read** _(not a verdict)_ — mixed — growing absolute EBITDA and above-peer growth collide with a -78% forward-EPS collapse, worse-than-peer leverage, and negative forward FCF.
+- **Snapshot:** NYSE · CMP $23.58 (2026-07-08) · cap $1.1B · 52-wk $19.16–$48.25 · shares 48.5M · CIK 0000784199 [1]
 
 ## The setup
 Fell -45.3% over 180d, idiosyncratic (-63.3% vs market) — an overshoot candidate.
@@ -491,7 +490,7 @@ _Source §: 8-K 0000784199-16-000175 · c199-20160125ex101fad737.htm_
 
 # Sources
 
-[1] `EOD close/52-wk · EDGAR XBRL shares · CIQ book value + market cap`
+[1] `exchange · EOD · EDGAR shares · CIQ book value + cap`
 [2] `EOD name−IWM 180d (screen data-record, G2)`
 [3] `EDGAR XBRL net-debt/EBITDA (screen data-record); breadth estimate — may under-capture scattered debt; pull CIQ`
 [4] `EDGAR XBRL FCF sign (screen data-record)`

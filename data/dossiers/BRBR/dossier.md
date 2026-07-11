@@ -1,17 +1,16 @@
 # Dossier — BELLRING BRANDS, INC. (BRBR)
 
-_Finalist rank 7 · ref 2026-07-06 · assembled 2026-07-10 06:56 UTC · LLM claude-opus-4-8_
+_Assembled facts, no verdict · data as of 2026-07-06 · assembled 2026-07-10 06:56 UTC · claude-opus-4-8_
 
 # Brief — first cut
 
-**BRBR · BELLRING BRANDS, INC.**
-_NYSE · Personal Care Products · cap $1.3B_
 BellRing Brands, Inc., together with its subsidiaries, provides various nutrition products in the United States.
-- **Stock info:** CMP $13.18 (2026-07-08) · 52-wk $7.82–$59.09 · shares 116.3M · book value/sh $-4.28 · mkt cap $1.3B [1]
+
+**Strongly-bearish** — a broad, sustained FY26 earnings reset (EBITDA -41%) atop elevated leverage and a largely earned peer discount.
 
 **Recommendation / Target:** _not yet logged — the human's call (Buy / Avoid + target)_
 
-**Machine read** _(not a verdict)_ — strongly-bearish — a broad, sustained FY26 earnings reset (EBITDA -41%) atop elevated leverage and a largely earned peer discount.
+- **Snapshot:** NYSE · CMP $13.18 (2026-07-08) · cap $1.3B · 52-wk $7.82–$59.09 · shares 116.3M · book value/sh $-4.28 · CIK 0001772016 [1]
 
 ## The setup
 Fell -41.6% over 180d, idiosyncratic (-56.3% vs market) — an overshoot candidate.
@@ -467,7 +466,7 @@ _Source §: 8-K 0001772016-21-000029 · ex10-1_amend2creditagmt.htm_
 
 # Sources
 
-[1] `EOD close/52-wk · EDGAR XBRL shares · CIQ book value + market cap`
+[1] `exchange · EOD · EDGAR shares · CIQ book value + cap`
 [2] `EOD name−IWM 180d (screen data-record, G2)`
 [3] `CIQ Net Debt $1,190M [FQ2/CQ1 Mar-31-2026] ÷ CIQ EBITDA $312M [LTM 12 months Mar-31-2026]`
 [4] `EDGAR XBRL FCF sign (screen data-record)`

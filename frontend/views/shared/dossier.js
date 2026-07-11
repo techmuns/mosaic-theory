@@ -471,43 +471,63 @@ const fmtCap = (v) => (v >= 1000 ? `$${(v / 1000).toFixed(1)}B` : `$${Math.round
 
 function fmtShares(v) { return v >= 1e9 ? `${(v / 1e9).toFixed(1)}B` : `${(v / 1e6).toFixed(1)}M`; }
 
-// Stock-info box — CMP · 52-week range · shares · book value/sh · market cap. Each field is
-// fail-honest (omitted when its source is absent). Mirrors render.py _stock_info_line.
-function stockInfoLine(m) {
-  const si = m.stock_info; if (!si) return "";
-  const ok = (f) => f && f.status === "present" && f.value != null;
-  const parts = [];
-  if (ok(si.price)) parts.push(`CMP $${si.price.value.toFixed(2)}${si.as_of ? ` (${si.as_of})` : ""}`);
-  if (ok(si.low_52w) && ok(si.high_52w)) parts.push(`52-wk $${si.low_52w.value.toFixed(2)}–$${si.high_52w.value.toFixed(2)}`);
-  if (ok(si.shares_out)) parts.push(`shares ${fmtShares(si.shares_out.value)}`);
-  if (ok(si.book_value_ps)) parts.push(`book value/sh $${si.book_value_ps.value.toFixed(2)}`);
-  if (ok(si.market_cap)) parts.push(`mkt cap ${fmtCap(si.market_cap.value)}`);
-  if (!parts.length) return "";
-  return `<div class="brief-stock"><span class="brief-vlab">Stock info</span> ${escapeHtml(parts.join(" · "))}</div>`;
+
+// 1 — TEASER (at-a-glance): a 2/3 NARRATIVE (business one-liner · machine read · the human's
+// Recommendation/Target slot) beside a 1/3 SNAPSHOT table (identity + exchange + stock-info + CIK),
+// consolidated from what used to repeat across the header meta / brief-meta / stock-info line. The
+// verdict slot is filled only from the ledger — never by the machine.
+// The machine's evidence READ — a "{lean} — {why}" balance, e.g. "strongly-bearish — stated going-concern
+// doubt …". The lean is an evidence sentiment, NOT a BUY/AVOID verdict (that stays the human's, in the
+// Recommendation slot right below). We tint the lean by direction (bear→danger, bull→live, mixed/neutral→
+// grey) and sentence-case it; the rest is plain body text. Fail-soft: an un-split read renders verbatim.
+function machineReadHtml(eb) {
+  const m = /^\s*([A-Za-z][A-Za-z\- ]*?)\s*[—–-]\s+([\s\S]+)$/.exec(eb || "");
+  if (!m) return escapeHtml(eb || "");
+  const lean = m[1].trim(), rest = m[2];
+  const l = lean.toLowerCase();
+  const col = l.includes("bear") ? "var(--danger)" : l.includes("bull") ? "var(--live)" : "var(--ink-2)";
+  const cased = lean.charAt(0).toUpperCase() + lean.slice(1);
+  return `<b class="brief-lean" style="color:${col}">${escapeHtml(cased)}</b> — ${escapeHtml(rest)}`;
 }
 
-// 1 — TEASER (at-a-glance): identity · GICS industry · cap · the human's Recommendation/Target slot ·
-// the machine read. The verdict slot is filled only from the ledger — never by the machine.
 function teaserCard(d, verdict, m) {
-  const s = d.synthesis, iv = m.implied_valuation || {};
-  const gics = (d.industry && d.industry.status === "present") ? d.industry.value : (d.sector || "");
-  const capOk = iv.market_cap && iv.market_cap.status === "present";
-  const meta = [d.exchange, gics, capOk ? `cap ${fmtCap(iv.market_cap.value)}` : ""].filter(Boolean).join(" · ");
+  const s = d.synthesis;
   const one = (d.business_description && d.business_description.status === "present")
     ? firstSentence(d.business_description.value) : "";
   const vslot = verdict
     ? `<span class="pill ${isBuyVerdict(verdict.verdict) ? "buy" : "avoid"}">${escapeHtml(verdict.verdict)}</span> <span class="muted" style="font-size:11.5px;">@ ${fmtPrice(verdict.entryPrice)} · ${fmtDate(verdict.decidedAt)}</span>`
     : `<span class="brief-slot">not yet logged</span> <span class="muted" style="font-size:11px;">the human's call — Buy / Avoid + target</span>`;
   const read = (s && s.evidence_balance)
-    ? `<div class="brief-read"><span class="brief-tag">machine read · not a verdict</span>${escapeHtml(s.evidence_balance)}</div>` : "";
-  return `<div class="card ds-section ds-brief">
-    <div class="ds-title" style="margin-bottom:3px;">Brief — first cut</div>
-    <div class="brief-idn"><span class="mono">${escapeHtml(d.ticker)}</span> · ${escapeHtml(d.name || "")}</div>
-    ${meta ? `<div class="brief-meta">${escapeHtml(meta)}</div>` : ""}
+    ? `<div class="brief-read">${machineReadHtml(s.evidence_balance)}</div>` : "";
+  const narrative = `<div class="brief-narrative">
     ${one ? `<div class="brief-oneliner">${escapeHtml(one)}</div>` : ""}
-    ${stockInfoLine(m)}
+    ${read}
     <div class="brief-verdict"><span class="brief-vlab">Recommendation / Target</span> ${vslot}</div>
-    ${read}</div>`;
+  </div>`;
+  return `<div class="card ds-section ds-brief">
+    <div class="brief-body">${narrative}${briefSnapshot(d, m)}</div></div>`;
+}
+
+// the Brief SNAPSHOT — a MOFSL-style label|value table of the scalar facts (identity · exchange · CMP ·
+// market cap · 52-wk · shares · book value/sh · CIK), consolidated from what used to be scattered across
+// the header meta, brief-meta, and the stock-info line. Fail-honest: a row is dropped when its source is
+// absent (e.g. AORT has no Book Value/Share row in its CIQ export → no Book/sh row, never a guess).
+function briefSnapshot(d, m) {
+  const si = m.stock_info || {};
+  const ok = (f) => f && f.status === "present" && f.value != null;
+  const rows = [];
+  const push = (label, val) => { if (val) rows.push(`<tr><td>${label}</td><td>${val}</td></tr>`); };
+  if (d.exchange) push("Exchange", escapeHtml(d.exchange));
+  if (ok(si.price)) push("CMP", `$${si.price.value.toFixed(2)}${si.as_of ? ` <span class="muted">(${escapeHtml(si.as_of)})</span>` : ""}`);
+  if (ok(si.market_cap)) push("Market cap", fmtCap(si.market_cap.value));
+  if (ok(si.low_52w) && ok(si.high_52w)) push("52-wk range", `$${si.low_52w.value.toFixed(2)}–$${si.high_52w.value.toFixed(2)}`);
+  if (ok(si.shares_out)) push("Shares out", fmtShares(si.shares_out.value));
+  if (ok(si.book_value_ps)) push("Book / sh", `$${si.book_value_ps.value.toFixed(2)}`);
+  if (d.cik) push("CIK", `<span class="mono">${escapeHtml(d.cik)}</span>`);
+  if (!rows.length) return "";
+  return `<div class="brief-snap">
+    <div class="brief-snap-idn"><span class="mono">${escapeHtml(d.ticker)}</span> · ${escapeHtml(d.name || "")}</div>
+    <table class="brief-snap-t"><tbody>${rows.join("")}</tbody></table></div>`;
 }
 
 // 2 — SETUP: why it's a candidate (drawdown, idiosyncratic) + the decisive question + decision snapshot.
@@ -1211,14 +1231,7 @@ function header(d) {
   return `<div class="header-block ds-header">
     <div class="ds-header-main">
       <h1 class="page-h"><span class="mono">${escapeHtml(d.ticker)}</span> · ${escapeHtml(d.name || "")}</h1>
-      <div class="subtitle">Assembled facts · <b>no verdict</b> — a source-bound mechanical layer plus a fenced framing. The BUY/AVOID call is the human's, logged via the CLI.</div>
-      <div class="ds-meta">
-        <span>Queue rank <span class="mono">#${d.rank ?? DASH}</span> <span class="muted">(ordering context, not a verdict on the name)</span></span>
-        <span>CIK <span class="mono">${escapeHtml(d.cik || DASH)}</span></span>
-        <span>Data as of <span class="mono">${fmtDate(d.reference_date)}</span></span>
-        <span>Assembled <span class="mono">${fmtStamp(d.assembled_at)}</span> <span class="muted">(may predate newer filings)</span></span>
-        <span class="muted">${d.synthesis ? `synthesis: ${escapeHtml(d.llm_model || "llm")}` : "mechanical layer only"}</span>
-      </div>
+      <div class="ds-meta">Assembled facts, <b>no verdict</b> · data as of <span class="mono">${fmtDate(d.reference_date)}</span> · assembled <span class="mono">${fmtStamp(d.assembled_at)}</span>${d.synthesis ? ` · synthesis <span class="mono">${escapeHtml(d.llm_model || "llm")}</span>` : " · mechanical layer only"}</div>
     </div>
     <div class="ds-pdf-wrap">
       <button id="ds-pdf" class="ds-pdf-btn" type="button" aria-haspopup="true" aria-expanded="false"

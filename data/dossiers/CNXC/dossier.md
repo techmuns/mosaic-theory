@@ -1,17 +1,16 @@
 # Dossier — Concentrix Corp (CNXC)
 
-_Finalist rank 10 · ref 2026-07-06 · assembled 2026-07-10 06:57 UTC · LLM claude-opus-4-8_
+_Assembled facts, no verdict · data as of 2026-07-06 · assembled 2026-07-10 06:57 UTC · claude-opus-4-8_
 
 # Brief — first cut
 
-**CNXC · Concentrix Corp**
-_Nasdaq · Data Processing and Outsourced Services · cap $1.5B_
 Concentrix Corporation designs, builds, and runs integrated customer experience (CX) solutions worldwide.
-- **Stock info:** CMP $21.38 (2026-07-08) · 52-wk $19.12–$62.14 · shares 61.0M · book value/sh $45.85 · mkt cap $1.5B [1]
+
+**Mixed** — growing revenue and positive LTM FCF sit against a large GAAP loss, falling absolute EBITDA, high leverage and deep estimate cuts.
 
 **Recommendation / Target:** _not yet logged — the human's call (Buy / Avoid + target)_
 
-**Machine read** _(not a verdict)_ — mixed — growing revenue and positive LTM FCF sit against a large GAAP loss, falling absolute EBITDA, high leverage and deep estimate cuts.
+- **Snapshot:** Nasdaq · CMP $21.38 (2026-07-08) · cap $1.5B · 52-wk $19.12–$62.14 · shares 61.0M · book value/sh $45.85 · CIK 0001803599 [1]
 
 ## The setup
 Fell -45.4% over 180d, idiosyncratic (-61.5% vs market) — an overshoot candidate.
@@ -492,7 +491,7 @@ _Source §: 8-K 0001803599-23-000177 · exhibit41indenture.htm_
 
 # Sources
 
-[1] `EOD close/52-wk · EDGAR XBRL shares · CIQ book value + market cap`
+[1] `exchange · EOD · EDGAR shares · CIQ book value + cap`
 [2] `EOD name−IWM 180d (screen data-record, G2)`
 [3] `CIQ Net Debt $5,467M [Q1 Feb-28-2026] ÷ CIQ EBITDA $1,231M [LTM 12 months Feb-28-2026]`
 [4] `EDGAR XBRL FCF sign (screen data-record)`

@@ -1,17 +1,16 @@
 # Dossier — GARTNER INC (IT)
 
-_Finalist rank 5 · ref 2026-07-06 · assembled 2026-07-10 07:02 UTC · LLM claude-opus-4-8_
+_Assembled facts, no verdict · data as of 2026-07-06 · assembled 2026-07-10 07:02 UTC · claude-opus-4-8_
 
 # Brief — first cut
 
-**IT · GARTNER INC**
-_NYSE · IT Consulting and Other Services · cap $8.7B_
 Gartner, Inc. provides business and technology insights for decisions and performance on an organization’s mission-critical priorities in the United States, Canada, Europe, the Middle East, Africa, and internationally.
-- **Stock info:** CMP $134.68 (2026-07-08) · 52-wk $124.25–$403.95 · shares 67.0M · book value/sh $0.93 · mkt cap $8.7B [1]
+
+**Mixed** — intact/rising absolute EBITDA, positive FCF and buybacks offset a genuine negative revenue turn with heavily negative forward revenue-revision breadth.
 
 **Recommendation / Target:** _not yet logged — the human's call (Buy / Avoid + target)_
 
-**Machine read** _(not a verdict)_ — mixed — intact/rising absolute EBITDA, positive FCF and buybacks offset a genuine negative revenue turn with heavily negative forward revenue-revision breadth.
+- **Snapshot:** NYSE · CMP $134.68 (2026-07-08) · cap $8.7B · 52-wk $124.25–$403.95 · shares 67.0M · book value/sh $0.93 · CIK 0000749251 [1]
 
 ## The setup
 Fell -45.0% over 180d, idiosyncratic (-61.0% vs market) — an overshoot candidate.
@@ -465,7 +464,7 @@ _Source §: 8-K 0001193125-20-256749 · d75343dex101.htm · amended by 000119312
 
 # Sources
 
-[1] `EOD close/52-wk · EDGAR XBRL shares · CIQ book value + market cap`
+[1] `exchange · EOD · EDGAR shares · CIQ book value + cap`
 [2] `EOD name−IWM 180d (screen data-record, G2)`
 [3] `CIQ Net Debt $1,688M [Q1 Mar-31-2026] ÷ CIQ EBITDA $1,337M [LTM 12 months Mar-31-2026]`
 [4] `CIQ Financials→Segments (Revenues, latest annual column)`

@@ -1560,28 +1560,34 @@ def _fmt_shares(v: float) -> str:  # raw share count → "151.9M" / "1.2B"
     return f"{v / 1e9:.1f}B" if v >= 1e9 else f"{v / 1e6:.1f}M"
 
 
-def _stock_info_line(si: StockInfo) -> list[str]:
-    """(Brief teaser) the market-data box — CMP · 52-wk range · shares · book value/sh · cap.
-    Each field is fail-honest: a value with no source is simply omitted (never fabricated). One
-    combined ↳ names the sources (EOD / EDGAR / CIQ); the per-field source_ref lives in JSON."""
+def _brief_snapshot(exchange: str | None, cik: str | None, si: StockInfo | None) -> list[str]:
+    """(Brief snapshot) the scalar facts on ONE line — exchange · CMP · cap · 52-wk · shares · book
+    value/sh · CIK — the linear-markdown mirror of the web dossier's snapshot table. Fail-honest:
+    a value with no source is omitted (e.g. AORT has no CIQ Book Value/Share → no book/sh), never
+    fabricated; one ↳ names the sources, the per-field source_ref lives in JSON."""
     p = SourceStatus.PRESENT
     parts: list[str] = []
-    if si.price.status is p and si.price.value is not None:
-        asof = f" ({si.as_of.isoformat()})" if si.as_of is not None else ""
-        parts.append(f"CMP ${si.price.value:,.2f}{asof}")
-    if (si.low_52w.status is p and si.low_52w.value is not None
-            and si.high_52w.status is p and si.high_52w.value is not None):
-        parts.append(f"52-wk ${si.low_52w.value:,.2f}–${si.high_52w.value:,.2f}")
-    if si.shares_out.status is p and si.shares_out.value is not None:
-        parts.append(f"shares {_fmt_shares(si.shares_out.value)}")
-    if si.book_value_ps.status is p and si.book_value_ps.value is not None:
-        parts.append(f"book value/sh ${si.book_value_ps.value:,.2f}")
-    if si.market_cap.status is p and si.market_cap.value is not None:
-        parts.append(f"mkt cap {_fmt_cap(si.market_cap.value)}")
+    if exchange:
+        parts.append(exchange)
+    if si is not None:
+        if si.price.status is p and si.price.value is not None:
+            asof = f" ({si.as_of.isoformat()})" if si.as_of is not None else ""
+            parts.append(f"CMP ${si.price.value:,.2f}{asof}")
+        if si.market_cap.status is p and si.market_cap.value is not None:
+            parts.append(f"cap {_fmt_cap(si.market_cap.value)}")
+        if (si.low_52w.status is p and si.low_52w.value is not None
+                and si.high_52w.status is p and si.high_52w.value is not None):
+            parts.append(f"52-wk ${si.low_52w.value:,.2f}–${si.high_52w.value:,.2f}")
+        if si.shares_out.status is p and si.shares_out.value is not None:
+            parts.append(f"shares {_fmt_shares(si.shares_out.value)}")
+        if si.book_value_ps.status is p and si.book_value_ps.value is not None:
+            parts.append(f"book value/sh ${si.book_value_ps.value:,.2f}")
+    if cik:
+        parts.append(f"CIK {cik}")
     if not parts:
         return []
-    return [f"- **Stock info:** {' · '.join(parts)}"
-            f"{_cite('EOD close/52-wk · EDGAR XBRL shares · CIQ book value + market cap')}"]
+    return [f"- **Snapshot:** {' · '.join(parts)}"
+            f"{_cite('exchange · EOD · EDGAR shares · CIQ book value + cap')}"]
 
 
 def _customer_concentration(m: MechanicalLayer) -> str | None:
@@ -1626,6 +1632,18 @@ def _brief_financials(m: MechanicalLayer) -> list[str]:
                   num_cols=num_cols)
 
 
+def _machine_read_md(eb: str) -> str:
+    """The machine's evidence read as markdown: the lean word (before the em-dash) bold + Sentence-
+    cased, then its rationale verbatim. Mirrors the web teaser's machineReadHtml minus the direction
+    tint (markdown has no color). The lean is an evidence sentiment, NOT a verdict — the human's
+    Buy/Avoid stays in the Recommendation slot below. Fail-soft: an un-split read is verbatim."""
+    m = re.match(r"^\s*([A-Za-z][A-Za-z\- ]*?)\s*[—–-]\s+(.+)$", eb, re.S)
+    if not m:
+        return eb
+    lean, rest = m.group(1).strip(), m.group(2)
+    return f"**{lean[:1].upper() + lean[1:]}** — {rest}"
+
+
 def _brief_lines(d: Dossier) -> list[str]:
     """(Brief) the market-standard first cut in 8 sections — teaser → setup → company → case →
     financial snapshot → valuation → catalyst → verify. Machine-assembled + source-bound; the
@@ -1633,26 +1651,19 @@ def _brief_lines(d: Dossier) -> list[str]:
     m = d.mechanical
     s = d.synthesis
     out: list[str] = ["# Brief — first cut", ""]
-    # 1 — TEASER: identity · GICS · cap · one-liner · the human's Recommendation/Target · read
-    gics = (d.industry.value if d.industry is not None and d.industry.status is SourceStatus.PRESENT
-            else d.sector)
-    cap = m.implied_valuation.market_cap if m.implied_valuation is not None else None
-    cap_s = (f"cap {_fmt_cap(cap.value)}"
-             if cap is not None and cap.status is SourceStatus.PRESENT and cap.value is not None
-             else "")
-    meta = " · ".join(x for x in [d.exchange, gics, cap_s] if x)
-    out.append(f"**{d.ticker} · {d.name}**")
-    if meta:
-        out.append(f"_{meta}_")
+    # 1 — TEASER: business one-liner · machine read · the human's Recommendation/Target · snapshot —
+    # the linear mirror of the web's 2/3 narrative + 1/3 snapshot. Identity + rank + framing live in
+    # the doc header above, so the teaser no longer repeats the ticker/name/cap (that was a dup).
     bd = d.business_description
     if bd is not None and bd.status is SourceStatus.PRESENT and bd.value is not None:
         out.append(_brief_oneliner(bd.value))
-    if m.stock_info is not None:
-        out += _stock_info_line(m.stock_info)
+    if s is not None and s.evidence_balance:
+        out += ["", _machine_read_md(s.evidence_balance)]
     out += ["", "**Recommendation / Target:** _not yet logged — the human's call "
             "(Buy / Avoid + target)_"]
-    if s is not None and s.evidence_balance:
-        out += ["", f"**Machine read** _(not a verdict)_ — {s.evidence_balance}"]
+    snap = _brief_snapshot(d.exchange, d.cik, m.stock_info)
+    if snap:
+        out += ["", *snap]
     out.append("")
     # 2 — SETUP: why it's a candidate + the decisive question + decision data
     out.append("## The setup")
@@ -1736,8 +1747,8 @@ def render_markdown(d: Dossier, *, dev: bool = False) -> str:
     out: list[str] = [
         f"# Dossier — {d.name} ({d.ticker})",
         "",
-        f"_Finalist rank {d.rank} · ref {d.reference_date} · assembled "
-        f"{_fmt_assembled(d.assembled_at)} · LLM {d.llm_model or 'none'}_",
+        f"_Assembled facts, no verdict · data as of {d.reference_date} · assembled "
+        f"{_fmt_assembled(d.assembled_at)} · {d.llm_model or 'mechanical layer only'}_",
         "",
     ]
     # (3-tier) BRIEF — first cut: the machine READ + decisive question + decision data + condensed
