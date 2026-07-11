@@ -6250,24 +6250,27 @@ console.log(JSON.stringify(r));
     assert r["label"] == {"left": "start", "right": "end", "pos": 96, "neg": 111}
 
 
-def test_roic_trend_exhibit_no_phantom_negative_tick_e2e() -> None:
-    """(#106, TEST-LAYER RULE) e2e WIRING pin: render a committed dossier whose ROIC is all-positive
-    through renderDossier and assert its roicTrend SVG never dips below zero — no phantom negative
-    tick / interior zero-line. Catches roicTrendExhibit reverting to inline zero-padding, which the
-    primitive-level lineDomain test would NOT. Phrasing-independent: the invariant is asserted only
-    WHEN the committed series is all-positive (derived from the artifact, not hard-coded)."""
+def test_return_ratios_exhibit_no_phantom_negative_tick_e2e() -> None:
+    """(#106 TEST-LAYER RULE; moved off the removed ROIC-trend exhibit) e2e WIRING pin: render a
+    committed dossier whose return ratios are ALL POSITIVE (IT) through renderDossier and assert the
+    return-ratios SVG draws NO negative % anywhere — the axis floors at 0 (no phantom negative tick,
+    the bug lineDomain fixes). Catches the exhibit reverting to inline zero-padding, which the
+    primitive-level lineDomain test would NOT. Phrasing-independent: asserted only when the
+    committed series is all-positive (derived from the artifact)."""
     import json
     import shutil
     import subprocess
     if not shutil.which("node"):
         pytest.skip("node unavailable")
-    doss = Path("data/dossiers/VRRM/dossier.json")
+    doss = Path("data/dossiers/IT/dossier.json")
     if not doss.exists():
-        pytest.skip("no committed VRRM dossier")
-    mech = json.loads(doss.read_text()).get("mechanical", {})
-    rt = (mech.get("quality", {}) or {}).get("roic_trend")
-    if not rt or rt.get("status") != "present" or not all(p["value"] > 0 for p in rt["value"]):
-        pytest.skip("VRRM roic_trend absent or not all-positive — invariant N/A")
+        pytest.skip("no committed IT dossier")
+    rr = (json.loads(doss.read_text()).get("mechanical", {}) or {}).get("return_ratios")
+    if not rr or rr.get("status") != "present":
+        pytest.skip("IT return_ratios absent")
+    vals = [v for row in rr["value"]["rows"] for v in (row.get("values") or []) if v is not None]
+    if not vals or not all(v > 0 for v in vals):
+        pytest.skip("IT return ratios not all-positive — invariant N/A")
     dj = Path("frontend/views/shared/dossier.js").resolve().as_uri()
     driver = f"""
 const handler = {{ get: () => stub, apply: () => stub, construct: () => ({{}}) }};
@@ -6275,17 +6278,17 @@ const stub = new Proxy(function(){{}}, handler);
 for (const g of ["window","document","location"]) {{ try {{ globalThis[g] = stub; }} catch {{}} }}
 import {{ readFileSync }} from "node:fs";
 const {{ renderDossier }} = await import("{dj}");
-const html = renderDossier(JSON.parse(readFileSync("data/dossiers/VRRM/dossier.json")), null);
-const m = html.match(/<svg[^>]*aria-label="ROIC \\(return on capital\\) trend"[\\s\\S]*?<\\/svg>/);
+const html = renderDossier(JSON.parse(readFileSync("data/dossiers/IT/dossier.json")), null);
+const m = html.match(/<svg[^>]*aria-label="Return ratios[\\s\\S]*?<\\/svg>/);
 console.log(JSON.stringify({{ found: !!m, svg: m ? m[0] : "" }}));
 """
     out = subprocess.run(["node", "--input-type=module", "-e", driver],
                          capture_output=True, text=True, check=True)
     res = json.loads(out.stdout)
-    assert res["found"], "VRRM roicTrend exhibit did not render"
-    # the invariant: an all-positive ROIC series draws NO negative percentage anywhere (the phantom
+    assert res["found"], "IT return-ratios exhibit did not render"
+    # the invariant: an all-positive ratio panel draws NO negative percentage anywhere (the phantom
     # tick was "-2%"); the axis floors at 0.
-    assert not re.search(r"-\d+(\.\d+)?%", res["svg"]), "phantom negative tick on all-positive ROIC"
+    assert not re.search(r"-\d+(\.\d+)?%", res["svg"]), "phantom tick on all-positive ratios"
 
 
 def test_exhibit_module_static_contract_no_node() -> None:

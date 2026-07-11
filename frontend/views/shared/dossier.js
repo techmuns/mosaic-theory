@@ -1259,41 +1259,13 @@ function leverageSurvival(m, refDate) {
 // STRUCTURED roic_trend series (never re-parsing the trajectory string). Values are fractions → ×100
 // for the % display. Zero baseline when the series crosses zero (a distressed name). Fail-honest:
 // no structured series → no chart (the trajectory table still renders).
-function roicTrendExhibit(q) {
-  const rt = q && q.roic_trend;
-  if (!rt || rt.status !== "present" || !Array.isArray(rt.value) || rt.value.length < 2) return "";
-  const pts = rt.value.map((p) => ({ period: p.period, v: p.value * 100 }));
-  const W = 560, H = 168, padL = 34, padR = 14, padT = 40, padB = 32;
-  const x0 = padL, x1 = W - padR, y1 = H - padB, plotW = x1 - x0, plotH = y1 - padT;
-  const vals = pts.map((p) => p.v);
-  // honest zero-anchored domain (shared with the margin panel): 0 is always shown (the value-creation
-  // threshold) but the axis pads beyond zero only on a side that has real data — an all-positive ROIC
-  // no longer draws a phantom negative tick (the bug the margin panel had). minSpan guards a flat run.
-  // (|| fallback: parity with the margin caller — a non-finite series can't reach here since the guard
-  // above requires ≥2 points and TrendPoint.value is a required float, but never destructure null.)
-  const { lo: vmin, hi: vmax } = lineDomain(vals, { padFrac: 0.14, minSpan: 2 }) || { lo: -1, hi: 1 };
-  const px = (i) => x0 + (i / (pts.length - 1)) * plotW;
-  const py = linScale(vmin, vmax, y1, padT);
-  const abbr = (p) => "'" + ((p.match(/\d{4}/) || [""])[0]).slice(2) + (/LTM/.test(p) ? "L" : "");
-  const zY = (vmin < 0 && vmax > 0) ? py(0) : null;
-  const zeroLine = zY != null ? `<line x1="${x0}" y1="${zY}" x2="${x1}" y2="${zY}" stroke="var(--line-2)" stroke-dasharray="3 2"/>` : "";
-  const line = `<polyline points="${pts.map((p, i) => `${px(i)},${py(p.v)}`).join(" ")}" fill="none" stroke="var(--accent)" stroke-width="1.8"/>`;
-  const halo = 'paint-order="stroke" stroke="var(--surface)" stroke-width="2.6"';  // readable over the line
-  const dots = pts.map((p, i) => `<circle cx="${px(i)}" cy="${py(p.v)}" r="3" fill="var(--accent)"/><text x="${px(i)}" y="${py(p.v) - 7}" font-size="8.5" text-anchor="middle" fill="var(--ink)" ${halo}>${p.v.toFixed(1)}%</text><text x="${px(i)}" y="${y1 + 14}" font-size="8.5" text-anchor="middle" fill="var(--ink-3)">${escapeHtml(abbr(p.period))}</text>`).join("");
-  const yticks = `<text x="${x0 - 5}" y="${py(vmax) + 3}" font-size="8.5" text-anchor="end" fill="var(--ink-3)">${Math.round(vmax)}%</text><text x="${x0 - 5}" y="${py(vmin) + 3}" font-size="8.5" text-anchor="end" fill="var(--ink-3)">${Math.round(vmin)}%</text>`;
-  return `<div class="ds-exhibit" style="margin:4px 0 10px;">
-    <svg viewBox="0 0 ${W} ${H}" width="100%" style="max-width:520px; display:block;" role="img" aria-label="ROIC (return on capital) trend">
-      <text x="0" y="15" font-size="12" font-weight="600" fill="var(--ink)">ROIC trend <tspan fill="var(--ink-3)" font-weight="400">— return on capital, per fiscal period</tspan></text>
-      ${zeroLine}${yticks}${line}${dots}
-    </svg>
-    <div class="muted" style="font-size:10.5px; margin-top:1px;">Source: CIQ Financials→Ratios (Return on Capital %, per fiscal-period columns).</div>
-  </div>`;
-}
-
 function trajectorySection(q) {
   if (!q) return "";
+  // (P4) the ROIC-trend CHART was removed — its RoCE-over-time is the return-ratios exhibit's RoCE line
+  // (Financial Snapshot), a strict duplicate. ROIC stays as a row in the trajectory table below; the
+  // structured q.roic_trend series stays in the JSON (machine-complete), just no longer charted here.
   return sec("Trajectory", "Revenue · EBITDA · margins · ROIC per period; the same-quarter YoY footnoted.",
-    roicTrendExhibit(q) + trajectoryTable(q) + fact("Share-count trend", q.share_count_trend));
+    trajectoryTable(q) + fact("Share-count trend", q.share_count_trend));
 }
 
 // (D1) verdict footer — the no-BUY/AVOID reminder closes the document (caveats opened it).
