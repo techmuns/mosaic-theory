@@ -1873,6 +1873,7 @@ def assemble_mechanical(
     # a PRESENT CIQ field is never overridden (_prefer_ciq).
     peer_comps = ciq_sheets.peer_comps(bundle)
     key_ratios = ciq_sheets.key_ratios(bundle)  # (Phase-2) CIQ Ratios panel: RoE/RoCE/D:E/dividend
+    return_ratios = ciq_sheets.return_ratios(bundle)  # (Phase-4) same panel, per-period
     ciq_fcf = ciq_sheets.free_cash_flow(bundle)
     ciq_margin = ciq_sheets.margin_trend(bundle)
     ciq_traj = ciq_sheets.multi_year_trajectory(bundle)
@@ -1935,6 +1936,7 @@ def assemble_mechanical(
         capital_structure=_capital_structure(record, edgar, http, bundle, reference_date),
         management_commentary=ciq_sheets.management_commentary(bundle),
         key_ratios=key_ratios,  # (Phase-2) the Motilal-style CIQ Ratios panel
+        return_ratios=return_ratios,  # (Phase-4) per-period return-ratio series (chart + table)
         stock_info=_stock_info(  # (Phase-2) CMP + 52wk range + shares + book value + cap
             record, store, edgar, bundle, reference_date, implied_val.market_cap),
     )

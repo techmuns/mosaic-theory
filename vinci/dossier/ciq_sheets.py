@@ -817,6 +817,68 @@ def roic_trend(bundle: CiqBundle) -> Sourced[list[TrendPoint]]:
     )
 
 
+# Rows the per-period panel surfaces: (display, CIQ row, kind). "pct" = the three RETURN ratios
+# (charted; raw decimals in `values`, ×100 for %); "x" = leverage/liquidity (table-only). Order =
+# chart legend + table order.
+_RETURN_RATIO_ROWS: tuple[tuple[str, str, str], ...] = (
+    ("RoE %", "Return on Equity %", "pct"),
+    ("RoCE %", "Return on Capital %", "pct"),
+    ("RoA %", "Return on Assets %", "pct"),
+    ("Total debt/equity", "Total Debt/Equity", "x"),
+    ("Current ratio", "Current Ratio", "x"),
+)
+
+
+def return_ratios(bundle: CiqBundle) -> Sourced[FinTable]:
+    """(Phase-4) The Motilal Ratios panel as a PER-PERIOD FinTable — RoE / RoCE / RoA % +
+    total-debt/equity + current ratio + dividend, one column per fiscal period. The three
+    return-ratio rows carry structured ``values`` (raw CIQ decimals) for the line exhibit;
+    leverage/dividend rows are table-only. STORED CIQ values, never computed. ACTUALS ONLY —
+    the Ratios sheet has no forward columns, and the Estimates ROE/ROA are a DIFFERENT basis
+    (never spliced → no false trend). Latest reconciles with key_ratios(); UNKNOWN if absent."""
+    try:
+        rat = bundle.sheet("financials", "Ratios", freq="annual")
+    except CiqUnavailableError as exc:
+        return _miss_or_unknown(bundle, "financials", exc)
+    hdr = _period_header(rat)
+    if hdr is None:
+        return Sourced.unknown(note="Ratios: no Fiscal Period header")
+    periods = _fin_periods(rat[hdr])
+    if not periods:
+        return Sourced.unknown(note="Ratios: no period columns")
+    columns = [s for _c, s, _l, _r in periods]
+    cols = [c for c, _s, _l, _r in periods]
+
+    def read(label: str) -> list[float | None]:
+        ri = _find_row(rat, label)
+        if ri is None:
+            return [None] * len(cols)
+        return [clean_num(rat[ri][c]) if c < len(rat[ri]) else None for c in cols]
+
+    rows: list[FinRow] = []
+    for disp, ciq_lbl, kind in _RETURN_RATIO_ROWS:
+        vals = read(ciq_lbl)
+        if not any(v is not None for v in vals):
+            continue  # fail-honest: a ratio absent for this name is omitted, never a guessed 0
+        if kind == "pct":  # a RETURN ratio — display %, and carry the raw decimals for the chart
+            cells = [f"{v * 100:.1f}%" if v is not None else "—" for v in vals]
+            rows.append(FinRow(label=disp, cells=cells, values=vals))
+        else:  # leverage/liquidity — table-only display (no chart series)
+            xcells = [f"{v:.2f}x" if v is not None else "—" for v in vals]
+            rows.append(FinRow(label=disp, cells=xcells))
+    dvi = _find_row(rat, "Dividend per Share")
+    if dvi is not None:  # NA across ⇒ "none"; a figure ⇒ the per-share dividend. Table-only.
+        dvals = [clean_num(rat[dvi][c]) if c < len(rat[dvi]) else None for c in cols]
+        cells = [f"{v:.2f}" if v is not None else "none" for v in dvals]
+        rows.append(FinRow(label="Dividend/sh", cells=cells))
+    if not any(r.values for r in rows):  # no charted return-ratio row survived → not an exhibit
+        return Sourced.unknown(note="Ratios: no return-ratio (RoE/RoCE/RoA) row with values")
+    return Sourced.present(
+        FinTable(columns=columns, rows=rows, is_estimate=[False] * len(columns)),
+        source_ref="CIQ Financials→Ratios (RoE / RoCE / RoA + leverage, multi-year columns)",
+    )
+
+
 def multi_year_trajectory(bundle: CiqBundle) -> Sourced[str]:
     """The multi-year arc (values per period, basis noted, never YoY'd across the Reclassified
     boundary) for total revenue, EBITDA, and segment EBITDA — the compounder-vs-melting-ice signal:

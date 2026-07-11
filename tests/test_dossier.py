@@ -3151,6 +3151,111 @@ def test_roic_trend_structured_series_preserves_fraction() -> None:
     assert cs.roic_trend(_fin_bundle({"Ratios": single}, "annual")).status is unk
 
 
+def test_return_ratios_fintable_structured_and_fail_honest() -> None:
+    """(P4) The per-period return-ratio FinTable the exhibit + YoY table consume. The three
+    return-ratio rows carry structured `values` (RAW fractions — chart applies ×100); the x-ratios
+    are display-only (empty `values`); dividend NA → 'none'. is_estimate all-False (ACTUALS ONLY, no
+    consensus splice). A missing row is omitted (never a guessed 0); no header, or no return-ratio
+    row at all, → UNKNOWN (a table with only x-ratios is not a return-ratio exhibit)."""
+    rat: list[list[typing.Any]] = [
+        ["For the Fiscal Period", "12 months Dec-31-2023", "12 months Dec-31-2024",
+         "LTM 12 months Mar-31-2025"],
+        ["Return on Equity %", -0.18, -0.41, -0.09],
+        ["Return on Capital %", -0.087, -0.021, 0.015],
+        ["Return on Assets %", -0.065, -0.016, 0.012],
+        ["Total Debt/Equity", 0.36, 0.85, 0.70],
+        ["Current Ratio", 1.05, 1.30, 0.96],
+        ["Dividend per Share", "NA", "NA", "NA"],
+    ]
+    s = cs.return_ratios(_fin_bundle({"Ratios": rat}, "annual"))
+    assert s.status is ds.SourceStatus.PRESENT and s.value is not None
+    t = s.value
+    assert t.columns == ["FY23", "FY24", "LTM"]
+    assert t.is_estimate == [False, False, False]  # ACTUALS ONLY — no consensus splice
+    rows = {r.label: r for r in t.rows}
+    # return ratios: RAW fractions in `values` (chart ×100 once), formatted % in `cells`
+    assert rows["RoE %"].values == [-0.18, -0.41, -0.09]
+    assert rows["RoE %"].cells == ["-18.0%", "-41.0%", "-9.0%"]
+    assert rows["RoCE %"].values[-1] == 0.015 and rows["RoA %"].values[-1] == 0.012
+    # x-ratios: display-only (NOT charted) → cells but empty `values`; dividend NA → "none"
+    assert rows["Total debt/equity"].cells == ["0.36x", "0.85x", "0.70x"]
+    assert rows["Total debt/equity"].values == []
+    assert rows["Dividend/sh"].cells == ["none", "none", "none"]
+    unk = ds.SourceStatus.UNKNOWN
+    no_hdr: list[list[typing.Any]] = [["Return on Equity %", -0.1, -0.2]]
+    assert cs.return_ratios(_fin_bundle({"Ratios": no_hdr}, "annual")).status is unk  # no header
+    x_only: list[list[typing.Any]] = [
+        ["For the Fiscal Period", "12 months Dec-31-2023", "12 months Dec-31-2024"],
+        ["Total Debt/Equity", 0.3, 0.4],
+    ]
+    assert cs.return_ratios(_fin_bundle({"Ratios": x_only}, "annual")).status is unk  # no returns
+
+
+def test_return_ratios_committed_reconciles_and_actuals_only() -> None:
+    """(P4 e2e) Every committed dossier that carries a return_ratios series: ACTUALS-ONLY
+    (is_estimate all-False — the guardrail against splicing the different-basis Estimates ROE/ROA),
+    return-ratio rows column-aligned, and the LATEST column RECONCILES with the key_ratios latest
+    string (both read the same CIQ column, so a divergence would mean a fabricated series)."""
+    import pathlib
+    import re as _re
+    seen = 0
+    for jp in sorted(pathlib.Path("data/dossiers").glob("*/dossier.json")):
+        d = ds.Dossier.model_validate_json(jp.read_text())
+        rr = d.mechanical.return_ratios
+        if rr is None or rr.status is not ds.SourceStatus.PRESENT or rr.value is None:
+            continue
+        seen += 1
+        t = rr.value
+        assert t.is_estimate == [False] * len(t.columns), f"{jp.parent.name}: an E column snuck in"
+        rows = {r.label: r for r in t.rows}
+        assert any(k in rows for k in ("RoE %", "RoCE %", "RoA %")), f"{jp.parent.name}: no row"
+        for lbl in ("RoE %", "RoCE %", "RoA %"):
+            if lbl in rows:
+                assert len(rows[lbl].values) == len(t.columns), f"{jp.parent.name}: {lbl} unaligned"
+        kr = d.mechanical.key_ratios
+        if kr is not None and kr.status is ds.SourceStatus.PRESENT and kr.value:
+            for lbl, tag in (("RoE %", "RoE"), ("RoCE %", "RoCE"), ("RoA %", "RoA")):
+                latest = rows[lbl].cells[-1] if lbl in rows else "—"
+                m = _re.search(rf"{tag} (-?\d+\.\d+%)", kr.value)
+                if m and latest != "—":
+                    assert latest == m.group(1), f"{jp.parent.name}: {tag} {latest}!={m.group(1)}"
+    assert seen >= 5, "expected the return-ratio series on most committed dossiers"
+
+
+def test_return_ratios_render_replaces_key_ratios_fact() -> None:
+    """(P4) In a committed dossier WITH the series, the markdown renders the per-period YoY table
+    and DROPS the latest-only 'Key ratios (latest)' fact (the web adds the line panels above it). A
+    name WITHOUT the series keeps the latest-period fallback — never a blank."""
+    import pathlib
+    p = pathlib.Path("data/dossiers/MVST/dossier.json")
+    if not p.exists():
+        pytest.skip("no committed MVST dossier.json")
+    d = ds.Dossier.model_validate_json(p.read_text())
+    rr = d.mechanical.return_ratios
+    if rr is None or rr.status is not ds.SourceStatus.PRESENT:
+        pytest.skip("MVST not re-derived with return_ratios yet")
+    md = dr.render_markdown(d)
+    assert "Return ratios — per fiscal period" in md
+    assert "**Key ratios (latest):**" not in md  # subsumed by the per-period table
+    assert "| RoE % |" in md  # the table carries the return-ratio rows
+
+
+def test_return_ratios_exhibit_two_panel_static_no_node() -> None:
+    """(P4) dossier.js's return-ratios exhibit ships node-unverified, so pin its contracts by source
+    inspection — NODE-FREE: it exists, splits into TWO scale-grouped panels (RoE | RoCE + RoA),
+    consumes the structured `values` (×100, never a cell re-parse), and financialSnapshot renders it
+    in place of the old latest-only 'Key ratios' fact with a fail-honest fallback."""
+    src = Path("frontend/views/shared/dossier.js").read_text()
+    assert "function returnRatiosExhibit" in src
+    # two panels grouped by SCALE — RoE on its own axis, RoCE + RoA sharing one
+    assert 'panel(roeS, 44, 250, "RoE %")' in src and 'panel(capS, 372, 566, "RoCE · RoA %")' in src
+    assert 'pts("RoE %")' in src and "v * 100" in src  # structured values, ×100 (no re-parse)
+    # wired into the snapshot as the replacement for the latest-only fact, with a fallback
+    assert "returnRatiosExhibit(rr)" in src
+    assert 'finTable("Return ratios — per fiscal period", rr)' in src
+    assert 'fact("Key ratios (latest)", m.key_ratios)' in src  # fail-honest fallback retained
+
+
 def test_own_history_chart_low_confidence_threshold_matches_string() -> None:
     """(P3, #105) The own-history CHART de-escalates its marker below the SAME close count the
     range_position STRING caveats (_MIN_CONFIDENT_CLOSES) — pinned so the thresholds can't drift.
