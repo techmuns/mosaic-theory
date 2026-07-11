@@ -2876,6 +2876,15 @@ two-name analysis (mid/small-caps, opposite directions) mapped against this inve
 
 ## 5. Next steps (ordered, current)
 
+**QUEUED (user-deferred 2026-07-11, "skip for now") — forward-multiple ladder UI.** The
+`cross_name_anchor` ladder (Valuation) renders periods-as-ROWS × multiples-as-columns and truncates to
+`_LADDER_KEEP` = NTM + FY26–FY28, noting "+N later fiscal years in JSON". Two available tweaks, both
+deferred: (a) TRANSPOSE to multiples-as-rows × periods-as-columns to match the financial-summary /
+valuation orientation (parser tests are on the derivation, not the render → safe); (b) revisit the
+forward-window cap. NOTE FOR THE RECORD: the "+N in JSON" is a DELIBERATE near-term signal cap, NOT a
+bug — FY29+ are thin, long-dated consensus (often 1 analyst), kept machine-complete in JSON, mirroring
+the financial-summary capping its forward columns at FY27E. Do not "fix" it as a truncation defect.
+
 **OPERATOR TO-DO — own-history exhibit → shared EXHIBIT frame (in PR #108).** The shared `EXHIBIT`
 design-token frame (`lib/exhibit.js`, from feat/return-ratios-exhibit) is adopted by revEbitda +
 return-ratios. Own-history was NOT aligned there because **PR #108 is independently rebuilding it into a
