@@ -3250,14 +3250,32 @@ def test_return_ratios_exhibit_two_panel_static_no_node() -> None:
     # two panels grouped by SCALE — RoE on its own axis, RoCE + RoA sharing one
     assert 'panel(roeS, 44, 366, "RoE %")' in src and 'panel(capS, 412, 748, "RoCE · RoA %")' in src
     assert 'pts("RoE %")' in src and "v * 100" in src  # structured values, ×100 (no re-parse)
-    # SHARES revEbitdaExhibit's design frame (canvas + y-band) — both carry these tokens so the
-    # Financial-Snapshot exhibits stay one visual system (a drift here is the inconsistency bug).
-    assert "const H = 276, cy0 = 54, cy1 = 234" in src  # return-ratios frame
-    assert "const W = 760, H = 276, cy0 = 54, cy1 = 234" in src  # revEbitda frame (same y-band)
+    # references the SHARED EXHIBIT frame (lib/exhibit.js), not its own canvas/fonts — so the
+    # Financial-Snapshot exhibits stay one visual system (see test_exhibit_shared_frame_tokens).
+    assert "= EXHIBIT, n = cols.length" in src  # destructures the shared frame
     # wired into the snapshot as the replacement for the latest-only fact, with a fallback
     assert "returnRatiosExhibit(rr)" in src
     assert 'finTable("Return ratios — per fiscal period", rr)' in src
     assert 'fact("Key ratios (latest)", m.key_ratios)' in src  # fail-honest fallback retained
+
+
+def test_exhibit_shared_frame_tokens_no_node() -> None:
+    """(P4) The shared EXHIBIT design frame (lib/exhibit.js) is the ONE source for canvas / y-band /
+    typography the dossier's panel exhibits reference, so their size/padding/spacing/labelling are
+    identical by construction (not hand-matched). Pin the token values AND that revEbitda + return-
+    ratios both DESTRUCTURE it rather than re-declaring their own literals (the drift that made
+    them look different). NODE-FREE — the token wiring ships unverified when node is absent."""
+    ex = Path("frontend/lib/exhibit.js").read_text()
+    assert "export const EXHIBIT" in ex
+    for tok in ("H: 276", "cy0: 54, cy1: 234", "wSingle: 430, wDual: 760",
+                "title: 15", "panel: 11.5", "axis: 10.5", "xlabel: 10", "legend: 11.5"):
+        assert tok in ex, f"EXHIBIT frame token missing: {tok}"
+    src = Path("frontend/views/shared/dossier.js").read_text()
+    assert "EXHIBIT } from" in src  # imported alongside the scale/domain primitives
+    assert "= EXHIBIT, W = EXHIBIT.wDual, H = EXHIBIT.H" in src  # revEbitda references the frame
+    assert "= EXHIBIT, n = cols.length" in src  # returnRatiosExhibit references the frame
+    # neither re-declares the old per-exhibit canvas literal (the reinvention this centralises)
+    assert "const W = 760, H = 276, cy0 = 54, cy1 = 234" not in src
 
 
 def test_own_history_chart_low_confidence_threshold_matches_string() -> None:
