@@ -216,10 +216,13 @@ table.data th.est-col, table.data td.est-col { background: var(--surface-2); }
 .cite::before { content: "↳ "; color: var(--accent); }
 /* (A2) endnote citation — a compact [n] marker (hover = the source_ref) resolving to the tier's
    Sources list at its end. Replaces the inline ↳ cites so the reading surface stays uncluttered. */
-.cite-n { font-size: 10px; color: var(--accent); font-weight: 600; margin-left: 1px; cursor: help; }
-.ds-sources ol { margin: 4px 0 0; padding: 0; list-style: none; }
-.ds-sources li { font-size: 11.5px; color: var(--ink-3); margin-top: 3px; display: flex; gap: 6px; }
-.ds-sources .src-n { color: var(--accent); font-weight: 600; flex: 0 0 auto; }
+.cite-n { font-size: 9px; color: var(--accent); font-weight: 600; margin-left: 1px; cursor: help; }
+/* Sources flow as ONE compact paragraph (was one-per-line) + ~13% smaller (11.5→10px) to reclaim space;
+   each entry's [n] label stays attached to its ref, entries separated by a middot. */
+.ds-sources ol { margin: 4px 0 0; padding: 0; list-style: none; font-size: 10px; color: var(--ink-3); line-height: 1.55; }
+.ds-sources li { display: inline; margin-right: 3px; }
+.ds-sources li:not(:last-child)::after { content: "\00B7"; color: var(--line-2); margin-left: 4px; }
+.ds-sources .src-n { color: var(--accent); font-weight: 600; white-space: nowrap; }
 .fact-caveat { display: block; font-size: 11.5px; color: var(--warn); margin-top: 3px; line-height: 1.45; }
 
 /* freshness / provenance footer */
