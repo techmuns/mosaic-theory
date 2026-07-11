@@ -803,12 +803,18 @@ function ownHistoryExhibit(m) {
     return s;
   };
 
+  // the subtitle only claims "log scale" when EVERY panel is actually log — the axis is chosen
+  // per-panel (useLog above), falling back to linear on a non-positive multiple, so a hardcoded global
+  // "log scale" would mislabel a mixed render (a chart reading differently from what it says). Mirrors
+  // panel()'s own vals.every(v > 0) so the label can't drift from the transform.
+  const allLog = bands.every((b) => b.series.filter((p) => p && p[1] != null).map((p) => p[1])
+    .concat([b.low, b.high, b.mean]).every((v) => v > 0));
   // no inline "Source:" caption — the Multiples source is already cited at the card level (range_position's
   // endnote → the tier's Sources list). Exhibits cite via endnotes, never a duplicate inline caption.
   return `<div class="ds-exhibit" style="margin:18px 0 16px;">
     <svg viewBox="0 0 ${W} ${H}" width="100%" style="max-width:${W}px; display:block;" role="img" aria-label="Valuation multiples vs their own trailing range">
       <text x="0" y="18" font-size="13" font-weight="600" fill="var(--ink)">Multiple vs its own trailing range</text>
-      <text x="0" y="32" font-size="9.5" fill="var(--ink-3)">each quarter's close vs its trailing average &amp; range · log scale${bands[0].as_of ? " · as-of " + escapeHtml(bands[0].as_of) : ""}</text>
+      <text x="0" y="32" font-size="9.5" fill="var(--ink-3)">each quarter's close vs its trailing average &amp; range${allLog ? " · log scale" : ""}${bands[0].as_of ? " · as-of " + escapeHtml(bands[0].as_of) : ""}</text>
       ${bands.map((b, i) => panel(b, geo[i][0], geo[i][1])).join("")}
     </svg>
     ${anyLowConf ? `<div class="muted" style="font-size:10px; margin-top:2px;">* fewer than ${LOW_CONF_CLOSES} closes — low-confidence read; current shown in neutral, not red/green.</div>` : ""}
