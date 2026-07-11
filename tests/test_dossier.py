@@ -3151,6 +3151,138 @@ def test_roic_trend_structured_series_preserves_fraction() -> None:
     assert cs.roic_trend(_fin_bundle({"Ratios": single}, "annual")).status is unk
 
 
+def test_return_ratios_fintable_structured_and_fail_honest() -> None:
+    """(P4) The per-period return-ratio FinTable the exhibit + YoY table consume. The three
+    return-ratio rows carry structured `values` (RAW fractions — chart applies ×100); the x-ratios
+    are display-only (empty `values`); dividend NA → 'none'. is_estimate all-False (ACTUALS ONLY, no
+    consensus splice). A missing row is omitted (never a guessed 0); no header, or no return-ratio
+    row at all, → UNKNOWN (a table with only x-ratios is not a return-ratio exhibit)."""
+    rat: list[list[typing.Any]] = [
+        ["For the Fiscal Period", "12 months Dec-31-2023", "12 months Dec-31-2024",
+         "LTM 12 months Mar-31-2025"],
+        ["Return on Equity %", -0.18, -0.41, -0.09],
+        ["Return on Capital %", -0.087, -0.021, 0.015],
+        ["Return on Assets %", -0.065, -0.016, 0.012],
+        ["Total Debt/Equity", 0.36, 0.85, 0.70],
+        ["Current Ratio", 1.05, 1.30, 0.96],
+        ["Dividend per Share", "NA", "NA", "NA"],
+    ]
+    s = cs.return_ratios(_fin_bundle({"Ratios": rat}, "annual"))
+    assert s.status is ds.SourceStatus.PRESENT and s.value is not None
+    t = s.value
+    assert t.columns == ["FY23", "FY24", "LTM"]
+    assert t.is_estimate == [False, False, False]  # ACTUALS ONLY — no consensus splice
+    rows = {r.label: r for r in t.rows}
+    # return ratios: RAW fractions in `values` (chart ×100 once), formatted % in `cells`
+    assert rows["RoE %"].values == [-0.18, -0.41, -0.09]
+    assert rows["RoE %"].cells == ["-18.0%", "-41.0%", "-9.0%"]
+    assert rows["RoCE %"].values[-1] == 0.015 and rows["RoA %"].values[-1] == 0.012
+    # x-ratios: display-only (NOT charted) → cells but empty `values`; dividend NA → "none"
+    assert rows["Total debt/equity"].cells == ["0.36x", "0.85x", "0.70x"]
+    assert rows["Total debt/equity"].values == []
+    assert rows["Dividend/sh"].cells == ["none", "none", "none"]
+    unk = ds.SourceStatus.UNKNOWN
+    no_hdr: list[list[typing.Any]] = [["Return on Equity %", -0.1, -0.2]]
+    assert cs.return_ratios(_fin_bundle({"Ratios": no_hdr}, "annual")).status is unk  # no header
+    x_only: list[list[typing.Any]] = [
+        ["For the Fiscal Period", "12 months Dec-31-2023", "12 months Dec-31-2024"],
+        ["Total Debt/Equity", 0.3, 0.4],
+    ]
+    assert cs.return_ratios(_fin_bundle({"Ratios": x_only}, "annual")).status is unk  # no returns
+
+
+def test_return_ratios_committed_reconciles_and_actuals_only() -> None:
+    """(P4 e2e) Every committed dossier that carries a return_ratios series: ACTUALS-ONLY
+    (is_estimate all-False — the guardrail against splicing the different-basis Estimates ROE/ROA),
+    return-ratio rows column-aligned, and the LATEST column RECONCILES with the key_ratios latest
+    string (both read the same CIQ column, so a divergence would mean a fabricated series)."""
+    import pathlib
+    import re as _re
+    seen = 0
+    for jp in sorted(pathlib.Path("data/dossiers").glob("*/dossier.json")):
+        d = ds.Dossier.model_validate_json(jp.read_text())
+        rr = d.mechanical.return_ratios
+        if rr is None or rr.status is not ds.SourceStatus.PRESENT or rr.value is None:
+            continue
+        seen += 1
+        t = rr.value
+        assert t.is_estimate == [False] * len(t.columns), f"{jp.parent.name}: an E column snuck in"
+        rows = {r.label: r for r in t.rows}
+        assert any(k in rows for k in ("RoE %", "RoCE %", "RoA %")), f"{jp.parent.name}: no row"
+        for lbl in ("RoE %", "RoCE %", "RoA %"):
+            if lbl in rows:
+                assert len(rows[lbl].values) == len(t.columns), f"{jp.parent.name}: {lbl} unaligned"
+        kr = d.mechanical.key_ratios
+        if kr is not None and kr.status is ds.SourceStatus.PRESENT and kr.value:
+            for lbl, tag in (("RoE %", "RoE"), ("RoCE %", "RoCE"), ("RoA %", "RoA")):
+                latest = rows[lbl].cells[-1] if lbl in rows else "—"
+                m = _re.search(rf"{tag} (-?\d+\.\d+%)", kr.value)
+                if m and latest != "—":
+                    assert latest == m.group(1), f"{jp.parent.name}: {tag} {latest}!={m.group(1)}"
+    assert seen >= 5, "expected the return-ratio series on most committed dossiers"
+
+
+def test_return_ratios_render_replaces_key_ratios_fact() -> None:
+    """(P4) In a committed dossier WITH the series, the markdown renders the per-period YoY table
+    and DROPS the latest-only 'Key ratios (latest)' fact (the web adds the line panels above it). A
+    name WITHOUT the series keeps the latest-period fallback — never a blank."""
+    import pathlib
+    p = pathlib.Path("data/dossiers/MVST/dossier.json")
+    if not p.exists():
+        pytest.skip("no committed MVST dossier.json")
+    d = ds.Dossier.model_validate_json(p.read_text())
+    rr = d.mechanical.return_ratios
+    if rr is None or rr.status is not ds.SourceStatus.PRESENT:
+        pytest.skip("MVST not re-derived with return_ratios yet")
+    md = dr.render_markdown(d)
+    assert "Return ratios — per fiscal period" in md
+    assert "**Key ratios (latest):**" not in md  # subsumed by the per-period table
+    assert "| RoE % |" in md  # the table carries the return-ratio rows
+
+
+def test_return_ratios_exhibit_two_panel_static_no_node() -> None:
+    """(P4) dossier.js's return-ratios exhibit ships node-unverified, so pin its contracts by source
+    inspection — NODE-FREE: it exists, splits into TWO scale-grouped panels (RoE | RoCE + RoA),
+    consumes the structured `values` (×100, never a cell re-parse), and financialSnapshot renders it
+    in place of the old latest-only 'Key ratios' fact with a fail-honest fallback."""
+    src = Path("frontend/views/shared/dossier.js").read_text()
+    assert "function returnRatiosExhibit" in src
+    # two panels grouped by SCALE — RoE on its own axis, RoCE + RoA sharing one
+    assert 'panel(roeS, 44, 366, "RoE %")' in src and 'panel(capS, 412, 748, "RoCE · RoA %")' in src
+    assert 'pts("RoE %")' in src and "v * 100" in src  # structured values, ×100 (no re-parse)
+    # references the SHARED EXHIBIT frame (lib/exhibit.js), not its own canvas/fonts — so the
+    # Financial-Snapshot exhibits stay one visual system (see test_exhibit_shared_frame_tokens).
+    assert "= EXHIBIT, n = cols.length" in src  # destructures the shared frame
+    # wired into the snapshot as the replacement for the latest-only fact, with a fallback
+    assert "returnRatiosExhibit(rr)" in src
+    assert 'finTable("Return ratios — per fiscal period", rr)' in src
+    assert 'fact("Key ratios (latest)", m.key_ratios)' in src  # fail-honest fallback retained
+
+
+def test_exhibit_shared_frame_tokens_no_node() -> None:
+    """(P4) The shared EXHIBIT design frame (lib/exhibit.js) is the ONE source for canvas / y-band /
+    typography the dossier's panel exhibits reference, so their size/padding/spacing/labelling are
+    identical by construction (not hand-matched). Pin the token values AND that revEbitda + return-
+    ratios both DESTRUCTURE it rather than re-declaring their own literals (the drift that made
+    them look different). NODE-FREE — the token wiring ships unverified when node is absent."""
+    ex = Path("frontend/lib/exhibit.js").read_text()
+    assert "export const EXHIBIT" in ex
+    for tok in ("H: 276", "cy0: 54, cy1: 234", "wSingle: 430, wDual: 760", "title: 15",
+                "panel: 11.5", "axis: 10.5", "xlabel: 10", "point: 10", "legend: 11.5"):
+        assert tok in ex, f"EXHIBIT frame token missing: {tok}"
+    # revEbitda's margin-point labels / haloes / card spacing consume fs.point + halo + margin — pin
+    # their VALUES too, so a change can't silently alter revEbitda's byte-identical output (which is
+    # otherwise only preview-verified, never regression-pinned). (#110 review)
+    assert 'stroke-width="2.8"' in ex  # EXHIBIT.halo
+    assert 'margin: "18px 0 16px"' in ex  # EXHIBIT.margin
+    src = Path("frontend/views/shared/dossier.js").read_text()
+    assert "EXHIBIT } from" in src  # imported alongside the scale/domain primitives
+    assert "= EXHIBIT, W = EXHIBIT.wDual, H = EXHIBIT.H" in src  # revEbitda references the frame
+    assert "= EXHIBIT, n = cols.length" in src  # returnRatiosExhibit references the frame
+    # neither re-declares the old per-exhibit canvas literal (the reinvention this centralises)
+    assert "const W = 760, H = 276, cy0 = 54, cy1 = 234" not in src
+
+
 def test_own_history_chart_low_confidence_threshold_matches_string() -> None:
     """(P3, #105) The own-history CHART de-escalates its marker below the SAME close count the
     range_position STRING caveats (_MIN_CONFIDENT_CLOSES) — pinned so the thresholds can't drift.
@@ -6123,24 +6255,27 @@ console.log(JSON.stringify(r));
     assert r["label"] == {"left": "start", "right": "end", "pos": 96, "neg": 111}
 
 
-def test_roic_trend_exhibit_no_phantom_negative_tick_e2e() -> None:
-    """(#106, TEST-LAYER RULE) e2e WIRING pin: render a committed dossier whose ROIC is all-positive
-    through renderDossier and assert its roicTrend SVG never dips below zero — no phantom negative
-    tick / interior zero-line. Catches roicTrendExhibit reverting to inline zero-padding, which the
-    primitive-level lineDomain test would NOT. Phrasing-independent: the invariant is asserted only
-    WHEN the committed series is all-positive (derived from the artifact, not hard-coded)."""
+def test_return_ratios_exhibit_no_phantom_negative_tick_e2e() -> None:
+    """(#106 TEST-LAYER RULE; moved off the removed ROIC-trend exhibit) e2e WIRING pin: render a
+    committed dossier whose return ratios are ALL POSITIVE (IT) through renderDossier and assert the
+    return-ratios SVG draws NO negative % anywhere — the axis floors at 0 (no phantom negative tick,
+    the bug lineDomain fixes). Catches the exhibit reverting to inline zero-padding, which the
+    primitive-level lineDomain test would NOT. Phrasing-independent: asserted only when the
+    committed series is all-positive (derived from the artifact)."""
     import json
     import shutil
     import subprocess
     if not shutil.which("node"):
         pytest.skip("node unavailable")
-    doss = Path("data/dossiers/VRRM/dossier.json")
+    doss = Path("data/dossiers/IT/dossier.json")
     if not doss.exists():
-        pytest.skip("no committed VRRM dossier")
-    mech = json.loads(doss.read_text()).get("mechanical", {})
-    rt = (mech.get("quality", {}) or {}).get("roic_trend")
-    if not rt or rt.get("status") != "present" or not all(p["value"] > 0 for p in rt["value"]):
-        pytest.skip("VRRM roic_trend absent or not all-positive — invariant N/A")
+        pytest.skip("no committed IT dossier")
+    rr = (json.loads(doss.read_text()).get("mechanical", {}) or {}).get("return_ratios")
+    if not rr or rr.get("status") != "present":
+        pytest.skip("IT return_ratios absent")
+    vals = [v for row in rr["value"]["rows"] for v in (row.get("values") or []) if v is not None]
+    if not vals or not all(v > 0 for v in vals):
+        pytest.skip("IT return ratios not all-positive — invariant N/A")
     dj = Path("frontend/views/shared/dossier.js").resolve().as_uri()
     driver = f"""
 const handler = {{ get: () => stub, apply: () => stub, construct: () => ({{}}) }};
@@ -6148,17 +6283,17 @@ const stub = new Proxy(function(){{}}, handler);
 for (const g of ["window","document","location"]) {{ try {{ globalThis[g] = stub; }} catch {{}} }}
 import {{ readFileSync }} from "node:fs";
 const {{ renderDossier }} = await import("{dj}");
-const html = renderDossier(JSON.parse(readFileSync("data/dossiers/VRRM/dossier.json")), null);
-const m = html.match(/<svg[^>]*aria-label="ROIC \\(return on capital\\) trend"[\\s\\S]*?<\\/svg>/);
+const html = renderDossier(JSON.parse(readFileSync("data/dossiers/IT/dossier.json")), null);
+const m = html.match(/<svg[^>]*aria-label="Return ratios[\\s\\S]*?<\\/svg>/);
 console.log(JSON.stringify({{ found: !!m, svg: m ? m[0] : "" }}));
 """
     out = subprocess.run(["node", "--input-type=module", "-e", driver],
                          capture_output=True, text=True, check=True)
     res = json.loads(out.stdout)
-    assert res["found"], "VRRM roicTrend exhibit did not render"
-    # the invariant: an all-positive ROIC series draws NO negative percentage anywhere (the phantom
+    assert res["found"], "IT return-ratios exhibit did not render"
+    # the invariant: an all-positive ratio panel draws NO negative percentage anywhere (the phantom
     # tick was "-2%"); the axis floors at 0.
-    assert not re.search(r"-\d+(\.\d+)?%", res["svg"]), "phantom negative tick on all-positive ROIC"
+    assert not re.search(r"-\d+(\.\d+)?%", res["svg"]), "phantom tick on all-positive ratios"
 
 
 def test_exhibit_module_static_contract_no_node() -> None:

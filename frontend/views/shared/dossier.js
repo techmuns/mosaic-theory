@@ -3,7 +3,7 @@
 // The synthesis is fenced as "the framing, not the answer." Read-only; verdicts are CLI-logged.
 import { getDossier, getDossierIndex, getLedger, isBuyVerdict } from "../../lib/snapshots.js";
 import { fmtPrice, fmtDate, fmtStamp, fmtPct, escapeHtml, DASH } from "../../lib/format.js";
-import { barDomain, lineDomain, linScale, logScale, labelAnchor, barLabelY } from "../../lib/exhibit.js";
+import { barDomain, lineDomain, linScale, logScale, labelAnchor, barLabelY, EXHIBIT } from "../../lib/exhibit.js";
 
 // PDF export uses the browser's native print-to-PDF (no library — the frontend stays dependency-free).
 // The browser derives the saved-file name from document.title, so on a dossier print we swap in a
@@ -601,24 +601,25 @@ function revEbitdaExhibit(fsa) {
   // SIDE-BY-SIDE panels (compact vs stacked, but sized for readability): a $M bars panel LEFT + a %
   // margin panel RIGHT, each AUTO-SCALED to its own data with its own zero baseline so no scale is ever
   // shared/clamped (a negative EBITDA or margin — MVST — renders correctly). Haloed labels read over bars.
-  const W = 760, H = 276, cy0 = 54, cy1 = 234;  // both panels share the chart-area y-band (+15% taller)
-  // scales / honest domains / nice-ceiling come from lib/exhibit.js (shared + node-tested) — barDomain
-  // spans zero with a fine ceiling + label headroom; lineDomain pads beyond zero only on a real side.
-  const halo = 'paint-order="stroke" stroke="var(--surface)" stroke-width="2.8"';
+  // shared design FRAME (canvas / y-band / fonts / halo / margin) from lib/exhibit.js — the ONE visual
+  // system every dossier exhibit references, so size/padding/spacing/labelling match across them.
+  const { cy0, cy1, fs, halo } = EXHIBIT, W = EXHIBIT.wDual, H = EXHIBIT.H;
+  // scales / honest domains / nice-ceiling also come from lib/exhibit.js (shared + node-tested) —
+  // barDomain spans zero with a fine ceiling + label headroom; lineDomain pads beyond zero on a real side.
   const abbr = (c) => String(c).replace(" (R)", "");
   const firstE = isE.findIndex((b) => b);
   // estimate shade is a BACKGROUND — render BEFORE the bars/labels so the E-column figures sit on top
   // (were behind the overlay). x-labels render LAST, over everything.
   const estShade = (px1, cxf, slot) => firstE >= 0 ? `<rect x="${cxf(firstE) - slot / 2}" y="${cy0}" width="${px1 - (cxf(firstE) - slot / 2)}" height="${cy1 - cy0}" fill="var(--surface-2)" opacity="0.7"/><line x1="${cxf(firstE) - slot / 2}" y1="${cy0}" x2="${cxf(firstE) - slot / 2}" y2="${cy1}" stroke="var(--line-2)" stroke-dasharray="3 3"/>` : "";
-  const xTicks = (cxf) => cols.map((c, i) => `<text x="${cxf(i)}" y="${cy1 + 16}" font-size="10" text-anchor="middle" fill="${isE[i] ? "var(--ink-3)" : "var(--ink-2)"}">${escapeHtml(abbr(c))}</text>`).join("");
+  const xTicks = (cxf) => cols.map((c, i) => `<text x="${cxf(i)}" y="${cy1 + 16}" font-size="${fs.xlabel}" text-anchor="middle" fill="${isE[i] ? "var(--ink-3)" : "var(--ink-2)"}">${escapeHtml(abbr(c))}</text>`).join("");
 
   // ---- LEFT panel: Revenue + EBITDA bars ($M), zero baseline (handles a negative EBITDA) ----
   const lx0 = 44, lx1 = 366, slotL = (lx1 - lx0) / n, cxL = (i) => lx0 + slotL * i + slotL / 2;
   const bwL = Math.min(16, slotL * 0.4);
   const { lo: loL, hi: hiL } = barDomain([...rev, ...ebitda]);  // spans 0; fine ceiling + 1.1 headroom
   const sBL = linScale(loL, hiL, cy1, cy0), baseL = sBL(0);
-  let left = estShade(lx1, cxL, slotL) + `<text x="${lx0}" y="${cy0 - 9}" font-size="11.5" font-weight="600" fill="var(--ink-2)">Revenue &amp; EBITDA ($M)</text><line x1="${lx0}" y1="${baseL}" x2="${lx1}" y2="${baseL}" stroke="var(--line-2)"/><text x="${lx0 - 4}" y="${cy0 + 3}" font-size="10.5" text-anchor="end" fill="var(--ink-3)">${Math.round(hiL)}</text><text x="${lx0 - 4}" y="${baseL + 3}" font-size="10.5" text-anchor="end" fill="var(--ink-3)">0</text>`;
-  if (loL < 0) left += `<text x="${lx0 - 4}" y="${cy1 + 3}" font-size="10.5" text-anchor="end" fill="var(--ink-3)">${Math.round(loL)}</text>`;
+  let left = estShade(lx1, cxL, slotL) + `<text x="${lx0}" y="${cy0 - 9}" font-size="${fs.panel}" font-weight="600" fill="var(--ink-2)">Revenue &amp; EBITDA ($M)</text><line x1="${lx0}" y1="${baseL}" x2="${lx1}" y2="${baseL}" stroke="var(--line-2)"/><text x="${lx0 - 4}" y="${cy0 + 3}" font-size="${fs.axis}" text-anchor="end" fill="var(--ink-3)">${Math.round(hiL)}</text><text x="${lx0 - 4}" y="${baseL + 3}" font-size="${fs.axis}" text-anchor="end" fill="var(--ink-3)">0</text>`;
+  if (loL < 0) left += `<text x="${lx0 - 4}" y="${cy1 + 3}" font-size="${fs.axis}" text-anchor="end" fill="var(--ink-3)">${Math.round(loL)}</text>`;
   left += cols.map((c, i) => {
     const op = isE[i] ? 0.5 : 1, rx = cxL(i) - bwL - 1, ex = cxL(i) + 1;
     let s = "";
@@ -634,22 +635,91 @@ function revEbitdaExhibit(fsa) {
   // a divide-by-zero scale); the || fallback keeps an all-null-margin panel valid.
   const { lo: mLo, hi: mHi } = lineDomain(marg, { padFrac: 0.2, minPad: 2, minSpan: 2 }) || { lo: 0, hi: 2 };
   const sMR = linScale(mLo, mHi, cy1, cy0), zeroR = sMR(0);
-  let right = estShade(rx1, cxR, slotR) + `<text x="${rx0}" y="${cy0 - 9}" font-size="11.5" font-weight="600" fill="var(--ink-2)">EBITDA margin (%)</text><line x1="${rx0}" y1="${zeroR}" x2="${rx1}" y2="${zeroR}" stroke="var(--line-2)" stroke-dasharray="3 2"/><text x="${rx0 - 4}" y="${cy0 + 3}" font-size="10.5" text-anchor="end" fill="var(--ink-3)">${Math.round(mHi)}%</text>`;
-  if (mLo < -0.5) right += `<text x="${rx0 - 4}" y="${cy1 + 3}" font-size="10.5" text-anchor="end" fill="var(--ink-3)">${Math.round(mLo)}%</text>`;
+  let right = estShade(rx1, cxR, slotR) + `<text x="${rx0}" y="${cy0 - 9}" font-size="${fs.panel}" font-weight="600" fill="var(--ink-2)">EBITDA margin (%)</text><line x1="${rx0}" y1="${zeroR}" x2="${rx1}" y2="${zeroR}" stroke="var(--line-2)" stroke-dasharray="3 2"/><text x="${rx0 - 4}" y="${cy0 + 3}" font-size="${fs.axis}" text-anchor="end" fill="var(--ink-3)">${Math.round(mHi)}%</text>`;
+  if (mLo < -0.5) right += `<text x="${rx0 - 4}" y="${cy1 + 3}" font-size="${fs.axis}" text-anchor="end" fill="var(--ink-3)">${Math.round(mLo)}%</text>`;
   const mpts = marg.map((p, i) => (p != null ? `${cxR(i)},${sMR(p)}` : null)).filter(Boolean).join(" ");
   right += `<polyline points="${mpts}" fill="none" stroke="var(--ink-2)" stroke-width="2"/>`;
-  right += marg.map((p, i) => (p != null ? `<circle cx="${cxR(i)}" cy="${sMR(p)}" r="3" fill="var(--ink-2)"/><text x="${cxR(i)}" y="${sMR(p) - 7}" font-size="10" text-anchor="middle" fill="var(--ink)" font-weight="600" ${halo}>${Math.round(p)}%</text>` : "")).join("");
+  right += marg.map((p, i) => (p != null ? `<circle cx="${cxR(i)}" cy="${sMR(p)}" r="3" fill="var(--ink-2)"/><text x="${cxR(i)}" y="${sMR(p) - 7}" font-size="${fs.point}" text-anchor="middle" fill="var(--ink)" font-weight="600" ${halo}>${Math.round(p)}%</text>` : "")).join("");
   right += xTicks(cxR);
 
-  const eLbl = firstE >= 0 ? `<text x="${W - 4}" y="${cy0 - 9}" font-size="10" text-anchor="end" fill="var(--ink-3)" font-style="italic">shaded = consensus (E), not our forecast</text>` : "";
-  const lg = `<g font-size="11.5" fill="var(--ink-2)"><rect x="44" y="${H - 14}" width="11" height="11" fill="var(--accent)" rx="1"/><text x="60" y="${H - 5}">Revenue</text><rect x="132" y="${H - 14}" width="11" height="11" fill="var(--live)" rx="1"/><text x="148" y="${H - 5}">EBITDA</text><line x1="224" y1="${H - 8}" x2="242" y2="${H - 8}" stroke="var(--ink-2)" stroke-width="2"/><circle cx="233" cy="${H - 8}" r="2.6" fill="var(--ink-2)"/><text x="248" y="${H - 5}">EBITDA margin %</text></g>`;
+  const eLbl = firstE >= 0 ? `<text x="${W - 4}" y="${cy0 - 9}" font-size="${fs.xlabel}" text-anchor="end" fill="var(--ink-3)" font-style="italic">shaded = consensus (E), not our forecast</text>` : "";
+  const lg = `<g font-size="${fs.legend}" fill="var(--ink-2)"><rect x="44" y="${H - 14}" width="11" height="11" fill="var(--accent)" rx="1"/><text x="60" y="${H - 5}">Revenue</text><rect x="132" y="${H - 14}" width="11" height="11" fill="var(--live)" rx="1"/><text x="148" y="${H - 5}">EBITDA</text><line x1="224" y1="${H - 8}" x2="242" y2="${H - 8}" stroke="var(--ink-2)" stroke-width="2"/><circle cx="233" cy="${H - 8}" r="2.6" fill="var(--ink-2)"/><text x="248" y="${H - 5}">EBITDA margin %</text></g>`;
 
   // no inline subtitle (panel headers + x-axis already say it) and no inline "Source:" line — the
   // financial-summary source is cited once at the card level (goes to the tier's Sources list).
-  return `<div class="ds-exhibit" style="margin:18px 0 16px;">
-    <svg viewBox="0 0 ${W} ${H}" width="100%" style="max-width:760px; display:block;" role="img" aria-label="Revenue, EBITDA and EBITDA-margin trend">
-      <text x="44" y="22" font-size="15" font-weight="600" fill="var(--ink)">Revenue, EBITDA &amp; margin</text>
+  return `<div class="ds-exhibit" style="margin:${EXHIBIT.margin};">
+    <svg viewBox="0 0 ${W} ${H}" width="100%" style="max-width:${W}px; display:block;" role="img" aria-label="Revenue, EBITDA and EBITDA-margin trend">
+      <text x="44" y="22" font-size="${fs.title}" font-weight="600" fill="var(--ink)">Revenue, EBITDA &amp; margin</text>
       ${eLbl}${left}${right}${lg}
+    </svg>
+  </div>`;
+}
+
+// 5b — RETURN RATIOS: RoE / RoCE / RoA over the CIQ Ratios fiscal-period columns. SHARES THE EXACT
+// design frame of revEbitdaExhibit — canvas 760×276, the cy0/cy1 y-band, title/panel-title/axis/point-
+// label fonts, slot centering, and the bottom legend — so every Financial-Snapshot exhibit reads as ONE
+// system. TWO panels grouped by SCALE — RoE alone (it can run 10× the others when equity is small, e.g.
+// Gartner) | RoCE + RoA together — each on its OWN honest axis, mirroring revEbitda's two-panel split.
+// Consumes the STRUCTURED `values` (×100, never a cell re-parse). ACTUALS ONLY — no consensus shade, no
+// extrapolation (no-conclude). Fail-honest: a panel with no data drops and the survivor renders at a
+// single-panel width (NOT stretched); the YoY table below carries every ratio row.
+function returnRatiosExhibit(rr) {
+  if (!rr || rr.status !== "present" || !rr.value || !Array.isArray(rr.value.rows)) return "";
+  const cols = rr.value.columns || [];
+  if (cols.length < 2) return "";
+  const pts = (key) => {
+    const row = rr.value.rows.find((r) => r.label === key);
+    const vals = row && row.values;
+    return (Array.isArray(vals) && vals.some((v) => v != null)) ? vals.map((v) => (v == null ? null : v * 100)) : null;
+  };
+  const roe = pts("RoE %"), roce = pts("RoCE %"), roa = pts("RoA %");
+  const { H, cy0, cy1, fs, halo } = EXHIBIT, n = cols.length;  // shared design frame (lib/exhibit.js)
+  // one line-panel over [px0,px1] — same frame as revEbitda's margin panel: slot-centred x, own honest
+  // domain (lineDomain, identical params), hi/lo % axis labels, a dashed zero line when the range spans
+  // it, and per-point value labels (font 10 wt600 haloed). Multi-series: the HIGHER value at each column
+  // labels above, the lower below, so a close RoCE/RoA pair separates.
+  const panel = (series, px0, px1, title) => {
+    const shown = series.filter((s) => s.pts);
+    if (!shown.length) return "";
+    const slot = (px1 - px0) / n, cx = (i) => px0 + slot * i + slot / 2;
+    const all = shown.flatMap((s) => s.pts).filter((v) => v != null);
+    const { lo, hi } = lineDomain(all, { padFrac: 0.2, minPad: 2, minSpan: 2 }) || { lo: 0, hi: 2 };
+    const sc = linScale(lo, hi, cy1, cy0);
+    let g = `<text x="${px0}" y="${cy0 - 9}" font-size="${fs.panel}" font-weight="600" fill="var(--ink-2)">${title}</text>`;
+    g += `<text x="${px0 - 4}" y="${cy0 + 3}" font-size="${fs.axis}" text-anchor="end" fill="var(--ink-3)">${Math.round(hi)}%</text>`;
+    g += `<text x="${px0 - 4}" y="${cy1 + 3}" font-size="${fs.axis}" text-anchor="end" fill="var(--ink-3)">${Math.round(lo)}%</text>`;
+    if (lo < 0 && hi > 0) g += `<line x1="${px0}" y1="${sc(0)}" x2="${px1}" y2="${sc(0)}" stroke="var(--line-2)" stroke-dasharray="3 2"/>`;
+    g += cols.map((c, i) => `<text x="${cx(i)}" y="${cy1 + 16}" font-size="${fs.xlabel}" text-anchor="middle" fill="var(--ink-2)">${escapeHtml(String(c))}</text>`).join("");
+    shown.forEach((s) => {
+      const seg = s.pts.map((v, i) => (v == null ? null : `${cx(i)},${sc(v)}`)).filter(Boolean).join(" ");
+      g += `<polyline points="${seg}" fill="none" stroke="${s.color}" stroke-width="2"/>`;
+      g += s.pts.map((v, i) => {
+        if (v == null) return "";
+        const top = shown.every((o) => o.pts[i] == null || v >= o.pts[i]);  // highest at column → above
+        return `<circle cx="${cx(i)}" cy="${sc(v)}" r="3" fill="${s.color}"/><text x="${cx(i)}" y="${top ? sc(v) - 7 : sc(v) + 14}" font-size="${fs.point}" text-anchor="middle" fill="${s.color}" font-weight="600" ${halo}>${Math.round(v)}%</text>`;
+      }).join("");
+    });
+    return g;
+  };
+  const roeS = [{ label: "RoE", color: "var(--ink)", pts: roe }];
+  const capS = [{ label: "RoCE", color: "var(--accent)", pts: roce }, { label: "RoA", color: "var(--ink-2)", pts: roa }];
+  const legendSeries = [...roeS, ...capS].filter((s) => s.pts);
+  let body = "", W = EXHIBIT.wDual, note = "";
+  if (roe && (roce || roa)) {
+    body = panel(roeS, 44, 366, "RoE %") + panel(capS, 412, 748, "RoCE · RoA %");
+    note = `<text x="${W - 4}" y="${cy0 - 9}" font-size="${fs.xlabel}" text-anchor="end" fill="var(--ink-3)" font-style="italic">actuals — no forward ratio estimates</text>`;
+  } else if (roe) { body = panel(roeS, 44, 366, "RoE %"); W = EXHIBIT.wSingle; }
+  else if (roce || roa) { body = panel(capS, 44, 366, "RoCE · RoA %"); W = EXHIBIT.wSingle; }
+  else return "";
+  // bottom legend — same mark + typography as revEbitda's (a line + dot per series)
+  const lg = `<g font-size="${fs.legend}" fill="var(--ink-2)">${legendSeries.map((s, i) => {
+    const lx = 44 + i * 78;
+    return `<line x1="${lx}" y1="${H - 8}" x2="${lx + 18}" y2="${H - 8}" stroke="${s.color}" stroke-width="2"/><circle cx="${lx + 9}" cy="${H - 8}" r="2.6" fill="${s.color}"/><text x="${lx + 24}" y="${H - 5}">${s.label}</text>`;
+  }).join("")}</g>`;
+  return `<div class="ds-exhibit" style="margin:${EXHIBIT.margin};">
+    <svg viewBox="0 0 ${W} ${H}" width="100%" style="max-width:${W}px; display:block;" role="img" aria-label="Return ratios (RoE; RoCE and RoA) per fiscal period">
+      <text x="44" y="22" font-size="${fs.title}" font-weight="600" fill="var(--ink)">Return ratios</text>
+      ${note}${body}${lg}
     </svg>
   </div>`;
 }
@@ -665,7 +735,13 @@ function financialSnapshot(m) {
   const isE = fsa.value.is_estimate || [], ec = (i) => (isE[i] ? " est-col" : "");  // (P3) shade E cols
   const head = `<tr><th></th>${cols.map((c, i) => `<th class="num${ec(i)}">${escapeHtml(String(c))}</th>`).join("")}</tr>`;
   const body = rows.map((r) => `<tr><td>${escapeHtml(r.label)}</td>${(r.cells || []).map((c, i) => `<td class="num mono${ec(i)}">${escapeHtml(String(c))}</td>`).join("")}</tr>`).join("");
-  const ratios = (m.key_ratios && m.key_ratios.status === "present") ? fact("Key ratios (latest)", m.key_ratios) : "";
+  // (Phase-4) the return-ratios line exhibit + per-period YoY table REPLACE the old latest-only "Key
+  // ratios" fact. Fail-honest fallback: a name without the CIQ Ratios panel (return_ratios UNKNOWN)
+  // keeps the committed latest-period line — never a blank, never a fabricated series.
+  const rr = m.return_ratios;
+  const ratios = (rr && rr.status === "present" && rr.value && Array.isArray(rr.value.rows) && rr.value.rows.length)
+    ? returnRatiosExhibit(rr) + finTable("Return ratios — per fiscal period", rr)
+    : (m.key_ratios && m.key_ratios.status === "present") ? fact("Key ratios (latest)", m.key_ratios) : "";
   return `<div class="card ds-section"><div class="ds-title">Financial snapshot <span class="muted" style="font-weight:400; text-transform:none; letter-spacing:0;">— full table in Appendix</span></div>
     ${revEbitdaExhibit(fsa)}
     <table class="data">${`<thead>${head}</thead><tbody>${body}</tbody>`}</table>
@@ -1183,41 +1259,13 @@ function leverageSurvival(m, refDate) {
 // STRUCTURED roic_trend series (never re-parsing the trajectory string). Values are fractions → ×100
 // for the % display. Zero baseline when the series crosses zero (a distressed name). Fail-honest:
 // no structured series → no chart (the trajectory table still renders).
-function roicTrendExhibit(q) {
-  const rt = q && q.roic_trend;
-  if (!rt || rt.status !== "present" || !Array.isArray(rt.value) || rt.value.length < 2) return "";
-  const pts = rt.value.map((p) => ({ period: p.period, v: p.value * 100 }));
-  const W = 560, H = 168, padL = 34, padR = 14, padT = 40, padB = 32;
-  const x0 = padL, x1 = W - padR, y1 = H - padB, plotW = x1 - x0, plotH = y1 - padT;
-  const vals = pts.map((p) => p.v);
-  // honest zero-anchored domain (shared with the margin panel): 0 is always shown (the value-creation
-  // threshold) but the axis pads beyond zero only on a side that has real data — an all-positive ROIC
-  // no longer draws a phantom negative tick (the bug the margin panel had). minSpan guards a flat run.
-  // (|| fallback: parity with the margin caller — a non-finite series can't reach here since the guard
-  // above requires ≥2 points and TrendPoint.value is a required float, but never destructure null.)
-  const { lo: vmin, hi: vmax } = lineDomain(vals, { padFrac: 0.14, minSpan: 2 }) || { lo: -1, hi: 1 };
-  const px = (i) => x0 + (i / (pts.length - 1)) * plotW;
-  const py = linScale(vmin, vmax, y1, padT);
-  const abbr = (p) => "'" + ((p.match(/\d{4}/) || [""])[0]).slice(2) + (/LTM/.test(p) ? "L" : "");
-  const zY = (vmin < 0 && vmax > 0) ? py(0) : null;
-  const zeroLine = zY != null ? `<line x1="${x0}" y1="${zY}" x2="${x1}" y2="${zY}" stroke="var(--line-2)" stroke-dasharray="3 2"/>` : "";
-  const line = `<polyline points="${pts.map((p, i) => `${px(i)},${py(p.v)}`).join(" ")}" fill="none" stroke="var(--accent)" stroke-width="1.8"/>`;
-  const halo = 'paint-order="stroke" stroke="var(--surface)" stroke-width="2.6"';  // readable over the line
-  const dots = pts.map((p, i) => `<circle cx="${px(i)}" cy="${py(p.v)}" r="3" fill="var(--accent)"/><text x="${px(i)}" y="${py(p.v) - 7}" font-size="8.5" text-anchor="middle" fill="var(--ink)" ${halo}>${p.v.toFixed(1)}%</text><text x="${px(i)}" y="${y1 + 14}" font-size="8.5" text-anchor="middle" fill="var(--ink-3)">${escapeHtml(abbr(p.period))}</text>`).join("");
-  const yticks = `<text x="${x0 - 5}" y="${py(vmax) + 3}" font-size="8.5" text-anchor="end" fill="var(--ink-3)">${Math.round(vmax)}%</text><text x="${x0 - 5}" y="${py(vmin) + 3}" font-size="8.5" text-anchor="end" fill="var(--ink-3)">${Math.round(vmin)}%</text>`;
-  return `<div class="ds-exhibit" style="margin:4px 0 10px;">
-    <svg viewBox="0 0 ${W} ${H}" width="100%" style="max-width:520px; display:block;" role="img" aria-label="ROIC (return on capital) trend">
-      <text x="0" y="15" font-size="12" font-weight="600" fill="var(--ink)">ROIC trend <tspan fill="var(--ink-3)" font-weight="400">— return on capital, per fiscal period</tspan></text>
-      ${zeroLine}${yticks}${line}${dots}
-    </svg>
-    <div class="muted" style="font-size:10.5px; margin-top:1px;">Source: CIQ Financials→Ratios (Return on Capital %, per fiscal-period columns).</div>
-  </div>`;
-}
-
 function trajectorySection(q) {
   if (!q) return "";
+  // (P4) the ROIC-trend CHART was removed — its RoCE-over-time is the return-ratios exhibit's RoCE line
+  // (Financial Snapshot), a strict duplicate. ROIC stays as a row in the trajectory table below; the
+  // structured q.roic_trend series stays in the JSON (machine-complete), just no longer charted here.
   return sec("Trajectory", "Revenue · EBITDA · margins · ROIC per period; the same-quarter YoY footnoted.",
-    roicTrendExhibit(q) + trajectoryTable(q) + fact("Share-count trend", q.share_count_trend));
+    trajectoryTable(q) + fact("Share-count trend", q.share_count_trend));
 }
 
 // (D1) verdict footer — the no-BUY/AVOID reminder closes the document (caveats opened it).

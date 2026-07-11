@@ -811,6 +811,12 @@ class MechanicalLayer(BaseModel):
     # (Phase-2) the Motilal-style key-ratios panel — latest RoE / RoCE / RoA + total-debt/equity +
     # current ratio + dividend, from the CIQ Ratios sheet. Optional-with-default for back-compat.
     key_ratios: Sourced[str] | None = None
+    # (Phase-4) the Motilal Ratios panel as a PER-PERIOD series — RoE / RoCE / RoA % +
+    # total-debt/equity + current ratio + dividend, one column per fiscal period. Feeds the
+    # return-ratios line exhibit + YoY table. The three return-ratio rows carry structured
+    # `values` (raw CIQ decimals); the chart reads those, x-ratios/dividend are table-only.
+    # ACTUALS ONLY — CIQ has no forward ratio columns here (no consensus splice). Pre-P4 opt.
+    return_ratios: Sourced[FinTable] | None = None
     # (Phase-2) the market-data 'stock info' box — CMP + 52-week range + shares + book value + cap,
     # each source-bound (EOD / EDGAR / CIQ). Optional-with-default for back-compat.
     stock_info: StockInfo | None = None

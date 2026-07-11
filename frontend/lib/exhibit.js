@@ -89,6 +89,24 @@ export function lineDomain(series, { padFrac = 0.15, minPad = 0, minSpan = 0 } =
   return { lo, hi };
 }
 
+// ---- shared design FRAME (the ONE visual system for the dossier's SVG exhibits) ----
+// Size, plot y-band, left inset, typography, halo, and card margin — referenced by EVERY panel exhibit
+// in dossier.js (revenue/EBITDA, return-ratios, ROIC trend) so they read as one system instead of each
+// re-inventing its canvas + fonts (the drift this centralises). A SINGLE-metric exhibit uses `wSingle`
+// (a lone chart is NOT stretched to the two-panel `wDual`); every exhibit shares H, the cy0/cy1 band,
+// `padL`, and the `fs` font scale. NOT a chart-type layout — bar/line/band geometry stays per-exhibit;
+// this only fixes the frame so "size / padding / spacing / labelling" match across them.
+export const EXHIBIT = Object.freeze({
+  H: 276,                 // canvas height (viewBox)
+  cy0: 54, cy1: 234,      // plot band: title + panel titles above cy0, x-labels + legend below cy1
+  padL: 44,               // left inset — the leftmost panel starts here; y-axis labels sit just left
+  wSingle: 430, wDual: 760,  // one-panel vs two-panel canvas width (a single metric is not stretched)
+  // font scale (px): main title · panel sub-title · y-axis · x-axis · point value · legend
+  fs: Object.freeze({ title: 15, panel: 11.5, axis: 10.5, xlabel: 10, point: 10, legend: 11.5 }),
+  halo: 'paint-order="stroke" stroke="var(--surface)" stroke-width="2.8"',  // readable text over marks
+  margin: "18px 0 16px",  // .ds-exhibit vertical rhythm
+});
+
 // ---- label placement ----
 // Anchor a value beside a marker on the roomier side of its panel midpoint (avoids running off-panel).
 export const labelAnchor = (px, mid) => (px < mid ? "start" : "end");

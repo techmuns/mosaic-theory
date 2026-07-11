@@ -54,7 +54,17 @@ _Key unknowns:_
 | EPS (GAAP, dil.) | 8.28 | 5.70 | 3.71 | -20.36 | -21.33 | 4.00 | 6.74 |
 | FCF ($M) | 505 | 476 | 632 | 705 | 517 | — | — |
 
-- **Key ratios (latest):** RoE -38.9%; RoCE 3.9%; RoA 3.2%; total debt/equity 2.04; current ratio 1.18 (latest) [13]
+- **Return ratios — per fiscal period** — [13]  <!-- ds-table -->
+
+|  | FY21 | FY22 | FY23 | FY24 | FY25 | LTM |
+|---|---|---|---|---|---|---|
+| RoE % | 16.5% | 16.4% | 9.2% | 6.1% | -37.7% | -38.9% |
+| RoCE % | 8.8% | 9.0% | 5.3% | 3.8% | 4.2% | 3.9% |
+| RoA % | 6.8% | 7.2% | 4.3% | 3.0% | 3.3% | 3.2% |
+| Total debt/equity | 0.50x | 1.01x | 1.40x | 1.39x | 2.02x | 2.04x |
+| Current ratio | 1.59x | 1.55x | 1.38x | 1.42x | 1.40x | 1.18x |
+| Dividend/sh | none | 3.10 | 0.10 | 0.10 | 0.10 | 0.09 |
+
 
 ## Valuation
 - **Valuation (vs peers):** EV/EBITDA 4.1x vs peer median 5.3x (-23%); P/E NM vs peer median 9.05 [14]
@@ -503,7 +513,7 @@ _Source §: 8-K 0001803599-23-000177 · exhibit41indenture.htm_
 [10] `CIQ Comparable Analysis→Operating Statistics (LTM Total Debt/EBITDA) · as-of 2026-06-25`
 [11] `EDGAR latest-Q OCF sign + CIQ LTM FCF sign`
 [12] `CIQ Financials→Income Statement + Cash Flow (annual) + Estimates→Trends (FY E)`
-[13] `CIQ Financials→Ratios (latest period)`
+[13] `CIQ Financials→Ratios (RoE / RoCE / RoA + leverage, multi-year columns)`
 [14] `CIQ Comparable Analysis→Trading Multiples (name vs peer Median)`
 [15] `CIQ Financials→Multiples (Close; last col = current, excluded from history)`
 [16] `CIQ Comparable Analysis→Financial Data (market-cap dispersion) + Business Description`

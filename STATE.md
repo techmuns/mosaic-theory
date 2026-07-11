@@ -2876,6 +2876,22 @@ two-name analysis (mid/small-caps, opposite directions) mapped against this inve
 
 ## 5. Next steps (ordered, current)
 
+**QUEUED (user-deferred 2026-07-11, "skip for now") — forward-multiple ladder UI.** The
+`cross_name_anchor` ladder (Valuation) renders periods-as-ROWS × multiples-as-columns and truncates to
+`_LADDER_KEEP` = NTM + FY26–FY28, noting "+N later fiscal years in JSON". Two available tweaks, both
+deferred: (a) TRANSPOSE to multiples-as-rows × periods-as-columns to match the financial-summary /
+valuation orientation (parser tests are on the derivation, not the render → safe); (b) revisit the
+forward-window cap. NOTE FOR THE RECORD: the "+N in JSON" is a DELIBERATE near-term signal cap, NOT a
+bug — FY29+ are thin, long-dated consensus (often 1 analyst), kept machine-complete in JSON, mirroring
+the financial-summary capping its forward columns at FY27E. Do not "fix" it as a truncation defect.
+
+**OPERATOR TO-DO — own-history exhibit → shared EXHIBIT frame (in PR #108).** The shared `EXHIBIT`
+design-token frame (`lib/exhibit.js`, from feat/return-ratios-exhibit) is adopted by revEbitda +
+return-ratios. Own-history was NOT aligned there because **PR #108 is independently rebuilding it into a
+line chart** — a same-branch refactor would collide. When #108 lands (or is next revised), refactor the
+own-history exhibit to destructure `EXHIBIT` (canvas/y-band/fonts/halo/margin) so it joins the one visual
+system, and drop its inline `Source:` caption in favour of the endnote citation.
+
 **DOSSIER first-cut BRIEF redesign — BUILT + VERIFIED, PR OPEN (#98, feat/dossier-brief, 2026-07-09).**
 The per-ticker dossier is now a THREE-TIER surface — **Brief / Analysis / Appendix** (client-side tabs +
 PDF-scope dropdown), md↔web parity held. The **Brief** is reworked from a card into a market-standard
@@ -3081,6 +3097,37 @@ Recommendation/Target slot is the HUMAN's ("not yet logged"); consensus, the imp
   null-fallback robustness. Merged to main IN ORDER: #104 (5fd72d9) → #105 (df42f6e) → #106. Suite green
   at each gate. **Incident→invariant:** chart-out-confidents-string → a JS↔Python confidence-threshold
   coherence test SHIPPED.
+  **RETURN-RATIOS EXHIBIT — BUILT + VERIFIED, PR OPEN (feat/return-ratios-exhibit, stacked on #109, 2026-07-11).**
+  Replaced the latest-only "Key ratios (latest)" inline fact (Financial Snapshot) with a per-period line
+  exhibit + a YoY ratios table (the Motilal Exhibit-10 pattern). The CIQ Ratios extractor already read a
+  MULTI-column sheet but collapsed to the latest — a NEW `return_ratios(bundle)→Sourced[FinTable]`
+  (`ciq_sheets.py`) surfaces the full per-period series (RoE/RoCE/RoA % carry structured `values` for the
+  chart; total-debt/equity + current ratio + dividend are table-only), new `Mechanical.return_ratios`
+  field, wired in `mechanical.py`. Web exhibit (`returnRatiosExhibit`, dossier.js) is TWO scale-grouped
+  panels — RoE alone | RoCE + RoA — each on its own honest axis (a single shared axis crushed RoCE/RoA
+  under Gartner/IT's distorted 270% RoE; user chose 2-panel). md parity = the YoY table via
+  `_fin_table_lines` (no chart in markdown). **GUARDRAIL — actuals only:** the CIQ Estimates panel DOES
+  carry forward RoE/RoA, but on a DIFFERENT basis (numbers don't reconcile with the Ratios actuals) and
+  NO RoCE — splicing would be a layer-mix + false trend, so the exhibit is single-source actuals, no
+  estimate shading, no extrapolation (no-conclude). Surgically re-derived the committed dossiers (no LLM):
+  9/10 PRESENT (FUBO 5 periods — later IPO; **AORT UNKNOWN** — its CIQ Ratios sheet is malformed, so it
+  keeps its prior no-ratios state, no regression). Verified in preview MVST (negative) + IT (distorted
+  RoE) + BRBR (no RoE row → RoCE+RoA only). ruff + mypy --strict + pytest(not network) green (+4 pins:
+  extractor frozen-fixture, e2e reconcile-vs-key_ratios + actuals-only, md table-replaces-fact, JS 2-panel
+  static). Code + artifacts in separate commits.
+  EXHIBIT-CONSISTENCY FOLLOW-UP (same PR): the return-ratios exhibit had invented its own canvas/fonts,
+  so it didn't match the revenue/EBITDA exhibit beside it. (1) Rebuilt it on revEbitda's frame (760×276,
+  cy0/cy1 band, 15/11.5/10.5/10 fonts, slot-centred x, per-point labels, bottom legend); single-panel
+  (no-RoE, e.g. BRBR) renders at 430 wide, NOT stretched. (2) Extracted a shared **`EXHIBIT`** design-
+  token constant (frozen: canvas/y-band/wSingle/wDual/font-scale/halo/margin) into `lib/exhibit.js`;
+  **revEbitda + return-ratios both DESTRUCTURE it** (one source of truth — revEbitda output byte-identical,
+  bar labels stay 9.5). (3) **Removed the ROIC-trend CHART** (Trajectory) — a strict duplicate of the
+  return-ratios RoCE line (same data/source/periods); ROIC stays as a table row + the `roic_trend` series
+  stays in JSON. Incident→invariant: a JS static pin asserts both exhibits reference `EXHIBIT` (no
+  per-exhibit canvas literal remains); the phantom-negative-tick e2e moved onto the return-ratios exhibit
+  (IT, all-positive). ruff + pytest(not network) green; revEbitda unchanged + return-ratios/roicTrend
+  verified in preview. **Own-history NOT touched here** — PR #108 is independently rebuilding it into a
+  line chart; its EXHIBIT-token adoption belongs in #108 (see §Next-steps).
   **DOSSIER-TOP REDESIGN — BUILT + VERIFIED, PR OPEN (feat/dossier-brief-header, 2026-07-11).** The
   header + Brief repeated facts (ticker·name in both the title and brief-idn; market cap in brief-meta
   AND stock-info; the no-verdict framing twice). SLIMMED the header to the title + ONE line

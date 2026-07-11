@@ -1704,7 +1704,12 @@ def _brief_lines(d: Dossier) -> list[str]:
     # 5 — FINANCIAL SNAPSHOT: un-truncated key financials + the ratios panel
     out.append("## Financial snapshot")
     out += _brief_financials(m)
-    if m.key_ratios is not None:
+    # (Phase-4) the per-period return-ratio YoY table REPLACES the latest-only "Key ratios"
+    # fact (the web adds a line exhibit above — markdown has no chart, so the table carries
+    # every ratio). Fail-honest: a name without the CIQ Ratios panel keeps the latest line.
+    if m.return_ratios is not None and m.return_ratios.status is SourceStatus.PRESENT:
+        out += _fin_table_lines("Return ratios — per fiscal period", m.return_ratios)
+    elif m.key_ratios is not None:
         out.append(_fact("Key ratios (latest)", m.key_ratios))
     out.append("")
     # 6 — VALUATION: cross-sectional + own-history + the multiple ladder + the implied ladder
