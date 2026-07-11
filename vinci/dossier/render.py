@@ -1632,6 +1632,18 @@ def _brief_financials(m: MechanicalLayer) -> list[str]:
                   num_cols=num_cols)
 
 
+def _machine_read_md(eb: str) -> str:
+    """The machine's evidence read as markdown: the lean word (before the em-dash) bold + Sentence-
+    cased, then its rationale verbatim. Mirrors the web teaser's machineReadHtml minus the direction
+    tint (markdown has no color). The lean is an evidence sentiment, NOT a verdict — the human's
+    Buy/Avoid stays in the Recommendation slot below. Fail-soft: an un-split read is verbatim."""
+    m = re.match(r"^\s*([A-Za-z][A-Za-z\- ]*?)\s*[—–-]\s+(.+)$", eb, re.S)
+    if not m:
+        return eb
+    lean, rest = m.group(1).strip(), m.group(2)
+    return f"**{lean[:1].upper() + lean[1:]}** — {rest}"
+
+
 def _brief_lines(d: Dossier) -> list[str]:
     """(Brief) the market-standard first cut in 8 sections — teaser → setup → company → case →
     financial snapshot → valuation → catalyst → verify. Machine-assembled + source-bound; the
@@ -1646,7 +1658,7 @@ def _brief_lines(d: Dossier) -> list[str]:
     if bd is not None and bd.status is SourceStatus.PRESENT and bd.value is not None:
         out.append(_brief_oneliner(bd.value))
     if s is not None and s.evidence_balance:
-        out += ["", f"**Machine read** _(not a verdict)_ — {s.evidence_balance}"]
+        out += ["", _machine_read_md(s.evidence_balance)]
     out += ["", "**Recommendation / Target:** _not yet logged — the human's call "
             "(Buy / Avoid + target)_"]
     snap = _brief_snapshot(d.exchange, d.cik, m.stock_info)

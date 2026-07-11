@@ -2087,6 +2087,41 @@ def test_dossier_top_redesign_no_duplication_static() -> None:
     # header slimmed: no queue rank, one terse 'no verdict' meta line
     assert "Queue rank" not in src
     assert "Assembled facts, <b>no verdict</b>" in src
+    # the two removed teaser bits: the card's own title (dup of the tab) and the machine-read pill.
+    # ("Brief — first cut" is em-dash; the tab is "Brief <span…first cut", so no false match.)
+    assert "Brief — first cut" not in src
+    assert "machine read · not a verdict" not in src and '"brief-tag"' not in src
+    # the lean word is tinted by DIRECTION (bear→danger, bull→live, else grey) — the machine's
+    # evidence READ, still not a verdict (the human's Buy/Avoid stays in the Recommendation slot).
+    assert "function machineReadHtml" in src
+    assert 'includes("bear") ? "var(--danger)"' in src
+    assert 'includes("bull") ? "var(--live)"' in src
+
+
+def test_brief_machine_read_lean_bold_sentence_cased() -> None:
+    """(brief) The teaser's machine READ leads with its lean word bold + Sentence-cased (the web
+    mirror colors it; markdown has no tint). The old '**Machine read**
+    _(not a verdict)_' prefix is gone; the 'not a verdict' framing lives in the doc header + the
+    Recommendation slot below. Unit pins the shared parser; an e2e sweep pins the wiring on every
+    committed dossier (phrasing-independent — it derives the expected line from the value)."""
+    # unit — lean bold + Sentence case, internal hyphen kept, rationale verbatim, fail-soft
+    assert dr._machine_read_md("strongly-bearish — doubt") == "**Strongly-bearish** — doubt"
+    assert dr._machine_read_md("mixed — a loss") == "**Mixed** — a loss"
+    assert dr._machine_read_md("bullish — a moat") == "**Bullish** — a moat"
+    assert dr._machine_read_md("no separator here") == "no separator here"  # fail-soft → verbatim
+    # e2e — every committed dossier: the rendered read IS _machine_read_md(eb), never the old prefix
+    import pathlib
+    seen = 0
+    for jp in sorted(pathlib.Path("data/dossiers").glob("*/dossier.json")):
+        d = ds.Dossier.model_validate_json(jp.read_text())
+        s = d.synthesis
+        if s is None or not s.evidence_balance:
+            continue
+        seen += 1
+        md = dr.render_markdown(d)
+        assert "**Machine read** _(not a verdict)_" not in md, f"{jp.parent.name}: old prefix"
+        assert dr._machine_read_md(s.evidence_balance) in md, f"{jp.parent.name}: not bold-lean"
+    assert seen >= 2, "expected >=2 committed dossiers with an evidence_balance"
 
 
 def test_vrrm_brief_stock_info_panel_present_and_cited() -> None:

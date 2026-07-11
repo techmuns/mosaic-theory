@@ -476,6 +476,20 @@ function fmtShares(v) { return v >= 1e9 ? `${(v / 1e9).toFixed(1)}B` : `${(v / 1
 // Recommendation/Target slot) beside a 1/3 SNAPSHOT table (identity + exchange + stock-info + CIK),
 // consolidated from what used to repeat across the header meta / brief-meta / stock-info line. The
 // verdict slot is filled only from the ledger — never by the machine.
+// The machine's evidence READ — a "{lean} — {why}" balance, e.g. "strongly-bearish — stated going-concern
+// doubt …". The lean is an evidence sentiment, NOT a BUY/AVOID verdict (that stays the human's, in the
+// Recommendation slot right below). We tint the lean by direction (bear→danger, bull→live, mixed/neutral→
+// grey) and sentence-case it; the rest is plain body text. Fail-soft: an un-split read renders verbatim.
+function machineReadHtml(eb) {
+  const m = /^\s*([A-Za-z][A-Za-z\- ]*?)\s*[—–-]\s+([\s\S]+)$/.exec(eb || "");
+  if (!m) return escapeHtml(eb || "");
+  const lean = m[1].trim(), rest = m[2];
+  const l = lean.toLowerCase();
+  const col = l.includes("bear") ? "var(--danger)" : l.includes("bull") ? "var(--live)" : "var(--ink-2)";
+  const cased = lean.charAt(0).toUpperCase() + lean.slice(1);
+  return `<b class="brief-lean" style="color:${col}">${escapeHtml(cased)}</b> — ${escapeHtml(rest)}`;
+}
+
 function teaserCard(d, verdict, m) {
   const s = d.synthesis;
   const one = (d.business_description && d.business_description.status === "present")
@@ -484,14 +498,13 @@ function teaserCard(d, verdict, m) {
     ? `<span class="pill ${isBuyVerdict(verdict.verdict) ? "buy" : "avoid"}">${escapeHtml(verdict.verdict)}</span> <span class="muted" style="font-size:11.5px;">@ ${fmtPrice(verdict.entryPrice)} · ${fmtDate(verdict.decidedAt)}</span>`
     : `<span class="brief-slot">not yet logged</span> <span class="muted" style="font-size:11px;">the human's call — Buy / Avoid + target</span>`;
   const read = (s && s.evidence_balance)
-    ? `<div class="brief-read"><span class="brief-tag">machine read · not a verdict</span>${escapeHtml(s.evidence_balance)}</div>` : "";
+    ? `<div class="brief-read">${machineReadHtml(s.evidence_balance)}</div>` : "";
   const narrative = `<div class="brief-narrative">
     ${one ? `<div class="brief-oneliner">${escapeHtml(one)}</div>` : ""}
     ${read}
     <div class="brief-verdict"><span class="brief-vlab">Recommendation / Target</span> ${vslot}</div>
   </div>`;
   return `<div class="card ds-section ds-brief">
-    <div class="ds-title" style="margin-bottom:6px;">Brief — first cut</div>
     <div class="brief-body">${narrative}${briefSnapshot(d, m)}</div></div>`;
 }
 
