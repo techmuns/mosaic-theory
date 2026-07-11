@@ -3081,6 +3081,24 @@ Recommendation/Target slot is the HUMAN's ("not yet logged"); consensus, the imp
   null-fallback robustness. Merged to main IN ORDER: #104 (5fd72d9) → #105 (df42f6e) → #106. Suite green
   at each gate. **Incident→invariant:** chart-out-confidents-string → a JS↔Python confidence-threshold
   coherence test SHIPPED.
+  **RETURN-RATIOS EXHIBIT — BUILT + VERIFIED, PR OPEN (feat/return-ratios-exhibit, stacked on #109, 2026-07-11).**
+  Replaced the latest-only "Key ratios (latest)" inline fact (Financial Snapshot) with a per-period line
+  exhibit + a YoY ratios table (the Motilal Exhibit-10 pattern). The CIQ Ratios extractor already read a
+  MULTI-column sheet but collapsed to the latest — a NEW `return_ratios(bundle)→Sourced[FinTable]`
+  (`ciq_sheets.py`) surfaces the full per-period series (RoE/RoCE/RoA % carry structured `values` for the
+  chart; total-debt/equity + current ratio + dividend are table-only), new `Mechanical.return_ratios`
+  field, wired in `mechanical.py`. Web exhibit (`returnRatiosExhibit`, dossier.js) is TWO scale-grouped
+  panels — RoE alone | RoCE + RoA — each on its own honest axis (a single shared axis crushed RoCE/RoA
+  under Gartner/IT's distorted 270% RoE; user chose 2-panel). md parity = the YoY table via
+  `_fin_table_lines` (no chart in markdown). **GUARDRAIL — actuals only:** the CIQ Estimates panel DOES
+  carry forward RoE/RoA, but on a DIFFERENT basis (numbers don't reconcile with the Ratios actuals) and
+  NO RoCE — splicing would be a layer-mix + false trend, so the exhibit is single-source actuals, no
+  estimate shading, no extrapolation (no-conclude). Surgically re-derived the committed dossiers (no LLM):
+  9/10 PRESENT (FUBO 5 periods — later IPO; **AORT UNKNOWN** — its CIQ Ratios sheet is malformed, so it
+  keeps its prior no-ratios state, no regression). Verified in preview MVST (negative) + IT (distorted
+  RoE) + BRBR (no RoE row → RoCE+RoA only). ruff + mypy --strict + pytest(not network) green (+4 pins:
+  extractor frozen-fixture, e2e reconcile-vs-key_ratios + actuals-only, md table-replaces-fact, JS 2-panel
+  static). Code + artifacts in separate commits.
   **DOSSIER-TOP REDESIGN — BUILT + VERIFIED, PR OPEN (feat/dossier-brief-header, 2026-07-11).** The
   header + Brief repeated facts (ticker·name in both the title and brief-idn; market cap in brief-meta
   AND stock-info; the no-verdict framing twice). SLIMMED the header to the title + ONE line
