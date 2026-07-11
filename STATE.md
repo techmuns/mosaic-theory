@@ -3093,6 +3093,15 @@ Recommendation/Target slot is the HUMAN's ("not yet logged"); consensus, the imp
   `_stock_info_line`→`_brief_snapshot`, doc header slimmed; .md regenerated). Verified MVST/AORT/VRRM
   in the browser (side-by-side desktop, stacked mobile); ruff + mypy --strict + pytest(not network)
   green (+3 pins: web no-dup static, md snapshot present/omit, VRRM e2e).
+  FOLLOW-UP (same PR, code `fea169e` + .md `fdb3965`): dropped the teaser's own "Brief — first cut"
+  title (dup of the active tab) and the "machine read · not a verdict" pill (dup of the header +
+  footer framing). The machine READ now leads with its lean word — bold, Sentence-cased, tinted by
+  DIRECTION (bearish→danger red, bullish→live green, mixed/neutral→grey) via `machineReadHtml` (web)
+  / `_machine_read_md` (md, no tint). GUARDRAIL: still the machine's READ, not a verdict — the human's
+  Buy/Avoid stays "not yet logged — the human's call" in the Recommendation slot directly below, and
+  the header/footer keep the "no verdict" line; the tint encodes evidence sentiment, never BUY/AVOID.
+  Verified MVST=red "Strongly-bearish", AORT=grey "Mixed"; 10 .md re-rendered (lean-line only, no JSON
+  change); suite green (+1 pin: shared lean formatter, unit + phrasing-independent e2e sweep).
 
 **RC-1 primary-source text extraction — BUILT + VERIFIED, PR OPEN (feat/primary-source-text, 2026-07-06).**
 DETERMINISTIC (anchored, never LLM) parsers of the EX-99.1 release (A, `vinci/edgar/release_parse.py`) and
