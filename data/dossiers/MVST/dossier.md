@@ -56,7 +56,17 @@ _Key unknowns:_
 | EPS (GAAP, dil.) | -0.52 | -0.34 | -0.61 | -0.09 | -0.19 | 0.18 | 0.17 |
 | FCF ($M) | -136 | -117 | -65 | 18 | 40 | — | — |
 
-- **Key ratios (latest):** RoE -9.3%; RoCE 1.5%; RoA 1.2%; total debt/equity 0.70; current ratio 0.96; dividend: none (latest) [14]
+- **Return ratios — per fiscal period** — [14]  <!-- ds-table -->
+
+|  | FY21 | FY22 | FY23 | FY24 | FY25 | LTM |
+|---|---|---|---|---|---|---|
+| RoE % | -57.1% | -24.3% | -18.1% | -41.1% | -7.3% | -9.3% |
+| RoCE % | -24.5% | -12.3% | -8.7% | -2.2% | 3.3% | 1.5% |
+| RoA % | -17.9% | -10.1% | -6.5% | -1.6% | 2.6% | 1.2% |
+| Total debt/equity | 0.21x | 0.29x | 0.36x | 0.85x | 0.94x | 0.70x |
+| Current ratio | 4.02x | 2.16x | 1.06x | 1.30x | 0.92x | 0.96x |
+| Dividend/sh | none | none | none | none | none | none |
+
 
 ## Valuation
 - **Valuation (vs peers):** EV/EBITDA 11.1x vs peer median 14.5x (-23%); P/E NM vs peer median 39 [15]
@@ -535,7 +545,7 @@ _Source §: latest 10-K 0001628280-26-018264 · mvst20251231-ex1013.htm_
 [11] `CIQ leverage bases + release LTM adj-EBITDA/margins`
 [12] `8-K 0001628280-26-033601 EX-99.1`
 [13] `CIQ Financials→Income Statement + Cash Flow (annual) + Estimates→Trends (FY E)`
-[14] `CIQ Financials→Ratios (latest period)`
+[14] `CIQ Financials→Ratios (RoE / RoCE / RoA + leverage, multi-year columns)`
 [15] `CIQ Comparable Analysis→Trading Multiples (name vs peer Median)`
 [16] `CIQ Financials→Multiples (Close; last col = current, excluded from history)`
 [17] `CIQ Comparable Analysis→Financial Data (market-cap dispersion) + Business Description`

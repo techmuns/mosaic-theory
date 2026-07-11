@@ -2489,6 +2489,125 @@
       "status": "present",
       "note": null
     },
+    "return_ratios": {
+      "value": {
+        "columns": [
+          "FY21",
+          "FY22",
+          "FY23",
+          "FY24",
+          "FY25",
+          "LTM"
+        ],
+        "rows": [
+          {
+            "label": "RoE %",
+            "cells": [
+              "16.5%",
+              "16.4%",
+              "9.2%",
+              "6.1%",
+              "-37.7%",
+              "-38.9%"
+            ],
+            "values": [
+              0.16479,
+              0.163892,
+              0.091777,
+              0.061399,
+              -0.377037,
+              -0.389198
+            ]
+          },
+          {
+            "label": "RoCE %",
+            "cells": [
+              "8.8%",
+              "9.0%",
+              "5.3%",
+              "3.8%",
+              "4.2%",
+              "3.9%"
+            ],
+            "values": [
+              0.087621,
+              0.089781,
+              0.053411,
+              0.037599,
+              0.042216,
+              0.03918
+            ]
+          },
+          {
+            "label": "RoA %",
+            "cells": [
+              "6.8%",
+              "7.2%",
+              "4.3%",
+              "3.0%",
+              "3.3%",
+              "3.2%"
+            ],
+            "values": [
+              0.067824,
+              0.071647,
+              0.042854,
+              0.030088,
+              0.033252,
+              0.031685
+            ]
+          },
+          {
+            "label": "Total debt/equity",
+            "cells": [
+              "0.50x",
+              "1.01x",
+              "1.40x",
+              "1.39x",
+              "2.02x",
+              "2.04x"
+            ],
+            "values": []
+          },
+          {
+            "label": "Current ratio",
+            "cells": [
+              "1.59x",
+              "1.55x",
+              "1.38x",
+              "1.42x",
+              "1.40x",
+              "1.18x"
+            ],
+            "values": []
+          },
+          {
+            "label": "Dividend/sh",
+            "cells": [
+              "none",
+              "3.10",
+              "0.10",
+              "0.10",
+              "0.10",
+              "0.09"
+            ],
+            "values": []
+          }
+        ],
+        "note": "",
+        "is_estimate": [
+          false,
+          false,
+          false,
+          false,
+          false,
+          false
+        ]
+      },
+      "source_ref": "CIQ Financials→Ratios (RoE / RoCE / RoA + leverage, multi-year columns)",
+      "status": "present",
+      "note": null
+    },
     "stock_info": {
       "price": {
         "value": 21.38,

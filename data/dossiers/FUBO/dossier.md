@@ -54,7 +54,17 @@ _Key unknowns:_
 | EPS (GAAP, dil.) | — | — | — | — | -2.88 | -1.40 | 0.01 |
 | FCF ($M) | — | -31 | -81 | -108 | -131 | — | — |
 
-- **Key ratios (latest):** RoE -5.7%; RoCE -3.3%; RoA -2.5%; total debt/equity 0.15; current ratio 0.99; dividend: none (latest) [13]
+- **Return ratios — per fiscal period** — [13]  <!-- ds-table -->
+
+|  | FY22 | FY23 | FY24 | FY25 | LTM |
+|---|---|---|---|---|---|
+| RoE % | — | -17.9% | -17.4% | -17.2% | -5.7% |
+| RoCE % | — | -11.2% | -10.9% | -10.7% | -3.3% |
+| RoA % | — | -8.3% | -7.7% | -7.5% | -2.5% |
+| Total debt/equity | — | — | — | — | 0.15x |
+| Current ratio | 0.00x | 0.01x | 0.01x | 0.02x | 0.99x |
+| Dividend/sh | none | none | none | none | none |
+
 
 ## Valuation
 - **Valuation (vs peers):** EV/EBITDA NM vs peer median 10.6; P/E NM vs peer median 23.7 [14]
@@ -451,7 +461,7 @@ _QoQ/YoY same-basis only; (R) = Reclassified_
 [10] `CIQ Comparable Analysis→Implied Valuation (= Implied Equity Value, basis × Low/Median/Mean/High) · as-of 2026-06-24`
 [11] `CIQ Financials→Cash Flow 'Levered Free Cash Flow' [LTM 12 months Mar-31-2026]`
 [12] `CIQ Financials→Income Statement + Cash Flow (annual) + Estimates→Trends (FY E)`
-[13] `CIQ Financials→Ratios (latest period)`
+[13] `CIQ Financials→Ratios (RoE / RoCE / RoA + leverage, multi-year columns)`
 [14] `CIQ Comparable Analysis→Trading Multiples (name vs peer Median)`
 [15] `CIQ Comparable Analysis→Financial Data (market-cap dispersion) + Business Description`
 [16] `CIQ Estimates→Multiples (forward-multiple ladder: NTM + FY26→FY33)`

@@ -4597,6 +4597,12 @@
       "status": "unknown",
       "note": "no key ratios found in the CIQ Ratios sheet"
     },
+    "return_ratios": {
+      "value": null,
+      "source_ref": null,
+      "status": "unknown",
+      "note": "Ratios: no Fiscal Period header"
+    },
     "stock_info": {
       "price": {
         "value": 23.58,

@@ -54,7 +54,15 @@ _Key unknowns:_
 | EPS (GAAP, dil.) | 0.88 | 1.23 | 1.86 | 1.68 | 1.28 | 1.40 | 1.44 |
 | FCF ($M) | -5 | 192 | 162 | 224 | 183 | — | — |
 
-- **Key ratios (latest):** RoCE 25.6%; RoA 18.5%; current ratio 2.52; dividend: none (latest) [13]
+- **Return ratios — per fiscal period** — [13]  <!-- ds-table -->
+
+|  | FY21 | FY22 | FY23 | FY24 | FY25 | LTM |
+|---|---|---|---|---|---|---|
+| RoCE % | 23.1% | 23.9% | 33.4% | 43.1% | 34.5% | 25.6% |
+| RoA % | 18.8% | 18.9% | 26.3% | 33.1% | 25.1% | 18.5% |
+| Current ratio | 1.54x | 2.94x | 2.82x | 2.91x | 2.35x | 2.52x |
+| Dividend/sh | none | none | none | none | none | none |
+
 
 ## Valuation
 - **Valuation (vs peers):** EV/EBITDA 7.9x vs peer median 6.2x (+26%); P/E 8.8x vs peer median 19.3x (-54%) [14]
@@ -478,7 +486,7 @@ _Source §: 8-K 0001772016-21-000029 · ex10-1_amend2creditagmt.htm_
 [10] `CIQ Comparable Analysis→Operating Statistics (name vs peer median: growth/margin/leverage/beta)`
 [11] `CIQ Estimates→Trends (current-FY consensus path; ragged, absent lookbacks n/a)`
 [12] `CIQ Financials→Income Statement + Cash Flow (annual) + Estimates→Trends (FY E)`
-[13] `CIQ Financials→Ratios (latest period)`
+[13] `CIQ Financials→Ratios (RoE / RoCE / RoA + leverage, multi-year columns)`
 [14] `CIQ Comparable Analysis→Trading Multiples (name vs peer Median)`
 [15] `CIQ Financials→Multiples (Close; last col = current, excluded from history)`
 [16] `CIQ Comparable Analysis→Financial Data (market-cap dispersion) + Business Description`
