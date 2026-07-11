@@ -2044,10 +2044,10 @@ def test_customer_concentration_floor_keeps_ge_qualifier() -> None:
     assert line2 is not None and "top customer 52%" in line2 and "≥" not in line2
 
 
-def test_stock_info_line_renders_present_and_omits_unknown() -> None:
-    """(Phase-2) The Brief stock-info line renders each PRESENT field and OMITS an UNKNOWN one
-    (fail-honest — never a fabricated placeholder); all-UNKNOWN → no line. Value pin on a FROZEN
-    fixture (the redraw-safe layer for specific values)."""
+def test_brief_snapshot_renders_present_and_omits_unknown() -> None:
+    """(Phase-2 / redesign) The Brief snapshot line leads with the exchange, renders each PRESENT
+    stock-info field + CIK, and OMITS an UNKNOWN one (fail-honest — never a fabricated placeholder);
+    nothing present → no line. Value pin on a FROZEN fixture (the redraw-safe layer)."""
     import datetime as _dt
     p, u = ds.Sourced.present, ds.Sourced.unknown
     si = ds.StockInfo(
@@ -2055,19 +2055,38 @@ def test_stock_info_line_renders_present_and_omits_unknown() -> None:
         low_52w=p(3.40, source_ref="EOD"), shares_out=p(151906653.0, source_ref="EDGAR"),
         book_value_ps=p(1.79, source_ref="CIQ"), market_cap=p(668.4, source_ref="CIQ"),
         as_of=_dt.date(2026, 7, 8))
-    body = " ".join(dr._stock_info_line(si))
-    assert "CMP $4.22 (2026-07-08)" in body
+    body = " ".join(dr._brief_snapshot("Nasdaq", "0001682745", si))
+    assert body.startswith("- **Snapshot:** Nasdaq · ")  # exchange leads
+    assert "CMP $4.22 (2026-07-08)" in body and "cap $668M" in body
     assert "52-wk $3.40–$25.83" in body
-    assert "shares 151.9M" in body and "book value/sh $1.79" in body and "mkt cap $668M" in body
+    assert "shares 151.9M" in body and "book value/sh $1.79" in body
+    assert "CIK 0001682745" in body  # CIK consolidated into the snapshot (was the header)
     # fail-honest: an UNKNOWN price/book → those chunks drop; the rest still render
     si2 = si.model_copy(update={"price": u(note="no bars"), "book_value_ps": u(note="no CIQ")})
-    body2 = " ".join(dr._stock_info_line(si2))
+    body2 = " ".join(dr._brief_snapshot("NYSE", None, si2))
     assert "CMP" not in body2 and "book value/sh" not in body2
-    assert "52-wk $3.40–$25.83" in body2 and "shares 151.9M" in body2
-    # all-UNKNOWN → the whole line is omitted (no empty box)
+    assert "52-wk $3.40–$25.83" in body2 and "shares 151.9M" in body2 and "NYSE" in body2
+    # nothing present at all → the whole line is omitted (no empty snapshot)
     allu = ds.StockInfo(price=u(note="x"), high_52w=u(note="x"), low_52w=u(note="x"),
                         shares_out=u(note="x"), book_value_ps=u(note="x"), market_cap=u(note="x"))
-    assert dr._stock_info_line(allu) == []
+    assert dr._brief_snapshot(None, None, allu) == []
+
+
+def test_dossier_top_redesign_no_duplication_static() -> None:
+    """(redesign) The dossier top: a SLIM header (title + one 'no verdict' meta line, no queue rank)
+    and a Brief teaser split into a 2/3 narrative + a 1/3 snapshot table. The identity, market cap,
+    and framing must NOT repeat across the two — the clutter this redesign removes. Node-free source
+    pins (the render is deterministic HTML)."""
+    src = Path("frontend/views/shared/dossier.js").read_text()
+    # the 2/3 + 1/3 layout + the snapshot
+    assert 'class="brief-body"' in src and "briefSnapshot(d, m)" in src
+    assert 'class="brief-snap"' in src and 'class="brief-snap-idn"' in src
+    # the OLD duplicated bits are gone (idn dup, meta cap dup, inline stock line)
+    assert '"brief-idn"' not in src and '"brief-meta"' not in src and '"brief-stock"' not in src
+    assert "function stockInfoLine" not in src
+    # header slimmed: no queue rank, one terse 'no verdict' meta line
+    assert "Queue rank" not in src
+    assert "Assembled facts, <b>no verdict</b>" in src
 
 
 def test_vrrm_brief_stock_info_panel_present_and_cited() -> None:
@@ -2083,10 +2102,11 @@ def test_vrrm_brief_stock_info_panel_present_and_cited() -> None:
     if d.mechanical.stock_info is None:
         pytest.skip("VRRM not re-assembled with stock_info yet")
     lines = dr.render_markdown(d).splitlines()
-    idx = next((i for i, ln in enumerate(lines) if "**Stock info:**" in ln), None)
-    assert idx is not None, "no Stock-info line in VRRM Brief"
+    idx = next((i for i, ln in enumerate(lines) if "**Snapshot:**" in ln), None)
+    assert idx is not None, "no Snapshot line in VRRM Brief"
     assert "CMP $" in lines[idx]  # VRRM has committed EOD bars
-    assert _re.search(r"\[\d+\]", lines[idx]), "stock-info not source-bound (no endnote [n])"
+    assert "CIK " in lines[idx]  # CIK now consolidated into the snapshot
+    assert _re.search(r"\[\d+\]", lines[idx]), "snapshot not source-bound (no endnote [n])"
 
 
 def test_endnotes_complete_on_every_committed_dossier() -> None:

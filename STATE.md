@@ -3081,6 +3081,18 @@ Recommendation/Target slot is the HUMAN's ("not yet logged"); consensus, the imp
   null-fallback robustness. Merged to main IN ORDER: #104 (5fd72d9) → #105 (df42f6e) → #106. Suite green
   at each gate. **Incident→invariant:** chart-out-confidents-string → a JS↔Python confidence-threshold
   coherence test SHIPPED.
+  **DOSSIER-TOP REDESIGN — BUILT + VERIFIED, PR OPEN (feat/dossier-brief-header, 2026-07-11).** The
+  header + Brief repeated facts (ticker·name in both the title and brief-idn; market cap in brief-meta
+  AND stock-info; the no-verdict framing twice). SLIMMED the header to the title + ONE line
+  (`Assembled facts, no verdict · data as of X · assembled Y · model`) — dropped queue rank, CIK, the
+  verbose framing + parentheticals. Rebuilt the Brief teaser as a 2/3 NARRATIVE (business one-liner ·
+  machine read · the human's Recommendation/Target slot) beside a 1/3 SNAPSHOT table (bold identity +
+  exchange · CMP · market cap · 52-wk · shares · book/sh · CIK — the MOFSL stock-info standard),
+  responsive→stacks <640px. CIK moved title→snapshot; GICS-industry dropped. Fail-honest: AORT omits
+  the Book/sh row (no CIQ Book Value/Share). RENDER-ONLY (no data re-derive) + md↔web parity (render.py
+  `_stock_info_line`→`_brief_snapshot`, doc header slimmed; .md regenerated). Verified MVST/AORT/VRRM
+  in the browser (side-by-side desktop, stacked mobile); ruff + mypy --strict + pytest(not network)
+  green (+3 pins: web no-dup static, md snapshot present/omit, VRRM e2e).
 
 **RC-1 primary-source text extraction — BUILT + VERIFIED, PR OPEN (feat/primary-source-text, 2026-07-06).**
 DETERMINISTIC (anchored, never LLM) parsers of the EX-99.1 release (A, `vinci/edgar/release_parse.py`) and
