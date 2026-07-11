@@ -1,17 +1,16 @@
 # Dossier — Vital Farms, Inc. (VITL)
 
-_Finalist rank 3 · ref 2026-07-06 · assembled 2026-07-10 07:04 UTC · LLM claude-opus-4-8_
+_Assembled facts, no verdict · data as of 2026-07-06 · assembled 2026-07-10 07:04 UTC · claude-opus-4-8_
 
 # Brief — first cut
 
-**VITL · Vital Farms, Inc.**
-_Nasdaq · Packaged Foods and Meats · cap $480M_
 Vital Farms, Inc., a food company, packages, markets, and distributes shell eggs, butter, and other products in the United States.
-- **Stock info:** CMP $12.32 (2026-07-08) · 52-wk $7.95–$53.12 · shares 42.8M · book value/sh $7.52 · mkt cap $480M [1]
+
+**Machine read** _(not a verdict)_ — strongly-bearish — forward EBITDA gutted -97% to ~$4M with cash burn and a founder exit; the low trailing multiple is optical, not cheap.
 
 **Recommendation / Target:** _not yet logged — the human's call (Buy / Avoid + target)_
 
-**Machine read** _(not a verdict)_ — strongly-bearish — forward EBITDA gutted -97% to ~$4M with cash burn and a founder exit; the low trailing multiple is optical, not cheap.
+- **Snapshot:** Nasdaq · CMP $12.32 (2026-07-08) · cap $480M · 52-wk $7.95–$53.12 · shares 42.8M · book value/sh $7.52 · CIK 0001579733 [1]
 
 ## The setup
 Fell -57.3% over 180d, idiosyncratic (-74.0% vs market) — an overshoot candidate.
@@ -453,7 +452,7 @@ _QoQ/YoY same-basis only; (R) = Reclassified_
 
 # Sources
 
-[1] `EOD close/52-wk · EDGAR XBRL shares · CIQ book value + market cap`
+[1] `exchange · EOD · EDGAR shares · CIQ book value + cap`
 [2] `EOD name−IWM 180d (screen data-record, G2)`
 [3] `CIQ Net Debt $3M [Q1 Mar-29-2026] ÷ CIQ EBITDA $80M [LTM 12 months Mar-29-2026]`
 [4] `EDGAR XBRL FCF sign (screen data-record)`

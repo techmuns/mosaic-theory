@@ -1,17 +1,16 @@
 # Dossier — EPAM Systems, Inc. (EPAM)
 
-_Finalist rank 11 · ref 2026-07-06 · assembled 2026-07-10 06:59 UTC · LLM claude-opus-4-8_
+_Assembled facts, no verdict · data as of 2026-07-06 · assembled 2026-07-10 06:59 UTC · claude-opus-4-8_
 
 # Brief — first cut
 
-**EPAM · EPAM Systems, Inc.**
-_NYSE · IT Consulting and Other Services · cap $4.0B_
 EPAM Systems, Inc. provides digital platform engineering and software development services worldwide.
-- **Stock info:** CMP $85.99 (2026-07-08) · 52-wk $73.06–$222.53 · shares 52.2M · book value/sh $65.04 · mkt cap $4.0B [1]
+
+**Machine read** _(not a verdict)_ — mixed — a net-cash, still-growing, FCF-positive franchise at a historic-floor multiple, set against sharply negative forward revenue revisions and multi-year margin erosion.
 
 **Recommendation / Target:** _not yet logged — the human's call (Buy / Avoid + target)_
 
-**Machine read** _(not a verdict)_ — mixed — a net-cash, still-growing, FCF-positive franchise at a historic-floor multiple, set against sharply negative forward revenue revisions and multi-year margin erosion.
+- **Snapshot:** NYSE · CMP $85.99 (2026-07-08) · cap $4.0B · 52-wk $73.06–$222.53 · shares 52.2M · book value/sh $65.04 · CIK 0001352010 [1]
 
 ## The setup
 Fell -60.2% over 180d, idiosyncratic (-76.0% vs market) — an overshoot candidate.
@@ -463,7 +462,7 @@ _Source §: 8-K 0001352010-17-000022 · exhibit10-1epamcreditagree.htm · amende
 
 # Sources
 
-[1] `EOD close/52-wk · EDGAR XBRL shares · CIQ book value + market cap`
+[1] `exchange · EOD · EDGAR shares · CIQ book value + cap`
 [2] `EOD name−IWM 180d (screen data-record, G2)`
 [3] `CIQ Net Debt $-749M [Q1 Mar-31-2026] ÷ CIQ EBITDA $732M [LTM 12 months Mar-31-2026]`
 [4] `EDGAR XBRL FCF sign (screen data-record)`

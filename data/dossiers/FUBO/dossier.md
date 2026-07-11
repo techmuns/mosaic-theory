@@ -1,17 +1,16 @@
 # Dossier — FuboTV Inc. (FUBO)
 
-_Finalist rank 2 · ref 2026-07-06 · assembled 2026-07-10 07:00 UTC · LLM claude-opus-4-8_
+_Assembled facts, no verdict · data as of 2026-07-06 · assembled 2026-07-10 07:00 UTC · claude-opus-4-8_
 
 # Brief — first cut
 
-**FUBO · FuboTV Inc.**
-_NYSE · Interactive Media and Services · cap $256M_
 FuboTV Inc. operates as a live TV streaming platform company in the United States and internationally.
-- **Stock info:** CMP $9.56 (2026-07-08) · 52-wk $7.95–$56.64 · shares 342.4M · book value/sh $27.58 · mkt cap $256M [1]
+
+**Machine read** _(not a verdict)_ — mixed — a real revenue/EBITDA inflection and light leverage set against deep, worsening cash burn with no disclosed runway.
 
 **Recommendation / Target:** _not yet logged — the human's call (Buy / Avoid + target)_
 
-**Machine read** _(not a verdict)_ — mixed — a real revenue/EBITDA inflection and light leverage set against deep, worsening cash burn with no disclosed runway.
+- **Snapshot:** NYSE · CMP $9.56 (2026-07-08) · cap $256M · 52-wk $7.95–$56.64 · shares 342.4M · book value/sh $27.58 · CIK 0001484769 [1]
 
 ## The setup
 Fell -65.9% over 180d, idiosyncratic (-82.5% vs market) — an overshoot candidate.
@@ -440,7 +439,7 @@ _QoQ/YoY same-basis only; (R) = Reclassified_
 
 # Sources
 
-[1] `EOD close/52-wk · EDGAR XBRL shares · CIQ book value + market cap`
+[1] `exchange · EOD · EDGAR shares · CIQ book value + cap`
 [2] `EOD name−IWM 180d (screen data-record, G2)`
 [3] `EDGAR XBRL FCF sign (screen data-record)`
 [4] `CIQ Financials→Segments (Revenues, latest annual column)`

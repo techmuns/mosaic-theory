@@ -1,17 +1,16 @@
 # Dossier — VERRA MOBILITY Corp (VRRM)
 
-_Finalist rank 1 · ref 2026-07-06 · assembled 2026-07-10 07:07 UTC · LLM claude-opus-4-8_
+_Assembled facts, no verdict · data as of 2026-07-06 · assembled 2026-07-10 07:07 UTC · claude-opus-4-8_
 
 # Brief — first cut
 
-**VRRM · VERRA MOBILITY Corp**
-_Nasdaq · Data Processing and Outsourced Services · cap $668M_
 Verra Mobility Corporation provides smart mobility technology solutions in the United States, Australia, Europe, and Canada.
-- **Stock info:** CMP $4.22 (2026-07-08) · 52-wk $3.40–$25.73 · shares 151.9M · book value/sh $1.79 · mkt cap $668M [1]
+
+**Machine read** _(not a verdict)_ — mixed — a genuine permanent customer-loss step-down and cut forward estimates offset by a still-FCF-positive, high-margin, self-funding base at trough multiples.
 
 **Recommendation / Target:** _not yet logged — the human's call (Buy / Avoid + target)_
 
-**Machine read** _(not a verdict)_ — mixed — a genuine permanent customer-loss step-down and cut forward estimates offset by a still-FCF-positive, high-margin, self-funding base at trough multiples.
+- **Snapshot:** Nasdaq · CMP $4.22 (2026-07-08) · cap $668M · 52-wk $3.40–$25.73 · shares 151.9M · book value/sh $1.79 · CIK 0001682745 [1]
 
 ## The setup
 Fell -81.1% over 180d, idiosyncratic (-97.7% vs market) — an overshoot candidate.
@@ -481,7 +480,7 @@ _Source §: 8-K 0001564590-18-024644 · vrrm-ex1010_20.htm_
 
 # Sources
 
-[1] `EOD close/52-wk · EDGAR XBRL shares · CIQ book value + market cap`
+[1] `exchange · EOD · EDGAR shares · CIQ book value + cap`
 [2] `EOD name−IWM 180d (screen data-record, G2)`
 [3] `CIQ Net Debt $1,046M [Q1 Mar-31-2026] ÷ CIQ EBITDA $358M [LTM 12 months Mar-31-2026]`
 [4] `EDGAR XBRL FCF sign (screen data-record)`

@@ -1,17 +1,16 @@
 # Dossier — Microvast Holdings, Inc. (MVST)
 
-_Finalist rank 228 · ref 2026-07-06 · assembled 2026-07-10 07:06 UTC · LLM claude-opus-4-8_
+_Assembled facts, no verdict · data as of 2026-07-06 · assembled 2026-07-10 07:06 UTC · claude-opus-4-8_
 
 # Brief — first cut
 
-**MVST · Microvast Holdings, Inc.**
-_Nasdaq · Construction Machinery and Heavy Transportation Equipment · cap $423M_
 Microvast Holdings, Inc. engages in the design, development, and manufacturing of battery components and systems primarily for electric commercial vehicles and energy storage systems.
-- **Stock info:** CMP $1.08 (2026-07-08) · 52-wk $1.03–$7.12 · shares 333.2M · book value/sh $1.40 · mkt cap $423M [1]
+
+**Machine read** _(not a verdict)_ — strongly-bearish — stated going-concern doubt with a near-term maturity wall against thin cash while adjusted EBITDA has turned negative and revenue is contracting.
 
 **Recommendation / Target:** _not yet logged — the human's call (Buy / Avoid + target)_
 
-**Machine read** _(not a verdict)_ — strongly-bearish — stated going-concern doubt with a near-term maturity wall against thin cash while adjusted EBITDA has turned negative and revenue is contracting.
+- **Snapshot:** Nasdaq · CMP $1.08 (2026-07-08) · cap $423M · 52-wk $1.03–$7.12 · shares 333.2M · book value/sh $1.40 · CIK 0001760689 [1]
 
 ## The setup
 Fell -62.9% over 180d, idiosyncratic (-80.9% vs market) — an overshoot candidate.
@@ -523,7 +522,7 @@ _Source §: latest 10-K 0001628280-26-018264 · mvst20251231-ex1013.htm_
 
 # Sources
 
-[1] `EOD close/52-wk · EDGAR XBRL shares · CIQ book value + market cap`
+[1] `exchange · EOD · EDGAR shares · CIQ book value + cap`
 [2] `EOD name−IWM 180d (screen data-record, G2)`
 [3] `CIQ Net Debt $200M [Q1 Mar-31-2026] ÷ CIQ EBITDA $52M [LTM 12 months Mar-31-2026]`
 [4] `EDGAR XBRL FCF sign (screen data-record)`

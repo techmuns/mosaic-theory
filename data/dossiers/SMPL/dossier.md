@@ -1,17 +1,16 @@
 # Dossier — Simply Good Foods Co (SMPL)
 
-_Finalist rank 21 · ref 2026-07-06 · assembled 2026-07-10 07:03 UTC · LLM claude-opus-4-8_
+_Assembled facts, no verdict · data as of 2026-07-06 · assembled 2026-07-10 07:03 UTC · claude-opus-4-8_
 
 # Brief — first cut
 
-**SMPL · Simply Good Foods Co**
-_Nasdaq · Packaged Foods and Meats · cap $1.1B_
 The Simply Good Foods Company, a consumer-packaged food and beverage company, engages in the development, marketing, and sale of snacks and meal replacements, and other products in North America and internationally.
-- **Stock info:** CMP $12.84 (2026-07-08) · 52-wk $10.21–$34.19 · shares 88.5M · book value/sh $16.46 · mkt cap $1.1B [1]
+
+**Machine read** _(not a verdict)_ — mixed — a genuine ~26% forward-earnings reset with no floor yet, against a conservative, self-funding balance sheet and single-event drawdown.
 
 **Recommendation / Target:** _not yet logged — the human's call (Buy / Avoid + target)_
 
-**Machine read** _(not a verdict)_ — mixed — a genuine ~26% forward-earnings reset with no floor yet, against a conservative, self-funding balance sheet and single-event drawdown.
+- **Snapshot:** Nasdaq · CMP $12.84 (2026-07-08) · cap $1.1B · 52-wk $10.21–$34.19 · shares 88.5M · book value/sh $16.46 · CIK 0001702744 [1]
 
 ## The setup
 Fell -33.1% over 180d, idiosyncratic (-45.6% vs market) — an overshoot candidate.
@@ -446,7 +445,7 @@ _QoQ/YoY same-basis only; (R) = Reclassified_
 
 # Sources
 
-[1] `EOD close/52-wk · EDGAR XBRL shares · CIQ book value + market cap`
+[1] `exchange · EOD · EDGAR shares · CIQ book value + cap`
 [2] `EOD name−IWM 180d (screen data-record, G2)`
 [3] `CIQ Net Debt $342M [FQ2/CQ1 Feb-28-2026] ÷ CIQ EBITDA $236M [LTM 12 months Feb-28-2026]`
 [4] `EDGAR XBRL FCF sign (screen data-record)`
