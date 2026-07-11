@@ -106,6 +106,11 @@ flag it. That incremental blur is the failure mode this whole project is built t
   The **Financial-Summary appendix is decision data → it STAYS in print** (it is not provenance). Provenance
   appendices are the audit tier → on-demand. Curating never deletes a fact — a moved fact is reachable in
   the expanded web on-demand tier or the JSON. (Discipline/methodology language lives in `source_ref`s + JSON.)
+- **Exhibits cite via ENDNOTES, never an inline caption.** An SVG exhibit's provenance is a `citeMark` →
+  the tier's Sources list (where every other cite resolves) — NEVER an inline `Source: …` caption under the
+  chart. The exhibit visualizes data already cited by its sibling table/fact (financial_summary /
+  range_position / trajectory), so a caption just duplicates the source in the wrong place. (Recurred on
+  three exhibits; guarded by a `>Source:`-scan test.)
 
 ## Stack & layout (orientation)
 

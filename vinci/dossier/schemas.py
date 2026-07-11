@@ -161,6 +161,10 @@ class OwnHistoryBand(BaseModel):
     percentile: float  # 0..1 — fraction of trailing history ≤ current
     n_closes: int  # trailing closes, current excluded (matches range_position's "over N closes")
     as_of: str | None = None
+    # (Phase-3b) line chart: mean of trailing history ('avg' line; low/high = min/max) + the FULL
+    # (date, multiple) close series (current = last point). Additive defaults for round-trip.
+    mean: float | None = None
+    series: list[tuple[str, float]] = Field(default_factory=list)
 
     model_config = {"frozen": True}
 

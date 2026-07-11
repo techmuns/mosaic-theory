@@ -3149,6 +3149,25 @@ Recommendation/Target slot is the HUMAN's ("not yet logged"); consensus, the imp
   the header/footer keep the "no verdict" line; the tint encodes evidence sentiment, never BUY/AVOID.
   Verified MVST=red "Strongly-bearish", AORT=grey "Mixed"; 10 .md re-rendered (lean-line only, no JSON
   change); suite green (+1 pin: shared lean formatter, unit + phrasing-independent e2e sweep).
+  **OWN-HISTORY LINE CHART — BUILT + VERIFIED, PR OPEN (feat/own-history-line, 2026-07-10).** Replaced
+  the own-history range-BAR with the institutional "multiple band" — a TIME-SERIES LINE of each multiple
+  over its trailing quarterly closes (the MOFSL/sell-side standard), lean form (mean/min/max reference
+  levels, no SD), EV/EBITDA + P/E side-by-side (one wide panel when a name has only one), log-scaled
+  (tames a P/E blown out by a near-zero-EPS quarter). Shows the PATH (de-rate/re-rate, cyclical
+  position), not just the snapshot. Data = the SAME quarterly closes the band collapsed — exposed as a
+  new structured `OwnHistoryBand.series` + `.mean` (shared _own_history_band, no drift). Honest-data
+  note: ours is ~19 quarterly TRAILING closes / ~5y (7/9 names ≥8 closes → clean; MVST 4 = sparse; MVST/
+  AORT EV-only), coarser than MOFSL's monthly-forward. Keeps the <8-close confidence de-escalation
+  (grey current + footnote). Artifacts: own_history SURGICALLY re-derived (deterministic; synthesis +
+  every other field byte-identical; NO LLM re-run). Verified VRRM (2 panels, de-rating below floor),
+  MVST (sparse grey), AORT (confident red ▼); ruff + mypy --strict + pytest(not network) green.
+  **Polish pass (review):** humanized the exhibit subtitle; a SINGLE-metric name keeps a normal panel
+  width (W=430, not full-bleed 760 — full-bleed broke the familiar line aspect); +breathing room
+  (margin 18/16). **Incident→invariant — inline exhibit source captions:** three exhibits (rev/EBITDA,
+  own-history, ROIC) each grew an inline `Source: …` caption instead of citing via an endnote → SHIPPED
+  a `>Source:`-scan guard (`test_exhibits_cite_via_endnotes_not_inline_source_caption`) + a CLAUDE.md
+  rule (exhibits cite via endnotes → Sources list, never an inline caption; the sibling table/fact
+  already cites the data). All three captions removed; sources now resolve in the Sources list.
 
 **RC-1 primary-source text extraction — BUILT + VERIFIED, PR OPEN (feat/primary-source-text, 2026-07-06).**
 DETERMINISTIC (anchored, never LLM) parsers of the EX-99.1 release (A, `vinci/edgar/release_parse.py`) and
