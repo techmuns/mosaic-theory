@@ -6,7 +6,7 @@ _Assembled facts, no verdict · data as of 2026-07-06 · assembled 2026-07-10 07
 
 Microvast Holdings, Inc. engages in the design, development, and manufacturing of battery components and systems primarily for electric commercial vehicles and energy storage systems.
 
-**Machine read** _(not a verdict)_ — strongly-bearish — stated going-concern doubt with a near-term maturity wall against thin cash while adjusted EBITDA has turned negative and revenue is contracting.
+**Strongly-bearish** — stated going-concern doubt with a near-term maturity wall against thin cash while adjusted EBITDA has turned negative and revenue is contracting.
 
 **Recommendation / Target:** _not yet logged — the human's call (Buy / Avoid + target)_
 

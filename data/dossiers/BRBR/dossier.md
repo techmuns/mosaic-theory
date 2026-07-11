@@ -6,7 +6,7 @@ _Assembled facts, no verdict · data as of 2026-07-06 · assembled 2026-07-10 06
 
 BellRing Brands, Inc., together with its subsidiaries, provides various nutrition products in the United States.
 
-**Machine read** _(not a verdict)_ — strongly-bearish — a broad, sustained FY26 earnings reset (EBITDA -41%) atop elevated leverage and a largely earned peer discount.
+**Strongly-bearish** — a broad, sustained FY26 earnings reset (EBITDA -41%) atop elevated leverage and a largely earned peer discount.
 
 **Recommendation / Target:** _not yet logged — the human's call (Buy / Avoid + target)_
 

@@ -6,7 +6,7 @@ _Assembled facts, no verdict · data as of 2026-07-06 · assembled 2026-07-10 06
 
 EPAM Systems, Inc. provides digital platform engineering and software development services worldwide.
 
-**Machine read** _(not a verdict)_ — mixed — a net-cash, still-growing, FCF-positive franchise at a historic-floor multiple, set against sharply negative forward revenue revisions and multi-year margin erosion.
+**Mixed** — a net-cash, still-growing, FCF-positive franchise at a historic-floor multiple, set against sharply negative forward revenue revisions and multi-year margin erosion.
 
 **Recommendation / Target:** _not yet logged — the human's call (Buy / Avoid + target)_
 

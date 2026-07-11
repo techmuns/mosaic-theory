@@ -6,7 +6,7 @@ _Assembled facts, no verdict · data as of 2026-07-06 · assembled 2026-07-10 07
 
 Vital Farms, Inc., a food company, packages, markets, and distributes shell eggs, butter, and other products in the United States.
 
-**Machine read** _(not a verdict)_ — strongly-bearish — forward EBITDA gutted -97% to ~$4M with cash burn and a founder exit; the low trailing multiple is optical, not cheap.
+**Strongly-bearish** — forward EBITDA gutted -97% to ~$4M with cash burn and a founder exit; the low trailing multiple is optical, not cheap.
 
 **Recommendation / Target:** _not yet logged — the human's call (Buy / Avoid + target)_
 

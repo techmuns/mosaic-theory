@@ -6,7 +6,7 @@ _Assembled facts, no verdict · data as of 2026-07-06 · assembled 2026-07-10 07
 
 Gartner, Inc. provides business and technology insights for decisions and performance on an organization’s mission-critical priorities in the United States, Canada, Europe, the Middle East, Africa, and internationally.
 
-**Machine read** _(not a verdict)_ — mixed — intact/rising absolute EBITDA, positive FCF and buybacks offset a genuine negative revenue turn with heavily negative forward revenue-revision breadth.
+**Mixed** — intact/rising absolute EBITDA, positive FCF and buybacks offset a genuine negative revenue turn with heavily negative forward revenue-revision breadth.
 
 **Recommendation / Target:** _not yet logged — the human's call (Buy / Avoid + target)_
 

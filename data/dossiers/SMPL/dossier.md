@@ -6,7 +6,7 @@ _Assembled facts, no verdict · data as of 2026-07-06 · assembled 2026-07-10 07
 
 The Simply Good Foods Company, a consumer-packaged food and beverage company, engages in the development, marketing, and sale of snacks and meal replacements, and other products in North America and internationally.
 
-**Machine read** _(not a verdict)_ — mixed — a genuine ~26% forward-earnings reset with no floor yet, against a conservative, self-funding balance sheet and single-event drawdown.
+**Mixed** — a genuine ~26% forward-earnings reset with no floor yet, against a conservative, self-funding balance sheet and single-event drawdown.
 
 **Recommendation / Target:** _not yet logged — the human's call (Buy / Avoid + target)_
 

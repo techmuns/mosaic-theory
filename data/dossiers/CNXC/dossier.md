@@ -6,7 +6,7 @@ _Assembled facts, no verdict · data as of 2026-07-06 · assembled 2026-07-10 06
 
 Concentrix Corporation designs, builds, and runs integrated customer experience (CX) solutions worldwide.
 
-**Machine read** _(not a verdict)_ — mixed — growing revenue and positive LTM FCF sit against a large GAAP loss, falling absolute EBITDA, high leverage and deep estimate cuts.
+**Mixed** — growing revenue and positive LTM FCF sit against a large GAAP loss, falling absolute EBITDA, high leverage and deep estimate cuts.
 
 **Recommendation / Target:** _not yet logged — the human's call (Buy / Avoid + target)_
 

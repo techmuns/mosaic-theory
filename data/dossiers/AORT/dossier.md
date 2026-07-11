@@ -6,7 +6,7 @@ _Assembled facts, no verdict · data as of 2026-07-06 · assembled 2026-07-10 06
 
 Artivion, Inc. manufactures, processes, and distributes medical devices and implantable human tissues worldwide.
 
-**Machine read** _(not a verdict)_ — mixed — growing absolute EBITDA and above-peer growth collide with a -78% forward-EPS collapse, worse-than-peer leverage, and negative forward FCF.
+**Mixed** — growing absolute EBITDA and above-peer growth collide with a -78% forward-EPS collapse, worse-than-peer leverage, and negative forward FCF.
 
 **Recommendation / Target:** _not yet logged — the human's call (Buy / Avoid + target)_
 

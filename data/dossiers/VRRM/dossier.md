@@ -6,7 +6,7 @@ _Assembled facts, no verdict · data as of 2026-07-06 · assembled 2026-07-10 07
 
 Verra Mobility Corporation provides smart mobility technology solutions in the United States, Australia, Europe, and Canada.
 
-**Machine read** _(not a verdict)_ — mixed — a genuine permanent customer-loss step-down and cut forward estimates offset by a still-FCF-positive, high-margin, self-funding base at trough multiples.
+**Mixed** — a genuine permanent customer-loss step-down and cut forward estimates offset by a still-FCF-positive, high-margin, self-funding base at trough multiples.
 
 **Recommendation / Target:** _not yet logged — the human's call (Buy / Avoid + target)_
 

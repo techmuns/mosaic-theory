@@ -6,7 +6,7 @@ _Assembled facts, no verdict · data as of 2026-07-06 · assembled 2026-07-10 07
 
 FuboTV Inc. operates as a live TV streaming platform company in the United States and internationally.
 
-**Machine read** _(not a verdict)_ — mixed — a real revenue/EBITDA inflection and light leverage set against deep, worsening cash burn with no disclosed runway.
+**Mixed** — a real revenue/EBITDA inflection and light leverage set against deep, worsening cash burn with no disclosed runway.
 
 **Recommendation / Target:** _not yet logged — the human's call (Buy / Avoid + target)_
 
