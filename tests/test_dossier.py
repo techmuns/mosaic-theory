@@ -3267,9 +3267,14 @@ def test_exhibit_shared_frame_tokens_no_node() -> None:
     them look different). NODE-FREE — the token wiring ships unverified when node is absent."""
     ex = Path("frontend/lib/exhibit.js").read_text()
     assert "export const EXHIBIT" in ex
-    for tok in ("H: 276", "cy0: 54, cy1: 234", "wSingle: 430, wDual: 760",
-                "title: 15", "panel: 11.5", "axis: 10.5", "xlabel: 10", "legend: 11.5"):
+    for tok in ("H: 276", "cy0: 54, cy1: 234", "wSingle: 430, wDual: 760", "title: 15",
+                "panel: 11.5", "axis: 10.5", "xlabel: 10", "point: 10", "legend: 11.5"):
         assert tok in ex, f"EXHIBIT frame token missing: {tok}"
+    # revEbitda's margin-point labels / haloes / card spacing consume fs.point + halo + margin — pin
+    # their VALUES too, so a change can't silently alter revEbitda's byte-identical output (which is
+    # otherwise only preview-verified, never regression-pinned). (#110 review)
+    assert 'stroke-width="2.8"' in ex  # EXHIBIT.halo
+    assert 'margin: "18px 0 16px"' in ex  # EXHIBIT.margin
     src = Path("frontend/views/shared/dossier.js").read_text()
     assert "EXHIBIT } from" in src  # imported alongside the scale/domain primitives
     assert "= EXHIBIT, W = EXHIBIT.wDual, H = EXHIBIT.H" in src  # revEbitda references the frame
