@@ -2876,6 +2876,13 @@ two-name analysis (mid/small-caps, opposite directions) mapped against this inve
 
 ## 5. Next steps (ordered, current)
 
+**OPERATOR TO-DO — own-history exhibit → shared EXHIBIT frame (in PR #108).** The shared `EXHIBIT`
+design-token frame (`lib/exhibit.js`, from feat/return-ratios-exhibit) is adopted by revEbitda +
+return-ratios. Own-history was NOT aligned there because **PR #108 is independently rebuilding it into a
+line chart** — a same-branch refactor would collide. When #108 lands (or is next revised), refactor the
+own-history exhibit to destructure `EXHIBIT` (canvas/y-band/fonts/halo/margin) so it joins the one visual
+system, and drop its inline `Source:` caption in favour of the endnote citation.
+
 **DOSSIER first-cut BRIEF redesign — BUILT + VERIFIED, PR OPEN (#98, feat/dossier-brief, 2026-07-09).**
 The per-ticker dossier is now a THREE-TIER surface — **Brief / Analysis / Appendix** (client-side tabs +
 PDF-scope dropdown), md↔web parity held. The **Brief** is reworked from a card into a market-standard
@@ -3099,6 +3106,19 @@ Recommendation/Target slot is the HUMAN's ("not yet logged"); consensus, the imp
   RoE) + BRBR (no RoE row → RoCE+RoA only). ruff + mypy --strict + pytest(not network) green (+4 pins:
   extractor frozen-fixture, e2e reconcile-vs-key_ratios + actuals-only, md table-replaces-fact, JS 2-panel
   static). Code + artifacts in separate commits.
+  EXHIBIT-CONSISTENCY FOLLOW-UP (same PR): the return-ratios exhibit had invented its own canvas/fonts,
+  so it didn't match the revenue/EBITDA exhibit beside it. (1) Rebuilt it on revEbitda's frame (760×276,
+  cy0/cy1 band, 15/11.5/10.5/10 fonts, slot-centred x, per-point labels, bottom legend); single-panel
+  (no-RoE, e.g. BRBR) renders at 430 wide, NOT stretched. (2) Extracted a shared **`EXHIBIT`** design-
+  token constant (frozen: canvas/y-band/wSingle/wDual/font-scale/halo/margin) into `lib/exhibit.js`;
+  **revEbitda + return-ratios both DESTRUCTURE it** (one source of truth — revEbitda output byte-identical,
+  bar labels stay 9.5). (3) **Removed the ROIC-trend CHART** (Trajectory) — a strict duplicate of the
+  return-ratios RoCE line (same data/source/periods); ROIC stays as a table row + the `roic_trend` series
+  stays in JSON. Incident→invariant: a JS static pin asserts both exhibits reference `EXHIBIT` (no
+  per-exhibit canvas literal remains); the phantom-negative-tick e2e moved onto the return-ratios exhibit
+  (IT, all-positive). ruff + pytest(not network) green; revEbitda unchanged + return-ratios/roicTrend
+  verified in preview. **Own-history NOT touched here** — PR #108 is independently rebuilding it into a
+  line chart; its EXHIBIT-token adoption belongs in #108 (see §Next-steps).
   **DOSSIER-TOP REDESIGN — BUILT + VERIFIED, PR OPEN (feat/dossier-brief-header, 2026-07-11).** The
   header + Brief repeated facts (ticker·name in both the title and brief-idn; market cap in brief-meta
   AND stock-info; the no-verdict framing twice). SLIMMED the header to the title + ONE line
