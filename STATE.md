@@ -2894,12 +2894,16 @@ forward-window cap. NOTE FOR THE RECORD: the "+N in JSON" is a DELIBERATE near-t
 bug — FY29+ are thin, long-dated consensus (often 1 analyst), kept machine-complete in JSON, mirroring
 the financial-summary capping its forward columns at FY27E. Do not "fix" it as a truncation defect.
 
-**OPERATOR TO-DO — own-history exhibit → shared EXHIBIT frame (in PR #108).** The shared `EXHIBIT`
-design-token frame (`lib/exhibit.js`, from feat/return-ratios-exhibit) is adopted by revEbitda +
-return-ratios. Own-history was NOT aligned there because **PR #108 is independently rebuilding it into a
-line chart** — a same-branch refactor would collide. When #108 lands (or is next revised), refactor the
-own-history exhibit to destructure `EXHIBIT` (canvas/y-band/fonts/halo/margin) so it joins the one visual
-system, and drop its inline `Source:` caption in favour of the endnote citation.
+**OWN-HISTORY EXHIBIT → shared EXHIBIT frame — DONE (feat/own-history-align-frame, PR OPEN, 2026-07-13).**
+After #108 + #110 merged, aligned the own-history exhibit ("Multiple vs its own trailing range") to the
+shared `EXHIBIT` frame so all three panel exhibits read as one system: destructures `EXHIBIT` (canvas
+760×276 / single 430 / cy0/cy1 band / fs / halo / margin), panels at 44→366 | 412→748, title 15, panel
+11.5, axis 10.5, x/point 10 — matching revEbitda/return-ratios. The chart's extra metadata (log scale ·
+as-of) + the low-confidence footnote moved BELOW the SVG (a muted caption) so the in-SVG frame stays
+identical (title-only, no subtitle band eating cy0); "log scale" gated on per-panel `allLog`; ref-level
+labels are value-only (dashed line marks the average) to fit the shared left inset. Confidence
+de-escalation preserved (MVST 4-close → grey ▼, not red). Verified in preview: CNXC (dual, matches
+return-ratios), MVST (single 430w + low-conf grey). Test pins all three exhibits destructure `EXHIBIT`.
 
 **DOSSIER first-cut BRIEF redesign — BUILT + VERIFIED, PR OPEN (#98, feat/dossier-brief, 2026-07-09).**
 The per-ticker dossier is now a THREE-TIER surface — **Brief / Analysis / Appendix** (client-side tabs +
