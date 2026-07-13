@@ -323,13 +323,15 @@ class ExposureFact(BaseModel, frozen=True):
 class ExposureBasis(StrEnum):
     """The STRONGEST disclosed basis across the stream — a factual read of disclosure concreteness,
     NOT a score/rank/membership verdict (assemble-not-conclude; pinned by the no-conclude guard).
-    REAL (FP bar) = binding-contract or quantified-revenue; committed/aspirational/none = not."""
+    REAL (FP bar) = binding-contract or quantified-revenue; committed/aspirational/none = not.
+    UNASSESSED_ERROR = a scan FAILED to assess this name (LLM/quota) — never a genuine none."""
 
     BINDING_CONTRACTS = "binding-contracts-with-terms"
     COMMITTED_CAPACITY = "committed-capacity-or-capex"
     QUANTIFIED_REVENUE = "quantified-revenue-share"
     ASPIRATIONAL = "aspirational-intent-only"
     NONE_DISCLOSED = "no-theme-exposure-disclosed"
+    UNASSESSED_ERROR = "unassessed-error"  # a scan/LLM FAILURE, not a genuine none (2026-07-13)
 
 
 class ExposureAssessment(BaseModel, frozen=True):

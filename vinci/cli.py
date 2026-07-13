@@ -629,6 +629,7 @@ def _cmd_themes_exposure(args: argparse.Namespace) -> int:
     from vinci.sec import build_efts_http, build_sec_http
     from vinci.themes import detection as det
     from vinci.themes.exposure import (
+        ScanAbortedError,
         grade_driving_fact,
         is_real_exposure,
         provenance_tag_of,
@@ -660,12 +661,21 @@ def _cmd_themes_exposure(args: argparse.Namespace) -> int:
     names = [(n.ticker, str(n.cik).zfill(10)) for n in universe if n.cik]
     ref = date.fromisoformat(args.ref) if args.ref else snap
     startdt = (ref - timedelta(days=args.window_days)).isoformat()
-    matched, results = scan_driver_exposure(
-        spec, names,
-        edgar=EdgarClient.from_config(cfg), sec_http=build_sec_http(cfg),
-        efts_http=build_efts_http(cfg), llm=AnthropicLlmClient.from_config(cfg),
-        startdt=startdt, enddt=ref.isoformat(), max_workers=args.workers, progress=stderr_reporter,
-    )
+    try:
+        matched, results = scan_driver_exposure(
+            spec, names,
+            edgar=EdgarClient.from_config(cfg), sec_http=build_sec_http(cfg),
+            efts_http=build_efts_http(cfg), llm=AnthropicLlmClient.from_config(cfg),
+            startdt=startdt, enddt=ref.isoformat(), max_workers=args.workers,
+            progress=stderr_reporter,
+        )
+    except ScanAbortedError as abort:  # 3 consecutive 4xx → stop, don't persist a poisoned queue
+        print(f"\n!! {abort}")
+        shown = ", ".join(abort.remaining[:40]) + (" …" if len(abort.remaining) > 40 else "")
+        print(f"   {len(abort.assessed)} assessed before abort; "
+              f"un-scanned ({len(abort.remaining)}): {shown}")
+        print("   NOT writing --out or scan-history — a poisoned queue is worse than none.")
+        return 2
     dumped = [a.model_dump(mode="json") for a in results]  # ONE dump — --out + history share bytes
     if args.out:  # audit-grade persistence — the full model_dump (facts + source_refs), no re-run
         Path(args.out).write_text("\n".join(json.dumps(r) for r in dumped))
@@ -697,7 +707,8 @@ def _cmd_themes_exposure(args: argparse.Namespace) -> int:
     tiers = [ExposureBasis.BINDING_CONTRACTS, ExposureBasis.QUANTIFIED_REVENUE,
              ExposureBasis.COMMITTED_CAPACITY, ExposureBasis.ASPIRATIONAL]
     dist = Counter(a.exposure_basis for a in results)
-    surfaced = [a for a in results if a.exposure_basis is not ExposureBasis.NONE_DISCLOSED]
+    _not_surfaced = (ExposureBasis.NONE_DISCLOSED, ExposureBasis.UNASSESSED_ERROR)
+    surfaced = [a for a in results if a.exposure_basis not in _not_surfaced]
     layers = Counter(_tag(f.fact) for a in surfaced if (f := grade_driving_fact(a)))
     errs = [a for a in results if any("error:" in fl.lower() for fl in a.flags)]
     print(f"\n=== Stage-3 · {spec.key} exposure scan ===")
@@ -707,6 +718,8 @@ def _cmd_themes_exposure(args: argparse.Namespace) -> int:
     for b in tiers:
         print(f"  {b.value:32} {dist.get(b, 0)}")
     print(f"  {'(no chain exposure disclosed)':32} {dist.get(ExposureBasis.NONE_DISCLOSED, 0)}")
+    print(f"  {'(UNASSESSED — scan error, NOT none)':32} "
+          f"{dist.get(ExposureBasis.UNASSESSED_ERROR, 0)}")
     print(f"\nVOLUME by chain layer — of the {len(surfaced)} surfaced:")
     for layer, n in layers.most_common():
         print(f"  {layer:22} {n}")

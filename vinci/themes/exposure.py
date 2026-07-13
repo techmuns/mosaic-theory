@@ -487,8 +487,8 @@ def assess_exposure(
     from the LLM): no cited concrete fact → ``no-theme-exposure-disclosed`` (fail-loud; a mention is
     not exposure). Cite-check is TWO-STAGE: the accession must trace to the stream AND the fact's
     load-bearing text must be grounded in that filing (``_fact_grounded``) — an ungrounded fact is
-    fail-closed. An empty stream or an LLM error yields a NONE assessment + a flag, never a
-    fabricated exposure."""
+    fail-closed. An empty stream yields NONE + a flag; an LLM error yields ``unassessed-error`` + a
+    flag — never a fabricated exposure, and never a false NONE."""
     stream_refs = [ref for ref, _ in stream]
     base = ExposureAssessment(
         ticker=ticker, cik=cik, driver=spec.description,
@@ -505,7 +505,8 @@ def assess_exposure(
     try:
         raw = llm.extract(system=_SYSTEM, user=user, tool=EXPOSURE_TOOL)
     except LlmError as exc:
-        return base.model_copy(update={"flags": [f"LLM error: {exc}"]})
+        return base.model_copy(update={
+            "exposure_basis": ExposureBasis.UNASSESSED_ERROR, "flags": [f"LLM error: {exc}"]})
 
     refs = set(stream_refs)
     by_accession = {m.group(0): text for ref, text in stream if (m := _ACC_RE.search(ref))}
@@ -557,6 +558,33 @@ def assess_exposure(
 # --------------------------------------------------------------------------------------------------
 # The universe scan (build 1 — the scale-discrimination test)
 # --------------------------------------------------------------------------------------------------
+_ABORT_AFTER = 3  # consecutive same-4xx (quota/auth) failures that abort a scan before poisoning
+
+
+class ScanAbortedError(RuntimeError):
+    """Raised when a scan aborts fast on 3 consecutive same-4xx (quota/auth) failures — the run is
+    stopped BEFORE writing a poisoned queue (the 2026-07-13 quota incident: 22 error records a naive
+    run persisted as tier none). Carries the status, assessed-so-far, and the un-scanned names."""
+
+    def __init__(self, status: int, reason: str, remaining: list[str],
+                 assessed: list[ExposureAssessment]) -> None:
+        self.status = status
+        self.reason = reason
+        self.remaining = remaining
+        self.assessed = assessed
+        super().__init__(
+            f"scan ABORTED after {_ABORT_AFTER} consecutive HTTP {status} failures ({reason}); "
+            f"{len(remaining)} names un-scanned — refusing to write a poisoned queue")
+
+
+def _client_error_status(exc: BaseException) -> int | None:
+    """The HTTP status if ``exc`` is a 4xx CLIENT error (quota/auth → SYSTEMIC), else None (5xx/
+    network → a per-name transient that must NOT trip the abort). Reads the anthropic SDK's
+    ``status_code`` (APIStatusError); absent → None."""
+    status = getattr(exc, "status_code", None)
+    return status if isinstance(status, int) and 400 <= status < 500 else None
+
+
 def scan_driver_exposure(
     spec: DriverSpec,
     names: list[tuple[str, str]],
@@ -587,17 +615,35 @@ def scan_driver_exposure(
         stream = recent_disclosure_stream(edgar, sec_http, cik, since=since)
         return assess_exposure(spec, ticker_by_cik[cik], cik, stream, llm=llm)
 
+    streak = 0  # consecutive same-4xx failures — abort-fast at _ABORT_AFTER (don't poison)
+    last_status: int | None = None
     with cf.ThreadPoolExecutor(max_workers=max_workers) as ex:
         futures = {ex.submit(work, c): c for c in candidates}
         for i, fut in enumerate(cf.as_completed(futures), 1):
             c = futures[fut]
             try:
                 out.append(fut.result())
+                streak = 0  # a success breaks the systemic-failure streak
             except Exception as exc:  # noqa: BLE001 — fail-loud per name, never drop silently
+                status = _client_error_status(exc)
+                if status is not None and status == last_status:
+                    streak += 1
+                elif status is not None:
+                    streak = 1  # first of a new same-4xx streak
+                else:
+                    streak = 0  # 5xx/network transient — does NOT trip the abort
+                last_status = status
                 out.append(ExposureAssessment(
                     ticker=ticker_by_cik[c], cik=c, driver=spec.description,
-                    exposure_basis=ExposureBasis.NONE_DISCLOSED, disclosed_facts=[],
+                    exposure_basis=ExposureBasis.UNASSESSED_ERROR, disclosed_facts=[],
                     primary_business="", key_unknowns=[], stream_refs=[],
                     flags=[f"scan error: {type(exc).__name__}: {exc}"]))
+                if status is not None and streak >= _ABORT_AFTER:
+                    for f in futures:
+                        f.cancel()  # cancel PENDING; running finish on __exit__, results discarded
+                    done = {a.cik for a in out}  # what the loop processed (not future.done())
+                    remaining = sorted(ticker_by_cik[cc] for cc in candidates if cc not in done)
+                    reason = f"{type(exc).__name__}: {exc}"
+                    raise ScanAbortedError(status, reason, remaining, out) from exc
             rep.tick(i)
     return matched, out
