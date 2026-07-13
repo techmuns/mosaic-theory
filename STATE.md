@@ -3159,6 +3159,15 @@ two-name analysis (mid/small-caps, opposite directions) mapped against this inve
   the bar). Thesis-break (all three WATCHLIST names): FMCSA non-domiciled-CDL rule stayed/reversed, or ACT
   driver availability returns to surplus. Gated on the analyst's dossier build; cites the theme-#3 freeze
   (`feat/theme3-freeze`) + `data/research/theme3_truckload_triage_2026-07-14.md`.
+**BRIEF DRAFTED — awaiting operator sign-off (2026-07-13):
+`planning/OPERATING_DRIVERS_BUILD_BRIEF.md` (PR-B, the mechanism-coverage tier).** Genesis: the
+MOSL Mahanagar Gas audit (full record rides with #116's STATE.md entry). Typed cited
+`operating_drivers` rows — Tier A anchored (EX-99.1 KPI/pricing + first MD&A attribution consumer)
+→ Tier B LLM-fenced transcripts via the covenant pattern PLUS a code-level verbatim/digit-trace
+validator the covenant template lacks; materiality as a cross-layer JOIN (never a product, per the
+DERIVED-PIN rule); synthesis bridge prompt-level only (the six-field no-conclusion pin untouched);
+Mechanism block on the Brief. Coverage evidence in-brief (10/10 transcripts; 3/10 names have no
+EX-99.1 path). **No code until sign-off.**
 - **OPERATOR NOTE (worktrees):** canonical main lives in the `-s2`/`-main` worktrees; the primary dir
   tracks unmerged `feat/own-history-line` — run audits and builds from a main worktree.
 - **Sweep cadence: MANUAL — operator decision 2026-07-13 (NO cron).** The Component-A co-movement sweep
