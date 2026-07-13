@@ -2910,7 +2910,7 @@ block. Honest scope: US KPI disclosure varies → UNKNOWN-heavy names expected; 
 generically automatable. Brief first, human sign-off, then code.
 
 **VERDICT-FIRST BRIEF — the machine-proposal pivot — BUILT + VERIFIED, PR OPEN
-(feat/verdict-first-brief, 2026-07-13).** CONSTITUTION CHANGE, decided by the operator with the
+(#116, feat/verdict-first-brief, 2026-07-13).** CONSTITUTION CHANGE, decided by the operator with the
 counter-case fully presented (automation-bias risk, no-tuning freeze, track-record
 recharacterization) — a recorded pivot, not drift; CLAUDE.md amended in the same PR. The Brief now
 LEADS with a machine-proposed directional verdict; the HUMAN's confirm/override is the verdict of
