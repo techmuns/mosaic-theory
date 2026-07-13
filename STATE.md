@@ -1956,6 +1956,23 @@ Each line: *what it does* — *verified how*.
   two consecutive quarters, OR NIC occupancy >= 90.0%' — on fire, re-underwrite with AHR as lead carrier.
   Full scan NOT sanctioned (carrier set too narrow; scan slot held by theme #3). Next checkpoint: NIC Q2
   data, late July 2026.
+- **IN-SILICO EVIDENCE SUBSTITUTION (source=analyst, registered 2026-07-13) — ADJUDICATED 2026-07-13 via
+  priced-gate (`data/priced_check/report_insilico.txt`) + research memo (research adjudication relayed
+  2026-07-13; memo save pending):** driver REAL and ADVANCING (Senate-unanimous FDA Modernization Act
+  3.0, NIH $150M, Year-1 goals met) but every guidance still DRAFT, zero animal-in-lieu approvals, and
+  P&L linkage ABSENT at all five names (CERT software +7%, bookings −2.5%; SLP software flat, TAKE-PRIVATE
+  @ $18.50 announced 2026-06-16; SDGR software −21%; CRL DSA stable, backlog $1.9B, mgmt 'no notable
+  changes in client behavior', ~$50M at-risk vs ~$200M NAMs revenue earned; NOTV Ch.11 2026-06-03 = debt
+  event, ticker NOTVQ). Public vehicle set thinning to ~one name. **DISPOSITION: PARK-WITH-TRIGGERS**
+  (below T012 WATCH+). Any ONE trigger fires -> re-underwrite CERT as a SINGLE-NAME dossier, NOT a theme
+  scan: (1) FDA FINALIZES any NAMs guidance or Modernization Act 3.0 ENACTED; (2) first documented FDA
+  acceptance of in-silico/NAMs data in lieu of animal TOXICOLOGY in an approval; (3) CERT software growth
+  >=15% YoY for two consecutive quarters OR bookings growth turns positive; (4) CRL discloses
+  client-behavior change or NAMs-attributed DSA backlog erosion. Scan NOT sanctioned: predicted 0
+  RATIFIED (all exposure aspirational-tier) — the gate+research pass substituted for the scan.
+  Driver-name refinement if ever advanced: the live wedge is in-silico substitution of CLINICAL evidence
+  (asciminib/Simcyp precedent), not animal-tox. Channel-comparison data point: analyst-named candidate #1
+  -> PARK-with-triggers; component-a candidate #1 (T007) -> ADVANCE.
 
 ## 3. FALSIFIED — tested and retired (NOT deferred)
 
