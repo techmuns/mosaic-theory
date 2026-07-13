@@ -1956,6 +1956,23 @@ Each line: *what it does* — *verified how*.
   two consecutive quarters, OR NIC occupancy >= 90.0%' — on fire, re-underwrite with AHR as lead carrier.
   Full scan NOT sanctioned (carrier set too narrow; scan slot held by theme #3). Next checkpoint: NIC Q2
   data, late July 2026.
+- **IN-SILICO EVIDENCE SUBSTITUTION (source=analyst, registered 2026-07-13) — ADJUDICATED 2026-07-13 via
+  priced-gate (`data/priced_check/report_insilico.txt`) + research memo (research adjudication relayed
+  2026-07-13; memo save pending):** driver REAL and ADVANCING (Senate-unanimous FDA Modernization Act
+  3.0, NIH $150M, Year-1 goals met) but every guidance still DRAFT, zero animal-in-lieu approvals, and
+  P&L linkage ABSENT at all five names (CERT software +7%, bookings −2.5%; SLP software flat, TAKE-PRIVATE
+  @ $18.50 announced 2026-06-16; SDGR software −21%; CRL DSA stable, backlog $1.9B, mgmt 'no notable
+  changes in client behavior', ~$50M at-risk vs ~$200M NAMs revenue earned; NOTV Ch.11 2026-06-03 = debt
+  event, ticker NOTVQ). Public vehicle set thinning to ~one name. **DISPOSITION: PARK-WITH-TRIGGERS**
+  (below T012 WATCH+). Any ONE trigger fires -> re-underwrite CERT as a SINGLE-NAME dossier, NOT a theme
+  scan: (1) FDA FINALIZES any NAMs guidance or Modernization Act 3.0 ENACTED; (2) first documented FDA
+  acceptance of in-silico/NAMs data in lieu of animal TOXICOLOGY in an approval; (3) CERT software growth
+  >=15% YoY for two consecutive quarters OR bookings growth turns positive; (4) CRL discloses
+  client-behavior change or NAMs-attributed DSA backlog erosion. Scan NOT sanctioned: predicted 0
+  RATIFIED (all exposure aspirational-tier) — the gate+research pass substituted for the scan.
+  Driver-name refinement if ever advanced: the live wedge is in-silico substitution of CLINICAL evidence
+  (asciminib/Simcyp precedent), not animal-tox. Channel-comparison data point: analyst-named candidate #1
+  -> PARK-with-triggers; component-a candidate #1 (T007) -> ADVANCE.
 
 ## 3. FALSIFIED — tested and retired (NOT deferred)
 
@@ -2931,6 +2948,39 @@ two-name analysis (mid/small-caps, opposite directions) mapped against this inve
 
 - **OPERATOR NOTE (worktrees):** canonical main lives in the `-s2`/`-main` worktrees; the primary dir
   tracks unmerged `feat/own-history-line` — run audits and builds from a main worktree.
+- **Sweep cadence: MANUAL — operator decision 2026-07-13 (NO cron).** The Component-A co-movement sweep
+  runs on demand, never scheduled. **Run locally** (fresh sweep, latest universe snapshot):
+  `.venv/bin/python -m vinci.cli themes` (append `--ref YYYY-MM-DD` to pin an as-of). NO workflow file is
+  shipped — the **Actions path was DROPPED**: the push credential (osxkeychain) AND `~/.mosaic_gh_token`
+  both report `repo` scope only, NOT `workflow`, so a workflow file cannot be pushed at all; secondarily,
+  the authored `monthly-themes.yml` never durably persisted the sweep snapshot (`data/scan_history/` is
+  git-ignored and it added no `upload-artifact` — only the `candidate_themes.jsonl` pointer would commit
+  via `git add data/snapshots`). **CANONICAL invocation — recorded HERE, the ONE place; the future Radar
+  screen MUST source it from here (no second hardcoding):** the June-17 harvest reproduces as
+  `python -m vinci.cli themes --ref 2026-06-17` with the `themes` subparser's documented defaults
+  `--basis r2 --window-days 365 --min-breadth 3` (the exact June-17 flag string was UNRECORDED, so these
+  documented defaults ARE the canonical set; their values live on the argparse subparser, not
+  re-hardcoded). **Reminder is display-only:** the (future) Radar screen shows last-run / next-due (+30d)
+  from the `component-a` scan_history manifest, amber when overdue — nothing fires automatically.
+- **DATA-TOPOLOGY of git-ignored artifacts (verified 2026-07-13 by `ls`; `data/` is PER-WORKTREE, NOT
+  shared).** `-s2`: `data/assay/` = 14 cards, `data/assay_history/` = 3 driver subdirs + `manifest.jsonl`
+  (46 snapshot files), `data/assay_cache/` = 1944 efts files. `-main`: `data/priced_check/report_all.txt`
+  present, `data/snapshots/candidate_themes.jsonl` = 35 (the restored June-17 harvest) +
+  `candidate_themes.2026-06-17.backup.jsonl`. `data/scan_history/` is EMPTY in BOTH worktrees — by design,
+  until the first post-merge exposure scan or Component-A sweep writes it. **SESSION RULE: print the
+  worktree + `pwd` before touching `data/`** — the same path holds different contents per worktree.
+- **UNIVERSE-COVERAGE FLAG (report-only; bounds what Component-A can cluster) — SDGR ABSENT from
+  `data/snapshots/securities.jsonl` by a COVERAGE GAP, not an exclusion rule.** The file is
+  `Store.export_snapshots()` of the `securities` table (`store.py:375`), seeded by `build_universe` from
+  `resolver.iter_universe(XNAS/XNYS/XASE)` (7641 considered) then fail-closed-gated. SDGR (CIK 1490978,
+  Nasdaq, SIC 2834, 1270 grouped-daily bars) clears exchange / SIC / price / cap-band, but is dropped at
+  the **`no_shares` gate (`vinci/universe.py:107-109`)**: the builder reads shares ONLY from the EDGAR
+  `dei:EntityCommonStockSharesOutstanding` frame (`vinci/edgar/client.py:308`, no us-gaap fallback), and
+  SDGR tags its shares under `us-gaap:CommonStockSharesOutstanding` (its `dei` block is public-float only)
+  → `shares[cik]=None` → fail-closed drop. Clinching differential: CERT and SLP DO report
+  `dei:EntityCommonStockSharesOutstanding`; SDGR does not. So NO attribute rule excludes SDGR — a
+  us-gaap-shares fallback would recover it (NOT fixed here). (NOTV is a DIFFERENT, earlier gap: absent
+  from `company_tickers_exchange.json` entirely → filtered at `resolver.py:112`.)
 
 **OPERATOR TO-DO — backfill the IWM benchmark before any full `vinci dossier` re-assemble (from
 feat/brief-decision-metrics, 2026-07-13).** Grouped-daily ingestion only stores the finalist universe,
