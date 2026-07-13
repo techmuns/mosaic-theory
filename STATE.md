@@ -3790,7 +3790,7 @@ BARRED further velocity-axis iteration (its pre-committed FINAL criterion + EXEC
 NOT a live radar signal. This radar design is therefore **NEEDS-REVISION** — the only remaining
 candidate indicators are **`capex-commitment-flow`** and **`policy-catalysts`**, both
 UNBUILT/UNVALIDATED, so the radar cannot be re-specified around velocity. Docs reconciliation only
-(no redesign); the post-theme-#2 radar build must re-select indicators.]** (b) **THEME #2 = the
+(no redesign); the post-theme-#2 radar build must re-select indicators.] (b) **THEME #2 = the
 demand-shaped defense COMPOSITIONAL SHIFT** (attritable / autonomy / cyber) — chosen to test whether
 reasoned decomposition GENERALIZES beyond supply chains, with two expected stresses — DIRECTION
 (tailwind vs headwind) and PARALLEL-vs-SEQUENTIAL categories — to be resolved BY EVIDENCE from theme #2,
