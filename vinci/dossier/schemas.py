@@ -274,6 +274,37 @@ class IdiosyncraticVsShared(BaseModel):
     model_config = {"frozen": True}
 
 
+class PerfPoint(BaseModel):
+    """One rebased point on the 52-week performance path — both series indexed to 100 at the window
+    start. ``benchmark`` is None only on a date the index has no bar on/before it (the name path
+    still renders — fail-loud, never a fabricated flat)."""
+
+    date: str  # ISO trading date
+    name: float  # the name's close, rebased to 100 at the window start
+    benchmark: float | None  # IWM close, rebased to 100 at the same anchor
+
+    model_config = {"frozen": True}
+
+
+class StockPerformance(BaseModel):
+    """52-week rebased price path — the name vs the IWM benchmark, both indexed to 100 at the window
+    start. Assemble/inform ONLY: it *visualizes* the same EOD closes the G2 idio comparison
+    (``idiosyncratic_vs_shared``) already sources — never a gate/rank input, never a verdict. The
+    whole object is None on the layer (exhibit absent) when the name has no window bars; a point's
+    ``benchmark`` is None when the index is absent — fail-loud rather than a fabricated series."""
+
+    points: list[PerfPoint]
+    name_symbol: str
+    benchmark_symbol: str  # "IWM"
+    as_of: date  # the window end (the exhibit's right edge)
+    window_days: int
+    name_return: float  # the name's total return over the plotted window (rebased end / 100 − 1)
+    benchmark_return: float | None  # IWM's over the same window (None when the index is absent)
+    source_ref: str
+
+    model_config = {"frozen": True}
+
+
 class ConsensusContext(BaseModel):
     """Light consensus context (CIQ Estimates) — context for 'am I non-consensus', not a driver."""
 
@@ -824,6 +855,10 @@ class MechanicalLayer(BaseModel):
     # (Phase-2) the market-data 'stock info' box — CMP + 52-week range + shares + book value + cap,
     # each source-bound (EOD / EDGAR / CIQ). Optional-with-default for back-compat.
     stock_info: StockInfo | None = None
+    # (Brief) the 52-week rebased price path — the name vs the IWM benchmark, both indexed to 100.
+    # Feeds the Brief-card stock-performance exhibit; visualizes the G2 idio EOD closes (assemble,
+    # never conclude). Optional-with-default for back-compat; None when the name has no window bars.
+    stock_performance: StockPerformance | None = None
 
     model_config = {"frozen": True}
 

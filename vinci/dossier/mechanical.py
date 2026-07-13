@@ -39,6 +39,7 @@ from vinci.dossier.schemas import (
     LeverageSurvival,
     MechanicalLayer,
     PeerComps,
+    PerfPoint,
     PrimarySource,
     Quality,
     ReconciliationValue,
@@ -46,6 +47,7 @@ from vinci.dossier.schemas import (
     Sourced,
     SourceStatus,
     StockInfo,
+    StockPerformance,
     Valuation,
 )
 from vinci.edgar import filing_sections, primary_source, release_parse
@@ -58,10 +60,11 @@ from vinci.graph.filings import html_to_text, normalize_text
 from vinci.netcache import CachedHttp, HttpError
 from vinci.resolver import EntityResolver, ResolutionError
 from vinci.resolver.index import pad_cik
-from vinci.schemas.data_record import DataRecord
+from vinci.schemas.data_record import DataRecord, Identity
 from vinci.schemas.envelope import CoverageStatus, DataField
 from vinci.schemas.market import PriceBar
 from vinci.store import Store
+from vinci.universe import benchmark_identity
 
 _ARCHIVE = "https://www.sec.gov/Archives/edgar/data/{cik}/{acc}/{doc}"
 _DECLINE_WINDOW_DAYS = 180  # the G2 decline window — keep the cohort comparison on the same window
@@ -474,6 +477,60 @@ def _idiosyncratic_vs_shared(
     return IdiosyncraticVsShared(
         name_180d_return=name_180d, market_180d_return=market_180d, rel_vs_market=rel,
         cohort=cohort, read=_idio_read(name_180d, cohort),
+    )
+
+
+_PERF_WINDOW_DAYS = 364  # 52 weeks — the Brief stock-performance exhibit window
+_PERF_MAX_POINTS = 60  # weekly-ish downsample cap: keeps the committed JSON + the SVG path light
+
+
+def _stock_performance(identity: Identity, store: Store, ref: date) -> StockPerformance | None:
+    """52-week rebased price path — the name vs IWM, both indexed to 100 at the window start. Reads
+    the SAME EOD closes the G2 idio comparison uses (assemble/visualize, never conclude). Returns
+    None (exhibit absent) when the name has <2 window bars — fail-loud, never a fabricated series.
+    The benchmark is aligned to the name's trading days via as-of closes; a point's ``benchmark`` is
+    None only when the index has no bar on/before that day (the name path still renders)."""
+    sym = identity.eod_symbol
+    lo = ref - timedelta(days=_PERF_WINDOW_DAYS)
+    name_win = [b for b in store.get_price_history(identity.internal_id) if lo <= b.bar_date <= ref]
+    if len(name_win) < 2:
+        return None
+    base_name = name_win[0].close
+    if base_name <= 0:
+        return None
+    bench = benchmark_identity("IWM")
+    bench_bars = store.get_price_history(bench.internal_id)
+    base_bench = _close_on_or_before(bench_bars, name_win[0].bar_date)
+
+    def _rebased_bench(d: date) -> float | None:
+        c = _close_on_or_before(bench_bars, d)
+        return round(c / base_bench * 100.0, 2) if (c and base_bench) else None
+
+    step = max(1, len(name_win) // _PERF_MAX_POINTS)
+    idxs = list(range(0, len(name_win), step))
+    if idxs[-1] != len(name_win) - 1:
+        idxs.append(len(name_win) - 1)  # always pin the current (right-edge) point
+    points = [
+        PerfPoint(
+            date=name_win[i].bar_date.isoformat(),
+            name=round(name_win[i].close / base_name * 100.0, 2),
+            benchmark=_rebased_bench(name_win[i].bar_date),
+        )
+        for i in idxs
+    ]
+    last_bench = _close_on_or_before(bench_bars, name_win[-1].bar_date)
+    return StockPerformance(
+        points=points,
+        name_symbol=sym,
+        benchmark_symbol=bench.eod_symbol,
+        as_of=name_win[-1].bar_date,
+        window_days=_PERF_WINDOW_DAYS,
+        name_return=name_win[-1].close / base_name - 1.0,
+        benchmark_return=(last_bench / base_bench - 1.0) if (last_bench and base_bench) else None,
+        source_ref=(
+            f"EOD {sym} vs {bench.eod_symbol} rebased to 100, "
+            f"{name_win[0].bar_date}..{name_win[-1].bar_date}"
+        ),
     )
 
 
@@ -1939,6 +1996,8 @@ def assemble_mechanical(
         return_ratios=return_ratios,  # (Phase-4) per-period return-ratio series (chart + table)
         stock_info=_stock_info(  # (Phase-2) CMP + 52wk range + shares + book value + cap
             record, store, edgar, bundle, reference_date, implied_val.market_cap),
+        # (Brief) 52-week rebased price path — name vs IWM (visualizes the G2 idio EOD closes).
+        stock_performance=_stock_performance(record.identity, store, reference_date),
     )
     # (RC-1 C) primary-source layer — fetch 8-K EX-99.1 releases + the latest 10-Q, parse, and run
     # the four cross-source derivations over them + this mechanical layer. Resilient: a fetch/parse

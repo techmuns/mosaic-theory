@@ -2876,6 +2876,15 @@ two-name analysis (mid/small-caps, opposite directions) mapped against this inve
 
 ## 5. Next steps (ordered, current)
 
+**OPERATOR TO-DO — backfill the IWM benchmark before any full `vinci dossier` re-assemble (from
+feat/brief-decision-metrics, 2026-07-13).** Grouped-daily ingestion only stores the finalist universe,
+so the benchmark index (`IDX-IWM`) is NOT populated by the normal pipeline. Run
+`.venv/bin/python -m scripts.fetch_benchmark_iwm` (one cached Polygon call, idempotent) so a fresh
+re-assemble computes `market_180d_return` and `mechanical.stock_performance` instead of failing loud to
+UNKNOWN. The committed dossiers already carry `stock_performance` (refreshed via
+`scripts.refresh_stock_performance`); this only matters when re-deriving from a DB without IWM bars.
+Longer-term: fold the benchmark into the standing EOD ingestion so it is never a manual step.
+
 **QUEUED (user-deferred 2026-07-11, "skip for now") — forward-multiple ladder UI.** The
 `cross_name_anchor` ladder (Valuation) renders periods-as-ROWS × multiples-as-columns and truncates to
 `_LADDER_KEEP` = NTM + FY26–FY28, noting "+N later fiscal years in JSON". Two available tweaks, both
@@ -3168,6 +3177,33 @@ Recommendation/Target slot is the HUMAN's ("not yet logged"); consensus, the imp
   a `>Source:`-scan guard (`test_exhibits_cite_via_endnotes_not_inline_source_caption`) + a CLAUDE.md
   rule (exhibits cite via endnotes → Sources list, never an inline caption; the sibling table/fact
   already cites the data). All three captions removed; sources now resolve in the Sources list.
+  **BRIEF DECISION METRICS + STOCK-PERFORMANCE EXHIBIT — BUILT + VERIFIED, PR OPEN (feat/brief-decision-
+  metrics, 2026-07-13).** Two folded changes. **(A · render-only)** moved the price-setup decision
+  values INTO the Brief teaser as a 2×2 tile grid (price action 180d · idio vs mkt · net-debt/EBITDA ·
+  FCF; going-concern when flagged), dropped the repetitive valuation-vs-peers line, and renamed the
+  "The setup" card → **"Decisive question"** (question only — the drawdown prefix was already in the
+  tiles). dossier.js + render.py + styles.css (`.brief-tiles` grid, capped 2×200px); md↔web parity.
+  **(B · new exhibit + benchmark data)** a compact **52-week stock-performance** exhibit in the Brief
+  snapshot column — the name vs the **IWM** benchmark, both **rebased to 100** at the window start
+  (MOFSL sidebar standard), reusing the shared EXHIBIT design language (fs · halo · margin ·
+  lineDomain-family math) at a sidebar size; index-domain via `extent` (NOT lineDomain's floor-at-0,
+  which would waste the 0..min band); name in `--accent`, benchmark in `--ink-3`. Web-only SVG (md
+  byte-identical). Required populating the benchmark: **IWM had NEVER been in the local prices DB**, so
+  `market_180d_return` was UNKNOWN in every dossier and the idio `rel_vs_market` came from the screen's
+  G2 data-record. NEW `PolygonEodClient.daily_bars` + pure `parse_aggregates` (per-symbol Polygon
+  aggregates; Bearer-auth/cache/pacing reused) + committed backfill `scripts/fetch_benchmark_iwm.py`
+  (546 IWM bars 2024-05-06..2026-07-10 under `IDX-IWM`; idempotent). NEW `StockPerformance`/`PerfPoint`
+  schema + `MechanicalLayer.stock_performance` (default None → back-compat) + `mechanical._stock_
+  performance(identity, store, ref)` (index-to-100, benchmark as-of-aligned to the name's trading days,
+  weekly downsample ≤60 pts, **fail-loud None** when <2 window bars, a point's benchmark None when the
+  index is absent — never bridged). Artifacts: the 10 dossiers' `stock_performance` SURGICALLY refreshed
+  via `scripts/refresh_stock_performance.py` (recomputes ONLY that mechanical field through the real
+  Dossier model — synthesis + every other field byte-identical, **NO LLM re-run**; +331 JSON lines each,
+  0 removed, md unchanged). *Verified: IWM 180d = +17.0% (was UNKNOWN); CNXC −59% vs IWM +36% (52w),
+  AORT −19% vs +36% — browser-confirmed both (domain adapts, legend fits); ruff + mypy --strict +
+  pytest(not network) **571 green** (+9 pins: 3 parse_aggregates fail-loud/date-map, 3 extractor incl. 2
+  fail-loud, static-contract, e2e renderDossier on committed CNXC, living-artifact invariants).*
+  **Invariant:** the existing `>Source:`-scan guard now also covers the new exhibit (no inline caption).
 
 **RC-1 primary-source text extraction — BUILT + VERIFIED, PR OPEN (feat/primary-source-text, 2026-07-06).**
 DETERMINISTIC (anchored, never LLM) parsers of the EX-99.1 release (A, `vinci/edgar/release_parse.py`) and
