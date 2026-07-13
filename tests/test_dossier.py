@@ -3268,8 +3268,8 @@ def test_exhibit_shared_frame_tokens_no_node() -> None:
     """(P4) The shared EXHIBIT design frame (lib/exhibit.js) is the ONE source for canvas / y-band /
     typography the dossier's panel exhibits reference, so their size/padding/spacing/labelling are
     identical by construction (not hand-matched). Pin the token values AND that revEbitda + return-
-    ratios both DESTRUCTURE it rather than re-declaring their own literals (the drift that made
-    them look different). NODE-FREE — the token wiring ships unverified when node is absent."""
+    ratios + own-history ALL DESTRUCTURE it rather than re-declaring their own literals (the drift
+    that made them look different). NODE-FREE — the wiring ships unverified when node is absent."""
     ex = Path("frontend/lib/exhibit.js").read_text()
     assert "export const EXHIBIT" in ex
     for tok in ("H: 276", "cy0: 54, cy1: 234", "wSingle: 430, wDual: 760", "title: 15",
@@ -3284,8 +3284,11 @@ def test_exhibit_shared_frame_tokens_no_node() -> None:
     assert "EXHIBIT } from" in src  # imported alongside the scale/domain primitives
     assert "= EXHIBIT, W = EXHIBIT.wDual, H = EXHIBIT.H" in src  # revEbitda references the frame
     assert "= EXHIBIT, n = cols.length" in src  # returnRatiosExhibit references the frame
+    assert "single ? EXHIBIT.wSingle : EXHIBIT.wDual" in src  # ownHistory references the frame
+    assert src.count("} = EXHIBIT") >= 3  # all three panel exhibits destructure the shared frame
     # neither re-declares the old per-exhibit canvas literal (the reinvention this centralises)
     assert "const W = 760, H = 276, cy0 = 54, cy1 = 234" not in src
+    assert "H = 240, cy0 = 62, cy1 = 214" not in src  # own-history's old per-exhibit frame is gone
 
 
 # --- Brief stock-performance exhibit (52-week rebased path: name vs IWM) -----------------------

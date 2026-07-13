@@ -827,14 +827,16 @@ function ownHistoryExhibit(m) {
   // MORE confident than the string it derives from (which prints an explicit LOW-CONFIDENCE caveat).
   const LOW_CONF_CLOSES = 8;
   const anyLowConf = bands.some((b) => b.n_closes < LOW_CONF_CLOSES);
-  // a single metric keeps a NORMAL panel width (not stretched full-bleed — that breaks the familiar
-  // line aspect); the exhibit just renders narrower. Two metrics sit side-by-side.
   const single = bands.length === 1;
-  // cy0 leaves a clear gap under the subtitle so the panel-header row (metric + %ile) never crowds it.
-  const W = single ? 430 : 760, H = 240, cy0 = 62, cy1 = 214;  // panels share this chart-area y-band
-  const halo = 'paint-order="stroke" stroke="var(--surface)" stroke-width="2.6"';
+  // SHARES revEbitda / return-ratios' EXHIBIT frame (canvas / y-band / fonts / halo / margin) so every
+  // dossier exhibit reads as ONE system: same 760×276 (single metric → 430, NOT stretched), same
+  // cy0/cy1 plot band, same panel columns (44→366 | 412→748), title/panel/axis/label fonts, and halo.
+  // The axis + vintage metadata (this chart's extra info) sits BELOW the SVG as a muted caption, so the
+  // in-SVG frame stays identical to the others (title-only, no subtitle band eating into cy0).
+  const { H, cy0, cy1, fs, halo } = EXHIBIT;
+  const W = single ? EXHIBIT.wSingle : EXHIBIT.wDual;
+  const geo = single ? [[44, 366]] : [[44, 366], [412, 748]];
   const yr = (s) => { const y = /(\d{4})/.exec(s || ""); return y ? "'" + y[1].slice(2) : ""; };
-  const geo = single ? [[70, 372]] : [[70, 372], [452, 748]];
 
   const panel = (b, x0, x1) => {
     const label = b.metric.replace(" (TEV/LTM)", "").replace("P/LTM EPS", "P/E");
@@ -846,39 +848,40 @@ function ownHistoryExhibit(m) {
     if (useLog) { dlo *= 0.92; dhi *= 1.08; } else { const p = (dhi - dlo) * 0.08 || 1; dlo -= p; dhi += p; }
     const sc = (useLog && logScale(dlo, dhi, cy1, cy0)) || linScale(dlo, dhi, cy1, cy0);
     const px = (i) => x0 + (i / (pts.length - 1)) * (x1 - x0);
-    // trailing-history reference levels: min / avg / max — neutral grey (avg dashed), value at the y-axis
-    const ref = (v, dash, tag) => `<line x1="${x0}" y1="${sc(v)}" x2="${x1}" y2="${sc(v)}" stroke="var(--line-2)"${dash ? ' stroke-dasharray="3 3"' : ""}/><text x="${x0 - 5}" y="${sc(v) + 3}" font-size="8.5" text-anchor="end" fill="var(--ink-3)">${tag}</text>`;
-    let s = `<text x="${x0}" y="${cy0 - 12}" font-size="11.5" font-weight="600" fill="var(--ink-2)">${escapeHtml(label)}</text>`;
-    s += `<text x="${x1}" y="${cy0 - 12}" font-size="8.5" text-anchor="end" fill="var(--ink-3)">${Math.round(b.percentile * 100)}%ile${lowConf ? "*" : ""} · ${b.n_closes}q</text>`;
-    s += ref(b.high, false, b.high.toFixed(1)) + ref(b.mean, true, "avg " + b.mean.toFixed(1)) + ref(b.low, false, b.low.toFixed(1));
-    s += `<polyline points="${pts.map((p, i) => `${px(i)},${sc(p[1])}`).join(" ")}" fill="none" stroke="var(--accent)" stroke-width="1.6"/>`;
+    // trailing-history reference levels: min / avg (DASHED) / max — grey, value at the y-axis. Value-only
+    // (no "avg" prefix) so the label fits the shared left inset; the dashed line marks the average.
+    const ref = (v, dash, tag) => `<line x1="${x0}" y1="${sc(v)}" x2="${x1}" y2="${sc(v)}" stroke="var(--line-2)"${dash ? ' stroke-dasharray="3 3"' : ""}/><text x="${x0 - 4}" y="${sc(v) + 3}" font-size="${fs.axis}" text-anchor="end" fill="var(--ink-3)">${tag}</text>`;
+    let s = `<text x="${x0}" y="${cy0 - 9}" font-size="${fs.panel}" font-weight="600" fill="var(--ink-2)">${escapeHtml(label)}</text>`;
+    s += `<text x="${x1}" y="${cy0 - 9}" font-size="${fs.xlabel}" text-anchor="end" fill="var(--ink-3)">${Math.round(b.percentile * 100)}%ile${lowConf ? "*" : ""} · ${b.n_closes}q</text>`;
+    s += ref(b.high, false, b.high.toFixed(1)) + ref(b.mean, true, b.mean.toFixed(1)) + ref(b.low, false, b.low.toFixed(1));
+    s += `<polyline points="${pts.map((p, i) => `${px(i)},${sc(p[1])}`).join(" ")}" fill="none" stroke="var(--accent)" stroke-width="1.8"/>`;
     // current = the last close: DIRECTIONAL color (below/above its own trailing range is a FACT) + value;
     // neutral grey when low-confidence. The human still judges cheap-vs-dear.
     const ci = pts.length - 1, cx = px(ci), cyv = sc(b.current);
     const col = lowConf ? "var(--ink-3)" : b.current < b.low ? "var(--danger)" : b.current > b.high ? "var(--live)" : "var(--accent)";
     const caret = b.current < b.low ? "▼" : b.current > b.high ? "▲" : "●";
     s += `<circle cx="${cx}" cy="${cyv}" r="3.5" fill="${col}" stroke="var(--surface)" stroke-width="1.2"/>`;
-    s += `<text x="${cx}" y="${cyv - 8}" font-size="10.5" text-anchor="end" fill="${col}" font-weight="700" ${halo}>${caret} ${b.current.toFixed(1)}x</text>`;
-    s += `<text x="${x0}" y="${cy1 + 15}" font-size="8.5" fill="var(--ink-3)">${escapeHtml(yr(pts[0][0]))}</text>`;
-    s += `<text x="${x1}" y="${cy1 + 15}" font-size="8.5" text-anchor="end" fill="var(--ink-3)">${escapeHtml(yr(pts[ci][0]))}</text>`;
+    s += `<text x="${cx}" y="${cyv - 8}" font-size="${fs.point}" text-anchor="end" fill="${col}" font-weight="700" ${halo}>${caret} ${b.current.toFixed(1)}x</text>`;
+    s += `<text x="${x0}" y="${cy1 + 16}" font-size="${fs.xlabel}" fill="var(--ink-3)">${escapeHtml(yr(pts[0][0]))}</text>`;
+    s += `<text x="${x1}" y="${cy1 + 16}" font-size="${fs.xlabel}" text-anchor="end" fill="var(--ink-3)">${escapeHtml(yr(pts[ci][0]))}</text>`;
     return s;
   };
 
-  // the subtitle only claims "log scale" when EVERY panel is actually log — the axis is chosen
-  // per-panel (useLog above), falling back to linear on a non-positive multiple, so a hardcoded global
-  // "log scale" would mislabel a mixed render (a chart reading differently from what it says). Mirrors
-  // panel()'s own vals.every(v > 0) so the label can't drift from the transform.
+  // "log scale" only claimed when EVERY panel is actually log — the axis is chosen per-panel (useLog
+  // above), falling back to linear on a non-positive multiple. Mirrors panel()'s vals.every(v > 0) so
+  // the label can't drift from the transform.
   const allLog = bands.every((b) => b.series.filter((p) => p && p[1] != null).map((p) => p[1])
     .concat([b.low, b.high, b.mean]).every((v) => v > 0));
+  const meta = `each quarter's close vs its trailing avg (dashed) &amp; range${allLog ? " · log scale" : ""}${bands[0].as_of ? " · as-of " + escapeHtml(bands[0].as_of) : ""}`;
   // no inline "Source:" caption — the Multiples source is already cited at the card level (range_position's
   // endnote → the tier's Sources list). Exhibits cite via endnotes, never a duplicate inline caption.
-  return `<div class="ds-exhibit" style="margin:18px 0 16px;">
+  return `<div class="ds-exhibit" style="margin:${EXHIBIT.margin};">
     <svg viewBox="0 0 ${W} ${H}" width="100%" style="max-width:${W}px; display:block;" role="img" aria-label="Valuation multiples vs their own trailing range">
-      <text x="0" y="18" font-size="13" font-weight="600" fill="var(--ink)">Multiple vs its own trailing range</text>
-      <text x="0" y="32" font-size="9.5" fill="var(--ink-3)">each quarter's close vs its trailing average &amp; range${allLog ? " · log scale" : ""}${bands[0].as_of ? " · as-of " + escapeHtml(bands[0].as_of) : ""}</text>
+      <text x="44" y="22" font-size="${fs.title}" font-weight="600" fill="var(--ink)">Multiple vs its own trailing range</text>
       ${bands.map((b, i) => panel(b, geo[i][0], geo[i][1])).join("")}
     </svg>
-    ${anyLowConf ? `<div class="muted" style="font-size:10px; margin-top:2px;">* fewer than ${LOW_CONF_CLOSES} closes — low-confidence read; current shown in neutral, not red/green.</div>` : ""}
+    <div class="muted" style="font-size:11px; margin-top:2px;">${meta}</div>
+    ${anyLowConf ? `<div class="muted" style="font-size:10px; margin-top:1px;">* fewer than ${LOW_CONF_CLOSES} closes — low-confidence read; current shown in neutral, not red/green.</div>` : ""}
   </div>`;
 }
 
