@@ -3267,8 +3267,9 @@ Recommendation/Target slot is the HUMAN's ("not yet logged"); consensus, the imp
   **LEAN SEGMENT/GEOGRAPHY CONCENTRATION — BUILT + VERIFIED, PR OPEN (feat/lean-segment-concentration,
   2026-07-13).** The Segments / Geography facts dropped tautological noise: a lone ~100% segment/geo
   ("X 9,826 (100%) of Total 9,826") collapses to "X — single segment/geography"; a real mix is %-only,
-  largest share first (magnitude lives in the Financial Summary); the redundant "[12 months …]" period
-  marker is compacted via the existing `_period_label`. `segment_ebitda` is exempt (`lean=False`) — its
+  largest share first (magnitude lives in the Financial Summary); the as-of period (was an inline
+  "[12 months …]" prefix — noise no other fact carries) moves to the source_ref, so the citation/Sources
+  tier keeps the vintage while the main body reads clean. `segment_ebitda` is exempt (`lean=False`) — its
   reconciliation needs the absolute per-segment values + pre-corporate sum + consolidated EBITDA. One
   formatter (`ciq_sheets._segment_section`); the noise was localized there (a full-dossier scan found
   the pattern in no other field). Collapse is guarded on share ≥99.5% (a lone segment at <100% = rest

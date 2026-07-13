@@ -672,8 +672,8 @@ def _segment_section(
     ``lean`` (default) is the concentration view: a single segment/geography is TAUTOLOGICAL ("X val
     (100%) of Total val") and collapses to a plain marker; a real mix is reported %-only, largest
     share first (magnitude lives in the Financial Summary). ``lean=False`` keeps the detailed value,
-    share, and total — the segment-EBITDA reconciliation needs the pre-corporate sum. The period is
-    always compacted (the raw header's redundant "12 months" annual marker dropped)."""
+    share, and total — the segment-EBITDA reconciliation needs the pre-corporate sum. The as-of
+    period is provenance, so it rides the source_ref (citation), not an inline main-body prefix."""
     try:
         rows = bundle.sheet("financials", "Segments", freq="annual")
     except CiqUnavailableError as exc:
@@ -711,14 +711,14 @@ def _segment_section(
     if not items:
         return Sourced.unknown(note=f"no {section} segment rows with values")
     label = f"{after_label} → {section}" if after_label else section
-    plabel = _period_label(period)  # compact; extra_fn still reads the RAW period for its match
+    # the as-of period is PROVENANCE → it rides the source_ref (citation), never an inline main-body
+    # prefix (no other dossier fact carries one). extra_fn still reads the RAW period for its match.
+    plabel = _period_label(period)
     tail = extra_fn(tot, period) if extra_fn else ""
-    src = f"CIQ Financials→Segments ({label}, latest annual column){source_note}"
+    src = f"CIQ Financials→Segments ({label}, latest annual column, {plabel}){source_note}"
     if not lean:  # detailed view — the EBITDA reconciliation needs the pre-corporate sum
         body = "; ".join(f"{n} {v:,.0f} ({s:.0%})" for n, v, s in items)
-        return Sourced.present(
-            f"[{plabel}] {body} of {total_label} {tot:,.0f}{tail}", source_ref=src
-        )
+        return Sourced.present(f"{body} of {total_label} {tot:,.0f}{tail}", source_ref=src)
     noun = "geography" if (after_label and "Geographic" in after_label) else "segment"
     body = (
         # collapse ONLY a lone item that is ~100% (tautological); a single item at <100% means the
@@ -727,7 +727,7 @@ def _segment_section(
         if len(items) == 1 and items[0][2] >= 0.995
         else "; ".join(f"{n} {s * 100:.0f}%" for n, _v, s in sorted(items, key=lambda t: -t[2]))
     )
-    return Sourced.present(f"[{plabel}] {body}{tail}", source_ref=src)
+    return Sourced.present(f"{body}{tail}", source_ref=src)
 
 
 def _consolidated_ebitda(bundle: CiqBundle, period: str) -> float | None:

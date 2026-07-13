@@ -2919,9 +2919,10 @@ def test_workbook_routing_finds_multiples_and_segments_inside_financials() -> No
     assert pct.value == round(1 / 3, 3)  # would be 0.5 if the partial last col were NOT excluded
     segs = cs.segments(b)
     assert segs.status is ds.SourceStatus.PRESENT
-    # lean concentration view: %-only mix (largest first), compact period — no absolutes / total
-    assert (segs.value or "") == "[Dec-31-2025] Commercial Services 51%; Government Solutions 49%"
-    assert "797" not in (segs.value or "") and "12 months" not in (segs.value or "")
+    # lean concentration view: %-only mix (largest first) — no absolutes/total, no inline period
+    assert (segs.value or "") == "Commercial Services 51%; Government Solutions 49%"
+    assert "797" not in (segs.value or "") and "[" not in (segs.value or "")
+    assert "Dec-31-2025" in (segs.source_ref or "")  # the as-of period rides the citation
 
 
 def test_quarterly_yoy_refuses_cross_basis_prior() -> None:
@@ -3758,11 +3759,11 @@ def test_geographic_section_parsed() -> None:
     b = _fin_bundle({"Segments": seg}, freq="annual")
     geo = cs.geographic(b)
     assert geo.status is ds.SourceStatus.PRESENT
-    # lean %-only mix, largest first, compact period; the geographic block is read, not the business
-    assert (geo.value or "") == "[Dec-31-2025] United States 86%; Australia 7%"
-    assert "Geographic" in (geo.source_ref or "")
+    # lean %-only mix, largest first, no inline period; the geographic block is read (not business)
+    assert (geo.value or "") == "United States 86%; Australia 7%"
+    assert "Geographic" in (geo.source_ref or "") and "Dec-31-2025" in (geo.source_ref or "")
     # the lone business segment is 436/979 = 45% (rest unlisted) → a share, NOT "single segment"
-    assert (cs.segments(b).value or "") == "[Dec-31-2025] Commercial Services 45%"
+    assert (cs.segments(b).value or "") == "Commercial Services 45%"
 
 
 def test_segment_lean_collapse_and_ebitda_stays_detailed() -> None:
@@ -3775,8 +3776,9 @@ def test_segment_lean_collapse_and_ebitda_stays_detailed() -> None:
         ["Revenues", ""], ["Software & Programming", 9826.0], ["  Total Revenues", 9826.0],
     ]
     s = cs.segments(_fin_bundle({"Segments": single}, freq="annual"))
-    assert s.value == "[Nov-30-2025] Software & Programming — single segment"
+    assert s.value == "Software & Programming — single segment"  # no inline period prefix
     assert "100%" not in s.value and "of Total" not in s.value and "9,826" not in s.value
+    assert "Nov-30-2025" in (s.source_ref or "")  # the as-of vintage rides the citation
 
     geo1 = [
         ["For the Fiscal Period", "12 months Sep-27-2025"],
@@ -3785,7 +3787,7 @@ def test_segment_lean_collapse_and_ebitda_stays_detailed() -> None:
         ["Revenues", ""], ["United States", 4413.0], ["  Total Revenues", 4413.0],
     ]
     g = cs.geographic(_fin_bundle({"Segments": geo1}, freq="annual"))
-    assert g.value == "[Sep-27-2025] United States — single geography"
+    assert g.value == "United States — single geography"
 
     seg_eb = [
         ["For the Fiscal Period", "12 months Dec-31-2025"],
@@ -3799,7 +3801,7 @@ def test_segment_lean_collapse_and_ebitda_stays_detailed() -> None:
     assert "Commercial Services 283 (70%)" in (eb.value or "")  # absolutes + share KEPT
     assert "of segment-EBITDA sum (pre-corporate) 405" in (eb.value or "")  # pre-corporate sum KEPT
     assert "consolidated EBITDA 362" in (eb.value or "") and "~43 unallocated" in (eb.value or "")
-    assert (eb.value or "").startswith("[Dec-31-2025]")  # period compacted, no "12 months"
+    assert not (eb.value or "").startswith("[") and "Dec-31-2025" in (eb.source_ref or "")
 
 
 # --- item 3: clean same-quarter YoY from the quarterly file; annual margins + guards kept --------
