@@ -1903,6 +1903,48 @@ Each line: *what it does* — *verified how*.
 - _Whole suite green (ruff + mypy --strict clean; `pytest -m "not network"` = 534 passed, 1 skipped;
   +3 gate tests: continuity-gate math, filed_quarters parse/404/throttle, gated-placebo-collapse
   property)._
+- **Component-A scans now NON-OVERWRITING via scan_history (2026-07-13, `feat/component-a-history`;
+  closes the audit-followup gap at `cli.py` ~521-525).** `_cmd_themes` computes the dump ONCE and writes
+  it BOTH to `candidate_themes.jsonl` (the "latest" pointer, same bytes) AND to an always-on timestamped
+  `scan_history` snapshot (`driver_slug=component-a`, `tier_field=None`), mirroring the exposure/assay
+  pattern — a monthly sweep can no longer clobber the prior harvest (the delta/monitor diffs against
+  immutable snapshots). `record_snapshot` gained an ADDITIVE `tier_field: str | None = "exposure_basis"`:
+  the default path is byte-identical (exposure/assay manifest lines unchanged, still fail-loud on a
+  missing key), and `None` gives Component-A records (no `exposure_basis`) an empty `tier_counts` instead
+  of a KeyError — pinned by a Component-A-shape test + an exposure-default regression test. Parity flags
+  `--scan-history-dir` / `--no-scan-history` added. **BACKUP NOTE (honest deviation from the brief):** the
+  June-17 `candidate_themes.jsonl` OUTPUT was already ABSENT at build time (untracked / never committed;
+  removed when the primary worktree left `feat/own-history-line`) — so NO
+  `candidate_themes.2026-06-17.backup.jsonl` was created (nothing to copy); the analyst's dispositions
+  were already extracted (entry below), and going forward the timestamped archive + committable
+  latest-pointer prevent recurrence. **Monthly sweep SANCTIONED; cron file AUTHORED + verified but
+  PENDING OPERATOR COMMIT — the PAT lacks GitHub `workflow` scope, so it could NOT be pushed (the file
+  is in the PR body for the operator to add, or grant scope + push):**
+  `.github/workflows/monthly-themes.yml` (cron `0 7 3 * *` + `workflow_dispatch`), mirroring
+  monthly-score.yml — runs `python -m vinci.cli themes` (documented defaults basis r2 / window 365d /
+  min-breadth 3; the exact June-17 flag string was UNRECORDED, SAID SO in the workflow), job-summary
+  prints snapshot path + manifest line, commits the `candidate_themes.jsonl` pointer (git history = the CI
+  archive; `data/scan_history/` stays git-ignored/local). Evidence: the June-17 harvest = 35 proposals → 2
+  advances (entry below). Backend + workflow only — NOTHING deploys. On `feat/component-a-history`; PR to
+  be opened, NOT merged.**
+- _Suite green (ruff + mypy --strict clean; `pytest -m "not network"` = 573 passed; +2 scan_history
+  tests). Dry-run: two Component-A sweeps → 2 immutable snapshots, prior untouched, `tier_counts: {}`._
+- **HARVEST DISPOSITION (2026-07-13, analyst) — Component-A 2026-06-17 harvest (35 clusters)**
+  dispositioned per `component_a_harvest_2026-06-17.md` + priced-check
+  (`data/priced_check/report_all.txt`, as-of 2026-07-10) + the deep-research evidence doc: **T007 ADVANCE
+  → theme #3 'truckload-supply-purge'** (source=component-a); **T012 ADVANCE-LITE** (research adjudication
+  before any scan; the NHI SHOP-vs-sector contradiction is the open question); **T000 PARK-priced**
+  (revisit trigger: product-tanker subset derate — STNG/TRMD/HAFN); **T009 PARK-as-theme**, CRK handed to
+  Edge-2 watch (single name: ~1 Bcf/d non-binding offtake vs ~1.1 Bcf/d output, fresh drawdown);
+  **T019/T024 REJECT-as-named** (no shared driver: four revenue models / macro-attributed cycle);
+  remaining 29 PARK/REJECT per the harvest file. **CHANNEL-TAG CONVENTION adopted:** every candidate theme
+  henceforth carries source ∈ {analyst, component-a, …} + date, for channel comparison. **CANDIDATE
+  REGISTERED:** 'in-silico evidence substitution' (CERT/SLP/SDGR tailwind vs CRL/NOTV headwind),
+  source=analyst, 2026-07-13, status: gate + research checks running. _[Verified at build:
+  `data/priced_check/report_all.txt` present (53,516 B). The harvest worksheet + deep-research doc are the
+  analyst's off-repo artifacts (not in the repo tree); the raw 35-cluster `candidate_themes.jsonl` was
+  already deleted (see backup note). The channel-tag CONVENTION is adopted now; the CandidateTheme schema
+  source/date field is a follow-up (audit-flagged, unbuilt).]_**
 
 ## 3. FALSIFIED — tested and retired (NOT deferred)
 

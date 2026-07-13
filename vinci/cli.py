@@ -518,12 +518,34 @@ def _cmd_themes(args: argparse.Namespace) -> int:
         min_breadth=args.min_breadth, max_names=args.max_names, progress=stderr_reporter,
     )
     print(render_result(result, top=args.top))
+    dumped = [t.model_dump(mode="json") for t in result.candidate_themes]  # ONE dump — the "latest"
+    # pointer and the scan-history snapshot share these bytes (mirrors exposure's --out ≡ snapshot).
     if not args.no_write:
-        out = cfg.snapshots_dir / "candidate_themes.jsonl"
-        with out.open("w") as f:
-            for t in result.candidate_themes:
-                f.write(t.model_dump_json() + "\n")
-        print(f"\nwrote {out} ({len(result.candidate_themes)} admissible candidate themes)")
+        out = cfg.snapshots_dir / "candidate_themes.jsonl"  # "latest" pointer (same bytes)
+        out.write_text("\n".join(json.dumps(r) for r in dumped))
+        print(f"\nwrote {out} ({len(dumped)} admissible candidate themes)")
+    if not args.no_scan_history:  # ALWAYS-ON timestamped archive — a monthly sweep must never
+        # clobber the prior harvest; the delta/monitor diffs against these immutable snapshots.
+        import subprocess
+
+        from vinci.themes.scan_history import record_snapshot
+
+        try:  # sha is manifest metadata — unavailable is a logged None, not a failure
+            git_sha: str | None = subprocess.run(
+                ["git", "rev-parse", "--short", "HEAD"],
+                capture_output=True, text=True, check=True, timeout=5,
+            ).stdout.strip() or None
+        except (OSError, subprocess.SubprocessError):
+            git_sha = None
+        history_root = args.scan_history_dir or Path("data/scan_history")
+        desc = (f"Component A co-movement; basis={args.basis}, window={args.window_days}d, "
+                f"ref={args.ref or 'snapshot as_of'}, min_breadth={args.min_breadth}")
+        snap_path = record_snapshot(
+            dumped, driver_slug="component-a", driver_desc=desc, history_root=history_root,
+            now=datetime.now(UTC), git_sha=git_sha, n_scanned=result.stats.names_with_coverage,
+            tier_field=None)
+        print(f"scan-history snapshot → {snap_path}")
+        print(f"manifest + {(history_root / 'manifest.jsonl').read_text().splitlines()[-1]}")
     return 0
 
 
@@ -1205,6 +1227,14 @@ def build_parser() -> argparse.ArgumentParser:
     p_themes.add_argument(
         "--no-write", action="store_true", dest="no_write",
         help="print only; do not write candidate_themes.jsonl",
+    )
+    p_themes.add_argument(
+        "--scan-history-dir", type=Path, dest="scan_history_dir",
+        help="scan-history archive root (default: data/scan_history; git-ignored)",
+    )
+    p_themes.add_argument(
+        "--no-scan-history", action="store_true", dest="no_scan_history",
+        help="skip the always-on timestamped history snapshot",
     )
     p_themes.set_defaults(func=_cmd_themes)
 
