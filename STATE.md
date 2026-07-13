@@ -3188,24 +3188,23 @@ Assemble-and-cite only; POSES, never forecasts; `Synthesis` six-field no-conclus
   (parity), grouped by kind, events most-recent-first, endnote-cited (`>Source:` guard green),
   honest empty line when no rows. **VERIFIED live (preview 8791):** MVST Brief shows attribution +
   events cited `[B9-B12]`, zero console errors; AORT (None) shows the honest empty card.
-- **Tier B (LLM-fenced transcripts) — BUILT + validator VERIFIED on the REAL transcript; the LIVE
-  model run is VERIFY-PENDING on API quota (honest gap).** Operator installed LibreOffice →
-  `_find_soffice` finds `/opt/homebrew/bin/soffice`; `transcript_for_synthesis` now returns real
-  parsed slices (MVST/VITL/CNXC ~24k chars, 2 calls each — SHOWN). `driver_extract.py` is the
-  covenant pattern + ONE load-bearing UPGRADE — a **code-level validator**: (i) the model's `quote`
-  must appear whitespace-normalized in the slice; (ii) every numeric in `value` must digit-trace
-  (the synthesis tracer's scales + ±2%/0.05 tol) to a number **in the row's OWN QUOTE** — traced
-  against the quote, NOT the 24k slice (a slice-wide universe spuriously traces almost anything —
-  caught in dev: `999` matched `99.97%` slice-wide). **VERIFIED on MVST's real transcript** (via a
-  deterministic FakeLlm over the real slice): a valid `266 megawatt hours` row KEPT + source_ref
-  machine-bound to the right call; a fabricated quote, an invented number, and a bad `kind` each
-  DROPPED to a flag. **LIVE model extraction BLOCKED:** the account hit its Anthropic usage limit
-  (regains 2026-08-01) — the request reached the API well-formed (400 usage-limit, not a
-  format/auth error), and the covenant precedent already proves the call mechanics; the ONE
-  unobserved thing is the model's actual row output, to be shown the moment quota returns. Fence
+- **Tier B (LLM-fenced transcripts) — BUILT + VERIFIED END-TO-END (live model run, 2026-07-13).**
+  Operator installed LibreOffice → `_find_soffice` finds `/opt/homebrew/bin/soffice`;
+  `transcript_for_synthesis` returns real parsed slices (~24k chars, 2 calls/name). `driver_extract.py`
+  is the covenant pattern + ONE load-bearing UPGRADE — a **code-level validator**: (i) the model's
+  `quote` must appear whitespace-normalized in the slice; (ii) every numeric in `value` must
+  digit-trace (the synthesis tracer's scales + ±2%/0.05 tol) to a number **in the row's OWN QUOTE**
+  — traced against the quote, NOT the 24k slice (a slice-wide universe spuriously traces almost
+  anything — caught in dev: `999` matched `99.97%` slice-wide). **VERIFIED LIVE (claude-opus-4-8):**
+  MVST → 12 rows incl. `sales volume ~274 MWh (Q1'26) vs ~536 MWh prior` (the exact figure the PR#41
+  incident predicted), `Phase 3.2 up to 2 GWh capacity add`, `US rev +173%`; VITL → 12 rows incl. a
+  textbook pricing mechanism `price gap closed 35%→25% at a top-10 customer → volume +18% in 2 weeks`,
+  `new-household share 55%→50%`, `TDP 149.8 vs 115.8 yoy`. Every row cited to a real call with a
+  verbatim quote; the row cap FLAGGED the excess (not silently dropped); ZERO fabrications observed.
+  The FakeLlm unit pins (keep/drop/cap/LLM-error) guard the validator deterministically in CI. Fence
   revised (scope-exact): a separate pre-synthesis validated phase reads transcript numbers; the
-  synthesis fence still says "derive NO numbers from this text — cite the `operating_drivers`
-  facts". `requirements.py` transcript `used_for` updated; `required` stays False.
+  synthesis fence still says "derive NO numbers from this text — cite the `operating_drivers` facts".
+  `requirements.py` transcript `used_for` updated; `required` stays False.
 - **Suite:** ruff + `mypy --strict` (94) + full `pytest -m "not network"` green. Pins: A1/A2 on
   real public-domain EX-99.1/10-Q excerpts + negatives; A3 on a SYNTHETIC KD fixture; Tier-B
   validator on a SYNTHETIC slice via FakeLlm (keep/drop/cap/LLM-error — real CIQ transcript text
@@ -3215,10 +3214,10 @@ Assemble-and-cite only; POSES, never forecasts; `Synthesis` six-field no-conclus
   "operating"⊃"rating" substring false-positive in the no-conclusion guard → matcher tightened to
   snake_case word boundaries [Y]; digit-trace-against-slice too permissive → trace against the
   row's own quote [Y]; render endnote-only → `>Source:`-scan guard [Y, pre-existing].
-- **NEXT (operator):** (1) test locally, then I open the PR; (2) **when Anthropic quota returns
-  (2026-08-01), run one live `vinci dossier` on a finalist to SHOW real Tier-B rows** — the sole
-  verify-pending item; (3) standing artifact pass re-assembles the cohort so committed dossiers
-  carry real driver rows.
+- **NEXT (operator):** (1) test locally (full cohort Tier-A + live Tier-B injected into the
+  frontend preview), then I open the PR; (2) standing artifact pass re-assembles the cohort via
+  `vinci dossier` so the COMMITTED dossiers carry real driver rows (both tiers) — the injected
+  preview jsons are restored to None after review.
 
 **BRIEF (v2) — `planning/OPERATING_DRIVERS_BUILD_BRIEF.md` (the spec the build followed).** Genesis: the
 MOSL Mahanagar Gas audit (full record rides with #116's STATE.md entry). v2 re-grounded on a
