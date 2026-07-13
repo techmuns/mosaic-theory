@@ -2229,6 +2229,97 @@ def test_web_mechanism_mirror_static() -> None:
     assert ">Source:" not in src  # the exhibits-cite-via-endnotes guard stays green
 
 
+# --- (PR-B Tier B) LLM-fenced transcript extractor — validator behavior (deterministic FakeLlm) ---
+# SYNTHETIC transcript slice (real CIQ transcript text is licensed → never committed; the real-slice
+# validation ran live against MVST's transcript). Two fenced calls; the validator is pinned here.
+_TB_SLICE = (
+    "--- Acme Q1 2026 Earnings Call, May 1, 2026 ---\n"
+    "Thanks operator. We shipped approximately 266 megawatt hours in the quarter, up 16% "
+    "year over year. Average selling price rose 7% effective March 1 across the fleet.\n"
+    "--- Acme Q4 2025 Earnings Call, Feb 1, 2026 ---\n"
+    "We added 40,000 members during the fourth quarter."
+)
+
+
+class _TBFakeLlm(LlmClient):
+    def __init__(self, payload: dict[str, typing.Any], *, raise_err: bool = False) -> None:
+        self._payload, self._raise = payload, raise_err
+
+    @property
+    def model(self) -> str:
+        return "fake-tb-1"
+
+    def extract(  # type: ignore[override]
+        self, *, system: str, user: str, tool: dict[str, typing.Any]
+    ) -> dict[str, typing.Any]:
+        if self._raise:
+            raise LlmError("simulated")
+        return self._payload
+
+
+def test_tier_b_validator_keeps_valid_drops_bad_and_binds_source() -> None:
+    """(PR-B Tier B) The code-level validator — the load-bearing UPGRADE over covenant extraction:
+    a real quote + a value whose numbers trace to that quote is KEPT (tier=llm-fenced, verbatim,
+    source_ref machine-set to the enclosing call); a fabricated quote, an invented number, and a
+    kind outside the fenced set are each DROPPED to a flag. Deterministic — no LLM-string pin."""
+    from vinci.dossier.driver_extract import extract_transcript_drivers
+    payload = {"drivers": [
+        {"kind": "leading_indicator", "metric": "shipments", "period": "Q1 2026",
+         "value": "266 megawatt hours",
+         "quote": "We shipped approximately 266 megawatt hours in the quarter, up 16% "
+                  "year over year."},
+        {"kind": "pricing_action", "metric": "ASP",
+         "value": "rose 7% effective March 1",
+         "quote": "Average selling price rose 7% effective March 1 across the fleet."},
+        {"kind": "leading_indicator", "metric": "deliveries",  # ⊖ fabricated quote
+         "value": "800 MWh",
+         "quote": "We delivered a record 800 MWh to Europe this quarter."},
+        {"kind": "leading_indicator", "metric": "shipments",  # ⊖ 999 not in quote
+         "value": "999 MWh",
+         "quote": "We added 40,000 members during the fourth quarter."},
+        {"kind": "attribution", "metric": "x", "value": "1",  # ⊖ kind outside the fenced set
+         "quote": "We added 40,000 members during the fourth quarter."},
+    ]}
+    rows, flags, _log = extract_transcript_drivers(
+        _TB_SLICE, llm=_TBFakeLlm(payload), ticker="ACME", name="Acme")
+    assert len(rows) == 2
+    kpi = next(r for r in rows if r.metric == "shipments")
+    assert kpi.tier == "llm-fenced" and kpi.value_num is None and kpi.unit is None  # verbatim-only
+    # source_ref machine-set to the enclosing call
+    assert kpi.source_ref == "CIQ transcript: Acme Q1 2026 Earnings Call, May 1, 2026"
+    assert kpi.kind.value == "leading_indicator"
+    # each bad row dropped with a reason (fabricated quote, untraced number, bad kind)
+    assert len(flags) == 3
+    joined = " ".join(flags)
+    assert "quote not in transcript" in joined
+    assert "not in its quote" in joined
+    assert "unknown kind" in joined
+
+
+def test_tier_b_llm_error_and_absent_slice_fail_loud() -> None:
+    """(PR-B Tier B ⊖) An LLM error or an absent slice yields NO rows + a naming flag — never a
+    fabricated driver, never a silent empty (the FIX-0 shape)."""
+    from vinci.dossier.driver_extract import extract_transcript_drivers
+    rows, flags, _ = extract_transcript_drivers(None, llm=_TBFakeLlm({}), ticker="X", name="X")
+    assert rows == [] and any("no transcript slice" in f for f in flags)
+    rows2, flags2, _ = extract_transcript_drivers(
+        _TB_SLICE, llm=_TBFakeLlm({}, raise_err=True), ticker="X", name="X")
+    assert rows2 == [] and any("LLM error" in f for f in flags2)
+
+
+def test_tier_b_row_cap_flags_excess() -> None:
+    """(PR-B Tier B ⊖) The row cap bounds cost/space — the excess is FLAGGED, never silently cut."""
+    from vinci.dossier.driver_extract import _MAX_ROWS, extract_transcript_drivers
+    one = {"kind": "leading_indicator", "metric": "shipments", "value": "266 megawatt hours",
+           "quote": "We shipped approximately 266 megawatt hours in the quarter, up 16% "
+                    "year over year."}
+    payload = {"drivers": [dict(one) for _ in range(_MAX_ROWS + 3)]}
+    rows, flags, _ = extract_transcript_drivers(
+        _TB_SLICE, llm=_TBFakeLlm(payload), ticker="X", name="X")
+    assert len(rows) == _MAX_ROWS
+    assert sum("capped" in f for f in flags) == 3  # the 3 excess rows each flagged
+
+
 def test_dossier_top_redesign_no_duplication_static() -> None:
     """(redesign) The dossier top: a SLIM header (title + one 'no verdict' meta line, no queue rank)
     and a Brief teaser split into a 2/3 narrative + a 1/3 snapshot table. The identity, market cap,

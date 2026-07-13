@@ -164,8 +164,10 @@ CIQ_MODULES: tuple[CiqModuleRequirement, ...] = (
         sheets=(),  # a text document, not a workbook with subsheets
         used_for=(
             "qualitative synthesis context — a boilerplate-stripped, char-bounded slice "
-            "(transcript_for_synthesis) — and a source-bound management-commentary POINTER "
-            "(management_commentary); never embedded full, never machine-curated"
+            "(transcript_for_synthesis) — a source-bound management-commentary POINTER "
+            "(management_commentary); and (PR-B Tier B) the LLM-fenced operating-driver rows "
+            "(extract_transcript_drivers — each quote-in-slice + digit-traced or dropped); never "
+            "embedded full, never machine-curated"
         ),
         granularity=Granularity.QUARTERLY,
         lookback="the last ~2 quarters (most recent 1–2 earnings calls)",

@@ -903,8 +903,10 @@ def synthesize(
             "\n\n=== Earnings-call transcripts, each fenced by a '--- <call> ---' label. With the "
             "latest and prior quarter both on file, COMPARE posture quarter-over-quarter where it "
             "shifts. Prepared remarks + Q&A, mechanically bounded. QUALITATIVE management-posture "
-            "context ONLY. Derive NO numbers; a point resting on it cites the 'CIQ transcript' "
-            "source_ref from the facts. ===\n"
+            "context ONLY. Derive NO numbers FROM THIS TEXT — any transcript figure you need has "
+            "already been extracted, validated, and cited as an `operating_drivers` fact above; "
+            "cite THAT source_ref, never a number you read here. A point resting on posture cites "
+            "the 'CIQ transcript' source_ref from the facts. ===\n"
             + transcript
         )
     log_parts = [f"model: {llm.model}", "", "=== SYSTEM ===", _SYSTEM, "", "=== USER ===", user]
