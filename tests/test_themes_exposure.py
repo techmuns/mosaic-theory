@@ -14,6 +14,7 @@ strings leaking in; AI-datacenter's prompt reproduces its old load-bearing conte
 from __future__ import annotations
 
 import json
+from pathlib import Path
 from typing import Any, cast
 
 import pytest
@@ -503,3 +504,55 @@ def test_truckload_asset_tl_precedes_equipment() -> None:
         "grew the company tractor fleet, expanding truckload capacity", lyr) == "asset-based-tl"
     # a pure equipment fact (used-truck / dealer, NO truckload signal) still reaches `equipment`
     assert provenance_tag_of("used truck sales through the dealer network", lyr) == "equipment"
+
+
+def test_only_tickers_partition_subset_and_missing() -> None:
+    """--only-tickers restricts to the intersection with the universe; unknown names come back as
+    `missing` (the caller prints + skips them) while the rest proceed — the delta-scan primitive."""
+    from vinci.cli import _partition_only
+
+    kept, missing = _partition_only({"AAA", "BBB"}, {"AAA", "BBB", "CCC"})
+    assert kept == {"AAA", "BBB"} and missing == []  # pure subset — all kept, none missing
+    kept, missing = _partition_only({"AAA", "ZZZ"}, {"AAA", "BBB"})
+    assert kept == {"AAA"} and missing == ["ZZZ"]  # unknown ZZZ surfaced; AAA still scanned
+
+
+def test_only_tickers_empty_intersection_errors() -> None:
+    """An empty intersection must ERROR (SystemExit), never silently scan nothing — a typo'd or
+    stale delta list would otherwise read as 'no exposure'."""
+    from vinci.cli import _partition_only
+
+    with pytest.raises(SystemExit):
+        _partition_only({"ZZZ", "YYY"}, {"AAA", "BBB"})
+
+
+def test_resolve_only_tickers_sources_and_guards(tmp_path: Path) -> None:
+    """--only-tickers parses a comma list (uppercased); --only-file reads the same from disk;
+    neither → None; both sources → error; a supplied-but-empty source → error."""
+    import argparse
+
+    from vinci.cli import _resolve_only_tickers
+
+    def ns(t: str | None = None, f: Path | None = None) -> argparse.Namespace:
+        return argparse.Namespace(only_tickers=t, only_file=f)
+
+    assert _resolve_only_tickers(ns()) is None  # neither given → not a delta scan
+    assert _resolve_only_tickers(ns(t="wern, rxo,arcb")) == {"WERN", "RXO", "ARCB"}  # comma+upper
+    names = tmp_path / "names.txt"
+    names.write_text("wern\nrxo\n")
+    assert _resolve_only_tickers(ns(f=names)) == {"WERN", "RXO"}  # file source
+    with pytest.raises(SystemExit):
+        _resolve_only_tickers(ns(t="A", f=names))  # both sources → error
+    empty = tmp_path / "empty.txt"
+    empty.write_text("  \n , \n")
+    with pytest.raises(SystemExit):
+        _resolve_only_tickers(ns(f=empty))  # supplied but parses to nothing → error
+
+
+def test_themes_exposure_only_tickers_argparse() -> None:
+    """themes-exposure exposes --only-tickers / --only-file (the monitor's future delta-scan)."""
+    from vinci.cli import build_parser
+
+    a = build_parser().parse_args(
+        ["themes-exposure", "--driver", "truckload-supply-purge", "--only-tickers", "WERN,RXO"])
+    assert a.only_tickers == "WERN,RXO" and a.only_file is None

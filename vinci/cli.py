@@ -582,6 +582,36 @@ def _cmd_themes_stage2(args: argparse.Namespace) -> int:
     return 0
 
 
+def _resolve_only_tickers(args: argparse.Namespace) -> set[str] | None:
+    """Parse ``--only-tickers`` / ``--only-file`` into an uppercased ticker set (None if neither is
+    given). At most one source; fail loud if a source is supplied but yields no tickers. This is the
+    monitor's delta-scan primitive — restrict a scan to a named subset with NO new code path."""
+    only_tickers: str | None = args.only_tickers
+    only_file: Path | None = args.only_file
+    if only_tickers and only_file:
+        raise SystemExit("error: pass at most one of --only-tickers / --only-file")
+    raw = only_tickers if only_tickers else (only_file.read_text() if only_file else None)
+    if raw is None:
+        return None
+    toks = {t.strip().upper() for t in raw.replace(",", "\n").split() if t.strip()}
+    if not toks:
+        raise SystemExit("error: --only-tickers/--only-file supplied but no tickers parsed from it")
+    return toks
+
+
+def _partition_only(requested: set[str], universe_tickers: set[str]) -> tuple[set[str], list[str]]:
+    """Split ``requested`` (uppercased) against the universe: (kept, missing-sorted). Fail loud on
+    an EMPTY intersection — a typo'd/stale delta-scan must ERROR, not silently scan nothing (which
+    would read as 'no exposure')."""
+    kept = requested & universe_tickers
+    missing = sorted(requested - universe_tickers)
+    if not kept:
+        raise SystemExit(
+            f"error: none of the {len(requested)} requested tickers are in the universe "
+            f"(e.g. {', '.join(sorted(requested)[:8])}) — refusing to scan nothing")
+    return kept, missing
+
+
 def _cmd_themes_exposure(args: argparse.Namespace) -> int:
     """Stage-3: scan the sub-$10B universe for DISCLOSED exposure to ONE driver — selected by
     ``--driver`` from the DRIVER_SPECS registry — reading each name's recent filing stream through
@@ -616,6 +646,15 @@ def _cmd_themes_exposure(args: argparse.Namespace) -> int:
     cfg = get_config()
     cfg.ensure_dirs()
     universe, snap = det.load_detection_universe(cfg)
+    only = _resolve_only_tickers(args)
+    if only is not None:  # delta-scan primitive: restrict to the intersection with the universe
+        kept, missing = _partition_only(only, {n.ticker.upper() for n in universe})
+        if missing:  # fail loud on names not in the universe — print, then proceed with the rest
+            print(f"!! {len(missing)} requested ticker(s) NOT in universe (skipped): "
+                  f"{', '.join(missing)}")
+        universe = [n for n in universe if n.ticker.upper() in kept]
+        print(f"--only-tickers: scanning {len(universe)} of {len(only)} requested "
+              "(intersection with the committed universe)")
     if args.max_names:
         universe = universe[: args.max_names]
     names = [(n.ticker, str(n.cik).zfill(10)) for n in universe if n.cik]
@@ -1270,6 +1309,16 @@ def build_parser() -> argparse.ArgumentParser:
         help="recent disclosure window in days (default: 290 ≈ 9.5mo)",
     )
     p_exp.add_argument("--max-names", type=int, dest="max_names", help="cap the universe (dev)")
+    p_exp.add_argument(
+        "--only-tickers", dest="only_tickers",
+        help="restrict the scan to these comma-separated tickers, intersected with the universe "
+        "(the monitor's delta-scan primitive); unknown names are printed and skipped, an empty "
+        "intersection errors rather than scanning nothing",
+    )
+    p_exp.add_argument(
+        "--only-file", type=Path, dest="only_file",
+        help="like --only-tickers but read the tickers from a file (comma/newline-separated)",
+    )
     p_exp.add_argument("--workers", type=int, default=6, help="concurrent LLM workers (default: 6)")
     p_exp.add_argument("--out", help="write full model_dump JSONL (audit-grade persistence)")
     p_exp.add_argument(
