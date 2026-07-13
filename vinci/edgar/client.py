@@ -301,13 +301,26 @@ class EdgarClient:
         return out
 
     def shares_outstanding_by_cik(self, periods: Sequence[str]) -> dict[str, float]:
-        """Merge shares-outstanding frames over recent ``periods`` (later win) for coverage."""
+        """Merge shares-outstanding frames over recent ``periods`` (later win). dei
+        ``EntityCommonStockSharesOutstanding`` is PRIMARY; a name tagging shares only under
+        ``us-gaap:CommonStockSharesOutstanding`` falls back to that frame with the SAME
+        point-in-time discipline (same ``periods``, same later-win), filling ONLY CIKs the dei
+        frames missed — dei always wins on overlap, so no dei value ever moves."""
         merged: dict[str, float] = {}
         for period in periods:
             try:
                 merged.update(self.frame("EntityCommonStockSharesOutstanding", period=period))
             except Exception:  # noqa: BLE001 — a missing/empty frame just contributes nothing
                 continue
+        fallback: dict[str, float] = {}
+        for period in periods:
+            try:
+                fallback.update(
+                    self.frame("CommonStockSharesOutstanding", namespace="us-gaap", period=period))
+            except Exception:  # noqa: BLE001 — a missing/empty frame just contributes nothing
+                continue
+        for cik, val in fallback.items():
+            merged.setdefault(cik, val)  # us-gaap fills only where dei is absent (dei primary)
         return merged
 
     def fundamental_snapshot(self, cik: int | str) -> FundamentalSnapshot:
