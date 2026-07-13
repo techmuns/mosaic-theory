@@ -1946,7 +1946,8 @@ Each line: *what it does* — *verified how*.
   analyst's off-repo artifacts (not in the repo tree); the raw 35-cluster `candidate_themes.jsonl` was
   already deleted (see backup note). The channel-tag CONVENTION is adopted now; the CandidateTheme schema
   source/date field is a follow-up (audit-flagged, unbuilt).]_
-- **T012 ADJUDICATED 2026-07-13 (research doc, primary-source):** driver real — occupancy + supply halves
+- **T012 ADJUDICATED 2026-07-13 (research doc `data/research/t012_seniorhousing_adjudication_2026-07-13.md`,
+  primary-source):** driver real — occupancy + supply halves
   verified, supply locked to ~2028 (2025 starts ~5,977 units, 29-mo lead, no 2026 uptick) — but the
   pricing-power leg ABSENT (BKD same-store RevPOR +1.8–3.4% vs opex +4.8–5.9% in all 4 qtrs; SNDA crossed
   only Q4'25, Q1'26 same-store merger-redefined). Cluster mislabeled at the name level (CTRE ~74% SNF
@@ -1957,8 +1958,8 @@ Each line: *what it does* — *verified how*.
   Full scan NOT sanctioned (carrier set too narrow; scan slot held by theme #3). Next checkpoint: NIC Q2
   data, late July 2026.
 - **IN-SILICO EVIDENCE SUBSTITUTION (source=analyst, registered 2026-07-13) — ADJUDICATED 2026-07-13 via
-  priced-gate (`data/priced_check/report_insilico.txt`) + research memo (research adjudication relayed
-  2026-07-13; memo save pending):** driver REAL and ADVANCING (Senate-unanimous FDA Modernization Act
+  priced-gate (`data/priced_check/report_insilico.txt`) + research memo
+  (`data/research/insilico_adjudication_2026-07-13.md`):** driver REAL and ADVANCING (Senate-unanimous FDA Modernization Act
   3.0, NIH $150M, Year-1 goals met) but every guidance still DRAFT, zero animal-in-lieu approvals, and
   P&L linkage ABSENT at all five names (CERT software +7%, bookings −2.5%; SLP software flat, TAKE-PRIVATE
   @ $18.50 announced 2026-06-16; SDGR software −21%; CRL DSA stable, backlog $1.9B, mgmt 'no notable
@@ -1978,6 +1979,23 @@ Each line: *what it does* — *verified how*.
   pre-triage checkpoint: analyst face-checks the WERN (expect tailwind driver-specific), RXO (expect
   indirect-opposite: broker), ARCB (expect indirect: LTL-majority) rows before any triage is trusted.
   Finding-4a data point #2: headwind encoded as indirect in text.
+- **SHARES-TAG us-gaap FALLBACK — Component-A coverage fix (2026-07-13, feat/shares-tag-fallback; PR
+  open, not merged).** `shares_outstanding_by_cik` (`vinci/edgar/client.py`) now falls back to the
+  `us-gaap:CommonStockSharesOutstanding` frame for any CIK the primary
+  `dei:EntityCommonStockSharesOutstanding` frame does not cover — SAME `periods`, SAME later-win merge,
+  dei ALWAYS wins on overlap; no other universe gate touched (fail-closed preserved — a name in NEITHER
+  frame still dies at `no_shares`). **SIZE (probed at ref 2026-07-06, priced resolver set): 2,075 names
+  die at `no_shares`; the us-gaap frame fallback recovers 213 of them past that gate.** Net universe
+  addition is < 213 — the head of the recoverable list is warrants/units (AENTW/AESPR/AESPU/AESPW …) the
+  security-type allowlist cuts downstream. **SDGR — the #117 UNIVERSE-COVERAGE-FLAG casualty — is NOT
+  recovered, correcting that flag's premise:** SDGR stopped tagging `us-gaap:CommonStockSharesOutstanding`
+  after FY2023 (last frame value 2023-12-31) and tags no `dei` shares, so it is absent from BOTH recent
+  calendar-quarter frames; a frames-based fallback cannot reach it (its recent share count lives off the
+  calendar-quarter frame — a deeper, still-unfixed gap; the §5 flag is corrected in place). **Detection-
+  universe delta: the one month-over-month Component-A diff crossing this change partly reflects coverage,
+  not market.** Verified: `pytest tests/test_edgar.py::test_shares_us_gaap_fallback_dei_primary` (pins
+  dei-wins-on-overlap / us-gaap-only-recovered / neither-still-`no_shares`); ruff + `mypy --strict vinci`
+  clean.
 
 ## 3. FALSIFIED — tested and retired (NOT deferred)
 
@@ -2971,7 +2989,8 @@ two-name analysis (mid/small-caps, opposite directions) mapped against this inve
   shared).** `-s2`: `data/assay/` = 14 cards, `data/assay_history/` = 3 driver subdirs + `manifest.jsonl`
   (46 snapshot files), `data/assay_cache/` = 1944 efts files. `-main`: `data/priced_check/report_all.txt`
   present, `data/snapshots/candidate_themes.jsonl` = 35 (the restored June-17 harvest) +
-  `candidate_themes.2026-06-17.backup.jsonl`. `data/scan_history/` is EMPTY in BOTH worktrees — by design,
+  `candidate_themes.2026-06-17.backup.jsonl`, `data/research/` (the insilico + t012-senior-housing
+  adjudication memos, 2026-07-13). `data/scan_history/` is EMPTY in BOTH worktrees — by design,
   until the first post-merge exposure scan or Component-A sweep writes it. **SESSION RULE: print the
   worktree + `pwd` before touching `data/`** — the same path holds different contents per worktree.
 - **UNIVERSE-COVERAGE FLAG (report-only; bounds what Component-A can cluster) — SDGR ABSENT from
@@ -2980,11 +2999,17 @@ two-name analysis (mid/small-caps, opposite directions) mapped against this inve
   `resolver.iter_universe(XNAS/XNYS/XASE)` (7641 considered) then fail-closed-gated. SDGR (CIK 1490978,
   Nasdaq, SIC 2834, 1270 grouped-daily bars) clears exchange / SIC / price / cap-band, but is dropped at
   the **`no_shares` gate (`vinci/universe.py:107-109`)**: the builder reads shares ONLY from the EDGAR
-  `dei:EntityCommonStockSharesOutstanding` frame (`vinci/edgar/client.py:308`, no us-gaap fallback), and
+  `dei:EntityCommonStockSharesOutstanding` frame (`vinci/edgar/client.py`, dei-only when this flag was
+  written; a us-gaap fallback was since added — see CORRECTED below), and
   SDGR tags its shares under `us-gaap:CommonStockSharesOutstanding` (its `dei` block is public-float only)
   → `shares[cik]=None` → fail-closed drop. Clinching differential: CERT and SLP DO report
-  `dei:EntityCommonStockSharesOutstanding`; SDGR does not. So NO attribute rule excludes SDGR — a
-  us-gaap-shares fallback would recover it (NOT fixed here). (NOTV is a DIFFERENT, earlier gap: absent
+  `dei:EntityCommonStockSharesOutstanding`; SDGR does not. So NO attribute rule excludes SDGR — but a
+  us-gaap-shares fallback does NOT recover it: **CORRECTED 2026-07-13 (shipped; see the §2
+  shares-tag-fallback entry).** The shipped fallback is FRAME-based (recent calendar-quarter
+  `us-gaap:CommonStockSharesOutstanding`, matching the dei path); SDGR STOPPED tagging that concept after
+  FY2023 (last frame value 2023-12-31), so it is absent from the recent us-gaap frames too — the fallback
+  recovers 213 OTHER `no_shares` names but NOT SDGR, which remains an unfixed deeper gap (its recent share
+  count lives off the calendar-quarter frame). (NOTV is a DIFFERENT, earlier gap: absent
   from `company_tickers_exchange.json` entirely → filtered at `resolver.py:112`.)
 
 **OPERATOR TO-DO — backfill the IWM benchmark before any full `vinci dossier` re-assemble (from

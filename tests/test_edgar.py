@@ -117,6 +117,30 @@ def test_shares_extracted_from_dei_namespace() -> None:
     assert latest_instant(pts).value == pytest.approx(1234.0)
 
 
+class _FrameStub(EdgarClient):
+    """dei tags CIK-1; us-gaap tags CIK-1 (dei must win) + CIK-2 (recovered); CIK-3 in neither."""
+
+    def __init__(self) -> None:  # only frame()/shares_outstanding_by_cik are exercised
+        pass
+
+    def frame(self, concept: str, *, namespace: str = "dei",
+              unit: str = "shares", period: str) -> dict[str, float]:
+        del concept, unit, period  # only `namespace` selects the frame in this stub
+        if namespace == "dei":
+            return {"0000000001": 100.0}
+        return {"0000000001": 999.0, "0000000002": 200.0}
+
+
+def test_shares_us_gaap_fallback_dei_primary() -> None:
+    """dei EntityCommonStockSharesOutstanding is PRIMARY; a name tagged ONLY under
+    us-gaap:CommonStockSharesOutstanding is RECOVERED via the fallback (same periods); dei WINS on
+    overlap; a name in NEITHER frame stays no_shares (fail-closed preserved)."""
+    out = _FrameStub().shares_outstanding_by_cik(["CY2026Q1I"])
+    assert out["0000000001"] == pytest.approx(100.0)  # dei wins on overlap (not the us-gaap 999)
+    assert out["0000000002"] == pytest.approx(200.0)  # us-gaap-only name RECOVERED
+    assert "0000000003" not in out  # neither frame → still no_shares (fail-closed preserved)
+
+
 def test_latest_instant_balance_sheet() -> None:
     cash = latest_instant(extract_points(SYNTHETIC_FACTS, "cash"))
     assert cash is not None and cash.is_instant and cash.value == pytest.approx(150.0)
