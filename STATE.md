@@ -2999,7 +2999,8 @@ two-name analysis (mid/small-caps, opposite directions) mapped against this inve
   `resolver.iter_universe(XNAS/XNYS/XASE)` (7641 considered) then fail-closed-gated. SDGR (CIK 1490978,
   Nasdaq, SIC 2834, 1270 grouped-daily bars) clears exchange / SIC / price / cap-band, but is dropped at
   the **`no_shares` gate (`vinci/universe.py:107-109`)**: the builder reads shares ONLY from the EDGAR
-  `dei:EntityCommonStockSharesOutstanding` frame (`vinci/edgar/client.py:308`, no us-gaap fallback), and
+  `dei:EntityCommonStockSharesOutstanding` frame (`vinci/edgar/client.py`, dei-only when this flag was
+  written; a us-gaap fallback was since added — see CORRECTED below), and
   SDGR tags its shares under `us-gaap:CommonStockSharesOutstanding` (its `dei` block is public-float only)
   → `shares[cik]=None` → fail-closed drop. Clinching differential: CERT and SLP DO report
   `dei:EntityCommonStockSharesOutstanding`; SDGR does not. So NO attribute rule excludes SDGR — but a
