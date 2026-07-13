@@ -11,7 +11,7 @@ from __future__ import annotations
 
 import json
 import sqlite3
-from collections.abc import Iterable, Iterator
+from collections.abc import Iterable, Iterator, Sequence
 from datetime import date
 from pathlib import Path
 from typing import Any
@@ -26,6 +26,30 @@ from vinci.store.schema import DDL, SCHEMA_VERSION, SNAPSHOT_TABLES
 
 def _iso(d: date | None) -> str | None:
     return d.isoformat() if d is not None else None
+
+
+# Snapshot tables whose committed JSONL is APPEND-ONLY — a write may only add rows, never drop one.
+_APPEND_ONLY_TABLES: frozenset[str] = frozenset({"decision_ledger"})
+
+
+def _assert_append_only(path: Path, new_lines: list[str], pk: Sequence[str]) -> None:
+    """Refuse (raise) if ``new_lines`` would drop any row already in ``path`` (compared by primary
+    key ``pk``) or is shorter. The decision ledger is APPEND-ONLY — the spread IS the accumulated
+    ledger, so a silent DELETE (e.g. a stale-DB ``export_snapshots``, the 2026-07-13 near-miss that
+    took decision_ledger.jsonl 1→0) must FAIL LOUD, never overwrite the committed track record."""
+    existing = [ln for ln in path.read_text().splitlines() if ln.strip()]
+    if not existing:
+        return
+
+    def keyset(lines: list[str]) -> set[tuple[Any, ...]]:
+        return {tuple(json.loads(ln)[c] for c in pk) for ln in lines if ln.strip()}
+
+    dropped = keyset(existing) - keyset(new_lines)
+    if len(new_lines) < len(existing) or dropped:
+        raise RuntimeError(
+            f"APPEND-ONLY VIOLATION on {path.name}: refusing to write {len(new_lines)} row(s) over "
+            f"{len(existing)} on disk ({len(dropped)} existing row(s) dropped by PK). The decision "
+            "ledger is append-only — a shrink is never valid (the spread IS the ledger).")
 
 
 class Store:
@@ -365,17 +389,32 @@ class Store:
         pks = sorted((r for r in info if r["pk"]), key=lambda r: r["pk"])
         return [r["name"] for r in pks] or [r["name"] for r in info]
 
-    def export_snapshots(self, snapshots_dir: Path) -> dict[str, int]:
-        """Write each durable table to ``<table>.jsonl`` (ordered by PK). Returns row counts."""
+    def export_snapshots(
+        self, snapshots_dir: Path, *, tables: Sequence[str] | None = None
+    ) -> dict[str, int]:
+        """Write each durable table to ``<table>.jsonl`` (ordered by PK). Returns row counts.
+
+        ``tables`` restricts the export to a SUBSET — ``build_universe`` passes only the artifacts
+        it actually builds (issuers/securities/universe_snapshot), so a stale working DB
+        export can no longer rewrite candidate_records/decision_ledger (the 2026-07-13 near-miss).
+        ``None`` exports all tables (the full durable dump). The append-only tables are guarded on
+        write regardless of caller — a shrink RAISES rather than committing a ledger DELETE."""
+        export_tables = tuple(SNAPSHOT_TABLES if tables is None else tables)
+        unknown = set(export_tables) - set(SNAPSHOT_TABLES)
+        if unknown:
+            raise ValueError(f"export_snapshots: unknown table(s) {sorted(unknown)}")
         snapshots_dir.mkdir(parents=True, exist_ok=True)
         counts: dict[str, int] = {}
-        for table in SNAPSHOT_TABLES:
+        for table in export_tables:
             order = ", ".join(self._pk_columns(table))
             rows = self._conn.execute(f"SELECT * FROM {table} ORDER BY {order}").fetchall()
+            lines = [json.dumps(dict(row), sort_keys=True) for row in rows]
             path = snapshots_dir / f"{table}.jsonl"
+            if table in _APPEND_ONLY_TABLES and path.exists():
+                _assert_append_only(path, lines, self._pk_columns(table))
             with path.open("w") as f:
-                for row in rows:
-                    f.write(json.dumps(dict(row), sort_keys=True) + "\n")
+                for line in lines:
+                    f.write(line + "\n")
             counts[table] = len(rows)
         return counts
 

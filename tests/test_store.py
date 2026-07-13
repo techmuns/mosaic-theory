@@ -7,6 +7,7 @@ and the durable **snapshot → rebuild** round-trip (with bulk prices intentiona
 
 from __future__ import annotations
 
+import json
 import sqlite3
 from datetime import date, datetime
 from pathlib import Path
@@ -284,3 +285,50 @@ def test_snapshot_export_and_rebuild(tmp_path: Path) -> None:
         assert b.get_ledger_entry("led-0001") == _ledger_entry(ident)
         # prices were not snapshotted → absent in the rebuilt DB (re-pull from Polygon)
         assert b.get_price_history(ident.internal_id) == []
+
+
+# --- ledger-export guard (the 2026-07-13 near-miss) -------------------------------------------
+def test_export_snapshots_refuses_to_shrink_ledger(store: Store, tmp_path: Path) -> None:
+    """The #121 near-miss, mechanized: a committed 1-entry decision_ledger.jsonl on disk + an EMPTY
+    working-DB ledger. A full export would write 0 rows over 1 — a ledger DELETE — so it RAISES and
+    leaves the committed file untouched (the guard fires BEFORE the write). E2e: guard wired in."""
+    snaps = tmp_path / "snaps"
+    snaps.mkdir()
+    (snaps / "decision_ledger.jsonl").write_text(json.dumps({"entry_id": "led-0001"}) + "\n")
+    with pytest.raises(RuntimeError, match="APPEND-ONLY"):
+        store.export_snapshots(snaps)  # 0 DB rows over 1 committed → ledger DELETE → refused
+    assert "led-0001" in (snaps / "decision_ledger.jsonl").read_text()  # never overwritten
+
+
+def test_ledger_guard_raises_on_missing_row(tmp_path: Path) -> None:
+    """Same row COUNT but an existing entry dropped (b gone, c added) still violates — the guard
+    compares by primary key, not just length."""
+    from vinci.store.store import _assert_append_only
+
+    p = tmp_path / "decision_ledger.jsonl"
+    p.write_text(json.dumps({"entry_id": "a"}) + "\n" + json.dumps({"entry_id": "b"}) + "\n")
+    new = [json.dumps({"entry_id": "a"}), json.dumps({"entry_id": "c"})]  # b dropped
+    with pytest.raises(RuntimeError, match="APPEND-ONLY"):
+        _assert_append_only(p, new, ["entry_id"])
+
+
+def test_ledger_guard_passes_on_pure_append(tmp_path: Path) -> None:
+    """A pure append (superset of the existing rows) is allowed — returns without raising."""
+    from vinci.store.store import _assert_append_only
+
+    p = tmp_path / "decision_ledger.jsonl"
+    p.write_text(json.dumps({"entry_id": "a"}) + "\n" + json.dumps({"entry_id": "b"}) + "\n")
+    superset = [json.dumps({"entry_id": e}) for e in ("a", "b", "c")]
+    _assert_append_only(p, superset, ["entry_id"])  # {a,b} ⊆ {a,b,c} → no raise
+
+
+def test_selective_export_writes_only_build_universe_tables(store: Store, tmp_path: Path) -> None:
+    """build_universe's selective export writes ONLY issuers/securities/universe_snapshot — never
+    candidate_records or decision_ledger — so a stale-DB build can't rewrite the ledger."""
+    from vinci.universe import BUILD_UNIVERSE_TABLES
+
+    snaps = tmp_path / "snaps"
+    store.export_snapshots(snaps, tables=BUILD_UNIVERSE_TABLES)
+    written = {p.name for p in snaps.glob("*.jsonl")}
+    assert written == {f"{t}.jsonl" for t in BUILD_UNIVERSE_TABLES}
+    assert "decision_ledger.jsonl" not in written and "candidate_records.jsonl" not in written
