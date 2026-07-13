@@ -15,6 +15,42 @@ def _by(items: list[Any], **kw: Any) -> Any:
     return next((i for i in items if all(getattr(i, k) == v for k, v in kw.items())), None)
 
 
+def test_a1_pricing_action_qualitative_and_ma_excluded() -> None:
+    """(PR-B A1) Pricing-action rows are verbatim-bound and QUALITATIVE by default — a headline
+    '7% increase' is revenue growth, NOT a price change, so value_num stays None. M&A/merger
+    'purchase price adjustment' boilerplate is NOT a pricing action (excluded)."""
+    # VITL-shaped real language → a qualitative pricing-action row, value_num None
+    vitl = rp.operating_drivers(
+        "Reflecting Strong Consumer Demand and Successful Strategic Pricing Actions; the 7% "
+        "increase from 2024 results.", source_ref=_SRC)
+    assert len(vitl) == 1 and vitl[0].kind.value == "pricing_action"
+    assert vitl[0].value_num is None  # the headline 7% is revenue growth, not the price action
+    assert "pricing action" in vitl[0].value.lower() and vitl[0].tier == "anchored"
+    # a % TIGHTLY bound to the price → captured
+    tight = rp.operating_drivers("We implemented a list price increase of 7% in March.",
+                                 source_ref=_SRC)
+    assert tight and tight[0].value_num == 7.0 and tight[0].unit == "%"
+    # ⊖ M&A boilerplate: 'purchase price adjustment' / merger context is not a pricing action
+    assert rp.operating_drivers(
+        "Subject to purchase price adjustments and indemnification under the merger agreement.",
+        source_ref=_SRC) == []
+
+
+def test_a1_leading_indicator_governed_and_false_positives_excluded() -> None:
+    """(PR-B A1) A KPI row requires a shipped/added verb GOVERNING the number+unit — the two
+    observed false-positive shapes are pinned OUT: an expense line-item carrying a unit word
+    (FUBO), and a product spec ('290Ah cell', MVST)."""
+    kpi = rp.operating_drivers("We shipped approximately 536 MWh in the quarter.", source_ref=_SRC)
+    assert len(kpi) == 1 and kpi[0].kind.value == "leading_indicator"
+    assert kpi[0].value_num == 536.0 and kpi[0].unit == "MWh"
+    # ⊖ expense line-item carrying a unit word (adjacency, no governing verb)
+    assert rp.operating_drivers("Subscriber related expenses 946,705 subscribers.",
+                                source_ref=_SRC) == []
+    # ⊖ product spec — a number+unit with no shipped/added verb
+    assert rp.operating_drivers(
+        "the launch of our 290Ah cell-based platform.", source_ref=_SRC) == []
+
+
 def test_ex991_locator_tolerant_multi_and_negative() -> None:
     r"""Tolerant 99.1 filename match — the three observed forms (ex991 / dex991 / the ex99_1
     underscore the old \W* class silently dropped); 99.2 / 99_2 NEVER match (the negative pin)."""

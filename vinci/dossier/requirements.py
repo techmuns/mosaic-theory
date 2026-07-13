@@ -172,6 +172,21 @@ CIQ_MODULES: tuple[CiqModuleRequirement, ...] = (
         required=False,
     ),
     CiqModuleRequirement(
+        module="Key Developments",
+        workbook_kind="key_developments",
+        freq=None,
+        sheets=(),  # a text/RTF document, not a workbook with subsheets
+        used_for=(
+            "(PR-B A3) dated, typed operating-EVENT rows for the Mechanism block "
+            "(key_development_drivers) — guidance changes, product/client announcements, "
+            "expansions, impairments (an INCLUDE filter; index/earnings/governance noise dropped); "
+            "a derived fact per row, source-bound, the raw RTF never committed"
+        ),
+        granularity=Granularity.SNAPSHOT,
+        lookback="the last ~1 year of key developments",
+        required=False,
+    ),
+    CiqModuleRequirement(
         module="Company Comparable Analysis (peer comps)",
         workbook_kind="comps",
         freq=None,

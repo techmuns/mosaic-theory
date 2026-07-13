@@ -92,11 +92,16 @@ def test_dossier_schema_has_no_conclusion_field() -> None:
         ds.MaturityWall, ds.ConcentrationCustomer, ds.CustomerConcentration, ds.Commitment,
     }
     assert expected <= models
+    # match a forbidden token only at snake_case WORD boundaries (^/_/$), not as a bare substring —
+    # so a factual 'operating_drivers' isn't flagged for the 'rating' inside 'ope-RATING' (the
+    # substring hazard: 'operating'⊃'rating', 'grating'⊃'rating', …), while 'buy_rating' /
+    # 'conviction_score' / a lone 'direction' still trip. Field names here are snake_case, so a
+    # boundary match is exact, not a loosening.
     offenders: list[str] = []
     for model in models:
         for fname in model.model_fields:
             low = fname.lower()
-            if any(tok in low for tok in _FORBIDDEN):
+            if any(re.search(rf"(?:^|_){re.escape(tok)}(?:$|_)", low) for tok in _FORBIDDEN):
                 offenders.append(f"{model.__name__}.{fname}")
     assert not offenders, f"dossier schema carries conclusion-shaped field(s): {offenders}"
 
@@ -2070,6 +2075,158 @@ def test_brief_snapshot_renders_present_and_omits_unknown() -> None:
     allu = ds.StockInfo(price=u(note="x"), high_52w=u(note="x"), low_52w=u(note="x"),
                         shares_out=u(note="x"), book_value_ps=u(note="x"), market_cap=u(note="x"))
     assert dr._brief_snapshot(None, None, allu) == []
+
+
+# --- (PR-B) operating-drivers: A3 Key Developments, fail-loud transcript, Mechanism render --------
+
+# SYNTHETIC Key-Developments text (real CIQ text is licensed → never committed). 5-column layout
+# ('Date|Company|Type|Headline|…') — the header-driven parse must find Type at index 2, not assume.
+_KD_5COL = (
+    "Report Criteria|\n"
+    "Selected Categories:|Company Forecasts and Ratings, Customer/Product|\n"
+    "Key Developments|\n"
+    "Date|Company|Type|Headline|Other Parties|\n"
+    "May-07-2026|Acme Co. (NasdaqGM:ACME)|Corporate Guidance - Raised|Acme Raises "
+    "FY2026 Guidance|-|\n"
+    "Situation: On May 7, 2026, Acme raised its full-year guidance on strong demand.\n"
+    "Apr-23-2026|Acme Co.|Product-Related Announcement|Acme Launches New Product Line|-|\n"
+    "Jun-29-2026|Acme Co.|Index Constituent Drop|Acme dropped from Russell 2000|-|\n"
+    "May-01-2026|Acme Co.|Executive/Board Change - Other|Acme CFO transition|-|\n"
+)
+# 4-column layout ('Date|Type|Headline|…') — Type at index 1. Same rows, no Company column.
+_KD_4COL = (
+    "Date|Type|Headline|Other Parties|\n"
+    "Mar-16-2026|Corporate Guidance - New/Confirmed|Co Provides 2026 Guidance|-|\n"
+    "Jan-02-2026|Index Constituent Add|Co added to an index|-|\n"
+)
+
+
+def _kd_bundle(monkeypatch: pytest.MonkeyPatch, text: str) -> ciq.CiqBundle:
+    """A bundle carrying one key_developments workbook; read_text is stubbed to `text` (the RTF
+    decode itself is covered by test_ciq — here we pin the parse/filter/header logic)."""
+    from pathlib import Path
+    monkeypatch.setattr(cs, "read_text", lambda path, fmt=None: text)
+    wb = ciq.CiqWorkbook(
+        kind="key_developments", path=Path("kd.rtf"), fmt=ciq.CiqFormat.RTF_TEXT, freq=None)
+    return ciq.CiqBundle(ticker="ACME", workbooks=(wb,))
+
+
+def test_a3_key_developments_header_driven_filter(monkeypatch: pytest.MonkeyPatch) -> None:
+    """(PR-B A3) EVENT rows from the KD export: header-driven column detection (5-col vs 4-col
+    layouts), the INCLUDE filter (guidance/product KEPT; index-constituent / exec-change DROPPED),
+    the Situation detail as verbatim, and a source_ref bound to the file + date."""
+    rows = cs.key_development_drivers(_kd_bundle(monkeypatch, _KD_5COL))
+    kept = {r.metric for r in rows}
+    assert "Corporate Guidance - Raised" in kept and "Product-Related Announcement" in kept
+    assert "Index Constituent Drop" not in kept  # ⊖ index mechanics dropped
+    assert "Executive/Board Change - Other" not in kept  # ⊖ governance dropped
+    guid = next(r for r in rows if r.metric == "Corporate Guidance - Raised")
+    assert guid.kind.value == "event" and guid.period == "May-07-2026" and guid.tier == "anchored"
+    assert guid.value == "Acme Raises FY2026 Guidance"
+    assert "raised its full-year guidance" in guid.verbatim  # the Situation line
+    assert guid.source_ref == "CIQ Key Developments: kd.rtf · May-07-2026"
+    # 4-column layout resolves Type at a DIFFERENT index — header-driven, not positional
+    rows4 = cs.key_development_drivers(_kd_bundle(monkeypatch, _KD_4COL))
+    assert [r.metric for r in rows4] == ["Corporate Guidance - New/Confirmed"]  # index add dropped
+
+
+def test_a3_headerless_kd_is_honest_empty(monkeypatch: pytest.MonkeyPatch) -> None:
+    """(PR-B A3 ⊖) A KD text with no recognizable Date|Type|Headline header → honest empty, never a
+    guessed column position."""
+    assert cs.key_development_drivers(
+        _kd_bundle(monkeypatch, "Report Criteria|\nrandom text\n")) == []
+
+
+def test_transcript_fail_loud_unparsed_flag_and_routing() -> None:
+    """(PR-B §3-now) Transcripts ON FILE but unparsed (LibreOffice missing) → a QA flag routed to
+    dev (not an analyst caveat); no transcript on file → NO flag (absence is not failure); a parsed
+    slice → NO flag. The 2026-07-10 silent-swallow can't recur."""
+    from pathlib import Path
+
+    from vinci.dossier.flags import partition
+    tr = ciq.CiqBundle(ticker="X", workbooks=(ciq.CiqWorkbook(
+        kind="transcript", path=Path("c.rtf"), fmt=ciq.CiqFormat.OLE_DISGUISED, freq=None),))
+    flag = cs.unparsed_transcript_flag(tr, None)  # on file, slice failed → flag
+    assert flag is not None and "unparseable" in flag
+    caveats, qa = partition([flag])
+    assert flag in qa and caveats == []  # dev/QA, never a human caveat
+    assert cs.unparsed_transcript_flag(tr, "--- call ---\nremarks") is None  # parsed → no flag
+    assert cs.unparsed_transcript_flag(  # absent → no flag
+        ciq.CiqBundle(ticker="X", workbooks=()), None) is None
+
+
+def _drv(kind: str, **kw: object) -> ds.OperatingDriver:
+    base: dict[str, object] = {"metric": "m", "value": "v", "verbatim": "vb",
+                               "source_ref": "8-K X EX-99.1", "tier": "anchored"}
+    return ds.OperatingDriver(kind=ds.DriverKind(kind), **{**base, **kw})  # type: ignore[arg-type]
+
+
+def test_mechanism_render_present_grouped_cited_and_honest_empty() -> None:
+    """(PR-B render e2e — invariants) The Mechanism block: present iff rows, grouped by kind with
+    events most-recent-first, every line endnote-cited; no rows → one honest line, never a
+    fabricated driver. Phrasing-independent (no value pin on a living-artifact string)."""
+    rows = [
+        _drv("attribution", metric="revenue", value="$5m, or 10%", value_num=-10.0, unit="%",
+             verbatim="Revenue decreased $5m, or 10%, due to lower volume.", source_ref="10-Q A"),
+        _drv("event", metric="Corporate Guidance - Raised", period="May-07-2026",
+             value="Raised FY26", source_ref="CIQ Key Developments: kd.rtf · May-07-2026"),
+        _drv("event", metric="Product-Related Announcement", period="Jun-29-2026",
+             value="Launch", source_ref="CIQ Key Developments: kd.rtf · Jun-29-2026"),
+    ]
+    m = _minimal_mech().model_copy(update={
+        "operating_drivers": ds.OperatingDriversExtract(rows=rows, qa_flags=[])})
+    body = "\n".join(dr._brief_mechanism_lines(m))
+    assert "## Mechanism" in body
+    assert "_Results attribution:_" in body and "_Recent events:_" in body
+    # events most-recent-first: Jun-29 before May-07 in the rendered order
+    assert body.index("Jun-29-2026") < body.index("May-07-2026")
+    assert ">Source:" not in body  # no inline exhibit caption (the endnotes rule)
+    # ⊖ honest empty — no rows → one honest line, no fabricated bullet
+    empty = "\n".join(dr._brief_mechanism_lines(_minimal_mech().model_copy(update={
+        "operating_drivers": ds.OperatingDriversExtract(rows=[], qa_flags=["x"])})))
+    assert "No operating drivers extracted" in empty and "\n- " not in empty
+    # ⊖ back-compat: operating_drivers=None (a pre-PR-B dossier) → still the honest line, no crash
+    assert "No operating drivers extracted" in "\n".join(
+        dr._brief_mechanism_lines(_minimal_mech()))  # operating_drivers defaults None
+
+
+def test_mechanism_render_endnote_cited_e2e() -> None:
+    """(PR-B render e2e — real endnote scope) Injecting driver rows into a committed dossier and
+    running the FULL render_markdown, every Mechanism bullet resolves to a numbered [n] endnote
+    (not an inline caption) — the endnotes discipline the exhibits guard enforces."""
+    import pathlib
+    p = pathlib.Path("data/dossiers/AORT/dossier.json")
+    if not p.exists():
+        pytest.skip("AORT committed dossier absent")
+    d = ds.Dossier.model_validate_json(p.read_text())
+    rows = [
+        _drv("attribution", metric="revenue", value="$5m, or 10%", value_num=-10.0, unit="%",
+             verbatim="Revenue decreased $5m, or 10%, due to lower volume.", source_ref="10-Q Z"),
+        _drv("event", metric="Corporate Guidance - Raised", period="May-07-2026",
+             value="Raised FY26", source_ref="CIQ Key Developments: kd.rtf · May-07-2026"),
+    ]
+    inj = d.model_copy(update={"mechanical": d.mechanical.model_copy(
+        update={"operating_drivers": ds.OperatingDriversExtract(rows=rows, qa_flags=[])})})
+    md = dr.render_markdown(inj)
+    lines = md.splitlines()
+    seg = lines[lines.index("## Mechanism"):]
+    seg = seg[:seg.index("## Financial snapshot")]
+    bullets = [ln for ln in seg if ln.startswith("- ")]
+    assert len(bullets) == 2 and all(re.search(r"\[\d+\]", ln) for ln in bullets)  # numbered cite
+    assert ">Source:" not in "\n".join(seg)  # never an inline exhibit caption
+
+
+def test_web_mechanism_mirror_static() -> None:
+    """(PR-B web parity) dossier.js mirrors the Mechanism block: mechanismCard on the Brief +
+    mechanismFull in Analysis, wired into briefTier/analysisTier, cited via citeMark (no inline
+    'Source:' — the exhibits-endnote rule), events sorted by a parsed KD date."""
+    src = Path("frontend/views/shared/dossier.js").read_text()
+    assert "function mechanismCard" in src and "function mechanismFull" in src
+    assert "briefCase(d.synthesis) + mechanismCard(m)" in src  # wired into the Brief
+    assert "+ mechanismFull(m)" in src  # wired into Analysis
+    assert "citeMark(r.source_ref)" in src  # endnote-cited, never inline
+    assert "No operating drivers extracted" in src  # the honest-empty mirror
+    assert ">Source:" not in src  # the exhibits-cite-via-endnotes guard stays green
 
 
 def test_dossier_top_redesign_no_duplication_static() -> None:

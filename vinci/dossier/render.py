@@ -1541,6 +1541,95 @@ def _brief_case_lines(s: Any) -> list[str]:
     return out
 
 
+_KIND_ORDER = ("leading_indicator", "pricing_action", "attribution", "event",
+               "pass_through_structure", "competitive_position")
+_KIND_LABEL = {
+    "leading_indicator": "Leading indicators", "pricing_action": "Pricing actions",
+    "attribution": "Results attribution", "event": "Recent events",
+    "pass_through_structure": "Pass-through", "competitive_position": "Competitive position",
+}
+
+
+def _event_sort_key(period: str | None) -> str:
+    """A KD 'May-28-2026' period → an ISO sortable key (desc via reverse); '' sorts last."""
+    if not period:
+        return ""
+    try:
+        return datetime.strptime(period, "%b-%d-%Y").date().isoformat()
+    except ValueError:
+        return ""
+
+
+def _driver_line(r: Any) -> str:
+    """One Mechanism row → a cited md bullet, shaped by kind. ATTRIBUTION shows the real (trimmed)
+    MD&A sentence — its cause IS the decision content; others show metric + value."""
+    if r.kind.value == "attribution":
+        body = r.verbatim if len(r.verbatim) <= 170 else r.verbatim[:167].rstrip() + "…"
+    elif r.kind.value == "event":
+        body = f"{r.period} · {r.metric}: {r.value}"
+    elif r.kind.value == "leading_indicator":
+        body = f"{r.metric}: {r.value}"
+    else:  # pricing_action / pass_through / competitive — the verbatim-bound value phrase
+        body = r.value[:1].upper() + r.value[1:]
+    return f"- {body}{_cite(r.source_ref)}"
+
+
+def _mechanism_groups(rows: list[Any], *, caps: dict[str, int]) -> list[str]:
+    """Rows grouped by kind in a fixed order, each capped; events most-recent-first. Shared by the
+    Brief (tight caps) and the Analysis tier (generous caps)."""
+    by_kind: dict[str, list[Any]] = {}
+    for r in rows:
+        by_kind.setdefault(r.kind.value, []).append(r)
+    out: list[str] = []
+    for kind in _KIND_ORDER:
+        group = by_kind.get(kind)
+        if not group:
+            continue
+        if kind == "event":
+            group = sorted(group, key=lambda r: _event_sort_key(r.period), reverse=True)
+        shown = group[:caps.get(kind, 3)]
+        out.append(f"_{_KIND_LABEL[kind]}:_")
+        out += [_driver_line(r) for r in shown]
+    return out
+
+
+_NO_DRIVERS = ("_No operating drivers extracted — anchored patterns missed; the transcript tier is "
+               "gated (LibreOffice) or dry._")
+
+
+def _brief_mechanism_lines(m: MechanicalLayer) -> list[str]:
+    """(PR-B Brief) the Mechanism block — forward operating drivers, grouped + tightly capped, each
+    cited. Fail-honest: a name with no rows renders one honest line, never a fabricated driver."""
+    od = m.operating_drivers
+    out: list[str] = ["## Mechanism"]
+    if od is None or not od.rows:
+        return [*out, _NO_DRIVERS, ""]
+    out.append("**Operating drivers** _(anchored; the full set is in Analysis)_")
+    out.append("")
+    out += _mechanism_groups(
+        list(od.rows),
+        caps={"attribution": 2, "pricing_action": 2, "leading_indicator": 2, "event": 3})
+    out.append("")
+    return out
+
+
+def _mechanism_lines(m: MechanicalLayer) -> list[str]:
+    """(PR-B Analysis) the full Mechanism rows — every kind, generous caps, each cited; a machine-QA
+    note when a source missed. Absent field ⇒ nothing (a pre-PR-B dossier round-trips clean)."""
+    od = m.operating_drivers
+    if od is None:
+        return []
+    out = ["## Operating drivers (mechanism)", ""]
+    if not od.rows:
+        return [*out, _NO_DRIVERS, ""]
+    out += _mechanism_groups(
+        list(od.rows),
+        caps={"attribution": 12, "pricing_action": 8, "leading_indicator": 12, "event": 10,
+              "pass_through_structure": 8, "competitive_position": 8})
+    out.append("")
+    return out
+
+
 def _brief_oneliner(desc: str) -> str:
     """First sentence of a CIQ business description ('{Co}, Inc. engages in …'), abbreviation-aware
     so the split doesn't stop at 'Inc.'/'Corp.'; capped for the teaser."""
@@ -1698,6 +1787,9 @@ def _brief_lines(d: Dossier) -> list[str]:
     out.append("")
     # 4 — THE CASE: condensed bull/bear + key unknowns
     out += ["## The case", *_brief_case_lines(s)]
+    # 4b — MECHANISM (PR-B): the forward operating drivers — leading indicators / pricing / MD&A
+    # attribution / dated events, cited. The mechanism the atomized case points don't carry.
+    out += _brief_mechanism_lines(m)
     # 5 — FINANCIAL SNAPSHOT: un-truncated key financials + the ratios panel
     out.append("## Financial snapshot")
     out += _brief_financials(m)
@@ -1819,6 +1911,9 @@ def render_markdown(d: Dossier, *, dev: bool = False) -> str:
     # (RC-1 C) primary-source cross-checks — filings vs CIQ panel (self-funding lives in leverage
     # above; wall / triangulation / guide / going-concern / concentration here).
     out += _primary_source_block(m)
+
+    # (PR-B) the full operating-driver rows — every kind, cited (the Brief shows a capped subset).
+    out += _mechanism_lines(m)
 
     # (D1·§3 · D2) Trajectory — the merged margin/multi-year table + share-count trend.
     out.append("### Trajectory (revenue · EBITDA · margins · ROIC)")

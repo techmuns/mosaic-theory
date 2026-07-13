@@ -16,9 +16,11 @@ from vinci.dossier.schemas import (
     ConcentrationCustomer,
     CustomerConcentration,
     DebtTranche,
+    DriverKind,
     FilingSectionExtract,
     GoingConcern,
     MaturityWall,
+    OperatingDriver,
 )
 from vinci.resolver.index import pad_cik
 
@@ -190,6 +192,110 @@ def _commitments(text: str, src: str) -> list[Commitment]:
             kind=m.group(2).lower(), amount=amt,
             within_12m=_money(m.group(3)) if m.group(3) else None,
             verbatim=_sentence(text, m.start(), cap=240), source_ref=src,
+        ))
+    return out
+
+
+# --- (PR-B A2) MD&A results attribution — price/volume/mix causality -----------------------------
+# The canonical MD&A shape, CONFIRMED across the cohort's cached 10-Qs (CNXC/MVST/SMPL/BRBR/VRRM):
+#   "<subj> (increased|decreased) [by] $X (million|billion), or Y%, … (due to|driven by|…) <cause>"
+# The CORE anchor is the "$X …, or Y%" magnitude; a row is emitted ONLY when a causal conjunction
+# follows within the window — so a bare "$X, or Y%" table figure with no attribution is NOT a row.
+_ATTR_CORE = re.compile(
+    r"(increased|decreased)\s+(?:by\s+)?\$\s*([\d,.]+)\s+(million|billion)\s*,?\s+or\s+([\d.]+)\s?%",
+    re.I)
+_ATTR_CAUSE = re.compile(
+    r"\b(due to|driven by|attributable to|as a result of|caused (?:primarily )?by|reflecting)\b",
+    re.I)
+# metric normalization — the subject snapped to the sentence start carries leading table-cell noise
+# ('4 % 94.9 % $ 1,490 … Commercial Services service revenue'); a keyword map recovers the clean
+# metric. 'pro\s*fit' tolerates the normalize_text hyphenation artifact ('operating pro fit', BRBR).
+_ATTR_METRIC: tuple[tuple[str, str], ...] = (
+    ("cost of revenue", r"cost\s+of\s+revenue"),
+    ("cost of sales", r"cost\s+of\s+sales"),
+    ("operating expenses", r"operating\s+expenses"),
+    ("operating profit", r"operating\s+pro\s*fit"),
+    ("gross profit", r"gross\s+pro\s*fit"),
+    ("gross margin", r"gross\s+margin"),
+    ("selling & marketing expense", r"selling\s+and\s+marketing"),
+    ("net income", r"net\s+income"),
+    ("net sales", r"net\s+sales"),
+    ("revenue", r"revenues?\b"),
+)
+
+
+def _attr_metric(subject: str) -> str:
+    """The clean metric from a noisy snapped subject — a keyword map, else a trailing letter-phrase.
+    A segment-qualified 'X service revenue' keeps the segment (VRRM's per-segment attribution)."""
+    low = subject.lower()
+    seg = re.search(r"([A-Z][A-Za-z]+(?:\s+[A-Z][A-Za-z]+){0,2})\s+service\s+revenue", subject)
+    if seg is not None:
+        return f"{' '.join(seg.group(1).split())} service revenue".lower()
+    for canonical, pat in _ATTR_METRIC:
+        if re.search(pat, low):
+            return canonical
+    words = re.findall(r"[A-Za-z][A-Za-z&'\-]*", subject)
+    return " ".join(words[-4:]).lower() if words else "(unlabeled)"
+
+
+def _attr_lo(text: str, start: int, *, back: int) -> int:
+    """The subject-sentence start ≤``back`` chars before the verb — the last '. ' (else the cap).
+    Tighter than a table-wide snap so the verbatim can't reach back into a preceding table."""
+    lo = text.rfind(". ", max(0, start - back), start)
+    return (lo + 2) if lo != -1 else max(0, start - back)
+
+
+def _attr_subject(text: str, start: int) -> str:
+    """The subject text between the prior sentence boundary and the verb at ``start``."""
+    return " ".join(text[_attr_lo(text, start, back=90):start].split())[-70:].strip()
+
+
+def _attr_verbatim(text: str, start: int, cause_end: int) -> str:
+    """The real attribution sentence — subject start (tight) THROUGH the sentence carrying the cause
+    (whose clause may trail into the next sentence, e.g. MVST's 'This decrease was driven by …'),
+    single-spaced, with leading table-cell numerics stripped. Never the table-wide window a generic
+    sentence-snap would grab. ``cause_end`` is the absolute end of the matched causal clause."""
+    lo = _attr_lo(text, start, back=90)
+    hi = text.find(". ", cause_end)
+    hi = (hi + 1) if hi != -1 and hi < cause_end + 170 else min(len(text), cause_end + 170)
+    frag = " ".join(text[lo:hi].split())
+    # drop leading table-cell debris: numeric cells, and a short lowercase word-FRAGMENT ('venue',
+    # a split 're|venue') that is itself glued in front of more table cells. Repeat until a real
+    # (capitalized) subject word or the sentence body remains.
+    frag = re.sub(r"^(?:[\d\s.,$%()\-]+|[a-z]{1,7}\s+(?=[\d$(]))+", "", frag)
+    return frag[:340].strip()
+
+
+def results_attribution(text: str, *, source_ref: str) -> list[OperatingDriver]:
+    """(PR-B A2) MD&A price/volume/mix attribution rows — each a magnitude ($ + %, direction-signed
+    into ``value_num``) bound to its causal clause, verbatim. A magnitude with NO stated cause is
+    not attribution (skipped); the empty list is an honest miss the collector flags. Never a
+    fabricated cause."""
+    src = source_ref
+    out: list[OperatingDriver] = []
+    seen: set[tuple[str, float]] = set()
+    for m in _ATTR_CORE.finditer(text):
+        cm = _ATTR_CAUSE.search(text, m.end(), m.end() + 190)
+        if cm is None:  # a magnitude with NO stated cause is not attribution
+            continue
+        pct = _money(m.group(4))
+        if pct is None:
+            continue
+        signed = -pct if m.group(1).lower() == "decreased" else pct
+        metric = _attr_metric(_attr_subject(text, m.start()))
+        key = (metric, signed)
+        if key in seen:
+            continue
+        seen.add(key)
+        period_m = re.search(
+            r"(?:three|six|nine)\s+months\s+ended\s+[A-Z][a-z]+\s+\d{1,2},\s+20\d\d",
+            text[max(0, m.start() - 90):m.end() + 90])
+        out.append(OperatingDriver(
+            kind=DriverKind.ATTRIBUTION, metric=metric,
+            period=period_m.group(0) if period_m else None,
+            value=f"${m.group(2)} {m.group(3).lower()}, or {m.group(4)}%",
+            value_num=signed, unit="%",
+            verbatim=_attr_verbatim(text, m.start(), cm.end()), source_ref=src, tier="anchored",
         ))
     return out
 

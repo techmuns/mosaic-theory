@@ -129,6 +129,12 @@ def assemble_one(
             reference_date=fin.reference_date,
         )
     flags += mech_flags
+    # (PR-B §3-now) transcript slice computed ONCE here so a fail-loud flag fires whether or not
+    # the LLM runs — transcripts on file that don't parse (no LibreOffice) never vanish silently.
+    transcript = ciq_sheets.transcript_for_synthesis(bundle)
+    unparsed = ciq_sheets.unparsed_transcript_flag(bundle, transcript)
+    if unparsed is not None:
+        flags.append(unparsed)
     synthesis = None
     logs: list[str] = []
     term_rows = None  # (E5) per-exhibit rows — attached to mech AFTER synthesis (render only)
@@ -165,8 +171,7 @@ def assemble_one(
                 "maturity_event": maturity_event})
             mech = mech.model_copy(update={"capital_structure": cs_pre})
         synthesis, synth_flags, synth_log = synthesize(
-            mech, llm=llm, ticker=ticker, name=rec.identity.name,
-            transcript=ciq_sheets.transcript_for_synthesis(bundle),
+            mech, llm=llm, ticker=ticker, name=rec.identity.name, transcript=transcript,
         )
         flags += synth_flags
         logs.append(synth_log)

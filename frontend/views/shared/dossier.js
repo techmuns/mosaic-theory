@@ -386,6 +386,7 @@ function analysisTier(d, m) {
     + catalystPath(m.catalyst_path, m.consensus_context)
     + (m.catalyst_path ? "" : consensus(m.consensus_context))  // legacy fallback only for old JSON
     + concentration(m.concentration)
+    + mechanismFull(m)                                  // PR-B full operating-driver rows
     + synthesis(d.synthesis);                           // D3 ordering + twins last — FULL synthesis here
 }
 
@@ -456,7 +457,7 @@ function briefVerdictChip(verdict) {
 // Target slot is the HUMAN's (never machine-filled). Mirrors _brief_lines() in render.py.
 function briefTier(d, verdict, m) {
   const parts = teaserCard(d, verdict, m) + setupCard(d.synthesis) + companyCard(m)
-    + briefCase(d.synthesis) + financialSnapshot(m) + valuationCard(m) + catalystCard(m) + verifyCard(d);
+    + briefCase(d.synthesis) + mechanismCard(m) + financialSnapshot(m) + valuationCard(m) + catalystCard(m) + verifyCard(d);
   return parts.trim() ? parts : "";
 }
 
@@ -585,6 +586,56 @@ function briefCase(s) {
       <div><div class="ds-title" style="font-size:12px; color:#16713e;">Bull — overshoot</div>${bulls}</div>
       <div><div class="ds-title" style="font-size:12px; color:var(--danger);">Bear — terminal</div>${bears}</div>
     </div>${uk}</div>`;
+}
+
+// (PR-B) the Mechanism block — forward operating drivers (leading indicators / pricing / MD&A
+// attribution / dated events), grouped + capped + cited. Mirrors _brief_mechanism_lines() /
+// _mechanism_lines() in render.py. ATTRIBUTION shows the real (trimmed) MD&A sentence — its cause
+// IS the decision content. Fail-honest: no rows → one honest line, never a fabricated driver.
+const DRV_KIND_ORDER = ["leading_indicator", "pricing_action", "attribution", "event", "pass_through_structure", "competitive_position"];
+const DRV_KIND_LABEL = { leading_indicator: "Leading indicators", pricing_action: "Pricing actions", attribution: "Results attribution", event: "Recent events", pass_through_structure: "Pass-through", competitive_position: "Competitive position" };
+const DRV_NONE = "No operating drivers extracted \u2014 anchored patterns missed; the transcript tier is gated (LibreOffice) or dry.";
+const DRV_MONTHS = { Jan: "01", Feb: "02", Mar: "03", Apr: "04", May: "05", Jun: "06", Jul: "07", Aug: "08", Sep: "09", Oct: "10", Nov: "11", Dec: "12" };
+function drvEventKey(period) {  // "May-28-2026" -> "2026-05-28" (sortable); "" last
+  const m = /^([A-Z][a-z]{2})-(\d{2})-(\d{4})$/.exec(period || "");
+  return m ? `${m[3]}-${DRV_MONTHS[m[1]] || "00"}-${m[2]}` : "";
+}
+function drvLine(r) {
+  let body;
+  if (r.kind === "attribution") body = r.verbatim && r.verbatim.length > 170 ? r.verbatim.slice(0, 167).trimEnd() + "\u2026" : (r.verbatim || "");
+  else if (r.kind === "event") body = `${r.period} \u00b7 ${r.metric}: ${r.value}`;
+  else if (r.kind === "leading_indicator") body = `${r.metric}: ${r.value}`;
+  else body = r.value ? r.value.charAt(0).toUpperCase() + r.value.slice(1) : "";
+  return `<div class="drv-row">${escapeHtml(body)}${citeMark(r.source_ref)}</div>`;
+}
+function drvGroups(rows, caps) {
+  const byKind = {};
+  for (const r of rows) (byKind[r.kind] = byKind[r.kind] || []).push(r);
+  let html = "";
+  for (const kind of DRV_KIND_ORDER) {
+    let group = byKind[kind];
+    if (!group || !group.length) continue;
+    if (kind === "event") group = group.slice().sort((a, b) => drvEventKey(b.period).localeCompare(drvEventKey(a.period)));
+    const shown = group.slice(0, (caps && caps[kind]) || 3);
+    html += `<div class="drv-grp">${escapeHtml(DRV_KIND_LABEL[kind])}</div>` + shown.map(drvLine).join("");
+  }
+  return html;
+}
+function mechanismCard(m) {
+  const od = m.operating_drivers;
+  const rows = (od && od.rows) || [];
+  if (!rows.length) return `<div class="card ds-section"><div class="ds-title">Mechanism</div><div class="muted" style="font-size:12.5px; margin-top:6px;">${escapeHtml(DRV_NONE)}</div></div>`;
+  const body = drvGroups(rows, { attribution: 2, pricing_action: 2, leading_indicator: 2, event: 3 });
+  return `<div class="card ds-section"><div class="ds-title">Mechanism <span class="muted" style="font-weight:400; text-transform:none; letter-spacing:0;">\u2014 operating drivers; full set in Analysis</span></div>
+    <div class="brief-mech">${body}</div></div>`;
+}
+function mechanismFull(m) {  // Analysis tier — every kind, generous caps
+  const od = m.operating_drivers;
+  if (!od) return "";
+  const rows = od.rows || [];
+  if (!rows.length) return `<div class="card ds-section"><div class="ds-title">Operating drivers (mechanism)</div><div class="muted" style="font-size:12.5px; margin-top:6px;">${escapeHtml(DRV_NONE)}</div></div>`;
+  const body = drvGroups(rows, { attribution: 12, pricing_action: 8, leading_indicator: 12, event: 10, pass_through_structure: 8, competitive_position: 8 });
+  return `<div class="card ds-section"><div class="ds-title">Operating drivers (mechanism)</div><div class="brief-mech">${body}</div></div>`;
 }
 
 // (Phase-3) Revenue + EBITDA bars ($M) + EBITDA-margin % line — the institutional financial-trend

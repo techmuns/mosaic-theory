@@ -3159,8 +3159,48 @@ two-name analysis (mid/small-caps, opposite directions) mapped against this inve
   the bar). Thesis-break (all three WATCHLIST names): FMCSA non-domiciled-CDL rule stayed/reversed, or ACT
   driver availability returns to surplus. Gated on the analyst's dossier build; cites the theme-#3 freeze
   (`feat/theme3-freeze`) + `data/research/theme3_truckload_triage_2026-07-14.md`.
-**BRIEF DRAFTED v2 — awaiting operator sign-off (2026-07-13):
-`planning/OPERATING_DRIVERS_BUILD_BRIEF.md` (PR-B, the mechanism-coverage tier).** Genesis: the
+**OPERATING-DRIVERS MECHANISM TIER (PR-B, Tiers A) — BUILT + VERIFIED, LOCAL (branch
+feat/operating-drivers, 2026-07-13; NOT yet PR'd — user tests locally first).** The MOSL
+"90-second handover" gap, closed with anchored extraction: typed cited `operating_drivers` rows on
+the mechanical layer + a Mechanism block on the Brief (between The case and Financial snapshot).
+Assemble-and-cite only; POSES, never forecasts; `Synthesis` six-field no-conclusion pin untouched.
+- **Schema:** `OperatingDriver{kind, metric, period, value (verbatim), value_num/unit (anchored
+  only), verbatim, source_ref (machine-set), tier}` + `OperatingDriversExtract` +
+  `MechanicalLayer.operating_drivers` (default None → back-compat; committed dossiers round-trip).
+- **A2 (10-Q MD&A attribution, `filing_sections.results_attribution`)** — the canonical
+  "<subj> increased/decreased $X, or Y%, … due to <cause>" shape; value_num direction-SIGNED;
+  verbatim spans into the cause sentence (MVST's "48.9% reduction in sales volume … 535.7→273.9
+  MWh"). **VERIFIED real cached 10-Qs: 5/10 names, 15 rows** (MVST/VRRM/SMPL/BRBR/CNXC). First
+  consumer of MD&A body text (already fetched + disk-cached — zero new I/O).
+- **A3 (CIQ Key Developments, `ciq_sheets.key_development_drivers`)** — the on-disk, classified,
+  previously-UNUSED export; **header-driven** column detection (4-col vs 5-col `…|Company|…`
+  layouts vary); INCLUDE filter (guidance/product/client/expansion/impairment; index/earnings/
+  governance noise dropped). **VERIFIED: 10/10 names, 88 rows** — incl. EPAM (18 rows, a
+  zero-EX-99.1 name the tier rescues). Declared in `requirements.CIQ_MODULES` (optional).
+- **A1 (EX-99.1 pricing + narrow KPI, `release_parse.operating_drivers`)** — DEMOTED per the
+  diagnosis: pricing real (VITL, qualitative — a headline 7% is revenue growth, value_num stays
+  None) with M&A-boilerplate exclusion; KPI requires a governing shipped/added verb, the two
+  observed false-positive shapes pinned OUT (FUBO expense-line, MVST "290Ah cell" spec).
+- **Fail-loud transcript fix (ships regardless):** `unparsed_transcript_flag` — transcripts on file
+  that don't parse (no LibreOffice) now emit a QA flag; the 2026-07-10 silent-None cohort can't
+  recur. Routed to dev/QA (an OPS action), not an analyst caveat.
+- **Render:** md `_brief_mechanism_lines`/`_mechanism_lines` + web `mechanismCard`/`mechanismFull`
+  (parity), grouped by kind, events most-recent-first, endnote-cited (`>Source:` guard green),
+  honest empty line when no rows. **VERIFIED live (preview 8791):** MVST Brief shows attribution +
+  events cited `[B9-B12]`, zero console errors; AORT (None) shows the honest empty card.
+- **Tier B (LLM-fenced transcripts) — NOT built, GATED.** LibreOffice re-confirmed absent →
+  deferred per the don't-build-speculatively rule; Tiers A ship the value without it.
+- **Suite:** ruff + `mypy --strict` (93) + full `pytest -m "not network"` green. Pins: A1/A2 on
+  real public-domain EX-99.1/10-Q excerpts + negatives; A3 on a SYNTHETIC KD fixture (real CIQ text
+  never committed — licensing); fail-loud + render e2e (endnote-cited via real render_markdown).
+- **Incident→invariant (shipped Y):** silent transcript-None → `unparsed_transcript_flag` + pin [Y];
+  undeclared CIQ kind consumed → `CIQ_MODULES` coverage guard caught it, now declared [Y]; the
+  "operating"⊃"rating" substring false-positive in the no-conclusion guard → matcher tightened to
+  snake_case word boundaries [Y]; render endnote-only → `>Source:`-scan guard [Y, pre-existing].
+- **NEXT (operator):** (1) test locally, then I open the PR; (2) LibreOffice install unlocks Tier B;
+  (3) standing artifact pass re-assembles the cohort so committed dossiers carry real driver rows.
+
+**BRIEF (v2) — `planning/OPERATING_DRIVERS_BUILD_BRIEF.md` (the spec the build followed).** Genesis: the
 MOSL Mahanagar Gas audit (full record rides with #116's STATE.md entry). v2 re-grounded on a
 PRE-SIGN-OFF DATA DIAGNOSIS over the actual substrate (SEC cache · CIQ store · committed dossiers);
 v1's Tier-B coverage claim was WRONG and is corrected: `management_commentary: present` is a
