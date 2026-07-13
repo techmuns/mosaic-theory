@@ -1912,14 +1912,15 @@ Each line: *what it does* — *verified how*.
   the default path is byte-identical (exposure/assay manifest lines unchanged, still fail-loud on a
   missing key), and `None` gives Component-A records (no `exposure_basis`) an empty `tier_counts` instead
   of a KeyError — pinned by a Component-A-shape test + an exposure-default regression test. Parity flags
-  `--scan-history-dir` / `--no-scan-history` added. **BACKUP NOTE (honest deviation from the brief):** the
-  June-17 `candidate_themes.jsonl` OUTPUT was already ABSENT at build time (untracked / never committed;
-  removed when the primary worktree left `feat/own-history-line`) — so NO
-  `candidate_themes.2026-06-17.backup.jsonl` was created (nothing to copy); the analyst's dispositions
-  were already extracted (entry below), and going forward the timestamped archive + committable
-  latest-pointer prevent recurrence. **Monthly sweep SANCTIONED; cron file AUTHORED + verified but
-  PENDING OPERATOR COMMIT — the PAT lacks GitHub `workflow` scope, so it could NOT be pushed (the file
-  is in the PR body for the operator to add, or grant scope + push):**
+  `--scan-history-dir` / `--no-scan-history` added. **BACKUP NOTE:** the June-17 `candidate_themes.jsonl`
+  OUTPUT was absent at first-build time (untracked / never committed; removed when the primary left
+  `feat/own-history-line`), then the raw June-17 output was RESTORED 2026-07-13 from the operator's
+  off-repo copy (35 clusters, first `T000`) → backup `candidate_themes.2026-06-17.backup.jsonl` MADE. The
+  timestamped archive + committable latest-pointer prevent recurrence. **Monthly sweep SANCTIONED; cron
+  AUTHORED + verified, PUSH STILL BLOCKED 2026-07-13 — the token at `~/.mosaic_gh_token` reports only
+  `repo` scope (NOT `workflow`) despite the re-scope precondition, so the push was rejected again; the
+  file is committed-ready locally, awaiting a `workflow`-scoped token in that file (or a keychain
+  refresh):**
   `.github/workflows/monthly-themes.yml` (cron `0 7 3 * *` + `workflow_dispatch`), mirroring
   monthly-score.yml — runs `python -m vinci.cli themes` (documented defaults basis r2 / window 365d /
   min-breadth 3; the exact June-17 flag string was UNRECORDED, SAID SO in the workflow), job-summary
@@ -1945,6 +1946,16 @@ Each line: *what it does* — *verified how*.
   analyst's off-repo artifacts (not in the repo tree); the raw 35-cluster `candidate_themes.jsonl` was
   already deleted (see backup note). The channel-tag CONVENTION is adopted now; the CandidateTheme schema
   source/date field is a follow-up (audit-flagged, unbuilt).]_**
+- **T012 ADJUDICATED 2026-07-13 (research doc, primary-source):** driver real — occupancy + supply halves
+  verified, supply locked to ~2028 (2025 starts ~5,977 units, 29-mo lead, no 2026 uptick) — but the
+  pricing-power leg ABSENT (BKD same-store RevPOR +1.8–3.4% vs opex +4.8–5.9% in all 4 qtrs; SNDA crossed
+  only Q4'25, Q1'26 same-store merger-redefined). Cluster mislabeled at the name level (CTRE ~74% SNF
+  triple-net — driver inapplicable; NHI SHOP −340bps management-attributed idiosyncratic; AHR the one true
+  carrier, occupancy AND rate rising). **DISPOSITION: WATCH+** (downgraded from ADVANCE-LITE by
+  adjudication). **VERBATIM TRIGGER:** 'BKD or SNDA same-store RevPOR growth >= same-store opex growth for
+  two consecutive quarters, OR NIC occupancy >= 90.0%' — on fire, re-underwrite with AHR as lead carrier.
+  Full scan NOT sanctioned (carrier set too narrow; scan slot held by theme #3). Next checkpoint: NIC Q2
+  data, late July 2026.
 
 ## 3. FALSIFIED — tested and retired (NOT deferred)
 
