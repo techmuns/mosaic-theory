@@ -2027,6 +2027,26 @@ Each line: *what it does* — *verified how*.
   wiring). (3) **Theme-#3 delta scan of the 47 recovered names PENDING** (sanctioned, small; runs
   post-merge via `--only-tickers` against the restored rebuild); the theme-#3 FREEZE remains gated on
   delta completion — the recovered names must be scanned before the funnel is treated as complete.
+- **LEDGER-EXPORT SEAM CLOSED + universe canonical at 1800 (2026-07-13, feat/ledger-export-guard; PR
+  open, not merged).** `store.export_snapshots` dumps the ENTIRE working DB (all 7 SNAPSHOT_TABLES); in
+  #121 a STALE working DB rewrote `candidate_records.jsonl` (−275) and `decision_ledger.jsonl` (1→0) — a
+  forbidden ledger-DELETE, caught by hand. **Two mechanical layers:** (1) SELECTIVE EXPORT — `build_universe`
+  exports ONLY what it builds (`BUILD_UNIVERSE_TABLES = issuers/securities/universe_snapshot`, enumerated
+  from `upsert_security` + `record_universe`, not guessed), so a stale-DB build can never touch the
+  ledger/candidates; other callers keep the full dump. (2) NO-ROW-DROP GUARD — `export_snapshots` RAISES
+  (`_assert_no_row_drop`, by PK) if a write would drop a committed row — `decision_ledger` (append-only)
+  AND the securities/issuers ENTITY MASTER (accumulate-only; #121 shrank BOTH), from ANY caller. **Cron-safety (report):** `run-weekly`/`run-monthly` call `rebuild_from_snapshots` BEFORE export
+  (orchestrator.py:44/:75), repopulating the DB ledger from the committed file → export writes ≥ committed
+  → no shrink (circumstantially safe, now guard-backed). Incident→invariant (shipped Y):
+  `test_export_snapshots_refuses_to_shrink_ledger` + `…_securities` (e2e), `test_ledger_guard_raises_on_missing_row`,
+  `test_ledger_guard_passes_on_pure_append`, `test_selective_export_writes_only_build_universe_tables`.
+  **Universe LANDED at 1800** (the #119 us-gaap recovery, ref 2026-07-06): committed the
+  issuers/securities/universe_snapshot TRIO from #121's rebuild post-guard — 1760 → 1800 (+47 recovered /
+  −7 frame-drift). TRIO not the 2-file pair the brief expected: 41 of 47 recovered issuers were ABSENT
+  from HEAD `issuers.jsonl`, so a securities-only commit would dangle 41 refs. `decision_ledger` +
+  `candidate_records` byte-identical to HEAD. **The July theme-#3 sweep is gated on THIS merge** — it runs
+  on the canonical 1800 (the 47 recovered names in-universe; #121's delta already showed 0 surfaced among
+  them, this is the standing record). ruff + `mypy --strict vinci` + pytest green.
 
 ## 3. FALSIFIED — tested and retired (NOT deferred)
 

@@ -77,6 +77,13 @@ def admit_security_type(ptype: str | None, allowed: tuple[str, ...]) -> bool:
     return ptype in allowed
 
 
+# The ONLY snapshot artifacts build_universe writes: upsert_security → issuers + securities,
+# record_universe → universe_snapshot. It exports EXACTLY this set so a stale working DB can never
+# rewrite candidate_records / decision_ledger via the full dump (the 2026-07-13 ledger-DELETE
+# near-miss). Enumerated from the store calls below, not guessed.
+BUILD_UNIVERSE_TABLES: tuple[str, ...] = ("issuers", "securities", "universe_snapshot")
+
+
 def build_universe(
     config: Config | None = None, *, reference_date: date, share_periods: list[str] | None = None
 ) -> dict[str, int]:
@@ -154,7 +161,7 @@ def build_universe(
                     market_cap, as_of=reference_date, source="DERIVED", tier=SourceTier.DERIVED
                 ),
             )
-        store.export_snapshots(cfg.snapshots_dir)
+        store.export_snapshots(cfg.snapshots_dir, tables=BUILD_UNIVERSE_TABLES)
     # Persist the fail-closed gate-exclusion counts as a committed health snapshot (the ops
     # dashboard reads these; a wrong count signals a gate bug). Derived counts only — no licensed
     # data. SIC-denylist drops = unknown_sic + non_operating; type-allowlist = unknown_type +
