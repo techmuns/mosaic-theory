@@ -2190,6 +2190,27 @@ def test_mechanism_render_present_grouped_cited_and_honest_empty() -> None:
         dr._brief_mechanism_lines(_minimal_mech()))  # operating_drivers defaults None
 
 
+def test_mechanism_render_dedups_cross_call_repeats() -> None:
+    """(PR-B polish) A stat management repeats across BOTH calls (same metric+value, different
+    source_ref) renders ONCE — the JSON keeps each provenance, the block collapses it. Distinct
+    values in a group stay separate (274 vs 536 MWh); dedup is value-level, not kind-level."""
+    rows = [
+        _drv("competitive_position", metric="patents", value="over 890 patents",
+             source_ref="CIQ transcript: Acme Q1 2026 Call"),
+        _drv("competitive_position", metric="patents", value="over 890 patents",
+             source_ref="CIQ transcript: Acme Q4 2025 Call"),  # same fact, other call → collapses
+        _drv("leading_indicator", metric="volume", value="274 MWh", source_ref="CIQ transcript: A"),
+        _drv("leading_indicator", metric="volume", value="536 MWh", source_ref="CIQ transcript: A"),
+    ]
+    m = _minimal_mech().model_copy(update={
+        "operating_drivers": ds.OperatingDriversExtract(rows=rows, qa_flags=[])})
+    body = "\n".join(dr._brief_mechanism_lines(m))
+    assert body.lower().count("over 890 patents") == 1  # the cross-call repeat collapsed
+    assert "274 MWh" in body and "536 MWh" in body  # distinct values NOT merged
+    # the JSON still carries BOTH provenances (machine-complete — dedup is render-only)
+    assert len([r for r in m.operating_drivers.rows if r.value == "over 890 patents"]) == 2
+
+
 def test_mechanism_render_endnote_cited_e2e() -> None:
     """(PR-B render e2e — real endnote scope) Injecting driver rows into a committed dossier and
     running the FULL render_markdown, every Mechanism bullet resolves to a numbered [n] endnote

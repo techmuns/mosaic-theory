@@ -1560,6 +1560,32 @@ def _event_sort_key(period: str | None) -> str:
         return ""
 
 
+def _drv_norm(s: Any) -> str:
+    return re.sub(r"\s+", " ", str(s or "")).strip().lower().rstrip(".")
+
+
+def _drv_key(r: Any) -> tuple[str, str]:
+    """The dedup identity of a driver row — normalized (metric, value). Management often repeats a
+    stat across BOTH earnings calls; the JSON keeps each provenance (distinct source_ref), but the
+    rendered Mechanism block shows the fact ONCE (three-tier rule: machine-complete JSON, curated
+    surface). Value-level, so '274 MWh' vs '536 MWh' stay distinct — only exact repeats collapse."""
+    return _drv_norm(r.metric), _drv_norm(r.value)
+
+
+def _dedup_drivers(rows: list[Any]) -> list[Any]:
+    """First occurrence of each (metric, value) wins — order-preserving (so an event group keeps its
+    most-recent-first sort, and the surviving row's citation is the first call that stated it)."""
+    seen: set[tuple[str, str]] = set()
+    out: list[Any] = []
+    for r in rows:
+        k = _drv_key(r)
+        if k in seen:
+            continue
+        seen.add(k)
+        out.append(r)
+    return out
+
+
 def _driver_line(r: Any) -> str:
     """One Mechanism row → a cited md bullet, shaped by kind. ATTRIBUTION shows the real (trimmed)
     MD&A sentence — its cause IS the decision content; others show metric + value."""
@@ -1587,7 +1613,7 @@ def _mechanism_groups(rows: list[Any], *, caps: dict[str, int]) -> list[str]:
             continue
         if kind == "event":
             group = sorted(group, key=lambda r: _event_sort_key(r.period), reverse=True)
-        shown = group[:caps.get(kind, 3)]
+        shown = _dedup_drivers(group)[:caps.get(kind, 3)]  # collapse a stat repeated across calls
         out.append(f"_{_KIND_LABEL[kind]}:_")
         out += [_driver_line(r) for r in shown]
     return out

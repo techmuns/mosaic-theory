@@ -608,6 +608,15 @@ function drvLine(r) {
   else body = r.value ? r.value.charAt(0).toUpperCase() + r.value.slice(1) : "";
   return `<div class="drv-row">${escapeHtml(body)}${citeMark(r.source_ref)}</div>`;
 }
+// dedup identity — normalized (metric, value); management often repeats a stat across BOTH calls,
+// so the JSON keeps each provenance but the block shows the fact ONCE (machine-complete JSON, curated
+// surface). Value-level, so '274 MWh' and '536 MWh' stay distinct — only exact repeats collapse.
+function drvDedup(rows) {
+  const norm = (s) => String(s || "").replace(/\s+/g, " ").trim().toLowerCase().replace(/\.$/, "");
+  const seen = new Set(), out = [];
+  for (const r of rows) { const k = norm(r.metric) + "\u0001" + norm(r.value); if (seen.has(k)) continue; seen.add(k); out.push(r); }
+  return out;
+}
 function drvGroups(rows, caps) {
   const byKind = {};
   for (const r of rows) (byKind[r.kind] = byKind[r.kind] || []).push(r);
@@ -616,7 +625,7 @@ function drvGroups(rows, caps) {
     let group = byKind[kind];
     if (!group || !group.length) continue;
     if (kind === "event") group = group.slice().sort((a, b) => drvEventKey(b.period).localeCompare(drvEventKey(a.period)));
-    const shown = group.slice(0, (caps && caps[kind]) || 3);
+    const shown = drvDedup(group).slice(0, (caps && caps[kind]) || 3);  // collapse cross-call repeats
     html += `<div class="drv-grp">${escapeHtml(DRV_KIND_LABEL[kind])}</div>` + shown.map(drvLine).join("");
   }
   return html;
