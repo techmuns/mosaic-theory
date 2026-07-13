@@ -3159,15 +3159,26 @@ two-name analysis (mid/small-caps, opposite directions) mapped against this inve
   the bar). Thesis-break (all three WATCHLIST names): FMCSA non-domiciled-CDL rule stayed/reversed, or ACT
   driver availability returns to surplus. Gated on the analyst's dossier build; cites the theme-#3 freeze
   (`feat/theme3-freeze`) + `data/research/theme3_truckload_triage_2026-07-14.md`.
-**BRIEF DRAFTED — awaiting operator sign-off (2026-07-13):
+**BRIEF DRAFTED v2 — awaiting operator sign-off (2026-07-13):
 `planning/OPERATING_DRIVERS_BUILD_BRIEF.md` (PR-B, the mechanism-coverage tier).** Genesis: the
-MOSL Mahanagar Gas audit (full record rides with #116's STATE.md entry). Typed cited
-`operating_drivers` rows — Tier A anchored (EX-99.1 KPI/pricing + first MD&A attribution consumer)
-→ Tier B LLM-fenced transcripts via the covenant pattern PLUS a code-level verbatim/digit-trace
-validator the covenant template lacks; materiality as a cross-layer JOIN (never a product, per the
-DERIVED-PIN rule); synthesis bridge prompt-level only (the six-field no-conclusion pin untouched);
-Mechanism block on the Brief. Coverage evidence in-brief (10/10 transcripts; 3/10 names have no
-EX-99.1 path). **No code until sign-off.**
+MOSL Mahanagar Gas audit (full record rides with #116's STATE.md entry). v2 re-grounded on a
+PRE-SIGN-OFF DATA DIAGNOSIS over the actual substrate (SEC cache · CIQ store · committed dossiers);
+v1's Tier-B coverage claim was WRONG and is corrected: `management_commentary: present` is a
+POINTER (files on disk), NOT parse success — **LibreOffice is not installed on this machine, so
+`transcript_for_synthesis` silently returns None for 10/10 names** (the 2026-07-10 cohort assembled
+with zero transcript text and no flag — a fail-loud violation; the fix ships regardless of PR-B).
+Diagnosed yields: 10-Q MD&A attribution CONFIRMED in cached real text (CNXC/MVST/SMPL — rescues 2
+of the 3 no-release names) → A2 promoted; EX-99.1 pricing real for VITL but AORT's hits are M&A
+boilerplate ("purchase price adjustments" — new negative-pin shape) and KPI yield is thin/noisy
+(expense-line + product-spec false-positive shapes) → A1 demoted; **CIQ Key Developments found on
+disk 10/10, classified (`key_developments`, ciq.py:169), consumed by NOTHING, striprtf-parseable
+(`Date|Type|Headline` + Situation rows, guidance/customer categories)** → NEW anchored A3. Tier B
+(LLM-fenced transcripts, covenant pattern + a code-level verbatim/digit-trace validator the
+covenant template lacks) is **GATED: operator installs LibreOffice + a shown parsed slice, else
+deferred**. Materiality = cross-layer JOIN, never a product; synthesis bridge prompt-level only.
+OPERATOR ACTIONS: (1) LibreOffice install (Tier-B unlock); (2) optional fuller-category Key
+Developments re-pull; (3) optional per-name CIQ operating-metrics export at depth. **No code until
+sign-off.**
 - **OPERATOR NOTE (worktrees):** canonical main lives in the `-s2`/`-main` worktrees; the primary dir
   tracks unmerged `feat/own-history-line` — run audits and builds from a main worktree.
 - **Sweep cadence: MANUAL — operator decision 2026-07-13 (NO cron).** The Component-A co-movement sweep
