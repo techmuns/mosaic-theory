@@ -525,8 +525,10 @@ function teaserCard(d, verdict, m) {
   const read = (s && s.evidence_balance)
     ? `<div class="brief-read">${machineReadHtml(s.evidence_balance)}</div>` : "";
   const prop = deriveProposal(s ? s.evidence_balance : "");
+  // a present proposal does NOT repeat the lean's rationale — the machine-read line directly above
+  // already carries it (the #109 de-dup discipline); the row names its DERIVATION instead.
   const propSlot = prop.action
-    ? `<span class="pill ${prop.action === "BUY" ? "buy" : "avoid"}">${prop.action}</span> <span class="muted" style="font-size:11.5px;">${escapeHtml(prop.reason || "")}</span>`
+    ? `<span class="pill ${prop.action === "BUY" ? "buy" : "avoid"}">${prop.action}</span> <span class="muted" style="font-size:11.5px;">derived from the lean above</span>`
     : `<span class="brief-slot">none</span> <span class="muted" style="font-size:11.5px;">${escapeHtml(prop.note)}</span>`;
   const narrative = `<div class="brief-narrative">
     ${one ? `<div class="brief-oneliner">${escapeHtml(one)}</div>` : ""}

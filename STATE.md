@@ -2934,7 +2934,9 @@ record.
   BUY−AVOID spread, honest-None until both legs), disposition counts, and the RAW override subset
   (ticker · both calls · forward outcome). Human-final spread stays PRIMARY.
 - **VERIFIED (real runs, committed artifacts):** MVST (lean `strongly-bearish`) renders
-  `**Machine proposal:** AVOID — stated going-concern doubt …`; AORT (lean `mixed`) renders
+  `**Machine proposal:** AVOID — derived from the lean above` (the row names its DERIVATION, never
+  re-quoting the lean's rationale — the read line directly above already carries it; operator
+  caught the initial reason-echo as a #109-class dup, fixed same-day); AORT (lean `mixed`) renders
   `**Machine proposal:** none — evidence two-sided (mixed) — the human's call`; CLI-sealed a
   paper verdict from the REAL committed MVST artifact into a SCRATCH store — human BUY against
   machine AVOID_TERMINAL → `disposition: "overridden"`, `proposal_assembled_at:

@@ -1649,12 +1649,14 @@ def _machine_read_md(eb: str) -> str:
 def _machine_proposal_md(p: MachineProposal) -> str:
     """The machine's PROPOSED verdict (the 2026-07-13 pivot) — the deterministic derivation of the
     committed lean (verdict.derive_proposal; face-validity mapping, never outcome-tuned). Renders
-    ABOVE the human slot; the human's confirm/override below is the verdict of record. No proposal
-    renders its fail-honest note — never a coin-flip. AVOID_TERMINAL displays as AVOID (display
-    only; the enum is the structured value in the ledger/JSON)."""
+    ABOVE the human slot; the human's confirm/override below is the verdict of record. A present
+    proposal does NOT repeat the lean's rationale — the machine-read line sits directly above and
+    already carries it (the #109 de-dup discipline); the row names its DERIVATION instead. No
+    proposal renders its fail-honest note — never a coin-flip. AVOID_TERMINAL displays as AVOID
+    (display only; the enum is the structured value in the ledger/JSON)."""
     if p.action is None:
         return f"**Machine proposal:** none — {p.note}"
-    return f"**Machine proposal:** {p.action_word} — {p.reason or p.note}"
+    return f"**Machine proposal:** {p.action_word} — derived from the lean above"
 
 
 def _brief_lines(d: Dossier) -> list[str]:
