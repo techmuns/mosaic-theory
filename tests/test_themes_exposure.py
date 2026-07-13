@@ -489,3 +489,17 @@ def test_truckload_provenance_ltl_ordered_before_asset_based_tl() -> None:
     assert provenance_tag_of("less-than-truckload carrier, tonnage per day", lyr) == "ltl"
     assert provenance_tag_of("asset-based truckload linehaul", lyr) == "asset-based-tl"
     assert provenance_tag_of("we run a freight brokerage / 3pl", lyr) == "brokerage-3pl"
+
+
+def test_truckload_asset_tl_precedes_equipment() -> None:
+    """Provenance ORDERING pin #2: a real asset-based TL carrier's fact names its OWN tractors and
+    trailers (equipment keywords), yet must tag `asset-based-tl` — the tailwind bucket — not
+    `equipment`. asset-based-tl precedes equipment, so its `truckload`/`linehaul` match wins;
+    a regression (equipment first) would mis-file every tractor/trailer-mentioning TL carrier under
+    equipment. `equipment` still catches a pure OEM/dealer fact with NO truckload signal."""
+    lyr = TRUCKLOAD_SUPPLY_PURGE.provenance_tags
+    # carrier fact naming its own tractors AND its truckload capacity → the tailwind bucket
+    assert provenance_tag_of(
+        "grew the company tractor fleet, expanding truckload capacity", lyr) == "asset-based-tl"
+    # a pure equipment fact (used-truck / dealer, NO truckload signal) still reaches `equipment`
+    assert provenance_tag_of("used truck sales through the dealer network", lyr) == "equipment"

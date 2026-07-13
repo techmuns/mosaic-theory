@@ -1979,6 +1979,14 @@ Each line: *what it does* — *verified how*.
   pre-triage checkpoint: analyst face-checks the WERN (expect tailwind driver-specific), RXO (expect
   indirect-opposite: broker), ARCB (expect indirect: LTL-majority) rows before any triage is trusted.
   Finding-4a data point #2: headwind encoded as indirect in text.
+  **Provenance-order refinement (2026-07-13, feat/truckload-provenance-order; PR open, not merged):**
+  `provenance_tag_of` is first-match, and `equipment` (keywords tractor/trailer) preceded
+  `asset-based-tl` (truckload/linehaul) — so a real TL carrier's fact naming its OWN tractors/trailers
+  mis-filed as `equipment`, not the tailwind bucket. Fix: swapped the precedence of those two layers
+  (asset-based-tl now first); keyword SETS unchanged (analyst-ratified verbatim). GROUPING label only —
+  the tie/verdict is unaffected. Incident→invariant (shipped Y): `test_truckload_asset_tl_precedes_equipment`
+  pins the carrier fact → `asset-based-tl` AND a pure OEM/dealer fact → `equipment`; the counterfactual
+  old-order run returned `equipment` (the bug). The ltl-before-asset-tl pin still holds.
 - **SHARES-TAG us-gaap FALLBACK — Component-A coverage fix (2026-07-13, feat/shares-tag-fallback; PR
   open, not merged).** `shares_outstanding_by_cik` (`vinci/edgar/client.py`) now falls back to the
   `us-gaap:CommonStockSharesOutstanding` frame for any CIK the primary
