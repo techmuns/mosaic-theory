@@ -21,8 +21,8 @@ BellRing Brands, Inc., together with its subsidiaries, provides various nutritio
 **Is the sharp FY26 earnings reset a one-time margin/demand air-pocket that stabilizes near the reset guide (overshoot), or the first leg of a structural erosion in this single protein-based franchise (value trap)?**
 
 ## Company & business
-- **Segments:** [Sep-30-2025] Protein-Based Consumer Goods — single segment [6]
-- **Geography:** [Sep-30-2025] United States 88%; Other Foreign 8%; Canada 4% [7]
+- **Segments:** Protein-Based Consumer Goods — single segment [6]
+- **Geography:** United States 88%; Other Foreign 8%; Canada 4% [7]
 
 ## The case
 **The case** _(top points; the full bull/bear is in Analysis)_
@@ -307,10 +307,10 @@ _NM = a real state (negative base), not missing_
 - **Short interest (FINRA):** Short interest (FINRA, settle 2026-06-15): 11.9M → 15.8M sh (+33.1%, rising) · 13.6% of shares out (EDGAR XBRL) · DTC 2.9d · recent: 2026-06-15 15.8M · 2026-05-29 11.9M · 2026-05-15 12.4M · 2026-04-30 9.6M [24]
 
 ### Concentration
-- **Segments (revenue share):** [Sep-30-2025] Protein-Based Consumer Goods — single segment [6]
+- **Segments (revenue share):** Protein-Based Consumer Goods — single segment [6]
 - **Segments (EBITDA share — where profit sits):** _UNKNOWN_ — Segments sheet has no 'EBITDA' section as expected
 - **Customers:** Amazon.com, Inc. (NasdaqGS:AMZN) — Distributor · Broadline Retail · src: BellRing Brands, Inc. (NYSE:BRBR) 2025 Form 10-K; Costco Wholesale Corporation (NasdaqGS:COST) — Distributor · Consumer Staples Merchandise Retail · src: BellRing Brands, Inc. (NYSE:BRBR) 2025 Form 10-K; Post Holdings, Inc. (NYSE:POST) — Licensee · Packaged Foods and Meats · src: BellRing Brands, Inc. (NYSE:BRBR) 2025 Form 10-K; Sam's West, Inc. — Distributor · Broadline Retail · src: BellRing Brands, Inc. (NYSE:BRBR) 2025 Form 10-K; Walmart Inc. (NasdaqGS:WMT) — Distributor · Consumer Staples Merchandise Retail · src: BellRing Brands, Inc. (NYSE:BRBR) 2025 Form 10-K [48]
-- **Geographic:** [Sep-30-2025] United States 88%; Other Foreign 8%; Canada 4% [7]
+- **Geographic:** United States 88%; Other Foreign 8%; Canada 4% [7]
 
 ## Synthesis
 
@@ -479,8 +479,8 @@ _Source §: 8-K 0001772016-21-000029 · ex10-1_amend2creditagmt.htm_
 [3] `EOD name−IWM 180d (screen data-record, G2)`
 [4] `CIQ Net Debt $1,190M [FQ2/CQ1 Mar-31-2026] ÷ CIQ EBITDA $312M [LTM 12 months Mar-31-2026]`
 [5] `EDGAR XBRL FCF sign (screen data-record)`
-[6] `CIQ Financials→Segments (Revenues, latest annual column)`
-[7] `CIQ Financials→Segments (Geographic Segment → Revenues, latest annual column)`
+[6] `CIQ Financials→Segments (Revenues, latest annual column, Sep-30-2025)`
+[7] `CIQ Financials→Segments (Geographic Segment → Revenues, latest annual column, Sep-30-2025)`
 [8] `CIQ Financials→Cash Flow 'Levered Free Cash Flow' [LTM 12 months Mar-31-2026]`
 [9] `EDGAR XBRL shares, trailing 2024-07-31..2026-04-28`
 [10] `CIQ Financials→Income Statement (margin % + absolute EBITDA reconciler)`

@@ -415,8 +415,8 @@
     },
     "concentration": {
       "segments": {
-        "value": "[Dec-28-2025] Eggs and Butter — single segment",
-        "source_ref": "CIQ Financials→Segments (Revenues, latest annual column)",
+        "value": "Eggs and Butter — single segment",
+        "source_ref": "CIQ Financials→Segments (Revenues, latest annual column, Dec-28-2025)",
         "status": "present",
         "note": null
       },
@@ -433,8 +433,8 @@
         "note": null
       },
       "geographic": {
-        "value": "[Dec-28-2025] United States — single geography",
-        "source_ref": "CIQ Financials→Segments (Geographic Segment → Revenues, latest annual column)",
+        "value": "United States — single geography",
+        "source_ref": "CIQ Financials→Segments (Geographic Segment → Revenues, latest annual column, Dec-28-2025)",
         "status": "present",
         "note": null
       }

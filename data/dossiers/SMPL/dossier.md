@@ -21,8 +21,8 @@ The Simply Good Foods Company, a consumer-packaged food and beverage company, en
 **Is the sharp cut to forward revenue and EBITDA a one-time reset to a new but stable base (overshoot), or the first leg of a structural demand decline in the core low-carb snacking category (value trap)?**
 
 ## Company & business
-- **Segments:** [Aug-30-2025] Branded Nutritional Foods and Snacking Products — single segment [6]
-- **Geography:** [Aug-30-2025] North America 98%; International 2% [7]
+- **Segments:** Branded Nutritional Foods and Snacking Products — single segment [6]
+- **Geography:** North America 98%; International 2% [7]
 
 ## The case
 **The case** _(top points; the full bull/bear is in Analysis)_
@@ -317,10 +317,10 @@ _NM = a real state (negative base), not missing_
 - **Short interest (FINRA):** Short interest (FINRA, settle 2026-06-15): 6.7M → 6.5M sh (-3.1%, falling) · 7.3% of shares out (EDGAR XBRL) · DTC 2.2d · recent: 2026-06-15 6.5M · 2026-05-29 6.7M · 2026-05-15 6.4M · 2026-04-30 5.0M [25]
 
 ### Concentration
-- **Segments (revenue share):** [Aug-30-2025] Branded Nutritional Foods and Snacking Products — single segment [6]
+- **Segments (revenue share):** Branded Nutritional Foods and Snacking Products — single segment [6]
 - **Segments (EBITDA share — where profit sits):** _UNKNOWN_ — Segments sheet has no 'EBITDA' section as expected
 - **Customers:** Amazon.com, Inc. (NasdaqGS:AMZN) — Distributor · Broadline Retail · src: The Simply Good Foods Company (NasdaqCM:SMPL) 2025 Form 10-K; Only What You Need, Inc. — Distributor · Soft Drinks and Non-alcoholic Beverages · src: The Simply Good Foods Company (NasdaqCM:SMPL) 2025 Form 10-K; Quest Nutrition, LLC — Distributor · Packaged Foods and Meats · src: The Simply Good Foods Company (NasdaqCM:SMPL) 2025 Form 10-K; Simply Good Foods USA, Inc. — Distributor · Packaged Foods and Meats · src: The Simply Good Foods Company (NasdaqCM:SMPL) 2025 Form 10-K; Walmart Inc. (NasdaqGS:WMT) — Distributor · Consumer Staples Merchandise Retail · src: The Simply Good Foods Company (NasdaqCM:SMPL) 2025 Form 10-K [49]
-- **Geographic:** [Aug-30-2025] North America 98%; International 2% [7]
+- **Geographic:** North America 98%; International 2% [7]
 
 ## Synthesis
 
@@ -460,8 +460,8 @@ _QoQ/YoY same-basis only; (R) = Reclassified_
 [3] `EOD name−IWM 180d (screen data-record, G2)`
 [4] `CIQ Net Debt $342M [FQ2/CQ1 Feb-28-2026] ÷ CIQ EBITDA $236M [LTM 12 months Feb-28-2026]`
 [5] `EDGAR XBRL FCF sign (screen data-record)`
-[6] `CIQ Financials→Segments (Revenues, latest annual column)`
-[7] `CIQ Financials→Segments (Geographic Segment → Revenues, latest annual column)`
+[6] `CIQ Financials→Segments (Revenues, latest annual column, Aug-30-2025)`
+[7] `CIQ Financials→Segments (Geographic Segment → Revenues, latest annual column, Aug-30-2025)`
 [8] `CIQ Net Debt ÷ CIQ LTM EBITDA (EDGAR XBRL breadth fallback) + FCF sign (survival capacity)`
 [9] `CIQ Comparable Analysis→Credit Health Panel · as-of 2026-06-25`
 [10] `CIQ Comparable Analysis→Operating Statistics (name vs peer median: growth/margin/leverage/beta)`
