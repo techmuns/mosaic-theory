@@ -360,6 +360,7 @@
 {"cik": "0000819793", "country": "US", "first_seen": "2026-06-12", "issuer_id": "ISS-0000819793", "name": "ALBANY INTERNATIONAL CORP /DE/", "sic": "2221", "sic_description": "Broadwoven Fabric Mills, Man Made Fiber & Silk"}
 {"cik": "0000821002", "country": "US", "first_seen": "2026-06-12", "issuer_id": "ISS-0000821002", "name": "G III APPAREL GROUP LTD /DE/", "sic": "2300", "sic_description": "Apparel & Other Finishd Prods of  Fabrics & Similar Matl"}
 {"cik": "0000821026", "country": "US", "first_seen": "2026-06-12", "issuer_id": "ISS-0000821026", "name": "Andersons, Inc.", "sic": "5150", "sic_description": "Wholesale-Farm Product Raw Materials"}
+{"cik": "0000821130", "country": "US", "first_seen": "2026-07-06", "issuer_id": "ISS-0000821130", "name": "ARRAY DIGITAL INFRASTRUCTURE, INC.", "sic": "4812", "sic_description": "Radiotelephone Communications"}
 {"cik": "0000821483", "country": "US", "first_seen": "2026-06-12", "issuer_id": "ISS-0000821483", "name": "PAR PACIFIC HOLDINGS, INC.", "sic": "1311", "sic_description": "Crude Petroleum & Natural Gas"}
 {"cik": "0000822663", "country": "US", "first_seen": "2026-06-12", "issuer_id": "ISS-0000822663", "name": "INTERPARFUMS INC", "sic": "2844", "sic_description": "Perfumes, Cosmetics & Other Toilet Preparations"}
 {"cik": "0000824142", "country": "US", "first_seen": "2026-07-06", "issuer_id": "ISS-0000824142", "name": "AAON, INC.", "sic": "3585", "sic_description": "Air-Cond & Warm Air Heatg Equip & Comm & Indl Refrig Equip"}
@@ -411,6 +412,7 @@
 {"cik": "0000866273", "country": "US", "first_seen": "2026-06-12", "issuer_id": "ISS-0000866273", "name": "MATRIX SERVICE CO", "sic": "1700", "sic_description": "Construction - Special Trade Contractors"}
 {"cik": "0000866291", "country": "US", "first_seen": "2026-06-12", "issuer_id": "ISS-0000866291", "name": "ALLEGRO MICROSYSTEMS, INC.", "sic": null, "sic_description": null}
 {"cik": "0000866706", "country": "US", "first_seen": "2026-06-12", "issuer_id": "ISS-0000866706", "name": "ESCO TECHNOLOGIES INC", "sic": "3669", "sic_description": "Communications Equipment, NEC"}
+{"cik": "0000866729", "country": "US", "first_seen": "2026-07-06", "issuer_id": "ISS-0000866729", "name": "SCHOLASTIC CORP", "sic": "2731", "sic_description": "Books: Publishing or  Publishing & Printing"}
 {"cik": "0000866829", "country": "US", "first_seen": "2026-06-12", "issuer_id": "ISS-0000866829", "name": "HELIX ENERGY SOLUTIONS GROUP INC", "sic": "1389", "sic_description": "Oil & Gas Field Services, NEC"}
 {"cik": "0000868671", "country": "US", "first_seen": "2026-06-12", "issuer_id": "ISS-0000868671", "name": "GLACIER BANCORP, INC.", "sic": "6022", "sic_description": "State Commercial Banks"}
 {"cik": "0000868780", "country": "US", "first_seen": "2026-06-12", "issuer_id": "ISS-0000868780", "name": "Dorman Products, Inc.", "sic": "3714", "sic_description": "Motor Vehicle Parts & Accessories"}
@@ -630,6 +632,7 @@
 {"cik": "0001021635", "country": "US", "first_seen": "2026-06-12", "issuer_id": "ISS-0001021635", "name": "OGE ENERGY CORP.", "sic": null, "sic_description": null}
 {"cik": "0001021860", "country": "US", "first_seen": "2026-06-12", "issuer_id": "ISS-0001021860", "name": "NOV Inc.", "sic": "3533", "sic_description": "Oil & Gas Field Machinery & Equipment"}
 {"cik": "0001022408", "country": "US", "first_seen": "2026-06-12", "issuer_id": "ISS-0001022408", "name": "EPLUS INC", "sic": "5045", "sic_description": "Wholesale-Computers & Peripheral Equipment & Software"}
+{"cik": "0001023024", "country": "US", "first_seen": "2026-07-06", "issuer_id": "ISS-0001023024", "name": "ANI PHARMACEUTICALS INC", "sic": "2834", "sic_description": "Pharmaceutical Preparations"}
 {"cik": "0001023128", "country": "US", "first_seen": "2026-06-12", "issuer_id": "ISS-0001023128", "name": "LITHIA MOTORS INC", "sic": "5500", "sic_description": "Retail-Auto Dealers & Gasoline Stations"}
 {"cik": "0001023459", "country": "US", "first_seen": "2026-06-12", "issuer_id": "ISS-0001023459", "name": "Simulations Plus, Inc.", "sic": "7373", "sic_description": "Services-Computer Integrated Systems Design"}
 {"cik": "0001023549", "country": "US", "first_seen": "2026-07-06", "issuer_id": "ISS-0001023549", "name": "XTL BIOPHARMACEUTICALS LTD", "sic": "2834", "sic_description": "Pharmaceutical Preparations"}
@@ -684,6 +687,7 @@
 {"cik": "0001050441", "country": "US", "first_seen": "2026-06-12", "issuer_id": "ISS-0001050441", "name": "EAGLE BANCORP INC", "sic": "6022", "sic_description": "State Commercial Banks"}
 {"cik": "0001050743", "country": "US", "first_seen": "2026-06-12", "issuer_id": "ISS-0001050743", "name": "PEAPACK GLADSTONE FINANCIAL CORP", "sic": "6029", "sic_description": "Commercial Banks, NEC"}
 {"cik": "0001050797", "country": "US", "first_seen": "2026-06-12", "issuer_id": "ISS-0001050797", "name": "COLUMBIA SPORTSWEAR CO", "sic": "2300", "sic_description": "Apparel & Other Finishd Prods of  Fabrics & Similar Matl"}
+{"cik": "0001051512", "country": "US", "first_seen": "2026-07-06", "issuer_id": "ISS-0001051512", "name": "TELEPHONE & DATA SYSTEMS INC /DE/", "sic": "4813", "sic_description": "Telephone Communications (No Radiotelephone)"}
 {"cik": "0001051627", "country": "US", "first_seen": "2026-06-12", "issuer_id": "ISS-0001051627", "name": "AXT INC", "sic": "3674", "sic_description": "Semiconductors & Related Devices"}
 {"cik": "0001052752", "country": "US", "first_seen": "2026-06-12", "issuer_id": "ISS-0001052752", "name": "GETTY REALTY CORP /MD/", "sic": "6500", "sic_description": "Real Estate"}
 {"cik": "0001053706", "country": "US", "first_seen": "2026-06-12", "issuer_id": "ISS-0001053706", "name": "CRA INTERNATIONAL, INC.", "sic": "8111", "sic_description": "Services-Legal Services"}
@@ -832,9 +836,11 @@
 {"cik": "0001173382", "country": "US", "first_seen": "2026-06-12", "issuer_id": "ISS-0001173382", "name": "CAE INC", "sic": "3690", "sic_description": "Miscellaneous Electrical Machinery, Equipment & Supplies"}
 {"cik": "0001173420", "country": "US", "first_seen": "2026-06-12", "issuer_id": "ISS-0001173420", "name": "NOVAGOLD RESOURCES INC", "sic": "1040", "sic_description": "Gold and Silver Ores"}
 {"cik": "0001173489", "country": "US", "first_seen": "2026-06-12", "issuer_id": "ISS-0001173489", "name": "CEVA INC", "sic": "7370", "sic_description": "Services-Computer Programming, Data Processing, Etc."}
+{"cik": "0001174169", "country": "US", "first_seen": "2026-07-06", "issuer_id": "ISS-0001174169", "name": "ALGONQUIN POWER & UTILITIES CORP.", "sic": "4911", "sic_description": "Electric Services"}
 {"cik": "0001174850", "country": "US", "first_seen": "2026-06-12", "issuer_id": "ISS-0001174850", "name": "NICOLET BANKSHARES INC", "sic": "6021", "sic_description": "National Commercial Banks"}
 {"cik": "0001174922", "country": "US", "first_seen": "2026-07-06", "issuer_id": "ISS-0001174922", "name": "WYNN RESORTS LTD", "sic": "7011", "sic_description": "Hotels & Motels"}
 {"cik": "0001175535", "country": "US", "first_seen": "2026-06-12", "issuer_id": "ISS-0001175535", "name": "Whitestone REIT", "sic": "6798", "sic_description": "Real Estate Investment Trusts"}
+{"cik": "0001177609", "country": "US", "first_seen": "2026-07-06", "issuer_id": "ISS-0001177609", "name": "FIVE BELOW, INC", "sic": "5331", "sic_description": "Retail-Variety Stores"}
 {"cik": "0001177648", "country": "US", "first_seen": "2026-06-12", "issuer_id": "ISS-0001177648", "name": "ENANTA PHARMACEUTICALS INC", "sic": null, "sic_description": null}
 {"cik": "0001178970", "country": "US", "first_seen": "2026-06-12", "issuer_id": "ISS-0001178970", "name": "PROVIDENT FINANCIAL SERVICES INC", "sic": "6035", "sic_description": "Savings Institution, Federally Chartered"}
 {"cik": "0001180262", "country": "US", "first_seen": "2026-06-12", "issuer_id": "ISS-0001180262", "name": "HERBALIFE LTD.", "sic": "5122", "sic_description": "Wholesale-Drugs, Proprietaries & Druggists' Sundries"}
@@ -1075,6 +1081,7 @@
 {"cik": "0001401667", "country": "US", "first_seen": "2026-06-12", "issuer_id": "ISS-0001401667", "name": "PUMA BIOTECHNOLOGY, INC.", "sic": null, "sic_description": null}
 {"cik": "0001402829", "country": "US", "first_seen": "2026-06-12", "issuer_id": "ISS-0001402829", "name": "Orion Group Holdings Inc", "sic": "1600", "sic_description": "Heavy Construction Other Than Bldg Const - Contractors"}
 {"cik": "0001403475", "country": "US", "first_seen": "2026-06-12", "issuer_id": "ISS-0001403475", "name": "Bank of Marin Bancorp", "sic": "6022", "sic_description": "State Commercial Banks"}
+{"cik": "0001404281", "country": "US", "first_seen": "2026-07-06", "issuer_id": "ISS-0001404281", "name": "Eledon Pharmaceuticals, Inc.", "sic": "2834", "sic_description": "Pharmaceutical Preparations"}
 {"cik": "0001404644", "country": "US", "first_seen": "2026-06-12", "issuer_id": "ISS-0001404644", "name": "Neurogene Inc.", "sic": "2834", "sic_description": "Pharmaceutical Preparations"}
 {"cik": "0001404655", "country": "US", "first_seen": "2026-06-12", "issuer_id": "ISS-0001404655", "name": "HUBSPOT INC", "sic": "7372", "sic_description": "Services-Prepackaged Software"}
 {"cik": "0001405495", "country": "US", "first_seen": "2026-06-12", "issuer_id": "ISS-0001405495", "name": "InterDigital, Inc.", "sic": "6794", "sic_description": "Patent Owners & Lessors"}
@@ -1128,6 +1135,7 @@
 {"cik": "0001434588", "country": "US", "first_seen": "2026-06-12", "issuer_id": "ISS-0001434588", "name": "Grand Canyon Education, Inc.", "sic": "8200", "sic_description": "Services-Educational Services"}
 {"cik": "0001434621", "country": "US", "first_seen": "2026-06-12", "issuer_id": "ISS-0001434621", "name": "LendingTree, Inc.", "sic": "6163", "sic_description": "Loan Brokers"}
 {"cik": "0001434647", "country": "US", "first_seen": "2026-06-12", "issuer_id": "ISS-0001434647", "name": "ZEVRA THERAPEUTICS, INC.", "sic": "2834", "sic_description": "Pharmaceutical Preparations"}
+{"cik": "0001434754", "country": "US", "first_seen": "2026-07-06", "issuer_id": "ISS-0001434754", "name": "SAFE BULKERS, INC.", "sic": "4412", "sic_description": "Deep Sea Foreign Transportation of  Freight"}
 {"cik": "0001434868", "country": "US", "first_seen": "2026-06-12", "issuer_id": "ISS-0001434868", "name": "Esperion Therapeutics, Inc.", "sic": "2834", "sic_description": "Pharmaceutical Preparations"}
 {"cik": "0001436126", "country": "US", "first_seen": "2026-06-12", "issuer_id": "ISS-0001436126", "name": "Mistras Group, Inc.", "sic": "8711", "sic_description": "Services-Engineering Services"}
 {"cik": "0001436208", "country": "US", "first_seen": "2026-06-12", "issuer_id": "ISS-0001436208", "name": "Legacy Housing Corp", "sic": null, "sic_description": null}
@@ -1144,6 +1152,7 @@
 {"cik": "0001439222", "country": "US", "first_seen": "2026-06-12", "issuer_id": "ISS-0001439222", "name": "AGIOS PHARMACEUTICALS, INC.", "sic": "2834", "sic_description": "Pharmaceutical Preparations"}
 {"cik": "0001439288", "country": "US", "first_seen": "2026-06-12", "issuer_id": "ISS-0001439288", "name": "Zurn Elkay Water Solutions Corp", "sic": "3560", "sic_description": "General Industrial Machinery & Equipment"}
 {"cik": "0001440972", "country": "US", "first_seen": "2026-06-12", "issuer_id": "ISS-0001440972", "name": "Lithium Argentina AG", "sic": "1000", "sic_description": "Metal Mining"}
+{"cik": "0001441683", "country": "US", "first_seen": "2026-07-06", "issuer_id": "ISS-0001441683", "name": "APPIAN CORP", "sic": "7372", "sic_description": "Services-Prepackaged Software"}
 {"cik": "0001443575", "country": "US", "first_seen": "2026-06-12", "issuer_id": "ISS-0001443575", "name": "Avidbank Holdings, Inc.", "sic": "6022", "sic_description": "State Commercial Banks"}
 {"cik": "0001443646", "country": "US", "first_seen": "2026-06-12", "issuer_id": "ISS-0001443646", "name": "Booz Allen Hamilton Holding Corp", "sic": "8742", "sic_description": "Services-Management Consulting Services"}
 {"cik": "0001443669", "country": "US", "first_seen": "2026-06-12", "issuer_id": "ISS-0001443669", "name": "Proto Labs Inc", "sic": "3440", "sic_description": "Fabricated Structural Metal Products"}
@@ -1209,6 +1218,7 @@
 {"cik": "0001483386", "country": "US", "first_seen": "2026-06-12", "issuer_id": "ISS-0001483386", "name": "abrdn Precious Metals Basket ETF Trust", "sic": null, "sic_description": null}
 {"cik": "0001483934", "country": "US", "first_seen": "2026-06-12", "issuer_id": "ISS-0001483934", "name": "Scorpio Tankers Inc.", "sic": "4412", "sic_description": "Deep Sea Foreign Transportation of  Freight"}
 {"cik": "0001484769", "country": "US", "first_seen": "2026-06-12", "issuer_id": "ISS-0001484769", "name": "FuboTV Inc.", "sic": "7812", "sic_description": "Services-Motion Picture & Video Tape Production"}
+{"cik": "0001484778", "country": "US", "first_seen": "2026-07-06", "issuer_id": "ISS-0001484778", "name": "ThredUp Inc.", "sic": "5961", "sic_description": "Retail-Catalog & Mail-Order Houses"}
 {"cik": "0001486159", "country": "US", "first_seen": "2026-06-12", "issuer_id": "ISS-0001486159", "name": "Chord Energy Corp", "sic": "1311", "sic_description": "Crude Petroleum & Natural Gas"}
 {"cik": "0001487428", "country": "US", "first_seen": "2026-06-12", "issuer_id": "ISS-0001487428", "name": "Horizon Technology Finance Corp", "sic": null, "sic_description": null}
 {"cik": "0001487918", "country": "US", "first_seen": "2026-06-12", "issuer_id": "ISS-0001487918", "name": "OFS Capital Corp", "sic": null, "sic_description": null}
@@ -1237,6 +1247,7 @@
 {"cik": "0001501697", "country": "US", "first_seen": "2026-06-12", "issuer_id": "ISS-0001501697", "name": "X4 Pharmaceuticals, Inc", "sic": null, "sic_description": null}
 {"cik": "0001501796", "country": "US", "first_seen": "2026-06-12", "issuer_id": "ISS-0001501796", "name": "Aura Biosciences, Inc.", "sic": "2836", "sic_description": "Biological Products, (No Diagnostic Substances)"}
 {"cik": "0001501989", "country": "US", "first_seen": "2026-06-12", "issuer_id": "ISS-0001501989", "name": "CytomX Therapeutics, Inc.", "sic": "2834", "sic_description": "Pharmaceutical Preparations"}
+{"cik": "0001503584", "country": "US", "first_seen": "2026-07-06", "issuer_id": "ISS-0001503584", "name": "Costamare Inc.", "sic": "4412", "sic_description": "Deep Sea Foreign Transportation of  Freight"}
 {"cik": "0001504008", "country": "US", "first_seen": "2026-06-12", "issuer_id": "ISS-0001504008", "name": "BankUnited, Inc.", "sic": "6035", "sic_description": "Savings Institution, Federally Chartered"}
 {"cik": "0001504461", "country": "US", "first_seen": "2026-06-12", "issuer_id": "ISS-0001504461", "name": "NGL Energy Partners LP", "sic": "4922", "sic_description": "Natural Gas Transmission"}
 {"cik": "0001504619", "country": "US", "first_seen": "2026-06-12", "issuer_id": "ISS-0001504619", "name": "PennantPark Floating Rate Capital Ltd.", "sic": null, "sic_description": null}
@@ -1245,6 +1256,7 @@
 {"cik": "0001506184", "country": "US", "first_seen": "2026-06-12", "issuer_id": "ISS-0001506184", "name": "IMMUTEP Ltd", "sic": "2834", "sic_description": "Pharmaceutical Preparations"}
 {"cik": "0001507079", "country": "US", "first_seen": "2026-06-12", "issuer_id": "ISS-0001507079", "name": "Floor & Decor Holdings, Inc.", "sic": "5211", "sic_description": "Retail-Lumber & Other Building Materials Dealers"}
 {"cik": "0001507605", "country": "US", "first_seen": "2026-06-12", "issuer_id": "ISS-0001507605", "name": "MARA Holdings, Inc.", "sic": "6199", "sic_description": "Finance Services"}
+{"cik": "0001508478", "country": "US", "first_seen": "2026-07-06", "issuer_id": "ISS-0001508478", "name": "Arcos Dorados Holdings Inc.", "sic": "5812", "sic_description": "Retail-Eating  Places"}
 {"cik": "0001508655", "country": "US", "first_seen": "2026-06-12", "issuer_id": "ISS-0001508655", "name": "Sixth Street Specialty Lending, Inc.", "sic": null, "sic_description": null}
 {"cik": "0001509261", "country": "US", "first_seen": "2026-06-12", "issuer_id": "ISS-0001509261", "name": "Rezolute, Inc.", "sic": "2834", "sic_description": "Pharmaceutical Preparations"}
 {"cik": "0001509470", "country": "US", "first_seen": "2026-06-12", "issuer_id": "ISS-0001509470", "name": "SURO CAPITAL CORP.", "sic": null, "sic_description": null}
@@ -1259,10 +1271,12 @@
 {"cik": "0001514281", "country": "US", "first_seen": "2026-06-12", "issuer_id": "ISS-0001514281", "name": "TPG Mortgage Investment Trust, Inc.", "sic": null, "sic_description": null}
 {"cik": "0001514705", "country": "US", "first_seen": "2026-06-12", "issuer_id": "ISS-0001514705", "name": "SunCoke Energy, Inc.", "sic": "3312", "sic_description": "Steel Works, Blast Furnaces & Rolling Mills (Coke Ovens)"}
 {"cik": "0001515673", "country": "US", "first_seen": "2026-06-12", "issuer_id": "ISS-0001515673", "name": "Ultragenyx Pharmaceutical Inc.", "sic": "2834", "sic_description": "Pharmaceutical Preparations"}
+{"cik": "0001516513", "country": "US", "first_seen": "2026-07-06", "issuer_id": "ISS-0001516513", "name": "Doximity, Inc.", "sic": "7371", "sic_description": "Services-Computer Programming Services"}
 {"cik": "0001516912", "country": "US", "first_seen": "2026-06-12", "issuer_id": "ISS-0001516912", "name": "Origin Bancorp, Inc.", "sic": "6022", "sic_description": "State Commercial Banks"}
 {"cik": "0001517022", "country": "US", "first_seen": "2026-07-06", "issuer_id": "ISS-0001517022", "name": "Akebia Therapeutics, Inc.", "sic": "2834", "sic_description": "Pharmaceutical Preparations"}
 {"cik": "0001517175", "country": "US", "first_seen": "2026-06-12", "issuer_id": "ISS-0001517175", "name": "Chefs' Warehouse, Inc.", "sic": "5141", "sic_description": "Wholesale-Groceries, General Line"}
 {"cik": "0001517228", "country": "US", "first_seen": "2026-06-12", "issuer_id": "ISS-0001517228", "name": "Vistance Networks, Inc.", "sic": "3663", "sic_description": "Radio & Tv Broadcasting & Communications Equipment"}
+{"cik": "0001517302", "country": "US", "first_seen": "2026-07-06", "issuer_id": "ISS-0001517302", "name": "Artisan Partners Asset Management Inc.", "sic": "6282", "sic_description": "Investment Advice"}
 {"cik": "0001517396", "country": "US", "first_seen": "2026-06-12", "issuer_id": "ISS-0001517396", "name": "STRATASYS LTD.", "sic": "3577", "sic_description": "Computer Peripheral Equipment, NEC"}
 {"cik": "0001517413", "country": "US", "first_seen": "2026-06-12", "issuer_id": "ISS-0001517413", "name": "Fastly, Inc.", "sic": "7372", "sic_description": "Services-Prepackaged Software"}
 {"cik": "0001518621", "country": "US", "first_seen": "2026-06-12", "issuer_id": "ISS-0001518621", "name": "Orchid Island Capital, Inc.", "sic": "6798", "sic_description": "Real Estate Investment Trusts"}
@@ -1291,6 +1305,7 @@
 {"cik": "0001527636", "country": "US", "first_seen": "2026-06-12", "issuer_id": "ISS-0001527636", "name": "Autohome Inc.", "sic": "7374", "sic_description": "Services-Computer Processing & Data Preparation"}
 {"cik": "0001527753", "country": "US", "first_seen": "2026-06-12", "issuer_id": "ISS-0001527753", "name": "Personalis, Inc.", "sic": "8071", "sic_description": "Services-Medical Laboratories"}
 {"cik": "0001527762", "country": "US", "first_seen": "2026-06-12", "issuer_id": "ISS-0001527762", "name": "Chaince Digital Holdings Inc.", "sic": null, "sic_description": null}
+{"cik": "0001528115", "country": "US", "first_seen": "2026-07-06", "issuer_id": "ISS-0001528115", "name": "Annexon, Inc.", "sic": "2834", "sic_description": "Pharmaceutical Preparations"}
 {"cik": "0001528287", "country": "US", "first_seen": "2026-06-12", "issuer_id": "ISS-0001528287", "name": "NeuroPace Inc", "sic": null, "sic_description": null}
 {"cik": "0001528396", "country": "US", "first_seen": "2026-06-17", "issuer_id": "ISS-0001528396", "name": "Guidewire Software, Inc.", "sic": null, "sic_description": null}
 {"cik": "0001528849", "country": "US", "first_seen": "2026-06-12", "issuer_id": "ISS-0001528849", "name": "RH", "sic": "5712", "sic_description": "Retail-Furniture Stores"}
@@ -1343,9 +1358,11 @@
 {"cik": "0001563190", "country": "US", "first_seen": "2026-06-12", "issuer_id": "ISS-0001563190", "name": "Compass, Inc.", "sic": "6531", "sic_description": "Real Estate Agents & Managers (For Others)"}
 {"cik": "0001563411", "country": "US", "first_seen": "2026-06-12", "issuer_id": "ISS-0001563411", "name": "CONSTELLIUM SE", "sic": "3341", "sic_description": "Secondary Smelting & Refining of  Nonferrous Metals"}
 {"cik": "0001563880", "country": "US", "first_seen": "2026-06-12", "issuer_id": "ISS-0001563880", "name": "Trevi Therapeutics, Inc.", "sic": "2834", "sic_description": "Pharmaceutical Preparations"}
+{"cik": "0001564408", "country": "US", "first_seen": "2026-07-06", "issuer_id": "ISS-0001564408", "name": "Snap Inc", "sic": "7370", "sic_description": "Services-Computer Programming, Data Processing, Etc."}
 {"cik": "0001564902", "country": "US", "first_seen": "2026-06-12", "issuer_id": "ISS-0001564902", "name": "United Parks & Resorts Inc.", "sic": "7990", "sic_description": "Services-Miscellaneous Amusement & Recreation"}
 {"cik": "0001565687", "country": "US", "first_seen": "2026-06-12", "issuer_id": "ISS-0001565687", "name": "Intapp, Inc.", "sic": "7372", "sic_description": "Services-Prepackaged Software"}
 {"cik": "0001567529", "country": "US", "first_seen": "2026-06-12", "issuer_id": "ISS-0001567529", "name": "KAMADA LTD", "sic": null, "sic_description": null}
+{"cik": "0001567683", "country": "US", "first_seen": "2026-07-06", "issuer_id": "ISS-0001567683", "name": "Clearway Energy, Inc.", "sic": "4911", "sic_description": "Electric Services"}
 {"cik": "0001567925", "country": "US", "first_seen": "2026-06-12", "issuer_id": "ISS-0001567925", "name": "Sila Realty Trust, Inc.", "sic": null, "sic_description": null}
 {"cik": "0001568100", "country": "US", "first_seen": "2026-06-12", "issuer_id": "ISS-0001568100", "name": "PagerDuty, Inc.", "sic": "7372", "sic_description": "Services-Prepackaged Software"}
 {"cik": "0001569187", "country": "US", "first_seen": "2026-06-12", "issuer_id": "ISS-0001569187", "name": "AH Realty Trust, Inc.", "sic": "6500", "sic_description": "Real Estate"}
@@ -1371,6 +1388,7 @@
 {"cik": "0001579684", "country": "US", "first_seen": "2026-06-12", "issuer_id": "ISS-0001579684", "name": "USA TODAY Co., Inc.", "sic": "2711", "sic_description": "Newspapers: Publishing or  Publishing & Printing"}
 {"cik": "0001579733", "country": "US", "first_seen": "2026-06-12", "issuer_id": "ISS-0001579733", "name": "Vital Farms, Inc.", "sic": "2000", "sic_description": "Food and Kindred Products"}
 {"cik": "0001579877", "country": "US", "first_seen": "2026-06-12", "issuer_id": "ISS-0001579877", "name": "OUTFRONT Media Inc.", "sic": "6798", "sic_description": "Real Estate Investment Trusts"}
+{"cik": "0001580560", "country": "US", "first_seen": "2026-07-06", "issuer_id": "ISS-0001580560", "name": "Flywire Corp", "sic": "7389", "sic_description": "Services-Business Services, NEC"}
 {"cik": "0001580670", "country": "US", "first_seen": "2026-06-12", "issuer_id": "ISS-0001580670", "name": "LGI Homes, Inc.", "sic": "1531", "sic_description": "Operative Builders"}
 {"cik": "0001580808", "country": "US", "first_seen": "2026-06-12", "issuer_id": "ISS-0001580808", "name": "A10 Networks, Inc.", "sic": "3576", "sic_description": "Computer Communications Equipment"}
 {"cik": "0001580905", "country": "US", "first_seen": "2026-06-12", "issuer_id": "ISS-0001580905", "name": "Installed Building Products, Inc.", "sic": "1520", "sic_description": "General Bldg Contractors - Residential Bldgs"}
@@ -1406,6 +1424,7 @@
 {"cik": "0001593275", "country": "US", "first_seen": "2026-06-12", "issuer_id": "ISS-0001593275", "name": "Hamilton Insurance Group, Ltd.", "sic": "6331", "sic_description": "Fire, Marine & Casualty Insurance"}
 {"cik": "0001593538", "country": "US", "first_seen": "2026-06-12", "issuer_id": "ISS-0001593538", "name": "NAVIENT CORP", "sic": "6211", "sic_description": "Security Brokers, Dealers & Flotation Companies"}
 {"cik": "0001593899", "country": "US", "first_seen": "2026-06-12", "issuer_id": "ISS-0001593899", "name": "Atea Pharmaceuticals, Inc.", "sic": null, "sic_description": null}
+{"cik": "0001595761", "country": "US", "first_seen": "2026-07-06", "issuer_id": "ISS-0001595761", "name": "WEIBO Corp", "sic": "7370", "sic_description": "Services-Computer Programming, Data Processing, Etc."}
 {"cik": "0001595974", "country": "US", "first_seen": "2026-06-12", "issuer_id": "ISS-0001595974", "name": "MAGNITE, INC.", "sic": "7370", "sic_description": "Services-Computer Programming, Data Processing, Etc."}
 {"cik": "0001596993", "country": "US", "first_seen": "2026-06-12", "issuer_id": "ISS-0001596993", "name": "DORIAN LPG LTD.", "sic": "4412", "sic_description": "Deep Sea Foreign Transportation of  Freight"}
 {"cik": "0001597033", "country": "US", "first_seen": "2026-06-12", "issuer_id": "ISS-0001597033", "name": "Sabre Corp", "sic": "7370", "sic_description": "Services-Computer Programming, Data Processing, Etc."}
@@ -1417,6 +1436,7 @@
 {"cik": "0001600222", "country": "US", "first_seen": "2026-06-12", "issuer_id": "ISS-0001600222", "name": "Phoenix Education Partners, Inc.", "sic": "8200", "sic_description": "Services-Educational Services"}
 {"cik": "0001600620", "country": "US", "first_seen": "2026-06-12", "issuer_id": "ISS-0001600620", "name": "Aurinia Pharmaceuticals Inc.", "sic": "2834", "sic_description": "Pharmaceutical Preparations"}
 {"cik": "0001601548", "country": "US", "first_seen": "2026-06-12", "issuer_id": "ISS-0001601548", "name": "V2X, Inc.", "sic": "8744", "sic_description": "Services-Facilities Support Management Services"}
+{"cik": "0001601830", "country": "US", "first_seen": "2026-07-06", "issuer_id": "ISS-0001601830", "name": "RECURSION PHARMACEUTICALS, INC.", "sic": "2836", "sic_description": "Biological Products, (No Diagnostic Substances)"}
 {"cik": "0001602658", "country": "US", "first_seen": "2026-06-12", "issuer_id": "ISS-0001602658", "name": "Investar Holding Corp", "sic": "6022", "sic_description": "State Commercial Banks"}
 {"cik": "0001603145", "country": "US", "first_seen": "2026-06-12", "issuer_id": "ISS-0001603145", "name": "XPLR Infrastructure, LP", "sic": "4911", "sic_description": "Electric Services"}
 {"cik": "0001603454", "country": "US", "first_seen": "2026-06-12", "issuer_id": "ISS-0001603454", "name": "Celcuity Inc.", "sic": "8071", "sic_description": "Services-Medical Laboratories"}
@@ -1461,6 +1481,7 @@
 {"cik": "0001624322", "country": "US", "first_seen": "2026-06-12", "issuer_id": "ISS-0001624322", "name": "Business First Bancshares, Inc.", "sic": "6022", "sic_description": "State Commercial Banks"}
 {"cik": "0001624794", "country": "US", "first_seen": "2026-06-12", "issuer_id": "ISS-0001624794", "name": "CSW INDUSTRIALS, INC.", "sic": "2891", "sic_description": "Adhesives & Sealants"}
 {"cik": "0001625101", "country": "US", "first_seen": "2026-06-12", "issuer_id": "ISS-0001625101", "name": "PULSE BIOSCIENCES, INC.", "sic": "3841", "sic_description": "Surgical & Medical Instruments & Apparatus"}
+{"cik": "0001625278", "country": "US", "first_seen": "2026-07-06", "issuer_id": "ISS-0001625278", "name": "NERDWALLET, INC.", "sic": "7374", "sic_description": "Services-Computer Processing & Data Preparation"}
 {"cik": "0001625297", "country": "US", "first_seen": "2026-06-12", "issuer_id": "ISS-0001625297", "name": "Indivior Pharmaceuticals, Inc.", "sic": "2834", "sic_description": "Pharmaceutical Preparations"}
 {"cik": "0001625791", "country": "US", "first_seen": "2026-06-12", "issuer_id": "ISS-0001625791", "name": "Kornit Digital Ltd.", "sic": "3555", "sic_description": "Printing Trades Machinery & Equipment"}
 {"cik": "0001626971", "country": "US", "first_seen": "2026-06-12", "issuer_id": "ISS-0001626971", "name": "Corvus Pharmaceuticals, Inc.", "sic": "2834", "sic_description": "Pharmaceutical Preparations"}
@@ -1508,6 +1529,7 @@
 {"cik": "0001649749", "country": "US", "first_seen": "2026-06-12", "issuer_id": "ISS-0001649749", "name": "FB Financial Corp", "sic": "6022", "sic_description": "State Commercial Banks"}
 {"cik": "0001649904", "country": "US", "first_seen": "2026-06-12", "issuer_id": "ISS-0001649904", "name": "RHYTHM PHARMACEUTICALS, INC.", "sic": "2834", "sic_description": "Pharmaceutical Preparations"}
 {"cik": "0001650132", "country": "US", "first_seen": "2026-06-12", "issuer_id": "ISS-0001650132", "name": "Four Corners Property Trust, Inc.", "sic": "6798", "sic_description": "Real Estate Investment Trusts"}
+{"cik": "0001650648", "country": "US", "first_seen": "2026-07-06", "issuer_id": "ISS-0001650648", "name": "4D Molecular Therapeutics, Inc.", "sic": "2836", "sic_description": "Biological Products, (No Diagnostic Substances)"}
 {"cik": "0001650664", "country": "US", "first_seen": "2026-07-06", "issuer_id": "ISS-0001650664", "name": "Editas Medicine, Inc.", "sic": "2836", "sic_description": "Biological Products, (No Diagnostic Substances)"}
 {"cik": "0001650729", "country": "US", "first_seen": "2026-06-12", "issuer_id": "ISS-0001650729", "name": "SiteOne Landscape Supply, Inc.", "sic": "5040", "sic_description": "Wholesale-Professional & Commercial Equipment & Supplies"}
 {"cik": "0001651562", "country": "US", "first_seen": "2026-06-12", "issuer_id": "ISS-0001651562", "name": "Coursera, Inc.", "sic": "7372", "sic_description": "Services-Prepackaged Software"}
@@ -1590,6 +1612,7 @@
 {"cik": "0001691421", "country": "US", "first_seen": "2026-06-12", "issuer_id": "ISS-0001691421", "name": "Lemonade, Inc.", "sic": "6331", "sic_description": "Fire, Marine & Casualty Insurance"}
 {"cik": "0001692115", "country": "US", "first_seen": "2026-06-12", "issuer_id": "ISS-0001692115", "name": "Southwest Gas Holdings, Inc.", "sic": "4923", "sic_description": "Natural Gas Transmisison & Distribution"}
 {"cik": "0001692376", "country": "US", "first_seen": "2026-06-12", "issuer_id": "ISS-0001692376", "name": "Velocity Financial, Inc.", "sic": null, "sic_description": null}
+{"cik": "0001693736", "country": "US", "first_seen": "2026-07-06", "issuer_id": "ISS-0001693736", "name": "EquipmentShare.com Inc", "sic": "7359", "sic_description": "Services-Equipment Rental & Leasing, NEC"}
 {"cik": "0001694426", "country": "US", "first_seen": "2026-06-12", "issuer_id": "ISS-0001694426", "name": "Delek US Holdings, Inc.", "sic": "2911", "sic_description": "Petroleum Refining"}
 {"cik": "0001696556", "country": "US", "first_seen": "2026-06-12", "issuer_id": "ISS-0001696556", "name": "Once Upon a Farm, PBC", "sic": "2000", "sic_description": "Food and Kindred Products"}
 {"cik": "0001697818", "country": "US", "first_seen": "2026-06-12", "issuer_id": "ISS-0001697818", "name": "Amber International Holding Ltd", "sic": null, "sic_description": null}
@@ -1697,6 +1720,7 @@
 {"cik": "0001750284", "country": "US", "first_seen": "2026-06-12", "issuer_id": "ISS-0001750284", "name": "Olema Pharmaceuticals, Inc.", "sic": "2834", "sic_description": "Pharmaceutical Preparations"}
 {"cik": "0001751876", "country": "US", "first_seen": "2026-07-06", "issuer_id": "ISS-0001751876", "name": "Paranovus Entertainment Technology Ltd.", "sic": "7374", "sic_description": "Services-Computer Processing & Data Preparation"}
 {"cik": "0001753539", "country": "US", "first_seen": "2026-06-12", "issuer_id": "ISS-0001753539", "name": "BlackSky Technology Inc.", "sic": "3663", "sic_description": "Radio & Tv Broadcasting & Communications Equipment"}
+{"cik": "0001754195", "country": "US", "first_seen": "2026-07-06", "issuer_id": "ISS-0001754195", "name": "Trulieve Cannabis Corp.", "sic": "2833", "sic_description": "Medicinal Chemicals & Botanical Products"}
 {"cik": "0001754226", "country": "US", "first_seen": "2026-06-12", "issuer_id": "ISS-0001754226", "name": "Orange County Bancorp, Inc. /DE/", "sic": null, "sic_description": null}
 {"cik": "0001755953", "country": "US", "first_seen": "2026-07-06", "issuer_id": "ISS-0001755953", "name": "American Bitcoin Corp.", "sic": "6199", "sic_description": "Finance Services"}
 {"cik": "0001756262", "country": "US", "first_seen": "2026-06-12", "issuer_id": "ISS-0001756262", "name": "TransMedics Group, Inc.", "sic": "3845", "sic_description": "Electromedical & Electrotherapeutic Apparatus"}
@@ -1737,6 +1761,7 @@
 {"cik": "0001770069", "country": "US", "first_seen": "2026-06-12", "issuer_id": "ISS-0001770069", "name": "MapLight Therapeutics, Inc.", "sic": "2834", "sic_description": "Pharmaceutical Preparations"}
 {"cik": "0001770121", "country": "US", "first_seen": "2026-06-12", "issuer_id": "ISS-0001770121", "name": "Sana Biotechnology, Inc.", "sic": "2836", "sic_description": "Biological Products, (No Diagnostic Substances)"}
 {"cik": "0001770450", "country": "US", "first_seen": "2026-06-12", "issuer_id": "ISS-0001770450", "name": "Xerox Holdings Corp", "sic": "3577", "sic_description": "Computer Peripheral Equipment, NEC"}
+{"cik": "0001770787", "country": "US", "first_seen": "2026-07-06", "issuer_id": "ISS-0001770787", "name": "10x Genomics, Inc.", "sic": "3826", "sic_description": "Laboratory Analytical Instruments"}
 {"cik": "0001771515", "country": "US", "first_seen": "2026-06-12", "issuer_id": "ISS-0001771515", "name": "Grocery Outlet Holding Corp.", "sic": "5411", "sic_description": "Retail-Grocery Stores"}
 {"cik": "0001772016", "country": "US", "first_seen": "2026-06-12", "issuer_id": "ISS-0001772016", "name": "BELLRING BRANDS, INC.", "sic": "2000", "sic_description": "Food and Kindred Products"}
 {"cik": "0001772253", "country": "US", "first_seen": "2026-06-12", "issuer_id": "ISS-0001772253", "name": "Flex LNG Ltd.", "sic": "4400", "sic_description": "Water Transportation"}
@@ -1752,6 +1777,7 @@
 {"cik": "0001783183", "country": "US", "first_seen": "2026-06-12", "issuer_id": "ISS-0001783183", "name": "Phathom Pharmaceuticals, Inc.", "sic": "2834", "sic_description": "Pharmaceutical Preparations"}
 {"cik": "0001783407", "country": "US", "first_seen": "2026-06-12", "issuer_id": "ISS-0001783407", "name": "Sound Group Inc.", "sic": null, "sic_description": null}
 {"cik": "0001784535", "country": "US", "first_seen": "2026-06-12", "issuer_id": "ISS-0001784535", "name": "Porch Group, Inc.", "sic": "7372", "sic_description": "Services-Prepackaged Software"}
+{"cik": "0001784570", "country": "US", "first_seen": "2026-07-06", "issuer_id": "ISS-0001784570", "name": "BETA Technologies, Inc.", "sic": "3721", "sic_description": "Aircraft"}
 {"cik": "0001785680", "country": "US", "first_seen": "2026-06-12", "issuer_id": "ISS-0001785680", "name": "BitVentures Ltd", "sic": null, "sic_description": null}
 {"cik": "0001786108", "country": "US", "first_seen": "2026-06-12", "issuer_id": "ISS-0001786108", "name": "Trinity Capital Inc.", "sic": null, "sic_description": null}
 {"cik": "0001786117", "country": "US", "first_seen": "2026-06-12", "issuer_id": "ISS-0001786117", "name": "Alpine Income Property Trust, Inc.", "sic": "6798", "sic_description": "Real Estate Investment Trusts"}
@@ -1801,6 +1827,7 @@
 {"cik": "0001808834", "country": "US", "first_seen": "2026-06-12", "issuer_id": "ISS-0001808834", "name": "PROG Holdings, Inc.", "sic": "7359", "sic_description": "Services-Equipment Rental & Leasing, NEC"}
 {"cik": "0001808898", "country": "US", "first_seen": "2026-06-12", "issuer_id": "ISS-0001808898", "name": "Benitec Biopharma Inc.", "sic": null, "sic_description": null}
 {"cik": "0001809196", "country": "US", "first_seen": "2026-06-12", "issuer_id": "ISS-0001809196", "name": "Immatics N.V.", "sic": "2836", "sic_description": "Biological Products, (No Diagnostic Substances)"}
+{"cik": "0001809987", "country": "US", "first_seen": "2026-07-06", "issuer_id": "ISS-0001809987", "name": "Mirion Technologies, Inc.", "sic": "3829", "sic_description": "Measuring & Controlling Devices, NEC"}
 {"cik": "0001810019", "country": "US", "first_seen": "2026-06-12", "issuer_id": "ISS-0001810019", "name": "Rackspace Technology, Inc.", "sic": "7370", "sic_description": "Services-Computer Programming, Data Processing, Etc."}
 {"cik": "0001810546", "country": "US", "first_seen": "2026-06-12", "issuer_id": "ISS-0001810546", "name": "Eastern Bankshares, Inc.", "sic": "6035", "sic_description": "Savings Institution, Federally Chartered"}
 {"cik": "0001811063", "country": "US", "first_seen": "2026-06-12", "issuer_id": "ISS-0001811063", "name": "Nuvation Bio Inc.", "sic": "2834", "sic_description": "Pharmaceutical Preparations"}
@@ -1822,6 +1849,7 @@
 {"cik": "0001818502", "country": "US", "first_seen": "2026-06-12", "issuer_id": "ISS-0001818502", "name": "OppFi Inc.", "sic": "6199", "sic_description": "Finance Services"}
 {"cik": "0001818794", "country": "US", "first_seen": "2026-06-12", "issuer_id": "ISS-0001818794", "name": "Dyne Therapeutics, Inc.", "sic": "2834", "sic_description": "Pharmaceutical Preparations"}
 {"cik": "0001819133", "country": "US", "first_seen": "2026-06-12", "issuer_id": "ISS-0001819133", "name": "Tango Therapeutics, Inc.", "sic": "2834", "sic_description": "Pharmaceutical Preparations"}
+{"cik": "0001819142", "country": "US", "first_seen": "2026-07-06", "issuer_id": "ISS-0001819142", "name": "SES AI Corp", "sic": "3690", "sic_description": "Miscellaneous Electrical Machinery, Equipment & Supplies"}
 {"cik": "0001819516", "country": "US", "first_seen": "2026-06-12", "issuer_id": "ISS-0001819516", "name": "Wheels Up Experience Inc.", "sic": null, "sic_description": null}
 {"cik": "0001819574", "country": "US", "first_seen": "2026-06-12", "issuer_id": "ISS-0001819574", "name": "Bark, Inc.", "sic": null, "sic_description": null}
 {"cik": "0001819576", "country": "US", "first_seen": "2026-06-12", "issuer_id": "ISS-0001819576", "name": "Liquidia Corp", "sic": "2834", "sic_description": "Pharmaceutical Preparations"}
@@ -1834,6 +1862,7 @@
 {"cik": "0001820144", "country": "US", "first_seen": "2026-06-12", "issuer_id": "ISS-0001820144", "name": "Grindr Inc.", "sic": "7370", "sic_description": "Services-Computer Programming, Data Processing, Etc."}
 {"cik": "0001820721", "country": "US", "first_seen": "2026-06-12", "issuer_id": "ISS-0001820721", "name": "Array Technologies, Inc.", "sic": "3674", "sic_description": "Semiconductors & Related Devices"}
 {"cik": "0001820872", "country": "US", "first_seen": "2026-06-12", "issuer_id": "ISS-0001820872", "name": "Global Business Travel Group, Inc.", "sic": "4700", "sic_description": "Transportation Services"}
+{"cik": "0001821159", "country": "US", "first_seen": "2026-07-06", "issuer_id": "ISS-0001821159", "name": "EVgo Inc.", "sic": "7500", "sic_description": "Services-Automotive Repair, Services & Parking"}
 {"cik": "0001821586", "country": "US", "first_seen": "2026-06-12", "issuer_id": "ISS-0001821586", "name": "MoonLake Immunotherapeutics", "sic": "2834", "sic_description": "Pharmaceutical Preparations"}
 {"cik": "0001821825", "country": "US", "first_seen": "2026-06-12", "issuer_id": "ISS-0001821825", "name": "Organon & Co.", "sic": "2834", "sic_description": "Pharmaceutical Preparations"}
 {"cik": "0001822479", "country": "US", "first_seen": "2026-06-12", "issuer_id": "ISS-0001822479", "name": "Sotera Health Co", "sic": "8090", "sic_description": "Services-Misc Health & Allied Services, NEC"}
@@ -1872,6 +1901,7 @@
 {"cik": "0001829726", "country": "US", "first_seen": "2026-06-12", "issuer_id": "ISS-0001829726", "name": "Triple Flag Precious Metals Corp.", "sic": "6795", "sic_description": "Mineral Royalty Traders"}
 {"cik": "0001829959", "country": "US", "first_seen": "2026-06-12", "issuer_id": "ISS-0001829959", "name": "Docebo Inc.", "sic": null, "sic_description": null}
 {"cik": "0001830033", "country": "US", "first_seen": "2026-06-12", "issuer_id": "ISS-0001830033", "name": "PureCycle Technologies, Inc.", "sic": "2821", "sic_description": "Plastic Materials, Synth Resins & Nonvulcan Elastomers"}
+{"cik": "0001830214", "country": "US", "first_seen": "2026-07-06", "issuer_id": "ISS-0001830214", "name": "Ginkgo Bioworks Holdings, Inc.", "sic": "2836", "sic_description": "Biological Products, (No Diagnostic Substances)"}
 {"cik": "0001830487", "country": "US", "first_seen": "2026-06-12", "issuer_id": "ISS-0001830487", "name": "Pharvaris N.V.", "sic": "2834", "sic_description": "Pharmaceutical Preparations"}
 {"cik": "0001831096", "country": "US", "first_seen": "2026-06-12", "issuer_id": "ISS-0001831096", "name": "Great Elm Group, Inc.", "sic": null, "sic_description": null}
 {"cik": "0001831097", "country": "US", "first_seen": "2026-06-12", "issuer_id": "ISS-0001831097", "name": "agilon health, inc.", "sic": "8090", "sic_description": "Services-Misc Health & Allied Services, NEC"}
@@ -1888,6 +1918,7 @@
 {"cik": "0001834376", "country": "US", "first_seen": "2026-06-12", "issuer_id": "ISS-0001834376", "name": "InnovAge Holding Corp.", "sic": null, "sic_description": null}
 {"cik": "0001834488", "country": "US", "first_seen": "2026-06-12", "issuer_id": "ISS-0001834488", "name": "N-able, Inc.", "sic": "7372", "sic_description": "Services-Prepackaged Software"}
 {"cik": "0001834622", "country": "US", "first_seen": "2026-06-12", "issuer_id": "ISS-0001834622", "name": "Hayward Holdings, Inc.", "sic": "3580", "sic_description": "Refrigeration & Service Industry Machinery"}
+{"cik": "0001835856", "country": "US", "first_seen": "2026-07-06", "issuer_id": "ISS-0001835856", "name": "Better Home & Finance Holding Co", "sic": "6163", "sic_description": "Loan Brokers"}
 {"cik": "0001835963", "country": "US", "first_seen": "2026-06-12", "issuer_id": "ISS-0001835963", "name": "Global-E Online Ltd.", "sic": "7372", "sic_description": "Services-Prepackaged Software"}
 {"cik": "0001836564", "country": "US", "first_seen": "2026-06-12", "issuer_id": "ISS-0001836564", "name": "Valneva SE", "sic": null, "sic_description": null}
 {"cik": "0001836981", "country": "US", "first_seen": "2026-06-12", "issuer_id": "ISS-0001836981", "name": "BigBear.ai Holdings, Inc.", "sic": "7372", "sic_description": "Services-Prepackaged Software"}
@@ -1935,6 +1966,7 @@
 {"cik": "0001855175", "country": "US", "first_seen": "2026-07-06", "issuer_id": "ISS-0001855175", "name": "Contineum Therapeutics, Inc.", "sic": "2834", "sic_description": "Pharmaceutical Preparations"}
 {"cik": "0001855474", "country": "US", "first_seen": "2026-07-06", "issuer_id": "ISS-0001855474", "name": "AirJoule Technologies Corp.", "sic": "3585", "sic_description": "Air-Cond & Warm Air Heatg Equip & Comm & Indl Refrig Equip"}
 {"cik": "0001855644", "country": "US", "first_seen": "2026-06-12", "issuer_id": "ISS-0001855644", "name": "Zura Bio Ltd", "sic": "2836", "sic_description": "Biological Products, (No Diagnostic Substances)"}
+{"cik": "0001855747", "country": "US", "first_seen": "2026-07-06", "issuer_id": "ISS-0001855747", "name": "Blend Labs, Inc.", "sic": "7370", "sic_description": "Services-Computer Programming, Data Processing, Etc."}
 {"cik": "0001856437", "country": "US", "first_seen": "2026-06-12", "issuer_id": "ISS-0001856437", "name": "Victoria's Secret & Co.", "sic": "5621", "sic_description": "Retail-Women's Clothing Stores"}
 {"cik": "0001856485", "country": "US", "first_seen": "2026-06-12", "issuer_id": "ISS-0001856485", "name": "Sylvamo Corp", "sic": "2621", "sic_description": "Paper Mills"}
 {"cik": "0001857154", "country": "US", "first_seen": "2026-06-12", "issuer_id": "ISS-0001857154", "name": "Krispy Kreme, Inc.", "sic": "5400", "sic_description": "Retail-Food Stores"}
@@ -1955,6 +1987,7 @@
 {"cik": "0001863127", "country": "US", "first_seen": "2026-06-12", "issuer_id": "ISS-0001863127", "name": "Tyra Biosciences, Inc.", "sic": "2834", "sic_description": "Pharmaceutical Preparations"}
 {"cik": "0001863934", "country": "US", "first_seen": "2026-06-12", "issuer_id": "ISS-0001863934", "name": "ADURO CLEAN TECHNOLOGIES INC.", "sic": "2800", "sic_description": "Chemicals & Allied Products"}
 {"cik": "0001863990", "country": "US", "first_seen": "2026-06-12", "issuer_id": "ISS-0001863990", "name": "MultiSensor AI Holdings, Inc.", "sic": null, "sic_description": null}
+{"cik": "0001865200", "country": "US", "first_seen": "2026-07-06", "issuer_id": "ISS-0001865200", "name": "Angel Studios, Inc.", "sic": "7812", "sic_description": "Services-Motion Picture & Video Tape Production"}
 {"cik": "0001865631", "country": "US", "first_seen": "2026-06-12", "issuer_id": "ISS-0001865631", "name": "NEXTNAV INC.", "sic": "3812", "sic_description": "Search, Detection, Navigation, Guidance, Aeronautical Sys"}
 {"cik": "0001866175", "country": "US", "first_seen": "2026-06-12", "issuer_id": "ISS-0001866175", "name": "Crescent Energy Co", "sic": "1311", "sic_description": "Crude Petroleum & Natural Gas"}
 {"cik": "0001866226", "country": "US", "first_seen": "2026-06-12", "issuer_id": "ISS-0001866226", "name": "Evolution Metals & Technologies Corp.", "sic": null, "sic_description": null}
@@ -1998,6 +2031,7 @@
 {"cik": "0001898416", "country": "US", "first_seen": "2026-06-12", "issuer_id": "ISS-0001898416", "name": "Alvotech", "sic": null, "sic_description": null}
 {"cik": "0001898496", "country": "US", "first_seen": "2026-06-12", "issuer_id": "ISS-0001898496", "name": "Getty Images Holdings, Inc.", "sic": "7389", "sic_description": "Services-Business Services, NEC"}
 {"cik": "0001898601", "country": "US", "first_seen": "2026-07-06", "issuer_id": "ISS-0001898601", "name": "IPERIONX Ltd", "sic": "1090", "sic_description": "Miscellaneous Metal Ores"}
+{"cik": "0001898718", "country": "US", "first_seen": "2026-07-06", "issuer_id": "ISS-0001898718", "name": "GMR Solutions Inc.", "sic": "4700", "sic_description": "Transportation Services"}
 {"cik": "0001899123", "country": "US", "first_seen": "2026-06-12", "issuer_id": "ISS-0001899123", "name": "Bitdeer Technologies Group", "sic": "6199", "sic_description": "Finance Services"}
 {"cik": "0001899287", "country": "US", "first_seen": "2026-06-12", "issuer_id": "ISS-0001899287", "name": "Amprius Technologies, Inc.", "sic": "3690", "sic_description": "Miscellaneous Electrical Machinery, Equipment & Supplies"}
 {"cik": "0001899883", "country": "US", "first_seen": "2026-06-12", "issuer_id": "ISS-0001899883", "name": "FTAI Infrastructure Inc.", "sic": "4011", "sic_description": "Railroads, Line-Haul Operating"}
@@ -2060,6 +2094,7 @@
 {"cik": "0001969302", "country": "US", "first_seen": "2026-06-12", "issuer_id": "ISS-0001969302", "name": "Pony AI Inc.", "sic": "7373", "sic_description": "Services-Computer Integrated Systems Design"}
 {"cik": "0001970622", "country": "US", "first_seen": "2026-06-12", "issuer_id": "ISS-0001970622", "name": "USA Rare Earth, Inc.", "sic": "1000", "sic_description": "Metal Mining"}
 {"cik": "0001974138", "country": "US", "first_seen": "2026-06-12", "issuer_id": "ISS-0001974138", "name": "NCR Atleos Corp", "sic": "3578", "sic_description": "Calculating & Accounting Machines (No Electronic Computers)"}
+{"cik": "0001974640", "country": "US", "first_seen": "2026-07-06", "issuer_id": "ISS-0001974640", "name": "Apogee Therapeutics, Inc.", "sic": "2836", "sic_description": "Biological Products, (No Diagnostic Substances)"}
 {"cik": "0001978867", "country": "US", "first_seen": "2026-06-12", "issuer_id": "ISS-0001978867", "name": "Cadeler A/S", "sic": null, "sic_description": null}
 {"cik": "0001979330", "country": "US", "first_seen": "2026-06-12", "issuer_id": "ISS-0001979330", "name": "NB Bancorp, Inc.", "sic": "6036", "sic_description": "Savings Institutions, Not Federally Chartered"}
 {"cik": "0001980088", "country": "US", "first_seen": "2026-06-12", "issuer_id": "ISS-0001980088", "name": "MACH NATURAL RESOURCES LP", "sic": null, "sic_description": null}
@@ -2080,6 +2115,7 @@
 {"cik": "0001993344", "country": "US", "first_seen": "2026-06-12", "issuer_id": "ISS-0001993344", "name": "Allied Gold Corp", "sic": null, "sic_description": null}
 {"cik": "0001994702", "country": "US", "first_seen": "2026-06-12", "issuer_id": "ISS-0001994702", "name": "Kyverna Therapeutics, Inc.", "sic": "2836", "sic_description": "Biological Products, (No Diagnostic Substances)"}
 {"cik": "0001995306", "country": "US", "first_seen": "2026-06-12", "issuer_id": "ISS-0001995306", "name": "SUPER HI INTERNATIONAL HOLDING LTD.", "sic": null, "sic_description": null}
+{"cik": "0001997350", "country": "US", "first_seen": "2026-07-06", "issuer_id": "ISS-0001997350", "name": "Accelerant Holdings", "sic": "6411", "sic_description": "Insurance Agents, Brokers & Service"}
 {"cik": "0001997377", "country": "US", "first_seen": "2026-06-12", "issuer_id": "ISS-0001997377", "name": "IsoEnergy Ltd.", "sic": null, "sic_description": null}
 {"cik": "0001997464", "country": "US", "first_seen": "2026-06-12", "issuer_id": "ISS-0001997464", "name": "Marex Group plc", "sic": "6200", "sic_description": "Security & Commodity Brokers, Dealers, Exchanges & Services"}
 {"cik": "0001997652", "country": "US", "first_seen": "2026-06-12", "issuer_id": "ISS-0001997652", "name": "Tamboran Resources Corp", "sic": "1311", "sic_description": "Crude Petroleum & Natural Gas"}
@@ -2093,6 +2129,7 @@
 {"cik": "0002001557", "country": "US", "first_seen": "2026-06-12", "issuer_id": "ISS-0002001557", "name": "Innventure, Inc.", "sic": null, "sic_description": null}
 {"cik": "0002002473", "country": "US", "first_seen": "2026-06-12", "issuer_id": "ISS-0002002473", "name": "Bowhead Specialty Holdings Inc.", "sic": "6331", "sic_description": "Fire, Marine & Casualty Insurance"}
 {"cik": "0002003292", "country": "US", "first_seen": "2026-06-12", "issuer_id": "ISS-0002003292", "name": "Klarna Group plc", "sic": "6199", "sic_description": "Finance Services"}
+{"cik": "0002004024", "country": "US", "first_seen": "2026-07-06", "issuer_id": "ISS-0002004024", "name": "Lianhe Sowell International Group Ltd", "sic": "7372", "sic_description": "Services-Prepackaged Software"}
 {"cik": "0002007191", "country": "US", "first_seen": "2026-06-12", "issuer_id": "ISS-0002007191", "name": "Telix Pharmaceuticals Ltd", "sic": null, "sic_description": null}
 {"cik": "0002007587", "country": "US", "first_seen": "2026-06-12", "issuer_id": "ISS-0002007587", "name": "American Integrity Insurance Group, Inc.", "sic": null, "sic_description": null}
 {"cik": "0002007825", "country": "US", "first_seen": "2026-06-12", "issuer_id": "ISS-0002007825", "name": "Infleqtion, Inc.", "sic": "7374", "sic_description": "Services-Computer Processing & Data Preparation"}
@@ -2131,6 +2168,7 @@
 {"cik": "0002033377", "country": "US", "first_seen": "2026-06-12", "issuer_id": "ISS-0002033377", "name": "Mega Fortune Co Ltd", "sic": null, "sic_description": null}
 {"cik": "0002035304", "country": "US", "first_seen": "2026-06-12", "issuer_id": "ISS-0002035304", "name": "Titan America SA", "sic": "1400", "sic_description": "Mining & Quarrying of  Nonmetallic Minerals (No Fuels)"}
 {"cik": "0002035709", "country": "US", "first_seen": "2026-06-12", "issuer_id": "ISS-0002035709", "name": "Phoenix Asia Holdings Ltd", "sic": null, "sic_description": null}
+{"cik": "0002035832", "country": "US", "first_seen": "2026-07-06", "issuer_id": "ISS-0002035832", "name": "Aktis Oncology, Inc.", "sic": "2834", "sic_description": "Pharmaceutical Preparations"}
 {"cik": "0002036042", "country": "US", "first_seen": "2026-06-12", "issuer_id": "ISS-0002036042", "name": "Sionna Therapeutics, Inc.", "sic": "2834", "sic_description": "Pharmaceutical Preparations"}
 {"cik": "0002039497", "country": "US", "first_seen": "2026-06-12", "issuer_id": "ISS-0002039497", "name": "Resolute Holdings Management, Inc.", "sic": "6199", "sic_description": "Finance Services"}
 {"cik": "0002040127", "country": "US", "first_seen": "2026-06-12", "issuer_id": "ISS-0002040127", "name": "Karman Holdings Inc.", "sic": "3728", "sic_description": "Aircraft Parts & Auxiliary Equipment, NEC"}
@@ -2150,7 +2188,9 @@
 {"cik": "0002062440", "country": "US", "first_seen": "2026-06-12", "issuer_id": "ISS-0002062440", "name": "Kyivstar Group Ltd.", "sic": "4812", "sic_description": "Radiotelephone Communications"}
 {"cik": "0002062583", "country": "US", "first_seen": "2026-06-12", "issuer_id": "ISS-0002062583", "name": "MiniMed Group, Inc.", "sic": "3841", "sic_description": "Surgical & Medical Instruments & Apparatus"}
 {"cik": "0002065601", "country": "US", "first_seen": "2026-06-12", "issuer_id": "ISS-0002065601", "name": "Central Bancompany, Inc.", "sic": "6022", "sic_description": "State Commercial Banks"}
+{"cik": "0002067129", "country": "US", "first_seen": "2026-07-06", "issuer_id": "ISS-0002067129", "name": "Neptune Insurance Holdings Inc.", "sic": "6411", "sic_description": "Insurance Agents, Brokers & Service"}
 {"cik": "0002067627", "country": "US", "first_seen": "2026-06-12", "issuer_id": "ISS-0002067627", "name": "Terra Innovatum Global N.V.", "sic": null, "sic_description": null}
+{"cik": "0002070849", "country": "US", "first_seen": "2026-07-06", "issuer_id": "ISS-0002070849", "name": "BillionToOne, Inc.", "sic": "8071", "sic_description": "Services-Medical Laboratories"}
 {"cik": "0002071288", "country": "US", "first_seen": "2026-06-12", "issuer_id": "ISS-0002071288", "name": "Lumexa Imaging Holdings, Inc.", "sic": "8071", "sic_description": "Services-Medical Laboratories"}
 {"cik": "0002071778", "country": "US", "first_seen": "2026-06-12", "issuer_id": "ISS-0002071778", "name": "Fermi Inc.", "sic": "6798", "sic_description": "Real Estate Investment Trusts"}
 {"cik": "0002078008", "country": "US", "first_seen": "2026-06-12", "issuer_id": "ISS-0002078008", "name": "Versigent PLC", "sic": "3714", "sic_description": "Motor Vehicle Parts & Accessories"}
@@ -2168,6 +2208,7 @@
 {"cik": "0002091349", "country": "US", "first_seen": "2026-06-12", "issuer_id": "ISS-0002091349", "name": "First Tracks Biotherapeutics, Inc.", "sic": "2834", "sic_description": "Pharmaceutical Preparations"}
 {"cik": "0002091467", "country": "US", "first_seen": "2026-06-12", "issuer_id": "ISS-0002091467", "name": "Boyd Group Services Inc.", "sic": "7500", "sic_description": "Services-Automotive Repair, Services & Parking"}
 {"cik": "0002092574", "country": "US", "first_seen": "2026-06-12", "issuer_id": "ISS-0002092574", "name": "Swarmer, Inc", "sic": "7372", "sic_description": "Services-Prepackaged Software"}
+{"cik": "0002097163", "country": "US", "first_seen": "2026-07-06", "issuer_id": "ISS-0002097163", "name": "Xanadu Quantum Technologies Ltd", "sic": "3571", "sic_description": "Electronic Computers"}
 {"cik": "0002099103", "country": "US", "first_seen": "2026-06-12", "issuer_id": "ISS-0002099103", "name": "iShares Staked Ethereum Trust ETF", "sic": null, "sic_description": null}
 {"cik": "0002100782", "country": "US", "first_seen": "2026-06-12", "issuer_id": "ISS-0002100782", "name": "Generate Biomedicines, Inc.", "sic": "2834", "sic_description": "Pharmaceutical Preparations"}
 {"cik": "0002104204", "country": "US", "first_seen": "2026-06-12", "issuer_id": "ISS-0002104204", "name": "Alamar Biosciences, Inc.", "sic": "3826", "sic_description": "Laboratory Analytical Instruments"}
