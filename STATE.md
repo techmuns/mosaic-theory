@@ -2929,6 +2929,9 @@ two-name analysis (mid/small-caps, opposite directions) mapped against this inve
 
 ## 5. Next steps (ordered, current)
 
+- **OPERATOR NOTE (worktrees):** canonical main lives in the `-s2`/`-main` worktrees; the primary dir
+  tracks unmerged `feat/own-history-line` — run audits and builds from a main worktree.
+
 **OPERATOR TO-DO — backfill the IWM benchmark before any full `vinci dossier` re-assemble (from
 feat/brief-decision-metrics, 2026-07-13).** Grouped-daily ingestion only stores the finalist universe,
 so the benchmark index (`IDX-IWM`) is NOT populated by the normal pipeline. Run
@@ -3779,7 +3782,15 @@ refactor/cite-check) green. Detection/B/C/forward-harness/universe UNTOUCHED. **
 (NOT built now):** (a) **INTAKE RADAR** — the human proposes themes from a machine-assembled radar of
 LEADING INDICATORS (disclosure-language velocity / capex-commitment flow / policy catalysts — explicitly
 NOT price-momentum or news-volume, which are late/replicable); machine PROPOSES, human ADVANCES-or-PARKS;
-built + validated AFTER theme #2 (a second theme is needed to generalize the radar). (b) **THEME #2 = the
+built + validated AFTER theme #2 (a second theme is needed to generalize the radar).
+**[SUPERSESSION — radar audit 2026-07-11:** of the three candidate leading indicators,
+**`disclosure-language velocity` is SUPERSEDED-BY-SANCTION** — it was explored as the assay velocity
+axis (v0→v2.1) and the sanctioned **assay-v2.1 entry (§2)** DEMOTED it to a printed diagnostic and
+BARRED further velocity-axis iteration (its pre-committed FINAL criterion + EXECUTED SCOPE-STOP); it is
+NOT a live radar signal. This radar design is therefore **NEEDS-REVISION** — the only remaining
+candidate indicators are **`capex-commitment-flow`** and **`policy-catalysts`**, both
+UNBUILT/UNVALIDATED, so the radar cannot be re-specified around velocity. Docs reconciliation only
+(no redesign); the post-theme-#2 radar build must re-select indicators.] (b) **THEME #2 = the
 demand-shaped defense COMPOSITIONAL SHIFT** (attritable / autonomy / cyber) — chosen to test whether
 reasoned decomposition GENERALIZES beyond supply chains, with two expected stresses — DIRECTION
 (tailwind vs headwind) and PARALLEL-vs-SEQUENTIAL categories — to be resolved BY EVIDENCE from theme #2,
