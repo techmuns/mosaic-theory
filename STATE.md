@@ -1973,6 +1973,11 @@ Each line: *what it does* — *verified how*.
   Driver-name refinement if ever advanced: the live wedge is in-silico substitution of CLINICAL evidence
   (asciminib/Simcyp precedent), not animal-tox. Channel-comparison data point: analyst-named candidate #1
   -> PARK-with-triggers; component-a candidate #1 (T007) -> ADVANCE.
+- **THEME #3 REGISTERED: truckload-supply-purge**, source=component-a (T007, 2026-06-17 harvest;
+  disposition 2026-07-13). Spec ratified verbatim by analyst. Full scan PENDING operator command;
+  pre-triage checkpoint: analyst face-checks the WERN (expect tailwind driver-specific), RXO (expect
+  indirect-opposite: broker), ARCB (expect indirect: LTL-majority) rows before any triage is trusted.
+  Finding-4a data point #2: headwind encoded as indirect in text.
 
 ## 3. FALSIFIED — tested and retired (NOT deferred)
 

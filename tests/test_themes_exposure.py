@@ -20,7 +20,12 @@ import pytest
 
 from vinci.graph.llm import LlmClient
 from vinci.netcache import CachedHttp, HttpError
-from vinci.themes.drivers import AI_DATACENTER, DEFENSE_DEMAND_SHIFT, DRIVER_SPECS
+from vinci.themes.drivers import (
+    AI_DATACENTER,
+    DEFENSE_DEMAND_SHIFT,
+    DRIVER_SPECS,
+    TRUCKLOAD_SUPPLY_PURGE,
+)
 from vinci.themes.exposure import (
     assess_exposure,
     grade_driving_fact,
@@ -454,7 +459,7 @@ def test_themes_exposure_driver_required_and_resolves(
     with pytest.raises(SystemExit):  # unknown driver → argparse exit
         parser.parse_args(["themes-exposure", "--driver", "not-a-theme"])
     err = capsys.readouterr().err
-    assert "ai-datacenter" in err and "defense-demand-shift" in err  # error names both keys
+    assert all(k in err for k in DRIVER_SPECS)  # error names every registry key (derived)
 
     with pytest.raises(SystemExit):  # missing --driver → required, no silent default
         parser.parse_args(["themes-exposure"])
@@ -463,4 +468,24 @@ def test_themes_exposure_driver_required_and_resolves(
         args = parser.parse_args(["themes-exposure", "--driver", key])
         assert args.driver == key
         assert DRIVER_SPECS[args.driver].key == key
-    assert set(DRIVER_SPECS) == {"ai-datacenter", "defense-demand-shift"}
+    assert "truckload-supply-purge" in DRIVER_SPECS  # registry drives --driver choices (derived)
+
+
+def test_truckload_driver_registered_and_fields_nonempty() -> None:
+    """Theme #3 (truckload-supply-purge, T007) is in the registry — now 3 keys — and its
+    analyst-ratified spec fields are all non-empty. The exposure classifier is driver-agnostic, so a
+    new theme is a new DriverSpec and nothing else."""
+    assert "truckload-supply-purge" in DRIVER_SPECS and len(DRIVER_SPECS) == 3
+    t = TRUCKLOAD_SUPPLY_PURGE
+    assert t.key == "truckload-supply-purge"
+    assert all([t.description, t.tie_taxonomy, t.prefilter_terms, t.provenance_tags])
+
+
+def test_truckload_provenance_ltl_ordered_before_asset_based_tl() -> None:
+    """Provenance ORDERING pin: 'less-than-truckload' → ltl, NOT asset-based-tl. Because
+    provenance_tag_of is first-match and ltl is listed FIRST, the 'truckload' substring in
+    asset-based-tl's keywords must not win — a regression would mis-tag LTL names as asset TL."""
+    lyr = TRUCKLOAD_SUPPLY_PURGE.provenance_tags
+    assert provenance_tag_of("less-than-truckload carrier, tonnage per day", lyr) == "ltl"
+    assert provenance_tag_of("asset-based truckload linehaul", lyr) == "asset-based-tl"
+    assert provenance_tag_of("we run a freight brokerage / 3pl", lyr) == "brokerage-3pl"
