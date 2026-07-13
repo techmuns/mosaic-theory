@@ -17,7 +17,7 @@ from __future__ import annotations
 
 from abc import ABC, abstractmethod
 from collections.abc import Iterable, Iterator
-from datetime import date, timedelta
+from datetime import UTC, date, datetime, timedelta
 from typing import Any, cast
 
 from pydantic import BaseModel
@@ -29,6 +29,7 @@ from vinci.schemas.data_record import Identity
 from vinci.schemas.market import PriceBar
 
 _GROUPED = "https://api.polygon.io/v2/aggs/grouped/locale/us/market/stocks/{day}"
+_AGGS = "https://api.polygon.io/v2/aggs/ticker/{symbol}/range/1/day/{start}/{end}"
 _REFERENCE = "https://api.polygon.io/v3/reference/tickers"
 _ONE_DAY = 86_400.0
 
@@ -174,6 +175,38 @@ class PolygonEodClient(EodClient):
             raise
         data = cast(dict[str, Any], raw)
         return parse_grouped_daily(data, day=day, min_results=self._min_results)
+
+    def daily_bars(self, symbol: str, start: date, end: date) -> list[tuple[date, RawBar]]:
+        """Per-symbol daily OHLCV over ``[start, end]`` (one cached call). Used for the benchmark
+        (IWM) history — grouped-daily only stores the finalist universe, so the index that the G2
+        idio comparison and the stock-performance exhibit need is fetched here. Fail-loud on a
+        non-OK status; ``adjusted`` so splits/dividends don't fabricate a step in the path."""
+        url = _AGGS.format(symbol=symbol, start=start.isoformat(), end=end.isoformat())
+        raw = self._http.get_json(
+            url, ttl_seconds=_ONE_DAY, params={"adjusted": "true", "sort": "asc", "limit": 50000}
+        )
+        return parse_aggregates(cast(dict[str, Any], raw), symbol=symbol)
+
+
+def parse_aggregates(data: dict[str, Any], *, symbol: str) -> list[tuple[date, RawBar]]:
+    """Pure parser + fail-loud guard for a Polygon per-symbol aggregates response (unit-testable).
+
+    Each bar's ``t`` is the window-start epoch-ms (ET midnight of the trading day); its UTC date is
+    that trading day. An OK/DELAYED status with no results is a legitimate empty range → []."""
+    status = data.get("status")
+    if status not in ("OK", "DELAYED"):
+        raise EodError(f"aggregates {symbol}: status={status!r} ({data.get('error') or data})")
+    out: list[tuple[date, RawBar]] = []
+    for r in data.get("results") or []:
+        t = r.get("t")
+        if t is None:
+            continue
+        d = datetime.fromtimestamp(t / 1000.0, tz=UTC).date()
+        bar = RawBar(
+            ticker=symbol, open=r["o"], high=r["h"], low=r["l"], close=r["c"], volume=r["v"]
+        )
+        out.append((d, bar))
+    return out
 
 
 def parse_grouped_daily(data: dict[str, Any], *, day: date, min_results: int) -> dict[str, RawBar]:

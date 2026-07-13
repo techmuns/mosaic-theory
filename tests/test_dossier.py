@@ -3288,6 +3288,157 @@ def test_exhibit_shared_frame_tokens_no_node() -> None:
     assert "const W = 760, H = 276, cy0 = 54, cy1 = 234" not in src
 
 
+# --- Brief stock-performance exhibit (52-week rebased path: name vs IWM) -----------------------
+def _perf_bar(iid: str, d: date, c: float) -> typing.Any:
+    from vinci.schemas.market import PriceBar
+    return PriceBar(
+        internal_id=iid, bar_date=d, open=c, high=c, low=c, close=c, volume=1.0, source="t"
+    )
+
+
+def _perf_ident() -> typing.Any:
+    return sdr.Identity(
+        internal_id="SEC-X-FOO", issuer_id="I", cik="1", ticker="FOO", mic="XNAS",
+        exchange="Nasdaq", eod_symbol="FOO", name="Foo Inc.",
+    )
+
+
+def test_stock_performance_rebases_to_100_and_aligns_benchmark(tmp_path: Path) -> None:
+    """(Brief) _stock_performance indexes BOTH the name and IWM to 100 at the window start, aligns
+    the benchmark to the name's trading days via as-of closes, and reports each series' windowed
+    return — the same EOD closes the G2 idio comparison cites (assemble, never conclude). VALUE
+    pins on a SYNTHETIC store (a frozen fixture; the committed artifact test asserts invariants)."""
+    from datetime import timedelta
+
+    from vinci.store import Store
+    ref = date(2026, 7, 6)
+    store = Store(tmp_path / "sp.db")
+    # name: 50 → 40 → 25 over the window (base 50) → rebased 100, 80, 50; windowed return −50%
+    store.write_prices([_perf_bar("SEC-X-FOO", ref - timedelta(days=350), 50.0),
+                        _perf_bar("SEC-X-FOO", ref - timedelta(days=100), 40.0),
+                        _perf_bar("SEC-X-FOO", ref, 25.0)])
+    # IWM under its canonical benchmark id: 200 → 220 → 260 (base 200) → rebased 100, 110, 130; +30%
+    store.write_prices([_perf_bar("IDX-IWM", ref - timedelta(days=350), 200.0),
+                        _perf_bar("IDX-IWM", ref - timedelta(days=100), 220.0),
+                        _perf_bar("IDX-IWM", ref, 260.0)])
+    sp = dm._stock_performance(_perf_ident(), store, ref)
+    assert sp is not None
+    assert sp.name_symbol == "FOO" and sp.benchmark_symbol == "IWM"
+    assert sp.as_of == ref and sp.window_days == 364
+    assert [p.name for p in sp.points] == [100.0, 80.0, 50.0]
+    assert [p.benchmark for p in sp.points] == [100.0, 110.0, 130.0]
+    assert sp.name_return == pytest.approx(-0.5) and sp.benchmark_return == pytest.approx(0.30)
+    assert "FOO" in sp.source_ref and "IWM" in sp.source_ref and "rebased to 100" in sp.source_ref
+
+
+def test_stock_performance_none_under_two_window_bars(tmp_path: Path) -> None:
+    """(Brief · fail-loud) A name with <2 bars in the 52w window yields NO exhibit — None on the
+    layer, never a fabricated one-point series. Bars OUTSIDE the window don't count."""
+    from datetime import timedelta
+
+    from vinci.store import Store
+    ref = date(2026, 7, 6)
+    store = Store(tmp_path / "sp.db")
+    store.write_prices([_perf_bar("SEC-X-FOO", ref, 25.0),  # one in-window bar
+                        _perf_bar("SEC-X-FOO", ref - timedelta(days=500), 90.0)])  # pre-window: out
+    assert dm._stock_performance(_perf_ident(), store, ref) is None
+
+
+def test_stock_performance_benchmark_none_when_iwm_absent(tmp_path: Path) -> None:
+    """(Brief · fail-loud) With NO IWM bars stored, the name path still renders (rebased to 100) but
+    every benchmark point is None and benchmark_return is None — a loud gap, never bridged/faked."""
+    from datetime import timedelta
+
+    from vinci.store import Store
+    ref = date(2026, 7, 6)
+    store = Store(tmp_path / "sp.db")
+    store.write_prices([_perf_bar("SEC-X-FOO", ref - timedelta(days=200), 50.0),
+                        _perf_bar("SEC-X-FOO", ref, 30.0)])
+    sp = dm._stock_performance(_perf_ident(), store, ref)
+    assert sp is not None
+    assert [p.name for p in sp.points] == [100.0, 60.0]
+    assert all(p.benchmark is None for p in sp.points)
+    assert sp.benchmark_return is None
+
+
+def test_stock_perf_exhibit_static_contract_no_node() -> None:
+    """(Brief) dossier.js's stock-performance exhibit ships node-unverified, so pin its contracts by
+    source inspection — NODE-FREE: it exists, reuses the shared EXHIBIT design language (fs · halo ·
+    margin), draws the name in --accent and the benchmark in --ink-3, indexes to 100 (extent-based
+    domain, NOT lineDomain's floor-at-0 which would waste the 0..min band), and reads the structured
+    points/returns. It sits in .brief-snap (briefSnapshot renders it below the scalar table)."""
+    src = Path("frontend/views/shared/dossier.js").read_text()
+    assert "function stockPerfExhibit" in src
+    assert "extent, EXHIBIT } from" in src  # extent imported for the index-domain (not floor-at-0)
+    assert "const { fs, halo, margin } = EXHIBIT" in src  # reuses the shared design language
+    assert 'nameCol = "var(--accent)", benchCol = "var(--ink-3)"' in src  # the specified colours
+    assert "ds-exhibit brief-perf" in src  # the exhibit card class
+    assert "sp.name_return" in src and "sp.benchmark_return" in src  # structured, no re-parse
+    assert "extent([...nameS, ...benchS])" in src  # index-domain over the flattened series
+    assert "stockPerfExhibit(m.stock_performance)" in src  # wired into briefSnapshot
+    # the >Source: guard (no inline caption) is enforced globally by
+    # test_exhibits_cite_via_endnotes_not_inline_source_caption — this exhibit must not add one.
+
+
+def test_stock_perf_exhibit_renders_from_committed_cnxc_e2e() -> None:
+    """(Brief · TEST-LAYER end-to-end) The committed CNXC dossier.json → the REAL renderDossier →
+    the stock-performance exhibit appears in the HTML. A production failure of the render is pinned
+    here, not only by source inspection. Phrasing-independent: presence of the chart card + title +
+    the rebased-100 aria-label, and ≥2 polylines (name + benchmark) — never an exact coordinate."""
+    import json
+    import pathlib
+    import shutil
+    import subprocess
+    if not shutil.which("node"):
+        pytest.skip("node unavailable")
+    if not pathlib.Path("data/dossiers/CNXC/dossier.json").exists():
+        pytest.skip("no committed CNXC dossier.json")
+    driver = r"""
+import { readFileSync } from "node:fs";
+import { pathToFileURL } from "node:url";
+import path from "node:path";
+const stub = new Proxy(function(){}, { get: () => stub, apply: () => stub, construct: () => ({}) });
+for (const g of ["window","document","location"]) { try { globalThis[g] = stub; } catch {} }
+const dj = pathToFileURL(path.resolve("frontend/views/shared/dossier.js")).href;
+const { renderDossier } = await import(dj);
+const html = renderDossier(JSON.parse(readFileSync("data/dossiers/CNXC/dossier.json")), null);
+console.log(JSON.stringify({
+  has_card: html.includes("ds-exhibit brief-perf"),
+  has_title: html.includes("Stock performance"),
+  has_aria: html.includes("rebased to 100"),
+  polylines: (html.match(/<polyline/g) || []).length,
+}));
+"""
+    out = subprocess.run(["node", "--input-type=module", "-e", driver],
+                         capture_output=True, text=True, check=True)
+    res = json.loads(out.stdout)
+    assert res["has_card"] and res["has_title"] and res["has_aria"], f"chart missing: {res}"
+    assert res["polylines"] >= 2, f"expected name + benchmark polylines, got {res['polylines']}"
+
+
+def test_stock_performance_committed_cnxc_artifact_invariants() -> None:
+    """(Brief · living-artifact) The re-assembled CNXC dossier carries a structurally-valid
+    stock_performance: both series start at exactly 100 (the rebase anchor), dates are strictly
+    ascending, the name symbol IS the ticker, IWM is the benchmark, and name_return reconciles with
+    the last plotted point. Phrasing/value-INDEPENDENT — the exact returns live on the frozen unit
+    fixture above, never on the re-drawn artifact (CLAUDE.md TEST-LAYER rule)."""
+    import pathlib
+    p = pathlib.Path("data/dossiers/CNXC/dossier.json")
+    if not p.exists():
+        pytest.skip("no committed CNXC dossier.json")
+    d = ds.Dossier.model_validate_json(p.read_text())
+    sp = d.mechanical.stock_performance
+    assert sp is not None and len(sp.points) >= 2
+    assert sp.name_symbol == d.ticker and sp.benchmark_symbol == "IWM"
+    assert sp.points[0].name == 100.0  # the rebase anchor — always 100 at the window start
+    if sp.points[0].benchmark is not None:
+        assert sp.points[0].benchmark == 100.0
+    dates = [pt.date for pt in sp.points]
+    assert dates == sorted(dates) and len(set(dates)) == len(dates)  # strictly ascending, unique
+    # reconciles with the last plotted point (which is rounded to 2 dp → allow that rounding slack)
+    assert sp.name_return == pytest.approx(sp.points[-1].name / 100.0 - 1.0, abs=1e-3)
+
+
 def test_own_history_chart_low_confidence_threshold_matches_string() -> None:
     """(P3, #105) The own-history CHART de-escalates its marker below the SAME close count the
     range_position STRING caveats (_MIN_CONFIDENT_CLOSES) — pinned so the thresholds can't drift.

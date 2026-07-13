@@ -17,6 +17,7 @@ from vinci.eod import (
     PolygonEodClient,
     compute_price_features,
     ingest_prices,
+    parse_aggregates,
     parse_grouped_daily,
     parse_tiingo_prices,
     relative_return,
@@ -68,6 +69,36 @@ def test_parse_grouped_daily_partial_fails_loud() -> None:
 def test_parse_grouped_daily_error_status_fails_loud() -> None:
     with pytest.raises(EodError):
         parse_grouped_daily({"status": "ERROR", "error": "bad key"}, day=REF, min_results=2)
+
+
+# --- parse_aggregates (per-symbol daily bars, for the benchmark backfill) ----------------------
+def test_parse_aggregates_maps_timestamp_to_trading_date_and_ohlcv() -> None:
+    # t is window-start epoch-ms (ET midnight): 1_719_806_400_000 → 2024-07-01 04:00Z → 2024-07-01
+    data = {
+        "status": "DELAYED",  # historical IWM is served DELAYED on the free tier — still valid
+        "resultsCount": 2,
+        "results": [
+            {"o": 203.5, "h": 203.8, "l": 200.5, "c": 201.2, "v": 2.2e7, "t": 1_719_806_400_000},
+            {"o": 201.2, "h": 205.0, "l": 201.0, "c": 204.4, "v": 1.8e7, "t": 1_719_892_800_000},
+        ],
+    }
+    rows = parse_aggregates(data, symbol="IWM")
+    assert [d.isoformat() for d, _ in rows] == ["2024-07-01", "2024-07-02"]
+    _d0, b0 = rows[0]
+    assert b0.ticker == "IWM" and b0.close == 201.2 and b0.open == 203.5 and b0.volume == 2.2e7
+
+
+def test_parse_aggregates_empty_results_is_empty_list() -> None:
+    # an OK status with no bars is a legitimate empty range (weekend/holiday span), not an error
+    assert parse_aggregates({"status": "OK", "resultsCount": 0, "results": []}, symbol="IWM") == []
+    assert parse_aggregates({"status": "OK"}, symbol="IWM") == []  # missing 'results' key → []
+
+
+def test_parse_aggregates_error_status_fails_loud() -> None:
+    with pytest.raises(EodError):
+        parse_aggregates({"status": "ERROR", "error": "bad key"}, symbol="IWM")
+    with pytest.raises(EodError):  # a NOT_AUTHORIZED-style non-OK must raise, never silently drop
+        parse_aggregates({"status": "NOT_AUTHORIZED"}, symbol="IWM")
 
 
 # --- parse_tiingo_prices ----------------------------------------------------------------------
