@@ -747,7 +747,7 @@ function stockPerfExhibit(sp) {
   if (!nameS.some((v) => v != null)) return "";
   const { fs, halo, margin } = EXHIBIT;  // shared design language (lib/exhibit.js) — compact frame below
   // compact sidebar frame — this sits inside .brief-snap, so it is NOT stretched to the main canvas.
-  const W = 248, H = 154, padL = 27, padR = 6, cy0 = 30, cy1 = 112, px0 = padL, px1 = W - padR;
+  const W = 285, H = 154, padL = 27, padR = 6, cy0 = 30, cy1 = 112, px0 = padL, px1 = W - padR;
   // A rebased-INDEX series (base 100), not a return series — its threshold is 100, not 0. Every series
   // starts at exactly 100, so `extent` always includes it; zoom to the real data range (padded) instead
   // of lineDomain's floor-at-0, which would waste the whole 0..min band. No fabrication: extent is the
