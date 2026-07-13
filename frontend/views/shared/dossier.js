@@ -419,10 +419,17 @@ function briefTile(label, value, danger) {
   return `<div class="brief-mc"><div class="l">${escapeHtml(label)}</div><div class="v${danger ? " dang" : ""}">${value}</div></div>`;
 }
 
-function briefStrip(m) {
+// the Brief DECISION TILES — the "why it's a candidate" metrics as a compact 2×2 grid, surfaced up in
+// the teaser card (the MOFSL stat-sidebar pattern): price action (the raw 180d drawdown) + idiosyncratic
+// drawdown vs the market + leverage + FCF sign (+ going-concern when flagged). Fail-honest: a tile
+// renders only when its source is present. (The "Valuation (vs peers)" line moved OUT — it is already
+// rendered by valuationCard; showing it here was a literal duplicate.)
+function briefTilesGrid(m) {
   const tiles = [];
-  const io = m.idiosyncratic_vs_shared;
-  if (io && io.rel_vs_market && io.rel_vs_market.status === "present")
+  const io = m.idiosyncratic_vs_shared || {};
+  if (io.name_180d_return && io.name_180d_return.status === "present")
+    tiles.push(briefTile("Price action (180d)", fmtPct(io.name_180d_return.value, { signed: true })));
+  if (io.rel_vs_market && io.rel_vs_market.status === "present")
     tiles.push(briefTile("Idio (vs mkt, 180d)", fmtPct(io.rel_vs_market.value, { signed: true })));
   const q = m.quality || {};
   if (q.net_debt_to_ebitda && q.net_debt_to_ebitda.status === "present")
@@ -431,9 +438,7 @@ function briefStrip(m) {
     tiles.push(briefTile("Free cash flow", escapeHtml(signWord(q.fcf_sign.value))));
   const gc = (((m.primary_source || {}).filing || {}).going_concern) || null;
   if (gc) tiles.push(briefTile("Going concern", gc.substantial_doubt ? "⚠ substantial doubt" : "not flagged", gc.substantial_doubt));
-  const strip = tiles.length ? `<div class="brief-strip">${tiles.join("")}</div>` : "";
-  const val = (m.valuation && m.valuation.cross_sectional) ? fact("Valuation (vs peers)", m.valuation.cross_sectional) : "";
-  return strip + val;
+  return tiles.length ? `<div class="brief-tiles">${tiles.join("")}</div>` : "";
 }
 
 function briefVerdictChip(verdict) {
@@ -450,7 +455,7 @@ function briefVerdictChip(verdict) {
 // snapshot → valuation → verify. Machine-assembled + source-bound throughout; the Recommendation /
 // Target slot is the HUMAN's (never machine-filled). Mirrors _brief_lines() in render.py.
 function briefTier(d, verdict, m) {
-  const parts = teaserCard(d, verdict, m) + setupCard(m, d.synthesis) + companyCard(m)
+  const parts = teaserCard(d, verdict, m) + setupCard(d.synthesis) + companyCard(m)
     + briefCase(d.synthesis) + financialSnapshot(m) + valuationCard(m) + catalystCard(m) + verifyCard(d);
   return parts.trim() ? parts : "";
 }
@@ -503,6 +508,7 @@ function teaserCard(d, verdict, m) {
     ${one ? `<div class="brief-oneliner">${escapeHtml(one)}</div>` : ""}
     ${read}
     <div class="brief-verdict"><span class="brief-vlab">Recommendation / Target</span> ${vslot}</div>
+    ${briefTilesGrid(m)}
   </div>`;
   return `<div class="card ds-section ds-brief">
     <div class="brief-body">${narrative}${briefSnapshot(d, m)}</div></div>`;
@@ -530,19 +536,14 @@ function briefSnapshot(d, m) {
     <table class="brief-snap-t"><tbody>${rows.join("")}</tbody></table></div>`;
 }
 
-// 2 — SETUP: why it's a candidate (drawdown, idiosyncratic) + the decisive question + decision snapshot.
-function setupCard(m, s) {
-  const io = m.idiosyncratic_vs_shared || {};
-  const dd = (io.name_180d_return && io.name_180d_return.status === "present") ? fmtPct(io.name_180d_return.value, { signed: true }) : null;
-  const idio = (io.rel_vs_market && io.rel_vs_market.status === "present") ? fmtPct(io.rel_vs_market.value, { signed: true }) : null;
-  let setup = "";
-  if (dd) setup = `<div style="font-size:12.5px;">Fell <span class="mono">${dd}</span> over 180d${idio ? `, idiosyncratic (<span class="mono">${idio}</span> vs market)` : ""} — an overshoot candidate.</div>`;
-  else if (idio) setup = `<div style="font-size:12.5px;">Idiosyncratic <span class="mono">${idio}</span> vs the market over 180d — an overshoot candidate.</div>`;
-  const dq = (s && s.decisive_question && s.decisive_question.question)
-    ? `<div class="brief-dq" style="margin-top:6px;"><b>Decisive question:</b> ${escapeHtml(s.decisive_question.question)}</div>` : "";
-  const strip = briefStrip(m);
-  if (!setup && !dq && !strip) return "";
-  return `<div class="card ds-section"><div class="ds-title">The setup</div>${setup}${dq}${strip}</div>`;
+// 2 — DECISIVE QUESTION: the one framing question the human must resolve. The candidate's drawdown /
+// idiosyncratic / leverage / FCF facts moved UP into the teaser tiles, so this card is now just the
+// question (the card title carries the "decisive question" label — no inline prefix).
+function setupCard(s) {
+  const q = (s && s.decisive_question && s.decisive_question.question) ? s.decisive_question.question : "";
+  if (!q) return "";
+  return `<div class="card ds-section"><div class="ds-title">Decisive question</div>
+    <div class="brief-dq" style="margin-top:4px;">${escapeHtml(q)}</div></div>`;
 }
 
 // 3 — COMPANY & BUSINESS: segments · geography · customer CONCENTRATION (the top-customer %, a real

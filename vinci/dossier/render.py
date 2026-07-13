@@ -1664,32 +1664,29 @@ def _brief_lines(d: Dossier) -> list[str]:
     snap = _brief_snapshot(d.exchange, d.cik, m.stock_info)
     if snap:
         out += ["", *snap]
-    out.append("")
-    # 2 — SETUP: why it's a candidate + the decisive question + decision data
-    out.append("## The setup")
+    # DECISION TILES (moved up from the old setup section, mirroring the web's teaser tiles): price
+    # action (raw 180d drawdown) + idiosyncratic (vs market) + leverage + FCF (+ going-concern when
+    # flagged). The "Valuation (vs peers)" line is NOT here — it renders once, in Valuation below.
     io = m.idiosyncratic_vs_shared
+    tiles: list[str] = []
+    if io is not None and io.name_180d_return.status is SourceStatus.PRESENT:
+        tiles.append(_fact("Price action (180d)", io.name_180d_return, _pct))
     if io is not None:
-        dd, idio = io.name_180d_return, io.rel_vs_market
-        if dd.status is SourceStatus.PRESENT:
-            line = f"Fell {_pct(dd.value)} over 180d"
-            if idio.status is SourceStatus.PRESENT:
-                line += f", idiosyncratic ({_pct(idio.value)} vs market)"
-            out.append(line + " — an overshoot candidate.")
-        elif idio.status is SourceStatus.PRESENT:
-            out.append(
-                f"Idiosyncratic {_pct(idio.value)} vs market over 180d — an overshoot candidate.")
-    if s is not None and s.decisive_question is not None and s.decisive_question.question:
-        out.append(f"**Decisive question:** {s.decisive_question.question}")
-    strip: list[str] = []
-    if io is not None:
-        strip.append(_fact("Idiosyncratic (vs market, 180d)", io.rel_vs_market, _pct))
+        tiles.append(_fact("Idiosyncratic (vs market, 180d)", io.rel_vs_market, _pct))
     if m.quality is not None:
-        strip.append(_fact("Net debt / EBITDA", m.quality.net_debt_to_ebitda, _mult))
-        strip.append(_fact("Free cash flow", m.quality.fcf_sign, _signword))
+        tiles.append(_fact("Net debt / EBITDA", m.quality.net_debt_to_ebitda, _mult))
+        tiles.append(_fact("Free cash flow", m.quality.fcf_sign, _signword))
     gc = _going_concern_brief(m)
     if gc is not None:
-        strip.append(gc)
-    out += ["", *strip, ""] if strip else [""]
+        tiles.append(gc)
+    if tiles:
+        out += ["", *tiles]
+    out.append("")
+    # 2 — DECISIVE QUESTION: the one framing question the human resolves. Drawdown / idiosyncratic /
+    # leverage / FCF facts are teaser tiles now, so this section is just the question (title carries
+    # the label — no inline "Decisive question:" prefix).
+    if s is not None and s.decisive_question is not None and s.decisive_question.question:
+        out += ["## Decisive question", f"**{s.decisive_question.question}**", ""]
     # 3 — COMPANY & BUSINESS: segments · geography · customer concentration (not names)
     out.append("## Company & business")
     if m.concentration is not None:
