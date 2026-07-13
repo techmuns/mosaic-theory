@@ -21,8 +21,8 @@ Gartner, Inc. provides business and technology insights for decisions and perfor
 **Is the negative revenue turn (-1.5% YoY, FY26E ~-1%) a temporary trough that the FY26E/FY27E EBITDA step-up correctly anticipates, or the start of a structural deceleration in the 78%-Insights core that makes the peer discount EARNED?**
 
 ## Company & business
-- **Segments:** [12 months Dec-31-2025] Conferences 645 (10%); Other 227 (4%); Insights 5,073 (78%); Consulting 552 (9%) of Total 6,497 [5]
-- **Geography:** [12 months Dec-31-2025] United States and Canada 4,033 (62%); Europe, Middle East and Africa 1,694 (26%); Other International 771 (12%) of Total 6,497 [6]
+- **Segments:** [Dec-31-2025] Insights 78%; Conferences 10%; Consulting 9%; Other 4% [5]
+- **Geography:** [Dec-31-2025] United States and Canada 62%; Europe, Middle East and Africa 26%; Other International 12% [6]
 
 ## The case
 **The case** _(top points; the full bull/bear is in Analysis)_
@@ -307,10 +307,10 @@ _NM = a real state (negative base), not missing_
 - **Short interest (FINRA):** Short interest (FINRA, settle 2026-06-15): 12.2M → 12.5M sh (+2.0%, rising) · 18.6% of shares out (EDGAR XBRL) · DTC 7.7d · recent: 2026-06-15 12.5M · 2026-05-29 12.2M · 2026-05-15 11.7M · 2026-04-30 10.0M [23]
 
 ### Concentration
-- **Segments (revenue share):** [12 months Dec-31-2025] Conferences 645 (10%); Other 227 (4%); Insights 5,073 (78%); Consulting 552 (9%) of Total 6,497 [5]
+- **Segments (revenue share):** [Dec-31-2025] Insights 78%; Conferences 10%; Consulting 9%; Other 4% [5]
 - **Segments (EBITDA share — where profit sits):** _UNKNOWN_ — Segments sheet has no 'EBITDA' section as expected
 - **Customers:** JB Financial Group Co., Ltd. (KOSE:A175330) — Gartner, Inc. (NYSE:IT) · Client Services · src: Diversified Banks; Kafein Yazilim Hizmetleri Ticaret A.S. (IBSE:KFEIN) — Gartner Turkey Teknoloji Arastirma ve Danismanlik Hizmetleri Limited Sirketi · Client Services · src: IT Consulting and Other Services; PT Global Sukses Solusi Tbk (IDX:RUNS) — Gartner Ireland Ltd. · Customer · src: Systems Software; Qatar National Bank (Q.P.S.C.) (DSM:QNBK) — Gartner, Inc. (NYSE:IT) · Client Services · src: Diversified Banks; United States — Gartner, Inc. (NYSE:IT) · Customer · src: Diversified Support Services [49]
-- **Geographic:** [12 months Dec-31-2025] United States and Canada 4,033 (62%); Europe, Middle East and Africa 1,694 (26%); Other International 771 (12%) of Total 6,497 [6]
+- **Geographic:** [Dec-31-2025] United States and Canada 62%; Europe, Middle East and Africa 26%; Other International 12% [6]
 
 ## Synthesis
 

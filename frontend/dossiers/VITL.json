@@ -415,7 +415,7 @@
     },
     "concentration": {
       "segments": {
-        "value": "[12 months Dec-28-2025] Eggs and Butter 759 (100%) of Total 759",
+        "value": "[Dec-28-2025] Eggs and Butter — single segment",
         "source_ref": "CIQ Financials→Segments (Revenues, latest annual column)",
         "status": "present",
         "note": null
@@ -433,7 +433,7 @@
         "note": null
       },
       "geographic": {
-        "value": "[12 months Dec-28-2025] United States 759 (100%) of Total 759",
+        "value": "[Dec-28-2025] United States — single geography",
         "source_ref": "CIQ Financials→Segments (Geographic Segment → Revenues, latest annual column)",
         "status": "present",
         "note": null

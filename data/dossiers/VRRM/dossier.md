@@ -21,8 +21,8 @@ Verra Mobility Corporation provides smart mobility technology solutions in the U
 **Does the Avis termination represent a one-time step-down after which the remaining ~$850M franchise re-stabilizes and grows off a self-funding base, or is it the first crack in a decelerating, single-customer-exposed revenue profile that keeps the multiple permanently depressed?**
 
 ## Company & business
-- **Segments:** [12 months Dec-31-2025] Commercial Services 436 (45%); Parking Solutions 83 (8%); Government Solutions 461 (47%) of Total 979 [6]
-- **Geography:** [12 months Dec-31-2025] Australia 66 (7%); United Kingdom 28 (3%); Canada 32 (3%); ALL Other 7 (1%); United States 846 (86%) of Total 979 [7]
+- **Segments:** [Dec-31-2025] Government Solutions 47%; Commercial Services 45%; Parking Solutions 8% [6]
+- **Geography:** [Dec-31-2025] United States 86%; Australia 7%; Canada 3%; United Kingdom 3%; ALL Other 1% [7]
 - **Customer concentration:** top customer 15% (from 15%) of revenue [8]
 
 ## The case
@@ -322,10 +322,10 @@ _NM = a real state (negative base), not missing_
 - **Short interest (FINRA):** Short interest (FINRA, settle 2026-06-15): 5.0M → 7.7M sh (+54.9%, rising) · 5.1% of shares out (EDGAR XBRL) · DTC 1.2d · recent: 2026-06-15 7.7M · 2026-05-29 5.0M · 2026-05-15 3.4M · 2026-04-30 4.0M [26]
 
 ### Concentration
-- **Segments (revenue share):** [12 months Dec-31-2025] Commercial Services 436 (45%); Parking Solutions 83 (8%); Government Solutions 461 (47%) of Total 979 [6]
-- **Segments (EBITDA share — where profit sits):** [12 months Dec-31-2025] Commercial Services 283 (68%); Parking Solutions 11 (3%); Government Solutions 122 (29%) of segment-EBITDA sum (pre-corporate) 416; consolidated EBITDA 362 (~54 unallocated corporate) [53]
+- **Segments (revenue share):** [Dec-31-2025] Government Solutions 47%; Commercial Services 45%; Parking Solutions 8% [6]
+- **Segments (EBITDA share — where profit sits):** [Dec-31-2025] Commercial Services 283 (68%); Parking Solutions 11 (3%); Government Solutions 122 (29%) of segment-EBITDA sum (pre-corporate) 416; consolidated EBITDA 362 (~54 unallocated corporate) [53]
 - **Customers:** Avis Budget Group, Inc. (NasdaqGS:CAR) — Customer · Passenger Ground Transportation · src: Verra Mobility Corporation (NasdaqCM:VRRM) 2026 Form 10-K; Enterprise Holdings, Inc. — Customer · Passenger Ground Transportation · src: Verra Mobility Corporation (NasdaqCM:VRRM) 2026 Form 10-K; New York City Department of Transportation — Customer · Diversified Support Services · src: Verra Mobility Corporation (NasdaqCM:VRRM) 2026 Form 10-K; The Hertz Corporation — Customer · Passenger Ground Transportation · src: Verra Mobility Corporation (NasdaqCM:VRRM) 2026 Form 10-K [54]
-- **Geographic:** [12 months Dec-31-2025] Australia 66 (7%); United Kingdom 28 (3%); Canada 32 (3%); ALL Other 7 (1%); United States 846 (86%) of Total 979 [7]
+- **Geographic:** [Dec-31-2025] United States 86%; Australia 7%; Canada 3%; United Kingdom 3%; ALL Other 1% [7]
 
 ## Synthesis
 

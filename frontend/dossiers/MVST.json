@@ -278,7 +278,7 @@
     },
     "concentration": {
       "segments": {
-        "value": "[12 months Dec-31-2025] Batteries / Battery Systems 428 (100%) of Total 428",
+        "value": "[Dec-31-2025] Batteries / Battery Systems — single segment",
         "source_ref": "CIQ Financials→Segments (Revenues, latest annual column)",
         "status": "present",
         "note": null
@@ -296,7 +296,7 @@
         "note": null
       },
       "geographic": {
-        "value": "[12 months Dec-31-2025] China 139 (33%); Other Asia & Pacific 3 (1%); Italy 93 (22%); France 78 (18%); Other Europe 41 (10%); U.S. 39 (9%); India 35 (8%) of Total 428",
+        "value": "[Dec-31-2025] China 33%; Italy 22%; France 18%; Other Europe 10%; U.S. 9%; India 8%; Other Asia & Pacific 1%",
         "source_ref": "CIQ Financials→Segments (Geographic Segment → Revenues, latest annual column)",
         "status": "present",
         "note": null
