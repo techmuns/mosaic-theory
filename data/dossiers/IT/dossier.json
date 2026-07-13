@@ -439,7 +439,7 @@
     },
     "concentration": {
       "segments": {
-        "value": "[12 months Dec-31-2025] Conferences 645 (10%); Other 227 (4%); Insights 5,073 (78%); Consulting 552 (9%) of Total 6,497",
+        "value": "[Dec-31-2025] Insights 78%; Conferences 10%; Consulting 9%; Other 4%",
         "source_ref": "CIQ Financials→Segments (Revenues, latest annual column)",
         "status": "present",
         "note": null
@@ -457,7 +457,7 @@
         "note": null
       },
       "geographic": {
-        "value": "[12 months Dec-31-2025] United States and Canada 4,033 (62%); Europe, Middle East and Africa 1,694 (26%); Other International 771 (12%) of Total 6,497",
+        "value": "[Dec-31-2025] United States and Canada 62%; Europe, Middle East and Africa 26%; Other International 12%",
         "source_ref": "CIQ Financials→Segments (Geographic Segment → Revenues, latest annual column)",
         "status": "present",
         "note": null

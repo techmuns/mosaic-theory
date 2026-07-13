@@ -21,8 +21,8 @@ Concentrix Corporation designs, builds, and runs integrated customer experience 
 **Is the compressing margin plus falling absolute EBITDA the leading edge of a secular, AI-driven decline in the CX/BPO model (value trap, discount EARNED), or a cyclical trough against still-growing revenue and self-funding cash flow (overshoot, discount RESIDUAL)?**
 
 ## Company & business
-- **Segments:** [12 months Nov-30-2025] Software & Programming 9,826 (100%) of Total 9,826 [6]
-- **Geography:** [12 months Nov-30-2025] Philippines 1,595 (16%); United States 1,052 (11%); India 1,126 (11%); Others 5,061 (52%); Great Britain 356 (4%); Germany 334 (3%); Canada 302 (3%) of Total 9,826 [7]
+- **Segments:** [Nov-30-2025] Software & Programming — single segment [6]
+- **Geography:** [Nov-30-2025] Others 52%; Philippines 16%; India 11%; United States 11%; Great Britain 4%; Germany 3%; Canada 3% [7]
 
 ## The case
 **The case** _(top points; the full bull/bear is in Analysis)_
@@ -326,10 +326,10 @@ _NM = a real state (negative base), not missing_
 - **Short interest (FINRA):** Short interest (FINRA, settle 2026-06-15): 10.4M → 10.1M sh (-3.0%, falling) · 16.5% of shares out (EDGAR XBRL) · DTC 5.5d · recent: 2026-06-15 10.1M · 2026-05-29 10.4M · 2026-05-15 10.5M · 2026-04-30 11.1M [24]
 
 ### Concentration
-- **Segments (revenue share):** [12 months Nov-30-2025] Software & Programming 9,826 (100%) of Total 9,826 [6]
+- **Segments (revenue share):** [Nov-30-2025] Software & Programming — single segment [6]
 - **Segments (EBITDA share — where profit sits):** _UNKNOWN_ — Segments sheet has no 'EBITDA' section as expected
 - **Customers:** MakeMyTrip Limited (NasdaqGS:MMYT) — Concentrix Daksh Services India Private Limited · Client Services · src: Hotels, Resorts and Cruise Lines; R Systems International Limited (NSEI:RSYSTEMS) — Sento Europe B.V. · Customer · src: IT Consulting and Other Services; SRP Groupe S.A. (ENXTPA:SRP) — Webhelp SAS · Client Services · src: Apparel Retail [48]
-- **Geographic:** [12 months Nov-30-2025] Philippines 1,595 (16%); United States 1,052 (11%); India 1,126 (11%); Others 5,061 (52%); Great Britain 356 (4%); Germany 334 (3%); Canada 302 (3%) of Total 9,826 [7]
+- **Geographic:** [Nov-30-2025] Others 52%; Philippines 16%; India 11%; United States 11%; Great Britain 4%; Germany 3%; Canada 3% [7]
 
 ## Synthesis
 

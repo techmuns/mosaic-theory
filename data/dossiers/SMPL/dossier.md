@@ -21,8 +21,8 @@ The Simply Good Foods Company, a consumer-packaged food and beverage company, en
 **Is the sharp cut to forward revenue and EBITDA a one-time reset to a new but stable base (overshoot), or the first leg of a structural demand decline in the core low-carb snacking category (value trap)?**
 
 ## Company & business
-- **Segments:** [12 months Aug-30-2025] Branded Nutritional Foods and Snacking Products 1,451 (100%) of Total 1,451 [6]
-- **Geography:** [12 months Aug-30-2025] North America 1,421 (98%); International 29 (2%) of Total 1,451 [7]
+- **Segments:** [Aug-30-2025] Branded Nutritional Foods and Snacking Products — single segment [6]
+- **Geography:** [Aug-30-2025] North America 98%; International 2% [7]
 
 ## The case
 **The case** _(top points; the full bull/bear is in Analysis)_
@@ -317,10 +317,10 @@ _NM = a real state (negative base), not missing_
 - **Short interest (FINRA):** Short interest (FINRA, settle 2026-06-15): 6.7M → 6.5M sh (-3.1%, falling) · 7.3% of shares out (EDGAR XBRL) · DTC 2.2d · recent: 2026-06-15 6.5M · 2026-05-29 6.7M · 2026-05-15 6.4M · 2026-04-30 5.0M [25]
 
 ### Concentration
-- **Segments (revenue share):** [12 months Aug-30-2025] Branded Nutritional Foods and Snacking Products 1,451 (100%) of Total 1,451 [6]
+- **Segments (revenue share):** [Aug-30-2025] Branded Nutritional Foods and Snacking Products — single segment [6]
 - **Segments (EBITDA share — where profit sits):** _UNKNOWN_ — Segments sheet has no 'EBITDA' section as expected
 - **Customers:** Amazon.com, Inc. (NasdaqGS:AMZN) — Distributor · Broadline Retail · src: The Simply Good Foods Company (NasdaqCM:SMPL) 2025 Form 10-K; Only What You Need, Inc. — Distributor · Soft Drinks and Non-alcoholic Beverages · src: The Simply Good Foods Company (NasdaqCM:SMPL) 2025 Form 10-K; Quest Nutrition, LLC — Distributor · Packaged Foods and Meats · src: The Simply Good Foods Company (NasdaqCM:SMPL) 2025 Form 10-K; Simply Good Foods USA, Inc. — Distributor · Packaged Foods and Meats · src: The Simply Good Foods Company (NasdaqCM:SMPL) 2025 Form 10-K; Walmart Inc. (NasdaqGS:WMT) — Distributor · Consumer Staples Merchandise Retail · src: The Simply Good Foods Company (NasdaqCM:SMPL) 2025 Form 10-K [49]
-- **Geographic:** [12 months Aug-30-2025] North America 1,421 (98%); International 29 (2%) of Total 1,451 [7]
+- **Geographic:** [Aug-30-2025] North America 98%; International 2% [7]
 
 ## Synthesis
 

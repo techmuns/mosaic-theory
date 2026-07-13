@@ -236,7 +236,7 @@
     },
     "concentration": {
       "segments": {
-        "value": "[12 months Sep-27-2025] Streaming Business 4,413 (100%) of Total 4,413",
+        "value": "[Sep-27-2025] Streaming Business — single segment",
         "source_ref": "CIQ Financials→Segments (Revenues, latest annual column)",
         "status": "present",
         "note": null
@@ -254,7 +254,7 @@
         "note": null
       },
       "geographic": {
-        "value": "[12 months Sep-27-2025] United States 4,413 (100%) of Total 4,413",
+        "value": "[Sep-27-2025] United States — single geography",
         "source_ref": "CIQ Financials→Segments (Geographic Segment → Revenues, latest annual column)",
         "status": "present",
         "note": null
