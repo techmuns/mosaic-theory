@@ -28,15 +28,18 @@ def _iso(d: date | None) -> str | None:
     return d.isoformat() if d is not None else None
 
 
-# Snapshot tables whose committed JSONL is APPEND-ONLY — a write may only add rows, never drop one.
-_APPEND_ONLY_TABLES: frozenset[str] = frozenset({"decision_ledger"})
+# Snapshot tables that may never DROP a committed row: decision_ledger (append-only — INSERT-only,
+# immutable) AND the securities/issuers ENTITY MASTER (accumulate-only — rows update via REPLACE but
+# identities are never pruned; the master resolves a ledgered name after it leaves the universe).
+# #121: a stale-DB full export shrank BOTH the ledger (1→0) and the entity master (−578 identities).
+_NO_ROW_DROP_TABLES: frozenset[str] = frozenset({"decision_ledger", "securities", "issuers"})
 
 
-def _assert_append_only(path: Path, new_lines: list[str], pk: Sequence[str]) -> None:
+def _assert_no_row_drop(path: Path, new_lines: list[str], pk: Sequence[str]) -> None:
     """Refuse (raise) if ``new_lines`` would drop any row already in ``path`` (compared by primary
-    key ``pk``) or is shorter. The decision ledger is APPEND-ONLY — the spread IS the accumulated
-    ledger, so a silent DELETE (e.g. a stale-DB ``export_snapshots``, the 2026-07-13 near-miss that
-    took decision_ledger.jsonl 1→0) must FAIL LOUD, never overwrite the committed track record."""
+    key ``pk``) or is shorter — these snapshots may only GROW. A silent shrink (e.g. a stale-DB
+    ``export_snapshots``, the 2026-07-13 near-miss took decision_ledger.jsonl 1→0 and would have
+    dropped 578 entity-master identities) must FAIL LOUD, never overwrite the committed record."""
     existing = [ln for ln in path.read_text().splitlines() if ln.strip()]
     if not existing:
         return
@@ -47,9 +50,9 @@ def _assert_append_only(path: Path, new_lines: list[str], pk: Sequence[str]) -> 
     dropped = keyset(existing) - keyset(new_lines)
     if len(new_lines) < len(existing) or dropped:
         raise RuntimeError(
-            f"APPEND-ONLY VIOLATION on {path.name}: refusing to write {len(new_lines)} row(s) over "
-            f"{len(existing)} on disk ({len(dropped)} existing row(s) dropped by PK). The decision "
-            "ledger is append-only — a shrink is never valid (the spread IS the ledger).")
+            f"ROW-DROP on {path.name}: writing {len(new_lines)} row(s) over {len(existing)} "
+            f"on disk would drop {len(dropped)} existing row(s) by PK. This snapshot may only grow "
+            "(append-only ledger / accumulate-only entity master); a shrink is never valid.")
 
 
 class Store:
@@ -397,8 +400,9 @@ class Store:
         ``tables`` restricts the export to a SUBSET — ``build_universe`` passes only the artifacts
         it actually builds (issuers/securities/universe_snapshot), so a stale working DB
         export can no longer rewrite candidate_records/decision_ledger (the 2026-07-13 near-miss).
-        ``None`` exports all tables (the full durable dump). The append-only tables are guarded on
-        write regardless of caller — a shrink RAISES rather than committing a ledger DELETE."""
+        ``None`` exports all tables (full dump). The no-row-drop tables (decision_ledger +
+        the securities/issuers entity master) are guarded on write regardless of caller — a shrink
+        RAISES rather than silently deleting committed rows."""
         export_tables = tuple(SNAPSHOT_TABLES if tables is None else tables)
         unknown = set(export_tables) - set(SNAPSHOT_TABLES)
         if unknown:
@@ -406,12 +410,12 @@ class Store:
         snapshots_dir.mkdir(parents=True, exist_ok=True)
         counts: dict[str, int] = {}
         for table in export_tables:
-            order = ", ".join(self._pk_columns(table))
-            rows = self._conn.execute(f"SELECT * FROM {table} ORDER BY {order}").fetchall()
+            pk = self._pk_columns(table)
+            rows = self._conn.execute(f"SELECT * FROM {table} ORDER BY {', '.join(pk)}").fetchall()
             lines = [json.dumps(dict(row), sort_keys=True) for row in rows]
             path = snapshots_dir / f"{table}.jsonl"
-            if table in _APPEND_ONLY_TABLES and path.exists():
-                _assert_append_only(path, lines, self._pk_columns(table))
+            if table in _NO_ROW_DROP_TABLES and path.exists():
+                _assert_no_row_drop(path, lines, pk)
             with path.open("w") as f:
                 for line in lines:
                     f.write(line + "\n")

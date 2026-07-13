@@ -2033,12 +2033,12 @@ Each line: *what it does* — *verified how*.
   forbidden ledger-DELETE, caught by hand. **Two mechanical layers:** (1) SELECTIVE EXPORT — `build_universe`
   exports ONLY what it builds (`BUILD_UNIVERSE_TABLES = issuers/securities/universe_snapshot`, enumerated
   from `upsert_security` + `record_universe`, not guessed), so a stale-DB build can never touch the
-  ledger/candidates; other callers keep the full dump. (2) APPEND-ONLY GUARD — `export_snapshots` RAISES
-  (`_assert_append_only`, by PK) if a `decision_ledger.jsonl` write would drop a row or shrink, from ANY
-  caller. **Cron-safety (report):** `run-weekly`/`run-monthly` call `rebuild_from_snapshots` BEFORE export
+  ledger/candidates; other callers keep the full dump. (2) NO-ROW-DROP GUARD — `export_snapshots` RAISES
+  (`_assert_no_row_drop`, by PK) if a write would drop a committed row — `decision_ledger` (append-only)
+  AND the securities/issuers ENTITY MASTER (accumulate-only; #121 shrank BOTH), from ANY caller. **Cron-safety (report):** `run-weekly`/`run-monthly` call `rebuild_from_snapshots` BEFORE export
   (orchestrator.py:44/:75), repopulating the DB ledger from the committed file → export writes ≥ committed
   → no shrink (circumstantially safe, now guard-backed). Incident→invariant (shipped Y):
-  `test_export_snapshots_refuses_to_shrink_ledger` (e2e 1→0), `test_ledger_guard_raises_on_missing_row`,
+  `test_export_snapshots_refuses_to_shrink_ledger` + `…_securities` (e2e), `test_ledger_guard_raises_on_missing_row`,
   `test_ledger_guard_passes_on_pure_append`, `test_selective_export_writes_only_build_universe_tables`.
   **Universe LANDED at 1800** (the #119 us-gaap recovery, ref 2026-07-06): committed the
   issuers/securities/universe_snapshot TRIO from #121's rebuild post-guard — 1760 → 1800 (+47 recovered /

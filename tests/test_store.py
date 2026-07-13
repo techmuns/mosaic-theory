@@ -295,31 +295,43 @@ def test_export_snapshots_refuses_to_shrink_ledger(store: Store, tmp_path: Path)
     snaps = tmp_path / "snaps"
     snaps.mkdir()
     (snaps / "decision_ledger.jsonl").write_text(json.dumps({"entry_id": "led-0001"}) + "\n")
-    with pytest.raises(RuntimeError, match="APPEND-ONLY"):
+    with pytest.raises(RuntimeError, match="ROW-DROP"):
         store.export_snapshots(snaps)  # 0 DB rows over 1 committed → ledger DELETE → refused
     assert "led-0001" in (snaps / "decision_ledger.jsonl").read_text()  # never overwritten
+
+
+def test_export_snapshots_refuses_to_shrink_securities(store: Store, tmp_path: Path) -> None:
+    """The guard also protects the securities/issuers ENTITY MASTER (accumulate-only): a build on a
+    stale DB that would drop committed identities RAISES — the #121 lossy-backup mechanism."""
+    snaps = tmp_path / "snaps"
+    snaps.mkdir()
+    rows = [json.dumps({"internal_id": i}) for i in ("SEC-1-A", "SEC-2-B")]
+    (snaps / "securities.jsonl").write_text("\n".join(rows) + "\n")
+    with pytest.raises(RuntimeError, match="ROW-DROP"):
+        store.export_snapshots(snaps)  # 0 DB securities over 2 committed → refused
+    assert "SEC-2-B" in (snaps / "securities.jsonl").read_text()  # entity master untouched
 
 
 def test_ledger_guard_raises_on_missing_row(tmp_path: Path) -> None:
     """Same row COUNT but an existing entry dropped (b gone, c added) still violates — the guard
     compares by primary key, not just length."""
-    from vinci.store.store import _assert_append_only
+    from vinci.store.store import _assert_no_row_drop
 
     p = tmp_path / "decision_ledger.jsonl"
     p.write_text(json.dumps({"entry_id": "a"}) + "\n" + json.dumps({"entry_id": "b"}) + "\n")
     new = [json.dumps({"entry_id": "a"}), json.dumps({"entry_id": "c"})]  # b dropped
-    with pytest.raises(RuntimeError, match="APPEND-ONLY"):
-        _assert_append_only(p, new, ["entry_id"])
+    with pytest.raises(RuntimeError, match="ROW-DROP"):
+        _assert_no_row_drop(p, new, ["entry_id"])
 
 
 def test_ledger_guard_passes_on_pure_append(tmp_path: Path) -> None:
     """A pure append (superset of the existing rows) is allowed — returns without raising."""
-    from vinci.store.store import _assert_append_only
+    from vinci.store.store import _assert_no_row_drop
 
     p = tmp_path / "decision_ledger.jsonl"
     p.write_text(json.dumps({"entry_id": "a"}) + "\n" + json.dumps({"entry_id": "b"}) + "\n")
     superset = [json.dumps({"entry_id": e}) for e in ("a", "b", "c")]
-    _assert_append_only(p, superset, ["entry_id"])  # {a,b} ⊆ {a,b,c} → no raise
+    _assert_no_row_drop(p, superset, ["entry_id"])  # {a,b} ⊆ {a,b,c} → no raise
 
 
 def test_selective_export_writes_only_build_universe_tables(store: Store, tmp_path: Path) -> None:
