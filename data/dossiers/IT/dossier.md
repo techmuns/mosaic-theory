@@ -21,8 +21,8 @@ Gartner, Inc. provides business and technology insights for decisions and perfor
 **Is the negative revenue turn (-1.5% YoY, FY26E ~-1%) a temporary trough that the FY26E/FY27E EBITDA step-up correctly anticipates, or the start of a structural deceleration in the 78%-Insights core that makes the peer discount EARNED?**
 
 ## Company & business
-- **Segments:** [12 months Dec-31-2025] Conferences 645 (10%); Other 227 (4%); Insights 5,073 (78%); Consulting 552 (9%) of Total 6,497 [5]
-- **Geography:** [12 months Dec-31-2025] United States and Canada 4,033 (62%); Europe, Middle East and Africa 1,694 (26%); Other International 771 (12%) of Total 6,497 [6]
+- **Segments:** Insights 78%; Conferences 10%; Consulting 9%; Other 4% [5]
+- **Geography:** United States and Canada 62%; Europe, Middle East and Africa 26%; Other International 12% [6]
 
 ## The case
 **The case** _(top points; the full bull/bear is in Analysis)_
@@ -307,10 +307,10 @@ _NM = a real state (negative base), not missing_
 - **Short interest (FINRA):** Short interest (FINRA, settle 2026-06-15): 12.2M → 12.5M sh (+2.0%, rising) · 18.6% of shares out (EDGAR XBRL) · DTC 7.7d · recent: 2026-06-15 12.5M · 2026-05-29 12.2M · 2026-05-15 11.7M · 2026-04-30 10.0M [23]
 
 ### Concentration
-- **Segments (revenue share):** [12 months Dec-31-2025] Conferences 645 (10%); Other 227 (4%); Insights 5,073 (78%); Consulting 552 (9%) of Total 6,497 [5]
+- **Segments (revenue share):** Insights 78%; Conferences 10%; Consulting 9%; Other 4% [5]
 - **Segments (EBITDA share — where profit sits):** _UNKNOWN_ — Segments sheet has no 'EBITDA' section as expected
 - **Customers:** JB Financial Group Co., Ltd. (KOSE:A175330) — Gartner, Inc. (NYSE:IT) · Client Services · src: Diversified Banks; Kafein Yazilim Hizmetleri Ticaret A.S. (IBSE:KFEIN) — Gartner Turkey Teknoloji Arastirma ve Danismanlik Hizmetleri Limited Sirketi · Client Services · src: IT Consulting and Other Services; PT Global Sukses Solusi Tbk (IDX:RUNS) — Gartner Ireland Ltd. · Customer · src: Systems Software; Qatar National Bank (Q.P.S.C.) (DSM:QNBK) — Gartner, Inc. (NYSE:IT) · Client Services · src: Diversified Banks; United States — Gartner, Inc. (NYSE:IT) · Customer · src: Diversified Support Services [49]
-- **Geographic:** [12 months Dec-31-2025] United States and Canada 4,033 (62%); Europe, Middle East and Africa 1,694 (26%); Other International 771 (12%) of Total 6,497 [6]
+- **Geographic:** United States and Canada 62%; Europe, Middle East and Africa 26%; Other International 12% [6]
 
 ## Synthesis
 
@@ -331,7 +331,7 @@ _NM = a real state (negative base), not missing_
 - A genuine counter-point OUTWEIGHED by the positive absolute-EBITDA and FCF facts: the impairment was booked against Digital, and a $20 broker target cut (140 → 120) accompanied the June revisions, signalling some analysts see the weakness as more than one-off. [9]
 - Latest same-quarter revenue growth turned NEGATIVE (-1.5% Q1 Mar-31-2026 vs Q1 Mar-31-2025) after a multi-year deceleration (+8% FY23 → +6% FY24 → +4% FY25), and the FY26E revenue line is set to shrink ~1% — this is a genuine top-line signal, not a margin-optics artifact, since the absolute EBITDA reconciler cannot offset falling revenue itself. [10]
 - Revenue-estimate breadth is sharply negative (FY2026 0↑/3↓ last month; FQ2/FQ3 2026 Revenue 0↑/11↓ at 2m/3m), and the FY26 consensus revenue path has been cut ~8% over 12 months — a REAL demand signal, not a trailing-multiple misread. [11]
-- Revenue is highly concentrated in the Insights segment (78% of $6,497M FY25), so the -1.5% top-line turn and negative revenue-revision breadth bear disproportionately on the core franchise. [5]
+- Revenue is highly concentrated in the Insights segment (78% of $6,497M FY25), so the -1.5% top-line turn and negative revenue-revision breadth bear disproportionately on the core franchise. [51]
 
 ### Decisive question
 **Is the negative revenue turn (-1.5% YoY, FY26E ~-1%) a temporary trough that the FY26E/FY27E EBITDA step-up correctly anticipates, or the start of a structural deceleration in the 78%-Insights core that makes the peer discount EARNED?**
@@ -344,7 +344,7 @@ _NM = a real state (negative base), not missing_
 ### …evidence against
 - Same-quarter revenue growth went negative (-1.5% Q1-26) after steady multi-year deceleration, and FY26E revenue is guided down ~1%. [10]
 - Forward revenue-revision breadth is overwhelmingly negative (FQ2/FQ3 2026 Revenue 0↑/11↓; FY26 path cut ~8% over 12 months). [11]
-- The weakness centers on the 78%-of-revenue Insights franchise, and a broker cut its target to $120 in June. [5]
+- The weakness centers on the 78%-of-revenue Insights franchise, and a broker cut its target to $120 in June. [51]
 
 ### Key unknowns
 - EV/EBITDA is trailing-only with no forward-adjusted basis and the adjusted EPS / adjusted net-debt/EBITDA figures are UNKNOWN (not in the revised 99.1 guidance) — the trailing multiple at its 0th percentile cannot distinguish cheap-overshoot from cheap-terminal.
@@ -393,7 +393,7 @@ _NM = a real state (negative base), not missing_
 _E = consensus (Estimates→Trends 'Current'), as-of ≥2026-06-24; (R) = Reclassified basis · FCF (levered, CIQ) = CIQ 'Levered Free Cash Flow', NOT CFO − capex_
 
 ### Trailing 8 quarters (the recent-quarter trajectory)
-- **Quarterly financials** — [51]  <!-- ds-table -->
+- **Quarterly financials** — [52]  <!-- ds-table -->
 
 |  | Q2-24 | Q3-24 | Q4-24 | Q1-25 | Q2-25 | Q3-25 | Q4-25 | Q1-26 |
 |---|---|---|---|---|---|---|---|---|
@@ -407,8 +407,8 @@ _E = consensus (Estimates→Trends 'Current'), as-of ≥2026-06-24; (R) = Reclas
 _QoQ/YoY same-basis only; (R) = Reclassified_
 
 ### Balance-sheet posture
-- **Posture:** as of Q1-26 ($M): cash & ST inv 1,667; total debt 3,355; net debt 1,688; equity 63; net working capital -238; net-debt/EBITDA → see the Leverage & survival block (not recomputed) [52]
-- **Coherence — BS vs implied-valuation bridge:** cash BS $1,667M / bridge $1,667M; debt BS $3,355M / bridge $3,355M — reconcile with the implied-valuation bridge. [53]
+- **Posture:** as of Q1-26 ($M): cash & ST inv 1,667; total debt 3,355; net debt 1,688; equity 63; net working capital -238; net-debt/EBITDA → see the Leverage & survival block (not recomputed) [53]
+- **Coherence — BS vs implied-valuation bridge:** cash BS $1,667M / bridge $1,667M; debt BS $3,355M / bridge $3,355M — reconcile with the implied-valuation bridge. [54]
 
 
 ### Capital-structure provenance — on-demand (web collapsed · print-excluded · JSON) — full panel · pointers · terms
@@ -426,7 +426,7 @@ _QoQ/YoY same-basis only; (R) = Reclassified_
 | State of Connecticut Economic Development Loan | Term Loans | $5.0M | 1.750% | NA | undated | N | N | USD |
 
 - **8-Ks at instrument maturities:** _UNKNOWN_ — no trailing-12m instrument maturity to anchor an 8-K
-- **Covenant / contract pointers (CIK-verified execution filings)** — [54]  <!-- ds-table -->
+- **Covenant / contract pointers (CIK-verified execution filings)** — [55]  <!-- ds-table -->
 
 |  | Filing | Date | Accession / exhibit (or note) |
 |---|---|---|---|
@@ -437,7 +437,7 @@ _QoQ/YoY same-basis only; (R) = Reclassified_
 | 4.50% Senior Notes Due 2028 | — | — | no contract-level filing expected (aggregate line item) |
 | 4.95% Senior Notes Due 2031 | — | — | no contract-level filing expected (aggregate line item) |
 
-- **Covenant terms — 24 Credit Agreement (governing agreement)** — [55]  <!-- ds-table -->
+- **Covenant terms — 24 Credit Agreement (governing agreement)** — [56]  <!-- ds-table -->
 
 |  | Governing value (lead · clause ≤200c) | Source § |
 |---|---|---|
@@ -467,7 +467,7 @@ _Source §: 8-K 0001193125-20-256749 · d75343dex101.htm · amended by 000119312
 
 
 ### Management commentary
-- **Earnings call (transcript pointer — read the file):** 2 earnings-call transcript(s) on file — read in full for management posture: Gartner, Inc., Q1 2026 Earnings Call, May 05, 2026.rtf; Gartner, Inc., Q4 2025 Earnings Call, Feb 03, 2026.rtf (pointer only; the synthesis cites them, the machine does not curate an excerpt) [56]
+- **Earnings call (transcript pointer — read the file):** 2 earnings-call transcript(s) on file — read in full for management posture: Gartner, Inc., Q1 2026 Earnings Call, May 05, 2026.rtf; Gartner, Inc., Q4 2025 Earnings Call, Feb 03, 2026.rtf (pointer only; the synthesis cites them, the machine does not curate an excerpt) [57]
 
 ---
 > **No BUY/AVOID here — this dossier only assembles and cites.** The verdict is the human's, logged separately via the ledger with a frozen entry price.
@@ -478,8 +478,8 @@ _Source §: 8-K 0001193125-20-256749 · d75343dex101.htm · amended by 000119312
 [2] `EOD IT 180d to 2026-07-06`
 [3] `EOD name−IWM 180d (screen data-record, G2)`
 [4] `CIQ Net Debt $1,688M [Q1 Mar-31-2026] ÷ CIQ EBITDA $1,337M [LTM 12 months Mar-31-2026]`
-[5] `CIQ Financials→Segments (Revenues, latest annual column)`
-[6] `CIQ Financials→Segments (Geographic Segment → Revenues, latest annual column)`
+[5] `CIQ Financials→Segments (Revenues, latest annual column, Dec-31-2025)`
+[6] `CIQ Financials→Segments (Geographic Segment → Revenues, latest annual column, Dec-31-2025)`
 [7] `CIQ Financials→Cash Flow 'Levered Free Cash Flow' [LTM 12 months Mar-31-2026]`
 [8] `EDGAR XBRL shares, trailing 2024-07-26..2026-05-01`
 [9] `CIQ Estimates→Recent Changes (250 broker revision events)`
@@ -524,9 +524,10 @@ _Source §: 8-K 0001193125-20-256749 · d75343dex101.htm · amended by 000119312
 [48] `CIQ Estimates→Surprise (annual)`
 [49] `CIQ Customers&Suppliers Gartner Inc NYSE IT Customers.rtf`
 [50] `CIQ Estimates→Trends (FY26/FY27 consensus EBITDA, latest snapshot)`
-[51] `CIQ Financials→Income Statement (quarterly, trailing 8Q)`
-[52] `CIQ Financials→Balance Sheet (quarterly, Q1-26)`
-[53] `CIQ Financials→Balance Sheet vs Comparable Analysis→Implied Valuation`
-[54] `EDGAR 10-K exhibit index + CIK-scoped efts (agreement-class, exhibit-bearing)`
-[55] `fenced Tier-2 extraction (verbatim, source-bound)`
-[56] `CIQ transcript(s): Gartner, Inc., Q1 2026 Earnings Call, May 05, 2026.rtf; Gartner, Inc., Q4 2025 Earnings Call, Feb 03, 2026.rtf`
+[51] `CIQ Financials→Segments (Revenues, latest annual column)`
+[52] `CIQ Financials→Income Statement (quarterly, trailing 8Q)`
+[53] `CIQ Financials→Balance Sheet (quarterly, Q1-26)`
+[54] `CIQ Financials→Balance Sheet vs Comparable Analysis→Implied Valuation`
+[55] `EDGAR 10-K exhibit index + CIK-scoped efts (agreement-class, exhibit-bearing)`
+[56] `fenced Tier-2 extraction (verbatim, source-bound)`
+[57] `CIQ transcript(s): Gartner, Inc., Q1 2026 Earnings Call, May 05, 2026.rtf; Gartner, Inc., Q4 2025 Earnings Call, Feb 03, 2026.rtf`

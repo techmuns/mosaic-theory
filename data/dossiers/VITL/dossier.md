@@ -21,8 +21,8 @@ Vital Farms, Inc., a food company, packages, markets, and distributes shell eggs
 **Is the FY26 earnings collapse a transient trough driven by the butter wind-down plus an input/margin shock that reverses as the restructuring completes, or the start of a durable impairment of the core egg franchise's economics?**
 
 ## Company & business
-- **Segments:** [12 months Dec-28-2025] Eggs and Butter 759 (100%) of Total 759 [6]
-- **Geography:** [12 months Dec-28-2025] United States 759 (100%) of Total 759 [7]
+- **Segments:** Eggs and Butter — single segment [6]
+- **Geography:** United States — single geography [7]
 - **Customer concentration:** top customer 22% (from 23%) · top-2 ~34% of revenue [8]
 
 ## The case
@@ -319,10 +319,10 @@ _NM = a real state (negative base), not missing_
 - **Short interest (FINRA):** Short interest (FINRA, settle 2026-06-15): 11.4M → 11.4M sh (-0.1%, falling) · 26.6% of shares out (EDGAR XBRL) · DTC 3.5d · recent: 2026-06-15 11.4M · 2026-05-29 11.4M · 2026-05-15 13.7M · 2026-04-30 14.1M [26]
 
 ### Concentration
-- **Segments (revenue share):** [12 months Dec-28-2025] Eggs and Butter 759 (100%) of Total 759 [6]
+- **Segments (revenue share):** Eggs and Butter — single segment [6]
 - **Segments (EBITDA share — where profit sits):** _UNKNOWN_ — Segments sheet has no 'EBITDA' section as expected
 - **Customers:** Albertsons Companies, Inc. (NYSE:ACI) — Distributor · Food Retail · src: Vital Farms, Inc. (NasdaqGM:VITL) 2026 Form 10-K; Ben E. Keith Company — Distributor · Food Distributors · src: Vital Farms, Inc. (NasdaqGM:VITL) 2026 Form 10-K; Dot Foods, Inc. — Distributor · Air Freight and Logistics · src: Vital Farms, Inc. (NasdaqGM:VITL) 2026 Form 10-K; Gordon Food Service, Inc. — Distributor · Food Distributors · src: Vital Farms, Inc. (NasdaqGM:VITL) 2026 Form 10-K; Performance Food Group, Inc. — Distributor · Food Distributors · src: Vital Farms, Inc. (NasdaqGM:VITL) 2026 Form 10-K; Publix Super Markets, Inc. — Distributor · Food Retail · src: Vital Farms, Inc. (NasdaqGM:VITL) 2026 Form 10-K; Shamrock Foods Company — Distributor · Packaged Foods and Meats · src: Vital Farms, Inc. (NasdaqGM:VITL) 2026 Form 10-K; Sprouts Farmers Market, Inc. (NasdaqGS:SFM) — Distributor · Food Retail · src: Vital Farms, Inc. (NasdaqGM:VITL) 2026 Form 10-K; Sysco Corporation (NYSE:SYY) — Distributor · Food Distributors · src: Vital Farms, Inc. (NasdaqGM:VITL) 2026 Form 10-K; Target Corporation (NYSE:TGT) — Distributor · Consumer Staples Merchandise Retail · src: Vital Farms, Inc. (NasdaqGM:VITL) 2026 Form 10-K; The Kroger Co. (NYSE:KR) — Distributor · Food Retail · src: Vital Farms, Inc. (NasdaqGM:VITL) 2026 Form 10-K; United Natural Foods, Inc. (NYSE:UNFI) — Distributor · Food Distributors · src: Vital Farms, Inc. (NasdaqGM:VITL) 2026 Form 10-K; US Foods, Inc. — Distributor · Food Distributors · src: Vital Farms, Inc. (NasdaqGM:VITL) 2026 Form 10-K; Walmart Inc. (NasdaqGS:WMT) — Distributor · Consumer Staples Merchandise Retail · src: Vital Farms, Inc. (NasdaqGM:VITL) 2026 Form 10-K; Whole Foods Market, Inc. — Distributor · Food Retail · src: Vital Farms, Inc. (NasdaqGM:VITL) 2026 Form 10-K [50]
-- **Geographic:** [12 months Dec-28-2025] United States 759 (100%) of Total 759 [7]
+- **Geographic:** United States — single geography [7]
 
 ## Synthesis
 
@@ -341,7 +341,7 @@ _NM = a real state (negative base), not missing_
 - Management guided next-FY adjusted EBITDA down to 0.0–10.0 from the 105.0–115.0 given just months earlier, a self-inflicted collapse in the forward outlook. [13]
 - Sell-side conviction has broken — multiple brokers (William Blair, Craig-Hallum, Telsey) cut from Buy (1.00) to Hold (3.00) on 2026-05-08 with target prices slashed (e.g., 26.0→11.0), and the horizon breadth is uniformly downward (e.g., Revenue FQ2 0↑/9↓). [14]
 - Gross margin cratered to 28% in Q1-26 from 39% a year earlier, and quarterly EBITDA margin fell to 1% from 15%, showing the profitability erosion is current, not merely projected. [53]
-- The business is single-segment and single-geography (Eggs and Butter 100%, United States 100%), concentrating the entire enterprise on one product category now being restructured. [6]
+- The business is single-segment and single-geography (Eggs and Butter 100%, United States 100%), concentrating the entire enterprise on one product category now being restructured. [54]
 - The gap-downs were driven by structural events, not a one-off print: a founder/Executive-Chairperson resignation (item 5.02) and a decision to wind down the entire butter product line (item 2.05) with exit charges. [27]
 - The de-rating is driven by a collapse in forward earnings power, not an optical trailing artifact: FY26 consensus EBITDA has been cut from $122.7M (12m ago) to $4.05M (latest), a net -97% path — this is the REAL signal, and it is why the NTM TEV/EBITDA is 70.81x (not cheap) despite the trailing 1.2x. [47]
 - Consensus FY26 EPS crossed zero (from +1.55 to -0.42) and net income went to -$18.8M, so the low trailing P/E of ~10.7x rests on backward earnings the forward set no longer supports — the trailing multiple is the consensus MISREAD, not the signal. [47]
@@ -350,7 +350,7 @@ _NM = a real state (negative base), not missing_
 **Is the FY26 earnings collapse a transient trough driven by the butter wind-down plus an input/margin shock that reverses as the restructuring completes, or the start of a durable impairment of the core egg franchise's economics?**
 
 ### …evidence for
-- Consensus already models a sharp rebound beyond the trough — FY27E EBITDA $48.3M vs FY26E $4.0M, and FY27 forward TEV/EBITDA of 9.98x implies the market prices recovery a year out. [54]
+- Consensus already models a sharp rebound beyond the trough — FY27E EBITDA $48.3M vs FY26E $4.0M, and FY27 forward TEV/EBITDA of 9.98x implies the market prices recovery a year out. [55]
 - The butter exit is explicitly a refocus onto core egg categories, expected substantially complete by end of fiscal 2026, framing the hit as bounded and self-imposed rather than demand-driven. [13]
 - Revenue guidance was cross-source VERIFIED at 775.0–800.0 and the company has met its revenue floor 7/7 times, so top-line delivery discipline is intact. [48]
 
@@ -423,8 +423,8 @@ _E = consensus (Estimates→Trends 'Current'), as-of ≥2026-05-28; (R) = Reclas
 _QoQ/YoY same-basis only; (R) = Reclassified_
 
 ### Balance-sheet posture
-- **Posture:** as of Q1-26 ($M): cash & ST inv 51; total debt 54; net debt 3; equity 331; net working capital 91; net-debt/EBITDA → see the Leverage & survival block (not recomputed) [55]
-- **Coherence — BS vs implied-valuation bridge:** cash BS $51M / bridge $51M; debt BS $54M / bridge $54M — reconcile with the implied-valuation bridge. [56]
+- **Posture:** as of Q1-26 ($M): cash & ST inv 51; total debt 54; net debt 3; equity 331; net working capital 91; net-debt/EBITDA → see the Leverage & survival block (not recomputed) [56]
+- **Coherence — BS vs implied-valuation bridge:** cash BS $51M / bridge $51M; debt BS $54M / bridge $54M — reconcile with the implied-valuation bridge. [57]
 
 
 ### Capital-structure provenance — on-demand (web collapsed · print-excluded · JSON) — full panel · pointers · terms
@@ -438,7 +438,7 @@ _QoQ/YoY same-basis only; (R) = Reclassified_
 
 - **8-Ks at instrument maturities:** _UNKNOWN_ — no trailing-12m instrument maturity to anchor an 8-K
 - **Covenant exhibit pointers:** _UNKNOWN_ — no CIK-scoped agreement exhibit located across the filing history
-- **Covenant terms (from the filed agreement):** COVENANT DIGEST — extraction failed: no covenant terms extracted from located exhibits (terms UNKNOWN, not pending). [57]
+- **Covenant terms (from the filed agreement):** COVENANT DIGEST — extraction failed: no covenant terms extracted from located exhibits (terms UNKNOWN, not pending). [58]
 
 ### Reference: CIQ implied equity at peer-median multiples
 > **Comparability gate:** comparability: HETEROGENEOUS (see Peer comps gate)
@@ -455,7 +455,7 @@ _QoQ/YoY same-basis only; (R) = Reclassified_
 
 
 ### Management commentary
-- **Earnings call (transcript pointer — read the file):** 2 earnings-call transcript(s) on file — read in full for management posture: Vital Farms, Inc., Q1 2026 Earnings Call, May 07, 2026.rtf; Vital Farms, Inc., Q4 2025 Earnings Call, Feb 26, 2026.rtf (pointer only; the synthesis cites them, the machine does not curate an excerpt) [58]
+- **Earnings call (transcript pointer — read the file):** 2 earnings-call transcript(s) on file — read in full for management posture: Vital Farms, Inc., Q1 2026 Earnings Call, May 07, 2026.rtf; Vital Farms, Inc., Q4 2025 Earnings Call, Feb 26, 2026.rtf (pointer only; the synthesis cites them, the machine does not curate an excerpt) [59]
 
 ---
 > **No BUY/AVOID here — this dossier only assembles and cites.** The verdict is the human's, logged separately via the ledger with a frozen entry price.
@@ -467,8 +467,8 @@ _QoQ/YoY same-basis only; (R) = Reclassified_
 [3] `EOD name−IWM 180d (screen data-record, G2)`
 [4] `CIQ Net Debt $3M [Q1 Mar-29-2026] ÷ CIQ EBITDA $80M [LTM 12 months Mar-29-2026]`
 [5] `EDGAR XBRL FCF sign (screen data-record)`
-[6] `CIQ Financials→Segments (Revenues, latest annual column)`
-[7] `CIQ Financials→Segments (Geographic Segment → Revenues, latest annual column)`
+[6] `CIQ Financials→Segments (Revenues, latest annual column, Dec-28-2025)`
+[7] `CIQ Financials→Segments (Geographic Segment → Revenues, latest annual column, Dec-28-2025)`
 [8] `10-Q 0001193125-26-210356`
 [9] `CIQ Comparable Analysis→Operating Statistics (LTM Total Debt/EBITDA) · as-of 2026-06-29`
 [10] `CIQ Comparable Analysis→Credit Health Panel · as-of 2026-06-29`
@@ -515,8 +515,9 @@ _QoQ/YoY same-basis only; (R) = Reclassified_
 [51] `CIQ Comparable Analysis→Operating Statistics (name vs peer median: growth/margin/leverage/beta)`
 [52] `CIQ Financials→Income Statement + Segments + Ratios (multi-year columns)`
 [53] `CIQ Financials→Income Statement (quarterly, trailing 8Q)`
-[54] `CIQ Estimates→Trends (FY26/FY27 consensus EBITDA, latest snapshot)`
-[55] `CIQ Financials→Balance Sheet (quarterly, Q1-26)`
-[56] `CIQ Financials→Balance Sheet vs Comparable Analysis→Implied Valuation`
-[57] `fenced Tier-2 digest (P1)`
-[58] `CIQ transcript(s): Vital Farms, Inc., Q1 2026 Earnings Call, May 07, 2026.rtf; Vital Farms, Inc., Q4 2025 Earnings Call, Feb 26, 2026.rtf`
+[54] `CIQ Financials→Segments (Revenues, latest annual column)`
+[55] `CIQ Estimates→Trends (FY26/FY27 consensus EBITDA, latest snapshot)`
+[56] `CIQ Financials→Balance Sheet (quarterly, Q1-26)`
+[57] `CIQ Financials→Balance Sheet vs Comparable Analysis→Implied Valuation`
+[58] `fenced Tier-2 digest (P1)`
+[59] `CIQ transcript(s): Vital Farms, Inc., Q1 2026 Earnings Call, May 07, 2026.rtf; Vital Farms, Inc., Q4 2025 Earnings Call, Feb 26, 2026.rtf`

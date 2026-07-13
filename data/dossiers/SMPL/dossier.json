@@ -431,8 +431,8 @@
     },
     "concentration": {
       "segments": {
-        "value": "[12 months Aug-30-2025] Branded Nutritional Foods and Snacking Products 1,451 (100%) of Total 1,451",
-        "source_ref": "CIQ Financials→Segments (Revenues, latest annual column)",
+        "value": "Branded Nutritional Foods and Snacking Products — single segment",
+        "source_ref": "CIQ Financials→Segments (Revenues, latest annual column, Aug-30-2025)",
         "status": "present",
         "note": null
       },
@@ -449,8 +449,8 @@
         "note": null
       },
       "geographic": {
-        "value": "[12 months Aug-30-2025] North America 1,421 (98%); International 29 (2%) of Total 1,451",
-        "source_ref": "CIQ Financials→Segments (Geographic Segment → Revenues, latest annual column)",
+        "value": "North America 98%; International 2%",
+        "source_ref": "CIQ Financials→Segments (Geographic Segment → Revenues, latest annual column, Aug-30-2025)",
         "status": "present",
         "note": null
       }

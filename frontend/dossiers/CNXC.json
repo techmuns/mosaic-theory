@@ -427,8 +427,8 @@
     },
     "concentration": {
       "segments": {
-        "value": "[12 months Nov-30-2025] Software & Programming 9,826 (100%) of Total 9,826",
-        "source_ref": "CIQ Financials→Segments (Revenues, latest annual column)",
+        "value": "Software & Programming — single segment",
+        "source_ref": "CIQ Financials→Segments (Revenues, latest annual column, Nov-30-2025)",
         "status": "present",
         "note": null
       },
@@ -445,8 +445,8 @@
         "note": null
       },
       "geographic": {
-        "value": "[12 months Nov-30-2025] Philippines 1,595 (16%); United States 1,052 (11%); India 1,126 (11%); Others 5,061 (52%); Great Britain 356 (4%); Germany 334 (3%); Canada 302 (3%) of Total 9,826",
-        "source_ref": "CIQ Financials→Segments (Geographic Segment → Revenues, latest annual column)",
+        "value": "Others 52%; Philippines 16%; India 11%; United States 11%; Great Britain 4%; Germany 3%; Canada 3%",
+        "source_ref": "CIQ Financials→Segments (Geographic Segment → Revenues, latest annual column, Nov-30-2025)",
         "status": "present",
         "note": null
       }
