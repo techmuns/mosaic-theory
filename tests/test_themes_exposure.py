@@ -556,3 +556,92 @@ def test_themes_exposure_only_tickers_argparse() -> None:
     a = build_parser().parse_args(
         ["themes-exposure", "--driver", "truckload-supply-purge", "--only-tickers", "WERN,RXO"])
     assert a.only_tickers == "WERN,RXO" and a.only_file is None
+
+
+# --- scan-error grading (the 2026-07-13 quota incident) ---------------------------------------
+def test_llm_error_is_unassessed_not_none() -> None:
+    """An LLM error yields the UNASSESSED_ERROR bucket + a flag — NEVER a false NONE. A failure must
+    not read as 'no exposure' (the 2026-07-13 quota incident, 22 error records → false none=22)."""
+    from vinci.graph.llm import LlmError
+
+    class _Boom(LlmClient):
+        @property
+        def model(self) -> str:
+            return "mock"
+
+        def extract(self, *, system: str, user: str, tool: dict[str, Any]) -> dict[str, Any]:
+            raise LlmError("truncated")
+
+    a = assess_exposure(AI_DATACENTER, "X", "1", _STREAM, llm=_Boom())
+    assert a.exposure_basis is ExposureBasis.UNASSESSED_ERROR  # NOT NONE_DISCLOSED
+    assert any("LLM error" in f for f in a.flags)
+
+
+def test_scan_error_unassessed_and_non_4xx_no_abort(monkeypatch: pytest.MonkeyPatch) -> None:
+    """A raw scan error → UNASSESSED_ERROR record (never NONE); a NON-4xx error does NOT
+    trip the abort — the run COMPLETES with every failed name bucketed unassessed."""
+    import vinci.themes.exposure as ex_mod
+    from vinci.themes.exposure import scan_driver_exposure
+
+    class _NetBoom(LlmClient):
+        @property
+        def model(self) -> str:
+            return "mock"
+
+        def extract(self, *, system: str, user: str, tool: dict[str, Any]) -> dict[str, Any]:
+            raise RuntimeError("connection reset")  # no status_code → transient, not systemic
+
+    names = [(f"T{i}", str(2000 + i)) for i in range(5)]
+    monkeypatch.setattr(ex_mod, "mention_prefilter", lambda *a, **k: {c for _, c in names})
+    monkeypatch.setattr(ex_mod, "recent_disclosure_stream", lambda *a, **k: [("8-K (acc A1)", "x")])
+    _matched, results = scan_driver_exposure(
+        AI_DATACENTER, names, edgar=cast(Any, None), sec_http=cast(Any, None),
+        efts_http=cast(Any, None), llm=_NetBoom(), startdt="2026-01-01", enddt="2026-06-01",
+        max_workers=1)
+    assert len(results) == 5  # completed — a non-4xx transient never aborts
+    assert all(r.exposure_basis is ExposureBasis.UNASSESSED_ERROR for r in results)  # never NONE
+
+
+def test_scan_aborts_fast_on_repeated_quota_4xx(monkeypatch: pytest.MonkeyPatch) -> None:
+    """3 consecutive same-4xx (quota/auth) LLM failures ABORT the scan (ScanAbortedError) BEFORE it
+    poisons the whole queue — the 2026-07-13 incident. Aborts EARLY (not all names scanned)."""
+    import vinci.themes.exposure as ex_mod
+    from vinci.themes.exposure import ScanAbortedError, scan_driver_exposure
+
+    class _Api400Error(Exception):
+        status_code = 400
+
+    class _Quota(LlmClient):
+        @property
+        def model(self) -> str:
+            return "mock"
+
+        def extract(self, *, system: str, user: str, tool: dict[str, Any]) -> dict[str, Any]:
+            raise _Api400Error("You have reached your specified API usage limits")
+
+    names = [(f"T{i}", str(1000 + i)) for i in range(10)]
+    monkeypatch.setattr(ex_mod, "mention_prefilter", lambda *a, **k: {c for _, c in names})
+    monkeypatch.setattr(ex_mod, "recent_disclosure_stream", lambda *a, **k: [("8-K (acc A1)", "x")])
+    with pytest.raises(ScanAbortedError) as ei:
+        scan_driver_exposure(
+            AI_DATACENTER, names, edgar=cast(Any, None), sec_http=cast(Any, None),
+            efts_http=cast(Any, None), llm=_Quota(), startdt="2026-01-01", enddt="2026-06-01",
+            max_workers=1)
+    assert ei.value.status == 400
+    assert len(ei.value.assessed) == 3  # aborted at the 3rd consecutive 4xx, not all 10
+    assert ei.value.remaining  # names left un-scanned (queue not poisoned)
+
+
+def test_valid_assessment_grade_unaffected_by_error_bucket() -> None:
+    """Regression pin: the UNASSESSED_ERROR bucket is isolated to error paths — a VALID (successful
+    LLM) assessment still derives its basis from the cited facts, unchanged."""
+    payload = {
+        "disclosed_facts": [
+            {"fact": "15-year lease with AWS for ~300 MW of data center capacity",
+             "concreteness": "binding-contract", "driver_tie": "driver-specific",
+             "source_ref": "8-K 2026-01-15 (acc A1)"}],
+        "primary_business": "datacenter HPC host", "key_unknowns": [],
+    }
+    a = assess_exposure(AI_DATACENTER, "CIFR", "1819989", _STREAM, llm=_MockLlm(payload))
+    assert a.exposure_basis is ExposureBasis.BINDING_CONTRACTS  # derived, NOT unassessed-error
+    assert a.flags == []

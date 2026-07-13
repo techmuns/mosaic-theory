@@ -2047,6 +2047,26 @@ Each line: *what it does* — *verified how*.
   `candidate_records` byte-identical to HEAD. **The July theme-#3 sweep is gated on THIS merge** — it runs
   on the canonical 1800 (the 47 recovered names in-universe; #121's delta already showed 0 surfaced among
   them, this is the standing record). ruff + `mypy --strict vinci` + pytest green.
+- **SCAN-ERROR GRADING — the 2026-07-13 quota incident closed mechanically (feat/scan-error-grade; PR
+  open, not merged).** The near-miss: 22 delta-scan records ERRORED (Anthropic 400 usage-cap) yet
+  defaulted to grade `none`; the scan_history manifest recorded `tier_counts {none: 22}` — a FALSE claim
+  that 22 unassessed names disclosed no exposure (caught by hand). Two mechanical layers + a report:
+  (1) UNASSESSED-ERROR BUCKET — an errored assessment (`LlmError` in `assess_exposure`, or a raw
+  exception in `scan_driver_exposure`) now grades `ExposureBasis.UNASSESSED_ERROR` (error in a flag),
+  NEVER `none`. The CLI tier print carries it as its own line + EXCLUDES it from `surfaced`; the manifest
+  `tier_counts` (a Counter of `exposure_basis`) shows it as its own key — a failure can no longer read as
+  'no exposure'. (2) ABORT-FAST — 3 consecutive same-4xx (quota/auth, by `status_code`) LLM failures
+  raise `ScanAbortedError`; the CLI catches it and writes NEITHER `--out` NOR scan_history (a poisoned
+  queue is worse than none) + prints the un-scanned names. A 5xx/network transient does NOT trip it.
+  (3) REPORT-ONLY (triage/freeze path): the freeze is `freeze_baskets` (forward.py:210), which guards on
+  human DISPOSITIONS (every committed name RATIFIED/PASSED, else raise) and does NOT ingest the scan
+  cohort. The poisoning is closed at the SCAN layer (own bucket, excluded from surfaced, visible count),
+  so NO refuse-to-freeze guard is built now — the freeze operates on the human's deliberate committed
+  list, not raw scan records, and the human sees the unassessed count before freezing. Defense-in-depth
+  hook if ever wanted: cross-check `all_committed` against the scan's UNASSESSED_ERROR set before
+  `freeze_baskets`. Verified: ruff + `mypy --strict vinci` clean; network-free tests
+  `test_llm_error_is_unassessed_not_none`, `test_scan_error_unassessed_and_non_4xx_no_abort`,
+  `test_scan_aborts_fast_on_repeated_quota_4xx`, `test_valid_assessment_grade_unaffected_by_error_bucket`.
 
 ## 3. FALSIFIED — tested and retired (NOT deferred)
 
