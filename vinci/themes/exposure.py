@@ -487,8 +487,8 @@ def assess_exposure(
     from the LLM): no cited concrete fact → ``no-theme-exposure-disclosed`` (fail-loud; a mention is
     not exposure). Cite-check is TWO-STAGE: the accession must trace to the stream AND the fact's
     load-bearing text must be grounded in that filing (``_fact_grounded``) — an ungrounded fact is
-    fail-closed. An empty stream or an LLM error yields a NONE assessment + a flag, never a
-    fabricated exposure."""
+    fail-closed. An empty stream yields NONE + a flag; an LLM error yields ``unassessed-error`` + a
+    flag — never a fabricated exposure, and never a false NONE."""
     stream_refs = [ref for ref, _ in stream]
     base = ExposureAssessment(
         ticker=ticker, cik=cik, driver=spec.description,
