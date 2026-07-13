@@ -29,6 +29,7 @@ def record_snapshot(
     now: datetime,
     git_sha: str | None,
     n_scanned: int,
+    tier_field: str | None = "exposure_basis",
 ) -> Path:
     """Write ``dumped`` as an immutable snapshot under ``history_root/<driver_slug>/`` and append
     one index line to ``history_root/manifest.jsonl``; returns the snapshot path.
@@ -37,11 +38,19 @@ def record_snapshot(
     newline-joined, no trailing newline), so an archived snapshot is a drop-in ``--out``
     replacement for any downstream reader. NON-OVERWRITING: a path collision (same second +
     sha) gets a ``__1``/``__2``/… suffix — an existing snapshot is never touched. Any write
-    error propagates loud; a silently missing snapshot would fake history."""
+    error propagates loud; a silently missing snapshot would fake history.
+
+    ``tier_field`` keys the manifest ``tier_counts`` (default ``exposure_basis``; a missing key is
+    FAIL-LOUD). Pass ``None`` for no-tier records (Component-A) → empty ``tier_counts``."""
     if now.tzinfo is None or now.utcoffset() != timedelta(0):  # aware-UTC only — the filename's
         # literal 'Z' would otherwise falsely imply UTC (verification obs A). Fail before any write.
         raise ValueError("record_snapshot requires an aware UTC datetime")
-    tier_counts = Counter(str(r["exposure_basis"]) for r in dumped)  # missing key = fail loud
+    # tier_counts index the display tier for exposure/assay; a missing key stays FAIL-LOUD (a
+    # malformed exposure record must not pass silently). tier_field=None for records with no tier
+    # concept (Component-A candidate themes) → empty tier_counts, never a KeyError. Default path is
+    # byte-identical: str(r["exposure_basis"]) exactly as before.
+    tier_counts: Counter[str] = (
+        Counter(str(r[tier_field]) for r in dumped) if tier_field is not None else Counter())
     subdir = history_root / driver_slug
     subdir.mkdir(parents=True, exist_ok=True)
     stem = f"{now:%Y%m%dT%H%M%SZ}__{git_sha or 'nosha'}"

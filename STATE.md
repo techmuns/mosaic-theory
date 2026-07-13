@@ -1903,6 +1903,59 @@ Each line: *what it does* — *verified how*.
 - _Whole suite green (ruff + mypy --strict clean; `pytest -m "not network"` = 534 passed, 1 skipped;
   +3 gate tests: continuity-gate math, filed_quarters parse/404/throttle, gated-placebo-collapse
   property)._
+- **Component-A scans now NON-OVERWRITING via scan_history (2026-07-13, `feat/component-a-history`;
+  closes the audit-followup gap at `cli.py` ~521-525).** `_cmd_themes` computes the dump ONCE and writes
+  it BOTH to `candidate_themes.jsonl` (the "latest" pointer, same bytes) AND to an always-on timestamped
+  `scan_history` snapshot (`driver_slug=component-a`, `tier_field=None`), mirroring the exposure/assay
+  pattern — a monthly sweep can no longer clobber the prior harvest (the delta/monitor diffs against
+  immutable snapshots). `record_snapshot` gained an ADDITIVE `tier_field: str | None = "exposure_basis"`:
+  the default path is byte-identical (exposure/assay manifest lines unchanged, still fail-loud on a
+  missing key), and `None` gives Component-A records (no `exposure_basis`) an empty `tier_counts` instead
+  of a KeyError — pinned by a Component-A-shape test + an exposure-default regression test. Parity flags
+  `--scan-history-dir` / `--no-scan-history` added. **BACKUP NOTE:** the June-17 `candidate_themes.jsonl`
+  OUTPUT was absent at first-build time (untracked / never committed; removed when the primary left
+  `feat/own-history-line`), then the raw June-17 output was RESTORED 2026-07-13 from the operator's
+  off-repo copy (35 clusters, first `T000`) → backup `candidate_themes.2026-06-17.backup.jsonl` MADE. The
+  timestamped archive + committable latest-pointer prevent recurrence. **Monthly sweep SANCTIONED; cron
+  AUTHORED + verified, PUSH STILL BLOCKED 2026-07-13 — the token at `~/.mosaic_gh_token` reports only
+  `repo` scope (NOT `workflow`) despite the re-scope precondition, so the push was rejected again; the
+  file is committed-ready locally, awaiting a `workflow`-scoped token in that file (or a keychain
+  refresh):**
+  `.github/workflows/monthly-themes.yml` (cron `0 7 3 * *` + `workflow_dispatch`), mirroring
+  monthly-score.yml — runs `python -m vinci.cli themes` (documented defaults basis r2 / window 365d /
+  min-breadth 3; the exact June-17 flag string was UNRECORDED, SAID SO in the workflow), job-summary
+  prints snapshot path + manifest line, commits the `candidate_themes.jsonl` pointer (git history = the CI
+  archive; `data/scan_history/` stays git-ignored/local). Evidence: the June-17 harvest = 35 proposals → 2
+  advances (entry below). Backend + workflow only — NOTHING deploys. On `feat/component-a-history`; PR to
+  be opened, NOT merged.
+- _Suite green (ruff + mypy --strict clean; `pytest -m "not network"` = 573 passed; +2 scan_history
+  tests). Dry-run: two Component-A sweeps → 2 immutable snapshots, prior untouched, `tier_counts: {}`._
+- **HARVEST DISPOSITION (2026-07-13, analyst) — Component-A 2026-06-17 harvest (35 clusters)**
+  dispositioned per `component_a_harvest_2026-06-17.md` + priced-check
+  (`data/priced_check/report_all.txt`, as-of 2026-07-10) + the deep-research evidence doc: **T007 ADVANCE
+  → theme #3 'truckload-supply-purge'** (source=component-a); **T012 ADVANCE-LITE** (research adjudication
+  before any scan; the NHI SHOP-vs-sector contradiction is the open question); **T000 PARK-priced**
+  (revisit trigger: product-tanker subset derate — STNG/TRMD/HAFN); **T009 PARK-as-theme**, CRK handed to
+  Edge-2 watch (single name: ~1 Bcf/d non-binding offtake vs ~1.1 Bcf/d output, fresh drawdown);
+  **T019/T024 REJECT-as-named** (no shared driver: four revenue models / macro-attributed cycle);
+  remaining 29 PARK/REJECT per the harvest file. **CHANNEL-TAG CONVENTION adopted:** every candidate theme
+  henceforth carries source ∈ {analyst, component-a, …} + date, for channel comparison. **CANDIDATE
+  REGISTERED:** 'in-silico evidence substitution' (CERT/SLP/SDGR tailwind vs CRL/NOTV headwind),
+  source=analyst, 2026-07-13, status: gate + research checks running. _[Verified at build:
+  `data/priced_check/report_all.txt` present (53,516 B). The harvest worksheet + deep-research doc are the
+  analyst's off-repo artifacts (not in the repo tree); the raw 35-cluster `candidate_themes.jsonl` was
+  already deleted (see backup note). The channel-tag CONVENTION is adopted now; the CandidateTheme schema
+  source/date field is a follow-up (audit-flagged, unbuilt).]_
+- **T012 ADJUDICATED 2026-07-13 (research doc, primary-source):** driver real — occupancy + supply halves
+  verified, supply locked to ~2028 (2025 starts ~5,977 units, 29-mo lead, no 2026 uptick) — but the
+  pricing-power leg ABSENT (BKD same-store RevPOR +1.8–3.4% vs opex +4.8–5.9% in all 4 qtrs; SNDA crossed
+  only Q4'25, Q1'26 same-store merger-redefined). Cluster mislabeled at the name level (CTRE ~74% SNF
+  triple-net — driver inapplicable; NHI SHOP −340bps management-attributed idiosyncratic; AHR the one true
+  carrier, occupancy AND rate rising). **DISPOSITION: WATCH+** (downgraded from ADVANCE-LITE by
+  adjudication). **VERBATIM TRIGGER:** 'BKD or SNDA same-store RevPOR growth >= same-store opex growth for
+  two consecutive quarters, OR NIC occupancy >= 90.0%' — on fire, re-underwrite with AHR as lead carrier.
+  Full scan NOT sanctioned (carrier set too narrow; scan slot held by theme #3). Next checkpoint: NIC Q2
+  data, late July 2026.
 
 ## 3. FALSIFIED — tested and retired (NOT deferred)
 

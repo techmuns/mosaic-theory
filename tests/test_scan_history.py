@@ -20,6 +20,12 @@ DUMPED: list[dict[str, object]] = [
 T1 = datetime(2026, 7, 4, 12, 0, 0, tzinfo=UTC)
 T2 = datetime(2026, 7, 4, 12, 5, 0, tzinfo=UTC)
 
+# Component-A candidate-theme records — NO ``exposure_basis`` field (unlike exposure/assay records)
+COMP_A_DUMPED: list[dict[str, object]] = [
+    {"cluster_id": "c1", "members": [{"ticker": "TK"}, {"ticker": "FRO"}], "tau_stability": [0.5]},
+    {"cluster_id": "c2", "members": [{"ticker": "RGTI"}], "tau_stability": [0.5, 0.6]},
+]
+
 
 def test_two_scans_additive_first_snapshot_untouched(tmp_path: Path) -> None:
     """(a) Two scans, same driver, distinct timestamps → 2 files + a 2-line manifest, and the
@@ -92,3 +98,29 @@ def test_utc_guard_rejects_naive_and_nonutc(tmp_path: Path) -> None:
                         now=datetime(2026, 7, 4, 12, 0, 0, tzinfo=UTC),
                         git_sha="s", n_scanned=1)
     assert p.exists() and manifest.exists()  # an aware UTC now passes
+
+
+def test_component_a_records_tier_field_none_no_keyerror(tmp_path: Path) -> None:
+    """(e) Component-A records carry NO ``exposure_basis``; ``tier_field=None`` lands
+    them with an EMPTY tier_counts (no KeyError), while the DEFAULT path still FAILS LOUD on the
+    missing key — the compatibility fix is additive / opt-in, never a silent behavior change."""
+    p = record_snapshot(COMP_A_DUMPED, driver_slug="component-a", driver_desc="basis=r2",
+                        history_root=tmp_path, now=T1, git_sha="abc1234", n_scanned=1713,
+                        tier_field=None)
+    entry = json.loads((tmp_path / "manifest.jsonl").read_text().splitlines()[0])
+    assert p.exists()
+    assert entry["tier_counts"] == {}  # no tier concept → empty, honest (never a fabricated bucket)
+    assert entry["n_records"] == 2 and entry["n_scanned"] == 1713
+    assert entry["driver_slug"] == "component-a"
+    with pytest.raises(KeyError):  # DEFAULT path UNCHANGED — still fail-loud on a missing tier key
+        record_snapshot(COMP_A_DUMPED, driver_slug="component-a", driver_desc="d",
+                        history_root=tmp_path, now=T2, git_sha=None, n_scanned=1)
+
+
+def test_exposure_default_tier_field_unchanged(tmp_path: Path) -> None:
+    """(f) Regression: exposure-shaped records through the DEFAULT tier_field produce the SAME
+    manifest tier_counts as before the Component-A compatibility change (byte-for-byte intact)."""
+    record_snapshot(DUMPED, driver_slug="ai-datacenter", driver_desc="d",
+                    history_root=tmp_path, now=T1, git_sha="abc1234", n_scanned=10)
+    entry = json.loads((tmp_path / "manifest.jsonl").read_text().splitlines()[0])
+    assert entry["tier_counts"] == {"committed-capacity": 2, "none-disclosed": 1}
