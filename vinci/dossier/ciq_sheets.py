@@ -663,11 +663,17 @@ def capital_structure_ciq(
 
 def _segment_section(
     bundle: CiqBundle, section: str, *, after_label: str | None = None, total_label: str = "Total",
-    extra_fn: Callable[[float, str], str] | None = None, source_note: str = "",
+    extra_fn: Callable[[float, str], str] | None = None, source_note: str = "", lean: bool = True,
 ) -> Sourced[str]:
     """Revenue/EBITDA share for a Segments-sheet section. ``after_label`` scopes the search past a
     sub-header (e.g. 'Geographic Segments') so the SAME 'Revenues' block under it is found, not
-    the first one — same parsing for business segments and geography."""
+    the first one — same parsing for business segments and geography.
+
+    ``lean`` (default) is the concentration view: a single segment/geography is TAUTOLOGICAL ("X val
+    (100%) of Total val") and collapses to a plain marker; a real mix is reported %-only, largest
+    share first (magnitude lives in the Financial Summary). ``lean=False`` keeps the detailed value,
+    share, and total — the segment-EBITDA reconciliation needs the pre-corporate sum. The period is
+    always compacted (the raw header's redundant "12 months" annual marker dropped)."""
     try:
         rows = bundle.sheet("financials", "Segments", freq="annual")
     except CiqUnavailableError as exc:
@@ -696,20 +702,32 @@ def _segment_section(
     if latest is None:
         return Sourced.unknown(note=f"Segments 'Total {section}' has no value")
     col, tot, period = latest
-    parts: list[str] = []
+    items: list[tuple[str, float, float]] = []
     for i in range(start + 1, total):
         seg = str(rows[i][0]).strip()
         v = clean_num(rows[i][col]) if col < len(rows[i]) else None
         if seg and v is not None and tot:
-            parts.append(f"{seg} {v:,.0f} ({v / tot:.0%})")
-    if not parts:
+            items.append((seg, v, v / tot))
+    if not items:
         return Sourced.unknown(note=f"no {section} segment rows with values")
     label = f"{after_label} → {section}" if after_label else section
+    plabel = _period_label(period)  # compact; extra_fn still reads the RAW period for its match
     tail = extra_fn(tot, period) if extra_fn else ""
-    return Sourced.present(
-        f"[{period}] " + "; ".join(parts) + f" of {total_label} {tot:,.0f}{tail}",
-        source_ref=f"CIQ Financials→Segments ({label}, latest annual column){source_note}",
+    src = f"CIQ Financials→Segments ({label}, latest annual column){source_note}"
+    if not lean:  # detailed view — the EBITDA reconciliation needs the pre-corporate sum
+        body = "; ".join(f"{n} {v:,.0f} ({s:.0%})" for n, v, s in items)
+        return Sourced.present(
+            f"[{plabel}] {body} of {total_label} {tot:,.0f}{tail}", source_ref=src
+        )
+    noun = "geography" if (after_label and "Geographic" in after_label) else "segment"
+    body = (
+        # collapse ONLY a lone item that is ~100% (tautological); a single item at <100% means the
+        # rest is unlisted, so it's shown as a share, not falsely labelled the whole business.
+        f"{items[0][0]} — single {noun}"
+        if len(items) == 1 and items[0][2] >= 0.995
+        else "; ".join(f"{n} {s * 100:.0f}%" for n, _v, s in sorted(items, key=lambda t: -t[2]))
     )
+    return Sourced.present(f"[{plabel}] {body}{tail}", source_ref=src)
 
 
 def _consolidated_ebitda(bundle: CiqBundle, period: str) -> float | None:
@@ -754,7 +772,7 @@ def segment_ebitda(bundle: CiqBundle) -> Sourced[str]:
 
     return _segment_section(
         bundle, "EBITDA", total_label="segment-EBITDA sum (pre-corporate)", extra_fn=reconcile,
-        source_note=" + Income Statement (consolidated EBITDA)",
+        source_note=" + Income Statement (consolidated EBITDA)", lean=False,
     )
 
 

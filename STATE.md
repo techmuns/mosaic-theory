@@ -3264,6 +3264,19 @@ Recommendation/Target slot is the HUMAN's ("not yet logged"); consensus, the imp
   pytest(not network) **571 green** (+9 pins: 3 parse_aggregates fail-loud/date-map, 3 extractor incl. 2
   fail-loud, static-contract, e2e renderDossier on committed CNXC, living-artifact invariants).*
   **Invariant:** the existing `>Source:`-scan guard now also covers the new exhibit (no inline caption).
+  **LEAN SEGMENT/GEOGRAPHY CONCENTRATION — BUILT + VERIFIED, PR OPEN (feat/lean-segment-concentration,
+  2026-07-13).** The Segments / Geography facts dropped tautological noise: a lone ~100% segment/geo
+  ("X 9,826 (100%) of Total 9,826") collapses to "X — single segment/geography"; a real mix is %-only,
+  largest share first (magnitude lives in the Financial Summary); the redundant "[12 months …]" period
+  marker is compacted via the existing `_period_label`. `segment_ebitda` is exempt (`lean=False`) — its
+  reconciliation needs the absolute per-segment values + pre-corporate sum + consolidated EBITDA. One
+  formatter (`ciq_sheets._segment_section`); the noise was localized there (a full-dossier scan found
+  the pattern in no other field). Collapse is guarded on share ≥99.5% (a lone segment at <100% = rest
+  unlisted → shown as a share, not falsely "single"). Citations ([B1]/[B2]/…) preserved. Artifacts:
+  `concentration` SURGICALLY re-derived via `scripts/refresh_concentration.py` (that field only; no LLM
+  re-run; 9 names, AORT has no segment data). *Verified: real CIQ output (CNXC single, IT/VRRM %-mix,
+  FUBO single-geo) + browser render; +1 test, 3 updated; ruff + mypy --strict + pytest(not network)
+  572 green.*
 
 **RC-1 primary-source text extraction — BUILT + VERIFIED, PR OPEN (feat/primary-source-text, 2026-07-06).**
 DETERMINISTIC (anchored, never LLM) parsers of the EX-99.1 release (A, `vinci/edgar/release_parse.py`) and

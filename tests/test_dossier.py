@@ -2919,7 +2919,9 @@ def test_workbook_routing_finds_multiples_and_segments_inside_financials() -> No
     assert pct.value == round(1 / 3, 3)  # would be 0.5 if the partial last col were NOT excluded
     segs = cs.segments(b)
     assert segs.status is ds.SourceStatus.PRESENT
-    assert "Commercial Services" in (segs.value or "") and "797" in (segs.value or "")
+    # lean concentration view: %-only mix (largest first), compact period — no absolutes / total
+    assert (segs.value or "") == "[Dec-31-2025] Commercial Services 51%; Government Solutions 49%"
+    assert "797" not in (segs.value or "") and "12 months" not in (segs.value or "")
 
 
 def test_quarterly_yoy_refuses_cross_basis_prior() -> None:
@@ -3583,7 +3585,7 @@ def test_segment_ebitda_section_surfaces_profit_share() -> None:
     b = _fin_bundle({"Segments": seg}, freq="annual")
     rev, eb = cs.segments(b), cs.segment_ebitda(b)
     assert rev.status is ds.SourceStatus.PRESENT
-    assert "Commercial Services 436 (45%)" in (rev.value or "")  # revenue share
+    assert "Commercial Services 45%" in (rev.value or "")  # revenue share (lean %-only)
     assert eb.status is ds.SourceStatus.PRESENT
     assert "Commercial Services 283 (68%)" in (eb.value or "")  # 282.5/415.9 — profit, not revenue
     assert "Segments (EBITDA" in (eb.source_ref or "")
@@ -3756,8 +3758,48 @@ def test_geographic_section_parsed() -> None:
     b = _fin_bundle({"Segments": seg}, freq="annual")
     geo = cs.geographic(b)
     assert geo.status is ds.SourceStatus.PRESENT
-    assert "United States 846 (86%)" in (geo.value or "") and "Geographic" in (geo.source_ref or "")
-    assert "Commercial Services 436" in (cs.segments(b).value or "")  # business block unaffected
+    # lean %-only mix, largest first, compact period; the geographic block is read, not the business
+    assert (geo.value or "") == "[Dec-31-2025] United States 86%; Australia 7%"
+    assert "Geographic" in (geo.source_ref or "")
+    # the lone business segment is 436/979 = 45% (rest unlisted) → a share, NOT "single segment"
+    assert (cs.segments(b).value or "") == "[Dec-31-2025] Commercial Services 45%"
+
+
+def test_segment_lean_collapse_and_ebitda_stays_detailed() -> None:
+    """(concentration) A lone segment/geography at ~100% is tautological ('X val (100%) of Total
+    val') → collapses to a plain marker; the '12 months' period is compacted. segment_ebitda is NOT
+    leaned — its reconciliation needs the per-segment values, the pre-corporate sum, and the
+    consolidated EBITDA. Deterministic formatter on frozen fixtures → value-level pins fit."""
+    single = [
+        ["For the Fiscal Period", "12 months Nov-30-2025"],
+        ["Revenues", ""], ["Software & Programming", 9826.0], ["  Total Revenues", 9826.0],
+    ]
+    s = cs.segments(_fin_bundle({"Segments": single}, freq="annual"))
+    assert s.value == "[Nov-30-2025] Software & Programming — single segment"
+    assert "100%" not in s.value and "of Total" not in s.value and "9,826" not in s.value
+
+    geo1 = [
+        ["For the Fiscal Period", "12 months Sep-27-2025"],
+        ["Geographic Segments", ""],
+        ["For the Fiscal Period", "12 months Sep-27-2025"],
+        ["Revenues", ""], ["United States", 4413.0], ["  Total Revenues", 4413.0],
+    ]
+    g = cs.geographic(_fin_bundle({"Segments": geo1}, freq="annual"))
+    assert g.value == "[Sep-27-2025] United States — single geography"
+
+    seg_eb = [
+        ["For the Fiscal Period", "12 months Dec-31-2025"],
+        ["EBITDA", ""], ["Commercial Services", 283.0], ["Government Solutions", 122.0],
+        ["  Total EBITDA", 405.0],
+    ]
+    inc = [["For the Fiscal Period", "12 months Dec-31-2025"], ["EBITDA", 362.0]]
+    b_eb = _fin_bundle({"Segments": seg_eb, "Income Statement": inc}, freq="annual")
+    eb = cs.segment_ebitda(b_eb)
+    assert eb.status is ds.SourceStatus.PRESENT
+    assert "Commercial Services 283 (70%)" in (eb.value or "")  # absolutes + share KEPT
+    assert "of segment-EBITDA sum (pre-corporate) 405" in (eb.value or "")  # pre-corporate sum KEPT
+    assert "consolidated EBITDA 362" in (eb.value or "") and "~43 unallocated" in (eb.value or "")
+    assert (eb.value or "").startswith("[Dec-31-2025]")  # period compacted, no "12 months"
 
 
 # --- item 3: clean same-quarter YoY from the quarterly file; annual margins + guards kept --------
