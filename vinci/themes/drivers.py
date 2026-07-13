@@ -184,9 +184,13 @@ TRUCKLOAD_SUPPLY_PURGE = DriverSpec(
         ("compliance-telematics",
          ("eld", "electronic logging", "hours of service", "telematics", "fmcsa", "compliance")),
         ("intermodal-dray", ("intermodal", "drayage", "container")),
-        ("equipment", ("tractor", "trailer", "used truck", "dealer", "fleet sales")),
+        # asset-based-tl precedes equipment: a TL carrier names its own tractors/trailers, so those
+        # generic-vehicle keywords must not shadow the tailwind bucket (truckload/linehaul). First-
+        # match order is load-bearing (regression-pinned). Only the precedence of these two
+        # layers changed — the keyword SETS stay analyst-ratified verbatim.
         ("asset-based-tl",
          ("truckload", "linehaul", "loaded mile", "company driver", "irregular route")),
+        ("equipment", ("tractor", "trailer", "used truck", "dealer", "fleet sales")),
     ),
 )
 
