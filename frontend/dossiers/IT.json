@@ -439,8 +439,8 @@
     },
     "concentration": {
       "segments": {
-        "value": "[Dec-31-2025] Insights 78%; Conferences 10%; Consulting 9%; Other 4%",
-        "source_ref": "CIQ Financials→Segments (Revenues, latest annual column)",
+        "value": "Insights 78%; Conferences 10%; Consulting 9%; Other 4%",
+        "source_ref": "CIQ Financials→Segments (Revenues, latest annual column, Dec-31-2025)",
         "status": "present",
         "note": null
       },
@@ -457,8 +457,8 @@
         "note": null
       },
       "geographic": {
-        "value": "[Dec-31-2025] United States and Canada 62%; Europe, Middle East and Africa 26%; Other International 12%",
-        "source_ref": "CIQ Financials→Segments (Geographic Segment → Revenues, latest annual column)",
+        "value": "United States and Canada 62%; Europe, Middle East and Africa 26%; Other International 12%",
+        "source_ref": "CIQ Financials→Segments (Geographic Segment → Revenues, latest annual column, Dec-31-2025)",
         "status": "present",
         "note": null
       }

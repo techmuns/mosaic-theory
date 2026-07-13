@@ -431,8 +431,8 @@
     },
     "concentration": {
       "segments": {
-        "value": "[Sep-30-2025] Protein-Based Consumer Goods — single segment",
-        "source_ref": "CIQ Financials→Segments (Revenues, latest annual column)",
+        "value": "Protein-Based Consumer Goods — single segment",
+        "source_ref": "CIQ Financials→Segments (Revenues, latest annual column, Sep-30-2025)",
         "status": "present",
         "note": null
       },
@@ -449,8 +449,8 @@
         "note": null
       },
       "geographic": {
-        "value": "[Sep-30-2025] United States 88%; Other Foreign 8%; Canada 4%",
-        "source_ref": "CIQ Financials→Segments (Geographic Segment → Revenues, latest annual column)",
+        "value": "United States 88%; Other Foreign 8%; Canada 4%",
+        "source_ref": "CIQ Financials→Segments (Geographic Segment → Revenues, latest annual column, Sep-30-2025)",
         "status": "present",
         "note": null
       }

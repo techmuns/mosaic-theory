@@ -431,8 +431,8 @@
     },
     "concentration": {
       "segments": {
-        "value": "[Dec-31-2025] Americas 58%; Europe 42%",
-        "source_ref": "CIQ Financials→Segments (Revenues, latest annual column)",
+        "value": "Americas 58%; Europe 42%",
+        "source_ref": "CIQ Financials→Segments (Revenues, latest annual column, Dec-31-2025)",
         "status": "present",
         "note": null
       },
@@ -449,8 +449,8 @@
         "note": null
       },
       "geographic": {
-        "value": "[Dec-31-2025] United States 52%; Other Locations 21%; United Kingdom 11%; Switzerland 8%; Germany 4%; Netherlands 4%",
-        "source_ref": "CIQ Financials→Segments (Geographic Segment → Revenues, latest annual column)",
+        "value": "United States 52%; Other Locations 21%; United Kingdom 11%; Switzerland 8%; Germany 4%; Netherlands 4%",
+        "source_ref": "CIQ Financials→Segments (Geographic Segment → Revenues, latest annual column, Dec-31-2025)",
         "status": "present",
         "note": null
       }

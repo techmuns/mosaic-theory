@@ -21,8 +21,8 @@ FuboTV Inc. operates as a live TV streaming platform company in the United State
 **Can FuboTV reach self-funding (positive OCF/FCF) before its cash burn forces dilutive financing — i.e. is the sub-peer TEV/Rev discount an overshoot that the EBITDA inflection resolves, or an EARNED discount on a still-burning model?**
 
 ## Company & business
-- **Segments:** [Sep-27-2025] Streaming Business — single segment [5]
-- **Geography:** [Sep-27-2025] United States — single geography [6]
+- **Segments:** Streaming Business — single segment [5]
+- **Geography:** United States — single geography [6]
 
 ## The case
 **The case** _(top points; the full bull/bear is in Analysis)_
@@ -307,10 +307,10 @@ _NM = a real state (negative base), not missing_
 - **Short interest (FINRA):** Short interest (FINRA, settle 2026-06-15): 7.0M → 6.9M sh (-1.9%, falling) · 2.0% of shares out (EDGAR XBRL) · DTC 4.2d · recent: 2026-06-15 6.9M · 2026-05-29 7.0M · 2026-05-15 7.3M · 2026-04-30 6.6M [22]
 
 ### Concentration
-- **Segments (revenue share):** [Sep-27-2025] Streaming Business — single segment [5]
+- **Segments (revenue share):** Streaming Business — single segment [5]
 - **Segments (EBITDA share — where profit sits):** _UNKNOWN_ — Segments sheet has no 'EBITDA' section as expected
 - **Customers:** CBS Corporation (Acquired) — fuboTV Inc. · Customer · src: Broadcasting; Denso Aircool Corporation — fuboTV Inc. · Customer · src: Automotive Parts and Equipment; International Family Entertainment, Inc. — fuboTV Inc. · Customer · src: Movies and Entertainment; NBCUniversal Media, LLC — fuboTV Inc. · Customer · src: Movies and Entertainment; ProBank Austin (Acquired) — fuboTV Inc. · Customer · src: Research and Consulting Services; TEGNA Inc. — fuboTV Inc. · Distributor · src: Broadcasting; Viacom Inc. (Acquired) — fuboTV Inc. · Customer · src: Movies and Entertainment; WideOpenWest, Inc. — fuboTV Inc. · Distributor · src: Cable and Satellite [44]
-- **Geographic:** [Sep-27-2025] United States — single geography [6]
+- **Geographic:** United States — single geography [6]
 
 ## Synthesis
 
@@ -453,8 +453,8 @@ _QoQ/YoY same-basis only; (R) = Reclassified_
 [2] `EOD FUBO 180d to 2026-07-06`
 [3] `EOD name−IWM 180d (screen data-record, G2)`
 [4] `EDGAR XBRL FCF sign (screen data-record)`
-[5] `CIQ Financials→Segments (Revenues, latest annual column)`
-[6] `CIQ Financials→Segments (Geographic Segment → Revenues, latest annual column)`
+[5] `CIQ Financials→Segments (Revenues, latest annual column, Sep-27-2025)`
+[6] `CIQ Financials→Segments (Geographic Segment → Revenues, latest annual column, Sep-27-2025)`
 [7] `CIQ Financials→Balance Sheet (quarterly, FY26)`
 [8] `CIQ Comparable Analysis→Operating Statistics (name vs peer median: growth/margin/leverage/beta)`
 [9] `CIQ Comparable Analysis→Trading Multiples (name row + Summary Statistics Low/Median/Mean/High)`

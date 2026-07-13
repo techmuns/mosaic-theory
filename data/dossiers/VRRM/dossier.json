@@ -423,14 +423,14 @@
     },
     "concentration": {
       "segments": {
-        "value": "[Dec-31-2025] Government Solutions 47%; Commercial Services 45%; Parking Solutions 8%",
-        "source_ref": "CIQ Financials→Segments (Revenues, latest annual column)",
+        "value": "Government Solutions 47%; Commercial Services 45%; Parking Solutions 8%",
+        "source_ref": "CIQ Financials→Segments (Revenues, latest annual column, Dec-31-2025)",
         "status": "present",
         "note": null
       },
       "segment_ebitda": {
-        "value": "[Dec-31-2025] Commercial Services 283 (68%); Parking Solutions 11 (3%); Government Solutions 122 (29%) of segment-EBITDA sum (pre-corporate) 416; consolidated EBITDA 362 (~54 unallocated corporate)",
-        "source_ref": "CIQ Financials→Segments (EBITDA, latest annual column) + Income Statement (consolidated EBITDA)",
+        "value": "Commercial Services 283 (68%); Parking Solutions 11 (3%); Government Solutions 122 (29%) of segment-EBITDA sum (pre-corporate) 416; consolidated EBITDA 362 (~54 unallocated corporate)",
+        "source_ref": "CIQ Financials→Segments (EBITDA, latest annual column, Dec-31-2025) + Income Statement (consolidated EBITDA)",
         "status": "present",
         "note": null
       },
@@ -441,8 +441,8 @@
         "note": null
       },
       "geographic": {
-        "value": "[Dec-31-2025] United States 86%; Australia 7%; Canada 3%; United Kingdom 3%; ALL Other 1%",
-        "source_ref": "CIQ Financials→Segments (Geographic Segment → Revenues, latest annual column)",
+        "value": "United States 86%; Australia 7%; Canada 3%; United Kingdom 3%; ALL Other 1%",
+        "source_ref": "CIQ Financials→Segments (Geographic Segment → Revenues, latest annual column, Dec-31-2025)",
         "status": "present",
         "note": null
       }
