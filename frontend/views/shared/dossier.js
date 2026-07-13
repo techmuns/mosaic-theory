@@ -102,7 +102,7 @@ async function renderIndex(root, item, frame) {
     ? `<div class="grid cols-3">${tickers.map((t) => `
         <a class="ds-index-card" href="#/dossier/${escapeHtml(t)}">
           <div class="mono" style="font-size:16px; font-weight:650;">${escapeHtml(t)}</div>
-          <div class="muted" style="font-size:12px; margin-top:4px;">assembled facts · no verdict →</div>
+          <div class="muted" style="font-size:12px; margin-top:4px;">assembled facts + derived proposal →</div>
         </a>`).join("")}</div>`
     : `<div class="notice">No dossiers committed to this deploy yet. Assemble with <span class="mono">python -m vinci dossier</span>, then commit the derived <span class="mono">dossier.json</span> to the private repo.</div>`;
   root.innerHTML = frame(item, {
@@ -452,8 +452,9 @@ function briefVerdictChip(verdict) {
 }
 
 // (Brief) the market-standard first-cut, 7 sections: teaser → setup → company → case → financial
-// snapshot → valuation → verify. Machine-assembled + source-bound throughout; the Recommendation /
-// Target slot is the HUMAN's (never machine-filled). Mirrors _brief_lines() in render.py.
+// snapshot → valuation → verify. Machine-assembled + source-bound throughout; the teaser LEADS with
+// the machine's DERIVED proposal (2026-07-13 pivot) and the human's confirm/override in the
+// Recommendation slot is the verdict of record. Mirrors _brief_lines() in render.py.
 function briefTier(d, verdict, m) {
   const parts = teaserCard(d, verdict, m) + setupCard(d.synthesis) + companyCard(m)
     + briefCase(d.synthesis) + financialSnapshot(m) + valuationCard(m) + catalystCard(m) + verifyCard(d);
@@ -477,14 +478,13 @@ const fmtCap = (v) => (v >= 1000 ? `$${(v / 1000).toFixed(1)}B` : `$${Math.round
 function fmtShares(v) { return v >= 1e9 ? `${(v / 1e9).toFixed(1)}B` : `${(v / 1e6).toFixed(1)}M`; }
 
 
-// 1 — TEASER (at-a-glance): a 2/3 NARRATIVE (business one-liner · machine read · the human's
-// Recommendation/Target slot) beside a 1/3 SNAPSHOT table (identity + exchange + stock-info + CIK),
-// consolidated from what used to repeat across the header meta / brief-meta / stock-info line. The
-// verdict slot is filled only from the ledger — never by the machine.
+// 1 — TEASER (at-a-glance): a 2/3 NARRATIVE (business one-liner · machine read · the machine's
+// DERIVED proposal · the human's Recommendation/Target slot) beside a 1/3 SNAPSHOT table (identity +
+// exchange + stock-info + CIK). The LOGGED-verdict slot is filled only from the ledger; the PROPOSAL
+// is derived client-side by deriveProposal() (the 2026-07-13 pivot) — deterministic, never the LLM.
 // The machine's evidence READ — a "{lean} — {why}" balance, e.g. "strongly-bearish — stated going-concern
-// doubt …". The lean is an evidence sentiment, NOT a BUY/AVOID verdict (that stays the human's, in the
-// Recommendation slot right below). We tint the lean by direction (bear→danger, bull→live, mixed/neutral→
-// grey) and sentence-case it; the rest is plain body text. Fail-soft: an un-split read renders verbatim.
+// doubt …". We tint the lean by direction (bear→danger, bull→live, mixed/neutral→grey) and sentence-case
+// it; the rest is plain body text. Fail-soft: an un-split read renders verbatim.
 function machineReadHtml(eb) {
   const m = /^\s*([A-Za-z][A-Za-z\- ]*?)\s*[—–-]\s+([\s\S]+)$/.exec(eb || "");
   if (!m) return escapeHtml(eb || "");
@@ -495,18 +495,43 @@ function machineReadHtml(eb) {
   return `<b class="brief-lean" style="color:${col}">${escapeHtml(cased)}</b> — ${escapeHtml(rest)}`;
 }
 
+// The machine's PROPOSED verdict (2026-07-13 pivot) — the JS mirror of vinci/dossier/verdict.py:
+// a face-validity-frozen mapping over the committed lean label; deterministic, NEVER outcome-tuned,
+// never the LLM. "mixed" proposes NOTHING (a two-sided read is the human's call — no coin-flip);
+// an absent/unparseable/unrecognized read proposes nothing, fail-honest. The human's logged
+// confirm/override (the ledger) is the verdict of record. AVOID_TERMINAL displays as AVOID.
+const PROPOSAL_BY_LEAN = { "strongly-bearish": "AVOID", "strongly-bullish": "BUY", "mixed": null };
+function deriveProposal(eb) {
+  if (!eb || !String(eb).trim()) return { action: null, note: "no machine read on this dossier" };
+  const m = /^\s*([A-Za-z][A-Za-z\- ]*?)\s*[—–-]\s+([\s\S]+)$/.exec(eb);
+  if (!m) return { action: null, note: "machine read did not parse — no proposal" };
+  const label = m[1].trim(), reason = m[2].trim();
+  const key = label.toLowerCase().replace(/\s+/g, "-");
+  if (!(key in PROPOSAL_BY_LEAN)) {
+    return { action: null, lean: label, note: `unrecognized lean '${label}' — no proposal (fail-honest)` };
+  }
+  const action = PROPOSAL_BY_LEAN[key];
+  if (!action) return { action: null, lean: label, note: "evidence two-sided (mixed) — the human's call" };
+  return { action, lean: label, reason };
+}
+
 function teaserCard(d, verdict, m) {
   const s = d.synthesis;
   const one = (d.business_description && d.business_description.status === "present")
     ? firstSentence(d.business_description.value) : "";
   const vslot = verdict
     ? `<span class="pill ${isBuyVerdict(verdict.verdict) ? "buy" : "avoid"}">${escapeHtml(verdict.verdict)}</span> <span class="muted" style="font-size:11.5px;">@ ${fmtPrice(verdict.entryPrice)} · ${fmtDate(verdict.decidedAt)}</span>`
-    : `<span class="brief-slot">not yet logged</span> <span class="muted" style="font-size:11px;">the human's call — Buy / Avoid + target</span>`;
+    : `<span class="brief-slot">not yet logged</span> <span class="muted" style="font-size:11px;">confirm or override — Buy / Avoid + target</span>`;
   const read = (s && s.evidence_balance)
     ? `<div class="brief-read">${machineReadHtml(s.evidence_balance)}</div>` : "";
+  const prop = deriveProposal(s ? s.evidence_balance : "");
+  const propSlot = prop.action
+    ? `<span class="pill ${prop.action === "BUY" ? "buy" : "avoid"}">${prop.action}</span> <span class="muted" style="font-size:11.5px;">${escapeHtml(prop.reason || "")}</span>`
+    : `<span class="brief-slot">none</span> <span class="muted" style="font-size:11.5px;">${escapeHtml(prop.note)}</span>`;
   const narrative = `<div class="brief-narrative">
     ${one ? `<div class="brief-oneliner">${escapeHtml(one)}</div>` : ""}
     ${read}
+    <div class="brief-proposal"><span class="brief-vlab">Machine proposal</span> ${propSlot}</div>
     <div class="brief-verdict"><span class="brief-vlab">Recommendation / Target</span> ${vslot}</div>
     ${briefTilesGrid(m)}
   </div>`;
@@ -1355,7 +1380,7 @@ function header(d) {
   return `<div class="header-block ds-header">
     <div class="ds-header-main">
       <h1 class="page-h"><span class="mono">${escapeHtml(d.ticker)}</span> · ${escapeHtml(d.name || "")}</h1>
-      <div class="ds-meta">Assembled facts, <b>no verdict</b> · data as of <span class="mono">${fmtDate(d.reference_date)}</span> · assembled <span class="mono">${fmtStamp(d.assembled_at)}</span>${d.synthesis ? ` · synthesis <span class="mono">${escapeHtml(d.llm_model || "llm")}</span>` : " · mechanical layer only"}</div>
+      <div class="ds-meta">Assembled facts + <b>derived proposal</b> · verdict of record: the human's · data as of <span class="mono">${fmtDate(d.reference_date)}</span> · assembled <span class="mono">${fmtStamp(d.assembled_at)}</span>${d.synthesis ? ` · synthesis <span class="mono">${escapeHtml(d.llm_model || "llm")}</span>` : " · mechanical layer only"}</div>
     </div>
     <div class="ds-pdf-wrap">
       <button id="ds-pdf" class="ds-pdf-btn" type="button" aria-haspopup="true" aria-expanded="false"
@@ -1768,7 +1793,7 @@ function appendixBlock(m) {
   // reference → management-commentary pointer LAST.
   if (!fs) return sec("Appendix", "", cap) + implied + mgmt;
   return sec(`Appendix — financial summary (actuals + consensus estimates) — ${asOfHeader(fs.as_of)}`,
-    "Consensus (E) columns are marked + as-of-stamped; growth never spans a basis change (— basis); actuals fail loud on gaps. The machine assembles — no verdict.",
+    "Consensus (E) columns are marked + as-of-stamped; growth never spans a basis change (— basis); actuals fail loud on gaps. The machine assembles; the verdict of record is the human's.",
     finTable("Annual ($M; E = consensus) — last-4-FY + LTM + FY26E/FY27E", fcfRelabel(fs.annual)) +
     finTable("Trailing 8 quarters — the recent-quarter trajectory", fs.quarterly) +
     fact("Balance-sheet posture", fs.balance_sheet) +

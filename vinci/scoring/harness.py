@@ -77,6 +77,8 @@ def score_ledger(
             name_return=total_return(entry.entry_price, exit_price),
             bench_return=total_return(bench_entry, bench_exit),
             sector=entry.sector,  # carried through for the per-sector spread read
+            machine_proposal=entry.machine_proposal,  # sealed at log time (2026-07-13 pivot)
+            disposition=entry.disposition,
         )
         scores.append(score)
         # pool daily returns of resolved BUYs vs the benchmark for the beta/alpha regression

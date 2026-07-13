@@ -19,6 +19,7 @@ from typing import Any, ParamSpec
 
 from vinci.dossier.covenant_extract import GoverningTerm, _derive_conversion, governing_terms
 from vinci.dossier.schemas import Dossier, MechanicalLayer, Sourced, SourceStatus, StockInfo
+from vinci.dossier.verdict import MachineProposal, derive_proposal, split_lean
 
 # Display curation for the catalyst path — the full data always stays in dossier.json; these only
 # cap/collapse/group the HUMAN view (the margin-trend mini-table idiom: curate display, not data).
@@ -1479,11 +1480,12 @@ def _synthesis_lines(d: Dossier, *, dev: bool) -> list[str]:
 
 
 # --- (Brief) first-cut tier -------------------------------------------------------------------
-# Leads the dossier with the machine's assembled READ (evidence_balance), the decisive question, a
-# compact decision-data strip, and only the DECISION-THREATENING caveats. It assembles from existing
-# fields and renders NO verdict — the machine never concludes. The human's logged verdict is a
-# ledger/frontend concern (this static md never renders a logged verdict, so the Brief omits it too;
-# the web mirror shows it as a read-only status chip). Mirrors brief() in frontend dossier.js.
+# Leads the dossier with the machine's assembled READ (evidence_balance), its PROPOSED verdict
+# (the 2026-07-13 pivot: a deterministic, face-validity-frozen derivation of the lean — see
+# vinci/dossier/verdict.py; the LLM still emits no verdict field), the decisive question, a compact
+# decision-data strip, and only the DECISION-THREATENING caveats. The HUMAN's confirm/override is
+# the verdict of record — a ledger/frontend concern (this static md never renders a logged verdict;
+# the web mirror shows it as a read-only status chip). Mirrors briefTier() in frontend dossier.js.
 
 # Caveats worth surfacing on the Brief: the ones that threaten the DECISION (leverage basis,
 # going-concern, wall/liquidity, dilution…). Freshness/plumbing caveats (parse counts, export-date
@@ -1635,19 +1637,31 @@ def _brief_financials(m: MechanicalLayer) -> list[str]:
 def _machine_read_md(eb: str) -> str:
     """The machine's evidence read as markdown: the lean word (before the em-dash) bold + Sentence-
     cased, then its rationale verbatim. Mirrors the web teaser's machineReadHtml minus the direction
-    tint (markdown has no color). The lean is an evidence sentiment, NOT a verdict — the human's
-    Buy/Avoid stays in the Recommendation slot below. Fail-soft: an un-split read is verbatim."""
-    m = re.match(r"^\s*([A-Za-z][A-Za-z\- ]*?)\s*[—–-]\s+(.+)$", eb, re.S)
-    if not m:
+    tint (markdown has no color). Parsed by THE shared lean parser (verdict.split_lean — the same
+    one the proposal derives from). Fail-soft: an un-split read is verbatim."""
+    parts = split_lean(eb)
+    if parts is None:
         return eb
-    lean, rest = m.group(1).strip(), m.group(2)
+    lean, rest = parts
     return f"**{lean[:1].upper() + lean[1:]}** — {rest}"
+
+
+def _machine_proposal_md(p: MachineProposal) -> str:
+    """The machine's PROPOSED verdict (the 2026-07-13 pivot) — the deterministic derivation of the
+    committed lean (verdict.derive_proposal; face-validity mapping, never outcome-tuned). Renders
+    ABOVE the human slot; the human's confirm/override below is the verdict of record. No proposal
+    renders its fail-honest note — never a coin-flip. AVOID_TERMINAL displays as AVOID (display
+    only; the enum is the structured value in the ledger/JSON)."""
+    if p.action is None:
+        return f"**Machine proposal:** none — {p.note}"
+    return f"**Machine proposal:** {p.action_word} — {p.reason or p.note}"
 
 
 def _brief_lines(d: Dossier) -> list[str]:
     """(Brief) the market-standard first cut in 8 sections — teaser → setup → company → case →
     financial snapshot → valuation → catalyst → verify. Machine-assembled + source-bound; the
-    Recommendation / Target slot is the HUMAN's. Mirrors briefTier() in the frontend dossier.js."""
+    teaser LEADS with the machine's derived proposal, and the human's confirm/override in the
+    Recommendation slot is the verdict of record. Mirrors briefTier() in the frontend dossier.js."""
     m = d.mechanical
     s = d.synthesis
     out: list[str] = ["# Brief — first cut", ""]
@@ -1659,7 +1673,12 @@ def _brief_lines(d: Dossier) -> list[str]:
         out.append(_brief_oneliner(bd.value))
     if s is not None and s.evidence_balance:
         out += ["", _machine_read_md(s.evidence_balance)]
-    out += ["", "**Recommendation / Target:** _not yet logged — the human's call "
+    # THE PIVOT (2026-07-13): the Brief LEADS with a machine-proposed verdict — a deterministic,
+    # face-validity-frozen mapping over the committed lean (the LLM still emits no verdict field).
+    # The HUMAN's confirm/override in the slot below is the verdict of record.
+    out += ["", _machine_proposal_md(
+        derive_proposal(s.evidence_balance if s is not None else None))]
+    out += ["", "**Recommendation / Target (human):** _not yet logged — confirm or override "
             "(Buy / Avoid + target)_"]
     snap = _brief_snapshot(d.exchange, d.cik, m.stock_info)
     if snap:
@@ -1749,12 +1768,14 @@ def render_markdown(d: Dossier, *, dev: bool = False) -> str:
     out: list[str] = [
         f"# Dossier — {d.name} ({d.ticker})",
         "",
-        f"_Assembled facts, no verdict · data as of {d.reference_date} · assembled "
+        f"_Assembled facts + derived machine proposal · verdict of record: the human's · "
+        f"data as of {d.reference_date} · assembled "
         f"{_fmt_assembled(d.assembled_at)} · {d.llm_model or 'mechanical layer only'}_",
         "",
     ]
-    # (3-tier) BRIEF — first cut: the machine READ + decisive question + decision data + condensed
-    # case + valuation snapshot. Assembles, never concludes; the logged verdict is a ledger concern.
+    # (3-tier) BRIEF — first cut: the machine READ + derived proposal + decisive question +
+    # decision data + condensed case + valuation snapshot. The proposal is deterministic (2026-07-13
+    # pivot); the human's logged confirm/override — a ledger concern — is the verdict of record.
     out += _brief_lines(d)
     # (3-tier) ANALYSIS — the full dossier: caveats → mechanical layer → FULL synthesis.
     out += ["# Analysis — full dossier", ""]

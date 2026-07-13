@@ -373,6 +373,9 @@ table.data.vs-table { width: 100%; }
 .brief-snap-t td:last-child { text-align: right; color: var(--ink); }
 @media (max-width: 640px) { .brief-body { flex-direction: column; } .brief-snap { max-width: none; width: 100%; } }
 .brief-verdict { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin: 10px 0 4px; padding: 8px 11px; border: 1px dashed var(--line-2); border-radius: 8px; }
+/* the machine's DERIVED proposal (2026-07-13 pivot) — solid border vs the human slot's dashed:
+   the machine's row is filled, the human's is the one awaiting a hand. */
+.brief-proposal { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin: 10px 0 0; padding: 8px 11px; border: 1px solid var(--line-2); border-radius: 8px; }
 .brief-vlab { font-size: 10.5px; text-transform: uppercase; letter-spacing: 0.05em; color: var(--ink-3); font-weight: 600; }
 .brief-slot { font-size: 13px; color: var(--ink-2); font-style: italic; }
 

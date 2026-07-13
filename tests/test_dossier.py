@@ -2084,9 +2084,10 @@ def test_dossier_top_redesign_no_duplication_static() -> None:
     # the OLD duplicated bits are gone (idn dup, meta cap dup, inline stock line)
     assert '"brief-idn"' not in src and '"brief-meta"' not in src and '"brief-stock"' not in src
     assert "function stockInfoLine" not in src
-    # header slimmed: no queue rank, one terse 'no verdict' meta line
+    # header slimmed: no queue rank, one terse meta line (post-pivot: derived proposal, the
+    # verdict of record stays the human's)
     assert "Queue rank" not in src
-    assert "Assembled facts, <b>no verdict</b>" in src
+    assert "Assembled facts + <b>derived proposal</b>" in src
     # the two removed teaser bits: the card's own title (dup of the tab) and the machine-read pill.
     # ("Brief — first cut" is em-dash; the tab is "Brief <span…first cut", so no false match.)
     assert "Brief — first cut" not in src
@@ -2122,6 +2123,96 @@ def test_brief_machine_read_lean_bold_sentence_cased() -> None:
         assert "**Machine read** _(not a verdict)_" not in md, f"{jp.parent.name}: old prefix"
         assert dr._machine_read_md(s.evidence_balance) in md, f"{jp.parent.name}: not bold-lean"
     assert seen >= 2, "expected >=2 committed dossiers with an evidence_balance"
+
+
+def test_machine_proposal_derivation_deterministic() -> None:
+    """(2026-07-13 pivot, unit) derive_proposal is a FROZEN 3-row face-validity mapping over the
+    lean LABEL — deterministic, fail-honest on everything else, never a guessed direction.
+    Positive pins (the three rows + label normalization + the display word) AND negative pins
+    (mixed / empty / None / unsplit / unrecognized each yield NO proposal)."""
+    from vinci.dossier.verdict import derive_proposal
+    from vinci.schemas.ledger import Verdict as Vd
+
+    assert derive_proposal("strongly-bearish — reason").action is Vd.AVOID_TERMINAL
+    assert derive_proposal("strongly-bullish — reason").action is Vd.BUY
+    assert derive_proposal("Strongly bearish — reason").action is Vd.AVOID_TERMINAL  # normalized
+    assert derive_proposal("strongly-bearish — reason").action_word == "AVOID"  # display word
+    assert derive_proposal("strongly-bullish — reason").action_word == "BUY"
+    # NO-proposal legs — each fail-honest, each with its why in the note
+    mixed = derive_proposal("mixed — two-sided evidence")
+    assert mixed.action is None and "two-sided" in mixed.note
+    assert derive_proposal("").action is None
+    assert derive_proposal(None).action is None
+    assert derive_proposal("no separator here").action is None
+    unknown = derive_proposal("neutral — nothing decisive")
+    assert unknown.action is None and "unrecognized" in unknown.note
+    # a directional REASON must never flip a read — the label alone drives the mapping
+    assert derive_proposal("mixed — strongly-bearish tail risks dominate").action is None
+
+
+def test_machine_proposal_frozen_fixture_values() -> None:
+    """(pivot value pins — FROZEN fixtures) The committed MVST/AORT leans AS OF 2026-07-13, frozen
+    here as literals. Ticker→verdict VALUE pins live HERE, never on the living artifacts (a
+    re-assembly re-words a lean; the living-artifact e2e below pins invariants only)."""
+    from vinci.dossier.verdict import derive_proposal
+    from vinci.schemas.ledger import Verdict as Vd
+
+    mvst = ("strongly-bearish — stated going-concern doubt with a near-term maturity wall against "
+            "thin cash while adjusted EBITDA has turned negative and revenue is contracting.")
+    aort = ("mixed — growing absolute EBITDA and above-peer growth collide with a -78% "
+            "forward-EPS collapse, worse-than-peer leverage, and negative forward FCF.")
+    p = derive_proposal(mvst)
+    assert p.action is Vd.AVOID_TERMINAL and p.lean == "strongly-bearish"
+    assert p.reason is not None and p.reason.startswith("stated going-concern doubt")
+    q = derive_proposal(aort)
+    assert q.action is None and q.lean == "mixed"  # two-sided → the human decides cold
+
+
+def test_brief_machine_proposal_line_e2e_invariants() -> None:
+    """(pivot e2e, LIVING artifacts — phrasing-independent invariants ONLY) Every committed dossier
+    renders EXACTLY the proposal line its own committed lean derives — both sides run the same
+    function, so a re-worded lean can't rot this — plus the human confirm/override slot, with the
+    pre-pivot slot gone; and a non-None proposal only ever derives from a strongly-* label (the
+    mapping's own invariant). NO ticker→verdict value pin here (those are frozen above)."""
+    import pathlib
+
+    from vinci.dossier.verdict import derive_proposal
+
+    seen = 0
+    for jp in sorted(pathlib.Path("data/dossiers").glob("*/dossier.json")):
+        d = ds.Dossier.model_validate_json(jp.read_text())
+        md = dr.render_markdown(d)
+        s = d.synthesis
+        p = derive_proposal(s.evidence_balance if s is not None else None)
+        assert dr._machine_proposal_md(p) in md, f"{jp.parent.name}: proposal line missing/diverged"
+        assert ("**Recommendation / Target (human):** _not yet logged — confirm or override "
+                in md), f"{jp.parent.name}: human confirm/override slot missing"
+        assert ("**Recommendation / Target:** _not yet logged — the human's call"
+                not in md), f"{jp.parent.name}: pre-pivot slot survived"
+        if p.action is not None:
+            assert p.lean is not None and p.lean.lower().replace(" ", "-") in (
+                "strongly-bearish", "strongly-bullish"), f"{jp.parent.name}: proposal off-mapping"
+        if s is not None and s.evidence_balance:
+            seen += 1
+    assert seen >= 2, "expected >=2 committed dossiers with an evidence_balance"
+
+
+def test_web_brief_proposal_mirror_static() -> None:
+    """(pivot web parity) dossier.js mirrors verdict.py: the frozen 3-row mapping (a mixed lean
+    proposes NOTHING — never a coin-flip), the derived-proposal row on the teaser, the
+    confirm/override copy, and the pivoted header meta — with every pre-pivot copy gone.
+    Node-free source pins; the mapping is OUR frozen code, never LLM text."""
+    src = Path("frontend/views/shared/dossier.js").read_text()
+    assert "function deriveProposal" in src
+    assert '"strongly-bearish": "AVOID"' in src and '"strongly-bullish": "BUY"' in src
+    assert '"mixed": null' in src  # two-sided → NO proposal
+    assert 'class="brief-proposal"' in src and "Machine proposal" in src
+    assert "confirm or override — Buy / Avoid + target" in src
+    assert "Assembled facts + <b>derived proposal</b>" in src
+    # the pre-pivot copy is gone everywhere on the surface
+    assert "Assembled facts, <b>no verdict</b>" not in src
+    assert "the human's call — Buy / Avoid + target" not in src
+    assert "assembled facts · no verdict" not in src
 
 
 def test_vrrm_brief_stock_info_panel_present_and_cited() -> None:

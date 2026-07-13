@@ -14,7 +14,8 @@ from collections.abc import Callable, Sequence
 from datetime import UTC, date, datetime
 from pathlib import Path
 
-from vinci.config import get_config, load_local_env
+from vinci.config import Config, get_config, load_local_env
+from vinci.dossier.verdict import derive_proposal
 from vinci.edgar import EdgarClient
 from vinci.eod import PolygonEodClient, compute_price_features, ingest_prices
 from vinci.ledger import LedgerError, log_verdict
@@ -289,13 +290,45 @@ def _cmd_dossier(args: argparse.Namespace) -> int:
     return 0
 
 
+def _sealed_proposal(
+    cfg: Config, ticker: str
+) -> tuple[Verdict | None, str | None, datetime | None]:
+    """The machine proposal for ``ticker``, SEALED from the COMMITTED dossier artifact at log time
+    (the 2026-07-13 pivot) — never recomputed from live data (as-of discipline). A missing artifact
+    logs with no proposal (fail-honest — pre-Brief names decide cold); a PRESENT but unreadable one
+    fails LOUD, never silently logging no-proposal when a proposal may exist."""
+    path = cfg.data_dir / "dossiers" / ticker / "dossier.json"
+    if not path.exists():
+        print(f"no committed dossier for {ticker} — logging with no machine proposal")
+        return None, None, None
+    try:
+        doc = json.loads(path.read_text())
+        synth = doc.get("synthesis") or {}
+        prop = derive_proposal(synth.get("evidence_balance"))
+        stamp = doc.get("assembled_at")
+        assembled = datetime.fromisoformat(stamp) if stamp else None
+    except (ValueError, OSError) as exc:  # corrupt/unreadable artifact → loud, actionable
+        raise LedgerError(f"committed dossier for {ticker} is unreadable: {exc}") from exc
+    if prop.action is None:
+        print(f"machine proposal for {ticker}: none — {prop.note}")
+    return prop.action, prop.lean, assembled
+
+
 def _cmd_log_verdict(args: argparse.Namespace) -> int:
-    """Record a manual BUY/AVOID-terminal verdict for a candidate, freezing the entry price."""
+    """Record a manual BUY/AVOID-terminal verdict for a candidate, freezing the entry price and
+    sealing the machine's proposal (from the committed dossier) + the confirm/override disposition
+    beside it — the human's verdict is the verdict of record."""
     cfg = get_config()
     ref = date.fromisoformat(args.ref) if args.ref else date.today()
     resolver = EntityResolver.from_config(cfg)  # sources the name's EDGAR SIC → sector at log time
     with Store(cfg.db_path) as store:
         try:
+            cand = store.get_candidate(args.candidate_id)
+            if cand is None:
+                raise LedgerError(
+                    f"no candidate {args.candidate_id!r} in the store (run the screen first)"
+                )
+            mp, ml, stamp = _sealed_proposal(cfg, cand.data_record.identity.ticker)
             entry = log_verdict(
                 store, resolver=resolver, candidate_id=args.candidate_id,
                 verdict=Verdict(args.verdict),
@@ -303,6 +336,7 @@ def _cmd_log_verdict(args: argparse.Namespace) -> int:
                 horizon_days=args.horizon_days, confidence=Confidence(args.confidence),
                 decided_at=datetime.now(), reference_date=ref,
                 staleness_days=cfg.price_staleness_days, benchmark=args.benchmark,
+                machine_proposal=mp, machine_lean=ml, proposal_assembled_at=stamp,
             )
         except LedgerError as exc:
             print(f"could not log verdict: {exc}")
@@ -310,9 +344,15 @@ def _cmd_log_verdict(args: argparse.Namespace) -> int:
         except sqlite3.IntegrityError:
             print(f"a verdict is already logged for {args.candidate_id} (ledger is append-only)")
             return 1
+    prop_note = (
+        f"machine proposed {entry.machine_proposal.value}" if entry.machine_proposal is not None
+        else "no machine proposal"
+    )
+    disp = entry.disposition.value if entry.disposition is not None else "n/a"
     print(
         f"logged {entry.verdict.value} for {entry.ticker} [sector: {entry.sector}]: frozen entry "
-        f"{entry.entry_price:.2f} as_of {entry.entry_price_as_of}, horizon {entry.horizon_days}d"
+        f"{entry.entry_price:.2f} as_of {entry.entry_price_as_of}, horizon {entry.horizon_days}d "
+        f"· {prop_note} → disposition {disp}"
     )
     return 0
 
