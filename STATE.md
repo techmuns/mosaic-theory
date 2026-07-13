@@ -1927,7 +1927,7 @@ Each line: *what it does* — *verified how*.
   prints snapshot path + manifest line, commits the `candidate_themes.jsonl` pointer (git history = the CI
   archive; `data/scan_history/` stays git-ignored/local). Evidence: the June-17 harvest = 35 proposals → 2
   advances (entry below). Backend + workflow only — NOTHING deploys. On `feat/component-a-history`; PR to
-  be opened, NOT merged.**
+  be opened, NOT merged.
 - _Suite green (ruff + mypy --strict clean; `pytest -m "not network"` = 573 passed; +2 scan_history
   tests). Dry-run: two Component-A sweeps → 2 immutable snapshots, prior untouched, `tier_counts: {}`._
 - **HARVEST DISPOSITION (2026-07-13, analyst) — Component-A 2026-06-17 harvest (35 clusters)**
@@ -1945,7 +1945,7 @@ Each line: *what it does* — *verified how*.
   `data/priced_check/report_all.txt` present (53,516 B). The harvest worksheet + deep-research doc are the
   analyst's off-repo artifacts (not in the repo tree); the raw 35-cluster `candidate_themes.jsonl` was
   already deleted (see backup note). The channel-tag CONVENTION is adopted now; the CandidateTheme schema
-  source/date field is a follow-up (audit-flagged, unbuilt).]_**
+  source/date field is a follow-up (audit-flagged, unbuilt).]_
 - **T012 ADJUDICATED 2026-07-13 (research doc, primary-source):** driver real — occupancy + supply halves
   verified, supply locked to ~2028 (2025 starts ~5,977 units, 29-mo lead, no 2026 uptick) — but the
   pricing-power leg ABSENT (BKD same-store RevPOR +1.8–3.4% vs opex +4.8–5.9% in all 4 qtrs; SNDA crossed
