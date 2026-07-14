@@ -346,12 +346,17 @@ _SWEEP_CADENCE_DAYS = 30
 
 
 def _radar_sweep_payload(manifest: Path) -> dict[str, str]:
-    """Compute the sweep payload: last_run (latest ts in the component-a manifest, else the seeded
-    June-17 harvest), source (manifest|seeded), next_due (+30d), and the canonical command. Pure —
-    testable without the frontend dir. Refreshes on the next site build after a run."""
+    """Compute the sweep payload: last_run (latest ts of a COMPONENT-A row in the ROOT scan-history
+    manifest, else the seeded June-17 harvest), source (manifest|seeded), next_due (+30d), and the
+    canonical command. Pure — testable without the frontend dir. Refreshes on the next site build.
+
+    `record_snapshot` writes ONE multi-driver manifest at data/scan_history/manifest.jsonl (each row
+    carries a `driver_slug`), so the sweep bar must FILTER to `component-a` before taking the latest
+    ts — a later row from another driver must not masquerade as the co-movement sweep's last run."""
     if manifest.exists():
         rows = [json.loads(line) for line in manifest.read_text().splitlines() if line.strip()]
-        ts = max((str(r.get("ts", "")) for r in rows), default="")
+        ca_ts = (str(r.get("ts", "")) for r in rows if r.get("driver_slug") == "component-a")
+        ts = max(ca_ts, default="")
         last_run, source = (ts[:10] if ts else _SWEEP_SEED_DATE), ("manifest" if ts else "seeded")
     else:
         last_run, source = _SWEEP_SEED_DATE, "seeded"
@@ -360,10 +365,12 @@ def _radar_sweep_payload(manifest: Path) -> dict[str, str]:
 
 
 def emit_radar_sweep() -> None:
-    """Write frontend/radar/sweep.json for the Radar sweep bar. Display-only — nothing fires."""
+    """Write frontend/radar/sweep.json for the sweep bar (display-only — nothing fires). Reads
+    the ROOT manifest where record_snapshot writes (data/scan_history/manifest.jsonl); the prior
+    component-a/manifest.jsonl path never existed, so the bar re-seeded silently (the #125 bug)."""
     out = HERE / "radar"
     out.mkdir(parents=True, exist_ok=True)
-    manifest = ROOT / "data" / "scan_history" / "component-a" / "manifest.jsonl"
+    manifest = ROOT / "data" / "scan_history" / "manifest.jsonl"
     (out / "sweep.json").write_text(json.dumps(_radar_sweep_payload(manifest), indent=1) + "\n")
 
 

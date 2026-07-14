@@ -2113,6 +2113,28 @@ Each line: *what it does* — *verified how*.
   errors**. Two sweep-payload tests pinned (`test_radar_sweep_seeded_fallback_and_next_due`,
   `…_reads_manifest_latest_ts`). ruff + `mypy --strict vinci` + pytest (593) + `node --check` all
   frontend JS green; `frontend/themes/*.json` byte-identical to HEAD (radar adds, never churns themes).
+- **COMPONENT-A SWEEP #2 — first month-over-month harvest (2026-07-14; run from `-main` at origin/main
+  `119ecbb`; zero-LLM, no commits — snapshots git-ignored).** `python -m vinci.cli themes` (canonical
+  defaults r2 / 365d / min_breadth 3, ref = snapshot as_of 2026-07-06) on the widened 1,800 universe →
+  **46 clusters** (n_scanned 1,783). Snapshot `data/scan_history/component-a/20260714T162125Z__119ecbb.jsonl`;
+  manifest ts `2026-07-14T16:21:25.550789Z`, n_records 46. June backup BYTE-UNTOUCHED (sha `c99b29af…`
+  identical before/after). **Month-over-month (June 35 → now 46, matched by ≥50% member overlap): 35
+  PERSISTED · 11 NEW · 1 GONE** (June auto-parts ADNT/ALV/LEA; a June 14-name regional-bank cluster SPLIT
+  in two). Only 4 of the +47 recovered names cluster (APGE, APPN, CMRE, SB). **CAVEAT: part of this diff
+  is coverage (+40 net universe names), not market.** Facts-only run; no dispositions, no STATE-of-record.
+- **RADAR SWEEP-BAR EMITTER PATH BUG (#125) — FIXED (2026-07-14, chore/sweep-refresh-jul14; PR open, not
+  merged; DEPLOYS on merge).** `emit_radar_sweep` read `data/scan_history/component-a/manifest.jsonl` — a
+  path `record_snapshot` NEVER writes (it writes ONE multi-driver manifest at
+  `data/scan_history/manifest.jsonl`) → `manifest.exists()` was always False → the sweep bar silently
+  re-seeded `2026-06-17` regardless of any real run. **Fix:** read the ROOT manifest + filter
+  `driver_slug == "component-a"` before the latest ts (a later row from another driver must not
+  masquerade as the co-movement sweep). Regenerated `frontend/radar/sweep.json` from `-main`'s real
+  manifest → `last_run 2026-07-14 / source manifest / next_due 2026-08-13`. **Surfaced by the radar
+  inbox+log build's pre-flight gate.** Incident→invariant (shipped Y): `test_emit_radar_sweep_end_to_end`
+  drives `record_snapshot` into a real multi-driver layout then asserts `emit_radar_sweep` reports the
+  component-a ts (not a later decoy) — the prior unit test passed a manifest path directly, so it never
+  exercised the hardcoded wrong path (test-layer lesson: pin the emitter, not just the pure payload).
+  ruff + `mypy --strict vinci` + pytest + `node --check` green; every other frontend file byte-identical.
 
 ## 3. FALSIFIED — tested and retired (NOT deferred)
 
@@ -3132,8 +3154,23 @@ two-name analysis (mid/small-caps, opposite directions) mapped against this inve
   `us-gaap:CommonStockSharesOutstanding`, matching the dei path); SDGR STOPPED tagging that concept after
   FY2023 (last frame value 2023-12-31), so it is absent from the recent us-gaap frames too — the fallback
   recovers 213 OTHER `no_shares` names but NOT SDGR, which remains an unfixed deeper gap (its recent share
-  count lives off the calendar-quarter frame). (NOTV is a DIFFERENT, earlier gap: absent
-  from `company_tickers_exchange.json` entirely → filtered at `resolver.py:112`.)
+  count lives off the calendar-quarter frame). **RE-CONFIRMED 2026-07-14 (sweep #2):** SDGR (CIK 1490978)
+  has no shares in any queried calendar-quarter frame `CY2025Q1I…CY2026Q1I` → `no_shares`
+  (`vinci/universe.py:114`); the original claim was CORRECT (an interim "never resolved into the entity
+  master" phrasing during the run was imprecise — SDGR IS resolvable on Nasdaq and reaches the gates; it
+  dies pre-`upsert` at `no_shares`). **NOTV — CORRECTED 2026-07-14:** the "absent from
+  `company_tickers_exchange.json` entirely" claim was WRONG. SEC lists `[720154,"Inotiv, Inc.","NOTVQ","OTC"]`
+  (ticker NOTVQ, venue OTC), so NOTV is PRESENT in the source but filtered at the exchange boundary
+  `resolver.py:112` (OTC ∉ {Nasdaq, NYSE, NYSE American}); it even carries 34.9M XBRL shares, so it would
+  clear `no_shares` on an allowed venue.
+- **OPERATOR DECISION PENDING — two fail-closed coverage holes surfaced by sweep #2 (report-only; no fix
+  without a decision).** (1) **`no_shares` calendar-quarter frame mismatch:** names whose cover-page
+  shares date doesn't land on a calendar quarter-end instant are dropped at `no_shares` even when large
+  and liquid — the 2026-07-14 roll-call hit PATH, SMR, HOOD, IBKR, CME (same class as SDGR). The current
+  EDGAR frame reader can't see them; a companyconcept-per-CIK fallback would, at a per-name EDGAR cost.
+  (2) **BDC blank-SIC exclusion:** HTGC/TSLX/GBDC/MAIN drop at `unknown_sic` (EDGAR submissions return a
+  blank SIC → fail-closed) — the intended operating-co gate, but it also sweeps real BDCs. Both are
+  DELIBERATE fail-closed behavior; widening either is an operator call, not a silent fix.
 
 **OPERATOR TO-DO — backfill the IWM benchmark before any full `vinci dossier` re-assemble (from
 feat/brief-decision-metrics, 2026-07-13).** Grouped-daily ingestion only stores the finalist universe,

@@ -9,6 +9,7 @@ load-bearing (the viewer must not oversell the theme edge), so a silent divergen
 from __future__ import annotations
 
 import importlib.util
+import json
 from pathlib import Path
 from typing import Any
 
@@ -121,12 +122,52 @@ def test_radar_sweep_seeded_fallback_and_next_due() -> None:
 
 
 def test_radar_sweep_reads_manifest_latest_ts(tmp_path: Path) -> None:
-    """A component-a manifest → last_run = the LATEST ts, source 'manifest', next_due +30d."""
+    """A multi-driver ROOT manifest → last_run = the latest COMPONENT-A ts; a LATER row from another
+    driver is IGNORED (the sweep bar reports the co-movement sweep, not any driver's run)."""
     m = tmp_path / "manifest.jsonl"
-    m.write_text('{"ts": "2026-06-17T12:00:00Z"}\n{"ts": "2026-07-01T09:30:00Z"}\n')
+    m.write_text(
+        '{"ts": "2026-06-17T12:00:00Z", "driver_slug": "component-a"}\n'
+        '{"ts": "2026-07-01T09:30:00Z", "driver_slug": "component-a"}\n'
+        '{"ts": "2026-07-20T00:00:00Z", "driver_slug": "other-driver"}\n'  # later → MUST be ignored
+    )
     p = _BUILD._radar_sweep_payload(m)
-    assert p["last_run"] == "2026-07-01" and p["source"] == "manifest"
+    assert p["last_run"] == "2026-07-01" and p["source"] == "manifest"  # NOT 2026-07-20
     assert p["next_due"] == "2026-07-31"  # 2026-07-01 + 30 days
+
+
+def test_radar_sweep_seeds_when_manifest_has_no_component_a_row(tmp_path: Path) -> None:
+    """A manifest that EXISTS but has only other drivers → seeded (never another driver's ts)."""
+    m = tmp_path / "manifest.jsonl"
+    m.write_text('{"ts": "2026-07-20T00:00:00Z", "driver_slug": "other-driver"}\n')
+    p = _BUILD._radar_sweep_payload(m)
+    assert p["last_run"] == _BUILD._SWEEP_SEED_DATE == "2026-06-17"
+    assert p["source"] == "seeded"
+
+
+def test_emit_radar_sweep_end_to_end(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    """END-TO-END seam (the #125 path bug at the layer it failed): record_snapshot writes a REAL
+    multi-driver manifest at data/scan_history/manifest.jsonl; emit_radar_sweep must read THAT path
+    (not the never-written component-a/manifest.jsonl) and filter to component-a — so a later
+    other-driver run does not masquerade as the sweep's last run."""
+    from datetime import UTC, datetime
+
+    from vinci.themes.scan_history import record_snapshot
+
+    hist = tmp_path / "data" / "scan_history"
+    record_snapshot([{"cluster_id": "T000"}], driver_slug="component-a", driver_desc="co-movement",
+                    history_root=hist, now=datetime(2026, 7, 14, 16, 21, 25, tzinfo=UTC),
+                    git_sha="119ecbb", n_scanned=1783, tier_field=None)
+    record_snapshot([{"x": 1}], driver_slug="other-driver", driver_desc="decoy (later run)",
+                    history_root=hist, now=datetime(2026, 7, 20, 0, 0, 0, tzinfo=UTC),
+                    git_sha="deadbee", n_scanned=1, tier_field=None)
+    monkeypatch.setattr(_BUILD, "ROOT", tmp_path)
+    monkeypatch.setattr(_BUILD, "HERE", tmp_path / "frontend")
+    _BUILD.emit_radar_sweep()
+    payload = json.loads((tmp_path / "frontend" / "radar" / "sweep.json").read_text())
+    assert payload["last_run"] == "2026-07-14"  # component-a ts, NOT other-driver's 2026-07-20
+    assert payload["source"] == "manifest"
+    assert payload["next_due"] == "2026-08-13"  # 2026-07-14 + 30 days
+    assert payload["command"] == "python -m vinci.cli themes"
 
 
 if __name__ == "__main__":
