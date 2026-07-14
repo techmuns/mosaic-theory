@@ -57,6 +57,8 @@ const EDGES = [
       { route: "themes", label: "Overview" },
       { route: "themes/watchlist", label: "Watchlist",
         does: "The names to re-underwrite when a trigger fires — a flat cross-theme monitoring surface. Each row is led by its verbatim trigger." },
+      { route: "radar", label: "Radar",
+        does: "Every theme idea on one map — how real the evidence is vs how much price has already moved. Read-only; the analyst's dispositions and wake-up rules render verbatim." },
     ],
   },
   {
@@ -98,6 +100,7 @@ const VIEWS = {
   ranker: () => import("./views/edge2/ranker.js"),
   graph: () => import("./views/edge2/graph.js"),
   themes: () => import("./views/themes/index.js"),
+  radar: () => import("./views/radar/index.js"),
 };
 
 // Every routable item: shared + each live edge's stages + each locked edge's own

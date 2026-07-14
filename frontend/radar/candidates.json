@@ -1,0 +1,97 @@
+{
+ "_note": "Analyst-owned candidate registry for the Radar screen. Hand-curated dispositions; rules render VERBATIM. Map x = evidence-the-idea-is-real (0..1), y = price-already-moved (0..1). Committed; NOT emitted.",
+ "candidates": [
+  {
+   "slug": "truckload-supply-purge",
+   "label": "Truckload supply purge",
+   "status": "live",
+   "source": "machine scan · Jun 17",
+   "px12m": "+14.8% vs small-caps (carriers, as of Jul 10)",
+   "map": { "x": 0.78, "y": 0.55, "basis": "measured" },
+   "tip": "Frozen Jul 14 · 37 names · 1 firm, 10 partial, 26 early · 3 on the buy-watch list",
+   "theme_route": "themes/truckload-supply-purge",
+   "detail": {
+    "summary": "Locked Jul 14 · 37 names · no buys yet — first buy can only come from the Werner deep study.",
+    "watch": [
+     { "ticker": "WERN", "rule": "DOSSIER-NOW: single-name underwrite in progress at the 2:1 bar on NORMALIZED earnings (trailing P/E sits at the 99th percentile of its own history — a trough-earnings artifact, not the bar)." },
+     { "ticker": "MRTN", "rule": "Re-underwrite when TL revenue per loaded mile turns positive YoY for two consecutive reported quarters, OR on a >=20% derate from the 2026-07-13 close while ACT capacity data stays tight." },
+     { "ticker": "HTLD", "rule": "Re-underwrite when TL revenue per loaded mile turns positive YoY for two consecutive reported quarters, OR on a >=20% derate from the 2026-07-13 close while ACT capacity data stays tight." }
+    ],
+    "comparison": [
+     { "ticker": "RXO", "note": "broker — losing side" },
+     { "ticker": "LSTR", "note": "broker-model — comparison (analyst call)" },
+     { "ticker": "ARCB", "note": "66% LTL — different cycle, neutral reference" }
+    ]
+   }
+  },
+  {
+   "slug": "senior-housing",
+   "label": "Senior housing",
+   "status": "watch",
+   "source": "machine scan · Jun 17",
+   "px12m": "−20.5% (as of Jul 10)",
+   "map": { "x": 0.62, "y": 0.18, "basis": "measured" },
+   "tip": "",
+   "detail": {
+    "lead": "AHR",
+    "rules": [
+     "BKD or SNDA same-store RevPOR growth >= same-store opex growth for two consecutive quarters, OR NIC occupancy >= 90.0%"
+    ]
+   }
+  },
+  {
+   "slug": "in-silico-evidence",
+   "label": "In-silico evidence",
+   "status": "parked",
+   "source": "analyst idea · Jul 13",
+   "px12m": "−55.7% (as of Jul 10)",
+   "map": { "x": 0.48, "y": 0.06, "basis": "measured" },
+   "tip": "",
+   "detail": {
+    "note": "if any fires: deep study on CERT alone — not a scan",
+    "rules": [
+     "FDA FINALIZES any NAMs guidance or Modernization Act 3.0 ENACTED",
+     "first documented FDA acceptance of in-silico/NAMs data in lieu of animal TOXICOLOGY in an approval",
+     "CERT software growth >=15% YoY for two consecutive quarters OR bookings growth turns positive",
+     "CRL discloses client-behavior change or NAMs-attributed DSA backlog erosion"
+    ]
+   }
+  },
+  {
+   "slug": "trade-flow-shipping",
+   "label": "Trade-flow shipping",
+   "status": "priced",
+   "source": "machine scan · Jun 17",
+   "px12m": "+31.7%",
+   "map": { "x": 0.80, "y": 0.86, "basis": "measured" },
+   "tip": "revisit only if product tankers (STNG, TRMD, HAFN) fall hard",
+   "detail": {
+    "note": "only if product tankers (STNG, TRMD, HAFN) fall hard"
+   }
+  },
+  {
+   "slug": "defense-demand-shift",
+   "label": "Defense demand-shift",
+   "status": "past",
+   "source": "calibration",
+   "px12m": "",
+   "map": { "x": 0.90, "y": 0.90, "basis": "story-placed" },
+   "tip": "scanned after a 2.5–9x re-rate; 108 names, 0 buys — the lesson this screen prevents",
+   "detail": {
+    "note": "scanned after a 2.5–9x re-rate; 108 names, 0 buys — the lesson this screen prevents"
+   }
+  },
+  {
+   "slug": "ai-datacenter",
+   "label": "AI-datacenter",
+   "status": "past",
+   "source": "calibration",
+   "px12m": "",
+   "map": { "x": 0.86, "y": 0.78, "basis": "story-placed" },
+   "tip": "450 surfaced, 0 buys — market moved first",
+   "detail": {
+    "note": "450 surfaced, 0 buys — market moved first"
+   }
+  }
+ ]
+}

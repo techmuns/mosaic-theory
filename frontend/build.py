@@ -27,7 +27,7 @@ import re
 import shutil
 import subprocess
 from collections import Counter
-from datetime import UTC, datetime
+from datetime import UTC, date, datetime, timedelta
 from pathlib import Path
 from typing import Any
 
@@ -334,6 +334,39 @@ def build_themes(themes_srcs: list[Path]) -> list[str]:
     return [s["slug"] for s in summaries]
 
 
+# --------------------------------------------------------------------------------------------------
+# Radar sweep bar — last-run / next-due (+30d) for the Component-A co-movement sweep. The CANONICAL
+# invocation is recorded ONCE here (and in STATE §5 "CANONICAL invocation — recorded HERE, the ONE
+# place; the future Radar screen MUST source it from here, no second hardcoding"); the frontend
+# RENDERS this string, never hardcodes it. Display-only reminder — nothing fires automatically.
+# --------------------------------------------------------------------------------------------------
+_SWEEP_COMMAND = "python -m vinci.cli themes"
+_SWEEP_SEED_DATE = "2026-06-17"  # the June-17 harvest — seeded last_run until a manifest exists
+_SWEEP_CADENCE_DAYS = 30
+
+
+def _radar_sweep_payload(manifest: Path) -> dict[str, str]:
+    """Compute the sweep payload: last_run (latest ts in the component-a manifest, else the seeded
+    June-17 harvest), source (manifest|seeded), next_due (+30d), and the canonical command. Pure —
+    testable without the frontend dir. Refreshes on the next site build after a run."""
+    if manifest.exists():
+        rows = [json.loads(line) for line in manifest.read_text().splitlines() if line.strip()]
+        ts = max((str(r.get("ts", "")) for r in rows), default="")
+        last_run, source = (ts[:10] if ts else _SWEEP_SEED_DATE), ("manifest" if ts else "seeded")
+    else:
+        last_run, source = _SWEEP_SEED_DATE, "seeded"
+    next_due = (date.fromisoformat(last_run) + timedelta(days=_SWEEP_CADENCE_DAYS)).isoformat()
+    return {"last_run": last_run, "source": source, "next_due": next_due, "command": _SWEEP_COMMAND}
+
+
+def emit_radar_sweep() -> None:
+    """Write frontend/radar/sweep.json for the Radar sweep bar. Display-only — nothing fires."""
+    out = HERE / "radar"
+    out.mkdir(parents=True, exist_ok=True)
+    manifest = ROOT / "data" / "scan_history" / "component-a" / "manifest.jsonl"
+    (out / "sweep.json").write_text(json.dumps(_radar_sweep_payload(manifest), indent=1))
+
+
 def main(argv: list[str] | None = None) -> None:
     ap = argparse.ArgumentParser(
         description="Assemble the static snapshot mirror the dashboard serves."
@@ -461,6 +494,9 @@ def main(argv: list[str] | None = None) -> None:
     # THEME-EDGE display JSON — non-destructive when the (git-ignored) freeze source is absent.
     theme_srcs = [Path(p) for p in (args.themes_src or [FORWARD])]
     theme_slugs = build_themes(theme_srcs)
+
+    # Radar sweep bar — regenerated every build (manifest git-ignored → seeded; a run refreshes).
+    emit_radar_sweep()
 
     print(
         f"mirror: {len(queue)} queue rows, {len(uni)} universe rows, "
