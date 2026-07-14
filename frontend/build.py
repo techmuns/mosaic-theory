@@ -364,7 +364,7 @@ def emit_radar_sweep() -> None:
     out = HERE / "radar"
     out.mkdir(parents=True, exist_ok=True)
     manifest = ROOT / "data" / "scan_history" / "component-a" / "manifest.jsonl"
-    (out / "sweep.json").write_text(json.dumps(_radar_sweep_payload(manifest), indent=1))
+    (out / "sweep.json").write_text(json.dumps(_radar_sweep_payload(manifest), indent=1) + "\n")
 
 
 def main(argv: list[str] | None = None) -> None:

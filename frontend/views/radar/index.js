@@ -15,7 +15,7 @@ const VB_W = 640, VB_H = 300, PX0 = 48, PX1 = 628, PY0 = 14, PY1 = 258;
 const clamp01 = (v) => Math.max(0, Math.min(1, Number(v) || 0));
 const px = (x) => PX0 + clamp01(x) * (PX1 - PX0);
 const py = (y) => PY1 - clamp01(y) * (PY1 - PY0);
-const shortLabel = (label) => String(label).length > 15 ? String(label).split(/[\s-]/)[0] : String(label);
+const shortLabel = (label) => String(label).length > 15 ? String(label).split(/\s+/)[0] : String(label);
 const todayIso = () => new Date().toISOString().slice(0, 10);
 
 // --- sweep bar ---------------------------------------------------------------------------------
@@ -152,14 +152,15 @@ export async function render(root, _params, { item, frame }) {
   }
   const state = { filter: "all", selected: (cands.find((c) => c.status === "live") || cands[0]).slug, page: 0 };
 
-  root.innerHTML = frame(item, { bodyHtml: `
+  root.innerHTML = frame(item, { bodyHtml: `<div class="radar-body">
     ${sweepBar(sweep)}
     <div class="radar-filters chips"></div>
     <div class="radar-map"></div>
     <div class="radar-detail rd-panel"></div>
     <div class="radar-list"></div>
     <div class="radar-foot foot">Read-only mirror of the analyst's dispositions — no run buttons; nothing
-      fires here. Past markers are story-placed, not measured.</div>` });
+      fires here. Past markers are story-placed, not measured.</div>
+    </div>` });
 
   const q = (s) => root.querySelector(s);
   const paint = () => {
@@ -175,7 +176,9 @@ export async function render(root, _params, { item, frame }) {
     q(".radar-list").innerHTML = listTable(shown, state);
   };
 
-  root.addEventListener("click", (e) => {
+  // Delegate on the re-rendered .radar-body child, NOT the persistent #main: attaching to #main would
+  // stack a new click listener on every #/radar visit. Every other view delegates on a fresh child.
+  root.querySelector(".radar-body").addEventListener("click", (e) => {
     const f = e.target.closest("[data-filter]");
     if (f) { state.filter = f.dataset.filter; state.page = 0; return paint(); }
     const dot = e.target.closest("[data-dot]");
