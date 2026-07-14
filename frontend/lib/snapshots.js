@@ -27,6 +27,7 @@ import { fmtMoney } from "./format.js";
 const SNAPSHOTS = "./snapshots"; // copied from data/snapshots/ at deploy (build.py)
 const DOSSIERS = "./dossiers"; // derived dossier.json only (committed to the PRIVATE repo when authed)
 const THEMES = "./themes"; // derived theme-edge display JSON (committed, like dossiers; build.py)
+const RADAR = "./radar"; // analyst-owned candidate registry (committed) + emitted sweep bar (build.py)
 
 async function _fetch(path) {
   const res = await fetch(path, { cache: "no-store" });
@@ -266,6 +267,30 @@ export async function getThemesIndex() {
     };
   } catch (e) {
     if (e.status === 404) return { drivers: [], crossDriver: null, pooledForward: null };
+    throw e;
+  }
+}
+
+// getRadarCandidates() -> { candidates: [{ slug, label, status, source, px12m, map:{x,y,basis}, tip,
+//   theme_route?, detail:{summary?, watch?, comparison?, rules?, lead?, note?} }] }. Empty on 404 (no
+// committed registry). Analyst-owned — rules render VERBATIM; the view never fabricates a disposition.
+export async function getRadarCandidates() {
+  try {
+    const d = await _json(`${RADAR}/candidates.json`);
+    return { candidates: Array.isArray(d?.candidates) ? d.candidates : [] };
+  } catch (e) {
+    if (e.status === 404) return { candidates: [] };
+    throw e;
+  }
+}
+
+// getRadarSweep() -> { last_run, source, next_due, command } | null (404 = no committed sweep). Emitted
+// by build.py from the component-a scan_history manifest; DISPLAY-only reminder, nothing fires.
+export async function getRadarSweep() {
+  try {
+    return await _json(`${RADAR}/sweep.json`);
+  } catch (e) {
+    if (e.status === 404) return null;
     throw e;
   }
 }

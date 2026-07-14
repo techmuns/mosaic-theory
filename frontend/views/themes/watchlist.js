@@ -15,11 +15,12 @@ export async function render(root, { item, frame }) {
   }
   const drivers = await Promise.all(idx.drivers.map((d) => getThemeDriver(d.slug)));
 
-  const intro = `<div class="banner-research">
-    <b>The manual-monitoring surface.</b> A flat cross-theme checklist — the names to re-underwrite the
-    instant a trigger fires. <b>Read-only</b>: nothing here fires automatically (the backend delta-scan
-    that watches filings is a later build). Each row is led by its verbatim trigger; the rationale is
-    behind “why it's on the list”.</div>`;
+  // Repetition-reduced top: the stage subtitle already orients (names to re-underwrite on a trigger,
+  // flat cross-theme surface, trigger-led rows). The read-only caveat + rationale-pointer — the only
+  // facts the banner added — move to a footer, mirroring the Radar tab's subtitle-up / disclaimer-down.
+  const wlFoot = `<div class="wl-foot foot muted" style="margin-top:16px; font-size:12px;">
+    <b>Read-only</b> — nothing here fires automatically (the backend delta-scan that watches filings is a
+    later build). Each row's rationale is behind “why it's on the list”.</div>`;
 
   const wlRow = (n) => `
     <div class="wl-row">
@@ -67,5 +68,5 @@ export async function render(root, { item, frame }) {
       </details>`;
   }).join("");
 
-  root.innerHTML = frame(item, { bodyHtml: intro + sections });
+  root.innerHTML = frame(item, { bodyHtml: sections + wlFoot });
 }

@@ -505,3 +505,62 @@ table.data.vs-table { width: 100%; }
   /* citation links print as plain ink — the ↳ ref text is what matters, not the colour */
   a { color: var(--ink); text-decoration: none; }
 }
+
+/* ── Radar (Themes → Radar): quadrant map + sweep bar + detail panel ──────────────────────── */
+.radar-svg { display: block; background: var(--surface); border: 1px solid var(--line); border-radius: var(--r); margin: 4px 0 14px; }
+.rq-frame { fill: none; stroke: var(--line-2); }
+.rq-target { fill: rgba(31, 157, 87, 0.07); }
+.rq-mid { stroke: var(--line-2); stroke-dasharray: 3 3; }
+.rq-cap { font: 10.5px var(--sans); fill: var(--ink-3); letter-spacing: 0.01em; }
+.rq-cap.tgt { fill: #16713e; font-weight: 600; }
+.rq-axis { font: 10px var(--sans); fill: var(--ink-2); font-weight: 600; letter-spacing: 0.02em; }
+.rq-dot { cursor: pointer; }
+.rq-c { stroke: var(--surface); stroke-width: 1; }
+.rq-dot.live .rq-c { fill: #0d9488; }
+.rq-dot.watch .rq-c { fill: #c07f16; }
+.rq-dot.parked .rq-c, .rq-dot.priced .rq-c { fill: var(--ink-3); }
+.rq-dot.past .rq-c { fill: none; stroke: var(--ink-3); stroke-width: 1.5; }
+.rq-ring { fill: none; stroke: var(--accent); stroke-width: 1.5; }
+.rq-lbl { font: 10px var(--sans); fill: var(--ink-2); }
+.rq-dot.sel .rq-lbl { fill: var(--ink); font-weight: 650; }
+
+.sweep-bar { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; padding: 9px 12px; background: var(--surface-2); border: 1px solid var(--line); border-radius: var(--r); margin-bottom: 12px; font-size: 13px; }
+.sweep-dot { width: 9px; height: 9px; border-radius: 50%; flex: none; }
+.sweep-dot.green { background: var(--live); box-shadow: 0 0 0 2px rgba(31,157,87,0.18); }
+.sweep-dot.amber { background: #c07f16; box-shadow: 0 0 0 2px rgba(192,127,22,0.18); }
+.sweep-over { color: #a5610f; font-weight: 650; }
+.sweep-run { font-size: 12px; padding: 2px 9px; border: 1px solid var(--line-2); border-radius: 999px; background: var(--surface); color: var(--accent); cursor: pointer; }
+.sweep-run:hover { border-color: var(--accent); }
+.sweep-cmd { font: 12px var(--mono); padding: 2px 8px; border: 1px solid var(--line-2); border-radius: 6px; background: var(--nav-bg); color: #d7deea; opacity: 0; transition: opacity 0.12s, border-color 0.2s; }
+.sweep-run:hover ~ .sweep-cmd, .sweep-cmd.show { opacity: 1; }
+.sweep-cmd.flash { border-color: var(--live); }
+
+.radar-chip { cursor: pointer; }
+.radar-chip.on { background: var(--nav-active); border-color: var(--nav-active); color: #fff; }
+.rc-n { opacity: 0.7; font-weight: 600; }
+
+.rd-panel { border: 1px solid var(--line); border-radius: var(--r); padding: 12px 14px; margin-bottom: 14px; background: var(--surface); }
+.rd-empty { padding: 6px 0; }
+.rd-head { display: flex; align-items: baseline; gap: 8px; flex-wrap: wrap; margin-bottom: 6px; }
+.rd-name { font-size: 15px; font-weight: 650; }
+.rd-summary { margin: 4px 0 8px; }
+.rd-lead { margin-bottom: 6px; }
+.rd-sec { margin-top: 9px; }
+.rd-sec-h { font-size: 11.5px; text-transform: uppercase; letter-spacing: 0.04em; color: var(--ink-3); margin-bottom: 5px; }
+.rd-rule, .rd-cmp { display: flex; gap: 8px; padding: 3px 0; align-items: baseline; }
+.rd-tk { font: 12px var(--mono); font-weight: 600; color: var(--ink); flex: none; min-width: 46px; }
+.rd-rt { font-size: 13px; }
+.rd-rules { margin: 0; padding-left: 18px; }
+.rd-rules li { padding: 2px 0; }
+.rd-note { margin-top: 8px; font-style: italic; }
+.rd-link { margin-top: 10px; }
+
+.pill.rd-live { background: #d9f2ea; color: #0d6e63; }
+.pill.rd-watch { background: var(--conditional-bg); color: #8a6418; }
+.pill.rd-parked, .pill.rd-priced, .pill.rd-past { background: var(--surface-2); color: var(--ink-2); }
+
+.radar-tbl tr[data-row] { cursor: pointer; }
+.radar-tbl tr.sel { background: #eef4ff; }
+.rd-pager { margin-top: 8px; display: flex; gap: 8px; align-items: center; }
+.rd-pager button { font-size: 12px; padding: 2px 8px; border: 1px solid var(--line-2); border-radius: 6px; background: var(--surface); cursor: pointer; }
+.rd-pager button[disabled] { opacity: 0.4; cursor: default; }

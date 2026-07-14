@@ -110,5 +110,24 @@ def test_edgar_url_shape() -> None:
     assert _BUILD._edgar_url("0001493152", "no accession here") is None  # no accession → no link
 
 
+def test_radar_sweep_seeded_fallback_and_next_due() -> None:
+    """No component-a manifest → seeded June-17 harvest; next_due = last_run + 30d; the command is
+    single-sourced from build.py (the Radar screen renders it, never hardcodes it)."""
+    p = _BUILD._radar_sweep_payload(Path("/no/such/manifest.jsonl"))
+    assert p["last_run"] == _BUILD._SWEEP_SEED_DATE == "2026-06-17"
+    assert p["source"] == "seeded"
+    assert p["next_due"] == "2026-07-17"  # 2026-06-17 + 30 days
+    assert p["command"] == "python -m vinci.cli themes"
+
+
+def test_radar_sweep_reads_manifest_latest_ts(tmp_path: Path) -> None:
+    """A component-a manifest → last_run = the LATEST ts, source 'manifest', next_due +30d."""
+    m = tmp_path / "manifest.jsonl"
+    m.write_text('{"ts": "2026-06-17T12:00:00Z"}\n{"ts": "2026-07-01T09:30:00Z"}\n')
+    p = _BUILD._radar_sweep_payload(m)
+    assert p["last_run"] == "2026-07-01" and p["source"] == "manifest"
+    assert p["next_due"] == "2026-07-31"  # 2026-07-01 + 30 days
+
+
 if __name__ == "__main__":
     raise SystemExit(pytest.main([__file__, "-q"]))
