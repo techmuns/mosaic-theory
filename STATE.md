@@ -3243,8 +3243,21 @@ Assemble-and-cite only; POSES, never forecasts; `Synthesis` six-field no-conclus
   (sign/exclude/event/off-thesis/verb) + directional grouping e2e. **PREVIEW CACHING FIX:** the
   stock `http.server` sends no cache headers → the browser hard-cached old ES modules; a
   no-cache dev server (`scratchpad/nocache_server.py`, port 8899) serves fresh — use that URL.
-- **NEXT (operator):** (1) test locally (full cohort Tier-A + live Tier-B injected into the
-  frontend preview, served no-cache on :8899), then I open the PR; (2) standing artifact pass
+- **STANDALONE BLOCK REMOVED — the drivers FEED SYNTHESIS, they are not a rendered surface
+  (operator decision, 2026-07-13, after 4 render iterations).** The honest diagnosis: a
+  mechanically-extracted fact list can never render the *directional call* the reader wants — that
+  call IS the verdict, which the constitution reserves for the human — so the block was raw
+  material in every format (flat list → curated → directional strip) and read as clutter. The one
+  place the drivers demonstrably earned their keep is **feeding synthesis** (the bull/bear grounds
+  in them and cites the −48%-volume mechanism — proven). So the standalone Mechanism block is
+  REMOVED from the Brief AND the Analysis tier (md + web + CSS; ~370 lines of driver-render code
+  deleted). KEPT: the extraction (A1/A2/A3 + Tier-B), the schema field (machine-complete in
+  `dossier.json` for audit), the assembly wiring, and **B** (`_operating_drivers_digest` + the
+  MECHANISM system rule + the fence). A regression guard pins that no `## Mechanism` /
+  `## Operating drivers (mechanism)` block renders while `operating_drivers` still rides in the
+  mech. Suite green. LESSON: the machine assembles+cites+feeds-reasoning; it does not render a
+  standalone "read" — that pretends to a conclusion it isn't allowed to make.
+- **NEXT (operator):** (1) test locally, then I open the PR; (2) standing artifact pass
   re-assembles the cohort via
   `vinci dossier` so the COMMITTED dossiers carry real driver rows (both tiers) — the injected
   preview jsons are restored to None after review.

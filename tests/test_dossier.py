@@ -2183,151 +2183,30 @@ def _drv(kind: str, **kw: object) -> ds.OperatingDriver:
     return ds.OperatingDriver(kind=ds.DriverKind(kind), **{**base, **kw})  # type: ignore[arg-type]
 
 
-def test_mechanism_render_present_grouped_cited_and_honest_empty() -> None:
-    """(PR-B render e2e — invariants) The Mechanism block: present iff rows, grouped by kind with
-    events most-recent-first, every line endnote-cited; no rows → one honest line, never a
-    fabricated driver. Phrasing-independent (no value pin on a living-artifact string)."""
-    rows = [
-        _drv("attribution", metric="revenue", value="$5m, or 10%", value_num=-10.0, unit="%",
-             verbatim="Revenue decreased $5m, or 10%, due to lower volume.", source_ref="10-Q A"),
-        _drv("event", metric="Corporate Guidance - Raised", period="May-07-2026",
-             value="Raised FY26", source_ref="CIQ Key Developments: kd.rtf · May-07-2026"),
-        _drv("event", metric="Product-Related Announcement", period="Jun-29-2026",
-             value="Launch", source_ref="CIQ Key Developments: kd.rtf · Jun-29-2026"),
-    ]
-    m = _minimal_mech().model_copy(update={
-        "operating_drivers": ds.OperatingDriversExtract(rows=rows, qa_flags=[])})
-    body = "\n".join(dr._brief_mechanism_lines(m))
-    assert "## Mechanism" in body
-    # grouped by DIRECTION (not kind): revenue -10% deteriorating; the two events improving
-    assert "_Deteriorating:_" in body and "_Improving:_" in body
-    assert body.index("_Deteriorating:_") < body.index("_Improving:_")  # bad news first
-    # events most-recent-first WITHIN Improving: Jun-29 before May-07
-    assert body.index("Jun-29-2026") < body.index("May-07-2026")
-    assert ">Source:" not in body  # no inline exhibit caption (the endnotes rule)
-    # ⊖ honest empty — no rows → one honest line, no fabricated bullet
-    empty = "\n".join(dr._brief_mechanism_lines(_minimal_mech().model_copy(update={
-        "operating_drivers": ds.OperatingDriversExtract(rows=[], qa_flags=["x"])})))
-    assert "No operating drivers extracted" in empty and "\n- " not in empty
-    # ⊖ back-compat: operating_drivers=None (a pre-PR-B dossier) → still the honest line, no crash
-    assert "No operating drivers extracted" in "\n".join(
-        dr._brief_mechanism_lines(_minimal_mech()))  # operating_drivers defaults None
-
-
-def test_driver_direction_reads_sign_not_verdict() -> None:
-    """(PR-B directional) _driver_direction reads the SIGN of a stated change only, not a verdict.
-    Top-line attribution → sign; cost/expense EXCLUDED (a cost decline in a collapse is not 'good');
-    events map by type (showcase/exhibition dropped); a signed off-thesis fact (patents) dropped;
-    verb-based direction for the rest; a bare level with no verb has no direction."""
-    d = dr._driver_direction
-    assert d(_drv("attribution", metric="revenue", value="x", value_num=-48.0)) == -1
-    assert d(_drv("attribution", metric="adjusted ebitda", value="x", value_num=12.0)) == 1
-    assert d(_drv("attribution", metric="cost of revenue", value="x", value_num=-43.6)) is None
-    assert d(_drv("event", metric="Corporate Guidance - Raised", value="Raises FY26")) == 1
-    assert d(_drv("event", metric="Corporate Guidance-Lowered", value="Lowers FY26")) == -1
-    assert d(_drv("event", metric="Impairments/Write Off", value="Impairment charge")) == -1
-    assert d(_drv("event", metric="Product-Related Announcement", value="Launches new line")) == 1
-    assert d(_drv("event", metric="Product-Related Announcement",
-                  value="to Showcase products at the Beijing Exhibition")) is None
-    off = _drv("competitive_position", metric="patents", value="grew to over 890 patents")
-    assert d(off) is None
-    assert d(_drv("leading_indicator", metric="US revenue", value="grew 173% to $39.3M")) == 1
-    assert d(_drv("leading_indicator", metric="members", value="declined to 50%")) == -1
-    assert d(_drv("leading_indicator", metric="sales volume", value="274 megawatt hours")) is None
-
-
-def test_mechanism_directional_grouping_and_line_curation() -> None:
-    """(PR-B directional + curation A) The Mechanism block groups by Deteriorating / Improving,
-    biggest move first; ATTRIBUTION renders 'metric ±% — cause' (curated, not the raw sentence);
-    a cost/expense line is excluded (no misleading sign); a bare level with no direction dropped."""
-    rows = [
-        _drv("attribution", metric="revenue", value="$55.9m, or 48.0%", value_num=-48.0, unit="%",
-             verbatim=("Our revenues decreased by $55.9 million, or 48.0%. The decrease was "
-                       "primarily driven by a 48.9% reduction in sales volume from approximately "
-                       "535.7 MWh for the three months ended Mar 31, 2025 to approximately "
-                       "273.9 MWh."), source_ref="10-Q Z"),
-        _drv("attribution", metric="cost of revenue", value="$32m, or 43.6%", value_num=-43.6,
-             unit="%", verbatim="Cost of revenues decreased 43.6% due to lower volume.",
-             source_ref="10-Q Z"),  # cost/expense → EXCLUDED from the directional strip
-        _drv("event", metric="Corporate Guidance - Raised", period="May-07-2026",
-             value="Raises FY26 guidance", source_ref="CIQ Key Developments: kd · May-07-2026"),
-        _drv("leading_indicator", metric="sales volume (megawatt hours)",
-             value="approximately 274 megawatt hours", source_ref="CIQ transcript: A"),  # bare
-    ]
-    m = _minimal_mech().model_copy(update={
-        "operating_drivers": ds.OperatingDriversExtract(rows=rows, qa_flags=[])})
-    body = "\n".join(dr._brief_mechanism_lines(m))
-    # attribution curated (metric + signed % + CAUSE); raw sentence + filler gone
-    assert "revenue -48% — a 48.9% reduction in sales volume" in body
-    assert "Our revenues decreased by" not in body
-    assert "for the three months ended" not in body
-    # cost/expense excluded — never a misleading 'improving'
-    assert "cost of revenue" not in body
-    # guidance-raised → Improving; a bare level with no direction → dropped
-    assert "Raises FY26 guidance" in body and body.index("Raises FY26") > body.index("_Improving:_")
-    assert "274 megawatt hours" not in body
-
-
-def test_mechanism_render_dedups_cross_call_repeats() -> None:
-    """(PR-B polish) A driver repeated across BOTH calls (same metric+value) renders ONCE, and a
-    'gigawatt hour(s)' plural variance also collapses. JSON keeps every provenance; dedup is
-    render-only. Distinct drivers stay separate."""
-    rows = [
-        _drv("leading_indicator", metric="capacity", value="added up to 2 gigawatt hours",
-             source_ref="CIQ transcript: Q1 Call"),
-        _drv("leading_indicator", metric="capacity", value="added up to 2 gigawatt hour",
-             source_ref="CIQ transcript: Q4 Call"),  # plural variance → collapses
-        _drv("leading_indicator", metric="US revenue", value="grew 173% to $39.3M",
-             source_ref="CIQ transcript: Q4 Call"),
-    ]
-    m = _minimal_mech().model_copy(update={
-        "operating_drivers": ds.OperatingDriversExtract(rows=rows, qa_flags=[])})
-    body = "\n".join(dr._brief_mechanism_lines(m)).lower()
-    assert body.count("2 gigawatt hour") == 1  # the plural-variance near-dup collapsed
-    assert "grew 173%" in body  # a distinct driver stays
-    assert len(m.operating_drivers.rows) == 3  # JSON keeps all provenances (render-only dedup)
-
-
-def test_mechanism_render_endnote_cited_e2e() -> None:
-    """(PR-B render e2e — real endnote scope) Injecting driver rows into a committed dossier and
-    running the FULL render_markdown, every Mechanism bullet resolves to a numbered [n] endnote
-    (not an inline caption) — the endnotes discipline the exhibits guard enforces."""
-    import pathlib
-    p = pathlib.Path("data/dossiers/AORT/dossier.json")
-    if not p.exists():
+def test_operating_drivers_feed_synthesis_but_render_no_standalone_block() -> None:
+    """(PR-B — decision 2026-07-13) The operating drivers are EXTRACTION that FEEDS SYNTHESIS, not a
+    standalone rendered surface: a mechanically-extracted fact list can't render the directional
+    CALL (that is the human's verdict). So the field stays machine-complete in the JSON and the
+    synthesis digest surfaces it, but NO standalone Mechanism block renders in md or web."""
+    rows = [_drv("attribution", metric="revenue", value="$5m, or 10%", value_num=-10.0, unit="%",
+                 verbatim="Revenue decreased 10% due to lower volume.", source_ref="10-Q Z")]
+    import pathlib as _pl
+    pth = _pl.Path("data/dossiers/AORT/dossier.json")
+    if not pth.exists():
         pytest.skip("AORT committed dossier absent")
-    d = ds.Dossier.model_validate_json(p.read_text())
-    rows = [
-        _drv("attribution", metric="revenue", value="$5m, or 10%", value_num=-10.0, unit="%",
-             verbatim="Revenue decreased $5m, or 10%, due to lower volume.", source_ref="10-Q Z"),
-        _drv("event", metric="Corporate Guidance - Raised", period="May-07-2026",
-             value="Raised FY26", source_ref="CIQ Key Developments: kd.rtf · May-07-2026"),
-    ]
+    d = ds.Dossier.model_validate_json(pth.read_text())
     inj = d.model_copy(update={"mechanical": d.mechanical.model_copy(
         update={"operating_drivers": ds.OperatingDriversExtract(rows=rows, qa_flags=[])})})
     md = dr.render_markdown(inj)
-    lines = md.splitlines()
-    seg = lines[lines.index("## Mechanism"):]
-    seg = seg[:seg.index("## Financial snapshot")]
-    bullets = [ln for ln in seg if ln.startswith("- ")]
-    assert len(bullets) == 2 and all(re.search(r"\[\d+\]", ln) for ln in bullets)  # numbered cite
-    assert ">Source:" not in "\n".join(seg)  # never an inline exhibit caption
-
-
-def test_web_mechanism_mirror_static() -> None:
-    """(PR-B web parity) dossier.js mirrors the Mechanism block: mechanismCard on the Brief +
-    mechanismFull in Analysis, wired into briefTier/analysisTier, cited via citeMark (no inline
-    'Source:' — the exhibits-endnote rule), events sorted by a parsed KD date."""
-    src = Path("frontend/views/shared/dossier.js").read_text()
-    assert "function mechanismCard" in src and "function mechanismFull" in src
-    assert "briefCase(d.synthesis) + mechanismCard(m)" in src  # wired into the Brief
-    assert "+ mechanismFull(m)" in src  # wired into Analysis
-    assert "citeMark(r.source_ref)" in src  # endnote-cited, never inline
-    assert "function drvDirection" in src  # the directional grouping is mirrored
-    assert '"-1": "Deteriorating"' in src and '"1": "Improving"' in src
-    assert "what's changing" in src  # the directional block label
-    assert "No operating drivers extracted" in src  # the honest-empty mirror
-    assert ">Source:" not in src  # the exhibits-cite-via-endnotes guard stays green
+    # the standalone block is GONE from both tiers (Brief + Analysis)
+    assert "## Mechanism" not in md
+    assert "## Operating drivers (mechanism)" not in md
+    # but the drivers still ride in the mech (→ synthesis) — machine-complete, not deleted
+    assert inj.mechanical.operating_drivers is not None
+    assert len(inj.mechanical.operating_drivers.rows) == 1
+    # and no standalone mechanism block wiring survives in the web either
+    web = Path("frontend/views/shared/dossier.js").read_text()
+    assert "mechanismCard" not in web and "mechanismFull" not in web
 
 
 # --- (PR-B Tier B) LLM-fenced transcript extractor — validator behavior (deterministic FakeLlm) ---

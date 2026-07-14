@@ -1541,222 +1541,6 @@ def _brief_case_lines(s: Any) -> list[str]:
     return out
 
 
-# (PR-B directional) The Mechanism block reads as a "what changed" strip — DETERIORATING vs
-# IMPROVING — not machine-centric extraction buckets. Direction is the machine reading the SIGN of a
-# STATED change (revenue down = deteriorating; that is arithmetic, not a verdict), never BUY/AVOID.
-# A driver with NO derivable sign is dropped — which also strips the static-fact noise (a patent
-# count, a TAM, a spec, a bare level) the human called irrelevant.
-_UP_GOOD = re.compile(  # metrics where UP is the good direction
-    r"revenue|\bsales\b|volume|shipment|deliver|subscriber|member|\busers?\b|order|booking|"
-    r"backlog|capacit|production|margin|ebitda|profit|income|earning|\beps\b|\bcash\b|\bfcf\b|"
-    r"free cash|retention|\basp\b|average selling|bookings|share\b", re.I)
-_UP_BAD = re.compile(r"\bcost|expense|leverage|\bdebt\b|churn", re.I)  # UP is bad (or ambiguous)
-_INCR = re.compile(r"\b(grew|grow\w*|increas\w*|rose|rising|higher|gain\w*|record|expand\w*|"
-                   r"added|improv\w*|surpass\w*|\bup\b|raised)\b", re.I)
-_DECR = re.compile(r"\b(declin\w*|drop\w*|fell|fall\w*|decreas\w*|lower\w*|reduc\w*|contract\w*|"
-                   r"collaps\w*|\bloss\b|negative|\bcut\b|\bdown\b|weak\w*)\b", re.I)
-_OFF_THESIS = re.compile(  # signed-but-off-thesis trivia the human flagged as irrelevant
-    r"patent|addressable market|\bTAM\b|award\b|EMEA|\bAsia\b|Pacific|\bAPAC\b|geograph|"
-    r"school bus|coulombic|monolithic stack|\bcycles\b", re.I)
-_DIR_LABEL = {-1: "Deteriorating", 1: "Improving"}
-_DIR_ORDER = (-1, 1)  # bad news first — for a de-rated name, the damage is the point
-
-
-# a "product" event that is only a trade-show / conference appearance or a marketing-campaign PR
-# stunt is not an operating driver — dropped from the directional strip.
-_EVENT_NOISE = re.compile(
-    r"showcase|exhibition|conference|trade show|to present|to attend|campaign|starring|"
-    r"limited[- ]time|limited[- ]edition|one-time|sweepstake|giveaway|mascot", re.I)
-
-
-def _event_direction(metric: str, value: str = "") -> int | None:
-    """A KD event Type → direction: guidance raised / client / product / expansion = improving;
-    guidance lowered / impairment / write-off / going-concern = deteriorating; else no change. A
-    'product' event that is only a trade-show/exhibition appearance is dropped (not a driver)."""
-    m = metric.lower()
-    if any(k in m for k in ("lower", "impair", "write", "going concern", "downgrade")):
-        return -1
-    if _EVENT_NOISE.search(value):  # a showcase / exhibition is not an operating change
-        return None
-    if any(k in m for k in ("raised", "client", "product", "expansion", "business win")):
-        return 1
-    return None  # new/confirmed guidance, conference, etc. — not a directional CHANGE
-
-
-def _driver_direction(r: Any) -> int | None:
-    """+1 improving · -1 deteriorating · None = no derivable sign (dropped from the strip). The
-    machine reads the SIGN of a stated change only. ATTRIBUTION uses value_num × metric polarity
-    but ONLY on top-line metrics (a cost decline in a volume collapse is not 'good' — cost/expense
-    lines are excluded, not mislabelled). EVENTS map by type. Other rows read a direction verb in
-    the text combined with metric polarity. Off-thesis trivia (foreign-regional mix, patents, TAM,
-    a lab spec) is dropped even when signed."""
-    text = f"{r.metric} {r.value}"
-    if _OFF_THESIS.search(text):
-        return None
-    kind = r.kind.value
-    if kind == "attribution":
-        if r.value_num is None or _UP_BAD.search(r.metric) or not _UP_GOOD.search(r.metric):
-            return None  # cost/expense or unclassifiable → excluded (never a misleading sign)
-        return 1 if r.value_num > 0 else -1
-    if kind == "event":
-        return _event_direction(r.metric, r.value)
-    inc, dec = bool(_INCR.search(text)), bool(_DECR.search(text))
-    if inc == dec:  # no verb, or contradictory → no clear direction (drops bare levels/specs)
-        return None
-    polarity = -1 if _UP_BAD.search(r.metric) else 1
-    return (1 if inc else -1) * polarity
-
-
-def _event_sort_key(period: str | None) -> str:
-    """A KD 'May-28-2026' period → an ISO sortable key (desc via reverse); '' sorts last."""
-    if not period:
-        return ""
-    try:
-        return datetime.strptime(period, "%b-%d-%Y").date().isoformat()
-    except ValueError:
-        return ""
-
-
-def _drv_norm(s: Any) -> str:
-    # normalize whitespace, case, trailing period, AND a trailing plural per word so a
-    # 'gigawatt hour' vs 'gigawatt hours' near-repeat collapses (management re-phrases each call).
-    base = re.sub(r"\s+", " ", str(s or "")).strip().lower().rstrip(".")
-    return re.sub(r"(\w{3,})s\b", r"\1", base)
-
-
-def _drv_key(r: Any) -> tuple[str, str]:
-    """The dedup identity of a driver row — normalized (metric, value). Management often repeats a
-    stat across BOTH earnings calls; the JSON keeps each provenance (distinct source_ref), but the
-    rendered Mechanism block shows the fact ONCE (three-tier rule: machine-complete JSON, curated
-    surface). Value-level, so '274 MWh' vs '536 MWh' stay distinct — only exact repeats collapse."""
-    return _drv_norm(r.metric), _drv_norm(r.value)
-
-
-def _dedup_drivers(rows: list[Any]) -> list[Any]:
-    """First occurrence of each (metric, value) wins — order-preserving (so an event group keeps its
-    most-recent-first sort, and the surviving row's citation is the first call that stated it)."""
-    seen: set[tuple[str, str]] = set()
-    out: list[Any] = []
-    for r in rows:
-        k = _drv_key(r)
-        if k in seen:
-            continue
-        seen.add(k)
-        out.append(r)
-    return out
-
-
-_CAUSE_LEAD = re.compile(
-    r"\b(?:due to|driven by|attributable to|because of|as a result of|reflect\w+|"
-    r"caused (?:primarily |mainly )?by)\b", re.I)
-_ATTR_FILLER = re.compile(
-    r"\s+for the (?:three|six|nine) months ended [A-Z][a-z]+\.?\s+\d{1,2},?\s+\d{4}"
-    r"|\s+for the same period in \d{4}|\s+compared to the same period in \d{4}", re.I)
-
-
-def _drv_cause(verbatim: str) -> str:
-    """The CAUSE clause of an attribution sentence — the MECHANISM (what drove the move), the part
-    the old raw-sentence truncation cut off. Period-phrase filler stripped; capped. Empty when the
-    sentence states no causal clause."""
-    m = _CAUSE_LEAD.search(verbatim)
-    if m is None:
-        return ""
-    tail = re.split(r"\.\s+[A-Z]", verbatim[m.end():].strip(" ,"))[0]
-    tail = re.sub(r"\s+", " ", _ATTR_FILLER.sub("", tail)).strip(" .,")
-    return (tail[:116].rstrip() + "…") if len(tail) > 116 else tail
-
-
-def _drv_clean_metric(m: str) -> str:
-    """A driver metric for display — drop a parenthetical unit ('sales volume (megawatt hours)' →
-    'sales volume') and cap length."""
-    out = re.sub(r"\s*\([^)]*\)\s*", " ", str(m or "")).strip()
-    return out if len(out) <= 46 else out[:44].rstrip() + "…"
-
-
-def _drv_clean_value(v: str) -> str:
-    """Display value — drop a leading hedge word ('approximately 274 MWh' → '274 MWh')."""
-    return re.sub(r"^\s*(approximately|about|around|roughly|~)\s+", "", str(v or ""), flags=re.I)
-
-
-def _driver_line(r: Any) -> str:
-    """One Mechanism row → a cited md bullet, CURATED by kind (mechanism-first, concise):
-    ATTRIBUTION leads with the metric + signed move, THEN the cause clause (the mechanism) not the
-    raw MD&A
-    sentence; LEADING_INDICATOR is metric + value with the redundant unit/hedge stripped; EVENT is
-    date-led; the rest are the verbatim value phrase, sentence-cased. All cited."""
-    kind = r.kind.value
-    if kind == "attribution":
-        head = (f"{_drv_clean_metric(r.metric)} {r.value_num:+g}%"
-                if r.value_num is not None else _drv_clean_metric(r.metric))
-        cause = _drv_cause(r.verbatim)
-        body = f"{head} — {cause}" if cause else head
-    elif kind == "event":  # the direction group already conveys the sign; show date + headline
-        head = r.value if len(r.value) <= 92 else r.value[:89].rstrip() + "…"
-        body = f"{r.period} · {head}"
-    elif kind == "leading_indicator":
-        body = f"{_drv_clean_metric(r.metric)}: {_drv_clean_value(r.value)}"
-    else:  # pricing_action / pass_through / competitive — the verbatim value phrase, sentence-cased
-        v = _drv_clean_value(r.value)
-        body = (v[:1].upper() + v[1:])[:150]
-    return f"- {body}{_cite(r.source_ref)}"
-
-
-def _mechanism_groups(rows: list[Any], *, cap: int) -> list[str]:
-    """Rows grouped by DIRECTION — Deteriorating then Improving — each capped, biggest signed move
-    first (events fall back to recency). A row with no derivable direction is DROPPED: that strips
-    the static-fact noise (bare levels, patents, TAM, specs) and the off-thesis trivia the human
-    flagged as irrelevant. Dedup collapses a stat repeated across calls. Brief passes a tight cap,
-    the Analysis tier a generous one."""
-    by_dir: dict[int, list[Any]] = {-1: [], 1: []}
-    for r in _dedup_drivers(rows):
-        d = _driver_direction(r)
-        if d is not None:
-            by_dir[d].append(r)
-    out: list[str] = []
-    for d in _DIR_ORDER:
-        group = sorted(by_dir[d], reverse=True,
-                       key=lambda r: (abs(r.value_num or 0.0), _event_sort_key(r.period)))
-        if not group:
-            continue
-        out.append(f"_{_DIR_LABEL[d]}:_")
-        out += [_driver_line(r) for r in group[:cap]]
-    return out
-
-
-_NO_DRIVERS = ("_No operating drivers extracted — anchored patterns missed; the transcript tier is "
-               "gated (LibreOffice) or dry._")
-
-
-def _brief_mechanism_lines(m: MechanicalLayer) -> list[str]:
-    """(PR-B Brief) the Mechanism block — forward operating drivers, grouped + tightly capped, each
-    cited. Fail-honest: a name with no rows renders one honest line, never a fabricated driver."""
-    od = m.operating_drivers
-    out: list[str] = ["## Mechanism"]
-    if od is None or not od.rows:
-        return [*out, _NO_DRIVERS, ""]
-    groups = _mechanism_groups(list(od.rows), cap=5)
-    if not groups:  # rows exist but none carry a derivable direction — honest, not fabricated
-        return [*out, "_No directional operating driver — see the full record in Analysis._", ""]
-    out.append("**What's changing** _(directional; the full record is in Analysis)_")
-    out += ["", *groups, ""]
-    return out
-
-
-def _mechanism_lines(m: MechanicalLayer) -> list[str]:
-    """(PR-B Analysis) the directional Mechanism strip at a generous cap — Deteriorating /
-    Improving, each cited. Absent field ⇒ nothing (a pre-PR-B dossier round-trips clean)."""
-    od = m.operating_drivers
-    if od is None:
-        return []
-    out = ["## Operating drivers (mechanism)", ""]
-    if not od.rows:
-        return [*out, _NO_DRIVERS, ""]
-    groups = _mechanism_groups(list(od.rows), cap=12)
-    out += groups or ["_No directional operating driver in the extracted set._"]
-    out.append("")
-    return out
-
-
 def _brief_oneliner(desc: str) -> str:
     """First sentence of a CIQ business description ('{Co}, Inc. engages in …'), abbreviation-aware
     so the split doesn't stop at 'Inc.'/'Corp.'; capped for the teaser."""
@@ -1912,11 +1696,11 @@ def _brief_lines(d: Dossier) -> list[str]:
     if cc is not None:
         out.append(cc)
     out.append("")
-    # 4 — THE CASE: condensed bull/bear + key unknowns
+    # 4 — THE CASE: condensed bull/bear + key unknowns. (PR-B) the operating drivers are NOT a
+    # standalone block — a mechanically-extracted fact list can't render the directional CALL (that
+    # is the human's verdict); they feed the synthesis instead, where the bull/bear grounds in them
+    # and cites them (operating_drivers stays machine-complete in dossier.json for audit).
     out += ["## The case", *_brief_case_lines(s)]
-    # 4b — MECHANISM (PR-B): the forward operating drivers — leading indicators / pricing / MD&A
-    # attribution / dated events, cited. The mechanism the atomized case points don't carry.
-    out += _brief_mechanism_lines(m)
     # 5 — FINANCIAL SNAPSHOT: un-truncated key financials + the ratios panel
     out.append("## Financial snapshot")
     out += _brief_financials(m)
@@ -2038,9 +1822,6 @@ def render_markdown(d: Dossier, *, dev: bool = False) -> str:
     # (RC-1 C) primary-source cross-checks — filings vs CIQ panel (self-funding lives in leverage
     # above; wall / triangulation / guide / going-concern / concentration here).
     out += _primary_source_block(m)
-
-    # (PR-B) the full operating-driver rows — every kind, cited (the Brief shows a capped subset).
-    out += _mechanism_lines(m)
 
     # (D1·§3 · D2) Trajectory — the merged margin/multi-year table + share-count trend.
     out.append("### Trajectory (revenue · EBITDA · margins · ROIC)")
