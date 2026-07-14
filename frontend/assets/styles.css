@@ -534,7 +534,6 @@ table.data.vs-table { width: 100%; }
 .sweep-cmd { font: 12px var(--mono); padding: 2px 8px; border: 1px solid var(--line-2); border-radius: 6px; background: var(--nav-bg); color: #d7deea; opacity: 0; transition: opacity 0.12s, border-color 0.2s; }
 .sweep-run:hover ~ .sweep-cmd, .sweep-cmd.show { opacity: 1; }
 .sweep-cmd.flash { border-color: var(--live); }
-.sweep-foot { flex-basis: 100%; margin-top: 2px; }
 
 .radar-chip { cursor: pointer; }
 .radar-chip.on { background: var(--nav-active); border-color: var(--nav-active); color: #fff; }

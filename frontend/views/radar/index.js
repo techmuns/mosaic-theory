@@ -26,12 +26,11 @@ function sweepBar(sweep) {
   return `
     <div class="sweep-bar">
       <span class="sweep-dot ${overdue ? "amber" : "green"}" title="${overdue ? "overdue" : "on cadence"}"></span>
-      <span class="sweep-txt">Component-A sweep · last run <b>${escapeHtml(sweep.last_run)}</b>
+      <span class="sweep-txt" title="sweep date refreshes on the next site build after a run">Component-A sweep · last run <b>${escapeHtml(sweep.last_run)}</b>
         <span class="foot">(${escapeHtml(sweep.source)})</span> · next due <b>${escapeHtml(sweep.next_due)}</b>${
     overdue ? ` <span class="sweep-over">(overdue)</span>` : ""}</span>
       <button class="sweep-run" data-copy="1" data-cmd="${cmd}" title="click to copy">▸ run command</button>
       <code class="sweep-cmd">${cmd}</code>
-      <div class="sweep-foot foot">sweep date refreshes on the next site build after a run.</div>
     </div>`;
 }
 

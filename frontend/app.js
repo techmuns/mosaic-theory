@@ -58,7 +58,7 @@ const EDGES = [
       { route: "themes/watchlist", label: "Watchlist",
         does: "The names to re-underwrite when a trigger fires — a flat cross-theme monitoring surface. Each row is led by its verbatim trigger." },
       { route: "radar", label: "Radar",
-        does: "Every theme idea on one map — how real the evidence is vs how much price has already moved. Read-only; the analyst's dispositions and wake-up rules render verbatim." },
+        does: "Every theme idea on one map — how real the evidence is vs how much price has already moved." },
     ],
   },
   {
