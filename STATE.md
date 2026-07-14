@@ -3214,6 +3214,20 @@ Assemble-and-cite only; POSES, never forecasts; `Synthesis` six-field no-conclus
   "operating"⊃"rating" substring false-positive in the no-conclusion guard → matcher tightened to
   snake_case word boundaries [Y]; digit-trace-against-slice too permissive → trace against the
   row's own quote [Y]; render endnote-only → `>Source:`-scan guard [Y, pre-existing].
+- **CURATION + SYNTHESIS-USE (A+B, 2026-07-13) — operator asked "what's the use of a raw list if
+  synthesis doesn't use it".** BOTH shipped: **(A)** the Mechanism line is now mechanism-first and
+  concise — ATTRIBUTION renders `metric ±% — <cause clause>` (the causal WHY, period-phrase filler
+  stripped) instead of the raw truncated MD&A sentence (which was cutting off the cause), biggest
+  move first; LEADING_INDICATOR drops the redundant unit/hedge (`sales volume: 274 MWh`, was
+  `sales volume (megawatt hours): approximately 274 megawatt hours`); md+web parity. **(B)** the
+  synthesis prompt now surfaces a SALIENT operating-drivers digest (term→value→source_ref) + a
+  MECHANISM system rule ("ground any operating bull/bear point in the specific driver, copy its
+  source_ref; the decisive question names the load-bearing driver"). **VERIFIED LIVE (MVST):** the
+  fresh synthesis grounds its bear case in the mechanism — "Revenue collapsed... down 48.0%...
+  driven mechanically by a 48.9% sales-volume reduction" CITING the attribution driver's
+  source_ref; the decisive question now reads "reverse the Q1 volume collapse". So the drivers now
+  BOTH read cleanly for the human AND feed the machine's reasoning. Pins: curated line format
+  (deterministic anchors) + the digest/system-rule (prompt-construction, not an LLM-output string).
 - **NEXT (operator):** (1) test locally (full cohort Tier-A + live Tier-B injected into the
   frontend preview), then I open the PR; (2) standing artifact pass re-assembles the cohort via
   `vinci dossier` so the COMMITTED dossiers carry real driver rows (both tiers) — the injected

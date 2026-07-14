@@ -115,6 +115,28 @@ def test_synthesis_is_the_only_llm_output_and_carries_no_conclusion() -> None:
     }
 
 
+def test_synthesis_surfaces_operating_drivers_digest_and_rule() -> None:
+    """(PR-B B) Synthesis makes the operating drivers SALIENT so the bull/bear ground in them: a
+    term→value→source_ref digest (each row's real source_ref, for the LLM to copy) and a MECHANISM
+    system rule telling it to cite the specific driver. Deterministic — the DIGEST + prompt, not an
+    LLM-composed output string."""
+    rows = [
+        _drv("attribution", metric="revenue", value="$55.9M, or 48.0%", value_num=-48.0, unit="%",
+             verbatim="Revenue decreased.", source_ref="10-Q Z"),
+        _drv("leading_indicator", metric="sales volume", value="approximately 274 MWh",
+             source_ref="CIQ transcript: MVST Q1 2026 Call"),
+    ]
+    od = ds.OperatingDriversExtract(rows=rows, qa_flags=[])
+    digest = syn._operating_drivers_digest(od)
+    assert "OPERATING DRIVERS" in digest
+    # each row surfaced with its REAL source_ref (the thing the LLM copies to cite)
+    assert "[attribution] revenue: $55.9M, or 48.0% → 10-Q Z" in digest
+    assert "→ CIQ transcript: MVST Q1 2026 Call" in digest
+    # the system rule instructs grounding operating points in a driver + its source_ref
+    assert "MECHANISM" in syn._SYSTEM and "source_ref" in syn._SYSTEM
+    assert "load-bearing driver" in syn._SYSTEM
+
+
 def test_twin_cases_are_never_numeric() -> None:
     """Analogues inform reasoning; they never carry a recovery rate / base rate / probability."""
     for fname, field in ds.TwinCase.model_fields.items():
@@ -2188,6 +2210,39 @@ def test_mechanism_render_present_grouped_cited_and_honest_empty() -> None:
     # ⊖ back-compat: operating_drivers=None (a pre-PR-B dossier) → still the honest line, no crash
     assert "No operating drivers extracted" in "\n".join(
         dr._brief_mechanism_lines(_minimal_mech()))  # operating_drivers defaults None
+
+
+def test_mechanism_line_curated_by_kind() -> None:
+    """(PR-B curation A) The Mechanism line reads mechanism-first, concise: ATTRIBUTION → metric +
+    signed move + the CAUSE clause (not the raw MD&A sentence, and not the period-phrase filler);
+    LEADING_INDICATOR strips the redundant unit + hedge; the biggest move sorts first."""
+    rows = [
+        _drv("attribution", metric="cost of revenue", value="$32.0 million, or 43.6%",
+             value_num=-43.6, unit="%",
+             verbatim=("Our cost of revenues for the three months ended March 31, 2026 decreased "
+                       "by $32.0 million, or 43.6%, compared to the same period in 2025, primarily "
+                       "due to the decrease in sales volumes."), source_ref="10-Q Z"),
+        _drv("attribution", metric="revenue", value="$55.9 million, or 48.0%", value_num=-48.0,
+             unit="%", verbatim=("Our revenues decreased by $55.9 million, or 48.0%. The decrease "
+                                 "was primarily driven by a 48.9% reduction in sales volume from "
+                                 "approximately 535.7 MWh for the three months ended Mar 31, 2025 "
+                                 "to approximately 273.9 MWh."), source_ref="10-Q Z"),
+        _drv("leading_indicator", metric="sales volume (megawatt hours)",
+             value="approximately 274 megawatt hours", source_ref="CIQ transcript: A"),
+    ]
+    m = _minimal_mech().model_copy(update={
+        "operating_drivers": ds.OperatingDriversExtract(rows=rows, qa_flags=[])})
+    body = "\n".join(dr._brief_mechanism_lines(m))
+    # attribution: metric + signed % + the CAUSE (mechanism), raw sentence + table-noise GONE
+    assert "revenue -48% — a 48.9% reduction in sales volume" in body
+    assert "cost of revenue -43.6% — the decrease in sales volumes" in body
+    assert "Our revenues decreased by" not in body  # the raw sentence lead is gone
+    assert "for the three months ended" not in body  # period-phrase filler stripped
+    # biggest move first: revenue (-48) before cost of revenue (-43.6)
+    assert body.index("revenue -48%") < body.index("cost of revenue -43.6%")
+    # leading indicator: redundant unit paren + 'approximately' hedge stripped
+    assert "sales volume: 274 megawatt hours" in body
+    assert "(megawatt hours): approximately" not in body
 
 
 def test_mechanism_render_dedups_cross_call_repeats() -> None:

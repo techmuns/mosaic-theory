@@ -600,12 +600,28 @@ function drvEventKey(period) {  // "May-28-2026" -> "2026-05-28" (sortable); "" 
   const m = /^([A-Z][a-z]{2})-(\d{2})-(\d{4})$/.exec(period || "");
   return m ? `${m[3]}-${DRV_MONTHS[m[1]] || "00"}-${m[2]}` : "";
 }
+// CURATED per-kind (mirrors _driver_line in render.py): attribution → metric + signed move + the
+// CAUSE clause (the mechanism), not the raw MD&A sentence; leading_indicator → metric + value with
+// the redundant unit/hedge stripped; event date-led; the rest the value phrase, sentence-cased.
+const DRV_CAUSE_LEAD = /\b(?:due to|driven by|attributable to|because of|as a result of|reflect\w+|caused (?:primarily |mainly )?by)\b/i;
+const DRV_FILLER = /\s+for the (?:three|six|nine) months ended [A-Z][a-z]+\.?\s+\d{1,2},?\s+\d{4}|\s+for the same period in \d{4}|\s+compared to the same period in \d{4}/ig;
+function drvCause(verbatim) {
+  const m = DRV_CAUSE_LEAD.exec(verbatim || ""); if (!m) return "";
+  let tail = String(verbatim).slice(m.index + m[0].length).replace(/^[\s,]+/, "").split(/\.\s+[A-Z]/)[0];
+  tail = tail.replace(DRV_FILLER, "").replace(/\s+/g, " ").replace(/^[\s.,]+|[\s.,]+$/g, "");
+  return tail.length > 116 ? tail.slice(0, 116).trimEnd() + "\u2026" : tail;
+}
+function drvCleanMetric(m) { const o = String(m || "").replace(/\s*\([^)]*\)\s*/g, " ").trim(); return o.length <= 46 ? o : o.slice(0, 44).trimEnd() + "\u2026"; }
+function drvCleanValue(v) { return String(v || "").replace(/^\s*(approximately|about|around|roughly|~)\s+/i, ""); }
 function drvLine(r) {
   let body;
-  if (r.kind === "attribution") body = r.verbatim && r.verbatim.length > 170 ? r.verbatim.slice(0, 167).trimEnd() + "\u2026" : (r.verbatim || "");
-  else if (r.kind === "event") body = `${r.period} \u00b7 ${r.metric}: ${r.value}`;
-  else if (r.kind === "leading_indicator") body = `${r.metric}: ${r.value}`;
-  else body = r.value ? r.value.charAt(0).toUpperCase() + r.value.slice(1) : "";
+  if (r.kind === "attribution") {
+    const head = r.value_num != null ? `${drvCleanMetric(r.metric)} ${r.value_num > 0 ? "+" : ""}${r.value_num}%` : drvCleanMetric(r.metric);
+    const cause = drvCause(r.verbatim);
+    body = cause ? `${head} \u2014 ${cause}` : head;
+  } else if (r.kind === "event") body = `${r.period} \u00b7 ${r.metric}: ${r.value}`;
+  else if (r.kind === "leading_indicator") body = `${drvCleanMetric(r.metric)}: ${drvCleanValue(r.value)}`;
+  else { const v = drvCleanValue(r.value); body = (v ? v.charAt(0).toUpperCase() + v.slice(1) : "").slice(0, 150); }
   return `<div class="drv-row">${escapeHtml(body)}${citeMark(r.source_ref)}</div>`;
 }
 // dedup identity — normalized (metric, value); management often repeats a stat across BOTH calls,
@@ -625,6 +641,7 @@ function drvGroups(rows, caps) {
     let group = byKind[kind];
     if (!group || !group.length) continue;
     if (kind === "event") group = group.slice().sort((a, b) => drvEventKey(b.period).localeCompare(drvEventKey(a.period)));
+    else if (kind === "attribution") group = group.slice().sort((a, b) => Math.abs(b.value_num || 0) - Math.abs(a.value_num || 0));
     const shown = drvDedup(group).slice(0, (caps && caps[kind]) || 3);  // collapse cross-call repeats
     html += `<div class="drv-grp">${escapeHtml(DRV_KIND_LABEL[kind])}</div>` + shown.map(drvLine).join("");
   }

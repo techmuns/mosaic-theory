@@ -1586,17 +1586,57 @@ def _dedup_drivers(rows: list[Any]) -> list[Any]:
     return out
 
 
+_CAUSE_LEAD = re.compile(
+    r"\b(?:due to|driven by|attributable to|because of|as a result of|reflect\w+|"
+    r"caused (?:primarily |mainly )?by)\b", re.I)
+_ATTR_FILLER = re.compile(
+    r"\s+for the (?:three|six|nine) months ended [A-Z][a-z]+\.?\s+\d{1,2},?\s+\d{4}"
+    r"|\s+for the same period in \d{4}|\s+compared to the same period in \d{4}", re.I)
+
+
+def _drv_cause(verbatim: str) -> str:
+    """The CAUSE clause of an attribution sentence — the MECHANISM (what drove the move), the part
+    the old raw-sentence truncation cut off. Period-phrase filler stripped; capped. Empty when the
+    sentence states no causal clause."""
+    m = _CAUSE_LEAD.search(verbatim)
+    if m is None:
+        return ""
+    tail = re.split(r"\.\s+[A-Z]", verbatim[m.end():].strip(" ,"))[0]
+    tail = re.sub(r"\s+", " ", _ATTR_FILLER.sub("", tail)).strip(" .,")
+    return (tail[:116].rstrip() + "…") if len(tail) > 116 else tail
+
+
+def _drv_clean_metric(m: str) -> str:
+    """A driver metric for display — drop a parenthetical unit ('sales volume (megawatt hours)' →
+    'sales volume') and cap length."""
+    out = re.sub(r"\s*\([^)]*\)\s*", " ", str(m or "")).strip()
+    return out if len(out) <= 46 else out[:44].rstrip() + "…"
+
+
+def _drv_clean_value(v: str) -> str:
+    """Display value — drop a leading hedge word ('approximately 274 MWh' → '274 MWh')."""
+    return re.sub(r"^\s*(approximately|about|around|roughly|~)\s+", "", str(v or ""), flags=re.I)
+
+
 def _driver_line(r: Any) -> str:
-    """One Mechanism row → a cited md bullet, shaped by kind. ATTRIBUTION shows the real (trimmed)
-    MD&A sentence — its cause IS the decision content; others show metric + value."""
-    if r.kind.value == "attribution":
-        body = r.verbatim if len(r.verbatim) <= 170 else r.verbatim[:167].rstrip() + "…"
-    elif r.kind.value == "event":
+    """One Mechanism row → a cited md bullet, CURATED by kind (mechanism-first, concise):
+    ATTRIBUTION leads with the metric + signed move, THEN the cause clause (the mechanism) not the
+    raw MD&A
+    sentence; LEADING_INDICATOR is metric + value with the redundant unit/hedge stripped; EVENT is
+    date-led; the rest are the verbatim value phrase, sentence-cased. All cited."""
+    kind = r.kind.value
+    if kind == "attribution":
+        head = (f"{_drv_clean_metric(r.metric)} {r.value_num:+g}%"
+                if r.value_num is not None else _drv_clean_metric(r.metric))
+        cause = _drv_cause(r.verbatim)
+        body = f"{head} — {cause}" if cause else head
+    elif kind == "event":
         body = f"{r.period} · {r.metric}: {r.value}"
-    elif r.kind.value == "leading_indicator":
-        body = f"{r.metric}: {r.value}"
-    else:  # pricing_action / pass_through / competitive — the verbatim-bound value phrase
-        body = r.value[:1].upper() + r.value[1:]
+    elif kind == "leading_indicator":
+        body = f"{_drv_clean_metric(r.metric)}: {_drv_clean_value(r.value)}"
+    else:  # pricing_action / pass_through / competitive — the verbatim value phrase, sentence-cased
+        v = _drv_clean_value(r.value)
+        body = (v[:1].upper() + v[1:])[:150]
     return f"- {body}{_cite(r.source_ref)}"
 
 
@@ -1613,6 +1653,8 @@ def _mechanism_groups(rows: list[Any], *, caps: dict[str, int]) -> list[str]:
             continue
         if kind == "event":
             group = sorted(group, key=lambda r: _event_sort_key(r.period), reverse=True)
+        elif kind == "attribution":  # biggest move first (decision-weight order)
+            group = sorted(group, key=lambda r: abs(r.value_num or 0.0), reverse=True)
         shown = _dedup_drivers(group)[:caps.get(kind, 3)]  # collapse a stat repeated across calls
         out.append(f"_{_KIND_LABEL[kind]}:_")
         out += [_driver_line(r) for r in shown]
