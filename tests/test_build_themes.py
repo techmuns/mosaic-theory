@@ -170,5 +170,76 @@ def test_emit_radar_sweep_end_to_end(tmp_path: Path, monkeypatch: pytest.MonkeyP
     assert payload["command"] == "python -m vinci.cli themes"
 
 
+def _review(key: str, members: list[str], decision: str = "parked") -> dict[str, Any]:
+    return {"key": key, "display_name": key, "decision": decision, "reviewed": "2026-07-13",
+            "by": "analyst", "reason": "x", "members": members}
+
+
+def _cluster(cid: str, members: list[str], rel12: float = 0.0) -> dict[str, Any]:
+    return {"cluster_id": cid, "members": [{"ticker": t} for t in members],
+            "admissibility": {"coherence_value": 0.4},
+            "strength_signals": {"momentum": {"h12mo": {"value": 0.1}},
+                                 "rel_strength_vs_market": {"h12mo": {"value": rel12}},
+                                 "breadth_expanding": {"value": 0.5},
+                                 "crowding_overextension": {"value": -0.1}}}
+
+
+def _run_inbox_log(tmp_path: Path, monkeypatch: pytest.MonkeyPatch, reviews: list[dict[str, Any]],
+                   clusters: list[dict[str, Any]]) -> tuple[dict[str, Any], dict[str, Any]]:
+    ca = tmp_path / "data" / "scan_history" / "component-a"
+    ca.mkdir(parents=True)
+    (ca / "20260714T120000Z__t.jsonl").write_text("\n".join(json.dumps(c) for c in clusters))
+    radar = tmp_path / "frontend" / "radar"
+    radar.mkdir(parents=True)
+    (radar / "reviews.json").write_text(json.dumps({"reviews": reviews}))
+    monkeypatch.setattr(_BUILD, "ROOT", tmp_path)
+    monkeypatch.setattr(_BUILD, "HERE", tmp_path / "frontend")
+    _BUILD.emit_radar_inbox_log()
+    return (json.loads((radar / "inbox.json").read_text()),
+            json.loads((radar / "log.json").read_text()))
+
+
+def test_radar_inbox_log_join(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    """The emitter's matcher: 50%-boundary is inclusive (matched), below-boundary drifts to inbox, a
+    review with no ≥50% cluster is 'gone', deltas are recorded, and matching is by MEMBER OVERLAP
+    (disjoint tickers → no accidental id match)."""
+    reviews = [
+        _review("2026-06-17:T000", ["A1", "A2", "A3", "A4"]),
+        _review("2026-06-17:T001", ["B1", "B2"], "rejected"),   # 50% boundary vs K1
+        _review("2026-06-17:T003", ["C1", "C2"]),               # GONE (no cluster)
+        _review("2026-06-17:T005", ["D1", "D2", "D3"]),         # drifts below → GONE, K3 → inbox
+    ]
+    clusters = [
+        _cluster("T000", ["A1", "A2", "A5"]),          # 2/3 = .67 ≥ .5 → matched; +A5 −A3,A4
+        _cluster("T001", ["B1", "B9"]),                # 1/2 = .50 → matched (boundary INCLUSIVE)
+        _cluster("T002", ["P1", "P2", "P3"], rel12=0.3),  # 0 overlap → inbox (new)
+        _cluster("T004", ["D1", "D8", "D9"]),          # 1/3 = .33 < .5 → inbox (drifted below)
+    ]
+    inbox, log = _run_inbox_log(tmp_path, monkeypatch, reviews, clusters)
+    assert inbox["scan_date"] == "2026-07-14"
+    assert [e["cluster_id"] for e in inbox["inbox"]] == ["T002", "T004"]  # sorted, new + drifted
+    t002 = inbox["inbox"][0]
+    assert t002["label"] == "P1 P2 +1" and t002["rel12"] == 0.3 and t002["coherence"] == 0.4
+    by_key = {r["key"]: r for r in log["reviews"]}
+    assert [r["key"] for r in log["reviews"]] == [  # deterministic key order; every review present
+        "2026-06-17:T000", "2026-06-17:T001", "2026-06-17:T003", "2026-06-17:T005"]
+    assert by_key["2026-06-17:T001"]["match"]["status"] == "matched"          # 50% boundary
+    assert by_key["2026-06-17:T000"]["match"]["added"] == ["A5"]              # changed counts
+    assert by_key["2026-06-17:T000"]["match"]["dropped"] == ["A3", "A4"]
+    assert by_key["2026-06-17:T003"]["match"]["status"] == "gone"             # no cluster
+    assert by_key["2026-06-17:T005"]["match"]["status"] == "gone"             # drifted below → gone
+
+
+def test_radar_inbox_log_deterministic(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    """Inbox is sorted by cluster_id (not snapshot order) and re-running is byte-identical."""
+    reviews = [_review("2026-06-17:T000", ["A", "B"])]
+    clusters = [_cluster("T009", ["C", "D"]), _cluster("T002", ["E", "F"])]  # both new → inbox
+    inbox, _ = _run_inbox_log(tmp_path, monkeypatch, reviews, clusters)
+    assert [e["cluster_id"] for e in inbox["inbox"]] == ["T002", "T009"]  # sorted, not C,D order
+    b1 = (tmp_path / "frontend" / "radar" / "inbox.json").read_bytes()
+    _BUILD.emit_radar_inbox_log()  # re-run over the same inputs
+    assert (tmp_path / "frontend" / "radar" / "inbox.json").read_bytes() == b1
+
+
 if __name__ == "__main__":
     raise SystemExit(pytest.main([__file__, "-q"]))

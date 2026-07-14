@@ -295,6 +295,32 @@ export async function getRadarSweep() {
   }
 }
 
+// getRadarInbox() -> { scan_date, inbox: [{ cluster_id, first_seen, members, label, rel12, mom12,
+//   coherence, breadth_exp, crowding }] }. Emitted by build.py — current sweep clusters NOT yet
+//   matched to a review. Empty on 404. The machine sorts here; reviews.json holds the decisions.
+export async function getRadarInbox() {
+  try {
+    const d = await _json(`${RADAR}/inbox.json`);
+    return { scan_date: d?.scan_date || "", inbox: Array.isArray(d?.inbox) ? d.inbox : [] };
+  } catch (e) {
+    if (e.status === 404) return { scan_date: "", inbox: [] };
+    throw e;
+  }
+}
+
+// getRadarLog() -> { scan_date, reviews: [{...reviews.json entry, match:{status, cluster_id, added,
+//   dropped}}] }. Emitted by build.py — the analyst's recorded dispositions + current match status.
+//   Reasons render VERBATIM from reviews.json (the single record); empty on 404.
+export async function getRadarLog() {
+  try {
+    const d = await _json(`${RADAR}/log.json`);
+    return { scan_date: d?.scan_date || "", reviews: Array.isArray(d?.reviews) ? d.reviews : [] };
+  } catch (e) {
+    if (e.status === 404) return { scan_date: "", reviews: [] };
+    throw e;
+  }
+}
+
 // getThemeDriver(slug) -> the per-driver display object (cohorts, tierShape, names, watchlist +
 // triggers, avoidControls, realTier, forward:{cohorts, undefinedMeasures, diagnostics, honestyLabel,
 // powerNote}), or null if that driver is not committed.

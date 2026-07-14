@@ -374,6 +374,101 @@ def emit_radar_sweep() -> None:
     (out / "sweep.json").write_text(json.dumps(_radar_sweep_payload(manifest), indent=1) + "\n")
 
 
+# --------------------------------------------------------------------------------------------------
+# Radar INBOX + REVIEW LOG — join the latest component-a snapshot × analyst-owned reviews.json.
+# The machine ASSEMBLES: match clusters to reviewed groups by MEMBER OVERLAP (ids are per-run,
+# never match on id), sorting into inbox (unjudged) vs log (reviewed). It NEVER decides —
+# reviews.json is the single record; a drifted match re-entering the inbox is CORRECT, not an
+# error. Non-destructive: absent snapshot/reviews → keep the committed files (deploy-safe).
+# --------------------------------------------------------------------------------------------------
+_MATCH_MIN = 0.5  # member overlap as a fraction of the SMALLER set
+
+
+def _overlap(a: set[str], b: set[str]) -> float:
+    """|a ∩ b| / min(|a|, |b|) — overlap as a fraction of the smaller set (0 if either is empty)."""
+    return len(a & b) / min(len(a), len(b)) if a and b else 0.0
+
+
+def _latest_component_a(root: Path) -> Path | None:
+    """Newest local/committed component-a snapshot (timestamp-prefixed filename → lexical max)."""
+    snaps = sorted((root / "data" / "scan_history" / "component-a").glob("*.jsonl"))
+    return snaps[-1] if snaps else None
+
+
+def _sig(cluster: dict[str, Any], *keys: str) -> float | None:
+    """Dig a numeric strength/admissibility value; None if any hop is missing (never fabricate)."""
+    node: Any = cluster
+    for k in keys:
+        if not isinstance(node, dict) or k not in node:
+            return None
+        node = node[k]
+    return node if isinstance(node, (int, float)) else None
+
+
+def _inbox_entry(cluster: dict[str, Any], first_seen: str) -> dict[str, Any]:
+    """One inbox row for an unreviewed cluster (display-only stats; machine never decides)."""
+    members = [m["ticker"] for m in cluster.get("members", [])]
+    label = " ".join(members[:2]) + (f" +{len(members) - 2}" if len(members) > 2 else "")
+    return {
+        "cluster_id": cluster["cluster_id"], "first_seen": first_seen, "members": members,
+        "label": label,
+        "rel12": _sig(cluster, "strength_signals", "rel_strength_vs_market", "h12mo", "value"),
+        "mom12": _sig(cluster, "strength_signals", "momentum", "h12mo", "value"),
+        "coherence": _sig(cluster, "admissibility", "coherence_value"),
+        "breadth_exp": _sig(cluster, "strength_signals", "breadth_expanding", "value"),
+        "crowding": _sig(cluster, "strength_signals", "crowding_overextension", "value"),
+    }
+
+
+def emit_radar_inbox_log() -> None:
+    """Sort the latest component-a clusters into inbox (unreviewed) vs log (matched to a review), by
+    member overlap ≥ _MATCH_MIN of the smaller set. Emits frontend/radar/{inbox,log}.json; assembles
+    only — reviews.json is the single record. Non-destructive when a source is absent."""
+    out = HERE / "radar"
+    reviews_path = out / "reviews.json"
+    snap_path = _latest_component_a(ROOT)
+    if snap_path is None or not reviews_path.exists():
+        return  # deploy / no local run → keep the committed inbox.json/log.json
+    reviews = json.loads(reviews_path.read_text())["reviews"]
+    clusters = [json.loads(line) for line in snap_path.read_text().splitlines() if line.strip()]
+    m = re.match(r"(\d{4})(\d{2})(\d{2})", snap_path.name)
+    scan_iso = "-".join(m.groups()) if m else ""
+
+    review_sets = {r["key"]: set(r["members"]) for r in reviews}
+    cluster_sets = {c["cluster_id"]: {mem["ticker"] for mem in c.get("members", [])}
+                    for c in clusters}
+
+    # LOG: every review + its current match status (best-overlap current cluster + membership delta)
+    log_reviews = []
+    for r in sorted(reviews, key=lambda r: r["key"]):
+        rset = review_sets[r["key"]]
+        cand = sorted((cid for cid, cs in cluster_sets.items() if _overlap(cs, rset) >= _MATCH_MIN))
+        if cand:
+            best = max(cand, key=lambda cid: _overlap(cluster_sets[cid], rset))  # ties → lowest cid
+            cs = cluster_sets[best]
+            match = {"status": "matched", "cluster_id": best,
+                     "added": sorted(cs - rset), "dropped": sorted(rset - cs)}
+        else:
+            match = {"status": "gone", "cluster_id": None, "added": [], "dropped": []}
+        log_reviews.append({**r, "match": match})
+
+    # INBOX: current clusters matched by NO review (not yet judged)
+    inbox = sorted(
+        (_inbox_entry(c, scan_iso) for c in clusters
+         if not any(_overlap(cluster_sets[c["cluster_id"]], rs) >= _MATCH_MIN
+                    for rs in review_sets.values())),
+        key=lambda e: e["cluster_id"])
+
+    (out / "inbox.json").write_text(
+        json.dumps({"scan_date": scan_iso, "inbox": inbox}, indent=1, ensure_ascii=False) + "\n")
+    (out / "log.json").write_text(
+        json.dumps({"scan_date": scan_iso, "reviews": log_reviews},
+                   indent=1, ensure_ascii=False) + "\n")
+    gone = sum(1 for r in log_reviews if r["match"]["status"] == "gone")
+    print(f"radar inbox+log: {len(clusters)} clusters → {len(clusters) - len(inbox)} matched / "
+          f"{len(inbox)} inbox; {len(log_reviews)} reviews ({gone} gone)")
+
+
 def main(argv: list[str] | None = None) -> None:
     ap = argparse.ArgumentParser(
         description="Assemble the static snapshot mirror the dashboard serves."
@@ -504,6 +599,8 @@ def main(argv: list[str] | None = None) -> None:
 
     # Radar sweep bar — regenerated every build (manifest git-ignored → seeded; a run refreshes).
     emit_radar_sweep()
+    # Radar inbox + review log — sort latest clusters into unreviewed vs reviewed (non-destructive).
+    emit_radar_inbox_log()
 
     print(
         f"mirror: {len(queue)} queue rows, {len(uni)} universe rows, "
