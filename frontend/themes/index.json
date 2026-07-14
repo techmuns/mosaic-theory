@@ -45,22 +45,45 @@
     "partial": 65,
     "early": 41
    }
+  },
+  {
+   "slug": "truckload-supply-purge",
+   "label": "Truckload supply purge",
+   "freezeDate": "2026-07-14",
+   "ratifiedCount": 0,
+   "surfacedCount": 37,
+   "frozenCount": 37,
+   "watchlistCount": 3,
+   "tierShape": {
+    "binding": 0,
+    "quantified": 1,
+    "committed": 10,
+    "aspirational": 26,
+    "none": 744,
+    "surfaced": 37,
+    "universe": 781
+   },
+   "frozenTiers": {
+    "firm": 1,
+    "partial": 10,
+    "early": 26
+   }
   }
  ],
  "crossDriver": {
-  "driversFrozen": 2,
+  "driversFrozen": 3,
   "totalRatified": 0,
-  "totalWatchlist": 8,
-  "line": "2 themes in snapshot; exposure-carry diagnostic poolable but UNPOWERED (2 < 4 themes)."
+  "totalWatchlist": 11,
+  "line": "3 themes in snapshot; exposure-carry diagnostic poolable but UNPOWERED (3 < 4 themes)."
  },
  "pooledForward": {
   "totalBuys": 0,
-  "totalWatchlist": 8,
+  "totalWatchlist": 11,
   "powerFloor": {
-   "themes": 2,
+   "themes": 3,
    "needed": 4,
-   "pct": 50,
-   "label": "2 of ~4-5 themes \u2014 unpowered"
+   "pct": 75,
+   "label": "3 of ~4-5 themes \u2014 unpowered"
   },
   "undefinedMeasures": [
    [
