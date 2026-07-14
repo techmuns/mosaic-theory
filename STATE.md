@@ -3228,8 +3228,24 @@ Assemble-and-cite only; POSES, never forecasts; `Synthesis` six-field no-conclus
   source_ref; the decisive question now reads "reverse the Q1 volume collapse". So the drivers now
   BOTH read cleanly for the human AND feed the machine's reasoning. Pins: curated line format
   (deterministic anchors) + the digest/system-rule (prompt-construction, not an LLM-output string).
+- **DIRECTIONAL RESTRUCTURE (2026-07-13) — operator: "not useful, no direction, points
+  irrelevant".** After a diagnosis + two clarifying questions, the Mechanism block was rebuilt from
+  a flat kind-bucketed list into a **directional "what's changing" strip**: two groups,
+  **Deteriorating / Improving**, biggest signed move first. Direction = the machine reading the
+  SIGN of a stated change (`_driver_direction`) — top-line attribution by value_num (cost/expense
+  EXCLUDED, never a misleading "cost-down = good"), events by type (guidance raised/lowered,
+  impairment, client/product; showcase/exhibition/marketing-PR dropped), verb-based for the rest.
+  A row with NO derivable sign is DROPPED — which strips exactly the noise the operator flagged:
+  bare levels, patents, TAM, lab specs, foreign-regional trivia. This is sign-reading, NOT a
+  verdict (stops well short of BUY/AVOID). md+web parity; near-dup plural collapse ("2 GWh
+  hour(s)"). VERIFIED (MVST/VITL/EPAM): MVST → Deteriorating: revenue −48% (volume collapse),
+  impairment · Improving: Iveco win, +2 GWh capacity, US rev +173%. Pins: `_driver_direction` unit
+  (sign/exclude/event/off-thesis/verb) + directional grouping e2e. **PREVIEW CACHING FIX:** the
+  stock `http.server` sends no cache headers → the browser hard-cached old ES modules; a
+  no-cache dev server (`scratchpad/nocache_server.py`, port 8899) serves fresh — use that URL.
 - **NEXT (operator):** (1) test locally (full cohort Tier-A + live Tier-B injected into the
-  frontend preview), then I open the PR; (2) standing artifact pass re-assembles the cohort via
+  frontend preview, served no-cache on :8899), then I open the PR; (2) standing artifact pass
+  re-assembles the cohort via
   `vinci dossier` so the COMMITTED dossiers carry real driver rows (both tiers) — the injected
   preview jsons are restored to None after review.
 

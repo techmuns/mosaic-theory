@@ -2199,8 +2199,10 @@ def test_mechanism_render_present_grouped_cited_and_honest_empty() -> None:
         "operating_drivers": ds.OperatingDriversExtract(rows=rows, qa_flags=[])})
     body = "\n".join(dr._brief_mechanism_lines(m))
     assert "## Mechanism" in body
-    assert "_Results attribution:_" in body and "_Recent events:_" in body
-    # events most-recent-first: Jun-29 before May-07 in the rendered order
+    # grouped by DIRECTION (not kind): revenue -10% deteriorating; the two events improving
+    assert "_Deteriorating:_" in body and "_Improving:_" in body
+    assert body.index("_Deteriorating:_") < body.index("_Improving:_")  # bad news first
+    # events most-recent-first WITHIN Improving: Jun-29 before May-07
     assert body.index("Jun-29-2026") < body.index("May-07-2026")
     assert ">Source:" not in body  # no inline exhibit caption (the endnotes rule)
     # ⊖ honest empty — no rows → one honest line, no fabricated bullet
@@ -2212,58 +2214,78 @@ def test_mechanism_render_present_grouped_cited_and_honest_empty() -> None:
         dr._brief_mechanism_lines(_minimal_mech()))  # operating_drivers defaults None
 
 
-def test_mechanism_line_curated_by_kind() -> None:
-    """(PR-B curation A) The Mechanism line reads mechanism-first, concise: ATTRIBUTION → metric +
-    signed move + the CAUSE clause (not the raw MD&A sentence, and not the period-phrase filler);
-    LEADING_INDICATOR strips the redundant unit + hedge; the biggest move sorts first."""
+def test_driver_direction_reads_sign_not_verdict() -> None:
+    """(PR-B directional) _driver_direction reads the SIGN of a stated change only, not a verdict.
+    Top-line attribution → sign; cost/expense EXCLUDED (a cost decline in a collapse is not 'good');
+    events map by type (showcase/exhibition dropped); a signed off-thesis fact (patents) dropped;
+    verb-based direction for the rest; a bare level with no verb has no direction."""
+    d = dr._driver_direction
+    assert d(_drv("attribution", metric="revenue", value="x", value_num=-48.0)) == -1
+    assert d(_drv("attribution", metric="adjusted ebitda", value="x", value_num=12.0)) == 1
+    assert d(_drv("attribution", metric="cost of revenue", value="x", value_num=-43.6)) is None
+    assert d(_drv("event", metric="Corporate Guidance - Raised", value="Raises FY26")) == 1
+    assert d(_drv("event", metric="Corporate Guidance-Lowered", value="Lowers FY26")) == -1
+    assert d(_drv("event", metric="Impairments/Write Off", value="Impairment charge")) == -1
+    assert d(_drv("event", metric="Product-Related Announcement", value="Launches new line")) == 1
+    assert d(_drv("event", metric="Product-Related Announcement",
+                  value="to Showcase products at the Beijing Exhibition")) is None
+    off = _drv("competitive_position", metric="patents", value="grew to over 890 patents")
+    assert d(off) is None
+    assert d(_drv("leading_indicator", metric="US revenue", value="grew 173% to $39.3M")) == 1
+    assert d(_drv("leading_indicator", metric="members", value="declined to 50%")) == -1
+    assert d(_drv("leading_indicator", metric="sales volume", value="274 megawatt hours")) is None
+
+
+def test_mechanism_directional_grouping_and_line_curation() -> None:
+    """(PR-B directional + curation A) The Mechanism block groups by Deteriorating / Improving,
+    biggest move first; ATTRIBUTION renders 'metric ±% — cause' (curated, not the raw sentence);
+    a cost/expense line is excluded (no misleading sign); a bare level with no direction dropped."""
     rows = [
-        _drv("attribution", metric="cost of revenue", value="$32.0 million, or 43.6%",
-             value_num=-43.6, unit="%",
-             verbatim=("Our cost of revenues for the three months ended March 31, 2026 decreased "
-                       "by $32.0 million, or 43.6%, compared to the same period in 2025, primarily "
-                       "due to the decrease in sales volumes."), source_ref="10-Q Z"),
-        _drv("attribution", metric="revenue", value="$55.9 million, or 48.0%", value_num=-48.0,
-             unit="%", verbatim=("Our revenues decreased by $55.9 million, or 48.0%. The decrease "
-                                 "was primarily driven by a 48.9% reduction in sales volume from "
-                                 "approximately 535.7 MWh for the three months ended Mar 31, 2025 "
-                                 "to approximately 273.9 MWh."), source_ref="10-Q Z"),
+        _drv("attribution", metric="revenue", value="$55.9m, or 48.0%", value_num=-48.0, unit="%",
+             verbatim=("Our revenues decreased by $55.9 million, or 48.0%. The decrease was "
+                       "primarily driven by a 48.9% reduction in sales volume from approximately "
+                       "535.7 MWh for the three months ended Mar 31, 2025 to approximately "
+                       "273.9 MWh."), source_ref="10-Q Z"),
+        _drv("attribution", metric="cost of revenue", value="$32m, or 43.6%", value_num=-43.6,
+             unit="%", verbatim="Cost of revenues decreased 43.6% due to lower volume.",
+             source_ref="10-Q Z"),  # cost/expense → EXCLUDED from the directional strip
+        _drv("event", metric="Corporate Guidance - Raised", period="May-07-2026",
+             value="Raises FY26 guidance", source_ref="CIQ Key Developments: kd · May-07-2026"),
         _drv("leading_indicator", metric="sales volume (megawatt hours)",
-             value="approximately 274 megawatt hours", source_ref="CIQ transcript: A"),
+             value="approximately 274 megawatt hours", source_ref="CIQ transcript: A"),  # bare
     ]
     m = _minimal_mech().model_copy(update={
         "operating_drivers": ds.OperatingDriversExtract(rows=rows, qa_flags=[])})
     body = "\n".join(dr._brief_mechanism_lines(m))
-    # attribution: metric + signed % + the CAUSE (mechanism), raw sentence + table-noise GONE
+    # attribution curated (metric + signed % + CAUSE); raw sentence + filler gone
     assert "revenue -48% — a 48.9% reduction in sales volume" in body
-    assert "cost of revenue -43.6% — the decrease in sales volumes" in body
-    assert "Our revenues decreased by" not in body  # the raw sentence lead is gone
-    assert "for the three months ended" not in body  # period-phrase filler stripped
-    # biggest move first: revenue (-48) before cost of revenue (-43.6)
-    assert body.index("revenue -48%") < body.index("cost of revenue -43.6%")
-    # leading indicator: redundant unit paren + 'approximately' hedge stripped
-    assert "sales volume: 274 megawatt hours" in body
-    assert "(megawatt hours): approximately" not in body
+    assert "Our revenues decreased by" not in body
+    assert "for the three months ended" not in body
+    # cost/expense excluded — never a misleading 'improving'
+    assert "cost of revenue" not in body
+    # guidance-raised → Improving; a bare level with no direction → dropped
+    assert "Raises FY26 guidance" in body and body.index("Raises FY26") > body.index("_Improving:_")
+    assert "274 megawatt hours" not in body
 
 
 def test_mechanism_render_dedups_cross_call_repeats() -> None:
-    """(PR-B polish) A stat management repeats across BOTH calls (same metric+value, different
-    source_ref) renders ONCE — the JSON keeps each provenance, the block collapses it. Distinct
-    values in a group stay separate (274 vs 536 MWh); dedup is value-level, not kind-level."""
+    """(PR-B polish) A driver repeated across BOTH calls (same metric+value) renders ONCE, and a
+    'gigawatt hour(s)' plural variance also collapses. JSON keeps every provenance; dedup is
+    render-only. Distinct drivers stay separate."""
     rows = [
-        _drv("competitive_position", metric="patents", value="over 890 patents",
-             source_ref="CIQ transcript: Acme Q1 2026 Call"),
-        _drv("competitive_position", metric="patents", value="over 890 patents",
-             source_ref="CIQ transcript: Acme Q4 2025 Call"),  # same fact, other call → collapses
-        _drv("leading_indicator", metric="volume", value="274 MWh", source_ref="CIQ transcript: A"),
-        _drv("leading_indicator", metric="volume", value="536 MWh", source_ref="CIQ transcript: A"),
+        _drv("leading_indicator", metric="capacity", value="added up to 2 gigawatt hours",
+             source_ref="CIQ transcript: Q1 Call"),
+        _drv("leading_indicator", metric="capacity", value="added up to 2 gigawatt hour",
+             source_ref="CIQ transcript: Q4 Call"),  # plural variance → collapses
+        _drv("leading_indicator", metric="US revenue", value="grew 173% to $39.3M",
+             source_ref="CIQ transcript: Q4 Call"),
     ]
     m = _minimal_mech().model_copy(update={
         "operating_drivers": ds.OperatingDriversExtract(rows=rows, qa_flags=[])})
-    body = "\n".join(dr._brief_mechanism_lines(m))
-    assert body.lower().count("over 890 patents") == 1  # the cross-call repeat collapsed
-    assert "274 MWh" in body and "536 MWh" in body  # distinct values NOT merged
-    # the JSON still carries BOTH provenances (machine-complete — dedup is render-only)
-    assert len([r for r in m.operating_drivers.rows if r.value == "over 890 patents"]) == 2
+    body = "\n".join(dr._brief_mechanism_lines(m)).lower()
+    assert body.count("2 gigawatt hour") == 1  # the plural-variance near-dup collapsed
+    assert "grew 173%" in body  # a distinct driver stays
+    assert len(m.operating_drivers.rows) == 3  # JSON keeps all provenances (render-only dedup)
 
 
 def test_mechanism_render_endnote_cited_e2e() -> None:
@@ -2301,6 +2323,9 @@ def test_web_mechanism_mirror_static() -> None:
     assert "briefCase(d.synthesis) + mechanismCard(m)" in src  # wired into the Brief
     assert "+ mechanismFull(m)" in src  # wired into Analysis
     assert "citeMark(r.source_ref)" in src  # endnote-cited, never inline
+    assert "function drvDirection" in src  # the directional grouping is mirrored
+    assert '"-1": "Deteriorating"' in src and '"1": "Improving"' in src
+    assert "what's changing" in src  # the directional block label
     assert "No operating drivers extracted" in src  # the honest-empty mirror
     assert ">Source:" not in src  # the exhibits-cite-via-endnotes guard stays green
 

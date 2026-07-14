@@ -1541,13 +1541,70 @@ def _brief_case_lines(s: Any) -> list[str]:
     return out
 
 
-_KIND_ORDER = ("leading_indicator", "pricing_action", "attribution", "event",
-               "pass_through_structure", "competitive_position")
-_KIND_LABEL = {
-    "leading_indicator": "Leading indicators", "pricing_action": "Pricing actions",
-    "attribution": "Results attribution", "event": "Recent events",
-    "pass_through_structure": "Pass-through", "competitive_position": "Competitive position",
-}
+# (PR-B directional) The Mechanism block reads as a "what changed" strip — DETERIORATING vs
+# IMPROVING — not machine-centric extraction buckets. Direction is the machine reading the SIGN of a
+# STATED change (revenue down = deteriorating; that is arithmetic, not a verdict), never BUY/AVOID.
+# A driver with NO derivable sign is dropped — which also strips the static-fact noise (a patent
+# count, a TAM, a spec, a bare level) the human called irrelevant.
+_UP_GOOD = re.compile(  # metrics where UP is the good direction
+    r"revenue|\bsales\b|volume|shipment|deliver|subscriber|member|\busers?\b|order|booking|"
+    r"backlog|capacit|production|margin|ebitda|profit|income|earning|\beps\b|\bcash\b|\bfcf\b|"
+    r"free cash|retention|\basp\b|average selling|bookings|share\b", re.I)
+_UP_BAD = re.compile(r"\bcost|expense|leverage|\bdebt\b|churn", re.I)  # UP is bad (or ambiguous)
+_INCR = re.compile(r"\b(grew|grow\w*|increas\w*|rose|rising|higher|gain\w*|record|expand\w*|"
+                   r"added|improv\w*|surpass\w*|\bup\b|raised)\b", re.I)
+_DECR = re.compile(r"\b(declin\w*|drop\w*|fell|fall\w*|decreas\w*|lower\w*|reduc\w*|contract\w*|"
+                   r"collaps\w*|\bloss\b|negative|\bcut\b|\bdown\b|weak\w*)\b", re.I)
+_OFF_THESIS = re.compile(  # signed-but-off-thesis trivia the human flagged as irrelevant
+    r"patent|addressable market|\bTAM\b|award\b|EMEA|\bAsia\b|Pacific|\bAPAC\b|geograph|"
+    r"school bus|coulombic|monolithic stack|\bcycles\b", re.I)
+_DIR_LABEL = {-1: "Deteriorating", 1: "Improving"}
+_DIR_ORDER = (-1, 1)  # bad news first — for a de-rated name, the damage is the point
+
+
+# a "product" event that is only a trade-show / conference appearance or a marketing-campaign PR
+# stunt is not an operating driver — dropped from the directional strip.
+_EVENT_NOISE = re.compile(
+    r"showcase|exhibition|conference|trade show|to present|to attend|campaign|starring|"
+    r"limited[- ]time|limited[- ]edition|one-time|sweepstake|giveaway|mascot", re.I)
+
+
+def _event_direction(metric: str, value: str = "") -> int | None:
+    """A KD event Type → direction: guidance raised / client / product / expansion = improving;
+    guidance lowered / impairment / write-off / going-concern = deteriorating; else no change. A
+    'product' event that is only a trade-show/exhibition appearance is dropped (not a driver)."""
+    m = metric.lower()
+    if any(k in m for k in ("lower", "impair", "write", "going concern", "downgrade")):
+        return -1
+    if _EVENT_NOISE.search(value):  # a showcase / exhibition is not an operating change
+        return None
+    if any(k in m for k in ("raised", "client", "product", "expansion", "business win")):
+        return 1
+    return None  # new/confirmed guidance, conference, etc. — not a directional CHANGE
+
+
+def _driver_direction(r: Any) -> int | None:
+    """+1 improving · -1 deteriorating · None = no derivable sign (dropped from the strip). The
+    machine reads the SIGN of a stated change only. ATTRIBUTION uses value_num × metric polarity
+    but ONLY on top-line metrics (a cost decline in a volume collapse is not 'good' — cost/expense
+    lines are excluded, not mislabelled). EVENTS map by type. Other rows read a direction verb in
+    the text combined with metric polarity. Off-thesis trivia (foreign-regional mix, patents, TAM,
+    a lab spec) is dropped even when signed."""
+    text = f"{r.metric} {r.value}"
+    if _OFF_THESIS.search(text):
+        return None
+    kind = r.kind.value
+    if kind == "attribution":
+        if r.value_num is None or _UP_BAD.search(r.metric) or not _UP_GOOD.search(r.metric):
+            return None  # cost/expense or unclassifiable → excluded (never a misleading sign)
+        return 1 if r.value_num > 0 else -1
+    if kind == "event":
+        return _event_direction(r.metric, r.value)
+    inc, dec = bool(_INCR.search(text)), bool(_DECR.search(text))
+    if inc == dec:  # no verb, or contradictory → no clear direction (drops bare levels/specs)
+        return None
+    polarity = -1 if _UP_BAD.search(r.metric) else 1
+    return (1 if inc else -1) * polarity
 
 
 def _event_sort_key(period: str | None) -> str:
@@ -1561,7 +1618,10 @@ def _event_sort_key(period: str | None) -> str:
 
 
 def _drv_norm(s: Any) -> str:
-    return re.sub(r"\s+", " ", str(s or "")).strip().lower().rstrip(".")
+    # normalize whitespace, case, trailing period, AND a trailing plural per word so a
+    # 'gigawatt hour' vs 'gigawatt hours' near-repeat collapses (management re-phrases each call).
+    base = re.sub(r"\s+", " ", str(s or "")).strip().lower().rstrip(".")
+    return re.sub(r"(\w{3,})s\b", r"\1", base)
 
 
 def _drv_key(r: Any) -> tuple[str, str]:
@@ -1630,8 +1690,9 @@ def _driver_line(r: Any) -> str:
                 if r.value_num is not None else _drv_clean_metric(r.metric))
         cause = _drv_cause(r.verbatim)
         body = f"{head} — {cause}" if cause else head
-    elif kind == "event":
-        body = f"{r.period} · {r.metric}: {r.value}"
+    elif kind == "event":  # the direction group already conveys the sign; show date + headline
+        head = r.value if len(r.value) <= 92 else r.value[:89].rstrip() + "…"
+        body = f"{r.period} · {head}"
     elif kind == "leading_indicator":
         body = f"{_drv_clean_metric(r.metric)}: {_drv_clean_value(r.value)}"
     else:  # pricing_action / pass_through / competitive — the verbatim value phrase, sentence-cased
@@ -1640,24 +1701,25 @@ def _driver_line(r: Any) -> str:
     return f"- {body}{_cite(r.source_ref)}"
 
 
-def _mechanism_groups(rows: list[Any], *, caps: dict[str, int]) -> list[str]:
-    """Rows grouped by kind in a fixed order, each capped; events most-recent-first. Shared by the
-    Brief (tight caps) and the Analysis tier (generous caps)."""
-    by_kind: dict[str, list[Any]] = {}
-    for r in rows:
-        by_kind.setdefault(r.kind.value, []).append(r)
+def _mechanism_groups(rows: list[Any], *, cap: int) -> list[str]:
+    """Rows grouped by DIRECTION — Deteriorating then Improving — each capped, biggest signed move
+    first (events fall back to recency). A row with no derivable direction is DROPPED: that strips
+    the static-fact noise (bare levels, patents, TAM, specs) and the off-thesis trivia the human
+    flagged as irrelevant. Dedup collapses a stat repeated across calls. Brief passes a tight cap,
+    the Analysis tier a generous one."""
+    by_dir: dict[int, list[Any]] = {-1: [], 1: []}
+    for r in _dedup_drivers(rows):
+        d = _driver_direction(r)
+        if d is not None:
+            by_dir[d].append(r)
     out: list[str] = []
-    for kind in _KIND_ORDER:
-        group = by_kind.get(kind)
+    for d in _DIR_ORDER:
+        group = sorted(by_dir[d], reverse=True,
+                       key=lambda r: (abs(r.value_num or 0.0), _event_sort_key(r.period)))
         if not group:
             continue
-        if kind == "event":
-            group = sorted(group, key=lambda r: _event_sort_key(r.period), reverse=True)
-        elif kind == "attribution":  # biggest move first (decision-weight order)
-            group = sorted(group, key=lambda r: abs(r.value_num or 0.0), reverse=True)
-        shown = _dedup_drivers(group)[:caps.get(kind, 3)]  # collapse a stat repeated across calls
-        out.append(f"_{_KIND_LABEL[kind]}:_")
-        out += [_driver_line(r) for r in shown]
+        out.append(f"_{_DIR_LABEL[d]}:_")
+        out += [_driver_line(r) for r in group[:cap]]
     return out
 
 
@@ -1672,28 +1734,25 @@ def _brief_mechanism_lines(m: MechanicalLayer) -> list[str]:
     out: list[str] = ["## Mechanism"]
     if od is None or not od.rows:
         return [*out, _NO_DRIVERS, ""]
-    out.append("**Operating drivers** _(anchored; the full set is in Analysis)_")
-    out.append("")
-    out += _mechanism_groups(
-        list(od.rows),
-        caps={"attribution": 2, "pricing_action": 2, "leading_indicator": 2, "event": 3})
-    out.append("")
+    groups = _mechanism_groups(list(od.rows), cap=5)
+    if not groups:  # rows exist but none carry a derivable direction — honest, not fabricated
+        return [*out, "_No directional operating driver — see the full record in Analysis._", ""]
+    out.append("**What's changing** _(directional; the full record is in Analysis)_")
+    out += ["", *groups, ""]
     return out
 
 
 def _mechanism_lines(m: MechanicalLayer) -> list[str]:
-    """(PR-B Analysis) the full Mechanism rows — every kind, generous caps, each cited; a machine-QA
-    note when a source missed. Absent field ⇒ nothing (a pre-PR-B dossier round-trips clean)."""
+    """(PR-B Analysis) the directional Mechanism strip at a generous cap — Deteriorating /
+    Improving, each cited. Absent field ⇒ nothing (a pre-PR-B dossier round-trips clean)."""
     od = m.operating_drivers
     if od is None:
         return []
     out = ["## Operating drivers (mechanism)", ""]
     if not od.rows:
         return [*out, _NO_DRIVERS, ""]
-    out += _mechanism_groups(
-        list(od.rows),
-        caps={"attribution": 12, "pricing_action": 8, "leading_indicator": 12, "event": 10,
-              "pass_through_structure": 8, "competitive_position": 8})
+    groups = _mechanism_groups(list(od.rows), cap=12)
+    out += groups or ["_No directional operating driver in the extracted set._"]
     out.append("")
     return out
 

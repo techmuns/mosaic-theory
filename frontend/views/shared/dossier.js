@@ -592,8 +592,36 @@ function briefCase(s) {
 // attribution / dated events), grouped + capped + cited. Mirrors _brief_mechanism_lines() /
 // _mechanism_lines() in render.py. ATTRIBUTION shows the real (trimmed) MD&A sentence — its cause
 // IS the decision content. Fail-honest: no rows → one honest line, never a fabricated driver.
-const DRV_KIND_ORDER = ["leading_indicator", "pricing_action", "attribution", "event", "pass_through_structure", "competitive_position"];
-const DRV_KIND_LABEL = { leading_indicator: "Leading indicators", pricing_action: "Pricing actions", attribution: "Results attribution", event: "Recent events", pass_through_structure: "Pass-through", competitive_position: "Competitive position" };
+// (directional) DETERIORATING vs IMPROVING — the machine reads the SIGN of a stated change (mirrors
+// _driver_direction in render.py). A row with no derivable sign is dropped (static facts / trivia).
+const DRV_DIR_LABEL = { "-1": "Deteriorating", "1": "Improving" };
+const DRV_DIR_ORDER = [-1, 1];
+const DRV_UP_GOOD = /revenue|\bsales\b|volume|shipment|deliver|subscriber|member|\busers?\b|order|booking|backlog|capacit|production|margin|ebitda|profit|income|earning|\beps\b|\bcash\b|\bfcf\b|free cash|retention|\basp\b|average selling|bookings|share\b/i;
+const DRV_UP_BAD = /\bcost|expense|leverage|\bdebt\b|churn/i;
+const DRV_INCR = /\b(grew|grow\w*|increas\w*|rose|rising|higher|gain\w*|record|expand\w*|added|improv\w*|surpass\w*|\bup\b|raised)\b/i;
+const DRV_DECR = /\b(declin\w*|drop\w*|fell|fall\w*|decreas\w*|lower\w*|reduc\w*|contract\w*|collaps\w*|\bloss\b|negative|\bcut\b|\bdown\b|weak\w*)\b/i;
+const DRV_OFF_THESIS = /patent|addressable market|\bTAM\b|award\b|EMEA|\bAsia\b|Pacific|\bAPAC\b|geograph|school bus|coulombic|monolithic stack|\bcycles\b/i;
+const DRV_EVENT_NOISE = /showcase|exhibition|conference|trade show|to present|to attend|campaign|starring|limited[- ]time|limited[- ]edition|one-time|sweepstake|giveaway|mascot/i;
+function drvEventDirection(metric, value) {
+  const m = String(metric || "").toLowerCase();
+  if (["lower", "impair", "write", "going concern", "downgrade"].some((k) => m.includes(k))) return -1;
+  if (DRV_EVENT_NOISE.test(value || "")) return null;
+  if (["raised", "client", "product", "expansion", "business win"].some((k) => m.includes(k))) return 1;
+  return null;
+}
+function drvDirection(r) {
+  const text = `${r.metric} ${r.value}`;
+  if (DRV_OFF_THESIS.test(text)) return null;
+  if (r.kind === "attribution") {
+    if (r.value_num == null || DRV_UP_BAD.test(r.metric) || !DRV_UP_GOOD.test(r.metric)) return null;
+    return r.value_num > 0 ? 1 : -1;
+  }
+  if (r.kind === "event") return drvEventDirection(r.metric, r.value);
+  const inc = DRV_INCR.test(text), dec = DRV_DECR.test(text);
+  if (inc === dec) return null;
+  const pol = DRV_UP_BAD.test(r.metric) ? -1 : 1;
+  return (inc ? 1 : -1) * pol;
+}
 const DRV_NONE = "No operating drivers extracted \u2014 anchored patterns missed; the transcript tier is gated (LibreOffice) or dry.";
 const DRV_MONTHS = { Jan: "01", Feb: "02", Mar: "03", Apr: "04", May: "05", Jun: "06", Jul: "07", Aug: "08", Sep: "09", Oct: "10", Nov: "11", Dec: "12" };
 function drvEventKey(period) {  // "May-28-2026" -> "2026-05-28" (sortable); "" last
@@ -619,7 +647,7 @@ function drvLine(r) {
     const head = r.value_num != null ? `${drvCleanMetric(r.metric)} ${r.value_num > 0 ? "+" : ""}${r.value_num}%` : drvCleanMetric(r.metric);
     const cause = drvCause(r.verbatim);
     body = cause ? `${head} \u2014 ${cause}` : head;
-  } else if (r.kind === "event") body = `${r.period} \u00b7 ${r.metric}: ${r.value}`;
+  } else if (r.kind === "event") { const h = (r.value || "").length > 92 ? r.value.slice(0, 89).trimEnd() + "\u2026" : (r.value || ""); body = `${r.period} \u00b7 ${h}`; }
   else if (r.kind === "leading_indicator") body = `${drvCleanMetric(r.metric)}: ${drvCleanValue(r.value)}`;
   else { const v = drvCleanValue(r.value); body = (v ? v.charAt(0).toUpperCase() + v.slice(1) : "").slice(0, 150); }
   return `<div class="drv-row">${escapeHtml(body)}${citeMark(r.source_ref)}</div>`;
@@ -628,40 +656,38 @@ function drvLine(r) {
 // so the JSON keeps each provenance but the block shows the fact ONCE (machine-complete JSON, curated
 // surface). Value-level, so '274 MWh' and '536 MWh' stay distinct — only exact repeats collapse.
 function drvDedup(rows) {
-  const norm = (s) => String(s || "").replace(/\s+/g, " ").trim().toLowerCase().replace(/\.$/, "");
+  const norm = (s) => String(s || "").replace(/\s+/g, " ").trim().toLowerCase().replace(/\.$/, "").replace(/(\w{3,})s\b/g, "$1");
   const seen = new Set(), out = [];
   for (const r of rows) { const k = norm(r.metric) + "\u0001" + norm(r.value); if (seen.has(k)) continue; seen.add(k); out.push(r); }
   return out;
 }
-function drvGroups(rows, caps) {
-  const byKind = {};
-  for (const r of rows) (byKind[r.kind] = byKind[r.kind] || []).push(r);
+function drvGroups(rows, cap) {
+  const byDir = { "-1": [], "1": [] };
+  for (const r of drvDedup(rows)) { const d = drvDirection(r); if (d != null) byDir[String(d)].push(r); }
   let html = "";
-  for (const kind of DRV_KIND_ORDER) {
-    let group = byKind[kind];
-    if (!group || !group.length) continue;
-    if (kind === "event") group = group.slice().sort((a, b) => drvEventKey(b.period).localeCompare(drvEventKey(a.period)));
-    else if (kind === "attribution") group = group.slice().sort((a, b) => Math.abs(b.value_num || 0) - Math.abs(a.value_num || 0));
-    const shown = drvDedup(group).slice(0, (caps && caps[kind]) || 3);  // collapse cross-call repeats
-    html += `<div class="drv-grp">${escapeHtml(DRV_KIND_LABEL[kind])}</div>` + shown.map(drvLine).join("");
+  for (const d of DRV_DIR_ORDER) {
+    const group = byDir[String(d)].slice().sort((a, b) =>
+      (Math.abs(b.value_num || 0) - Math.abs(a.value_num || 0)) || drvEventKey(b.period).localeCompare(drvEventKey(a.period)));
+    if (!group.length) continue;
+    html += `<div class="drv-grp">${escapeHtml(DRV_DIR_LABEL[String(d)])}</div>` + group.slice(0, cap).map(drvLine).join("");
   }
   return html;
 }
 function mechanismCard(m) {
   const od = m.operating_drivers;
   const rows = (od && od.rows) || [];
-  if (!rows.length) return `<div class="card ds-section"><div class="ds-title">Mechanism</div><div class="muted" style="font-size:12.5px; margin-top:6px;">${escapeHtml(DRV_NONE)}</div></div>`;
-  const body = drvGroups(rows, { attribution: 2, pricing_action: 2, leading_indicator: 2, event: 3 });
-  return `<div class="card ds-section"><div class="ds-title">Mechanism <span class="muted" style="font-weight:400; text-transform:none; letter-spacing:0;">\u2014 operating drivers; full set in Analysis</span></div>
-    <div class="brief-mech">${body}</div></div>`;
+  const body = rows.length ? drvGroups(rows, 5) : "";
+  const inner = body || `<div class="muted" style="font-size:12.5px; margin-top:6px;">${escapeHtml(rows.length ? "No directional operating driver \u2014 see the full record in Analysis." : DRV_NONE)}</div>`;
+  return `<div class="card ds-section"><div class="ds-title">Mechanism <span class="muted" style="font-weight:400; text-transform:none; letter-spacing:0;">\u2014 what's changing; full record in Analysis</span></div>
+    <div class="brief-mech">${inner}</div></div>`;
 }
-function mechanismFull(m) {  // Analysis tier — every kind, generous caps
+function mechanismFull(m) {  // Analysis tier — directional strip, generous cap
   const od = m.operating_drivers;
   if (!od) return "";
   const rows = od.rows || [];
-  if (!rows.length) return `<div class="card ds-section"><div class="ds-title">Operating drivers (mechanism)</div><div class="muted" style="font-size:12.5px; margin-top:6px;">${escapeHtml(DRV_NONE)}</div></div>`;
-  const body = drvGroups(rows, { attribution: 12, pricing_action: 8, leading_indicator: 12, event: 10, pass_through_structure: 8, competitive_position: 8 });
-  return `<div class="card ds-section"><div class="ds-title">Operating drivers (mechanism)</div><div class="brief-mech">${body}</div></div>`;
+  const body = rows.length ? drvGroups(rows, 12) : "";
+  const inner = body || `<div class="muted" style="font-size:12.5px; margin-top:6px;">${escapeHtml(rows.length ? "No directional operating driver in the extracted set." : DRV_NONE)}</div>`;
+  return `<div class="card ds-section"><div class="ds-title">Operating drivers (mechanism)</div><div class="brief-mech">${inner}</div></div>`;
 }
 
 // (Phase-3) Revenue + EBITDA bars ($M) + EBITDA-margin % line — the institutional financial-trend
