@@ -72,6 +72,7 @@ def _git_sha() -> str | None:
 _DRIVER_SLUG: dict[str, tuple[str, str]] = {
     "AI-datacenter value chain": ("ai-datacenter", "AI-datacenter"),
     "defense-demand-shift": ("defense", "Defense demand-shift"),
+    "truckload-supply-purge": ("truckload-supply-purge", "Truckload supply purge"),
 }
 # the concreteness → rank ladder + the driver-tie gate, mirroring vinci.themes.exposure so the tier
 # shape derives IDENTICALLY from the ledger's (grade, driver_tie) as the backend's exposure_basis.

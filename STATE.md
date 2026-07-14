@@ -2067,6 +2067,30 @@ Each line: *what it does* — *verified how*.
   `freeze_baskets`. Verified: ruff + `mypy --strict vinci` clean; network-free tests
   `test_llm_error_is_unassessed_not_none`, `test_scan_error_unassessed_and_non_4xx_no_abort`,
   `test_scan_aborts_fast_on_repeated_quota_4xx`, `test_valid_assessment_grade_unaffected_by_error_bucket`.
+- **THEME #3 truckload-supply-purge FROZEN — third driver through the multi-cohort forward machinery
+  (2026-07-14, feat/theme3-freeze; PR open, not merged).** Cohort = the combined 781-assessed scan (main
+  `20260713T141114Z__bd4be31`, 759 + delta2 22, 0 surfaced) → 37 surfaced (tier 0 binding / 1 quantified /
+  10 committed / 26 aspirational). Froze ALL 37 surfaced (mirrors the defense all-surfaced pattern):
+  0 RATIFIED · 37 PASSED · 37 naive baseline — the zero-ratified UNDEFINED-with-reason path applies (no
+  BUY leg → RATIFIED-dependent spreads UNDEFINED, not computed; frozen outputs are AVOID-discipline +
+  exposure-carry DIAGNOSTICS, beta-confounded). Dispositions analyst-ratified 2026-07-14
+  (`data/research/theme3_truckload_triage_2026-07-14.md`). **WATCHLIST (3, re-underwrite):** WERN —
+  *"DOSSIER-NOW: single-name underwrite in progress at the 2:1 bar on NORMALIZED earnings (trailing P/E
+  99th percentile of own history — a trough-earnings artifact, not the bar). Thesis-break (all three):
+  FMCSA non-domiciled-CDL rule stayed/reversed, or ACT driver availability returns to surplus."*; MRTN +
+  HTLD (identical) — *"Re-underwrite when TL revenue per loaded mile turns positive YoY for two
+  consecutive reported quarters, OR on a ≥20% derate from the 2026-07-13 close while ACT capacity data
+  stays tight."* **AVOID-CONTROLS (3, ⊆ PASSED):** RXO (pure asset-light brokerage — losing side), LSTR
+  (borderline BCO/asset-light, analyst call 2026-07-14), ARCB (66% LTL — purge-orthogonal). **NOTED, not
+  frozen as candidates:** TFIN (freight factoring), KDK (autonomous trucking — second-order), FA (driver
+  screening — sleeper). Remaining surfaced = PARK/REJECT (tie-gate honest output). **STRUCTURAL FINDING:**
+  NO surfaced name discloses the driver itself (FMCSA rule / ELD purge / SCOTUS) — grades encode
+  structural business-model exposure; underwriting theme #3 = structural carrier exposure × external
+  driver-liveness evidence (ACT / spot-rate / FMCSA, OUTSIDE filings) × the 2:1 bar (dossier). Pre-triage
+  face-check CLOSED: WERN / RXO / ARCB matched directional expectation 3/3. Frontend mirrored via build.py:
+  `frontend/themes/truckload-supply-purge.json` + `index.json` (3 drivers); ai-datacenter + defense
+  byte-identical; DEPLOYS on merge (viewer gains theme #3). NEXT: **DOSSIER-NOW on WERN** (single-name
+  underwrite at the 2:1 bar on normalized earnings). ruff + `mypy --strict vinci` + pytest green.
 
 ## 3. FALSIFIED — tested and retired (NOT deferred)
 
@@ -3040,6 +3064,12 @@ two-name analysis (mid/small-caps, opposite directions) mapped against this inve
 
 ## 5. Next steps (ordered, current)
 
+- **DOSSIER-NOW: WERN (theme #3 truckload) — single-name underwrite at the 2:1 bar (2026-07-14).** The
+  scan's sole REAL-tier name (quantified / driver-specific asset-based TL). Underwrite on NORMALIZED
+  earnings — trailing P/E sits at the 99th percentile of its own history (a trough-earnings artifact, not
+  the bar). Thesis-break (all three WATCHLIST names): FMCSA non-domiciled-CDL rule stayed/reversed, or ACT
+  driver availability returns to surplus. Gated on the analyst's dossier build; cites the theme-#3 freeze
+  (`feat/theme3-freeze`) + `data/research/theme3_truckload_triage_2026-07-14.md`.
 - **OPERATOR NOTE (worktrees):** canonical main lives in the `-s2`/`-main` worktrees; the primary dir
   tracks unmerged `feat/own-history-line` — run audits and builds from a main worktree.
 - **Sweep cadence: MANUAL — operator decision 2026-07-13 (NO cron).** The Component-A co-movement sweep
