@@ -2293,6 +2293,26 @@ Each line: *what it does* — *verified how*.
   **priced-check pipeline invocation** (no CLI/script/Makefile generates `data/priced_check/report_*.txt`);
   the **monthly-sweep runtime** (the "~20 min" is an operator estimate, not recorded); and the
   **research-brief question count** (in-silico used Q1–Q3, T012 Q1–Q5 — not a fixed template of three).
+- **PRICED-CHECK CLI — the validated price gate now has a repo home (2026-07-15, feat/priced-check;
+  PR open, not merged).** New `themes-priced-check --basket … --label … [--asof] [--out]` assembles a
+  basket's PRICE AXIS: split-adjusted basket-MEDIAN 6/12/18mo return, excess vs SPY/IWM, per-member
+  coverage, quarter-by-quarter excess-vs-IWM trajectory, market-model residual dispersion, valuation
+  percentile (repo `pe_current_and_percentile`, one cached EDGAR read), and a MECHANICAL tag (12mo
+  excess vs BOTH > +20% → PRICED; both <= +20% → NOT-PRICED; else MIXED). `< 3` priced → UNDEFINED
+  (never a fake 0); stale/delisted members excluded; returns dividend-blind. Prices via the repo
+  Polygon client (`daily_bars`, cached, adjusted — the single-basket analogue of the ad-hoc
+  grouped-daily warm). The pure math lives in `vinci/themes/priced_check.py`, ported VERBATIM from the
+  ad-hoc `data/priced_check/compute.py` (the SPEC); each run is snapshotted under
+  `data/scan_history/priced-check-<label>/` (git-ignored, dated + immutable).
+  - **REPRODUCTION-VERIFIED EXACT** against the committed `report_all.txt` T007 basket
+    (WERN/MRTN/HTLD/LSTR/ARCB/RXO @ 2026-07-10): **12mo exSPY +25.8%, exIWM +14.8%, tag MIXED** — and
+    every other figure (6/18mo, all six quarters, valuation 99%ile per-name, dispersion +0.57) matched
+    to the printed precision. `--asof` matched the report's LATEST → **zero drift, no method mismatch**.
+    (`daily_bars` adjusted closes == the grouped-daily adjusted closes the ad-hoc used.)
+  - **UNRESOLVED #1 (runbook §c) CLOSED** — runbook §c now carries the real invocation; the KNOWN GAP
+    section is empty (every loop reproducible from the repo). Tests (network-free, stubbed bars, 6):
+    median/excess, `<3`-UNDEFINED, tag boundaries, stale exclusion, dispersion. ruff + `mypy --strict
+    vinci` + pytest (654) green.
 
 ## 3. FALSIFIED — tested and retired (NOT deferred)
 
@@ -3272,11 +3292,9 @@ two-name analysis (mid/small-caps, opposite directions) mapped against this inve
   the bar). Thesis-break (all three WATCHLIST names): FMCSA non-domiciled-CDL rule stayed/reversed, or ACT
   driver availability returns to surplus. Gated on the analyst's dossier build; cites the theme-#3 freeze
   (`feat/theme3-freeze`) + `data/research/theme3_truckload_triage_2026-07-14.md`.
-- **`themes-priced-check` CLI — the validated price gate has no repo home; QUEUED (2026-07-15).** The
-  priced-check that sits between any draft/registration and any advance (the survivor price read) has NO
-  in-repo generator — `data/priced_check/report_*.txt` were produced by ad-hoc session scripts
-  (untracked, `-main` only). Give it a CLI so the survivor-checks loop (docs/RUNBOOKS.md §c) is
-  reproducible from the repo. Until it lands, that step is not runnable from the doc alone.
+- **`themes-priced-check` CLI — SHIPPED 2026-07-15 (feat/priced-check; see §2).** The survivor price
+  gate now has a repo home, reproduction-verified exact against `report_all.txt`; runbook §c carries the
+  real invocation. (Was: QUEUED — no in-repo generator. Now closed.)
 - **DRAFTING-RUBRIC v2 STANDS — 2nd iteration NOT sanctioned; validation PRE-REGISTERED on Aug 13
   (operator ruling 2026-07-15).** v1 (all keep-for-checks) → v2 park-default + runtime few-shot lifted
   the Jul-14 face-validity from **0/11 → 7/11 park-or-reject** (5/11 exact); 4 keep-for-checks

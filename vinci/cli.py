@@ -988,6 +988,203 @@ def _cmd_themes_review(args: argparse.Namespace) -> int:
     return 0
 
 
+def _pc_fmt(x: float | None) -> str:
+    return "  n/a  " if x is None else f"{x * 100:+7.1f}%"
+
+
+def _pc_fetch(members: list[str], benches: list[str], start: date, asof: date,
+              client: Any) -> tuple[dict[str, dict[str, float]], list[str]]:
+    """Split-adjusted daily closes for members + benches over [start, asof] via the repo Polygon
+    client's per-symbol aggregates (`daily_bars`, adjusted=true — one cached call each; the
+    single-basket analogue of the ad-hoc grouped-daily warm, same adjusted closes). The trading-day
+    calendar is the union of the fetched dates (liquid names ⇒ the market calendar)."""
+    needed = sorted(set(members) | set(benches))
+    bars: dict[str, dict[str, float]] = {t: {} for t in needed}
+    all_dates: set[str] = set()
+    for t in needed:
+        for d, bar in client.daily_bars(t, start, asof):
+            if bar.close > 0:
+                iso = d.isoformat()
+                bars[t][iso] = bar.close
+                all_dates.add(iso)
+    return bars, sorted(all_dates)
+
+
+def _pc_valuation(members: list[str], bars: dict[str, dict[str, float]],
+                  asof: date) -> dict[str, Any]:
+    """P/E percentile of own ~5y history (repo `pe_current_and_percentile`), basket median. The ONLY
+    non-Polygon read — cached EDGAR companyfacts; absent/unresolvable → UNKNOWN, disclosed, never
+    substituted. Reproduces the ad-hoc valuation_percentile verbatim."""
+    import statistics as st
+    from datetime import date
+
+    from vinci.edgar.client import EdgarClient
+    from vinci.edgar.concepts import extract_points
+    from vinci.resolver import EntityResolver, ResolutionError, UnknownSymbolError
+    from vinci.schemas.market import PriceBar
+    from vinci.screens.assemble import pe_current_and_percentile
+
+    resolver = EntityResolver.from_config()
+    edgar = EdgarClient.from_config()
+    per: dict[str, tuple[str, Any]] = {}
+    for t in members:
+        series = bars.get(t, {})
+        if not series:
+            per[t] = ("UNKNOWN", "no price bars")
+            continue
+        try:
+            cik = resolver.resolve_ticker(t).cik
+        except (UnknownSymbolError, ResolutionError) as e:
+            per[t] = ("UNKNOWN", f"resolve: {type(e).__name__}")
+            continue
+        try:
+            facts = edgar.companyfacts(cik)
+        except Exception as e:  # noqa: BLE001 — absent XBRL → UNKNOWN, disclosed
+            per[t] = ("UNKNOWN", f"companyfacts: {type(e).__name__}")
+            continue
+        annual_eps = [p for p in extract_points(facts, "eps_diluted") if p.is_annual]
+        pbars = [PriceBar(internal_id=t, bar_date=date.fromisoformat(iso), open=c, high=c, low=c,
+                          close=c, volume=0.0, source="polygon-grouped")
+                 for iso, c in series.items() if c > 0]
+        _pe, pctile = pe_current_and_percentile(pbars, annual_eps, reference_date=asof)
+        per[t] = ("PCTILE", pctile.value) if pctile.value is not None else \
+            ("UNKNOWN", pctile.note or "unknown")
+    vals = [v for s, v in per.values() if s == "PCTILE"]
+    return {"per": {t: list(v) for t, v in per.items()},
+            "median": st.median(vals) if vals else None, "n": len(vals)}
+
+
+def _print_priced_check(res: dict[str, Any], val: dict[str, Any], label: str) -> None:
+    from vinci.themes import priced_check as pc
+
+    members = res["members"]
+    print("=" * 92)
+    print(f"PRICED-CHECK — basket '{label}'  ({len(members)} members)   assemble numbers; conclude "
+          "nothing")
+    print(f"latest close = {res['latest']}   |   members: {' '.join(members)}")
+    print("returns = adjusted-close cumulative (Polygon grouped-daily, adjusted=true; "
+          "split-adjusted)")
+    print("MECHANICAL TAG (12mo): excess vs BOTH SPY & IWM > +20% → PRICED ; both <= +20% → "
+          "NOT-PRICED ; else MIXED")
+    print("DISCLOSURES: price returns are DIVIDEND-BLIND; thin-n medians are weak; stale/delisted "
+          "members (last bar > 7d old) are flagged and excluded from 'now'.")
+    print("=" * 92)
+
+    print("\nBENCHMARK cumulative returns (reference):")
+    print(f"  {'window':8s} {'SPY':>9s} {'IWM':>9s}")
+    for w in pc.WINDOWS:
+        b = res["benchmarks"][w]
+        print(f"  {str(w) + 'mo':8s} {_pc_fmt(b['spy'])} {_pc_fmt(b['iwm'])}")
+
+    print(f"\nCOVERAGE over 18mo [{res['anchors'][18]} .. {res['latest']}] (bars found / gaps):")
+    cells = [f"{t}:{f}/{g}" for t, (f, g) in res["coverage"].items()]
+    for k in range(0, len(cells), 6):
+        print("  " + "   ".join(cells[k:k + 6]))
+
+    print("\n1) PRICED READ  (basket MEDIAN cumulative return; excess vs index; n = priced)")
+    print(f"   {'window':7s} {'med ret':>9s} {'exSPY':>9s} {'exIWM':>9s} {'n':>4s}")
+    for w in pc.WINDOWS:
+        r = res["priced"][w]
+        if "undef" in r:
+            print(f"   {str(w) + 'mo':7s}  UNDEFINED — {r['undef']}  (n={r['n']})")
+        else:
+            print(f"   {str(w) + 'mo':7s} {_pc_fmt(r['med'])} {_pc_fmt(r['ex_spy'])} "
+                  f"{_pc_fmt(r['ex_iwm'])} {r['n']:>4d}")
+
+    print("\n2) TRAJECTORY  (quarter-by-quarter basket-median EXCESS vs IWM; oldest→newest)")
+    for row in res["trajectory"]:
+        lab = f"Q{row['q']}[{row['a']}->{row['b']}]"
+        if row.get("undef"):
+            print(f"   {lab}=UNDEF(n={row['n']})")
+        else:
+            print(f"   {lab}={row['ex_iwm'] * 100:+.1f}%(n={row['n']})")
+
+    print("\n3) VALUATION — P/E percentile of own ~5y history (repo pe_current_and_percentile; "
+          "point-in-time)")
+    if val["median"] is not None:
+        print(f"   basket MEDIAN P/E percentile = {val['median'] * 100:.0f}%ile   "
+              f"(n={val['n']} of {len(members)} with a defined percentile)")
+    else:
+        print("   basket MEDIAN P/E percentile = UNDEFINED (0 members with a defined percentile)")
+    defined = [f"{t}={v * 100:.0f}%" for t, (s, v) in val["per"].items() if s == "PCTILE"]
+    unknown = [f"{t}({v})" for t, (s, v) in val["per"].items() if s == "UNKNOWN"]
+    if defined:
+        print("   defined:", "  ".join(defined))
+    if unknown:
+        print("   UNKNOWN:", "  ".join(unknown))
+
+    print("\n4) DISPERSION — median pairwise corr of market-model RESIDUAL returns, trailing 6mo")
+    dsp = res["dispersion"]
+    if "undef" in dsp:
+        print(f"   UNDEFINED — {dsp['undef']}")
+    else:
+        print(f"   median pairwise residual corr = {dsp['median']:+.2f}   "
+              f"(members used={dsp['n_members']}, pairs={dsp['n_pairs']})")
+    print(f"\nTAG: {res['tag']}")
+
+
+def _cmd_themes_priced_check(args: argparse.Namespace) -> int:
+    """Assemble the PRICE AXIS of a basket (the survivor price gate): split-adjusted basket-median
+    6/12/18mo return, excess vs SPY/IWM, quarterly trajectory, residual dispersion, valuation
+    percentile, and a MECHANICAL tag — no recommendation, no thesis. Polygon (cached) + one cached
+    EDGAR read for the percentile. Snapshots each run so reads are dated + immutable."""
+    import re
+    import subprocess
+    from datetime import timedelta
+
+    from vinci.eod.client import PolygonEodClient
+    from vinci.themes import priced_check as pc
+    from vinci.themes.scan_history import record_snapshot
+
+    cfg = get_config()
+    cfg.ensure_dirs()
+    members = [t.strip().upper() for t in args.basket.split(",") if t.strip()]
+    if not members:
+        print("!! --basket is empty")
+        return 2
+    label = args.label.strip()
+    asof = date.fromisoformat(args.asof) if args.asof else date.today()
+    start = asof - timedelta(days=1855)  # covers pe_current_and_percentile's 1825d window + pad
+
+    print(f"fetching {len(members)} members + SPY/IWM over [{start} .. {asof}] "
+          "(repo Polygon client, cache-first) …")
+    client = PolygonEodClient.from_config()
+    bars, trading = _pc_fetch(members, ["SPY", "IWM"], start, asof, client)
+    ctx = pc.PriceCtx(bars, trading, asof)
+    res = pc.compute(ctx, members)
+    val = _pc_valuation(members, bars, asof)
+    _print_priced_check(res, val, label)
+
+    # dated + immutable snapshot: one record with the full price axis + valuation (json-safe)
+    record = {
+        "label": label, "asof": asof.isoformat(), "members": members, "tag": res["tag"],
+        "priced": {str(w): res["priced"][w] for w in pc.WINDOWS},
+        "trajectory": [{**r, "a": r["a"].isoformat(), "b": r["b"].isoformat()}
+                       for r in res["trajectory"]],
+        "dispersion": res["dispersion"],
+        "coverage": {t: list(res["coverage"][t]) for t in members},
+        "benchmarks": {str(w): res["benchmarks"][w] for w in pc.WINDOWS},
+        "valuation": val, "trading_days": len(trading),
+    }
+    history_root = args.scan_history_dir or Path("data/scan_history")
+    try:
+        git_sha: str | None = subprocess.run(
+            ["git", "rev-parse", "--short", "HEAD"], capture_output=True, text=True, check=True,
+            timeout=5).stdout.strip() or None
+    except (OSError, subprocess.SubprocessError):
+        git_sha = None
+    slug = "priced-check-" + re.sub(r"[^a-z0-9-]+", "-", label.lower()).strip("-")
+    snap = record_snapshot(
+        [record], driver_slug=slug, driver_desc=f"Priced-check '{label}' asof {asof}",
+        history_root=history_root, now=datetime.now(UTC), git_sha=git_sha, n_scanned=len(members),
+        tier_field=None)
+    print(f"\nscan-history snapshot → {snap}")
+    if args.out:
+        Path(args.out).write_text(json.dumps(record, indent=1) + "\n")
+        print(f"operator export → {args.out}")
+    return 0
+
+
 def _cmd_themes_forward(args: argparse.Namespace) -> int:
     """Stage-4 forward-validation harness: load the analyst's dispositioned committed-tier worksheet
     into the append-only ratification ledger, report disposition status, and — once EVERY name is
@@ -1624,6 +1821,20 @@ def build_parser() -> argparse.ArgumentParser:
     p_rev.add_argument("--name", help="display name (default: the draft name, else top-3 tickers)")
     p_rev.add_argument("--amend", action="store_true", help="overwrite an existing review")
     p_rev.set_defaults(func=_cmd_themes_review)
+
+    p_pc = sub.add_parser(
+        "themes-priced-check",
+        help="assemble a basket's PRICE AXIS (median 6/12/18mo return, excess vs SPY/IWM, "
+        "trajectory, dispersion, valuation, mechanical tag) — the survivor price gate",
+    )
+    p_pc.add_argument("--basket", required=True,
+                      help="comma-separated tickers, e.g. WERN,MRTN,HTLD")
+    p_pc.add_argument("--label", required=True, help="basket name (snapshot slug + display)")
+    p_pc.add_argument("--asof", help="latest-close date YYYY-MM-DD (default: today)")
+    p_pc.add_argument("--out", help="optional operator export path (JSON record)")
+    p_pc.add_argument("--scan-history-dir", type=Path, dest="scan_history_dir",
+                      help="scan-history archive root (default: data/scan_history; git-ignored)")
+    p_pc.set_defaults(func=_cmd_themes_priced_check)
 
     p_fwd = sub.add_parser(
         "themes-forward",
