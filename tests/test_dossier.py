@@ -2315,9 +2315,10 @@ def test_dossier_top_redesign_no_duplication_static() -> None:
     # the OLD duplicated bits are gone (idn dup, meta cap dup, inline stock line)
     assert '"brief-idn"' not in src and '"brief-meta"' not in src and '"brief-stock"' not in src
     assert "function stockInfoLine" not in src
-    # header slimmed: no queue rank, one terse 'no verdict' meta line
+    # header slimmed: no queue rank, one terse meta line (anti-anchoring: the proposal is SEALED,
+    # revealed only after the human's verdict; the verdict of record stays the human's)
     assert "Queue rank" not in src
-    assert "Assembled facts, <b>no verdict</b>" in src
+    assert "Assembled facts · <b>proposal sealed</b> (revealed after the human's verdict)" in src
     # the two removed teaser bits: the card's own title (dup of the tab) and the machine-read pill.
     # ("Brief — first cut" is em-dash; the tab is "Brief <span…first cut", so no false match.)
     assert "Brief — first cut" not in src
@@ -2353,6 +2354,115 @@ def test_brief_machine_read_lean_bold_sentence_cased() -> None:
         assert "**Machine read** _(not a verdict)_" not in md, f"{jp.parent.name}: old prefix"
         assert dr._machine_read_md(s.evidence_balance) in md, f"{jp.parent.name}: not bold-lean"
     assert seen >= 2, "expected >=2 committed dossiers with an evidence_balance"
+
+
+def test_machine_proposal_derivation_deterministic() -> None:
+    """(2026-07-13 pivot, unit) derive_proposal is a FROZEN 3-row face-validity mapping over the
+    lean LABEL — deterministic, fail-honest on everything else, never a guessed direction.
+    Positive pins (the three rows + label normalization + the display word) AND negative pins
+    (mixed / empty / None / unsplit / unrecognized each yield NO proposal)."""
+    from vinci.dossier.verdict import derive_proposal
+    from vinci.schemas.ledger import Verdict as Vd
+
+    assert derive_proposal("strongly-bearish — reason").action is Vd.AVOID_TERMINAL
+    assert derive_proposal("strongly-bullish — reason").action is Vd.BUY
+    assert derive_proposal("Strongly bearish — reason").action is Vd.AVOID_TERMINAL  # normalized
+    assert derive_proposal("strongly-bearish — reason").action_word == "AVOID"  # display word
+    assert derive_proposal("strongly-bullish — reason").action_word == "BUY"
+    # NO-proposal legs — each fail-honest, each with its why in the note
+    mixed = derive_proposal("mixed — two-sided evidence")
+    assert mixed.action is None and "two-sided" in mixed.note
+    assert derive_proposal("").action is None
+    assert derive_proposal(None).action is None
+    assert derive_proposal("no separator here").action is None
+    unknown = derive_proposal("neutral — nothing decisive")
+    assert unknown.action is None and "unrecognized" in unknown.note
+    # a directional REASON must never flip a read — the label alone drives the mapping
+    assert derive_proposal("mixed — strongly-bearish tail risks dominate").action is None
+
+
+def test_machine_proposal_frozen_fixture_values() -> None:
+    """(pivot value pins — FROZEN fixtures) The committed MVST/AORT leans AS OF 2026-07-13, frozen
+    here as literals. Ticker→verdict VALUE pins live HERE, never on the living artifacts (a
+    re-assembly re-words a lean; the living-artifact e2e below pins invariants only)."""
+    from vinci.dossier.verdict import derive_proposal
+    from vinci.schemas.ledger import Verdict as Vd
+
+    mvst = ("strongly-bearish — stated going-concern doubt with a near-term maturity wall against "
+            "thin cash while adjusted EBITDA has turned negative and revenue is contracting.")
+    aort = ("mixed — growing absolute EBITDA and above-peer growth collide with a -78% "
+            "forward-EPS collapse, worse-than-peer leverage, and negative forward FCF.")
+    p = derive_proposal(mvst)
+    assert p.action is Vd.AVOID_TERMINAL and p.lean == "strongly-bearish"
+    assert p.reason is not None and p.reason.startswith("stated going-concern doubt")
+    q = derive_proposal(aort)
+    assert q.action is None and q.lean == "mixed"  # two-sided → the human decides cold
+
+
+def test_brief_hides_proposal_until_verdict_but_reveals_on_show_proposal() -> None:
+    """(anti-anchoring, 2026-07-13 — LIVING artifacts, phrasing-independent invariants ONLY) The
+    brief HIDES the machine's proposed verdict by default so it can't anchor the human before they
+    log theirs: the default render carries the sealed-note (never the AVOID/BUY proposal line), the
+    human confirm/override slot, and the pre-pivot slot gone. With ``show_proposal=True`` the SAME
+    dossier reveals EXACTLY the proposal line its own committed lean derives (both sides run
+    derive_proposal, so a re-worded lean can't rot this); a non-None proposal only ever derives from
+    a strongly-* label. NO ticker→verdict value pin here (those are frozen on the fixture below)."""
+    import pathlib
+
+    from vinci.dossier.verdict import derive_proposal
+
+    seen = 0
+    for jp in sorted(pathlib.Path("data/dossiers").glob("*/dossier.json")):
+        d = ds.Dossier.model_validate_json(jp.read_text())
+        s = d.synthesis
+        p = derive_proposal(s.evidence_balance if s is not None else None)
+        hidden = dr.render_markdown(d)  # default: proposal sealed, not shown
+        revealed = dr.render_markdown(d, show_proposal=True)  # explicit peek
+        # DEFAULT hides it — the sealed-note is present, the derived proposal line is NOT
+        assert ("**Machine proposal:** _sealed at assembly"
+                in hidden), f"{jp.parent.name}: sealed-note missing from default brief"
+        assert dr._machine_proposal_md(p) not in hidden, (
+            f"{jp.parent.name}: proposal leaked pre-verdict")
+        # --show-proposal REVEALS exactly the derived line
+        assert dr._machine_proposal_md(p) in revealed, f"{jp.parent.name}: reveal missing/diverged"
+        assert ("**Recommendation / Target (human):** _not yet logged — confirm or override "
+                in hidden), f"{jp.parent.name}: human confirm/override slot missing"
+        assert ("**Recommendation / Target:** _not yet logged — the human's call"
+                not in hidden), f"{jp.parent.name}: pre-pivot slot survived"
+        if p.action is not None:
+            assert p.lean is not None and p.lean.lower().replace(" ", "-") in (
+                "strongly-bearish", "strongly-bullish"), f"{jp.parent.name}: proposal off-mapping"
+        if s is not None and s.evidence_balance:
+            seen += 1
+    assert seen >= 2, "expected >=2 committed dossiers with an evidence_balance"
+
+
+def test_web_brief_proposal_mirror_static() -> None:
+    """(pivot web parity + anti-anchoring 2026-07-13) dossier.js mirrors verdict.py + the md brief:
+    the frozen 3-row mapping (a mixed lean proposes NOTHING — never a coin-flip) and the
+    confirm/override copy stay, but the proposal is HIDDEN until the human logs their verdict: the
+    teaser gates the reveal on ``!verdict`` (sealed-note before, proposal after), and the header now
+    reads 'proposal sealed'. Node-free source pins; the mapping is OUR frozen code, never LLM."""
+    src = Path("frontend/views/shared/dossier.js").read_text()
+    assert "function deriveProposal" in src
+    assert '"strongly-bearish": "AVOID"' in src and '"strongly-bullish": "BUY"' in src
+    assert '"mixed": null' in src  # two-sided → NO proposal
+    assert 'class="brief-proposal"' in src and "Machine proposal" in src
+    assert "confirm or override — Buy / Avoid + target" in src
+    # (review) ONE shared JS lean parser (splitLean) — machineReadHtml + deriveProposal both call it
+    assert "function splitLean" in src
+    assert src.count(r"[A-Za-z\- ]*?") == 1, "the lean regex must live in ONE parser (splitLean)"
+    # (review) Object.hasOwn, not `key in` — `in` walks Object.prototype (a parity break vs Python)
+    assert "Object.hasOwn(PROPOSAL_BY_LEAN" in src and "key in PROPOSAL_BY_LEAN" not in src
+    # ANTI-ANCHORING: the reveal is gated on a logged verdict; the sealed-note shows before
+    assert "const propSlot = !verdict" in src, "web brief must hide the proposal until a verdict"
+    assert "revealed after your verdict is logged" in src
+    assert "Assembled facts · <b>proposal sealed</b> (revealed after the human's verdict)" in src
+    # the OLD 'leads with the derived proposal' copy is gone; so is every pre-pivot copy
+    assert "Assembled facts + <b>derived proposal</b>" not in src
+    assert "Assembled facts, <b>no verdict</b>" not in src
+    assert "the human's call — Buy / Avoid + target" not in src
+    assert "assembled facts · no verdict" not in src
 
 
 def test_vrrm_brief_stock_info_panel_present_and_cited() -> None:
@@ -6453,7 +6563,7 @@ def test_d1_section_order_facts_first() -> None:
             < pos("### Concentration") < pos("## Synthesis"))
     assert (pos("### Bull case") < pos("### Bear case") < pos("### Decisive question")
             < pos("### Key unknowns") < pos("### Twin reference cases"))
-    assert pos("### Twin reference cases") < pos("No BUY/AVOID here")  # verdict footer last
+    assert pos("### Twin reference cases") < pos("The machine PROPOSES")  # verdict footer last
     # (D1) management-commentary pointer relocated into the appendix zone
     assert pos("## Synthesis") < pos("### Management commentary")
 

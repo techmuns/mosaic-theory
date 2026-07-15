@@ -30,6 +30,7 @@ from vinci.dossier.schemas import (
     Synthesis,
     TwinCase,
 )
+from vinci.dossier.verdict import split_lean
 from vinci.graph.llm import LlmClient, LlmError
 
 _UNVERIFIED = "[LLM-suggested, unverified]"
@@ -669,7 +670,11 @@ def _validate(
     # side isn't sized-as-outweighed (the MVST defect — a 'strongly-bearish' label with a 5-bull /
     # 6-bear body). The flag sizes the minority; it never asks to delete a genuine counter-point.
     eb = (synth.evidence_balance or "").strip().lower()
-    lean = eb.split("—")[0]  # the label, before the dash-reason (so a reason can't flip the read)
+    # the label, before the dash-reason (so a reason can't flip the read) — via THE shared parser
+    # (verdict.split_lean, also the proposal's input); an unsplit read falls back to the whole
+    # string, matching the pre-pivot behavior of ``eb.split("—")[0]`` on a dash-less read.
+    _parts = split_lean(eb)
+    lean = _parts[0] if _parts is not None else eb
     nb, nr = len(bull), len(bear)
     if not eb:
         flags.append(

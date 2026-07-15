@@ -3366,6 +3366,126 @@ forward-window cap. NOTE FOR THE RECORD: the "+N in JSON" is a DELIBERATE near-t
 bug — FY29+ are thin, long-dated consensus (often 1 analyst), kept machine-complete in JSON, mirroring
 the financial-summary capping its forward columns at FY27E. Do not "fix" it as a truncation defect.
 
+**QUEUED (operator-approved 2026-07-13) — mechanism-coverage build brief (PR-B, the "90-second
+handover").** Genesis: audit of the MOSL Mahanagar Gas note (11 Jun 2026 — the Brief's original
+template) against our Brief. Scored: MOSL p1–2 structure 8.5 / reliability 4.5 (causal mechanism +
+operational leading indicators, but verdict-first, no bear case, unsourced management-flow numbers,
+TP arithmetic = 100% re-rating assumption); our Brief structure 7.5 / reliability 9 (source-bound,
+fail-honest, but case points ATOMIZED — no mechanism). The one gap with teeth: forward operating
+MECHANISM facts (leading indicator + base rate · pricing actions taken vs headwind · pass-through
+structure · driver-materiality sizing). NEXT: draft the BRIEF-CONTRACT brief — `operating_drivers`
+typed cited facts; EX-99.1 anchored tier (precedent: `_enrich_drawdown_drivers`) + transcript
+LLM-fenced tier via the covenant_extract pattern (verbatim-validated; REVISES the "transcripts:
+derive NO numbers" fence for a dedicated extraction phase only); driver × segment-share materiality
+(UNKNOWN renders as UNKNOWN); a POSED (never forecast) per-case mechanism slot; Brief "Mechanism"
+block. Honest scope: US KPI disclosure varies → UNKNOWN-heavy names expected; competitive-slack not
+generically automatable. Brief first, human sign-off, then code.
+
+**VERDICT-FIRST BRIEF — the machine-proposal pivot — BUILT + VERIFIED, PR OPEN
+(#116, feat/verdict-first-brief, 2026-07-13).** CONSTITUTION CHANGE, decided by the operator with the
+counter-case fully presented (automation-bias risk, no-tuning freeze, track-record
+recharacterization) — a recorded pivot, not drift; CLAUDE.md amended in the same PR. The Brief now
+LEADS with a machine-proposed directional verdict; the HUMAN's confirm/override is the verdict of
+record.
+- **Design — deterministic derivation, NOT a new LLM output.** `vinci/dossier/verdict.py`:
+  face-validity-FROZEN 3-row mapping over the committed lean label — strongly-bearish→AVOID_TERMINAL
+  · strongly-bullish→BUY · mixed→NO proposal (a two-sided read is the human's call, never a
+  coin-flip); empty/unparseable/unrecognized → no proposal, fail-honest. The LLM STILL emits no
+  verdict field — `Synthesis` unchanged, the no-conclusion schema pin stands, and the dossier
+  package still cannot import the ledger writer (AST guard: `vinci.schemas.ledger` ≠ `vinci.ledger`).
+- **ONE shared lean parser** (`verdict.split_lean`) now feeds the synthesis FALSE-BALANCE QA, the
+  md machine-read, and the proposal — retiring synthesis.py's em-dash-only `eb.split("—")[0]`
+  (the two-divergent-parsers bug class; dossier.js mirrors it as `deriveProposal`).
+- **Ledger seal:** entries gain `{machine_proposal, machine_lean, proposal_assembled_at,
+  disposition confirmed/overridden/no_proposal}`, stamped ONCE at log time; the CLI reads the
+  COMMITTED `dossier.json` (never recomputed — as-of discipline; missing artifact → no-proposal
+  fail-honest print; corrupt artifact → LedgerError, loud). Schema coherence validator REJECTS a
+  disposition contradicting its (proposal, verdict) pair. Legacy payloads load all-None — a
+  readable "pre-pivot" state.
+- **Scoring — three curves from entry #1:** `ScoreReport` gains the machine shadow curve (machine
+  BUY−AVOID spread, honest-None until both legs), disposition counts, and the RAW override subset
+  (ticker · both calls · forward outcome). Human-final spread stays PRIMARY.
+- **VERIFIED (real runs, committed artifacts):** MVST (lean `strongly-bearish`) renders
+  `**Machine proposal:** AVOID — derived from the lean above` (the row names its DERIVATION, never
+  re-quoting the lean's rationale — the read line directly above already carries it; operator
+  caught the initial reason-echo as a #109-class dup, fixed same-day); AORT (lean `mixed`) renders
+  `**Machine proposal:** none — evidence two-sided (mixed) — the human's call`; CLI-sealed a
+  paper verdict from the REAL committed MVST artifact into a SCRATCH store — human BUY against
+  machine AVOID_TERMINAL → `disposition: "overridden"`, `proposal_assembled_at:
+  2026-07-10T07:06:48Z` round-tripped. ruff + mypy --strict (94) + full offline pytest green.
+- **Tests:** derivation unit (3 rows + label normalization + 5 no-proposal negatives, incl. "a
+  directional REASON never flips a mixed label"); FROZEN-fixture value pins (MVST/AORT leans as-of
+  2026-07-13 as literals — ticker→verdict value pins live there, never on living artifacts);
+  living-artifact e2e = phrasing-independent invariants only (rendered line == derivation of the
+  same committed lean, mapping invariant, confirm/override slot present, pre-pivot slot gone);
+  web-mirror static pins; ledger disposition positive+negative pins + legacy-load pin; scoring
+  shadow-curve pins + store→harness→report carry-through.
+- **ACCEPTED RISK (consciously, operator decision) + PRE-REGISTERED FALSIFIER:** a machine proposal
+  ANCHORS the human — the fund's stated edge is the human discriminator, and a confirm-workflow can
+  degrade it invisibly. Falsifier: if the override rate collapses toward ~0 OR the human-final
+  spread tracks the machine spread within noise over the forward window → the anchoring concern is
+  CONFIRMED → revisit verdict placement. The disposition lane makes this measurable from the first
+  entry.
+- **Incident→invariant:** LLM-free-verdict risk → Synthesis no-conclusion pin + AST
+  no-ledger-import guard [shipped, pre-existing, re-verified] · incoherent disposition → schema
+  coherence validator + negative pins [shipped] · proposal recomputed at log time → CLI seals from
+  the committed artifact only [shipped; the "is it really the committed artifact" provenance has no
+  machine check — accepted] · mapping outcome-tuning → no machine check possible (a human-review
+  concern, same class as ranker weights) — accepted, guarded by CLAUDE.md language.
+- **Blast-radius note:** committed `dossier.md` artifacts are PRE-pivot until the standing artifact
+  pass re-renders them (tests render from JSON in-memory, so the suite is green either way).
+- **ANTI-ANCHORING SURFACING + SEAL-ONCE DETERMINISM (2026-07-13, same-day revision of the pivot;
+  feat/verdict-first-brief, merged current with main).** The pivot's own ACCEPTED-RISK falsifier —
+  a SHOWN proposal anchors the human — is now STRUCTURALLY mitigated, not merely measured: **the
+  brief HIDES the proposed verdict until the human logs theirs.**
+  - **(surfacing)** `render_markdown(show_proposal=False)` is the default — the brief shows the
+    machine READ (the evidence lean = assembly) but a SEALED-NOTE where the proposal was; the derived
+    verdict is revealed only AFTER the human's verdict is logged (the ledger CLI prints it) or on an
+    explicit `dossier --ticker X --show-proposal` peek. Web parity: `dossier.js teaserCard` gates the
+    reveal on `!verdict`. Ledger gains `revealed_pre_verdict` (default False = decided blind;
+    `log-verdict --saw-proposal` self-reports a peek → True flags an anchored disposition to
+    down-weight). The machine READ stays — it is the assembled evidence summary, not the verdict
+    (tiers, never the rank).
+  - **(a) determinism lives in the SEAL, not the sample.** Reproducing the proposal via sampling is
+    IMPOSSIBLE on Opus 4.8: `temperature`/`top_p`/`top_k` are REMOVED (400 "temperature is deprecated
+    for this model" — confirmed live + Anthropic API docs), and there is no `seed`. A temp-0 branch
+    was built and DISCARDED (it would 400 every real synthesis). It is also UNNECESSARY — the real
+    requirement is ANTI-HINDSIGHT: the proposal derives from the COMMITTED artifact (assembly-time
+    snapshot) and is SEALED once (append-only, `LedgerEntry(frozen=True)`), never re-derived after
+    prices move. **k=1 seal-once is the design;** proposal noise is accepted and averages out across
+    the ledger.
+  - **(b) majority-of-k REJECTED.** A modal-lean vote over K synthesis runs would de-noise the
+    proposal but costs a permanent ~5× per name for ~0 decision value: the proposal is HIDDEN until
+    the human's verdict, so per-name split precision helps NO decision, and the ledger averages the
+    noise across names.
+  - **(c) driver-effect evidence (LOGGED, not re-run — stochastic, do not re-derive):** feeding
+    operating drivers into synthesis moves the lean on operating-thesis names. VITL WITHOUT drivers
+    ≈ 67% strongly-bearish / 33% mixed (proposal AVOID vs defer); WITH ≈ 8% / 92% mixed (defer).
+    VRRM / MVST / EPAM: no material shift. The drivers appropriately escalate a de-rated name with a
+    real cited counter-thesis from a confident AVOID to defer-to-human. (n≈12 draws/condition,
+    temp≈1 — this is the record, not a reproducible number.)
+  - **(d) PRINCIPLE:** machine proposals are MEASURED against the human, never SHOWN before the human
+    decides — the same discipline as the theme edge's **tiers-never-ranks**. The disposition
+    (confirm/override) is the disagreement ledger the pivot exists to produce; anchoring the human
+    destroys that one measurement.
+  - **(e) Option-B crude-rule DEMOTED to a future CONTROL lane (design-only, NOT built).** A proposal
+    derived from deterministic committed signals (going-concern, drawdown, leverage-vs-peers,
+    consensus-cut direction) was considered as the determinism fix; rejected as the PRIMARY proposal
+    (cruder than the LLM's holistic lean) but recorded as a naive-baseline lane — a future shadow
+    ledger reads human vs LLM-proposal vs crude-rule, making the LLM proposal's lift over a dumb rule
+    measurable. Build when enough sealed proposals accumulate.
+  - **(f) DUAL-LANE with/without-drivers shadow spread (design-only, NOT built).** Two proposal lanes
+    — with-drivers vs without-drivers — sealed at assembly and tracked against the human's actual
+    verdicts; the forward BUY−AVOID spread difference is the ONLY measure of whether driver-grounding
+    improves the machine's directional skill. Meaningful only ACROSS the ledger (not per-name) and
+    only post-seal-once. Trigger: enough sealed proposals accumulate to compare.
+  - **Incident→invariant:** proposal anchors the human [the pivot's accepted risk] → brief hides the
+    proposal until the human logs + `revealed_pre_verdict` stamp [shipped] · Opus-4.8 non-reproducible
+    proposal → determinism relocated to the append-only seal (anti-hindsight); reproducibility
+    consciously NOT required [shipped + recorded]. VERIFIED: ruff + mypy --strict (94) + full offline
+    pytest green; the MVST brief hides the proposal by default (`sealed at assembly`) and reveals
+    `AVOID` only under `--show-proposal`.
+
 **OWN-HISTORY EXHIBIT → shared EXHIBIT frame — DONE (feat/own-history-align-frame, PR OPEN, 2026-07-13).**
 After #108 + #110 merged, aligned the own-history exhibit ("Multiple vs its own trailing range") to the
 shared `EXHIBIT` frame so all three panel exhibits read as one system: destructures `EXHIBIT` (canvas
