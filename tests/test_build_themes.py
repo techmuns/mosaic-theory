@@ -241,5 +241,22 @@ def test_radar_inbox_log_deterministic(tmp_path: Path, monkeypatch: pytest.Monke
     assert (tmp_path / "frontend" / "radar" / "inbox.json").read_bytes() == b1
 
 
+def test_radar_inbox_log_non_destructive_without_snapshot(
+        tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    """Deploy-safe: reviews.json present but NO component-a snapshot → the emitter must NOT clobber
+    the committed inbox.json/log.json (the deploy keeps serving the last real local emission)."""
+    radar = tmp_path / "frontend" / "radar"
+    radar.mkdir(parents=True)
+    rv = {"reviews": [_review("2026-06-17:T000", ["A", "B"])]}
+    (radar / "reviews.json").write_text(json.dumps(rv))
+    (radar / "inbox.json").write_text('{"sentinel": true}')  # committed artifact — must survive
+    (radar / "log.json").write_text('{"sentinel": true}')
+    monkeypatch.setattr(_BUILD, "ROOT", tmp_path)  # no component-a snapshot dir under tmp_path
+    monkeypatch.setattr(_BUILD, "HERE", tmp_path / "frontend")
+    _BUILD.emit_radar_inbox_log()
+    assert json.loads((radar / "inbox.json").read_text()) == {"sentinel": True}
+    assert json.loads((radar / "log.json").read_text()) == {"sentinel": True}
+
+
 if __name__ == "__main__":
     raise SystemExit(pytest.main([__file__, "-q"]))

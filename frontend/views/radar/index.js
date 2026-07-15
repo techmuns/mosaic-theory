@@ -16,6 +16,7 @@ const FILTERS = [["all", "All"], ["live", "Live"], ["watch", "Watch"], ["parked"
 // margin (negative x), so the quadrant is NEVER reshaped. y inverts so y=0 (not moved) is the BOTTOM.
 const VB_X = -112, VB_W = 752, VB_H = 300, PX0 = 48, PX1 = 628, PY0 = 14, PY1 = 258;
 const LANE_DOT_X = -98, LANE_LBL_X = -90, LANE_LO = -1.2, LANE_HI = 1.2;  // rel12 clamp for the lane
+const LANE_Y0 = PY0 + 22;  // dots start below this — reserves the top of the lane for the header
 const clamp01 = (v) => Math.max(0, Math.min(1, Number(v) || 0));
 const px = (x) => PX0 + clamp01(x) * (PX1 - PX0);
 const py = (y) => PY1 - clamp01(y) * (PY1 - PY0);
@@ -65,7 +66,7 @@ function placeLabels(pos) {
 // lane, not evidence. An unjudged cluster has no "how real" reading until the analyst reviews it.
 function laneLayout(inbox) {
   const yFor = (r) => PY1
-    - (Math.max(LANE_LO, Math.min(LANE_HI, Number(r) || 0)) - LANE_LO) / (LANE_HI - LANE_LO) * (PY1 - PY0);
+    - (Math.max(LANE_LO, Math.min(LANE_HI, Number(r) || 0)) - LANE_LO) / (LANE_HI - LANE_LO) * (PY1 - LANE_Y0);
   const items = inbox.map((e) => ({ e, y: yFor(e.rel12) })).sort((a, b) => a.y - b.y);
   for (let i = 1; i < items.length; i++) {
     if (items[i].y - items[i - 1].y < 16) items[i].y = items[i - 1].y + 16;
