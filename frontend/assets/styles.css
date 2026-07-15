@@ -272,6 +272,7 @@ a:hover { text-decoration: underline; }
   display: flex; align-items: center; gap: 9px;
   padding: 7px 20px; cursor: pointer; color: var(--nav-ink);
   border-left: 2px solid transparent; font-size: 13px; user-select: none;
+  transition: background 0.15s, color 0.15s, border-color 0.15s;
 }
 .nav-item:hover { background: var(--nav-active); text-decoration: none; }
 .nav-item.active { background: var(--nav-active); border-left-color: var(--accent); color: var(--on-nav); }
@@ -349,7 +350,7 @@ a:hover { text-decoration: underline; }
 .chip.locked { background: var(--surface-2); color: var(--locked); }
 
 /* status pill (inline) */
-.pill { font-size: 11px; padding: 2px 8px; border-radius: 999px; font-weight: 600; letter-spacing: 0.02em; }
+.pill { font-size: 11px; padding: 2px 8px; border-radius: 999px; font-weight: 600; letter-spacing: 0.02em; font-variant-numeric: tabular-nums; }
 .pill.live { background: var(--live-bg); color: var(--pos-text); }
 .pill.locked { background: var(--surface-2); color: var(--locked); }
 .pill.conditional { background: var(--conditional-bg); color: var(--conditional); }
@@ -384,7 +385,7 @@ a:hover { text-decoration: underline; }
 table.data { width: auto; max-width: 100%; border-collapse: collapse; font-size: 13px; } /* (K2) size to content, capped */
 table.data th { text-align: left; font-size: 11px; text-transform: uppercase; letter-spacing: 0.04em; color: var(--ink-3); font-weight: 600; padding: 8px 10px; border-bottom: 1px solid var(--line-2); white-space: nowrap; }
 table.data th.num { text-align: right; } /* (K2) numeric header aligns to its right-aligned column */
-table.data td { padding: 9px 10px; border-bottom: 1px solid var(--line); vertical-align: top; }
+table.data td { padding: 9px 10px; border-bottom: 1px solid var(--line); vertical-align: top; font-variant-numeric: tabular-nums; transition: background 0.12s; }
 /* the ranker packs the most columns — tighten its cell gutters so all fit without a page h-scroll */
 #rk-table th, #rk-table td { padding-left: 6px; padding-right: 6px; }
 table.data td.mono { white-space: nowrap; } /* keep tickers (incl. the ▸ caret) on one line — never wrap a 4-char name */
@@ -588,7 +589,7 @@ table.data.vs-table { width: 100%; }
 
 /* (3-tier) dossier tabs — Brief · Analysis · Appendix (client-side; default Brief). */
 .ds-tabs { display: flex; gap: 2px; border-bottom: 1px solid var(--line); margin: 8px 0 16px; }
-.ds-tab { padding: 8px 15px; font-size: 13px; color: var(--ink-2); background: none; border: none; border-bottom: 2px solid transparent; cursor: pointer; font-family: inherit; margin-bottom: -1px; }
+.ds-tab { padding: 8px 15px; font-size: 13px; color: var(--ink-2); background: none; border: none; border-bottom: 2px solid transparent; cursor: pointer; font-family: inherit; margin-bottom: -1px; transition: color 0.15s, border-color 0.15s; }
 .ds-tab:hover { color: var(--ink); }
 .ds-tab.on { color: var(--accent); border-bottom-color: var(--accent); font-weight: 600; }
 .ds-tab .s { font-size: 11px; color: var(--ink-3); margin-left: 5px; }
@@ -842,7 +843,7 @@ table.data.vs-table { width: 100%; }
 /* ── Radar sub-tabs (Map · Inbox · Log) + drawer ─────────────────────────────────────────── */
 .rt-sweep { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; font-size: 12.5px; color: var(--ink-2); margin-bottom: 10px; }
 .rt-tabs { display: flex; gap: 2px; border-bottom: 1px solid var(--line); margin-bottom: 14px; }
-.rt-tab { font: 13px var(--sans); padding: 6px 12px; border: 0; background: none; color: var(--ink-2); cursor: pointer; border-bottom: 2px solid transparent; margin-bottom: -1px; }
+.rt-tab { font: 13px var(--sans); padding: 6px 12px; border: 0; background: none; color: var(--ink-2); cursor: pointer; border-bottom: 2px solid transparent; margin-bottom: -1px; transition: color 0.15s, border-color 0.15s; }
 .rt-tab:hover { color: var(--ink); }
 .rt-tab.on { color: var(--ink); font-weight: 650; border-bottom-color: var(--accent); }
 .rt-tab.warn { color: var(--warn-text); }
