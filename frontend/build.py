@@ -27,7 +27,7 @@ import re
 import shutil
 import subprocess
 from collections import Counter
-from datetime import UTC, datetime
+from datetime import UTC, date, datetime, timedelta
 from pathlib import Path
 from typing import Any
 
@@ -72,6 +72,7 @@ def _git_sha() -> str | None:
 _DRIVER_SLUG: dict[str, tuple[str, str]] = {
     "AI-datacenter value chain": ("ai-datacenter", "AI-datacenter"),
     "defense-demand-shift": ("defense", "Defense demand-shift"),
+    "truckload-supply-purge": ("truckload-supply-purge", "Truckload supply purge"),
 }
 # the concreteness → rank ladder + the driver-tie gate, mirroring vinci.themes.exposure so the tier
 # shape derives IDENTICALLY from the ledger's (grade, driver_tie) as the backend's exposure_basis.
@@ -333,6 +334,141 @@ def build_themes(themes_srcs: list[Path]) -> list[str]:
     return [s["slug"] for s in summaries]
 
 
+# --------------------------------------------------------------------------------------------------
+# Radar sweep bar — last-run / next-due (+30d) for the Component-A co-movement sweep. The CANONICAL
+# invocation is recorded ONCE here (and in STATE §5 "CANONICAL invocation — recorded HERE, the ONE
+# place; the future Radar screen MUST source it from here, no second hardcoding"); the frontend
+# RENDERS this string, never hardcodes it. Display-only reminder — nothing fires automatically.
+# --------------------------------------------------------------------------------------------------
+_SWEEP_COMMAND = "python -m vinci.cli themes"
+_SWEEP_SEED_DATE = "2026-06-17"  # the June-17 harvest — seeded last_run until a manifest exists
+_SWEEP_CADENCE_DAYS = 30
+
+
+def _radar_sweep_payload(manifest: Path) -> dict[str, str]:
+    """Compute the sweep payload: last_run (latest ts of a COMPONENT-A row in the ROOT scan-history
+    manifest, else the seeded June-17 harvest), source (manifest|seeded), next_due (+30d), and the
+    canonical command. Pure — testable without the frontend dir. Refreshes on the next site build.
+
+    `record_snapshot` writes ONE multi-driver manifest at data/scan_history/manifest.jsonl (each row
+    carries a `driver_slug`), so the sweep bar must FILTER to `component-a` before taking the latest
+    ts — a later row from another driver must not masquerade as the co-movement sweep's last run."""
+    if manifest.exists():
+        rows = [json.loads(line) for line in manifest.read_text().splitlines() if line.strip()]
+        ca_ts = (str(r.get("ts", "")) for r in rows if r.get("driver_slug") == "component-a")
+        ts = max(ca_ts, default="")
+        last_run, source = (ts[:10] if ts else _SWEEP_SEED_DATE), ("manifest" if ts else "seeded")
+    else:
+        last_run, source = _SWEEP_SEED_DATE, "seeded"
+    next_due = (date.fromisoformat(last_run) + timedelta(days=_SWEEP_CADENCE_DAYS)).isoformat()
+    return {"last_run": last_run, "source": source, "next_due": next_due, "command": _SWEEP_COMMAND}
+
+
+def emit_radar_sweep() -> None:
+    """Write frontend/radar/sweep.json for the sweep bar (display-only — nothing fires). Reads
+    the ROOT manifest where record_snapshot writes (data/scan_history/manifest.jsonl); the prior
+    component-a/manifest.jsonl path never existed, so the bar re-seeded silently (the #125 bug)."""
+    out = HERE / "radar"
+    out.mkdir(parents=True, exist_ok=True)
+    manifest = ROOT / "data" / "scan_history" / "manifest.jsonl"
+    (out / "sweep.json").write_text(json.dumps(_radar_sweep_payload(manifest), indent=1) + "\n")
+
+
+# --------------------------------------------------------------------------------------------------
+# Radar INBOX + REVIEW LOG — join the latest component-a snapshot × analyst-owned reviews.json.
+# The machine ASSEMBLES: match clusters to reviewed groups by MEMBER OVERLAP (ids are per-run,
+# never match on id), sorting into inbox (unjudged) vs log (reviewed). It NEVER decides —
+# reviews.json is the single record; a drifted match re-entering the inbox is CORRECT, not an
+# error. Non-destructive: absent snapshot/reviews → keep the committed files (deploy-safe).
+# --------------------------------------------------------------------------------------------------
+_MATCH_MIN = 0.5  # member overlap as a fraction of the SMALLER set
+
+
+def _overlap(a: set[str], b: set[str]) -> float:
+    """|a ∩ b| / min(|a|, |b|) — overlap as a fraction of the smaller set (0 if either is empty)."""
+    return len(a & b) / min(len(a), len(b)) if a and b else 0.0
+
+
+def _latest_component_a(root: Path) -> Path | None:
+    """Newest local/committed component-a snapshot (timestamp-prefixed filename → lexical max)."""
+    snaps = sorted((root / "data" / "scan_history" / "component-a").glob("*.jsonl"))
+    return snaps[-1] if snaps else None
+
+
+def _sig(cluster: dict[str, Any], *keys: str) -> float | None:
+    """Dig a numeric strength/admissibility value; None if any hop is missing (never fabricate)."""
+    node: Any = cluster
+    for k in keys:
+        if not isinstance(node, dict) or k not in node:
+            return None
+        node = node[k]
+    return node if isinstance(node, (int, float)) else None
+
+
+def _inbox_entry(cluster: dict[str, Any], first_seen: str) -> dict[str, Any]:
+    """One inbox row for an unreviewed cluster (display-only stats; machine never decides)."""
+    members = [m["ticker"] for m in cluster.get("members", [])]
+    label = " ".join(members[:2]) + (f" +{len(members) - 2}" if len(members) > 2 else "")
+    return {
+        "cluster_id": cluster["cluster_id"], "first_seen": first_seen, "members": members,
+        "label": label,
+        "rel12": _sig(cluster, "strength_signals", "rel_strength_vs_market", "h12mo", "value"),
+        "mom12": _sig(cluster, "strength_signals", "momentum", "h12mo", "value"),
+        "coherence": _sig(cluster, "admissibility", "coherence_value"),
+        "breadth_exp": _sig(cluster, "strength_signals", "breadth_expanding", "value"),
+        "crowding": _sig(cluster, "strength_signals", "crowding_overextension", "value"),
+    }
+
+
+def emit_radar_inbox_log() -> None:
+    """Sort the latest component-a clusters into inbox (unreviewed) vs log (matched to a review), by
+    member overlap ≥ _MATCH_MIN of the smaller set. Emits frontend/radar/{inbox,log}.json; assembles
+    only — reviews.json is the single record. Non-destructive when a source is absent."""
+    out = HERE / "radar"
+    reviews_path = out / "reviews.json"
+    snap_path = _latest_component_a(ROOT)
+    if snap_path is None or not reviews_path.exists():
+        return  # deploy / no local run → keep the committed inbox.json/log.json
+    reviews = json.loads(reviews_path.read_text())["reviews"]
+    clusters = [json.loads(line) for line in snap_path.read_text().splitlines() if line.strip()]
+    m = re.match(r"(\d{4})(\d{2})(\d{2})", snap_path.name)
+    scan_iso = "-".join(m.groups()) if m else ""
+
+    review_sets = {r["key"]: set(r["members"]) for r in reviews}
+    cluster_sets = {c["cluster_id"]: {mem["ticker"] for mem in c.get("members", [])}
+                    for c in clusters}
+
+    # LOG: every review + its current match status (best-overlap current cluster + membership delta)
+    log_reviews = []
+    for r in sorted(reviews, key=lambda r: r["key"]):
+        rset = review_sets[r["key"]]
+        cand = sorted((cid for cid, cs in cluster_sets.items() if _overlap(cs, rset) >= _MATCH_MIN))
+        if cand:
+            best = max(cand, key=lambda cid: _overlap(cluster_sets[cid], rset))  # ties → lowest cid
+            cs = cluster_sets[best]
+            match = {"status": "matched", "cluster_id": best,
+                     "added": sorted(cs - rset), "dropped": sorted(rset - cs)}
+        else:
+            match = {"status": "gone", "cluster_id": None, "added": [], "dropped": []}
+        log_reviews.append({**r, "match": match})
+
+    # INBOX: current clusters matched by NO review (not yet judged)
+    inbox = sorted(
+        (_inbox_entry(c, scan_iso) for c in clusters
+         if not any(_overlap(cluster_sets[c["cluster_id"]], rs) >= _MATCH_MIN
+                    for rs in review_sets.values())),
+        key=lambda e: e["cluster_id"])
+
+    (out / "inbox.json").write_text(
+        json.dumps({"scan_date": scan_iso, "inbox": inbox}, indent=1, ensure_ascii=False) + "\n")
+    (out / "log.json").write_text(
+        json.dumps({"scan_date": scan_iso, "reviews": log_reviews},
+                   indent=1, ensure_ascii=False) + "\n")
+    gone = sum(1 for r in log_reviews if r["match"]["status"] == "gone")
+    print(f"radar inbox+log: {len(clusters)} clusters → {len(clusters) - len(inbox)} matched / "
+          f"{len(inbox)} inbox; {len(log_reviews)} reviews ({gone} gone)")
+
+
 def main(argv: list[str] | None = None) -> None:
     ap = argparse.ArgumentParser(
         description="Assemble the static snapshot mirror the dashboard serves."
@@ -460,6 +596,11 @@ def main(argv: list[str] | None = None) -> None:
     # THEME-EDGE display JSON — non-destructive when the (git-ignored) freeze source is absent.
     theme_srcs = [Path(p) for p in (args.themes_src or [FORWARD])]
     theme_slugs = build_themes(theme_srcs)
+
+    # Radar sweep bar — regenerated every build (manifest git-ignored → seeded; a run refreshes).
+    emit_radar_sweep()
+    # Radar inbox + review log — sort latest clusters into unreviewed vs reviewed (non-destructive).
+    emit_radar_inbox_log()
 
     print(
         f"mirror: {len(queue)} queue rows, {len(uni)} universe rows, "

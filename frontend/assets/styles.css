@@ -508,3 +508,96 @@ table.data.vs-table { width: 100%; }
   /* citation links print as plain ink — the ↳ ref text is what matters, not the colour */
   a { color: var(--ink); text-decoration: none; }
 }
+
+/* ── Radar (Themes → Radar): quadrant map + sweep bar + detail panel ──────────────────────── */
+.radar-svg { display: block; background: var(--surface); border: 1px solid var(--line); border-radius: var(--r); margin: 4px 0 14px; }
+.rq-frame { fill: none; stroke: var(--line-2); }
+.rq-target { fill: rgba(31, 157, 87, 0.07); }
+.rq-mid { stroke: var(--line-2); stroke-dasharray: 3 3; }
+.rq-cap { font: 10.5px var(--sans); fill: var(--ink-3); letter-spacing: 0.01em; }
+.rq-cap.tgt { fill: #16713e; font-weight: 600; }
+.rq-axis { font: 10px var(--sans); fill: var(--ink-2); font-weight: 600; letter-spacing: 0.02em; }
+.rq-dot { cursor: pointer; }
+.rq-c { stroke: var(--surface); stroke-width: 1; }
+.rq-dot.live .rq-c { fill: #0d9488; }
+.rq-dot.watch .rq-c { fill: #c07f16; }
+.rq-dot.parked .rq-c, .rq-dot.priced .rq-c { fill: var(--ink-3); }
+.rq-dot.past .rq-c { fill: none; stroke: var(--ink-3); stroke-width: 1.5; }
+.rq-ring { fill: none; stroke: var(--accent); stroke-width: 1.5; }
+.rq-lbl { font: 10px var(--sans); fill: var(--ink-2); }
+.rq-dot.sel .rq-lbl { fill: var(--ink); font-weight: 650; }
+
+.sweep-dot { width: 9px; height: 9px; border-radius: 50%; flex: none; }
+.sweep-dot.green { background: var(--live); box-shadow: 0 0 0 2px rgba(31,157,87,0.18); }
+.sweep-dot.amber { background: #c07f16; box-shadow: 0 0 0 2px rgba(192,127,22,0.18); }
+.sweep-over { color: #a5610f; font-weight: 650; }
+.sweep-run { font-size: 12px; padding: 2px 9px; border: 1px solid var(--line-2); border-radius: 999px; background: var(--surface); color: var(--accent); cursor: pointer; }
+.sweep-run:hover { border-color: var(--accent); }
+.sweep-cmd { font: 12px var(--mono); padding: 2px 8px; border: 1px solid var(--line-2); border-radius: 6px; background: var(--nav-bg); color: #d7deea; opacity: 0; transition: opacity 0.12s, border-color 0.2s; }
+.sweep-run:hover ~ .sweep-cmd, .sweep-cmd.show { opacity: 1; }
+.sweep-cmd.flash { border-color: var(--live); }
+
+.rd-head { display: flex; align-items: baseline; gap: 8px; flex-wrap: wrap; margin-bottom: 6px; }
+.rd-name { font-size: 15px; font-weight: 650; }
+.rd-summary { margin: 4px 0 8px; font-size: 12.5px; }
+.rd-rule, .rd-cmp { display: flex; gap: 8px; padding: 3px 0; align-items: baseline; }
+.rd-tk { font: 12px var(--mono); font-weight: 600; color: var(--ink); flex: none; min-width: 46px; }
+.rd-rt { font-size: 13px; }
+.rd-rules { margin: 0; padding-left: 18px; }
+.rd-rules li { padding: 2px 0; }
+.rd-note { margin-top: 8px; font-style: italic; }
+.rd-link { margin-top: 10px; }
+
+.pill.rd-live { background: #d9f2ea; color: #0d6e63; }
+.pill.rd-watch { background: var(--conditional-bg); color: #8a6418; }
+.pill.rd-parked, .pill.rd-priced, .pill.rd-past { background: var(--surface-2); color: var(--ink-2); }
+
+.rd-pager { margin-top: 8px; display: flex; gap: 8px; align-items: center; }
+.rd-pager button { font-size: 12px; padding: 2px 8px; border: 1px solid var(--line-2); border-radius: 6px; background: var(--surface); cursor: pointer; }
+.rd-pager button[disabled] { opacity: 0.4; cursor: default; }
+
+/* ── Radar review log + inbox tables ─────────────────────────────────────────────────────── */
+.rd-log-controls { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; flex-wrap: wrap; }
+.rd-log-search { font: 13px var(--sans); padding: 4px 9px; border: 1px solid var(--line-2); border-radius: 6px; background: var(--surface); color: var(--ink); min-width: 220px; }
+.rd-log-count { margin-left: auto; }
+.rd-log-tbl { width: 100%; }
+.rd-log-tbl tr[data-log-row] { cursor: pointer; }
+.rd-log-tbl tr[data-log-row]:hover { background: var(--surface-2); }
+.rd-log-tbl tr.ex { background: #eef4ff; }
+.rd-log-ex td { background: var(--surface-2); font-size: 12px; padding: 6px 10px; }
+.rd-log-ex .foot { margin: 2px 0; }
+.rd-log-src { color: var(--ink-3); font-style: italic; }
+
+/* review-log decision chips */
+.pill.dec-advanced { background: #d9f2ea; color: #0d6e63; }
+.pill.dec-watch { background: var(--conditional-bg); color: #8a6418; }
+.pill.dec-parked { background: var(--surface-2); color: var(--ink-2); }
+.pill.dec-rejected { background: #fbe9e9; color: #a3372f; }
+
+/* ── Radar sub-tabs (Map · Inbox · Log) + drawer ─────────────────────────────────────────── */
+.rt-sweep { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; font-size: 12.5px; color: var(--ink-2); margin-bottom: 10px; }
+.rt-tabs { display: flex; gap: 2px; border-bottom: 1px solid var(--line); margin-bottom: 14px; }
+.rt-tab { font: 13px var(--sans); padding: 6px 12px; border: 0; background: none; color: var(--ink-2); cursor: pointer; border-bottom: 2px solid transparent; margin-bottom: -1px; }
+.rt-tab:hover { color: var(--ink); }
+.rt-tab.on { color: var(--ink); font-weight: 650; border-bottom-color: var(--accent); }
+.rt-tab.warn { color: #8a6418; }
+.rt-tab.warn.on { border-bottom-color: var(--conditional); }
+.rt-badge { font-size: 11px; color: var(--ink-3); font-weight: 600; }
+.rt-tab.warn .rt-badge, .rt-tab.on .rt-badge { color: inherit; }
+.rt-hint, .rt-note { color: var(--ink-3); font-size: 12px; margin: 2px 0 10px; }
+.rt-foot { color: var(--ink-3); font-size: 12px; margin-top: 12px; }
+
+.rt-drawer { border: 1px solid var(--line); border-radius: var(--r); padding: 12px 14px; margin: 4px 0 14px; background: var(--surface); }
+.rt-x { margin-left: auto; border: 0; background: none; color: var(--ink-3); font-size: 18px; line-height: 1; cursor: pointer; padding: 0 2px; }
+.rt-x:hover { color: var(--ink); }
+.rd-line { font-size: 12.5px; margin: 3px 0; }
+.rd-line.foot { color: var(--ink-3); }
+.rd-k { color: var(--ink-3); }
+.rt-rules-x { margin-top: 10px; }
+.rt-expander { font: 12px var(--sans); padding: 3px 0; border: 0; background: none; color: var(--accent); cursor: pointer; }
+.rt-rules { margin-top: 6px; border-top: 1px solid var(--line-2); padding-top: 8px; }
+
+.rt-judged, .rt-inbox { width: 100%; }
+.rt-judged tr[data-drawer-open], .rt-inbox tr[data-inbox-row], .rt-low { cursor: pointer; }
+.rt-judged tr[data-drawer-open]:hover, .rt-inbox tr[data-inbox-row]:hover, .rt-low:hover { background: var(--surface-2); }
+.rt-judged tr.sel, .rt-inbox tr.ex { background: #eef4ff; }

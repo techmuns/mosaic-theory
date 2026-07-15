@@ -484,7 +484,7 @@ def test_themes_forward_driver_required_and_choices_gated(
     with pytest.raises(SystemExit):  # unknown key → argparse choices error
         parser.parse_args([*base, "--driver", "not-a-theme"])
     err = capsys.readouterr().err
-    assert "ai-datacenter" in err and "defense-demand-shift" in err  # names both keys
+    assert all(k in err for k in DRIVER_SPECS)  # error names every registry key (derived)
 
     for key in DRIVER_SPECS:  # each valid key parses
         assert parser.parse_args([*base, "--driver", key]).driver == key

@@ -1,0 +1,190 @@
+{
+ "scan_date": "2026-07-14",
+ "inbox": [
+  {
+   "cluster_id": "T004",
+   "first_seen": "2026-07-14",
+   "members": [
+    "CLSK",
+    "APLD",
+    "RIOT",
+    "MARA",
+    "BTBT",
+    "KEEL",
+    "CIFR",
+    "CORZ",
+    "WYFI"
+   ],
+   "label": "CLSK APLD +7",
+   "rel12": 0.39844953028928076,
+   "mom12": 0.7587553601714088,
+   "coherence": 0.41153884137467167,
+   "breadth_exp": 0.5555555555555556,
+   "crowding": -0.0586962401947525
+  },
+  {
+   "cluster_id": "T006",
+   "first_seen": "2026-07-14",
+   "members": [
+    "CVSA",
+    "INOD",
+    "STRA",
+    "PRDO",
+    "AMN",
+    "LOPE",
+    "WEST"
+   ],
+   "label": "CVSA INOD +5",
+   "rel12": -0.2406633570117661,
+   "mom12": 0.1196424728703619,
+   "coherence": 0.31115018962315083,
+   "breadth_exp": 0.42857142857142855,
+   "crowding": 0.03805817871209616
+  },
+  {
+   "cluster_id": "T007",
+   "first_seen": "2026-07-14",
+   "members": [
+    "ACIW",
+    "QTWO",
+    "APPN",
+    "ALKT",
+    "PCOR",
+    "NABL",
+    "NCNO"
+   ],
+   "label": "ACIW QTWO +5",
+   "rel12": -0.7340665701332847,
+   "mom12": -0.3737607402511567,
+   "coherence": 0.43571122244828425,
+   "breadth_exp": 0.14285714285714285,
+   "crowding": 0.12757651856087926
+  },
+  {
+   "cluster_id": "T010",
+   "first_seen": "2026-07-14",
+   "members": [
+    "FDS",
+    "MORN",
+    "EXLS",
+    "EPAM",
+    "G",
+    "GLOB"
+   ],
+   "label": "FDS MORN +4",
+   "rel12": -0.805919931632106,
+   "mom12": -0.445614101749978,
+   "coherence": 0.436019675651106,
+   "breadth_exp": 0.0,
+   "crowding": -0.07078992834195441
+  },
+  {
+   "cluster_id": "T011",
+   "first_seen": "2026-07-14",
+   "members": [
+    "COHU",
+    "FORM",
+    "CAMT",
+    "UCTT",
+    "ICHR"
+   ],
+   "label": "COHU FORM +3",
+   "rel12": 2.055641205235891,
+   "mom12": 2.4159470351180192,
+   "coherence": 0.45222570545321367,
+   "breadth_exp": 0.8,
+   "crowding": 0.07917901502393687
+  },
+  {
+   "cluster_id": "T030",
+   "first_seen": "2026-07-14",
+   "members": [
+    "SSTK",
+    "DFTX",
+    "GETY",
+    "APGE"
+   ],
+   "label": "SSTK DFTX +2",
+   "rel12": -0.8216587710585986,
+   "mom12": -0.46135294117647063,
+   "coherence": 0.4836017183597205,
+   "breadth_exp": 0.5,
+   "crowding": 0.2443088759117874
+  },
+  {
+   "cluster_id": "T034",
+   "first_seen": "2026-07-14",
+   "members": [
+    "FWDI",
+    "BMNR",
+    "SBET"
+   ],
+   "label": "FWDI BMNR +1",
+   "rel12": -1.0642098839834178,
+   "mom12": -0.7039040541012898,
+   "coherence": 0.4938552658832131,
+   "breadth_exp": 0.0,
+   "crowding": -0.07988900248283926
+  },
+  {
+   "cluster_id": "T037",
+   "first_seen": "2026-07-14",
+   "members": [
+    "TGB",
+    "HBM",
+    "ERO"
+   ],
+   "label": "TGB HBM +1",
+   "rel12": 0.7582352035525222,
+   "mom12": 1.1185410334346502,
+   "coherence": 0.4891780538052508,
+   "breadth_exp": 0.0,
+   "crowding": -0.05398044892927789
+  },
+  {
+   "cluster_id": "T040",
+   "first_seen": "2026-07-14",
+   "members": [
+    "LTBR",
+    "OKLO",
+    "NNE"
+   ],
+   "label": "LTBR OKLO +1",
+   "rel12": -0.6699033531019423,
+   "mom12": -0.30959752321981426,
+   "coherence": 0.5847989317561684,
+   "breadth_exp": 0.0,
+   "crowding": -0.188201377524557
+  },
+  {
+   "cluster_id": "T043",
+   "first_seen": "2026-07-14",
+   "members": [
+    "KBR",
+    "BAH",
+    "SAIC"
+   ],
+   "label": "KBR BAH +1",
+   "rel12": -0.563244501091668,
+   "mom12": -0.20293867120954,
+   "coherence": 0.4977314060021613,
+   "breadth_exp": 0.0,
+   "crowding": 0.09131727797539213
+  },
+  {
+   "cluster_id": "T045",
+   "first_seen": "2026-07-14",
+   "members": [
+    "NB",
+    "MP",
+    "USAR"
+   ],
+   "label": "NB MP +1",
+   "rel12": 0.6145895676074116,
+   "mom12": 0.9748953974895396,
+   "coherence": 0.5212453547437529,
+   "breadth_exp": 0.0,
+   "crowding": -0.1374400796659757
+  }
+ ]
+}

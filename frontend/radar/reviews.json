@@ -1,0 +1,558 @@
+{
+ "_note": "Analyst-owned record of the June-17 group reviews — THE single source of review reasons (STATE points here, never copies). Members populated from the June backup by cluster_id; decisions/reasons VERBATIM, never re-drafted. Committed.",
+ "reviews": [
+  {
+   "key": "2026-06-17:T000",
+   "display_name": "Trade-flow shipping",
+   "decision": "parked",
+   "reviewed": "2026-07-13",
+   "by": "analyst",
+   "reason": "real driver, already moved; revisit on product-tanker drop",
+   "members": [
+    "TK",
+    "FRO",
+    "NAT",
+    "TEN",
+    "GNK",
+    "DHT",
+    "DAC",
+    "SBLK",
+    "NMM",
+    "GSL",
+    "STNG",
+    "ASC",
+    "NVGS",
+    "LPG",
+    "CMBT",
+    "BWLP",
+    "TRMD",
+    "INSW",
+    "HAFN",
+    "HSHP",
+    "ECO"
+   ],
+   "map_ref": "trade-flow-shipping"
+  },
+  {
+   "key": "2026-06-17:T001",
+   "display_name": "Housing complex",
+   "decision": "parked",
+   "reviewed": "2026-07-13",
+   "by": "analyst (advisor-drafted reason)",
+   "reason": "rate-cut macro, consensus-watched",
+   "members": [
+    "LPX",
+    "KBH",
+    "MHO",
+    "MTH",
+    "MHK",
+    "UFPI",
+    "TREX",
+    "BXC",
+    "BLDR",
+    "BCC",
+    "OC",
+    "GRBK",
+    "FBIN",
+    "TMHC",
+    "CCS",
+    "LGIH",
+    "PRGO",
+    "OPTU",
+    "MBC"
+   ]
+  },
+  {
+   "key": "2026-06-17:T002",
+   "display_name": "Gold/silver juniors",
+   "decision": "parked",
+   "reviewed": "2026-07-13",
+   "by": "analyst (advisor-drafted reason)",
+   "reason": "metal-price proxy, already moved",
+   "members": [
+    "ASM",
+    "EGO",
+    "SSRM",
+    "BVN",
+    "NG",
+    "SA",
+    "EXK",
+    "AG",
+    "SVM",
+    "FSM",
+    "GAU",
+    "BTG",
+    "SII",
+    "OR",
+    "SKE",
+    "EQX",
+    "TFPM",
+    "CGAU"
+   ]
+  },
+  {
+   "key": "2026-06-17:T003",
+   "display_name": "Regional banks",
+   "decision": "parked",
+   "reviewed": "2026-07-13",
+   "by": "analyst (advisor-drafted reason)",
+   "reason": "interest-rate factor, not a theme",
+   "members": [
+    "ASB",
+    "FNB",
+    "SFNC",
+    "ZION",
+    "FULT",
+    "ONB",
+    "UBSI",
+    "SSB",
+    "INDB",
+    "UCB",
+    "CATY",
+    "AUB",
+    "HOMB",
+    "BKU"
+   ]
+  },
+  {
+   "key": "2026-06-17:T004",
+   "display_name": "Hotel REITs",
+   "decision": "parked",
+   "reviewed": "2026-07-13",
+   "by": "analyst (advisor-drafted reason)",
+   "reason": "broad but recognized",
+   "members": [
+    "RHP",
+    "SHO",
+    "DRH",
+    "APLE",
+    "PEB",
+    "INN",
+    "RLJ",
+    "XHR",
+    "PK"
+   ]
+  },
+  {
+   "key": "2026-06-17:T006",
+   "display_name": "Commodity chemicals",
+   "decision": "parked",
+   "reviewed": "2026-07-13",
+   "by": "analyst (advisor-drafted reason)",
+   "reason": "cycle-bottom value; driver is spreads",
+   "members": [
+    "OLN",
+    "EMN",
+    "CE",
+    "HUN",
+    "TROX",
+    "CC"
+   ]
+  },
+  {
+   "key": "2026-06-17:T007",
+   "display_name": "Truckload carriers",
+   "decision": "advanced",
+   "reviewed": "2026-07-13",
+   "by": "analyst",
+   "reason": "became theme #3 — truckload supply purge",
+   "members": [
+    "WERN",
+    "MRTN",
+    "HTLD",
+    "LSTR",
+    "ARCB",
+    "RXO"
+   ],
+   "map_ref": "truckload-supply-purge"
+  },
+  {
+   "key": "2026-06-17:T008",
+   "display_name": "Uranium",
+   "decision": "parked",
+   "reviewed": "2026-07-13",
+   "by": "analyst (advisor-drafted reason)",
+   "reason": "consensus nuclear story, moved",
+   "members": [
+    "DNN",
+    "UEC",
+    "URG",
+    "UUUU",
+    "EU",
+    "NXE"
+   ]
+  },
+  {
+   "key": "2026-06-17:T009",
+   "display_name": "Appalachian natural gas",
+   "decision": "parked",
+   "reviewed": "2026-07-13",
+   "by": "analyst",
+   "reason": "loud story, firm evidence at one name; CRK to single-name watch",
+   "members": [
+    "CRK",
+    "RRC",
+    "GPOR",
+    "CNX",
+    "BKV"
+   ]
+  },
+  {
+   "key": "2026-06-17:T010",
+   "display_name": "Water utilities",
+   "decision": "parked",
+   "reviewed": "2026-07-13",
+   "by": "analyst (advisor-drafted reason)",
+   "reason": "bond proxy",
+   "members": [
+    "MSEX",
+    "YORW",
+    "HTO",
+    "CWT",
+    "AWR"
+   ]
+  },
+  {
+   "key": "2026-06-17:T011",
+   "display_name": "Mortgage insurers",
+   "decision": "parked",
+   "reviewed": "2026-07-13",
+   "by": "analyst (advisor-drafted reason)",
+   "reason": "housing/rate factor",
+   "members": [
+    "MTG",
+    "RDN",
+    "ESNT",
+    "NMIH",
+    "ACT"
+   ]
+  },
+  {
+   "key": "2026-06-17:T012",
+   "display_name": "Senior housing REITs",
+   "decision": "watch",
+   "reviewed": "2026-07-13",
+   "by": "analyst",
+   "reason": "demand+supply real; pricing power not yet — wake-up rule set",
+   "members": [
+    "NHI",
+    "LTC",
+    "SBRA",
+    "CTRE",
+    "AHR"
+   ],
+   "map_ref": "senior-housing"
+  },
+  {
+   "key": "2026-06-17:T013",
+   "display_name": "Oilfield equipment",
+   "decision": "parked",
+   "reviewed": "2026-07-13",
+   "by": "analyst (advisor-drafted reason)",
+   "reason": "capex cycle, already moving",
+   "members": [
+    "NOV",
+    "INVX",
+    "OIS",
+    "FET",
+    "WFRD"
+   ]
+  },
+  {
+   "key": "2026-06-17:T014",
+   "display_name": "Met coal",
+   "decision": "parked",
+   "reviewed": "2026-07-13",
+   "by": "analyst (advisor-drafted reason)",
+   "reason": "coal-price proxy",
+   "members": [
+    "BTU",
+    "SXC",
+    "HCC",
+    "AMR",
+    "CNR"
+   ]
+  },
+  {
+   "key": "2026-06-17:T015",
+   "display_name": "Manufactured housing",
+   "decision": "parked",
+   "reviewed": "2026-07-13",
+   "by": "analyst (advisor-drafted reason)",
+   "reason": "affordability kernel, too small",
+   "members": [
+    "SKY",
+    "CVCO",
+    "PMT",
+    "PFSI"
+   ]
+  },
+  {
+   "key": "2026-06-17:T016",
+   "display_name": "Auto dealers",
+   "decision": "parked",
+   "reviewed": "2026-07-13",
+   "by": "analyst (advisor-drafted reason)",
+   "reason": "consensus-distressed",
+   "members": [
+    "AN",
+    "LAD",
+    "GPI",
+    "ABG"
+   ]
+  },
+  {
+   "key": "2026-06-17:T017",
+   "display_name": "Mortgage REITs",
+   "decision": "parked",
+   "reviewed": "2026-07-13",
+   "by": "analyst (advisor-drafted reason)",
+   "reason": "rate factor",
+   "members": [
+    "DX",
+    "ARR",
+    "IVR",
+    "ORC"
+   ]
+  },
+  {
+   "key": "2026-06-17:T018",
+   "display_name": "Industrial REITs",
+   "decision": "parked",
+   "reviewed": "2026-07-13",
+   "by": "analyst (advisor-drafted reason)",
+   "reason": "recognized cycle",
+   "members": [
+    "LXP",
+    "FR",
+    "TRNO",
+    "STAG"
+   ]
+  },
+  {
+   "key": "2026-06-17:T019",
+   "display_name": "Seat-software basket",
+   "decision": "rejected",
+   "reviewed": "2026-07-13",
+   "by": "analyst",
+   "reason": "no shared driver — four revenue models",
+   "members": [
+    "DOCU",
+    "HUBS",
+    "BRZE",
+    "MNDY"
+   ]
+  },
+  {
+   "key": "2026-06-17:T020",
+   "display_name": "Strip-center REITs",
+   "decision": "parked",
+   "reviewed": "2026-07-13",
+   "by": "analyst (advisor-drafted reason)",
+   "reason": "recognized recovery",
+   "members": [
+    "KRG",
+    "PECO",
+    "BRX",
+    "UE"
+   ]
+  },
+  {
+   "key": "2026-06-17:T022",
+   "display_name": "Cannabis",
+   "decision": "parked",
+   "reviewed": "2026-07-13",
+   "by": "analyst (advisor-drafted reason)",
+   "reason": "policy binary, perennial",
+   "members": [
+    "CRON",
+    "TLRY",
+    "CGC",
+    "SNDL"
+   ]
+  },
+  {
+   "key": "2026-06-17:T023",
+   "display_name": "Quantum computing",
+   "decision": "rejected",
+   "reviewed": "2026-07-13",
+   "by": "analyst (advisor-drafted reason)",
+   "reason": "story cluster, post-spike",
+   "members": [
+    "QUBT",
+    "RGTI",
+    "QBTS",
+    "INFQ"
+   ]
+  },
+  {
+   "key": "2026-06-17:T024",
+   "display_name": "Staffing firms",
+   "decision": "rejected",
+   "reviewed": "2026-07-13",
+   "by": "analyst",
+   "reason": "filings blame macro, not AI",
+   "members": [
+    "KFY",
+    "RHI",
+    "MAN"
+   ]
+  },
+  {
+   "key": "2026-06-17:T026",
+   "display_name": "Offshore drillers",
+   "decision": "parked",
+   "reviewed": "2026-07-13",
+   "by": "analyst (advisor-drafted reason)",
+   "reason": "dayrate proxy, moved",
+   "members": [
+    "VAL",
+    "RIG",
+    "NE"
+   ]
+  },
+  {
+   "key": "2026-06-17:T027",
+   "display_name": "Net-lease REITs",
+   "decision": "parked",
+   "reviewed": "2026-07-13",
+   "by": "analyst (advisor-drafted reason)",
+   "reason": "cap-rate duration",
+   "members": [
+    "NNN",
+    "ADC",
+    "EPRT"
+   ]
+  },
+  {
+   "key": "2026-06-17:T028",
+   "display_name": "Kitchen/welding/QSR mix",
+   "decision": "rejected",
+   "reviewed": "2026-07-13",
+   "by": "analyst (advisor-drafted reason)",
+   "reason": "driver-less grab bag",
+   "members": [
+    "MIDD",
+    "ESAB",
+    "BOBS"
+   ]
+  },
+  {
+   "key": "2026-06-17:T029",
+   "display_name": "Refiners",
+   "decision": "parked",
+   "reviewed": "2026-07-13",
+   "by": "analyst (advisor-drafted reason)",
+   "reason": "crack-spread proxy, moved",
+   "members": [
+    "PARR",
+    "CVI",
+    "DK"
+   ]
+  },
+  {
+   "key": "2026-06-17:T030",
+   "display_name": "Auto suppliers",
+   "decision": "parked",
+   "reviewed": "2026-07-13",
+   "by": "analyst (advisor-drafted reason)",
+   "reason": "consensus volume/EV distress",
+   "members": [
+    "LEA",
+    "ALV",
+    "ADNT"
+   ]
+  },
+  {
+   "key": "2026-06-17:T031",
+   "display_name": "Micro-biotech trio",
+   "decision": "rejected",
+   "reviewed": "2026-07-13",
+   "by": "analyst (advisor-drafted reason)",
+   "reason": "idiosyncratic co-spike",
+   "members": [
+    "QGEN",
+    "ACRS",
+    "CRVS"
+   ]
+  },
+  {
+   "key": "2026-06-17:T032",
+   "display_name": "Argentina trio",
+   "decision": "parked",
+   "reviewed": "2026-07-13",
+   "by": "analyst (advisor-drafted reason)",
+   "reason": "country macro, ran",
+   "members": [
+    "CRESY",
+    "LOMA",
+    "CAAP"
+   ]
+  },
+  {
+   "key": "2026-06-17:T033",
+   "display_name": "Gas utilities",
+   "decision": "parked",
+   "reviewed": "2026-07-13",
+   "by": "analyst (advisor-drafted reason)",
+   "reason": "rate duration",
+   "members": [
+    "SR",
+    "OGS",
+    "NWN"
+   ]
+  },
+  {
+   "key": "2026-06-17:T034",
+   "display_name": "Budget airlines",
+   "decision": "parked",
+   "reviewed": "2026-07-13",
+   "by": "analyst (advisor-drafted reason)",
+   "reason": "recovery, moved",
+   "members": [
+    "JBLU",
+    "ALGT",
+    "ULCC"
+   ]
+  },
+  {
+   "key": "2026-06-17:T036",
+   "display_name": "Medtech/lithium mix",
+   "decision": "rejected",
+   "reviewed": "2026-07-13",
+   "by": "analyst (advisor-drafted reason)",
+   "reason": "coincidence — 0.17 correlation",
+   "members": [
+    "CLPT",
+    "QURE",
+    "LAC"
+   ]
+  },
+  {
+   "key": "2026-06-17:T037",
+   "display_name": "China solar",
+   "decision": "parked",
+   "reviewed": "2026-07-13",
+   "by": "analyst (advisor-drafted reason)",
+   "reason": "policy driver, hard jurisdiction",
+   "members": [
+    "CSIQ",
+    "DQ",
+    "JKS"
+   ]
+  },
+  {
+   "key": "2026-06-17:T038",
+   "display_name": "E&S insurers",
+   "decision": "parked",
+   "reviewed": "2026-07-13",
+   "by": "analyst (advisor-drafted reason)",
+   "reason": "pricing-cycle factor",
+   "members": [
+    "SKWD",
+    "PLMR",
+    "BOW"
+   ]
+  }
+ ]
+}

@@ -1903,6 +1903,283 @@ Each line: *what it does* — *verified how*.
 - _Whole suite green (ruff + mypy --strict clean; `pytest -m "not network"` = 534 passed, 1 skipped;
   +3 gate tests: continuity-gate math, filed_quarters parse/404/throttle, gated-placebo-collapse
   property)._
+- **Component-A scans now NON-OVERWRITING via scan_history (2026-07-13, `feat/component-a-history`;
+  closes the audit-followup gap at `cli.py` ~521-525).** `_cmd_themes` computes the dump ONCE and writes
+  it BOTH to `candidate_themes.jsonl` (the "latest" pointer, same bytes) AND to an always-on timestamped
+  `scan_history` snapshot (`driver_slug=component-a`, `tier_field=None`), mirroring the exposure/assay
+  pattern — a monthly sweep can no longer clobber the prior harvest (the delta/monitor diffs against
+  immutable snapshots). `record_snapshot` gained an ADDITIVE `tier_field: str | None = "exposure_basis"`:
+  the default path is byte-identical (exposure/assay manifest lines unchanged, still fail-loud on a
+  missing key), and `None` gives Component-A records (no `exposure_basis`) an empty `tier_counts` instead
+  of a KeyError — pinned by a Component-A-shape test + an exposure-default regression test. Parity flags
+  `--scan-history-dir` / `--no-scan-history` added. **BACKUP NOTE:** the June-17 `candidate_themes.jsonl`
+  OUTPUT was absent at first-build time (untracked / never committed; removed when the primary left
+  `feat/own-history-line`), then the raw June-17 output was RESTORED 2026-07-13 from the operator's
+  off-repo copy (35 clusters, first `T000`) → backup `candidate_themes.2026-06-17.backup.jsonl` MADE. The
+  timestamped archive + committable latest-pointer prevent recurrence. **Monthly sweep SANCTIONED; cron
+  AUTHORED + verified, PUSH STILL BLOCKED 2026-07-13 — the token at `~/.mosaic_gh_token` reports only
+  `repo` scope (NOT `workflow`) despite the re-scope precondition, so the push was rejected again; the
+  file is committed-ready locally, awaiting a `workflow`-scoped token in that file (or a keychain
+  refresh):**
+  `.github/workflows/monthly-themes.yml` (cron `0 7 3 * *` + `workflow_dispatch`), mirroring
+  monthly-score.yml — runs `python -m vinci.cli themes` (documented defaults basis r2 / window 365d /
+  min-breadth 3; the exact June-17 flag string was UNRECORDED, SAID SO in the workflow), job-summary
+  prints snapshot path + manifest line, commits the `candidate_themes.jsonl` pointer (git history = the CI
+  archive; `data/scan_history/` stays git-ignored/local). Evidence: the June-17 harvest = 35 proposals → 2
+  advances (entry below). Backend + workflow only — NOTHING deploys. On `feat/component-a-history`; PR to
+  be opened, NOT merged.
+- _Suite green (ruff + mypy --strict clean; `pytest -m "not network"` = 573 passed; +2 scan_history
+  tests). Dry-run: two Component-A sweeps → 2 immutable snapshots, prior untouched, `tier_counts: {}`._
+- **HARVEST DISPOSITION (2026-07-13, analyst) — Component-A 2026-06-17 harvest (35 clusters)**
+  dispositioned per `component_a_harvest_2026-06-17.md` + priced-check
+  (`data/priced_check/report_all.txt`, as-of 2026-07-10) + the deep-research evidence doc: **T007 ADVANCE
+  → theme #3 'truckload-supply-purge'** (source=component-a); **T012 ADVANCE-LITE** (research adjudication
+  before any scan; the NHI SHOP-vs-sector contradiction is the open question); **T000 PARK-priced**
+  (revisit trigger: product-tanker subset derate — STNG/TRMD/HAFN); **T009 PARK-as-theme**, CRK handed to
+  Edge-2 watch (single name: ~1 Bcf/d non-binding offtake vs ~1.1 Bcf/d output, fresh drawdown);
+  **T019/T024 REJECT-as-named** (no shared driver: four revenue models / macro-attributed cycle);
+  remaining 29 PARK/REJECT per the harvest file. **CHANNEL-TAG CONVENTION adopted:** every candidate theme
+  henceforth carries source ∈ {analyst, component-a, …} + date, for channel comparison. **CANDIDATE
+  REGISTERED:** 'in-silico evidence substitution' (CERT/SLP/SDGR tailwind vs CRL/NOTV headwind),
+  source=analyst, 2026-07-13, status: gate + research checks running. _[Verified at build:
+  `data/priced_check/report_all.txt` present (53,516 B). The harvest worksheet + deep-research doc are the
+  analyst's off-repo artifacts (not in the repo tree); the raw 35-cluster `candidate_themes.jsonl` was
+  already deleted (see backup note). The channel-tag CONVENTION is adopted now; the CandidateTheme schema
+  source/date field is a follow-up (audit-flagged, unbuilt).]_
+- **T012 ADJUDICATED 2026-07-13 (research doc `data/research/t012_seniorhousing_adjudication_2026-07-13.md`,
+  primary-source):** driver real — occupancy + supply halves
+  verified, supply locked to ~2028 (2025 starts ~5,977 units, 29-mo lead, no 2026 uptick) — but the
+  pricing-power leg ABSENT (BKD same-store RevPOR +1.8–3.4% vs opex +4.8–5.9% in all 4 qtrs; SNDA crossed
+  only Q4'25, Q1'26 same-store merger-redefined). Cluster mislabeled at the name level (CTRE ~74% SNF
+  triple-net — driver inapplicable; NHI SHOP −340bps management-attributed idiosyncratic; AHR the one true
+  carrier, occupancy AND rate rising). **DISPOSITION: WATCH+** (downgraded from ADVANCE-LITE by
+  adjudication). **VERBATIM TRIGGER:** 'BKD or SNDA same-store RevPOR growth >= same-store opex growth for
+  two consecutive quarters, OR NIC occupancy >= 90.0%' — on fire, re-underwrite with AHR as lead carrier.
+  Full scan NOT sanctioned (carrier set too narrow; scan slot held by theme #3). Next checkpoint: NIC Q2
+  data, late July 2026.
+- **IN-SILICO EVIDENCE SUBSTITUTION (source=analyst, registered 2026-07-13) — ADJUDICATED 2026-07-13 via
+  priced-gate (`data/priced_check/report_insilico.txt`) + research memo
+  (`data/research/insilico_adjudication_2026-07-13.md`):** driver REAL and ADVANCING (Senate-unanimous FDA Modernization Act
+  3.0, NIH $150M, Year-1 goals met) but every guidance still DRAFT, zero animal-in-lieu approvals, and
+  P&L linkage ABSENT at all five names (CERT software +7%, bookings −2.5%; SLP software flat, TAKE-PRIVATE
+  @ $18.50 announced 2026-06-16; SDGR software −21%; CRL DSA stable, backlog $1.9B, mgmt 'no notable
+  changes in client behavior', ~$50M at-risk vs ~$200M NAMs revenue earned; NOTV Ch.11 2026-06-03 = debt
+  event, ticker NOTVQ). Public vehicle set thinning to ~one name. **DISPOSITION: PARK-WITH-TRIGGERS**
+  (below T012 WATCH+). Any ONE trigger fires -> re-underwrite CERT as a SINGLE-NAME dossier, NOT a theme
+  scan: (1) FDA FINALIZES any NAMs guidance or Modernization Act 3.0 ENACTED; (2) first documented FDA
+  acceptance of in-silico/NAMs data in lieu of animal TOXICOLOGY in an approval; (3) CERT software growth
+  >=15% YoY for two consecutive quarters OR bookings growth turns positive; (4) CRL discloses
+  client-behavior change or NAMs-attributed DSA backlog erosion. Scan NOT sanctioned: predicted 0
+  RATIFIED (all exposure aspirational-tier) — the gate+research pass substituted for the scan.
+  Driver-name refinement if ever advanced: the live wedge is in-silico substitution of CLINICAL evidence
+  (asciminib/Simcyp precedent), not animal-tox. Channel-comparison data point: analyst-named candidate #1
+  -> PARK-with-triggers; component-a candidate #1 (T007) -> ADVANCE.
+- **THEME #3 REGISTERED: truckload-supply-purge**, source=component-a (T007, 2026-06-17 harvest;
+  disposition 2026-07-13). Spec ratified verbatim by analyst. Full scan PENDING operator command;
+  pre-triage checkpoint: analyst face-checks the WERN (expect tailwind driver-specific), RXO (expect
+  indirect-opposite: broker), ARCB (expect indirect: LTL-majority) rows before any triage is trusted.
+  Finding-4a data point #2: headwind encoded as indirect in text.
+  **Provenance-order refinement (2026-07-13, feat/truckload-provenance-order; PR open, not merged):**
+  `provenance_tag_of` is first-match, and `equipment` (keywords tractor/trailer) preceded
+  `asset-based-tl` (truckload/linehaul) — so a real TL carrier's fact naming its OWN tractors/trailers
+  mis-filed as `equipment`, not the tailwind bucket. Fix: swapped the precedence of those two layers
+  (asset-based-tl now first); keyword SETS unchanged (analyst-ratified verbatim). GROUPING label only —
+  the tie/verdict is unaffected. Incident→invariant (shipped Y): `test_truckload_asset_tl_precedes_equipment`
+  pins the carrier fact → `asset-based-tl` AND a pure OEM/dealer fact → `equipment`; the counterfactual
+  old-order run returned `equipment` (the bug). The ltl-before-asset-tl pin still holds.
+- **SHARES-TAG us-gaap FALLBACK — Component-A coverage fix (2026-07-13, feat/shares-tag-fallback; PR
+  open, not merged).** `shares_outstanding_by_cik` (`vinci/edgar/client.py`) now falls back to the
+  `us-gaap:CommonStockSharesOutstanding` frame for any CIK the primary
+  `dei:EntityCommonStockSharesOutstanding` frame does not cover — SAME `periods`, SAME later-win merge,
+  dei ALWAYS wins on overlap; no other universe gate touched (fail-closed preserved — a name in NEITHER
+  frame still dies at `no_shares`). **SIZE (probed at ref 2026-07-06, priced resolver set): 2,075 names
+  die at `no_shares`; the us-gaap frame fallback recovers 213 of them past that gate.** Net universe
+  addition is < 213 — the head of the recoverable list is warrants/units (AENTW/AESPR/AESPU/AESPW …) the
+  security-type allowlist cuts downstream. **SDGR — the #117 UNIVERSE-COVERAGE-FLAG casualty — is NOT
+  recovered, correcting that flag's premise:** SDGR stopped tagging `us-gaap:CommonStockSharesOutstanding`
+  after FY2023 (last frame value 2023-12-31) and tags no `dei` shares, so it is absent from BOTH recent
+  calendar-quarter frames; a frames-based fallback cannot reach it (its recent share count lives off the
+  calendar-quarter frame — a deeper, still-unfixed gap; the §5 flag is corrected in place). **Detection-
+  universe delta: the one month-over-month Component-A diff crossing this change partly reflects coverage,
+  not market.** Verified: `pytest tests/test_edgar.py::test_shares_us_gaap_fallback_dei_primary` (pins
+  dei-wins-on-overlap / us-gaap-only-recovered / neither-still-`no_shares`); ruff + `mypy --strict vinci`
+  clean.
+- **UNIVERSE REBUILT post-#119 + `--only-tickers` delta-scan primitive (2026-07-13,
+  feat/scan-only-tickers; PR open, not merged).** (1) Rebuilt the cap-band universe with the post-#119
+  builder (`vinci build-universe --ref 2026-07-06`, matching the committed snapshot's as_of so the delta
+  isolates the shares recovery, not price drift): **in_universe 1760 → 1800 (net +40: +47 recovered,
+  −7 dropped).** The +47 is dominated by the #119 us-gaap shares fallback clearing names past `no_shares`;
+  it is FAR below the 213 "recoverable-past-`no_shares`" because the downstream cap-band ($300M–$10B) /
+  ADV-floor ($3M) / security-type gates cut most recovered names — the #119 caveat, now quantified. The
+  −7 (AGX/SUZ/TBRG/IRD/GLSI/OLPX/PAYP) are EDGAR-frame drift, NOT #119: the fallback only ADDS shares
+  (dei wins on overlap) so it cannot drop a name — these reflect ~1 week of fresh 10-Q frame data between
+  the Jul-6 snapshot and the Jul-13 rebuild (EDGAR frames are live; no historical frame snapshot to
+  isolate against). The rebuilt universe_snapshot/securities/issuers are **NOT committed here** — the
+  full-DB `export_snapshots` also rewrote `candidate_records.jsonl` (−275) and `decision_ledger.jsonl`
+  (−1, a forbidden ledger-DELETE) from a stale working DB, so ALL snapshot changes were reverted to
+  protect the append-only ledger; the counts above are the recorded FACT, the artifact refresh is left to
+  the weekly cron / a clean artifact pass. (2) `themes-exposure` gained `--only-tickers T1,T2,…` /
+  `--only-file <path>`: restricts a scan to the intersection of the named set and the universe
+  (`_resolve_only_tickers` + `_partition_only`) — unknown names are printed and skipped, an EMPTY
+  intersection ERRORS (never scans nothing silently). This is the **monitor's future DELTA-SCAN
+  primitive** — restrict a scan to a named subset with NO new code path. Verified: ruff + `mypy --strict
+  vinci` clean; network-free tests (subset / unknown-name fail-loud / empty-intersection error / argparse
+  wiring). (3) **Theme-#3 delta scan of the 47 recovered names PENDING** (sanctioned, small; runs
+  post-merge via `--only-tickers` against the restored rebuild); the theme-#3 FREEZE remains gated on
+  delta completion — the recovered names must be scanned before the funnel is treated as complete.
+- **LEDGER-EXPORT SEAM CLOSED + universe canonical at 1800 (2026-07-13, feat/ledger-export-guard; PR
+  open, not merged).** `store.export_snapshots` dumps the ENTIRE working DB (all 7 SNAPSHOT_TABLES); in
+  #121 a STALE working DB rewrote `candidate_records.jsonl` (−275) and `decision_ledger.jsonl` (1→0) — a
+  forbidden ledger-DELETE, caught by hand. **Two mechanical layers:** (1) SELECTIVE EXPORT — `build_universe`
+  exports ONLY what it builds (`BUILD_UNIVERSE_TABLES = issuers/securities/universe_snapshot`, enumerated
+  from `upsert_security` + `record_universe`, not guessed), so a stale-DB build can never touch the
+  ledger/candidates; other callers keep the full dump. (2) NO-ROW-DROP GUARD — `export_snapshots` RAISES
+  (`_assert_no_row_drop`, by PK) if a write would drop a committed row — `decision_ledger` (append-only)
+  AND the securities/issuers ENTITY MASTER (accumulate-only; #121 shrank BOTH), from ANY caller. **Cron-safety (report):** `run-weekly`/`run-monthly` call `rebuild_from_snapshots` BEFORE export
+  (orchestrator.py:44/:75), repopulating the DB ledger from the committed file → export writes ≥ committed
+  → no shrink (circumstantially safe, now guard-backed). Incident→invariant (shipped Y):
+  `test_export_snapshots_refuses_to_shrink_ledger` + `…_securities` (e2e), `test_ledger_guard_raises_on_missing_row`,
+  `test_ledger_guard_passes_on_pure_append`, `test_selective_export_writes_only_build_universe_tables`.
+  **Universe LANDED at 1800** (the #119 us-gaap recovery, ref 2026-07-06): committed the
+  issuers/securities/universe_snapshot TRIO from #121's rebuild post-guard — 1760 → 1800 (+47 recovered /
+  −7 frame-drift). TRIO not the 2-file pair the brief expected: 41 of 47 recovered issuers were ABSENT
+  from HEAD `issuers.jsonl`, so a securities-only commit would dangle 41 refs. `decision_ledger` +
+  `candidate_records` byte-identical to HEAD. **The July theme-#3 sweep is gated on THIS merge** — it runs
+  on the canonical 1800 (the 47 recovered names in-universe; #121's delta already showed 0 surfaced among
+  them, this is the standing record). ruff + `mypy --strict vinci` + pytest green.
+- **SCAN-ERROR GRADING — the 2026-07-13 quota incident closed mechanically (feat/scan-error-grade; PR
+  open, not merged).** The near-miss: 22 delta-scan records ERRORED (Anthropic 400 usage-cap) yet
+  defaulted to grade `none`; the scan_history manifest recorded `tier_counts {none: 22}` — a FALSE claim
+  that 22 unassessed names disclosed no exposure (caught by hand). Two mechanical layers + a report:
+  (1) UNASSESSED-ERROR BUCKET — an errored assessment (`LlmError` in `assess_exposure`, or a raw
+  exception in `scan_driver_exposure`) now grades `ExposureBasis.UNASSESSED_ERROR` (error in a flag),
+  NEVER `none`. The CLI tier print carries it as its own line + EXCLUDES it from `surfaced`; the manifest
+  `tier_counts` (a Counter of `exposure_basis`) shows it as its own key — a failure can no longer read as
+  'no exposure'. (2) ABORT-FAST — 3 consecutive same-4xx (quota/auth, by `status_code`) LLM failures
+  raise `ScanAbortedError`; the CLI catches it and writes NEITHER `--out` NOR scan_history (a poisoned
+  queue is worse than none) + prints the un-scanned names. A 5xx/network transient does NOT trip it.
+  (3) REPORT-ONLY (triage/freeze path): the freeze is `freeze_baskets` (forward.py:210), which guards on
+  human DISPOSITIONS (every committed name RATIFIED/PASSED, else raise) and does NOT ingest the scan
+  cohort. The poisoning is closed at the SCAN layer (own bucket, excluded from surfaced, visible count),
+  so NO refuse-to-freeze guard is built now — the freeze operates on the human's deliberate committed
+  list, not raw scan records, and the human sees the unassessed count before freezing. Defense-in-depth
+  hook if ever wanted: cross-check `all_committed` against the scan's UNASSESSED_ERROR set before
+  `freeze_baskets`. Verified: ruff + `mypy --strict vinci` clean; network-free tests
+  `test_llm_error_is_unassessed_not_none`, `test_scan_error_unassessed_and_non_4xx_no_abort`,
+  `test_scan_aborts_fast_on_repeated_quota_4xx`, `test_valid_assessment_grade_unaffected_by_error_bucket`.
+- **THEME #3 truckload-supply-purge FROZEN — third driver through the multi-cohort forward machinery
+  (2026-07-14, feat/theme3-freeze; PR open, not merged).** Cohort = the combined 781-assessed scan (main
+  `20260713T141114Z__bd4be31`, 759 + delta2 22, 0 surfaced) → 37 surfaced (tier 0 binding / 1 quantified /
+  10 committed / 26 aspirational). Froze ALL 37 surfaced (mirrors the defense all-surfaced pattern):
+  0 RATIFIED · 37 PASSED · 37 naive baseline — the zero-ratified UNDEFINED-with-reason path applies (no
+  BUY leg → RATIFIED-dependent spreads UNDEFINED, not computed; frozen outputs are AVOID-discipline +
+  exposure-carry DIAGNOSTICS, beta-confounded). Dispositions analyst-ratified 2026-07-14
+  (`data/research/theme3_truckload_triage_2026-07-14.md`). **WATCHLIST (3, re-underwrite):** WERN —
+  *"DOSSIER-NOW: single-name underwrite in progress at the 2:1 bar on NORMALIZED earnings (trailing P/E
+  99th percentile of own history — a trough-earnings artifact, not the bar). Thesis-break (all three):
+  FMCSA non-domiciled-CDL rule stayed/reversed, or ACT driver availability returns to surplus."*; MRTN +
+  HTLD (identical) — *"Re-underwrite when TL revenue per loaded mile turns positive YoY for two
+  consecutive reported quarters, OR on a ≥20% derate from the 2026-07-13 close while ACT capacity data
+  stays tight."* **AVOID-CONTROLS (3, ⊆ PASSED):** RXO (pure asset-light brokerage — losing side), LSTR
+  (borderline BCO/asset-light, analyst call 2026-07-14), ARCB (66% LTL — purge-orthogonal). **NOTED, not
+  frozen as candidates:** TFIN (freight factoring), KDK (autonomous trucking — second-order), FA (driver
+  screening — sleeper). Remaining surfaced = PARK/REJECT (tie-gate honest output). **STRUCTURAL FINDING:**
+  NO surfaced name discloses the driver itself (FMCSA rule / ELD purge / SCOTUS) — grades encode
+  structural business-model exposure; underwriting theme #3 = structural carrier exposure × external
+  driver-liveness evidence (ACT / spot-rate / FMCSA, OUTSIDE filings) × the 2:1 bar (dossier). Pre-triage
+  face-check CLOSED: WERN / RXO / ARCB matched directional expectation 3/3. Frontend mirrored via build.py:
+  `frontend/themes/truckload-supply-purge.json` + `index.json` (3 drivers); ai-datacenter + defense
+  byte-identical; DEPLOYS on merge (viewer gains theme #3). NEXT: **DOSSIER-NOW on WERN** (single-name
+  underwrite at the 2:1 bar on normalized earnings). ruff + `mypy --strict vinci` + pytest green.
+- **RADAR SCREEN — every theme idea on one map (2026-07-14, feat/radar-screen; PR open, not merged;
+  DEPLOYS on merge — viewer gains a "Radar" tab under Themes).** Shipped per operator sign-off 2026-07-14
+  (DESIGN option A: quadrant-map hero + detail panel BELOW). A read-only, **zero-LLM** mirror of the
+  analyst's own dispositions: 6 theme ideas plotted on evidence-the-idea-is-real (x) × price-already-moved
+  (y), color-coded by status (live-teal / watch-amber / parked+priced-gray / past-gray-hollow), selected
+  ring, hover tooltip, click-to-select; a detail panel renders the analyst's wake-up rules + comparison
+  legs **VERBATIM**; a Theme/Status/Found-by/Price-12mo list (paginates past 12). **No run buttons —
+  nothing fires here** (the machine assembles/cites, never concludes; past markers are story-placed, not
+  measured). **DATA CONTRACT:** `frontend/radar/candidates.json` is **analyst-owned** (the 6 entries +
+  every disposition/rule authored by hand, committed, never machine-written); `frontend/radar/sweep.json`
+  is **emitted by build.py** (`_radar_sweep_payload`: `last_run` = latest ts in the git-ignored
+  `data/scan_history/component-a/manifest.jsonl`, else seeded `2026-06-17`; `next_due` = last_run + 30d;
+  the run **command is single-sourced in build.py** `_SWEEP_COMMAND = "python -m vinci.cli themes"` — the
+  screen renders it, never hardcodes it). **Verified — mock-first rule satisfied:** rendered the view from
+  committed JSON in preview (no backend), confirmed quadrant/dots/captions/axes, sweep bar (green dot,
+  seeded 2026-06-17, next-due 2026-07-17), filter counts (All 6 / Live 1 / Watch 1 / Parked 1 / Too late 1
+  / Past 2), BOTH detail panels verbatim (Truckload WERN/MRTN/HTLD + RXO/LSTR/ARCB; In-silico's 4 wake-up
+  rules), the 6-row list, and all interactions (filter narrows dots+list, dot/row click selects, "full
+  page →" routes to the theme page, "▸ run command" reveals+copies the command chip) — **zero console
+  errors**. Two sweep-payload tests pinned (`test_radar_sweep_seeded_fallback_and_next_due`,
+  `…_reads_manifest_latest_ts`). ruff + `mypy --strict vinci` + pytest (593) + `node --check` all
+  frontend JS green; `frontend/themes/*.json` byte-identical to HEAD (radar adds, never churns themes).
+- **COMPONENT-A SWEEP #2 — first month-over-month harvest (2026-07-14; run from `-main` at origin/main
+  `119ecbb`; zero-LLM, no commits — snapshots git-ignored).** `python -m vinci.cli themes` (canonical
+  defaults r2 / 365d / min_breadth 3, ref = snapshot as_of 2026-07-06) on the widened 1,800 universe →
+  **46 clusters** (n_scanned 1,783). Snapshot `data/scan_history/component-a/20260714T162125Z__119ecbb.jsonl`;
+  manifest ts `2026-07-14T16:21:25.550789Z`, n_records 46. June backup BYTE-UNTOUCHED (sha `c99b29af…`
+  identical before/after). **Month-over-month (June 35 → now 46, matched by ≥50% member overlap): 35
+  PERSISTED · 11 NEW · 1 GONE** (June auto-parts ADNT/ALV/LEA; a June 14-name regional-bank cluster SPLIT
+  in two). Only 4 of the +47 recovered names cluster (APGE, APPN, CMRE, SB). **CAVEAT: part of this diff
+  is coverage (+40 net universe names), not market.** Facts-only run; no dispositions, no STATE-of-record.
+- **RADAR SWEEP-BAR EMITTER PATH BUG (#125) — FIXED (2026-07-14, chore/sweep-refresh-jul14; PR open, not
+  merged; DEPLOYS on merge).** `emit_radar_sweep` read `data/scan_history/component-a/manifest.jsonl` — a
+  path `record_snapshot` NEVER writes (it writes ONE multi-driver manifest at
+  `data/scan_history/manifest.jsonl`) → `manifest.exists()` was always False → the sweep bar silently
+  re-seeded `2026-06-17` regardless of any real run. **Fix:** read the ROOT manifest + filter
+  `driver_slug == "component-a"` before the latest ts (a later row from another driver must not
+  masquerade as the co-movement sweep). Regenerated `frontend/radar/sweep.json` from `-main`'s real
+  manifest → `last_run 2026-07-14 / source manifest / next_due 2026-08-13`. **Surfaced by the radar
+  inbox+log build's pre-flight gate.** Incident→invariant (shipped Y): `test_emit_radar_sweep_end_to_end`
+  drives `record_snapshot` into a real multi-driver layout then asserts `emit_radar_sweep` reports the
+  component-a ts (not a later decoy) — the prior unit test passed a manifest path directly, so it never
+  exercised the hardcoded wrong path (test-layer lesson: pin the emitter, not just the pure payload).
+  ruff + `mypy --strict vinci` + pytest + `node --check` green; every other frontend file byte-identical.
+- **RADAR INBOX LANE + REVIEW LOG — shipped per operator sanction 2026-07-14 (feat/radar-inbox-log; PR
+  open, not merged; DEPLOYS on merge).** The Radar gains (1) an INBOX lane left of the quadrant — current
+  sweep clusters NOT yet matched to a review (11 from the 2026-07-14 sweep), hollow-gray dots by 12mo
+  rel-strength (NO quadrant x-position — an unjudged cluster has no "how real" reading yet); and (2) a
+  REVIEW LOG below the list — the analyst's recorded dispositions (search, All/Rejected-only, expandable
+  members + membership-drift note, paginated past 15). **DATA CONTRACT:** `frontend/radar/reviews.json`
+  is the **single analyst-owned record** of group reviews (35 June-17 clusters; STATE points here, never
+  copies reasons); `frontend/radar/{inbox,log}.json` are **emitted by build.py** (`emit_radar_inbox_log`
+  joins the latest component-a snapshot × reviews.json by MEMBER OVERLAP ≥50% of the smaller set —
+  cluster_ids are per-run, never matched on id; non-destructive when a source is absent). Today's split:
+  **46 clusters → 35 matched / 11 inbox; 35 reviews (1 gone** = June auto-parts ADNT/ALV/LEA). The
+  machine SORTS (matched→log, unmatched→inbox) but NEVER decides — every inbox detail carries "review is
+  recorded in reviews.json — this screen never decides." **JUNE BACK-FILL ATTRIBUTION:** of the 35
+  reasons, **29 are advisor-drafted (analyst-agreed)** and 6 are analyst-direct — recorded in each
+  entry's `by` field, never laundered. Verified in preview (rendered from committed JSON, zero console
+  errors): inbox count, lane dots + tooltips, dot-click detail, log search "quantum"→1, Rejected-only→6,
+  a June row's verbatim reason. Emitter tests pinned (`test_radar_inbox_log_join` 50%-boundary /
+  drift-to-inbox / gone / deltas, `…_deterministic`). ruff + `mypy --strict vinci` + pytest (597) +
+  `node --check` all JS green; `themes/*.json` + `candidates.json` + `sweep.json` BYTE-IDENTICAL.
+  **SCOPE CAP (operator-ratified 2026-07-14, recorded verbatim):** *"Radar polish is CAPPED after this
+  PR: no further Radar UI work until a first BUY, a fired watchlist trigger, or actual LP usage of the
+  site."*
+- **RADAR RESTRUCTURED TO TABS — final structural pass per operator direction 2026-07-15
+  (feat/radar-tabs-restructure; PR open, not merged; DEPLOYS on merge). VIEW-LAYER ONLY — all data
+  contracts BYTE-IDENTICAL (candidates/sweep/reviews/inbox/log/themes JSON), build.py UNTOUCHED.** One
+  Radar nav stage, three internal sub-tabs **Map · Inbox · Log**. **REMOVED (the clutter):** the status
+  filter-chip row (All/Live/…; code comment retains it only if judged themes exceed 12), the inbox lane
+  inside the map SVG (killing the y-axis-label collision — map is now full-width), the always-open detail
+  panel, the long footer paragraphs (each tab now ≤1 muted line), and the Found-by column (moved to the
+  drawer). **ADDED:** a slim one-line sweep status above the tabs (dot · "scan Jul 14 · next Aug 13" ·
+  run-command copy); a **drawer** (collapsed by default, one open at a time) opened by a map dot OR a
+  judged-list row — title + status chip · one-line summary · Watching/Comparison ticker rows · muted
+  "found by …" · "full page →" · a "Wake-up rules ▾" expander revealing the rules VERBATIM from
+  candidates.json (wall-of-text removed from the default view, verbatim preserved); the **Inbox tab**
+  (full-width table sorted by |price move| ASCENDING — "least-moved first"); the **Log tab** (search +
+  Rejected-only + verbatim reasons). Inbox tab badge is WARNING-styled when any item is >14 days old.
+  **Deep links** #/radar/inbox and #/radar/log load the right tab (router params, like themes sub-routes);
+  tab clicks sync the URL via replaceState without re-fetching. Copy pass: sentence case throughout,
+  12–13px body, right-aligned tabular numbers, reused chip classes, no new colors. Verified in preview
+  (all data files byte-identical, zero console errors): each tab; drawer from the Truckload dot AND its
+  list row; the wake-up-rules expander shows verbatim text; inbox sort order + a row expanded; log search
+  "quantum"→1; Rejected-only→6; deep links load the right tab; Overview + Watchlist unregressed. ruff +
+  `mypy --strict vinci` + pytest (598) + `node --check` all JS green. **The standing SCOPE CAP re-applies
+  verbatim after this PR:** *"Radar polish is CAPPED after this PR: no further Radar UI work until a first
+  BUY, a fired watchlist trigger, or actual LP usage of the site."*
 
 ## 3. FALSIFIED — tested and retired (NOT deferred)
 
@@ -2876,6 +3153,70 @@ two-name analysis (mid/small-caps, opposite directions) mapped against this inve
 
 ## 5. Next steps (ordered, current)
 
+- **DOSSIER-NOW: WERN (theme #3 truckload) — single-name underwrite at the 2:1 bar (2026-07-14).** The
+  scan's sole REAL-tier name (quantified / driver-specific asset-based TL). Underwrite on NORMALIZED
+  earnings — trailing P/E sits at the 99th percentile of its own history (a trough-earnings artifact, not
+  the bar). Thesis-break (all three WATCHLIST names): FMCSA non-domiciled-CDL rule stayed/reversed, or ACT
+  driver availability returns to surplus. Gated on the analyst's dossier build; cites the theme-#3 freeze
+  (`feat/theme3-freeze`) + `data/research/theme3_truckload_triage_2026-07-14.md`.
+- **OPERATOR NOTE (worktrees):** canonical main lives in the `-s2`/`-main` worktrees; the primary dir
+  tracks unmerged `feat/own-history-line` — run audits and builds from a main worktree.
+- **Sweep cadence: MANUAL — operator decision 2026-07-13 (NO cron).** The Component-A co-movement sweep
+  runs on demand, never scheduled. **Run locally** (fresh sweep, latest universe snapshot):
+  `.venv/bin/python -m vinci.cli themes` (append `--ref YYYY-MM-DD` to pin an as-of). NO workflow file is
+  shipped — the **Actions path was DROPPED**: the push credential (osxkeychain) AND `~/.mosaic_gh_token`
+  both report `repo` scope only, NOT `workflow`, so a workflow file cannot be pushed at all; secondarily,
+  the authored `monthly-themes.yml` never durably persisted the sweep snapshot (`data/scan_history/` is
+  git-ignored and it added no `upload-artifact` — only the `candidate_themes.jsonl` pointer would commit
+  via `git add data/snapshots`). **CANONICAL invocation — recorded HERE, the ONE place; the future Radar
+  screen MUST source it from here (no second hardcoding):** the June-17 harvest reproduces as
+  `python -m vinci.cli themes --ref 2026-06-17` with the `themes` subparser's documented defaults
+  `--basis r2 --window-days 365 --min-breadth 3` (the exact June-17 flag string was UNRECORDED, so these
+  documented defaults ARE the canonical set; their values live on the argparse subparser, not
+  re-hardcoded). **Reminder is display-only:** the (future) Radar screen shows last-run / next-due (+30d)
+  from the `component-a` scan_history manifest, amber when overdue — nothing fires automatically.
+- **DATA-TOPOLOGY of git-ignored artifacts (verified 2026-07-13 by `ls`; `data/` is PER-WORKTREE, NOT
+  shared).** `-s2`: `data/assay/` = 14 cards, `data/assay_history/` = 3 driver subdirs + `manifest.jsonl`
+  (46 snapshot files), `data/assay_cache/` = 1944 efts files. `-main`: `data/priced_check/report_all.txt`
+  present, `data/snapshots/candidate_themes.jsonl` = 35 (the restored June-17 harvest) +
+  `candidate_themes.2026-06-17.backup.jsonl`, `data/research/` (the insilico + t012-senior-housing
+  adjudication memos, 2026-07-13). `data/scan_history/` is EMPTY in BOTH worktrees — by design,
+  until the first post-merge exposure scan or Component-A sweep writes it. **SESSION RULE: print the
+  worktree + `pwd` before touching `data/`** — the same path holds different contents per worktree.
+- **UNIVERSE-COVERAGE FLAG (report-only; bounds what Component-A can cluster) — SDGR ABSENT from
+  `data/snapshots/securities.jsonl` by a COVERAGE GAP, not an exclusion rule.** The file is
+  `Store.export_snapshots()` of the `securities` table (`store.py:375`), seeded by `build_universe` from
+  `resolver.iter_universe(XNAS/XNYS/XASE)` (7641 considered) then fail-closed-gated. SDGR (CIK 1490978,
+  Nasdaq, SIC 2834, 1270 grouped-daily bars) clears exchange / SIC / price / cap-band, but is dropped at
+  the **`no_shares` gate (`vinci/universe.py:107-109`)**: the builder reads shares ONLY from the EDGAR
+  `dei:EntityCommonStockSharesOutstanding` frame (`vinci/edgar/client.py`, dei-only when this flag was
+  written; a us-gaap fallback was since added — see CORRECTED below), and
+  SDGR tags its shares under `us-gaap:CommonStockSharesOutstanding` (its `dei` block is public-float only)
+  → `shares[cik]=None` → fail-closed drop. Clinching differential: CERT and SLP DO report
+  `dei:EntityCommonStockSharesOutstanding`; SDGR does not. So NO attribute rule excludes SDGR — but a
+  us-gaap-shares fallback does NOT recover it: **CORRECTED 2026-07-13 (shipped; see the §2
+  shares-tag-fallback entry).** The shipped fallback is FRAME-based (recent calendar-quarter
+  `us-gaap:CommonStockSharesOutstanding`, matching the dei path); SDGR STOPPED tagging that concept after
+  FY2023 (last frame value 2023-12-31), so it is absent from the recent us-gaap frames too — the fallback
+  recovers 213 OTHER `no_shares` names but NOT SDGR, which remains an unfixed deeper gap (its recent share
+  count lives off the calendar-quarter frame). **RE-CONFIRMED 2026-07-14 (sweep #2):** SDGR (CIK 1490978)
+  has no shares in any queried calendar-quarter frame `CY2025Q1I…CY2026Q1I` → `no_shares`
+  (`vinci/universe.py:114`); the original claim was CORRECT (an interim "never resolved into the entity
+  master" phrasing during the run was imprecise — SDGR IS resolvable on Nasdaq and reaches the gates; it
+  dies pre-`upsert` at `no_shares`). **NOTV — CORRECTED 2026-07-14:** the "absent from
+  `company_tickers_exchange.json` entirely" claim was WRONG. SEC lists `[720154,"Inotiv, Inc.","NOTVQ","OTC"]`
+  (ticker NOTVQ, venue OTC), so NOTV is PRESENT in the source but filtered at the exchange boundary
+  `resolver.py:112` (OTC ∉ {Nasdaq, NYSE, NYSE American}); it even carries 34.9M XBRL shares, so it would
+  clear `no_shares` on an allowed venue.
+- **OPERATOR DECISION PENDING — two fail-closed coverage holes surfaced by sweep #2 (report-only; no fix
+  without a decision).** (1) **`no_shares` calendar-quarter frame mismatch:** names whose cover-page
+  shares date doesn't land on a calendar quarter-end instant are dropped at `no_shares` even when large
+  and liquid — the 2026-07-14 roll-call hit PATH, SMR, HOOD, IBKR, CME (same class as SDGR). The current
+  EDGAR frame reader can't see them; a companyconcept-per-CIK fallback would, at a per-name EDGAR cost.
+  (2) **BDC blank-SIC exclusion:** HTGC/TSLX/GBDC/MAIN drop at `unknown_sic` (EDGAR submissions return a
+  blank SIC → fail-closed) — the intended operating-co gate, but it also sweeps real BDCs. Both are
+  DELIBERATE fail-closed behavior; widening either is an operator call, not a silent fix.
+
 **OPERATOR TO-DO — backfill the IWM benchmark before any full `vinci dossier` re-assemble (from
 feat/brief-decision-metrics, 2026-07-13).** Grouped-daily ingestion only stores the finalist universe,
 so the benchmark index (`IDX-IWM`) is NOT populated by the normal pipeline. Run
@@ -3809,7 +4150,15 @@ refactor/cite-check) green. Detection/B/C/forward-harness/universe UNTOUCHED. **
 (NOT built now):** (a) **INTAKE RADAR** — the human proposes themes from a machine-assembled radar of
 LEADING INDICATORS (disclosure-language velocity / capex-commitment flow / policy catalysts — explicitly
 NOT price-momentum or news-volume, which are late/replicable); machine PROPOSES, human ADVANCES-or-PARKS;
-built + validated AFTER theme #2 (a second theme is needed to generalize the radar). (b) **THEME #2 = the
+built + validated AFTER theme #2 (a second theme is needed to generalize the radar).
+**[SUPERSESSION — radar audit 2026-07-11:** of the three candidate leading indicators,
+**`disclosure-language velocity` is SUPERSEDED-BY-SANCTION** — it was explored as the assay velocity
+axis (v0→v2.1) and the sanctioned **assay-v2.1 entry (§2)** DEMOTED it to a printed diagnostic and
+BARRED further velocity-axis iteration (its pre-committed FINAL criterion + EXECUTED SCOPE-STOP); it is
+NOT a live radar signal. This radar design is therefore **NEEDS-REVISION** — the only remaining
+candidate indicators are **`capex-commitment-flow`** and **`policy-catalysts`**, both
+UNBUILT/UNVALIDATED, so the radar cannot be re-specified around velocity. Docs reconciliation only
+(no redesign); the post-theme-#2 radar build must re-select indicators.] (b) **THEME #2 = the
 demand-shaped defense COMPOSITIONAL SHIFT** (attritable / autonomy / cyber) — chosen to test whether
 reasoned decomposition GENERALIZES beyond supply chains, with two expected stresses — DIRECTION
 (tailwind vs headwind) and PARALLEL-vs-SEQUENTIAL categories — to be resolved BY EVIDENCE from theme #2,

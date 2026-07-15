@@ -1,0 +1,625 @@
+{
+ "driver": "truckload-supply-purge",
+ "slug": "truckload-supply-purge",
+ "label": "Truckload supply purge",
+ "freezeDate": "2026-07-14",
+ "freezeTimestamp": "2026-07-14T00:00:00",
+ "ratifiedCount": 0,
+ "surfacedCount": 37,
+ "frozenCount": 37,
+ "watchlistCount": 3,
+ "tierShape": {
+  "binding": 0,
+  "quantified": 1,
+  "committed": 10,
+  "aspirational": 26,
+  "none": 744,
+  "surfaced": 37,
+  "universe": 781
+ },
+ "frozenTiers": {
+  "firm": 1,
+  "partial": 10,
+  "early": 26
+ },
+ "categories": [
+  {
+   "tag": "asset-based-tl",
+   "n": 9
+  },
+  {
+   "tag": "compliance-telematics",
+   "n": 8
+  },
+  {
+   "tag": "unspecified",
+   "n": 5
+  },
+  {
+   "tag": "driver-supply",
+   "n": 4
+  },
+  {
+   "tag": "equipment",
+   "n": 4
+  },
+  {
+   "tag": "ltl",
+   "n": 3
+  },
+  {
+   "tag": "intermodal-dray",
+   "n": 2
+  },
+  {
+   "tag": "brokerage-3pl",
+   "n": 2
+  }
+ ],
+ "names": [
+  {
+   "ticker": "WERN",
+   "substructureTag": "asset-based-tl",
+   "driverTie": "driver-specific",
+   "grade": "quantified-revenue",
+   "basis": "quantified",
+   "gradeFact": "Werner describes itself as one of the largest truckload carriers in the U.S. (based on total operating revenues), engaged primarily in transporting truckload shipments of general commodities. Its TTS segment operated a fleet of 7,100 trucks at end of 2025, of which 6,785 were company-operated and 315 were owned/operated by independent contractors \u2014 an asset-based truckload carrier with company tractors and company/leased drivers. TTS accounted for 69% of total operating revenues in 2025.",
+   "accession": "0000793074-26-000071",
+   "edgarUrl": "https://www.sec.gov/Archives/edgar/data/793074/000079307426000071/0000793074-26-000071-index.htm",
+   "rationale": "WATCHLIST \u2014 DOSSIER-NOW; the scan's sole REAL-tier (quantified / driver-specific) name.",
+   "cohorts": [
+    "watchlist"
+   ]
+  },
+  {
+   "ticker": "AIOT",
+   "substructureTag": "compliance-telematics",
+   "driverTie": "indirect",
+   "grade": "committed-capacity",
+   "basis": "committed",
+   "gradeFact": "Powerfleet is a global provider of AIoT (Artificial Intelligence-of-Things) fleet-management SaaS and connected data solutions; its Powerfleet for On-Road solutions provide asset management, tracking and condition-monitoring for over-the-road assets such as heavy trucks, dry-van trailers, refrigerated trailers and shipping containers. This is telematics/fleet software, not an asset-based truckload carrier, driver-training provider, or a disclosed enforcement-driven compliance demand story.",
+   "accession": "0001628280-26-043187",
+   "edgarUrl": "https://www.sec.gov/Archives/edgar/data/1774170/000162828026043187/0001628280-26-043187-index.htm",
+   "rationale": "PARK/REJECT \u2014 tie-gate honest output (adjacent-but-distinct; no asset-based TL-rate exposure).",
+   "cohorts": []
+  },
+  {
+   "ticker": "ARCB",
+   "substructureTag": "ltl",
+   "driverTie": "indirect",
+   "grade": "quantified-revenue",
+   "basis": "committed",
+   "gradeFact": "ArcBest's primary revenue base is its Asset-Based segment (ABF Freight), an LTL motor carrier, which accounted for approximately 66% of total revenues before other revenues and intercompany eliminations in 2025 (approximately 63% in Q1 2026). LTL is a consolidated-network business on a different cycle from the spot/contract truckload capacity purge.",
+   "accession": "0001104659-26-019699",
+   "edgarUrl": "https://www.sec.gov/Archives/edgar/data/894405/000110465926019699/0001104659-26-019699-index.htm",
+   "rationale": "66% LTL: different cycle, contract-priced networks. Freight-exposed, purge-orthogonal control.",
+   "cohorts": [
+    "avoid-control"
+   ]
+  },
+  {
+   "ticker": "HTLD",
+   "substructureTag": "asset-based-tl",
+   "driverTie": "driver-specific",
+   "grade": "committed-capacity",
+   "basis": "committed",
+   "gradeFact": "Heartland is 'a short, medium, and long-haul truckload carrier and transportation services provider' that 'primarily provide[s] nationwide asset-based dry van truckload service for major shippers across the United States.' This is an asset-based TL carrier \u2014 the tailwind side of the capacity purge.",
+   "accession": "0000799233-26-000006",
+   "edgarUrl": "https://www.sec.gov/Archives/edgar/data/799233/000079923326000006/0000799233-26-000006-index.htm",
+   "rationale": "WATCHLIST \u2014 re-underwrite cohort (committed / driver-specific asset-based TL carrier).",
+   "cohorts": [
+    "watchlist"
+   ]
+  },
+  {
+   "ticker": "KDK",
+   "substructureTag": "unspecified",
+   "driverTie": "indirect",
+   "grade": "committed-capacity",
+   "basis": "committed",
+   "gradeFact": "Kodiak works with large fleets including J.B. Hunt, Werner Enterprises, C.R. England and Martin Brower, and as of Dec 31, 2025 customers used Kodiak-owned autonomous trucks to deliver more than 12,600 revenue-generating loads across the southern US; Kodiak currently charges long-haul customers a per-mile or per-load fee to deliver freight on Kodiak-owned trucks.",
+   "accession": "0001628280-26-016910",
+   "edgarUrl": "https://www.sec.gov/Archives/edgar/data/1853138/000162828026016910/0001628280-26-016910-index.htm",
+   "rationale": "NOTED (not frozen as a candidate): autonomous trucking \u2014 second-order, not underwritable now.",
+   "cohorts": []
+  },
+  {
+   "ticker": "LSTR",
+   "substructureTag": "brokerage-3pl",
+   "driverTie": "indirect",
+   "grade": "committed-capacity",
+   "basis": "committed",
+   "gradeFact": "Truck transportation services contributed 91% of consolidated revenue in FY2025, and a significant portion of truckload services is priced in the SPOT MARKET over irregular routes \u2014 indicating meaningful TL-rate exposure, but delivered via third-party capacity (BCO independent contractors and Truck Brokerage Carriers), not company-owned tractors/employed drivers.",
+   "accession": "0001193125-26-064756",
+   "edgarUrl": "https://www.sec.gov/Archives/edgar/data/853816/000119312526064756/0001193125-26-064756-index.htm",
+   "rationale": "borderline BCO/asset-light model, held as comparison leg by analyst call 2026-07-14 (its contracted capacity also shrinks in the purge).",
+   "cohorts": [
+    "avoid-control"
+   ]
+  },
+  {
+   "ticker": "MATX",
+   "substructureTag": "ltl",
+   "driverTie": "indirect",
+   "grade": "committed-capacity",
+   "basis": "committed",
+   "gradeFact": "Matson's Logistics segment provides multimodal transportation brokerage including long-haul and regional highway trucking services, specialized hauling, flat-bed and project services, and less-than-truckload services (Transportation Brokerage services). This is a brokerage/asset-light model \u2014 the buy-side of TL capacity, on the LOSING side of the purge (buy-rate squeeze and post-SCOTUS broker liability), not an asset-based TL carrier.",
+   "accession": "0001104659-26-020944",
+   "edgarUrl": "https://www.sec.gov/Archives/edgar/data/3453/000110465926020944/0001104659-26-020944-index.htm",
+   "rationale": "PARK/REJECT \u2014 tie-gate honest output (adjacent-but-distinct; no asset-based TL-rate exposure).",
+   "cohorts": []
+  },
+  {
+   "ticker": "MRTN",
+   "substructureTag": "asset-based-tl",
+   "driverTie": "driver-specific",
+   "grade": "committed-capacity",
+   "basis": "committed",
+   "gradeFact": "Marten is one of the leading temperature-sensitive truckload carriers in the U.S., operating a fleet of 2,654 tractors including 2,577 company-owned tractors and only 77 supplied by independent contractors, with 2,660 employed drivers as of Dec 31, 2025 \u2014 an asset-based, company-driver TL carrier on the tailwind side of the capacity purge.",
+   "accession": "0001437749-26-005971",
+   "edgarUrl": "https://www.sec.gov/Archives/edgar/data/799167/000143774926005971/0001437749-26-005971-index.htm",
+   "rationale": "WATCHLIST \u2014 re-underwrite cohort (committed / driver-specific asset-based TL carrier).",
+   "cohorts": [
+    "watchlist"
+   ]
+  },
+  {
+   "ticker": "RXO",
+   "substructureTag": "brokerage-3pl",
+   "driverTie": "indirect",
+   "grade": "quantified-revenue",
+   "basis": "committed",
+   "gradeFact": "RXO describes itself as a brokered transportation platform with an asset-light business model whose largest component is its core truck brokerage business, acting as an intermediary between shippers and independent motor carriers and pricing its service on a contract or spot basis.",
+   "accession": "0001929561-26-000013",
+   "edgarUrl": "https://www.sec.gov/Archives/edgar/data/1929561/000192956126000013/0001929561-26-000013-index.htm",
+   "rationale": "pure asset-light brokerage: losing side of the purge (buy-rate squeeze + post-SCOTUS broker liability). Comparison leg.",
+   "cohorts": [
+    "avoid-control"
+   ]
+  },
+  {
+   "ticker": "SRCE",
+   "substructureTag": "equipment",
+   "driverTie": "indirect",
+   "grade": "committed-capacity",
+   "basis": "committed",
+   "gradeFact": "1st Source Bank's Specialty Finance Group has a medium and heavy duty truck division that provides new and pre-owned fleet financing for highway tractors, medium duty trucks and trailers to the trucking industry; finance relationships generally range from $50,000 to $25 million with terms of three to eight years. At March 31, 2026, medium and heavy duty truck loans/leases were $264.2 million (vs. $269.7 million at Dec 31, 2025).",
+   "accession": "0000034782-26-000011",
+   "edgarUrl": "https://www.sec.gov/Archives/edgar/data/34782/000003478226000011/0000034782-26-000011-index.htm",
+   "rationale": "PARK/REJECT \u2014 tie-gate honest output (adjacent-but-distinct; no asset-based TL-rate exposure).",
+   "cohorts": []
+  },
+  {
+   "ticker": "TFIN",
+   "substructureTag": "unspecified",
+   "driverTie": "indirect",
+   "grade": "committed-capacity",
+   "basis": "committed",
+   "gradeFact": "Triumph is a financial holding company whose business is primarily focused on providing financial services to participants in the for-hire trucking ecosystem in the US, including Brokers, Shippers, Factors and Carriers, via four segments (Banking, Factoring, Payments, Intelligence).",
+   "accession": "0001539638-26-000007",
+   "edgarUrl": "https://www.sec.gov/Archives/edgar/data/1539638/000153963826000007/0001539638-26-000007-index.htm",
+   "rationale": "NOTED (not frozen as a candidate): freight factoring \u2014 future look.",
+   "cohorts": []
+  },
+  {
+   "ticker": "ALSN",
+   "substructureTag": "compliance-telematics",
+   "driverTie": "not-driver",
+   "grade": "committed-capacity",
+   "basis": "aspirational",
+   "gradeFact": "Allison is the world's largest manufacturer of fully automatic transmissions for medium- and heavy-duty commercial vehicles; its North American on-highway market includes Class 8 straight trucks and regional haul tractors, but it explicitly notes manual and automated-manual transmissions (not Allison's fully automatic) are the most prevalent transmission types in Class 8 tractors in North America. This positions Allison as a component supplier to the tractor-trailer equipment tier, not as an asset-based TL carrier, driver-supply, or compliance vendor.",
+   "accession": "0001193125-26-065627",
+   "edgarUrl": "https://www.sec.gov/Archives/edgar/data/1411207/000119312526065627/0001193125-26-065627-index.htm",
+   "rationale": "PARK/REJECT \u2014 tie-gate honest output (adjacent-but-distinct; no asset-based TL-rate exposure).",
+   "cohorts": []
+  },
+  {
+   "ticker": "AMBA",
+   "substructureTag": "driver-supply",
+   "driverTie": "not-driver",
+   "grade": "stated-intent",
+   "basis": "aspirational",
+   "gradeFact": "The N1 SoC is described as supporting a range of advanced applications including 'autonomous fleet telematics.' This is a generic product-capability mention with no disclosed customer, contract, revenue, or linkage to compliant TL carriers, CDL driver supply, or enforcement-driven telematics demand.",
+   "accession": "0001193125-26-119321",
+   "edgarUrl": "https://www.sec.gov/Archives/edgar/data/1280263/000119312526119321/0001193125-26-119321-index.htm",
+   "rationale": "PARK/REJECT \u2014 tie-gate honest output (adjacent-but-distinct; no asset-based TL-rate exposure).",
+   "cohorts": []
+  },
+  {
+   "ticker": "ARKO",
+   "substructureTag": "compliance-telematics",
+   "driverTie": "not-driver",
+   "grade": "quantified-revenue",
+   "basis": "aspirational",
+   "gradeFact": "ARKO operates a fleet fueling segment (proprietary and third-party cardlock/unstaffed fueling locations and proprietary fuel cards) serving commercial and municipal entities, with diesel accounting for ~80% of fleet fueling sales; the segment sold 142.8 million gallons and generated ~$483.8 million in revenue for FY2025. This serves trucking/fleet fuel demand but is fuel retail/distribution, not asset-based TL freight capacity or driver/compliance supply.",
+   "accession": "0001193125-26-071464",
+   "edgarUrl": "https://www.sec.gov/Archives/edgar/data/1823794/000119312526071464/0001193125-26-071464-index.htm",
+   "rationale": "PARK/REJECT \u2014 tie-gate honest output (adjacent-but-distinct; no asset-based TL-rate exposure).",
+   "cohorts": []
+  },
+  {
+   "ticker": "BB",
+   "substructureTag": "compliance-telematics",
+   "driverTie": "not-driver",
+   "grade": "stated-intent",
+   "basis": "aspirational",
+   "gradeFact": "BlackBerry Radar is a family of asset monitoring and telematics solutions for the transportation and logistics industry, including devices and secure cloud-based dashboards for tracking containers, trailers, chassis, flatbeds and heavy machinery, reporting locations and sensor data, and enabling custom alerts and fleet management analytics.",
+   "accession": "0001070235-26-000039",
+   "edgarUrl": "https://www.sec.gov/Archives/edgar/data/1070235/000107023526000039/0001070235-26-000039-index.htm",
+   "rationale": "PARK/REJECT \u2014 tie-gate honest output (adjacent-but-distinct; no asset-based TL-rate exposure).",
+   "cohorts": []
+  },
+  {
+   "ticker": "BXC",
+   "substructureTag": "ltl",
+   "driverTie": "not-driver",
+   "grade": "committed-capacity",
+   "basis": "aspirational",
+   "gradeFact": "BlueLinx operates a tractor and trailer fleet used to deliver building products from its warehouses to customers, and lists maintaining/modernizing its 'tractor and trailer fleet' as a capital-structure objective. This fleet is used for its own inbound/outbound building-products distribution (LTL delivery, job site delivery, backhaul) \u2014 not as a for-hire truckload carrier selling capacity at TL rates.",
+   "accession": "0001628280-26-011136",
+   "edgarUrl": "https://www.sec.gov/Archives/edgar/data/1301787/000162828026011136/0001628280-26-011136-index.htm",
+   "rationale": "PARK/REJECT \u2014 tie-gate honest output (adjacent-but-distinct; no asset-based TL-rate exposure).",
+   "cohorts": []
+  },
+  {
+   "ticker": "CAR",
+   "substructureTag": "equipment",
+   "driverTie": "not-driver",
+   "grade": "committed-capacity",
+   "basis": "aspirational",
+   "gradeFact": "Company operates Budget Truck, described as one of the largest local and one-way truck and cargo van rental businesses in the US, with an average fleet of ~24,000 vehicles in 2025 rented through ~800 Company and dealer-operated locations. These are light- to medium-duty trucks (GVW under 26,000 pounds) and cargo vans serving light-commercial and consumer (household-goods moving) sectors.",
+   "accession": "0000723612-26-000012",
+   "edgarUrl": "https://www.sec.gov/Archives/edgar/data/723612/000072361226000012/0000723612-26-000012-index.htm",
+   "rationale": "PARK/REJECT \u2014 tie-gate honest output (adjacent-but-distinct; no asset-based TL-rate exposure).",
+   "cohorts": []
+  },
+  {
+   "ticker": "COLD",
+   "substructureTag": "asset-based-tl",
+   "driverTie": "not-driver",
+   "grade": "stated-intent",
+   "basis": "aspirational",
+   "gradeFact": "Americold operates a Transportation segment and provides transportation services to customers, disclosing both in-house trucking services and use of third-party trucking service providers. The disclosure frames these as sources of potential liabilities, costs and regulatory/disruption risk rather than as an asset-based for-hire truckload carrier priced off spot/contract TL rates.",
+   "accession": "0001628280-26-032130",
+   "edgarUrl": "https://www.sec.gov/Archives/edgar/data/1455863/000162828026032130/0001628280-26-032130-index.htm",
+   "rationale": "PARK/REJECT \u2014 tie-gate honest output (adjacent-but-distinct; no asset-based TL-rate exposure).",
+   "cohorts": []
+  },
+  {
+   "ticker": "DGII",
+   "substructureTag": "compliance-telematics",
+   "driverTie": "not-driver",
+   "grade": "stated-intent",
+   "basis": "aspirational",
+   "gradeFact": "Digi lists established relationships with equipment vendors across industries including 'transportation,' allowing partners to ship Digi products as components \u2014 but no disclosure ties this to truckload freight, TL rates, driver compliance, or the capacity purge.",
+   "accession": "0000854775-25-000026",
+   "edgarUrl": "https://www.sec.gov/Archives/edgar/data/854775/000085477525000026/0000854775-25-000026-index.htm",
+   "rationale": "PARK/REJECT \u2014 tie-gate honest output (adjacent-but-distinct; no asset-based TL-rate exposure).",
+   "cohorts": []
+  },
+  {
+   "ticker": "FA",
+   "substructureTag": "driver-supply",
+   "driverTie": "not-driver",
+   "grade": "stated-intent",
+   "basis": "aspirational",
+   "gradeFact": "Pre-onboarding services include 'driver records and compliance' and post-onboarding services include motor vehicle records; the company screens employees, contractors, contingent workers, and drivers, and adjacent products include 'fleet and vehicle compliance.' This is driver-screening/compliance-check activity, not CDL driver training/recruiting or ELD/telematics capacity supply, and no enforcement-driven demand tied to the capacity purge is disclosed.",
+   "accession": "0001193125-26-211985",
+   "edgarUrl": "https://www.sec.gov/Archives/edgar/data/1210677/000119312526211985/0001193125-26-211985-index.htm",
+   "rationale": "NOTED (not frozen as a candidate): driver screening \u2014 sleeper flag.",
+   "cohorts": []
+  },
+  {
+   "ticker": "GBX",
+   "substructureTag": "intermodal-dray",
+   "driverTie": "not-driver",
+   "grade": "committed-capacity",
+   "basis": "aspirational",
+   "gradeFact": "The Manufacturing segment produces intermodal railcars (double-stack Maxi-Stack platforms designed to transport containers stacked two-high on a single platform). Intermodal rail is adjacent to trucking but is expressly a distinct market (rail/intermodal), not asset-based truckload capacity, and is on the losing/substitution side of a TL-rate upcycle rather than a purge tailwind.",
+   "accession": "0001193125-25-253612",
+   "edgarUrl": "https://www.sec.gov/Archives/edgar/data/923120/000119312525253612/0001193125-25-253612-index.htm",
+   "rationale": "PARK/REJECT \u2014 tie-gate honest output (adjacent-but-distinct; no asset-based TL-rate exposure).",
+   "cohorts": []
+  },
+  {
+   "ticker": "GT",
+   "substructureTag": "driver-supply",
+   "driverTie": "not-driver",
+   "grade": "committed-capacity",
+   "basis": "aspirational",
+   "gradeFact": "Goodyear's Americas commercial business provides commercial truck tires, retreads, services and business solutions to trucking fleets, including from ~180 Company-owned Goodyear Commercial Tire & Service Centers offering new tires, retreads, mechanical service, preventative maintenance and roadside assistance. This serves trucking fleets as a supplier of tires/services but is not asset-based TL freight capacity, driver training/recruiting, or ELD/telematics enforcement demand; it is an equipment/consumables supplier to the sector on a replacement-tire cycle.",
+   "accession": "0001628280-26-006708",
+   "edgarUrl": "https://www.sec.gov/Archives/edgar/data/42582/000162828026006708/0001628280-26-006708-index.htm",
+   "rationale": "PARK/REJECT \u2014 tie-gate honest output (adjacent-but-distinct; no asset-based TL-rate exposure).",
+   "cohorts": []
+  },
+  {
+   "ticker": "KARO",
+   "substructureTag": "driver-supply",
+   "driverTie": "not-driver",
+   "grade": "stated-intent",
+   "basis": "aspirational",
+   "gradeFact": "Karooooo operates an Operational Intelligence Platform integrating vehicles, assets, field workforces and workflows, capturing telematics data to help customers with safety, productivity, compliance, cost control and service execution \u2014 a fleet management / telematics software and hardware business. It is not disclosed as an asset-based truckload carrier, a US TL rate-priced operation, a CDL driver training/recruiting provider, or a disclosed enforcement-driven compliance vendor tied to the US TL capacity purge.",
+   "accession": "0001213900-26-066795",
+   "edgarUrl": "https://www.sec.gov/Archives/edgar/data/1828102/000121390026066795/0001213900-26-066795-index.htm",
+   "rationale": "PARK/REJECT \u2014 tie-gate honest output (adjacent-but-distinct; no asset-based TL-rate exposure).",
+   "cohorts": []
+  },
+  {
+   "ticker": "KEX",
+   "substructureTag": "asset-based-tl",
+   "driverTie": "not-driver",
+   "grade": "quantified-revenue",
+   "basis": "aspirational",
+   "gradeFact": "Kirby is the nation's largest domestic tank BARGE operator, transporting bulk liquid products (petrochemicals, black oil, refined products, agricultural chemicals) by tank barge on inland waterways and coastwise. Its marine transportation segment (KMT) generated 59% of Q1 2026 revenues. This is marine/waterway freight, not for-hire truckload trucking.",
+   "accession": "0001193125-26-214839",
+   "edgarUrl": "https://www.sec.gov/Archives/edgar/data/56047/000119312526214839/0001193125-26-214839-index.htm",
+   "rationale": "PARK/REJECT \u2014 tie-gate honest output (adjacent-but-distinct; no asset-based TL-rate exposure).",
+   "cohorts": []
+  },
+  {
+   "ticker": "KNF",
+   "substructureTag": "asset-based-tl",
+   "driverTie": "not-driver",
+   "grade": "committed-capacity",
+   "basis": "aspirational",
+   "gradeFact": "March 7, 2025 acquisition of Strata Corporation for $454.0 million, which added aggregate reserves, ready-mix and asphalt plants, a construction division, and 'rail and trucking assets' to the Central segment. The trucking assets are internal construction-materials logistics, not disclosed as for-hire TL freight capacity monetizing spot/contract truckload rates.",
+   "accession": "0001955520-26-000003",
+   "edgarUrl": "https://www.sec.gov/Archives/edgar/data/1955520/000195552026000003/0001955520-26-000003-index.htm",
+   "rationale": "PARK/REJECT \u2014 tie-gate honest output (adjacent-but-distinct; no asset-based TL-rate exposure).",
+   "cohorts": []
+  },
+  {
+   "ticker": "KNSL",
+   "substructureTag": "asset-based-tl",
+   "driverTie": "not-driver",
+   "grade": "quantified-revenue",
+   "basis": "aspirational",
+   "gradeFact": "Kinsale discloses a 'Commercial Auto' division with $48,721 thousand of gross written premiums in 2025 (2.5% of total), up from $35,047 thousand in 2024. This is E&S commercial auto insurance coverage, not truckload freight revenue priced off spot/contract TL rates; no linkage to compliant asset-based carriers, driver supply, or the capacity purge is disclosed.",
+   "accession": "0001669162-26-000015",
+   "edgarUrl": "https://www.sec.gov/Archives/edgar/data/1669162/000166916226000015/0001669162-26-000015-index.htm",
+   "rationale": "PARK/REJECT \u2014 tie-gate honest output (adjacent-but-distinct; no asset-based TL-rate exposure).",
+   "cohorts": []
+  },
+  {
+   "ticker": "MANH",
+   "substructureTag": "unspecified",
+   "driverTie": "not-driver",
+   "grade": "stated-intent",
+   "basis": "aspirational",
+   "gradeFact": "Manhattan sells a Transportation Management Solution (TMS) that helps shippers move freight at the lowest possible freight costs, connect with a network of partners to increase shipping capacity, and automate procurement-to-pay \u2014 supply-chain execution software, not an asset-based TL carrier or TL freight priced off spot/contract rates.",
+   "accession": "0001193125-26-037138",
+   "edgarUrl": "https://www.sec.gov/Archives/edgar/data/1056696/000119312526037138/0001193125-26-037138-index.htm",
+   "rationale": "PARK/REJECT \u2014 tie-gate honest output (adjacent-but-distinct; no asset-based TL-rate exposure).",
+   "cohorts": []
+  },
+  {
+   "ticker": "MLR",
+   "substructureTag": "equipment",
+   "driverTie": "not-driver",
+   "grade": "committed-capacity",
+   "basis": "aspirational",
+   "gradeFact": "Miller Industries describes itself as the world's largest manufacturer of towing and recovery equipment, designing and manufacturing car carrier and wrecker bodies installed on third-party chassis and sold through a distributor network; wreckers are used to recover and tow disabled vehicles including overturned tractor trailers, buses, and motor homes.",
+   "accession": "0001104659-26-023486",
+   "edgarUrl": "https://www.sec.gov/Archives/edgar/data/924822/000110465926023486/0001104659-26-023486-index.htm",
+   "rationale": "PARK/REJECT \u2014 tie-gate honest output (adjacent-but-distinct; no asset-based TL-rate exposure).",
+   "cohorts": []
+  },
+  {
+   "ticker": "NPO",
+   "substructureTag": "compliance-telematics",
+   "driverTie": "not-driver",
+   "grade": "committed-capacity",
+   "basis": "aspirational",
+   "gradeFact": "Commercial vehicle was disclosed as an end market representing $168.1 million (14.7%) of 2025 third-party sales of $1,143.3 million. This is a blended end-market figure for commercial-vehicle products (wheel-end/suspension components), with no attribution to TL freight rates, driver supply, ELD/compliance enforcement, or capacity consolidation; the direction of exposure is to equipment demand, an area the driver definition treats as ambiguous/indirect at best (OEM-adjacent, not the purge tailwind).",
+   "accession": "0001628280-26-009798",
+   "edgarUrl": "https://www.sec.gov/Archives/edgar/data/1164863/000162828026009798/0001628280-26-009798-index.htm",
+   "rationale": "PARK/REJECT \u2014 tie-gate honest output (adjacent-but-distinct; no asset-based TL-rate exposure).",
+   "cohorts": []
+  },
+  {
+   "ticker": "PBI",
+   "substructureTag": "asset-based-tl",
+   "driverTie": "not-driver",
+   "grade": "committed-capacity",
+   "basis": "aspirational",
+   "gradeFact": "Presort Services operates a fleet of over 350 drivers and vehicles providing client logistics including a USPS long-haul partnership to move sorted mail into the postal system; this is captive mail-transport logistics for the company's own presort network, not for-hire truckload freight priced off spot/contract TL rates.",
+   "accession": "0001628280-26-009650",
+   "edgarUrl": "https://www.sec.gov/Archives/edgar/data/78814/000162828026009650/0001628280-26-009650-index.htm",
+   "rationale": "PARK/REJECT \u2014 tie-gate honest output (adjacent-but-distinct; no asset-based TL-rate exposure).",
+   "cohorts": []
+  },
+  {
+   "ticker": "SEB",
+   "substructureTag": "intermodal-dray",
+   "driverTie": "not-driver",
+   "grade": "committed-capacity",
+   "basis": "aspirational",
+   "gradeFact": "Seaboard's Marine segment provides dry, refrigerated and other cargo shipping services by ocean between the U.S. and 27 countries in the Caribbean and Central and South America, with a fleet of chartered and owned vessels; its network of offices and agents sells freight services including intermodal transport of import/export cargo 'by truck or rail' to and from ports. This is ocean/intermodal freight, not for-hire US truckload capacity priced off TL spot/contract rates.",
+   "accession": "0000088121-26-000012",
+   "edgarUrl": "https://www.sec.gov/Archives/edgar/data/88121/000008812126000012/0000088121-26-000012-index.htm",
+   "rationale": "PARK/REJECT \u2014 tie-gate honest output (adjacent-but-distinct; no asset-based TL-rate exposure).",
+   "cohorts": []
+  },
+  {
+   "ticker": "SKY",
+   "substructureTag": "unspecified",
+   "driverTie": "not-driver",
+   "grade": "stated-intent",
+   "basis": "aspirational",
+   "gradeFact": "The Company operates Star Fleet Trucking, which provides transportation services to the manufactured housing and other industries from several dispatch locations across the United States.",
+   "accession": "0001193125-26-239333",
+   "edgarUrl": "https://www.sec.gov/Archives/edgar/data/90896/000119312526239333/0001193125-26-239333-index.htm",
+   "rationale": "PARK/REJECT \u2014 tie-gate honest output (adjacent-but-distinct; no asset-based TL-rate exposure).",
+   "cohorts": []
+  },
+  {
+   "ticker": "SSB",
+   "substructureTag": "unspecified",
+   "driverTie": "not-driver",
+   "grade": "stated-intent",
+   "basis": "aspirational",
+   "gradeFact": "The Bank operates Corporate Billing, a transaction-based finance division headquartered in Decatur, Alabama, that provides factoring, invoicing, collection and accounts receivable management services to transportation companies (and automotive parts/service providers) nationwide. This is a financial-services relationship with trucking/transportation companies, not asset-based TL freight capacity; no TL-rate linkage, no purge-driven demand, and no quantified revenue disclosed.",
+   "accession": "0001104659-26-017884",
+   "edgarUrl": "https://www.sec.gov/Archives/edgar/data/764038/000110465926017884/0001104659-26-017884-index.htm",
+   "rationale": "PARK/REJECT \u2014 tie-gate honest output (adjacent-but-distinct; no asset-based TL-rate exposure).",
+   "cohorts": []
+  },
+  {
+   "ticker": "SVC",
+   "substructureTag": "equipment",
+   "driverTie": "not-driver",
+   "grade": "committed-capacity",
+   "basis": "aspirational",
+   "gradeFact": "SVC is a REIT owning 760 service-focused retail net lease properties and 94 hotels; its net lease portfolio includes 175 travel centers leased to a subsidiary of TravelCenters of America (TA) under five master leases expiring 2033, with ~$2.3B invested in 131 TA-branded and ~$1.0B in 44 Petro Stopping Centers properties. Travel centers offer parking for ~200 tractor trailers, diesel fuel, truck repair/maintenance and DEF.",
+   "accession": "0000945394-26-000012",
+   "edgarUrl": "https://www.sec.gov/Archives/edgar/data/945394/000094539426000012/0000945394-26-000012-index.htm",
+   "rationale": "PARK/REJECT \u2014 tie-gate honest output (adjacent-but-distinct; no asset-based TL-rate exposure).",
+   "cohorts": []
+  },
+  {
+   "ticker": "TRN",
+   "substructureTag": "asset-based-tl",
+   "driverTie": "not-driver",
+   "grade": "quantified-revenue",
+   "basis": "aspirational",
+   "gradeFact": "Trinity Industries is a provider of railcar products and services in North America under the TrinityRail platform \u2014 railcar leasing and management, railcar manufacturing, and railcar maintenance/modifications. Its lease fleet totaled 101,485 railcars at 97.1% utilization as of Dec 31, 2025; end markets are refined products/chemicals, energy, agriculture, construction/metals, and consumer products. This is rail freight equipment, not truckload trucking.",
+   "accession": "0000099780-26-000014",
+   "edgarUrl": "https://www.sec.gov/Archives/edgar/data/99780/000009978026000014/0000099780-26-000014-index.htm",
+   "rationale": "PARK/REJECT \u2014 tie-gate honest output (adjacent-but-distinct; no asset-based TL-rate exposure).",
+   "cohorts": []
+  },
+  {
+   "ticker": "VNT",
+   "substructureTag": "compliance-telematics",
+   "driverTie": "indirect",
+   "grade": "stated-intent",
+   "basis": "aspirational",
+   "gradeFact": "Teletrac Navman (within Mobility Technologies) offers telematics hardware and software to commercial and government fleet operators, and Vontier states its solutions are 'positioned to benefit from increasing regulations worldwide governing driver safety, hours of service, recording and monitoring requirements.' This is a telematics/ELD-adjacent business citing regulatory (HOS/monitoring) tailwinds, but it is a generic industrial-tech mention with no disclosed enforcement-driven demand and no linkage to TL-capacity rates or the US truckload purge specifically.",
+   "accession": "0001628280-26-007648",
+   "edgarUrl": "https://www.sec.gov/Archives/edgar/data/1786842/000162828026007648/0001628280-26-007648-index.htm",
+   "rationale": "PARK/REJECT \u2014 tie-gate honest output (adjacent-but-distinct; no asset-based TL-rate exposure).",
+   "cohorts": []
+  },
+  {
+   "ticker": "WNC",
+   "substructureTag": "compliance-telematics",
+   "driverTie": "not-driver",
+   "grade": "stated-intent",
+   "basis": "aspirational",
+   "gradeFact": "The company describes itself as delivering end-to-end solutions that optimize supply chains across transportation, logistics, and infrastructure markets, and cites the cyclical nature of its business and demand for its products as a key forward-looking risk \u2014 a generic freight-cycle/supply-chain framing with no disclosed linkage to TL spot/contract rates, FMCSA enforcement, or capacity consolidation.",
+   "accession": "0000879526-26-000036",
+   "edgarUrl": "https://www.sec.gov/Archives/edgar/data/879526/000087952626000036/0000879526-26-000036-index.htm",
+   "rationale": "PARK/REJECT \u2014 tie-gate honest output (adjacent-but-distinct; no asset-based TL-rate exposure).",
+   "cohorts": []
+  }
+ ],
+ "watchlist": [
+  {
+   "ticker": "WERN",
+   "substructureTag": "asset-based-tl",
+   "grade": "quantified-revenue",
+   "basis": "quantified",
+   "gradeFact": "Werner describes itself as one of the largest truckload carriers in the U.S. (based on total operating revenues), engaged primarily in transporting truckload shipments of general commodities. Its TTS segment operated a fleet of 7,100 trucks at end of 2025, of which 6,785 were company-operated and 315 were owned/operated by independent contractors \u2014 an asset-based truckload carrier with company tractors and company/leased drivers. TTS accounted for 69% of total operating revenues in 2025.",
+   "accession": "0000793074-26-000071",
+   "edgarUrl": "https://www.sec.gov/Archives/edgar/data/793074/000079307426000071/0000793074-26-000071-index.htm",
+   "rationale": "WATCHLIST \u2014 DOSSIER-NOW; the scan's sole REAL-tier (quantified / driver-specific) name.",
+   "trigger": "DOSSIER-NOW: single-name underwrite in progress at the 2:1 bar on NORMALIZED earnings (trailing P/E sits at the 99th percentile of its own history \u2014 a trough-earnings artifact, not the bar). Thesis-break (all three names): FMCSA non-domiciled-CDL rule stayed or reversed, or ACT driver availability returns to surplus."
+  },
+  {
+   "ticker": "MRTN",
+   "substructureTag": "asset-based-tl",
+   "grade": "committed-capacity",
+   "basis": "committed",
+   "gradeFact": "Marten is one of the leading temperature-sensitive truckload carriers in the U.S., operating a fleet of 2,654 tractors including 2,577 company-owned tractors and only 77 supplied by independent contractors, with 2,660 employed drivers as of Dec 31, 2025 \u2014 an asset-based, company-driver TL carrier on the tailwind side of the capacity purge.",
+   "accession": "0001437749-26-005971",
+   "edgarUrl": "https://www.sec.gov/Archives/edgar/data/799167/000143774926005971/0001437749-26-005971-index.htm",
+   "rationale": "WATCHLIST \u2014 re-underwrite cohort (committed / driver-specific asset-based TL carrier).",
+   "trigger": "Re-underwrite when TL revenue per loaded mile turns positive YoY for two consecutive reported quarters, OR on a >=20% derate from the 2026-07-13 close while ACT capacity data stays tight."
+  },
+  {
+   "ticker": "HTLD",
+   "substructureTag": "asset-based-tl",
+   "grade": "committed-capacity",
+   "basis": "committed",
+   "gradeFact": "Heartland is 'a short, medium, and long-haul truckload carrier and transportation services provider' that 'primarily provide[s] nationwide asset-based dry van truckload service for major shippers across the United States.' This is an asset-based TL carrier \u2014 the tailwind side of the capacity purge.",
+   "accession": "0000799233-26-000006",
+   "edgarUrl": "https://www.sec.gov/Archives/edgar/data/799233/000079923326000006/0000799233-26-000006-index.htm",
+   "rationale": "WATCHLIST \u2014 re-underwrite cohort (committed / driver-specific asset-based TL carrier).",
+   "trigger": "Re-underwrite when TL revenue per loaded mile turns positive YoY for two consecutive reported quarters, OR on a >=20% derate from the 2026-07-13 close while ACT capacity data stays tight."
+  }
+ ],
+ "avoidControls": [
+  {
+   "ticker": "RXO",
+   "substructureTag": "brokerage-3pl",
+   "grade": "quantified-revenue",
+   "basis": "committed",
+   "gradeFact": "RXO describes itself as a brokered transportation platform with an asset-light business model whose largest component is its core truck brokerage business, acting as an intermediary between shippers and independent motor carriers and pricing its service on a contract or spot basis.",
+   "accession": "0001929561-26-000013",
+   "edgarUrl": "https://www.sec.gov/Archives/edgar/data/1929561/000192956126000013/0001929561-26-000013-index.htm",
+   "rationale": "pure asset-light brokerage: losing side of the purge (buy-rate squeeze + post-SCOTUS broker liability). Comparison leg."
+  },
+  {
+   "ticker": "LSTR",
+   "substructureTag": "brokerage-3pl",
+   "grade": "committed-capacity",
+   "basis": "committed",
+   "gradeFact": "Truck transportation services contributed 91% of consolidated revenue in FY2025, and a significant portion of truckload services is priced in the SPOT MARKET over irregular routes \u2014 indicating meaningful TL-rate exposure, but delivered via third-party capacity (BCO independent contractors and Truck Brokerage Carriers), not company-owned tractors/employed drivers.",
+   "accession": "0001193125-26-064756",
+   "edgarUrl": "https://www.sec.gov/Archives/edgar/data/853816/000119312526064756/0001193125-26-064756-index.htm",
+   "rationale": "borderline BCO/asset-light model, held as comparison leg by analyst call 2026-07-14 (its contracted capacity also shrinks in the purge)."
+  },
+  {
+   "ticker": "ARCB",
+   "substructureTag": "ltl",
+   "grade": "quantified-revenue",
+   "basis": "committed",
+   "gradeFact": "ArcBest's primary revenue base is its Asset-Based segment (ABF Freight), an LTL motor carrier, which accounted for approximately 66% of total revenues before other revenues and intercompany eliminations in 2025 (approximately 63% in Q1 2026). LTL is a consolidated-network business on a different cycle from the spot/contract truckload capacity purge.",
+   "accession": "0001104659-26-019699",
+   "edgarUrl": "https://www.sec.gov/Archives/edgar/data/894405/000110465926019699/0001104659-26-019699-index.htm",
+   "rationale": "66% LTL: different cycle, contract-priced networks. Freight-exposed, purge-orthogonal control."
+  }
+ ],
+ "realTier": [],
+ "forward": {
+  "cohorts": {
+   "buy": 0,
+   "naive": 37,
+   "passed": 37,
+   "watchlist": 3,
+   "avoidControls": 3,
+   "realTier": 0
+  },
+  "undefinedMeasures": [
+   [
+    "RATIFIED-PASSED (\u00a73a, the core edge-measure)",
+    "no BUY leg \u2014 zero RATIFIED; requires a ratified cohort that does not exist"
+   ],
+   [
+    "RATIFIED-NAIVE(equal-weight) (\u00a73b-i)",
+    "no BUY leg \u2014 zero RATIFIED; requires a ratified cohort that does not exist"
+   ],
+   [
+    "RATIFIED vs keyword/co-movement screen (\u00a73b-ii, deferred)",
+    "no BUY leg \u2014 zero RATIFIED; requires a ratified cohort that does not exist"
+   ]
+  ],
+  "diagnostics": [
+   {
+    "name": "avoid-discipline",
+    "status": "PENDING",
+    "confound": "truckload-supply-purge-BETA-CONFOUNDED + regime-dependent \u2014 was declining to buy the committed tier costly or vindicated in THIS window? Largely a truckload-supply-purge-beta bet, NOT selection skill.",
+    "note": "0 days forward from freeze \u2014 accrues over calendar time."
+   },
+   {
+    "name": "exposure-carry",
+    "status": "PENDING",
+    "confound": "PARTIALLY beta-controlled \u2014 both cohorts are truckload-supply-purge-labelled so the common truckload-supply-purge-beta largely cancels in the divergence; isolates whether the exposure GRADE (real vs not) carries forward info. The more informative of the two \u2014 still NOT an edge verdict.",
+    "note": "genuine-exposure (watchlist) vs other-PASSED divergence; pending forward."
+   }
+  ],
+  "honestyLabel": "No BUY leg exists (zero RATIFIED) -> the core edge-measure (RATIFIED-PASSED) and all RATIFIED-dependent spreads are UNDEFINED and NOT computed. The outputs below are AVOID-discipline and exposure-carry DIAGNOSTICS, beta-confounded, and are NOT a validation of the semantic-primary edge.",
+  "powerNote": "UNPOWERED \u2014 DIRECTIONAL / ANECDOTAL: below the a-priori floor (needs >=8 theme-quarters across >=4 drivers, sign-consistent). A forward-directional read, never a significance test."
+ }
+}

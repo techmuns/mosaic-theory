@@ -27,6 +27,7 @@ import { fmtMoney } from "./format.js";
 const SNAPSHOTS = "./snapshots"; // copied from data/snapshots/ at deploy (build.py)
 const DOSSIERS = "./dossiers"; // derived dossier.json only (committed to the PRIVATE repo when authed)
 const THEMES = "./themes"; // derived theme-edge display JSON (committed, like dossiers; build.py)
+const RADAR = "./radar"; // analyst-owned candidate registry (committed) + emitted sweep bar (build.py)
 
 async function _fetch(path) {
   const res = await fetch(path, { cache: "no-store" });
@@ -266,6 +267,56 @@ export async function getThemesIndex() {
     };
   } catch (e) {
     if (e.status === 404) return { drivers: [], crossDriver: null, pooledForward: null };
+    throw e;
+  }
+}
+
+// getRadarCandidates() -> { candidates: [{ slug, label, status, source, px12m, map:{x,y,basis}, tip,
+//   theme_route?, detail:{summary?, watch?, comparison?, rules?, lead?, note?} }] }. Empty on 404 (no
+// committed registry). Analyst-owned — rules render VERBATIM; the view never fabricates a disposition.
+export async function getRadarCandidates() {
+  try {
+    const d = await _json(`${RADAR}/candidates.json`);
+    return { candidates: Array.isArray(d?.candidates) ? d.candidates : [] };
+  } catch (e) {
+    if (e.status === 404) return { candidates: [] };
+    throw e;
+  }
+}
+
+// getRadarSweep() -> { last_run, source, next_due, command } | null (404 = no committed sweep). Emitted
+// by build.py from the component-a scan_history manifest; DISPLAY-only reminder, nothing fires.
+export async function getRadarSweep() {
+  try {
+    return await _json(`${RADAR}/sweep.json`);
+  } catch (e) {
+    if (e.status === 404) return null;
+    throw e;
+  }
+}
+
+// getRadarInbox() -> { scan_date, inbox: [{ cluster_id, first_seen, members, label, rel12, mom12,
+//   coherence, breadth_exp, crowding }] }. Emitted by build.py — current sweep clusters NOT yet
+//   matched to a review. Empty on 404. The machine sorts here; reviews.json holds the decisions.
+export async function getRadarInbox() {
+  try {
+    const d = await _json(`${RADAR}/inbox.json`);
+    return { scan_date: d?.scan_date || "", inbox: Array.isArray(d?.inbox) ? d.inbox : [] };
+  } catch (e) {
+    if (e.status === 404) return { scan_date: "", inbox: [] };
+    throw e;
+  }
+}
+
+// getRadarLog() -> { scan_date, reviews: [{...reviews.json entry, match:{status, cluster_id, added,
+//   dropped}}] }. Emitted by build.py — the analyst's recorded dispositions + current match status.
+//   Reasons render VERBATIM from reviews.json (the single record); empty on 404.
+export async function getRadarLog() {
+  try {
+    const d = await _json(`${RADAR}/log.json`);
+    return { scan_date: d?.scan_date || "", reviews: Array.isArray(d?.reviews) ? d.reviews : [] };
+  } catch (e) {
+    if (e.status === 404) return { scan_date: "", reviews: [] };
     throw e;
   }
 }

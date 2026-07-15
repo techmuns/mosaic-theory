@@ -558,12 +558,34 @@ def _cmd_themes(args: argparse.Namespace) -> int:
         min_breadth=args.min_breadth, max_names=args.max_names, progress=stderr_reporter,
     )
     print(render_result(result, top=args.top))
+    dumped = [t.model_dump(mode="json") for t in result.candidate_themes]  # ONE dump — the "latest"
+    # pointer and the scan-history snapshot share these bytes (mirrors exposure's --out ≡ snapshot).
     if not args.no_write:
-        out = cfg.snapshots_dir / "candidate_themes.jsonl"
-        with out.open("w") as f:
-            for t in result.candidate_themes:
-                f.write(t.model_dump_json() + "\n")
-        print(f"\nwrote {out} ({len(result.candidate_themes)} admissible candidate themes)")
+        out = cfg.snapshots_dir / "candidate_themes.jsonl"  # "latest" pointer (same bytes)
+        out.write_text("\n".join(json.dumps(r) for r in dumped))
+        print(f"\nwrote {out} ({len(dumped)} admissible candidate themes)")
+    if not args.no_scan_history:  # ALWAYS-ON timestamped archive — a monthly sweep must never
+        # clobber the prior harvest; the delta/monitor diffs against these immutable snapshots.
+        import subprocess
+
+        from vinci.themes.scan_history import record_snapshot
+
+        try:  # sha is manifest metadata — unavailable is a logged None, not a failure
+            git_sha: str | None = subprocess.run(
+                ["git", "rev-parse", "--short", "HEAD"],
+                capture_output=True, text=True, check=True, timeout=5,
+            ).stdout.strip() or None
+        except (OSError, subprocess.SubprocessError):
+            git_sha = None
+        history_root = args.scan_history_dir or Path("data/scan_history")
+        desc = (f"Component A co-movement; basis={args.basis}, window={args.window_days}d, "
+                f"ref={args.ref or 'snapshot as_of'}, min_breadth={args.min_breadth}")
+        snap_path = record_snapshot(
+            dumped, driver_slug="component-a", driver_desc=desc, history_root=history_root,
+            now=datetime.now(UTC), git_sha=git_sha, n_scanned=result.stats.names_with_coverage,
+            tier_field=None)
+        print(f"scan-history snapshot → {snap_path}")
+        print(f"manifest + {(history_root / 'manifest.jsonl').read_text().splitlines()[-1]}")
     return 0
 
 
@@ -600,6 +622,36 @@ def _cmd_themes_stage2(args: argparse.Namespace) -> int:
     return 0
 
 
+def _resolve_only_tickers(args: argparse.Namespace) -> set[str] | None:
+    """Parse ``--only-tickers`` / ``--only-file`` into an uppercased ticker set (None if neither is
+    given). At most one source; fail loud if a source is supplied but yields no tickers. This is the
+    monitor's delta-scan primitive — restrict a scan to a named subset with NO new code path."""
+    only_tickers: str | None = args.only_tickers
+    only_file: Path | None = args.only_file
+    if only_tickers and only_file:
+        raise SystemExit("error: pass at most one of --only-tickers / --only-file")
+    raw = only_tickers if only_tickers else (only_file.read_text() if only_file else None)
+    if raw is None:
+        return None
+    toks = {t.strip().upper() for t in raw.replace(",", "\n").split() if t.strip()}
+    if not toks:
+        raise SystemExit("error: --only-tickers/--only-file supplied but no tickers parsed from it")
+    return toks
+
+
+def _partition_only(requested: set[str], universe_tickers: set[str]) -> tuple[set[str], list[str]]:
+    """Split ``requested`` (uppercased) against the universe: (kept, missing-sorted). Fail loud on
+    an EMPTY intersection — a typo'd/stale delta-scan must ERROR, not silently scan nothing (which
+    would read as 'no exposure')."""
+    kept = requested & universe_tickers
+    missing = sorted(requested - universe_tickers)
+    if not kept:
+        raise SystemExit(
+            f"error: none of the {len(requested)} requested tickers are in the universe "
+            f"(e.g. {', '.join(sorted(requested)[:8])}) — refusing to scan nothing")
+    return kept, missing
+
+
 def _cmd_themes_exposure(args: argparse.Namespace) -> int:
     """Stage-3: scan the sub-$10B universe for DISCLOSED exposure to ONE driver — selected by
     ``--driver`` from the DRIVER_SPECS registry — reading each name's recent filing stream through
@@ -617,6 +669,7 @@ def _cmd_themes_exposure(args: argparse.Namespace) -> int:
     from vinci.sec import build_efts_http, build_sec_http
     from vinci.themes import detection as det
     from vinci.themes.exposure import (
+        ScanAbortedError,
         grade_driving_fact,
         is_real_exposure,
         provenance_tag_of,
@@ -634,17 +687,35 @@ def _cmd_themes_exposure(args: argparse.Namespace) -> int:
     cfg = get_config()
     cfg.ensure_dirs()
     universe, snap = det.load_detection_universe(cfg)
+    only = _resolve_only_tickers(args)
+    if only is not None:  # delta-scan primitive: restrict to the intersection with the universe
+        kept, missing = _partition_only(only, {n.ticker.upper() for n in universe})
+        if missing:  # fail loud on names not in the universe — print, then proceed with the rest
+            print(f"!! {len(missing)} requested ticker(s) NOT in universe (skipped): "
+                  f"{', '.join(missing)}")
+        universe = [n for n in universe if n.ticker.upper() in kept]
+        print(f"--only-tickers: scanning {len(universe)} of {len(only)} requested "
+              "(intersection with the committed universe)")
     if args.max_names:
         universe = universe[: args.max_names]
     names = [(n.ticker, str(n.cik).zfill(10)) for n in universe if n.cik]
     ref = date.fromisoformat(args.ref) if args.ref else snap
     startdt = (ref - timedelta(days=args.window_days)).isoformat()
-    matched, results = scan_driver_exposure(
-        spec, names,
-        edgar=EdgarClient.from_config(cfg), sec_http=build_sec_http(cfg),
-        efts_http=build_efts_http(cfg), llm=AnthropicLlmClient.from_config(cfg),
-        startdt=startdt, enddt=ref.isoformat(), max_workers=args.workers, progress=stderr_reporter,
-    )
+    try:
+        matched, results = scan_driver_exposure(
+            spec, names,
+            edgar=EdgarClient.from_config(cfg), sec_http=build_sec_http(cfg),
+            efts_http=build_efts_http(cfg), llm=AnthropicLlmClient.from_config(cfg),
+            startdt=startdt, enddt=ref.isoformat(), max_workers=args.workers,
+            progress=stderr_reporter,
+        )
+    except ScanAbortedError as abort:  # 3 consecutive 4xx → stop, don't persist a poisoned queue
+        print(f"\n!! {abort}")
+        shown = ", ".join(abort.remaining[:40]) + (" …" if len(abort.remaining) > 40 else "")
+        print(f"   {len(abort.assessed)} assessed before abort; "
+              f"un-scanned ({len(abort.remaining)}): {shown}")
+        print("   NOT writing --out or scan-history — a poisoned queue is worse than none.")
+        return 2
     dumped = [a.model_dump(mode="json") for a in results]  # ONE dump — --out + history share bytes
     if args.out:  # audit-grade persistence — the full model_dump (facts + source_refs), no re-run
         Path(args.out).write_text("\n".join(json.dumps(r) for r in dumped))
@@ -676,7 +747,8 @@ def _cmd_themes_exposure(args: argparse.Namespace) -> int:
     tiers = [ExposureBasis.BINDING_CONTRACTS, ExposureBasis.QUANTIFIED_REVENUE,
              ExposureBasis.COMMITTED_CAPACITY, ExposureBasis.ASPIRATIONAL]
     dist = Counter(a.exposure_basis for a in results)
-    surfaced = [a for a in results if a.exposure_basis is not ExposureBasis.NONE_DISCLOSED]
+    _not_surfaced = (ExposureBasis.NONE_DISCLOSED, ExposureBasis.UNASSESSED_ERROR)
+    surfaced = [a for a in results if a.exposure_basis not in _not_surfaced]
     layers = Counter(_tag(f.fact) for a in surfaced if (f := grade_driving_fact(a)))
     errs = [a for a in results if any("error:" in fl.lower() for fl in a.flags)]
     print(f"\n=== Stage-3 · {spec.key} exposure scan ===")
@@ -686,6 +758,8 @@ def _cmd_themes_exposure(args: argparse.Namespace) -> int:
     for b in tiers:
         print(f"  {b.value:32} {dist.get(b, 0)}")
     print(f"  {'(no chain exposure disclosed)':32} {dist.get(ExposureBasis.NONE_DISCLOSED, 0)}")
+    print(f"  {'(UNASSESSED — scan error, NOT none)':32} "
+          f"{dist.get(ExposureBasis.UNASSESSED_ERROR, 0)}")
     print(f"\nVOLUME by chain layer — of the {len(surfaced)} surfaced:")
     for layer, n in layers.most_common():
         print(f"  {layer:22} {n}")
@@ -1246,6 +1320,14 @@ def build_parser() -> argparse.ArgumentParser:
         "--no-write", action="store_true", dest="no_write",
         help="print only; do not write candidate_themes.jsonl",
     )
+    p_themes.add_argument(
+        "--scan-history-dir", type=Path, dest="scan_history_dir",
+        help="scan-history archive root (default: data/scan_history; git-ignored)",
+    )
+    p_themes.add_argument(
+        "--no-scan-history", action="store_true", dest="no_scan_history",
+        help="skip the always-on timestamped history snapshot",
+    )
     p_themes.set_defaults(func=_cmd_themes)
 
     p_s2 = sub.add_parser(
@@ -1280,6 +1362,16 @@ def build_parser() -> argparse.ArgumentParser:
         help="recent disclosure window in days (default: 290 ≈ 9.5mo)",
     )
     p_exp.add_argument("--max-names", type=int, dest="max_names", help="cap the universe (dev)")
+    p_exp.add_argument(
+        "--only-tickers", dest="only_tickers",
+        help="restrict the scan to these comma-separated tickers, intersected with the universe "
+        "(the monitor's delta-scan primitive); unknown names are printed and skipped, an empty "
+        "intersection errors rather than scanning nothing",
+    )
+    p_exp.add_argument(
+        "--only-file", type=Path, dest="only_file",
+        help="like --only-tickers but read the tickers from a file (comma/newline-separated)",
+    )
     p_exp.add_argument("--workers", type=int, default=6, help="concurrent LLM workers (default: 6)")
     p_exp.add_argument("--out", help="write full model_dump JSONL (audit-grade persistence)")
     p_exp.add_argument(

@@ -14,13 +14,19 @@ strings leaking in; AI-datacenter's prompt reproduces its old load-bearing conte
 from __future__ import annotations
 
 import json
+from pathlib import Path
 from typing import Any, cast
 
 import pytest
 
 from vinci.graph.llm import LlmClient
 from vinci.netcache import CachedHttp, HttpError
-from vinci.themes.drivers import AI_DATACENTER, DEFENSE_DEMAND_SHIFT, DRIVER_SPECS
+from vinci.themes.drivers import (
+    AI_DATACENTER,
+    DEFENSE_DEMAND_SHIFT,
+    DRIVER_SPECS,
+    TRUCKLOAD_SUPPLY_PURGE,
+)
 from vinci.themes.exposure import (
     assess_exposure,
     grade_driving_fact,
@@ -454,7 +460,7 @@ def test_themes_exposure_driver_required_and_resolves(
     with pytest.raises(SystemExit):  # unknown driver → argparse exit
         parser.parse_args(["themes-exposure", "--driver", "not-a-theme"])
     err = capsys.readouterr().err
-    assert "ai-datacenter" in err and "defense-demand-shift" in err  # error names both keys
+    assert all(k in err for k in DRIVER_SPECS)  # error names every registry key (derived)
 
     with pytest.raises(SystemExit):  # missing --driver → required, no silent default
         parser.parse_args(["themes-exposure"])
@@ -463,4 +469,179 @@ def test_themes_exposure_driver_required_and_resolves(
         args = parser.parse_args(["themes-exposure", "--driver", key])
         assert args.driver == key
         assert DRIVER_SPECS[args.driver].key == key
-    assert set(DRIVER_SPECS) == {"ai-datacenter", "defense-demand-shift"}
+    assert "truckload-supply-purge" in DRIVER_SPECS  # registry drives --driver choices (derived)
+
+
+def test_truckload_driver_registered_and_fields_nonempty() -> None:
+    """Theme #3 (truckload-supply-purge, T007) is in the registry — now 3 keys — and its
+    analyst-ratified spec fields are all non-empty. The exposure classifier is driver-agnostic, so a
+    new theme is a new DriverSpec and nothing else."""
+    assert "truckload-supply-purge" in DRIVER_SPECS and len(DRIVER_SPECS) == 3
+    t = TRUCKLOAD_SUPPLY_PURGE
+    assert t.key == "truckload-supply-purge"
+    assert all([t.description, t.tie_taxonomy, t.prefilter_terms, t.provenance_tags])
+
+
+def test_truckload_provenance_ltl_ordered_before_asset_based_tl() -> None:
+    """Provenance ORDERING pin: 'less-than-truckload' → ltl, NOT asset-based-tl. Because
+    provenance_tag_of is first-match and ltl is listed FIRST, the 'truckload' substring in
+    asset-based-tl's keywords must not win — a regression would mis-tag LTL names as asset TL."""
+    lyr = TRUCKLOAD_SUPPLY_PURGE.provenance_tags
+    assert provenance_tag_of("less-than-truckload carrier, tonnage per day", lyr) == "ltl"
+    assert provenance_tag_of("asset-based truckload linehaul", lyr) == "asset-based-tl"
+    assert provenance_tag_of("we run a freight brokerage / 3pl", lyr) == "brokerage-3pl"
+
+
+def test_truckload_asset_tl_precedes_equipment() -> None:
+    """Provenance ORDERING pin #2: a real asset-based TL carrier's fact names its OWN tractors and
+    trailers (equipment keywords), yet must tag `asset-based-tl` — the tailwind bucket — not
+    `equipment`. asset-based-tl precedes equipment, so its `truckload`/`linehaul` match wins;
+    a regression (equipment first) would mis-file every tractor/trailer-mentioning TL carrier under
+    equipment. `equipment` still catches a pure OEM/dealer fact with NO truckload signal."""
+    lyr = TRUCKLOAD_SUPPLY_PURGE.provenance_tags
+    # carrier fact naming its own tractors AND its truckload capacity → the tailwind bucket
+    assert provenance_tag_of(
+        "grew the company tractor fleet, expanding truckload capacity", lyr) == "asset-based-tl"
+    # a pure equipment fact (used-truck / dealer, NO truckload signal) still reaches `equipment`
+    assert provenance_tag_of("used truck sales through the dealer network", lyr) == "equipment"
+
+
+def test_only_tickers_partition_subset_and_missing() -> None:
+    """--only-tickers restricts to the intersection with the universe; unknown names come back as
+    `missing` (the caller prints + skips them) while the rest proceed — the delta-scan primitive."""
+    from vinci.cli import _partition_only
+
+    kept, missing = _partition_only({"AAA", "BBB"}, {"AAA", "BBB", "CCC"})
+    assert kept == {"AAA", "BBB"} and missing == []  # pure subset — all kept, none missing
+    kept, missing = _partition_only({"AAA", "ZZZ"}, {"AAA", "BBB"})
+    assert kept == {"AAA"} and missing == ["ZZZ"]  # unknown ZZZ surfaced; AAA still scanned
+
+
+def test_only_tickers_empty_intersection_errors() -> None:
+    """An empty intersection must ERROR (SystemExit), never silently scan nothing — a typo'd or
+    stale delta list would otherwise read as 'no exposure'."""
+    from vinci.cli import _partition_only
+
+    with pytest.raises(SystemExit):
+        _partition_only({"ZZZ", "YYY"}, {"AAA", "BBB"})
+
+
+def test_resolve_only_tickers_sources_and_guards(tmp_path: Path) -> None:
+    """--only-tickers parses a comma list (uppercased); --only-file reads the same from disk;
+    neither → None; both sources → error; a supplied-but-empty source → error."""
+    import argparse
+
+    from vinci.cli import _resolve_only_tickers
+
+    def ns(t: str | None = None, f: Path | None = None) -> argparse.Namespace:
+        return argparse.Namespace(only_tickers=t, only_file=f)
+
+    assert _resolve_only_tickers(ns()) is None  # neither given → not a delta scan
+    assert _resolve_only_tickers(ns(t="wern, rxo,arcb")) == {"WERN", "RXO", "ARCB"}  # comma+upper
+    names = tmp_path / "names.txt"
+    names.write_text("wern\nrxo\n")
+    assert _resolve_only_tickers(ns(f=names)) == {"WERN", "RXO"}  # file source
+    with pytest.raises(SystemExit):
+        _resolve_only_tickers(ns(t="A", f=names))  # both sources → error
+    empty = tmp_path / "empty.txt"
+    empty.write_text("  \n , \n")
+    with pytest.raises(SystemExit):
+        _resolve_only_tickers(ns(f=empty))  # supplied but parses to nothing → error
+
+
+def test_themes_exposure_only_tickers_argparse() -> None:
+    """themes-exposure exposes --only-tickers / --only-file (the monitor's future delta-scan)."""
+    from vinci.cli import build_parser
+
+    a = build_parser().parse_args(
+        ["themes-exposure", "--driver", "truckload-supply-purge", "--only-tickers", "WERN,RXO"])
+    assert a.only_tickers == "WERN,RXO" and a.only_file is None
+
+
+# --- scan-error grading (the 2026-07-13 quota incident) ---------------------------------------
+def test_llm_error_is_unassessed_not_none() -> None:
+    """An LLM error yields the UNASSESSED_ERROR bucket + a flag — NEVER a false NONE. A failure must
+    not read as 'no exposure' (the 2026-07-13 quota incident, 22 error records → false none=22)."""
+    from vinci.graph.llm import LlmError
+
+    class _Boom(LlmClient):
+        @property
+        def model(self) -> str:
+            return "mock"
+
+        def extract(self, *, system: str, user: str, tool: dict[str, Any]) -> dict[str, Any]:
+            raise LlmError("truncated")
+
+    a = assess_exposure(AI_DATACENTER, "X", "1", _STREAM, llm=_Boom())
+    assert a.exposure_basis is ExposureBasis.UNASSESSED_ERROR  # NOT NONE_DISCLOSED
+    assert any("LLM error" in f for f in a.flags)
+
+
+def test_scan_error_unassessed_and_non_4xx_no_abort(monkeypatch: pytest.MonkeyPatch) -> None:
+    """A raw scan error → UNASSESSED_ERROR record (never NONE); a NON-4xx error does NOT
+    trip the abort — the run COMPLETES with every failed name bucketed unassessed."""
+    import vinci.themes.exposure as ex_mod
+    from vinci.themes.exposure import scan_driver_exposure
+
+    class _NetBoom(LlmClient):
+        @property
+        def model(self) -> str:
+            return "mock"
+
+        def extract(self, *, system: str, user: str, tool: dict[str, Any]) -> dict[str, Any]:
+            raise RuntimeError("connection reset")  # no status_code → transient, not systemic
+
+    names = [(f"T{i}", str(2000 + i)) for i in range(5)]
+    monkeypatch.setattr(ex_mod, "mention_prefilter", lambda *a, **k: {c for _, c in names})
+    monkeypatch.setattr(ex_mod, "recent_disclosure_stream", lambda *a, **k: [("8-K (acc A1)", "x")])
+    _matched, results = scan_driver_exposure(
+        AI_DATACENTER, names, edgar=cast(Any, None), sec_http=cast(Any, None),
+        efts_http=cast(Any, None), llm=_NetBoom(), startdt="2026-01-01", enddt="2026-06-01",
+        max_workers=1)
+    assert len(results) == 5  # completed — a non-4xx transient never aborts
+    assert all(r.exposure_basis is ExposureBasis.UNASSESSED_ERROR for r in results)  # never NONE
+
+
+def test_scan_aborts_fast_on_repeated_quota_4xx(monkeypatch: pytest.MonkeyPatch) -> None:
+    """3 consecutive same-4xx (quota/auth) LLM failures ABORT the scan (ScanAbortedError) BEFORE it
+    poisons the whole queue — the 2026-07-13 incident. Aborts EARLY (not all names scanned)."""
+    import vinci.themes.exposure as ex_mod
+    from vinci.themes.exposure import ScanAbortedError, scan_driver_exposure
+
+    class _Api400Error(Exception):
+        status_code = 400
+
+    class _Quota(LlmClient):
+        @property
+        def model(self) -> str:
+            return "mock"
+
+        def extract(self, *, system: str, user: str, tool: dict[str, Any]) -> dict[str, Any]:
+            raise _Api400Error("You have reached your specified API usage limits")
+
+    names = [(f"T{i}", str(1000 + i)) for i in range(10)]
+    monkeypatch.setattr(ex_mod, "mention_prefilter", lambda *a, **k: {c for _, c in names})
+    monkeypatch.setattr(ex_mod, "recent_disclosure_stream", lambda *a, **k: [("8-K (acc A1)", "x")])
+    with pytest.raises(ScanAbortedError) as ei:
+        scan_driver_exposure(
+            AI_DATACENTER, names, edgar=cast(Any, None), sec_http=cast(Any, None),
+            efts_http=cast(Any, None), llm=_Quota(), startdt="2026-01-01", enddt="2026-06-01",
+            max_workers=1)
+    assert ei.value.status == 400
+    assert len(ei.value.assessed) == 3  # aborted at the 3rd consecutive 4xx, not all 10
+    assert ei.value.remaining  # names left un-scanned (queue not poisoned)
+
+
+def test_valid_assessment_grade_unaffected_by_error_bucket() -> None:
+    """Regression pin: the UNASSESSED_ERROR bucket is isolated to error paths — a VALID (successful
+    LLM) assessment still derives its basis from the cited facts, unchanged."""
+    payload = {
+        "disclosed_facts": [
+            {"fact": "15-year lease with AWS for ~300 MW of data center capacity",
+             "concreteness": "binding-contract", "driver_tie": "driver-specific",
+             "source_ref": "8-K 2026-01-15 (acc A1)"}],
+        "primary_business": "datacenter HPC host", "key_unknowns": [],
+    }
+    a = assess_exposure(AI_DATACENTER, "CIFR", "1819989", _STREAM, llm=_MockLlm(payload))
+    assert a.exposure_basis is ExposureBasis.BINDING_CONTRACTS  # derived, NOT unassessed-error
+    assert a.flags == []

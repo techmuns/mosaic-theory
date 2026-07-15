@@ -52,8 +52,11 @@ const EDGES = [
   {
     key: "themes", label: "Themes", state: "live",
     stages: [
-      // Just two top tabs: the portfolio landing + the standing watchlist. Surfaced-names and
-      // forward-performance are now DRILL-DOWNS from the landing (#/themes/<theme>[/<tier>]), not tabs.
+      // Top tabs: the radar map (default landing), the portfolio Overview, and the standing
+      // watchlist. Surfaced-names and forward-performance are DRILL-DOWNS from the Overview
+      // landing (#/themes/<theme>[/<tier>]), not tabs.
+      { route: "radar", label: "Radar",
+        does: "Every theme idea on one map — how real the evidence is vs how much price has already moved." },
       { route: "themes", label: "Overview" },
       { route: "themes/watchlist", label: "Watchlist",
         does: "The names to re-underwrite when a trigger fires — a flat cross-theme monitoring surface. Each row is led by its verbatim trigger." },
@@ -98,6 +101,7 @@ const VIEWS = {
   ranker: () => import("./views/edge2/ranker.js"),
   graph: () => import("./views/edge2/graph.js"),
   themes: () => import("./views/themes/index.js"),
+  radar: () => import("./views/radar/index.js"),
 };
 
 // Every routable item: shared + each live edge's stages + each locked edge's own

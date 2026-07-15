@@ -126,8 +126,77 @@ DEFENSE_DEMAND_SHIFT = DriverSpec(
     ),
 )
 
+# --------------------------------------------------------------------------------------------------
+# LOAD-BEARING analyst judgment, encoded VERBATIM in tie_taxonomy (do NOT re-draft). Headwind side
+# (brokers/3PLs) is encoded as INDIRECT with opposite sign per the defense precedent — finding-4a
+# data point #2. source=component-a (cluster T007, harvest 2026-06-17, disposition 2026-07-13).
+# --------------------------------------------------------------------------------------------------
+TRUCKLOAD_SUPPLY_PURGE = DriverSpec(
+    key="truckload-supply-purge",
+    description=(
+        "the TRUCKLOAD SUPPLY PURGE — a regulatory-driven contraction of US for-hire truckload "
+        "capacity: FMCSA enforcement removing non-domiciled CDL holders (final rule live "
+        "2026-03), purges of fraudulent ELD/hours-of-service records, and the unanimous SCOTUS "
+        "broker-liability ruling (2026-05) raising the cost of using marginal carriers — "
+        "shifting pricing power TOWARD compliant, asset-based truckload carriers and the "
+        "services that supply compliant capacity, while freight DEMAND stays weak (a "
+        "supply-driven, not demand-driven, upcycle). The structure is the TL-capacity value "
+        "chain: shipper → broker/3PL → asset-based TL carrier → owner-operator/small fleet (the "
+        "exiting capacity) → driver supply (training/recruiting) → compliance/telematics → "
+        "tractor-trailer equipment. Exposure must be to the TAILWIND side of the purge, grounded "
+        "in disclosed activity — NOT generic logistics/supply-chain, NOT parcel/rail/ocean/air, "
+        "NOT a demand-recovery claim."
+    ),
+    tie_taxonomy=(
+        "driver-specific = tied to the TAILWIND side of the capacity purge — an asset-based "
+        "truckload carrier (company tractors, company or leased drivers) whose disclosed revenue "
+        "is TL freight priced off spot/contract TL rates; a provider of CDL driver training, "
+        "licensing, or recruiting monetizing demand for compliant drivers; a compliance/ELD/"
+        "telematics vendor with disclosed enforcement-driven demand; or a disclosed "
+        "capacity-consolidation beneficiary (fleet growth or acquisitions into exiting "
+        "capacity). Direction matters: exposure must be to the side pricing power is shifting "
+        "TOWARD. "
+        "indirect = freight-exposed but not purge-tailwind — an LTL-majority carrier "
+        "(contract-priced consolidated networks on a different cycle) even though it is deeply "
+        "in trucking; an asset-light or brokerage-majority model or 3PL, which is exposed to "
+        "this driver on the LOSING side (buy-rate squeeze and post-SCOTUS liability) — flag, "
+        "does not clear; intermodal/drayage; tractor-trailer OEMs and dealers (ambiguous "
+        "near-term: exiting capacity raises used-truck supply); a logistics conglomerate "
+        "without disclosed TL-rate linkage. "
+        "not-driver = adjacent-but-distinct — parcel/last-mile, rail, ocean or air freight, "
+        "shippers and retailers, warehouse/industrial REITs, generic supply-chain software "
+        "without TL-rate or compliance linkage, or a name whose trucking exposure is a minor "
+        "end-market."
+    ),
+    prefilter_terms=(
+        "truckload", "less-than-truckload", "for-hire", "spot rate", "contract rate",
+        "freight brokerage", "owner-operator", "linehaul", "revenue per loaded mile", "tractor",
+        "trailer", "commercial driver", "CDL", "driver training", "driver recruiting",
+        "electronic logging", "ELD", "hours of service", "FMCSA", "carrier capacity",
+        "purchased transportation", "drayage", "intermodal", "telematics", "3PL",
+    ),
+    provenance_tags=(
+        ("ltl", ("less-than-truckload", "ltl", "tonnage per day", "shipment weight")),
+        ("brokerage-3pl",
+         ("brokerage", "3pl", "purchased transportation", "freight broker", "asset-light")),
+        ("driver-supply",
+         ("cdl", "driver training", "driver recruiting", "driver pay", "driving school")),
+        ("compliance-telematics",
+         ("eld", "electronic logging", "hours of service", "telematics", "fmcsa", "compliance")),
+        ("intermodal-dray", ("intermodal", "drayage", "container")),
+        # asset-based-tl precedes equipment: a TL carrier names its own tractors/trailers, so those
+        # generic-vehicle keywords must not shadow the tailwind bucket (truckload/linehaul). First-
+        # match order is load-bearing (regression-pinned). Only the precedence of these two
+        # layers changed — the keyword SETS stay analyst-ratified verbatim.
+        ("asset-based-tl",
+         ("truckload", "linehaul", "loaded mile", "company driver", "irregular route")),
+        ("equipment", ("tractor", "trailer", "used truck", "dealer", "fleet sales")),
+    ),
+)
+
 # registry — adding a theme = adding its DriverSpec instance here
 DRIVER_SPECS: dict[str, DriverSpec] = {
     AI_DATACENTER.key: AI_DATACENTER,
     DEFENSE_DEMAND_SHIFT.key: DEFENSE_DEMAND_SHIFT,
+    TRUCKLOAD_SUPPLY_PURGE.key: TRUCKLOAD_SUPPLY_PURGE,
 }
