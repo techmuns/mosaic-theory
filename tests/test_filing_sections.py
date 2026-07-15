@@ -65,6 +65,24 @@ def test_a2_attribution_negative_pins() -> None:
         "Revenue increased $5.0 million, or 2.0%, in the quarter.", source_ref="x") == []
     # a bare table figure (no increased/decreased verb) — not even the core shape
     assert fs.results_attribution("Revenue $ 213,392 $ 211,902 0.7 %", source_ref="x") == []
+    # ⊖ a cause 2+ sentences away is NOT this magnitude's cause (never adopted)
+    assert fs.results_attribution(
+        "Operating expenses increased $3.0 million, or 4.0%. Separately, cash rose. "
+        "The tax benefit was recognized due to a valuation allowance release.",
+        source_ref="x") == []
+    # ✓ a cause in the IMMEDIATELY-following sentence IS bound (MVST 'This decrease…' shape)
+    nxt = fs.results_attribution(
+        "Revenue decreased $50.0 million, or 48.0%. The decrease was driven by lower volume.",
+        source_ref="x")
+    assert nxt and nxt[0].value_num == -48.0
+    # ✓ distinct PERIODS with the same % are kept distinct (not silently deduped to one row)
+    two = fs.results_attribution(
+        "Revenue increased $5.0 million, or 5.0%, for the three months ended March 31, 2026 due to "
+        "pricing. Revenue increased $10.0 million, or 5.0%, for the six months ended "
+        "March 31, 2026 "
+        "due to volume.", source_ref="x")
+    assert len(two) == 2 and {r.period for r in two} == {
+        "three months ended March 31, 2026", "six months ended March 31, 2026"}
 
 
 def test_filing_sections_mvst_q1_26() -> None:

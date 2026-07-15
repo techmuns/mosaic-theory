@@ -322,8 +322,11 @@ _PRICING = re.compile(
     r"price\s+increases?|rais(?:e|ed|ing)\s+(?:our\s+|list\s+)?prices?|"
     r"increas(?:e|ed|ing)\s+(?:our\s+|the\s+)?(?:average\s+)?(?:selling\s+)?prices?)",
     re.I)
-_PRICING_PCT = re.compile(  # a % TIGHTLY bound to the price action (else stays qualitative)
-    r"pric\w+[^.]{0,40}?(?:of|by)\s+([\d.]+)\s?%|([\d.]+)\s?%\s+(?:list\s+)?price\s+increase", re.I)
+_PRICING_PCT = re.compile(  # a % TIGHTLY bound to the price action (else stays qualitative) — the
+    # gap forbids COMMAS and DIGITS and is short, so a nearby UNRELATED % ('net of 8% rebates',
+    # 'offset by 4% higher logistics', '…to gross margin of 40%') can't misbind as the price change.
+    r"pric\w+[^.,\d]{0,24}?(?:of|by)\s+([\d.]+)\s?%"
+    r"|([\d.]+)\s?%\s+(?:list\s+)?price\s+increase", re.I)
 _MA_CONTEXT = re.compile(
     r"purchase\s+price\s+adjustment|merger\s+agreement|acquisition\s+agreement|indemnif\w+|"
     r"escrow", re.I)
@@ -349,6 +352,9 @@ def operating_drivers(text: str, *, source_ref: str) -> list[OperatingDriver]:
         window = text[max(0, m.start() - 60):m.end() + 60]
         if _MA_CONTEXT.search(window):  # a merger/indemnity 'price' clause is not a pricing action
             continue
+        if re.search(r"\b(?:not|no|without|never)\s+\w*$|n['’]t\s+\w*$",
+                     text[max(0, m.start() - 18):m.start()], re.I):
+            continue  # a NEGATED statement ('did not raise prices', 'no price increases') isn't one
         phrase = re.sub(r"\s+", " ", m.group(0)).strip().lower()
         if phrase in seen:
             continue

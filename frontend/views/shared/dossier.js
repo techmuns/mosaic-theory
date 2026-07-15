@@ -587,7 +587,6 @@ function briefCase(s) {
     </div>${uk}</div>`;
 }
 
-
 // (Phase-3) Revenue + EBITDA bars ($M) + EBITDA-margin % line — the institutional financial-trend
 // exhibit as a dependency-free inline SVG (theme-aware via CSS vars; prints with the Brief). Consumes
 // the STRUCTURED `values` + `is_estimate` (NEVER the display cells — parsers rule); estimate columns

@@ -273,9 +273,14 @@ def results_attribution(text: str, *, source_ref: str) -> list[OperatingDriver]:
     fabricated cause."""
     src = source_ref
     out: list[OperatingDriver] = []
-    seen: set[tuple[str, float]] = set()
+    seen: set[tuple[str, float, str | None]] = set()
     for m in _ATTR_CORE.finditer(text):
         cm = _ATTR_CAUSE.search(text, m.end(), m.end() + 190)
+        # accept a cause only in the SAME or immediately-following sentence (≤1 boundary between)
+        # — a magnitude with no stated cause must NOT adopt a `due to` from a later, unrelated
+        # sentence (2+ away). '3.0' doesn't count: a boundary is a period-then-space.
+        if cm is not None and len(re.findall(r"[.]\s", text[m.end():cm.start()])) > 1:
+            cm = None
         if cm is None:  # a magnitude with NO stated cause is not attribution
             continue
         pct = _money(m.group(4))
@@ -283,16 +288,24 @@ def results_attribution(text: str, *, source_ref: str) -> list[OperatingDriver]:
             continue
         signed = -pct if m.group(1).lower() == "decreased" else pct
         metric = _attr_metric(_attr_subject(text, m.start()))
-        key = (metric, signed)
+        # the period is stated in the magnitude's OWN sentence — bound the search to it so an
+        # adjacent PRIOR sentence's period isn't mis-stamped (which then dedup-collides two rows).
+        p_lo = text.rfind(". ", max(0, m.start() - 200), m.start())
+        p_lo = p_lo + 2 if p_lo != -1 else max(0, m.start() - 90)
+        p_hi = text.find(". ", m.end())
+        p_hi = p_hi if p_hi != -1 else min(len(text), m.end() + 90)
+        period_m = re.search(
+            r"(?:three|six|nine)\s+months\s+ended\s+[A-Z][a-z]+\s+\d{1,2},\s+20\d\d",
+            text[p_lo:p_hi])
+        period = period_m.group(0) if period_m else None
+        # period-in-key: a 10-Q reports the SAME line item for 3-mo AND 6-mo; when both round to the
+        # same %, keying on (metric, signed) alone silently drops the second — keep them distinct.
+        key = (metric, signed, period)
         if key in seen:
             continue
         seen.add(key)
-        period_m = re.search(
-            r"(?:three|six|nine)\s+months\s+ended\s+[A-Z][a-z]+\s+\d{1,2},\s+20\d\d",
-            text[max(0, m.start() - 90):m.end() + 90])
         out.append(OperatingDriver(
-            kind=DriverKind.ATTRIBUTION, metric=metric,
-            period=period_m.group(0) if period_m else None,
+            kind=DriverKind.ATTRIBUTION, metric=metric, period=period,
             value=f"${m.group(2)} {m.group(3).lower()}, or {m.group(4)}%",
             value_num=signed, unit="%",
             verbatim=_attr_verbatim(text, m.start(), cm.end()), source_ref=src, tier="anchored",

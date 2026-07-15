@@ -34,6 +34,19 @@ def test_a1_pricing_action_qualitative_and_ma_excluded() -> None:
     assert rp.operating_drivers(
         "Subject to purchase price adjustments and indemnification under the merger agreement.",
         source_ref=_SRC) == []
+    # ⊖ a nearby UNRELATED % must NOT misbind as the price change — the row stays QUALITATIVE
+    for txt in (
+        "Net price increases, net of 8% rebates, contributed to the quarter.",
+        "Pricing actions, offset by 4% higher logistics costs, in the period.",
+        "Pricing actions contributed to gross margin of 40% in the period.",
+    ):
+        rows = rp.operating_drivers(txt, source_ref=_SRC)
+        assert rows and rows[0].value_num is None, f"misbound %: {txt!r} → {rows[0].value_num}"
+    # ⊖ a NEGATED pricing statement is not a pricing action
+    assert rp.operating_drivers(
+        "We did not raise prices during the quarter.", source_ref=_SRC) == []
+    assert rp.operating_drivers(
+        "There were no price increases in the period.", source_ref=_SRC) == []
 
 
 def test_a1_leading_indicator_governed_and_false_positives_excluded() -> None:

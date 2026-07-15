@@ -2186,27 +2186,30 @@ def _drv(kind: str, **kw: object) -> ds.OperatingDriver:
 def test_operating_drivers_feed_synthesis_but_render_no_standalone_block() -> None:
     """(PR-B — decision 2026-07-13) The operating drivers are EXTRACTION that FEEDS SYNTHESIS, not a
     standalone rendered surface: a mechanically-extracted fact list can't render the directional
-    CALL (that is the human's verdict). So the field stays machine-complete in the JSON and the
-    synthesis digest surfaces it, but NO standalone Mechanism block renders in md or web."""
-    rows = [_drv("attribution", metric="revenue", value="$5m, or 10%", value_num=-10.0, unit="%",
-                 verbatim="Revenue decreased 10% due to lower volume.", source_ref="10-Q Z")]
+    CALL (that is the human's verdict). So the field stays machine-complete in the JSON, the
+    synthesis digest surfaces it (the LLM is told to ground the bull/bear in it), and NO standalone
+    Mechanism block renders in the md — REAL invariants, not the absence of never-existed tokens."""
+    from vinci.dossier.synthesis import _operating_drivers_digest
+    rows = [_drv("attribution", metric="revenue", value="$5m, or 48%", value_num=-48.0, unit="%",
+                 verbatim="Revenue decreased 48% due to a sales-volume reduction.",
+                 source_ref="10-Q Z")]
     import pathlib as _pl
     pth = _pl.Path("data/dossiers/AORT/dossier.json")
     if not pth.exists():
         pytest.skip("AORT committed dossier absent")
     d = ds.Dossier.model_validate_json(pth.read_text())
+    od = ds.OperatingDriversExtract(rows=rows, qa_flags=[])
     inj = d.model_copy(update={"mechanical": d.mechanical.model_copy(
-        update={"operating_drivers": ds.OperatingDriversExtract(rows=rows, qa_flags=[])})})
+        update={"operating_drivers": od})})
+    # (1) drivers FEED synthesis — the digest carries the metric/value/source_ref
+    digest = _operating_drivers_digest(od)
+    assert "revenue" in digest.lower() and "48" in digest and "10-Q Z" in digest
+    # (2) but NOT as a standalone block — no Mechanism heading in the brief/analysis md
     md = dr.render_markdown(inj)
-    # the standalone block is GONE from both tiers (Brief + Analysis)
-    assert "## Mechanism" not in md
-    assert "## Operating drivers (mechanism)" not in md
-    # but the drivers still ride in the mech (→ synthesis) — machine-complete, not deleted
+    assert "## Mechanism" not in md and "## Operating drivers (mechanism)" not in md
+    # (3) machine-complete: the field rides in the JSON, never deleted
     assert inj.mechanical.operating_drivers is not None
     assert len(inj.mechanical.operating_drivers.rows) == 1
-    # and no standalone mechanism block wiring survives in the web either
-    web = Path("frontend/views/shared/dossier.js").read_text()
-    assert "mechanismCard" not in web and "mechanismFull" not in web
 
 
 # --- (PR-B Tier B) LLM-fenced transcript extractor — validator behavior (deterministic FakeLlm) ---
