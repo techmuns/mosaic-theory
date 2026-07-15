@@ -3,7 +3,7 @@
 // then the SCAN tiers firm/partial/early (the drill affordance, scoped to this theme). The NONE tier is
 // DROPPED — pure inventory; the "surfaced of scanned" subtitle already implies it. Then the watchlist
 // inline (short) + this theme's forward cohorts. No full name dump — tap a scan count → the tier altitude.
-import { getThemeDriver } from "../../lib/snapshots.js";
+import { getThemeDriver, getThemeContext } from "../../lib/snapshots.js";
 import { fmtInt, fmtDate, DASH, escapeHtml } from "../../lib/format.js";
 
 function oneLine(s) {
@@ -11,10 +11,30 @@ function oneLine(s) {
   return s.length <= 120 ? s : s.slice(0, 120).replace(/\s+\S*$/, "") + "…";
 }
 
+// "What this theme is" — the ratified driver definition (quoted) + the analyst's plain-language
+// notes. Analyst-owned in themes/context.json; absent theme → "" (graceful, the page still renders).
+function whatSection(cx) {
+  if (!cx) return "";
+  const ds = cx.driver_summary || {};
+  const notes = Array.isArray(cx.analyst_notes) ? cx.analyst_notes : [];
+  const quote = ds.quote
+    ? `<blockquote class="tc-quote">${escapeHtml(ds.quote)}</blockquote>
+       <div class="foot tc-src">— ${escapeHtml(ds.source || "ratified driver definition")}</div>`
+    : "";
+  const noteLines = notes.length
+    ? `<div class="tc-notes">${notes
+        .map((n) => `<div class="tc-note">${escapeHtml(n)}</div>`).join("")}</div>`
+    : "";
+  if (!quote && !noteLines) return "";
+  return `<div class="card theme-context" style="margin-bottom:16px;">
+      <h3>What this theme is</h3>${quote}${noteLines}
+    </div>`;
+}
+
 export async function render(root, _ctx, slug) {
   const bc = `<div class="breadcrumb"><a href="#/overview">Overview</a><span class="sep">/</span><a href="#/themes">Themes</a><span class="sep">/</span>${escapeHtml(slug)}</div>`;
   root.innerHTML = `${bc}<div class="notice">Loading theme…</div>`;
-  const d = await getThemeDriver(slug);
+  const [d, cx] = await Promise.all([getThemeDriver(slug), getThemeContext(slug)]);
   if (!d) {
     root.innerHTML = `${bc}<div class="notice">Theme “${escapeHtml(slug)}” not found. <a href="#/themes">Back to portfolio</a>.</div>`;
     return;
@@ -74,5 +94,5 @@ export async function render(root, _ctx, slug) {
       <div class="cite">${escapeHtml(f.honestyLabel || "")}</div>
     </div>`;
 
-  root.innerHTML = head + tiers + wlBlock + fwd;
+  root.innerHTML = head + whatSection(cx) + tiers + wlBlock + fwd;
 }

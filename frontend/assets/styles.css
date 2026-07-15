@@ -266,6 +266,14 @@ a.tier-count { color: var(--accent); }
 a.tier-count:hover { text-decoration: underline; }
 .tier-count.zero { color: var(--ink-3); font-weight: 400; }
 
+/* "What this theme is" — quoted ratified definition + analyst notes on the theme altitude page */
+.theme-context .tc-quote { margin: 6px 0 4px; padding: 2px 0 2px 12px; border-left: 3px solid var(--line-2);
+  font-size: 13px; color: var(--ink); line-height: 1.55; }
+.theme-context .tc-src { margin: 0 0 10px; }
+.theme-context .tc-notes { margin-top: 8px; border-top: 1px solid var(--line); padding-top: 8px; }
+.theme-context .tc-note { font-size: 12.5px; color: var(--ink-2); line-height: 1.55; padding: 4px 0; }
+.theme-context .tc-note + .tc-note { border-top: 1px solid var(--line-2); }
+
 /* --- B1: Overview verdict/scan split — two labeled column blocks (verdict primary, scan muted) --- */
 /* fill the window: the Theme column absorbs the slack so the number columns stay grouped on the right
    (scoped to .vs-table — other data tables keep the K2 content-sized width) */

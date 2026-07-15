@@ -33,6 +33,7 @@
    "map": { "x": 0.62, "y": 0.18, "basis": "measured" },
    "tip": "",
    "detail": {
+    "summary": "Demand and supply both check out — occupancy climbing, new construction locked at decade lows through ~2028. The missing piece: room rates rising faster than costs. That's the wake-up rule.",
     "lead": "AHR",
     "rules": [
      "BKD or SNDA same-store RevPOR growth >= same-store opex growth for two consecutive quarters, OR NIC occupancy >= 90.0%"
@@ -48,6 +49,7 @@
    "map": { "x": 0.48, "y": 0.06, "basis": "measured" },
    "tip": "",
    "detail": {
+    "summary": "Regulators are moving toward computer-model evidence, but no company's revenue shows it yet, the 2025 spike traded and faded. Parked with four wake-up rules; if one fires, it's a single-company study on CERT, not a scan.",
     "note": "if any fires: deep study on CERT alone — not a scan",
     "rules": [
      "FDA FINALIZES any NAMs guidance or Modernization Act 3.0 ENACTED",
@@ -66,6 +68,7 @@
    "map": { "x": 0.80, "y": 0.86, "basis": "measured" },
    "tip": "revisit only if product tankers (STNG, TRMD, HAFN) fall hard",
    "detail": {
+    "summary": "Real driver (re-routing, sanctions), but the market already paid for it, up 31.7% vs small-caps. Revisit only if the product-tanker names fall hard.",
     "note": "only if product tankers (STNG, TRMD, HAFN) fall hard"
    }
   },
