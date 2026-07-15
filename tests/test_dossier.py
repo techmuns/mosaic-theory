@@ -2218,6 +2218,11 @@ def test_web_brief_proposal_mirror_static() -> None:
     assert '"mixed": null' in src  # two-sided → NO proposal
     assert 'class="brief-proposal"' in src and "Machine proposal" in src
     assert "confirm or override — Buy / Avoid + target" in src
+    # (review) ONE shared JS lean parser (splitLean) — machineReadHtml + deriveProposal both call it
+    assert "function splitLean" in src
+    assert src.count(r"[A-Za-z\- ]*?") == 1, "the lean regex must live in ONE parser (splitLean)"
+    # (review) Object.hasOwn, not `key in` — `in` walks Object.prototype (a parity break vs Python)
+    assert "Object.hasOwn(PROPOSAL_BY_LEAN" in src and "key in PROPOSAL_BY_LEAN" not in src
     # ANTI-ANCHORING: the reveal is gated on a logged verdict; the sealed-note shows before
     assert "const propSlot = !verdict" in src, "web brief must hide the proposal until a verdict"
     assert "revealed after your verdict is logged" in src
@@ -6327,7 +6332,7 @@ def test_d1_section_order_facts_first() -> None:
             < pos("### Concentration") < pos("## Synthesis"))
     assert (pos("### Bull case") < pos("### Bear case") < pos("### Decisive question")
             < pos("### Key unknowns") < pos("### Twin reference cases"))
-    assert pos("### Twin reference cases") < pos("No BUY/AVOID here")  # verdict footer last
+    assert pos("### Twin reference cases") < pos("The machine PROPOSES")  # verdict footer last
     # (D1) management-commentary pointer relocated into the appendix zone
     assert pos("## Synthesis") < pos("### Management commentary")
 

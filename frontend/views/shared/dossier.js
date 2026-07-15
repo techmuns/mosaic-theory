@@ -1,5 +1,5 @@
 // DOSSIER VIEWER — render the structured dossier.json into styled, source-bound sections.
-// Assembles facts · NO verdict. Every fact shows its [n] citation (source-binding is the signature).
+// Assembles facts + a machine proposal SEALED until the human's verdict. Every fact shows its [n] cite.
 // The synthesis is fenced as "the framing, not the answer." Read-only; verdicts are CLI-logged.
 import { getDossier, getDossierIndex, getLedger, isBuyVerdict } from "../../lib/snapshots.js";
 import { fmtPrice, fmtDate, fmtStamp, fmtPct, escapeHtml, DASH } from "../../lib/format.js";
@@ -485,10 +485,18 @@ function fmtShares(v) { return v >= 1e9 ? `${(v / 1e9).toFixed(1)}B` : `${(v / 1
 // The machine's evidence READ — a "{lean} — {why}" balance, e.g. "strongly-bearish — stated going-concern
 // doubt …". We tint the lean by direction (bear→danger, bull→live, mixed/neutral→grey) and sentence-case
 // it; the rest is plain body text. Fail-soft: an un-split read renders verbatim.
-function machineReadHtml(eb) {
+// THE one shared lean parser (mirrors vinci/dossier/verdict.py split_lean) — "{lean} — {why}" →
+// [lean, rest] (both trimmed) else null. machineReadHtml AND deriveProposal both consume it; two
+// divergent copies of this regex is the "two parsers of one string" drift the shared-parser rule kills.
+function splitLean(eb) {
   const m = /^\s*([A-Za-z][A-Za-z\- ]*?)\s*[—–-]\s+([\s\S]+)$/.exec(eb || "");
-  if (!m) return escapeHtml(eb || "");
-  const lean = m[1].trim(), rest = m[2];
+  return m ? [m[1].trim(), m[2].trim()] : null;
+}
+
+function machineReadHtml(eb) {
+  const p = splitLean(eb);
+  if (!p) return escapeHtml(eb || "");
+  const [lean, rest] = p;
   const l = lean.toLowerCase();
   const col = l.includes("bear") ? "var(--danger)" : l.includes("bull") ? "var(--live)" : "var(--ink-2)";
   const cased = lean.charAt(0).toUpperCase() + lean.slice(1);
@@ -503,11 +511,13 @@ function machineReadHtml(eb) {
 const PROPOSAL_BY_LEAN = { "strongly-bearish": "AVOID", "strongly-bullish": "BUY", "mixed": null };
 function deriveProposal(eb) {
   if (!eb || !String(eb).trim()) return { action: null, note: "no machine read on this dossier" };
-  const m = /^\s*([A-Za-z][A-Za-z\- ]*?)\s*[—–-]\s+([\s\S]+)$/.exec(eb);
-  if (!m) return { action: null, note: "machine read did not parse — no proposal" };
-  const label = m[1].trim(), reason = m[2].trim();
+  const p = splitLean(eb);
+  if (!p) return { action: null, note: "machine read did not parse — no proposal" };
+  const label = p[0], reason = p[1];
   const key = label.toLowerCase().replace(/\s+/g, "-");
-  if (!(key in PROPOSAL_BY_LEAN)) {
+  // Object.hasOwn, NOT `key in` — `in` walks Object.prototype, so lean 'constructor'/'toString'
+  // would falsely resolve to a garbage action (parity break vs Python's plain-dict membership).
+  if (!Object.hasOwn(PROPOSAL_BY_LEAN, key)) {
     return { action: null, lean: label, note: `unrecognized lean '${label}' — no proposal (fail-honest)` };
   }
   const action = PROPOSAL_BY_LEAN[key];
@@ -1379,8 +1389,9 @@ function trajectorySection(q) {
 // (D1) verdict footer — the no-BUY/AVOID reminder closes the document (caveats opened it).
 function verdictFooter() {
   return `<div class="card ds-section" style="text-align:center; color:var(--ink-2); font-size:12.5px;">
-    <b>No BUY/AVOID here — this dossier only assembles and cites.</b> The verdict is the human's,
-    logged separately via the ledger with a frozen entry price.</div>`;
+    <b>The machine proposes; the human decides.</b> The proposed verdict is sealed at assembly and
+    revealed after the human logs theirs — the verdict of record is the human's, with a frozen
+    entry price in the ledger.</div>`;
 }
 
 function header(d) {

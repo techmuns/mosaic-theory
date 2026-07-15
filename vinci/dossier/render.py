@@ -1916,8 +1916,9 @@ def render_markdown(d: Dossier, *, dev: bool = False, show_proposal: bool = Fals
     out += _mgmt_commentary_lines(m)
     out += [
         "---",
-        "> **No BUY/AVOID here — this dossier only assembles and cites.** The verdict is the "
-        "human's, logged separately via the ledger with a frozen entry price.",
+        "> **The machine PROPOSES; the human DECIDES.** The proposed verdict is sealed at assembly "
+        "and revealed only after the human logs theirs — the verdict of record is the human's, "
+        "with a frozen entry price in the ledger.",
     ]
     out += _sources_section()  # (A2) the single document-end Sources list — every [n] resolves here
     return "\n".join(_dedupe_unknown_reasons(out))  # (H3) fold repeated UNKNOWN reasons
