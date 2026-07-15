@@ -45,8 +45,8 @@ function tabBar(state, inbox, log) {
   const counts = { map: null, inbox: inbox.length, log: (log.reviews || []).length };
   const stale = inbox.some((e) => daysSince(e.first_seen) > 14);
   const tab = (k, label) => `<button class="rt-tab ${state.tab === k ? "on" : ""} ${
-    k === "inbox" && stale ? "warn" : ""}" data-tab="${k}">${label}${
-    counts[k] != null ? ` <span class="rt-badge">${counts[k]}</span>` : ""}</button>`;
+    k === "inbox" && stale ? "warn" : ""}" data-tab="${k}" role="tab" aria-selected="${state.tab === k}">${
+    label}${counts[k] != null ? ` <span class="rt-badge">${counts[k]}</span>` : ""}</button>`;
   return `<div class="rt-tabs" role="tablist">${tab("map", "Map")}${tab("inbox", "Inbox")}${tab("log", "Log")}</div>`;
 }
 

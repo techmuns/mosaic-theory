@@ -588,6 +588,7 @@ table.data.vs-table { width: 100%; }
 .rt-x { margin-left: auto; border: 0; background: none; color: var(--ink-3); font-size: 18px; line-height: 1; cursor: pointer; padding: 0 2px; }
 .rt-x:hover { color: var(--ink); }
 .rd-line { font-size: 12.5px; margin: 3px 0; }
+.rd-line.foot { color: var(--ink-3); }
 .rd-k { color: var(--ink-3); }
 .rt-rules-x { margin-top: 10px; }
 .rt-expander { font: 12px var(--sans); padding: 3px 0; border: 0; background: none; color: var(--accent); cursor: pointer; }
