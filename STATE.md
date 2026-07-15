@@ -2230,6 +2230,35 @@ Each line: *what it does* — *verified how*.
     — early evidence the human is NOT anchoring to the draft. (The pivot's FORMAL anchoring falsifier
     tracks the single-name VERDICT proposal in `verdict.py`, a separate surface, and watches for its
     override rate COLLAPSING; this draft-suggestion override rate is an ANALOGOUS signal, not that metric.)
+- **DRAFTING RUBRIC v2 — park-default + runtime few-shot precedent (2026-07-15, fix/draft-rubric;
+  PR open, not merged; DEPLOYS on merge).** `drafts.py` `_DRAFT_SYSTEM` rewritten: **park** is the
+  default (commodity/rate/factor proxies; already-moved groups reasoned over the rel-strength/momentum
+  stats; recognized cycles), **reject** for driverless grab-bags / collapsed gimmicks, and
+  **keep-for-checks** reserved for the flat-or-lagging-price + nameable-CORPORATE-driver middle
+  (never the default). The reason must CITE the stat when it drives the call; rel/momentum now render
+  as signed percents (`+206%`). **Runtime FEW-SHOT precedent**: the ≤10 most-recent `reviews.json`
+  decision+reason pairs are injected per draft, EXCLUDING any review overlapping the drafted cluster
+  by members (no self-leak — pinned). `PROMPT_VERSION="2"` is folded into the idempotency key (bump
+  regenerates; same version reuses; a legacy no-version pointer regenerates — all pinned). A
+  `--include-reviewed` path re-drafts the clusters reviewed FOR THIS scan (fails loud on an empty set,
+  never a silent no-op).
+  - **FACE-VALIDITY CHECK (one-shot, 11 LLM calls under v2, self-excluded few-shot) — VERBATIM
+    RESULT: exact agreement 5/11, park-or-reject 7/11** (v1 was 0/11 park-or-reject). The two cases
+    the operator named both dispositioned AWAY from keep-for-checks: **T011 (+206%) → park** ("+206% vs
+    market, +242% mom — cyclical proxy, already moved"); **T034 (collapsed shells) → park**.
+    **keep-for-checks survived on 4 lagging clusters the human PARKED — T006, T007, T040, T043** (all
+    −24% to −73% vs market; the model found a plausible nameable driver, the human judged them
+    already-moved / not-a-theme). T034 also disagreed park-vs-reject. **Below the ~9–11/11 expectation
+    → NOT iterating the prompt here; a second iteration needs operator sanction.**
+  - **CAVEAT (accuracy-first):** this is a SINGLE-SCAN, FROTHY-TAPE test set (nearly everything had
+    "already moved") and the few-shot precedent for these 11 is dominated by the other 10 fresh
+    park/reject calls — so it is a sanity read, NOT independent validation. **Confirm the park-default
+    holds on a calmer sweep before trusting it.** The 4 keep-for-checks survivors are the concrete
+    gap for the sanctioned next iteration. Set by FACE-VALIDITY, never forward-return tuning.
+  - **Live inbox drafts NOT regenerated for display** (inbox is empty; next real use is the Aug 13
+    scan). The committed `drafts.json` holds the v2 face-validity re-check of the (reviewed) Jul-14
+    clusters, tagged `prompt_version: 2`; among data files ONLY `drafts.json` changed
+    (reviews/inbox/log byte-identical). ruff + `mypy --strict` + pytest (643) + `node --check` green.
 
 ## 3. FALSIFIED — tested and retired (NOT deferred)
 
@@ -3209,13 +3238,18 @@ two-name analysis (mid/small-caps, opposite directions) mapped against this inve
   the bar). Thesis-break (all three WATCHLIST names): FMCSA non-domiciled-CDL rule stayed/reversed, or ACT
   driver availability returns to surplus. Gated on the analyst's dossier build; cites the theme-#3 freeze
   (`feat/theme3-freeze`) + `data/research/theme3_truckload_triage_2026-07-14.md`.
-- **DRAFTING-RUBRIC FIX — the machine's advisory `suggested` is too permissive (QUEUED 2026-07-15).**
-  First live datapoint: the drafting layer proposed `keep-for-checks` on ALL 11 Jul-14 clusters; the
-  human overrode 11/11 (10 park / 1 reject). A disposition that says "look harder" every time carries no
-  triage signal. Fix the rubric in `vinci/themes/drafts.py` (`_DRAFT_SYSTEM` + `DRAFT_TOOL`) so `park`
-  is the DEFAULT for a moved/proxy/coincidence cluster and `keep-for-checks` is EARNED (e.g. real driver
-  + not-yet-moved). Set by FACE-VALIDITY against these 11 labelled overrides as a rubric check —
-  **never tuned on forward returns.** Re-draft is one `themes-draft --force` run (pennies).
+- **DRAFTING-RUBRIC v2 SHIPPED, PARTIAL — a 2nd iteration is OPERATOR-SANCTION-GATED (2026-07-15,
+  fix/draft-rubric).** v1 (all keep-for-checks) → v2 park-default + runtime few-shot lifted the
+  Jul-14 face-validity from **0/11 → 7/11 park-or-reject** (5/11 exact), but fell SHORT of the ~9–11
+  expectation: **keep-for-checks still survives on 4 lagging clusters the human parked — T006
+  (education), T007 (vertical SaaS), T040 (nuclear SMR), T043 (gov services)** — all −24% to −73% vs
+  market where the model found a nameable driver but the human judged "already moved / not a theme".
+  **NEXT (needs operator sanction — do NOT self-iterate the prompt):** tighten keep-for-checks so a
+  merely-lagging price is not enough when the group is a recognized macro/policy/cycle basket; the 4
+  survivors are the labelled target. Confirm on a CALMER sweep first (the Jul-14 set is frothy, and the
+  few-shot for the check was dominated by fresh park/reject calls). FACE-VALIDITY only — never tuned on
+  forward returns. A re-draft under a bumped `PROMPT_VERSION` is one `themes-draft --include-reviewed`
+  run (pennies).
 **OPERATING-DRIVERS MECHANISM TIER (PR-B, Tiers A + Tier B code) — BUILT + VERIFIED, LOCAL (branch
 feat/operating-drivers, 2026-07-13; NOT yet PR'd — user tests locally first).** The MOSL
 "90-second handover" gap, closed with anchored extraction: typed cited `operating_drivers` rows on

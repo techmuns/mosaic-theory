@@ -818,15 +818,24 @@ def _load_latest_component_a() -> tuple[Path | None, list[dict[str, Any]], str]:
 
 
 def _cmd_themes_draft(args: argparse.Namespace) -> int:
-    """Draft a name + hypothesis + advisory disposition for each UNREVIEWED cluster — ONE LLM call
-    each, keyed <scan_date>:<cluster_id>. The machine DRAFTS; the human OWNS (themes-review).
-    Idempotent: reuses drafts already current for this snapshot (no duplicate spend). Any call error
-    → an unassessed-error record (never a fabricated draft); 3 consecutive same-4xx aborts early."""
+    """Draft a name + hypothesis + advisory triage disposition for each UNREVIEWED cluster — ONE LLM
+    call each, keyed <scan_date>:<cluster_id>, primed with self-excluded few-shot precedent from
+    reviews.json. The machine DRAFTS; the human OWNS (themes-review). Idempotent: reuses drafts
+    current for this snapshot AND prompt version (no duplicate spend). --include-reviewed re-drafts
+    the clusters reviewed FOR THIS scan (a one-shot face-validity re-check vs the human's own calls;
+    prints draft-vs-decision agreement). Any call error → an unassessed-error record (never a
+    fabricated draft); 3 consecutive same-4xx aborts early."""
     import subprocess
     from datetime import UTC, datetime
 
     from vinci.graph.llm import AnthropicLlmClient
-    from vinci.themes.drafts import DraftAbortedError, draft_unreviewed
+    from vinci.themes.drafts import (
+        PROMPT_VERSION,
+        DraftAbortedError,
+        _drafts_current,
+        draft_targets,
+        draft_unreviewed,
+    )
     from vinci.themes.scan_history import record_snapshot
 
     cfg = get_config()
@@ -837,22 +846,34 @@ def _cmd_themes_draft(args: argparse.Namespace) -> int:
         return 2
     reviews = json.loads(Path("frontend/radar/reviews.json").read_text())["reviews"]
     drafts_out = Path("frontend/radar/drafts.json")
+    include_reviewed = getattr(args, "include_reviewed", False)
 
-    if drafts_out.exists() and not args.force:  # IDEMPOTENT — no duplicate LLM spend per scan
+    # IDEMPOTENT (normal path only) — reuse iff same snapshot AND same prompt version; a version
+    # bump or a legacy pointer regenerates. --include-reviewed always runs (it is a re-check).
+    if drafts_out.exists() and not args.force and not include_reviewed:
         prev = json.loads(drafts_out.read_text())
-        if prev.get("source") == snap_path.name:
+        if _drafts_current(prev, snap_path.name, PROMPT_VERSION):
             n_prev = len(prev.get("drafts", []))
-            print(f"drafts already current for {snap_path.name} ({n_prev} drafts) "
-                  "— reusing, no LLM spend (--force to redraft)")
+            print(f"drafts already current for {snap_path.name} @ v{PROMPT_VERSION} "
+                  f"({n_prev} drafts) — reusing, no LLM spend (--force to redraft)")
             return 0
+
+    # FAIL LOUD, never silently no-op: the face-validity re-check needs a non-empty target set.
+    todo = draft_targets(clusters, reviews, scan_date, include_reviewed=include_reviewed)
+    if not todo:
+        which = "reviewed-for-this-scan" if include_reviewed else "unreviewed"
+        print(f"!! no {which} clusters in {snap_path.name} — nothing to draft")
+        return 2
 
     llm = AnthropicLlmClient.from_config(cfg)
     try:
-        drafts = draft_unreviewed(clusters, reviews, scan_date, llm, progress=stderr_reporter)
+        drafts = draft_unreviewed(clusters, reviews, scan_date, llm, progress=stderr_reporter,
+                                  include_reviewed=include_reviewed)
     except DraftAbortedError as abort:
         print(f"\n!! {abort} — NOT writing drafts (a poisoned run is worse than none)")
         return 2
 
+    kind = "face-validity recheck (include-reviewed)" if include_reviewed else "inbox drafts"
     history_root = args.scan_history_dir or Path("data/scan_history")
     try:  # sha is manifest metadata — unavailable is a logged None, not a failure
         git_sha: str | None = subprocess.run(
@@ -862,16 +883,16 @@ def _cmd_themes_draft(args: argparse.Namespace) -> int:
         git_sha = None
     snap = record_snapshot(
         drafts, driver_slug="component-a-drafts",
-        driver_desc=f"Component-A drafts for {snap_path.name} (scan {scan_date})",
+        driver_desc=f"Component-A drafts v{PROMPT_VERSION} for {snap_path.name} — {kind}",
         history_root=history_root, now=datetime.now(UTC), git_sha=git_sha,
         n_scanned=len(drafts), tier_field=None)
     drafts_out.write_text(json.dumps(
-        {"scan_date": scan_date, "source": snap_path.name, "drafts": drafts},
-        indent=1, ensure_ascii=False) + "\n")
+        {"scan_date": scan_date, "source": snap_path.name, "prompt_version": PROMPT_VERSION,
+         "drafts": drafts}, indent=1, ensure_ascii=False) + "\n")
 
     ok = sum(1 for d in drafts if d["status"] == "drafted")
-    print(f"\ndrafted {ok}/{len(drafts)} unreviewed clusters ({len(drafts) - ok} unassessed-error) "
-          f"→ {drafts_out}")
+    print(f"\ndrafted {ok}/{len(drafts)} {kind} @ v{PROMPT_VERSION} "
+          f"({len(drafts) - ok} unassessed-error) → {drafts_out}")
     print(f"scan-history snapshot → {snap}")
     print(f"manifest + {(history_root / 'manifest.jsonl').read_text().splitlines()[-1]}")
     print("\n=== DRAFTS (review sheet — hypotheses, not facts; suggestion is advisory) ===")
@@ -883,7 +904,34 @@ def _cmd_themes_draft(args: argparse.Namespace) -> int:
         else:
             print(f"\n[{d['key']}] UNASSESSED-ERROR — {d['error']}")
         print(f"    members: {' '.join(str(t) for t in d['members'])}")
+    if include_reviewed:
+        _print_face_validity(drafts, reviews)
     return 0
+
+
+def _print_face_validity(drafts: list[dict[str, Any]], reviews: list[dict[str, Any]]) -> None:
+    """Face-validity comparison: each new draft suggestion NEXT TO the human's recorded decision for
+    the same cluster, with the exact-agreement count and the park-or-reject count. Not tuning — a
+    one-shot sanity read of the rubric against the human's own calls."""
+    decision = {r["key"]: r.get("decision") for r in reviews}
+    drafted = [d for d in drafts if d["status"] == "drafted"]
+    agree = pr = 0
+    print("\n=== FACE-VALIDITY: new draft suggestion vs the human decision (self-excluded) ===")
+    print(f"  {'cluster':26} {'draft':16} {'human':16} match")
+    for d in sorted(drafted, key=lambda x: x["key"]):
+        human = decision.get(d["key"], "<none>")
+        sug = d["suggested"]
+        ok = sug == human
+        agree += ok
+        pr += sug in ("park", "reject")
+        name = (d["draft_name"] or "")[:24]
+        print(f"  {name:26} {sug:16} {str(human):16} {'✓' if ok else '✗'}")
+    n = len(drafted)
+    print(f"\nagreement (exact): {agree}/{n} · park-or-reject: {pr}/{n}")
+    survivors = [d["key"] for d in drafted if d["suggested"] == "keep-for-checks"]
+    if survivors:
+        print(f"keep-for-checks survivors (REPORT — do not iterate the prompt further here): "
+              f"{', '.join(survivors)}")
 
 
 def _cmd_themes_review(args: argparse.Namespace) -> int:
@@ -1552,7 +1600,10 @@ def build_parser() -> argparse.ArgumentParser:
         "call each; the machine drafts, the human owns via themes-review)",
     )
     p_draft.add_argument("--force", action="store_true",
-                         help="redraft even if drafts are already current for this snapshot")
+                         help="redraft even if drafts are current for this snapshot+version")
+    p_draft.add_argument("--include-reviewed", action="store_true", dest="include_reviewed",
+                         help="re-draft clusters reviewed FOR THIS scan (one-shot face-validity "
+                              "check vs the human's calls); prints agreement")
     p_draft.add_argument("--scan-history-dir", type=Path, dest="scan_history_dir",
                          help="scan-history archive root (default: data/scan_history; git-ignored)")
     p_draft.set_defaults(func=_cmd_themes_draft)

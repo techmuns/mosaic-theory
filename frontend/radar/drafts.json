@@ -1,6 +1,7 @@
 {
  "scan_date": "2026-07-14",
  "source": "20260714T162125Z__119ecbb.jsonl",
+ "prompt_version": "2",
  "drafts": [
   {
    "key": "2026-07-14:T004",
@@ -17,10 +18,10 @@
     "WYFI"
    ],
    "status": "drafted",
-   "draft_name": "Crypto-Mining & AI Compute",
-   "hypothesis": "Co-movement may reflect shared exposure to crypto-mining economics and pivots toward AI/HPC datacenter compute demand — a guess, not established.",
-   "suggested": "keep-for-checks",
-   "reason": "Tight sector overlap, strong momentum, low crowding warrant checks.",
+   "draft_name": "Bitcoin Miner / HPC Pivot",
+   "hypothesis": "Group may track bitcoin price plus a pivot narrative toward AI/HPC datacenter hosting — a crypto-and-compute proxy, not company execution.",
+   "suggested": "park",
+   "reason": "+40% rel-strength, +76% momentum — BTC proxy, already moved",
    "error": null,
    "model": "claude-opus-4-8"
   },
@@ -37,10 +38,10 @@
     "WEST"
    ],
    "status": "drafted",
-   "draft_name": "Education Services Core",
-   "hypothesis": "Cluster may be driven by for-profit education/workforce-training exposure; co-movement possibly reflects shared enrollment or labor-market sensitivity. Several members look off-theme.",
+   "draft_name": "Education services cluster",
+   "hypothesis": "Possibly shared exposure to for-profit education enrollment and labor/staffing demand cycles; a few members look like loose grab-bag fits.",
    "suggested": "keep-for-checks",
-   "reason": "Education plurality plausible but low coherence, mixed sectors warrant verification.",
+   "reason": "-24% rel-strength, lagging market; plausible enrollment-driven corporate driver",
    "error": null,
    "model": "claude-opus-4-8"
   },
@@ -57,10 +58,10 @@
     "NCNO"
    ],
    "status": "drafted",
-   "draft_name": "B2B Vertical SaaS",
-   "hypothesis": "Possibly co-move as prepackaged-software vendors selling into banks/enterprise; shared driver may be rate/IT-budget sensitivity dragging on subscription-growth sentiment.",
+   "draft_name": "Vertical SaaS Laggards",
+   "hypothesis": "These may co-move as enterprise/vertical software names derating on softer bookings and higher-for-longer rate pressure on growth multiples.",
    "suggested": "keep-for-checks",
-   "reason": "Tight SIC overlap plus strong shared downtrend suggests a real common factor.",
+   "reason": "-73% vs market, low crowding — lagging, possible real corporate driver",
    "error": null,
    "model": "claude-opus-4-8"
   },
@@ -76,10 +77,10 @@
     "GLOB"
    ],
    "status": "drafted",
-   "draft_name": "Data & Digital Services",
-   "hypothesis": "Co-movement may reflect shared exposure to enterprise IT/data-analytics spend cycles; softening demand or AI-substitution fears could be a common headwind — a guess.",
-   "suggested": "keep-for-checks",
-   "reason": "Coherent negative-momentum group with plausible common demand driver; worth checks.",
+   "draft_name": "IT Services / Data Derate",
+   "hypothesis": "Cluster may be derating on fears that AI compresses billable IT-services and data/analytics headcount, pressuring growth multiples.",
+   "suggested": "park",
+   "reason": "-81% rel-strength — AI-displacement derate, already crushed",
    "error": null,
    "model": "claude-opus-4-8"
   },
@@ -94,10 +95,10 @@
     "ICHR"
    ],
    "status": "drafted",
-   "draft_name": "Semi Test & Subfab",
-   "hypothesis": "Members may share exposure to semiconductor capex cycle — test, inspection, and subfab/fluid-delivery equipment — possibly co-moving on shared demand expectations.",
-   "suggested": "keep-for-checks",
-   "reason": "Coherent semi-cap supply-chain overlap; strong momentum, low crowding.",
+   "draft_name": "Semi Test & Subsystems",
+   "hypothesis": "These may co-move as semiconductor test/inspection and fab-subsystem suppliers riding a shared capex/upcycle tailwind.",
+   "suggested": "park",
+   "reason": "+206% vs market, +242% mom — cyclical proxy, already moved",
    "error": null,
    "model": "claude-opus-4-8"
   },
@@ -111,10 +112,10 @@
     "APGE"
    ],
    "status": "drafted",
-   "draft_name": "Stock-Media & Biotech Mix",
-   "hypothesis": "Possibly two overlapping subgroups: stock-imagery/content names and clinical-stage biotechs — co-movement may reflect shared small-cap risk-off rather than one driver.",
-   "suggested": "keep-for-checks",
-   "reason": "Mixed sectors, modest coherence, low crowding — verify if real or coincidence.",
+   "draft_name": "Stock-media + biotech mix",
+   "hypothesis": "Possibly two unrelated pairs (visual-content licensing vs clinical-stage biotech) coinciding, with no single shared corporate driver.",
+   "suggested": "reject",
+   "reason": "Driverless grab-bag: media co's + biotechs, coherence 0.48 — coincidence.",
    "error": null,
    "model": "claude-opus-4-8"
   },
@@ -128,9 +129,9 @@
    ],
    "status": "drafted",
    "draft_name": "Crypto Treasury Proxies",
-   "hypothesis": "Co-movement may reflect shared exposure to a crypto-treasury/digital-asset-holding strategy, so prices could track sentiment on the underlying tokens rather than operations.",
-   "suggested": "keep-for-checks",
-   "reason": "Same SIC, moderate coherence, plausible common driver worth verifying.",
+   "hypothesis": "These may be crypto-treasury vehicles whose co-movement tracks digital-asset prices rather than any shared company execution.",
+   "suggested": "park",
+   "reason": "Likely coin-price proxy; -106% rel-strength — already moved",
    "error": null,
    "model": "claude-opus-4-8"
   },
@@ -143,10 +144,10 @@
     "ERO"
    ],
    "status": "drafted",
-   "draft_name": "Copper Miners Beta",
-   "hypothesis": "Co-movement may reflect shared sensitivity to copper prices; all three could be tracking a common base-metals demand or supply narrative.",
-   "suggested": "keep-for-checks",
-   "reason": "Tight industry overlap plus strong momentum warrants factor-vs-idiosyncratic checks.",
+   "draft_name": "Copper Miner Move",
+   "hypothesis": "Group likely tracks copper price rather than company execution — a metal proxy, not a corporate driver.",
+   "suggested": "park",
+   "reason": "+76% vs market, +112% momentum — metal proxy, already moved",
    "error": null,
    "model": "claude-opus-4-8"
   },
@@ -159,10 +160,10 @@
     "NNE"
    ],
    "status": "drafted",
-   "draft_name": "Advanced Nuclear Basket",
-   "hypothesis": "Names may co-move on shared exposure to next-gen nuclear/fuel sentiment; possibly a themed narrative cycle rather than fundamentals.",
+   "draft_name": "Nuclear SMR Basket",
+   "hypothesis": "Names may co-move on speculative advanced-nuclear / SMR fuel-cycle sentiment tied to power-demand narratives rather than shared execution.",
    "suggested": "keep-for-checks",
-   "reason": "Plausible common driver, decent coherence, low crowding — worth verifying.",
+   "reason": "-67% vs market, lagging — possible nameable nuclear driver, check",
    "error": null,
    "model": "claude-opus-4-8"
   },
@@ -175,10 +176,10 @@
     "SAIC"
    ],
    "status": "drafted",
-   "draft_name": "Gov Services Contractors",
-   "hypothesis": "Possibly co-moving on shared exposure to federal contracting/budget sentiment; weak momentum may reflect a common spending-outlook headwind — a guess, not a fact.",
+   "draft_name": "Government Services Contractors",
+   "hypothesis": "These may share exposure to federal contracting budgets and procurement cycles, possibly pressured by spending-cut or efficiency concerns.",
    "suggested": "keep-for-checks",
-   "reason": "Plausible single driver despite mixed SIC labels; coherence moderate.",
+   "reason": "-56% vs market, lagging; plausible nameable corporate driver, not a proxy",
    "error": null,
    "model": "claude-opus-4-8"
   },
@@ -192,9 +193,9 @@
    ],
    "status": "drafted",
    "draft_name": "Rare Earth Miners",
-   "hypothesis": "Co-movement may reflect shared exposure to rare-earth/critical-minerals sentiment, possibly tied to supply-chain or policy narratives — a hypothesis, not established.",
-   "suggested": "keep-for-checks",
-   "reason": "Tight thematic overlap, strong momentum, low crowding worth checking.",
+   "hypothesis": "Group likely tracks rare-earth/critical-mineral prices and supply-chain policy tailwinds, a commodity proxy rather than shared company execution.",
+   "suggested": "park",
+   "reason": "+61% rel-strength, +97% momentum — commodity proxy, already moved",
    "error": null,
    "model": "claude-opus-4-8"
   }

@@ -18,7 +18,17 @@ import pytest
 
 from vinci.cli import _cmd_themes_draft, _cmd_themes_review
 from vinci.graph.llm import LlmClient, LlmError
-from vinci.themes.drafts import DraftAbortedError, draft_unreviewed, unreviewed_clusters
+from vinci.themes.drafts import (
+    PROMPT_VERSION,
+    DraftAbortedError,
+    _cluster_prompt,
+    _drafts_current,
+    _recent_precedent,
+    draft_cluster,
+    draft_targets,
+    draft_unreviewed,
+    unreviewed_clusters,
+)
 
 
 def _cluster(cid: str, members: list[str]) -> dict[str, Any]:
@@ -123,6 +133,75 @@ def test_draft_invalid_suggested_is_unassessed_not_fabricated() -> None:
     assert "invalid suggested" in out[0]["error"]
 
 
+# --- v2 rubric: few-shot precedent, targeting, versioned idempotency -----------------------------
+
+class _CapturingLlm(LlmClient):
+    """Records the last user prompt so a test can assert what precedent reached the model."""
+
+    def __init__(self) -> None:
+        self.last_user = ""
+
+    def extract(self, *, system: str, user: str, tool: dict[str, Any]) -> dict[str, Any]:
+        self.last_user = user
+        return {"draft_name": "X", "hypothesis": "h", "suggested": "park", "reason": "r"}
+
+    @property
+    def model(self) -> str:
+        return "stub"
+
+
+def test_precedent_injected_and_self_excluded() -> None:
+    """draft_cluster injects the fund's recent decisions into the prompt as few-shot precedent, but
+    EXCLUDES the drafted cluster's own recorded decision (member overlap) — no self-leak."""
+    cluster = _cluster("T004", ["CLSK", "RIOT"])
+    reviews = [
+        _review("2026-07-14:T004", ["CLSK", "RIOT"], decision="park", reason="coin-price proxy"),
+        _review("2026-06-17:R1", ["AAA", "BBB"], decision="reject", reason="collapsed gimmicks"),
+        _review("2026-07-15:R2", ["CCC", "DDD"], decision="park", reason="metal proxy"),
+    ]
+    llm = _CapturingLlm()
+    draft_cluster(cluster, "2026-07-14:T004", llm, reviews)
+    assert "collapsed gimmicks" in llm.last_user      # OTHER precedent injected
+    assert "metal proxy" in llm.last_user
+    assert "coin-price proxy" not in llm.last_user     # SELF-EXCLUDED (same members) — no self-leak
+
+
+def test_recent_precedent_orders_by_date_and_excludes_self() -> None:
+    cluster = _cluster("T004", ["CLSK", "RIOT"])
+    older = _review("k2", ["A", "B"], decision="reject", reason="old")
+    newer = _review("k3", ["C", "D"], decision="park", reason="new")
+    older["reviewed"], newer["reviewed"] = "2026-06-17", "2026-07-15"
+    selfrev = _review("k1", ["CLSK", "RIOT"], reason="self")
+    pairs = _recent_precedent([selfrev, older, newer], cluster)
+    assert all(reason != "self" for _, reason in pairs)   # self excluded
+    assert pairs[0] == ("park", "new")                    # most recent first
+
+
+def test_draft_targets_normal_vs_include_reviewed() -> None:
+    """Normal targets the UNREVIEWED set; include_reviewed targets the clusters reviewed FOR THIS
+    scan (the face-validity re-check set)."""
+    clusters = [_cluster("T004", ["CLSK", "RIOT"]), _cluster("T099", ["ZZ", "YY"])]
+    reviews = [_review("2026-07-14:T004", ["CLSK", "RIOT"])]  # T004 reviewed for this scan
+    normal = draft_targets(clusters, reviews, "2026-07-14", include_reviewed=False)
+    reviewed = draft_targets(clusters, reviews, "2026-07-14", include_reviewed=True)
+    assert [c["cluster_id"] for c in normal] == ["T099"]      # unreviewed only
+    assert [c["cluster_id"] for c in reviewed] == ["T004"]    # reviewed-for-this-scan only
+
+
+def test_drafts_current_gates_on_source_and_version() -> None:
+    src, ver = "20260714T162125Z__x.jsonl", PROMPT_VERSION
+    assert _drafts_current({"source": src, "prompt_version": ver}, src, ver)
+    assert not _drafts_current({"source": src, "prompt_version": "old"}, src, ver)  # version bump
+    assert not _drafts_current({"source": "other", "prompt_version": ver}, src, ver)  # src change
+    assert not _drafts_current({"source": src}, src, ver)  # legacy pointer, no version
+
+
+def test_cluster_prompt_formats_stats_as_percent() -> None:
+    """rel-strength / momentum fractions render as signed percents so the model can cite them."""
+    prompt = _cluster_prompt(_cluster("T004", ["A", "B"]))  # rel12=0.2, mom12=0.1 in the helper
+    assert "+20%" in prompt and "+10%" in prompt
+
+
 # --- CLI: themes-draft (idempotency) -------------------------------------------------------------
 
 def _write_snapshot(tmp_path: Path, clusters: list[dict[str, Any]],
@@ -143,20 +222,58 @@ def _write_radar(tmp_path: Path, reviews: list[dict[str, Any]],
     return radar
 
 
-def test_draft_cli_idempotent_reuses_by_source(
+def _draft_ns(*, force: bool = False, include_reviewed: bool = False) -> argparse.Namespace:
+    return argparse.Namespace(force=force, include_reviewed=include_reviewed, scan_history_dir=None)
+
+
+def test_draft_cli_idempotent_reuses_same_source_and_version(
         tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
-    """themes-draft reuses drafts already current for THIS snapshot (drafts.json.source == basename)
-    → returns 0 and spends NO LLM call (from_config is never even constructed)."""
+    """themes-draft reuses drafts current for THIS snapshot AND this prompt version → returns 0 and
+    spends NO LLM call (from_config is never even constructed)."""
     monkeypatch.chdir(tmp_path)
     name = _write_snapshot(tmp_path, [_cluster("T002", ["P1", "P2"])])
-    _write_radar(tmp_path, [], drafts={"scan_date": "2026-07-14", "source": name, "drafts": []})
+    _write_radar(tmp_path, [], drafts={"scan_date": "2026-07-14", "source": name,
+                                       "prompt_version": PROMPT_VERSION, "drafts": []})
 
     def _boom(*a: Any, **k: Any) -> Any:  # from_config must NOT be reached on the idempotent path
         raise AssertionError("LLM client constructed on an idempotent re-run")
 
     monkeypatch.setattr("vinci.graph.llm.AnthropicLlmClient.from_config", staticmethod(_boom))
-    rc = _cmd_themes_draft(argparse.Namespace(force=False, scan_history_dir=None))
+    rc = _cmd_themes_draft(_draft_ns())
     assert rc == 0
+
+
+def test_draft_cli_version_bump_regenerates(
+        tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    """A committed pointer at a DIFFERENT prompt version is NOT reused — themes-draft regenerates
+    (constructs the client, drafts, and writes the new version into drafts.json)."""
+    monkeypatch.chdir(tmp_path)
+    name = _write_snapshot(tmp_path, [_cluster("T002", ["P1", "P2"])])
+    # committed under an OLD version → must NOT be reused under the current PROMPT_VERSION
+    _write_radar(tmp_path, [], drafts={"scan_date": "2026-07-14", "source": name,
+                                       "prompt_version": "0-legacy", "drafts": [
+                                           {"key": "x", "status": "drafted"}]})
+    monkeypatch.setattr("vinci.graph.llm.AnthropicLlmClient.from_config",
+                        staticmethod(lambda *a, **k: _OkLlm()))
+    rc = _cmd_themes_draft(_draft_ns())
+    assert rc == 0
+    out = json.loads((tmp_path / "frontend" / "radar" / "drafts.json").read_text())
+    assert out["prompt_version"] == PROMPT_VERSION            # regenerated at the current version
+    assert out["drafts"][0]["cluster_id"] == "T002"           # real re-draft, not the stale pointer
+
+
+def test_draft_cli_legacy_pointer_without_version_regenerates(
+        tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    """A #130-era pointer with NO prompt_version is stale → regenerate (never silently reused)."""
+    monkeypatch.chdir(tmp_path)
+    name = _write_snapshot(tmp_path, [_cluster("T002", ["P1", "P2"])])
+    _write_radar(tmp_path, [], drafts={"scan_date": "2026-07-14", "source": name, "drafts": []})
+    monkeypatch.setattr("vinci.graph.llm.AnthropicLlmClient.from_config",
+                        staticmethod(lambda *a, **k: _OkLlm()))
+    rc = _cmd_themes_draft(_draft_ns())
+    assert rc == 0
+    out = json.loads((tmp_path / "frontend" / "radar" / "drafts.json").read_text())
+    assert out["prompt_version"] == PROMPT_VERSION
 
 
 # --- CLI: themes-review ---------------------------------------------------------------------------
