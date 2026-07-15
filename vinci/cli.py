@@ -858,12 +858,17 @@ def _cmd_themes_draft(args: argparse.Namespace) -> int:
                   f"({n_prev} drafts) — reusing, no LLM spend (--force to redraft)")
             return 0
 
-    # FAIL LOUD, never silently no-op: the face-validity re-check needs a non-empty target set.
     todo = draft_targets(clusters, reviews, scan_date, include_reviewed=include_reviewed)
     if not todo:
-        which = "reviewed-for-this-scan" if include_reviewed else "unreviewed"
-        print(f"!! no {which} clusters in {snap_path.name} — nothing to draft")
-        return 2
+        # --include-reviewed MUST run: an empty target means the check silently didn't happen →
+        # FAIL LOUD (rc 2). The normal path with no unreviewed clusters is BENIGN — the inbox is
+        # fully triaged; that is a success state, not an error (rc 0, leave the pointer untouched).
+        if include_reviewed:
+            print(f"!! --include-reviewed: no clusters reviewed for {scan_date} in "
+                  f"{snap_path.name} — nothing to re-check")
+            return 2
+        print(f"no unreviewed clusters in {snap_path.name} — inbox is empty, nothing to draft")
+        return 0
 
     llm = AnthropicLlmClient.from_config(cfg)
     try:

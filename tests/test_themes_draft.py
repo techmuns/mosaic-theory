@@ -276,6 +276,35 @@ def test_draft_cli_legacy_pointer_without_version_regenerates(
     assert out["prompt_version"] == PROMPT_VERSION
 
 
+def _no_llm(monkeypatch: pytest.MonkeyPatch) -> None:
+    def _boom(*a: Any, **k: Any) -> Any:
+        raise AssertionError("LLM client constructed on an empty target set")
+    monkeypatch.setattr("vinci.graph.llm.AnthropicLlmClient.from_config", staticmethod(_boom))
+
+
+def test_draft_cli_include_reviewed_empty_fails_loud(
+        tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    """--include-reviewed with NO clusters reviewed for this scan → rc 2 (fail loud), NEVER a silent
+    no-op, and NO LLM constructed — the operator-flagged failure mode the guard exists for."""
+    monkeypatch.chdir(tmp_path)
+    _write_snapshot(tmp_path, [_cluster("T002", ["P1", "P2"])])  # a cluster exists...
+    _write_radar(tmp_path, [])                                   # ...but nothing reviewed this scan
+    _no_llm(monkeypatch)
+    assert _cmd_themes_draft(_draft_ns(include_reviewed=True)) == 2
+
+
+def test_draft_cli_normal_empty_inbox_is_benign_not_error(
+        tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    """Normal path with every cluster already reviewed → empty unreviewed set is a SUCCESS state
+    (inbox triaged): rc 0, no LLM, and the committed pointer is left untouched (not overwritten)."""
+    monkeypatch.chdir(tmp_path)
+    _write_snapshot(tmp_path, [_cluster("T002", ["P1", "P2"])])
+    _write_radar(tmp_path, [_review("2026-07-14:T002", ["P1", "P2"])])  # T002 reviewed → none left
+    _no_llm(monkeypatch)
+    assert _cmd_themes_draft(_draft_ns()) == 0                # benign, NOT rc 2
+    assert not (tmp_path / "frontend" / "radar" / "drafts.json").exists()  # pointer left untouched
+
+
 # --- CLI: themes-review ---------------------------------------------------------------------------
 
 def _review_ns(cluster: str, decision: str, reason: str, *, name: str | None = None,
