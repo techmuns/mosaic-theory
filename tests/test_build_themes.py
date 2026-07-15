@@ -278,6 +278,13 @@ def test_industry_hint_mixed() -> None:
     assert h == "mixed: Computer services 1 · Investment advice 1"
 
 
+def test_industry_hint_single_sic_non_majority() -> None:
+    """One distinct SIC, not a majority (rest carry no SIC) → single industry + coverage, not
+    the degenerate 'mixed: X · X 0'."""
+    mem = [{"ticker": "A", "sic": "3674"}, {"ticker": "B"}, {"ticker": "C"}]
+    assert _BUILD._industry_hint({"cluster_id": "T0", "members": mem}) == "Semiconductors · 1/3"
+
+
 def test_industry_hint_only_on_unreviewed_inbox(
         tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
     """The hint is emitted ONLY for unreviewed (inbox) clusters; a matched group goes to the log

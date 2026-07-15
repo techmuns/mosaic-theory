@@ -426,9 +426,9 @@ def _sic_name(code: str) -> str:
 
 
 def _industry_hint(cluster: dict[str, Any]) -> str | None:
-    """Most common 4-digit SIC among the members + coverage ("Semiconductors · 5/5"); no majority →
-    "mixed: <top> N · <second> M". Assemble-only hint for an unreviewed cluster — never a verdict.
-    None when no member carries a SIC. Deterministic: Counter keeps member order on ties."""
+    """Most common member SIC + coverage ("Semiconductors · 5/5"); a single industry or a majority →
+    that. Else (≥2 industries, none a majority) → "mixed: <top> N · <second> M". Assemble-only hint
+    for an unreviewed cluster — never a verdict. None when no member has a SIC. Deterministic."""
     members = cluster.get("members", [])
     sics = Counter(str(m.get("sic") or "").strip() for m in members)
     sics.pop("", None)
@@ -437,9 +437,9 @@ def _industry_hint(cluster: dict[str, Any]) -> str | None:
     total = len(members)
     ranked = sics.most_common()
     top_code, top_n = ranked[0]
-    if top_n * 2 > total:  # strict majority of the members
+    if len(ranked) == 1 or top_n * 2 > total:  # single industry, or a strict majority
         return f"{_sic_name(top_code)} · {top_n}/{total}"
-    sc, sn = ranked[1] if len(ranked) > 1 else (top_code, 0)
+    sc, sn = ranked[1]
     return f"mixed: {_sic_name(top_code)} {top_n} · {_sic_name(sc)} {sn}"
 
 
