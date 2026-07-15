@@ -12,7 +12,7 @@
   --surface-2: #eef1f6;
   --ink: #0f1622;
   --ink-2: #565f72;
-  --ink-3: #868fa1;
+  --ink-3: #646b7a;
   --line: #e6e9ef;
   --line-2: #d9dee7;
 
@@ -26,6 +26,8 @@
   /* state — live / gate / accent / danger */
   --live: #177a49;
   --live-bg: #e6f2eb;
+  /* --locked labels INACTIVE UI (locked pills/chips, gated features) — kept intentionally
+     low-contrast to read as disabled; WCAG 1.4.3 exempts inactive components from the ratio. */
   --locked: #98a0b0;
   --conditional: #9a6d1e;
   --conditional-bg: #f6f0e1;
@@ -93,14 +95,14 @@
   --surface-2: #181f2a;
   --ink: #eef1f6;
   --ink-2: #9aa4b5;
-  --ink-3: #727c8c;
+  --ink-3: #7c8696;
   --line: #202834;
   --line-2: #2a333f;
 
   /* nav rail (dark in both themes) */
   --nav-bg: #080b11;
   --nav-ink: #c0c8d4;
-  --nav-ink-2: #6e7889;
+  --nav-ink-2: #78828f;
   --nav-active: #161d27;
   --nav-line: #1c242f;
 
@@ -165,12 +167,12 @@
     --surface-2: #181f2a;
     --ink: #eef1f6;
     --ink-2: #9aa4b5;
-    --ink-3: #727c8c;
+    --ink-3: #7c8696;
     --line: #202834;
     --line-2: #2a333f;
     --nav-bg: #080b11;
     --nav-ink: #c0c8d4;
-    --nav-ink-2: #6e7889;
+    --nav-ink-2: #78828f;
     --nav-active: #161d27;
     --nav-line: #1c242f;
     --live: #42bd76;
@@ -236,6 +238,13 @@ html, body {
 
 a { color: var(--accent); text-decoration: none; }
 a:hover { text-decoration: underline; }
+
+/* keyboard focus — a visible accent ring on every interactive element (nav links, tabs, the theme
+   toggle, filter inputs, <details> summaries). Mouse users never see it (:focus-visible only). */
+a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible,
+summary:focus-visible, [tabindex]:focus-visible {
+  outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 3px;
+}
 
 /* --- app shell: sidebar + main ------------------------------------------- */
 .app { display: grid; grid-template-columns: 236px 1fr; min-height: 100vh; }
@@ -683,7 +692,7 @@ table.data.vs-table { width: 100%; }
     --surface-2: #eef1f6;
     --ink: #0f1622;
     --ink-2: #565f72;
-    --ink-3: #868fa1;
+    --ink-3: #646b7a;
     --line: #e6e9ef;
     --line-2: #d9dee7;
     --nav-bg: #10151d;
