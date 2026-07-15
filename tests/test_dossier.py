@@ -92,11 +92,16 @@ def test_dossier_schema_has_no_conclusion_field() -> None:
         ds.MaturityWall, ds.ConcentrationCustomer, ds.CustomerConcentration, ds.Commitment,
     }
     assert expected <= models
+    # match a forbidden token only at snake_case WORD boundaries (^/_/$), not as a bare substring —
+    # so a factual 'operating_drivers' isn't flagged for the 'rating' inside 'ope-RATING' (the
+    # substring hazard: 'operating'⊃'rating', 'grating'⊃'rating', …), while 'buy_rating' /
+    # 'conviction_score' / a lone 'direction' still trip. Field names here are snake_case, so a
+    # boundary match is exact, not a loosening.
     offenders: list[str] = []
     for model in models:
         for fname in model.model_fields:
             low = fname.lower()
-            if any(tok in low for tok in _FORBIDDEN):
+            if any(re.search(rf"(?:^|_){re.escape(tok)}(?:$|_)", low) for tok in _FORBIDDEN):
                 offenders.append(f"{model.__name__}.{fname}")
     assert not offenders, f"dossier schema carries conclusion-shaped field(s): {offenders}"
 
@@ -108,6 +113,28 @@ def test_synthesis_is_the_only_llm_output_and_carries_no_conclusion() -> None:
         "evidence_balance", "bull_points", "bear_points", "twin_reference_cases",
         "decisive_question", "key_unknowns",
     }
+
+
+def test_synthesis_surfaces_operating_drivers_digest_and_rule() -> None:
+    """(PR-B B) Synthesis makes the operating drivers SALIENT so the bull/bear ground in them: a
+    term→value→source_ref digest (each row's real source_ref, for the LLM to copy) and a MECHANISM
+    system rule telling it to cite the specific driver. Deterministic — the DIGEST + prompt, not an
+    LLM-composed output string."""
+    rows = [
+        _drv("attribution", metric="revenue", value="$55.9M, or 48.0%", value_num=-48.0, unit="%",
+             verbatim="Revenue decreased.", source_ref="10-Q Z"),
+        _drv("leading_indicator", metric="sales volume", value="approximately 274 MWh",
+             source_ref="CIQ transcript: MVST Q1 2026 Call"),
+    ]
+    od = ds.OperatingDriversExtract(rows=rows, qa_flags=[])
+    digest = syn._operating_drivers_digest(od)
+    assert "OPERATING DRIVERS" in digest
+    # each row surfaced with its REAL source_ref (the thing the LLM copies to cite)
+    assert "[attribution] revenue: $55.9M, or 48.0% → 10-Q Z" in digest
+    assert "→ CIQ transcript: MVST Q1 2026 Call" in digest
+    # the system rule instructs grounding operating points in a driver + its source_ref
+    assert "MECHANISM" in syn._SYSTEM and "source_ref" in syn._SYSTEM
+    assert "load-bearing driver" in syn._SYSTEM
 
 
 def test_twin_cases_are_never_numeric() -> None:
@@ -2072,6 +2099,210 @@ def test_brief_snapshot_renders_present_and_omits_unknown() -> None:
     assert dr._brief_snapshot(None, None, allu) == []
 
 
+# --- (PR-B) operating-drivers: A3 Key Developments, fail-loud transcript, Mechanism render --------
+
+# SYNTHETIC Key-Developments text (real CIQ text is licensed → never committed). 5-column layout
+# ('Date|Company|Type|Headline|…') — the header-driven parse must find Type at index 2, not assume.
+_KD_5COL = (
+    "Report Criteria|\n"
+    "Selected Categories:|Company Forecasts and Ratings, Customer/Product|\n"
+    "Key Developments|\n"
+    "Date|Company|Type|Headline|Other Parties|\n"
+    "May-07-2026|Acme Co. (NasdaqGM:ACME)|Corporate Guidance - Raised|Acme Raises "
+    "FY2026 Guidance|-|\n"
+    "Situation: On May 7, 2026, Acme raised its full-year guidance on strong demand.\n"
+    "Apr-23-2026|Acme Co.|Product-Related Announcement|Acme Launches New Product Line|-|\n"
+    "Jun-29-2026|Acme Co.|Index Constituent Drop|Acme dropped from Russell 2000|-|\n"
+    "May-01-2026|Acme Co.|Executive/Board Change - Other|Acme CFO transition|-|\n"
+)
+# 4-column layout ('Date|Type|Headline|…') — Type at index 1. Same rows, no Company column.
+_KD_4COL = (
+    "Date|Type|Headline|Other Parties|\n"
+    "Mar-16-2026|Corporate Guidance - New/Confirmed|Co Provides 2026 Guidance|-|\n"
+    "Jan-02-2026|Index Constituent Add|Co added to an index|-|\n"
+)
+
+
+def _kd_bundle(monkeypatch: pytest.MonkeyPatch, text: str) -> ciq.CiqBundle:
+    """A bundle carrying one key_developments workbook; read_text is stubbed to `text` (the RTF
+    decode itself is covered by test_ciq — here we pin the parse/filter/header logic)."""
+    from pathlib import Path
+    monkeypatch.setattr(cs, "read_text", lambda path, fmt=None: text)
+    wb = ciq.CiqWorkbook(
+        kind="key_developments", path=Path("kd.rtf"), fmt=ciq.CiqFormat.RTF_TEXT, freq=None)
+    return ciq.CiqBundle(ticker="ACME", workbooks=(wb,))
+
+
+def test_a3_key_developments_header_driven_filter(monkeypatch: pytest.MonkeyPatch) -> None:
+    """(PR-B A3) EVENT rows from the KD export: header-driven column detection (5-col vs 4-col
+    layouts), the INCLUDE filter (guidance/product KEPT; index-constituent / exec-change DROPPED),
+    the Situation detail as verbatim, and a source_ref bound to the file + date."""
+    rows = cs.key_development_drivers(_kd_bundle(monkeypatch, _KD_5COL))
+    kept = {r.metric for r in rows}
+    assert "Corporate Guidance - Raised" in kept and "Product-Related Announcement" in kept
+    assert "Index Constituent Drop" not in kept  # ⊖ index mechanics dropped
+    assert "Executive/Board Change - Other" not in kept  # ⊖ governance dropped
+    guid = next(r for r in rows if r.metric == "Corporate Guidance - Raised")
+    assert guid.kind.value == "event" and guid.period == "May-07-2026" and guid.tier == "anchored"
+    assert guid.value == "Acme Raises FY2026 Guidance"
+    assert "raised its full-year guidance" in guid.verbatim  # the Situation line
+    assert guid.source_ref == "CIQ Key Developments: kd.rtf · May-07-2026"
+    # 4-column layout resolves Type at a DIFFERENT index — header-driven, not positional
+    rows4 = cs.key_development_drivers(_kd_bundle(monkeypatch, _KD_4COL))
+    assert [r.metric for r in rows4] == ["Corporate Guidance - New/Confirmed"]  # index add dropped
+
+
+def test_a3_headerless_kd_is_honest_empty(monkeypatch: pytest.MonkeyPatch) -> None:
+    """(PR-B A3 ⊖) A KD text with no recognizable Date|Type|Headline header → honest empty, never a
+    guessed column position."""
+    assert cs.key_development_drivers(
+        _kd_bundle(monkeypatch, "Report Criteria|\nrandom text\n")) == []
+
+
+def test_transcript_fail_loud_unparsed_flag_and_routing() -> None:
+    """(PR-B §3-now) Transcripts ON FILE but unparsed (LibreOffice missing) → a QA flag routed to
+    dev (not an analyst caveat); no transcript on file → NO flag (absence is not failure); a parsed
+    slice → NO flag. The 2026-07-10 silent-swallow can't recur."""
+    from pathlib import Path
+
+    from vinci.dossier.flags import partition
+    tr = ciq.CiqBundle(ticker="X", workbooks=(ciq.CiqWorkbook(
+        kind="transcript", path=Path("c.rtf"), fmt=ciq.CiqFormat.OLE_DISGUISED, freq=None),))
+    flag = cs.unparsed_transcript_flag(tr, None)  # on file, slice failed → flag
+    assert flag is not None and "unparseable" in flag
+    caveats, qa = partition([flag])
+    assert flag in qa and caveats == []  # dev/QA, never a human caveat
+    assert cs.unparsed_transcript_flag(tr, "--- call ---\nremarks") is None  # parsed → no flag
+    assert cs.unparsed_transcript_flag(  # absent → no flag
+        ciq.CiqBundle(ticker="X", workbooks=()), None) is None
+
+
+def _drv(kind: str, **kw: object) -> ds.OperatingDriver:
+    base: dict[str, object] = {"metric": "m", "value": "v", "verbatim": "vb",
+                               "source_ref": "8-K X EX-99.1", "tier": "anchored"}
+    return ds.OperatingDriver(kind=ds.DriverKind(kind), **{**base, **kw})  # type: ignore[arg-type]
+
+
+def test_operating_drivers_feed_synthesis_but_render_no_standalone_block() -> None:
+    """(PR-B — decision 2026-07-13) The operating drivers are EXTRACTION that FEEDS SYNTHESIS, not a
+    standalone rendered surface: a mechanically-extracted fact list can't render the directional
+    CALL (that is the human's verdict). So the field stays machine-complete in the JSON, the
+    synthesis digest surfaces it (the LLM is told to ground the bull/bear in it), and NO standalone
+    Mechanism block renders in the md — REAL invariants, not the absence of never-existed tokens."""
+    from vinci.dossier.synthesis import _operating_drivers_digest
+    rows = [_drv("attribution", metric="revenue", value="$5m, or 48%", value_num=-48.0, unit="%",
+                 verbatim="Revenue decreased 48% due to a sales-volume reduction.",
+                 source_ref="10-Q Z")]
+    import pathlib as _pl
+    pth = _pl.Path("data/dossiers/AORT/dossier.json")
+    if not pth.exists():
+        pytest.skip("AORT committed dossier absent")
+    d = ds.Dossier.model_validate_json(pth.read_text())
+    od = ds.OperatingDriversExtract(rows=rows, qa_flags=[])
+    inj = d.model_copy(update={"mechanical": d.mechanical.model_copy(
+        update={"operating_drivers": od})})
+    # (1) drivers FEED synthesis — the digest carries the metric/value/source_ref
+    digest = _operating_drivers_digest(od)
+    assert "revenue" in digest.lower() and "48" in digest and "10-Q Z" in digest
+    # (2) but NOT as a standalone block — no Mechanism heading in the brief/analysis md
+    md = dr.render_markdown(inj)
+    assert "## Mechanism" not in md and "## Operating drivers (mechanism)" not in md
+    # (3) machine-complete: the field rides in the JSON, never deleted
+    assert inj.mechanical.operating_drivers is not None
+    assert len(inj.mechanical.operating_drivers.rows) == 1
+
+
+# --- (PR-B Tier B) LLM-fenced transcript extractor — validator behavior (deterministic FakeLlm) ---
+# SYNTHETIC transcript slice (real CIQ transcript text is licensed → never committed; the real-slice
+# validation ran live against MVST's transcript). Two fenced calls; the validator is pinned here.
+_TB_SLICE = (
+    "--- Acme Q1 2026 Earnings Call, May 1, 2026 ---\n"
+    "Thanks operator. We shipped approximately 266 megawatt hours in the quarter, up 16% "
+    "year over year. Average selling price rose 7% effective March 1 across the fleet.\n"
+    "--- Acme Q4 2025 Earnings Call, Feb 1, 2026 ---\n"
+    "We added 40,000 members during the fourth quarter."
+)
+
+
+class _TBFakeLlm(LlmClient):
+    def __init__(self, payload: dict[str, typing.Any], *, raise_err: bool = False) -> None:
+        self._payload, self._raise = payload, raise_err
+
+    @property
+    def model(self) -> str:
+        return "fake-tb-1"
+
+    def extract(  # type: ignore[override]
+        self, *, system: str, user: str, tool: dict[str, typing.Any]
+    ) -> dict[str, typing.Any]:
+        if self._raise:
+            raise LlmError("simulated")
+        return self._payload
+
+
+def test_tier_b_validator_keeps_valid_drops_bad_and_binds_source() -> None:
+    """(PR-B Tier B) The code-level validator — the load-bearing UPGRADE over covenant extraction:
+    a real quote + a value whose numbers trace to that quote is KEPT (tier=llm-fenced, verbatim,
+    source_ref machine-set to the enclosing call); a fabricated quote, an invented number, and a
+    kind outside the fenced set are each DROPPED to a flag. Deterministic — no LLM-string pin."""
+    from vinci.dossier.driver_extract import extract_transcript_drivers
+    payload = {"drivers": [
+        {"kind": "leading_indicator", "metric": "shipments", "period": "Q1 2026",
+         "value": "266 megawatt hours",
+         "quote": "We shipped approximately 266 megawatt hours in the quarter, up 16% "
+                  "year over year."},
+        {"kind": "pricing_action", "metric": "ASP",
+         "value": "rose 7% effective March 1",
+         "quote": "Average selling price rose 7% effective March 1 across the fleet."},
+        {"kind": "leading_indicator", "metric": "deliveries",  # ⊖ fabricated quote
+         "value": "800 MWh",
+         "quote": "We delivered a record 800 MWh to Europe this quarter."},
+        {"kind": "leading_indicator", "metric": "shipments",  # ⊖ 999 not in quote
+         "value": "999 MWh",
+         "quote": "We added 40,000 members during the fourth quarter."},
+        {"kind": "attribution", "metric": "x", "value": "1",  # ⊖ kind outside the fenced set
+         "quote": "We added 40,000 members during the fourth quarter."},
+    ]}
+    rows, flags, _log = extract_transcript_drivers(
+        _TB_SLICE, llm=_TBFakeLlm(payload), ticker="ACME", name="Acme")
+    assert len(rows) == 2
+    kpi = next(r for r in rows if r.metric == "shipments")
+    assert kpi.tier == "llm-fenced" and kpi.value_num is None and kpi.unit is None  # verbatim-only
+    # source_ref machine-set to the enclosing call
+    assert kpi.source_ref == "CIQ transcript: Acme Q1 2026 Earnings Call, May 1, 2026"
+    assert kpi.kind.value == "leading_indicator"
+    # each bad row dropped with a reason (fabricated quote, untraced number, bad kind)
+    assert len(flags) == 3
+    joined = " ".join(flags)
+    assert "quote not in transcript" in joined
+    assert "not in its quote" in joined
+    assert "unknown kind" in joined
+
+
+def test_tier_b_llm_error_and_absent_slice_fail_loud() -> None:
+    """(PR-B Tier B ⊖) An LLM error or an absent slice yields NO rows + a naming flag — never a
+    fabricated driver, never a silent empty (the FIX-0 shape)."""
+    from vinci.dossier.driver_extract import extract_transcript_drivers
+    rows, flags, _ = extract_transcript_drivers(None, llm=_TBFakeLlm({}), ticker="X", name="X")
+    assert rows == [] and any("no transcript slice" in f for f in flags)
+    rows2, flags2, _ = extract_transcript_drivers(
+        _TB_SLICE, llm=_TBFakeLlm({}, raise_err=True), ticker="X", name="X")
+    assert rows2 == [] and any("LLM error" in f for f in flags2)
+
+
+def test_tier_b_row_cap_flags_excess() -> None:
+    """(PR-B Tier B ⊖) The row cap bounds cost/space — the excess is FLAGGED, never silently cut."""
+    from vinci.dossier.driver_extract import _MAX_ROWS, extract_transcript_drivers
+    one = {"kind": "leading_indicator", "metric": "shipments", "value": "266 megawatt hours",
+           "quote": "We shipped approximately 266 megawatt hours in the quarter, up 16% "
+                    "year over year."}
+    payload = {"drivers": [dict(one) for _ in range(_MAX_ROWS + 3)]}
+    rows, flags, _ = extract_transcript_drivers(
+        _TB_SLICE, llm=_TBFakeLlm(payload), ticker="X", name="X")
+    assert len(rows) == _MAX_ROWS
+    assert sum("capped" in f for f in flags) == 3  # the 3 excess rows each flagged
+
+
 def test_dossier_top_redesign_no_duplication_static() -> None:
     """(redesign) The dossier top: a SLIM header (title + one 'no verdict' meta line, no queue rank)
     and a Brief teaser split into a 2/3 narrative + a 1/3 snapshot table. The identity, market cap,
@@ -2084,9 +2315,10 @@ def test_dossier_top_redesign_no_duplication_static() -> None:
     # the OLD duplicated bits are gone (idn dup, meta cap dup, inline stock line)
     assert '"brief-idn"' not in src and '"brief-meta"' not in src and '"brief-stock"' not in src
     assert "function stockInfoLine" not in src
-    # header slimmed: no queue rank, one terse 'no verdict' meta line
+    # header slimmed: no queue rank, one terse meta line (anti-anchoring: the proposal is SEALED,
+    # revealed only after the human's verdict; the verdict of record stays the human's)
     assert "Queue rank" not in src
-    assert "Assembled facts, <b>no verdict</b>" in src
+    assert "Assembled facts · <b>proposal sealed</b> (revealed after the human's verdict)" in src
     # the two removed teaser bits: the card's own title (dup of the tab) and the machine-read pill.
     # ("Brief — first cut" is em-dash; the tab is "Brief <span…first cut", so no false match.)
     assert "Brief — first cut" not in src
@@ -2122,6 +2354,115 @@ def test_brief_machine_read_lean_bold_sentence_cased() -> None:
         assert "**Machine read** _(not a verdict)_" not in md, f"{jp.parent.name}: old prefix"
         assert dr._machine_read_md(s.evidence_balance) in md, f"{jp.parent.name}: not bold-lean"
     assert seen >= 2, "expected >=2 committed dossiers with an evidence_balance"
+
+
+def test_machine_proposal_derivation_deterministic() -> None:
+    """(2026-07-13 pivot, unit) derive_proposal is a FROZEN 3-row face-validity mapping over the
+    lean LABEL — deterministic, fail-honest on everything else, never a guessed direction.
+    Positive pins (the three rows + label normalization + the display word) AND negative pins
+    (mixed / empty / None / unsplit / unrecognized each yield NO proposal)."""
+    from vinci.dossier.verdict import derive_proposal
+    from vinci.schemas.ledger import Verdict as Vd
+
+    assert derive_proposal("strongly-bearish — reason").action is Vd.AVOID_TERMINAL
+    assert derive_proposal("strongly-bullish — reason").action is Vd.BUY
+    assert derive_proposal("Strongly bearish — reason").action is Vd.AVOID_TERMINAL  # normalized
+    assert derive_proposal("strongly-bearish — reason").action_word == "AVOID"  # display word
+    assert derive_proposal("strongly-bullish — reason").action_word == "BUY"
+    # NO-proposal legs — each fail-honest, each with its why in the note
+    mixed = derive_proposal("mixed — two-sided evidence")
+    assert mixed.action is None and "two-sided" in mixed.note
+    assert derive_proposal("").action is None
+    assert derive_proposal(None).action is None
+    assert derive_proposal("no separator here").action is None
+    unknown = derive_proposal("neutral — nothing decisive")
+    assert unknown.action is None and "unrecognized" in unknown.note
+    # a directional REASON must never flip a read — the label alone drives the mapping
+    assert derive_proposal("mixed — strongly-bearish tail risks dominate").action is None
+
+
+def test_machine_proposal_frozen_fixture_values() -> None:
+    """(pivot value pins — FROZEN fixtures) The committed MVST/AORT leans AS OF 2026-07-13, frozen
+    here as literals. Ticker→verdict VALUE pins live HERE, never on the living artifacts (a
+    re-assembly re-words a lean; the living-artifact e2e below pins invariants only)."""
+    from vinci.dossier.verdict import derive_proposal
+    from vinci.schemas.ledger import Verdict as Vd
+
+    mvst = ("strongly-bearish — stated going-concern doubt with a near-term maturity wall against "
+            "thin cash while adjusted EBITDA has turned negative and revenue is contracting.")
+    aort = ("mixed — growing absolute EBITDA and above-peer growth collide with a -78% "
+            "forward-EPS collapse, worse-than-peer leverage, and negative forward FCF.")
+    p = derive_proposal(mvst)
+    assert p.action is Vd.AVOID_TERMINAL and p.lean == "strongly-bearish"
+    assert p.reason is not None and p.reason.startswith("stated going-concern doubt")
+    q = derive_proposal(aort)
+    assert q.action is None and q.lean == "mixed"  # two-sided → the human decides cold
+
+
+def test_brief_hides_proposal_until_verdict_but_reveals_on_show_proposal() -> None:
+    """(anti-anchoring, 2026-07-13 — LIVING artifacts, phrasing-independent invariants ONLY) The
+    brief HIDES the machine's proposed verdict by default so it can't anchor the human before they
+    log theirs: the default render carries the sealed-note (never the AVOID/BUY proposal line), the
+    human confirm/override slot, and the pre-pivot slot gone. With ``show_proposal=True`` the SAME
+    dossier reveals EXACTLY the proposal line its own committed lean derives (both sides run
+    derive_proposal, so a re-worded lean can't rot this); a non-None proposal only ever derives from
+    a strongly-* label. NO ticker→verdict value pin here (those are frozen on the fixture below)."""
+    import pathlib
+
+    from vinci.dossier.verdict import derive_proposal
+
+    seen = 0
+    for jp in sorted(pathlib.Path("data/dossiers").glob("*/dossier.json")):
+        d = ds.Dossier.model_validate_json(jp.read_text())
+        s = d.synthesis
+        p = derive_proposal(s.evidence_balance if s is not None else None)
+        hidden = dr.render_markdown(d)  # default: proposal sealed, not shown
+        revealed = dr.render_markdown(d, show_proposal=True)  # explicit peek
+        # DEFAULT hides it — the sealed-note is present, the derived proposal line is NOT
+        assert ("**Machine proposal:** _sealed at assembly"
+                in hidden), f"{jp.parent.name}: sealed-note missing from default brief"
+        assert dr._machine_proposal_md(p) not in hidden, (
+            f"{jp.parent.name}: proposal leaked pre-verdict")
+        # --show-proposal REVEALS exactly the derived line
+        assert dr._machine_proposal_md(p) in revealed, f"{jp.parent.name}: reveal missing/diverged"
+        assert ("**Recommendation / Target (human):** _not yet logged — confirm or override "
+                in hidden), f"{jp.parent.name}: human confirm/override slot missing"
+        assert ("**Recommendation / Target:** _not yet logged — the human's call"
+                not in hidden), f"{jp.parent.name}: pre-pivot slot survived"
+        if p.action is not None:
+            assert p.lean is not None and p.lean.lower().replace(" ", "-") in (
+                "strongly-bearish", "strongly-bullish"), f"{jp.parent.name}: proposal off-mapping"
+        if s is not None and s.evidence_balance:
+            seen += 1
+    assert seen >= 2, "expected >=2 committed dossiers with an evidence_balance"
+
+
+def test_web_brief_proposal_mirror_static() -> None:
+    """(pivot web parity + anti-anchoring 2026-07-13) dossier.js mirrors verdict.py + the md brief:
+    the frozen 3-row mapping (a mixed lean proposes NOTHING — never a coin-flip) and the
+    confirm/override copy stay, but the proposal is HIDDEN until the human logs their verdict: the
+    teaser gates the reveal on ``!verdict`` (sealed-note before, proposal after), and the header now
+    reads 'proposal sealed'. Node-free source pins; the mapping is OUR frozen code, never LLM."""
+    src = Path("frontend/views/shared/dossier.js").read_text()
+    assert "function deriveProposal" in src
+    assert '"strongly-bearish": "AVOID"' in src and '"strongly-bullish": "BUY"' in src
+    assert '"mixed": null' in src  # two-sided → NO proposal
+    assert 'class="brief-proposal"' in src and "Machine proposal" in src
+    assert "confirm or override — Buy / Avoid + target" in src
+    # (review) ONE shared JS lean parser (splitLean) — machineReadHtml + deriveProposal both call it
+    assert "function splitLean" in src
+    assert src.count(r"[A-Za-z\- ]*?") == 1, "the lean regex must live in ONE parser (splitLean)"
+    # (review) Object.hasOwn, not `key in` — `in` walks Object.prototype (a parity break vs Python)
+    assert "Object.hasOwn(PROPOSAL_BY_LEAN" in src and "key in PROPOSAL_BY_LEAN" not in src
+    # ANTI-ANCHORING: the reveal is gated on a logged verdict; the sealed-note shows before
+    assert "const propSlot = !verdict" in src, "web brief must hide the proposal until a verdict"
+    assert "revealed after your verdict is logged" in src
+    assert "Assembled facts · <b>proposal sealed</b> (revealed after the human's verdict)" in src
+    # the OLD 'leads with the derived proposal' copy is gone; so is every pre-pivot copy
+    assert "Assembled facts + <b>derived proposal</b>" not in src
+    assert "Assembled facts, <b>no verdict</b>" not in src
+    assert "the human's call — Buy / Avoid + target" not in src
+    assert "assembled facts · no verdict" not in src
 
 
 def test_vrrm_brief_stock_info_panel_present_and_cited() -> None:
@@ -6222,7 +6563,7 @@ def test_d1_section_order_facts_first() -> None:
             < pos("### Concentration") < pos("## Synthesis"))
     assert (pos("### Bull case") < pos("### Bear case") < pos("### Decisive question")
             < pos("### Key unknowns") < pos("### Twin reference cases"))
-    assert pos("### Twin reference cases") < pos("No BUY/AVOID here")  # verdict footer last
+    assert pos("### Twin reference cases") < pos("The machine PROPOSES")  # verdict footer last
     # (D1) management-commentary pointer relocated into the appendix zone
     assert pos("## Synthesis") < pos("### Management commentary")
 

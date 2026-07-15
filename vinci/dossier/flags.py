@@ -41,7 +41,9 @@ _QA_MARKERS: tuple[str, ...] = (
     "CONTRADICTION",  # P2 — synthesis calls a PRESENT mechanical block pending/unread (dev QA lint)
     "(E5)",  # FIX-2 — Tier-2 covenant-extraction machine notes (cost bound / fetch fail) → dev, not
     "(P3)",  # a decision caveat; the human-facing summary is one line INSIDE the covenant block.
-)
+    "transcripts on file but unparseable",  # PR-B §3-now — an OPS action (install LibreOffice),
+    "operating-drivers:",  # PR-B — mechanism-tier per-source honest-miss notes → dev/JSON QA, not
+)  # an analyst caveat; a no-driver name renders the honest empty Mechanism line, not a caveat.
 
 # The validator-speak caveats carry a `{where}:` field name (which synthesis point tripped it).
 _WHERE_HUMAN: dict[str, str] = {

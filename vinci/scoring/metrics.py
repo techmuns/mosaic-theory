@@ -13,7 +13,7 @@ import statistics
 from collections import defaultdict
 from dataclasses import dataclass, field
 
-from vinci.schemas.ledger import Verdict
+from vinci.schemas.ledger import Disposition, Verdict
 
 
 def total_return(entry_price: float, exit_price: float) -> float:
@@ -31,6 +31,10 @@ class VerdictScore:
     name_return: float
     bench_return: float
     sector: str | None = None  # carried from the ledger entry — for the per-sector spread read
+    # Sealed machine proposal + disposition (2026-07-13 pivot) — carried from the ledger entry so
+    # the report can read the machine curve and the override subset. None == pre-pivot entry.
+    machine_proposal: Verdict | None = None
+    disposition: Disposition | None = None
 
     @property
     def excess_gross(self) -> float:
@@ -96,6 +100,18 @@ def ols_beta_alpha(
 
 
 @dataclass(frozen=True)
+class OverrideOutcome:
+    """One resolved OVERRIDE — human vs machine on the same name, with the forward outcome.
+    The most informative subset the pivot produces: it directly reads which side the forward
+    return vindicated. Reported raw (ticker · both calls · return); the human reads it."""
+
+    ticker: str
+    human: Verdict
+    machine: Verdict
+    name_return: float
+
+
+@dataclass(frozen=True)
 class ScoreReport:
     """Aggregate scoring over the resolved verdicts, plus the count still pending."""
 
@@ -116,6 +132,17 @@ class ScoreReport:
     # Per-sector BUY−AVOID spread (the sector-expertise read) — each "insufficient data" until its
     # own sample is real. Empty until verdicts resolve. See STATE.md §sector-expertise scoping.
     by_sector: dict[str, SectorSpread] = field(default_factory=dict)
+    # --- machine-proposal shadow curves (2026-07-13 pivot) -------------------------------------
+    # The HUMAN-final spread above stays the PRIMARY metric; these read the machine's sealed
+    # proposals and the confirm/override dispositions over the SAME resolved verdicts, so the
+    # decomposition (machine baseline vs human delta) accumulates from day one.
+    n_machine_buy: int = 0
+    n_machine_avoid: int = 0
+    machine_buy_avoid_spread: float | None = None
+    n_confirmed: int = 0
+    n_overridden: int = 0
+    n_no_proposal: int = 0
+    overrides: tuple[OverrideOutcome, ...] = ()
 
     def to_dict(self) -> dict[str, object]:
         d: dict[str, object] = {k: getattr(self, k) for k in self.__dataclass_fields__}
@@ -124,6 +151,11 @@ class ScoreReport:
                 "sufficient": v.sufficient}
             for s, v in self.by_sector.items()
         }
+        d["overrides"] = [
+            {"ticker": o.ticker, "human": o.human.value, "machine": o.machine.value,
+             "name_return": o.name_return}
+            for o in self.overrides
+        ]
         return d
 
     def to_markdown(self) -> str:
@@ -157,6 +189,22 @@ class ScoreReport:
             "",
             "## Per-sector BUY−AVOID spread (sector-expertise read)",
             *(sector_lines or ["- (no resolved verdicts yet)"]),
+        ]
+        override_lines = [
+            f"- {o.ticker}: human {o.human.value} vs machine {o.machine.value} → "
+            f"name return {pct(o.name_return)}"
+            for o in self.overrides
+        ]
+        lines += [
+            "",
+            "## Machine-proposal shadow curves (2026-07-13 pivot)",
+            "_The human-final spread above stays PRIMARY; this decomposes it into the machine's_ "
+            "_sealed-proposal baseline and the human's confirm/override delta._",
+            f"- Machine BUY−AVOID spread: {pct(self.machine_buy_avoid_spread)} "
+            f"({self.n_machine_buy} machine-BUY / {self.n_machine_avoid} machine-AVOID resolved)",
+            f"- Dispositions (resolved): confirmed {self.n_confirmed} · "
+            f"overridden {self.n_overridden} · no-proposal {self.n_no_proposal}",
+            *(override_lines or ["- (no resolved overrides yet)"]),
             "",
             "_Tiny n: directional gates, not significance tests. Paper fills are optimistic._",
         ]
@@ -188,6 +236,21 @@ def aggregate(
     if book_daily is not None and bench_daily is not None:
         beta, alpha = ols_beta_alpha(book_daily, bench_daily)
 
+    # machine shadow curves (2026-07-13 pivot) — the SAME resolved set, bucketed by the SEALED
+    # machine proposal; the override subset carries each disagreement's forward outcome raw.
+    m_buys = [s.name_return for s in scores if s.machine_proposal is Verdict.BUY]
+    m_avoids = [s.name_return for s in scores if s.machine_proposal is Verdict.AVOID_TERMINAL]
+    m_buy_mean, m_avoid_mean = mean(m_buys), mean(m_avoids)
+    machine_spread = (
+        m_buy_mean - m_avoid_mean
+        if m_buy_mean is not None and m_avoid_mean is not None else None
+    )
+    overrides = tuple(
+        OverrideOutcome(s.ticker, s.verdict, s.machine_proposal, s.name_return)
+        for s in scores
+        if s.disposition is Disposition.OVERRIDDEN and s.machine_proposal is not None
+    )
+
     return ScoreReport(
         n_resolved_buy=len(buys),
         n_resolved_avoid=len(avoids),
@@ -204,4 +267,11 @@ def aggregate(
         twin_buy_bounced=(buy_mean > 0) if buy_mean is not None else None,
         twin_avoid_fell=(avoid_mean < 0) if avoid_mean is not None else None,
         by_sector=spread_by_sector(scores),
+        n_machine_buy=len(m_buys),
+        n_machine_avoid=len(m_avoids),
+        machine_buy_avoid_spread=machine_spread,
+        n_confirmed=sum(1 for s in scores if s.disposition is Disposition.CONFIRMED),
+        n_overridden=sum(1 for s in scores if s.disposition is Disposition.OVERRIDDEN),
+        n_no_proposal=sum(1 for s in scores if s.disposition is Disposition.NO_PROPOSAL),
+        overrides=overrides,
     )

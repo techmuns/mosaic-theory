@@ -13,7 +13,7 @@ from __future__ import annotations
 from datetime import date, datetime
 from typing import Protocol
 
-from vinci.schemas.ledger import Confidence, LedgerEntry, Verdict
+from vinci.schemas.ledger import Confidence, Disposition, LedgerEntry, Verdict
 from vinci.sectors import sector_for_sic
 from vinci.store import Store
 
@@ -44,11 +44,20 @@ def log_verdict(
     reference_date: date,
     staleness_days: int,
     benchmark: str = "IWM",
+    machine_proposal: Verdict | None = None,
+    machine_lean: str | None = None,
+    proposal_assembled_at: datetime | None = None,
+    revealed_pre_verdict: bool = False,
 ) -> LedgerEntry:
     """Freeze the entry price + the sector and append a verdict for ``candidate_id``; returns it.
 
     The sector is captured HERE, at log time, from the name's EDGAR SIC (via ``resolver``) → it is
-    frozen with the verdict and never derived later, so the spread is sector-readable forever."""
+    frozen with the verdict and never derived later, so the spread is sector-readable forever.
+
+    The machine's SEALED proposal (2026-07-13 pivot) arrives from the caller — derived by
+    ``vinci.dossier.verdict.derive_proposal`` over the COMMITTED dossier artifact, never recomputed
+    from live data — and the disposition (confirm / override / no-proposal) is stamped here, once:
+    the human's verdict is the verdict of record; the disposition is the disagreement ledger."""
     cand = store.get_candidate(candidate_id)
     if cand is None:
         raise LedgerError(f"no candidate {candidate_id!r} in the store (run the screen first)")
@@ -71,6 +80,13 @@ def log_verdict(
             f"({ident.internal_id}) — refresh EOD bars first"
         )
 
+    # Disposition — stamped ONCE, at log time (every post-pivot entry carries one; a None
+    # disposition in the ledger therefore always means "logged before the pivot").
+    disposition = (
+        Disposition.NO_PROPOSAL if machine_proposal is None
+        else Disposition.CONFIRMED if machine_proposal is verdict
+        else Disposition.OVERRIDDEN
+    )
     entry = LedgerEntry(
         entry_id=f"V-{candidate_id}",  # one verdict per candidate; re-log → append-only conflict
         candidate_id=candidate_id,
@@ -87,6 +103,11 @@ def log_verdict(
         confidence=confidence,
         decided_at=decided_at,
         benchmark=benchmark,
+        machine_proposal=machine_proposal,
+        machine_lean=machine_lean,
+        proposal_assembled_at=proposal_assembled_at,
+        disposition=disposition,
+        revealed_pre_verdict=revealed_pre_verdict,  # anti-anchoring: did the human peek? (No)
     )
     store.append_ledger(entry)
     return entry

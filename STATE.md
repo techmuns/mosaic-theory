@@ -3192,6 +3192,128 @@ two-name analysis (mid/small-caps, opposite directions) mapped against this inve
   the bar). Thesis-break (all three WATCHLIST names): FMCSA non-domiciled-CDL rule stayed/reversed, or ACT
   driver availability returns to surplus. Gated on the analyst's dossier build; cites the theme-#3 freeze
   (`feat/theme3-freeze`) + `data/research/theme3_truckload_triage_2026-07-14.md`.
+**OPERATING-DRIVERS MECHANISM TIER (PR-B, Tiers A + Tier B code) — BUILT + VERIFIED, LOCAL (branch
+feat/operating-drivers, 2026-07-13; NOT yet PR'd — user tests locally first).** The MOSL
+"90-second handover" gap, closed with anchored extraction: typed cited `operating_drivers` rows on
+the mechanical layer + a Mechanism block on the Brief (between The case and Financial snapshot).
+Assemble-and-cite only; POSES, never forecasts; `Synthesis` six-field no-conclusion pin untouched.
+- **Schema:** `OperatingDriver{kind, metric, period, value (verbatim), value_num/unit (anchored
+  only), verbatim, source_ref (machine-set), tier}` + `OperatingDriversExtract` +
+  `MechanicalLayer.operating_drivers` (default None → back-compat; committed dossiers round-trip).
+- **A2 (10-Q MD&A attribution, `filing_sections.results_attribution`)** — the canonical
+  "<subj> increased/decreased $X, or Y%, … due to <cause>" shape; value_num direction-SIGNED;
+  verbatim spans into the cause sentence (MVST's "48.9% reduction in sales volume … 535.7→273.9
+  MWh"). **VERIFIED real cached 10-Qs: 5/10 names, 15 rows** (MVST/VRRM/SMPL/BRBR/CNXC). First
+  consumer of MD&A body text (already fetched + disk-cached — zero new I/O).
+- **A3 (CIQ Key Developments, `ciq_sheets.key_development_drivers`)** — the on-disk, classified,
+  previously-UNUSED export; **header-driven** column detection (4-col vs 5-col `…|Company|…`
+  layouts vary); INCLUDE filter (guidance/product/client/expansion/impairment; index/earnings/
+  governance noise dropped). **VERIFIED: 10/10 names, 88 rows** — incl. EPAM (18 rows, a
+  zero-EX-99.1 name the tier rescues). Declared in `requirements.CIQ_MODULES` (optional).
+- **A1 (EX-99.1 pricing + narrow KPI, `release_parse.operating_drivers`)** — DEMOTED per the
+  diagnosis: pricing real (VITL, qualitative — a headline 7% is revenue growth, value_num stays
+  None) with M&A-boilerplate exclusion; KPI requires a governing shipped/added verb, the two
+  observed false-positive shapes pinned OUT (FUBO expense-line, MVST "290Ah cell" spec).
+- **Fail-loud transcript fix (ships regardless):** `unparsed_transcript_flag` — transcripts on file
+  that don't parse (no LibreOffice) now emit a QA flag; the 2026-07-10 silent-None cohort can't
+  recur. Routed to dev/QA (an OPS action), not an analyst caveat.
+- **Render:** md `_brief_mechanism_lines`/`_mechanism_lines` + web `mechanismCard`/`mechanismFull`
+  (parity), grouped by kind, events most-recent-first, endnote-cited (`>Source:` guard green),
+  honest empty line when no rows. **VERIFIED live (preview 8791):** MVST Brief shows attribution +
+  events cited `[B9-B12]`, zero console errors; AORT (None) shows the honest empty card.
+- **Tier B (LLM-fenced transcripts) — BUILT + VERIFIED END-TO-END (live model run, 2026-07-13).**
+  Operator installed LibreOffice → `_find_soffice` finds `/opt/homebrew/bin/soffice`;
+  `transcript_for_synthesis` returns real parsed slices (~24k chars, 2 calls/name). `driver_extract.py`
+  is the covenant pattern + ONE load-bearing UPGRADE — a **code-level validator**: (i) the model's
+  `quote` must appear whitespace-normalized in the slice; (ii) every numeric in `value` must
+  digit-trace (the synthesis tracer's scales + ±2%/0.05 tol) to a number **in the row's OWN QUOTE**
+  — traced against the quote, NOT the 24k slice (a slice-wide universe spuriously traces almost
+  anything — caught in dev: `999` matched `99.97%` slice-wide). **VERIFIED LIVE (claude-opus-4-8):**
+  MVST → 12 rows incl. `sales volume ~274 MWh (Q1'26) vs ~536 MWh prior` (the exact figure the PR#41
+  incident predicted), `Phase 3.2 up to 2 GWh capacity add`, `US rev +173%`; VITL → 12 rows incl. a
+  textbook pricing mechanism `price gap closed 35%→25% at a top-10 customer → volume +18% in 2 weeks`,
+  `new-household share 55%→50%`, `TDP 149.8 vs 115.8 yoy`. Every row cited to a real call with a
+  verbatim quote; the row cap FLAGGED the excess (not silently dropped); ZERO fabrications observed.
+  The FakeLlm unit pins (keep/drop/cap/LLM-error) guard the validator deterministically in CI. Fence
+  revised (scope-exact): a separate pre-synthesis validated phase reads transcript numbers; the
+  synthesis fence still says "derive NO numbers from this text — cite the `operating_drivers` facts".
+  `requirements.py` transcript `used_for` updated; `required` stays False.
+- **Suite:** ruff + `mypy --strict` (94) + full `pytest -m "not network"` green. Pins: A1/A2 on
+  real public-domain EX-99.1/10-Q excerpts + negatives; A3 on a SYNTHETIC KD fixture; Tier-B
+  validator on a SYNTHETIC slice via FakeLlm (keep/drop/cap/LLM-error — real CIQ transcript text
+  never committed, licensing); fail-loud + render e2e (endnote-cited via real render_markdown).
+- **Incident→invariant (shipped Y):** silent transcript-None → `unparsed_transcript_flag` + pin [Y];
+  undeclared CIQ kind consumed → `CIQ_MODULES` coverage guard caught it, now declared [Y]; the
+  "operating"⊃"rating" substring false-positive in the no-conclusion guard → matcher tightened to
+  snake_case word boundaries [Y]; digit-trace-against-slice too permissive → trace against the
+  row's own quote [Y]; render endnote-only → `>Source:`-scan guard [Y, pre-existing].
+- **CURATION + SYNTHESIS-USE (A+B, 2026-07-13) — operator asked "what's the use of a raw list if
+  synthesis doesn't use it".** BOTH shipped: **(A)** the Mechanism line is now mechanism-first and
+  concise — ATTRIBUTION renders `metric ±% — <cause clause>` (the causal WHY, period-phrase filler
+  stripped) instead of the raw truncated MD&A sentence (which was cutting off the cause), biggest
+  move first; LEADING_INDICATOR drops the redundant unit/hedge (`sales volume: 274 MWh`, was
+  `sales volume (megawatt hours): approximately 274 megawatt hours`); md+web parity. **(B)** the
+  synthesis prompt now surfaces a SALIENT operating-drivers digest (term→value→source_ref) + a
+  MECHANISM system rule ("ground any operating bull/bear point in the specific driver, copy its
+  source_ref; the decisive question names the load-bearing driver"). **VERIFIED LIVE (MVST):** the
+  fresh synthesis grounds its bear case in the mechanism — "Revenue collapsed... down 48.0%...
+  driven mechanically by a 48.9% sales-volume reduction" CITING the attribution driver's
+  source_ref; the decisive question now reads "reverse the Q1 volume collapse". So the drivers now
+  BOTH read cleanly for the human AND feed the machine's reasoning. Pins: curated line format
+  (deterministic anchors) + the digest/system-rule (prompt-construction, not an LLM-output string).
+- **DIRECTIONAL RESTRUCTURE (2026-07-13) — operator: "not useful, no direction, points
+  irrelevant".** After a diagnosis + two clarifying questions, the Mechanism block was rebuilt from
+  a flat kind-bucketed list into a **directional "what's changing" strip**: two groups,
+  **Deteriorating / Improving**, biggest signed move first. Direction = the machine reading the
+  SIGN of a stated change (`_driver_direction`) — top-line attribution by value_num (cost/expense
+  EXCLUDED, never a misleading "cost-down = good"), events by type (guidance raised/lowered,
+  impairment, client/product; showcase/exhibition/marketing-PR dropped), verb-based for the rest.
+  A row with NO derivable sign is DROPPED — which strips exactly the noise the operator flagged:
+  bare levels, patents, TAM, lab specs, foreign-regional trivia. This is sign-reading, NOT a
+  verdict (stops well short of BUY/AVOID). md+web parity; near-dup plural collapse ("2 GWh
+  hour(s)"). VERIFIED (MVST/VITL/EPAM): MVST → Deteriorating: revenue −48% (volume collapse),
+  impairment · Improving: Iveco win, +2 GWh capacity, US rev +173%. Pins: `_driver_direction` unit
+  (sign/exclude/event/off-thesis/verb) + directional grouping e2e. **PREVIEW CACHING FIX:** the
+  stock `http.server` sends no cache headers → the browser hard-cached old ES modules; a
+  no-cache dev server (`scratchpad/nocache_server.py`, port 8899) serves fresh — use that URL.
+- **STANDALONE BLOCK REMOVED — the drivers FEED SYNTHESIS, they are not a rendered surface
+  (operator decision, 2026-07-13, after 4 render iterations).** The honest diagnosis: a
+  mechanically-extracted fact list can never render the *directional call* the reader wants — that
+  call IS the verdict, which the constitution reserves for the human — so the block was raw
+  material in every format (flat list → curated → directional strip) and read as clutter. The one
+  place the drivers demonstrably earned their keep is **feeding synthesis** (the bull/bear grounds
+  in them and cites the −48%-volume mechanism — proven). So the standalone Mechanism block is
+  REMOVED from the Brief AND the Analysis tier (md + web + CSS; ~370 lines of driver-render code
+  deleted). KEPT: the extraction (A1/A2/A3 + Tier-B), the schema field (machine-complete in
+  `dossier.json` for audit), the assembly wiring, and **B** (`_operating_drivers_digest` + the
+  MECHANISM system rule + the fence). A regression guard pins that no `## Mechanism` /
+  `## Operating drivers (mechanism)` block renders while `operating_drivers` still rides in the
+  mech. Suite green. LESSON: the machine assembles+cites+feeds-reasoning; it does not render a
+  standalone "read" — that pretends to a conclusion it isn't allowed to make.
+- **NEXT (operator):** (1) test locally, then I open the PR; (2) standing artifact pass
+  re-assembles the cohort via
+  `vinci dossier` so the COMMITTED dossiers carry real driver rows (both tiers) — the injected
+  preview jsons are restored to None after review.
+
+**BRIEF (v2) — `planning/OPERATING_DRIVERS_BUILD_BRIEF.md` (the spec the build followed).** Genesis: the
+MOSL Mahanagar Gas audit (full record rides with #116's STATE.md entry). v2 re-grounded on a
+PRE-SIGN-OFF DATA DIAGNOSIS over the actual substrate (SEC cache · CIQ store · committed dossiers);
+v1's Tier-B coverage claim was WRONG and is corrected: `management_commentary: present` is a
+POINTER (files on disk), NOT parse success — **LibreOffice is not installed on this machine, so
+`transcript_for_synthesis` silently returns None for 10/10 names** (the 2026-07-10 cohort assembled
+with zero transcript text and no flag — a fail-loud violation; the fix ships regardless of PR-B).
+Diagnosed yields: 10-Q MD&A attribution CONFIRMED in cached real text (CNXC/MVST/SMPL — rescues 2
+of the 3 no-release names) → A2 promoted; EX-99.1 pricing real for VITL but AORT's hits are M&A
+boilerplate ("purchase price adjustments" — new negative-pin shape) and KPI yield is thin/noisy
+(expense-line + product-spec false-positive shapes) → A1 demoted; **CIQ Key Developments found on
+disk 10/10, classified (`key_developments`, ciq.py:169), consumed by NOTHING, striprtf-parseable
+(`Date|Type|Headline` + Situation rows, guidance/customer categories)** → NEW anchored A3. Tier B
+(LLM-fenced transcripts, covenant pattern + a code-level verbatim/digit-trace validator the
+covenant template lacks) is **GATED: operator installs LibreOffice + a shown parsed slice, else
+deferred**. Materiality = cross-layer JOIN, never a product; synthesis bridge prompt-level only.
+OPERATOR ACTIONS: (1) LibreOffice install (Tier-B unlock); (2) optional fuller-category Key
+Developments re-pull; (3) optional per-name CIQ operating-metrics export at depth. **No code until
+sign-off.**
 - **OPERATOR NOTE (worktrees):** canonical main lives in the `-s2`/`-main` worktrees; the primary dir
   tracks unmerged `feat/own-history-line` — run audits and builds from a main worktree.
 - **Sweep cadence: MANUAL — operator decision 2026-07-13 (NO cron).** The Component-A co-movement sweep
@@ -3267,6 +3389,126 @@ valuation orientation (parser tests are on the derivation, not the render → sa
 forward-window cap. NOTE FOR THE RECORD: the "+N in JSON" is a DELIBERATE near-term signal cap, NOT a
 bug — FY29+ are thin, long-dated consensus (often 1 analyst), kept machine-complete in JSON, mirroring
 the financial-summary capping its forward columns at FY27E. Do not "fix" it as a truncation defect.
+
+**QUEUED (operator-approved 2026-07-13) — mechanism-coverage build brief (PR-B, the "90-second
+handover").** Genesis: audit of the MOSL Mahanagar Gas note (11 Jun 2026 — the Brief's original
+template) against our Brief. Scored: MOSL p1–2 structure 8.5 / reliability 4.5 (causal mechanism +
+operational leading indicators, but verdict-first, no bear case, unsourced management-flow numbers,
+TP arithmetic = 100% re-rating assumption); our Brief structure 7.5 / reliability 9 (source-bound,
+fail-honest, but case points ATOMIZED — no mechanism). The one gap with teeth: forward operating
+MECHANISM facts (leading indicator + base rate · pricing actions taken vs headwind · pass-through
+structure · driver-materiality sizing). NEXT: draft the BRIEF-CONTRACT brief — `operating_drivers`
+typed cited facts; EX-99.1 anchored tier (precedent: `_enrich_drawdown_drivers`) + transcript
+LLM-fenced tier via the covenant_extract pattern (verbatim-validated; REVISES the "transcripts:
+derive NO numbers" fence for a dedicated extraction phase only); driver × segment-share materiality
+(UNKNOWN renders as UNKNOWN); a POSED (never forecast) per-case mechanism slot; Brief "Mechanism"
+block. Honest scope: US KPI disclosure varies → UNKNOWN-heavy names expected; competitive-slack not
+generically automatable. Brief first, human sign-off, then code.
+
+**VERDICT-FIRST BRIEF — the machine-proposal pivot — BUILT + VERIFIED, PR OPEN
+(#116, feat/verdict-first-brief, 2026-07-13).** CONSTITUTION CHANGE, decided by the operator with the
+counter-case fully presented (automation-bias risk, no-tuning freeze, track-record
+recharacterization) — a recorded pivot, not drift; CLAUDE.md amended in the same PR. The Brief now
+LEADS with a machine-proposed directional verdict; the HUMAN's confirm/override is the verdict of
+record.
+- **Design — deterministic derivation, NOT a new LLM output.** `vinci/dossier/verdict.py`:
+  face-validity-FROZEN 3-row mapping over the committed lean label — strongly-bearish→AVOID_TERMINAL
+  · strongly-bullish→BUY · mixed→NO proposal (a two-sided read is the human's call, never a
+  coin-flip); empty/unparseable/unrecognized → no proposal, fail-honest. The LLM STILL emits no
+  verdict field — `Synthesis` unchanged, the no-conclusion schema pin stands, and the dossier
+  package still cannot import the ledger writer (AST guard: `vinci.schemas.ledger` ≠ `vinci.ledger`).
+- **ONE shared lean parser** (`verdict.split_lean`) now feeds the synthesis FALSE-BALANCE QA, the
+  md machine-read, and the proposal — retiring synthesis.py's em-dash-only `eb.split("—")[0]`
+  (the two-divergent-parsers bug class; dossier.js mirrors it as `deriveProposal`).
+- **Ledger seal:** entries gain `{machine_proposal, machine_lean, proposal_assembled_at,
+  disposition confirmed/overridden/no_proposal}`, stamped ONCE at log time; the CLI reads the
+  COMMITTED `dossier.json` (never recomputed — as-of discipline; missing artifact → no-proposal
+  fail-honest print; corrupt artifact → LedgerError, loud). Schema coherence validator REJECTS a
+  disposition contradicting its (proposal, verdict) pair. Legacy payloads load all-None — a
+  readable "pre-pivot" state.
+- **Scoring — three curves from entry #1:** `ScoreReport` gains the machine shadow curve (machine
+  BUY−AVOID spread, honest-None until both legs), disposition counts, and the RAW override subset
+  (ticker · both calls · forward outcome). Human-final spread stays PRIMARY.
+- **VERIFIED (real runs, committed artifacts):** MVST (lean `strongly-bearish`) renders
+  `**Machine proposal:** AVOID — derived from the lean above` (the row names its DERIVATION, never
+  re-quoting the lean's rationale — the read line directly above already carries it; operator
+  caught the initial reason-echo as a #109-class dup, fixed same-day); AORT (lean `mixed`) renders
+  `**Machine proposal:** none — evidence two-sided (mixed) — the human's call`; CLI-sealed a
+  paper verdict from the REAL committed MVST artifact into a SCRATCH store — human BUY against
+  machine AVOID_TERMINAL → `disposition: "overridden"`, `proposal_assembled_at:
+  2026-07-10T07:06:48Z` round-tripped. ruff + mypy --strict (94) + full offline pytest green.
+- **Tests:** derivation unit (3 rows + label normalization + 5 no-proposal negatives, incl. "a
+  directional REASON never flips a mixed label"); FROZEN-fixture value pins (MVST/AORT leans as-of
+  2026-07-13 as literals — ticker→verdict value pins live there, never on living artifacts);
+  living-artifact e2e = phrasing-independent invariants only (rendered line == derivation of the
+  same committed lean, mapping invariant, confirm/override slot present, pre-pivot slot gone);
+  web-mirror static pins; ledger disposition positive+negative pins + legacy-load pin; scoring
+  shadow-curve pins + store→harness→report carry-through.
+- **ACCEPTED RISK (consciously, operator decision) + PRE-REGISTERED FALSIFIER:** a machine proposal
+  ANCHORS the human — the fund's stated edge is the human discriminator, and a confirm-workflow can
+  degrade it invisibly. Falsifier: if the override rate collapses toward ~0 OR the human-final
+  spread tracks the machine spread within noise over the forward window → the anchoring concern is
+  CONFIRMED → revisit verdict placement. The disposition lane makes this measurable from the first
+  entry.
+- **Incident→invariant:** LLM-free-verdict risk → Synthesis no-conclusion pin + AST
+  no-ledger-import guard [shipped, pre-existing, re-verified] · incoherent disposition → schema
+  coherence validator + negative pins [shipped] · proposal recomputed at log time → CLI seals from
+  the committed artifact only [shipped; the "is it really the committed artifact" provenance has no
+  machine check — accepted] · mapping outcome-tuning → no machine check possible (a human-review
+  concern, same class as ranker weights) — accepted, guarded by CLAUDE.md language.
+- **Blast-radius note:** committed `dossier.md` artifacts are PRE-pivot until the standing artifact
+  pass re-renders them (tests render from JSON in-memory, so the suite is green either way).
+- **ANTI-ANCHORING SURFACING + SEAL-ONCE DETERMINISM (2026-07-13, same-day revision of the pivot;
+  feat/verdict-first-brief, merged current with main).** The pivot's own ACCEPTED-RISK falsifier —
+  a SHOWN proposal anchors the human — is now STRUCTURALLY mitigated, not merely measured: **the
+  brief HIDES the proposed verdict until the human logs theirs.**
+  - **(surfacing)** `render_markdown(show_proposal=False)` is the default — the brief shows the
+    machine READ (the evidence lean = assembly) but a SEALED-NOTE where the proposal was; the derived
+    verdict is revealed only AFTER the human's verdict is logged (the ledger CLI prints it) or on an
+    explicit `dossier --ticker X --show-proposal` peek. Web parity: `dossier.js teaserCard` gates the
+    reveal on `!verdict`. Ledger gains `revealed_pre_verdict` (default False = decided blind;
+    `log-verdict --saw-proposal` self-reports a peek → True flags an anchored disposition to
+    down-weight). The machine READ stays — it is the assembled evidence summary, not the verdict
+    (tiers, never the rank).
+  - **(a) determinism lives in the SEAL, not the sample.** Reproducing the proposal via sampling is
+    IMPOSSIBLE on Opus 4.8: `temperature`/`top_p`/`top_k` are REMOVED (400 "temperature is deprecated
+    for this model" — confirmed live + Anthropic API docs), and there is no `seed`. A temp-0 branch
+    was built and DISCARDED (it would 400 every real synthesis). It is also UNNECESSARY — the real
+    requirement is ANTI-HINDSIGHT: the proposal derives from the COMMITTED artifact (assembly-time
+    snapshot) and is SEALED once (append-only, `LedgerEntry(frozen=True)`), never re-derived after
+    prices move. **k=1 seal-once is the design;** proposal noise is accepted and averages out across
+    the ledger.
+  - **(b) majority-of-k REJECTED.** A modal-lean vote over K synthesis runs would de-noise the
+    proposal but costs a permanent ~5× per name for ~0 decision value: the proposal is HIDDEN until
+    the human's verdict, so per-name split precision helps NO decision, and the ledger averages the
+    noise across names.
+  - **(c) driver-effect evidence (LOGGED, not re-run — stochastic, do not re-derive):** feeding
+    operating drivers into synthesis moves the lean on operating-thesis names. VITL WITHOUT drivers
+    ≈ 67% strongly-bearish / 33% mixed (proposal AVOID vs defer); WITH ≈ 8% / 92% mixed (defer).
+    VRRM / MVST / EPAM: no material shift. The drivers appropriately escalate a de-rated name with a
+    real cited counter-thesis from a confident AVOID to defer-to-human. (n≈12 draws/condition,
+    temp≈1 — this is the record, not a reproducible number.)
+  - **(d) PRINCIPLE:** machine proposals are MEASURED against the human, never SHOWN before the human
+    decides — the same discipline as the theme edge's **tiers-never-ranks**. The disposition
+    (confirm/override) is the disagreement ledger the pivot exists to produce; anchoring the human
+    destroys that one measurement.
+  - **(e) Option-B crude-rule DEMOTED to a future CONTROL lane (design-only, NOT built).** A proposal
+    derived from deterministic committed signals (going-concern, drawdown, leverage-vs-peers,
+    consensus-cut direction) was considered as the determinism fix; rejected as the PRIMARY proposal
+    (cruder than the LLM's holistic lean) but recorded as a naive-baseline lane — a future shadow
+    ledger reads human vs LLM-proposal vs crude-rule, making the LLM proposal's lift over a dumb rule
+    measurable. Build when enough sealed proposals accumulate.
+  - **(f) DUAL-LANE with/without-drivers shadow spread (design-only, NOT built).** Two proposal lanes
+    — with-drivers vs without-drivers — sealed at assembly and tracked against the human's actual
+    verdicts; the forward BUY−AVOID spread difference is the ONLY measure of whether driver-grounding
+    improves the machine's directional skill. Meaningful only ACROSS the ledger (not per-name) and
+    only post-seal-once. Trigger: enough sealed proposals accumulate to compare.
+  - **Incident→invariant:** proposal anchors the human [the pivot's accepted risk] → brief hides the
+    proposal until the human logs + `revealed_pre_verdict` stamp [shipped] · Opus-4.8 non-reproducible
+    proposal → determinism relocated to the append-only seal (anti-hindsight); reproducibility
+    consciously NOT required [shipped + recorded]. VERIFIED: ruff + mypy --strict (94) + full offline
+    pytest green; the MVST brief hides the proposal by default (`sealed at assembly`) and reveals
+    `AVOID` only under `--show-proposal`.
 
 **OWN-HISTORY EXHIBIT → shared EXHIBIT frame — DONE (feat/own-history-align-frame, PR OPEN, 2026-07-13).**
 After #108 + #110 merged, aligned the own-history exhibit ("Multiple vs its own trailing range") to the

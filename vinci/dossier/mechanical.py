@@ -38,6 +38,8 @@ from vinci.dossier.schemas import (
     ImpliedValuation,
     LeverageSurvival,
     MechanicalLayer,
+    OperatingDriver,
+    OperatingDriversExtract,
     PeerComps,
     PerfPoint,
     PrimarySource,
@@ -1774,17 +1776,23 @@ def _release_revenue_guide(
 def _primary_source(
     record: DataRecord, edgar: EdgarClient, http: CachedHttp,
     bundle: CiqBundle, reference_date: date, mech: MechanicalLayer,
-) -> tuple[PrimarySource, float]:
+) -> tuple[PrimarySource, float, OperatingDriversExtract]:
     """(RC-1 C) Fetch the primary-source filings (recent 8-K EX-99.1 releases + the latest 10-Q),
     parse them, and run the four cross-source derivations over them + the CIQ/EDGAR mechanical
     layer. RESILIENT: any fetch/parse miss becomes an honest UNKNOWN line + a QA flag — the assembly
-    NEVER aborts. Returns (PrimarySource, fetch-latency seconds) so the caller reports the delta."""
+    NEVER aborts. Also assembles the (PR-B) operating-driver rows over the SAME already-fetched text
+    (A1 releases + A2 10-Q MD&A) plus CIQ Key Developments (A3) — zero extra I/O. Returns
+    (PrimarySource, fetch-latency seconds, OperatingDriversExtract)."""
     t0 = time.perf_counter()
     cik = record.identity.cik
     qa: list[str] = []
     releases: list[ReleaseExtract] = []
     filing: FilingSectionExtract | None = None
     filing_as_of: date | None = None  # the parsed 10-Q's period end — the maturity-wall 'as of'
+    # (PR-B) operating-driver rows accumulate over the same fetched text; a per-source miss flags.
+    driver_rows: list[OperatingDriver] = []
+    driver_qa: list[str] = []
+    saw_release = saw_10q = False
     # (1) recent 8-K EX-99.1 earnings/event releases (one failing exhibit never drops the rest) -
     if cik:
         try:
@@ -1794,8 +1802,10 @@ def _primary_source(
                 try:
                     for url in release_parse.exhibit_991_urls(http, cik, f.accession):
                         txt = normalize_text(html_to_text(http.get_text(url, ttl_seconds=_PS_TTL)))
-                        releases.append(release_parse.parse_release(
-                            txt, source_ref=f"8-K {f.accession} EX-99.1"))
+                        src = f"8-K {f.accession} EX-99.1"
+                        releases.append(release_parse.parse_release(txt, source_ref=src))
+                        saw_release = True
+                        driver_rows += release_parse.operating_drivers(txt, source_ref=src)  # A1
                 except Exception as exc:
                     qa.append(f"primary-source: EX-99.1 fetch/parse failed for 8-K {f.accession} "
                               f"({type(exc).__name__})")
@@ -1808,11 +1818,22 @@ def _primary_source(
             if qs and qs[0].primary_doc:
                 url = filing_sections.filing_url(cik, qs[0].accession, qs[0].primary_doc)
                 txt = normalize_text(html_to_text(http.get_text(url, ttl_seconds=_PS_TTL)))
-                filing = filing_sections.parse_filing_sections(
-                    txt, source_ref=f"10-Q {qs[0].accession}")
+                src = f"10-Q {qs[0].accession}"
+                filing = filing_sections.parse_filing_sections(txt, source_ref=src)
                 filing_as_of = qs[0].report_date  # the maturity-wall 'as of' — panel window base
+                saw_10q = True
+                driver_rows += filing_sections.results_attribution(txt, source_ref=src)  # A2
         except Exception as exc:
             qa.append(f"primary-source: latest 10-Q fetch/parse failed ({type(exc).__name__})")
+    driver_rows += ciq_sheets.key_development_drivers(bundle)  # A3 (CIQ Key Developments)
+    # per-source honest-miss flags (a fetched source that yielded no driver row) — never a fake row
+    if saw_release and not any(r.source_ref.startswith("8-K") for r in driver_rows):
+        driver_qa.append("operating-drivers: no anchored pattern matched — EX-99.1 pricing/KPI")
+    if saw_10q and not any(r.source_ref.startswith("10-Q") for r in driver_rows):
+        driver_qa.append("operating-drivers: no anchored pattern matched — 10-Q MD&A attribution")
+    if not driver_rows:
+        driver_qa.append("operating-drivers: no rows extracted (releases/10-Q/KD all missed)")
+    op_drivers = OperatingDriversExtract(rows=driver_rows, qa_flags=driver_qa)
     latency = time.perf_counter() - t0
     facts = _companyfacts_or_none(edgar, cik)
     # (3) derivations over structured inputs (never re-parsing a display string) -----------------
@@ -1872,7 +1893,7 @@ def _primary_source(
         guide_verification=Sourced.present(
             guide, source_ref="CIQ revenue guide vs release actual/outlook"),
         qa_flags=qa)
-    return ps, latency
+    return ps, latency, op_drivers
 
 
 def _stock_info(
@@ -2002,10 +2023,13 @@ def assemble_mechanical(
     # (RC-1 C) primary-source layer — fetch 8-K EX-99.1 releases + the latest 10-Q, parse, and run
     # the four cross-source derivations over them + this mechanical layer. Resilient: a fetch/parse
     # miss becomes an UNKNOWN line + QA flag, never an abort. Attached via model_copy (frozen).
-    primary, ps_latency = _primary_source(record, edgar, http, bundle, reference_date, mech)
-    mech = mech.model_copy(update={"primary_source": primary})
+    primary, ps_latency, op_drivers = _primary_source(
+        record, edgar, http, bundle, reference_date, mech)
+    mech = mech.model_copy(update={
+        "primary_source": primary, "operating_drivers": op_drivers})  # (PR-B) mechanism tier
     mech = _enrich_drawdown_drivers(mech, primary)  # (B1) gap-downs → parsed EX-99.1 drivers
     flags: list[str] = list(primary.qa_flags)
+    flags += op_drivers.qa_flags  # (PR-B) operating-driver per-source honest-miss flags → QA
     flags.append(f"primary-source: {len(primary.releases)} EX-99.1 release(s) + "
                  f"{'1' if primary.filing is not None else '0'} 10-Q parsed "
                  f"(+{ps_latency:.1f}s fetch)")

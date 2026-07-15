@@ -21,9 +21,9 @@ const GATE_DEF = "the BUY−AVOID spread that must prove positive before capital
 const SHARED = [
   { route: "overview", label: "Overview", state: "home" },
   { route: "dossier", label: "Dossier", state: "live",
-    does: "Assembled facts · no verdict. A source-bound mechanical layer plus a fenced bull/bear framing — the framing, not the answer." },
+    does: "Assembled facts + a derived machine proposal. A source-bound mechanical layer, a fenced bull/bear framing, and a deterministic proposal over its lean — the human's confirm/override is the verdict of record." },
   { route: "decision-log", label: "Decision log", state: "live",
-    does: "The immutable, append-only ledger of logged verdicts — each a frozen leg of the BUY−AVOID spread. Displayed here; logged only via the CLI." },
+    does: "The immutable, append-only ledger of logged verdicts — each a frozen leg of the BUY−AVOID spread, sealed beside the machine's proposal (confirm / override / no-proposal tracked). Displayed here; logged only via the CLI." },
 ];
 
 // --- EDGE REGISTRY: adding an edge / a stage is a DATA change here ------------

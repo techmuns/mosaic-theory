@@ -27,11 +27,13 @@ from vinci.dossier.ciq import (
 )
 from vinci.dossier.schemas import (
     CapitalInstrument,
+    DriverKind,
     FinRow,
     FinTable,
     GuidanceRow,
     ImpliedRow,
     ImpliedValuation,
+    OperatingDriver,
     OwnHistoryBand,
     PeerComps,
     PeerRow,
@@ -1836,6 +1838,92 @@ def transcript_for_synthesis(bundle: CiqBundle) -> str | None:
         if prose.strip():
             slices.append(f"--- {wb.path.name} ---\n{prose}")
     return "\n\n".join(slices) if slices else None
+
+
+# --- (PR-B A3) CIQ Key Developments — dated, typed operating events ------------------------------
+# The KD export (real RTF; striprtf — no LibreOffice) is a table 'Date | Type | Headline | Other
+# Parties' + a 'Situation:' detail line per row. Only OPERATING-mechanism Types are kept — an
+# INCLUDE list (the long tail is index-constituent / earnings-calendar / governance noise). Set by
+# face-validity; extend on observed misses. NOT a capital-markets or governance event.
+_KD_KEEP = re.compile(
+    r"guidance|forecast|product|client\s+announcement|business\s+expansion|capacity|"
+    r"impairment|write[\s-]?off", re.I)
+_KD_DATE = re.compile(r"^[A-Z][a-z]{2}-\d{2}-\d{4}$")
+
+
+def _kd_columns(lines: list[str]) -> tuple[int, int] | None:
+    """The (Type, Headline) column indices from the KD table header — the layout VARIES: some
+    exports carry a 'Company' column ('Date|Company|Type|Headline|…'), some do not
+    ('Date|Type|Headline|…'). Read the header, never assume fixed positions. None when absent."""
+    for ln in lines:
+        cells = [c.strip().lower() for c in ln.split("|")]
+        if "date" in cells and "type" in cells and "headline" in cells:
+            return cells.index("type"), cells.index("headline")
+    return None
+
+
+def key_development_drivers(bundle: CiqBundle) -> list[OperatingDriver]:
+    """(PR-B A3) Dated, typed EVENT rows from the CIQ Key Developments export — guidance changes,
+    product/client announcements, expansions, impairments (an INCLUDE filter; index/earnings/
+    governance noise is dropped). Each row is a derived fact ``{Type, date, Headline, Situation}``,
+    source-bound to the export; the raw RTF is never committed. Empty when the export is absent,
+    unparseable, headerless, or carries no operating-mechanism row (collector flags an all-miss)."""
+    wb = bundle.workbook("key_developments")
+    if wb is None:
+        return []
+    try:
+        text = read_text(wb.path, wb.fmt)
+    except CiqParseError:
+        return []  # unparseable KD export → honest empty; the collector's per-source flag fires
+    lines = [ln.strip() for ln in text.splitlines() if ln.strip()]
+    cols = _kd_columns(lines)
+    if cols is None:
+        return []  # no recognizable header → honest empty (never guess column positions)
+    type_i, head_i = cols
+    out: list[OperatingDriver] = []
+    seen: set[str] = set()
+    for i, ln in enumerate(lines):
+        cells = [c.strip() for c in ln.split("|")]
+        if len(cells) <= max(type_i, head_i) or not _KD_DATE.match(cells[0]):
+            continue
+        date_s, kd_type, headline = cells[0], cells[type_i], cells[head_i]
+        if not kd_type or _KD_KEEP.search(kd_type) is None:
+            continue
+        # the 'Situation:' detail is the next non-row line, if present
+        situation = ""
+        for nxt in lines[i + 1:i + 3]:
+            if nxt.lower().startswith("situation:"):
+                situation = nxt
+                break
+        key = f"{date_s}|{headline[:60]}"
+        if not headline or key in seen:
+            continue
+        seen.add(key)
+        out.append(OperatingDriver(
+            kind=DriverKind.EVENT, metric=kd_type, period=date_s,
+            value=" ".join(headline.split())[:200], value_num=None, unit=None,
+            verbatim=" ".join((situation or headline).split())[:300],
+            source_ref=f"CIQ Key Developments: {wb.path.name} · {date_s}", tier="anchored",
+        ))
+    return out
+
+
+_TRANSCRIPTS_UNPARSED = "transcripts on file but unparseable"
+
+
+def unparsed_transcript_flag(bundle: CiqBundle, transcript_slice: str | None) -> str | None:
+    """Fail-loud (PR-B §3-now): transcripts are ON FILE but NONE parsed (the OLE-disguised RTFs need
+    LibreOffice; ``transcript_for_synthesis`` swallows the per-workbook ``CiqParseError`` → a silent
+    None). Given the already-computed slice, return a QA flag so the missing call context is never
+    silently swallowed again — the 2026-07-10 cohort assembled blind to every earnings call with no
+    trace. None when no transcript is on file (absence is not failure) or the slice parsed.
+
+    Takes the slice the caller already computed (zero re-parse). The flag leads with a token routed
+    to the QA channel (a dev/ops action — install LibreOffice — not an analyst decision caveat)."""
+    if transcript_slice is not None or not bundle.all_workbooks("transcript"):
+        return None
+    return (f"{_TRANSCRIPTS_UNPARSED} (LibreOffice missing?) — synthesis received no earnings-call "
+            f"text for {bundle.ticker}")
 
 
 def management_commentary(bundle: CiqBundle) -> Sourced[str]:

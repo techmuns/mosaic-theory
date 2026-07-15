@@ -12,12 +12,23 @@ An AI-native, long-biased, US-first concentrated equity fund. The edge is **deep
 a few finalists, fed by an AI funnel that achieves breadth and cross-sectional reasoning a human
 can't.** Everything you build serves that division of labor:
 - **AI does** breadth, parallel assembly, and reasoning across the whole universe/graph.
-- **The human decides** — the verdict on a finalist is never the machine's.
+- **The machine PROPOSES; the human decides** *(2026-07-13 pivot)* — the Brief leads with a
+  machine-proposed verdict derived DETERMINISTICALLY from its committed evidence lean
+  (`vinci/dossier/verdict.py`: a face-validity-frozen 3-row mapping; `mixed` proposes nothing).
+  The **human's confirm/override is the verdict of record**; the ledger seals the proposal +
+  disposition beside it, so the spread decomposes into the machine baseline vs the human delta.
 - The edge is the discriminator's hit-rate, measured by the **BUY−AVOID forward-return spread** —
-  accumulated forward over calendar time. That number is the only thing that proves the fund works.
+  accumulated forward over calendar time (human-final = PRIMARY; the machine-proposal curve and
+  the override subset accumulate beside it). That number is the only thing that proves the fund
+  works.
 
-If a change blurs that line — code starting to make the judgment instead of feeding it — STOP and
-flag it. That incremental blur is the failure mode this whole project is built to avoid.
+The line that must not blur (re-pointed by the pivot): **the LLM never free-writes a verdict**
+(the proposal is plain-code derivation of the lean; `Synthesis` has no verdict field — test-pinned),
+**the proposal mapping is never outcome-tuned**, and **no code path approaches execution**. If a
+change crosses any of these — STOP and flag it. ACCEPTED RISK (recorded in STATE.md with its
+falsifier): a machine proposal ANCHORS the human — if the override rate collapses toward ~0 or the
+human spread tracks the machine spread within noise, the anchoring concern is confirmed → revisit
+verdict placement.
 
 ## Session ritual (every time)
 
@@ -87,9 +98,12 @@ flag it. That incremental blur is the failure mode this whole project is built t
 - **The control says no.** When a result depends on adjustment (sector/benchmark/factor), trust the
   de-confounded/control number over the persuasive raw one. Don't round noise up to signal. A control
   that should read ~0 but reads ±X tells you X is the noise floor.
-- **The machine assembles and cites; it does not conclude.** Anything that surfaces/ranks/assembles
-  ORDERS or INFORMS — it never renders the BUY/AVOID verdict. The human logs that by hand. An LLM
-  verdict on a single high-stakes name is confident, fluent noise.
+- **The machine assembles, cites, and PROPOSES — it never free-concludes** *(2026-07-13 pivot)*.
+  The proposal is a deterministic, face-validity-frozen derivation of the synthesis's committed
+  lean — never an LLM-written verdict (an LLM verdict on a single high-stakes name is confident,
+  fluent noise; `Synthesis` still has no verdict field). `mixed` proposes NOTHING — a two-sided
+  read is the human's call, never a coin-flip. The human logs the verdict of record by hand
+  (confirm/override); the ledger seals the proposal + disposition beside it.
 - **Source-bind everything** — claims (especially in dossiers) point to the primary cell/filing, so the
   human verifies rather than trusts the summary.
 - **Parsers consume structured values, never rendered strings — display formatting is never
