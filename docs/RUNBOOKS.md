@@ -14,8 +14,14 @@
   primary dir may track an unmerged branch — run audits/builds/sweeps from a main worktree.
   **Print `git worktree list` + `pwd` before touching `data/`:** `data/` is PER-WORKTREE — the same
   path holds different contents in each. *(Source: STATE.md §"OPERATOR NOTE (worktrees)" + §DATA-TOPOLOGY.)*
-- **Python:** `.venv/bin/python` (3.12; system python is 3.9, too old). Run modules as
-  `PYTHONPATH=$PWD .venv/bin/python -m vinci.cli …`. *(Source: repo `.venv`; memory "Local Python env".)*
+- **Python / tooling — define `$VENV` first.** Let **`$VENV`** = the project's Python-3.12 venv
+  `bin/` directory (3.12; system python is 3.9, too old). **Its path is environment-specific and,
+  observed on this machine, the venv lives in the PRIMARY checkout (`<primary-checkout>/.venv/bin`),
+  NOT inside the `-s2` / `-main` worktrees you run from — so `./.venv/bin` does NOT exist there.**
+  Locate/activate the venv for your environment, then run modules as
+  `PYTHONPATH=$PWD $VENV/python -m vinci.cli …` and tools as `$VENV/ruff` / `$VENV/mypy` /
+  `$VENV/python -m pytest`. *(Source: `ls` of the worktrees — `.venv` absent in `-s2`/`-main`,
+  present in the primary checkout; memory "Local Python env".)*
 - **Secrets:** `ANTHROPIC_API_KEY`, `POLYGON_API_KEY` live in a git-ignored `.env`, loaded by
   `load_local_env()` in the CLI entrypoint; never printed, never committed. *(Source: CLAUDE.md
   §Security; `vinci/config.py`.)*
@@ -34,7 +40,7 @@ The full current monthly sequence: scan → draft → review → refresh → PR.
 ### (i) Scan — `python -m vinci.cli themes` (zero-LLM)
 
 ```
-PYTHONPATH=$PWD .venv/bin/python -m vinci.cli themes
+PYTHONPATH=$PWD $VENV/python -m vinci.cli themes
 ```
 
 - Co-movement cluster scan over the universe; **no LLM**. Defaults: `--basis r2` (market+sector+size+vol
@@ -52,7 +58,7 @@ PYTHONPATH=$PWD .venv/bin/python -m vinci.cli themes
 ### (ii) Draft — `python -m vinci.cli themes-draft` (LLM, ~1 call per unreviewed cluster)
 
 ```
-PYTHONPATH=$PWD .venv/bin/python -m vinci.cli themes-draft
+PYTHONPATH=$PWD $VENV/python -m vinci.cli themes-draft
 ```
 
 - Drafts an advisory `{draft_name, hypothesis, suggested, reason}` for each **UNREVIEWED** cluster —
@@ -72,7 +78,7 @@ PYTHONPATH=$PWD .venv/bin/python -m vinci.cli themes-draft
 ### (iii) Operator review — `python -m vinci.cli themes-review`
 
 ```
-PYTHONPATH=$PWD .venv/bin/python -m vinci.cli themes-review \
+PYTHONPATH=$PWD $VENV/python -m vinci.cli themes-review \
   --cluster <scan-date>:<cluster_id> \
   --decision keep-for-checks|park|reject \
   --reason "…"                      # --amend to overwrite an existing key; --name to override the label
@@ -98,7 +104,7 @@ PYTHONPATH=$PWD .venv/bin/python -m vinci.cli themes-review \
 Re-run the two build.py emitters (stdlib-only, deploy-safe) from the committed snapshot × reviews:
 
 ```
-PYTHONPATH=$PWD .venv/bin/python -c "import importlib.util as u; \
+PYTHONPATH=$PWD $VENV/python -c "import importlib.util as u; \
  s=u.spec_from_file_location('b','frontend/build.py'); b=u.module_from_spec(s); s.loader.exec_module(b); \
  b.emit_radar_sweep(); b.emit_radar_inbox_log()"
 ```
@@ -229,12 +235,12 @@ truckload-supply-purge** (PR **#124**; STATE.md §"THEME #3 truckload-supply-pur
   file (60/−15); caught and redone as a surgical **+3**. **#124** froze the `themes/*.json` mirror — a
   regenerate would clobber the freeze, hence "ship new content as a separate file, never regenerate.")*
 - **Gate commands (VERBATIM):**
-  - `.venv/bin/ruff check vinci/ tests/ frontend/build.py`
-  - `PYTHONPATH=$PWD .venv/bin/mypy --strict vinci` — **scope is `vinci` (the package).** `tests/` is
+  - `$VENV/ruff check vinci/ tests/ frontend/build.py`
+  - `PYTHONPATH=$PWD $VENV/mypy --strict vinci` — **scope is `vinci` (the package).** `tests/` is
     **NOT** strict-clean (pre-existing errors in other test files); keep only the test files you touch
     strict-clean. *(Source: `pyproject.toml [tool.mypy] strict=true` with no `files`; STATE.md/PR
     entries consistently cite `mypy --strict vinci`.)*
-  - `PYTHONPATH=$PWD .venv/bin/python -m pytest -m "not network"`
+  - `PYTHONPATH=$PWD $VENV/python -m pytest -m "not network"`
   - `node --check <each changed .js>`
 - **ARTIFACT-PASS rule:** after regenerating any committed artifact, **re-run the full offline suite** —
   tests read the committed artifacts, so a re-assembled file can turn a pinned test red. Verifying the
