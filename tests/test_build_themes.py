@@ -175,8 +175,11 @@ def _review(key: str, members: list[str], decision: str = "parked") -> dict[str,
             "by": "analyst", "reason": "x", "members": members}
 
 
-def _cluster(cid: str, members: list[str], rel12: float = 0.0) -> dict[str, Any]:
-    return {"cluster_id": cid, "members": [{"ticker": t} for t in members],
+def _cluster(cid: str, members: list[str], rel12: float = 0.0,
+             sics: list[str] | None = None) -> dict[str, Any]:
+    mem = ([{"ticker": t} for t in members] if sics is None
+           else [{"ticker": t, "sic": s} for t, s in zip(members, sics, strict=True)])
+    return {"cluster_id": cid, "members": mem,
             "admissibility": {"coherence_value": 0.4},
             "strength_signals": {"momentum": {"h12mo": {"value": 0.1}},
                                  "rel_strength_vs_market": {"h12mo": {"value": rel12}},
@@ -256,6 +259,36 @@ def test_radar_inbox_log_non_destructive_without_snapshot(
     _BUILD.emit_radar_inbox_log()
     assert json.loads((radar / "inbox.json").read_text()) == {"sentinel": True}
     assert json.loads((radar / "log.json").read_text()) == {"sentinel": True}
+
+
+def _sic_cluster(sics: list[str]) -> dict[str, Any]:
+    members = [{"ticker": f"X{i}", "sic": s} for i, s in enumerate(sics)]
+    return {"cluster_id": "T0", "members": members}
+
+
+def test_industry_hint_majority() -> None:
+    """A strict majority (3 of 5 share the SIC) → '<name> · N/total'."""
+    h = _BUILD._industry_hint(_sic_cluster(["3674", "3674", "3674", "3825", "3827"]))
+    assert h == "Semiconductors · 3/5"
+
+
+def test_industry_hint_mixed() -> None:
+    """No majority (all distinct) → 'mixed: <top> N · <second> M' (member order breaks the tie)."""
+    h = _BUILD._industry_hint(_sic_cluster(["7370", "6282", "7389"]))
+    assert h == "mixed: Computer services 1 · Investment advice 1"
+
+
+def test_industry_hint_only_on_unreviewed_inbox(
+        tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    """The hint is emitted ONLY for unreviewed (inbox) clusters; a matched group goes to the log
+    with no industry_hint (reviewed rows keep the analyst's name)."""
+    reviews = [_review("2026-06-17:T000", ["A1", "A2"])]  # matches cluster T000
+    clusters = [_cluster("T000", ["A1", "A2"], sics=["3674", "3674"]),  # matched → log (no hint)
+                _cluster("T002", ["P1", "P2"], sics=["7372", "7372"])]  # unreviewed → inbox (hint)
+    inbox, log = _run_inbox_log(tmp_path, monkeypatch, reviews, clusters)
+    assert inbox["inbox"][0]["cluster_id"] == "T002"
+    assert inbox["inbox"][0]["industry_hint"] == "Prepackaged software · 2/2"
+    assert all("industry_hint" not in r for r in log["reviews"])
 
 
 if __name__ == "__main__":

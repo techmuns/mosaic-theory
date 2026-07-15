@@ -2180,6 +2180,15 @@ Each line: *what it does* — *verified how*.
   `mypy --strict vinci` + pytest (598) + `node --check` all JS green. **The standing SCOPE CAP re-applies
   verbatim after this PR:** *"Radar polish is CAPPED after this PR: no further Radar UI work until a first
   BUY, a fired watchlist trigger, or actual LP usage of the site."*
+- **INBOX INDUSTRY HINT — operator-sanctioned one-line cap exception (2026-07-15, chore/inbox-industry-hint;
+  PR open, not merged; DEPLOYS on merge).** build.py `_industry_hint` adds an `industry_hint` per UNREVIEWED
+  inbox cluster — the most common 4-digit member SIC + coverage ("Prepackaged software · 7/7"), or "mixed:
+  <top> N · <second> M" with no majority — via a small static SIC→name map covering only the codes in the
+  current inbox (no repo SIC-name source; nothing fetched). Rendered as a muted second line in the Inbox
+  tab's Group cell; reviewed groups (Log tab) keep the analyst's name, no hint. NO reviews.json change, NO
+  decisions recorded; every data file except `inbox.json` byte-identical; build.py-only emitter + view. The
+  standing SCOPE CAP re-applies verbatim after this PR. ruff + `mypy --strict vinci` + pytest (601) +
+  `node --check` green.
 
 ## 3. FALSIFIED — tested and retired (NOT deferred)
 

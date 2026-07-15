@@ -598,3 +598,4 @@ table.data.vs-table { width: 100%; }
 .rt-judged tr[data-drawer-open], .rt-inbox tr[data-inbox-row], .rt-low { cursor: pointer; }
 .rt-judged tr[data-drawer-open]:hover, .rt-inbox tr[data-inbox-row]:hover, .rt-low:hover { background: var(--surface-2); }
 .rt-judged tr.sel, .rt-inbox tr.ex { background: #eef4ff; }
+.rt-ind { color: var(--ink-3); font-size: 11px; font-weight: 400; margin-top: 1px; }

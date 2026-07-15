@@ -159,7 +159,8 @@ function inboxRow(e, expanded) {
   const isEx = expanded === e.cluster_id;
   const group = e.members.slice(0, 3).join(" ") + (e.members.length > 3 ? ` +${e.members.length - 3}` : "");
   const head = `<tr data-inbox-row="${escapeHtml(e.cluster_id)}" class="${isEx ? "ex" : ""}">
-    <td><b>${escapeHtml(group)}</b></td>
+    <td><b>${escapeHtml(group)}</b>${
+      e.industry_hint ? `<div class="rt-ind">${escapeHtml(e.industry_hint)}</div>` : ""}</td>
     <td class="num">${fmtPct(e.rel12)}</td>
     <td class="num">${fmtNum(e.coherence)}</td>
     <td class="foot">${escapeHtml(e.first_seen)}</td></tr>`;
