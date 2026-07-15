@@ -216,6 +216,11 @@
   }
 }
 
+/* the component transitions (nav/tabs/rows, added in the craft pass) must NOT fire on a theme
+   switch — app.js adds .theme-switching for the one frame the token flip paints, so the whole
+   page changes theme instantly instead of a few elements lagging behind. */
+:root.theme-switching * { transition: none !important; }
+
 * { box-sizing: border-box; }
 
 html, body {

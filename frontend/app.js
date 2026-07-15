@@ -309,10 +309,15 @@ function currentTheme() {
   return matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
 }
 function applyTheme(t) {
-  document.documentElement.setAttribute("data-theme", t);
+  const root = document.documentElement;
+  // suppress the component transitions (nav/tabs/rows) for the one frame the token flip paints —
+  // otherwise those few elements fade while everything else snaps, giving a staggered switch.
+  root.classList.add("theme-switching");
+  root.setAttribute("data-theme", t);
   try { localStorage.setItem("nv-theme", t); } catch (e) { /* private mode */ }
   const btn = document.getElementById("theme-tog");
   if (btn) btn.innerHTML = t === "dark" ? SUN : MOON;
+  requestAnimationFrame(() => requestAnimationFrame(() => root.classList.remove("theme-switching")));
 }
 function wireThemeToggle() {
   const btn = document.getElementById("theme-tog");
