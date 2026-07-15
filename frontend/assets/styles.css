@@ -551,7 +551,7 @@ table.data.vs-table { width: 100%; }
 .brief-read { font-size: 14.5px; line-height: 1.55; color: var(--ink); margin: 2px 0 6px; }
 .brief-lean { font-weight: 700; }
 /* the decisive question as an editorial pull-quote — the one framing the human must resolve */
-.brief-dq { font-size: 15px; color: var(--ink); margin: 6px 0 2px; line-height: 1.55; padding-left: 15px; border-left: 3px solid var(--accent); letter-spacing: -0.003em; }
+.brief-dq { font-size: 15px; color: var(--ink); margin: 6px 0 2px; line-height: 1.55; padding-left: 15px; border-left: 3px solid var(--accent); letter-spacing: -0.01em; }
 .brief-tiles { display: grid; grid-template-columns: repeat(2, minmax(0, 200px)); gap: 8px; margin: 12px 0 2px; }
 .brief-mc { background: var(--surface-2); border-radius: 8px; padding: 6px 11px; min-width: 92px; }
 .brief-mc .l { font-size: 11px; color: var(--ink-3); }
