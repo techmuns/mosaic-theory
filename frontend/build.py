@@ -443,8 +443,33 @@ def _industry_hint(cluster: dict[str, Any]) -> str | None:
     return f"mixed: {_sic_name(top_code)} {top_n} · {_sic_name(sc)} {sn}"
 
 
-def _inbox_entry(cluster: dict[str, Any], first_seen: str) -> dict[str, Any]:
-    """One inbox row for an unreviewed cluster (display-only stats; machine never decides)."""
+def _draft_pairs(out: Path) -> list[tuple[set[str], dict[str, Any]]]:
+    """DRAFTED records from radar/drafts.json as (member-set, record) pairs for a member-overlap
+    join into the inbox. Only status=='drafted' with a name (unassessed-errors carry no draft).
+    Empty when the file is absent (deploy-safe). The draft is ADVISORY — never marks a decision."""
+    path = out / "drafts.json"
+    if not path.exists():
+        return []
+    drafts = json.loads(path.read_text()).get("drafts", [])
+    return [({t for t in d.get("members", []) if t}, d)
+            for d in drafts if d.get("status") == "drafted" and d.get("draft_name")]
+
+
+def _match_draft(cluster_set: set[str],
+                 pairs: list[tuple[set[str], dict[str, Any]]]) -> dict[str, Any] | None:
+    """Best-overlap drafted record for a cluster (≥ _MATCH_MIN of the smaller set), else None.
+    Member-overlap join, not cluster_id (ids are per-run) — mirrors the reviews matcher above."""
+    cand = [(s, d) for s, d in pairs if _overlap(cluster_set, s) >= _MATCH_MIN]
+    if not cand:
+        return None
+    return max(cand, key=lambda sd: _overlap(cluster_set, sd[0]))[1]
+
+
+def _inbox_entry(cluster: dict[str, Any], first_seen: str,
+                 draft: dict[str, Any] | None = None) -> dict[str, Any]:
+    """One inbox row for an unreviewed cluster (display-only stats; machine never decides). When an
+    advisory draft matches, carry its name / read (terse reason) / suggestion — advisory, not a
+    verdict; the fuller hypothesis stays in drafts.json (the machine-complete record)."""
     members = [m["ticker"] for m in cluster.get("members", [])]
     label = " ".join(members[:2]) + (f" +{len(members) - 2}" if len(members) > 2 else "")
     return {
@@ -455,6 +480,9 @@ def _inbox_entry(cluster: dict[str, Any], first_seen: str) -> dict[str, Any]:
         "coherence": _sig(cluster, "admissibility", "coherence_value"),
         "breadth_exp": _sig(cluster, "strength_signals", "breadth_expanding", "value"),
         "crowding": _sig(cluster, "strength_signals", "crowding_overextension", "value"),
+        "draft_name": draft.get("draft_name") if draft else None,
+        "draft_read": draft.get("reason") if draft else None,
+        "draft_suggested": draft.get("suggested") if draft else None,
     }
 
 
@@ -490,9 +518,12 @@ def emit_radar_inbox_log() -> None:
             match = {"status": "gone", "cluster_id": None, "added": [], "dropped": []}
         log_reviews.append({**r, "match": match})
 
-    # INBOX: current clusters matched by NO review (not yet judged)
+    # INBOX: current clusters matched by NO review (not yet judged). An advisory draft (if any) is
+    # joined by member overlap — it informs the row, never marks it reviewed.
+    draft_pairs = _draft_pairs(out)
     inbox = sorted(
-        (_inbox_entry(c, scan_iso) for c in clusters
+        (_inbox_entry(c, scan_iso, _match_draft(cluster_sets[c["cluster_id"]], draft_pairs))
+         for c in clusters
          if not any(_overlap(cluster_sets[c["cluster_id"]], rs) >= _MATCH_MIN
                     for rs in review_sets.values())),
         key=lambda e: e["cluster_id"])

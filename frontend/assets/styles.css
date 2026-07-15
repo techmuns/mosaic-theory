@@ -602,3 +602,9 @@ table.data.vs-table { width: 100%; }
 .rt-judged tr[data-drawer-open]:hover, .rt-inbox tr[data-inbox-row]:hover, .rt-low:hover { background: var(--surface-2); }
 .rt-judged tr.sel, .rt-inbox tr.ex { background: #eef4ff; }
 .rt-ind { color: var(--ink-3); font-size: 11px; font-weight: 400; margin-top: 1px; }
+/* advisory DRAFT (assembled, never a decision) — understated on purpose: muted name + dashed chip */
+.rt-draft { display: flex; align-items: center; gap: 6px; margin-top: 2px; }
+.rt-draft-name { font-size: 12px; font-weight: 500; color: var(--ink-2); }
+.rt-draft-chip { font-size: 9.5px; font-weight: 600; letter-spacing: 0.06em; color: var(--ink-3);
+  border: 1px dashed var(--line); border-radius: 4px; padding: 0 4px; text-transform: uppercase; }
+.rt-draft-read { font-size: 11px; font-weight: 400; font-style: italic; margin-top: 1px; }

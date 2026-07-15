@@ -158,9 +158,16 @@ const INBOX_PER = 15;
 function inboxRow(e, expanded) {
   const isEx = expanded === e.cluster_id;
   const group = e.members.slice(0, 3).join(" ") + (e.members.length > 3 ? ` +${e.members.length - 3}` : "");
+  // advisory draft (assembled, never a decision) — a working name + a muted "suggested — read" line
+  const draftName = e.draft_name
+    ? `<div class="rt-draft"><span class="rt-draft-name">${escapeHtml(e.draft_name)}</span>` +
+      `<span class="rt-draft-chip">DRAFT</span></div>` : "";
+  const draftLine = e.draft_suggested
+    ? `<div class="rt-draft-read foot">draft: ${escapeHtml(e.draft_suggested)}` +
+      `${e.draft_read ? ` — ${escapeHtml(e.draft_read)}` : ""} (advisor)</div>` : "";
   const head = `<tr data-inbox-row="${escapeHtml(e.cluster_id)}" class="${isEx ? "ex" : ""}">
-    <td><b>${escapeHtml(group)}</b>${
-      e.industry_hint ? `<div class="rt-ind">${escapeHtml(e.industry_hint)}</div>` : ""}</td>
+    <td><b>${escapeHtml(group)}</b>${draftName}${
+      e.industry_hint ? `<div class="rt-ind">${escapeHtml(e.industry_hint)}</div>` : ""}${draftLine}</td>
     <td class="num">${fmtPct(e.rel12)}</td>
     <td class="num">${fmtNum(e.coherence)}</td>
     <td class="foot">${escapeHtml(e.first_seen)}</td></tr>`;

@@ -298,5 +298,89 @@ def test_industry_hint_only_on_unreviewed_inbox(
     assert all("industry_hint" not in r for r in log["reviews"])
 
 
+def _draft_rec(cid: str, members: list[str], *, name: str = "Coin proxies",
+               suggested: str = "park", reason: str = "coin-price proxy",
+               status: str = "drafted") -> dict[str, Any]:
+    drafted = status == "drafted"
+    return {"key": f"2026-07-14:{cid}", "cluster_id": cid, "members": members, "status": status,
+            "draft_name": name if drafted else None,
+            "hypothesis": "these track the coin price" if drafted else None,
+            "suggested": suggested if drafted else None,
+            "reason": reason if drafted else None,
+            "error": None if drafted else "LlmError: quota", "model": "m"}
+
+
+def _run_inbox_with_drafts(tmp_path: Path, monkeypatch: pytest.MonkeyPatch,
+                           reviews: list[dict[str, Any]], clusters: list[dict[str, Any]],
+                           drafts: list[dict[str, Any]]) -> dict[str, Any]:
+    ca = tmp_path / "data" / "scan_history" / "component-a"
+    ca.mkdir(parents=True)
+    (ca / "20260714T120000Z__t.jsonl").write_text("\n".join(json.dumps(c) for c in clusters))
+    radar = tmp_path / "frontend" / "radar"
+    radar.mkdir(parents=True)
+    (radar / "reviews.json").write_text(json.dumps({"reviews": reviews}))
+    (radar / "drafts.json").write_text(json.dumps(
+        {"scan_date": "2026-07-14", "source": "20260714T120000Z__t.jsonl", "drafts": drafts}))
+    monkeypatch.setattr(_BUILD, "ROOT", tmp_path)
+    monkeypatch.setattr(_BUILD, "HERE", tmp_path / "frontend")
+    _BUILD.emit_radar_inbox_log()
+    inbox: dict[str, Any] = json.loads((radar / "inbox.json").read_text())
+    return inbox
+
+
+def test_radar_inbox_draft_join(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    """An advisory draft joins onto its unreviewed inbox row by MEMBER overlap (the draft's own
+    cluster_id differs — ids are per-run), carrying draft_name / draft_read (the terse reason) /
+    draft_suggested. The fuller hypothesis is NOT inlined (it stays in drafts.json)."""
+    clusters = [_cluster("T002", ["P1", "P2", "P3"], rel12=0.3)]  # unreviewed → inbox
+    drafts = [_draft_rec("K9", ["P1", "P2", "P3"], name="Coin proxies", suggested="park",
+                         reason="coin-price proxy")]
+    inbox = _run_inbox_with_drafts(tmp_path, monkeypatch, [], clusters, drafts)
+    row = inbox["inbox"][0]
+    assert row["cluster_id"] == "T002"
+    assert row["draft_name"] == "Coin proxies"
+    assert row["draft_suggested"] == "park"
+    assert row["draft_read"] == "coin-price proxy"   # read == the terse advisory reason
+    assert "hypothesis" not in row                    # the 25-word hypothesis is not inlined
+
+
+def test_radar_inbox_draft_absent_or_errored_is_null(
+        tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    """The emitter never fabricates an advisory line: a row with no matching draft, and a row whose
+    only candidate is an unassessed-error draft, both carry null draft fields."""
+    clusters = [_cluster("T001", ["A1", "A2"]), _cluster("T002", ["B1", "B2"])]
+    drafts = [_draft_rec("E", ["B1", "B2"], status="unassessed-error")]  # errored → not joinable
+    inbox = _run_inbox_with_drafts(tmp_path, monkeypatch, [], clusters, drafts)
+    by = {e["cluster_id"]: e for e in inbox["inbox"]}
+    for cid in ("T001", "T002"):
+        assert by[cid]["draft_name"] is None
+        assert by[cid]["draft_read"] is None
+        assert by[cid]["draft_suggested"] is None
+
+
+def test_radar_draft_not_carried_onto_reviewed_log_rows(
+        tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    """A draft is an INBOX affordance only: a cluster matched to a review goes to the log, which
+    carries no draft_* fields, even if a stale draft's members still overlap it."""
+    reviews = [_review("2026-06-17:R0", ["A1", "A2"])]  # matches T000 → log
+    clusters = [_cluster("T000", ["A1", "A2"]),          # reviewed → log
+                _cluster("T002", ["P1", "P2"], rel12=0.2)]  # unreviewed → inbox
+    drafts = [_draft_rec("Kx", ["A1", "A2"], name="stale draft", suggested="park", reason="r")]
+    ca = tmp_path / "data" / "scan_history" / "component-a"
+    ca.mkdir(parents=True)
+    (ca / "20260714T120000Z__t.jsonl").write_text("\n".join(json.dumps(c) for c in clusters))
+    radar = tmp_path / "frontend" / "radar"
+    radar.mkdir(parents=True)
+    (radar / "reviews.json").write_text(json.dumps({"reviews": reviews}))
+    (radar / "drafts.json").write_text(json.dumps(
+        {"scan_date": "2026-07-14", "source": "20260714T120000Z__t.jsonl", "drafts": drafts}))
+    monkeypatch.setattr(_BUILD, "ROOT", tmp_path)
+    monkeypatch.setattr(_BUILD, "HERE", tmp_path / "frontend")
+    _BUILD.emit_radar_inbox_log()
+    log = json.loads((radar / "log.json").read_text())
+    assert [r["key"] for r in log["reviews"]] == ["2026-06-17:R0"]
+    assert all("draft_name" not in r for r in log["reviews"])  # log rows carry no draft affordance
+
+
 if __name__ == "__main__":
     raise SystemExit(pytest.main([__file__, "-q"]))

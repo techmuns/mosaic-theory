@@ -1,0 +1,202 @@
+{
+ "scan_date": "2026-07-14",
+ "source": "20260714T162125Z__119ecbb.jsonl",
+ "drafts": [
+  {
+   "key": "2026-07-14:T004",
+   "cluster_id": "T004",
+   "members": [
+    "CLSK",
+    "APLD",
+    "RIOT",
+    "MARA",
+    "BTBT",
+    "KEEL",
+    "CIFR",
+    "CORZ",
+    "WYFI"
+   ],
+   "status": "drafted",
+   "draft_name": "Crypto-Mining & AI Compute",
+   "hypothesis": "Co-movement may reflect shared exposure to crypto-mining economics and pivots toward AI/HPC datacenter compute demand — a guess, not established.",
+   "suggested": "keep-for-checks",
+   "reason": "Tight sector overlap, strong momentum, low crowding warrant checks.",
+   "error": null,
+   "model": "claude-opus-4-8"
+  },
+  {
+   "key": "2026-07-14:T006",
+   "cluster_id": "T006",
+   "members": [
+    "CVSA",
+    "INOD",
+    "STRA",
+    "PRDO",
+    "AMN",
+    "LOPE",
+    "WEST"
+   ],
+   "status": "drafted",
+   "draft_name": "Education Services Core",
+   "hypothesis": "Cluster may be driven by for-profit education/workforce-training exposure; co-movement possibly reflects shared enrollment or labor-market sensitivity. Several members look off-theme.",
+   "suggested": "keep-for-checks",
+   "reason": "Education plurality plausible but low coherence, mixed sectors warrant verification.",
+   "error": null,
+   "model": "claude-opus-4-8"
+  },
+  {
+   "key": "2026-07-14:T007",
+   "cluster_id": "T007",
+   "members": [
+    "ACIW",
+    "QTWO",
+    "APPN",
+    "ALKT",
+    "PCOR",
+    "NABL",
+    "NCNO"
+   ],
+   "status": "drafted",
+   "draft_name": "B2B Vertical SaaS",
+   "hypothesis": "Possibly co-move as prepackaged-software vendors selling into banks/enterprise; shared driver may be rate/IT-budget sensitivity dragging on subscription-growth sentiment.",
+   "suggested": "keep-for-checks",
+   "reason": "Tight SIC overlap plus strong shared downtrend suggests a real common factor.",
+   "error": null,
+   "model": "claude-opus-4-8"
+  },
+  {
+   "key": "2026-07-14:T010",
+   "cluster_id": "T010",
+   "members": [
+    "FDS",
+    "MORN",
+    "EXLS",
+    "EPAM",
+    "G",
+    "GLOB"
+   ],
+   "status": "drafted",
+   "draft_name": "Data & Digital Services",
+   "hypothesis": "Co-movement may reflect shared exposure to enterprise IT/data-analytics spend cycles; softening demand or AI-substitution fears could be a common headwind — a guess.",
+   "suggested": "keep-for-checks",
+   "reason": "Coherent negative-momentum group with plausible common demand driver; worth checks.",
+   "error": null,
+   "model": "claude-opus-4-8"
+  },
+  {
+   "key": "2026-07-14:T011",
+   "cluster_id": "T011",
+   "members": [
+    "COHU",
+    "FORM",
+    "CAMT",
+    "UCTT",
+    "ICHR"
+   ],
+   "status": "drafted",
+   "draft_name": "Semi Test & Subfab",
+   "hypothesis": "Members may share exposure to semiconductor capex cycle — test, inspection, and subfab/fluid-delivery equipment — possibly co-moving on shared demand expectations.",
+   "suggested": "keep-for-checks",
+   "reason": "Coherent semi-cap supply-chain overlap; strong momentum, low crowding.",
+   "error": null,
+   "model": "claude-opus-4-8"
+  },
+  {
+   "key": "2026-07-14:T030",
+   "cluster_id": "T030",
+   "members": [
+    "SSTK",
+    "DFTX",
+    "GETY",
+    "APGE"
+   ],
+   "status": "drafted",
+   "draft_name": "Stock-Media & Biotech Mix",
+   "hypothesis": "Possibly two overlapping subgroups: stock-imagery/content names and clinical-stage biotechs — co-movement may reflect shared small-cap risk-off rather than one driver.",
+   "suggested": "keep-for-checks",
+   "reason": "Mixed sectors, modest coherence, low crowding — verify if real or coincidence.",
+   "error": null,
+   "model": "claude-opus-4-8"
+  },
+  {
+   "key": "2026-07-14:T034",
+   "cluster_id": "T034",
+   "members": [
+    "FWDI",
+    "BMNR",
+    "SBET"
+   ],
+   "status": "drafted",
+   "draft_name": "Crypto Treasury Proxies",
+   "hypothesis": "Co-movement may reflect shared exposure to a crypto-treasury/digital-asset-holding strategy, so prices could track sentiment on the underlying tokens rather than operations.",
+   "suggested": "keep-for-checks",
+   "reason": "Same SIC, moderate coherence, plausible common driver worth verifying.",
+   "error": null,
+   "model": "claude-opus-4-8"
+  },
+  {
+   "key": "2026-07-14:T037",
+   "cluster_id": "T037",
+   "members": [
+    "TGB",
+    "HBM",
+    "ERO"
+   ],
+   "status": "drafted",
+   "draft_name": "Copper Miners Beta",
+   "hypothesis": "Co-movement may reflect shared sensitivity to copper prices; all three could be tracking a common base-metals demand or supply narrative.",
+   "suggested": "keep-for-checks",
+   "reason": "Tight industry overlap plus strong momentum warrants factor-vs-idiosyncratic checks.",
+   "error": null,
+   "model": "claude-opus-4-8"
+  },
+  {
+   "key": "2026-07-14:T040",
+   "cluster_id": "T040",
+   "members": [
+    "LTBR",
+    "OKLO",
+    "NNE"
+   ],
+   "status": "drafted",
+   "draft_name": "Advanced Nuclear Basket",
+   "hypothesis": "Names may co-move on shared exposure to next-gen nuclear/fuel sentiment; possibly a themed narrative cycle rather than fundamentals.",
+   "suggested": "keep-for-checks",
+   "reason": "Plausible common driver, decent coherence, low crowding — worth verifying.",
+   "error": null,
+   "model": "claude-opus-4-8"
+  },
+  {
+   "key": "2026-07-14:T043",
+   "cluster_id": "T043",
+   "members": [
+    "KBR",
+    "BAH",
+    "SAIC"
+   ],
+   "status": "drafted",
+   "draft_name": "Gov Services Contractors",
+   "hypothesis": "Possibly co-moving on shared exposure to federal contracting/budget sentiment; weak momentum may reflect a common spending-outlook headwind — a guess, not a fact.",
+   "suggested": "keep-for-checks",
+   "reason": "Plausible single driver despite mixed SIC labels; coherence moderate.",
+   "error": null,
+   "model": "claude-opus-4-8"
+  },
+  {
+   "key": "2026-07-14:T045",
+   "cluster_id": "T045",
+   "members": [
+    "NB",
+    "MP",
+    "USAR"
+   ],
+   "status": "drafted",
+   "draft_name": "Rare Earth Miners",
+   "hypothesis": "Co-movement may reflect shared exposure to rare-earth/critical-minerals sentiment, possibly tied to supply-chain or policy narratives — a hypothesis, not established.",
+   "suggested": "keep-for-checks",
+   "reason": "Tight thematic overlap, strong momentum, low crowding worth checking.",
+   "error": null,
+   "model": "claude-opus-4-8"
+  }
+ ]
+}
