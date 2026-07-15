@@ -2281,6 +2281,18 @@ Each line: *what it does* — *verified how*.
     +3 insertions, no reformat). Among data files, only `candidates.json` + the new `context.json`
     changed; every other radar/theme artifact byte-identical. ruff + `mypy --strict vinci` + pytest
     (648) + `node --check` green.
+- **PROCESS EXTERNALIZED TO REPO RUNBOOKS (2026-07-15, docs/runbooks; PR open, not merged; docs-only,
+  nothing deploys).** The operating loops now live in **`docs/RUNBOOKS.md`** — monthly sweep,
+  group-review recording, survivor checks, theme-advance, the per-PR verification checklist, sacred
+  files, the UI rule + Radar SCOPE CAP, and the calendar/standing watches — each written so a FRESH
+  Claude Code session can execute it from the doc alone, with every step sourced from the repo
+  (STATE / CLAUDE.md / `--help` / committed artifacts / git history) and citations per section.
+  `CLAUDE.md` gained a one-line pointer ("operating loops live in docs/RUNBOOKS.md — follow them before
+  improvising"). **The loops are venue-independent: chat is optional, but DECISIONS and MERGES remain
+  operator-only.** Three items are recorded **UNRESOLVED** (undocumented in-repo, do NOT invent): the
+  **priced-check pipeline invocation** (no CLI/script/Makefile generates `data/priced_check/report_*.txt`);
+  the **monthly-sweep runtime** (the "~20 min" is an operator estimate, not recorded); and the
+  **research-brief question count** (in-silico used Q1–Q3, T012 Q1–Q5 — not a fixed template of three).
 
 ## 3. FALSIFIED — tested and retired (NOT deferred)
 
