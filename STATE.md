@@ -3272,6 +3272,11 @@ two-name analysis (mid/small-caps, opposite directions) mapped against this inve
   the bar). Thesis-break (all three WATCHLIST names): FMCSA non-domiciled-CDL rule stayed/reversed, or ACT
   driver availability returns to surplus. Gated on the analyst's dossier build; cites the theme-#3 freeze
   (`feat/theme3-freeze`) + `data/research/theme3_truckload_triage_2026-07-14.md`.
+- **`themes-priced-check` CLI — the validated price gate has no repo home; QUEUED (2026-07-15).** The
+  priced-check that sits between any draft/registration and any advance (the survivor price read) has NO
+  in-repo generator — `data/priced_check/report_*.txt` were produced by ad-hoc session scripts
+  (untracked, `-main` only). Give it a CLI so the survivor-checks loop (docs/RUNBOOKS.md §c) is
+  reproducible from the repo. Until it lands, that step is not runnable from the doc alone.
 - **DRAFTING-RUBRIC v2 STANDS — 2nd iteration NOT sanctioned; validation PRE-REGISTERED on Aug 13
   (operator ruling 2026-07-15).** v1 (all keep-for-checks) → v2 park-default + runtime few-shot lifted
   the Jul-14 face-validity from **0/11 → 7/11 park-or-reject** (5/11 exact); 4 keep-for-checks

@@ -3,7 +3,7 @@
 > **How to use this file.** Each section below is a loop a **fresh Claude Code session** can execute
 > from this doc alone. Every step is sourced from the repo (STATE.md, CLAUDE.md, `--help` output,
 > committed artifacts, git history) — the source is cited per step. Where a convention is undocumented
-> the step says **UNRESOLVED** and the question is collected in the final section — do NOT invent it.
+> the step flags it and the open item is collected in the final **KNOWN GAP** section — do NOT invent it.
 >
 > This file governs PROCESS. `CLAUDE.md` governs behavior; `STATE.md` is what is true right now;
 > `docs/engineering.md` is the fuller handbook. On any conflict of fact, STATE.md wins.
@@ -52,7 +52,9 @@ PYTHONPATH=$PWD $VENV/python -m vinci.cli themes
   (git-ignored). A monthly sweep can no longer clobber the prior harvest — the archive is append-only.
   *(Source: `vinci/cli.py:_cmd_themes` (`cfg.snapshots_dir / "candidate_themes.jsonl"`, `record_snapshot`);
   STATE.md §monthly-sweep.)*
-- **Duration:** operator estimate ~20 min. **UNRESOLVED — the runtime is not recorded in-repo.**
+- **Runtime:** the "~20 min" is an unrecorded operator estimate — **time the scan on the next sweep**
+  (wrap the invocation, e.g. `time PYTHONPATH=$PWD $VENV/python -m vinci.cli themes`) **and record the
+  real duration in that sweep's STATE entry.**
 - **Worktree:** run from a main worktree; print worktree + pwd first (per the Preamble).
 
 ### (ii) Draft — `python -m vinci.cli themes-draft` (LLM, ~1 call per unreviewed cluster)
@@ -165,10 +167,9 @@ advance** — a candidate is not advanced to a scan/underwrite until it survives
 - Artifacts exist as `data/priced_check/report_all.txt` (as-of 2026-07-10, ~53 KB) and
   `data/priced_check/report_insilico.txt` — **untracked, present only in `-main`**. *(Source: STATE.md
   §DATA-TOPOLOGY.)*
-- **UNRESOLVED — the priced-check pipeline INVOCATION is not documented in-repo.** No CLI subcommand,
-  `scripts/`, `Makefile`, or doc generates `data/priced_check/report_*.txt` (grep of `vinci/`,
-  `scripts/`, `Makefile`, `pyproject.toml`, `docs/` returns nothing). How the report is produced must be
-  recovered before this step can be run from the doc alone.
+- **Priced-check has NO in-repo generator** — the reports in `data/priced_check/` were produced by
+  ad-hoc session scripts (untracked, `-main` only). A **`themes-priced-check` CLI is QUEUED** (see
+  STATE.md §Next-steps). **Until it lands, a survivor price read is not reproducible from this doc.**
 
 ### 3-question research brief (template, verbatim from the in-silico / T012 pattern)
 The in-silico adjudication is the **3-question** instance
@@ -183,9 +184,9 @@ The in-silico adjudication is the **3-question** instance
 T012 (senior-housing) **extended the same template to Q1–Q5**
 (`data/research/t012_seniorhousing_adjudication_2026-07-13.md`): Q1 idiosyncratic-vs-demand, Q2
 SH-vs-SNF revenue splits, Q3 pricing-power (rate-beats-cost), Q4 supply/construction-starts, Q5 per-name
-disconfirming fact. *(Source: the two research docs.)* **Note:** the template is "N numbered
-evidence questions ending in a per-name disconfirming fact + evidence-only conclusion + cited sources" —
-the in-silico case used 3, T012 used 5; the count is the analyst's, not fixed at 3.
+disconfirming fact. *(Source: the two research docs.)* **Count: 3 core questions** (driver live /
+revenue reality in filings / consensus stage), **extended per case** (T012 used Q1–Q5 to adjudicate a
+name-level contradiction). **No canonical count.**
 
 ---
 
@@ -314,13 +315,12 @@ merges** any change that touches them:
 
 ---
 
-## UNRESOLVED (undocumented in-repo — recover before running from the doc alone)
+## KNOWN GAP (the one step not reproducible from this doc)
 
-1. **Priced-check pipeline invocation** (§c). `data/priced_check/report_all.txt` /
-   `report_insilico.txt` exist as untracked artifacts (present only in `-main`), but **no CLI, script,
-   Makefile target, or doc in the repo generates them.** How is the priced-check run?
-2. **Monthly-sweep runtime** (§a.i). The "~20 min" is an operator estimate; the scan duration is not
-   recorded anywhere in the repo (STATE.md / engineering.md / CLAUDE.md).
-3. **Research-brief question count** (§c). The "3-question" template is the in-silico instance (Q1–Q3);
-   T012 used Q1–Q5. The number of questions is the analyst's per-case, not a fixed template of three —
-   confirm whether a canonical count is intended.
+- **Priced-check has no in-repo generator** (§c). `data/priced_check/report_*.txt` were produced by
+  ad-hoc session scripts (untracked, `-main` only); a **`themes-priced-check` CLI is QUEUED** (STATE.md
+  §Next-steps). Until it lands, the survivor price read is not reproducible from this doc.
+
+*Resolved since the first cut of this doc:* the **monthly-sweep runtime** (§a.i — measure and record on
+the next sweep) and the **research-brief question count** (§c — 3 core questions, extended per case, no
+canonical count).
