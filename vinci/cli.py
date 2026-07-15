@@ -261,6 +261,24 @@ def _cmd_dossier(args: argparse.Namespace) -> int:
             print(requirements.render_checklist(args.ticker))
         return 0
 
+    # --show-proposal: an explicit PEEK at the sealed machine proposal for --ticker. The committed
+    # brief HIDES it (anti-anchoring); this re-renders the COMMITTED artifact to stdout with the
+    # proposal revealed, WITHOUT re-assembling or overwriting anything. If the operator peeks before
+    # logging, self-report via `log-verdict --saw-proposal` (stamps revealed_pre_verdict).
+    if getattr(args, "show_proposal", False):
+        if not args.ticker:
+            print("--show-proposal requires --ticker")
+            return 1
+        from vinci.dossier.render import render_markdown
+        from vinci.dossier.schemas import Dossier
+
+        path = get_config().data_dir / "dossiers" / args.ticker.upper() / "dossier.json"
+        if not path.exists():
+            print(f"no committed dossier for {args.ticker} — assemble it first")
+            return 1
+        print(render_markdown(Dossier.model_validate_json(path.read_text()), show_proposal=True))
+        return 0
+
     from vinci.dossier.assemble import assemble_cohort, load_finalists
 
     cfg = get_config()
@@ -337,6 +355,7 @@ def _cmd_log_verdict(args: argparse.Namespace) -> int:
                 decided_at=datetime.now(), reference_date=ref,
                 staleness_days=cfg.price_staleness_days, benchmark=args.benchmark,
                 machine_proposal=mp, machine_lean=ml, proposal_assembled_at=stamp,
+                revealed_pre_verdict=getattr(args, "saw_proposal", False),
             )
         except LedgerError as exc:
             print(f"could not log verdict: {exc}")
@@ -1232,6 +1251,11 @@ def build_parser() -> argparse.ArgumentParser:
         "--json", action="store_true", dest="json",
         help="with 'requirements': emit the manifest as JSON (machine-readable, for the upload UI)",
     )
+    p_dossier.add_argument(
+        "--show-proposal", action="store_true", dest="show_proposal",
+        help="reveal the SEALED machine proposal for --ticker (a peek; the brief hides it so it "
+        "can't anchor you). If you peek before logging, pass log-verdict --saw-proposal.",
+    )
     p_dossier.set_defaults(func=_cmd_dossier)
 
     p_log = sub.add_parser("log-verdict", help="record a manual BUY/AVOID verdict for a candidate")
@@ -1244,6 +1268,11 @@ def build_parser() -> argparse.ArgumentParser:
     p_log.add_argument("--confidence", required=True, choices=[c.value for c in Confidence])
     p_log.add_argument("--benchmark", default="IWM", help="scoring benchmark (default: IWM)")
     p_log.add_argument("--ref", help="decision/entry-price date YYYY-MM-DD (default: today)")
+    p_log.add_argument(
+        "--saw-proposal", action="store_true", dest="saw_proposal",
+        help="self-report: you peeked at the machine proposal (dossier --show-proposal) BEFORE "
+        "deciding. Stamps revealed_pre_verdict=True so the anchored disposition is down-weighted.",
+    )
     p_log.set_defaults(func=_cmd_log_verdict)
 
     p_ledger = sub.add_parser("ledger", help="list recorded paper verdicts")

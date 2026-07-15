@@ -199,6 +199,28 @@ def test_log_verdict_seals_proposal_and_disposition(tmp_path: Path) -> None:
         assert e3.machine_proposal is None and e3.disposition is Disposition.NO_PROPOSAL
 
 
+def test_log_verdict_stamps_revealed_pre_verdict_anti_anchoring(tmp_path: Path) -> None:
+    """(anti-anchoring, 2026-07-13) The brief HIDES the proposal so the human decides blind; the
+    ledger records whether they peeked (dossier --show-proposal → log-verdict --saw-proposal) BEFORE
+    logging. Default False == an uncontaminated human-vs-machine comparison; True flags an anchored
+    disposition to down-weight. Frozen with the verdict, survives the store round-trip."""
+    with Store(tmp_path / "t.db") as store:
+        c1 = _seed(store, _ident("BLD", "SEC-0000000031-BLD", "0000000031"))
+        e1 = log_verdict(store, candidate_id=c1, verdict=Verdict.AVOID_TERMINAL,
+                         decided_at=datetime(2026, 7, 13, 10, 0),
+                         machine_proposal=Verdict.AVOID_TERMINAL, machine_lean="strongly-bearish",
+                         **_KW)
+        assert e1.revealed_pre_verdict is False  # normal flow — decided blind
+        c2 = _seed(store, _ident("PEK", "SEC-0000000032-PEK", "0000000032"))
+        e2 = log_verdict(store, candidate_id=c2, verdict=Verdict.BUY,
+                         decided_at=datetime(2026, 7, 13, 10, 0),
+                         machine_proposal=Verdict.AVOID_TERMINAL, machine_lean="strongly-bearish",
+                         revealed_pre_verdict=True, **_KW)
+        assert e2.revealed_pre_verdict is True  # peeked — anchored, down-weight
+        stored = store.get_ledger_entry(e2.entry_id)
+        assert stored is not None and stored.revealed_pre_verdict is True  # frozen + round-trips
+
+
 def test_ledger_disposition_coherence_negative_pins() -> None:
     """(pivot negative pins) A stored disposition that contradicts its (proposal, verdict) pair is
     REJECTED at construction — an incoherent record would silently corrupt all three spread

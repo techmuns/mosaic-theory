@@ -102,7 +102,7 @@ async function renderIndex(root, item, frame) {
     ? `<div class="grid cols-3">${tickers.map((t) => `
         <a class="ds-index-card" href="#/dossier/${escapeHtml(t)}">
           <div class="mono" style="font-size:16px; font-weight:650;">${escapeHtml(t)}</div>
-          <div class="muted" style="font-size:12px; margin-top:4px;">assembled facts + derived proposal →</div>
+          <div class="muted" style="font-size:12px; margin-top:4px;">assembled facts · proposal sealed →</div>
         </a>`).join("")}</div>`
     : `<div class="notice">No dossiers committed to this deploy yet. Assemble with <span class="mono">python -m vinci dossier</span>, then commit the derived <span class="mono">dossier.json</span> to the private repo.</div>`;
   root.innerHTML = frame(item, {
@@ -525,11 +525,16 @@ function teaserCard(d, verdict, m) {
   const read = (s && s.evidence_balance)
     ? `<div class="brief-read">${machineReadHtml(s.evidence_balance)}</div>` : "";
   const prop = deriveProposal(s ? s.evidence_balance : "");
-  // a present proposal does NOT repeat the lean's rationale — the machine-read line directly above
-  // already carries it (the #109 de-dup discipline); the row names its DERIVATION instead.
-  const propSlot = prop.action
-    ? `<span class="pill ${prop.action === "BUY" ? "buy" : "avoid"}">${prop.action}</span> <span class="muted" style="font-size:11.5px;">derived from the lean above</span>`
-    : `<span class="brief-slot">none</span> <span class="muted" style="font-size:11.5px;">${escapeHtml(prop.note)}</span>`;
+  // ANTI-ANCHORING (2026-07-13): the proposal is DERIVED + sealed at assembly but HIDDEN until the
+  // human logs their verdict — so it can't anchor them or contaminate the human-vs-machine
+  // comparison (the same discipline as the theme edge's tiers-never-ranks). Revealed only AFTER a
+  // verdict is logged (mirrors the md brief's sealed-note + the ledger CLI's post-log reveal). A
+  // present proposal does NOT repeat the lean's rationale — the machine-read line above carries it.
+  const propSlot = !verdict
+    ? `<span class="brief-slot">sealed</span> <span class="muted" style="font-size:11px;">revealed after your verdict is logged</span>`
+    : prop.action
+      ? `<span class="pill ${prop.action === "BUY" ? "buy" : "avoid"}">${prop.action}</span> <span class="muted" style="font-size:11.5px;">derived from the lean above</span>`
+      : `<span class="brief-slot">none</span> <span class="muted" style="font-size:11.5px;">${escapeHtml(prop.note)}</span>`;
   const narrative = `<div class="brief-narrative">
     ${one ? `<div class="brief-oneliner">${escapeHtml(one)}</div>` : ""}
     ${read}
@@ -1382,7 +1387,7 @@ function header(d) {
   return `<div class="header-block ds-header">
     <div class="ds-header-main">
       <h1 class="page-h"><span class="mono">${escapeHtml(d.ticker)}</span> · ${escapeHtml(d.name || "")}</h1>
-      <div class="ds-meta">Assembled facts + <b>derived proposal</b> · verdict of record: the human's · data as of <span class="mono">${fmtDate(d.reference_date)}</span> · assembled <span class="mono">${fmtStamp(d.assembled_at)}</span>${d.synthesis ? ` · synthesis <span class="mono">${escapeHtml(d.llm_model || "llm")}</span>` : " · mechanical layer only"}</div>
+      <div class="ds-meta">Assembled facts · <b>proposal sealed</b> (revealed after the human's verdict) · verdict of record: the human's · data as of <span class="mono">${fmtDate(d.reference_date)}</span> · assembled <span class="mono">${fmtStamp(d.assembled_at)}</span>${d.synthesis ? ` · synthesis <span class="mono">${escapeHtml(d.llm_model || "llm")}</span>` : " · mechanical layer only"}</div>
     </div>
     <div class="ds-pdf-wrap">
       <button id="ds-pdf" class="ds-pdf-btn" type="button" aria-haspopup="true" aria-expanded="false"

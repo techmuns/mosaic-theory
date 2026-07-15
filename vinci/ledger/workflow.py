@@ -47,6 +47,7 @@ def log_verdict(
     machine_proposal: Verdict | None = None,
     machine_lean: str | None = None,
     proposal_assembled_at: datetime | None = None,
+    revealed_pre_verdict: bool = False,
 ) -> LedgerEntry:
     """Freeze the entry price + the sector and append a verdict for ``candidate_id``; returns it.
 
@@ -106,6 +107,7 @@ def log_verdict(
         machine_lean=machine_lean,
         proposal_assembled_at=proposal_assembled_at,
         disposition=disposition,
+        revealed_pre_verdict=revealed_pre_verdict,  # anti-anchoring: did the human peek? (No)
     )
     store.append_ledger(entry)
     return entry

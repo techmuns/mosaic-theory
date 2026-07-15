@@ -1659,11 +1659,13 @@ def _machine_proposal_md(p: MachineProposal) -> str:
     return f"**Machine proposal:** {p.action_word} — derived from the lean above"
 
 
-def _brief_lines(d: Dossier) -> list[str]:
+def _brief_lines(d: Dossier, *, show_proposal: bool = False) -> list[str]:
     """(Brief) the market-standard first cut in 8 sections — teaser → setup → company → case →
-    financial snapshot → valuation → catalyst → verify. Machine-assembled + source-bound; the
-    teaser LEADS with the machine's derived proposal, and the human's confirm/override in the
-    Recommendation slot is the verdict of record. Mirrors briefTier() in the frontend dossier.js."""
+    financial snapshot → valuation → catalyst → verify. Machine-assembled + source-bound. The
+    machine's proposed verdict is DERIVED + sealed to the shadow ledger at assembly but NOT shown
+    here before the human logs theirs (``show_proposal=False``, the default) — so it can't anchor
+    the human or contaminate the human-vs-machine comparison. The human's confirm/override in the
+    Recommendation slot is the verdict of record."""
     m = d.mechanical
     s = d.synthesis
     out: list[str] = ["# Brief — first cut", ""]
@@ -1675,11 +1677,20 @@ def _brief_lines(d: Dossier) -> list[str]:
         out.append(_brief_oneliner(bd.value))
     if s is not None and s.evidence_balance:
         out += ["", _machine_read_md(s.evidence_balance)]
-    # THE PIVOT (2026-07-13): the Brief LEADS with a machine-proposed verdict — a deterministic,
-    # face-validity-frozen mapping over the committed lean (the LLM still emits no verdict field).
-    # The HUMAN's confirm/override in the slot below is the verdict of record.
-    out += ["", _machine_proposal_md(
-        derive_proposal(s.evidence_balance if s is not None else None))]
+    # THE PIVOT (2026-07-13) — REVISED same day (anti-anchoring): the machine's proposed verdict is
+    # DERIVED (deterministic, face-validity-frozen over the committed lean; the LLM still emits no
+    # verdict field) and SEALED to the shadow ledger at assembly — but it is NOT shown in the brief
+    # before the human logs theirs, so it can't anchor the human OR contaminate the human-vs-machine
+    # comparison (the same discipline as tiers-never-ranks). Revealed only AFTER the verdict is
+    # logged (the ledger CLI prints it), or on an explicit ``--show-proposal`` peek. The machine
+    # READ above (the evidence lean) is the assembled evidence summary, not the verdict — it
+    # stays, mirroring the full bull/bear balance in the Analysis synthesis.
+    if show_proposal:
+        out += ["", _machine_proposal_md(
+            derive_proposal(s.evidence_balance if s is not None else None))]
+    else:
+        out += ["", "**Machine proposal:** _sealed at assembly — revealed after your verdict is "
+                "logged (or `--show-proposal`)_"]
     out += ["", "**Recommendation / Target (human):** _not yet logged — confirm or override "
             "(Buy / Avoid + target)_"]
     snap = _brief_snapshot(d.exchange, d.cik, m.stock_info)
@@ -1760,25 +1771,28 @@ def _brief_lines(d: Dossier) -> list[str]:
 
 
 @_endnote_scope
-def render_markdown(d: Dossier, *, dev: bool = False) -> str:
+def render_markdown(d: Dossier, *, dev: bool = False, show_proposal: bool = False) -> str:
     """(D1) Facts-first restructure. Section order: header → caveats → mechanical layer [drawdown &
     idiosyncrasy (clubbed) → leverage & survival → trajectory → valuation → peer comps → catalyst →
     concentration] → synthesis → appendix (+ management-commentary pointer) → verdict footer. Old
     committed JSONs still render (every field is optional-safe). ``dev`` shows the D3 tier tags.
+    ``show_proposal`` reveals the sealed machine proposal in the brief (default False — the brief
+    hides it so it can't anchor the human before they log their verdict).
     The fresh per-document endnote table + its reset are handled by ``@_endnote_scope``."""
     m = d.mechanical
     out: list[str] = [
         f"# Dossier — {d.name} ({d.ticker})",
         "",
-        f"_Assembled facts + derived machine proposal · verdict of record: the human's · "
-        f"data as of {d.reference_date} · assembled "
+        f"_Assembled facts · machine proposal sealed (revealed after the human's verdict) · "
+        f"verdict of record: the human's · data as of {d.reference_date} · assembled "
         f"{_fmt_assembled(d.assembled_at)} · {d.llm_model or 'mechanical layer only'}_",
         "",
     ]
-    # (3-tier) BRIEF — first cut: the machine READ + derived proposal + decisive question +
-    # decision data + condensed case + valuation snapshot. The proposal is deterministic (2026-07-13
-    # pivot); the human's logged confirm/override — a ledger concern — is the verdict of record.
-    out += _brief_lines(d)
+    # (3-tier) BRIEF — first cut: the machine READ + decisive question + decision data + condensed
+    # case + valuation snapshot. The derived proposal is SEALED at assembly but hidden here
+    # (anti-anchoring) unless ``show_proposal``; the human's logged confirm/override — a ledger
+    # concern — is the verdict of record, and the reveal happens after it is logged.
+    out += _brief_lines(d, show_proposal=show_proposal)
     # (3-tier) ANALYSIS — the full dossier: caveats → mechanical layer → FULL synthesis.
     out += ["# Analysis — full dossier", ""]
     # (D1) CAVEATS — what to verify before trusting the evidence below.

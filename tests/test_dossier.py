@@ -2084,10 +2084,10 @@ def test_dossier_top_redesign_no_duplication_static() -> None:
     # the OLD duplicated bits are gone (idn dup, meta cap dup, inline stock line)
     assert '"brief-idn"' not in src and '"brief-meta"' not in src and '"brief-stock"' not in src
     assert "function stockInfoLine" not in src
-    # header slimmed: no queue rank, one terse meta line (post-pivot: derived proposal, the
-    # verdict of record stays the human's)
+    # header slimmed: no queue rank, one terse meta line (anti-anchoring: the proposal is SEALED,
+    # revealed only after the human's verdict; the verdict of record stays the human's)
     assert "Queue rank" not in src
-    assert "Assembled facts + <b>derived proposal</b>" in src
+    assert "Assembled facts · <b>proposal sealed</b> (revealed after the human's verdict)" in src
     # the two removed teaser bits: the card's own title (dup of the tab) and the machine-read pill.
     # ("Brief — first cut" is em-dash; the tab is "Brief <span…first cut", so no false match.)
     assert "Brief — first cut" not in src
@@ -2168,12 +2168,14 @@ def test_machine_proposal_frozen_fixture_values() -> None:
     assert q.action is None and q.lean == "mixed"  # two-sided → the human decides cold
 
 
-def test_brief_machine_proposal_line_e2e_invariants() -> None:
-    """(pivot e2e, LIVING artifacts — phrasing-independent invariants ONLY) Every committed dossier
-    renders EXACTLY the proposal line its own committed lean derives — both sides run the same
-    function, so a re-worded lean can't rot this — plus the human confirm/override slot, with the
-    pre-pivot slot gone; and a non-None proposal only ever derives from a strongly-* label (the
-    mapping's own invariant). NO ticker→verdict value pin here (those are frozen above)."""
+def test_brief_hides_proposal_until_verdict_but_reveals_on_show_proposal() -> None:
+    """(anti-anchoring, 2026-07-13 — LIVING artifacts, phrasing-independent invariants ONLY) The
+    brief HIDES the machine's proposed verdict by default so it can't anchor the human before they
+    log theirs: the default render carries the sealed-note (never the AVOID/BUY proposal line), the
+    human confirm/override slot, and the pre-pivot slot gone. With ``show_proposal=True`` the SAME
+    dossier reveals EXACTLY the proposal line its own committed lean derives (both sides run
+    derive_proposal, so a re-worded lean can't rot this); a non-None proposal only ever derives from
+    a strongly-* label. NO ticker→verdict value pin here (those are frozen on the fixture below)."""
     import pathlib
 
     from vinci.dossier.verdict import derive_proposal
@@ -2181,14 +2183,21 @@ def test_brief_machine_proposal_line_e2e_invariants() -> None:
     seen = 0
     for jp in sorted(pathlib.Path("data/dossiers").glob("*/dossier.json")):
         d = ds.Dossier.model_validate_json(jp.read_text())
-        md = dr.render_markdown(d)
         s = d.synthesis
         p = derive_proposal(s.evidence_balance if s is not None else None)
-        assert dr._machine_proposal_md(p) in md, f"{jp.parent.name}: proposal line missing/diverged"
+        hidden = dr.render_markdown(d)  # default: proposal sealed, not shown
+        revealed = dr.render_markdown(d, show_proposal=True)  # explicit peek
+        # DEFAULT hides it — the sealed-note is present, the derived proposal line is NOT
+        assert ("**Machine proposal:** _sealed at assembly"
+                in hidden), f"{jp.parent.name}: sealed-note missing from default brief"
+        assert dr._machine_proposal_md(p) not in hidden, (
+            f"{jp.parent.name}: proposal leaked pre-verdict")
+        # --show-proposal REVEALS exactly the derived line
+        assert dr._machine_proposal_md(p) in revealed, f"{jp.parent.name}: reveal missing/diverged"
         assert ("**Recommendation / Target (human):** _not yet logged — confirm or override "
-                in md), f"{jp.parent.name}: human confirm/override slot missing"
+                in hidden), f"{jp.parent.name}: human confirm/override slot missing"
         assert ("**Recommendation / Target:** _not yet logged — the human's call"
-                not in md), f"{jp.parent.name}: pre-pivot slot survived"
+                not in hidden), f"{jp.parent.name}: pre-pivot slot survived"
         if p.action is not None:
             assert p.lean is not None and p.lean.lower().replace(" ", "-") in (
                 "strongly-bearish", "strongly-bullish"), f"{jp.parent.name}: proposal off-mapping"
@@ -2198,18 +2207,23 @@ def test_brief_machine_proposal_line_e2e_invariants() -> None:
 
 
 def test_web_brief_proposal_mirror_static() -> None:
-    """(pivot web parity) dossier.js mirrors verdict.py: the frozen 3-row mapping (a mixed lean
-    proposes NOTHING — never a coin-flip), the derived-proposal row on the teaser, the
-    confirm/override copy, and the pivoted header meta — with every pre-pivot copy gone.
-    Node-free source pins; the mapping is OUR frozen code, never LLM text."""
+    """(pivot web parity + anti-anchoring 2026-07-13) dossier.js mirrors verdict.py + the md brief:
+    the frozen 3-row mapping (a mixed lean proposes NOTHING — never a coin-flip) and the
+    confirm/override copy stay, but the proposal is HIDDEN until the human logs their verdict: the
+    teaser gates the reveal on ``!verdict`` (sealed-note before, proposal after), and the header now
+    reads 'proposal sealed'. Node-free source pins; the mapping is OUR frozen code, never LLM."""
     src = Path("frontend/views/shared/dossier.js").read_text()
     assert "function deriveProposal" in src
     assert '"strongly-bearish": "AVOID"' in src and '"strongly-bullish": "BUY"' in src
     assert '"mixed": null' in src  # two-sided → NO proposal
     assert 'class="brief-proposal"' in src and "Machine proposal" in src
     assert "confirm or override — Buy / Avoid + target" in src
-    assert "Assembled facts + <b>derived proposal</b>" in src
-    # the pre-pivot copy is gone everywhere on the surface
+    # ANTI-ANCHORING: the reveal is gated on a logged verdict; the sealed-note shows before
+    assert "const propSlot = !verdict" in src, "web brief must hide the proposal until a verdict"
+    assert "revealed after your verdict is logged" in src
+    assert "Assembled facts · <b>proposal sealed</b> (revealed after the human's verdict)" in src
+    # the OLD 'leads with the derived proposal' copy is gone; so is every pre-pivot copy
+    assert "Assembled facts + <b>derived proposal</b>" not in src
     assert "Assembled facts, <b>no verdict</b>" not in src
     assert "the human's call — Buy / Avoid + target" not in src
     assert "assembled facts · no verdict" not in src

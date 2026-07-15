@@ -80,6 +80,11 @@ class LedgerEntry(BaseModel, frozen=True):
     machine_lean: str | None = None  # the lean label the proposal derived from (None: no read)
     proposal_assembled_at: datetime | None = None  # WHICH dossier artifact proposed (its stamp)
     disposition: Disposition | None = None  # confirm/override/no-proposal; None == pre-pivot
+    # Anti-anchoring provenance (2026-07-13): the brief HIDES the proposal so the human decides
+    # blind; this records whether the human peeked at it (via ``--show-proposal``) BEFORE logging.
+    # ``False`` in normal flow == an uncontaminated human-vs-machine comparison; ``True`` flags a
+    # disposition whose CONFIRMED/OVERRIDDEN reading is anchored and must be down-weighted.
+    revealed_pre_verdict: bool = False
 
     @model_validator(mode="after")
     def _sane(self) -> LedgerEntry:
