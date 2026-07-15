@@ -818,6 +818,235 @@
     "added": [],
     "dropped": []
    }
+  },
+  {
+   "key": "2026-07-14:T004",
+   "display_name": "Crypto-Mining & AI Compute",
+   "decision": "park",
+   "reviewed": "2026-07-15",
+   "by": "analyst (advisor-drafted reason)",
+   "reason": "coin-price proxy, already moved",
+   "members": [
+    "CLSK",
+    "APLD",
+    "RIOT",
+    "MARA",
+    "BTBT",
+    "KEEL",
+    "CIFR",
+    "CORZ",
+    "WYFI"
+   ],
+   "match": {
+    "status": "matched",
+    "cluster_id": "T004",
+    "added": [],
+    "dropped": []
+   }
+  },
+  {
+   "key": "2026-07-14:T006",
+   "display_name": "Education Services Core",
+   "decision": "park",
+   "reviewed": "2026-07-15",
+   "by": "analyst (advisor-drafted reason)",
+   "reason": "mixed bag, no single driver",
+   "members": [
+    "CVSA",
+    "INOD",
+    "STRA",
+    "PRDO",
+    "AMN",
+    "LOPE",
+    "WEST"
+   ],
+   "match": {
+    "status": "matched",
+    "cluster_id": "T006",
+    "added": [],
+    "dropped": []
+   }
+  },
+  {
+   "key": "2026-07-14:T007",
+   "display_name": "B2B Vertical SaaS",
+   "decision": "park",
+   "reviewed": "2026-07-15",
+   "by": "analyst (advisor-drafted reason)",
+   "reason": "software derate factor, broader than June",
+   "members": [
+    "ACIW",
+    "QTWO",
+    "APPN",
+    "ALKT",
+    "PCOR",
+    "NABL",
+    "NCNO"
+   ],
+   "match": {
+    "status": "matched",
+    "cluster_id": "T007",
+    "added": [],
+    "dropped": []
+   }
+  },
+  {
+   "key": "2026-07-14:T010",
+   "display_name": "Data & Digital Services",
+   "decision": "park",
+   "reviewed": "2026-07-15",
+   "by": "analyst (advisor-drafted reason)",
+   "reason": "AI-displacement story #3, late either way",
+   "members": [
+    "FDS",
+    "MORN",
+    "EXLS",
+    "EPAM",
+    "G",
+    "GLOB"
+   ],
+   "match": {
+    "status": "matched",
+    "cluster_id": "T010",
+    "added": [],
+    "dropped": []
+   }
+  },
+  {
+   "key": "2026-07-14:T011",
+   "display_name": "Semi Test & Subfab",
+   "decision": "park",
+   "reviewed": "2026-07-15",
+   "by": "analyst (advisor-drafted reason)",
+   "reason": "up 206 pct vs market — far too late",
+   "members": [
+    "COHU",
+    "FORM",
+    "CAMT",
+    "UCTT",
+    "ICHR"
+   ],
+   "match": {
+    "status": "matched",
+    "cluster_id": "T011",
+    "added": [],
+    "dropped": []
+   }
+  },
+  {
+   "key": "2026-07-14:T030",
+   "display_name": "Stock-Media & Biotech Mix",
+   "decision": "park",
+   "reviewed": "2026-07-15",
+   "by": "analyst (advisor-drafted reason)",
+   "reason": "AI losers, already crushed",
+   "members": [
+    "SSTK",
+    "DFTX",
+    "GETY",
+    "APGE"
+   ],
+   "match": {
+    "status": "matched",
+    "cluster_id": "T030",
+    "added": [],
+    "dropped": []
+   }
+  },
+  {
+   "key": "2026-07-14:T034",
+   "display_name": "Crypto Treasury Proxies",
+   "decision": "reject",
+   "reviewed": "2026-07-15",
+   "by": "analyst (advisor-drafted reason)",
+   "reason": "collapsed gimmicks",
+   "members": [
+    "FWDI",
+    "BMNR",
+    "SBET"
+   ],
+   "match": {
+    "status": "matched",
+    "cluster_id": "T034",
+    "added": [],
+    "dropped": []
+   }
+  },
+  {
+   "key": "2026-07-14:T037",
+   "display_name": "Copper Miners Beta",
+   "decision": "park",
+   "reviewed": "2026-07-15",
+   "by": "analyst (advisor-drafted reason)",
+   "reason": "metal-price proxy, moved",
+   "members": [
+    "TGB",
+    "HBM",
+    "ERO"
+   ],
+   "match": {
+    "status": "matched",
+    "cluster_id": "T037",
+    "added": [],
+    "dropped": []
+   }
+  },
+  {
+   "key": "2026-07-14:T040",
+   "display_name": "Advanced Nuclear Basket",
+   "decision": "park",
+   "reviewed": "2026-07-15",
+   "by": "analyst (advisor-drafted reason)",
+   "reason": "real long-run driver, hype deflated; revisit on evidence",
+   "members": [
+    "LTBR",
+    "OKLO",
+    "NNE"
+   ],
+   "match": {
+    "status": "matched",
+    "cluster_id": "T040",
+    "added": [],
+    "dropped": []
+   }
+  },
+  {
+   "key": "2026-07-14:T043",
+   "display_name": "Gov Services Contractors",
+   "decision": "park",
+   "reviewed": "2026-07-15",
+   "by": "analyst (advisor-drafted reason)",
+   "reason": "derated on spending fear, not a theme",
+   "members": [
+    "KBR",
+    "BAH",
+    "SAIC"
+   ],
+   "match": {
+    "status": "matched",
+    "cluster_id": "T043",
+    "added": [],
+    "dropped": []
+   }
+  },
+  {
+   "key": "2026-07-14:T045",
+   "display_name": "Rare Earth Miners",
+   "decision": "park",
+   "reviewed": "2026-07-15",
+   "by": "analyst (advisor-drafted reason)",
+   "reason": "policy and metal proxy, moved",
+   "members": [
+    "NB",
+    "MP",
+    "USAR"
+   ],
+   "match": {
+    "status": "matched",
+    "cluster_id": "T045",
+    "added": [],
+    "dropped": []
+   }
   }
  ]
 }

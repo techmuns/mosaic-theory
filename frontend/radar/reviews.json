@@ -553,6 +553,169 @@
     "PLMR",
     "BOW"
    ]
+  },
+  {
+   "key": "2026-07-14:T004",
+   "display_name": "Crypto-Mining & AI Compute",
+   "decision": "park",
+   "reviewed": "2026-07-15",
+   "by": "analyst (advisor-drafted reason)",
+   "reason": "coin-price proxy, already moved",
+   "members": [
+    "CLSK",
+    "APLD",
+    "RIOT",
+    "MARA",
+    "BTBT",
+    "KEEL",
+    "CIFR",
+    "CORZ",
+    "WYFI"
+   ]
+  },
+  {
+   "key": "2026-07-14:T006",
+   "display_name": "Education Services Core",
+   "decision": "park",
+   "reviewed": "2026-07-15",
+   "by": "analyst (advisor-drafted reason)",
+   "reason": "mixed bag, no single driver",
+   "members": [
+    "CVSA",
+    "INOD",
+    "STRA",
+    "PRDO",
+    "AMN",
+    "LOPE",
+    "WEST"
+   ]
+  },
+  {
+   "key": "2026-07-14:T007",
+   "display_name": "B2B Vertical SaaS",
+   "decision": "park",
+   "reviewed": "2026-07-15",
+   "by": "analyst (advisor-drafted reason)",
+   "reason": "software derate factor, broader than June",
+   "members": [
+    "ACIW",
+    "QTWO",
+    "APPN",
+    "ALKT",
+    "PCOR",
+    "NABL",
+    "NCNO"
+   ]
+  },
+  {
+   "key": "2026-07-14:T010",
+   "display_name": "Data & Digital Services",
+   "decision": "park",
+   "reviewed": "2026-07-15",
+   "by": "analyst (advisor-drafted reason)",
+   "reason": "AI-displacement story #3, late either way",
+   "members": [
+    "FDS",
+    "MORN",
+    "EXLS",
+    "EPAM",
+    "G",
+    "GLOB"
+   ]
+  },
+  {
+   "key": "2026-07-14:T011",
+   "display_name": "Semi Test & Subfab",
+   "decision": "park",
+   "reviewed": "2026-07-15",
+   "by": "analyst (advisor-drafted reason)",
+   "reason": "up 206 pct vs market — far too late",
+   "members": [
+    "COHU",
+    "FORM",
+    "CAMT",
+    "UCTT",
+    "ICHR"
+   ]
+  },
+  {
+   "key": "2026-07-14:T030",
+   "display_name": "Stock-Media & Biotech Mix",
+   "decision": "park",
+   "reviewed": "2026-07-15",
+   "by": "analyst (advisor-drafted reason)",
+   "reason": "AI losers, already crushed",
+   "members": [
+    "SSTK",
+    "DFTX",
+    "GETY",
+    "APGE"
+   ]
+  },
+  {
+   "key": "2026-07-14:T034",
+   "display_name": "Crypto Treasury Proxies",
+   "decision": "reject",
+   "reviewed": "2026-07-15",
+   "by": "analyst (advisor-drafted reason)",
+   "reason": "collapsed gimmicks",
+   "members": [
+    "FWDI",
+    "BMNR",
+    "SBET"
+   ]
+  },
+  {
+   "key": "2026-07-14:T037",
+   "display_name": "Copper Miners Beta",
+   "decision": "park",
+   "reviewed": "2026-07-15",
+   "by": "analyst (advisor-drafted reason)",
+   "reason": "metal-price proxy, moved",
+   "members": [
+    "TGB",
+    "HBM",
+    "ERO"
+   ]
+  },
+  {
+   "key": "2026-07-14:T040",
+   "display_name": "Advanced Nuclear Basket",
+   "decision": "park",
+   "reviewed": "2026-07-15",
+   "by": "analyst (advisor-drafted reason)",
+   "reason": "real long-run driver, hype deflated; revisit on evidence",
+   "members": [
+    "LTBR",
+    "OKLO",
+    "NNE"
+   ]
+  },
+  {
+   "key": "2026-07-14:T043",
+   "display_name": "Gov Services Contractors",
+   "decision": "park",
+   "reviewed": "2026-07-15",
+   "by": "analyst (advisor-drafted reason)",
+   "reason": "derated on spending fear, not a theme",
+   "members": [
+    "KBR",
+    "BAH",
+    "SAIC"
+   ]
+  },
+  {
+   "key": "2026-07-14:T045",
+   "display_name": "Rare Earth Miners",
+   "decision": "park",
+   "reviewed": "2026-07-15",
+   "by": "analyst (advisor-drafted reason)",
+   "reason": "policy and metal proxy, moved",
+   "members": [
+    "NB",
+    "MP",
+    "USAR"
+   ]
   }
  ]
 }

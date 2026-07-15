@@ -2213,6 +2213,23 @@ Each line: *what it does* — *verified how*.
   - **Incident→invariant:** #123 fabricated-on-error → the LlmError→unassessed record + abort-fast are
     pinned by `test_draft_error_becomes_unassessed_never_fabricated`, `_aborts_fast_on_repeated_4xx`, and
     `_invalid_suggested_is_unassessed_not_fabricated` (a bad-enum tool result fails loud, never coerced).
+- **JUL-14 REVIEWS RECORDED — the human dispositioned all 11 inbox clusters (2026-07-15, operator
+  recording; PR open, not merged; DEPLOYS on merge).** 10 `park` + 1 `reject` (T034 Crypto Treasury
+  Proxies = "collapsed gimmicks"). Reasons were ADVISOR-DRAFTED and analyst-RATIFIED verbatim (operator:
+  "adopt yours") → `by:"analyst (advisor-drafted reason)"` (the June convention), set on exactly the 11
+  new keys via a scripted `by`-only edit (no CLI flag for arbitrary attribution exists; the 35 June
+  entries + all other fields untouched). Recorded through the real `themes-review` CLI (`reviewed`
+  = 2026-07-15, the review date; display names = the machine's draft names, which were kept even as its
+  SUGGESTIONS were overridden). Emitters re-run → **inbox 0, log 46** (45 matched + 1 pre-existing "gone").
+  Only `reviews.json` (+11, purely additive) / `inbox.json` (→ empty) / `log.json` (+11) changed among
+  data files; `drafts.json` untouched. ruff + `mypy --strict` + pytest (636) + `node --check` green.
+  - **The repo's own drafts suggested `keep-for-checks` on ALL 11 and were OVERRIDDEN** by the human's
+    park/reject. A machine that proposes "look harder" on every co-moving cluster adds no triage signal —
+    the drafting RUBRIC is too permissive. **Rubric fix QUEUED (§Next-steps), not built here.** First
+    live datapoint on the drafting layer: the human overrode the machine's advisory disposition **11/11**
+    — early evidence the human is NOT anchoring to the draft. (The pivot's FORMAL anchoring falsifier
+    tracks the single-name VERDICT proposal in `verdict.py`, a separate surface, and watches for its
+    override rate COLLAPSING; this draft-suggestion override rate is an ANALOGOUS signal, not that metric.)
 
 ## 3. FALSIFIED — tested and retired (NOT deferred)
 
@@ -3192,6 +3209,13 @@ two-name analysis (mid/small-caps, opposite directions) mapped against this inve
   the bar). Thesis-break (all three WATCHLIST names): FMCSA non-domiciled-CDL rule stayed/reversed, or ACT
   driver availability returns to surplus. Gated on the analyst's dossier build; cites the theme-#3 freeze
   (`feat/theme3-freeze`) + `data/research/theme3_truckload_triage_2026-07-14.md`.
+- **DRAFTING-RUBRIC FIX — the machine's advisory `suggested` is too permissive (QUEUED 2026-07-15).**
+  First live datapoint: the drafting layer proposed `keep-for-checks` on ALL 11 Jul-14 clusters; the
+  human overrode 11/11 (10 park / 1 reject). A disposition that says "look harder" every time carries no
+  triage signal. Fix the rubric in `vinci/themes/drafts.py` (`_DRAFT_SYSTEM` + `DRAFT_TOOL`) so `park`
+  is the DEFAULT for a moved/proxy/coincidence cluster and `keep-for-checks` is EARNED (e.g. real driver
+  + not-yet-moved). Set by FACE-VALIDITY against these 11 labelled overrides as a rubric check —
+  **never tuned on forward returns.** Re-draft is one `themes-draft --force` run (pennies).
 **OPERATING-DRIVERS MECHANISM TIER (PR-B, Tiers A + Tier B code) — BUILT + VERIFIED, LOCAL (branch
 feat/operating-drivers, 2026-07-13; NOT yet PR'd — user tests locally first).** The MOSL
 "90-second handover" gap, closed with anchored extraction: typed cited `operating_drivers` rows on
