@@ -548,9 +548,10 @@ table.data.vs-table { width: 100%; }
 
 /* (Brief) first-cut tier — leads the dossier; assembles, never concludes. */
 .ds-brief { border-left: 3px solid var(--accent); }
-.brief-read { font-size: 14.5px; line-height: 1.55; color: var(--ink); margin: 10px 0 4px; }
+.brief-read { font-size: 14.5px; line-height: 1.55; color: var(--ink); margin: 2px 0 6px; }
 .brief-lean { font-weight: 700; }
-.brief-dq { font-size: 13px; color: var(--ink-2); margin: 8px 0; line-height: 1.5; }
+/* the decisive question as an editorial pull-quote — the one framing the human must resolve */
+.brief-dq { font-size: 15px; color: var(--ink); margin: 6px 0 2px; line-height: 1.55; padding-left: 15px; border-left: 3px solid var(--accent); letter-spacing: -0.003em; }
 .brief-tiles { display: grid; grid-template-columns: repeat(2, minmax(0, 200px)); gap: 8px; margin: 12px 0 2px; }
 .brief-mc { background: var(--surface-2); border-radius: 8px; padding: 6px 11px; min-width: 92px; }
 .brief-mc .l { font-size: 11px; color: var(--ink-3); }
@@ -570,7 +571,7 @@ table.data.vs-table { width: 100%; }
 .brief-snap-t td { padding: 3.5px 0; border-bottom: 1px solid var(--line); vertical-align: baseline; }
 .brief-snap-t tr:last-child td { border-bottom: none; }
 .brief-snap-t td:first-child { color: var(--ink-3); white-space: nowrap; padding-right: 10px; }
-.brief-snap-t td:last-child { text-align: right; color: var(--ink); }
+.brief-snap-t td:last-child { text-align: right; color: var(--ink); font-variant-numeric: tabular-nums; }
 @media (max-width: 640px) { .brief-body { flex-direction: column; } .brief-snap { max-width: none; width: 100%; } }
 .brief-verdict { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin: 10px 0 4px; padding: 8px 11px; border: 1px dashed var(--line-2); border-radius: 8px; }
 /* the machine's DERIVED proposal (2026-07-13 pivot) — solid border vs the human slot's dashed:
@@ -578,6 +579,12 @@ table.data.vs-table { width: 100%; }
 .brief-proposal { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin: 10px 0 0; padding: 8px 11px; border: 1px solid var(--line-2); border-radius: 8px; }
 .brief-vlab { font-size: 10.5px; text-transform: uppercase; letter-spacing: 0.05em; color: var(--ink-3); font-weight: 600; }
 .brief-slot { font-size: 13px; color: var(--ink-2); font-style: italic; }
+/* (Brief, editorial pass) standalone section eyebrows over the machine read + key-figures table,
+   institutional tabular figures, and a hairline divider between the bull / bear case columns. */
+.brief-eyebrow { display: block; margin: 13px 0 3px; }
+.brief-snap .brief-eyebrow { margin: 0 0 5px; }
+.brief-case > div + div { border-left: 1px solid var(--line); padding-left: 18px; }
+@media (max-width: 640px) { .brief-case > div + div { border-left: none; padding-left: 0; } }
 
 /* (3-tier) dossier tabs — Brief · Analysis · Appendix (client-side; default Brief). */
 .ds-tabs { display: flex; gap: 2px; border-bottom: 1px solid var(--line); margin: 8px 0 16px; }
