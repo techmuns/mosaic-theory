@@ -524,7 +524,6 @@ table.data.vs-table { width: 100%; }
 .rq-lbl { font: 10px var(--sans); fill: var(--ink-2); }
 .rq-dot.sel .rq-lbl { fill: var(--ink); font-weight: 650; }
 
-.sweep-bar { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; padding: 9px 12px; background: var(--surface-2); border: 1px solid var(--line); border-radius: var(--r); margin-bottom: 12px; font-size: 13px; }
 .sweep-dot { width: 9px; height: 9px; border-radius: 50%; flex: none; }
 .sweep-dot.green { background: var(--live); box-shadow: 0 0 0 2px rgba(31,157,87,0.18); }
 .sweep-dot.amber { background: #c07f16; box-shadow: 0 0 0 2px rgba(192,127,22,0.18); }
@@ -535,18 +534,9 @@ table.data.vs-table { width: 100%; }
 .sweep-run:hover ~ .sweep-cmd, .sweep-cmd.show { opacity: 1; }
 .sweep-cmd.flash { border-color: var(--live); }
 
-.radar-chip { cursor: pointer; }
-.radar-chip.on { background: var(--nav-active); border-color: var(--nav-active); color: #fff; }
-.rc-n { opacity: 0.7; font-weight: 600; }
-
-.rd-panel { border: 1px solid var(--line); border-radius: var(--r); padding: 12px 14px; margin-bottom: 14px; background: var(--surface); }
-.rd-empty { padding: 6px 0; }
 .rd-head { display: flex; align-items: baseline; gap: 8px; flex-wrap: wrap; margin-bottom: 6px; }
 .rd-name { font-size: 15px; font-weight: 650; }
-.rd-summary { margin: 4px 0 8px; }
-.rd-lead { margin-bottom: 6px; }
-.rd-sec { margin-top: 9px; }
-.rd-sec-h { font-size: 11.5px; text-transform: uppercase; letter-spacing: 0.04em; color: var(--ink-3); margin-bottom: 5px; }
+.rd-summary { margin: 4px 0 8px; font-size: 12.5px; }
 .rd-rule, .rd-cmp { display: flex; gap: 8px; padding: 3px 0; align-items: baseline; }
 .rd-tk { font: 12px var(--mono); font-weight: 600; color: var(--ink); flex: none; min-width: 46px; }
 .rd-rt { font-size: 13px; }
@@ -559,33 +549,11 @@ table.data.vs-table { width: 100%; }
 .pill.rd-watch { background: var(--conditional-bg); color: #8a6418; }
 .pill.rd-parked, .pill.rd-priced, .pill.rd-past { background: var(--surface-2); color: var(--ink-2); }
 
-.radar-tbl tr[data-row] { cursor: pointer; }
-.radar-tbl tr.sel { background: #eef4ff; }
 .rd-pager { margin-top: 8px; display: flex; gap: 8px; align-items: center; }
 .rd-pager button { font-size: 12px; padding: 2px 8px; border: 1px solid var(--line-2); border-radius: 6px; background: var(--surface); cursor: pointer; }
 .rd-pager button[disabled] { opacity: 0.4; cursor: default; }
 
-/* ── Radar inbox lane (left of the quadrant) ─────────────────────────────────────────────── */
-.rq-lane-h { font: 10px var(--sans); font-weight: 650; fill: var(--ink-2); letter-spacing: 0.01em; }
-.rq-lane-sub { font: 9px var(--sans); fill: var(--ink-3); }
-.rq-lane-dot { cursor: pointer; }
-.rq-lane-c { fill: none; stroke: var(--ink-3); stroke-width: 1.5; }
-.rq-lane-dot:hover .rq-lane-c { stroke: var(--ink-2); }
-.rq-lane-lbl { font: 9.5px var(--sans); fill: var(--ink-2); }
-.rq-lane-dot.sel .rq-lane-lbl { fill: var(--ink); font-weight: 650; }
-
-/* inbox indicator chip in the filter row */
-.inbox-chip { border-color: var(--accent); color: var(--accent); font-weight: 600; }
-.inbox-chip.warn { border-color: var(--conditional); color: #8a6418; background: var(--conditional-bg); }
-
-/* inbox detail panel */
-.pill.rd-inbox { background: var(--surface-2); color: var(--ink-2); border: 1px dashed var(--line-2); }
-.rd-mem { display: flex; flex-wrap: wrap; gap: 3px 12px; }
-.rd-mem .rd-tk { min-width: 0; }
-
-/* ── Radar review log (below the list) ───────────────────────────────────────────────────── */
-.radar-log { margin-top: 22px; border-top: 1px solid var(--line); padding-top: 14px; }
-.rd-log-h { font-size: 14px; font-weight: 650; margin-bottom: 8px; }
+/* ── Radar review log + inbox tables ─────────────────────────────────────────────────────── */
 .rd-log-controls { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; flex-wrap: wrap; }
 .rd-log-search { font: 13px var(--sans); padding: 4px 9px; border: 1px solid var(--line-2); border-radius: 6px; background: var(--surface); color: var(--ink); min-width: 220px; }
 .rd-log-count { margin-left: auto; }
@@ -602,3 +570,31 @@ table.data.vs-table { width: 100%; }
 .pill.dec-watch { background: var(--conditional-bg); color: #8a6418; }
 .pill.dec-parked { background: var(--surface-2); color: var(--ink-2); }
 .pill.dec-rejected { background: #fbe9e9; color: #a3372f; }
+
+/* ── Radar sub-tabs (Map · Inbox · Log) + drawer ─────────────────────────────────────────── */
+.rt-sweep { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; font-size: 12.5px; color: var(--ink-2); margin-bottom: 10px; }
+.rt-tabs { display: flex; gap: 2px; border-bottom: 1px solid var(--line); margin-bottom: 14px; }
+.rt-tab { font: 13px var(--sans); padding: 6px 12px; border: 0; background: none; color: var(--ink-2); cursor: pointer; border-bottom: 2px solid transparent; margin-bottom: -1px; }
+.rt-tab:hover { color: var(--ink); }
+.rt-tab.on { color: var(--ink); font-weight: 650; border-bottom-color: var(--accent); }
+.rt-tab.warn { color: #8a6418; }
+.rt-tab.warn.on { border-bottom-color: var(--conditional); }
+.rt-badge { font-size: 11px; color: var(--ink-3); font-weight: 600; }
+.rt-tab.warn .rt-badge, .rt-tab.on .rt-badge { color: inherit; }
+.rt-hint, .rt-note { color: var(--ink-3); font-size: 12px; margin: 2px 0 10px; }
+.rt-foot { color: var(--ink-3); font-size: 12px; margin-top: 12px; }
+
+.rt-drawer { border: 1px solid var(--line); border-radius: var(--r); padding: 12px 14px; margin: 4px 0 14px; background: var(--surface); }
+.rt-x { margin-left: auto; border: 0; background: none; color: var(--ink-3); font-size: 18px; line-height: 1; cursor: pointer; padding: 0 2px; }
+.rt-x:hover { color: var(--ink); }
+.rd-line { font-size: 12.5px; margin: 3px 0; }
+.rd-line.foot { color: var(--ink-3); }
+.rd-k { color: var(--ink-3); }
+.rt-rules-x { margin-top: 10px; }
+.rt-expander { font: 12px var(--sans); padding: 3px 0; border: 0; background: none; color: var(--accent); cursor: pointer; }
+.rt-rules { margin-top: 6px; border-top: 1px solid var(--line-2); padding-top: 8px; }
+
+.rt-judged, .rt-inbox { width: 100%; }
+.rt-judged tr[data-drawer-open], .rt-inbox tr[data-inbox-row], .rt-low { cursor: pointer; }
+.rt-judged tr[data-drawer-open]:hover, .rt-inbox tr[data-inbox-row]:hover, .rt-low:hover { background: var(--surface-2); }
+.rt-judged tr.sel, .rt-inbox tr.ex { background: #eef4ff; }
