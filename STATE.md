@@ -2180,6 +2180,15 @@ Each line: *what it does* — *verified how*.
   `mypy --strict vinci` + pytest (598) + `node --check` all JS green. **The standing SCOPE CAP re-applies
   verbatim after this PR:** *"Radar polish is CAPPED after this PR: no further Radar UI work until a first
   BUY, a fired watchlist trigger, or actual LP usage of the site."*
+- **INBOX INDUSTRY HINT — operator-sanctioned one-line cap exception (2026-07-15, chore/inbox-industry-hint;
+  PR open, not merged; DEPLOYS on merge).** build.py `_industry_hint` adds an `industry_hint` per UNREVIEWED
+  inbox cluster — the most common 4-digit member SIC + coverage ("Prepackaged software · 7/7"), or "mixed:
+  <top> N · <second> M" with no majority — via a small static SIC→name map covering only the codes in the
+  current inbox (no repo SIC-name source; nothing fetched). Rendered as a muted second line in the Inbox
+  tab's Group cell; reviewed groups (Log tab) keep the analyst's name, no hint. NO reviews.json change, NO
+  decisions recorded; every data file except `inbox.json` byte-identical; build.py-only emitter + view. The
+  standing SCOPE CAP re-applies verbatim after this PR. ruff + `mypy --strict vinci` + pytest (601) +
+  `node --check` green.
 
 ## 3. FALSIFIED — tested and retired (NOT deferred)
 
@@ -3159,6 +3168,128 @@ two-name analysis (mid/small-caps, opposite directions) mapped against this inve
   the bar). Thesis-break (all three WATCHLIST names): FMCSA non-domiciled-CDL rule stayed/reversed, or ACT
   driver availability returns to surplus. Gated on the analyst's dossier build; cites the theme-#3 freeze
   (`feat/theme3-freeze`) + `data/research/theme3_truckload_triage_2026-07-14.md`.
+**OPERATING-DRIVERS MECHANISM TIER (PR-B, Tiers A + Tier B code) — BUILT + VERIFIED, LOCAL (branch
+feat/operating-drivers, 2026-07-13; NOT yet PR'd — user tests locally first).** The MOSL
+"90-second handover" gap, closed with anchored extraction: typed cited `operating_drivers` rows on
+the mechanical layer + a Mechanism block on the Brief (between The case and Financial snapshot).
+Assemble-and-cite only; POSES, never forecasts; `Synthesis` six-field no-conclusion pin untouched.
+- **Schema:** `OperatingDriver{kind, metric, period, value (verbatim), value_num/unit (anchored
+  only), verbatim, source_ref (machine-set), tier}` + `OperatingDriversExtract` +
+  `MechanicalLayer.operating_drivers` (default None → back-compat; committed dossiers round-trip).
+- **A2 (10-Q MD&A attribution, `filing_sections.results_attribution`)** — the canonical
+  "<subj> increased/decreased $X, or Y%, … due to <cause>" shape; value_num direction-SIGNED;
+  verbatim spans into the cause sentence (MVST's "48.9% reduction in sales volume … 535.7→273.9
+  MWh"). **VERIFIED real cached 10-Qs: 5/10 names, 15 rows** (MVST/VRRM/SMPL/BRBR/CNXC). First
+  consumer of MD&A body text (already fetched + disk-cached — zero new I/O).
+- **A3 (CIQ Key Developments, `ciq_sheets.key_development_drivers`)** — the on-disk, classified,
+  previously-UNUSED export; **header-driven** column detection (4-col vs 5-col `…|Company|…`
+  layouts vary); INCLUDE filter (guidance/product/client/expansion/impairment; index/earnings/
+  governance noise dropped). **VERIFIED: 10/10 names, 88 rows** — incl. EPAM (18 rows, a
+  zero-EX-99.1 name the tier rescues). Declared in `requirements.CIQ_MODULES` (optional).
+- **A1 (EX-99.1 pricing + narrow KPI, `release_parse.operating_drivers`)** — DEMOTED per the
+  diagnosis: pricing real (VITL, qualitative — a headline 7% is revenue growth, value_num stays
+  None) with M&A-boilerplate exclusion; KPI requires a governing shipped/added verb, the two
+  observed false-positive shapes pinned OUT (FUBO expense-line, MVST "290Ah cell" spec).
+- **Fail-loud transcript fix (ships regardless):** `unparsed_transcript_flag` — transcripts on file
+  that don't parse (no LibreOffice) now emit a QA flag; the 2026-07-10 silent-None cohort can't
+  recur. Routed to dev/QA (an OPS action), not an analyst caveat.
+- **Render:** md `_brief_mechanism_lines`/`_mechanism_lines` + web `mechanismCard`/`mechanismFull`
+  (parity), grouped by kind, events most-recent-first, endnote-cited (`>Source:` guard green),
+  honest empty line when no rows. **VERIFIED live (preview 8791):** MVST Brief shows attribution +
+  events cited `[B9-B12]`, zero console errors; AORT (None) shows the honest empty card.
+- **Tier B (LLM-fenced transcripts) — BUILT + VERIFIED END-TO-END (live model run, 2026-07-13).**
+  Operator installed LibreOffice → `_find_soffice` finds `/opt/homebrew/bin/soffice`;
+  `transcript_for_synthesis` returns real parsed slices (~24k chars, 2 calls/name). `driver_extract.py`
+  is the covenant pattern + ONE load-bearing UPGRADE — a **code-level validator**: (i) the model's
+  `quote` must appear whitespace-normalized in the slice; (ii) every numeric in `value` must
+  digit-trace (the synthesis tracer's scales + ±2%/0.05 tol) to a number **in the row's OWN QUOTE**
+  — traced against the quote, NOT the 24k slice (a slice-wide universe spuriously traces almost
+  anything — caught in dev: `999` matched `99.97%` slice-wide). **VERIFIED LIVE (claude-opus-4-8):**
+  MVST → 12 rows incl. `sales volume ~274 MWh (Q1'26) vs ~536 MWh prior` (the exact figure the PR#41
+  incident predicted), `Phase 3.2 up to 2 GWh capacity add`, `US rev +173%`; VITL → 12 rows incl. a
+  textbook pricing mechanism `price gap closed 35%→25% at a top-10 customer → volume +18% in 2 weeks`,
+  `new-household share 55%→50%`, `TDP 149.8 vs 115.8 yoy`. Every row cited to a real call with a
+  verbatim quote; the row cap FLAGGED the excess (not silently dropped); ZERO fabrications observed.
+  The FakeLlm unit pins (keep/drop/cap/LLM-error) guard the validator deterministically in CI. Fence
+  revised (scope-exact): a separate pre-synthesis validated phase reads transcript numbers; the
+  synthesis fence still says "derive NO numbers from this text — cite the `operating_drivers` facts".
+  `requirements.py` transcript `used_for` updated; `required` stays False.
+- **Suite:** ruff + `mypy --strict` (94) + full `pytest -m "not network"` green. Pins: A1/A2 on
+  real public-domain EX-99.1/10-Q excerpts + negatives; A3 on a SYNTHETIC KD fixture; Tier-B
+  validator on a SYNTHETIC slice via FakeLlm (keep/drop/cap/LLM-error — real CIQ transcript text
+  never committed, licensing); fail-loud + render e2e (endnote-cited via real render_markdown).
+- **Incident→invariant (shipped Y):** silent transcript-None → `unparsed_transcript_flag` + pin [Y];
+  undeclared CIQ kind consumed → `CIQ_MODULES` coverage guard caught it, now declared [Y]; the
+  "operating"⊃"rating" substring false-positive in the no-conclusion guard → matcher tightened to
+  snake_case word boundaries [Y]; digit-trace-against-slice too permissive → trace against the
+  row's own quote [Y]; render endnote-only → `>Source:`-scan guard [Y, pre-existing].
+- **CURATION + SYNTHESIS-USE (A+B, 2026-07-13) — operator asked "what's the use of a raw list if
+  synthesis doesn't use it".** BOTH shipped: **(A)** the Mechanism line is now mechanism-first and
+  concise — ATTRIBUTION renders `metric ±% — <cause clause>` (the causal WHY, period-phrase filler
+  stripped) instead of the raw truncated MD&A sentence (which was cutting off the cause), biggest
+  move first; LEADING_INDICATOR drops the redundant unit/hedge (`sales volume: 274 MWh`, was
+  `sales volume (megawatt hours): approximately 274 megawatt hours`); md+web parity. **(B)** the
+  synthesis prompt now surfaces a SALIENT operating-drivers digest (term→value→source_ref) + a
+  MECHANISM system rule ("ground any operating bull/bear point in the specific driver, copy its
+  source_ref; the decisive question names the load-bearing driver"). **VERIFIED LIVE (MVST):** the
+  fresh synthesis grounds its bear case in the mechanism — "Revenue collapsed... down 48.0%...
+  driven mechanically by a 48.9% sales-volume reduction" CITING the attribution driver's
+  source_ref; the decisive question now reads "reverse the Q1 volume collapse". So the drivers now
+  BOTH read cleanly for the human AND feed the machine's reasoning. Pins: curated line format
+  (deterministic anchors) + the digest/system-rule (prompt-construction, not an LLM-output string).
+- **DIRECTIONAL RESTRUCTURE (2026-07-13) — operator: "not useful, no direction, points
+  irrelevant".** After a diagnosis + two clarifying questions, the Mechanism block was rebuilt from
+  a flat kind-bucketed list into a **directional "what's changing" strip**: two groups,
+  **Deteriorating / Improving**, biggest signed move first. Direction = the machine reading the
+  SIGN of a stated change (`_driver_direction`) — top-line attribution by value_num (cost/expense
+  EXCLUDED, never a misleading "cost-down = good"), events by type (guidance raised/lowered,
+  impairment, client/product; showcase/exhibition/marketing-PR dropped), verb-based for the rest.
+  A row with NO derivable sign is DROPPED — which strips exactly the noise the operator flagged:
+  bare levels, patents, TAM, lab specs, foreign-regional trivia. This is sign-reading, NOT a
+  verdict (stops well short of BUY/AVOID). md+web parity; near-dup plural collapse ("2 GWh
+  hour(s)"). VERIFIED (MVST/VITL/EPAM): MVST → Deteriorating: revenue −48% (volume collapse),
+  impairment · Improving: Iveco win, +2 GWh capacity, US rev +173%. Pins: `_driver_direction` unit
+  (sign/exclude/event/off-thesis/verb) + directional grouping e2e. **PREVIEW CACHING FIX:** the
+  stock `http.server` sends no cache headers → the browser hard-cached old ES modules; a
+  no-cache dev server (`scratchpad/nocache_server.py`, port 8899) serves fresh — use that URL.
+- **STANDALONE BLOCK REMOVED — the drivers FEED SYNTHESIS, they are not a rendered surface
+  (operator decision, 2026-07-13, after 4 render iterations).** The honest diagnosis: a
+  mechanically-extracted fact list can never render the *directional call* the reader wants — that
+  call IS the verdict, which the constitution reserves for the human — so the block was raw
+  material in every format (flat list → curated → directional strip) and read as clutter. The one
+  place the drivers demonstrably earned their keep is **feeding synthesis** (the bull/bear grounds
+  in them and cites the −48%-volume mechanism — proven). So the standalone Mechanism block is
+  REMOVED from the Brief AND the Analysis tier (md + web + CSS; ~370 lines of driver-render code
+  deleted). KEPT: the extraction (A1/A2/A3 + Tier-B), the schema field (machine-complete in
+  `dossier.json` for audit), the assembly wiring, and **B** (`_operating_drivers_digest` + the
+  MECHANISM system rule + the fence). A regression guard pins that no `## Mechanism` /
+  `## Operating drivers (mechanism)` block renders while `operating_drivers` still rides in the
+  mech. Suite green. LESSON: the machine assembles+cites+feeds-reasoning; it does not render a
+  standalone "read" — that pretends to a conclusion it isn't allowed to make.
+- **NEXT (operator):** (1) test locally, then I open the PR; (2) standing artifact pass
+  re-assembles the cohort via
+  `vinci dossier` so the COMMITTED dossiers carry real driver rows (both tiers) — the injected
+  preview jsons are restored to None after review.
+
+**BRIEF (v2) — `planning/OPERATING_DRIVERS_BUILD_BRIEF.md` (the spec the build followed).** Genesis: the
+MOSL Mahanagar Gas audit (full record rides with #116's STATE.md entry). v2 re-grounded on a
+PRE-SIGN-OFF DATA DIAGNOSIS over the actual substrate (SEC cache · CIQ store · committed dossiers);
+v1's Tier-B coverage claim was WRONG and is corrected: `management_commentary: present` is a
+POINTER (files on disk), NOT parse success — **LibreOffice is not installed on this machine, so
+`transcript_for_synthesis` silently returns None for 10/10 names** (the 2026-07-10 cohort assembled
+with zero transcript text and no flag — a fail-loud violation; the fix ships regardless of PR-B).
+Diagnosed yields: 10-Q MD&A attribution CONFIRMED in cached real text (CNXC/MVST/SMPL — rescues 2
+of the 3 no-release names) → A2 promoted; EX-99.1 pricing real for VITL but AORT's hits are M&A
+boilerplate ("purchase price adjustments" — new negative-pin shape) and KPI yield is thin/noisy
+(expense-line + product-spec false-positive shapes) → A1 demoted; **CIQ Key Developments found on
+disk 10/10, classified (`key_developments`, ciq.py:169), consumed by NOTHING, striprtf-parseable
+(`Date|Type|Headline` + Situation rows, guidance/customer categories)** → NEW anchored A3. Tier B
+(LLM-fenced transcripts, covenant pattern + a code-level verbatim/digit-trace validator the
+covenant template lacks) is **GATED: operator installs LibreOffice + a shown parsed slice, else
+deferred**. Materiality = cross-layer JOIN, never a product; synthesis bridge prompt-level only.
+OPERATOR ACTIONS: (1) LibreOffice install (Tier-B unlock); (2) optional fuller-category Key
+Developments re-pull; (3) optional per-name CIQ operating-metrics export at depth. **No code until
+sign-off.**
 - **OPERATOR NOTE (worktrees):** canonical main lives in the `-s2`/`-main` worktrees; the primary dir
   tracks unmerged `feat/own-history-line` — run audits and builds from a main worktree.
 - **Sweep cadence: MANUAL — operator decision 2026-07-13 (NO cron).** The Component-A co-movement sweep

@@ -16,6 +16,7 @@
     "WYFI"
    ],
    "label": "CLSK APLD +7",
+   "industry_hint": "Finance services · 8/9",
    "rel12": 0.39844953028928076,
    "mom12": 0.7587553601714088,
    "coherence": 0.41153884137467167,
@@ -35,6 +36,7 @@
     "WEST"
    ],
    "label": "CVSA INOD +5",
+   "industry_hint": "Educational services · 4/7",
    "rel12": -0.2406633570117661,
    "mom12": 0.1196424728703619,
    "coherence": 0.31115018962315083,
@@ -54,6 +56,7 @@
     "NCNO"
    ],
    "label": "ACIW QTWO +5",
+   "industry_hint": "Prepackaged software · 7/7",
    "rel12": -0.7340665701332847,
    "mom12": -0.3737607402511567,
    "coherence": 0.43571122244828425,
@@ -72,6 +75,7 @@
     "GLOB"
    ],
    "label": "FDS MORN +4",
+   "industry_hint": "mixed: Computer services 1 · Investment advice 1",
    "rel12": -0.805919931632106,
    "mom12": -0.445614101749978,
    "coherence": 0.436019675651106,
@@ -89,6 +93,7 @@
     "ICHR"
    ],
    "label": "COHU FORM +3",
+   "industry_hint": "Semiconductors · 3/5",
    "rel12": 2.055641205235891,
    "mom12": 2.4159470351180192,
    "coherence": 0.45222570545321367,
@@ -105,6 +110,7 @@
     "APGE"
    ],
    "label": "SSTK DFTX +2",
+   "industry_hint": "mixed: Data processing services 1 · Medicinal chemicals 1",
    "rel12": -0.8216587710585986,
    "mom12": -0.46135294117647063,
    "coherence": 0.4836017183597205,
@@ -120,6 +126,7 @@
     "SBET"
    ],
    "label": "FWDI BMNR +1",
+   "industry_hint": "Finance services · 3/3",
    "rel12": -1.0642098839834178,
    "mom12": -0.7039040541012898,
    "coherence": 0.4938552658832131,
@@ -135,6 +142,7 @@
     "ERO"
    ],
    "label": "TGB HBM +1",
+   "industry_hint": "Metal mining · 2/3",
    "rel12": 0.7582352035525222,
    "mom12": 1.1185410334346502,
    "coherence": 0.4891780538052508,
@@ -150,6 +158,7 @@
     "NNE"
    ],
    "label": "LTBR OKLO +1",
+   "industry_hint": "Electric utilities · 2/3",
    "rel12": -0.6699033531019423,
    "mom12": -0.30959752321981426,
    "coherence": 0.5847989317561684,
@@ -165,6 +174,7 @@
     "SAIC"
    ],
    "label": "KBR BAH +1",
+   "industry_hint": "mixed: Heavy construction 1 · Management consulting 1",
    "rel12": -0.563244501091668,
    "mom12": -0.20293867120954,
    "coherence": 0.4977314060021613,
@@ -180,6 +190,7 @@
     "USAR"
    ],
    "label": "NB MP +1",
+   "industry_hint": "Metal mining · 3/3",
    "rel12": 0.6145895676074116,
    "mom12": 0.9748953974895396,
    "coherence": 0.5212453547437529,

@@ -17,9 +17,11 @@ from __future__ import annotations
 import re
 
 from vinci.dossier.schemas import (
+    DriverKind,
     EventImpact,
     GuidanceItem,
     OneOffItem,
+    OperatingDriver,
     ReconciliationValue,
     ReleaseExtract,
 )
@@ -304,6 +306,89 @@ def _event_impacts(text: str, src: str) -> list[EventImpact]:
             metric=_impact_metric(phrase), effect=direction, low=low, high=high,
             period=period_m.group(1).strip() if period_m else "",
             verbatim=_verbatim(text, m.start(), m.end()), source_ref=src,
+        ))
+    return out
+
+
+# --- (PR-B A1) operating drivers — pricing actions + narrow leading indicators -------------------
+# DEMOTED per the pre-sign-off diagnosis: pricing language is REAL (VITL) but KPI yield on this
+# cohort is thin/noisy, so KPI is narrow (a shipped/added verb must GOVERN the number+unit — not
+# adjacency) with the two observed false-positive shapes pinned out: an expense line-item carrying a
+# unit word (FUBO), and a product spec ('290Ah cell', MVST). Pricing rows are QUALITATIVE by default
+# (a headline '7% increase' is revenue growth, NOT a price change) — value_num is set ONLY when a %
+# binds tightly to the price. M&A/merger boilerplate ('purchase price adjustment') is excluded.
+_PRICING = re.compile(
+    r"(strategic\s+pricing\s+actions?|pricing\s+actions?|list\s+price\s+increases?|"
+    r"price\s+increases?|rais(?:e|ed|ing)\s+(?:our\s+|list\s+)?prices?|"
+    r"increas(?:e|ed|ing)\s+(?:our\s+|the\s+)?(?:average\s+)?(?:selling\s+)?prices?)",
+    re.I)
+_PRICING_PCT = re.compile(  # a % TIGHTLY bound to the price action (else stays qualitative) — the
+    # gap forbids COMMAS and DIGITS and is short, so a nearby UNRELATED % ('net of 8% rebates',
+    # 'offset by 4% higher logistics', '…to gross margin of 40%') can't misbind as the price change.
+    r"pric\w+[^.,\d]{0,24}?(?:of|by)\s+([\d.]+)\s?%"
+    r"|([\d.]+)\s?%\s+(?:list\s+)?price\s+increase", re.I)
+_MA_CONTEXT = re.compile(
+    r"purchase\s+price\s+adjustment|merger\s+agreement|acquisition\s+agreement|indemnif\w+|"
+    r"escrow", re.I)
+_KPI_UNIT = (r"MWh|GWh|units|vehicles|members|subscribers|customers|locations|stores|procedures|"
+             r"shipments|deliveries|tons")
+# a shipped/added/etc. verb must GOVERN the number+unit (≤40 chars before) — adjacency alone is not
+# a KPI (rejects 'Subscriber related expenses 946,705' and the '290Ah cell' product spec).
+_KPI = re.compile(
+    r"(shipped|delivered|added|produced|served|installed|sold|reached|grew\s+to|"
+    r"increased\s+to)\s+(?:approximately\s+|about\s+|~)?([\d,][\d,.]*)\s+(" + _KPI_UNIT + r")\b",
+    re.I)
+_KPI_EXCLUDE = re.compile(r"expense|cost\s+of", re.I)
+
+
+def operating_drivers(text: str, *, source_ref: str) -> list[OperatingDriver]:
+    """(PR-B A1) Pricing-action + narrow leading-indicator rows from a 99.1 release. Pricing rows
+    are verbatim-bound and QUALITATIVE unless a % binds tightly to the price; KPI rows require a
+    governing shipped/added verb. M&A boilerplate and expense-line unit words are excluded. Empty is
+    an honest miss the collector flags — the diagnosis expects thin KPI yield on this cohort."""
+    out: list[OperatingDriver] = []
+    seen: set[str] = set()
+    for m in _PRICING.finditer(text):
+        window = text[max(0, m.start() - 60):m.end() + 60]
+        if _MA_CONTEXT.search(window):  # a merger/indemnity 'price' clause is not a pricing action
+            continue
+        if re.search(r"\b(?:not|no|without|never)\s+\w*$|n['’]t\s+\w*$",
+                     text[max(0, m.start() - 18):m.start()], re.I):
+            continue  # a NEGATED statement ('did not raise prices', 'no price increases') isn't one
+        phrase = re.sub(r"\s+", " ", m.group(0)).strip().lower()
+        if phrase in seen:
+            continue
+        seen.add(phrase)
+        pm = _PRICING_PCT.search(text[m.start():m.end() + 60])
+        pct = _money(pm.group(1) or pm.group(2)) if pm else None
+        out.append(OperatingDriver(
+            kind=DriverKind.PRICING_ACTION, metric="pricing action", period=_period_near(
+                text, m.start(), m.end()) or None,
+            value=(f"{phrase} — {pct:g}%" if pct is not None else phrase),
+            value_num=pct, unit="%" if pct is not None else None,
+            verbatim=_verbatim(text, m.start(), m.end(), cap=200), source_ref=source_ref,
+            tier="anchored",
+        ))
+        if len(seen) >= 4:  # dedup-cap pricing phrases (a release repeats them) — no silent flood
+            break
+    for m in _KPI.finditer(text):
+        pre = text[max(0, m.start() - 32):m.start()]
+        if _KPI_EXCLUDE.search(pre):  # 'Subscriber related expenses 946,705' is NOT a volume KPI
+            continue
+        num = _money(m.group(2))
+        if num is None:
+            continue
+        unit = m.group(3)
+        key = f"{num}|{unit.lower()}"
+        if key in seen:
+            continue
+        seen.add(key)
+        out.append(OperatingDriver(
+            kind=DriverKind.LEADING_INDICATOR, metric=f"{m.group(1).lower()} ({unit.lower()})",
+            period=_period_near(text, m.start(), m.end()) or None,
+            value=f"{m.group(2)} {unit}", value_num=num, unit=unit,
+            verbatim=_verbatim(text, m.start(), m.end(), cap=200), source_ref=source_ref,
+            tier="anchored",
         ))
     return out
 

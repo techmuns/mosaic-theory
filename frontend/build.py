@@ -405,13 +405,51 @@ def _sig(cluster: dict[str, Any], *keys: str) -> float | None:
     return node if isinstance(node, (int, float)) else None
 
 
+# Static 4-digit SIC → industry-name map — only the codes in the current inbox. The repo has no
+# SIC-name source (sectors.py is coarse sectors, not 4-digit names); nothing is fetched here.
+# Display-only hint for an unreviewed cluster — the machine never names or decides a theme.
+_SIC_NAME = {
+    "1000": "Metal mining", "1040": "Gold & silver ores", "1600": "Heavy construction",
+    "2080": "Beverages", "2810": "Industrial inorganic chemicals",
+    "2833": "Medicinal chemicals", "2836": "Biological products", "3674": "Semiconductors",
+    "3825": "Electrical measuring instruments", "3827": "Lab analytical instruments",
+    "4911": "Electric utilities", "6199": "Finance services", "6282": "Investment advice",
+    "7363": "Staffing services", "7370": "Computer services", "7371": "Computer programming",
+    "7372": "Prepackaged software", "7373": "Systems integration",
+    "7374": "Data processing services", "7389": "Business services",
+    "8200": "Educational services", "8742": "Management consulting",
+}
+
+
+def _sic_name(code: str) -> str:
+    return _SIC_NAME.get(code, f"SIC {code}")
+
+
+def _industry_hint(cluster: dict[str, Any]) -> str | None:
+    """Most common member SIC + coverage ("Semiconductors · 5/5"); a single industry or a majority →
+    that. Else (≥2 industries, none a majority) → "mixed: <top> N · <second> M". Assemble-only hint
+    for an unreviewed cluster — never a verdict. None when no member has a SIC. Deterministic."""
+    members = cluster.get("members", [])
+    sics = Counter(str(m.get("sic") or "").strip() for m in members)
+    sics.pop("", None)
+    if not sics:
+        return None
+    total = len(members)
+    ranked = sics.most_common()
+    top_code, top_n = ranked[0]
+    if len(ranked) == 1 or top_n * 2 > total:  # single industry, or a strict majority
+        return f"{_sic_name(top_code)} · {top_n}/{total}"
+    sc, sn = ranked[1]
+    return f"mixed: {_sic_name(top_code)} {top_n} · {_sic_name(sc)} {sn}"
+
+
 def _inbox_entry(cluster: dict[str, Any], first_seen: str) -> dict[str, Any]:
     """One inbox row for an unreviewed cluster (display-only stats; machine never decides)."""
     members = [m["ticker"] for m in cluster.get("members", [])]
     label = " ".join(members[:2]) + (f" +{len(members) - 2}" if len(members) > 2 else "")
     return {
         "cluster_id": cluster["cluster_id"], "first_seen": first_seen, "members": members,
-        "label": label,
+        "label": label, "industry_hint": _industry_hint(cluster),
         "rel12": _sig(cluster, "strength_signals", "rel_strength_vs_market", "h12mo", "value"),
         "mom12": _sig(cluster, "strength_signals", "momentum", "h12mo", "value"),
         "coherence": _sig(cluster, "admissibility", "coherence_value"),
