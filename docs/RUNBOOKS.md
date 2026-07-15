@@ -163,13 +163,25 @@ Open a PR (do NOT merge). **Include the pre-registered rubric-v2 validation note
 advance** — a candidate is not advanced to a scan/underwrite until it survives both. *(Source: STATE.md
 §"T007 ADVANCE / T012" — dispositioned per harvest + priced-check + deep-research evidence doc.)*
 
-### Priced-check
-- Artifacts exist as `data/priced_check/report_all.txt` (as-of 2026-07-10, ~53 KB) and
-  `data/priced_check/report_insilico.txt` — **untracked, present only in `-main`**. *(Source: STATE.md
-  §DATA-TOPOLOGY.)*
-- **Priced-check has NO in-repo generator** — the reports in `data/priced_check/` were produced by
-  ad-hoc session scripts (untracked, `-main` only). A **`themes-priced-check` CLI is QUEUED** (see
-  STATE.md §Next-steps). **Until it lands, a survivor price read is not reproducible from this doc.**
+### Priced-check — `python -m vinci.cli themes-priced-check`
+
+```
+PYTHONPATH=$PWD $VENV/python -m vinci.cli themes-priced-check \
+  --basket TICK1,TICK2,… --label <name> [--asof YYYY-MM-DD] [--out <path>]
+```
+
+- Assembles the basket's **PRICE AXIS** (the survivor price gate): split-adjusted basket-MEDIAN
+  6/12/18mo cumulative return, excess vs **SPY / IWM**, per-member coverage, a quarter-by-quarter
+  excess-vs-IWM trajectory, market-model residual dispersion, a valuation percentile (repo
+  `pe_current_and_percentile` over ~5y, one cached EDGAR read), and a **MECHANICAL tag** (12mo excess
+  vs BOTH > +20% → PRICED; both <= +20% → NOT-PRICED; else MIXED). `< 3` priced members in a window →
+  UNDEFINED-with-reason, never a fake 0; stale/delisted members (last bar > 7d old) are excluded from
+  "now". Returns are **dividend-blind**; thin-n medians are weak. Prices via the repo Polygon client
+  (`daily_bars`, cached, adjusted). Each run is snapshotted under
+  `data/scan_history/priced-check-<label>/` (git-ignored, dated + immutable); `--out` is an optional
+  operator JSON export. **Run from `-main`** (holds the warm Polygon cache). *(Source:
+  `themes-priced-check --help`; `vinci/themes/priced_check.py` — the method is ported VERBATIM from the
+  ad-hoc `data/priced_check/compute.py` and reproduction-verified exact against `report_all.txt`.)*
 
 ### 3-question research brief (template, verbatim from the in-silico / T012 pattern)
 The in-silico adjudication is the **3-question** instance
@@ -315,12 +327,11 @@ merges** any change that touches them:
 
 ---
 
-## KNOWN GAP (the one step not reproducible from this doc)
+## KNOWN GAP
 
-- **Priced-check has no in-repo generator** (§c). `data/priced_check/report_*.txt` were produced by
-  ad-hoc session scripts (untracked, `-main` only); a **`themes-priced-check` CLI is QUEUED** (STATE.md
-  §Next-steps). Until it lands, the survivor price read is not reproducible from this doc.
-
-*Resolved since the first cut of this doc:* the **monthly-sweep runtime** (§a.i — measure and record on
-the next sweep) and the **research-brief question count** (§c — 3 core questions, extended per case, no
-canonical count).
+**None open.** Every loop above is now reproducible from the repo. Items resolved since the first cut
+of this doc:
+- **Priced-check generator** (§c) — the `themes-priced-check` CLI now assembles the survivor price
+  gate (reproduction-verified exact against `report_all.txt`).
+- **Monthly-sweep runtime** (§a.i) — measure and record on the next sweep.
+- **Research-brief question count** (§c) — 3 core questions, extended per case; no canonical count.
