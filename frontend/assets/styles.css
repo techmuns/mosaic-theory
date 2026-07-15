@@ -564,3 +564,41 @@ table.data.vs-table { width: 100%; }
 .rd-pager { margin-top: 8px; display: flex; gap: 8px; align-items: center; }
 .rd-pager button { font-size: 12px; padding: 2px 8px; border: 1px solid var(--line-2); border-radius: 6px; background: var(--surface); cursor: pointer; }
 .rd-pager button[disabled] { opacity: 0.4; cursor: default; }
+
+/* ── Radar inbox lane (left of the quadrant) ─────────────────────────────────────────────── */
+.rq-lane-h { font: 10px var(--sans); font-weight: 650; fill: var(--ink-2); letter-spacing: 0.01em; }
+.rq-lane-sub { font: 9px var(--sans); fill: var(--ink-3); }
+.rq-lane-dot { cursor: pointer; }
+.rq-lane-c { fill: none; stroke: var(--ink-3); stroke-width: 1.5; }
+.rq-lane-dot:hover .rq-lane-c { stroke: var(--ink-2); }
+.rq-lane-lbl { font: 9.5px var(--sans); fill: var(--ink-2); }
+.rq-lane-dot.sel .rq-lane-lbl { fill: var(--ink); font-weight: 650; }
+
+/* inbox indicator chip in the filter row */
+.inbox-chip { border-color: var(--accent); color: var(--accent); font-weight: 600; }
+.inbox-chip.warn { border-color: var(--conditional); color: #8a6418; background: var(--conditional-bg); }
+
+/* inbox detail panel */
+.pill.rd-inbox { background: var(--surface-2); color: var(--ink-2); border: 1px dashed var(--line-2); }
+.rd-mem { display: flex; flex-wrap: wrap; gap: 3px 12px; }
+.rd-mem .rd-tk { min-width: 0; }
+
+/* ── Radar review log (below the list) ───────────────────────────────────────────────────── */
+.radar-log { margin-top: 22px; border-top: 1px solid var(--line); padding-top: 14px; }
+.rd-log-h { font-size: 14px; font-weight: 650; margin-bottom: 8px; }
+.rd-log-controls { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; flex-wrap: wrap; }
+.rd-log-search { font: 13px var(--sans); padding: 4px 9px; border: 1px solid var(--line-2); border-radius: 6px; background: var(--surface); color: var(--ink); min-width: 220px; }
+.rd-log-count { margin-left: auto; }
+.rd-log-tbl { width: 100%; }
+.rd-log-tbl tr[data-log-row] { cursor: pointer; }
+.rd-log-tbl tr[data-log-row]:hover { background: var(--surface-2); }
+.rd-log-tbl tr.ex { background: #eef4ff; }
+.rd-log-ex td { background: var(--surface-2); font-size: 12px; padding: 6px 10px; }
+.rd-log-ex .foot { margin: 2px 0; }
+.rd-log-src { color: var(--ink-3); font-style: italic; }
+
+/* review-log decision chips */
+.pill.dec-advanced { background: #d9f2ea; color: #0d6e63; }
+.pill.dec-watch { background: var(--conditional-bg); color: #8a6418; }
+.pill.dec-parked { background: var(--surface-2); color: var(--ink-2); }
+.pill.dec-rejected { background: #fbe9e9; color: #a3372f; }
