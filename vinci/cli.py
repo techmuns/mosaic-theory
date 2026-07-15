@@ -13,6 +13,7 @@ import sys
 from collections.abc import Callable, Sequence
 from datetime import UTC, date, datetime
 from pathlib import Path
+from typing import Any
 
 from vinci.config import get_config, load_local_env
 from vinci.edgar import EdgarClient
@@ -743,6 +744,131 @@ def _cmd_themes_exposure(args: argparse.Namespace) -> int:
     return 0
 
 
+def _load_latest_component_a() -> tuple[Path | None, list[dict[str, Any]], str]:
+    """Newest component-a snapshot: (path, clusters, scan-date from the YYYYMMDD filename)."""
+    import re
+
+    root = Path("data/scan_history/component-a")
+    snaps = sorted(root.glob("*.jsonl")) if root.exists() else []
+    if not snaps:
+        return None, [], ""
+    p = snaps[-1]
+    clusters = [json.loads(ln) for ln in p.read_text().splitlines() if ln.strip()]
+    m = re.match(r"(\d{4})(\d{2})(\d{2})", p.name)
+    return p, clusters, ("-".join(m.groups()) if m else "")
+
+
+def _cmd_themes_draft(args: argparse.Namespace) -> int:
+    """Draft a name + hypothesis + advisory disposition for each UNREVIEWED cluster — ONE LLM call
+    each, keyed <scan_date>:<cluster_id>. The machine DRAFTS; the human OWNS (themes-review).
+    Idempotent: reuses drafts already current for this snapshot (no duplicate spend). Any call error
+    → an unassessed-error record (never a fabricated draft); 3 consecutive same-4xx aborts early."""
+    import subprocess
+    from datetime import UTC, datetime
+
+    from vinci.graph.llm import AnthropicLlmClient
+    from vinci.themes.drafts import DraftAbortedError, draft_unreviewed
+    from vinci.themes.scan_history import record_snapshot
+
+    cfg = get_config()
+    cfg.ensure_dirs()
+    snap_path, clusters, scan_date = _load_latest_component_a()
+    if snap_path is None:
+        print("!! no component-a snapshot under data/scan_history/component-a — run `themes` first")
+        return 2
+    reviews = json.loads(Path("frontend/radar/reviews.json").read_text())["reviews"]
+    drafts_out = Path("frontend/radar/drafts.json")
+
+    if drafts_out.exists() and not args.force:  # IDEMPOTENT — no duplicate LLM spend per scan
+        prev = json.loads(drafts_out.read_text())
+        if prev.get("source") == snap_path.name:
+            n_prev = len(prev.get("drafts", []))
+            print(f"drafts already current for {snap_path.name} ({n_prev} drafts) "
+                  "— reusing, no LLM spend (--force to redraft)")
+            return 0
+
+    llm = AnthropicLlmClient.from_config(cfg)
+    try:
+        drafts = draft_unreviewed(clusters, reviews, scan_date, llm, progress=stderr_reporter)
+    except DraftAbortedError as abort:
+        print(f"\n!! {abort} — NOT writing drafts (a poisoned run is worse than none)")
+        return 2
+
+    history_root = args.scan_history_dir or Path("data/scan_history")
+    try:  # sha is manifest metadata — unavailable is a logged None, not a failure
+        git_sha: str | None = subprocess.run(
+            ["git", "rev-parse", "--short", "HEAD"], capture_output=True, text=True, check=True,
+            timeout=5).stdout.strip() or None
+    except (OSError, subprocess.SubprocessError):
+        git_sha = None
+    snap = record_snapshot(
+        drafts, driver_slug="component-a-drafts",
+        driver_desc=f"Component-A drafts for {snap_path.name} (scan {scan_date})",
+        history_root=history_root, now=datetime.now(UTC), git_sha=git_sha,
+        n_scanned=len(drafts), tier_field=None)
+    drafts_out.write_text(json.dumps(
+        {"scan_date": scan_date, "source": snap_path.name, "drafts": drafts},
+        indent=1, ensure_ascii=False) + "\n")
+
+    ok = sum(1 for d in drafts if d["status"] == "drafted")
+    print(f"\ndrafted {ok}/{len(drafts)} unreviewed clusters ({len(drafts) - ok} unassessed-error) "
+          f"→ {drafts_out}")
+    print(f"scan-history snapshot → {snap}")
+    print(f"manifest + {(history_root / 'manifest.jsonl').read_text().splitlines()[-1]}")
+    print("\n=== DRAFTS (review sheet — hypotheses, not facts; suggestion is advisory) ===")
+    for d in drafts:
+        if d["status"] == "drafted":
+            print(f"\n[{d['key']}] {d['draft_name']}  ·  suggested: {d['suggested']}")
+            print(f"    hypothesis: {d['hypothesis']}")
+            print(f"    reason: {d['reason']}")
+        else:
+            print(f"\n[{d['key']}] UNASSESSED-ERROR — {d['error']}")
+        print(f"    members: {' '.join(str(t) for t in d['members'])}")
+    return 0
+
+
+def _cmd_themes_review(args: argparse.Namespace) -> int:
+    """Record the analyst's disposition for a drafted cluster → append to reviews.json (the single
+    record). Validates the key against the latest snapshot; refuses an existing key without --amend;
+    attributes by:"analyst", or "analyst (ratified advisor draft)" when decision+reason match."""
+    snap_path, clusters, scan_date = _load_latest_component_a()
+    if snap_path is None:
+        print("!! no component-a snapshot — run `themes` first")
+        return 2
+    key = args.cluster
+    valid = {f"{scan_date}:{c['cluster_id']}": c for c in clusters}
+    if key not in valid:
+        print(f"!! key {key!r} not a cluster in the latest snapshot ({scan_date}). "
+              f"Valid: {', '.join(sorted(valid))}")
+        return 2
+    members = [m["ticker"] for m in valid[key].get("members", [])]
+
+    reviews_path = Path("frontend/radar/reviews.json")
+    doc = json.loads(reviews_path.read_text())
+    existing = next((r for r in doc["reviews"] if r["key"] == key), None)
+    if existing and not args.amend:
+        print(f"!! {key} already reviewed (decision={existing['decision']}). --amend to overwrite.")
+        return 2
+
+    draft = None
+    drafts_path = Path("frontend/radar/drafts.json")
+    if drafts_path.exists():
+        draft = next((d for d in json.loads(drafts_path.read_text()).get("drafts", [])
+                      if d["key"] == key), None)
+    ratified = bool(draft and draft.get("status") == "drafted"
+                    and draft.get("suggested") == args.decision
+                    and (draft.get("reason") or "").strip() == args.reason.strip())
+    by = "analyst (ratified advisor draft)" if ratified else "analyst"
+    name = args.name or (draft.get("draft_name") if draft and draft.get("draft_name")
+                         else " ".join(members[:3]))
+    entry = {"key": key, "display_name": name, "decision": args.decision, "reviewed": scan_date,
+             "by": by, "reason": args.reason, "members": members}
+    doc["reviews"] = [r for r in doc["reviews"] if r["key"] != key] + [entry]
+    reviews_path.write_text(json.dumps(doc, indent=1, ensure_ascii=False) + "\n")
+    print(f"wrote review → {json.dumps(entry, ensure_ascii=False)}")
+    return 0
+
+
 def _cmd_themes_forward(args: argparse.Namespace) -> int:
     """Stage-4 forward-validation harness: load the analyst's dispositioned committed-tier worksheet
     into the append-only ratification ledger, report disposition status, and — once EVERY name is
@@ -1343,6 +1469,29 @@ def build_parser() -> argparse.ArgumentParser:
         help="skip the always-on timestamped history snapshot",
     )
     p_exp.set_defaults(func=_cmd_themes_exposure)
+
+    p_draft = sub.add_parser(
+        "themes-draft",
+        help="Draft a name + hypothesis + advisory disposition for each UNREVIEWED cluster (1 LLM "
+        "call each; the machine drafts, the human owns via themes-review)",
+    )
+    p_draft.add_argument("--force", action="store_true",
+                         help="redraft even if drafts are already current for this snapshot")
+    p_draft.add_argument("--scan-history-dir", type=Path, dest="scan_history_dir",
+                         help="scan-history archive root (default: data/scan_history; git-ignored)")
+    p_draft.set_defaults(func=_cmd_themes_draft)
+
+    p_rev = sub.add_parser(
+        "themes-review",
+        help="Record the analyst's disposition for a drafted cluster → reviews.json",
+    )
+    p_rev.add_argument("--cluster", required=True, help="cluster key '<scan-date>:<cluster_id>'")
+    p_rev.add_argument("--decision", required=True, choices=("keep-for-checks", "park", "reject"),
+                       help="the analyst's disposition (draft vocabulary; ratification is a match)")
+    p_rev.add_argument("--reason", required=True, help="one-line reason (verbatim to reviews.json)")
+    p_rev.add_argument("--name", help="display name (default: the draft name, else top-3 tickers)")
+    p_rev.add_argument("--amend", action="store_true", help="overwrite an existing review")
+    p_rev.set_defaults(func=_cmd_themes_review)
 
     p_fwd = sub.add_parser(
         "themes-forward",

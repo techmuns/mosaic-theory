@@ -21,7 +21,10 @@
    "mom12": 0.7587553601714088,
    "coherence": 0.41153884137467167,
    "breadth_exp": 0.5555555555555556,
-   "crowding": -0.0586962401947525
+   "crowding": -0.0586962401947525,
+   "draft_name": "Crypto-Mining & AI Compute",
+   "draft_read": "Tight sector overlap, strong momentum, low crowding warrant checks.",
+   "draft_suggested": "keep-for-checks"
   },
   {
    "cluster_id": "T006",
@@ -41,7 +44,10 @@
    "mom12": 0.1196424728703619,
    "coherence": 0.31115018962315083,
    "breadth_exp": 0.42857142857142855,
-   "crowding": 0.03805817871209616
+   "crowding": 0.03805817871209616,
+   "draft_name": "Education Services Core",
+   "draft_read": "Education plurality plausible but low coherence, mixed sectors warrant verification.",
+   "draft_suggested": "keep-for-checks"
   },
   {
    "cluster_id": "T007",
@@ -61,7 +67,10 @@
    "mom12": -0.3737607402511567,
    "coherence": 0.43571122244828425,
    "breadth_exp": 0.14285714285714285,
-   "crowding": 0.12757651856087926
+   "crowding": 0.12757651856087926,
+   "draft_name": "B2B Vertical SaaS",
+   "draft_read": "Tight SIC overlap plus strong shared downtrend suggests a real common factor.",
+   "draft_suggested": "keep-for-checks"
   },
   {
    "cluster_id": "T010",
@@ -80,7 +89,10 @@
    "mom12": -0.445614101749978,
    "coherence": 0.436019675651106,
    "breadth_exp": 0.0,
-   "crowding": -0.07078992834195441
+   "crowding": -0.07078992834195441,
+   "draft_name": "Data & Digital Services",
+   "draft_read": "Coherent negative-momentum group with plausible common demand driver; worth checks.",
+   "draft_suggested": "keep-for-checks"
   },
   {
    "cluster_id": "T011",
@@ -98,7 +110,10 @@
    "mom12": 2.4159470351180192,
    "coherence": 0.45222570545321367,
    "breadth_exp": 0.8,
-   "crowding": 0.07917901502393687
+   "crowding": 0.07917901502393687,
+   "draft_name": "Semi Test & Subfab",
+   "draft_read": "Coherent semi-cap supply-chain overlap; strong momentum, low crowding.",
+   "draft_suggested": "keep-for-checks"
   },
   {
    "cluster_id": "T030",
@@ -115,7 +130,10 @@
    "mom12": -0.46135294117647063,
    "coherence": 0.4836017183597205,
    "breadth_exp": 0.5,
-   "crowding": 0.2443088759117874
+   "crowding": 0.2443088759117874,
+   "draft_name": "Stock-Media & Biotech Mix",
+   "draft_read": "Mixed sectors, modest coherence, low crowding — verify if real or coincidence.",
+   "draft_suggested": "keep-for-checks"
   },
   {
    "cluster_id": "T034",
@@ -131,7 +149,10 @@
    "mom12": -0.7039040541012898,
    "coherence": 0.4938552658832131,
    "breadth_exp": 0.0,
-   "crowding": -0.07988900248283926
+   "crowding": -0.07988900248283926,
+   "draft_name": "Crypto Treasury Proxies",
+   "draft_read": "Same SIC, moderate coherence, plausible common driver worth verifying.",
+   "draft_suggested": "keep-for-checks"
   },
   {
    "cluster_id": "T037",
@@ -147,7 +168,10 @@
    "mom12": 1.1185410334346502,
    "coherence": 0.4891780538052508,
    "breadth_exp": 0.0,
-   "crowding": -0.05398044892927789
+   "crowding": -0.05398044892927789,
+   "draft_name": "Copper Miners Beta",
+   "draft_read": "Tight industry overlap plus strong momentum warrants factor-vs-idiosyncratic checks.",
+   "draft_suggested": "keep-for-checks"
   },
   {
    "cluster_id": "T040",
@@ -163,7 +187,10 @@
    "mom12": -0.30959752321981426,
    "coherence": 0.5847989317561684,
    "breadth_exp": 0.0,
-   "crowding": -0.188201377524557
+   "crowding": -0.188201377524557,
+   "draft_name": "Advanced Nuclear Basket",
+   "draft_read": "Plausible common driver, decent coherence, low crowding — worth verifying.",
+   "draft_suggested": "keep-for-checks"
   },
   {
    "cluster_id": "T043",
@@ -179,7 +206,10 @@
    "mom12": -0.20293867120954,
    "coherence": 0.4977314060021613,
    "breadth_exp": 0.0,
-   "crowding": 0.09131727797539213
+   "crowding": 0.09131727797539213,
+   "draft_name": "Gov Services Contractors",
+   "draft_read": "Plausible single driver despite mixed SIC labels; coherence moderate.",
+   "draft_suggested": "keep-for-checks"
   },
   {
    "cluster_id": "T045",
@@ -195,7 +225,10 @@
    "mom12": 0.9748953974895396,
    "coherence": 0.5212453547437529,
    "breadth_exp": 0.0,
-   "crowding": -0.1374400796659757
+   "crowding": -0.1374400796659757,
+   "draft_name": "Rare Earth Miners",
+   "draft_read": "Tight thematic overlap, strong momentum, low crowding worth checking.",
+   "draft_suggested": "keep-for-checks"
   }
  ]
 }
