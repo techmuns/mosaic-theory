@@ -164,11 +164,28 @@ CIQ_MODULES: tuple[CiqModuleRequirement, ...] = (
         sheets=(),  # a text document, not a workbook with subsheets
         used_for=(
             "qualitative synthesis context — a boilerplate-stripped, char-bounded slice "
-            "(transcript_for_synthesis) — and a source-bound management-commentary POINTER "
-            "(management_commentary); never embedded full, never machine-curated"
+            "(transcript_for_synthesis) — a source-bound management-commentary POINTER "
+            "(management_commentary); and (PR-B Tier B) the LLM-fenced operating-driver rows "
+            "(extract_transcript_drivers — each quote-in-slice + digit-traced or dropped); never "
+            "embedded full, never machine-curated"
         ),
         granularity=Granularity.QUARTERLY,
         lookback="the last ~2 quarters (most recent 1–2 earnings calls)",
+        required=False,
+    ),
+    CiqModuleRequirement(
+        module="Key Developments",
+        workbook_kind="key_developments",
+        freq=None,
+        sheets=(),  # a text/RTF document, not a workbook with subsheets
+        used_for=(
+            "(PR-B A3) dated, typed operating-EVENT rows for the Mechanism block "
+            "(key_development_drivers) — guidance changes, product/client announcements, "
+            "expansions, impairments (an INCLUDE filter; index/earnings/governance noise dropped); "
+            "a derived fact per row, source-bound, the raw RTF never committed"
+        ),
+        granularity=Granularity.SNAPSHOT,
+        lookback="the last ~1 year of key developments",
         required=False,
     ),
     CiqModuleRequirement(

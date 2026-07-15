@@ -24,6 +24,67 @@ _MVST_10Q = (
 )
 
 
+# (PR-B A2) real, public-domain MD&A attribution excerpts — CNXC Q2-26 + MVST Q1-26 10-Qs.
+_CNXC_ATTR = (
+    "Cost of revenue increased $9.0 million, or 0.6%, due to changes in foreign currency exchange "
+    "rates, which was caused primarily by the strengthening of the euro and several other "
+    "currencies against the U.S. dollar."
+)
+_MVST_ATTR = (
+    "Revenues Our revenues for the three months ended March 31, 2026 decreased by $55.9 million, "
+    "or 48.0%, compared to the same period in 2025. The decrease was primarily driven by a 48.9% "
+    "reduction in sales volume from approximately 535.7 MWh for the three months ended March 31, "
+    "2025 to approximately 273.9 MWh for the same period in 2026."
+)
+
+
+def test_a2_attribution_real_excerpts_signed_and_cause_bound() -> None:
+    """(PR-B A2) The canonical MD&A shape → an ATTRIBUTION row: $ + % magnitude, direction-SIGNED
+    into value_num, the metric normalized, and the cause captured in the verbatim (MVST's MWh
+    volume story spans into the next sentence). Real public-domain 10-Q text, CI-verifiable."""
+    cnxc = fs.results_attribution(_CNXC_ATTR, source_ref="10-Q CNXC")
+    assert len(cnxc) == 1
+    r = cnxc[0]
+    assert r.kind.value == "attribution" and r.tier == "anchored"
+    assert r.metric == "cost of revenue" and r.value_num == 0.6 and r.unit == "%"  # increased → +
+    assert r.value == "$9.0 million, or 0.6%"
+    assert "foreign currency" in r.verbatim  # the cause is carried, verbatim
+
+    mvst = fs.results_attribution(_MVST_ATTR, source_ref="10-Q MVST")
+    rev = next(x for x in mvst if x.metric == "revenue")
+    assert rev.value_num == -48.0 and rev.unit == "%"  # decreased → negative
+    assert "48.9% reduction in sales volume" in rev.verbatim  # cause spans the next sentence
+    assert "535.7 MWh" in rev.verbatim and "273.9 MWh" in rev.verbatim
+
+
+def test_a2_attribution_negative_pins() -> None:
+    """(PR-B A2 ⊖) A magnitude with NO stated cause is NOT attribution; a '$X, or Y%' table figure
+    with no causal conjunction yields no row — never a fabricated cause."""
+    # magnitude but no cause conjunction
+    assert fs.results_attribution(
+        "Revenue increased $5.0 million, or 2.0%, in the quarter.", source_ref="x") == []
+    # a bare table figure (no increased/decreased verb) — not even the core shape
+    assert fs.results_attribution("Revenue $ 213,392 $ 211,902 0.7 %", source_ref="x") == []
+    # ⊖ a cause 2+ sentences away is NOT this magnitude's cause (never adopted)
+    assert fs.results_attribution(
+        "Operating expenses increased $3.0 million, or 4.0%. Separately, cash rose. "
+        "The tax benefit was recognized due to a valuation allowance release.",
+        source_ref="x") == []
+    # ✓ a cause in the IMMEDIATELY-following sentence IS bound (MVST 'This decrease…' shape)
+    nxt = fs.results_attribution(
+        "Revenue decreased $50.0 million, or 48.0%. The decrease was driven by lower volume.",
+        source_ref="x")
+    assert nxt and nxt[0].value_num == -48.0
+    # ✓ distinct PERIODS with the same % are kept distinct (not silently deduped to one row)
+    two = fs.results_attribution(
+        "Revenue increased $5.0 million, or 5.0%, for the three months ended March 31, 2026 due to "
+        "pricing. Revenue increased $10.0 million, or 5.0%, for the six months ended "
+        "March 31, 2026 "
+        "due to volume.", source_ref="x")
+    assert len(two) == 2 and {r.period for r in two} == {
+        "three months ended March 31, 2026", "six months ended March 31, 2026"}
+
+
 def test_filing_sections_mvst_q1_26() -> None:
     """MVST Q1-26 pins: substantial-doubt (verbatim + plans); the filing-basis wall (111.2 ≤12m,
     bond 41.7/Jan-2027 + convertible 26.7/May-2026); Customer A 52/31 · B 18/16; commitments."""

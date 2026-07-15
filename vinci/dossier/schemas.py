@@ -775,6 +775,51 @@ class FilingSectionExtract(BaseModel):
     model_config = {"frozen": True}
 
 
+# --- (PR-B) operating drivers — the mechanism tier (anchored A1/A2/A3 + gated LLM-fenced) ---------
+
+
+class DriverKind(enum.StrEnum):
+    """The kind of operating-mechanism fact — the taxonomy the Brief's Mechanism block groups by."""
+
+    LEADING_INDICATOR = "leading_indicator"  # a unit-volume / KPI run-rate (a shipped/added count)
+    PRICING_ACTION = "pricing_action"  # a price change taken/announced (dated where stated)
+    ATTRIBUTION = "attribution"  # an MD&A price/volume/mix causality sentence ($ + % + cause)
+    EVENT = "event"  # a dated CIQ Key-Developments row (typed headline)
+    PASS_THROUGH_STRUCTURE = "pass_through_structure"  # indexation / contract pass-through facts
+    COMPETITIVE_POSITION = "competitive_position"  # a stated competitive-slack / position claim
+
+
+class OperatingDriver(BaseModel):
+    """(PR-B) One typed, cited, verbatim-bound operating-mechanism fact. ``value`` is the VERBATIM
+    stated value; ``value_num``/``unit`` are the STRUCTURED numeric an ANCHORED extractor parsed
+    (None on an LLM-fenced row — verbatim-only there, the covenant discipline). ``source_ref`` is
+    MACHINE-SET by the extractor; the model/parse never invents a citation. ``tier`` records the
+    extraction path (anchored | llm-fenced) so the human weighs deterministic vs LLM-read rows."""
+
+    kind: DriverKind
+    metric: str  # e.g. "revenue", "average selling price", a KD Type
+    period: str | None = None  # as STATED ("Q1 2026", "FY26"); None when unstated
+    value: str  # the VERBATIM stated value ("$32.0 million, or 43.6%", "536 MWh")
+    value_num: float | None = None  # STRUCTURED numeric — anchored rows only; consumers read THIS
+    unit: str | None = None  # the value_num's unit ("%", "MWh", "$M"); None on verbatim-only rows
+    verbatim: str  # the exact sentence/row read from — the human greps for it
+    source_ref: str  # accession + exhibit / "CIQ Key Developments: …" / "CIQ transcript: …"
+    tier: str  # "anchored" | "llm-fenced"
+
+    model_config = {"frozen": True}
+
+
+class OperatingDriversExtract(BaseModel):
+    """(PR-B) The assembled operating-driver rows across sources (EX-99.1 A1 + 10-Q MD&A A2 + CIQ
+    Key Developments A3 + gated transcript LLM-fenced), plus fail-loud ``qa_flags`` — every miss,
+    drop, or parse failure is a loud marker, never a fabricated row."""
+
+    rows: list[OperatingDriver] = Field(default_factory=list)
+    qa_flags: list[str] = Field(default_factory=list)
+
+    model_config = {"frozen": True}
+
+
 # --- RC-1 (C): the primary-source layer — parsed extracts + DERIVED cross-source surfaces ---------
 
 
@@ -859,6 +904,10 @@ class MechanicalLayer(BaseModel):
     # Feeds the Brief-card stock-performance exhibit; visualizes the G2 idio EOD closes (assemble,
     # never conclude). Optional-with-default for back-compat; None when the name has no window bars.
     stock_performance: StockPerformance | None = None
+    # (PR-B) operating-driver mechanism facts — anchored EX-99.1/10-Q/CIQ-KD rows (+ gated
+    # transcript LLM-fenced). Optional-with-default for back-compat: old JSON round-trips; a fresh
+    # assembly builds it (empty rows + a qa_flag when every source misses — fail-honest).
+    operating_drivers: OperatingDriversExtract | None = None
 
     model_config = {"frozen": True}
 

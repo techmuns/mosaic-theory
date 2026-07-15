@@ -1696,7 +1696,10 @@ def _brief_lines(d: Dossier) -> list[str]:
     if cc is not None:
         out.append(cc)
     out.append("")
-    # 4 — THE CASE: condensed bull/bear + key unknowns
+    # 4 — THE CASE: condensed bull/bear + key unknowns. (PR-B) the operating drivers are NOT a
+    # standalone block — a mechanically-extracted fact list can't render the directional CALL (that
+    # is the human's verdict); they feed the synthesis instead, where the bull/bear grounds in them
+    # and cites them (operating_drivers stays machine-complete in dossier.json for audit).
     out += ["## The case", *_brief_case_lines(s)]
     # 5 — FINANCIAL SNAPSHOT: un-truncated key financials + the ratios panel
     out.append("## Financial snapshot")

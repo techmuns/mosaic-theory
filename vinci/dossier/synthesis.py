@@ -23,6 +23,7 @@ from typing import Any
 from vinci.dossier.schemas import (
     DecisiveQuestion,
     MechanicalLayer,
+    OperatingDriversExtract,
     PrimarySource,
     SourcedPoint,
     SourceStatus,
@@ -388,7 +389,14 @@ _SYSTEM = (
     "peer set, treat every peer stat as a CONFIDENCE-GATED input, not a clean benchmark; and read "
     "the trailing-vs-forward (LTM vs NTM) peer spread before leaning on any single multiple. "
     "(11) NEVER reference an internal rule, instruction, or their numbers ('rule 8', 'per rule 3') "
-    "in any output field — the reader sees only source-bound analysis, never the machinery."
+    "in any output field — the reader sees only source-bound analysis, never the machinery. "
+    "(12) MECHANISM: the OPERATING-DRIVERS facts (a labelled digest below — validated volumes, "
+    "pricing actions, capacity, mix, dated events) are the causal WHY behind the numbers. When a "
+    "bull or bear point rests on an operating trend (volume, price, mix, capacity, a client win, a "
+    "guidance move), GROUND it in the specific driver and copy THAT driver's source_ref — a "
+    "mechanism-bearing point beats a bare multiple/margin observation. The decisive question's "
+    "evidence_for / evidence_against should name the load-bearing driver each side turns on. Never "
+    "invent a driver not in the digest, nor restate a driver's number as your own derivation."
 )
 
 
@@ -825,6 +833,22 @@ def _decode_escapes(obj: Any) -> Any:
     return obj
 
 
+def _operating_drivers_digest(od: OperatingDriversExtract) -> str:
+    """(PR-B §5) A salient term → value → source_ref digest of the operating-driver facts for the
+    synthesis phase — the causal MECHANISM the atomized bull/bear otherwise misses. Already inside
+    the facts JSON, but surfaced here so the LLM leans on it and copies the exact source_ref. One
+    literal example:
+      [leading_indicator] sales volume: approximately 274 megawatt hours → CIQ transcript: …Q1 2026…
+    """
+    out = ["=== OPERATING DRIVERS — validated, cited facts. GROUND any operating bull/bear point "
+           "(volume · price · mix · capacity · client · guidance) in the relevant driver and copy "
+           "its source_ref. Anchored = filings; llm-fenced = the call (already validated). ==="]
+    for r in od.rows:
+        val = r.value if len(r.value) <= 130 else r.value[:127].rstrip() + "…"
+        out.append(f"[{r.kind.value}] {r.metric}: {val} → {r.source_ref}")
+    return "\n".join(out)
+
+
 def _primary_source_digest(ps: PrimarySource) -> str:
     """(RC-1 C) A term → value → source_ref digest of the primary-source cross-checks for the LLM
     synthesis phase — VERBATIMS EXCLUDED (provenance is on-demand, never LLM input). Both
@@ -898,13 +922,17 @@ def synthesize(
     )
     if mech.primary_source is not None:
         user += "\n\n" + _primary_source_digest(mech.primary_source)
+    if mech.operating_drivers is not None and mech.operating_drivers.rows:
+        user += "\n\n" + _operating_drivers_digest(mech.operating_drivers)
     if transcript:
         user += (
             "\n\n=== Earnings-call transcripts, each fenced by a '--- <call> ---' label. With the "
             "latest and prior quarter both on file, COMPARE posture quarter-over-quarter where it "
             "shifts. Prepared remarks + Q&A, mechanically bounded. QUALITATIVE management-posture "
-            "context ONLY. Derive NO numbers; a point resting on it cites the 'CIQ transcript' "
-            "source_ref from the facts. ===\n"
+            "context ONLY. Derive NO numbers FROM THIS TEXT — any transcript figure you need has "
+            "already been extracted, validated, and cited as an `operating_drivers` fact above; "
+            "cite THAT source_ref, never a number you read here. A point resting on posture cites "
+            "the 'CIQ transcript' source_ref from the facts. ===\n"
             + transcript
         )
     log_parts = [f"model: {llm.model}", "", "=== SYSTEM ===", _SYSTEM, "", "=== USER ===", user]
