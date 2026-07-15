@@ -830,7 +830,11 @@ def _cmd_themes_draft(args: argparse.Namespace) -> int:
 def _cmd_themes_review(args: argparse.Namespace) -> int:
     """Record the analyst's disposition for a drafted cluster → append to reviews.json (the single
     record). Validates the key against the latest snapshot; refuses an existing key without --amend;
-    attributes by:"analyst", or "analyst (ratified advisor draft)" when decision+reason match."""
+    attributes by:"analyst", or "analyst (ratified advisor draft)" when decision+reason match.
+    `reviewed` is the DATE OF REVIEW (today), not the scan date — the scan date already lives in the
+    key. An --amend PRESERVES any extra fields on the existing entry (e.g. map_ref)."""
+    from datetime import UTC, datetime
+
     snap_path, clusters, scan_date = _load_latest_component_a()
     if snap_path is None:
         print("!! no component-a snapshot — run `themes` first")
@@ -859,10 +863,13 @@ def _cmd_themes_review(args: argparse.Namespace) -> int:
                     and draft.get("suggested") == args.decision
                     and (draft.get("reason") or "").strip() == args.reason.strip())
     by = "analyst (ratified advisor draft)" if ratified else "analyst"
-    name = args.name or (draft.get("draft_name") if draft and draft.get("draft_name")
-                         else " ".join(members[:3]))
-    entry = {"key": key, "display_name": name, "decision": args.decision, "reviewed": scan_date,
-             "by": by, "reason": args.reason, "members": members}
+    draft_name = draft.get("draft_name") if draft and draft.get("draft_name") else None
+    name = (args.name or draft_name or (existing.get("display_name") if existing else None)
+            or " ".join(members[:3]))
+    # {**existing, …} PRESERVES extra fields (map_ref) on --amend; a fresh review starts from {}.
+    entry = {**(existing or {}), "key": key, "display_name": name, "decision": args.decision,
+             "reviewed": datetime.now(UTC).date().isoformat(), "by": by, "reason": args.reason,
+             "members": members}
     doc["reviews"] = [r for r in doc["reviews"] if r["key"] != key] + [entry]
     reviews_path.write_text(json.dumps(doc, indent=1, ensure_ascii=False) + "\n")
     print(f"wrote review → {json.dumps(entry, ensure_ascii=False)}")

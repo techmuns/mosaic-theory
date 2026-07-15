@@ -170,7 +170,10 @@ def _review_ns(cluster: str, decision: str, reason: str, *, name: str | None = N
 def test_review_happy_writes_analyst_entry(
         tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
     """A valid key with no matching draft → by:'analyst', appended to reviews.json with the members
-    resolved from the snapshot."""
+    resolved from the snapshot. `reviewed` is the DATE OF REVIEW (today), NOT the scan date — the
+    scan date already lives in the key (the 'Reviewed' column means when-reviewed)."""
+    from datetime import UTC, datetime
+
     monkeypatch.chdir(tmp_path)
     _write_snapshot(tmp_path, [_cluster("T004", ["CLSK", "RIOT", "MARA"])])
     _write_radar(tmp_path, [])
@@ -180,7 +183,8 @@ def test_review_happy_writes_analyst_entry(
     entry = doc["reviews"][-1]
     assert entry["key"] == "2026-07-14:T004" and entry["decision"] == "keep-for-checks"
     assert entry["by"] == "analyst" and entry["members"] == ["CLSK", "RIOT", "MARA"]
-    assert entry["reviewed"] == "2026-07-14"
+    assert entry["reviewed"] == datetime.now(UTC).date().isoformat()  # today, not the scan date
+    assert entry["reviewed"] != "2026-07-14"  # NOT the scan date (regression pin)
 
 
 def test_review_ratified_when_decision_and_reason_match_draft(
@@ -225,10 +229,13 @@ def test_review_bad_key_rejected_without_write(
 def test_review_dup_refused_without_amend_then_overwrites_with_amend(
         tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
     """An already-reviewed key is refused without --amend (rc 2, no change); --amend overwrites in
-    place (no duplicate key)."""
+    place (no duplicate key) and PRESERVES extra fields (map_ref) + the prior display_name when no
+    new name is given — an amend must not silently drop data the Log view renders."""
     monkeypatch.chdir(tmp_path)
     _write_snapshot(tmp_path, [_cluster("T004", ["CLSK", "RIOT"])])
     existing = _review("2026-07-14:T004", ["CLSK", "RIOT"], decision="park", reason="first")
+    existing["display_name"] = "Bitcoin miners"  # a curated name the amend must keep
+    existing["map_ref"] = "bitcoin-miners"
     radar = _write_radar(tmp_path, [existing])
     before = (radar / "reviews.json").read_bytes()
 
@@ -240,6 +247,9 @@ def test_review_dup_refused_without_amend_then_overwrites_with_amend(
     reviews = json.loads((radar / "reviews.json").read_text())["reviews"]
     keyed = [r for r in reviews if r["key"] == "2026-07-14:T004"]
     assert len(keyed) == 1 and keyed[0]["decision"] == "reject"  # overwritten, not duplicated
+    assert keyed[0]["map_ref"] == "bitcoin-miners"              # extra field preserved
+    assert keyed[0]["display_name"] == "Bitcoin miners"        # prior name kept (no --name given)
+    assert keyed[0]["reason"] == "second"                      # managed field updated
 
 
 if __name__ == "__main__":
