@@ -4,6 +4,19 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="robots" content="noindex, nofollow" />
+  <script>
+    /* Set the theme before first paint — no flash of the wrong palette. A saved choice wins,
+       otherwise follow the OS. The sidebar toggle (app.js) flips + persists this same attribute. */
+    (function () {
+      try {
+        var t = localStorage.getItem("nv-theme");
+        if (t !== "light" && t !== "dark") {
+          t = matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+        }
+        document.documentElement.setAttribute("data-theme", t);
+      } catch (e) {}
+    })();
+  </script>
   <title>Nostra Vinci · research &amp; decision ops</title>
   <link rel="stylesheet" href="./assets/styles.css" />
 </head>
