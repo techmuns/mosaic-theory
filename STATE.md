@@ -2259,6 +2259,28 @@ Each line: *what it does* — *verified how*.
     scan). The committed `drafts.json` holds the v2 face-validity re-check of the (reviewed) Jul-14
     clusters, tagged `prompt_version: 2`; among data files ONLY `drafts.json` changed
     (reviews/inbox/log byte-identical). ruff + `mypy --strict` + pytest (643) + `node --check` green.
+- **THEME-CONTEXT PAGE CONTENT — "What this theme is" (2026-07-15, feat/theme-context; PR open, not
+  merged; DEPLOYS on merge).** The theme altitude page (`#/themes/<slug>`) gains a leading section
+  above the tiers: the **ratified driver definition QUOTED** + the analyst's plain-language notes.
+  - **SINGLE-SOURCE rule (machine-checked):** `driver_summary` is the ratified `DriverSpec`
+    description's opening sentence, quoted verbatim (attributed "ratified driver definition") — NOT
+    free text. New committed file `frontend/themes/context.json` (analyst-owned), generated from the
+    specs and keyed by the theme-page slug (`defense`, not the driver key `defense-demand-shift`),
+    joined at view time (`getThemeContext`; graceful absence). `test_theme_context.py` pins each
+    `driver_summary.quote` to `first_sentence(spec.description)` — a drift or an un-regenerated edit
+    reddens (proven: mutating the quote fails the test).
+  - **analyst_notes** are judgment, verbatim, analyst-owned (NOT pinned to the spec): truckload
+    carries the 4 valuation/proof/loser-side/thesis-break lines; defense + ai-datacenter each carry
+    the one calibration line ("scanned after the market had already re-rated it").
+  - **The FROZEN `frontend/themes/*.json` stay BYTE-IDENTICAL** (the #124 clobber lesson) — new
+    content ships as a SEPARATE file, never a regenerate.
+  - **candidates.json** (the one sanctioned Radar TEXT touch — no Radar view/UI change; the cap
+    holds): `detail.summary` added for the three non-scanned candidates (senior-housing,
+    in-silico-evidence, trade-flow-shipping), advisor-drafted + analyst-ratified 2026-07-15. The
+    Radar drawer already renders `detail.summary || note || lead`, so it is a pure data edit (clean
+    +3 insertions, no reformat). Among data files, only `candidates.json` + the new `context.json`
+    changed; every other radar/theme artifact byte-identical. ruff + `mypy --strict vinci` + pytest
+    (648) + `node --check` green.
 
 ## 3. FALSIFIED — tested and retired (NOT deferred)
 
@@ -3238,18 +3260,15 @@ two-name analysis (mid/small-caps, opposite directions) mapped against this inve
   the bar). Thesis-break (all three WATCHLIST names): FMCSA non-domiciled-CDL rule stayed/reversed, or ACT
   driver availability returns to surplus. Gated on the analyst's dossier build; cites the theme-#3 freeze
   (`feat/theme3-freeze`) + `data/research/theme3_truckload_triage_2026-07-14.md`.
-- **DRAFTING-RUBRIC v2 SHIPPED, PARTIAL — a 2nd iteration is OPERATOR-SANCTION-GATED (2026-07-15,
-  fix/draft-rubric).** v1 (all keep-for-checks) → v2 park-default + runtime few-shot lifted the
-  Jul-14 face-validity from **0/11 → 7/11 park-or-reject** (5/11 exact), but fell SHORT of the ~9–11
-  expectation: **keep-for-checks still survives on 4 lagging clusters the human parked — T006
-  (education), T007 (vertical SaaS), T040 (nuclear SMR), T043 (gov services)** — all −24% to −73% vs
-  market where the model found a nameable driver but the human judged "already moved / not a theme".
-  **NEXT (needs operator sanction — do NOT self-iterate the prompt):** tighten keep-for-checks so a
-  merely-lagging price is not enough when the group is a recognized macro/policy/cycle basket; the 4
-  survivors are the labelled target. Confirm on a CALMER sweep first (the Jul-14 set is frothy, and the
-  few-shot for the check was dominated by fresh park/reject calls). FACE-VALIDITY only — never tuned on
-  forward returns. A re-draft under a bumped `PROMPT_VERSION` is one `themes-draft --include-reviewed`
-  run (pennies).
+- **DRAFTING-RUBRIC v2 STANDS — 2nd iteration NOT sanctioned; validation PRE-REGISTERED on Aug 13
+  (operator ruling 2026-07-15).** v1 (all keep-for-checks) → v2 park-default + runtime few-shot lifted
+  the Jul-14 face-validity from **0/11 → 7/11 park-or-reject** (5/11 exact); 4 keep-for-checks
+  survivors on lagging clusters the human parked (T006/T007/T040/T043). **The operator ruled: v2
+  stands, do NOT re-tune the prompt now.** Validation is **pre-registered on the Aug 13 sweep** —
+  `keep-for-checks` is expected to be the EXCEPTION, not the default; disagreements are reviewed THEN,
+  on fresh (not-yet-priced) clusters rather than this frothy already-moved set. FACE-VALIDITY only —
+  never tuned on forward returns. (If Aug 13 shows keep-for-checks creeping back to the default, THAT
+  is the trigger to revisit — a real forward test, not a re-fit to the Jul-14 labels.)
 **OPERATING-DRIVERS MECHANISM TIER (PR-B, Tiers A + Tier B code) — BUILT + VERIFIED, LOCAL (branch
 feat/operating-drivers, 2026-07-13; NOT yet PR'd — user tests locally first).** The MOSL
 "90-second handover" gap, closed with anchored extraction: typed cited `operating_drivers` rows on

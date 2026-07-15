@@ -333,6 +333,19 @@ export async function getThemeDriver(slug) {
   }
 }
 
+// getThemeContext(slug) -> { driver_summary:{quote, source}, analyst_notes:[string] } for one theme,
+// or null (theme absent, or context.json not committed to this deploy → graceful absence). One
+// committed analyst-owned file joined at view time; driver_summary is quoted from the ratified spec.
+export async function getThemeContext(slug) {
+  try {
+    const all = await _once("theme-context", () => _json(`${THEMES}/context.json`));
+    return all?.[String(slug).toLowerCase()] ?? null;
+  } catch (e) {
+    if (e.status === 404) return null;
+    throw e;
+  }
+}
+
 // getGraphCoverage() -> {
 //   available, model, stats: {names,withEdges,totalEdges,realEdges,realUsListed},
 //   edges: [{focal, counterpartyName, counterpartyTicker, relType, direction, resolution, evidence}],

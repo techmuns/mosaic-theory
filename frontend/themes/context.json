@@ -1,0 +1,32 @@
+{
+ "truckload-supply-purge": {
+  "driver_summary": {
+   "quote": "the TRUCKLOAD SUPPLY PURGE — a regulatory-driven contraction of US for-hire truckload capacity: FMCSA enforcement removing non-domiciled CDL holders (final rule live 2026-03), purges of fraudulent ELD/hours-of-service records, and the unanimous SCOTUS broker-liability ruling (2026-05) raising the cost of using marginal carriers — shifting pricing power TOWARD compliant, asset-based truckload carriers and the services that supply compliant capacity, while freight DEMAND stays weak (a supply-driven, not demand-driven, upcycle).",
+   "source": "ratified driver definition"
+  },
+  "analyst_notes": [
+   "Trucking profits are at a cycle bottom, so the stocks look expensive on last year's earnings — trailing P/E sits at the 99th percentile of its own history. The deep study values a normal year's profits, not the bottom of the cycle.",
+   "No surfaced name discloses the driver in its filings, the proof lives outside them: FMCSA enforcement, ELD purges, the SCOTUS broker-liability ruling, and spot rates.",
+   "In a supply squeeze, brokers get hurt first (customer prices locked, truck costs spiking), RXO and LSTR are the losing-side comparison; ARCB is mostly a different trucking cycle.",
+   "Demand is still weak — this is a supply-driven upcycle. If the rules reverse or capacity returns, the thesis breaks."
+  ]
+ },
+ "defense": {
+  "driver_summary": {
+   "quote": "the COMPOSITIONAL SHIFT in defense demand — spending moving FROM exquisite, few, crewed/legacy platforms TOWARD attritable, mass-producible, autonomous, and software-defined systems, driven by higher global defense budgets (US, Europe, Japan, India, Gulf) AND recent-conflict lessons that mass + attritability + autonomy beat exquisite-but-scarce.",
+   "source": "ratified driver definition"
+  },
+  "analyst_notes": [
+   "Scanned after the market had already re-rated it — kept as a calibration case; the lesson the radar exists to prevent."
+  ]
+ },
+ "ai-datacenter": {
+  "driver_summary": {
+   "quote": "the AI-DATACENTER VALUE CHAIN — any layer of the chain that builds or supplies AI-datacenter compute: chips/GPU → HBM & memory → advanced packaging → thermal/cooling → power DELIVERED TO AI datacenters → optical interconnect → colocation/operator → AI-cloud.",
+   "source": "ratified driver definition"
+  },
+  "analyst_notes": [
+   "Scanned after the market had already re-rated it — kept as a calibration case; the lesson the radar exists to prevent."
+  ]
+ }
+}
