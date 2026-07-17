@@ -324,7 +324,9 @@ summary:focus-visible, [tabindex]:focus-visible {
 .breadcrumb a { color: var(--ink-2); }
 .breadcrumb .sep { margin: 0 7px; color: var(--line-2); }
 
-.page-h { font-size: 22px; font-weight: 650; letter-spacing: -0.01em; margin: 0; }
+/* page title — matches the locked Hybrid mockup's heading (.dir-hyb .scr-h h2): 24px at
+   weight 600 with -0.02em tracking. Was 22px/650/-0.01em — heavier and less tracked. */
+.page-h { font-size: 24px; font-weight: 600; letter-spacing: -0.02em; margin: 0; }
 
 /* persistent subtitles — ALWAYS visible (never hover); what the stage does. */
 .subtitle { color: var(--ink-2); font-size: 12.5px; margin-top: 6px; max-width: 760px; }
