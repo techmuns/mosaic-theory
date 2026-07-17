@@ -306,6 +306,115 @@ def _cmd_dossier(args: argparse.Namespace) -> int:
             print(f"      ⚠ {c}")
     for e in errors:
         print(f"  ERROR {e}")
+    # (mid-cycle) single --ticker with --peers/--scenario → compute + attach the mid-cycle block
+    if args.ticker and (getattr(args, "peers", None) or getattr(args, "scenario", None)):
+        reasons = {n: getattr(args, f"reason_{n}") for n in ("bear", "base", "bull")
+                   if getattr(args, f"reason_{n}", None)}
+        peers = [p.strip().upper() for p in (args.peers or "").split(",") if p.strip()]
+        rc = _attach_midcycle(cfg, args.ticker, peers=peers,
+                              scenario_specs=args.scenario or [], reasons=reasons)
+        if rc != 0:
+            return rc
+    return 0
+
+
+def _parse_scenario(spec: str) -> tuple[str, dict[str, float]]:
+    """'bear:rev=3000,margin=0.03,multiple=5' → ('bear', {'rev':…, 'margin':…, 'multiple':…})."""
+    name, _, rest = spec.partition(":")
+    kv: dict[str, float] = {}
+    for part in rest.split(","):
+        if part.strip():
+            k, _, v = part.partition("=")
+            kv[k.strip()] = float(v)
+    return name.strip().lower(), kv
+
+
+def _attach_midcycle(cfg: Config, ticker: str, *, peers: list[str],
+                     scenario_specs: list[str], reasons: dict[str, str]) -> int:
+    """Compute the mid-cycle block for one --ticker and persist it into the committed dossier
+    .json/.md (re-render only — mechanical/synthesis layers untouched). Deterministic, no LLM."""
+    from vinci.dossier import midcycle as mc
+    from vinci.dossier.ciq import CiqBundle
+    from vinci.dossier.manual_store import LocalFolderStore
+    from vinci.dossier.render import render_markdown
+    from vinci.dossier.schemas import Dossier
+    from vinci.edgar.client import EdgarClient
+    from vinci.resolver import EntityResolver
+
+    ddir = cfg.data_dir / "dossiers" / ticker.upper()
+    path = ddir / "dossier.json"
+    if not path.exists():
+        print(f"  midcycle: no committed dossier for {ticker} — assemble it first")
+        return 1
+    d = Dossier.model_validate_json(path.read_text())
+    resolver, edgar = EntityResolver.from_config(cfg), EdgarClient.from_config(cfg)
+
+    def series(t: str) -> tuple[mc.AnnualSeries, mc.AnnualSeries]:
+        f = edgar.companyfacts(resolver.resolve_ticker(t).cik)
+        return mc.annual_series(f, "revenue"), mc.annual_series(f, "operating_income")
+
+    rev, oi = series(ticker)
+    facts = edgar.companyfacts(resolver.resolve_ticker(ticker).cik)
+    margin = mc.margin_anchor(rev, oi)
+    fuel = mc.fuel_split(facts, rev, oi)
+    per: dict[str, mc.MarginAnchor] = {}
+    for p in peers:
+        try:
+            pr, po = series(p)
+            per[p] = mc.margin_anchor(pr, po)
+        except Exception as exc:  # noqa: BLE001 — a peer that won't resolve is EXCLUDED, named
+            per[p] = mc.MarginAnchor(by_year={}, revenue_tag=None, opinc_tag=None,
+                                     note=f"fetch error: {type(exc).__name__}")
+    peer_band = mc.peer_anchor(per)
+    bundle = CiqBundle.from_files(ticker, LocalFolderStore.from_config(cfg).files(ticker))
+    mult = mc.multiple_anchor(bundle)
+
+    scenarios: list[mc.Scenario] = []
+    try:
+        for spec in scenario_specs:
+            name, kv = _parse_scenario(spec)
+            r_musd = kv.get("rev")
+            multiple = kv.get("multiple", mult.median if mult.available else None)
+            if r_musd is None or multiple is None:
+                print(f"  scenario {name!r}: needs rev= and multiple= "
+                      "(multiple may default to the D-anchor only when CIQ is present)")
+                return 2
+            scenarios.append(mc.build_scenario(
+                name, revenue=r_musd, multiple=multiple, anchor_margin=margin.median,
+                margin=kv.get("margin"), reason=reasons.get(name)))
+    except mc.ScenarioError as exc:
+        print(f"  REFUSED — {exc}")
+        return 2
+
+    si = d.mechanical.stock_info
+    spot = si.price.value if si else None
+    shares = si.shares_out.value if si else None
+    # Net debt ($M) from the CIQ TEV->equity bridge (the existing capital-structure block):
+    # net debt = total debt - cash (net cash -> negative, a legitimate value, so guard on None).
+    iv = d.mechanical.implied_valuation
+    net_debt = (
+        iv.bridge_debt - iv.bridge_cash
+        if iv is not None and iv.bridge_debt is not None and iv.bridge_cash is not None
+        else None
+    )
+    # A scenario grid needs spot + positive shares + net debt. Supplied-but-unpriceable is said
+    # LOUDLY and renders anchors only — the analyst's scenarios are never silently dropped.
+    priced = (bool(scenarios) and spot is not None and shares is not None
+              and shares > 0 and net_debt is not None)
+    if scenarios and not priced:
+        missing = ", ".join(
+            n for n, ok in (("spot", spot is not None),
+                            ("shares>0", shares is not None and shares > 0),
+                            ("net-debt (CIQ TEV→equity bridge)", net_debt is not None)) if not ok)
+        print(f"  scenarios supplied but NOT priced — missing/invalid: {missing}; anchors only")
+    block = mc.assemble_midcycle(margin=margin, fuel=fuel, peers=peer_band, mult=mult,
+                                 scenarios=scenarios or None, spot=spot, net_debt_musd=net_debt,
+                                 shares=shares)
+    d2 = d.model_copy(update={"midcycle": block})
+    path.write_text(d2.model_dump_json(indent=2))
+    (ddir / "dossier.md").write_text(render_markdown(d2))
+    print(f"  midcycle attached → {ddir} (anchors"
+          f"{' + scenario grid + ratio' if priced else ' only'})")
     return 0
 
 
@@ -1639,6 +1748,16 @@ def build_parser() -> argparse.ArgumentParser:
         help="reveal the SEALED machine proposal for --ticker (a peek; the brief hides it so it "
         "can't anchor you). If you peek before logging, pass log-verdict --saw-proposal.",
     )
+    # (mid-cycle) the cyclical-underwriting block — computed for a single --ticker
+    p_dossier.add_argument("--peers", help="comma-separated peer tickers for the mid-cycle margin "
+                           "band (Anchor B), e.g. MRTN,HTLD; peers under 10y history excluded")
+    p_dossier.add_argument("--scenario", action="append", default=[],
+                           help="a mid-cycle scenario 'name:rev=<$M>,margin=<frac>,multiple=<x>' "
+                           "(bear/base/bull; omit margin → anchor default). Repeatable.")
+    for _sc in ("bear", "base", "bull"):
+        p_dossier.add_argument(f"--reason-{_sc}", dest=f"reason_{_sc}",
+                               help=f"why the {_sc} scenario deviates from the anchor "
+                               "(REQUIRED for a deviated margin; refused otherwise)")
     p_dossier.set_defaults(func=_cmd_dossier)
 
     p_log = sub.add_parser("log-verdict", help="record a manual BUY/AVOID verdict for a candidate")

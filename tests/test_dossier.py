@@ -4882,12 +4882,14 @@ def test_print_reasserts_light_palette_so_dark_never_prints() -> None:
 
     base = css[css.index(":root {") : css.index("\n}", css.index(":root {"))]
     light = hexmap(base)
-    assert light.get("--bg") and light.get("--surface") and light.get("--ink"), "base light tokens missing"
+    assert (light.get("--bg") and light.get("--surface")
+            and light.get("--ink")), "base light tokens missing"
 
     dstart = css.index(':root[data-theme="dark"]')
     dark = hexmap(css[dstart : css.index("\n}", dstart)])
     # the dark theme must genuinely differ from light (else the whole re-assert is a no-op)
-    assert dark["--bg"] != light["--bg"] and dark["--surface"] != light["--surface"], "dark == light?"
+    assert (dark["--bg"] != light["--bg"]
+            and dark["--surface"] != light["--surface"]), "dark == light?"
 
     # the @media print re-assert rule (targets the dark selector, sets light values). Anchor on the
     # block's opening brace — bare "@media print" also appears in the :root header comment above.
