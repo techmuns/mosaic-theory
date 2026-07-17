@@ -16,7 +16,7 @@ export async function render(root) {
   const gateCard = `
     <div class="card gate-card" style="grid-column: 1 / -1;">
       <h3 class="g-label">Validation gate · BUY−AVOID spread</h3>
-      <div class="g-spread">${spread.spread === null ? DASH : spread.spread}</div>
+      <div class="g-spread${spread.spread === null ? " empty" : ""}">${spread.spread === null ? DASH : spread.spread}</div>
       <div class="g-status">
         <b>${spread.resolvedCount} resolved</b> · gate not met ·
         needs ≥2 quarters of resolved verdicts, both legs, positive and large enough to be real
@@ -63,16 +63,16 @@ export async function render(root) {
   // Theme edge — a LIGHT summary; deep status lives in #/themes. Skipped if no theme artifacts.
   const td = themes.crossDriver;
   const themeCard = themes.drivers.length ? `
-    <div class="card" style="display:flex; justify-content:space-between; align-items:center; gap:16px; flex-wrap:wrap; margin-bottom:18px;">
+    <div class="card theme-edge">
       <div>
-        <h3 style="margin-bottom:6px;">Theme edge <span class="pill unresolved" style="margin-left:4px;">unvalidated · research</span></h3>
-        <div style="font-size:13px; color:var(--ink-2);">
+        <h3>Theme edge <span class="pill unresolved">unvalidated · research</span></h3>
+        <div class="theme-edge-stat">
           <b>${fmtInt(td?.driversFrozen ?? themes.drivers.length)} drivers</b> in snapshot ·
           <b>${fmtInt(td?.totalRatified ?? 0)} buys</b> ·
           <b>${fmtInt(td?.totalWatchlist ?? 0)} watchlist</b> names to re-underwrite
         </div>
       </div>
-      <a href="#/themes" style="font-weight:600; white-space:nowrap;">View theme edge →</a>
+      <a href="#/themes" class="theme-edge-link">View theme edge →</a>
     </div>` : "";
 
   root.innerHTML = `
