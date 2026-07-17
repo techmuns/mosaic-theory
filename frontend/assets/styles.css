@@ -4,78 +4,216 @@
    ============================================================================ */
 
 :root {
-  --bg: #f7f8fa;
+  /* Hybrid palette — cool neutrals, indigo accent, hairlines. Light is the default theme;
+     the dark layer + pre-JS fallback follow, and @media print re-asserts light (see below). */
+  /* core neutrals — cool greys */
+  --bg: #f6f7f9;
   --surface: #ffffff;
-  --surface-2: #f0f2f5;
-  --ink: #1b2230;
-  --ink-2: #5b6675;
-  --ink-3: #8a94a6;
-  --line: #e2e6ec;
-  --line-2: #d3d9e2;
+  --surface-2: #eef1f6;
+  --ink: #0f1622;
+  --ink-2: #565f72;
+  --ink-3: #868fa1;
+  --line: #e6e9ef;
+  --line-2: #d9dee7;
 
-  --nav-bg: #141a24;
-  --nav-ink: #c3cad6;
-  --nav-ink-2: #7e8a9c;
-  --nav-active: #1f2937;
-  --nav-line: #232c39;
+  /* nav rail (dark in both themes) */
+  --nav-bg: #10151d;
+  --nav-ink: #c4ccd8;
+  --nav-ink-2: #7c8698;
+  --nav-active: #1c2530;
+  --nav-line: #232c3a;
 
-  --live: #1f9d57;
-  --live-bg: #e7f5ec;
-  --locked: #97a0b0;
-  --conditional: #b6802a;
-  --conditional-bg: #f8f1e2;
-  --accent: #2f6fde;
-  --danger: #c23b34;
-  --danger-bg: #fbecea;
-  --warn: #b6802a;
+  /* state — live / gate / accent / danger */
+  --live: #177a49;
+  --live-bg: #e6f2eb;
+  --locked: #98a0b0;
+  --conditional: #9a6d1e;
+  --conditional-bg: #f6f0e1;
+  --accent: #33459a;
+  --danger: #b23a34;
+  --danger-bg: #fbeceb;
+  --warn: #9a6d1e;
 
-  /* semantic — positive (green) + radar-live (teal, kept distinct) */
-  --pos-text: #16713e;
-  --pos-border: #bfe5cd;
-  --teal-c: #0d9488;
+  /* positive (green) + radar-live (teal, kept distinct) */
+  --pos-text: #177a49;
+  --pos-border: #bfe0cd;
+  --teal-c: #0d8f83;
   --teal-text: #0d6e63;
-  --teal-bg: #d9f2ea;
+  --teal-bg: #daf0ea;
 
-  /* semantic — warn / validation-gate (amber + cream) */
+  /* warn / validation-gate (amber + cream) */
   --warn-text: #8a6418;
-  --warn-border: #ecdcae;
-  --warn-strong: #c07f16;
-  --gate-a: #fffdf7;
-  --gate-b: #fcfaf2;
-  --gate-div: #efe6cf;
-  --gate-gold: #d7b15f;
+  --warn-border: #e6dcc4;
+  --warn-strong: #b57e1a;
+  --gate-a: #fbfaf5;
+  --gate-b: #f6f3eb;
+  --gate-div: #ece4d3;
+  --gate-gold: #b08d57;
 
-  /* semantic — danger (red) */
+  /* danger (red) */
   --danger-border: #eecac6;
-  --danger-text: #a3372f;
+  --danger-text: #a5382f;
 
-  /* semantic — accent / info (blue) */
-  --accent-bg: #eef3fc;
-  --accent-border: #cfddf6;
-  --accent-strong: #1d4ed8;
-  --accent-text: #2a4a7a;
+  /* accent / info (indigo) */
+  --accent-bg: #edeff8;
+  --accent-border: #d4dbf0;
+  --accent-strong: #34489e;
+  --accent-text: #3a4a80;
 
-  /* semantic — synthesis fence (purple; the LLM's framing) */
+  /* synthesis fence (purple; the LLM's framing) */
   --synth: #4a3b78;
   --synth-strong: #3a2d63;
-  --synth-bg: #f4f1fb;
-  --synth-border: #ddd3f0;
+  --synth-bg: #f3f0fa;
+  --synth-border: #ddd4f0;
 
-  /* chrome — on-dark text, row highlight, nav overlays, glows */
+  /* chrome — on-dark text, row highlight, nav overlays, glows, shadow */
   --on-nav: #ffffff;
-  --row-hi: #eef4ff;
-  --nav-gate-border: #3a4456;
+  --row-hi: #eef1fb;
+  --nav-gate-border: #2a3444;
   --nav-wash: rgba(255, 255, 255, 0.02);
-  --nav-cmd-ink: #d7deea;
-  --glow-live: rgba(31, 157, 87, 0.18);
-  --glow-amber: rgba(192, 127, 22, 0.18);
-  --target-fill: rgba(31, 157, 87, 0.07);
+  --nav-cmd-ink: #d3dae8;
+  --glow-live: rgba(23, 122, 73, 0.20);
+  --glow-amber: rgba(181, 126, 26, 0.20);
+  --target-fill: rgba(23, 122, 73, 0.08);
+  --shadow: 0 1px 2px rgba(15, 22, 34, 0.05), 0 8px 22px -10px rgba(15, 22, 34, 0.12);
 
   --mono: ui-monospace, "SF Mono", "JetBrains Mono", Menlo, Consolas, monospace;
   --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-
   --r: 8px;
-  --shadow: 0 1px 2px rgba(20, 26, 36, 0.05), 0 1px 8px rgba(20, 26, 36, 0.04);
+}
+
+/* ── Dark theme ──────────────────────────────────────────────────────────────────────────
+   Applied by [data-theme="dark"] (the sidebar toggle / saved preference, stamped on <html> by
+   the head script before first paint) and, pre-JS, by the prefers-colour-scheme fallback. Only
+   colour tokens are re-declared — --mono/--sans/--r are theme-invariant (defined once above). */
+:root[data-theme="dark"] {
+  /* core neutrals — cool greys */
+  --bg: #0a0e14;
+  --surface: #12171f;
+  --surface-2: #181f2a;
+  --ink: #eef1f6;
+  --ink-2: #9aa4b5;
+  --ink-3: #727c8c;
+  --line: #202834;
+  --line-2: #2a333f;
+
+  /* nav rail (dark in both themes) */
+  --nav-bg: #080b11;
+  --nav-ink: #c0c8d4;
+  --nav-ink-2: #6e7889;
+  --nav-active: #161d27;
+  --nav-line: #1c242f;
+
+  /* state — live / gate / accent / danger */
+  --live: #42bd76;
+  --live-bg: #132621;
+  --locked: #6c7787;
+  --conditional: #d4a94a;
+  --conditional-bg: #241d10;
+  --accent: #8497f2;
+  --danger: #e4756c;
+  --danger-bg: #2a1917;
+  --warn: #d4a94a;
+
+  /* positive (green) + radar-live (teal, kept distinct) */
+  --pos-text: #5cc98a;
+  --pos-border: #284836;
+  --teal-c: #3bb7ab;
+  --teal-text: #54c9bb;
+  --teal-bg: #0f2b27;
+
+  /* warn / validation-gate (amber + cream) */
+  --warn-text: #d9b25a;
+  --warn-border: #3a3320;
+  --warn-strong: #d9a13f;
+  --gate-a: #191d16;
+  --gate-b: #151911;
+  --gate-div: #2c2a1f;
+  --gate-gold: #c9a468;
+
+  /* danger (red) */
+  --danger-border: #402825;
+  --danger-text: #e88b82;
+
+  /* accent / info (indigo) */
+  --accent-bg: #181f33;
+  --accent-border: #2b3557;
+  --accent-strong: #9aabf5;
+  --accent-text: #93a0cf;
+
+  /* synthesis fence (purple; the LLM's framing) */
+  --synth: #bcacde;
+  --synth-strong: #cdc2f0;
+  --synth-bg: #1b1730;
+  --synth-border: #2f2846;
+
+  /* chrome — on-dark text, row highlight, nav overlays, glows, shadow */
+  --on-nav: #ffffff;
+  --row-hi: #151e30;
+  --nav-gate-border: #242d39;
+  --nav-wash: rgba(255, 255, 255, 0.03);
+  --nav-cmd-ink: #aeb8ca;
+  --glow-live: rgba(66, 189, 118, 0.22);
+  --glow-amber: rgba(217, 161, 63, 0.22);
+  --target-fill: rgba(66, 189, 118, 0.10);
+  --shadow: 0 1px 2px rgba(0, 0, 0, 0.40), 0 12px 28px -12px rgba(0, 0, 0, 0.66);
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme]) {
+    --bg: #0a0e14;
+    --surface: #12171f;
+    --surface-2: #181f2a;
+    --ink: #eef1f6;
+    --ink-2: #9aa4b5;
+    --ink-3: #727c8c;
+    --line: #202834;
+    --line-2: #2a333f;
+    --nav-bg: #080b11;
+    --nav-ink: #c0c8d4;
+    --nav-ink-2: #6e7889;
+    --nav-active: #161d27;
+    --nav-line: #1c242f;
+    --live: #42bd76;
+    --live-bg: #132621;
+    --locked: #6c7787;
+    --conditional: #d4a94a;
+    --conditional-bg: #241d10;
+    --accent: #8497f2;
+    --danger: #e4756c;
+    --danger-bg: #2a1917;
+    --warn: #d4a94a;
+    --pos-text: #5cc98a;
+    --pos-border: #284836;
+    --teal-c: #3bb7ab;
+    --teal-text: #54c9bb;
+    --teal-bg: #0f2b27;
+    --warn-text: #d9b25a;
+    --warn-border: #3a3320;
+    --warn-strong: #d9a13f;
+    --gate-a: #191d16;
+    --gate-b: #151911;
+    --gate-div: #2c2a1f;
+    --gate-gold: #c9a468;
+    --danger-border: #402825;
+    --danger-text: #e88b82;
+    --accent-bg: #181f33;
+    --accent-border: #2b3557;
+    --accent-strong: #9aabf5;
+    --accent-text: #93a0cf;
+    --synth: #bcacde;
+    --synth-strong: #cdc2f0;
+    --synth-bg: #1b1730;
+    --synth-border: #2f2846;
+    --on-nav: #ffffff;
+    --row-hi: #151e30;
+    --nav-gate-border: #242d39;
+    --nav-wash: rgba(255, 255, 255, 0.03);
+    --nav-cmd-ink: #aeb8ca;
+    --glow-live: rgba(66, 189, 118, 0.22);
+    --glow-amber: rgba(217, 161, 63, 0.22);
+    --target-fill: rgba(66, 189, 118, 0.10);
+    --shadow: 0 1px 2px rgba(0, 0, 0, 0.40), 0 12px 28px -12px rgba(0, 0, 0, 0.66);
+  }
 }
 
 * { box-sizing: border-box; }
@@ -108,8 +246,20 @@ a:hover { text-decoration: underline; }
   overflow-y: auto;
 }
 
-.brand { padding: 4px 20px 14px; border-bottom: 1px solid var(--nav-line); margin-bottom: 10px; }
+.brand { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 4px 16px 14px 20px; border-bottom: 1px solid var(--nav-line); margin-bottom: 10px; }
 .brand .mark { font-weight: 650; font-size: 15px; color: var(--on-nav); letter-spacing: 0.2px; }
+
+/* icon-only light/dark toggle — sits in the brand block, rendered once at startup */
+.theme-tog {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 28px; height: 28px; flex: none; padding: 0;
+  background: transparent; border: 1px solid var(--nav-line); border-radius: 7px;
+  color: var(--nav-ink-2); cursor: pointer;
+  transition: color 0.15s, border-color 0.15s, background 0.15s;
+}
+.theme-tog:hover { color: var(--nav-ink); border-color: var(--nav-gate-border); background: var(--nav-active); }
+.theme-tog:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.theme-tog svg { display: block; }
 
 .nav-group { margin: 14px 0 4px; }
 .nav-group > .label {
@@ -511,6 +661,64 @@ table.data.vs-table { width: 100%; }
 
 @media print {
   html, body { background: #fff; }
+  /* dark mode never reaches paper: re-assert the light palette so the PDF is always light,
+     regardless of the on-screen theme (the `* { print-color-adjust: exact }` rule below would
+     otherwise bleed dark tokens into print). Higher-specificity dark selector overridden here. */
+  :root, :root[data-theme="dark"] {
+    --bg: #f6f7f9;
+    --surface: #ffffff;
+    --surface-2: #eef1f6;
+    --ink: #0f1622;
+    --ink-2: #565f72;
+    --ink-3: #868fa1;
+    --line: #e6e9ef;
+    --line-2: #d9dee7;
+    --nav-bg: #10151d;
+    --nav-ink: #c4ccd8;
+    --nav-ink-2: #7c8698;
+    --nav-active: #1c2530;
+    --nav-line: #232c3a;
+    --live: #177a49;
+    --live-bg: #e6f2eb;
+    --locked: #98a0b0;
+    --conditional: #9a6d1e;
+    --conditional-bg: #f6f0e1;
+    --accent: #33459a;
+    --danger: #b23a34;
+    --danger-bg: #fbeceb;
+    --warn: #9a6d1e;
+    --pos-text: #177a49;
+    --pos-border: #bfe0cd;
+    --teal-c: #0d8f83;
+    --teal-text: #0d6e63;
+    --teal-bg: #daf0ea;
+    --warn-text: #8a6418;
+    --warn-border: #e6dcc4;
+    --warn-strong: #b57e1a;
+    --gate-a: #fbfaf5;
+    --gate-b: #f6f3eb;
+    --gate-div: #ece4d3;
+    --gate-gold: #b08d57;
+    --danger-border: #eecac6;
+    --danger-text: #a5382f;
+    --accent-bg: #edeff8;
+    --accent-border: #d4dbf0;
+    --accent-strong: #34489e;
+    --accent-text: #3a4a80;
+    --synth: #4a3b78;
+    --synth-strong: #3a2d63;
+    --synth-bg: #f3f0fa;
+    --synth-border: #ddd4f0;
+    --on-nav: #ffffff;
+    --row-hi: #eef1fb;
+    --nav-gate-border: #2a3444;
+    --nav-wash: rgba(255, 255, 255, 0.02);
+    --nav-cmd-ink: #d3dae8;
+    --glow-live: rgba(23, 122, 73, 0.20);
+    --glow-amber: rgba(181, 126, 26, 0.20);
+    --target-fill: rgba(23, 122, 73, 0.08);
+    --shadow: 0 1px 2px rgba(15, 22, 34, 0.05), 0 8px 22px -10px rgba(15, 22, 34, 0.12);
+  }
   .app { display: block; }
   .sidebar { display: none !important; }
   .breadcrumb { display: none; }

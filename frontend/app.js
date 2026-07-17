@@ -173,6 +173,7 @@ function renderSidebar() {
   document.getElementById("sidebar").innerHTML = `
     <div class="brand">
       <div class="mark">Nostra Vinci</div>
+      <button class="theme-tog" id="theme-tog" type="button" aria-label="Toggle dark mode" title="Toggle dark mode"></button>
     </div>
     <div class="nav-group"><div class="label">Shared</div>${SHARED.map(sharedItem).join("")}</div>
     <div class="nav-group"><div class="label">Edges</div>${EDGES.map(edgeItem).join("")}</div>
@@ -295,6 +296,32 @@ async function dispatch() {
   }
 }
 
+// --- theme toggle -----------------------------------------------------------
+// The head script (index.html) stamps data-theme before first paint; this only
+// keeps the icon in sync and flips + persists on click. Icon-only, per design:
+// show the theme you'd switch TO (moon while light, sun while dark).
+const MOON = `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>`;
+const SUN = `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4.2"/><path d="M12 1.6v2.4M12 20v2.4M3.5 3.5l1.7 1.7M18.8 18.8l1.7 1.7M1.6 12h2.4M20 12h2.4M3.5 20.5l1.7-1.7M18.8 5.2l1.7-1.7"/></svg>`;
+
+function currentTheme() {
+  const t = document.documentElement.getAttribute("data-theme");
+  if (t === "light" || t === "dark") return t;
+  return matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+}
+function applyTheme(t) {
+  document.documentElement.setAttribute("data-theme", t);
+  try { localStorage.setItem("nv-theme", t); } catch (e) { /* private mode */ }
+  const btn = document.getElementById("theme-tog");
+  if (btn) btn.innerHTML = t === "dark" ? SUN : MOON;
+}
+function wireThemeToggle() {
+  const btn = document.getElementById("theme-tog");
+  if (!btn) return;
+  btn.innerHTML = currentTheme() === "dark" ? SUN : MOON;
+  btn.addEventListener("click", () => applyTheme(currentTheme() === "dark" ? "light" : "dark"));
+}
+
 renderSidebar();
+wireThemeToggle();
 window.addEventListener("hashchange", dispatch);
 dispatch();
