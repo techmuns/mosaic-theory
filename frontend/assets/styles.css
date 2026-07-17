@@ -61,6 +61,7 @@
   --accent-border: #d4dbf0;
   --accent-strong: #34489e;
   --accent-text: #3a4a80;
+  --accent-2: #6f83e0;
 
   /* synthesis fence (purple; the LLM's framing) */
   --synth: #4a3b78;
@@ -142,6 +143,7 @@
   --accent-border: #2b3557;
   --accent-strong: #9aabf5;
   --accent-text: #93a0cf;
+  --accent-2: #a9b7f7;
 
   /* synthesis fence (purple; the LLM's framing) */
   --synth: #bcacde;
@@ -202,6 +204,7 @@
     --accent-border: #2b3557;
     --accent-strong: #9aabf5;
     --accent-text: #93a0cf;
+    --accent-2: #a9b7f7;
     --synth: #bcacde;
     --synth-strong: #cdc2f0;
     --synth-bg: #1b1730;
@@ -262,7 +265,7 @@ summary:focus-visible, [tabindex]:focus-visible {
 
 .brand { display: flex; align-items: center; gap: 8px; padding: 4px 16px 14px 20px; border-bottom: 1px solid var(--nav-line); margin-bottom: 10px; }
 /* logo mark — a small indigo gradient tile before the wordmark (Hybrid mockup) */
-.brand-logo { width: 16px; height: 16px; flex: none; border-radius: 5px; background: linear-gradient(135deg, var(--accent), #6f83e0); }
+.brand-logo { width: 16px; height: 16px; flex: none; border-radius: 5px; background: linear-gradient(135deg, var(--accent), var(--accent-2)); }
 .brand .mark { font-weight: 650; font-size: 15px; color: var(--on-nav); letter-spacing: 0.2px; margin-right: auto; }
 
 /* icon-only light/dark toggle — sits in the brand block, rendered once at startup */
@@ -745,6 +748,7 @@ table.data.vs-table { width: 100%; }
     --accent-border: #d4dbf0;
     --accent-strong: #34489e;
     --accent-text: #3a4a80;
+    --accent-2: #6f83e0;
     --synth: #4a3b78;
     --synth-strong: #3a2d63;
     --synth-bg: #f3f0fa;
