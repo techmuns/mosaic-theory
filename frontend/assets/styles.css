@@ -812,7 +812,7 @@ table.data.vs-table { width: 100%; }
 }
 
 /* ── Radar (Themes → Radar): quadrant map + sweep bar + detail panel ──────────────────────── */
-.radar-svg { display: block; width: 100%; margin: 2px 0 8px; overflow: visible; }
+.radar-svg { display: block; width: 100%; margin: 2px 0 8px; }
 .rq-target { fill: var(--target-fill); }
 .rq-mid { stroke: var(--line-2); stroke-dasharray: 3 3; }
 .rq-cap { font: 9px var(--sans); fill: var(--ink-3); letter-spacing: 0.06em; text-transform: uppercase; }
