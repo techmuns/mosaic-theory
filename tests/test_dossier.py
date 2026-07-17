@@ -4865,6 +4865,46 @@ def test_t1_provenance_on_demand_marker_print_exclusion_and_nothing_deleted() ->
     assert "details:not([open])" in css and "display: none" in css  # print-exclusion rule
 
 
+def test_print_reasserts_light_palette_so_dark_never_prints() -> None:
+    """(PR5 INVARIANT) Dark mode must NEVER reach paper. The dossier has a dark theme, and
+    `@media print { * { print-color-adjust: exact } }` would otherwise bleed the dark canvas onto
+    the PDF. Guard: under @media print the dark selector re-declares EVERY token it overrides back
+    to its base :root LIGHT value, so a PDF printed while data-theme=dark is fully light. Fully
+    deterministic source pin — catches a removed re-assert, a drifted value, or a NEW dark token
+    added without a matching print re-assert (the bleed regression)."""
+    import pathlib
+    import re
+
+    css = pathlib.Path("frontend/assets/styles.css").read_text()
+
+    def hexmap(block: str) -> dict[str, str]:
+        return {k: v.lower() for k, v in re.findall(r"(--[a-z0-9-]+):\s*(#[0-9a-fA-F]{6})", block)}
+
+    base = css[css.index(":root {") : css.index("\n}", css.index(":root {"))]
+    light = hexmap(base)
+    assert light.get("--bg") and light.get("--surface") and light.get("--ink"), "base light tokens missing"
+
+    dstart = css.index(':root[data-theme="dark"]')
+    dark = hexmap(css[dstart : css.index("\n}", dstart)])
+    # the dark theme must genuinely differ from light (else the whole re-assert is a no-op)
+    assert dark["--bg"] != light["--bg"] and dark["--surface"] != light["--surface"], "dark == light?"
+
+    # the @media print re-assert rule (targets the dark selector, sets light values). Anchor on the
+    # block's opening brace — bare "@media print" also appears in the :root header comment above.
+    pstart = css.index("@media print {")
+    reassert_i = css.index(':root[data-theme="dark"]', pstart)
+    reassert = hexmap(css[reassert_i : css.index("}", reassert_i)])
+
+    # EVERY token that differs light-vs-dark MUST be re-asserted to its light value under print
+    bleeders = {t: dark[t] for t in dark if light.get(t) and light[t] != dark[t]}
+    assert bleeders, "expected the dark theme to override hex tokens"
+    for tok, dark_val in bleeders.items():
+        assert reassert.get(tok) == light[tok], (
+            f"@media print must re-assert {tok} to light {light[tok]} — dark {dark_val} would "
+            "bleed onto the PDF (print-color-adjust:exact)"
+        )
+
+
 def test_t3_py_js_revision_headline_parity() -> None:
     """(T3 · py↔js) The revision-headline PRIORITY + |%Δ| logic MUST stay identical in render.py and
     dossier.js — mirror drift is the H2 lesson. Structural: the JS `_HEADLINE_PRIORITY` equals
