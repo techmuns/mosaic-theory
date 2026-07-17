@@ -71,15 +71,27 @@ function placeLabels(pos) {
 
 function mapSvg(cands, drawerSlug) {
   const MX = (PX0 + PX1) / 2, MY = (PY0 + PY1) / 2;
+  const gx = (f) => PX0 + f * (PX1 - PX0), gy = (f) => PY1 - f * (PY1 - PY0);
+  // faint quarter gridlines — read how deep a dot sits inside a quadrant; the 0.5 mid-cross below
+  // stays the prominent 2×2 divider.
+  const grid = [0.25, 0.75].map((f) =>
+    `<line x1="${gx(f)}" y1="${PY0}" x2="${gx(f)}" y2="${PY1}" class="rq-grid"/>` +
+    `<line x1="${PX0}" y1="${gy(f)}" x2="${PX1}" y2="${gy(f)}" class="rq-grid"/>`).join("");
+  // axis ticks at the quarters — a measured feel; the map is qualitative so there's no numeric scale.
+  const ticks = [0.25, 0.5, 0.75].map((f) =>
+    `<line x1="${gx(f)}" y1="${PY1}" x2="${gx(f)}" y2="${PY1 + 4}" class="rq-tick"/>` +
+    `<line x1="${PX0 - 4}" y1="${gy(f)}" x2="${PX0}" y2="${gy(f)}" class="rq-tick"/>`).join("");
   const bg = `
     <rect x="${MX}" y="${MY}" width="${PX1 - MX}" height="${PY1 - MY}" class="rq-target"/>
-    <rect x="${PX0}" y="${PY0}" width="${PX1 - PX0}" height="${PY1 - PY0}" class="rq-frame"/>
+    ${grid}
+    <rect x="${PX0}" y="${PY0}" width="${PX1 - PX0}" height="${PY1 - PY0}" class="rq-frame" rx="5"/>
     <line x1="${MX}" y1="${PY0}" x2="${MX}" y2="${PY1}" class="rq-mid"/>
     <line x1="${PX0}" y1="${MY}" x2="${PX1}" y2="${MY}" class="rq-mid"/>
-    <text x="${PX1 - 8}" y="${PY1 - 8}" class="rq-cap tgt" text-anchor="end">real · not yet moved — target</text>
-    <text x="${PX1 - 8}" y="${PY0 + 15}" class="rq-cap" text-anchor="end">real · already moved — late</text>
-    <text x="${PX0 + 8}" y="${PY0 + 15}" class="rq-cap">story only · price up</text>
-    <text x="${PX0 + 8}" y="${PY1 - 8}" class="rq-cap">quiet</text>`;
+    ${ticks}
+    <text x="${PX1 - 10}" y="${PY1 - 10}" class="rq-cap tgt" text-anchor="end">real · not yet moved — target</text>
+    <text x="${PX1 - 10}" y="${PY0 + 16}" class="rq-cap" text-anchor="end">real · already moved — late</text>
+    <text x="${PX0 + 10}" y="${PY0 + 16}" class="rq-cap">story only · price up</text>
+    <text x="${PX0 + 10}" y="${PY1 - 10}" class="rq-cap">quiet</text>`;
   const axes = `
     <text x="${MX}" y="${VB_H - 3}" class="rq-axis" text-anchor="middle">evidence the idea is real →</text>
     <text x="11" y="${MY}" class="rq-axis" text-anchor="middle" transform="rotate(-90 11 ${MY})">price already moved →</text>`;
@@ -146,9 +158,16 @@ function judgedList(cands, state) {
   return `<table class="data rt-judged"><tbody>${primary.map(row).join("")}${lowBlock}</tbody></table>`;
 }
 
+const LEGEND_ITEMS = [["live", "Live"], ["watch", "Watch"], ["parked", "Parked"], ["priced", "Too late"], ["past", "Past"]];
 function mapTab(cands, state) {
+  const present = new Set(cands.map((c) => c.status));
+  const legend = LEGEND_ITEMS.filter(([k]) => present.has(k))
+    .map(([k, lbl]) => `<span class="rq-leg"><span class="rq-sw ${k}"></span>${lbl}</span>`).join("");
   return `${mapSvg(cands, state.drawer)}
-    <div class="rt-hint foot">click a dot for its thesis</div>
+    <div class="rq-below">
+      <div class="rq-legend">${legend}</div>
+      <div class="rt-hint foot">click a dot for its thesis</div>
+    </div>
     ${state.drawer ? drawer(cands.find((c) => c.slug === state.drawer), state.drawerRules) : ""}
     ${judgedList(cands, state)}`;
 }
