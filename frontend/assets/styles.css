@@ -402,7 +402,9 @@ summary:focus-visible, [tabindex]:focus-visible {
 .placeholder .note { font-size: 12px; color: var(--ink-3); margin-top: 14px; font-style: italic; }
 
 /* generic stage notice (for live screens still being filled in) */
-.notice { background: var(--surface); border: 1px dashed var(--line-2); border-radius: var(--r); padding: 18px 20px; color: var(--ink-2); font-size: 13px; }
+/* empty / loading / not-built states (21 sites) — a calm, centred placeholder rather than a
+   left-aligned info box; reads clearly as "a state, not content" across every view. */
+.notice { background: var(--surface); border: 1px dashed var(--line-2); border-radius: var(--r); padding: 26px 22px; color: var(--ink-3); font-size: 13px; line-height: 1.55; text-align: center; }
 
 /* tables */
 table.data { width: auto; max-width: 100%; border-collapse: collapse; font-size: 13px; } /* (K2) size to content, capped */
@@ -662,8 +664,10 @@ table.data.vs-table { width: 100%; }
 .point.bull { border-left: 3px solid var(--live); padding-left: 11px; }
 .point.bear { border-left: 3px solid var(--danger); padding-left: 11px; }
 .point .uncited { color: var(--danger); font-size: 11px; font-weight: 600; }
-.kv-list { margin: 0; padding-left: 18px; font-size: 13px; color: var(--ink-2); }
-.kv-list li { margin-bottom: 5px; }
+/* institutional list marker — a quiet en-dash instead of the default disc */
+.kv-list { margin: 0; padding-left: 16px; font-size: 13px; color: var(--ink-2); list-style: none; }
+.kv-list li { margin-bottom: 5px; position: relative; }
+.kv-list li::before { content: "–"; position: absolute; left: -14px; color: var(--ink-3); }
 
 /* the read-only logged verdict record on a dossier */
 .logged-verdict { border: 2px solid var(--line-2); border-radius: var(--r); padding: 16px 18px; background: var(--surface); }
