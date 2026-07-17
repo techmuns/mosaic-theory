@@ -34,6 +34,8 @@ from dataclasses import dataclass, field
 from datetime import date
 from typing import Any
 
+from pydantic import BaseModel
+
 from vinci.edgar.concepts import CONCEPT_ALIASES, ConceptPoint, extract_points
 
 MIN_YEARS = 10   # the anchor window; below this we print ACTUAL coverage, never extrapolate
@@ -377,3 +379,182 @@ def sensitivity(base: Scenario, bear: Scenario, *, net_debt: float, shares: floa
             rows.append({"d_margin": dm, "d_multiple": dx, "ratio": rr.ratio,
                          "undefined": rr.undefined})
     return rows
+
+
+# --- (d) MULTIPLE ANCHORS ------------------------------------------------------------------------
+@dataclass(frozen=True)
+class MultipleAnchor:
+    """The name's OWN-history EV/EBITDA band — trough / median / upper-quartile.
+
+    REUSES the existing own-history extraction (``ciq_sheets._multiples_close`` — the very series
+    ``ev_ebitda_percentile`` / ``range_position`` read); we do NOT re-derive a multiple series from
+    prices + EBITDA. That series is CIQ-fed, so a name without the CIQ Financials→Quarterly export
+    degrades LOUDLY here while the EDGAR margin anchors (A/B) stand on their own."""
+
+    available: bool
+    note: str
+    trough: float | None = None
+    median: float | None = None
+    upper_quartile: float | None = None
+    n_quarters: int = 0
+    source_ref: str | None = None
+
+
+def multiple_anchor(bundle: Any) -> MultipleAnchor:
+    """Own-history EV/EBITDA trough / median / upper-quartile. CIQ absent (or too few closes) →
+    UNAVAILABLE, said plainly — never fabricated, and never blocks the margin anchors."""
+    from vinci.dossier.ciq import CiqUnavailableError
+    from vinci.dossier.ciq_sheets import _multiples_close
+
+    if bundle is None:
+        return MultipleAnchor(available=False,
+                              note="multiple anchors: UNAVAILABLE — CIQ absent (no bundle)")
+    try:
+        rows = bundle.sheet("financials", "Multiples", freq="quarterly")
+    except CiqUnavailableError as exc:
+        return MultipleAnchor(
+            available=False,
+            note=f"multiple anchors: UNAVAILABLE — CIQ absent ({type(exc).__name__}: the "
+                 f"Financials→Quarterly 'Multiples' sheet); margin anchors A/B are unaffected")
+    series = [v for _, v in _multiples_close(rows, "TEV/LTM EBITDA") if v is not None]
+    if len(series) < 4:
+        return MultipleAnchor(
+            available=False, n_quarters=len(series),
+            note=f"multiple anchors: UNAVAILABLE — only {len(series)} quarterly TEV/LTM EBITDA "
+                 f"closes (<4) — too short for a band")
+    v = sorted(series)
+    return MultipleAnchor(
+        available=True, trough=min(v), median=st.median(v), upper_quartile=_pctile(v, 0.75),
+        n_quarters=len(series),
+        note=f"own-history EV/EBITDA band over {len(series)} quarterly closes",
+        source_ref="CIQ Financials→Multiples 'TEV/LTM EBITDA' Close (own-history band)")
+
+
+# --- the serializable RECORD (persists in dossier.json; renders in the dossier) -----------------
+# UNITS: revenue and net_debt are $M; shares is a raw count; value_per_share and spot are $/share.
+class ScenarioRecord(BaseModel):
+    """One scenario, computed. Assumptions are the analyst's (or the labelled anchor default);
+    placements say where each assumption sits vs the name's own 10y AND the peer band."""
+
+    name: str
+    revenue_musd: float
+    margin: float
+    multiple: float
+    source: str                       # "analyst" | "anchor default"
+    reason: str | None = None
+    op_income_musd: float
+    ev_musd: float
+    equity_musd: float
+    value_per_share: float
+    margin_pct_of_own: float | None = None    # placement vs the name's own 10y margins
+    margin_pct_of_peer: float | None = None   # placement vs the peer band of medians
+
+
+class MidCycle(BaseModel):
+    """The mid-cycle & scenarios record — assemble-not-conclude. Anchors always; the grid, ratio and
+    sensitivity only when the analyst supplied scenarios. Optional on the Dossier → committed
+    artifacts without it round-trip unchanged."""
+
+    convention: str = CONVENTION_TEXT
+    bar: float = BAR
+    # ANCHOR A — own margin history
+    margin_by_year: dict[str, float]
+    margin_median: float | None
+    margin_q1: float | None = None
+    margin_q3: float | None = None
+    margin_trough: float | None
+    margin_peak: float | None
+    margin_coverage: str
+    revenue_tag: str | None
+    opinc_tag: str | None
+    # (b) fuel split
+    fuel_disclosed: bool
+    fuel_note: str
+    fuel_incl_median: float | None = None
+    fuel_excl_median: float | None = None
+    # ANCHOR B — peers
+    peer_medians: dict[str, float] = {}
+    peer_coverage: dict[str, str] = {}
+    peer_excluded: dict[str, str] = {}
+    peer_band_median: float | None = None
+    # ANCHOR D — own EV/EBITDA multiple band
+    multiple_available: bool = False
+    multiple_note: str = ""
+    multiple_trough: float | None = None
+    multiple_median: float | None = None
+    multiple_upper_quartile: float | None = None
+    multiple_source_ref: str | None = None
+    # scenario grid + the ratio (present only when scenarios were supplied)
+    spot: float | None = None
+    net_debt_musd: float | None = None
+    shares: float | None = None
+    scenarios: list[ScenarioRecord] = []
+    reward: float | None = None
+    risk: float | None = None
+    ratio: float | None = None
+    ratio_undefined: str | None = None
+    clears_bar: bool | None = None
+    sensitivity: list[dict[str, Any]] = []
+
+
+def _anchor_record(margin: MarginAnchor, fuel: FuelSplit, peers: PeerAnchor,
+                   mult: MultipleAnchor) -> dict[str, Any]:
+    q = margin.quartiles()
+    return {
+        "margin_by_year": {str(y): margin.by_year[y] for y in margin.years},
+        "margin_median": margin.median, "margin_trough": margin.trough, "margin_peak": margin.peak,
+        "margin_q1": q[0] if q else None, "margin_q3": q[1] if q else None,
+        "margin_coverage": margin.coverage_note, "revenue_tag": margin.revenue_tag,
+        "opinc_tag": margin.opinc_tag,
+        "fuel_disclosed": fuel.disclosed, "fuel_note": fuel.note,
+        "fuel_incl_median": fuel.incl.median if fuel.incl else None,
+        "fuel_excl_median": fuel.excl.median if fuel.excl else None,
+        "peer_medians": {t: round(v, 4) for t, v in peers.peer_medians.items()},
+        "peer_coverage": {t: a.coverage_note for t, a in peers.included.items()},
+        "peer_excluded": dict(peers.excluded), "peer_band_median": peers.band_median,
+        "multiple_available": mult.available, "multiple_note": mult.note,
+        "multiple_trough": mult.trough, "multiple_median": mult.median,
+        "multiple_upper_quartile": mult.upper_quartile, "multiple_source_ref": mult.source_ref,
+    }
+
+
+def assemble_midcycle(*, margin: MarginAnchor, fuel: FuelSplit, peers: PeerAnchor,
+                      mult: MultipleAnchor, scenarios: list[Scenario] | None = None,
+                      spot: float | None = None, net_debt_musd: float | None = None,
+                      shares: float | None = None) -> MidCycle:
+    """Build the serializable record from the computed anchors (+ optional scenarios). Scenario
+    values need spot/net_debt/shares; absent → anchors render alone (the ratio stays None)."""
+    rec = _anchor_record(margin, fuel, peers, mult)
+    if not scenarios or spot is None or net_debt_musd is None or shares is None or shares <= 0:
+        return MidCycle(**rec)
+    own = margin.values
+    band = list(peers.peer_medians.values())
+    srecs: list[ScenarioRecord] = []
+    by_name: dict[str, ScenarioRecord] = {}
+    for s in scenarios:
+        v = scenario_value(s, net_debt=net_debt_musd, shares=shares)   # $M in, $M/count out
+        vps = v.equity * 1e6 / shares                                  # $M → $/share
+        r = ScenarioRecord(
+            name=s.name, revenue_musd=s.revenue, margin=s.margin, multiple=s.multiple,
+            source=s.source, reason=s.reason, op_income_musd=v.op_income, ev_musd=v.ev,
+            equity_musd=v.equity, value_per_share=vps,
+            margin_pct_of_own=percentile_of(s.margin, own),
+            margin_pct_of_peer=percentile_of(s.margin, band))
+        srecs.append(r)
+        by_name[s.name] = r
+    rr = None
+    sens: list[dict[str, Any]] = []
+    if "base" in by_name and "bear" in by_name:
+        rr = reward_risk(base_vps=by_name["base"].value_per_share,
+                         bear_vps=by_name["bear"].value_per_share, spot=spot)
+        base_s = next(s for s in scenarios if s.name == "base")
+        bear_s = next(s for s in scenarios if s.name == "bear")
+        # sensitivity works in the $M-per-share basis (scenario_value returns $M equity / shares);
+        # the ratio is scale-invariant, so spot is converted to that basis. Same ratio as the main
+        # ($/share) path — pinned by test_assemble_midcycle_units.
+        sens = sensitivity(base_s, bear_s, net_debt=net_debt_musd, shares=shares, spot=spot / 1e6)
+    return MidCycle(
+        **rec, spot=spot, net_debt_musd=net_debt_musd, shares=shares, scenarios=srecs,
+        reward=rr.reward if rr else None, risk=rr.risk if rr else None,
+        ratio=rr.ratio if rr else None, ratio_undefined=rr.undefined if rr else None,
+        clears_bar=rr.clears_bar if rr else None, sensitivity=sens)

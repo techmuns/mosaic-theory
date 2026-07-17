@@ -2314,8 +2314,9 @@ Each line: *what it does* — *verified how*.
     median/excess, `<3`-UNDEFINED, tag boundaries, stale exclusion, dispersion. ruff + `mypy --strict
     vinci` + pytest (654) green.
 
-- **REWARD-TO-RISK CONVENTION RATIFIED + MID-CYCLE PRIMITIVE (2026-07-16/17, feat/midcycle-scenarios;
-  PR open, not merged).** The fund's ≥2:1 bar finally has a recorded METHOD.
+- **REWARD-TO-RISK CONVENTION RATIFIED + MID-CYCLE BLOCK (2026-07-16/17, feat/midcycle-scenarios;
+  PR open, not merged).** The fund's ≥2:1 bar finally has a recorded METHOD, and the deterministic
+  cyclical-underwriting block (anchors A/B/D + scenario grid + ratio) that applies it.
   - **(a) THE CONVENTION (operator-ratified 2026-07-16, verbatim):** *reward = (base value per share −
     spot price); risk = (spot price − bear value per share); both measured at SPOT, not entry. Bull is
     computed and PRINTED (upside shape + base discipline) but is NEVER in the ratio. The ratio is a
@@ -2338,17 +2339,40 @@ Each line: *what it does* — *verified how*.
     `<10y` prints ACTUAL coverage and never extrapolates); the FUEL-SURCHARGE split BOTH ways when
     separately disclosed (never picks one; a fuel COST tag is refused as a surcharge disclosure);
     ANCHOR B (peer band = the cross-peer median of each peer's OWN long-history median, peers under
-    10y EXCLUDED and NAMED); the scenario grid (anchor-default base labelled; **a deviation with no
-    reason is REFUSED** — `ScenarioError`); revenue×margin→EV→equity→value/share; the ratio per the
-    convention above; and a sensitivity grid at margin ±1pt / multiple ±1 turn. The machine computes
-    arithmetic + placement only — it never proposes an assumption.
+    10y EXCLUDED and NAMED); **ANCHOR D — the name's OWN-history EV/EBITDA band (trough / median /
+    upper-quartile), REUSING the existing own-history multiples series (`ciq_sheets._multiples_close`,
+    the very series `ev_ebitda_percentile`/`range_position` read) — CIQ absent or <4 closes →
+    "multiple anchors: UNAVAILABLE" said plainly, NEVER blocking A/B**; the scenario grid (anchor-
+    default base labelled; **a deviation with no reason is REFUSED** — `ScenarioError`);
+    revenue×margin→EV→equity→value/share; the ratio per the convention above; and a sensitivity grid
+    at margin ±1pt / multiple ±1 turn. The machine computes arithmetic + placement only — it never
+    proposes an assumption.
+  - **CLI + RENDER + JSON RECORD.** `dossier --ticker <T> --peers A,B --scenario
+    'name:rev=,margin=,multiple=' --reason-<name> …` computes + attaches the block (`_attach_midcycle`):
+    net debt for the EV→equity bridge is the source-bound CIQ bridge (`implied_valuation.bridge_debt −
+    bridge_cash`, $M); spot/shares from `stock_info`. Renders a **"Mid-cycle & scenarios"** section
+    under the valuation block (anchors alone when no scenarios; the grid + ratio + sensitivity when
+    supplied). The block is an OPTIONAL `Dossier.midcycle` field → **committed dossiers without it
+    re-render BYTE-IDENTICAL** (proven: VRRM/MVST HEAD-render vs working-tree-render, same sha256; the
+    section is gated `if mc is None: return []`). When present the record — scenario assumptions +
+    reasons + source + per-scenario value/share + reward/risk/ratio/clears_bar + sensitivity —
+    **persists in `dossier.json` under `midcycle`** (verified: `_attach_midcycle` into a temp data dir
+    round-trips the record). **LEDGER QUESTION (report-only, built nothing):** the ratio could ALSO
+    seal onto the ledger entry beside the machine proposal (so the spread decomposes vs the analyst's
+    stated reward/risk) — but the ledger seals a VERDICT + proposal, not the underwriting math, and the
+    scenario assumptions are the analyst's live inputs (not an as-of artifact). Recommendation: **leave
+    it in `dossier.json` only** until a resolved verdict needs its stated ratio audited; revisit when
+    the first BUY/AVOID with a mid-cycle grid is logged.
   - **REAL RUN — WERN (the cyclical the primitive exists for):** own 18y margin history 2008–2025,
     **median 7.45%** (Q1 5.92% / Q3 9.14%, trough 0.39% in 2025, peak 11.31% in 2021) — i.e. **the
     current 0.4% margin is the trough of its own 18-year cycle**, which is exactly what the 99th-
     percentile trailing P/E was disguising. Peer band (MRTN 8.15 / HTLD 15.73 / KNX 8.67 / SNDR 6.39 /
     ARCB 3.43 / LSTR 6.88) → **band median 7.51%**; WERN's own median sits at the 50th pct of the band.
-    Two independent anchors agree at ~7.5%. Fuel-surcharge revenue is NOT separately XBRL-tagged for
-    WERN — only the as-reported margin exists; the split must come from the 10-K table by hand.
+    Two independent anchors agree at ~7.5%. **ANCHOR D (CIQ, re-run with the multiple line): 43
+    quarterly TEV/LTM-EBITDA closes → trough 4.56x / median 6.56x / upper-quartile 6.97x** — the
+    own-history multiple band the trailing 99th-pct P/E hid (WERN CIQ read in place from the primary
+    worktree; git-ignored, never copied or committed). Fuel-surcharge revenue is NOT separately
+    XBRL-tagged for WERN — only the as-reported margin exists; the split must come from the 10-K by hand.
   - **INCIDENT→INVARIANT (new, found by this build): `extract_points` resolves concept aliases
     FIRST-HIT-WINS and silently truncates a filer that switched tags** — WERN reads 4y under
     `RevenueFromContractWithCustomerExcludingAssessedTax` while `Revenues` holds 18y. The shared
@@ -2360,9 +2384,11 @@ Each line: *what it does* — *verified how*.
   - **CAVEAT:** peer windows DIFFER (MRTN ends 2023; ARCB starts 2016), so the band is a cross-peer
     median of different cycle windows — per-peer coverage is printed so the human sees it, never
     silently averaged.
-  - Tests: 13 network-free (stubbed facts) — margin series/median, `<10y` coverage, alias truncation,
-    peer exclusion, fuel split both-ways + cost-tag refusal, anchor default, deviation-refused,
-    convention worked example + both degenerate cases, value bridge, sensitivity, placement.
+  - Tests: **18 network-free** (stubbed facts + stub CIQ rows) — margin series/median, `<10y` coverage,
+    alias truncation, peer exclusion, fuel split both-ways + cost-tag refusal, anchor default,
+    deviation-refused, convention worked example + both degenerate cases, value bridge, sensitivity,
+    placement, **Anchor-D multiple band (absent / too-few-closes / present), assemble units+ratio
+    (WERN-scale) with the sensitivity centre == the main ratio, and the MidCycle JSON round-trip.**
 
 ## 3. FALSIFIED — tested and retired (NOT deferred)
 
@@ -3342,6 +3368,22 @@ two-name analysis (mid/small-caps, opposite directions) mapped against this inve
   the bar). Thesis-break (all three WATCHLIST names): FMCSA non-domiciled-CDL rule stayed/reversed, or ACT
   driver availability returns to surplus. Gated on the analyst's dossier build; cites the theme-#3 freeze
   (`feat/theme3-freeze`) + `data/research/theme3_truckload_triage_2026-07-14.md`.
+- **OPERATOR DECISION — `extract_points` first-alias-wins truncation (found by feat/midcycle-scenarios,
+  2026-07-17).** The shared EDGAR extractor resolves concept aliases FIRST-HIT-WINS and silently
+  truncates a filer that switched tags mid-history (WERN: 4y under
+  `RevenueFromContractWithCustomerExcludingAssessedTax` vs 18y under `Revenues`; VRRM: 9y under the
+  606 tag). `midcycle.annual_series` works around it locally (LONGEST-single-alias, one basis, never a
+  splice), but the **shared extractor is UNCHANGED and the truncation is latent for any other
+  long-history consumer** (`margin_trend`, `multi_year_trajectory`, screen fundamentals). A fix would
+  MOVE committed dossier numbers → **needs an operator decision (fix vs leave) + a full artifact
+  re-assembly pass if fixed.** Recorded, not chased (scope). Pinned locally by
+  `test_longest_alias_wins_not_first_hit`.
+- **GREEN-MAIN BREACH RECORDED — #138–#148 merged with a latent ruff red (repaired 2026-07-17).** The
+  design series #138–#148 left two E501s in `tests/test_dossier.py` on origin/main (pre-existing, NOT
+  from feat/midcycle-scenarios). Repaired in-branch (commit e1c0352, formatting only) so this PR sits
+  on green. Standing invariant reaffirmed: **no red main** — a merge that reddens trunk is a breach
+  even when pytest passes, because ruff is part of the gate. Incident→invariant (candidate): the merge
+  gate should run `ruff check .` repo-wide (not only changed files) as a required check before merge.
 - **`themes-priced-check` CLI — SHIPPED 2026-07-15 (feat/priced-check; see §2).** The survivor price
   gate now has a repo home, reproduction-verified exact against `report_all.txt`; runbook §c carries the
   real invocation. (Was: QUEUED — no in-repo generator. Now closed.)

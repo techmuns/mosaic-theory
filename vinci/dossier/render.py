@@ -1773,6 +1773,85 @@ def _brief_lines(d: Dossier, *, show_proposal: bool = False) -> list[str]:
     return out
 
 
+def _mc_pct(x: float | None) -> str:
+    return "—" if x is None else f"{x * 100:.1f}%"
+
+
+def _mc_pctile(x: float | None) -> str:
+    return "—" if x is None else f"{x * 100:.0f}th pct"
+
+
+def _midcycle_section(mc: Any) -> list[str]:
+    """(mid-cycle) 'Mid-cycle & scenarios'. Empty when the record is absent (byte-identity for
+    pre-midcycle dossiers). Anchors always; the grid, ratio + sensitivity only when scenarios were
+    supplied. Assemble-not-conclude: assumptions are the analyst's, the machine shows arithmetic +
+    placement + the ratio per the ratified convention."""
+    if mc is None:
+        return []
+    out: list[str] = ["### Mid-cycle & scenarios",
+                      f"_A trailing multiple on trough earnings misleads; these anchor on the "
+                      f"cycle. Reward/risk convention: {mc.convention}_", ""]
+    # ANCHOR A — own margin history
+    years = sorted(mc.margin_by_year, key=int)
+    series = "  ".join(f"{y}:{mc.margin_by_year[y] * 100:.1f}%" for y in years)
+    out += [
+        f"- **Own operating-margin history** ({mc.margin_coverage}; revenue `{mc.revenue_tag}` / "
+        f"operating income `{mc.opinc_tag}`, EDGAR XBRL): {series}",
+        f"  - median **{_mc_pct(mc.margin_median)}** · Q1 {_mc_pct(mc.margin_q1)} / Q3 "
+        f"{_mc_pct(mc.margin_q3)} · trough {_mc_pct(mc.margin_trough)} · "
+        f"peak {_mc_pct(mc.margin_peak)}",
+    ]
+    if mc.fuel_disclosed:
+        out.append(f"  - fuel-surcharge split (BOTH ways): incl median "
+                   f"{_mc_pct(mc.fuel_incl_median)} · ex median {_mc_pct(mc.fuel_excl_median)}")
+    else:
+        out.append(f"  - fuel-surcharge: {mc.fuel_note}")
+    # ANCHOR B — peer band
+    if mc.peer_medians:
+        peers = " · ".join(f"{t} {_mc_pct(v)}" for t, v in mc.peer_medians.items())
+        out.append(f"- **Peer band** (each peer's own long-history median): {peers} → band median "
+                   f"**{_mc_pct(mc.peer_band_median)}**")
+    for t, why in mc.peer_excluded.items():
+        out.append(f"  - {t}: {why}")
+    # ANCHOR D — own EV/EBITDA band
+    if mc.multiple_available:
+        out.append(f"- **Own EV/EBITDA band** ({mc.multiple_note}): trough "
+                   f"{mc.multiple_trough:.1f}x · median {mc.multiple_median:.1f}x · "
+                   f"upper-quartile {mc.multiple_upper_quartile:.1f}x")
+    else:
+        out.append(f"- **Own EV/EBITDA band**: {mc.multiple_note}")
+    # SCENARIO GRID + ratio (only when supplied)
+    if mc.scenarios:
+        hdr = ("| scenario | rev $M | margin | ×mult | op-inc $M | value/sh | "
+               "margin own/peer pct | source |")
+        out += ["", f"**Scenario grid** (analyst-supplied; machine computes value + placement; "
+                f"$M rev/net-debt; spot ${mc.spot:.2f}, net debt ${mc.net_debt_musd:.0f}M):",
+                "", hdr, "|---|---:|---:|---:|---:|---:|---|---|"]
+        for s in mc.scenarios:
+            out.append(
+                f"| {s.name} | {s.revenue_musd:.0f} | {_mc_pct(s.margin)} | {s.multiple:.1f}x | "
+                f"{s.op_income_musd:.0f} | ${s.value_per_share:.2f} | "
+                f"{_mc_pctile(s.margin_pct_of_own)} / {_mc_pctile(s.margin_pct_of_peer)} "
+                f"| {s.source}"
+                f"{(' — ' + s.reason) if s.reason else ''} |")
+        out.append("")
+        if mc.ratio_undefined:
+            out.append(f"- **Reward/risk: {mc.ratio_undefined}** "
+                       f"(reward = base−spot ${mc.reward:.2f}; risk leg degenerate)")
+        elif mc.ratio is not None:
+            verdict = "CLEARS" if mc.clears_bar else "BELOW"
+            out.append(f"- **Reward/risk = {mc.ratio:.2f}:1** — **{verdict}** the "
+                       f"≥{mc.bar:.0f}:1 bar (reward base−spot ${mc.reward:.2f}; risk "
+                       f"spot−bear ${mc.risk:.2f}; bull not in the ratio — convention).")
+        if mc.sensitivity:
+            cells = "; ".join(
+                f"m{r['d_margin'] * 100:+.0f}pt/×{r['d_multiple']:+.0f}="
+                + ("undef" if r["ratio"] is None else f"{r['ratio']:.2f}") for r in mc.sensitivity)
+            out.append(f"  - sensitivity (base margin ±1pt / multiple ±1 turn): {cells}")
+    out.append("")
+    return out
+
+
 @_endnote_scope
 def render_markdown(d: Dossier, *, dev: bool = False, show_proposal: bool = False) -> str:
     """(D1) Facts-first restructure. Section order: header → caveats → mechanical layer [drawdown &
@@ -1878,6 +1957,10 @@ def render_markdown(d: Dossier, *, dev: bool = False, show_proposal: bool = Fals
         _fact("Own-history range position", m.valuation.range_position),
         "",
     ]
+
+    # (mid-cycle) the cyclical-underwriting section — UNDER the valuation block. Rendered only when
+    # the record is present (absent → nothing, so pre-midcycle dossiers are byte-identical).
+    out += _midcycle_section(d.midcycle)
 
     # (D1·§5) Peer comps — roster + comparability + multiples + grid + implied valuation.
     out.append("### Peer comps")  # (K5) discipline framing lives in the block body + source_refs

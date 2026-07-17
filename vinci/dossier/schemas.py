@@ -20,6 +20,8 @@ from typing import Generic, TypeVar
 
 from pydantic import BaseModel, Field, model_validator
 
+from vinci.dossier.midcycle import MidCycle
+
 T = TypeVar("T")
 
 
@@ -998,5 +1000,10 @@ class Dossier(BaseModel):
     industry: Sourced[str] | None = None
     exchange: str | None = None
     business_description: Sourced[str] | None = None
+    # (mid-cycle) the cyclical-underwriting record — own/peer margin anchors, EV/EBITDA band, the
+    # analyst's scenario grid + the reward/risk ratio (vinci.dossier.midcycle). Default None so a
+    # committed dossier.json without it round-trips byte-identically; when absent the render emits
+    # nothing (the section is gated on presence).
+    midcycle: MidCycle | None = None
 
     model_config = {"frozen": True}

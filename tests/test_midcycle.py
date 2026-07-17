@@ -165,6 +165,99 @@ def test_sensitivity_grid_math() -> None:
     assert up["ratio"] == pytest.approx(2.0)
 
 
+class _StubBundle:
+    """A CiqBundle stand-in for the multiple-anchor path — returns Multiples rows or raises."""
+
+    def __init__(self, rows: list[list[Any]] | None) -> None:
+        self._rows = rows
+
+    def sheet(self, kind: str, sheet_name: str, *, freq: str | None = None) -> list[list[Any]]:
+        from vinci.dossier.ciq import CiqUnavailableError
+        if self._rows is None:
+            raise CiqUnavailableError("no Multiples sheet")
+        return self._rows
+
+
+def _mult_rows(closes: list[float]) -> list[list[Any]]:
+    """A minimal CIQ 'Multiples' block in the shape _multiples_close parses: a period-header row
+    (dates at col 2+), the metric label row, then the 'Close' subrow (col 1 == 'Close')."""
+    n = len(closes)
+    dates = list(range(45000, 45000 + n))                    # serial-date headers at col 2+
+    return [
+        ["For Quarter Ending", "", *dates],
+        ["TEV/LTM EBITDA", "", *([""] * n)],
+        ["", "Close", *closes],
+    ]
+
+
+def test_multiple_anchor_absent_ciq_degrades_loudly() -> None:
+    """No bundle / no CIQ sheet → UNAVAILABLE, said plainly; never fabricated, never blocks A/B."""
+    a = mc.multiple_anchor(None)
+    assert not a.available and "UNAVAILABLE — CIQ absent" in a.note and a.median is None
+    a2 = mc.multiple_anchor(_StubBundle(None))
+    assert not a2.available and "UNAVAILABLE — CIQ absent" in a2.note
+
+
+def test_multiple_anchor_too_few_closes_is_unavailable() -> None:
+    a = mc.multiple_anchor(_StubBundle(_mult_rows([8.0, 9.0, 10.0])))   # <4
+    assert not a.available and "too short for a band" in a.note and a.n_quarters == 3
+
+
+def test_multiple_anchor_band_from_own_history() -> None:
+    a = mc.multiple_anchor(_StubBundle(_mult_rows([6.0, 8.0, 10.0, 12.0, 14.0])))
+    assert a.available and a.n_quarters == 5
+    assert a.trough == pytest.approx(6.0) and a.median == pytest.approx(10.0)
+    assert a.upper_quartile == pytest.approx(12.0)          # 75th pct of 6,8,10,12,14
+    assert a.source_ref and "TEV/LTM EBITDA" in a.source_ref
+
+
+def test_assemble_midcycle_units_and_ratio() -> None:
+    """End-to-end: $M revenue/net-debt + raw share count → $/share value; ratio per convention;
+    sensitivity centre agrees with the main ratio (scale-invariant — pins the unit math)."""
+    f = _facts(Revenues=_REV, OperatingIncomeLoss=_OI)   # own margins 5%…14%, median 9.5%
+    margin = _anchor(f)
+    peers = mc.peer_anchor({"P": _anchor(f)})
+    mult = mc.multiple_anchor(None)                       # CIQ absent → anchors still record
+    fuel = mc.fuel_split(f, mc.annual_series(f, "revenue"), mc.annual_series(f, "operating_income"))
+    scen = [
+        mc.build_scenario("bear", revenue=3000.0, multiple=5.0, anchor_margin=0.095, margin=0.03,
+                          reason="freight trough persists"),
+        mc.build_scenario("base", revenue=3200.0, multiple=6.5, anchor_margin=0.095),  # default
+        mc.build_scenario("bull", revenue=3400.0, multiple=8.0, anchor_margin=0.095, margin=0.12,
+                          reason="rate recovery to prior peak"),
+    ]
+    m = mc.assemble_midcycle(margin=margin, fuel=fuel, peers=peers, mult=mult, scenarios=scen,
+                             spot=25.0, net_debt_musd=500.0, shares=60_000_000.0)
+    base = next(s for s in m.scenarios if s.name == "base")
+    # base: 3200×.095=304 op-inc $M ×6.5=1976 EV −500=1476 eq $M → ×1e6/60e6 = $24.60
+    assert base.op_income_musd == pytest.approx(304.0) and base.ev_musd == pytest.approx(1976.0)
+    assert base.value_per_share == pytest.approx(24.60, abs=0.01)
+    assert base.source == "anchor default"
+    bear = next(s for s in m.scenarios if s.name == "bear")
+    # bear: 3000×.03=90 ×5=450 −500=−50 eq → −$0.833/sh (below spot → real risk)
+    assert bear.value_per_share == pytest.approx(-0.833, abs=0.01)
+    # reward = 24.60−25 = −0.40 ; risk = 25−(−0.833) = 25.833 → ratio < 0 (base ~ at spot)
+    assert m.reward == pytest.approx(-0.40, abs=0.01) and m.risk == pytest.approx(25.833, abs=0.01)
+    assert m.ratio is not None and m.clears_bar is False
+    # base margin 9.5% → 5 of 10 own margins (5–9%) at-or-below → 50th pct
+    assert base.margin_pct_of_own == pytest.approx(0.5)
+    # sensitivity centre must equal the main ratio (unit consistency across the two bases)
+    centre = next(r for r in m.sensitivity if r["d_margin"] == 0.0 and r["d_multiple"] == 0.0)
+    assert centre["ratio"] == pytest.approx(m.ratio)
+
+
+def test_midcycle_roundtrips_json() -> None:
+    """The record is pydantic-serializable (persists in dossier.json, re-loads)."""
+    f = _facts(Revenues=_REV, OperatingIncomeLoss=_OI)
+    m = mc.assemble_midcycle(margin=_anchor(f), fuel=mc.fuel_split(
+        f, mc.annual_series(f, "revenue"), mc.annual_series(f, "operating_income")),
+        peers=mc.peer_anchor({}), mult=mc.multiple_anchor(None))     # anchors alone, no scenarios
+    dumped = m.model_dump_json()
+    back = mc.MidCycle.model_validate_json(dumped)
+    assert back.margin_median == pytest.approx(0.095)
+    assert back.scenarios == [] and back.ratio is None
+
+
 def test_percentile_placement() -> None:
     sample = [0.05, 0.06, 0.07, 0.08, 0.09, 0.10, 0.11, 0.12, 0.13, 0.14]
     assert mc.percentile_of(0.13, sample) == pytest.approx(0.9)   # 9 of 10 at-or-below
