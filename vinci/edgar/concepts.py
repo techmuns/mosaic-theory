@@ -92,40 +92,49 @@ def _parse_date(s: str | None) -> date | None:
 
 def extract_points(facts: dict[str, Any], concept: str) -> list[ConceptPoint]:
     """Extract all reported points for a logical concept, trying alias tags in priority order."""
-    nsmap = facts.get("facts", {})
     for tag in CONCEPT_ALIASES[concept]:
-        node = None
-        for ns in _NAMESPACES:
-            node = nsmap.get(ns, {}).get(tag)
-            if node:
-                break
-        if not node:
-            continue
-        points: list[ConceptPoint] = []
-        for unit, rows in node.get("units", {}).items():
-            for r in rows:
-                end = _parse_date(r.get("end"))
-                filed = _parse_date(r.get("filed"))
-                if end is None or filed is None or r.get("val") is None:
-                    continue
-                points.append(
-                    ConceptPoint(
-                        concept=concept,
-                        tag=tag,
-                        unit=unit,
-                        value=float(r["val"]),
-                        period_start=_parse_date(r.get("start")),
-                        period_end=end,
-                        filed=filed,
-                        fy=r.get("fy"),
-                        fp=r.get("fp"),
-                        form=r.get("form"),
-                        accession=r.get("accn"),
-                    )
-                )
+        points = points_for_tag(facts, tag, concept=concept)
         if points:
             return points  # first alias with data wins
     return []
+
+
+def points_for_tag(facts: dict[str, Any], tag: str, *, concept: str = "") -> list[ConceptPoint]:
+    """All reported points under exactly ``tag`` (the first namespace that carries it, in priority
+    order). Takes the tag EXPLICITLY — no ``CONCEPT_ALIASES`` lookup, so callers that need a single
+    known tag never mutate the shared alias map (which extractors read from parallel assembly
+    threads). ``concept`` only labels the returned points; defaults to the tag itself."""
+    nsmap = facts.get("facts", {})
+    node = None
+    for ns in _NAMESPACES:
+        node = nsmap.get(ns, {}).get(tag)
+        if node:
+            break
+    if not node:
+        return []
+    points: list[ConceptPoint] = []
+    for unit, rows in node.get("units", {}).items():
+        for r in rows:
+            end = _parse_date(r.get("end"))
+            filed = _parse_date(r.get("filed"))
+            if end is None or filed is None or r.get("val") is None:
+                continue
+            points.append(
+                ConceptPoint(
+                    concept=concept or tag,
+                    tag=tag,
+                    unit=unit,
+                    value=float(r["val"]),
+                    period_start=_parse_date(r.get("start")),
+                    period_end=end,
+                    filed=filed,
+                    fy=r.get("fy"),
+                    fp=r.get("fp"),
+                    form=r.get("form"),
+                    accession=r.get("accn"),
+                )
+            )
+    return points
 
 
 def latest_annual(points: list[ConceptPoint]) -> ConceptPoint | None:

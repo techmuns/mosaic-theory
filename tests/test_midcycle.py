@@ -265,5 +265,43 @@ def test_percentile_placement() -> None:
     assert mc.percentile_of(0.5, []) is None
 
 
+def test_extraction_never_mutates_concept_aliases() -> None:
+    """Regression (F3): annual_series + fuel_split read tags EXPLICITLY (points_for_tag) and must
+    NEVER mutate the shared CONCEPT_ALIASES map — extractors read it from parallel assembly threads,
+    so a transient mutation there would race into silent wrong numbers."""
+    from copy import deepcopy
+
+    from vinci.edgar.concepts import CONCEPT_ALIASES
+
+    before = deepcopy(CONCEPT_ALIASES)
+    f = _facts(Revenues=_REV, OperatingIncomeLoss=_OI,
+               FuelSurchargeRevenue=dict.fromkeys(_YEARS, 100.0))
+    rev, oi = mc.annual_series(f, "revenue"), mc.annual_series(f, "operating_income")
+    split = mc.fuel_split(f, rev, oi)
+    assert split.disclosed                                    # the fuel path actually ran
+    assert before == CONCEPT_ALIASES                          # untouched, key-for-key
+    assert "_fuel_surcharge" not in CONCEPT_ALIASES           # no transient key leaked
+
+
+def test_assemble_drops_unpriceable_scenarios_to_anchors_only() -> None:
+    """F1: scenarios supplied but net debt unavailable → ANCHORS ONLY (empty grid, no ratio) — the
+    analyst's scenarios are never priced on a missing input. net_debt == 0.0 (debt == cash) is a
+    VALID value and DOES price (guarded on None, not falsiness)."""
+    f = _facts(Revenues=_REV, OperatingIncomeLoss=_OI)
+    margin = _anchor(f)
+    fuel = mc.fuel_split(f, mc.annual_series(f, "revenue"), mc.annual_series(f, "operating_income"))
+    scen = [mc.build_scenario("base", revenue=3200.0, multiple=6.5, anchor_margin=0.095),
+            mc.build_scenario("bear", revenue=3000.0, multiple=5.0, anchor_margin=0.095,
+                              margin=0.03, reason="trough")]
+    kw: dict[str, Any] = {
+        "margin": margin, "fuel": fuel, "peers": mc.peer_anchor({}),
+        "mult": mc.multiple_anchor(None), "scenarios": scen, "spot": 25.0, "shares": 60_000_000.0}
+    dropped = mc.assemble_midcycle(net_debt_musd=None, **kw)          # missing net debt → drop
+    assert dropped.scenarios == [] and dropped.ratio is None and dropped.clears_bar is None
+    assert dropped.margin_median == pytest.approx(0.095)             # anchors still present
+    priced = mc.assemble_midcycle(net_debt_musd=0.0, **kw)            # 0.0 is valid → priced
+    assert len(priced.scenarios) == 2 and priced.ratio is not None
+
+
 if __name__ == "__main__":
     raise SystemExit(pytest.main([__file__, "-q"]))

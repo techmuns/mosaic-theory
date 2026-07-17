@@ -2381,14 +2381,25 @@ Each line: *what it does* — *verified how*.
     across ASC-606/pre-606 bases. Pinned by `test_longest_alias_wins_not_first_hit`. **The shared
     extractor's truncation remains a latent issue for any other long-history consumer — recorded, not
     fixed here (scope).**
+  - **REVIEW HARDENING (PR #149 self-review — 2 fixes, both pinned):** **(F3)** the per-tag read no
+    longer MUTATES the shared `CONCEPT_ALIASES` map — `annual_series`/`fuel_split` call a new
+    non-mutating `concepts.points_for_tag(facts, tag)` (`extract_points` refactored to delegate,
+    behavior-preserving — `test_edgar` + full suite green); the old transient mutation would have
+    raced under the assembly `ThreadPoolExecutor`. Pinned by
+    `test_extraction_never_mutates_concept_aliases`. **(F1)** scenarios supplied but UNPRICEABLE (a
+    name with no CIQ net-debt bridge) are now announced LOUDLY and render anchors-only — no silent
+    drop, no false "grid + ratio" message. Pinned by
+    `test_assemble_drops_unpriceable_scenarios_to_anchors_only` (incl. the valid `net_debt == 0.0`
+    net-cash-neutral edge — guarded on None, not falsiness).
   - **CAVEAT:** peer windows DIFFER (MRTN ends 2023; ARCB starts 2016), so the band is a cross-peer
     median of different cycle windows — per-peer coverage is printed so the human sees it, never
     silently averaged.
-  - Tests: **18 network-free** (stubbed facts + stub CIQ rows) — margin series/median, `<10y` coverage,
+  - Tests: **20 network-free** (stubbed facts + stub CIQ rows) — margin series/median, `<10y` coverage,
     alias truncation, peer exclusion, fuel split both-ways + cost-tag refusal, anchor default,
     deviation-refused, convention worked example + both degenerate cases, value bridge, sensitivity,
-    placement, **Anchor-D multiple band (absent / too-few-closes / present), assemble units+ratio
-    (WERN-scale) with the sensitivity centre == the main ratio, and the MidCycle JSON round-trip.**
+    placement, Anchor-D multiple band (absent / too-few-closes / present), assemble units+ratio
+    (WERN-scale) with the sensitivity centre == the main ratio, the MidCycle JSON round-trip, **plus
+    the two PR-#149 review pins (no CONCEPT_ALIASES mutation; unpriceable scenarios → anchors-only).**
 
 ## 3. FALSIFIED — tested and retired (NOT deferred)
 

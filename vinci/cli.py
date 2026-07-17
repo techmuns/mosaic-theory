@@ -390,13 +390,23 @@ def _attach_midcycle(cfg: Config, ticker: str, *, peers: list[str],
     spot = si.price.value if si else None
     shares = si.shares_out.value if si else None
     # Net debt ($M) from the CIQ TEV->equity bridge (the existing capital-structure block):
-    # net debt = total debt - cash. Absent bridge -> None -> scenarios render valueless (loud).
+    # net debt = total debt - cash (net cash -> negative, a legitimate value, so guard on None).
     iv = d.mechanical.implied_valuation
     net_debt = (
         iv.bridge_debt - iv.bridge_cash
         if iv is not None and iv.bridge_debt is not None and iv.bridge_cash is not None
         else None
     )
+    # A scenario grid needs spot + positive shares + net debt. Supplied-but-unpriceable is said
+    # LOUDLY and renders anchors only — the analyst's scenarios are never silently dropped.
+    priced = (bool(scenarios) and spot is not None and shares is not None
+              and shares > 0 and net_debt is not None)
+    if scenarios and not priced:
+        missing = ", ".join(
+            n for n, ok in (("spot", spot is not None),
+                            ("shares>0", shares is not None and shares > 0),
+                            ("net-debt (CIQ TEV→equity bridge)", net_debt is not None)) if not ok)
+        print(f"  scenarios supplied but NOT priced — missing/invalid: {missing}; anchors only")
     block = mc.assemble_midcycle(margin=margin, fuel=fuel, peers=peer_band, mult=mult,
                                  scenarios=scenarios or None, spot=spot, net_debt_musd=net_debt,
                                  shares=shares)
@@ -404,7 +414,7 @@ def _attach_midcycle(cfg: Config, ticker: str, *, peers: list[str],
     path.write_text(d2.model_dump_json(indent=2))
     (ddir / "dossier.md").write_text(render_markdown(d2))
     print(f"  midcycle attached → {ddir} (anchors"
-          f"{' + scenario grid + ratio' if scenarios else ' only'})")
+          f"{' + scenario grid + ratio' if priced else ' only'})")
     return 0
 
 

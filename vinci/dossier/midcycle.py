@@ -36,7 +36,7 @@ from typing import Any
 
 from pydantic import BaseModel
 
-from vinci.edgar.concepts import CONCEPT_ALIASES, ConceptPoint, extract_points
+from vinci.edgar.concepts import CONCEPT_ALIASES, ConceptPoint, points_for_tag
 
 MIN_YEARS = 10   # the anchor window; below this we print ACTUAL coverage, never extrapolate
 BAR = 2.0               # the fund's ≥2:1 reward-to-risk bar (analyst-specified)
@@ -70,32 +70,33 @@ def annual_series(facts: dict[str, Any], concept: str) -> AnnualSeries:
     CONCEPT_ALIASES priority). One tag = one basis; we never splice tags into a single series."""
     best: AnnualSeries | None = None
     for tag in CONCEPT_ALIASES[concept]:
-        by_year: dict[int, float] = {}
-        acc: dict[int, str | None] = {}
-        filed: dict[int, date] = {}
-        for p in _points_for_tag(facts, concept, tag):
-            y = p.period_end.year
-            # latest-FILED wins for a restated year; same tag throughout, so the basis is stable
-            if y not in by_year or (p.filed and (y not in filed or p.filed > filed[y])):
-                by_year[y] = p.value
-                acc[y] = p.accession
-                if p.filed:
-                    filed[y] = p.filed
-        cand = AnnualSeries(concept=concept, tag=tag, by_year=by_year, accession_by_year=acc)
+        cand = _series_from_points(concept, tag, _annual_points(facts, tag, concept))
         if best is None or cand.n_years > best.n_years:
             best = cand
     return best or AnnualSeries(concept=concept, tag=None, by_year={}, accession_by_year={})
 
 
-def _points_for_tag(facts: dict[str, Any], concept: str, tag: str) -> list[ConceptPoint]:
-    """Annual points reported under exactly ``tag`` (reuses the shared extractor's parse by
-    restricting the alias list to one tag — no re-implementation of XBRL parsing)."""
-    saved = CONCEPT_ALIASES[concept]
-    try:
-        CONCEPT_ALIASES[concept] = [tag]
-        return [p for p in extract_points(facts, concept) if p.is_annual]
-    finally:
-        CONCEPT_ALIASES[concept] = saved
+def _annual_points(facts: dict[str, Any], tag: str, concept: str = "") -> list[ConceptPoint]:
+    """Annual points reported under exactly ``tag``. Reads the tag EXPLICITLY (``points_for_tag``) —
+    never mutates the shared CONCEPT_ALIASES map, which extractors read from parallel assembly
+    threads; and no re-implementation of XBRL parsing."""
+    return [p for p in points_for_tag(facts, tag, concept=concept) if p.is_annual]
+
+
+def _series_from_points(concept: str, tag: str, points: list[ConceptPoint]) -> AnnualSeries:
+    """Fold one tag's annual points into a single-tag AnnualSeries — latest-FILED wins for a
+    restated year (same tag throughout, so the basis stays stable)."""
+    by_year: dict[int, float] = {}
+    acc: dict[int, str | None] = {}
+    filed: dict[int, date] = {}
+    for p in points:
+        y = p.period_end.year
+        if y not in by_year or (p.filed and (y not in filed or p.filed > filed[y])):
+            by_year[y] = p.value
+            acc[y] = p.accession
+            if p.filed:
+                filed[y] = p.filed
+    return AnnualSeries(concept=concept, tag=tag, by_year=by_year, accession_by_year=acc)
 
 
 @dataclass(frozen=True)
@@ -223,14 +224,8 @@ def fuel_split(facts: dict[str, Any], revenue: AnnualSeries, opinc: AnnualSeries
                   "as-reported margin exists here; the split, if needed, must come from the 10-K "
                   "revenue table by hand"))
     ns_tag = tags[0].split(":", 1)[1]
-    saved = CONCEPT_ALIASES.get("revenue")
-    try:
-        CONCEPT_ALIASES["_fuel_surcharge"] = [ns_tag]
-        fuel = annual_series(facts, "_fuel_surcharge")
-    finally:
-        CONCEPT_ALIASES.pop("_fuel_surcharge", None)
-        if saved is not None:
-            CONCEPT_ALIASES["revenue"] = saved
+    fuel = _series_from_points("fuel_surcharge", ns_tag,
+                               _annual_points(facts, ns_tag, "fuel_surcharge"))
     ex_rev = AnnualSeries(
         concept="revenue_ex_fuel", tag=revenue.tag,
         by_year={y: revenue.by_year[y] - fuel.by_year[y]
