@@ -123,7 +123,7 @@ function assembleHelp() {
     <details class="card" style="margin-bottom:18px; background:var(--surface-2);">
       <summary style="cursor:pointer; font-size:12.5px; font-weight:600; color:var(--ink-2);">How to assemble a dossier <span class="muted" style="font-weight:400;">(read-only — copy &amp; run locally, then rebuild)</span></summary>
       <div class="subtitle muted" style="margin:10px 0 8px;">Replace <span class="mono">&lt;TICKER&gt;</span> with the name. Pull the licensed CIQ first, assemble, then rebuild the mirror — the dashboard runs nothing.</div>
-      <pre style="background:var(--nav-bg); color:#c3cad6; padding:12px 14px; border-radius:8px; font-size:12px; overflow-x:auto; margin:0; line-height:1.6;"><code>python -m vinci dossier requirements --ticker &lt;TICKER&gt;  # which licensed CIQ to pull first
+      <pre style="background:var(--nav-bg); color:var(--nav-ink); padding:12px 14px; border-radius:8px; font-size:12px; overflow-x:auto; margin:0; line-height:1.6;"><code>python -m vinci dossier requirements --ticker &lt;TICKER&gt;  # which licensed CIQ to pull first
 python -m vinci dossier --ticker &lt;TICKER&gt;               # assemble one finalist (facts + fenced synthesis)
 python -m vinci dossier --top 10                         # or: the top 10 of the ranked queue
 python3 frontend/build.py                                # mirror into this dashboard, then reload</code></pre>
@@ -624,7 +624,7 @@ function briefCase(s) {
   const uk = uks.length ? `<div class="ds-title" style="font-size:12px; margin-top:12px;">Key unknowns</div><ul class="kv-list">${uks.map((k) => `<li>${escapeHtml(k)}</li>`).join("")}</ul>` : "";
   return `<div class="card ds-section"><div class="ds-title">The case <span class="muted" style="font-weight:400; text-transform:none; letter-spacing:0;">— top points; full bull/bear in Analysis</span></div>
     <div class="brief-case">
-      <div><div class="ds-title" style="font-size:12px; color:#16713e;">Bull — overshoot</div>${bulls}</div>
+      <div><div class="ds-title" style="font-size:12px; color:var(--pos-text);">Bull — overshoot</div>${bulls}</div>
       <div><div class="ds-title" style="font-size:12px; color:var(--danger);">Bear — terminal</div>${bears}</div>
     </div>${uk}</div>`;
 }
@@ -2062,7 +2062,7 @@ function loggedVerdict(v, ticker, refDate) {
     return `<details class="card ds-section">
       <summary style="cursor:pointer; font-size:12.5px; font-weight:600; color:var(--ink-2);">Logged verdict <span class="muted" style="font-weight:400;">— none yet for ${escapeHtml(ticker)} · how to log it (read-only — run locally)</span></summary>
       <div class="logged-verdict none" style="margin-top:10px;">Verdicts are logged via the CLI only — never from this dashboard (the friction is the safeguard). After deciding from the facts above, run this locally from the repo root:</div>
-      <pre style="background:var(--nav-bg); color:#c3cad6; padding:12px 14px; border-radius:8px; font-size:12px; overflow-x:auto; margin:10px 0 0; line-height:1.6;"><code>python -m vinci log-verdict ${escapeHtml(cid)} \\
+      <pre style="background:var(--nav-bg); color:var(--nav-ink); padding:12px 14px; border-radius:8px; font-size:12px; overflow-x:auto; margin:10px 0 0; line-height:1.6;"><code>python -m vinci log-verdict ${escapeHtml(cid)} \\
   --verdict &lt;BUY|AVOID_TERMINAL&gt; \\
   --twin "how the terminal-decline twin is ruled out" \\
   --thesis "the overshoot thesis (or AVOID rationale)" \\

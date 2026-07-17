@@ -18,8 +18,8 @@ const COLS = [
 const STATE_RANK = { "not-started": 0, "dossier-built": 1, "verdict-logged": 2 };
 const STATE_BADGE = {
   "not-started": `<span class="pill" style="background:var(--surface-2);color:var(--ink-3);">not started</span>`,
-  "dossier-built": `<span class="pill" style="background:#e9f0fc;color:#1d4ed8;">dossier</span>`,
-  "verdict-logged": `<span class="pill" style="background:var(--live-bg);color:#16713e;">verdict ✓</span>`,
+  "dossier-built": `<span class="pill" style="background:var(--accent-bg);color:var(--accent-strong);">dossier</span>`,
+  "verdict-logged": `<span class="pill" style="background:var(--live-bg);color:var(--pos-text);">verdict ✓</span>`,
 };
 
 let DATA = null;
