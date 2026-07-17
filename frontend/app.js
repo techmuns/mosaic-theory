@@ -172,6 +172,7 @@ function renderSidebar() {
 
   document.getElementById("sidebar").innerHTML = `
     <div class="brand">
+      <span class="brand-logo" aria-hidden="true"></span>
       <div class="mark">Nostra Vinci</div>
       <button class="theme-tog" id="theme-tog" type="button" aria-label="Toggle dark mode" title="Toggle dark mode"></button>
     </div>
