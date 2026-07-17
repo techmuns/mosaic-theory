@@ -71,30 +71,21 @@ function placeLabels(pos) {
 
 function mapSvg(cands, drawerSlug) {
   const MX = (PX0 + PX1) / 2, MY = (PY0 + PY1) / 2;
-  const gx = (f) => PX0 + f * (PX1 - PX0), gy = (f) => PY1 - f * (PY1 - PY0);
-  // faint quarter gridlines — read how deep a dot sits inside a quadrant; the 0.5 mid-cross below
-  // stays the prominent 2×2 divider.
-  const grid = [0.25, 0.75].map((f) =>
-    `<line x1="${gx(f)}" y1="${PY0}" x2="${gx(f)}" y2="${PY1}" class="rq-grid"/>` +
-    `<line x1="${PX0}" y1="${gy(f)}" x2="${PX1}" y2="${gy(f)}" class="rq-grid"/>`).join("");
-  // axis ticks at the quarters — a measured feel; the map is qualitative so there's no numeric scale.
-  const ticks = [0.25, 0.5, 0.75].map((f) =>
-    `<line x1="${gx(f)}" y1="${PY1}" x2="${gx(f)}" y2="${PY1 + 4}" class="rq-tick"/>` +
-    `<line x1="${PX0 - 4}" y1="${gy(f)}" x2="${PX0}" y2="${gy(f)}" class="rq-tick"/>`).join("");
+  // A bare 2×2 CROSS — no plot frame, no gridlines, no ticks. The map is qualitative (there is no
+  // scale to read against), so chart furniture only adds noise; the quadrant captions carry the
+  // meaning. The target quadrant keeps a faint wash because "real · not yet moved" is the one zone
+  // the human is hunting for.
   const bg = `
     <rect x="${MX}" y="${MY}" width="${PX1 - MX}" height="${PY1 - MY}" class="rq-target"/>
-    ${grid}
-    <rect x="${PX0}" y="${PY0}" width="${PX1 - PX0}" height="${PY1 - PY0}" class="rq-frame" rx="5"/>
     <line x1="${MX}" y1="${PY0}" x2="${MX}" y2="${PY1}" class="rq-mid"/>
     <line x1="${PX0}" y1="${MY}" x2="${PX1}" y2="${MY}" class="rq-mid"/>
-    ${ticks}
-    <text x="${PX1 - 10}" y="${PY1 - 10}" class="rq-cap tgt" text-anchor="end">real · not yet moved — target</text>
-    <text x="${PX1 - 10}" y="${PY0 + 16}" class="rq-cap" text-anchor="end">real · already moved — late</text>
-    <text x="${PX0 + 10}" y="${PY0 + 16}" class="rq-cap">story only · price up</text>
-    <text x="${PX0 + 10}" y="${PY1 - 10}" class="rq-cap">quiet</text>`;
+    <text x="${PX1 - 4}" y="${PY1 - 6}" class="rq-cap tgt" text-anchor="end">real · not yet moved — target</text>
+    <text x="${PX1 - 4}" y="${PY0 + 10}" class="rq-cap" text-anchor="end">real · already moved — late</text>
+    <text x="${PX0 + 4}" y="${PY0 + 10}" class="rq-cap">story only · price up</text>
+    <text x="${PX0 + 4}" y="${PY1 - 6}" class="rq-cap">quiet</text>`;
   const axes = `
-    <text x="${MX}" y="${VB_H - 3}" class="rq-axis" text-anchor="middle">evidence the idea is real →</text>
-    <text x="11" y="${MY}" class="rq-axis" text-anchor="middle" transform="rotate(-90 11 ${MY})">price already moved →</text>`;
+    <text x="${MX}" y="${VB_H - 2}" class="rq-axis" text-anchor="middle">evidence the idea is real →</text>
+    <text x="10" y="${MY}" class="rq-axis" text-anchor="middle" transform="rotate(-90 10 ${MY})">price already moved →</text>`;
   const pos = cands.map((c) => ({ c, x: px(c.map && c.map.x), y: py(c.map && c.map.y) }));
   const labels = placeLabels(pos);
   const dots = pos.map(({ c, x, y }, i) => {
@@ -159,14 +150,29 @@ function judgedList(cands, state) {
 }
 
 const LEGEND_ITEMS = [["live", "Live"], ["watch", "Watch"], ["parked", "Parked"], ["priced", "Too late"], ["past", "Past"]];
+// MAP tab — a compact quadrant beside a status panel (rather than a full-bleed map with the legend
+// dumped underneath). The panel is derived ENTIRELY from the committed candidates: the status counts
+// and the watch list are real. Nothing is synthesised to fill the column — there is no first-mention
+// flow to chart here (the inbox is empty), so no such block is drawn.
 function mapTab(cands, state) {
-  const present = new Set(cands.map((c) => c.status));
-  const legend = LEGEND_ITEMS.filter(([k]) => present.has(k))
-    .map(([k, lbl]) => `<span class="rq-leg"><span class="rq-sw ${k}"></span>${lbl}</span>`).join("");
-  return `${mapSvg(cands, state.drawer)}
-    <div class="rq-below">
-      <div class="rq-legend">${legend}</div>
-      <div class="rt-hint foot">click a dot for its thesis</div>
+  const counts = {};
+  cands.forEach((c) => { counts[c.status] = (counts[c.status] || 0) + 1; });
+  const statusRows = LEGEND_ITEMS.filter(([k]) => counts[k]).map(([k, lbl]) =>
+    `<div class="rq-st"><span class="rq-sw ${k}"></span><span class="rq-st-l">${lbl}</span>` +
+    `<span class="rq-st-n">${counts[k]}</span></div>`).join("");
+  const watching = cands.filter((c) => c.status === "watch").map((c) => escapeHtml(c.label));
+  const watchBlock = watching.length
+    ? `<div class="rq-ph">Watching</div><div class="rq-watch">${watching.join(" · ")}</div>` : "";
+  return `<div class="rq-layout">
+      <div class="rq-mapcol">
+        ${mapSvg(cands, state.drawer)}
+        <div class="rt-hint foot">click a dot for its thesis</div>
+      </div>
+      <aside class="rq-panel">
+        <div class="rq-ph">Status</div>
+        <div class="rq-stats">${statusRows}</div>
+        ${watchBlock}
+      </aside>
     </div>
     ${state.drawer ? drawer(cands.find((c) => c.slug === state.drawer), state.drawerRules) : ""}
     ${judgedList(cands, state)}`;
