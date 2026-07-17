@@ -533,7 +533,7 @@ function teaserCard(d, verdict, m) {
     ? `<span class="pill ${isBuyVerdict(verdict.verdict) ? "buy" : "avoid"}">${escapeHtml(verdict.verdict)}</span> <span class="muted" style="font-size:11.5px;">@ ${fmtPrice(verdict.entryPrice)} · ${fmtDate(verdict.decidedAt)}</span>`
     : `<span class="brief-slot">not yet logged</span> <span class="muted" style="font-size:11px;">confirm or override — Buy / Avoid + target</span>`;
   const read = (s && s.evidence_balance)
-    ? `<div class="brief-read">${machineReadHtml(s.evidence_balance)}</div>` : "";
+    ? `<div class="brief-vlab brief-eyebrow">Assessment</div><div class="brief-read">${machineReadHtml(s.evidence_balance)}</div>` : "";
   const prop = deriveProposal(s ? s.evidence_balance : "");
   // ANTI-ANCHORING (2026-07-13): the proposal is DERIVED + sealed at assembly but HIDDEN until the
   // human logs their verdict — so it can't anchor them or contaminate the human-vs-machine
@@ -576,9 +576,10 @@ function briefSnapshot(d, m) {
   const chart = stockPerfExhibit(m.stock_performance);
   if (!rows.length && !chart) return "";
   const table = rows.length ? `<table class="brief-snap-t"><tbody>${rows.join("")}</tbody></table>` : "";
+  const kf = rows.length ? `<div class="brief-vlab brief-eyebrow">Key figures</div>` : "";
   return `<div class="brief-snap">
     <div class="brief-snap-idn"><span class="mono">${escapeHtml(d.ticker)}</span> · ${escapeHtml(d.name || "")}</div>
-    ${table}${chart}</div>`;
+    ${kf}${table}${chart}</div>`;
 }
 
 // 2 — DECISIVE QUESTION: the one framing question the human must resolve. The candidate's drawdown /
