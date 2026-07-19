@@ -338,24 +338,31 @@ class ScenarioValue:
 
 
 def scenario_value(s: Scenario, *, net_debt: float, shares: float,
-                   cash_interest: float = 0.0, cash_tax_rate: float = 0.0) -> ScenarioValue:
+                   cash_interest: float | None = None,
+                   cash_tax_rate: float | None = None) -> ScenarioValue:
     """revenue × margin → EBIT; + D&A → **EBITDA**; × multiple → EV; − net debt → equity ÷ shares.
 
     The multiple is an EV/**EBITDA** turn (ANCHOR D's basis). EV/EBIT and a rough normalized FCF
     are computed alongside as labelled cross-checks — capital intensity is exactly what an EBITDA
     multiple hides. Normalized FCF = EBITDA − maint-capex(≈D&A) − cash tax − cash interest, i.e.
-    EBIT − cash tax − cash interest, with cash tax = rate × max(0, EBIT − cash interest)."""
+    EBIT − cash tax − cash interest, with cash tax = rate × max(0, EBIT − cash interest).
+
+    ``cash_interest``/``cash_tax_rate`` default to **None**, not 0.0: with both zero the FCF
+    formula collapses to EBIT, and printing EBIT under a "normalized FCF" label would be a
+    fabricated number. Absent inputs → ``norm_fcf`` is None and the cross-check renders as "—"."""
     if shares <= 0:
         raise ValueError("shares must be > 0")
     oi = s.revenue * s.margin
     ebitda = oi + s.d_and_a
     ev = ebitda * s.multiple
     eq = ev - net_debt
-    pretax = oi - cash_interest
-    cash_tax = cash_tax_rate * pretax if pretax > 0 else 0.0
+    norm_fcf: float | None = None
+    if cash_interest is not None and cash_tax_rate is not None:
+        pretax = oi - cash_interest
+        cash_tax = cash_tax_rate * pretax if pretax > 0 else 0.0
+        norm_fcf = oi - cash_tax - cash_interest
     return ScenarioValue(op_income=oi, ebitda=ebitda, ev=ev, equity=eq, vps=eq / shares,
-                         ev_ebit=(ev / oi) if oi > 0 else None,
-                         norm_fcf=oi - cash_tax - cash_interest)
+                         ev_ebit=(ev / oi) if oi > 0 else None, norm_fcf=norm_fcf)
 
 
 @dataclass(frozen=True)
@@ -552,11 +559,12 @@ def _anchor_record(margin: MarginAnchor, fuel: FuelSplit, peers: PeerAnchor,
 def assemble_midcycle(*, margin: MarginAnchor, fuel: FuelSplit, peers: PeerAnchor,
                       mult: MultipleAnchor, scenarios: list[Scenario] | None = None,
                       spot: float | None = None, net_debt_musd: float | None = None,
-                      shares: float | None = None, cash_interest_musd: float = 0.0,
-                      cash_tax_rate: float = 0.0) -> MidCycle:
+                      shares: float | None = None, cash_interest_musd: float | None = None,
+                      cash_tax_rate: float | None = None) -> MidCycle:
     """Build the serializable record from the computed anchors (+ optional scenarios). Scenario
     values need spot/net_debt/shares; absent → anchors render alone (the ratio stays None).
-    ``cash_interest_musd``/``cash_tax_rate`` feed the normalized-FCF cross-check only."""
+    ``cash_interest_musd``/``cash_tax_rate`` feed the normalized-FCF cross-check ONLY, and both
+    must be supplied for it to compute — otherwise the FCF cross-check stays None (never EBIT)."""
     rec = _anchor_record(margin, fuel, peers, mult)
     if not scenarios or spot is None or net_debt_musd is None or shares is None or shares <= 0:
         return MidCycle(**rec)

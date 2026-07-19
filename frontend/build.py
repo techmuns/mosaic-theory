@@ -56,35 +56,51 @@ def _jsonl(path: Path) -> list[dict[str, Any]]:
 # A committed `scenarios/<TICKER>.json` underwrite record renders as a card attachable under ANY
 # watchlist name — no full-dossier dependency. Names WITHOUT a record are untouched (the key is
 # omitted entirely, so their display JSON stays byte-identical).
-def _scenario_card(rec: Any) -> dict[str, Any]:
+#
+# STDLIB ONLY (docs/DEPLOY.md): this file is the Cloudflare Pages build step, run as
+# `python frontend/build.py` with NO requirements.txt — so it must never import `vinci` (which
+# pulls in pydantic) or anything else off the stdlib. The records are plain JSON; we read them
+# directly. The record's own field names are the contract (vinci/scenarios.py owns the schema).
+def _scenario_card(rec: dict[str, Any]) -> dict[str, Any]:
     """One underwrite record → the display card: the bear/base/bull grid, the reward/risk ratio
     against the bar, the capital-intensity cross-checks, and the verdict status. The basis and
     recipe travel WITH the card so the multiple's unit can never be misread on screen."""
-    r = rec.result
+    r = rec.get("result") or {}
+    per = r.get("per_scenario") or {}
+    verdict = rec.get("verdict") or {}
     return {
-        "ticker": rec.ticker, "recipeId": rec.recipe_id, "recipeDesc": rec.recipe_desc,
-        "multipleBasis": rec.multiple_basis, "underwriteDate": rec.underwrite_date,
-        "analyst": rec.analyst, "spot": rec.spot, "spotSource": rec.spot_source,
-        "facts": [{"key": k, "value": f.value, "unit": f.unit, "basis": f.basis,
-                   "source": f.source} for k, f in rec.facts.items()],
+        "ticker": rec["ticker"], "recipeId": rec["recipe_id"], "recipeDesc": rec["recipe_desc"],
+        "multipleBasis": rec["multiple_basis"], "underwriteDate": rec["underwrite_date"],
+        "analyst": rec["analyst"], "spot": rec["spot"], "spotSource": rec["spot_source"],
+        "facts": [{"key": k, "value": f["value"], "unit": f["unit"], "basis": f["basis"],
+                   "source": f["source"]} for k, f in (rec.get("facts") or {}).items()],
         "scenarios": [
-            {"name": n, "revenue": s.revenue, "margin": s.margin, "multiple": s.multiple,
-             "reason": s.reason,
-             **({"valuePerShare": o.value_per_share, "opIncome": o.op_income, "ebitda": o.ebitda,
-                 "ev": o.ev, "equity": o.equity, "evEbit": o.ev_ebit, "normFcf": o.norm_fcf}
-                if (o := r.per_scenario.get(n)) is not None else {})}
-            for n, s in rec.scenarios.items()],
-        "reward": r.reward, "risk": r.risk, "ratio": r.ratio, "bar": r.bar,
-        "ratioUndefined": r.ratio_undefined, "passFail": r.pass_fail,
-        "verdict": {"status": rec.verdict.status, "recorded": rec.verdict.recorded},
+            {"name": n, "revenue": s["revenue"], "margin": s["margin"], "multiple": s["multiple"],
+             "reason": s["reason"],
+             **({"valuePerShare": o["value_per_share"], "opIncome": o["op_income"],
+                 "ebitda": o["ebitda"], "ev": o["ev"], "equity": o["equity"],
+                 "evEbit": o.get("ev_ebit"), "normFcf": o.get("norm_fcf")}
+                if (o := per.get(n)) is not None else {})}
+            for n, s in (rec.get("scenarios") or {}).items()],
+        "reward": r.get("reward"), "risk": r.get("risk"), "ratio": r.get("ratio"),
+        "bar": r.get("bar"), "ratioUndefined": r.get("ratio_undefined"),
+        "passFail": r.get("pass_fail"),
+        "verdict": {"status": verdict.get("status"), "recorded": verdict.get("recorded")},
     }
 
 
 def _scenario_cards() -> dict[str, dict[str, Any]]:
     """Every committed underwrite record, keyed by ticker. Empty when none exist."""
-    from vinci.scenarios import all_records
-
-    return {t: _scenario_card(rec) for t, rec in all_records(root=ROOT).items()}
+    d = ROOT / "scenarios"
+    if not d.is_dir():
+        return {}
+    out: dict[str, dict[str, Any]] = {}
+    for p in sorted(d.glob("*.json")):
+        if p.name.startswith("_"):          # _schema.json and friends are not records
+            continue
+        rec = json.loads(p.read_text())
+        out[str(rec["ticker"]).upper()] = _scenario_card(rec)
+    return out
 
 
 def _git_sha() -> str | None:

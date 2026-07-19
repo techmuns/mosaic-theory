@@ -19,7 +19,7 @@ import json
 from pathlib import Path
 from typing import Any, Literal
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, field_validator
 
 SCHEMA_VERSION = "1.0"
 BAR = 2.0
@@ -47,6 +47,17 @@ class ScenarioInput(BaseModel):
     reason: str                    # WHY this deviates from the anchor — required, never blank
 
     model_config = {"frozen": True}
+
+    @field_validator("reason")
+    @classmethod
+    def _reason_not_blank(cls, v: str) -> str:
+        """The record is the durable artifact, so the refusal binds HERE — ``run_recipe`` builds
+        its Scenario directly and would otherwise bypass ``build_scenario``'s no-reason guard.
+        An assumption without a recorded reason is exactly what this fund refuses to compute."""
+        if not v.strip():
+            raise ValueError("reason is required and must not be blank — refusing to record a "
+                             "scenario assumption with no stated reason")
+        return v
 
 
 class ScenarioOutcome(BaseModel):
@@ -125,8 +136,10 @@ def run_recipe(rec: ScenarioRecord) -> ScenarioRecord:
     shares = rec.facts["diluted_shares"].value            # MILLIONS → $M/M = $/share
     if shares <= 0:
         raise ValueError("diluted_shares must be > 0")
-    interest = rec.facts["cash_interest"].value if "cash_interest" in rec.facts else 0.0
-    tax_rate = rec.facts["cash_tax_rate"].value if "cash_tax_rate" in rec.facts else 0.0
+    # Absent -> None (NOT 0.0): with both zero the FCF formula collapses to EBIT, and a "norm
+    # FCF" that is silently EBIT is a fabricated number. Both required, or the cross-check is None.
+    interest = rec.facts["cash_interest"].value if "cash_interest" in rec.facts else None
+    tax_rate = rec.facts["cash_tax_rate"].value if "cash_tax_rate" in rec.facts else None
 
     per: dict[str, ScenarioOutcome] = {}
     for name, s in rec.scenarios.items():
