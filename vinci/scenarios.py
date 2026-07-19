@@ -23,7 +23,9 @@ from pydantic import BaseModel, Field, field_validator
 
 SCHEMA_VERSION = "1.0"
 BAR = 2.0
-VerdictStatus = Literal["pending_analyst", "confirmed", "overridden", "passed"]
+# "watch" = the name is not underwritable at TODAY's price but the franchise is intact — a
+# re-underwrite candidate, explicitly NOT an avoid. Distinct from "passed" (declined outright).
+VerdictStatus = Literal["pending_analyst", "confirmed", "overridden", "passed", "watch"]
 
 
 class Fact(BaseModel):
@@ -85,10 +87,20 @@ class Result(BaseModel):
 
 
 class Verdict(BaseModel):
-    """The human's call. The machine NEVER sets anything but ``pending_analyst``."""
+    """The human's call. The machine NEVER sets anything but ``pending_analyst``.
+
+    A verdict that says only "no" decays into a number nobody can re-check. ``rationale`` records
+    WHY, and ``reunderwrite_triggers`` records what would have to change for the answer to change —
+    so a WATCH is a standing instruction rather than a shrug."""
 
     status: VerdictStatus = "pending_analyst"
     recorded: str | None = None            # ISO date the human recorded it; None while pending
+    rationale: str | None = None           # WHY — the human's reasoning, in their own words
+    reunderwrite_triggers: list[str] = Field(default_factory=list)  # what would reopen the name
+    # (avoid-leg) the asymmetry is inverted at today's price — track for short-alpha on PAPER.
+    # Recording it does NOT create a position: no code path here approaches execution.
+    avoid_priced: bool = False
+    avoid_priced_note: str | None = None
 
 
 class ScenarioRecord(BaseModel):

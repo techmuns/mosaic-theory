@@ -578,13 +578,13 @@
       "margin": 0.015,
       "multiple": 6.0,
       "reason": "trough persists; One-Way keeps shrinking; underlying FY25 ex the Q2 insurance credit was ~breakeven, so 1.5% is slight lift off a ~0% floor.",
-      "valuePerShare": 16.602403605408117,
-      "opIncome": 42.75,
-      "ebitda": 329.071,
-      "ev": 1974.4260000000002,
-      "equity": 994.6500000000002,
-      "evEbit": 46.185403508771934,
-      "normFcf": 2.772750000000002
+      "valuePerShare": 16.6,
+      "opIncome": 42.8,
+      "ebitda": 329.1,
+      "ev": 1974.4,
+      "equity": 994.7,
+      "evEbit": 46.2,
+      "normFcf": 2.8
      },
      {
       "name": "base",
@@ -592,13 +592,13 @@
       "margin": 0.0625,
       "multiple": 6.5,
       "reason": "deviates from 7.45% anchor: insurance run-rate +~125bps (2018-22 avg 4.06% -> 2025-26 underlying ~5.3%, ex one-off Q2-25 favorable credit); ~50bps for Dedicated mix shift 51.5%->73% capping One-Way upside in peak-margin years.",
-      "valuePerShare": 35.73168920046738,
-      "opIncome": 193.75,
-      "ebitda": 480.071,
-      "ev": 3120.4615000000003,
-      "equity": 2140.6855000000005,
-      "evEbit": 16.105607741935486,
-      "normFcf": 116.02275
+      "valuePerShare": 35.73,
+      "opIncome": 193.8,
+      "ebitda": 480.1,
+      "ev": 3120.5,
+      "equity": 2140.7,
+      "evEbit": 16.1,
+      "normFcf": 116.0
      },
      {
       "name": "bull",
@@ -606,24 +606,31 @@
       "margin": 0.08,
       "multiple": 7.0,
       "reason": "genuine cycle turn: One-Way rebounds on tight capacity + driver-supply tightening; Dedicated fully loaded. Below 12-14% 2020-22 peaks (One-Way exposure reduced; insurance ~125bps higher).",
-      "valuePerShare": 48.881171757636466,
+      "valuePerShare": 48.88,
       "opIncome": 272.0,
-      "ebitda": 558.321,
-      "ev": 3908.2470000000003,
-      "equity": 2928.4710000000005,
-      "evEbit": 14.368555147058824,
-      "normFcf": 174.71025
+      "ebitda": 558.3,
+      "ev": 3908.2,
+      "equity": 2928.5,
+      "evEbit": 14.4,
+      "normFcf": 174.7
      }
     ],
-    "reward": -10.30831079953262,
-    "risk": 29.437596394591882,
-    "ratio": -0.3501750163755356,
+    "reward": -10.31,
+    "risk": 29.44,
+    "ratio": -0.35,
     "bar": 2.0,
     "ratioUndefined": null,
     "passFail": "FAIL",
     "verdict": {
-     "status": "pending_analyst",
-     "recorded": null
+     "status": "watch",
+     "recorded": "2026-07-19",
+     "rationale": "FAIL at 2:1 (ratio -0.35, reward -10.31 at spot 46.04). Base sits ~22% below spot; corroborated by EV/EBIT 16.1x at base and ~3.7% normalized FCF yield \u2014 priced to its own recovery. Quality franchise, not broken -> WATCH, not AVOID.",
+     "reunderwriteTriggers": [
+      "spot pulls to ~28-30 (where base offers 2:1)",
+      "a reported quarter proving normalized operating margin genuinely >7.5% (e.g. disclosed Dedicated segment economics, or a clean beat)"
+     ],
+     "avoidPriced": true,
+     "avoidPricedNote": "inverted asymmetry at 46 (upside +6% to bull, downside -22% base / -64% bear) -> track for avoid-leg short-alpha on paper."
     }
    }
   },

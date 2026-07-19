@@ -98,7 +98,14 @@
     "pass_fail": "FAIL"
   },
   "verdict": {
-    "status": "pending_analyst",
-    "recorded": null
+    "status": "watch",
+    "recorded": "2026-07-19",
+    "rationale": "FAIL at 2:1 (ratio -0.35, reward -10.31 at spot 46.04). Base sits ~22% below spot; corroborated by EV/EBIT 16.1x at base and ~3.7% normalized FCF yield — priced to its own recovery. Quality franchise, not broken -> WATCH, not AVOID.",
+    "reunderwrite_triggers": [
+      "spot pulls to ~28-30 (where base offers 2:1)",
+      "a reported quarter proving normalized operating margin genuinely >7.5% (e.g. disclosed Dedicated segment economics, or a clean beat)"
+    ],
+    "avoid_priced": true,
+    "avoid_priced_note": "inverted asymmetry at 46 (upside +6% to bull, downside -22% base / -64% bear) -> track for avoid-leg short-alpha on paper."
   }
 }

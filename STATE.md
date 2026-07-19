@@ -2314,10 +2314,27 @@ Each line: *what it does* — *verified how*.
     median/excess, `<3`-UNDEFINED, tag boundaries, stale exclusion, dispersion. ruff + `mypy --strict
     vinci` + pytest (654) green.
 
-- **WERN — THE FUND'S FIRST REPRODUCIBLE 2:1 RUN (2026-07-19, feat/wern-underwrite; PR open, NOT
-  merged). Result recorded: FAIL at spot. Verdict: PENDING ANALYST — the machine did not ratify.**
-  The first underwrite carried end-to-end through a *named recipe* on a *versioned record*, so it
-  can be re-run and audited rather than remembered.
+- **WERN — THE FUND'S FIRST REPRODUCIBLE 2:1 RUN (2026-07-19, #150). Result: FAIL at spot.
+  ANALYST VERDICT RECORDED 2026-07-19: `watch` — NOT avoid, NOT a buy.**
+  - **THE VERDICT (human, recorded in `scenarios/WERN.json` → `verdict`):** *"FAIL at 2:1 (ratio
+    −0.35, reward −10.31 at spot 46.04). Base sits ~22% below spot; corroborated by EV/EBIT 16.1x
+    at base and ~3.7% normalized FCF yield — priced to its own recovery. Quality franchise, not
+    broken → WATCH, not AVOID."* The machine proposed nothing; it computed and recorded, and the
+    human decided — the first end-to-end exercise of the 2026-07-13 division of labour.
+  - **RE-UNDERWRITE TRIGGERS (a WATCH is a standing instruction, not a shrug):** (1) spot pulls to
+    **~28–30**, where the base case offers 2:1; (2) a reported quarter proving normalized operating
+    margin genuinely **>7.5%** (disclosed Dedicated segment economics, or a clean beat).
+  - **`avoid_priced = true`** — the asymmetry is INVERTED at $46 (upside +6% to bull vs downside
+    −22% to base / −64% to bear). Tracked for **avoid-leg short-alpha on PAPER**. Recording this
+    creates no position: no code path here approaches execution.
+  - **SCHEMA:** `VerdictStatus` gained `watch` (not underwritable at today's price, franchise
+    intact — distinct from `passed`, which declines outright), and `Verdict` gained `rationale`,
+    `reunderwrite_triggers`, `avoid_priced`, `avoid_priced_note`. *A verdict that says only "no"
+    decays into a number nobody can re-check.* Display rounding lives in the frontend card
+    (prices/ratio 2dp, multiples and $M 1dp); the RECORD stays full-precision.
+  - The first underwrite carried end-to-end through a *named recipe* on a *versioned record*, so it
+    can be re-run and audited rather than remembered — verified: re-running R1 against the committed
+    record reproduces it EXACTLY.
   - **RECIPE #1 (`R1_midcycle_margin_evebitda`)** — mid-cycle operating margin on a mid-cycle
     revenue base × an exit **EV/LTM-EBITDA** multiple; reward/risk at SPOT per the ratified
     convention. Persisted as `scenarios/WERN.json` (schema + writer/reader in `vinci/scenarios.py`).

@@ -201,7 +201,7 @@
       "type": "object"
     },
     "Verdict": {
-      "description": "The human's call. The machine NEVER sets anything but ``pending_analyst``.",
+      "description": "The human's call. The machine NEVER sets anything but ``pending_analyst``.\n\nA verdict that says only \"no\" decays into a number nobody can re-check. ``rationale`` records\nWHY, and ``reunderwrite_triggers`` records what would have to change for the answer to change \u2014\nso a WATCH is a standing instruction rather than a shrug.",
       "properties": {
         "status": {
           "default": "pending_analyst",
@@ -209,7 +209,8 @@
             "pending_analyst",
             "confirmed",
             "overridden",
-            "passed"
+            "passed",
+            "watch"
           ],
           "title": "Status",
           "type": "string"
@@ -225,6 +226,42 @@
           ],
           "default": null,
           "title": "Recorded"
+        },
+        "rationale": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Rationale"
+        },
+        "reunderwrite_triggers": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Reunderwrite Triggers",
+          "type": "array"
+        },
+        "avoid_priced": {
+          "default": false,
+          "title": "Avoid Priced",
+          "type": "boolean"
+        },
+        "avoid_priced_note": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Avoid Priced Note"
         }
       },
       "title": "Verdict",
