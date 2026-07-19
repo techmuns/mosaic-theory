@@ -1,0 +1,111 @@
+{
+  "schema_version": "1.0",
+  "ticker": "WERN",
+  "recipe_id": "R1_midcycle_margin_evebitda",
+  "recipe_desc": "Mid-cycle underwrite: normalized operating margin on a mid-cycle revenue base, valued at an exit EV/LTM-EBITDA multiple; reward/risk measured at SPOT.",
+  "multiple_basis": "EV/EBITDA",
+  "underwrite_date": "2026-07-19",
+  "analyst": "nogods404",
+  "spot": 46.04,
+  "spot_source": "Polygon EOD daily close 2026-07-17 (live)",
+  "facts": {
+    "d_and_a": {
+      "value": 286.321,
+      "unit": "$M",
+      "basis": "consolidated FY2025",
+      "source": "10-K acc 0000793074-26-000071 — CONSOLIDATED STATEMENTS OF INCOME, 'Depreciation and amortization'"
+    },
+    "net_debt": {
+      "value": 979.776,
+      "unit": "$M",
+      "basis": "incl. operating + finance leases, as of 2026-03-31",
+      "source": "10-Q acc 0000793074-26-000096 balance sheet — LT debt 8.600 + 869.600 + finance leases 26.706 + 26.878 + operating leases 48.832 + 60.704 - cash & equivalents 61.544 = 979.776"
+    },
+    "diluted_shares": {
+      "value": 59.91,
+      "unit": "M shares",
+      "basis": "diluted weighted-average, 3 months ended 2026-03-31",
+      "source": "10-Q acc 0000793074-26-000096 — income statement"
+    },
+    "cash_interest": {
+      "value": 39.053,
+      "unit": "$M",
+      "basis": "FY2025 interest expense (cross-check input only)",
+      "source": "10-K acc 0000793074-26-000071 — income statement, 'Interest expense'"
+    },
+    "cash_tax_rate": {
+      "value": 0.25,
+      "unit": "rate",
+      "basis": "ANALYST ASSUMPTION, not a filing figure — normalized cash-tax rate for the FCF cross-check only; does not touch value/share",
+      "source": "analyst assumption (cross-check only)"
+    }
+  },
+  "scenarios": {
+    "bear": {
+      "revenue": 2850.0,
+      "margin": 0.015,
+      "multiple": 6.0,
+      "reason": "trough persists; One-Way keeps shrinking; underlying FY25 ex the Q2 insurance credit was ~breakeven, so 1.5% is slight lift off a ~0% floor."
+    },
+    "base": {
+      "revenue": 3100.0,
+      "margin": 0.0625,
+      "multiple": 6.5,
+      "reason": "deviates from 7.45% anchor: insurance run-rate +~125bps (2018-22 avg 4.06% -> 2025-26 underlying ~5.3%, ex one-off Q2-25 favorable credit); ~50bps for Dedicated mix shift 51.5%->73% capping One-Way upside in peak-margin years."
+    },
+    "bull": {
+      "revenue": 3400.0,
+      "margin": 0.08,
+      "multiple": 7.0,
+      "reason": "genuine cycle turn: One-Way rebounds on tight capacity + driver-supply tightening; Dedicated fully loaded. Below 12-14% 2020-22 peaks (One-Way exposure reduced; insurance ~125bps higher)."
+    }
+  },
+  "result": {
+    "per_scenario": {
+      "bear": {
+        "value_per_share": 16.602403605408117,
+        "op_income": 42.75,
+        "ebitda": 329.071,
+        "ev": 1974.4260000000002,
+        "equity": 994.6500000000002,
+        "ev_ebit": 46.185403508771934,
+        "norm_fcf": 2.772750000000002
+      },
+      "base": {
+        "value_per_share": 35.73168920046738,
+        "op_income": 193.75,
+        "ebitda": 480.071,
+        "ev": 3120.4615000000003,
+        "equity": 2140.6855000000005,
+        "ev_ebit": 16.105607741935486,
+        "norm_fcf": 116.02275
+      },
+      "bull": {
+        "value_per_share": 48.881171757636466,
+        "op_income": 272.0,
+        "ebitda": 558.321,
+        "ev": 3908.2470000000003,
+        "equity": 2928.4710000000005,
+        "ev_ebit": 14.368555147058824,
+        "norm_fcf": 174.71025
+      }
+    },
+    "reward": -10.30831079953262,
+    "risk": 29.437596394591882,
+    "ratio": -0.3501750163755356,
+    "ratio_undefined": null,
+    "bar": 2.0,
+    "pass_fail": "FAIL"
+  },
+  "verdict": {
+    "status": "watch",
+    "recorded": "2026-07-19",
+    "rationale": "FAIL at 2:1 (ratio -0.35, reward -10.31 at spot 46.04). Base sits ~22% below spot; corroborated by EV/EBIT 16.1x at base and ~3.7% normalized FCF yield — priced to its own recovery. Quality franchise, not broken -> WATCH, not AVOID.",
+    "reunderwrite_triggers": [
+      "spot pulls to ~28-30 (where base offers 2:1)",
+      "a reported quarter proving normalized operating margin genuinely >7.5% (e.g. disclosed Dedicated segment economics, or a clean beat)"
+    ],
+    "avoid_priced": true,
+    "avoid_priced_note": "inverted asymmetry at 46 (upside +6% to bull, downside -22% base / -64% bear) -> track for avoid-leg short-alpha on paper."
+  }
+}

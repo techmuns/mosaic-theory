@@ -52,6 +52,70 @@ def _jsonl(path: Path) -> list[dict[str, Any]]:
     return [json.loads(line) for line in path.read_text().splitlines() if line.strip()]
 
 
+# --- SCENARIO CARDS (reusable) ------------------------------------------------------------------
+# A committed `scenarios/<TICKER>.json` underwrite record renders as a card attachable under ANY
+# watchlist name — no full-dossier dependency. Names WITHOUT a record are untouched (the key is
+# omitted entirely, so their display JSON stays byte-identical).
+#
+# STDLIB ONLY (docs/DEPLOY.md): this file is the Cloudflare Pages build step, run as
+# `python frontend/build.py` with NO requirements.txt — so it must never import `vinci` (which
+# pulls in pydantic) or anything else off the stdlib. The records are plain JSON; we read them
+# directly. The record's own field names are the contract (vinci/scenarios.py owns the schema).
+def _rd(x: Any, places: int) -> Any:
+    """Round for DISPLAY only — the stored record keeps full precision. None passes through, so an
+    absent cross-check still renders as absent rather than as 0."""
+    return round(x, places) if isinstance(x, (int, float)) and not isinstance(x, bool) else x
+
+
+def _scenario_card(rec: dict[str, Any]) -> dict[str, Any]:
+    """One underwrite record → the display card: the bear/base/bull grid, the reward/risk ratio
+    against the bar, the capital-intensity cross-checks, and the verdict. The basis and recipe
+    travel WITH the card so the multiple's unit can never be misread on screen.
+
+    Numbers are rounded HERE, never in the record: prices/ratio to 2dp, multiples and $M to 1dp."""
+    r = rec.get("result") or {}
+    per = r.get("per_scenario") or {}
+    v = rec.get("verdict") or {}
+    return {
+        "ticker": rec["ticker"], "recipeId": rec["recipe_id"], "recipeDesc": rec["recipe_desc"],
+        "multipleBasis": rec["multiple_basis"], "underwriteDate": rec["underwrite_date"],
+        "analyst": rec["analyst"], "spot": _rd(rec["spot"], 2), "spotSource": rec["spot_source"],
+        "facts": [{"key": k, "value": f["value"], "unit": f["unit"], "basis": f["basis"],
+                   "source": f["source"]} for k, f in (rec.get("facts") or {}).items()],
+        "scenarios": [
+            {"name": n, "revenue": s["revenue"], "margin": s["margin"], "multiple": s["multiple"],
+             "reason": s["reason"],
+             **({"valuePerShare": _rd(o["value_per_share"], 2), "opIncome": _rd(o["op_income"], 1),
+                 "ebitda": _rd(o["ebitda"], 1), "ev": _rd(o["ev"], 1),
+                 "equity": _rd(o["equity"], 1), "evEbit": _rd(o.get("ev_ebit"), 1),
+                 "normFcf": _rd(o.get("norm_fcf"), 1)}
+                if (o := per.get(n)) is not None else {})}
+            for n, s in (rec.get("scenarios") or {}).items()],
+        "reward": _rd(r.get("reward"), 2), "risk": _rd(r.get("risk"), 2),
+        "ratio": _rd(r.get("ratio"), 2), "bar": r.get("bar"),
+        "ratioUndefined": r.get("ratio_undefined"), "passFail": r.get("pass_fail"),
+        "verdict": {"status": v.get("status"), "recorded": v.get("recorded"),
+                    "rationale": v.get("rationale"),
+                    "reunderwriteTriggers": v.get("reunderwrite_triggers") or [],
+                    "avoidPriced": v.get("avoid_priced"),
+                    "avoidPricedNote": v.get("avoid_priced_note")},
+    }
+
+
+def _scenario_cards() -> dict[str, dict[str, Any]]:
+    """Every committed underwrite record, keyed by ticker. Empty when none exist."""
+    d = ROOT / "scenarios"
+    if not d.is_dir():
+        return {}
+    out: dict[str, dict[str, Any]] = {}
+    for p in sorted(d.glob("*.json")):
+        if p.name.startswith("_"):          # _schema.json and friends are not records
+            continue
+        rec = json.loads(p.read_text())
+        out[str(rec["ticker"]).upper()] = _scenario_card(rec)
+    return out
+
+
 def _git_sha() -> str | None:
     try:
         return subprocess.check_output(
@@ -198,12 +262,16 @@ def _theme_display(baskets: dict[str, Any], ledger: list[dict[str, Any]],
         surfaced = frozen
         tier_shape = {**tier, "none": None, "surfaced": frozen, "universe": None}
 
+    cards = _scenario_cards()
+
     def _detail(t: str, extra: dict[str, Any]) -> dict[str, Any]:
         n = by_ticker.get(t, {})
         base = {k: n.get(k, "") for k in
                 ("substructureTag", "grade", "basis", "gradeFact", "accession", "edgarUrl",
                  "rationale")}
-        return {"ticker": t, **base, **extra}
+        # attach ONLY when an underwrite record exists — names without one stay byte-identical
+        card = {"scenarioCard": cards[t]} if t in cards else {}
+        return {"ticker": t, **base, **extra, **card}
 
     watchlist = [_detail(t, {"trigger": triggers.get(t, "")}) for t in baskets.get("watchlist", [])
                  if t in by_ticker]

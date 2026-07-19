@@ -375,13 +375,20 @@ def _attach_midcycle(cfg: Config, ticker: str, *, peers: list[str],
             name, kv = _parse_scenario(spec)
             r_musd = kv.get("rev")
             multiple = kv.get("multiple", mult.median if mult.available else None)
+            dna = kv.get("dna")
             if r_musd is None or multiple is None:
                 print(f"  scenario {name!r}: needs rev= and multiple= "
                       "(multiple may default to the D-anchor only when CIQ is present)")
                 return 2
+            if dna is None:
+                # The multiple is an EV/EBITDA turn; without D&A we would price off EBIT and
+                # silently understate a capital-heavy name. Refuse rather than assume zero.
+                print(f"  scenario {name!r}: needs dna=<$M> — `multiple` is an "
+                      f"{mc.MULTIPLE_BASIS} turn, so D&A is required (pass dna=0 to mean zero)")
+                return 2
             scenarios.append(mc.build_scenario(
                 name, revenue=r_musd, multiple=multiple, anchor_margin=margin.median,
-                margin=kv.get("margin"), reason=reasons.get(name)))
+                d_and_a=dna, margin=kv.get("margin"), reason=reasons.get(name)))
     except mc.ScenarioError as exc:
         print(f"  REFUSED — {exc}")
         return 2
@@ -1752,8 +1759,10 @@ def build_parser() -> argparse.ArgumentParser:
     p_dossier.add_argument("--peers", help="comma-separated peer tickers for the mid-cycle margin "
                            "band (Anchor B), e.g. MRTN,HTLD; peers under 10y history excluded")
     p_dossier.add_argument("--scenario", action="append", default=[],
-                           help="a mid-cycle scenario 'name:rev=<$M>,margin=<frac>,multiple=<x>' "
-                           "(bear/base/bull; omit margin → anchor default). Repeatable.")
+                           help="a mid-cycle scenario "
+                           "'name:rev=<$M>,margin=<frac>,multiple=<x>,dna=<$M>' (bear/base/bull; "
+                           "multiple is an EV/EBITDA turn so dna= is required; omit margin → "
+                           "anchor default). Repeatable.")
     for _sc in ("bear", "base", "bull"):
         p_dossier.add_argument(f"--reason-{_sc}", dest=f"reason_{_sc}",
                                help=f"why the {_sc} scenario deviates from the anchor "

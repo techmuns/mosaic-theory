@@ -40,6 +40,10 @@ from vinci.edgar.concepts import CONCEPT_ALIASES, ConceptPoint, points_for_tag
 
 MIN_YEARS = 10   # the anchor window; below this we print ACTUAL coverage, never extrapolate
 BAR = 2.0               # the fund's ≥2:1 reward-to-risk bar (analyst-specified)
+# The scenario `multiple` is an EV/EBITDA turn — the SAME basis as ANCHOR D (`TEV/LTM EBITDA`).
+# Stamped into every record: an EBITDA multiple silently applied to EBIT understates a
+# capital-heavy name by roughly (1 + D&A/EBIT)x. (Fixed 2026-07-19; pinned by the WERN test.)
+MULTIPLE_BASIS = "EV/EBITDA"
 CONVENTION_TEXT = (
     "reward = (base value per share − spot); risk = (spot − bear value per share); both at SPOT, "
     "not entry. Bull is printed but NEVER in the ratio. Price ratio only — no probability weights, "
@@ -280,9 +284,12 @@ class Scenario:
     name: str                      # bear | base | bull
     revenue: float                 # $ (same unit as the series)
     margin: float                  # operating margin, fraction
-    multiple: float                # EV / operating income (turns)
+    multiple: float                # EV / LTM EBITDA (turns) — EBITDA basis, NOT EBIT
     source: str                    # "analyst" | "anchor default"
     reason: str | None = None
+    # D&A ($, same unit as revenue). EBITDA = revenue×margin + d_and_a, and the multiple applies to
+    # EBITDA — matching ANCHOR D (`TEV/LTM EBITDA`). Held constant across scenarios by the analyst.
+    d_and_a: float = 0.0
 
 
 class ScenarioError(ValueError):
@@ -290,17 +297,21 @@ class ScenarioError(ValueError):
 
 
 def build_scenario(name: str, *, revenue: float, multiple: float, anchor_margin: float | None,
-                   margin: float | None = None, reason: str | None = None) -> Scenario:
+                   d_and_a: float, margin: float | None = None,
+                   reason: str | None = None) -> Scenario:
     """The analyst supplies; the machine labels and refuses. Margin omitted → the A/B ANCHOR
     DEFAULT (labelled). A supplied margin that DEVIATES from the anchor requires a reason —
-    ``ScenarioError`` otherwise. The machine never proposes an assumption."""
+    ``ScenarioError`` otherwise. The machine never proposes an assumption.
+
+    ``d_and_a`` is REQUIRED (no default): the multiple is an EV/**EBITDA** turn, so omitting D&A
+    would silently price the name off EBIT. Pass ``d_and_a=0.0`` only to mean a true zero."""
     if margin is None:
         if anchor_margin is None:
             raise ScenarioError(
                 f"{name}: no margin supplied and no anchor default available (anchor UNDEFINED) — "
                 f"supply margin=… with --reason-{name}")
         return Scenario(name=name, revenue=revenue, margin=anchor_margin, multiple=multiple,
-                        source="anchor default", reason=reason)
+                        source="anchor default", reason=reason, d_and_a=d_and_a)
     deviates = anchor_margin is None or abs(margin - anchor_margin) > 1e-12
     if deviates and not (reason and reason.strip()):
         anchor_txt = "n/a" if anchor_margin is None else f"{anchor_margin:.4f}"
@@ -308,25 +319,50 @@ def build_scenario(name: str, *, revenue: float, multiple: float, anchor_margin:
             f"{name}: margin {margin:.4f} deviates from the anchor default ({anchor_txt}) — "
             f"--reason-{name} is required; refusing to compute a deviated scenario with no reason")
     return Scenario(name=name, revenue=revenue, margin=margin, multiple=multiple,
-                    source="analyst" if deviates else "anchor default", reason=reason)
+                    source="analyst" if deviates else "anchor default", reason=reason,
+                    d_and_a=d_and_a)
 
 
 @dataclass(frozen=True)
 class ScenarioValue:
-    op_income: float
+    """The EBITDA-basis bridge, plus the capital-intensity CROSS-CHECKS (labelled, never the
+    headline): a capital-heavy name flatters on EV/EBITDA and looks dear on EV/EBIT."""
+
+    op_income: float                 # EBIT = revenue × margin
+    ebitda: float                    # EBIT + D&A — what the multiple is applied to
     ev: float
     equity: float
     vps: float
+    ev_ebit: float | None = None     # CROSS-CHECK: EV / EBIT (None when EBIT <= 0)
+    norm_fcf: float | None = None    # CROSS-CHECK: EBITDA − maint-capex(≈D&A) − cash tax − interest
 
 
-def scenario_value(s: Scenario, *, net_debt: float, shares: float) -> ScenarioValue:
-    """revenue × margin → operating income → × multiple → EV → − net debt → equity → ÷ shares."""
+def scenario_value(s: Scenario, *, net_debt: float, shares: float,
+                   cash_interest: float | None = None,
+                   cash_tax_rate: float | None = None) -> ScenarioValue:
+    """revenue × margin → EBIT; + D&A → **EBITDA**; × multiple → EV; − net debt → equity ÷ shares.
+
+    The multiple is an EV/**EBITDA** turn (ANCHOR D's basis). EV/EBIT and a rough normalized FCF
+    are computed alongside as labelled cross-checks — capital intensity is exactly what an EBITDA
+    multiple hides. Normalized FCF = EBITDA − maint-capex(≈D&A) − cash tax − cash interest, i.e.
+    EBIT − cash tax − cash interest, with cash tax = rate × max(0, EBIT − cash interest).
+
+    ``cash_interest``/``cash_tax_rate`` default to **None**, not 0.0: with both zero the FCF
+    formula collapses to EBIT, and printing EBIT under a "normalized FCF" label would be a
+    fabricated number. Absent inputs → ``norm_fcf`` is None and the cross-check renders as "—"."""
     if shares <= 0:
         raise ValueError("shares must be > 0")
     oi = s.revenue * s.margin
-    ev = oi * s.multiple
+    ebitda = oi + s.d_and_a
+    ev = ebitda * s.multiple
     eq = ev - net_debt
-    return ScenarioValue(op_income=oi, ev=ev, equity=eq, vps=eq / shares)
+    norm_fcf: float | None = None
+    if cash_interest is not None and cash_tax_rate is not None:
+        pretax = oi - cash_interest
+        cash_tax = cash_tax_rate * pretax if pretax > 0 else 0.0
+        norm_fcf = oi - cash_tax - cash_interest
+    return ScenarioValue(op_income=oi, ebitda=ebitda, ev=ev, equity=eq, vps=eq / shares,
+                         ev_ebit=(ev / oi) if oi > 0 else None, norm_fcf=norm_fcf)
 
 
 @dataclass(frozen=True)
@@ -363,7 +399,8 @@ def sensitivity(base: Scenario, bear: Scenario, *, net_debt: float, shares: floa
     for dm in (-margin_step, 0.0, margin_step):
         for dx in (-multiple_step, 0.0, multiple_step):
             b = Scenario(name=base.name, revenue=base.revenue, margin=base.margin + dm,
-                         multiple=base.multiple + dx, source=base.source, reason=base.reason)
+                         multiple=base.multiple + dx, source=base.source, reason=base.reason,
+                         d_and_a=base.d_and_a)   # carry D&A — else the grid reverts to EBIT
             if b.multiple <= 0:
                 rows.append({"d_margin": dm, "d_multiple": dx, "ratio": None,
                              "undefined": "multiple <= 0"})
@@ -434,13 +471,17 @@ class ScenarioRecord(BaseModel):
     name: str
     revenue_musd: float
     margin: float
-    multiple: float
+    multiple: float                   # EV/LTM EBITDA turns (basis: MidCycle.multiple_basis)
     source: str                       # "analyst" | "anchor default"
     reason: str | None = None
     op_income_musd: float
+    d_and_a_musd: float = 0.0
+    ebitda_musd: float = 0.0          # op_income + D&A — what the multiple is applied to
     ev_musd: float
     equity_musd: float
     value_per_share: float
+    ev_ebit: float | None = None      # CROSS-CHECK (labelled, never the headline)
+    norm_fcf_musd: float | None = None  # CROSS-CHECK: EBITDA − maint-capex(≈D&A) − tax − interest
     margin_pct_of_own: float | None = None    # placement vs the name's own 10y margins
     margin_pct_of_peer: float | None = None   # placement vs the peer band of medians
 
@@ -452,6 +493,8 @@ class MidCycle(BaseModel):
 
     convention: str = CONVENTION_TEXT
     bar: float = BAR
+    # The basis the scenario `multiple` is applied to — STAMPED so the unit can never be misread.
+    multiple_basis: str = MULTIPLE_BASIS
     # ANCHOR A — own margin history
     margin_by_year: dict[str, float]
     margin_median: float | None
@@ -516,9 +559,12 @@ def _anchor_record(margin: MarginAnchor, fuel: FuelSplit, peers: PeerAnchor,
 def assemble_midcycle(*, margin: MarginAnchor, fuel: FuelSplit, peers: PeerAnchor,
                       mult: MultipleAnchor, scenarios: list[Scenario] | None = None,
                       spot: float | None = None, net_debt_musd: float | None = None,
-                      shares: float | None = None) -> MidCycle:
+                      shares: float | None = None, cash_interest_musd: float | None = None,
+                      cash_tax_rate: float | None = None) -> MidCycle:
     """Build the serializable record from the computed anchors (+ optional scenarios). Scenario
-    values need spot/net_debt/shares; absent → anchors render alone (the ratio stays None)."""
+    values need spot/net_debt/shares; absent → anchors render alone (the ratio stays None).
+    ``cash_interest_musd``/``cash_tax_rate`` feed the normalized-FCF cross-check ONLY, and both
+    must be supplied for it to compute — otherwise the FCF cross-check stays None (never EBIT)."""
     rec = _anchor_record(margin, fuel, peers, mult)
     if not scenarios or spot is None or net_debt_musd is None or shares is None or shares <= 0:
         return MidCycle(**rec)
@@ -527,12 +573,15 @@ def assemble_midcycle(*, margin: MarginAnchor, fuel: FuelSplit, peers: PeerAncho
     srecs: list[ScenarioRecord] = []
     by_name: dict[str, ScenarioRecord] = {}
     for s in scenarios:
-        v = scenario_value(s, net_debt=net_debt_musd, shares=shares)   # $M in, $M/count out
+        v = scenario_value(s, net_debt=net_debt_musd, shares=shares,
+                           cash_interest=cash_interest_musd, cash_tax_rate=cash_tax_rate)
         vps = v.equity * 1e6 / shares                                  # $M → $/share
         r = ScenarioRecord(
             name=s.name, revenue_musd=s.revenue, margin=s.margin, multiple=s.multiple,
-            source=s.source, reason=s.reason, op_income_musd=v.op_income, ev_musd=v.ev,
-            equity_musd=v.equity, value_per_share=vps,
+            source=s.source, reason=s.reason, op_income_musd=v.op_income,
+            d_and_a_musd=s.d_and_a, ebitda_musd=v.ebitda, ev_musd=v.ev,
+            equity_musd=v.equity, value_per_share=vps, ev_ebit=v.ev_ebit,
+            norm_fcf_musd=v.norm_fcf,
             margin_pct_of_own=percentile_of(s.margin, own),
             margin_pct_of_peer=percentile_of(s.margin, band))
         srecs.append(r)
