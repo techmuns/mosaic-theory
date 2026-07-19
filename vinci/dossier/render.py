@@ -1822,19 +1822,31 @@ def _midcycle_section(mc: Any) -> list[str]:
         out.append(f"- **Own EV/EBITDA band**: {mc.multiple_note}")
     # SCENARIO GRID + ratio (only when supplied)
     if mc.scenarios:
-        hdr = ("| scenario | rev $M | margin | ×mult | op-inc $M | value/sh | "
-               "margin own/peer pct | source |")
+        basis = getattr(mc, "multiple_basis", "EV/EBITDA")
+        hdr = (f"| scenario | rev $M | margin | EBIT $M | +D&A → EBITDA $M | ×mult ({basis}) | "
+               "value/sh | margin own/peer pct | source |")
         out += ["", f"**Scenario grid** (analyst-supplied; machine computes value + placement; "
-                f"$M rev/net-debt; spot ${mc.spot:.2f}, net debt ${mc.net_debt_musd:.0f}M):",
-                "", hdr, "|---|---:|---:|---:|---:|---:|---|---|"]
+                f"$M rev/net-debt; spot ${mc.spot:.2f}, net debt ${mc.net_debt_musd:.0f}M; the "
+                f"multiple is applied to **{basis}**):",
+                "", hdr, "|---|---:|---:|---:|---:|---:|---:|---|---|"]
         for s in mc.scenarios:
             out.append(
-                f"| {s.name} | {s.revenue_musd:.0f} | {_mc_pct(s.margin)} | {s.multiple:.1f}x | "
-                f"{s.op_income_musd:.0f} | ${s.value_per_share:.2f} | "
+                f"| {s.name} | {s.revenue_musd:.0f} | {_mc_pct(s.margin)} | "
+                f"{s.op_income_musd:.0f} | {s.ebitda_musd:.0f} | {s.multiple:.1f}x | "
+                f"${s.value_per_share:.2f} | "
                 f"{_mc_pctile(s.margin_pct_of_own)} / {_mc_pctile(s.margin_pct_of_peer)} "
                 f"| {s.source}"
                 f"{(' — ' + s.reason) if s.reason else ''} |")
         out.append("")
+        # CROSS-CHECKS — capital intensity is what an EBITDA multiple hides. Labelled, not headline.
+        xs = [s for s in mc.scenarios if s.ev_ebit is not None or s.norm_fcf_musd is not None]
+        if xs:
+            cells = " · ".join(
+                f"{s.name} EV/EBIT {('—' if s.ev_ebit is None else f'{s.ev_ebit:.1f}x')}, "
+                f"norm-FCF {('—' if s.norm_fcf_musd is None else f'${s.norm_fcf_musd:.0f}M')}"
+                for s in xs)
+            out += [f"- _Cross-checks (capital intensity — an {basis} multiple flatters a "
+                    f"capital-heavy carrier; maint-capex ≈ D&A):_ {cells}", ""]
         if mc.ratio_undefined:
             out.append(f"- **Reward/risk: {mc.ratio_undefined}** "
                        f"(reward = base−spot ${mc.reward:.2f}; risk leg degenerate)")

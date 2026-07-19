@@ -52,6 +52,41 @@ def _jsonl(path: Path) -> list[dict[str, Any]]:
     return [json.loads(line) for line in path.read_text().splitlines() if line.strip()]
 
 
+# --- SCENARIO CARDS (reusable) ------------------------------------------------------------------
+# A committed `scenarios/<TICKER>.json` underwrite record renders as a card attachable under ANY
+# watchlist name — no full-dossier dependency. Names WITHOUT a record are untouched (the key is
+# omitted entirely, so their display JSON stays byte-identical).
+def _scenario_card(rec: Any) -> dict[str, Any]:
+    """One underwrite record → the display card: the bear/base/bull grid, the reward/risk ratio
+    against the bar, the capital-intensity cross-checks, and the verdict status. The basis and
+    recipe travel WITH the card so the multiple's unit can never be misread on screen."""
+    r = rec.result
+    return {
+        "ticker": rec.ticker, "recipeId": rec.recipe_id, "recipeDesc": rec.recipe_desc,
+        "multipleBasis": rec.multiple_basis, "underwriteDate": rec.underwrite_date,
+        "analyst": rec.analyst, "spot": rec.spot, "spotSource": rec.spot_source,
+        "facts": [{"key": k, "value": f.value, "unit": f.unit, "basis": f.basis,
+                   "source": f.source} for k, f in rec.facts.items()],
+        "scenarios": [
+            {"name": n, "revenue": s.revenue, "margin": s.margin, "multiple": s.multiple,
+             "reason": s.reason,
+             **({"valuePerShare": o.value_per_share, "opIncome": o.op_income, "ebitda": o.ebitda,
+                 "ev": o.ev, "equity": o.equity, "evEbit": o.ev_ebit, "normFcf": o.norm_fcf}
+                if (o := r.per_scenario.get(n)) is not None else {})}
+            for n, s in rec.scenarios.items()],
+        "reward": r.reward, "risk": r.risk, "ratio": r.ratio, "bar": r.bar,
+        "ratioUndefined": r.ratio_undefined, "passFail": r.pass_fail,
+        "verdict": {"status": rec.verdict.status, "recorded": rec.verdict.recorded},
+    }
+
+
+def _scenario_cards() -> dict[str, dict[str, Any]]:
+    """Every committed underwrite record, keyed by ticker. Empty when none exist."""
+    from vinci.scenarios import all_records
+
+    return {t: _scenario_card(rec) for t, rec in all_records(root=ROOT).items()}
+
+
 def _git_sha() -> str | None:
     try:
         return subprocess.check_output(
@@ -198,12 +233,16 @@ def _theme_display(baskets: dict[str, Any], ledger: list[dict[str, Any]],
         surfaced = frozen
         tier_shape = {**tier, "none": None, "surfaced": frozen, "universe": None}
 
+    cards = _scenario_cards()
+
     def _detail(t: str, extra: dict[str, Any]) -> dict[str, Any]:
         n = by_ticker.get(t, {})
         base = {k: n.get(k, "") for k in
                 ("substructureTag", "grade", "basis", "gradeFact", "accession", "edgarUrl",
                  "rationale")}
-        return {"ticker": t, **base, **extra}
+        # attach ONLY when an underwrite record exists — names without one stay byte-identical
+        card = {"scenarioCard": cards[t]} if t in cards else {}
+        return {"ticker": t, **base, **extra, **card}
 
     watchlist = [_detail(t, {"trigger": triggers.get(t, "")}) for t in baskets.get("watchlist", [])
                  if t in by_ticker]

@@ -108,15 +108,17 @@ def test_fuel_cost_tag_is_not_a_surcharge_disclosure() -> None:
 
 
 def test_anchor_default_base_is_labelled() -> None:
-    s = mc.build_scenario("base", revenue=1000.0, multiple=8.0, anchor_margin=0.09)
+    s = mc.build_scenario("base", revenue=1000.0, multiple=8.0, anchor_margin=0.09, d_and_a=0.0)
     assert s.margin == pytest.approx(0.09) and s.source == "anchor default"
 
 
 def test_deviation_without_reason_is_refused() -> None:
     with pytest.raises(mc.ScenarioError) as ei:
-        mc.build_scenario("bull", revenue=1000.0, multiple=8.0, anchor_margin=0.09, margin=0.12)
+        mc.build_scenario("bull", revenue=1000.0, multiple=8.0, anchor_margin=0.09,
+                          d_and_a=0.0, margin=0.12)
     assert "--reason-bull is required" in str(ei.value)
-    ok = mc.build_scenario("bull", revenue=1000.0, multiple=8.0, anchor_margin=0.09, margin=0.12,
+    ok = mc.build_scenario("bull", revenue=1000.0, multiple=8.0, anchor_margin=0.09,
+                           d_and_a=0.0, margin=0.12,
                            reason="freight recovery to prior-peak rate per mile")
     assert ok.source == "analyst" and ok.reason
 
@@ -220,10 +222,13 @@ def test_assemble_midcycle_units_and_ratio() -> None:
     mult = mc.multiple_anchor(None)                       # CIQ absent → anchors still record
     fuel = mc.fuel_split(f, mc.annual_series(f, "revenue"), mc.annual_series(f, "operating_income"))
     scen = [
-        mc.build_scenario("bear", revenue=3000.0, multiple=5.0, anchor_margin=0.095, margin=0.03,
+        mc.build_scenario("bear", revenue=3000.0, multiple=5.0, anchor_margin=0.095,
+                          d_and_a=0.0, margin=0.03,
                           reason="freight trough persists"),
-        mc.build_scenario("base", revenue=3200.0, multiple=6.5, anchor_margin=0.095),  # default
-        mc.build_scenario("bull", revenue=3400.0, multiple=8.0, anchor_margin=0.095, margin=0.12,
+        mc.build_scenario("base", revenue=3200.0, multiple=6.5, anchor_margin=0.095,
+                          d_and_a=0.0),  # default
+        mc.build_scenario("bull", revenue=3400.0, multiple=8.0, anchor_margin=0.095,
+                          d_and_a=0.0, margin=0.12,
                           reason="rate recovery to prior peak"),
     ]
     m = mc.assemble_midcycle(margin=margin, fuel=fuel, peers=peers, mult=mult, scenarios=scen,
@@ -290,9 +295,10 @@ def test_assemble_drops_unpriceable_scenarios_to_anchors_only() -> None:
     f = _facts(Revenues=_REV, OperatingIncomeLoss=_OI)
     margin = _anchor(f)
     fuel = mc.fuel_split(f, mc.annual_series(f, "revenue"), mc.annual_series(f, "operating_income"))
-    scen = [mc.build_scenario("base", revenue=3200.0, multiple=6.5, anchor_margin=0.095),
+    scen = [mc.build_scenario("base", revenue=3200.0, multiple=6.5, anchor_margin=0.095,
+                              d_and_a=0.0),
             mc.build_scenario("bear", revenue=3000.0, multiple=5.0, anchor_margin=0.095,
-                              margin=0.03, reason="trough")]
+                              d_and_a=0.0, margin=0.03, reason="trough")]
     kw: dict[str, Any] = {
         "margin": margin, "fuel": fuel, "peers": mc.peer_anchor({}),
         "mult": mc.multiple_anchor(None), "scenarios": scen, "spot": 25.0, "shares": 60_000_000.0}
@@ -301,6 +307,75 @@ def test_assemble_drops_unpriceable_scenarios_to_anchors_only() -> None:
     assert dropped.margin_median == pytest.approx(0.095)             # anchors still present
     priced = mc.assemble_midcycle(net_debt_musd=0.0, **kw)            # 0.0 is valid → priced
     assert len(priced.scenarios) == 2 and priced.ratio is not None
+
+
+# --- B1 REGRESSION: the multiple is EV/EBITDA, never EV/EBIT ------------------------------------
+# WERN recipe R1, real source-bound facts: D&A 286.321 (FY2025 10-K consolidated income statement),
+# net debt 979.776 (2026-03-31 10-Q, incl. operating + finance leases), diluted shares 59.91M.
+_W_DNA, _W_ND, _W_SH, _W_SPOT = 286.321, 979.776, 59_910_000.0, 46.00
+_W_GRID = (("bear", 2850.0, 0.015, 6.0), ("base", 3100.0, 0.0625, 6.5),
+           ("bull", 3400.0, 0.080, 7.0))
+
+
+def _wern_block() -> mc.MidCycle:
+    f = _facts(Revenues=_REV, OperatingIncomeLoss=_OI)
+    scen = [mc.build_scenario(n, revenue=r, margin=m, multiple=x, anchor_margin=0.0745,
+                              d_and_a=_W_DNA, reason=f"{n} — recipe R1 pin")
+            for n, r, m, x in _W_GRID]
+    return mc.assemble_midcycle(
+        margin=_anchor(f), fuel=mc.fuel_split(f, mc.annual_series(f, "revenue"),
+                                              mc.annual_series(f, "operating_income")),
+        peers=mc.peer_anchor({}), mult=mc.multiple_anchor(None), scenarios=scen,
+        spot=_W_SPOT, net_debt_musd=_W_ND, shares=_W_SH)
+
+
+def test_wern_multiple_is_ev_ebitda_not_ev_ebit() -> None:
+    """The #149 defect, pinned: the multiple applies to EBITDA (EBIT + D&A), matching ANCHOR D's
+    `TEV/LTM EBITDA` basis. If this ever computes on EBIT again, every assertion below fails —
+    D&A (286.3) exceeds base EBIT (193.8), so the two bases are ~7.5x apart on value/share."""
+    m = _wern_block()
+    assert m.multiple_basis == "EV/EBITDA"
+    got = {s.name: s.value_per_share for s in m.scenarios}
+    assert got["bear"] == pytest.approx(16.60, abs=0.02)
+    assert got["base"] == pytest.approx(35.73, abs=0.02)
+    assert got["bull"] == pytest.approx(48.88, abs=0.02)
+    # EBIT basis would give these — assert we are NOT on it (the silent-revert guard)
+    for name, ebit_vps in (("bear", -12.07), ("base", 4.67), ("bull", 15.43)):
+        assert abs(got[name] - ebit_vps) > 1.0, f"{name} priced off EBIT — the B1 defect is back"
+    base = next(s for s in m.scenarios if s.name == "base")
+    assert base.op_income_musd == pytest.approx(193.75)          # EBIT
+    assert base.d_and_a_musd == pytest.approx(_W_DNA)
+    assert base.ebitda_musd == pytest.approx(480.071)            # EBIT + D&A — the multiple's base
+    assert base.ev_musd == pytest.approx(3120.46, abs=0.02)      # EBITDA × 6.5, NOT EBIT × 6.5
+
+
+def test_wern_ratio_is_a_correct_fail_at_spot() -> None:
+    """Reward is NEGATIVE at spot 46 (base $35.73 < spot) → sub-2:1 → an honest FAIL, recorded."""
+    m = _wern_block()
+    assert m.reward == pytest.approx(-10.27, abs=0.02)     # base − spot
+    assert m.risk == pytest.approx(29.40, abs=0.02)        # spot − bear
+    assert m.ratio == pytest.approx(-0.349, abs=0.005)
+    assert m.clears_bar is False                            # a correct FAIL, not an error
+    assert m.ratio_undefined is None                        # risk leg is well-defined
+
+
+def test_capital_intensity_cross_checks_are_present() -> None:
+    """EV/EBIT and normalized FCF ride alongside — an EBITDA multiple flatters a capital-heavy
+    carrier, and the cross-check is what shows it."""
+    f = _facts(Revenues=_REV, OperatingIncomeLoss=_OI)
+    scen = [mc.build_scenario(n, revenue=r, margin=mg, multiple=x, anchor_margin=0.0745,
+                              d_and_a=_W_DNA, reason="pin") for n, r, mg, x in _W_GRID]
+    m = mc.assemble_midcycle(
+        margin=_anchor(f), fuel=mc.fuel_split(f, mc.annual_series(f, "revenue"),
+                                              mc.annual_series(f, "operating_income")),
+        peers=mc.peer_anchor({}), mult=mc.multiple_anchor(None), scenarios=scen, spot=_W_SPOT,
+        net_debt_musd=_W_ND, shares=_W_SH, cash_interest_musd=39.053, cash_tax_rate=0.25)
+    base = next(s for s in m.scenarios if s.name == "base")
+    # EV/EBIT = 3120.46 / 193.75 = 16.1x vs the 6.5x EBITDA turn — the capital-intensity gap
+    assert base.ev_ebit == pytest.approx(16.11, abs=0.05)
+    assert base.ev_ebit > base.multiple * 2                 # EBITDA turn flatters, materially
+    # norm FCF = EBIT − cash tax − cash interest = 193.75 − 38.674 − 39.053
+    assert base.norm_fcf_musd == pytest.approx(116.02, abs=0.05)
 
 
 if __name__ == "__main__":
