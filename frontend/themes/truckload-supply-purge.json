@@ -524,7 +524,108 @@
    "accession": "0000793074-26-000071",
    "edgarUrl": "https://www.sec.gov/Archives/edgar/data/793074/000079307426000071/0000793074-26-000071-index.htm",
    "rationale": "WATCHLIST \u2014 DOSSIER-NOW; the scan's sole REAL-tier (quantified / driver-specific) name.",
-   "trigger": "DOSSIER-NOW: single-name underwrite in progress at the 2:1 bar on NORMALIZED earnings (trailing P/E sits at the 99th percentile of its own history \u2014 a trough-earnings artifact, not the bar). Thesis-break (all three names): FMCSA non-domiciled-CDL rule stayed or reversed, or ACT driver availability returns to surplus."
+   "trigger": "DOSSIER-NOW: single-name underwrite in progress at the 2:1 bar on NORMALIZED earnings (trailing P/E sits at the 99th percentile of its own history \u2014 a trough-earnings artifact, not the bar). Thesis-break (all three names): FMCSA non-domiciled-CDL rule stayed or reversed, or ACT driver availability returns to surplus.",
+   "scenarioCard": {
+    "ticker": "WERN",
+    "recipeId": "R1_midcycle_margin_evebitda",
+    "recipeDesc": "Mid-cycle underwrite: normalized operating margin on a mid-cycle revenue base, valued at an exit EV/LTM-EBITDA multiple; reward/risk measured at SPOT.",
+    "multipleBasis": "EV/EBITDA",
+    "underwriteDate": "2026-07-19",
+    "analyst": "nogods404",
+    "spot": 46.04,
+    "spotSource": "Polygon EOD daily close 2026-07-17 (live)",
+    "facts": [
+     {
+      "key": "d_and_a",
+      "value": 286.321,
+      "unit": "$M",
+      "basis": "consolidated FY2025",
+      "source": "10-K acc 0000793074-26-000071 \u2014 CONSOLIDATED STATEMENTS OF INCOME, 'Depreciation and amortization'"
+     },
+     {
+      "key": "net_debt",
+      "value": 979.776,
+      "unit": "$M",
+      "basis": "incl. operating + finance leases, as of 2026-03-31",
+      "source": "10-Q acc 0000793074-26-000096 balance sheet \u2014 LT debt 8.600 + 869.600 + finance leases 26.706 + 26.878 + operating leases 48.832 + 60.704 - cash & equivalents 61.544 = 979.776"
+     },
+     {
+      "key": "diluted_shares",
+      "value": 59.91,
+      "unit": "M shares",
+      "basis": "diluted weighted-average, 3 months ended 2026-03-31",
+      "source": "10-Q acc 0000793074-26-000096 \u2014 income statement"
+     },
+     {
+      "key": "cash_interest",
+      "value": 39.053,
+      "unit": "$M",
+      "basis": "FY2025 interest expense (cross-check input only)",
+      "source": "10-K acc 0000793074-26-000071 \u2014 income statement, 'Interest expense'"
+     },
+     {
+      "key": "cash_tax_rate",
+      "value": 0.25,
+      "unit": "rate",
+      "basis": "ANALYST ASSUMPTION, not a filing figure \u2014 normalized cash-tax rate for the FCF cross-check only; does not touch value/share",
+      "source": "analyst assumption (cross-check only)"
+     }
+    ],
+    "scenarios": [
+     {
+      "name": "bear",
+      "revenue": 2850.0,
+      "margin": 0.015,
+      "multiple": 6.0,
+      "reason": "trough persists; One-Way keeps shrinking; underlying FY25 ex the Q2 insurance credit was ~breakeven, so 1.5% is slight lift off a ~0% floor.",
+      "valuePerShare": 16.602403605408117,
+      "opIncome": 42.75,
+      "ebitda": 329.071,
+      "ev": 1974.4260000000002,
+      "equity": 994.6500000000002,
+      "evEbit": 46.185403508771934,
+      "normFcf": 2.772750000000002
+     },
+     {
+      "name": "base",
+      "revenue": 3100.0,
+      "margin": 0.0625,
+      "multiple": 6.5,
+      "reason": "deviates from 7.45% anchor: insurance run-rate +~125bps (2018-22 avg 4.06% -> 2025-26 underlying ~5.3%, ex one-off Q2-25 favorable credit); ~50bps for Dedicated mix shift 51.5%->73% capping One-Way upside in peak-margin years.",
+      "valuePerShare": 35.73168920046738,
+      "opIncome": 193.75,
+      "ebitda": 480.071,
+      "ev": 3120.4615000000003,
+      "equity": 2140.6855000000005,
+      "evEbit": 16.105607741935486,
+      "normFcf": 116.02275
+     },
+     {
+      "name": "bull",
+      "revenue": 3400.0,
+      "margin": 0.08,
+      "multiple": 7.0,
+      "reason": "genuine cycle turn: One-Way rebounds on tight capacity + driver-supply tightening; Dedicated fully loaded. Below 12-14% 2020-22 peaks (One-Way exposure reduced; insurance ~125bps higher).",
+      "valuePerShare": 48.881171757636466,
+      "opIncome": 272.0,
+      "ebitda": 558.321,
+      "ev": 3908.2470000000003,
+      "equity": 2928.4710000000005,
+      "evEbit": 14.368555147058824,
+      "normFcf": 174.71025
+     }
+    ],
+    "reward": -10.30831079953262,
+    "risk": 29.437596394591882,
+    "ratio": -0.3501750163755356,
+    "bar": 2.0,
+    "ratioUndefined": null,
+    "passFail": "FAIL",
+    "verdict": {
+     "status": "pending_analyst",
+     "recorded": null
+    }
+   }
   },
   {
    "ticker": "MRTN",
