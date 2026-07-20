@@ -1,6 +1,8 @@
-// RADAR (#/radar) — one nav stage, three internal sub-tabs: Map · Inbox · Log. READ-ONLY: the machine
+// RADAR (#/themes/radar) — the intake stage of the Themes edge, three internal sub-tabs (chips):
+// Map · Inbox · Log. READ-ONLY: the machine
 // assembles and sorts (candidates on the map, unreviewed clusters in Inbox, dispositions in Log) but
-// NEVER decides — reviews.json is the single record. Deep links #/radar/inbox and #/radar/log load the
+// NEVER decides — reviews.json is the single record. Deep links #/themes/radar/inbox and
+// #/themes/radar/log load the
 // right tab; tab clicks sync the URL (replaceState) without re-fetching. Data contracts unchanged.
 import { getRadarCandidates, getRadarSweep, getRadarInbox, getRadarLog } from "../../lib/snapshots.js";
 import { escapeHtml } from "../../lib/format.js";
@@ -302,7 +304,7 @@ export async function render(root, params, { item, frame }) {
 
   const q = (s) => root.querySelector(s);
   const syncHash = () => {
-    const h = "#/radar" + (state.tab === "map" ? "" : "/" + state.tab);
+    const h = "#/themes/radar" + (state.tab === "map" ? "" : "/" + state.tab);
     if (location.hash !== h) history.replaceState(null, "", h);  // URL follows the tab; no re-dispatch
   };
   const paintTabs = () => { q(".rt-tabbar").innerHTML = tabBar(state, inbox, log); };
