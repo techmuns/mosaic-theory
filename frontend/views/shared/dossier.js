@@ -82,8 +82,8 @@ export async function render(root, params, { item, frame }) {
         <div class="subtitle muted" style="margin:-6px 0 12px;">This is the analyst's scenario underwrite — not assembled
           facts, and its verdict is not a ledger verdict of record. The full dossier is built on a
           re-underwrite trigger.</div>
-        ${withEndnotes("U", () => `${uwCard(card, { ticker: false, cites: "endnote" })}
-        ${loggedVerdict(verdict, ticker, card.underwriteDate)}`)}
+        ${uwCard(card, { ticker: false })}
+        ${loggedVerdict(verdict, ticker, card.underwriteDate)}
         ${assembleHelp()}` });
       return;
     }

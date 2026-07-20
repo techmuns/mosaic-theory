@@ -3,15 +3,17 @@
 // Canonical components only: .card h3 eyebrow, .fact rows, table.data for the 3-leg matrix,
 // .pill (verbatim-cased), .kv-list, inline ↳ .cite, <details>. No private type scale.
 //
-// CITES follow the dossier's two-mode convention (lib/cites.js), selected by the `cites` option:
-//   "inline"  (DEFAULT) every cite renders inline. SAFE for a host that runs no endnote pass —
-//             the theme page embeds this card as a supporting exhibit and has no Sources list.
-//   "endnote" MAIN-BODY cites emit citeMark placeholders for the host's withEndnotes() pass; the
-//             on-demand <details> block STAYS inline either way (print-excluded — an endnote there
-//             would leave an orphan [n] in a printed Sources list, pointing at an unseeable marker).
-// A host passing "endnote" MUST wrap the result in withEndnotes(), or the placeholder renders "[?]".
-// Defaulting to "inline" makes forgetting harmless rather than visibly broken.
-// and self-contained on theme pages. Gaps render as pills (UNDEFINED), never blank.
+// CITES: the card OWNS its citations (lib/cites.js) and renders identically on every surface — no
+// host has to run an endnote pass, and there is no mode to get wrong. TWO scopes, because print
+// fate differs:
+//   main body   withEndnotes("U", …) — its Sources list sits inside the card, right after the body.
+//   <details>   withEndnotes("I", …) — marker AND list both INSIDE the collapsed block, so they
+//               share print fate (`details:not([open])` drops the block from a PDF; an [I n]
+//               resolving into the card's outer list would orphan there).
+// Earlier this was gated on a `cites` option so a host with no pass wouldn't render "[?]". That
+// knob is gone: self-contained scopes make the failure impossible instead of merely defaulted-away,
+// and it was leaving the theme page's copy of the card visibly different from the dossier's.
+// Gaps render as pills (UNDEFINED), never blank.
 import { escapeHtml, fmtPrice, DASH } from "../../lib/format.js";
 import { citeMark, withEndnotes } from "../../lib/cites.js";
 
@@ -96,39 +98,30 @@ function legsTable(c) {
     ${reasons ? `<ul class="kv-list" style="margin-top:8px;">${reasons}</ul>` : ""}`);
 }
 
-// The audit block carries its OWN endnote scope in endnote mode — markers AND their Sources list
-// both live INSIDE the <details>, so the two share print fate: collapsed, the whole scope drops out
-// of the PDF together; expanded, both print. That is the real invariant the L3/#10 rule protects (a
-// marker must never outlive its Sources entry, nor the reverse) — routing these five cites into the
-// CARD's list instead would orphan five entries in every collapsed-block print. Its own scope keeps
-// the block self-contained, so no host is required to run a pass for it.
-function inputsDetails(c, cites) {
+// The audit block carries its OWN endnote scope — markers AND their Sources list both live INSIDE
+// the <details>, so the two share print fate: collapsed, the whole scope drops out of the PDF
+// together; expanded, both print. That is the real invariant the L3/#10 rule protects (a marker
+// must never outlive its Sources entry, nor the reverse) — routing these cites into the CARD's
+// outer list instead would orphan them in every collapsed-block print.
+function inputsDetails(c) {
   const facts = c.facts || [];
   if (!facts.length) return "";
   const rows = () => facts.map((f) => fact(f.key, `${mono(String(f.value))} ${escapeHtml(f.unit || "")}
       <span class="muted">· ${escapeHtml(f.basis || "")}</span>
-      ${f.source ? (cites === "endnote" ? citeMark(f.source)
-                                        : `<span class="cite">${escapeHtml(f.source)}</span>`) : ""}`)).join("");
+      ${f.source ? citeMark(f.source) : ""}`)).join("");
   return `<details class="uw-inputs"><summary>Inputs &amp; sources</summary>${
-    cites === "endnote" ? withEndnotes("I", rows) : rows()}</details>`;
+    withEndnotes("I", rows)}</details>`;
 }
 
 // uwCard(cardJson) -> HTML string. `ticker:false` drops the ticker from the eyebrow when the host
 // page already carries it as its h1 (the dossier degrade).
-// MAIN-BODY provenance — an endnote when the host runs the pass, inline when it doesn't.
-function spotCite(ref, cites) {
-  if (!ref) return "";
-  return cites === "endnote" ? citeMark(ref) : `<span class="cite">${escapeHtml(ref)}</span>`;
-}
-
-export function uwCard(c, { ticker = true, cites = "inline" } = {}) {
+export function uwCard(c, { ticker = true } = {}) {
   if (!c) return "";
   const v = c.verdict || {};
   const recipe = [c.recipeId ? c.recipeId.split("_")[0] : "", c.multipleBasis]
     .filter(Boolean).join(" · ");
   const trig = (v.reunderwriteTriggers || []).map((t) => `<li>${escapeHtml(t)}</li>`).join("");
-  return `
-  <section class="card uw-card">
+  const body = () => `
     <h3>Underwrite${ticker ? ` · ${mono(c.ticker)}` : ""}
       <span class="uw-h-sub">${escapeHtml(recipe)}</span></h3>
     ${verdictFact(c)}
@@ -136,11 +129,14 @@ export function uwCard(c, { ticker = true, cites = "inline" } = {}) {
     ${fact("Reward · risk", `${mono(money(c.reward))} · ${mono(money(c.risk))}
       <span class="muted">— base − spot / spot − bear</span>`)}
     ${fact("Spot", `${mono(fmtPrice(c.spot))}
-      ${spotCite(c.spotSource, cites)}`)}
+      ${c.spotSource ? citeMark(c.spotSource) : ""}`)}
     ${legsTable(c)}
     ${v.rationale ? fact("Rationale", escapeHtml(v.rationale)) : ""}
-    ${trig ? fact("Re-underwrite when", `<ul class="kv-list">${trig}</ul>`) : ""}
-    ${inputsDetails(c, cites)}
+    ${trig ? fact("Re-underwrite when", `<ul class="kv-list">${trig}</ul>`) : ""}`;
+  return `
+  <section class="card uw-card">
+    ${withEndnotes("U", body)}
+    ${inputsDetails(c)}
     <div class="foot uw-foot">underwritten ${escapeHtml(c.underwriteDate || DASH)} · analyst
       ${escapeHtml(c.analyst || DASH)}${c.recipeDesc ? ` · ${escapeHtml(c.recipeDesc)}` : ""}</div>
   </section>`;

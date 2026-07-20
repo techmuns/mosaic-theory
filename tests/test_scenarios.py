@@ -231,41 +231,33 @@ def test_citation_system_is_shared_not_re_implemented() -> None:
     assert hits == ["cites.js"], f"the citeMark placeholder shape leaked outside cites.js: {hits}"
 
 
-def test_uw_card_main_body_cites_are_endnotes_when_the_host_runs_the_pass() -> None:
-    """The card's MAIN BODY must be able to emit endnotes, and the host that asks for them must
-    actually run the pass — an unconsumed placeholder renders a literal "[?]" to the analyst.
+def test_uw_card_owns_its_citations_and_renders_the_same_everywhere() -> None:
+    """The card is SELF-CONTAINED: it runs its own endnote scopes, so no host must run a pass and
+    the same card cannot render differently on two surfaces (it did — the theme page's copy kept
+    long inline strings while the dossier's was numbered).
 
-    The on-demand <details> block stays inline in BOTH modes on purpose: it is print-excluded, so an
-    endnote there would leave an orphan [n] in a printed Sources list pointing at a marker the
-    reader cannot see (the auditCitesInline rule)."""
+    TWO scopes, because print fate differs. The main body's list sits inside the card. The Inputs
+    <details> keeps its OWN nested scope: `details:not([open])` drops a collapsed block from the
+    PDF, so an [I n] resolving into the card's outer list would orphan there — marker and Sources
+    entry must always share print fate."""
     import re
 
     root = Path(__file__).resolve().parents[1] / "frontend"
     uw = (root / "views" / "shared" / "uw-card.js").read_text()
-    assert 'cites = "inline"' in uw, (
-        "the default must stay inline — a host with no endnote pass would otherwise render [?]")
-    assert re.search(r'cites === "endnote"\s*\?\s*citeMark\(ref\)', uw), (
-        "the main-body cite must become a citeMark placeholder in endnote mode")
-    # the audit <details> carries its OWN endnote scope in endnote mode — marker AND list both
-    # inside the block, so they share print fate; it must NEVER resolve into the card's list
-    inputs = re.search(r"function inputsDetails\(c, cites\) \{(.*?)\n\}", uw, re.S)
-    assert inputs, "inputsDetails must take the cite mode"
-    body = inputs.group(1)
-    assert 'withEndnotes("I", rows)' in body, (
-        "the Inputs block must own its endnote scope — resolving into the card's Sources list "
-        "orphans every entry when the block is printed collapsed")
-    assert 'class="cite"' in body, "inline mode must still render the full source string"
-    assert "citeMark(f.source)" in body
-    # any host that asks for endnotes must run withEndnotes over the result
+    assert 'withEndnotes("U", body)' in uw, "the card must run its own main-body endnote scope"
+    inputs = re.search(r"function inputsDetails\(c\) \{(.*?)\n\}", uw, re.S)
+    assert inputs, "inputsDetails must take no cite mode — the card has no modes left"
+    assert 'withEndnotes("I", rows)' in inputs.group(1), (
+        "the Inputs block must own its scope — resolving into the card's list orphans every entry "
+        "when the block is printed collapsed")
+    assert "citeMark(f.source)" in inputs.group(1)
+    # the mode knob is GONE — a knob a host can get wrong is a rendering difference in waiting
+    assert "cites" not in uw.split("export function uwCard")[1], (
+        "uwCard must take no cite mode; self-contained scopes make the failure impossible")
+    assert 'class="cite"' not in uw, "no hand-rolled inline cite survives in the card"
+    # ...and no host runs a pass on its behalf
     dossier = (root / "views" / "shared" / "dossier.js").read_text()
-    for m in re.finditer(r'uwCard\([^)]*cites:\s*"endnote"[^)]*\)', dossier):
-        window = dossier[max(0, m.start() - 400):m.end()]
-        assert "withEndnotes(" in window, (
-            "a host requesting endnote cites must wrap the card in withEndnotes(), else the "
-            "placeholder renders as a literal [?]")
-    # the theme host must NOT request endnotes (it runs no pass)
-    theme = (root / "views" / "themes" / "theme.js").read_text()
-    assert '"endnote"' not in theme, "the theme page runs no endnote pass — it must stay inline"
+    assert 'withEndnotes("U"' not in dossier, "the card owns the U scope now, not the host"
 
 
 if __name__ == "__main__":

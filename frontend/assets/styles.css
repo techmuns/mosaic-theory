@@ -573,11 +573,11 @@ table.data.vs-table { width: 100%; }
 .uw-h-sub { text-transform: none; letter-spacing: 0; font-weight: 400; color: var(--ink-3); margin-left: 6px; }
 .uw-note { font-size: 11px; margin-top: 5px; }
 .uw-inputs { margin-top: 8px; }
-/* the Inputs block owns its endnote scope, so its Sources list is NESTED — strip the card chrome
-   (it is a footnote run inside a block, not a page section) */
-.uw-inputs .ds-sources { background: none; border: 0; border-top: 1px solid var(--line); border-radius: 0;
+/* the card owns its endnote scopes (main body + the Inputs block), so BOTH Sources lists are
+   NESTED inside it — strip the card chrome; they are footnote runs, not page sections */
+.uw-card .ds-sources { background: none; border: 0; border-top: 1px solid var(--line); border-radius: 0;
   box-shadow: none; padding: 6px 0 0; margin: 8px 0 0; }
-.uw-inputs .ds-sources .ds-title { font-size: 10px; }
+.uw-card .ds-sources .ds-title { font-size: 10px; }
 .uw-inputs > summary { cursor: pointer; font-size: 11.5px; color: var(--ink-3); }
 .uw-foot { margin-top: 9px; }
 
