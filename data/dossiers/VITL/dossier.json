@@ -58,15 +58,27 @@
         "value": [
           {
             "metric": "EV/EBITDA (TEV/LTM)",
-            "current": 1.466638,
-            "low": 1.870272,
-            "high": 110.561,
-            "median": 3.880202,
-            "percentile": 0.0,
-            "n_closes": 19,
-            "as_of": "2026-03-31",
-            "mean": 18.634012263157896,
+            "current": 1.484275,
+            "low": 1.274968,
+            "high": 172.521094,
+            "median": 4.198793,
+            "percentile": 0.08333333333333333,
+            "n_closes": 24,
+            "as_of": "2026-07-17",
+            "mean": 27.086781458333334,
             "series": [
+              [
+                "2020-09-30",
+                172.521094
+              ],
+              [
+                "2020-12-31",
+                73.215279
+              ],
+              [
+                "2021-03-31",
+                47.558543
+              ],
               [
                 "2021-06-30",
                 41.778771
@@ -146,20 +158,41 @@
               [
                 "2026-03-31",
                 1.466638
+              ],
+              [
+                "2026-06-30",
+                1.274968
+              ],
+              [
+                "2026-07-17",
+                1.484275
               ]
-            ]
+            ],
+            "periodicity_days_median": 91.0,
+            "window_span_years": 5.79,
+            "periodicity": "quarterly",
+            "data_quality": null,
+            "source_file": "Vital Farms Inc NasdaqGM VITL Financials_Quarterly.xls"
           },
           {
             "metric": "P/LTM EPS",
-            "current": 9.805562,
-            "low": 24.166779,
+            "current": 12.909679,
+            "low": 9.805562,
             "high": 206.0,
             "median": 36.570983,
-            "percentile": 0.0,
-            "n_closes": 15,
-            "as_of": "2026-03-31",
-            "mean": 59.060940933333335,
+            "percentile": 0.10526315789473684,
+            "n_closes": 19,
+            "as_of": "2026-07-17",
+            "mean": 60.28973268421053,
             "series": [
+              [
+                "2020-12-31",
+                157.815646
+              ],
+              [
+                "2021-03-31",
+                80.889188
+              ],
               [
                 "2021-06-30",
                 65.532864
@@ -223,8 +256,21 @@
               [
                 "2026-03-31",
                 9.805562
+              ],
+              [
+                "2026-06-30",
+                11.080411
+              ],
+              [
+                "2026-07-17",
+                12.909679
               ]
-            ]
+            ],
+            "periodicity_days_median": 91.0,
+            "window_span_years": 5.54,
+            "periodicity": "quarterly",
+            "data_quality": null,
+            "source_file": "Vital Farms Inc NasdaqGM VITL Financials_Quarterly.xls"
           }
         ],
         "source_ref": "CIQ Financials→Multiples (Close; last col = current, excluded from history)",
@@ -5146,8 +5192,10 @@
     "recipe_hint": "R1_midcycle_margin_evebitda",
     "applicable": true,
     "multiple_basis": "EV/EBITDA",
-    "computed_at": "2026-07-20T14:26:46.194171Z",
+    "computed_at": "2026-07-20T19:57:26.121380Z",
     "reason": null,
+    "data_quality": null,
+    "data_quality_detail": [],
     "margin": {
       "value": 0.060239,
       "unit": "fraction",
@@ -5157,11 +5205,11 @@
       "confidence": "firm"
     },
     "multiple": {
-      "value": 3.880202,
+      "value": 4.198793,
       "unit": "EV/EBITDA",
       "source": "valuation.own_history.median",
-      "history_quarters": 19,
-      "confidence": "weak"
+      "history_quarters": 24,
+      "confidence": "firm"
     },
     "d_and_a": {
       "value": 9.254,
@@ -5187,9 +5235,9 @@
       "basis": "LTM revenue",
       "source": "committed financial_summary.annual (LTM)"
     },
-    "anchor_base_value_per_share": 4.3523,
-    "anchor_ev_ebit": 4.6401,
-    "overall_confidence": "weak",
+    "anchor_base_value_per_share": 4.7561,
+    "anchor_ev_ebit": 5.0211,
+    "overall_confidence": "firm",
     "note": "ATTENTION FILTER, not a verdict. Even a firm anchor requires a full bear/base/bull 2:1 underwrite before any BUY. Spot and reward-to-base are computed live at triage, not stored here."
   }
 }

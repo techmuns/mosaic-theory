@@ -58,15 +58,23 @@
         "value": [
           {
             "metric": "EV/EBITDA (TEV/LTM)",
-            "current": 5.071916,
+            "current": 3.884201,
             "low": 4.394569,
             "high": 12.816876,
             "median": 6.888432,
-            "percentile": 0.10526315789473684,
-            "n_closes": 19,
-            "as_of": "2026-03-31",
-            "mean": 7.520042105263158,
+            "percentile": 0.0,
+            "n_closes": 23,
+            "as_of": "2026-07-17",
+            "mean": 7.473486043478261,
             "series": [
+              [
+                "2020-12-31",
+                7.688573
+              ],
+              [
+                "2021-03-31",
+                11.320707
+              ],
               [
                 "2021-06-30",
                 10.367706
@@ -146,20 +154,37 @@
               [
                 "2026-03-31",
                 5.071916
+              ],
+              [
+                "2026-06-30",
+                4.928183
+              ],
+              [
+                "2026-07-17",
+                3.884201
               ]
-            ]
+            ],
+            "periodicity_days_median": 91.0,
+            "window_span_years": 5.54,
+            "periodicity": "quarterly",
+            "data_quality": null,
+            "source_file": "Concentrix Corporation NasdaqGS CNXC Financials_Quarterly.xls"
           },
           {
             "metric": "P/LTM EPS",
             "current": 8.766527,
             "low": 9.730044,
-            "high": 29.791939,
-            "median": 14.828353,
+            "high": 38.620247,
+            "median": 14.953981,
             "percentile": 0.0,
-            "n_closes": 18,
+            "n_closes": 19,
             "as_of": "2025-12-31",
-            "mean": 16.629924166666665,
+            "mean": 17.78730957894737,
             "series": [
+              [
+                "2021-03-31",
+                38.620247
+              ],
               [
                 "2021-06-30",
                 29.791939
@@ -236,7 +261,12 @@
                 "2025-12-31",
                 8.766527
               ]
-            ]
+            ],
+            "periodicity_days_median": 91.0,
+            "window_span_years": 4.75,
+            "periodicity": "quarterly",
+            "data_quality": null,
+            "source_file": "Concentrix Corporation NasdaqGS CNXC Financials_Quarterly.xls"
           }
         ],
         "source_ref": "CIQ Financials→Multiples (Close; last col = current, excluded from history)",
@@ -3320,8 +3350,10 @@
     "recipe_hint": "R1_midcycle_margin_evebitda",
     "applicable": true,
     "multiple_basis": "EV/EBITDA",
-    "computed_at": "2026-07-20T14:26:46.108640Z",
+    "computed_at": "2026-07-20T19:57:26.035434Z",
     "reason": null,
+    "data_quality": null,
+    "data_quality_detail": [],
     "margin": {
       "value": 0.065422,
       "unit": "fraction",
@@ -3334,8 +3366,8 @@
       "value": 6.888432,
       "unit": "EV/EBITDA",
       "source": "valuation.own_history.median",
-      "history_quarters": 19,
-      "confidence": "weak"
+      "history_quarters": 23,
+      "confidence": "firm"
     },
     "d_and_a": {
       "value": 660.433,
@@ -3363,7 +3395,7 @@
     },
     "anchor_base_value_per_share": 61.9935,
     "anchor_ev_ebit": 13.8745,
-    "overall_confidence": "weak",
+    "overall_confidence": "firm",
     "note": "ATTENTION FILTER, not a verdict. Even a firm anchor requires a full bear/base/bull 2:1 underwrite before any BUY. Spot and reward-to-base are computed live at triage, not stored here."
   }
 }

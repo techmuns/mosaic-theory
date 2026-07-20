@@ -58,15 +58,43 @@
         "value": [
           {
             "metric": "EV/EBITDA (TEV/LTM)",
-            "current": 7.478706,
-            "low": 8.818111,
+            "current": 8.193529,
+            "low": 4.287579,
             "high": 27.868415,
-            "median": 20.001294,
-            "percentile": 0.0,
-            "n_closes": 19,
-            "as_of": "2026-06-22",
-            "mean": 19.686185684210525,
+            "median": 19.761409,
+            "percentile": 0.037037037037037035,
+            "n_closes": 27,
+            "as_of": "2026-07-17",
+            "mean": 18.417415555555557,
             "series": [
+              [
+                "2019-12-31",
+                4.287579
+              ],
+              [
+                "2020-03-31",
+                16.216707
+              ],
+              [
+                "2020-06-30",
+                15.261314
+              ],
+              [
+                "2020-09-30",
+                18.826208
+              ],
+              [
+                "2020-12-31",
+                18.654756
+              ],
+              [
+                "2021-03-31",
+                19.856059
+              ],
+              [
+                "2021-06-30",
+                21.635948
+              ],
               [
                 "2021-09-30",
                 21.50289
@@ -144,22 +172,59 @@
                 8.818111
               ],
               [
-                "2026-06-22",
-                7.478706
+                "2026-06-30",
+                8.494121
+              ],
+              [
+                "2026-07-17",
+                8.193529
               ]
-            ]
+            ],
+            "periodicity_days_median": 91.0,
+            "window_span_years": 6.54,
+            "periodicity": "quarterly",
+            "data_quality": null,
+            "source_file": "BellRing Brands Inc NYSE BRBR Financials_Quarterly.xls"
           },
           {
             "metric": "P/LTM EPS",
-            "current": 7.92577,
-            "low": 11.131366,
-            "high": 48.005686,
-            "median": 35.114111,
-            "percentile": 0.0,
-            "n_closes": 19,
-            "as_of": "2026-06-22",
-            "mean": 33.33108578947368,
+            "current": 9.445461,
+            "low": 5.210892,
+            "high": 57.265856,
+            "median": 33.734174,
+            "percentile": 0.14814814814814814,
+            "n_closes": 27,
+            "as_of": "2026-07-17",
+            "mean": 29.70739037037037,
             "series": [
+              [
+                "2019-12-31",
+                6.819125
+              ],
+              [
+                "2020-03-31",
+                5.210892
+              ],
+              [
+                "2020-06-30",
+                5.893744
+              ],
+              [
+                "2020-09-30",
+                5.985176
+              ],
+              [
+                "2020-12-31",
+                40.75809
+              ],
+              [
+                "2021-03-31",
+                36.791517
+              ],
+              [
+                "2021-06-30",
+                57.265856
+              ],
               [
                 "2021-09-30",
                 43.507419
@@ -237,10 +302,19 @@
                 11.131366
               ],
               [
-                "2026-06-22",
-                7.92577
+                "2026-06-30",
+                10.08451
+              ],
+              [
+                "2026-07-17",
+                9.445461
               ]
-            ]
+            ],
+            "periodicity_days_median": 91.0,
+            "window_span_years": 6.54,
+            "periodicity": "quarterly",
+            "data_quality": null,
+            "source_file": "BellRing Brands Inc NYSE BRBR Financials_Quarterly.xls"
           }
         ],
         "source_ref": "CIQ Financials→Multiples (Close; last col = current, excluded from history)",
@@ -5164,8 +5238,10 @@
     "recipe_hint": "R1_midcycle_margin_evebitda",
     "applicable": true,
     "multiple_basis": "EV/EBITDA",
-    "computed_at": "2026-07-20T14:26:46.095679Z",
+    "computed_at": "2026-07-20T19:57:26.022074Z",
     "reason": null,
+    "data_quality": null,
+    "data_quality_detail": [],
     "margin": {
       "value": 0.160404,
       "unit": "fraction",
@@ -5175,11 +5251,11 @@
       "confidence": "firm"
     },
     "multiple": {
-      "value": 20.001294,
+      "value": 19.761409,
       "unit": "EV/EBITDA",
       "source": "valuation.own_history.median",
-      "history_quarters": 19,
-      "confidence": "weak"
+      "history_quarters": 27,
+      "confidence": "firm"
     },
     "d_and_a": {
       "value": 18.6,
@@ -5205,9 +5281,9 @@
       "basis": "LTM revenue",
       "source": "committed financial_summary.annual (LTM)"
     },
-    "anchor_base_value_per_share": 56.1997,
-    "anchor_ev_ebit": 20.996,
-    "overall_confidence": "weak",
+    "anchor_base_value_per_share": 55.4062,
+    "anchor_ev_ebit": 20.7442,
+    "overall_confidence": "firm",
     "note": "ATTENTION FILTER, not a verdict. Even a firm anchor requires a full bear/base/bull 2:1 underwrite before any BUY. Spot and reward-to-base are computed live at triage, not stored here."
   }
 }

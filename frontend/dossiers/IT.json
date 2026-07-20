@@ -58,15 +58,83 @@
         "value": [
           {
             "metric": "EV/EBITDA (TEV/LTM)",
-            "current": 7.49985,
-            "low": 9.342744,
-            "high": 29.6795,
-            "median": 22.7124315,
-            "percentile": 0.0,
-            "n_closes": 20,
-            "as_of": "2026-06-24",
-            "mean": 22.2070255,
+            "current": 7.968092,
+            "low": 7.458903,
+            "high": 37.827356,
+            "median": 23.382523,
+            "percentile": 0.02631578947368421,
+            "n_closes": 38,
+            "as_of": "2026-07-17",
+            "mean": 23.705751868421054,
             "series": [
+              [
+                "2017-03-31",
+                22.906794
+              ],
+              [
+                "2017-06-30",
+                29.203212
+              ],
+              [
+                "2017-09-29",
+                37.793557
+              ],
+              [
+                "2017-12-29",
+                37.827356
+              ],
+              [
+                "2018-03-29",
+                35.104841
+              ],
+              [
+                "2018-06-29",
+                35.700489
+              ],
+              [
+                "2018-09-28",
+                32.901373
+              ],
+              [
+                "2018-12-31",
+                23.807402
+              ],
+              [
+                "2019-03-29",
+                25.820547
+              ],
+              [
+                "2019-06-28",
+                24.587594
+              ],
+              [
+                "2019-09-30",
+                22.258974
+              ],
+              [
+                "2019-12-31",
+                23.930772
+              ],
+              [
+                "2020-03-31",
+                16.953391
+              ],
+              [
+                "2020-06-30",
+                17.895837
+              ],
+              [
+                "2020-09-30",
+                18.190355
+              ],
+              [
+                "2020-12-31",
+                21.440441
+              ],
+              [
+                "2021-03-31",
+                22.896223
+              ],
               [
                 "2021-06-30",
                 25.836309
@@ -148,22 +216,87 @@
                 9.342744
               ],
               [
-                "2026-06-24",
-                7.49985
+                "2026-06-30",
+                7.458903
+              ],
+              [
+                "2026-07-17",
+                7.968092
               ]
-            ]
+            ],
+            "periodicity_days_median": 91.0,
+            "window_span_years": 9.3,
+            "periodicity": "quarterly",
+            "data_quality": null,
+            "source_file": "Gartner Inc NYSE IT Financials_Quarterly.xls"
           },
           {
             "metric": "P/LTM EPS",
-            "current": 12.962894,
-            "low": 16.174985,
-            "high": 61.133812,
-            "median": 32.502666500000004,
-            "percentile": 0.0,
-            "n_closes": 20,
-            "as_of": "2026-06-24",
-            "mean": 34.23306295,
+            "current": 13.928628,
+            "low": 12.878442,
+            "high": 255.323078,
+            "median": 41.658847,
+            "percentile": 0.02857142857142857,
+            "n_closes": 35,
+            "as_of": "2026-07-17",
+            "mean": 53.774675085714286,
             "series": [
+              [
+                "2017-03-31",
+                46.748917
+              ],
+              [
+                "2017-06-30",
+                56.152037
+              ],
+              [
+                "2017-09-29",
+                255.323078
+              ],
+              [
+                "2018-09-28",
+                170.615032
+              ],
+              [
+                "2018-12-31",
+                81.369015
+              ],
+              [
+                "2019-03-29",
+                114.045112
+              ],
+              [
+                "2019-06-28",
+                90.69367
+              ],
+              [
+                "2019-09-30",
+                59.589445
+              ],
+              [
+                "2019-12-31",
+                56.348822
+              ],
+              [
+                "2020-03-31",
+                38.894531
+              ],
+              [
+                "2020-06-30",
+                38.397951
+              ],
+              [
+                "2020-09-30",
+                47.176881
+              ],
+              [
+                "2020-12-31",
+                67.547139
+              ],
+              [
+                "2021-03-31",
+                61.672297
+              ],
               [
                 "2021-06-30",
                 61.133812
@@ -245,10 +378,19 @@
                 16.40829
               ],
               [
-                "2026-06-24",
-                12.962894
+                "2026-06-30",
+                12.878442
+              ],
+              [
+                "2026-07-17",
+                13.928628
               ]
-            ]
+            ],
+            "periodicity_days_median": 91.0,
+            "window_span_years": 9.3,
+            "periodicity": "quarterly",
+            "data_quality": null,
+            "source_file": "Gartner Inc NYSE IT Financials_Quarterly.xls"
           }
         ],
         "source_ref": "CIQ Financials→Multiples (Close; last col = current, excluded from history)",
@@ -5291,8 +5433,10 @@
     "recipe_hint": "R1_midcycle_margin_evebitda",
     "applicable": true,
     "multiple_basis": "EV/EBITDA",
-    "computed_at": "2026-07-20T14:26:46.160060Z",
+    "computed_at": "2026-07-20T19:57:26.087468Z",
     "reason": null,
+    "data_quality": null,
+    "data_quality_detail": [],
     "margin": {
       "value": 0.141347,
       "unit": "fraction",
@@ -5302,10 +5446,10 @@
       "confidence": "firm"
     },
     "multiple": {
-      "value": 22.7124315,
+      "value": 23.382523,
       "unit": "EV/EBITDA",
       "source": "valuation.own_history.median",
-      "history_quarters": 20,
+      "history_quarters": 38,
       "confidence": "firm"
     },
     "d_and_a": {
@@ -5332,8 +5476,8 @@
       "basis": "LTM revenue",
       "source": "committed financial_summary.annual (LTM)"
     },
-    "anchor_base_value_per_share": 337.9613,
-    "anchor_ev_ebit": 27.684,
+    "anchor_base_value_per_share": 348.6442,
+    "anchor_ev_ebit": 28.5008,
     "overall_confidence": "firm",
     "note": "ATTENTION FILTER, not a verdict. Even a firm anchor requires a full bear/base/bull 2:1 underwrite before any BUY. Spot and reward-to-base are computed live at triage, not stored here."
   }
