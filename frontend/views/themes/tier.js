@@ -1,7 +1,8 @@
 // TIER ALTITUDE (#/themes/<theme>/<tier>) — ONLY that theme's that-tier names, as the scannable
 // table: ticker, category, driver-tie, clean grade, one-line fact summary; the full grade fact +
-// EDGAR filing expand on ROW CLICK (progressive disclosure — never inline paragraphs). A filter box
-// + breadcrumb (Themes / <theme> / <tier>) + back. You never face more than one tier of one theme.
+// EDGAR filing expand on ROW CLICK (progressive disclosure — never inline paragraphs). Framed by
+// the shared stage frame (tabs persist while drilling); a filter box + the grade key. You never
+// face more than one tier of one theme.
 import { getThemeDriver } from "../../lib/snapshots.js";
 import { fmtInt, escapeHtml, gradeLabel, GRADE_DEF } from "../../lib/format.js";
 
@@ -21,25 +22,28 @@ function oneLine(s) {
   s = String(s || "").trim();
   return s.length <= 110 ? s : s.slice(0, 110).replace(/\s+\S*$/, "") + "…";
 }
-const crumb = (slug, label, tier) =>
-  `<div class="breadcrumb"><a href="#/overview">Overview</a><span class="sep">/</span>` +
-  `<a href="#/themes">Themes</a><span class="sep">/</span>` +
-  `<a href="#/themes/${escapeHtml(slug)}">${escapeHtml(label || slug)}</a>` +
-  `<span class="sep">/</span>${escapeHtml(TIER_LABEL[tier] || tier)}</div>`;
+const crumbX = (slug, label, tier) =>
+  `<span class="sep">/</span><a href="#/themes/${escapeHtml(slug)}">${escapeHtml(label || slug)}</a>` +
+  `<span class="sep">/</span>${escapeHtml(TIER_LABEL[tier] || tier)}`;
 
-export async function render(root, _ctx, slug, tier) {
+let FRAME = null;
+
+export async function render(root, { item, frame }, slug, tier) {
   q = "";
-  root.innerHTML = `${crumb(slug, slug, tier)}<div class="notice">Loading names…</div>`;
+  FRAME = (label, title, bodyHtml) => frame(item, {
+    title, crumbExtra: crumbX(slug, label, tier), bodyHtml });
+  root.innerHTML = FRAME(slug, slug, `<div class="notice">Loading names…</div>`);
   const d = await getThemeDriver(slug);
   if (!d) {
-    root.innerHTML = `${crumb(slug, slug, tier)}<div class="notice">Theme not found. <a href="#/themes">Back to portfolio</a>.</div>`;
+    root.innerHTML = FRAME(slug, slug,
+      `<div class="notice">Theme not found. <a href="#/themes">Back to the themes landing</a>.</div>`);
     return;
   }
   const bases = TIER_BASES[tier];
   if (!bases) {
-    root.innerHTML = `${crumb(slug, d.label, tier)}<div class="notice">The <b>${escapeHtml(tier)}</b> tier
+    root.innerHTML = FRAME(d.label, d.label, `<div class="notice">The <b>${escapeHtml(tier)}</b> tier
       has no per-name detail in the snapshot (unsurfaced / not carried forward).
-      <a href="#/themes/${escapeHtml(slug)}">Back to ${escapeHtml(d.label)}</a>.</div>`;
+      <a href="#/themes/${escapeHtml(slug)}">Back to ${escapeHtml(d.label)}</a>.</div>`);
     return;
   }
   NAMES = (d.names || []).filter((n) => bases.includes(n.basis));
@@ -48,12 +52,8 @@ export async function render(root, _ctx, slug, tier) {
 
 function paint(root, d, slug, tier) {
   const controls = `
-    <div class="header-block" style="margin-bottom:14px;">
-      <h1 class="page-h">${escapeHtml(d.label)} · ${escapeHtml(TIER_LABEL[tier] || tier)}</h1>
-      <div class="subtitle muted">Click a row for the full grade fact + filing</div>
-    </div>
+    <div class="subtitle muted" style="margin:-6px 0 12px;">Click a row for the full grade fact + filing</div>
     <div style="display:flex; gap:12px; align-items:center; margin-bottom:12px; flex-wrap:wrap;">
-      <a href="#/themes/${escapeHtml(slug)}" class="foot">← ${escapeHtml(d.label)}</a>
       <input id="th-q" type="search" placeholder="Filter ticker · category · fact…" autocomplete="off" value=""
         style="flex:1; min-width:180px; padding:8px 11px; border:1px solid var(--line-2); border-radius:8px; font-size:13px;" />
     </div>
@@ -62,7 +62,7 @@ function paint(root, d, slug, tier) {
       <th>Ticker</th><th>Category</th><th>Driver tie</th><th>Grade</th><th>Grade fact</th>
     </tr></thead><tbody id="th-body"></tbody></table>`;
 
-  root.innerHTML = crumb(slug, d.label, tier) + controls;
+  root.innerHTML = FRAME(d.label, `${d.label} · ${TIER_LABEL[tier] || tier}`, controls);
   rows();
   root.querySelector("#th-q").addEventListener("input", (e) => { q = e.target.value.toLowerCase(); rows(); });
 }
