@@ -6299,6 +6299,88 @@ def test_balance_sheet_posture_and_bridge_coherence_gate() -> None:
     assert "DISAGREE" in d and "326" in d and "500" in d and "neither is silently preferred" in d
 
 
+# --- CIQ 'No Data Available' header-only subsheet (AORT, 2026-07) ------------------------------
+# AORT's CIQ Financials export returned the literal 'No Data Available' sentinel for its Income
+# Statement / Balance Sheet / Cash Flow tabs (header-only, zero numeric cells) WHILE Key Stats +
+# Multiples were fully populated on the SAME workbook — a bad/partial export, not missing data. The
+# builders surfaced this as a cryptic, bug-masking 'no Fiscal Period header' / bare 'Balance Sheet'
+# note — indistinguishable from a genuine parse failure. The fix names the sentinel + the fix
+# (re-export). Shells are SYNTHETIC reproductions of the observed shape (no licensed CIQ data).
+def _no_data_shell(section: str) -> list[list[typing.Any]]:
+    """CIQ's header-only 'No Data Available' subsheet — a title/meta banner, the section label, then
+    the sentinel in col 0 (AORT's exact empty-tab shape). No licensed data."""
+    return [
+        ["Acme Co. (NYSE:XYZ) (Standard)"],
+        [""],
+        ["In Millions of the reporting currency", "Template:", "Standard", "", "Restatement:"],
+        [""],
+        [section],
+        ["No Data Available"],
+        [""],
+    ]
+
+
+def test_financial_summary_annual_no_data_available_names_the_reexport() -> None:
+    """(AORT) A 'No Data Available' Income Statement → UNKNOWN whose note names the SENTINEL and the
+    actionable fix (re-export) — not the cryptic 'no Fiscal Period header'."""
+    b = _fin_bundle({"Income Statement": _no_data_shell("Income Statement")}, freq="annual")
+    s = cs.financial_summary_annual(b, as_of="2026-05-15")
+    assert s.status is ds.SourceStatus.UNKNOWN and s.value is None
+    note = s.note or ""
+    assert "No Data Available" in note and "re-export" in note
+    assert "no Fiscal Period header" not in note  # the cryptic note is gone
+
+
+def test_financial_summary_quarterly_no_data_available_names_the_reexport() -> None:
+    """(AORT) Same for the quarterly Income Statement subsheet."""
+    b = _fin_bundle({"Income Statement": _no_data_shell("Income Statement")}, freq="quarterly")
+    s = cs.financial_summary_quarterly(b)
+    assert s.status is ds.SourceStatus.UNKNOWN and s.value is None
+    note = s.note or ""
+    assert "No Data Available" in note and "re-export" in note
+    assert "no Fiscal Period header" not in note
+
+
+def test_balance_sheet_posture_no_data_available_names_the_reexport() -> None:
+    """(AORT) A 'No Data Available' Balance Sheet → UNKNOWN naming the sentinel + re-export — not
+    the bare 'Balance Sheet' note (which _miss_or_unknown emitted for the header-only shell)."""
+    b = _fin_bundle({"Balance Sheet": _no_data_shell("Balance Sheet")}, freq="quarterly")
+    s = cs.balance_sheet_posture(b)
+    assert s.status is ds.SourceStatus.UNKNOWN and s.value is None
+    note = s.note or ""
+    assert "No Data Available" in note and "re-export" in note
+
+
+def test_return_ratios_no_data_available_names_the_reexport() -> None:
+    """(AORT, review #155) The Ratios FinTable panel gets the same guard — a 'No Data Available'
+    Ratios sheet → UNKNOWN naming the sentinel + re-export, not the cryptic header note."""
+    b = _fin_bundle({"Ratios": _no_data_shell("Ratios")}, freq="annual")
+    s = cs.return_ratios(b)
+    assert s.status is ds.SourceStatus.UNKNOWN and s.value is None
+    note = s.note or ""
+    assert "No Data Available" in note and "re-export" in note
+    assert "no Fiscal Period header" not in note
+
+
+def test_no_data_shell_stays_distinct_from_a_genuine_header_parse_failure() -> None:
+    """The negative pin: a POPULATED sheet with real rows but NO Fiscal-Period header (a genuine
+    parse failure) must STILL read 'no Fiscal Period header' — never the No-Data note. The two
+    failure modes stay distinct, so a real parse bug is never masked by (nor misfiled as) the
+    benign, re-exportable data gap. Also pins the guard helper directly."""
+    populated_no_header: list[list[typing.Any]] = [
+        ["Income Statement"],               # a section label, but no 'For the Fiscal Period' row
+        ["Total Revenue", 100.0, 110.0],
+        ["EBITDA", 20.0, 22.0],
+    ]
+    assert cs._no_data_available(_no_data_shell("Income Statement")) is True   # shell → detected
+    assert cs._no_data_available(populated_no_header) is False                 # populated → not
+    s = cs.financial_summary_annual(
+        _fin_bundle({"Income Statement": populated_no_header}, freq="annual"), as_of="2026-05-15")
+    assert s.status is ds.SourceStatus.UNKNOWN
+    note = s.note or ""
+    assert "no Fiscal Period header" in note and "No Data Available" not in note
+
+
 def test_credit_health_completes_all_four_peer_median_dims() -> None:
     """(R1) Credit health reports the name's four dimensions AND the peer median PER dimension (not
     Overall only): peers score [1, 4] on each of O/Op/S/L → median 2.5 across the board."""

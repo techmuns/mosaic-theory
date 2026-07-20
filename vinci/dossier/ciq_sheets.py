@@ -69,6 +69,26 @@ def _period_header(rows: Rows) -> int | None:
     return next((i for i, r in enumerate(rows) if r and "Fiscal Period" in str(r[0])), None)
 
 
+_CIQ_NO_DATA = "No Data Available"  # CIQ's header-only sentinel for an empty-export subsheet
+
+
+def _no_data_available(rows: Rows) -> bool:
+    """True when a CIQ subsheet is the header-only 'No Data Available' shell — the export pulled the
+    tab but CIQ returned no rows for it (a bad/partial export; the data EXISTS in CIQ, as the
+    populated Key Stats / Multiples tabs on the SAME workbook attest — AORT, 2026-07). A DATA gap
+    (re-export), NOT a parse failure — surfaced DISTINCTLY so a genuine header-parse bug on a
+    POPULATED sheet is never masked by (nor misfiled as) this benign, actionable gap."""
+    return any(r and str(r[0]).strip() == _CIQ_NO_DATA for r in rows)
+
+
+def _no_data_note(sheet: str) -> str:
+    """The honest, actionable UNKNOWN note for a 'No Data Available' subsheet — names the fix."""
+    return (
+        f"{sheet}: CIQ returned '{_CIQ_NO_DATA}' — subsheet is header-only (a bad/partial CIQ "
+        "export); re-export the CIQ Financials workbook"
+    )
+
+
 def _reclassified_cols(header: list[Any]) -> set[int]:
     return {j for j, c in enumerate(header) if isinstance(c, str) and "Reclassified" in c}
 
@@ -864,6 +884,8 @@ def return_ratios(bundle: CiqBundle) -> Sourced[FinTable]:
         rat = bundle.sheet("financials", "Ratios", freq="annual")
     except CiqUnavailableError as exc:
         return _miss_or_unknown(bundle, "financials", exc)
+    if _no_data_available(rat):
+        return Sourced.unknown(note=_no_data_note("Ratios"))
     hdr = _period_header(rat)
     if hdr is None:
         return Sourced.unknown(note="Ratios: no Fiscal Period header")
@@ -2741,6 +2763,8 @@ def financial_summary_annual(bundle: CiqBundle, *, as_of: str | None = None) -> 
         inc = bundle.sheet("financials", "Income Statement", freq="annual")
     except CiqUnavailableError as exc:
         return _miss_or_unknown(bundle, "financials", exc)
+    if _no_data_available(inc):
+        return Sourced.unknown(note=_no_data_note("Income Statement (annual)"))
     hdr = _period_header(inc)
     if hdr is None:
         return Sourced.unknown(note="Income Statement (annual): no Fiscal Period header")
@@ -2879,6 +2903,8 @@ def financial_summary_quarterly(bundle: CiqBundle) -> Sourced[FinTable]:
         rows = bundle.sheet("financials", "Income Statement", freq="quarterly")
     except CiqUnavailableError as exc:
         return _miss_or_unknown(bundle, "financials", exc)
+    if _no_data_available(rows):
+        return Sourced.unknown(note=_no_data_note("Income Statement (quarterly)"))
     hdr = _period_header(rows)
     if hdr is None:
         return Sourced.unknown(note="Income Statement (quarterly): no Fiscal Period header")
@@ -2983,17 +3009,24 @@ def balance_sheet_posture(bundle: CiqBundle) -> Sourced[str]:
     debt, equity, net working capital (TCA − TCL). Net-debt/EBITDA is NOT recomputed — it cross-refs
     the unified leverage block. Prefers the freshest (quarterly) Balance Sheet."""
     unavailable: Exception | None = None
+    no_data = False
     try:  # literal freqs (not a loop var) so the CIQ-manifest drift guard can see the address
-        if (got := _bs_posture_build(
-            bundle.sheet("financials", "Balance Sheet", freq="quarterly"), "quarterly")):
+        bs_q = bundle.sheet("financials", "Balance Sheet", freq="quarterly")
+        if _no_data_available(bs_q):
+            no_data = True
+        elif (got := _bs_posture_build(bs_q, "quarterly")):
             return got
     except CiqUnavailableError as exc:
         unavailable = exc
     try:
-        if (got := _bs_posture_build(
-            bundle.sheet("financials", "Balance Sheet", freq="annual"), "annual")):
+        bs_a = bundle.sheet("financials", "Balance Sheet", freq="annual")
+        if _no_data_available(bs_a):
+            no_data = True
+        elif (got := _bs_posture_build(bs_a, "annual")):
             return got
     except CiqUnavailableError as exc:
         unavailable = exc
+    if no_data:  # header-only 'No Data Available' shell (re-export) — distinct from a parse failure
+        return Sourced.unknown(note=_no_data_note("Balance Sheet"))
     return _miss_or_unknown(
         bundle, "financials", unavailable or CiqUnavailableError("Balance Sheet"))
