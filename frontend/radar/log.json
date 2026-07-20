@@ -822,7 +822,7 @@
   {
    "key": "2026-07-14:T004",
    "display_name": "Crypto-Mining & AI Compute",
-   "decision": "park",
+   "decision": "parked",
    "reviewed": "2026-07-15",
    "by": "analyst (advisor-drafted reason)",
    "reason": "coin-price proxy, already moved",
@@ -847,7 +847,7 @@
   {
    "key": "2026-07-14:T006",
    "display_name": "Education Services Core",
-   "decision": "park",
+   "decision": "parked",
    "reviewed": "2026-07-15",
    "by": "analyst (advisor-drafted reason)",
    "reason": "mixed bag, no single driver",
@@ -870,7 +870,7 @@
   {
    "key": "2026-07-14:T007",
    "display_name": "B2B Vertical SaaS",
-   "decision": "park",
+   "decision": "parked",
    "reviewed": "2026-07-15",
    "by": "analyst (advisor-drafted reason)",
    "reason": "software derate factor, broader than June",
@@ -893,7 +893,7 @@
   {
    "key": "2026-07-14:T010",
    "display_name": "Data & Digital Services",
-   "decision": "park",
+   "decision": "parked",
    "reviewed": "2026-07-15",
    "by": "analyst (advisor-drafted reason)",
    "reason": "AI-displacement story #3, late either way",
@@ -915,7 +915,7 @@
   {
    "key": "2026-07-14:T011",
    "display_name": "Semi Test & Subfab",
-   "decision": "park",
+   "decision": "parked",
    "reviewed": "2026-07-15",
    "by": "analyst (advisor-drafted reason)",
    "reason": "up 206 pct vs market — far too late",
@@ -936,7 +936,7 @@
   {
    "key": "2026-07-14:T030",
    "display_name": "Stock-Media & Biotech Mix",
-   "decision": "park",
+   "decision": "parked",
    "reviewed": "2026-07-15",
    "by": "analyst (advisor-drafted reason)",
    "reason": "AI losers, already crushed",
@@ -956,7 +956,7 @@
   {
    "key": "2026-07-14:T034",
    "display_name": "Crypto Treasury Proxies",
-   "decision": "reject",
+   "decision": "rejected",
    "reviewed": "2026-07-15",
    "by": "analyst (advisor-drafted reason)",
    "reason": "collapsed gimmicks",
@@ -975,7 +975,7 @@
   {
    "key": "2026-07-14:T037",
    "display_name": "Copper Miners Beta",
-   "decision": "park",
+   "decision": "parked",
    "reviewed": "2026-07-15",
    "by": "analyst (advisor-drafted reason)",
    "reason": "metal-price proxy, moved",
@@ -994,7 +994,7 @@
   {
    "key": "2026-07-14:T040",
    "display_name": "Advanced Nuclear Basket",
-   "decision": "park",
+   "decision": "parked",
    "reviewed": "2026-07-15",
    "by": "analyst (advisor-drafted reason)",
    "reason": "real long-run driver, hype deflated; revisit on evidence",
@@ -1013,7 +1013,7 @@
   {
    "key": "2026-07-14:T043",
    "display_name": "Gov Services Contractors",
-   "decision": "park",
+   "decision": "parked",
    "reviewed": "2026-07-15",
    "by": "analyst (advisor-drafted reason)",
    "reason": "derated on spending fear, not a theme",
@@ -1032,7 +1032,7 @@
   {
    "key": "2026-07-14:T045",
    "display_name": "Rare Earth Miners",
-   "decision": "park",
+   "decision": "parked",
    "reviewed": "2026-07-15",
    "by": "analyst (advisor-drafted reason)",
    "reason": "policy and metal proxy, moved",
