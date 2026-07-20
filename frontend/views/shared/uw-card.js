@@ -1,10 +1,19 @@
 // UNDERWRITE CARD — the ONE renderer for a first-cut underwrite record (the `scenarioCard` shape
 // build.py emits, standalone in frontend/scenarios/ and embedded in theme watchlist entries).
 // Canonical components only: .card h3 eyebrow, .fact rows, table.data for the 3-leg matrix,
-// .pill (verbatim-cased), .kv-list, inline ↳ .cite, <details>. No private type scale. Cites are
-// the INLINE form only — never citeMark — so the card is inert inside the dossier's endnote pass
+// .pill (verbatim-cased), .kv-list, inline ↳ .cite, <details>. No private type scale.
+//
+// CITES follow the dossier's two-mode convention (lib/cites.js), selected by the `cites` option:
+//   "inline"  (DEFAULT) every cite renders inline. SAFE for a host that runs no endnote pass —
+//             the theme page embeds this card as a supporting exhibit and has no Sources list.
+//   "endnote" MAIN-BODY cites emit citeMark placeholders for the host's withEndnotes() pass; the
+//             on-demand <details> block STAYS inline either way (print-excluded — an endnote there
+//             would leave an orphan [n] in a printed Sources list, pointing at an unseeable marker).
+// A host passing "endnote" MUST wrap the result in withEndnotes(), or the placeholder renders "[?]".
+// Defaulting to "inline" makes forgetting harmless rather than visibly broken.
 // and self-contained on theme pages. Gaps render as pills (UNDEFINED), never blank.
 import { escapeHtml, fmtPrice, DASH } from "../../lib/format.js";
+import { citeMark } from "../../lib/cites.js";
 
 const mono = (s) => `<span class="mono">${escapeHtml(s)}</span>`;
 
@@ -98,7 +107,13 @@ function inputsDetails(c) {
 
 // uwCard(cardJson) -> HTML string. `ticker:false` drops the ticker from the eyebrow when the host
 // page already carries it as its h1 (the dossier degrade).
-export function uwCard(c, { ticker = true } = {}) {
+// MAIN-BODY provenance — an endnote when the host runs the pass, inline when it doesn't.
+function spotCite(ref, cites) {
+  if (!ref) return "";
+  return cites === "endnote" ? citeMark(ref) : `<span class="cite">${escapeHtml(ref)}</span>`;
+}
+
+export function uwCard(c, { ticker = true, cites = "inline" } = {}) {
   if (!c) return "";
   const v = c.verdict || {};
   const recipe = [c.recipeId ? c.recipeId.split("_")[0] : "", c.multipleBasis]
@@ -113,7 +128,7 @@ export function uwCard(c, { ticker = true } = {}) {
     ${fact("Reward · risk", `${mono(money(c.reward))} · ${mono(money(c.risk))}
       <span class="muted">— base − spot / spot − bear</span>`)}
     ${fact("Spot", `${mono(fmtPrice(c.spot))}
-      ${c.spotSource ? `<span class="cite">${escapeHtml(c.spotSource)}</span>` : ""}`)}
+      ${spotCite(c.spotSource, cites)}`)}
     ${legsTable(c)}
     ${v.rationale ? fact("Rationale", escapeHtml(v.rationale)) : ""}
     ${trig ? fact("Re-underwrite when", `<ul class="kv-list">${trig}</ul>`) : ""}

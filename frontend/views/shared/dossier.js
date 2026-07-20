@@ -3,6 +3,9 @@
 // The synthesis is fenced as "the framing, not the answer." Read-only; verdicts are CLI-logged.
 import { getDossier, getDossierIndex, getLedger, isBuyVerdict, getScenarioIndex, getScenarioCard, getMachineReads } from "../../lib/snapshots.js";
 import { fmtPrice, fmtDate, fmtStamp, fmtPct, escapeHtml, DASH } from "../../lib/format.js";
+// THE citation system now lives in lib/cites.js — one implementation, shared with uw-card.js
+// (it was private here, which is why the underwrite card had to hardcode the inline form).
+import { citeMark, withEndnotes, auditCitesInline } from "../../lib/cites.js";
 import { barDomain, lineDomain, linScale, logScale, barLabelY, extent, EXHIBIT } from "../../lib/exhibit.js";
 import { uwCard } from "./uw-card.js";
 
@@ -79,8 +82,8 @@ export async function render(root, params, { item, frame }) {
         <div class="subtitle muted" style="margin:-6px 0 12px;">This is the analyst's scenario underwrite — not assembled
           facts, and its verdict is not a ledger verdict of record. The full dossier is built on a
           re-underwrite trigger.</div>
-        ${uwCard(card, { ticker: false })}
-        ${loggedVerdict(verdict, ticker, card.underwriteDate)}
+        ${withEndnotes("U", () => `${uwCard(card, { ticker: false, cites: "endnote" })}
+        ${loggedVerdict(verdict, ticker, card.underwriteDate)}`)}
         ${assembleHelp()}` });
       return;
     }
@@ -248,41 +251,6 @@ python3 frontend/build.py                                # mirror into this dash
     </details>`;
 }
 
-// (A2) PER-TIER endnotes — each cite becomes a numbered [n] marker (a superscript with a hover
-// tooltip) resolving to that tier's own Sources list at its end. Per-tier, NOT one global list: the
-// tabs + PDF-scope dropdown must each be self-contained (a [n] on the Brief tab can't resolve into a
-// hidden Analysis tab; a "Brief" PDF lists only the Brief's sources). citeMark emits a placeholder;
-// withEndnotes numbers them in READING order (two-pass) so the [n] are monotonic down the page even
-// though cards may pre-compute their cites out of DOM order.
-function citeMark(sourceRef) {
-  if (!sourceRef) return "";  // a PRESENT fact always has a ref; guard defensively (no marker if absent)
-  return `<sup class="cite-n" data-ref="${escapeHtml(sourceRef)}">[?]</sup>`;  // numbered by withEndnotes
-}
-// (review #9) ONE definition of the citeMark placeholder shape, parsed by BOTH withEndnotes and
-// auditCitesInline — so a change to citeMark's markup can't leave one consumer's ad-hoc regex stale
-// ("two divergent parsers of one string" is the documented bug class). A FRESH /g regex per call (no
-// shared lastIndex across .replace). Capture group 1 = the (already HTML-escaped) source_ref.
-const citePlaceholders = () => /<sup class="cite-n" data-ref="([^"]*)">\[\?\]<\/sup>/g;
-function withEndnotes(prefix, fn) {
-  // (L2) tier-prefix the markers ([B4]/[A4]/[X4]) so they stay UNAMBIGUOUS when all tiers print
-  // together in a "Full dossier" PDF, while each tab / print-scope keeps its own self-contained list.
-  const order = [];
-  const body = fn().replace(citePlaceholders(), (_m, ref) => {
-    let i = order.indexOf(ref);  // ref is already HTML-escaped (from citeMark) — dedup by exact string
-    if (i < 0) { order.push(ref); i = order.length - 1; }
-    return `<sup class="cite-n" title="${ref}">[${prefix}${i + 1}]</sup>`;
-  });
-  if (!order.length) return body;
-  const items = order.map((r, i) =>
-    `<li><span class="src-n">[${prefix}${i + 1}]</span> <span class="mono">${r}</span></li>`).join("");
-  return body + `<div class="card ds-section ds-sources"><div class="ds-title">Sources</div><ol>${items}</ol></div>`;
-}
-// (L3) An on-demand audit <details> is print-EXCLUDED; render ITS provenance cites INLINE (source_ref
-// shown) rather than as endnotes, so they leave no orphan [n] Sources entry with no visible marker in
-// a printed "Full" dossier. Converts only this block's cite placeholders; the main body still endnotes.
-function auditCitesInline(html) {
-  return html.replace(citePlaceholders(), (_m, ref) => ` <span class="cite">${ref}</span>`);
-}
 
 // --- a single Sourced fact: value + [n] cite, or honest UNKNOWN/MISSING --
 function fact(label, s, fmt, { hi = false } = {}) {
