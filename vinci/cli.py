@@ -427,6 +427,56 @@ def _attach_midcycle(cfg: Config, ticker: str, *, peers: list[str],
     return 0
 
 
+def _cmd_anchor_backfill(args: argparse.Namespace) -> int:
+    """Backfill the committed R1 anchor block into existing dossiers — the anchor-ONLY writer.
+
+    Computes the anchor from the committed mechanical layer + EDGAR (no CIQ workbook, no LLM, no
+    re-assembly) and writes ONLY the ``anchor`` block into dossier.json: the model round-trips, so
+    re-dumping reproduces the committed bytes plus the new field, leaving every other field
+    byte-identical. dossier.md is untouched — the anchor is data-only (the UI ignores it)."""
+    from vinci.dossier.anchor import Anchor, compute_anchor, insert_anchor_block
+    from vinci.dossier.schemas import Dossier
+    from vinci.edgar.client import EdgarClient
+    from vinci.resolver import EntityResolver
+
+    cfg = get_config()
+    resolver, edgar = EntityResolver.from_config(cfg), EdgarClient.from_config(cfg)
+    tickers = [t.strip().upper() for t in args.tickers.split(",") if t.strip()]
+    done: list[tuple[str, Anchor]] = []
+    for t in tickers:
+        path = cfg.data_dir / "dossiers" / t / "dossier.json"
+        if not path.exists():
+            print(f"  {t}: no committed dossier — skip")
+            continue
+        original = path.read_text()
+        d = Dossier.model_validate_json(original)
+        if d.anchor is not None:
+            print(f"  {t}: already has an anchor block — skip (revert to re-backfill)")
+            continue
+        try:
+            facts = edgar.companyfacts(resolver.resolve_ticker(t).cik)
+        except Exception as exc:  # noqa: BLE001 — a name that won't fetch is skipped, never guessed
+            print(f"  {t}: EDGAR fetch failed ({type(exc).__name__}) — skip, not written")
+            continue
+        anchor = compute_anchor(d.mechanical.model_dump(mode="json"), facts=facts,
+                                computed_at=datetime.now(UTC))
+        # byte-preserving string insert (a model round-trip drifts older-schema fields; see anchor)
+        path.write_text(insert_anchor_block(original, anchor))
+        done.append((t, anchor))
+    print(f"\n=== anchor backfill: {len(done)}/{len(tickers)} written ===")
+    print(f"{'ticker':7}{'margin (yrs)':>18}{'multiple (qtrs)':>18}{'base $/sh':>11}{'conf':>7}")
+    for t, a in done:
+        if (a.applicable and a.margin and a.margin.value is not None and a.multiple
+                and a.multiple.value is not None and a.anchor_base_value_per_share is not None):
+            m = f"{a.margin.value * 100:.1f}% ({a.margin.anchor_years}y {a.margin.confidence})"
+            x = f"{a.multiple.value:.1f}x ({a.multiple.history_quarters}q {a.multiple.confidence})"
+            print(f"{t:7}{m:>18}{x:>18}{a.anchor_base_value_per_share:>11.2f}"
+                  f"{a.overall_confidence or '—':>7}")
+        else:
+            print(f"{t:7}  {a.recipe_hint} · applicable={a.applicable} — {a.reason}")
+    return 0
+
+
 def _sealed_proposal(
     cfg: Config, ticker: str
 ) -> tuple[Verdict | None, str | None, datetime | None]:
@@ -1770,6 +1820,14 @@ def build_parser() -> argparse.ArgumentParser:
                                help=f"why the {_sc} scenario deviates from the anchor "
                                "(REQUIRED for a deviated margin; refused otherwise)")
     p_dossier.set_defaults(func=_cmd_dossier)
+
+    p_anchor = sub.add_parser(
+        "anchor-backfill",
+        help="backfill the committed R1 anchor block into dossiers (anchor-only writer — no "
+        "re-assembly, no LLM, EDGAR-only; every other field stays byte-identical)")
+    p_anchor.add_argument("--tickers", required=True,
+                          help="comma-separated tickers, e.g. AORT,BRBR,CNXC")
+    p_anchor.set_defaults(func=_cmd_anchor_backfill)
 
     p_log = sub.add_parser("log-verdict", help="record a manual BUY/AVOID verdict for a candidate")
     p_log.add_argument("candidate_id", help="candidate id from `vinci screen`")
