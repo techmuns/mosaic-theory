@@ -453,6 +453,34 @@ def test_lean_tag_is_label_only_and_never_directional() -> None:
     assert rule and "--ink-2" in rule.group(1), ".ds-lean must stay the muted/neutral ink"
 
 
+def test_shelf_tag_prefers_the_logged_human_verdict() -> None:
+    """The shelf tag's PRECEDENCE, which is the constitution in miniature: a logged human verdict
+    outranks the machine's lean.
+
+    Colour on this shelf must mean A HUMAN DECIDED — never that a model leaned. So the coloured
+    buy/avoid pill lives in verdictTag (the verdict OF RECORD, where nothing is left to anchor)
+    while leanTag stays neutral for the still-undecided names; the guard above pins that half.
+    Invert the dispatch and an unlogged name would wear a decision colour."""
+    import re
+    from pathlib import Path
+
+    js = (Path(__file__).resolve().parents[1] / "frontend" / "views" / "shared" / "dossier.js"
+          ).read_text()
+    m = re.search(r"function cardTag\(ticker, reads, verdictBy\) \{(.*?)\n\}", js, re.S)
+    assert m, "cardTag() is gone — the shelf lost its tag-precedence dispatcher"
+    assert re.search(r"return\s+v\s*\?\s*verdictTag\(v\)\s*:\s*leanTag\(", m.group(1)), (
+        "cardTag must prefer the LOGGED verdict over the machine lean — inverted, an undecided "
+        "name would wear a decision colour")
+    vt = re.search(r"function verdictTag\(v\) \{(.*?)\n\}", js, re.S)
+    assert vt, "verdictTag() is gone"
+    # AVOID_TERMINAL -> AVOID is lossless ONLY while those are the two verdicts — pin the premise
+    from vinci.schemas.ledger import Verdict
+
+    assert {v.value for v in Verdict} == {"BUY", "AVOID_TERMINAL"}, (
+        "the Verdict enum grew — verdictTag's short AVOID word may no longer be lossless")
+    assert '"BUY" : "AVOID"' in vt.group(1) and "isBuyVerdict(" in vt.group(1)
+
+
 def test_build_never_grows_a_second_lean_parser() -> None:
     """TOMBSTONE: the '<lean> — <why>' split has ONE python parser (vinci.dossier.verdict) and ONE
     JS mirror (dossier.js). build.py ships the read RAW so it never becomes a third — the same

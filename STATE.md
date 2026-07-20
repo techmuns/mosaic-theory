@@ -2316,11 +2316,19 @@ Each line: *what it does* — *verified how*.
 
 - **DOSSIER-SHELF LEAN TAG + DARK-MODE TOOLBAR FIX (2026-07-20, feat/index-lean-tags; PR open,
   NOT merged).** Operator ask: a small verdict-ish tag per dossier card, like the WERN card.
-  - **WHAT IS SHOWN — the evidence LEAN, not the proposal.** The index card now carries the
+  - **WHAT IS SHOWN — the evidence LEAN, not the proposal.** The index card carries the
     synthesis's committed lean LABEL ("Mixed" / "Strongly bearish" / "Strongly bullish"). This is
     the same read the Brief already shows openly WITH its rationale; the machine's BUY/AVOID
     PROPOSAL remains sealed until the human logs (the 2026-07-13 pivot is untouched — no code
     path reveals `deriveProposal` earlier than before).
+  - **TAG PRECEDENCE — the constitution in miniature (`cardTag`).** A LOGGED HUMAN VERDICT
+    outranks the machine's lean: a decided name wears the coloured buy/avoid pill (the verdict OF
+    RECORD — by then there is nothing left to anchor), an undecided name wears the neutral lean.
+    **Colour on this shelf therefore means A HUMAN DECIDED, never that a model leaned.** Today
+    VRRM alone reads a red AVOID beside ten muted leans. Pinned by
+    `test_shelf_tag_prefers_the_logged_human_verdict` (inverting the dispatch would put a decision
+    colour on an undecided name); `AVOID_TERMINAL → "AVOID"` is lossless and the pin asserts the
+    two-verdict premise it depends on. Tags render INLINE on the ticker line (one-row cards).
   - **Rendered NEUTRAL by design, and pinned that way.** The lean maps 1:1 onto the proposal
     (`strongly-bearish → AVOID`), so the tag is ONE deterministic hop from a verdict. It uses no
     `.pill buy/avoid` vocabulary and no danger/live tint — a grid of directional COLOUR would let

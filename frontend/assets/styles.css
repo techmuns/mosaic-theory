@@ -702,7 +702,9 @@ table.data.vs-table { width: 100%; }
 .ds-index-card:hover { border-color: var(--accent); text-decoration: none; }
 /* the machine's evidence lean, muted BY DESIGN — informational, never a directional cue (see
    leanTag() in views/shared/dossier.js: colour here would turn the shelf into a buy/avoid screen) */
-.ds-lean { margin-top: 5px; font-size: 11px; letter-spacing: .02em; color: var(--ink-2); }
+.ds-lean { font-size: 11px; letter-spacing: .02em; color: var(--ink-2); font-family: var(--sans); font-weight: 500; }
+/* both shelf tags ride INLINE on the ticker line (card height stays one row) */
+.ds-card-tag { margin-left: 8px; vertical-align: middle; }
 /* assemble-help — in-flow block by default (the degrade page); .dd = the index-toolbar dropdown:
    collapsed one-liner top-right, panel OVERLAYS on open (the PDF-menu precedent) so it never
    scrolls away under N cards and never reflows the grid. */
