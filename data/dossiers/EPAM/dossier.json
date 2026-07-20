@@ -5109,15 +5109,20 @@
     "recipe_hint": "R1_midcycle_margin_evebitda",
     "applicable": true,
     "multiple_basis": "EV/EBITDA",
-    "computed_at": "2026-07-20T14:26:46.131177Z",
+    "computed_at": "2026-07-20T17:11:31.313879Z",
     "reason": null,
+    "data_quality": "revenue_tag_conflict",
+    "data_quality_detail": [
+      "FY2016: RevenueFromContractWithCustomerExcludingAssessedTax 1,160M vs SalesRevenueNet 264M (77% apart)",
+      "FY2017: RevenueFromContractWithCustomerExcludingAssessedTax 1,450M vs SalesRevenueNet 325M (78% apart)"
+    ],
     "margin": {
       "value": 0.118997,
       "unit": "fraction",
       "basis": "operating margin (EBIT / revenue)",
-      "source": "EDGAR companyfacts OperatingIncomeLoss / RevenueFromContractWithCustomerExcludingAssessedTax — reported median over 10 FY",
+      "source": "EDGAR companyfacts OperatingIncomeLoss / RevenueFromContractWithCustomerExcludingAssessedTax — reported median over 10 FY — CAPPED weak: revenue_tag_conflict",
       "anchor_years": 10,
-      "confidence": "firm"
+      "confidence": "weak"
     },
     "multiple": {
       "value": 16.240099,
