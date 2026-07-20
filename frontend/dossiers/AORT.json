@@ -5865,18 +5865,23 @@
   },
   "midcycle": null,
   "anchor": {
-    "recipe_hint": "R1_midcycle_margin_evebitda",
+    "recipe_hint": "R2_NEEDED",
     "applicable": true,
     "multiple_basis": "EV/EBITDA",
-    "computed_at": "2026-07-20T14:26:46.058327Z",
-    "reason": null,
+    "computed_at": "2026-07-20T17:11:31.264475Z",
+    "reason": "margin history low-single-digit (corrected 5yr median 2.72%); bull case is a forward ramp to a regime that has never existed (consensus 20%+ FY26E) — mean-reversion premise does not fit; route to forward-margin recipe.",
+    "data_quality": "revenue_tag_conflict",
+    "data_quality_detail": [
+      "FY2016: RevenueFromContractWithCustomerExcludingAssessedTax 180M vs Revenues 43M (76% apart)",
+      "FY2017: RevenueFromContractWithCustomerExcludingAssessedTax 190M vs Revenues 45M (76% apart)"
+    ],
     "margin": {
-      "value": 0.158257,
+      "value": 0.038721,
       "unit": "fraction",
       "basis": "operating margin (EBIT / revenue)",
-      "source": "EDGAR companyfacts OperatingIncomeLoss / Revenues — reported median over 13 FY",
-      "anchor_years": 13,
-      "confidence": "firm"
+      "source": "EDGAR companyfacts OperatingIncomeLoss / RevenueFromContractWithCustomerExcludingAssessedTax — reported median over 10 FY — CAPPED weak: revenue_tag_conflict",
+      "anchor_years": 10,
+      "confidence": "weak"
     },
     "multiple": {
       "value": 32.106241,
@@ -5909,9 +5914,9 @@
       "basis": "LTM revenue",
       "source": "committed financial_summary.annual (LTM)"
     },
-    "anchor_base_value_per_share": 57.2936,
-    "anchor_ev_ebit": 42.0392,
-    "overall_confidence": "firm",
+    "anchor_base_value_per_share": 21.8954,
+    "anchor_ev_ebit": 72.7036,
+    "overall_confidence": "weak",
     "note": "ATTENTION FILTER, not a verdict. Even a firm anchor requires a full bear/base/bull 2:1 underwrite before any BUY. Spot and reward-to-base are computed live at triage, not stored here."
   }
 }

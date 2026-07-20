@@ -5865,11 +5865,11 @@
   },
   "midcycle": null,
   "anchor": {
-    "recipe_hint": "R1_midcycle_margin_evebitda",
+    "recipe_hint": "R2_NEEDED",
     "applicable": true,
     "multiple_basis": "EV/EBITDA",
     "computed_at": "2026-07-20T17:11:31.264475Z",
-    "reason": null,
+    "reason": "margin history low-single-digit (corrected 5yr median 2.72%); bull case is a forward ramp to a regime that has never existed (consensus 20%+ FY26E) — mean-reversion premise does not fit; route to forward-margin recipe.",
     "data_quality": "revenue_tag_conflict",
     "data_quality_detail": [
       "FY2016: RevenueFromContractWithCustomerExcludingAssessedTax 180M vs Revenues 43M (76% apart)",
