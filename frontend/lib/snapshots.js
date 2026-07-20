@@ -28,6 +28,7 @@ const SNAPSHOTS = "./snapshots"; // copied from data/snapshots/ at deploy (build
 const DOSSIERS = "./dossiers"; // derived dossier.json only (committed to the PRIVATE repo when authed)
 const THEMES = "./themes"; // derived theme-edge display JSON (committed, like dossiers; build.py)
 const RADAR = "./radar"; // analyst-owned candidate registry (committed) + emitted sweep bar (build.py)
+const SCENARIOS = "./scenarios"; // first-cut underwrite cards (committed, like dossiers; build.py)
 
 async function _fetch(path) {
   const res = await fetch(path, { cache: "no-store" });
@@ -238,6 +239,28 @@ export async function getDossierIndex() {
     return Array.isArray(idx?.tickers) ? idx.tickers : [];
   } catch (e) {
     if (e.status === 404) return []; // none committed yet (gated on the private/authed deploy)
+    throw e;
+  }
+}
+
+// getScenarioIndex() -> [ticker, ...] (committed first-cut underwrite records; NOT dossiers)
+export async function getScenarioIndex() {
+  try {
+    const idx = await _json(`${SCENARIOS}/index.json`);
+    return Array.isArray(idx?.tickers) ? idx.tickers : [];
+  } catch (e) {
+    if (e.status === 404) return []; // none committed yet
+    throw e;
+  }
+}
+
+// getScenarioCard(ticker) -> the display-card shape build.py emits (same shape the theme JSON
+// embeds as `scenarioCard` — ONE contract), or null if absent.
+export async function getScenarioCard(ticker) {
+  try {
+    return await _json(`${SCENARIOS}/${String(ticker).toUpperCase()}.json`);
+  } catch (e) {
+    if (e.status === 404) return null;
     throw e;
   }
 }
@@ -468,17 +491,21 @@ export async function getUniverseStats() {
   }
 }
 
-// getProcessedStates() -> (ticker) => "verdict-logged" | "dossier-built" | "not-started"
-// Per-name WORKFLOW state, derived (read-only) from committed dossier presence + ledger presence.
+// getProcessedStates() -> (ticker) => "verdict-logged" | "dossier-built" | "underwritten" | "not-started"
+// Per-name WORKFLOW state, derived (read-only) from committed dossier presence + ledger presence
+// + scenario-record PRESENCE (never the scenario verdict — workflow state, not a ledger read).
 // Turns the queue into a workflow surface; it reads those snapshots, it never writes them.
 export async function getProcessedStates() {
-  const [dossiers, led] = await Promise.all([getDossierIndex(), getLedger()]);
+  const [dossiers, led, scen] = await Promise.all([
+    getDossierIndex(), getLedger(), getScenarioIndex()]);
   const built = new Set(dossiers.map((t) => String(t).toUpperCase()));
   const logged = new Set(led.entries.map((e) => String(e.ticker).toUpperCase()));
+  const underwritten = new Set(scen.map((t) => String(t).toUpperCase()));
   return (ticker) => {
     const t = String(ticker).toUpperCase();
     if (logged.has(t)) return "verdict-logged";
     if (built.has(t)) return "dossier-built";
+    if (underwritten.has(t)) return "underwritten";
     return "not-started";
   };
 }
