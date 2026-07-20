@@ -168,6 +168,17 @@ class OwnHistoryBand(BaseModel):
     # (date, multiple) close series (current = last point). Additive defaults for round-trip.
     mean: float | None = None
     series: list[tuple[str, float]] = Field(default_factory=list)
+    # (periodicity) SELF-DESCRIBING metadata so a band can never again be read as more history than
+    # it holds (the 2026-07-21 window-staleness incident: IT's committed band was a genuine but
+    # SHORT 5.0y export). periodicity_days_median exposes the close cadence (~91 = quarterly, ~365 =
+    # annual); window_span_years is the actual calendar span; periodicity is a coarse label; a
+    # data_quality flag fires when quarterly is expected but the spacing is annual. Additive/opt.
+    # so pre-metadata committed JSON round-trips byte-identically.
+    periodicity_days_median: float | None = None
+    window_span_years: float | None = None
+    periodicity: str | None = None            # "quarterly" | "annual" | "irregular"
+    data_quality: str | None = None           # e.g. "periodicity_mismatch" (fail-loud)
+    source_file: str | None = None            # the CIQ export the band was read from
 
     model_config = {"frozen": True}
 

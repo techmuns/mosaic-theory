@@ -30,7 +30,10 @@ from vinci.edgar.concepts import (
 
 # --- tunable constants (named, not magic) -----------------------------------------------------
 ANCHOR_FIRM_MIN_YEARS = 7            # a margin spanning >=7 FYs plausibly covers a cycle -> "firm"
-ANCHOR_FIRM_MIN_MULT_QUARTERS = 20   # >=~5y of EV/EBITDA closes -> "firm" multiple; fewer -> "weak"
+# The multiple leg is firm on the WINDOW it actually spans, not a raw close count: a band could show
+# 20 closes yet span 20 years if annual-mislabelled (the 2026-07-21 incident). Firm ⇔ >=5 calendar
+# years AND quarterly periodicity — never point-count alone.
+ANCHOR_FIRM_MIN_MULT_YEARS = 5.0
 
 _USD_M = 1e6
 RECIPE_R1 = "R1_midcycle_margin_evebitda"
@@ -118,16 +121,27 @@ class Anchor(BaseModel, frozen=True):
 
 
 # --- committed-artifact readers (work on the mechanical layer as a dict) -----------------------
-def _own_history_multiple(mechanical: dict[str, Any]) -> tuple[float, int] | None:
-    """(median EV/LTM-EBITDA, close-count) from committed ``valuation.own_history`` — READ, never
-    recomputed. None when the own-history multiple is absent/UNKNOWN."""
+def _own_history_multiple(mechanical: dict[str, Any]) -> dict[str, Any] | None:
+    """The committed own-history EV/EBITDA band — READ, never recomputed. Returns the median, close
+    count, calendar span, periodicity label and any data-quality flag so the caller can judge the
+    multiple leg on the WINDOW it actually spans, not the raw point count. None when absent/UNKNOWN.
+
+    ``window_span_years``/``periodicity`` are optional (pre-metadata committed JSON lacks them): a
+    band without them is treated as span-UNKNOWN → the leg cannot be firm (the safe read)."""
     oh = ((mechanical.get("valuation") or {}).get("own_history") or {}).get("value")
     if not isinstance(oh, list):
         return None
     ev = next((r for r in oh if isinstance(r, dict) and "EBITDA" in str(r.get("metric", ""))), None)
     if not ev or ev.get("median") is None:
         return None
-    return float(ev["median"]), int(ev.get("n_closes") or 0)
+    span = ev.get("window_span_years")
+    return {
+        "median": float(ev["median"]),
+        "n_closes": int(ev.get("n_closes") or 0),
+        "span_years": float(span) if span is not None else None,
+        "periodicity": ev.get("periodicity"),
+        "data_quality": ev.get("data_quality"),
+    }
 
 
 def _fs_annual(mechanical: dict[str, Any]) -> dict[str, Any]:
@@ -289,7 +303,8 @@ def compute_anchor(mechanical: dict[str, Any], *, facts: dict[str, Any],
     if mult is None:
         return Anchor(recipe_hint=RECIPE_UNKNOWN, applicable=False, computed_at=computed_at,
                       reason="own-history multiple missing (valuation.own_history.median absent)")
-    mult_median, mult_qtrs = mult
+    mult_median, mult_qtrs = mult["median"], mult["n_closes"]
+    mult_span, mult_period, mult_dq = mult["span_years"], mult["periodicity"], mult["data_quality"]
 
     # margin — median operating margin over the years the TOTAL-revenue tag covers. EBIT is aligned
     # to exactly those years by margin_anchor (it intersects the two series), so the ratio is always
@@ -342,7 +357,10 @@ def compute_anchor(mechanical: dict[str, Any], *, facts: dict[str, Any],
     # CONFIDENCE has a VALIDITY component, not just a count: any data-quality flag (or a fallback)
     # caps the margin leg — and therefore the overall — at "weak", however many years underlie it.
     m_conf = "firm" if (margin_years >= ANCHOR_FIRM_MIN_YEARS and not forced_weak) else "weak"
-    x_conf = "firm" if mult_qtrs >= ANCHOR_FIRM_MIN_MULT_QUARTERS else "weak"
+    # Multiple leg is firm on the WINDOW it spans + quarterly cadence — NOT the raw close count. A
+    # band lacking span metadata (pre-refresh JSON) or flagged periodicity_mismatch cannot be firm.
+    x_conf = ("firm" if (mult_span is not None and mult_span >= ANCHOR_FIRM_MIN_MULT_YEARS
+                         and mult_period == "quarterly" and not mult_dq) else "weak")
     overall = "firm" if (m_conf == "firm" and x_conf == "firm") else "weak"
     if data_quality and margin_source:
         margin_source += f" — CAPPED weak: {data_quality}"
@@ -373,13 +391,20 @@ def compute_anchor(mechanical: dict[str, Any], *, facts: dict[str, Any],
         base = round(sv.equity * _USD_M / dil.value, 4)
         ev_ebit = round(sv.ev_ebit, 4) if sv.ev_ebit is not None else None
 
+    # a periodicity mismatch on the multiple band is its own fail-loud data-quality event; raise it
+    # on the anchor (joining any revenue-tag conflict) so the flag rides with the number it taints.
+    dq = data_quality
+    detail = list(conflicts)
+    if mult_dq:
+        dq = f"{dq}+{mult_dq}" if dq else mult_dq
+        detail.append(f"own_history multiple: {mult_dq} (periodicity {mult_period})")
     return Anchor(
         recipe_hint=RECIPE_R1, applicable=base is not None, computed_at=computed_at,
         reason=(None if base is not None else "R1 inputs incomplete — see per-input source stamps"),
         margin=margin_blk, multiple=multiple_blk, d_and_a=da_blk, net_debt=nd_blk,
         diluted_shares=dil_blk, ltm_revenue=ltm_blk,
         anchor_base_value_per_share=base, anchor_ev_ebit=ev_ebit, overall_confidence=overall,
-        data_quality=data_quality, data_quality_detail=conflicts)
+        data_quality=dq, data_quality_detail=detail)
 
 
 def insert_anchor_block(text: str, anchor: Anchor) -> str:
@@ -397,6 +422,25 @@ def insert_anchor_block(text: str, anchor: Anchor) -> str:
     trailing = text[len(end):]                                   # preserved trailing whitespace
     head = end[:-1].rstrip()                                     # up to the last field's value
     return f"{head},\n{field}\n}}{trailing}"
+
+
+def replace_own_history_value(text: str, bands_value: Any) -> str:
+    """Byte-preserving replace of ``mechanical.valuation.own_history.value`` in a committed
+    dossier.json TEXT, leaving every OTHER field byte-for-byte identical.
+
+    A model round-trip drifts older-schema dossiers; a plain ``json.load``→``dump(indent=2,
+    ensure_ascii=False)`` reproduces the committed bytes EXACTLY (verified), so it is the safe
+    surgical path — parse preserving order, swap ONLY that one nested value, re-serialise. Raises if
+    the own_history path is absent (never silently no-ops)."""
+    import json
+
+    doc = json.loads(text)
+    oh = (((doc.get("mechanical") or {}).get("valuation") or {}).get("own_history"))
+    if not isinstance(oh, dict) or "value" not in oh:
+        raise ValueError("mechanical.valuation.own_history.value absent — refusing to refresh")
+    oh["value"] = bands_value
+    out = json.dumps(doc, indent=2, ensure_ascii=False)
+    return out + "\n" if text.endswith("\n") and not out.endswith("\n") else out
 
 
 def anchor_changed(old: Anchor | None, new: Anchor) -> bool:

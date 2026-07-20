@@ -181,10 +181,43 @@ _OWN_HISTORY_SRC = "CIQ Financials→Multiples (Close; last col = current, exclu
 _OWN_HISTORY_METRICS = (("EV/EBITDA (TEV/LTM)", "TEV/LTM EBITDA"), ("P/LTM EPS", "P/LTM EPS"))
 
 
-def _own_history_band(metric: str, pairs: list[tuple[Any, float]]) -> OwnHistoryBand | None:
+# (periodicity) a quarterly export closes ~91 days apart; an annual one ~365. A band read from an
+# annual series but LABELLED quarterly overstates its history — the 2026-07-21 incident. The bounds
+# classify the median spacing and fire a fail-loud flag when quarterly is expected but annual found.
+_QUARTERLY_DAYS = (60, 130)
+_ANNUAL_DAYS = (300, 430)
+PERIODICITY_MISMATCH = "periodicity_mismatch"
+
+
+def _periodicity(dates: list[Any]) -> tuple[float | None, float | None, str, str | None]:
+    """(median close-spacing in days, calendar span in years, coarse label, data_quality flag).
+
+    The loader stamps these onto every band so a consumer never has to guess how much history a
+    band holds. A quarterly-expected series with annual spacing is a fail-loud data-quality event —
+    it means an annual export was mislabelled quarterly (or the wrong file was read)."""
+    ds = sorted(d for d in dates if d is not None)
+    if len(ds) < 3:
+        return None, None, "irregular", None
+    gaps = [(ds[i + 1] - ds[i]).days for i in range(len(ds) - 1)]
+    med = statistics.median(gaps)
+    span = round((ds[-1] - ds[0]).days / 365.25, 2)
+    if _QUARTERLY_DAYS[0] <= med <= _QUARTERLY_DAYS[1]:
+        return med, span, "quarterly", None
+    if _ANNUAL_DAYS[0] <= med <= _ANNUAL_DAYS[1]:
+        # the sheet is the quarterly Multiples tab — annual spacing here is the mislabel, fail loud
+        return med, span, "annual", PERIODICITY_MISMATCH
+    return med, span, "irregular", None
+
+
+def _own_history_band(
+    metric: str, pairs: list[tuple[Any, float]], *, source_file: str | None = None
+) -> OwnHistoryBand | None:
     """(Phase-3) The current multiple vs its TRAILING close range (current EXCLUDED from history) —
     the ONE own-history stat, shared by range_position (its string) and own_history_bands (the
-    structured chart data) so the two can't drift. None when <4 closes (no meaningful range)."""
+    structured chart data) so the two can't drift. None when <4 closes (no meaningful range).
+
+    Stamps SELF-DESCRIBING periodicity/span metadata + ``source_file`` (the 2026-07-21 window-
+    staleness fix) so a band can never again be read as more history than it holds."""
     if len(pairs) < 4:
         return None
     vals = [v for _, v in pairs]
@@ -193,11 +226,14 @@ def _own_history_band(metric: str, pairs: list[tuple[Any, float]]) -> OwnHistory
     # full (date, multiple) close path for the line (current = last point; dates label the x-axis).
     # mean/min/max are over history (current excluded), like low/high.
     series = [(p.isoformat() if p is not None else "", v) for p, v in pairs]
+    per_days, span_years, per_label, dq = _periodicity([p for p, _ in pairs])
     return OwnHistoryBand(
         metric=metric, current=cur, low=min(hist), high=max(hist),
         median=statistics.median(hist), percentile=sum(1 for h in hist if h <= cur) / len(hist),
         n_closes=len(hist), as_of=d.isoformat() if d is not None else None,
         mean=statistics.mean(hist), series=series,
+        periodicity_days_median=per_days, window_span_years=span_years, periodicity=per_label,
+        data_quality=dq, source_file=source_file,
     )
 
 
@@ -241,10 +277,12 @@ def own_history_bands(bundle: CiqBundle) -> Sourced[list[OwnHistoryBand]]:
         rows = bundle.sheet("financials", "Multiples", freq="quarterly")
     except CiqUnavailableError as exc:
         return _miss_or_unknown(bundle, "financials", exc)
+    wb = bundle.workbook("financials", freq="quarterly")
+    src_file = wb.path.name if wb is not None else None
     bands: list[OwnHistoryBand] = []
     for metric, label in _OWN_HISTORY_METRICS:
         pairs = [(d, v) for d, v in _multiples_close(rows, label) if v is not None]
-        if (band := _own_history_band(metric, pairs)) is not None:
+        if (band := _own_history_band(metric, pairs, source_file=src_file)) is not None:
             bands.append(band)
     if not bands:
         return Sourced.unknown(note="no multiple has ≥4 quarterly closes — no own-history band")

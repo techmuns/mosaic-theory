@@ -155,8 +155,18 @@ def _facts(**tags: dict[int, float]) -> dict[str, object]:
     return {"facts": {"us-gaap": node}}
 
 
-_MECH_OK = {"valuation": {"own_history": {"value": [
-    {"metric": "EV/EBITDA (TEV/LTM)", "median": 10.0, "n_closes": 40}]}}}
+def _band(**kw: object) -> dict[str, object]:
+    """An own-history EV/EBITDA band. Defaults describe a FIRM band: >=5y span, quarterly cadence,
+    no data-quality flag — the multiple leg is firm on the WINDOW, not the raw close count."""
+    return {"metric": "EV/EBITDA (TEV/LTM)", "median": 10.0, "n_closes": 40,
+            "window_span_years": 9.0, "periodicity": "quarterly", "data_quality": None, **kw}
+
+
+def _mech(**kw: object) -> dict[str, object]:
+    return {"valuation": {"own_history": {"value": [_band(**kw)]}}}
+
+
+_MECH_OK = _mech()   # a firm own-history band
 _TOTAL = "RevenueFromContractWithCustomerExcludingAssessedTax"   # the ASC-606 total-revenue tag
 
 
@@ -247,6 +257,73 @@ def test_anchor_changed_ignores_only_the_timestamp() -> None:
     moved = a1.model_copy(update={"anchor_base_value_per_share": 9.99})
     assert anc.anchor_changed(a1, same) is False
     assert anc.anchor_changed(a1, moved) is True
+
+
+# --- periodicity + window-span (the 2026-07-21 staleness fix) ----------------------------------
+def test_periodicity_classifies_quarterly_and_annual_spacing() -> None:
+    """The shared loader stamps close cadence: ~91-day gaps → quarterly (no flag); ~365-day gaps on
+    the quarterly Multiples tab → annual + a fail-loud periodicity_mismatch (a mislabel)."""
+    from datetime import date, timedelta
+
+    from vinci.dossier.ciq_sheets import PERIODICITY_MISMATCH, _own_history_band
+    q = [(date(2020, 1, 1) + timedelta(days=91 * i), 10.0 + i) for i in range(12)]
+    b = _own_history_band("EV/EBITDA (TEV/LTM)", q, source_file="q.xls")
+    assert b is not None and b.periodicity == "quarterly" and b.data_quality is None
+    assert 88 <= (b.periodicity_days_median or 0) <= 94 and b.source_file == "q.xls"
+    ann = [(date(2005, 1, 1) + timedelta(days=365 * i), 10.0 + i) for i in range(12)]
+    ba = _own_history_band("EV/EBITDA (TEV/LTM)", ann)
+    assert ba is not None and ba.periodicity == "annual"
+    assert ba.data_quality == PERIODICITY_MISMATCH   # annual spacing on a quarterly tab → fail loud
+
+
+def test_multiple_leg_confidence_is_span_based_not_point_count() -> None:
+    """The multiple leg is firm on the WINDOW it spans + quarterly cadence, NEVER the raw close
+    count. A band with 40 closes but only 4y span (or annual periodicity, or a mismatch flag, or NO
+    span metadata) is weak — the exact failure the window-staleness incident exposed."""
+    facts = _facts(**{
+        _TOTAL: dict.fromkeys(range(2016, 2026), 100e6),
+        "OperatingIncomeLoss": dict.fromkeys(range(2016, 2026), 20e6),
+    })
+    firm = compute_anchor(_mech(window_span_years=9.0, periodicity="quarterly"),
+                          facts=facts, computed_at=_now())
+    assert firm.multiple is not None and firm.multiple.confidence == "firm"
+    short = compute_anchor(_mech(window_span_years=4.0, periodicity="quarterly"),
+                           facts=facts, computed_at=_now())
+    assert short.multiple is not None and short.multiple.confidence == "weak"   # < 5y span
+    ann = compute_anchor(
+        _mech(window_span_years=20.0, periodicity="annual", data_quality="periodicity_mismatch"),
+        facts=facts, computed_at=_now())
+    assert ann.multiple is not None and ann.multiple.confidence == "weak"       # annual, flagged
+    assert ann.data_quality and "periodicity_mismatch" in ann.data_quality      # flag rides anchor
+    legacy = compute_anchor({"valuation": {"own_history": {"value": [
+        {"metric": "EV/EBITDA (TEV/LTM)", "median": 10.0, "n_closes": 40}]}}},  # pre-metadata JSON
+        facts=facts, computed_at=_now())
+    assert legacy.multiple is not None and legacy.multiple.confidence == "weak"  # span-UNKNOWN
+
+
+def test_own_history_band_carries_periodicity_metadata_fields() -> None:
+    """Schema pin: the band exposes the self-describing metadata a consumer needs to judge the
+    window — periodicity_days_median, window_span_years, periodicity, data_quality, source_file."""
+    from vinci.dossier.schemas import OwnHistoryBand
+    assert {"periodicity_days_median", "window_span_years", "periodicity", "data_quality",
+            "source_file"} <= set(OwnHistoryBand.model_fields)
+
+
+def test_replace_own_history_value_is_byte_preserving() -> None:
+    """The refresh writer swaps ONLY own_history.value; every other field keeps its committed bytes
+    (json.dump(indent=2, ensure_ascii=False) reproduces the committed style — a unicode arrow stays
+    literal, not \\u2192). Absent path → refuses rather than silently no-ops."""
+    from vinci.dossier.anchor import replace_own_history_value
+    text = ('{\n  "ticker": "X",\n  "mechanical": {\n    "valuation": {\n'
+            '      "own_history": {\n        "value": [1],\n        "source_ref": "a→b"\n'
+            '      }\n    }\n  }\n}')
+    out = replace_own_history_value(text, [{"median": 9.9}])
+    parsed = json.loads(out)
+    assert parsed["ticker"] == "X"                                        # untouched
+    assert parsed["mechanical"]["valuation"]["own_history"]["value"] == [{"median": 9.9}]
+    assert "a→b" in out and "\\u2192" not in out                     # unicode kept literal
+    with pytest.raises(ValueError, match="own_history.value absent"):
+        replace_own_history_value('{"ticker":"X"}', [])
 
 
 # --- byte-preserving backfill insert -----------------------------------------------------------
