@@ -16,6 +16,7 @@ from typing import Any
 from vinci.config import Config, get_config
 from vinci.edgar import EdgarClient
 from vinci.eod import PolygonEodClient
+from vinci.labels import resolve_label
 from vinci.progress import ProgressFn
 from vinci.resolver import EntityResolver
 from vinci.themes import cluster as cl
@@ -92,6 +93,7 @@ def analyze_stage2(
         tm = [
             ThemeMember(ticker=name_by_id[m].ticker, name=name_by_id[m].name, cik=name_by_id[m].cik,
                         sic=sic_of.get(m), sector=sector_of.get(m, "Unknown"),
+                        industry=(resolve_label(s).industry if (s := sic_of.get(m)) else None),
                         sic_source_ref=f"EDGAR SIC for CIK {name_by_id[m].cik}")
             for m in present
         ]

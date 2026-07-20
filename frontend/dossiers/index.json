@@ -10,5 +10,57 @@
     "SMPL",
     "VITL",
     "VRRM"
-  ]
+  ],
+  "labels": {
+    "AORT": {
+      "industry": "Health Care Equipment",
+      "source": "ciq-gics",
+      "source_ref": "CIQ Public Company Profile\u2192Primary Industry Classification"
+    },
+    "BRBR": {
+      "industry": "Personal Care Products",
+      "source": "ciq-gics",
+      "source_ref": "CIQ Public Company Profile\u2192Primary Industry Classification"
+    },
+    "CNXC": {
+      "industry": "Data Processing and Outsourced Services",
+      "source": "ciq-gics",
+      "source_ref": "CIQ Public Company Profile\u2192Primary Industry Classification"
+    },
+    "EPAM": {
+      "industry": "IT Consulting and Other Services",
+      "source": "ciq-gics",
+      "source_ref": "CIQ Public Company Profile\u2192Primary Industry Classification"
+    },
+    "FUBO": {
+      "industry": "Interactive Media and Services",
+      "source": "ciq-gics",
+      "source_ref": "CIQ Public Company Profile\u2192Primary Industry Classification"
+    },
+    "IT": {
+      "industry": "IT Consulting and Other Services",
+      "source": "ciq-gics",
+      "source_ref": "CIQ Public Company Profile\u2192Primary Industry Classification"
+    },
+    "MVST": {
+      "industry": "Construction Machinery and Heavy Transportation Equipment",
+      "source": "ciq-gics",
+      "source_ref": "CIQ Public Company Profile\u2192Primary Industry Classification"
+    },
+    "SMPL": {
+      "industry": "Packaged Foods and Meats",
+      "source": "ciq-gics",
+      "source_ref": "CIQ Public Company Profile\u2192Primary Industry Classification"
+    },
+    "VITL": {
+      "industry": "Packaged Foods and Meats",
+      "source": "ciq-gics",
+      "source_ref": "CIQ Public Company Profile\u2192Primary Industry Classification"
+    },
+    "VRRM": {
+      "industry": "Data Processing and Outsourced Services",
+      "source": "ciq-gics",
+      "source_ref": "CIQ Public Company Profile\u2192Primary Industry Classification"
+    }
+  }
 }

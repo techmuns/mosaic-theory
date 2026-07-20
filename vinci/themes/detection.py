@@ -21,6 +21,7 @@ from datetime import date, timedelta
 from vinci.config import Config, get_config
 from vinci.eod import PolygonEodClient
 from vinci.eod.client import EodClient
+from vinci.labels import resolve_label
 from vinci.progress import ProgressFn, ProgressReporter
 from vinci.resolver import EntityResolver, ResolutionError
 from vinci.sectors import sector_for_sic
@@ -210,6 +211,7 @@ def detect_themes(
             ThemeMember(
                 ticker=name_by_id[m].ticker, name=name_by_id[m].name, cik=name_by_id[m].cik,
                 sic=sic_of.get(m), sector=sector_of.get(m, "Unknown"),
+                industry=(resolve_label(s).industry if (s := sic_of.get(m)) else None),
                 sic_source_ref=f"EDGAR submissions SIC for CIK {name_by_id[m].cik}",
             )
             for m in rc.members if m in name_by_id

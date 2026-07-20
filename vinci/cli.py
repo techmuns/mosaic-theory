@@ -196,16 +196,18 @@ def _cmd_rank(args: argparse.Namespace) -> int:
         market_caps=caps, deep_work_adv_floor=args.deep_work_adv_floor,
         structural_flags=structural_flags or None,
     )
-    # Attach a DERIVED SECTOR + finer sub-INDUSTRY per name (SIC → sectors.*) HERE in the writer,
+    # Attach the RESOLVED labels per name (vinci.labels — the ONE resolver) HERE in the writer,
     # never in the scorer — vinci.rank / vinci.screens stay pure (an AST fence test asserts it).
     # Assemble/inform ONLY: they feed the human cluster roll-up; never a gate/weight/sort.
-    from vinci.sectors import industry_for_sic, sector_for_sic
+    # gics=None at universe scale: CIQ-GICS overlays join at the frontend build from the committed
+    # dossier index, so a dossier landing between rank runs upgrades its name without a re-rank.
+    from vinci.labels import resolve_label
 
     sic_by_id = {c.candidate_id: c.data_record.identity.sic for c in cands}
     ranked = [
         r.model_copy(update={
-            "sector": sector_for_sic(sic_by_id.get(r.candidate_id)),
-            "industry": industry_for_sic(sic_by_id.get(r.candidate_id)),
+            "sector": (lbl := resolve_label(sic_by_id.get(r.candidate_id))).sector,
+            "industry": lbl.industry,
         })
         for r in ranked
     ]

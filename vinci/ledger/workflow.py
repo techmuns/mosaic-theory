@@ -13,8 +13,8 @@ from __future__ import annotations
 from datetime import date, datetime
 from typing import Protocol
 
+from vinci.labels import resolve_label
 from vinci.schemas.ledger import Confidence, Disposition, LedgerEntry, Verdict
-from vinci.sectors import sector_for_sic
 from vinci.store import Store
 
 
@@ -62,7 +62,7 @@ def log_verdict(
     if cand is None:
         raise LedgerError(f"no candidate {candidate_id!r} in the store (run the screen first)")
     ident = cand.data_record.identity
-    sector = sector_for_sic(resolver.sic_for(ident.cik)[0])
+    sector = resolve_label(resolver.sic_for(ident.cik)[0]).sector
 
     try:
         # point-in-time: freeze on the latest bar ON OR BEFORE the decision date — never a future

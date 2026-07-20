@@ -36,11 +36,11 @@ from vinci.edgar.client import EdgarClient
 from vinci.finra import build_finra_http
 from vinci.graph.exposure import ExposureGraph
 from vinci.graph.llm import LlmClient
+from vinci.labels import resolve_label
 from vinci.rank import load_candidates_from_snapshot
 from vinci.resolver import EntityResolver
 from vinci.schemas.candidate import CandidateRecord
 from vinci.sec import build_sec_http
-from vinci.sectors import sector_for_sic
 from vinci.store import Store
 
 
@@ -210,7 +210,7 @@ def assemble_one(
         caveats=caveats, qa_flags=qa_flags,
         # (teaser/company) SIC-derived sector/sub-industry + exchange + CIQ subject business desc —
         # assemble/inform context for the Brief teaser, never a gate/rank input.
-        sector=sector_for_sic(rec.identity.sic),  # SIC coarse sector — the CIQ-GICS fallback
+        sector=resolve_label(rec.identity.sic).sector,  # coarse sector — the CIQ-GICS fallback
         industry=ciq_sheets.gics_industry(bundle),  # CIQ GICS Primary Industry Classification
         exchange=rec.identity.exchange,
         business_description=ciq_sheets.business_description(bundle),

@@ -1,21 +1,21 @@
 // RANKER — the priority queue as a sortable read-only table with per-name structural profiles +
 // a workflow state per row. Orders, never decides. Rows open the dossier. Sort/filter are purely
 // client-side, in place — the queue is fetched once and never re-fetched on sort/filter.
-import { getRankedQueue, getProcessedStates, getG3Reasons } from "../../lib/snapshots.js";
+import { getRankedQueue, getProcessedStates, getG3Reasons, getGicsLabels, WORKFLOW_STATES } from "../../lib/snapshots.js";
 import { fmtScore, fmtMoney, fmtDate, fmtPct, escapeHtml, DASH } from "../../lib/format.js";
 import { refreshBlock } from "../../lib/ui.js";
 
 const AXES = ["idiosyncrasy", "depth", "character", "multiple"];
 const COLS = [
   { key: "rank", label: "#", num: true }, { key: "ticker", label: "Ticker" },
-  { key: "industry", label: "Industry" },  // DERIVED SIC sub-industry — assemble/inform, not a rank input
+  { key: "industry", label: "Industry" },  // resolved label (CIQ-GICS overlay > official SIC) — inform, not a rank input
   { key: "state", label: "Workflow" },
   { key: "score", label: "Score", num: true }, { key: "depthBand", label: "Band" },
   { key: "idiosyncrasy", label: "Idio (vs mkt)", num: true }, { key: "depth", label: "Depth (52w)", num: true },
   { key: "character", label: "Character" }, { key: "multiple", label: "Multiple" },
   { key: "advUsd", label: "ADV", num: true }, { key: "marketCap", label: "Mkt cap", num: true },
 ];
-const STATE_RANK = { "not-started": 0, "underwritten": 1, "dossier-built": 2, "verdict-logged": 3 };
+const STATE_RANK = WORKFLOW_STATES;  // ONE vocab (lib/snapshots.js) — never re-typed here
 const STATE_BADGE = {
   "not-started": `<span class="pill" style="background:var(--surface-2);color:var(--ink-3);">not started</span>`,
   // scenario-record PRESENCE (a first-cut underwrite exists) — an intermediate workflow state,
@@ -27,13 +27,21 @@ const STATE_BADGE = {
 
 let DATA = null;
 let stateOf = null; // (ticker) => workflow state
+let GICS = {};  // {TICKER: {industry, source_ref}} — the committed-dossier CIQ-GICS overlay
+
+// the displayed Industry: CIQ-GICS when a committed dossier carries it, else the queue's official
+// SIC title (the JS twin of vinci.labels.resolve_label's precedence — pinned by a source test)
+function dispIndustry(r) {
+  return (GICS[r.ticker] && GICS[r.ticker].industry) || r.industry || "—";
+}
 let G3 = null; // ticker -> the specific G3 UNKNOWN reason
 let state = null;
 
 export async function render(root, _params, { item, frame }) {
   state = { sort: "rank", dir: 1, q: "", hideSunk: false };
   root.innerHTML = frame(item, { bodyHtml: `<div class="notice">Loading queue…</div>` });
-  [DATA, stateOf, G3] = await Promise.all([getRankedQueue(), getProcessedStates(), getG3Reasons()]);
+  [DATA, stateOf, G3, GICS] = await Promise.all([
+    getRankedQueue(), getProcessedStates(), getG3Reasons(), getGicsLabels()]);
 
   const w = DATA.weights;
   const edge = `
@@ -101,6 +109,7 @@ function renderHead() {
 function axisVal(row, key) {
   if (AXES.includes(key)) return row.axes[key]?.score;
   if (key === "state") return STATE_RANK[stateOf(row.ticker)] ?? 0;
+  if (key === "industry") return dispIndustry(row);   // sort by the DISPLAYED label (GICS overlay)
   return row[key];
 }
 
@@ -108,7 +117,7 @@ function renderRows() {
   const body = document.getElementById("rk-body");
   if (!body) return;
   let rows = DATA.rows.slice();
-  if (state.q) rows = rows.filter((r) => r.ticker.toLowerCase().includes(state.q) || (r.name || "").toLowerCase().includes(state.q) || (r.sector || "").toLowerCase().includes(state.q) || (r.industry || "").toLowerCase().includes(state.q));
+  if (state.q) rows = rows.filter((r) => r.ticker.toLowerCase().includes(state.q) || (r.name || "").toLowerCase().includes(state.q) || (r.sector || "").toLowerCase().includes(state.q) || dispIndustry(r).toLowerCase().includes(state.q));
   if (state.hideSunk) rows = rows.filter((r) => !r.structurallyDisqualified);
 
   rows.sort((a, b) => {
@@ -162,7 +171,7 @@ function renderRows() {
         <td class="num muted">${r.rank}</td>
         <td><span class="mono" style="font-weight:600;">${escapeHtml(r.ticker)}</span>${sunk ? " ⛔" : ""}
           <div class="muted" style="font-size:11.5px;">${escapeHtml((r.name || "").slice(0, 40))}</div>${flag}</td>
-        <td class="muted" style="font-size:12px;"><span style="display:inline-block; max-width:92px; line-height:1.25;">${escapeHtml(r.industry || "—")}</span></td>
+        <td class="muted" style="font-size:12px;"><span style="display:inline-block; max-width:92px; line-height:1.25;">${escapeHtml(dispIndustry(r))}${GICS[r.ticker] ? ` <span class="gics-mark" title="CIQ GICS Primary Industry Classification — ${escapeHtml(GICS[r.ticker].source_ref || "committed dossier")}">CIQ</span>` : ""}</span></td>
         <td>${STATE_BADGE[stateOf(r.ticker)] || ""}</td>
         <td class="num" style="font-weight:600;">${fmtScore(r.score)}</td>
         <td><span class="pill ${sunk ? "unresolved" : "live"}">${escapeHtml(r.depthBand)}</span>${gated}</td>
