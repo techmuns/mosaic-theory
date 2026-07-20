@@ -710,6 +710,8 @@ table.data.vs-table { width: 100%; }
 .ds-help.dd .ds-help-body { position: absolute; right: 0; top: calc(100% + 8px); z-index: 40;
   width: min(720px, 82vw); background: var(--surface); border: 1px solid var(--line-2);
   border-radius: var(--r); box-shadow: var(--shadow); padding: 4px 14px 13px; }
+/* CIQ-GICS provenance mark on an overlaid Industry label (ranker) — the source travels visibly */
+.gics-mark { font-size: 8.5px; font-weight: 700; letter-spacing: 0.05em; color: var(--accent); cursor: help; }
 /* first-analysis (underwrite-only) index cards — dashed = typed as NOT-a-dossier at a glance */
 .ds-index-card.uw { border-style: dashed; box-shadow: none; background: var(--surface-2); }
 .ds-index-card.uw:hover { border-color: var(--conditional); }

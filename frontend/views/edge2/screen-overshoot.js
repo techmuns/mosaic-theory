@@ -72,7 +72,7 @@ function clusterRollup(names) {
   return `
     <div class="card" style="margin-bottom:16px;">
       <h3>Cross-sectional clusters <span class="muted" style="font-weight:400; text-transform:none; letter-spacing:0;">— sector → sub-industry, over the ${fmtInt(total)} admitted</span></h3>
-      <div class="subtitle muted" style="margin:6px 0 9px;">Business classification (SEC SIC) — <b>not a peer cohort, not a sector-adjusted control</b>. G2 strips <i>market</i> beta, not sector, so a large cluster asks: did the <b>group</b> fall, not the name? Assemble / inform — it gates, weights, and sorts nothing.</div>
+      <div class="subtitle muted" style="margin:6px 0 9px;">Business classification (SEC SIC, official titles) — <b>not a peer cohort, not a sector-adjusted control</b>. G2 strips <i>market</i> beta, not sector, so a large cluster asks: did the <b>group</b> fall, not the name? Assemble / inform — it gates, weights, and sorts nothing. Per-name CIQ-GICS (finer, where a dossier exists) shows on the <a href="#/ranker">ranker</a>.</div>
       ${lead ? `<div style="font-size:13px; margin-bottom:2px;">${lead}</div>` : ""}
       ${rows}
     </div>`;
