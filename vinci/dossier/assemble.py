@@ -19,6 +19,7 @@ from typing import Any
 from vinci.config import Config, get_config
 from vinci.dossier import ciq_sheets, requirements
 from vinci.dossier import flags as dossier_flags
+from vinci.dossier.anchor import RECIPE_UNKNOWN, Anchor, compute_anchor
 from vinci.dossier.ciq import CiqBundle
 from vinci.dossier.covenant_extract import (
     covenant_digest,
@@ -204,10 +205,21 @@ def assemble_one(
     # split the emitted flags by audience: decision caveats → human PDF/web (re-voiced), machine
     # QA self-checks → dev/JSON only (emission logic is untouched; classification is display-layer).
     caveats, qa_flags = dossier_flags.partition(flags)
+    # (anchor) the persisted R1 anchor — spot-independent, source-bound (vinci.dossier.anchor). Best
+    # effort: any own-history gap or EDGAR error yields an INAPPLICABLE anchor with a reason,
+    # never a crashed assembly (the dossier stands on its own; the anchor is committed triage
+    # context).
+    try:
+        anchor_facts = EdgarClient.from_config(cfg).companyfacts(rec.identity.cik)
+        anchor = compute_anchor(mech.model_dump(mode="json"), facts=anchor_facts,
+                                computed_at=datetime.now(UTC))
+    except Exception as exc:  # noqa: BLE001 — anchor is best-effort; it never blocks the dossier
+        anchor = Anchor(recipe_hint=RECIPE_UNKNOWN, applicable=False, computed_at=datetime.now(UTC),
+                        reason=f"anchor computation failed: {type(exc).__name__}")
     dossier = Dossier(
         ticker=ticker, name=rec.identity.name, cik=rec.identity.cik,
         reference_date=fin.reference_date, rank=fin.rank, mechanical=mech, synthesis=synthesis,
-        caveats=caveats, qa_flags=qa_flags,
+        caveats=caveats, qa_flags=qa_flags, anchor=anchor,
         # (teaser/company) SIC-derived sector/sub-industry + exchange + CIQ subject business desc —
         # assemble/inform context for the Brief teaser, never a gate/rank input.
         sector=resolve_label(rec.identity.sic).sector,  # coarse sector — the CIQ-GICS fallback

@@ -3665,6 +3665,33 @@ two-name analysis (mid/small-caps, opposite directions) mapped against this inve
 
 ## 5. Next steps (ordered, current)
 
+- **R1 ANCHOR PERSISTENCE ENGINE + 7 backfilled — BUILT (branch `feat/r1-anchor-persist`,
+  2026-07-20; PR open, NOT merged).** Triage is now a cheap READ of a committed, source-bound,
+  spot-INDEPENDENT anchor instead of a live CIQ+EDGAR recompute (the read-only triage STOP-gate that
+  exposed the need). **Engine (`vinci/dossier/anchor.py`):** one shared
+  `compute_anchor(mechanical, facts, computed_at)` — margin = EDGAR median operating margin over ALL
+  available FY (fallback: committed `financial_summary` EBIT/Rev, forced weak); multiple = committed
+  `valuation.own_history.median` (READ, never recomputed); D&A = combined `dep_amort` tag else a
+  source-stamped `Depreciation + AmortizationOfIntangibleAssets` split (the CNXC case); net-debt =
+  lease-inclusive (debt + finance + operating leases − cash) reusing the tested under-capture guard +
+  a stored bridge string; diluted-WA shares + LTM-rev source-stamped. **Value math is the #150
+  block's `scenario_value` (EBITDA basis, EV=(EBIT+D&A)×mult) — never reimplemented.** POSITIVITY
+  GUARD: margin ≤ 0 → `recipe_hint=R2_NEEDED`, `applicable=false` (the guard for future pre-profit
+  names; it does NOT chase turnarounds — analyst override, out of scope). Schema: optional top-level
+  `Dossier.anchor` (pre-anchor JSON round-trips byte-identically). **Wired into assembly** (fail-soft:
+  any gap/EDGAR error → an inapplicable anchor with a reason, never a crashed dossier). **Backfill
+  command** `vinci anchor-backfill --tickers …` writes ONLY the anchor block via a BYTE-PRESERVING
+  string insert — a model round-trip drifts OLDER-schema fields (new-default materialisation), the
+  incident that earned `insert_anchor_block`. **Backfilled 7** (AORT/BRBR/CNXC/EPAM/IT/SMPL/VITL) —
+  every other field byte-identical, verified per name. Confidence: margin firm ≥7 FY, multiple firm
+  ≥20 quarterly closes, overall = the weaker. **Incident→invariant (shipped Y):** 6 tests — schema
+  pin, EBITDA-basis numeric (frozen + living-artifact consistency), positivity guard,
+  byte-preserving insert, missing-multiple non-crash. Green (ruff + mypy --strict 102 files +
+  pytest). Frontend unaffected (UI ignores the block; Cloudflare rebuilds the mirror at deploy).
+  **Anchor bases:** AORT $57.29 (firm) · BRBR $56.20 (weak) · CNXC $61.99 (weak) · EPAM $225.55
+  (weak) · IT $337.96 (firm) · SMPL $38.43 (firm) · VITL $4.35 (weak). **NEXT (not in this PR — the
+  brief's scope guard):** run the overshoot triage as a cheap read of these anchors × live spot
+  (reward-to-base rank).
 - **AORT empty `financial_summary` — CIQ 'No Data Available' export, made loud (PR #155,
   `fix/ciq-aort-financials`, 2026-07-20; NOT merged — agent stops at PR).** AORT's CIQ Financials
   export returned the header-only `No Data Available` sentinel for Income Statement / Balance Sheet /

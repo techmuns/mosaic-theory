@@ -20,6 +20,7 @@ from typing import Generic, TypeVar
 
 from pydantic import BaseModel, Field, model_validator
 
+from vinci.dossier.anchor import Anchor
 from vinci.dossier.midcycle import MidCycle
 
 T = TypeVar("T")
@@ -1005,5 +1006,10 @@ class Dossier(BaseModel):
     # committed dossier.json without it round-trips byte-identically; when absent the render emits
     # nothing (the section is gated on presence).
     midcycle: MidCycle | None = None
+    # (anchor) the R1 mid-cycle-margin × own-history-EV/EBITDA fundamental, PERSISTED source-bound
+    # so triage is a cheap read (vinci.dossier.anchor). Spot-independent; an ATTENTION FILTER, not
+    # a verdict. Default None so a committed dossier.json without it round-trips byte-identically;
+    # the UI ignores it for now (data-only).
+    anchor: Anchor | None = None
 
     model_config = {"frozen": True}
