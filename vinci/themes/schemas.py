@@ -57,6 +57,9 @@ class ThemeMember(BaseModel, frozen=True):
     cik: str
     sic: str | None
     sector: str  # coarse GICS-like bucket (vinci.sectors.sector_for_sic)
+    # official SEC SIC industry title (vinci.labels resolver, universe scale — no CIQ at breadth).
+    # Default None → pre-field committed JSONL round-trips; consumers degrade loudly, never guess.
+    industry: str | None = None
     sic_source_ref: str  # where the SIC came from, so the analyst verifies (CLAUDE.md source-bind)
 
 
