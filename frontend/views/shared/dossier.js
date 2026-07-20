@@ -1,9 +1,10 @@
 // DOSSIER VIEWER — render the structured dossier.json into styled, source-bound sections.
 // Assembles facts + a machine proposal SEALED until the human's verdict. Every fact shows its [n] cite.
 // The synthesis is fenced as "the framing, not the answer." Read-only; verdicts are CLI-logged.
-import { getDossier, getDossierIndex, getLedger, isBuyVerdict } from "../../lib/snapshots.js";
+import { getDossier, getDossierIndex, getLedger, isBuyVerdict, getScenarioIndex, getScenarioCard } from "../../lib/snapshots.js";
 import { fmtPrice, fmtDate, fmtStamp, fmtPct, escapeHtml, DASH } from "../../lib/format.js";
 import { barDomain, lineDomain, linScale, logScale, barLabelY, extent, EXHIBIT } from "../../lib/exhibit.js";
+import { uwCard } from "./uw-card.js";
 
 // PDF export uses the browser's native print-to-PDF (no library — the frontend stays dependency-free).
 // The browser derives the saved-file name from document.title, so on a dossier print we swap in a
@@ -49,6 +50,25 @@ export async function render(root, params, { item, frame }) {
 
   const [d, led] = await Promise.all([getDossier(ticker), getLedger()]);
   if (!d) {
+    // RICH DEGRADE — a name with a committed FIRST-CUT UNDERWRITE but no dossier renders its
+    // record under explicit typing (an underwrite is NOT assembled facts, and its scenario
+    // verdict is NOT a ledger verdict of record). Neither artifact → the plain notice, unchanged.
+    const card = await getScenarioCard(ticker);
+    if (card) {
+      const verdict = led.entries.find((e) => e.ticker === ticker) || null;
+      root.innerHTML = frame(item, { crumbExtra: crumb, bare: true, bodyHtml: `
+        <div class="header-block">
+          <h1 class="page-h"><span class="mono">${escapeHtml(ticker)}</span> · first analysis</h1>
+          <div class="subtitle muted">underwrite record · no dossier assembled${card.underwriteDate ? ` · underwritten ${escapeHtml(card.underwriteDate)}` : ""}${card.recipeId ? ` · recipe ${escapeHtml(card.recipeId.split("_")[0])}` : ""}${card.multipleBasis ? ` · basis ${escapeHtml(card.multipleBasis)}` : ""}</div>
+        </div>
+        <div class="subtitle muted" style="margin:-6px 0 12px;">This is the analyst's scenario underwrite — not assembled
+          facts, and its verdict is not a ledger verdict of record. The full dossier is built on a
+          re-underwrite trigger.</div>
+        ${uwCard(card, { ticker: false })}
+        ${loggedVerdict(verdict, ticker, undefined)}
+        ${assembleHelp()}` });
+      return;
+    }
     root.innerHTML = frame(item, { crumbExtra: crumb, bare: true, bodyHtml: `
       <div class="notice">No dossier assembled for <b>${escapeHtml(ticker)}</b> in this deploy.
       Assemble it via <span class="mono">python -m vinci dossier --ticker ${escapeHtml(ticker)}</span> (then commit the derived
@@ -91,7 +111,7 @@ export async function render(root, params, { item, frame }) {
 // --- dossier index (no ticker) ----------------------------------------------
 async function renderIndex(root, item, frame) {
   root.innerHTML = frame(item, { bodyHtml: `<div class="notice">Loading dossiers…</div>` });
-  const tickers = await getDossierIndex();
+  const [tickers, scenTickers] = await Promise.all([getDossierIndex(), getScenarioIndex()]);
   const search = `
     <form id="ds-search" style="display:flex; gap:10px; margin:4px 0 18px;">
       <input id="ds-q" type="search" placeholder="Jump to a ticker's dossier (e.g. VRRM)…" autocomplete="off"
@@ -105,8 +125,22 @@ async function renderIndex(root, item, frame) {
           <div class="muted" style="font-size:12px; margin-top:4px;">assembled facts · proposal sealed →</div>
         </a>`).join("")}</div>`
     : `<div class="notice">No dossiers committed to this deploy yet. Assemble with <span class="mono">python -m vinci dossier</span>, then commit the derived <span class="mono">dossier.json</span> to the private repo.</div>`;
+  // FIRST ANALYSIS — names with a committed underwrite record but no dossier. TYPED, never
+  // blended: a scenario underwrite is a screen-stage read with a scenario verdict, not assembled
+  // facts — the label carries the distinction, the dashed card keeps it visible at a glance.
+  const uwOnly = scenTickers.filter((t) => !tickers.includes(t));
+  const uwGroup = uwOnly.length ? `
+    <div class="ds-title" style="margin-top:22px;">First analysis · underwrites</div>
+    <div class="subtitle muted" style="margin:2px 0 10px;">scenario underwrite records — not dossiers;
+      a screen-stage read with a recorded scenario verdict, no assembled facts</div>
+    <div class="grid cols-3">${uwOnly.map((t) => `
+      <a class="ds-index-card uw" href="#/dossier/${escapeHtml(t)}">
+        <div class="mono" style="font-size:16px; font-weight:650;">${escapeHtml(t)}
+          <span class="pill conditional" style="margin-left:6px;">underwrite</span></div>
+        <div class="muted" style="font-size:12px; margin-top:4px;">first-cut underwrite · no dossier →</div>
+      </a>`).join("")}</div>` : "";
   root.innerHTML = frame(item, {
-    bodyHtml: `${assembleHelp()}<div class="subtitle" style="margin-bottom:10px;">Search any ticker, open a finalist from the <a href="#/ranker">ranker</a>, or pick a committed one below.</div>${search}${body}`,
+    bodyHtml: `${assembleHelp()}<div class="subtitle" style="margin-bottom:10px;">Search any ticker, open a finalist from the <a href="#/ranker">ranker</a>, or pick a committed one below.</div>${search}${body}${uwGroup}`,
   });
   // client-side navigation only (no write path) — jump to any ticker's dossier
   root.querySelector("#ds-search").addEventListener("submit", (e) => {
@@ -1265,7 +1299,7 @@ function governingTerms(rows, pointers) {
   (rows || []).forEach((r) => {
     const v = r.value || {};
     const [fam, dt] = meta[_accOf(v.source_ref) || _accOf(v.note)] || ["(unmapped)", ""];
-    const key = fam + " " + r.name;
+    const key = fam + "\x00" + r.name;
     if (!grouped.has(key)) { grouped.set(key, { fam, term: r.name, list: [] }); order.push(key); }
     grouped.get(key).list.push([dt, r]);  // (RC-1.5d) store the whole row — components ride along
   });

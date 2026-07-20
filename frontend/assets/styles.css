@@ -700,6 +700,9 @@ table.data.vs-table { width: 100%; }
 /* dossier index cards */
 .ds-index-card { display: block; border: 1px solid var(--line); border-radius: var(--r); padding: 14px 16px; background: var(--surface); box-shadow: var(--shadow); }
 .ds-index-card:hover { border-color: var(--accent); text-decoration: none; }
+/* first-analysis (underwrite-only) index cards — dashed = typed as NOT-a-dossier at a glance */
+.ds-index-card.uw { border-style: dashed; box-shadow: none; background: var(--surface-2); }
+.ds-index-card.uw:hover { border-color: var(--conditional); }
 
 @media (max-width: 820px) {
   .app { grid-template-columns: 1fr; }
