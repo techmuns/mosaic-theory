@@ -269,20 +269,20 @@ def _sic_cluster(sics: list[str]) -> dict[str, Any]:
 def test_industry_hint_majority() -> None:
     """A strict majority (3 of 5 share the SIC) → '<name> · N/total'."""
     h = _BUILD._industry_hint(_sic_cluster(["3674", "3674", "3674", "3825", "3827"]))
-    assert h == "Semiconductors · 3/5"
+    assert h == "SIC 3674 · 3/5"   # sic-only fixture → pre-field degrade
 
 
 def test_industry_hint_mixed() -> None:
     """No majority (all distinct) → 'mixed: <top> N · <second> M' (member order breaks the tie)."""
     h = _BUILD._industry_hint(_sic_cluster(["7370", "6282", "7389"]))
-    assert h == "mixed: Computer services 1 · Investment advice 1"
+    assert h == "mixed: SIC 7370 1 · SIC 6282 1"   # pre-field degrade: raw codes, no name invented
 
 
 def test_industry_hint_single_sic_non_majority() -> None:
     """One distinct SIC, not a majority (rest carry no SIC) → single industry + coverage, not
     the degenerate 'mixed: X · X 0'."""
     mem = [{"ticker": "A", "sic": "3674"}, {"ticker": "B"}, {"ticker": "C"}]
-    assert _BUILD._industry_hint({"cluster_id": "T0", "members": mem}) == "Semiconductors · 1/3"
+    assert _BUILD._industry_hint({"cluster_id": "T0", "members": mem}) == "SIC 3674 · 1/3"
 
 
 def test_industry_hint_only_on_unreviewed_inbox(
@@ -294,7 +294,7 @@ def test_industry_hint_only_on_unreviewed_inbox(
                 _cluster("T002", ["P1", "P2"], sics=["7372", "7372"])]  # unreviewed → inbox (hint)
     inbox, log = _run_inbox_log(tmp_path, monkeypatch, reviews, clusters)
     assert inbox["inbox"][0]["cluster_id"] == "T002"
-    assert inbox["inbox"][0]["industry_hint"] == "Prepackaged software · 2/2"
+    assert inbox["inbox"][0]["industry_hint"] == "SIC 7372 · 2/2"   # sic-only fixture → degrade
     assert all("industry_hint" not in r for r in log["reviews"])
 
 
@@ -380,6 +380,61 @@ def test_radar_draft_not_carried_onto_reviewed_log_rows(
     log = json.loads((radar / "log.json").read_text())
     assert [r["key"] for r in log["reviews"]] == ["2026-06-17:R0"]
     assert all("draft_name" not in r for r in log["reviews"])  # log rows carry no draft affordance
+
+
+# --- ONE-RESOLVER pins (labels + radar vocab) ----------------------------------------------------
+def test_dossier_index_labels_match_the_backend_resolver() -> None:
+    """The stdlib twin: build.py's index `labels` map must equal vinci.labels.committed_gics_index
+    over the real committed dossier tree — the build fence forbids the import, so the two
+    implementations are pinned against each other instead."""
+    from pathlib import Path
+
+    from vinci.labels import committed_gics_index
+
+    root = Path(__file__).resolve().parents[1]
+    committed = json.loads((root / "frontend" / "dossiers" / "index.json").read_text())
+    expect = {t: {"industry": v["industry"], "source": "ciq-gics", "source_ref": v["source_ref"]}
+              for t, v in committed_gics_index(root / "data" / "dossiers").items()}
+    assert committed.get("labels") == expect
+
+
+def test_radar_decision_vocab_canonical_and_mirrored_in_js() -> None:
+    """HIGH-1 pins: (a) every decision in the committed analyst record maps through
+    _CANON_DECISION (an unmapped one fails the BUILD loud — this pin fails the SUITE loud);
+    (b) the canonical value set equals radar.js's DECISION_LABEL keys (py↔JS source pin — the
+    test_web_brief_proposal_mirror_static pattern)."""
+    import re
+    from pathlib import Path
+
+    b = _load_build()
+    root = Path(__file__).resolve().parents[1]
+    reviews = json.loads((root / "frontend" / "radar" / "reviews.json").read_text())["reviews"]
+    unknown = {str(r.get("decision")) for r in reviews} - set(b._CANON_DECISION)
+    assert not unknown, f"reviews.json decisions outside _CANON_DECISION: {unknown}"
+    js = (root / "frontend" / "views" / "themes" / "radar.js").read_text()
+    m = re.search(r"DECISION_LABEL\s*=\s*\{([^}]*)\}", js)
+    assert m, "DECISION_LABEL not found in radar.js"
+    js_keys = set(re.findall(r"(\w+)\s*:", m.group(1)))
+    assert js_keys == set(b._CANON_DECISION.values()), (
+        f"radar.js DECISION_LABEL {js_keys} != canonical {set(b._CANON_DECISION.values())}")
+    # the committed log.json is already canonical (regenerated through the seam)
+    log = json.loads((root / "frontend" / "radar" / "log.json").read_text())
+    assert {r["decision"] for r in log["reviews"]} <= set(b._CANON_DECISION.values())
+
+
+def test_industry_hint_prefers_member_industry_and_degrades_to_raw_sic() -> None:
+    """The hint counts the resolver-attached member.industry (official titles); a PRE-FIELD
+    cluster degrades to raw `SIC <code>` — never a fabricated name (the _SIC_NAME map is dead)."""
+    b = _load_build()
+    named = {"members": [{"industry": "Services-Prepackaged Software", "sic": "7372"},
+                         {"industry": "Services-Prepackaged Software", "sic": "7372"},
+                         {"industry": "Semiconductors & Related Devices", "sic": "3674"}]}
+    assert b._industry_hint(named) == "Services-Prepackaged Software · 2/3"
+    prefield = {"members": [{"sic": "7372"}, {"sic": "7372"}, {"sic": "3674"}]}
+    assert b._industry_hint(prefield) == "SIC 7372 · 2/3"
+    assert b._industry_hint({"members": []}) is None
+    src = (Path(__file__).resolve().parents[1] / "frontend" / "build.py").read_text()
+    assert "_SIC_NAME" not in src, "the static SIC-name map must stay dead — one table"
 
 
 if __name__ == "__main__":

@@ -504,42 +504,28 @@ def _sig(cluster: dict[str, Any], *keys: str) -> float | None:
     return node if isinstance(node, (int, float)) else None
 
 
-# Static 4-digit SIC → industry-name map — only the codes in the current inbox. The repo has no
-# SIC-name source (sectors.py is coarse sectors, not 4-digit names); nothing is fetched here.
-# Display-only hint for an unreviewed cluster — the machine never names or decides a theme.
-_SIC_NAME = {
-    "1000": "Metal mining", "1040": "Gold & silver ores", "1600": "Heavy construction",
-    "2080": "Beverages", "2810": "Industrial inorganic chemicals",
-    "2833": "Medicinal chemicals", "2836": "Biological products", "3674": "Semiconductors",
-    "3825": "Electrical measuring instruments", "3827": "Lab analytical instruments",
-    "4911": "Electric utilities", "6199": "Finance services", "6282": "Investment advice",
-    "7363": "Staffing services", "7370": "Computer services", "7371": "Computer programming",
-    "7372": "Prepackaged software", "7373": "Systems integration",
-    "7374": "Data processing services", "7389": "Business services",
-    "8200": "Educational services", "8742": "Management consulting",
-}
-
-
-def _sic_name(code: str) -> str:
-    return _SIC_NAME.get(code, f"SIC {code}")
-
-
 def _industry_hint(cluster: dict[str, Any]) -> str | None:
-    """Most common member SIC + coverage ("Semiconductors · 5/5"); a single industry or a majority →
-    that. Else (≥2 industries, none a majority) → "mixed: <top> N · <second> M". Assemble-only hint
-    for an unreviewed cluster — never a verdict. None when no member has a SIC. Deterministic."""
+    """Most common member INDUSTRY + coverage ("Services-Prepackaged Software · 7/7"); a single
+    industry or a strict majority → that; else "mixed: <top> N · <second> M". The names are the
+    OFFICIAL SEC SIC titles, attached to member rows by the backend resolver (vinci.labels) at
+    sweep time — build.py (stdlib fence) aggregates, it never maintains a naming map. PRE-FIELD
+    snapshots (members lack `industry`) degrade to the raw `SIC <code>` — 4-digit specificity is
+    kept, a name is never fabricated. Assemble-only hint — never a verdict. Deterministic."""
     members = cluster.get("members", [])
-    sics = Counter(str(m.get("sic") or "").strip() for m in members)
-    sics.pop("", None)
-    if not sics:
-        return None
+    vals = Counter((str(m.get("industry") or "")).strip() for m in members)
+    vals.pop("", None)
+    if not vals:  # pre-field snapshot → raw SIC codes, loudly un-named
+        vals = Counter(f"SIC {str(m.get('sic') or '').strip()}" for m in members
+                       if str(m.get("sic") or "").strip())
+        if not vals:
+            return None
     total = len(members)
-    ranked = sics.most_common()
-    top_code, top_n = ranked[0]
+    ranked = vals.most_common()
+    top, top_n = ranked[0]
     if len(ranked) == 1 or top_n * 2 > total:  # single industry, or a strict majority
-        return f"{_sic_name(top_code)} · {top_n}/{total}"
-    sc, sn = ranked[1]
-    return f"mixed: {_sic_name(top_code)} {top_n} · {_sic_name(sc)} {sn}"
+        return f"{top} · {top_n}/{total}"
+    second, sn = ranked[1]
+    return f"mixed: {top} {top_n} · {second} {sn}"
 
 
 def _draft_pairs(out: Path) -> list[tuple[set[str], dict[str, Any]]]:
@@ -585,6 +571,14 @@ def _inbox_entry(cluster: dict[str, Any], first_seen: str,
     }
 
 
+# Review-decision vocabulary — the analyst record (reviews.json) is VERBATIM and human-written;
+# this seam canonicalizes shorthand at EMIT time so the renderer's label/filter vocab holds
+# (reviews.json stays untouched — the record is the record). An unmapped decision fails the
+# build LOUD: extend the map consciously, never render an unknown pill.
+_CANON_DECISION = {"advanced": "advanced", "watch": "watch", "parked": "parked",
+                   "rejected": "rejected", "park": "parked", "reject": "rejected"}
+
+
 def emit_radar_inbox_log() -> None:
     """Sort the latest component-a clusters into inbox (unreviewed) vs log (matched to a review), by
     member overlap ≥ _MATCH_MIN of the smaller set. Emits frontend/radar/{inbox,log}.json; assembles
@@ -596,6 +590,10 @@ def emit_radar_inbox_log() -> None:
         return  # deploy / no local run → keep the committed inbox.json/log.json
     reviews = json.loads(reviews_path.read_text())["reviews"]
     clusters = [json.loads(line) for line in snap_path.read_text().splitlines() if line.strip()]
+    if clusters and not any((str(m.get("industry") or "")).strip()
+                            for c in clusters for m in c.get("members", [])):
+        print("radar inbox: component-a snapshot predates member.industry — "
+              "raw-SIC hints until the next sweep")
     m = re.match(r"(\d{4})(\d{2})(\d{2})", snap_path.name)
     scan_iso = "-".join(m.groups()) if m else ""
 
@@ -615,7 +613,11 @@ def emit_radar_inbox_log() -> None:
                      "added": sorted(cs - rset), "dropped": sorted(rset - cs)}
         else:
             match = {"status": "gone", "cluster_id": None, "added": [], "dropped": []}
-        log_reviews.append({**r, "match": match})
+        canon = _CANON_DECISION.get(str(r.get("decision") or ""))
+        if canon is None:
+            raise SystemExit(f"unknown radar decision {r.get('decision')!r} in reviews.json "
+                             f"({r.get('key')}) — extend _CANON_DECISION or fix the record")
+        log_reviews.append({**r, "decision": canon, "match": match})
 
     # INBOX: current clusters matched by NO review (not yet judged). An advisory draft (if any) is
     # joined by member overlap — it informs the row, never marks it reviewed.
@@ -661,7 +663,12 @@ def main(argv: list[str] | None = None) -> None:
         shutil.copyfile(SNAP / "universe_stats.json", OUT_SNAP / "universe_stats.json")
 
     # DERIVED dossiers only (data/dossiers/<TICKER>/dossier.json → dossiers/<TICKER>.json).
+    # The index also carries a LABELS overlay — each committed dossier's CIQ-GICS industry
+    # (status "present" only), so the ranker upgrades a name the moment its dossier commits,
+    # without a queue re-emit. Stdlib twin of vinci.labels.committed_gics_index (the build fence
+    # forbids the import) — a parity test pins the two against the real committed tree.
     tickers: list[str] = []
+    labels: dict[str, dict[str, str]] = {}
     if DOSS.exists():
         for folder in sorted(p for p in DOSS.iterdir() if p.is_dir()):
             f = folder / "dossier.json"
@@ -669,7 +676,12 @@ def main(argv: list[str] | None = None) -> None:
                 ticker = folder.name.upper()
                 shutil.copyfile(f, OUT_DOSS / f"{ticker}.json")
                 tickers.append(ticker)
-    (OUT_DOSS / "index.json").write_text(json.dumps({"tickers": tickers}, indent=2))
+                ind = json.loads(f.read_text()).get("industry") or {}
+                if ind.get("status") == "present" and (ind.get("value") or "").strip():
+                    labels[ticker] = {"industry": ind["value"].strip(), "source": "ciq-gics",
+                                      "source_ref": ind.get("source_ref") or ""}
+    (OUT_DOSS / "index.json").write_text(
+        json.dumps({"tickers": tickers, "labels": labels}, indent=2))
 
     scen_tickers = emit_scenarios()
 
