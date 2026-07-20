@@ -3618,6 +3618,23 @@ two-name analysis (mid/small-caps, opposite directions) mapped against this inve
 
 ## 5. Next steps (ordered, current)
 
+- **AORT empty `financial_summary` — CIQ 'No Data Available' export, made loud (PR #155,
+  `fix/ciq-aort-financials`, 2026-07-20; NOT merged — agent stops at PR).** AORT's CIQ Financials
+  export returned the header-only `No Data Available` sentinel for Income Statement / Balance Sheet /
+  Cash Flow (+ Ratios), BOTH Annual & Quarterly, WHILE Key Stats (Revenue 486.4, EBITDA 95.3, EPS
+  0.095 FY26) + Multiples (256 numeric) were fully populated on the SAME workbook → the data EXISTS in
+  CIQ; a bad/partial export, not missing data. The three `financial_summary` builders surfaced it as a
+  cryptic `no Fiscal Period header` / bare `Balance Sheet` UNKNOWN — indistinguishable from a genuine
+  header-parse failure. **Fix (shipped):** a shared `_no_data_available` sentinel guard in
+  `ciq_sheets.py` → an honest, actionable note naming the sentinel + the re-export; a
+  populated-but-headerless sheet still reads `no Fiscal Period header` (the two failure modes stay
+  DISTINCT — a real parse bug is never masked by the benign data gap). Green (ruff + mypy --strict +
+  pytest). **Incident→invariant (shipped Y):** 4 regression pins (3 positive builder pins + 1 negative
+  distinctness pin), synthetic shells, no licensed CIQ data. **OPERATOR TO-DO:** re-export AORT's CIQ
+  Financials workbook (Annual + Quarterly) to populate the tables + ratios — the new note makes the gap
+  self-explanatory. **FOLLOW-UP (held out of scope in #155):** extend `_no_data_available` to
+  `return_ratios` + the other ~17 financial-subsheet readers (same cryptic-note pattern on a No-Data
+  workbook) for surface consistency.
 - **DOSSIER-NOW: WERN (theme #3 truckload) — single-name underwrite at the 2:1 bar (2026-07-14).** The
   scan's sole REAL-tier name (quantified / driver-specific asset-based TL). Underwrite on NORMALIZED
   earnings — trailing P/E sits at the 99th percentile of its own history (a trough-earnings artifact, not
