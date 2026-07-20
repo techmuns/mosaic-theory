@@ -21,7 +21,7 @@ const GATE_DEF = "the BUY−AVOID spread that must prove positive before capital
 const SHARED = [
   { route: "overview", label: "Overview", state: "home" },
   { route: "dossier", label: "Dossier", state: "live",
-    does: "Assembled facts + a derived machine proposal. A source-bound mechanical layer, a fenced bull/bear framing, and a deterministic proposal over its lean — the human's confirm/override is the verdict of record." },
+    does: "Per-name research records — assembled-facts dossiers and first-cut underwrites, typed and kept distinct; the human's confirm/override is the verdict of record." },
   { route: "decision-log", label: "Decision log", state: "live",
     does: "The immutable, append-only ledger of logged verdicts — each a frozen leg of the BUY−AVOID spread, sealed beside the machine's proposal (confirm / override / no-proposal tracked). Displayed here; logged only via the CLI." },
 ];
@@ -52,14 +52,13 @@ const EDGES = [
   {
     key: "themes", label: "Themes", state: "live",
     stages: [
-      // Top tabs: the radar map (default landing), the portfolio Overview, and the standing
-      // watchlist. Surfaced-names and forward-performance are DRILL-DOWNS from the Overview
-      // landing (#/themes/<theme>[/<tier>]), not tabs.
-      { route: "radar", label: "Radar",
+      // Two tabs, funnel order: the themes landing (glance — table, watchlist, intake strip),
+      // then the radar intake (candidates -> inbox -> log). Theme pages and tier tables are
+      // DRILL-DOWNS from the landing (#/themes/<theme>[/<tier>]), framed with these same tabs.
+      { route: "themes", label: "Themes",
+        does: "Every frozen theme at a glance — verdict vs scan counts, the cross-theme watchlist, and the radar intake state." },
+      { route: "themes/radar", label: "Radar",
         does: "Every theme idea on one map — how real the evidence is vs how much price has already moved." },
-      { route: "themes", label: "Overview" },
-      { route: "themes/watchlist", label: "Watchlist",
-        does: "The names to re-underwrite when a trigger fires — a flat cross-theme monitoring surface. Each row is led by its verbatim trigger." },
     ],
   },
   {
@@ -101,7 +100,6 @@ const VIEWS = {
   ranker: () => import("./views/edge2/ranker.js"),
   graph: () => import("./views/edge2/graph.js"),
   themes: () => import("./views/themes/index.js"),
-  radar: () => import("./views/radar/index.js"),
 };
 
 // Every routable item: shared + each live edge's stages + each locked edge's own
@@ -205,10 +203,8 @@ function setActive(item) {
 // stages (the active one highlighted), then the stage's own subtitle. For a
 // SHARED view it is the classic breadcrumb + header-block. `bare` (the dossier
 // DETAIL) omits the header-block; the dossier supplies its own ticker header.
-export function frame(item, { crumbExtra = "", bodyHtml = "", bare = false } = {}) {
+export function frame(item, { crumbExtra = "", title = "", bodyHtml = "", bare = false } = {}) {
   const subtitle = item.does ? `<div class="subtitle">${escapeHtml(item.does)}</div>` : "";
-  const persistent = item.route === "dossier"
-    ? `<div class="subtitle muted">assembled facts · no verdict</div>` : "";
   const edge = edgeOfItem(item);
 
   if (edge && edge.stages && edge.stages.length && !bare) {
@@ -217,20 +213,27 @@ export function frame(item, { crumbExtra = "", bodyHtml = "", bare = false } = {
       const ico = s.state === "conditional" ? ` <span class="cond-ico" title="conditional">◑</span>` : "";
       return `<a class="tab ${active ? "active" : ""}" data-route="${s.route}" href="#/${s.route}">${escapeHtml(s.label)}${ico}</a>`;
     }).join("");
+    // A drill-down (crumbExtra set) keeps the stage tabs but takes its OWN h1 (`title`) and
+    // extends the breadcrumb — the edge label becomes the link back to the stage landing. The
+    // drill-down supplies its own subtitle inside bodyHtml, so the stage subtitle is dropped.
+    const drill = Boolean(crumbExtra);
+    const crumbEdge = drill
+      ? `<a href="#/${edge.stages[0].route}">${escapeHtml(edge.label)}</a>`
+      : escapeHtml(edge.label);
     return `
-      <div class="breadcrumb"><a href="#/overview">Overview</a><span class="sep">/</span>${escapeHtml(edge.label)}</div>
+      <div class="breadcrumb"><a href="#/overview">Overview</a><span class="sep">/</span>${crumbEdge}${crumbExtra}</div>
       <div class="edge-head">
-        <h1 class="page-h">${escapeHtml(edge.label)}</h1>
+        <h1 class="page-h">${escapeHtml(drill && title ? title : edge.label)}</h1>
         <nav class="tabs">${tabs}</nav>
       </div>
-      ${subtitle || persistent ? `<div class="stage-sub">${subtitle}${persistent}</div>` : ""}
+      ${!drill && subtitle ? `<div class="stage-sub">${subtitle}</div>` : ""}
       ${bodyHtml}`;
   }
 
   const headerBlock = bare ? "" : `
     <div class="header-block">
       <h1 class="page-h">${escapeHtml(item.label)}</h1>
-      ${subtitle}${persistent}
+      ${subtitle}
     </div>`;
   const sectionCrumb = crumbExtra
     ? `<a href="#/${item.route}">${escapeHtml(item.label)}</a>`
@@ -266,7 +269,11 @@ function renderConditional(root, item) {
 
 // --- router ------------------------------------------------------------------
 function parseHash() {
-  const h = (location.hash || "#/overview").replace(/^#\/?/, "");
+  let h = (location.hash || "#/overview").replace(/^#\/?/, "");
+  // Legacy-route normalizer — old URLs keep working after the IA fold-in (radar joined the
+  // themes sub-router; the flat watchlist/scan/forward screens folded into the landing).
+  if (h === "radar" || h.startsWith("radar/")) h = "themes/" + h;
+  else if (h === "themes/watchlist" || h === "themes/scan" || h === "themes/forward") h = "themes";
   const [route, ...rest] = h.split("/");
   return { route: route || "overview", params: rest };
 }

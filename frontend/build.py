@@ -116,6 +116,27 @@ def _scenario_cards() -> dict[str, dict[str, Any]]:
     return out
 
 
+OUT_SCEN = HERE / "scenarios"
+
+
+def emit_scenarios() -> list[str]:
+    """Standalone `frontend/scenarios/` mirror — `index.json` {"tickers":[…]} + one
+    `<TICKER>.json` per committed underwrite record, in the EXACT `_scenario_card()` shape the
+    theme JSON embeds (one contract, one consumer-side renderer). Deterministic + idempotent, so
+    the committed output never churns; COMMITTED like `frontend/dossiers/` so the static serve
+    works without a build step. Sits beside the dossier mirror: dossiers = assembled facts,
+    scenarios = first-cut underwrites — the SHARED per-name surface types the two, never blends."""
+    cards = _scenario_cards()
+    if OUT_SCEN.exists():
+        shutil.rmtree(OUT_SCEN)
+    OUT_SCEN.mkdir(parents=True)
+    for t, card in sorted(cards.items()):
+        (OUT_SCEN / f"{t}.json").write_text(json.dumps(card, indent=1) + "\n")
+    (OUT_SCEN / "index.json").write_text(
+        json.dumps({"tickers": sorted(cards)}, indent=2) + "\n")
+    return sorted(cards)
+
+
 def _git_sha() -> str | None:
     try:
         return subprocess.check_output(
@@ -173,11 +194,21 @@ _POWER_NOTE = (
 )
 
 
+# First-path segments the themes sub-router owns (plus legacy redirects) — a theme slug that
+# collides would be unroutable, so the build fails LOUD rather than shipping a shadowed page.
+_RESERVED_SLUGS = frozenset({"radar", "watchlist", "scan", "forward"})
+
+
 def _slug(driver: str) -> tuple[str, str]:
     if driver in _DRIVER_SLUG:
-        return _DRIVER_SLUG[driver]
-    s = re.sub(r"[^a-z0-9]+", "-", driver.lower()).strip("-") or "driver"
-    return s, driver
+        s, label = _DRIVER_SLUG[driver]
+    else:
+        s = re.sub(r"[^a-z0-9]+", "-", driver.lower()).strip("-") or "driver"
+        label = driver
+    if s in _RESERVED_SLUGS:
+        raise SystemExit(f"theme slug {s!r} collides with a reserved themes route "
+                         f"({', '.join(sorted(_RESERVED_SLUGS))}) — rename the driver")
+    return s, label
 
 
 def _eff_basis(grade: str, tie: str) -> str:
@@ -640,6 +671,8 @@ def main(argv: list[str] | None = None) -> None:
                 tickers.append(ticker)
     (OUT_DOSS / "index.json").write_text(json.dumps({"tickers": tickers}, indent=2))
 
+    scen_tickers = emit_scenarios()
+
     # DERIVED EDGAR-10-K exposure map → slim graph.json (edges + shared nodes + headline stats).
     # Authorized for the private/authed repo as a derived artifact (CLAUDE.md) and COMMITTED there
     # (verbatim PUBLIC 10-K phrases + relationship-TYPE taxonomy only, no CIQ workbook data); the
@@ -742,6 +775,7 @@ def main(argv: list[str] | None = None) -> None:
     print(
         f"mirror: {len(queue)} queue rows, {len(uni)} universe rows, "
         f"{len(tickers)} dossier(s) [{', '.join(tickers) or 'none'}], "
+        f"{len(scen_tickers)} underwrite(s) [{', '.join(scen_tickers) or 'none'}], "
         f"{len(theme_slugs)} theme(s) [{', '.join(theme_slugs) or 'none'}] → frontend/"
     )
 

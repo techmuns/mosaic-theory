@@ -1,8 +1,10 @@
-// RADAR (#/radar) — one nav stage, three internal sub-tabs: Map · Inbox · Log. READ-ONLY: the machine
+// RADAR (#/themes/radar) — the intake stage of the Themes edge, three internal sub-tabs (chips):
+// Map · Inbox · Log. READ-ONLY: the machine
 // assembles and sorts (candidates on the map, unreviewed clusters in Inbox, dispositions in Log) but
-// NEVER decides — reviews.json is the single record. Deep links #/radar/inbox and #/radar/log load the
+// NEVER decides — reviews.json is the single record. Deep links #/themes/radar/inbox and
+// #/themes/radar/log load the
 // right tab; tab clicks sync the URL (replaceState) without re-fetching. Data contracts unchanged.
-import { getRadarCandidates, getRadarSweep, getRadarInbox, getRadarLog } from "../../lib/snapshots.js";
+import { getRadarCandidates, getRadarSweep, getRadarInbox, getRadarLog, getThemesIndex } from "../../lib/snapshots.js";
 import { escapeHtml } from "../../lib/format.js";
 
 const STATUS_LABEL = { live: "Live", watch: "Watch", parked: "Parked", priced: "Too late", past: "Past" };
@@ -102,16 +104,35 @@ function mapSvg(cands, drawerSlug) {
     aria-label="theme radar quadrant map">${bg}${axes}${dots}</svg>`;
 }
 
+// Resolve a candidate to a COMMITTED theme page — explicit theme_route wins, then slug, then a
+// case-insensitive label match against the themes index. No committed page → no link is fabricated
+// (the old #/themes/<map_ref> links were wrong by construction — map_refs are candidate slugs).
+function themeHrefFor(c, themeIdx) {
+  const drivers = (themeIdx && themeIdx.drivers) || [];
+  const explicit = (c.theme_route || "").replace(/^#?\/?/, "");
+  if (explicit) {
+    const slug = explicit.replace(/^themes\//, "");
+    if (drivers.some((d) => d.slug === slug)) return `#/themes/${slug}`;
+  }
+  if (drivers.some((d) => d.slug === c.slug)) return `#/themes/${c.slug}`;
+  const byLabel = drivers.find((d) =>
+    (d.label || "").toLowerCase() === (c.label || "").toLowerCase());
+  return byLabel ? `#/themes/${byLabel.slug}` : null;
+}
+
 // Drawer: collapsed by default, one open at a time. Compact by default; the VERBATIM wake-up rules
-// (the wall of text) live behind the "Wake-up rules ▾" expander.
-function drawer(c, rulesOpen) {
+// (the wall of text) live behind the "Wake-up rules ▾" expander. A candidate that resolves to a
+// committed theme page links there and SUPPRESSES the verbatim watch/rules block — the theme page
+// owns triggers now; unresolved candidates keep the full verbatim block (rules render somewhere,
+// verbatim, always).
+function drawer(c, rulesOpen, themeHref) {
   if (!c) return "";
   const d = c.detail || {};
   const summary = d.summary || d.note || (d.lead ? `Lead name: ${d.lead}` : "");
   const watch = Array.isArray(d.watch) ? d.watch : [];
   const cmp = Array.isArray(d.comparison) ? d.comparison : [];
   const rules = Array.isArray(d.rules) ? d.rules : [];
-  const hasRules = watch.length || rules.length;
+  const hasRules = !themeHref && (watch.length || rules.length);
   const verbatim = watch.map((w) => `<div class="rd-rule"><span class="rd-tk">${escapeHtml(w.ticker)}</span>
       <span class="rd-rt">${escapeHtml(w.rule)}</span></div>`).join("")
     + (rules.length ? `<ul class="rd-rules">${rules.map((r) => `<li>${escapeHtml(r)}</li>`).join("")}</ul>` : "")
@@ -128,7 +149,7 @@ function drawer(c, rulesOpen) {
     ${cmp.length ? `<div class="rd-line"><span class="rd-k">Comparison:</span> ${
       cmp.map((x) => escapeHtml(x.ticker)).join(", ")}</div>` : ""}
     <div class="rd-line foot">found by ${escapeHtml(c.source || "machine scan")}</div>
-    ${c.theme_route ? `<div class="rd-link"><a href="#/${escapeHtml(c.theme_route)}">full page →</a></div>` : ""}
+    ${themeHref ? `<div class="rd-link"><a href="${escapeHtml(themeHref)}">full page →</a></div>` : ""}
     ${hasRules ? `<div class="rt-rules-x">
       <button class="rt-expander" data-drawer-rules="1">Wake-up rules ${rulesOpen ? "▴" : "▾"}</button>
       ${rulesOpen ? `<div class="rt-rules">${verbatim}</div>` : ""}</div>` : ""}
@@ -154,7 +175,7 @@ const LEGEND_ITEMS = [["live", "Live"], ["watch", "Watch"], ["parked", "Parked"]
 // dumped underneath). The panel is derived ENTIRELY from the committed candidates: the status counts
 // and the watch list are real. Nothing is synthesised to fill the column — there is no first-mention
 // flow to chart here (the inbox is empty), so no such block is drawn.
-function mapTab(cands, state) {
+function mapTab(cands, state, themeIdx) {
   const counts = {};
   cands.forEach((c) => { counts[c.status] = (counts[c.status] || 0) + 1; });
   const statusRows = LEGEND_ITEMS.filter(([k]) => counts[k]).map(([k, lbl]) =>
@@ -174,7 +195,8 @@ function mapTab(cands, state) {
         ${watchBlock}
       </aside>
     </div>
-    ${state.drawer ? drawer(cands.find((c) => c.slug === state.drawer), state.drawerRules) : ""}
+    ${state.drawer ? drawer(cands.find((c) => c.slug === state.drawer), state.drawerRules,
+        themeHrefFor(cands.find((c) => c.slug === state.drawer) || {}, themeIdx)) : ""}
     ${judgedList(cands, state)}`;
 }
 
@@ -203,7 +225,12 @@ function inboxRow(e, expanded) {
     </td></tr>`;
 }
 
-function inboxTab(inbox, state) {
+function inboxTab(inbox, state, scanDate) {
+  if (!inbox.length) {
+    return `<div class="notice">Inbox empty${scanDate ? ` as of ${escapeHtml(scanDate)}` : ""} —
+      every current cluster is matched to a review. New clusters land here on the next sweep.</div>
+      <div class="rt-foot foot">reviews are recorded off-screen; this screen never decides.</div>`;
+  }
   const sorted = inbox.slice().sort((a, b) => Math.abs(Number(a.rel12) || 0) - Math.abs(Number(b.rel12) || 0));
   const pages = Math.max(1, Math.ceil(sorted.length / INBOX_PER));
   const page = Math.min(state.inbox.page, pages - 1), start = page * INBOX_PER;
@@ -235,7 +262,7 @@ function logRow(r, expanded) {
     <div class="foot"><b>changed since</b>: ${escapeHtml(note)}${
       added.length ? ` · added ${added.map(escapeHtml).join(", ")}` : ""}${
       dropped.length ? ` · dropped ${dropped.map(escapeHtml).join(", ")}` : ""}</div>
-    ${r.map_ref ? `<div class="rd-link"><a href="#/themes/${escapeHtml(r.map_ref)}">full page →</a></div>` : ""}
+    ${r.map_ref ? `<div class="rd-link"><button class="rt-expander" data-view-map="${escapeHtml(r.map_ref)}">view on map →</button></div>` : ""}
     <div class="foot rd-log-src">recorded by ${escapeHtml(r.by)} · reviews.json is the single record</div>
     </td></tr>`;
 }
@@ -276,8 +303,9 @@ function copyCmd(btn) {
 
 export async function render(root, params, { item, frame }) {
   root.innerHTML = frame(item, { bodyHtml: `<div class="notice">Loading radar…</div>` });
-  const [cand, sweep, inboxData, logData] = await Promise.all(
-    [getRadarCandidates(), getRadarSweep(), getRadarInbox(), getRadarLog()]);
+  const [cand, sweep, inboxData, logData, themeIdx] = await Promise.all(
+    [getRadarCandidates(), getRadarSweep(), getRadarInbox(), getRadarLog(),
+     getThemesIndex().catch(() => ({ drivers: [] }))]);
   const cands = cand.candidates;
   if (!cands.length) {
     root.innerHTML = frame(item, { bodyHtml: `
@@ -302,7 +330,7 @@ export async function render(root, params, { item, frame }) {
 
   const q = (s) => root.querySelector(s);
   const syncHash = () => {
-    const h = "#/radar" + (state.tab === "map" ? "" : "/" + state.tab);
+    const h = "#/themes/radar" + (state.tab === "map" ? "" : "/" + state.tab);
     if (location.hash !== h) history.replaceState(null, "", h);  // URL follows the tab; no re-dispatch
   };
   const paintTabs = () => { q(".rt-tabbar").innerHTML = tabBar(state, inbox, log); };
@@ -310,8 +338,8 @@ export async function render(root, params, { item, frame }) {
     const a = document.activeElement;
     const wasSearch = a && a.classList && a.classList.contains("rd-log-search");
     const caret = wasSearch ? a.selectionStart : null;
-    q(".rt-content").innerHTML = state.tab === "inbox" ? inboxTab(inbox, state)
-      : state.tab === "log" ? logTab(log, state) : mapTab(cands, state);
+    q(".rt-content").innerHTML = state.tab === "inbox" ? inboxTab(inbox, state, inboxData.scan_date)
+      : state.tab === "log" ? logTab(log, state) : mapTab(cands, state, themeIdx);
     if (wasSearch) {
       const inp = q(".rd-log-search");
       if (inp) { inp.focus(); if (caret != null) inp.setSelectionRange(caret, caret); }
@@ -327,6 +355,9 @@ export async function render(root, params, { item, frame }) {
     if (dr) { const s = dr.dataset.drawerOpen; state.drawer = state.drawer === s ? null : s; state.drawerRules = false; return paintContent(); }
     if (e.target.closest("[data-drawer-close]")) { state.drawer = null; return paintContent(); }
     if (e.target.closest("[data-drawer-rules]")) { state.drawerRules = !state.drawerRules; return paintContent(); }
+    const vm = e.target.closest("[data-view-map]");
+    if (vm) { state.tab = "map"; state.drawer = vm.dataset.viewMap; state.drawerRules = false;
+      syncHash(); paintTabs(); return paintContent(); }
     if (e.target.closest("[data-low-toggle]")) { state.showLow = !state.showLow; return paintContent(); }
     const ir = e.target.closest("[data-inbox-row]");
     if (ir) { state.inbox.expanded = state.inbox.expanded === ir.dataset.inboxRow ? null : ir.dataset.inboxRow; return paintContent(); }

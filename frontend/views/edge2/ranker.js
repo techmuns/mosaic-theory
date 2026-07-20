@@ -15,9 +15,12 @@ const COLS = [
   { key: "character", label: "Character" }, { key: "multiple", label: "Multiple" },
   { key: "advUsd", label: "ADV", num: true }, { key: "marketCap", label: "Mkt cap", num: true },
 ];
-const STATE_RANK = { "not-started": 0, "dossier-built": 1, "verdict-logged": 2 };
+const STATE_RANK = { "not-started": 0, "underwritten": 1, "dossier-built": 2, "verdict-logged": 3 };
 const STATE_BADGE = {
   "not-started": `<span class="pill" style="background:var(--surface-2);color:var(--ink-3);">not started</span>`,
+  // scenario-record PRESENCE (a first-cut underwrite exists) — an intermediate workflow state,
+  // amber so it can never read as a ledger verdict.
+  "underwritten": `<span class="pill conditional">underwritten</span>`,
   "dossier-built": `<span class="pill" style="background:var(--accent-bg);color:var(--accent-strong);">dossier</span>`,
   "verdict-logged": `<span class="pill" style="background:var(--live-bg);color:var(--pos-text);">verdict ✓</span>`,
 };

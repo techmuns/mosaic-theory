@@ -1,9 +1,10 @@
 // DOSSIER VIEWER — render the structured dossier.json into styled, source-bound sections.
 // Assembles facts + a machine proposal SEALED until the human's verdict. Every fact shows its [n] cite.
 // The synthesis is fenced as "the framing, not the answer." Read-only; verdicts are CLI-logged.
-import { getDossier, getDossierIndex, getLedger, isBuyVerdict } from "../../lib/snapshots.js";
+import { getDossier, getDossierIndex, getLedger, isBuyVerdict, getScenarioIndex, getScenarioCard } from "../../lib/snapshots.js";
 import { fmtPrice, fmtDate, fmtStamp, fmtPct, escapeHtml, DASH } from "../../lib/format.js";
 import { barDomain, lineDomain, linScale, logScale, barLabelY, extent, EXHIBIT } from "../../lib/exhibit.js";
+import { uwCard } from "./uw-card.js";
 
 // PDF export uses the browser's native print-to-PDF (no library — the frontend stays dependency-free).
 // The browser derives the saved-file name from document.title, so on a dossier print we swap in a
@@ -30,13 +31,17 @@ window.addEventListener("afterprint", () => {
 // scope-menu on any outside click. Registering it per-render (inside render()) would leak a stale
 // listener on every dossier navigation, each closing over a now-detached menu. The toggle button
 // calls stopPropagation, so this never fires on the button itself.
-document.addEventListener("click", () => {
+document.addEventListener("click", (e) => {
   const menu = document.querySelector("#ds-pdf-menu");
   if (menu && !menu.hidden) {
     menu.hidden = true;
     const btn = document.querySelector("#ds-pdf");
     if (btn) btn.setAttribute("aria-expanded", "false");
   }
+  // the index assemble-help dropdown closes the same way; clicks inside it (the summary toggle,
+  // selecting text in the panel) are ignored so native <details> behavior still opens it.
+  const help = document.querySelector(".ds-help.dd[open]");
+  if (help && !e.target.closest(".ds-help.dd")) help.open = false;
 });
 
 export async function render(root, params, { item, frame }) {
@@ -49,6 +54,25 @@ export async function render(root, params, { item, frame }) {
 
   const [d, led] = await Promise.all([getDossier(ticker), getLedger()]);
   if (!d) {
+    // RICH DEGRADE — a name with a committed FIRST-CUT UNDERWRITE but no dossier renders its
+    // record under explicit typing (an underwrite is NOT assembled facts, and its scenario
+    // verdict is NOT a ledger verdict of record). Neither artifact → the plain notice, unchanged.
+    const card = await getScenarioCard(ticker);
+    if (card) {
+      const verdict = led.entries.find((e) => e.ticker === ticker) || null;
+      root.innerHTML = frame(item, { crumbExtra: crumb, bare: true, bodyHtml: `
+        <div class="header-block">
+          <h1 class="page-h"><span class="mono">${escapeHtml(ticker)}</span> · first analysis</h1>
+          <div class="subtitle muted">underwrite record · no dossier assembled${card.underwriteDate ? ` · underwritten ${escapeHtml(card.underwriteDate)}` : ""}${card.recipeId ? ` · recipe ${escapeHtml(card.recipeId.split("_")[0])}` : ""}${card.multipleBasis ? ` · basis ${escapeHtml(card.multipleBasis)}` : ""}</div>
+        </div>
+        <div class="subtitle muted" style="margin:-6px 0 12px;">This is the analyst's scenario underwrite — not assembled
+          facts, and its verdict is not a ledger verdict of record. The full dossier is built on a
+          re-underwrite trigger.</div>
+        ${uwCard(card, { ticker: false })}
+        ${loggedVerdict(verdict, ticker, card.underwriteDate)}
+        ${assembleHelp()}` });
+      return;
+    }
     root.innerHTML = frame(item, { crumbExtra: crumb, bare: true, bodyHtml: `
       <div class="notice">No dossier assembled for <b>${escapeHtml(ticker)}</b> in this deploy.
       Assemble it via <span class="mono">python -m vinci dossier --ticker ${escapeHtml(ticker)}</span> (then commit the derived
@@ -91,22 +115,57 @@ export async function render(root, params, { item, frame }) {
 // --- dossier index (no ticker) ----------------------------------------------
 async function renderIndex(root, item, frame) {
   root.innerHTML = frame(item, { bodyHtml: `<div class="notice">Loading dossiers…</div>` });
-  const tickers = await getDossierIndex();
+  const [tickers, scenTickers] = await Promise.all([getDossierIndex(), getScenarioIndex()]);
+  const uwOnly = scenTickers.filter((t) => !tickers.includes(t));
+
+  // Repetition-reduced: identity lives ONCE per typed panel (not on every card), the search
+  // placeholder is the instruction, and the assemble-help sits at the foot (on-demand tier).
   const search = `
-    <form id="ds-search" style="display:flex; gap:10px; margin:4px 0 18px;">
-      <input id="ds-q" type="search" placeholder="Jump to a ticker's dossier (e.g. VRRM)…" autocomplete="off"
-        style="flex:1; max-width:380px; padding:9px 12px; border:1px solid var(--line-2); border-radius:8px; font-size:13px;" />
-      <button type="submit" style="padding:9px 18px; border:1px solid var(--line-2); border-radius:8px; background:var(--surface); cursor:pointer; font-size:13px;">Open</button>
-    </form>`;
-  const body = tickers.length
+    <div class="ds-toolbar">
+      <form id="ds-search" style="display:flex; gap:10px; align-items:center; flex:1 1 380px; margin:0;">
+        <input id="ds-q" type="search" placeholder="Jump to a ticker's dossier (e.g. VRRM)…" autocomplete="off"
+          style="flex:1; max-width:380px; padding:9px 12px; border:1px solid var(--line-2); border-radius:8px; font-size:13px;" />
+        <button type="submit" style="padding:9px 18px; border:1px solid var(--line-2); border-radius:8px; background:var(--surface); cursor:pointer; font-size:13px;">Open</button>
+        <a class="foot" href="#/ranker">open a finalist from the ranker →</a>
+      </form>
+      ${assembleHelp(true)}
+    </div>`;
+
+  // TYPED PANELS behind segmented chips — one artifact type per panel, scalable past a single
+  // scroll (100 dossiers stay one tab away from the underwrites, not one long page above them).
+  const chips = `
+    <div class="rt-tabs" id="ds-panels-tabs">
+      <button type="button" class="rt-tab on" data-panel="dossiers">Dossiers · ${tickers.length}</button>
+      <button type="button" class="rt-tab" data-panel="underwrites">First analysis · ${uwOnly.length}</button>
+    </div>`;
+
+  const dossierGrid = tickers.length
     ? `<div class="grid cols-3">${tickers.map((t) => `
         <a class="ds-index-card" href="#/dossier/${escapeHtml(t)}">
           <div class="mono" style="font-size:16px; font-weight:650;">${escapeHtml(t)}</div>
-          <div class="muted" style="font-size:12px; margin-top:4px;">assembled facts · proposal sealed →</div>
         </a>`).join("")}</div>`
     : `<div class="notice">No dossiers committed to this deploy yet. Assemble with <span class="mono">python -m vinci dossier</span>, then commit the derived <span class="mono">dossier.json</span> to the private repo.</div>`;
+  const dossierPanel = `
+    <div data-panel-body="dossiers">
+      <div class="subtitle muted" style="margin:0 0 10px;">assembled facts · proposal sealed until the human logs</div>
+      ${dossierGrid}
+    </div>`;
+
+  const uwGrid = uwOnly.length
+    ? `<div class="grid cols-3">${uwOnly.map((t) => `
+        <a class="ds-index-card uw" href="#/dossier/${escapeHtml(t)}">
+          <div class="mono" style="font-size:16px; font-weight:650;">${escapeHtml(t)}
+            <span class="pill conditional" style="margin-left:6px;">underwrite</span></div>
+        </a>`).join("")}</div>`
+    : `<div class="foot">none yet — a record lands as <span class="mono">scenarios/&lt;TICKER&gt;.json</span> and appears here.</div>`;
+  const uwPanel = `
+    <div data-panel-body="underwrites" hidden>
+      <div class="subtitle muted" style="margin:0 0 10px;">scenario underwrite records — a screen-stage read with a recorded scenario verdict; not a dossier</div>
+      ${uwGrid}
+    </div>`;
+
   root.innerHTML = frame(item, {
-    bodyHtml: `${assembleHelp()}<div class="subtitle" style="margin-bottom:10px;">Search any ticker, open a finalist from the <a href="#/ranker">ranker</a>, or pick a committed one below.</div>${search}${body}`,
+    bodyHtml: `${search}${chips}${dossierPanel}${uwPanel}`,
   });
   // client-side navigation only (no write path) — jump to any ticker's dossier
   root.querySelector("#ds-search").addEventListener("submit", (e) => {
@@ -114,19 +173,29 @@ async function renderIndex(root, item, frame) {
     const t = root.querySelector("#ds-q").value.trim().toUpperCase();
     if (t) location.hash = `#/dossier/${encodeURIComponent(t)}`;
   });
+  // panel chips — client-side toggle, no route (the ds-tabs precedent)
+  root.querySelectorAll("#ds-panels-tabs .rt-tab").forEach((b) => b.addEventListener("click", () => {
+    root.querySelectorAll("#ds-panels-tabs .rt-tab").forEach((x) => x.classList.toggle("on", x === b));
+    root.querySelectorAll("[data-panel-body]").forEach((pnl) =>
+      pnl.hidden = pnl.dataset.panelBody !== b.dataset.panel);
+  }));
 }
 
 // "How to assemble a dossier" — COPYABLE TEXT in the same compact, collapsible style as the
 // Ingestion page's refresh block (never a button). The dashboard is read-only and runs nothing.
-function assembleHelp() {
+function assembleHelp(dd = false) {
+  // dd=true -> the index-toolbar dropdown (collapsed control top-right, panel overlays on open —
+  // the PDF-menu precedent); default -> the in-flow block the degrade page keeps.
   return `
-    <details class="card" style="margin-bottom:18px; background:var(--surface-2);">
-      <summary style="cursor:pointer; font-size:12.5px; font-weight:600; color:var(--ink-2);">How to assemble a dossier <span class="muted" style="font-weight:400;">(read-only — copy &amp; run locally, then rebuild)</span></summary>
+    <details class="card ds-help${dd ? " dd" : ""}">
+      <summary style="cursor:pointer; font-size:12.5px; font-weight:600; color:var(--ink-2);">How to assemble a dossier${dd ? "" : ` <span class="muted" style="font-weight:400;">(read-only — copy &amp; run locally, then rebuild)</span>`}</summary>
+      <div class="ds-help-body">
       <div class="subtitle muted" style="margin:10px 0 8px;">Replace <span class="mono">&lt;TICKER&gt;</span> with the name. Pull the licensed CIQ first, assemble, then rebuild the mirror — the dashboard runs nothing.</div>
       <pre style="background:var(--nav-bg); color:var(--nav-ink); padding:12px 14px; border-radius:8px; font-size:12px; overflow-x:auto; margin:0; line-height:1.6;"><code>python -m vinci dossier requirements --ticker &lt;TICKER&gt;  # which licensed CIQ to pull first
 python -m vinci dossier --ticker &lt;TICKER&gt;               # assemble one finalist (facts + fenced synthesis)
 python -m vinci dossier --top 10                         # or: the top 10 of the ranked queue
 python3 frontend/build.py                                # mirror into this dashboard, then reload</code></pre>
+      </div>
     </details>`;
 }
 
@@ -1265,7 +1334,7 @@ function governingTerms(rows, pointers) {
   (rows || []).forEach((r) => {
     const v = r.value || {};
     const [fam, dt] = meta[_accOf(v.source_ref) || _accOf(v.note)] || ["(unmapped)", ""];
-    const key = fam + " " + r.name;
+    const key = fam + "\x00" + r.name;
     if (!grouped.has(key)) { grouped.set(key, { fam, term: r.name, list: [] }); order.push(key); }
     grouped.get(key).list.push([dt, r]);  // (RC-1.5d) store the whole row — components ride along
   });

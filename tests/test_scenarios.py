@@ -133,5 +133,48 @@ def test_frontend_build_stays_stdlib_only() -> None:
     assert not offenders, f"frontend/build.py must stay stdlib-only; found: {offenders}"
 
 
+def _load_build():  # type: ignore[no-untyped-def]
+    """Import frontend/build.py as a module (it is a script, not a package member)."""
+    import importlib.util
+
+    path = Path(__file__).resolve().parents[1] / "frontend" / "build.py"
+    spec = importlib.util.spec_from_file_location("fe_build", path)
+    assert spec is not None and spec.loader is not None
+    mod = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(mod)
+    return mod
+
+
+def test_emit_scenarios_matches_theme_embedded_card_and_is_deterministic() -> None:
+    """The standalone `frontend/scenarios/<T>.json` must be the EXACT `_scenario_card()` shape the
+    theme JSON embeds (one contract), and two emits must be byte-identical (committed output never
+    churns). Runs against the real committed `scenarios/` + `frontend/themes/` artifacts."""
+    build = _load_build()
+    root = Path(__file__).resolve().parents[1]
+    cards = build._scenario_cards()
+    assert "WERN" in cards                                  # the committed record reaches the emit
+    theme = json.loads((root / "frontend" / "themes" / "truckload-supply-purge.json").read_text())
+    embedded = next(w["scenarioCard"] for w in theme["watchlist"]
+                    if w["ticker"] == "WERN" and "scenarioCard" in w)
+    assert cards["WERN"] == embedded                        # ONE shape, wherever the card renders
+    out = root / "frontend" / "scenarios"
+    if out.is_dir():                                        # emitted by the build → pinned stable
+        first = {p.name: p.read_bytes() for p in sorted(out.glob("*.json"))}
+        build.emit_scenarios()
+        second = {p.name: p.read_bytes() for p in sorted(out.glob("*.json"))}
+        assert first == second                              # idempotent, byte-for-byte
+        idx = json.loads(second["index.json"].decode())
+        assert idx == {"tickers": sorted(cards)}
+
+
+def test_reserved_theme_slugs_fail_loud() -> None:
+    """A theme slug that collides with a themes-route first segment (radar/watchlist/scan/forward)
+    would be unroutable — the build must refuse it, never ship a shadowed page."""
+    build = _load_build()
+    with pytest.raises(SystemExit, match="reserved themes route"):
+        build._slug("Radar")
+    assert build._slug("Truckload Supply Purge")[0] == "truckload-supply-purge"
+
+
 if __name__ == "__main__":
     raise SystemExit(pytest.main([__file__, "-q"]))
