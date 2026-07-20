@@ -3315,5 +3315,55 @@
     "source_ref": "CIQ Comparable Analysis→Business Description (subject row)",
     "status": "present",
     "note": null
+  },
+  "anchor": {
+    "recipe_hint": "R1_midcycle_margin_evebitda",
+    "applicable": true,
+    "multiple_basis": "EV/EBITDA",
+    "computed_at": "2026-07-20T14:26:46.108640Z",
+    "reason": null,
+    "margin": {
+      "value": 0.065422,
+      "unit": "fraction",
+      "basis": "operating margin (EBIT / revenue)",
+      "source": "EDGAR companyfacts OperatingIncomeLoss / RevenueFromContractWithCustomerExcludingAssessedTax — reported median over 7 FY",
+      "anchor_years": 7,
+      "confidence": "firm"
+    },
+    "multiple": {
+      "value": 6.888432,
+      "unit": "EV/EBITDA",
+      "source": "valuation.own_history.median",
+      "history_quarters": 19,
+      "confidence": "weak"
+    },
+    "d_and_a": {
+      "value": 660.433,
+      "unit": "$M",
+      "basis": "consolidated latest FY",
+      "source": "EDGAR Depreciation + AmortizationOfIntangibleAssets (split, FY2025)"
+    },
+    "net_debt": {
+      "value": 5248.695,
+      "unit": "$M",
+      "basis": "lease-inclusive net debt (latest 10-Q)",
+      "source": "EDGAR: total debt 4,585 + finance leases 0 + operating leases 919 − cash 256 ($M)"
+    },
+    "diluted_shares": {
+      "value": 61078000.0,
+      "unit": "shares",
+      "basis": "diluted weighted-average (latest 10-Q)",
+      "source": "EDGAR WeightedAverageNumberOfDilutedSharesOutstanding"
+    },
+    "ltm_revenue": {
+      "value": 9953.94,
+      "unit": "$M",
+      "basis": "LTM revenue",
+      "source": "committed financial_summary.annual (LTM)"
+    },
+    "anchor_base_value_per_share": 61.9935,
+    "anchor_ev_ebit": 13.8745,
+    "overall_confidence": "weak",
+    "note": "ATTENTION FILTER, not a verdict. Even a firm anchor requires a full bear/base/bull 2:1 underwrite before any BUY. Spot and reward-to-base are computed live at triage, not stored here."
   }
 }
