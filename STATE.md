@@ -2314,8 +2314,38 @@ Each line: *what it does* — *verified how*.
     median/excess, `<3`-UNDEFINED, tag boundaries, stale exclusion, dispersion. ruff + `mypy --strict
     vinci` + pytest (654) green.
 
-- **DOSSIER-SHELF LEAN TAG + DARK-MODE TOOLBAR FIX (2026-07-20, feat/index-lean-tags; PR open,
-  NOT merged).** Operator ask: a small verdict-ish tag per dossier card, like the WERN card.
+- **PRODUCTION BUG — EXISTENCE INFERRED FROM A 404 (2026-07-20, fix/existence-from-index; PR open,
+  NOT merged).** Operator report: WERN's dossier link opened locally but hung on the deploy.
+  - **CAUSE.** The dossier view PROBED for `dossiers/<T>.json` and read "no dossier" off a **404**.
+    True on a plain static server; NOT on the authed Pages origin — `functions/_middleware.js`
+    runs on EVERY request and a miss that fails inside `ctx.next()` falls through its bare
+    `catch {}` to `challenge()` = **401**. `getDossier` tolerates only 404 → rethrew → the awaited
+    `Promise.all` rejected → the render died at "Loading dossier…" before reaching the underwrite
+    fallback. **A host-semantics dependency that local dev can never expose.**
+  - **WHY ONLY WERN.** It is the only ticker with an underwrite record but NO dossier — the only
+    page whose NORMAL path requires a MISSING file. Every other name has a real dossier.json and
+    never takes the branch. (Unknown tickers hung identically; nothing links to one.)
+  - **FIX — absence is DATA, not an error code.** `dossiers/index.json` + `scenarios/index.json`
+    already list exactly what the build emitted, so the view asks them and fetches only what is
+    known to exist. No probe, no error-code interpretation, no dependence on host 404 semantics.
+    The helpers stay FAIL-LOUD (a 500/401 on a file that SHOULD exist must still throw, never
+    silently degrade to "nothing committed yet") — the fix stops ASKING for known-absent files.
+  - **Verified by REPRODUCTION, not reasoning:** a local origin answering 401 for a miss (the
+    middleware's behavior) reproduced the hang exactly; after the fix WERN renders "first
+    analysis" + the card with the origin still returning 401; VRRM renders; unknown ZZZZ shows the
+    honest notice. The regression pin FAILS on the pre-fix JS (demonstrated).
+  - **INVARIANT** (per the incident rule): `test_dossier_view_resolves_existence_from_the_index_
+    never_from_a_404` — the per-name fetches must be index-gated and appear exactly once, so an
+    unguarded probe cannot creep back.
+  - **STILL OPEN (flagged, not fixed — scope):** `getThemeDriver(slug)` is the one remaining
+    per-name probe with the same assumption; unreachable today because the router only offers
+    slugs from the themes index. Every other 404-degrading helper reads a whole-file artifact that
+    IS committed (audited: 10 of them, all present), so none take the 404 path in production.
+  - **GENERAL LESSON:** a static-server 404 is not a contract. Any "does this artifact exist?"
+    question must be answered by a committed manifest, never by interpreting a transport error.
+
+- **DOSSIER-SHELF LEAN TAG + DARK-MODE TOOLBAR FIX (2026-07-20, feat/index-lean-tags; MERGED
+  #154 `f493a0c`).** Operator ask: a small verdict-ish tag per dossier card, like the WERN card.
   - **WHAT IS SHOWN — the evidence LEAN, not the proposal.** The index card carries the
     synthesis's committed lean LABEL ("Mixed" / "Strongly bearish" / "Strongly bullish"). This is
     the same read the Brief already shows openly WITH its rationale; the machine's BUY/AVOID

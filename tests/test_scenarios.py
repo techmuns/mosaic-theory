@@ -176,5 +176,37 @@ def test_reserved_theme_slugs_fail_loud() -> None:
     assert build._slug("Truckload Supply Purge")[0] == "truckload-supply-purge"
 
 
+def test_dossier_view_resolves_existence_from_the_index_never_from_a_404() -> None:
+    """PRODUCTION REGRESSION — WERN's page rendered locally but hung forever on the deploy.
+
+    The view used to PROBE for `dossiers/<T>.json` and read "no dossier" off a 404. That holds on a
+    plain static server, but the authed Pages origin runs functions/_middleware.js on EVERY request
+    and a miss that fails inside ctx.next() falls through its bare `catch {}` to challenge() — a
+    401. getDossier tolerates ONLY 404, so it rethrew and the view died at "Loading dossier…".
+
+    It bit exactly one name: WERN — the only ticker with an underwrite but no dossier, hence the
+    only page whose NORMAL path needs a missing file. Reproduced against an origin that answers 401
+    for a miss, and fixed by asking the committed index (which lists what the build actually
+    emitted) instead of interpreting a transport error. Absence is DATA, not an error code.
+
+    The helpers stay fail-loud on purpose — a 500/401 on a file that SHOULD exist must still throw
+    rather than silently degrade to "nothing committed yet"; the fix is to not probe for files the
+    index already says are absent."""
+    import re
+
+    js = (Path(__file__).resolve().parents[1] / "frontend" / "views" / "shared" / "dossier.js"
+          ).read_text()
+    # the dossier read is GUARDED by index membership — and appears exactly once, so no unguarded
+    # probe can hide elsewhere in the view
+    assert len(re.findall(r"await getDossier\(", js)) == 1, "an unguarded getDossier probe crept in"
+    guard = r"known\.includes\(ticker\)\s*\?\s*await getDossier\(ticker\)\s*:\s*null"
+    assert re.search(guard, js), (
+        "the dossier fetch must be gated on the committed index, not on a 404 from a probe")
+    # ditto the underwrite record
+    assert len(re.findall(r"await getScenarioCard\(", js)) == 1
+    assert re.search(r"\(await getScenarioIndex\(\)\)\.includes\(ticker\)", js), (
+        "the scenario-card fetch must be gated on the scenario index")
+
+
 if __name__ == "__main__":
     raise SystemExit(pytest.main([__file__, "-q"]))

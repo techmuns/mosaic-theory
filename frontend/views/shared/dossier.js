@@ -52,12 +52,23 @@ export async function render(root, params, { item, frame }) {
   // bare: the detail page's own ticker header replaces the generic "Dossier" header block (no duplication)
   root.innerHTML = frame(item, { crumbExtra: crumb, bare: true, bodyHtml: `<div class="notice">Loading dossier…</div>` });
 
-  const [d, led] = await Promise.all([getDossier(ticker), getLedger()]);
+  // EXISTENCE COMES FROM THE COMMITTED INDEX, NEVER FROM A TRANSPORT ERROR CODE.
+  // Probing for the file and reading "absent" off a 404 holds on a plain static server but NOT on
+  // the authed Pages origin: functions/_middleware.js runs on EVERY request, and a miss that fails
+  // inside ctx.next() falls through its bare `catch {}` to challenge() — a 401. getDossier only
+  // tolerates 404, so it rethrew and this view died at "Loading dossier…". It bit exactly one name:
+  // WERN, the only ticker with an underwrite but no dossier, i.e. the only page whose normal path
+  // requires a MISSING file. The index lists exactly what the build emitted — ask it, don't probe.
+  const [known, led] = await Promise.all([getDossierIndex(), getLedger()]);
+  const d = known.includes(ticker) ? await getDossier(ticker) : null;
   if (!d) {
     // RICH DEGRADE — a name with a committed FIRST-CUT UNDERWRITE but no dossier renders its
     // record under explicit typing (an underwrite is NOT assembled facts, and its scenario
     // verdict is NOT a ledger verdict of record). Neither artifact → the plain notice, unchanged.
-    const card = await getScenarioCard(ticker);
+    // same rule for the underwrite record — the scenario index is the source of truth for
+    // which records the build emitted; never probe-and-interpret-the-error.
+    const card = (await getScenarioIndex()).includes(ticker)
+      ? await getScenarioCard(ticker) : null;
     if (card) {
       const verdict = led.entries.find((e) => e.ticker === ticker) || null;
       root.innerHTML = frame(item, { crumbExtra: crumb, bare: true, bodyHtml: `
