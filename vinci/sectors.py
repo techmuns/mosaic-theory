@@ -13,6 +13,8 @@ SIC fails honest → ``"Unknown"`` (never guessed).
 
 from __future__ import annotations
 
+from vinci.sic_table import SIC_TABLE
+
 
 def sector_for_sic(sic: str | int | None) -> str:
     """Map an SEC SIC code to a coarse GICS-like sector. ``None``/blank/non-numeric → ``"Unknown"``.
@@ -63,176 +65,53 @@ def sector_for_sic(sic: str | int | None) -> str:
     return "Other"
 
 
-def industry_for_sic(sic: str | int | None) -> str:
-    """Map an SEC SIC code to a READABLE sub-industry — finer than :func:`sector_for_sic`.
+def _display_title(official: str) -> str:
+    """Deterministic display casing over a VERBATIM official SEC title (stored ALL-CAPS).
 
-    Same discipline: DETERMINISTIC, STABLE, fail-honest (blank/non-numeric → ``"Unknown"``). Where a
-    code has no specific sub-industry it FALLS BACK to the coarse sector, so an industry label is
-    never *less* informative than the sector. This is a human-readable classification lens for the
-    cross-sectional cluster read — NOT a peer cohort, NOT a driver/theme (that is the theme edge),
-    and NEVER a screen / rank / verdict input.
+    Word-wise capitalization; glue words stay lowercase except at the start of the title or of a
+    parenthesised/hyphenated segment ("TRUCKING (NO LOCAL)" → "Trucking (No Local)",
+    "SERVICES-PREPACKAGED SOFTWARE" → "Services-Prepackaged Software"). Pure presentation — the
+    vendored table keeps the SEC's verbatim strings."""
+    glue = {"and", "of", "or", "the", "a", "an", "etc.", "etc"}
+
+    def cap_word(w: str, first: bool) -> str:
+        parts = w.split("-")
+        out = []
+        for i, part in enumerate(parts):
+            low = part.lower()
+            lead = low.lstrip("(")
+            prefix = part[: len(part) - len(lead)].lower() if lead != low else ""
+            if not lead:
+                out.append(low)
+                continue
+            seg_first = first or i > 0 or prefix != ""
+            out.append(prefix + (lead.capitalize() if seg_first or lead not in glue else lead))
+        return "-".join(out)
+
+    words = official.split(" ")
+    return " ".join(cap_word(w, i == 0) for i, w in enumerate(words))
+
+
+def industry_for_sic(sic: str | int | None) -> str:
+    """Map an SEC SIC code to its OFFICIAL industry title (display-cased) — finer than
+    :func:`sector_for_sic`.
+
+    The naming source is the vendored official SEC SIC code list (``vinci.sic_table.SIC_TABLE`` —
+    the repo's ONE universe-wide fine-industry table; it replaced both the old hand-rolled
+    ~80-bucket map here and the frontend ``_SIC_NAME`` map). Same discipline: DETERMINISTIC,
+    STABLE, fail-honest (blank/non-numeric → ``"Unknown"``). A code the official table lacks
+    FALLS BACK to the coarse sector, so an industry label is never *less* informative than the
+    sector. This is a human-readable classification lens for the cross-sectional cluster read —
+    NOT a peer cohort, NOT a driver/theme (that is the theme edge), and NEVER a
+    screen / rank / verdict input.
     """
     if sic is None:
         return "Unknown"
     s = str(sic).strip()
     if not s.isdigit():
         return "Unknown"
-    n = int(s)
-    mg = n // 100  # 2-digit major group
-
-    # --- Health Care ---
-    if 2833 <= n <= 2834:
-        return "Pharma"
-    if n == 2835:
-        return "Diagnostics"
-    if n == 2836:
-        return "Biotech"
-    if n in (3826, 3827, 3829):
-        return "Life Sciences Tools"
-    if 3840 <= n <= 3851:
-        return "Medical Devices"
-    if 8060 <= n <= 8069:
-        return "Hospitals"
-    if 8050 <= n <= 8059:
-        return "Healthcare Facilities"
-    if n == 8071:
-        return "Diagnostics"
-    if mg == 80:
-        return "Healthcare Services"
-    if n == 6324:
-        return "Managed Care"
-
-    # --- Technology ---
-    if n == 7372:
-        return "Software"
-    if n in (7370, 7371, 7373, 7374, 7379):
-        return "IT Services"
-    if n == 3674:
-        return "Semiconductors"
-    if n == 3559:
-        return "Semi Equipment"
-    if n == 3576:
-        return "Networking"
-    if n in (3571, 3572, 3575, 3577, 3578):
-        return "Computer Hardware"
-    if n in (3661, 3663, 3669):
-        return "Comms Equipment"
-    if 3670 <= n <= 3679:
-        return "Electronic Components"
-
-    # --- Financials ---
-    if 6020 <= n <= 6036:
-        return "Banks"
-    if n == 6141:
-        return "Consumer Finance"
-    if n in (6153, 6159, 6172):
-        return "Commercial Finance"
-    if n in (6200, 6211):
-        return "Capital Markets"
-    if n == 6282:
-        return "Asset Management"
-    if n in (6311, 6321, 6331, 6411):
-        return "Insurance"
-
-    # --- Real Estate ---
-    if n == 6798:
-        return "REIT"
-    if n == 6500 or 6510 <= n <= 6519:
-        return "Real Estate"
-    if n == 6531:
-        return "Real Estate Services"
-
-    # --- Energy ---
-    if n == 1311:
-        return "Oil & Gas E&P"
-    if n in (1381, 1389, 3533):
-        return "Oil & Gas Services"
-    if n == 2911:
-        return "Refining"
-
-    # --- Materials ---
-    if n == 1040:
-        return "Gold Mining"
-    if 1000 <= n <= 1099 or 1400 <= n <= 1499:
-        return "Metals & Mining"
-    if 3310 <= n <= 3316:
-        return "Steel"
-    if 2600 <= n <= 2679:
-        return "Paper & Packaging"
-    if n in (3241, 3270, 3272, 3281):
-        return "Building Materials"
-    if 2800 <= n <= 2899:
-        return "Chemicals"
-
-    # --- Industrials ---
-    if 3720 <= n <= 3728 or n in (3760, 3480, 3812):
-        return "Aerospace & Defense"
-    if n == 4011 or n == 4013:
-        return "Rail"
-    if 4200 <= n <= 4231:
-        return "Trucking & Logistics"
-    if 4500 <= n <= 4581:
-        return "Airlines"
-    if 4700 <= n <= 4789:
-        return "Transport Services"
-    if 1600 <= n <= 1799:
-        return "Construction"
-    if 3500 <= n <= 3569:
-        return "Machinery"
-    if 5000 <= n <= 5199:
-        return "Distributors"
-
-    # --- Consumer Discretionary ---
-    if n in (3711, 3713, 3714, 3715):
-        return "Autos & Parts"
-    if 2300 <= n <= 2399 or 3100 <= n <= 3199:
-        return "Apparel & Footwear"
-    if n == 5812:
-        return "Restaurants"
-    if 7000 <= n <= 7011:
-        return "Hotels & Leisure"
-    if n in (7812, 7822, 7900, 7990, 7997):
-        return "Media & Entertainment"
-    if n in (1531, 1520, 1522, 2450):
-        return "Homebuilding"
-    if 5200 <= n <= 5999:
-        return "Retail"
-
-    # --- Consumer Staples ---
-    if 2080 <= n <= 2086:
-        return "Beverages"
-    if n == 2100 or 2110 <= n <= 2141:
-        return "Tobacco"
-    if n in (2840, 2842, 2844):
-        return "Household Products"
-    if 2000 <= n <= 2099:
-        return "Food Products"
-    if 100 <= n <= 999:
-        return "Agriculture"
-
-    # --- Communication Services ---
-    if n == 4813:
-        return "Telecom"
-    if n == 4812:
-        return "Wireless Telecom"
-    if n == 4841:
-        return "Cable & Satellite"
-    if n in (4832, 4833):
-        return "Broadcasting"
-    if n == 4899:
-        return "Media & Internet"
-    if n == 2711:
-        return "Publishing"
-
-    # --- Utilities ---
-    if n == 4911 or n == 4931:
-        return "Electric Utilities"
-    if n in (4922, 4923, 4924, 4925):
-        return "Gas Utilities"
-    if n == 4941:
-        return "Water Utilities"
-    if n == 4991:
-        return "Renewables & IPPs"
-
-    # no specific sub-industry → the coarse sector (never LESS informative than sector_for_sic)
+    official = SIC_TABLE.get(s.zfill(4))
+    if official:
+        return _display_title(official)
+    # no official entry → the coarse sector (never LESS informative than sector_for_sic)
     return sector_for_sic(sic)

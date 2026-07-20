@@ -522,11 +522,13 @@ def test_sector_never_enters_the_scorer_or_the_gate() -> None:
             scanned.add(src.name)
             for node in ast.walk(ast.parse(src.read_text())):
                 if isinstance(node, ast.ImportFrom) and node.module is not None:
-                    bad = node.module == "vinci.sectors" or node.module.startswith("vinci.sectors.")
-                    assert not bad, f"{src.name} imports {node.module} — sector must not gate/score"
+                    bad = any(node.module == m or node.module.startswith(m + ".")
+                              for m in ("vinci.sectors", "vinci.labels", "vinci.sic_table"))
+                    assert not bad, f"{src.name} imports {node.module} — labels must not gate/score"
                 if isinstance(node, ast.Import):
                     for alias in node.names:
-                        assert not alias.name.startswith("vinci.sectors"), (
-                            f"{src.name} imports {alias.name} — sector must not gate/score"
+                        assert not any(alias.name.startswith(m) for m in
+                                       ("vinci.sectors", "vinci.labels", "vinci.sic_table")), (
+                            f"{src.name} imports {alias.name} — labels must not gate/score"
                         )
     assert {"ranker.py", "screen2.py"} <= scanned  # sanity: the scorer + gate files were scanned
