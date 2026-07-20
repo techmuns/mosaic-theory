@@ -3716,6 +3716,45 @@ two-name analysis (mid/small-caps, opposite directions) mapped against this inve
 
 ## 5. Next steps (ordered, current)
 
+- **OWN-HISTORY BAND REFRESH + SELF-DESCRIBING PERIODICITY METADATA (branch
+  `feat/own-history-band-refresh`, 2026-07-21; PR open, NOT merged).**
+  - **MISDIAGNOSIS → DETECTION → REAL FINDING.** A brief asserted IT's "quarterly" multiples file
+    held ~20 ANNUAL closes mislabelled as quarters. **Detection refuted it:** every committed AND
+    on-disk band shows **91-day (quarterly) spacing** — IT's committed 21 dates are quarter-ends
+    (2021-06-30 … 2026-06-24), genuinely quarterly over 5.0y. The premise was withdrawn. The REAL
+    defect is **window staleness**: 6 committed bands were built from SHORTER exports than what's now
+    on disk (IT 21→39 closes / 5.0→9.3y; EPAM 19→38 / 4.8→9.3y; SMPL 20→36; BRBR 19→27; CNXC 19→23;
+    VITL 19→24; MVST 4→6). A band could read as more/less history than it holds with nothing on the
+    record to say which.
+  - **REFRESH RULE ADOPTED:** own-history bands recompute from the CURRENT on-disk CIQ export; every
+    band now stores `periodicity_days_median`, `window_span_years`, `periodicity`, `source_file`, and
+    a fail-loud `data_quality="periodicity_mismatch"` (annual spacing on the quarterly Multiples tab).
+    Computed in the ONE shared loader `_own_history_band` (range_position / bands / refresh can't
+    drift). CLI `own-history-refresh --tickers …[--dry-run]` writes ONLY `own_history.value`
+    byte-preserving (JSON-surgical `dump(indent=2, ensure_ascii=False)` reproduces committed bytes
+    exactly; a model round-trip drifts older-schema dossiers). A name with no on-disk CIQ →
+    "awaiting corrected export", left untouched.
+  - **CONFIDENCE now span-based:** the multiple leg is `firm` only if **window_span ≥ 5y AND
+    periodicity == quarterly** (and no mismatch flag) — never raw close count.
+    `ANCHOR_FIRM_MIN_MULT_QUARTERS` retired for `ANCHOR_FIRM_MIN_MULT_YEARS=5.0`. A pre-metadata band
+    (span UNKNOWN) → weak (the safe read). This CORRECTED SMPL: 20 closes but only 4.98y span →
+    multiple leg now weak.
+  - **RE-BACKFILL (scope BRBR/CNXC/EPAM/IT/SMPL/VITL/MVST):** medians moved, anchor bases recomputed
+    (byte-preserving, own_history + anchor only): **EPAM $225.55→$306.05 (+36%)** (median 16.2→22.4x,
+    leg firm on 9.3y), IT $337.96→$348.64 (+3%, median 22.7→23.4x), VITL $4.35→$4.76 (+9%), BRBR
+    $56.20→$55.41 (−1%), CNXC/SMPL bases unchanged (metadata + confidence only), MVST stays R2. **NO
+    triage-tier flips** vs the 2026-07-17 spot (EPAM strengthens +154%→+245% but stays PRIORITY).
+  - **SCOPE HELD:** AORT NOT touched (PR #161 owns it; its band matched anyway); NCNO/VRRM matched;
+    **WERN detect-and-report only** — its on-disk band is 43 quarterly closes / 10.3y, **no mislabel**,
+    recorded-verdict inputs left as-used.
+  - **IT BUY and the SMPL run remain HELD** pending analyst re-ratification against the corrected
+    9.3y band. Report-only: IT's chosen legs barely move (bear 9.5x 5→5%ile, base 15.0x 15→11%ile,
+    bull 20.0x 25→24%ile); **"base below median" still holds** (median 22.7→23.4x); current-multiple
+    percentile 0→3% (the longer window contains a lower 7.46x trough). The extended window does NOT
+    invalidate the pending IT underwrite — it makes the base marginally MORE conservative.
+  - **STILL OPEN (unchanged by this):** the shared `extract_points`/`annual_series` longest/first-
+    alias rule (this was own-history-local + anchor-local); and the operator may want a standing
+    refresh cadence so committed bands don't silently lag new exports.
 - **ANCHOR REVENUE-TAG DEFECT — FOUND, FIXED, BOOK RE-VALIDATED (branch
   `fix/anchor-revenue-tag`, 2026-07-20; PR open, NOT merged).** The R1 anchor's margin DENOMINATOR
   was chosen by *longest series*, which for AORT selected `Revenues` — a PARTIAL/segment measure

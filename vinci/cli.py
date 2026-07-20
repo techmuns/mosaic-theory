@@ -496,6 +496,62 @@ def _cmd_anchor_backfill(args: argparse.Namespace) -> int:
     return 0
 
 
+def _cmd_own_history_refresh(args: argparse.Namespace) -> int:
+    """Refresh committed ``valuation.own_history`` from the CURRENT on-disk CIQ export (the
+    2026-07-21 window-staleness fix), stamping periodicity/span/source_file metadata.
+
+    Recomputes the band via the SHARED loader (own_history_bands — no re-impl), then writes
+    ONLY that nested value byte-preserving (all other fields byte-identical). Prints old-vs-new
+    median/span/n and the periodicity verdict; flags any name whose on-disk band is annual-spaced.
+    A name with no CIQ file on disk is 'awaiting corrected export' — left untouched, listed. Does
+    NOT touch the anchor block — run ``anchor-backfill`` after to re-derive the multiple leg."""
+    from vinci.dossier import ciq_sheets as cs
+    from vinci.dossier.anchor import replace_own_history_value
+    from vinci.dossier.ciq import CiqBundle
+    from vinci.dossier.manual_store import LocalFolderStore
+    from vinci.dossier.schemas import SourceStatus
+
+    cfg = get_config()
+    store = LocalFolderStore.from_config(cfg)
+    tickers = [t.strip().upper() for t in args.tickers.split(",") if t.strip()]
+    print(f"{'ticker':7}{'old med/n/yrs':>20}{'new med/n/yrs':>20}{'period':>11}  status")
+    for t in tickers:
+        path = cfg.data_dir / "dossiers" / t / "dossier.json"
+        if not path.exists():
+            print(f"{t:7}  no committed dossier — skip")
+            continue
+        original = path.read_text()
+        doc = json.loads(original)
+        oh_old = next((b for b in (((doc.get("mechanical") or {}).get("valuation") or {})
+                                   .get("own_history") or {}).get("value") or []
+                       if "EBITDA" in str(b.get("metric", ""))), None)
+        if not store.available(t):
+            print(f"{t:7}  AWAITING CORRECTED EXPORT — no CIQ file on disk; committed band kept")
+            continue
+        band = cs.own_history_bands(CiqBundle.from_files(t, store.files(t)))
+        if band.status != SourceStatus.PRESENT or not band.value:
+            print(f"{t:7}  no own-history band from export ({band.note or 'unknown'}) — skip")
+            continue
+        new_val = [b.model_dump(mode="json") for b in band.value]
+        oh_new = next((b for b in new_val if "EBITDA" in str(b.get("metric", ""))), None)
+
+        def fmt(b: dict[str, Any] | None) -> str:
+            if not b:
+                return "—"
+            return (f"{(b.get('median') or 0):.1f}/{b.get('n_closes')}/"
+                    f"{b.get('window_span_years') or '?'}y")
+        per = (oh_new or {}).get("periodicity") or "?"
+        dq = (oh_new or {}).get("data_quality")
+        changed = json.dumps(oh_old, sort_keys=True) != json.dumps(oh_new, sort_keys=True)
+        status = ("PERIODICITY_MISMATCH ✗" if dq else
+                  ("refreshed *" if changed and not args.dry_run else
+                   ("would refresh (dry-run)" if changed else "unchanged (0/0)")))
+        print(f"{t:7}{fmt(oh_old):>20}{fmt(oh_new):>20}{per:>11}  {status}")
+        if changed and not args.dry_run:
+            path.write_text(replace_own_history_value(original, new_val))
+    return 0
+
+
 def _sealed_proposal(
     cfg: Config, ticker: str
 ) -> tuple[Verdict | None, str | None, datetime | None]:
@@ -1850,6 +1906,16 @@ def build_parser() -> argparse.ArgumentParser:
                           help="DIAGNOSTIC: recompute and report old-vs-new without writing "
                                "anything (the re-validation pass)")
     p_anchor.set_defaults(func=_cmd_anchor_backfill)
+
+    p_ohr = sub.add_parser(
+        "own-history-refresh",
+        help="recompute committed valuation.own_history from the CURRENT on-disk CIQ export, stamp "
+        "periodicity/span metadata (byte-preserving; own_history value only). Then anchor-backfill "
+        "after to re-derive the multiple leg.")
+    p_ohr.add_argument("--tickers", required=True, help="comma-separated tickers")
+    p_ohr.add_argument("--dry-run", action="store_true", dest="dry_run",
+                       help="DIAGNOSTIC: report old-vs-new bands without writing")
+    p_ohr.set_defaults(func=_cmd_own_history_refresh)
 
     p_log = sub.add_parser("log-verdict", help="record a manual BUY/AVOID verdict for a candidate")
     p_log.add_argument("candidate_id", help="candidate id from `vinci screen`")
