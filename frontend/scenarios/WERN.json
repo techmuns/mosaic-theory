@@ -2,6 +2,117 @@
  "ticker": "WERN",
  "recipeId": "R1_midcycle_margin_evebitda",
  "recipeDesc": "Mid-cycle underwrite: normalized operating margin on a mid-cycle revenue base, valued at an exit EV/LTM-EBITDA multiple; reward/risk measured at SPOT.",
+ "recipeFormula": [
+  "EBIT = revenue \u00d7 op margin",
+  "EBITDA = EBIT + D&A",
+  "EV = EBITDA \u00d7 exit multiple (EV/EBITDA)",
+  "equity = EV \u2212 net debt",
+  "value/share = equity \u00f7 diluted shares"
+ ],
+ "assumptions": [
+  {
+   "axis": "revenue",
+   "method": "Legs set against reported history: bear holds a trough below FY2025 with continued One-Way shrink; base is a modest cyclical recovery above FY2025; bull sits just above the FY2022 peak on a genuine cycle turn.",
+   "references": [
+    {
+     "label": "FY2025 reported revenue",
+     "value": 2974.4,
+     "unit": "$M",
+     "source": "EDGAR companyfacts us-gaap Revenues, FY2025 (verified 2026-07-20 vs EDGAR companyfacts)"
+    },
+    {
+     "label": "FY2022 peak revenue",
+     "value": 3290.0,
+     "unit": "$M",
+     "source": "EDGAR companyfacts us-gaap Revenues, FY2022 (verified 2026-07-20 vs EDGAR companyfacts)"
+    }
+   ]
+  },
+  {
+   "axis": "margin",
+   "method": "Modeled off the 7.45% own-history median anchor: base deducts ~125bps for the structurally higher insurance run-rate and ~50bps for the Dedicated mix shift capping One-Way upside; bear is a slight lift off the ~0% FY2025 underlying floor; bull re-rates toward but below the FY2021 consolidated peak.",
+   "references": [
+    {
+     "label": "own-history median operating margin, FY2008-2025 (the anchor)",
+     "value": 7.45,
+     "unit": "%",
+     "source": "EDGAR companyfacts OperatingIncomeLoss / Revenues, 18 FYs \u2014 midcycle margin_anchor median (#150 run 2026-07-19; verified 2026-07-20 vs EDGAR companyfacts)"
+    },
+    {
+     "label": "peer-band median operating margin (MRTN/HTLD/KNX/SNDR/ARCB/LSTR)",
+     "value": 7.51,
+     "unit": "%",
+     "source": "EDGAR peer margin_anchor medians, cross-peer median (#150 run 2026-07-19; peer windows differ \u2014 printed, not averaged)"
+    },
+    {
+     "label": "FY2025 reported operating margin (trough of the 18y history)",
+     "value": 0.39,
+     "unit": "%",
+     "source": "EDGAR companyfacts \u2014 margin_anchor by_year[2025] (verified 2026-07-20 vs EDGAR companyfacts)"
+    },
+    {
+     "label": "FY2025 underlying operating margin, ex Q2-25 favorable insurance credit",
+     "value": 0.0,
+     "unit": "%",
+     "source": "analyst normalization \u2014 FY2025 reported 0.39% less the Q2-25 favorable claim development (10-K acc 0000793074-26-000071); approximate"
+    },
+    {
+     "label": "insurance & claims run-rate, 2018-22 average",
+     "value": 4.06,
+     "unit": "% of revenue",
+     "source": "EDGAR us-gaap:OperatingInsuranceAndClaimsCostsProduction \u00f7 Revenues, FY2018-22 = 3.99/3.61/4.63/3.61/4.48 (verified 2026-07-20 vs EDGAR companyfacts)"
+    },
+    {
+     "label": "insurance & claims run-rate, 2025-26 underlying",
+     "value": 5.3,
+     "unit": "% of revenue",
+     "source": "analyst normalization, ex one-off Q2-25 favorable credit (the reported tag runs through FY2024; the normalization is the analyst's)"
+    },
+    {
+     "label": "Dedicated share of Truckload segment revenue, FY2018",
+     "value": 51.5,
+     "unit": "%",
+     "source": "10-K FY2018 revenue disclosure \u2014 analyst calculation (confirm basis at review)"
+    },
+    {
+     "label": "Dedicated share of Truckload segment revenue, current",
+     "value": 73.0,
+     "unit": "%",
+     "source": "10-K acc 0000793074-26-000071 revenue disclosure \u2014 analyst calculation (confirm basis at review)"
+    },
+    {
+     "label": "FY2021 peak operating margin (consolidated; 2020/2022 were 9.59%/9.82%)",
+     "value": 11.31,
+     "unit": "%",
+     "source": "EDGAR companyfacts \u2014 margin_anchor by_year[2021] (verified 2026-07-20 vs EDGAR companyfacts)"
+    }
+   ]
+  },
+  {
+   "axis": "multiple",
+   "method": "Chosen against the own-history TEV/LTM-EBITDA band: bear between trough and median, base at roughly the median, bull toward the upper quartile on a genuine cycle turn.",
+   "references": [
+    {
+     "label": "own-history TEV/LTM-EBITDA trough (43 quarterly closes)",
+     "value": 4.56,
+     "unit": "x",
+     "source": "CIQ Financials\u2192Multiples 'TEV/LTM EBITDA' Close \u2014 derived band statistic (#150 run 2026-07-19; series read in place, never committed)"
+    },
+    {
+     "label": "own-history TEV/LTM-EBITDA median",
+     "value": 6.56,
+     "unit": "x",
+     "source": "same series \u2014 derived band statistic (#150 run 2026-07-19)"
+    },
+    {
+     "label": "own-history TEV/LTM-EBITDA upper quartile",
+     "value": 6.97,
+     "unit": "x",
+     "source": "same series \u2014 derived band statistic (#150 run 2026-07-19)"
+    }
+   ]
+  }
+ ],
  "multipleBasis": "EV/EBITDA",
  "underwriteDate": "2026-07-19",
  "analyst": "nogods404",
