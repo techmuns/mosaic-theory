@@ -1,7 +1,7 @@
 // DOSSIER VIEWER — render the structured dossier.json into styled, source-bound sections.
 // Assembles facts + a machine proposal SEALED until the human's verdict. Every fact shows its [n] cite.
 // The synthesis is fenced as "the framing, not the answer." Read-only; verdicts are CLI-logged.
-import { getDossier, getDossierIndex, getLedger, isBuyVerdict, getScenarioIndex, getScenarioCard } from "../../lib/snapshots.js";
+import { getDossier, getDossierIndex, getLedger, isBuyVerdict, getScenarioIndex, getScenarioCard, getMachineReads } from "../../lib/snapshots.js";
 import { fmtPrice, fmtDate, fmtStamp, fmtPct, escapeHtml, DASH } from "../../lib/format.js";
 import { barDomain, lineDomain, linScale, logScale, barLabelY, extent, EXHIBIT } from "../../lib/exhibit.js";
 import { uwCard } from "./uw-card.js";
@@ -113,9 +113,47 @@ export async function render(root, params, { item, frame }) {
 }
 
 // --- dossier index (no ticker) ----------------------------------------------
+// The machine's evidence LEAN as a glance tag on an index card — the LABEL only ("Strongly
+// bearish" / "Mixed"): the rationale stays on the Brief, where the read is shown WITH its
+// reasoning. Deliberately NEUTRAL — no .pill buy/avoid vocabulary and no red/green — because a
+// grid of directional colour lets the eye triage the shelf before a single fact is read, which is
+// the same anchoring the sealed proposal exists to prevent. (The lean maps 1:1 onto the proposal,
+// so the tag is one deterministic hop from AVOID/BUY; showing it as a COLOUR would make the shelf
+// a recommendation screen.) Split by the ONE shared parser; an absent or unparseable read renders
+// NOTHING at all — never a fabricated "neutral".
+// ONE tag per shelf card, with the CONSTITUTION'S precedence: the human's logged verdict outranks
+// the machine's read. Once a verdict is logged there is nothing left to anchor — the decision is
+// made and sealed — so the verdict OF RECORD gets the colour it earns (the same buy/avoid pill the
+// Brief uses). Only the still-undecided names show the machine's lean, and only in neutral ink.
+// That split is the point: colour on this shelf means A HUMAN DECIDED, never that a model leaned.
+function cardTag(ticker, reads, verdictBy) {
+  const v = verdictBy[ticker];
+  return v ? verdictTag(v) : leanTag(reads[ticker]);
+}
+
+// The human's verdict of record. AVOID_TERMINAL displays as AVOID — lossless, since BUY and
+// AVOID_TERMINAL are the only two verdicts (mirrors MachineProposal.action_word on the py side).
+function verdictTag(v) {
+  const buy = isBuyVerdict(v.verdict);
+  const at = [v.entryPrice != null ? `@ ${fmtPrice(v.entryPrice)}` : "", fmtDate(v.decidedAt)]
+    .filter(Boolean).join(" · ");
+  return `<span class="pill ${buy ? "buy" : "avoid"} ds-card-tag" title="${escapeHtml(
+    `your logged verdict${at ? " " + at : ""}`)}">${buy ? "BUY" : "AVOID"}</span>`;
+}
+
+function leanTag(eb) {
+  const p = splitLean(eb);
+  if (!p) return "";
+  const cased = p[0].charAt(0).toUpperCase() + p[0].slice(1).replace(/-/g, " ");
+  return `<span class="ds-lean ds-card-tag" title="machine evidence lean — no verdict logged yet; its rationale is on the dossier, and the proposal stays sealed until you log one">${escapeHtml(cased)}</span>`;
+}
 async function renderIndex(root, item, frame) {
   root.innerHTML = frame(item, { bodyHtml: `<div class="notice">Loading dossiers…</div>` });
-  const [tickers, scenTickers] = await Promise.all([getDossierIndex(), getScenarioIndex()]);
+  const [tickers, scenTickers, reads, led] = await Promise.all([
+    getDossierIndex(), getScenarioIndex(), getMachineReads(), getLedger()]);
+  // the human's logged verdicts, by ticker — the shelf's tag precedence resolves against these
+  const verdictBy = {};
+  for (const e of (led && led.entries) || []) if (e && e.ticker) verdictBy[e.ticker] = e;
   const uwOnly = scenTickers.filter((t) => !tickers.includes(t));
 
   // Repetition-reduced: identity lives ONCE per typed panel (not on every card), the search
@@ -124,8 +162,8 @@ async function renderIndex(root, item, frame) {
     <div class="ds-toolbar">
       <form id="ds-search" style="display:flex; gap:10px; align-items:center; flex:1 1 380px; margin:0;">
         <input id="ds-q" type="search" placeholder="Jump to a ticker's dossier (e.g. VRRM)…" autocomplete="off"
-          style="flex:1; max-width:380px; padding:9px 12px; border:1px solid var(--line-2); border-radius:8px; font-size:13px;" />
-        <button type="submit" style="padding:9px 18px; border:1px solid var(--line-2); border-radius:8px; background:var(--surface); cursor:pointer; font-size:13px;">Open</button>
+          style="flex:1; max-width:380px; padding:9px 12px; border:1px solid var(--line-2); border-radius:8px; font-size:13px; background:var(--surface); color:var(--ink);" />
+        <button type="submit" style="padding:9px 18px; border:1px solid var(--line-2); border-radius:8px; background:var(--surface); color:var(--ink); cursor:pointer; font-size:13px;">Open</button>
         <a class="foot" href="#/ranker">open a finalist from the ranker →</a>
       </form>
       ${assembleHelp(true)}
@@ -142,7 +180,7 @@ async function renderIndex(root, item, frame) {
   const dossierGrid = tickers.length
     ? `<div class="grid cols-3">${tickers.map((t) => `
         <a class="ds-index-card" href="#/dossier/${escapeHtml(t)}">
-          <div class="mono" style="font-size:16px; font-weight:650;">${escapeHtml(t)}</div>
+          <div class="mono" style="font-size:16px; font-weight:650;">${escapeHtml(t)}${cardTag(t, reads, verdictBy)}</div>
         </a>`).join("")}</div>`
     : `<div class="notice">No dossiers committed to this deploy yet. Assemble with <span class="mono">python -m vinci dossier</span>, then commit the derived <span class="mono">dossier.json</span> to the private repo.</div>`;
   const dossierPanel = `

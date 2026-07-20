@@ -667,8 +667,17 @@ def main(argv: list[str] | None = None) -> None:
     # (status "present" only), so the ranker upgrades a name the moment its dossier commits,
     # without a queue re-emit. Stdlib twin of vinci.labels.committed_gics_index (the build fence
     # forbids the import) — a parity test pins the two against the real committed tree.
+    # The index also carries READS — each dossier's synthesis ``evidence_balance`` VERBATIM, so the
+    # index cards can tag a name with the machine's evidence lean at a glance. Emitted RAW and
+    # UNPARSED on purpose: the "<lean> — <why>" split has exactly ONE shared JS parser
+    # (dossier.js splitLean, mirroring vinci/dossier/verdict.py) and this build step must never
+    # grow a third copy of that regex. WHAT THIS IS: the evidence LEAN, which the Brief already
+    # shows openly with its rationale — NOT the machine's BUY/AVOID proposal, which stays sealed
+    # until the human logs their verdict (the 2026-07-13 anti-anchoring pivot). Absent/blank
+    # synthesis -> no entry (fail-honest; the card simply carries no tag, never a "neutral" one).
     tickers: list[str] = []
     labels: dict[str, dict[str, str]] = {}
+    reads: dict[str, str] = {}
     if DOSS.exists():
         for folder in sorted(p for p in DOSS.iterdir() if p.is_dir()):
             f = folder / "dossier.json"
@@ -676,12 +685,16 @@ def main(argv: list[str] | None = None) -> None:
                 ticker = folder.name.upper()
                 shutil.copyfile(f, OUT_DOSS / f"{ticker}.json")
                 tickers.append(ticker)
-                ind = json.loads(f.read_text()).get("industry") or {}
+                doc = json.loads(f.read_text())
+                ind = doc.get("industry") or {}
                 if ind.get("status") == "present" and (ind.get("value") or "").strip():
                     labels[ticker] = {"industry": ind["value"].strip(), "source": "ciq-gics",
                                       "source_ref": ind.get("source_ref") or ""}
+                eb = ((doc.get("synthesis") or {}).get("evidence_balance") or "").strip()
+                if eb:
+                    reads[ticker] = eb
     (OUT_DOSS / "index.json").write_text(
-        json.dumps({"tickers": tickers, "labels": labels}, indent=2))
+        json.dumps({"tickers": tickers, "labels": labels, "reads": reads}, indent=2))
 
     scen_tickers = emit_scenarios()
 

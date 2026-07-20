@@ -258,6 +258,15 @@ export async function getGicsLabels() {
   return idx && typeof idx.labels === "object" && idx.labels ? idx.labels : {};
 }
 
+// getMachineReads() -> {TICKER: "<lean> — <why>"} — each committed dossier's synthesis evidence
+// balance, RAW and unparsed (the one shared lean parser lives in dossier.js; nothing here splits
+// it). This is the machine's evidence LEAN — already shown openly on the Brief with its rationale
+// — NOT the sealed BUY/AVOID proposal, which stays hidden until the human logs their verdict.
+export async function getMachineReads() {
+  const idx = await _dossierIndex();
+  return idx && typeof idx.reads === "object" && idx.reads ? idx.reads : {};
+}
+
 // The per-name WORKFLOW-state vocabulary — ONE definition (MED-7): getProcessedStates() returns
 // these keys; consumers (the ranker badge/sort) import THIS object instead of re-typing strings.
 export const WORKFLOW_STATES = {
