@@ -151,7 +151,12 @@
                 "2026-06-24",
                 5.957365
               ]
-            ]
+            ],
+            "periodicity_days_median": 91.0,
+            "window_span_years": 4.98,
+            "periodicity": "quarterly",
+            "data_quality": null,
+            "source_file": "The Simply Good Foods Company NasdaqCM SMPL Financials_Quarterly.xls"
           },
           {
             "metric": "P/LTM EPS",
@@ -240,7 +245,12 @@
                 "2026-03-31",
                 15.958736
               ]
-            ]
+            ],
+            "periodicity_days_median": 91.0,
+            "window_span_years": 4.75,
+            "periodicity": "quarterly",
+            "data_quality": null,
+            "source_file": "The Simply Good Foods Company NasdaqCM SMPL Financials_Quarterly.xls"
           }
         ],
         "source_ref": "CIQ Financials→Multiples (Close; last col = current, excluded from history)",
@@ -4876,22 +4886,28 @@
     "recipe_hint": "R1_midcycle_margin_evebitda",
     "applicable": true,
     "multiple_basis": "EV/EBITDA",
-    "computed_at": "2026-07-20T14:26:46.180388Z",
+    "computed_at": "2026-07-20T19:57:26.107515Z",
     "reason": null,
+    "data_quality": "revenue_tag_conflict",
+    "data_quality_detail": [
+      "FY2018: RevenueFromContractWithCustomerExcludingAssessedTax 438M vs Revenues 121M (72% apart)",
+      "FY2019: RevenueFromContractWithCustomerExcludingAssessedTax 524M vs Revenues 124M (76% apart)",
+      "FY2020: RevenueFromContractWithCustomerExcludingAssessedTax 817M vs Revenues 227M (72% apart)"
+    ],
     "margin": {
       "value": 0.154481,
       "unit": "fraction",
       "basis": "operating margin (EBIT / revenue)",
-      "source": "EDGAR companyfacts OperatingIncomeLoss / RevenueFromContractWithCustomerExcludingAssessedTax — reported median over 8 FY",
+      "source": "EDGAR companyfacts OperatingIncomeLoss / RevenueFromContractWithCustomerExcludingAssessedTax — reported median over 8 FY — CAPPED weak: revenue_tag_conflict",
       "anchor_years": 8,
-      "confidence": "firm"
+      "confidence": "weak"
     },
     "multiple": {
       "value": 16.3373895,
       "unit": "EV/EBITDA",
       "source": "valuation.own_history.median",
       "history_quarters": 20,
-      "confidence": "firm"
+      "confidence": "weak"
     },
     "d_and_a": {
       "value": 21.431,
@@ -4919,7 +4935,7 @@
     },
     "anchor_base_value_per_share": 38.4274,
     "anchor_ev_ebit": 17.9378,
-    "overall_confidence": "firm",
+    "overall_confidence": "weak",
     "note": "ATTENTION FILTER, not a verdict. Even a firm anchor requires a full bear/base/bull 2:1 underwrite before any BUY. Spot and reward-to-base are computed live at triage, not stored here."
   }
 }

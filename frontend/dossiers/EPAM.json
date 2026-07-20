@@ -58,15 +58,87 @@
         "value": [
           {
             "metric": "EV/EBITDA (TEV/LTM)",
-            "current": 4.045677,
-            "low": 8.002404,
+            "current": 4.872979,
+            "low": 4.262664,
             "high": 57.212924,
-            "median": 16.240099,
-            "percentile": 0.0,
-            "n_closes": 19,
-            "as_of": "2026-06-22",
-            "mean": 20.105735842105265,
+            "median": 22.414586,
+            "percentile": 0.02631578947368421,
+            "n_closes": 38,
+            "as_of": "2026-07-17",
+            "mean": 23.833653842105264,
             "series": [
+              [
+                "2017-03-31",
+                20.608112
+              ],
+              [
+                "2017-06-30",
+                22.77791
+              ],
+              [
+                "2017-09-29",
+                22.727797
+              ],
+              [
+                "2017-12-29",
+                26.229298
+              ],
+              [
+                "2018-03-29",
+                26.31361
+              ],
+              [
+                "2018-06-29",
+                27.322453
+              ],
+              [
+                "2018-09-28",
+                28.016796
+              ],
+              [
+                "2018-12-31",
+                21.408619
+              ],
+              [
+                "2019-03-29",
+                29.763385
+              ],
+              [
+                "2019-06-28",
+                24.292333
+              ],
+              [
+                "2019-09-30",
+                24.274937
+              ],
+              [
+                "2019-12-31",
+                26.929513
+              ],
+              [
+                "2020-03-31",
+                22.635593
+              ],
+              [
+                "2020-06-30",
+                29.314772
+              ],
+              [
+                "2020-09-30",
+                36.537661
+              ],
+              [
+                "2020-12-31",
+                38.719176
+              ],
+              [
+                "2021-03-31",
+                40.516902
+              ],
+              [
+                "2021-06-30",
+                51.018334
+              ],
               [
                 "2021-09-30",
                 52.901591
@@ -144,22 +216,103 @@
                 8.002404
               ],
               [
-                "2026-06-22",
-                4.045677
+                "2026-06-30",
+                4.262664
+              ],
+              [
+                "2026-07-17",
+                4.872979
               ]
-            ]
+            ],
+            "periodicity_days_median": 91.0,
+            "window_span_years": 9.3,
+            "periodicity": "quarterly",
+            "data_quality": null,
+            "source_file": "EPAM Systems Inc NYSE EPAM Financials_Quarterly.xls"
           },
           {
             "metric": "P/LTM EPS",
-            "current": 10.89919,
-            "low": 20.148809,
+            "current": 12.708077,
+            "low": 11.373629,
             "high": 92.699233,
-            "median": 31.276939,
-            "percentile": 0.0,
-            "n_closes": 19,
-            "as_of": "2026-06-22",
-            "mean": 38.87330352631579,
+            "median": 41.936052000000004,
+            "percentile": 0.02631578947368421,
+            "n_closes": 38,
+            "as_of": "2026-07-17",
+            "mean": 45.45571992105263,
             "series": [
+              [
+                "2017-03-31",
+                40.385026
+              ],
+              [
+                "2017-06-30",
+                45.21962
+              ],
+              [
+                "2017-09-29",
+                42.458938
+              ],
+              [
+                "2017-12-29",
+                45.274249
+              ],
+              [
+                "2018-03-29",
+                86.757575
+              ],
+              [
+                "2018-06-29",
+                60.850715
+              ],
+              [
+                "2018-09-28",
+                61.106764
+              ],
+              [
+                "2018-12-31",
+                43.860892
+              ],
+              [
+                "2019-03-29",
+                39.88916
+              ],
+              [
+                "2019-06-28",
+                41.700031
+              ],
+              [
+                "2019-09-30",
+                42.51247
+              ],
+              [
+                "2019-12-31",
+                49.450914
+              ],
+              [
+                "2020-03-31",
+                40.984556
+              ],
+              [
+                "2020-06-30",
+                51.007737
+              ],
+              [
+                "2020-09-30",
+                63.777402
+              ],
+              [
+                "2020-12-31",
+                66.002448
+              ],
+              [
+                "2021-03-31",
+                70.8375
+              ],
+              [
+                "2021-06-30",
+                85.274964
+              ],
               [
                 "2021-09-30",
                 84.143615
@@ -237,10 +390,19 @@
                 20.148809
               ],
               [
-                "2026-06-22",
-                10.89919
+                "2026-06-30",
+                11.373629
+              ],
+              [
+                "2026-07-17",
+                12.708077
               ]
-            ]
+            ],
+            "periodicity_days_median": 91.0,
+            "window_span_years": 9.3,
+            "periodicity": "quarterly",
+            "data_quality": null,
+            "source_file": "EPAM Systems Inc NYSE EPAM Financials_Quarterly.xls"
           }
         ],
         "source_ref": "CIQ Financials→Multiples (Close; last col = current, excluded from history)",
@@ -5109,22 +5271,27 @@
     "recipe_hint": "R1_midcycle_margin_evebitda",
     "applicable": true,
     "multiple_basis": "EV/EBITDA",
-    "computed_at": "2026-07-20T14:26:46.131177Z",
+    "computed_at": "2026-07-20T19:57:26.057764Z",
     "reason": null,
+    "data_quality": "revenue_tag_conflict",
+    "data_quality_detail": [
+      "FY2016: RevenueFromContractWithCustomerExcludingAssessedTax 1,160M vs SalesRevenueNet 264M (77% apart)",
+      "FY2017: RevenueFromContractWithCustomerExcludingAssessedTax 1,450M vs SalesRevenueNet 325M (78% apart)"
+    ],
     "margin": {
       "value": 0.118997,
       "unit": "fraction",
       "basis": "operating margin (EBIT / revenue)",
-      "source": "EDGAR companyfacts OperatingIncomeLoss / RevenueFromContractWithCustomerExcludingAssessedTax — reported median over 10 FY",
+      "source": "EDGAR companyfacts OperatingIncomeLoss / RevenueFromContractWithCustomerExcludingAssessedTax — reported median over 10 FY — CAPPED weak: revenue_tag_conflict",
       "anchor_years": 10,
-      "confidence": "firm"
+      "confidence": "weak"
     },
     "multiple": {
-      "value": 16.240099,
+      "value": 22.414586,
       "unit": "EV/EBITDA",
       "source": "valuation.own_history.median",
-      "history_quarters": 19,
-      "confidence": "weak"
+      "history_quarters": 38,
+      "confidence": "firm"
     },
     "d_and_a": {
       "value": 45.317,
@@ -5150,8 +5317,8 @@
       "basis": "LTM revenue",
       "source": "committed financial_summary.annual (LTM)"
     },
-    "anchor_base_value_per_share": 225.5489,
-    "anchor_ev_ebit": 17.3534,
+    "anchor_base_value_per_share": 306.0468,
+    "anchor_ev_ebit": 23.9511,
     "overall_confidence": "weak",
     "note": "ATTENTION FILTER, not a verdict. Even a firm anchor requires a full bear/base/bull 2:1 underwrite before any BUY. Spot and reward-to-base are computed live at triage, not stored here."
   }
