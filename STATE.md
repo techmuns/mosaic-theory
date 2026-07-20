@@ -2314,8 +2314,44 @@ Each line: *what it does* — *verified how*.
     median/excess, `<3`-UNDEFINED, tag boundaries, stale exclusion, dispersion. ruff + `mypy --strict
     vinci` + pytest (654) green.
 
-- **PRODUCTION BUG — EXISTENCE INFERRED FROM A 404 (2026-07-20, fix/existence-from-index; PR open,
-  NOT merged).** Operator report: WERN's dossier link opened locally but hung on the deploy.
+- **CITATION SYSTEM LIFTED TO lib/cites.js — THE THIRD NON-MODULARITY (2026-07-20,
+  feat/shared-cites; PR open, NOT merged).** Operator: "why doesn't first analysis number its
+  sources like the dossier — did our change not go global?"
+  - **ANSWER: nothing failed to propagate; it was NEVER shared.** `citeMark` / `withEndnotes` /
+    `citePlaceholders` / `auditCitesInline` were ~25 PRIVATE lines inside `dossier.js` (which
+    exports only `render` + `renderDossier`), so `uw-card.js` could not reach them. Its
+    inline-only cites were DOCUMENTED and defensively correct — neither host that renders the card
+    runs an endnote pass, so placeholders would have shown as literal `[?]` — but that was a
+    workaround for a missing module, and it forced the inline form onto the MAIN BODY too.
+    **Third instance of the same class** (after the label maps and the workflow-state vocab): one
+    good implementation locked in one module ⇒ the next surface ships a lesser one.
+  - **The convention is TWO-MODE, and only one of the three cites was actually wrong.** Main body
+    → numbered endnotes; on-demand print-EXCLUDED `<details>` audit blocks → inline (an endnote
+    there orphans an `[n]` in a printed Sources list, pointing at a marker the reader can't see).
+    The card's `<details class="uw-inputs">` cites were therefore CORRECT; only the main-body Spot
+    cite violated the rule.
+  - **FIX.** Machinery moved VERBATIM to `frontend/lib/cites.js` (behavior unchanged). `uwCard`
+    gains a `cites` option — **DEFAULT "inline"** so a host with no pass is never broken; the
+    `<details>` block stays inline in BOTH modes. The WERN page requests `"endnote"` and runs
+    `withEndnotes("U", …)`; the theme page (no Sources list) keeps the default and is untouched.
+  - **GUARDS.** The pre-existing #9/#10 pin follows the machinery to the lib AND now sweeps EVERY
+    module that can import `citeMark` (the orphan-in-print mistake is no longer dossier.js's alone
+    to make). New pins: one home, ONE placeholder grammar frontend-wide, the inline default, the
+    `<details>` inline rule, and that a host requesting endnotes actually runs the pass.
+  - **Verified in the browser** — WERN: 0 main-body inline cites, marker `[U1]`, Sources
+    "[U1] Polygon EOD daily close…", `<details>` keeps 5 inline cites, 0 orphan `[?]`; theme page
+    unchanged (0 markers, 0 Sources sections); VRRM per-tier numbering intact (Brief `[B1…]` 19
+    sources, Analysis `[A1…]` 49). **The preview caught a real bug pre-commit**: the uw-card import
+    silently no-op'd and the page threw "citeMark is not defined" — the PREVIEW RULE paid for
+    itself.
+  - **PROCESS DEFECT (recorded, mine):** a gate command piped pytest through `grep`, which
+    discards the exit code, so a run reporting `1 failed` did not stop the commit. The commit was
+    afterwards verified green in an ISOLATED clean checkout of HEAD (709 passed, exit 0) and the
+    failure never reproduced in 4 further runs — cause unknown, NOT explained away. Gate commands
+    must assert pytest's exit status, never a grepped summary line.
+
+- **PRODUCTION BUG — EXISTENCE INFERRED FROM A 404 (2026-07-20, fix/existence-from-index; MERGED
+  #156 `04c1b3d`).** Operator report: WERN's dossier link opened locally but hung on the deploy.
   - **CAUSE.** The dossier view PROBED for `dossiers/<T>.json` and read "no dossier" off a **404**.
     True on a plain static server; NOT on the authed Pages origin — `functions/_middleware.js`
     runs on EVERY request and a miss that fails inside `ctx.next()` falls through its bare
