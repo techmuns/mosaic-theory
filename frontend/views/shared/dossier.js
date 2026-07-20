@@ -64,14 +64,16 @@ export async function render(root, params, { item, frame }) {
   // requires a MISSING file. The index lists exactly what the build emitted — ask it, don't probe.
   const [known, led] = await Promise.all([getDossierIndex(), getLedger()]);
   const d = known.includes(ticker) ? await getDossier(ticker) : null;
+  // The underwrite record is read ONCE, for BOTH paths — a name may have a dossier, a record, or
+  // both (IT has both; WERN only a record). Same rule as the dossier: the scenario index is the
+  // source of truth for what the build emitted; never probe-and-interpret-the-error. One call site
+  // keeps the "no unguarded probe can hide" pin checkable.
+  const card = (await getScenarioIndex()).includes(ticker)
+    ? await getScenarioCard(ticker) : null;
   if (!d) {
     // RICH DEGRADE — a name with a committed FIRST-CUT UNDERWRITE but no dossier renders its
     // record under explicit typing (an underwrite is NOT assembled facts, and its scenario
     // verdict is NOT a ledger verdict of record). Neither artifact → the plain notice, unchanged.
-    // same rule for the underwrite record — the scenario index is the source of truth for
-    // which records the build emitted; never probe-and-interpret-the-error.
-    const card = (await getScenarioIndex()).includes(ticker)
-      ? await getScenarioCard(ticker) : null;
     if (card) {
       const verdict = led.entries.find((e) => e.ticker === ticker) || null;
       root.innerHTML = frame(item, { crumbExtra: crumb, bare: true, bodyHtml: `
@@ -94,7 +96,8 @@ export async function render(root, params, { item, frame }) {
     return;
   }
   const verdict = led.entries.find((e) => e.ticker === ticker) || null;
-  root.innerHTML = frame(item, { crumbExtra: crumb, bare: true, bodyHtml: renderDossier(d, verdict) });
+  root.innerHTML = frame(item, {
+    crumbExtra: crumb, bare: true, bodyHtml: renderDossier(d, verdict, card) });
   // (3-tier) client-side tabs — default Brief; toggle the active panel, no re-fetch, no router change.
   root.querySelectorAll(".ds-tab").forEach((tab) => tab.addEventListener("click", () => {
     const tier = tab.dataset.tier;
@@ -437,8 +440,10 @@ function trajectoryTable(q) {
   return dataTable(label, srcs[0].source_ref, periods.map(fmtPeriod), rows, note);
 }
 
-export function renderDossier(d, verdict) {  // exported for the module-load smoke test (renders the
-  const m = d.mechanical || {};              // committed dossier JSON to HTML in node, no DOM/fetch)
+// `card` is the OPTIONAL committed underwrite record (frontend/scenarios/<T>.json) — passed in by
+// render() because it needs a fetch; defaulted so the node smoke test keeps calling with two args.
+export function renderDossier(d, verdict, card = null) {  // exported for the module-load smoke test
+  const m = d.mechanical || {};              // (renders committed dossier JSON to HTML, no DOM/fetch)
   // (3-tier) Brief (first cut) · Analysis (full dossier) · Appendix (data & audit). ONE document; the
   // tabs are client-side chrome (default Brief, no re-fetch). Mirrors the # Brief / # Analysis /
   // # Appendix top-level sections in render.py. The machine still never concludes — the Brief leads
@@ -446,7 +451,7 @@ export function renderDossier(d, verdict) {  // exported for the module-load smo
   // (A2) each tier renders inside withEndnotes(): its cites become [n] markers + a per-tier Sources
   // list at its end (self-contained per tab / per PDF scope).
   return header(d) + tierTabs() + `<div class="ds-tiers">
-    <section class="ds-tier on" data-tier="brief">${withEndnotes("B", () => briefTier(d, verdict, m))}</section>
+    <section class="ds-tier on" data-tier="brief">${withEndnotes("B", () => briefTier(d, verdict, m, card))}</section>
     <section class="ds-tier" data-tier="analysis">${withEndnotes("A", () => analysisTier(d, m))}</section>
     <section class="ds-tier" data-tier="appendix">${withEndnotes("X", () => appendixTier(d, verdict, m))}</section>
   </div>`;
@@ -541,10 +546,51 @@ function briefVerdictChip(verdict) {
 // snapshot → valuation → verify. Machine-assembled + source-bound throughout; the teaser LEADS with
 // the machine's DERIVED proposal (2026-07-13 pivot) and the human's confirm/override in the
 // Recommendation slot is the verdict of record. Mirrors _brief_lines() in render.py.
-function briefTier(d, verdict, m) {
+function briefTier(d, verdict, m, card) {
   const parts = teaserCard(d, verdict, m) + setupCard(d.synthesis) + companyCard(m)
-    + briefCase(d.synthesis) + financialSnapshot(m) + valuationCard(m) + catalystCard(m) + verifyCard(d);
+    + briefCase(d.synthesis) + financialSnapshot(m) + valuationCard(m) + catalystCard(m)
+    + anchorPanel(d.anchor) + scenarioPanel(card) + verifyCard(d);
   return parts.trim() ? parts : "";
+}
+
+// (log-a) SCREENING ANCHOR — the committed R1 anchor block (vinci/dossier/anchor.py), read-only.
+// A mechanical re-rate of the name to its OWN-history median multiple on a NAIVE reported median
+// margin: an ATTENTION FILTER, never a verdict and never a target — it applies no structural
+// adjustment. Absent anchor → renders nothing, so pre-anchor dossiers are untouched.
+function anchorPanel(a) {
+  if (!a) return "";
+  const conf = (c) => `<span class="pill${c === "firm" ? "" : " conditional"}">${escapeHtml(c || "—")}</span>`;
+  const row = (label, val, note) =>
+    `<tr><td>${escapeHtml(label)}</td><td class="num mono">${val}</td><td class="muted">${note}</td></tr>`;
+  const mg = a.margin, mu = a.multiple;
+  const base = a.anchor_base_value_per_share;
+  const rows = [
+    row("Recipe", escapeHtml(a.recipe_hint || "—"), a.applicable ? "applicable" : "NOT applicable"),
+    mg ? row("Mid-cycle margin", mg.value != null ? `${(mg.value * 100).toFixed(1)}%` : "—",
+             `${mg.anchor_years}y history · ${conf(mg.confidence)}`) : "",
+    mu ? row("Own-history multiple", mu.value != null ? `${mu.value.toFixed(1)}x` : "—",
+             `${mu.history_quarters} closes · ${conf(mu.confidence)} · ${escapeHtml(a.multiple_basis || "")}`) : "",
+    base != null ? row("Anchor base", `$${base.toFixed(2)}`,
+                       `spot-independent · EV/EBIT ${a.anchor_ev_ebit != null ? a.anchor_ev_ebit.toFixed(1) : "—"}x`) : "",
+    row("Overall confidence", conf(a.overall_confidence), ""),
+  ].join("");
+  const dq = a.data_quality
+    ? `<div class="notice" style="margin-top:8px;"><b>data_quality: ${escapeHtml(a.data_quality)}</b>${
+        (a.data_quality_detail || []).map((x) =>
+          `<div class="mono" style="font-size:11px;">${escapeHtml(x)}</div>`).join("")}</div>` : "";
+  const why = a.reason ? `<div class="muted" style="margin-top:6px;">${escapeHtml(a.reason)}</div>` : "";
+  return `<div class="card ds-section"><div class="ds-title">Screening anchor <span class="muted" style="font-weight:400; text-transform:none; letter-spacing:0;">— not a verdict</span></div>
+    <div class="subtitle muted" style="margin:-4px 0 8px;">Mechanical re-rate to this name's OWN-history median multiple on a naive reported median margin. An ATTENTION FILTER: it applies no structural adjustment, so a cheap-looking anchor still has to survive a full bear/base/bull underwrite.</div>
+    <table class="data"><tbody>${rows}</tbody></table>${dq}${why}</div>`;
+}
+
+// (log-b) the analyst's committed underwrite record, rendered with the SAME card component the
+// watchlist uses (uw-card.js) — one card, one contract. Absent record → nothing renders.
+function scenarioPanel(card) {
+  if (!card) return "";
+  return `<div class="card ds-section"><div class="ds-title">Scenario underwrite <span class="muted" style="font-weight:400; text-transform:none; letter-spacing:0;">— the analyst's bear/base/bull</span></div>
+    <div class="subtitle muted" style="margin:-4px 0 8px;">The analyst's scenario record. Its scenario verdict is NOT a ledger verdict of record.</div>
+    ${uwCard(card, { ticker: false })}</div>`;
 }
 
 // first sentence of a CIQ business description ("{Co}, Inc. engages in …") — abbreviation-aware so

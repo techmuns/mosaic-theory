@@ -3791,6 +3791,40 @@ two-name analysis (mid/small-caps, opposite directions) mapped against this inve
   - **STILL OPEN (unchanged by this):** the shared `extract_points`/`annual_series` longest/first-
     alias rule (this was own-history-local + anchor-local); and the operator may want a standing
     refresh cadence so committed bands don't silently lag new exports.
+- **IT UNDERWRITE RUN + DOSSIER-PAGE LOG + AORT→R2 (branch `feat/it-underwrite-anchor-panel`,
+  2026-07-20; PR open, NOT merged). TWO VERDICTS PENDING THE ANALYST — the machine set none.**
+  - **IT (R1, WERN-method): ratio 7.04 vs the 2.0 bar → PASS, `verdict.status=pending_analyst`.**
+    bear $121.20 (EV/EBIT 11.7x, normFCF $560.9M) · base $273.85 (17.5x, $801.6M) · bull $426.63
+    (22.9x, $942.5M) at spot $140.19 (Polygon 2026-07-17); reward 133.66 / risk 18.99.
+    **CAVEAT THE RATIO HIDES:** 7.04 is driven by a SHALLOW bear, not a conservative base — the
+    bear leg sits only −13.5% below spot, so the risk denominator is small. Harden the bear before
+    reading the ratio as a 7:1. Facts pulled from the committed anchor block (#158/#160-verified);
+    `diluted_shares` converted anchor-raw→MILLIONS (the runner's unit contract — a silent 1e6 trap).
+    Assumption `method` sentences are DRAFT — ratify at review (the WERN precedent).
+  - **SMPL — STOPPED AT THE STEP-0 GATE, no scenario record written.** The FY2025 gap (EDGAR GAAP
+    EBIT 157.3 vs CIQ 241 = 83.7) is explained only **72.8%** by a quantified one-off — the
+    **$60.9M** intangible impairment (`ImpairmentOfIntangibleAssetsExcludingGoodwill`, 10-K
+    0001702744-25-000046; the 10-K's only other operating one-off is $0.8M transaction costs). The
+    residual ~$22.8M traces to CIQ-vs-GAAP normalisation (intangible amortisation $16.9M + those
+    costs), NOT a recorded charge. Below the ~80% bar → stopped per the brief.
+    **Substantively the finding cuts the other way and is the operator's call:** FY2025 margin ex
+    the impairment = **15.0%**, essentially AT the 7yr clean median (15.51%) — i.e. NO structural
+    margin break. That is **materially different from the ~16.6% the brief anticipated** (−1.6pp),
+    so the base-reason append would be required if SMPL is resumed.
+  - **Dossier-page log LIVE (read-only, additive):** every dossier with a committed anchor now
+    renders a "Screening anchor — not a verdict" panel (margin+years+confidence, multiple+closes,
+    anchor base + EV/EBIT, `data_quality` flags, reason); a dossier with a committed
+    `scenarios/<T>.json` also renders the analyst's card via the SAME `uw-card.js` the watchlist
+    uses. Dossiers without an anchor are untouched; **WERN's theme-watchlist card is untouched**
+    (build.py unchanged, WERN records unchanged). The record is read ONCE for both page paths so
+    the #159 "existence from the index, never a 404" pin holds UNCHANGED at one call site.
+  - **AORT → the R2 cohort** (joins NCNO, MVST, FUBO): `recipe_hint="R2_NEEDED"`, corrected values
+    and `applicable` kept as-is, reason recorded — *"margin history low-single-digit (corrected 5yr
+    median 2.72%); bull case is a forward ramp to a regime that has never existed (consensus 20%+
+    FY26E) — mean-reversion premise does not fit; route to forward-margin recipe."* No verdict
+    recorded. Byte-preserving edit via `replace_anchor_block`.
+  - Also caught up: the committed `frontend/dossiers/{EPAM,SMPL}.json` mirrors, stale since #160
+    (Cloudflare rebuilds at deploy, so the committed mirror had lagged).
 - **ANCHOR REVENUE-TAG DEFECT — FOUND, FIXED, BOOK RE-VALIDATED (branch
   `fix/anchor-revenue-tag`, 2026-07-20; PR open, NOT merged).** The R1 anchor's margin DENOMINATOR
   was chosen by *longest series*, which for AORT selected `Revenues` — a PARTIAL/segment measure
