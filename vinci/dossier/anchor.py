@@ -36,6 +36,23 @@ _USD_M = 1e6
 RECIPE_R1 = "R1_midcycle_margin_evebitda"
 RECIPE_R2 = "R2_NEEDED"
 RECIPE_UNKNOWN = "unknown"
+RECIPE_UNRESOLVED = "ANCHOR_UNRESOLVED"
+
+# The margin DENOMINATOR is chosen by what the tag MEANS (total company revenue), never by which
+# series is longest. Longest-wins picked AORT's `Revenues`, which reports a partial/segment measure
+# for FY2011–17 ($30–45M vs the 606 tag's $180–190M — ~4x) and manufactured 38–50% "margins" and a
+# false 15.83% anchor median. Preference order: the post-2018 ASC-606 total-revenue standard first,
+# legacy totals last. Fewer VALID years beats more invalid ones.
+_REVENUE_TAG_PREFERENCE = (
+    "RevenueFromContractWithCustomerExcludingAssessedTax",
+    "RevenueFromContractWithCustomerIncludingAssessedTax",
+    "Revenues",
+    "SalesRevenueNet",
+)
+# Two tags reporting the SAME fiscal year this far apart are not two views of one number — one of
+# them is not total revenue. Never silently pick: flag, and use the preferred (total) tag.
+_TAG_CONFLICT_PCT = 0.25
+DQ_REVENUE_TAG_CONFLICT = "revenue_tag_conflict"
 _DILUTED_TAG = "WeightedAverageNumberOfDilutedSharesOutstanding"
 _NOTE = (
     "ATTENTION FILTER, not a verdict. Even a firm anchor requires a full bear/base/bull 2:1 "
@@ -79,11 +96,15 @@ class Anchor(BaseModel, frozen=True):
     """The R1 anchor block — source-bound, spot-independent. Optional on the Dossier so committed
     JSON predating it round-trips byte-identically; the UI ignores it for now (data-only)."""
 
-    recipe_hint: str                    # RECIPE_R1 | RECIPE_R2 | RECIPE_UNKNOWN
+    recipe_hint: str                    # RECIPE_R1 | RECIPE_R2 | RECIPE_UNKNOWN | RECIPE_UNRESOLVED
     applicable: bool
     multiple_basis: str = mc.MULTIPLE_BASIS  # "EV/EBITDA"
     computed_at: datetime
     reason: str | None = None           # why inapplicable (R2 / gap), else None
+    # Fail-loud data-quality channel. A fired flag CAPS overall_confidence at "weak" no matter how
+    # many years/quarters underlie the stats — AORT read "firm" on fabricated years; never again.
+    data_quality: str | None = None                  # e.g. DQ_REVENUE_TAG_CONFLICT
+    data_quality_detail: list[str] = []              # which tags disagreed, by how much
     margin: AnchorMargin | None = None
     multiple: AnchorMultiple | None = None
     d_and_a: AnchorInput | None = None
@@ -145,6 +166,49 @@ def _margin_from_fs(mechanical: dict[str, Any]) -> tuple[float, int] | None:
         if not (i < len(ise) and ise[i]) and ebit[i] is not None and rev[i]
     ]
     return (st.median(margins), len(margins)) if margins else None
+
+
+# --- revenue-denominator selection (anchor-local; the shared resolver is NOT touched) ----------
+def _revenue_candidates(facts: dict[str, Any]) -> dict[str, mc.AnnualSeries]:
+    """Every candidate revenue tag that actually reports ANNUAL data, keyed by tag.
+
+    Reads each tag EXPLICITLY so the choice below is OURS, not the shared alias resolver's —
+    ``extract_points``/``CONCEPT_ALIASES`` and ``midcycle.annual_series`` (used by the mid-cycle
+    block and its tests) are deliberately left unchanged. Reuses midcycle's point-folding rather
+    than re-implementing XBRL parsing."""
+    out: dict[str, mc.AnnualSeries] = {}
+    for tag in _REVENUE_TAG_PREFERENCE:
+        s = mc._series_from_points("revenue", tag, mc._annual_points(facts, tag, "revenue"))
+        if s.by_year:
+            out[tag] = s
+    return out
+
+
+def _total_revenue_series(facts: dict[str, Any]) -> tuple[mc.AnnualSeries | None, list[str]]:
+    """The TOTAL-company revenue series chosen by PREFERENCE (never by longest coverage), plus any
+    fail-loud disagreement notes.
+
+    GUARD: when two candidate tags both report a fiscal year and disagree by more than
+    ``_TAG_CONFLICT_PCT``, they are not two views of one number — one is not total revenue. Record
+    the disagreement (the caller flags ``data_quality`` and caps confidence) and use the PREFERRED
+    tag. No candidate at all → ``(None, [])``, and the caller marks the anchor UNRESOLVED rather
+    than deriving a margin from a partial denominator."""
+    cands = _revenue_candidates(facts)
+    if not cands:
+        return None, []
+    tag = next(t for t in _REVENUE_TAG_PREFERENCE if t in cands)
+    chosen = cands[tag]
+    conflicts: list[str] = []
+    for other, s in cands.items():
+        if other == tag:
+            continue
+        for y in sorted(set(chosen.by_year) & set(s.by_year)):
+            a, b = chosen.by_year[y], s.by_year[y]
+            scale = max(abs(a), abs(b))
+            if scale and abs(a - b) / scale > _TAG_CONFLICT_PCT:
+                conflicts.append(f"FY{y}: {tag} {a / _USD_M:,.0f}M vs {other} {b / _USD_M:,.0f}M "
+                                 f"({abs(a - b) / scale * 100:.0f}% apart)")
+    return chosen, conflicts
 
 
 # --- EDGAR source-bound extractors (fail-loud; a gap → None, never a fabricated zero) ----------
@@ -227,13 +291,22 @@ def compute_anchor(mechanical: dict[str, Any], *, facts: dict[str, Any],
                       reason="own-history multiple missing (valuation.own_history.median absent)")
     mult_median, mult_qtrs = mult
 
-    # margin — median operating margin over ALL available FYs (EDGAR); fallback → financial_summary.
-    rev_s, oi_s = mc.annual_series(facts, "revenue"), mc.annual_series(facts, "operating_income")
+    # margin — median operating margin over the years the TOTAL-revenue tag covers. EBIT is aligned
+    # to exactly those years by margin_anchor (it intersects the two series), so the ratio is always
+    # one consistent basis. Fewer valid years beats more invalid ones.
+    rev_s, conflicts = _total_revenue_series(facts)
+    if rev_s is None:
+        return Anchor(
+            recipe_hint=RECIPE_UNRESOLVED, applicable=False, computed_at=computed_at,
+            reason="no reliable total-revenue tag — refusing to derive a margin from a partial "
+                   "denominator")
+    oi_s = mc.annual_series(facts, "operating_income")  # single alias (OperatingIncomeLoss)
     ma = mc.margin_anchor(rev_s, oi_s)
     margin_val, margin_years = ma.median, ma.n_years
     margin_source = (f"EDGAR companyfacts {oi_s.tag} / {rev_s.tag} — reported median over "
                      f"{margin_years} FY") if margin_val is not None else ""
-    forced_weak = False
+    data_quality = DQ_REVENUE_TAG_CONFLICT if conflicts else None
+    forced_weak = bool(conflicts)
     if margin_val is None:
         fb = _margin_from_fs(mechanical)
         if fb is not None:
@@ -241,12 +314,23 @@ def compute_anchor(mechanical: dict[str, Any], *, facts: dict[str, Any],
             margin_source = "financial_summary (short history) — EBIT/Revenue reported median"
             forced_weak = True
 
-    # POSITIVITY GUARD (minimal): no positive normalizable margin → the revenue-anchored recipe.
-    if margin_val is None or margin_val <= 0:
+    # Two DIFFERENT facts, never lumped (the same fail-loud discipline edgar/client.py applies to
+    # its own UNKNOWNs): a margin we could not COMPUTE is not a margin we computed and found
+    # non-positive. The first is a data gap; only the second is an R2 (revenue-anchored) signal.
+    if margin_val is None:
+        return Anchor(
+            recipe_hint=RECIPE_UNRESOLVED, applicable=False, computed_at=computed_at,
+            reason=f"operating margin not computable — no fiscal year where both {oi_s.tag} and "
+                   f"{rev_s.tag} report",
+            data_quality=data_quality, data_quality_detail=conflicts)
+
+    # POSITIVITY GUARD (minimal): a COMPUTED but non-positive margin → the revenue-anchored recipe.
+    if margin_val <= 0:
         return Anchor(
             recipe_hint=RECIPE_R2, applicable=False, computed_at=computed_at,
             reason="no positive operating margin over available history — needs revenue-anchored "
-                   "recipe")
+                   "recipe",
+            data_quality=data_quality, data_quality_detail=conflicts)
 
     # remaining source-bound inputs
     da = _latest_dep_amort(facts)
@@ -255,9 +339,13 @@ def compute_anchor(mechanical: dict[str, Any], *, facts: dict[str, Any],
     ltm_rev = _ltm_revenue_from_fs(mechanical)
     nd_val = nd[0] if nd else None
 
+    # CONFIDENCE has a VALIDITY component, not just a count: any data-quality flag (or a fallback)
+    # caps the margin leg — and therefore the overall — at "weak", however many years underlie it.
     m_conf = "firm" if (margin_years >= ANCHOR_FIRM_MIN_YEARS and not forced_weak) else "weak"
     x_conf = "firm" if mult_qtrs >= ANCHOR_FIRM_MIN_MULT_QUARTERS else "weak"
     overall = "firm" if (m_conf == "firm" and x_conf == "firm") else "weak"
+    if data_quality and margin_source:
+        margin_source += f" — CAPPED weak: {data_quality}"
 
     margin_blk = AnchorMargin(value=round(margin_val, 6), basis="operating margin (EBIT / revenue)",
                               source=margin_source, anchor_years=margin_years, confidence=m_conf)
@@ -290,7 +378,8 @@ def compute_anchor(mechanical: dict[str, Any], *, facts: dict[str, Any],
         reason=(None if base is not None else "R1 inputs incomplete — see per-input source stamps"),
         margin=margin_blk, multiple=multiple_blk, d_and_a=da_blk, net_debt=nd_blk,
         diluted_shares=dil_blk, ltm_revenue=ltm_blk,
-        anchor_base_value_per_share=base, anchor_ev_ebit=ev_ebit, overall_confidence=overall)
+        anchor_base_value_per_share=base, anchor_ev_ebit=ev_ebit, overall_confidence=overall,
+        data_quality=data_quality, data_quality_detail=conflicts)
 
 
 def insert_anchor_block(text: str, anchor: Anchor) -> str:
@@ -308,3 +397,33 @@ def insert_anchor_block(text: str, anchor: Anchor) -> str:
     trailing = text[len(end):]                                   # preserved trailing whitespace
     head = end[:-1].rstrip()                                     # up to the last field's value
     return f"{head},\n{field}\n}}{trailing}"
+
+
+def anchor_changed(old: Anchor | None, new: Anchor) -> bool:
+    """Did anything MATERIAL change? ``computed_at`` alone must never rewrite a committed artifact —
+    a re-validation pass that moves nothing should leave every dossier byte-identical."""
+    if old is None:
+        return True
+    a, b = old.model_dump(mode="json"), new.model_dump(mode="json")
+    a.pop("computed_at", None)
+    b.pop("computed_at", None)
+    return a != b
+
+
+_ANCHOR_FIELD = '\n  "anchor": {'
+
+
+def replace_anchor_block(text: str, anchor: Anchor) -> str:
+    """Byte-preserving REPLACE of an existing trailing anchor block (or a plain insert when absent).
+
+    ``anchor`` is always the LAST field the model serialises, so the existing block is stripped back
+    to the previous field and re-appended — every other field keeps its committed bytes, exactly as
+    the #158 insert does."""
+    i = text.rfind(_ANCHOR_FIELD)
+    if i == -1:
+        return insert_anchor_block(text, anchor)
+    head = text[:i].rstrip()
+    if head.endswith(","):
+        head = head[:-1].rstrip()          # drop the separator; insert_anchor_block re-adds it
+    trailing = text[len(text.rstrip()):]
+    return insert_anchor_block(f"{head}\n}}{trailing}", anchor)

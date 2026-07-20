@@ -434,7 +434,12 @@ def _cmd_anchor_backfill(args: argparse.Namespace) -> int:
     re-assembly) and writes ONLY the ``anchor`` block into dossier.json: the model round-trips, so
     re-dumping reproduces the committed bytes plus the new field, leaving every other field
     byte-identical. dossier.md is untouched — the anchor is data-only (the UI ignores it)."""
-    from vinci.dossier.anchor import Anchor, compute_anchor, insert_anchor_block
+    from vinci.dossier.anchor import (
+        Anchor,
+        anchor_changed,
+        compute_anchor,
+        replace_anchor_block,
+    )
     from vinci.dossier.schemas import Dossier
     from vinci.edgar.client import EdgarClient
     from vinci.resolver import EntityResolver
@@ -442,7 +447,7 @@ def _cmd_anchor_backfill(args: argparse.Namespace) -> int:
     cfg = get_config()
     resolver, edgar = EntityResolver.from_config(cfg), EdgarClient.from_config(cfg)
     tickers = [t.strip().upper() for t in args.tickers.split(",") if t.strip()]
-    done: list[tuple[str, Anchor]] = []
+    done: list[tuple[str, Anchor, float | None, bool]] = []
     for t in tickers:
         path = cfg.data_dir / "dossiers" / t / "dossier.json"
         if not path.exists():
@@ -450,9 +455,6 @@ def _cmd_anchor_backfill(args: argparse.Namespace) -> int:
             continue
         original = path.read_text()
         d = Dossier.model_validate_json(original)
-        if d.anchor is not None:
-            print(f"  {t}: already has an anchor block — skip (revert to re-backfill)")
-            continue
         try:
             facts = edgar.companyfacts(resolver.resolve_ticker(t).cik)
         except Exception as exc:  # noqa: BLE001 — a name that won't fetch is skipped, never guessed
@@ -460,20 +462,37 @@ def _cmd_anchor_backfill(args: argparse.Namespace) -> int:
             continue
         anchor = compute_anchor(d.mechanical.model_dump(mode="json"), facts=facts,
                                 computed_at=datetime.now(UTC))
-        # byte-preserving string insert (a model round-trip drifts older-schema fields; see anchor)
-        path.write_text(insert_anchor_block(original, anchor))
-        done.append((t, anchor))
-    print(f"\n=== anchor backfill: {len(done)}/{len(tickers)} written ===")
-    print(f"{'ticker':7}{'margin (yrs)':>18}{'multiple (qtrs)':>18}{'base $/sh':>11}{'conf':>7}")
-    for t, a in done:
+        old_base = d.anchor.anchor_base_value_per_share if d.anchor else None
+        moved = anchor_changed(d.anchor, anchor)
+        if args.dry_run:
+            print(f"  {t}: DRY-RUN — {'CHANGED' if moved else 'unchanged'}")
+        elif not moved:
+            print(f"  {t}: anchor unchanged — not rewritten (artifact left byte-identical)")
+        else:
+            # byte-preserving replace/insert (a model round-trip drifts older-schema fields)
+            path.write_text(replace_anchor_block(original, anchor))
+        done.append((t, anchor, old_base, moved))
+    n_moved = sum(1 for _t, _a, _o, mv in done if mv)
+    mode = "DRY-RUN (nothing written)" if args.dry_run else "written"
+    print(f"\n=== anchor backfill: {len(done)} name(s) processed · {n_moved} changed · {mode} ===")
+    print(f"{'ticker':7}{'margin (yrs)':>18}{'multiple (qtrs)':>18}{'old base':>10}"
+          f"{'new base':>10}{'move':>9}{'conf':>7}  data_quality")
+    for t, a, old_base, moved in done:
         if (a.applicable and a.margin and a.margin.value is not None and a.multiple
                 and a.multiple.value is not None and a.anchor_base_value_per_share is not None):
             m = f"{a.margin.value * 100:.1f}% ({a.margin.anchor_years}y {a.margin.confidence})"
             x = f"{a.multiple.value:.1f}x ({a.multiple.history_quarters}q {a.multiple.confidence})"
-            print(f"{t:7}{m:>18}{x:>18}{a.anchor_base_value_per_share:>11.2f}"
-                  f"{a.overall_confidence or '—':>7}")
+            new = a.anchor_base_value_per_share
+            mv = (f"{(new - old_base) / old_base * 100:+.0f}%"
+                  if old_base is not None and old_base != 0 else "NEW")
+            print(f"{t:7}{m:>18}{x:>18}{(f'{old_base:.2f}' if old_base else '—'):>10}"
+                  f"{new:>10.2f}{mv:>9}{a.overall_confidence or '—':>7}  {a.data_quality or ''}"
+                  f"{' *' if moved else ''}")
         else:
-            print(f"{t:7}  {a.recipe_hint} · applicable={a.applicable} — {a.reason}")
+            print(f"{t:7}  {a.recipe_hint} · applicable={a.applicable} — {a.reason}"
+                  f"{' *' if moved else ''}")
+    if n_moved:
+        print("  (* = changed)")
     return 0
 
 
@@ -1827,6 +1846,9 @@ def build_parser() -> argparse.ArgumentParser:
         "re-assembly, no LLM, EDGAR-only; every other field stays byte-identical)")
     p_anchor.add_argument("--tickers", required=True,
                           help="comma-separated tickers, e.g. AORT,BRBR,CNXC")
+    p_anchor.add_argument("--dry-run", action="store_true", dest="dry_run",
+                          help="DIAGNOSTIC: recompute and report old-vs-new without writing "
+                               "anything (the re-validation pass)")
     p_anchor.set_defaults(func=_cmd_anchor_backfill)
 
     p_log = sub.add_parser("log-verdict", help="record a manual BUY/AVOID verdict for a candidate")

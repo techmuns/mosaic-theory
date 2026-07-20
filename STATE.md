@@ -3716,6 +3716,38 @@ two-name analysis (mid/small-caps, opposite directions) mapped against this inve
 
 ## 5. Next steps (ordered, current)
 
+- **ANCHOR REVENUE-TAG DEFECT — FOUND, FIXED, BOOK RE-VALIDATED (branch
+  `fix/anchor-revenue-tag`, 2026-07-20; PR open, NOT merged).** The R1 anchor's margin DENOMINATOR
+  was chosen by *longest series*, which for AORT selected `Revenues` — a PARTIAL/segment measure
+  reading **$30–45M for FY2011–17 where the ASC-606 tag reads $180–190M (~4x)**. That fabricated
+  38–50% "margins", a false **15.83%** anchor median over FY2009–2021 (containing **zero** of the
+  current business), and a `firm` confidence on invented years. Found by the normalization-basis
+  pull, not by a test — the anchor was internally consistent and therefore silently wrong.
+  **FIX (anchor-local, by design):** `anchor.py` now selects the denominator by MEANING via
+  `_REVENUE_TAG_PREFERENCE` (606-Excluding > 606-Including > `Revenues` > `SalesRevenueNet`) —
+  *fewer VALID years beats more invalid ones* — and EBIT is intersected onto exactly those years.
+  **Fail-loud guard:** two candidate tags disagreeing >25% on a shared FY set
+  `data_quality="revenue_tag_conflict"` + the tag/gap detail, and the TOTAL tag wins; **no**
+  total-revenue tag at all → `recipe_hint="ANCHOR_UNRESOLVED"`, `applicable=false` (never a margin
+  off a partial denominator). **Confidence gained a VALIDITY component:** any fired flag CAPS the
+  margin leg — and the overall — at `weak`, however many years underlie it (AORT read `firm` on
+  fabricated years; that cannot recur). **BLAST RADIUS (re-validated all 7 committed anchors in
+  `--dry-run` diagnostic mode): 3 of 7 moved, but only ONE value moved** — AORT margin
+  15.83%→**3.87%** (13y→10y), base **$57.29→$21.90 (−62%)**, ev/ebit 42.0→**72.7** (the multiple leg
+  is now visibly wrong for the margin profile too), `firm`→`weak`. EPAM and SMPL moved
+  METADATA-only (conflict flagged against a partial `SalesRevenueNet`/`Revenues`; **bases
+  unchanged**) — but **SMPL's overall confidence drops `firm`→`weak`**, so of the three
+  firm-confidence PRIORITY names only **IT** survives. BRBR/CNXC/IT/VITL unchanged and left
+  **byte-identical** (0/0 diff). **Triage impact:** AORT falls from PRIORITY UNDERWRITE (+129%) to
+  ≈**−13%** vs the 2026-07-17 spot. **Tests:** tag-preference, conflict-guard (total wins),
+  applicability-flip, confidence-cap, byte-preserving `replace_anchor_block`, `anchor_changed`
+  timestamp-only no-op. Green (ruff + mypy --strict 102 + pytest).
+  **STILL OPEN — the broader item is NOT closed by this:** the shared `extract_points` /
+  `CONCEPT_ALIASES` first-alias resolver and `midcycle.annual_series`'s longest-alias rule are
+  **untouched by design** (changing them would hit `_attach_midcycle` + 19 midcycle tests). Any
+  OTHER consumer of those (`margin_trend`, `multi_year_trajectory`, screen fundamentals, the
+  mid-cycle block's own anchors) can still pick a partial tag. That remains the operator-decision
+  item already recorded below.
 - **OPERATOR (from the 2026-07-20 scenario-derivations build):** (a) at PR review, ratify the
   three draft `method` sentences on WERN's assumptions + the two `confirm at review`
   Dedicated-mix ref sources (51.5%→73% — analyst calcs whose filing basis needs naming), and

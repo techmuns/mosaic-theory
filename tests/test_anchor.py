@@ -12,8 +12,10 @@ from pathlib import Path
 
 import pytest
 
+from vinci.dossier import anchor as anc
 from vinci.dossier import midcycle as mc
 from vinci.dossier.anchor import (
+    ANCHOR_FIRM_MIN_YEARS,
     RECIPE_R1,
     RECIPE_R2,
     Anchor,
@@ -23,6 +25,7 @@ from vinci.dossier.anchor import (
     _latest_dep_amort,
     compute_anchor,
     insert_anchor_block,
+    replace_anchor_block,
 )
 from vinci.dossier.schemas import Dossier
 
@@ -40,6 +43,7 @@ def test_anchor_schema_shape_and_dossier_field() -> None:
     anchor JSON round-trips."""
     assert set(Anchor.model_fields) == {
         "recipe_hint", "applicable", "multiple_basis", "computed_at", "reason",
+        "data_quality", "data_quality_detail",
         "margin", "multiple", "d_and_a", "net_debt", "diluted_shares", "ltm_revenue",
         "anchor_base_value_per_share", "anchor_ev_ebit", "overall_confidence", "note",
     }
@@ -96,16 +100,16 @@ def test_backfilled_anchor_base_consistent_with_stored_inputs() -> None:
 
 
 # --- positivity guard --------------------------------------------------------------------------
-def test_positivity_guard_sets_r2_when_margin_nonpositive(monkeypatch: pytest.MonkeyPatch) -> None:
+def test_positivity_guard_sets_r2_when_margin_nonpositive() -> None:
     """A name with no positive normalizable operating margin → recipe_hint R2_NEEDED, applicable
     False, and nothing else stored (the guard for future pre-profit names; it does NOT try to catch
-    turnarounds — that is the analyst's override)."""
-    monkeypatch.setattr(mc, "margin_anchor", lambda _r, _o: mc.MarginAnchor(
-        by_year={2019: -0.10, 2020: -0.05}, revenue_tag="Revenues",
-        opinc_tag="OperatingIncomeLoss"))
-    mechanical = {"valuation": {"own_history": {"value": [
-        {"metric": "EV/EBITDA (TEV/LTM)", "median": 10.0, "n_closes": 30}]}}}
-    a = compute_anchor(mechanical, facts={"facts": {}}, computed_at=_now())
+    turnarounds — that is the analyst's override). Uses a REAL total-revenue tag so the guard is
+    reached (an absent revenue tag is the separate UNRESOLVED path)."""
+    facts = _facts(**{
+        _TOTAL: dict.fromkeys(range(2018, 2026), 100e6),
+        "OperatingIncomeLoss": dict.fromkeys(range(2018, 2026), -8e6),  # persistently loss-making
+    })
+    a = compute_anchor(_MECH_OK, facts=facts, computed_at=_now())
     assert a.recipe_hint == RECIPE_R2 and a.applicable is False
     assert "revenue-anchored" in (a.reason or "")
     assert a.anchor_base_value_per_share is None and a.margin is None  # "store nothing else"
@@ -140,6 +144,111 @@ def test_dep_amort_split_requires_the_same_fiscal_period() -> None:
     assert _latest_dep_amort(_da_facts("2025-11-30", "2024-11-30")) is None  # negative pin
 
 
+# --- revenue-denominator tag selection (the AORT defect) ---------------------------------------
+def _facts(**tags: dict[int, float]) -> dict[str, object]:
+    """companyfacts carrying the given us-gaap tags → {fiscal_year: value}, as ~12-month annuals."""
+    node: dict[str, object] = {}
+    for tag, by_year in tags.items():
+        node[tag] = {"units": {"USD": [
+            {"start": f"{y - 1}-12-31", "end": f"{y}-12-31", "val": v, "filed": f"{y + 1}-02-01",
+             "fy": y, "fp": "FY", "form": "10-K", "accn": "x"} for y, v in by_year.items()]}}
+    return {"facts": {"us-gaap": node}}
+
+
+_MECH_OK = {"valuation": {"own_history": {"value": [
+    {"metric": "EV/EBITDA (TEV/LTM)", "median": 10.0, "n_closes": 40}]}}}
+_TOTAL = "RevenueFromContractWithCustomerExcludingAssessedTax"   # the ASC-606 total-revenue tag
+
+
+def test_revenue_tag_preference_picks_total_not_longest() -> None:
+    """The denominator is chosen by MEANING (total revenue), never by longest series — the defect
+    that let AORT's partial `Revenues` (13y) beat the 606 total (10y). Fewer VALID years wins."""
+    facts = _facts(**{
+        "Revenues": dict.fromkeys(range(2011, 2022), 40e6),   # 11y PARTIAL (the longer series)
+        _TOTAL: dict.fromkeys(range(2016, 2026), 180e6),      # 10y TOTAL (the correct one)
+    })
+    s, conflicts = anc._total_revenue_series(facts)
+    assert s is not None
+    assert s.tag == "RevenueFromContractWithCustomerExcludingAssessedTax"   # total, not longest
+    assert s.n_years == 10 and conflicts                                     # and it is recorded
+
+
+def test_revenue_tag_conflict_guard_fires_and_total_tag_wins() -> None:
+    """A partial-vs-total disagreement is never silently resolved: the guard flags it, records the
+    tags and the gap, and the TOTAL tag supplies the denominator (margin 10%, not a partial 40%)."""
+    facts = _facts(**{
+        "Revenues": dict.fromkeys(range(2016, 2022), 40e6),   # partial
+        _TOTAL: dict.fromkeys(range(2016, 2026), 160e6),
+        "OperatingIncomeLoss": dict.fromkeys(range(2016, 2026), 16e6),
+    })
+    a = compute_anchor(_MECH_OK, facts=facts, computed_at=_now())
+    assert a.data_quality == anc.DQ_REVENUE_TAG_CONFLICT
+    assert a.data_quality_detail and any("Revenues" in d and "apart" in d
+                                         for d in a.data_quality_detail)
+    assert a.margin is not None
+    assert a.margin.value == pytest.approx(0.10, abs=1e-9)   # 16/160 total — NOT 16/40 partial
+
+
+def test_data_quality_flag_caps_confidence_at_weak() -> None:
+    """Confidence has a VALIDITY component: 10 clean years (≥7) and 40 closes (≥20) would read
+    'firm' on counts alone — a fired flag caps the margin leg, and the overall, at weak. AORT read
+    'firm' on fabricated years; that must not recur."""
+    facts = _facts(**{
+        "Revenues": dict.fromkeys(range(2016, 2022), 40e6),
+        _TOTAL: dict.fromkeys(range(2016, 2026), 160e6),
+        "OperatingIncomeLoss": dict.fromkeys(range(2016, 2026), 16e6),
+    })
+    a = compute_anchor(_MECH_OK, facts=facts, computed_at=_now())
+    assert a.margin is not None and a.margin.anchor_years >= ANCHOR_FIRM_MIN_YEARS
+    assert a.multiple is not None and a.multiple.confidence == "firm"   # the count leg IS firm
+    assert a.margin.confidence == "weak" and a.overall_confidence == "weak"
+    assert "CAPPED weak" in a.margin.source
+
+
+def test_revenue_tag_preference_covers_every_known_revenue_alias() -> None:
+    """DRIFT GUARD: every revenue alias the shared resolver knows must be RANKED here. An alias
+    added to CONCEPT_ALIASES but not to _REVENUE_TAG_PREFERENCE would be silently INVISIBLE — never
+    a candidate (so never chosen even when it is the true total) and never conflict-checked — i.e.
+    exactly the failure this module exists to prevent, re-entering through another door."""
+    from vinci.edgar.concepts import CONCEPT_ALIASES
+    unranked = set(CONCEPT_ALIASES["revenue"]) - set(anc._REVENUE_TAG_PREFERENCE)
+    assert not unranked, f"revenue alias(es) not ranked in _REVENUE_TAG_PREFERENCE: {unranked}"
+
+
+def test_uncomputable_margin_is_unresolved_not_r2() -> None:
+    """A margin we could not COMPUTE (no fiscal year where both series report) is a DIFFERENT fact
+    from one computed and found non-positive — never lumped into R2_NEEDED, which would tell the
+    analyst 'use the revenue-anchored recipe' when the truth is 'there is no margin data'."""
+    facts = _facts(**{
+        _TOTAL: dict.fromkeys(range(2018, 2022), 100e6),
+        "OperatingIncomeLoss": dict.fromkeys(range(2010, 2014), 5e6),   # NO overlapping FY
+    })
+    a = compute_anchor(_MECH_OK, facts=facts, computed_at=_now())
+    assert a.recipe_hint == anc.RECIPE_UNRESOLVED and a.applicable is False
+    assert "not computable" in (a.reason or "")
+    assert a.margin is None and a.anchor_base_value_per_share is None
+
+
+def test_no_total_revenue_tag_flips_applicability_to_unresolved() -> None:
+    """Only partial/absent revenue tags → ANCHOR_UNRESOLVED, applicable False. The anchor refuses to
+    emit a margin off a partial denominator rather than publishing a fabricated one."""
+    facts = _facts(OperatingIncomeLoss=dict.fromkeys(range(2016, 2026), 5000000.0))
+    a = compute_anchor(_MECH_OK, facts=facts, computed_at=_now())
+    assert a.recipe_hint == anc.RECIPE_UNRESOLVED and a.applicable is False
+    assert "total-revenue tag" in (a.reason or "")
+    assert a.margin is None and a.anchor_base_value_per_share is None
+
+
+def test_anchor_changed_ignores_only_the_timestamp() -> None:
+    """A re-validation that moves nothing must not rewrite the artifact (computed_at alone is not a
+    change); any material move must."""
+    a1 = Anchor(recipe_hint=RECIPE_R1, applicable=True, computed_at=_now())
+    same = a1.model_copy(update={"computed_at": datetime(2027, 5, 5, tzinfo=UTC)})
+    moved = a1.model_copy(update={"anchor_base_value_per_share": 9.99})
+    assert anc.anchor_changed(a1, same) is False
+    assert anc.anchor_changed(a1, moved) is True
+
+
 # --- byte-preserving backfill insert -----------------------------------------------------------
 def test_insert_anchor_block_is_byte_preserving() -> None:
     """The backfill insert appends ONLY the anchor field; every other byte is preserved (the sole
@@ -153,3 +262,17 @@ def test_insert_anchor_block_is_byte_preserving() -> None:
     assert out.startswith('{\n  "ticker": "X",\n  "midcycle": null,\n  "anchor": {')
     with pytest.raises(ValueError, match="not a JSON object"):
         insert_anchor_block("not json", a)
+
+
+def test_replace_anchor_block_is_byte_preserving_and_does_not_duplicate() -> None:
+    """The re-backfill REPLACES a trailing anchor in place: other fields keep their committed bytes
+    and the key is never duplicated (a second insert would produce two 'anchor' keys)."""
+    a1 = Anchor(recipe_hint=RECIPE_R1, applicable=True, computed_at=_now())
+    text = insert_anchor_block('{\n  "ticker": "X",\n  "midcycle": null\n}', a1)
+    a2 = a1.model_copy(update={"anchor_base_value_per_share": 12.34})
+    out = replace_anchor_block(text, a2)
+    parsed = json.loads(out)
+    assert parsed["ticker"] == "X" and parsed["midcycle"] is None          # untouched
+    assert parsed["anchor"]["anchor_base_value_per_share"] == 12.34        # replaced
+    assert out.count('"anchor":') == 1                                     # not duplicated
+    assert out.startswith('{\n  "ticker": "X",\n  "midcycle": null,\n  "anchor": {')
