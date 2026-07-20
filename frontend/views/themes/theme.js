@@ -72,9 +72,21 @@ export async function render(root, _ctx, slug) {
   const wlBlock = `
     <div class="card" style="margin-bottom:16px;">
       <h3>Watchlist · ${fmtInt(wl.length)}</h3>
-      ${wl.map((n) => `<div style="padding:7px 0; border-bottom:1px solid var(--line); font-size:12.5px; line-height:1.5;">
+      ${wl.map((n) => {
+        // A recorded verdict SUPERSEDES the freeze trigger — otherwise the row keeps advertising
+        // an underwrite that has already been decided. No card → unchanged.
+        const c = n.scenarioCard, v = (c && c.verdict) || {};
+        const tail = c
+          ? `<span class="pill conditional">${escapeHtml(String(v.status || "").toUpperCase())}</span>
+             <span class="pill ${c.passFail === "PASS" ? "buy" : "avoid"}">${escapeHtml(c.passFail || "")}</span>
+             <b>${typeof c.ratio === "number" ? escapeHtml(c.ratio.toFixed(2)) + ":1" : DASH}</b>
+             <span class="muted">vs ${escapeHtml(String(c.bar == null ? 2 : c.bar))}:1 —
+             re-underwrite when ${escapeHtml(oneLine((v.reunderwriteTriggers || [])[0] || DASH))}</span>`
+          : escapeHtml(oneLine(n.trigger));
+        return `<div style="padding:7px 0; border-bottom:1px solid var(--line); font-size:12.5px; line-height:1.5;">
         <b class="mono">${escapeHtml(n.ticker)}</b> <span class="muted">${escapeHtml(n.substructureTag || "")}</span> —
-        ${escapeHtml(oneLine(n.trigger))}</div>`).join("") || `<div class="foot">none</div>`}
+        ${tail}</div>`;
+      }).join("") || `<div class="foot">none</div>`}
       <div class="foot" style="margin-top:9px;"><a href="#/themes/watchlist">Full watchlist →</a></div>
     </div>`;
 
