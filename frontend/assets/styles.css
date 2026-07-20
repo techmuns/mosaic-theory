@@ -572,6 +572,12 @@ table.data.vs-table { width: 100%; }
 .uw-card table.data { width: 100%; }
 .uw-h-sub { text-transform: none; letter-spacing: 0; font-weight: 400; color: var(--ink-3); margin-left: 6px; }
 .uw-note { font-size: 11px; margin-top: 5px; }
+.uw-recipe { font-size: 11px; margin: 2px 0 6px; }
+.uw-methods { margin-top: 8px; }
+.uw-method { margin-top: 6px; }
+.uw-method > summary { cursor: pointer; font-size: 11.5px; color: var(--ink-3); }
+.uw-method-h { font-size: 11px; color: var(--ink-3); margin: 6px 0 2px; }
+.uw-refs-t td.uw-ref-cite { white-space: nowrap; }
 .uw-inputs { margin-top: 8px; }
 /* the card owns its endnote scopes (main body + the Inputs block), so BOTH Sources lists are
    NESTED inside it — strip the card chrome; they are footnote runs, not page sections */

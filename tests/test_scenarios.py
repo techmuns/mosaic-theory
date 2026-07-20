@@ -203,6 +203,54 @@ def test_committed_wern_underwrite_carries_its_methodology() -> None:
     assert sc.run_recipe(rec).result == rec.result
 
 
+def test_scenario_card_emits_derivations_and_omits_them_for_legacy_records() -> None:
+    """The emit passes methodology through UNROUNDED and in renderer-friendly list shape; a
+    pre-1.1 record emits NEITHER key — the degrade is omission, never a fabricated empty."""
+    build = _load_build()
+    rec = json.loads(sc.run_recipe(_rec()).model_dump_json())
+    card = build._scenario_card(rec)
+    assert card["recipeFormula"] == list(sc.R1_FORMULA)
+    assert [a["axis"] for a in card["assumptions"]] == ["revenue", "margin", "multiple"]
+    margin = next(a for a in card["assumptions"] if a["axis"] == "margin")
+    ref = margin["references"][0]
+    assert ref == {"label": "own-history median operating margin", "value": 7.45,
+                   "unit": "%", "source": "EDGAR margin_anchor"}   # raw pass-through, no _rd
+    legacy = {k: v for k, v in rec.items() if k not in ("assumptions", "recipe_formula")}
+    lcard = build._scenario_card(legacy)
+    assert "assumptions" not in lcard and "recipeFormula" not in lcard
+
+
+def test_uw_card_methodology_block_owns_its_print_fate() -> None:
+    """Source pins for the schema-1.1 render: the recipe line lives INSIDE the Scenarios fact;
+    the reference tables carry their OWN "M" endnote scope inside the <details> (marker + list
+    share print fate — the Inputs-block invariant, mechanically enforced repo-wide by the #10
+    sweep); the Method fact prints in the main tier."""
+    import re
+
+    uw = (Path(__file__).resolve().parents[1] / "frontend" / "views" / "shared" / "uw-card.js"
+          ).read_text()
+    legs = re.search(r"function legsTable\(c\) \{(.*?)\n\}", uw, re.S)
+    assert legs and "${recipeLine(c)}" in legs.group(1), (
+        "the recipe chain must render inside the Scenarios fact, above the table")
+    refs = re.search(r"function methodRefsDetails\(c\) \{(.*?)\n\}", uw, re.S)
+    assert refs, "methodRefsDetails() is gone"
+    assert 'withEndnotes("M", tables)' in refs.group(1), (
+        "the reference tables must own their endnote scope — resolving into the card's list "
+        "orphans every entry in a collapsed-block print")
+    assert "citeMark(p.source)" in refs.group(1), "every reference value must be source-cited"
+    body = re.search(r"const body = \(\) => `(.*?)`;", uw, re.S)
+    assert body and "${methodFact(c)}" in body.group(1), (
+        "the Method fact must print in the main body tier (always-visible methodology)")
+    # canonical axis order — the regression was a botched modulo sort putting revenue LAST
+    assert re.search(r"const rank = \(a\) => \{ const i = AXIS_ORDER\.indexOf\(a\.axis\); "
+                     r"return i < 0 \? 99 : i; \};", uw), (
+        "orderedAssumptions must rank known axes by AXIS_ORDER (revenue first) and unknown last")
+    # degrade: both helpers return "" on absent data — no fabricated block
+    assert re.search(r'function recipeLine\(c\) \{[^}]*?return "";', uw, re.S)
+    assert 'if (!withRefs.length) return "";' in uw
+    assert 'if (!lines) return "";' in uw
+
+
 def test_committed_schema_matches_the_model() -> None:
     """F4: ``scenarios/_schema.json`` is committed — pin it so a model change cannot silently
     leave a stale schema behind."""
