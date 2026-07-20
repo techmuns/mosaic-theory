@@ -3626,15 +3626,17 @@ two-name analysis (mid/small-caps, opposite directions) mapped against this inve
   CIQ; a bad/partial export, not missing data. The three `financial_summary` builders surfaced it as a
   cryptic `no Fiscal Period header` / bare `Balance Sheet` UNKNOWN — indistinguishable from a genuine
   header-parse failure. **Fix (shipped):** a shared `_no_data_available` sentinel guard in
-  `ciq_sheets.py` → an honest, actionable note naming the sentinel + the re-export; a
-  populated-but-headerless sheet still reads `no Fiscal Period header` (the two failure modes stay
-  DISTINCT — a real parse bug is never masked by the benign data gap). Green (ruff + mypy --strict +
-  pytest). **Incident→invariant (shipped Y):** 4 regression pins (3 positive builder pins + 1 negative
-  distinctness pin), synthetic shells, no licensed CIQ data. **OPERATOR TO-DO:** re-export AORT's CIQ
-  Financials workbook (Annual + Quarterly) to populate the tables + ratios — the new note makes the gap
-  self-explanatory. **FOLLOW-UP (held out of scope in #155):** extend `_no_data_available` to
-  `return_ratios` + the other ~17 financial-subsheet readers (same cryptic-note pattern on a No-Data
-  workbook) for surface consistency.
+  `ciq_sheets.py`, applied to all four financial-TABLE builders (`financial_summary_annual` /
+  `_quarterly`, `balance_sheet_posture`, and `return_ratios` — the last added in the #155 self-review)
+  → an honest, actionable note naming the sentinel + the re-export; a populated-but-headerless sheet
+  still reads `no Fiscal Period header` (the two failure modes stay DISTINCT — a real parse bug is
+  never masked by the benign data gap). Green (ruff + mypy --strict + pytest). **Incident→invariant
+  (shipped Y):** 5 regression pins (4 positive builder pins + 1 negative distinctness pin), synthetic
+  shells, no licensed CIQ data. **OPERATOR TO-DO:** re-export AORT's CIQ Financials workbook (Annual +
+  Quarterly) to populate the tables + ratios — the new note makes the gap self-explanatory.
+  **FOLLOW-UP (held out of scope in #155):** the ~17 SCALAR financial-subsheet readers (`net_debt`,
+  `ltm_ebitda`, margin/trajectory extractors) return UNKNOWN via cell-level absence on a No-Data
+  workbook — less cryptic than the table builders, a separate broader pass.
 - **DOSSIER-NOW: WERN (theme #3 truckload) — single-name underwrite at the 2:1 bar (2026-07-14).** The
   scan's sole REAL-tier name (quantified / driver-specific asset-based TL). Underwrite on NORMALIZED
   earnings — trailing P/E sits at the 99th percentile of its own history (a trough-earnings artifact, not

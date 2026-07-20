@@ -884,6 +884,8 @@ def return_ratios(bundle: CiqBundle) -> Sourced[FinTable]:
         rat = bundle.sheet("financials", "Ratios", freq="annual")
     except CiqUnavailableError as exc:
         return _miss_or_unknown(bundle, "financials", exc)
+    if _no_data_available(rat):
+        return Sourced.unknown(note=_no_data_note("Ratios"))
     hdr = _period_header(rat)
     if hdr is None:
         return Sourced.unknown(note="Ratios: no Fiscal Period header")

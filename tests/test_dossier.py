@@ -6331,6 +6331,17 @@ def test_balance_sheet_posture_no_data_available_names_the_reexport() -> None:
     assert "No Data Available" in note and "re-export" in note
 
 
+def test_return_ratios_no_data_available_names_the_reexport() -> None:
+    """(AORT, review #155) The Ratios FinTable panel gets the same guard — a 'No Data Available'
+    Ratios sheet → UNKNOWN naming the sentinel + re-export, not the cryptic header note."""
+    b = _fin_bundle({"Ratios": _no_data_shell("Ratios")}, freq="annual")
+    s = cs.return_ratios(b)
+    assert s.status is ds.SourceStatus.UNKNOWN and s.value is None
+    note = s.note or ""
+    assert "No Data Available" in note and "re-export" in note
+    assert "no Fiscal Period header" not in note
+
+
 def test_no_data_shell_stays_distinct_from_a_genuine_header_parse_failure() -> None:
     """The negative pin: a POPULATED sheet with real rows but NO Fiscal-Period header (a genuine
     parse failure) must STILL read 'no Fiscal Period header' — never the No-Data note. The two
