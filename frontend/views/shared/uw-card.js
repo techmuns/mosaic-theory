@@ -76,7 +76,7 @@ function legsTable(c) {
         ${row("Revenue ($M)", (l) => thousands(l.revenue))}
         ${row("Op margin", (l) => pct(l.margin))}
         ${row(`Exit ${basis}`, (l) => oneDp(l.multiple, "×"))}
-        ${row("Value / share", (l) => fmtPrice(l.valuePerShare), { name: true })}
+        ${row("Value / share", (l) => money(l.valuePerShare), { name: true })}
         ${row("EV/EBIT (cross-check)", (l) => oneDp(l.evEbit, "×"), { mutedLabel: true })}
         ${row("Norm FCF ($M, cross-check)", (l) => oneDp(l.normFcf), { mutedLabel: true })}
       </tbody>

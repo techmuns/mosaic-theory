@@ -31,13 +31,17 @@ window.addEventListener("afterprint", () => {
 // scope-menu on any outside click. Registering it per-render (inside render()) would leak a stale
 // listener on every dossier navigation, each closing over a now-detached menu. The toggle button
 // calls stopPropagation, so this never fires on the button itself.
-document.addEventListener("click", () => {
+document.addEventListener("click", (e) => {
   const menu = document.querySelector("#ds-pdf-menu");
   if (menu && !menu.hidden) {
     menu.hidden = true;
     const btn = document.querySelector("#ds-pdf");
     if (btn) btn.setAttribute("aria-expanded", "false");
   }
+  // the index assemble-help dropdown closes the same way; clicks inside it (the summary toggle,
+  // selecting text in the panel) are ignored so native <details> behavior still opens it.
+  const help = document.querySelector(".ds-help.dd[open]");
+  if (help && !e.target.closest(".ds-help.dd")) help.open = false;
 });
 
 export async function render(root, params, { item, frame }) {
@@ -65,7 +69,7 @@ export async function render(root, params, { item, frame }) {
           facts, and its verdict is not a ledger verdict of record. The full dossier is built on a
           re-underwrite trigger.</div>
         ${uwCard(card, { ticker: false })}
-        ${loggedVerdict(verdict, ticker, undefined)}
+        ${loggedVerdict(verdict, ticker, card.underwriteDate)}
         ${assembleHelp()}` });
       return;
     }
@@ -131,8 +135,8 @@ async function renderIndex(root, item, frame) {
   // scroll (100 dossiers stay one tab away from the underwrites, not one long page above them).
   const chips = `
     <div class="rt-tabs" id="ds-panels-tabs">
-      <button class="rt-tab on" data-panel="dossiers">Dossiers · ${tickers.length}</button>
-      <button class="rt-tab" data-panel="underwrites">First analysis · ${uwOnly.length}</button>
+      <button type="button" class="rt-tab on" data-panel="dossiers">Dossiers · ${tickers.length}</button>
+      <button type="button" class="rt-tab" data-panel="underwrites">First analysis · ${uwOnly.length}</button>
     </div>`;
 
   const dossierGrid = tickers.length

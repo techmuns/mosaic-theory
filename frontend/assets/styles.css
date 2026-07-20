@@ -832,6 +832,7 @@ table.data.vs-table { width: 100%; }
   /* keep atomic units intact across page breaks; sections still flow naturally */
   .fact, .filing, .point, .flag, .logged-verdict, table.data tr { break-inside: avoid; }
   .uw-card, .wl-row { break-inside: avoid; }
+  .ds-help.dd { display: none; }
   .ds-title { break-after: avoid; }
 
   /* let wide tables flow to full width instead of being clipped by the scroll box */
