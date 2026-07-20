@@ -21,7 +21,7 @@ const GATE_DEF = "the BUY−AVOID spread that must prove positive before capital
 const SHARED = [
   { route: "overview", label: "Overview", state: "home" },
   { route: "dossier", label: "Dossier", state: "live",
-    does: "Assembled facts + a derived machine proposal. A source-bound mechanical layer, a fenced bull/bear framing, and a deterministic proposal over its lean — the human's confirm/override is the verdict of record." },
+    does: "Per-name research records — assembled-facts dossiers and first-cut underwrites, typed and kept distinct; the human's confirm/override is the verdict of record." },
   { route: "decision-log", label: "Decision log", state: "live",
     does: "The immutable, append-only ledger of logged verdicts — each a frozen leg of the BUY−AVOID spread, sealed beside the machine's proposal (confirm / override / no-proposal tracked). Displayed here; logged only via the CLI." },
 ];
@@ -205,8 +205,6 @@ function setActive(item) {
 // DETAIL) omits the header-block; the dossier supplies its own ticker header.
 export function frame(item, { crumbExtra = "", title = "", bodyHtml = "", bare = false } = {}) {
   const subtitle = item.does ? `<div class="subtitle">${escapeHtml(item.does)}</div>` : "";
-  const persistent = item.route === "dossier"
-    ? `<div class="subtitle muted">assembled facts · no verdict</div>` : "";
   const edge = edgeOfItem(item);
 
   if (edge && edge.stages && edge.stages.length && !bare) {
@@ -228,14 +226,14 @@ export function frame(item, { crumbExtra = "", title = "", bodyHtml = "", bare =
         <h1 class="page-h">${escapeHtml(drill && title ? title : edge.label)}</h1>
         <nav class="tabs">${tabs}</nav>
       </div>
-      ${!drill && (subtitle || persistent) ? `<div class="stage-sub">${subtitle}${persistent}</div>` : ""}
+      ${!drill && subtitle ? `<div class="stage-sub">${subtitle}</div>` : ""}
       ${bodyHtml}`;
   }
 
   const headerBlock = bare ? "" : `
     <div class="header-block">
       <h1 class="page-h">${escapeHtml(item.label)}</h1>
-      ${subtitle}${persistent}
+      ${subtitle}
     </div>`;
   const sectionCrumb = crumbExtra
     ? `<a href="#/${item.route}">${escapeHtml(item.label)}</a>`

@@ -915,8 +915,8 @@ table.data.vs-table { width: 100%; }
 
 /* ── Radar sub-tabs (Map · Inbox · Log) + drawer ─────────────────────────────────────────── */
 .rt-sweep { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; font-size: 12.5px; color: var(--ink-2); margin-bottom: 10px; }
-/* radar sub-tabs — SEGMENTED CHIPS, subordinate to the frame's single underline stage bar
-   (the double-underline stack died with the IA fold-in; hierarchy by visual weight). */
+/* segmented chips — the SHARED subordinate tab pattern (radar map/inbox/log, dossier-index
+   dossiers/first-analysis panels); the frame's underline stage bar stays the only underline. */
 .rt-tabs { display: flex; gap: 6px; margin-bottom: 14px; }
 .rt-tab { font: 12px var(--sans); padding: 3px 12px; border: 1px solid var(--line-2); border-radius: 999px; background: none; color: var(--ink-2); cursor: pointer; transition: color 0.15s, border-color 0.15s, background 0.15s; }
 .rt-tab:hover { color: var(--ink); border-color: var(--line-2); background: var(--surface-2); }

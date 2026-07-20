@@ -2357,6 +2357,17 @@ Each line: *what it does* — *verified how*.
     origin/main (headless harness); `python3 frontend/build.py` (the Cloudflare invocation, no
     PYTHONPATH) leaves the tree byte-identical and is idempotent; browser-walked every route + legacy
     redirects, light AND dark, incl. the previously-broken radar links and the WERN card/degrade.
+  - **REVIEW ROUND (operator, on the live preview): the dossier index was wordy + one-scroll.**
+    De-worded and re-tiered: the frame's persistent "assembled facts · no verdict" line REMOVED —
+    it was PRE-PIVOT copy (the anti-anchoring pivot renamed the identity to "proposal sealed";
+    the dossier.js pin already banned the phrase there) — identity now lives ONCE per typed panel;
+    the SHARED `does` line cut to one sentence covering both artifact types; the ×10 per-card
+    "assembled facts · proposal sealed →" collapsed into the panel subtitle (cards are ticker-only);
+    the search-instruction sentence dropped (the placeholder is the instruction; the ranker link
+    moved into the search row); assemble-help moved to the foot. SCALE: the index became TWO
+    segmented-chip panels — "Dossiers · N" | "First analysis · M" (the ds-tabs/radar chip
+    precedent, client-side, no route) — so 100 dossiers stay one tab away from the underwrites,
+    not one long page above them.
   - **DRIVE-BY FIX (explicit, not silent):** `dossier.js` carried a LITERAL NUL byte as a
     compound-key separator (`fam + NUL + name`), making the whole file read as BINARY to grep — now
     the behavior-identical `"\x00"` escape. **Two implementation bugs caught by the browser walk,

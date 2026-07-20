@@ -112,35 +112,53 @@ export async function render(root, params, { item, frame }) {
 async function renderIndex(root, item, frame) {
   root.innerHTML = frame(item, { bodyHtml: `<div class="notice">Loading dossiers…</div>` });
   const [tickers, scenTickers] = await Promise.all([getDossierIndex(), getScenarioIndex()]);
+  const uwOnly = scenTickers.filter((t) => !tickers.includes(t));
+
+  // Repetition-reduced: identity lives ONCE per typed panel (not on every card), the search
+  // placeholder is the instruction, and the assemble-help sits at the foot (on-demand tier).
   const search = `
-    <form id="ds-search" style="display:flex; gap:10px; margin:4px 0 18px;">
+    <form id="ds-search" style="display:flex; gap:10px; align-items:center; margin:4px 0 16px;">
       <input id="ds-q" type="search" placeholder="Jump to a ticker's dossier (e.g. VRRM)…" autocomplete="off"
         style="flex:1; max-width:380px; padding:9px 12px; border:1px solid var(--line-2); border-radius:8px; font-size:13px;" />
       <button type="submit" style="padding:9px 18px; border:1px solid var(--line-2); border-radius:8px; background:var(--surface); cursor:pointer; font-size:13px;">Open</button>
+      <a class="foot" href="#/ranker">open a finalist from the ranker →</a>
     </form>`;
-  const body = tickers.length
+
+  // TYPED PANELS behind segmented chips — one artifact type per panel, scalable past a single
+  // scroll (100 dossiers stay one tab away from the underwrites, not one long page above them).
+  const chips = `
+    <div class="rt-tabs" id="ds-panels-tabs">
+      <button class="rt-tab on" data-panel="dossiers">Dossiers · ${tickers.length}</button>
+      <button class="rt-tab" data-panel="underwrites">First analysis · ${uwOnly.length}</button>
+    </div>`;
+
+  const dossierGrid = tickers.length
     ? `<div class="grid cols-3">${tickers.map((t) => `
         <a class="ds-index-card" href="#/dossier/${escapeHtml(t)}">
           <div class="mono" style="font-size:16px; font-weight:650;">${escapeHtml(t)}</div>
-          <div class="muted" style="font-size:12px; margin-top:4px;">assembled facts · proposal sealed →</div>
         </a>`).join("")}</div>`
     : `<div class="notice">No dossiers committed to this deploy yet. Assemble with <span class="mono">python -m vinci dossier</span>, then commit the derived <span class="mono">dossier.json</span> to the private repo.</div>`;
-  // FIRST ANALYSIS — names with a committed underwrite record but no dossier. TYPED, never
-  // blended: a scenario underwrite is a screen-stage read with a scenario verdict, not assembled
-  // facts — the label carries the distinction, the dashed card keeps it visible at a glance.
-  const uwOnly = scenTickers.filter((t) => !tickers.includes(t));
-  const uwGroup = uwOnly.length ? `
-    <div class="ds-title" style="margin-top:22px;">First analysis · underwrites</div>
-    <div class="subtitle muted" style="margin:2px 0 10px;">scenario underwrite records — not dossiers;
-      a screen-stage read with a recorded scenario verdict, no assembled facts</div>
-    <div class="grid cols-3">${uwOnly.map((t) => `
-      <a class="ds-index-card uw" href="#/dossier/${escapeHtml(t)}">
-        <div class="mono" style="font-size:16px; font-weight:650;">${escapeHtml(t)}
-          <span class="pill conditional" style="margin-left:6px;">underwrite</span></div>
-        <div class="muted" style="font-size:12px; margin-top:4px;">first-cut underwrite · no dossier →</div>
-      </a>`).join("")}</div>` : "";
+  const dossierPanel = `
+    <div data-panel-body="dossiers">
+      <div class="subtitle muted" style="margin:0 0 10px;">assembled facts · proposal sealed until the human logs</div>
+      ${dossierGrid}
+    </div>`;
+
+  const uwGrid = uwOnly.length
+    ? `<div class="grid cols-3">${uwOnly.map((t) => `
+        <a class="ds-index-card uw" href="#/dossier/${escapeHtml(t)}">
+          <div class="mono" style="font-size:16px; font-weight:650;">${escapeHtml(t)}
+            <span class="pill conditional" style="margin-left:6px;">underwrite</span></div>
+        </a>`).join("")}</div>`
+    : `<div class="foot">none yet — a record lands as <span class="mono">scenarios/&lt;TICKER&gt;.json</span> and appears here.</div>`;
+  const uwPanel = `
+    <div data-panel-body="underwrites" hidden>
+      <div class="subtitle muted" style="margin:0 0 10px;">scenario underwrite records — a screen-stage read with a recorded scenario verdict; not a dossier</div>
+      ${uwGrid}
+    </div>`;
+
   root.innerHTML = frame(item, {
-    bodyHtml: `${assembleHelp()}<div class="subtitle" style="margin-bottom:10px;">Search any ticker, open a finalist from the <a href="#/ranker">ranker</a>, or pick a committed one below.</div>${search}${body}${uwGroup}`,
+    bodyHtml: `${search}${chips}${dossierPanel}${uwPanel}${assembleHelp()}`,
   });
   // client-side navigation only (no write path) — jump to any ticker's dossier
   root.querySelector("#ds-search").addEventListener("submit", (e) => {
@@ -148,6 +166,12 @@ async function renderIndex(root, item, frame) {
     const t = root.querySelector("#ds-q").value.trim().toUpperCase();
     if (t) location.hash = `#/dossier/${encodeURIComponent(t)}`;
   });
+  // panel chips — client-side toggle, no route (the ds-tabs precedent)
+  root.querySelectorAll("#ds-panels-tabs .rt-tab").forEach((b) => b.addEventListener("click", () => {
+    root.querySelectorAll("#ds-panels-tabs .rt-tab").forEach((x) => x.classList.toggle("on", x === b));
+    root.querySelectorAll("[data-panel-body]").forEach((pnl) =>
+      pnl.hidden = pnl.dataset.panelBody !== b.dataset.panel);
+  }));
 }
 
 // "How to assemble a dossier" — COPYABLE TEXT in the same compact, collapsible style as the
