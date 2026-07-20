@@ -208,5 +208,59 @@ def test_dossier_view_resolves_existence_from_the_index_never_from_a_404() -> No
         "the scenario-card fetch must be gated on the scenario index")
 
 
+def test_citation_system_is_shared_not_re_implemented() -> None:
+    """The citation system has ONE home (frontend/lib/cites.js).
+
+    It used to be ~25 private lines inside dossier.js, which is precisely why uw-card.js hardcoded
+    the inline form for EVERY cite — including its main-body Spot cite, where the dossier's own
+    convention says endnote. A good implementation locked in one module forces the next surface to
+    ship a lesser one; this pins the lift so it cannot regress."""
+    root = Path(__file__).resolve().parents[1] / "frontend"
+    lib = (root / "lib" / "cites.js").read_text()
+    for fn in ("export function citeMark", "export function withEndnotes",
+               "export function auditCitesInline", "export const citePlaceholders"):
+        assert fn in lib, f"lib/cites.js lost {fn}"
+    dossier = (root / "views" / "shared" / "dossier.js").read_text()
+    assert 'from "../../lib/cites.js"' in dossier, "dossier.js must import the shared cite system"
+    for dead in ("function citeMark(", "function withEndnotes(", "function auditCitesInline("):
+        assert dead not in dossier, f"dossier.js re-declares {dead} — one implementation, one home"
+    # exactly ONE module may know the placeholder grammar — a second copy is the documented
+    # "two divergent parsers of one string" bug class
+    marker = 'data-ref="'
+    hits = sorted(p.name for p in root.rglob("*.js") if marker in p.read_text())
+    assert hits == ["cites.js"], f"the citeMark placeholder shape leaked outside cites.js: {hits}"
+
+
+def test_uw_card_main_body_cites_are_endnotes_when_the_host_runs_the_pass() -> None:
+    """The card's MAIN BODY must be able to emit endnotes, and the host that asks for them must
+    actually run the pass — an unconsumed placeholder renders a literal "[?]" to the analyst.
+
+    The on-demand <details> block stays inline in BOTH modes on purpose: it is print-excluded, so an
+    endnote there would leave an orphan [n] in a printed Sources list pointing at a marker the
+    reader cannot see (the auditCitesInline rule)."""
+    import re
+
+    root = Path(__file__).resolve().parents[1] / "frontend"
+    uw = (root / "views" / "shared" / "uw-card.js").read_text()
+    assert 'cites = "inline"' in uw, (
+        "the default must stay inline — a host with no endnote pass would otherwise render [?]")
+    assert re.search(r'cites === "endnote"\s*\?\s*citeMark\(ref\)', uw), (
+        "the main-body cite must become a citeMark placeholder in endnote mode")
+    # the audit <details> keeps the inline form regardless of mode
+    inputs = re.search(r"function inputsDetails\(c\) \{(.*?)\n\}", uw, re.S)
+    assert inputs and 'class="cite"' in inputs.group(1) and "citeMark(" not in inputs.group(1), (
+        "the on-demand audit block must cite INLINE in both modes (no orphan [n] in print)")
+    # any host that asks for endnotes must run withEndnotes over the result
+    dossier = (root / "views" / "shared" / "dossier.js").read_text()
+    for m in re.finditer(r'uwCard\([^)]*cites:\s*"endnote"[^)]*\)', dossier):
+        window = dossier[max(0, m.start() - 400):m.end()]
+        assert "withEndnotes(" in window, (
+            "a host requesting endnote cites must wrap the card in withEndnotes(), else the "
+            "placeholder renders as a literal [?]")
+    # the theme host must NOT request endnotes (it runs no pass)
+    theme = (root / "views" / "themes" / "theme.js").read_text()
+    assert '"endnote"' not in theme, "the theme page runs no endnote pass — it must stay inline"
+
+
 if __name__ == "__main__":
     raise SystemExit(pytest.main([__file__, "-q"]))

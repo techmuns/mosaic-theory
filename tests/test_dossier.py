@@ -2534,29 +2534,40 @@ def test_endnote_scope_restores_fallback_after_a_render() -> None:
 
 
 def test_web_cite_machinery_static_invariants_no_node() -> None:
-    """(review #6/#9/#10) dossier.js's web cite machinery ships UNVERIFIED when node is absent (the
+    """(review #6/#9/#10) the web cite machinery ships UNVERIFIED when node is absent (the
     node-gated parity tests skip), so pin its structural contracts by source inspection — NODE-FREE:
       #9  the citeMark placeholder is parsed in exactly ONE place (citePlaceholders), called by BOTH
           withEndnotes and auditCitesInline — no second ad-hoc parser that can drift from citeMark;
       #10 no citeMark sits INSIDE a print-excluded <details>…</details> literal (its [n] marker is
           hidden by the print CSS → an orphan Sources entry in a Full PDF — the L3 bug).
-    (Behavioural numbering is still checked by the node-gated parity tests when node is present.)"""
+    (Behavioural numbering is still checked by the node-gated parity tests when node is present.)
+
+    The machinery now lives in frontend/lib/cites.js (lifted out of dossier.js, which kept it
+    private and so forced uw-card.js to hardcode the inline form). #9 therefore pins the LIB; #10
+    sweeps EVERY frontend module, because citeMark is now importable anywhere — the orphan-in-print
+    mistake is no longer dossier.js's alone to make."""
     import pathlib
     import re as _re
-    src = pathlib.Path("frontend/views/shared/dossier.js").read_text()
+    src = pathlib.Path("frontend/lib/cites.js").read_text()
     # #9 — the placeholder REGEX source exists exactly once (inside citePlaceholders); both call it.
     assert src.count(r'data-ref="([^"]*)">\[\?\]<\/sup>') == 1, "cite regex must live in one place"
-    assert src.count("const citePlaceholders =") == 1, "citePlaceholders must be defined once"
+    assert src.count("citePlaceholders =") == 1, "citePlaceholders must be defined once"
     assert src.count("citePlaceholders()") >= 2, "withEndnotes + auditCitesInline must both call it"
     # citeMark's EMITTED placeholder matches the parser's expected shape (emitter↔parser contract)
     assert 'class="cite-n" data-ref="${escapeHtml(sourceRef)}">[?]</sup>' in src
     # #10 — no citeMark inside a print-excluded <details>…</details> literal (place the cite OUTSIDE
     # the details, as the revision-log does, or route it via auditCitesInline as the cap-struct one
     # does). Catches direct embeds. Strip full-line // comments first — prose mentioning "<details>"
-    # (e.g. the L3 doc-comment) is not a real tag and would over-match.
-    code = "\n".join(ln for ln in src.splitlines() if not ln.lstrip().startswith("//"))
-    for seg in _re.findall(r"<details\b.*?</details>", code, _re.S):
-        assert "citeMark(" not in seg, "a citeMark in a <details> literal orphans in print (#10)"
+    # (e.g. the L3 doc-comment) is not a real tag and would over-match. Swept across every module
+    # that can now import citeMark, not just the dossier view.
+    for p in sorted(pathlib.Path("frontend").rglob("*.js")):
+        text = p.read_text()
+        if "citeMark(" not in text:
+            continue
+        code = "\n".join(ln for ln in text.splitlines() if not ln.lstrip().startswith("//"))
+        for seg in _re.findall(r"<details\b.*?</details>", code, _re.S):
+            assert "citeMark(" not in seg, (
+                f"{p.name}: a citeMark in a <details> literal orphans in print (#10)")
 
 
 def test_self_referential_twin_requires_resolved_period_in_the_name() -> None:
