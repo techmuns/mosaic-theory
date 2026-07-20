@@ -117,12 +117,15 @@ async function renderIndex(root, item, frame) {
   // Repetition-reduced: identity lives ONCE per typed panel (not on every card), the search
   // placeholder is the instruction, and the assemble-help sits at the foot (on-demand tier).
   const search = `
-    <form id="ds-search" style="display:flex; gap:10px; align-items:center; margin:4px 0 16px;">
-      <input id="ds-q" type="search" placeholder="Jump to a ticker's dossier (e.g. VRRM)…" autocomplete="off"
-        style="flex:1; max-width:380px; padding:9px 12px; border:1px solid var(--line-2); border-radius:8px; font-size:13px;" />
-      <button type="submit" style="padding:9px 18px; border:1px solid var(--line-2); border-radius:8px; background:var(--surface); cursor:pointer; font-size:13px;">Open</button>
-      <a class="foot" href="#/ranker">open a finalist from the ranker →</a>
-    </form>`;
+    <div class="ds-toolbar">
+      <form id="ds-search" style="display:flex; gap:10px; align-items:center; flex:1 1 380px; margin:0;">
+        <input id="ds-q" type="search" placeholder="Jump to a ticker's dossier (e.g. VRRM)…" autocomplete="off"
+          style="flex:1; max-width:380px; padding:9px 12px; border:1px solid var(--line-2); border-radius:8px; font-size:13px;" />
+        <button type="submit" style="padding:9px 18px; border:1px solid var(--line-2); border-radius:8px; background:var(--surface); cursor:pointer; font-size:13px;">Open</button>
+        <a class="foot" href="#/ranker">open a finalist from the ranker →</a>
+      </form>
+      ${assembleHelp(true)}
+    </div>`;
 
   // TYPED PANELS behind segmented chips — one artifact type per panel, scalable past a single
   // scroll (100 dossiers stay one tab away from the underwrites, not one long page above them).
@@ -158,7 +161,7 @@ async function renderIndex(root, item, frame) {
     </div>`;
 
   root.innerHTML = frame(item, {
-    bodyHtml: `${search}${chips}${dossierPanel}${uwPanel}${assembleHelp()}`,
+    bodyHtml: `${search}${chips}${dossierPanel}${uwPanel}`,
   });
   // client-side navigation only (no write path) — jump to any ticker's dossier
   root.querySelector("#ds-search").addEventListener("submit", (e) => {
@@ -176,15 +179,19 @@ async function renderIndex(root, item, frame) {
 
 // "How to assemble a dossier" — COPYABLE TEXT in the same compact, collapsible style as the
 // Ingestion page's refresh block (never a button). The dashboard is read-only and runs nothing.
-function assembleHelp() {
+function assembleHelp(dd = false) {
+  // dd=true -> the index-toolbar dropdown (collapsed control top-right, panel overlays on open —
+  // the PDF-menu precedent); default -> the in-flow block the degrade page keeps.
   return `
-    <details class="card" style="margin-bottom:18px; background:var(--surface-2);">
-      <summary style="cursor:pointer; font-size:12.5px; font-weight:600; color:var(--ink-2);">How to assemble a dossier <span class="muted" style="font-weight:400;">(read-only — copy &amp; run locally, then rebuild)</span></summary>
+    <details class="card ds-help${dd ? " dd" : ""}">
+      <summary style="cursor:pointer; font-size:12.5px; font-weight:600; color:var(--ink-2);">How to assemble a dossier${dd ? "" : ` <span class="muted" style="font-weight:400;">(read-only — copy &amp; run locally, then rebuild)</span>`}</summary>
+      <div class="ds-help-body">
       <div class="subtitle muted" style="margin:10px 0 8px;">Replace <span class="mono">&lt;TICKER&gt;</span> with the name. Pull the licensed CIQ first, assemble, then rebuild the mirror — the dashboard runs nothing.</div>
       <pre style="background:var(--nav-bg); color:var(--nav-ink); padding:12px 14px; border-radius:8px; font-size:12px; overflow-x:auto; margin:0; line-height:1.6;"><code>python -m vinci dossier requirements --ticker &lt;TICKER&gt;  # which licensed CIQ to pull first
 python -m vinci dossier --ticker &lt;TICKER&gt;               # assemble one finalist (facts + fenced synthesis)
 python -m vinci dossier --top 10                         # or: the top 10 of the ranked queue
 python3 frontend/build.py                                # mirror into this dashboard, then reload</code></pre>
+      </div>
     </details>`;
 }
 

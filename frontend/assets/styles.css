@@ -700,6 +700,16 @@ table.data.vs-table { width: 100%; }
 /* dossier index cards */
 .ds-index-card { display: block; border: 1px solid var(--line); border-radius: var(--r); padding: 14px 16px; background: var(--surface); box-shadow: var(--shadow); }
 .ds-index-card:hover { border-color: var(--accent); text-decoration: none; }
+/* assemble-help — in-flow block by default (the degrade page); .dd = the index-toolbar dropdown:
+   collapsed one-liner top-right, panel OVERLAYS on open (the PDF-menu precedent) so it never
+   scrolls away under N cards and never reflows the grid. */
+.ds-help { margin-bottom: 18px; background: var(--surface-2); }
+.ds-toolbar { display: flex; gap: 14px; align-items: flex-start; flex-wrap: wrap; margin: 4px 0 16px; }
+.ds-help.dd { margin: 0; padding: 8px 13px; position: relative; flex: none; }
+.ds-help.dd > summary { white-space: nowrap; }
+.ds-help.dd .ds-help-body { position: absolute; right: 0; top: calc(100% + 8px); z-index: 40;
+  width: min(720px, 82vw); background: var(--surface); border: 1px solid var(--line-2);
+  border-radius: var(--r); box-shadow: var(--shadow); padding: 4px 14px 13px; }
 /* first-analysis (underwrite-only) index cards — dashed = typed as NOT-a-dossier at a glance */
 .ds-index-card.uw { border-style: dashed; box-shadow: none; background: var(--surface-2); }
 .ds-index-card.uw:hover { border-color: var(--conditional); }
