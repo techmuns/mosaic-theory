@@ -2330,20 +2330,31 @@ Each line: *what it does* — *verified how*.
     there orphans an `[n]` in a printed Sources list, pointing at a marker the reader can't see).
     The card's `<details class="uw-inputs">` cites were therefore CORRECT; only the main-body Spot
     cite violated the rule.
-  - **FIX.** Machinery moved VERBATIM to `frontend/lib/cites.js` (behavior unchanged). `uwCard`
-    gains a `cites` option — **DEFAULT "inline"** so a host with no pass is never broken; the
-    `<details>` block stays inline in BOTH modes. The WERN page requests `"endnote"` and runs
-    `withEndnotes("U", …)`; the theme page (no Sources list) keeps the default and is untouched.
-  - **GUARDS.** The pre-existing #9/#10 pin follows the machinery to the lib AND now sweeps EVERY
-    module that can import `citeMark` (the orphan-in-print mistake is no longer dossier.js's alone
-    to make). New pins: one home, ONE placeholder grammar frontend-wide, the inline default, the
-    `<details>` inline rule, and that a host requesting endnotes actually runs the pass.
-  - **Verified in the browser** — WERN: 0 main-body inline cites, marker `[U1]`, Sources
-    "[U1] Polygon EOD daily close…", `<details>` keeps 5 inline cites, 0 orphan `[?]`; theme page
-    unchanged (0 markers, 0 Sources sections); VRRM per-tier numbering intact (Brief `[B1…]` 19
-    sources, Analysis `[A1…]` 49). **The preview caught a real bug pre-commit**: the uw-card import
-    silently no-op'd and the page threw "citeMark is not defined" — the PREVIEW RULE paid for
-    itself.
+  - **FIX (final form — the card OWNS its citations).** Machinery moved VERBATIM to
+    `frontend/lib/cites.js`. The design then went through two iterations ON THE BRANCH:
+    (1) a `cites` option on `uwCard` (default "inline"; the WERN host wrapped in
+    `withEndnotes("U", …)`; the theme page kept inline) — REPLACED when the operator asked why the
+    theme page's copy still showed the old layout: a knob a host can get wrong IS a rendering
+    difference in waiting. (2) The knob is GONE — `uwCard` runs its OWN two scopes:
+    `withEndnotes("U", body)` for the main body (its Sources list sits inside the card) and
+    `withEndnotes("I", …)` INSIDE the Inputs `<details>` (marker + list share print fate —
+    `details:not([open])` drops a collapsed block from the PDF, so an `[I n]` resolving into the
+    card's outer list would orphan there). NO host runs a pass; the card renders identically on
+    EVERY surface, current and future.
+  - **GUARDS.** The pre-existing #9/#10 pin follows the machinery to the lib AND sweeps EVERY
+    module that can import `citeMark`; #10 now states the REAL invariant (a citeMark inside a
+    `<details>` is allowed IFF the block carries its own endnote scope) instead of the old blunt
+    proxy (never inside `<details>`) — an operator-approved loosening. New pins: one home, ONE
+    placeholder grammar frontend-wide, the card runs its own U scope + the Inputs block its own I
+    scope, NO `cites` knob and no hand-rolled inline cite left in the card, and no host wraps the
+    card in a pass of its own.
+  - **Verified in the browser (all three surfaces, post-redesign)** — WERN: `[U1]` + Sources in
+    the card, `[I1…I5]` + their list INSIDE the expanded `<details>`, exactly 2 Sources sections
+    (U + I — no host double-wrap), 0 inline cites, 0 orphan `[?]`; THEME page now renders the
+    SAME numbered card (`[U1]`, `[I1…I5]`, 0 orphans) — the operator's "why is the theme copy not
+    updated?" is what forced iteration (2); VRRM per-tier numbering intact (Brief `[B1…]` 19
+    sources). **The preview caught a real bug pre-commit**: the uw-card import silently no-op'd
+    and the page threw "citeMark is not defined" — the PREVIEW RULE paid for itself.
   - **PROCESS DEFECT (recorded, mine):** a gate command piped pytest through `grep`, which
     discards the exit code, so a run reporting `1 failed` did not stop the commit. The commit was
     afterwards verified green in an ISOLATED clean checkout of HEAD (709 passed, exit 0) and the
