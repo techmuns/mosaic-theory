@@ -251,6 +251,61 @@ def test_uw_card_methodology_block_owns_its_print_fate() -> None:
     assert 'if (!lines) return "";' in uw
 
 
+def test_uw_card_renders_derivations_and_degrades_silently_node() -> None:
+    """Node-gated e2e: render the COMMITTED WERN card through the real uwCard and assert the
+    methodology actually reaches the HTML — data-driven (every method sentence + every reference
+    label from the committed JSON, escaped exactly as the renderer escapes), plus the structural
+    markers. NEG: the same card stripped of assumptions/recipeFormula renders NO methodology
+    block and loses exactly one Sources list (the M scope) — silence, never fabrication."""
+    import shutil
+    import subprocess
+
+    if not shutil.which("node"):
+        pytest.skip("node unavailable")
+    card_path = Path(__file__).resolve().parents[1] / "frontend" / "scenarios" / "WERN.json"
+    if "assumptions" not in json.loads(card_path.read_text()):
+        pytest.skip("committed card predates the backfill")
+    driver = r"""
+import { readFileSync } from "node:fs";
+import { pathToFileURL } from "node:url";
+import path from "node:path";
+const stub = new Proxy(function(){}, { get: () => stub, apply: () => stub, construct: () => ({}) });
+for (const g of ["window","document","location"]) { try { globalThis[g] = stub; } catch {} }
+const cardUrl = pathToFileURL(path.resolve("frontend/views/shared/uw-card.js")).href;
+const { uwCard } = await import(cardUrl);
+const { escapeHtml } = await import(pathToFileURL(path.resolve("frontend/lib/format.js")).href);
+const card = JSON.parse(readFileSync("frontend/scenarios/WERN.json"));
+const html = uwCard(card);
+const missing = [];
+for (const a of card.assumptions) {
+  if (!html.includes(escapeHtml(a.method))) missing.push(["method", a.axis]);
+  for (const r of a.references)
+    if (!html.includes(escapeHtml(r.label))) missing.push(["ref", r.label.slice(0, 40)]);
+}
+const stripped = { ...card }; delete stripped.assumptions; delete stripped.recipeFormula;
+const bare = uwCard(stripped);
+const count = (h, n) => h.split(n).length - 1;
+console.log(JSON.stringify({
+  missing,
+  recipe: html.includes("EBIT = revenue"),
+  block: html.includes('class="uw-method"') && html.includes("[M1]"),
+  chosen: html.includes("chosen (bear · base · bull)"),
+  bareClean: !bare.includes("uw-method") && !bare.includes("uw-recipe"),
+  sourcesFull: count(html, 'class="card ds-section ds-sources"'),
+  sourcesBare: count(bare, 'class="card ds-section ds-sources"'),
+}));
+"""
+    out = subprocess.run(["node", "--input-type=module", "-e", driver],
+                         capture_output=True, text=True, check=True,
+                         cwd=Path(__file__).resolve().parents[1])
+    res = json.loads(out.stdout)
+    assert res["missing"] == [], f"committed methodology absent from the render: {res['missing']}"
+    assert res["recipe"] and res["block"] and res["chosen"], res
+    assert res["bareClean"], "a stripped card must render NO methodology block (no fabrication)"
+    # full = U + I + M scopes; stripped loses exactly the M list, U and I untouched
+    assert (res["sourcesFull"], res["sourcesBare"]) == (3, 2), res
+
+
 def test_committed_schema_matches_the_model() -> None:
     """F4: ``scenarios/_schema.json`` is committed — pin it so a model change cannot silently
     leave a stale schema behind."""
