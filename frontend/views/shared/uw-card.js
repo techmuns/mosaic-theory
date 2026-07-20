@@ -13,7 +13,7 @@
 // Defaulting to "inline" makes forgetting harmless rather than visibly broken.
 // and self-contained on theme pages. Gaps render as pills (UNDEFINED), never blank.
 import { escapeHtml, fmtPrice, DASH } from "../../lib/format.js";
-import { citeMark } from "../../lib/cites.js";
+import { citeMark, withEndnotes } from "../../lib/cites.js";
 
 const mono = (s) => `<span class="mono">${escapeHtml(s)}</span>`;
 
@@ -96,13 +96,21 @@ function legsTable(c) {
     ${reasons ? `<ul class="kv-list" style="margin-top:8px;">${reasons}</ul>` : ""}`);
 }
 
-function inputsDetails(c) {
+// The audit block carries its OWN endnote scope in endnote mode — markers AND their Sources list
+// both live INSIDE the <details>, so the two share print fate: collapsed, the whole scope drops out
+// of the PDF together; expanded, both print. That is the real invariant the L3/#10 rule protects (a
+// marker must never outlive its Sources entry, nor the reverse) — routing these five cites into the
+// CARD's list instead would orphan five entries in every collapsed-block print. Its own scope keeps
+// the block self-contained, so no host is required to run a pass for it.
+function inputsDetails(c, cites) {
   const facts = c.facts || [];
   if (!facts.length) return "";
-  const rows = facts.map((f) => fact(f.key, `${mono(String(f.value))} ${escapeHtml(f.unit || "")}
+  const rows = () => facts.map((f) => fact(f.key, `${mono(String(f.value))} ${escapeHtml(f.unit || "")}
       <span class="muted">· ${escapeHtml(f.basis || "")}</span>
-      ${f.source ? `<span class="cite">${escapeHtml(f.source)}</span>` : ""}`)).join("");
-  return `<details class="uw-inputs"><summary>Inputs &amp; sources</summary>${rows}</details>`;
+      ${f.source ? (cites === "endnote" ? citeMark(f.source)
+                                        : `<span class="cite">${escapeHtml(f.source)}</span>`) : ""}`)).join("");
+  return `<details class="uw-inputs"><summary>Inputs &amp; sources</summary>${
+    cites === "endnote" ? withEndnotes("I", rows) : rows()}</details>`;
 }
 
 // uwCard(cardJson) -> HTML string. `ticker:false` drops the ticker from the eyebrow when the host
@@ -132,7 +140,7 @@ export function uwCard(c, { ticker = true, cites = "inline" } = {}) {
     ${legsTable(c)}
     ${v.rationale ? fact("Rationale", escapeHtml(v.rationale)) : ""}
     ${trig ? fact("Re-underwrite when", `<ul class="kv-list">${trig}</ul>`) : ""}
-    ${inputsDetails(c)}
+    ${inputsDetails(c, cites)}
     <div class="foot uw-foot">underwritten ${escapeHtml(c.underwriteDate || DASH)} · analyst
       ${escapeHtml(c.analyst || DASH)}${c.recipeDesc ? ` · ${escapeHtml(c.recipeDesc)}` : ""}</div>
   </section>`;

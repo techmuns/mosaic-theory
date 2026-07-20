@@ -2555,19 +2555,28 @@ def test_web_cite_machinery_static_invariants_no_node() -> None:
     assert src.count("citePlaceholders()") >= 2, "withEndnotes + auditCitesInline must both call it"
     # citeMark's EMITTED placeholder matches the parser's expected shape (emitter↔parser contract)
     assert 'class="cite-n" data-ref="${escapeHtml(sourceRef)}">[?]</sup>' in src
-    # #10 — no citeMark inside a print-excluded <details>…</details> literal (place the cite OUTSIDE
-    # the details, as the revision-log does, or route it via auditCitesInline as the cap-struct one
-    # does). Catches direct embeds. Strip full-line // comments first — prose mentioning "<details>"
-    # (e.g. the L3 doc-comment) is not a real tag and would over-match. Swept across every module
-    # that can now import citeMark, not just the dossier view.
+    # #10 — THE REAL INVARIANT: a cite's [n] marker and its Sources entry must share PRINT FATE.
+    # Print hides a COLLAPSED block (`details:not([open])`) but still prints the enclosing tier's
+    # Sources list, so a citeMark inside a <details> that resolves into an OUTER scope orphans its
+    # entry — an [n] in the printed list pointing at a marker the reader cannot see.
+    #
+    # This used to be pinned as the blunter proxy "no citeMark inside <details>, ever". That proxy
+    # also forbade the SAFE construction: a block carrying its OWN withEndnotes scope, where marker
+    # and list are both inside the details and therefore vanish (or print) together. The uw-card's
+    # Inputs block uses exactly that, so the guard now states the invariant instead of the proxy.
+    # Strip full-line // comments first — prose mentioning "<details>" is not a real tag.
     for p in sorted(pathlib.Path("frontend").rglob("*.js")):
         text = p.read_text()
         if "citeMark(" not in text:
             continue
         code = "\n".join(ln for ln in text.splitlines() if not ln.lstrip().startswith("//"))
         for seg in _re.findall(r"<details\b.*?</details>", code, _re.S):
-            assert "citeMark(" not in seg, (
-                f"{p.name}: a citeMark in a <details> literal orphans in print (#10)")
+            if "citeMark(" not in seg and "withEndnotes(" not in seg:
+                continue
+            assert "withEndnotes(" in seg, (
+                f"{p.name}: a citeMark in a <details> resolves into an OUTER Sources list and "
+                "orphans its [n] in a collapsed-block print — give the block its own "
+                "withEndnotes scope, or cite inline (auditCitesInline)")
 
 
 def test_self_referential_twin_requires_resolved_period_in_the_name() -> None:

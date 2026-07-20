@@ -246,10 +246,16 @@ def test_uw_card_main_body_cites_are_endnotes_when_the_host_runs_the_pass() -> N
         "the default must stay inline — a host with no endnote pass would otherwise render [?]")
     assert re.search(r'cites === "endnote"\s*\?\s*citeMark\(ref\)', uw), (
         "the main-body cite must become a citeMark placeholder in endnote mode")
-    # the audit <details> keeps the inline form regardless of mode
-    inputs = re.search(r"function inputsDetails\(c\) \{(.*?)\n\}", uw, re.S)
-    assert inputs and 'class="cite"' in inputs.group(1) and "citeMark(" not in inputs.group(1), (
-        "the on-demand audit block must cite INLINE in both modes (no orphan [n] in print)")
+    # the audit <details> carries its OWN endnote scope in endnote mode — marker AND list both
+    # inside the block, so they share print fate; it must NEVER resolve into the card's list
+    inputs = re.search(r"function inputsDetails\(c, cites\) \{(.*?)\n\}", uw, re.S)
+    assert inputs, "inputsDetails must take the cite mode"
+    body = inputs.group(1)
+    assert 'withEndnotes("I", rows)' in body, (
+        "the Inputs block must own its endnote scope — resolving into the card's Sources list "
+        "orphans every entry when the block is printed collapsed")
+    assert 'class="cite"' in body, "inline mode must still render the full source string"
+    assert "citeMark(f.source)" in body
     # any host that asks for endnotes must run withEndnotes over the result
     dossier = (root / "views" / "shared" / "dossier.js").read_text()
     for m in re.finditer(r'uwCard\([^)]*cites:\s*"endnote"[^)]*\)', dossier):
