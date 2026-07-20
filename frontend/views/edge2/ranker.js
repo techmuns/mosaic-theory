@@ -109,6 +109,7 @@ function renderHead() {
 function axisVal(row, key) {
   if (AXES.includes(key)) return row.axes[key]?.score;
   if (key === "state") return STATE_RANK[stateOf(row.ticker)] ?? 0;
+  if (key === "industry") return dispIndustry(row);   // sort by the DISPLAYED label (GICS overlay)
   return row[key];
 }
 

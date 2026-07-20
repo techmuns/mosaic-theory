@@ -232,15 +232,21 @@ export async function getSpreadStatus() {
   };
 }
 
+// ONE fetch for the dossier index — getDossierIndex + getGicsLabels both want it (the ranker
+// calls both via getProcessedStates + the overlay), so they share the repo's _once memoizer
+// instead of racing two no-store requests. 404 -> null (none committed yet, authed-deploy gate).
+function _dossierIndex() {
+  return _once("dossier-index", () =>
+    _json(`${DOSSIERS}/index.json`).catch((e) => {
+      if (e.status === 404) return null;
+      throw e;
+    }));
+}
+
 // getDossierIndex() -> [ticker, ...]  (committed, derived dossiers available to the viewer)
 export async function getDossierIndex() {
-  try {
-    const idx = await _json(`${DOSSIERS}/index.json`);
-    return Array.isArray(idx?.tickers) ? idx.tickers : [];
-  } catch (e) {
-    if (e.status === 404) return []; // none committed yet (gated on the private/authed deploy)
-    throw e;
-  }
+  const idx = await _dossierIndex();
+  return Array.isArray(idx?.tickers) ? idx.tickers : [];
 }
 
 // getGicsLabels() -> {TICKER: {industry, source, source_ref}} — the CIQ-GICS overlay build.py
@@ -248,13 +254,8 @@ export async function getDossierIndex() {
 // its Industry label everywhere this is consumed, the moment the dossier commits — no queue
 // re-emit. Old committed index without `labels` -> {} (today's behavior, no overlay).
 export async function getGicsLabels() {
-  try {
-    const idx = await _json(`${DOSSIERS}/index.json`);
-    return idx && typeof idx.labels === "object" && idx.labels ? idx.labels : {};
-  } catch (e) {
-    if (e.status === 404) return {};
-    throw e;
-  }
+  const idx = await _dossierIndex();
+  return idx && typeof idx.labels === "object" && idx.labels ? idx.labels : {};
 }
 
 // The per-name WORKFLOW-state vocabulary — ONE definition (MED-7): getProcessedStates() returns

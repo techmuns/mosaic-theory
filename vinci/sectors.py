@@ -73,6 +73,7 @@ def _display_title(official: str) -> str:
     "SERVICES-PREPACKAGED SOFTWARE" → "Services-Prepackaged Software"). Pure presentation — the
     vendored table keeps the SEC's verbatim strings."""
     glue = {"and", "of", "or", "the", "a", "an", "etc.", "etc"}
+    acronyms = {"nec": "NEC", "nec.": "NEC."}   # SIC "Not Elsewhere Classified" — never "Nec"
 
     def cap_word(w: str, first: bool) -> str:
         parts = w.split("-")
@@ -85,6 +86,9 @@ def _display_title(official: str) -> str:
                 out.append(low)
                 continue
             seg_first = first or i > 0 or prefix != ""
+            if lead.rstrip(",") in acronyms or lead in acronyms:
+                out.append(prefix + acronyms.get(lead, acronyms[lead.rstrip(",")] + ","))
+                continue
             out.append(prefix + (lead.capitalize() if seg_first or lead not in glue else lead))
         return "-".join(out)
 

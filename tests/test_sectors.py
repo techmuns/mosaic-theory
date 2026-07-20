@@ -34,9 +34,10 @@ def test_industry_for_sic_finer_sub_industries() -> None:
     # ("Disgnostic" is the SEC list's own typo — vendored verbatim, display-cased)
     assert industry_for_sic("2836") == "Biological Products, (No Disgnostic Substances)"
     assert industry_for_sic("2834") == "Pharmaceutical Preparations"
-    assert industry_for_sic("8062") == "Services-General Medical & Surgical Hospitals, Nec"
+    assert industry_for_sic("8062") == "Services-General Medical & Surgical Hospitals, NEC"
     assert industry_for_sic("6798") == "Real Estate Investment Trusts"
     assert industry_for_sic("4213") == "Trucking (No Local)"  # parenthesised-segment casing
+    assert industry_for_sic("1389") == "Oil & Gas Field Services, NEC"  # NEC stays an acronym
 
 
 def test_industry_for_sic_falls_back_to_sector_never_less_informative() -> None:
