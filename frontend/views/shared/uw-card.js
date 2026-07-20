@@ -83,6 +83,7 @@ function legsTable(c) {
     `<li><b>${escapeHtml(l.name)}</b> — ${escapeHtml(l.reason)}</li>`).join("");
   const basis = c.multipleBasis || DASH;   // the RECORD stamps its basis; absent renders honest
   return fact(`Scenarios (${basis})`, `
+    ${recipeLine(c)}
     <div style="overflow-x:auto;"><table class="data uw-legs-t">
       <thead>${head}</thead>
       <tbody>
@@ -96,6 +97,72 @@ function legsTable(c) {
     </table></div>
     <div class="uw-note muted">bull is printed for range honesty — never in the ratio</div>
     ${reasons ? `<ul class="kv-list" style="margin-top:8px;">${reasons}</ul>` : ""}`);
+}
+
+// --- methodology (schema 1.1) ------------------------------------------------------------------
+// The recipe chain the record was computed under — stamped into the record from the ONE engine
+// constant (midcycle.R1_FORMULA), so what this line SAYS is what scenario_value DID. Absent on
+// pre-1.1 records → renders nothing (silence, never a fabricated chain).
+function recipeLine(c) {
+  const steps = c.recipeFormula || [];
+  if (!steps.length) return "";
+  return `<div class="uw-recipe mono muted">${steps.map(escapeHtml).join("&nbsp; →&nbsp; ")}</div>`;
+}
+
+// Axis → the EXACT legs-table row label + value formatter, so the derivation block and the table
+// above it speak one vocabulary. An unknown axis (a future recipe) renders raw — never dropped.
+function axisLabel(axis, basis) {
+  return axis === "revenue" ? "Revenue ($M)"
+    : axis === "margin" ? "Op margin"
+    : axis === "multiple" ? `Exit ${basis}` : axis;
+}
+function axisFmt(axis) {
+  return axis === "revenue" ? thousands
+    : axis === "margin" ? pct
+    : axis === "multiple" ? (v) => oneDp(v, "×") : (v) => String(v);
+}
+const AXIS_ORDER = ["revenue", "margin", "multiple"];
+function orderedAssumptions(c) {
+  const rank = (a) => { const i = AXIS_ORDER.indexOf(a.axis); return i < 0 ? 99 : i; };
+  return [...(c.assumptions || [])].sort((x, y) => rank(x) - rank(y));
+}
+
+// Always-visible: ONE line per axis stating how it was modeled — the reviewer's at-a-glance
+// methodology check. The reference numbers live one click deeper (methodRefsDetails).
+function methodLines(c) {
+  const items = orderedAssumptions(c).map((a) =>
+    `<li><b>${escapeHtml(axisLabel(a.axis, c.multipleBasis || DASH))}</b> — ${escapeHtml(a.method)}</li>`);
+  return items.length ? `<ul class="kv-list uw-methods">${items.join("")}</ul>` : "";
+}
+
+// On-demand: per-axis reference frames, source-cited, with the chosen bear/base/bull trio
+// JUXTAPOSED as the closing row (juxtapose, never difference — the reader compares, the machine
+// does not editorialize a gap). Own "M" endnote scope INSIDE the <details>: marker and Sources
+// list share print fate (the same invariant as the Inputs block).
+function methodRefsDetails(c) {
+  const withRefs = orderedAssumptions(c).filter((a) => (a.references || []).length);
+  if (!withRefs.length) return "";
+  const legs = ["bear", "base", "bull"]
+    .map((n) => (c.scenarios || []).find((s) => s.name === n)).filter(Boolean);
+  const tables = () => withRefs.map((a) => {
+    const fmt = axisFmt(a.axis);
+    const rows = a.references.map((p) =>
+      `<tr><td>${escapeHtml(p.label)}</td><td class="num">${mono(String(p.value))} ${escapeHtml(p.unit)}</td>
+        <td class="uw-ref-cite">${citeMark(p.source)}</td></tr>`).join("");
+    const chosen = legs.length
+      ? `<tr class="name-row"><td>chosen (${legs.map((l) => escapeHtml(l.name)).join(" · ")})</td>
+          <td class="num">${legs.map((l) => fmt(l[a.axis])).join(" · ")}</td><td></td></tr>` : "";
+    return `<div class="uw-method-h">${escapeHtml(axisLabel(a.axis, c.multipleBasis || DASH))}</div>
+      <div style="overflow-x:auto;"><table class="data uw-refs-t"><tbody>${rows}${chosen}</tbody></table></div>`;
+  }).join("");
+  return `<details class="uw-method"><summary>Reference frames &amp; chosen values</summary>${
+    withEndnotes("M", tables)}</details>`;
+}
+
+function methodFact(c) {
+  const lines = methodLines(c);
+  if (!lines) return "";
+  return fact("Method", lines + methodRefsDetails(c));
 }
 
 // The audit block carries its OWN endnote scope — markers AND their Sources list both live INSIDE
@@ -131,6 +198,7 @@ export function uwCard(c, { ticker = true } = {}) {
     ${fact("Spot", `${mono(fmtPrice(c.spot))}
       ${c.spotSource ? citeMark(c.spotSource) : ""}`)}
     ${legsTable(c)}
+    ${methodFact(c)}
     ${v.rationale ? fact("Rationale", escapeHtml(v.rationale)) : ""}
     ${trig ? fact("Re-underwrite when", `<ul class="kv-list">${trig}</ul>`) : ""}`;
   return `

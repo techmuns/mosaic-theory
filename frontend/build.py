@@ -78,6 +78,18 @@ def _scenario_card(rec: dict[str, Any]) -> dict[str, Any]:
     v = rec.get("verdict") or {}
     return {
         "ticker": rec["ticker"], "recipeId": rec["recipe_id"], "recipeDesc": rec["recipe_desc"],
+        # schema-1.1 methodology: the stamped arithmetic chain + per-axis derivations. Keys are
+        # OMITTED (not emptied) for pre-1.1 records — the degrade is silence, never a fabricated
+        # block, and old committed cards stay byte-identical under the emit-determinism pin.
+        # Reference values pass through RAW (display-natural units in the record; no _rd).
+        **({"recipeFormula": list(rec["recipe_formula"])}
+           if rec.get("recipe_formula") else {}),
+        **({"assumptions": [
+            {"axis": k, "method": a["method"],
+             "references": [{"label": p["label"], "value": p["value"], "unit": p["unit"],
+                             "source": p["source"]} for p in (a.get("references") or [])]}
+            for k, a in rec["assumptions"].items()]}
+           if rec.get("assumptions") else {}),
         "multipleBasis": rec["multiple_basis"], "underwriteDate": rec["underwrite_date"],
         "analyst": rec["analyst"], "spot": _rd(rec["spot"], 2), "spotSource": rec["spot_source"],
         "facts": [{"key": k, "value": f["value"], "unit": f["unit"], "basis": f["basis"],
