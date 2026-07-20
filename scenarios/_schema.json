@@ -1,5 +1,26 @@
 {
   "$defs": {
+    "AssumptionDerivation": {
+      "description": "HOW one assumption axis was modeled: a one-sentence analyst method + the reference frame.\n``references`` MAY be empty \u2014 a pure-judgment method honestly stated beats a fabricated\nreference; a blank method is refused like a blank reason.",
+      "properties": {
+        "method": {
+          "title": "Method",
+          "type": "string"
+        },
+        "references": {
+          "items": {
+            "$ref": "#/$defs/RefPoint"
+          },
+          "title": "References",
+          "type": "array"
+        }
+      },
+      "required": [
+        "method"
+      ],
+      "title": "AssumptionDerivation",
+      "type": "object"
+    },
     "Fact": {
       "description": "One source-bound input. ``basis`` names WHAT the number is; ``source`` names WHERE it came\nfrom (form + accession + statement line) so the human can verify rather than trust.",
       "properties": {
@@ -27,6 +48,35 @@
         "source"
       ],
       "title": "Fact",
+      "type": "object"
+    },
+    "RefPoint": {
+      "description": "One source-bound REFERENCE value an assumption was modeled against (a history median, an\nanchor, a floor, a peak). ``label`` names what it is (the ``basis`` role); recorded in\ndisplay-natural units (``4.06`` + ``\"%\"``, ``6.56`` + ``\"x\"``) \u2014 no consumer re-scales it.",
+      "properties": {
+        "label": {
+          "title": "Label",
+          "type": "string"
+        },
+        "value": {
+          "title": "Value",
+          "type": "number"
+        },
+        "unit": {
+          "title": "Unit",
+          "type": "string"
+        },
+        "source": {
+          "title": "Source",
+          "type": "string"
+        }
+      },
+      "required": [
+        "label",
+        "value",
+        "unit",
+        "source"
+      ],
+      "title": "RefPoint",
       "type": "object"
     },
     "Result": {
@@ -271,7 +321,7 @@
   "description": "``scenarios/<TICKER>.json`` \u2014 the full versioned underwrite record.",
   "properties": {
     "schema_version": {
-      "default": "1.0",
+      "default": "1.1",
       "title": "Schema Version",
       "type": "string"
     },
@@ -286,6 +336,13 @@
     "recipe_desc": {
       "title": "Recipe Desc",
       "type": "string"
+    },
+    "recipe_formula": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Recipe Formula",
+      "type": "array"
     },
     "multiple_basis": {
       "title": "Multiple Basis",
@@ -319,6 +376,13 @@
         "$ref": "#/$defs/ScenarioInput"
       },
       "title": "Scenarios",
+      "type": "object"
+    },
+    "assumptions": {
+      "additionalProperties": {
+        "$ref": "#/$defs/AssumptionDerivation"
+      },
+      "title": "Assumptions",
       "type": "object"
     },
     "result": {

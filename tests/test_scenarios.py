@@ -31,6 +31,14 @@ def _rec(**over: object) -> sc.ScenarioRecord:
             "base": sc.ScenarioInput(revenue=3100.0, margin=0.0625, multiple=6.5, reason="mid"),
             "bull": sc.ScenarioInput(revenue=3400.0, margin=0.080, multiple=7.0, reason="turn"),
         },
+        # schema 1.1: methodology is REQUIRED — the fixture exercises the strict path everywhere
+        "assumptions": {
+            "revenue": sc.AssumptionDerivation(method="legs set against reported history"),
+            "margin": sc.AssumptionDerivation(method="modeled off the own-history median anchor",
+                references=[sc.RefPoint(label="own-history median operating margin",
+                                        value=7.45, unit="%", source="EDGAR margin_anchor")]),
+            "multiple": sc.AssumptionDerivation(method="chosen against the own-history band"),
+        },
     }
     base.update(over)
     return sc.ScenarioRecord(**base)  # type: ignore[arg-type]
@@ -112,6 +120,87 @@ def test_norm_fcf_is_none_without_its_inputs_never_ebit() -> None:
         "cash_tax_rate": sc.Fact(value=0.25, unit="rate", basis="assumption", source="analyst"),
     }))
     assert full.result.per_scenario["base"].norm_fcf == pytest.approx(116.02, abs=0.05)
+
+
+def test_refpoint_and_method_blanks_are_refused() -> None:
+    """1.1 guards: a reference value or method that cannot be verified is refused at the
+    boundary (the blank-reason pattern); an EMPTY references list is legal — a pure-judgment
+    method honestly stated beats a fabricated reference."""
+    for field in ("label", "unit", "source"):
+        kw = {"label": "x", "value": 1.0, "unit": "%", "source": "y", field: "  "}
+        with pytest.raises(ValueError, match="cannot be verified"):
+            sc.RefPoint(**kw)  # type: ignore[arg-type]
+    ok = sc.RefPoint(label="median margin", value=7.45, unit="%", source="EDGAR")
+    assert ok.value == 7.45
+    for blank in ("", "   ", "\n\t"):
+        with pytest.raises(ValueError, match="method is required"):
+            sc.AssumptionDerivation(method=blank)
+    judged = sc.AssumptionDerivation(method="half-turn premium for cycle-turn rerating")
+    assert judged.references == []
+
+
+def test_r1_assumption_axes_are_guarded_both_ways() -> None:
+    """Unknown axis → refused at ANY version (silent render-drop is data loss); completeness →
+    binds from 1.1; an unknown recipe_id is unconstrained until it declares axes."""
+    assert set(_rec().assumptions) == {"revenue", "margin", "multiple"}   # POS: exact set OK
+    incomplete = {"revenue": sc.AssumptionDerivation(method="history")}
+    with pytest.raises(ValueError, match="must cover exactly"):
+        _rec(assumptions=incomplete)
+    bad = dict(_rec().assumptions)
+    bad["fx_rate"] = sc.AssumptionDerivation(method="typo axis")
+    with pytest.raises(ValueError, match="unknown assumption axis"):
+        _rec(assumptions=bad)
+    with pytest.raises(ValueError, match="unknown assumption axis"):
+        _rec(schema_version="1.0", assumptions={"fx_rate": bad["fx_rate"]})  # any version
+    exotic = _rec(recipe_id="R9_future", assumptions={"wacc": sc.AssumptionDerivation(
+        method="declared when the recipe exists")})
+    assert "wacc" in exotic.assumptions                                   # unconstrained
+
+
+def test_legacy_1_0_record_computes_without_assumptions() -> None:
+    """Methodology binds FORWARD: a 1.0 record with no assumptions validates, computes the same
+    numbers as always, and gets the formula STAMPED; the same emptiness at 1.1 is refused."""
+    legacy = _rec(schema_version="1.0", assumptions={})
+    out = sc.run_recipe(legacy)
+    assert out.result.per_scenario["base"].value_per_share == pytest.approx(35.73, abs=0.02)
+    assert out.recipe_formula == list(sc.R1_FORMULA)
+    with pytest.raises(ValueError, match="must state how each axis was modeled"):
+        _rec(assumptions={})
+
+
+def test_run_recipe_stamps_and_guards_the_r1_formula() -> None:
+    """The stated recipe can never drift from the computed one: unstamped → stamped from the ONE
+    engine constant; a record CLAIMING different arithmetic is refused, never overwritten. The
+    five steps are exact-pinned — code constants, not LLM text."""
+    out = sc.run_recipe(_rec())
+    assert out.recipe_formula == list(sc.R1_FORMULA)
+    restated = sc.run_recipe(out)                       # pre-stamped, correct → unchanged
+    assert restated.recipe_formula == list(sc.R1_FORMULA)
+    with pytest.raises(ValueError, match="does not match R1_FORMULA"):
+        sc.run_recipe(_rec(recipe_formula=["EV = EBIT × multiple"]))
+    assert list(sc.R1_FORMULA) == [
+        "EBIT = revenue × op margin",
+        "EBITDA = EBIT + D&A",
+        "EV = EBITDA × exit multiple (EV/EBITDA)",
+        "equity = EV − net debt",
+        "value/share = equity ÷ diluted shares",
+    ]
+
+
+def test_committed_wern_underwrite_carries_its_methodology() -> None:
+    """E2E on the committed record — the reproducibility-unit invariant. Skip-gated while the
+    committed record predates the backfill (schema 1.0); permanently active after."""
+    root = Path(__file__).resolve().parents[1]
+    rec = sc.read_record("WERN", root=root)
+    if rec.schema_version == "1.0":
+        pytest.skip("pre-backfill — binds after this PR's artifact commit")
+    assert set(rec.assumptions) == {"revenue", "margin", "multiple"}
+    assert rec.recipe_formula == list(sc.R1_FORMULA)
+    for axis, a in rec.assumptions.items():
+        for r in a.references:
+            assert r.source.strip(), f"{axis} reference {r.label!r} has no source"
+    # assumptions/formula must not feed arithmetic: recompute == committed result
+    assert sc.run_recipe(rec).result == rec.result
 
 
 def test_committed_schema_matches_the_model() -> None:

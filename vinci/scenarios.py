@@ -12,6 +12,14 @@ recipe, not to whatever the code happened to do that day.
 
 The machine COMPUTES and RECORDS; it never ratifies. ``verdict.status`` starts
 ``pending_analyst`` and only a human moves it.
+
+SCHEMA 1.1 — METHODOLOGY BINDS FORWARD. A record now carries HOW each assumption axis was
+modeled: ``assumptions`` (per axis: a one-sentence method + source-bound reference values the
+legs were chosen against) and ``recipe_formula`` (the arithmetic chain, stamped from the ONE
+engine constant ``midcycle.R1_FORMULA`` — stated recipe can never drift from computed recipe).
+1.0 records stay valid (the completeness gate binds only from 1.1 on — the reward/risk
+convention's binds-forward pattern); an unknown axis is refused at ANY version, because a typo'd
+axis silently dropping from the render is data loss.
 """
 from __future__ import annotations
 
@@ -19,13 +27,14 @@ import json
 from pathlib import Path
 from typing import Any, Literal
 
-from pydantic import BaseModel, Field, field_validator
+from pydantic import BaseModel, Field, field_validator, model_validator
 
-# ONE bar. The compute layer (vinci.dossier.midcycle) owns the ratified convention; the record
-# layer re-exports it — judge (clears_bar) and stamp (Result.bar) can no longer diverge.
-from vinci.dossier.midcycle import BAR
+# ONE bar / ONE formula. The compute layer (vinci.dossier.midcycle) owns the ratified
+# convention; the record layer re-exports — judge (clears_bar) and stamp (Result.bar) can no
+# longer diverge, and the stamped recipe_formula is the SAME constant the engine states.
+from vinci.dossier.midcycle import BAR, R1_FORMULA
 
-SCHEMA_VERSION = "1.0"
+SCHEMA_VERSION = "1.1"
 # "watch" = the name is not underwritable at TODAY's price but the franchise is intact — a
 # re-underwrite candidate, explicitly NOT an avoid. Distinct from "passed" (declined outright).
 VerdictStatus = Literal["pending_analyst", "confirmed", "overridden", "passed", "watch"]
@@ -41,6 +50,46 @@ class Fact(BaseModel):
     source: str                    # e.g. "10-K acc 0000793074-26-000071 income statement"
 
     model_config = {"frozen": True}
+
+
+class RefPoint(BaseModel):
+    """One source-bound REFERENCE value an assumption was modeled against (a history median, an
+    anchor, a floor, a peak). ``label`` names what it is (the ``basis`` role); recorded in
+    display-natural units (``4.06`` + ``"%"``, ``6.56`` + ``"x"``) — no consumer re-scales it."""
+
+    label: str
+    value: float
+    unit: str                      # "%" | "$M" | "x" | ...
+    source: str                    # the filing/tag/run that produced the value
+
+    model_config = {"frozen": True}
+
+    @field_validator("label", "unit", "source")
+    @classmethod
+    def _ref_not_blank(cls, v: str) -> str:
+        if not v.strip():
+            raise ValueError("a reference value with no label/unit/source cannot be verified — "
+                             "refusing to record it")
+        return v
+
+
+class AssumptionDerivation(BaseModel):
+    """HOW one assumption axis was modeled: a one-sentence analyst method + the reference frame.
+    ``references`` MAY be empty — a pure-judgment method honestly stated beats a fabricated
+    reference; a blank method is refused like a blank reason."""
+
+    method: str
+    references: list[RefPoint] = Field(default_factory=list)
+
+    model_config = {"frozen": True}
+
+    @field_validator("method")
+    @classmethod
+    def _method_not_blank(cls, v: str) -> str:
+        if not v.strip():
+            raise ValueError("method is required and must not be blank — an assumption whose "
+                             "modeling cannot be stated cannot be reviewed")
+        return v
 
 
 class ScenarioInput(BaseModel):
@@ -113,6 +162,9 @@ class ScenarioRecord(BaseModel):
     ticker: str
     recipe_id: str                         # e.g. "R1_midcycle_margin_evebitda"
     recipe_desc: str
+    # the arithmetic chain, stamped by run_recipe from midcycle.R1_FORMULA (the multiple_basis
+    # precedent: the record states the recipe its numbers came from; a mismatch refuses loud)
+    recipe_formula: list[str] = Field(default_factory=list)
     multiple_basis: str                    # "EV/EBITDA" — stamped so the unit cannot be misread
     underwrite_date: str                   # ISO date
     analyst: str
@@ -120,11 +172,44 @@ class ScenarioRecord(BaseModel):
     spot_source: str
     facts: dict[str, Fact]                 # d_and_a, net_debt, diluted_shares (+ any recipe extras)
     scenarios: dict[str, ScenarioInput]    # bear | base | bull
+    # per-AXIS methodology (revenue | margin | multiple for R1): how each modeled input was
+    # derived, with its source-bound reference frame — the reviewable "why these numbers"
+    assumptions: dict[str, AssumptionDerivation] = Field(default_factory=dict)
     result: Result = Field(default_factory=Result)
     verdict: Verdict = Field(default_factory=Verdict)
 
+    @model_validator(mode="after")
+    def _assumption_axes_guarded(self) -> ScenarioRecord:
+        """Axes guard, both directions. Unknown axis for a KNOWN recipe → refuse at ANY version
+        (a typo'd axis silently dropping from the render is data loss). Completeness (exactly
+        the recipe's axes) binds FORWARD from schema 1.1 — 1.0 records predate the field and
+        stay valid. An unknown recipe_id is unconstrained until it declares its axes."""
+        axes = AXES_BY_RECIPE.get(self.recipe_id)
+        if axes is None:
+            return self
+        unknown = set(self.assumptions) - set(axes)
+        if unknown:
+            raise ValueError(
+                f"unknown assumption axis {sorted(unknown)} for recipe {self.recipe_id!r} — "
+                f"the axes are {'/'.join(axes)}")
+        if (self.schema_version != "1.0" and self.assumptions
+                and set(self.assumptions) != set(axes)):
+            raise ValueError(
+                f"assumptions must cover exactly {'/'.join(axes)} for recipe "
+                f"{self.recipe_id!r} (methodology binds forward from schema 1.1)")
+        if self.schema_version != "1.0" and not self.assumptions:
+            raise ValueError(
+                f"a schema-{self.schema_version} record must state how each axis was modeled — "
+                f"assumptions must cover {'/'.join(axes)} (methodology binds forward from 1.1)")
+        return self
+
 
 RECIPE_R1 = "R1_midcycle_margin_evebitda"
+
+# The assumption AXES each known recipe models. The axes guard binds per-recipe: unknown axes are
+# refused for a known recipe at any schema version; completeness (all axes present) binds from
+# schema 1.1. A future recipe declares its axes here when it exists — never speculatively.
+AXES_BY_RECIPE: dict[str, tuple[str, ...]] = {RECIPE_R1: ("revenue", "margin", "multiple")}
 
 
 def run_recipe(rec: ScenarioRecord) -> ScenarioRecord:
@@ -146,6 +231,11 @@ def run_recipe(rec: ScenarioRecord) -> ScenarioRecord:
     for key in ("d_and_a", "net_debt", "diluted_shares"):
         if key not in rec.facts:
             raise ValueError(f"recipe {RECIPE_R1} needs fact {key!r} — refusing to assume it")
+    # a record CLAIMING a different arithmetic than the engine's is a lie — refuse, never
+    # silently overwrite (the multiple_basis pattern); an unstamped record gets stamped below
+    if rec.recipe_formula and rec.recipe_formula != list(R1_FORMULA):
+        raise ValueError("record's recipe_formula does not match R1_FORMULA — refusing to "
+                         "compute under a misstated recipe")
     dna = rec.facts["d_and_a"].value
     net_debt = rec.facts["net_debt"].value
     shares = rec.facts["diluted_shares"].value            # MILLIONS → $M/M = $/share
@@ -173,7 +263,8 @@ def run_recipe(rec: ScenarioRecord) -> ScenarioRecord:
                      ratio_undefined=rr.undefined, bar=BAR,
                      pass_fail=("UNDEFINED" if rr.ratio is None else
                                 ("PASS" if rr.clears_bar else "FAIL")))
-    return rec.model_copy(update={"result": res})
+    # stamp result + the formula (machine assembly, like multiple_basis — never judgment)
+    return rec.model_copy(update={"result": res, "recipe_formula": list(R1_FORMULA)})
 
 
 def records_dir(root: Path | None = None) -> Path:

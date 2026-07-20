@@ -337,6 +337,19 @@ class ScenarioValue:
     norm_fcf: float | None = None    # CROSS-CHECK: EBITDA − maint-capex(≈D&A) − cash tax − interest
 
 
+# THE one statement of the R1 arithmetic, stamped verbatim into every scenario record
+# (vinci.scenarios) so the rendered card prints the recipe its numbers actually came from.
+# Changing scenario_value() below requires changing this LINE-FOR-LINE — the stamp/refuse guard
+# in run_recipe makes a divergent record fail loud, never render a misstated recipe.
+R1_FORMULA: tuple[str, ...] = (
+    "EBIT = revenue × op margin",
+    "EBITDA = EBIT + D&A",
+    "EV = EBITDA × exit multiple (EV/EBITDA)",
+    "equity = EV − net debt",
+    "value/share = equity ÷ diluted shares",
+)
+
+
 def scenario_value(s: Scenario, *, net_debt: float, shares: float,
                    cash_interest: float | None = None,
                    cash_tax_rate: float | None = None) -> ScenarioValue:
