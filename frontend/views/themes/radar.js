@@ -175,7 +175,7 @@ const LEGEND_ITEMS = [["live", "Live"], ["watch", "Watch"], ["parked", "Parked"]
 // dumped underneath). The panel is derived ENTIRELY from the committed candidates: the status counts
 // and the watch list are real. Nothing is synthesised to fill the column — there is no first-mention
 // flow to chart here (the inbox is empty), so no such block is drawn.
-function mapTab(cands, state) {
+function mapTab(cands, state, themeIdx) {
   const counts = {};
   cands.forEach((c) => { counts[c.status] = (counts[c.status] || 0) + 1; });
   const statusRows = LEGEND_ITEMS.filter(([k]) => counts[k]).map(([k, lbl]) =>
@@ -339,7 +339,7 @@ export async function render(root, params, { item, frame }) {
     const wasSearch = a && a.classList && a.classList.contains("rd-log-search");
     const caret = wasSearch ? a.selectionStart : null;
     q(".rt-content").innerHTML = state.tab === "inbox" ? inboxTab(inbox, state, inboxData.scan_date)
-      : state.tab === "log" ? logTab(log, state) : mapTab(cands, state);
+      : state.tab === "log" ? logTab(log, state) : mapTab(cands, state, themeIdx);
     if (wasSearch) {
       const inp = q(".rd-log-search");
       if (inp) { inp.focus(); if (caret != null) inp.setSelectionRange(caret, caret); }

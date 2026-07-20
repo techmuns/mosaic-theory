@@ -45,7 +45,7 @@ export async function render(root, { item, frame }) {
   root.innerHTML = frame(item, { bodyHtml: `<div class="notice">Loading themes…</div>` });
   const [idx, cands, inbox] = await Promise.all([
     getThemesIndex(),
-    getRadarCandidates().catch(() => []),
+    getRadarCandidates().then((r) => r.candidates || []).catch(() => []),
     getRadarInbox().catch(() => null),
   ]);
   if (!idx.drivers.length) {

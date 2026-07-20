@@ -88,7 +88,7 @@ export async function render(root, { item, frame }, slug) {
   });
   const [d, cx, cands] = await Promise.all([
     getThemeDriver(slug), getThemeContext(slug),
-    getRadarCandidates().catch(() => []),
+    getRadarCandidates().then((r) => r.candidates || []).catch(() => []),
   ]);
   if (!d) {
     root.innerHTML = frame(item, {
