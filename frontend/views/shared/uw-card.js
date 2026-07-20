@@ -48,9 +48,11 @@ function ratioFact(c) {
       `<span class="pill unresolved">UNDEFINED</span> <span class="muted">${escapeHtml(c.ratioUndefined)}</span>`);
   }
   if (typeof c.ratio !== "number") return fact("Ratio vs bar", `<span class="pill unresolved">${DASH}</span>`);
-  const bar = c.bar == null ? 2 : c.bar;
+  // the bar comes from the RECORD (stamped by the recipe) — an absent bar renders honest, never
+  // an invented 2 (LOW-11: the card carries no fund constants of its own)
+  const bar = typeof c.bar === "number" ? `vs ${escapeHtml(String(c.bar))} : 1` : `bar ${DASH}`;
   return fact("Ratio vs bar",
-    `${mono(c.ratio.toFixed(2) + " : 1")} <span class="muted">vs ${escapeHtml(String(bar))} : 1</span>`,
+    `${mono(c.ratio.toFixed(2) + " : 1")} <span class="muted">${bar}</span>`,
     { hi: true });
 }
 
@@ -68,7 +70,7 @@ function legsTable(c) {
     `<th class="num${l.name === "bull" ? " est-col" : ""}">${escapeHtml(l.name)}</th>`).join("") + `</tr>`;
   const reasons = legs.filter((l) => l.reason).map((l) =>
     `<li><b>${escapeHtml(l.name)}</b> — ${escapeHtml(l.reason)}</li>`).join("");
-  const basis = c.multipleBasis || "EV/EBITDA";
+  const basis = c.multipleBasis || DASH;   // the RECORD stamps its basis; absent renders honest
   return fact(`Scenarios (${basis})`, `
     <div style="overflow-x:auto;"><table class="data uw-legs-t">
       <thead>${head}</thead>

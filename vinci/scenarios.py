@@ -21,8 +21,11 @@ from typing import Any, Literal
 
 from pydantic import BaseModel, Field, field_validator
 
+# ONE bar. The compute layer (vinci.dossier.midcycle) owns the ratified convention; the record
+# layer re-exports it — judge (clears_bar) and stamp (Result.bar) can no longer diverge.
+from vinci.dossier.midcycle import BAR
+
 SCHEMA_VERSION = "1.0"
-BAR = 2.0
 # "watch" = the name is not underwritable at TODAY's price but the franchise is intact — a
 # re-underwrite candidate, explicitly NOT an avoid. Distinct from "passed" (declined outright).
 VerdictStatus = Literal["pending_analyst", "confirmed", "overridden", "passed", "watch"]
