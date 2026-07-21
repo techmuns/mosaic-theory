@@ -556,6 +556,7 @@ def _cmd_anchor_backfill(args: argparse.Namespace) -> int:
         preserve_operator_tag,
         replace_anchor_block,
     )
+    from vinci.dossier.ciq import CiqBundle
     from vinci.dossier.schemas import Dossier
     from vinci.edgar.client import EdgarClient
     from vinci.resolver import EntityResolver
@@ -576,8 +577,25 @@ def _cmd_anchor_backfill(args: argparse.Namespace) -> int:
         except Exception as exc:  # noqa: BLE001 — a name that won't fetch is skipped, never guessed
             print(f"  {t}: EDGAR fetch failed ({type(exc).__name__}) — skip, not written")
             continue
+        # DEPTH-STAGE FALLBACK: the CIQ workbook fills a hole EDGAR left, never overrides it.
+        # Extraction is cross-checked before it is offered; a sheet that failed a coherence check
+        # is not handed on at all (ciq_balance refuses rather than degrades).
+        ciq = None
+        try:
+            from vinci.dossier.ciq_balance import extract as _ciq_extract
+            from vinci.dossier.manual_store import LocalFolderStore as _Store
+            bundle = CiqBundle.from_files(t, _Store.from_config(cfg).files(t))
+            ciq = _ciq_extract(bundle, t)
+            if not ciq.ok:
+                print(f"  {t}: CIQ extraction REFUSED — {'; '.join(ciq.failures)}")
+                ciq = None
+            elif ciq.facts:
+                print(f"  {t}: CIQ bridge available ({len(ciq.facts)} facts, "
+                      f"{len(ciq.checks)} checks passed)")
+        except Exception as exc:  # noqa: BLE001 — no workbook is normal; EDGAR-only then
+            print(f"  {t}: no CIQ bridge ({type(exc).__name__})")
         anchor = compute_anchor(d.mechanical.model_dump(mode="json"), facts=facts,
-                                computed_at=datetime.now(UTC))
+                                computed_at=datetime.now(UTC), ciq=ciq)
         # An operator's hand re-tag outranks the machine's fresh proposal — the recipe is preserved
         # and the divergence reported, never silently overwritten (the queued 2026-07-21 defect).
         anchor, notes = preserve_operator_tag(d.anchor, anchor)
