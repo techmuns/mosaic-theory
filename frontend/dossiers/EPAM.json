@@ -5277,18 +5277,17 @@
     "multiple_basis": "EV/EBITDA",
     "computed_at": "2026-07-20T19:57:26.057764Z",
     "reason": null,
-    "data_quality": "revenue_tag_conflict",
+    "data_quality": null,
     "data_quality_detail": [
-      "FY2016: RevenueFromContractWithCustomerExcludingAssessedTax 1,160M vs SalesRevenueNet 264M (77% apart)",
-      "FY2017: RevenueFromContractWithCustomerExcludingAssessedTax 1,450M vs SalesRevenueNet 325M (78% apart)"
+      "[re-audited 2026-07-21: the flag was a DURATION artifact, not a partial tag — EDGAR stamps quarterly points inside a 10-K with fp=\"FY\", and the guard compared tags WITHOUT filtering to a ~365-day span, so a 90-day quarter was read as the year. At matched FY duration the candidate tags agree and no conflict exists. Committed margin value is UNCHANGED at stored precision (verified before/after); only the flag and the confidence move.]"
     ],
     "margin": {
       "value": 0.118997,
       "unit": "fraction",
       "basis": "operating margin (EBIT / revenue)",
-      "source": "EDGAR companyfacts OperatingIncomeLoss / RevenueFromContractWithCustomerExcludingAssessedTax — reported median over 10 FY — CAPPED weak: revenue_tag_conflict",
+      "source": "EDGAR companyfacts OperatingIncomeLoss / RevenueFromContractWithCustomerExcludingAssessedTax — reported median over 10 FY",
       "anchor_years": 10,
-      "confidence": "weak"
+      "confidence": "firm"
     },
     "multiple": {
       "value": 22.414586,
@@ -5323,7 +5322,7 @@
     },
     "anchor_base_value_per_share": 306.0468,
     "anchor_ev_ebit": 23.9511,
-    "overall_confidence": "weak",
+    "overall_confidence": "firm",
     "note": "ATTENTION FILTER, not a verdict. Even a firm anchor requires a full bear/base/bull 2:1 underwrite before any BUY. Spot and reward-to-base are computed live at triage, not stored here."
   }
 }

@@ -5870,18 +5870,17 @@
     "multiple_basis": "EV/EBITDA",
     "computed_at": "2026-07-20T17:11:31.264475Z",
     "reason": "margin history low-single-digit (corrected 5yr median 2.72%); bull case is a forward ramp to a regime that has never existed (consensus 20%+ FY26E) — mean-reversion premise does not fit; route to forward-margin recipe.",
-    "data_quality": "revenue_tag_conflict",
+    "data_quality": null,
     "data_quality_detail": [
-      "FY2016: RevenueFromContractWithCustomerExcludingAssessedTax 180M vs Revenues 43M (76% apart)",
-      "FY2017: RevenueFromContractWithCustomerExcludingAssessedTax 190M vs Revenues 45M (76% apart)"
+      "[re-audited 2026-07-21: the flag was a DURATION artifact, not a partial tag — EDGAR stamps quarterly points inside a 10-K with fp=\"FY\", and the guard compared tags WITHOUT filtering to a ~365-day span, so a 90-day quarter was read as the year. At matched FY duration the candidate tags agree and no conflict exists. Committed margin value is UNCHANGED at stored precision (verified before/after); only the flag and the confidence move.] AORT note: the flag's PROTECTIVE work was real even though its mechanism label was wrong — the bad short-duration denominator did corrupt the original anchor, so capping it was correct; the recorded cause is what is being corrected here."
     ],
     "margin": {
       "value": 0.038721,
       "unit": "fraction",
       "basis": "operating margin (EBIT / revenue)",
-      "source": "EDGAR companyfacts OperatingIncomeLoss / RevenueFromContractWithCustomerExcludingAssessedTax — reported median over 10 FY — CAPPED weak: revenue_tag_conflict",
+      "source": "EDGAR companyfacts OperatingIncomeLoss / RevenueFromContractWithCustomerExcludingAssessedTax — reported median over 10 FY",
       "anchor_years": 10,
-      "confidence": "weak"
+      "confidence": "firm"
     },
     "multiple": {
       "value": 32.106241,
@@ -5916,7 +5915,7 @@
     },
     "anchor_base_value_per_share": 21.8954,
     "anchor_ev_ebit": 72.7036,
-    "overall_confidence": "weak",
+    "overall_confidence": "firm",
     "note": "ATTENTION FILTER, not a verdict. Even a firm anchor requires a full bear/base/bull 2:1 underwrite before any BUY. Spot and reward-to-base are computed live at triage, not stored here."
   }
 }
