@@ -582,7 +582,6 @@ table.data.vs-table { width: 100%; }
 .uw-recipe { font-size: 11px; margin: 2px 0 6px; }
 .uw-methods { margin-top: 8px; }
 .uw-method { margin-top: 6px; }
-.uw-method > summary { cursor: pointer; font-size: 11.5px; color: var(--ink-3); }
 .uw-method-h { font-size: 11px; color: var(--ink-3); margin: 6px 0 2px; }
 .uw-refs-t td.uw-ref-cite { white-space: nowrap; }
 .uw-inputs { margin-top: 8px; }
@@ -591,7 +590,6 @@ table.data.vs-table { width: 100%; }
 .uw-card .ds-sources { background: none; border: 0; border-top: 1px solid var(--line); border-radius: 0;
   box-shadow: none; padding: 6px 0 0; margin: 8px 0 0; }
 .uw-card .ds-sources .ds-title { font-size: 10px; }
-.uw-inputs > summary { cursor: pointer; font-size: 11.5px; color: var(--ink-3); }
 .uw-foot { margin-top: 9px; }
 
 /* --- underwrite MASTHEAD (the decision surface) ---------------------------
@@ -641,11 +639,15 @@ table.data.vs-table { width: 100%; }
    the table's height. The rail slot is fixed 360px — wide enough that the staggered labels
    never abbreviate — and the table takes the rest without stretching. */
 .uw-split { display: grid; grid-template-columns: minmax(0, 1fr) 360px; gap: 4px 26px;
-  align-items: start; }
+  align-items: stretch; }
 .uw-sec-h { font-size: 10.4px; text-transform: uppercase; letter-spacing: 0.06em;
   color: var(--ink-3); font-weight: 600; margin: 2px 0 8px; }
 .uw-sec-h .basis { text-transform: none; letter-spacing: 0; font-weight: 400; }
-.uw-rail { border-left: 1px solid var(--line); padding-left: 22px; min-width: 0; }
+.uw-rail { border-left: 1px solid var(--line); padding-left: 22px; min-width: 0;
+  display: flex; flex-direction: column; }
+/* the stack centres itself against the table's height; the foot bottom-aligns with the table
+   block — measured before this rule: track y=88 vs table middle 138, ragged 32px bottom gap */
+.uw-rail .uw-rr { margin-top: auto; margin-bottom: auto; }
 
 /* the staggered stack: four label ROWS around one absolute track — each label owns a row, tied
    to its tick by a hairline lead, so label widths never compete (the constraint that forced the
@@ -1122,10 +1124,13 @@ table.data tr td.uw-vs { font-size: 12.5px; }
    is exactly what this fund refuses to compute" — a printed tear sheet showing three scenario
    columns with no justification would be the wrong artifact. So they collapse on SCREEN and are
    forced open in PRINT below. */
-.uw-reasons, .uw-method-block { margin-top: 8px; }
-.uw-reasons > summary, .uw-method-block > summary {
-  cursor: pointer; font-size: 11.5px; color: var(--ink-3); }
-.uw-reasons > summary::marker, .uw-method-block > summary::marker { color: var(--ink-3); }
+.uw-reasons, .uw-method-block { margin-top: 10px; }
+.uw-reasons > summary, .uw-method-block > summary, .uw-method > summary, .uw-inputs > summary {
+  cursor: pointer; font-size: 12.3px; font-weight: 650; color: var(--ink-2); padding: 4px 0; }
+.uw-reasons > summary:hover, .uw-method-block > summary:hover, .uw-method > summary:hover,
+.uw-inputs > summary:hover { color: var(--ink); }
+.uw-reasons > summary::marker, .uw-method-block > summary::marker,
+.uw-method > summary::marker, .uw-inputs > summary::marker { color: var(--accent); }
 .uw-reasons .kv-list { margin-top: 6px; }
 
 @media print {
@@ -1137,4 +1142,10 @@ table.data tr td.uw-vs { font-size: 12.5px; }
   details.uw-reasons > .uw-reasons-body { display: block !important;
     content-visibility: visible !important; }
   details.uw-reasons::details-content { content-visibility: visible !important; display: block !important; }
+}
+
+@media print {
+  .uw-split { grid-template-columns: 1fr !important; }
+  .uw-rail { border-left: 0; padding-left: 0; border-top: 1px solid var(--line);
+    padding-top: 12px; margin-top: 12px; display: block; }
 }

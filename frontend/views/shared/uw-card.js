@@ -341,13 +341,16 @@ function legsTable(c) {
       </tbody>
     </table></div>
     <div class="uw-note muted">bull is range context — never in the ratio${
-      tgt ? ", never the target" : ""}</div>
-    ${reasons ? `<details class="uw-reasons"><summary>Why each leg sits there</summary>
-      <div class="uw-reasons-body"><ul class="kv-list">${reasons}</ul></div></details>` : ""}`;
+      tgt ? ", never the target" : ""}</div>`;
   const main = `<div class="uw-split-main">
       <div class="uw-sec-h">Scenarios <span class="basis">${escapeHtml(basis)}</span></div>
       ${tableHtml}</div>`;
-  return rail ? `<div class="uw-split">${main}${rail}</div>` : main;
+  // the reasoning block sits BELOW the split at full card width — inside the table's column it
+  // inherited a 552px measure, wrapping analyst prose to the width of a number grid
+  const reasonsHtml = reasons ? `<details class="uw-reasons">
+      <summary>Why each leg sits where it does — the analyst's reasoning</summary>
+      <div class="uw-reasons-body"><ul class="kv-list">${reasons}</ul></div></details>` : "";
+  return (rail ? `<div class="uw-split">${main}${rail}</div>` : main) + reasonsHtml;
 }
 
 // --- methodology (schema 1.1) ------------------------------------------------------------------
@@ -406,7 +409,7 @@ function methodRefsDetails(c) {
     return `<div class="uw-method-h">${escapeHtml(axisLabel(a.axis, c.multipleBasis || DASH))}</div>
       <div style="overflow-x:auto;"><table class="data uw-refs-t"><tbody>${rows}${chosen}</tbody></table></div>`;
   }).join("");
-  return `<details class="uw-method"><summary>References &amp; chosen values</summary>${
+  return `<details class="uw-method"><summary>Reference values — what each assumption was set against</summary>${
     withEndnotes("M", tables)}${recipeLine(c)}</details>`;
 }
 
@@ -417,8 +420,11 @@ function methodRefsDetails(c) {
 function methodFact(c) {
   const lines = methodLines(c);
   if (!lines) return "";
-  return fact("Method", `<details class="uw-method-block"><summary>How each axis was modeled</summary>
-    <div>${lines}${methodRefsDetails(c)}</div></details>`);
+  // no fact() wrapper: a "Method" label over a summary that says "How each axis was modeled"
+  // is the same word twice — the summary IS the label
+  return `<details class="uw-method-block">
+    <summary>How each axis was modeled — revenue, margin and multiple methodology</summary>
+    <div>${lines}${methodRefsDetails(c)}</div></details>`;
 }
 
 // The audit block carries its OWN endnote scope — markers AND their Sources list both live INSIDE
@@ -432,7 +438,7 @@ function inputsDetails(c) {
   const rows = () => facts.map((f) => fact(f.key, `${mono(String(f.value))} ${escapeHtml(f.unit || "")}
       <span class="muted">· ${escapeHtml(f.basis || "")}</span>
       ${f.source ? citeMark(f.source) : ""}`)).join("");
-  return `<details class="uw-inputs"><summary>Inputs &amp; sources</summary>${
+  return `<details class="uw-inputs"><summary>Inputs &amp; sources — the recorded facts behind the math</summary>${
     withEndnotes("I", rows)}</details>`;
 }
 
