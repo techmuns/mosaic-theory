@@ -11,6 +11,12 @@ Gartner, Inc. provides business and technology insights for decisions and perfor
 - **Geography:** United States and Canada 62%; Europe, Middle East and Africa 26%; Other International 12% [2]
 - **Snapshot:** NYSE · CMP $141.06 (2026-07-20) · cap $8.7B · 52-wk $124.25–$403.95 · shares 67.0M · book value/sh $0.93 [3]
 
+**The crux — what decides this, and what would change our mind**
+**Is the contract-value deceleration a transient, federal-and-macro-driven pause in an intact subscription compounder (overshoot), or the leading edge of a structural demand impairment in the core Insights franchise (value trap)?**
+- Company-adjusted LTM EBITDA and adjusted EPS are not in the revised guidance, so the adjusted forward EV/EBITDA and adjusted leverage cannot be computed — the multiple debate rests on a trailing-only basis.
+- No segment-level EBITDA breakout is disclosed, so it is impossible to isolate whether the Insights subscription core is holding margin while lower-margin segments drag — an opaque gap that obscures the quality of the profit mix.
+_full unknowns + the evidence for/against in Analysis_
+
 ## What happened
 - **Shape:** discrete gap-downs — 2026-02-03 earnings + Reg-FD [4]
 - **Price (180d):** -45.0% [5]
@@ -19,8 +25,6 @@ Gartner, Inc. provides business and technology insights for decisions and perfor
 - **Free cash flow:** _UNKNOWN_ — no OCF/capex
 
 ## The case
-**Is the contract-value deceleration a transient, federal-and-macro-driven pause in an intact subscription compounder (overshoot), or the leading edge of a structural demand impairment in the core Insights franchise (value trap)?**
-
 _(top points; the full argument is in Analysis)_
 
 _Bull case — the decline is overdone:_
@@ -31,10 +35,6 @@ _Bear case — the decline is real:_
 - Revenue growth has stalled to a stop — FY25 +4% decelerating to LTM, with Q1-2026 revenue -1.5% YoY, the first same-quarter contraction in the series, indicating the top line is no longer compounding. [11]
 - This is a REAL signal, not an optical one: forward consensus confirms the deceleration rather than reverting it — FY26 revenue estimate cut from $7,011.9M (12m ago) to $6,431.2M (latest), a -8% path, and EBITDA -7%, so the cheap forward multiple sits on a still-falling numerator. [12]
 - Near-term forward revisions are overwhelmingly negative — Revenue FQ2/FQ3 2026 breadth 0 up / 11 down over 2-3 months — a broad-based downgrade, not one stray broker. [13]
-_Key unknowns:_
-- Company-adjusted LTM EBITDA and adjusted EPS are not in the revised guidance, so the adjusted forward EV/EBITDA and adjusted leverage cannot be computed — the multiple debate rests on a trailing-only basis.
-- No segment-level EBITDA breakout is disclosed, so it is impossible to isolate whether the Insights subscription core is holding margin while lower-margin segments drag — an opaque gap that obscures the quality of the profit mix.
-- The peer set is flagged HETEROGENEOUS (market caps $751M–$119.1B, 159x span); every peer multiple and the 'cheap vs median' framing is a confidence-gated input, not a clean benchmark, and the discount cannot be cleanly split into earned vs residual from the supplied deltas.
 
 ## Financial snapshot
 - **Financial snapshot** — [14]  <!-- ds-table -->
@@ -68,7 +68,7 @@ _table shows the last 4 fiscal years · 5 earlier years are in the Appendix_
   - gap 2026-02-03 → 2026-02-03 [`0000749251-26-000028`](https://www.sec.gov/Archives/edgar/data/749251/000074925126000028/it-20260129.htm)
     - items: 2.02 Results of Operations and Financial Condition, 7.01 Regulation FD Disclosure, 9.01 Financial Statements and Exhibits
     - **what the results showed:** $150.0M of goodwill impairment related to Digital [19]
-- **Revised guidance · Net debt / EBITDA (fwd-adj covenant basis) · EV/EBITDA (adjusted, forward) · Adjusted EPS (earnings power):** _UNKNOWN_ — no revised-outlook 99.1 exhibit parsed — the revised forward guidance is UNKNOWN
+- **Revised guidance · Net debt / EBITDA [FWD-ADJ] · EV/EBITDA (adjusted, forward) · Adjusted EPS (earnings power):** _UNKNOWN_ — no revised-outlook 99.1 exhibit parsed — the revised forward guidance is UNKNOWN
 
 _Company-specific or market-wide?_
 - **Name 180d return:** -45.0% [5]
@@ -77,16 +77,16 @@ _Company-specific or market-wide?_
 - **Supplier/customer cohort:** none mapped for this name — the comparison is vs the market only
 
 ### Leverage & survival
-- **Net debt / EBITDA (CIQ NET basis):** 1.3x [7]
-- **Total debt / EBITDA (comps — name vs peer median):** name 2.4x vs peer median 1.8x (comps TOTAL-debt/EBITDA basis) [21]
+- **Net debt / EBITDA [NET]:** 1.3x [7]
+- **Total debt / EBITDA vs peers:** name 2.4x vs peer median 1.8x (comps TOTAL-debt/EBITDA basis) [21]
 - **Net debt / OCF:** 1.2x [22]
 - **Interest coverage:** 10.1x [8]
-- **Self-funding (two-input: latest-Q OCF + LTM FCF):** self-funding: YES — latest-Q OCF > 0 AND LTM FCF > 0 [23]
+- **Self-funding:** self-funding: YES — latest-Q OCF > 0 AND LTM FCF > 0 [23]
 - **Credit health:** _UNKNOWN_ — credit-health panel scale is ambiguous in the export
 
 - **Free cash flow ($M):** 1064.2 [9]
 - **Live instruments — near-dated (≤12m + 2027):** none due in the window — 8 undated / later aggregate line item(s) in the appendix panel [24]
-- **Maturity wall** (deterministic, vs the 2026-07-06 reference):
+- **Maturity wall** · vs the 2026-07-06 reference:
   - due 2028: $800.0M
   - due 2029: $600.0M
   - due 2030: $800.0M

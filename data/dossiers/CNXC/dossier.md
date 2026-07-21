@@ -13,6 +13,12 @@ Concentrix Corporation designs, builds, and runs integrated customer experience 
 - **Geography:** Others 52%; Philippines 16%; India 11%; United States 11%; Great Britain 4%; Germany 3%; Canada 3% [2]
 - **Snapshot:** Nasdaq · CMP $21.38 (2026-07-08) · cap $1.5B · 52-wk $19.12–$62.14 · shares 61.0M · book value/sh $45.85 [3]
 
+**The crux — what decides this, and what would change our mind**
+**Is the compressing margin plus falling absolute EBITDA the leading edge of a secular, AI-driven decline in the CX/BPO model (value trap, discount EARNED), or a cyclical trough against still-growing revenue and self-funding cash flow (overshoot, discount RESIDUAL)?**
+- No forward/adjusted EV/EBITDA or adjusted EPS was in the revised guidance, so the trailing 5.1x cannot be resolved into cheap-overshoot vs cheap-terminal on a forward basis — an unresolved neutral, and the missing adjusted disclosure itself is a bearish opacity flag.
+- Segment EBITDA is not disclosed (Segments sheet has no EBITDA section) and revenue is 100% one segment, so profitability by business line is opaque — a bearish gap, not a neutral one.
+_full unknowns + the evidence for/against in Analysis_
+
 ## What happened
 - **Shape:** discrete gap-downs — 2026-01-28 no 8-K matched; 2026-02-11 other event; 2026-02-12 other event; 2026-03-24 material agreement; 2026-06-30 earnings [4]
 - **Price (180d):** -45.4% [5]
@@ -21,8 +27,6 @@ Concentrix Corporation designs, builds, and runs integrated customer experience 
 - **Free cash flow:** positive [8]
 
 ## The case
-**Is the compressing margin plus falling absolute EBITDA the leading edge of a secular, AI-driven decline in the CX/BPO model (value trap, discount EARNED), or a cyclical trough against still-growing revenue and self-funding cash flow (overshoot, discount RESIDUAL)?**
-
 _(top points; the full argument is in Analysis)_
 
 _Bull case — the decline is overdone:_
@@ -33,10 +37,6 @@ _Bear case — the decline is real:_
 - Leverage is high and worse than peers: net-debt/EBITDA 4.4x and total-debt/EBITDA 3.4x vs peer median 2.0x, with interest coverage only 3.4x — an earned reason for a valuation discount, not overshoot. [12]
 - Self-funding is only MIXED on a triangulated basis: latest-quarter operating cash flow was negative even though LTM FCF was positive — both must be positive to call it self-funding. [13]
 - The stock has fallen -45.4% over 180 days and -61.5% relative to the market, with return-on-capital deteriorating (ROIC 8.8% FY21 → 3.9% LTM) — a persistent, name-specific de-rating, not a market move. [6]
-_Key unknowns:_
-- No forward/adjusted EV/EBITDA or adjusted EPS was in the revised guidance, so the trailing 5.1x cannot be resolved into cheap-overshoot vs cheap-terminal on a forward basis — an unresolved neutral, and the missing adjusted disclosure itself is a bearish opacity flag.
-- Segment EBITDA is not disclosed (Segments sheet has no EBITDA section) and revenue is 100% one segment, so profitability by business line is opaque — a bearish gap, not a neutral one.
-- The June 29/30 earnings release carried NO NUMERIC OUTLOOK, so the stale FQ2 guide (104d old) could not be cross-checked and forward direction is unverified — a bearish disclosure gap.
 
 ## Financial snapshot
 - **Financial snapshot** — [14]  <!-- ds-table -->
@@ -84,7 +84,7 @@ _Key unknowns:_
   - gap 2026-06-30 → 2026-06-29 [`0001803599-26-000133`](https://www.sec.gov/Archives/edgar/data/1803599/000180359926000133/cnxc-20260629.htm)
     - items: 2.02 Results of Operations and Financial Condition, 9.01 Financial Statements and Exhibits
     - 2.02 Results of Operations and Financial Condition: Results of Operations and Financial Condition. On June 29, 2026, Concentrix Corporation (the “Company” or “Concentrix”) issued a press release reporting its financial results for the second quarter ended May 31, 2026. A copy of the press release is furnished as Exhibit 99.1 hereto and is incorporated in this
-- **Revised guidance · Net debt / EBITDA (fwd-adj covenant basis) · EV/EBITDA (adjusted, forward) · Adjusted EPS (earnings power):** _UNKNOWN_ — no revised-outlook 99.1 exhibit parsed — the revised forward guidance is UNKNOWN
+- **Revised guidance · Net debt / EBITDA [FWD-ADJ] · EV/EBITDA (adjusted, forward) · Adjusted EPS (earnings power):** _UNKNOWN_ — no revised-outlook 99.1 exhibit parsed — the revised forward guidance is UNKNOWN
 
 _Company-specific or market-wide?_
 - **Name 180d return:** -45.4% [5]
@@ -92,11 +92,11 @@ _Company-specific or market-wide?_
 - **Supplier/customer cohort:** none mapped for this name — the comparison is vs the market only
 
 ### Leverage & survival
-- **Net debt / EBITDA (CIQ NET basis):** 4.4x [7]
-- **Total debt / EBITDA (comps — name vs peer median):** name 3.4x vs peer median 2.0x (comps TOTAL-debt/EBITDA basis) [12]
+- **Net debt / EBITDA [NET]:** 4.4x [7]
+- **Total debt / EBITDA vs peers:** name 3.4x vs peer median 2.0x (comps TOTAL-debt/EBITDA basis) [12]
 - **Net debt / OCF:** 7.6x [19]
 - **Interest coverage:** 3.4x [20]
-- **Self-funding (two-input: latest-Q OCF + LTM FCF):** self-funding: MIXED — latest-Q OCF < 0, LTM FCF > 0 (both must be positive to self-fund) [13]
+- **Self-funding:** self-funding: MIXED — latest-Q OCF < 0, LTM FCF > 0 (both must be positive to self-fund) [13]
 - **Credit health** — [10]  <!-- ds-table -->
 
 |  | Name | Peer median |
@@ -119,7 +119,7 @@ _S&P issuer rating BBB- · scale 1=strongest … 4=weakest (S&P-MI PD model)_
 
 _8 undated / later aggregate line item(s) in the appendix panel_
 
-- **Maturity wall** (deterministic, vs the 2026-07-06 reference):
+- **Maturity wall** · vs the 2026-07-06 reference:
   - **matured (pre-reference): $0.0M** — resolution not in this data; verify each against its 8-K (NEVER assume repaid or defaulted):
     - 2025-09-25 (284d before ref): – Sellers Note
   - due 2028: $537.0M

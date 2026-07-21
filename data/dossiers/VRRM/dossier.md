@@ -12,6 +12,12 @@ Verra Mobility Corporation provides smart mobility technology solutions in the U
 - **Customer concentration:** top customer 15% (from 15%) of revenue [3]
 - **Snapshot:** Nasdaq · CMP $4.22 (2026-07-08) · cap $668M · 52-wk $3.40–$25.73 · shares 151.9M · book value/sh $1.79 [4]
 
+**The crux — what decides this, and what would change our mind**
+**Does the Avis termination represent a one-time step-down after which the remaining ~$850M franchise re-stabilizes and grows off a self-funding base, or is it the first crack in a decelerating, single-customer-exposed revenue profile that keeps the multiple permanently depressed?**
+- Whether the ~$4.7x trailing / ~4.3x forward EV/EBITDA at a 0th-percentile own-history floor is overshoot or earned remains unresolved — a trailing multiple at its floor is neither bull nor bear until the forward base stabilizes.
+- The peer set is HETEROGENEOUS (caps $430M–$15.9B, 37x span) so every peer-median multiple is a confidence-gated input, not a clean benchmark; the earned-vs-residual split cannot be cleanly read off this comp.
+_full unknowns + the evidence for/against in Analysis_
+
 ## What happened
 - **Shape:** discrete gap-downs — 2026-02-25 earnings + Reg-FD; 2026-05-27 Reg-FD + other event; 2026-06-02 management change + Reg-FD [5]
 - **Price (180d):** -81.1% [6]
@@ -20,8 +26,6 @@ Verra Mobility Corporation provides smart mobility technology solutions in the U
 - **Free cash flow:** positive [9]
 
 ## The case
-**Does the Avis termination represent a one-time step-down after which the remaining ~$850M franchise re-stabilizes and grows off a self-funding base, or is it the first crack in a decelerating, single-customer-exposed revenue profile that keeps the multiple permanently depressed?**
-
 _(top points; the full argument is in Analysis)_
 
 _Bull case — the decline is overdone:_
@@ -32,10 +36,6 @@ _Bear case — the decline is real:_
 - Leverage is elevated versus peers and the company carries a sub-investment-grade profile — net-debt/EBITDA 2.9x, total-debt/EBITDA 3.0x vs peer-median 1.9x, S&P issuer rating BB- with weakest-tier Solvency score — raising the stakes if the forward EBITDA base steps down further. [13]
 - The drawdown is driven by a discrete, structural customer loss — Avis Budget (>10% of total revenue) served a termination notice — which management itself quantifies as a $135–145M annualized revenue hit and $120–125M segment-profit hit; this is a real permanent-impairment signal, not an optical timing artifact. [14]
 - Forward estimates have been cut sharply and broadly — FY26 EBITDA consensus -16%, EBIT -26%, GAAP net income -29% (12m→latest) — and revision breadth is one-sided (Revenue FY26 0↑/8↓; EPS 1↑/5↓ last month), confirming this is a genuine downgrade cycle not a transient overshoot. [15]
-_Key unknowns:_
-- Whether the ~$4.7x trailing / ~4.3x forward EV/EBITDA at a 0th-percentile own-history floor is overshoot or earned remains unresolved — a trailing multiple at its floor is neither bull nor bear until the forward base stabilizes.
-- The peer set is HETEROGENEOUS (caps $430M–$15.9B, 37x span) so every peer-median multiple is a confidence-gated input, not a clean benchmark; the earned-vs-residual split cannot be cleanly read off this comp.
-- Covenant basis and covenant headroom are UNKNOWN/not disclosed — an expected disclosure gap that is a bearish risk given BB- rating and 3.0x total-debt/EBITDA if the forward EBITDA base erodes further.
 
 ## Financial snapshot
 - **Financial snapshot** — [16]  <!-- ds-table -->
@@ -92,12 +92,12 @@ _Company-specific or market-wide?_
 - **Supplier/customer cohort:** none mapped for this name — the comparison is vs the market only
 
 ### Leverage & survival
-- **Net debt / EBITDA (CIQ NET basis):** 2.9x [8]
-- **Total debt / EBITDA (comps — name vs peer median):** name 3.0x vs peer median 1.9x (comps TOTAL-debt/EBITDA basis) [13]
+- **Net debt / EBITDA [NET]:** 2.9x [8]
+- **Total debt / EBITDA vs peers:** name 3.0x vs peer median 1.9x (comps TOTAL-debt/EBITDA basis) [13]
 - **Net debt / OCF:** 4.5x [22]
-- **Net debt / EBITDA (fwd-adj covenant basis):** ~2.6x fwd-adj (net debt $1,009M / FY26 adj-EBITDA $380–$385M) [23]
+- **Net debt / EBITDA [FWD-ADJ]:** ~2.6x fwd-adj (net debt $1,009M / FY26 adj-EBITDA $380–$385M) [23]
 - **Interest coverage:** 5.6x [24]
-- **Self-funding (two-input: latest-Q OCF + LTM FCF):** self-funding: YES — latest-Q OCF > 0 AND LTM FCF > 0 [25]
+- **Self-funding:** self-funding: YES — latest-Q OCF > 0 AND LTM FCF > 0 [25]
 - **Credit health** — [26]  <!-- ds-table -->
 
 |  | Name | Peer median |
@@ -113,7 +113,7 @@ _S&P issuer rating BB- · scale 1=strongest … 4=weakest (S&P-MI PD model)_
 - **FCF sign:** positive [9]
 - **Free cash flow ($M):** 53.9 [11]
 - **Live instruments — near-dated (≤12m + 2027):** none due in the window — 4 undated / later aggregate line item(s) in the appendix panel [27]
-- **Maturity wall** (deterministic, vs the 2026-07-06 reference):
+- **Maturity wall** · vs the 2026-07-06 reference:
   - due 2028: $687.1M
   - due 2029: $350.0M
   - due 2030: $0.0M

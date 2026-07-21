@@ -11,6 +11,12 @@ EPAM Systems, Inc. provides digital platform engineering and software developmen
 - **Geography:** United States 52%; Other Locations 21%; United Kingdom 11%; Switzerland 8%; Germany 4%; Netherlands 4% [2]
 - **Snapshot:** NYSE · CMP $85.99 (2026-07-08) · cap $4.0B · 52-wk $73.06–$222.53 · shares 52.2M · book value/sh $65.04 [3]
 
+**The crux — what decides this, and what would change our mind**
+**Is the collapse in top-line trajectory and margin a CYCLICAL/AI-transition air-pocket that mean-reverts (overshoot), or the start of a SECULAR erosion of the labor-arbitrage services model (value trap)?**
+- Adjusted/forward EBITDA and adjusted EPS are UNKNOWN — the 99.1 revised guidance carried no adjusted figure, so the trailing 4.0x cannot be cleanly split into cheap-overshoot vs cheap-terminal.
+- The 2026-02-19 earnings 8-K carried NO NUMERIC forward outlook and NO revised-guidance 99.1 exhibit was parsed — the absence of a management forward guide at the very event that triggered the de-rating is a bearish disclosure gap, not a neutral one.
+_full unknowns + the evidence for/against in Analysis_
+
 ## What happened
 - **Shape:** discrete gap-downs — 2026-02-03 no 8-K matched; 2026-02-19 earnings; 2026-06-18 no 8-K matched [4]
 - **Price (180d):** -60.2% [5]
@@ -19,8 +25,6 @@ EPAM Systems, Inc. provides digital platform engineering and software developmen
 - **Free cash flow:** positive [8]
 
 ## The case
-**Is the collapse in top-line trajectory and margin a CYCLICAL/AI-transition air-pocket that mean-reverts (overshoot), or the start of a SECULAR erosion of the labor-arbitrage services model (value trap)?**
-
 _(top points; the full argument is in Analysis)_
 
 _Bull case — the decline is overdone:_
@@ -31,10 +35,6 @@ _Bear case — the decline is real:_
 - The primary-source self-funding read is MIXED, not clean: the latest quarter's operating cash flow is NEGATIVE even though LTM FCF is positive — both must be positive to self-fund on a current basis. [11]
 - Forward revenue revisions are broadly NEGATIVE: FQ2 2026 Revenue breadth 1↑/14↓ and FQ3 2026 0↑/14↓, and GAAP net income for FY26 is revised net -9% — the trailing EBITDA rise masks a deteriorating forward top-line trajectory. [12]
 - EBITDA margin has structurally compressed from 17% (FY21) to 13% (LTM) and gross margin from 34% to 29% — and this is the REAL signal, not an optical artifact: while absolute EBITDA rose modestly, the multi-year margin erosion is a genuine profitability decline in a labor-arbitrage services model, not a % that fell while dollars grew faster. [13]
-_Key unknowns:_
-- Adjusted/forward EBITDA and adjusted EPS are UNKNOWN — the 99.1 revised guidance carried no adjusted figure, so the trailing 4.0x cannot be cleanly split into cheap-overshoot vs cheap-terminal.
-- The 2026-02-19 earnings 8-K carried NO NUMERIC forward outlook and NO revised-guidance 99.1 exhibit was parsed — the absence of a management forward guide at the very event that triggered the de-rating is a bearish disclosure gap, not a neutral one.
-- Interest coverage is UNKNOWN (no period with both EBITDA and interest expense) and the covenant basis / adjusted-EBITDA leverage basis is UNKNOWN — leaving the covenant headroom on the $700M revolver (max leverage 3.50x) unverifiable.
 
 ## Financial snapshot
 - **Financial snapshot** — [14]  <!-- ds-table -->
@@ -68,7 +68,7 @@ _table shows the last 4 fiscal years · 5 earlier years are in the Appendix_
   - gap 2026-02-19 → 2026-02-19 [`0001352010-26-000010`](https://www.sec.gov/Archives/edgar/data/1352010/000135201026000010/epam-20260219.htm)
     - items: 2.02 Results of Operations and Financial Condition, 9.01 Financial Statements and Exhibits
     - 2.02 Results of Operations and Financial Condition: Results of Operations and Financial Condition. On February 19, 2026, EPAM Systems, Inc. (the “Company” or “EPAM”) issued a press release discussing its results of operations for the fourth quarter and the year ended December 31, 2025. A copy of the press release is attached as Exhibit 99.1 to this report and is incorporated by reference into this
-- **Revised guidance · Net debt / EBITDA (fwd-adj covenant basis) · EV/EBITDA (adjusted, forward) · Adjusted EPS (earnings power):** _UNKNOWN_ — no revised-outlook 99.1 exhibit parsed — the revised forward guidance is UNKNOWN
+- **Revised guidance · Net debt / EBITDA [FWD-ADJ] · EV/EBITDA (adjusted, forward) · Adjusted EPS (earnings power):** _UNKNOWN_ — no revised-outlook 99.1 exhibit parsed — the revised forward guidance is UNKNOWN
 
 _Company-specific or market-wide?_
 - **Name 180d return:** -60.2% [5]
@@ -76,11 +76,11 @@ _Company-specific or market-wide?_
 - **Supplier/customer cohort:** none mapped for this name — the comparison is vs the market only
 
 ### Leverage & survival
-- **Net debt / EBITDA (CIQ NET basis):** -1.0x [7]
-- **Total debt / EBITDA (comps — name vs peer median):** name 0.4x vs peer median 1.5x (comps TOTAL-debt/EBITDA basis) [19]
+- **Net debt / EBITDA [NET]:** -1.0x [7]
+- **Total debt / EBITDA vs peers:** name 0.4x vs peer median 1.5x (comps TOTAL-debt/EBITDA basis) [19]
 - **Net debt / OCF:** -1.3x [20]
 - **Interest coverage:** _UNKNOWN_ — no period with both EBITDA and Interest Expense
-- **Self-funding (two-input: latest-Q OCF + LTM FCF):** self-funding: MIXED — latest-Q OCF < 0, LTM FCF > 0 (both must be positive to self-fund) [11]
+- **Self-funding:** self-funding: MIXED — latest-Q OCF < 0, LTM FCF > 0 (both must be positive to self-fund) [11]
 - **Credit health** — [10]  <!-- ds-table -->
 
 |  | Name | Peer median |
@@ -96,7 +96,7 @@ _S&P issuer rating unrated · scale 1=strongest … 4=weakest (S&P-MI PD model)_
 - **FCF sign:** positive [8]
 - **Free cash flow ($M):** 692.9 [21]
 - **Live instruments — near-dated (≤12m + 2027):** none due in the window — 3 undated / later aggregate line item(s) in the appendix panel [22]
-- **Maturity wall** (deterministic, vs the 2026-07-06 reference):
+- **Maturity wall** · vs the 2026-07-06 reference:
   - due 2030: $25.0M
   - undated (floor — no panel maturity): $118.7M — Long Term Debt - Other $0.0M, Operating Lease Liabilities $118.7M
   - _reconciliation: itemized $143.7M (panel A 2025 filed Feb-26-2026) vs the latest-quarter aggregates below — the gap is unitemized / newer term loans; read the QoQ movement in the aggregates line._
