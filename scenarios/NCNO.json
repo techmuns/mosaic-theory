@@ -1,0 +1,299 @@
+{
+  "schema_version": "1.1",
+  "ticker": "NCNO",
+  "recipe_id": "R2_terminal_margin",
+  "recipe_desc": "Terminal-margin: value the business in the year it reaches a normal operating margin, then discount that value back at the house waiting charge. Used where no trailing multiple describes the company.",
+  "recipe_formula": [
+    "EBIT_T = terminal revenue × terminal margin",
+    "D&A_T = (latest-FY D&A ÷ latest-FY revenue) × terminal revenue",
+    "EBITDA_T = EBIT_T + D&A_T",
+    "EV_T = denominator_T × exit multiple   (denominator = EBITDA_T, or EBIT_T on EV/EBIT)",
+    "net debt_T = current net debt + cumulative burn to breakeven",
+    "equity_T = EV_T − net debt_T",
+    "shares_T = current diluted × (1 + share growth)^years + announced-raise shares",
+    "value_T = equity_T ÷ shares_T",
+    "PV = value_T ÷ (1 + hurdle)^years"
+  ],
+  "multiple_basis": "EV/EBITDA",
+  "underwrite_date": "2026-07-21",
+  "analyst": "analyst",
+  "spot": 17.93,
+  "spot_source": "Polygon NCNO close 2026-07-20 (live at underwrite)",
+  "facts": {
+    "net_debt": {
+      "value": 223.899,
+      "unit": "$M",
+      "basis": "lease-inclusive net debt, latest quarter: total debt 263 + finance leases 51 + operating leases 13 - cash 103",
+      "source": "EDGAR companyfacts, 10-Q period ended 2026-04-30"
+    },
+    "diluted_shares": {
+      "value": 109.458,
+      "unit": "shares",
+      "basis": "latest-quarter diluted weighted-average count; the completed buyback is real, and projecting dilution forward from here via the zero-floored growth rate is the conservative direction",
+      "source": "EDGAR WeightedAverageNumberOfDilutedSharesOutstanding, quarter ended 2026-04-30"
+    },
+    "d_and_a_ratio": {
+      "value": 0.069264,
+      "unit": "rate",
+      "basis": "latest full-year depreciation and amortisation over the same year's revenue (42.255 / 610.058)",
+      "source": "EDGAR companyfacts dep_amort, FY2026"
+    },
+    "share_growth": {
+      "value": 0.011119,
+      "unit": "rate",
+      "basis": "three-year compound growth in the diluted count, floored at zero",
+      "source": "EDGAR WeightedAverageNumberOfDilutedSharesOutstanding, FY2023-FY2026"
+    }
+  },
+  "scenarios": {
+    "bear": {
+      "revenue": 684.0,
+      "margin": 0.086,
+      "multiple": 10.0,
+      "reason": "deceleration runs past consensus (forward operating-income revisions 0 up / 9 down); operating leverage slows with growth; exit below the mature-peer reference.",
+      "years_to_terminal": 4.0
+    },
+    "base": {
+      "revenue": 754.8,
+      "margin": 0.126,
+      "multiple": 12.5,
+      "reason": "revenue = consensus FY2027 then a stated fade of ~1.5 points a year; margin = the durable +3-points-a-year leverage path from the first positive year (+0.6%); exit set on the one genuinely mature vertical-software peer (12.3x at 23% margins) - at terminal, growth has decelerated by construction, so a growth multiple would pay for the same growth twice.",
+      "years_to_terminal": 4.0
+    },
+    "bull": {
+      "revenue": 809.2,
+      "margin": 0.166,
+      "multiple": 16.0,
+      "reason": "the recent +4-points-a-year pace holds and revenue fades only to 8%; exit at a premium to the mature peer for franchise dominance in bank software.",
+      "years_to_terminal": 4.0
+    }
+  },
+  "assumptions": {
+    "revenue": {
+      "method": "Terminal revenue starts from the consensus FY2027 figure and then fades at a stated rate: about 1.5 points of growth lost each year in the central case, 1.0 in the optimistic case. Only FY2027 is a consensus figure; every year beyond it is our own extrapolation of a deceleration that has held for four years and need not hold again.",
+      "references": [
+        {
+          "label": "consensus revenue, FY2027",
+          "value": 644.7,
+          "unit": "$M",
+          "source": "CIQ Estimates->Trends"
+        },
+        {
+          "label": "reported revenue, FY2026",
+          "value": 594.8,
+          "unit": "$M",
+          "source": "EDGAR RevenueFromContractWithCustomerExcludingAssessedTax"
+        },
+        {
+          "label": "realised growth, FY2024/FY2025/FY2026",
+          "value": 10.0,
+          "unit": "%",
+          "source": "EDGAR revenue series (16.7 / 13.5 / 10.0)"
+        }
+      ],
+      "ratified_by": null,
+      "ratified": null
+    },
+    "margin": {
+      "method": "Every margin here is on a reported accounting basis, and so is the depreciation assumption, because the two have to sit in the same layer. The 26-28% operating margins widely quoted for this company exclude stock compensation and the amortisation of acquired intangibles; both are real costs to an owner. The evidence that the layers differ is arithmetic: the consensus figures imply about $6M of depreciation for a year in which the company reported about $42M. The central path takes the durable improvement of the last two years - roughly 3 points a year from the first positive year of +0.6% - rather than the one-off step of four years ago. The weakness is that a straight-line margin has no ceiling, while a 60.6% gross margin is a real one.",
+      "references": [
+        {
+          "label": "reported operating margin, FY2026",
+          "value": 0.6,
+          "unit": "%",
+          "source": "EDGAR OperatingIncomeLoss / revenue"
+        },
+        {
+          "label": "margin path at +2 points a year, pessimistic",
+          "value": 8.6,
+          "unit": "%",
+          "source": "extrapolation of the reported margin series"
+        },
+        {
+          "label": "margin path at +3 points a year, central",
+          "value": 12.6,
+          "unit": "%",
+          "source": "extrapolation of the reported margin series"
+        },
+        {
+          "label": "margin path at +4 points a year, optimistic",
+          "value": 16.6,
+          "unit": "%",
+          "source": "extrapolation of the reported margin series"
+        },
+        {
+          "label": "gross margin, FY2026 - the structural ceiling",
+          "value": 60.6,
+          "unit": "%",
+          "source": "EDGAR GrossProfit / revenue"
+        },
+        {
+          "label": "depreciation implied by the consensus layer",
+          "value": 5.7,
+          "unit": "$M",
+          "source": "CIQ Estimates->Trends (EBITDA less EBIT, FY2027)"
+        },
+        {
+          "label": "depreciation reported, FY2026",
+          "value": 42.255,
+          "unit": "$M",
+          "source": "EDGAR companyfacts dep_amort"
+        }
+      ],
+      "ratified_by": null,
+      "ratified": null
+    },
+    "multiple": {
+      "method": "The exit multiple is set against a mature vertical-software peer rather than against this company's own trading history. That history spans ten quarterly closes over 2.3 years, and for most of it the earnings denominator sat near zero, which inflates a multiple without saying anything about value - its median of 82.9x is unusable as an exit. Both data-quality checks on that series pass, so the number is real; it is the period that is too short and too distorted. Cross-checked on revenue: 754.8 at 3.0 times enterprise value to revenue, the mature peer's level, gives about $10 a share in today's terms, which agrees with the central case.",
+      "references": [
+        {
+          "label": "mature vertical-software peer, enterprise value to EBITDA",
+          "value": 12.3,
+          "unit": "x",
+          "source": "CIQ Comparable Analysis (SPS Commerce, 23.2% EBITDA margin)"
+        },
+        {
+          "label": "closest bank-software peer, enterprise value to EBITDA",
+          "value": 33.2,
+          "unit": "x",
+          "source": "CIQ Comparable Analysis (Q2 Holdings, pre-maturity)"
+        },
+        {
+          "label": "this company's trailing median, ten closes over 2.3 years - unusable",
+          "value": 82.9,
+          "unit": "x",
+          "source": "CIQ Financials->Multiples (near-zero denominator)"
+        },
+        {
+          "label": "mature vertical-software peer, enterprise value to revenue",
+          "value": 3.0,
+          "unit": "x",
+          "source": "CIQ Comparable Analysis (SPS Commerce)"
+        }
+      ],
+      "ratified_by": null,
+      "ratified": null
+    },
+    "horizon": {
+      "method": "Four years to the terminal year. At three years the margin ramp would have to finish almost immediately; at five the waiting charge halves the answer, so the exit multiple rather than the operating case would carry the result. Four years matches the improvement pace the company has actually delivered for two years running.",
+      "references": [
+        {
+          "label": "years to the terminal year",
+          "value": 4.0,
+          "unit": "years",
+          "source": "analyst judgement, set against the realised margin pace"
+        },
+        {
+          "label": "waiting charge applied over the horizon",
+          "value": 74.9,
+          "unit": "%",
+          "source": "house rate of 15% a year compounded over four years"
+        }
+      ],
+      "ratified_by": null,
+      "ratified": null
+    }
+  },
+  "gate_adjudication": null,
+  "tier": "A",
+  "survival_input": {
+    "fcf": 82.564,
+    "fcf_basis": "latest full year (FY2026), not a trailing twelve months",
+    "fcf_source": "EDGAR companyfacts operating cash flow less capital expenditure, FY2026",
+    "cash": 102.8,
+    "facilities": 0.0,
+    "facilities_source": null,
+    "years_to_breakeven": null,
+    "announced_raise": false,
+    "raise_accession": null,
+    "raise_shares": 0.0,
+    "raise_proceeds": 0.0
+  },
+  "result": {
+    "per_scenario": {
+      "bear": {
+        "value_per_share": 4.188431222769724,
+        "op_income": 58.824,
+        "ebitda": 106.20057600000001,
+        "ev": 1062.00576,
+        "equity": 838.10676,
+        "ev_ebit": 18.053953488372095,
+        "norm_fcf": null,
+        "years": 4.0,
+        "d_and_a_t": 47.37657600000001,
+        "net_debt_t": 223.899,
+        "shares_t": 114.40805272829161,
+        "value_terminal": 7.3255923863193875,
+        "hurdle": 0.15
+      },
+      "base": {
+        "value_per_share": 8.088024041367131,
+        "op_income": 95.1048,
+        "ebitda": 147.3852672,
+        "ev": 1842.3158399999998,
+        "equity": 1618.4168399999999,
+        "ev_ebit": 19.37142857142857,
+        "norm_fcf": null,
+        "years": 4.0,
+        "d_and_a_t": 52.280467200000004,
+        "net_debt_t": 223.899,
+        "shares_t": 114.40805272829161,
+        "value_terminal": 14.146004598501365,
+        "hurdle": 0.15
+      },
+      "bull": {
+        "value_per_share": 14.103475410672631,
+        "op_income": 134.3272,
+        "ebitda": 190.37562880000002,
+        "ev": 3046.0100608000002,
+        "equity": 2822.1110608000004,
+        "ev_ebit": 22.676048192771084,
+        "norm_fcf": null,
+        "years": 4.0,
+        "d_and_a_t": 56.04842880000001,
+        "net_debt_t": 223.899,
+        "shares_t": 114.40805272829161,
+        "value_terminal": 24.66706663998774,
+        "hurdle": 0.15
+      }
+    },
+    "survival": {
+      "status": "PASS",
+      "burn": null,
+      "burn_basis": "latest full year (FY2026), not a trailing twelve months",
+      "burn_source": "EDGAR companyfacts operating cash flow less capital expenditure, FY2026",
+      "cash": 102.8,
+      "facilities": 0.0,
+      "facilities_source": null,
+      "runway_years": null,
+      "years_to_breakeven": null,
+      "announced_raise": false,
+      "raise_accession": null,
+      "note": "trivial pass — free cash flow is positive (82.6, latest full year (FY2026), not a trailing twelve months); the company funds itself and has no runway question",
+      "detail": []
+    },
+    "hurdle": 0.15,
+    "reward": -9.841975958632869,
+    "risk": 13.741568777230276,
+    "ratio": -0.7162192409167273,
+    "ratio_undefined": null,
+    "bar": 2.0,
+    "pass_fail": "FAIL"
+  },
+  "verdict": {
+    "status": "watch",
+    "recorded": "2026-07-21",
+    "rationale": "WATCH at $17.93. The underwrite fails our 2:1 bar decisively: the base case values the business near $8 a share in today's terms - under half the market price - and even the optimistic case sits below the price. nCino has just crossed into profitability and the path to mature software margins is real, but the market is already paying today, with no waiting charge, for earnings that on a reported accounting basis arrive around 2030. A sound franchise, fully paid for. We revisit below about $9, or on evidence the ramp is beating our pace - subscription growth back above 12% for two straight quarters, or margins expanding faster than four points a year.",
+    "rationale_plain": null,
+    "rationale_plain_recorded": null,
+    "reunderwrite_triggers": [
+      "price below about $9, roughly the base case in today's terms, then re-run the underwrite at the new price",
+      "subscription revenue growth at or above 12% year over year for two consecutive quarters - the deferred-consumption thesis is converting; re-underwrite with a faster ramp",
+      "reported operating margin expanding by 4 points a year or more across two consecutive halves - raise the terminal path and re-underwrite"
+    ],
+    "entry_price": null,
+    "ratio_at_entry": null,
+    "avoid_priced": true,
+    "avoid_priced_note": "inverted asymmetry at $17.93: upside to the optimistic case is about -21%, downside to the pessimistic case about -77%, both in present-value terms. The verdict is invariant to the waiting-charge rate - it fails even at zero - and to giving full credit for interim free cash flow."
+  }
+}

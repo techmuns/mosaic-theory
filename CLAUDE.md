@@ -190,6 +190,12 @@ incomplete regardless of code state.
   incident → invariant → shipped Y/N.
 - **PREVIEW RULE.** Render/layout PRs run a Phase-1 preview from committed JSON and **STOP for
   approval**; data/extractor PRs go straight to build with real-run verification.
+  **EXTENDED 2026-07-21 — a card preview MUST include the EXPANDED / print-tier state, not just the
+  visible one.** Since the T1 amendment every `<details>` force-opens in the PDF, so the audit tier
+  is ALWAYS in the export even while collapsed on screen. Cause of the extension: #176's synthetic
+  R2 preview checked the visible tier, passed, and shipped a renderer that printed `undefined`
+  three times inside the collapsed reference table — in every PDF, invisible to the preview that
+  approved it. Render collapsed AND force-open; capture both.
 - **OPERATOR-ACTION RULE.** Operator to-dos arising from builds/audits are appended to STATE.md
   §Next-steps **by the build itself** — chat is not a ledger.
 - **ARTIFACT-PASS RULE.** The standing post-merge artifact pass (re-assemble dossiers → build frontend

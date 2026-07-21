@@ -2873,14 +2873,14 @@ Edge-2 — gated by definition, not parallel-buildable; turns the loop into real
    can't size until you know the edge is real, and sizing precedes execution.
 2. **Execution (IBKR)** — trigger: sizing built **+** spread positive **+** the regulatory gate (§6,
    SFC Type 9) clear for real money. Hard-deferred; paper until all three.
-3. **Monitoring / thesis-break / decay** — trigger: live positions exist (i.e. after execution).
+5. **Monitoring / thesis-break / decay** — trigger: live positions exist (i.e. after execution).
 
 **SECOND WAVE — widen the funnel** (buildable in PARALLEL per §4's GOVERNOR — validation-design-first,
 without starving the lead loop; each becomes a *real* widener only when its OWN spread validates):
-4. **Edge 1 (orphaned quality) screen** — buildable in parallel per the governor (validation design =
+6. **Edge 1 (orphaned quality) screen** — buildable in parallel per the governor (validation design =
    its own BUY−AVOID spread); real capital still waits on that spread. Reuses the same ranker +
    dossier-assembler on a different (neglect-based, not drawdown-based) screen — the strongest expansion.
-5. **Active event-detection feeding `graph-exposure`** — buildable in parallel per the governor
+7. **Active event-detection feeding `graph-exposure`** — buildable in parallel per the governor
    (validation design = the event-assembly obvious/non-obvious test, ledger below); gated only on not
    starving the lead loop. An alerting layer on the existing lookup (**not** the falsified mechanical
    screen) — surfaces exposed cross-sections to the human on a real event; decides nothing.
@@ -3821,28 +3821,39 @@ re-anchor (the full STATE split stays its own queued task — nothing was reloca
    SMPL assembly missed the 2026-07-09 print by one day. Assembly must FLAG filings newer than
    its evidence window, and stamp what window it read. (The §7 print-freshness gate and the
    monitor's freshness panel cover verdicts manually until this exists.)
-2. **R2 ENGINE — BUILT 2026-07-21 (`R2_terminal_margin`).** Terminal-margin bridge, 15% house
+2. **R2 COHORT UNDERWRITES — NCNO DONE, four to go.** `scenarios/NCNO.json` is the first R2
+   record (watch, 2026-07-21). Remaining: **AORT** and **VITL** need dedicated basis pulls before
+   any record — the shakedown grids were advisory-grade. **AORT's pull must first resolve the
+   FY2025 +13% share-count step (41.68 → 47.16M: issuance or converts?)** — its floored 3-year CAGR
+   of 5.62% compounds to +24.4% dilution over four years and dominates its ratio. **VITL is
+   survival-blocked** (0.76y runway vs 4y; re-engage on an Item 1.01/2.03 financing filing or on
+   free cash flow turning positive). MVST/FUBO remain fact-blocked (item 3).
+3. **g_sbc CONTAMINATION WARNING (queued).** The trailing-3-year diluted-share CAGR is taken raw;
+   a single acquisition issuance inside the window silently becomes a permanent dilution rate.
+   Ship a flag when any single year-over-year share jump exceeds about twice the series median —
+   AORT's FY2025 step is the live example, and it is an input to a valuation, not a footnote.
+4. **R2 ENGINE — BUILT 2026-07-21 (`R2_terminal_margin`).** Terminal-margin bridge, 15% house
    hurdle, hard survival gate, tier A/B, EV/EBIT basis supported, card rendered. Conventions
    ratified in §7. **NEXT: the per-name grids** — cohort underwrites (NCNO / MVST / AORT / VITL,
    and FUBO once its facts exist) each need their own evidence pull → analyst bear/base/bull, the
    same way R1 ran. The engine does not underwrite anything by itself.
-3. **COHORT FACT GAPS — CIQ balance-sheet extraction needed (blocks two underwrites).** **MVST**:
+5. **COHORT FACT GAPS — CIQ balance-sheet extraction needed (blocks two underwrites).** **MVST**:
    no D&A tag at all; net debt UNKNOWN (under-capture guard refused). **FUBO**: not underwritable
    from committed data — `dep_amort` resolves to $0.003M from **FY2014**, debt tags last filed
    **2020-06-30**, FCF is **FY2024**, and diluted WA reads 30.0M against 342.7M shares outstanding
    (an 11x gap; reverse split?). EDGAR cannot close either — these need the CIQ balance sheet.
-4. **TAGGER PROPOSALS AWAITING RATIFICATION (operator).** The propose-only tagger agrees with 10 of
+6. **TAGGER PROPOSALS AWAITING RATIFICATION (operator).** The propose-only tagger agrees with 10 of
    11 committed hand tags; it proposes `R2_NEEDED` for FUBO, whose committed hint is the machine
    placeholder `unknown`. No hint was written — ratify or reject, then re-run the sweep.
-5. **`_latest_dep_amort` prefers a STALE combined tag over current split tags.** FUBO takes a 2014
+7. **`_latest_dep_amort` prefers a STALE combined tag over current split tags.** FUBO takes a 2014
    value of $0.003M over split tags summing $38.5M (FY2024). Affects any filer that switched tags.
    Found 2026-07-21, not fixed in-branch (scope).
-6. **`own-history-refresh` silently drops `ev_ebitda.note`.** Its branch only re-applies the
+8. **`own-history-refresh` silently drops `ev_ebitda.note`.** Its branch only re-applies the
    "trailing only" note when `ev_ebitda_adjusted_fwd` is absent; when present (VITL) the committed
    note is lost. Found 2026-07-21 by dry-run diff and routed around surgically, not patched.
 
 **ANALYST / OPERATOR**
-7. **EPAM underwrite — RUN 2026-07-21, VERDICT PENDING.** `scenarios/EPAM.json` written and
+9. **EPAM underwrite — RUN 2026-07-21, VERDICT PENDING.** `scenarios/EPAM.json` written and
    computed standalone (R1, EV/EBITDA); card shipped at `pending_analyst` — the machine
    recorded the bar test, it did NOT decide. Legs (live spot $89.40, Polygon close
    2026-07-20): bear $63.14 · base $163.08 · bull $291.24 (printed, never in the ratio);
@@ -3856,29 +3867,29 @@ re-anchor (the full STATE split stays its own queued task — nothing was reloca
    own cadence, an ESTIMATE, not a date certain).** The 2:1 bar is met at any spot ≤ **$96.45**
    (from base 163.08 / bear 63.14: spot = (base + 2·bear) ÷ 3), recorded so the ceiling never
    has to be re-derived. EPAM now rides the monitor freshness panel as `verdict pending`.
-8. **BRBR — QUEUE A FULL R1 UNDERWRITE, POST-AUGUST-WINDOW.** The last of the three dispositions
+10. **BRBR — QUEUE A FULL R1 UNDERWRITE, POST-AUGUST-WINDOW.** The last of the three dispositions
    still open; CNXC and VITL were closed 2026-07-21 (`R1_NOT_ROBUST` and `R2_NEEDED`). BRBR passes
    both band guards, so its anchor is usable. **Basis = the 2026-07-21 disposition pull**, whose
    one contested item is now settled: `book value/share −$4.28` IS committed and sourced
    (`mechanical.stock_info.book_value_ps`) — the pull's "unsourced" finding was a false negative.
    Hold until after the August print window for the same reason EPAM is held.
-9. **CIQ ESCALATION — VITL `TEV/LTM EBITDA` (LOW PRIORITY, operator).** Reproducible statement
+11. **CIQ ESCALATION — VITL `TEV/LTM EBITDA` (LOW PRIORITY, operator).** Reproducible statement
    drafted: *VITL (NasdaqGM:VITL), Financials→Multiples — `TEV/LTM EBITDA` is populated against a
    rent-adjusted denominator. Backing it out of the sheet's own TEV gives ~393 against EBITDAR
    ~390.5 (1.007x) and EBITDA 79.5 (4.94x), across every recent period; `TEV/LTM EBIT` on the same
    sheet reconciles to EDGAR exactly.* Low priority: the guard already disqualifies the band, so
    nothing downstream depends on CIQ answering. Worth sending because the same rent-adjustment
    substitution would silently distort ANY lease-heavy name.
-10. **Truckload freeze-source re-run** — confirm the surgically-patched
+12. **Truckload freeze-source re-run** — confirm the surgically-patched
    `frontend/themes/truckload-supply-purge.json` reproduces byte-identical from the freeze.
-11. **Sweep-#2 fail-closed coverage holes (2)** — operator decision, report-only.
-12. **Drafting-rubric v2 validation — DATED 2026-08-13** (pre-registered; do not run early).
+13. **Sweep-#2 fail-closed coverage holes (2)** — operator decision, report-only.
+14. **Drafting-rubric v2 validation — DATED 2026-08-13** (pre-registered; do not run early).
 
 **HOUSEKEEPING**
-13. **Refresh cadence → docs/RUNBOOKS.md** (it is operating practice, not state).
-14. **Full STATE split** — §5 build records → a fossils/decisions file; this block is the interim.
+15. **Refresh cadence → docs/RUNBOOKS.md** (it is operating practice, not state).
+16. **Full STATE split** — §5 build records → a fossils/decisions file; this block is the interim.
 
-15. **REFERENCE-LABEL REGISTER + de-couple the median lookup (PAIRED — do not split).**
+17. **REFERENCE-LABEL REGISTER + de-couple the median lookup (PAIRED — do not split).**
     `assumptions[].references[].label` renders to the reader but is not linted; 14 labels across
     the four records still carry house vocabulary (`own-history band low`, `committed anchor
     median`, EPAM's `DEAD REGIME`). Restating them is blocked on a real coupling: `uw-card.js:188`
@@ -3887,14 +3898,14 @@ re-anchor (the full STATE split stays its own queued task — nothing was reloca
     (`median` / `band_low` / `p75` / …), switch the lookup to it, THEN restate the labels with
     analyst ratification. Splitting them means either a broken card or a rule left violated.
 
-16. **MIRROR-SYNC CI CHECK.** A generator run dirties BOTH its source and its `frontend/` mirror;
+18. **MIRROR-SYNC CI CHECK.** A generator run dirties BOTH its source and its `frontend/` mirror;
     an artifact pass that commits only the source leaves the deployed site reading stale data
     SILENTLY — nothing is red, the page is just wrong. Found 2026-07-21: `92feab0` committed
     `data/monitor/2026-07-20.json` without its mirror, so the live freshness panel was still
     missing EPAM (fixed in `a982900`). Ship a CI step that rebuilds and fails if `git status` is
     dirty — the artifact pass is complete when the tree is clean, not when the source commit lands.
 
-17. **RATIONALE STYLE RULE (adopted 2026-07-21; binds FUTURE verdicts, never sealed ones).**
+19. **RATIONALE STYLE RULE (adopted 2026-07-21; binds FUTURE verdicts, never sealed ones).**
     `verdict.rationale` is plain thesis prose — the market-standard shape: thesis, the two or
     three numbers that carry it, the risk accepted. **Accession numbers, vendor names (CIQ /
     Polygon), verification arithmetic ("1,100 × 8% × 6.0x → $3.54 → 2.17:1"), and process
@@ -4152,6 +4163,47 @@ cannot drift between emitters. Pinned both ways
 **CLOSED by the 2026-07-21 monitor build:** position monitor (book vs benchmarks, spread,
 freshness panel) · benchmark-by-cap-band assignment + the ledger-supersession artifact · the
 SIC-87xx sector miss · entry-price/ratio-at-entry + implied-odds display.
+
+- **FIRST R2 RECORD — NCNO, WATCH + AVOID-PRICED (branch `data/r2-ncno-first-record`, 2026-07-21).**
+  The instrument's first real use. `scenarios/NCNO.json`, recipe `R2_terminal_margin`, basis
+  EV/EBITDA, tier **A** (recurring subscription revenue, 60.6% gross margin, self-funding), 4-year
+  horizon on all legs, spot **$17.93** (last close 2026-07-20). Freshness gate CLEAR — zero filings
+  post-date the 2026-07-20 evidence window.
+  - **RESULT.** bear $4.19 · base $8.09 · bull $14.10 in today's terms (terminal $7.33 / $14.15 /
+    $24.67). reward −9.84 · risk +13.74 · **ratio −0.72 → FAIL** at the 2.0 bar. Survival **PASS**
+    (trivial — free cash flow +$82.6M; the company funds itself). Verdict **watch**, `avoid_priced`
+    true, **no ledger row** (a watch opens no position — precedent stands).
+  - **THE READ.** Base value is under half the market price and even the optimistic case sits below
+    it; the asymmetry is inverted (−21% up / −77% down, present-value terms) and **invariant to the
+    waiting-charge rate — it fails at 0% — and to full credit for interim free cash flow.** A sound
+    franchise, fully paid for.
+  - **R2 CONVENTIONS FROZEN** per the pre-committed shakedown criterion: 0 of 36 matrix cells cleared
+    the bar and **no single flip changed any verdict**, so no convention is modified.
+    **HONEST CAVEAT, recorded because it matters more than the result:** the test ran FAR from the
+    boundary — the shakedown grids imply exit multiples 2.9–3.3× below what the prices require, so
+    the matrix had **no discriminating power**. This is not "the conventions survived a stress
+    test"; it is "the test could not have failed them."
+  - **STANDING RULE ADOPTED.** Any future R2 run landing **within ±0.5 of the bar** auto-prints its
+    flip table before the verdict, adjudicated under the same criterion. That is where the matrix
+    would actually discriminate.
+  - **COHERENCE, re-verified at the record:** R2 at years→0 reproduces R1's committed IT base
+    ($273.8463) to **−0.107%**; the residual is exactly R2's ratio-derived D&A ($198.943M) against
+    R1's flat D&A ($200.309M) on a terminal revenue 0.68% below LTM. `years=0` is refused by design.
+  - **RENDER DEFECT FOUND BY THE RECORD, fixed in-branch (see the PREVIEW-RULE extension).** The
+    chosen-trio row looked its value up by AXIS NAME; R1's three axes are spelled like their leg
+    fields, R2's `horizon` is not (`yearsToTerminal`), so it printed `undefined` three times — and
+    via T1's force-open, in every PDF. Pinned across every committed card.
+  - **PROSE.** Linter **0 flags**. Two words changed from the brief's supplied text: `anchor\w*` is
+    a house token, so "exit anchored on…" → "exit set on…" and "mature-anchored terminal" → "set
+    against a mature vertical-software peer". Meaning preserved.
+  - **HELD, needing dedicated basis pulls (shakedown grids were advisory-grade, not records):**
+    **AORT** — its pull must first determine the FY2025 **+13% share-count step** (41.68 → 47.16M:
+    issuance or converts?) before any dilution override; the floored 3-year CAGR of 5.62% compounds
+    to **+24.4% dilution** over 4 years and is doing more damage to its ratio than any convention on
+    the matrix. **VITL** — survival-blocked (0.76y runway vs 4y; **zero** financing on file: no
+    S-3/S-1/424B5 and no Item 1.01 or 2.03 in twelve months). Re-engage on an Item 1.01/2.03
+    financing filing, or free cash flow turning positive.
+  - Gate: ruff + `mypy --strict` clean; `pytest -m "not network"` green on the committed artifacts.
 
 - **R2 ENGINE — TERMINAL MARGIN, SURVIVAL GATE, PV, TAGGER (branch `feat/r2-terminal-margin`,
   2026-07-21). ENGINE ONLY — no underwrites in this build, per the R1 pattern.**
