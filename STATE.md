@@ -2314,6 +2314,44 @@ Each line: *what it does* — *verified how*.
     median/excess, `<3`-UNDEFINED, tag boundaries, stale exclusion, dispersion. ruff + `mypy --strict
     vinci` + pytest (654) green.
 
+- **SECOND BUY — SMPL, freshness-amended then confirmed (2026-07-21, data/smpl-second-buy;
+  DATA-ONLY — 0 code files).** The print-freshness gate ran BEFORE the verdict: the fiscal-Q3
+  print (2026-07-09, **8-K 0001702744-26-000021**, EX-99.1) was read against the record.
+  - **8-K-VERIFIED (each from the EX-99.1):** Q3 net sales $357.0M, −6.3% YoY; Atkins −24.6% ·
+    Quest +1.1% · OWYN +3.6% (net-sales basis); **FY26 outlook updated to $1.345–1.355B** (the
+    8-K's numbers — the $1.35–1.36B secondary variant is wrong; prior range NOT stated in the
+    8-K ⇒ no "raised" language); adj-EBITDA guide $220–225M; GM ~−375bps; Q3 impairment $82.0M
+    and YTD $331.0M (goodwill + Atkins/OWYN intangibles); Q3 net loss $52.0M; buyback ~2.1M sh /
+    ~$25M; cash $123.9M; term loan $400.0M (8-K's own net-debt/adj-EBITDA 1.2x, loan basis).
+    **DROPPED (not in the EX-99.1): the "September high-single-digit price increase"** —
+    call-only claim, stays off the record. LOAD-BEARING CONFIRMED: guide midpoint $1,350M sits
+    ABOVE the base leg's 1,330 — the base is conservative vs management's own path.
+  - **PRE-VERDICT AMENDMENTS (visible, tagged, numbers untouched):** base reason's now-false
+    "(company issued no numeric guidance)" replaced with the tagged guidance-reinstated note;
+    bull reason's "multiple to own-history median" corrected to "toward but below the 17.85x
+    median (16.0x ≈ 29th pctile of the corrected 8.55y band)". result{}/facts/assumptions
+    asserted identical through model_validate.
+  - **THE BUY:** entry **10.92** (Polygon close 2026-07-20 — the latest completed session;
+    decided 2026-07-21), **ratio_at_entry 4.03:1** recomputed at entry BEFORE writing (bar 2:1).
+    Boundary re-verified at entry: 1,100×8%×6.0x → $3.54 → **2.17 clears**; 1,050×7%×6.0x →
+    $2.62 → **1.92 fails** — the fragility is exactly where the record says it is. Rationale
+    figures all re-derived from committed layers: guided adj-EBITDA margin ~16.5% (222.5/1,350)
+    vs normalized ~17.1% equivalent; current multiple ~5.65x = 0th pctile (below the 6.11x band
+    low; committed assumption at the same close); FCF yield ~12.3% (committed CIQ levered FCF
+    125.5 / entry mcap); net debt ~1.5x (lease-inclusive 324.6/222.5 — the 8-K's 1.2x is loan
+    basis). Triggers: Quest ≤0% YoY ×2q · FY26 cut at fiscal Q4 (~Oct) or FY27 init <~$1.30B ·
+    GM erosion beyond ~375bps / sustained <~31%.
+  - **LEDGER (append-only; IT's row structure mirrored):** V-SMPL-screen2-20260706 ·
+    SEC-0001702744-SMPL · sector Consumer Staples (resolver) · machine lean "mixed" → proposal
+    none → **disposition no_proposal** (sealed from the committed dossier, verified not
+    assumed) · confidence medium · horizon 180d · underwrite_ref scenarios/SMPL.json. VRRM + IT
+    rows asserted byte-untouched. **The ledger now holds two BUY legs (IT, SMPL) + one AVOID
+    (VRRM) — the BUY−AVOID spread becomes computable at the monitor build; IT's first trigger
+    (Q2 print, contract-value growth) lands early Aug.**
+  - QUEUED (§5): dossier-assembly freshness check — the 2026-07-10 SMPL assembly missed the
+    2026-07-09 print by ONE DAY; assembly should detect filings newer than its evidence window
+    (pairs with the assembly provenance stamp item). Standing rule formalized in §7.
+
 - **SCHEMA 1.1 — STRUCTURED ASSUMPTION DERIVATIONS + THE STAMPED RECIPE FORMULA (2026-07-20,
   feat/scenario-derivations; PR open, NOT merged).** Operator: the Scenarios table prints bare
   numbers a teammate cannot audit ("is 1.5% bear margin too low, or is it off the 5y average?"),
@@ -3925,6 +3963,12 @@ two-name analysis (mid/small-caps, opposite directions) mapped against this inve
   OTHER consumer of those (`margin_trend`, `multi_year_trajectory`, screen fundamentals, the
   mid-cycle block's own anchors) can still pick a partial tag. That remains the operator-decision
   item already recorded below.
+- **BUILD — dossier-assembly freshness check (queued 2026-07-21, from the SMPL near-miss):** the
+  2026-07-10 SMPL assembly missed the 2026-07-09 fiscal-Q3 print by ONE DAY and shipped a
+  "no numeric guidance" premise the print had already falsified. Assembly should detect EDGAR
+  filings newer than its evidence window and FLAG (not silently absorb) them — pairs with the
+  assembly provenance-stamp item. The manual §7 print-freshness gate covers verdicts until built.
+
 - **OPERATOR (from the 2026-07-20 scenario-derivations build):** (a) at PR review, ratify the
   three draft `method` sentences on WERN's assumptions + the two `confirm at review`
   Dedicated-mix ref sources (51.5%→73% — analyst calcs whose filing basis needs naming), and
@@ -5032,6 +5076,13 @@ calendar time. Validate **forward, never backtest**. Pre-register kill criteria;
 **face-validity, never by forward returns**. **The control says no** — trust the
 de-confounded/control number over the persuasive story. **Manual** = the CIQ export + the verdict;
 **automated** = everything mechanical between.
+
+**Print-freshness gate (standing, formalized 2026-07-21 at the SMPL BUY):** mandatory before ANY
+verdict — check EDGAR for filings newer than the record's evidence (the record's as-of vs the
+latest 8-K/10-Q/10-K); read the print against the record; amend VISIBLY (tagged, numbers
+untouched) where the print falsifies a stated premise. **Never record over an unread print.**
+Only primary filings go on the record — a figure a secondary source carries but the filing
+doesn't is dropped, noted, never recorded (the SMPL "September price increase" case).
 
 **Disciplined on CAPITAL, flexible on BUILD (§4 GATE).** Real capital waits on an edge's validated
 spread — hard, unchanged. The BUILD does **not** single-thread: build toward + forward-validate edges
