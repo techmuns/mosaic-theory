@@ -374,6 +374,10 @@ def _compose_gap_drivers(release: ReleaseExtract) -> Sourced[str] | None:
         parts.append(f"{g.period} {g.metric} outlook: {outlook}")
     if not parts:
         return None
+    # DEDUP, order-preserving: a release that states the same one-off twice (IT's $150.0M Digital
+    # impairment appeared in both the headline and the detail paragraph) must not read as a stutter
+    # — identical segments carry no second fact.
+    parts = list(dict.fromkeys(parts))
     return Sourced.present("; ".join(parts), source_ref=release.source_ref)
 
 
