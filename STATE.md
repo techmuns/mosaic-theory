@@ -3982,6 +3982,25 @@ and the leak scan caught a second evidence_balance phrasing on three names (tran
 both generator strings fixed). Data artifact left honestly in place: IT's doubled impairment
 sentence — recorded here as "heals at re-assembly", which was WRONG (see the #178 record below).
 
+**BUILD RECORD — 2026-07-21 IT full re-assembly (artifact pass e8181e7) + before/after comparison.**
+IT re-assembled against the same-vintage on-disk workbook; committed-vs-fresh compared leaf-by-leaf
+(4294→4519 leaves). VINTAGE CLEAN: financial_summary values byte-identical (sole annual diff: the
+consensus as-of note healed "as-of ?" → "≥2026-06-24"); return_ratios/ROIC/margin/trajectory WIDENED
+to FY17+ with every overlapping value identical (the full-history extractor's first live pass on a
+re-assembly). #178's dedup PROVEN LIVE: the fresh parse of the 8-K (which states the impairment
+twice) emits one segment. NEW since Jul-10 assembly: operating_drivers (4 anchored events + 12
+LLM-fenced leading indicators; 8 Tier-B drops disclosed in qa_flags 4→26 — no-silent-caps honored);
+anchor.ltm_fcf; NTM forward multiple. SYNTHESIS (weather + substance): lean still mixed → proposal
+still proposes nothing (the sealed ledger record untouched); bull/bear 9/4 → 9/6 and the
+FALSE-BALANCE caveat cleared; substance GAINED contract-value mechanics ($5.3B CV +1%, GTS −4%/GBS
+−2% new business, federal CV 126→114 named the largest swing factor), engagement metrics, and the
+3rd-percentile-of-9y own-history read (unavailable pre-full-history); LLM selection DROPPED the
+guidance-credibility bull point (28/30 beat record — data still in the dossier) and churned twins
+(Moody's + D&B out, Cognizant in). AS-OF DRIFT, not vintage: P/E 14.13→14.53 / pctile 2.1%→4.8%
+(screen data-record refreshed; EDGAR/EOD sourced). FACE-VALIDITY FLAG: a third-party sponsor PR
+rides the anchored event tier (CIQ Key Developments noise) — task chip spawned for a
+subject-company filter. Suite green on the fresh artifacts (901) before push.
+
 **BUILD RECORD — 2026-07-21 driver-segment dedup (PR #178, audit item 8 closed).** The declutter
 record's "heals at re-assembly" claim was FALSE: the release-driver composer had no dedup, so a
 re-assembly would have re-emitted IT's doubled "$150.0M Digital impairment" verbatim (the 8-K states
