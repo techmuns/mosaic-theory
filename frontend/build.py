@@ -142,12 +142,35 @@ def _scenario_card(rec: dict[str, Any], ledger: dict[str, dict[str, Any]] | None
         "scenarios": [
             {"name": n, "revenue": s["revenue"], "margin": s["margin"], "multiple": s["multiple"],
              "reason": s["reason"],
+             **({"yearsToTerminal": s["years_to_terminal"]}
+                if s.get("years_to_terminal") is not None else {}),
              **({"valuePerShare": _rd(o["value_per_share"], 2), "opIncome": _rd(o["op_income"], 1),
                  "ebitda": _rd(o["ebitda"], 1), "ev": _rd(o["ev"], 1),
                  "equity": _rd(o["equity"], 1), "evEbit": _rd(o.get("ev_ebit"), 1),
-                 "normFcf": _rd(o.get("norm_fcf"), 1)}
+                 "normFcf": _rd(o.get("norm_fcf"), 1),
+                 # (R2) the terminal-year bridge. Omitted wholesale on R1 records so their
+                 # committed cards stay byte-identical under the emit-determinism pin.
+                 **({"valueTerminal": _rd(o.get("value_terminal"), 2),
+                     "years": o.get("years"), "dAndAT": _rd(o.get("d_and_a_t"), 1),
+                     "netDebtT": _rd(o.get("net_debt_t"), 1),
+                     "sharesT": _rd(o.get("shares_t"), 2)}
+                    if o.get("value_terminal") is not None else {})}
                 if (o := per.get(n)) is not None else {})}
             for n, s in (rec.get("scenarios") or {}).items()],
+        # (R2) tier + hurdle + the survival gate. All omitted on R1 records.
+        **({"tier": rec["tier"]} if rec.get("tier") else {}),
+        **({"hurdle": r["hurdle"]} if r.get("hurdle") is not None else {}),
+        **({"survival": {
+            "status": sv["status"], "burn": _rd(sv.get("burn"), 1),
+            "burnBasis": sv.get("burn_basis") or "", "burnSource": sv.get("burn_source") or "",
+            "cash": _rd(sv.get("cash"), 1), "facilities": _rd(sv.get("facilities"), 1),
+            "facilitiesSource": sv.get("facilities_source"),
+            "runwayYears": _rd(sv.get("runway_years"), 2),
+            "yearsToBreakeven": sv.get("years_to_breakeven"),
+            "announcedRaise": bool(sv.get("announced_raise")),
+            "raiseAccession": sv.get("raise_accession"),
+            "note": sv.get("note") or "", "detail": list(sv.get("detail") or [])}}
+           if (sv := r.get("survival")) else {}),
         "reward": _rd(r.get("reward"), 2), "risk": _rd(r.get("risk"), 2),
         "ratio": _rd(r.get("ratio"), 2), "bar": r.get("bar"),
         "ratioUndefined": r.get("ratio_undefined"), "passFail": r.get("pass_fail"),

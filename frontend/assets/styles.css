@@ -1220,3 +1220,19 @@ table.data tr td.uw-vs { font-size: 12.5px; }
    scale from the stat band down (the About eyebrow inherited a 13px top margin its sibling lacked) */
 .uw-open .brief-body { margin-top: 0; }
 .uw-open .brief-eyebrow { margin: 0 0 5px; }
+
+/* --- R2 (terminal-margin): survival gate + tier ------------------------------------------------
+   The gate is a BLOCKING state, not a caveat: a survival FAIL stops a confirmed BUY in the record,
+   so the panel must not read softer than the guard behaves. */
+.uw-survival { margin: 14px 0 4px; padding: 10px 12px; border: 1px solid var(--line-2);
+  border-radius: 6px; background: var(--bg-2); break-inside: avoid; }
+/* the design system's own danger tokens — a hardcoded red would not follow dark mode, which is
+   exactly where a blocking state must stay legible */
+.uw-survival-fail { border-color: var(--danger-border); background: var(--danger-bg); }
+.uw-survival-fail .uw-sec-h .basis { color: var(--danger-text); font-weight: 600; }
+.uw-surv-body { margin-top: 6px; }
+.uw-bad { color: var(--danger-text); font-weight: 600; }
+.uw-tier { display: inline-block; padding: 1px 7px; border-radius: 10px; font-size: 11px;
+  font-weight: 600; letter-spacing: .02em; border: 1px solid var(--line-2); color: var(--ink-2); }
+.uw-tier-a { border-color: var(--line-1); }
+.uw-tier-b { border-style: dashed; }
