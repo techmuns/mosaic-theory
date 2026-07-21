@@ -113,6 +113,29 @@
           "title": "Per Scenario",
           "type": "object"
         },
+        "survival": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/SurvivalBlock"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "hurdle": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Hurdle"
+        },
         "reward": {
           "anyOf": [
             {
@@ -205,6 +228,18 @@
         "reason": {
           "title": "Reason",
           "type": "string"
+        },
+        "years_to_terminal": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Years To Terminal"
         }
       },
       "required": [
@@ -262,6 +297,78 @@
           ],
           "default": null,
           "title": "Norm Fcf"
+        },
+        "years": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Years"
+        },
+        "d_and_a_t": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "D And A T"
+        },
+        "net_debt_t": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Net Debt T"
+        },
+        "shares_t": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Shares T"
+        },
+        "value_terminal": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Value Terminal"
+        },
+        "hurdle": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Hurdle"
         }
       },
       "required": [
@@ -272,6 +379,223 @@
         "equity"
       ],
       "title": "ScenarioOutcome",
+      "type": "object"
+    },
+    "SurvivalBlock": {
+      "description": "(R2) The survival gate, recorded in full so its runway arithmetic is re-checkable.\n\nA terminal value is worthless if the company never reaches the terminal year, so this is a HARD\nBLOCK on confirming a BUY rather than an input to the ratio \u2014 an asymmetry computed on a company\nthat runs out of money is not a cheap asymmetry, it is a wrong one.",
+      "properties": {
+        "status": {
+          "title": "Status",
+          "type": "string"
+        },
+        "burn": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Burn"
+        },
+        "burn_basis": {
+          "default": "",
+          "title": "Burn Basis",
+          "type": "string"
+        },
+        "burn_source": {
+          "default": "",
+          "title": "Burn Source",
+          "type": "string"
+        },
+        "cash": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Cash"
+        },
+        "facilities": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Facilities"
+        },
+        "facilities_source": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Facilities Source"
+        },
+        "runway_years": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Runway Years"
+        },
+        "years_to_breakeven": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Years To Breakeven"
+        },
+        "announced_raise": {
+          "default": false,
+          "title": "Announced Raise",
+          "type": "boolean"
+        },
+        "raise_accession": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Raise Accession"
+        },
+        "note": {
+          "default": "",
+          "title": "Note",
+          "type": "string"
+        },
+        "detail": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Detail",
+          "type": "array"
+        }
+      },
+      "required": [
+        "status"
+      ],
+      "title": "SurvivalBlock",
+      "type": "object"
+    },
+    "SurvivalInput": {
+      "description": "(R2) The analyst-supplied survival inputs. Kept OFF ``facts`` because two of them are not\nnumbers, and a gate whose accession lived in a float field could not carry the one thing that\nmakes a raise count.",
+      "properties": {
+        "fcf": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Fcf"
+        },
+        "fcf_basis": {
+          "title": "Fcf Basis",
+          "type": "string"
+        },
+        "fcf_source": {
+          "title": "Fcf Source",
+          "type": "string"
+        },
+        "cash": {
+          "title": "Cash",
+          "type": "number"
+        },
+        "facilities": {
+          "default": 0.0,
+          "title": "Facilities",
+          "type": "number"
+        },
+        "facilities_source": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Facilities Source"
+        },
+        "years_to_breakeven": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Years To Breakeven"
+        },
+        "announced_raise": {
+          "default": false,
+          "title": "Announced Raise",
+          "type": "boolean"
+        },
+        "raise_accession": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Raise Accession"
+        },
+        "raise_shares": {
+          "default": 0.0,
+          "title": "Raise Shares",
+          "type": "number"
+        },
+        "raise_proceeds": {
+          "default": 0.0,
+          "title": "Raise Proceeds",
+          "type": "number"
+        }
+      },
+      "required": [
+        "fcf",
+        "fcf_basis",
+        "fcf_source",
+        "cash"
+      ],
+      "title": "SurvivalInput",
       "type": "object"
     },
     "Verdict": {
@@ -468,6 +792,29 @@
       ],
       "default": null,
       "title": "Gate Adjudication"
+    },
+    "tier": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Tier"
+    },
+    "survival_input": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/SurvivalInput"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
     },
     "result": {
       "$ref": "#/$defs/Result"

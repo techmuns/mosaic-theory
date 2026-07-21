@@ -4718,5 +4718,50 @@
     "source_ref": "CIQ Comparable Analysis→Business Description (subject row)",
     "status": "present",
     "note": null
+  },
+  "anchor": {
+    "recipe_hint": "unknown",
+    "applicable": false,
+    "multiple_basis": "EV/EBITDA",
+    "computed_at": "2026-07-21T15:07:01.388879Z",
+    "reason": "own-history multiple missing (valuation.own_history.median absent)",
+    "data_quality": null,
+    "data_quality_detail": [],
+    "margin": null,
+    "multiple": null,
+    "d_and_a": {
+      "value": 0.003,
+      "unit": "$M",
+      "basis": "consolidated latest FY",
+      "source": "EDGAR companyfacts dep_amort (combined)"
+    },
+    "net_debt": {
+      "value": null,
+      "unit": "$M",
+      "basis": "lease-inclusive net debt (latest 10-Q)",
+      "source": "EDGAR: total debt 27 + finance leases 0 + operating leases 33 − cash 238 ($M) — UNDER-CAPTURED: ConvertibleDebtNoncurrent $230M alone exceeds the extracted long-term+current total; pull CIQ"
+    },
+    "diluted_shares": {
+      "value": 30049437.0,
+      "unit": "shares",
+      "basis": "diluted weighted-average (latest 10-Q)",
+      "source": "EDGAR WeightedAverageNumberOfDilutedSharesOutstanding"
+    },
+    "ltm_revenue": {
+      "value": 5304.069,
+      "unit": "$M",
+      "basis": "LTM revenue",
+      "source": "committed financial_summary.annual (LTM)"
+    },
+    "ltm_fcf": {
+      "value": -82.205,
+      "unit": "$M",
+      "basis": "latest FY2024 (not LTM)",
+      "source": "EDGAR companyfacts operating_cash_flow − capex (FY2024, same period)"
+    },
+    "anchor_base_value_per_share": null,
+    "anchor_ev_ebit": null,
+    "overall_confidence": null,
+    "note": "ATTENTION FILTER, not a verdict. Even a firm anchor requires a full bear/base/bull 2:1 underwrite before any BUY. Spot and reward-to-base are computed live at triage, not stored here."
   }
 }

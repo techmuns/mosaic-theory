@@ -3515,16 +3515,42 @@
     "recipe_hint": "R2_NEEDED",
     "applicable": false,
     "multiple_basis": "EV/EBITDA",
-    "computed_at": "2026-07-20T19:57:27.141776Z",
+    "computed_at": "2026-07-21T15:07:01.368627Z",
     "reason": "no positive operating margin over available history — needs revenue-anchored recipe",
     "data_quality": null,
     "data_quality_detail": [],
     "margin": null,
     "multiple": null,
-    "d_and_a": null,
-    "net_debt": null,
-    "diluted_shares": null,
-    "ltm_revenue": null,
+    "d_and_a": {
+      "value": null,
+      "unit": "$M",
+      "basis": "consolidated latest FY",
+      "source": "UNKNOWN — no D&A tag (combined or split)"
+    },
+    "net_debt": {
+      "value": null,
+      "unit": "$M",
+      "basis": "lease-inclusive net debt (latest 10-Q)",
+      "source": "EDGAR: total debt 13 + finance leases 0 + operating leases 17 − cash 126 ($M) — UNDER-CAPTURED: ShortTermBorrowings $111M alone exceeds the extracted long-term+current total; pull CIQ"
+    },
+    "diluted_shares": {
+      "value": 385272000.0,
+      "unit": "shares",
+      "basis": "diluted weighted-average (latest 10-Q)",
+      "source": "EDGAR WeightedAverageNumberOfDilutedSharesOutstanding"
+    },
+    "ltm_revenue": {
+      "value": 371.637,
+      "unit": "$M",
+      "basis": "LTM revenue",
+      "source": "committed financial_summary.annual (LTM)"
+    },
+    "ltm_fcf": {
+      "value": 56.074,
+      "unit": "$M",
+      "basis": "latest FY2025 (not LTM)",
+      "source": "EDGAR companyfacts operating_cash_flow − capex (FY2025, same period)"
+    },
     "anchor_base_value_per_share": null,
     "anchor_ev_ebit": null,
     "overall_confidence": null,
