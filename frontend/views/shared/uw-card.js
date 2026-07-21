@@ -273,7 +273,7 @@ function ladder(c) {
     <div class="uw-lad-zone">
       <span>${c.ratioUndefined ? escapeHtml(c.ratioUndefined)
         : `risk ${escapeHtml(money(c.risk))}`}</span>
-      <span>${c.ratioUndefined ? "" : `reward ${escapeHtml(money(c.reward))} — zone widths to scale`}</span>
+      <span>${c.ratioUndefined ? "" : `reward ${escapeHtml(money(c.reward))}`}</span>
     </div>
   </div>`;
 }
