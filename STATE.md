@@ -3841,7 +3841,8 @@ re-anchor (the full STATE split stays its own queued task — nothing was reloca
    ratified in §7. **NEXT: the per-name grids** — cohort underwrites (NCNO / MVST / AORT / VITL,
    and FUBO once its facts exist) each need their own evidence pull → analyst bear/base/bull, the
    same way R1 ran. The engine does not underwrite anything by itself.
-6. **COHORT FACT GAPS — CIQ balance-sheet extraction needed (blocks two underwrites).** **MVST**:
+6. **~~COHORT FACT GAPS — CIQ balance-sheet extraction~~ — CLOSED 2026-07-22.** MVST and FUBO are
+   both underwritable; see the build record. Superseded detail: **MVST**:
    no D&A tag at all; net debt UNKNOWN (under-capture guard refused). **FUBO**: not underwritable
    from committed data — `dep_amort` resolves to $0.003M from **FY2014**, debt tags last filed
    **2020-06-30**, FCF is **FY2024**, and diluted WA reads 30.0M against 342.7M shares outstanding
@@ -3849,15 +3850,19 @@ re-anchor (the full STATE split stays its own queued task — nothing was reloca
 7. **TAGGER PROPOSALS AWAITING RATIFICATION (operator).** The propose-only tagger agrees with 10 of
    11 committed hand tags; it proposes `R2_NEEDED` for FUBO, whose committed hint is the machine
    placeholder `unknown`. No hint was written — ratify or reject, then re-run the sweep.
-8. **`_latest_dep_amort` prefers a STALE combined tag over current split tags.** FUBO takes a 2014
+8. **EPAM'S COMMITTED D&A IS SIX YEARS STALE — CHECK BEFORE ITS VERDICT.** The vintage fix
+   resolves EPAM to **124.811** (FY2025) against a committed **45.317** (FY2019, +175%). EPAM has a
+   PENDING underwrite whose EBITDA basis rests on the stale figure. Reported, NOT rewritten (out of
+   this branch's scope). Re-check the held grid before the verdict lands.
+9. **~~`_latest_dep_amort` prefers a STALE combined tag~~ — CLOSED 2026-07-22.** FUBO takes a 2014
    value of $0.003M over split tags summing $38.5M (FY2024). Affects any filer that switched tags.
    Found 2026-07-21, not fixed in-branch (scope).
-9. **`own-history-refresh` silently drops `ev_ebitda.note`.** Its branch only re-applies the
+10. **`own-history-refresh` silently drops `ev_ebitda.note`.** Its branch only re-applies the
    "trailing only" note when `ev_ebitda_adjusted_fwd` is absent; when present (VITL) the committed
    note is lost. Found 2026-07-21 by dry-run diff and routed around surgically, not patched.
 
 **ANALYST / OPERATOR**
-10. **EPAM underwrite — RUN 2026-07-21, VERDICT PENDING.** `scenarios/EPAM.json` written and
+11. **EPAM underwrite — RUN 2026-07-21, VERDICT PENDING.** `scenarios/EPAM.json` written and
    computed standalone (R1, EV/EBITDA); card shipped at `pending_analyst` — the machine
    recorded the bar test, it did NOT decide. Legs (live spot $89.40, Polygon close
    2026-07-20): bear $63.14 · base $163.08 · bull $291.24 (printed, never in the ratio);
@@ -3871,29 +3876,29 @@ re-anchor (the full STATE split stays its own queued task — nothing was reloca
    own cadence, an ESTIMATE, not a date certain).** The 2:1 bar is met at any spot ≤ **$96.45**
    (from base 163.08 / bear 63.14: spot = (base + 2·bear) ÷ 3), recorded so the ceiling never
    has to be re-derived. EPAM now rides the monitor freshness panel as `verdict pending`.
-11. **BRBR — QUEUE A FULL R1 UNDERWRITE, POST-AUGUST-WINDOW.** The last of the three dispositions
+12. **BRBR — QUEUE A FULL R1 UNDERWRITE, POST-AUGUST-WINDOW.** The last of the three dispositions
    still open; CNXC and VITL were closed 2026-07-21 (`R1_NOT_ROBUST` and `R2_NEEDED`). BRBR passes
    both band guards, so its anchor is usable. **Basis = the 2026-07-21 disposition pull**, whose
    one contested item is now settled: `book value/share −$4.28` IS committed and sourced
    (`mechanical.stock_info.book_value_ps`) — the pull's "unsourced" finding was a false negative.
    Hold until after the August print window for the same reason EPAM is held.
-12. **CIQ ESCALATION — VITL `TEV/LTM EBITDA` (LOW PRIORITY, operator).** Reproducible statement
+13. **CIQ ESCALATION — VITL `TEV/LTM EBITDA` (LOW PRIORITY, operator).** Reproducible statement
    drafted: *VITL (NasdaqGM:VITL), Financials→Multiples — `TEV/LTM EBITDA` is populated against a
    rent-adjusted denominator. Backing it out of the sheet's own TEV gives ~393 against EBITDAR
    ~390.5 (1.007x) and EBITDA 79.5 (4.94x), across every recent period; `TEV/LTM EBIT` on the same
    sheet reconciles to EDGAR exactly.* Low priority: the guard already disqualifies the band, so
    nothing downstream depends on CIQ answering. Worth sending because the same rent-adjustment
    substitution would silently distort ANY lease-heavy name.
-13. **Truckload freeze-source re-run** — confirm the surgically-patched
+14. **Truckload freeze-source re-run** — confirm the surgically-patched
    `frontend/themes/truckload-supply-purge.json` reproduces byte-identical from the freeze.
-14. **Sweep-#2 fail-closed coverage holes (2)** — operator decision, report-only.
-15. **Drafting-rubric v2 validation — DATED 2026-08-13** (pre-registered; do not run early).
+15. **Sweep-#2 fail-closed coverage holes (2)** — operator decision, report-only.
+16. **Drafting-rubric v2 validation — DATED 2026-08-13** (pre-registered; do not run early).
 
 **HOUSEKEEPING**
-16. **Refresh cadence → docs/RUNBOOKS.md** (it is operating practice, not state).
-17. **Full STATE split** — §5 build records → a fossils/decisions file; this block is the interim.
+17. **Refresh cadence → docs/RUNBOOKS.md** (it is operating practice, not state).
+18. **Full STATE split** — §5 build records → a fossils/decisions file; this block is the interim.
 
-18. **REFERENCE-LABEL REGISTER + de-couple the median lookup (PAIRED — do not split).**
+19. **REFERENCE-LABEL REGISTER + de-couple the median lookup (PAIRED — do not split).**
     `assumptions[].references[].label` renders to the reader but is not linted; 14 labels across
     the four records still carry house vocabulary (`own-history band low`, `committed anchor
     median`, EPAM's `DEAD REGIME`). Restating them is blocked on a real coupling: `uw-card.js:188`
@@ -3902,14 +3907,14 @@ re-anchor (the full STATE split stays its own queued task — nothing was reloca
     (`median` / `band_low` / `p75` / …), switch the lookup to it, THEN restate the labels with
     analyst ratification. Splitting them means either a broken card or a rule left violated.
 
-19. **MIRROR-SYNC CI CHECK.** A generator run dirties BOTH its source and its `frontend/` mirror;
+20. **MIRROR-SYNC CI CHECK.** A generator run dirties BOTH its source and its `frontend/` mirror;
     an artifact pass that commits only the source leaves the deployed site reading stale data
     SILENTLY — nothing is red, the page is just wrong. Found 2026-07-21: `92feab0` committed
     `data/monitor/2026-07-20.json` without its mirror, so the live freshness panel was still
     missing EPAM (fixed in `a982900`). Ship a CI step that rebuilds and fails if `git status` is
     dirty — the artifact pass is complete when the tree is clean, not when the source commit lands.
 
-20. **RATIONALE STYLE RULE (adopted 2026-07-21; binds FUTURE verdicts, never sealed ones).**
+21. **RATIONALE STYLE RULE (adopted 2026-07-21; binds FUTURE verdicts, never sealed ones).**
     `verdict.rationale` is plain thesis prose — the market-standard shape: thesis, the two or
     three numbers that carry it, the risk accepted. **Accession numbers, vendor names (CIQ /
     Polygon), verification arithmetic ("1,100 × 8% × 6.0x → $3.54 → 2.17:1"), and process
@@ -4167,6 +4172,58 @@ cannot drift between emitters. Pinned both ways
 **CLOSED by the 2026-07-21 monitor build:** position monitor (book vs benchmarks, spread,
 freshness panel) · benchmark-by-cap-band assignment + the ledger-supersession artifact · the
 SIC-87xx sector miss · entry-price/ratio-at-entry + implied-odds display.
+
+- **CIQ BALANCE-SHEET EXTRACTION + THE D&A VINTAGE FIX — MVST AND FUBO UNBLOCKED (branch
+  `feat/ciq-balance-sheet-extraction`, 2026-07-22).** Closes two queued items.
+  - **THE VINTAGE DEFECT WAS DEEPER THAN QUEUED.** The queued note said `_latest_dep_amort` prefers
+    the combined tag over newer split tags. True, but the staleness starts one level up:
+    `extract_points` resolves ALIASES BY ORDER — first-with-any-data wins — which is right for
+    breadth and wrong for vintage, because an abandoned tag keeps its last value forever and still
+    sorts first. EPAM's `DepreciationDepletionAndAmortization` last reported **FY2019**; its
+    `DepreciationAndAmortization` reports **FY2025**. Fixed inside `_latest_dep_amort` (scan every
+    alias + the split pair, take the freshest, stamp what it overrode); the shared resolver is
+    deliberately untouched — other consumers depend on its ordering.
+  - **VINTAGE SWEEP — 8 of 11 unchanged, the R1 book is current.** Three would move, REPORTED not
+    rewritten: **EPAM 45.317 → 124.811 (+175%)**, a **FY2019** value sitting under a **PENDING
+    underwrite** — its EBITDA basis is six years stale and the pending grid should be re-checked
+    before any verdict; **FUBO 0.003 → 38.548** (in scope, written); **VRRM None → 114.08** (no
+    anchor block, nothing to rewrite).
+  - **THE BRIEFED D&A COHERENCE CHECK WAS A FALSE-POSITIVE GENERATOR — designed out with evidence.**
+    Cash-flow vs income-statement equality within 20% fires on 2 of 4 honest names (AORT 61% apart,
+    FUBO 97%) because the two rows are DIFFERENT MEASURES: CIQ's income-statement line is the
+    depreciation inside operating expenses, the cash-flow "Total" is consolidated. AORT settles it —
+    EDGAR's combined tag (22.458) matches the cash-flow total (23.35), not the income-statement line
+    (9.05). Shipped instead: the CONTAINMENT invariant (operating-expense portion ≤ consolidated
+    total), which holds on every name and needs no tolerance. A guard that fires on honest names
+    gets switched off.
+  - **EXTRACTION MODULE** (`vinci/dossier/ciq_balance.py`): cash + short-term investments, total
+    debt, leases, D&A, operating cash flow, capital expenditure, diluted shares — each stamped with
+    file + sha. **UNIT scale asserted by MAGNITUDE against revenue**, never off a header: three 1e6
+    defects have shipped here, and two survived a green test because the fixture value was zero.
+    Net-debt cross-read (balance sheet vs multiple-implied TEV less market cap) available where a
+    market cap exists. A failed check REFUSES the whole bundle rather than handing on survivors.
+  - **ANCHOR WIRING — EDGAR-FIRST, ALWAYS.** The vendor sheet fills a HOLE and never overrides a
+    primary filing; every filled field is stamped `vendor_bridge` in `data_quality` with the fields
+    named, so the boundary is visible in the artifact. MVST took D&A + net debt; FUBO took net debt;
+    IT took only a free-cash-flow hole (base unchanged, +0%).
+  - **FUBO SHARE RESOLUTION — a REVERSE SPLIT, confirmed.** Diluted 30.0M vs 342.7M outstanding was
+    a real corporate action, not a stale tag. Evidence: (a) management commentary in the 2026-04-06
+    8-K discusses the reverse stock split directly; (b) **both regimes reconcile against their own
+    EPS** — −2.1M ÷ 30.715M = −$0.07 and −6.0M ÷ 349.097M = −$0.02, exactly as filed; (c) CIQ's own
+    income statement independently reports **30.72M** diluted; (d) the committed market cap ÷ price
+    implies ~27M shares, consistent with ~30M and not with 342M. Implied ratio ≈ 1-for-12. **The
+    current diluted count is 30.715M** and FUBO's share question is CLOSED.
+  - **UNDERWRITABILITY.** **MVST — YES**: facts complete, and G2 is runnable for the first time
+    (**pass 1.34x**); G1 passes at 10.01% implied D&A. **FUBO — YES on R2**: facts complete and the
+    share question closed, but its band guards stay UNRUN because it has no trailing multiple series
+    at all (every multiple NM on a loss-making year). That is structural, unfixable by a balance-
+    sheet pull, and precisely the condition R2 exists for. **VITL remains the only flagged band.**
+  - **THE CIQ-MANIFEST DRIFT GUARD EARNED ITS KEEP.** It rejected the module three times — a
+    parameterised `freq`, a looped sheet name, then an undeclared `("financials", None)` address —
+    until every `(kind, sheet, freq)` was a string literal it could read statically. `CIQ_MODULES`
+    now declares the quarterly Cash Flow sheet and what consumes it.
+  - Gate: ruff + `mypy --strict` clean; `pytest -m "not network"` green. 20 new pins, all
+    magnitude-bound with non-zero fixtures.
 
 - **SECOND R2 RECORD — AORT, WATCH + AVOID-PRICED (branch `data/r2-aort-record`, 2026-07-22).**
   `scenarios/AORT.json`, recipe `R2_terminal_margin`, basis EV/EBITDA, **tier B**, 4-year horizon,

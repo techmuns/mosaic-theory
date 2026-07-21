@@ -4737,23 +4737,23 @@
     "recipe_hint": "unknown",
     "applicable": false,
     "multiple_basis": "EV/EBITDA",
-    "computed_at": "2026-07-21T15:07:01.388879Z",
+    "computed_at": "2026-07-21T19:43:57.611580Z",
     "reason": "own-history multiple missing (valuation.own_history.median absent)",
     "data_quality": null,
     "data_quality_detail": [],
     "margin": null,
     "multiple": null,
     "d_and_a": {
-      "value": 0.003,
+      "value": 38.548,
       "unit": "$M",
       "basis": "consolidated latest FY",
-      "source": "EDGAR companyfacts dep_amort (combined)"
+      "source": "EDGAR companyfacts DepreciationAndAmortization (combined, FY2024) — CHOSEN BY VINTAGE over 1 staler candidate(s), oldest FY2014 (10y behind)"
     },
     "net_debt": {
-      "value": null,
+      "value": 170.4,
       "unit": "$M",
       "basis": "lease-inclusive net debt (latest 10-Q)",
-      "source": "EDGAR: total debt 27 + finance leases 0 + operating leases 33 − cash 238 ($M) — UNDER-CAPTURED: ConvertibleDebtNoncurrent $230M alone exceeds the extracted long-term+current total; pull CIQ"
+      "source": "CIQ classified balance sheet (vendor basis; EDGAR debt tags absent or under-captured) [FuboTV Inc NYSE FUBO Financials_Quarterly.xls sha f8210078d3]"
     },
     "diluted_shares": {
       "value": 30049437.0,

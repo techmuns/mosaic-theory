@@ -3717,23 +3717,23 @@
     "recipe_hint": "R2_NEEDED",
     "applicable": false,
     "multiple_basis": "EV/EBITDA",
-    "computed_at": "2026-07-21T15:07:01.368627Z",
+    "computed_at": "2026-07-21T19:43:57.566755Z",
     "reason": "no positive operating margin over available history — needs revenue-anchored recipe",
     "data_quality": null,
     "data_quality_detail": [],
     "margin": null,
     "multiple": null,
     "d_and_a": {
-      "value": null,
+      "value": 33.228,
       "unit": "$M",
       "basis": "consolidated latest FY",
-      "source": "UNKNOWN — no D&A tag (combined or split)"
+      "source": "CIQ Financials->Cash Flow (vendor basis; no EDGAR D&A tag) [Microvast Holdings Inc NasdaqCM MVST Financials_Quarterly.xls sha 30aa558d20]"
     },
     "net_debt": {
-      "value": null,
+      "value": 199.9,
       "unit": "$M",
       "basis": "lease-inclusive net debt (latest 10-Q)",
-      "source": "EDGAR: total debt 13 + finance leases 0 + operating leases 17 − cash 126 ($M) — UNDER-CAPTURED: ShortTermBorrowings $111M alone exceeds the extracted long-term+current total; pull CIQ"
+      "source": "CIQ classified balance sheet (vendor basis; EDGAR debt tags absent or under-captured) [Microvast Holdings Inc NasdaqCM MVST Financials_Quarterly.xls sha 30aa558d20]"
     },
     "diluted_shares": {
       "value": 385272000.0,
