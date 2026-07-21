@@ -635,9 +635,15 @@ table.data.vs-table { width: 100%; }
 
 /* --- risk / reward ladder -------------------------------------------------
    Zone WIDTHS are the ratio: the asymmetry is legible before a number is read. */
+/* CLEARANCE lives on the TRACK's top margin, not the ladder's: .uw-ladder has no border or
+   padding, so its top margin COLLAPSES with the track's and the larger of the two wins — raising
+   the ladder's alone is a no-op. The ABOVE labels sit 16px over the track and stand ~14px tall,
+   so the track needs ~30px above it plus breathing room. This was previously cushioned by the
+   masthead strip, which is now conditional; without the margin the labels sat 1px off the stat
+   band on any name with nothing to flag. */
 .uw-ladder { margin: 14px 0 10px; }
 .uw-lad-track { position: relative; height: 8px; border-radius: 4px;
-  background: var(--surface-2); margin: 27px 0 24px; max-width: 480px; }
+  background: var(--surface-2); margin: 42px 0 24px; max-width: 480px; }
 .uw-lad-risk, .uw-lad-reward { position: absolute; top: 0; bottom: 0; }
 .uw-lad-risk { background: var(--danger-bg); }
 .uw-lad-reward { background: var(--live-bg); }

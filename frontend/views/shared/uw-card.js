@@ -187,22 +187,23 @@ function methodCell(c) {
   return statCell("Method", escapeHtml(desc), escapeHtml(sub), { txt: true });
 }
 
-// The foot states WHOSE call this is and where the verdict of record lives — the disclaimer is
-// only true while no ledger row exists, so a logged name gets the pointer instead.
+// A strip under the band for what the reader must WEIGH — a gate the human overrode, an inverted
+// asymmetry, or the absence of a ledger verdict of record. It renders only when it has something
+// to say. It used to also carry `recorded`/`ledger id`, which made it a permanent metadata rail
+// duplicating the card foot's job: two metadata strips, one under the band and one at the bottom.
+// Those moved to the foot, where the card's other metadata already lives.
 function mastheadFoot(c) {
   const v = c.verdict || {};
   const bits = [];
-  if (v.recorded) bits.push(`recorded ${escapeHtml(v.recorded)}`);
   if (c.gateAdjudication) bits.push(escapeHtml(c.gateAdjudication));
-  if (c.ledger && c.ledger.entryId) {
-    bits.push(`ledger ${mono(c.ledger.entryId)}`);
-  } else {
+  // only meaningful while no ledger row exists — a logged name says so in the foot instead
+  if (!(c.ledger && c.ledger.entryId) && v.status && v.status !== "pending_analyst") {
     bits.push("scenario verdict — NOT a ledger verdict of record");
   }
   if (v.avoidPriced) {
     bits.push(`⚠ avoid-priced${v.avoidPricedNote ? ` — ${escapeHtml(v.avoidPricedNote)}` : ""}`);
   }
-  return `<div class="uw-mast-foot">${bits.join(" · ")}</div>`;
+  return bits.length ? `<div class="uw-mast-foot">${bits.join(" · ")}</div>` : "";
 }
 
 // A bare green "BUY" chip in a report header IS the sell-side ratings idiom — a reader parses it
@@ -439,6 +440,8 @@ export function uwCard(c, { ticker = true } = {}) {
     ${withEndnotes("U", body)}
     ${inputsDetails(c)}
     <div class="foot uw-foot">underwritten ${escapeHtml(c.underwriteDate || DASH)} · analyst
-      ${escapeHtml(c.analyst || DASH)}${c.recipeId ? ` · recipe ${escapeHtml(c.recipeId)}` : ""}</div>
+      ${escapeHtml(c.analyst || DASH)}${c.recipeId ? ` · recipe ${escapeHtml(c.recipeId)}` : ""}${
+      v.recorded ? ` · verdict recorded ${escapeHtml(v.recorded)}` : ""}${
+      c.ledger && c.ledger.entryId ? ` · ledger ${mono(c.ledger.entryId)}` : ""}</div>
   </section>`;
 }
