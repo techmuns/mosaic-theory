@@ -11,7 +11,7 @@ import json
 import sqlite3
 import sys
 from collections.abc import Callable, Sequence
-from datetime import UTC, date, datetime
+from datetime import UTC, date, datetime, timedelta
 from pathlib import Path
 from typing import Any
 
@@ -671,6 +671,136 @@ def _cmd_log_verdict(args: argparse.Namespace) -> int:
         f"· {prop_note} → disposition {disp}"
     )
     return 0
+
+
+def _cmd_monitor(args: argparse.Namespace) -> int:
+    """MANUAL cadence (no scheduler): mark the committed ledger to the latest close against each
+    leg's ASSIGNED benchmark, print the book + the BUY−AVOID diagnostic + the freshness panel,
+    and write a dated snapshot as the auditable book history.
+
+    Reads the COMMITTED `decision_ledger.jsonl` — the durable record — not the working DB (which
+    a fresh clone has never populated). Benchmarks come from the committed assignment artifact,
+    which SUPERSEDES the ledger row's own field; a leg with no assignment fails LOUD rather than
+    being measured against a yardstick nobody chose."""
+    from vinci import monitor as mon
+    from vinci.labels import resolve_label
+
+    cfg = get_config()
+    root = Path.cwd()
+    ref = date.fromisoformat(args.ref) if args.ref else date.today()
+    ledger_path = cfg.data_dir / "snapshots" / "decision_ledger.jsonl"
+    if not ledger_path.exists():
+        print(f"no committed ledger at {ledger_path}")
+        return 1
+    rows_raw = [json.loads(ln) for ln in ledger_path.read_text().splitlines() if ln.strip()]
+    if not rows_raw:
+        print("decision ledger is empty — nothing to monitor")
+        return 0
+    assignments = mon.read_assignments(root)
+    missing = sorted({r["ticker"] for r in rows_raw} - set(assignments))
+    if missing:
+        print(f"no benchmark assignment for {missing} — refusing to measure against an "
+              f"unassigned yardstick (write data/monitor/benchmark_assignments.json first)")
+        return 1
+
+    # SIC per ticker → the sector is RE-RESOLVED here, at the display/report layer. The frozen
+    # ledger row keeps whatever it logged (IT logged "Other" before the 87xx family fix); the
+    # correction is forward-only — an append-only row is never rewritten to look better.
+    sic_by_ticker: dict[str, str | None] = {}
+    cik_by_ticker: dict[str, str | None] = {}
+    sec_path = cfg.data_dir / "snapshots" / "securities.jsonl"
+    if sec_path.exists():
+        for ln in sec_path.read_text().splitlines():
+            if ln.strip():
+                rec = json.loads(ln)
+                sic_by_ticker[rec.get("ticker")] = rec.get("sic")
+                cik_by_ticker[rec.get("ticker")] = rec.get("cik")
+
+    eod = PolygonEodClient.from_config(cfg)
+    cache: dict[date, dict[str, Any]] = {}
+
+    def bars_on_or_before(day: date) -> tuple[date, dict[str, Any]]:
+        """The latest session ON OR BEFORE ``day`` — never a future bar (lookahead), fail loud
+        after a week of misses rather than silently reaching further back."""
+        for back in range(8):
+            d = day - timedelta(days=back)
+            if d not in cache:
+                try:
+                    cache[d] = dict(eod.grouped_daily(d))
+                except Exception:  # noqa: BLE001 — a holiday/empty day just steps back
+                    cache[d] = {}
+            if cache[d]:
+                return d, cache[d]
+        raise RuntimeError(f"no EOD session found within 7 days of {day}")
+
+    now_date, now_bars = bars_on_or_before(ref)
+    rows: list[mon.PositionRow] = []
+    notes: list[str] = []
+    for r in rows_raw:
+        payload = json.loads(r["payload"])
+        tkr, asg = r["ticker"], assignments[r["ticker"]]
+        entry_day, entry_bars = bars_on_or_before(date.fromisoformat(r["entry_price_as_of"]))
+        for need, where in ((tkr, "position"), (asg.benchmark, "benchmark")):
+            if need not in entry_bars or need not in now_bars:
+                raise RuntimeError(f"{tkr}: no {where} bar for {need} "
+                                   f"({entry_day} / {now_date}) — refusing to guess a price")
+        live_sector = resolve_label(sic_by_ticker.get(tkr)).sector
+        if payload.get("sector") and payload["sector"] != live_sector:
+            notes.append(f"{tkr}: sector re-resolved to {live_sector} for display "
+                         f"(the frozen row logged {payload['sector']} — never rewritten)")
+        rows.append(mon.position_row(
+            ticker=tkr, verdict=r["verdict"], sector=live_sector,
+            entry_price=r["entry_price"], entry_date=date.fromisoformat(r["entry_price_as_of"]),
+            current_price=now_bars[tkr].close, current_date=now_date,
+            benchmark=asg.benchmark, benchmark_entry=entry_bars[asg.benchmark].close,
+            benchmark_now=now_bars[asg.benchmark].close, horizon_days=r["horizon_days"]))
+        if payload.get("benchmark") and payload["benchmark"] != asg.benchmark:
+            notes.append(f"{tkr}: benchmark {asg.benchmark} (cap band) SUPERSEDES the ledger "
+                         f"row's {payload['benchmark']} — the row itself is never mutated")
+
+    fresh: list[mon.FreshnessRow] = []
+    edgar = EdgarClient.from_config(cfg)
+    for name in sorted({r["ticker"] for r in rows_raw} | _watch_tickers(root)):
+        rec_path = root / "scenarios" / f"{name}.json"
+        if not rec_path.exists():
+            continue
+        record = json.loads(rec_path.read_text())
+        cik = cik_by_ticker.get(name)
+        filings: list[tuple[str, date, str]] = []
+        if cik:
+            for f in edgar.recent_filings(cik, forms=("8-K", "10-Q", "10-K"),
+                                          since=ref - timedelta(days=760)):
+                filings.append((f.form, f.filing_date, f.accession))
+        v = record.get("verdict") or {}
+        note = (f"WATCH (not a position) — avoid-priced: {v.get('avoid_priced_note')}"
+                if v.get("avoid_priced") else None)
+        logged = next((r["verdict"] for r in rows_raw if r["ticker"] == name), None)
+        fresh.append(mon.freshness_row(
+            ticker=name, verdict=logged or str(v.get("status") or "—"),
+            record=record, filings=filings, today=ref, watch_note=note))
+
+    snap = mon.MonitorSnapshot(as_of=now_date, rows=rows, spread=mon.compute_spread(rows),
+                               freshness=fresh, notes=notes)
+    print(mon.render_table(snap))
+    path = mon.write_snapshot(snap, root=root)
+    print(f"\nsnapshot written: {path}")
+    return 0
+
+
+def _watch_tickers(root: Path) -> set[str]:
+    """Scenario records that are NOT ledger positions but carry standing triggers (a `watch`
+    verdict like WERN) — surfaced in the freshness panel so a tracked name cannot go stale."""
+    out: set[str] = set()
+    d = root / "scenarios"
+    if not d.is_dir():
+        return out
+    for p in sorted(d.glob("*.json")):
+        if p.name.startswith("_"):
+            continue
+        rec = json.loads(p.read_text())
+        if (rec.get("verdict") or {}).get("status") == "watch":
+            out.add(str(rec["ticker"]))
+    return out
 
 
 def _cmd_ledger(args: argparse.Namespace) -> int:
@@ -1990,6 +2120,10 @@ def build_parser() -> argparse.ArgumentParser:
         "deciding. Stamps revealed_pre_verdict=True so the anchored disposition is down-weighted.",
     )
     p_log.set_defaults(func=_cmd_log_verdict)
+
+    p_mon = sub.add_parser("monitor", help="mark the book to market vs benchmarks (manual)")
+    p_mon.add_argument("--ref", help="as-of date YYYY-MM-DD (default: today)")
+    p_mon.set_defaults(func=_cmd_monitor)
 
     p_ledger = sub.add_parser("ledger", help="list recorded paper verdicts")
     p_ledger.set_defaults(func=_cmd_ledger)

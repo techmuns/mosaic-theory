@@ -108,6 +108,10 @@ def _scenario_card(rec: dict[str, Any]) -> dict[str, Any]:
         "ratioUndefined": r.get("ratio_undefined"), "passFail": r.get("pass_fail"),
         "verdict": {"status": v.get("status"), "recorded": v.get("recorded"),
                     "rationale": v.get("rationale"),
+                    # the human's FROZEN entry beside the underwrite's own ratio — the card must
+                    # show what was accepted AT ENTRY, not only what the grid computed at spot
+                    "entryPrice": _rd(v.get("entry_price"), 2),
+                    "ratioAtEntry": _rd(v.get("ratio_at_entry"), 2),
                     "reunderwriteTriggers": v.get("reunderwrite_triggers") or [],
                     "avoidPriced": v.get("avoid_priced"),
                     "avoidPricedNote": v.get("avoid_priced_note")},
@@ -147,6 +151,32 @@ def emit_scenarios() -> list[str]:
     (OUT_SCEN / "index.json").write_text(
         json.dumps({"tickers": sorted(cards)}, indent=2) + "\n")
     return sorted(cards)
+
+
+MON = ROOT / "data" / "monitor"
+OUT_MON = HERE / "monitor"
+
+
+def emit_monitor() -> list[str]:
+    """Mirror the committed monitor history → `frontend/monitor/` + `index.json`
+    {"days":[…], "latest": "YYYY-MM-DD"}, plus the benchmark assignments. The frontend reads the
+    LATEST snapshot only — a committed, dated price, never a live fetch: the browser must not be
+    able to show a mark the repo cannot reproduce. No history → nothing written and the live
+    columns degrade to "—" (never a fabricated mark)."""
+    if not MON.is_dir():
+        return []
+    days = sorted(p.stem for p in MON.glob("*.json") if p.name != "benchmark_assignments.json")
+    if OUT_MON.exists():
+        shutil.rmtree(OUT_MON)
+    OUT_MON.mkdir(parents=True)
+    for d in days:
+        shutil.copyfile(MON / f"{d}.json", OUT_MON / f"{d}.json")
+    asg = MON / "benchmark_assignments.json"
+    if asg.exists():
+        shutil.copyfile(asg, OUT_MON / "benchmark_assignments.json")
+    (OUT_MON / "index.json").write_text(
+        json.dumps({"days": days, "latest": days[-1] if days else None}, indent=2) + "\n")
+    return days
 
 
 def _git_sha() -> str | None:
@@ -709,6 +739,7 @@ def main(argv: list[str] | None = None) -> None:
         json.dumps({"tickers": tickers, "labels": labels, "reads": reads}, indent=2))
 
     scen_tickers = emit_scenarios()
+    mon_days = emit_monitor()
 
     # DERIVED EDGAR-10-K exposure map → slim graph.json (edges + shared nodes + headline stats).
     # Authorized for the private/authed repo as a derived artifact (CLAUDE.md) and COMMITTED there
@@ -813,6 +844,7 @@ def main(argv: list[str] | None = None) -> None:
         f"mirror: {len(queue)} queue rows, {len(uni)} universe rows, "
         f"{len(tickers)} dossier(s) [{', '.join(tickers) or 'none'}], "
         f"{len(scen_tickers)} underwrite(s) [{', '.join(scen_tickers) or 'none'}], "
+        f"{len(mon_days)} monitor day(s) [latest {mon_days[-1] if mon_days else 'none'}], "
         f"{len(theme_slugs)} theme(s) [{', '.join(theme_slugs) or 'none'}] → frontend/"
     )
 

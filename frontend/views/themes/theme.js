@@ -3,7 +3,7 @@
 // FULL underwrite cards (the only full-fidelity render site), the avoid-controls, and the forward
 // cohorts. Framed by the shared stage frame (tabs persist on drill-down); a recorded verdict
 // SUPERSEDES the freeze trigger — the row never advertises an underwrite already decided.
-import { getThemeDriver, getThemeContext, getRadarCandidates } from "../../lib/snapshots.js";
+import { getThemeDriver, getThemeContext, getRadarCandidates, getMonitor } from "../../lib/snapshots.js";
 import { fmtInt, fmtDate, DASH, escapeHtml, gradeBucket, gradeLabel } from "../../lib/format.js";
 import { uwCard } from "../shared/uw-card.js";
 
@@ -41,7 +41,7 @@ function radarChip(cands, slug, label) {
 
 // One watch name, full fidelity: header row → re-underwrite trigger (verdict supersedes freeze) →
 // the canonical underwrite card when a record exists → the disposition rationale on demand.
-function watchRow(n) {
+function watchRow(n, marks = {}) {
   const c = n.scenarioCard;
   const trig = c && (c.verdict?.reunderwriteTriggers || []).length
     ? `<ul class="kv-list">${c.verdict.reunderwriteTriggers
@@ -56,7 +56,7 @@ function watchRow(n) {
         ${n.edgarUrl ? `<a href="${encodeURI(n.edgarUrl)}" target="_blank" rel="noopener" style="font-size:11px; margin-left:auto;">EDGAR ${escapeHtml(n.accession || "")}</a>` : ""}
       </div>
       <div class="wl-trigger"><span class="k">re-underwrite when</span>${trig}</div>
-      ${c ? uwCard(c) : ""}
+      ${c ? uwCard(c, { mark: marks[String(n.ticker).toUpperCase()] || null }) : ""}
       ${n.rationale || n.gradeFact ? `<details class="wl-why">
         <summary>why it's on the list</summary>
         <div class="wl-why-body">${n.rationale ? escapeHtml(n.rationale) : ""}${n.gradeFact ? `<div class="cite">${escapeHtml(n.gradeFact)}</div>` : ""}</div>
@@ -86,10 +86,15 @@ export async function render(root, { item, frame }, slug) {
     title: slug, crumbExtra: `<span class="sep">/</span>${escapeHtml(slug)}`,
     bodyHtml: `<div class="notice">Loading theme…</div>`,
   });
-  const [d, cx, cands] = await Promise.all([
+  const [d, cx, cands, mon] = await Promise.all([
     getThemeDriver(slug), getThemeContext(slug),
     getRadarCandidates().then((r) => r.candidates || []).catch(() => []),
+    getMonitor().catch(() => null),
   ]);
+  // committed monitor marks by ticker — the embedded card's implied-odds line reads the SAME
+  // dated mark the dossier page uses, so one name never shows two different spots.
+  const marks = {};
+  for (const r of (mon && mon.rows) || []) marks[String(r.ticker).toUpperCase()] = r;
   if (!d) {
     root.innerHTML = frame(item, {
       title: slug, crumbExtra: `<span class="sep">/</span>${escapeHtml(slug)}`,
@@ -128,7 +133,7 @@ export async function render(root, { item, frame }, slug) {
   const wlBlock = `
     <div class="card" style="margin-bottom:16px;">
       <h3>Watchlist · ${fmtInt(wl.length)} <span class="uw-h-sub">re-underwrite on trigger</span></h3>
-      ${wl.map(watchRow).join("") || `<div class="foot">none</div>`}
+      ${wl.map((n) => watchRow(n, marks)).join("") || `<div class="foot">none</div>`}
     </div>`;
 
   const fwd = `
