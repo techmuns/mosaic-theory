@@ -16,6 +16,7 @@ from collections.abc import Callable
 from datetime import date
 from typing import Any, NamedTuple
 
+from vinci.dossier.band_guards import SheetCoherence, compose_flag, sheet_coherence
 from vinci.dossier.ciq import (
     _UNAVAILABLE_CELLS,
     CiqBundle,
@@ -179,6 +180,31 @@ _MIN_CONFIDENT_CLOSES = 8
 _OWN_HISTORY_SRC = "CIQ Financials→Multiples (Close; last col = current, excluded from history)"
 # (Phase-3) the own-history metrics: (display metric, Multiples-sheet row label)
 _OWN_HISTORY_METRICS = (("EV/EBITDA (TEV/LTM)", "TEV/LTM EBITDA"), ("P/LTM EPS", "P/LTM EPS"))
+# (coherence) the three TEV/LTM rows whose RATIOS pin the EV/EBITDA denominator against the same
+# sheet's own revenue and EBIT — the VITL cross-check. Labels are the sheet's, verbatim.
+_COHERENCE_ROWS = (("revenue", "TEV/LTM Total Revenue"), ("ebitda", "TEV/LTM EBITDA"),
+                   ("ebit", "TEV/LTM EBIT"))
+
+
+def _latest_common_multiples(rows: Rows) -> tuple[dict[str, float], str | None] | None:
+    """The three TEV/LTM multiples at the latest column where ALL THREE report → (values, date).
+
+    Joined on the column DATE, never on position: the Close rows of two metrics need not be the same
+    length, so the Nth pair of one is not necessarily the Nth column of another. A ratio of two
+    multiples taken from DIFFERENT columns is not a ratio of one company at one moment — so it is
+    one shared column or nothing (``None``)."""
+    by_metric: dict[str, dict[Any, float]] = {}
+    for key, label in _COHERENCE_ROWS:
+        by_metric[key] = {d: v for d, v in _multiples_close(rows, label) if v is not None
+                          and d is not None}
+        if not by_metric[key]:
+            return None
+    shared = set.intersection(*(set(m) for m in by_metric.values()))
+    if not shared:
+        return None
+    d = max(shared)
+    return {k: m[d] for k, m in by_metric.items()}, (d.isoformat() if hasattr(d, "isoformat")
+                                                     else str(d))
 
 
 # (periodicity) a quarterly export closes ~91 days apart; an annual one ~365. A band read from an
@@ -228,13 +254,15 @@ def file_provenance(path: Any) -> tuple[str | None, str | None]:
 def _own_history_band(
     metric: str, pairs: list[tuple[Any, float]], *, source_file: str | None = None,
     source_sha256: str | None = None, source_mtime: str | None = None,
+    coherence: SheetCoherence | None = None,
 ) -> OwnHistoryBand | None:
     """(Phase-3) The current multiple vs its TRAILING close range (current EXCLUDED from history) —
     the ONE own-history stat, shared by range_position (its string) and own_history_bands (the
     structured chart data) so the two can't drift. None when <4 closes (no meaningful range).
 
     Stamps SELF-DESCRIBING periodicity/span metadata + ``source_file`` (the 2026-07-21 window-
-    staleness fix) so a band can never again be read as more history than it holds."""
+    staleness fix) so a band can never again be read as more history than it holds, and — EV/EBITDA
+    band only — the ``coherence`` read of whether the sheet's own rows agree (VITL, same day)."""
     if len(pairs) < 4:
         return None
     vals = [v for _, v in pairs]
@@ -244,6 +272,8 @@ def _own_history_band(
     # mean/min/max are over history (current excluded), like low/high.
     series = [(p.isoformat() if p is not None else "", v) for p, v in pairs]
     per_days, span_years, per_label, dq = _periodicity([p for p, _ in pairs])
+    # both flags ride together — an incoherent band that is ALSO annual-mislabelled must show both
+    dq = compose_flag(dq, coherence.flag if coherence else None)
     return OwnHistoryBand(
         metric=metric, current=cur, low=min(hist), high=max(hist),
         median=statistics.median(hist), percentile=sum(1 for h in hist if h <= cur) / len(hist),
@@ -252,6 +282,9 @@ def _own_history_band(
         periodicity_days_median=per_days, window_span_years=span_years, periodicity=per_label,
         data_quality=dq, source_file=source_file,
         source_sha256=source_sha256, source_mtime=source_mtime,
+        implied_ebitda_margin=coherence.implied_ebitda_margin if coherence else None,
+        implied_ebit_margin=coherence.implied_ebit_margin if coherence else None,
+        implied_d_and_a_margin=coherence.implied_d_and_a_margin if coherence else None,
     )
 
 
@@ -298,11 +331,17 @@ def own_history_bands(bundle: CiqBundle) -> Sourced[list[OwnHistoryBand]]:
     wb = bundle.workbook("financials", freq="quarterly")
     src_file = wb.path.name if wb is not None else None
     src_sha, src_mtime = file_provenance(wb.path) if wb is not None else (None, None)
+    # (coherence) one read of the latest shared column, stamped on the EV/EBITDA band only — it is
+    # that band's denominator the check interrogates. P/LTM EPS has no EBITDA/EBIT ratio to test.
+    common = _latest_common_multiples(rows)
+    coh = sheet_coherence(mult_revenue=common[0]["revenue"], mult_ebitda=common[0]["ebitda"],
+                          mult_ebit=common[0]["ebit"], as_of=common[1]) if common else None
     bands: list[OwnHistoryBand] = []
     for metric, label in _OWN_HISTORY_METRICS:
         pairs = [(d, v) for d, v in _multiples_close(rows, label) if v is not None]
         band = _own_history_band(metric, pairs, source_file=src_file,
-                                 source_sha256=src_sha, source_mtime=src_mtime)
+                                 source_sha256=src_sha, source_mtime=src_mtime,
+                                 coherence=coh if label == "TEV/LTM EBITDA" else None)
         if band is not None:
             bands.append(band)
     if not bands:

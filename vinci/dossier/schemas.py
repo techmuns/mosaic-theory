@@ -177,8 +177,17 @@ class OwnHistoryBand(BaseModel):
     periodicity_days_median: float | None = None
     window_span_years: float | None = None
     periodicity: str | None = None            # "quarterly" | "annual" | "irregular"
-    data_quality: str | None = None           # e.g. "periodicity_mismatch" (fail-loud)
+    # "periodicity_mismatch" | "band_incoherent" | both, joined by "+" (fail-loud; see band_guards)
+    data_quality: str | None = None
     source_file: str | None = None            # the CIQ export the band was read from
+    # (coherence) What the SAME Multiples column implies about this company, from the ratios of its
+    # TEV/LTM revenue, EBITDA and EBIT rows — TEV cancels, so these need no absolute figure. Carried
+    # on the band because the anchor is computed from committed JSON alone (no workbook re-open) and
+    # needs the implied D&A margin to run the recorded-D&A comparison. EV/EBITDA band only; None
+    # when the export lacks a TEV/LTM EBIT row. Additive/optional — pre-guard JSON round-trips.
+    implied_ebitda_margin: float | None = None
+    implied_ebit_margin: float | None = None
+    implied_d_and_a_margin: float | None = None
     # (provenance) WHICH bytes produced this band. A filename is not identity — SMPL's band was
     # refreshed from a STALE same-named copy (sha 680fd7bee7, 4.98y) while the canonical export
     # (7bd83a1103, 8.55y) sat elsewhere, and nothing in the artifact showed it. The hash makes a
