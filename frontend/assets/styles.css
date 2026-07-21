@@ -959,10 +959,20 @@ table.data tr td.uw-vs { font-size: 12.5px; }
   body.ds-print-full .ds-tier { display: block !important; }
   body.ds-print-brief .ds-tier { display: none !important; }
   body.ds-print-brief .ds-tier[data-tier="brief"] { display: block !important; }
-  /* (T1) the ON-DEMAND / audit tier is EXCLUDED from the printed PDF: a collapsed <details> (e.g. the
+  /* (T1, AMENDED 2026-07-21 by operator decision) the ON-DEMAND / audit tier PRINTS EXPANDED:
+     every <details> renders open in the PDF regardless of on-screen state — the export is the
+     COMPLETE record. The web surface is unchanged (still collapsed); only the print fate
+     flipped. Summaries print as section headers, disclosure markers hidden (paper cannot be
+     clicked); a block's endnote markers and its Sources list now print TOGETHER, still sharing
+     fate. Previously excluded: a collapsed <details> (e.g. the
      capital-structure provenance, the revision-log expansion) drops out of the report. An <details open>
      the reader expanded on screen still prints — that's intentional (they chose to see it). */
-  details:not([open]) { display: none !important; }
+  details:not([open]) { display: block !important; }
+  details:not([open]) > *:not(summary) { display: block !important;
+    content-visibility: visible !important; }
+  details::details-content { content-visibility: visible !important; display: block !important; }
+  summary { list-style: none; }
+  summary::marker, summary::-webkit-details-marker { display: none; content: ""; }
   /* slight left/right inset + scale the whole report to ~85%, so a dense dossier fits in noticeably
      fewer pages (a deep finalist drops from ~10 to ~6-7) WITHOUT dropping, summarising, or re-laying
      out any content — print is high-DPI so the type stays crisp at this scale. */
@@ -1145,16 +1155,8 @@ table.data tr td.uw-vs { font-size: 12.5px; }
 .uw-method > summary::marker, .uw-inputs > summary::marker { color: var(--accent); }
 .uw-reasons .kv-list { margin-top: 6px; }
 
-@media print {
-  /* out-specify the global `details:not([open]) { display: none }` audit-tier rule, then reveal
-     the content a closed <details> hides — belt (display) and braces (content-visibility), since
-     engines differ on which one gates it */
-  details.uw-reasons:not([open]) { display: block !important; }
-  details.uw-reasons > summary { display: none !important; }
-  details.uw-reasons > .uw-reasons-body { display: block !important;
-    content-visibility: visible !important; }
-  details.uw-reasons::details-content { content-visibility: visible !important; display: block !important; }
-}
+/* (the uw-reasons print carve-out is gone: the amended T1 force-opens EVERY details in
+   print, which subsumes it — one rule, no special case) */
 
 @media print {
   .uw-split { grid-template-columns: 1fr !important; }

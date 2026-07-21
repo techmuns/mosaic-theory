@@ -3927,6 +3927,18 @@ cannot drift between emitters. Pinned both ways
 freshness panel) · benchmark-by-cap-band assignment + the ledger-supersession artifact · the
 SIC-87xx sector miss · entry-price/ratio-at-entry + implied-odds display.
 
+- **T1 PRINT AMENDMENT — THE PDF IS THE COMPLETE RECORD (branch `feat/print-audit-tier`,
+  2026-07-21; operator decision).** DESIGN RULE v2's tier-2 print fate FLIPPED: the on-demand /
+  audit tier now **prints expanded** in both existing exports (Brief and Full) — every `<details>`
+  force-opens in the PDF regardless of its on-screen state, its summary printing as the section
+  header (disclosure markers hidden; paper cannot be clicked). The WEB surface is unchanged
+  (still collapsed). Direction came from the operator reviewing the exports ("why is the pdf not
+  loading all the dropdowns and their headers?" → "by default print them irrespective of open
+  status"). The cite-scope invariant holds in the new direction: a block's endnote markers and
+  its Sources list live inside it and now print TOGETHER — fate still shared. The uw-reasons
+  print carve-out is REMOVED as subsumed (one rule, no special case). **CLAUDE.md's DESIGN RULE
+  v2 clause amended in the same commit** — the constitution must not describe a print fate the
+  build no longer has. Exports run longer (the audit tier adds pages); that is the point.
 - **UNDERWRITE TEAR SHEET — THE CARD LEADS WITH THE DECISION (branch `feat/uw-tear-sheet`,
   2026-07-21; PR open, NOT merged).** The underwrite card rebuilt as an institutional tear sheet,
   in the ONE component every surface renders (dossier Brief tab, first-analysis page, theme

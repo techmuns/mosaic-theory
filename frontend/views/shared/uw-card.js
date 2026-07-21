@@ -7,9 +7,10 @@
 // host has to run an endnote pass, and there is no mode to get wrong. TWO scopes, because print
 // fate differs:
 //   main body   withEndnotes("U", …) — its Sources list sits inside the card, right after the body.
-//   <details>   withEndnotes("I", …) — marker AND list both INSIDE the collapsed block, so they
-//               share print fate (`details:not([open])` drops the block from a PDF; an [I n]
-//               resolving into the card's outer list would orphan there).
+//   <details>   withEndnotes("I", …) — marker AND list both INSIDE the block, so they share
+//               fate on every surface (T1-amended 2026-07-21: print force-opens all details, so
+//               both PRINT together; an [I n] resolving into the card's outer list would still
+//               split them on screen).
 // Earlier this was gated on a `cites` option so a host with no pass wouldn't render "[?]". That
 // knob is gone: self-contained scopes make the failure impossible instead of merely defaulted-away,
 // and it was leaving the theme page's copy of the card visibly different from the dossier's.
@@ -378,8 +379,8 @@ function legsTable(c) {
 
 // The per-leg reasoning, full card width, placed AFTER the rationale + thesis-breaks: the read
 // order runs verdict-level first (why the position, what breaks it), then leg-level (why each
-// number), then methodology. Collapsed on screen; the print carve-out forces it into the PDF —
-// a printed grid with no justification would contradict the no-reason-no-compute rule.
+// number), then methodology. Collapsed on screen; prints expanded like every details since the
+// T1 amendment — a printed grid with no justification would contradict no-reason-no-compute.
 function legReasons(c) {
   const reasons = ["bear", "base", "bull"]
     .map((n) => leg(c, n)).filter((l) => l && l.reason)
@@ -450,10 +451,10 @@ function methodRefsDetails(c) {
     withEndnotes("M", tables)}${recipeLine(c)}</details>`;
 }
 
-// COLLAPSED by default: this is per-axis METHODOLOGY, one step toward provenance, and the
-// masthead's Method cell already carries the headline. Unlike the leg reasons (which justify the
-// numbers in the table and therefore belong in the printed record), methodology is audit-tier —
-// so the normal `details:not([open])` print exclusion is the correct fate here.
+// COLLAPSED by default on screen: this is per-axis METHODOLOGY, one step toward provenance,
+// and the masthead's Method cell already carries the headline. Since the T1 amendment
+// (2026-07-21, operator decision) the audit tier PRINTS EXPANDED — the PDF is the complete
+// record — so this block prints open, its summary as the section header.
 function methodFact(c) {
   const lines = methodLines(c);
   if (!lines) return "";
@@ -464,11 +465,11 @@ function methodFact(c) {
     <div>${lines}${methodRefsDetails(c)}</div></details>`;
 }
 
-// The audit block carries its OWN endnote scope — markers AND their Sources list both live INSIDE
-// the <details>, so the two share print fate: collapsed, the whole scope drops out of the PDF
-// together; expanded, both print. That is the real invariant the L3/#10 rule protects (a marker
-// must never outlive its Sources entry, nor the reverse) — routing these cites into the CARD's
-// outer list instead would orphan them in every collapsed-block print.
+// The audit block carries its OWN endnote scope — markers AND their Sources list both live
+// INSIDE the <details>, so the two share fate everywhere: on screen they collapse together, and
+// since the T1 amendment they PRINT together (every details force-opens in the PDF). That is the
+// real invariant the L3/#10 rule protects (a marker must never outlive its Sources entry, nor
+// the reverse) — routing these cites into the CARD's outer list would still split them on screen.
 function inputsDetails(c) {
   const facts = c.facts || [];
   if (!facts.length) return "";
