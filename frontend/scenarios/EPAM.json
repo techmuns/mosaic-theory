@@ -210,8 +210,6 @@
   "status": "pending_analyst",
   "recorded": null,
   "rationale": null,
-  "entryPrice": null,
-  "ratioAtEntry": null,
   "reunderwriteTriggers": [],
   "avoidPriced": false,
   "avoidPricedNote": null
