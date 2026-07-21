@@ -74,6 +74,18 @@
   },
   "freshness": [
     {
+      "ticker": "EPAM",
+      "verdict": "verdict pending",
+      "last_evidence_date": "2026-07-21",
+      "last_evidence_source": "underwrite_date",
+      "newer_filings": [],
+      "unread_print": false,
+      "next_expected_print": "2026-08-07",
+      "next_expected_basis": "ESTIMATE — same-quarter filing one year prior + 365d (filer's own cadence)",
+      "triggers": [],
+      "watch_note": null
+    },
+    {
       "ticker": "IT",
       "verdict": "BUY",
       "last_evidence_date": "2026-07-20",
@@ -108,8 +120,8 @@
     {
       "ticker": "WERN",
       "verdict": "watch",
-      "last_evidence_date": "2026-07-19",
-      "last_evidence_source": "underwrite_date",
+      "last_evidence_date": "2026-07-21",
+      "last_evidence_source": "bull reason amendment",
       "newer_filings": [],
       "unread_print": false,
       "next_expected_print": "2026-07-29",
