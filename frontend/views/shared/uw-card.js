@@ -71,11 +71,10 @@ function headlineState(c) {
   return status === "confirmed" || status === "overridden" ? "target" : "base";
 }
 
-const STATE_LABEL = {
-  target: "Target — base case",
-  base: "Base value — target on confirm",
-  priced: "Priced — base below spot",
-};
+// ONE word in the rating box — the qualifier moves to the sub-line. "Target — base case" was
+// tautological with the legs table's own "base · target" header directly beneath it.
+const STATE_LABEL = { target: "Target", base: "Base value", priced: "Priced" };
+const STATE_NOTE = { target: "", base: "target on confirm", priced: "base below spot" };
 
 // The verdict OF RECORD is the ledger's BUY/AVOID (joined at build). The scenario record has no
 // such field, so absent a ledger row the card shows the scenario status and says nothing more.
@@ -130,8 +129,8 @@ function headlineCell(c) {
   const delta = vsSpot(bv, c.spot);
   const cls = signCls(bv, c.spot);
   const val = `${money(bv)}${delta ? ` <span class="uw-pct ${cls}">${delta}</span>` : ""}`;
-  const asOf = c.spotSource ? "" : "";
-  const sub = `vs spot ${escapeHtml(fmtPrice(c.spot))}${asOf}`;
+  const sub = [STATE_NOTE[st], `vs spot ${escapeHtml(fmtPrice(c.spot))}`]
+    .filter(Boolean).join(" · ");
   return `<div class="uw-stat uw-stat-lead ${st}">
     <div class="uw-stat-lab uw-eyebrow">${escapeHtml(STATE_LABEL[st])}</div>
     <div class="uw-stat-val lead">${val}</div>
@@ -202,12 +201,18 @@ function mastheadFoot(c) {
   return `<div class="uw-mast-foot">${bits.join(" · ")}</div>`;
 }
 
+// A bare green "BUY" chip in a report header IS the sell-side ratings idiom — a reader parses it
+// as a recommendation. Here it is the HUMAN's verdict of record, sealed in the append-only ledger
+// and explicitly not a machine call, so the header says which it is. It also restores the band's
+// label-over-value grammar (every other cell has a micro-label) and repairs the weak states:
+// "Verdict · pending analyst" reads as a state; a lone grey chip reads as an error.
 function masthead(c, showTicker) {
+  const pills = verdictPills(c);
   return `<div class="uw-mast">
     <div class="uw-mast-head">
       <span class="uw-mast-t">${showTicker ? `${mono(c.ticker)} · ` : ""}Scenario underwrite
         <span class="muted">${escapeHtml(c.multipleBasis || "")}</span></span>
-      <span class="uw-mast-pills">${verdictPills(c)}</span>
+      ${pills ? `<span class="uw-mast-pills"><span class="uw-vlab">Verdict</span>${pills}</span>` : ""}
     </div>
     <div class="uw-statband">
       ${headlineCell(c)}
@@ -313,7 +318,8 @@ function legsTable(c) {
     </table></div>
     <div class="uw-note muted">bull is range context — never in the ratio${
       tgt ? ", never the target" : ""}</div>
-    ${reasons ? `<ul class="kv-list" style="margin-top:8px;">${reasons}</ul>` : ""}`);
+    ${reasons ? `<details class="uw-reasons"><summary>Why each leg sits there</summary>
+      <div class="uw-reasons-body"><ul class="kv-list">${reasons}</ul></div></details>` : ""}`);
 }
 
 // --- methodology (schema 1.1) ------------------------------------------------------------------
@@ -376,10 +382,15 @@ function methodRefsDetails(c) {
     withEndnotes("M", tables)}${recipeLine(c)}</details>`;
 }
 
+// COLLAPSED by default: this is per-axis METHODOLOGY, one step toward provenance, and the
+// masthead's Method cell already carries the headline. Unlike the leg reasons (which justify the
+// numbers in the table and therefore belong in the printed record), methodology is audit-tier —
+// so the normal `details:not([open])` print exclusion is the correct fate here.
 function methodFact(c) {
   const lines = methodLines(c);
   if (!lines) return "";
-  return fact("Method", lines + methodRefsDetails(c));
+  return fact("Method", `<details class="uw-method-block"><summary>How each axis was modeled</summary>
+    <div>${lines}${methodRefsDetails(c)}</div></details>`);
 }
 
 // The audit block carries its OWN endnote scope — markers AND their Sources list both live INSIDE

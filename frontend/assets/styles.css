@@ -604,11 +604,16 @@ table.data.vs-table { width: 100%; }
 .uw-mast-t { font-size: 12px; font-weight: 650; text-transform: uppercase; letter-spacing: 0.06em;
   color: var(--ink-2); }
 .uw-mast-t .muted { text-transform: none; letter-spacing: 0; font-weight: 400; }
-.uw-mast-pills { display: flex; gap: 6px; flex-wrap: wrap; }
+.uw-mast-pills { display: flex; gap: 7px; flex-wrap: wrap; align-items: baseline; }
+.uw-vlab { font-size: 10.4px; text-transform: uppercase; letter-spacing: 0.06em;
+  color: var(--ink-3); font-weight: 600; }
 .uw-statband { display: grid; grid-template-columns: repeat(5, 1fr);
   border-bottom: 1px solid var(--line); }
 .uw-stat { padding: 9px 13px; border-left: 1px solid var(--line); min-width: 0; }
-.uw-stat:first-child { border-left: 0; padding-left: 0; }
+.uw-stat:first-child { border-left: 0; }
+.uw-stat-lead { background: var(--accent-bg); border-radius: 6px 0 0 6px; }
+.uw-stat-lead.base { background: var(--conditional-bg); }
+.uw-stat-lead.priced { background: var(--danger-bg); }
 .uw-stat-lab { font-size: 10.4px; text-transform: uppercase; letter-spacing: 0.06em;
   color: var(--ink-3); font-weight: 600; }
 .uw-stat-val { font-family: var(--mono); font-variant-numeric: tabular-nums;
@@ -633,7 +638,7 @@ table.data.vs-table { width: 100%; }
    Zone WIDTHS are the ratio: the asymmetry is legible before a number is read. */
 .uw-ladder { margin: 14px 0 10px; }
 .uw-lad-track { position: relative; height: 8px; border-radius: 4px;
-  background: var(--surface-2); margin: 27px 0 24px; }
+  background: var(--surface-2); margin: 27px 0 24px; max-width: 480px; }
 .uw-lad-risk, .uw-lad-reward { position: absolute; top: 0; bottom: 0; }
 .uw-lad-risk { background: var(--danger-bg); }
 .uw-lad-reward { background: var(--live-bg); }
@@ -654,8 +659,10 @@ table.data.vs-table { width: 100%; }
 .uw-lad-lab .n { text-transform: uppercase; font-size: 9.6px; letter-spacing: 0.05em; color: var(--ink-3); }
 .uw-lad-lab.target .mono, .uw-lad-lab.target .n { color: var(--accent-text); }
 .uw-lad-lab.priced .mono, .uw-lad-lab.priced .n { color: var(--danger-text); }
+/* the zone footer belongs to the track and must share its width — otherwise "reward …" floats off
+   at the card's right edge with nothing above it to annotate */
 .uw-lad-zone { display: flex; justify-content: space-between; gap: 12px;
-  font-size: 11px; color: var(--ink-3); }
+  font-size: 11px; color: var(--ink-3); max-width: 480px; }
 
 /* the base column IS the decision once a verdict ratifies it.
    `tr` is in the selector on purpose: `table.data tr.name-row td` (the value/share emphasis row)
@@ -664,7 +671,8 @@ table.data tr th.uw-tgt-col, table.data tr td.uw-tgt-col { background: var(--acc
 table.data tr th.uw-tgt-col { color: var(--accent-text); }
 .uw-tgt-tag { font-size: 9.2px; text-transform: uppercase; letter-spacing: 0.05em;
   font-weight: 650; color: var(--accent-text); }
-table.data tr td.uw-vs { font-size: 11.6px; }
+table.data tr td.uw-vs { font-size: 12.5px; }
+.uw-legs-t .uw-pct { font-size: 11.5px; margin-left: 0; }
 
 /* thesis-break / re-underwrite chips — longer than a .pill, so they wrap */
 .uw-trig { display: flex; align-items: baseline; gap: 8px; flex-wrap: wrap;
@@ -1082,3 +1090,26 @@ table.data tr td.uw-vs { font-size: 11.6px; }
    title (the masthead is self-describing, and its foot is the one that knows the ledger) */
 .uw-panel { padding: 0; background: none; border: 0; box-shadow: none; }
 .uw-panel .uw-card { margin: 0; }
+
+/* (4) COLLAPSIBLES — density on screen without losing the record.
+   Method is methodology (audit tier) and takes the normal print exclusion. The LEG REASONS are
+   different: they justify the numbers in the table, and "an assumption without a recorded reason
+   is exactly what this fund refuses to compute" — a printed tear sheet showing three scenario
+   columns with no justification would be the wrong artifact. So they collapse on SCREEN and are
+   forced open in PRINT below. */
+.uw-reasons, .uw-method-block { margin-top: 8px; }
+.uw-reasons > summary, .uw-method-block > summary {
+  cursor: pointer; font-size: 11.5px; color: var(--ink-3); }
+.uw-reasons > summary::marker, .uw-method-block > summary::marker { color: var(--ink-3); }
+.uw-reasons .kv-list { margin-top: 6px; }
+
+@media print {
+  /* out-specify the global `details:not([open]) { display: none }` audit-tier rule, then reveal
+     the content a closed <details> hides — belt (display) and braces (content-visibility), since
+     engines differ on which one gates it */
+  details.uw-reasons:not([open]) { display: block !important; }
+  details.uw-reasons > summary { display: none !important; }
+  details.uw-reasons > .uw-reasons-body { display: block !important;
+    content-visibility: visible !important; }
+  details.uw-reasons::details-content { content-visibility: visible !important; display: block !important; }
+}
