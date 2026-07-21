@@ -3957,6 +3957,22 @@ re-anchor (the full STATE split stays its own queued task — nothing was reloca
     restating a label can silently break the card. That classifier is itself a standing violation
     of the parsers-consume-structured-values rule. Queued as item 12.
 
+**BUILD RECORD — 2026-07-21 Analysis declutter (PR #177, stacked on #175).** The audited
+Analysis-tier defects, applied display-only in BOTH renderers: the four surface CONTRADICTIONS
+(two P/Es on one page; UNKNOWN-market beside a present relative; UNKNOWN-FCF-sign beside a present
+value; the superseded-line pair) are structurally impossible now — each suppression conditional on
+the sibling's presence, honest-absence still renders. Duplicate tables deduped conditionally
+(trajectory vs financial summary/return ratios; LTM multiples vs the per-peer grid); the 18-row
+horizon wall capped to headline metrics with the remainder counted; verification machinery
+(wall coherence, guide verification) relocated to the appendix; machine dialect display-transformed
+(Form-4 codes, list-reprs, item codes, field names, degenerate ranges, stored render-instructions)
+with frozen-string pins and JS twins. dossier.json untouched; 11 md regenerated; leak scan
+11 docs × 11 patterns clean. INVARIANT shipped: a node smoke over five committed names asserts
+zero dialect in the full web render — it caught the Brief's un-wired shape transform pre-commit,
+and the leak scan caught a second evidence_balance phrasing on three names (transform generalized,
+both generator strings fixed). Data artifact left honestly in place: IT's doubled impairment
+sentence (stored extraction artifact — heals at re-assembly).
+
 **BUILD RECORD — 2026-07-21 full-history financials.** The extractor was applying a DISPLAY
 window at EXTRACTION (`fy[-4:]`, quarterly `[-8:]`): 51 fiscal-year columns and 277 quarters across
 the 12 names never entered dossier.json, unrecoverable without the licensed workbook. It also broke
