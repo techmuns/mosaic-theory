@@ -3980,7 +3980,18 @@ with frozen-string pins and JS twins. dossier.json untouched; 11 md regenerated;
 zero dialect in the full web render — it caught the Brief's un-wired shape transform pre-commit,
 and the leak scan caught a second evidence_balance phrasing on three names (transform generalized,
 both generator strings fixed). Data artifact left honestly in place: IT's doubled impairment
-sentence (stored extraction artifact — heals at re-assembly).
+sentence — recorded here as "heals at re-assembly", which was WRONG (see the #178 record below).
+
+**BUILD RECORD — 2026-07-21 driver-segment dedup (PR #178, audit item 8 closed).** The declutter
+record's "heals at re-assembly" claim was FALSE: the release-driver composer had no dedup, so a
+re-assembly would have re-emitted IT's doubled "$150.0M Digital impairment" verbatim (the 8-K states
+it in both headline and detail paragraph). Fixed at both layers: order-preserving segment dedup in
+the composer (`dict.fromkeys` before the "; " join) + the committed IT value patched
+byte-preservingly; md + frontend mirror regenerated. Pinned both layers (committed-artifact
+no-duplicate-segments invariant + source pin on the guard). ACCEPTED EDGE: two DISTINCT one-offs
+with identical amount AND wording would collapse to one segment — the extraction layer cannot
+distinguish that pair either, so the join-level dedup loses nothing new. Gate on merged main
+8d5c2b8: ruff + mypy --strict clean, 901 passed, generators idempotent.
 
 **BUILD RECORD — 2026-07-21 full-history financials.** The extractor was applying a DISPLAY
 window at EXTRACTION (`fy[-4:]`, quarterly `[-8:]`): 51 fiscal-year columns and 277 quarters across
