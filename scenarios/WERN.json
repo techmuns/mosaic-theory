@@ -64,7 +64,7 @@
       "revenue": 3400.0,
       "margin": 0.08,
       "multiple": 7.0,
-      "reason": "genuine cycle turn: One-Way rebounds on tight capacity + driver-supply tightening; Dedicated fully loaded. Below 12-14% 2020-22 peaks (One-Way exposure reduced; insurance ~125bps higher)."
+      "reason": "genuine cycle turn: One-Way rebounds on tight capacity + driver-supply tightening; Dedicated fully loaded. Below TTS-segment peaks of 12–14% (FY20–22: 12.04/13.78/12.13%; consolidated 9.6–11.3%) (One-Way exposure reduced; insurance ~125bps higher) [amended 2026-07-21: scoped to segment level — consolidated record 9.59/11.31/9.82%, FY22 10-K segment footnote]."
     }
   },
   "assumptions": {
@@ -83,7 +83,9 @@
           "unit": "$M",
           "source": "EDGAR companyfacts us-gaap Revenues, FY2022 (verified 2026-07-20 vs EDGAR companyfacts)"
         }
-      ]
+      ],
+      "ratified_by": "analyst",
+      "ratified": "2026-07-21"
     },
     "margin": {
       "method": "Modeled off the 7.45% own-history median anchor: base deducts ~125bps for the structurally higher insurance run-rate and ~50bps for the Dedicated mix shift capping One-Way upside; bear is a slight lift off the ~0% FY2025 underlying floor; bull re-rates toward but below the FY2021 consolidated peak.",
@@ -128,13 +130,13 @@
           "label": "Dedicated share of Truckload segment revenue, FY2018",
           "value": 51.5,
           "unit": "%",
-          "source": "10-K FY2018 revenue disclosure — analyst calculation (confirm basis at review)"
+          "source": "FY2019 10-K acc 0000793074-20-000014 MD&A statistical table, 'Trucking revenues, net of fuel surcharge': Dedicated 817,203 / (817,203 + One-Way 770,972) = 51.46% [basis stamped 2026-07-21: recomputed from the filing's component lines]"
         },
         {
-          "label": "Dedicated share of Truckload segment revenue, current",
-          "value": 73.0,
+          "label": "Dedicated share of Truckload segment revenue, Q1-2026",
+          "value": 73.2,
           "unit": "%",
-          "source": "10-K acc 0000793074-26-000071 revenue disclosure — analyst calculation (confirm basis at review)"
+          "source": "Q1-2026 10-Q acc 0000793074-26-000096, 'Trucking revenues, net of fuel surcharge': Dedicated 371,880 / (371,880 + One-Way 136,401) = 73.16% [amended 2026-07-21: prior source mis-attributed — FY2025 10-K full-year mix is 64.5% (1,149,550 / (1,149,550 + 633,853)) and that filing carries no ~73% figure on any basis; the ~73% is the Q1-2026 quarter; operator-confirmed ruling]"
         },
         {
           "label": "FY2021 peak operating margin (consolidated; 2020/2022 were 9.59%/9.82%)",
@@ -142,7 +144,9 @@
           "unit": "%",
           "source": "EDGAR companyfacts — margin_anchor by_year[2021] (verified 2026-07-20 vs EDGAR companyfacts)"
         }
-      ]
+      ],
+      "ratified_by": "analyst",
+      "ratified": "2026-07-21"
     },
     "multiple": {
       "method": "Chosen against the own-history TEV/LTM-EBITDA band: bear between trough and median, base at roughly the median, bull toward the upper quartile on a genuine cycle turn.",
@@ -165,7 +169,9 @@
           "unit": "x",
           "source": "same series — derived band statistic (#150 run 2026-07-19)"
         }
-      ]
+      ],
+      "ratified_by": "analyst",
+      "ratified": "2026-07-21"
     }
   },
   "result": {

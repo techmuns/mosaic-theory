@@ -52,6 +52,29 @@ def _jsonl(path: Path) -> list[dict[str, Any]]:
     return [json.loads(line) for line in path.read_text().splitlines() if line.strip()]
 
 
+# --- MIRROR RE-SEED GUARD -----------------------------------------------------------------------
+# 4th worktree-provenance incident; 2nd sweep.json re-seed. A generated artifact whose SOURCE is
+# absent in THIS worktree must be left BYTE-UNTOUCHED — never regenerated from seeds/defaults.
+# The failure this kills: a build run from a worktree without data/scan_history/manifest.jsonl
+# silently rewrote the COMMITTED frontend/radar/sweep.json back to the seeded June-17 date, so a
+# real sweep looked stale. The same class covers theme freezes (git-ignored source) and the radar
+# inbox/log. ONE implementation, so the discipline can't drift between emitters.
+def _preserve_unless_source(label: str, artifact: Path, *, source_present: bool) -> bool:
+    """True ⇒ the caller may regenerate. False ⇒ it MUST leave the artifact untouched.
+
+    Source absent + artifact present → the deploy / other-worktree case: the committed file is the
+    only good copy, so keep it and say so. Source absent + artifact ALSO missing → nothing to
+    preserve and nothing to serve; that is a real breakage, so raise rather than emit a seeded
+    placeholder (fail loud, never fabricate)."""
+    if source_present:
+        return True
+    if artifact.exists():
+        print(f"SKIPPED {label}: source absent")
+        return False
+    raise SystemExit(
+        f"{label}: source absent AND artifact missing ({artifact}) — nothing to preserve")
+
+
 # --- SCENARIO CARDS (reusable) ------------------------------------------------------------------
 # A committed `scenarios/<TICKER>.json` underwrite record renders as a card attachable under ANY
 # watchlist name — no full-dossier dependency. Names WITHOUT a record are untouched (the key is
@@ -130,10 +153,16 @@ def _scenario_card(rec: dict[str, Any], ledger: dict[str, dict[str, Any]] | None
         "verdict": {"status": v.get("status"), "recorded": v.get("recorded"),
                     "rationale": v.get("rationale"),
                     "reunderwriteTriggers": v.get("reunderwrite_triggers") or [],
-                    # the price the call was actually made AT and the asymmetry accepted there —
-                    # None on a verdict that opened no position (watch / pending)
-                    "entryPrice": _rd(v.get("entry_price"), 2),
-                    "ratioAtEntry": _rd(v.get("ratio_at_entry"), 2),
+                    # the human's FROZEN entry beside the underwrite's own ratio — the card must
+                    # show what was accepted AT ENTRY, not only what the grid computed at spot.
+                    # Keys OMITTED (never null) on a verdict that opened no position (watch /
+                    # pending), so un-entered records stay byte-identical across re-emits.
+                    # (The merge stacked this pair from BOTH #165 and the tear-sheet branch as
+                    # duplicate dict keys — silently last-one-wins in Python; ONE emit now.)
+                    **({"entryPrice": _rd(v["entry_price"], 2)}
+                       if v.get("entry_price") is not None else {}),
+                    **({"ratioAtEntry": _rd(v["ratio_at_entry"], 2)}
+                       if v.get("ratio_at_entry") is not None else {}),
                     "avoidPriced": v.get("avoid_priced"),
                     "avoidPricedNote": v.get("avoid_priced_note")},
         # The LEDGER verdict of record (BUY / AVOID_TERMINAL) — the scenario record has no such
@@ -180,6 +209,32 @@ def emit_scenarios() -> list[str]:
     (OUT_SCEN / "index.json").write_text(
         json.dumps({"tickers": sorted(cards)}, indent=2) + "\n")
     return sorted(cards)
+
+
+MON = ROOT / "data" / "monitor"
+OUT_MON = HERE / "monitor"
+
+
+def emit_monitor() -> list[str]:
+    """Mirror the committed monitor history → `frontend/monitor/` + `index.json`
+    {"days":[…], "latest": "YYYY-MM-DD"}, plus the benchmark assignments. The frontend reads the
+    LATEST snapshot only — a committed, dated price, never a live fetch: the browser must not be
+    able to show a mark the repo cannot reproduce. No history → nothing written and the live
+    columns degrade to "—" (never a fabricated mark)."""
+    if not MON.is_dir():
+        return []
+    days = sorted(p.stem for p in MON.glob("*.json") if p.name != "benchmark_assignments.json")
+    if OUT_MON.exists():
+        shutil.rmtree(OUT_MON)
+    OUT_MON.mkdir(parents=True)
+    for d in days:
+        shutil.copyfile(MON / f"{d}.json", OUT_MON / f"{d}.json")
+    asg = MON / "benchmark_assignments.json"
+    if asg.exists():
+        shutil.copyfile(asg, OUT_MON / "benchmark_assignments.json")
+    (OUT_MON / "index.json").write_text(
+        json.dumps({"days": days, "latest": days[-1] if days else None}, indent=2) + "\n")
+    return days
 
 
 def _git_sha() -> str | None:
@@ -460,9 +515,14 @@ def build_themes(themes_srcs: list[Path]) -> list[str]:
                 continue
             scans = sorted(d.glob("*scan*.jsonl"))
             pairs.append((bp, lp, scans[0] if scans else None))
-    if not pairs:
-        print("themes: no freeze source (forward_*_baskets.json) found — leaving committed "
-              "frontend/themes/ untouched (WARN; not an error)")
+    # RE-SEED GUARD (same class as sweep.json): no freeze source in this worktree — e.g. the
+    # Cloudflare deploy, where the source is git-ignored — ⇒ keep the committed theme JSON.
+    # The embedded underwrite CARDS are the one part the guard's own principle still permits:
+    # their source is the COMMITTED scenarios/ records + ledger snapshot (present even where the
+    # freeze source is not), so they refresh in place while every other byte of the theme JSON
+    # stays preserved. With no committed records, refresh_theme_cards() is a no-op — the same
+    # source-absent discipline, one level down.
+    if not _preserve_unless_source("frontend/themes/", OUT_THEMES, source_present=bool(pairs)):
         refresh_theme_cards()
         return []
     OUT_THEMES.mkdir(parents=True, exist_ok=True)
@@ -548,8 +608,13 @@ def emit_radar_sweep() -> None:
     the ROOT manifest where record_snapshot writes (data/scan_history/manifest.jsonl); the prior
     component-a/manifest.jsonl path never existed, so the bar re-seeded silently (the #125 bug)."""
     out = HERE / "radar"
-    out.mkdir(parents=True, exist_ok=True)
     manifest = ROOT / "data" / "scan_history" / "manifest.jsonl"
+    # RE-SEED GUARD: no manifest in this worktree ⇒ keep the committed sweep.json. Regenerating
+    # would re-seed a real sweep date back to the June-17 default (the incident this guards).
+    if not _preserve_unless_source(
+            "sweep.json", out / "sweep.json", source_present=manifest.exists()):
+        return
+    out.mkdir(parents=True, exist_ok=True)
     (out / "sweep.json").write_text(json.dumps(_radar_sweep_payload(manifest), indent=1) + "\n")
 
 
@@ -666,8 +731,12 @@ def emit_radar_inbox_log() -> None:
     out = HERE / "radar"
     reviews_path = out / "reviews.json"
     snap_path = _latest_component_a(ROOT)
-    if snap_path is None or not reviews_path.exists():
-        return  # deploy / no local run → keep the committed inbox.json/log.json
+    # RE-SEED GUARD (same class as sweep.json): deploy / no local run → keep the committed
+    # inbox.json + log.json rather than emitting an empty pair over the last real emission.
+    if not _preserve_unless_source(
+            "radar inbox.json + log.json", out / "inbox.json",
+            source_present=snap_path is not None and reviews_path.exists()):
+        return
     reviews = json.loads(reviews_path.read_text())["reviews"]
     clusters = [json.loads(line) for line in snap_path.read_text().splitlines() if line.strip()]
     if clusters and not any((str(m.get("industry") or "")).strip()
@@ -777,6 +846,7 @@ def main(argv: list[str] | None = None) -> None:
         json.dumps({"tickers": tickers, "labels": labels, "reads": reads}, indent=2))
 
     scen_tickers = emit_scenarios()
+    mon_days = emit_monitor()
 
     # DERIVED EDGAR-10-K exposure map → slim graph.json (edges + shared nodes + headline stats).
     # Authorized for the private/authed repo as a derived artifact (CLAUDE.md) and COMMITTED there
@@ -881,6 +951,7 @@ def main(argv: list[str] | None = None) -> None:
         f"mirror: {len(queue)} queue rows, {len(uni)} universe rows, "
         f"{len(tickers)} dossier(s) [{', '.join(tickers) or 'none'}], "
         f"{len(scen_tickers)} underwrite(s) [{', '.join(scen_tickers) or 'none'}], "
+        f"{len(mon_days)} monitor day(s) [latest {mon_days[-1] if mon_days else 'none'}], "
         f"{len(theme_slugs)} theme(s) [{', '.join(theme_slugs) or 'none'}] → frontend/"
     )
 

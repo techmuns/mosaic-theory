@@ -2781,6 +2781,58 @@ Each line: *what it does* — *verified how*.
     placement, Anchor-D multiple band (absent / too-few-closes / present), assemble units+ratio
     (WERN-scale) with the sensitivity centre == the main ratio, the MidCycle JSON round-trip, **plus
     the two PR-#149 review pins (no CONCEPT_ALIASES mutation; unpriceable scenarios → anchors-only).**
+- **FRONTEND GLOW-UP — Hybrid palette + DARK MODE, shipped across 11 PRs (#138–#148).** The
+  dashboard was ~75% token-driven already; the blockers were ~64 hardcoded colours in `styles.css`
+  + 6 hex literals in JS. PR1 absorbed all of them into semantic tokens (invisible refactor), which
+  let the palette AND a full dark theme propagate to every screen and every SVG exhibit at once.
+  - Delivered: Hybrid palette (cool neutrals, indigo accent); dark theme via `:root[data-theme="dark"]`
+    + a `prefers-color-scheme` pre-JS fallback, stamped on `<html>` by a head script so there is no
+    flash; icon-only sun/moon toggle in the sidebar `.brand`, persisted to `localStorage`; editorial
+    Dossier (pull-quote decisive question, Assessment / Key-figures eyebrows, tabular figures);
+    institutional `tabular-nums` on every data table + pill; Radar quadrant recrafted (compact map
+    beside a status panel, bare 2×2 cross — the frame/gridlines/ticks an earlier pass had ADDED were
+    removed as noise on a qualitative map); nav to the locked mockup (logo mark, inset pills);
+    WCAG-AA contrast in BOTH themes; `:focus-visible` rings on every interactive element.
+  - **INCIDENT→INVARIANT (shipped Y): `test_print_reasserts_light_palette_so_dark_never_prints`.**
+    `@media print { * { print-color-adjust: exact } }` would bleed the dark canvas into every PDF.
+    The guard asserts that EVERY token the dark theme overrides is re-declared to its base `:root`
+    LIGHT value under `@media print` — so it also catches a NEW dark token added without a matching
+    print re-assert. Verified both ways (green on light; reddens when a print token is mutated dark).
+  - **CAVEAT (conscious, not a defect):** `--locked` (inactive locked pills/chips) is left below
+    AA — WCAG 1.4.3 exempts inactive UI components from the contrast ratio; forcing it would make
+    disabled controls read as active.
+  - **NOT copied from the mockup, deliberately:** the study's Radar showed `CONVICTION × MATURITY`
+    with invented themes (Nuclear SMR / Quantum …) and a "first-mention sweep" month heatmap. The
+    real axes are evidence-is-real × price-already-moved, and `radar/inbox.json` carries an EMPTY
+    `inbox` array (0 rows — note the file is a `{scan_date, inbox: []}` dict, so check the ARRAY, not
+    the file) — there is no first-mention flow to chart. Only the mockup's LAYOUT/type language
+    was adopted; its fabricated analytical model and its invented data block were not.
+
+- **BROWSER-MEMORY SCARE — investigated to ground; NOT the app. Recorded so it is not re-investigated.**
+  Reported ~500–550 MB for the deployed dashboard tab. Measured on the deployed page: JS heap
+  **136.9 MB AFTER a forced GC** (i.e. genuinely retained, not collection lag).
+  - Heap snapshot named the mechanism: `Window (global*)` **×195**, `Detached HTMLDocument` ×65,
+    `{__esModule}` **×4,686** (≈24 modules × ~195 realms), `Function` ×673k, `(compiled code)` ×895k.
+    The app is ~325 KB across ~24 modules and creates **zero** iframes / `window.open` / `document.write`
+    — it cannot produce ~900k compiled functions or 195 JS realms. That is injected third-party code.
+  - **RESOLVED: browser EXTENSIONS injecting into the tab.** The same deployed page in an Incognito
+    window (extensions off) reads **4.6 MB** — matching a local measurement of the identical route
+    (4.4 MB, same 391 DOM nodes). Extensions accounted for ~132 MB, ~97% of the reported figure.
+  - App-side facts, measured, no leak: **3–7 MB** heap across all 11 screens; 42 sequential navigations
+    gave heap 3.9 → 6.1 → **2.7 MB** (falls — no monotonic growth); DOM fully reclaimed each cycle.
+    Heaviest render is the Ranker at 5,115 nodes / 276 rows. There is NO 4–5× memory win available:
+    the app's entire footprint is smaller than the noise floor of the browser it runs in.
+  - **METHOD for any repeat doubt — do this FIRST (30 seconds, before any snapshot analysis):** open
+    the page in Incognito and run `+(performance.memory.usedJSHeapSize/1048576).toFixed(1)`. It
+    separates app from extensions immediately. A heap snapshot is only worth taking if Incognito is
+    ALSO high.
+  - **METHODOLOGICAL TRAP (cost a wrong conclusion here):** the first measurements were taken against
+    a stale worktree while `main` had moved **56 commits** ahead (adding `scenarios/`, `uw-card.js`,
+    `lib/cites.js`), so the benchmarked build was NOT the deployed one. Measure the DEPLOYED commit.
+  - **NOT fixed (accepted, low value):** `lib/snapshots.js` fetches with `cache: "no-store"`, so every
+    revisit re-downloads + re-parses (AORT's 209 KB was fetched 3× in one session). That is a SPEED
+    cost only, with no memory implication; always-fresh fetches match the "static mirror lags local
+    state until the next `git push`" design. Revisit only if navigation latency becomes a complaint.
 
 ## 3. FALSIFIED — tested and retired (NOT deferred)
 
@@ -3757,6 +3809,116 @@ two-name analysis (mid/small-caps, opposite directions) mapped against this inve
   targets the latter, and the dossier must flag whether the current driver is **durable or fading**.
 
 ## 5. Next steps (ordered, current)
+
+### LIVE QUEUE (authoritative — 2026-07-21)
+
+**Everything below this block is a BUILD RECORD, not a queue item.** §5 accreted to 1,232 lines
+because completed work was appended to a section named "next steps"; this block is the interim
+re-anchor (the full STATE split stays its own queued task — nothing was relocated here).
+
+**BUILD**
+1. **Dossier-assembly freshness detection + assembly provenance stamp (PAIRED).** The 2026-07-10
+   SMPL assembly missed the 2026-07-09 print by one day. Assembly must FLAG filings newer than
+   its evidence window, and stamp what window it read. (The §7 print-freshness gate and the
+   monitor's freshness panel cover verdicts manually until this exists.)
+2. **Shared `annual_series` alias fix** — GATES `attach_midcycle`.
+3. **R2 recipe** (for NCNO / MVST / FUBO / AORT — names R1's positivity guard rejects).
+
+**ANALYST / OPERATOR**
+4. **EPAM underwrite** — in flight.
+5. **BRBR / CNXC / VITL dispositions** — dossiers built, no verdict.
+6. **Truckload freeze-source re-run** — confirm the surgically-patched
+   `frontend/themes/truckload-supply-purge.json` reproduces byte-identical from the freeze.
+7. **`extract_points` first-alias-wins truncation** — operator decision, open since 2026-07-16.
+8. **Sweep-#2 fail-closed coverage holes (2)** — operator decision, report-only.
+9. **Drafting-rubric v2 validation — DATED 2026-08-13** (pre-registered; do not run early).
+
+**HOUSEKEEPING**
+10. **Refresh cadence → docs/RUNBOOKS.md** (it is operating practice, not state).
+11. **Full STATE split** — §5 build records → a fossils/decisions file; this block is the interim.
+
+**CLOSED by the 2026-07-21 WERN ratification run:** all three operator rulings recorded on
+`scenarios/WERN.json` under the visible-amendment discipline (result / facts / scenario
+numbers / verdict byte-identical; only the ruled items + tags changed). **Two premises in
+the brief were WRONG and are corrected here rather than pattern-matched through:**
+(1) there were NO `DRAFT — ratify at review` markers to strip — that was an IT-convention
+carry-over; WERN's three method sentences came from the #164 build as clean prose, were
+read for conformance to the ratified methodology, and are now stamped
+`ratified_by=analyst, ratified=2026-07-21` (the optional fields PR #161 already added to
+`AssumptionDerivation` — no schema change). (2) the current Dedicated-mix reference was
+mis-attributed: it stored **73.0% sourced to the FY2025 10-K**, but that filing's full-year
+mix is **64.46%** (1,149,550 / (1,149,550 + 633,853)) and it carries **no ~73% figure on any
+basis**. The ~73% is the **Q1-2026 quarter** — 371,880 / (371,880 + 136,401) = **73.16%**,
+10-Q acc 0000793074-26-000096 — now the stored value (73.2) and source. FY2018's 51.5% was
+recomputed and reproduces at **51.46%** (FY2019 10-K acc 0000793074-20-000014), basis
+stamped. The bull reason's "12–14% peaks" is scoped to TTS-SEGMENT level (consolidated
+record 9.59/11.31/9.82%). Thesis logic and every number untouched.
+**COUPLING SURFACED (bears on the Truckload freeze-source re-run, still open):**
+`frontend/themes/truckload-supply-purge.json` EMBEDS a copy of WERN's scenario card, and
+`test_emit_scenarios_matches_theme_embedded_card_and_is_deterministic` enforces ONE SHAPE
+between it and `scenarios/WERN.json` — so amending the record desynced the theme file and
+reddened the suite. The re-seed guard (correctly) refused to regenerate the theme JSON here
+because its freeze source is absent from this worktree, so the embedded card was re-emitted
+MECHANICALLY through the same `_scenario_card()` the emitter uses (never hand-typed): +5/-5
+lines, the identical ruled items. This ADDS to what the freeze-source re-run must reproduce
+byte-identical — that item now covers two surgical patches, not one.
+
+**CLOSED by the 2026-07-21 mirror re-seed guard:** the sweep.json build guard
+(`_preserve_unless_source`) — a generated artifact whose SOURCE is absent in the running
+worktree is now left BYTE-UNTOUCHED and announced as `SKIPPED <artifact>: source absent`;
+it fails loud only when the artifact is ALSO missing (nothing to preserve). Applied to
+sweep.json, the theme freezes and the radar inbox/log from ONE helper, so the discipline
+cannot drift between emitters. Pinned both ways
+(`test_mirror_reseed_guard_leaves_sweep_byte_identical_without_manifest`,
+`test_mirror_reseed_guard_fails_loud_when_nothing_to_preserve`).
+
+**CLOSED by the 2026-07-21 monitor build:** position monitor (book vs benchmarks, spread,
+freshness panel) · benchmark-by-cap-band assignment + the ledger-supersession artifact · the
+SIC-87xx sector miss · entry-price/ratio-at-entry + implied-odds display.
+
+- **POSITION MONITOR v1 (A2) — BUILT (2026-07-21, feat/monitor-v1).** The ledger froze what was
+  decided; nothing reported what happened since. `vinci/monitor.py` + `python -m vinci monitor`
+  (MANUAL — no scheduler), reading the COMMITTED `decision_ledger.jsonl` (the working DB is
+  empty on any fresh clone; the JSONL is the durable record).
+  - **Benchmark by CAP BAND at ENTRY** — `<$4B → IWM · $4–25B → MDY · >$25B → SPY`, named
+    constants, face-validity-chosen. Assigned: **VRRM $0.72B → IWM · IT $9.87B → MDY · SMPL
+    $1.02B → IWM**, shares source-stamped (IT/SMPL scenario-record diluted shares; VRRM the
+    dossier's EDGAR XBRL shares_out). The ledger has NO amendment row type, so the committed
+    `data/monitor/benchmark_assignments.json` **SUPERSEDES** the row's `benchmark` field for
+    scoring — IT's logged IWM is wrong for a $9.9B name and is corrected FORWARD; **no row was
+    mutated**, and every supersession prints in the run + the snapshot notes + the web card.
+  - **Excess** = position return − its assigned benchmark's return over the SAME window. BOTH
+    sides PRICE return (dividends excluded on both) — stated in the module, the snapshot, the
+    terminal table and the UI; never mixed with a total-return series.
+  - **BUY−AVOID spread** = mean(BUY excess) − mean(AVOID excess). An AVOID falling vs benchmark
+    has NEGATIVE excess → subtracting it makes the spread MORE positive (being right about a
+    terminal decline pays exactly like being right about an overshoot). Pinned BOTH directions.
+    An empty leg → `None` + reason, never 0.0. **First read: +14.43 pp — DIAGNOSTIC ONLY**
+    (0/3 resolved; both BUY legs 0 days old, so the number is carried entirely by VRRM).
+  - **Freshness/trigger panel:** last evidence date = underwrite date OR a later visible
+    `[amended …]` tag; EDGAR filings since → UNREAD PRINT flag; next print ESTIMATED from the
+    filer's own cadence (labeled); triggers verbatim. **The machine FLAGS, never adjudicates** —
+    pinned by asserting the model carries no fired/breach field. All three currently GREEN;
+    IT's next print ~2026-08-05, its first trigger window. WERN surfaces as a tracked
+    non-position (watch triggers + avoid_priced).
+  - **Sector fix, forward-only:** SIC major group 87 (engineering/accounting/research/management
+    services) fell through to "Other" — mislabelling the IT leg and 7 queue names
+    (HURN/WLDN/ACM/G/BAH/BWMN/STN). Mapped at the FAMILY level → **Industrials** (GICS
+    Professional Services); the finer reading still rides on `industry` (IT's CIQ-GICS is "IT
+    Consulting and Other Services"). The monitor RE-RESOLVES for display and says so; **the
+    frozen row keeps "Other" forever** (pinned).
+  - **Display:** decision log gains the spread card (caveats + sign convention ON SCREEN), live
+    per-leg columns, and the freshness panel; the scenario card shows **both ratios labeled** —
+    underwrite vs accepted-at-entry (**IT 7.04 vs 6.69**, a divergence one number would hide) —
+    plus a DERIVED *market-implied bear weight = (base − spot) ÷ (base − bear)* at the COMMITTED
+    mark (**SMPL 80% @ $10.92 · IT 87% @ $141.06**). The browser never fetches a live price;
+    no mark → no line.
+  - **INCIDENT #4 (recurrence, recorded):** the build re-seeded `frontend/radar/sweep.json` to
+    2026-06-17 again in the primary worktree (absent component-a manifest) — reverted by hand;
+    the guard is queue item 3. Third occurrence.
+  - Gate: ruff + `mypy --strict` clean; **761 passed** (+11); build ×2 idempotent; both display
+    changes browser-verified; `data/monitor/` allow-listed in `.gitignore` (derived analysis —
+    a spread nobody can re-read is not evidence).
 
 - **FIRST BUY RECORDED — IT (PR #161, 2026-07-21). THE FUND NOW HOLDS A LIVE PAPER POSITION.**
   - **THE VERDICT.** Human-recorded **BUY**, `verdict.status="confirmed"`, recorded 2026-07-21.
@@ -5083,6 +5245,11 @@ latest 8-K/10-Q/10-K); read the print against the record; amend VISIBLY (tagged,
 untouched) where the print falsifies a stated premise. **Never record over an unread print.**
 Only primary filings go on the record — a figure a secondary source carries but the filing
 doesn't is dropped, noted, never recorded (the SMPL "September price increase" case).
+
+**Monitor cadence: a MANUAL command (`python -m vinci monitor`), never a scheduler.** The interim
+spread is a DIAGNOSTIC — read for direction, never tuned on; the measurement is the PER-ROW read
+at that row's horizon date. Each run commits a dated snapshot: a spread nobody can re-read is not
+evidence.
 
 **Disciplined on CAPITAL, flexible on BUILD (§4 GATE).** Real capital waits on an edge's validated
 spread — hard, unchanged. The BUILD does **not** single-thread: build toward + forward-validate edges

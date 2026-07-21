@@ -14,7 +14,7 @@
 // knob is gone: self-contained scopes make the failure impossible instead of merely defaulted-away,
 // and it was leaving the theme page's copy of the card visibly different from the dossier's.
 // Gaps render as pills (UNDEFINED), never blank.
-import { escapeHtml, fmtPrice, DASH } from "../../lib/format.js";
+import { escapeHtml, fmtPrice, fmtDate, DASH } from "../../lib/format.js";
 import { citeMark, withEndnotes } from "../../lib/cites.js";
 
 const mono = (s) => `<span class="mono">${escapeHtml(s)}</span>`;
@@ -107,7 +107,10 @@ function ratioCell(c) {
   if (typeof c.ratio !== "number") return statCell("Reward : risk", DASH, "no ratio recorded");
   // the bar comes from the RECORD (stamped by the recipe) — an absent bar renders honest, never
   // an invented 2 (LOW-11: the card carries no fund constants of its own)
-  const bar = typeof c.bar === "number" ? `vs the ${escapeHtml(String(c.bar))} : 1 bar` : `bar ${DASH}`;
+  // #165's two-ratio rule, kept under the masthead layout: the UNDERWRITE ratio lives here
+  // (labelled), the AT-ENTRY ratio lives in the Entry cell — both shown, neither misreported.
+  const bar = typeof c.bar === "number"
+    ? `at underwrite · vs the ${escapeHtml(String(c.bar))} : 1 bar` : `at underwrite · bar ${DASH}`;
   return statCell("Reward : risk", c.ratio.toFixed(2) + " : 1" + badge, bar);
 }
 
@@ -297,6 +300,29 @@ function rangeRail(c) {
   </div>`;
 }
 
+// DERIVED, never asserted: under a two-point read of the grid, the price sits between the bear
+// and base values, so (base − spot) / (base − bear) is the weight the market is putting on the
+// bear leg. It is arithmetic ON the card's own numbers — not a probability the fund claims, and
+// not a forecast. `spot` comes from the latest COMMITTED monitor mark (dated on screen), never a
+// live fetch; with no mark the line renders nothing at all.
+function impliedOdds(c, mark) {
+  if (!mark || typeof mark.current_price !== "number") return "";
+  const leg = (n) => (c.scenarios || []).find((s) => s.name === n);
+  const base = leg("base"), bear = leg("bear");
+  if (!base || !bear || typeof base.valuePerShare !== "number"
+      || typeof bear.valuePerShare !== "number") return "";
+  const span = base.valuePerShare - bear.valuePerShare;
+  if (!(span > 0)) return "";                    // degenerate grid — say nothing, never divide
+  const w = (base.valuePerShare - mark.current_price) / span;
+  const note = w < 0 ? " — above base: the market prices better than the base case"
+    : w > 1 ? " — below bear: the market prices worse than the bear case" : "";
+  return `<div class="uw-odds">Market-implied bear weight at ${escapeHtml(fmtPrice(mark.current_price))}
+    (${escapeHtml(fmtDate(mark.current_date))}) =
+    (base ${escapeHtml(fmtPrice(base.valuePerShare))} − spot) ÷ (base − bear ${escapeHtml(fmtPrice(bear.valuePerShare))})
+    = <b>${(w * 100).toFixed(0)}%</b>${escapeHtml(note)} <span class="muted">— derived from this
+    grid at a committed mark; not a forecast.</span></div>`;
+}
+
 // the 3-leg matrix: assumptions → value/share → cross-checks. Bull column takes .est-col (the
 // existing not-in-the-decision-math tint) — bull is printed for range honesty, never in the ratio.
 function legsTable(c) {
@@ -451,7 +477,7 @@ function inputsDetails(c) {
 
 // uwCard(cardJson) -> HTML string. `ticker:false` drops the ticker from the eyebrow when the host
 // page already carries it as its h1 (the dossier degrade).
-export function uwCard(c, { ticker = true } = {}) {
+export function uwCard(c, { ticker = true, mark = null } = {}) {
   if (!c) return "";
   const v = c.verdict || {};
   const trig = (v.reunderwriteTriggers || []).map((t) =>
@@ -466,6 +492,7 @@ export function uwCard(c, { ticker = true } = {}) {
   const body = () => `
     ${masthead(c, ticker)}
     ${legsTable(c)}
+    ${impliedOdds(c, mark)}
     ${v.rationale ? fact("Rationale", escapeHtml(v.rationale)) : ""}
     ${trig ? `<div class="uw-trig"><span class="uw-trig-lab">${
       headlineState(c) === "target" ? "Thesis breaks" : "Re-underwrite when"}</span>${trig}</div>` : ""}

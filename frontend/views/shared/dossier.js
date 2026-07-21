@@ -1,7 +1,7 @@
 // DOSSIER VIEWER — render the structured dossier.json into styled, source-bound sections.
 // Assembles facts + a machine proposal SEALED until the human's verdict. Every fact shows its [n] cite.
 // The synthesis is fenced as "the framing, not the answer." Read-only; verdicts are CLI-logged.
-import { getDossier, getDossierIndex, getLedger, isBuyVerdict, getScenarioIndex, getScenarioCard, getMachineReads } from "../../lib/snapshots.js";
+import { getDossier, getDossierIndex, getLedger, isBuyVerdict, getScenarioIndex, getScenarioCard, getMachineReads, getMonitorRow } from "../../lib/snapshots.js";
 import { fmtPrice, fmtDate, fmtStamp, fmtPct, escapeHtml, DASH } from "../../lib/format.js";
 // THE citation system now lives in lib/cites.js — one implementation, shared with uw-card.js
 // (it was private here, which is why the underwrite card had to hardcode the inline form).
@@ -70,6 +70,9 @@ export async function render(root, params, { item, frame }) {
   // keeps the "no unguarded probe can hide" pin checkable.
   const card = (await getScenarioIndex()).includes(ticker)
     ? await getScenarioCard(ticker) : null;
+  // the committed monitor mark (dated; never a live fetch) — feeds the card's implied-odds line.
+  // BOTH hosts pass it, so the card never differs between the dossier and theme surfaces.
+  const mark = card ? await getMonitorRow(ticker) : null;
   if (!d) {
     // RICH DEGRADE — a name with a committed FIRST-CUT UNDERWRITE but no dossier renders its
     // record under explicit typing (an underwrite is NOT assembled facts, and its scenario
@@ -83,7 +86,7 @@ export async function render(root, params, { item, frame }) {
         </div>
         <div class="subtitle muted" style="margin:-6px 0 12px;">This is the analyst's scenario underwrite —
           not assembled facts. The full dossier is built on a re-underwrite trigger.</div>
-        ${uwCard(card, { ticker: false })}
+        ${uwCard(card, { ticker: false, mark })}
         ${loggedVerdict(verdict, ticker, card.underwriteDate)}
         ${assembleHelp()}` });
       return;
@@ -96,7 +99,7 @@ export async function render(root, params, { item, frame }) {
   }
   const verdict = led.entries.find((e) => e.ticker === ticker) || null;
   root.innerHTML = frame(item, {
-    crumbExtra: crumb, bare: true, bodyHtml: renderDossier(d, verdict, card) });
+    crumbExtra: crumb, bare: true, bodyHtml: renderDossier(d, verdict, card, mark) });
   // (3-tier) client-side tabs — default Brief; toggle the active panel, no re-fetch, no router change.
   root.querySelectorAll(".ds-tab").forEach((tab) => tab.addEventListener("click", () => {
     const tier = tab.dataset.tier;
@@ -441,7 +444,7 @@ function trajectoryTable(q) {
 
 // `card` is the OPTIONAL committed underwrite record (frontend/scenarios/<T>.json) — passed in by
 // render() because it needs a fetch; defaulted so the node smoke test keeps calling with two args.
-export function renderDossier(d, verdict, card = null) {  // exported for the module-load smoke test
+export function renderDossier(d, verdict, card = null, mark = null) {  // exported for the module-load smoke test
   const m = d.mechanical || {};              // (renders committed dossier JSON to HTML, no DOM/fetch)
   // (3-tier) Brief (first cut) · Analysis (full dossier) · Appendix (data & audit). ONE document; the
   // tabs are client-side chrome (default Brief, no re-fetch). Mirrors the # Brief / # Analysis /
@@ -450,7 +453,7 @@ export function renderDossier(d, verdict, card = null) {  // exported for the mo
   // (A2) each tier renders inside withEndnotes(): its cites become [n] markers + a per-tier Sources
   // list at its end (self-contained per tab / per PDF scope).
   return header(d) + tierTabs() + `<div class="ds-tiers">
-    <section class="ds-tier on" data-tier="brief">${withEndnotes("B", () => briefTier(d, verdict, m, card))}</section>
+    <section class="ds-tier on" data-tier="brief">${withEndnotes("B", () => briefTier(d, verdict, m, card, mark))}</section>
     <section class="ds-tier" data-tier="analysis">${withEndnotes("A", () => analysisTier(d, m))}</section>
     <section class="ds-tier" data-tier="appendix">${withEndnotes("X", () => appendixTier(d, verdict, m))}</section>
   </div>`;
@@ -551,8 +554,8 @@ function briefVerdictChip(verdict) {
 // Anti-anchoring is unaffected: that rule protects the MACHINE's sealed proposal from anchoring
 // the human, and the teaser (which carries it) is untouched in both content and position relative
 // to the facts. An analyst's own recorded underwrite cannot anchor its author.
-function briefTier(d, verdict, m, card) {
-  const parts = scenarioPanel(card) + teaserCard(d, verdict, m) + setupCard(d.synthesis)
+function briefTier(d, verdict, m, card, mark) {
+  const parts = scenarioPanel(card, mark) + teaserCard(d, verdict, m) + setupCard(d.synthesis)
     + companyCard(m) + briefCase(d.synthesis) + financialSnapshot(m) + valuationCard(m)
     + catalystCard(m) + anchorPanel(d.anchor) + verifyCard(d);
   return parts.trim() ? parts : "";
@@ -599,9 +602,9 @@ function anchorPanel(a) {
 // the masthead and, once a name was logged, flatly contradicted the foot (IT rendered "NOT a
 // ledger verdict of record" directly above "ledger V-IT-screen2-20260706"). One statement, one
 // place, and it is the one that knows the ledger.
-function scenarioPanel(card) {
+function scenarioPanel(card, mark = null) {
   if (!card) return "";
-  return `<div class="ds-section uw-panel">${uwCard(card, { ticker: false })}</div>`;
+  return `<div class="ds-section uw-panel">${uwCard(card, { ticker: false, mark })}</div>`;
 }
 
 // first sentence of a CIQ business description ("{Co}, Inc. engages in …") — abbreviation-aware so
