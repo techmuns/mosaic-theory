@@ -2781,6 +2781,58 @@ Each line: *what it does* — *verified how*.
     placement, Anchor-D multiple band (absent / too-few-closes / present), assemble units+ratio
     (WERN-scale) with the sensitivity centre == the main ratio, the MidCycle JSON round-trip, **plus
     the two PR-#149 review pins (no CONCEPT_ALIASES mutation; unpriceable scenarios → anchors-only).**
+- **FRONTEND GLOW-UP — Hybrid palette + DARK MODE, shipped across 11 PRs (#138–#148).** The
+  dashboard was ~75% token-driven already; the blockers were ~64 hardcoded colours in `styles.css`
+  + 6 hex literals in JS. PR1 absorbed all of them into semantic tokens (invisible refactor), which
+  let the palette AND a full dark theme propagate to every screen and every SVG exhibit at once.
+  - Delivered: Hybrid palette (cool neutrals, indigo accent); dark theme via `:root[data-theme="dark"]`
+    + a `prefers-color-scheme` pre-JS fallback, stamped on `<html>` by a head script so there is no
+    flash; icon-only sun/moon toggle in the sidebar `.brand`, persisted to `localStorage`; editorial
+    Dossier (pull-quote decisive question, Assessment / Key-figures eyebrows, tabular figures);
+    institutional `tabular-nums` on every data table + pill; Radar quadrant recrafted (compact map
+    beside a status panel, bare 2×2 cross — the frame/gridlines/ticks an earlier pass had ADDED were
+    removed as noise on a qualitative map); nav to the locked mockup (logo mark, inset pills);
+    WCAG-AA contrast in BOTH themes; `:focus-visible` rings on every interactive element.
+  - **INCIDENT→INVARIANT (shipped Y): `test_print_reasserts_light_palette_so_dark_never_prints`.**
+    `@media print { * { print-color-adjust: exact } }` would bleed the dark canvas into every PDF.
+    The guard asserts that EVERY token the dark theme overrides is re-declared to its base `:root`
+    LIGHT value under `@media print` — so it also catches a NEW dark token added without a matching
+    print re-assert. Verified both ways (green on light; reddens when a print token is mutated dark).
+  - **CAVEAT (conscious, not a defect):** `--locked` (inactive locked pills/chips) is left below
+    AA — WCAG 1.4.3 exempts inactive UI components from the contrast ratio; forcing it would make
+    disabled controls read as active.
+  - **NOT copied from the mockup, deliberately:** the study's Radar showed `CONVICTION × MATURITY`
+    with invented themes (Nuclear SMR / Quantum …) and a "first-mention sweep" month heatmap. The
+    real axes are evidence-is-real × price-already-moved, and `radar/inbox.json` carries an EMPTY
+    `inbox` array (0 rows — note the file is a `{scan_date, inbox: []}` dict, so check the ARRAY, not
+    the file) — there is no first-mention flow to chart. Only the mockup's LAYOUT/type language
+    was adopted; its fabricated analytical model and its invented data block were not.
+
+- **BROWSER-MEMORY SCARE — investigated to ground; NOT the app. Recorded so it is not re-investigated.**
+  Reported ~500–550 MB for the deployed dashboard tab. Measured on the deployed page: JS heap
+  **136.9 MB AFTER a forced GC** (i.e. genuinely retained, not collection lag).
+  - Heap snapshot named the mechanism: `Window (global*)` **×195**, `Detached HTMLDocument` ×65,
+    `{__esModule}` **×4,686** (≈24 modules × ~195 realms), `Function` ×673k, `(compiled code)` ×895k.
+    The app is ~325 KB across ~24 modules and creates **zero** iframes / `window.open` / `document.write`
+    — it cannot produce ~900k compiled functions or 195 JS realms. That is injected third-party code.
+  - **RESOLVED: browser EXTENSIONS injecting into the tab.** The same deployed page in an Incognito
+    window (extensions off) reads **4.6 MB** — matching a local measurement of the identical route
+    (4.4 MB, same 391 DOM nodes). Extensions accounted for ~132 MB, ~97% of the reported figure.
+  - App-side facts, measured, no leak: **3–7 MB** heap across all 11 screens; 42 sequential navigations
+    gave heap 3.9 → 6.1 → **2.7 MB** (falls — no monotonic growth); DOM fully reclaimed each cycle.
+    Heaviest render is the Ranker at 5,115 nodes / 276 rows. There is NO 4–5× memory win available:
+    the app's entire footprint is smaller than the noise floor of the browser it runs in.
+  - **METHOD for any repeat doubt — do this FIRST (30 seconds, before any snapshot analysis):** open
+    the page in Incognito and run `+(performance.memory.usedJSHeapSize/1048576).toFixed(1)`. It
+    separates app from extensions immediately. A heap snapshot is only worth taking if Incognito is
+    ALSO high.
+  - **METHODOLOGICAL TRAP (cost a wrong conclusion here):** the first measurements were taken against
+    a stale worktree while `main` had moved **56 commits** ahead (adding `scenarios/`, `uw-card.js`,
+    `lib/cites.js`), so the benchmarked build was NOT the deployed one. Measure the DEPLOYED commit.
+  - **NOT fixed (accepted, low value):** `lib/snapshots.js` fetches with `cache: "no-store"`, so every
+    revisit re-downloads + re-parses (AORT's 209 KB was fetched 3× in one session). That is a SPEED
+    cost only, with no memory implication; always-fresh fetches match the "static mirror lags local
+    state until the next `git push`" design. Revisit only if navigation latency becomes a complaint.
 
 ## 3. FALSIFIED — tested and retired (NOT deferred)
 
