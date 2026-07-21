@@ -209,8 +209,25 @@ def _periodicity(dates: list[Any]) -> tuple[float | None, float | None, str, str
     return med, span, "irregular", None
 
 
+def file_provenance(path: Any) -> tuple[str | None, str | None]:
+    """(sha256[:10], ISO mtime) of a CIQ export — the bytes a band was actually read from.
+
+    A filename is not identity: SMPL's band was refreshed from a STALE same-named copy while the
+    canonical export sat elsewhere, and the artifact could not show it. Unreadable → (None, None):
+    provenance is best-effort context, it never blocks a band."""
+    import hashlib
+    from datetime import UTC, datetime
+    try:
+        data = path.read_bytes()
+        mt = datetime.fromtimestamp(path.stat().st_mtime, UTC).isoformat(timespec="seconds")
+        return hashlib.sha256(data).hexdigest()[:10], mt
+    except OSError:
+        return None, None
+
+
 def _own_history_band(
-    metric: str, pairs: list[tuple[Any, float]], *, source_file: str | None = None
+    metric: str, pairs: list[tuple[Any, float]], *, source_file: str | None = None,
+    source_sha256: str | None = None, source_mtime: str | None = None,
 ) -> OwnHistoryBand | None:
     """(Phase-3) The current multiple vs its TRAILING close range (current EXCLUDED from history) —
     the ONE own-history stat, shared by range_position (its string) and own_history_bands (the
@@ -234,6 +251,7 @@ def _own_history_band(
         mean=statistics.mean(hist), series=series,
         periodicity_days_median=per_days, window_span_years=span_years, periodicity=per_label,
         data_quality=dq, source_file=source_file,
+        source_sha256=source_sha256, source_mtime=source_mtime,
     )
 
 
@@ -279,10 +297,13 @@ def own_history_bands(bundle: CiqBundle) -> Sourced[list[OwnHistoryBand]]:
         return _miss_or_unknown(bundle, "financials", exc)
     wb = bundle.workbook("financials", freq="quarterly")
     src_file = wb.path.name if wb is not None else None
+    src_sha, src_mtime = file_provenance(wb.path) if wb is not None else (None, None)
     bands: list[OwnHistoryBand] = []
     for metric, label in _OWN_HISTORY_METRICS:
         pairs = [(d, v) for d, v in _multiples_close(rows, label) if v is not None]
-        if (band := _own_history_band(metric, pairs, source_file=src_file)) is not None:
+        band = _own_history_band(metric, pairs, source_file=src_file,
+                                 source_sha256=src_sha, source_mtime=src_mtime)
+        if band is not None:
             bands.append(band)
     if not bands:
         return Sourced.unknown(note="no multiple has ≥4 quarterly closes — no own-history band")

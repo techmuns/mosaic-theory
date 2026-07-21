@@ -179,6 +179,12 @@ class OwnHistoryBand(BaseModel):
     periodicity: str | None = None            # "quarterly" | "annual" | "irregular"
     data_quality: str | None = None           # e.g. "periodicity_mismatch" (fail-loud)
     source_file: str | None = None            # the CIQ export the band was read from
+    # (provenance) WHICH bytes produced this band. A filename is not identity — SMPL's band was
+    # refreshed from a STALE same-named copy (sha 680fd7bee7, 4.98y) while the canonical export
+    # (7bd83a1103, 8.55y) sat elsewhere, and nothing in the artifact showed it. The hash makes a
+    # stale read visible IN the record instead of inferable weeks later.
+    source_sha256: str | None = None          # first 10 hex of the file actually read
+    source_mtime: str | None = None           # ISO mtime of that file
 
     model_config = {"frozen": True}
 
