@@ -253,3 +253,28 @@ def test_monitor_mirror_is_emitted_for_the_frontend() -> None:
 
 if __name__ == "__main__":
     raise SystemExit(pytest.main([__file__, "-q"]))
+
+
+def test_freshness_panel_includes_pending_analyst_records(tmp_path: Path) -> None:
+    """A record at status=pending_analyst is exactly the one that must not go stale unnoticed: the
+    underwrite is RUN and the verdict is still owed, so the next print can move the decision before
+    it is ever made. Previously the panel only picked up `watch`, so EPAM was invisible."""
+    from vinci.cli import _FRESHNESS_STATUSES, _STATUS_LABEL, _watch_tickers
+
+    d = tmp_path / "scenarios"
+    d.mkdir()
+    (d / "PEND.json").write_text(json.dumps(
+        {"ticker": "PEND", "underwrite_date": "2026-07-21",
+         "verdict": {"status": "pending_analyst"}}))
+    (d / "WCH.json").write_text(json.dumps(
+        {"ticker": "WCH", "underwrite_date": "2026-07-19", "verdict": {"status": "watch"}}))
+    (d / "CONF.json").write_text(json.dumps(
+        {"ticker": "CONF", "underwrite_date": "2026-07-01", "verdict": {"status": "confirmed"}}))
+
+    picked = _watch_tickers(tmp_path)
+    assert "PEND" in picked, "a pending_analyst record must reach the freshness panel"
+    assert "WCH" in picked, "watch names must still be picked up"
+    assert "CONF" not in picked, "a decided record is a ledger position, not a freshness watch"
+    assert set(_FRESHNESS_STATUSES) == {"watch", "pending_analyst"}
+    # the panel labels it in plain words, never the raw enum
+    assert _STATUS_LABEL["pending_analyst"] == "verdict pending"
