@@ -118,11 +118,14 @@ verdict placement.
   fact stays in it. The rendered surface is THREE TIERS:
   1. **MAIN BODY** — decision values; ALWAYS printed. The human's decision surface.
   2. **ON-DEMAND** — context & audit (provenance: verbatim quotes, accessions, reference/agreement terms,
-     amendment chains, per-item revision detail): a collapsed `<details>` on web, **EXCLUDED from print**.
+     amendment chains, per-item revision detail): a collapsed `<details>` on web, **PRINT-EXPANDED**
+     *(operator decision 2026-07-21 — previously excluded from print)*: every `<details>` force-opens
+     in the PDF regardless of on-screen state, its summary printing as the section header, so the
+     export is the COMPLETE record. The web surface stays collapsed — only the print fate flipped.
   3. **JSON** — machine-complete, the full record behind every curated value.
-  The **Financial-Summary appendix is decision data → it STAYS in print** (it is not provenance). Provenance
-  appendices are the audit tier → on-demand. Curating never deletes a fact — a moved fact is reachable in
-  the expanded web on-demand tier or the JSON. (Discipline/methodology language lives in `source_ref`s + JSON.)
+  The **Financial-Summary appendix is decision data → it STAYS in print** (it is not provenance).
+  Curating never deletes a fact — a moved fact is reachable in the expanded web on-demand tier, the
+  printed PDF, or the JSON. (Discipline/methodology language lives in `source_ref`s + JSON.)
 - **Exhibits cite via ENDNOTES, never an inline caption.** An SVG exhibit's provenance is a `citeMark` →
   the tier's Sources list (where every other cite resolves) — NEVER an inline `Source: …` caption under the
   chart. The exhibit visualizes data already cited by its sibling table/fact (financial_summary /
