@@ -90,6 +90,10 @@ function verdictPills(c) {
     out.push(`<span class="pill ${v.status === "pending_analyst" ? "conditional" : "unresolved"}"
       >${escapeHtml(v.status.replace("_", " "))}</span>`);
   }
+  // TIER rides beside the status: it is a standing property of the business, not an audit detail,
+  // and it is what the reader weighs the verdict's confidence against.
+  const t = tierBadge(c);
+  if (t) out.push(t);
   return out.join(" ");
 }
 
@@ -330,6 +334,56 @@ function impliedOdds(c, mark) {
 
 // the 3-leg matrix: assumptions → value/share → cross-checks. Bull column takes .est-col (the
 // existing not-in-the-decision-math tint) — bull is printed for range honesty, never in the ratio.
+
+// --- R2 (terminal-margin) ----------------------------------------------------------------------
+// An R2 record values a business in the year it reaches a normal margin and discounts that back, so
+// the card must show BOTH numbers: the terminal value the analyst modelled and its present value,
+// which is the one the ratio uses. Showing only the terminal number would compare a five-year story
+// against a price paid today; showing only the PV would hide what was actually assumed.
+const isR2 = (c) => (c.recipeId || "").startsWith("R2");
+
+// TIER is a property of the BUSINESS, not of the answer — it feeds confidence and never the bar.
+function tierBadge(c) {
+  if (!c.tier) return "";
+  const b = c.tier === "A";
+  return `<span class="uw-tier ${b ? "uw-tier-a" : "uw-tier-b"}" title="${
+    b ? "contracted or recurring revenue, gross-profitable, self-funded to breakeven"
+      : "survival-gated or unproven unit economics"}">tier ${escapeHtml(c.tier)}</span>`;
+}
+
+// THE SURVIVAL GATE, with its arithmetic shown rather than its verdict asserted. A terminal value
+// is worthless if the company never reaches the terminal year, so a FAIL is rendered as a blocking
+// state — it is what stops a confirmed BUY in the record, and the card must not read softer than
+// the guard behaves.
+function survivalPanel(c) {
+  const s = c.survival;
+  if (!s) return "";
+  const fail = s.status === "FAIL";
+  const rows = [];
+  if (s.burn != null) {
+    rows.push(fact("Cash burn", `${money(s.burn)} a year`
+      + (s.burnBasis ? ` <span class="muted">${escapeHtml(s.burnBasis)}</span>` : "")));
+    const funds = [s.cash != null ? `cash ${money(s.cash)}` : null,
+                   s.facilities ? `committed undrawn facilities ${money(s.facilities)}` : null]
+      .filter(Boolean).join(" + ");
+    // TWO decimals, matching the engine's own note verbatim: rounding the headline to 1.3y beside
+    // a note reading 1.25y is the same number disagreeing with itself on one panel.
+    rows.push(fact("Runway", `${funds} ÷ ${money(s.burn)} = <b>${
+      s.runwayYears == null ? DASH : `${s.runwayYears.toFixed(2)}y`}</b>`));
+  }
+  if (s.yearsToBreakeven != null) rows.push(fact("To breakeven", oneDp(s.yearsToBreakeven, "y")));
+  if (s.announcedRaise) {
+    rows.push(fact("Announced raise", s.raiseAccession
+      ? `committed <span class="mono">${escapeHtml(s.raiseAccession)}</span>`
+      : `<span class="uw-bad">no accession on file — not counted</span>`));
+  }
+  return `<div class="uw-survival${fail ? " uw-survival-fail" : ""}">
+      <div class="uw-sec-h">Survival <span class="basis">${
+        fail ? "GATE FAILED — blocks a confirmed buy" : "gate cleared"}</span></div>
+      <div class="uw-surv-body">${rows.join("")}
+        <div class="uw-note muted">${escapeHtml(s.note || "")}</div></div></div>`;
+}
+
 function legsTable(c) {
   const order = ["bear", "base", "bull"];
   const legs = order.map((n) => (c.scenarios || []).find((s) => s.name === n)).filter(Boolean);
@@ -360,15 +414,20 @@ function legsTable(c) {
     <div style="overflow-x:auto;"><table class="data uw-legs-t">
       <thead>${head}</thead>
       <tbody>
-        ${row("Value / share", (l) => money(l.valuePerShare), { name: true })}
+        ${isR2(c) ? row("Terminal value / share", (l) => money(l.valueTerminal), { mutedLabel: true }) : ""}
+        ${row(isR2(c) ? "Value / share, today" : "Value / share",
+              (l) => money(l.valuePerShare), { name: true })}
         ${row("vs spot", delta, { cls: " uw-vs" })}
-        ${row("Revenue ($M)", (l) => thousands(l.revenue))}
-        ${row("Op margin", (l) => pct(l.margin))}
+        ${isR2(c) ? row("Years to terminal", (l) => oneDp(l.years ?? l.yearsToTerminal, "y")) : ""}
+        ${row(isR2(c) ? "Terminal revenue ($M)" : "Revenue ($M)", (l) => thousands(l.revenue))}
+        ${row(isR2(c) ? "Terminal op margin" : "Op margin", (l) => pct(l.margin))}
         ${row(`Exit ${basis}`, (l) => oneDp(l.multiple, "×"))}
       </tbody>
     </table></div>
     <div class="uw-note muted">bull is range context — never in the ratio${
-      tgt ? ", never the target" : ""}</div>`;
+      tgt ? ", never the target" : ""}${isR2(c) && c.hurdle != null
+        ? ` · today's value discounts the terminal year at ${pct(c.hurdle)} a year`
+        : ""}</div>`;
   const main = `<div class="uw-split-main">
       <div class="uw-sec-h">Scenarios <span class="basis">${escapeHtml(basis)}</span></div>
       ${tableHtml}</div>`;
@@ -548,6 +607,7 @@ export function uwCard(c, { ticker = true, mark = null } = {}) {
   const body = () => `
     ${masthead(c, ticker)}
     ${legsTable(c)}
+    ${survivalPanel(c)}
     ${impliedOdds(c, mark)}
     ${rationaleFact(v)}
     ${trigChips(c, v)}
@@ -577,6 +637,7 @@ export function uwCardParts(c, { mark = null, detailExtra = "", rationale = true
   // narrative slot), so the detail must not render it a second time.
   const detail = () => `
     ${legsTable(c)}
+    ${survivalPanel(c)}
     ${impliedOdds(c, mark)}
     ${rationale ? rationaleFact(v) : ""}
     ${detailExtra}
