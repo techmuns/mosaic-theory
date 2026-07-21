@@ -2805,8 +2805,8 @@ Each line: *what it does* — *verified how*.
     with invented themes (Nuclear SMR / Quantum …) and a "first-mention sweep" month heatmap. The
     real axes are evidence-is-real × price-already-moved, and `radar/inbox.json` carries an EMPTY
     `inbox` array (0 rows — note the file is a `{scan_date, inbox: []}` dict, so check the ARRAY, not
-    the file) — there is no first-mention flow to chart. Only the mockup's LAYOUT/type language was adopted; its fabricated
-    analytical model and its invented data block were not.
+    the file) — there is no first-mention flow to chart. Only the mockup's LAYOUT/type language
+    was adopted; its fabricated analytical model and its invented data block were not.
 
 - **BROWSER-MEMORY SCARE — investigated to ground; NOT the app. Recorded so it is not re-investigated.**
   Reported ~500–550 MB for the deployed dashboard tab. Measured on the deployed page: JS heap
@@ -2833,7 +2833,6 @@ Each line: *what it does* — *verified how*.
     revisit re-downloads + re-parses (AORT's 209 KB was fetched 3× in one session). That is a SPEED
     cost only, with no memory implication; always-fresh fetches match the "static mirror lags local
     state until the next `git push`" design. Revisit only if navigation latency becomes a complaint.
-
 
 ## 3. FALSIFIED — tested and retired (NOT deferred)
 
