@@ -314,8 +314,6 @@ function legsTable(c) {
   const head = `<tr><th></th>` + legs.map((l) =>
     `<th class="num${colCls(l)}">${escapeHtml(l.name)}${
       l.name === "base" && tgt ? ` <span class="uw-tgt-tag">target</span>` : ""}</th>`).join("") + `</tr>`;
-  const reasons = legs.filter((l) => l.reason).map((l) =>
-    `<li><b>${escapeHtml(l.name)}</b> — ${escapeHtml(l.reason)}</li>`).join("");
   const basis = c.multipleBasis || DASH;   // the RECORD stamps its basis; absent renders honest
   const delta = (l) => {
     const d = vsSpot(l.valuePerShare, c.spot);
@@ -345,12 +343,21 @@ function legsTable(c) {
   const main = `<div class="uw-split-main">
       <div class="uw-sec-h">Scenarios <span class="basis">${escapeHtml(basis)}</span></div>
       ${tableHtml}</div>`;
-  // the reasoning block sits BELOW the split at full card width — inside the table's column it
-  // inherited a 552px measure, wrapping analyst prose to the width of a number grid
-  const reasonsHtml = reasons ? `<details class="uw-reasons">
+  return rail ? `<div class="uw-split">${main}${rail}</div>` : main;
+}
+
+// The per-leg reasoning, full card width, placed AFTER the rationale + thesis-breaks: the read
+// order runs verdict-level first (why the position, what breaks it), then leg-level (why each
+// number), then methodology. Collapsed on screen; the print carve-out forces it into the PDF —
+// a printed grid with no justification would contradict the no-reason-no-compute rule.
+function legReasons(c) {
+  const reasons = ["bear", "base", "bull"]
+    .map((n) => leg(c, n)).filter((l) => l && l.reason)
+    .map((l) => `<li><b>${escapeHtml(l.name)}</b> — ${escapeHtml(l.reason)}</li>`).join("");
+  if (!reasons) return "";
+  return `<details class="uw-reasons">
       <summary>Why each leg sits where it does — the analyst's reasoning</summary>
-      <div class="uw-reasons-body"><ul class="kv-list">${reasons}</ul></div></details>` : "";
-  return (rail ? `<div class="uw-split">${main}${rail}</div>` : main) + reasonsHtml;
+      <div class="uw-reasons-body"><ul class="kv-list">${reasons}</ul></div></details>`;
 }
 
 // --- methodology (schema 1.1) ------------------------------------------------------------------
@@ -462,6 +469,7 @@ export function uwCard(c, { ticker = true } = {}) {
     ${v.rationale ? fact("Rationale", escapeHtml(v.rationale)) : ""}
     ${trig ? `<div class="uw-trig"><span class="uw-trig-lab">${
       headlineState(c) === "target" ? "Thesis breaks" : "Re-underwrite when"}</span>${trig}</div>` : ""}
+    ${legReasons(c)}
     ${methodFact(c)}`;
   return `
   <section class="card uw-card">
