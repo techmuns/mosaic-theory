@@ -531,7 +531,7 @@ def _cmd_own_history_refresh(args: argparse.Namespace) -> int:
     A name with no CIQ file on disk is 'awaiting corrected export' — left untouched, listed. Does
     NOT touch the anchor block — run ``anchor-backfill`` after to re-derive the multiple leg."""
     from vinci.dossier import ciq_sheets as cs
-    from vinci.dossier.anchor import replace_own_history_value
+    from vinci.dossier.anchor import replace_valuation_fields
     from vinci.dossier.ciq import CiqBundle
     from vinci.dossier.manual_store import LocalFolderStore
     from vinci.dossier.schemas import SourceStatus
@@ -558,12 +558,33 @@ def _cmd_own_history_refresh(args: argparse.Namespace) -> int:
         if not store.available(t):
             print(f"{t:7}  AWAITING CORRECTED EXPORT — no CIQ file on disk; committed band kept")
             continue
-        band = cs.own_history_bands(CiqBundle.from_files(t, store.files(t)))
+        bundle = CiqBundle.from_files(t, store.files(t))
+        band = cs.own_history_bands(bundle)
         if band.status != SourceStatus.PRESENT or not band.value:
             print(f"{t:7}  no own-history band from export ({band.note or 'unknown'}) — skip")
             continue
         new_val = [b.model_dump(mode="json") for b in band.value]
         oh_new = next((b for b in new_val if "EBITDA" in str(b.get("metric", ""))), None)
+        # THE WHOLE multiples-derived CLUSTER, recomputed together. own_history, range_position,
+        # ev_ebitda and (when CIQ-sourced) ev_ebitda_percentile_5y all read the SAME close series;
+        # refreshing the band alone left a 35-close band beside a string still saying "over 20
+        # closes" — the drift the shared loader exists to prevent. Recompute or don't touch it.
+        val_old = ((doc.get("mechanical") or {}).get("valuation") or {})
+        updates: dict[str, Any] = {"own_history": band.model_dump(mode="json")}
+        updates["range_position"] = cs.range_position(bundle).model_dump(mode="json")
+        ev = cs.ev_ebitda_current(bundle)
+        if ev.status is SourceStatus.PRESENT and (
+                (val_old.get("ev_ebitda_adjusted_fwd") or {}).get("status") != "present"):
+            # mirror mechanical._valuation's trailing-only blind-flag (no forward counterpart)
+            ev = ev.model_copy(update={
+                "note": "trailing only — no forward basis; cannot distinguish cheap-overshoot from "
+                        "cheap-terminal"})
+        updates["ev_ebitda"] = ev.model_dump(mode="json")
+        # percentile is EDGAR-screen-sourced when the screen knew it; only the CIQ path is ours
+        pct_old = val_old.get("ev_ebitda_percentile_5y") or {}
+        if "CIQ" in str(pct_old.get("source_ref") or ""):
+            updates["ev_ebitda_percentile_5y"] = cs.ev_ebitda_percentile(bundle).model_dump(
+                mode="json")
 
         def fmt(b: dict[str, Any] | None) -> str:
             if not b:
@@ -572,13 +593,15 @@ def _cmd_own_history_refresh(args: argparse.Namespace) -> int:
                     f"{b.get('window_span_years') or '?'}y")
         per = (oh_new or {}).get("periodicity") or "?"
         dq = (oh_new or {}).get("data_quality")
-        changed = json.dumps(oh_old, sort_keys=True) != json.dumps(oh_new, sort_keys=True)
+        changed = any(json.dumps(val_old.get(k), sort_keys=True) != json.dumps(v, sort_keys=True)
+                      for k, v in updates.items())
         status = ("PERIODICITY_MISMATCH ✗" if dq else
                   ("refreshed *" if changed and not args.dry_run else
                    ("would refresh (dry-run)" if changed else "unchanged (0/0)")))
-        print(f"{t:7}{fmt(oh_old):>20}{fmt(oh_new):>20}{per:>11}  {status}")
+        print(f"{t:7}{fmt(oh_old):>20}{fmt(oh_new):>20}{per:>11}  {status}"
+              f"{'' if not changed else '  [' + ', '.join(sorted(updates)) + ']'}")
         if changed and not args.dry_run:
-            path.write_text(replace_own_history_value(original, new_val))
+            path.write_text(replace_valuation_fields(original, updates))
     return 0
 
 

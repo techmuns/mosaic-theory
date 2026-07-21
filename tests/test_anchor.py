@@ -331,21 +331,46 @@ def test_canonical_sync_always_overwrites_a_stale_local_copy(tmp_path: Path) -> 
         sync_canonical_ciq(canonical, local, ["ABSENT"])            # fail loud, no fallback
 
 
-def test_replace_own_history_value_is_byte_preserving() -> None:
-    """The refresh writer swaps ONLY own_history.value; every other field keeps its committed bytes
-    (json.dump(indent=2, ensure_ascii=False) reproduces the committed style — a unicode arrow stays
-    literal, not \\u2192). Absent path → refuses rather than silently no-ops."""
-    from vinci.dossier.anchor import replace_own_history_value
+def test_replace_valuation_fields_is_byte_preserving() -> None:
+    """The refresh writer swaps ONLY the named valuation fields; every other field keeps its
+    committed bytes (json.dump(indent=2, ensure_ascii=False) reproduces the committed style — a
+    unicode arrow stays literal, not \\u2192). An absent field → refuses rather than no-ops."""
+    from vinci.dossier.anchor import replace_valuation_fields
     text = ('{\n  "ticker": "X",\n  "mechanical": {\n    "valuation": {\n'
-            '      "own_history": {\n        "value": [1],\n        "source_ref": "a→b"\n'
-            '      }\n    }\n  }\n}')
-    out = replace_own_history_value(text, [{"median": 9.9}])
+            '      "own_history": {"value": [1]},\n      "range_position": {"value": "old→x"},\n'
+            '      "pe": {"value": 3}\n    }\n  }\n}')
+    out = replace_valuation_fields(text, {"own_history": {"value": [{"median": 9.9}]},
+                                          "range_position": {"value": "new→y"}})
     parsed = json.loads(out)
-    assert parsed["ticker"] == "X"                                        # untouched
-    assert parsed["mechanical"]["valuation"]["own_history"]["value"] == [{"median": 9.9}]
-    assert "a→b" in out and "\\u2192" not in out                     # unicode kept literal
-    with pytest.raises(ValueError, match="own_history.value absent"):
-        replace_own_history_value('{"ticker":"X"}', [])
+    v = parsed["mechanical"]["valuation"]
+    assert parsed["ticker"] == "X" and v["pe"] == {"value": 3}            # untouched
+    assert v["own_history"]["value"] == [{"median": 9.9}]                 # replaced
+    assert v["range_position"]["value"] == "new→y"                        # replaced together
+    assert "new→y" in out and "\\u2192" not in out                        # unicode kept literal
+    with pytest.raises(ValueError, match="valuation.nope absent"):
+        replace_valuation_fields(text, {"nope": {}})
+
+
+def test_committed_own_history_agrees_with_its_sibling_range_position() -> None:
+    """COHERENCE PIN (the drift this PR's first pass introduced). own_history, range_position and
+    ev_ebitda all read the SAME Multiples close series and the module guarantees they "can't drift".
+    Refreshing the band ALONE left a 35-close band beside a string still reading "over 20 closes".
+    Every committed dossier must quote the SAME median and close-count in both places."""
+    import re
+    for doss in sorted((_ROOT / "data" / "dossiers").glob("*/dossier.json")):
+        val = (json.loads(doss.read_text()).get("mechanical") or {}).get("valuation") or {}
+        oh, rp = val.get("own_history") or {}, val.get("range_position") or {}
+        if oh.get("status") != "present" or rp.get("status") != "present":
+            continue
+        band = next((b for b in oh["value"] if "EBITDA" in str(b.get("metric", ""))), None)
+        if not band:
+            continue
+        m = re.search(r"median ([\d.]+)x\) over (\d+) closes", str(rp.get("value") or ""))
+        assert m, f"{doss.parent.name}: range_position string not parseable — {rp.get('value')!r}"
+        assert round(float(m.group(1)), 1) == round(band["median"], 1), (
+            f"{doss.parent.name}: range_position median {m.group(1)} != band {band['median']:.2f}")
+        assert int(m.group(2)) == band["n_closes"], (
+            f"{doss.parent.name}: range_position {m.group(2)} closes != band {band['n_closes']}")
 
 
 # --- byte-preserving backfill insert -----------------------------------------------------------

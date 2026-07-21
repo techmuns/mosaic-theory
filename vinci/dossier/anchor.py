@@ -424,21 +424,29 @@ def insert_anchor_block(text: str, anchor: Anchor) -> str:
     return f"{head},\n{field}\n}}{trailing}"
 
 
-def replace_own_history_value(text: str, bands_value: Any) -> str:
-    """Byte-preserving replace of ``mechanical.valuation.own_history.value`` in a committed
+def replace_valuation_fields(text: str, updates: dict[str, Any]) -> str:
+    """Byte-preserving replace of one or more ``mechanical.valuation.<field>`` values in a committed
     dossier.json TEXT, leaving every OTHER field byte-for-byte identical.
+
+    Takes the WHOLE cluster at once on purpose. ``own_history``, ``range_position``, ``ev_ebitda``
+    and ``ev_ebitda_percentile_5y`` all derive from the SAME Multiples close series — the module
+    guarantees they "can't drift" precisely because one loader feeds them. Refreshing one alone
+    re-introduces the drift the guarantee exists to prevent (a band over 35 closes beside a string
+    still saying "over 20 closes"), so the writer refuses to make that easy.
 
     A model round-trip drifts older-schema dossiers; a plain ``json.load``→``dump(indent=2,
     ensure_ascii=False)`` reproduces the committed bytes EXACTLY (verified), so it is the safe
-    surgical path — parse preserving order, swap ONLY that one nested value, re-serialise. Raises if
-    the own_history path is absent (never silently no-ops)."""
+    surgical path. Raises when a named field is absent (never silently no-ops)."""
     import json
 
     doc = json.loads(text)
-    oh = (((doc.get("mechanical") or {}).get("valuation") or {}).get("own_history"))
-    if not isinstance(oh, dict) or "value" not in oh:
-        raise ValueError("mechanical.valuation.own_history.value absent — refusing to refresh")
-    oh["value"] = bands_value
+    val = ((doc.get("mechanical") or {}).get("valuation"))
+    if not isinstance(val, dict):
+        raise ValueError("mechanical.valuation absent — refusing to refresh")
+    for field, new in updates.items():
+        if field not in val:
+            raise ValueError(f"mechanical.valuation.{field} absent — refusing to refresh")
+        val[field] = new
     out = json.dumps(doc, indent=2, ensure_ascii=False)
     return out + "\n" if text.endswith("\n") and not out.endswith("\n") else out
 

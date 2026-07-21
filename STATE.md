@@ -3772,6 +3772,22 @@ two-name analysis (mid/small-caps, opposite directions) mapped against this inve
     **provenance-only; every band value byte-identical** (verified field-by-field).
     ⚠ **SMPL's median moved 16.34→17.85x**, which is the reference the held SMPL underwrite's 12.5x
     base was set against ("just under the 25th pctile") — re-check that reference when SMPL resumes.
+  - **SIBLING-DRIFT INCIDENT (found in the second review of this PR, 2026-07-21; fixed in-branch).**
+    Refreshing `own_history` ALONE broke the module's own stated invariant. `range_position`,
+    `ev_ebitda` and `ev_ebitda_percentile_5y` all read the SAME Multiples close series and share
+    `_own_history_band` expressly "so the two can't drift" (ciq_sheets docstrings) — the refresh
+    updated the band and left the siblings on the OLD export, so every one of the 7 carried a
+    self-contradicting valuation block: SMPL a 35-close band beside a string reading *"median 16.3x
+    over 20 closes"*; EPAM band 22.4x vs string 16.2x; `ev_ebitda` stale on all 7 (IT 7.5 vs band
+    current 7.97). **`range_position` renders on the dossier page**, so an analyst would have read the
+    stale string next to a chart drawn from the new band. **FIXED:** the refresh now recomputes the
+    whole multiples-derived CLUSTER atomically (`replace_valuation_fields`, not a single-field
+    writer), preserving `_valuation`'s trailing-only blind-flag and touching
+    `ev_ebitda_percentile_5y` only when it was CIQ-sourced (it is EDGAR-screen-sourced when the
+    screen knew it). Anchors re-verified **0 changed** — the defect was display-layer only, no
+    valuation math moved. **INVARIANT SHIPPED:** a coherence pin asserts every committed dossier
+    quotes the SAME median and close-count in `own_history` and `range_position` (it failed on the
+    pre-fix artifacts, which is how it was caught).
   - **STILL OPEN (unchanged by this):** the shared `extract_points`/`annual_series` longest/first-
     alias rule (this was own-history-local + anchor-local); and the operator may want a standing
     refresh cadence so committed bands don't silently lag new exports.
