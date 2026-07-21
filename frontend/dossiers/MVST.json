@@ -100,7 +100,9 @@
             "window_span_years": 1.3,
             "periodicity": "quarterly",
             "data_quality": null,
-            "source_file": "Microvast Holdings Inc NasdaqCM MVST Financials_Quarterly.xls"
+            "source_file": "Microvast Holdings Inc NasdaqCM MVST Financials_Quarterly.xls",
+            "source_sha256": "30aa558d20",
+            "source_mtime": "2026-07-20T13:19:08+00:00"
           }
         ],
         "source_ref": "CIQ Financials→Multiples (Close; last col = current, excluded from history)",

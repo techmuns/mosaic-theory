@@ -184,7 +184,9 @@
             "window_span_years": 6.54,
             "periodicity": "quarterly",
             "data_quality": null,
-            "source_file": "BellRing Brands Inc NYSE BRBR Financials_Quarterly.xls"
+            "source_file": "BellRing Brands Inc NYSE BRBR Financials_Quarterly.xls",
+            "source_sha256": "bc8ac66837",
+            "source_mtime": "2026-07-20T13:11:59+00:00"
           },
           {
             "metric": "P/LTM EPS",
@@ -314,7 +316,9 @@
             "window_span_years": 6.54,
             "periodicity": "quarterly",
             "data_quality": null,
-            "source_file": "BellRing Brands Inc NYSE BRBR Financials_Quarterly.xls"
+            "source_file": "BellRing Brands Inc NYSE BRBR Financials_Quarterly.xls",
+            "source_sha256": "bc8ac66837",
+            "source_mtime": "2026-07-20T13:11:59+00:00"
           }
         ],
         "source_ref": "CIQ Financials→Multiples (Close; last col = current, excluded from history)",

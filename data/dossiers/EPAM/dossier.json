@@ -228,7 +228,9 @@
             "window_span_years": 9.3,
             "periodicity": "quarterly",
             "data_quality": null,
-            "source_file": "EPAM Systems Inc NYSE EPAM Financials_Quarterly.xls"
+            "source_file": "EPAM Systems Inc NYSE EPAM Financials_Quarterly.xls",
+            "source_sha256": "9614730c9e",
+            "source_mtime": "2026-07-20T13:16:33+00:00"
           },
           {
             "metric": "P/LTM EPS",
@@ -402,7 +404,9 @@
             "window_span_years": 9.3,
             "periodicity": "quarterly",
             "data_quality": null,
-            "source_file": "EPAM Systems Inc NYSE EPAM Financials_Quarterly.xls"
+            "source_file": "EPAM Systems Inc NYSE EPAM Financials_Quarterly.xls",
+            "source_sha256": "9614730c9e",
+            "source_mtime": "2026-07-20T13:16:33+00:00"
           }
         ],
         "source_ref": "CIQ Financials→Multiples (Close; last col = current, excluded from history)",

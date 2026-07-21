@@ -58,15 +58,71 @@
         "value": [
           {
             "metric": "EV/EBITDA (TEV/LTM)",
-            "current": 5.957365,
+            "current": 5.646146,
             "low": 6.109363,
-            "high": 23.227802,
-            "median": 16.3373895,
+            "high": 28.877589,
+            "median": 17.851406,
             "percentile": 0.0,
-            "n_closes": 20,
-            "as_of": "2026-06-24",
-            "mean": 15.6652703,
+            "n_closes": 35,
+            "as_of": "2026-07-17",
+            "mean": 17.784694285714284,
             "series": [
+              [
+                "2017-12-29",
+                17.250649
+              ],
+              [
+                "2018-03-31",
+                16.299991
+              ],
+              [
+                "2018-06-30",
+                16.486458
+              ],
+              [
+                "2018-09-30",
+                20.485672
+              ],
+              [
+                "2018-12-31",
+                22.638922
+              ],
+              [
+                "2019-03-29",
+                22.40121
+              ],
+              [
+                "2019-06-28",
+                24.763034
+              ],
+              [
+                "2019-09-30",
+                27.173071
+              ],
+              [
+                "2019-12-31",
+                28.877589
+              ],
+              [
+                "2020-03-31",
+                23.996625
+              ],
+              [
+                "2020-06-30",
+                19.972007
+              ],
+              [
+                "2020-09-30",
+                19.436061
+              ],
+              [
+                "2020-12-31",
+                23.160666
+              ],
+              [
+                "2021-03-31",
+                20.023659
+              ],
               [
                 "2021-06-30",
                 23.227802
@@ -148,27 +204,85 @@
                 6.109363
               ],
               [
-                "2026-06-24",
-                5.957365
+                "2026-06-30",
+                6.19328
+              ],
+              [
+                "2026-07-17",
+                5.646146
               ]
             ],
             "periodicity_days_median": 91.0,
-            "window_span_years": 4.98,
+            "window_span_years": 8.55,
             "periodicity": "quarterly",
             "data_quality": null,
-            "source_file": "The Simply Good Foods Company NasdaqCM SMPL Financials_Quarterly.xls"
+            "source_file": "The Simply Good Foods Company NasdaqCM SMPL Financials_Quarterly.xls",
+            "source_sha256": "7bd83a1103",
+            "source_mtime": "2026-07-20T13:20:18+00:00"
           },
           {
             "metric": "P/LTM EPS",
             "current": 15.958736,
             "low": 17.353439,
-            "high": 190.60199,
-            "median": 28.6501185,
+            "high": 249.704464,
+            "median": 32.657679,
             "percentile": 0.0,
-            "n_closes": 18,
+            "n_closes": 31,
             "as_of": "2026-03-31",
-            "mean": 46.601984611111114,
+            "mean": 53.49374741935484,
             "series": [
+              [
+                "2018-03-31",
+                249.704464
+              ],
+              [
+                "2018-06-30",
+                24.37608
+              ],
+              [
+                "2018-09-30",
+                30.779602
+              ],
+              [
+                "2018-12-31",
+                19.6875
+              ],
+              [
+                "2019-03-29",
+                20.836305
+              ],
+              [
+                "2019-06-28",
+                40.750154
+              ],
+              [
+                "2019-09-30",
+                44.985491
+              ],
+              [
+                "2019-12-31",
+                50.964376
+              ],
+              [
+                "2020-03-31",
+                59.085916
+              ],
+              [
+                "2020-06-30",
+                66.129703
+              ],
+              [
+                "2020-09-30",
+                72.966614
+              ],
+              [
+                "2020-12-31",
+                89.6
+              ],
+              [
+                "2021-03-31",
+                49.604242
+              ],
               [
                 "2021-06-30",
                 136.497207
@@ -247,10 +361,12 @@
               ]
             ],
             "periodicity_days_median": 91.0,
-            "window_span_years": 4.75,
+            "window_span_years": 8.0,
             "periodicity": "quarterly",
             "data_quality": null,
-            "source_file": "The Simply Good Foods Company NasdaqCM SMPL Financials_Quarterly.xls"
+            "source_file": "The Simply Good Foods Company NasdaqCM SMPL Financials_Quarterly.xls",
+            "source_sha256": "7bd83a1103",
+            "source_mtime": "2026-07-20T13:20:18+00:00"
           }
         ],
         "source_ref": "CIQ Financials→Multiples (Close; last col = current, excluded from history)",
@@ -4886,7 +5002,7 @@
     "recipe_hint": "R1_midcycle_margin_evebitda",
     "applicable": true,
     "multiple_basis": "EV/EBITDA",
-    "computed_at": "2026-07-20T19:57:26.107515Z",
+    "computed_at": "2026-07-21T04:03:58.819631Z",
     "reason": null,
     "data_quality": "revenue_tag_conflict",
     "data_quality_detail": [
@@ -4903,11 +5019,11 @@
       "confidence": "weak"
     },
     "multiple": {
-      "value": 16.3373895,
+      "value": 17.851406,
       "unit": "EV/EBITDA",
       "source": "valuation.own_history.median",
-      "history_quarters": 20,
-      "confidence": "weak"
+      "history_quarters": 35,
+      "confidence": "firm"
     },
     "d_and_a": {
       "value": 21.431,
@@ -4933,8 +5049,8 @@
       "basis": "LTM revenue",
       "source": "committed financial_summary.annual (LTM)"
     },
-    "anchor_base_value_per_share": 38.4274,
-    "anchor_ev_ebit": 17.9378,
+    "anchor_base_value_per_share": 42.3096,
+    "anchor_ev_ebit": 19.6001,
     "overall_confidence": "weak",
     "note": "ATTENTION FILTER, not a verdict. Even a firm anchor requires a full bear/base/bull 2:1 underwrite before any BUY. Spot and reward-to-base are computed live at triage, not stored here."
   }

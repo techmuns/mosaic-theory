@@ -168,7 +168,9 @@
             "window_span_years": 5.54,
             "periodicity": "quarterly",
             "data_quality": null,
-            "source_file": "Concentrix Corporation NasdaqGS CNXC Financials_Quarterly.xls"
+            "source_file": "Concentrix Corporation NasdaqGS CNXC Financials_Quarterly.xls",
+            "source_sha256": "69c3061346",
+            "source_mtime": "2026-07-20T13:15:19+00:00"
           },
           {
             "metric": "P/LTM EPS",
@@ -266,7 +268,9 @@
             "window_span_years": 4.75,
             "periodicity": "quarterly",
             "data_quality": null,
-            "source_file": "Concentrix Corporation NasdaqGS CNXC Financials_Quarterly.xls"
+            "source_file": "Concentrix Corporation NasdaqGS CNXC Financials_Quarterly.xls",
+            "source_sha256": "69c3061346",
+            "source_mtime": "2026-07-20T13:15:19+00:00"
           }
         ],
         "source_ref": "CIQ Financials→Multiples (Close; last col = current, excluded from history)",
