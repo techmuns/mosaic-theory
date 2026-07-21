@@ -319,6 +319,25 @@ def test_no_committed_dossier_publishes_a_base_off_a_flagged_band() -> None:
             f"{t}: the band's flag did not ride onto the anchor")
 
 
+def test_committed_implied_margins_satisfy_the_identity() -> None:
+    """Wherever the three implied margins are committed together they must obey the definition
+    (EBITDA margin − EBIT margin = D&A margin) — a stored triple that does not is a writer bug.
+    Asserts at least one band carries them, so the guard's evidence cannot silently stop being
+    written without a test going red."""
+    seen = 0
+    for t, doc in _committed():
+        bands = (((doc.get("mechanical") or {}).get("valuation") or {})
+                 .get("own_history") or {}).get("value") or []
+        for b in bands:
+            a, c, d = (b.get("implied_ebitda_margin"), b.get("implied_ebit_margin"),
+                       b.get("implied_d_and_a_margin"))
+            if a is None or c is None or d is None:
+                continue
+            seen += 1
+            assert a - c == pytest.approx(d, abs=1e-5), f"{t}: {a} − {c} != {d}"
+    assert seen, "no committed band carries the implied margins — the guard evidence is missing"
+
+
 def test_anchor_reason_names_the_defect_when_a_band_is_flagged() -> None:
     """A flagged anchor must SAY why in its own reason/detail, so the human reading the artifact
     never has to infer the disqualification from a null."""

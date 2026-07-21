@@ -171,8 +171,11 @@
             "periodicity_days_median": 91.0,
             "window_span_years": 5.79,
             "periodicity": "quarterly",
-            "data_quality": null,
+            "data_quality": "band_incoherent",
             "source_file": "Vital Farms Inc NasdaqGM VITL Financials_Quarterly.xls",
+            "implied_ebitda_margin": 0.501082,
+            "implied_ebit_margin": 0.081937,
+            "implied_d_and_a_margin": 0.419146,
             "source_sha256": "7217811451",
             "source_mtime": "2026-07-20T13:21:29+00:00"
           },
@@ -273,6 +276,9 @@
             "periodicity": "quarterly",
             "data_quality": null,
             "source_file": "Vital Farms Inc NasdaqGM VITL Financials_Quarterly.xls",
+            "implied_ebitda_margin": null,
+            "implied_ebit_margin": null,
+            "implied_d_and_a_margin": null,
             "source_sha256": "7217811451",
             "source_mtime": "2026-07-20T13:21:29+00:00"
           }
@@ -5193,13 +5199,18 @@
     "note": null
   },
   "anchor": {
-    "recipe_hint": "R1_midcycle_margin_evebitda",
-    "applicable": true,
+    "recipe_hint": "R2_NEEDED",
+    "applicable": false,
     "multiple_basis": "EV/EBITDA",
     "computed_at": "2026-07-20T19:57:26.121380Z",
-    "reason": null,
-    "data_quality": null,
-    "data_quality_detail": [],
+    "reason": "trailing ramp (0 to 11.6% EBIT margin over four years) with a guided forward reset (FY26E adjusted EBITDA $0-10M, gross margin 28% from 39%, founder exit, cash burn) - no trailing median describes this business in either direction; it is a forward-margin question. The EBITDA band also carries a vendor data defect (implied D&A about $329M against $15M recorded, systematic across every period); the TEV/LTM EBIT row reconciles exactly, so an EBIT-basis band is available if ever wanted.",
+    "data_quality": "band_incoherent+band_unreconciled",
+    "data_quality_detail": [
+      "own_history multiple: band_incoherent - CIQ Financials->Multiples implies D&A of 328.8 ($M) against 9.254 recorded (35.5x), outside the 8x band; the EV/EBITDA denominator does not match this company's own cost structure. SOURCE LAYERS: implied 328.8 = (TEV/LTM Total Revenue 0.743744 x LTM revenue 784.41) / TEV/LTM EBITDA 1.484275, all from the Multiples sheet, 2026-07-17 column; recorded 9.254 = EDGAR companyfacts dep_amort, latest FY. The CIQ Cash Flow LTM figure for the same item is 15.212 - the two recorded layers differ by period and source, and the finding holds against either (35.5x and 21.6x).",
+      "own_history multiple: band_unreconciled - market-implied EBITDA 340.0 against 73.5 recorded (4.62x), outside the 2.5x band. TEV 504.7 (CIQ market cap 479.5 as-of 2026-06-29 + EDGAR lease-inclusive net debt 25.2) / current multiple 1.484275.",
+      "ROOT CAUSE (2026-07-21, reproducible): the TEV/LTM EBITDA row is populated against a RENT-ADJUSTED denominator, not EBITDA. Backing the denominator out of the sheet's own TEV gives 393.1 against the Income Statement's EBITDAR of 390.5 (1.007x) and its EBITDA of 79.5 (4.94x); the same ~1.0x-to-EBITDAR relation holds across the four most recent columns. VITL carries an imputed operating-lease charge of ~$311M against $79M of EBITDA, which is why the distortion is so large on this name. The TEV/LTM EBIT row is unaffected (EBIT takes no rent add-back) and reconciles to EDGAR's $64.272M exactly.",
+      "CONSEQUENCE: valuation.own_history.median 4.198793x is derived from this series, so the R1 anchor base of $4.7561 that stood until 2026-07-21 is WITHDRAWN, not merely downgraded."
+    ],
     "margin": {
       "value": 0.060239,
       "unit": "fraction",
@@ -5213,7 +5224,7 @@
       "unit": "EV/EBITDA",
       "source": "valuation.own_history.median",
       "history_quarters": 24,
-      "confidence": "firm"
+      "confidence": "weak"
     },
     "d_and_a": {
       "value": 9.254,
@@ -5239,9 +5250,9 @@
       "basis": "LTM revenue",
       "source": "committed financial_summary.annual (LTM)"
     },
-    "anchor_base_value_per_share": 4.7561,
-    "anchor_ev_ebit": 5.0211,
-    "overall_confidence": "firm",
+    "anchor_base_value_per_share": null,
+    "anchor_ev_ebit": null,
+    "overall_confidence": "weak",
     "note": "ATTENTION FILTER, not a verdict. Even a firm anchor requires a full bear/base/bull 2:1 underwrite before any BUY. Spot and reward-to-base are computed live at triage, not stored here."
   }
 }

@@ -3821,10 +3821,19 @@ re-anchor (the full STATE split stays its own queued task — nothing was reloca
    SMPL assembly missed the 2026-07-09 print by one day. Assembly must FLAG filings newer than
    its evidence window, and stamp what window it read. (The §7 print-freshness gate and the
    monitor's freshness panel cover verdicts manually until this exists.)
-2. **R2 recipe** (for NCNO / MVST / FUBO / AORT — names R1's positivity guard rejects).
+2. **R2 recipe** (for NCNO / MVST / FUBO / AORT / **VITL** — names R1 cannot anchor). VITL joined
+   2026-07-21: not a positivity rejection but a forward-margin question, and its EV/EBITDA band is
+   disqualified by the coherence guard on top. R2 must handle both entry routes.
+3. **`anchor-backfill` must preserve an OPERATOR re-tag.** The backfill recomputes from EDGAR and
+   overwrites a hand-set `recipe_hint`/`reason` — AORT's and now VITL's and CNXC's. Mirror
+   `build.py`'s `_preserve_unless_source` guard. Recorded as accepted risk until built; falsifier
+   is a re-tag silently vanishing after a backfill run.
+4. **`own-history-refresh` silently drops `ev_ebitda.note`.** Its branch only re-applies the
+   "trailing only" note when `ev_ebitda_adjusted_fwd` is absent; when present (VITL) the committed
+   note is lost. Found 2026-07-21 by dry-run diff and routed around surgically, not patched.
 
 **ANALYST / OPERATOR**
-3. **EPAM underwrite — RUN 2026-07-21, VERDICT PENDING.** `scenarios/EPAM.json` written and
+5. **EPAM underwrite — RUN 2026-07-21, VERDICT PENDING.** `scenarios/EPAM.json` written and
    computed standalone (R1, EV/EBITDA); card shipped at `pending_analyst` — the machine
    recorded the bar test, it did NOT decide. Legs (live spot $89.40, Polygon close
    2026-07-20): bear $63.14 · base $163.08 · bull $291.24 (printed, never in the ratio);
@@ -3838,17 +3847,29 @@ re-anchor (the full STATE split stays its own queued task — nothing was reloca
    own cadence, an ESTIMATE, not a date certain).** The 2:1 bar is met at any spot ≤ **$96.45**
    (from base 163.08 / bear 63.14: spot = (base + 2·bear) ÷ 3), recorded so the ceiling never
    has to be re-derived. EPAM now rides the monitor freshness panel as `verdict pending`.
-4. **BRBR / CNXC / VITL dispositions** — dossiers built, no verdict.
-5. **Truckload freeze-source re-run** — confirm the surgically-patched
+6. **BRBR — QUEUE A FULL R1 UNDERWRITE, POST-AUGUST-WINDOW.** The last of the three dispositions
+   still open; CNXC and VITL were closed 2026-07-21 (`R1_NOT_ROBUST` and `R2_NEEDED`). BRBR passes
+   both band guards, so its anchor is usable. **Basis = the 2026-07-21 disposition pull**, whose
+   one contested item is now settled: `book value/share −$4.28` IS committed and sourced
+   (`mechanical.stock_info.book_value_ps`) — the pull's "unsourced" finding was a false negative.
+   Hold until after the August print window for the same reason EPAM is held.
+7. **CIQ ESCALATION — VITL `TEV/LTM EBITDA` (LOW PRIORITY, operator).** Reproducible statement
+   drafted: *VITL (NasdaqGM:VITL), Financials→Multiples — `TEV/LTM EBITDA` is populated against a
+   rent-adjusted denominator. Backing it out of the sheet's own TEV gives ~393 against EBITDAR
+   ~390.5 (1.007x) and EBITDA 79.5 (4.94x), across every recent period; `TEV/LTM EBIT` on the same
+   sheet reconciles to EDGAR exactly.* Low priority: the guard already disqualifies the band, so
+   nothing downstream depends on CIQ answering. Worth sending because the same rent-adjustment
+   substitution would silently distort ANY lease-heavy name.
+8. **Truckload freeze-source re-run** — confirm the surgically-patched
    `frontend/themes/truckload-supply-purge.json` reproduces byte-identical from the freeze.
-6. **Sweep-#2 fail-closed coverage holes (2)** — operator decision, report-only.
-7. **Drafting-rubric v2 validation — DATED 2026-08-13** (pre-registered; do not run early).
+9. **Sweep-#2 fail-closed coverage holes (2)** — operator decision, report-only.
+10. **Drafting-rubric v2 validation — DATED 2026-08-13** (pre-registered; do not run early).
 
 **HOUSEKEEPING**
-8. **Refresh cadence → docs/RUNBOOKS.md** (it is operating practice, not state).
-9. **Full STATE split** — §5 build records → a fossils/decisions file; this block is the interim.
+11. **Refresh cadence → docs/RUNBOOKS.md** (it is operating practice, not state).
+12. **Full STATE split** — §5 build records → a fossils/decisions file; this block is the interim.
 
-12. **REFERENCE-LABEL REGISTER + de-couple the median lookup (PAIRED — do not split).**
+13. **REFERENCE-LABEL REGISTER + de-couple the median lookup (PAIRED — do not split).**
     `assumptions[].references[].label` renders to the reader but is not linted; 14 labels across
     the four records still carry house vocabulary (`own-history band low`, `committed anchor
     median`, EPAM's `DEAD REGIME`). Restating them is blocked on a real coupling: `uw-card.js:188`
@@ -3857,14 +3878,14 @@ re-anchor (the full STATE split stays its own queued task — nothing was reloca
     (`median` / `band_low` / `p75` / …), switch the lookup to it, THEN restate the labels with
     analyst ratification. Splitting them means either a broken card or a rule left violated.
 
-11. **MIRROR-SYNC CI CHECK.** A generator run dirties BOTH its source and its `frontend/` mirror;
+14. **MIRROR-SYNC CI CHECK.** A generator run dirties BOTH its source and its `frontend/` mirror;
     an artifact pass that commits only the source leaves the deployed site reading stale data
     SILENTLY — nothing is red, the page is just wrong. Found 2026-07-21: `92feab0` committed
     `data/monitor/2026-07-20.json` without its mirror, so the live freshness panel was still
     missing EPAM (fixed in `a982900`). Ship a CI step that rebuilds and fails if `git status` is
     dirty — the artifact pass is complete when the tree is clean, not when the source commit lands.
 
-10. **RATIONALE STYLE RULE (adopted 2026-07-21; binds FUTURE verdicts, never sealed ones).**
+15. **RATIONALE STYLE RULE (adopted 2026-07-21; binds FUTURE verdicts, never sealed ones).**
     `verdict.rationale` is plain thesis prose — the market-standard shape: thesis, the two or
     three numbers that carry it, the risk accepted. **Accession numbers, vendor names (CIQ /
     Polygon), verification arithmetic ("1,100 × 8% × 6.0x → $3.54 → 2.17:1"), and process
@@ -4029,6 +4050,103 @@ cannot drift between emitters. Pinned both ways
 **CLOSED by the 2026-07-21 monitor build:** position monitor (book vs benchmarks, spread,
 freshness panel) · benchmark-by-cap-band assignment + the ledger-supersession artifact · the
 SIC-87xx sector miss · entry-price/ratio-at-entry + implied-odds display.
+
+- **BAND COHERENCE + RECONCILIATION GUARDS — FIFTH BAND-DEFECT CLASS, CLOSED (branch
+  `feat/band-coherence-guards`, 2026-07-21).** VITL's CIQ Multiples export carried a `TEV/LTM
+  EBITDA` row contradicted by its own `TEV/LTM EBIT` row. Nothing in the pipeline could see it: the
+  parser read the labelled row correctly, the revenue and EBIT rows on the SAME sheet reconciled to
+  EDGAR exactly ($64.272M EBIT, to four decimals), and the band's periodicity/span metadata was
+  honest. The row was simply wrong — and a wrong denominator propagates silently into
+  `anchor_base_value_per_share`, the number a human reads as the fundamental.
+  - **ROOT CAUSE (diagnosed, reproducible — sharper than "vendor defect").** The `TEV/LTM EBITDA`
+    row is populated against a **RENT-ADJUSTED** denominator. Backing the denominator out of the
+    sheet's own TEV gives **393.1** against the Income Statement's **EBITDAR 390.5 (1.007x)** and
+    its **EBITDA 79.5 (4.94x)**; the same ~1.0x-to-EBITDAR relation holds across the four most
+    recent columns. VITL carries an imputed operating-lease charge of ~$311M against $79M of
+    EBITDA, which is why the distortion is enormous on this name specifically. The EBIT row is
+    unaffected — EBIT takes no rent add-back. **A re-pull will not fix it**: this is CIQ's
+    calculation for this ticker, not a stale cell.
+  - **TWO GUARDS, SHARING NO INPUT** (`vinci/dossier/band_guards.py`) so one vendor defect cannot
+    satisfy both. **(1) Internal coherence** (parse time): TEV cancels out of the ratio of any two
+    multiples off ONE column, so the sheet alone implies an EBITDA margin, an EBIT margin, and the
+    D&A margin between them — asserts the identity (EBITDA ≥ EBIT ⇒ D&A ≥ 0) and an economic
+    ceiling on implied D&A as a share of revenue. No market data, no EDGAR, no vintage question.
+    **(2) Market reconciliation** (anchor time): `(market cap + net debt) ÷ current multiple` vs
+    reported EBITDA. Market cap is read from the committed artifact and feeds `data_quality` ONLY —
+    **no anchor value derives from it**, so the base stays the spot-independent fundamental it is
+    documented to be (pinned: doubling market cap leaves every anchor value byte-identical).
+  - **A TRIP DISQUALIFIES, NOT MERELY DOWNGRADES.** Flag composed onto band + anchor
+    (`band_incoherent` / `band_unreconciled`, joined with any existing flag), multiple leg capped
+    weak, and **no base value published at all**. "Weak confidence" is not enough when the number
+    would still be read as the fundamental. Evidence (`implied_*_margin`) persists ON the band —
+    additive/optional so pre-guard JSON round-trips — because the anchor runs from committed JSON
+    alone and never re-opens a workbook.
+  - **THRESHOLDS ARE FACE-VALIDITY CALIBRATED, NEVER OUTCOME-TUNED.** Set against the full sweep of
+    all committed bands; each sits near the geometric midpoint of the worst HONEST reading and
+    VITL's. No bound here has ever seen a forward return.
+
+    | check | honest worst | VITL | bound | headroom |
+    |---|---|---|---|---|
+    | implied D&A / revenue | CNXC 11.14% | 41.91% | 25% | 2.2x / 1.7x |
+    | implied D&A / recorded D&A | EPAM 4.20x | 35.53x | 8x | 1.9x / 4.4x |
+    | market-implied EBITDA / recorded | CNXC 1.41x | 4.62x | 2.5x | 1.8x / 1.8x |
+
+  - **FULL SWEEP RUN — VITL IS THE ONLY NAME THAT TRIPS.** All 11 committed bands, both guards, real
+    run. 9 with a CIQ export pass internal coherence (FUBO/VRRM have no local export — check not
+    runnable, which is NOT a pass); 7 pass reconciliation (MVST/NCNO/VRRM/FUBO lack EDGAR net debt).
+    No silent fixes; nothing else to escalate. **The brief's name list named WERN (no committed
+    dossier, no CIQ export) and omitted FUBO (has both)** — swept by committed band, discrepancy
+    reported rather than reconciled away.
+  - **COVERAGE HOLES, RECORDED NOT PAPERED OVER.** (a) Guard 1 needs a `TEV/LTM EBIT` row and guard
+    2 needs EDGAR net debt — a name missing either is UNRUN, and unrun is reported as unrun, never
+    as clean. (b) The guard is skipped when implied EBIT margin is negative (the identity stops
+    holding) — territory R1's positivity guard already routes to R2, so no live coverage is lost.
+  - **DELIBERATE DEVIATION FROM THE BRIEF (flagged).** The brief specified "close from export else
+    Polygon at as-of". The CIQ Multiples sheet carries no price row, and every committed dossier
+    already has a CIQ market cap, so the Polygon fallback would be unexercisable by any real run —
+    not written, per "don't build speculatively".
+  - **INVARIANT (incident → guard, shipped Y):** `tests/test_band_guards.py` — real observed VITL
+    multiples frozen, synthetic 5x understatement, the negative-D&A identity, vintage noise at
+    SMPL's real 1.79x and EPAM's real 4.20x, honest IT/CNXC controls, absent-row gap-not-defect,
+    flag composition, and end-to-end through `compute_anchor`. **Living committed artifacts are
+    asserted only against phrasing- and value-independent invariants** (a flagged band publishes no
+    base; the margin identity holds), so a corrected re-pull turns them green rather than red.
+  - **ACCEPTED RISK (recorded, not fixed).** A hand re-tag of an anchor block is overwritten by
+    `anchor-backfill`, which recomputes from EDGAR. This already applied to AORT's re-tag and is
+    unchanged by this build — not newly introduced here. Falsifier: a re-tag silently disappearing
+    after a backfill run. Fix (queued, not built): make the backfill preserve an operator re-tag the
+    way `build.py`'s `_preserve_unless_source` guard preserves mirror sources.
+  - **FOUND IN PASSING — NOT FIXED (scope).** `own-history-refresh` would silently DROP a committed
+    `ev_ebitda.note`: its branch only re-applies the "trailing only" note when
+    `ev_ebitda_adjusted_fwd` is absent, and for VITL it is present. Caught by dry-run diff, so
+    VITL's band was written surgically (`own_history` alone, after confirming read-only that
+    `range_position` and `ev_ebitda_percentile_5y` are byte-identical on refresh). Queued, not
+    silently patched.
+  - **DATA (C2).** **VITL → the R2 cohort** (now NCNO / MVST / FUBO / AORT / VITL):
+    `recipe_hint="R2_NEEDED"`, `applicable=false`, **anchor base $4.7561 WITHDRAWN** (not
+    downgraded) — `valuation.own_history.median` 4.198793x derives from the defective series.
+    Reason recorded (trailing ramp 0→11.6% EBIT margin over four years against a guided forward
+    reset: FY26E adjusted EBITDA $0–10M, gross margin 28% from 39%, founder exit, cash burn — no
+    trailing median describes this business in either direction; it is a forward-margin question),
+    with the defect and its source layers in `data_quality_detail`. **CNXC → `R1_NOT_ROBUST`** (new
+    enum value, flagged as new — no prior precedent existed): net debt 139% of anchor equity, ±1x
+    EV/EBITDA moves value/share ~89% of spot ($21.47 at $24.24), so no R1 grid is robust to one turn
+    of multiple error. `applicable` and the base are LEFT STANDING, following the AORT re-tag
+    precedent — CNXC passes both guards, so its arithmetic is honest; what the re-tag records is
+    that an honest answer cannot DISCRIMINATE at this leverage. Withdrawing the number would
+    conflate "not robust" with "not computable", the distinction the enum exists to make. Re-engage:
+    reported net-debt/EBITDA below ~3.5x, or absolute EBITDA stable two consecutive quarters. Both
+    edits byte-preserving; `frontend/dossiers/{VITL,CNXC}.json` mirrors rebuilt in the same commit
+    so the deployed panel never shows the withdrawn $4.76.
+  - **BRBR BOOK-VALUE CHECK — THE TRIAGE WAS RIGHT; THE 2026-07-21 PULL WAS WRONG.** `book value/
+    share −$4.28` **is** committed, at `mechanical.stock_info.book_value_ps`, `status: present`,
+    `source_ref: "CIQ Financials→Balance Sheet→Book Value/Share (latest)"`, and cited in the
+    leverage narrative. The 2026-07-20 triage asserted it correctly; the 2026-07-21 disposition pull
+    reported it unsourced — a **false negative in that pull**, logged here rather than a
+    non-existent unsourced assertion by the triage. Cause: the pull searched prose for "book value"
+    instead of the structured key.
+  - Gate: ruff + `mypy --strict` clean; `pytest -m "not network"` green (exit 0) on the
+    freshly-committed artifacts, per the ARTIFACT-PASS RULE.
 
 - **T1 PRINT AMENDMENT — THE PDF IS THE COMPLETE RECORD (branch `feat/print-audit-tier`,
   2026-07-21; operator decision).** DESIGN RULE v2's tier-2 print fate FLIPPED: the on-demand /
