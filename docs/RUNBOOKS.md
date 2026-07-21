@@ -258,6 +258,14 @@ truckload-supply-purge** (PR **#124**; STATE.md §"THEME #3 truckload-supply-pur
 - **ARTIFACT-PASS rule:** after regenerating any committed artifact, **re-run the full offline suite** —
   tests read the committed artifacts, so a re-assembled file can turn a pinned test red. Verifying the
   rendered surface is necessary but **not sufficient**. *(Source: CLAUDE.md §ARTIFACT-PASS RULE.)*
+- **PRE-ASSEMBLY EOD REFRESH (mandatory before any `dossier assemble`):** refresh the name AND the
+  three cap-band benchmarks so CMP + the exhibit read the market, not the last refresh —
+  `python -m vinci.cli refresh <TICKER> IWM MDY SPY --start <~14mo back> --end <today>`.
+  The assembler fail-louds anyway: a last stored close **> 7 calendar days** before assembly stamps
+  a `PRICE STALE AT ASSEMBLY` note on the CMP row + a `stock-info:` QA flag — a stale-noted dossier
+  is a missed refresh, not a publishable artifact. *(Benchmarks are cap-band per
+  `vinci.monitor.benchmark_for_cap`; the dossier surface resolves the SAME policy at the reference
+  date's cap, so MDY bars must exist for mid-band names like IT.)*
 - **Browser-preview evidence (frontend PRs):** render from committed JSON on localhost; capture
   **screenshots** of the change and confirm **zero console errors**; render/layout PRs **STOP for
   operator approval** (PREVIEW RULE). *(Source: CLAUDE.md §PREVIEW RULE.)*

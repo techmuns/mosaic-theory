@@ -40,6 +40,7 @@ from vinci.graph.llm import AnthropicLlmClient, LlmClient, LlmError
 from vinci.schemas import data_record as sdr
 from vinci.schemas.envelope import DataField, SourceTier
 from vinci.sec import build_sec_http
+from vinci.universe import benchmark_identity
 
 # A conclusion = verdict / recommendation / direction / score / rating / probability (or a synonym).
 # No dossier field may carry one: the LLM can't conclude because there is nowhere to put it.
@@ -3713,7 +3714,7 @@ def test_stock_performance_rebases_to_100_and_aligns_benchmark(tmp_path: Path) -
     store.write_prices([_perf_bar("IDX-IWM", ref - timedelta(days=350), 200.0),
                         _perf_bar("IDX-IWM", ref - timedelta(days=100), 220.0),
                         _perf_bar("IDX-IWM", ref, 260.0)])
-    sp = dm._stock_performance(_perf_ident(), store, ref)
+    sp = dm._stock_performance(_perf_ident(), store, ref, bench=benchmark_identity("IWM"))
     assert sp is not None
     assert sp.name_symbol == "FOO" and sp.benchmark_symbol == "IWM"
     assert sp.as_of == ref and sp.window_days == 364
@@ -3733,7 +3734,8 @@ def test_stock_performance_none_under_two_window_bars(tmp_path: Path) -> None:
     store = Store(tmp_path / "sp.db")
     store.write_prices([_perf_bar("SEC-X-FOO", ref, 25.0),  # one in-window bar
                         _perf_bar("SEC-X-FOO", ref - timedelta(days=500), 90.0)])  # pre-window: out
-    assert dm._stock_performance(_perf_ident(), store, ref) is None
+    assert dm._stock_performance(
+        _perf_ident(), store, ref, bench=benchmark_identity("IWM")) is None
 
 
 def test_stock_performance_benchmark_none_when_iwm_absent(tmp_path: Path) -> None:
@@ -3746,7 +3748,7 @@ def test_stock_performance_benchmark_none_when_iwm_absent(tmp_path: Path) -> Non
     store = Store(tmp_path / "sp.db")
     store.write_prices([_perf_bar("SEC-X-FOO", ref - timedelta(days=200), 50.0),
                         _perf_bar("SEC-X-FOO", ref, 30.0)])
-    sp = dm._stock_performance(_perf_ident(), store, ref)
+    sp = dm._stock_performance(_perf_ident(), store, ref, bench=benchmark_identity("IWM"))
     assert sp is not None
     assert [p.name for p in sp.points] == [100.0, 60.0]
     assert all(p.benchmark is None for p in sp.points)
@@ -7352,3 +7354,51 @@ def test_release_drivers_dedup_identical_segments() -> None:
     # the extractor guard exists (source pin — future assemblies can't reintroduce it)
     src = pathlib.Path("vinci/dossier/mechanical.py").read_text()
     assert "parts = list(dict.fromkeys(parts))" in src
+
+
+def test_resolve_benchmark_cap_bands_and_unknown_fallback() -> None:
+    """The dossier surface resolves its benchmark via the monitor's OWN cap-band policy (CIQ $M cap
+    → USD): small→IWM, mid→MDY, large→SPY. An UNKNOWN cap falls back to IWM and SAYS SO in the
+    basis — a stated default, never a silent guess."""
+    ref = date(2026, 7, 6)
+    small, _ = dm._resolve_benchmark(ds.Sourced.present(2_000.0, source_ref="CIQ cap"), ref)
+    mid, m_basis = dm._resolve_benchmark(ds.Sourced.present(8_735.2, source_ref="CIQ cap"), ref)
+    large, _ = dm._resolve_benchmark(ds.Sourced.present(30_000.0, source_ref="CIQ cap"), ref)
+    assert (small.eod_symbol, mid.eod_symbol, large.eod_symbol) == ("IWM", "MDY", "SPY")
+    assert mid.internal_id == "IDX-MDY" and "mid" in m_basis and "MDY" in m_basis
+    unk, u_basis = dm._resolve_benchmark(ds.Sourced.unknown(note="no CIQ cap"), ref)
+    assert unk.eod_symbol == "IWM" and "UNKNOWN" in u_basis
+
+
+def test_price_stale_note_fires_only_past_the_cadence() -> None:
+    """Assembly-time staleness guard: a last stored close >7 calendar days behind TODAY (assembly
+    instant, not the reference date) → loud note naming the gap; at/inside the cadence → None."""
+    today = date(2026, 7, 21)
+    note = dm._price_stale_note(date(2026, 7, 8), today)
+    assert note is not None and "PRICE STALE AT ASSEMBLY" in note and "13 calendar days" in note
+    assert dm._price_stale_note(date(2026, 7, 14), today) is None  # exactly the cadence → fresh
+    assert dm._price_stale_note(date(2026, 7, 21), today) is None
+    assert dm._price_stale_note(None, today) is None
+
+
+def test_committed_it_dossier_capband_benchmark_and_fresh_price() -> None:
+    """(benchmark unification e2e) IT's CIQ cap ($8.7B) is mid-band, so the committed artifact's
+    analytical benchmark is MDY across the exhibit + the 180d relative — one yardstick, stated
+    basis. And the committed CMP carries NO stale-at-assembly note (the pre-assembly refresh ran;
+    the note is stamped at assembly, so this is an artifact fact, not a clock read). Deterministic
+    values only: the cap-band mapping is plain code, never LLM text."""
+    p = Path("data/dossiers/IT/dossier.json")
+    if not p.exists():
+        pytest.skip("no committed IT dossier.json")
+    mech = json.loads(p.read_text())["mechanical"]
+    io = mech["idiosyncratic_vs_shared"]
+    assert io["benchmark_symbol"] == "MDY"
+    assert "cap-band" in (io["benchmark_basis"] or "")
+    sp = mech["stock_performance"]
+    assert sp["benchmark_symbol"] == "MDY" and "MDY" in sp["source_ref"]
+    # the relative leg is recomputed on the SAME yardstick at assembly (never the G2 IWM number
+    # under a mid-band read)
+    assert "MDY" in (io["rel_vs_market"].get("source_ref") or "")
+    assert mech["stock_info"]["price"].get("note") in (None, "")
+    md = Path("data/dossiers/IT/dossier.md").read_text()
+    assert "Market (MDY) 180d return" in md

@@ -1708,7 +1708,8 @@ def _brief_snapshot(exchange: str | None, si: StockInfo | None) -> list[str]:
     if si is not None:
         if si.price.status is p and si.price.value is not None:
             asof = f" ({si.as_of.isoformat()})" if si.as_of is not None else ""
-            parts.append(f"CMP ${si.price.value:,.2f}{asof}")
+            stale = f" ⚠ {si.price.note}" if si.price.note else ""  # assembly staleness, loud
+            parts.append(f"CMP ${si.price.value:,.2f}{asof}{stale}")
         if si.market_cap.status is p and si.market_cap.value is not None:
             parts.append(f"cap {_fmt_cap(si.market_cap.value)}")
         if (si.low_52w.status is p and si.low_52w.value is not None
@@ -2070,7 +2071,8 @@ def render_markdown(d: Dossier, *, dev: bool = False, show_proposal: bool = Fals
     # absent too — the honest-absence case.
     if (io.market_180d_return.status is SourceStatus.PRESENT
             or io.rel_vs_market.status is not SourceStatus.PRESENT):
-        out.append(_fact("Market (IWM) 180d return", io.market_180d_return, _pct))
+        out.append(
+            _fact(f"Market ({io.benchmark_symbol}) 180d return", io.market_180d_return, _pct))
     out.append(_fact("Relative vs market", io.rel_vs_market, _pct))
     cohort = io.cohort
     if cohort.status is SourceStatus.PRESENT and cohort.value:
