@@ -3825,7 +3825,17 @@ re-anchor (the full STATE split stays its own queued task — nothing was reloca
 3. **R2 recipe** (for NCNO / MVST / FUBO / AORT — names R1's positivity guard rejects).
 
 **ANALYST / OPERATOR**
-4. **EPAM underwrite** — in flight.
+4. **EPAM underwrite — RUN 2026-07-21, VERDICT PENDING.** `scenarios/EPAM.json` written and
+   computed standalone (R1, EV/EBITDA); card shipped at `pending_analyst` — the machine
+   recorded the bar test, it did NOT decide. Legs (live spot $89.40, Polygon close
+   2026-07-20): bear $63.14 · base $163.08 · bull $291.24 (printed, never in the ratio);
+   reward 73.68 / risk 26.26 = **2.81:1 PASS** at the 2.0 bar; market-implied bear weight
+   **74%**. Margin legs are set on the REGIME-SPLIT post-2022 EDGAR window (median 11.10%,
+   base takes a ~60bps trajectory haircut to 10.5%), NOT the 10-FY blend (11.90% — straddles
+   the 2022 break) and NOT pre-war (13.27% — dead regime); the multiple sits below the
+   post-2022 median (15.16x), not the bubble-era full-blend 22.41x. The three `method`
+   sentences are **DRAFT — ratify at review**. **Analyst decision outstanding** — the verdict
+   lands as its own data-only pass.
 5. **BRBR / CNXC / VITL dispositions** — dossiers built, no verdict.
 6. **Truckload freeze-source re-run** — confirm the surgically-patched
    `frontend/themes/truckload-supply-purge.json` reproduces byte-identical from the freeze.
