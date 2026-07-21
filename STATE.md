@@ -3886,11 +3886,25 @@ re-anchor (the full STATE split stays its own queued task — nothing was reloca
     never "DEAD REGIME"). Build/PR numbers are repo provenance and never appear in prose.
 
     **WHICH rationale the rule binds: the reader-facing one.** `rationale_plain` carries the
-    restatement; the original `rationale` is UNCHANGED and stays sealed — it renders behind an
-    "as recorded <date>" expander (and prints, per the T1 amendment). Once a restatement exists the
-    original is a historical artifact and is exempt from the linter; with no restatement, the
-    original IS reader-facing and is bound. Anything else would mean no restated record could ever
-    read clean, and a linter that cries wolf gets switched off.
+    restatement. Once a restatement exists the original is a historical artifact and is exempt from
+    the linter; with no restatement, the original IS reader-facing and is bound. Anything else would
+    mean no restated record could ever read clean, and a linter that cries wolf gets switched off.
+
+    **AMENDED 2026-07-21 (same day): the scenario-record originals were DROPPED.** The record now
+    carries the plain restatement only; `verdict.rationale` is null on all four. §7 always made the
+    record copy the analyst's to change — this is that call, exercised. Where the sealed copy lives
+    now:
+    * **IT / SMPL** — losslessly, in the append-only ledger: `payload.thesis` was verified
+      BYTE-IDENTICAL to the dropped text before removal. This is the ledger doing its job.
+    * **WERN** — nowhere. A WATCH opens no position, so it has no ledger row, and its record was the
+      only committed copy. Dropped as a **conscious, recorded loss** (analyst decision): the two
+      statistics the prose carried — EV/EBIT 16.1x at base, ~3.7% normalized FCF yield — survive
+      structurally in the card's cross-check rows, so only the wording is gone.
+    * **EPAM** — never had one (verdict pending).
+    The render still supports original + restatement together (pinned on synthetic fixtures) — the
+    path is live for any FUTURE record that keeps both. **Standing consequence:** a verdict that
+    opens no position has no append-only backstop, so dropping its original is irreversible. Check
+    for a ledger row BEFORE dropping — the check is one line and the loss is permanent.
 
     **Draft status is STRUCTURED, never prose.** `ratified_by`/`ratified` already carry it, so the
     "DRAFT — ratify at review" marker is gone from method text; the card badges "draft — unratified"
