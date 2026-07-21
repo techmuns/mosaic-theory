@@ -595,7 +595,9 @@ def _cmd_own_history_refresh(args: argparse.Namespace) -> int:
         dq = (oh_new or {}).get("data_quality")
         changed = any(json.dumps(val_old.get(k), sort_keys=True) != json.dumps(v, sort_keys=True)
                       for k, v in updates.items())
-        status = ("PERIODICITY_MISMATCH ✗" if dq else
+        # print the flag VERBATIM — a band now carries more than one kind (periodicity_mismatch,
+        # band_incoherent, or both joined by "+"), and a hardcoded label would misname the defect
+        status = (f"{str(dq).upper()} ✗" if dq else
                   ("refreshed *" if changed and not args.dry_run else
                    ("would refresh (dry-run)" if changed else "unchanged (0/0)")))
         print(f"{t:7}{fmt(oh_old):>20}{fmt(oh_new):>20}{per:>11}  {status}"

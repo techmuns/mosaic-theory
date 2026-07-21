@@ -18,6 +18,7 @@ from typing import Any
 
 from pydantic import BaseModel
 
+from vinci.dossier import band_guards as bg
 from vinci.dossier import midcycle as mc
 from vinci.edgar.client import _max_outstanding_debt
 from vinci.edgar.concepts import (
@@ -40,6 +41,12 @@ RECIPE_R1 = "R1_midcycle_margin_evebitda"
 RECIPE_R2 = "R2_NEEDED"
 RECIPE_UNKNOWN = "unknown"
 RECIPE_UNRESOLVED = "ANCHOR_UNRESOLVED"
+# An OPERATOR re-tag, never machine-derived (2026-07-21, CNXC): R1 computes cleanly but its output
+# is not ROBUST — one turn of multiple error moves value/share by most of spot, so the grid cannot
+# discriminate whatever the arithmetic says. Distinct from R2_NEEDED (the recipe does not fit) and
+# from ANCHOR_UNRESOLVED (an input is missing): here the recipe fits and the inputs are sound, and
+# the ANSWER is still not usable. Recorded by hand with its re-engagement trigger.
+RECIPE_R1_NOT_ROBUST = "R1_NOT_ROBUST"
 
 # The margin DENOMINATOR is chosen by what the tag MEANS (total company revenue), never by which
 # series is longest. Longest-wins picked AORT's `Revenues`, which reports a partial/segment measure
@@ -127,7 +134,9 @@ def _own_history_multiple(mechanical: dict[str, Any]) -> dict[str, Any] | None:
     multiple leg on the WINDOW it actually spans, not the raw point count. None when absent/UNKNOWN.
 
     ``window_span_years``/``periodicity`` are optional (pre-metadata committed JSON lacks them): a
-    band without them is treated as span-UNKNOWN → the leg cannot be firm (the safe read)."""
+    band without them is treated as span-UNKNOWN → the leg cannot be firm (the safe read). Likewise
+    ``implied_d_and_a_margin`` (the band-coherence read) — absent on pre-guard JSON, which simply
+    leaves the recorded-D&A cross-check unrun rather than failing."""
     oh = ((mechanical.get("valuation") or {}).get("own_history") or {}).get("value")
     if not isinstance(oh, list):
         return None
@@ -135,12 +144,16 @@ def _own_history_multiple(mechanical: dict[str, Any]) -> dict[str, Any] | None:
     if not ev or ev.get("median") is None:
         return None
     span = ev.get("window_span_years")
+    da_margin = ev.get("implied_d_and_a_margin")
+    cur = ev.get("current")
     return {
         "median": float(ev["median"]),
+        "current": float(cur) if cur is not None else None,
         "n_closes": int(ev.get("n_closes") or 0),
         "span_years": float(span) if span is not None else None,
         "periodicity": ev.get("periodicity"),
         "data_quality": ev.get("data_quality"),
+        "implied_d_and_a_margin": float(da_margin) if da_margin is not None else None,
     }
 
 
@@ -164,6 +177,28 @@ def _ltm_revenue_from_fs(mechanical: dict[str, Any]) -> float | None:
         return None
     idx = _last_actual_index(ann, len(vals))
     return float(vals[idx]) if 0 <= idx < len(vals) and vals[idx] is not None else None
+
+
+def _ltm_ebit_from_fs(mechanical: dict[str, Any]) -> float | None:
+    """LTM EBIT ($M) — the last ACTUAL EBIT column, the same column ``_ltm_revenue_from_fs`` reads.
+    Paired with EDGAR D&A it gives the RECORDED EBITDA the market-reconciliation guard tests the
+    multiple against (the sheet never states EBITDA outright; it is EBIT + D&A by definition)."""
+    ann = _fs_annual(mechanical)
+    row = next((r for r in ann.get("rows") or [] if r.get("label") == "EBIT ($M)"), None)
+    vals = (row or {}).get("values") or []
+    if not vals:
+        return None
+    idx = _last_actual_index(ann, len(vals))
+    return float(vals[idx]) if 0 <= idx < len(vals) and vals[idx] is not None else None
+
+
+def _market_cap_from_mechanical(mechanical: dict[str, Any]) -> float | None:
+    """Committed CIQ market cap ($M) — the market leg of the reconciliation guard, read from the
+    artifact so the check runs at BACKFILL time too (no network, no live spot). It feeds only
+    ``data_quality``; no anchor VALUE derives from it, so the anchor stays spot-independent."""
+    mc_blk = (mechanical.get("implied_valuation") or {}).get("market_cap") or {}
+    v = mc_blk.get("value")
+    return float(v) if isinstance(v, int | float) else None
 
 
 def _margin_from_fs(mechanical: dict[str, Any]) -> tuple[float, int] | None:
@@ -354,13 +389,36 @@ def compute_anchor(mechanical: dict[str, Any], *, facts: dict[str, Any],
     ltm_rev = _ltm_revenue_from_fs(mechanical)
     nd_val = nd[0] if nd else None
 
+    # --- BAND GUARDS: does this multiple describe THIS company? (VITL, 2026-07-21) --------------
+    # Two cross-checks sharing no input. The sheet-internal half already ran at parse time and rides
+    # in on the band's data_quality; here the anchor supplies what only it holds — the RECORDED D&A
+    # and EBITDA to test the sheet's implied figures against. A trip disqualifies the multiple: the
+    # anchor publishes no base value off a denominator that provably is not this company's EBITDA.
+    band_detail: list[str] = []
+    da_flag, da_detail = bg.recorded_d_and_a_check(
+        implied_d_and_a_margin=mult["implied_d_and_a_margin"], revenue=ltm_rev,
+        recorded_d_and_a=(da[0] / _USD_M if da else None))
+    band_detail += da_detail
+    ltm_ebit = _ltm_ebit_from_fs(mechanical)
+    recon = bg.market_reconciliation(
+        market_cap=_market_cap_from_mechanical(mechanical), net_debt=nd_val,
+        current_multiple=mult["current"],
+        recorded_ebitda=((ltm_ebit + da[0] / _USD_M) if (ltm_ebit is not None and da) else None))
+    band_detail += recon.detail if recon else []
+    band_flag = bg.compose_flag(bg.compose_flag(mult_dq, da_flag), recon.flag if recon else None)
+    # a PARSE-time incoherence (mult_dq) already disqualifies the band; so does either check here
+    band_tripped = bool(da_flag) or bool(recon and recon.flag) or bg.BAND_INCOHERENT in (mult_dq
+                                                                                         or "")
+
     # CONFIDENCE has a VALIDITY component, not just a count: any data-quality flag (or a fallback)
     # caps the margin leg — and therefore the overall — at "weak", however many years underlie it.
     m_conf = "firm" if (margin_years >= ANCHOR_FIRM_MIN_YEARS and not forced_weak) else "weak"
     # Multiple leg is firm on the WINDOW it spans + quarterly cadence — NOT the raw close count. A
-    # band lacking span metadata (pre-refresh JSON) or flagged periodicity_mismatch cannot be firm.
+    # band lacking span metadata (pre-refresh JSON), flagged periodicity_mismatch, or failing either
+    # band guard cannot be firm.
     x_conf = ("firm" if (mult_span is not None and mult_span >= ANCHOR_FIRM_MIN_MULT_YEARS
-                         and mult_period == "quarterly" and not mult_dq) else "weak")
+                         and mult_period == "quarterly" and not mult_dq and not band_tripped)
+              else "weak")
     overall = "firm" if (m_conf == "firm" and x_conf == "firm") else "weak"
     if data_quality and margin_source:
         margin_source += f" — CAPPED weak: {data_quality}"
@@ -381,9 +439,13 @@ def compute_anchor(mechanical: dict[str, Any], *, facts: dict[str, Any],
     ltm_blk = AnchorInput(value=(round(ltm_rev, 3) if ltm_rev is not None else None), unit="$M",
                           basis="LTM revenue", source="committed financial_summary.annual (LTM)")
 
-    # anchor base — the #150 block's EBITDA-basis value math; needs a complete bridge.
+    # anchor base — the #150 block's EBITDA-basis value math; needs a complete bridge AND a multiple
+    # that survived the band guards. A tripped guard means the multiple's denominator is provably
+    # not this company's EBITDA, so re-rating to it would publish a fabricated fundamental — the one
+    # outcome the fail-loud rule exists to prevent. UNUSABLE until cleared, not merely "weak".
     base = ev_ebit = None
-    if da and nd_val is not None and dil and dil.value > 0 and ltm_rev is not None:
+    if (da and nd_val is not None and dil and dil.value > 0 and ltm_rev is not None
+            and not band_tripped):
         sv = mc.scenario_value(
             mc.Scenario(name="base", revenue=ltm_rev, margin=margin_val, multiple=mult_median,
                         source="anchor default", d_and_a=da[0] / _USD_M),
@@ -391,16 +453,21 @@ def compute_anchor(mechanical: dict[str, Any], *, facts: dict[str, Any],
         base = round(sv.equity * _USD_M / dil.value, 4)
         ev_ebit = round(sv.ev_ebit, 4) if sv.ev_ebit is not None else None
 
-    # a periodicity mismatch on the multiple band is its own fail-loud data-quality event; raise it
+    # a periodicity mismatch or a band-guard trip is its own fail-loud data-quality event; raise it
     # on the anchor (joining any revenue-tag conflict) so the flag rides with the number it taints.
-    dq = data_quality
+    dq = bg.compose_flag(data_quality, band_flag)
     detail = list(conflicts)
     if mult_dq:
-        dq = f"{dq}+{mult_dq}" if dq else mult_dq
         detail.append(f"own_history multiple: {mult_dq} (periodicity {mult_period})")
+    detail += band_detail
+    reason = None
+    if band_tripped:
+        reason = ("own-history EV/EBITDA band failed a coherence guard — the multiple's "
+                  "denominator is not this company's EBITDA; multiple UNUSABLE until re-sourced")
+    elif base is None:
+        reason = "R1 inputs incomplete — see per-input source stamps"
     return Anchor(
-        recipe_hint=RECIPE_R1, applicable=base is not None, computed_at=computed_at,
-        reason=(None if base is not None else "R1 inputs incomplete — see per-input source stamps"),
+        recipe_hint=RECIPE_R1, applicable=base is not None, computed_at=computed_at, reason=reason,
         margin=margin_blk, multiple=multiple_blk, d_and_a=da_blk, net_debt=nd_blk,
         diluted_shares=dil_blk, ltm_revenue=ltm_blk,
         anchor_base_value_per_share=base, anchor_ev_ebit=ev_ebit, overall_confidence=overall,
