@@ -746,8 +746,6 @@ table.data tr td.uw-vs { font-size: 12.5px; }
 .ds-sub { margin: 0 0 12px !important; }
 
 /* (Brief) first-cut tier — leads the dossier; assembles, never concludes. */
-.ds-brief { border-left: 3px solid var(--accent); }
-.brief-read { font-size: 14.5px; line-height: 1.55; color: var(--ink); margin: 2px 0 6px; }
 .brief-lean { font-weight: 700; }
 /* the decisive question as an editorial pull-quote — the one framing the human must resolve */
 .brief-dq { font-size: 15px; color: var(--ink); margin: 6px 0 2px; line-height: 1.55; padding-left: 15px; border-left: 3px solid var(--accent); letter-spacing: -0.01em; }
@@ -765,19 +763,15 @@ table.data tr td.uw-vs { font-size: 12.5px; }
 .brief-narrative { flex: 2 1 0; min-width: 0; }
 .brief-oneliner { font-size: 12.5px; color: var(--ink-2); margin-top: 0; line-height: 1.5; }
 .brief-snap { flex: 1 1 0; min-width: 216px; max-width: 304px; }
-.brief-snap-idn { font-size: 13px; font-weight: 650; color: var(--ink); margin-bottom: 6px; padding-bottom: 6px; border-bottom: 1px solid var(--line-2); line-height: 1.35; }
 .brief-snap-t { width: 100%; border-collapse: collapse; font-size: 12px; }
 .brief-snap-t td { padding: 3.5px 0; border-bottom: 1px solid var(--line); vertical-align: baseline; }
 .brief-snap-t tr:last-child td { border-bottom: none; }
 .brief-snap-t td:first-child { color: var(--ink-3); white-space: nowrap; padding-right: 10px; }
 .brief-snap-t td:last-child { text-align: right; color: var(--ink); font-variant-numeric: tabular-nums; }
 @media (max-width: 640px) { .brief-body { flex-direction: column; } .brief-snap { max-width: none; width: 100%; } }
-.brief-verdict { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin: 10px 0 4px; padding: 8px 11px; border: 1px dashed var(--line-2); border-radius: 8px; }
 /* the machine's DERIVED proposal (2026-07-13 pivot) — solid border vs the human slot's dashed:
    the machine's row is filled, the human's is the one awaiting a hand. */
-.brief-proposal { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin: 10px 0 0; padding: 8px 11px; border: 1px solid var(--line-2); border-radius: 8px; }
 .brief-vlab { font-size: 10.5px; text-transform: uppercase; letter-spacing: 0.05em; color: var(--ink-3); font-weight: 600; }
-.brief-slot { font-size: 13px; color: var(--ink-2); font-style: italic; }
 /* (Brief, editorial pass) standalone section eyebrows over the machine read + key-figures table,
    institutional tabular figures, and a hairline divider between the bull / bear case columns. */
 .brief-eyebrow { display: block; margin: 13px 0 3px; }
@@ -1194,7 +1188,6 @@ table.data tr td.uw-vs { font-size: 12.5px; }
 .ds-title .ds-route { float: right; font-size: 10.5px; font-weight: 500; text-transform: none;
   letter-spacing: 0; color: var(--accent-2); }
 /* the machine-assessment suffix + conditional caveat strip inside the decision card */
-.uw-assess-note { font-size: 11.5px; }
 .uw-warn { border: 1px solid var(--danger); border-left-width: 3px; border-radius: 6px;
   padding: 8px 12px; margin: 10px 0 2px; font-size: 12.5px; color: var(--ink-2); }
 /* Record & reproduce: the re-run command block */

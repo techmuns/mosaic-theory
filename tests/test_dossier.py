@@ -7090,3 +7090,78 @@ console.log(JSON.stringify({{
     assert not r["anchorAbsent"], "a dossier without an anchor must render no anchor panel"
     assert not r["cardWithout"], "the underwrite card must not appear without a scenario record"
     assert r["cardWith"], "a passed scenario record must render the underwrite card"
+
+
+def test_verify_first_skips_resolved_caveats_and_keeps_genuine_ones() -> None:
+    """(regression — VRRM, 2026-07-21) A RESOLVED caveat is the record of a check that PASSED; it
+    must never fire the Brief's conditional warning strip. VRRM's "RESOLVED (P/E basis)" did —
+    'basis' matched the decision keywords — so both renderers now skip the RESOLVED prefix.
+    Frozen-fixture unit pins (md) + a source pin (web guard present)."""
+    resolved = "RESOLVED (P/E basis) — trailing GAAP P/E 5.1x is one-time-distorted"
+    genuine = "Net debt/EBITDA (3.8x) is on REPORTED EBITDA, not the covenant basis; verify"
+    noise = "primary-source: 1 EX-99.1 release(s) + 1 10-Q parsed (+0.1s fetch)"
+    assert dr._brief_verify_first([resolved]) == [], "a RESOLVED caveat fired the warning"
+    kept = dr._brief_verify_first([resolved, genuine, noise])
+    assert len(kept) == 1 and kept[0].startswith("Net debt/EBITDA"), (
+        "the genuine leverage caveat must still fire (lead clause only)")
+    # the web guard mirrors it (node-free source pin; the shared regex class is per-renderer)
+    js = Path("frontend/views/shared/dossier.js").read_text()
+    import re as _re
+    fn = _re.search(r"function briefVerifyFirst\(.*?\n\}", js, _re.S)
+    assert fn and _re.search(r"/\^RESOLVED\\b/i\.test\(c\)", fn.group(0)), (
+        "web briefVerifyFirst must skip RESOLVED caveats")
+
+
+def test_opener_narrative_slot_rationale_once_and_conditional_warning_node() -> None:
+    """(tier redesign e2e) TWO structural invariants of the new Brief, phrasing-independent:
+
+    1. NARRATIVE ONCE — with an underwrite record carrying a recorded rationale (IT), the Brief
+       renders EXACTLY ONE 'Rationale' fact label and NO 'Assessment' label (the analyst's words
+       replace the machine read, and the detail card suppresses its copy). A pending name (EPAM)
+       renders exactly one 'Assessment' and no 'Rationale'.
+    2. CONDITIONAL WARNING — on a FROZEN synthetic dossier, a decision-keyword caveat fires the
+       strip once; a RESOLVED caveat and a process caveat fire nothing (living-artifact caveats
+       re-word on every assembly, so the strip's fixture is synthetic by the TEST-LAYER rule)."""
+    import json
+    import shutil
+    import subprocess
+
+    if not shutil.which("node"):
+        pytest.skip("node not available")
+    dj = Path("frontend/views/shared/dossier.js").resolve().as_uri()
+    driver = f"""
+const handler = {{ get: () => stub, apply: () => stub, construct: () => ({{}}) }};
+const stub = new Proxy(function(){{}}, handler);
+for (const g of ["window","document","location"]) {{ try {{ globalThis[g] = stub; }} catch {{}} }}
+import {{ readFileSync }} from "node:fs";
+const {{ renderDossier }} = await import("{dj}");
+const rd = (p) => JSON.parse(readFileSync(p));
+const count = (h, n) => h.split(n).length - 1;
+const it = renderDossier(rd("data/dossiers/IT/dossier.json"), null,
+  rd("frontend/scenarios/IT.json"));
+const epam = renderDossier(rd("data/dossiers/EPAM/dossier.json"), null,
+  rd("frontend/scenarios/EPAM.json"));
+const bare = {{ ticker: "X", name: "X Co", cik: "0", reference_date: "2026-06-01",
+  assembled_at: "2026-06-01T12:00:00", mechanical: {{}}, synthesis: null }};
+const warn = renderDossier({{ ...bare, caveats: ["leverage covenant basis — check it"] }}, null);
+const clean = renderDossier({{ ...bare, caveats: [
+  "RESOLVED (P/E basis) — one-time distortion, verified",
+  "primary-source: 0 EX-99.1 release(s) + 1 10-Q parsed (+0.1s fetch)"] }}, null);
+console.log(JSON.stringify({{
+  itRationale: count(it, ">Rationale</div>"),
+  itAssessment: count(it, ">Assessment</div>"),
+  epamAssessment: count(epam, ">Assessment</div>"),
+  epamRationale: count(epam, ">Rationale</div>"),
+  warnFires: count(warn, "uw-warn"),
+  cleanFires: count(clean, "uw-warn"),
+}}));
+"""
+    out = subprocess.run(["node", "--input-type=module", "-e", driver],
+                         capture_output=True, text=True, check=True)
+    r = json.loads(out.stdout)
+    assert r["itRationale"] == 1 and r["itAssessment"] == 0, (
+        "a logged name must carry the analyst's rationale EXACTLY once, replacing the assessment")
+    assert r["epamAssessment"] == 1 and r["epamRationale"] == 0, (
+        "a pending name must carry the machine assessment exactly once, and no rationale")
+    assert r["warnFires"] == 1, "a decision-keyword caveat must fire the warning strip once"
+    assert r["cleanFires"] == 0, "RESOLVED + process caveats must fire nothing"
