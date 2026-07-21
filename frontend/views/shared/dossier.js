@@ -84,9 +84,8 @@ export async function render(root, params, { item, frame }) {
           <h1 class="page-h"><span class="mono">${escapeHtml(ticker)}</span> · first analysis</h1>
           <div class="subtitle muted">underwrite record · no dossier assembled${card.underwriteDate ? ` · underwritten ${escapeHtml(card.underwriteDate)}` : ""}${card.recipeId ? ` · recipe ${escapeHtml(card.recipeId.split("_")[0])}` : ""}${card.multipleBasis ? ` · basis ${escapeHtml(card.multipleBasis)}` : ""}</div>
         </div>
-        <div class="subtitle muted" style="margin:-6px 0 12px;">This is the analyst's scenario underwrite — not assembled
-          facts, and its verdict is not a ledger verdict of record. The full dossier is built on a
-          re-underwrite trigger.</div>
+        <div class="subtitle muted" style="margin:-6px 0 12px;">This is the analyst's scenario underwrite —
+          not assembled facts. The full dossier is built on a re-underwrite trigger.</div>
         ${uwCard(card, { ticker: false, mark })}
         ${loggedVerdict(verdict, ticker, card.underwriteDate)}
         ${assembleHelp()}` });
@@ -549,10 +548,16 @@ function briefVerdictChip(verdict) {
 // snapshot → valuation → verify. Machine-assembled + source-bound throughout; the teaser LEADS with
 // the machine's DERIVED proposal (2026-07-13 pivot) and the human's confirm/override in the
 // Recommendation slot is the verdict of record. Mirrors _brief_lines() in render.py.
+// ORDER (2026-07-21): the underwrite tear sheet LEADS. The page's job is to support a decision,
+// and the underwrite is the only section carrying one — it was previously 9th of 10, behind eight
+// sections of assembled facts, purely because #161 appended it rather than placing it.
+// Anti-anchoring is unaffected: that rule protects the MACHINE's sealed proposal from anchoring
+// the human, and the teaser (which carries it) is untouched in both content and position relative
+// to the facts. An analyst's own recorded underwrite cannot anchor its author.
 function briefTier(d, verdict, m, card, mark) {
-  const parts = teaserCard(d, verdict, m) + setupCard(d.synthesis) + companyCard(m)
-    + briefCase(d.synthesis) + financialSnapshot(m) + valuationCard(m) + catalystCard(m)
-    + anchorPanel(d.anchor) + scenarioPanel(card, mark) + verifyCard(d);
+  const parts = scenarioPanel(card, mark) + teaserCard(d, verdict, m) + setupCard(d.synthesis)
+    + companyCard(m) + briefCase(d.synthesis) + financialSnapshot(m) + valuationCard(m)
+    + catalystCard(m) + anchorPanel(d.anchor) + verifyCard(d);
   return parts.trim() ? parts : "";
 }
 
@@ -589,11 +594,17 @@ function anchorPanel(a) {
 
 // (log-b) the analyst's committed underwrite record, rendered with the SAME card component the
 // watchlist uses (uw-card.js) — one card, one contract. Absent record → nothing renders.
+//
+// The card is SELF-DESCRIBING since the tear-sheet build: its masthead carries the "Scenario
+// underwrite" title and the verdict pills, and its foot states where the verdict of record lives
+// — the ledger entry_id when one exists, the "not a ledger verdict" disclaimer only when it does
+// not. This wrapper therefore adds NO title and NO subtitle: the pair it used to print restated
+// the masthead and, once a name was logged, flatly contradicted the foot (IT rendered "NOT a
+// ledger verdict of record" directly above "ledger V-IT-screen2-20260706"). One statement, one
+// place, and it is the one that knows the ledger.
 function scenarioPanel(card, mark = null) {
   if (!card) return "";
-  return `<div class="card ds-section"><div class="ds-title">Scenario underwrite <span class="muted" style="font-weight:400; text-transform:none; letter-spacing:0;">— the analyst's bear/base/bull</span></div>
-    <div class="subtitle muted" style="margin:-4px 0 8px;">The analyst's scenario record. Its scenario verdict is NOT a ledger verdict of record.</div>
-    ${uwCard(card, { ticker: false, mark })}</div>`;
+  return `<div class="ds-section uw-panel">${uwCard(card, { ticker: false, mark })}</div>`;
 }
 
 // first sentence of a CIQ business description ("{Co}, Inc. engages in …") — abbreviation-aware so

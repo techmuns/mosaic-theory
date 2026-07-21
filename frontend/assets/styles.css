@@ -570,6 +570,13 @@ table.data.vs-table { width: 100%; }
 /* underwrite card — canonical components only; glue is layout, never a private type scale */
 .uw-card { margin: 10px 0 4px; }
 .uw-card table.data { width: 100%; }
+/* DENSITY: the card is a tear sheet, not a prose page — its rows carry one value each and do not
+   need the reading rhythm the dossier's narrative sections use. The .fact label column is 210px
+   page-wide; inside the card that is dead space in front of two short labels. */
+.uw-card .fact { grid-template-columns: 150px 1fr; gap: 12px; padding: 7px 0; }
+.uw-card table.data th, .uw-card table.data td { padding: 4px 9px; }
+.uw-card .kv-list { margin-top: 6px; }
+.uw-card .kv-list > li { margin-bottom: 4px; line-height: 1.45; }
 .uw-h-sub { text-transform: none; letter-spacing: 0; font-weight: 400; color: var(--ink-3); margin-left: 6px; }
 .uw-note { font-size: 11px; margin-top: 5px; }
 /* monitor marks — direction is data, not decoration (both readable in light + dark) */
@@ -579,7 +586,6 @@ table.data.vs-table { width: 100%; }
 .uw-recipe { font-size: 11px; margin: 2px 0 6px; }
 .uw-methods { margin-top: 8px; }
 .uw-method { margin-top: 6px; }
-.uw-method > summary { cursor: pointer; font-size: 11.5px; color: var(--ink-3); }
 .uw-method-h { font-size: 11px; color: var(--ink-3); margin: 6px 0 2px; }
 .uw-refs-t td.uw-ref-cite { white-space: nowrap; }
 .uw-inputs { margin-top: 8px; }
@@ -588,8 +594,136 @@ table.data.vs-table { width: 100%; }
 .uw-card .ds-sources { background: none; border: 0; border-top: 1px solid var(--line); border-radius: 0;
   box-shadow: none; padding: 6px 0 0; margin: 8px 0 0; }
 .uw-card .ds-sources .ds-title { font-size: 10px; }
-.uw-inputs > summary { cursor: pointer; font-size: 11.5px; color: var(--ink-3); }
 .uw-foot { margin-top: 9px; }
+
+/* --- underwrite MASTHEAD (the decision surface) ---------------------------
+   The tear-sheet header every research note opens with: the rating + the number the card exists
+   to produce, then the asymmetry, the entry, the downside and the method — all read before
+   anything below. Existing tokens only; no private palette. */
+.uw-mast { margin-bottom: 10px; }
+.uw-mast-head { display: flex; align-items: baseline; justify-content: space-between;
+  gap: 12px; flex-wrap: wrap; padding-bottom: 7px; border-bottom: 1px solid var(--line-2); }
+.uw-mast-t { font-size: 12px; font-weight: 650; text-transform: uppercase; letter-spacing: 0.06em;
+  color: var(--ink-2); }
+.uw-mast-t .muted { text-transform: none; letter-spacing: 0; font-weight: 400; }
+.uw-mast-pills { display: flex; gap: 7px; flex-wrap: wrap; align-items: baseline; }
+.uw-vlab { font-size: 10.4px; text-transform: uppercase; letter-spacing: 0.06em;
+  color: var(--ink-3); font-weight: 600; }
+.uw-statband { display: grid; grid-template-columns: repeat(5, 1fr);
+  border-bottom: 1px solid var(--line); }
+.uw-stat { padding: 9px 13px; border-left: 1px solid var(--line); min-width: 0; }
+.uw-stat:first-child { border-left: 0; }
+.uw-stat-lead { background: var(--accent-bg); border-radius: 6px 0 0 6px; }
+.uw-stat-lead.base { background: var(--conditional-bg); }
+.uw-stat-lead.priced { background: var(--danger-bg); }
+.uw-stat-lab { font-size: 10.4px; text-transform: uppercase; letter-spacing: 0.06em;
+  color: var(--ink-3); font-weight: 600; }
+.uw-stat-val { font-family: var(--mono); font-variant-numeric: tabular-nums;
+  font-size: 16.5px; font-weight: 650; letter-spacing: -0.01em; color: var(--ink);
+  margin: 3px 0 1px; line-height: 1.2; white-space: nowrap; }
+.uw-stat-val.lead { font-size: 22px; letter-spacing: -0.02em; }
+.uw-stat-val.txt { font-family: var(--sans); font-size: 12.4px; font-weight: 600;
+  line-height: 1.3; white-space: normal; }
+.uw-stat-val.neg { color: var(--danger-text); }
+.uw-stat-sub { font-size: 11.2px; color: var(--ink-2); line-height: 1.4; }
+.uw-eyebrow { color: var(--accent-text); }
+.uw-stat-lead.base .uw-eyebrow { color: var(--conditional); }
+.uw-stat-lead.priced .uw-eyebrow { color: var(--danger-text); }
+.uw-pct { font-size: 0.62em; font-weight: 650; margin-left: 4px; }
+.uw-pct.pos { color: var(--pos-text); }
+.uw-pct.neg { color: var(--danger-text); }
+.pill.uw-mini { font-size: 10px; padding: 2px 7px; vertical-align: 2px; }
+.uw-mast-foot { font-size: 11.2px; color: var(--ink-3); padding-top: 6px; line-height: 1.45; }
+
+/* --- risk / reward ladder -------------------------------------------------
+   Zone WIDTHS are the ratio: the asymmetry is legible before a number is read. */
+/* --- scenario SPLIT: table beside the range rail -----------------------------
+   The full-width table carried ~350px of dead column while the ladder occupied its own
+   full-width band. Side by side, the table's columns size to their ink and the rail reuses
+   the table's height. The rail slot is fixed 360px — wide enough that the staggered labels
+   never abbreviate — and the table takes the rest without stretching. */
+.uw-split { display: grid; grid-template-columns: minmax(0, 1fr) 360px; gap: 4px 26px;
+  align-items: stretch; }
+.uw-sec-h { font-size: 10.4px; text-transform: uppercase; letter-spacing: 0.06em;
+  color: var(--ink-3); font-weight: 600; margin: 2px 0 8px; }
+.uw-sec-h .basis { text-transform: none; letter-spacing: 0; font-weight: 400; }
+.uw-rail { border-left: 1px solid var(--line); padding-left: 22px; min-width: 0;
+  display: flex; flex-direction: column; }
+/* the stack centres itself against the table's height; the foot bottom-aligns with the table
+   block — measured before this rule: track y=88 vs table middle 138, ragged 32px bottom gap */
+.uw-rail .uw-rr { margin-top: auto; margin-bottom: auto; }
+
+/* the staggered stack: four label ROWS around one absolute track — each label owns a row, tied
+   to its tick by a hairline lead, so label widths never compete (the constraint that forced the
+   old single-row full-width ladder). Row grid: labels 0 / 28 / 86 / 110, track at 62. */
+.uw-rr { position: relative; height: 134px; }
+.uw-rr-track { position: absolute; left: 0; right: 0; top: 62px; height: 8px;
+  border-radius: 4px; background: var(--surface-2); }
+.uw-rr-lab { position: absolute; white-space: nowrap; display: flex; align-items: baseline;
+  gap: 5px; font-size: 11px; color: var(--ink-2); }
+.uw-rr-lab.mid { transform: translateX(-50%); }
+.uw-rr-lab.r1 { top: 0; } .uw-rr-lab.r2 { top: 28px; }
+.uw-rr-lab.r3 { top: 86px; } .uw-rr-lab.r4 { top: 110px; }
+.uw-rr-lab .mono { font-size: 12px; color: var(--ink); font-weight: 650; }
+.uw-rr-lab .n { text-transform: uppercase; font-size: 9.4px; letter-spacing: 0.05em;
+  color: var(--ink-3); }
+.uw-rr-lab .uw-pct { font-size: 10.5px; }
+.uw-rr-lab.t .mono { font-size: 14px; color: var(--accent-text); }
+.uw-rr-lab.t .n { color: var(--accent-text); font-weight: 700; }
+.uw-rr-lab.t.priced .mono, .uw-rr-lab.t.priced .n { color: var(--danger-text); }
+.uw-rr-lead { position: absolute; width: 1px; background: var(--line-2); }
+.uw-rr-foot { margin-top: 12px; padding-top: 9px; border-top: 1px solid var(--line);
+  display: flex; flex-direction: column; gap: 4px; font-size: 11.3px; }
+.uw-rr-foot .row { display: flex; justify-content: space-between; gap: 10px; color: var(--ink-2); }
+.uw-rr-foot .row .k { color: var(--ink-3); }
+.uw-rr-foot .row .val { font-family: var(--mono); font-variant-numeric: tabular-nums; }
+
+@media (max-width: 900px) {
+  .uw-split { grid-template-columns: 1fr; }
+  .uw-rail { border-left: 0; padding-left: 0; border-top: 1px solid var(--line);
+    padding-top: 12px; margin-top: 10px; }
+}
+
+.uw-lad-risk, .uw-lad-reward { position: absolute; top: 0; bottom: 0; }
+.uw-lad-risk { background: var(--danger-bg); }
+.uw-lad-reward { background: var(--live-bg); }
+.uw-lad-tick { position: absolute; top: -5px; bottom: -5px; width: 2px;
+  background: var(--ink-3); border-radius: 1px; }
+.uw-lad-tick.spot { background: var(--ink); }
+.uw-lad-tick.bear { background: var(--danger); }
+.uw-lad-tick.bull { background: var(--ink-3); opacity: 0.55; }
+.uw-lad-tick.base { background: var(--accent); width: 4px; top: -9px; bottom: -9px; }
+.uw-lad-tick.base.priced { background: var(--danger); }
+
+/* the base column IS the decision once a verdict ratifies it.
+   `tr` is in the selector on purpose: `table.data tr.name-row td` (the value/share emphasis row)
+   would otherwise out-specify this and drop the tint from the ONE row that matters most. */
+table.data tr th.uw-tgt-col, table.data tr td.uw-tgt-col { background: var(--accent-bg); }
+table.data tr th.uw-tgt-col { color: var(--accent-text); }
+.uw-tgt-tag { font-size: 9.2px; text-transform: uppercase; letter-spacing: 0.05em;
+  font-weight: 650; color: var(--accent-text); }
+table.data tr td.uw-vs { font-size: 12.5px; }
+.uw-legs-t .uw-pct { font-size: 11.5px; margin-left: 0; }
+
+/* thesis-break / re-underwrite chips — longer than a .pill, so they wrap */
+.uw-trig { display: flex; align-items: baseline; gap: 8px; flex-wrap: wrap;
+  margin-top: 10px; padding-top: 9px; border-top: 1px solid var(--line); }
+.uw-trig-lab { font-size: 10.4px; text-transform: uppercase; letter-spacing: 0.06em;
+  color: var(--ink-3); font-weight: 600; }
+.uw-chip { font-size: 11.4px; line-height: 1.45; color: var(--ink-2);
+  background: var(--surface-2); border: 1px solid var(--line);
+  border-radius: 999px; padding: 3px 11px; }
+
+@media (max-width: 820px) {
+  .uw-statband { grid-template-columns: repeat(2, 1fr); }
+  .uw-stat { border-left: 0; border-top: 1px solid var(--line); padding-left: 0; }
+  .uw-stat:first-child, .uw-stat:nth-child(2) { border-top: 0; }
+  .uw-stat-val.lead { font-size: 22px; }
+}
+@media (max-width: 560px) {
+  .uw-statband { grid-template-columns: 1fr; }
+  .uw-stat:nth-child(2) { border-top: 1px solid var(--line); }
+}
 
 /* --- dossier viewer ------------------------------------------------------ */
 /* header carries the ticker block on the left and the Download-PDF action on the right */
@@ -853,7 +987,15 @@ table.data.vs-table { width: 100%; }
 
   /* keep atomic units intact across page breaks; sections still flow naturally */
   .fact, .filing, .point, .flag, .logged-verdict, table.data tr { break-inside: avoid; }
-  .uw-card, .wl-row { break-inside: avoid; }
+  /* the underwrite card (and the watchlist row that embeds it) must FRAGMENT: since the
+     tear-sheet build it is ~a full page tall, and break-inside:avoid turned it into a monolith
+     that could not fit under the page-1 header — the whole card jumped to page 2, orphaning the
+     header on a ~90% blank first page. Atomicity moves DOWN a level: the card breaks freely, its
+     building blocks do not, so page breaks land at the seams. .uw-rr is absolutely-positioned
+     geometry and must never split mid-stack. */
+  .uw-card, .wl-row { break-inside: auto; }
+  .uw-mast, .uw-rr, .uw-rail, .uw-split-main, .uw-trig, .uw-reasons,
+  .uw-card .ds-sources, .wl-top, .wl-trigger { break-inside: avoid; }
   .ds-help.dd { display: none; }
   .ds-title { break-after: avoid; }
 
@@ -982,3 +1124,51 @@ table.data.vs-table { width: 100%; }
 .rt-draft-chip { font-size: 9.5px; font-weight: 600; letter-spacing: 0.06em; color: var(--ink-3);
   border: 1px dashed var(--line); border-radius: 4px; padding: 0 4px; text-transform: uppercase; }
 .rt-draft-read { font-size: 11px; font-weight: 400; font-style: italic; margin-top: 1px; }
+
+/* the dossier's underwrite panel is just the card — the wrapper adds spacing, never a second
+   title (the masthead is self-describing, and its foot is the one that knows the ledger) */
+.uw-panel { padding: 0; background: none; border: 0; box-shadow: none; }
+.uw-panel .uw-card { margin: 0; }
+
+/* (4) COLLAPSIBLES — density on screen without losing the record.
+   Method is methodology (audit tier) and takes the normal print exclusion. The LEG REASONS are
+   different: they justify the numbers in the table, and "an assumption without a recorded reason
+   is exactly what this fund refuses to compute" — a printed tear sheet showing three scenario
+   columns with no justification would be the wrong artifact. So they collapse on SCREEN and are
+   forced open in PRINT below. */
+.uw-reasons, .uw-method-block { margin-top: 10px; }
+.uw-reasons > summary, .uw-method-block > summary, .uw-method > summary, .uw-inputs > summary {
+  cursor: pointer; font-size: 12.3px; font-weight: 650; color: var(--ink-2); padding: 4px 0; }
+.uw-reasons > summary:hover, .uw-method-block > summary:hover, .uw-method > summary:hover,
+.uw-inputs > summary:hover { color: var(--ink); }
+.uw-reasons > summary::marker, .uw-method-block > summary::marker,
+.uw-method > summary::marker, .uw-inputs > summary::marker { color: var(--accent); }
+.uw-reasons .kv-list { margin-top: 6px; }
+
+@media print {
+  /* out-specify the global `details:not([open]) { display: none }` audit-tier rule, then reveal
+     the content a closed <details> hides — belt (display) and braces (content-visibility), since
+     engines differ on which one gates it */
+  details.uw-reasons:not([open]) { display: block !important; }
+  details.uw-reasons > summary { display: none !important; }
+  details.uw-reasons > .uw-reasons-body { display: block !important;
+    content-visibility: visible !important; }
+  details.uw-reasons::details-content { content-visibility: visible !important; display: block !important; }
+}
+
+@media print {
+  .uw-split { grid-template-columns: 1fr !important; }
+  .uw-rail { border-left: 0; padding-left: 0; border-top: 1px solid var(--line);
+    padding-top: 12px; margin-top: 12px; display: block; }
+}
+
+@media print {
+  /* Footnote runs never split: the brief export stranded a 4-line SOURCES tail alone on its
+     final page. Every per-tier Sources list is well under a page, so keeping each whole is safe
+     — a full block on the last page reads as intentional; a severed tail reads as breakage. */
+  .ds-sources { break-inside: avoid; }
+  /* The appendix is a CHAPTER: the full export orphaned its header card at a page bottom with
+     the financial table starting overleaf. A fresh page keeps header and table together — the
+     institutional norm for an appendix — and only in the full export (the brief never prints it). */
+  body.ds-print-full .ds-tier[data-tier="appendix"] { break-before: page; }
+}

@@ -90,7 +90,24 @@ def _rd(x: Any, places: int) -> Any:
     return round(x, places) if isinstance(x, (int, float)) and not isinstance(x, bool) else x
 
 
-def _scenario_card(rec: dict[str, Any]) -> dict[str, Any]:
+def _ledger_by_ticker() -> dict[str, dict[str, Any]]:
+    """The committed decision ledger, keyed by ticker — the BUY/AVOID word of record.
+
+    The card renders on surfaces that never load the ledger snapshot (the theme watchlist embeds
+    its card into the frozen theme JSON), so the join happens HERE, at build, not in the client.
+    Absent file → empty: a deploy without a ledger renders cards with no verdict-of-record line
+    rather than failing. The ledger is append-only, so a ticker maps to at most one entry."""
+    p = SNAP / "decision_ledger.jsonl"
+    if not p.is_file():
+        return {}
+    out: dict[str, dict[str, Any]] = {}
+    for row in _jsonl(p):
+        out[str(row.get("ticker", "")).upper()] = row
+    return out
+
+
+def _scenario_card(rec: dict[str, Any], ledger: dict[str, dict[str, Any]] | None = None
+                   ) -> dict[str, Any]:
     """One underwrite record → the display card: the bear/base/bull grid, the reward/risk ratio
     against the bar, the capital-intensity cross-checks, and the verdict. The basis and recipe
     travel WITH the card so the multiple's unit can never be misread on screen.
@@ -99,6 +116,7 @@ def _scenario_card(rec: dict[str, Any]) -> dict[str, Any]:
     r = rec.get("result") or {}
     per = r.get("per_scenario") or {}
     v = rec.get("verdict") or {}
+    led = (ledger or {}).get(str(rec["ticker"]).upper())
     return {
         "ticker": rec["ticker"], "recipeId": rec["recipe_id"], "recipeDesc": rec["recipe_desc"],
         # schema-1.1 methodology: the stamped arithmetic chain + per-axis derivations. Keys are
@@ -129,15 +147,31 @@ def _scenario_card(rec: dict[str, Any]) -> dict[str, Any]:
         "reward": _rd(r.get("reward"), 2), "risk": _rd(r.get("risk"), 2),
         "ratio": _rd(r.get("ratio"), 2), "bar": r.get("bar"),
         "ratioUndefined": r.get("ratio_undefined"), "passFail": r.get("pass_fail"),
+        # gate_adjudication: a machine gate the human consciously overrode. OMITTED when absent so
+        # records that never hit a gate stay byte-identical.
+        **({"gateAdjudication": rec["gate_adjudication"]} if rec.get("gate_adjudication") else {}),
         "verdict": {"status": v.get("status"), "recorded": v.get("recorded"),
                     "rationale": v.get("rationale"),
-                    # the human's FROZEN entry beside the underwrite's own ratio — the card must
-                    # show what was accepted AT ENTRY, not only what the grid computed at spot
-                    "entryPrice": _rd(v.get("entry_price"), 2),
-                    "ratioAtEntry": _rd(v.get("ratio_at_entry"), 2),
                     "reunderwriteTriggers": v.get("reunderwrite_triggers") or [],
+                    # the human's FROZEN entry beside the underwrite's own ratio — the card must
+                    # show what was accepted AT ENTRY, not only what the grid computed at spot.
+                    # Keys OMITTED (never null) on a verdict that opened no position (watch /
+                    # pending), so un-entered records stay byte-identical across re-emits.
+                    # (The merge stacked this pair from BOTH #165 and the tear-sheet branch as
+                    # duplicate dict keys — silently last-one-wins in Python; ONE emit now.)
+                    **({"entryPrice": _rd(v["entry_price"], 2)}
+                       if v.get("entry_price") is not None else {}),
+                    **({"ratioAtEntry": _rd(v["ratio_at_entry"], 2)}
+                       if v.get("ratio_at_entry") is not None else {}),
                     "avoidPriced": v.get("avoid_priced"),
                     "avoidPricedNote": v.get("avoid_priced_note")},
+        # The LEDGER verdict of record (BUY / AVOID_TERMINAL) — the scenario record has no such
+        # field, and the card must never invent one. Key OMITTED when the name has no ledger row,
+        # so an un-logged name renders no verdict-of-record line (and stays byte-identical).
+        **({"ledger": {"verdict": led["verdict"], "entryId": led["entry_id"],
+                       "entryPrice": _rd(led.get("entry_price"), 2),
+                       "entryPriceAsOf": led.get("entry_price_as_of"),
+                       "decidedAt": led.get("decided_at")}} if led else {}),
     }
 
 
@@ -146,12 +180,13 @@ def _scenario_cards() -> dict[str, dict[str, Any]]:
     d = ROOT / "scenarios"
     if not d.is_dir():
         return {}
+    ledger = _ledger_by_ticker()
     out: dict[str, dict[str, Any]] = {}
     for p in sorted(d.glob("*.json")):
         if p.name.startswith("_"):          # _schema.json and friends are not records
             continue
         rec = json.loads(p.read_text())
-        out[str(rec["ticker"]).upper()] = _scenario_card(rec)
+        out[str(rec["ticker"]).upper()] = _scenario_card(rec, ledger)
     return out
 
 
@@ -482,7 +517,13 @@ def build_themes(themes_srcs: list[Path]) -> list[str]:
             pairs.append((bp, lp, scans[0] if scans else None))
     # RE-SEED GUARD (same class as sweep.json): no freeze source in this worktree — e.g. the
     # Cloudflare deploy, where the source is git-ignored — ⇒ keep the committed theme JSON.
+    # The embedded underwrite CARDS are the one part the guard's own principle still permits:
+    # their source is the COMMITTED scenarios/ records + ledger snapshot (present even where the
+    # freeze source is not), so they refresh in place while every other byte of the theme JSON
+    # stays preserved. With no committed records, refresh_theme_cards() is a no-op — the same
+    # source-absent discipline, one level down.
     if not _preserve_unless_source("frontend/themes/", OUT_THEMES, source_present=bool(pairs)):
+        refresh_theme_cards()
         return []
     OUT_THEMES.mkdir(parents=True, exist_ok=True)
     summaries: list[dict[str, Any]] = []
@@ -496,6 +537,42 @@ def build_themes(themes_srcs: list[Path]) -> list[str]:
     summaries.sort(key=lambda s: s["slug"])
     (OUT_THEMES / "index.json").write_text(json.dumps(_theme_index(summaries), indent=1))
     return [s["slug"] for s in summaries]
+
+
+def refresh_theme_cards() -> list[str]:
+    """Re-embed the underwrite cards inside the COMMITTED theme JSONs from the COMMITTED records.
+
+    The theme display JSON embeds each watch name's `scenarioCard` so the watchlist renders without
+    a second fetch — but it is normally rewritten only by a full freeze, whose source
+    (`forward_*_baskets.json`) is GIT-IGNORED. That made the embedded card un-regenerable in CI: any
+    change to the card's shape left the committed theme copy stale, with a pin asserting the two are
+    identical and no way to satisfy it. This refreshes JUST the embedded cards in place — every
+    other byte of the theme JSON is untouched — so a card-shape change propagates to the watchlist
+    from committed inputs alone. A name whose record has since been deleted keeps its embedded copy
+    (removing it is a freeze decision, not a render one); a theme with no cards is left alone."""
+    if not OUT_THEMES.is_dir():
+        return []
+    cards = _scenario_cards()
+    touched: list[str] = []
+    for p in sorted(OUT_THEMES.glob("*.json")):
+        if p.name == "index.json":
+            continue
+        display = json.loads(p.read_text())
+        changed = False
+        # the display JSON's actual list keys (_theme_display emits camelCase avoidControls;
+        # a snake_case sweep key here would silently never match)
+        for key in ("watchlist", "avoidControls"):
+            for row in display.get(key) or []:
+                t = str(row.get("ticker", "")).upper()
+                if "scenarioCard" in row and t in cards and row["scenarioCard"] != cards[t]:
+                    row["scenarioCard"] = cards[t]
+                    changed = True
+        if changed:
+            p.write_text(json.dumps(display, indent=1))
+            touched.append(p.stem)
+    if touched:
+        print(f"themes: re-embedded underwrite cards in {', '.join(touched)}")
+    return touched
 
 
 # --------------------------------------------------------------------------------------------------

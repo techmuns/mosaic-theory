@@ -221,18 +221,26 @@ def test_scenario_card_emits_derivations_and_omits_them_for_legacy_records() -> 
 
 
 def test_uw_card_methodology_block_owns_its_print_fate() -> None:
-    """Source pins for the schema-1.1 render: the recipe line lives INSIDE the Scenarios fact;
-    the reference tables carry their OWN "M" endnote scope inside the <details> (marker + list
-    share print fate — the Inputs-block invariant, mechanically enforced repo-wide by the #10
-    sweep); the Method fact prints in the main tier."""
+    """Source pins for the schema-1.1 render: the recipe CHAIN is provenance and lives in the
+    on-demand tier; the reference tables carry their OWN "M" endnote scope inside the <details>
+    (marker + list share print fate — the Inputs-block invariant, mechanically enforced repo-wide
+    by the #10 sweep); the Method fact prints in the main tier.
+
+    TIER CORRECTION (tear-sheet build): the chain used to render in the MAIN body, above the legs
+    table. It is a drift guard — proof the stated recipe is the computed recipe — which makes it
+    provenance, and DESIGN RULE v2 puts provenance in the collapsed/print-excluded tier, not
+    between the analyst's decision values. The recipe NAME still leads (the masthead's Method
+    cell); only the arithmetic moved."""
     import re
 
     uw = (Path(__file__).resolve().parents[1] / "frontend" / "views" / "shared" / "uw-card.js"
           ).read_text()
     legs = re.search(r"function legsTable\(c\) \{(.*?)\n\}", uw, re.S)
-    assert legs and "${recipeLine(c)}" in legs.group(1), (
-        "the recipe chain must render inside the Scenarios fact, above the table")
+    assert legs and "${recipeLine(c)}" not in legs.group(1), (
+        "the recipe chain is provenance — it must NOT render in the main-body legs table")
     refs = re.search(r"function methodRefsDetails\(c\) \{(.*?)\n\}", uw, re.S)
+    assert refs and "${recipeLine(c)}" in refs.group(1), (
+        "the recipe chain must render inside the on-demand references <details> (print-excluded)")
     assert refs, "methodRefsDetails() is gone"
     assert 'withEndnotes("M", tables)' in refs.group(1), (
         "the reference tables must own their endnote scope — resolving into the card's list "
@@ -450,6 +458,92 @@ def test_uw_card_owns_its_citations_and_renders_the_same_everywhere() -> None:
     # ...and no host runs a pass on its behalf
     dossier = (root / "views" / "shared" / "dossier.js").read_text()
     assert 'withEndnotes("U"' not in dossier, "the card owns the U scope now, not the host"
+
+
+def test_uw_headline_state_machine_never_invents_a_target() -> None:
+    """THE CONSTITUTIONAL PIN of the tear-sheet header. `base_vps` is a COMPUTATION; it becomes a
+    TARGET only when a human verdict ratifies it, and never when it sits at/below spot (a
+    WERN-shape avoid has no upside to target). Rendered on the real committed cards + two
+    synthetic states, via node — the label is what an analyst reads as the fund's call.
+
+    Pins the RULE, not the wording: each state must produce its own distinct eyebrow, a pending
+    record must never print the ratified label, and a priced record must never print either."""
+    import json
+    import shutil
+    import subprocess
+
+    if not shutil.which("node"):
+        pytest.skip("node not available")
+    root = Path(__file__).resolve().parents[1]
+    uw = (root / "frontend" / "views" / "shared" / "uw-card.js").resolve().as_uri()
+    driver = f"""
+import {{ readFileSync }} from "node:fs";
+const {{ uwCard }} = await import("{uw}");
+const rd = (p) => JSON.parse(readFileSync(p));
+const it = rd("frontend/scenarios/IT.json");        // confirmed BUY, base ABOVE spot
+const wern = rd("frontend/scenarios/WERN.json");    // watch, base BELOW spot (priced)
+// synthetic: the same record still awaiting the analyst — the machine's only reachable state
+const pending = JSON.parse(JSON.stringify(it));
+pending.verdict.status = "pending_analyst";
+pending.verdict.entryPrice = null; pending.verdict.ratioAtEntry = null;
+delete pending.ledger;
+// synthetic: a CONFIRMED verdict whose base sits below spot — status must NOT win over price
+const confirmedButPriced = JSON.parse(JSON.stringify(wern));
+confirmedButPriced.verdict.status = "confirmed";
+const grab = (h) => (h.match(/uw-stat-lab uw-eyebrow">([^<]*)</) || [null, ""])[1].trim();
+console.log(JSON.stringify({{
+  target: grab(uwCard(it)),
+  pending: grab(uwCard(pending)),
+  priced: grab(uwCard(wern)),
+  confirmedButPriced: grab(uwCard(confirmedButPriced)),
+  targetHasLedgerPill: /pill buy">BUY</.test(uwCard(it)),
+  pricedHasNoLedgerPill: !/pill buy">BUY</.test(uwCard(wern)),
+  pendingShowsPass: /uw-mini">PASS</.test(uwCard(pending)),
+  targetHidesPass: !/uw-mini">PASS</.test(uwCard(it)),
+  pendingNoEntry: /no position/.test(uwCard(pending)),
+  targetHasEntry: uwCard(it).includes("141.06"),
+}}));
+"""
+    out = subprocess.run(["node", "--input-type=module", "-e", driver],
+                         capture_output=True, text=True, cwd=root, check=True)
+    r = json.loads(out.stdout)
+    # three DISTINCT states, none of them borrowing another's label
+    assert len({r["target"], r["pending"], r["priced"]}) == 3, r
+    assert r["target"] and r["pending"] and r["priced"], r
+    assert r["pending"] != r["target"], "a pending record must not print the ratified label"
+    assert r["priced"] != r["target"], "a base at/below spot is never a target"
+    # price beats status: ratification cannot turn a below-spot base into a target
+    assert r["confirmedButPriced"] == r["priced"], (
+        "a CONFIRMED verdict whose base sits below spot must still read as priced")
+    # the verdict of record is the LEDGER's, never invented from the scenario status
+    assert r["targetHasLedgerPill"], "a logged BUY must show the ledger verdict"
+    assert r["pricedHasNoLedgerPill"], "a name with no ledger row must not show a BUY/AVOID word"
+    # PASS is the machine's bar test — it speaks only while the human's call is still open
+    assert r["pendingShowsPass"] and r["targetHidesPass"], r
+    assert r["pendingNoEntry"] and r["targetHasEntry"], r
+
+
+def test_theme_embedded_cards_are_regenerable_from_committed_inputs() -> None:
+    """The theme JSON embeds each watch name's card, and a pin asserts the embed equals a fresh
+    build — but the FREEZE source that writes it is git-ignored. Without a refresh path a
+    card-shape change is unsatisfiable in CI: the committed embed goes stale and nothing
+    committed can rebuild it. `refresh_theme_cards()` closes that, from committed inputs only.
+
+    Pinned by mutating the committed embed and asserting the refresh restores it byte-for-byte."""
+    build = _load_build()
+    root = Path(__file__).resolve().parents[1]
+    p = root / "frontend" / "themes" / "truckload-supply-purge.json"
+    original = p.read_text()
+    try:
+        doc = json.loads(original)
+        row = next(w for w in doc["watchlist"] if "scenarioCard" in w)
+        row["scenarioCard"] = {"ticker": row["ticker"], "stale": True}   # simulate a shape change
+        p.write_text(json.dumps(doc, indent=1))
+        assert build.refresh_theme_cards() == ["truckload-supply-purge"]
+        assert p.read_text() == original, "refresh must restore the embed byte-for-byte"
+        assert build.refresh_theme_cards() == [], "a clean refresh must be a no-op (idempotent)"
+    finally:
+        p.write_text(original)
 
 
 def test_entry_price_refuses_a_price_that_never_traded() -> None:
