@@ -24,6 +24,7 @@ axis silently dropping from the render is data loss.
 from __future__ import annotations
 
 import json
+import warnings
 from pathlib import Path
 from typing import Any, Literal
 
@@ -33,6 +34,7 @@ from pydantic import BaseModel, Field, field_validator, model_validator
 # convention; the record layer re-exports — judge (clears_bar) and stamp (Result.bar) can no
 # longer diverge, and the stamped recipe_formula is the SAME constant the engine states.
 from vinci.dossier.midcycle import BAR, R1_FORMULA
+from vinci.prose_lint import ProseRegisterWarning, lint_record
 
 SCHEMA_VERSION = "1.1"
 # "watch" = the name is not underwritable at TODAY's price but the franchise is intact — a
@@ -155,6 +157,18 @@ class Verdict(BaseModel):
     status: VerdictStatus = "pending_analyst"
     recorded: str | None = None            # ISO date the human recorded it; None while pending
     rationale: str | None = None           # WHY — the human's reasoning, in their own words
+    # The SAME reasoning in external-reader register (STATE.md §7 item 10): plain thesis prose for
+    # someone who has never seen this repo. Analyst-authored like `rationale` — the machine proposes
+    # no wording here, it only flags register violations (vinci.prose_lint).
+    #
+    # BOTH may coexist: the card leads with the restatement and puts the original behind an
+    # "as recorded <date>" expander. But the original is NOT retained by rule — §7 makes the
+    # scenario-record copy the analyst's to re-word or DROP, and on 2026-07-21 they dropped all
+    # four (the append-only LEDGER copy is the sealed one, and it is untouchable). So a record may
+    # legitimately carry the restatement alone. Before dropping an original, check the name HAS a
+    # ledger row: a watch/no-position verdict has none, so the drop is irreversible.
+    rationale_plain: str | None = None
+    rationale_plain_recorded: str | None = None   # ISO date the restatement was recorded
     reunderwrite_triggers: list[str] = Field(default_factory=list)  # what would reopen the name
     # A recorded BUY is the start of a forward track, so the spread needs the price and the
     # asymmetry AT the moment of the call — not the underwrite-date spot, which has since moved.
@@ -299,10 +313,25 @@ def records_dir(root: Path | None = None) -> Path:
 
 
 def write_record(rec: ScenarioRecord, *, root: Path | None = None) -> Path:
-    """Persist to ``scenarios/<TICKER>.json`` — pretty + diff-able, so committed state reads."""
+    """Persist to ``scenarios/<TICKER>.json`` — pretty + diff-able, so committed state reads.
+
+    Prose is register-linted on the way out (:mod:`vinci.prose_lint`). The lint WARNS and never
+    blocks: legacy records predate the register rule and must stay writable, and the linter never
+    edits analyst words. The warning is the worklist surfacing at the moment it is cheapest to act
+    on — while the record is open — rather than at a later audit.
+    """
     d = records_dir(root)
     d.mkdir(parents=True, exist_ok=True)
     path = d / f"{rec.ticker.upper()}.json"
+    flags = lint_record(rec)
+    if flags:
+        warnings.warn(
+            f"{rec.ticker}: {len(flags)} prose-register flag(s) — "
+            + "; ".join(str(f) for f in flags[:4])
+            + (f"; +{len(flags) - 4} more" if len(flags) > 4 else ""),
+            ProseRegisterWarning,
+            stacklevel=2,
+        )
     path.write_text(rec.model_dump_json(indent=2) + "\n")
     return path
 

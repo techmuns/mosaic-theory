@@ -58,24 +58,24 @@
       "revenue": 5000.0,
       "margin": 0.08,
       "multiple": 6.0,
-      "reason": "secular leg: AI substitution erodes the labor-arbitrage model; revenue −10% from LTM (revision breadth FQ3 0↑/14↓ extrapolated); margin below the FY25 worst (9.53%) as pricing grinds — floored by the variable-cost model, not collapsed; multiple holds near the post-2022 trough region (band min 4.26x, current 4.87x @ 2.6th pctile) — secular gets no re-rate."
+      "reason": "Secular case: AI substitution erodes the labour-arbitrage model; revenue -10% from the trailing twelve months (carrying the negative forward revision breadth, FQ3 0 up / 14 down, rather than assuming it reverses); margin below the FY25 worst (9.53%) as pricing grinds — floored by the variable-cost model, not collapsed; the multiple holds near the post-2022 trough (range low 4.26x, current 4.87x at the 2.6th percentile) — a secular decline earns no re-rating. [restated for external readability 2026-07-21; substance unchanged]"
     },
     "base": {
       "revenue": 5730.0,
       "margin": 0.105,
       "multiple": 12.5,
-      "reason": "margin = post-2022 regime median 11.10% minus a ~60bps trajectory haircut: the regime's most recent year (FY25, 9.53%) is its worst and revision breadth is 0↑/14↓, so the live-regime median likely overstates the forward mid-cycle. Explicitly NOT the 10y blend (11.9% — straddles the 2022 break), NOT pre-war (13.27% — dead regime), NOT consensus recovery (~15.6% EBIT — the Street's base is our bull). Revenue = consensus FY26E. Multiple below the 15.16x post-2022 median: the AI-substitution question earns a durable discount even at mid-cycle."
+      "reason": "Margin is the post-2022 regime median of 11.10% less a ~60bps trajectory haircut: the regime's most recent year (FY25, 9.53%) is its worst and revision breadth is 0 up / 14 down, so the live-regime median likely overstates the forward mid-cycle. Explicitly not the 10-year blend (11.9%, which straddles the 2022 break), not the pre-war level (13.27%, a regime no longer representative), and not the consensus recovery (~15.6% operating income — the Street's base case is our bull). Revenue is consensus FY26E. The multiple sits below the 15.16x post-2022 median: the AI-substitution question earns a durable discount even at mid-cycle. [restated for external readability 2026-07-21; substance unchanged]"
     },
     "bull": {
       "revenue": 6075.0,
       "margin": 0.13,
       "multiple": 18.0,
-      "reason": "cyclical air-pocket resolves: the delivery rebuild completes and margin recovers toward but below the pre-war median (13.27%) and well below consensus (~15.6%); revenue = consensus FY27E; multiple toward but below the post-2022 75th pctile (20.09x)."
+      "reason": "The cyclical air-pocket resolves: the delivery rebuild completes and margin recovers toward but below the pre-war median (13.27%) and well below consensus (~15.6%); revenue is consensus FY27E; the multiple moves toward but stays below the post-2022 75th percentile (20.09x). [restated for external readability 2026-07-21; substance unchanged]"
     }
   },
   "assumptions": {
     "revenue": {
-      "method": "DRAFT — ratify at review. Legs set on the consensus path: base = consensus FY26E, bull = consensus FY27E, bear = LTM less ~10% carrying the negative forward revision breadth (FQ3 0↑/14↓) forward rather than assuming it reverses.",
+      "method": "Legs are set on the consensus path: base is consensus FY26E, bull is consensus FY27E, and bear is the trailing twelve months less ~10%, carrying the negative forward revision breadth (FQ3 0 up / 14 down) forward rather than assuming it reverses. [restated for external readability 2026-07-21; substance unchanged]",
       "references": [
         {
           "label": "consensus FY26E revenue",
@@ -100,7 +100,7 @@
       "ratified": null
     },
     "margin": {
-      "method": "DRAFT — ratify at review. Modeled on the REGIME-SPLIT EDGAR operating-margin statistics (post-2022 window; OperatingIncomeLoss ÷ the ASC-606 revenue tag, 10-K points duration-filtered to 350–380 days per the 2026-07-21 basis pull): base = the post-2022 median 11.10% less a ~60bps trajectory haircut; bear sits below the regime's worst year (FY25 9.53%); bull recovers toward but below the pre-war median (13.27%, DEAD REGIME). The 10-FY blend (11.90%) is explicitly NOT used — it straddles the 2022 break and describes neither regime.",
+      "method": "Modelled on regime-split operating-margin statistics (post-2022 window; operating income divided by the ASC-606 revenue tag, with annual filing points filtered to 350-380 day durations so no quarter is mistaken for a year): base is the post-2022 median of 11.10% less a ~60bps trajectory haircut; bear sits below the regime's worst year (FY25, 9.53%); bull recovers toward but below the pre-war median (13.27%, a regime no longer representative). The 10-year blend (11.90%) is explicitly not used — it straddles the 2022 break and describes neither regime. [restated for external readability 2026-07-21; substance unchanged]",
       "references": [
         {
           "label": "post-2022 regime median operating margin (FY2022-2025)",
@@ -137,7 +137,7 @@
       "ratified": null
     },
     "multiple": {
-      "method": "DRAFT — ratify at review. Chosen against the REGIME-SPLIT own-history TEV/LTM-EBITDA band (refreshed post-#162, 38 quarterly closes): base sits BELOW the post-2022 median (15.16x) as an analyst discount for the unresolved AI-substitution question; bear near the post-2022 trough region; bull toward but below the post-2022 75th percentile (20.09x). The full-blend median (22.41x) is not used — it is a pre-2022 bubble-era statistic.",
+      "method": "Chosen against the regime-split TEV/LTM-EBITDA trading range (38 quarterly closes): base sits below the post-2022 median (15.16x) as an analyst discount for the unresolved AI-substitution question; bear near the post-2022 trough; bull toward but below the post-2022 75th percentile (20.09x). The full-blend median (22.41x) is not used — it is a pre-2022 bubble-era statistic. [restated for external readability 2026-07-21; substance unchanged]",
       "references": [
         {
           "label": "post-2022 band 25th percentile",

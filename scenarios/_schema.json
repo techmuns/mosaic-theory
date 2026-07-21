@@ -313,6 +313,30 @@
           "default": null,
           "title": "Rationale"
         },
+        "rationale_plain": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Rationale Plain"
+        },
+        "rationale_plain_recorded": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Rationale Plain Recorded"
+        },
         "reunderwrite_triggers": {
           "items": {
             "type": "string"

@@ -423,7 +423,9 @@ function orderedAssumptions(c) {
 // methodology check. The reference numbers live one click deeper (methodRefsDetails).
 function methodLines(c) {
   const items = orderedAssumptions(c).map((a) =>
-    `<li><b>${escapeHtml(axisLabel(a.axis, c.multipleBasis || DASH))}</b> — ${escapeHtml(a.method)}</li>`);
+    `<li><b>${escapeHtml(axisLabel(a.axis, c.multipleBasis || DASH))}</b>${
+      a.unratified ? ` <span class="uw-draft-badge">draft — unratified</span>` : ""
+    } — ${escapeHtml(a.method)}</li>`);
   return items.length ? `<ul class="kv-list uw-methods">${items.join("")}</ul>` : "";
 }
 
@@ -449,6 +451,24 @@ function methodRefsDetails(c) {
   }).join("");
   return `<details class="uw-method"><summary>Reference values — what each assumption was set against</summary>${
     withEndnotes("M", tables)}${recipeLine(c)}</details>`;
+}
+
+// The verdict's reasoning, in the register an OUTSIDE reader needs (STATE.md §7 item 10).
+// `rationalePlain` leads when present; the original `rationale` is the SEALED record of what the
+// analyst wrote at the verdict and never disappears — it moves behind an "as recorded <date>"
+// expander. Since the T1 amendment that expander prints OPEN, so the PDF carries both registers:
+// the plain read for the reader, the original for the audit. With no restatement recorded the
+// original renders exactly as before — no record is worse off for the field existing.
+function rationaleFact(v) {
+  if (!v.rationale && !v.rationalePlain) return "";
+  if (!v.rationalePlain) return fact("Rationale", escapeHtml(v.rationale));
+  const asOf = v.recorded ? ` ${escapeHtml(v.recorded)}` : "";
+  const original = v.rationale
+    ? `<details class="uw-rationale-orig">
+        <summary>Rationale as recorded${asOf} — the analyst's original wording</summary>
+        <div>${escapeHtml(v.rationale)}</div></details>`
+    : "";
+  return fact("Rationale", `${escapeHtml(v.rationalePlain)}${original}`);
 }
 
 // COLLAPSED by default on screen: this is per-axis METHODOLOGY, one step toward provenance,
@@ -498,7 +518,7 @@ export function uwCard(c, { ticker = true, mark = null } = {}) {
     ${masthead(c, ticker)}
     ${legsTable(c)}
     ${impliedOdds(c, mark)}
-    ${v.rationale ? fact("Rationale", escapeHtml(v.rationale)) : ""}
+    ${rationaleFact(v)}
     ${trig ? `<div class="uw-trig"><span class="uw-trig-lab">${
       headlineState(c) === "target" ? "Thesis breaks" : "Re-underwrite when"}</span>${trig}</div>` : ""}
     ${legReasons(c)}

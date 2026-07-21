@@ -127,6 +127,10 @@ def _scenario_card(rec: dict[str, Any], ledger: dict[str, dict[str, Any]] | None
            if rec.get("recipe_formula") else {}),
         **({"assumptions": [
             {"axis": k, "method": a["method"],
+             # Draft status is STRUCTURED, never a marker inside the prose (the register rule: a
+             # prose duplicate of structured state is the thing being removed). Emitted only when
+             # UNratified, so a ratified axis stays byte-identical — the card badges from this.
+             **({"unratified": True} if not a.get("ratified_by") else {}),
              "references": [{"label": p["label"], "value": p["value"], "unit": p["unit"],
                              "source": p["source"]} for p in (a.get("references") or [])]}
             for k, a in rec["assumptions"].items()]}
@@ -152,6 +156,11 @@ def _scenario_card(rec: dict[str, Any], ledger: dict[str, dict[str, Any]] | None
         **({"gateAdjudication": rec["gate_adjudication"]} if rec.get("gate_adjudication") else {}),
         "verdict": {"status": v.get("status"), "recorded": v.get("recorded"),
                     "rationale": v.get("rationale"),
+                    # the external-reader restatement, when the analyst has recorded one. OMITTED
+                    # (never null) while absent, so every record that predates the restatement pass
+                    # re-emits byte-identical — the card renderer falls back to `rationale` alone.
+                    **({"rationalePlain": v["rationale_plain"]}
+                       if v.get("rationale_plain") else {}),
                     "reunderwriteTriggers": v.get("reunderwrite_triggers") or [],
                     # the human's FROZEN entry beside the underwrite's own ratio — the card must
                     # show what was accepted AT ENTRY, not only what the grid computed at spot.

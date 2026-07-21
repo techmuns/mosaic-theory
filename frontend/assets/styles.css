@@ -1147,12 +1147,26 @@ table.data tr td.uw-vs { font-size: 12.5px; }
    columns with no justification would be the wrong artifact. So they collapse on SCREEN and are
    forced open in PRINT below. */
 .uw-reasons, .uw-method-block { margin-top: 10px; }
-.uw-reasons > summary, .uw-method-block > summary, .uw-method > summary, .uw-inputs > summary {
+.uw-reasons > summary, .uw-method-block > summary, .uw-method > summary, .uw-inputs > summary,
+.uw-rationale-orig > summary {
   cursor: pointer; font-size: 12.3px; font-weight: 650; color: var(--ink-2); padding: 4px 0; }
 .uw-reasons > summary:hover, .uw-method-block > summary:hover, .uw-method > summary:hover,
-.uw-inputs > summary:hover { color: var(--ink); }
+.uw-inputs > summary:hover, .uw-rationale-orig > summary:hover { color: var(--ink); }
 .uw-reasons > summary::marker, .uw-method-block > summary::marker,
-.uw-method > summary::marker, .uw-inputs > summary::marker { color: var(--accent); }
+.uw-method > summary::marker, .uw-inputs > summary::marker,
+.uw-rationale-orig > summary::marker { color: var(--accent); }
+/* An unratified axis is flagged from STRUCTURED state (assumptions[].unratified), never from a
+   marker typed into the method prose. Muted, not alarming: a draft methodology is a normal stage
+   of an open name, and the badge says "not yet signed off", not "wrong". */
+.uw-draft-badge {
+  display: inline-block; margin-left: 6px; padding: 1px 6px; border-radius: 3px;
+  border: 1px solid var(--line); background: var(--bg-2); color: var(--ink-2);
+  font-size: 10.5px; font-weight: 600; letter-spacing: 0.02em; vertical-align: 1px; }
+
+/* The sealed original sits INSIDE the Rationale fact, under the plain restatement — indented so
+   the eye reads it as the same claim in the analyst's own words, not a second, competing point. */
+.uw-rationale-orig { margin-top: 8px; border-left: 2px solid var(--line); padding-left: 10px; }
+.uw-rationale-orig > div { font-size: 12.6px; color: var(--ink-2); margin-top: 2px; }
 .uw-reasons .kv-list { margin-top: 6px; }
 
 /* (the uw-reasons print carve-out is gone: the amended T1 force-opens EVERY details in
