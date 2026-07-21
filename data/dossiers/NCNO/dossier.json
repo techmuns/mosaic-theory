@@ -4943,5 +4943,50 @@
     "status": "present",
     "note": null
   },
-  "midcycle": null
+  "midcycle": null,
+  "anchor": {
+    "recipe_hint": "R2_NEEDED",
+    "applicable": false,
+    "multiple_basis": "EV/EBITDA",
+    "computed_at": "2026-07-21T15:07:01.354795Z",
+    "reason": "no positive operating margin over available history — needs revenue-anchored recipe",
+    "data_quality": null,
+    "data_quality_detail": [],
+    "margin": null,
+    "multiple": null,
+    "d_and_a": {
+      "value": 42.255,
+      "unit": "$M",
+      "basis": "consolidated latest FY",
+      "source": "EDGAR companyfacts dep_amort (combined)"
+    },
+    "net_debt": {
+      "value": 223.899,
+      "unit": "$M",
+      "basis": "lease-inclusive net debt (latest 10-Q)",
+      "source": "EDGAR: total debt 263 + finance leases 51 + operating leases 13 − cash 103 ($M)"
+    },
+    "diluted_shares": {
+      "value": 109458472.0,
+      "unit": "shares",
+      "basis": "diluted weighted-average (latest 10-Q)",
+      "source": "EDGAR WeightedAverageNumberOfDilutedSharesOutstanding"
+    },
+    "ltm_revenue": {
+      "value": 610.058,
+      "unit": "$M",
+      "basis": "LTM revenue",
+      "source": "committed financial_summary.annual (LTM)"
+    },
+    "ltm_fcf": {
+      "value": 82.564,
+      "unit": "$M",
+      "basis": "latest FY2026 (not LTM)",
+      "source": "EDGAR companyfacts operating_cash_flow − capex (FY2026, same period)"
+    },
+    "anchor_base_value_per_share": null,
+    "anchor_ev_ebit": null,
+    "overall_confidence": null,
+    "note": "ATTENTION FILTER, not a verdict. Even a firm anchor requires a full bear/base/bull 2:1 underwrite before any BUY. Spot and reward-to-base are computed live at triage, not stored here."
+  }
 }

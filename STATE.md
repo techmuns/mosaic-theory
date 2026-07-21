@@ -3821,19 +3821,28 @@ re-anchor (the full STATE split stays its own queued task — nothing was reloca
    SMPL assembly missed the 2026-07-09 print by one day. Assembly must FLAG filings newer than
    its evidence window, and stamp what window it read. (The §7 print-freshness gate and the
    monitor's freshness panel cover verdicts manually until this exists.)
-2. **R2 recipe** (for NCNO / MVST / FUBO / AORT / **VITL** — names R1 cannot anchor). VITL joined
-   2026-07-21: not a positivity rejection but a forward-margin question, and its EV/EBITDA band is
-   disqualified by the coherence guard on top. R2 must handle both entry routes.
-3. **`anchor-backfill` must preserve an OPERATOR re-tag.** The backfill recomputes from EDGAR and
-   overwrites a hand-set `recipe_hint`/`reason` — AORT's and now VITL's and CNXC's. Mirror
-   `build.py`'s `_preserve_unless_source` guard. Recorded as accepted risk until built; falsifier
-   is a re-tag silently vanishing after a backfill run.
-4. **`own-history-refresh` silently drops `ev_ebitda.note`.** Its branch only re-applies the
+2. **R2 ENGINE — BUILT 2026-07-21 (`R2_terminal_margin`).** Terminal-margin bridge, 15% house
+   hurdle, hard survival gate, tier A/B, EV/EBIT basis supported, card rendered. Conventions
+   ratified in §7. **NEXT: the per-name grids** — cohort underwrites (NCNO / MVST / AORT / VITL,
+   and FUBO once its facts exist) each need their own evidence pull → analyst bear/base/bull, the
+   same way R1 ran. The engine does not underwrite anything by itself.
+3. **COHORT FACT GAPS — CIQ balance-sheet extraction needed (blocks two underwrites).** **MVST**:
+   no D&A tag at all; net debt UNKNOWN (under-capture guard refused). **FUBO**: not underwritable
+   from committed data — `dep_amort` resolves to $0.003M from **FY2014**, debt tags last filed
+   **2020-06-30**, FCF is **FY2024**, and diluted WA reads 30.0M against 342.7M shares outstanding
+   (an 11x gap; reverse split?). EDGAR cannot close either — these need the CIQ balance sheet.
+4. **TAGGER PROPOSALS AWAITING RATIFICATION (operator).** The propose-only tagger agrees with 10 of
+   11 committed hand tags; it proposes `R2_NEEDED` for FUBO, whose committed hint is the machine
+   placeholder `unknown`. No hint was written — ratify or reject, then re-run the sweep.
+5. **`_latest_dep_amort` prefers a STALE combined tag over current split tags.** FUBO takes a 2014
+   value of $0.003M over split tags summing $38.5M (FY2024). Affects any filer that switched tags.
+   Found 2026-07-21, not fixed in-branch (scope).
+6. **`own-history-refresh` silently drops `ev_ebitda.note`.** Its branch only re-applies the
    "trailing only" note when `ev_ebitda_adjusted_fwd` is absent; when present (VITL) the committed
    note is lost. Found 2026-07-21 by dry-run diff and routed around surgically, not patched.
 
 **ANALYST / OPERATOR**
-5. **EPAM underwrite — RUN 2026-07-21, VERDICT PENDING.** `scenarios/EPAM.json` written and
+7. **EPAM underwrite — RUN 2026-07-21, VERDICT PENDING.** `scenarios/EPAM.json` written and
    computed standalone (R1, EV/EBITDA); card shipped at `pending_analyst` — the machine
    recorded the bar test, it did NOT decide. Legs (live spot $89.40, Polygon close
    2026-07-20): bear $63.14 · base $163.08 · bull $291.24 (printed, never in the ratio);
@@ -3847,29 +3856,29 @@ re-anchor (the full STATE split stays its own queued task — nothing was reloca
    own cadence, an ESTIMATE, not a date certain).** The 2:1 bar is met at any spot ≤ **$96.45**
    (from base 163.08 / bear 63.14: spot = (base + 2·bear) ÷ 3), recorded so the ceiling never
    has to be re-derived. EPAM now rides the monitor freshness panel as `verdict pending`.
-6. **BRBR — QUEUE A FULL R1 UNDERWRITE, POST-AUGUST-WINDOW.** The last of the three dispositions
+8. **BRBR — QUEUE A FULL R1 UNDERWRITE, POST-AUGUST-WINDOW.** The last of the three dispositions
    still open; CNXC and VITL were closed 2026-07-21 (`R1_NOT_ROBUST` and `R2_NEEDED`). BRBR passes
    both band guards, so its anchor is usable. **Basis = the 2026-07-21 disposition pull**, whose
    one contested item is now settled: `book value/share −$4.28` IS committed and sourced
    (`mechanical.stock_info.book_value_ps`) — the pull's "unsourced" finding was a false negative.
    Hold until after the August print window for the same reason EPAM is held.
-7. **CIQ ESCALATION — VITL `TEV/LTM EBITDA` (LOW PRIORITY, operator).** Reproducible statement
+9. **CIQ ESCALATION — VITL `TEV/LTM EBITDA` (LOW PRIORITY, operator).** Reproducible statement
    drafted: *VITL (NasdaqGM:VITL), Financials→Multiples — `TEV/LTM EBITDA` is populated against a
    rent-adjusted denominator. Backing it out of the sheet's own TEV gives ~393 against EBITDAR
    ~390.5 (1.007x) and EBITDA 79.5 (4.94x), across every recent period; `TEV/LTM EBIT` on the same
    sheet reconciles to EDGAR exactly.* Low priority: the guard already disqualifies the band, so
    nothing downstream depends on CIQ answering. Worth sending because the same rent-adjustment
    substitution would silently distort ANY lease-heavy name.
-8. **Truckload freeze-source re-run** — confirm the surgically-patched
+10. **Truckload freeze-source re-run** — confirm the surgically-patched
    `frontend/themes/truckload-supply-purge.json` reproduces byte-identical from the freeze.
-9. **Sweep-#2 fail-closed coverage holes (2)** — operator decision, report-only.
-10. **Drafting-rubric v2 validation — DATED 2026-08-13** (pre-registered; do not run early).
+11. **Sweep-#2 fail-closed coverage holes (2)** — operator decision, report-only.
+12. **Drafting-rubric v2 validation — DATED 2026-08-13** (pre-registered; do not run early).
 
 **HOUSEKEEPING**
-11. **Refresh cadence → docs/RUNBOOKS.md** (it is operating practice, not state).
-12. **Full STATE split** — §5 build records → a fossils/decisions file; this block is the interim.
+13. **Refresh cadence → docs/RUNBOOKS.md** (it is operating practice, not state).
+14. **Full STATE split** — §5 build records → a fossils/decisions file; this block is the interim.
 
-13. **REFERENCE-LABEL REGISTER + de-couple the median lookup (PAIRED — do not split).**
+15. **REFERENCE-LABEL REGISTER + de-couple the median lookup (PAIRED — do not split).**
     `assumptions[].references[].label` renders to the reader but is not linted; 14 labels across
     the four records still carry house vocabulary (`own-history band low`, `committed anchor
     median`, EPAM's `DEAD REGIME`). Restating them is blocked on a real coupling: `uw-card.js:188`
@@ -3878,14 +3887,14 @@ re-anchor (the full STATE split stays its own queued task — nothing was reloca
     (`median` / `band_low` / `p75` / …), switch the lookup to it, THEN restate the labels with
     analyst ratification. Splitting them means either a broken card or a rule left violated.
 
-14. **MIRROR-SYNC CI CHECK.** A generator run dirties BOTH its source and its `frontend/` mirror;
+16. **MIRROR-SYNC CI CHECK.** A generator run dirties BOTH its source and its `frontend/` mirror;
     an artifact pass that commits only the source leaves the deployed site reading stale data
     SILENTLY — nothing is red, the page is just wrong. Found 2026-07-21: `92feab0` committed
     `data/monitor/2026-07-20.json` without its mirror, so the live freshness panel was still
     missing EPAM (fixed in `a982900`). Ship a CI step that rebuilds and fails if `git status` is
     dirty — the artifact pass is complete when the tree is clean, not when the source commit lands.
 
-15. **RATIONALE STYLE RULE (adopted 2026-07-21; binds FUTURE verdicts, never sealed ones).**
+17. **RATIONALE STYLE RULE (adopted 2026-07-21; binds FUTURE verdicts, never sealed ones).**
     `verdict.rationale` is plain thesis prose — the market-standard shape: thesis, the two or
     three numbers that carry it, the risk accepted. **Accession numbers, vendor names (CIQ /
     Polygon), verification arithmetic ("1,100 × 8% × 6.0x → $3.54 → 2.17:1"), and process
@@ -4077,6 +4086,76 @@ cannot drift between emitters. Pinned both ways
 freshness panel) · benchmark-by-cap-band assignment + the ledger-supersession artifact · the
 SIC-87xx sector miss · entry-price/ratio-at-entry + implied-odds display.
 
+- **R2 ENGINE — TERMINAL MARGIN, SURVIVAL GATE, PV, TAGGER (branch `feat/r2-terminal-margin`,
+  2026-07-21). ENGINE ONLY — no underwrites in this build, per the R1 pattern.**
+  - **WHY R2 EXISTS, concretely.** R1 needs a history worth reverting to. NCNO/MVST have a negative
+    margin history; VITL/AORT are ramps with a guided forward reset that no trailing median
+    describes; and **FUBO has no multiple series at all** — its `TEV/LTM EBITDA`, `TEV/LTM EBIT` and
+    `P/LTM EPS` are ALL "NM" on a loss-making trailing year (EBIT −$106.2M), so there is no band to
+    take a median of. That is a structural property of a loss-making name, not a data gap.
+  - **THE RECIPE.** Analyst supplies terminal year / revenue / margin / exit multiple **per leg**;
+    the engine builds EBIT_T → D&A_T (ratio × terminal revenue) → EBITDA_T → EV_T → equity_T →
+    shares_T → value_T, then discounts at the house hurdle. **EV/EBIT is a first-class basis** (the
+    formula adjusts, not a relabelled EBITDA run) because VITL's EBITDA band is vendor-defective
+    while its EBIT row reconciles exactly. Conventions ratified in §7.
+  - **WORKED EXAMPLE (NCNO facts, illustrative — no record written):** EBIT 900×12% = 108.0; D&A
+    0.069264×900 = 62.34; EBITDA 170.34 × 14 = EV 2,384.73; − net debt 223.90 = equity 2,160.83;
+    shares 109.4585M×(1.011119)^4 = 114.4085M → **value_T $18.89**; ÷ 1.15^4 → **PV $10.80**.
+  - **TWO 1e6 UNIT DEFECTS FOUND AND FIXED — both caught by running real numbers, neither by a
+    green test.** (1) **SHIPPED IN #173:** `compute_anchor` passed EDGAR net debt in DOLLARS into
+    the $M-denominated reconciliation guard. Latent because nothing had been re-backfilled since the
+    merge; the first real backfill spuriously withdrew **AORT's and CNXC's** base values. The pin
+    could not see it because its fixture netted to **ZERO** net debt, where dollars and $M are
+    indistinguishable — *a unit pin whose value is 0 is not a unit pin*. Fixed; fixture now carries
+    $300M; all six R1 names reproduce their committed base exactly (+0%). (2) **IN THE NEW ENGINE:**
+    $M equity ÷ a raw share count gave **$0.0000/sh** off $2.16bn of equity — plausible as "cheap"
+    rather than obviously broken. Both now pinned by MAGNITUDE, never by not-None.
+  - **THE OVERWRITE DEFECT IS CLOSED.** `anchor-backfill` now PRESERVES an operator's hand re-tag
+    and REPORTS the machine's competing proposal instead of applying it. Verified on a dry run:
+    AORT's, CNXC's and VITL's judgments all survive. Previously one backfill away from vanishing.
+  - **THE ANCHOR NOW GATHERS FACTS ON EVERY PATH.** `compute_anchor` used to bail before touching
+    EDGAR when R1 did not apply, so the very names R2 exists to underwrite committed an anchor with
+    every input null. An unusable RECIPE is not a reason to withhold the EVIDENCE. Adds `ltm_fcf`
+    (the survival input) with its basis stamped **annual, stated as such** — summing XBRL
+    quarterlies into a claimed LTM is where a fabricated burn would come from.
+  - **TAGGER — PROPOSE-ONLY, and it never writes.** On the committed book it independently
+    reproduces **10 of 11** hand tags, including CNXC's `R1_NOT_ROBUST` from the leverage signal
+    alone and AORT/VITL's `R2_NEEDED` from margin shape. The one disagreement is FUBO, whose
+    committed hint is the machine placeholder `unknown` (proposes `R2_NEEDED`). **No hint writes
+    this build — the operator ratifies.**
+  - **STEP 0 — COHORT CLOSURE, and it did NOT fully close.** Canonical-sync earned its keep
+    immediately: **AORT's two workbooks in the `-fix` worktree were STALE** (different bytes from
+    canonical). Band values proved identical, so nothing moved — luck, not design. FUBO's canonical
+    folder holds a full 10-file export; its local absence was a worktree gap. Guards across the
+    cohort: **NCNO became runnable on reconciliation (1.08x pass, previously unrun)**; MVST/FUBO
+    stay UNRUN; AORT 1.02x pass; **VITL remains the only trip, on both. No new trips.**
+  - **COHORT GAPS, RECORDED NOT PAPERED OVER.** **FUBO is not underwritable from committed data:**
+    `dep_amort` resolves to **$0.003M from FY2014** (twelve years stale), debt tags last filed
+    **2020-06-30**, FCF is **FY2024**, and diluted WA reads **30.0M against 342.7M shares
+    outstanding** — an 11x gap unresolvable from tags alone. **MVST** has no D&A tag at all and its
+    net debt is UNKNOWN (the under-capture guard correctly refused). Both net-debt gaps need CIQ
+    balance-sheet extraction, not EDGAR. Per operator default, FUBO STAYS in the cohort with its
+    gaps recorded — dropping it would hide the problem.
+  - **FOUND IN PASSING — NOT FIXED (scope).** `_latest_dep_amort` prefers the COMBINED D&A tag
+    regardless of vintage, so FUBO takes a 2014 value of $0.003M over current split tags summing
+    $38.5M. Affects any filer that switched tags. Queued.
+  - **INVARIANT (incident → guard, shipped Y):** `tests/test_terminal_margin.py` (36 pins: worked
+    example step-by-step, both unit magnitudes, EV/EBIT basis, dilution/burn/D&A-ratio behaviour,
+    degenerate guards, the survival fail/raise/accession/FCF-positive paths, and the
+    confirmed-blocked-on-FAIL gate end-to-end) and `tests/test_tagger.py` (18 pins: the
+    signal→proposal mapping on synthetic shapes, precedence, purity, absent-vs-disagree).
+  - **A LIVING-ARTIFACT PIN WAS AT THE WRONG LAYER, fixed.** `test_dossier_page_logs_anchor_and_
+    scenario_panels` used FUBO as its "dossier without an anchor" fixture and went red the moment
+    FUBO earned one. The no-anchor case is now CONSTRUCTED — the invariant is a property of the
+    RENDERER, and binding it to a live ticker made it a property of the queue.
+  - Render: R2 card variant (terminal value AND PV both labelled, hurdle + years shown, survival
+    panel with its runway arithmetic, tier badge), previewed light + dark. Prose-register linter:
+    **0 flags** on everything this build wrote. Runway rounding aligned to the engine's own note
+    (1.3y beside 1.25y was one number disagreeing with itself on one panel); the danger palette uses
+    the design-system `--danger-*` tokens, not a hardcoded red that would not follow dark mode.
+  - Gate: ruff + `mypy --strict` clean; `pytest -m "not network"` green. R1 scenario cards
+    byte-identical after the frontend rebuild (emit-determinism pin holds).
+
 - **BAND COHERENCE + RECONCILIATION GUARDS — FIFTH BAND-DEFECT CLASS, CLOSED (branch
   `feat/band-coherence-guards`, 2026-07-21).** VITL's CIQ Multiples export carried a `TEV/LTM
   EBITDA` row contradicted by its own `TEV/LTM EBIT` row. Nothing in the pipeline could see it: the
@@ -4137,8 +4216,9 @@ SIC-87xx sector miss · entry-price/ratio-at-entry + implied-odds display.
     flag composition, and end-to-end through `compute_anchor`. **Living committed artifacts are
     asserted only against phrasing- and value-independent invariants** (a flagged band publishes no
     base; the margin identity holds), so a corrected re-pull turns them green rather than red.
-  - **ACCEPTED RISK (recorded, not fixed).** A hand re-tag of an anchor block is overwritten by
-    `anchor-backfill`, which recomputes from EDGAR. This already applied to AORT's re-tag and is
+  - **ACCEPTED RISK — CLOSED 2026-07-21 by `feat/r2-terminal-margin`** (`preserve_operator_tag`).
+    Was: a hand re-tag of an anchor block is overwritten by `anchor-backfill`, which recomputes from
+    EDGAR. This already applied to AORT's re-tag and is
     unchanged by this build — not newly introduced here. Falsifier: a re-tag silently disappearing
     after a backfill run. Fix (queued, not built): make the backfill preserve an operator re-tag the
     way `build.py`'s `_preserve_unless_source` guard preserves mirror sources.
@@ -5613,6 +5693,35 @@ latest 8-K/10-Q/10-K); read the print against the record; amend VISIBLY (tagged,
 untouched) where the print falsifies a stated premise. **Never record over an unread print.**
 Only primary filings go on the record — a figure a secondary source carries but the filing
 doesn't is dropped, noted, never recorded (the SMPL "September price increase" case).
+
+**R2 CONVENTIONS — ratified 2026-07-21.** The terminal-margin recipe, for names R1 cannot anchor.
+
+- **HURDLE = 15%, FLAT, HOUSE-WIDE.** ≈ risk-free (~4.3%) + equity premium (~5%) + demanded excess;
+  the midpoint of a cohort CAPM-with-size-premium range (~12–17%). A module constant beside the bar,
+  never a record field, **so no name can pass by shading its own discount rate** — a per-name hurdle
+  is the single easiest place to manufacture a pass. Name-specific risk is expressed where it can be
+  REVIEWED: in the bear leg, in the survival gate, and in tier→confidence. Never in the rate.
+- **SURVIVAL IS A HARD GATE, not a ratio input.** runway = (cash + committed undrawn facilities) ÷
+  burn. Runway short of the analyst's years-to-breakeven with **no announced or committed raise** →
+  FAIL, and a FAIL **blocks `verdict.status="confirmed"`** — pinned on the RECORD, not the runner,
+  because the verdict is written by hand and a compute-path guard would be edited straight past. A
+  raise counts **only with an accession**: an intention in a press cycle is not committed capital.
+  `watch`/`passed` stay reachable and the record still computes and prints in full — an asymmetry on
+  a company that runs out of money is not a cheap asymmetry, it is a wrong one.
+- **ONE BAR, 2.0, unchanged.** The bar does not move because the recipe did. Bull is printed and
+  never in the ratio, exactly as R1.
+- **TIER is a property of the BUSINESS, not of the answer.** **A** = contracted/recurring revenue,
+  gross-profitable, self-funded to breakeven on the balance sheet it already has. **B** =
+  survival-gated or unproven unit economics. Tier feeds **confidence at the verdict** and
+  deliberately does **NOT** move the bar — a lower bar for a worse business is how a fund talks
+  itself into one.
+- **PV and TERMINAL are both rendered, always labelled.** `value_per_share` carries the PV (what the
+  ratio uses); `value_terminal` the undiscounted number. Showing only the terminal value compares a
+  multi-year story against a price paid today; showing only the PV hides what was assumed.
+- **DILUTION AND BURN ARE MODELLED, not assumed away.** Shares compound at a floored trailing-3y
+  diluted CAGR over the horizon (**floor 0** — projecting buybacks forward is a silent gift to a
+  name more likely to be issuing stock), plus any announced raise as a discrete event; cumulative
+  burn to breakeven only ever ADDS to terminal net debt.
 
 **Monitor cadence: a MANUAL command (`python -m vinci monitor`), never a scheduler.** The interim
 spread is a DIAGNOSTIC — read for direction, never tuned on; the measurement is the PER-ROW read
