@@ -45,6 +45,9 @@ def test_anchor_schema_shape_and_dossier_field() -> None:
         "recipe_hint", "applicable", "multiple_basis", "computed_at", "reason",
         "data_quality", "data_quality_detail",
         "margin", "multiple", "d_and_a", "net_debt", "diluted_shares", "ltm_revenue",
+        # ltm_fcf (2026-07-21, R2 cohort): the SURVIVAL input — a negative value IS the burn the
+        # R2 gate divides cash by, so it is source-bound and basis-stamped like every other input.
+        "ltm_fcf",
         "anchor_base_value_per_share", "anchor_ev_ebit", "overall_confidence", "note",
     }
     assert set(AnchorMargin.model_fields) == {"value", "unit", "basis", "source", "anchor_years",

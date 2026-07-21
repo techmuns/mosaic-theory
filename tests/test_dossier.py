@@ -7070,7 +7070,11 @@ import {{ readFileSync }} from "node:fs";
 const {{ renderDossier }} = await import("{dj}");
 const rd = (p) => JSON.parse(readFileSync(p));
 const withAnchor = rd("data/dossiers/IT/dossier.json");
-const noAnchor = rd("data/dossiers/FUBO/dossier.json");
+// The no-anchor case is CONSTRUCTED, never borrowed from whichever ticker happens to lack a block
+// today: this was pinned to FUBO and went red the moment FUBO earned one (2026-07-21, the R2
+// cohort backfill). The invariant under test — "an absent anchor renders nothing" — is a property
+// of the RENDERER; binding it to a live ticker made it a property of the queue instead.
+const noAnchor = {{ ...withAnchor, anchor: null }};
 const card = rd("frontend/scenarios/IT.json");
 console.log(JSON.stringify({{
   anchorPanel: renderDossier(withAnchor, null)
