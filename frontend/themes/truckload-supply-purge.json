@@ -599,13 +599,13 @@
         "label": "Dedicated share of Truckload segment revenue, FY2018",
         "value": 51.5,
         "unit": "%",
-        "source": "10-K FY2018 revenue disclosure \u2014 analyst calculation (confirm basis at review)"
+        "source": "FY2019 10-K acc 0000793074-20-000014 MD&A statistical table, 'Trucking revenues, net of fuel surcharge': Dedicated 817,203 / (817,203 + One-Way 770,972) = 51.46% [basis stamped 2026-07-21: recomputed from the filing's component lines]"
        },
        {
-        "label": "Dedicated share of Truckload segment revenue, current",
-        "value": 73.0,
+        "label": "Dedicated share of Truckload segment revenue, Q1-2026",
+        "value": 73.2,
         "unit": "%",
-        "source": "10-K acc 0000793074-26-000071 revenue disclosure \u2014 analyst calculation (confirm basis at review)"
+        "source": "Q1-2026 10-Q acc 0000793074-26-000096, 'Trucking revenues, net of fuel surcharge': Dedicated 371,880 / (371,880 + One-Way 136,401) = 73.16% [amended 2026-07-21: prior source mis-attributed \u2014 FY2025 10-K full-year mix is 64.5% (1,149,550 / (1,149,550 + 633,853)) and that filing carries no ~73% figure on any basis; the ~73% is the Q1-2026 quarter; operator-confirmed ruling]"
        },
        {
         "label": "FY2021 peak operating margin (consolidated; 2020/2022 were 9.59%/9.82%)",
@@ -716,7 +716,7 @@
       "revenue": 3400.0,
       "margin": 0.08,
       "multiple": 7.0,
-      "reason": "genuine cycle turn: One-Way rebounds on tight capacity + driver-supply tightening; Dedicated fully loaded. Below 12-14% 2020-22 peaks (One-Way exposure reduced; insurance ~125bps higher).",
+      "reason": "genuine cycle turn: One-Way rebounds on tight capacity + driver-supply tightening; Dedicated fully loaded. Below TTS-segment peaks of 12\u201314% (FY20\u201322: 12.04/13.78/12.13%; consolidated 9.6\u201311.3%) (One-Way exposure reduced; insurance ~125bps higher) [amended 2026-07-21: scoped to segment level \u2014 consolidated record 9.59/11.31/9.82%, FY22 10-K segment footnote].",
       "valuePerShare": 48.88,
       "opIncome": 272.0,
       "ebitda": 558.3,
