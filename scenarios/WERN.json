@@ -58,7 +58,7 @@
       "revenue": 3100.0,
       "margin": 0.0625,
       "multiple": 6.5,
-      "reason": "deviates from 7.45% anchor: insurance run-rate +~125bps (2018-22 avg 4.06% -> 2025-26 underlying ~5.3%, ex one-off Q2-25 favorable credit); ~50bps for Dedicated mix shift 51.5%->73% capping One-Way upside in peak-margin years."
+      "reason": "Set below the 7.45% full-history screening median: the insurance run-rate is about 125bps higher (2018-22 average 4.06% against 2025-26 underlying ~5.3%, excluding the one-off Q2-25 favourable credit), and about 50bps comes off for the Dedicated mix shift from 51.5% to 73%, which caps One-Way upside in peak-margin years. [restated for external readability 2026-07-21; substance unchanged]"
     },
     "bull": {
       "revenue": 3400.0,
@@ -88,7 +88,7 @@
       "ratified": "2026-07-21"
     },
     "margin": {
-      "method": "Modeled off the 7.45% own-history median anchor: base deducts ~125bps for the structurally higher insurance run-rate and ~50bps for the Dedicated mix shift capping One-Way upside; bear is a slight lift off the ~0% FY2025 underlying floor; bull re-rates toward but below the FY2021 consolidated peak.",
+      "method": "Modelled off the 7.45% full-history screening median: base deducts ~125bps for the structurally higher insurance run-rate and ~50bps for the Dedicated mix shift capping One-Way upside; bear is a slight lift off the ~0% FY2025 underlying floor; bull re-rates toward but below the FY2021 consolidated peak. [restated for external readability 2026-07-21; substance unchanged]",
       "references": [
         {
           "label": "own-history median operating margin, FY2008-2025 (the anchor)",
@@ -149,7 +149,7 @@
       "ratified": "2026-07-21"
     },
     "multiple": {
-      "method": "Chosen against the own-history TEV/LTM-EBITDA band: bear between trough and median, base at roughly the median, bull toward the upper quartile on a genuine cycle turn.",
+      "method": "Chosen against the company's own TEV/LTM-EBITDA trading range: bear between the trough and the median, base at roughly the median, bull toward the upper quartile on a genuine cycle turn. [restated for external readability 2026-07-21; substance unchanged]",
       "references": [
         {
           "label": "own-history TEV/LTM-EBITDA trough (43 quarterly closes)",
@@ -220,6 +220,8 @@
       "a reported quarter proving normalized operating margin genuinely >7.5% (e.g. disclosed Dedicated segment economics, or a clean beat)"
     ],
     "avoid_priced": true,
-    "avoid_priced_note": "inverted asymmetry at 46 (upside +6% to bull, downside -22% base / -64% bear) -> track for avoid-leg short-alpha on paper."
+    "avoid_priced_note": "inverted asymmetry at 46 (upside +6% to bull, downside -22% base / -64% bear) -> track for avoid-leg short-alpha on paper.",
+    "rationale_plain": "WATCH at $46. The underwrite fails our 2:1 bar — the base case values the business roughly 22% below the market price, so the recovery is already paid for. A sound franchise at the wrong price, not a broken one. We revisit below about $28–30, or on evidence that normal profitability is genuinely higher than the company's own history suggests.",
+    "rationale_plain_recorded": "2026-07-21"
   }
 }

@@ -164,9 +164,19 @@ def lint_record(rec: Any) -> list[ProseFlag]:
     flags: list[ProseFlag] = []
 
     v = d.get("verdict") or {}
-    for key in ("rationale", "rationale_plain"):
-        if v.get(key):
-            flags += lint_text(v[key], f"verdict.{key}", max_words=RATIONALE_MAX_WORDS)
+    # Which rationale faces the READER decides which one the register binds.
+    #
+    # With a restatement recorded, `rationale_plain` is the reader-facing text and `rationale` is a
+    # SEALED historical artifact: §7 holds that the machine never rewrites analyst words, and the
+    # analyst recorded a plain restatement precisely INSTEAD of altering the original. Linting the
+    # sealed copy forever would mean no restated record could ever reach zero — the linter would cry
+    # wolf permanently and get switched off, which is the failure this module is built to avoid.
+    #
+    # With NO restatement, the original IS the reader-facing text and must meet the register.
+    reader_facing = "rationale_plain" if v.get("rationale_plain") else "rationale"
+    if v.get(reader_facing):
+        flags += lint_text(v[reader_facing], f"verdict.{reader_facing}",
+                           max_words=RATIONALE_MAX_WORDS)
     if v.get("avoid_priced_note"):
         flags += lint_text(v["avoid_priced_note"], "verdict.avoid_priced_note")
     for i, t in enumerate(v.get("reunderwrite_triggers") or []):

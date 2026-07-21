@@ -127,6 +127,10 @@ def _scenario_card(rec: dict[str, Any], ledger: dict[str, dict[str, Any]] | None
            if rec.get("recipe_formula") else {}),
         **({"assumptions": [
             {"axis": k, "method": a["method"],
+             # Draft status is STRUCTURED, never a marker inside the prose (the register rule: a
+             # prose duplicate of structured state is the thing being removed). Emitted only when
+             # UNratified, so a ratified axis stays byte-identical — the card badges from this.
+             **({"unratified": True} if not a.get("ratified_by") else {}),
              "references": [{"label": p["label"], "value": p["value"], "unit": p["unit"],
                              "source": p["source"]} for p in (a.get("references") or [])]}
             for k, a in rec["assumptions"].items()]}

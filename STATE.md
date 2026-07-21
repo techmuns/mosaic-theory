@@ -3848,6 +3848,13 @@ re-anchor (the full STATE split stays its own queued task — nothing was reloca
 8. **Refresh cadence → docs/RUNBOOKS.md** (it is operating practice, not state).
 9. **Full STATE split** — §5 build records → a fossils/decisions file; this block is the interim.
 
+11. **MIRROR-SYNC CI CHECK.** A generator run dirties BOTH its source and its `frontend/` mirror;
+    an artifact pass that commits only the source leaves the deployed site reading stale data
+    SILENTLY — nothing is red, the page is just wrong. Found 2026-07-21: `92feab0` committed
+    `data/monitor/2026-07-20.json` without its mirror, so the live freshness panel was still
+    missing EPAM (fixed in `a982900`). Ship a CI step that rebuilds and fails if `git status` is
+    dirty — the artifact pass is complete when the tree is clean, not when the source commit lands.
+
 10. **RATIONALE STYLE RULE (adopted 2026-07-21; binds FUTURE verdicts, never sealed ones).**
     `verdict.rationale` is plain thesis prose — the market-standard shape: thesis, the two or
     three numbers that carry it, the risk accepted. **Accession numbers, vendor names (CIQ /
@@ -3860,6 +3867,69 @@ re-anchor (the full STATE split stays its own queued task — nothing was reloca
     scenario-record copy is the analyst's to re-word (meaning-preserving, by hand) if they
     choose. This rule makes the standard checkable at the NEXT verdict instead of re-discovered
     after it. (IT's rationale largely conforms and needs nothing.)
+
+    **EXTENDED 2026-07-21 (restatement pass — all four records).** The rule now covers EVERY prose
+    field in a scenario record, because a record is read by an outside buy-side analyst who has
+    never seen this repo, and the registers differ by field:
+
+    | field | register |
+    |---|---|
+    | `rationale_plain` | plain thesis, ≤~120 words: action + asymmetry → the variant view with its carrying numbers → the kill condition |
+    | `reunderwrite_triggers` | measurable condition → threshold → action |
+    | leg `reason` | investment-committee register — statistics cited BY NAME |
+    | `assumptions[].method` | technical replication detail (a reader must be able to rebuild the number) |
+
+    Binding on every field regardless of register: **accessions and vendor names live in the
+    structured `references` / `source` fields only**, and **house-internal labels appear nowhere —
+    state the claim, not the label** ("the sell-off has overshot fair value", never "overshoot";
+    "the full-history screening median", never "the anchor"; "a regime no longer representative",
+    never "DEAD REGIME"). Build/PR numbers are repo provenance and never appear in prose.
+
+    **WHICH rationale the rule binds: the reader-facing one.** `rationale_plain` carries the
+    restatement; the original `rationale` is UNCHANGED and stays sealed — it renders behind an
+    "as recorded <date>" expander (and prints, per the T1 amendment). Once a restatement exists the
+    original is a historical artifact and is exempt from the linter; with no restatement, the
+    original IS reader-facing and is bound. Anything else would mean no restated record could ever
+    read clean, and a linter that cries wolf gets switched off.
+
+    **Draft status is STRUCTURED, never prose.** `ratified_by`/`ratified` already carry it, so the
+    "DRAFT — ratify at review" marker is gone from method text; the card badges "draft — unratified"
+    from the structured field. A prose duplicate of structured state is exactly what this rule
+    removes.
+
+    Machine check shipped: `vinci/prose_lint.py` — **flag-only, never rewrites** (a linter that
+    edited analyst prose would violate the very line this rule protects), wired at `write_record` as
+    a non-blocking warning plus a repo check pinning all four records clean. Boundary: scenario
+    records are the EXTERNAL register; **the dossier layer stays internal** until a name graduates
+    (543 flags there are out of scope by definition, not a backlog).
+
+**BUILD RECORD — 2026-07-21 plain-language restatement pass (all four scenario records).**
+Every prose field in IT / SMPL / WERN / EPAM restated into external-reader register; 23 restatements
+applied (only fields that needed it — tagging an already-clean field would have made the record lie
+about what changed). `Verdict.rationale_plain` + `rationale_plain_recorded` added (additive; every
+pre-existing record still validates). The three verdicted names carry analyst-authored plain
+rationales — the machine wrote NO rationale prose, consistent with the pivot. EPAM has none: its
+verdict is still pending, and none was invented.
+
+INVARIANCE PROVEN, not asserted: `result`, `facts`, every scenario NUMBER, `verdict.rationale` on
+all four, and the decision ledger are byte-identical before/after; the mirror rebuild left
+`sweep.json` unchanged (ee5416ba…) and WERN's theme-embedded card was re-emitted mechanically via
+`_scenario_card()`, never hand-typed.
+
+TWO FINDINGS WORTH KEEPING:
+* **The linter's own false positives were caught by linting the ANALYST's supplied text.** Three
+  patterns matched ordinary English as if it were house vocabulary — "early Aug" (a date, not the
+  `early` grade), "still clears 2.02:1" (the verb, not the `cleared` status), "the company's own
+  history" (possessive English, not the `own-history median` statistic). The last was found only
+  because the analyst's own restatement tripped it: the linter was wrong, not the prose. Each
+  narrowing carries a negative pin quoting the real sentence. A linter that cries wolf gets
+  switched off, so a false positive is a defect, not conservatism.
+* **Code and data could not be split here without a red commit.** Measured, not assumed: with the
+  data stashed, three tests fail — including the pre-existing emit-determinism pin, because a
+  changed emitter necessarily changes its emitted artifacts in the SAME commit. The C1/C2 split
+  held for the linter+schema+render (7a6fc2c, code-only, zero artifacts moved); the emitter change
+  landed with its artifacts, which is the opposite of the failure CLAUDE.md's rule guards against
+  (logic smuggled into an artifact commit).
 
 **CLOSED by the 2026-07-21 extraction-hygiene run:** the shared `annual_series` alias item AND
 the `extract_points` first-alias/truncation item — ONE root defect, not two.

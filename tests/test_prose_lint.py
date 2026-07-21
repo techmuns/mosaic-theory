@@ -125,10 +125,34 @@ def test_lint_record_reaches_every_prose_surface() -> None:
     }
     fields = {f.field for f in pl.lint_record(rec)}
     assert fields == {
-        "verdict.rationale", "verdict.rationale_plain", "verdict.avoid_priced_note",
+        # rationale_plain is present, so IT is the reader-facing text and the sealed original is
+        # exempt (see test_sealed_original_is_exempt_once_restated)
+        "verdict.rationale_plain", "verdict.avoid_priced_note",
         "verdict.reunderwrite_triggers[0]", "scenarios.bear.reason",
         "assumptions.margin.method", "gate_adjudication",
     }
+
+
+def test_sealed_original_is_exempt_once_restated_but_bound_until_then() -> None:
+    """Whichever rationale faces the READER is the one the register binds.
+
+    §7 seals the original: the machine never rewrites analyst words, and a restatement is recorded
+    INSTEAD of altering it. If the sealed copy kept flagging, no restated record could ever reach
+    zero — the linter would cry wolf forever and get switched off.
+    """
+    original = "Side taken: overshoot; the anchor is dragged by CIQ data"
+    # no restatement yet -> the original is reader-facing and MUST flag
+    only_original = pl.lint_record({"verdict": {"rationale": original}})
+    assert only_original and all(f.field == "verdict.rationale" for f in only_original)
+    # restatement recorded -> the original is a historical artifact, exempt; the plain text binds
+    restated = pl.lint_record({"verdict": {"rationale": original,
+                                           "rationale_plain": "The market has overshot on a "
+                                                              "still-intact business."}})
+    assert restated == [], "the sealed original must not flag once a restatement is recorded"
+    # and the restatement itself is still policed
+    bad_restatement = pl.lint_record({"verdict": {"rationale": original,
+                                                  "rationale_plain": "the anchor says so"}})
+    assert [f.field for f in bad_restatement] == ["verdict.rationale_plain"]
 
 
 # ---------------------------------------------------------------- write-path + schema
@@ -241,3 +265,54 @@ def test_card_emitter_omits_rationale_plain_when_absent() -> None:
     card = build._scenario_card(rec)
     assert "rationalePlain" not in card["verdict"], (
         "absent restatement must OMIT the key, never emit null")
+
+
+def test_draft_badge_renders_from_structured_state_not_a_prose_marker() -> None:
+    """An unratified axis is flagged by `unratified`, never by "DRAFT" typed into the method.
+
+    Structural pin both ways: a null-stamped axis emits the flag and the card badges it; a stamped
+    axis emits nothing and renders no badge. This is what let the DRAFT prose marker be DROPPED —
+    the state was already structured, and a prose duplicate of structured state is precisely what
+    the register rule removes.
+    """
+    import re
+    import sys
+
+    sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "frontend"))
+    import build  # type: ignore[import-not-found]
+
+    rec = json.loads((Path("scenarios") / "EPAM.json").read_text())
+    card = build._scenario_card(rec)
+    axes = {a["axis"]: a for a in card["assumptions"]}
+    assert all(a.get("unratified") for a in axes.values()), (
+        "EPAM's axes are unratified (ratified_by null) — every one must carry the flag")
+    assert not any("DRAFT" in a["method"] for a in axes.values()), (
+        "the prose marker is gone; structured state carries draft status now")
+
+    stamped = json.loads((Path("scenarios") / "IT.json").read_text())
+    st_card = build._scenario_card(stamped)
+    assert not any("unratified" in a for a in st_card["assumptions"]), (
+        "a ratified axis must OMIT the key entirely, so its card stays byte-identical")
+
+    src = (Path(__file__).resolve().parents[1] / "frontend" / "views" / "shared" / "uw-card.js"
+           ).read_text()
+    fn = re.search(r"function methodLines\(c\) \{(.*?)\n\}", src, re.S)
+    assert fn and "a.unratified" in fn.group(1) and "uw-draft-badge" in fn.group(1), (
+        "methodLines must badge from a.unratified")
+
+
+def test_every_committed_scenario_record_is_register_clean() -> None:
+    """THE REPO CHECK. The four records are the external-reader surface — they stay clean.
+
+    Data-coupled by design: it ships with the restatement that makes it true, because a test that
+    is red at one commit and green at the next is a red commit.
+    """
+    dirty = {}
+    for p in sorted(Path("scenarios").glob("*.json")):
+        if p.name.startswith("_"):
+            continue
+        flags = pl.lint_record(json.loads(p.read_text()))
+        if flags:
+            dirty[p.stem] = [str(f) for f in flags]
+    assert not dirty, ("prose-register violations in committed records:\n"
+                       + json.dumps(dirty, indent=2))

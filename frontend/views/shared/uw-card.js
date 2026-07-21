@@ -423,7 +423,9 @@ function orderedAssumptions(c) {
 // methodology check. The reference numbers live one click deeper (methodRefsDetails).
 function methodLines(c) {
   const items = orderedAssumptions(c).map((a) =>
-    `<li><b>${escapeHtml(axisLabel(a.axis, c.multipleBasis || DASH))}</b> — ${escapeHtml(a.method)}</li>`);
+    `<li><b>${escapeHtml(axisLabel(a.axis, c.multipleBasis || DASH))}</b>${
+      a.unratified ? ` <span class="uw-draft-badge">draft — unratified</span>` : ""
+    } — ${escapeHtml(a.method)}</li>`);
   return items.length ? `<ul class="kv-list uw-methods">${items.join("")}</ul>` : "";
 }
 
