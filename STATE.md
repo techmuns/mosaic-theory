@@ -3957,6 +3957,32 @@ re-anchor (the full STATE split stays its own queued task — nothing was reloca
     restating a label can silently break the card. That classifier is itself a standing violation
     of the parsers-consume-structured-values rule. Queued as item 12.
 
+**BUILD RECORD — 2026-07-21 dossier three-tier redesign (PR #174).** The Brief/Analysis/Appendix
+tabs re-designed from first principles as an institutional report; web + md renderers moved
+together; NO dossier.json data changed (render layer only + the 11 regenerated dossier.md).
+Brief = six decision-ordered cards (At a glance · Scenario analysis · What happened · The case ·
+Financial snapshot · Valuation — first cut); a logged name's narrative slot carries the analyst's
+recorded rationale (once — the detail card suppresses its copy), a pending name the machine
+assessment. Analysis re-ordered to decision logic, analyst caveats only. Appendix gains "How to
+read this dossier" + RECORD & REPRODUCE (data window · model · identifiers · underwrite record ·
+assembly log · re-run · verdict record) — the §5-item-1 provenance stamp's rendered home.
+
+RETIRED from the reader surface with mechanisms intact: the standing machine-proposal row (still
+derived + sealed at assembly, disposition still recorded; revealed by the ledger CLI and md
+--show-proposal — pinned both directions), the Recommendation/Target slot, the standing
+Verify-first section (now a conditional warning strip that skips RESOLVED caveats — VRRM's
+resolved P/E-basis check was firing it), the verdict footer, the header process-meta line (whose
+"data as of" contradicted per-fact vintages — the header now carries the DOCUMENT date), raw
+recipe ids, the assembly-log line masquerading as an analyst caveat (all 11 dossiers), and the
+per-card discipline lectures (stated once in the reading guide).
+
+VERIFIED: 836 offline tests green ON the regenerated artifacts (10 structure pins re-anchored,
+each keeping its invariant); scripted invariants 11 documents × 10 checks all hold; mirrors +
+monitor idempotent; sweep.json byte-identical; live preview across the four coverage shapes
+(pending / logged-with-card / logged-no-card / no-dossier degrade). Anti-anchoring note: removing
+the proposal DISPLAY crosses none of the three protected lines (no LLM verdict, no outcome
+tuning, no execution path) — the seal/reveal mechanism is untouched and test-pinned.
+
 **BUILD RECORD — 2026-07-21 plain-language restatement pass (all four scenario records).**
 Every prose field in IT / SMPL / WERN / EPAM restated into external-reader register; 23 restatements
 applied (only fields that needed it — tagging an already-clean field would have made the record lie

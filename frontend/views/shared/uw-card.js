@@ -215,14 +215,14 @@ function mastheadFoot(c) {
 // and explicitly not a machine call, so the header says which it is. It also restores the band's
 // label-over-value grammar (every other cell has a micro-label) and repairs the weak states:
 // "Verdict · pending analyst" reads as a state; a lone grey chip reads as an error.
-function masthead(c, showTicker) {
+function masthead(c, showTicker, { eyebrow = true } = {}) {
   const pills = verdictPills(c);
   return `<div class="uw-mast">
-    <div class="uw-mast-head">
+    ${eyebrow ? `<div class="uw-mast-head">
       <span class="uw-mast-t">${showTicker ? `${mono(c.ticker)} · ` : ""}Scenario underwrite
         <span class="muted">${escapeHtml(c.multipleBasis || "")}</span></span>
       ${pills ? `<span class="uw-mast-pills"><span class="uw-vlab">Verdict</span>${pills}</span>` : ""}
-    </div>
+    </div>` : ""}
     <div class="uw-statband">
       ${headlineCell(c)}
       ${ratioCell(c)}
@@ -365,8 +365,6 @@ function legsTable(c) {
         ${row("Revenue ($M)", (l) => thousands(l.revenue))}
         ${row("Op margin", (l) => pct(l.margin))}
         ${row(`Exit ${basis}`, (l) => oneDp(l.multiple, "×"))}
-        ${row("EV/EBIT (cross-check)", (l) => oneDp(l.evEbit, "×"), { mutedLabel: true })}
-        ${row("Norm FCF ($M, cross-check)", (l) => oneDp(l.normFcf), { mutedLabel: true })}
       </tbody>
     </table></div>
     <div class="uw-note muted">bull is range context — never in the ratio${
@@ -490,23 +488,56 @@ function methodFact(c) {
 // since the T1 amendment they PRINT together (every details force-opens in the PDF). That is the
 // real invariant the L3/#10 rule protects (a marker must never outlive its Sources entry, nor
 // the reverse) — routing these cites into the CARD's outer list would still split them on screen.
+// The per-leg EV/EBIT + normalized-FCF cross-checks are VERIFICATION math, not decision drivers —
+// the tier-redesign moved them off the first-cut grid into this audit block (the fund's own rule:
+// verification sits one click deeper). Same numbers, same legs, just relocated.
+function crossChecks(c) {
+  const order = ["bear", "base", "bull"];
+  const legs = order.map((n) => (c.scenarios || []).find((s) => s.name === n)).filter(Boolean);
+  if (!legs.length || !legs.some((l) => l.evEbit != null || l.normFcf != null)) return "";
+  const row = (label, fn) => `<tr><td>${escapeHtml(label)}</td>${
+    legs.map((l) => `<td class="num">${fn(l)}</td>`).join("")}</tr>`;
+  // own class, NOT uw-method-h: cross-checks are verification math, not methodology, and the
+  // stripped-card pin asserts a bare card emits NO "uw-method" markup (no fabricated method block).
+  return `<div class="uw-xcheck-h" style="margin-top:10px;">Cross-checks — per leg</div>
+    <div style="overflow-x:auto;"><table class="data uw-refs-t">
+      <thead><tr><th></th>${legs.map((l) => `<th class="num">${escapeHtml(l.name)}</th>`).join("")}</tr></thead>
+      <tbody>${row("EV/EBIT", (l) => oneDp(l.evEbit, "×"))}${row("Norm FCF ($M)", (l) => oneDp(l.normFcf))}</tbody>
+    </table></div>`;
+}
+
 function inputsDetails(c) {
   const facts = c.facts || [];
   if (!facts.length) return "";
   const rows = () => facts.map((f) => fact(f.key, `${mono(String(f.value))} ${escapeHtml(f.unit || "")}
       <span class="muted">· ${escapeHtml(f.basis || "")}</span>
-      ${f.source ? citeMark(f.source) : ""}`)).join("");
-  return `<details class="uw-inputs"><summary>Inputs &amp; sources — the recorded facts behind the math</summary>${
+      ${f.source ? citeMark(f.source) : ""}`)).join("") + crossChecks(c);
+  return `<details class="uw-inputs"><summary>Inputs &amp; sources — the recorded facts and per-leg cross-checks</summary>${
     withEndnotes("I", rows)}</details>`;
 }
 
 // uwCard(cardJson) -> HTML string. `ticker:false` drops the ticker from the eyebrow when the host
-// page already carries it as its h1 (the dossier degrade).
+// page already carries it as its h1 (the dossier degrade). `extra` injects host-supplied decision
+// rows (the dossier's machine-assessment line + conditional caveat strip) after the rationale and
+// before the triggers — themes pass nothing and render exactly as before (ONE-SHAPE preserved:
+// the option's default is off, so the shared card never forks).
+function trigChips(c, v) {
+  const trig = (v.reunderwriteTriggers || []).map((t) =>
+    `<span class="uw-chip">${escapeHtml(t)}</span>`).join("");
+  return trig ? `<div class="uw-trig"><span class="uw-trig-lab">${
+    headlineState(c) === "target" ? "Thesis breaks" : "Re-underwrite when"}</span>${trig}</div>` : "";
+}
+
+function uwFoot(c, v) {
+  return `<div class="foot uw-foot">underwritten ${escapeHtml(c.underwriteDate || DASH)} · analyst
+      ${escapeHtml(c.analyst || DASH)}${
+      v.recorded ? ` · verdict recorded ${escapeHtml(v.recorded)}` : ""}${
+      c.ledger && c.ledger.entryId ? ` · ledger ${mono(c.ledger.entryId)}` : ""}</div>`;
+}
+
 export function uwCard(c, { ticker = true, mark = null } = {}) {
   if (!c) return "";
   const v = c.verdict || {};
-  const trig = (v.reunderwriteTriggers || []).map((t) =>
-    `<span class="uw-chip">${escapeHtml(t)}</span>`).join("");
   // The masthead leads: the target/base number, the asymmetry, the entry, the downside, the method
   // — the five things a reader needs before deciding whether to read on. The spot cite rides in
   // the headline cell so the price on screen still resolves to its source.
@@ -519,17 +550,44 @@ export function uwCard(c, { ticker = true, mark = null } = {}) {
     ${legsTable(c)}
     ${impliedOdds(c, mark)}
     ${rationaleFact(v)}
-    ${trig ? `<div class="uw-trig"><span class="uw-trig-lab">${
-      headlineState(c) === "target" ? "Thesis breaks" : "Re-underwrite when"}</span>${trig}</div>` : ""}
+    ${trigChips(c, v)}
     ${legReasons(c)}
     ${methodFact(c)}`;
   return `
   <section class="card uw-card">
     ${withEndnotes("U", body)}
     ${inputsDetails(c)}
-    <div class="foot uw-foot">underwritten ${escapeHtml(c.underwriteDate || DASH)} · analyst
-      ${escapeHtml(c.analyst || DASH)}${c.recipeId ? ` · recipe ${escapeHtml(c.recipeId)}` : ""}${
-      v.recorded ? ` · verdict recorded ${escapeHtml(v.recorded)}` : ""}${
-      c.ledger && c.ledger.entryId ? ` · ledger ${mono(c.ledger.entryId)}` : ""}</div>
+    ${uwFoot(c, v)}
   </section>`;
+}
+
+// The SPLIT composition (dossier tier redesign): the same pieces as uwCard, arranged as TWO
+// fragments the host wraps in its own cards — `head` (the masthead strip) for an opener that
+// pairs the decision headline with company identity, and `detail` (legs table → odds → rationale
+// → host-injected rows → triggers → audit blocks → foot) for the underwrite-detail card. ONE
+// implementation of every piece — this is an arrangement, not a fork; themes keep uwCard.
+// Endnote scopes: `head` is returned RAW — the HOST wraps its whole opener card in one scope so
+// the masthead citation and the company block citations share a single Sources list at the card
+// END (a scope closed after the masthead alone dropped its Sources list mid-card). The detail
+// keeps "U" (+ "M"/"I" inside its own blocks), self-contained.
+export function uwCardParts(c, { mark = null, detailExtra = "", rationale = true } = {}) {
+  if (!c) return null;
+  const v = c.verdict || {};
+  // `rationale: false` — the host lifted the analyst's rationale into its opener card (the
+  // narrative slot), so the detail must not render it a second time.
+  const detail = () => `
+    ${legsTable(c)}
+    ${impliedOdds(c, mark)}
+    ${rationale ? rationaleFact(v) : ""}
+    ${detailExtra}
+    ${trigChips(c, v)}
+    ${legReasons(c)}
+    ${methodFact(c)}`;
+  return {
+    head: masthead(c, false, { eyebrow: false }),
+    chips: verdictPills(c),
+    // no foot here: underwritten-date/analyst/ledger are provenance — the dossier's Record &
+    // reproduce carries them (themes keep the foot via uwCard)
+    detail: withEndnotes("U", detail) + inputsDetails(c),
+  };
 }

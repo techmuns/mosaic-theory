@@ -2072,9 +2072,10 @@ def test_customer_concentration_floor_keeps_ge_qualifier() -> None:
 
 
 def test_brief_snapshot_renders_present_and_omits_unknown() -> None:
-    """(Phase-2 / redesign) The Brief snapshot line leads with the exchange, renders each PRESENT
-    stock-info field + CIK, and OMITS an UNKNOWN one (fail-honest — never a fabricated placeholder);
-    nothing present → no line. Value pin on a FROZEN fixture (the redraw-safe layer)."""
+    """(tier redesign) The Brief snapshot line leads with the exchange, renders each PRESENT
+    stock-info field, and OMITS an UNKNOWN one (fail-honest — never a fabricated placeholder);
+    nothing present → no line. CIK is NOT here — it moved to Record & reproduce (an identifier,
+    not a decision figure). Value pin on a FROZEN fixture (the redraw-safe layer)."""
     import datetime as _dt
     p, u = ds.Sourced.present, ds.Sourced.unknown
     si = ds.StockInfo(
@@ -2082,21 +2083,21 @@ def test_brief_snapshot_renders_present_and_omits_unknown() -> None:
         low_52w=p(3.40, source_ref="EOD"), shares_out=p(151906653.0, source_ref="EDGAR"),
         book_value_ps=p(1.79, source_ref="CIQ"), market_cap=p(668.4, source_ref="CIQ"),
         as_of=_dt.date(2026, 7, 8))
-    body = " ".join(dr._brief_snapshot("Nasdaq", "0001682745", si))
+    body = " ".join(dr._brief_snapshot("Nasdaq", si))
     assert body.startswith("- **Snapshot:** Nasdaq · ")  # exchange leads
     assert "CMP $4.22 (2026-07-08)" in body and "cap $668M" in body
     assert "52-wk $3.40–$25.83" in body
     assert "shares 151.9M" in body and "book value/sh $1.79" in body
-    assert "CIK 0001682745" in body  # CIK consolidated into the snapshot (was the header)
+    assert "CIK" not in body  # moved to Record & reproduce — never in the snapshot line
     # fail-honest: an UNKNOWN price/book → those chunks drop; the rest still render
     si2 = si.model_copy(update={"price": u(note="no bars"), "book_value_ps": u(note="no CIQ")})
-    body2 = " ".join(dr._brief_snapshot("NYSE", None, si2))
+    body2 = " ".join(dr._brief_snapshot("NYSE", si2))
     assert "CMP" not in body2 and "book value/sh" not in body2
     assert "52-wk $3.40–$25.83" in body2 and "shares 151.9M" in body2 and "NYSE" in body2
     # nothing present at all → the whole line is omitted (no empty snapshot)
     allu = ds.StockInfo(price=u(note="x"), high_52w=u(note="x"), low_52w=u(note="x"),
                         shares_out=u(note="x"), book_value_ps=u(note="x"), market_cap=u(note="x"))
-    assert dr._brief_snapshot(None, None, allu) == []
+    assert dr._brief_snapshot(None, allu) == []
 
 
 # --- (PR-B) operating-drivers: A3 Key Developments, fail-loud transcript, Mechanism render --------
@@ -2304,27 +2305,32 @@ def test_tier_b_row_cap_flags_excess() -> None:
 
 
 def test_dossier_top_redesign_no_duplication_static() -> None:
-    """(redesign) The dossier top: a SLIM header (title + one 'no verdict' meta line, no queue rank)
-    and a Brief teaser split into a 2/3 narrative + a 1/3 snapshot table. The identity, market cap,
-    and framing must NOT repeat across the two — the clutter this redesign removes. Node-free source
-    pins (the render is deterministic HTML)."""
+    """(tier redesign 2026-07-21) The dossier top: a SLIM header — company identity in the
+    institutional format "Name (Exchange: TICKER)" + the DOCUMENT date, NO process meta — and an
+    opener card ("At a glance") whose company block never repeats the header identity. Node-free
+    source pins (the render is deterministic HTML)."""
     src = Path("frontend/views/shared/dossier.js").read_text()
-    # the 2/3 + 1/3 layout + the snapshot
+    # the opener layout + the key-figures sidebar
     assert 'class="brief-body"' in src and "briefSnapshot(d, m)" in src
-    assert 'class="brief-snap"' in src and 'class="brief-snap-idn"' in src
-    # the OLD duplicated bits are gone (idn dup, meta cap dup, inline stock line)
+    assert 'class="brief-snap"' in src
+    # identity renders ONCE: the header carries Name (Exchange: TICKER); the sidebar's identity
+    # line is gone, and so is its Exchange row (the header is the exchange's one home)
+    assert 'class="page-h-id"' in src
+    assert 'class="brief-snap-idn"' not in src
+    assert 'push("Exchange"' not in src
+    # the OLD duplicated bits stay gone (idn dup, meta cap dup, inline stock line, queue rank)
     assert '"brief-idn"' not in src and '"brief-meta"' not in src and '"brief-stock"' not in src
     assert "function stockInfoLine" not in src
-    # header slimmed: no queue rank, one terse meta line (anti-anchoring: the proposal is SEALED,
-    # revealed only after the human's verdict; the verdict of record stays the human's)
     assert "Queue rank" not in src
-    assert "Assembled facts · <b>proposal sealed</b> (revealed after the human's verdict)" in src
-    # the two removed teaser bits: the card's own title (dup of the tab) and the machine-read pill.
-    # ("Brief — first cut" is em-dash; the tab is "Brief <span…first cut", so no false match.)
+    # the old header meta line (process telemetry as a subtitle) is GONE — the document date is
+    # the header; the vintage map + model live in Record & reproduce
+    assert "Assembled facts" not in src
+    assert "function recordAndReproduce" in src
+    # the card's own title dup + machine-read pill stay gone
     assert "Brief — first cut" not in src
     assert "machine read · not a verdict" not in src and '"brief-tag"' not in src
     # the lean word is tinted by DIRECTION (bear→danger, bull→live, else grey) — the machine's
-    # evidence READ, still not a verdict (the human's Buy/Avoid stays in the Recommendation slot).
+    # evidence READ, still not a verdict (the verdict of record stays the human's, via the ledger)
     assert "function machineReadHtml" in src
     assert 'includes("bear") ? "var(--danger)"' in src
     assert 'includes("bull") ? "var(--live)"' in src
@@ -2416,19 +2422,21 @@ def test_brief_hides_proposal_until_verdict_but_reveals_on_show_proposal() -> No
         d = ds.Dossier.model_validate_json(jp.read_text())
         s = d.synthesis
         p = derive_proposal(s.evidence_balance if s is not None else None)
-        hidden = dr.render_markdown(d)  # default: proposal sealed, not shown
-        revealed = dr.render_markdown(d, show_proposal=True)  # explicit peek
-        # DEFAULT hides it — the sealed-note is present, the derived proposal line is NOT
-        assert ("**Machine proposal:** _sealed at assembly"
-                in hidden), f"{jp.parent.name}: sealed-note missing from default brief"
-        assert dr._machine_proposal_md(p) not in hidden, (
-            f"{jp.parent.name}: proposal leaked pre-verdict")
-        # --show-proposal REVEALS exactly the derived line
+        hidden = dr.render_markdown(d)  # default: NO proposal surface at all (2026-07-21 round)
+        revealed = dr.render_markdown(d, show_proposal=True)  # the operator's explicit peek
+        # DEFAULT carries no proposal surface — no line, no sealed-note, no section header. The
+        # mechanism is sealed at assembly and revealed by the ledger CLI post-log; this document
+        # shows nothing it could anchor with.
+        assert "Machine proposal" not in hidden, f"{jp.parent.name}: proposal surfaced by default"
+        assert "machine proposal sealed" not in hidden, f"{jp.parent.name}: stale sealed-note"
+        assert "## Scenario analysis" not in hidden, (
+            f"{jp.parent.name}: the proposal section must exist only under --show-proposal")
+        # --show-proposal REVEALS exactly the derived line, under its own section header
         assert dr._machine_proposal_md(p) in revealed, f"{jp.parent.name}: reveal missing/diverged"
-        assert ("**Recommendation / Target (human):** _not yet logged — confirm or override "
-                in hidden), f"{jp.parent.name}: human confirm/override slot missing"
-        assert ("**Recommendation / Target:** _not yet logged — the human's call"
-                not in hidden), f"{jp.parent.name}: pre-pivot slot survived"
+        assert "## Scenario analysis" in revealed, f"{jp.parent.name}: peek section header missing"
+        # the standing Recommendation/Target slot is GONE (redundant with the verdict surfaces)
+        assert "Recommendation / Target" not in hidden, (
+            f"{jp.parent.name}: the retired recommendation slot survived")
         if p.action is not None:
             assert p.lean is not None and p.lean.lower().replace(" ", "-") in (
                 "strongly-bearish", "strongly-bullish"), f"{jp.parent.name}: proposal off-mapping"
@@ -2438,31 +2446,32 @@ def test_brief_hides_proposal_until_verdict_but_reveals_on_show_proposal() -> No
 
 
 def test_web_brief_proposal_mirror_static() -> None:
-    """(pivot web parity + anti-anchoring 2026-07-13) dossier.js mirrors verdict.py + the md brief:
-    the frozen 3-row mapping (a mixed lean proposes NOTHING — never a coin-flip) and the
-    confirm/override copy stay, but the proposal is HIDDEN until the human logs their verdict: the
-    teaser gates the reveal on ``!verdict`` (sealed-note before, proposal after), and the header now
-    reads 'proposal sealed'. Node-free source pins; the mapping is OUR frozen code, never LLM."""
+    """(pivot web parity, re-pinned for the 2026-07-21 tier redesign) dossier.js keeps verdict.py's
+    frozen 3-row mapping (a mixed lean proposes NOTHING — never a coin-flip) and the ONE shared
+    lean parser — but renders NO proposal surface at all: the standing line was retired (user
+    decision); the seal/reveal lives in the ledger CLI and the md --show-proposal peek. The header
+    meta line is gone too (the document date is the header; process meta lives in Record &
+    reproduce). Node-free source pins; the mapping is OUR frozen code, never LLM."""
     src = Path("frontend/views/shared/dossier.js").read_text()
     assert "function deriveProposal" in src
     assert '"strongly-bearish": "AVOID"' in src and '"strongly-bullish": "BUY"' in src
     assert '"mixed": null' in src  # two-sided → NO proposal
-    assert 'class="brief-proposal"' in src and "Machine proposal" in src
-    assert "confirm or override — Buy / Avoid + target" in src
     # (review) ONE shared JS lean parser (splitLean) — machineReadHtml + deriveProposal both call it
     assert "function splitLean" in src
     assert src.count(r"[A-Za-z\- ]*?") == 1, "the lean regex must live in ONE parser (splitLean)"
     # (review) Object.hasOwn, not `key in` — `in` walks Object.prototype (a parity break vs Python)
     assert "Object.hasOwn(PROPOSAL_BY_LEAN" in src and "key in PROPOSAL_BY_LEAN" not in src
-    # ANTI-ANCHORING: the reveal is gated on a logged verdict; the sealed-note shows before
-    assert "const propSlot = !verdict" in src, "web brief must hide the proposal until a verdict"
-    assert "revealed after your verdict is logged" in src
-    assert "Assembled facts · <b>proposal sealed</b> (revealed after the human's verdict)" in src
-    # the OLD 'leads with the derived proposal' copy is gone; so is every pre-pivot copy
-    assert "Assembled facts + <b>derived proposal</b>" not in src
-    assert "Assembled facts, <b>no verdict</b>" not in src
-    assert "the human's call — Buy / Avoid + target" not in src
-    assert "assembled facts · no verdict" not in src
+    # NO proposal surface on the web brief — no slot, no sealed-note, no reveal gate
+    assert 'class="brief-proposal"' not in src and "propSlot" not in src
+    assert "Machine proposal" not in src
+    assert "revealed after your verdict is logged" not in src
+    # the old header meta (process telemetry as a subtitle) is gone
+    assert "Assembled facts" not in src
+    # the NARRATIVE slot: a logged name leads with the analyst's rationale; pending names with the
+    # machine read; the detail card suppresses its rationale copy so the words appear ONCE
+    assert "function narrativeRow" in src
+    assert "v.rationalePlain || v.rationale" in src
+    assert "rationale: false" in src
 
 
 def test_vrrm_brief_stock_info_panel_present_and_cited() -> None:
@@ -2481,7 +2490,10 @@ def test_vrrm_brief_stock_info_panel_present_and_cited() -> None:
     idx = next((i for i, ln in enumerate(lines) if "**Snapshot:**" in ln), None)
     assert idx is not None, "no Snapshot line in VRRM Brief"
     assert "CMP $" in lines[idx]  # VRRM has committed EOD bars
-    assert "CIK " in lines[idx]  # CIK now consolidated into the snapshot
+    assert "CIK" not in lines[idx]  # CIK moved to Record & reproduce (tier redesign)
+    md = "\n".join(lines)
+    assert "## Record & reproduce" in md and "**Identifiers:** CIK" in md, (
+        "the identifier must live in Record & reproduce")
     assert _re.search(r"\[\d+\]", lines[idx]), "snapshot not source-bound (no endnote [n])"
 
 
@@ -3737,7 +3749,9 @@ def test_stock_perf_exhibit_static_contract_no_node() -> None:
     src = Path("frontend/views/shared/dossier.js").read_text()
     assert "function stockPerfExhibit" in src
     assert "extent, EXHIBIT } from" in src  # extent imported for the index-domain (not floor-at-0)
-    assert "const { fs, halo, margin } = EXHIBIT" in src  # reuses the shared design language
+    assert "const { fs, halo } = EXHIBIT" in src  # shared design language (margin: a fixed
+    # 14px top so the sidebar chart shares the Key-figures rhythm — the uniform-padding decision)
+    assert 'style="margin:14px 0 0;"' in src
     assert 'nameCol = "var(--accent)", benchCol = "var(--ink-3)"' in src  # the specified colours
     assert "ds-exhibit brief-perf" in src  # the exhibit card class
     assert "sp.name_return" in src and "sp.benchmark_return" in src  # structured, no re-parse
@@ -4875,7 +4889,7 @@ def test_t1_provenance_on_demand_marker_print_exclusion_and_nothing_deleted() ->
     import pathlib
     md = dr.render_markdown(ds.Dossier.model_validate_json(
         pathlib.Path("data/dossiers/MVST/dossier.json").read_text()))
-    assert "Capital-structure provenance — on-demand" in md
+    assert "Capital structure & debt terms — instruments · pointers · covenants" in md
     # anchor-style (audit #2): the verbatim covenant AMOUNT + accession are kept — assert the digits
     # + accession, not the LLM's exact 'RMB …' formatting of the amount (TEST-LAYER rule)
     assert "800,000,000" in md and "0001760689-24-000021" in md
@@ -5075,7 +5089,7 @@ def test_fresh_dossier_renders_catalyst_path_in_place_of_consensus_slot() -> Non
         assembled_at=datetime(2026, 6, 1, 12, 0),
     )
     md = dr.render_markdown(dossier)
-    assert "### Catalyst path (estimates · guidance · revisions) — as-of 2026-05-15" in md
+    assert "### The street — estimates & guidance (as-of 2026-05-15)" in md
     assert "146.5 (6m) → 62.1 (now)" in md
     # events COMPRESSED (T3): one line per broker-day with the action mix + the headline revision
     assert "2026-05-15 · HCW" in md and "EBITDA FY 2026 146.5→62.1" in md
@@ -6686,9 +6700,10 @@ def _synth_min(bull: list[typing.Any], bear: list[typing.Any]) -> ds.Synthesis:
 
 
 def test_d1_section_order_facts_first() -> None:
-    """(D1) The rendered markdown is facts-first: caveats → drawdown & idiosyncrasy (clubbed) →
-    leverage & survival → trajectory → valuation → peer comps → concentration → synthesis (twins
-    LAST) → appendix → verdict footer."""
+    """(D1, re-pinned for the tier redesign) The rendered markdown is decision-logic ordered:
+    caveats → what broke → survival → operating trajectory → valuation → peer comps → ownership &
+    concentration → the argument (twins LAST) → appendix (reading guide … Record & reproduce
+    closing). The old verdict footer is GONE — a third copy of the pivot statement."""
     dossier = ds.Dossier(
         ticker="X", name="X Co", cik="0", reference_date=date(2026, 6, 1), rank=1,
         mechanical=_minimal_mech(), synthesis=_synth_min([], []),
@@ -6701,15 +6716,15 @@ def test_d1_section_order_facts_first() -> None:
         assert s in md, f"missing section: {s}"
         return md.index(s)
 
-    assert (pos("Analyst caveats") < pos("Drawdown cause & idiosyncrasy")
-            < pos("### Leverage & survival") < pos("### Trajectory")
+    assert (pos("Analyst caveats") < pos("What broke — and did it fall alone?")
+            < pos("### Leverage & survival") < pos("### Operating trajectory")
             < pos("### Valuation & own-history") < pos("### Peer comps")
-            < pos("### Concentration") < pos("## Synthesis"))
+            < pos("### Ownership & concentration") < pos("## The argument"))
     assert (pos("### Bull case") < pos("### Bear case") < pos("### Decisive question")
             < pos("### Key unknowns") < pos("### Twin reference cases"))
-    assert pos("### Twin reference cases") < pos("The machine PROPOSES")  # verdict footer last
-    # (D1) management-commentary pointer relocated into the appendix zone
-    assert pos("## Synthesis") < pos("### Management commentary")
+    assert "The machine PROPOSES" not in md  # the verdict footer is retired
+    assert pos("## How to read this dossier") < pos("### Management commentary") \
+        < pos("## Record & reproduce"), "the appendix closes with Record & reproduce"
 
 
 def test_d2_trajectory_table_merges_both_parents_no_drift() -> None:
@@ -7033,12 +7048,13 @@ def test_exhibits_cite_via_endnotes_not_inline_source_caption() -> None:
 
 
 def test_dossier_page_logs_anchor_and_scenario_panels() -> None:
-    """(log) The dossier page carries TWO read-only panels: the committed screening anchor for any
-    dossier that has one, and the analyst's underwrite card ONLY when a scenario record is passed.
+    """(log · tier redesign) The dossier Brief carries the committed screening context (inside the
+    Scenario analysis card) for any dossier that has one, and the underwrite masthead/detail ONLY
+    when a scenario record is passed.
 
-    The panels are additive: a dossier with no `anchor` renders no anchor panel (pre-anchor JSON is
-    untouched), and the card never appears from the 2-arg call the other node pins use — it needs a
-    fetch, so render() supplies it. Node-gated like the other render pins."""
+    Additive both ways: a dossier with no `anchor` renders no screening block (pre-anchor JSON is
+    untouched), and the stat band never appears from the 2-arg call the other node pins use — it
+    needs a fetch, so render() supplies it. Node-gated like the other render pins."""
     import json
     import shutil
     import subprocess
@@ -7057,11 +7073,13 @@ const withAnchor = rd("data/dossiers/IT/dossier.json");
 const noAnchor = rd("data/dossiers/FUBO/dossier.json");
 const card = rd("frontend/scenarios/IT.json");
 console.log(JSON.stringify({{
-  anchorPanel: renderDossier(withAnchor, null).includes("Screening anchor"),
+  anchorPanel: renderDossier(withAnchor, null)
+    .includes("Screening context — how this name surfaced"),
   anchorNotVerdict: renderDossier(withAnchor, null).includes("not a verdict"),
-  anchorAbsent: renderDossier(noAnchor, null).includes("Screening anchor"),
-  cardWithout: renderDossier(withAnchor, null).includes("Scenario underwrite"),
-  cardWith: renderDossier(withAnchor, null, card).includes("Scenario underwrite"),
+  anchorAbsent: renderDossier(noAnchor, null)
+    .includes("Screening context — how this name surfaced"),
+  cardWithout: renderDossier(withAnchor, null).includes("uw-statband"),
+  cardWith: renderDossier(withAnchor, null, card).includes("uw-statband"),
 }}));
 """
     out = subprocess.run(["node", "--input-type=module", "-e", driver],
@@ -7072,3 +7090,78 @@ console.log(JSON.stringify({{
     assert not r["anchorAbsent"], "a dossier without an anchor must render no anchor panel"
     assert not r["cardWithout"], "the underwrite card must not appear without a scenario record"
     assert r["cardWith"], "a passed scenario record must render the underwrite card"
+
+
+def test_verify_first_skips_resolved_caveats_and_keeps_genuine_ones() -> None:
+    """(regression — VRRM, 2026-07-21) A RESOLVED caveat is the record of a check that PASSED; it
+    must never fire the Brief's conditional warning strip. VRRM's "RESOLVED (P/E basis)" did —
+    'basis' matched the decision keywords — so both renderers now skip the RESOLVED prefix.
+    Frozen-fixture unit pins (md) + a source pin (web guard present)."""
+    resolved = "RESOLVED (P/E basis) — trailing GAAP P/E 5.1x is one-time-distorted"
+    genuine = "Net debt/EBITDA (3.8x) is on REPORTED EBITDA, not the covenant basis; verify"
+    noise = "primary-source: 1 EX-99.1 release(s) + 1 10-Q parsed (+0.1s fetch)"
+    assert dr._brief_verify_first([resolved]) == [], "a RESOLVED caveat fired the warning"
+    kept = dr._brief_verify_first([resolved, genuine, noise])
+    assert len(kept) == 1 and kept[0].startswith("Net debt/EBITDA"), (
+        "the genuine leverage caveat must still fire (lead clause only)")
+    # the web guard mirrors it (node-free source pin; the shared regex class is per-renderer)
+    js = Path("frontend/views/shared/dossier.js").read_text()
+    import re as _re
+    fn = _re.search(r"function briefVerifyFirst\(.*?\n\}", js, _re.S)
+    assert fn and _re.search(r"/\^RESOLVED\\b/i\.test\(c\)", fn.group(0)), (
+        "web briefVerifyFirst must skip RESOLVED caveats")
+
+
+def test_opener_narrative_slot_rationale_once_and_conditional_warning_node() -> None:
+    """(tier redesign e2e) TWO structural invariants of the new Brief, phrasing-independent:
+
+    1. NARRATIVE ONCE — with an underwrite record carrying a recorded rationale (IT), the Brief
+       renders EXACTLY ONE 'Rationale' fact label and NO 'Assessment' label (the analyst's words
+       replace the machine read, and the detail card suppresses its copy). A pending name (EPAM)
+       renders exactly one 'Assessment' and no 'Rationale'.
+    2. CONDITIONAL WARNING — on a FROZEN synthetic dossier, a decision-keyword caveat fires the
+       strip once; a RESOLVED caveat and a process caveat fire nothing (living-artifact caveats
+       re-word on every assembly, so the strip's fixture is synthetic by the TEST-LAYER rule)."""
+    import json
+    import shutil
+    import subprocess
+
+    if not shutil.which("node"):
+        pytest.skip("node not available")
+    dj = Path("frontend/views/shared/dossier.js").resolve().as_uri()
+    driver = f"""
+const handler = {{ get: () => stub, apply: () => stub, construct: () => ({{}}) }};
+const stub = new Proxy(function(){{}}, handler);
+for (const g of ["window","document","location"]) {{ try {{ globalThis[g] = stub; }} catch {{}} }}
+import {{ readFileSync }} from "node:fs";
+const {{ renderDossier }} = await import("{dj}");
+const rd = (p) => JSON.parse(readFileSync(p));
+const count = (h, n) => h.split(n).length - 1;
+const it = renderDossier(rd("data/dossiers/IT/dossier.json"), null,
+  rd("frontend/scenarios/IT.json"));
+const epam = renderDossier(rd("data/dossiers/EPAM/dossier.json"), null,
+  rd("frontend/scenarios/EPAM.json"));
+const bare = {{ ticker: "X", name: "X Co", cik: "0", reference_date: "2026-06-01",
+  assembled_at: "2026-06-01T12:00:00", mechanical: {{}}, synthesis: null }};
+const warn = renderDossier({{ ...bare, caveats: ["leverage covenant basis — check it"] }}, null);
+const clean = renderDossier({{ ...bare, caveats: [
+  "RESOLVED (P/E basis) — one-time distortion, verified",
+  "primary-source: 0 EX-99.1 release(s) + 1 10-Q parsed (+0.1s fetch)"] }}, null);
+console.log(JSON.stringify({{
+  itRationale: count(it, ">Rationale</div>"),
+  itAssessment: count(it, ">Assessment</div>"),
+  epamAssessment: count(epam, ">Assessment</div>"),
+  epamRationale: count(epam, ">Rationale</div>"),
+  warnFires: count(warn, "uw-warn"),
+  cleanFires: count(clean, "uw-warn"),
+}}));
+"""
+    out = subprocess.run(["node", "--input-type=module", "-e", driver],
+                         capture_output=True, text=True, check=True)
+    r = json.loads(out.stdout)
+    assert r["itRationale"] == 1 and r["itAssessment"] == 0, (
+        "a logged name must carry the analyst's rationale EXACTLY once, replacing the assessment")
+    assert r["epamAssessment"] == 1 and r["epamRationale"] == 0, (
+        "a pending name must carry the machine assessment exactly once, and no rationale")
+    assert r["warnFires"] == 1, "a decision-keyword caveat must fire the warning strip once"
+    assert r["cleanFires"] == 0, "RESOLVED + process caveats must fire nothing"
