@@ -2107,11 +2107,30 @@ function eventGroups(s) {
   const moreGroups = keys.length > _GROUP_CAP ? `<div class="muted" style="font-size:12px; margin-top:4px;">+${keys.length - _GROUP_CAP} more broker-days in JSON</div>` : "";
   // (T3) ON-DEMAND expansion: the full per-item list — every event (metric period prior→current),
   // grouped by broker-day — collapsed in a <details>. This is the web on-demand tier of the moved facts.
+  // ENTITLEMENT-RUN COMPRESSION (2026-07-21, from the first T1-expanded export): an item whose
+  // four value fields are all withheld-or-blank carries zero information — the license withholds
+  // the numbers — yet the expanded print rendered 64 of IT's 250 as full line items (~2 pages of
+  // literally nothing). Such a set compresses to ONE counted line per broker-day; the JSON keeps
+  // every item, so no fact is deleted — the line says where they live. An item with ANY real
+  // field stays verbatim (partial information is information), and at least one field must
+  // actually read "Entitlement Needed" for the line's label to be honest — an all-blank item
+  // (none exist today) would render verbatim rather than be mislabeled as entitlement-gated.
+  const _BLANKS = new Set(["", "-", "—", "NM", "NA"]);           // the pinned blank class
+  const fullyGated = (e) => {
+    const vals = ["broker_prior", "broker_current", "consensus_before", "consensus_after"]
+      .map((f) => String(e[f] ?? "").trim());
+    return vals.every((v) => v === "Entitlement Needed" || _BLANKS.has(v))
+      && vals.some((v) => v === "Entitlement Needed");
+  };
   const expanded = keys.map((k) => {
     const evs = groups.get(k), [dt, broker] = k.split("|");
-    const items = evs.map((e) =>
+    const shown = evs.filter((e) => !fullyGated(e));
+    const gatedN = evs.length - shown.length;
+    const items = shown.map((e) =>
       `<li><b>${escapeHtml(e.metric)}</b> ${escapeHtml(e.period)}: ${escapeHtml(e.broker_prior)}&rarr;${escapeHtml(e.broker_current)} <span class="muted">(cons ${escapeHtml(e.consensus_before)}&rarr;${escapeHtml(e.consensus_after)})</span></li>`).join("");
-    return `<div style="margin-top:7px;"><b>${escapeHtml(dt)} · ${escapeHtml(broker)}</b><ul class="event-log">${items}</ul></div>`;
+    const gatedLine = gatedN
+      ? `<li class="muted">${gatedN} entitlement-gated item${gatedN === 1 ? "" : "s"} — values withheld by CIQ entitlement; retained in JSON</li>` : "";
+    return `<div style="margin-top:7px;"><b>${escapeHtml(dt)} · ${escapeHtml(broker)}</b><ul class="event-log">${items}${gatedLine}</ul></div>`;
   }).join("");
   const details = `<details style="margin-top:6px;"><summary style="cursor:pointer; font-size:12px; color:var(--ink-2);">Expand all ${events.length} revisions per broker-day (on-demand)</summary><div>${expanded}</div></details>`;
   const cite = citeMark(s.source_ref);
