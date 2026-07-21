@@ -150,7 +150,9 @@ function entryCell(c) {
   }
   const r = num(v.ratioAtEntry);
   const led = c.ledger;
-  const sub = [r !== null ? `${r.toFixed(2)} : 1 at entry` : "",
+  // terse on purpose: the cell is ~190px, and a sub that wraps costs a line on EVERY cell in the
+  // band (they share a row height) — the long forms live in the table and the foot
+  const sub = [r !== null ? `${r.toFixed(2)} : 1` : "",
     (led && led.entryPriceAsOf) || v.recorded || ""].filter(Boolean).join(" · ");
   return statCell("Entry", money(e), escapeHtml(sub));
 }
@@ -178,7 +180,7 @@ function methodCell(c) {
   const ref = (c.assumptions || []).find((a) => a.axis === "multiple");
   const med = ref && (ref.references || []).find((p) => /median/i.test(p.label || ""));
   const sub = [m !== null ? `${word} ${oneDp(m, "×")}` : "",
-    med ? `vs ${oneDp(med.value, "×")} own-history median` : ""].filter(Boolean).join(" · ");
+    med ? `vs ${oneDp(med.value, "×")} median` : ""].filter(Boolean).join(" · ");
   return statCell("Method", escapeHtml(desc), escapeHtml(sub), { txt: true });
 }
 

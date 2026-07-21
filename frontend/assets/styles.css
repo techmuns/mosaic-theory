@@ -570,6 +570,13 @@ table.data.vs-table { width: 100%; }
 /* underwrite card — canonical components only; glue is layout, never a private type scale */
 .uw-card { margin: 10px 0 4px; }
 .uw-card table.data { width: 100%; }
+/* DENSITY: the card is a tear sheet, not a prose page — its rows carry one value each and do not
+   need the reading rhythm the dossier's narrative sections use. The .fact label column is 210px
+   page-wide; inside the card that is dead space in front of two short labels. */
+.uw-card .fact { grid-template-columns: 150px 1fr; gap: 12px; padding: 7px 0; }
+.uw-card table.data th, .uw-card table.data td { padding: 4px 9px; }
+.uw-card .kv-list { margin-top: 6px; }
+.uw-card .kv-list > li { margin-bottom: 4px; line-height: 1.45; }
 .uw-h-sub { text-transform: none; letter-spacing: 0; font-weight: 400; color: var(--ink-3); margin-left: 6px; }
 .uw-note { font-size: 11px; margin-top: 5px; }
 .uw-recipe { font-size: 11px; margin: 2px 0 6px; }
@@ -591,41 +598,42 @@ table.data.vs-table { width: 100%; }
    The tear-sheet header every research note opens with: the rating + the number the card exists
    to produce, then the asymmetry, the entry, the downside and the method — all read before
    anything below. Existing tokens only; no private palette. */
-.uw-mast { margin-bottom: 12px; }
+.uw-mast { margin-bottom: 10px; }
 .uw-mast-head { display: flex; align-items: baseline; justify-content: space-between;
-  gap: 12px; flex-wrap: wrap; padding-bottom: 9px; border-bottom: 1px solid var(--line-2); }
+  gap: 12px; flex-wrap: wrap; padding-bottom: 7px; border-bottom: 1px solid var(--line-2); }
 .uw-mast-t { font-size: 12px; font-weight: 650; text-transform: uppercase; letter-spacing: 0.06em;
   color: var(--ink-2); }
 .uw-mast-t .muted { text-transform: none; letter-spacing: 0; font-weight: 400; }
 .uw-mast-pills { display: flex; gap: 6px; flex-wrap: wrap; }
 .uw-statband { display: grid; grid-template-columns: repeat(5, 1fr);
   border-bottom: 1px solid var(--line); }
-.uw-stat { padding: 11px 14px; border-left: 1px solid var(--line); min-width: 0; }
+.uw-stat { padding: 9px 13px; border-left: 1px solid var(--line); min-width: 0; }
 .uw-stat:first-child { border-left: 0; padding-left: 0; }
 .uw-stat-lab { font-size: 10.4px; text-transform: uppercase; letter-spacing: 0.06em;
   color: var(--ink-3); font-weight: 600; }
 .uw-stat-val { font-family: var(--mono); font-variant-numeric: tabular-nums;
-  font-size: 17px; font-weight: 650; letter-spacing: -0.01em; color: var(--ink);
-  margin: 4px 0 2px; line-height: 1.2; }
-.uw-stat-val.lead { font-size: 25px; letter-spacing: -0.02em; }
-.uw-stat-val.txt { font-family: var(--sans); font-size: 12.8px; font-weight: 600; line-height: 1.35; }
+  font-size: 16.5px; font-weight: 650; letter-spacing: -0.01em; color: var(--ink);
+  margin: 3px 0 1px; line-height: 1.2; white-space: nowrap; }
+.uw-stat-val.lead { font-size: 22px; letter-spacing: -0.02em; }
+.uw-stat-val.txt { font-family: var(--sans); font-size: 12.4px; font-weight: 600;
+  line-height: 1.3; white-space: normal; }
 .uw-stat-val.neg { color: var(--danger-text); }
 .uw-stat-sub { font-size: 11.2px; color: var(--ink-2); line-height: 1.4; }
 .uw-eyebrow { color: var(--accent-text); }
 .uw-stat-lead.base .uw-eyebrow { color: var(--conditional); }
 .uw-stat-lead.priced .uw-eyebrow { color: var(--danger-text); }
-.uw-pct { font-size: 0.72em; font-weight: 650; margin-left: 4px; }
+.uw-pct { font-size: 0.62em; font-weight: 650; margin-left: 4px; }
 .uw-pct.pos { color: var(--pos-text); }
 .uw-pct.neg { color: var(--danger-text); }
 .pill.uw-mini { font-size: 10px; padding: 2px 7px; vertical-align: 2px; }
-.uw-mast-foot { font-size: 11.2px; color: var(--ink-3); padding-top: 8px; line-height: 1.5; }
+.uw-mast-foot { font-size: 11.2px; color: var(--ink-3); padding-top: 6px; line-height: 1.45; }
 .uw-spot-cite { font-size: 11.2px; margin: -4px 0 10px; }
 
 /* --- risk / reward ladder -------------------------------------------------
    Zone WIDTHS are the ratio: the asymmetry is legible before a number is read. */
-.uw-ladder { margin: 20px 0 14px; }
+.uw-ladder { margin: 14px 0 10px; }
 .uw-lad-track { position: relative; height: 8px; border-radius: 4px;
-  background: var(--surface-2); margin: 34px 0 30px; }
+  background: var(--surface-2); margin: 27px 0 24px; }
 .uw-lad-risk, .uw-lad-reward { position: absolute; top: 0; bottom: 0; }
 .uw-lad-risk { background: var(--danger-bg); }
 .uw-lad-reward { background: var(--live-bg); }
@@ -660,7 +668,7 @@ table.data tr td.uw-vs { font-size: 11.6px; }
 
 /* thesis-break / re-underwrite chips — longer than a .pill, so they wrap */
 .uw-trig { display: flex; align-items: baseline; gap: 8px; flex-wrap: wrap;
-  margin-top: 12px; padding-top: 10px; border-top: 1px solid var(--line); }
+  margin-top: 10px; padding-top: 9px; border-top: 1px solid var(--line); }
 .uw-trig-lab { font-size: 10.4px; text-transform: uppercase; letter-spacing: 0.06em;
   color: var(--ink-3); font-weight: 600; }
 .uw-chip { font-size: 11.4px; line-height: 1.45; color: var(--ink-2);
