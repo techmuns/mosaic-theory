@@ -1,0 +1,347 @@
+{
+  "schema_version": "1.1",
+  "ticker": "AORT",
+  "recipe_id": "R2_terminal_margin",
+  "recipe_desc": "Terminal-margin: value the business in the year it reaches a normal operating margin, then discount that value back at the house waiting charge. Used where no trailing multiple describes the company.",
+  "recipe_formula": [
+    "EBIT_T = terminal revenue × terminal margin",
+    "D&A_T = (latest-FY D&A ÷ latest-FY revenue) × terminal revenue",
+    "EBITDA_T = EBIT_T + D&A_T",
+    "EV_T = denominator_T × exit multiple   (denominator = EBITDA_T, or EBIT_T on EV/EBIT)",
+    "net debt_T = current net debt + cumulative burn to breakeven",
+    "equity_T = EV_T − net debt_T",
+    "shares_T = current diluted × (1 + share growth)^years + announced-raise shares",
+    "value_T = equity_T ÷ shares_T",
+    "PV = value_T ÷ (1 + hurdle)^years"
+  ],
+  "multiple_basis": "EV/EBITDA",
+  "underwrite_date": "2026-07-22",
+  "analyst": "analyst",
+  "spot": 25.37,
+  "spot_source": "Polygon AORT close 2026-07-20 (live at underwrite)",
+  "facts": {
+    "net_debt": {
+      "value": 202.393,
+      "unit": "$M",
+      "basis": "lease-inclusive net debt, latest quarter: total debt 215 + finance leases 4 + operating leases 39 - cash 56",
+      "source": "EDGAR companyfacts, 10-Q period ended 2026-03-31"
+    },
+    "diluted_shares": {
+      "value": 49.731,
+      "unit": "shares",
+      "basis": "latest-quarter diluted weighted-average count; it includes the May-2025 debt-for-equity exchange shares, and the retired principal is correspondingly out of the net-debt bridge - a coherent pair, with no double-count",
+      "source": "EDGAR WeightedAverageNumberOfDilutedSharesOutstanding, quarter ended 2026-03-31"
+    },
+    "d_and_a_ratio": {
+      "value": 0.048961,
+      "unit": "rate",
+      "basis": "latest depreciation and amortisation over trailing-twelve-month revenue (22.458 / 458.689)",
+      "source": "EDGAR companyfacts dep_amort, FY2025; revenue from the committed financial summary"
+    },
+    "share_growth": {
+      "value": 0.022516,
+      "unit": "rate",
+      "basis": "OVERRIDE. The raw three-year compound rate (5.62%) terminates in a one-off convert-for-stock exchange whose balance-sheet benefit is already banked in net debt; compounding it forward would charge the terminal year twice. Forward rate = the FY2021-FY2024 organic basic-share compound rate.",
+      "source": "EDGAR 8-K Item 3.02 accessions 0000784199-25-000080 (2025-05-14) and 0000784199-25-000129 (2025-05-29); share series FY2021-FY2024"
+    }
+  },
+  "scenarios": {
+    "bear": {
+      "revenue": 590.0,
+      "margin": 0.045,
+      "multiple": 9.0,
+      "reason": "the valve recall dents the growth franchise and the FY2024 cost reset proves unsustainable: margin returns toward the 2021-23 structural zone as spending normalizes; a levered, low-margin device business exits well below mature peers.",
+      "years_to_terminal": 4.0
+    },
+    "base": {
+      "revenue": 638.5,
+      "margin": 0.095,
+      "multiple": 13.0,
+      "reason": "revenue = consensus FY2027 then a stated fade of ~1.5 points a year; margin = partial delivery of the consensus path - above the realized two-year mean (8.83%), below next year's street case (10.80%), respecting that operating leverage ran backwards in the latest year; exit paired to the outcome: mature device businesses at about twice our terminal margin trade near 14x, so 13x for this one.",
+      "years_to_terminal": 4.0
+    },
+    "bull": {
+      "revenue": 680.0,
+      "margin": 0.13,
+      "multiple": 16.0,
+      "reason": "the FY2024 operating model (10% on falling spend) proves durable and scales past consensus; the recall is bounded at the next print; partial deleveraging earns a step toward - but below - the company's own trading floor.",
+      "years_to_terminal": 4.0
+    }
+  },
+  "assumptions": {
+    "revenue": {
+      "method": "Terminal revenue starts from the street's FY2027 figure and then fades at a stated rate of about 1.5 points of growth a year in the central case. Only FY2026 and FY2027 are street figures; everything beyond is our own extrapolation, and the realized growth record is lumpy rather than a smooth curve because acquisitions and the 2020 shutdown both sit inside it.",
+      "references": [
+        {
+          "label": "street revenue, FY2026",
+          "value": 486.4,
+          "unit": "$M",
+          "source": "CIQ Estimates->Trends"
+        },
+        {
+          "label": "street revenue, FY2027",
+          "value": 540.0,
+          "unit": "$M",
+          "source": "CIQ Estimates->Trends"
+        },
+        {
+          "label": "reported revenue, FY2025",
+          "value": 441.3,
+          "unit": "$M",
+          "source": "EDGAR RevenueFromContractWithCustomerExcludingAssessedTax"
+        },
+        {
+          "label": "company revenue guidance, FY2026 low end",
+          "value": 480.0,
+          "unit": "$M",
+          "source": "CIQ guidance bridge, dated 2026-05-07"
+        },
+        {
+          "label": "company revenue guidance, FY2026 high end",
+          "value": 496.0,
+          "unit": "$M",
+          "source": "CIQ guidance bridge, dated 2026-05-07"
+        }
+      ],
+      "ratified_by": null,
+      "ratified": null
+    },
+    "margin": {
+      "method": "Every margin here is on a reported accounting basis, and so is the depreciation assumption, because the two must sit in the same layer. The street's 'EBITDA' figures are not: they imply about $62M of depreciation for a year in which the company reported about $22M, so converting them at our depreciation rate would overstate the operating margin by roughly eight points. The honest street references are its own stated operating-profit rows, 6.93% for FY2026 and 10.80% for FY2027. The realized record is the harder evidence: the best year on file, FY2024 at 10.01%, came from spending FALLING 11.7% in absolute dollars, and the following year gave 2.4 points back as spending grew 22.7% against 13.6% revenue. Operating leverage ran backwards in the latest year, which is why the central case sits below next year's street figure rather than on it.",
+      "references": [
+        {
+          "label": "reported operating margin, FY2024 - best year on file",
+          "value": 10.01,
+          "unit": "%",
+          "source": "EDGAR OperatingIncomeLoss / revenue"
+        },
+        {
+          "label": "operating expenses, FY2024 - the reason for that year",
+          "value": -11.7,
+          "unit": "%",
+          "source": "EDGAR OperatingExpenses, year on year"
+        },
+        {
+          "label": "reported operating margin, FY2025",
+          "value": 7.65,
+          "unit": "%",
+          "source": "EDGAR OperatingIncomeLoss / revenue"
+        },
+        {
+          "label": "operating expenses, FY2025 - leverage running backwards",
+          "value": 22.7,
+          "unit": "%",
+          "source": "EDGAR OperatingExpenses, year on year"
+        },
+        {
+          "label": "realized two-year mean operating margin",
+          "value": 8.83,
+          "unit": "%",
+          "source": "EDGAR, FY2024 and FY2025"
+        },
+        {
+          "label": "street operating margin, FY2026 - stated, not derived",
+          "value": 6.93,
+          "unit": "%",
+          "source": "CIQ Estimates->Trends (EBIT row)"
+        },
+        {
+          "label": "street operating margin, FY2027 - stated, not derived",
+          "value": 10.8,
+          "unit": "%",
+          "source": "CIQ Estimates->Trends (EBIT row)"
+        },
+        {
+          "label": "depreciation implied by the street layer, FY2026",
+          "value": 61.6,
+          "unit": "$M",
+          "source": "CIQ Estimates->Trends (EBITDA less EBIT)"
+        },
+        {
+          "label": "depreciation reported, FY2025",
+          "value": 22.458,
+          "unit": "$M",
+          "source": "EDGAR companyfacts dep_amort"
+        },
+        {
+          "label": "earnings revision breadth, next two quarters",
+          "value": -7.0,
+          "unit": "count",
+          "source": "CIQ Estimates->Revisions (0 upward / 7 downward)"
+        },
+        {
+          "label": "street full-year earnings revision over twelve months",
+          "value": -78.0,
+          "unit": "%",
+          "source": "CIQ Estimates->Trends (FY2026 reported EPS path)"
+        }
+      ],
+      "ratified_by": null,
+      "ratified": null
+    },
+    "multiple": {
+      "method": "The exit multiple is paired to the margin the leg actually reaches, not taken from a peer whose economics the leg does not model. Mature device businesses earning about twice our terminal margin trade near 14x, and every one of them carries net cash while this company carries three and a half turns of debt - so the central case exits just below that level and the pessimistic case well below it. This company's own trading history is the longest series available and both data-quality checks pass on it, but its median spans years when earnings were near zero, which inflates a multiple without saying anything about value; the current and low readings are the usable part. For orientation: breaking even against the price would need roughly 15 to 17 percent operating margins at that historical floor multiple.",
+      "references": [
+        {
+          "label": "mature device business, enterprise value to EBITDA",
+          "value": 13.8,
+          "unit": "x",
+          "source": "CIQ Comparable Analysis (Boston Scientific, 26.7% EBITDA margin)"
+        },
+        {
+          "label": "mature device business, closest in size, net cash",
+          "value": 23.2,
+          "unit": "x",
+          "source": "CIQ Comparable Analysis (LeMaitre Vascular, 30.7% EBITDA margin)"
+        },
+        {
+          "label": "this company's trailing current reading, seventh percentile",
+          "value": 20.6,
+          "unit": "x",
+          "source": "CIQ Financials->Multiples (42 closes; both checks pass)"
+        },
+        {
+          "label": "this company's trailing low",
+          "value": 18.8,
+          "unit": "x",
+          "source": "CIQ Financials->Multiples (42 closes; both checks pass)"
+        },
+        {
+          "label": "this company's trailing median - spans near-zero-earnings years",
+          "value": 32.1,
+          "unit": "x",
+          "source": "CIQ Financials->Multiples (42 closes; both checks pass)"
+        },
+        {
+          "label": "peer median, heterogeneous ten-name set",
+          "value": 24.6,
+          "unit": "x",
+          "source": "CIQ Comparable Analysis (set spans $39M to $66.1B)"
+        }
+      ],
+      "ratified_by": null,
+      "ratified": null
+    },
+    "horizon": {
+      "method": "Four years to the terminal year, matching the first record on this recipe so the two are comparable. Three years would require the margin recovery to complete almost immediately after a recall and a guidance cut; five would let the waiting charge halve the answer, leaving the exit multiple rather than the operating case to carry it.",
+      "references": [
+        {
+          "label": "years to the terminal year",
+          "value": 4.0,
+          "unit": "years",
+          "source": "analyst judgement"
+        },
+        {
+          "label": "waiting charge applied over the horizon",
+          "value": 74.9,
+          "unit": "%",
+          "source": "house rate of 15% a year compounded over four years"
+        }
+      ],
+      "ratified_by": null,
+      "ratified": null
+    }
+  },
+  "gate_adjudication": null,
+  "tier": "B",
+  "survival_input": {
+    "fcf": 0.839,
+    "fcf_basis": "latest full year (FY2025), operating cash flow less capital expenditure - a cushion of essentially zero: cash generation nearly doubled but capital spending tripled to $39.0M and consumed it",
+    "fcf_source": "EDGAR companyfacts operating cash flow less capital expenditure, FY2025",
+    "cash": 55.8,
+    "facilities": 0.0,
+    "facilities_source": null,
+    "years_to_breakeven": null,
+    "announced_raise": false,
+    "raise_accession": null,
+    "raise_shares": 0.0,
+    "raise_proceeds": 0.0
+  },
+  "result": {
+    "per_scenario": {
+      "bear": {
+        "value_per_share": 3.118775745461389,
+        "op_income": 26.55,
+        "ebitda": 55.436989999999994,
+        "ev": 498.93290999999994,
+        "equity": 296.53990999999996,
+        "ev_ebit": 18.792199999999998,
+        "norm_fcf": null,
+        "years": 4.0,
+        "d_and_a_t": 28.886989999999997,
+        "net_debt_t": 202.393,
+        "shares_t": 54.36352909858969,
+        "value_terminal": 5.454758271160377,
+        "hurdle": 0.15
+      },
+      "base": {
+        "value_per_share": 10.438923161651413,
+        "op_income": 60.6575,
+        "ebitda": 91.91909849999999,
+        "ev": 1194.9482804999998,
+        "equity": 992.5552804999998,
+        "ev_ebit": 19.69992631578947,
+        "norm_fcf": null,
+        "years": 4.0,
+        "d_and_a_t": 31.261598499999998,
+        "net_debt_t": 202.393,
+        "shares_t": 54.36352909858969,
+        "value_terminal": 18.257741852998077,
+        "hurdle": 0.15
+      },
+      "bull": {
+        "value_per_share": 18.349423527596958,
+        "op_income": 88.4,
+        "ebitda": 121.69348,
+        "ev": 1947.09568,
+        "equity": 1744.7026799999999,
+        "ev_ebit": 22.025969230769228,
+        "norm_fcf": null,
+        "years": 4.0,
+        "d_and_a_t": 33.293479999999995,
+        "net_debt_t": 202.393,
+        "shares_t": 54.36352909858969,
+        "value_terminal": 32.093256433664116,
+        "hurdle": 0.15
+      }
+    },
+    "survival": {
+      "status": "PASS",
+      "burn": null,
+      "burn_basis": "latest full year (FY2025), operating cash flow less capital expenditure - a cushion of essentially zero: cash generation nearly doubled but capital spending tripled to $39.0M and consumed it",
+      "burn_source": "EDGAR companyfacts operating cash flow less capital expenditure, FY2025",
+      "cash": 55.8,
+      "facilities": 0.0,
+      "facilities_source": null,
+      "runway_years": null,
+      "years_to_breakeven": null,
+      "announced_raise": false,
+      "raise_accession": null,
+      "note": "trivial pass — free cash flow is positive (0.8, latest full year (FY2025), operating cash flow less capital expenditure - a cushion of essentially zero: cash generation nearly doubled but capital spending tripled to $39.0M and consumed it); the company funds itself and has no runway question",
+      "detail": []
+    },
+    "hurdle": 0.15,
+    "reward": -14.931076838348588,
+    "risk": 22.251224254538613,
+    "ratio": -0.6710227117190226,
+    "ratio_undefined": null,
+    "bar": 2.0,
+    "pass_fail": "FAIL"
+  },
+  "verdict": {
+    "status": "watch",
+    "recorded": "2026-07-22",
+    "rationale": "WATCH at $25.37. The underwrite fails our 2:1 bar with room to spare: the base case is worth about $10 a share in today's terms - under half the market price - and even the optimistic case sits a quarter below it. The market is paying today for margins this company has never printed: breaking even needs roughly 15% operating margins at the stock's own historical floor multiple, against a best-ever year of 10%, margins that moved backwards last year, three-and-a-half turns of debt, and a product recall whose cost is not yet quantified. A real franchise, priced past its delivery. We revisit near $10, or on proof the 2024 cost discipline was structural rather than a one-year event.",
+    "rationale_plain": null,
+    "rationale_plain_recorded": null,
+    "reunderwrite_triggers": [
+      "price below about $10.50, roughly the base case in today's terms, then re-run at the new price",
+      "the second-quarter report quantifies the recall as bounded AND valve and stent-graft revenue growth holds double-digit - re-underwrite the optimistic and central cases",
+      "reported operating margin at or above 10% for two consecutive halves with spending growing slower than revenue - the cost model is structural; raise the terminal path"
+    ],
+    "entry_price": null,
+    "ratio_at_entry": null,
+    "avoid_priced": true,
+    "avoid_priced_note": "inverted asymmetry at $25.37: the optimistic case is about 28% below the price and the pessimistic case about 88% below it. The verdict is robust to the dilution override - it fails under either share path - and print-insensitive: the pending second-quarter report can lower the answer, not rescue it."
+  }
+}

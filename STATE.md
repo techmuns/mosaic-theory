@@ -3821,39 +3821,43 @@ re-anchor (the full STATE split stays its own queued task — nothing was reloca
    SMPL assembly missed the 2026-07-09 print by one day. Assembly must FLAG filings newer than
    its evidence window, and stamp what window it read. (The §7 print-freshness gate and the
    monitor's freshness panel cover verdicts manually until this exists.)
-2. **R2 COHORT UNDERWRITES — NCNO DONE, four to go.** `scenarios/NCNO.json` is the first R2
-   record (watch, 2026-07-21). Remaining: **AORT** and **VITL** need dedicated basis pulls before
-   any record — the shakedown grids were advisory-grade. **AORT's pull must first resolve the
-   FY2025 +13% share-count step (41.68 → 47.16M: issuance or converts?)** — its floored 3-year CAGR
-   of 5.62% compounds to +24.4% dilution over four years and dominates its ratio. **VITL is
-   survival-blocked** (0.76y runway vs 4y; re-engage on an Item 1.01/2.03 financing filing or on
+2. **BAND SPAN-METADATA STAMPS — NCNO + AORT, one byte-preserving pass.** Both bands predate the
+   periodicity/span stamp: NCNO carries 10 keys and AORT 10, neither with `window_span_years`,
+   `data_quality` or the implied margins. AORT's committed band still reads `confidence: firm` on a
+   rule it was never tested against — a fresh backfill would demote its multiple leg to weak.
+   Neither affects a recorded verdict (both are watches), so this is housekeeping, but do the two
+   together in one pass rather than per-name.
+3. **R2 COHORT UNDERWRITES — NCNO + AORT DONE, three to go.** `scenarios/NCNO.json` is the first R2
+   record (watch, 2026-07-21). **AORT recorded 2026-07-22** — its share-step question is CLOSED (a May-2025
+   convert-for-stock exchange; override to the 2.25% organic rate, reason recorded). Remaining:
+   **VITL is survival-blocked** (0.76y runway vs 4y; re-engage on an Item 1.01/2.03 financing filing or on
    free cash flow turning positive). MVST/FUBO remain fact-blocked (item 3).
-3. **g_sbc CONTAMINATION WARNING (queued).** The trailing-3-year diluted-share CAGR is taken raw;
+4. **g_sbc CONTAMINATION WARNING (queued).** The trailing-3-year diluted-share CAGR is taken raw;
    a single acquisition issuance inside the window silently becomes a permanent dilution rate.
    Ship a flag when any single year-over-year share jump exceeds about twice the series median —
    AORT's FY2025 step is the live example, and it is an input to a valuation, not a footnote.
-4. **R2 ENGINE — BUILT 2026-07-21 (`R2_terminal_margin`).** Terminal-margin bridge, 15% house
+5. **R2 ENGINE — BUILT 2026-07-21 (`R2_terminal_margin`).** Terminal-margin bridge, 15% house
    hurdle, hard survival gate, tier A/B, EV/EBIT basis supported, card rendered. Conventions
    ratified in §7. **NEXT: the per-name grids** — cohort underwrites (NCNO / MVST / AORT / VITL,
    and FUBO once its facts exist) each need their own evidence pull → analyst bear/base/bull, the
    same way R1 ran. The engine does not underwrite anything by itself.
-5. **COHORT FACT GAPS — CIQ balance-sheet extraction needed (blocks two underwrites).** **MVST**:
+6. **COHORT FACT GAPS — CIQ balance-sheet extraction needed (blocks two underwrites).** **MVST**:
    no D&A tag at all; net debt UNKNOWN (under-capture guard refused). **FUBO**: not underwritable
    from committed data — `dep_amort` resolves to $0.003M from **FY2014**, debt tags last filed
    **2020-06-30**, FCF is **FY2024**, and diluted WA reads 30.0M against 342.7M shares outstanding
    (an 11x gap; reverse split?). EDGAR cannot close either — these need the CIQ balance sheet.
-6. **TAGGER PROPOSALS AWAITING RATIFICATION (operator).** The propose-only tagger agrees with 10 of
+7. **TAGGER PROPOSALS AWAITING RATIFICATION (operator).** The propose-only tagger agrees with 10 of
    11 committed hand tags; it proposes `R2_NEEDED` for FUBO, whose committed hint is the machine
    placeholder `unknown`. No hint was written — ratify or reject, then re-run the sweep.
-7. **`_latest_dep_amort` prefers a STALE combined tag over current split tags.** FUBO takes a 2014
+8. **`_latest_dep_amort` prefers a STALE combined tag over current split tags.** FUBO takes a 2014
    value of $0.003M over split tags summing $38.5M (FY2024). Affects any filer that switched tags.
    Found 2026-07-21, not fixed in-branch (scope).
-8. **`own-history-refresh` silently drops `ev_ebitda.note`.** Its branch only re-applies the
+9. **`own-history-refresh` silently drops `ev_ebitda.note`.** Its branch only re-applies the
    "trailing only" note when `ev_ebitda_adjusted_fwd` is absent; when present (VITL) the committed
    note is lost. Found 2026-07-21 by dry-run diff and routed around surgically, not patched.
 
 **ANALYST / OPERATOR**
-9. **EPAM underwrite — RUN 2026-07-21, VERDICT PENDING.** `scenarios/EPAM.json` written and
+10. **EPAM underwrite — RUN 2026-07-21, VERDICT PENDING.** `scenarios/EPAM.json` written and
    computed standalone (R1, EV/EBITDA); card shipped at `pending_analyst` — the machine
    recorded the bar test, it did NOT decide. Legs (live spot $89.40, Polygon close
    2026-07-20): bear $63.14 · base $163.08 · bull $291.24 (printed, never in the ratio);
@@ -3867,29 +3871,29 @@ re-anchor (the full STATE split stays its own queued task — nothing was reloca
    own cadence, an ESTIMATE, not a date certain).** The 2:1 bar is met at any spot ≤ **$96.45**
    (from base 163.08 / bear 63.14: spot = (base + 2·bear) ÷ 3), recorded so the ceiling never
    has to be re-derived. EPAM now rides the monitor freshness panel as `verdict pending`.
-10. **BRBR — QUEUE A FULL R1 UNDERWRITE, POST-AUGUST-WINDOW.** The last of the three dispositions
+11. **BRBR — QUEUE A FULL R1 UNDERWRITE, POST-AUGUST-WINDOW.** The last of the three dispositions
    still open; CNXC and VITL were closed 2026-07-21 (`R1_NOT_ROBUST` and `R2_NEEDED`). BRBR passes
    both band guards, so its anchor is usable. **Basis = the 2026-07-21 disposition pull**, whose
    one contested item is now settled: `book value/share −$4.28` IS committed and sourced
    (`mechanical.stock_info.book_value_ps`) — the pull's "unsourced" finding was a false negative.
    Hold until after the August print window for the same reason EPAM is held.
-11. **CIQ ESCALATION — VITL `TEV/LTM EBITDA` (LOW PRIORITY, operator).** Reproducible statement
+12. **CIQ ESCALATION — VITL `TEV/LTM EBITDA` (LOW PRIORITY, operator).** Reproducible statement
    drafted: *VITL (NasdaqGM:VITL), Financials→Multiples — `TEV/LTM EBITDA` is populated against a
    rent-adjusted denominator. Backing it out of the sheet's own TEV gives ~393 against EBITDAR
    ~390.5 (1.007x) and EBITDA 79.5 (4.94x), across every recent period; `TEV/LTM EBIT` on the same
    sheet reconciles to EDGAR exactly.* Low priority: the guard already disqualifies the band, so
    nothing downstream depends on CIQ answering. Worth sending because the same rent-adjustment
    substitution would silently distort ANY lease-heavy name.
-12. **Truckload freeze-source re-run** — confirm the surgically-patched
+13. **Truckload freeze-source re-run** — confirm the surgically-patched
    `frontend/themes/truckload-supply-purge.json` reproduces byte-identical from the freeze.
-13. **Sweep-#2 fail-closed coverage holes (2)** — operator decision, report-only.
-14. **Drafting-rubric v2 validation — DATED 2026-08-13** (pre-registered; do not run early).
+14. **Sweep-#2 fail-closed coverage holes (2)** — operator decision, report-only.
+15. **Drafting-rubric v2 validation — DATED 2026-08-13** (pre-registered; do not run early).
 
 **HOUSEKEEPING**
-15. **Refresh cadence → docs/RUNBOOKS.md** (it is operating practice, not state).
-16. **Full STATE split** — §5 build records → a fossils/decisions file; this block is the interim.
+16. **Refresh cadence → docs/RUNBOOKS.md** (it is operating practice, not state).
+17. **Full STATE split** — §5 build records → a fossils/decisions file; this block is the interim.
 
-17. **REFERENCE-LABEL REGISTER + de-couple the median lookup (PAIRED — do not split).**
+18. **REFERENCE-LABEL REGISTER + de-couple the median lookup (PAIRED — do not split).**
     `assumptions[].references[].label` renders to the reader but is not linted; 14 labels across
     the four records still carry house vocabulary (`own-history band low`, `committed anchor
     median`, EPAM's `DEAD REGIME`). Restating them is blocked on a real coupling: `uw-card.js:188`
@@ -3898,14 +3902,14 @@ re-anchor (the full STATE split stays its own queued task — nothing was reloca
     (`median` / `band_low` / `p75` / …), switch the lookup to it, THEN restate the labels with
     analyst ratification. Splitting them means either a broken card or a rule left violated.
 
-18. **MIRROR-SYNC CI CHECK.** A generator run dirties BOTH its source and its `frontend/` mirror;
+19. **MIRROR-SYNC CI CHECK.** A generator run dirties BOTH its source and its `frontend/` mirror;
     an artifact pass that commits only the source leaves the deployed site reading stale data
     SILENTLY — nothing is red, the page is just wrong. Found 2026-07-21: `92feab0` committed
     `data/monitor/2026-07-20.json` without its mirror, so the live freshness panel was still
     missing EPAM (fixed in `a982900`). Ship a CI step that rebuilds and fails if `git status` is
     dirty — the artifact pass is complete when the tree is clean, not when the source commit lands.
 
-19. **RATIONALE STYLE RULE (adopted 2026-07-21; binds FUTURE verdicts, never sealed ones).**
+20. **RATIONALE STYLE RULE (adopted 2026-07-21; binds FUTURE verdicts, never sealed ones).**
     `verdict.rationale` is plain thesis prose — the market-standard shape: thesis, the two or
     three numbers that carry it, the risk accepted. **Accession numbers, vendor names (CIQ /
     Polygon), verification arithmetic ("1,100 × 8% × 6.0x → $3.54 → 2.17:1"), and process
@@ -4163,6 +4167,52 @@ cannot drift between emitters. Pinned both ways
 **CLOSED by the 2026-07-21 monitor build:** position monitor (book vs benchmarks, spread,
 freshness panel) · benchmark-by-cap-band assignment + the ledger-supersession artifact · the
 SIC-87xx sector miss · entry-price/ratio-at-entry + implied-odds display.
+
+- **SECOND R2 RECORD — AORT, WATCH + AVOID-PRICED (branch `data/r2-aort-record`, 2026-07-22).**
+  `scenarios/AORT.json`, recipe `R2_terminal_margin`, basis EV/EBITDA, **tier B**, 4-year horizon,
+  spot **$25.37** (last close 2026-07-20). Freshness CLEAR. Same PRICED family as NCNO: the base
+  case is worth less than half the market price and the optimistic case sits below it too.
+  - **RESULT.** bear $3.12 · base $10.44 · bull $18.35 in today's terms (terminal $5.45 / $18.26 /
+    $32.09). reward −14.93 · risk +22.25 · **ratio −0.67 → FAIL**. Survival **PASS** but tier **B**,
+    because the pass is nominal: FY2025 free cash flow **+$0.8M** — cash generation nearly doubled
+    while capital spending TRIPLED to $39.0M and consumed it — against 3.7x leverage and 2.5x
+    interest coverage. A gate that passes on $0.8M is not a cushion, and the tier says so.
+  - **THE DILUTION OVERRIDE, and why it is not a double-count.** The raw 3-year diluted CAGR
+    (5.62%) terminates in a **one-off convert-for-stock exchange**: ~$99M of 4.25% notes due 2025
+    exchanged for common stock in May 2025 (8-K Item 3.02, accessions `0000784199-25-000080` and
+    `-000129`; total debt 314.6 → 215.5 across the quarter). Compounding that forward would charge
+    the terminal year for an event whose balance-sheet benefit is ALREADY banked in net debt.
+    Override to the **FY2021–FY2024 organic basic CAGR, 2.25%**. **The static inputs are already
+    coherent** — the exchange shares are in the 49.731M divisor and the retired principal is out of
+    the 202.4 bridge, so there is no double-count to fix; the error would have been dynamic.
+  - **THE FY2025 SHARE STEP, decomposed** (+5.486M, +13.16%): **+3.659M basic (67%)** = the
+    exchange; **+1.827M (33%)** = dilutive securities re-entering diluted EPS as the company turned
+    profitable. Basic equalled diluted EXACTLY in FY2018 and FY2020–24 — every one a loss year,
+    where dilutive securities are antidilutive and excluded. That signature is what identified the
+    mechanism.
+  - **FCF-LAYER PRECEDENT SET.** The house basis is **EDGAR operating cash flow less capital
+    expenditure** (+$0.8M, FY2025). The vendor's levered measure reads **−$7.3M** — recorded beside
+    it rather than reconciled away, because the two are different definitions over different
+    periods and the sign disagreement is itself the finding. The committed dossier carries BOTH
+    `quality.free_cash_flow: -7.3` and `quality.survival_capacity: "FCF-positive → self-funding"`;
+    that internal contradiction is the vendor layer's, not ours.
+  - **THE CONSENSUS LAYER IS NOT GAAP, proven arithmetically.** Street "EBITDA" implies about
+    **$62M of depreciation** for a year in which the company reported about **$22M**. Converting
+    street EBITDA at our depreciation rate would overstate the operating margin by ~8 points, so the
+    record uses the street's own **stated** operating-profit rows (6.93% FY2026, 10.80% FY2027).
+  - **MARGIN IS NOT A RAMP.** FY2024's 10.01% — the best year on file — came from operating expenses
+    FALLING 11.7% in absolute dollars; FY2025 gave 2.4 points back as spending grew 22.7% against
+    13.6% revenue. **Operating leverage ran backwards in the latest year.** The committed 3.87%
+    anchor median reconciles exactly but blends FY2016's 12.10% (pre-acquisition CryoLife) with
+    FY2020's 0.96% (shutdown) — two business identities in one statistic.
+  - **THE BEAR LEG DID NOT NEED REBUILDING.** Unlike NCNO (4/4 bear points pre-rebutted in their own
+    sentence), AORT's synthesis is genuinely two-sided — **1 of 8** — and `evidence_balance` reads
+    `mixed`, where the machine proposes nothing. The recorded bear leg is the analyst's, informed by
+    a real one.
+  - Verdict **watch**, `avoid_priced` true, **no ledger row**. Robustness verified: the verdict FAILS
+    under BOTH share paths (organic −0.67, raw −0.72), so it does not rest on the override.
+  - Gate: ruff + `mypy --strict` clean; `pytest -m "not network"` green; prose linter **0 flags**
+    (the rationale tripped the 120-word cap at 122 and was trimmed to 119 — the cap did its job).
 
 - **FIRST R2 RECORD — NCNO, WATCH + AVOID-PRICED (branch `data/r2-ncno-first-record`, 2026-07-21).**
   The instrument's first real use. `scenarios/NCNO.json`, recipe `R2_terminal_margin`, basis
