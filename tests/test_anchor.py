@@ -301,12 +301,34 @@ def test_multiple_leg_confidence_is_span_based_not_point_count() -> None:
     assert legacy.multiple is not None and legacy.multiple.confidence == "weak"  # span-UNKNOWN
 
 
-def test_own_history_band_carries_periodicity_metadata_fields() -> None:
+def test_own_history_band_carries_periodicity_and_provenance_fields() -> None:
     """Schema pin: the band exposes the self-describing metadata a consumer needs to judge the
-    window — periodicity_days_median, window_span_years, periodicity, data_quality, source_file."""
+    window — cadence/span/periodicity/data_quality — PLUS the provenance of the bytes it was read
+    from (source_file is not identity: a stale same-named copy gave SMPL a phantom 4.98y band)."""
     from vinci.dossier.schemas import OwnHistoryBand
     assert {"periodicity_days_median", "window_span_years", "periodicity", "data_quality",
-            "source_file"} <= set(OwnHistoryBand.model_fields)
+            "source_file", "source_sha256", "source_mtime"} <= set(OwnHistoryBand.model_fields)
+
+
+def test_canonical_sync_always_overwrites_a_stale_local_copy(tmp_path: Path) -> None:
+    """COPY DISCIPLINE — the SMPL incident. A stale same-named file already in the working location
+    must be OVERWRITTEN from canonical (no skip-if-present), so the band carries the CANONICAL
+    file's hash. A missing canonical folder FAILS LOUD rather than reading unknown-vintage bytes."""
+    import hashlib
+
+    from vinci.cli import sync_canonical_ciq
+    from vinci.dossier.ciq_sheets import file_provenance
+    canonical, local = tmp_path / "canon", tmp_path / "local"
+    (canonical / "XYZ").mkdir(parents=True)
+    (local / "XYZ").mkdir(parents=True)
+    (canonical / "XYZ" / "f.xls").write_bytes(b"CANONICAL-CURRENT")
+    (local / "XYZ" / "f.xls").write_bytes(b"STALE-OLD-COPY")          # the skip-if-present trap
+    sync_canonical_ciq(canonical, local, ["XYZ"])
+    assert (local / "XYZ" / "f.xls").read_bytes() == b"CANONICAL-CURRENT"   # overwritten, not kept
+    sha, _mt = file_provenance(local / "XYZ" / "f.xls")
+    assert sha == hashlib.sha256(b"CANONICAL-CURRENT").hexdigest()[:10]     # canonical hash stamped
+    with pytest.raises(FileNotFoundError, match="canonical CIQ folder missing"):
+        sync_canonical_ciq(canonical, local, ["ABSENT"])            # fail loud, no fallback
 
 
 def test_replace_own_history_value_is_byte_preserving() -> None:

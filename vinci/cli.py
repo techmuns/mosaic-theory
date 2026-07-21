@@ -496,6 +496,31 @@ def _cmd_anchor_backfill(args: argparse.Namespace) -> int:
     return 0
 
 
+def sync_canonical_ciq(canonical: Path, local: Path, tickers: list[str]) -> list[str]:
+    """Sync each ticker's CIQ folder FROM the canonical location, ALWAYS overwriting.
+
+    There is no skip-if-present. SMPL's band was refreshed from a stale same-named copy precisely
+    because a 'already present, skip' shortcut left an older export in place while the canonical one
+    had moved on — the artifact then recorded a 4.98y window that did not exist. A missing canonical
+    folder FAILS LOUD rather than falling back to whatever is lying in the worktree: reading
+    an unknown-vintage file is the failure being prevented, not an acceptable degrade."""
+    import shutil
+
+    out: list[str] = []
+    for t in tickers:
+        src, dst = canonical / t, local / t
+        if not src.is_dir() or not any(p.is_file() for p in src.iterdir()):
+            raise FileNotFoundError(
+                f"canonical CIQ folder missing/empty for {t}: {src} — refusing to refresh from "
+                f"whatever copy is in the worktree (unknown vintage)")
+        dst.mkdir(parents=True, exist_ok=True)
+        for p in src.iterdir():
+            if p.is_file() and not p.name.startswith("."):
+                shutil.copy2(p, dst / p.name)          # ALWAYS overwrite — never skip-if-present
+        out.append(f"{t}: synced {src}")
+    return out
+
+
 def _cmd_own_history_refresh(args: argparse.Namespace) -> int:
     """Refresh committed ``valuation.own_history`` from the CURRENT on-disk CIQ export (the
     2026-07-21 window-staleness fix), stamping periodicity/span/source_file metadata.
@@ -514,6 +539,11 @@ def _cmd_own_history_refresh(args: argparse.Namespace) -> int:
     cfg = get_config()
     store = LocalFolderStore.from_config(cfg)
     tickers = [t.strip().upper() for t in args.tickers.split(",") if t.strip()]
+    if args.canonical_ciq:
+        synced = sync_canonical_ciq(Path(args.canonical_ciq), cfg.data_dir / "manual" / "ciq",
+                                    tickers)
+        for line in synced:
+            print(f"  sync: {line}")
     print(f"{'ticker':7}{'old med/n/yrs':>20}{'new med/n/yrs':>20}{'period':>11}  status")
     for t in tickers:
         path = cfg.data_dir / "dossiers" / t / "dossier.json"
@@ -1915,6 +1945,10 @@ def build_parser() -> argparse.ArgumentParser:
     p_ohr.add_argument("--tickers", required=True, help="comma-separated tickers")
     p_ohr.add_argument("--dry-run", action="store_true", dest="dry_run",
                        help="DIAGNOSTIC: report old-vs-new bands without writing")
+    p_ohr.add_argument("--canonical-ciq", dest="canonical_ciq",
+                       help="sync each ticker's CIQ folder FROM this canonical root before reading "
+                            "(ALWAYS overwrites — no skip-if-present; missing canonical is fatal). "
+                            "Use when running outside the primary worktree.")
     p_ohr.set_defaults(func=_cmd_own_history_refresh)
 
     p_log = sub.add_parser("log-verdict", help="record a manual BUY/AVOID verdict for a candidate")

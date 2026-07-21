@@ -3752,6 +3752,26 @@ two-name analysis (mid/small-caps, opposite directions) mapped against this inve
     bull 20.0x 25→24%ile); **"base below median" still holds** (median 22.7→23.4x); current-multiple
     percentile 0→3% (the longer window contains a lower 7.46x trough). The extended window does NOT
     invalidate the pending IT underwrite — it makes the base marginally MORE conservative.
+  - **SMPL STALE-READ INCIDENT (found in review of this same PR, 2026-07-21; fixed in-branch).**
+    The first pass refreshed SMPL from a STALE same-named export — the worktree copy
+    (sha `680fd7bee7`, 21 closes, 4.98y) — because the copy step **skipped SMPL as "already
+    present"** while the canonical primary export had been replaced hours later (sha `7bd83a1103`,
+    36 closes, 2017-12-29→2026-07-17, **8.55y**). The artifact was internally consistent and
+    therefore silently wrong: the new span guard dutifully applied a correct rule to bad input and
+    demoted SMPL's multiple leg firm→weak on a window that does not exist. Nothing in the record
+    could show it — `source_file` recorded a NAME, and both files share that name.
+    **CORRECTED:** SMPL band median 16.34→**17.85x**, n 20→**35**, span 4.98→**8.55y**, multiple leg
+    weak→**FIRM**, anchor base $38.43→**$42.31 (+10%)**. Overall stays weak (revenue-tag conflict,
+    #160). **Two rules adopted:**
+    (a) **HASH-STAMPED PROVENANCE** — every band stores `source_sha256` + `source_mtime` of the file
+    actually read, so a stale read is visible IN the artifact rather than reconstructed later;
+    (b) **CANONICAL-SYNC-ALWAYS** — the refresh path syncs from the canonical CIQ root and ALWAYS
+    overwrites (`--canonical-ciq`); there is no skip-if-present, and a missing canonical folder FAILS
+    LOUD rather than reading unknown-vintage bytes. Pinned by a stale-local-copy test.
+    The other six were re-stamped with the hashes of the files their refresh actually read —
+    **provenance-only; every band value byte-identical** (verified field-by-field).
+    ⚠ **SMPL's median moved 16.34→17.85x**, which is the reference the held SMPL underwrite's 12.5x
+    base was set against ("just under the 25th pctile") — re-check that reference when SMPL resumes.
   - **STILL OPEN (unchanged by this):** the shared `extract_points`/`annual_series` longest/first-
     alias rule (this was own-history-local + anchor-local); and the operator may want a standing
     refresh cadence so committed bands don't silently lag new exports.
