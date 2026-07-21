@@ -1188,3 +1188,42 @@ table.data tr td.uw-vs { font-size: 12.5px; }
      institutional norm for an appendix — and only in the full export (the brief never prints it). */
   body.ds-print-full .ds-tier[data-tier="appendix"] { break-before: page; }
 }
+
+/* ---- dossier tier redesign (2026-07) ---- */
+/* router note: top-right of a section title, naming where the depth lives */
+.ds-title .ds-route { float: right; font-size: 10.5px; font-weight: 500; text-transform: none;
+  letter-spacing: 0; color: var(--accent-2); }
+/* the machine-assessment suffix + conditional caveat strip inside the decision card */
+.uw-assess-note { font-size: 11.5px; }
+.uw-warn { border: 1px solid var(--danger); border-left-width: 3px; border-radius: 6px;
+  padding: 8px 12px; margin: 10px 0 2px; font-size: 12.5px; color: var(--ink-2); }
+/* Record & reproduce: the re-run command block */
+.ds-rerun { background: var(--nav-bg); color: var(--nav-ink); padding: 8px 11px;
+  border-radius: 6px; font-size: 11.5px; overflow-x: auto; margin: 4px 0; line-height: 1.5; }
+/* the reading guide collapsible at the top of the Appendix */
+.ds-howto > summary { cursor: pointer; font-size: 12.5px; font-weight: 650; color: var(--ink-2); }
+.ds-howto > summary:hover { color: var(--ink); }
+.ds-howto > summary::marker { color: var(--accent); }
+/* per-leg cross-checks heading inside the Inputs audit block (deliberately NOT uw-method-h —
+   cross-checks are verification, not methodology; see the stripped-card no-fabrication pin) */
+.uw-xcheck-h { font-size: 11px; color: var(--ink-3); margin: 6px 0 2px; }
+/* opener card: company identity under the masthead; detail card: the screening-context block */
+.uw-company { border-top: 1px solid var(--line); margin-top: 12px; padding-top: 12px; }
+.uw-screen { border-top: 1px solid var(--line); margin-top: 12px; }
+/* opener/detail card polish: title-row verdict pills, sectioned internals */
+.ds-title .uw-title-chips { float: right; font-weight: 400; text-transform: none; letter-spacing: 0; }
+.ds-title .uw-title-chips .uw-vlab { margin-right: 6px; }
+.card.uw-card > .ds-title { margin-bottom: 10px; }
+/* header identity + screen-table prose cell */
+.page-h .page-h-id { color: var(--ink-2); font-weight: 500; }
+.uw-screen-m { text-align: right; font-size: 12.5px; }
+/* the opener's stat band is a PROPERLY ENCLOSED strip (the approved-mockup treatment): one
+   rounded box whose frame does the separating — which retires the company block's own rule
+   (two parallel floating lines read as a stray divider) */
+.uw-open .uw-statband { border: 1px solid var(--line); border-radius: 8px; overflow: hidden; }
+.uw-open .uw-stat-lead, .uw-open .uw-stat-lead.base, .uw-open .uw-stat-lead.priced { border-radius: 0; }
+.uw-open .uw-company { border-top: 0; margin-top: 14px; padding-top: 0; }
+/* uniform two-column rhythm in the opener: both eyebrows start at the same height, one spacing
+   scale from the stat band down (the About eyebrow inherited a 13px top margin its sibling lacked) */
+.uw-open .brief-body { margin-top: 0; }
+.uw-open .brief-eyebrow { margin: 0 0 5px; }

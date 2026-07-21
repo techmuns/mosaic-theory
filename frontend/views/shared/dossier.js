@@ -7,7 +7,7 @@ import { fmtPrice, fmtDate, fmtStamp, fmtPct, escapeHtml, DASH } from "../../lib
 // (it was private here, which is why the underwrite card had to hardcode the inline form).
 import { citeMark, withEndnotes, auditCitesInline } from "../../lib/cites.js";
 import { barDomain, lineDomain, linScale, logScale, barLabelY, extent, EXHIBIT } from "../../lib/exhibit.js";
-import { uwCard } from "./uw-card.js";
+import { uwCard, uwCardParts } from "./uw-card.js";
 
 // PDF export uses the browser's native print-to-PDF (no library — the frontend stays dependency-free).
 // The browser derives the saved-file name from document.title, so on a dossier print we swap in a
@@ -455,7 +455,7 @@ export function renderDossier(d, verdict, card = null, mark = null) {  // export
   return header(d) + tierTabs() + `<div class="ds-tiers">
     <section class="ds-tier on" data-tier="brief">${withEndnotes("B", () => briefTier(d, verdict, m, card, mark))}</section>
     <section class="ds-tier" data-tier="analysis">${withEndnotes("A", () => analysisTier(d, m))}</section>
-    <section class="ds-tier" data-tier="appendix">${withEndnotes("X", () => appendixTier(d, verdict, m))}</section>
+    <section class="ds-tier" data-tier="appendix">${withEndnotes("X", () => appendixTier(d, verdict, m, card))}</section>
   </div>`;
 }
 
@@ -467,27 +467,82 @@ function tierTabs() {
   </div>`;
 }
 
-// ANALYSIS tier — the full mechanical dossier + the FULL synthesis (today's dossier body). The caveats
-// head it: verify before trusting the evidence below.
+// ANALYSIS tier — the work, ordered by the decision logic: verify → what broke → does it survive →
+// how it's trending → what it's worth → vs whom → what the street thinks → who owns it → the full
+// argument. Caveats are ANALYST caveats only — the `primary-source:` assembly-log line renders in
+// Record & reproduce, not here (process telemetry is not a caveat).
 function analysisTier(d, m) {
-  return flagsSection(d.caveats || d.flags || [])       // D1: caveats first (what to verify)
-    + drawdownIdio(m)                                   // drawdown cause + idiosyncrasy, clubbed
-    + leverageSurvival(m, d.reference_date)             // leverage & survival + capital structure
-    + trajectorySection(m.quality || {})                // merged trajectory table + share-count
-    + valuation(m.valuation)                            // valuation & own-history
+  const analystCaveats = (d.caveats || d.flags || []).filter((c) => !isProcessCaveat(c));
+  return flagsSection(analystCaveats)                   // caveats first (what to verify)
+    + drawdownIdio(m)                                   // what broke — and did it fall alone?
+    + leverageSurvival(m, d.reference_date)             // balance sheet & survival
+    + trajectorySection(m.quality || {}, m)             // trajectory + the return-ratios table
+    + valuation(m.valuation)                            // the ONLY home of the full multiples read
     + peerComps(m.peer_comps)                           // peer comps (per-peer grid inside)
-    + catalystPath(m.catalyst_path, m.consensus_context)
+    + catalystPath(m.catalyst_path, m.consensus_context)  // the street — estimates & guidance
     + (m.catalyst_path ? "" : consensus(m.consensus_context))  // legacy fallback only for old JSON
     + concentration(m.concentration)
-    + synthesis(d.synthesis);                           // D3 ordering + twins last — FULL synthesis here
+    + synthesis(d.synthesis);                           // the argument — stays the capstone
 }
 
-// APPENDIX tier — data & audit: financial summary + cap-structure provenance + implied-val reference +
-// mgmt pointer (appendixBlock), then the logged-verdict block and the no-BUY/AVOID footer.
-function appendixTier(d, verdict, m) {
-  return appendixBlock(m)
-    + loggedVerdict(verdict, d.ticker, d.reference_date)
-    + verdictFooter();
+// assembly telemetry ("primary-source: N EX-99.1 release(s) + 1 10-Q parsed (+0.3s fetch)") is a
+// PROCESS log line, not an analyst caveat — it renders in the Appendix's Record & reproduce.
+function isProcessCaveat(c) { return String(c).startsWith("primary-source:"); }
+
+// APPENDIX tier — verify & reproduce: nothing here is needed to DECIDE; everything is needed to
+// AUDIT. Reading guide first, then the full statements + cap-structure provenance + implied-equity
+// reference + mgmt pointer (appendixBlock), and Record & reproduce closing the document. (The
+// screening-context panel moved to the Brief's underwrite-detail card — user decision.)
+// verdictFooter is GONE — it was a third copy of the pivot statement (beside the decision strip's
+// sealed-proposal suffix and Record & reproduce's verdict row).
+function appendixTier(d, verdict, m, card) {
+  return howToRead()
+    + appendixBlock(m)
+    + recordAndReproduce(d, verdict, card);
+}
+
+// The reading guide — the discipline/methodology language that used to repeat as per-card
+// subtitles, stated ONCE. A <details>: collapsed on screen, print-expanded (T1) so the PDF still
+// carries the contract.
+function howToRead() {
+  return `<details class="card ds-section ds-howto">
+    <summary>How to read this dossier</summary>
+    <ul class="kv-list" style="margin-top:8px;">
+      <li>The machine assembles and cites; <b>the analyst decides</b>. Nothing in this document is a
+        recommendation — the verdict of record is the human's, logged to an append-only ledger with
+        a frozen entry price.</li>
+      <li>The machine's proposed verdict is derived deterministically from its written assessment
+        and stays <b>sealed until the analyst's verdict is recorded</b>, so it cannot anchor the
+        decision. A two-sided assessment proposes nothing.</li>
+      <li>Citations [n] resolve in the Sources list at the end of each tab. <b>Cited is not
+        verified</b> — the reference locates the claim so you can check it.</li>
+      <li>Reference values (peer-implied equity, price-implied levels) are shown <b>beside</b> the
+        figures they contextualize, never differenced into an upside — the reader judges the gap.</li>
+      <li>A value shown as UNKNOWN is honestly absent at the source — nothing here is imputed.</li>
+    </ul></details>`;
+}
+
+// RECORD & REPRODUCE — everything needed to date, audit, or regenerate this document. Absorbs the
+// old header meta (assembly stamp, model), the assembly-log caveat line, the identifiers, and the
+// logged-verdict block (with its CLI how-to when no verdict exists — process documentation lives
+// with process). The queued assembly-provenance stamp (STATE §5 item 1) lands here when built.
+function recordAndReproduce(d, verdict, card = null) {
+  const proc = (d.caveats || []).filter(isProcessCaveat);
+  const row = (label, val) => `<div class="fact"><div class="fact-label">${escapeHtml(label)}</div>
+    <div class="fact-val">${val}</div></div>`;
+  return `<div class="card ds-section"><div class="ds-title">Record &amp; reproduce</div>
+    <div class="subtitle muted ds-sub">Everything needed to date, audit, or regenerate this document.</div>
+    ${row("Data window", `screened as of <span class="mono">${fmtDate(d.reference_date)}</span> · assembled <span class="mono">${fmtStamp(d.assembled_at)}</span>`)}
+    ${row("Synthesis", d.synthesis
+      ? `model <span class="mono">${escapeHtml(d.llm_model || "llm")}</span> — facts assembled mechanically; the synthesis frames, the analyst decides`
+      : "not assembled — mechanical layer only")}
+    ${row("Identifiers", `CIK <span class="mono">${escapeHtml(d.cik || DASH)}</span>${d.exchange ? ` · ${escapeHtml(d.exchange)}` : ""} : <span class="mono">${escapeHtml(d.ticker)}</span>`)}
+    ${card ? row("Underwrite record", `underwritten <span class="mono">${escapeHtml(card.underwriteDate || DASH)}</span> · analyst ${escapeHtml(card.analyst || DASH)}${card.ledger && card.ledger.entryId ? ` · ledger <span class="mono">${escapeHtml(card.ledger.entryId)}</span>` : ""}`) : ""}
+    ${proc.length ? row("Assembly log", proc.map(escapeHtml).join("; ")) : ""}
+    ${row("Re-run", `<pre class="ds-rerun"><code>python -m vinci dossier --ticker ${escapeHtml(d.ticker)}</code></pre>
+      <span class="muted" style="font-size:11px;">regenerates every assembled fact from the same sources; committed values change only when the sources have</span>`)}
+    ${loggedVerdict(verdict, d.ticker, d.reference_date, { bare: true })}
+  </div>`;
 }
 
 // --- (Brief) first-cut tier — leads with the machine READ (evidence_balance), the decisive question,
@@ -499,6 +554,9 @@ const _BRIEF_DECISION_KW = /leverage|covenant|going.?concern|maturity|wall|liqui
 function briefVerifyFirst(caveats, limit = 2) {
   const out = [];
   for (const c of caveats || []) {
+    // a RESOLVED caveat is a record of a check that PASSED — it must never demand verification
+    // (surfaced by VRRM: "RESOLVED (P/E basis)" fired the warning strip).
+    if (/^RESOLVED\b/i.test(c)) continue;
     if (!_BRIEF_DECISION_KW.test(c)) continue;
     let lead = String(c).split(/;|\s+—\s+/)[0].trim();
     if (lead.length > 120) lead = lead.slice(0, 117).trimEnd() + "…";
@@ -521,9 +579,9 @@ function briefTilesGrid(m) {
   const tiles = [];
   const io = m.idiosyncratic_vs_shared || {};
   if (io.name_180d_return && io.name_180d_return.status === "present")
-    tiles.push(briefTile("Price action (180d)", fmtPct(io.name_180d_return.value, { signed: true })));
+    tiles.push(briefTile("Price (180d)", fmtPct(io.name_180d_return.value, { signed: true })));
   if (io.rel_vs_market && io.rel_vs_market.status === "present")
-    tiles.push(briefTile("Idio (vs mkt, 180d)", fmtPct(io.rel_vs_market.value, { signed: true })));
+    tiles.push(briefTile("vs market (180d)", fmtPct(io.rel_vs_market.value, { signed: true })));
   const q = m.quality || {};
   if (q.net_debt_to_ebitda && q.net_debt_to_ebitda.status === "present")
     tiles.push(briefTile("Net debt/EBITDA", mult(q.net_debt_to_ebitda.value)));
@@ -544,41 +602,164 @@ function briefVerdictChip(verdict) {
     <span class="muted" style="font-size:11.5px;">logged @ ${fmtPrice(verdict.entryPrice)} · ${fmtDate(verdict.decidedAt)}</span></div>`;
 }
 
-// (Brief) the market-standard first-cut, 7 sections: teaser → setup → company → case → financial
-// snapshot → valuation → verify. Machine-assembled + source-bound throughout; the teaser LEADS with
-// the machine's DERIVED proposal (2026-07-13 pivot) and the human's confirm/override in the
-// Recommendation slot is the verdict of record. Mirrors _brief_lines() in render.py.
-// ORDER (2026-07-21): the underwrite tear sheet LEADS. The page's job is to support a decision,
-// and the underwrite is the only section carrying one — it was previously 9th of 10, behind eight
-// sections of assembled facts, purely because #161 appended it rather than placing it.
-// Anti-anchoring is unaffected: that rule protects the MACHINE's sealed proposal from anchoring
-// the human, and the teaser (which carries it) is untouched in both content and position relative
-// to the facts. An analyst's own recorded underwrite cannot anchor its author.
+// (Brief · tier redesign 2026-07-21, card split per user) SIX decision-ordered cards:
+//   1 opener — the underwrite masthead + assessment + company identity (one read: the decision
+//     headline and what the business is)
+//   2 underwrite detail — scenarios table + rationale + machine proposal (sealed) + audit blocks
+//     + the screening context (how the name surfaced beside how it was underwritten)
+//   3 what happened — the drawdown events + the decision tiles
+//   4 the case — decisive question + top bull/bear + unknowns
+//   5 financial snapshot — trend exhibit + the compact annual table
+//   6 valuation first-cut — trailing-range read + peers + one consensus line
+// Everything needed to decide PASS vs READ DEEPER, nothing else; each card's router note names
+// where its depth lives. The underwrite still LEADS (2026-07-21 order decision) and the machine's
+// proposal stays SEALED until the human's verdict (the 2026-07-13 pivot — anti-anchoring intact;
+// it now rides as the assessment line's suffix instead of a standing row). Mirrors _brief_lines().
 function briefTier(d, verdict, m, card, mark) {
-  const parts = scenarioPanel(card, mark) + teaserCard(d, verdict, m) + setupCard(d.synthesis)
-    + companyCard(m) + briefCase(d.synthesis) + financialSnapshot(m) + valuationCard(m)
-    + catalystCard(m) + anchorPanel(d.anchor) + verifyCard(d);
+  const parts = openerCard(d, verdict, m, card, mark)
+    + underwriteDetail(d, verdict, m, card, mark)
+    + whatHappened(m) + briefCase(d.synthesis)
+    + financialSnapshot(m) + valuationCard(m);
   return parts.trim() ? parts : "";
+}
+
+// The machine's read + its DERIVED proposal in ONE row (the proposal is a deterministic mapping of
+// this same lean — vinci/dossier/verdict.py — so a second standing row was the same fact twice).
+// Sealed until the human's verdict is logged; revealed after (mirrors the md brief + ledger CLI).
+function assessmentRow(d) {
+  const s = d.synthesis;
+  if (!s || !s.evidence_balance) return "";
+  return `<div class="fact"><div class="fact-label">Assessment</div>
+    <div class="fact-val">${machineReadHtml(s.evidence_balance)}</div></div>`;
+}
+
+// The opener's NARRATIVE slot (user decision): a logged name leads with the ANALYST'S rationale —
+// the verdict of record's own words replace the machine read; a pending name (no rationale yet)
+// leads with the machine Assessment. The rationale renders HERE only — the detail card suppresses
+// its copy (rationale: false), so the words appear once.
+function narrativeRow(d, card) {
+  const v = (card && card.verdict) || {};
+  const plain = v.rationalePlain || v.rationale;
+  if (plain) return `<div class="fact"><div class="fact-label">Rationale</div>
+    <div class="fact-val">${escapeHtml(plain)}</div></div>`;
+  return assessmentRow(d);
+}
+
+// (user decision) the standing proposal row is GONE from the web brief. The pivot
+// MECHANISM is untouched: the proposal is still derived + sealed to the shadow ledger at assembly,
+// the disposition is recorded at log time, and the reveal lives in the ledger CLI and the md
+// renderer's --show-proposal peek. deriveProposal stays: it is the tested JS twin of
+// vinci/dossier/verdict.py's mapping.
+
+// CONDITIONAL caveat strip — renders ONLY when a decision-threatening caveat exists (going-concern,
+// covenant, maturity wall, liquidity…). Replaces the standing "Verify first" section, which sat on
+// every Brief while its real content was usually empty: an exception surfaces as an exception.
+function warningStrip(d) {
+  const vf = briefVerifyFirst(d.caveats || []);
+  if (!vf.length) return "";
+  return `<div class="uw-warn">⚠ <b>Verify before the verdict:</b> ${vf.map(escapeHtml).join("; ")}
+    <span class="muted" style="font-size:11px;">— full caveats in Analysis</span></div>`;
+}
+
+// 1 — OPENER (user decision, 2026-07-21 phase-1 round): the underwrite MASTHEAD + the machine
+// assessment (proposal line NOT here — it lives in the detail card) + the conditional warning +
+// the company identity (one-liner · segments · geography · concentration · key figures). The
+// decision headline and what-the-business-is in one opening read. Without an underwrite record
+// (VRRM): the verdict chip + assessment open the card instead of the masthead.
+function openerCard(d, verdict, m, card, mark) {
+  const parts = card ? uwCardParts(card, { mark }) : null;
+  // the card carries a REAL heading like every other Brief card; the verdict pills ride the title
+  // row (the uw eyebrow that used to carry them is suppressed in split mode)
+  const chips = parts && parts.chips
+    ? `<span class="uw-title-chips"><span class="uw-vlab">Verdict</span>${parts.chips}</span>` : "";
+  const title = `<div class="ds-title">At a glance${chips}</div>`;
+  const lead = parts ? parts.head : briefVerdictChip(verdict);
+  const warn = warningStrip(d);
+  const about = companyInner(d, m, narrativeRow(d, card));
+  if (!lead && !(warn + about).trim()) return "";
+  // one divider only (the company block's own border-top); the narrative lives INSIDE it,
+  // above Segments — no extra sectioned rule between the masthead and the block
+  const body = () => `${lead}${warn}${about}`;
+  return `<div class="card ds-section uw-card uw-open">${title}${withEndnotes("S", body)}</div>`;
+}
+
+// 2 — UNDERWRITE DETAIL (user decision): the scenarios table + range rail, the analyst's rationale,
+// the machine-proposal row (sealed until the verdict — the pivot, placement only), the thesis-break
+// chips, the collapsed audit blocks, and the SCREENING CONTEXT (returned from the Appendix — how
+// the name surfaced belongs beside how it was underwritten). Fail-honest without a record: renders
+// the proposal + screening context alone when either exists.
+function underwriteDetail(d, verdict, m, card, mark) {
+  const screen = anchorInner(d.anchor);
+  if (!card) {
+    if (!screen) return "";
+    return `<div class="card ds-section"><div class="ds-title">Scenario analysis<span class="ds-route">no scenario record for this name</span></div>
+      ${screen}</div>`;
+  }
+  const title = `<div class="ds-title">Scenario analysis <span class="muted" style="font-weight:400; text-transform:none; letter-spacing:0;">${escapeHtml(card.multipleBasis || "")}</span><span class="ds-route">every assumption &amp; source recorded below</span></div>`;
+  const parts = uwCardParts(card, { mark, rationale: false });
+  return `<div class="card ds-section uw-card">${title}${parts.detail}${screen}</div>`;
+}
+
+// the company-identity block shared by the opener: one-liner · segments / geography / customer
+// concentration · the key-figures table + 52-week relative path. CIK lives in Record & reproduce.
+function companyInner(d, m, narrative = "") {
+  const one = (d.business_description && d.business_description.status === "present")
+    ? firstSentence(d.business_description.value) : "";
+  const c = m.concentration || {};
+  const fil = (m.primary_source || {}).filing || {};
+  const custs = ((fil.concentration || {}).customers || []).filter((x) => x && x.pct != null);
+  let concLine = "";
+  if (custs.length) {
+    const top = custs.slice().sort((a, b) => b.pct - a.pct);
+    const top2 = top.slice(0, 2).reduce((s, x) => s + x.pct, 0);
+    const val = `top customer <span class="mono">${Math.round(top[0].pct)}%</span>${top[0].prior_pct != null ? ` <span class="muted">(from ${Math.round(top[0].prior_pct)}%)</span>` : ""}${top.length > 1 ? ` · top-2 ~<span class="mono">${Math.round(top2)}%</span>` : ""} of revenue`;
+    concLine = `<div class="fact"><div class="fact-label">Customer concentration</div><div class="fact-val">${val}${citeMark(fil.source_ref)}</div></div>`;
+  }
+  const left = `${one ? `<div class="brief-oneliner">${escapeHtml(one)}</div>` : ""}` +
+    narrative +
+    ((c.segments && c.segments.status === "present") ? fact("Segments", c.segments) : "") +
+    ((c.geographic && c.geographic.status === "present") ? fact("Geography", c.geographic) : "") +
+    concLine;
+  const right = briefSnapshot(d, m);
+  if (!left && !right) return "";
+  return `<div class="uw-company"><div class="brief-body">${
+    left ? `<div class="brief-narrative"><div class="brief-vlab brief-eyebrow">About the company</div>${left}</div>` : ""}${right}</div></div>`;
+}
+
+// 3 — WHAT HAPPENED: the drawdown events + the decision tiles. The Brief used to show the raw
+// drawdown % with no WHY — but the fund's whole question (overshoot vs terminal) starts from what
+// broke, so the shape belongs on page 1. The narrative names the EVENTS; the tiles carry the
+// NUMBERS (never both in one surface). Full event log + filings stay in Analysis.
+function whatHappened(m) {
+  const dc = m.drawdown_cause || {};
+  const shape = (dc.shape && dc.shape.status === "present") ? fact("Shape", dc.shape) : "";
+  const tiles = briefTilesGrid(m);
+  if (!shape && !tiles) return "";
+  return `<div class="card ds-section"><div class="ds-title">What happened<span class="ds-route">full event log in Analysis</span></div>
+    ${shape}${tiles}</div>`;
 }
 
 // (log-a) SCREENING ANCHOR — the committed R1 anchor block (vinci/dossier/anchor.py), read-only.
 // A mechanical re-rate of the name to its OWN-history median multiple on a NAIVE reported median
 // margin: an ATTENTION FILTER, never a verdict and never a target — it applies no structural
 // adjustment. Absent anchor → renders nothing, so pre-anchor dossiers are untouched.
-function anchorPanel(a) {
+function anchorInner(a) {
   if (!a) return "";
   const conf = (c) => `<span class="pill${c === "firm" ? "" : " conditional"}">${escapeHtml(c || "—")}</span>`;
-  const row = (label, val, note) =>
-    `<tr><td>${escapeHtml(label)}</td><td class="num mono">${val}</td><td class="muted">${note}</td></tr>`;
+  const row = (label, val, note, { prose = false } = {}) =>
+    `<tr><td>${escapeHtml(label)}</td><td class="${prose ? "uw-screen-m" : "num mono"}">${val}</td><td class="muted">${note}</td></tr>`;
   const mg = a.margin, mu = a.multiple;
   const base = a.anchor_base_value_per_share;
+  const methodName = String(a.recipe_hint || "").startsWith("R1")
+    ? "mid-cycle margin × the median multiple of its own history" : (a.recipe_hint || "—");
   const rows = [
-    row("Recipe", escapeHtml(a.recipe_hint || "—"), a.applicable ? "applicable" : "NOT applicable"),
+    row("Method", escapeHtml(methodName), a.applicable ? "applicable" : "NOT applicable",
+        { prose: true }),
     mg ? row("Mid-cycle margin", mg.value != null ? `${(mg.value * 100).toFixed(1)}%` : "—",
              `${mg.anchor_years}y history · ${conf(mg.confidence)}`) : "",
-    mu ? row("Own-history multiple", mu.value != null ? `${mu.value.toFixed(1)}x` : "—",
+    mu ? row("Median multiple, own history", mu.value != null ? `${mu.value.toFixed(1)}x` : "—",
              `${mu.history_quarters} closes · ${conf(mu.confidence)} · ${escapeHtml(a.multiple_basis || "")}`) : "",
-    base != null ? row("Anchor base", `$${base.toFixed(2)}`,
+    base != null ? row("Screen value / share", `$${base.toFixed(2)}`,
                        `spot-independent · EV/EBIT ${a.anchor_ev_ebit != null ? a.anchor_ev_ebit.toFixed(1) : "—"}x`) : "",
     row("Overall confidence", conf(a.overall_confidence), ""),
   ].join("");
@@ -587,25 +768,13 @@ function anchorPanel(a) {
         (a.data_quality_detail || []).map((x) =>
           `<div class="mono" style="font-size:11px;">${escapeHtml(x)}</div>`).join("")}</div>` : "";
   const why = a.reason ? `<div class="muted" style="margin-top:6px;">${escapeHtml(a.reason)}</div>` : "";
-  return `<div class="card ds-section"><div class="ds-title">Screening anchor <span class="muted" style="font-weight:400; text-transform:none; letter-spacing:0;">— not a verdict</span></div>
-    <div class="subtitle muted" style="margin:-4px 0 8px;">Mechanical re-rate to this name's OWN-history median multiple on a naive reported median margin. An ATTENTION FILTER: it applies no structural adjustment, so a cheap-looking anchor still has to survive a full bear/base/bull underwrite.</div>
+  return `<div class="uw-screen"><div class="ds-title" style="font-size:12px; margin-top:14px;">Screening context — how this name surfaced<span class="ds-route">not a verdict</span></div>
+    <div class="subtitle muted" style="margin:2px 0 8px;">A mechanical re-rate to the median multiple of this name's own trading history, on its naive reported median margin. An attention filter only — it applies no structural adjustment, so a cheap-looking screen still has to survive the full bear/base/bull underwrite.</div>
     <table class="data"><tbody>${rows}</tbody></table>${dq}${why}</div>`;
 }
 
-// (log-b) the analyst's committed underwrite record, rendered with the SAME card component the
-// watchlist uses (uw-card.js) — one card, one contract. Absent record → nothing renders.
-//
-// The card is SELF-DESCRIBING since the tear-sheet build: its masthead carries the "Scenario
-// underwrite" title and the verdict pills, and its foot states where the verdict of record lives
-// — the ledger entry_id when one exists, the "not a ledger verdict" disclaimer only when it does
-// not. This wrapper therefore adds NO title and NO subtitle: the pair it used to print restated
-// the masthead and, once a name was logged, flatly contradicted the foot (IT rendered "NOT a
-// ledger verdict of record" directly above "ledger V-IT-screen2-20260706"). One statement, one
-// place, and it is the one that knows the ledger.
-function scenarioPanel(card, mark = null) {
-  if (!card) return "";
-  return `<div class="ds-section uw-panel">${uwCard(card, { ticker: false, mark })}</div>`;
-}
+// (tier redesign) scenarioPanel is GONE — the Brief composes uwCardParts() directly: the masthead
+// opens card 1 beside the company identity; the legs/audit detail forms card 2.
 
 // first sentence of a CIQ business description ("{Co}, Inc. engages in …") — abbreviation-aware so
 // the split doesn't stop at "Inc."/"Corp."; capped for the teaser.
@@ -624,13 +793,6 @@ const fmtCap = (v) => (v >= 1000 ? `$${(v / 1000).toFixed(1)}B` : `$${Math.round
 function fmtShares(v) { return v >= 1e9 ? `${(v / 1e9).toFixed(1)}B` : `${(v / 1e6).toFixed(1)}M`; }
 
 
-// 1 — TEASER (at-a-glance): a 2/3 NARRATIVE (business one-liner · machine read · the machine's
-// DERIVED proposal · the human's Recommendation/Target slot) beside a 1/3 SNAPSHOT table (identity +
-// exchange + stock-info + CIK). The LOGGED-verdict slot is filled only from the ledger; the PROPOSAL
-// is derived client-side by deriveProposal() (the 2026-07-13 pivot) — deterministic, never the LLM.
-// The machine's evidence READ — a "{lean} — {why}" balance, e.g. "strongly-bearish — stated going-concern
-// doubt …". We tint the lean by direction (bear→danger, bull→live, mixed/neutral→grey) and sentence-case
-// it; the rest is plain body text. Fail-soft: an un-split read renders verbatim.
 // THE one shared lean parser (mirrors vinci/dossier/verdict.py split_lean) — "{lean} — {why}" →
 // [lean, rest] (both trimmed) else null. machineReadHtml AND deriveProposal both consume it; two
 // divergent copies of this regex is the "two parsers of one string" drift the shared-parser rule kills.
@@ -671,108 +833,55 @@ function deriveProposal(eb) {
   return { action, lean: label, reason };
 }
 
-function teaserCard(d, verdict, m) {
-  const s = d.synthesis;
-  const one = (d.business_description && d.business_description.status === "present")
-    ? firstSentence(d.business_description.value) : "";
-  const vslot = verdict
-    ? `<span class="pill ${isBuyVerdict(verdict.verdict) ? "buy" : "avoid"}">${escapeHtml(verdict.verdict)}</span> <span class="muted" style="font-size:11.5px;">@ ${fmtPrice(verdict.entryPrice)} · ${fmtDate(verdict.decidedAt)}</span>`
-    : `<span class="brief-slot">not yet logged</span> <span class="muted" style="font-size:11px;">confirm or override — Buy / Avoid + target</span>`;
-  const read = (s && s.evidence_balance)
-    ? `<div class="brief-vlab brief-eyebrow">Assessment</div><div class="brief-read">${machineReadHtml(s.evidence_balance)}</div>` : "";
-  const prop = deriveProposal(s ? s.evidence_balance : "");
-  // ANTI-ANCHORING (2026-07-13): the proposal is DERIVED + sealed at assembly but HIDDEN until the
-  // human logs their verdict — so it can't anchor them or contaminate the human-vs-machine
-  // comparison (the same discipline as the theme edge's tiers-never-ranks). Revealed only AFTER a
-  // verdict is logged (mirrors the md brief's sealed-note + the ledger CLI's post-log reveal). A
-  // present proposal does NOT repeat the lean's rationale — the machine-read line above carries it.
-  const propSlot = !verdict
-    ? `<span class="brief-slot">sealed</span> <span class="muted" style="font-size:11px;">revealed after your verdict is logged</span>`
-    : prop.action
-      ? `<span class="pill ${prop.action === "BUY" ? "buy" : "avoid"}">${prop.action}</span> <span class="muted" style="font-size:11.5px;">derived from the lean above</span>`
-      : `<span class="brief-slot">none</span> <span class="muted" style="font-size:11.5px;">${escapeHtml(prop.note)}</span>`;
-  const narrative = `<div class="brief-narrative">
-    ${one ? `<div class="brief-oneliner">${escapeHtml(one)}</div>` : ""}
-    ${read}
-    <div class="brief-proposal"><span class="brief-vlab">Machine proposal</span> ${propSlot}</div>
-    <div class="brief-verdict"><span class="brief-vlab">Recommendation / Target</span> ${vslot}</div>
-    ${briefTilesGrid(m)}
-  </div>`;
-  return `<div class="card ds-section ds-brief">
-    <div class="brief-body">${narrative}${briefSnapshot(d, m)}</div></div>`;
-}
+// (tier redesign) teaserCard is GONE: its one-liner + snapshot sidebar merged into companyInner,
+// its assessment/proposal rows folded into the decision strip (assessmentRow), its verdict slot was
+// redundant three ways (the uw-card's status chip, the ENTRY masthead cell, and the card foot), and
+// its tiles moved to whatHappened beside the drawdown shape they qualify.
 
-// the Brief SNAPSHOT — a MOFSL-style label|value table of the scalar facts (identity · exchange · CMP ·
-// market cap · 52-wk · shares · book value/sh · CIK), consolidated from what used to be scattered across
-// the header meta, brief-meta, and the stock-info line. Fail-honest: a row is dropped when its source is
-// absent (e.g. AORT has no Book Value/Share row in its CIQ export → no Book/sh row, never a guess).
+// the key-figures sidebar — a label|value table of the scalar facts (exchange · CMP · market cap ·
+// 52-wk · shares · book value/sh). CIK moved to Record & reproduce (an identifier, not a decision
+// figure). Fail-honest: a row is dropped when its source is absent (e.g. AORT has no
+// Book Value/Share row in its export → no Book/sh row, never a guess).
 function briefSnapshot(d, m) {
   const si = m.stock_info || {};
   const ok = (f) => f && f.status === "present" && f.value != null;
   const rows = [];
   const push = (label, val) => { if (val) rows.push(`<tr><td>${label}</td><td>${val}</td></tr>`); };
-  if (d.exchange) push("Exchange", escapeHtml(d.exchange));
   if (ok(si.price)) push("CMP", `$${si.price.value.toFixed(2)}${si.as_of ? ` <span class="muted">(${escapeHtml(si.as_of)})</span>` : ""}`);
   if (ok(si.market_cap)) push("Market cap", fmtCap(si.market_cap.value));
   if (ok(si.low_52w) && ok(si.high_52w)) push("52-wk range", `$${si.low_52w.value.toFixed(2)}–$${si.high_52w.value.toFixed(2)}`);
   if (ok(si.shares_out)) push("Shares out", fmtShares(si.shares_out.value));
   if (ok(si.book_value_ps)) push("Book / sh", `$${si.book_value_ps.value.toFixed(2)}`);
-  if (d.cik) push("CIK", `<span class="mono">${escapeHtml(d.cik)}</span>`);
   // the 52-week stock-vs-benchmark path sits BELOW the scalar table (MOFSL-style sidebar) — web-only.
   const chart = stockPerfExhibit(m.stock_performance);
   if (!rows.length && !chart) return "";
   const table = rows.length ? `<table class="brief-snap-t"><tbody>${rows.join("")}</tbody></table>` : "";
   const kf = rows.length ? `<div class="brief-vlab brief-eyebrow">Key figures</div>` : "";
+  // no identity line here — the page h1 two inches above already says it (was a literal duplicate)
   return `<div class="brief-snap">
-    <div class="brief-snap-idn"><span class="mono">${escapeHtml(d.ticker)}</span> · ${escapeHtml(d.name || "")}</div>
     ${kf}${table}${chart}</div>`;
 }
 
-// 2 — DECISIVE QUESTION: the one framing question the human must resolve. The candidate's drawdown /
-// idiosyncratic / leverage / FCF facts moved UP into the teaser tiles, so this card is now just the
-// question (the card title carries the "decisive question" label — no inline prefix).
-function setupCard(s) {
-  const q = (s && s.decisive_question && s.decisive_question.question) ? s.decisive_question.question : "";
-  if (!q) return "";
-  return `<div class="card ds-section"><div class="ds-title">Decisive question</div>
-    <div class="brief-dq" style="margin-top:4px;">${escapeHtml(q)}</div></div>`;
-}
+// (tier redesign) setupCard is GONE — one line does not earn a card; the decisive question now
+// leads "The case". companyCard is GONE — merged into companyInner above.
 
-// 3 — COMPANY & BUSINESS: segments · geography · customer CONCENTRATION (the top-customer %, a real
-// risk — NOT the raw customer names, which are noise in an institutional first cut).
-function companyCard(m) {
-  const c = m.concentration || {};
-  const fil = (m.primary_source || {}).filing || {};
-  const custs = ((fil.concentration || {}).customers || []).filter((x) => x && x.pct != null);
-  let concLine = "";
-  if (custs.length) {
-    const top = custs.slice().sort((a, b) => b.pct - a.pct);
-    const top2 = top.slice(0, 2).reduce((s, x) => s + x.pct, 0);
-    const val = `top customer <span class="mono">${Math.round(top[0].pct)}%</span>${top[0].prior_pct != null ? ` <span class="muted">(from ${Math.round(top[0].prior_pct)}%)</span>` : ""}${top.length > 1 ? ` · top-2 ~<span class="mono">${Math.round(top2)}%</span>` : ""} of revenue`;
-    concLine = `<div class="fact"><div class="fact-label">Customer concentration</div><div class="fact-val">${val}${citeMark(fil.source_ref)}</div></div>`;
-  }
-  const rows = [
-    (c.segments && c.segments.status === "present") ? fact("Segments", c.segments) : "",
-    (c.geographic && c.geographic.status === "present") ? fact("Geography", c.geographic) : "",
-    concLine,
-  ].join("");
-  if (!rows) return "";
-  return `<div class="card ds-section"><div class="ds-title">Company &amp; business</div>${rows}</div>`;
-}
-
-// 4 — THE CASE: condensed top-3 bull / top-3 bear (evidence-weighted, same order as Analysis) +
-// top-3 key unknowns. The FULL bull/bear lives in the Analysis synthesis; source-bound throughout.
+// 4 — THE CASE: the decisive question LEADS (it framed a card of its own — one line does not earn
+// a card), then top-3 bull / top-3 bear (evidence-weighted, same order as Analysis) + top-3 key
+// unknowns. Labels state the claim, not the house shorthand: "the decline is overdone" /
+// "the decline is real" (was "overshoot" / "terminal"). Full argument lives in Analysis.
 function briefCase(s) {
   if (!s || (!(s.bull_points || []).length && !(s.bear_points || []).length)) return "";
+  const q = (s.decisive_question && s.decisive_question.question) ? s.decisive_question.question : "";
   const pt = (p, cls) => `<div class="point ${cls}">${escapeHtml(p.claim)}${citeMark(p.source_ref)}</div>`;
   const bulls = orderPoints(s.bull_points).slice(0, 3).map((p) => pt(p, "bull")).join("") || `<div class="muted">—</div>`;
   const bears = orderPoints(s.bear_points).slice(0, 3).map((p) => pt(p, "bear")).join("") || `<div class="muted">—</div>`;
   const uks = (s.key_unknowns || []).slice(0, 3);
   const uk = uks.length ? `<div class="ds-title" style="font-size:12px; margin-top:12px;">Key unknowns</div><ul class="kv-list">${uks.map((k) => `<li>${escapeHtml(k)}</li>`).join("")}</ul>` : "";
-  return `<div class="card ds-section"><div class="ds-title">The case <span class="muted" style="font-weight:400; text-transform:none; letter-spacing:0;">— top points; full bull/bear in Analysis</span></div>
+  return `<div class="card ds-section"><div class="ds-title">The case<span class="ds-route">full argument in Analysis</span></div>
+    ${q ? `<div class="brief-dq">${escapeHtml(q)}</div>` : ""}
     <div class="brief-case">
-      <div><div class="ds-title" style="font-size:12px; color:var(--pos-text);">Bull — overshoot</div>${bulls}</div>
-      <div><div class="ds-title" style="font-size:12px; color:var(--danger);">Bear — terminal</div>${bears}</div>
+      <div><div class="ds-title" style="font-size:12px; color:var(--pos-text);">Bull case — the decline is overdone</div>${bulls}</div>
+      <div><div class="ds-title" style="font-size:12px; color:var(--danger);">Bear case — the decline is real</div>${bears}</div>
     </div>${uk}</div>`;
 }
 
@@ -934,7 +1043,7 @@ function stockPerfExhibit(sp) {
   const nameS = pts.map((p) => (p && Number.isFinite(p.name) ? p.name : null));
   const benchS = pts.map((p) => (p && Number.isFinite(p.benchmark) ? p.benchmark : null));
   if (!nameS.some((v) => v != null)) return "";
-  const { fs, halo, margin } = EXHIBIT;  // shared design language (lib/exhibit.js) — compact frame below
+  const { fs, halo } = EXHIBIT;  // shared design language (lib/exhibit.js) — compact frame below
   // compact sidebar frame — this sits inside .brief-snap, so it is NOT stretched to the main canvas.
   const W = 285, H = 154, padL = 27, padR = 6, cy0 = 30, cy1 = 112, px0 = padL, px1 = W - padR;
   // A rebased-INDEX series (base 100), not a return series — its threshold is 100, not 0. Every series
@@ -966,9 +1075,9 @@ function stockPerfExhibit(sp) {
     + `<circle cx="${px0 + 3}" cy="${ly - 3}" r="2.6" fill="${nameCol}"/><text x="${px0 + 10}" y="${ly}" fill="var(--ink-2)">${sym} <tspan fill="${nameCol}" font-weight="600">${nr}</tspan></text>`
     + `<circle cx="${px0 + 120}" cy="${ly - 3}" r="2.6" fill="${benchCol}"/><text x="${px0 + 127}" y="${ly}" fill="var(--ink-2)">${bsym} <tspan fill="${benchCol}" font-weight="600">${br}</tspan></text>`
     + `</g>`;
-  return `<div class="ds-exhibit brief-perf" style="margin:${margin};">
+  return `<div class="ds-exhibit brief-perf" style="margin:14px 0 0;">
     <svg viewBox="0 0 ${W} ${H}" width="100%" style="max-width:${W}px; display:block;" role="img" aria-label="52-week price performance, ${sym} versus ${bsym}, rebased to 100">
-      <text x="${px0 - 4}" y="15" font-size="${fs.panel}" font-weight="600" fill="var(--ink-2)">Stock performance <tspan font-size="${fs.xlabel}" fill="var(--ink-3)" font-weight="400">· 52-wk, =100</tspan></text>
+      <text x="0" y="15" font-size="${fs.panel}" font-weight="600" fill="var(--ink-2)">Stock performance <tspan font-size="${fs.xlabel}" fill="var(--ink-3)" font-weight="400">· 52-wk, =100</tspan></text>
       ${yLab}${base}${xLab}${line(benchS, benchCol, 1.4)}${line(nameS, nameCol, 2)}${leg}
     </svg>
   </div>`;
@@ -985,14 +1094,14 @@ function financialSnapshot(m) {
   const isE = fsa.value.is_estimate || [], ec = (i) => (isE[i] ? " est-col" : "");  // (P3) shade E cols
   const head = `<tr><th></th>${cols.map((c, i) => `<th class="num${ec(i)}">${escapeHtml(String(c))}</th>`).join("")}</tr>`;
   const body = rows.map((r) => `<tr><td>${escapeHtml(r.label)}</td>${(r.cells || []).map((c, i) => `<td class="num mono${ec(i)}">${escapeHtml(String(c))}</td>`).join("")}</tr>`).join("");
-  // (Phase-4) the return-ratios line exhibit + per-period YoY table REPLACE the old latest-only "Key
-  // ratios" fact. Fail-honest fallback: a name without the CIQ Ratios panel (return_ratios UNKNOWN)
-  // keeps the committed latest-period line — never a blank, never a fabricated series.
+  // (tier redesign) the return-ratios EXHIBIT stays on the first cut; its per-period TABLE is
+  // depth and moved to the Analysis trajectory section. Fail-honest fallback unchanged: a name
+  // without the Ratios panel keeps the committed latest-period line.
   const rr = m.return_ratios;
   const ratios = (rr && rr.status === "present" && rr.value && Array.isArray(rr.value.rows) && rr.value.rows.length)
-    ? returnRatiosExhibit(rr) + finTable("Return ratios — per fiscal period", rr)
+    ? returnRatiosExhibit(rr)
     : (m.key_ratios && m.key_ratios.status === "present") ? fact("Key ratios (latest)", m.key_ratios) : "";
-  return `<div class="card ds-section"><div class="ds-title">Financial snapshot <span class="muted" style="font-weight:400; text-transform:none; letter-spacing:0;">— full table in Appendix</span></div>
+  return `<div class="card ds-section"><div class="ds-title">Financial snapshot<span class="ds-route">full statements in Appendix</span></div>
     ${revEbitdaExhibit(fsa)}
     <table class="data">${`<thead>${head}</thead><tbody>${body}</tbody>`}</table>
     ${citeMark(fsa.source_ref)}${ratios}</div>`;
@@ -1074,47 +1183,19 @@ function ownHistoryExhibit(m) {
   </div>`;
 }
 
+// 6 — VALUATION, FIRST CUT: the trailing-range read + the peers read + ONE consensus line (enough
+// to know whether the view is variant, no more — the street's full machinery lives in Analysis).
+// The forward-multiple ladder moved to Analysis (its only home) and the implied-equity table to
+// the Appendix (its only home) — each appeared in two or three tiers before.
 function valuationCard(m) {
-  const cross = (m.valuation && m.valuation.cross_sectional) ? fact("Valuation (vs peers)", m.valuation.cross_sectional) : "";
+  const cross = (m.valuation && m.valuation.cross_sectional) ? fact("vs peers", m.valuation.cross_sectional) : "";
   const comp = (m.peer_comps && m.peer_comps.comparability) ? fact("Comparability", m.peer_comps.comparability) : "";
   const rng = (m.valuation && m.valuation.range_position && m.valuation.range_position.status === "present")
-    ? fact("Own-history range", m.valuation.range_position) : "";
-  const cna = (m.catalyst_path || {}).cross_name_anchor;   // the forward-multiple ladder across years
-  const mladder = (cna && cna.status === "present") ? ladderTable(cna) : "";
-  const iv = m.implied_valuation || {};
-  let impl = "";
-  if (iv.implied_equity && iv.implied_equity.status === "present" && Array.isArray(iv.implied_equity.value)) {
-    const capOk = iv.market_cap && iv.market_cap.status === "present";
-    const rows = iv.implied_equity.value.map((r) =>
-      `<tr><td>${escapeHtml(r.basis)}</td><td class="num mono">${r.median != null ? fmtCap(r.median) : "—"}</td></tr>`).join("");
-    impl = `<div style="margin-top:10px;"><div class="muted" style="font-size:11.5px; margin-bottom:4px;">Implied equity at the peer-median multiple — <b>reference, not a target</b> (the human sets the target); juxtapose vs market cap${capOk ? ` <span class="mono">${fmtCap(iv.market_cap.value)}</span>` : ""}, never difference.</div>
-      <table class="data"><thead><tr><th>Basis</th><th class="num">Peer-median implied equity</th></tr></thead><tbody>${rows}</tbody></table>
-      ${citeMark(iv.implied_equity.source_ref)}</div>`;
-  }
-  if (!cross && !comp && !rng && !mladder && !impl) return "";
-  return `<div class="card ds-section"><div class="ds-title">Valuation <span class="muted" style="font-weight:400; text-transform:none; letter-spacing:0;">— multiples across years + cross-sectional; full detail in Analysis</span></div>${cross}${comp}${rng}${ownHistoryExhibit(m)}${mladder}${impl}</div>`;
-}
-
-// 7 — CATALYST & CONSENSUS: the forward/street view — consensus target + ratings, positioning
-// (insider activity, short interest). Context for a NON-consensus read, never a machine driver/target;
-// the full estimate-revision log lives in the Analysis catalyst path.
-function catalystCard(m) {
-  const cp = m.catalyst_path || {};
-  const rows = [
-    (cp.consensus_stats && cp.consensus_stats.status === "present") ? fact("Consensus (target · ratings)", cp.consensus_stats) : "",
-    (cp.insider_activity && cp.insider_activity.status === "present") ? fact("Insider activity (6m)", cp.insider_activity) : "",
-    (cp.short_interest && cp.short_interest.status === "present") ? fact("Short interest", cp.short_interest) : "",
-  ].join("");
-  if (!rows) return "";
-  return `<div class="card ds-section"><div class="ds-title">Catalyst &amp; consensus <span class="muted" style="font-weight:400; text-transform:none; letter-spacing:0;">— the street's view; full revisions in Analysis</span></div>
-    <div class="subtitle muted ds-sub" style="margin-bottom:8px;">The street's forward view — context for a non-consensus read, not a driver.</div>${rows}</div>`;
-}
-
-// 8 — VERIFY FIRST: only the decision-threatening caveats (the verdict slot lives in the teaser).
-function verifyCard(d) {
-  const vf = briefVerifyFirst(d.caveats || []);
-  if (!vf.length) return "";
-  return `<div class="card ds-section"><div class="ds-title">Verify first</div><div class="brief-verify">${vf.map(escapeHtml).join("; ")}</div></div>`;
+    ? fact("vs own trading history", m.valuation.range_position) : "";
+  const cs = (m.catalyst_path || {}).consensus_stats;
+  const cons = (cs && cs.status === "present") ? fact("Consensus (target · ratings)", cs) : "";
+  if (!cross && !comp && !rng && !cons) return "";
+  return `<div class="card ds-section"><div class="ds-title">Valuation — first cut<span class="ds-route">full multiples, implied levels &amp; the forward ladder in Analysis</span></div>${rng}${ownHistoryExhibit(m)}${cross}${comp}${cons}</div>`;
 }
 
 // (D1/R3) drawdown cause + idiosyncrasy under ONE section header (matches the md) — what happened,
@@ -1123,7 +1204,7 @@ function drawdownIdio(m) {
   const dd = drawdownCause(m.drawdown_cause), io = idioVsShared(m.idiosyncratic_vs_shared);
   if (!dd && !io) return "";
   const divider = `<div class="ds-title" style="font-size:12px; margin-top:14px;">Did it happen alone? (idiosyncratic vs shared)</div>`;
-  return sec("Drawdown cause & idiosyncrasy — what happened, and did it happen alone?",
+  return sec("What broke — and did it fall alone?",
     "The event(s) that broke the name, then whether it fell alone (idiosyncratic) or with its graph cohort.",
     dd + (io ? divider + io : ""));
 }
@@ -1524,28 +1605,30 @@ function leverageSurvival(m, refDate) {
 // STRUCTURED roic_trend series (never re-parsing the trajectory string). Values are fractions → ×100
 // for the % display. Zero baseline when the series crosses zero (a distressed name). Fail-honest:
 // no structured series → no chart (the trajectory table still renders).
-function trajectorySection(q) {
+function trajectorySection(q, m = {}) {
   if (!q) return "";
   // (P4) the ROIC-trend CHART was removed — its RoCE-over-time is the return-ratios exhibit's RoCE line
   // (Financial Snapshot), a strict duplicate. ROIC stays as a row in the trajectory table below; the
   // structured q.roic_trend series stays in the JSON (machine-complete), just no longer charted here.
-  return sec("Trajectory", "Revenue · EBITDA · margins · ROIC per period; the same-quarter YoY footnoted.",
-    trajectoryTable(q) + fact("Share-count trend", q.share_count_trend));
+  // (tier redesign) the return-ratios PER-PERIOD table moved here from the Brief — its exhibit stays
+  // on the first cut; the table is depth and belongs with the operating arc.
+  const rr = m.return_ratios;
+  const rrTable = (rr && rr.status === "present" && rr.value && Array.isArray(rr.value.rows) && rr.value.rows.length)
+    ? finTable("Return ratios — per fiscal period", rr) : "";
+  return sec("Operating trajectory", "Revenue · EBITDA · margins · ROIC per period; the same-quarter YoY footnoted.",
+    trajectoryTable(q) + fact("Share-count trend", q.share_count_trend) + rrTable);
 }
 
-// (D1) verdict footer — the no-BUY/AVOID reminder closes the document (caveats opened it).
-function verdictFooter() {
-  return `<div class="card ds-section" style="text-align:center; color:var(--ink-2); font-size:12.5px;">
-    <b>The machine proposes; the human decides.</b> The proposed verdict is sealed at assembly and
-    revealed after the human logs theirs — the verdict of record is the human's, with a frozen
-    entry price in the ledger.</div>`;
-}
-
+// SLIM HEADER (tier redesign): ticker · name · the DOCUMENT date. The old meta line was process
+// telemetry ("proposal sealed · assembled … UTC · synthesis claude-…") worn as a subtitle, and its
+// "data as of <screen-date>" CONTRADICTED the body (the price and estimates carry their own, newer
+// and older, as-ofs). Market convention dates a note by publication: the assembly date. The full
+// vintage map + model + pivot mechanics live in the Appendix's Record & reproduce section.
 function header(d) {
   return `<div class="header-block ds-header">
     <div class="ds-header-main">
-      <h1 class="page-h"><span class="mono">${escapeHtml(d.ticker)}</span> · ${escapeHtml(d.name || "")}</h1>
-      <div class="ds-meta">Assembled facts · <b>proposal sealed</b> (revealed after the human's verdict) · verdict of record: the human's · data as of <span class="mono">${fmtDate(d.reference_date)}</span> · assembled <span class="mono">${fmtStamp(d.assembled_at)}</span>${d.synthesis ? ` · synthesis <span class="mono">${escapeHtml(d.llm_model || "llm")}</span>` : " · mechanical layer only"}</div>
+      <h1 class="page-h">${escapeHtml(d.name || d.ticker)} <span class="page-h-id">(${d.exchange ? `${escapeHtml(d.exchange)}: ` : ""}<span class="mono">${escapeHtml(d.ticker)}</span>)</span></h1>
+      <div class="ds-meta">${fmtDate(d.assembled_at)}</div>
     </div>
     <div class="ds-pdf-wrap">
       <button id="ds-pdf" class="ds-pdf-btn" type="button" aria-haspopup="true" aria-expanded="false"
@@ -1648,7 +1731,7 @@ function valuation(v) {
 
 function concentration(c) {
   if (!c) return "";
-  return sec("Concentration", "Segment / customer / geographic exposure. Segment-EBITDA share is the decision-relevant profit view.",
+  return sec("Ownership & concentration", "Segment / customer / geographic exposure. Segment-EBITDA share is the decision-relevant profit view.",
     fact("Segments (revenue share)", c.segments) +
     fact("Segment EBITDA share", c.segment_ebitda, null, { hi: true }) +
     fact("Customers", c.customers) +
@@ -1906,10 +1989,10 @@ function impliedBlock(iv) {
     // (audit C4) word-boundary, not substring — so "NTM EBITDA" doesn't match "NTM EBITDAR"
     const rows = eq.value.filter((r) => keep.some((k) => new RegExp("^" + k + "\\b").test(String(r.basis))))
       .map((r) => ({ label: r.basis, cells: [_numC(r.median)] }));  // (K4) MEDIAN column only
-    table = dataTable("Implied equity at peer-median ($M, CIQ)", eq.source_ref,
+    table = dataTable("Implied equity at the peer median ($M)", eq.source_ref,
       ["Implied equity (median)"], rows, "");
   }
-  return sec("Reference: CIQ implied equity at peer-median multiples",  // (K5) renamed + demoted
+  return sec("Implied equity at peer multiples",  // (tier redesign) vendor name out of the title
     (gate ? gateShortref(gate) + " — " : "") + "Reference only — the human judges earned vs residual "
     + "(not a machine upside); the full Low/Mean/High and all bases are in the JSON.",
     fact("Name market cap ($M) — the ADJACENT fact to compare against", iv.market_cap) +
@@ -1937,8 +2020,8 @@ function fcfRelabel(s) {
   if (!s || s.status !== "present" || !s.value) return s;
   const ft = s.value;
   if (!(ft.rows || []).some((r) => r.label === "FCF ($M)")) return s;
-  const rows = ft.rows.map((r) => (r.label === "FCF ($M)" ? { ...r, label: "FCF (levered, CIQ)" } : r));
-  const fn = "FCF (levered, CIQ) = CIQ 'Levered Free Cash Flow', NOT CFO − capex";
+  const rows = ft.rows.map((r) => (r.label === "FCF ($M)" ? { ...r, label: "FCF (levered)" } : r));
+  const fn = "FCF (levered) = levered free cash flow as sourced — NOT CFO − capex";
   return { ...s, value: { ...ft, rows, note: ft.note ? `${ft.note} · ${fn}` : fn } };
 }
 
@@ -1956,9 +2039,9 @@ function appendixBlock(m) {
   const implied = impliedBlock(m.implied_valuation);  // (K4) reference-only card ("" for a pre-B3 JSON)
   // (mirrors render_markdown) order: financial summary → cap-structure provenance → implied-valuation
   // reference → management-commentary pointer LAST.
-  if (!fs) return sec("Appendix", "", cap) + implied + mgmt;
-  return sec(`Appendix — financial summary (actuals + consensus estimates) — ${asOfHeader(fs.as_of)}`,
-    "Consensus (E) columns are marked + as-of-stamped; growth never spans a basis change (— basis); actuals fail loud on gaps. The machine assembles; the verdict of record is the human's.",
+  if (!fs) return sec("Financial statements", "", cap) + implied + mgmt;
+  return sec(`Financial statements (actuals + consensus estimates) — ${asOfHeader(fs.as_of)}`,
+    "Consensus (E) columns are marked and as-of-stamped; growth never spans a basis change (— basis).",
     finTable("Annual ($M; E = consensus) — last-4-FY + LTM + FY26E/FY27E", fcfRelabel(fs.annual)) +
     finTable("Trailing 8 quarters — the recent-quarter trajectory", fs.quarterly) +
     fact("Balance-sheet posture", fs.balance_sheet) +
@@ -2142,7 +2225,7 @@ function catalystPath(cp, cc) {
   // Fix 5: the legacy consensus facts are gone (duplicated by the reads); fold in the one
   // non-duplicate — Surprise history.
   const surprise = cc ? seriesTable("Surprise history (annual beat/miss)", cc.surprise_history) : "";
-  return sec(`Catalyst path — ${catAsof(cp)}`,
+  return sec(`The street — estimates & guidance (${catAsof(cp)})`,
     "Horizon-matched estimates, guidance & revision events (CIQ Estimates). Native cadence — FQ horizon, monthly path, NTM anchor. Assembles and cites; renders no upside, fair value, or direction.",
     horizonTable(cp.horizon_read) +
     accelTable(cp.acceleration_read) +
@@ -2182,10 +2265,13 @@ function consensus(cc) {
 }
 
 function synthesis(s) {
-  const fence = `<div class="synth-fence"><b>The framing, not the answer.</b> A verdict-free bull/bear structure for the human to reason about — there is no recommendation, score, direction, or probability anywhere in it, by design. The human decides and logs BUY/AVOID via the CLI. <b>Citations [n] locate each claim in a numbered source (listed at the end of each tab) for you to verify — cited is not verified.</b></div>`;
+  // one lead line, not a boxed lecture — the full reading guide lives in the Appendix's
+  // "How to read this dossier". The fence's substance (no recommendation anywhere, by design;
+  // cited is not verified) is stated once there.
+  const fence = `<div class="subtitle muted ds-sub">A verdict-free framing for the analyst — no recommendation or direction anywhere in it, by design. Reading guide in the Appendix.</div>`;
   if (!s) {
-    return `<div class="card ds-section"><div class="ds-title">Synthesis</div>${fence}
-      <div class="notice">Synthesis not assembled — mechanical layer only (CIQ inputs too thin, or the LLM step was skipped). The facts above stand on their own.</div></div>`;
+    return `<div class="card ds-section"><div class="ds-title">The argument</div>${fence}
+      <div class="notice">Synthesis not assembled — mechanical layer only (source inputs too thin, or the synthesis step was skipped). The facts above stand on their own.</div></div>`;
   }
   const point = (p, cls) => `<div class="point ${cls}">${escapeHtml(p.claim)}${citeMark(p.source_ref)}${p.cited === false ? ` <span class="uncited">⚠ uncited — does not trace to a mechanical fact</span>` : ""}</div>`;
   const dq = s.decisive_question || {};
@@ -2204,11 +2290,11 @@ function synthesis(s) {
     <div class="point"><b>${escapeHtml(t.name || "")}</b> — ${escapeHtml(twinOutcome(t))}
       <div class="muted" style="font-size:12px; margin-top:3px;">distinguished by: ${escapeHtml(t.distinguishing_fact || "")}</div>
       <div class="muted" style="font-size:12px; margin-top:3px;">source: ${escapeHtml(t.source || "")}</div></div>`).join("");
-  return `<div class="card ds-section"><div class="ds-title">Synthesis · framing</div>${fence}
-    ${s.evidence_balance ? `<div style="margin:6px 0; padding:8px 11px; border:1px solid var(--line); border-left:3px solid var(--accent); border-radius:4px; font-size:13px; line-height:1.5;"><b>Evidence balance:</b> ${escapeHtml(s.evidence_balance)}</div>` : ""}
-    <div class="ds-title" style="font-size:12px; margin-top:6px;">Bull — the overshoot case</div>
+  return `<div class="card ds-section"><div class="ds-title">The argument</div>${fence}
+    ${s.evidence_balance ? `<div style="margin:6px 0 10px; font-size:13.5px; line-height:1.5;">${machineReadHtml(s.evidence_balance)}</div>` : ""}
+    <div class="ds-title" style="font-size:12px; margin-top:6px;">Bull case — the decline is overdone</div>
     ${orderPoints(s.bull_points).map((p) => point(p, "bull")).join("") || `<div class="muted">—</div>`}
-    <div class="ds-title" style="font-size:12px; margin-top:14px;">Bear — the terminal-decline case</div>
+    <div class="ds-title" style="font-size:12px; margin-top:14px;">Bear case — the decline is real</div>
     ${orderPoints(s.bear_points).map((p) => point(p, "bear")).join("") || `<div class="muted">—</div>`}
     <div class="ds-title" style="font-size:12px; margin-top:14px;">The decisive question</div>
     <div style="font-size:13.5px; font-weight:600; margin:4px 0 8px;">${escapeHtml(dq.question || DASH)}</div>
@@ -2222,9 +2308,18 @@ function synthesis(s) {
   </div>`;
 }
 
-function loggedVerdict(v, ticker, refDate) {
+function loggedVerdict(v, ticker, refDate, { bare = false } = {}) {
+  const wrap = (inner) => bare
+    ? `<div class="fact"><div class="fact-label">Verdict record</div><div class="fact-val">${inner}</div></div>`
+    : inner;
   if (!v) {
     const cid = `${ticker}-screen2-${String(refDate || "").replace(/-/g, "")}`;
+    if (bare) {
+      return wrap(`no verdict logged yet — verdicts are logged via the CLI only, never from this
+        dashboard (the friction is the safeguard):
+        <pre class="ds-rerun"><code>python -m vinci log-verdict ${escapeHtml(cid)} --verdict &lt;BUY|AVOID_TERMINAL&gt; …</code></pre>
+        <span class="muted" style="font-size:11px;">append-only — the entry price freezes from the screen's as-of date (<span class="mono">${escapeHtml(String(refDate || DASH))}</span>); a logged verdict cannot be edited or deleted</span>`);
+    }
     return `<details class="card ds-section">
       <summary style="cursor:pointer; font-size:12.5px; font-weight:600; color:var(--ink-2);">Logged verdict <span class="muted" style="font-weight:400;">— none yet for ${escapeHtml(ticker)} · how to log it (read-only — run locally)</span></summary>
       <div class="logged-verdict none" style="margin-top:10px;">Verdicts are logged via the CLI only — never from this dashboard (the friction is the safeguard). After deciding from the facts above, run this locally from the repo root:</div>
@@ -2237,9 +2332,7 @@ function loggedVerdict(v, ticker, refDate) {
       <div class="subtitle muted" style="margin-top:8px;">Append-only — the entry price is frozen from the screen's as-of date (<span class="mono">${escapeHtml(String(refDate || DASH))}</span>); a logged verdict cannot be edited or deleted.</div></details>`;
   }
   const isBuy = isBuyVerdict(v.verdict);
-  return `<div class="card ds-section"><div class="ds-title">Logged verdict — immutable</div>
-    <div class="subtitle muted ds-sub">The human's call, logged via the CLI and frozen. This dashboard displays it; it cannot edit, delete, or revise it.</div>
-    <div class="logged-verdict">
+  const body = `<div class="logged-verdict">
       <div style="display:flex; gap:12px; align-items:baseline; flex-wrap:wrap;">
         <span class="pill ${isBuy ? "buy" : "avoid"}">${escapeHtml(v.verdict)}</span>
         <span class="pill ${v.resolved ? "live" : "unresolved"}">${v.resolved ? "resolved" : "unresolved · " + (v.daysToHorizon == null ? DASH : Math.max(0, v.daysToHorizon) + "d to horizon")}</span>
@@ -2253,7 +2346,12 @@ function loggedVerdict(v, ticker, refDate) {
       </div>
       ${v.thesis ? `<div style="margin-top:10px;"><span class="muted" style="font-size:11px; text-transform:uppercase;">Thesis</span><div style="font-size:13px; color:var(--ink-2);">${escapeHtml(v.thesis)}</div></div>` : ""}
       ${v.killCriteria ? `<div style="margin-top:8px;"><span class="muted" style="font-size:11px; text-transform:uppercase;">Kill criteria</span><div style="font-size:13px; color:var(--ink-2);">${escapeHtml(v.killCriteria)}</div></div>` : ""}
-    </div></div>`;
+    </div>`;
+  if (bare) return wrap(`logged via the CLI and immutable — this dashboard displays it; it cannot
+    edit, delete, or revise it.${body}`);
+  return `<div class="card ds-section"><div class="ds-title">Logged verdict — immutable</div>
+    <div class="subtitle muted ds-sub">The human's call, logged via the CLI and frozen. This dashboard displays it; it cannot edit, delete, or revise it.</div>
+    ${body}</div>`;
 }
 
 // a Sourced[list[str]] rendered inline (e.g. gap-down dates)

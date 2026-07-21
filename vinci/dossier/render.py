@@ -344,7 +344,7 @@ def _catalyst_section(m: MechanicalLayer) -> list[str]:
             _fact("Surprise history (beat/miss)", m.consensus_context.surprise_history),
         ]
     else:
-        hdr = f"### Catalyst path (estimates · guidance · revisions) — {_asof_header(cp.as_of)}"
+        hdr = f"### The street — estimates & guidance ({_asof_header(cp.as_of)})"
         out.append(hdr)
         out += _horizon_lines(cp.horizon_read)
         out.append(_fact("Acceleration read (monthly consensus path)", cp.acceleration_read))
@@ -920,10 +920,10 @@ def _capital_structure_appendix_lines(cs: Any) -> list[str]:
     flat facts when there was no structured panel; removed, so nothing is lost from the surface. The
     8-K/pointer/covenant `_fact`s below always render (UNKNOWN-safe). Relocated + kept in JSON."""
     inst = cs.instruments
-    # (T1) the ON-DEMAND / audit tier: the md keeps it in full under this marker; the web collapses
-    # it in a <details> that print excludes; the JSON is machine-complete. Nothing deleted.
-    out: list[str] = ["", "### Capital-structure provenance — on-demand (web collapsed · print-"
-                      "excluded · JSON) — full panel · pointers · terms"]
+    # the audit tier: the md keeps it in full; the web collapses it in a <details> (which PRINTS
+    # EXPANDED since the T1 amendment); the JSON is machine-complete. Nothing deleted. (The old
+    # header carried the internal tier framing AND said "print-excluded" — stale on both counts.)
+    out: list[str] = ["", "### Capital structure & debt terms — instruments · pointers · covenants"]
     if inst.status is SourceStatus.PRESENT and inst.value:
         out += _table(f"Capital structure — full instrument panel {cs.detail_as_of}",
                       inst.source_ref, _CS_COLS, [_instrument_row(i) for i in inst.value],
@@ -1117,7 +1117,7 @@ def _implied_lines(iv: Any) -> list[str]:
     g = iv.comparability_gate
     gate = g.value if g.status is SourceStatus.PRESENT else ""
     out = [
-        "### Reference: CIQ implied equity at peer-median multiples",  # (K4) renamed + demoted
+        "### Implied equity at peer multiples",  # (tier redesign) vendor out of the title
         f"> **Comparability gate:** {_gate_shortref(gate)}" if gate else "",  # (H3) short-ref
         "> _Reference only — the human judges earned vs residual (not a machine upside); the full "
         "Low/Mean/High and all bases are in the JSON._",
@@ -1173,7 +1173,7 @@ def _appendix_lines(m: MechanicalLayer) -> list[str]:
     fs = m.financial_summary
     if fs is None:
         return []
-    hdr = ("## APPENDIX — FINANCIAL SUMMARY (actuals + consensus estimates) "
+    hdr = ("## Financial statements (actuals + consensus estimates) "
            f"— {_asof_header(fs.as_of)}")
     out = ["", hdr, "### Annual (last-4-FY + LTM + FY26E/FY27E consensus)"]
     annual = _annual_with_fcf_label(fs.annual)  # D5b: FCF row relabeled + footnoted (display-only)
@@ -1242,13 +1242,22 @@ def _flags_section(d: Dossier) -> list[str]:
     what/where/why-it-matters/how-to-verify shape, the offending sentence IN FULL. Only decision
     caveats show here (re-voiced, plus the 'pull CIQ …' notes); the machine-QA self-checks live in
     ``d.qa_flags`` (JSON / dev only). The dossier assembles and cites; the verdict is the human."""
-    if not d.caveats:
+    # (tier redesign) analyst caveats ONLY — the `primary-source:` assembly-log line is process
+    # telemetry and renders in Record & reproduce, never as a caveat to the reader.
+    caveats = [c for c in d.caveats if not _is_process_caveat(c)]
+    if not caveats:
         return []
     out = ["## ⚠ Analyst caveats — verify before the verdict", ""]
-    for c in d.caveats:
+    for c in caveats:
         out += _caveat_block(c)
     out.append("")
     return out
+
+
+def _is_process_caveat(c: str) -> bool:
+    """Assembly telemetry ("primary-source: N EX-99.1 release(s) … (+0.3s fetch)") — a process log
+    line, not an analyst caveat; it renders in the Appendix's Record & reproduce."""
+    return c.startswith("primary-source:")
 
 
 # --- D2: the two trajectory views ('Margin trend' + 'Multi-year trajectory') are one story; merge
@@ -1444,7 +1453,7 @@ def _synthesis_lines(d: Dossier, *, dev: bool) -> list[str]:
     (D3, render-side); the [tier · citation-class] tag shows in the DEV view only."""
     s = d.synthesis
     assert s is not None
-    out = ["## Synthesis", ""]  # (K5) 'LLM framing, source-bound' discipline is in each cite
+    out = ["## The argument", ""]  # discipline language lives ONCE, in How to read this dossier
     if s.evidence_balance:
         out += [f"**Evidence balance:** {s.evidence_balance}", ""]
 
@@ -1464,8 +1473,8 @@ def _synthesis_lines(d: Dossier, *, dev: bool) -> list[str]:
         out.extend(cite(p) for p in pts)
         out.append("")
 
-    ordered("Bull case (overshoot / mean-revert)", s.bull_points)
-    ordered("Bear case (terminal / value-trap)", s.bear_points)
+    ordered("Bull case — the decline is overdone", s.bull_points)
+    ordered("Bear case — the decline is real", s.bear_points)
     out += ["### Decisive question", f"**{s.decisive_question.question}**", ""]
     plain("…evidence for", s.decisive_question.evidence_for)
     plain("…evidence against", s.decisive_question.evidence_against)
@@ -1509,9 +1518,13 @@ def _going_concern_brief(m: MechanicalLayer) -> str | None:
 
 
 def _brief_verify_first(caveats: list[str], limit: int = 2) -> list[str]:
-    """Only DECISION-THREATENING caveats (lead clause), never freshness/plumbing ones."""
+    """Only DECISION-THREATENING caveats (lead clause), never freshness/plumbing ones — and never
+    a RESOLVED one: that is the record of a check that PASSED, not a demand to verify (surfaced by
+    VRRM, whose "RESOLVED (P/E basis)" caveat fired the Brief warning strip)."""
     out: list[str] = []
     for c in caveats:
+        if re.match(r"RESOLVED\b", c, re.IGNORECASE):
+            continue
         if not _BRIEF_DECISION_KW.search(c):
             continue
         lead = re.split(r";|\s+—\s+", c, maxsplit=1)[0].strip()
@@ -1528,14 +1541,16 @@ def _brief_case_lines(s: Any) -> list[str]:
     top-3 key unknowns. The FULL synthesis stays in the Analysis tier; source-bound here too."""
     if s is None or (not s.bull_points and not s.bear_points):
         return []
-    out: list[str] = ["**The case** _(top points; the full bull/bear is in Analysis)_", ""]
+    # (tier redesign) no inner "The case" line — the section header carries it; leg labels state
+    # the claim, not the house shorthand.
+    out: list[str] = ["_(top points; the full argument is in Analysis)_", ""]
 
     def top3(pts: list[Any]) -> list[str]:
         top = [p for p, _tier, _cr in _ordered_points(pts)][:3]
         return [f"- {p.claim}{_cite(p.source_ref)}" for p in top]
 
-    out += ["_Bull — overshoot:_", *(top3(s.bull_points) or ["- —"])]
-    out += ["_Bear — terminal:_", *(top3(s.bear_points) or ["- —"])]
+    out += ["_Bull case — the decline is overdone:_", *(top3(s.bull_points) or ["- —"])]
+    out += ["_Bear case — the decline is real:_", *(top3(s.bear_points) or ["- —"])]
     uks = list(s.key_unknowns)[:3]
     if uks:
         out += ["_Key unknowns:_", *[f"- {u}" for u in uks]]
@@ -1562,9 +1577,10 @@ def _fmt_shares(v: float) -> str:  # raw share count → "151.9M" / "1.2B"
     return f"{v / 1e9:.1f}B" if v >= 1e9 else f"{v / 1e6:.1f}M"
 
 
-def _brief_snapshot(exchange: str | None, cik: str | None, si: StockInfo | None) -> list[str]:
+def _brief_snapshot(exchange: str | None, si: StockInfo | None) -> list[str]:
     """(Brief snapshot) the scalar facts on ONE line — exchange · CMP · cap · 52-wk · shares · book
-    value/sh · CIK — the linear-markdown mirror of the web dossier's snapshot table. Fail-honest:
+    value/sh — the linear-markdown mirror of the web key-figures table (CIK moved to Record &
+    reproduce: an identifier, not a decision figure). Fail-honest:
     a value with no source is omitted (e.g. AORT has no CIQ Book Value/Share → no book/sh), never
     fabricated; one ↳ names the sources, the per-field source_ref lives in JSON."""
     p = SourceStatus.PRESENT
@@ -1584,8 +1600,6 @@ def _brief_snapshot(exchange: str | None, cik: str | None, si: StockInfo | None)
             parts.append(f"shares {_fmt_shares(si.shares_out.value)}")
         if si.book_value_ps.status is p and si.book_value_ps.value is not None:
             parts.append(f"book value/sh ${si.book_value_ps.value:,.2f}")
-    if cik:
-        parts.append(f"CIK {cik}")
     if not parts:
         return []
     return [f"- **Snapshot:** {' · '.join(parts)}"
@@ -1660,116 +1674,98 @@ def _machine_proposal_md(p: MachineProposal) -> str:
 
 
 def _brief_lines(d: Dossier, *, show_proposal: bool = False) -> list[str]:
-    """(Brief) the market-standard first cut in 8 sections — teaser → setup → company → case →
-    financial snapshot → valuation → catalyst → verify. Machine-assembled + source-bound. The
-    machine's proposed verdict is DERIVED + sealed to the shadow ledger at assembly but NOT shown
-    here before the human logs theirs (``show_proposal=False``, the default) — so it can't anchor
-    the human or contaminate the human-vs-machine comparison. The human's confirm/override in the
-    Recommendation slot is the verdict of record."""
+    """(Brief · tier redesign 2026-07-21) the IC one-pager, SIX decision-ordered sections —
+    decision strip → company snapshot → what happened → the case → financial snapshot → valuation
+    first-cut. Everything needed to decide PASS vs READ DEEPER, nothing else. The machine's
+    proposed verdict is DERIVED + sealed at assembly and NOT shown before the human logs theirs
+    (``show_proposal=False``, the default — anti-anchoring); it rides as the assessment line's
+    suffix, never a standing row (the proposal is a deterministic mapping of that same lean, so a
+    second row was the same fact twice). The old "Recommendation / Target" slot is gone — the
+    verdict of record is a ledger concern and renders where the ledger is displayed. Mirrors
+    briefTier() in frontend dossier.js (the web additionally leads with the underwrite card, a
+    separate committed artifact this renderer does not read)."""
     m = d.mechanical
     s = d.synthesis
     out: list[str] = ["# Brief — first cut", ""]
-    # 1 — TEASER: business one-liner · machine read · the human's Recommendation/Target · snapshot —
-    # the linear mirror of the web's 2/3 narrative + 1/3 snapshot. Identity + rank + framing live in
-    # the doc header above, so the teaser no longer repeats the ticker/name/cap (that was a dup).
+    # 1 — "At a glance" (card-split mirror): the machine's ASSESSMENT (no proposal here — user
+    # decision), the CONDITIONAL warning line, and the company identity in one opening section.
+    # (The web opener additionally leads with the underwrite masthead, a separate committed
+    # artifact this renderer does not read.)
+    out.append("## At a glance")
+    vf = _brief_verify_first(d.caveats)
+    if vf:
+        out += ["> ⚠ **Verify before the verdict:** " + "; ".join(vf)
+                + " — full caveats in Analysis.", ""]
     bd = d.business_description
     if bd is not None and bd.status is SourceStatus.PRESENT and bd.value is not None:
         out.append(_brief_oneliner(bd.value))
+    # the NARRATIVE slot sits above Segments (mirrors the web opener). The web replaces this with
+    # the analyst's recorded rationale on a logged name — that text lives in the scenario-record
+    # artifact this renderer does not read, so the md always carries the machine assessment.
     if s is not None and s.evidence_balance:
-        out += ["", _machine_read_md(s.evidence_balance)]
-    # THE PIVOT (2026-07-13) — REVISED same day (anti-anchoring): the machine's proposed verdict is
-    # DERIVED (deterministic, face-validity-frozen over the committed lean; the LLM still emits no
-    # verdict field) and SEALED to the shadow ledger at assembly — but it is NOT shown in the brief
-    # before the human logs theirs, so it can't anchor the human OR contaminate the human-vs-machine
-    # comparison (the same discipline as tiers-never-ranks). Revealed only AFTER the verdict is
-    # logged (the ledger CLI prints it), or on an explicit ``--show-proposal`` peek. The machine
-    # READ above (the evidence lean) is the assembled evidence summary, not the verdict — it
-    # stays, mirroring the full bull/bear balance in the Analysis synthesis.
-    if show_proposal:
-        out += ["", _machine_proposal_md(
-            derive_proposal(s.evidence_balance if s is not None else None))]
-    else:
-        out += ["", "**Machine proposal:** _sealed at assembly — revealed after your verdict is "
-                "logged (or `--show-proposal`)_"]
-    out += ["", "**Recommendation / Target (human):** _not yet logged — confirm or override "
-            "(Buy / Avoid + target)_"]
-    snap = _brief_snapshot(d.exchange, d.cik, m.stock_info)
-    if snap:
-        out += ["", *snap]
-    # DECISION TILES (moved up from the old setup section, mirroring the web's teaser tiles): price
-    # action (raw 180d drawdown) + idiosyncratic (vs market) + leverage + FCF (+ going-concern when
-    # flagged). The "Valuation (vs peers)" line is NOT here — it renders once, in Valuation below.
-    io = m.idiosyncratic_vs_shared
-    tiles: list[str] = []
-    if io is not None and io.name_180d_return.status is SourceStatus.PRESENT:
-        tiles.append(_fact("Price action (180d)", io.name_180d_return, _pct))
-    if io is not None:
-        tiles.append(_fact("Idiosyncratic (vs market, 180d)", io.rel_vs_market, _pct))
-    if m.quality is not None:
-        tiles.append(_fact("Net debt / EBITDA", m.quality.net_debt_to_ebitda, _mult))
-        tiles.append(_fact("Free cash flow", m.quality.fcf_sign, _signword))
-    gc = _going_concern_brief(m)
-    if gc is not None:
-        tiles.append(gc)
-    if tiles:
-        out += ["", *tiles]
-    out.append("")
-    # 2 — DECISIVE QUESTION: the one framing question the human resolves. Drawdown / idiosyncratic /
-    # leverage / FCF facts are teaser tiles now, so this section is just the question (title carries
-    # the label — no inline "Decisive question:" prefix).
-    if s is not None and s.decisive_question is not None and s.decisive_question.question:
-        out += ["## Decisive question", f"**{s.decisive_question.question}**", ""]
-    # 3 — COMPANY & BUSINESS: segments · geography · customer concentration (not names)
-    out.append("## Company & business")
+        out.append(_machine_read_md(s.evidence_balance))
     if m.concentration is not None:
         out += [_fact("Segments", m.concentration.segments),
                 _fact("Geography", m.concentration.geographic)]
     cc = _customer_concentration(m)
     if cc is not None:
         out.append(cc)
+    snap = _brief_snapshot(d.exchange, m.stock_info)
+    if snap:
+        out += snap
     out.append("")
-    # 4 — THE CASE: condensed bull/bear + key unknowns. (PR-B) the operating drivers are NOT a
-    # standalone block — a mechanically-extracted fact list can't render the directional CALL (that
-    # is the human's verdict); they feed the synthesis instead, where the bull/bear grounds in them
-    # and cites them (operating_drivers stays machine-complete in dossier.json for audit).
-    out += ["## The case", *_brief_case_lines(s)]
-    # 5 — FINANCIAL SNAPSHOT: un-truncated key financials + the ratios panel
+    # (user decision) the standing machine-proposal line is GONE from the default brief — the
+    # pivot MECHANISM is untouched (derived + sealed to the shadow ledger at assembly; disposition
+    # recorded at log time; the ledger CLI reveals post-log). ``--show-proposal`` is the operator's
+    # explicit peek and still renders the proposal, under its own section header.
+    if show_proposal:
+        out += ["## Scenario analysis",
+                _machine_proposal_md(
+                    derive_proposal(s.evidence_balance if s is not None else None)), ""]
+    # 3 — WHAT HAPPENED: the drawdown shape + the decision tiles. The Brief used to show the raw
+    # drawdown % with no WHY; the fund's whole question (overshoot vs terminal) starts from what
+    # broke. Full event log + filings stay in Analysis.
+    out.append("## What happened")
+    if m.drawdown_cause is not None:
+        out.append(_fact("Shape", m.drawdown_cause.shape))
+    io = m.idiosyncratic_vs_shared
+    if io is not None and io.name_180d_return.status is SourceStatus.PRESENT:
+        out.append(_fact("Price (180d)", io.name_180d_return, _pct))
+    if io is not None:
+        out.append(_fact("vs market (180d)", io.rel_vs_market, _pct))
+    if m.quality is not None:
+        out += [_fact("Net debt / EBITDA", m.quality.net_debt_to_ebitda, _mult),
+                _fact("Free cash flow", m.quality.fcf_sign, _signword)]
+    gc = _going_concern_brief(m)
+    if gc is not None:
+        out.append(gc)
+    out.append("")
+    # 4 — THE CASE: the decisive question LEADS (one line does not earn a section of its own),
+    # then the condensed bull/bear + key unknowns.
+    out.append("## The case")
+    if s is not None and s.decisive_question is not None and s.decisive_question.question:
+        out += [f"**{s.decisive_question.question}**", ""]
+    out += _brief_case_lines(s)
+    # 5 — FINANCIAL SNAPSHOT: the compact table. The per-period return-ratios table moved to the
+    # Analysis trajectory section (the web keeps its exhibit here; markdown has no chart).
     out.append("## Financial snapshot")
     out += _brief_financials(m)
-    # (Phase-4) the per-period return-ratio YoY table REPLACES the latest-only "Key ratios"
-    # fact (the web adds a line exhibit above — markdown has no chart, so the table carries
-    # every ratio). Fail-honest: a name without the CIQ Ratios panel keeps the latest line.
-    if m.return_ratios is not None and m.return_ratios.status is SourceStatus.PRESENT:
-        out += _fin_table_lines("Return ratios — per fiscal period", m.return_ratios)
-    elif m.key_ratios is not None:
+    if (m.return_ratios is None or m.return_ratios.status is not SourceStatus.PRESENT) \
+            and m.key_ratios is not None:
         out.append(_fact("Key ratios (latest)", m.key_ratios))
     out.append("")
-    # 6 — VALUATION: cross-sectional + own-history + the multiple ladder + the implied ladder
-    out.append("## Valuation")
+    # 6 — VALUATION, FIRST CUT: the trailing-range read + peers + ONE consensus line (enough to
+    # know whether the view is variant). The forward-multiple ladder lives in Analysis only; the
+    # implied-equity table in the Appendix only.
+    out.append("## Valuation — first cut")
     if m.valuation is not None:
-        out += [_fact("Valuation (vs peers)", m.valuation.cross_sectional),
-                _fact("Own-history range", m.valuation.range_position)]
+        out += [_fact("vs own trading history", m.valuation.range_position),
+                _fact("vs peers", m.valuation.cross_sectional)]
     if m.peer_comps is not None:
         out.append(_fact("Comparability", m.peer_comps.comparability))
     if m.catalyst_path is not None:
-        out += _ladder_lines(m.catalyst_path.cross_name_anchor)
-    if m.implied_valuation is not None:
-        out += _implied_lines(m.implied_valuation)
+        out.append(_fact("Consensus (target · ratings)", m.catalyst_path.consensus_stats))
     out.append("")
-    # 7 — CATALYST & CONSENSUS: the street's forward view (context, never a machine driver/target)
-    cp = m.catalyst_path
-    if cp is not None:
-        out += ["## Catalyst & consensus",
-                _fact("Consensus (target · ratings)", cp.consensus_stats)]
-        if cp.insider_activity is not None:
-            out.append(_fact("Insider activity (6m)", cp.insider_activity))
-        if cp.short_interest is not None:
-            out.append(_fact("Short interest", cp.short_interest))
-        out.append("")
-    # 8 — VERIFY FIRST: the decision-threatening caveats
-    vf = _brief_verify_first(d.caveats)
-    if vf:
-        out += ["## Verify first", "; ".join(vf), ""]
     return out
 
 
@@ -1874,12 +1870,14 @@ def render_markdown(d: Dossier, *, dev: bool = False, show_proposal: bool = Fals
     hides it so it can't anchor the human before they log their verdict).
     The fresh per-document endnote table + its reset are handled by ``@_endnote_scope``."""
     m = d.mechanical
+    # SLIM HEADER (tier redesign): name + the DOCUMENT date. The old meta italic was process
+    # telemetry, and its "data as of <screen-date>" contradicted the body's own per-fact as-ofs.
+    # The full vintage map + model + pivot mechanics live in Record & reproduce at the end.
+    ident = f"({d.exchange}: {d.ticker})" if d.exchange else f"({d.ticker})"
     out: list[str] = [
-        f"# Dossier — {d.name} ({d.ticker})",
+        f"# Dossier — {d.name} {ident}",
         "",
-        f"_Assembled facts · machine proposal sealed (revealed after the human's verdict) · "
-        f"verdict of record: the human's · data as of {d.reference_date} · assembled "
-        f"{_fmt_assembled(d.assembled_at)} · {d.llm_model or 'mechanical layer only'}_",
+        f"_{d.assembled_at:%B %-d, %Y}_",
         "",
     ]
     # (3-tier) BRIEF — first cut: the machine READ + decisive question + decision data + condensed
@@ -1894,7 +1892,7 @@ def render_markdown(d: Dossier, *, dev: bool = False, show_proposal: bool = Fals
     out += ["## Mechanical layer", ""]  # (K5) methodology jargon lives in source_refs/JSON
 
     # (D1·§1) Drawdown cause & idiosyncrasy — CLUBBED: what happened, and did it happen alone?
-    out.append("### Drawdown cause & idiosyncrasy — what happened, and did it happen alone?")
+    out.append("### What broke — and did it fall alone?")
     out += [
         _fact("Shape", m.drawdown_cause.shape),
         _fact("Gap-down dates", m.drawdown_cause.gap_down_dates, _dates),
@@ -1951,10 +1949,14 @@ def render_markdown(d: Dossier, *, dev: bool = False, show_proposal: bool = Fals
     # above; wall / triangulation / guide / going-concern / concentration here).
     out += _primary_source_block(m)
 
-    # (D1·§3 · D2) Trajectory — the merged margin/multi-year table + share-count trend.
-    out.append("### Trajectory (revenue · EBITDA · margins · ROIC)")
+    # (D1·§3 · D2) Operating trajectory — the merged margin/multi-year table + share-count trend
+    # + (tier redesign) the per-period return-ratios table, moved here from the Brief.
+    out.append("### Operating trajectory (revenue · EBITDA · margins · ROIC)")
     out += _trajectory_table_lines(m)
-    out += [_fact("Share-count trend", m.quality.share_count_trend), ""]
+    out.append(_fact("Share-count trend", m.quality.share_count_trend))
+    if m.return_ratios is not None and m.return_ratios.status is SourceStatus.PRESENT:
+        out += _fin_table_lines("Return ratios — per fiscal period", m.return_ratios)
+    out.append("")
 
     # (D1·§4) Valuation & own-history. (G) implied expectations slot in AFTER cross-sectional (the
     # edge) and BEFORE the own-history reads.
@@ -1986,8 +1988,8 @@ def render_markdown(d: Dossier, *, dev: bool = False, show_proposal: bool = Fals
     # (D1·§6) Catalyst path (the management-commentary pointer moved to the appendix).
     out += _catalyst_section(m)
 
-    # (D1·§7) Concentration.
-    out.append("### Concentration")
+    # (D1·§7) Ownership & concentration.
+    out.append("### Ownership & concentration")
     out += [
         _fact("Segments (revenue share)", m.concentration.segments),
         _fact("Segments (EBITDA share — where profit sits)", m.concentration.segment_ebitda),
@@ -2000,23 +2002,73 @@ def render_markdown(d: Dossier, *, dev: bool = False, show_proposal: bool = Fals
     if d.synthesis is not None:
         out += _synthesis_lines(d, dev=dev)
     else:
-        out += ["## Synthesis", "_Not produced (see flags)._", ""]
+        out += ["## The argument",
+                "_Synthesis not assembled — the facts above stand on their own._", ""]
 
-    # (3-tier) APPENDIX — data & audit: financial summary → capital-structure provenance →
-    # implied-valuation reference → management-commentary pointer, then the verdict footer.
+    # (3-tier · tier redesign) APPENDIX — verify & reproduce: reading guide → financial
+    # statements → capital-structure provenance → implied-equity reference → mgmt pointer →
+    # Record & reproduce closing the document. The old verdict footer is GONE (it was a third
+    # copy of the pivot statement, beside the brief's sealed-proposal line and Record &
+    # reproduce's verdict row).
     out += ["# Appendix — data & audit", ""]
+    out += _how_to_read_lines()
     appendix = _appendix_lines(m)
-    out += appendix if appendix else ["## Financial summary", ""]
+    out += appendix if appendix else ["## Financial statements", ""]
     if m.capital_structure is not None:
         out += _capital_structure_appendix_lines(m.capital_structure)  # (K1) provenance
     if m.implied_valuation is not None:
-        out += _implied_lines(m.implied_valuation)  # (K4) reference-only, demoted here
+        out += _implied_lines(m.implied_valuation)  # reference-only — its ONLY home
     out += _mgmt_commentary_lines(m)
-    out += [
-        "---",
-        "> **The machine PROPOSES; the human DECIDES.** The proposed verdict is sealed at assembly "
-        "and revealed only after the human logs theirs — the verdict of record is the human's, "
-        "with a frozen entry price in the ledger.",
-    ]
+    out += _record_reproduce_lines(d)
     out += _sources_section()  # (A2) the single document-end Sources list — every [n] resolves here
     return "\n".join(_dedupe_unknown_reasons(out))  # (H3) fold repeated UNKNOWN reasons
+
+
+def _how_to_read_lines() -> list[str]:
+    """The reading guide — the discipline language that used to repeat as per-section framing,
+    stated ONCE (mirrors the web's collapsible; markdown has no <details>, so it prints)."""
+    return [
+        "## How to read this dossier",
+        "- The machine assembles and cites; **the analyst decides**. Nothing here is a "
+        "recommendation — the verdict of record is the human's, logged to an append-only ledger "
+        "with a frozen entry price.",
+        "- The machine's proposed verdict is derived deterministically from its written assessment "
+        "and stays **sealed until the analyst's verdict is recorded**, so it cannot anchor the "
+        "decision. A two-sided assessment proposes nothing.",
+        "- Citations [n] resolve in the Sources list at the document end. **Cited is not "
+        "verified** — the reference locates the claim so you can check it.",
+        "- Reference values (peer-implied equity, price-implied levels) are shown **beside** the "
+        "figures they contextualize, never differenced into an upside — the reader judges the gap.",
+        "- A value shown as UNKNOWN is honestly absent at the source — nothing is imputed.",
+        "",
+    ]
+
+
+def _record_reproduce_lines(d: Dossier) -> list[str]:
+    """RECORD & REPRODUCE — everything needed to date, audit, or regenerate this document. Absorbs
+    the old header meta (assembly stamp, model), the assembly-log caveat line, and the identifiers.
+    The queued assembly-provenance stamp (STATE §5 item 1) lands here when built. The logged
+    verdict itself is a ledger/frontend concern — this static md names where it lives."""
+    proc = [c for c in d.caveats if _is_process_caveat(c)]
+    out = [
+        "## Record & reproduce",
+        f"- **Data window:** screened as of {d.reference_date} · assembled "
+        f"{_fmt_assembled(d.assembled_at)}",
+        "- **Synthesis:** " + (
+            f"model `{d.llm_model}` — facts assembled mechanically; the synthesis frames, "
+            "the analyst decides"
+            if d.llm_model and d.synthesis is not None
+            else "not assembled — mechanical layer only"),
+        f"- **Identifiers:** CIK `{d.cik or '—'}`"
+        + (f" · {d.exchange} : {d.ticker}" if d.exchange else f" · {d.ticker}"),
+    ]
+    if proc:
+        out.append("- **Assembly log:** " + "; ".join(proc))
+    out += [
+        f"- **Re-run:** `python -m vinci dossier --ticker {d.ticker}` — regenerates every "
+        "assembled fact from the same sources; committed values change only when the sources have.",
+        "- **Verdict record:** logged via the CLI to the append-only decision ledger "
+        "(entry price frozen at the screen date); this document displays state, never records it.",
+        "",
+    ]
+    return out
