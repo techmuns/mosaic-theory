@@ -559,7 +559,9 @@ def refresh_theme_cards() -> list[str]:
             continue
         display = json.loads(p.read_text())
         changed = False
-        for key in ("watchlist", "avoid_controls", "avoidControls"):
+        # the display JSON's actual list keys (_theme_display emits camelCase avoidControls;
+        # a snake_case sweep key here would silently never match)
+        for key in ("watchlist", "avoidControls"):
             for row in display.get(key) or []:
                 t = str(row.get("ticker", "")).upper()
                 if "scenarioCard" in row and t in cards and row["scenarioCard"] != cards[t]:

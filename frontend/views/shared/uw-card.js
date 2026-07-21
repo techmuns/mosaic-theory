@@ -256,10 +256,14 @@ function rangeRail(c) {
   const zones = c.ratioUndefined || b >= s ? "" : `
     <div class="uw-lad-risk" style="left:${at(b)}%; width:${at(s) - at(b)}%;"></div>
     <div class="uw-lad-reward" style="left:${at(s)}%; width:${Math.max(0, at(m) - at(s))}%;"></div>`;
-  // a centred label at either extreme would hang outside the slot — near an edge it anchors flush
-  const place = (pos) => (pos <= 12 ? "left:0"
-    : pos >= 88 ? "right:0" : `left:${pos.toFixed(2)}%`);
-  const anchor = (pos) => (pos > 12 && pos < 88 ? " mid" : "");
+  // a centred label at either extreme would hang outside the slot — near an edge it anchors
+  // flush. The threshold is set by the WIDEST label's half-width (~130px target ≈ 19% of the
+  // 337px track): a tick in the 12–20% band with a centred label would clip into the rail's
+  // border, so anything inside 20% of an edge anchors to it. The LEAD is unaffected — it stays
+  // at the true tick position, so an edge-anchored label still points at its mark.
+  const place = (pos) => (pos <= 20 ? "left:0"
+    : pos >= 80 ? "right:0" : `left:${pos.toFixed(2)}%`);
+  const anchor = (pos) => (pos > 20 && pos < 80 ? " mid" : "");
   const lab = (v, name, row, cls = "", { delta = true } = {}) => {
     const d = delta ? vsSpot(v, s) : null;   // spot carries no delta against itself
     const pos = at(v);
