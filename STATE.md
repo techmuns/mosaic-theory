@@ -3848,6 +3848,19 @@ re-anchor (the full STATE split stays its own queued task — nothing was reloca
 8. **Refresh cadence → docs/RUNBOOKS.md** (it is operating practice, not state).
 9. **Full STATE split** — §5 build records → a fossils/decisions file; this block is the interim.
 
+10. **RATIONALE STYLE RULE (adopted 2026-07-21; binds FUTURE verdicts, never sealed ones).**
+    `verdict.rationale` is plain thesis prose — the market-standard shape: thesis, the two or
+    three numbers that carry it, the risk accepted. **Accession numbers, vendor names (CIQ /
+    Polygon), verification arithmetic ("1,100 × 8% × 6.0x → $3.54 → 2.17:1"), and process
+    narration ("re-verified at entry against the …-session close") live in `facts` /
+    `source_refs` / the record's structured fields — never in the rationale text.** Trigger:
+    SMPL's recorded rationale (audited 2026-07-21) violates all three — an accession
+    mid-sentence, CIQ arithmetic inline, formula chains as prose. THE SEALED TEXT STANDS: the
+    ledger copy is append-only forever, and the machine never rewrites analyst words — the
+    scenario-record copy is the analyst's to re-word (meaning-preserving, by hand) if they
+    choose. This rule makes the standard checkable at the NEXT verdict instead of re-discovered
+    after it. (IT's rationale largely conforms and needs nothing.)
+
 **CLOSED by the 2026-07-21 extraction-hygiene run:** the shared `annual_series` alias item AND
 the `extract_points` first-alias/truncation item — ONE root defect, not two.
 `ConceptPoint.is_annual` read `fp == "FY" OR days >= 300`; EDGAR stamps every QUARTERLY point
@@ -3914,6 +3927,64 @@ cannot drift between emitters. Pinned both ways
 freshness panel) · benchmark-by-cap-band assignment + the ledger-supersession artifact · the
 SIC-87xx sector miss · entry-price/ratio-at-entry + implied-odds display.
 
+- **UNDERWRITE TEAR SHEET — THE CARD LEADS WITH THE DECISION (branch `feat/uw-tear-sheet`,
+  2026-07-21; PR open, NOT merged).** The underwrite card rebuilt as an institutional tear sheet,
+  in the ONE component every surface renders (dossier Brief tab, first-analysis page, theme
+  watchlist) — global by construction, future surfaces inherit.
+  - **MASTHEAD** (5 stat cells: target / reward:risk / entry / downside / method) leads the card,
+    and the card leads the Brief tier (was 9th of 10 — #161 appended it; anti-anchoring
+    unaffected: that rule protects the MACHINE's sealed proposal, and the teaser is untouched).
+  - **THE LABEL IS A STATE MACHINE, price beats status:** `priced` (base ≤ spot — a WERN-shape
+    avoid has no upside to target, whatever the status says) → `target` (recorded verdict above
+    spot) → `base` (pending — the machine's only reachable state). Node-pinned with a synthetic
+    CONFIRMED-but-priced record; both regressions verified red before landing. The BUY/AVOID word
+    is the LEDGER's, joined at build (`_ledger_by_ticker`) because the theme watchlist never
+    loads the ledger snapshot — the card never invents a verdict of record. "Verdict · BUY"
+    labeling (a bare green BUY chip reads as a sell-side recommendation; this fund's is a sealed
+    human verdict). PASS/FAIL renders only while the call is open.
+  - **RANGE RAIL beside the scenario table** (the operator's side-by-side idea, unlocked by
+    STAGGERED labels — each label owns a row tied to its tick by a hairline lead; the old
+    one-row-of-labels layout was the only reason side-by-side "didn't fit"). The bar stays
+    HORIZONTAL: one row of a football field, the research convention — a vertical bar was
+    prototyped, researched, found to be NO research object, and dropped (recorded in the layout
+    study). Table columns sized to ink (938→552px; ~350px was dead), rail fixed 360px. Card
+    1,972 → ~880px over the whole pass (−55%) with MORE information on screen.
+  - **READ ORDER:** masthead → split (table + rail) → implied-odds (#165) → rationale →
+    thesis-breaks → leg reasoning (collapsed; PRINT-FORCED open — a printed grid with no
+    justification would contradict the no-reason-no-compute rule) → methodology (collapsed,
+    print-EXCLUDED: provenance tier) → sources → inputs → foot. The recipe CHAIN moved to the
+    on-demand tier (it is a drift guard, hence provenance); the recipe NAME stays in the
+    masthead's Method cell.
+  - **PRINT, DIAGNOSED FROM THE OPERATOR'S ACTUAL PDFs:** the Brief export opened with the header
+    orphaned on a ~90% blank page 1 — the pre-tear-sheet rule `.uw-card { break-inside: avoid }`
+    had turned the now-page-tall card into an unbreakable monolith that jumped whole to page 2
+    (`.wl-row` had the same disease waiting). Atomicity moved DOWN a level: card and row
+    fragment; their building blocks (masthead, rail stack, split halves, chips, reasoning,
+    Sources runs) carry the avoid. Verified with a REAL export (headless Brave print-to-pdf):
+    page 1 now carries the entire decision surface. A4 also cannot hold the two-column split —
+    explicit `@media print` stack rules, not reliance on the viewport query.
+  - **MERGED WITH #165 (position monitor) — same component, both intents kept:** impliedOdds
+    ported verbatim (committed mark, dated, never a live fetch); the two-ratio rule holds across
+    the masthead (underwrite ratio labeled "at underwrite" in the Reward:risk cell; accepted
+    ratio in the Entry cell beside its frozen price; #165's pin re-pointed to the new anchors,
+    every semantic assertion unchanged). **The merge caught a real class:** both branches had
+    added the entryPrice/ratioAtEntry emit and the auto-merge stacked them as DUPLICATE dict
+    keys (silently last-one-wins in Python) — deduped to ONE omit-when-absent emit, so
+    un-entered records (WERN) stay byte-identical across re-emits.
+  - **THEME EMBED MADE REGENERABLE (INVARIANT SHIPPED):** the theme JSON embeds each watch
+    name's card, pinned equal to a fresh build — but the freeze source is git-ignored, so any
+    card-shape change was unsatisfiable in CI. `refresh_theme_cards()` re-embeds from committed
+    records only; COMPOSES with #166's re-seed guard (theme preserved whole when the freeze
+    source is absent; the embedded cards' own source is the committed records, so they refresh —
+    with no records it is a no-op, the same discipline one level down). Pinned by
+    mutate-the-embed → byte-for-byte restore → idempotent no-op.
+  - **Other invariants shipped:** headline state machine node pin (3 states distinct, price
+    beats status, ledger word never invented, PASS only while open); summaries restyled from
+    11.5px/400/ink-3 ("styled to be ignored") to 12.3px/650 + explanatory names.
+  - **DEFERRED, recorded:** Option 2 of the layout study — a TRUE football field (underwrite
+    range vs the 52-week trading range on one axis; IT's ranges nearly coincide, 121–427 vs
+    124–404 — "the bull case is where the stock traded a year ago"). Needs the 52-week field
+    plumbed through build.py: a data change, not a layout one.
 - **POSITION MONITOR v1 (A2) — BUILT (2026-07-21, feat/monitor-v1).** The ledger froze what was
   decided; nothing reported what happened since. `vinci/monitor.py` + `python -m vinci monitor`
   (MANUAL — no scheduler), reading the COMMITTED `decision_ledger.jsonl` (the working DB is
@@ -5276,15 +5347,6 @@ calendar time. Validate **forward, never backtest**. Pre-register kill criteria;
 **face-validity, never by forward returns**. **The control says no** — trust the
 de-confounded/control number over the persuasive story. **Manual** = the CIQ export + the verdict;
 **automated** = everything mechanical between.
-
-**Verdict-rationale shape (standing, formalized 2026-07-21 while EPAM's verdict is deferred).**
-A logged verdict's `rationale` is PLAIN THESIS PROSE, ≤~120 words, in this shape:
-**action + asymmetry → the variant view with its two or three carrying numbers → the kill
-condition in plain words.** No accessions, no vendor names, no arithmetic chains: provenance
-already lives in the structured fields (`facts[].source`, `assumptions[].references[].source`),
-and the verification arithmetic belongs in this file's verdict-log entry. The rationale is what
-a reader must understand to disagree with the decision — not the audit trail proving it was
-computed. A rationale that reads like a citation list is failing its job.
 
 **Print-freshness gate (standing, formalized 2026-07-21 at the SMPL BUY):** mandatory before ANY
 verdict — check EDGAR for filings newer than the record's evidence (the record's as-of vs the

@@ -214,15 +214,21 @@ const noMark = uwCard(card, {});
 const base = card.scenarios.find((s) => s.name === "base").valuePerShare;
 const bear = card.scenarios.find((s) => s.name === "bear").valuePerShare;
 const want = Math.round(((base - mark.current_price) / (base - bear)) * 100);
+// TOKEN ANCHORS re-pointed for the tear-sheet masthead (merged after #165): the two ratios live
+// in SEPARATE LABELED CELLS — the underwrite's in the Reward:risk cell (sub "at underwrite"),
+// the accepted one in the Entry cell beside its frozen price. Same invariant, new home.
+const entryRatioStr = card.verdict.ratioAtEntry.toFixed(2) + " : 1";
+const bothRatios = (h) => h.includes("at underwrite")
+  && /uw-stat-lab">Entry</.test(h) && h.includes(entryRatioStr);
 console.log(JSON.stringify({
-  underwriteLabeled: withMark.includes("(underwrite)"),
-  entryLabeled: withMark.includes("at entry"),
+  underwriteLabeled: withMark.includes("at underwrite"),
+  entryLabeled: /uw-stat-lab">Entry</.test(withMark) && withMark.includes(entryRatioStr),
   entryRatio: card.verdict.ratioAtEntry, underwriteRatio: card.ratio,
   oddsShown: withMark.includes("Market-implied bear weight"),
   oddsValueMatchesDerivation: withMark.includes(`<b>${want}%</b>`),
   notAForecast: withMark.includes("not a forecast"),
   noMarkNoOdds: !noMark.includes("Market-implied bear weight"),
-  noMarkKeepsRatios: noMark.includes("(underwrite)") && noMark.includes("at entry"),
+  noMarkKeepsRatios: bothRatios(noMark),
 }));
 """
     out = subprocess.run(["node", "--input-type=module", "-e", driver], capture_output=True,
