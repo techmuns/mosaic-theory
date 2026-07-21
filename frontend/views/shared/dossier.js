@@ -1084,16 +1084,32 @@ function stockPerfExhibit(sp) {
 }
 
 // 5 — FINANCIAL SNAPSHOT: revenue / EBITDA / EBITDA-margin trajectory (from financial_summary.annual).
+// The BRIEF's window over the (now full-history) annual series: the last 4 actual fiscal years +
+// LTM + every consensus column. Curated at the RENDER layer — the record and the Appendix keep
+// every exported year; a first cut that ran ten columns wide would stop being a first cut.
+const _BRIEF_FY = 4;
+function briefWindow(v) {
+  const cols = v.columns || [], isE = v.is_estimate || [];
+  const keep = cols.map((c, i) => ({ c, i }))
+    .filter(({ c, i }) => isE[i] || /^LTM/i.test(String(c)));           // LTM + estimates always
+  const actual = cols.map((c, i) => ({ c, i }))
+    .filter(({ c, i }) => !isE[i] && !/^LTM/i.test(String(c)));
+  const idx = [...actual.slice(-_BRIEF_FY), ...keep].map((x) => x.i).sort((a, b) => a - b);
+  return { idx, hidden: Math.max(0, actual.length - _BRIEF_FY) };
+}
+
 function financialSnapshot(m) {
   const fsa = (m.financial_summary || {}).annual;
   if (!fsa || fsa.status !== "present" || !fsa.value) return "";
-  const cols = fsa.value.columns || [], want = ["Revenue ($M)", "Revenue growth", "EBITDA ($M)",
+  const want = ["Revenue ($M)", "Revenue growth", "EBITDA ($M)",
     "EBITDA margin", "EBIT ($M)", "Net income ($M)", "EPS (GAAP, dil.)", "FCF ($M)"];
   const rows = (fsa.value.rows || []).filter((r) => want.includes(r.label));
+  const { idx, hidden } = briefWindow(fsa.value);
+  const cols = idx.map((i) => (fsa.value.columns || [])[i]);
   if (!cols.length || !rows.length) return "";
   const isE = fsa.value.is_estimate || [], ec = (i) => (isE[i] ? " est-col" : "");  // (P3) shade E cols
-  const head = `<tr><th></th>${cols.map((c, i) => `<th class="num${ec(i)}">${escapeHtml(String(c))}</th>`).join("")}</tr>`;
-  const body = rows.map((r) => `<tr><td>${escapeHtml(r.label)}</td>${(r.cells || []).map((c, i) => `<td class="num mono${ec(i)}">${escapeHtml(String(c))}</td>`).join("")}</tr>`).join("");
+  const head = `<tr><th></th>${idx.map((i) => `<th class="num${ec(i)}">${escapeHtml(String(fsa.value.columns[i]))}</th>`).join("")}</tr>`;
+  const body = rows.map((r) => `<tr><td>${escapeHtml(r.label)}</td>${idx.map((i) => `<td class="num mono${ec(i)}">${escapeHtml(String((r.cells || [])[i]))}</td>`).join("")}</tr>`).join("");
   // (tier redesign) the return-ratios EXHIBIT stays on the first cut; its per-period TABLE is
   // depth and moved to the Analysis trajectory section. Fail-honest fallback unchanged: a name
   // without the Ratios panel keeps the committed latest-period line.
@@ -1101,10 +1117,15 @@ function financialSnapshot(m) {
   const ratios = (rr && rr.status === "present" && rr.value && Array.isArray(rr.value.rows) && rr.value.rows.length)
     ? returnRatiosExhibit(rr)
     : (m.key_ratios && m.key_ratios.status === "present") ? fact("Key ratios (latest)", m.key_ratios) : "";
+  // the exhibit above spans the FULL series, so the note points at the TABLE's window only
+  const more = hidden
+    ? `<div class="muted" style="font-size:11px; margin-top:4px;">table shows the last ${
+        _BRIEF_FY} fiscal years · ${hidden} earlier ${hidden === 1 ? "year is" : "years are"
+        } charted above and tabulated in the Appendix</div>` : "";
   return `<div class="card ds-section"><div class="ds-title">Financial snapshot<span class="ds-route">full statements in Appendix</span></div>
     ${revEbitdaExhibit(fsa)}
     <table class="data">${`<thead>${head}</thead><tbody>${body}</tbody>`}</table>
-    ${citeMark(fsa.source_ref)}${ratios}</div>`;
+    ${citeMark(fsa.source_ref)}${more}${ratios}</div>`;
 }
 
 // 6 — VALUATION: cross-sectional read (the edge) + comparability gate + the implied-value REFERENCE
@@ -2007,6 +2028,20 @@ function asOfHeader(s) {
   return v.startsWith("≥") ? `export date unverified (data ≥ ${v.slice(1)})` : `as-of ${v}`;
 }
 
+// "FY17–FY25 + LTM + 2 estimates" — the table says what it actually spans, so a reader never has
+// to infer the window (and a truncated one can never masquerade as the whole history).
+function spanLabel(s, unit) {
+  const cols = (s && s.status === "present" && s.value && s.value.columns) || [];
+  if (!cols.length) return `every ${unit} on file`;
+  const est = (s.value.is_estimate || []).filter(Boolean).length;
+  const act = cols.filter((c) => !/^LTM/i.test(String(c)));
+  const span = act.length > 1 ? `${act[0]}–${act[act.length - 1 - (est ? est : 0)] || act[0]}` : act[0];
+  const bits = [`${span}`];
+  if (cols.some((c) => /^LTM/i.test(String(c)))) bits.push("LTM");
+  if (est) bits.push(`${est} consensus`);
+  return bits.join(" + ");
+}
+
 // (C1/C2) a Sourced[FinTable] → the shared dataTable; UNKNOWN/MISSING falls through to a fact badge
 function finTable(label, s) {
   if (!s || s.status !== "present" || !s.value) return fact(label, s);
@@ -2042,8 +2077,9 @@ function appendixBlock(m) {
   if (!fs) return sec("Financial statements", "", cap) + implied + mgmt;
   return sec(`Financial statements (actuals + consensus estimates) — ${asOfHeader(fs.as_of)}`,
     "Consensus (E) columns are marked and as-of-stamped; growth never spans a basis change (— basis).",
-    finTable("Annual ($M; E = consensus) — last-4-FY + LTM + FY26E/FY27E", fcfRelabel(fs.annual)) +
-    finTable("Trailing 8 quarters — the recent-quarter trajectory", fs.quarterly) +
+    finTable(`Annual ($M; E = consensus) — ${spanLabel(fs.annual, "fiscal year")}`,
+             fcfRelabel(fs.annual)) +
+    finTable(`Quarterly ($M) — ${spanLabel(fs.quarterly, "quarter")}`, fs.quarterly) +
     fact("Balance-sheet posture", fs.balance_sheet) +
     fact("Coherence — balance sheet vs implied-valuation bridge", fs.coherence) +
     cap) +     // (K1) capital-structure provenance (subhead + full panel/pointers/terms)

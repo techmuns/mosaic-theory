@@ -8,6 +8,7 @@ discipline as the ranker's no-forward-returns AST guard.
 from __future__ import annotations
 
 import ast
+import json
 import re
 import typing
 from datetime import UTC, date, datetime, timedelta, timezone
@@ -16,6 +17,7 @@ from pathlib import Path
 import pytest
 from pydantic import BaseModel
 
+from vinci import cli
 from vinci.dossier import assemble as dass
 from vinci.dossier import ciq, manual_store
 from vinci.dossier import ciq_sheets as cs
@@ -7165,3 +7167,78 @@ console.log(JSON.stringify({{
         "a pending name must carry the machine assessment exactly once, and no rationale")
     assert r["warnFires"] == 1, "a decision-keyword caveat must fire the warning strip once"
     assert r["cleanFires"] == 0, "RESOLVED + process caveats must fire nothing"
+
+
+def test_financial_summary_extraction_is_not_windowed() -> None:
+    """(full-history) The EXTRACTOR must keep every exported period — a display window applied at
+    extraction put five-plus fiscal years and up to 33 quarters beyond recovery (the licensed
+    workbook is the only other copy, and the deployed surface has none). Source pins: the old
+    `fy[-4:]` / `[-8:]` slices are gone, and the committed records now carry more than the old
+    window on at least one name."""
+    src = Path("vinci/dossier/ciq_sheets.py").read_text()
+    assert "disp = fy[-4:]" not in src, "the annual extractor must not window at extraction"
+    assert "_fin_periods(rows[hdr])[-8:]" not in src, "the quarterly extractor must not window"
+    assert "disp = fy + ltm[:1]" in src
+    wide = 0
+    for jp in sorted(Path("data/dossiers").glob("*/dossier.json")):
+        fs = json.loads(jp.read_text())["mechanical"].get("financial_summary") or {}
+        ann = (fs.get("annual") or {}).get("value") or {}
+        if len(ann.get("columns") or []) > 7:      # 4 FY + LTM + 2 estimates was the old ceiling
+            wide += 1
+    assert wide >= 5, f"expected the widened history on most committed dossiers, got {wide}"
+
+
+def test_brief_windows_the_annual_table_and_states_what_it_hides() -> None:
+    """(full-history) The BRIEF curates at the RENDER layer — last 4 actual FY + LTM + consensus —
+    and NAMES the hidden count; the Appendix and the JSON keep every exported year. This is the
+    inversion of the old bug: curate the view, never the record."""
+    import re as _re
+
+    d = ds.Dossier.model_validate_json(Path("data/dossiers/IT/dossier.json").read_text())
+    tbl = d.mechanical.financial_summary.annual.value        # type: ignore[union-attr]
+    assert tbl is not None and len(tbl.columns) > 7, "IT should carry its full exported history"
+    idx = dr._brief_window(tbl)
+    kept = [tbl.columns[i] for i in idx]
+    actual = [c for c in kept
+              if not str(c).upper().startswith("LTM") and not str(c).endswith("E")]
+    assert len(actual) == dr._BRIEF_FY, f"the brief must show {dr._BRIEF_FY} actual FY, got {kept}"
+    assert any(str(c).upper().startswith("LTM") for c in kept), "LTM must survive the window"
+    md = dr.render_markdown(d)
+    brief, appendix = md.split("# Analysis")[0], md.split("# Appendix")[1]
+    assert _re.search(r"table shows the last \d+ fiscal years · \d+ earlier years? "
+                      r"(is|are) in the Appendix", brief), (
+        "the brief must state how many years it hid — never a silent window")
+    assert "FY17" in appendix and "FY17" not in brief, (
+        "the full history belongs in the Appendix, not the first cut")
+
+
+def test_financials_backfill_refuses_a_newer_workbook() -> None:
+    """(full-history · vintage guard) The backfill widens a WINDOW; it must never silently refresh
+    VALUES. CIQ stamps no export date and the '≥' as-of is a floor, so a re-exported workbook is
+    otherwise undetectable — and refreshing numbers under a synthesis written against the old ones
+    makes a dossier cite figures it no longer contains. A committed cell that was '—' only because
+    nothing preceded it is exempt: that derivation became computable, it was not restated."""
+    committed = {"annual": {"value": {
+        "columns": ["FY24", "FY25", "LTM"],
+        "rows": [{"label": "Revenue ($M)", "cells": ["100", "110", "115"]},
+                 {"label": "Revenue growth", "cells": ["—", "+10%", "— (basis)"]}]}}}
+    # widened only: the committed series is the exact tail, and the leading '—' becomes computable
+    widened = {"annual": {"value": {
+        "columns": ["FY22", "FY23", "FY24", "FY25", "LTM"],
+        "rows": [{"label": "Revenue ($M)", "cells": ["80", "90", "100", "110", "115"]},
+                 {"label": "Revenue growth",
+                  "cells": ["—", "+13%", "+11%", "+10%", "— (basis)"]}]}}}
+    assert cli._fs_value_drift(committed, widened) == [], (
+        "widening + a newly-computable derivation must NOT be reported as drift")
+    # a genuine restatement of an existing number IS drift
+    refreshed = json.loads(json.dumps(widened))
+    refreshed["annual"]["value"]["rows"][0]["cells"][-1] = "119"      # LTM restated
+    drift = cli._fs_value_drift(committed, refreshed)
+    assert drift and "LTM" in drift[0] and "'115'" in drift[0], drift
+    # duplicate period labels must not confuse the comparison (BRBR's quarterly reads FY24 ×3)
+    dup_c = {"annual": {"value": {"columns": ["FY24", "FY24"],
+                                  "rows": [{"label": "R", "cells": ["1", "2"]}]}}}
+    dup_f = {"annual": {"value": {"columns": ["FY23", "FY24", "FY24"],
+                                  "rows": [{"label": "R", "cells": ["0", "1", "2"]}]}}}
+    assert cli._fs_value_drift(dup_c, dup_f) == [], (
+        "positional compare must survive duplicate labels")

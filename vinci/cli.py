@@ -427,6 +427,121 @@ def _attach_midcycle(cfg: Config, ticker: str, *, peers: list[str],
     return 0
 
 
+
+
+def _fs_value_drift(committed: dict[str, Any], fresh: dict[str, Any]) -> list[str]:
+    """Committed financial-summary cells that the re-extraction would CHANGE.
+
+    Widening only PREPENDS earlier periods, so the committed series must be the exact tail of the
+    fresh one. A cell that was '—' purely because nothing preceded it is exempt: it is a derivation
+    that has become computable, not a restatement. Compared POSITIONALLY from the end — several
+    names carry duplicate period labels (BRBR's quarterly columns read FY24, FY24, FY24), so a
+    label lookup silently compares the wrong column.
+    """
+    out: list[str] = []
+    for tbl in ("annual", "quarterly"):
+        cv = ((committed.get(tbl) or {}).get("value")) or {}
+        fv = ((fresh.get(tbl) or {}).get("value")) or {}
+        cols, fcols = cv.get("columns") or [], fv.get("columns") or []
+        if not cols or not fcols:
+            continue
+        n = len(cols)
+        if fcols[-n:] != cols:
+            out.append(f"{tbl}: column tail differs")
+            continue
+        crows = {r["label"]: r["cells"] for r in cv.get("rows") or []}
+        for r in fv.get("rows") or []:
+            old = crows.get(r["label"])
+            if old is None:
+                continue
+            tail = (r.get("cells") or [])[-n:]
+            for i, (o, nw) in enumerate(zip(old, tail, strict=False)):
+                if str(o) != str(nw) and not str(o).startswith("—"):
+                    out.append(f"{tbl}/{r['label']}/{cols[i]}: {o!r}→{nw!r}")
+    return out
+
+
+def _cmd_financials_backfill(args: argparse.Namespace) -> int:
+    """Re-extract financial_summary from the on-disk CIQ export into committed dossiers.
+
+    The FINANCIALS-ONLY writer, modelled on ``anchor-backfill``: no re-assembly, no LLM, no other
+    field touched. Written as a DICT-LEVEL patch because the committed files round-trip
+    byte-identically under ``json.dumps(indent=2, ensure_ascii=False)`` (asserted per file before
+    writing) while the pydantic model does NOT — it materialises absent optionals as explicit
+    nulls, which would rewrite fields this command has no business touching.
+
+    Why it exists: the extractor used to window the series at EXTRACTION (``fy[-4:]``,
+    quarterly ``[-8:]``), so five-plus fiscal years and up to 33 quarters never entered
+    dossier.json and were unrecoverable without the licensed workbook. Widening the extractor only
+    helps names re-assembled afterwards; this backfills the ones already committed.
+    """
+    import json as _json
+
+    from vinci.dossier.ciq import CiqBundle, CiqUnavailableError
+    from vinci.dossier.ciq_sheets import financial_summary_annual, financial_summary_quarterly
+
+    root = Path("data/dossiers")
+    tickers = [t.strip().upper() for t in args.tickers.split(",") if t.strip()]
+    rc = 0
+    for t in tickers:
+        jp = root / t / "dossier.json"
+        if not jp.exists():
+            print(f"{t}: no committed dossier.json — skipped")
+            continue
+        raw = jp.read_text()
+        doc = _json.loads(raw)
+        # PRE-EDIT ASSERTION: refuse to write unless the serialiser reproduces this file exactly,
+        # so every untouched byte is provably preserved.
+        if _json.dumps(doc, indent=2, ensure_ascii=False) != raw:
+            print(f"{t}: REFUSING — serialiser does not reproduce the committed bytes")
+            rc = 1
+            continue
+        paths = sorted((Path("data/manual/ciq") / t).glob("*.xls"))
+        if not paths:
+            print(f"{t}: no CIQ workbook on disk — skipped (re-extraction needs the export)")
+            continue
+        try:
+            bundle = CiqBundle.from_files(t, paths)
+            ann = financial_summary_annual(bundle)
+            qtr = financial_summary_quarterly(bundle)
+        except CiqUnavailableError as exc:
+            print(f"{t}: CIQ unavailable ({exc}) — skipped")
+            rc = 1
+            continue
+        fs = (doc.get("mechanical") or {}).get("financial_summary")
+        if fs is None:
+            print(f"{t}: no committed financial_summary block — skipped")
+            continue
+        before = (len((fs.get("annual") or {}).get("value", {}).get("columns", []) or []),
+                  len((fs.get("quarterly") or {}).get("value", {}).get("columns", []) or []))
+        new_ann = _json.loads(ann.model_dump_json())
+        new_qtr = _json.loads(qtr.model_dump_json())
+        after = (len((new_ann.get("value") or {}).get("columns", []) or []),
+                 len((new_qtr.get("value") or {}).get("columns", []) or []))
+        # VINTAGE GUARD. This command widens a WINDOW; it must never silently refresh VALUES.
+        # The committed series has to be the exact tail of the re-extracted one — same columns,
+        # same cells. When it is not, the on-disk workbook is a NEWER export than the one this
+        # dossier was assembled from (CIQ stamps no export date, and the '≥' as-of is a floor, so
+        # nothing else detects it). Refreshing numbers under a synthesis written against the old
+        # ones is how a dossier starts citing figures it no longer contains — so: refuse, report,
+        # and let a full re-assembly handle that name.
+        drift = _fs_value_drift(fs, {"annual": new_ann, "quarterly": new_qtr})
+        if drift:
+            print(f"{t}: REFUSED — the on-disk CIQ export is NEWER than this dossier's assembly "
+                  f"({len(drift)} committed value(s) would change, e.g. {drift[0]}). "
+                  f"Re-assemble {t} instead so its synthesis matches its numbers.")
+            rc = 1
+            continue
+        if args.dry_run:
+            print(f"{t}: annual {before[0]}→{after[0]} cols · quarterly {before[1]}→{after[1]} "
+                  f"(dry-run, nothing written)")
+            continue
+        fs["annual"], fs["quarterly"] = new_ann, new_qtr
+        jp.write_text(_json.dumps(doc, indent=2, ensure_ascii=False))
+        print(f"{t}: annual {before[0]}→{after[0]} cols · quarterly {before[1]}→{after[1]} → {jp}")
+    return rc
+
+
 def _cmd_anchor_backfill(args: argparse.Namespace) -> int:
     """Backfill the committed R1 anchor block into existing dossiers — the anchor-ONLY writer.
 
@@ -2101,6 +2216,16 @@ def build_parser() -> argparse.ArgumentParser:
                           help="DIAGNOSTIC: recompute and report old-vs-new without writing "
                                "anything (the re-validation pass)")
     p_anchor.set_defaults(func=_cmd_anchor_backfill)
+
+    p_fin = sub.add_parser(
+        "financials-backfill",
+        help="re-extract financial_summary from the on-disk CIQ export into committed dossiers "
+        "(financials-only writer — no re-assembly, no LLM; every other field byte-identical)")
+    p_fin.add_argument("--tickers", required=True,
+                       help="comma-separated tickers, e.g. AORT,BRBR,CNXC")
+    p_fin.add_argument("--dry-run", action="store_true", dest="dry_run",
+                       help="DIAGNOSTIC: report old-vs-new column counts without writing")
+    p_fin.set_defaults(func=_cmd_financials_backfill)
 
     p_ohr = sub.add_parser(
         "own-history-refresh",
