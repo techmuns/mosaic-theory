@@ -621,12 +621,16 @@ def _leverage_block(m: MechanicalLayer) -> list[str]:
     lines (which fall back for a pre-B2 dossier.json)."""
     lv = m.leverage_survival
     assert lv is not None
+    # (buy-side layout, terse labels) the basis stays VISIBLE as a [TAG] — NET vs TOTAL vs FWD-ADJ
+    # on adjacent rows is disclosure, never tooltip/cite-only; methodology beyond the basis lives in
+    # the cite. Twins frontend leverageBlock()'s stat-grid cells (the md stays linear — content
+    # parity, layout differs).
     lines = [
         "### Leverage & survival",  # (K5) header humanized; the net-vs-total discipline is per-row
-        _fact("Net debt / EBITDA (CIQ NET basis)", lv.net_debt_to_ebitda, _mult),
-        _fact("Total debt / EBITDA (comps — name vs peer median)", lv.total_debt_to_ebitda),
+        _fact("Net debt / EBITDA [NET]", lv.net_debt_to_ebitda, _mult),
+        _fact("Total debt / EBITDA vs peers", lv.total_debt_to_ebitda),
         _fact("Net debt / OCF", m.quality.net_debt_to_ocf, _mult),
-        _fact("Net debt / EBITDA (fwd-adj covenant basis)", m.quality.net_debt_to_ebitda_adjusted),
+        _fact("Net debt / EBITDA [FWD-ADJ]", m.quality.net_debt_to_ebitda_adjusted),
         _fact("Interest coverage", lv.interest_coverage, _mult),
     ]
     # (declutter P1) when the two-input self-funding read exists it REPLACES the one-input survival
@@ -635,9 +639,10 @@ def _leverage_block(m: MechanicalLayer) -> list[str]:
     # a pre-RC-1 dossier that has nothing better.
     ps = m.primary_source
     if ps is not None and ps.self_funding.status is SourceStatus.PRESENT:
-        lines.append(_fact("Self-funding (two-input: latest-Q OCF + LTM FCF)", ps.self_funding))
+        # (terse label) the two-input rule reads in the value itself
+        lines.append(_fact("Self-funding", ps.self_funding))
     else:
-        lines.append(_fact("Survival (self-funding + nearest wall)", lv.survival))
+        lines.append(_fact("Survival", lv.survival))
     return [*lines, *_credit_health_lines(lv), ""]
 
 
@@ -746,7 +751,7 @@ def _maturity_wall_lines(cs: Any, reference_date: date) -> list[str]:
     def bykey(x: tuple[date, Any]) -> tuple[date, str]:  # sort a (date, instrument) pair stably
         return (x[0], x[1].description)
 
-    out = [f"- **Maturity wall** (deterministic, vs the {reference_date.isoformat()} reference):"]
+    out = [f"- **Maturity wall** · vs the {reference_date.isoformat()} reference:"]
     if matured:
         out.append(
             f"  - **matured (pre-reference): {_musd(dtot(matured))}** — resolution not in this "
@@ -1655,8 +1660,9 @@ def _brief_verify_first(caveats: list[str], limit: int = 2) -> list[str]:
 
 
 def _brief_case_lines(s: Any) -> list[str]:
-    """THE CASE, condensed — top-3 bull / top-3 bear (same evidence-weighted order as Analysis) +
-    top-3 key unknowns. The FULL synthesis stays in the Analysis tier; source-bound here too."""
+    """THE CASE, condensed — top-3 bull / top-3 bear (same evidence-weighted order as Analysis).
+    The decisive question + unknowns live in the cover's crux block; the FULL synthesis stays in
+    the Analysis tier; source-bound here too."""
     if s is None or (not s.bull_points and not s.bear_points):
         return []
     # (tier redesign) no inner "The case" line — the section header carries it; leg labels state
@@ -1669,9 +1675,7 @@ def _brief_case_lines(s: Any) -> list[str]:
 
     out += ["_Bull case — the decline is overdone:_", *(top3(s.bull_points) or ["- —"])]
     out += ["_Bear case — the decline is real:_", *(top3(s.bear_points) or ["- —"])]
-    uks = list(s.key_unknowns)[:3]
-    if uks:
-        out += ["_Key unknowns:_", *[f"- {u}" for u in uks]]
+    # (buy-side cover) key unknowns moved to the cover's crux block — no second copy here
     out.append("")
     return out
 
@@ -1860,6 +1864,14 @@ def _brief_lines(d: Dossier, *, show_proposal: bool = False) -> list[str]:
     snap = _brief_snapshot(d.exchange, m.stock_info)
     if snap:
         out += snap
+    # (buy-side cover) THE CRUX closes the cover — the decisive question + the top-2 unknowns,
+    # both ALREADY-COMMITTED synthesis fields (render-tier only; no assembly change). "The case"
+    # below drops its copies so the question renders once per tier. Mirrors cruxInner() on the web.
+    if s is not None and s.decisive_question is not None and s.decisive_question.question:
+        out += ["", "**The crux — what decides this, and what would change our mind**",
+                f"**{s.decisive_question.question}**"]
+        out += [f"- {u}" for u in list(s.key_unknowns)[:2]]
+        out.append("_full unknowns + the evidence for/against in Analysis_")
     out.append("")
     # (user decision) the standing machine-proposal line is GONE from the default brief — the
     # pivot MECHANISM is untouched (derived + sealed to the shadow ledger at assembly; disposition
@@ -1887,11 +1899,9 @@ def _brief_lines(d: Dossier, *, show_proposal: bool = False) -> list[str]:
     if gc is not None:
         out.append(gc)
     out.append("")
-    # 4 — THE CASE: the decisive question LEADS (one line does not earn a section of its own),
-    # then the condensed bull/bear + key unknowns.
+    # 4 — THE CASE: the condensed bull/bear alone — the decisive question + unknowns moved to the
+    # cover's CRUX block (buy-side cover), so the question renders once per tier.
     out.append("## The case")
-    if s is not None and s.decisive_question is not None and s.decisive_question.question:
-        out += [f"**{s.decisive_question.question}**", ""]
     out += _brief_case_lines(s)
     # 5 — FINANCIAL SNAPSHOT: the compact table. The per-period return-ratios table moved to the
     # Analysis trajectory section (the web keeps its exhibit here; markdown has no chart).
