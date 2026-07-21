@@ -1,0 +1,128 @@
+{
+  "as_of": "2026-07-20",
+  "price_basis": "price-return both sides (Polygon daily closes; dividends excluded on the position AND the benchmark alike — never mixed with a total-return series)",
+  "rows": [
+    {
+      "ticker": "VRRM",
+      "verdict": "AVOID_TERMINAL",
+      "sector": "Industrials",
+      "entry_price": 4.71,
+      "entry_date": "2026-06-17",
+      "current_price": 4.07,
+      "current_date": "2026-07-20",
+      "position_return": -0.13588110403397025,
+      "benchmark": "IWM",
+      "benchmark_entry": 289.88,
+      "benchmark_now": 292.31,
+      "benchmark_return": 0.008382779080999159,
+      "excess": -0.1442638831149694,
+      "days_elapsed": 33,
+      "horizon_days": 180,
+      "horizon_date": "2026-12-14",
+      "resolved": false
+    },
+    {
+      "ticker": "IT",
+      "verdict": "BUY",
+      "sector": "Industrials",
+      "entry_price": 141.06,
+      "entry_date": "2026-07-20",
+      "current_price": 141.06,
+      "current_date": "2026-07-20",
+      "position_return": 0.0,
+      "benchmark": "MDY",
+      "benchmark_entry": 683.34,
+      "benchmark_now": 683.34,
+      "benchmark_return": 0.0,
+      "excess": 0.0,
+      "days_elapsed": 0,
+      "horizon_days": 180,
+      "horizon_date": "2027-01-16",
+      "resolved": false
+    },
+    {
+      "ticker": "SMPL",
+      "verdict": "BUY",
+      "sector": "Consumer Staples",
+      "entry_price": 10.92,
+      "entry_date": "2026-07-20",
+      "current_price": 10.92,
+      "current_date": "2026-07-20",
+      "position_return": 0.0,
+      "benchmark": "IWM",
+      "benchmark_entry": 292.31,
+      "benchmark_now": 292.31,
+      "benchmark_return": 0.0,
+      "excess": 0.0,
+      "days_elapsed": 0,
+      "horizon_days": 180,
+      "horizon_date": "2027-01-16",
+      "resolved": false
+    }
+  ],
+  "spread": {
+    "buy_n": 2,
+    "avoid_n": 1,
+    "buy_mean_excess": 0.0,
+    "avoid_mean_excess": -0.1442638831149694,
+    "spread": 0.1442638831149694,
+    "resolved_n": 0,
+    "max_days_elapsed": 33,
+    "sign_convention": "BUY−AVOID = mean(BUY excess) − mean(AVOID excess). An AVOID leg falling against its benchmark carries NEGATIVE excess, so subtracting it makes the spread MORE positive: being right about a terminal decline pays in exactly as being right about an overshoot.",
+    "caveat": "DIAGNOSTIC ONLY until each row reaches its horizon date (§7: never tuned on). A leg's excess is price-return vs its assigned benchmark over the same window.",
+    "undefined_reason": null
+  },
+  "freshness": [
+    {
+      "ticker": "IT",
+      "verdict": "BUY",
+      "last_evidence_date": "2026-07-20",
+      "last_evidence_source": "underwrite_date",
+      "newer_filings": [],
+      "unread_print": false,
+      "next_expected_print": "2026-08-05",
+      "next_expected_basis": "ESTIMATE — same-quarter filing one year prior + 365d (filer's own cadence)",
+      "triggers": [
+        "Q2-2026 print (early Aug): contract-value growth decelerates further or turns negative → re-underwrite the bear leg",
+        "revenue below the FY26E consensus path two consecutive quarters → re-test base at 12x",
+        "operating margin breaks below ~16% ex one-offs → regime assumption fails"
+      ],
+      "watch_note": null
+    },
+    {
+      "ticker": "SMPL",
+      "verdict": "BUY",
+      "last_evidence_date": "2026-07-21",
+      "last_evidence_source": "underwrite_date",
+      "newer_filings": [],
+      "unread_print": false,
+      "next_expected_print": "2026-10-23",
+      "next_expected_basis": "ESTIMATE — same-quarter filing one year prior + 365d (filer's own cadence)",
+      "triggers": [
+        "Quest revenue growth ≤ 0% YoY for two consecutive quarters → carry engine dead; re-underwrite bull and base legs",
+        "FY26 guidance cut at the fiscal Q4 print (~Oct 2026), or initial FY27 guidance below ~$1.30B → base revenue path fails",
+        "gross-margin erosion beyond the guided ~375bps, or sustained GM below ~31% → margin regime break"
+      ],
+      "watch_note": null
+    },
+    {
+      "ticker": "WERN",
+      "verdict": "watch",
+      "last_evidence_date": "2026-07-19",
+      "last_evidence_source": "underwrite_date",
+      "newer_filings": [],
+      "unread_print": false,
+      "next_expected_print": "2026-07-29",
+      "next_expected_basis": "ESTIMATE — same-quarter filing one year prior + 365d (filer's own cadence)",
+      "triggers": [
+        "spot pulls to ~28-30 (where base offers 2:1)",
+        "a reported quarter proving normalized operating margin genuinely >7.5% (e.g. disclosed Dedicated segment economics, or a clean beat)"
+      ],
+      "watch_note": "WATCH (not a position) — avoid-priced: inverted asymmetry at 46 (upside +6% to bull, downside -22% base / -64% bear) -> track for avoid-leg short-alpha on paper."
+    }
+  ],
+  "notes": [
+    "IT: sector re-resolved to Industrials for display (the frozen row logged Other — never rewritten)",
+    "IT: benchmark MDY (cap band) SUPERSEDES the ledger row's IWM — the row itself is never mutated"
+  ]
+}
