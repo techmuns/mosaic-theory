@@ -1382,7 +1382,7 @@ function capitalStructureAppendix(cs) {
   // Nothing deleted — the panel/pointers/terms are relocated here, not dropped. Mirrors the md marker
   // in render._capital_structure_appendix_lines.
   return auditCitesInline(`<details class="card ds-section">
-    <summary style="cursor:pointer; font-size:12.5px; font-weight:600; color:var(--ink-2);">Capital-structure provenance — on-demand (audit) <span class="muted" style="font-weight:400;">— full panel · pointers · terms (web collapsed · print-excluded · JSON)</span></summary>
+    <summary style="cursor:pointer; font-size:12.5px; font-weight:600; color:var(--ink-2);">Capital-structure provenance — on-demand (audit) <span class="muted" style="font-weight:400;">— full panel · pointers · terms (web collapsed · prints in full · JSON)</span></summary>
     <div style="margin-top:10px;">${inner}</div></details>`);
 }
 
