@@ -983,7 +983,15 @@ table.data tr td.uw-vs { font-size: 12.5px; }
 
   /* keep atomic units intact across page breaks; sections still flow naturally */
   .fact, .filing, .point, .flag, .logged-verdict, table.data tr { break-inside: avoid; }
-  .uw-card, .wl-row { break-inside: avoid; }
+  /* the underwrite card (and the watchlist row that embeds it) must FRAGMENT: since the
+     tear-sheet build it is ~a full page tall, and break-inside:avoid turned it into a monolith
+     that could not fit under the page-1 header — the whole card jumped to page 2, orphaning the
+     header on a ~90% blank first page. Atomicity moves DOWN a level: the card breaks freely, its
+     building blocks do not, so page breaks land at the seams. .uw-rr is absolutely-positioned
+     geometry and must never split mid-stack. */
+  .uw-card, .wl-row { break-inside: auto; }
+  .uw-mast, .uw-rr, .uw-rail, .uw-split-main, .uw-trig, .uw-reasons,
+  .uw-card .ds-sources, .wl-top, .wl-trigger { break-inside: avoid; }
   .ds-help.dd { display: none; }
   .ds-title { break-after: avoid; }
 
