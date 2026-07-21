@@ -572,6 +572,10 @@ table.data.vs-table { width: 100%; }
 .uw-card table.data { width: 100%; }
 .uw-h-sub { text-transform: none; letter-spacing: 0; font-weight: 400; color: var(--ink-3); margin-left: 6px; }
 .uw-note { font-size: 11px; margin-top: 5px; }
+/* monitor marks — direction is data, not decoration (both readable in light + dark) */
+.mon-up { color: var(--pos-text); }
+.mon-dn { color: var(--danger); }
+.uw-odds { font-size: 11.5px; margin-top: 6px; color: var(--ink-2); }
 .uw-recipe { font-size: 11px; margin: 2px 0 6px; }
 .uw-methods { margin-top: 8px; }
 .uw-method { margin-top: 6px; }

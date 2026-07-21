@@ -29,6 +29,7 @@ const DOSSIERS = "./dossiers"; // derived dossier.json only (committed to the PR
 const THEMES = "./themes"; // derived theme-edge display JSON (committed, like dossiers; build.py)
 const RADAR = "./radar"; // analyst-owned candidate registry (committed) + emitted sweep bar (build.py)
 const SCENARIOS = "./scenarios"; // first-cut underwrite cards (committed, like dossiers; build.py)
+const MONITOR = "./monitor"; // committed monitor history — dated marks, never a live fetch
 
 async function _fetch(path) {
   const res = await fetch(path, { cache: "no-store" });
@@ -207,6 +208,30 @@ async function _loadLedger() {
     },
     entries,
   };
+}
+
+// getMonitor() -> the LATEST committed monitor snapshot {as_of, rows[], spread, freshness[],
+// price_basis, notes[]} or null when no history is committed. The browser NEVER fetches a live
+// price: every mark it shows is a dated, committed number the repo can reproduce. Absent history
+// degrades the live columns to "—" rather than inventing a mark.
+export function getMonitor() { return _once("monitor", _loadMonitor); }
+async function _loadMonitor() {
+  try {
+    const idx = await _json(`${MONITOR}/index.json`);
+    if (!idx || !idx.latest) return null;
+    return await _json(`${MONITOR}/${idx.latest}.json`);
+  } catch (e) {
+    if (e.status === 404) return null;   // none committed yet
+    throw e;
+  }
+}
+
+// getMonitorRow(ticker) -> that name's row in the latest snapshot, or null. The spot the card
+// shows for its implied-odds line comes from HERE — a committed mark, dated on screen.
+export async function getMonitorRow(ticker) {
+  const snap = await getMonitor();
+  const t = String(ticker || "").toUpperCase();
+  return (snap && (snap.rows || []).find((r) => String(r.ticker).toUpperCase() === t)) || null;
 }
 
 // The long leg is any BUY-family verdict; everything else (AVOID_TERMINAL, …) is the avoid leg.

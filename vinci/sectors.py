@@ -62,6 +62,14 @@ def sector_for_sic(sic: str | int | None) -> str:
         return "Consumer Discretionary"  # retail, apparel, autos-as-sold, entertainment
     if (15 <= mg <= 17) or (34 <= mg <= 39) or (mg == 37) or (40 <= mg <= 47) or mg in (50, 51):
         return "Industrials"  # construction, machinery, transport equip, transportation, wholesale
+    if mg == 87:
+        # 87 = engineering, accounting, research, MANAGEMENT & related services → GICS puts this
+        # family in Industrials / Professional Services. Added 2026-07-21: the whole group fell
+        # through to "Other", which mislabelled the IT (Gartner, 8741) ledger leg and 7 other
+        # queue names (HURN/WLDN/ACM/G/BAH/BWMN/STN). Fixed at the FAMILY level, never per-name —
+        # `sector` is the stable grouping axis; a name's finer GICS reading rides on `industry`
+        # (IT's CIQ-GICS is "IT Consulting and Other Services"), which never reshuffles this.
+        return "Industrials"
     return "Other"
 
 

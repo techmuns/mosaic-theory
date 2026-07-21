@@ -14,7 +14,7 @@
 // knob is gone: self-contained scopes make the failure impossible instead of merely defaulted-away,
 // and it was leaving the theme page's copy of the card visibly different from the dossier's.
 // Gaps render as pills (UNDEFINED), never blank.
-import { escapeHtml, fmtPrice, DASH } from "../../lib/format.js";
+import { escapeHtml, fmtPrice, fmtDate, DASH } from "../../lib/format.js";
 import { citeMark, withEndnotes } from "../../lib/cites.js";
 
 const mono = (s) => `<span class="mono">${escapeHtml(s)}</span>`;
@@ -62,9 +62,39 @@ function ratioFact(c) {
   // the bar comes from the RECORD (stamped by the recipe) — an absent bar renders honest, never
   // an invented 2 (LOW-11: the card carries no fund constants of its own)
   const bar = typeof c.bar === "number" ? `vs ${escapeHtml(String(c.bar))} : 1` : `bar ${DASH}`;
+  // TWO ratios, both labeled: what the grid computed at the underwrite's spot, and what the human
+  // actually accepted at entry (frozen in the ledger). They differ whenever price moved between
+  // the underwrite and the log — showing only one would misreport the accepted asymmetry.
+  const v = c.verdict || {};
+  const atEntry = (typeof v.ratioAtEntry === "number" && typeof v.entryPrice === "number")
+    ? ` <span class="muted">·</span> <span class="mono">${escapeHtml(v.ratioAtEntry.toFixed(2))} : 1</span>
+        <span class="muted">at entry ${escapeHtml(fmtPrice(v.entryPrice))}</span>` : "";
   return fact("Ratio vs bar",
-    `${mono(c.ratio.toFixed(2) + " : 1")} <span class="muted">${bar}</span>`,
+    `${mono(c.ratio.toFixed(2) + " : 1")} <span class="muted">${bar} (underwrite)</span>${atEntry}`,
     { hi: true });
+}
+
+// DERIVED, never asserted: under a two-point read of the grid, the price sits between the bear
+// and base values, so (base − spot) / (base − bear) is the weight the market is putting on the
+// bear leg. It is arithmetic ON the card's own numbers — not a probability the fund claims, and
+// not a forecast. `spot` comes from the latest COMMITTED monitor mark (dated on screen), never a
+// live fetch; with no mark the line renders nothing at all.
+function impliedOdds(c, mark) {
+  if (!mark || typeof mark.current_price !== "number") return "";
+  const leg = (n) => (c.scenarios || []).find((s) => s.name === n);
+  const base = leg("base"), bear = leg("bear");
+  if (!base || !bear || typeof base.valuePerShare !== "number"
+      || typeof bear.valuePerShare !== "number") return "";
+  const span = base.valuePerShare - bear.valuePerShare;
+  if (!(span > 0)) return "";                    // degenerate grid — say nothing, never divide
+  const w = (base.valuePerShare - mark.current_price) / span;
+  const note = w < 0 ? " — above base: the market prices better than the base case"
+    : w > 1 ? " — below bear: the market prices worse than the bear case" : "";
+  return `<div class="uw-odds">Market-implied bear weight at ${escapeHtml(fmtPrice(mark.current_price))}
+    (${escapeHtml(fmtDate(mark.current_date))}) =
+    (base ${escapeHtml(fmtPrice(base.valuePerShare))} − spot) ÷ (base − bear ${escapeHtml(fmtPrice(bear.valuePerShare))})
+    = <b>${(w * 100).toFixed(0)}%</b>${escapeHtml(note)} <span class="muted">— derived from this
+    grid at a committed mark; not a forecast.</span></div>`;
 }
 
 // the 3-leg matrix: assumptions → value/share → cross-checks. Bull column takes .est-col (the
@@ -182,7 +212,7 @@ function inputsDetails(c) {
 
 // uwCard(cardJson) -> HTML string. `ticker:false` drops the ticker from the eyebrow when the host
 // page already carries it as its h1 (the dossier degrade).
-export function uwCard(c, { ticker = true } = {}) {
+export function uwCard(c, { ticker = true, mark = null } = {}) {
   if (!c) return "";
   const v = c.verdict || {};
   const recipe = [c.recipeId ? c.recipeId.split("_")[0] : "", c.multipleBasis]
@@ -198,6 +228,7 @@ export function uwCard(c, { ticker = true } = {}) {
     ${fact("Spot", `${mono(fmtPrice(c.spot))}
       ${c.spotSource ? citeMark(c.spotSource) : ""}`)}
     ${legsTable(c)}
+    ${impliedOdds(c, mark)}
     ${methodFact(c)}
     ${v.rationale ? fact("Rationale", escapeHtml(v.rationale)) : ""}
     ${trig ? fact("Re-underwrite when", `<ul class="kv-list">${trig}</ul>`) : ""}`;
