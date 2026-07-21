@@ -3822,26 +3822,55 @@ re-anchor (the full STATE split stays its own queued task — nothing was reloca
    its evidence window, and stamp what window it read. (The §7 print-freshness gate and the
    monitor's freshness panel cover verdicts manually until this exists.)
 2. **Shared `annual_series` alias fix** — GATES `attach_midcycle`.
-3. **sweep.json build guard** — `emit_radar_sweep` re-seeds the committed bar to 2026-06-17
-   whenever the component-a manifest is absent from the running worktree (INCIDENT #4: reverted
-   by hand three times, incl. 2026-07-21). The build should REFUSE to overwrite a
-   manifest-derived bar with a seeded one, not silently downgrade it.
-4. **R2 recipe** (for NCNO / MVST / FUBO / AORT — names R1's positivity guard rejects).
+3. **R2 recipe** (for NCNO / MVST / FUBO / AORT — names R1's positivity guard rejects).
 
 **ANALYST / OPERATOR**
-5. **EPAM underwrite** — in flight.
-6. **BRBR / CNXC / VITL dispositions** — dossiers built, no verdict.
-7. **WERN ratifications (3):** the three draft `method` sentences; the Dedicated-mix ref basis
-   (51.5%→73% — name the filing); and the "12–14% peaks" prose vs the verified 9.59/11.31/9.82%.
-8. **Truckload freeze-source re-run** — confirm the surgically-patched
+4. **EPAM underwrite** — in flight.
+5. **BRBR / CNXC / VITL dispositions** — dossiers built, no verdict.
+6. **Truckload freeze-source re-run** — confirm the surgically-patched
    `frontend/themes/truckload-supply-purge.json` reproduces byte-identical from the freeze.
-9. **`extract_points` first-alias-wins truncation** — operator decision, open since 2026-07-16.
-10. **Sweep-#2 fail-closed coverage holes (2)** — operator decision, report-only.
-11. **Drafting-rubric v2 validation — DATED 2026-08-13** (pre-registered; do not run early).
+7. **`extract_points` first-alias-wins truncation** — operator decision, open since 2026-07-16.
+8. **Sweep-#2 fail-closed coverage holes (2)** — operator decision, report-only.
+9. **Drafting-rubric v2 validation — DATED 2026-08-13** (pre-registered; do not run early).
 
 **HOUSEKEEPING**
-12. **Refresh cadence → docs/RUNBOOKS.md** (it is operating practice, not state).
-13. **Full STATE split** — §5 build records → a fossils/decisions file; this block is the interim.
+10. **Refresh cadence → docs/RUNBOOKS.md** (it is operating practice, not state).
+11. **Full STATE split** — §5 build records → a fossils/decisions file; this block is the interim.
+
+**CLOSED by the 2026-07-21 WERN ratification run:** all three operator rulings recorded on
+`scenarios/WERN.json` under the visible-amendment discipline (result / facts / scenario
+numbers / verdict byte-identical; only the ruled items + tags changed). **Two premises in
+the brief were WRONG and are corrected here rather than pattern-matched through:**
+(1) there were NO `DRAFT — ratify at review` markers to strip — that was an IT-convention
+carry-over; WERN's three method sentences came from the #164 build as clean prose, were
+read for conformance to the ratified methodology, and are now stamped
+`ratified_by=analyst, ratified=2026-07-21` (the optional fields PR #161 already added to
+`AssumptionDerivation` — no schema change). (2) the current Dedicated-mix reference was
+mis-attributed: it stored **73.0% sourced to the FY2025 10-K**, but that filing's full-year
+mix is **64.46%** (1,149,550 / (1,149,550 + 633,853)) and it carries **no ~73% figure on any
+basis**. The ~73% is the **Q1-2026 quarter** — 371,880 / (371,880 + 136,401) = **73.16%**,
+10-Q acc 0000793074-26-000096 — now the stored value (73.2) and source. FY2018's 51.5% was
+recomputed and reproduces at **51.46%** (FY2019 10-K acc 0000793074-20-000014), basis
+stamped. The bull reason's "12–14% peaks" is scoped to TTS-SEGMENT level (consolidated
+record 9.59/11.31/9.82%). Thesis logic and every number untouched.
+**COUPLING SURFACED (bears on the Truckload freeze-source re-run, still open):**
+`frontend/themes/truckload-supply-purge.json` EMBEDS a copy of WERN's scenario card, and
+`test_emit_scenarios_matches_theme_embedded_card_and_is_deterministic` enforces ONE SHAPE
+between it and `scenarios/WERN.json` — so amending the record desynced the theme file and
+reddened the suite. The re-seed guard (correctly) refused to regenerate the theme JSON here
+because its freeze source is absent from this worktree, so the embedded card was re-emitted
+MECHANICALLY through the same `_scenario_card()` the emitter uses (never hand-typed): +5/-5
+lines, the identical ruled items. This ADDS to what the freeze-source re-run must reproduce
+byte-identical — that item now covers two surgical patches, not one.
+
+**CLOSED by the 2026-07-21 mirror re-seed guard:** the sweep.json build guard
+(`_preserve_unless_source`) — a generated artifact whose SOURCE is absent in the running
+worktree is now left BYTE-UNTOUCHED and announced as `SKIPPED <artifact>: source absent`;
+it fails loud only when the artifact is ALSO missing (nothing to preserve). Applied to
+sweep.json, the theme freezes and the radar inbox/log from ONE helper, so the discipline
+cannot drift between emitters. Pinned both ways
+(`test_mirror_reseed_guard_leaves_sweep_byte_identical_without_manifest`,
+`test_mirror_reseed_guard_fails_loud_when_nothing_to_preserve`).
 
 **CLOSED by the 2026-07-21 monitor build:** position monitor (book vs benchmarks, spread,
 freshness panel) · benchmark-by-cap-band assignment + the ledger-supersession artifact · the
