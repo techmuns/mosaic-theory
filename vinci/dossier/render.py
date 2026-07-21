@@ -131,10 +131,62 @@ def _endnote_scope(fn: Callable[_P, str]) -> Callable[_P, str]:
     return wrapper
 
 
+
+# --- (declutter P3) display transforms — reader-register curation of machine-composed strings.
+# Display-ONLY: every transform leaves dossier.json untouched; each is mirrored in dossier.js.
+_F4_CODES = re.compile(r"other ((?:[A-Z]×\d+/?)+)$")
+
+
+def _fmt_insider(v: Any) -> str:
+    """'other F×46/G×6/J×34/M×56' → 'other filings 142' — raw Form-4 transaction codes are machine
+    dialect; the per-code split stays in dossier.json."""
+    text = str(v)
+    m = _F4_CODES.search(text)
+    if not m:
+        return text
+    total = sum(int(n) for n in re.findall(r"×(\d+)", m.group(1)))
+    return text[: m.start()] + f"other filings {total}"
+
+
+def _fmt_customers(v: Any) -> str:
+    """A raw relationship dump ('A (KOSE:X) — the name · Client Services · src: …; B …') → a count.
+    The Brief already treats raw customer names as noise; the roster stays in dossier.json."""
+    text = str(v)
+    if "src:" not in text:
+        return text
+    n = len([seg for seg in text.split(";") if seg.strip()])
+    return (f"{n} mapped client relationship(s) — roster in JSON; concentration %, when disclosed, "
+            "is the 10-Q read above")
+
+
+def _fmt_shape(v: Any) -> str:
+    """Strip bare 8-K item codes ('earnings (2.02) + Reg-FD (7.01)') — the filing block below names
+    the item types in words."""
+    return re.sub(r"\s*\((\d\.\d{2})\)", "", str(v))
+
+
+def _fmt_guide_verification(v: Any) -> str:
+    """'guide verification (revenue): CIQ 6405.0–6405.0 vs release QUALITATIVE → plausibility flag;
+    render the qualitative growth line' → the label duplicate, the degenerate range, and the
+    trailing render-instruction are machine dialect."""
+    text = str(v)
+    text = re.sub(r"^guide verification \(([^)]+)\):\s*", r"\1: ", text)
+    text = re.sub(r"\b(\d[\d,.]*)–\1\b", r"\1", text)
+    return re.sub(r";\s*render the [^;]+$", "", text).strip()
+
+
+def _clean_note(note: str) -> str:
+    """Reader-register cleanup of machine-composed UNKNOWN/MISSING reasons (display-only)."""
+    out = note
+    out = re.sub(r"\s*for 8-Ks \['([^']+)'\]", r" for the filed 8-K \1", out)
+    out = out.replace("Credit Health Panel: scale direction ambiguous — not rendered",
+                      "credit-health panel scale is ambiguous in the export")
+    return out
+
 def _fact(label: str, s: Sourced[Any], fmt: Callable[[Any], str] = str) -> str:
     if s.status is SourceStatus.PRESENT:
         return f"- **{label}:** {fmt(s.value)}{_cite(s.source_ref)}"
-    return f"- **{label}:** _{s.status.value.upper()}_ — {s.note}"
+    return f"- **{label}:** _{s.status.value.upper()}_ — {_clean_note(str(s.note))}"
 
 
 def _sourced_str(s: Sourced[Any]) -> str:
@@ -210,22 +262,36 @@ def _asof_header(s: Sourced[Any]) -> str:
     return f"export date unverified (data ≥ {v[1:]})" if v.startswith("≥") else f"as-of {v}"
 
 
+# (declutter P2) the HEADLINE horizon metrics — the ones the synthesis actually argues from.
+# Interest expense / EBT / the GAAP-vs-excl-excep net-income splits made an 18-row wall; they stay
+# machine-complete in dossier.json, counted here.
+_HORIZON_KEEP = re.compile(r"^(Revenue|EBITDA|EBIT|EPS)\b", re.IGNORECASE)
+
+
 def _horizon_lines(s: Sourced[Any]) -> list[str]:
-    """(4a) Horizon read: non-zero breadth rows first; rows with ZERO breadth across ALL windows
-    collapse to one line. The full grid stays in dossier.json."""
+    """(4a · declutter P2) Horizon read: HEADLINE metrics with non-zero breadth first; zero-breadth
+    rows collapse to one line; non-headline metrics are counted, not printed. The full grid stays
+    in dossier.json."""
     label = "Horizon read (FQ — next-2Q revision breadth)"
     if s.status is not SourceStatus.PRESENT or not s.value:
         return [_fact(label, s)]
     nonzero: list[str] = []
     zero: list[str] = []
+    skipped = 0
     for seg in (seg.strip() for seg in _body(str(s.value)).split("; ")):
-        if seg:
-            (nonzero if re.search(r"[1-9]\d*[↑↓]", seg) else zero).append(seg)
+        if not seg:
+            continue
+        if not _HORIZON_KEEP.match(seg):
+            skipped += 1
+            continue
+        (nonzero if re.search(r"[1-9]\d*[↑↓]", seg) else zero).append(seg)
     out = [f"- **{label}** — {_cite_inline(s.source_ref)}:"]
     out += [f"  - {seg}" for seg in nonzero]
     if zero:
         labels = ", ".join(seg.split(":", 1)[0] for seg in zero)
         out.append(f"  - _no revisions in any window: {labels}_")
+    if skipped:
+        out.append(f"  - _+{skipped} non-headline metric rows in JSON_")
     return out
 
 
@@ -344,8 +410,9 @@ def _catalyst_section(m: MechanicalLayer) -> list[str]:
             _fact("Surprise history (beat/miss)", m.consensus_context.surprise_history),
         ]
     else:
-        hdr = f"### The street — estimates & guidance ({_asof_header(cp.as_of)})"
+        hdr = "### The street — estimates & guidance"
         out.append(hdr)
+        out.append(f"_{_asof_header(cp.as_of)}_")
         out += _horizon_lines(cp.horizon_read)
         out.append(_fact("Acceleration read (monthly consensus path)", cp.acceleration_read))
         out += _ladder_lines(cp.cross_name_anchor)
@@ -357,7 +424,8 @@ def _catalyst_section(m: MechanicalLayer) -> list[str]:
         # (F) positioning inputs — free DATED feeds; rendered only when present (pre-F JSON
         # has neither field → None → not rendered). Counts / shares / dates only, no interpretation.
         if cp.insider_activity is not None:
-            out.append(_fact("Insider activity (Form 4, 6m)", cp.insider_activity))
+            out.append(_fact("Insider activity (Form 4, 6m)", cp.insider_activity,
+                             _fmt_insider))
         if cp.short_interest is not None:
             out.append(_fact("Short interest (FINRA)", cp.short_interest))
     out.append("")  # (D1) the management-commentary pointer moved OUT of here, into the appendix
@@ -469,9 +537,13 @@ def _peer_grid_lines(s: Sourced[Any]) -> list[str]:
     return _table(label, s.source_ref, cols, trows, name_rows=frozenset(name_rows))
 
 
-def _multiples_lines(s: Sourced[Any]) -> list[str]:
-    """(B4) Trading multiples → the shared table (multiple × Name/Low/Median/Mean/High)."""
-    label = "Trading multiples (name vs peer Low/Median/Mean/High · LTM+NTM)"
+def _multiples_lines(s: Sourced[Any], *, grid_present: bool = False) -> list[str]:
+    """(B4 · declutter P2) Trading multiples → the shared table. When the per-peer grid renders on
+    the same page, the LTM rows here are its summary statistics restated (the grid carries every
+    peer AND its own median row) — so only the FORWARD (NTM) rows survive, which exist nowhere
+    else. Without the grid, the full table stands."""
+    label = ("Forward multiples (name vs peer Low/Median/Mean/High · NTM)" if grid_present
+             else "Trading multiples (name vs peer Low/Median/Mean/High · LTM+NTM)")
     if s.status is not SourceStatus.PRESENT or not s.value:
         return [_fact(label, s)]
     body, note = _split_note(str(s.value))
@@ -484,6 +556,8 @@ def _multiples_lines(s: Sourced[Any]) -> list[str]:
         )
         if m:
             rows.append(list(m.groups()))
+    if grid_present:
+        rows = [r for r in rows if r[0].strip().upper().startswith("NTM")]
     if not rows:
         return [_fact(label, s)]
     return _table(label, s.source_ref, ["Name", "Low", "Median", "Mean", "High"], rows, note)
@@ -554,14 +628,16 @@ def _leverage_block(m: MechanicalLayer) -> list[str]:
         _fact("Net debt / OCF", m.quality.net_debt_to_ocf, _mult),
         _fact("Net debt / EBITDA (fwd-adj covenant basis)", m.quality.net_debt_to_ebitda_adjusted),
         _fact("Interest coverage", lv.interest_coverage, _mult),
-        _fact("Survival (self-funding + nearest wall)", lv.survival),
     ]
-    # (RC-1 C) the two-input self-funding read SUPERSEDES the one-input survival claim above —
-    # placed adjacent so the correction is unmissable (MVST 'self-funding' is actually MIXED).
+    # (declutter P1) when the two-input self-funding read exists it REPLACES the one-input survival
+    # claim — the dossier used to print the weaker line and then a second line announcing that the
+    # next one superseded it. Print the superseding read alone; the one-input line renders only for
+    # a pre-RC-1 dossier that has nothing better.
     ps = m.primary_source
     if ps is not None and ps.self_funding.status is SourceStatus.PRESENT:
-        lines.append(_fact("Self-funding — two-input read (supersedes the line above)",
-                           ps.self_funding))
+        lines.append(_fact("Self-funding (two-input: latest-Q OCF + LTM FCF)", ps.self_funding))
+    else:
+        lines.append(_fact("Survival (self-funding + nearest wall)", lv.survival))
     return [*lines, *_credit_health_lines(lv), ""]
 
 
@@ -590,15 +666,16 @@ def _event_impact_lines(m: MechanicalLayer) -> list[str]:
 
 
 def _primary_source_block(m: MechanicalLayer) -> list[str]:
-    """(RC-1 C) Primary-source cross-checks — the four cross-source derivations over the actual 8-K
-    releases + latest 10-Q vs the CIQ/EDGAR panel. Decision data → MAIN BODY. Going-concern LEADS
-    unsoftened when doubt is stated, else the CHECKED-ABSENCE ('none in latest 10-Q'). Empty for a
-    pre-RC-1 dossier.json (primary_source absent)."""
+    """(RC-1 C · declutter P2) The DECISION cross-checks from the filings — going concern (leads
+    unsoftened when doubt is stated, else the checked-absence), the EBITDA-basis triangulation, and
+    the 10-Q customer concentration. The pure VERIFICATION flags (wall coherence, guide
+    verification) moved to the appendix (:func:`_verification_lines`) — they audit the assembly,
+    they do not inform the verdict. Empty for a pre-RC-1 dossier.json."""
     ps = m.primary_source
     if ps is None:
         return []
     fil = ps.filing
-    out = ["### Primary-source cross-checks (8-K releases + latest 10-Q vs CIQ panel)", ""]
+    out = ["### Filing cross-checks — going concern · leverage basis", ""]
     gc = fil.going_concern if fil is not None else None
     if gc is not None and gc.substantial_doubt:  # doubt LEADS, unsoftened
         out += [f"- **⚠ Going concern — SUBSTANTIAL DOUBT:** {gc.verbatim}{_cite(gc.source_ref)}",
@@ -608,13 +685,11 @@ def _primary_source_block(m: MechanicalLayer) -> list[str]:
                    f"{_cite_inline(fil.source_ref)}")
     else:
         out.append("- **Going-concern language:** _UNKNOWN_ — latest 10-Q not parsed")
-    out.append(_fact("Wall coherence — filing ≤12m vs CIQ panel (same window)", ps.wall_coherence))
     tri_val = ps.basis_triangulation.value
     if tri_val is not None:  # multi-line → bold header + sub-bullets
         tri = tri_val.split("\n")
         out.append(f"- **{tri[0]}**{_cite(ps.basis_triangulation.source_ref)}")
         out += [f"  - {row.strip()}" for row in tri[1:] if row.strip()]
-    out.append(_fact("Guide verification — CIQ guide vs release", ps.guide_verification))
     cc = fil.concentration if fil is not None else None
     if cc is not None and cc.customers:
         out.append(f"- **Customer concentration (latest 10-Q):**{_cite(cc.source_ref)}")
@@ -625,6 +700,21 @@ def _primary_source_block(m: MechanicalLayer) -> list[str]:
         if cc.terms:
             out.append(f"  - order terms: {cc.terms}")
     return [*out, ""]
+
+
+def _verification_lines(m: MechanicalLayer) -> list[str]:
+    """(declutter P2) Assembly-verification flags — wall coherence and guide verification check the
+    ASSEMBLY against the filings; they belong with the audit tier, not between decision sections."""
+    ps = m.primary_source
+    if ps is None:
+        return []
+    return [
+        "### Assembly verification — filing vs panel",
+        _fact("Wall coherence — filing ≤12m vs CIQ panel (same window)", ps.wall_coherence),
+        _fact("Guide verification — CIQ guide vs release", ps.guide_verification,
+              _fmt_guide_verification),
+        "",
+    ]
 
 
 def _musd(v: float | None) -> str:  # a $M principal → "$25.0M", or "–"
@@ -673,7 +763,10 @@ def _maturity_wall_lines(cs: Any, reference_date: date) -> list[str]:
     for yr, grp in groupby(sorted(later, key=bykey), key=lambda x: x[0].year):
         out.append(f"  - due {yr}: {_musd(dtot(list(grp)))}")
     if undated:
-        detail = ", ".join(f"{i.description[:26]} {_musd(i.principal_musd)}" for i in undated)
+        # word-boundary cap (the old [:26] cut mid-word: "Operating Lease Liabilitie")
+        def _short(name: str, cap: int = 34) -> str:
+            return name if len(name) <= cap else name[:cap].rsplit(" ", 1)[0] + "…"
+        detail = ", ".join(f"{_short(i.description)} {_musd(i.principal_musd)}" for i in undated)
         undated_tot = sum(i.principal_musd or 0.0 for i in undated)
         out.append(
             f"  - undated (floor — no panel maturity): {_musd(undated_tot)} — {detail}")
@@ -894,9 +987,15 @@ def _capital_structure_lines(cs: Any, reference_date: date) -> list[str]:
         moved = len(inst.value) - len(near)
         note = (f"{moved} undated / later aggregate line item(s) in the appendix panel"
                 if moved else "")
-        out += _table(f"Live instruments — near-dated (≤12m + {reference_date.year + 1}) — panel "
-                      f"{cs.detail_as_of}", inst.source_ref, _CS_COLS,
-                      [_instrument_row(i) for i in near], note=note, num_cols=_CS_NUM)
+        if near:
+            out += _table(f"Live instruments — near-dated (≤12m + {reference_date.year + 1}) — "
+                          f"panel {cs.detail_as_of}", inst.source_ref, _CS_COLS,
+                          [_instrument_row(i) for i in near], note=note, num_cols=_CS_NUM)
+        else:
+            # (declutter) no tranche due in the window → say so; never an all-header empty table
+            out.append(f"- **Live instruments — near-dated (≤12m + {reference_date.year + 1}):** "
+                       f"none due in the window — {note or 'full panel in the appendix'}"
+                       f"{_cite(inst.source_ref)}")
     else:
         out.append(_fact("Capital structure (instruments)", inst))
     out += _maturity_wall_lines(cs, reference_date)
@@ -1070,9 +1169,8 @@ def _implied_expectations_lines(v: Any) -> list[str]:
     out = [
         f"- **What the current price implies (at stated multiples)** — "  # (K4) human-facing rename
         f"{_gate_shortref(ie.heterogeneity_gate)}",
-        "  - _price-implied fundamental levels at stated multiples — the human judges earned vs "
-        "residual; identity (†): at the name's own multiple the implied level IS consensus._",
-        f"  - _TEV as-of {ie.tev_as_of} · multiples as-of {ie.multiples_as_of}_",
+        f"  - _TEV as-of {ie.tev_as_of} · multiples as-of {ie.multiples_as_of} · † at the name's "
+        "own multiple the implied level is consensus by identity_",
     ]
     # rows carry the row-LABEL (the multiple's name) + one cell PER column — `_table` prepends a
     # blank header for the label, so each row must have len(cols)+1 cells: [label, multiple, level].
@@ -1087,24 +1185,19 @@ def _implied_expectations_lines(v: Any) -> list[str]:
     out += _table(
         "Price-implied levels (at each stated multiple)", ie.tev.source_ref,
         ["Multiple (× used)", "Implied level"], rows, name_rows=name_rows)
-    out.append("  - _Reads AGAINST the consensus path anchors below — juxtapose the price-implied "
-               "level vs consensus per metric; never subtract one from the other._")  # (K4)
+
     # (audit) H7/P8 made BOTH EBITDA and Revenue anchors UNKNOWN-able — they read the DIRECT
     # Estimates→Trends levels (may lack FY26/FY27), so show the NOTE via _sourced_str, never bare
     # "None". rev_anchors is guarded the same way (no longer the always-PRESENT ladder).
-    out.append(
-        "- **Consensus path anchors (EBITDA — juxtapose, do NOT difference):** "
-        f"{_sourced_str(ie.anchors)}")
+    out.append(f"- **Consensus path anchors (EBITDA):** {_sourced_str(ie.anchors)}")
     if ie.rev_anchors is not None:  # the parallel revenue anchors substantiate the TEV/Rev identity
-        out.append(
-            "- **Consensus path anchors (Revenue — juxtapose, do NOT difference):** "
-            f"{_sourced_str(ie.rev_anchors)}")
-    out.append(f"  - _{'⚠ ' if not ie.vintage_coherent else ''}{ie.coherence_note}_")
+        out.append(f"- **Consensus path anchors (Revenue):** {_sourced_str(ie.rev_anchors)}")
+    # (declutter) the coherence SELF-CHECK prints only when it FAILS — a passing
+    # residual-within-tolerance line is assembly QA, not analysis. Same for net-debt.
+    if not ie.vintage_coherent:
+        out.append(f"  - _⚠ {ie.coherence_note}_")
     if not ie.net_debt_reconciled:
         out.append("  - _⚠ net-debt disagrees with the cash/debt bridge — see the TEV source_")
-    out.append(
-        "  - _Fixed multiple set (declared in code, no per-name curation): name NTM + peer-median "
-        "NTM/LTM, on TEV/EBITDA and TEV/Rev._")
     out.append("")
     return out
 
@@ -1138,13 +1231,19 @@ def _implied_lines(iv: Any) -> list[str]:
     return out
 
 
+def _all_none_row(cells: list[str]) -> bool:
+    """A row whose every cell literally reads 'none' carries no information — the label's absence
+    IS the fact, and six cells of 'none' are furniture (IT's Dividend/sh row)."""
+    return bool(cells) and all(str(c).strip().lower() == "none" for c in cells)
+
+
 def _fin_table_lines(label: str, s: Sourced[Any]) -> list[str]:
     """A Sourced[FinTable] → the shared markdown table (columns → header, each row's [label, *cells]
     → a data row). UNKNOWN/MISSING falls back to the standard fact line."""
     if s.status is not SourceStatus.PRESENT or not s.value:
         return [_fact(label, s)]
     ft = s.value
-    rows = [[r.label, *r.cells] for r in ft.rows]
+    rows = [[r.label, *r.cells] for r in ft.rows if not _all_none_row(list(r.cells))]
     return _table(label, s.source_ref, ft.columns, rows, ft.note)
 
 
@@ -1222,6 +1321,7 @@ def _caveat_block(c: str) -> list[str]:
     """(D4) A guardrail caveat renders in the what / where / why-it-matters / how-to-verify shape,
     the offending sentence IN FULL. A mechanical / 'pull CIQ …' caveat is already a complete
     advisory sentence, so it stays a single full-sentence bullet (no forced split)."""
+    c = c.replace("evidence_balance", "the written assessment")  # committed strings, any variant
     m = _CAVEAT_RE.match(c)
     if not m:
         return [f"- {c}"]
@@ -1325,14 +1425,32 @@ def _trajectory_table_lines(m: MechanicalLayer) -> list[str]:
     def _norm(p: str) -> str:
         return re.sub(r"\s*\((?:R|LTM)\)", "", re.sub(r"-\d{1,2}-", "-", p)).strip()
 
+    # (declutter P2) rows that DUPLICATE another table on the same page are dropped: the
+    # revenue/EBITDA/EBITDA-margin series are cell-identical to the financial summary (which now
+    # carries the FULL history), and ROIC is cell-identical to the return-ratios RoCE row directly
+    # beneath this table. Each drop is CONDITIONAL on the duplicating table being present, so a
+    # dossier without a Ratios sheet keeps its ROIC here (fail-honest, never a silent hole).
+    fs_present = (m.financial_summary is not None
+                  and m.financial_summary.annual.status is SourceStatus.PRESENT)
+    rr_present = (m.return_ratios is not None
+                  and m.return_ratios.status is SourceStatus.PRESENT)
+    dup = (({"Revenue ($M)", "EBITDA ($M)", "EBITDA margin"} if fs_present else set())
+           | ({"ROIC"} if rr_present else set()))
     rows: list[list[str]] = []
     for disp, aliases in _TRAJ_ROWS:
+        if disp in dup:
+            continue
         series = next((merged[a] for a in aliases if a in merged), None)
         if series is not None:
             by_n = {_norm(p): v for p, v in series}
             rows.append([disp, *[by_n.get(_norm(p), "–") for p in periods]])
-    if not rows or not periods:  # nothing parsed → fall back to the raw text (back-compat)
-        pick = mt if mt.status is SourceStatus.PRESENT else my
+    if not rows or not periods:
+        if merged and periods:
+            # everything deduplicated away — keep the decision-relevant footnote, skip the table
+            frags0 = [f.strip() for n in notes for f in n.split(";") if f.strip()]
+            note0 = "; ".join(dict.fromkeys(frags0))
+            return [f"- _{yoy}. {note0}_" if yoy else f"- _{note0}_"] if (yoy or note0) else []
+        pick = mt if mt.status is SourceStatus.PRESENT else my  # nothing parsed → raw (back-compat)
         return [_fact("Trajectory (revenue · EBITDA · margins · ROIC)", pick)]
     cols = [re.sub(r"-\d{1,2}-", "-", p) for p in periods]  # "Dec-31-2021"→"Dec-2021"; keep markers
     # (N6) dedupe the footnote at the SEMICOLON-FRAGMENT level — both parent notes lead with
@@ -1755,7 +1873,7 @@ def _brief_lines(d: Dossier, *, show_proposal: bool = False) -> list[str]:
     # broke. Full event log + filings stay in Analysis.
     out.append("## What happened")
     if m.drawdown_cause is not None:
-        out.append(_fact("Shape", m.drawdown_cause.shape))
+        out.append(_fact("Shape", m.drawdown_cause.shape, _fmt_shape))
     io = m.idiosyncratic_vs_shared
     if io is not None and io.name_180d_return.status is SourceStatus.PRESENT:
         out.append(_fact("Price (180d)", io.name_180d_return, _pct))
@@ -1921,10 +2039,13 @@ def render_markdown(d: Dossier, *, dev: bool = False, show_proposal: bool = Fals
 
     # (D1·§1) Drawdown cause & idiosyncrasy — CLUBBED: what happened, and did it happen alone?
     out.append("### What broke — and did it fall alone?")
-    out += [
-        _fact("Shape", m.drawdown_cause.shape),
-        _fact("Gap-down dates", m.drawdown_cause.gap_down_dates, _dates),
-    ]
+    out.append(_fact("Shape", m.drawdown_cause.shape, _fmt_shape))
+    # (declutter) the dates row repeats the shape line whenever every date already appears there
+    gd = m.drawdown_cause.gap_down_dates
+    shape_v = m.drawdown_cause.shape
+    if not (gd.status is SourceStatus.PRESENT and shape_v.status is SourceStatus.PRESENT
+            and all(str(d) in str(shape_v.value) for d in (gd.value or []))):
+        out.append(_fact("Gap-down dates", gd, _dates))
     if m.drawdown_cause.filings:
         out.append("- **Gap-downs — what the results showed (parsed EX-99.1) + the 8-K:**")
         for f in m.drawdown_cause.filings:
@@ -1940,22 +2061,29 @@ def render_markdown(d: Dossier, *, dev: bool = False, show_proposal: bool = Fals
                     out.append(f"    - {ev}")
     out.append(_fact("Revised guidance", m.drawdown_cause.revised_guidance))
     out += _event_impact_lines(m)  # (RC-1 C) Avis-class event-impact quantifications
-    out += [
-        "",
-        "_Did it happen alone? (idiosyncratic vs shared — the G2-vs-market compensation):_",
-        _fact("Name 180d return", m.idiosyncratic_vs_shared.name_180d_return, _pct),
-        _fact("Market (IWM) 180d return", m.idiosyncratic_vs_shared.market_180d_return, _pct),
-        _fact("Relative vs market", m.idiosyncratic_vs_shared.rel_vs_market, _pct),
-        _fact("Cohort read", m.idiosyncratic_vs_shared.read),
-    ]
-    cohort = m.idiosyncratic_vs_shared.cohort
+    io = m.idiosyncratic_vs_shared
+    out += ["", "_Company-specific or market-wide?_",
+            _fact("Name 180d return", io.name_180d_return, _pct)]
+    # (declutter P1) an "UNKNOWN — benchmark bars unavailable" market row directly above a PRESENT
+    # relative-vs-market number reads as a contradiction (if relative is known, the market read
+    # existed at assembly). Show the market row only when it carries a value or the relative is
+    # absent too — the honest-absence case.
+    if (io.market_180d_return.status is SourceStatus.PRESENT
+            or io.rel_vs_market.status is not SourceStatus.PRESENT):
+        out.append(_fact("Market (IWM) 180d return", io.market_180d_return, _pct))
+    out.append(_fact("Relative vs market", io.rel_vs_market, _pct))
+    cohort = io.cohort
     if cohort.status is SourceStatus.PRESENT and cohort.value:
+        out.append(_fact("Cohort read", io.read))
         out.append(f"- **Graph cohort** (`{cohort.source_ref}`):")
         for cm in cohort.value:
             ret = f"{cm.ret_180d:.0%}" if cm.ret_180d is not None else "no bars"
             out.append(f"  - [{cm.hops}h] {cm.ticker}: {ret} · via {cm.via}")
     else:
-        out.append(_fact("Graph cohort", cohort))
+        # (declutter) ONE row for one absence — "Cohort read UNKNOWN" + "Graph cohort UNKNOWN"
+        # said the same thing twice, one of them citing an internal filename
+        out.append("- **Supplier/customer cohort:** none mapped for this name — the comparison "
+                   "is vs the market only")
     out.append("")
 
     # (D1·§2) Leverage & survival — the survival story in one place (+ FCF + liquidity).
@@ -1963,10 +2091,13 @@ def render_markdown(d: Dossier, *, dev: bool = False, show_proposal: bool = Fals
         out += _leverage_block(m)  # ### Leverage & survival (unified) …
     else:  # pre-B2 JSON: the quality leverage lines under the same header
         out += ["### Leverage & survival", *_quality_leverage_lines(m)]
-    out += [
-        _fact("FCF sign", m.quality.fcf_sign, _signword),
-        _fact("Free cash flow ($M)", m.quality.free_cash_flow),
-    ]
+    # (declutter P1) "FCF sign: UNKNOWN" directly above a present FCF value read as a
+    # contradiction — the sign is derivable from the number on the same surface. The sign row
+    # renders only when it carries a value or the FCF value itself is absent.
+    if (m.quality.fcf_sign.status is SourceStatus.PRESENT
+            or m.quality.free_cash_flow.status is not SourceStatus.PRESENT):
+        out.append(_fact("FCF sign", m.quality.fcf_sign, _signword))
+    out.append(_fact("Free cash flow ($M)", m.quality.free_cash_flow))
     # (E1/E2) structured capital structure + maturity wall replace the flat liquidity string; pre-E
     # dossier.json falls back to the legacy Quality.liquidity_covenant_flags line.
     if m.capital_structure is not None:
@@ -1979,7 +2110,7 @@ def render_markdown(d: Dossier, *, dev: bool = False, show_proposal: bool = Fals
 
     # (D1·§3 · D2) Operating trajectory — the merged margin/multi-year table + share-count trend
     # + (tier redesign) the per-period return-ratios table, moved here from the Brief.
-    out.append("### Operating trajectory (revenue · EBITDA · margins · ROIC)")
+    out.append("### Operating trajectory")
     out += _trajectory_table_lines(m)
     out.append(_fact("Share-count trend", m.quality.share_count_trend))
     if m.return_ratios is not None and m.return_ratios.status is SourceStatus.PRESENT:
@@ -1991,9 +2122,11 @@ def render_markdown(d: Dossier, *, dev: bool = False, show_proposal: bool = Fals
     out.append("### Valuation & own-history")
     out.append(_fact("Cross-sectional (vs peers — the edge)", m.valuation.cross_sectional))
     out += _implied_expectations_lines(m.valuation)
+    # (declutter P1) the bare P/E and EV/EBITDA fact rows are GONE: both numbers already render
+    # inside tables that carry their context (the peer grid; the dated range line below), and the
+    # two sheets disagree by vintage (P/E 14.1 vs the comps grid's 13) — two values of one ratio
+    # with no reconciliation reads as a contradiction, not information.
     out += [
-        _fact("P/E", m.valuation.pe, _mult),
-        _fact("EV/EBITDA (GAAP TEV/LTM)", m.valuation.ev_ebitda, _mult),
         _fact("EV/EBITDA (adjusted, forward)", m.valuation.ev_ebitda_adjusted_fwd),
         _fact("Adjusted EPS (earnings power)", m.valuation.adjusted_eps),
         _fact("Own-history range position", m.valuation.range_position),
@@ -2008,7 +2141,8 @@ def render_markdown(d: Dossier, *, dev: bool = False, show_proposal: bool = Fals
     out.append("### Peer comps")  # (K5) discipline framing lives in the block body + source_refs
     out += _roster_lines(m.peer_comps.peer_set)
     out.append(_fact("Comparability (confidence gate)", m.peer_comps.comparability))
-    out += _multiples_lines(m.peer_comps.trading_multiples)
+    out += _multiples_lines(m.peer_comps.trading_multiples,
+                            grid_present=m.peer_comps.peer_grid is not None)
     out += _peer_grid_or_deltas(m.peer_comps)
     out.append("")
     # (K4) implied valuation is DEMOTED to the appendix (reference-only) — not in the main body.
@@ -2021,7 +2155,7 @@ def render_markdown(d: Dossier, *, dev: bool = False, show_proposal: bool = Fals
     out += [
         _fact("Segments (revenue share)", m.concentration.segments),
         _fact("Segments (EBITDA share — where profit sits)", m.concentration.segment_ebitda),
-        _fact("Customers", m.concentration.customers),
+        _fact("Customers", m.concentration.customers, _fmt_customers),
         _fact("Geographic", m.concentration.geographic),
         "",
     ]
@@ -2047,6 +2181,7 @@ def render_markdown(d: Dossier, *, dev: bool = False, show_proposal: bool = Fals
     if m.implied_valuation is not None:
         out += _implied_lines(m.implied_valuation)  # reference-only — its ONLY home
     out += _mgmt_commentary_lines(m)
+    out += _verification_lines(m)
     out += _record_reproduce_lines(d)
     out += _sources_section()  # (A2) the single document-end Sources list — every [n] resolves here
     return "\n".join(_dedupe_unknown_reasons(out))  # (H3) fold repeated UNKNOWN reasons

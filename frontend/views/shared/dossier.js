@@ -404,8 +404,18 @@ function orderPoints(pts) {  // stable sort by (tier, citation-class, emission i
 
 // (D2) merge 'Margin trend' + 'Multi-year trajectory' into ONE table (reuse parseSeries). Rows keyed
 // by canonical label (revenue/EBITDA identical across the two → no drift); footnote fragments deduped.
-function trajectoryTable(q) {
-  const label = "Trajectory (revenue · EBITDA · margins · ROIC)";
+function trajectoryTable(q, m = {}) {
+  const label = "Trajectory (per period)";
+  // (declutter P2) rows that duplicate another table on this page are dropped — revenue/EBITDA/
+  // EBITDA margin are cell-identical to the financial summary; ROIC to the return-ratios RoCE row.
+  // Conditional on those tables being present (a dossier without them keeps its rows here).
+  const fsPresent = !!(m.financial_summary && m.financial_summary.annual
+    && m.financial_summary.annual.status === "present");
+  const rrPresent = !!(m.return_ratios && m.return_ratios.status === "present");
+  const dup = new Set([
+    ...(fsPresent ? ["Revenue ($M)", "EBITDA ($M)", "EBITDA margin"] : []),
+    ...(rrPresent ? ["ROIC"] : []),
+  ]);
   const srcs = [q.margin_trend, q.multi_year_trajectory].filter((s) => s && s.status === "present" && s.value != null);
   if (!srcs.length) return fact(label, q.margin_trend || q.multi_year_trajectory);
   const byLabel = new Map(); const scalars = []; const notes = []; const periods = [];
@@ -426,7 +436,7 @@ function trajectoryTable(q) {
   const order = Object.keys(DISP);
   const seen = new Set(); const rows = [];
   for (const key of order) {
-    if (!byLabel.has(key) || seen.has(DISP[key])) continue;
+    if (!byLabel.has(key) || seen.has(DISP[key]) || dup.has(DISP[key])) continue;
     seen.add(DISP[key]);
     const sr = byLabel.get(key);
     const by = Object.fromEntries(sr.points.map((pt) => [String(pt.period).replace(/\s*\((?:R|LTM)\)/i, "").trim(), pt]));
@@ -439,6 +449,10 @@ function trajectoryTable(q) {
   for (const n of notes) for (const f of n.split(";")) { const t = f.trim(); if (t && !frags.includes(t)) frags.push(t); }
   let note = scalars.map((x) => `${x.label}: ${x.value}`).join(" · ");
   note = [note, frags.join("; ")].filter(Boolean).join(". ");
+  if (!rows.length) {
+    // everything deduplicated away — keep the decision-relevant footnote, skip the empty table
+    return note ? `<div class="muted" style="font-size:11.5px; margin:4px 0;">${escapeHtml(note)}</div>` : "";
+  }
   return dataTable(label, srcs[0].source_ref, periods.map(fmtPeriod), rows, note);
 }
 
@@ -732,7 +746,7 @@ function companyInner(d, m, narrative = "") {
 // NUMBERS (never both in one surface). Full event log + filings stay in Analysis.
 function whatHappened(m) {
   const dc = m.drawdown_cause || {};
-  const shape = (dc.shape && dc.shape.status === "present") ? fact("Shape", dc.shape) : "";
+  const shape = (dc.shape && dc.shape.status === "present") ? fact("Shape", dc.shape, fmtShape) : "";
   const tiles = briefTilesGrid(m);
   if (!shape && !tiles) return "";
   return `<div class="card ds-section"><div class="ds-title">What happened<span class="ds-route">full event log in Analysis</span></div>
@@ -1219,12 +1233,38 @@ function valuationCard(m) {
   return `<div class="card ds-section"><div class="ds-title">Valuation — first cut<span class="ds-route">full multiples, implied levels &amp; the forward ladder in Analysis</span></div>${rng}${ownHistoryExhibit(m)}${cross}${comp}${cons}</div>`;
 }
 
+// --- (declutter P3) display transforms — JS twins of render.py's _fmt_* helpers. Display-ONLY:
+// dossier.json is untouched; each transform is mirrored across the two renderers.
+function fmtInsider(v) {
+  const m = /other ((?:[A-Z]×\d+\/?)+)$/.exec(String(v));
+  if (!m) return String(v);
+  const total = (m[1].match(/×(\d+)/g) || []).reduce((s, x) => s + Number(x.slice(1)), 0);
+  return String(v).slice(0, m.index) + `other filings ${total}`;
+}
+
+function fmtCustomers(v) {
+  const text = String(v);
+  if (!text.includes("src:")) return text;
+  const n = text.split(";").filter((x) => x.trim()).length;
+  return `${n} mapped client relationship(s) — roster in JSON; concentration %, when disclosed, `
+    + "is the 10-Q read above";
+}
+
+function fmtShape(v) { return String(v).replace(/\s*\(\d\.\d{2}\)/g, ""); }
+
+function cleanNote(note) {
+  return String(note)
+    .replace(/\s*for 8-Ks \['([^']+)'\]/, " for the filed 8-K $1")
+    .replace("Credit Health Panel: scale direction ambiguous — not rendered",
+             "credit-health panel scale is ambiguous in the export");
+}
+
 // (D1/R3) drawdown cause + idiosyncrasy under ONE section header (matches the md) — what happened,
 // and did it happen alone?
 function drawdownIdio(m) {
   const dd = drawdownCause(m.drawdown_cause), io = idioVsShared(m.idiosyncratic_vs_shared);
   if (!dd && !io) return "";
-  const divider = `<div class="ds-title" style="font-size:12px; margin-top:14px;">Did it happen alone? (idiosyncratic vs shared)</div>`;
+  const divider = `<div class="ds-title" style="font-size:12px; margin-top:14px;">Company-specific or market-wide?</div>`;
   return sec("What broke — and did it fall alone?",
     "The event(s) that broke the name, then whether it fell alone (idiosyncratic) or with its graph cohort.",
     dd + (io ? divider + io : ""));
@@ -1261,7 +1301,9 @@ function maturityWall(cs, refDate) {
   const byYr = {};
   for (const [m, i] of later) (byYr[m.slice(0, 4)] ||= []).push([m, i]);
   for (const yr of Object.keys(byYr).sort()) li.push(`<li>due ${yr}: ${_mM(sum(byYr[yr]))}</li>`);
-  if (undated.length) li.push(`<li>undated (floor — no panel maturity): ${_mM(sum(undated))} — ${undated.map((i) => `${escapeHtml(i.description.slice(0, 26))} ${_mM(i.principal_musd)}`).join(", ")}</li>`);
+  const shortName = (n, cap = 34) =>
+    (n.length <= cap ? n : n.slice(0, cap).split(" ").slice(0, -1).join(" ") + "…");
+  if (undated.length) li.push(`<li>undated (floor — no panel maturity): ${_mM(sum(undated))} — ${undated.map((i) => `${escapeHtml(shortName(i.description))} ${_mM(i.principal_musd)}`).join(", ")}</li>`);
   li.push(`<li class="muted"><i>reconciliation: itemized ${_mM(sum(inst.value))} (panel ${escapeHtml(cs.detail_as_of || "")}) vs the latest-quarter aggregates below — the gap is unitemized / newer term loans.</i></li>`);
   return `<div class="fact"><div class="fact-label">Maturity wall (deterministic, vs ${escapeHtml(refDate)})</div><ul class="kv-list">${li.join("")}</ul></div>`;
 }
@@ -1449,8 +1491,13 @@ function capitalStructureInner(cs, refDate) {
     const near = inst.value.filter((i) => i.maturity_date && Number(i.maturity_date.slice(0, 4)) <= refYearNext);
     const moved = inst.value.length - near.length;
     const note = moved ? `${moved} undated / later aggregate line item(s) in the appendix panel` : "";
-    table = dataTable(`Live instruments — near-dated (≤12m + ${refYearNext}) — panel ${cs.detail_as_of || ""}`,
-      inst.source_ref, _CS_COLS, near.map(instrumentRow), note);
+    // (declutter) zero tranches in the window → one honest line, never an all-header empty table
+    table = near.length
+      ? dataTable(`Live instruments — near-dated (≤12m + ${refYearNext}) — panel ${cs.detail_as_of || ""}`,
+          inst.source_ref, _CS_COLS, near.map(instrumentRow), note)
+      : fact(`Live instruments — near-dated (≤12m + ${refYearNext})`,
+          { status: "present", value: `none due in the window — ${note || "full panel in the appendix"}`,
+            source_ref: inst.source_ref });
   }
   // (P3) the verbatim maturity-resolution event, when captured (a pre-P3 JSON has no field → nothing)
   const matEv = cs.maturity_event && (cs.maturity_event.status !== "present" || cs.maturity_event.value)
@@ -1612,8 +1659,12 @@ function leverageSurvival(m, refDate) {
     fact("Net debt / EBITDA (covenant adj.)", q.net_debt_to_ebitda_adjusted) +
     fact("Survival capacity", q.survival_capacity) +
     fact("Interest coverage", q.interest_coverage, mult));
-  const cash = subhead("Cash & liquidity — self-funding, the survival input") +
-    fact("FCF sign", q.fcf_sign, signWord) + fact("Free cash flow ($M)", q.free_cash_flow) +
+  // (declutter P1) "FCF sign: UNKNOWN" above a present FCF value read as a contradiction
+  const fcfSign = (q.fcf_sign && q.fcf_sign.status === "present")
+    || !(q.free_cash_flow && q.free_cash_flow.status === "present")
+    ? fact("FCF sign", q.fcf_sign, signWord) : "";
+  const cash = subhead("Cash & liquidity") +
+    fcfSign + fact("Free cash flow ($M)", q.free_cash_flow) +
     (m.capital_structure ? "" : fact("Liquidity / covenant flags", q.liquidity_covenant_flags));
   const capital = m.capital_structure ? capitalStructureInner(m.capital_structure, refDate) : "";
   return sec("Survival — leverage · cash/FCF · capital structure & maturity wall",
@@ -1636,8 +1687,8 @@ function trajectorySection(q, m = {}) {
   const rr = m.return_ratios;
   const rrTable = (rr && rr.status === "present" && rr.value && Array.isArray(rr.value.rows) && rr.value.rows.length)
     ? finTable("Return ratios — per fiscal period", rr) : "";
-  return sec("Operating trajectory", "Revenue · EBITDA · margins · ROIC per period; the same-quarter YoY footnoted.",
-    trajectoryTable(q) + fact("Share-count trend", q.share_count_trend) + rrTable);
+  return sec("Operating trajectory", "The per-period arc; the same-quarter YoY footnoted.",
+    trajectoryTable(q, m) + fact("Share-count trend", q.share_count_trend) + rrTable);
 }
 
 // SLIM HEADER (tier redesign): ticker · name · the DOCUMENT date. The old meta line was process
@@ -1667,6 +1718,7 @@ function header(d) {
 // 'pull CIQ …' caveat is already a complete advisory → one full-sentence bullet.
 const _CAVEAT_RE = /^(.*?)\(([^)]*?\bpoint[^)]*?)\):\s*'([\s\S]*?)'\s*—\s*([\s\S]*)$/;
 function caveatBlock(f) {
+  f = String(f).replace(/evidence_balance/g, "the written assessment");
   const resolved = /^RESOLVED\b/i.test(f);
   const icon = resolved ? "✓" : "⚠";
   const m = f.match(_CAVEAT_RE);
@@ -1711,24 +1763,25 @@ function impliedExpectations(ie) {
         : `UNKNOWN — ${r.note || ""}`,
     ],
   }));
+  // (declutter P3) the discipline lectures live ONCE in "How to read this dossier"; this block
+  // keeps the gate, the vintages, and a terse † key.
   const intro = `<div class="fact"><div class="fact-label">What the current price implies (at stated multiples)</div>
     <div style="min-width:0;"><div class="muted" style="font-size:12px;">${escapeHtml(gateShortref(ie.heterogeneity_gate || ""))}</div>
-    <div class="muted" style="font-size:11px; margin-top:4px;">price-implied fundamental levels at stated multiples — the human judges earned vs residual; identity (†): at the name's own multiple the implied level IS consensus.</div>
-    <div class="muted" style="font-size:11px;">TEV as-of ${escapeHtml(ie.tev_as_of || "")} · multiples as-of ${escapeHtml(ie.multiples_as_of || "")}</div></div></div>`;  // (K4) human-facing rename
+    <div class="muted" style="font-size:11px;">TEV as-of ${escapeHtml(ie.tev_as_of || "")} · multiples as-of ${escapeHtml(ie.multiples_as_of || "")} · † at the name's own multiple the implied level is consensus by identity</div></div></div>`;
   const table = dataTable("Price-implied levels (at each stated multiple)", ie.tev && ie.tev.source_ref,
     ["Multiple (× used)", "Implied level"], rows, "");  // (K5) renamed
-  // (K4) reads-against line — juxtapose vs consensus, never subtract (avoids %/upside/gap/discount).
-  const readsAgainst = `<div class="muted" style="font-size:11px; margin-top:4px;">Reads AGAINST the consensus path anchors below — juxtapose the price-implied level vs consensus per metric; never subtract one from the other.</div>`;
+  const readsAgainst = "";  // (declutter) the juxtapose rule is stated once, in the reading guide
   // the parallel REVENUE anchors substantiate the TEV/Rev name-row identity (†); only when present.
   const revAnchors = (ie.rev_anchors && ie.rev_anchors.value)
-    ? `<div style="margin-top:4px;"><b>Consensus path anchors (Revenue — juxtapose, do NOT difference):</b> ${escapeHtml(ie.rev_anchors.value)}</div>` : "";
+    ? `<div style="margin-top:4px;"><b>Consensus path anchors (Revenue):</b> ${escapeHtml(ie.rev_anchors.value)}</div>` : "";
   // (audit) H7 EBITDA anchors can be UNKNOWN (Trends may lack FY26/FY27) — show the note, not blank.
   const anchorsTxt = (ie.anchors && ie.anchors.value) || (ie.anchors && ie.anchors.note) || "n/a";
-  const anchors = `<div class="fact"><div class="fact-label">Consensus path anchors (EBITDA — juxtapose, do NOT difference)</div>
+  // (declutter) the coherence SELF-CHECK prints only when it FAILS — a passing residual line is
+  // assembly QA; the fixed-multiple-set note was internal provenance ("declared in code").
+  const anchors = `<div class="fact"><div class="fact-label">Consensus path anchors (EBITDA)</div>
     <div style="min-width:0;">${escapeHtml(anchorsTxt)}${revAnchors}
-    <div class="muted" style="font-size:11px; margin-top:4px;">${ie.vintage_coherent ? "" : "⚠ "}${escapeHtml(ie.coherence_note || "")}</div>
-    ${ie.net_debt_reconciled ? "" : `<div class="muted" style="font-size:11px;">⚠ net-debt input disagrees with the cash/debt bridge — see the TEV source</div>`}
-    <div class="muted" style="font-size:11px;">Fixed multiple set (declared in code, no per-name curation): name NTM + peer-median NTM/LTM, on TEV/EBITDA and TEV/Rev.</div></div></div>`;
+    ${ie.vintage_coherent ? "" : `<div class="muted" style="font-size:11px; margin-top:4px;">⚠ ${escapeHtml(ie.coherence_note || "")}</div>`}
+    ${ie.net_debt_reconciled ? "" : `<div class="muted" style="font-size:11px;">⚠ net-debt input disagrees with the cash/debt bridge — see the TEV source</div>`}</div></div>`;
   return intro + table + readsAgainst + anchors;  // (K4) reads-against between the table and the anchors
 }
 
@@ -1737,11 +1790,12 @@ function valuation(v) {
   // Mirrors the md render (PR #48): lead with the CROSS-SECTIONAL read (the edge); the own-history
   // percentile barely discriminates across finalists, so it's folded into the range line below.
   // (G) implied expectations slot in AFTER cross-sectional, BEFORE the own-history reads.
-  return sec("Valuation", "Cross-sectional vs peers (the edge); own-history range as secondary context.",
-    fact("Cross-sectional (vs peers — the edge)", v.cross_sectional, null, { hi: true }) +
+  // (declutter P1) the bare P/E and EV/EBITDA facts are GONE — both numbers already render inside
+  // tables carrying their context, and the two sheets disagree by vintage (P/E 14.1 vs the comps
+  // grid's 13), which read as a contradiction rather than information.
+  return sec("Valuation", "Cross-sectional vs peers; the trailing-range read as secondary context.",
+    fact("Cross-sectional (vs peers)", v.cross_sectional, null, { hi: true }) +
     impliedExpectations(v.implied_expectations) +
-    fact("P/E", v.pe, (x) => escapeHtml(Number(x).toFixed(1)) + "&times;") +
-    fact("EV/EBITDA (TEV/LTM, GAAP)", v.ev_ebitda, mult) +
     fact("EV/adj-EBITDA (forward)", v.ev_ebitda_adjusted_fwd) +
     fact("Adjusted EPS (guide)", v.adjusted_eps) +
     fact("Own-history range position", v.range_position, null, { hi: true }));
@@ -1752,10 +1806,10 @@ function valuation(v) {
 
 function concentration(c) {
   if (!c) return "";
-  return sec("Ownership & concentration", "Segment / customer / geographic exposure. Segment-EBITDA share is the decision-relevant profit view.",
+  return sec("Ownership & concentration", "Segment, customer and geographic exposure.",
     fact("Segments (revenue share)", c.segments) +
     fact("Segment EBITDA share", c.segment_ebitda, null, { hi: true }) +
-    fact("Customers", c.customers) +
+    fact("Customers", c.customers, fmtCustomers) +
     fact("Geographic", c.geographic));
 }
 
@@ -1782,11 +1836,16 @@ function parsePeerMultiples(text) {
   return rows.length ? { rows, note } : null;
 }
 
-function peerMultiplesFact(label, s) {
+function peerMultiplesFact(label, s, { gridPresent = false } = {}) {
   if (!s || s.status !== "present" || s.value == null) return fact(label, s);
   const p = parsePeerMultiples(s.value);
   if (!p) return fact(label, s);
-  const rows = p.rows.map((r) => ({ label: r.metric, cells: [r.name, r.low, r.median, r.mean, r.high] }));
+  // (declutter P2) with the per-peer grid on the same page, the LTM rows here are its summary
+  // statistics restated (the grid carries every peer AND a median row) — only the FORWARD (NTM)
+  // rows survive, which exist nowhere else.
+  const kept = gridPresent ? p.rows.filter((r) => /^NTM/i.test(r.metric)) : p.rows;
+  if (!kept.length) return fact(label, s);
+  const rows = kept.map((r) => ({ label: r.metric, cells: [r.name, r.low, r.median, r.mean, r.high] }));
   return dataTable(label, s.source_ref, ["Name", "Low", "Median", "Mean", "High"], rows, p.note || "");
 }
 
@@ -1845,10 +1904,13 @@ function peerRosterFact(label, s) {
 
 function peerComps(pc) {
   if (!pc) return "";
-  return sec("Peer comps", "CIQ Company Comparable Analysis — the consensus comp, framed to RESIST. The peer-vs-name gap is never a verdict: composition + fundamental deltas let the human judge the discount EARNED (value-trap) vs RESIDUAL (overshoot). The machine never re-draws the peer set or computes an implied upside.",
+  return sec("Peer comparison", "The roster, the comparability gate, and the per-peer grid — the reader judges whether the discount is earned or residual.",
     peerRosterFact("Peer set (roster · caps · business)", pc.peer_set) +
     fact("Comparability (confidence gate)", pc.comparability, null, { hi: true }) +
-    peerMultiplesFact("Trading multiples (name vs peer Low/Median/Mean/High · LTM+NTM)", pc.trading_multiples) +
+    peerMultiplesFact(pc.peer_grid
+      ? "Forward multiples (name vs peer Low/Median/Mean/High · NTM)"
+      : "Trading multiples (name vs peer Low/Median/Mean/High · LTM+NTM)",
+      pc.trading_multiples, { gridPresent: !!pc.peer_grid }) +
     // B1: the per-peer grid (name + median footer) replaces the median-only deltas line
     (pc.peer_grid ? peerGridTable(pc.peer_grid)
       : peerDeltasFact("Fundamental deltas (earned-vs-residual inputs)", pc.fundamental_deltas)));
@@ -1865,9 +1927,14 @@ function drawdownCause(dc) {
         : (f.events || []).map((e) => `<div class="fe">${escapeHtml(e)}</div>`).join("")}
       ${f.url ? `<div style="margin-top:5px;"><a href="${encodeURI(f.url)}" target="_blank" rel="noopener">EDGAR ${escapeHtml(f.accession || "")}</a></div>` : ""}
     </div>`).join("");
+  // (declutter) the dates row repeats the shape line whenever every date already appears there
+  const gd = dc.gap_down_dates || {};
+  const shapeV = dc.shape || {};
+  const datesDup = gd.status === "present" && shapeV.status === "present"
+    && (gd.value || []).every((d) => String(shapeV.value).includes(String(d)));
   return (  // (R3) body only — drawdownIdio wraps it in the shared section header
-    fact("Shape", dc.shape) +
-    fact("Gap-down dates", listFact(dc.gap_down_dates)) +
+    fact("Shape", dc.shape, fmtShape) +
+    (datesDup ? "" : fact("Gap-down dates", listFact(dc.gap_down_dates))) +
     fact("Revised guidance", dc.revised_guidance) +
     (filings ? `<div style="margin-top:12px;">${filings}</div>` : ""));
 }
@@ -1881,12 +1948,22 @@ function idioVsShared(io) {
           <td class="muted" style="font-size:11.5px;">${escapeHtml(c.via || "")}</td></tr>`).join("")}
       </tbody></table><div class="muted" style="font-size:11.5px; margin-top:4px;">source: ${escapeHtml(io.cohort.source_ref || "")}</div></div>`
     : `<div class="fact-val muted" style="margin-top:8px;"><span class="pill unresolved">${io.cohort?.status === "missing" ? "MISSING" : "UNKNOWN"}</span> ${escapeHtml(io.cohort?.note || "no graph cohort")}</div>`;
+  const cohortPresent = io.cohort && io.cohort.status === "present" && Array.isArray(io.cohort.value);
+  // (declutter P1) an UNKNOWN market row above a PRESENT relative read as a contradiction; and the
+  // two cohort-absence rows said one absence twice, one citing an internal filename.
+  const marketRow = (io.market_180d_return && io.market_180d_return.status === "present")
+    || !(io.rel_vs_market && io.rel_vs_market.status === "present")
+    ? fact("Market (IWM) 180d", io.market_180d_return, ret) : "";
+  const cohortBlock = cohortPresent
+    ? fact("Read", io.read, null, { hi: true })
+      + `<div class="fact"><div class="fact-label">Graph cohort</div><div>${cohort}</div></div>`
+    : `<div class="fact"><div class="fact-label">Supplier/customer cohort</div>
+      <div class="fact-val muted">none mapped for this name — the comparison is vs the market only</div></div>`;
   return (  // (R3) body only — drawdownIdio wraps it in the shared section header
-    fact("Read", io.read, null, { hi: true }) +
     fact("Name 180d return", io.name_180d_return, ret) +
-    fact("Market (IWM) 180d", io.market_180d_return, ret) +
+    marketRow +
     fact("Relative vs market", io.rel_vs_market, ret) +
-    `<div class="fact"><div class="fact-label">Graph cohort</div><div>${cohort}</div></div>`);
+    cohortBlock);
 }
 
 // --- catalyst path (the five CIQ Estimates sheets, horizon-matched). Fix 4: the string fields are
@@ -1985,13 +2062,19 @@ function creditHealth(lv) {
 function leverageBlock(m) {
   const lv = m.leverage_survival;
   if (!lv) return "";
-  return subhead("Leverage & survival") +  /* (K5) header humanized; net-vs-total discipline is per-row */
-    fact("Net debt / EBITDA (CIQ NET basis)", lv.net_debt_to_ebitda, mult) +
+  // (declutter P1) when the two-input self-funding read exists it REPLACES the one-input survival
+  // claim (the md used to print both, the second announcing it superseded the first); the web now
+  // mirrors the corrected shape. No subhead — the section title directly above already says it.
+  const sf = ((m.primary_source || {}).self_funding) || null;
+  const survival = (sf && sf.status === "present")
+    ? fact("Self-funding (two-input: latest-Q OCF + LTM FCF)", sf)
+    : fact("Survival (self-funding + nearest wall)", lv.survival);
+  return fact("Net debt / EBITDA (CIQ NET basis)", lv.net_debt_to_ebitda, mult) +
     fact("Total debt / EBITDA (comps — name vs peer median)", lv.total_debt_to_ebitda) +
     fact("Net debt / OCF", m.quality.net_debt_to_ocf, mult) +
     fact("Net debt / EBITDA (fwd-adj)", m.quality.net_debt_to_ebitda_adjusted) +
     fact("Interest coverage", lv.interest_coverage, mult) +
-    fact("Survival (self-funding + nearest wall)", lv.survival) +
+    survival +
     creditHealth(lv);  // (K3) 4-row mini-table; fail-soft to fact("Credit health", …)
 }
 
@@ -2046,7 +2129,11 @@ function spanLabel(s, unit) {
 function finTable(label, s) {
   if (!s || s.status !== "present" || !s.value) return fact(label, s);
   const ft = s.value;
-  const rows = (ft.rows || []).map((r) => ({ label: r.label, cells: r.cells }));
+  // (declutter) a row whose every cell literally reads "none" is furniture (IT's Dividend/sh)
+  const rows = (ft.rows || [])
+    .filter((r) => !((r.cells || []).length
+      && (r.cells || []).every((c) => String(c).trim().toLowerCase() === "none")))
+    .map((r) => ({ label: r.label, cells: r.cells }));
   return dataTable(label, s.source_ref, ft.columns || [], rows, ft.note || "", ft.is_estimate || []);
 }
 
@@ -2103,12 +2190,21 @@ function horizonTable(s) {
     byMetric.get(metric)[period] = t.slice(ci + 2);
   }
   periods.sort();
+  // (declutter P2) HEADLINE metrics only — the ones the synthesis argues from; interest/EBT/the
+  // GAAP-vs-excl splits made an 18-row wall. Counted, machine-complete in JSON. (Mirrors
+  // render.py's _HORIZON_KEEP.)
+  const KEEP = /^(Revenue|EBITDA|EBIT|EPS)\b/i;
   const nonzero = [], zero = [];
-  for (const [metric, cells] of byMetric)
+  let skipped = 0;
+  for (const [metric, cells] of byMetric) {
+    if (!KEEP.test(metric)) { skipped += 1; continue; }
     (Object.values(cells).some((c) => /[1-9]\d*[↑↓]/.test(c)) ? nonzero : zero).push(metric);
+  }
   const rows = nonzero.map((m) => ({ label: m, cells: periods.map((p) => byMetric.get(m)[p] || DASH) }));
-  const note = zero.length ? `no revisions in any window: ${zero.join(", ")}` : "";
-  return dataTable(label, s.source_ref, periods, rows, note);
+  const bits = [];
+  if (zero.length) bits.push(`no revisions in any window: ${zero.join(", ")}`);
+  if (skipped) bits.push(`+${skipped} non-headline metric rows in JSON`);
+  return dataTable(label, s.source_ref, periods, rows, bits.join(" · "));
 }
 
 const _baseMetric = (m) => m.replace(/\s*(Normalized|\(GAAP\)|\(Excl\. Excep\))/g, "").trim();
@@ -2261,8 +2357,9 @@ function catalystPath(cp, cc) {
   // Fix 5: the legacy consensus facts are gone (duplicated by the reads); fold in the one
   // non-duplicate — Surprise history.
   const surprise = cc ? seriesTable("Surprise history (annual beat/miss)", cc.surprise_history) : "";
-  return sec(`The street — estimates & guidance (${catAsof(cp)})`,
-    "Horizon-matched estimates, guidance & revision events (CIQ Estimates). Native cadence — FQ horizon, monthly path, NTM anchor. Assembles and cites; renders no upside, fair value, or direction.",
+  return sec("The street — estimates & guidance",
+    "Revision breadth, the monthly consensus path, guidance delivery, and positioning.",
+    `<div class="muted" style="font-size:11px; margin:-2px 0 8px;">${escapeHtml(catAsof(cp))}</div>` +
     horizonTable(cp.horizon_read) +
     accelTable(cp.acceleration_read) +
     ladderTable(cp.cross_name_anchor) +
@@ -2272,7 +2369,7 @@ function catalystPath(cp, cc) {
     surprise +
     // (F) positioning inputs — free DATED feeds; only when present (pre-F JSON omits both fields).
     // Counts / shares / dates only, no interpretation.
-    (cp.insider_activity ? fact("Insider activity (Form 4, 6m)", cp.insider_activity) : "") +
+    (cp.insider_activity ? fact("Insider activity (Form 4, 6m)", cp.insider_activity, fmtInsider) : "") +
     (cp.short_interest ? fact("Short interest (FINRA)", cp.short_interest) : ""));
 }
 
