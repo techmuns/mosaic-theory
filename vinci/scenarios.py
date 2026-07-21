@@ -158,10 +158,15 @@ class Verdict(BaseModel):
     recorded: str | None = None            # ISO date the human recorded it; None while pending
     rationale: str | None = None           # WHY — the human's reasoning, in their own words
     # The SAME reasoning in external-reader register (STATE.md §7 item 10): plain thesis prose for
-    # someone who has never seen this repo. It NEVER replaces `rationale` — the original is the
-    # sealed record of what the analyst wrote at the verdict, and both render (restatement first,
-    # original behind an "as recorded" expander). Analyst-authored like `rationale`: the machine
-    # proposes no wording here, it only flags register violations (vinci.prose_lint).
+    # someone who has never seen this repo. Analyst-authored like `rationale` — the machine proposes
+    # no wording here, it only flags register violations (vinci.prose_lint).
+    #
+    # BOTH may coexist: the card leads with the restatement and puts the original behind an
+    # "as recorded <date>" expander. But the original is NOT retained by rule — §7 makes the
+    # scenario-record copy the analyst's to re-word or DROP, and on 2026-07-21 they dropped all
+    # four (the append-only LEDGER copy is the sealed one, and it is untouchable). So a record may
+    # legitimately carry the restatement alone. Before dropping an original, check the name HAS a
+    # ledger row: a watch/no-position verdict has none, so the drop is irreversible.
     rationale_plain: str | None = None
     rationale_plain_recorded: str | None = None   # ISO date the restatement was recorded
     reunderwrite_triggers: list[str] = Field(default_factory=list)  # what would reopen the name

@@ -95,7 +95,7 @@
       "next_expected_print": "2026-08-05",
       "next_expected_basis": "ESTIMATE — same-quarter filing one year prior + 365d (filer's own cadence)",
       "triggers": [
-        "Q2-2026 print (early Aug): contract-value growth decelerates further or turns negative → re-underwrite the bear leg",
+        "Q2-2026 print (early Aug): contract-value growth decelerates further or turns negative → deepen the bear case and re-underwrite. [restated for external readability 2026-07-21; substance unchanged]",
         "revenue below the FY26E consensus path two consecutive quarters → re-test base at 12x",
         "operating margin breaks below ~16% ex one-offs → regime assumption fails"
       ],
@@ -111,7 +111,7 @@
       "next_expected_print": "2026-10-23",
       "next_expected_basis": "ESTIMATE — same-quarter filing one year prior + 365d (filer's own cadence)",
       "triggers": [
-        "Quest revenue growth ≤ 0% YoY for two consecutive quarters → carry engine dead; re-underwrite bull and base legs",
+        "Quest revenue growth ≤ 0% YoY for two consecutive quarters → the growth engine is dead; re-underwrite the bull and base cases. [restated for external readability 2026-07-21; substance unchanged]",
         "FY26 guidance cut at the fiscal Q4 print (~Oct 2026), or initial FY27 guidance below ~$1.30B → base revenue path fails",
         "gross-margin erosion beyond the guided ~375bps, or sustained GM below ~31% → margin regime break"
       ],

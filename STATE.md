@@ -3848,6 +3848,15 @@ re-anchor (the full STATE split stays its own queued task — nothing was reloca
 8. **Refresh cadence → docs/RUNBOOKS.md** (it is operating practice, not state).
 9. **Full STATE split** — §5 build records → a fossils/decisions file; this block is the interim.
 
+12. **REFERENCE-LABEL REGISTER + de-couple the median lookup (PAIRED — do not split).**
+    `assumptions[].references[].label` renders to the reader but is not linted; 14 labels across
+    the four records still carry house vocabulary (`own-history band low`, `committed anchor
+    median`, EPAM's `DEAD REGIME`). Restating them is blocked on a real coupling: `uw-card.js:188`
+    finds the median reference by `/median/i.test(p.label)` — a CLASSIFIER on display prose, which
+    the parsers-consume-structured-values rule forbids. So: give references a structured `role`
+    (`median` / `band_low` / `p75` / …), switch the lookup to it, THEN restate the labels with
+    analyst ratification. Splitting them means either a broken card or a rule left violated.
+
 11. **MIRROR-SYNC CI CHECK.** A generator run dirties BOTH its source and its `frontend/` mirror;
     an artifact pass that commits only the source leaves the deployed site reading stale data
     SILENTLY — nothing is red, the page is just wrong. Found 2026-07-21: `92feab0` committed
@@ -3916,6 +3925,16 @@ re-anchor (the full STATE split stays its own queued task — nothing was reloca
     a non-blocking warning plus a repo check pinning all four records clean. Boundary: scenario
     records are the EXTERNAL register; **the dossier layer stays internal** until a name graduates
     (543 flags there are out of scope by definition, not a backlog).
+
+    **KNOWN GAP — `references[].label` is NOT scanned (found in review of PR #172).** "Zero flags"
+    means the four scanned surfaces (rationale, triggers, leg reasons, methods), NOT the whole
+    reader-facing record. Reference labels DO render to the reader (`uw-card.js` reference table)
+    and **14 of them still carry house vocabulary** — including EPAM's `DEAD REGIME`, the exact
+    token this pass set out to remove. Not fixed in-pass for two reasons, both real: the labels are
+    analyst-facing prose that needs ratification like the other restatements, and `uw-card.js:188`
+    CLASSIFIES on label text (`/median/i.test(p.label)`) to find the median reference — so
+    restating a label can silently break the card. That classifier is itself a standing violation
+    of the parsers-consume-structured-values rule. Queued as item 12.
 
 **BUILD RECORD — 2026-07-21 plain-language restatement pass (all four scenario records).**
 Every prose field in IT / SMPL / WERN / EPAM restated into external-reader register; 23 restatements

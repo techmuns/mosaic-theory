@@ -217,7 +217,7 @@
     "recorded": "2026-07-21",
     "rationale": null,
     "reunderwrite_triggers": [
-      "Quest revenue growth <= 0% YoY for two consecutive quarters -> the growth engine is dead; re-underwrite the bull and base cases. [restated for external readability 2026-07-21; substance unchanged]",
+      "Quest revenue growth ≤ 0% YoY for two consecutive quarters → the growth engine is dead; re-underwrite the bull and base cases. [restated for external readability 2026-07-21; substance unchanged]",
       "FY26 guidance cut at the fiscal Q4 print (~Oct 2026), or initial FY27 guidance below ~$1.30B → base revenue path fails",
       "gross-margin erosion beyond the guided ~375bps, or sustained GM below ~31% → margin regime break"
     ],
