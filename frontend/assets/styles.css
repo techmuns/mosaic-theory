@@ -587,6 +587,94 @@ table.data.vs-table { width: 100%; }
 .uw-inputs > summary { cursor: pointer; font-size: 11.5px; color: var(--ink-3); }
 .uw-foot { margin-top: 9px; }
 
+/* --- underwrite MASTHEAD (the decision surface) ---------------------------
+   The tear-sheet header every research note opens with: the rating + the number the card exists
+   to produce, then the asymmetry, the entry, the downside and the method — all read before
+   anything below. Existing tokens only; no private palette. */
+.uw-mast { margin-bottom: 12px; }
+.uw-mast-head { display: flex; align-items: baseline; justify-content: space-between;
+  gap: 12px; flex-wrap: wrap; padding-bottom: 9px; border-bottom: 1px solid var(--line-2); }
+.uw-mast-t { font-size: 12px; font-weight: 650; text-transform: uppercase; letter-spacing: 0.06em;
+  color: var(--ink-2); }
+.uw-mast-t .muted { text-transform: none; letter-spacing: 0; font-weight: 400; }
+.uw-mast-pills { display: flex; gap: 6px; flex-wrap: wrap; }
+.uw-statband { display: grid; grid-template-columns: repeat(5, 1fr);
+  border-bottom: 1px solid var(--line); }
+.uw-stat { padding: 11px 14px; border-left: 1px solid var(--line); min-width: 0; }
+.uw-stat:first-child { border-left: 0; padding-left: 0; }
+.uw-stat-lab { font-size: 10.4px; text-transform: uppercase; letter-spacing: 0.06em;
+  color: var(--ink-3); font-weight: 600; }
+.uw-stat-val { font-family: var(--mono); font-variant-numeric: tabular-nums;
+  font-size: 17px; font-weight: 650; letter-spacing: -0.01em; color: var(--ink);
+  margin: 4px 0 2px; line-height: 1.2; }
+.uw-stat-val.lead { font-size: 25px; letter-spacing: -0.02em; }
+.uw-stat-val.txt { font-family: var(--sans); font-size: 12.8px; font-weight: 600; line-height: 1.35; }
+.uw-stat-val.neg { color: var(--danger-text); }
+.uw-stat-sub { font-size: 11.2px; color: var(--ink-2); line-height: 1.4; }
+.uw-eyebrow { color: var(--accent-text); }
+.uw-stat-lead.base .uw-eyebrow { color: var(--conditional); }
+.uw-stat-lead.priced .uw-eyebrow { color: var(--danger-text); }
+.uw-pct { font-size: 0.72em; font-weight: 650; margin-left: 4px; }
+.uw-pct.pos { color: var(--pos-text); }
+.uw-pct.neg { color: var(--danger-text); }
+.pill.uw-mini { font-size: 10px; padding: 2px 7px; vertical-align: 2px; }
+.uw-mast-foot { font-size: 11.2px; color: var(--ink-3); padding-top: 8px; line-height: 1.5; }
+.uw-spot-cite { font-size: 11.2px; margin: -4px 0 10px; }
+
+/* --- risk / reward ladder -------------------------------------------------
+   Zone WIDTHS are the ratio: the asymmetry is legible before a number is read. */
+.uw-ladder { margin: 20px 0 14px; }
+.uw-lad-track { position: relative; height: 8px; border-radius: 4px;
+  background: var(--surface-2); margin: 34px 0 30px; }
+.uw-lad-risk, .uw-lad-reward { position: absolute; top: 0; bottom: 0; }
+.uw-lad-risk { background: var(--danger-bg); }
+.uw-lad-reward { background: var(--live-bg); }
+.uw-lad-tick { position: absolute; top: -5px; bottom: -5px; width: 2px;
+  background: var(--ink-3); border-radius: 1px; }
+.uw-lad-tick.spot { background: var(--ink); }
+.uw-lad-tick.bear { background: var(--danger); }
+.uw-lad-tick.bull { background: var(--ink-3); opacity: 0.55; }
+.uw-lad-tick.base { background: var(--accent); width: 4px; top: -9px; bottom: -9px; }
+.uw-lad-tick.base.priced { background: var(--danger); }
+.uw-lad-lab { position: absolute; transform: translateX(-50%); white-space: nowrap;
+  font-size: 11px; color: var(--ink-2); display: flex; align-items: baseline; gap: 5px; }
+.uw-lad-lab.end { transform: translateX(50%); }
+.uw-lad-lab.above { bottom: 16px; }
+.uw-lad-lab.below { top: 16px; }
+.uw-lad-lab .mono { font-size: 12px; color: var(--ink); font-weight: 600; }
+.uw-lad-lab .n { text-transform: uppercase; font-size: 9.6px; letter-spacing: 0.05em; color: var(--ink-3); }
+.uw-lad-lab.target .mono, .uw-lad-lab.target .n { color: var(--accent-text); }
+.uw-lad-lab.priced .mono, .uw-lad-lab.priced .n { color: var(--danger-text); }
+.uw-lad-zone { display: flex; justify-content: space-between; gap: 12px;
+  font-size: 11px; color: var(--ink-3); }
+
+/* the base column IS the decision once a verdict ratifies it */
+table.data th.uw-tgt-col, table.data td.uw-tgt-col { background: var(--accent-bg); }
+table.data th.uw-tgt-col { color: var(--accent-text); }
+.uw-tgt-tag { font-size: 9.2px; text-transform: uppercase; letter-spacing: 0.05em;
+  font-weight: 650; color: var(--accent-text); }
+table.data tr td.uw-vs { font-size: 11.6px; }
+
+/* thesis-break / re-underwrite chips — longer than a .pill, so they wrap */
+.uw-trig { display: flex; align-items: baseline; gap: 8px; flex-wrap: wrap;
+  margin-top: 12px; padding-top: 10px; border-top: 1px solid var(--line); }
+.uw-trig-lab { font-size: 10.4px; text-transform: uppercase; letter-spacing: 0.06em;
+  color: var(--ink-3); font-weight: 600; }
+.uw-chip { font-size: 11.4px; line-height: 1.45; color: var(--ink-2);
+  background: var(--surface-2); border: 1px solid var(--line);
+  border-radius: 999px; padding: 3px 11px; }
+
+@media (max-width: 820px) {
+  .uw-statband { grid-template-columns: repeat(2, 1fr); }
+  .uw-stat { border-left: 0; border-top: 1px solid var(--line); padding-left: 0; }
+  .uw-stat:first-child, .uw-stat:nth-child(2) { border-top: 0; }
+  .uw-stat-val.lead { font-size: 22px; }
+}
+@media (max-width: 560px) {
+  .uw-statband { grid-template-columns: 1fr; }
+  .uw-stat:nth-child(2) { border-top: 1px solid var(--line); }
+}
+
 /* --- dossier viewer ------------------------------------------------------ */
 /* header carries the ticker block on the left and the Download-PDF action on the right */
 .ds-header { display: flex; align-items: flex-start; justify-content: space-between; gap: 18px; flex-wrap: wrap; }
@@ -978,3 +1066,8 @@ table.data.vs-table { width: 100%; }
 .rt-draft-chip { font-size: 9.5px; font-weight: 600; letter-spacing: 0.06em; color: var(--ink-3);
   border: 1px dashed var(--line); border-radius: 4px; padding: 0 4px; text-transform: uppercase; }
 .rt-draft-read { font-size: 11px; font-weight: 400; font-style: italic; margin-top: 1px; }
+
+/* the dossier's underwrite panel is just the card — the wrapper adds spacing, never a second
+   title (the masthead is self-describing, and its foot is the one that knows the ledger) */
+.uw-panel { padding: 0; background: none; border: 0; box-shadow: none; }
+.uw-panel .uw-card { margin: 0; }
