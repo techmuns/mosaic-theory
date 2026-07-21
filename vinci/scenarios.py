@@ -373,7 +373,18 @@ def _run_r2(rec: ScenarioRecord) -> ScenarioRecord:
         facilities=si.facilities, facilities_source=si.facilities_source,
         years_to_breakeven=si.years_to_breakeven, announced_raise=si.announced_raise,
         raise_accession=si.raise_accession)
+    # A BURNING company must state the cash it consumes on the way. Defaulting this to zero valued
+    # the terminal year as though the burn were free: the survival block would read FAIL at 1.25y of
+    # runway while the SAME record carried terminal net debt unchanged from today's balance sheet.
+    # That is the exact direction of error R2 exists to prevent, and it applies to the whole cohort
+    # by definition — they burn. The machine will not fill it in either (deriving burn × years would
+    # be the machine proposing an assumption): the analyst states it, or the record refuses.
     burn_fact = rec.facts.get("burn_to_breakeven")
+    if burn_fact is None and surv.burn:
+        raise ValueError(
+            f"recipe {RECIPE_R2} needs fact 'burn_to_breakeven' — the survival block shows a burn "
+            f"of {surv.burn:,.1f} a year, so cash IS consumed before the terminal year and cannot "
+            "be valued at zero. State the cumulative burn (0.0 only if it is genuinely nil).")
     net_debt = rec.facts["net_debt"].value - si.raise_proceeds
     shares_now = rec.facts["diluted_shares"].value * 1e6          # MILLIONS -> raw count
     per: dict[str, ScenarioOutcome] = {}
