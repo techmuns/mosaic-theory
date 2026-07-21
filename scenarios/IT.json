@@ -58,13 +58,13 @@
       "revenue": 5800.0,
       "margin": 0.15,
       "multiple": 9.5,
-      "reason": "secular leg: GenAI substitution bites Insights (78% of revenue); multi-year revenue decline; margin held above the COVID trough (FY2020 12.0%) on subscription cost flex; multiple at the own-history band-low (9.34)."
+      "reason": "secular leg: GenAI substitution bites Insights (78% of revenue); multi-year revenue decline; margin held above the COVID trough (FY2020 12.0%) on subscription cost flex; multiple near the own-history band-low (7.46); 9.5x ≈ 5th pctile of the 9.3y band."
     },
     "base": {
       "revenue": 6430.0,
       "margin": 0.185,
       "multiple": 15.0,
-      "reason": "margin = 7yr clean median 18.45% ex the $150M FY25 goodwill impairment — the 14.13% anchor is dragged by the pre-2021 regime (five straight years ran 18-21%). Revenue = consensus FY26E. Multiple deliberately below the 22.7x own-history median: a decelerating top line doesn't re-earn the growth-era multiple."
+      "reason": "margin = 7yr clean median 18.45% (rounded to 18.5%) ex the $150M FY25 goodwill impairment — the 14.13% anchor is dragged by the pre-2021 regime (five straight years ran 18-21%). Revenue = consensus FY26E. Multiple deliberately below the 23.4x own-history median (9.3y band): a decelerating top line doesn't re-earn the growth-era multiple."
     },
     "bull": {
       "revenue": 6715.0,
@@ -75,7 +75,7 @@
   },
   "assumptions": {
     "revenue": {
-      "method": "DRAFT — ratify at review. Legs are set off the committed consensus path rather than round numbers: base IS consensus FY26E, bull IS consensus FY27E (the modelled re-acceleration), and bear takes a multi-year secular decline materially below FY26E to price the GenAI-substitution case.",
+      "method": "Legs are set off the committed consensus path rather than round numbers: base IS consensus FY26E, bull IS consensus FY27E (the modelled re-acceleration), and bear takes a multi-year secular decline materially below FY26E to price the GenAI-substitution case.",
       "references": [
         {
           "label": "FY2025 reported revenue",
@@ -101,10 +101,12 @@
           "unit": "$M",
           "source": "committed dossier financial_summary.annual (CIQ; E cols = consensus Trends 'Current')"
         }
-      ]
+      ],
+      "ratified_by": "analyst",
+      "ratified": "2026-07-21"
     },
     "margin": {
-      "method": "DRAFT — ratify at review. Operating-margin legs are set off the CLEAN reported history with FY2025 adjusted for the quantified $150.0M Digital Markets goodwill impairment — NOT off the raw anchor median, which spans the pre-2021 regime while the last five years ran 18-21%. Bear holds above the FY2020 COVID trough on subscription cost flex; base is the 7yr clean median; bull sits near the FY2023 best.",
+      "method": "Operating-margin legs are set off the CLEAN reported history with FY2025 adjusted for the quantified $150.0M Digital Markets goodwill impairment — NOT off the raw anchor median, which spans the pre-2021 regime while the last five years ran 18-21%. Bear holds above the FY2020 COVID trough on subscription cost flex; base is the 7yr clean median; bull sits near the FY2023 best.",
       "references": [
         {
           "label": "committed anchor median (pre-2021-dragged)",
@@ -142,36 +144,40 @@
           "unit": "%",
           "source": "EDGAR OperatingIncomeLoss + $150.0M; one-off per primary_source.releases[].one_offs (8-K 0000749251-26-000028 EX-99.1)"
         }
-      ]
+      ],
+      "ratified_by": "analyst",
+      "ratified": "2026-07-21"
     },
     "multiple": {
-      "method": "DRAFT — ratify at review. Multiple legs sit inside the name's OWN-history EV/EBITDA band, deliberately BELOW the median at base: a decelerating top line does not re-earn the growth-era multiple. Bear is set at the band low; bull moves toward but stays under the median.",
+      "method": "Multiple legs sit inside the name's OWN-history EV/EBITDA band, deliberately BELOW the median at base: a decelerating top line does not re-earn the growth-era multiple. Bear is set near the band low; bull moves toward but stays under the median.",
       "references": [
         {
           "label": "own-history band low — bear",
-          "value": 9.34,
+          "value": 7.46,
           "unit": "x",
-          "source": "committed dossier valuation.own_history (CIQ Financials→Multiples 'TEV/LTM EBITDA' Close, 20 closes, as-of 2026-06-24)"
+          "source": "committed dossier valuation.own_history (CIQ Financials→Multiples 'TEV/LTM EBITDA' Close, 38 closes, 9.3y span, as-of 2026-07-17, sha 66405c3bc0)"
         },
         {
           "label": "own-history median (base set below it)",
-          "value": 22.71,
+          "value": 23.38,
           "unit": "x",
-          "source": "committed dossier valuation.own_history (CIQ Financials→Multiples 'TEV/LTM EBITDA' Close, 20 closes, as-of 2026-06-24)"
+          "source": "committed dossier valuation.own_history (CIQ Financials→Multiples 'TEV/LTM EBITDA' Close, 38 closes, 9.3y span, as-of 2026-07-17, sha 66405c3bc0)"
         },
         {
           "label": "own-history 75th percentile",
-          "value": 26.12,
+          "value": 26.82,
           "unit": "x",
-          "source": "committed dossier valuation.own_history (CIQ Financials→Multiples 'TEV/LTM EBITDA' Close, 20 closes, as-of 2026-06-24)"
+          "source": "committed dossier valuation.own_history (CIQ Financials→Multiples 'TEV/LTM EBITDA' Close, 38 closes, 9.3y span, as-of 2026-07-17, sha 66405c3bc0)"
         },
         {
-          "label": "current multiple (0th pctile)",
-          "value": 7.5,
+          "label": "current multiple (3rd pctile)",
+          "value": 7.97,
           "unit": "x",
-          "source": "committed dossier valuation.own_history (CIQ Financials→Multiples 'TEV/LTM EBITDA' Close, 20 closes, as-of 2026-06-24)"
+          "source": "committed dossier valuation.own_history (CIQ Financials→Multiples 'TEV/LTM EBITDA' Close, 38 closes, 9.3y span, as-of 2026-07-17, sha 66405c3bc0)"
         }
-      ]
+      ],
+      "ratified_by": "analyst",
+      "ratified": "2026-07-21"
     }
   },
   "result": {
@@ -212,10 +218,16 @@
     "pass_fail": "PASS"
   },
   "verdict": {
-    "status": "pending_analyst",
-    "recorded": null,
-    "rationale": null,
-    "reunderwrite_triggers": [],
+    "status": "confirmed",
+    "recorded": "2026-07-21",
+    "rationale": "BUY at 141.06. Underwrite PASS 7.04:1 at 140.19 (2026-07-17); re-verified 6.69:1 at entry. Stress: brutal secular bear (rev −20%, margin 13%, 8x → $75.24) still clears 2.02:1 — barely, against the 2.0 bar. Known fragility, accepted: fails only if base multiple compresses to ~12x alongside the secular bear — i.e. only if revenue never re-stabilizes. Side taken: overshoot over GenAI disruption — five consecutive years of 18–21% operating margins, absolute EBITDA rising through the de-rate, LTM FCF +$1,064M (~11% FCF yield at spot), priced at ~the 3rd percentile of its own 9.3-year multiple band. Market prices structural decline; committed evidence shows revenue deceleration with an intact earnings base.",
+    "reunderwrite_triggers": [
+      "Q2-2026 print (early Aug): contract-value growth decelerates further or turns negative → re-underwrite the bear leg",
+      "revenue below the FY26E consensus path two consecutive quarters → re-test base at 12x",
+      "operating margin breaks below ~16% ex one-offs → regime assumption fails"
+    ],
+    "entry_price": 141.06,
+    "ratio_at_entry": 6.685869749511423,
     "avoid_priced": false,
     "avoid_priced_note": null
   }
