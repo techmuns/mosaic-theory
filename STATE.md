@@ -3811,6 +3811,87 @@ two-name analysis (mid/small-caps, opposite directions) mapped against this inve
 
 ## 5. Next steps (ordered, current)
 
+### LIVE QUEUE (authoritative — 2026-07-21)
+
+**Everything below this block is a BUILD RECORD, not a queue item.** §5 accreted to 1,232 lines
+because completed work was appended to a section named "next steps"; this block is the interim
+re-anchor (the full STATE split stays its own queued task — nothing was relocated here).
+
+**BUILD**
+1. **Dossier-assembly freshness detection + assembly provenance stamp (PAIRED).** The 2026-07-10
+   SMPL assembly missed the 2026-07-09 print by one day. Assembly must FLAG filings newer than
+   its evidence window, and stamp what window it read. (The §7 print-freshness gate and the
+   monitor's freshness panel cover verdicts manually until this exists.)
+2. **Shared `annual_series` alias fix** — GATES `attach_midcycle`.
+3. **sweep.json build guard** — `emit_radar_sweep` re-seeds the committed bar to 2026-06-17
+   whenever the component-a manifest is absent from the running worktree (INCIDENT #4: reverted
+   by hand three times, incl. 2026-07-21). The build should REFUSE to overwrite a
+   manifest-derived bar with a seeded one, not silently downgrade it.
+4. **R2 recipe** (for NCNO / MVST / FUBO / AORT — names R1's positivity guard rejects).
+
+**ANALYST / OPERATOR**
+5. **EPAM underwrite** — in flight.
+6. **BRBR / CNXC / VITL dispositions** — dossiers built, no verdict.
+7. **WERN ratifications (3):** the three draft `method` sentences; the Dedicated-mix ref basis
+   (51.5%→73% — name the filing); and the "12–14% peaks" prose vs the verified 9.59/11.31/9.82%.
+8. **Truckload freeze-source re-run** — confirm the surgically-patched
+   `frontend/themes/truckload-supply-purge.json` reproduces byte-identical from the freeze.
+9. **`extract_points` first-alias-wins truncation** — operator decision, open since 2026-07-16.
+10. **Sweep-#2 fail-closed coverage holes (2)** — operator decision, report-only.
+11. **Drafting-rubric v2 validation — DATED 2026-08-13** (pre-registered; do not run early).
+
+**HOUSEKEEPING**
+12. **Refresh cadence → docs/RUNBOOKS.md** (it is operating practice, not state).
+13. **Full STATE split** — §5 build records → a fossils/decisions file; this block is the interim.
+
+**CLOSED by the 2026-07-21 monitor build:** position monitor (book vs benchmarks, spread,
+freshness panel) · benchmark-by-cap-band assignment + the ledger-supersession artifact · the
+SIC-87xx sector miss · entry-price/ratio-at-entry + implied-odds display.
+
+- **POSITION MONITOR v1 (A2) — BUILT (2026-07-21, feat/monitor-v1).** The ledger froze what was
+  decided; nothing reported what happened since. `vinci/monitor.py` + `python -m vinci monitor`
+  (MANUAL — no scheduler), reading the COMMITTED `decision_ledger.jsonl` (the working DB is
+  empty on any fresh clone; the JSONL is the durable record).
+  - **Benchmark by CAP BAND at ENTRY** — `<$4B → IWM · $4–25B → MDY · >$25B → SPY`, named
+    constants, face-validity-chosen. Assigned: **VRRM $0.72B → IWM · IT $9.87B → MDY · SMPL
+    $1.02B → IWM**, shares source-stamped (IT/SMPL scenario-record diluted shares; VRRM the
+    dossier's EDGAR XBRL shares_out). The ledger has NO amendment row type, so the committed
+    `data/monitor/benchmark_assignments.json` **SUPERSEDES** the row's `benchmark` field for
+    scoring — IT's logged IWM is wrong for a $9.9B name and is corrected FORWARD; **no row was
+    mutated**, and every supersession prints in the run + the snapshot notes + the web card.
+  - **Excess** = position return − its assigned benchmark's return over the SAME window. BOTH
+    sides PRICE return (dividends excluded on both) — stated in the module, the snapshot, the
+    terminal table and the UI; never mixed with a total-return series.
+  - **BUY−AVOID spread** = mean(BUY excess) − mean(AVOID excess). An AVOID falling vs benchmark
+    has NEGATIVE excess → subtracting it makes the spread MORE positive (being right about a
+    terminal decline pays exactly like being right about an overshoot). Pinned BOTH directions.
+    An empty leg → `None` + reason, never 0.0. **First read: +14.43 pp — DIAGNOSTIC ONLY**
+    (0/3 resolved; both BUY legs 0 days old, so the number is carried entirely by VRRM).
+  - **Freshness/trigger panel:** last evidence date = underwrite date OR a later visible
+    `[amended …]` tag; EDGAR filings since → UNREAD PRINT flag; next print ESTIMATED from the
+    filer's own cadence (labeled); triggers verbatim. **The machine FLAGS, never adjudicates** —
+    pinned by asserting the model carries no fired/breach field. All three currently GREEN;
+    IT's next print ~2026-08-05, its first trigger window. WERN surfaces as a tracked
+    non-position (watch triggers + avoid_priced).
+  - **Sector fix, forward-only:** SIC major group 87 (engineering/accounting/research/management
+    services) fell through to "Other" — mislabelling the IT leg and 7 queue names
+    (HURN/WLDN/ACM/G/BAH/BWMN/STN). Mapped at the FAMILY level → **Industrials** (GICS
+    Professional Services); the finer reading still rides on `industry` (IT's CIQ-GICS is "IT
+    Consulting and Other Services"). The monitor RE-RESOLVES for display and says so; **the
+    frozen row keeps "Other" forever** (pinned).
+  - **Display:** decision log gains the spread card (caveats + sign convention ON SCREEN), live
+    per-leg columns, and the freshness panel; the scenario card shows **both ratios labeled** —
+    underwrite vs accepted-at-entry (**IT 7.04 vs 6.69**, a divergence one number would hide) —
+    plus a DERIVED *market-implied bear weight = (base − spot) ÷ (base − bear)* at the COMMITTED
+    mark (**SMPL 80% @ $10.92 · IT 87% @ $141.06**). The browser never fetches a live price;
+    no mark → no line.
+  - **INCIDENT #4 (recurrence, recorded):** the build re-seeded `frontend/radar/sweep.json` to
+    2026-06-17 again in the primary worktree (absent component-a manifest) — reverted by hand;
+    the guard is queue item 3. Third occurrence.
+  - Gate: ruff + `mypy --strict` clean; **761 passed** (+11); build ×2 idempotent; both display
+    changes browser-verified; `data/monitor/` allow-listed in `.gitignore` (derived analysis —
+    a spread nobody can re-read is not evidence).
+
 - **FIRST BUY RECORDED — IT (PR #161, 2026-07-21). THE FUND NOW HOLDS A LIVE PAPER POSITION.**
   - **THE VERDICT.** Human-recorded **BUY**, `verdict.status="confirmed"`, recorded 2026-07-21.
     **entry_price $141.06** (Polygon close 2026-07-20 — 2026-07-21 had not traded at record time),
@@ -5136,6 +5217,11 @@ latest 8-K/10-Q/10-K); read the print against the record; amend VISIBLY (tagged,
 untouched) where the print falsifies a stated premise. **Never record over an unread print.**
 Only primary filings go on the record — a figure a secondary source carries but the filing
 doesn't is dropped, noted, never recorded (the SMPL "September price increase" case).
+
+**Monitor cadence: a MANUAL command (`python -m vinci monitor`), never a scheduler.** The interim
+spread is a DIAGNOSTIC — read for direction, never tuned on; the measurement is the PER-ROW read
+at that row's horizon date. Each run commits a dated snapshot: a spread nobody can re-read is not
+evidence.
 
 **Disciplined on CAPITAL, flexible on BUILD (§4 GATE).** Real capital waits on an edge's validated
 spread — hard, unchanged. The BUILD does **not** single-thread: build toward + forward-validate edges
