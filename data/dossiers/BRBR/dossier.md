@@ -44,7 +44,7 @@ _Key unknowns:_
 |  | FY22 (R) | FY23 (R) | FY24 | FY25 | LTM | FY26E | FY27E |
 |---|---:|---:|---:|---:|---:|---:|---:|
 | Revenue ($M) | 1,372 | 1,667 | 1,996 | 2,317 | 2,332 | 2,333 | 2,413 |
-| Revenue growth | — | +22% | — (basis) | +16% | — (basis) | +1% (vs FY25) | +3% |
+| Revenue growth | — (basis) | +22% | — (basis) | +16% | — (basis) | +1% (vs FY25) | +3% |
 | EBITDA ($M) | 234 | 316 | 424 | 376 | 312 | 319 | 327 |
 | EBITDA margin | 17% | 19% | 21% | 16% | 13% | 14% | 14% |
 | EBIT ($M) | 212 | 294 | 405 | 357 | 292 | 279 | 290 |
@@ -52,6 +52,7 @@ _Key unknowns:_
 | EPS (GAAP, dil.) | 0.88 | 1.23 | 1.86 | 1.68 | 1.28 | 1.40 | 1.44 |
 | FCF ($M) | -5 | 192 | 162 | 224 | 183 | — | — |
 
+_table shows the last 4 fiscal years · 5 earlier years are in the Appendix_
 
 ## Valuation — first cut
 - **vs own trading history:** EV/EBITDA (TEV/LTM) 8.2x as-of 2026-07-17 — trailing range 4.3–27.9x (median 19.8x) over 27 closes → 4%ile → near-floor; P/LTM EPS 9.4x [15]
@@ -354,42 +355,42 @@ _NM = a real state (negative base), not missing_
 
 
 ## Financial statements (actuals + consensus estimates) — export date unverified (data ≥ 2026-05-14)
-### Annual (last-4-FY + LTM + FY26E/FY27E consensus)
+### Annual — every exported fiscal year + LTM + consensus
 - **Annual financials ($M; E = consensus)** — [14]  <!-- ds-table -->
 
-|  | FY22 (R) | FY23 (R) | FY24 | FY25 | LTM | FY26E | FY27E |
-|---|---|---|---|---|---|---|---|
-| Revenue ($M) | 1,372 | 1,667 | 1,996 | 2,317 | 2,332 | 2,333 | 2,413 |
-| Revenue growth | — | +22% | — (basis) | +16% | — (basis) | +1% (vs FY25) | +3% |
-| EBITDA ($M) | 234 | 316 | 424 | 376 | 312 | 319 | 327 |
-| EBITDA margin | 17% | 19% | 21% | 16% | 13% | 14% | 14% |
-| EBIT ($M) | 212 | 294 | 405 | 357 | 292 | 279 | 290 |
-| Net income ($M) | 82 | 166 | 246 | 216 | 158 | 165 | 163 |
-| EPS (GAAP, dil.) | 0.88 | 1.23 | 1.86 | 1.68 | 1.28 | 1.40 | 1.44 |
-| EPS (Normalized) | 0.73 | 1.06 | 1.64 | 1.41 | 1.10 | 1.25 | 1.37 |
-| CFO ($M) | 21 | 216 | 200 | 261 | 195 | — | — |
-| Capex ($M) | -2 | -2 | -2 | -5 | -9 | — | — |
-| FCF (levered, CIQ) | -5 | 192 | 162 | 224 | 183 | — | — |
+|  | FY17 (R) | FY18 | FY19 | FY20 | FY21 | FY22 (R) | FY23 (R) | FY24 | FY25 | LTM | FY26E | FY27E |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| Revenue ($M) | 713 | 828 | 854 | 988 | 1,247 | 1,372 | 1,667 | 1,996 | 2,317 | 2,332 | 2,333 | 2,413 |
+| Revenue growth | — | — (basis) | +3% | +16% | +26% | — (basis) | +22% | — (basis) | +16% | — (basis) | +1% (vs FY25) | +3% |
+| EBITDA ($M) | 117 | 146 | 194 | 191 | 227 | 234 | 316 | 424 | 376 | 312 | 319 | 327 |
+| EBITDA margin | 16% | 18% | 23% | 19% | 18% | 17% | 19% | 21% | 16% | 13% | 14% | 14% |
+| EBIT ($M) | 92 | 120 | 169 | 166 | 203 | 212 | 294 | 405 | 357 | 292 | 279 | 290 |
+| Net income ($M) | 35 | 0 | 0 | 24 | 28 | 82 | 166 | 246 | 216 | 158 | 165 | 163 |
+| EPS (GAAP, dil.) | — | — | — | 0.60 | 0.70 | 0.88 | 1.23 | 1.86 | 1.68 | 1.28 | 1.40 | 1.44 |
+| EPS (Normalized) | — | -0.62 | -0.44 | -0.18 | 0.33 | 0.73 | 1.06 | 1.64 | 1.41 | 1.10 | 1.25 | 1.37 |
+| CFO ($M) | 80 | 141 | 98 | 97 | 226 | 21 | 216 | 200 | 261 | 195 | — | — |
+| Capex ($M) | -4 | -5 | -3 | -2 | -2 | -2 | -2 | -2 | -5 | -9 | — | — |
+| FCF (levered, CIQ) | — | 121 | 69 | 61 | 178 | -5 | 192 | 162 | 224 | 183 | — | — |
 
-_E = consensus (Estimates→Trends 'Current'), as-of ≥2026-05-14; (R) = Reclassified basis · FCF (levered, CIQ) = CIQ 'Levered Free Cash Flow', NOT CFO − capex_
+_E = consensus (Estimates→Trends 'Current'), as-of ?; (R) = Reclassified basis · FCF (levered, CIQ) = CIQ 'Levered Free Cash Flow', NOT CFO − capex_
 
-### Trailing 8 quarters (the recent-quarter trajectory)
-- **Quarterly financials** — [47]  <!-- ds-table -->
+### Quarterly — every exported quarter
+- **Quarterly financials** — [48]  <!-- ds-table -->
 
-|  | FY24 | FY24 | FY24 | FY25 | FY25 | FY25 | FY25 | FY26 |
-|---|---|---|---|---|---|---|---|---|
-| Revenue ($M) | 515 | 556 | 533 | 588 | 548 | 648 | 537 | 599 |
-| Gross margin | 37% | 37% | 37% | 32% | 35% | 29% | 30% | 27% |
-| EBITDA ($M) | 116 | 117 | 120 | 100 | 49 | 107 | 83 | 72 |
-| EBITDA margin | 23% | 21% | 22% | 17% | 9% | 17% | 16% | 12% |
-| Revenue QoQ | — | +8% | -4% | +10% | -7% | +18% | -17% | +11% |
-| Revenue YoY | — | — | — | — | — | — | — | — |
+|  | FY17 | FY18 | FY18 | FY18 | FY18 | FY19 | FY19 | FY19 | FY19 | FY20 (R) | FY20 (R) | FY20 (R) | FY20 (R) | FY21 (R) | FY21 (R) | FY21 (R) | FY21 | FY22 | FY22 | FY22 | FY22 (R) | FY23 (R) | FY23 (R) | FY23 | FY23 | FY24 | FY24 | FY24 | FY24 | FY25 | FY25 | FY25 | FY25 | FY26 |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| Revenue ($M) | 196 | 205 | 216 | 220 | 186 | 216 | 238 | 214 | 244 | 258 | 204 | 283 | 282 | 282 | 343 | 340 | 306 | 315 | 371 | 379 | 363 | 386 | 446 | 473 | 430 | 495 | 515 | 556 | 533 | 588 | 548 | 648 | 537 | 599 |
+| Gross margin | 33% | 31% | 35% | 34% | 35% | 36% | 38% | 36% | 37% | 34% | 34% | 32% | 33% | 31% | 32% | 28% | 30% | 28% | 32% | 32% | 34% | 30% | 31% | 33% | 34% | 33% | 37% | 37% | 37% | 32% | 35% | 29% | 30% | 27% |
+| EBITDA ($M) | 28 | 31 | 46 | 44 | 39 | 49 | 60 | 45 | 56 | 42 | 37 | 57 | 54 | 39 | 69 | 63 | 58 | 49 | 74 | 68 | 80 | 63 | 81 | 91 | 96 | 96 | 116 | 117 | 120 | 100 | 49 | 107 | 83 | 72 |
+| EBITDA margin | 14% | 15% | 21% | 20% | 21% | 23% | 25% | 21% | 23% | 16% | 18% | 20% | 19% | 14% | 20% | 19% | 19% | 15% | 20% | 18% | 22% | 16% | 18% | 19% | 22% | 19% | 23% | 21% | 22% | 17% | 9% | 17% | 16% | 12% |
+| Revenue QoQ | — | +5% | +5% | +2% | -16% | +17% | +10% | -10% | +14% | — (basis) | -21% | +38% | -0% | -0% | +21% | -1% | — (basis) | +3% | +18% | +2% | — (basis) | +6% | +16% | — (basis) | -9% | +15% | +4% | +8% | -4% | +10% | -7% | +18% | -17% | +11% |
+| Revenue YoY | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — |
 
 _QoQ/YoY same-basis only; (R) = Reclassified_
 
 ### Balance-sheet posture
-- **Posture:** as of FY26 ($M): cash & ST inv 33; total debt 1,222; net debt 1,190; equity -498; net working capital 455; net-debt/EBITDA → see the Leverage & survival block (not recomputed) [48]
-- **Coherence — BS vs implied-valuation bridge:** cash BS $33M / bridge $33M; debt BS $1,222M / bridge $1,222M — reconcile with the implied-valuation bridge. [49]
+- **Posture:** as of FY26 ($M): cash & ST inv 33; total debt 1,222; net debt 1,190; equity -498; net working capital 455; net-debt/EBITDA → see the Leverage & survival block (not recomputed) [49]
+- **Coherence — BS vs implied-valuation bridge:** cash BS $33M / bridge $33M; debt BS $1,222M / bridge $1,222M — reconcile with the implied-valuation bridge. [50]
 
 
 ### Capital structure & debt terms — instruments · pointers · covenants
@@ -402,7 +403,7 @@ _QoQ/YoY same-basis only; (R) = Reclassified_
 | Revolving Credit Facility | Revolving Credit | $250.0M | 5.820% | Various Benchmarks | 2030-08-22 | Y | N |  |
 
 - **8-Ks at instrument maturities:** _UNKNOWN_ — no trailing-12m instrument maturity to anchor an 8-K
-- **Covenant / contract pointers (CIK-verified execution filings)** — [50]  <!-- ds-table -->
+- **Covenant / contract pointers (CIK-verified execution filings)** — [51]  <!-- ds-table -->
 
 |  | Filing | Date | Accession / exhibit (or note) |
 |---|---|---|---|
@@ -411,7 +412,7 @@ _QoQ/YoY same-basis only; (R) = Reclassified_
 | 7.00% Senior Notes Maturing in March 2030 | — | — | no contract-level filing expected (aggregate line item) |
 | Operating Lease Liabilities | — | — | no contract-level filing expected (aggregate line item) |
 
-- **Covenant terms — Revolving Credit Facility (governing agreement)** — [51]  <!-- ds-table -->
+- **Covenant terms — Revolving Credit Facility (governing agreement)** — [52]  <!-- ds-table -->
 
 |  | Governing value (lead · clause ≤200c) | Source § |
 |---|---|---|
@@ -432,9 +433,9 @@ _Source §: 8-K 0001772016-21-000029 · ex10-1_amend2creditagmt.htm_
 ### Implied equity at peer multiples
 > **Comparability gate:** comparability: HETEROGENEOUS (see Peer comps gate)
 > _Reference only — the human judges earned vs residual (not a machine upside); the full Low/Mean/High and all bases are in the JSON._
-- **Name market cap ($M) — the ADJACENT fact to compare against:** 1310.5 [52]
-- **Bridge (TEV → equity):** TEV→equity bridge: + cash $32.60M, − total debt $1,222.30M [53]
-- **Implied equity at peer-median ($M, CIQ)** — [54]  <!-- ds-table -->
+- **Name market cap ($M) — the ADJACENT fact to compare against:** 1310.5 [53]
+- **Bridge (TEV → equity):** TEV→equity bridge: + cash $32.60M, − total debt $1,222.30M [54]
+- **Implied equity at peer-median ($M, CIQ)** — [55]  <!-- ds-table -->
 
 |  | Implied equity (median) |
 |---|---:|
@@ -444,7 +445,7 @@ _Source §: 8-K 0001772016-21-000029 · ex10-1_amend2creditagmt.htm_
 
 
 ### Management commentary
-- **Earnings call (transcript pointer — read the file):** 2 earnings-call transcript(s) on file — read in full for management posture: BellRing Brands, Inc., Q1 2026 Earnings Call, Feb 03, 2026.rtf; BellRing Brands, Inc., Q2 2026 Earnings Call, May 05, 2026.rtf (pointer only; the synthesis cites them, the machine does not curate an excerpt) [55]
+- **Earnings call (transcript pointer — read the file):** 2 earnings-call transcript(s) on file — read in full for management posture: BellRing Brands, Inc., Q1 2026 Earnings Call, Feb 03, 2026.rtf; BellRing Brands, Inc., Q2 2026 Earnings Call, May 05, 2026.rtf (pointer only; the synthesis cites them, the machine does not curate an excerpt) [56]
 
 ## Record & reproduce
 - **Data window:** screened as of 2026-07-06 · assembled 2026-07-10 06:56 UTC
@@ -504,11 +505,12 @@ _Source §: 8-K 0001772016-21-000029 · ex10-1_amend2creditagmt.htm_
 [45] `CIQ Customers&Suppliers BellRing Brands Inc NYSE BRBR Customers.rtf`
 [46] `CIQ Estimates→Consensus`
 [47] `CIQ Financials→Income Statement (quarterly, trailing 8Q)`
-[48] `CIQ Financials→Balance Sheet (quarterly, FY26)`
-[49] `CIQ Financials→Balance Sheet vs Comparable Analysis→Implied Valuation`
-[50] `EDGAR 10-K exhibit index + CIK-scoped efts (agreement-class, exhibit-bearing)`
-[51] `fenced Tier-2 extraction (verbatim, source-bound)`
-[52] `CIQ Comparable Analysis→Financial Data (name Market Capitalization Latest) · as-of 2026-06-24`
-[53] `CIQ Comparable Analysis→Implied Valuation (cash/debt bridge) · as-of 2026-06-24`
-[54] `CIQ Comparable Analysis→Implied Valuation (= Implied Equity Value, basis × Low/Median/Mean/High) · as-of 2026-06-24`
-[55] `CIQ transcript(s): BellRing Brands, Inc., Q1 2026 Earnings Call, Feb 03, 2026.rtf; BellRing Brands, Inc., Q2 2026 Earnings Call, May 05, 2026.rtf`
+[48] `CIQ Financials→Income Statement (quarterly, full exported history)`
+[49] `CIQ Financials→Balance Sheet (quarterly, FY26)`
+[50] `CIQ Financials→Balance Sheet vs Comparable Analysis→Implied Valuation`
+[51] `EDGAR 10-K exhibit index + CIK-scoped efts (agreement-class, exhibit-bearing)`
+[52] `fenced Tier-2 extraction (verbatim, source-bound)`
+[53] `CIQ Comparable Analysis→Financial Data (name Market Capitalization Latest) · as-of 2026-06-24`
+[54] `CIQ Comparable Analysis→Implied Valuation (cash/debt bridge) · as-of 2026-06-24`
+[55] `CIQ Comparable Analysis→Implied Valuation (= Implied Equity Value, basis × Low/Median/Mean/High) · as-of 2026-06-24`
+[56] `CIQ transcript(s): BellRing Brands, Inc., Q1 2026 Earnings Call, Feb 03, 2026.rtf; BellRing Brands, Inc., Q2 2026 Earnings Call, May 05, 2026.rtf`

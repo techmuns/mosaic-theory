@@ -43,7 +43,7 @@ _Key unknowns:_
 |  | FY22 | FY23 (R) | FY24 (R) | FY25 | LTM | FY26E | FY27E |
 |---|---:|---:|---:|---:|---:|---:|---:|
 | Revenue ($M) | 314 | 354 | 389 | 441 | 459 | 486 | 540 |
-| Revenue growth | — | — (basis) | +10% | — (basis) | — (basis) | +10% (vs FY25) | +11% |
+| Revenue growth | — (basis) | — (basis) | +10% | — (basis) | — (basis) | +10% (vs FY25) | +11% |
 | EBITDA ($M) | 20 | 15 | 52 | 54 | 61 | 95 | 116 |
 | EBITDA margin | 6% | 4% | 13% | 12% | 13% | 20% | 21% |
 | EBIT ($M) | -3 | -8 | 28 | 31 | 38 | 34 | 58 |
@@ -51,6 +51,7 @@ _Key unknowns:_
 | EPS (GAAP, dil.) | -0.48 | -0.75 | -0.32 | 0.21 | 0.24 | 0.10 | 0.41 |
 | FCF ($M) | 0 | -4 | 0 | -20 | -7 | — | — |
 
+_table shows the last 4 fiscal years · 6 earlier years are in the Appendix_
 
 ## Valuation — first cut
 - **vs own trading history:** EV/EBITDA (TEV/LTM) 20.6x as-of 2026-07-17 — trailing range 18.8–75.4x (median 32.1x) over 42 closes → 7%ile → near-floor; P/LTM EPS 104.0x [15]
@@ -381,36 +382,36 @@ _NM = a real state (negative base), not missing_
 
 
 ## Financial statements (actuals + consensus estimates) — export date unverified (data ≥ 2026-06-23)
-### Annual (last-4-FY + LTM + FY26E/FY27E consensus)
+### Annual — every exported fiscal year + LTM + consensus
 - **Annual financials ($M; E = consensus)** — [14]  <!-- ds-table -->
 
-|  | FY22 | FY23 (R) | FY24 (R) | FY25 | LTM | FY26E | FY27E |
-|---|---|---|---|---|---|---|---|
-| Revenue ($M) | 314 | 354 | 389 | 441 | 459 | 486 | 540 |
-| Revenue growth | — | — (basis) | +10% | — (basis) | — (basis) | +10% (vs FY25) | +11% |
-| EBITDA ($M) | 20 | 15 | 52 | 54 | 61 | 95 | 116 |
-| EBITDA margin | 6% | 4% | 13% | 12% | 13% | 20% | 21% |
-| EBIT ($M) | -3 | -8 | 28 | 31 | 38 | 34 | 58 |
-| Net income ($M) | -19 | -31 | -13 | 10 | 12 | 5 | 23 |
-| EPS (GAAP, dil.) | -0.48 | -0.75 | -0.32 | 0.21 | 0.24 | 0.10 | 0.41 |
-| EPS (Normalized) | -0.37 | -0.55 | -0.22 | 0.20 | 0.26 | 0.44 | 0.72 |
-| CFO ($M) | -5 | 19 | 22 | 40 | 58 | — | — |
-| Capex ($M) | -11 | -10 | -11 | -39 | -43 | — | — |
-| FCF (levered, CIQ) | 0 | -4 | 0 | -20 | -7 | — | — |
+|  | FY16 | FY17 | FY18 | FY19 | FY20 | FY21 (R) | FY22 | FY23 (R) | FY24 (R) | FY25 | LTM | FY26E | FY27E |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| Revenue ($M) | 180 | 190 | 263 | 276 | 253 | 299 | 314 | 354 | 389 | 441 | 459 | 486 | 540 |
+| Revenue growth | — | +5% | +39% | +5% | -8% | — (basis) | — (basis) | — (basis) | +10% | — (basis) | — (basis) | +10% (vs FY25) | +11% |
+| EBITDA ($M) | 25 | 20 | 30 | 35 | 28 | 25 | 20 | 15 | 52 | 54 | 61 | 95 | 116 |
+| EBITDA margin | 14% | 11% | 11% | 13% | 11% | 8% | 6% | 4% | 13% | 12% | 13% | 20% | 21% |
+| EBIT ($M) | 17 | 11 | 12 | 17 | 7 | 1 | -3 | -8 | 28 | 31 | 38 | 34 | 58 |
+| Net income ($M) | 11 | 4 | -3 | 2 | -17 | -15 | -19 | -31 | -13 | 10 | 12 | 5 | 23 |
+| EPS (GAAP, dil.) | 0.32 | 0.11 | -0.08 | 0.05 | -0.44 | -0.38 | -0.48 | -0.75 | -0.32 | 0.21 | 0.24 | 0.10 | 0.41 |
+| EPS (Normalized) | 0.26 | 0.11 | -0.06 | 0.03 | -0.21 | -0.35 | -0.37 | -0.55 | -0.22 | 0.20 | 0.26 | 0.44 | 0.72 |
+| CFO ($M) | 20 | 11 | 10 | 16 | 12 | -3 | -5 | 19 | 22 | 40 | 58 | — | — |
+| Capex ($M) | -6 | -7 | -6 | -8 | -7 | -13 | -11 | -10 | -11 | -39 | -43 | — | — |
+| FCF (levered, CIQ) | 4 | -18 | 9 | -4 | 5 | -21 | 0 | -4 | 0 | -20 | -7 | — | — |
 
-_E = consensus (Estimates→Trends 'Current'), as-of ≥2026-06-23; (R) = Reclassified basis · FCF (levered, CIQ) = CIQ 'Levered Free Cash Flow', NOT CFO − capex_
+_E = consensus (Estimates→Trends 'Current'), as-of ?; (R) = Reclassified basis · FCF (levered, CIQ) = CIQ 'Levered Free Cash Flow', NOT CFO − capex_
 
-### Trailing 8 quarters (the recent-quarter trajectory)
+### Quarterly — every exported quarter
 - **Quarterly financials** — [52]  <!-- ds-table -->
 
-|  | Q2-24 | Q3-24 (R) | Q4-24 (R) | Q1-25 (R) | Q2-25 | Q3-25 | Q4-25 | Q1-26 |
-|---|---|---|---|---|---|---|---|---|
-| Revenue ($M) | 98 | 96 | 97 | 99 | 113 | 113 | 116 | 116 |
-| Gross margin | 65% | 64% | 63% | 64% | 65% | 66% | 63% | 65% |
-| EBITDA ($M) | 14 | 14 | 10 | 5 | 17 | 17 | 15 | 12 |
-| EBITDA margin | 14% | 15% | 11% | 5% | 15% | 15% | 13% | 11% |
-| Revenue QoQ | — | — (basis) | +2% | +2% | — (basis) | +0% | +2% | +0% |
-| Revenue YoY | — | — | — | — | +15% | — (basis) | — (basis) | — (basis) |
+|  | Q1-16 | Q2-16 | Q3-16 | Q4-16 | Q1-17 | Q2-17 (R) | Q3-17 (R) | Q4-17 (R) | Q1-18 | Q2-18 | Q3-18 (R) | Q4-18 (R) | Q1-19 | Q2-19 | Q3-19 (R) | Q4-19 (R) | Q1-20 | Q2-20 | Q3-20 | Q4-20 | Q1-21 | Q2-21 | Q3-21 (R) | Q4-21 (R) | Q1-22 | Q2-22 | Q3-22 (R) | Q4-22 (R) | Q1-23 (R) | Q2-23 | Q3-23 (R) | Q4-23 (R) | Q1-24 (R) | Q2-24 | Q3-24 (R) | Q4-24 (R) | Q1-25 (R) | Q2-25 | Q3-25 | Q4-25 | Q1-26 |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| Revenue ($M) | 43 | 47 | 45 | 45 | 45 | 48 | 44 | 53 | 62 | 68 | 65 | 68 | 68 | 71 | 68 | 70 | 66 | 54 | 65 | 68 | 71 | 76 | 72 | 79 | 77 | 80 | 77 | 79 | 83 | 89 | 88 | 94 | 97 | 98 | 96 | 97 | 99 | 113 | 113 | 116 | 116 |
+| Gross margin | 66% | 66% | 67% | 71% | 70% | 69% | 68% | 74% | 66% | 69% | 66% | 67% | 66% | 66% | 67% | 67% | 66% | 67% | 66% | 66% | 67% | 66% | 66% | 65% | 66% | 65% | 63% | 64% | 65% | 65% | 64% | 65% | 65% | 65% | 64% | 63% | 64% | 65% | 66% | 63% | 65% |
+| EBITDA ($M) | 7 | 9 | 9 | 1 | 7 | 7 | 3 | 6 | 2 | 11 | 11 | 0 | 7 | 11 | 9 | 9 | 4 | 3 | 9 | 12 | 8 | 11 | 6 | 1 | 6 | 7 | 2 | 5 | 7 | 10 | 11 | 11 | 14 | 14 | 14 | 10 | 5 | 17 | 17 | 15 | 12 |
+| EBITDA margin | 16% | 19% | 19% | 2% | 15% | 15% | 7% | 11% | 4% | 17% | 17% | 0% | 10% | 15% | 14% | 12% | 6% | 5% | 14% | 18% | 12% | 14% | 8% | 1% | 7% | 9% | 2% | 7% | 8% | 11% | 12% | 11% | 14% | 14% | 15% | 11% | 5% | 15% | 15% | 13% | 11% |
+| Revenue QoQ | — | +9% | -4% | -0% | +0% | — (basis) | -8% | +20% | — (basis) | +11% | — (basis) | +5% | — (basis) | +5% | — (basis) | +3% | — (basis) | -19% | +21% | +4% | +5% | +7% | — (basis) | +10% | — (basis) | +4% | — (basis) | +3% | +5% | — (basis) | — (basis) | +7% | +4% | — (basis) | — (basis) | +2% | +2% | — (basis) | +0% | +2% | +0% |
+| Revenue YoY | — | — | — | — | +5% | — (basis) | — (basis) | — (basis) | +37% | — (basis) | +47% | +28% | +9% | +4% | +5% | +3% | -2% | -24% | — (basis) | — (basis) | +7% | +42% | — (basis) | — (basis) | +9% | +6% | +6% | +0% | — (basis) | +11% | +14% | +18% | +17% | +10% | +9% | +4% | +2% | +15% | — (basis) | — (basis) | — (basis) |
 
 _QoQ/YoY same-basis only; (R) = Reclassified_
 
@@ -585,7 +586,7 @@ _Source §: 8-K 0000784199-16-000175 · c199-20160125ex101fad737.htm_
 [49] `CIQ Estimates→Consensus`
 [50] `CIQ Key Developments: Artivion Inc NYSE AORT Key Developments.rtf · May-07-2026`
 [51] `CIQ Key Developments: Artivion Inc NYSE AORT Key Developments.rtf · May-23-2026`
-[52] `CIQ Financials→Income Statement (quarterly, trailing 8Q)`
+[52] `CIQ Financials→Income Statement (quarterly, full exported history)`
 [53] `CIQ Financials→Balance Sheet (quarterly, Q1-26)`
 [54] `CIQ Financials→Balance Sheet vs Comparable Analysis→Implied Valuation`
 [55] `EDGAR 10-K exhibit index + CIK-scoped efts (agreement-class, exhibit-bearing)`

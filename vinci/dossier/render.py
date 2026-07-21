@@ -1175,10 +1175,10 @@ def _appendix_lines(m: MechanicalLayer) -> list[str]:
         return []
     hdr = ("## Financial statements (actuals + consensus estimates) "
            f"— {_asof_header(fs.as_of)}")
-    out = ["", hdr, "### Annual (last-4-FY + LTM + FY26E/FY27E consensus)"]
+    out = ["", hdr, "### Annual — every exported fiscal year + LTM + consensus"]
     annual = _annual_with_fcf_label(fs.annual)  # D5b: FCF row relabeled + footnoted (display-only)
     out += _fin_table_lines("Annual financials ($M; E = consensus)", annual)
-    out.append("### Trailing 8 quarters (the recent-quarter trajectory)")
+    out.append("### Quarterly — every exported quarter")
     out += _fin_table_lines("Quarterly financials", fs.quarterly)
     out += [
         "### Balance-sheet posture",
@@ -1628,24 +1628,52 @@ def _customer_concentration(m: MechanicalLayer) -> str | None:
     return f"- **Customer concentration:** {line} of revenue{_cite(fil.source_ref)}"
 
 
+_BRIEF_FY = 4  # actual fiscal years on the first cut; the Appendix + JSON keep every one
+
+
+def _brief_window(tbl: Any) -> list[int]:
+    """Column indices for the BRIEF's view of the annual table: the last ``_BRIEF_FY`` ACTUAL
+    fiscal years + LTM + every consensus column. Curated at the RENDER layer — the record holds
+    every exported year (the truncation used to happen at extraction, which put five-plus years of
+    actuals beyond recovery). Mirrors briefWindow() in dossier.js."""
+    cols = list(tbl.columns)
+    est = list(getattr(tbl, "is_estimate", None) or [])
+
+    def is_est(i: int) -> bool:
+        return i < len(est) and bool(est[i])
+
+    always = [i for i, c in enumerate(cols) if is_est(i) or str(c).upper().startswith("LTM")]
+    actual = [i for i, c in enumerate(cols)
+              if not is_est(i) and not str(c).upper().startswith("LTM")]
+    return sorted(actual[-_BRIEF_FY:] + always)
+
+
 def _brief_financials(m: MechanicalLayer) -> list[str]:
-    """The Motilal-style financials snapshot — the key income-statement rows (un-truncated), as a
-    table; the full statement stays in the Appendix."""
+    """The financials snapshot — the key income-statement rows over the BRIEF's window (last 4
+    fiscal years + LTM + consensus); the full exported history stays in the Appendix and the JSON,
+    and the hidden count is stated rather than silently dropped."""
     fs = m.financial_summary
     if fs is None or fs.annual.status is not SourceStatus.PRESENT or fs.annual.value is None:
         return []
     tbl = fs.annual.value
     want = {"Revenue ($M)", "Revenue growth", "EBITDA ($M)", "EBITDA margin",
             "EBIT ($M)", "Net income ($M)", "EPS (GAAP, dil.)", "FCF ($M)"}
-    rows = [[r.label, *r.cells] for r in tbl.rows if r.label in want]
-    if not rows or not tbl.columns:
+    idx = _brief_window(tbl)
+    cols = [tbl.columns[i] for i in idx]
+    rows = [[r.label, *[r.cells[i] for i in idx if i < len(r.cells)]]
+            for r in tbl.rows if r.label in want]
+    if not rows or not cols:
         return []
+    hidden = len(tbl.columns) - len(idx)
     # num_cols are 0-based indices into cols (the period columns) — _table prepends the label cell
     # itself. range(len) right-aligns EVERY period; range(1, len+1) left off column 0 and wasted
     # index len (the first period rendered left-aligned).
-    num_cols = frozenset(range(len(tbl.columns)))
-    return _table("Financial snapshot", fs.annual.source_ref, list(tbl.columns), rows,
-                  num_cols=num_cols)
+    out = _table("Financial snapshot", fs.annual.source_ref, cols, rows,
+                 num_cols=frozenset(range(len(cols))))
+    if hidden > 0:
+        out.append(f"_table shows the last {_BRIEF_FY} fiscal years · {hidden} earlier "
+                   f"{'year is' if hidden == 1 else 'years are'} in the Appendix_")
+    return out
 
 
 def _machine_read_md(eb: str) -> str:

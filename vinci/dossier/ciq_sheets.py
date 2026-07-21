@@ -1095,7 +1095,7 @@ def surprise_history(bundle: CiqBundle) -> Sourced[str]:
             if (v := clean_num(rows[ri][j])) is not None
             and j < len(rows[yhdr]) and (yr := clean_num(rows[yhdr][j])) is not None
         ]
-        return ", ".join(out[-5:]) if out else None
+        return ", ".join(out) if out else None  # full series; the render windows it
 
     parts: list[str] = []
     if (e := series(_find_row_prefix(rows, "EPS (GAAP)"))) is not None:
@@ -2852,11 +2852,12 @@ _C1_CF: tuple[tuple[str, str], ...] = (
 
 
 def financial_summary_annual(bundle: CiqBundle, *, as_of: str | None = None) -> Sourced[FinTable]:
-    """(C1 + C4) Annual actuals (last-4-FY + LTM, from Financials Income Statement + Cash Flow)
-    fused with FY2026E/FY2027E consensus (Estimates→Trends 'Current'). E cols marked; growth is
-    never computed across a Reclassified basis ('— (basis)'), and an FY estimate's growth is vs the
-    PRIOR FISCAL YEAR ('+4% (vs FY25)'), not the overlapping LTM (D5c). EPS is split into same-basis
-    GAAP + Normalized rows (D5a). Core rows fail loud; supplementary rows render only if present."""
+    """(C1 + C4) Annual actuals — EVERY exported FY + LTM, from Financials Income Statement +
+    Cash Flow — fused with FY2026E/FY2027E consensus (Estimates→Trends 'Current'). E cols marked;
+    growth is never computed across a Reclassified basis ('— (basis)'), and an FY estimate's
+    growth is vs the PRIOR FISCAL YEAR ('+4% (vs FY25)'), not the overlapping LTM (D5c). EPS is
+    split into same-basis GAAP + Normalized rows (D5a). Core rows fail loud; supplementary rows
+    render only if present."""
     try:
         inc = bundle.sheet("financials", "Income Statement", freq="annual")
     except CiqUnavailableError as exc:
@@ -2869,7 +2870,13 @@ def financial_summary_annual(bundle: CiqBundle, *, as_of: str | None = None) -> 
     periods = _fin_periods(inc[hdr])
     fy = [p for p in periods if not p[2]]
     ltm = [p for p in periods if p[2]]
-    disp = fy[-4:] + ltm[:1]
+    # EVERY exported fiscal year reaches the record (was `fy[-4:]` — a display window applied at
+    # EXTRACTION, so five to six years of actuals never entered dossier.json and could not be
+    # recovered without the licensed workbook). The record is machine-complete; the BRIEF still
+    # shows the last four + LTM + estimates, curated at the render layer where the three-tier rule
+    # already lives. A cyclical-vs-secular question cannot be judged on a window that starts inside
+    # the period under judgement.
+    disp = fy + ltm[:1]
     if not disp:
         return Sourced.unknown(note="Income Statement (annual): no period columns")
     act_cols = [c for c, _s, _l, _r in disp]
@@ -3006,7 +3013,8 @@ def financial_summary_quarterly(bundle: CiqBundle) -> Sourced[FinTable]:
     hdr = _period_header(rows)
     if hdr is None:
         return Sourced.unknown(note="Income Statement (quarterly): no Fiscal Period header")
-    periods = _fin_periods(rows[hdr])[-8:]
+    # every exported quarter reaches the record (was `[-8:]`); the render shows the trailing 8
+    periods = _fin_periods(rows[hdr])
     if len(periods) < 2:
         return Sourced.unknown(note="Income Statement (quarterly): fewer than 2 quarters")
     cols = [c for c, _s, _l, _r in periods]
@@ -3060,7 +3068,7 @@ def financial_summary_quarterly(bundle: CiqBundle) -> Sourced[FinTable]:
     return Sourced.present(
         FinTable(columns=columns, rows=frows,
                  note=ebitda_note + "QoQ/YoY same-basis only; (R) = Reclassified"),
-        source_ref="CIQ Financials→Income Statement (quarterly, trailing 8Q)",
+        source_ref="CIQ Financials→Income Statement (quarterly, full exported history)",
     )
 
 
