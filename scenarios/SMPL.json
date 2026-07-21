@@ -64,13 +64,13 @@
       "revenue": 1330.0,
       "margin": 0.155,
       "multiple": 12.5,
-      "reason": "margin = 7yr clean median 15.51% (clean stats bracket the anchor; no realized break — FY2025 resolved: $60.9M intangible impairment, 10-K 0001702744-25-000046; ex-impairment margin 15.0%, at the median; residual ~$22.8M of the CIQ gap is definitional — intangible amortization 16.9 + transaction costs 0.8 — not operating). Revenue = consensus FY26E 1334 (company issued no numeric guidance). Multiple below the 17.9x own-history median (35 closes, 8.55y): the category question (GLP-1/Atkins) earns a durable discount; 12.5x = 14th percentile of the corrected band."
+      "reason": "margin = 7yr clean median 15.51% (clean stats bracket the anchor; no realized break — FY2025 resolved: $60.9M intangible impairment, 10-K 0001702744-25-000046; ex-impairment margin 15.0%, at the median; residual ~$22.8M of the CIQ gap is definitional — intangible amortization 16.9 + transaction costs 0.8 — not operating). Revenue = consensus FY26E 1334 [amended 2026-07-21 pre-verdict: FY26 guidance reinstated at the fiscal Q3 print (2026-07-09, 8-K 0001702744-26-000021) at $1.345–1.355B; base revenue 1,330 sits below the guide midpoint — the base leg is conservative vs management's own path.]. Multiple below the 17.9x own-history median (35 closes, 8.55y): the category question (GLP-1/Atkins) earns a durable discount; 12.5x = 14th percentile of the corrected band."
     },
     "bull": {
       "revenue": 1420.0,
       "margin": 0.165,
       "multiple": 16.0,
-      "reason": "overshoot resolves: Quest carries growth, Atkins stabilizes at a smaller base; margin between median and best (17.35%); multiple to own-history median."
+      "reason": "overshoot resolves: Quest carries growth, Atkins stabilizes at a smaller base; margin between median and best (17.35%); multiple toward but below the 17.85x own-history median (16.0x ≈ 29th pctile of the corrected 8.55y band) [amended 2026-07-21 pre-verdict: band refresh #162]."
     }
   },
   "assumptions": {
@@ -213,12 +213,16 @@
     "pass_fail": "PASS"
   },
   "verdict": {
-    "status": "pending_analyst",
-    "recorded": null,
-    "rationale": null,
-    "reunderwrite_triggers": [],
-    "entry_price": null,
-    "ratio_at_entry": null,
+    "status": "confirmed",
+    "recorded": "2026-07-21",
+    "rationale": "BUY at 10.92. Underwrite PASS 4.03:1 at 10.92 (2026-07-20); re-verified 4.03:1 at entry (same close — entry recorded 2026-07-21 against the 2026-07-20 session). Freshness (fiscal Q3 print 2026-07-09, 8-K 0001702744-26-000021): FY26 guidance reinstated at $1.345-1.355B — base revenue 1,330 sits below the guide midpoint, so the base leg is conservative vs management's own path; guided adj-EBITDA margin ~16.5% (222.5/1,350 midpoints) vs our normalized ~17.1% EBITDA-margin equivalent. Atkins -24.6% (brand impaired FY25 — management corroborates the bear direction the grid already prices); Quest +1.1% — the carry engine is unproven, the accepted open risk; OWYN +3.6%. GM guided ~-375bps; YTD FY26 non-cash impairments $331.0M. Side taken: overshoot over category decline — the market sold a consensus beat with reinstated guidance down to ~5.65x (0th percentile of the 8.55y band, below the 6.11x band low), the overshoot signature; trailing FCF yield ~12.3% (CIQ levered FCF 125.5 / entry mcap 1,023); buybacks active (~2.1M sh / ~$25M in the quarter); net debt ~1.5x guided adj-EBITDA (lease-inclusive 324.6/222.5; the 8-K's loan-basis reads 1.2x), self-funding. Known fragility, accepted: fails 2:1 only if revenue ~-26% AND margin below the worst clean year (9.58%) AND multiple below the band low coincide — boundary verified at entry: 1,100 × 8% × 6.0x → $3.54 → 2.17:1 clears; 1,050 × 7% × 6.0x → $2.62 → 1.92:1 fails. Quest stall is a bull-leg risk; bull is never in the ratio.",
+    "reunderwrite_triggers": [
+      "Quest revenue growth ≤ 0% YoY for two consecutive quarters → carry engine dead; re-underwrite bull and base legs",
+      "FY26 guidance cut at the fiscal Q4 print (~Oct 2026), or initial FY27 guidance below ~$1.30B → base revenue path fails",
+      "gross-margin erosion beyond the guided ~375bps, or sustained GM below ~31% → margin regime break"
+    ],
+    "entry_price": 10.92,
+    "ratio_at_entry": 4.029910552276017,
     "avoid_priced": false,
     "avoid_priced_note": null
   }
