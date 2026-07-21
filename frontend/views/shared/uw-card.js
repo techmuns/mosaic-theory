@@ -463,14 +463,24 @@ function recipeLine(c) {
 function axisLabel(axis, basis) {
   return axis === "revenue" ? "Revenue ($M)"
     : axis === "margin" ? "Op margin"
-    : axis === "multiple" ? `Exit ${basis}` : axis;
+    : axis === "multiple" ? `Exit ${basis}`
+    : axis === "horizon" ? "Years to terminal" : axis;
 }
 function axisFmt(axis) {
   return axis === "revenue" ? thousands
     : axis === "margin" ? pct
-    : axis === "multiple" ? (v) => oneDp(v, "×") : (v) => String(v);
+    : axis === "multiple" ? (v) => oneDp(v, "×")
+    : axis === "horizon" ? (v) => oneDp(v, "y") : (v) => String(v);
 }
-const AXIS_ORDER = ["revenue", "margin", "multiple"];
+
+// An assumption AXIS is not always spelled the same as the LEG FIELD carrying its chosen value.
+// R1's three axes happen to match their leg keys exactly, so the chosen-trio row could look the
+// value up by axis name — until R2 added `horizon`, whose leg field is `yearsToTerminal`. The
+// lookup then resolved to undefined and PRINTED it, in the first R2 record ever written and (via
+// the T1 print rule, which force-opens every details block) in every PDF export of it.
+const AXIS_LEG_KEY = { horizon: "yearsToTerminal" };
+const axisLegValue = (leg, axis) => leg[AXIS_LEG_KEY[axis] || axis];
+const AXIS_ORDER = ["revenue", "margin", "multiple", "horizon"];
 function orderedAssumptions(c) {
   const rank = (a) => { const i = AXIS_ORDER.indexOf(a.axis); return i < 0 ? 99 : i; };
   return [...(c.assumptions || [])].sort((x, y) => rank(x) - rank(y));
@@ -502,7 +512,7 @@ function methodRefsDetails(c) {
         <td class="uw-ref-cite">${citeMark(p.source)}</td></tr>`).join("");
     const chosen = legs.length
       ? `<tr class="name-row"><td>chosen (${legs.map((l) => escapeHtml(l.name)).join(" · ")})</td>
-          <td class="num">${legs.map((l) => fmt(l[a.axis])).join(" · ")}</td><td></td></tr>` : "";
+          <td class="num">${legs.map((l) => fmt(axisLegValue(l, a.axis))).join(" · ")}</td><td></td></tr>` : "";
     return `<div class="uw-method-h">${escapeHtml(axisLabel(a.axis, c.multipleBasis || DASH))}</div>
       <div style="overflow-x:auto;"><table class="data uw-refs-t"><tbody>${rows}${chosen}</tbody></table></div>`;
   }).join("");
