@@ -7333,3 +7333,22 @@ def test_contradiction_suppressions_on_frozen_fixtures() -> None:
     m4 = m3.model_copy(update={"quality": q2})
     md4 = dr.render_markdown(d1.model_copy(update={"mechanical": m4}))
     assert "FCF sign:** _UNKNOWN_" in md4
+
+
+def test_release_drivers_dedup_identical_segments() -> None:
+    """(audit item 8 — regression) A release that states the same one-off twice must not read as a
+    stutter: the composer dedups identical segments order-preserving. IT's Feb-3 8-K stated the
+    $150.0M Digital impairment in both the headline and the detail paragraph, and the committed
+    dossier printed it twice. Frozen committed-artifact pin + the extractor guard."""
+    import json as _json
+    import pathlib
+    p = pathlib.Path("data/dossiers/IT/dossier.json")
+    if not p.exists():
+        pytest.skip("no committed IT dossier.json")
+    f = _json.loads(p.read_text())["mechanical"]["drawdown_cause"]["filings"][0]
+    val = f["drivers"]["value"]
+    segs = [x.strip() for x in val.split(";")]
+    assert len(segs) == len(dict.fromkeys(segs)), f"duplicated driver segments: {val!r}"
+    # the extractor guard exists (source pin — future assemblies can't reintroduce it)
+    src = pathlib.Path("vinci/dossier/mechanical.py").read_text()
+    assert "parts = list(dict.fromkeys(parts))" in src

@@ -71,7 +71,7 @@ _table shows the last 4 fiscal years · 5 earlier years are in the Appendix_
 - **Gap-downs — what the results showed (parsed EX-99.1) + the 8-K:**
   - gap 2026-02-03 → 2026-02-03 [`0000749251-26-000028`](https://www.sec.gov/Archives/edgar/data/749251/000074925126000028/it-20260129.htm)
     - items: 2.02 Results of Operations and Financial Condition, 7.01 Regulation FD Disclosure, 9.01 Financial Statements and Exhibits
-    - **what the results showed:** $150.0M of goodwill impairment related to Digital; $150.0M of goodwill impairment related to Digital [18]
+    - **what the results showed:** $150.0M of goodwill impairment related to Digital [18]
 - **Revised guidance · Net debt / EBITDA (fwd-adj covenant basis) · EV/EBITDA (adjusted, forward) · Adjusted EPS (earnings power):** _UNKNOWN_ — no revised-outlook 99.1 exhibit parsed — the revised forward guidance is UNKNOWN
 
 _Company-specific or market-wide?_
