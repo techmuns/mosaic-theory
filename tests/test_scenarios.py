@@ -598,3 +598,72 @@ def test_committed_records_that_opened_a_position_carry_their_entry() -> None:
 
 if __name__ == "__main__":
     raise SystemExit(pytest.main([__file__, "-q"]))
+
+
+def test_every_committed_card_renders_without_undefined() -> None:
+    """REGRESSION PIN (#179). The chosen-trio row looked its value up by AXIS NAME. R1's three axes
+    happen to be spelled exactly like their leg fields, so that held — until R2 added ``horizon``,
+    whose leg field is ``yearsToTerminal``. The lookup resolved to undefined and PRINTED it, three
+    times, in the first R2 record ever written.
+
+    It would have shipped in every PDF too: the T1 print rule force-opens every details block, and
+    the chosen row lives inside the collapsed reference table, so a preview of the VISIBLE tier
+    could not see it (#176's synthetic preview checked exactly that and passed).
+
+    Asserts the invariant across EVERY committed card, not just the R2 one — the next axis added to
+    any recipe gets caught here rather than in an export."""
+    import shutil
+    import subprocess
+
+    if not shutil.which("node"):
+        pytest.skip("node unavailable")
+    root = Path(__file__).resolve().parents[1]
+    cards = sorted(p.name for p in (root / "frontend" / "scenarios").glob("*.json")
+                   if p.name != "index.json")
+    assert cards, "no committed cards to render"
+    driver = r"""
+import { readFileSync, readdirSync } from "node:fs";
+import { pathToFileURL } from "node:url";
+import path from "node:path";
+const stub = new Proxy(function(){}, { get: () => stub, apply: () => stub, construct: () => ({}) });
+for (const g of ["window","document","location"]) { try { globalThis[g] = stub; } catch {} }
+const uwUrl = pathToFileURL(path.resolve("frontend/views/shared/uw-card.js")).href;
+const { uwCard } = await import(uwUrl);
+const CHOSEN_RE = /chosen \(bear · base · bull\)<\/td>\s*<td class="num">([^<]*)<\/td>/g;
+const out = {};
+for (const f of readdirSync("frontend/scenarios")) {
+  if (!f.endsWith(".json") || f === "index.json") continue;
+  const card = JSON.parse(readFileSync("frontend/scenarios/" + f));
+  const html = uwCard(card, { ticker: true, mark: null });
+  out[f.replace(".json","")] = {
+    undef: (html.match(/undefined/g) || []).length,
+    axes: (card.assumptions || []).map((a) => a.axis),
+    chosenRows: (html.match(/chosen \(bear/g) || []).length,
+    horizonLabel: html.includes("Years to terminal"),
+    // the CHOSEN-TRIO cells specifically (dot-joined), not the main scenarios table
+    chosenTrios: [...html.matchAll(CHOSEN_RE)].map((m) => m[1].trim()),
+  };
+}
+console.log(JSON.stringify(out));
+"""
+    proc = subprocess.run(["node", "--input-type=module", "-e", driver],
+                          capture_output=True, text=True, check=True, cwd=root)
+    res = json.loads(proc.stdout)
+    for ticker, r in res.items():
+        assert r["undef"] == 0, (
+            f"{ticker}: rendered card prints 'undefined' x{r['undef']} — an assumption axis has no "
+            f"leg-field mapping (axes: {r['axes']})")
+        assert r["chosenRows"], f"{ticker}: no chosen-trio row rendered"
+        assert all(c.strip() for c in r["chosenTrios"]), (
+            f"{ticker}: an axis rendered an EMPTY chosen row — {r['chosenTrios']}")
+    r2 = [t for t, r in res.items() if "horizon" in r["axes"]]
+    for t in r2:
+        assert res[t]["horizonLabel"], f"{t}: horizon axis renders its bare key, not a label"
+        trios = res[t]["chosenTrios"]
+        assert len(trios) == len(res[t]["axes"]), (
+            f"{t}: {len(trios)} chosen-trio rows for {len(res[t]['axes'])} axes")
+        yrs = [x for x in trios if x.endswith("y")]
+        assert yrs, f"{t}: no horizon chosen row printing years — got {trios}"
+        assert all(part.strip().endswith("y") and part.strip()[:-1].replace(".", "").isdigit()
+                   for part in yrs[0].split("·")), (
+            f"{t}: the horizon chosen row is not per-leg year values — got {yrs[0]!r}")
