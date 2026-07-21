@@ -3800,7 +3800,7 @@
               "values": []
             }
           ],
-          "note": "E = consensus (Estimates→Trends 'Current'), as-of ≥2026-06-12; (R) = Reclassified basis",
+          "note": "E = consensus (Estimates→Trends 'Current'), as-of ?; (R) = Reclassified basis",
           "is_estimate": [
             false,
             false,
@@ -3818,6 +3818,8 @@
       "quarterly": {
         "value": {
           "columns": [
+            "FY23",
+            "FY24",
             "FY24",
             "FY24",
             "FY24",
@@ -3831,6 +3833,8 @@
             {
               "label": "Revenue ($M)",
               "cells": [
+                "1,051",
+                "1,076",
                 "1,058",
                 "1,058",
                 "1,106",
@@ -3851,6 +3855,8 @@
                 "0%",
                 "0%",
                 "0%",
+                "0%",
+                "0%",
                 "7%",
                 "8%"
               ],
@@ -3859,6 +3865,8 @@
             {
               "label": "EBITDA ($M)",
               "cells": [
+                "—",
+                "—",
                 "—",
                 "—",
                 "—",
@@ -3879,6 +3887,8 @@
                 "—",
                 "—",
                 "—",
+                "—",
+                "—",
                 "-0%",
                 "2%"
               ],
@@ -3888,6 +3898,8 @@
               "label": "Revenue QoQ",
               "cells": [
                 "—",
+                "+2%",
+                "-2%",
                 "+0%",
                 "+4%",
                 "— (basis)",
@@ -3908,6 +3920,8 @@
                 "—",
                 "—",
                 "—",
+                "—",
+                "—",
                 "—"
               ],
               "values": []
@@ -3916,7 +3930,7 @@
           "note": "QoQ/YoY same-basis only; (R) = Reclassified",
           "is_estimate": []
         },
-        "source_ref": "CIQ Financials→Income Statement (quarterly, trailing 8Q)",
+        "source_ref": "CIQ Financials→Income Statement (quarterly, full exported history)",
         "status": "present",
         "note": null
       },

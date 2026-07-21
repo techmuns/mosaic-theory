@@ -43,7 +43,7 @@ _Key unknowns:_
 |  | FY23 (R) | FY24 (R) | FY25 | FY26 | LTM | FY26E | FY27E |
 |---|---:|---:|---:|---:|---:|---:|---:|
 | Revenue ($M) | 408 | 477 | 541 | 595 | 610 | — | 645 |
-| Revenue growth | — | +17% | — (basis) | +10% | — (basis) | — | — |
+| Revenue growth | — (basis) | +17% | — (basis) | +10% | — (basis) | — | — |
 | EBITDA ($M) | -48 | 11 | 27 | 59 | 72 | — | 175 |
 | EBITDA margin | -12% | 2% | 5% | 10% | 12% | — | 27% |
 | EBIT ($M) | -83 | -34 | -9 | 17 | 30 | — | 169 |
@@ -51,6 +51,7 @@ _Key unknowns:_
 | EPS (GAAP, dil.) | -0.93 | -0.38 | -0.33 | 0.05 | 0.12 | — | 0.35 |
 | FCF ($M) | 21 | 82 | 99 | 145 | 139 | — | — |
 
+_table shows the last 4 fiscal years · 5 earlier years are in the Appendix_
 
 ## Valuation — first cut
 - **vs own trading history:** EV/EBITDA (TEV/LTM) 27.8x as-of 2026-07-17 — trailing range 25.8–221.1x (median 82.9x) over 10 closes → 10%ile → near-floor; P/LTM EPS 154.3x [15]
@@ -345,36 +346,36 @@ _NM = a real state (negative base), not missing_
 
 
 ## Financial statements (actuals + consensus estimates) — export date unverified (data ≥ 2026-07-12)
-### Annual (last-4-FY + LTM + FY26E/FY27E consensus)
+### Annual — every exported fiscal year + LTM + consensus
 - **Annual financials ($M; E = consensus)** — [14]  <!-- ds-table -->
 
-|  | FY23 (R) | FY24 (R) | FY25 | FY26 | LTM | FY26E | FY27E |
-|---|---|---|---|---|---|---|---|
-| Revenue ($M) | 408 | 477 | 541 | 595 | 610 | — | 645 |
-| Revenue growth | — | +17% | — (basis) | +10% | — (basis) | — | — |
-| EBITDA ($M) | -48 | 11 | 27 | 59 | 72 | — | 175 |
-| EBITDA margin | -12% | 2% | 5% | 10% | 12% | — | 27% |
-| EBIT ($M) | -83 | -34 | -9 | 17 | 30 | — | 169 |
-| Net income ($M) | -103 | -42 | -38 | 5 | 13 | — | 38 |
-| EPS (GAAP, dil.) | -0.93 | -0.38 | -0.33 | 0.05 | 0.12 | — | 0.35 |
-| EPS (Normalized) | -0.50 | -0.19 | -0.19 | 0.07 | 0.04 | — | 1.25 |
-| CFO ($M) | -15 | 57 | 55 | 90 | 117 | — | — |
-| Capex ($M) | -19 | -4 | -2 | -8 | -6 | — | — |
-| FCF (levered, CIQ) | 21 | 82 | 99 | 145 | 139 | — | — |
+|  | FY18 | FY19 | FY20 (R) | FY21 | FY22 | FY23 (R) | FY24 (R) | FY25 | FY26 | LTM | FY26E | FY27E |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| Revenue ($M) | 58 | 92 | 138 | 204 | 274 | 408 | 477 | 541 | 595 | 610 | — | 645 |
+| Revenue growth | — | +57% | — (basis) | — (basis) | +34% | — (basis) | +17% | — (basis) | +10% | — (basis) | — | — |
+| EBITDA ($M) | -18 | -22 | -24 | -35 | -41 | -48 | 11 | 27 | 59 | 72 | — | 175 |
+| EBITDA margin | -31% | -24% | -17% | -17% | -15% | -12% | 2% | 5% | 10% | 12% | — | 27% |
+| EBIT ($M) | -19 | -23 | -28 | -43 | -51 | -83 | -34 | -9 | 17 | 30 | — | 169 |
+| Net income ($M) | -19 | -22 | -28 | -40 | -49 | -103 | -42 | -38 | 5 | 13 | — | 38 |
+| EPS (GAAP, dil.) | — | -0.30 | -0.35 | -0.46 | -0.51 | -0.93 | -0.38 | -0.33 | 0.05 | 0.12 | — | 0.35 |
+| EPS (Normalized) | — | -0.19 | -0.21 | -0.28 | -0.34 | -0.50 | -0.19 | -0.19 | 0.07 | 0.04 | — | 1.25 |
+| CFO ($M) | -16 | -5 | -9 | 9 | -19 | -15 | 57 | 55 | 90 | 117 | — | — |
+| Capex ($M) | -3 | -8 | -6 | -4 | -6 | -19 | -4 | -2 | -8 | -6 | — | — |
+| FCF (levered, CIQ) | — | -6 | -5 | 28 | 36 | 21 | 82 | 99 | 145 | 139 | — | — |
 
-_E = consensus (Estimates→Trends 'Current'), as-of ≥2026-07-12; (R) = Reclassified basis · FCF (levered, CIQ) = CIQ 'Levered Free Cash Flow', NOT CFO − capex_
+_E = consensus (Estimates→Trends 'Current'), as-of ?; (R) = Reclassified basis · FCF (levered, CIQ) = CIQ 'Levered Free Cash Flow', NOT CFO − capex_
 
-### Trailing 8 quarters (the recent-quarter trajectory)
+### Quarterly — every exported quarter
 - **Quarterly financials** — [49]  <!-- ds-table -->
 
-|  | Q2-24 (R) | Q3-24 | Q4-25 | Q1-25 | Q2-25 | Q3-25 | Q4-26 | Q1-26 |
-|---|---|---|---|---|---|---|---|---|
-| Revenue ($M) | 132 | 139 | 141 | 144 | 149 | 152 | 150 | 159 |
-| Gross margin | 59% | 61% | 60% | 60% | 60% | 62% | 61% | 63% |
-| EBITDA ($M) | 2 | 12 | 3 | 19 | 13 | 23 | 13 | 31 |
-| EBITDA margin | 1% | 8% | 2% | 13% | 9% | 15% | 8% | 20% |
-| Revenue QoQ | — | — (basis) | +2% | +2% | +3% | +2% | -2% | +7% |
-| Revenue YoY | — | — | — | — | — (basis) | +10% | +6% | +11% |
+|  | Q1-19 | Q2-19 | Q3-19 | Q4-20 | Q1-20 | Q2-20 | Q3-20 | Q4-21 | Q1-21 | Q2-21 | Q3-21 | Q4-22 | Q1-22 (R) | Q2-22 (R) | Q3-22 (R) | Q4-23 (R) | Q1-23 (R) | Q2-23 (R) | Q3-23 (R) | Q4-24 (R) | Q1-24 | Q2-24 (R) | Q3-24 | Q4-25 | Q1-25 | Q2-25 | Q3-25 | Q4-26 | Q1-26 |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| Revenue ($M) | 30 | 32 | 38 | 39 | 45 | 49 | 54 | 57 | 62 | 67 | 70 | 75 | 94 | 100 | 105 | 109 | 114 | 117 | 122 | 124 | 128 | 132 | 139 | 141 | 144 | 149 | 152 | 150 | 159 |
+| Gross margin | 53% | 54% | 55% | 52% | 58% | 54% | 58% | 57% | 58% | 60% | 61% | 58% | 57% | 59% | 59% | 59% | 59% | 59% | 61% | 60% | 60% | 59% | 61% | 60% | 60% | 60% | 62% | 61% | 63% |
+| EBITDA ($M) | -3 | -7 | -5 | -9 | -2 | -14 | -7 | -12 | -13 | -11 | -10 | -7 | -16 | -14 | -8 | -8 | 2 | -2 | 6 | 5 | 12 | 2 | 12 | 3 | 19 | 13 | 23 | 13 | 31 |
+| EBITDA margin | -10% | -22% | -14% | -23% | -6% | -29% | -13% | -21% | -21% | -17% | -14% | -9% | -16% | -14% | -8% | -7% | 2% | -2% | 5% | 4% | 9% | 1% | 8% | 2% | 13% | 9% | 15% | 8% | 20% |
+| Revenue QoQ | — | +7% | +18% | +2% | +16% | +9% | +11% | +4% | +10% | +7% | +5% | +7% | — (basis) | +6% | +6% | +4% | +4% | +3% | +4% | +1% | — (basis) | — (basis) | — (basis) | +2% | +2% | +3% | +2% | -2% | +7% |
+| Revenue YoY | — | — | — | — | +50% | +52% | +43% | +47% | +39% | +36% | +29% | +32% | — (basis) | — (basis) | — (basis) | — (basis) | +21% | +18% | +16% | +13% | — (basis) | +13% | — (basis) | — (basis) | +13% | — (basis) | +10% | +6% | +11% |
 
 _QoQ/YoY same-basis only; (R) = Reclassified_
 
@@ -493,7 +494,7 @@ _Source §: 8-K 0001902733-24-000171 · exhibit101creditagreementb.htm · amende
 [46] `CIQ transcript: nCino, Inc., Q1 2027 Earnings Call, May 27, 2026.rtf`
 [47] `CIQ transcript: nCino, Inc., Q4 2026 Earnings Call, Mar 31, 2026.rtf`
 [48] `CIQ Key Developments: nCino Inc NasdaqGS NCNO Key Developments.rtf · Jul-14-2026`
-[49] `CIQ Financials→Income Statement (quarterly, trailing 8Q)`
+[49] `CIQ Financials→Income Statement (quarterly, full exported history)`
 [50] `CIQ Financials→Balance Sheet (quarterly, Q1-26)`
 [51] `CIQ Financials→Balance Sheet vs Comparable Analysis→Implied Valuation`
 [52] `EDGAR 10-K exhibit index + CIK-scoped efts (agreement-class, exhibit-bearing)`

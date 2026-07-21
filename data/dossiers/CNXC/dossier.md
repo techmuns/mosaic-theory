@@ -375,7 +375,7 @@ _NM = a real state (negative base), not missing_
 
 
 ## Financial statements (actuals + consensus estimates) — export date unverified (data ≥ 2026-06-05)
-### Annual (last-4-FY + LTM + FY26E/FY27E consensus)
+### Annual — every exported fiscal year + LTM + consensus
 - **Annual financials ($M; E = consensus)** — [14]  <!-- ds-table -->
 
 |  | FY22 | FY23 (R) | FY24 (R) | FY25 | LTM | FY26E | FY27E |
@@ -394,7 +394,7 @@ _NM = a real state (negative base), not missing_
 
 _E = consensus (Estimates→Trends 'Current'), as-of ≥2026-06-05; (R) = Reclassified basis · FCF (levered, CIQ) = CIQ 'Levered Free Cash Flow', NOT CFO − capex_
 
-### Trailing 8 quarters (the recent-quarter trajectory)
+### Quarterly — every exported quarter
 - **Quarterly financials** — [48]  <!-- ds-table -->
 
 |  | Q2-24 (R) | Q3-24 (R) | Q4-24 (R) | Q1-25 (R) | Q2-25 | Q3-25 | Q4-25 | Q1-26 |

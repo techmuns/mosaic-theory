@@ -355,7 +355,7 @@ _NM = a real state (negative base), not missing_
 
 
 ## Financial statements (actuals + consensus estimates) — export date unverified (data ≥ 2026-06-12)
-### Annual (last-4-FY + LTM + FY26E/FY27E consensus)
+### Annual — every exported fiscal year + LTM + consensus
 - **Annual financials ($M; E = consensus)** — [14]  <!-- ds-table -->
 
 |  | FY22 | FY23 | FY24 | FY25 | LTM | FY26E | FY27E |
@@ -372,25 +372,25 @@ _NM = a real state (negative base), not missing_
 | Capex ($M) | — | — | — | — | -1 | — | — |
 | FCF (levered, CIQ) | — | -31 | -81 | -108 | -131 | — | — |
 
-_E = consensus (Estimates→Trends 'Current'), as-of ≥2026-06-12; (R) = Reclassified basis · FCF (levered, CIQ) = CIQ 'Levered Free Cash Flow', NOT CFO − capex_
+_E = consensus (Estimates→Trends 'Current'), as-of ?; (R) = Reclassified basis · FCF (levered, CIQ) = CIQ 'Levered Free Cash Flow', NOT CFO − capex_
 
-### Trailing 8 quarters (the recent-quarter trajectory)
-- **Quarterly financials** — [43]  <!-- ds-table -->
+### Quarterly — every exported quarter
+- **Quarterly financials** — [46]  <!-- ds-table -->
 
-|  | FY24 | FY24 | FY24 | FY25 (R) | FY25 | FY25 | FY25 | FY26 |
-|---|---|---|---|---|---|---|---|---|
-| Revenue ($M) | 1,058 | 1,058 | 1,106 | 1,125 | 1,091 | 1,091 | 1,549 | 1,574 |
-| Gross margin | 0% | 0% | 0% | 0% | 0% | 0% | 7% | 8% |
-| EBITDA ($M) | — | — | — | — | — | — | -4 | 34 |
-| EBITDA margin | — | — | — | — | — | — | -0% | 2% |
-| Revenue QoQ | — | +0% | +4% | — (basis) | — (basis) | +0% | +42% | +2% |
-| Revenue YoY | — | — | — | — | — | — | — | — |
+|  | FY23 | FY24 | FY24 | FY24 | FY24 | FY25 (R) | FY25 | FY25 | FY25 | FY26 |
+|---|---|---|---|---|---|---|---|---|---|---|
+| Revenue ($M) | 1,051 | 1,076 | 1,058 | 1,058 | 1,106 | 1,125 | 1,091 | 1,091 | 1,549 | 1,574 |
+| Gross margin | 0% | 0% | 0% | 0% | 0% | 0% | 0% | 0% | 7% | 8% |
+| EBITDA ($M) | — | — | — | — | — | — | — | — | -4 | 34 |
+| EBITDA margin | — | — | — | — | — | — | — | — | -0% | 2% |
+| Revenue QoQ | — | +2% | -2% | +0% | +4% | — (basis) | — (basis) | +0% | +42% | +2% |
+| Revenue YoY | — | — | — | — | — | — | — | — | — | — |
 
 _QoQ/YoY same-basis only; (R) = Reclassified_
 
 ### Balance-sheet posture
 - **Posture:** as of FY26 ($M): cash & ST inv 238; total debt 408; net debt 170; equity 812; net working capital -6; net-debt/EBITDA → see the Leverage & survival block (not recomputed) [8]
-- **Coherence — BS vs implied-valuation bridge:** cash BS $238M / bridge $238M; debt BS $408M / bridge $408M — reconcile with the implied-valuation bridge. [46]
+- **Coherence — BS vs implied-valuation bridge:** cash BS $238M / bridge $238M; debt BS $408M / bridge $408M — reconcile with the implied-valuation bridge. [47]
 
 
 ### Capital structure & debt terms — instruments · pointers · covenants
@@ -405,13 +405,13 @@ _QoQ/YoY same-basis only; (R) = Reclassified_
 
 - **8-Ks at instrument maturities:** _UNKNOWN_ — no trailing-12m instrument maturity to anchor an 8-K
 - **Covenant exhibit pointers:** _UNKNOWN_ — no CIK-scoped agreement exhibit located across the filing history
-- **Covenant terms (from the filed agreement):** COVENANT DIGEST — extraction failed: no covenant terms extracted from located exhibits (terms UNKNOWN, not pending). [47]
+- **Covenant terms (from the filed agreement):** COVENANT DIGEST — extraction failed: no covenant terms extracted from located exhibits (terms UNKNOWN, not pending). [48]
 
 ### Implied equity at peer multiples
 > **Comparability gate:** comparability: HETEROGENEOUS (see Peer comps gate)
 > _Reference only — the human judges earned vs residual (not a machine upside); the full Low/Mean/High and all bases are in the JSON._
-- **Name market cap ($M) — the ADJACENT fact to compare against:** 256.4 [48]
-- **Bridge (TEV → equity):** TEV→equity bridge: + cash $237.80M, − total debt $408.20M [49]
+- **Name market cap ($M) — the ADJACENT fact to compare against:** 256.4 [49]
+- **Bridge (TEV → equity):** TEV→equity bridge: + cash $237.80M, − total debt $408.20M [50]
 - **Implied equity at peer-median ($M, CIQ)** — [12]  <!-- ds-table -->
 
 |  | Implied equity (median) |
@@ -421,7 +421,7 @@ _QoQ/YoY same-basis only; (R) = Reclassified_
 
 
 ### Management commentary
-- **Earnings call (transcript pointer — read the file):** 2 earnings-call transcript(s) on file — read in full for management posture: FuboTV Inc., Q1 2026 Earnings Call, Feb 03, 2026.rtf; FuboTV Inc., Q2 2026 Earnings Call, May 06, 2026.rtf (pointer only; the synthesis cites them, the machine does not curate an excerpt) [50]
+- **Earnings call (transcript pointer — read the file):** 2 earnings-call transcript(s) on file — read in full for management posture: FuboTV Inc., Q1 2026 Earnings Call, Feb 03, 2026.rtf; FuboTV Inc., Q2 2026 Earnings Call, May 06, 2026.rtf (pointer only; the synthesis cites them, the machine does not curate an excerpt) [51]
 
 ## Record & reproduce
 - **Data window:** screened as of 2026-07-06 · assembled 2026-07-10 07:00 UTC
@@ -479,8 +479,9 @@ _QoQ/YoY same-basis only; (R) = Reclassified_
 [43] `CIQ Financials→Income Statement (quarterly, trailing 8Q)`
 [44] `CIQ Estimates→Consensus`
 [45] `CIQ Estimates→Trends (FY26/FY27 consensus EBITDA, latest snapshot)`
-[46] `CIQ Financials→Balance Sheet vs Comparable Analysis→Implied Valuation`
-[47] `fenced Tier-2 digest (P1)`
-[48] `CIQ Comparable Analysis→Financial Data (name Market Capitalization Latest) · as-of 2026-06-24`
-[49] `CIQ Comparable Analysis→Implied Valuation (cash/debt bridge) · as-of 2026-06-24`
-[50] `CIQ transcript(s): FuboTV Inc., Q1 2026 Earnings Call, Feb 03, 2026.rtf; FuboTV Inc., Q2 2026 Earnings Call, May 06, 2026.rtf`
+[46] `CIQ Financials→Income Statement (quarterly, full exported history)`
+[47] `CIQ Financials→Balance Sheet vs Comparable Analysis→Implied Valuation`
+[48] `fenced Tier-2 digest (P1)`
+[49] `CIQ Comparable Analysis→Financial Data (name Market Capitalization Latest) · as-of 2026-06-24`
+[50] `CIQ Comparable Analysis→Implied Valuation (cash/debt bridge) · as-of 2026-06-24`
+[51] `CIQ transcript(s): FuboTV Inc., Q1 2026 Earnings Call, Feb 03, 2026.rtf; FuboTV Inc., Q2 2026 Earnings Call, May 06, 2026.rtf`

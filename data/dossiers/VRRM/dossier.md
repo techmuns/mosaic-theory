@@ -43,7 +43,7 @@ _Key unknowns:_
 |  | FY22 (R) | FY23 (R) | FY24 (R) | FY25 | LTM | FY26E | FY27E |
 |---|---:|---:|---:|---:|---:|---:|---:|
 | Revenue ($M) | 742 | 817 | 879 | 979 | 979 | 989 | 948 |
-| Revenue growth | — | +10% | +8% | — (basis) | — (basis) | +1% (vs FY25) | -4% |
+| Revenue growth | +35% | +10% | +8% | — (basis) | — (basis) | +1% (vs FY25) | -4% |
 | EBITDA ($M) | 304 | 306 | 342 | 362 | 358 | 382 | 333 |
 | EBITDA margin | 41% | 37% | 39% | 37% | 37% | 39% | 35% |
 | EBIT ($M) | 165 | 193 | 233 | 248 | 242 | 229 | 183 |
@@ -51,6 +51,7 @@ _Key unknowns:_
 | EPS (GAAP, dil.) | 0.50 | 0.36 | 0.19 | 0.85 | 0.82 | 0.85 | 0.73 |
 | FCF ($M) | 183 | 139 | 146 | 83 | 54 | — | — |
 
+_table shows the last 4 fiscal years · 1 earlier year is in the Appendix_
 
 ## Valuation — first cut
 - **vs own trading history:** EV/EBITDA (TEV/LTM) 8.5x as-of 2026-03-31 — trailing range 10.4–23.2x (median 13.6x) over 19 closes → 0%ile → near-floor; P/LTM EPS 16.8x [17]
@@ -364,36 +365,36 @@ _NM = a real state (negative base), not missing_
 
 
 ## Financial statements (actuals + consensus estimates) — export date unverified (data ≥ 2026-06-09)
-### Annual (last-4-FY + LTM + FY26E/FY27E consensus)
+### Annual — every exported fiscal year + LTM + consensus
 - **Annual financials ($M; E = consensus)** — [16]  <!-- ds-table -->
 
-|  | FY22 (R) | FY23 (R) | FY24 (R) | FY25 | LTM | FY26E | FY27E |
-|---|---|---|---|---|---|---|---|
-| Revenue ($M) | 742 | 817 | 879 | 979 | 979 | 989 | 948 |
-| Revenue growth | — | +10% | +8% | — (basis) | — (basis) | +1% (vs FY25) | -4% |
-| EBITDA ($M) | 304 | 306 | 342 | 362 | 358 | 382 | 333 |
-| EBITDA margin | 41% | 37% | 39% | 37% | 37% | 39% | 35% |
-| EBIT ($M) | 165 | 193 | 233 | 248 | 242 | 229 | 183 |
-| Net income ($M) | 92 | 57 | 31 | 137 | 131 | 128 | 107 |
-| EPS (GAAP, dil.) | 0.50 | 0.36 | 0.19 | 0.85 | 0.82 | 0.85 | 0.73 |
-| EPS (Normalized) | 0.49 | 0.37 | 0.66 | 0.80 | 0.79 | 1.23 | 1.03 |
-| CFO ($M) | 218 | 206 | 224 | 256 | 234 | — | — |
-| Capex ($M) | -48 | -57 | -71 | -119 | -129 | — | — |
-| FCF (levered, CIQ) | 183 | 139 | 146 | 83 | 54 | — | — |
+|  | FY21 (R) | FY22 (R) | FY23 (R) | FY24 (R) | FY25 | LTM | FY26E | FY27E |
+|---|---|---|---|---|---|---|---|---|
+| Revenue ($M) | 551 | 742 | 817 | 879 | 979 | 979 | 989 | 948 |
+| Revenue growth | — | +35% | +10% | +8% | — (basis) | — (basis) | +1% (vs FY25) | -4% |
+| EBITDA ($M) | 229 | 304 | 306 | 342 | 362 | 358 | 382 | 333 |
+| EBITDA margin | 42% | 41% | 37% | 39% | 37% | 37% | 39% | 35% |
+| EBIT ($M) | 112 | 165 | 193 | 233 | 248 | 242 | 229 | 183 |
+| Net income ($M) | 41 | 92 | 57 | 31 | 137 | 131 | 128 | 107 |
+| EPS (GAAP, dil.) | 0.25 | 0.50 | 0.36 | 0.19 | 0.85 | 0.82 | 0.85 | 0.73 |
+| EPS (Normalized) | 0.28 | 0.49 | 0.37 | 0.66 | 0.80 | 0.79 | 1.23 | 1.03 |
+| CFO ($M) | 193 | 218 | 206 | 224 | 256 | 234 | — | — |
+| Capex ($M) | -25 | -48 | -57 | -71 | -119 | -129 | — | — |
+| FCF (levered, CIQ) | 198 | 183 | 139 | 146 | 83 | 54 | — | — |
 
-_E = consensus (Estimates→Trends 'Current'), as-of ≥2026-06-09; (R) = Reclassified basis · FCF (levered, CIQ) = CIQ 'Levered Free Cash Flow', NOT CFO − capex_
+_E = consensus (Estimates→Trends 'Current'), as-of ?; (R) = Reclassified basis · FCF (levered, CIQ) = CIQ 'Levered Free Cash Flow', NOT CFO − capex_
 
-### Trailing 8 quarters (the recent-quarter trajectory)
+### Quarterly — every exported quarter
 - **Quarterly financials** — [57]  <!-- ds-table -->
 
-|  | Q2-24 | Q3-24 | Q4-24 (R) | Q1-25 | Q2-25 | Q3-25 | Q4-25 | Q1-26 |
-|---|---|---|---|---|---|---|---|---|
-| Revenue ($M) | 222 | 226 | 222 | 223 | 236 | 262 | 258 | 224 |
-| Gross margin | 61% | 61% | 61% | 61% | 60% | 58% | 55% | 55% |
-| EBITDA ($M) | 89 | 91 | 81 | 85 | 92 | 103 | 81 | 81 |
-| EBITDA margin | 40% | 40% | 37% | 38% | 39% | 39% | 32% | 36% |
-| Revenue QoQ | — | +1% | — (basis) | — (basis) | +6% | +11% | -2% | -13% |
-| Revenue YoY | — | — | — | — | +6% | +16% | — (basis) | +0% |
+|  | Q2-21 (R) | Q3-21 (R) | Q4-21 (R) | Q1-22 | Q2-22 | Q3-22 | Q4-22 (R) | Q1-23 | Q2-23 | Q3-23 | Q4-23 (R) | Q1-24 | Q2-24 | Q3-24 | Q4-24 (R) | Q1-25 | Q2-25 | Q3-25 | Q4-25 | Q1-26 |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| Revenue ($M) | 129 | 162 | 170 | 170 | 187 | 198 | 186 | 192 | 204 | 210 | 211 | 210 | 222 | 226 | 222 | 223 | 236 | 262 | 258 | 224 |
+| Gross margin | 66% | 64% | 62% | 64% | 64% | 62% | 63% | 63% | 63% | 61% | 60% | 62% | 61% | 61% | 61% | 61% | 60% | 58% | 55% | 55% |
+| EBITDA ($M) | 59 | 71 | 77 | 68 | 80 | 81 | 76 | 80 | 85 | 87 | 54 | 81 | 89 | 91 | 81 | 85 | 92 | 103 | 81 | 81 |
+| EBITDA margin | 45% | 44% | 46% | 40% | 43% | 41% | 41% | 42% | 42% | 41% | 26% | 39% | 40% | 40% | 37% | 38% | 39% | 39% | 32% | 36% |
+| Revenue QoQ | — | +26% | +5% | — (basis) | +10% | +5% | — (basis) | — (basis) | +7% | +3% | — (basis) | — (basis) | +6% | +1% | — (basis) | — (basis) | +6% | +11% | -2% | -13% |
+| Revenue YoY | — | — | — | — | — (basis) | — (basis) | +9% | +13% | +9% | +6% | +13% | +9% | +9% | +7% | +5% | +6% | +6% | +16% | — (basis) | +0% |
 
 _QoQ/YoY same-basis only; (R) = Reclassified_
 
@@ -527,7 +528,7 @@ _Source §: 8-K 0001564590-18-024644 · vrrm-ex1010_20.htm_
 [54] `8-K item codes at the gap-down dates (not blanket-labelled earnings)`
 [55] `CIQ Financials→Income Statement + Segments + Ratios (multi-year columns)`
 [56] `CIQ Estimates→Trends (FY26/FY27 consensus EBITDA, latest snapshot)`
-[57] `CIQ Financials→Income Statement (quarterly, trailing 8Q)`
+[57] `CIQ Financials→Income Statement (quarterly, full exported history)`
 [58] `CIQ Financials→Balance Sheet (quarterly, Q1-26)`
 [59] `CIQ Financials→Balance Sheet vs Comparable Analysis→Implied Valuation`
 [60] `EDGAR 10-K exhibit index + CIK-scoped efts (agreement-class, exhibit-bearing)`
