@@ -4139,7 +4139,17 @@ SIC-87xx sector miss · entry-price/ratio-at-entry + implied-odds display.
   - **FOUND IN PASSING — NOT FIXED (scope).** `_latest_dep_amort` prefers the COMBINED D&A tag
     regardless of vintage, so FUBO takes a 2014 value of $0.003M over current split tags summing
     $38.5M. Affects any filer that switched tags. Queued.
-  - **INVARIANT (incident → guard, shipped Y):** `tests/test_terminal_margin.py` (36 pins: worked
+  - **THE REVIEW OF #176 CAUGHT A REAL DEFECT IN THIS BUILD — fixed in-branch.**
+    `burn_to_breakeven` defaulted to **0.0**, so a burning company valued its terminal year as
+    though the burn were free: the survival block read FAIL at 1.25y of runway while the SAME
+    record carried terminal net debt UNCHANGED from today's balance sheet. That is the exact
+    direction of error R2 exists to prevent, and it applied to the whole cohort by definition —
+    they burn. Now REFUSES when the survival block shows a burn and the fact is absent. The machine
+    does not derive `burn × years` either: filling it in would be the machine proposing an
+    assumption. An explicit `0.0` is accepted — that is the analyst stating it. Pinned both ways
+    (`test_a_burning_company_must_state_the_cash_it_consumes`,
+    `test_a_self_funding_company_needs_no_burn_fact`).
+  - **INVARIANT (incident → guard, shipped Y):** `tests/test_terminal_margin.py` (38 pins: worked
     example step-by-step, both unit magnitudes, EV/EBIT basis, dilution/burn/D&A-ratio behaviour,
     degenerate guards, the survival fail/raise/accession/FCF-positive paths, and the
     confirmed-blocked-on-FAIL gate end-to-end) and `tests/test_tagger.py` (18 pins: the

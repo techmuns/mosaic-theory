@@ -257,7 +257,12 @@ def _r2_record(**kw: object):
             "d_and_a_ratio": sc.Fact(value=0.069264, unit="rate", basis="latest FY D&A/revenue",
                                      source="EDGAR"),
             "share_growth": sc.Fact(value=0.011119, unit="rate", basis="3y diluted CAGR",
-                                    source="EDGAR")},
+                                    source="EDGAR"),
+            # Held at an explicit NIL so the record arithmetic matches the engine's worked-example
+            # pin above; the burn-specific tests override it. An explicit 0.0 is the analyst
+            # stating it, which is exactly what the burn guard demands.
+            "burn_to_breakeven": sc.Fact(value=0.0, unit="$M", basis="held nil for the pin",
+                                         source="analyst")},
         "scenarios": {
             "bear": sc.ScenarioInput(revenue=720, margin=0.06, multiple=10, years_to_terminal=4,
                                      reason="slower ramp"),
@@ -372,3 +377,37 @@ def test_announced_raise_proceeds_reduce_terminal_net_debt() -> None:
         plain.result.per_scenario["base"].net_debt_t - 150.0)
     assert raised.result.per_scenario["base"].shares_t == pytest.approx(
         plain.result.per_scenario["base"].shares_t + 20.0, abs=1e-6)
+
+
+def test_a_burning_company_must_state_the_cash_it_consumes() -> None:
+    """REVIEW FIX (#176). A record whose survival block shows a burn cannot value the terminal year
+    as though that burn were free. Defaulting burn_to_breakeven to zero produced the contradiction
+    of a FAIL gate at 1.25y of runway sitting beside terminal net debt UNCHANGED from today — the
+    exact direction of error R2 exists to prevent, and it applies to the whole cohort by definition.
+
+    The machine refuses rather than deriving burn × years: filling it in would be the machine
+    proposing an assumption. An explicit 0.0 is accepted — that is the analyst stating it."""
+    from vinci import scenarios as sc
+    burning = _r2_record()                      # survival_input burns 80.0 a year
+    silent = {k: v for k, v in burning.facts.items() if k != "burn_to_breakeven"}
+    with pytest.raises(ValueError, match="needs fact 'burn_to_breakeven'"):
+        sc.run_recipe(burning.model_copy(update={"facts": silent}))
+    # stated explicitly -> computes, and the burn lands on terminal net debt
+    stated = dict(burning.facts)
+    stated["burn_to_breakeven"] = sc.Fact(value=240.0, unit="$M",
+                                          basis="three years at the stated burn", source="analyst")
+    r = sc.run_recipe(burning.model_copy(update={"facts": stated}))
+    assert r.result.per_scenario["base"].net_debt_t == pytest.approx(223.9 + 240.0)
+    # an explicit nil is the analyst's call to make, and is honoured
+    r0 = sc.run_recipe(burning)
+    assert r0.result.per_scenario["base"].net_debt_t == pytest.approx(223.9)
+
+
+def test_a_self_funding_company_needs_no_burn_fact() -> None:
+    """The refusal is scoped to a company that actually burns — an FCF-positive name has no cash
+    to consume, so demanding the fact there would be ceremony."""
+    from vinci import scenarios as sc
+    r = sc.run_recipe(_r2_record(survival_input=sc.SurvivalInput(
+        fcf=82.5, fcf_basis="latest FY2026", fcf_source="EDGAR OCF−capex", cash=200.0)))
+    assert r.result.survival is not None and r.result.survival.status == "PASS"
+    assert r.result.per_scenario["base"].net_debt_t == pytest.approx(223.9)
