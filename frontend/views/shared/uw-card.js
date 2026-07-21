@@ -129,8 +129,12 @@ function headlineCell(c) {
   const delta = vsSpot(bv, c.spot);
   const cls = signCls(bv, c.spot);
   const val = `${money(bv)}${delta ? ` <span class="uw-pct ${cls}">${delta}</span>` : ""}`;
-  const sub = [STATE_NOTE[st], `vs spot ${escapeHtml(fmtPrice(c.spot))}`]
-    .filter(Boolean).join(" · ");
+  // the spot CITE rides here, on the first and highest-prominence statement of the price. It used
+  // to sit on its own line below the masthead — a citation that had lost its home when the
+  // masthead replaced the old "Spot" fact row, restating a price the tile states one line above
+  // and breaking the price/target pairing a tear-sheet header exists to make.
+  const sub = [STATE_NOTE[st], `vs spot ${escapeHtml(fmtPrice(c.spot))}${
+    c.spotSource ? " " + citeMark(c.spotSource) : ""}`].filter(Boolean).join(" · ");
   return `<div class="uw-stat uw-stat-lead ${st}">
     <div class="uw-stat-lab uw-eyebrow">${escapeHtml(STATE_LABEL[st])}</div>
     <div class="uw-stat-val lead">${val}</div>
@@ -418,16 +422,18 @@ export function uwCard(c, { ticker = true } = {}) {
   // The masthead leads: the target/base number, the asymmetry, the entry, the downside, the method
   // — the five things a reader needs before deciding whether to read on. The spot cite rides in
   // the headline cell so the price on screen still resolves to its source.
+  // ORDER: decision content runs contiguously (the answer, its shape, its derivation, its
+  // reasoning, and what would break it), THEN the audit tier. Method sat between the table and the
+  // rationale, putting a collapsed block in the middle of the decision read; grouped with the
+  // other audit blocks it stops interrupting and starts belonging.
   const body = () => `
     ${masthead(c, ticker)}
-    ${c.spotSource ? `<div class="uw-spot-cite muted">spot ${mono(fmtPrice(c.spot))} ${
-      citeMark(c.spotSource)}</div>` : ""}
     ${ladder(c)}
     ${legsTable(c)}
-    ${methodFact(c)}
     ${v.rationale ? fact("Rationale", escapeHtml(v.rationale)) : ""}
     ${trig ? `<div class="uw-trig"><span class="uw-trig-lab">${
-      headlineState(c) === "target" ? "Thesis breaks" : "Re-underwrite when"}</span>${trig}</div>` : ""}`;
+      headlineState(c) === "target" ? "Thesis breaks" : "Re-underwrite when"}</span>${trig}</div>` : ""}
+    ${methodFact(c)}`;
   return `
   <section class="card uw-card">
     ${withEndnotes("U", body)}
