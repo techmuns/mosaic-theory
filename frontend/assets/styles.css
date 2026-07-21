@@ -1161,3 +1161,14 @@ table.data tr td.uw-vs { font-size: 12.5px; }
   .uw-rail { border-left: 0; padding-left: 0; border-top: 1px solid var(--line);
     padding-top: 12px; margin-top: 12px; display: block; }
 }
+
+@media print {
+  /* Footnote runs never split: the brief export stranded a 4-line SOURCES tail alone on its
+     final page. Every per-tier Sources list is well under a page, so keeping each whole is safe
+     — a full block on the last page reads as intentional; a severed tail reads as breakage. */
+  .ds-sources { break-inside: avoid; }
+  /* The appendix is a CHAPTER: the full export orphaned its header card at a page bottom with
+     the financial table starting overleaf. A fresh page keeps header and table together — the
+     institutional norm for an appendix — and only in the full export (the brief never prints it). */
+  body.ds-print-full .ds-tier[data-tier="appendix"] { break-before: page; }
+}
