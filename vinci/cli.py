@@ -775,8 +775,9 @@ def _cmd_monitor(args: argparse.Namespace) -> int:
         note = (f"WATCH (not a position) — avoid-priced: {v.get('avoid_priced_note')}"
                 if v.get("avoid_priced") else None)
         logged = next((r["verdict"] for r in rows_raw if r["ticker"] == name), None)
+        status = str(v.get("status") or "—")
         fresh.append(mon.freshness_row(
-            ticker=name, verdict=logged or str(v.get("status") or "—"),
+            ticker=name, verdict=logged or _STATUS_LABEL.get(status, status),
             record=record, filings=filings, today=ref, watch_note=note))
 
     snap = mon.MonitorSnapshot(as_of=now_date, rows=rows, spread=mon.compute_spread(rows),
@@ -787,9 +788,18 @@ def _cmd_monitor(args: argparse.Namespace) -> int:
     return 0
 
 
+# Scenario statuses that are NOT ledger positions but must still be watched for staleness:
+#   watch            — a standing re-underwrite trigger (WERN)
+#   pending_analyst  — the underwrite is RUN and the verdict is outstanding (EPAM). A record
+#                      awaiting a human decision is exactly the one that must not go stale
+#                      unnoticed: the next print can move the decision before it is ever made.
+_FRESHNESS_STATUSES = ("watch", "pending_analyst")
+_STATUS_LABEL = {"pending_analyst": "verdict pending"}
+
+
 def _watch_tickers(root: Path) -> set[str]:
-    """Scenario records that are NOT ledger positions but carry standing triggers (a `watch`
-    verdict like WERN) — surfaced in the freshness panel so a tracked name cannot go stale."""
+    """Scenario records that are NOT ledger positions but must appear in the freshness panel —
+    standing-trigger `watch` names and `pending_analyst` records whose verdict is still owed."""
     out: set[str] = set()
     d = root / "scenarios"
     if not d.is_dir():
@@ -798,7 +808,7 @@ def _watch_tickers(root: Path) -> set[str]:
         if p.name.startswith("_"):
             continue
         rec = json.loads(p.read_text())
-        if (rec.get("verdict") or {}).get("status") == "watch":
+        if (rec.get("verdict") or {}).get("status") in _FRESHNESS_STATUSES:
             out.add(str(rec["ticker"]))
     return out
 

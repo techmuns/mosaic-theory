@@ -16,10 +16,18 @@ from pydantic import BaseModel
 
 # logical concept -> priority-ordered us-gaap tags (first present wins)
 CONCEPT_ALIASES: dict[str, list[str]] = {
+    # Ordered by MEANING, not by which tag happens to have data (#160's preference, extended here
+    # so the shared resolver and the anchor can never disagree about what "total revenue" is):
+    #   ASC-606 Excluding  →  the modern total, net of assessed tax (the intended denominator)
+    #   ASC-606 Including  →  the same total, gross of assessed tax
+    #   Revenues           →  the pre-606 catch-all; total for older filers
+    #   SalesRevenueNet    →  pre-606 and, for some filers, only a COMPONENT — last resort
+    # Previously `Revenues` outranked `Including`, so the shared path and the anchor could pick
+    # different denominators for the same filer.
     "revenue": [
         "RevenueFromContractWithCustomerExcludingAssessedTax",
-        "Revenues",
         "RevenueFromContractWithCustomerIncludingAssessedTax",
+        "Revenues",
         "SalesRevenueNet",
     ],
     "operating_income": ["OperatingIncomeLoss"],
@@ -58,6 +66,12 @@ CONCEPT_ALIASES: dict[str, list[str]] = {
 # XBRL concepts span two taxonomies; dei holds cover-page facts (shares), us-gaap the financials.
 _NAMESPACES = ("dei", "us-gaap")
 
+# A reported FY duration is never exactly 365: 52/53-week filers land on 358–371, leap years on 366.
+# The window is deliberately TIGHT — wide enough for every real fiscal year, far too narrow for a
+# quarter (~90d) or a half (~180d). See ConceptPoint.is_annual for why duration must be necessary.
+ANNUAL_MIN_DAYS = 350
+ANNUAL_MAX_DAYS = 380
+
 
 class ConceptPoint(BaseModel, frozen=True):
     """One reported value for a concept over a period (flow) or at an instant (balance-sheet)."""
@@ -80,10 +94,20 @@ class ConceptPoint(BaseModel, frozen=True):
 
     @property
     def is_annual(self) -> bool:
-        """Heuristic: a full-year flow (≈ 12-month period or FY)."""
+        """A full-year FLOW: the period must actually span ~12 months.
+
+        DURATION IS NECESSARY, never optional. The old rule was
+        ``fp == "FY" or days >= 300`` — an ``or``, so a 90-day quarter stamped ``fp="FY"``
+        passed with NO duration check at all. EDGAR stamps every quarterly point inside a
+        10-K with ``fp="FY"``, so that admitted Q1 values as if they were the year: EPAM's
+        FY2016 revenue read 264 (Q1) instead of 1,160 (FY), which fired a false
+        ``revenue_tag_conflict`` and capped a clean anchor to `weak`.
+
+        ``fp`` is now only a fallback for points that omit it entirely — it can never
+        override the measured span."""
         if self.period_start is None:
             return False
-        return self.fp == "FY" or (self.period_end - self.period_start).days >= 300
+        return ANNUAL_MIN_DAYS <= (self.period_end - self.period_start).days <= ANNUAL_MAX_DAYS
 
 
 def _parse_date(s: str | None) -> date | None:

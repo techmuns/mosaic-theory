@@ -12,6 +12,8 @@ from datetime import date
 import pytest
 
 from vinci.edgar import (
+    CONCEPT_ALIASES,
+    ConceptPoint,
     EdgarClient,
     all_unknown_snapshot,
     compute_fundamental_snapshot,
@@ -411,3 +413,65 @@ def test_non_xbrl_cik_degrades_to_unknown() -> None:
     # a CIK with no companyfacts → all UNKNOWN, never a crash
     snap = client.fundamental_snapshot(1)
     assert snap.op_income_sign.coverage_status is CoverageStatus.UNKNOWN
+
+
+# --- FY-DURATION FILTERING (the false-conflict defect) -------------------------------------------
+def _pt(start: str, end: str, val: float, *, fp: str = "FY", form: str = "10-K") -> ConceptPoint:
+    return ConceptPoint(concept="revenue", tag="SalesRevenueNet", unit="USD", value=val,
+                        period_start=date.fromisoformat(start), period_end=date.fromisoformat(end),
+                        filed=date(2017, 3, 1), fy=int(end[:4]), fp=fp, form=form, accession="a")
+
+
+def test_is_annual_rejects_a_quarter_stamped_fp_fy() -> None:
+    """THE DEFECT: EDGAR stamps every quarterly point inside a 10-K with fp="FY". The old rule was
+    `fp == "FY" or days >= 300` — an OR, so a 90-day quarter passed with NO duration check. That is
+    the real EPAM shape: FY2016 revenue read 264 (Q1) instead of 1,160 (FY), which fired a false
+    revenue_tag_conflict and capped a clean anchor to `weak`. Duration is now NECESSARY."""
+    q1_as_fy = _pt("2016-01-01", "2016-03-31", 264e6)          # 90d, fp=FY, inside the 10-K
+    full_year = _pt("2016-01-01", "2016-12-31", 1160e6)        # 365d — the real year
+    assert q1_as_fy.fp == "FY"
+    assert not q1_as_fy.is_annual, "a 90-day FY-stamped quarter is not a year"
+    assert full_year.is_annual
+    # the halves and three-quarter cumulatives EDGAR also stamps fp=FY are likewise excluded
+    assert not _pt("2016-01-01", "2016-06-30", 548e6).is_annual   # 181d
+    assert not _pt("2016-01-01", "2016-09-30", 847e6).is_annual   # 273d
+
+
+def test_is_annual_accepts_the_real_fiscal_year_shapes() -> None:
+    """52/53-week filers and leap years are real years; a 300-day stub is not (the old floor let it
+    through). The window must be wide enough for every genuine FY and far too narrow for a half."""
+    assert _pt("2025-01-01", "2025-12-31", 1.0).is_annual        # 364d
+    assert _pt("2024-01-01", "2024-12-31", 1.0).is_annual        # 365d (leap)
+    assert _pt("2025-01-01", "2026-01-03", 1.0).is_annual        # 367d — 53-week filer
+    assert not _pt("2025-01-01", "2025-10-28", 1.0).is_annual    # 300d — below the floor
+    assert not _pt("2025-01-01", "2026-06-30", 1.0).is_annual    # 545d — above the ceiling
+
+
+def test_extract_points_annual_path_is_duration_filtered() -> None:
+    """The SHARED path (extract_points → is_annual), not just the anchor: a filer whose 10-K carries
+    both the quarter and the year under one tag must resolve to the YEAR."""
+    facts = {"facts": {"us-gaap": {"Revenues": {"units": {"USD": [
+        {"start": "2016-01-01", "end": "2016-03-31", "val": 264e6, "filed": "2017-03-01",
+         "fy": 2016, "fp": "FY", "form": "10-K", "accn": "a"},
+        {"start": "2016-01-01", "end": "2016-12-31", "val": 1160e6, "filed": "2017-03-01",
+         "fy": 2016, "fp": "FY", "form": "10-K", "accn": "a"},
+    ]}}}}}
+    annual = [p for p in extract_points(facts, "revenue") if p.is_annual]
+    assert [p.value for p in annual] == [1160e6], "the shared annual path admitted a quarter"
+    assert latest_annual(extract_points(facts, "revenue")).value == pytest.approx(1160e6)
+
+
+def test_revenue_alias_order_is_by_meaning_and_every_known_tag_is_ranked() -> None:
+    """DRIFT GUARD (the #160 pattern): the shared resolver and the anchor must never disagree about
+    what 'total revenue' is. The shared order is ranked by MEANING — 606-Excluding, then
+    606-Including, then the pre-606 catch-all, then SalesRevenueNet (a COMPONENT for some filers).
+    Previously `Revenues` outranked `Including`. Any new revenue alias must be ranked in both."""
+    from vinci.dossier.anchor import _REVENUE_TAG_PREFERENCE
+    shared = CONCEPT_ALIASES["revenue"]
+    assert shared == [
+        "RevenueFromContractWithCustomerExcludingAssessedTax",
+        "RevenueFromContractWithCustomerIncludingAssessedTax",
+        "Revenues",
+        "SalesRevenueNet",
+    ]
+    assert list(_REVENUE_TAG_PREFERENCE) == shared, "anchor/shared revenue preference drifted"

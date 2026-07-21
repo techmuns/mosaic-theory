@@ -3821,11 +3821,10 @@ re-anchor (the full STATE split stays its own queued task — nothing was reloca
    SMPL assembly missed the 2026-07-09 print by one day. Assembly must FLAG filings newer than
    its evidence window, and stamp what window it read. (The §7 print-freshness gate and the
    monitor's freshness panel cover verdicts manually until this exists.)
-2. **Shared `annual_series` alias fix** — GATES `attach_midcycle`.
-3. **R2 recipe** (for NCNO / MVST / FUBO / AORT — names R1's positivity guard rejects).
+2. **R2 recipe** (for NCNO / MVST / FUBO / AORT — names R1's positivity guard rejects).
 
 **ANALYST / OPERATOR**
-4. **EPAM underwrite — RUN 2026-07-21, VERDICT PENDING.** `scenarios/EPAM.json` written and
+3. **EPAM underwrite — RUN 2026-07-21, VERDICT PENDING.** `scenarios/EPAM.json` written and
    computed standalone (R1, EV/EBITDA); card shipped at `pending_analyst` — the machine
    recorded the bar test, it did NOT decide. Legs (live spot $89.40, Polygon close
    2026-07-20): bear $63.14 · base $163.08 · bull $291.24 (printed, never in the ratio);
@@ -3835,18 +3834,21 @@ re-anchor (the full STATE split stays its own queued task — nothing was reloca
    the 2022 break) and NOT pre-war (13.27% — dead regime); the multiple sits below the
    post-2022 median (15.16x), not the bubble-era full-blend 22.41x. The three `method`
    sentences are **DRAFT — ratify at review**. **Analyst decision outstanding** — the verdict
-   lands as its own data-only pass.
-5. **BRBR / CNXC / VITL dispositions** — dossiers built, no verdict.
-6. **Truckload freeze-source re-run** — confirm the surgically-patched
+   lands as its own data-only pass. **HELD pending the Q2 print (~2026-08-07 — the filer's
+   own cadence, an ESTIMATE, not a date certain).** The 2:1 bar is met at any spot ≤ **$96.45**
+   (from base 163.08 / bear 63.14: spot = (base + 2·bear) ÷ 3), recorded so the ceiling never
+   has to be re-derived. EPAM now rides the monitor freshness panel as `verdict pending`.
+4. **BRBR / CNXC / VITL dispositions** — dossiers built, no verdict.
+5. **Truckload freeze-source re-run** — confirm the surgically-patched
    `frontend/themes/truckload-supply-purge.json` reproduces byte-identical from the freeze.
-7. **`extract_points` first-alias-wins truncation** — operator decision, open since 2026-07-16.
-8. **Sweep-#2 fail-closed coverage holes (2)** — operator decision, report-only.
-9. **Drafting-rubric v2 validation — DATED 2026-08-13** (pre-registered; do not run early).
+6. **Sweep-#2 fail-closed coverage holes (2)** — operator decision, report-only.
+7. **Drafting-rubric v2 validation — DATED 2026-08-13** (pre-registered; do not run early).
 
 **HOUSEKEEPING**
-10. **Refresh cadence → docs/RUNBOOKS.md** (it is operating practice, not state).
-11. **Full STATE split** — §5 build records → a fossils/decisions file; this block is the interim.
-12. **RATIONALE STYLE RULE (adopted 2026-07-21; binds FUTURE verdicts, never sealed ones).**
+8. **Refresh cadence → docs/RUNBOOKS.md** (it is operating practice, not state).
+9. **Full STATE split** — §5 build records → a fossils/decisions file; this block is the interim.
+
+10. **RATIONALE STYLE RULE (adopted 2026-07-21; binds FUTURE verdicts, never sealed ones).**
     `verdict.rationale` is plain thesis prose — the market-standard shape: thesis, the two or
     three numbers that carry it, the risk accepted. **Accession numbers, vendor names (CIQ /
     Polygon), verification arithmetic ("1,100 × 8% × 6.0x → $3.54 → 2.17:1"), and process
@@ -3858,6 +3860,33 @@ re-anchor (the full STATE split stays its own queued task — nothing was reloca
     scenario-record copy is the analyst's to re-word (meaning-preserving, by hand) if they
     choose. This rule makes the standard checkable at the NEXT verdict instead of re-discovered
     after it. (IT's rationale largely conforms and needs nothing.)
+
+**CLOSED by the 2026-07-21 extraction-hygiene run:** the shared `annual_series` alias item AND
+the `extract_points` first-alias/truncation item — ONE root defect, not two.
+`ConceptPoint.is_annual` read `fp == "FY" OR days >= 300`; EDGAR stamps every QUARTERLY point
+inside a 10-K with `fp="FY"`, so a 90-day quarter passed with **no duration check at all**.
+Duration is now NECESSARY (350–380d). One predicate fixed all three surfaces — the anchor's
+annual extraction, #160's conflict comparison, and the shared `extract_points` path (the guard
+routes through `mc._annual_points`). Blast radius mapped first: all 11 `is_annual` consumers
+intend annual semantics, no fixture relied on the loose 300–349d band, suite green on the
+predicate change alone. The shared revenue alias order also ranked `Revenues` ABOVE
+`606-Including` while the anchor ranked the reverse — the two could pick different denominators
+for one filer; now single-ordered by MEANING and drift-pinned.
+
+**#160 DIAGNOSIS CORRECTED — the fix stands, the mechanism story was wrong.** #160 recorded
+these flags as a PARTIAL-TAG problem. The audit shows WRONG-DURATION in every case: AORT's
+`Revenues` 43M is a 90-day Q1, SMPL's 121M a 90-day quarter, EPAM's 264M a 90-day Q1 — each
+stamped `fp="FY"` inside the 10-K. The guard's PROTECTIVE work was REAL (a short-duration
+denominator genuinely corrupts an anchor, so capping was correct); only the stated cause is
+corrected. Re-audited under duration filtering all three conflicts VANISH: EPAM/SMPL/AORT go
+`weak → firm` on the margin leg and overall, with **every committed margin value UNCHANGED at
+stored precision** (0.118997 / 0.154481 / 0.038721 — verified before/after; the ~1e-7 recompute
+deltas are the values being ROUNDED ON WRITE, not a data change, so the loud re-backfill path
+was correctly NOT triggered).
+
+**MONITOR:** the freshness panel selected only `watch`, so a RUN underwrite awaiting a verdict
+was invisible; `pending_analyst` rides it too now — that record is precisely the one that must
+not go stale, since the next print can move the decision before it is ever made.
 
 **CLOSED by the 2026-07-21 WERN ratification run:** all three operator rulings recorded on
 `scenarios/WERN.json` under the visible-amendment discipline (result / facts / scenario
