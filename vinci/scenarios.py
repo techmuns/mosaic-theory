@@ -104,10 +104,14 @@ class AssumptionDerivation(BaseModel):
 class ScenarioInput(BaseModel):
     """One analyst-supplied leg. ``margin`` is a DECIMAL fraction (0.0625 = 6.25%)."""
 
-    revenue: float                 # $M
-    margin: float                  # decimal fraction of revenue (operating margin)
-    multiple: float                # turns, on `multiple_basis`
+    revenue: float                 # $M  (R2: TERMINAL-year revenue)
+    margin: float                  # decimal fraction of revenue (R2: TERMINAL EBIT margin)
+    multiple: float                # turns, on `multiple_basis` (R2: the EXIT multiple)
     reason: str                    # WHY this deviates from the anchor — required, never blank
+    # (R2) years from today to this leg's terminal year. Per LEG, not per record: a bear case that
+    # takes longer to arrive is worth less today, and forcing one horizon on all three legs would
+    # hide exactly that. None on R1 records, which have no horizon.
+    years_to_terminal: float | None = None
 
     model_config = {"frozen": True}
 
@@ -133,12 +137,65 @@ class ScenarioOutcome(BaseModel):
     equity: float                  # $M
     ev_ebit: float | None = None   # CROSS-CHECK
     norm_fcf: float | None = None  # CROSS-CHECK ($M)
+    # (R2) the terminal-year bridge and its present value. `value_per_share` above carries the PV —
+    # it is what the ratio uses — and `value_terminal` the undiscounted terminal number. BOTH are
+    # rendered and labelled: conflating them is how a five-year story gets compared against a price
+    # paid today. Absent on R1 records.
+    years: float | None = None
+    d_and_a_t: float | None = None
+    net_debt_t: float | None = None
+    shares_t: float | None = None          # MILLIONS, the record convention
+    value_terminal: float | None = None
+    hurdle: float | None = None
+
+
+class SurvivalBlock(BaseModel):
+    """(R2) The survival gate, recorded in full so its runway arithmetic is re-checkable.
+
+    A terminal value is worthless if the company never reaches the terminal year, so this is a HARD
+    BLOCK on confirming a BUY rather than an input to the ratio — an asymmetry computed on a company
+    that runs out of money is not a cheap asymmetry, it is a wrong one."""
+
+    status: str                             # "PASS" | "FAIL"
+    burn: float | None = None               # annual cash burn ($M, positive); None when FCF >= 0
+    burn_basis: str = ""
+    burn_source: str = ""
+    cash: float | None = None
+    facilities: float | None = None         # committed UNDRAWN only
+    facilities_source: str | None = None
+    runway_years: float | None = None
+    years_to_breakeven: float | None = None
+    announced_raise: bool = False
+    raise_accession: str | None = None      # a raise counts only WITH one
+    note: str = ""
+    detail: list[str] = Field(default_factory=list)
+
+
+class SurvivalInput(BaseModel):
+    """(R2) The analyst-supplied survival inputs. Kept OFF ``facts`` because two of them are not
+    numbers, and a gate whose accession lived in a float field could not carry the one thing that
+    makes a raise count."""
+
+    fcf: float | None                       # $M; negative = burn. None = UNKNOWN, never assumed 0
+    fcf_basis: str
+    fcf_source: str
+    cash: float                             # $M
+    facilities: float = 0.0                 # $M, committed UNDRAWN only
+    facilities_source: str | None = None
+    years_to_breakeven: float | None = None
+    announced_raise: bool = False
+    raise_accession: str | None = None
+    raise_shares: float = 0.0               # MILLIONS, the record convention
+    raise_proceeds: float = 0.0             # $M — reduces terminal net debt
 
 
 class Result(BaseModel):
     """Filled by the run. ``pass_fail`` records the bar test honestly — a FAIL is a result."""
 
     per_scenario: dict[str, ScenarioOutcome] = Field(default_factory=dict)
+    # (R2) the gate, and the discount rate the PV legs were computed at. Absent on R1 records.
+    survival: SurvivalBlock | None = None
+    hurdle: float | None = None
     reward: float | None = None            # base − spot
     risk: float | None = None              # spot − bear
     ratio: float | None = None             # reward / risk (price ratio only)
@@ -216,6 +273,12 @@ class ScenarioRecord(BaseModel):
     # walked past leaves no trace otherwise — the record would read as though it never fired,
     # which is the one reading that makes the gate worthless. None == no gate was adjudicated.
     gate_adjudication: str | None = None
+    # (R2) TIER — a property of the BUSINESS, not of the answer. "A" = contracted/recurring revenue,
+    # gross-profitable, self-funded to breakeven; "B" = survival-gated or unproven unit economics.
+    # It feeds CONFIDENCE at the verdict and deliberately does NOT move the bar: a lower bar for a
+    # worse business is how a fund talks itself into one. None on R1 records.
+    tier: str | None = None
+    survival_input: SurvivalInput | None = None      # (R2) inputs to the gate; None on R1
     result: Result = Field(default_factory=Result)
     verdict: Verdict = Field(default_factory=Verdict)
 
@@ -245,12 +308,108 @@ class ScenarioRecord(BaseModel):
         return self
 
 
+    @model_validator(mode="after")
+    def _survival_blocks_a_confirmed_buy(self) -> ScenarioRecord:
+        """(R2) A survival FAIL BLOCKS ``verdict.status = "confirmed"``. The refusal binds on the
+        RECORD, not on the runner, because the record is the durable artifact and the verdict is
+        written by hand — a guard that lived only in the compute path would be walked straight past
+        by an analyst editing JSON.
+
+        An asymmetry computed on a company that runs out of money before its terminal year is not a
+        cheap asymmetry, it is a wrong one, so the gate is not overridable by the arithmetic looking
+        attractive. Every OTHER status stays reachable: "passed" and "watch" are exactly what a
+        failing name should be able to receive, and the record still computes and prints in full."""
+        surv = self.result.survival
+        if surv and surv.status == "FAIL" and self.verdict.status == "confirmed":
+            raise ValueError(
+                "survival gate FAILED — refusing to record a confirmed BUY on a company that has "
+                f"not been shown to reach its terminal year ({surv.note or 'see survival block'}). "
+                "Record it as watch/passed, or clear the gate with a committed raise.")
+        return self
+
+
 RECIPE_R1 = "R1_midcycle_margin_evebitda"
 
 # The assumption AXES each known recipe models. The axes guard binds per-recipe: unknown axes are
 # refused for a known recipe at any schema version; completeness (all axes present) binds from
 # schema 1.1. A future recipe declares its axes here when it exists — never speculatively.
-AXES_BY_RECIPE: dict[str, tuple[str, ...]] = {RECIPE_R1: ("revenue", "margin", "multiple")}
+RECIPE_R2 = "R2_terminal_margin"
+AXES_BY_RECIPE: dict[str, tuple[str, ...]] = {
+    RECIPE_R1: ("revenue", "margin", "multiple"),
+    # R2 models the HORIZON as a fourth axis: when the terminal year arrives is an assumption in
+    # its own right (it drives both the discount and the accumulated dilution), so it is stated and
+    # reviewed like the other three rather than buried in the leg inputs.
+    RECIPE_R2: ("revenue", "margin", "multiple", "horizon"),
+}
+
+
+def _run_r2(rec: ScenarioRecord) -> ScenarioRecord:
+    """(R2) Compute ``result{}`` via the terminal-margin engine. The machine records the bar test
+    and the gate; it does NOT touch ``verdict``.
+
+    UNITS: ``net_debt``/``burn_to_breakeven`` in $M and ``diluted_shares`` in MILLIONS, matching the
+    R1 record convention. The engine takes a RAW share count, so the conversion happens HERE, once,
+    at the boundary — the two 1e6 defects found on 2026-07-21 both came from a scale applied in the
+    wrong place, so there is exactly one in this path and it is named."""
+    from vinci.dossier import midcycle as mc
+    from vinci.dossier import terminal_margin as tmod
+
+    if rec.multiple_basis not in (tmod.BASIS_EBITDA, tmod.BASIS_EBIT):
+        raise ValueError(f"record multiple_basis {rec.multiple_basis!r} is not an R2 basis — "
+                         f"expected {tmod.BASIS_EBITDA!r} or {tmod.BASIS_EBIT!r}")
+    for key in ("net_debt", "diluted_shares", "d_and_a_ratio", "share_growth"):
+        if key not in rec.facts:
+            raise ValueError(f"recipe {RECIPE_R2} needs fact {key!r} — refusing to assume it")
+    if rec.recipe_formula and rec.recipe_formula != list(tmod.R2_FORMULA):
+        raise ValueError("record's recipe_formula does not match R2_FORMULA — refusing to "
+                         "compute under a misstated recipe")
+    si = rec.survival_input
+    if si is None:
+        raise ValueError(f"recipe {RECIPE_R2} needs survival_input — a terminal value on a company "
+                         "whose runway is unstated cannot be underwritten")
+
+    surv = tmod.survival_gate(
+        fcf=si.fcf, fcf_basis=si.fcf_basis, fcf_source=si.fcf_source, cash=si.cash,
+        facilities=si.facilities, facilities_source=si.facilities_source,
+        years_to_breakeven=si.years_to_breakeven, announced_raise=si.announced_raise,
+        raise_accession=si.raise_accession)
+    burn_fact = rec.facts.get("burn_to_breakeven")
+    net_debt = rec.facts["net_debt"].value - si.raise_proceeds
+    shares_now = rec.facts["diluted_shares"].value * 1e6          # MILLIONS -> raw count
+    per: dict[str, ScenarioOutcome] = {}
+    for name, s in rec.scenarios.items():
+        if s.years_to_terminal is None:
+            raise ValueError(f"{name}: an R2 leg needs years_to_terminal — the horizon drives both "
+                             "the discount and the accumulated dilution")
+        v = tmod.terminal_value(
+            tmod.TerminalLeg(name=name, years=s.years_to_terminal, revenue=s.revenue,
+                             margin=s.margin, multiple=s.multiple, reason=s.reason),
+            basis=rec.multiple_basis, d_and_a_ratio_=rec.facts["d_and_a_ratio"].value,
+            net_debt_now=net_debt, burn_to_breakeven=(burn_fact.value if burn_fact else 0.0),
+            shares_now=shares_now, g_sbc=rec.facts["share_growth"].value,
+            raise_shares=si.raise_shares * 1e6)
+        per[name] = ScenarioOutcome(
+            value_per_share=v.pv,                 # the PV IS what the ratio uses
+            op_income=v.ebit_t, ebitda=v.ebitda_t, ev=v.ev_t, equity=v.equity_t,
+            ev_ebit=(v.ev_t / v.ebit_t if v.ebit_t > 0 else None),
+            years=v.years, d_and_a_t=v.d_and_a_t, net_debt_t=v.net_debt_t,
+            shares_t=v.shares_t / 1e6, value_terminal=v.value_t, hurdle=v.hurdle)
+
+    sb = SurvivalBlock(
+        status=surv.status, burn=surv.burn, burn_basis=surv.burn_basis,
+        burn_source=surv.burn_source, cash=surv.cash, facilities=surv.facilities,
+        facilities_source=surv.facilities_source, runway_years=surv.runway_years,
+        years_to_breakeven=surv.years_to_breakeven, announced_raise=surv.announced_raise,
+        raise_accession=surv.raise_accession, note=surv.note, detail=list(surv.detail))
+    res = Result(per_scenario=per, bar=BAR, survival=sb, hurdle=tmod.HURDLE)
+    if "base" in per and "bear" in per:
+        rr = mc.reward_risk(base_vps=per["base"].value_per_share,
+                            bear_vps=per["bear"].value_per_share, spot=rec.spot)
+        res = Result(per_scenario=per, reward=rr.reward, risk=rr.risk, ratio=rr.ratio,
+                     ratio_undefined=rr.undefined, bar=BAR, survival=sb, hurdle=tmod.HURDLE,
+                     pass_fail=("UNDEFINED" if rr.ratio is None else
+                                ("PASS" if rr.clears_bar else "FAIL")))
+    return rec.model_copy(update={"result": res, "recipe_formula": list(tmod.R2_FORMULA)})
 
 
 def run_recipe(rec: ScenarioRecord) -> ScenarioRecord:
@@ -263,9 +422,11 @@ def run_recipe(rec: ScenarioRecord) -> ScenarioRecord:
     The machine records the bar test; it does NOT touch ``verdict``."""
     from vinci.dossier import midcycle as mc
 
+    if rec.recipe_id == RECIPE_R2:
+        return _run_r2(rec)
     if rec.recipe_id != RECIPE_R1:
         raise ValueError(f"unknown recipe_id {rec.recipe_id!r} — this runner implements "
-                         f"{RECIPE_R1}")
+                         f"{RECIPE_R1} and {RECIPE_R2}")
     if rec.multiple_basis != mc.MULTIPLE_BASIS:
         raise ValueError(f"record multiple_basis {rec.multiple_basis!r} != block basis "
                          f"{mc.MULTIPLE_BASIS!r} — refusing to compute on a mismatched unit")
