@@ -221,7 +221,16 @@
    "revenue below the FY26E consensus path two consecutive quarters \u2192 re-test base at 12x",
    "operating margin breaks below ~16% ex one-offs \u2192 regime assumption fails"
   ],
+  "entryPrice": 141.06,
+  "ratioAtEntry": 6.69,
   "avoidPriced": false,
   "avoidPricedNote": null
+ },
+ "ledger": {
+  "verdict": "BUY",
+  "entryId": "V-IT-screen2-20260706",
+  "entryPrice": 141.06,
+  "entryPriceAsOf": "2026-07-20",
+  "decidedAt": "2026-07-21T00:00:00"
  }
 }

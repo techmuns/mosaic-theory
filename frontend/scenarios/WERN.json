@@ -213,6 +213,8 @@
    "spot pulls to ~28-30 (where base offers 2:1)",
    "a reported quarter proving normalized operating margin genuinely >7.5% (e.g. disclosed Dedicated segment economics, or a clean beat)"
   ],
+  "entryPrice": null,
+  "ratioAtEntry": null,
   "avoidPriced": true,
   "avoidPricedNote": "inverted asymmetry at 46 (upside +6% to bull, downside -22% base / -64% bear) -> track for avoid-leg short-alpha on paper."
  }
