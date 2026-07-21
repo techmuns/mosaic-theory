@@ -2816,13 +2816,17 @@ without starving the lead loop; each becomes a *real* widener only when its OWN 
   bind.) Follow-up hygiene (not a blocker): replace the weak test password with a strong secret.
 - **Verification harness (LLM bull/bear/judge)** — trigger: only if running the manual discriminator
   reveals it needs a structured bull/bear step. May never be needed; do not build speculatively.
-- **Theme-edge verdict recorder (A2 — LOCKED SPEC in §7, ratified 2026-07-04)** — the recorder that closes
-  the theme-edge loop (watchlist trigger → re-underwrite → source-tagged verdict → the ONE unified
-  BUY−AVOID spread). **Trigger:** build ALONGSIDE the monitor (the delta-scan that fires watchlist triggers)
-  OR when the first watchlist trigger actually approaches — NOT before. Rationale: A2 widens the append-only
-  ledger that Overshoot's LIVE spread depends on; build-to-evidence says do not touch the live validation
-  gate speculatively for a capability whose first use is quarters out. The loop staying OPEN (0 buys) is
-  honest today and the viewer says so.
+- **Theme-edge verdict recorder (A2 — LOCKED SPEC in §7, ratified 2026-07-04) — TRIGGER FIRED
+  2026-07-21; NO LONGER DEFERRED.** The recorder that closes the theme-edge loop (watchlist trigger →
+  re-underwrite → source-tagged verdict → the ONE unified BUY−AVOID spread). **Original trigger:**
+  build ALONGSIDE the monitor OR when the first watchlist trigger actually approaches — NOT before.
+  **What changed:** the fund now holds a LIVE recorded position (IT BUY, entry $141.06 @ 2026-07-20),
+  and its three thesis-break triggers are quarter-dated — the first (Q2-2026 print) lands **early
+  Aug 2026**, i.e. weeks out, not quarters. A live position with dated triggers and no monitor is a
+  standing instruction nobody is watching. The build-to-evidence rationale (don't touch the live
+  validation gate speculatively) is now SATISFIED, not overridden: the evidence exists.
+  ⚠ The old note "the loop staying OPEN (0 buys) is honest today" is **superseded** — the ledger
+  holds 1 BUY + 1 AVOID as of 2026-07-21.
 - **Drive adapter for the dossier-assembler** — trigger: the local-folder assembler is proven and the
   manual export→folder step is the real friction. A convenience, not a milestone. Design (review-only):
   `docs/CLOUD_DOSSIER_TRIGGER.md`. **CORRECTION 2026-06-26:** an API-based Google-Drive `DriveStore`
@@ -3716,8 +3720,72 @@ two-name analysis (mid/small-caps, opposite directions) mapped against this inve
 
 ## 5. Next steps (ordered, current)
 
-- **OWN-HISTORY BAND REFRESH + SELF-DESCRIBING PERIODICITY METADATA (branch
-  `feat/own-history-band-refresh`, 2026-07-21; PR open, NOT merged).**
+- **FIRST BUY RECORDED — IT (PR #161, 2026-07-21). THE FUND NOW HOLDS A LIVE PAPER POSITION.**
+  - **THE VERDICT.** Human-recorded **BUY**, `verdict.status="confirmed"`, recorded 2026-07-21.
+    **entry_price $141.06** (Polygon close 2026-07-20 — 2026-07-21 had not traded at record time),
+    **ratio_at_entry 6.686:1** (legs unchanged; only the spot moved from the 140.19 underwrite).
+    The ≥2.0 gate was re-checked at the live spot BEFORE anything was written.
+  - **THE MACHINE ABSTAINED.** IT's committed lean is `mixed` → `derive_proposal` returns NO
+    proposal → `disposition="no_proposal"`, `machine_lean="mixed"`, sealed from the committed
+    artifact (`assembled_at 2026-07-10T07:02:39Z`), `revealed_pre_verdict=false`. **The fund's
+    first BUY is a COLD HUMAN CALL** — exactly the cell the 2026-07-13 pivot says is the human's
+    product. It also means the machine-proposal spread curve starts EMPTY on this name: entry 1 of
+    the human curve has no machine counterpart, so the machine-vs-human decomposition begins at
+    n=0 for the proposal leg. Worth remembering before reading any early spread.
+  - **LEDGER ROW** `V-IT-screen2-20260706` appended (append-only; VRRM untouched, pinned by a new
+    test): candidate `IT-screen2-20260706` (from `ranked_queue.jsonl` — **the dossier carries no
+    candidate_id**, the brief's stated source was wrong), internal `SEC-0000749251-IT`,
+    horizon **180d**, confidence **medium** (both analyst-answered, not guessed), benchmark IWM.
+  - **THESIS-BREAK TRIGGERS** (recorded in `reunderwrite_triggers`, the field that already renders
+    on every surface — a parallel `thesis_break_triggers` list would have been a second home for
+    one concept): Q2-2026 print (early Aug) contract-value growth decelerating/negative → re-underwrite
+    the bear leg · revenue below FY26E consensus two consecutive quarters → re-test base at 12x ·
+    operating margin below ~16% ex one-offs → regime assumption fails.
+  - **RATIONALE CLAIMS RE-DERIVED BEFORE RECORDING** (the brief asserted them; the record states
+    what the math says): stress leg (rev −20%, margin 13%, 8x) → **$75.24 and 2.02:1**, NOT the
+    asserted "~$76 / ~2.1:1" — it clears the 2.0 bar **barely**, and the recorded rationale now says
+    so. FCF yield 10.8% ≈ "~11%" ✓; base leg reproduced to 1e-6 against the committed result.
+  - **BAND REFERENCES RE-POINTED** to the #162-corrected 9.3y band (n 38, as-of 2026-07-17, sha
+    `66405c3bc0`): low 9.34→**7.46**, median 22.71→**23.38**, 75th 26.12→**26.82**, current
+    7.5→**7.97 @ 3rd pctile** (was labelled 0th). "Base below median" still holds. The three method
+    sentences were **ratified** (`ratified_by="analyst"`, `ratified=2026-07-21`).
+  - **SMPL RESUMED** via analyst gate adjudication (recorded IN the record, new
+    `gate_adjudication` field — a gate that fired and was walked past must leave a trace):
+    "~80% one-off bar fired at 72.8%; residual vendor-definitional, not operating; RESUME 2026-07-21".
+    Run: bear $6.95 · base $26.90 · bull $40.21 at spot $10.92 (2026-07-20) → reward 15.98 / risk
+    3.97 → **4.03:1 PASS**. `verdict.status="pending_analyst"` — **the machine did not ratify.**
+    Every statistic the reasons assert was re-derived from EDGAR and matched exactly (7yr clean
+    median 15.51%, FY2020 worst 9.58%, FY2022 best 17.35%, FY2025 ex-impairment 15.01%).
+  - **SMPL 10-K FINDING — THE IMPAIRED ASSET IS NAMED, AND IT IS THE THESIS.** 10-K
+    0001702744-25-000046 Note 5, verbatim: *"…identified potential indicators of impairment for the
+    **Atkins brand** indefinite-lived intangible asset and the licensing agreements finite-lived
+    intangible asset… resulting in a loss on impairment of $60.9 million"*, triggered by *"declines
+    of future revenue projections"*. The one-off is not incidental — the company impaired the exact
+    brand the bear leg is about. **This cuts toward the bear/value-trap leg and the analyst should
+    weigh it at the verdict**, not read the impairment as a clean add-back.
+  - **INVARIANTS SHIPPED (INVARIANT RULE):** `test_entry_price_refuses_a_price_that_never_traded`
+    (negative pin: 0/−1 rejected — every forward return divides by this number) + its positive pin;
+    `test_committed_ledger_is_coherent_and_append_only` (e2e on the committed ledger: every payload
+    re-validates through the disposition-coherence validator, columns must agree with payload,
+    entry_ids unique, the original VRRM row can never vanish);
+    `test_committed_records_that_opened_a_position_carry_their_entry` (phrasing-independent).
+  - **OPERATOR / NEXT (queue, in order):**
+    1. **A2 monitor build is ACTIVATED** — a live position with an early-Aug trigger and no monitor
+       is a standing instruction nobody is watching (see the deferred-list entry, now un-deferred).
+    2. **Assembly-path provenance stamp** — `own_history` gets sha/mtime only on the REFRESH path;
+       a fresh `assemble` still writes a band with no file provenance, so the #162 stale-read class
+       is only half-closed.
+    3. **Shared `annual_series` longest/first-alias rule** — still unfixed (own-history-local and
+       anchor-local only). **Fix this BEFORE any `attach_midcycle` work**, which would inherit it.
+    4. **IT's ledger benchmark is IWM** (inherited default, VRRM precedent). IT is a ~$9.9B name;
+       IWM is small-cap. The excess-return leg of the spread may be measured against the wrong
+       index — decide before the 180d horizon closes.
+    5. **The card shows the UNDERWRITE ratio (7.04 @ $140.19), not the ENTRY (6.686 @ $141.06)** —
+       both are correctly labelled and neither is wrong, but `entry_price`/`ratio_at_entry` are not
+       plumbed to the card, so the entry is visible only inside the rationale PROSE. Surfacing them
+       structurally is a RENDER change → needs a preview per the PREVIEW RULE.
+- **OWN-HISTORY BAND REFRESH + SELF-DESCRIBING PERIODICITY METADATA (PR #162 — **MERGED to main
+  2026-07-21**, rebase, head `f87e74d`).**
   - **MISDIAGNOSIS → DETECTION → REAL FINDING.** A brief asserted IT's "quarterly" multiples file
     held ~20 ANNUAL closes mislabelled as quarters. **Detection refuted it:** every committed AND
     on-disk band shows **91-day (quarterly) spacing** — IT's committed 21 dates are quarter-ends

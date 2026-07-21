@@ -1,7 +1,7 @@
 {
   "$defs": {
     "AssumptionDerivation": {
-      "description": "HOW one assumption axis was modeled: a one-sentence analyst method + the reference frame.\n``references`` MAY be empty \u2014 a pure-judgment method honestly stated beats a fabricated\nreference; a blank method is refused like a blank reason.",
+      "description": "HOW one assumption axis was modeled: a one-sentence analyst method + the reference frame.\n``references`` MAY be empty \u2014 a pure-judgment method honestly stated beats a fabricated\nreference; a blank method is refused like a blank reason.\n\nA method sentence is DRAFTED with the run and RATIFIED by the human at review. ``ratified_by``\n/``ratified`` record that second act, so a reviewer can tell a sentence the analyst stood\nbehind from one that merely shipped with the run. Absent = not yet ratified (the honest\ndefault); the machine never sets them.",
       "properties": {
         "method": {
           "title": "Method",
@@ -13,6 +13,30 @@
           },
           "title": "References",
           "type": "array"
+        },
+        "ratified_by": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Ratified By"
+        },
+        "ratified": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Ratified"
         }
       },
       "required": [
@@ -296,6 +320,30 @@
           "title": "Reunderwrite Triggers",
           "type": "array"
         },
+        "entry_price": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Entry Price"
+        },
+        "ratio_at_entry": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Ratio At Entry"
+        },
         "avoid_priced": {
           "default": false,
           "title": "Avoid Priced",
@@ -384,6 +432,18 @@
       },
       "title": "Assumptions",
       "type": "object"
+    },
+    "gate_adjudication": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Gate Adjudication"
     },
     "result": {
       "$ref": "#/$defs/Result"
