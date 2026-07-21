@@ -3957,6 +3957,27 @@ re-anchor (the full STATE split stays its own queued task — nothing was reloca
     restating a label can silently break the card. That classifier is itself a standing violation
     of the parsers-consume-structured-values rule. Queued as item 12.
 
+**BUILD RECORD — 2026-07-21 full-history financials.** The extractor was applying a DISPLAY
+window at EXTRACTION (`fy[-4:]`, quarterly `[-8:]`): 51 fiscal-year columns and 277 quarters across
+the 12 names never entered dossier.json, unrecoverable without the licensed workbook. It also broke
+a derived value — the earliest visible year's growth read "—" forever because nothing preceded it
+(IT FY22: "—" → +16%, hand-checked). Now: extraction keeps every exported period; the BRIEF windows
+to 4 FY + LTM + consensus and STATES what it hid; the Appendix names its span. Curate the view,
+never the record.
+
+**VINTAGE GUARD (incident → invariant).** Re-extracting CNXC/SMPL/VITL did not just widen windows,
+it RESTATED committed values (CNXC LTM revenue 9,954→9,999 — the workbook says 9999.042, so the
+committed number came from an older export). CIQ stamps no export date and the `≥` as-of is a
+FLOOR, so nothing else detects a re-export; refreshing numbers under a synthesis written against
+the old ones makes a dossier cite figures it no longer contains. `financials-backfill` now REFUSES
+such a name and directs to a full re-assembly. Comparison is POSITIONAL from the end — several
+names carry duplicate period labels (BRBR quarterly: FY24, FY24, FY24) and a label lookup compares
+the wrong column (it produced a false alarm on the first pass). Shipped as a machine check + tests.
+
+**OPERATOR TO-DO:** re-assemble CNXC, SMPL, VITL so their synthesis matches their (newer) numbers,
+then run `financials-backfill` for the widened history. **SMPL is a logged BUY with a live forward
+track** — its committed LTM revenue is one export behind.
+
 **BUILD RECORD — 2026-07-21 dossier three-tier redesign (PR #174).** The Brief/Analysis/Appendix
 tabs re-designed from first principles as an institutional report; web + md renderers moved
 together; NO dossier.json data changed (render layer only + the 11 regenerated dossier.md).
