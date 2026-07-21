@@ -25,14 +25,14 @@
         "note": null
       },
       "ev_ebitda": {
-        "value": 4.0,
+        "value": 4.9,
         "source_ref": "CIQ Financials→Multiples 'TEV/LTM EBITDA' Close (latest) — current multiple",
         "status": "present",
         "note": "trailing only — no forward basis; cannot distinguish cheap-overshoot from cheap-terminal"
       },
       "ev_ebitda_percentile_5y": {
-        "value": 0.0,
-        "source_ref": "CIQ Financials→Multiples 'TEV/LTM EBITDA' Close — 19 quarters (partial last column excluded from the distribution)",
+        "value": 0.026,
+        "source_ref": "CIQ Financials→Multiples 'TEV/LTM EBITDA' Close — 38 quarters (partial last column excluded from the distribution)",
         "status": "present",
         "note": null
       },
@@ -49,7 +49,7 @@
         "note": "adjusted figure not in the 99.1 revised guidance"
       },
       "range_position": {
-        "value": "EV/EBITDA (TEV/LTM) 4.0x as-of 2026-06-22 — trailing range 8.0–57.2x (median 16.2x) over 19 closes → 0%ile → near-floor; P/LTM EPS 10.9x",
+        "value": "EV/EBITDA (TEV/LTM) 4.9x as-of 2026-07-17 — trailing range 4.3–57.2x (median 22.4x) over 38 closes → 3%ile → near-floor; P/LTM EPS 12.7x",
         "source_ref": "CIQ Financials→Multiples (Close; last col = current, excluded from history)",
         "status": "present",
         "note": null
