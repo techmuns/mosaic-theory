@@ -230,11 +230,16 @@ function masthead(c, showTicker) {
   </div>`;
 }
 
-// --- RISK / REWARD LADDER -------------------------------------------------------------------------
-// The asymmetry, drawn to scale: the risk and reward zone WIDTHS are the ratio, so the shape is
-// readable before a single number is. Degenerate legs (bear at/above spot → risk undefined) render
-// the track with no zones and print `ratio_undefined` verbatim — fail-honest, never a drawn lie.
-function ladder(c) {
+// --- RANGE RAIL -----------------------------------------------------------------------------------
+// The bear/base/bull bar BESIDE the scenario table — one row of a football field, kept horizontal
+// (the conventional read; a vertical bar is not a research object). The zone widths are still the
+// ratio drawn to scale. The table's height gives this slot ~130px of vertical room, so each label
+// takes its OWN row, tied to its tick by a hairline lead — their widths stop competing, which is
+// what forced the old full-width single-row ladder. FOUR labels is this layout's ceiling: a fifth
+// has no row to take.
+// Degenerate legs (bear at/above spot → risk undefined) render the track with no zones and print
+// `ratio_undefined` verbatim in the foot — fail-honest, never a drawn lie.
+function rangeRail(c) {
   const b = num((leg(c, "bear") || {}).valuePerShare);
   const m = num((leg(c, "base") || {}).valuePerShare);
   const u = num((leg(c, "bull") || {}).valuePerShare);
@@ -248,37 +253,46 @@ function ladder(c) {
   const zones = c.ratioUndefined || b >= s ? "" : `
     <div class="uw-lad-risk" style="left:${at(b)}%; width:${at(s) - at(b)}%;"></div>
     <div class="uw-lad-reward" style="left:${at(s)}%; width:${Math.max(0, at(m) - at(s))}%;"></div>`;
-  // A centred label at either extreme hangs half its width outside the track and gets clipped by
-  // the card. Near an edge the label ANCHORS to it instead (no centring transform) so the number
-  // stays whole — the tick still marks the true position; only the text alignment changes.
-  const place = (pos) => (pos <= 12 ? { css: "left:0", cls: " start" }
-    : pos >= 88 ? { css: "right:0", cls: " end" }
-    : { css: `left:${pos.toFixed(2)}%`, cls: "" });
-  const lab = (v, name, cls) => {
-    const d = vsSpot(v, s);
-    const p = place(at(v));
-    return `<span class="uw-lad-lab ${cls}${p.cls}" style="${p.css}">
+  // a centred label at either extreme would hang outside the slot — near an edge it anchors flush
+  const place = (pos) => (pos <= 12 ? "left:0"
+    : pos >= 88 ? "right:0" : `left:${pos.toFixed(2)}%`);
+  const anchor = (pos) => (pos > 12 && pos < 88 ? " mid" : "");
+  const lab = (v, name, row, cls = "", { delta = true } = {}) => {
+    const d = delta ? vsSpot(v, s) : null;   // spot carries no delta against itself
+    const pos = at(v);
+    return `<span class="uw-rr-lab r${row}${anchor(pos)}${cls}" style="${place(pos)}">
       ${mono(v.toFixed(2))}<span class="n">${escapeHtml(name)}</span>${
       d ? `<span class="uw-pct ${signCls(v, s)}">${d}</span>` : ""}</span>`;
   };
+  // fixed row grid (px from the stack top): labels at 0 / 28 / 86 / 110, track at 62.
+  // Each lead runs from its label's row to the track at the TICK's x — the stagger costs nothing
+  // if the eye can trace label to position.
+  const lead = (pos, top, height) =>
+    `<span class="uw-rr-lead" style="${pos >= 99 ? "right:0" : `left:${pos.toFixed(2)}%`}; top:${top}px; height:${height}px;"></span>`;
   const tgtName = st === "target" ? "TARGET" : st === "priced" ? "base (priced)" : "base";
-  return `<div class="uw-ladder">
-    <div class="uw-lad-track">
-      ${zones}
-      <span class="uw-lad-tick bear" style="left:${at(b)}%;"></span>
-      <span class="uw-lad-tick spot" style="left:${at(s)}%;"></span>
-      <span class="uw-lad-tick base ${st}" style="left:${at(m)}%;"></span>
-      ${u === null ? "" : `<span class="uw-lad-tick bull" style="left:${at(u)}%;"></span>`}
-      ${lab(b, "bear", "above")}
-      <span class="uw-lad-lab below${place(at(s)).cls}" style="${place(at(s)).css}">
-        ${mono(s.toFixed(2))}<span class="n">spot</span></span>
-      ${lab(m, tgtName, "above " + st)}
-      ${u === null ? "" : lab(u, "bull", "above")}
+  return `<div class="uw-rail">
+    <div class="uw-sec-h">Range vs spot</div>
+    <div class="uw-rr">
+      ${lab(m, tgtName, 1, " t " + st)}
+      ${u === null ? "" : lab(u, "bull", 2)}
+      ${lead(at(m), 16, 46)}
+      ${u === null ? "" : lead(at(u), 44, 18)}
+      <div class="uw-rr-track">
+        ${zones}
+        <span class="uw-lad-tick bear" style="left:${at(b)}%;"></span>
+        <span class="uw-lad-tick spot" style="left:${at(s)}%;"></span>
+        <span class="uw-lad-tick base ${st}" style="left:${at(m)}%;"></span>
+        ${u === null ? "" : `<span class="uw-lad-tick bull" style="left:${at(u)}%;"></span>`}
+      </div>
+      ${lead(at(b), 70, 16)}
+      ${lab(b, "bear", 3)}
+      ${lead(at(s), 70, 40)}
+      ${lab(s, "spot", 4, "", { delta: false })}
     </div>
-    <div class="uw-lad-zone">
-      <span>${c.ratioUndefined ? escapeHtml(c.ratioUndefined)
-        : `risk ${escapeHtml(money(c.risk))}`}</span>
-      <span>${c.ratioUndefined ? "" : `reward ${escapeHtml(money(c.reward))}`}</span>
+    <div class="uw-rr-foot">${c.ratioUndefined
+      ? `<div class="row"><span class="k">${escapeHtml(c.ratioUndefined)}</span></div>`
+      : `<div class="row"><span class="k">Reward</span><span class="val">${escapeHtml(money(c.reward))}</span></div>
+         <div class="row"><span class="k">Risk</span><span class="val">${escapeHtml(money(c.risk))}</span></div>`}
     </div>
   </div>`;
 }
@@ -308,7 +322,12 @@ function legsTable(c) {
     return d ? `<span class="uw-pct ${signCls(l.valuePerShare, c.spot)}">${d}</span>` : DASH;
   };
   // DECISION VALUES LEAD: value/share then its % vs spot, before the inputs that produced them.
-  return fact(`Scenarios (${basis})`, `
+  // The table shares its row with the range rail (SPLIT layout): the old full-width table carried
+  // ~350px of dead column while the ladder occupied a full-width band of its own — side by side,
+  // the table's columns size to their ink and the rail reuses the table's height. No fact() label
+  // column here: it would starve both halves; each half carries its own section heading.
+  const rail = rangeRail(c);
+  const tableHtml = `
     <div style="overflow-x:auto;"><table class="data uw-legs-t">
       <thead>${head}</thead>
       <tbody>
@@ -324,7 +343,11 @@ function legsTable(c) {
     <div class="uw-note muted">bull is range context — never in the ratio${
       tgt ? ", never the target" : ""}</div>
     ${reasons ? `<details class="uw-reasons"><summary>Why each leg sits there</summary>
-      <div class="uw-reasons-body"><ul class="kv-list">${reasons}</ul></div></details>` : ""}`);
+      <div class="uw-reasons-body"><ul class="kv-list">${reasons}</ul></div></details>` : ""}`;
+  const main = `<div class="uw-split-main">
+      <div class="uw-sec-h">Scenarios <span class="basis">${escapeHtml(basis)}</span></div>
+      ${tableHtml}</div>`;
+  return rail ? `<div class="uw-split">${main}${rail}</div>` : main;
 }
 
 // --- methodology (schema 1.1) ------------------------------------------------------------------
@@ -429,7 +452,6 @@ export function uwCard(c, { ticker = true } = {}) {
   // other audit blocks it stops interrupting and starts belonging.
   const body = () => `
     ${masthead(c, ticker)}
-    ${ladder(c)}
     ${legsTable(c)}
     ${v.rationale ? fact("Rationale", escapeHtml(v.rationale)) : ""}
     ${trig ? `<div class="uw-trig"><span class="uw-trig-lab">${

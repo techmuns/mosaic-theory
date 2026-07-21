@@ -635,15 +635,49 @@ table.data.vs-table { width: 100%; }
 
 /* --- risk / reward ladder -------------------------------------------------
    Zone WIDTHS are the ratio: the asymmetry is legible before a number is read. */
-/* CLEARANCE lives on the TRACK's top margin, not the ladder's: .uw-ladder has no border or
-   padding, so its top margin COLLAPSES with the track's and the larger of the two wins — raising
-   the ladder's alone is a no-op. The ABOVE labels sit 16px over the track and stand ~14px tall,
-   so the track needs ~30px above it plus breathing room. This was previously cushioned by the
-   masthead strip, which is now conditional; without the margin the labels sat 1px off the stat
-   band on any name with nothing to flag. */
-.uw-ladder { margin: 14px 0 10px; }
-.uw-lad-track { position: relative; height: 8px; border-radius: 4px;
-  background: var(--surface-2); margin: 42px 0 24px; max-width: 480px; }
+/* --- scenario SPLIT: table beside the range rail -----------------------------
+   The full-width table carried ~350px of dead column while the ladder occupied its own
+   full-width band. Side by side, the table's columns size to their ink and the rail reuses
+   the table's height. The rail slot is fixed 360px — wide enough that the staggered labels
+   never abbreviate — and the table takes the rest without stretching. */
+.uw-split { display: grid; grid-template-columns: minmax(0, 1fr) 360px; gap: 4px 26px;
+  align-items: start; }
+.uw-sec-h { font-size: 10.4px; text-transform: uppercase; letter-spacing: 0.06em;
+  color: var(--ink-3); font-weight: 600; margin: 2px 0 8px; }
+.uw-sec-h .basis { text-transform: none; letter-spacing: 0; font-weight: 400; }
+.uw-rail { border-left: 1px solid var(--line); padding-left: 22px; min-width: 0; }
+
+/* the staggered stack: four label ROWS around one absolute track — each label owns a row, tied
+   to its tick by a hairline lead, so label widths never compete (the constraint that forced the
+   old single-row full-width ladder). Row grid: labels 0 / 28 / 86 / 110, track at 62. */
+.uw-rr { position: relative; height: 134px; }
+.uw-rr-track { position: absolute; left: 0; right: 0; top: 62px; height: 8px;
+  border-radius: 4px; background: var(--surface-2); }
+.uw-rr-lab { position: absolute; white-space: nowrap; display: flex; align-items: baseline;
+  gap: 5px; font-size: 11px; color: var(--ink-2); }
+.uw-rr-lab.mid { transform: translateX(-50%); }
+.uw-rr-lab.r1 { top: 0; } .uw-rr-lab.r2 { top: 28px; }
+.uw-rr-lab.r3 { top: 86px; } .uw-rr-lab.r4 { top: 110px; }
+.uw-rr-lab .mono { font-size: 12px; color: var(--ink); font-weight: 650; }
+.uw-rr-lab .n { text-transform: uppercase; font-size: 9.4px; letter-spacing: 0.05em;
+  color: var(--ink-3); }
+.uw-rr-lab .uw-pct { font-size: 10.5px; }
+.uw-rr-lab.t .mono { font-size: 14px; color: var(--accent-text); }
+.uw-rr-lab.t .n { color: var(--accent-text); font-weight: 700; }
+.uw-rr-lab.t.priced .mono, .uw-rr-lab.t.priced .n { color: var(--danger-text); }
+.uw-rr-lead { position: absolute; width: 1px; background: var(--line-2); }
+.uw-rr-foot { margin-top: 12px; padding-top: 9px; border-top: 1px solid var(--line);
+  display: flex; flex-direction: column; gap: 4px; font-size: 11.3px; }
+.uw-rr-foot .row { display: flex; justify-content: space-between; gap: 10px; color: var(--ink-2); }
+.uw-rr-foot .row .k { color: var(--ink-3); }
+.uw-rr-foot .row .val { font-family: var(--mono); font-variant-numeric: tabular-nums; }
+
+@media (max-width: 900px) {
+  .uw-split { grid-template-columns: 1fr; }
+  .uw-rail { border-left: 0; padding-left: 0; border-top: 1px solid var(--line);
+    padding-top: 12px; margin-top: 10px; }
+}
+
 .uw-lad-risk, .uw-lad-reward { position: absolute; top: 0; bottom: 0; }
 .uw-lad-risk { background: var(--danger-bg); }
 .uw-lad-reward { background: var(--live-bg); }
@@ -654,20 +688,6 @@ table.data.vs-table { width: 100%; }
 .uw-lad-tick.bull { background: var(--ink-3); opacity: 0.55; }
 .uw-lad-tick.base { background: var(--accent); width: 4px; top: -9px; bottom: -9px; }
 .uw-lad-tick.base.priced { background: var(--danger); }
-.uw-lad-lab { position: absolute; transform: translateX(-50%); white-space: nowrap;
-  font-size: 11px; color: var(--ink-2); display: flex; align-items: baseline; gap: 5px; }
-/* anchored to an edge — no centring transform, so the number never hangs outside the track */
-.uw-lad-lab.start, .uw-lad-lab.end { transform: none; }
-.uw-lad-lab.above { bottom: 16px; }
-.uw-lad-lab.below { top: 16px; }
-.uw-lad-lab .mono { font-size: 12px; color: var(--ink); font-weight: 600; }
-.uw-lad-lab .n { text-transform: uppercase; font-size: 9.6px; letter-spacing: 0.05em; color: var(--ink-3); }
-.uw-lad-lab.target .mono, .uw-lad-lab.target .n { color: var(--accent-text); }
-.uw-lad-lab.priced .mono, .uw-lad-lab.priced .n { color: var(--danger-text); }
-/* the zone footer belongs to the track and must share its width — otherwise "reward …" floats off
-   at the card's right edge with nothing above it to annotate */
-.uw-lad-zone { display: flex; justify-content: space-between; gap: 12px;
-  font-size: 11px; color: var(--ink-3); max-width: 480px; }
 
 /* the base column IS the decision once a verdict ratifies it.
    `tr` is in the selector on purpose: `table.data tr.name-row td` (the value/share emphasis row)
