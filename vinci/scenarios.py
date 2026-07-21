@@ -76,10 +76,17 @@ class RefPoint(BaseModel):
 class AssumptionDerivation(BaseModel):
     """HOW one assumption axis was modeled: a one-sentence analyst method + the reference frame.
     ``references`` MAY be empty — a pure-judgment method honestly stated beats a fabricated
-    reference; a blank method is refused like a blank reason."""
+    reference; a blank method is refused like a blank reason.
+
+    A method sentence is DRAFTED with the run and RATIFIED by the human at review. ``ratified_by``
+    /``ratified`` record that second act, so a reviewer can tell a sentence the analyst stood
+    behind from one that merely shipped with the run. Absent = not yet ratified (the honest
+    default); the machine never sets them."""
 
     method: str
     references: list[RefPoint] = Field(default_factory=list)
+    ratified_by: str | None = None         # who ratified the method sentence; None while draft
+    ratified: str | None = None            # ISO date of ratification; None while draft
 
     model_config = {"frozen": True}
 
@@ -149,10 +156,26 @@ class Verdict(BaseModel):
     recorded: str | None = None            # ISO date the human recorded it; None while pending
     rationale: str | None = None           # WHY — the human's reasoning, in their own words
     reunderwrite_triggers: list[str] = Field(default_factory=list)  # what would reopen the name
+    # A recorded BUY is the start of a forward track, so the spread needs the price and the
+    # asymmetry AT the moment of the call — not the underwrite-date spot, which has since moved.
+    # Both stay None for a verdict that opens no position (watch / passed).
+    entry_price: float | None = None       # spot at the instant the human recorded the call
+    ratio_at_entry: float | None = None    # reward/risk recomputed at entry_price
     # (avoid-leg) the asymmetry is inverted at today's price — track for short-alpha on PAPER.
     # Recording it does NOT create a position: no code path here approaches execution.
     avoid_priced: bool = False
     avoid_priced_note: str | None = None
+
+    @field_validator("entry_price")
+    @classmethod
+    def _entry_price_real(cls, v: float | None) -> float | None:
+        """Absent is honest (no position); zero/negative is not. Every forward return in the
+        spread is measured FROM this number — a 0.0 that slipped through would divide the whole
+        track record by a price that never traded."""
+        if v is not None and v <= 0:
+            raise ValueError(f"entry_price {v} is not a traded price — refusing to record an "
+                             "entry the forward spread cannot be measured from")
+        return v
 
 
 class ScenarioRecord(BaseModel):
@@ -175,6 +198,10 @@ class ScenarioRecord(BaseModel):
     # per-AXIS methodology (revenue | margin | multiple for R1): how each modeled input was
     # derived, with its source-bound reference frame — the reviewable "why these numbers"
     assumptions: dict[str, AssumptionDerivation] = Field(default_factory=dict)
+    # A machine gate the human consciously overrode, and WHY. A gate that fired and was then
+    # walked past leaves no trace otherwise — the record would read as though it never fired,
+    # which is the one reading that makes the gate worthless. None == no gate was adjudicated.
+    gate_adjudication: str | None = None
     result: Result = Field(default_factory=Result)
     verdict: Verdict = Field(default_factory=Verdict)
 

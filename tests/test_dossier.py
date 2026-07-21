@@ -7030,3 +7030,45 @@ def test_exhibits_cite_via_endnotes_not_inline_source_caption() -> None:
     assert ">Source:" not in src, (
         "an exhibit inlines a 'Source:' caption — remove it; the sibling table/fact's citeMark "
         "carries the source to the Sources list (see revEbitdaExhibit for the pattern)")
+
+
+def test_dossier_page_logs_anchor_and_scenario_panels() -> None:
+    """(log) The dossier page carries TWO read-only panels: the committed screening anchor for any
+    dossier that has one, and the analyst's underwrite card ONLY when a scenario record is passed.
+
+    The panels are additive: a dossier with no `anchor` renders no anchor panel (pre-anchor JSON is
+    untouched), and the card never appears from the 2-arg call the other node pins use — it needs a
+    fetch, so render() supplies it. Node-gated like the other render pins."""
+    import json
+    import shutil
+    import subprocess
+
+    if not shutil.which("node"):
+        pytest.skip("node not available")
+    dj = Path("frontend/views/shared/dossier.js").resolve().as_uri()
+    driver = f"""
+const handler = {{ get: () => stub, apply: () => stub, construct: () => ({{}}) }};
+const stub = new Proxy(function(){{}}, handler);
+for (const g of ["window","document","location"]) {{ try {{ globalThis[g] = stub; }} catch {{}} }}
+import {{ readFileSync }} from "node:fs";
+const {{ renderDossier }} = await import("{dj}");
+const rd = (p) => JSON.parse(readFileSync(p));
+const withAnchor = rd("data/dossiers/IT/dossier.json");
+const noAnchor = rd("data/dossiers/FUBO/dossier.json");
+const card = rd("frontend/scenarios/IT.json");
+console.log(JSON.stringify({{
+  anchorPanel: renderDossier(withAnchor, null).includes("Screening anchor"),
+  anchorNotVerdict: renderDossier(withAnchor, null).includes("not a verdict"),
+  anchorAbsent: renderDossier(noAnchor, null).includes("Screening anchor"),
+  cardWithout: renderDossier(withAnchor, null).includes("Scenario underwrite"),
+  cardWith: renderDossier(withAnchor, null, card).includes("Scenario underwrite"),
+}}));
+"""
+    out = subprocess.run(["node", "--input-type=module", "-e", driver],
+                         capture_output=True, text=True, check=True)
+    r = json.loads(out.stdout)
+    assert r["anchorPanel"], "committed anchor did not render its screening panel"
+    assert r["anchorNotVerdict"], "the anchor panel must label itself 'not a verdict'"
+    assert not r["anchorAbsent"], "a dossier without an anchor must render no anchor panel"
+    assert not r["cardWithout"], "the underwrite card must not appear without a scenario record"
+    assert r["cardWith"], "a passed scenario record must render the underwrite card"

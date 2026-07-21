@@ -261,6 +261,45 @@ def test_legacy_ledger_payload_loads_with_none_proposal() -> None:
     assert e.proposal_assembled_at is None and e.disposition is None
 
 
+def test_underwrite_provenance_fields_are_additive() -> None:
+    """``ratio_at_entry``/``underwrite_ref`` are additive: the pre-feature payload shape (VRRM)
+    still loads with both None, and a row that carries them round-trips. The ledger's history is
+    never invalidated by a new field."""
+    legacy = {
+        "entry_id": "V-X", "candidate_id": "X", "internal_id": "SEC-0000000001-X", "ticker": "X",
+        "verdict": "BUY", "twin_call": "t", "entry_price": 21.5, "entry_price_as_of": "2026-05-01",
+        "thesis": "th", "kill_criteria": "k", "horizon_days": 180, "confidence": "medium",
+        "decided_at": "2026-05-01T10:00:00",
+    }
+    e = LedgerEntry.model_validate_json(json.dumps(legacy))
+    assert e.ratio_at_entry is None and e.underwrite_ref is None
+    withref = LedgerEntry.model_validate_json(
+        json.dumps({**legacy, "ratio_at_entry": 6.69, "underwrite_ref": "scenarios/X.json"}))
+    rt = LedgerEntry.model_validate_json(withref.model_dump_json())
+    assert (rt.ratio_at_entry, rt.underwrite_ref) == (6.69, "scenarios/X.json")
+
+
+def test_committed_ledger_is_coherent_and_append_only() -> None:
+    """E2E on the COMMITTED ledger — the artifact the whole BUY−AVOID spread is measured from.
+
+    Every row must re-validate as a ``LedgerEntry`` (so the disposition-coherence validator runs on
+    real committed data), every entry price must be a real price, entry_ids must be unique, and the
+    ORIGINAL row must still be present — the ledger is append-only, so a row that ever existed can
+    never stop existing. A row whose payload disagrees with its own columns is corruption."""
+    p = Path(__file__).resolve().parents[1] / "data" / "snapshots" / "decision_ledger.jsonl"
+    rows = [json.loads(line) for line in p.read_text().splitlines() if line.strip()]
+    assert rows, "the committed ledger is empty — the spread has nothing to accumulate from"
+    ids = [r["entry_id"] for r in rows]
+    assert len(ids) == len(set(ids)), f"duplicate entry_id in the ledger: {ids}"
+    assert "V-VRRM-screen2-20260617" in ids, "the first logged verdict vanished — NOT append-only"
+    for r in rows:
+        e = LedgerEntry.model_validate_json(r["payload"])   # runs disposition coherence
+        assert e.entry_price > 0
+        for col in ("entry_id", "candidate_id", "internal_id", "ticker"):
+            assert r[col] == getattr(e, col), f"{r['entry_id']}: col {col} disagrees with payload"
+        assert r["verdict"] == e.verdict.value and r["entry_price"] == e.entry_price
+
+
 def test_spread_groups_by_sector_and_is_honest_until_enough() -> None:
     """The spread reads PER-SECTOR; a sector returns 'insufficient data' until both legs are real,
     and an untagged verdict (sector None, like the pre-feature VRRM) buckets under 'Unknown'."""

@@ -452,5 +452,55 @@ def test_uw_card_owns_its_citations_and_renders_the_same_everywhere() -> None:
     assert 'withEndnotes("U"' not in dossier, "the card owns the U scope now, not the host"
 
 
+def test_entry_price_refuses_a_price_that_never_traded() -> None:
+    """NEGATIVE PIN for the entry-price guard. Every forward return in the spread is measured FROM
+    this number, so a 0.0/negative that slipped through would divide the whole track record by a
+    price that never traded. Absent stays legal — that is "no position", not a bad price."""
+    for bad in (0.0, -1.0, -141.06):
+        with pytest.raises(ValueError, match="not a traded price"):
+            sc.Verdict(status="confirmed", entry_price=bad)
+    assert sc.Verdict().entry_price is None                     # absent == no position, allowed
+
+
+def test_entry_price_and_ratio_record_a_live_entry() -> None:
+    """POSITIVE PIN — the recorded-BUY shape round-trips: a real price, the asymmetry accepted at
+    it, and the status the human set. ``ratio_at_entry`` is deliberately unconstrained: a verdict
+    may be recorded at a ratio the machine would call ugly, and the record must hold it."""
+    v = sc.Verdict(status="confirmed", recorded="2026-07-21", entry_price=141.06,
+                   ratio_at_entry=6.685869749511423, reunderwrite_triggers=["a", "b"])
+    rt = sc.Verdict.model_validate_json(v.model_dump_json())
+    assert (rt.entry_price, rt.status) == (141.06, "confirmed")
+    assert rt.ratio_at_entry == 6.685869749511423
+    assert sc.Verdict(ratio_at_entry=-0.35).ratio_at_entry == -0.35     # a FAIL ratio is a fact
+
+
+def test_ratification_and_gate_adjudication_are_additive() -> None:
+    """A pre-ratification record (no ``ratified_by``/``ratified``/``gate_adjudication``) stays valid
+    with all three None — the honest default is "not yet ratified", never a silent yes."""
+    assert _rec().gate_adjudication is None
+    a = sc.AssumptionDerivation(method="m")
+    assert (a.ratified_by, a.ratified) == (None, None)
+    done = sc.AssumptionDerivation(method="m", ratified_by="analyst", ratified="2026-07-21")
+    rt = sc.AssumptionDerivation.model_validate_json(done.model_dump_json())
+    assert (rt.ratified_by, rt.ratified) == ("analyst", "2026-07-21")
+
+
+def test_committed_records_that_opened_a_position_carry_their_entry() -> None:
+    """E2E on the COMMITTED artifacts, phrasing-independent: a still-pending verdict carries no
+    entry, a recorded one dates itself, and an entry price never appears without the asymmetry
+    accepted at it. Pins the invariant, never the analyst's prose (which re-words)."""
+    for p in sorted((Path(__file__).resolve().parents[1] / "scenarios").glob("*.json")):
+        if p.name.startswith("_"):
+            continue
+        v = sc.ScenarioRecord.model_validate_json(p.read_text()).verdict
+        if v.status == "pending_analyst":
+            assert v.entry_price is None, f"{p.name}: a pending verdict must not carry an entry"
+            continue
+        assert v.recorded, f"{p.name}: a recorded verdict must date itself"
+        if v.entry_price is not None:
+            assert v.entry_price > 0 and v.ratio_at_entry is not None, (
+                f"{p.name}: an entry price with no ratio at entry is an unreadable anchor")
+
+
 if __name__ == "__main__":
     raise SystemExit(pytest.main([__file__, "-q"]))

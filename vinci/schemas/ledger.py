@@ -61,6 +61,13 @@ class LedgerEntry(BaseModel, frozen=True):
     # Frozen at decision time — the anchor for forward-return scoring.
     entry_price: float
     entry_price_as_of: date
+    # The asymmetry the call was made ON, frozen beside the price it was made AT. The underwrite
+    # record it came from is editable; this copy is not — so the forward return is always readable
+    # against the ratio actually accepted. ``None`` == a verdict logged without an underwrite grid.
+    ratio_at_entry: float | None = None
+    # Pointer to the underwrite record that justified this row (e.g. "scenarios/IT.json") — the
+    # ledger says WHAT was decided; the record says how the numbers were built. None: no record.
+    underwrite_ref: str | None = None
 
     thesis: str  # short written thesis (BUY) or rationale (AVOID)
     kill_criteria: str  # what would falsify the thesis

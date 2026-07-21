@@ -1,0 +1,225 @@
+{
+  "schema_version": "1.1",
+  "ticker": "SMPL",
+  "recipe_id": "R1_midcycle_margin_evebitda",
+  "recipe_desc": "Mid-cycle underwrite: normalized operating margin on a mid-cycle revenue base, valued at an exit EV/LTM-EBITDA multiple; reward/risk measured at SPOT.",
+  "recipe_formula": [
+    "EBIT = revenue × op margin",
+    "EBITDA = EBIT + D&A",
+    "EV = EBITDA × exit multiple (EV/EBITDA)",
+    "equity = EV − net debt",
+    "value/share = equity ÷ diluted shares"
+  ],
+  "multiple_basis": "EV/EBITDA",
+  "underwrite_date": "2026-07-21",
+  "analyst": "nogods404",
+  "spot": 10.92,
+  "spot_source": "Polygon daily aggregate close 2026-07-20 (live)",
+  "facts": {
+    "d_and_a": {
+      "value": 21.431,
+      "unit": "$M",
+      "basis": "consolidated latest FY",
+      "source": "EDGAR companyfacts dep_amort (combined) — via committed dossier anchor block (#158/#160/#162-verified)"
+    },
+    "net_debt": {
+      "value": 324.582,
+      "unit": "$M",
+      "basis": "lease-inclusive net debt (latest 10-Q)",
+      "source": "EDGAR: total debt 397 + finance leases 0 + operating leases 51 − cash 124 ($M) — via committed dossier anchor block (#158/#160/#162-verified)"
+    },
+    "diluted_shares": {
+      "value": 93.677801,
+      "unit": "M shares",
+      "basis": "diluted weighted-average (latest 10-Q) (anchor raw count / 1e6)",
+      "source": "EDGAR WeightedAverageNumberOfDilutedSharesOutstanding — via committed dossier anchor block (#158/#160/#162-verified)"
+    },
+    "ltm_revenue": {
+      "value": 1416.208,
+      "unit": "$M",
+      "basis": "LTM revenue",
+      "source": "committed financial_summary.annual (LTM) — via committed dossier anchor block (#158/#160/#162-verified)"
+    },
+    "cash_interest": {
+      "value": 23.249,
+      "unit": "$M",
+      "basis": "FY2025 non-operating interest expense (FCF cross-check only)",
+      "source": "EDGAR companyfacts InterestExpenseNonoperating FY2025"
+    },
+    "cash_tax_rate": {
+      "value": 0.2376,
+      "unit": "rate",
+      "basis": "FY2025 effective rate = tax expense / pre-tax income (FCF cross-check only; does not touch value/share)",
+      "source": "EDGAR companyfacts IncomeTaxExpenseBenefit 32.289 / pre-tax 135.903 (FY2025)"
+    }
+  },
+  "scenarios": {
+    "bear": {
+      "revenue": 1180.0,
+      "margin": 0.1,
+      "multiple": 7.0,
+      "reason": "value-trap leg: GLP-1 + Atkins decline prove secular; revenue continues past consensus; margin ~ worst clean year (FY2020 9.58%); multiple at the trough band (ex-current low 6.11)."
+    },
+    "base": {
+      "revenue": 1330.0,
+      "margin": 0.155,
+      "multiple": 12.5,
+      "reason": "margin = 7yr clean median 15.51% (clean stats bracket the anchor; no realized break — FY2025 resolved: $60.9M intangible impairment, 10-K 0001702744-25-000046; ex-impairment margin 15.0%, at the median; residual ~$22.8M of the CIQ gap is definitional — intangible amortization 16.9 + transaction costs 0.8 — not operating). Revenue = consensus FY26E 1334 (company issued no numeric guidance). Multiple below the 17.9x own-history median (35 closes, 8.55y): the category question (GLP-1/Atkins) earns a durable discount; 12.5x = 14th percentile of the corrected band."
+    },
+    "bull": {
+      "revenue": 1420.0,
+      "margin": 0.165,
+      "multiple": 16.0,
+      "reason": "overshoot resolves: Quest carries growth, Atkins stabilizes at a smaller base; margin between median and best (17.35%); multiple to own-history median."
+    }
+  },
+  "assumptions": {
+    "revenue": {
+      "method": "DRAFT — ratify at review. Legs are set off the consensus path and the LTM base rather than round numbers: base IS consensus FY26E (the company issued no numeric guidance), bull sits just under LTM on a stabilizing Atkins, and bear takes revenue materially past consensus to price the secular GLP-1/Atkins-decline case.",
+      "references": [
+        {
+          "label": "FY2025 reported revenue",
+          "value": 1450.9,
+          "unit": "$M",
+          "source": "EDGAR companyfacts OperatingIncomeLoss / RevenueFromContractWithCustomerExcludingAssessedTax (FY2025)"
+        },
+        {
+          "label": "LTM revenue",
+          "value": 1416.208,
+          "unit": "$M",
+          "source": "committed dossier anchor block (#158/#160/#162-verified)"
+        },
+        {
+          "label": "consensus FY26E revenue (base)",
+          "value": 1334.0,
+          "unit": "$M",
+          "source": "committed dossier financial_summary (E cols = consensus)"
+        }
+      ],
+      "ratified_by": null,
+      "ratified": null
+    },
+    "margin": {
+      "method": "DRAFT — ratify at review. Operating-margin legs are set off the CLEAN reported history with FY2025 adjusted for the quantified $60.9M Atkins-brand + licensing-agreement intangible impairment — the clean stats BRACKET the naive anchor rather than breaking from it. Bear sits at the worst clean year, base at the 7yr clean median, bull between median and the FY2022 best.",
+      "references": [
+        {
+          "label": "committed anchor median (naive, 8 FY)",
+          "value": 15.45,
+          "unit": "%",
+          "source": "committed dossier anchor block (#158/#160/#162-verified) anchor.margin.value"
+        },
+        {
+          "label": "7yr clean median (FY2025 adjusted) — base",
+          "value": 15.51,
+          "unit": "%",
+          "source": "EDGAR companyfacts OperatingIncomeLoss / RevenueFromContractWithCustomerExcludingAssessedTax FY2019-FY2025, FY2025 ex the $60.9M impairment"
+        },
+        {
+          "label": "FY2020 worst clean year — bear",
+          "value": 9.58,
+          "unit": "%",
+          "source": "EDGAR companyfacts OperatingIncomeLoss / RevenueFromContractWithCustomerExcludingAssessedTax (FY2020)"
+        },
+        {
+          "label": "FY2022 best clean year — bull ceiling",
+          "value": 17.35,
+          "unit": "%",
+          "source": "EDGAR companyfacts OperatingIncomeLoss / RevenueFromContractWithCustomerExcludingAssessedTax (FY2022)"
+        },
+        {
+          "label": "FY2025 adjusted ex $60.9M impairment",
+          "value": 15.01,
+          "unit": "%",
+          "source": "EDGAR companyfacts OperatingIncomeLoss / RevenueFromContractWithCustomerExcludingAssessedTax (FY2025) + 10-K 0001702744-25-000046 (FY2025, Note 5 Goodwill and Intangibles)"
+        }
+      ],
+      "ratified_by": null,
+      "ratified": null
+    },
+    "multiple": {
+      "method": "DRAFT — ratify at review. Multiple legs sit inside the name's OWN-history EV/EBITDA band, deliberately BELOW the median at base: the unresolved category question (GLP-1 substitution, Atkins decline) earns a durable discount rather than a cyclical one. Bear sits at the band trough; bull moves toward but stays under the median.",
+      "references": [
+        {
+          "label": "own-history band low — bear",
+          "value": 6.11,
+          "unit": "x",
+          "source": "committed dossier valuation.own_history (CIQ Financials→Multiples 'TEV/LTM EBITDA' Close, 35 closes, 8.55y span, as-of 2026-07-17, sha 7bd83a1103)"
+        },
+        {
+          "label": "own-history 25th percentile",
+          "value": 15.2,
+          "unit": "x",
+          "source": "committed dossier valuation.own_history (CIQ Financials→Multiples 'TEV/LTM EBITDA' Close, 35 closes, 8.55y span, as-of 2026-07-17, sha 7bd83a1103)"
+        },
+        {
+          "label": "own-history median (base set below it)",
+          "value": 17.85,
+          "unit": "x",
+          "source": "committed dossier valuation.own_history (CIQ Financials→Multiples 'TEV/LTM EBITDA' Close, 35 closes, 8.55y span, as-of 2026-07-17, sha 7bd83a1103)"
+        },
+        {
+          "label": "own-history 75th percentile",
+          "value": 20.88,
+          "unit": "x",
+          "source": "committed dossier valuation.own_history (CIQ Financials→Multiples 'TEV/LTM EBITDA' Close, 35 closes, 8.55y span, as-of 2026-07-17, sha 7bd83a1103)"
+        },
+        {
+          "label": "current multiple (0th pctile)",
+          "value": 5.65,
+          "unit": "x",
+          "source": "committed dossier valuation.own_history (CIQ Financials→Multiples 'TEV/LTM EBITDA' Close, 35 closes, 8.55y span, as-of 2026-07-17, sha 7bd83a1103)"
+        }
+      ],
+      "ratified_by": null,
+      "ratified": null
+    }
+  },
+  "gate_adjudication": "~80% one-off bar fired at 72.8%; residual identified as vendor-definitional, not operating; analyst adjudicated RESUME 2026-07-21.",
+  "result": {
+    "per_scenario": {
+      "bear": {
+        "value_per_share": 6.953995429504158,
+        "op_income": 118.0,
+        "ebitda": 139.431,
+        "ev": 976.017,
+        "equity": 651.4350000000001,
+        "ev_ebit": 8.271330508474577,
+        "norm_fcf": 72.23816240000001
+      },
+      "base": {
+        "value_per_share": 26.902643669016104,
+        "op_income": 206.15,
+        "ebitda": 227.58100000000002,
+        "ev": 2844.7625000000003,
+        "equity": 2520.1805000000004,
+        "ev_ebit": 13.799478535047296,
+        "norm_fcf": 139.4437224
+      },
+      "bull": {
+        "value_per_share": 40.21351867557182,
+        "op_income": 234.3,
+        "ebitda": 255.73100000000002,
+        "ev": 4091.6960000000004,
+        "equity": 3767.1140000000005,
+        "ev_ebit": 17.463491250533504,
+        "norm_fcf": 160.9052824
+      }
+    },
+    "reward": 15.982643669016104,
+    "risk": 3.9660045704958415,
+    "ratio": 4.029910552276017,
+    "ratio_undefined": null,
+    "bar": 2.0,
+    "pass_fail": "PASS"
+  },
+  "verdict": {
+    "status": "pending_analyst",
+    "recorded": null,
+    "rationale": null,
+    "reunderwrite_triggers": [],
+    "entry_price": null,
+    "ratio_at_entry": null,
+    "avoid_priced": false,
+    "avoid_priced_note": null
+  }
+}
