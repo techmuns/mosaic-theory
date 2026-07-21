@@ -638,7 +638,8 @@ table.data.vs-table { width: 100%; }
 .uw-lad-tick.base.priced { background: var(--danger); }
 .uw-lad-lab { position: absolute; transform: translateX(-50%); white-space: nowrap;
   font-size: 11px; color: var(--ink-2); display: flex; align-items: baseline; gap: 5px; }
-.uw-lad-lab.end { transform: translateX(50%); }
+/* anchored to an edge — no centring transform, so the number never hangs outside the track */
+.uw-lad-lab.start, .uw-lad-lab.end { transform: none; }
 .uw-lad-lab.above { bottom: 16px; }
 .uw-lad-lab.below { top: 16px; }
 .uw-lad-lab .mono { font-size: 12px; color: var(--ink); font-weight: 600; }
@@ -648,9 +649,11 @@ table.data.vs-table { width: 100%; }
 .uw-lad-zone { display: flex; justify-content: space-between; gap: 12px;
   font-size: 11px; color: var(--ink-3); }
 
-/* the base column IS the decision once a verdict ratifies it */
-table.data th.uw-tgt-col, table.data td.uw-tgt-col { background: var(--accent-bg); }
-table.data th.uw-tgt-col { color: var(--accent-text); }
+/* the base column IS the decision once a verdict ratifies it.
+   `tr` is in the selector on purpose: `table.data tr.name-row td` (the value/share emphasis row)
+   would otherwise out-specify this and drop the tint from the ONE row that matters most. */
+table.data tr th.uw-tgt-col, table.data tr td.uw-tgt-col { background: var(--accent-bg); }
+table.data tr th.uw-tgt-col { color: var(--accent-text); }
 .uw-tgt-tag { font-size: 9.2px; text-transform: uppercase; letter-spacing: 0.05em;
   font-weight: 650; color: var(--accent-text); }
 table.data tr td.uw-vs { font-size: 11.6px; }

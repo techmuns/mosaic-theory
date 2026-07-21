@@ -236,13 +236,16 @@ function ladder(c) {
   const zones = c.ratioUndefined || b >= s ? "" : `
     <div class="uw-lad-risk" style="left:${at(b)}%; width:${at(s) - at(b)}%;"></div>
     <div class="uw-lad-reward" style="left:${at(s)}%; width:${Math.max(0, at(m) - at(s))}%;"></div>`;
+  // A centred label at either extreme hangs half its width outside the track and gets clipped by
+  // the card. Near an edge the label ANCHORS to it instead (no centring transform) so the number
+  // stays whole — the tick still marks the true position; only the text alignment changes.
+  const place = (pos) => (pos <= 12 ? { css: "left:0", cls: " start" }
+    : pos >= 88 ? { css: "right:0", cls: " end" }
+    : { css: `left:${pos.toFixed(2)}%`, cls: "" });
   const lab = (v, name, cls) => {
     const d = vsSpot(v, s);
-    const pos = at(v);
-    // labels near the right edge anchor from the right so nothing clips out of the track
-    const side = pos > 88 ? `right:${(100 - pos).toFixed(2)}%` : `left:${pos.toFixed(2)}%`;
-    const align = pos > 88 ? " end" : "";
-    return `<span class="uw-lad-lab ${cls}${align}" style="${side}">
+    const p = place(at(v));
+    return `<span class="uw-lad-lab ${cls}${p.cls}" style="${p.css}">
       ${mono(v.toFixed(2))}<span class="n">${escapeHtml(name)}</span>${
       d ? `<span class="uw-pct ${signCls(v, s)}">${d}</span>` : ""}</span>`;
   };
@@ -255,7 +258,7 @@ function ladder(c) {
       <span class="uw-lad-tick base ${st}" style="left:${at(m)}%;"></span>
       ${u === null ? "" : `<span class="uw-lad-tick bull" style="left:${at(u)}%;"></span>`}
       ${lab(b, "bear", "above")}
-      <span class="uw-lad-lab below" style="left:${at(s).toFixed(2)}%;">
+      <span class="uw-lad-lab below${place(at(s)).cls}" style="${place(at(s)).css}">
         ${mono(s.toFixed(2))}<span class="n">spot</span></span>
       ${lab(m, tgtName, "above " + st)}
       ${u === null ? "" : lab(u, "bull", "above")}
