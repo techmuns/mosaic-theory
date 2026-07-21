@@ -22,6 +22,7 @@ from vinci.dossier import band_guards as bg
 from vinci.dossier import midcycle as mc
 from vinci.edgar.client import _max_outstanding_debt
 from vinci.edgar.concepts import (
+    CONCEPT_ALIASES,
     ConceptPoint,
     extract_points,
     latest_annual,
@@ -268,23 +269,53 @@ def _total_revenue_series(facts: dict[str, Any]) -> tuple[mc.AnnualSeries | None
 
 # --- EDGAR source-bound extractors (fail-loud; a gap → None, never a fabricated zero) ----------
 def _latest_dep_amort(facts: dict[str, Any]) -> tuple[float, str] | None:
-    """Latest-FY consolidated D&A ($). Prefer the combined tag; else the source-stamped
-    ``Depreciation + AmortizationOfIntangibleAssets`` split-sum (a filer like CNXC reports the two
-    separately, not the combined tag). None when neither is tagged — flagged, never zero-filled."""
-    p = latest_annual(extract_points(facts, "dep_amort"))
-    if p:
-        return p.value, "EDGAR companyfacts dep_amort (combined)"
+    """Latest-FY consolidated D&A ($) → (value, source). Picks by VINTAGE, not by tag name.
+
+    Was: prefer the combined tag whenever present, else the split pair. That preference is a
+    landmine for any filer that CHANGED tags — the abandoned tag stays in companyfacts forever at
+    its last reported value. FUBO's combined ``dep_amort`` last reported **$0.003M in FY2014**
+    while its current split tags sum to **~$38.5M**; name-preference picked the twelve-year-old
+    number, and it flowed straight into the anchor's EBITDA basis. (Queued 2026-07-21, closed here.)
+
+    Now: build both candidates, and take the one whose fiscal period is FRESHER. Ties keep the
+    combined tag, which is the filer's own single-line disclosure and needs no summation.
+
+    The split pair still requires the SAME fiscal period on both legs — summing an FY2025
+    depreciation into an FY2024 amortisation would fabricate a D&A that never existed."""
+    # EVERY combined alias is considered, not just the first one carrying data. ``extract_points``
+    # resolves aliases by ORDER — first-with-any-data wins — which is right for breadth and wrong
+    # for vintage: an abandoned tag keeps its last value forever and still sorts first. EPAM's
+    # `DepreciationDepletionAndAmortization` last reported FY2019 ($45.3M) while its
+    # `DepreciationAndAmortization` reports FY2025 ($124.8M), and the FY2019 figure was sitting in
+    # a committed anchor under a PENDING underwrite. The shared resolver is deliberately left
+    # untouched (other consumers depend on its ordering); the vintage rule lives here.
+    cands: list[tuple[Any, float, str]] = []
+    for tag in CONCEPT_ALIASES["dep_amort"]:
+        p = latest_annual(points_for_tag(facts, tag))
+        if p:
+            cands.append((p.period_end, p.value,
+                          f"EDGAR companyfacts {tag} (combined, FY{p.fy or p.period_end.year})"))
     dep = latest_annual(points_for_tag(facts, "Depreciation"))
     am = latest_annual(points_for_tag(facts, "AmortizationOfIntangibleAssets"))
     # SAME fiscal period or nothing: summing an FY2025 depreciation into an FY2024 amortisation
-    # would fabricate a D&A that never existed. This is the period-alignment discipline
-    # ``edgar_fundamentals`` already applies to its own EBITDA add-back — misaligned → UNKNOWN
-    # (flagged upstream), never a silently blended number.
+    # would fabricate a D&A that never existed.
     if dep and am and dep.period_end == am.period_end:
         fy = dep.fy or dep.period_end.year
-        return dep.value + am.value, (
-            f"EDGAR Depreciation + AmortizationOfIntangibleAssets (split, FY{fy})")
-    return None
+        cands.append((dep.period_end, dep.value + am.value,
+                      f"EDGAR Depreciation + AmortizationOfIntangibleAssets (split, FY{fy})"))
+    if not cands:
+        return None
+    freshest = max(c[0] for c in cands)
+    # Ties keep the EARLIEST candidate at that vintage — alias order first, the summed split last,
+    # because a filer's own single line needs no summation to be right.
+    best = next(c for c in cands if c[0] == freshest)
+    stale = [c for c in cands if c[0] < freshest]
+    note = ""
+    if stale:
+        oldest = min(c[0] for c in stale)
+        note = (f" — CHOSEN BY VINTAGE over {len(stale)} staler candidate(s), oldest "
+                f"FY{oldest.year} ({(freshest - oldest).days // 365}y behind)")
+    return best[1], best[2] + note
 
 
 def _latest_fcf(facts: dict[str, Any]) -> tuple[float, str, str] | None:
@@ -347,7 +378,11 @@ def _lease_inclusive_net_debt(facts: dict[str, Any]) -> tuple[float | None, str]
     return td + fin + opl - cash.value, bridge
 
 
-def _bridge_inputs(mechanical: dict[str, Any], facts: dict[str, Any]) -> dict[str, Any]:
+DQ_VENDOR_BRIDGE = "vendor_bridge"
+
+
+def _bridge_inputs(mechanical: dict[str, Any], facts: dict[str, Any],
+                   ciq: Any = None) -> dict[str, Any]:
     """Every SOURCE-BOUND scalar the block carries, gathered independently of whether R1 applies.
 
     Split out (2026-07-21, R2 cohort) because the R1 recipe and the FACTS are different things. The
@@ -361,7 +396,29 @@ def _bridge_inputs(mechanical: dict[str, Any], facts: dict[str, Any]) -> dict[st
     dil = _latest_point(facts, _DILUTED_TAG)
     ltm_rev = _ltm_revenue_from_fs(mechanical)
     fcf = _latest_fcf(facts)
+
+    # EDGAR-FIRST, ALWAYS. The vendor sheet fills a HOLE; it never overrides a primary filing.
+    # A filled hole is stamped so the human can see which numbers are not EDGAR's — the manual CIQ
+    # pull is the depth stage, and a bridge that silently mixed the two would hide that boundary.
+    vendor: list[str] = []
+    if ciq is not None and ciq.ok:
+        if da is None and (v := ciq.value("d_and_a")) is not None:
+            da = (v * _USD_M, f"CIQ Financials->Cash Flow (vendor basis; no EDGAR D&A tag) "
+                              f"[{ciq.source_file} sha {ciq.source_sha256}]")
+            vendor.append("d_and_a")
+        if nd_val is None and (v := ciq.value("net_debt")) is not None:
+            nd_val = v * _USD_M
+            nd = (nd_val, f"CIQ classified balance sheet (vendor basis; EDGAR debt tags absent or "
+                          f"under-captured) [{ciq.source_file} sha {ciq.source_sha256}]")
+            vendor.append("net_debt")
+        o, c = ciq.value("ocf"), ciq.value("capex")
+        if fcf is None and o is not None and c is not None:
+            fcf = ((o - abs(c)) * _USD_M, "trailing twelve months (vendor basis)",
+                   f"CIQ Financials->Cash Flow operating cash flow less capital expenditure "
+                   f"[{ciq.source_file} sha {ciq.source_sha256}]")
+            vendor.append("ltm_fcf")
     return {
+        "vendor_filled": vendor,
         "da": da, "nd_val": nd_val, "dil": dil, "ltm_rev": ltm_rev,
         "d_and_a": AnchorInput(
             value=(round(da[0] / _USD_M, 3) if da else None), unit="$M",
@@ -369,7 +426,9 @@ def _bridge_inputs(mechanical: dict[str, Any], facts: dict[str, Any]) -> dict[st
             source=(da[1] if da else "UNKNOWN — no D&A tag (combined or split)")),
         "net_debt": AnchorInput(value=(round(nd_val / _USD_M, 3) if nd_val is not None else None),
                                 unit="$M", basis="lease-inclusive net debt (latest 10-Q)",
-                                source=("EDGAR: " + nd[1]) if nd else "UNKNOWN — no debt/cash tag"),
+                                source=(nd[1] if nd and nd[1].startswith("CIQ")
+                                        else ("EDGAR: " + nd[1]) if nd
+                                        else "UNKNOWN — no debt/cash tag")),
         "diluted_shares": AnchorInput(value=(dil.value if dil else None), unit="shares",
                                       basis="diluted weighted-average (latest 10-Q)",
                                       source=(f"EDGAR {_DILUTED_TAG}" if dil
@@ -395,7 +454,7 @@ def _with_bridge(anchor: Anchor, bridge: dict[str, Any]) -> Anchor:
 
 # --- the shared anchor computation (called by assembly AND the backfill writer) ----------------
 def compute_anchor(mechanical: dict[str, Any], *, facts: dict[str, Any],
-                   computed_at: datetime) -> Anchor:
+                   computed_at: datetime, ciq: Any = None) -> Anchor:
     """The R1 anchor from SOURCE-BOUND inputs. ``mechanical`` is the mechanical layer as a dict
     (``model_dump`` at assembly, committed JSON at backfill); ``facts`` is EDGAR companyfacts.
 
@@ -407,7 +466,7 @@ def compute_anchor(mechanical: dict[str, Any], *, facts: dict[str, Any],
     An inapplicable RECIPE never suppresses the FACTS: every return path carries the source-bound
     EDGAR bridge (:func:`_bridge_inputs`), because the names R1 cannot anchor are precisely the
     ones the R2 recipe has to underwrite from those same numbers."""
-    bridge = _bridge_inputs(mechanical, facts)
+    bridge = _bridge_inputs(mechanical, facts, ciq)
     mult = _own_history_multiple(mechanical)
     if mult is None:
         return _with_bridge(Anchor(
@@ -523,7 +582,12 @@ def compute_anchor(mechanical: dict[str, Any], *, facts: dict[str, Any],
     # a periodicity mismatch or a band-guard trip is its own fail-loud data-quality event; raise it
     # on the anchor (joining any revenue-tag conflict) so the flag rides with the number it taints.
     dq = bg.compose_flag(data_quality, band_flag)
+    if bridge["vendor_filled"]:
+        dq = bg.compose_flag(dq, DQ_VENDOR_BRIDGE)
     detail = list(conflicts)
+    if bridge["vendor_filled"]:
+        detail.append("vendor bridge: " + ", ".join(bridge["vendor_filled"])
+                      + " supplied by the CIQ workbook because EDGAR had no usable tag")
     if mult_dq:
         detail.append(f"own_history multiple: {mult_dq} (periodicity {mult_period})")
     detail += band_detail

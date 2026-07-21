@@ -109,12 +109,15 @@ CIQ_MODULES: tuple[CiqModuleRequirement, ...] = (
         module="Financials — Quarterly",
         workbook_kind="financials",
         freq="quarterly",
-        sheets=("Multiples", "Income Statement", "Balance Sheet"),
+        sheets=("Multiples", "Income Statement", "Balance Sheet", "Cash Flow"),
         used_for=(
             "valuation-range position / multiple percentiles (ev_ebitda_current, "
             "ev_ebitda_percentile, range_position, pe_ltm_current), the freshest CIQ Net/Total "
-            "Debt for net-debt/EBITDA (net_debt / total_debt), and the clean same-quarter YoY "
-            "revenue trajectory (margin_trend / multi_year_trajectory)"
+            "Debt for net-debt/EBITDA (net_debt / total_debt), the clean same-quarter YoY "
+            "revenue trajectory (margin_trend / multi_year_trajectory), and the DEPTH-STAGE "
+            "balance-sheet bridge that unblocks a name EDGAR cannot supply — cash, total debt, "
+            "leases, depreciation, operating cash flow, capital expenditure and diluted shares "
+            "(ciq_balance.extract), used only where the EDGAR tag is absent or stale"
         ),
         granularity=Granularity.QUARTERLY,
         lookback=(
