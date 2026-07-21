@@ -239,3 +239,136 @@ def test_formula_stamp_matches_the_engine_shape() -> None:
         assert token in joined, f"R2_FORMULA no longer states: {token}"
     assert tm.RECIPE_R2 == "R2_terminal_margin"
     assert set(tm.TIER_DESC) == {tm.TIER_A, tm.TIER_B}
+
+
+# --- the RECORD layer: dispatch, stamping, and the gate that blocks a confirmed BUY -------------
+def _r2_record(**kw: object):
+    """A minimal but VALID R2 record. Units follow the R1 record convention: $M for money,
+    MILLIONS for the share count — the engine's raw-count conversion happens inside _run_r2."""
+    from vinci import scenarios as sc
+    d: dict = {
+        "ticker": "DEMO", "recipe_id": sc.RECIPE_R2, "recipe_desc": "terminal-margin",
+        "multiple_basis": tm.BASIS_EBITDA, "underwrite_date": "2026-07-21", "analyst": "test",
+        "spot": 6.00, "spot_source": "test close",
+        "facts": {
+            "net_debt": sc.Fact(value=223.9, unit="$M", basis="lease-inclusive", source="EDGAR"),
+            "diluted_shares": sc.Fact(value=109.458, unit="shares", basis="diluted WA",
+                                      source="EDGAR"),
+            "d_and_a_ratio": sc.Fact(value=0.069264, unit="rate", basis="latest FY D&A/revenue",
+                                     source="EDGAR"),
+            "share_growth": sc.Fact(value=0.011119, unit="rate", basis="3y diluted CAGR",
+                                    source="EDGAR")},
+        "scenarios": {
+            "bear": sc.ScenarioInput(revenue=720, margin=0.06, multiple=10, years_to_terminal=4,
+                                     reason="slower ramp"),
+            "base": sc.ScenarioInput(revenue=900, margin=0.12, multiple=14, years_to_terminal=4,
+                                     reason="plan"),
+            "bull": sc.ScenarioInput(revenue=1080, margin=0.18, multiple=18, years_to_terminal=4,
+                                     reason="upside")},
+        "assumptions": {a: sc.AssumptionDerivation(method="stated for the test run")
+                        for a in ("revenue", "margin", "multiple", "horizon")},
+        "tier": tm.TIER_B,
+        "survival_input": sc.SurvivalInput(fcf=-80.0, fcf_basis="latest FY2025",
+                                           fcf_source="EDGAR OCF−capex", cash=100.0,
+                                           years_to_breakeven=3.0)}
+    d.update(kw)
+    return sc.ScenarioRecord(**d)
+
+
+def test_run_recipe_dispatches_r2_and_stamps_its_formula() -> None:
+    """The record states the recipe its numbers came from — an R2 record must carry R2_FORMULA,
+    not R1's (the multiple_basis precedent: a misstated recipe refuses rather than renders)."""
+    from vinci import scenarios as sc
+    r = sc.run_recipe(_r2_record())
+    assert r.recipe_formula == list(tm.R2_FORMULA)
+    assert r.result.hurdle == tm.HURDLE
+    assert r.result.survival is not None
+    base = r.result.per_scenario["base"]
+    assert base.value_per_share == pytest.approx(10.7987, abs=1e-3)     # the PV drives the ratio
+    assert base.value_terminal == pytest.approx(18.8869, abs=1e-3)      # undiscounted, alongside
+    assert base.shares_t == pytest.approx(114.4085, abs=1e-3)           # MILLIONS on the record
+
+
+def test_r2_record_refuses_a_misstated_formula() -> None:
+    from vinci import scenarios as sc
+    with pytest.raises(ValueError, match="does not match R2_FORMULA"):
+        sc.run_recipe(_r2_record(recipe_formula=["EBIT = revenue × margin"]))
+
+
+@pytest.mark.parametrize("missing", ["net_debt", "diluted_shares", "d_and_a_ratio", "share_growth"])
+def test_r2_refuses_to_assume_a_missing_fact(missing: str) -> None:
+    from vinci import scenarios as sc
+    rec = _r2_record()
+    facts = {k: v for k, v in rec.facts.items() if k != missing}
+    with pytest.raises(ValueError, match=f"needs fact '{missing}'"):
+        sc.run_recipe(rec.model_copy(update={"facts": facts}))
+
+
+def test_r2_refuses_a_leg_with_no_horizon() -> None:
+    from vinci import scenarios as sc
+    rec = _r2_record()
+    legs = dict(rec.scenarios)
+    legs["base"] = sc.ScenarioInput(revenue=900, margin=0.12, multiple=14, reason="plan")
+    with pytest.raises(ValueError, match="needs years_to_terminal"):
+        sc.run_recipe(rec.model_copy(update={"scenarios": legs}))
+
+
+def test_r2_refuses_without_survival_input() -> None:
+    from vinci import scenarios as sc
+    with pytest.raises(ValueError, match="needs survival_input"):
+        sc.run_recipe(_r2_record(survival_input=None))
+
+
+def test_survival_fail_blocks_a_confirmed_buy_but_not_watch_or_passed() -> None:
+    """THE GATE, pinned on the RECORD. It binds here rather than in the runner because the verdict
+    is written by hand — a guard living only in the compute path would be edited straight past.
+
+    'watch' and 'passed' stay reachable: they are exactly what a failing name should receive, and
+    the record still computes and prints in full."""
+    from vinci import scenarios as sc
+    r = sc.run_recipe(_r2_record())
+    assert r.result.survival is not None and r.result.survival.status == "FAIL"
+    payload = r.model_dump()
+    payload["verdict"] = {**payload["verdict"], "status": "confirmed"}
+    with pytest.raises(ValueError, match="survival gate FAILED"):
+        sc.ScenarioRecord.model_validate(payload)
+    for ok in ("watch", "passed", "pending_analyst"):
+        payload["verdict"] = {**payload["verdict"], "status": ok}
+        assert sc.ScenarioRecord.model_validate(payload).verdict.status == ok
+
+
+def test_a_cleared_gate_allows_a_confirmed_buy() -> None:
+    """The block is on the FAILING gate, not on R2 as a recipe — a name that clears it confirms
+    normally, or the gate would be a permanent veto on the whole cohort."""
+    from vinci import scenarios as sc
+    r = sc.run_recipe(_r2_record(survival_input=sc.SurvivalInput(
+        fcf=82.5, fcf_basis="latest FY2026", fcf_source="EDGAR OCF−capex", cash=200.0)))
+    assert r.result.survival is not None and r.result.survival.status == "PASS"
+    payload = r.model_dump()
+    payload["verdict"] = {**payload["verdict"], "status": "confirmed"}
+    assert sc.ScenarioRecord.model_validate(payload).verdict.status == "confirmed"
+
+
+def test_r2_axes_require_the_horizon() -> None:
+    """The horizon is a modelled AXIS, so the axes guard demands it be explained like the others."""
+    from vinci import scenarios as sc
+    assert sc.AXES_BY_RECIPE[sc.RECIPE_R2] == ("revenue", "margin", "multiple", "horizon")
+    with pytest.raises(ValueError, match="must cover exactly"):
+        _r2_record(assumptions={a: sc.AssumptionDerivation(method="m")
+                                for a in ("revenue", "margin", "multiple")})
+
+
+def test_announced_raise_proceeds_reduce_terminal_net_debt() -> None:
+    """A raise brings CASH as well as shares — counting only the dilution would overstate the debt
+    the terminal equity carries."""
+    from vinci import scenarios as sc
+    plain = sc.run_recipe(_r2_record())
+    raised = sc.run_recipe(_r2_record(survival_input=sc.SurvivalInput(
+        fcf=-80.0, fcf_basis="latest FY2025", fcf_source="EDGAR OCF−capex", cash=100.0,
+        years_to_breakeven=3.0, announced_raise=True, raise_accession="0001104659-26-1",
+        raise_shares=20.0, raise_proceeds=150.0)))
+    assert raised.result.survival is not None and raised.result.survival.status == "PASS"
+    assert raised.result.per_scenario["base"].net_debt_t == pytest.approx(
+        plain.result.per_scenario["base"].net_debt_t - 150.0)
+    assert raised.result.per_scenario["base"].shares_t == pytest.approx(
+        plain.result.per_scenario["base"].shares_t + 20.0, abs=1e-6)
