@@ -212,7 +212,11 @@ def _synth_facts() -> dict:
         node[tag] = {"units": {"USD": [
             {"start": f"{y - 1}-12-31", "end": f"{y}-12-31", "val": v, "filed": f"{y + 1}-02-01",
              "fy": y, "fp": "FY", "form": "10-K", "accn": "x"} for y, v in by_year.items()]}}
-    for tag, val in (("LongTermDebtNoncurrent", 100e6), ("CashAndCashEquivalentsAtCarryingValue",
+    # NON-ZERO net debt on purpose ($400M debt − $100M cash = $300M). The first version of this
+    # fixture netted to zero, where dollars and $M are indistinguishable — and it therefore could
+    # not see that compute_anchor was passing EDGAR dollars into a $M-denominated guard. A unit
+    # pin whose value is 0 is not a unit pin.
+    for tag, val in (("LongTermDebtNoncurrent", 400e6), ("CashAndCashEquivalentsAtCarryingValue",
                                                          100e6)):
         node[tag] = {"units": {"USD": [                       # INSTANT: no "start" key
             {"end": "2025-12-31", "val": val, "filed": "2026-02-01", "fy": 2025, "fp": "Q4",
@@ -235,7 +239,8 @@ def _synth_mech(*, da_margin: float | None, current: float) -> dict:
             "is_estimate": [False],
             "rows": [{"label": "Revenue ($M)", "values": [1000.0]},
                      {"label": "EBIT ($M)", "values": [120.0]}]}}},
-        # TEV = 1000 + 0; at the coherent 8.0x that implies $125M EBITDA vs $130M recorded (0.96x)
+        # TEV = 1000 + 300 net debt; at the coherent 8.0x that implies $162.5M EBITDA against
+        # $130M recorded (1.25x) — inside the 2.5x band, and only because net debt is scaled to $M.
         "implied_valuation": {"market_cap": {"value": 1000.0}},
     }
 
@@ -275,12 +280,29 @@ def test_tripped_band_publishes_no_anchor_base_through_compute_anchor() -> None:
 
 def test_market_reconciliation_alone_disqualifies_the_anchor() -> None:
     """The two guards are INDEPENDENT: a band with no coherence evidence at all (pre-guard committed
-    JSON) is still caught when the market says the multiple's denominator is 5x the reported EBITDA
-    — 1,000/1.6 = $625M implied against $130M recorded."""
+    JSON) is still caught when the market says the multiple's denominator dwarfs reported EBITDA —
+    TEV 1,300 ÷ 1.6x = $812M implied against $130M recorded (6.25x)."""
     a = compute_anchor(_synth_mech(da_margin=None, current=1.6), facts=_synth_facts(),
                        computed_at=_now())
     assert a.data_quality == bg.BAND_UNRECONCILED
     assert a.anchor_base_value_per_share is None and a.applicable is False
+
+
+def test_net_debt_reaches_the_market_guard_in_millions_not_dollars() -> None:
+    """UNIT PIN (the #173 defect, found 2026-07-21 when the first real backfill ran). EDGAR reports
+    net debt in DOLLARS and the committed market cap is in $M; compute_anchor must scale before the
+    two are added. Unscaled, TEV inflates by ~1e6 and EVERY honest name trips band_unreconciled —
+    which is exactly what AORT and CNXC did.
+
+    Driven through compute_anchor, on a name whose net debt is deliberately NON-ZERO: with $300M of
+    net debt correctly scaled the band reconciles at 1.25x and no flag fires. A regression would
+    make this ~1e6x and turn the assertion red."""
+    a = compute_anchor(_synth_mech(da_margin=0.010, current=8.0), facts=_synth_facts(),
+                       computed_at=_now())
+    assert a.net_debt is not None and a.net_debt.value == pytest.approx(300.0)
+    assert a.data_quality is None, (
+        f"honest band tripped {a.data_quality!r} — net debt is reaching the guard in dollars")
+    assert a.anchor_base_value_per_share is not None
 
 
 def test_guard_reads_market_cap_but_no_anchor_value_depends_on_it() -> None:

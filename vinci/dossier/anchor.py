@@ -121,6 +121,12 @@ class Anchor(BaseModel, frozen=True):
     net_debt: AnchorInput | None = None
     diluted_shares: AnchorInput | None = None
     ltm_revenue: AnchorInput | None = None
+    # (R2 cohort, 2026-07-21) Free cash flow — the SURVIVAL input. A negative value IS the burn the
+    # R2 gate divides cash+facilities by, so its basis is stated on the block rather than assumed:
+    # EDGAR reports a clean ANNUAL point, and summing XBRL quarterlies into a true LTM is where a
+    # fabricated burn would come from (Q4 is usually FY-minus-9M, not a filed discrete quarter).
+    # The R2 record takes this as a DEFAULT the analyst may override with a reason. Additive/opt.
+    ltm_fcf: AnchorInput | None = None
     anchor_base_value_per_share: float | None = None   # the spot-independent fundamental
     anchor_ev_ebit: float | None = None
     overall_confidence: str | None = None  # firm | weak (the WEAKER of margin/multiple)
@@ -281,6 +287,23 @@ def _latest_dep_amort(facts: dict[str, Any]) -> tuple[float, str] | None:
     return None
 
 
+def _latest_fcf(facts: dict[str, Any]) -> tuple[float, str, str] | None:
+    """Latest-FY free cash flow ($) → (value, basis, source). OCF − capex, both from the SAME
+    fiscal period or nothing: an FY2025 OCF net of FY2024 capex is a number that never existed.
+
+    ANNUAL basis on purpose, and the basis travels with the value. The R2 survival gate divides
+    cash by this when it is negative, so an over-claimed 'LTM' would propagate straight into a
+    runway the company does not have. Capex absent entirely → None (never a zero-capex FCF)."""
+    ocf = latest_annual(extract_points(facts, "operating_cash_flow"))
+    capex = latest_annual(extract_points(facts, "capex"))
+    if not ocf or not capex or ocf.period_end != capex.period_end:
+        return None
+    fy = ocf.fy or ocf.period_end.year
+    # capex is reported as a POSITIVE outflow in the cash-flow statement; subtract its magnitude
+    return (ocf.value - abs(capex.value), f"latest FY{fy} (not LTM)",
+            f"EDGAR companyfacts operating_cash_flow − capex (FY{fy}, same period)")
+
+
 def _latest_point(facts: dict[str, Any], tag: str) -> ConceptPoint | None:
     """The most recent reported point for an explicit tag, by (period_end, filed).
 
@@ -324,6 +347,52 @@ def _lease_inclusive_net_debt(facts: dict[str, Any]) -> tuple[float | None, str]
     return td + fin + opl - cash.value, bridge
 
 
+def _bridge_inputs(mechanical: dict[str, Any], facts: dict[str, Any]) -> dict[str, Any]:
+    """Every SOURCE-BOUND scalar the block carries, gathered independently of whether R1 applies.
+
+    Split out (2026-07-21, R2 cohort) because the R1 recipe and the FACTS are different things. The
+    early returns below used to bail before touching EDGAR, so a name R1 cannot anchor — FUBO has
+    no EV/EBITDA band at all, its multiples being NM on a loss-making trailing year — committed an
+    anchor block with every input null. Those are exactly the names the R2 recipe underwrites, and
+    exactly the facts it needs. An unusable RECIPE is not a reason to withhold the EVIDENCE."""
+    da = _latest_dep_amort(facts)
+    nd = _lease_inclusive_net_debt(facts)
+    nd_val = nd[0] if nd else None
+    dil = _latest_point(facts, _DILUTED_TAG)
+    ltm_rev = _ltm_revenue_from_fs(mechanical)
+    fcf = _latest_fcf(facts)
+    return {
+        "da": da, "nd_val": nd_val, "dil": dil, "ltm_rev": ltm_rev,
+        "d_and_a": AnchorInput(
+            value=(round(da[0] / _USD_M, 3) if da else None), unit="$M",
+            basis="consolidated latest FY",
+            source=(da[1] if da else "UNKNOWN — no D&A tag (combined or split)")),
+        "net_debt": AnchorInput(value=(round(nd_val / _USD_M, 3) if nd_val is not None else None),
+                                unit="$M", basis="lease-inclusive net debt (latest 10-Q)",
+                                source=("EDGAR: " + nd[1]) if nd else "UNKNOWN — no debt/cash tag"),
+        "diluted_shares": AnchorInput(value=(dil.value if dil else None), unit="shares",
+                                      basis="diluted weighted-average (latest 10-Q)",
+                                      source=(f"EDGAR {_DILUTED_TAG}" if dil
+                                              else "UNKNOWN — no diluted WA tag")),
+        "ltm_revenue": AnchorInput(value=(round(ltm_rev, 3) if ltm_rev is not None else None),
+                                   unit="$M", basis="LTM revenue",
+                                   source="committed financial_summary.annual (LTM)"),
+        "ltm_fcf": AnchorInput(value=(round(fcf[0] / _USD_M, 3) if fcf else None), unit="$M",
+                               basis=(fcf[1] if fcf else "free cash flow"),
+                               source=(fcf[2] if fcf else
+                                       "UNKNOWN — no aligned operating-cash-flow + capex pair")),
+    }
+
+
+_BRIDGE_FIELDS = ("d_and_a", "net_debt", "diluted_shares", "ltm_revenue", "ltm_fcf")
+
+
+def _with_bridge(anchor: Anchor, bridge: dict[str, Any]) -> Anchor:
+    """Attach the source-bound inputs to an anchor whose RECIPE did not resolve — the facts stand
+    on their own footing, and the R2 cohort reads them from here."""
+    return anchor.model_copy(update={k: bridge[k] for k in _BRIDGE_FIELDS})
+
+
 # --- the shared anchor computation (called by assembly AND the backfill writer) ----------------
 def compute_anchor(mechanical: dict[str, Any], *, facts: dict[str, Any],
                    computed_at: datetime) -> Anchor:
@@ -333,11 +402,17 @@ def compute_anchor(mechanical: dict[str, Any], *, facts: dict[str, Any],
     Every input is cited and fail-loud: a missing own-history multiple → inapplicable; a
     non-positive margin → the R2 (revenue-anchored) hint; an incomplete value bridge → applicable
     False with the per-input source stamps telling the human exactly what's missing. The base value
-    is the #150 block's EBITDA-basis math, never reimplemented here."""
+    is the #150 block's EBITDA-basis math, never reimplemented here.
+
+    An inapplicable RECIPE never suppresses the FACTS: every return path carries the source-bound
+    EDGAR bridge (:func:`_bridge_inputs`), because the names R1 cannot anchor are precisely the
+    ones the R2 recipe has to underwrite from those same numbers."""
+    bridge = _bridge_inputs(mechanical, facts)
     mult = _own_history_multiple(mechanical)
     if mult is None:
-        return Anchor(recipe_hint=RECIPE_UNKNOWN, applicable=False, computed_at=computed_at,
-                      reason="own-history multiple missing (valuation.own_history.median absent)")
+        return _with_bridge(Anchor(
+            recipe_hint=RECIPE_UNKNOWN, applicable=False, computed_at=computed_at,
+            reason="own-history multiple missing (valuation.own_history.median absent)"), bridge)
     mult_median, mult_qtrs = mult["median"], mult["n_closes"]
     mult_span, mult_period, mult_dq = mult["span_years"], mult["periodicity"], mult["data_quality"]
 
@@ -346,10 +421,10 @@ def compute_anchor(mechanical: dict[str, Any], *, facts: dict[str, Any],
     # one consistent basis. Fewer valid years beats more invalid ones.
     rev_s, conflicts = _total_revenue_series(facts)
     if rev_s is None:
-        return Anchor(
+        return _with_bridge(Anchor(
             recipe_hint=RECIPE_UNRESOLVED, applicable=False, computed_at=computed_at,
             reason="no reliable total-revenue tag — refusing to derive a margin from a partial "
-                   "denominator")
+                   "denominator"), bridge)
     oi_s = mc.annual_series(facts, "operating_income")  # single alias (OperatingIncomeLoss)
     ma = mc.margin_anchor(rev_s, oi_s)
     margin_val, margin_years = ma.median, ma.n_years
@@ -368,26 +443,25 @@ def compute_anchor(mechanical: dict[str, Any], *, facts: dict[str, Any],
     # its own UNKNOWNs): a margin we could not COMPUTE is not a margin we computed and found
     # non-positive. The first is a data gap; only the second is an R2 (revenue-anchored) signal.
     if margin_val is None:
-        return Anchor(
+        return _with_bridge(Anchor(
             recipe_hint=RECIPE_UNRESOLVED, applicable=False, computed_at=computed_at,
             reason=f"operating margin not computable — no fiscal year where both {oi_s.tag} and "
                    f"{rev_s.tag} report",
-            data_quality=data_quality, data_quality_detail=conflicts)
+            data_quality=data_quality, data_quality_detail=conflicts), bridge)
 
     # POSITIVITY GUARD (minimal): a COMPUTED but non-positive margin → the revenue-anchored recipe.
     if margin_val <= 0:
-        return Anchor(
+        return _with_bridge(Anchor(
             recipe_hint=RECIPE_R2, applicable=False, computed_at=computed_at,
             reason="no positive operating margin over available history — needs revenue-anchored "
                    "recipe",
-            data_quality=data_quality, data_quality_detail=conflicts)
+            data_quality=data_quality, data_quality_detail=conflicts), bridge)
 
-    # remaining source-bound inputs
-    da = _latest_dep_amort(facts)
-    nd = _lease_inclusive_net_debt(facts)
-    dil = _latest_point(facts, _DILUTED_TAG)
-    ltm_rev = _ltm_revenue_from_fs(mechanical)
-    nd_val = nd[0] if nd else None
+    # remaining source-bound inputs — the SAME gather every other return path uses, never a
+    # second copy of the extraction logic (two gatherers of one fact is the drift class this
+    # repo keeps re-learning).
+    da, nd_val, dil = bridge["da"], bridge["nd_val"], bridge["dil"]
+    ltm_rev = bridge["ltm_rev"]
 
     # --- BAND GUARDS: does this multiple describe THIS company? (VITL, 2026-07-21) --------------
     # Two cross-checks sharing no input. The sheet-internal half already ran at parse time and rides
@@ -400,8 +474,13 @@ def compute_anchor(mechanical: dict[str, Any], *, facts: dict[str, Any],
         recorded_d_and_a=(da[0] / _USD_M if da else None))
     band_detail += da_detail
     ltm_ebit = _ltm_ebit_from_fs(mechanical)
+    # EVERY argument here is $M. ``nd_val`` and ``da`` arrive from EDGAR in DOLLARS, so both are
+    # scaled — passing raw dollars beside a $M market cap silently inflates TEV by 1e6 and trips
+    # the guard on every honest name (the #173 defect: latent because no committed artifact had
+    # been re-backfilled, and the unit pin used net debt of ZERO, where 0 dollars == 0 $M).
     recon = bg.market_reconciliation(
-        market_cap=_market_cap_from_mechanical(mechanical), net_debt=nd_val,
+        market_cap=_market_cap_from_mechanical(mechanical),
+        net_debt=(nd_val / _USD_M if nd_val is not None else None),
         current_multiple=mult["current"],
         recorded_ebitda=((ltm_ebit + da[0] / _USD_M) if (ltm_ebit is not None and da) else None))
     band_detail += recon.detail if recon else []
@@ -426,18 +505,6 @@ def compute_anchor(mechanical: dict[str, Any], *, facts: dict[str, Any],
     margin_blk = AnchorMargin(value=round(margin_val, 6), basis="operating margin (EBIT / revenue)",
                               source=margin_source, anchor_years=margin_years, confidence=m_conf)
     multiple_blk = AnchorMultiple(value=mult_median, history_quarters=mult_qtrs, confidence=x_conf)
-    da_blk = AnchorInput(value=(round(da[0] / _USD_M, 3) if da else None), unit="$M",
-                         basis="consolidated latest FY",
-                         source=(da[1] if da else "UNKNOWN — no D&A tag (combined or split)"))
-    nd_blk = AnchorInput(value=(round(nd_val / _USD_M, 3) if nd_val is not None else None),
-                         unit="$M", basis="lease-inclusive net debt (latest 10-Q)",
-                         source=("EDGAR: " + nd[1]) if nd else "UNKNOWN — no debt/cash tag")
-    dil_blk = AnchorInput(value=(dil.value if dil else None), unit="shares",
-                          basis="diluted weighted-average (latest 10-Q)",
-                          source=(f"EDGAR {_DILUTED_TAG}" if dil
-                                  else "UNKNOWN — no diluted WA tag"))
-    ltm_blk = AnchorInput(value=(round(ltm_rev, 3) if ltm_rev is not None else None), unit="$M",
-                          basis="LTM revenue", source="committed financial_summary.annual (LTM)")
 
     # anchor base — the #150 block's EBITDA-basis value math; needs a complete bridge AND a multiple
     # that survived the band guards. A tripped guard means the multiple's denominator is provably
@@ -468,8 +535,8 @@ def compute_anchor(mechanical: dict[str, Any], *, facts: dict[str, Any],
         reason = "R1 inputs incomplete — see per-input source stamps"
     return Anchor(
         recipe_hint=RECIPE_R1, applicable=base is not None, computed_at=computed_at, reason=reason,
-        margin=margin_blk, multiple=multiple_blk, d_and_a=da_blk, net_debt=nd_blk,
-        diluted_shares=dil_blk, ltm_revenue=ltm_blk,
+        margin=margin_blk, multiple=multiple_blk,
+        **{k: bridge[k] for k in _BRIDGE_FIELDS},
         anchor_base_value_per_share=base, anchor_ev_ebit=ev_ebit, overall_confidence=overall,
         data_quality=dq, data_quality_detail=detail)
 
@@ -516,6 +583,44 @@ def replace_valuation_fields(text: str, updates: dict[str, Any]) -> str:
         val[field] = new
     out = json.dumps(doc, indent=2, ensure_ascii=False)
     return out + "\n" if text.endswith("\n") and not out.endswith("\n") else out
+
+
+def preserve_operator_tag(old: Anchor | None, new: Anchor) -> tuple[Anchor, list[str]]:
+    """An operator's hand re-tag OUTRANKS the machine's fresh proposal. Returns (anchor, notes).
+
+    The backfill recomputes ``recipe_hint``/``reason`` from EDGAR on every run, so AORT's,
+    CNXC's and VITL's hand re-tags — each carrying a judgment the machine cannot derive
+    ("leveraged residual", "forward-margin question") — were one backfill away from silently
+    vanishing. That was the queued overwrite defect; this closes it.
+
+    Provenance is NOT recorded on the block, so the rule is deliberately the conservative one:
+    ANY divergence from the committed hint keeps the COMMITTED value, rather than guessing which
+    side was human. The machine's proposal is reported, never applied — the tagger is propose-only
+    for the same reason.
+
+    Only the RECIPE is preserved. Every computed VALUE (margin, multiple, the bridge, the base)
+    refreshes normally: a re-tag is a judgment about which recipe fits, not a freeze on the
+    arithmetic. A committed ``data_quality_detail`` that the fresh run does not reproduce is
+    REPORTED rather than merged — silently unioning them would keep a root-cause narrative alive
+    after a corrected re-pull had made it false."""
+    notes: list[str] = []
+    if old is None:
+        return new, notes
+    updates: dict[str, Any] = {}
+    if old.recipe_hint and old.recipe_hint != new.recipe_hint:
+        updates["recipe_hint"] = old.recipe_hint
+        updates["reason"] = old.reason
+        notes.append(f"PRESERVED operator recipe_hint {old.recipe_hint!r} "
+                     f"(machine proposed {new.recipe_hint!r}) — reason kept verbatim")
+    elif old.reason and old.reason != new.reason:
+        updates["reason"] = old.reason
+        notes.append(f"PRESERVED operator reason under the same hint {old.recipe_hint!r}")
+    fresh_detail = new.data_quality_detail or []
+    dropped = [d for d in (old.data_quality_detail or []) if d not in fresh_detail]
+    if dropped:
+        notes.append(f"REVIEW: {len(dropped)} committed data_quality_detail line(s) are NOT "
+                     f"reproduced by this run and will be replaced — first: {dropped[0][:80]}…")
+    return (new.model_copy(update=updates) if updates else new), notes
 
 
 def anchor_changed(old: Anchor | None, new: Anchor) -> bool:

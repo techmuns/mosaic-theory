@@ -438,6 +438,7 @@ def _cmd_anchor_backfill(args: argparse.Namespace) -> int:
         Anchor,
         anchor_changed,
         compute_anchor,
+        preserve_operator_tag,
         replace_anchor_block,
     )
     from vinci.dossier.schemas import Dossier
@@ -462,6 +463,11 @@ def _cmd_anchor_backfill(args: argparse.Namespace) -> int:
             continue
         anchor = compute_anchor(d.mechanical.model_dump(mode="json"), facts=facts,
                                 computed_at=datetime.now(UTC))
+        # An operator's hand re-tag outranks the machine's fresh proposal — the recipe is preserved
+        # and the divergence reported, never silently overwritten (the queued 2026-07-21 defect).
+        anchor, notes = preserve_operator_tag(d.anchor, anchor)
+        for n in notes:
+            print(f"  {t}: {n}")
         old_base = d.anchor.anchor_base_value_per_share if d.anchor else None
         moved = anchor_changed(d.anchor, anchor)
         if args.dry_run:
