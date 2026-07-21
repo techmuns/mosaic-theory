@@ -59,6 +59,7 @@ from vinci.eod import compute_price_features
 from vinci.finra import FinraLayoutError, short_interest_points
 from vinci.graph.exposure import ExposureGraph
 from vinci.graph.filings import html_to_text, normalize_text
+from vinci.monitor import benchmark_for_cap
 from vinci.netcache import CachedHttp, HttpError
 from vinci.resolver import EntityResolver, ResolutionError
 from vinci.resolver.index import pad_cik
@@ -456,10 +457,28 @@ def _idio_read(name_180d: Sourced[float], cohort: Sourced[list[CohortMember]]) -
     return Sourced.present(read, source_ref=f"derived from {len(rets)} cohort names; face-validity")
 
 
+def _resolve_benchmark(market_cap_musd: Sourced[float], ref: date) -> tuple[Identity, str]:
+    """The dossier surface's benchmark = the SAME cap-band policy the monitor freezes at entry
+    (``vinci.monitor.benchmark_for_cap``), applied to the CIQ cap ($M) at the reference date.
+    One policy, two instants — the monitor's assignment stays frozen for scoring; this one gives
+    the analytical context (exhibit + 180d relative) the right yardstick. Cap UNKNOWN → the
+    small-cap default, stated loudly in the basis (never a silent guess)."""
+    cap_m = market_cap_musd.value if market_cap_musd.status is SourceStatus.PRESENT else None
+    if cap_m is not None and cap_m > 0:
+        cap_usd = cap_m * 1e6  # CIQ panel is $M; the policy takes USD
+        sym, band = benchmark_for_cap(cap_usd)
+        basis = f"cap-band: ${cap_usd / 1e9:.1f}B @ {ref} → {band} → {sym}"
+    else:
+        sym, basis = "IWM", "cap-band: cap UNKNOWN → small-cap default IWM"
+    return benchmark_identity(sym), basis
+
+
 def _idiosyncratic_vs_shared(
-    record: DataRecord, store: Store, graph: ExposureGraph, resolver: EntityResolver, ref: date
+    record: DataRecord, store: Store, graph: ExposureGraph, resolver: EntityResolver, ref: date,
+    *, bench: Identity, bench_basis: str,
 ) -> IdiosyncraticVsShared:
     sym = record.identity.eod_symbol
+    bsym = bench.eod_symbol
     bars = store.get_price_history(record.identity.internal_id)
     name_ret = _window_return(bars, ref, _DECLINE_WINDOW_DAYS) if bars else None
     name_180d = (
@@ -469,20 +488,34 @@ def _idiosyncratic_vs_shared(
         if name_ret is not None
         else Sourced.unknown(note="name has no bars over the window")
     )
-    bench_bars = store.get_price_history("IDX-IWM")
+    bench_bars = store.get_price_history(bench.internal_id)
     mkt_ret = _window_return(bench_bars, ref, _DECLINE_WINDOW_DAYS) if bench_bars else None
     market_180d = (
-        Sourced.present(mkt_ret, source_ref=f"EOD IWM {_DECLINE_WINDOW_DAYS}d to {ref}")
+        Sourced.present(
+            mkt_ret, source_ref=f"EOD {bsym} {_DECLINE_WINDOW_DAYS}d to {ref} ({bench_basis})"
+        )
         if mkt_ret is not None
-        else Sourced.unknown(note="IWM benchmark bars unavailable")
+        else Sourced.unknown(note=f"{bsym} benchmark bars unavailable — run `vinci refresh {bsym}`")
     )
-    rel = _sourced(
-        record.prices.rel_ret_vs_market, source_ref="EOD name−IWM 180d (screen data-record, G2)"
+    # rel is RECOMPUTED here on the same yardstick as market_180d. The screen record's G2 rel
+    # (name−IWM, the universe-wide gate) stays in the record — mixing the two would put a
+    # small-cap denominator under a mid/large-cap read.
+    rel = (
+        Sourced.present(
+            name_ret - mkt_ret,
+            source_ref=f"EOD {sym}−{bsym} {_DECLINE_WINDOW_DAYS}d to {ref} (assembly, cap-band)",
+        )
+        if (name_ret is not None and mkt_ret is not None)
+        else Sourced.unknown(
+            note=f"name−{bsym} needs both legs; "
+                 f"missing {'name' if name_ret is None else bsym} bars"
+        )
     )
     cohort = _cohort(graph, resolver, store, record.identity.ticker, ref)
     return IdiosyncraticVsShared(
         name_180d_return=name_180d, market_180d_return=market_180d, rel_vs_market=rel,
         cohort=cohort, read=_idio_read(name_180d, cohort),
+        benchmark_symbol=bsym, benchmark_basis=bench_basis,
     )
 
 
@@ -490,12 +523,15 @@ _PERF_WINDOW_DAYS = 364  # 52 weeks — the Brief stock-performance exhibit wind
 _PERF_MAX_POINTS = 60  # weekly-ish downsample cap: keeps the committed JSON + the SVG path light
 
 
-def _stock_performance(identity: Identity, store: Store, ref: date) -> StockPerformance | None:
-    """52-week rebased price path — the name vs IWM, both indexed to 100 at the window start. Reads
-    the SAME EOD closes the G2 idio comparison uses (assemble/visualize, never conclude). Returns
-    None (exhibit absent) when the name has <2 window bars — fail-loud, never a fabricated series.
-    The benchmark is aligned to the name's trading days via as-of closes; a point's ``benchmark`` is
-    None only when the index has no bar on/before that day (the name path still renders)."""
+def _stock_performance(
+    identity: Identity, store: Store, ref: date, *, bench: Identity
+) -> StockPerformance | None:
+    """52-week rebased price path — the name vs its cap-band benchmark, both indexed to 100 at the
+    window start. Reads the SAME EOD closes the idio comparison uses (assemble/visualize, never
+    conclude). Returns None (exhibit absent) when the name has <2 window bars — fail-loud, never a
+    fabricated series. The benchmark is aligned to the name's trading days via as-of closes; a
+    point's ``benchmark`` is None only when the index has no bar on/before that day (the name path
+    still renders)."""
     sym = identity.eod_symbol
     lo = ref - timedelta(days=_PERF_WINDOW_DAYS)
     name_win = [b for b in store.get_price_history(identity.internal_id) if lo <= b.bar_date <= ref]
@@ -504,7 +540,6 @@ def _stock_performance(identity: Identity, store: Store, ref: date) -> StockPerf
     base_name = name_win[0].close
     if base_name <= 0:
         return None
-    bench = benchmark_identity("IWM")
     bench_bars = store.get_price_history(bench.internal_id)
     base_bench = _close_on_or_before(bench_bars, name_win[0].bar_date)
 
@@ -1900,9 +1935,27 @@ def _primary_source(
     return ps, latency, op_drivers
 
 
+_ASSEMBLY_PRICE_STALE_DAYS = 7  # one weekly refresh cadence + a weekend; older ⇒ refresh was missed
+
+
+def _price_stale_note(last_close: date | None, today: date) -> str | None:
+    """Fail-loud staleness at ASSEMBLY time (vs today, not the reference date): an as-of document
+    may legitimately trail the screen date, but a CMP printed from a close older than one refresh
+    cadence silently misleads. Returns the caveat text, or None when fresh/unknowable."""
+    if last_close is None:
+        return None
+    gap = (today - last_close).days
+    if gap <= _ASSEMBLY_PRICE_STALE_DAYS:
+        return None
+    return (
+        f"PRICE STALE AT ASSEMBLY: last stored close {last_close} is {gap} calendar days before "
+        f"assembly — run `vinci refresh` before assembling"
+    )
+
+
 def _stock_info(
     record: DataRecord, store: Store, edgar: EdgarClient, bundle: CiqBundle,
-    reference_date: date, market_cap: Sourced[float],
+    reference_date: date, market_cap: Sourced[float], *, today: date | None = None,
 ) -> StockInfo:
     """(Phase-2) The market-data 'stock info' box: CMP + 52-week range (EOD price features), shares
     outstanding (EDGAR XBRL), book value/share + market cap (CIQ). Each value is source-bound; a
@@ -1915,8 +1968,12 @@ def _stock_info(
         staleness_days=get_config().price_staleness_days, market_cap=cap_val)
     sym = record.identity.eod_symbol
     shares = _edgar_shares_outstanding(edgar, record.identity.cik)
+    price = _sourced(feats.last, source_ref=f"EOD {sym} last close")
+    stale = _price_stale_note(feats.last.as_of, today or date.today())
+    if stale and price.status is SourceStatus.PRESENT:
+        price = price.model_copy(update={"note": stale})
     return StockInfo(
-        price=_sourced(feats.last, source_ref=f"EOD {sym} last close"),
+        price=price,
         high_52w=_sourced(feats.high_52w, source_ref=f"EOD {sym} 52-week high"),
         low_52w=_sourced(feats.low_52w, source_ref=f"EOD {sym} 52-week low"),
         shares_out=(
@@ -1981,6 +2038,10 @@ def assemble_mechanical(
         fcf=fcf, margin=margin, trajectory=trajectory,
     )
     implied_val = ciq_sheets.implied_valuation(bundle, peer_comps.comparability)
+    # cap-band benchmark for the dossier surface (exhibit + 180d relative) — the monitor's policy
+    # applied at the reference date's CIQ cap; one yardstick across both consumers below.
+    bench, bench_basis = _resolve_benchmark(implied_val.market_cap, reference_date)
+    today = date.today()  # assembly instant — the staleness guard compares the store against NOW
     # (F) positioning inputs slotted into the catalyst path — free DATED feeds: EDGAR Form 4 insider
     # activity + FINRA short interest (DTC vs the screen ADV). Counts/shares/dates only.
     catalyst = _catalyst_path(
@@ -2004,7 +2065,8 @@ def assemble_mechanical(
         peer_comps=peer_comps,
         drawdown_cause=drawdown,
         idiosyncratic_vs_shared=_idiosyncratic_vs_shared(
-            record, store, graph, resolver, reference_date
+            record, store, graph, resolver, reference_date,
+            bench=bench, bench_basis=bench_basis,
         ),
         consensus_context=_consensus(bundle),
         catalyst_path=catalyst,
@@ -2020,9 +2082,10 @@ def assemble_mechanical(
         key_ratios=key_ratios,  # (Phase-2) the Motilal-style CIQ Ratios panel
         return_ratios=return_ratios,  # (Phase-4) per-period return-ratio series (chart + table)
         stock_info=_stock_info(  # (Phase-2) CMP + 52wk range + shares + book value + cap
-            record, store, edgar, bundle, reference_date, implied_val.market_cap),
-        # (Brief) 52-week rebased price path — name vs IWM (visualizes the G2 idio EOD closes).
-        stock_performance=_stock_performance(record.identity, store, reference_date),
+            record, store, edgar, bundle, reference_date, implied_val.market_cap, today=today),
+        # (Brief) 52-week rebased price path — name vs the cap-band benchmark (the idio closes).
+        stock_performance=_stock_performance(
+            record.identity, store, reference_date, bench=bench),
     )
     # (RC-1 C) primary-source layer — fetch 8-K EX-99.1 releases + the latest 10-Q, parse, and run
     # the four cross-source derivations over them + this mechanical layer. Resilient: a fetch/parse
@@ -2034,6 +2097,9 @@ def assemble_mechanical(
     mech = _enrich_drawdown_drivers(mech, primary)  # (B1) gap-downs → parsed EX-99.1 drivers
     flags: list[str] = list(primary.qa_flags)
     flags += op_drivers.qa_flags  # (PR-B) operating-driver per-source honest-miss flags → QA
+    si_asof = mech.stock_info.as_of if mech.stock_info is not None else None
+    if (stale := _price_stale_note(si_asof, today)) is not None:
+        flags.append(f"stock-info: {stale}")  # loud twin of the CMP-row note — machine-visible
     flags.append(f"primary-source: {len(primary.releases)} EX-99.1 release(s) + "
                  f"{'1' if primary.filing is not None else '0'} 10-Q parsed "
                  f"(+{ps_latency:.1f}s fetch)")

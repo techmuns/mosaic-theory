@@ -20,6 +20,7 @@ from vinci.dossier.verdict import derive_proposal
 from vinci.edgar import EdgarClient
 from vinci.eod import PolygonEodClient, compute_price_features, ingest_prices
 from vinci.ledger import LedgerError, log_verdict
+from vinci.monitor import BENCHMARK_LARGE, BENCHMARK_MID, BENCHMARK_SMALL
 from vinci.orchestrator import run_monthly, run_weekly
 from vinci.progress import stderr_reporter
 from vinci.rank import (
@@ -41,7 +42,7 @@ from vinci.themes.assay import PriceCloseFn
 from vinci.themes.assay_candidates import CANDIDATE_SPECS, PLACEBO_KEY
 from vinci.themes.assay_schemas import AssayCard, CandidateSpec
 from vinci.themes.drivers import DRIVER_SPECS
-from vinci.universe import build_universe
+from vinci.universe import benchmark_identity, build_universe
 
 
 def _cmd_resolve(args: argparse.Namespace) -> int:
@@ -73,6 +74,10 @@ def _cmd_refresh(args: argparse.Namespace) -> int:
     client = PolygonEodClient.from_config(cfg)
     secs = []
     for t in args.tickers:
+        if t.upper() in {BENCHMARK_SMALL, BENCHMARK_MID, BENCHMARK_LARGE}:
+            # benchmark ETFs are synthetic identities (IDX-*), not SEC issuers — resolver-exempt
+            secs.append(benchmark_identity(t.upper()))
+            continue
         try:
             secs.append(resolver.resolve_ticker(t))
         except ResolutionError as exc:

@@ -861,7 +861,7 @@ function briefSnapshot(d, m) {
   const ok = (f) => f && f.status === "present" && f.value != null;
   const rows = [];
   const push = (label, val) => { if (val) rows.push(`<tr><td>${label}</td><td>${val}</td></tr>`); };
-  if (ok(si.price)) push("CMP", `$${si.price.value.toFixed(2)}${si.as_of ? ` <span class="muted">(${escapeHtml(si.as_of)})</span>` : ""}`);
+  if (ok(si.price)) push("CMP", `$${si.price.value.toFixed(2)}${si.as_of ? ` <span class="muted">(${escapeHtml(si.as_of)})</span>` : ""}${si.price.note ? ` <span class="pill unresolved" title="${escapeHtml(si.price.note)}">STALE</span>` : ""}`);
   if (ok(si.market_cap)) push("Market cap", fmtCap(si.market_cap.value));
   if (ok(si.low_52w) && ok(si.high_52w)) push("52-wk range", `$${si.low_52w.value.toFixed(2)}–$${si.high_52w.value.toFixed(2)}`);
   if (ok(si.shares_out)) push("Shares out", fmtShares(si.shares_out.value));
@@ -1040,7 +1040,7 @@ function returnRatiosExhibit(rr) {
   </div>`;
 }
 
-// BRIEF stock-performance exhibit — the 52-week rebased price path, the name vs the IWM benchmark,
+// BRIEF stock-performance exhibit — the 52-week rebased price path, the name vs its cap-band benchmark,
 // both indexed to 100 at the window start (mechanical.stock_performance). A COMPACT sidebar exhibit:
 // it reuses the shared design LANGUAGE (EXHIBIT.fs fonts · halo · margin · the honest lineDomain /
 // linScale math from lib/exhibit.js) at a brief-snapshot-column size — NOT the wSingle/wDual main-
@@ -1953,7 +1953,7 @@ function idioVsShared(io) {
   // two cohort-absence rows said one absence twice, one citing an internal filename.
   const marketRow = (io.market_180d_return && io.market_180d_return.status === "present")
     || !(io.rel_vs_market && io.rel_vs_market.status === "present")
-    ? fact("Market (IWM) 180d", io.market_180d_return, ret) : "";
+    ? fact(`Market (${escapeHtml(io.benchmark_symbol || "IWM")}) 180d`, io.market_180d_return, ret) : "";
   const cohortBlock = cohortPresent
     ? fact("Read", io.read, null, { hi: true })
       + `<div class="fact"><div class="fact-label">Graph cohort</div><div>${cohort}</div></div>`

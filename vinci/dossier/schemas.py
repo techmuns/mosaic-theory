@@ -295,10 +295,13 @@ class IdiosyncraticVsShared(BaseModel):
     """
 
     name_180d_return: Sourced[float]
-    market_180d_return: Sourced[float]  # IWM — the G2 benchmark
-    rel_vs_market: Sourced[float]  # name − IWM (the G2 number)
+    market_180d_return: Sourced[float]  # the assigned cap-band benchmark (monitor policy)
+    rel_vs_market: Sourced[float]  # name − benchmark, recomputed at assembly on the same yardstick
     cohort: Sourced[list[CohortMember]]
     read: Sourced[str]  # "fell alone (idiosyncratic)" vs "fell with cohort (shared/thematic)"
+    # cap-band benchmark identity — defaults keep pre-unification committed dossiers loadable
+    benchmark_symbol: str = "IWM"
+    benchmark_basis: str | None = None  # e.g. "cap-band: $8.7B → mid ($4–25B) → MDY"
 
     model_config = {"frozen": True}
 
@@ -310,25 +313,26 @@ class PerfPoint(BaseModel):
 
     date: str  # ISO trading date
     name: float  # the name's close, rebased to 100 at the window start
-    benchmark: float | None  # IWM close, rebased to 100 at the same anchor
+    benchmark: float | None  # the assigned benchmark's close, rebased to 100 at the same anchor
 
     model_config = {"frozen": True}
 
 
 class StockPerformance(BaseModel):
-    """52-week rebased price path — the name vs the IWM benchmark, both indexed to 100 at the window
-    start. Assemble/inform ONLY: it *visualizes* the same EOD closes the G2 idio comparison
-    (``idiosyncratic_vs_shared``) already sources — never a gate/rank input, never a verdict. The
-    whole object is None on the layer (exhibit absent) when the name has no window bars; a point's
+    """52-week rebased price path — the name vs its assigned cap-band benchmark, both indexed to
+    100 at the window start. Assemble/inform ONLY: it *visualizes* the same EOD closes the idio
+    comparison (``idiosyncratic_vs_shared``) already sources — never a gate/rank input or verdict.
+    The whole object is None on the layer (exhibit absent) when the name has no window bars; a
+    point's
     ``benchmark`` is None when the index is absent — fail-loud rather than a fabricated series."""
 
     points: list[PerfPoint]
     name_symbol: str
-    benchmark_symbol: str  # "IWM"
+    benchmark_symbol: str  # the cap-band assignment (IWM / MDY / SPY)
     as_of: date  # the window end (the exhibit's right edge)
     window_days: int
     name_return: float  # the name's total return over the plotted window (rebased end / 100 − 1)
-    benchmark_return: float | None  # IWM's over the same window (None when the index is absent)
+    benchmark_return: float | None  # the benchmark's, same window (None when the index is absent)
     source_ref: str
 
     model_config = {"frozen": True}
