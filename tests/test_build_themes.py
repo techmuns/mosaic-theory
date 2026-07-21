@@ -532,5 +532,38 @@ def test_industry_hint_prefers_member_industry_and_degrades_to_raw_sic() -> None
     assert "_SIC_NAME" not in src, "the static SIC-name map must stay dead — one table"
 
 
+def test_mirror_reseed_guard_leaves_sweep_byte_identical_without_manifest(
+        tmp_path: Path, monkeypatch: pytest.MonkeyPatch,
+        capsys: pytest.CaptureFixture[str]) -> None:
+    """MIRROR RE-SEED GUARD (4th worktree-provenance incident; 2nd sweep.json re-seed).
+
+    Building from a worktree that lacks data/scan_history/manifest.jsonl must leave the COMMITTED
+    sweep.json BYTE-IDENTICAL — the old emitter rewrote it from the seeded June-17 default, making
+    a real sweep look stale. Byte-level, not payload-level: a re-serialise changing only whitespace
+    would still dirty the mirror, which is exactly the churn this kills."""
+    radar = tmp_path / "frontend" / "radar"
+    radar.mkdir(parents=True)
+    committed = ('{\n "last_run": "2026-07-14",\n "source": "manifest",'
+                 '\n "next_due": "2026-08-13"\n}\n')
+    (radar / "sweep.json").write_text(committed)
+    before = (radar / "sweep.json").read_bytes()
+    monkeypatch.setattr(_BUILD, "ROOT", tmp_path)      # no data/scan_history/manifest.jsonl here
+    monkeypatch.setattr(_BUILD, "HERE", tmp_path / "frontend")
+    _BUILD.emit_radar_sweep()
+    assert (radar / "sweep.json").read_bytes() == before, "re-seeded a committed artifact"
+    assert "SKIPPED sweep.json: source absent" in capsys.readouterr().out
+
+
+def test_mirror_reseed_guard_fails_loud_when_nothing_to_preserve(
+        tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    """The NEGATIVE pin: source absent AND artifact missing ⇒ nothing to preserve and nothing to
+    serve. That must RAISE, not silently emit a seeded placeholder — the guard may only protect
+    an existing file, never excuse an empty screen."""
+    monkeypatch.setattr(_BUILD, "ROOT", tmp_path)          # no manifest
+    monkeypatch.setattr(_BUILD, "HERE", tmp_path / "frontend")  # no committed sweep.json
+    with pytest.raises(SystemExit, match="nothing to preserve"):
+        _BUILD.emit_radar_sweep()
+
+
 if __name__ == "__main__":
     raise SystemExit(pytest.main([__file__, "-q"]))

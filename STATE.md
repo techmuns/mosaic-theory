@@ -3822,26 +3822,31 @@ re-anchor (the full STATE split stays its own queued task — nothing was reloca
    its evidence window, and stamp what window it read. (The §7 print-freshness gate and the
    monitor's freshness panel cover verdicts manually until this exists.)
 2. **Shared `annual_series` alias fix** — GATES `attach_midcycle`.
-3. **sweep.json build guard** — `emit_radar_sweep` re-seeds the committed bar to 2026-06-17
-   whenever the component-a manifest is absent from the running worktree (INCIDENT #4: reverted
-   by hand three times, incl. 2026-07-21). The build should REFUSE to overwrite a
-   manifest-derived bar with a seeded one, not silently downgrade it.
-4. **R2 recipe** (for NCNO / MVST / FUBO / AORT — names R1's positivity guard rejects).
+3. **R2 recipe** (for NCNO / MVST / FUBO / AORT — names R1's positivity guard rejects).
 
 **ANALYST / OPERATOR**
-5. **EPAM underwrite** — in flight.
-6. **BRBR / CNXC / VITL dispositions** — dossiers built, no verdict.
-7. **WERN ratifications (3):** the three draft `method` sentences; the Dedicated-mix ref basis
+4. **EPAM underwrite** — in flight.
+5. **BRBR / CNXC / VITL dispositions** — dossiers built, no verdict.
+6. **WERN ratifications (3):** the three draft `method` sentences; the Dedicated-mix ref basis
    (51.5%→73% — name the filing); and the "12–14% peaks" prose vs the verified 9.59/11.31/9.82%.
-8. **Truckload freeze-source re-run** — confirm the surgically-patched
+7. **Truckload freeze-source re-run** — confirm the surgically-patched
    `frontend/themes/truckload-supply-purge.json` reproduces byte-identical from the freeze.
-9. **`extract_points` first-alias-wins truncation** — operator decision, open since 2026-07-16.
-10. **Sweep-#2 fail-closed coverage holes (2)** — operator decision, report-only.
-11. **Drafting-rubric v2 validation — DATED 2026-08-13** (pre-registered; do not run early).
+8. **`extract_points` first-alias-wins truncation** — operator decision, open since 2026-07-16.
+9. **Sweep-#2 fail-closed coverage holes (2)** — operator decision, report-only.
+10. **Drafting-rubric v2 validation — DATED 2026-08-13** (pre-registered; do not run early).
 
 **HOUSEKEEPING**
-12. **Refresh cadence → docs/RUNBOOKS.md** (it is operating practice, not state).
-13. **Full STATE split** — §5 build records → a fossils/decisions file; this block is the interim.
+11. **Refresh cadence → docs/RUNBOOKS.md** (it is operating practice, not state).
+12. **Full STATE split** — §5 build records → a fossils/decisions file; this block is the interim.
+
+**CLOSED by the 2026-07-21 mirror re-seed guard:** the sweep.json build guard
+(`_preserve_unless_source`) — a generated artifact whose SOURCE is absent in the running
+worktree is now left BYTE-UNTOUCHED and announced as `SKIPPED <artifact>: source absent`;
+it fails loud only when the artifact is ALSO missing (nothing to preserve). Applied to
+sweep.json, the theme freezes and the radar inbox/log from ONE helper, so the discipline
+cannot drift between emitters. Pinned both ways
+(`test_mirror_reseed_guard_leaves_sweep_byte_identical_without_manifest`,
+`test_mirror_reseed_guard_fails_loud_when_nothing_to_preserve`).
 
 **CLOSED by the 2026-07-21 monitor build:** position monitor (book vs benchmarks, spread,
 freshness panel) · benchmark-by-cap-band assignment + the ledger-supersession artifact · the

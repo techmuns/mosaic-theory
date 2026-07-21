@@ -52,6 +52,29 @@ def _jsonl(path: Path) -> list[dict[str, Any]]:
     return [json.loads(line) for line in path.read_text().splitlines() if line.strip()]
 
 
+# --- MIRROR RE-SEED GUARD -----------------------------------------------------------------------
+# 4th worktree-provenance incident; 2nd sweep.json re-seed. A generated artifact whose SOURCE is
+# absent in THIS worktree must be left BYTE-UNTOUCHED — never regenerated from seeds/defaults.
+# The failure this kills: a build run from a worktree without data/scan_history/manifest.jsonl
+# silently rewrote the COMMITTED frontend/radar/sweep.json back to the seeded June-17 date, so a
+# real sweep looked stale. The same class covers theme freezes (git-ignored source) and the radar
+# inbox/log. ONE implementation, so the discipline can't drift between emitters.
+def _preserve_unless_source(label: str, artifact: Path, *, source_present: bool) -> bool:
+    """True ⇒ the caller may regenerate. False ⇒ it MUST leave the artifact untouched.
+
+    Source absent + artifact present → the deploy / other-worktree case: the committed file is the
+    only good copy, so keep it and say so. Source absent + artifact ALSO missing → nothing to
+    preserve and nothing to serve; that is a real breakage, so raise rather than emit a seeded
+    placeholder (fail loud, never fabricate)."""
+    if source_present:
+        return True
+    if artifact.exists():
+        print(f"SKIPPED {label}: source absent")
+        return False
+    raise SystemExit(
+        f"{label}: source absent AND artifact missing ({artifact}) — nothing to preserve")
+
+
 # --- SCENARIO CARDS (reusable) ------------------------------------------------------------------
 # A committed `scenarios/<TICKER>.json` underwrite record renders as a card attachable under ANY
 # watchlist name — no full-dossier dependency. Names WITHOUT a record are untouched (the key is
@@ -457,9 +480,9 @@ def build_themes(themes_srcs: list[Path]) -> list[str]:
                 continue
             scans = sorted(d.glob("*scan*.jsonl"))
             pairs.append((bp, lp, scans[0] if scans else None))
-    if not pairs:
-        print("themes: no freeze source (forward_*_baskets.json) found — leaving committed "
-              "frontend/themes/ untouched (WARN; not an error)")
+    # RE-SEED GUARD (same class as sweep.json): no freeze source in this worktree — e.g. the
+    # Cloudflare deploy, where the source is git-ignored — ⇒ keep the committed theme JSON.
+    if not _preserve_unless_source("frontend/themes/", OUT_THEMES, source_present=bool(pairs)):
         return []
     OUT_THEMES.mkdir(parents=True, exist_ok=True)
     summaries: list[dict[str, Any]] = []
@@ -510,8 +533,13 @@ def emit_radar_sweep() -> None:
     the ROOT manifest where record_snapshot writes (data/scan_history/manifest.jsonl); the prior
     component-a/manifest.jsonl path never existed, so the bar re-seeded silently (the #125 bug)."""
     out = HERE / "radar"
-    out.mkdir(parents=True, exist_ok=True)
     manifest = ROOT / "data" / "scan_history" / "manifest.jsonl"
+    # RE-SEED GUARD: no manifest in this worktree ⇒ keep the committed sweep.json. Regenerating
+    # would re-seed a real sweep date back to the June-17 default (the incident this guards).
+    if not _preserve_unless_source(
+            "sweep.json", out / "sweep.json", source_present=manifest.exists()):
+        return
+    out.mkdir(parents=True, exist_ok=True)
     (out / "sweep.json").write_text(json.dumps(_radar_sweep_payload(manifest), indent=1) + "\n")
 
 
@@ -628,8 +656,12 @@ def emit_radar_inbox_log() -> None:
     out = HERE / "radar"
     reviews_path = out / "reviews.json"
     snap_path = _latest_component_a(ROOT)
-    if snap_path is None or not reviews_path.exists():
-        return  # deploy / no local run → keep the committed inbox.json/log.json
+    # RE-SEED GUARD (same class as sweep.json): deploy / no local run → keep the committed
+    # inbox.json + log.json rather than emitting an empty pair over the last real emission.
+    if not _preserve_unless_source(
+            "radar inbox.json + log.json", out / "inbox.json",
+            source_present=snap_path is not None and reviews_path.exists()):
+        return
     reviews = json.loads(reviews_path.read_text())["reviews"]
     clusters = [json.loads(line) for line in snap_path.read_text().splitlines() if line.strip()]
     if clusters and not any((str(m.get("industry") or "")).strip()
