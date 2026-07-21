@@ -12,7 +12,7 @@ EPAM Systems, Inc. provides digital platform engineering and software developmen
 - **Snapshot:** NYSE · CMP $85.99 (2026-07-08) · cap $4.0B · 52-wk $73.06–$222.53 · shares 52.2M · book value/sh $65.04 [3]
 
 ## What happened
-- **Shape:** discrete gap-downs — 2026-02-03 no 8-K matched; 2026-02-19 earnings (2.02); 2026-06-18 no 8-K matched [4]
+- **Shape:** discrete gap-downs — 2026-02-03 no 8-K matched; 2026-02-19 earnings; 2026-06-18 no 8-K matched [4]
 - **Price (180d):** -60.2% [5]
 - **vs market (180d):** -76.0% [6]
 - **Net debt / EBITDA:** -1.0x [7]
@@ -63,28 +63,24 @@ _table shows the last 4 fiscal years · 5 earlier years are in the Appendix_
 ## Mechanical layer
 
 ### What broke — and did it fall alone?
-- **Shape:** discrete gap-downs — 2026-02-03 no 8-K matched; 2026-02-19 earnings (2.02); 2026-06-18 no 8-K matched [4]
-- **Gap-down dates:** 2026-02-03, 2026-02-19, 2026-06-18 [19]
+- **Shape:** discrete gap-downs — 2026-02-03 no 8-K matched; 2026-02-19 earnings; 2026-06-18 no 8-K matched [4]
 - **Gap-downs — what the results showed (parsed EX-99.1) + the 8-K:**
   - gap 2026-02-19 → 2026-02-19 [`0001352010-26-000010`](https://www.sec.gov/Archives/edgar/data/1352010/000135201026000010/epam-20260219.htm)
     - items: 2.02 Results of Operations and Financial Condition, 9.01 Financial Statements and Exhibits
     - 2.02 Results of Operations and Financial Condition: Results of Operations and Financial Condition. On February 19, 2026, EPAM Systems, Inc. (the “Company” or “EPAM”) issued a press release discussing its results of operations for the fourth quarter and the year ended December 31, 2025. A copy of the press release is attached as Exhibit 99.1 to this report and is incorporated by reference into this
 - **Revised guidance · Net debt / EBITDA (fwd-adj covenant basis) · EV/EBITDA (adjusted, forward) · Adjusted EPS (earnings power):** _UNKNOWN_ — no revised-outlook 99.1 exhibit parsed — the revised forward guidance is UNKNOWN
 
-_Did it happen alone? (idiosyncratic vs shared — the G2-vs-market compensation):_
+_Company-specific or market-wide?_
 - **Name 180d return:** -60.2% [5]
-- **Market (IWM) 180d return:** _UNKNOWN_ — IWM benchmark bars unavailable
 - **Relative vs market:** -76.0% [6]
-- **Cohort read:** _UNKNOWN_ — no graph cohort to compare — see rel_vs_market for the name-vs-market read
-- **Graph cohort:** _UNKNOWN_ — EPAM not in graph_coverage.json — no exposed cross-section to compare
+- **Supplier/customer cohort:** none mapped for this name — the comparison is vs the market only
 
 ### Leverage & survival
 - **Net debt / EBITDA (CIQ NET basis):** -1.0x [7]
-- **Total debt / EBITDA (comps — name vs peer median):** name 0.4x vs peer median 1.5x (comps TOTAL-debt/EBITDA basis) [20]
-- **Net debt / OCF:** -1.3x [21]
+- **Total debt / EBITDA (comps — name vs peer median):** name 0.4x vs peer median 1.5x (comps TOTAL-debt/EBITDA basis) [19]
+- **Net debt / OCF:** -1.3x [20]
 - **Interest coverage:** _UNKNOWN_ — no period with both EBITDA and Interest Expense
-- **Survival (self-funding + nearest wall):** net-debt/EBITDA -1.0x (CIQ) → net cash | FCF-positive → self-funding [22]
-- **Self-funding — two-input read (supersedes the line above):** self-funding: MIXED — latest-Q OCF < 0, LTM FCF > 0 (both must be positive to self-fund) [11]
+- **Self-funding (two-input: latest-Q OCF + LTM FCF):** self-funding: MIXED — latest-Q OCF < 0, LTM FCF > 0 (both must be positive to self-fund) [11]
 - **Credit health** — [10]  <!-- ds-table -->
 
 |  | Name | Peer median |
@@ -98,51 +94,39 @@ _S&P issuer rating unrated · scale 1=strongest … 4=weakest (S&P-MI PD model)_
 
 
 - **FCF sign:** positive [8]
-- **Free cash flow ($M):** 692.9 [23]
-- **Live instruments — near-dated (≤12m + 2027) — panel A 2025 filed Feb-26-2026** — [24]  <!-- ds-table -->
-
-|  | Type | Principal | Coupon | Floating | Maturity | Sec | Conv | Cur |
-|---|---|---:|---|---|---|---|---|---|
-
-_3 undated / later aggregate line item(s) in the appendix panel_
-
+- **Free cash flow ($M):** 692.9 [21]
+- **Live instruments — near-dated (≤12m + 2027):** none due in the window — 3 undated / later aggregate line item(s) in the appendix panel [22]
 - **Maturity wall** (deterministic, vs the 2026-07-06 reference):
   - due 2030: $25.0M
-  - undated (floor — no panel maturity): $118.7M — Long Term Debt - Other $0.0M, Operating Lease Liabilitie $118.7M
+  - undated (floor — no panel maturity): $118.7M — Long Term Debt - Other $0.0M, Operating Lease Liabilities $118.7M
   - _reconciliation: itemized $143.7M (panel A 2025 filed Feb-26-2026) vs the latest-quarter aggregates below — the gap is unitemized / newer term loans; read the QoQ movement in the aggregates line._
-- **Capital-structure aggregates (latest quarter):** leases 122.9; total principal 287.9; total debt 287.9 (latest quarter) ($M) [25]
+- **Capital-structure aggregates (latest quarter):** leases 122.9; total principal 287.9; total debt 287.9 (latest quarter) ($M) [23]
 - **Covenants — Revolving Credit Facility** (governing values; full verbatim in appendix):
   - **Interest / coupon:** Base Rate Option: Base Rate plus Applicable Margin (Revolving Credit Base Rate Spread ranges 0.000% to 1.000% by Level)…
   - **Maturity:** October 21, 2026 · October 21, 2026 (Expiration Date), as such date may be extended pursuant to Section 12.1
   - **Financial maintenance:** Maximum Consolidated Leverage Ratio: not to exceed 3.50 to 1.00 (temporarily increasable to 4.00 to 1.00 for a four fis…
   - **Events of default:** Mandatory Prepayments (Section 5.3): (a) and (b) Reserved; (d) Alternative Currencies overage above 105% of Alternative…
 
-### Primary-source cross-checks (8-K releases + latest 10-Q vs CIQ panel)
+### Filing cross-checks — going concern · leverage basis
 
-- **Going-concern language:** none in latest 10-Q — checked, absent [26]
-- **Wall coherence — filing ≤12m vs CIQ panel (same window):** wall coherence: UNKNOWN — filing states no ≤12m figure [27]
-- **EBITDA-basis triangulation (each leverage basis-labeled):** [28]
+- **Going-concern language:** none in latest 10-Q — checked, absent [24]
+- **EBITDA-basis triangulation (each leverage basis-labeled):** [25]
   - net debt / EBITDA (CIQ, GAAP basis): -1.0x
   - total debt / EBITDA (CIQ comps, GAAP basis): 0.4x
   - net debt / company-adjusted LTM EBITDA (LTM unavailable): UNKNOWN
   - covenant basis: UNKNOWN (not disclosed)
-- **Guide verification — CIQ guide vs release:** guide verification (revenue): CIQ 1400.0–1415.0 vs release NO NUMERIC OUTLOOK → not cross-checked [29]
 
-### Operating trajectory (revenue · EBITDA · margins · ROIC)
+### Operating trajectory
 - **Trajectory ($M · % — per period)** — [13]  <!-- ds-table -->
 
 |  | Dec-2021 | Dec-2022 (R) | Dec-2023 (R) | Dec-2024 | Dec-2025 | Mar-2026 (LTM) |
 |---|---|---|---|---|---|---|
-| Revenue ($M) | 3,758 | 4,825 | 4,691 | 4,728 | 5,457 | 5,555 |
-| EBITDA ($M) | 628 | 799 | 652 | 693 | 707 | 731 |
-| EBITDA margin | 17% | 17% | 14% | 15% | 13% | 13% |
 | Gross margin | 34% | 33% | 31% | 31% | 29% | 29% |
-| ROIC | 13.7% | 14.9% | 10.3% | 10.2% | 9.6% | 10.1% |
 
 _Revenue YoY (latest same-quarter): +7.6% (Q1 Mar-31-2026 vs Q1 Mar-31-2025). R reclassified; margin % can fall while absolute EBITDA RISES — read them together; per-period values, never YoY'd across a basis_
 
-- **Share-count trend:** buying back (trailing ~1.7y): 56,935,370 (2024-07-31) → 52,244,451 (2026-04-30), -8.2% [30]
-- **Return ratios — per fiscal period** — [31]  <!-- ds-table -->
+- **Share-count trend:** buying back (trailing ~1.7y): 56,935,370 (2024-07-31) → 52,244,451 (2026-04-30), -8.2% [26]
+- **Return ratios — per fiscal period** — [27]  <!-- ds-table -->
 
 |  | FY21 | FY22 | FY23 | FY24 | FY25 | LTM |
 |---|---|---|---|---|---|---|
@@ -151,15 +135,13 @@ _Revenue YoY (latest same-quarter): +7.6% (Q1 Mar-31-2026 vs Q1 Mar-31-2025). R 
 | RoA % | 10.9% | 11.7% | 8.4% | 8.3% | 7.5% | 8.0% |
 | Total debt/equity | 0.10x | 0.06x | 0.05x | 0.04x | 0.04x | 0.08x |
 | Current ratio | 2.97x | 3.69x | 4.79x | 2.96x | 2.59x | 2.67x |
-| Dividend/sh | none | none | none | none | none | none |
 
 
 ### Valuation & own-history
 - **Cross-sectional (vs peers — the edge):** EV/EBITDA 4.1x vs peer median 5.5x (-25%); P/E 11x vs peer median 10.5x (+5%) [16]
 - **What the current price implies (at stated multiples)** — comparability: HETEROGENEOUS (see Peer comps gate)
-  - _price-implied fundamental levels at stated multiples — the human judges earned vs residual; identity (†): at the name's own multiple the implied level IS consensus._
-  - _TEV as-of 2026-06-24 · multiples as-of 2026-06-18_
-- **Price-implied levels (at each stated multiple)** — [32]  <!-- ds-table -->
+  - _TEV as-of 2026-06-24 · multiples as-of 2026-06-18 · † at the name's own multiple the implied level is consensus by identity_
+- **Price-implied levels (at each stated multiple)** — [28]  <!-- ds-table -->
 
 |  | Multiple (× used) | Implied level |
 |---|---|---|
@@ -170,18 +152,13 @@ _Revenue YoY (latest same-quarter): +7.6% (Q1 Mar-31-2026 vs Q1 Mar-31-2025). R 
 | peer-median NTM TEV/Rev | 0.93x | $3,514.1M Revenue |
 | peer-median LTM TEV/Rev | 1x | $3,268.1M Revenue |
 
-  - _Reads AGAINST the consensus path anchors below — juxtapose the price-implied level vs consensus per metric; never subtract one from the other._
-- **Consensus path anchors (EBITDA — juxtapose, do NOT difference):** FY26E $963.0M · FY27E $1036.9M (direct consensus EBITDA — CIQ Estimates→Trends latest snapshot)
-- **Consensus path anchors (Revenue — juxtapose, do NOT difference):** FY26E $5730.4M · FY27E $6074.5M (direct consensus Revenue — CIQ Estimates→Trends latest snapshot)
-  - _vintage-coherent: derived FY26 $975.6M vs direct consensus $963.0M (residual 0.013 ≤ 0.10 tolerance)_
-  - _Fixed multiple set (declared in code, no per-name curation): name NTM + peer-median NTM/LTM, on TEV/EBITDA and TEV/Rev._
+- **Consensus path anchors (EBITDA):** FY26E $963.0M · FY27E $1036.9M (direct consensus EBITDA — CIQ Estimates→Trends latest snapshot)
+- **Consensus path anchors (Revenue):** FY26E $5730.4M · FY27E $6074.5M (direct consensus Revenue — CIQ Estimates→Trends latest snapshot)
 
-- **P/E:** 13.1x [33]
-- **EV/EBITDA (GAAP TEV/LTM):** 4.9x [34]
 - **Own-history range position:** EV/EBITDA (TEV/LTM) 4.9x as-of 2026-07-17 — trailing range 4.3–57.2x (median 22.4x) over 38 closes → 3%ile → near-floor; P/LTM EPS 12.7x [15]
 
 ### Peer comps
-- **Peer set (roster · caps · business)** — [35]  <!-- ds-table -->
+- **Peer set (roster · caps · business)** — [29]  <!-- ds-table -->
 
 |  | Mkt cap | Business |
 |---|---|---|
@@ -199,20 +176,17 @@ _Revenue YoY (latest same-quarter): +7.6% (Q1 Mar-31-2026 vs Q1 Mar-31-2025). R 
 _the name: $4.0B_
 
 - **Comparability (confidence gate):** market caps span $734M–$77.7B (106x); the name is $4.0B → HETEROGENEOUS — low comparability: the peer median is anchored by businesses of differing scale/model; scrutinise comparability before reading any peer stat as a clean benchmark. [17]
-- **Trading multiples (name vs peer Low/Median/Mean/High · LTM+NTM)** — [36]  <!-- ds-table -->
+- **Forward multiples (name vs peer Low/Median/Mean/High · NTM)** — [30]  <!-- ds-table -->
 
 |  | Name | Low | Median | Mean | High |
 |---|---|---|---|---|---|
-| TEV/Rev | 0.6 | 0.3 | 1 | 1.1 | 3.1 |
-| TEV/EBITDA | 4.1 | 2.3 | 5.5 | 25.2 | 199.3 |
-| P/E | 11 | 7.9 | 10.5 | 35.5 | 164.1 |
 | NTM TEV/Rev | 0.56 | 0.34 | 0.93 | 1.09 | 2.97 |
 | NTM TEV/EBITDA | 3.37 | 2.65 | 5.26 | 8.42 | 35.37 |
 | NTM P/E | 5.76 | 3.27 | 7.47 | 14.74 | 74.86 |
 
 _NM = a real state (negative base), not missing_
 
-- **Per-peer grid (cap · valuation · margin · growth · leverage — name vs peers)** — [37]  <!-- ds-table -->
+- **Per-peer grid (cap · valuation · margin · growth · leverage — name vs peers)** — [31]  <!-- ds-table -->
 
 |  | Cap | TEV/EBITDA | TEV/Rev | P/E | EBITDA margin | Rev growth (1y) | Total debt/EBITDA | Net debt ($M) |
 |---|---|---|---|---|---|---|---|---|
@@ -231,7 +205,8 @@ _NM = a real state (negative base), not missing_
 
 
 
-### The street — estimates & guidance (export date unverified (data ≥ 2026-06-18))
+### The street — estimates & guidance
+_export date unverified (data ≥ 2026-06-18)_
 - **Horizon read (FQ — next-2Q revision breadth)** — [12]:
   - EPS Normalized FQ2 2026: 1m 0↑/0↓, 2m 11↑/5↓, 3m 11↑/5↓
   - EPS Normalized FQ3 2026: 1m 0↑/0↓, 2m 11↑/4↓, 3m 12↑/3↓
@@ -241,22 +216,15 @@ _NM = a real state (negative base), not missing_
   - EBITDA FQ3 2026: 1m 0↑/0↓, 2m 2↑/3↓, 3m 1↑/4↓
   - EBIT FQ2 2026: 1m 0↑/0↓, 2m 4↑/9↓, 3m 2↑/10↓
   - EBIT FQ3 2026: 1m 0↑/0↓, 2m 1↑/12↓, 3m 1↑/11↓
-  - Interest Expense FQ2 2026: 1m 0↑/0↓, 2m 1↑/5↓, 3m 1↑/5↓
-  - Interest Expense FQ3 2026: 1m 0↑/0↓, 2m 0↑/6↓, 3m 1↑/5↓
-  - EBT (GAAP) FQ2 2026: 1m 0↑/0↓, 2m 1↑/7↓, 3m 0↑/8↓
-  - EBT (GAAP) FQ3 2026: 1m 0↑/0↓, 2m 3↑/6↓, 3m 3↑/6↓
-  - Net Income (Excl. Excep) FQ2 2026: 1m 0↑/0↓, 2m 1↑/11↓, 3m 1↑/11↓
-  - Net Income (Excl. Excep) FQ3 2026: 1m 0↑/0↓, 2m 2↑/11↓, 3m 1↑/12↓
-  - Net Income (GAAP) FQ2 2026: 1m 0↑/1↓, 2m 0↑/15↓, 3m 0↑/16↓
-  - Net Income (GAAP) FQ3 2026: 1m 0↑/0↓, 2m 1↑/0↓, 3m 1↑/0↓
-- **Acceleration read (monthly consensus path):** FY 2026 EPS Normalized: 12.1 (12m) → 12.2 (9m) → 12.4 (6m) → 12.8 (3m) → 12.8 (2m) → 13.1 (1m) → 13.1 (latest); net +8% (12m→latest) | FY 2026 EPS (GAAP): 8.54 (12m) → 8.47 (9m) → 8.60 (6m) → 8.16 (3m) → 8.14 (2m) → 8.32 (1m) → 8.32 (latest); net -3% (12m→latest) | FY 2026 Revenue: 5,744.0 (12m) → 5,802.1 (9m) → 5,823.3 (6m) → 5,803.2 (3m) → 5,780.8 (2m) → 5,729.8 (1m) → 5,730.4 (latest); net -0% (12m→latest) | FY 2026 EBITDA: 962.1 (12m) → 951.7 (9m) → 968.2 (6m) → 970.1 (3m) → 966.3 (2m) → 963.0 (1m) → 963.0 (latest); net +0% (12m→latest) | FY 2026 EBIT: 884.7 (12m) → 892.6 (9m) → 901.2 (6m) → 901.3 (3m) → 898.4 (2m) → 891.5 (1m) → 891.5 (latest); net +1% (12m→latest) | FY 2026 Interest Expense: -9.00 (3m) → -9.00 (2m) → -2.00 (1m) → -3.41 (latest); improving (magnitude toward zero) (3m→latest) | FY 2026 EBT (GAAP): 627.7 (12m) → 627.9 (9m) → 626.9 (6m) → 595.3 (3m) → 593.1 (2m) → 595.8 (1m) → 596.1 (latest); net -5% (12m→latest) | FY 2026 Net Income (Excl. Excep): 684.4 (12m) → 687.2 (9m) → 686.4 (6m) → 694.8 (3m) → 692.6 (2m) → 687.5 (1m) → 687.6 (latest); net +0% (12m→latest) | FY 2026 Net Income (GAAP): 479.5 (12m) → 478.6 (9m) → 477.0 (6m) → 442.5 (3m) → 441.2 (2m) → 438.8 (1m) → 438.7 (latest); net -9% (12m→latest)  [data ≥ 2026-06-18 · export date unverified] [38]
-- **Cross-name anchor (NTM forward-multiple ladder)** — [39]:
+  - _+8 non-headline metric rows in JSON_
+- **Acceleration read (monthly consensus path):** FY 2026 EPS Normalized: 12.1 (12m) → 12.2 (9m) → 12.4 (6m) → 12.8 (3m) → 12.8 (2m) → 13.1 (1m) → 13.1 (latest); net +8% (12m→latest) | FY 2026 EPS (GAAP): 8.54 (12m) → 8.47 (9m) → 8.60 (6m) → 8.16 (3m) → 8.14 (2m) → 8.32 (1m) → 8.32 (latest); net -3% (12m→latest) | FY 2026 Revenue: 5,744.0 (12m) → 5,802.1 (9m) → 5,823.3 (6m) → 5,803.2 (3m) → 5,780.8 (2m) → 5,729.8 (1m) → 5,730.4 (latest); net -0% (12m→latest) | FY 2026 EBITDA: 962.1 (12m) → 951.7 (9m) → 968.2 (6m) → 970.1 (3m) → 966.3 (2m) → 963.0 (1m) → 963.0 (latest); net +0% (12m→latest) | FY 2026 EBIT: 884.7 (12m) → 892.6 (9m) → 901.2 (6m) → 901.3 (3m) → 898.4 (2m) → 891.5 (1m) → 891.5 (latest); net +1% (12m→latest) | FY 2026 Interest Expense: -9.00 (3m) → -9.00 (2m) → -2.00 (1m) → -3.41 (latest); improving (magnitude toward zero) (3m→latest) | FY 2026 EBT (GAAP): 627.7 (12m) → 627.9 (9m) → 626.9 (6m) → 595.3 (3m) → 593.1 (2m) → 595.8 (1m) → 596.1 (latest); net -5% (12m→latest) | FY 2026 Net Income (Excl. Excep): 684.4 (12m) → 687.2 (9m) → 686.4 (6m) → 694.8 (3m) → 692.6 (2m) → 687.5 (1m) → 687.6 (latest); net +0% (12m→latest) | FY 2026 Net Income (GAAP): 479.5 (12m) → 478.6 (9m) → 477.0 (6m) → 442.5 (3m) → 441.2 (2m) → 438.8 (1m) → 438.7 (latest); net -9% (12m→latest)  [data ≥ 2026-06-18 · export date unverified] [32]
+- **Cross-name anchor (NTM forward-multiple ladder)** — [33]:
   - NTM: TEV/REV 0.56 · TEV/EBITDA 3.32 · TEV/EBIT 3.57 · Price/Earnings 5.69 · PEG 0.54 · P/BV –
   - FY 2026: TEV/REV 0.56 · TEV/EBITDA 3.35 · TEV/EBIT 3.62 · Price/Earnings 5.82 · PEG 0.56 · P/BV 1.05
   - FY 2027: TEV/REV 0.53 · TEV/EBITDA 3.11 · TEV/EBIT 3.37 · Price/Earnings 5.39 · PEG 0.52 · P/BV 0.90
   - FY 2028: TEV/REV 0.50 · TEV/EBITDA 2.89 · TEV/EBIT 3.12 · Price/Earnings 5.01 · PEG 0.48 · P/BV 0.75
   - _+2 later fiscal years in JSON_
-- **Guidance bridge (latest guide + sign-aware delivery track-record)** — [40]  <!-- ds-table -->
+- **Guidance bridge (latest guide + sign-aware delivery track-record)** — [34]  <!-- ds-table -->
 
 |  | Latest guide | For | Dated | Age | Record (met/resolved) | Most recent |
 |---|---|---|---|---|---|---|
@@ -265,7 +233,7 @@ _NM = a real state (negative base), not missing_
 | Capital Expenditure | '(19.00) - (20.00)' | FY 2016 | 2016-02-18 | 3791d (stale) | spend ≤ ceiling 1/2 | FY 2016 MISSED |
 
 - **Consensus stats (target + ratings):** Target price: mean $144.06, median $139.00, high/low 235.00/99.00, N 17/17; Ratings: Buy 9, Outperform 2, Hold 9, Underperform 0, Sell 0, No Opinion 0, Buy 0, Outperform 0, Hold 2, Underperform 0, Sell 0  [data ≥ 2026-06-18 · export date unverified] [18]
-- **Revision-event log** (250 events · 11 broker-days) — [41]:
+- **Revision-event log** (250 events · 11 broker-days) — [35]:
   - **2026-06-18 · Morningstar Inc.** · 1↑/0↓ · +1 items in JSON
   - **2026-06-15 · Wedbush Securities Inc.** · 0↑/2↓, 26 initiations · Target Price Non-periodic 230.0→99.0 · +27 items in JSON
   - **2026-05-29 · broker undisclosed** · 0↑/2↓ · Target Price Non-periodic 130.0→110.0 · +1 items in JSON
@@ -273,14 +241,14 @@ _NM = a real state (negative base), not missing_
   - **2026-05-08 · Mizuho Securities USA LLC** · 8↑/11↓ · Revenue FQ2 2026 1438.0→1411.0 · +18 items in JSON
   - **2026-05-08 · broker undisclosed** · 21↑/56↓ · EBITDA FQ2 2026 240.0→230.0 · +90 items in JSON
   - _+5 more broker-days in JSON_
-- **Surprise history (annual beat/miss):** GAAP-EPS surprise: FY2021 +2%, FY2022 +7%, FY2023 -4%, FY2024 -0%, FY2025 -2%; Revenue surprise: FY2021 +1%, FY2022 +0%, FY2023 +0%, FY2024 +1%, FY2025 +0% (GAAP-EPS basis; +beat / −miss) [42]
-- **Insider activity (Form 4, 6m):** Open-market buys 6 · sells 0 (net +0.5K sh) · grants 18 · last 2026-05-22 · other F×35/M×1 [43]
-- **Short interest (FINRA):** Short interest (FINRA, settle 2026-06-15): 9.6M → 10.3M sh (+7.8%, rising) · 19.7% of shares out (EDGAR XBRL) · DTC 5.2d · recent: 2026-06-15 10.3M · 2026-05-29 9.6M · 2026-05-15 9.3M · 2026-04-30 7.8M [44]
+- **Surprise history (annual beat/miss):** GAAP-EPS surprise: FY2021 +2%, FY2022 +7%, FY2023 -4%, FY2024 -0%, FY2025 -2%; Revenue surprise: FY2021 +1%, FY2022 +0%, FY2023 +0%, FY2024 +1%, FY2025 +0% (GAAP-EPS basis; +beat / −miss) [36]
+- **Insider activity (Form 4, 6m):** Open-market buys 6 · sells 0 (net +0.5K sh) · grants 18 · last 2026-05-22 · other filings 36 [37]
+- **Short interest (FINRA):** Short interest (FINRA, settle 2026-06-15): 9.6M → 10.3M sh (+7.8%, rising) · 19.7% of shares out (EDGAR XBRL) · DTC 5.2d · recent: 2026-06-15 10.3M · 2026-05-29 9.6M · 2026-05-15 9.3M · 2026-04-30 7.8M [38]
 
 ### Ownership & concentration
 - **Segments (revenue share):** Americas 58%; Europe 42% [1]
 - **Segments (EBITDA share — where profit sits):** _UNKNOWN_ — Segments sheet has no 'EBITDA' section as expected
-- **Customers:** AB Electrolux (publ) (OM:ELUX B) — Your Agency SA · Customer · src: Household Appliances; Actiris — Emakina Group SA · Customer · src: Human Resource and Employment Services; AG Insurance SA/NV — Emakina Group SA · Customer · src: Property and Casualty Insurance; Air Canada (TSX:AC) — Emakina Group SA · Customer · src: Passenger Airlines; Al Tayer Group — Emakina Group SA · Customer · src: Industrial Conglomerates; Alès Groupe S.A. — Emakina Group SA · Customer · src: Personal Care Products; Ansell Healthcare Europe N.V. — The Reference N.V. · Customer · src: Health Care Supplies; Ansell Limited (ASX:ANN) — Emakina Group SA · Customer · src: Health Care Supplies; Aquafin NV — Emakina Group SA · Customer · src: Environmental and Facilities Services; Arçelik Anonim Sirketi (IBSE:ARCLK) — Emakina Group SA · Customer · src: Household Appliances; Austrian Standards Plus GmbH — Emakina Group SA · Customer · src: Diversified Support Services; Automobiles Citroen SA — Your Agency SA · Customer · src: Automobile Manufacturers; AXA SA (ENXTPA:CS) — Emakina Group SA · Customer · src: Multi-line Insurance; Banca Monte dei Paschi di Siena S.p.A. (BIT:BMPS) — Emakina Group SA · Customer · src: Diversified Banks; Banque Stellantis France — Your Agency SA · Customer · src: Specialized Finance; Barilla Holding S.p.A. — Emakina Group SA · Customer · src: Packaged Foods and Meats; Basic Fit International B.V. — Emakina Group SA · Customer · src: Multi-Sector Holdings; Basic Fit International B.V. — Emakina.NL BV · Customer · src: Multi-Sector Holdings; Bayerische Motoren Werke Aktiengesellschaft (XTRA:BMW) — Emakina Group SA · Customer · src: Automobile Manufacturers; Beiersdorf Aktiengesellschaft (XTRA:BEI) — Emakina Group SA · Customer · src: Personal Care Products; Biotherm — Your Agency SA · Customer · src: Personal Care Products; Blocket AB — Doe Blomberg Gottberg Aktiebolag · Customer · src: Application Software; Blocket AB — Emakina Group SA · Customer · src: Application Software; Blue Band Group — Emakina Group SA · Customer · src: Hotels, Resorts and Cruise Lines; Blue Stores S.A. — Emakina Group SA · Customer · src: Apparel, Accessories and Luxury Goods; BNP Paribas Fortis SA (ENXTBR:017250539) — Emakina Belgique SA · Customer · src: Diversified Banks; BNP Paribas Fortis SA (ENXTBR:017250539) — Emakina Group SA · Customer · src: Diversified Banks; Bonduelle SCA (ENXTPA:BON) — Emakina.NL BV · Customer · src: Packaged Foods and Meats; Boucheron Holding S.A. — EMAKINA.FR SA · Customer · src: Multi-Sector Holdings; Boucheron S.A.S. — Emakina Group SA · Customer · src: Apparel, Accessories and Luxury Goods; …(+151 more) [45]
+- **Customers:** 31 mapped client relationship(s) — roster in JSON; concentration %, when disclosed, is the 10-Q read above [39]
 - **Geographic:** United States 52%; Other Locations 21%; United Kingdom 11%; Switzerland 8%; Germany 4%; Netherlands 4% [2]
 
 ## The argument
@@ -292,17 +260,17 @@ _NM = a real state (negative base), not missing_
 - The balance sheet is net-cash at net-debt/EBITDA -1.0x with LTM FCF of $692.9M positive, so the business is self-funding and not survival-constrained on an LTM basis. [7]
 - Credit-health scoring places the name stronger than peers on every axis (Overall/Operational/Solvency/Liquidity 2/2/2/1 vs peer-median 3/3/3/3; 1=strongest). [10]
 - Revenue is still GROWING, not contracting: FY25 +15% and Q1-26 +7.6% YoY, with absolute EBITDA RISING across the trailing arc (693→707→731) even as the margin % compressed — the % decline is not falling absolute profit. [13]
-- Near-term earnings estimates have firmed, not collapsed: FY26 EPS Normalized revised net +8% (12.1→13.1 over 12m→latest) and the guidance track-record shows FQ1 2026 MET on both revenue and EPS with 63/64 and 66/67 historical floor-beats. [38]
-- The company is buying back stock — share count fell 8.2% over ~1.7 years (56.9M → 52.2M) — a capital-return posture, not distress behavior. [30]
-- Consensus is not capitulating: mean target $144.06 / median $139.00 sits well above the $85.99 close, and ratings skew Buy 9 / Outperform 2 / Hold 9 with zero Sell. [46]
+- Near-term earnings estimates have firmed, not collapsed: FY26 EPS Normalized revised net +8% (12.1→13.1 over 12m→latest) and the guidance track-record shows FQ1 2026 MET on both revenue and EPS with 63/64 and 66/67 historical floor-beats. [32]
+- The company is buying back stock — share count fell 8.2% over ~1.7 years (56.9M → 52.2M) — a capital-return posture, not distress behavior. [26]
+- Consensus is not capitulating: mean target $144.06 / median $139.00 sits well above the $85.99 close, and ratings skew Buy 9 / Outperform 2 / Hold 9 with zero Sell. [40]
 - The stock trades at TEV/LTM EBITDA 4.0x, the 0th percentile of its own ~5-year range of 8.0–57.2x (median 16.2x), a near-floor de-rating not seen before in its history. [15]
 
 ### Bear case — the decline is real
 - The primary-source self-funding read is MIXED, not clean: the latest quarter's operating cash flow is NEGATIVE even though LTM FCF is positive — both must be positive to self-fund on a current basis. [11]
 - Forward revenue revisions are broadly NEGATIVE: FQ2 2026 Revenue breadth 1↑/14↓ and FQ3 2026 0↑/14↓, and GAAP net income for FY26 is revised net -9% — the trailing EBITDA rise masks a deteriorating forward top-line trajectory. [12]
 - EBITDA margin has structurally compressed from 17% (FY21) to 13% (LTM) and gross margin from 34% to 29% — and this is the REAL signal, not an optical artifact: while absolute EBITDA rose modestly, the multi-year margin erosion is a genuine profitability decline in a labor-arbitrage services model, not a % that fell while dollars grew faster. [13]
-- Short interest is high and RISING: 10.3M shares (+7.8%), 19.7% of shares outstanding, 5.2-day cover — a large and growing bet against the name. [44]
-- Analyst target prices have been slashed on initiation/revision (Wedbush 230→99; another 215→110; Truist 146→112) even as the consensus mean stays elevated — a stale-mean-vs-fresh-cut divergence that flags the high consensus target as lagging. [41]
+- Short interest is high and RISING: 10.3M shares (+7.8%), 19.7% of shares outstanding, 5.2-day cover — a large and growing bet against the name. [38]
+- Analyst target prices have been slashed on initiation/revision (Wedbush 230→99; another 215→110; Truist 146→112) even as the consensus mean stays elevated — a stale-mean-vs-fresh-cut divergence that flags the high consensus target as lagging. [35]
 - The stock is down 60% over 180 days and -76% relative to the market, with three discrete gap-downs (2026-02-03, 02-19 earnings, 06-18) — a persistent idiosyncratic de-rating, not a market-wide move. [6]
 
 ### Decisive question
@@ -310,7 +278,7 @@ _NM = a real state (negative base), not missing_
 
 ### …evidence for
 - Revenue is still growing +7.6% YoY in Q1-26 and +15% in FY25, absolute EBITDA is rising, and forward EPS Normalized firmed net +8% — consistent with a temporary reset, not structural decay. [13]
-- Net-cash balance sheet (-1.0x) plus positive LTM FCF and ongoing buybacks give the business time to reset without forced action. [22]
+- Net-cash balance sheet (-1.0x) plus positive LTM FCF and ongoing buybacks give the business time to reset without forced action. [41]
 
 ### …evidence against
 - Forward revenue revision breadth is overwhelmingly negative (FQ2 1↑/14↓, FQ3 0↑/14↓) and gross/EBITDA margins have eroded multi-year — the leading indicators point down, not to reversion. [12]
@@ -374,7 +342,7 @@ _NM = a real state (negative base), not missing_
 _E = consensus (Estimates→Trends 'Current'), as-of ?; (R) = Reclassified basis · FCF (levered, CIQ) = CIQ 'Levered Free Cash Flow', NOT CFO − capex_
 
 ### Quarterly — every exported quarter
-- **Quarterly financials** — [47]  <!-- ds-table -->
+- **Quarterly financials** — [42]  <!-- ds-table -->
 
 |  | Q1-17 | Q2-17 (R) | Q3-17 (R) | Q4-17 (R) | Q1-18 (R) | Q2-18 (R) | Q3-18 (R) | Q4-18 (R) | Q1-19 | Q2-19 | Q3-19 | Q4-19 | Q1-20 | Q2-20 | Q3-20 | Q4-20 | Q1-21 | Q2-21 (R) | Q3-21 (R) | Q4-21 (R) | Q1-22 (R) | Q2-22 (R) | Q3-22 (R) | Q4-22 (R) | Q1-23 (R) | Q2-23 | Q3-23 | Q4-23 (R) | Q1-24 (R) | Q2-24 (R) | Q3-24 | Q4-24 (R) | Q1-25 | Q2-25 | Q3-25 | Q4-25 | Q1-26 |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
@@ -388,12 +356,12 @@ _E = consensus (Estimates→Trends 'Current'), as-of ?; (R) = Reclassified basis
 _QoQ/YoY same-basis only; (R) = Reclassified_
 
 ### Balance-sheet posture
-- **Posture:** as of Q1-26 ($M): cash & ST inv 1,037; total debt 288; net debt -749; equity 3,431; net working capital 1,473; net-debt/EBITDA → see the Leverage & survival block (not recomputed) [48]
-- **Coherence — BS vs implied-valuation bridge:** cash BS $1,037M / bridge $1,037M; debt BS $288M / bridge $288M — reconcile with the implied-valuation bridge. [49]
+- **Posture:** as of Q1-26 ($M): cash & ST inv 1,037; total debt 288; net debt -749; equity 3,431; net working capital 1,473; net-debt/EBITDA → see the Leverage & survival block (not recomputed) [43]
+- **Coherence — BS vs implied-valuation bridge:** cash BS $1,037M / bridge $1,037M; debt BS $288M / bridge $288M — reconcile with the implied-valuation bridge. [44]
 
 
 ### Capital structure & debt terms — instruments · pointers · covenants
-- **Capital structure — full instrument panel A 2025 filed Feb-26-2026** — [24]  <!-- ds-table -->
+- **Capital structure — full instrument panel A 2025 filed Feb-26-2026** — [22]  <!-- ds-table -->
 
 |  | Type | Principal | Coupon | Floating | Maturity | Sec | Conv | Cur |
 |---|---|---:|---|---|---|---|---|---|
@@ -402,7 +370,7 @@ _QoQ/YoY same-basis only; (R) = Reclassified_
 | Revolving Credit Facility | Revolving Credit | $25.0M | 4.500% | Benchmark | 2030-10-03 | N | N |  |
 
 - **8-Ks at instrument maturities:** _UNKNOWN_ — no trailing-12m instrument maturity to anchor an 8-K
-- **Covenant / contract pointers (CIK-verified execution filings)** — [50]  <!-- ds-table -->
+- **Covenant / contract pointers (CIK-verified execution filings)** — [45]  <!-- ds-table -->
 
 |  | Filing | Date | Accession / exhibit (or note) |
 |---|---|---|---|
@@ -411,7 +379,7 @@ _QoQ/YoY same-basis only; (R) = Reclassified_
 | Long Term Debt | — | — | no contract-level filing expected (aggregate line item) |
 | Operating Lease Liabilities | — | — | no contract-level filing expected (aggregate line item) |
 
-- **Covenant terms — Revolving Credit Facility (governing agreement)** — [51]  <!-- ds-table -->
+- **Covenant terms — Revolving Credit Facility (governing agreement)** — [46]  <!-- ds-table -->
 
 |  | Governing value (lead · clause ≤200c) | Source § |
 |---|---|---|
@@ -429,9 +397,9 @@ _Source §: 8-K 0001352010-17-000022 · exhibit10-1epamcreditagree.htm · amende
 ### Implied equity at peer multiples
 > **Comparability gate:** comparability: HETEROGENEOUS (see Peer comps gate)
 > _Reference only — the human judges earned vs residual (not a machine upside); the full Low/Mean/High and all bases are in the JSON._
-- **Name market cap ($M) — the ADJACENT fact to compare against:** 4017.1 [52]
-- **Bridge (TEV → equity):** TEV→equity bridge: + cash $1,037.00M, − total debt $287.90M [53]
-- **Implied equity at peer-median ($M, CIQ)** — [54]  <!-- ds-table -->
+- **Name market cap ($M) — the ADJACENT fact to compare against:** 4017.1 [47]
+- **Bridge (TEV → equity):** TEV→equity bridge: + cash $1,037.00M, − total debt $287.90M [48]
+- **Implied equity at peer-median ($M, CIQ)** — [49]  <!-- ds-table -->
 
 |  | Implied equity (median) |
 |---|---:|
@@ -441,7 +409,11 @@ _Source §: 8-K 0001352010-17-000022 · exhibit10-1epamcreditagree.htm · amende
 
 
 ### Management commentary
-- **Earnings call (transcript pointer — read the file):** 2 earnings-call transcript(s) on file — read in full for management posture: EPAM Systems, Inc., Q1 2026 Earnings Call, May 07, 2026.rtf; EPAM Systems, Inc., Q4 2025 Earnings Call, Feb 19, 2026.rtf (pointer only; the synthesis cites them, the machine does not curate an excerpt) [55]
+- **Earnings call (transcript pointer — read the file):** 2 earnings-call transcript(s) on file — read in full for management posture: EPAM Systems, Inc., Q1 2026 Earnings Call, May 07, 2026.rtf; EPAM Systems, Inc., Q4 2025 Earnings Call, Feb 19, 2026.rtf (pointer only; the synthesis cites them, the machine does not curate an excerpt) [50]
+
+### Assembly verification — filing vs panel
+- **Wall coherence — filing ≤12m vs CIQ panel (same window):** wall coherence: UNKNOWN — filing states no ≤12m figure [51]
+- **Guide verification — CIQ guide vs release:** revenue: CIQ 1400.0–1415.0 vs release NO NUMERIC OUTLOOK → not cross-checked [52]
 
 ## Record & reproduce
 - **Data window:** screened as of 2026-07-06 · assembled 2026-07-10 06:59 UTC
@@ -472,40 +444,37 @@ _Source §: 8-K 0001352010-17-000022 · exhibit10-1epamcreditagree.htm · amende
 [16] `CIQ Comparable Analysis→Trading Multiples (name vs peer Median)`
 [17] `CIQ Comparable Analysis→Financial Data (market-cap dispersion) + Business Description`
 [18] `CIQ Estimates→Consensus (target stats) + Trends Non-Periodic (ratings)`
-[19] `EOD gap-down detector (screen events)`
-[20] `CIQ Comparable Analysis→Operating Statistics (LTM Total Debt/EBITDA) · as-of 2026-06-24`
-[21] `CIQ Net Debt $-749M [Q1 Mar-31-2026] ÷ CIQ OCF $594M [LTM 12 months Mar-31-2026]`
-[22] `CIQ Net Debt ÷ CIQ LTM EBITDA (EDGAR XBRL breadth fallback) + FCF sign (survival capacity)`
-[23] `CIQ Financials→Cash Flow 'Levered Free Cash Flow' [LTM 12 months Mar-31-2026]`
-[24] `CIQ Financials→Capital Structure Details (A 2025 filed Feb-26-2026)`
-[25] `CIQ Financials→Capital Structure Summary`
-[26] `10-Q 0001352010-26-000029`
-[27] `10-Q maturity wall vs CIQ capital panel (same window)`
-[28] `CIQ leverage bases + release LTM adj-EBITDA/margins`
-[29] `CIQ revenue guide vs release actual/outlook`
-[30] `EDGAR XBRL shares, trailing 2024-07-31..2026-04-30`
-[31] `CIQ Financials→Ratios (RoE / RoCE / RoA + leverage, multi-year columns)`
-[32] `TEV = mcap 4017.1 + net debt -749.0 (CIQ Comparable Analysis→Financial Data, Latest, as-of 2026-06-24) — simple-TEV basis`
-[33] `EDGAR XBRL eps_diluted × EOD price (screen data-record, G3)`
-[34] `CIQ Financials→Multiples 'TEV/LTM EBITDA' Close (latest) — current multiple`
-[35] `CIQ Comparable Analysis→Financial Data + Business Description (roster + caps + business)`
-[36] `CIQ Comparable Analysis→Trading Multiples (name row + Summary Statistics Low/Median/Mean/High)`
-[37] `CIQ Comparable Analysis→Financial Data + Operating Statistics (per-peer grid) · as-of 2026-06-24`
-[38] `CIQ Estimates→Trends (current-FY consensus path; ragged, absent lookbacks n/a)`
-[39] `CIQ Estimates→Multiples (forward-multiple ladder: NTM + FY26→FY33)`
-[40] `CIQ Estimates→Guidance (latest guide + sign-aware delivery track-record)`
-[41] `CIQ Estimates→Recent Changes (250 broker revision events)  [data ≥ 2026-06-18 · export date unverified]`
-[42] `CIQ Estimates→Surprise (annual)`
-[43] `EDGAR Form 4 (latest 0001355666-26-000002; 25 in 6m)`
-[44] `FINRA consolidated short interest (settle 2026-06-15); DTC = 10,307,704 short ÷ 1,970,609 screen 90d ADV`
-[45] `CIQ Customers&Suppliers EPAM Systems Inc NYSE EPAM Customers.rtf`
-[46] `CIQ Estimates→Consensus`
-[47] `CIQ Financials→Income Statement (quarterly, full exported history)`
-[48] `CIQ Financials→Balance Sheet (quarterly, Q1-26)`
-[49] `CIQ Financials→Balance Sheet vs Comparable Analysis→Implied Valuation`
-[50] `EDGAR 10-K exhibit index + CIK-scoped efts (agreement-class, exhibit-bearing)`
-[51] `fenced Tier-2 extraction (verbatim, source-bound)`
-[52] `CIQ Comparable Analysis→Financial Data (name Market Capitalization Latest) · as-of 2026-06-24`
-[53] `CIQ Comparable Analysis→Implied Valuation (cash/debt bridge) · as-of 2026-06-24`
-[54] `CIQ Comparable Analysis→Implied Valuation (= Implied Equity Value, basis × Low/Median/Mean/High) · as-of 2026-06-24`
-[55] `CIQ transcript(s): EPAM Systems, Inc., Q1 2026 Earnings Call, May 07, 2026.rtf; EPAM Systems, Inc., Q4 2025 Earnings Call, Feb 19, 2026.rtf`
+[19] `CIQ Comparable Analysis→Operating Statistics (LTM Total Debt/EBITDA) · as-of 2026-06-24`
+[20] `CIQ Net Debt $-749M [Q1 Mar-31-2026] ÷ CIQ OCF $594M [LTM 12 months Mar-31-2026]`
+[21] `CIQ Financials→Cash Flow 'Levered Free Cash Flow' [LTM 12 months Mar-31-2026]`
+[22] `CIQ Financials→Capital Structure Details (A 2025 filed Feb-26-2026)`
+[23] `CIQ Financials→Capital Structure Summary`
+[24] `10-Q 0001352010-26-000029`
+[25] `CIQ leverage bases + release LTM adj-EBITDA/margins`
+[26] `EDGAR XBRL shares, trailing 2024-07-31..2026-04-30`
+[27] `CIQ Financials→Ratios (RoE / RoCE / RoA + leverage, multi-year columns)`
+[28] `TEV = mcap 4017.1 + net debt -749.0 (CIQ Comparable Analysis→Financial Data, Latest, as-of 2026-06-24) — simple-TEV basis`
+[29] `CIQ Comparable Analysis→Financial Data + Business Description (roster + caps + business)`
+[30] `CIQ Comparable Analysis→Trading Multiples (name row + Summary Statistics Low/Median/Mean/High)`
+[31] `CIQ Comparable Analysis→Financial Data + Operating Statistics (per-peer grid) · as-of 2026-06-24`
+[32] `CIQ Estimates→Trends (current-FY consensus path; ragged, absent lookbacks n/a)`
+[33] `CIQ Estimates→Multiples (forward-multiple ladder: NTM + FY26→FY33)`
+[34] `CIQ Estimates→Guidance (latest guide + sign-aware delivery track-record)`
+[35] `CIQ Estimates→Recent Changes (250 broker revision events)  [data ≥ 2026-06-18 · export date unverified]`
+[36] `CIQ Estimates→Surprise (annual)`
+[37] `EDGAR Form 4 (latest 0001355666-26-000002; 25 in 6m)`
+[38] `FINRA consolidated short interest (settle 2026-06-15); DTC = 10,307,704 short ÷ 1,970,609 screen 90d ADV`
+[39] `CIQ Customers&Suppliers EPAM Systems Inc NYSE EPAM Customers.rtf`
+[40] `CIQ Estimates→Consensus`
+[41] `CIQ Net Debt ÷ CIQ LTM EBITDA (EDGAR XBRL breadth fallback) + FCF sign (survival capacity)`
+[42] `CIQ Financials→Income Statement (quarterly, full exported history)`
+[43] `CIQ Financials→Balance Sheet (quarterly, Q1-26)`
+[44] `CIQ Financials→Balance Sheet vs Comparable Analysis→Implied Valuation`
+[45] `EDGAR 10-K exhibit index + CIK-scoped efts (agreement-class, exhibit-bearing)`
+[46] `fenced Tier-2 extraction (verbatim, source-bound)`
+[47] `CIQ Comparable Analysis→Financial Data (name Market Capitalization Latest) · as-of 2026-06-24`
+[48] `CIQ Comparable Analysis→Implied Valuation (cash/debt bridge) · as-of 2026-06-24`
+[49] `CIQ Comparable Analysis→Implied Valuation (= Implied Equity Value, basis × Low/Median/Mean/High) · as-of 2026-06-24`
+[50] `CIQ transcript(s): EPAM Systems, Inc., Q1 2026 Earnings Call, May 07, 2026.rtf; EPAM Systems, Inc., Q4 2025 Earnings Call, Feb 19, 2026.rtf`
+[51] `10-Q maturity wall vs CIQ capital panel (same window)`
+[52] `CIQ revenue guide vs release actual/outlook`

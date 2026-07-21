@@ -684,8 +684,9 @@ def _validate(
     # '… eroding, mixed cash generation' (a bearish read) trips the flag on a mid-sentence word.
     elif "mixed" in lean and (nb + nr) >= 3 and (min(nb, nr) == 0 or max(nb, nr) > 2 * min(nb, nr)):
         flags.append(
-            f"FALSE-BALANCE? evidence_balance reads 'mixed' but the bull/bear split is lopsided "
-            f"({nb} bull vs {nr} bear) — confirm genuinely mixed, not one-sided dressed as balanced"
+            f"FALSE-BALANCE? the written assessment reads 'mixed' but the bull/bear split is "
+            f"lopsided ({nb} bull vs {nr} bear) — confirm genuinely mixed, not one-sided dressed "
+            f"as balanced"
         )
     elif "strong" in lean and ("bear" in lean or "bull" in lean) and (nb + nr) >= 3:
         lean_bear = "bear" in lean
@@ -694,7 +695,7 @@ def _validate(
         if near_symmetric and not any(_OUTWEIGHED.search(p.claim) for p in minority):
             side = "bull" if lean_bear else "bear"
             flags.append(
-                f"FALSE-BALANCE? evidence_balance commits a strong lean but the body is "
+                f"FALSE-BALANCE? the written assessment commits a strong lean but the body is "
                 f"near-symmetric ({nb} bull vs {nr} bear) and the minority {side}_points aren't "
                 "qualified-as-outweighed — size the minority against the lean (rule 7), or it "
                 "launders a one-sided case"

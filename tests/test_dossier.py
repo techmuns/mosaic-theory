@@ -1165,11 +1165,18 @@ def test_primary_source_render_surfaces_and_supersede() -> None:
         "primary_source": _primary_source_fixture(doubt=True), "leverage_survival": lv})
     block = "\n".join(dr._primary_source_block(m))
     assert "SUBSTANTIAL DOUBT" in block and "going concern" in block.lower()
-    assert "109.6" in block and "AGREES" in block
-    assert "~18.7x" in block and "covenant basis: UNKNOWN" in block and "VENDOR-ECHO" in block
+    assert "~18.7x" in block and "covenant basis: UNKNOWN" in block
     assert "Customer A: 52.0% (prior 31.0%)" in block
+    # (declutter) the VERIFICATION flags moved to the appendix block — not between decision sections
+    assert "Wall coherence" not in block and "Guide verification" not in block
+    ver = "\n".join(dr._verification_lines(m))
+    assert "109.6" in ver and "AGREES" in ver, "wall coherence must survive in the appendix"
+    assert "VENDOR-ECHO" in ver, "guide verification must survive in the appendix"
+    # (declutter) the two-input read REPLACES the one-input survival line (no superseded line left)
     lev = "\n".join(dr._leverage_block(m))
-    assert "supersedes the line above" in lev and "MIXED" in lev  # adjacent to the one-input claim
+    assert "Self-funding (two-input" in lev and "MIXED" in lev
+    assert "supersedes the line above" not in lev
+    assert "Survival (self-funding + nearest wall)" not in lev
     m2 = _minimal_mech().model_copy(update={"primary_source": _primary_source_fixture(doubt=False)})
     block2 = "\n".join(dr._primary_source_block(m2))
     assert "none in latest 10-Q — checked, absent" in block2
@@ -3008,9 +3015,13 @@ def test_k6_99_1_unknown_reason_renders_once_on_real_mvst() -> None:
            if ln.startswith("- **") and "_UNKNOWN_" in ln and "99.1" in ln]
     assert len(unk) == 1, f"99.1 unknown-reason occurrences must be 1, got {len(unk)}"
     assert "Revised guidance" in unk[0] and "fwd-adj" in unk[0]  # all affected fields named
-    coh = [ln for ln in md.splitlines()
-           if ln.startswith("- **") and "_UNKNOWN_" in ln and "exposed" in ln]
-    assert len(coh) == 1  # graph-cohort folds to one too
+    # (declutter) the reason reads plain — no Python list-repr survives anywhere in the render
+    # (the repr→plain transform itself is pinned on a frozen string in
+    # test_display_transforms_read_plain; MVST's own note never carried one)
+    assert "['" not in unk[0]
+    # (declutter) the graph-cohort absence renders as ONE plain line, no internal filename
+    assert "graph_coverage.json" not in md
+    assert md.count("Supplier/customer cohort") == 1
 
 
 def test_k1_covenant_value_lead_extracts_the_decision_figure_before_clip() -> None:
@@ -5091,7 +5102,8 @@ def test_fresh_dossier_renders_catalyst_path_in_place_of_consensus_slot() -> Non
         assembled_at=datetime(2026, 6, 1, 12, 0),
     )
     md = dr.render_markdown(dossier)
-    assert "### The street — estimates & guidance (as-of 2026-05-15)" in md
+    assert "### The street — estimates & guidance" in md
+    assert "_as-of 2026-05-15_" in md  # (declutter) the vintage is a line, not heading furniture
     assert "146.5 (6m) → 62.1 (now)" in md
     # events COMPRESSED (T3): one line per broker-day with the action mix + the headline revision
     assert "2026-05-15 · HCW" in md and "EBITDA FY 2026 146.5→62.1" in md
@@ -5577,7 +5589,12 @@ def test_peer_comps_section_reaches_the_rendered_markdown() -> None:
     md = dr.render_markdown(dossier)
     assert "### Peer comps" in md  # the section is wired into the mechanical-layer render
     assert "Roku" in md and "$306.6B" in md  # the roster + caps reach the page
-    assert "| NM |" in md  # NM survives to the rendered artifact — now a trading-multiples cell
+    # (declutter) with the grid present the multiples table keeps its FORWARD rows only — the LTM
+    # rows were the grid's own summary statistics restated. NM still reaches the artifact (the
+    # grid's name row), and the NM legend rides the table that remains.
+    assert "Forward multiples (name vs peer Low/Median/Mean/High · NTM)" in md
+    assert "**NM**" in md  # NM survives — a real state (negative base), never silently dropped
+    assert "NM = a real state" in md
     # B1: the per-peer grid replaces the median-only deltas line — name vs peers + a median footer,
     # rendered through the shared table renderer (no computed discount/delta).
     assert "Per-peer grid" in md and "Peer median" in md and dr._TABLE_MARK in md
@@ -5855,7 +5872,9 @@ def test_all_rendered_tables_route_through_the_shared_renderer() -> None:
     n_tables = sum(1 for ln in md.splitlines() if ln.startswith("|---"))
     assert n_tables >= 6  # roster + trading multiples + per-peer grid + implied equity + C1 + C2
     assert md.count(dr._TABLE_MARK) == n_tables  # NO table bypasses the shared renderer
-    for lbl in ("Peer set", "Trading multiples", "Per-peer grid", "Implied equity at peer-median",
+    # (declutter) with the grid present the multiples table is FORWARD-only (LTM rows were the
+    # grid's summary statistics restated)
+    for lbl in ("Peer set", "Forward multiples", "Per-peer grid", "Implied equity at peer-median",
                 "Annual financials", "Quarterly financials"):  # incl. the C1/C2 appendix tables
         assert _re.search(_re.escape(lbl) + r"[^\n]*" + _re.escape(dr._TABLE_MARK), md), lbl
     # every GFM table must be COLUMN-ALIGNED: header, separator, and each data row carry the SAME
@@ -7246,3 +7265,71 @@ def test_financials_backfill_refuses_a_newer_workbook() -> None:
                                   "rows": [{"label": "R", "cells": ["0", "1", "2"]}]}}}
     assert cli._fs_value_drift(dup_c, dup_f) == [], (
         "positional compare must survive duplicate labels")
+
+
+def test_display_transforms_read_plain() -> None:
+    """(declutter P3) The display transforms turn machine dialect into reader register — display
+    ONLY, dossier.json untouched. Frozen-string pins; each transform has a JS twin in dossier.js
+    (source-pinned below)."""
+    assert dr._fmt_insider(
+        "Open-market buys 1 · sells 0 (net +0.1K sh) · grants 0 · last 2026-07-06 · "
+        "other F×46/G×6/J×34/M×56"
+    ).endswith("other filings 142")
+    # a string with no code tail passes through verbatim
+    assert dr._fmt_insider("Open-market buys 2 · sells 1") == "Open-market buys 2 · sells 1"
+    dump = ("A Co (KOSE:X) — The Name · Client Services · src: Banks; "
+            "B Co (IBSE:Y) — The Name Sub · Client Services · src: Software")
+    out = dr._fmt_customers(dump)
+    assert "2 mapped client relationship(s)" in out and "src:" not in out
+    assert dr._fmt_customers("top customer 28% of revenue") == "top customer 28% of revenue"
+    assert dr._fmt_shape("discrete gap-downs — 2026-02-03 earnings (2.02) + Reg-FD (7.01)") == \
+        "discrete gap-downs — 2026-02-03 earnings + Reg-FD"
+    assert dr._fmt_guide_verification(
+        "guide verification (revenue): CIQ 6405.0–6405.0 vs release QUALITATIVE → plausibility "
+        "flag; render the qualitative growth line"
+    ) == "revenue: CIQ 6405.0 vs release QUALITATIVE → plausibility flag"
+    assert dr._clean_note("no revised-outlook 99.1 exhibit parsed for 8-Ks "
+                          "['0000749251-26-000028']") == \
+        "no revised-outlook 99.1 exhibit parsed for the filed 8-K 0000749251-26-000028"
+    assert "ambiguous in the export" in dr._clean_note(
+        "Credit Health Panel: scale direction ambiguous — not rendered")
+    # the JS twins exist (mirrored renderers — node-free source pins)
+    js = Path("frontend/views/shared/dossier.js").read_text()
+    for fn in ("function fmtInsider", "function fmtCustomers", "function fmtShape",
+               "function cleanNote"):
+        assert fn in js, f"missing JS twin: {fn}"
+
+
+def test_contradiction_suppressions_on_frozen_fixtures() -> None:
+    """(declutter P1) The four surface contradictions stay fixed: an UNKNOWN market row never
+    renders beside a PRESENT relative; an UNKNOWN FCF-sign row never renders beside a PRESENT FCF
+    value; the honest-absence cases still render both rows."""
+    p, u = ds.Sourced.present, ds.Sourced.unknown
+    io_mixed = ds.IdiosyncraticVsShared(
+        name_180d_return=p(-0.45, source_ref="EOD"),
+        market_180d_return=u(note="IWM benchmark bars unavailable"),
+        rel_vs_market=p(-0.61, source_ref="EOD"),
+        read=u(note="no graph cohort"), cohort=u(note="not in coverage"))
+    m1 = _minimal_mech().model_copy(update={"idiosyncratic_vs_shared": io_mixed})
+    d1 = ds.Dossier(ticker="X", name="X", cik="0", reference_date=date(2026, 6, 1), rank=1,
+                    mechanical=m1, synthesis=None, caveats=[], qa_flags=[], llm_model=None,
+                    assembled_at=datetime(2026, 6, 1, 12, 0))
+    md1 = dr.render_markdown(d1)
+    assert "Market (IWM) 180d return:** _UNKNOWN_" not in md1, (
+        "an UNKNOWN market row beside a present relative reads as a contradiction")
+    assert "Relative vs market:** -61.0%" in md1
+    # honest absence: BOTH absent → the market row renders with its reason
+    io_both = io_mixed.model_copy(update={"rel_vs_market": u(note="no bars")})
+    m2 = m1.model_copy(update={"idiosyncratic_vs_shared": io_both})
+    md2 = dr.render_markdown(d1.model_copy(update={"mechanical": m2}))
+    assert "Market (IWM) 180d return:** _UNKNOWN_" in md2
+    # FCF: sign UNKNOWN + value present → sign row suppressed; both absent → sign row renders
+    q1 = _minimal_mech().quality.model_copy(update={
+        "fcf_sign": u(note="no OCF/capex"), "free_cash_flow": p(1064.2, source_ref="CIQ CF")})
+    m3 = _minimal_mech().model_copy(update={"quality": q1})
+    md3 = dr.render_markdown(d1.model_copy(update={"mechanical": m3}))
+    assert "FCF sign:** _UNKNOWN_" not in md3 and "Free cash flow ($M):** 1064.2" in md3
+    q2 = q1.model_copy(update={"free_cash_flow": u(note="no CF sheet")})
+    m4 = m3.model_copy(update={"quality": q2})
+    md4 = dr.render_markdown(d1.model_copy(update={"mechanical": m4}))
+    assert "FCF sign:** _UNKNOWN_" in md4
