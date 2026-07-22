@@ -330,7 +330,8 @@ def test_uw_card_ev_revenue_shows_no_dead_margin_rows_node() -> None:
         pytest.skip("node unavailable")
     card_path = Path(__file__).resolve().parents[1] / "frontend" / "scenarios" / "FUBO.json"
     if not card_path.exists():
-        pytest.skip("no EV/Revenue card committed yet")
+        pytest.skip("no EV/Revenue card committed yet — awaiting combined-entity re-scope, "
+                    "not this build")
     driver = r"""
 import { readFileSync } from "node:fs";
 import { pathToFileURL } from "node:url";
