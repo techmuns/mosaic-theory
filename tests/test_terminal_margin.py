@@ -411,3 +411,68 @@ def test_a_self_funding_company_needs_no_burn_fact() -> None:
         fcf=82.5, fcf_basis="latest FY2026", fcf_source="EDGAR OCF−capex", cash=200.0)))
     assert r.result.survival is not None and r.result.survival.status == "PASS"
     assert r.result.per_scenario["base"].net_debt_t == pytest.approx(223.9)
+
+
+# --- going concern: the trivial pass is FORBIDDEN (MVST is the falsifier) ------------------------
+def test_going_concern_forbids_the_trivial_pass_on_positive_trailing_fcf() -> None:
+    """THE MVST SHAPE, and the reason this branch exists. Trailing free cash flow was +$56.1M — a
+    clean trivial pass under the old gate, which returned "the company funds itself and has no
+    runway question" — while the filer's own 10-Q states substantial doubt about its ability to
+    continue and the latest quarter annualises to a $102.6M BURN.
+
+    The disclosure is about the future and the cash flow is about the past, so the past cannot
+    overturn it. With going concern stated the gate evaluates on the supplied burn, never on the
+    trailing sign."""
+    s = tm.survival_gate(
+        fcf=+56.074, fcf_basis="trailing annual", fcf_source="EDGAR",
+        cash=126.1, facilities=98.0, facilities_source="at-the-market remaining capacity",
+        years_to_breakeven=3.0, going_concern_stated=True,
+        going_concern_accession="0001628280-26-033590",
+        burn_override=102.6, burn_override_basis="latest quarter annualised",
+        latest_period_fcf=-25.65)
+    assert s.status == "FAIL"
+    assert "trivial pass" not in s.note, "the false-pass path is still reachable"
+    assert s.burn == pytest.approx(102.6), "evaluated on the trailing figure, not the stated burn"
+    assert s.runway_years == pytest.approx((126.1 + 98.0) / 102.6, abs=1e-6)
+    assert any("going concern" in d for d in s.detail)
+    assert any("0001628280-26-033590" in d for d in s.detail)
+
+
+def test_going_concern_without_a_burn_override_refuses() -> None:
+    """The override is MANDATORY once going concern is stated — the trailing figure is exactly the
+    number the disclosure contradicts, so falling back to it would defeat the branch."""
+    s = tm.survival_gate(fcf=+56.074, fcf_basis="trailing annual", fcf_source="EDGAR",
+                         cash=126.1, years_to_breakeven=3.0, going_concern_stated=True)
+    assert s.status == "FAIL" and "NO burn override" in s.note
+
+
+def test_sign_contradiction_is_always_printed() -> None:
+    """A trailing figure and a latest period with opposite signs is reported whatever the gate
+    concludes — a reader shown only the annual number would draw the opposite conclusion."""
+    s = tm.survival_gate(fcf=+56.074, fcf_basis="trailing annual", fcf_source="EDGAR",
+                         cash=500.0, latest_period_fcf=-25.65)
+    assert s.status == "PASS"                      # not a going-concern name; trivial pass stands
+    assert any("OPPOSITE SIGNS" in d for d in s.detail)
+
+
+def test_facility_credit_and_the_raise_move_together() -> None:
+    """COHERENCE, no half-credit. A committed facility credits RUNWAY here; where it is drawn, the
+    same event must move shares_T AND terminal net debt in the engine — proceeds reduce net debt
+    and the shares land on the count. Asserted jointly so neither can be taken alone."""
+    s = tm.survival_gate(fcf=-100.0, fcf_basis="annual", fcf_source="EDGAR", cash=50.0,
+                         facilities=100.0, facilities_source="ATM remaining",
+                         years_to_breakeven=1.0)
+    assert s.status == "PASS" and s.runway_years == pytest.approx(1.5)   # facility credited
+    base = tm.terminal_value(_leg(), basis=tm.BASIS_EBITDA, **_BRIDGE)
+    drawn = tm.terminal_value(_leg(), basis=tm.BASIS_EBITDA,
+                              **{**_BRIDGE, "net_debt_now": _BRIDGE["net_debt_now"] - 100.0},
+                              raise_shares=90e6)
+    assert drawn.net_debt_t == pytest.approx(base.net_debt_t - 100.0), "proceeds did not land"
+    assert drawn.shares_t == pytest.approx(base.shares_t + 90e6), "shares did not land"
+
+
+def test_trivial_pass_still_works_for_a_clean_name() -> None:
+    """REGRESSION: NCNO/AORT-shaped names must keep their trivial pass — the new branch is scoped
+    to a stated going concern, not to every positive-FCF name."""
+    s = tm.survival_gate(fcf=82.564, fcf_basis="latest FY", fcf_source="EDGAR", cash=200.0)
+    assert s.status == "PASS" and "trivial pass" in s.note and s.burn is None
