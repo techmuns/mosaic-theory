@@ -4,9 +4,11 @@ pinned on real filenames. A miss fails LOUD (qa_flags), never fabricating a valu
 """
 from __future__ import annotations
 
+import typing
 from typing import Any
 
 from vinci.edgar import release_parse as rp
+from vinci.netcache import CachedHttp, HttpError
 
 _SRC = "8-K 0000000000-00-000000 Ex-99.1"
 
@@ -160,3 +162,92 @@ def test_release_parse_fail_loud_no_pattern() -> None:
                           source_ref=_SRC)
     assert ex.reconciliation == [] and ex.guidance == [] and ex.event_impacts == []
     assert ex.one_offs == [] and any("no anchored pattern matched" in f for f in ex.qa_flags)
+
+
+# --- Ex-99.1 discovery: EDGAR's SGML TYPE leads, the filename guess is the fallback ---------------
+# REAL filenames observed 2026-07-22 across every 2.02/8.01 8-K of the eleven committed names.
+_EX991_REAL_NAMES = (
+    "aort-2025x8k063025ex991.htm", "form8k-ex991.htm", "ex991nov25sharerepurchasepr.htm",
+    "ex99-1.htm", "it-12312025xex991.htm", "it-09302025xex991_gdm.htm",
+    "mvst2026q1ex991earningspre.htm", "vitl-ex99_1.htm", "d123116dex991.htm", "vrrm-ex99_1.htm",
+    # the five conventions the filename rule NEVER matched (24 of 53 releases lost)
+    "brbrexh991-q12026earningsr.htm", "exhibit991-pressrelease.htm", "exhibit991q22026.htm",
+    "exhibit991pressreleaseofnc.htm", "a991_pressreleasexq2x2026.htm",
+    "exhibit99_q1x2026.htm",  # EPAM — its only '1' comes from "q1"; no filename rule can win here
+)
+
+
+class _FakeHttp:
+    """Minimal CachedHttp stand-in — records calls, serves canned header/index payloads."""
+
+    def __init__(self, header_text: str | None, index_names: list[str] | None = None) -> None:
+        self._header, self._names, self.calls = header_text, index_names or [], []
+
+    def get_text(self, url: str, **_kw: object) -> str:
+        self.calls.append(url)
+        if self._header is None:
+            raise HttpError("no header")
+        return self._header
+
+    def get_json(self, url: str, **_kw: object) -> dict[str, object]:
+        self.calls.append(url)
+        return {"directory": {"item": [{"name": n} for n in self._names]}}
+
+
+def _headers_html(pairs: list[tuple[str, str]]) -> str:
+    """The -index-headers page as EDGAR serves it: SGML tags HTML-ESCAPED."""
+    body = "".join(
+        f"&lt;DOCUMENT&gt; &lt;TYPE&gt;{ty} &lt;SEQUENCE&gt;{i} &lt;FILENAME&gt;{fn} "
+        f"&lt;DESCRIPTION&gt;{ty} &lt;/DOCUMENT&gt;"
+        for i, (ty, fn) in enumerate(pairs, start=1)
+    )
+    return f"<html><body><pre>&lt;SEC-HEADER&gt;{body}</pre></body></html>"
+
+
+def test_ex991_urls_prefer_the_sgml_type_over_the_filename() -> None:
+    """The authoritative path: EDGAR types the exhibit, so a press release is found REGARDLESS of
+    its filename — including EPAM's 'exhibit99_q1x2026.htm', which no filename rule can classify
+    (its '1' is the quarter). EX-99.2 in the same filing is never picked up."""
+    http = _FakeHttp(_headers_html([
+        ("8-K", "epam-20260507.htm"),
+        ("EX-99.1", "exhibit99_q1x2026.htm"),
+        ("EX-99.2", "someother.htm"),
+    ]))
+    urls = rp.exhibit_991_urls(typing.cast(CachedHttp, http), "0001352010", "0001352010-26-000026")
+    assert len(urls) == 1 and urls[0].endswith("/exhibit99_q1x2026.htm")
+    assert not rp._is_ex991("exhibit99_q1x2026.htm"), "the filename rule alone would have missed it"
+
+
+def test_ex991_urls_return_every_furnished_release_and_reject_neighbours() -> None:
+    """A filing can furnish more than one 99.1; 99.10/99.11 are DIFFERENT exhibits, and a
+    non-text document is never fetched as prose."""
+    http = _FakeHttp(_headers_html([
+        ("EX-99.1", "a991_pressreleasexq2x2026.htm"),
+        ("EX-99.1", "second-release.htm"),
+        ("EX-99.10", "ex9910.htm"),
+        ("EX-99.11", "ex9911.htm"),
+        ("EX-99.1", "deck.pdf"),
+    ]))
+    urls = rp.exhibit_991_urls(typing.cast(CachedHttp, http), "0001702744", "0001702744-26-000010")
+    assert [u.rsplit("/", 1)[1] for u in urls] == [
+        "a991_pressreleasexq2x2026.htm", "second-release.htm"]
+
+
+def test_ex991_urls_fall_back_to_the_filename_when_the_header_is_unreadable() -> None:
+    """Header unreachable → the filename guess still finds the conventionally-named exhibit
+    (degrade, never crash); a filing that furnishes none returns []."""
+    http = _FakeHttp(None, index_names=["it-12312025xex991.htm", "it-20260129.htm"])
+    urls = rp.exhibit_991_urls(typing.cast(CachedHttp, http), "0000749251", "0000749251-26-000028")
+    assert len(urls) == 1 and urls[0].endswith("/it-12312025xex991.htm")
+    empty = _FakeHttp(None, index_names=["primary-doc.htm", "FilingSummary.xml"])
+    assert rp.exhibit_991_urls(typing.cast(CachedHttp, empty), "1", "0-0-0") == []
+
+
+def test_sgml_detection_covers_every_real_filename_the_regex_missed() -> None:
+    """The full observed corpus: TYPE-based discovery finds all of them, and the filename rule is
+    measurably weaker — the gap this change closes."""
+    http = _FakeHttp(_headers_html([("EX-99.1", n) for n in _EX991_REAL_NAMES]))
+    urls = rp.exhibit_991_urls(typing.cast(CachedHttp, http), "1", "0-0-0")
+    assert len(urls) == len(_EX991_REAL_NAMES), "TYPE lookup must find every real press release"
+    by_name = sum(1 for n in _EX991_REAL_NAMES if rp._is_ex991(n))
+    assert by_name < len(_EX991_REAL_NAMES), "the filename rule is a strict subset (the bug)"

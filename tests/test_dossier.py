@@ -4047,12 +4047,14 @@ def test_revised_guidance_extracts_figures_block_not_lede() -> None:
     assert dm._extract_revised_guidance("An earnings call. Revenue grew. No outlook given.") is None
 
 
-def test_ex_991_name_matcher() -> None:
-    assert dm._is_ex991("d123116dex991.htm")  # RR Donnelley 'dex991' form (VRRM's filer)
-    assert dm._is_ex991("ex-99.1.htm") and dm._is_ex991("ex99d1.htm")
-    assert not dm._is_ex991("ex99.2.htm")  # 99.2 is a different exhibit
-    assert not dm._is_ex991("ex99.10.htm")  # 99.10, not 99.1
-    assert not dm._is_ex991("FilingSummary.xml")  # not a readable document
+def test_ex_991_detector_lives_in_exactly_one_place() -> None:
+    """This module used to carry its OWN copy of the Ex-99.1 filename regex, and the two copies
+    DRIFTED — the one here never learned the '_' separator class, so it missed 'ex99_1.htm' that
+    the other matched. The rule now lives once, in release_parse; mechanical delegates."""
+    src = Path("vinci/dossier/mechanical.py").read_text()
+    assert "_EX991" not in src, "the duplicate detector must not come back"
+    assert "def _is_ex991" not in src
+    assert "release_parse.exhibit_991_urls(http, cik, accession)" in src
 
 
 # --- item 3: render formatters (raw float → legible at render; source value untouched) --------
@@ -7906,3 +7908,24 @@ def test_scenario_table_renders_a_revenue_basis_leg_without_a_margin() -> None:
     assert cells[2] == "—", f"absent margin must render as an em-dash, got {cells[2]!r}"
     assert "%" not in cells[2]  # never a fabricated 0.0% margin
     assert cells[1] == "500" and cells[3] == "2.5x" and cells[4] == "$12.00"
+
+
+def test_assembly_writes_no_synthesis_less_dossier_over_a_good_one_undetected() -> None:
+    """(INCIDENT 2026-07-22, recorded risk) A transient LLM failure during `dossier assemble`
+    makes ``synthesize`` return None; the assembler then WRITES the dossier anyway with
+    ``synthesis: None``, silently replacing a committed synthesis with nothing. Observed live:
+    BRBR's 6-bull/8-bear synthesis was wiped by one flaky call, and the only signal was the word
+    'NO-synth' in a summary line — a retry succeeded.
+
+    This pins the DISCLOSURE that must exist so the loss is never silent: the failure emits a flag
+    naming it. The surviving risk (the write itself is not blocked) is recorded in STATE.md."""
+    import inspect
+
+    from vinci.dossier import synthesis as dsynth
+
+    src = inspect.getsource(dsynth.synthesize)
+    assert "LLM synthesis failed (no usable output)" in src, (
+        "a synthesis failure must emit a named flag, never a bare None")
+    asm = Path("vinci/dossier/assemble.py").read_text()
+    assert "LLM synthesis skipped (no ANTHROPIC client) — mechanical layer only" in asm, (
+        "a skipped synthesis must be disclosed on the dossier, not inferred from a console line")

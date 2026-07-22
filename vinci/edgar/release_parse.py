@@ -14,6 +14,7 @@ Text is read pre-normalized (vinci.graph.filings.normalize_text folds the nbsp E
 """
 from __future__ import annotations
 
+import html
 import re
 
 from vinci.dossier.schemas import (
@@ -30,31 +31,70 @@ from vinci.resolver.index import pad_cik
 
 _INDEX = "https://www.sec.gov/Archives/edgar/data/{cik}/{acc}/index.json"
 _ARCHIVE = "https://www.sec.gov/Archives/edgar/data/{cik}/{acc}/{doc}"
+_HEADERS = "https://www.sec.gov/Archives/edgar/data/{cik}/{acc}/{acc_dashed}-index-headers.html"
 
-# TOLERANT Ex-99.1 filename match: 'ex991' / 'dex991' / 'ex-99.1' / 'ex99_1' — ANY separators,
-# including the '_' WORD char that the old \W* class dropped (→ vrrm-ex99_1.htm was missed).
-# The final '1' requirement + (?!\d) exclude 99.2 / ex99_2 (the char after the separators is not 1).
-_EX991 = re.compile(r"ex[\W_]*99[\W_]*d?[\W_]*1(?!\d)", re.I)
+# TOLERANT Ex-99.1 filename match — the FALLBACK only (see exhibit_991_urls): 'ex991' / 'dex991' /
+# 'ex-99.1' / 'ex99_1', any separators including the '_' WORD char that a \W* class drops.
+# The final '1' + (?!\d) exclude 99.2 / 99.10. Filenames are a GUESS: filers also ship
+# 'a991_pressrelease…', 'exhibit991…', 'exh991…' (unmatched here), and EPAM's 'exhibit99_q1x2026'
+# matches only by the accident of "q1" — which is precisely why the TYPE lookup below leads.
+_EX991_NAME = re.compile(r"ex[\W_]*99[\W_]*d?[\W_]*1(?!\d)", re.I)
+# EDGAR's own per-document SGML header: <TYPE>EX-99.1 … <FILENAME>whatever.htm. Served
+# HTML-ESCAPED inside the -index-headers page, so the caller unescapes before matching.
+_SGML_DOC = re.compile(r"<TYPE>([^\s<]+)[\s\S]{0,400}?<FILENAME>([^\s<]+)", re.I)
+_TEXT_DOC = (".htm", ".html", ".txt")
 
 
 def _is_ex991(name: str) -> bool:
+    """Filename-shaped guess at an Ex-99.1 press release (the fallback path)."""
     low = name.lower()
-    return low.endswith((".htm", ".html", ".txt")) and _EX991.search(low) is not None
+    return low.endswith(_TEXT_DOC) and _EX991_NAME.search(low) is not None
+
+
+def _ex991_names_from_headers(http: CachedHttp, cik: str, accession: str) -> list[str] | None:
+    """Filenames EDGAR itself types as EX-99.1, from the filing's SGML header.
+
+    The AUTHORITATIVE source: the header states the exhibit designator, so no filename convention
+    has to be guessed. Returns None when the header is unreachable/unparseable (caller falls back
+    to the filename match) — distinct from [] which means 'read it, this filing furnishes none'."""
+    acc = accession.replace("-", "")
+    url = _HEADERS.format(cik=int(pad_cik(cik)), acc=acc, acc_dashed=accession)
+    try:
+        raw = http.get_text(url, ttl_seconds=None)
+    except (HttpError, ValueError):
+        return None
+    text = html.unescape(raw)
+    if "<TYPE>" not in text.upper():
+        return None  # not the SGML shape we expect — fall back rather than assert absence
+    return [
+        fn for ty, fn in _SGML_DOC.findall(text)
+        # EX-99.1 exactly — never EX-99.11/99.12, and never the EX-99.2 sibling
+        if re.fullmatch(r"ex-?99[.\-]?1", ty.strip(), re.I) and fn.lower().endswith(_TEXT_DOC)
+    ]
 
 
 def exhibit_991_urls(http: CachedHttp, cik: str, accession: str) -> list[str]:
     """ALL furnished Exhibit-99.1 press-release URLs in a filing (not first-match — a filing can
-    carry more than one, and both must parse). Empty when none / the index is unreachable."""
+    carry more than one, and both must parse).
+
+    Reads the exhibit TYPE from EDGAR's SGML header rather than pattern-matching the FILENAME:
+    filers name the same exhibit 'ex991', 'a991_pressrelease…', 'exhibit991…', 'exh991…' and
+    'exhibit99_q1x2026', so a filename rule is a guess that silently loses press releases (measured
+    2026-07-22: 24 of 53 across five names). The filename match stays as the fallback for a filing
+    whose header cannot be read. Empty when the filing genuinely furnishes no Ex-99.1."""
     acc = accession.replace("-", "")
-    try:
-        idx = http.get_json(_INDEX.format(cik=int(pad_cik(cik)), acc=acc), ttl_seconds=None)
-    except (HttpError, ValueError):
-        return []
-    return [
-        _ARCHIVE.format(cik=int(pad_cik(cik)), acc=acc, doc=str(item.get("name", "")))
-        for item in idx.get("directory", {}).get("item", [])
-        if _is_ex991(str(item.get("name", "")))
-    ]
+    names = _ex991_names_from_headers(http, cik, accession)
+    if names is None:  # header unreadable → fall back to the filename guess
+        try:
+            idx = http.get_json(_INDEX.format(cik=int(pad_cik(cik)), acc=acc), ttl_seconds=None)
+        except (HttpError, ValueError):
+            return []
+        names = [
+            str(item.get("name", ""))
+            for item in idx.get("directory", {}).get("item", [])
+            if _is_ex991(str(item.get("name", "")))
+        ]
+    return [_ARCHIVE.format(cik=int(pad_cik(cik)), acc=acc, doc=n) for n in names]
 
 
 # --- helpers -------------------------------------------------------------------------------------
