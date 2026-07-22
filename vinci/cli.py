@@ -427,7 +427,12 @@ def _attach_midcycle(cfg: Config, ticker: str, *, peers: list[str],
                                  shares=shares)
     d2 = d.model_copy(update={"midcycle": block})
     path.write_text(d2.model_dump_json(indent=2))
-    (ddir / "dossier.md").write_text(render_markdown(d2))
+    from vinci.scenarios import read_record as _read_rec
+    try:  # the underwrite record rides the md Brief; absent/unreadable → facts-only md
+        _card = _read_rec(d2.ticker)
+    except Exception:  # noqa: BLE001
+        _card = None
+    (ddir / "dossier.md").write_text(render_markdown(d2, card=_card))
     print(f"  midcycle attached → {ddir} (anchors"
           f"{' + scenario grid + ratio' if priced else ' only'})")
     return 0

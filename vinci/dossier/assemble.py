@@ -97,11 +97,27 @@ def _load_graph(cfg: Config) -> ExposureGraph:
     return ExposureGraph.from_edges(edges)
 
 
+def _read_scenario_card(ticker: str) -> Any | None:
+    """The committed underwrite record for ``ticker``, or None when the name is not underwritten.
+
+    Imported HERE, not at module scope: ``vinci.scenarios`` imports ``vinci.dossier.midcycle``, so
+    a top-level import would cycle. Read-only — the assembler never writes the record, and the
+    dossier package still imports no ledger/scoring (the structural no-verdict line is untouched).
+    A malformed/absent record degrades to None: an export missing its thesis is a smaller failure
+    than an assembly that dies on it."""
+    try:
+        from vinci.scenarios import read_record
+        return read_record(ticker)
+    except Exception:  # noqa: BLE001 — absent or unreadable record is a normal, non-fatal state
+        return None
+
+
 def _write(dossier: Dossier, llm_log: str, out_root: Path) -> Path:
     folder = out_root / dossier.ticker
     folder.mkdir(parents=True, exist_ok=True)
     (folder / "dossier.json").write_text(dossier.model_dump_json(indent=2))
-    (folder / "dossier.md").write_text(render_markdown(dossier))
+    (folder / "dossier.md").write_text(
+        render_markdown(dossier, card=_read_scenario_card(dossier.ticker)))
     (folder / "llm_call.log").write_text(llm_log or "(no LLM call — synthesis skipped)")
     return folder
 

@@ -7768,3 +7768,80 @@ def test_committed_peer_rosters_split_to_their_declared_count() -> None:
         assert len(segs) == declared, f"{p.parent.name}: {declared} declared, {len(segs)} split"
         for s in segs:
             assert s.count(" — ") <= 1, f"{p.parent.name}: extra delimiter in {s[:60]!r}"
+
+
+def test_md_brief_carries_the_underwrite_layer_and_suppresses_the_machine_read() -> None:
+    """(md/web parity) A logged name's markdown Brief carries the underwrite layer the export used
+    to drop entirely: the economics strip, the disposition, the analyst's THESIS, and the
+    bear/base/bull table with each recorded reason. AUTHORSHIP: the thesis REPLACES the machine
+    assessment (two voices in one slot blurs which is which) — and the disposition is never
+    labelled a verdict, because the BUY/AVOID verdict of record is the ledger's.
+
+    Phrasing-independent: the thesis is asserted to equal the COMMITTED record's own text rather
+    than any literal string, and the scenario rows are checked against the record's inputs."""
+    p = Path("data/dossiers/IT/dossier.json")
+    sp = Path("scenarios/IT.json")
+    if not (p.exists() and sp.exists()):
+        pytest.skip("no committed IT dossier/scenario record")
+    from vinci.scenarios import read_record
+    card = read_record("IT")
+    d = ds.Dossier.model_validate_json(p.read_text())
+    md = dr.render_markdown(d, card=card)
+    glance = md.split("## At a glance")[1].split("\n## ")[0]
+
+    thesis = card.verdict.rationale_plain or card.verdict.rationale
+    assert thesis and "### Thesis — our rationale" in glance and thesis in glance
+    # authorship: the machine read is suppressed once the analyst's thesis is present
+    if d.synthesis is not None and d.synthesis.evidence_balance:
+        assert dr._machine_read_md(d.synthesis.evidence_balance) not in glance
+    # disposition, never "verdict of record" (that is the ledger's)
+    assert "Underwrite disposition:" in glance
+    assert "Verdict of record:" not in glance
+    assert f"{card.spot:,.2f}" in glance  # the economics strip carries the recorded spot
+
+    scen = md.split("## Scenario analysis")[1].split("\n## ")[0]
+    assert "| scenario | revenue $M | margin | multiple | value / sh | vs spot |" in scen
+    for nm in ("bear", "base", "bull"):
+        s = card.scenarios.get(nm)
+        if s is None:
+            continue
+        assert f"| {nm} | {s.revenue:,.0f} |" in scen, f"{nm} row must carry its recorded revenue"
+        if s.reason:
+            assert s.reason in scen, f"{nm}'s recorded reason must render beside the arithmetic"
+
+
+def test_md_without_a_card_is_unchanged_and_keeps_the_machine_read() -> None:
+    """Fail-honest: a name with no underwrite record renders NO underwrite section and keeps the
+    machine assessment — byte-identity for un-underwritten names, and the machine voice is never
+    dressed as a thesis."""
+    p = Path("data/dossiers/IT/dossier.json")
+    if not p.exists():
+        pytest.skip("no committed IT dossier.json")
+    d = ds.Dossier.model_validate_json(p.read_text())
+    md = dr.render_markdown(d, card=None)
+    assert "Thesis — our rationale" not in md
+    assert "Underwrite disposition:" not in md
+    assert "## Scenario analysis" not in md
+    if d.synthesis is not None and d.synthesis.evidence_balance:
+        assert dr._machine_read_md(d.synthesis.evidence_balance) in md
+
+
+def test_download_menu_offers_three_scopes_and_serves_the_committed_md() -> None:
+    """(download menu) The button is a generic 'Download' with three scopes; the MD option fetches
+    the COMMITTED render from the mirror rather than re-rendering markdown in JS (a second
+    generator would drift from vinci/dossier/render.py), and the build publishes one .md per
+    mirrored dossier so the fetch can succeed."""
+    src = Path("frontend/views/shared/dossier.js").read_text()
+    assert "&#x2913; Download &#x25be;" in src and "Download PDF" not in src
+    for scope in ('data-scope="brief"', 'data-scope="full"', 'data-scope="md"'):
+        assert scope in src
+    assert "Brief PDF" in src and "Full dossier PDF" in src and "Full dossier MD" in src
+    # the MD path fetches the committed mirror; no JS markdown generator
+    assert "./dossiers/${encodeURIComponent(ticker)}.md" in src
+    assert "-dossier.md" in src  # download filename
+    build = Path("frontend/build.py").read_text()
+    assert 'OUT_DOSS / f"{ticker}.md"' in build
+    # every mirrored dossier has its markdown twin published
+    mirrored = {p.stem for p in Path("frontend/dossiers").glob("*.json")} - {"index"}
+    md_served = {p.stem for p in Path("frontend/dossiers").glob("*.md")}
+    assert mirrored == md_served, f"missing md for: {sorted(mirrored - md_served)}"
