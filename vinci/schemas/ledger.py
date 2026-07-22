@@ -123,6 +123,11 @@ class LedgerEntry(BaseModel, frozen=True):
     closes_entry_id: str | None = None       # CLOSE only — the entry_id being closed
     exit_price: float | None = None          # CLOSE only — the realized exit
     exit_price_as_of: date | None = None     # CLOSE only
+    # WHY the position was closed, in the reader-facing register. Distinct from ``thesis``, which
+    # on a decision row is the reasoning FOR the call: a close is a different act and states its
+    # own grounds. Sealed by the same append-only discipline as everything else in this record —
+    # the row is frozen at write.
+    reason: str | None = None                # CLOSE only
 
     @model_validator(mode="after")
     def _close_row_shape(self) -> LedgerEntry:
@@ -149,6 +154,9 @@ class LedgerEntry(BaseModel, frozen=True):
             raise ValueError(f"close row {self.entry_id!r}: exit_price must be positive")
         if self.closes_entry_id == self.entry_id:
             raise ValueError(f"close row {self.entry_id!r} closes itself")
+        if not (self.reason or "").strip():
+            raise ValueError(f"close row {self.entry_id!r} has no reason — a position closes for a "
+                             "stated reason, or the record cannot be reviewed later")
         return self
 
     @model_validator(mode="after")
