@@ -97,11 +97,30 @@ def _load_graph(cfg: Config) -> ExposureGraph:
     return ExposureGraph.from_edges(edges)
 
 
+def _read_scenario_card(ticker: str) -> Any | None:
+    """The committed underwrite record for ``ticker``, or None when the name is not underwritten.
+
+    Imported HERE, not at module scope: ``vinci.scenarios`` imports ``vinci.dossier.midcycle``, so
+    a top-level import would cycle. Read-only — the assembler never writes the record, and the
+    dossier package still imports no ledger/scoring (the structural no-verdict line is untouched).
+
+    FAIL-LOUD BOUNDARY: an ABSENT record is a normal state (most names are never underwritten) and
+    degrades to None. A record that EXISTS but will not parse is not normal — swallowing it would
+    ship a dossier.md silently missing its thesis and scenarios, with nothing anywhere saying so.
+    That error propagates."""
+    from vinci.scenarios import read_record
+    try:
+        return read_record(ticker)
+    except FileNotFoundError:
+        return None  # not underwritten — the majority case, not a failure
+
+
 def _write(dossier: Dossier, llm_log: str, out_root: Path) -> Path:
     folder = out_root / dossier.ticker
     folder.mkdir(parents=True, exist_ok=True)
     (folder / "dossier.json").write_text(dossier.model_dump_json(indent=2))
-    (folder / "dossier.md").write_text(render_markdown(dossier))
+    (folder / "dossier.md").write_text(
+        render_markdown(dossier, card=_read_scenario_card(dossier.ticker)))
     (folder / "llm_call.log").write_text(llm_log or "(no LLM call — synthesis skipped)")
     return folder
 

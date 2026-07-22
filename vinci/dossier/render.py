@@ -15,11 +15,14 @@ from collections import Counter
 from collections.abc import Callable
 from datetime import UTC, date, datetime
 from itertools import groupby
-from typing import Any, ParamSpec
+from typing import TYPE_CHECKING, Any, ParamSpec
 
 from vinci.dossier.covenant_extract import GoverningTerm, _derive_conversion, governing_terms
 from vinci.dossier.schemas import Dossier, MechanicalLayer, Sourced, SourceStatus, StockInfo
 from vinci.dossier.verdict import MachineProposal, derive_proposal, split_lean
+
+if TYPE_CHECKING:  # typing only — a RUNTIME import would cycle (scenarios → dossier.midcycle)
+    from vinci.scenarios import ScenarioRecord
 
 # Display curation for the catalyst path — the full data always stays in dossier.json; these only
 # cap/collapse/group the HUMAN view (the margin-trend mini-table idiom: curate display, not data).
@@ -1827,7 +1830,97 @@ def _machine_proposal_md(p: MachineProposal) -> str:
     return f"**Machine proposal:** {p.action_word} — derived from the lean above"
 
 
-def _brief_lines(d: Dossier, *, show_proposal: bool = False) -> list[str]:
+def _underwrite_lines(card: ScenarioRecord | None) -> list[str]:
+    """(md/web parity) The UNDERWRITE layer on the markdown Brief — the analyst's thesis, the
+    at-a-glance economics, and the bear/base/bull table.
+
+    Until now this rendered ONLY on the web: the scenario record is a separate committed artifact
+    (``scenarios/<TICKER>.json``) that this renderer never read, so an exported .md silently
+    dropped the thesis, the target, the reward:risk and every scenario — exactly what the buy-side
+    cover leads with. The record is passed IN (never loaded here): a runtime import of
+    ``vinci.scenarios`` would cycle back into ``vinci.dossier.midcycle``.
+
+    Assemble-not-conclude holds: every number below is the analyst's own recorded input or plain
+    arithmetic already computed in the record — this function derives no new judgment. Absent
+    record → no section at all (byte-identity for un-underwritten names)."""
+    if card is None:
+        return []
+    r, v = card.result, card.verdict
+    out: list[str] = []
+    per = r.per_scenario or {}
+    base = per.get("base")
+    spot = card.spot
+    # the stat strip — target (base value/share), spot, reward, risk, ratio
+    strip: list[str] = []
+    if base is not None and base.value_per_share is not None:
+        vps = base.value_per_share
+        upside = (vps / spot - 1.0) if spot else None
+        strip.append(f"**Target (base)** ${vps:,.2f}"
+                     + (f" ({upside:+.1%} vs spot)" if upside is not None else ""))
+    strip.append(f"**Spot** ${spot:,.2f} (underwritten {card.underwrite_date})")
+    if r.reward is not None:
+        strip.append(f"**Reward** ${r.reward:,.2f}")
+    if r.risk is not None:
+        strip.append(f"**Risk** ${r.risk:,.2f}")
+    if r.ratio is not None:
+        strip.append(f"**Reward : risk** {r.ratio:,.2f} : 1 (bar {r.bar:g} : 1)")
+    elif r.ratio_undefined:
+        strip.append("**Reward : risk** UNDEFINED")
+    out += [" · ".join(strip), ""]
+    if v.status:
+        # DISPOSITION, not the verdict: `status` is confirm/override against the machine proposal.
+        # The BUY/AVOID verdict of record lives in the append-only ledger, which this package does
+        # not import (the structural no-verdict line) — labelling it "verdict" here would blur the
+        # two exact things the pivot keeps separate.
+        rec = f" ({v.recorded})" if v.recorded else ""
+        entry = f" · entry ${v.entry_price:,.2f}" if v.entry_price is not None else ""
+        out += [f"**Underwrite disposition:** {v.status.upper()}{rec}{entry} — "
+                f"_the BUY/AVOID verdict of record is the ledger's_", ""]
+    # the THESIS — the analyst's own words (plain restatement preferred), never machine text
+    thesis = v.rationale_plain or v.rationale
+    if thesis:
+        out += ["### Thesis — our rationale", thesis, ""]
+    return out
+
+
+def _scenario_table_lines(card: ScenarioRecord | None) -> list[str]:
+    """(md/web parity) The bear/base/bull table + each scenario's recorded REASON — the web's
+    'Scenario analysis' card. The assumptions ARE the argument on the buy side, so the reasons
+    render beside the arithmetic rather than as hidden metadata. Analyst inputs and the record's
+    own computed value/share only — no new derivation."""
+    if card is None:
+        return []
+    per = card.result.per_scenario or {}
+    spot = card.spot
+    rows: list[str] = []
+    for nm in ("bear", "base", "bull"):
+        s = card.scenarios.get(nm)
+        p = per.get(nm)
+        if s is None or p is None:
+            continue
+        vps = p.value_per_share
+        vs = f"{vps / spot - 1.0:+.1%}" if (vps is not None and spot) else "—"
+        # margin is OPTIONAL by design: an R2 EV/Revenue leg applies its multiple to revenue and
+        # never reads a margin, so the record omits one rather than fabricating a driver the
+        # arithmetic ignores. Render the absence as "—" — never format None, never invent 0%.
+        marg = "—" if s.margin is None else f"{s.margin:.1%}"
+        rows.append(f"| {nm} | {s.revenue:,.0f} | {marg} | {s.multiple:g}x | "
+                    f"{'—' if vps is None else f'${vps:,.2f}'} | {vs} |")
+    if not rows:
+        return []
+    out = [f"_{card.recipe_desc}_", "",
+           "| scenario | revenue $M | margin | multiple | value / sh | vs spot |",
+           "| --- | ---: | ---: | ---: | ---: | ---: |", *rows, ""]
+    for nm in ("bear", "base", "bull"):
+        s = card.scenarios.get(nm)
+        if s is not None and s.reason:
+            out.append(f"- **{nm}** — {s.reason}")
+    out.append("")
+    return out
+
+
+def _brief_lines(d: Dossier, *, show_proposal: bool = False,
+                 card: ScenarioRecord | None = None) -> list[str]:
     """(Brief · tier redesign 2026-07-21) the IC one-pager, SIX decision-ordered sections —
     decision strip → company snapshot → what happened → the case → financial snapshot → valuation
     first-cut. Everything needed to decide PASS vs READ DEEPER, nothing else. The machine's
@@ -1846,6 +1939,9 @@ def _brief_lines(d: Dossier, *, show_proposal: bool = False) -> list[str]:
     # (The web opener additionally leads with the underwrite masthead, a separate committed
     # artifact this renderer does not read.)
     out.append("## At a glance")
+    # (md/web parity) the UNDERWRITE layer leads the glance when the name has a recorded card:
+    # economics strip → verdict of record → the analyst's thesis. Absent card → unchanged.
+    out += _underwrite_lines(card)
     vf = _brief_verify_first(d.caveats)
     if vf:
         out += ["> ⚠ **Verify before the verdict:** " + "; ".join(vf)
@@ -1853,10 +1949,12 @@ def _brief_lines(d: Dossier, *, show_proposal: bool = False) -> list[str]:
     bd = d.business_description
     if bd is not None and bd.status is SourceStatus.PRESENT and bd.value is not None:
         out.append(_brief_oneliner(bd.value))
-    # the NARRATIVE slot sits above Segments (mirrors the web opener). The web replaces this with
-    # the analyst's recorded rationale on a logged name — that text lives in the scenario-record
-    # artifact this renderer does not read, so the md always carries the machine assessment.
-    if s is not None and s.evidence_balance:
+    # the NARRATIVE slot sits above Segments (mirrors the web opener). AUTHORSHIP: a logged name
+    # leads with the analyst's THESIS (rendered by _underwrite_lines above) and the machine read
+    # is suppressed — the human's words are the verdict of record, and two voices in one slot
+    # blurs which is which. A pending name keeps the machine assessment, never titled a thesis.
+    has_thesis = card is not None and bool(card.verdict.rationale_plain or card.verdict.rationale)
+    if s is not None and s.evidence_balance and not has_thesis:
         out.append(_machine_read_md(s.evidence_balance))
     if m.concentration is not None:
         out += [_fact("Segments", m.concentration.segments),
@@ -1880,10 +1978,15 @@ def _brief_lines(d: Dossier, *, show_proposal: bool = False) -> list[str]:
     # pivot MECHANISM is untouched (derived + sealed to the shadow ledger at assembly; disposition
     # recorded at log time; the ledger CLI reveals post-log). ``--show-proposal`` is the operator's
     # explicit peek and still renders the proposal, under its own section header.
-    if show_proposal:
-        out += ["## Scenario analysis",
-                _machine_proposal_md(
-                    derive_proposal(s.evidence_balance if s is not None else None)), ""]
+    # SCENARIO ANALYSIS — the recorded bear/base/bull table (+ reasons); the sealed machine
+    # proposal joins it only under the operator's explicit --show-proposal peek.
+    scen = _scenario_table_lines(card)
+    if scen or show_proposal:
+        out.append("## Scenario analysis")
+        out += scen
+        if show_proposal:
+            out += [_machine_proposal_md(
+                derive_proposal(s.evidence_balance if s is not None else None)), ""]
     # 3 — WHAT HAPPENED: the drawdown shape + the decision tiles. The Brief used to show the raw
     # drawdown % with no WHY; the fund's whole question (overshoot vs terminal) starts from what
     # broke. Full event log + filings stay in Analysis.
@@ -2028,7 +2131,8 @@ def _midcycle_section(mc: Any) -> list[str]:
 
 
 @_endnote_scope
-def render_markdown(d: Dossier, *, dev: bool = False, show_proposal: bool = False) -> str:
+def render_markdown(d: Dossier, *, dev: bool = False, show_proposal: bool = False,
+                    card: ScenarioRecord | None = None) -> str:
     """(D1) Facts-first restructure. Section order: header → caveats → mechanical layer [drawdown &
     idiosyncrasy (clubbed) → leverage & survival → trajectory → valuation → peer comps → catalyst →
     concentration] → synthesis → appendix (+ management-commentary pointer) → verdict footer. Old
@@ -2051,7 +2155,7 @@ def render_markdown(d: Dossier, *, dev: bool = False, show_proposal: bool = Fals
     # case + valuation snapshot. The derived proposal is SEALED at assembly but hidden here
     # (anti-anchoring) unless ``show_proposal``; the human's logged confirm/override — a ledger
     # concern — is the verdict of record, and the reveal happens after it is logged.
-    out += _brief_lines(d, show_proposal=show_proposal)
+    out += _brief_lines(d, show_proposal=show_proposal, card=card)
     # (3-tier) ANALYSIS — the full dossier: caveats → mechanical layer → FULL synthesis.
     out += ["# Analysis — full dossier", ""]
     # (D1) CAVEATS — what to verify before trusting the evidence below.

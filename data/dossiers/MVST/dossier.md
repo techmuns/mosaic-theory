@@ -5,10 +5,16 @@ _July 10, 2026_
 # Brief — first cut
 
 ## At a glance
+**Target (base)** $0.60 (-34.5% vs spot) · **Spot** $0.92 (underwritten 2026-07-22) · **Reward** $-0.32 · **Risk** $0.97 · **Reward : risk** -0.33 : 1 (bar 2 : 1)
+
+**Underwrite disposition:** WATCH (2026-07-22) — _the BUY/AVOID verdict of record is the ledger's_
+
+### Thesis — our rationale
+WATCH at $0.92. The underwrite fails our 2:1 bar: the base case is worth roughly the market price in today's terms, so the price pays nothing for the very real chance the equity is worth zero - the company's own filings state substantial doubt it can continue, a debt wall comes due within a year against roughly matching cash, and the share count is compounding double-digit through an open selling programme. The gross-margin turnaround is real engineering - from deeply negative to thirty percent in three years - which is why this stays on the watch list at all. We revisit on a completed refinancing, or on returning growth with cash generation.
+
 > ⚠ **Verify before the verdict:** Net debt/EBITDA (3.9x) is on REPORTED EBITDA (CIQ / consolidated GAAP), not the covenant basis — full caveats in Analysis.
 
 Microvast Holdings, Inc. engages in the design, development, and manufacturing of battery components and systems primarily for electric commercial vehicles and energy storage systems.
-**Strongly-bearish** — stated going-concern doubt with a near-term maturity wall against thin cash while adjusted EBITDA has turned negative and revenue is contracting.
 - **Segments:** Batteries / Battery Systems — single segment [1]
 - **Geography:** China 33%; Italy 22%; France 18%; Other Europe 10%; U.S. 9%; India 8%; Other Asia & Pacific 1% [2]
 - **Customer concentration:** top customer 52% (from 31%) · top-2 ~70% of revenue [3]
@@ -19,6 +25,19 @@ Microvast Holdings, Inc. engages in the design, development, and manufacturing o
 - Covenant basis leverage and the minimum-liquidity covenant threshold are UNKNOWN/undisclosed — whether the name is in or near breach cannot be judged (bearish opacity given going-concern status).
 - No numeric FY26 revenue guidance was given — the outlook is QUALITATIVE-only, and the CIQ 427.5 'guide' is a stale vendor-echo of prior-year actual, leaving no verified forward guide (bearish disclosure gap).
 _full unknowns + the evidence for/against in Analysis_
+
+## Scenario analysis
+_Terminal-margin: value the business in the year it reaches a normal operating margin, then discount that value back at the house waiting charge._
+
+| scenario | revenue $M | margin | multiple | value / sh | vs spot |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| bear | 550 | 2.0% | 6x | $-0.05 | -105.4% |
+| base | 850 | 6.0% | 7.9x | $0.60 | -34.5% |
+| bull | 1,000 | 10.0% | 10x | $1.50 | +63.8% |
+
+- **bear** — the contraction proves durable: the largest customer (52% of revenue) wobbles, revenue stabilizes well below the peak run-rate, margins hold barely positive as a marginal producer; a levered, distressed supplier exit.
+- **base** — revenue recovers on the consensus path with a haircut for the current -25% quarter; margin reaches levered-auto-supplier economics rather than the street's cut-but-still-hopeful path; exit at the closest economic analogue (a levered auto-parts maker at 7.9x), not the scale leader's multiple.
+- **bull** — the gross-margin engineering (-28% to +31% in three years) carries through: revenue re-accelerates, double-digit operating margin arrives, partial deleveraging earns a step above the analogue.
 
 ## What happened
 - **Shape:** discrete gap-downs — 2026-03-17 earnings; 2026-05-12 earnings; 2026-05-18 no 8-K matched [5]

@@ -121,8 +121,31 @@ export async function render(root, params, { item, frame }) {
     // (outside-click closes the menu via the once-registered module-scoped document listener near
     // the top of this file — NOT re-added here per-render, which leaked one stale listener per
     // dossier navigation, each closing over a now-detached menu.)
-    pdfMenu.querySelectorAll("button").forEach((b) => b.addEventListener("click", () => {
+    pdfMenu.querySelectorAll("button").forEach((b) => b.addEventListener("click", async () => {
       pdfMenu.hidden = true;
+      pdfBtn.setAttribute("aria-expanded", "false");
+      if (b.dataset.scope === "md") {
+        // the MD download serves the COMMITTED render (frontend/dossiers/<T>.md) — the same file
+        // the pipeline wrote, never a browser-side re-render: a second markdown generator in JS
+        // would be a twin that silently drifts from vinci/dossier/render.py.
+        const prev = b.innerHTML;
+        try {
+          const res = await fetch(`./dossiers/${encodeURIComponent(ticker)}.md`, { cache: "no-store" });
+          if (!res.ok) throw new Error(`HTTP ${res.status}`);
+          const url = URL.createObjectURL(new Blob([await res.text()], { type: "text/markdown" }));
+          const a = document.createElement("a");
+          a.href = url;
+          a.download = `${ticker}-dossier.md`;
+          a.click();
+          URL.revokeObjectURL(url);
+        } catch (err) {
+          // fail LOUD in place — a silent no-op would read as "nothing to download"
+          b.innerHTML = `<span class="muted">markdown unavailable — ${escapeHtml(String(err.message || err))}</span>`;
+          setTimeout(() => { b.innerHTML = prev; }, 4000);
+          pdfMenu.hidden = false;
+        }
+        return;
+      }
       const full = b.dataset.scope === "full";
       document.body.classList.toggle("ds-print-full", full);
       document.body.classList.toggle("ds-print-brief", !full);
@@ -1813,10 +1836,11 @@ function header(d) {
     </div>
     <div class="ds-pdf-wrap">
       <button id="ds-pdf" class="ds-pdf-btn" type="button" aria-haspopup="true" aria-expanded="false"
-        title="Export to PDF — opens your browser's print dialog; choose &ldquo;Save as PDF&rdquo;.">&#x2913; Download PDF &#x25be;</button>
+        title="Download this dossier — PDF via your browser's print dialog (choose &ldquo;Save as PDF&rdquo;), or the rendered Markdown file.">&#x2913; Download &#x25be;</button>
       <div class="ds-pdf-menu" id="ds-pdf-menu" role="menu" hidden>
-        <button type="button" data-scope="brief" role="menuitem">Brief <span class="muted">· first cut</span></button>
-        <button type="button" data-scope="full" role="menuitem">Full dossier <span class="muted">· all tiers</span></button>
+        <button type="button" data-scope="brief" role="menuitem">Brief PDF <span class="muted">· first cut</span></button>
+        <button type="button" data-scope="full" role="menuitem">Full dossier PDF <span class="muted">· all tiers</span></button>
+        <button type="button" data-scope="md" role="menuitem">Full dossier MD <span class="muted">· markdown file</span></button>
       </div>
     </div>
   </div>`;

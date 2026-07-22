@@ -9,10 +9,13 @@ from __future__ import annotations
 
 import ast
 import json
+import os
 import re
+import tempfile
 import typing
 from datetime import UTC, date, datetime, timedelta, timezone
 from pathlib import Path
+from typing import Any
 
 import pytest
 from pydantic import BaseModel
@@ -7768,3 +7771,135 @@ def test_committed_peer_rosters_split_to_their_declared_count() -> None:
         assert len(segs) == declared, f"{p.parent.name}: {declared} declared, {len(segs)} split"
         for s in segs:
             assert s.count(" — ") <= 1, f"{p.parent.name}: extra delimiter in {s[:60]!r}"
+
+
+def test_md_brief_carries_the_underwrite_layer_and_suppresses_the_machine_read() -> None:
+    """(md/web parity) A logged name's markdown Brief carries the underwrite layer the export used
+    to drop entirely: the economics strip, the disposition, the analyst's THESIS, and the
+    bear/base/bull table with each recorded reason. AUTHORSHIP: the thesis REPLACES the machine
+    assessment (two voices in one slot blurs which is which) — and the disposition is never
+    labelled a verdict, because the BUY/AVOID verdict of record is the ledger's.
+
+    Phrasing-independent: the thesis is asserted to equal the COMMITTED record's own text rather
+    than any literal string, and the scenario rows are checked against the record's inputs."""
+    p = Path("data/dossiers/IT/dossier.json")
+    sp = Path("scenarios/IT.json")
+    if not (p.exists() and sp.exists()):
+        pytest.skip("no committed IT dossier/scenario record")
+    from vinci.scenarios import read_record
+    card = read_record("IT")
+    d = ds.Dossier.model_validate_json(p.read_text())
+    md = dr.render_markdown(d, card=card)
+    glance = md.split("## At a glance")[1].split("\n## ")[0]
+
+    thesis = card.verdict.rationale_plain or card.verdict.rationale
+    assert thesis and "### Thesis — our rationale" in glance and thesis in glance
+    # authorship: the machine read is suppressed once the analyst's thesis is present
+    if d.synthesis is not None and d.synthesis.evidence_balance:
+        assert dr._machine_read_md(d.synthesis.evidence_balance) not in glance
+    # disposition, never "verdict of record" (that is the ledger's)
+    assert "Underwrite disposition:" in glance
+    assert "Verdict of record:" not in glance
+    assert f"{card.spot:,.2f}" in glance  # the economics strip carries the recorded spot
+
+    scen = md.split("## Scenario analysis")[1].split("\n## ")[0]
+    assert "| scenario | revenue $M | margin | multiple | value / sh | vs spot |" in scen
+    for nm in ("bear", "base", "bull"):
+        s = card.scenarios.get(nm)
+        if s is None:
+            continue
+        assert f"| {nm} | {s.revenue:,.0f} |" in scen, f"{nm} row must carry its recorded revenue"
+        if s.reason:
+            assert s.reason in scen, f"{nm}'s recorded reason must render beside the arithmetic"
+
+
+def test_md_without_a_card_is_unchanged_and_keeps_the_machine_read() -> None:
+    """Fail-honest: a name with no underwrite record renders NO underwrite section and keeps the
+    machine assessment — byte-identity for un-underwritten names, and the machine voice is never
+    dressed as a thesis."""
+    p = Path("data/dossiers/IT/dossier.json")
+    if not p.exists():
+        pytest.skip("no committed IT dossier.json")
+    d = ds.Dossier.model_validate_json(p.read_text())
+    md = dr.render_markdown(d, card=None)
+    assert "Thesis — our rationale" not in md
+    assert "Underwrite disposition:" not in md
+    assert "## Scenario analysis" not in md
+    if d.synthesis is not None and d.synthesis.evidence_balance:
+        assert dr._machine_read_md(d.synthesis.evidence_balance) in md
+
+
+def test_download_menu_offers_three_scopes_and_serves_the_committed_md() -> None:
+    """(download menu) The button is a generic 'Download' with three scopes; the MD option fetches
+    the COMMITTED render from the mirror rather than re-rendering markdown in JS (a second
+    generator would drift from vinci/dossier/render.py), and the build publishes one .md per
+    mirrored dossier so the fetch can succeed."""
+    src = Path("frontend/views/shared/dossier.js").read_text()
+    assert "&#x2913; Download &#x25be;" in src and "Download PDF" not in src
+    for scope in ('data-scope="brief"', 'data-scope="full"', 'data-scope="md"'):
+        assert scope in src
+    assert "Brief PDF" in src and "Full dossier PDF" in src and "Full dossier MD" in src
+    # the MD path fetches the committed mirror; no JS markdown generator
+    assert "./dossiers/${encodeURIComponent(ticker)}.md" in src
+    assert "-dossier.md" in src  # download filename
+    build = Path("frontend/build.py").read_text()
+    assert 'OUT_DOSS / f"{ticker}.md"' in build
+    # every mirrored dossier has its markdown twin published
+    mirrored = {p.stem for p in Path("frontend/dossiers").glob("*.json")} - {"index"}
+    md_served = {p.stem for p in Path("frontend/dossiers").glob("*.md")}
+    assert mirrored == md_served, f"missing md for: {sorted(mirrored - md_served)}"
+
+
+def test_scenario_card_read_is_loud_on_a_corrupt_record() -> None:
+    """(review fix) FAIL-LOUD BOUNDARY on the underwrite read: an ABSENT record is the normal
+    state (most names are never underwritten) and degrades to None, but a record that EXISTS and
+    will not parse must PROPAGATE — swallowing it would ship a dossier.md silently missing its
+    thesis and scenarios with nothing anywhere saying so. Mirrors the repo's disclose-on-degrade
+    convention ('a peer that won't resolve is EXCLUDED, named')."""
+    import json as _json
+
+    from vinci.dossier import assemble as dassemble
+
+    cwd = Path.cwd()
+    with tempfile.TemporaryDirectory() as tmp:
+        root = Path(tmp)
+        (root / "scenarios").mkdir()
+        try:
+            os.chdir(root)
+            # absent → None, no raise
+            assert dassemble._read_scenario_card("ZZZZ") is None
+            # present but malformed → LOUD
+            (root / "scenarios" / "BAD.json").write_text(_json.dumps({"ticker": "BAD"}))
+            with pytest.raises(Exception) as exc:
+                dassemble._read_scenario_card("BAD")
+            assert not isinstance(exc.value, FileNotFoundError), (
+                "a corrupt record must not be reported as an absent one")
+        finally:
+            os.chdir(cwd)
+
+
+def test_scenario_table_renders_a_revenue_basis_leg_without_a_margin() -> None:
+    """(review fix, PR #188 interaction) An R2 EV/Revenue leg applies its multiple to REVENUE and
+    never reads a margin, so ``ScenarioInput.margin`` is None by design rather than missing. The
+    md table must render that absence as an em-dash — formatting None raises TypeError, and
+    substituting 0% would fabricate a driver the arithmetic never used."""
+    class _S:
+        revenue, margin, multiple, reason = 500.0, None, 2.5, "revenue-basis leg"
+
+    class _P:
+        value_per_share = 12.0
+
+    class _R:
+        per_scenario = {"base": _P()}
+
+    class _Card:
+        result, spot, recipe_desc = _R(), 10.0, "R2 EV/Revenue"
+        scenarios = {"base": _S()}
+
+    lines = dr._scenario_table_lines(typing.cast(Any, _Card()))
+    row = next(x for x in lines if x.startswith("| base |"))
+    cells = [c.strip() for c in row.strip("|").split("|")]
+    # cells: scenario · revenue · margin · multiple · value/sh · vs spot
+    assert cells[2] == "—", f"absent margin must render as an em-dash, got {cells[2]!r}"
+    assert "%" not in cells[2]  # never a fabricated 0.0% margin
+    assert cells[1] == "500" and cells[3] == "2.5x" and cells[4] == "$12.00"

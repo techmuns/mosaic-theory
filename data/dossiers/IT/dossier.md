@@ -5,8 +5,14 @@ _July 21, 2026_
 # Brief — first cut
 
 ## At a glance
+**Target (base)** $273.85 (+95.3% vs spot) · **Spot** $140.19 (underwritten 2026-07-20) · **Reward** $133.66 · **Risk** $18.99 · **Reward : risk** 7.04 : 1 (bar 2 : 1)
+
+**Underwrite disposition:** CONFIRMED (2026-07-21) · entry $141.06 — _the BUY/AVOID verdict of record is the ledger's_
+
+### Thesis — our rationale
+BUY at $141.06, 6.7:1 against the 2:1 bar; a brutal secular bear still clears 2.0. The market is pricing GenAI as a structural displacement of syndicated research; our judgment is that the sell-off has overshot fair value for a still-intact business — five straight years of 18–21% operating margins, absolute EBITDA rising through the decline, ~11% trailing free-cash-flow yield, an entry near the 3rd percentile of its own nine-year multiple range. Only the top line has slowed. The trade fails if revenue never re-stabilizes — a shrinking Gartner deserving ~12x — with contract-value growth at the August print as the first test.
+
 Gartner, Inc. provides business and technology insights for decisions and performance on an organization’s mission-critical priorities in the United States, Canada, Europe, the Middle East, Africa, and internationally.
-**Mixed** — a non-cash impairment and intact franchise economics collide with a genuine, consensus-confirmed revenue/CV deceleration.
 - **Segments:** Insights 78%; Conferences 10%; Consulting 9%; Other 4% [1]
 - **Geography:** United States and Canada 62%; Europe, Middle East and Africa 26%; Other International 12% [2]
 - **Snapshot:** NYSE · CMP $141.06 (2026-07-20) · cap $8.7B · 52-wk $124.25–$403.95 · shares 67.0M · book value/sh $0.93 [3]
@@ -16,6 +22,19 @@ Gartner, Inc. provides business and technology insights for decisions and perfor
 - Company-adjusted LTM EBITDA and adjusted EPS are not in the revised guidance, so the adjusted forward EV/EBITDA and adjusted leverage cannot be computed — the multiple debate rests on a trailing-only basis.
 - No segment-level EBITDA breakout is disclosed, so it is impossible to isolate whether the Insights subscription core is holding margin while lower-margin segments drag — an opaque gap that obscures the quality of the profit mix.
 _full unknowns + the evidence for/against in Analysis_
+
+## Scenario analysis
+_Mid-cycle underwrite: normalized operating margin on a mid-cycle revenue base, valued at an exit EV/LTM-EBITDA multiple; reward/risk measured at SPOT._
+
+| scenario | revenue $M | margin | multiple | value / sh | vs spot |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| bear | 5,800 | 15.0% | 9.5x | $121.20 | -13.5% |
+| base | 6,430 | 18.5% | 15x | $273.85 | +95.3% |
+| bull | 6,715 | 20.5% | 20x | $426.63 | +204.3% |
+
+- **bear** — Secular case: GenAI substitution bites Insights (78% of revenue); revenue declines over several years; margin holds above the COVID trough (FY2020 12.0%) on subscription cost flex; the multiple sits near the low end of its own nine-year trading range (7.46x), with 9.5x at roughly the 5th percentile. [restated for external readability 2026-07-21; substance unchanged]
+- **base** — Margin is the seven-year clean median of 18.45% (rounded to 18.5%), excluding the $150M FY25 goodwill impairment. The 14.13% full-history screening median is dragged down by the pre-2021 regime, while the last five years ran 18-21%. Revenue is consensus FY26E. The multiple is set deliberately below the 23.4x median of that nine-year trading range: a decelerating top line does not re-earn the growth-era multiple. [restated for external readability 2026-07-21; substance unchanged]
+- **bull** — The turn proves cyclical: FY27E re-acceleration (+4%); margin near the FY2023 best (20.94%); the multiple moves toward but stays below the median of its own trading history. [restated for external readability 2026-07-21; substance unchanged]
 
 ## What happened
 - **Shape:** discrete gap-downs — 2026-02-03 earnings + Reg-FD [4]

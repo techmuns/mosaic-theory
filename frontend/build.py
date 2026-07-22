@@ -867,6 +867,12 @@ def main(argv: list[str] | None = None) -> None:
             if f.is_file():
                 ticker = folder.name.upper()
                 shutil.copyfile(f, OUT_DOSS / f"{ticker}.json")
+                # the rendered markdown rides the mirror too, so the dossier page can offer it as
+                # a download. Same licensing status as the JSON beside it — DERIVED analysis, not
+                # reproduced CIQ — so it is committed under exactly the same rule.
+                md = folder / "dossier.md"
+                if md.is_file():
+                    shutil.copyfile(md, OUT_DOSS / f"{ticker}.md")
                 tickers.append(ticker)
                 doc = json.loads(f.read_text())
                 ind = doc.get("industry") or {}
