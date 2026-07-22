@@ -1,5 +1,5 @@
 {
-  "schema_version": "1.1",
+  "schema_version": "1.2",
   "ticker": "NCNO",
   "recipe_id": "R2_terminal_margin",
   "recipe_desc": "Terminal-margin: value the business in the year it reaches a normal operating margin, then discount that value back at the house waiting charge. Used where no trailing multiple describes the company.",
@@ -51,7 +51,9 @@
       "margin": 0.086,
       "multiple": 10.0,
       "reason": "deceleration runs past consensus (forward operating-income revisions 0 up / 9 down); operating leverage slows with growth; exit below the mature-peer reference.",
-      "years_to_terminal": 4.0
+      "years_to_terminal": 4.0,
+      "bear_basis": "peer-reference",
+      "margin_basis": "EBIT"
     },
     "base": {
       "revenue": 754.8,

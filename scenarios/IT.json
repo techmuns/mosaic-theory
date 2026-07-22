@@ -1,5 +1,5 @@
 {
-  "schema_version": "1.1",
+  "schema_version": "1.2",
   "ticker": "IT",
   "recipe_id": "R1_midcycle_margin_evebitda",
   "recipe_desc": "Mid-cycle underwrite: normalized operating margin on a mid-cycle revenue base, valued at an exit EV/LTM-EBITDA multiple; reward/risk measured at SPOT.",
@@ -59,7 +59,9 @@
       "margin": 0.132,
       "multiple": 7.5,
       "reason": "set from the market's own pricing of the downside state: declining information-services businesses trade near six times cash earnings (observed range roughly five to eight) and keep only a fraction of their margins through a real decline. This cell takes the most charitable coherent reading - cash-margin retention of the closest surviving decliner, and a multiple at the top of the observed range in credit to the balance sheet (margin stated on the operating line; equivalent to roughly 16.3% on the cash-earnings line - the closest surviving decliner's margin retention applied in full). The company's own trading record contains no downside-state precedent (it opens in 2017, inside the growth era), so the cross-section governs. [amended 2026-07-22]",
-      "years_to_terminal": null
+      "years_to_terminal": null,
+      "bear_basis": "bear-state-comps",
+      "margin_basis": "EBIT"
     },
     "base": {
       "revenue": 6430.0,

@@ -1074,6 +1074,33 @@ def _cmd_monitor(args: argparse.Namespace) -> int:
     return 0
 
 
+def _cmd_audit_r1(args: argparse.Namespace) -> int:
+    """R1 applicability audit — READ-ONLY over committed artifacts.
+
+    Reads dossiers + scenario records and prints the seven-check matrix. It writes nothing unless
+    ``--out`` is given, and it never changes an exit code on a flag: flags PRINT (the linter
+    model). A check that refused to proceed would be routed around exactly when it mattered."""
+    from datetime import date as _date
+
+    from vinci import audit_r1 as ar
+
+    root = Path.cwd()
+    audits = ar.load_and_audit(root)
+    if not audits:
+        print("no committed dossier carries an anchor — nothing to audit")
+        return 0
+    report = ar.render(audits, as_of=args.as_of or _date.today().isoformat())
+    print(report)
+    if getattr(args, "out", None):
+        args.out.parent.mkdir(parents=True, exist_ok=True)
+        args.out.write_text(report + "\n")
+        print(f"\nreport written: {args.out}")
+    loud = sum(1 for a in audits for f in a.flags if f.severity == "flag")
+    print(f"\n{len(audits)} name(s) audited · {loud} flag(s) · "
+          f"{sum(1 for a in audits if a.disposition == 'clean')} clean")
+    return 0
+
+
 # Scenario statuses that are NOT ledger positions but must still be watched for staleness:
 #   watch            — a standing re-underwrite trigger (WERN)
 #   pending_analyst  — the underwrite is RUN and the verdict is outstanding (EPAM). A record
@@ -2441,6 +2468,14 @@ def build_parser() -> argparse.ArgumentParser:
     p_mon = sub.add_parser("monitor", help="mark the book to market vs benchmarks (manual)")
     p_mon.add_argument("--ref", help="as-of date YYYY-MM-DD (default: today)")
     p_mon.set_defaults(func=_cmd_monitor)
+
+    p_audit = sub.add_parser("audit", help="standing read-only audits over committed artifacts")
+    audit_sub = p_audit.add_subparsers(dest="audit_what", required=True)
+    p_r1 = audit_sub.add_parser(
+        "r1", help="R1 applicability — the seven checks (read-only; flags print, never block)")
+    p_r1.add_argument("--as-of", dest="as_of", help="date stamp for the report (default: today)")
+    p_r1.add_argument("--out", type=Path, help="write the report here as well as printing it")
+    p_r1.set_defaults(func=_cmd_audit_r1)
 
     p_ledger = sub.add_parser("ledger", help="list recorded paper verdicts")
     p_ledger.set_defaults(func=_cmd_ledger)

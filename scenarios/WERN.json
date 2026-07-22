@@ -1,5 +1,5 @@
 {
-  "schema_version": "1.1",
+  "schema_version": "1.2",
   "ticker": "WERN",
   "recipe_id": "R1_midcycle_margin_evebitda",
   "recipe_desc": "Mid-cycle underwrite: normalized operating margin on a mid-cycle revenue base, valued at an exit EV/LTM-EBITDA multiple; reward/risk measured at SPOT.",
@@ -52,7 +52,9 @@
       "revenue": 2850.0,
       "margin": 0.015,
       "multiple": 6.0,
-      "reason": "trough persists; One-Way keeps shrinking; underlying FY25 ex the Q2 insurance credit was ~breakeven, so 1.5% is slight lift off a ~0% floor."
+      "reason": "trough persists; One-Way keeps shrinking; underlying FY25 ex the Q2 insurance credit was ~breakeven, so 1.5% is slight lift off a ~0% floor.",
+      "bear_basis": "own-history",
+      "margin_basis": "EBIT"
     },
     "base": {
       "revenue": 3100.0,

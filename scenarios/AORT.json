@@ -1,5 +1,5 @@
 {
-  "schema_version": "1.1",
+  "schema_version": "1.2",
   "ticker": "AORT",
   "recipe_id": "R2_terminal_margin",
   "recipe_desc": "Terminal-margin: value the business in the year it reaches a normal operating margin, then discount that value back at the house waiting charge. Used where no trailing multiple describes the company.",
@@ -51,7 +51,9 @@
       "margin": 0.045,
       "multiple": 9.0,
       "reason": "the valve recall dents the growth franchise and the FY2024 cost reset proves unsustainable: margin returns toward the 2021-23 structural zone as spending normalizes; a levered, low-margin device business exits well below mature peers.",
-      "years_to_terminal": 4.0
+      "years_to_terminal": 4.0,
+      "bear_basis": "analyst",
+      "margin_basis": "EBIT"
     },
     "base": {
       "revenue": 638.5,
