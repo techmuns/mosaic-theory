@@ -1,0 +1,26 @@
+{
+  "AORT": {
+    "chars": 687,
+    "sha256": "fa08fde90c63ebe47fa0d6a026be40ea04a0f11c65009a1d82ceaaf5f3965b8d"
+  },
+  "IT": {
+    "chars": 632,
+    "sha256": "dd5ca6d29748bee5eed082766f1ad83ae7dbd6b6dfc1dfb3137394a266f62089"
+  },
+  "MVST": {
+    "chars": 650,
+    "sha256": "e2220c757d10e89a9ac781e8840b3b1da10b7f1040784f67065e5feb9f1ce270"
+  },
+  "NCNO": {
+    "chars": 658,
+    "sha256": "e815a980b2347e3787654001b12d769f6923e0d0840a15d08aa972b0ca830f55"
+  },
+  "SMPL": {
+    "chars": 748,
+    "sha256": "245011700a5326be29cf69b8cbab12a170dc33d184c2c230ccbbba761060085e"
+  },
+  "WERN": {
+    "chars": 344,
+    "sha256": "2e0e0f549c7002a523a5a4a0da07f0f80aa2bffe5ebb470d588494f8187d940c"
+  }
+}

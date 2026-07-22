@@ -111,7 +111,17 @@
                 "2026-07-17",
                 27.841318
               ]
-            ]
+            ],
+            "periodicity_days_median": null,
+            "window_span_years": null,
+            "periodicity": null,
+            "data_quality": null,
+            "source_file": null,
+            "implied_ebitda_margin": null,
+            "implied_ebit_margin": null,
+            "implied_d_and_a_margin": null,
+            "source_sha256": null,
+            "source_mtime": null
           }
         ],
         "source_ref": "CIQ Financials→Multiples (Close; last col = current, excluded from history)",
@@ -589,7 +599,9 @@
         "source_ref": null,
         "status": "unknown",
         "note": "no graph cohort to compare — see rel_vs_market for the name-vs-market read"
-      }
+      },
+      "benchmark_symbol": "IWM",
+      "benchmark_basis": null
     },
     "consensus_context": {
       "eps_trend": {
@@ -3587,9 +3599,9 @@
             "currency": "USD"
           },
           {
-            "description": "Senior Secured Revolving Credit Facility",
+            "description": "Credit facility $263.5M gross contractual ($200M incremental term loan, First Amendment 2026-03-30, plus $63.5M revolver; carrying $262.8M net of issuance costs); both mature 2029-10-28; the term loan amortizes in 13 quarterly $2.5M installments then a $167.5M balloon [amended 2026-07-22: this row read a $213.5M revolver, which predates the March-2026 amendment.]",
             "type": "Revolving Credit",
-            "principal_musd": 213.5,
+            "principal_musd": 263.5,
             "coupon": "5.680%",
             "floating_rate": "Benchmark",
             "maturity_date": "2029-10-28",
@@ -5044,7 +5056,7 @@
         "cited": true
       },
       {
-        "claim": "The company has been buying back stock (-5.2% share count over ~1.7 years), consistent with FCF-funded capital return rather than distress dilution.",
+        "claim": "The company has been buying back stock (-5.2% share count over ~1.7 years), consistent with FCF-funded capital return rather than distress dilution. (funding note: the $100M accelerated repurchase was financed in part by the $200M term loan, whose proceeds also repaid $150M of revolver - not purely internally generated cash)",
         "source_ref": "EDGAR XBRL shares, trailing 2024-08-22..2026-05-22",
         "cited": true
       },

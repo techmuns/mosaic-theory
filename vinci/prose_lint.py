@@ -35,6 +35,8 @@ from typing import Any
 
 from pydantic import BaseModel
 
+from vinci import seal
+
 # ---------------------------------------------------------------- limits
 
 # The rationale is the one field with a LENGTH rule: it is the read a busy allocator gives you.
@@ -141,7 +143,12 @@ def lint_text(text: str, field: str, *, max_words: int | None = None) -> list[Pr
         for m in pattern.finditer(text):
             flags.append(ProseFlag(field=field, category=category, match=m.group(0), hint=hint))
     if max_words is not None:
-        n = len(text.split())
+        # The cap binds the THESIS, not the audit trail. A sealed rationale grows only by dated
+        # `[amended …]` tags (vinci.seal), so counting those against the cap would force a choice
+        # between recording an amendment and passing the linter — and the amendment would lose.
+        # The register checks above still scan the tags: an amendment must read like the thesis it
+        # extends, it just does not consume its budget.
+        n = len(seal.base_text(text).split())
         if n > max_words:
             flags.append(
                 ProseFlag(
@@ -164,18 +171,21 @@ def lint_record(rec: Any) -> list[ProseFlag]:
     flags: list[ProseFlag] = []
 
     v = d.get("verdict") or {}
-    # Which rationale faces the READER decides which one the register binds.
+    # SINGLE REGISTER (ratified 2026-07-22). `verdict.rationale` is THE rationale — the field the
+    # reader sees, the linter binds, and the seal protects.
     #
-    # With a restatement recorded, `rationale_plain` is the reader-facing text and `rationale` is a
-    # SEALED historical artifact: §7 holds that the machine never rewrites analyst words, and the
-    # analyst recorded a plain restatement precisely INSTEAD of altering the original. Linting the
-    # sealed copy forever would mean no restated record could ever reach zero — the linter would cry
-    # wolf permanently and get switched off, which is the failure this module is built to avoid.
+    # The former two-field arrangement (`rationale` sealed + `rationale_plain` reader-facing) split
+    # the register in practice: the four restated records populated `rationale_plain` while the
+    # three R2 records written afterwards populated `rationale`, so "the reader-facing text"
+    # resolved to a DIFFERENT field per record and the linter's coverage moved with it. One field
+    # cannot drift from itself.
     #
-    # With NO restatement, the original IS the reader-facing text and must meet the register.
-    reader_facing = "rationale_plain" if v.get("rationale_plain") else "rationale"
-    if v.get(reader_facing):
-        flags += lint_text(v[reader_facing], f"verdict.{reader_facing}",
+    # `rationale_plain` is DEPRECATED and read by nothing. What replaced its sealing job is
+    # vinci/seal.py: growth is append-only, so the original survives INSIDE the field rather than
+    # beside it — and the linter binding the whole field no longer risks crying wolf on sealed text,
+    # because an amendment tag is appended in the same register as the text it extends.
+    if v.get("rationale"):
+        flags += lint_text(v["rationale"], "verdict.rationale",
                            max_words=RATIONALE_MAX_WORDS)
     if v.get("avoid_priced_note"):
         flags += lint_text(v["avoid_priced_note"], "verdict.avoid_priced_note")

@@ -736,10 +736,15 @@ function assessmentRow(d) {
 // detail card suppresses its copy (rationale: false), so the words appear once.
 function thesisBlock(card) {
   const v = (card && card.verdict) || {};
-  const plain = v.rationalePlain || v.rationale;
-  if (!plain) return "";
+  // ONE field since 2026-07-22 — `rationale` is canonical, `rationalePlain` retired. Amendment
+  // tags are set apart here for the same reason as on the card: a reader must be able to tell
+  // what was recorded at the verdict from what was appended after it.
+  const thesis = v.rationale;
+  if (!thesis) return "";
+  const marked = escapeHtml(thesis).replace(
+    /\[amended (\d{4}-\d{2}-\d{2})\s*:/g, '<span class="muted">[amended $1:</span>');
   return `<div class="brief-vlab brief-eyebrow">Thesis — our rationale</div>
-    <div class="brief-thesis">${escapeHtml(plain)}</div>`;
+    <div class="brief-thesis">${marked}</div>`;
 }
 
 // (user decision) the standing proposal row is GONE from the web brief. The pivot

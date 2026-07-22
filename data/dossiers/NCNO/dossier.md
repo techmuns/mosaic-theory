@@ -49,7 +49,7 @@ _(top points; the full argument is in Analysis)_
 
 _Bull case — the decline is overdone:_
 - The name is self-funding with LTM FCF of $138.5M and positive latest-quarter OCF, removing dilution/solvency pressure during the transition. [8]
-- The company has been buying back stock (-5.2% share count over ~1.7 years), consistent with FCF-funded capital return rather than distress dilution. [9]
+- The company has been buying back stock (-5.2% share count over ~1.7 years), consistent with FCF-funded capital return rather than distress dilution. (funding note: the $100M accelerated repurchase was financed in part by the $200M term loan, whose proceeds also repaid $150M of revolver - not purely internally generated cash) [9]
 - Absolute EBITDA has inflected sharply positive and compounded from -$48M (FY23) to +$72M LTM, with margin rising -12%→+12%, so a falling TEV/LTM-EBITDA multiple reflects a rapidly rising denominator, not deterioration. [10]
 _Bear case — the decline is real:_
 - A genuine counter-point: rising short interest (17.0M→20.2M sh, +18.4%; 18.4% of shares out) and insider selling (23 open-market sells, 0 buys) reflect bearish positioning — outweighed by the constructive sell-side consensus and self-funding cash profile. [11]
@@ -109,10 +109,10 @@ _no supplier/customer cohort mapped for this name — the comparison is vs the m
 - **Free cash flow ($M):** 138.5 [8]
 - **Live instruments — near-dated (≤12m + 2027):** none due in the window — 3 undated / later aggregate line item(s) in the appendix panel [23]
 - **Maturity wall** · vs the 2026-07-06 reference:
-  - due 2029: $213.5M
+  - due 2029: $263.5M
   - due 2034: $14.0M
   - undated (floor — no panel maturity): $51.2M — Financing Obligations - Lease $51.2M
-  - _reconciliation: itemized $278.7M (panel A 2026 filed Mar-31-2026) vs the latest-quarter aggregates below — the gap is unitemized / newer term loans; read the QoQ movement in the aggregates line._
+  - _reconciliation: itemized $328.7M (panel A 2026 filed Mar-31-2026) vs the latest-quarter aggregates below — the gap is unitemized / newer term loans; read the QoQ movement in the aggregates line._
 - **Capital-structure aggregates (latest quarter):** term loans 200.0; leases 63.9; total principal 327.4; total debt 326.7 (latest quarter) ($M) [24]
 - **Covenants — Senior Secured Revolving Credit Facility** (governing values; full verbatim in appendix):
   - **Interest / coupon:** Term SOFR Loans: Term SOFR plus the Applicable Rate; Base Rate Loans: Base Rate plus the Applicable Rate. Applicable Ra…
@@ -268,7 +268,7 @@ _export date unverified (data ≥ 2026-07-12)_
 
 ### Bull case — the decline is overdone
 - The name is self-funding with LTM FCF of $138.5M and positive latest-quarter OCF, removing dilution/solvency pressure during the transition. [8]
-- The company has been buying back stock (-5.2% share count over ~1.7 years), consistent with FCF-funded capital return rather than distress dilution. [9]
+- The company has been buying back stock (-5.2% share count over ~1.7 years), consistent with FCF-funded capital return rather than distress dilution. (funding note: the $100M accelerated repurchase was financed in part by the $200M term loan, whose proceeds also repaid $150M of revolver - not purely internally generated cash) [9]
 - Absolute EBITDA has inflected sharply positive and compounded from -$48M (FY23) to +$72M LTM, with margin rising -12%→+12%, so a falling TEV/LTM-EBITDA multiple reflects a rapidly rising denominator, not deterioration. [10]
 - Sell-side stance is constructive — consensus rating Buy (1.00) with a mean target of $23.36 versus a $2.0B cap, and guidance has been met 29/29 on revenue and 26/28 on EPS. [39]
 - The AI/platform-pricing transition shows real traction: subscription-revenue growth accelerated to 12% and non-GAAP operating margin reached 28% (Rule of 40), a mechanism behind the margin inflection. [40]
@@ -379,7 +379,7 @@ _QoQ/YoY same-basis only; (R) = Reclassified_
 |---|---|---:|---|---|---|---|---|---|
 | Financing Obligations - Lease | Capital Lease | $51.2M | 6.800% | NA | undated | Y | N | USD |
 | Operating Lease Liabilities | Capital Lease | $14.0M | 6.800% | NA | 2034-12-01 | Y | N | USD |
-| Senior Secured Revolving Credit Facility | Revolving Credit | $213.5M | 5.680% | Benchmark | 2029-10-28 | Y | N | USD |
+| Credit facility $263.5M gross contractual ($200M incremental term loan, First Amendment 2026-03-30, plus $63.5M revolver; carrying $262.8M net of issuance costs); both mature 2029-10-28; the term loan amortizes in 13 quarterly $2.5M installments then a $167.5M balloon [amended 2026-07-22: this row read a $213.5M revolver, which predates the March-2026 amendment.] | Revolving Credit | $263.5M | 5.680% | Benchmark | 2029-10-28 | Y | N | USD |
 
 - **8-Ks at instrument maturities:** _UNKNOWN_ — no trailing-12m instrument maturity to anchor an 8-K
 - **Covenant / contract pointers (CIK-verified execution filings)** — [46]  <!-- ds-table -->

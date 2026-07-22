@@ -532,22 +532,24 @@ function methodRefsDetails(c) {
     withEndnotes("M", tables)}${recipeLine(c)}</details>`;
 }
 
-// The verdict's reasoning, in the register an OUTSIDE reader needs (STATE.md §7 item 10).
-// `rationalePlain` leads when present; the original `rationale` is the SEALED record of what the
-// analyst wrote at the verdict and never disappears — it moves behind an "as recorded <date>"
-// expander. Since the T1 amendment that expander prints OPEN, so the PDF carries both registers:
-// the plain read for the reader, the original for the audit. With no restatement recorded the
-// original renders exactly as before — no record is worse off for the field existing.
+// The verdict's reasoning — ONE field since 2026-07-22. `rationale` is canonical; the former
+// `rationalePlain` second register is retired and no longer emitted.
+//
+// The two-field arrangement existed to keep the recorded wording safe while a plain restatement
+// led. That job moved into the field itself: a recorded rationale is APPEND-ONLY (vinci/seal.py),
+// growing by dated `[amended <date>: …]` tags, so the original survives inside the text and the
+// reader sees the amendment beside the sentence it changed rather than in a separate expander.
 function rationaleFact(v) {
-  if (!v.rationale && !v.rationalePlain) return "";
-  if (!v.rationalePlain) return fact("Rationale", escapeHtml(v.rationale));
-  const asOf = v.recorded ? ` ${escapeHtml(v.recorded)}` : "";
-  const original = v.rationale
-    ? `<details class="uw-rationale-orig">
-        <summary>Rationale as recorded${asOf} — the analyst's original wording</summary>
-        <div>${escapeHtml(v.rationale)}</div></details>`
-    : "";
-  return fact("Rationale", `${escapeHtml(v.rationalePlain)}${original}`);
+  if (!v.rationale) return "";
+  return fact("Rationale", amendMarks(v.rationale));
+}
+
+// Amendment tags are audit trail, not thesis — set them apart so a reader can see at a glance
+// which words were recorded at the verdict and which were added afterwards, and WHEN.
+function amendMarks(text) {
+  return escapeHtml(text).replace(
+    /\[amended (\d{4}-\d{2}-\d{2})\s*:/g,
+    '<span class="muted">[amended $1:</span>');
 }
 
 // COLLAPSED by default on screen: this is per-axis METHODOLOGY, one step toward provenance,
