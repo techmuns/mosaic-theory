@@ -87,6 +87,85 @@ def test_unknown_basis_refuses() -> None:
         tm.terminal_value(_leg(), basis="EV/Sales", **_BRIDGE)
 
 
+# --- EV/Revenue basis ---------------------------------------------------------------------------
+# FUBO has no trailing EBITDA, no trailing EBIT, no EPS and ZERO committed own-history bands, so
+# every earnings basis would have to invent the terminal margin it then values. This basis asks the
+# smaller, answerable question — worth if it merely survives at peer-thin margins — and the pins
+# below are all about ONE property: margin and D&A must be incapable of touching the answer.
+_REV_BRIDGE = {"d_and_a_ratio_": None, "net_debt_now": 170.4, "burn_to_breakeven": 400.0,
+               "shares_now": 30_715_000.0, "g_sbc": 0.04}
+
+
+def test_ev_revenue_matches_a_hand_computation_exactly() -> None:
+    """COHERENCE PIN — the whole chain against arithmetic done by hand, step by step, so a
+    regression names the step it broke rather than just the answer."""
+    v = tm.terminal_value(_leg(margin=None, revenue=6100.0, multiple=0.7),
+                          basis=tm.BASIS_REVENUE, **_REV_BRIDGE)
+    assert v.denominator_t == pytest.approx(6100.0)          # REVENUE is the denominator
+    assert v.ev_t == pytest.approx(4270.0)                   # 6100 × 0.7
+    assert v.net_debt_t == pytest.approx(570.4)              # 170.4 + 400.0 burn
+    assert v.equity_t == pytest.approx(3699.6)               # 4270.0 − 570.4
+    assert v.shares_t == pytest.approx(30_715_000.0 * 1.04**4, rel=1e-12)
+    assert v.value_t == pytest.approx(3699.6e6 / (30_715_000.0 * 1.04**4), rel=1e-12)
+    assert v.pv == pytest.approx(v.value_t / 1.15**4, rel=1e-12)
+    # the earnings fields are ABSENT, not zero — nothing for a card to render as a driver
+    assert v.ebit_t is None and v.d_and_a_t is None and v.ebitda_t is None
+
+
+def test_ev_revenue_ignores_margin_because_it_never_accepts_one() -> None:
+    """THE DEAD-INPUT PIN, stated the only way it can be true: a margin cannot move the value
+    because the engine REFUSES to take one. Testing "value is unchanged when margin changes" on a
+    silently-ignored field would pass just as happily on a renderer that still printed it."""
+    for bad in (0.0, 0.12, -0.30):
+        with pytest.raises(tm.TerminalError, match="carries terminal margin"):
+            tm.terminal_value(_leg(margin=bad), basis=tm.BASIS_REVENUE, **_REV_BRIDGE)
+    # ...and the same for the D&A ratio, the other leg of the earnings bridge
+    with pytest.raises(tm.TerminalError, match="carries a D&A ratio"):
+        tm.terminal_value(_leg(margin=None), basis=tm.BASIS_REVENUE,
+                          **{**_REV_BRIDGE, "d_and_a_ratio_": 0.069264})
+
+
+def test_earnings_bases_still_demand_the_margin_they_value() -> None:
+    """The NEGATIVE pin of the same guard, both directions: nullable margin must not become an
+    optional margin on the bases whose entire arithmetic runs through it."""
+    for basis in (tm.BASIS_EBITDA, tm.BASIS_EBIT):
+        with pytest.raises(tm.TerminalError, match="THROUGH its terminal margin"):
+            tm.terminal_value(_leg(margin=None), basis=basis, **_BRIDGE)
+    with pytest.raises(tm.TerminalError, match="needs a D&A ratio"):
+        tm.terminal_value(_leg(), basis=tm.BASIS_EBITDA, **{**_BRIDGE, "d_and_a_ratio_": None})
+
+
+def test_ev_revenue_keeps_every_non_valuation_mechanic() -> None:
+    """EV/Revenue changes the TERMINAL VALUATION and nothing else — the burn still lands in
+    terminal net debt, dilution still compounds, and the hurdle still discounts. A basis that
+    quietly switched those off would flatter exactly the names it is reserved for."""
+    dry = tm.terminal_value(_leg(margin=None, revenue=6100.0, multiple=0.7),
+                            basis=tm.BASIS_REVENUE, **{**_REV_BRIDGE, "burn_to_breakeven": 0.0})
+    burning = tm.terminal_value(_leg(margin=None, revenue=6100.0, multiple=0.7),
+                                basis=tm.BASIS_REVENUE, **_REV_BRIDGE)
+    assert burning.net_debt_t > dry.net_debt_t and burning.value_t < dry.value_t
+    undiluted = tm.terminal_value(_leg(margin=None, revenue=6100.0, multiple=0.7),
+                                  basis=tm.BASIS_REVENUE, **{**_REV_BRIDGE, "g_sbc": 0.0})
+    assert undiluted.shares_t < burning.shares_t and undiluted.value_t > burning.value_t
+    assert burning.pv < burning.value_t                       # still discounted
+
+
+def test_ev_revenue_formula_stamp_is_its_own_chain() -> None:
+    """The stamp states the arithmetic a record ACTUALLY ran. An EV/Revenue record stamped with
+    R2's EBIT line would be describing a computation that never happened — and the EBITDA/EBIT
+    records must keep the stamp they were committed with, byte for byte."""
+    rev = tm.formula_for(tm.BASIS_REVENUE)
+    assert rev == tm.R2_FORMULA_REVENUE
+    assert tm.formula_for(tm.BASIS_EBITDA) == tm.R2_FORMULA == tm.formula_for(tm.BASIS_EBIT)
+    joined = " ".join(rev)
+    assert "terminal revenue × exit multiple" in joined
+    for absent in ("EBIT_T", "D&A_T", "EBITDA_T", "terminal margin"):
+        assert absent not in joined, f"the EV/Revenue chain must not claim {absent}"
+    # every non-valuation mechanic is still stated
+    for token in ("net debt_T", "shares_T", "share growth", "hurdle"):
+        assert token in joined
+
+
 # --- dilution and the cash between here and there -----------------------------------------------
 def test_share_growth_is_a_floored_three_year_cagr() -> None:
     """The floor is ASYMMETRIC on purpose: a buyback history is not evidence of future shrinkage,
@@ -296,7 +375,7 @@ def test_run_recipe_dispatches_r2_and_stamps_its_formula() -> None:
 
 def test_r2_record_refuses_a_misstated_formula() -> None:
     from vinci import scenarios as sc
-    with pytest.raises(ValueError, match="does not match R2_FORMULA"):
+    with pytest.raises(ValueError, match="recipe_formula does not match"):
         sc.run_recipe(_r2_record(recipe_formula=["EBIT = revenue × margin"]))
 
 
@@ -307,6 +386,84 @@ def test_r2_refuses_to_assume_a_missing_fact(missing: str) -> None:
     facts = {k: v for k, v in rec.facts.items() if k != missing}
     with pytest.raises(ValueError, match=f"needs fact '{missing}'"):
         sc.run_recipe(rec.model_copy(update={"facts": facts}))
+
+
+def _r2_revenue_record(**kw: object):
+    """The same minimal record on the EV/Revenue basis: no margin on any leg, no d_and_a_ratio
+    fact, and a three-axis methodology — the shape a real EV/Revenue record must take.
+
+    Built through the CONSTRUCTOR, never ``model_copy``: model_copy does not re-run validators, so
+    a helper that used it would silently skip the very axes guard these tests exist to pin."""
+    from vinci import scenarios as sc
+    rec = _r2_record()
+    d: dict = {
+        "ticker": "DEMO", "recipe_id": sc.RECIPE_R2, "recipe_desc": "terminal-margin",
+        "multiple_basis": tm.BASIS_REVENUE, "underwrite_date": "2026-07-21", "analyst": "test",
+        "spot": 6.00, "spot_source": "test close",
+        "facts": {k: v for k, v in rec.facts.items() if k != "d_and_a_ratio"},
+        "scenarios": {
+            n: sc.ScenarioInput(revenue=s.revenue, multiple=m, years_to_terminal=4,
+                                reason=s.reason)
+            for (n, s), m in zip(rec.scenarios.items(), (0.5, 0.7, 1.0), strict=True)},
+        "assumptions": {a: sc.AssumptionDerivation(method="stated for the test run")
+                        for a in ("revenue", "multiple", "horizon")},
+        "tier": tm.TIER_B, "survival_input": rec.survival_input}
+    d.update(kw)
+    return sc.ScenarioRecord(**d)
+
+
+def test_r2_revenue_record_runs_and_stamps_the_revenue_chain() -> None:
+    """END TO END on the record layer: an EV/Revenue record computes, stamps ITS OWN chain, and
+    carries no earnings figures for a renderer to mistake for value drivers."""
+    from vinci import scenarios as sc
+    r = sc.run_recipe(_r2_revenue_record())
+    assert r.recipe_formula == list(tm.R2_FORMULA_REVENUE)
+    base = r.result.per_scenario["base"]
+    assert base.op_income is None and base.ebitda is None and base.d_and_a_t is None
+    assert base.ev_ebit is None            # no EBIT to cross-check against
+    assert base.value_terminal is not None and base.value_per_share is not None
+
+
+def test_r2_revenue_record_refuses_a_dead_d_and_a_fact() -> None:
+    """A d_and_a_ratio fact on an EV/Revenue record is a driver nothing reads. Refuse it at the
+    record layer too — the engine's refusal never sees it, because _run_r2 stops passing it."""
+    from vinci import scenarios as sc
+    rec = _r2_revenue_record()
+    facts = {**rec.facts, "d_and_a_ratio": sc.Fact(value=0.0113, unit="rate", basis="latest FY",
+                                                   source="EDGAR")}
+    with pytest.raises(ValueError, match="no computation reads"):
+        sc.run_recipe(rec.model_copy(update={"facts": facts}))
+
+
+def test_r2_revenue_axes_drop_margin_both_directions() -> None:
+    """The methodology axes follow the BASIS, not just the recipe. Requiring a margin write-up on a
+    basis that never reads a margin would produce a reviewable-looking paragraph attached to
+    nothing; accepting one silently would do the same. Both are refused."""
+    from vinci import scenarios as sc
+    assert sc.axes_for(sc.RECIPE_R2, tm.BASIS_REVENUE) == ("revenue", "multiple", "horizon")
+    assert sc.axes_for(sc.RECIPE_R2, tm.BASIS_EBITDA) == sc.AXES_BY_RECIPE[sc.RECIPE_R2]
+    with pytest.raises(ValueError, match="unknown assumption axis"):
+        _r2_revenue_record(assumptions={
+            a: sc.AssumptionDerivation(method="stated for the test run")
+            for a in ("revenue", "margin", "multiple", "horizon")})
+    with pytest.raises(ValueError, match="must cover exactly"):
+        _r2_revenue_record(assumptions={
+            a: sc.AssumptionDerivation(method="stated for the test run")
+            for a in ("revenue", "multiple")})
+
+
+def test_r1_still_demands_the_margin_it_values() -> None:
+    """`margin` became nullable for EV/Revenue. R1 is a mid-cycle MARGIN recipe end to end, so an
+    absent one must refuse rather than reach the block as a silent zero."""
+    from tests.test_scenarios import _rec
+    from vinci import scenarios as sc
+
+    rec = _rec()
+    legs = dict(rec.scenarios)
+    legs["base"] = sc.ScenarioInput(revenue=legs["base"].revenue, multiple=legs["base"].multiple,
+                                    reason=legs["base"].reason)
+    with pytest.raises(ValueError, match="mid-cycle MARGIN recipe"):
+        sc.run_recipe(rec.model_copy(update={"scenarios": legs}))
 
 
 def test_r2_refuses_a_leg_with_no_horizon() -> None:

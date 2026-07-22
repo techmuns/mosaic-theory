@@ -218,8 +218,16 @@
           "type": "number"
         },
         "margin": {
-          "title": "Margin",
-          "type": "number"
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Margin"
         },
         "multiple": {
           "title": "Multiple",
@@ -244,7 +252,6 @@
       },
       "required": [
         "revenue",
-        "margin",
         "multiple",
         "reason"
       ],
@@ -259,12 +266,28 @@
           "type": "number"
         },
         "op_income": {
-          "title": "Op Income",
-          "type": "number"
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Op Income"
         },
         "ebitda": {
-          "title": "Ebitda",
-          "type": "number"
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Ebitda"
         },
         "ev": {
           "title": "Ev",
@@ -373,8 +396,6 @@
       },
       "required": [
         "value_per_share",
-        "op_income",
-        "ebitda",
         "ev",
         "equity"
       ],

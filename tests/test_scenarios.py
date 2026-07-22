@@ -314,6 +314,64 @@ console.log(JSON.stringify({
     assert (res["sourcesFull"], res["sourcesBare"]) == (3, 2), res
 
 
+def test_uw_card_ev_revenue_shows_no_dead_margin_rows_node() -> None:
+    """THE DEAD-INPUT PIN AT THE RENDER LAYER. An EV/Revenue value is revenue × multiple; margin
+    and D&A never enter it. If the card printed a margin row anyway it would read as a driver of a
+    number it did not produce, and no reader could tell — the same class of defect as #179's
+    `undefined` reference table, which shipped invisibly into every PDF because the preview only
+    checked the collapsed state.
+
+    Rendered in BOTH states for that reason: collapsed as seen on screen, and force-open as the T1
+    print rule exports it. A row hidden behind a <details> is still in the PDF."""
+    import shutil
+    import subprocess
+
+    if not shutil.which("node"):
+        pytest.skip("node unavailable")
+    card_path = Path(__file__).resolve().parents[1] / "frontend" / "scenarios" / "FUBO.json"
+    if not card_path.exists():
+        pytest.skip("no EV/Revenue card committed yet — awaiting combined-entity re-scope, "
+                    "not this build")
+    driver = r"""
+import { readFileSync } from "node:fs";
+import { pathToFileURL } from "node:url";
+import path from "node:path";
+const stub = new Proxy(function(){}, { get: () => stub, apply: () => stub, construct: () => ({}) });
+for (const g of ["window","document","location"]) { try { globalThis[g] = stub; } catch {} }
+const cardUrl = pathToFileURL(path.resolve("frontend/views/shared/uw-card.js")).href;
+const { uwCard } = await import(cardUrl);
+const card = JSON.parse(readFileSync("frontend/scenarios/FUBO.json"));
+const html = uwCard(card);
+// the PRINT tier: every <details> force-opens in the PDF, so scan that text too
+const printed = html.replace(/<details/g, "<details open");
+console.log(JSON.stringify({
+  basis: card.multipleBasis,
+  marginRow: /Terminal op margin|>Op margin</.test(html),
+  marginRowPrinted: /Terminal op margin|>Op margin</.test(printed),
+  undef: /undefined|NaN/.test(printed),
+  // the value drivers that DO belong, and the mechanics EV/Revenue must keep
+  exitRow: html.includes("Exit EV/Revenue"),
+  revenueRow: html.includes("Terminal revenue ($M)"),
+  horizonRow: html.includes("Years to terminal"),
+  survival: html.includes("uw-survival"),
+  tier: html.includes("tier B"),
+  methodAxes: html.includes("revenue, multiple and horizon methodology"),
+  marginMethod: /<b>Op margin<\/b>/.test(printed),
+}));
+"""
+    out = subprocess.run(["node", "--input-type=module", "-e", driver],
+                         capture_output=True, text=True, check=True,
+                         cwd=Path(__file__).resolve().parents[1])
+    res = json.loads(out.stdout)
+    assert res["basis"] == "EV/Revenue", res
+    assert not res["marginRow"], "EV/Revenue card renders a margin row that no computation fed"
+    assert not res["marginRowPrinted"], "the margin row is absent on screen but PRESENT in the PDF"
+    assert not res["marginMethod"], "an EV/Revenue card carries a margin methodology line"
+    assert not res["undef"], "undefined/NaN reached the rendered card (the #179 class)"
+    assert res["exitRow"] and res["revenueRow"] and res["horizonRow"], res
+    assert res["survival"] and res["tier"] and res["methodAxes"], res
+
+
 def test_committed_schema_matches_the_model() -> None:
     """F4: ``scenarios/_schema.json`` is committed — pin it so a model change cannot silently
     leave a stale schema behind."""

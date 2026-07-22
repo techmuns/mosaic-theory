@@ -2833,6 +2833,33 @@ Each line: *what it does* — *verified how*.
     revisit re-downloads + re-parses (AORT's 209 KB was fetched 3× in one session). That is a SPEED
     cost only, with no memory implication; always-fresh fetches match the "static mirror lags local
     state until the next `git push`" design. Revisit only if navigation latency becomes a complaint.
+- **R2 `EV/Revenue` BASIS (`vinci/dossier/terminal_margin.py`) — SHIPPED 2026-07-22 as a CAPABILITY,
+  with NO name underwritten on it.** For a business with no profits to value: every earnings basis
+  would have to invent the terminal margin and then multiply that invention by a peer multiple
+  earned on margins somebody else delivered. `EV/Revenue` asks the smaller, answerable question —
+  *what is this worth if it merely SURVIVES at peer-thin margins?*
+  - **Margin and D&A are structurally ABSENT, not computed-and-ignored.** The engine REFUSES a
+    margin or a D&A ratio on an EV/Revenue leg; `ebit_t`/`d_and_a_t`/`ebitda_t` are `None`;
+    `_run_r2` neither requires nor accepts a `d_and_a_ratio` FACT; the methodology axes drop
+    `margin` (`scenarios.axes_for`); the card suppresses the margin row in BOTH the collapsed and
+    the force-open print state. An input a computation never reads renders as a driver the reader
+    cannot identify as inert — refusing is the only version of this that stays honest. The pin is
+    written as a refusal for that reason: "value unchanged when margin changes" would pass just as
+    happily on a renderer that still printed it.
+  - **`R2_FORMULA` is UNCHANGED, byte for byte.** EV/Revenue carries its own chain
+    (`R2_FORMULA_REVENUE`, 6 lines vs 9): a record stamped `EBIT_T = terminal revenue × terminal
+    margin` that never computed one would describe an arithmetic it did not run, which is the one
+    thing the stamp exists to prevent. *Verified:* NCNO/AORT/MVST all still stamp `R2_FORMULA` and
+    re-validate under the new model; every committed record is byte-identical (only the derived
+    `scenarios/_schema.json` moved).
+  - Dilution, the burn landing in terminal net debt, the survival gate, the 15% hurdle and the 2:1
+    bar are untouched — only the terminal valuation differs. ruff + `mypy --strict` clean, 950
+    passed (+9). PR #187.
+  - **ITS INTENDED TRIGGER WAS FALSIFIED MID-BUILD (recorded honestly).** The basis was queued
+    against FUBO, and FUBO is not the company the brief described — see §5. The capability stands on
+    its own reasoning; the next genuinely pre-profit name uses it. **No record has ever been written
+    on this basis**, so it is shipped-and-UNEXERCISED: the first real use must re-verify the
+    arithmetic against a hand computation rather than trust the pins alone.
 
 ## 3. FALSIFIED — tested and retired (NOT deferred)
 
@@ -3827,44 +3854,86 @@ re-anchor (the full STATE split stays its own queued task — nothing was reloca
    rule it was never tested against — a fresh backfill would demote its multiple leg to weak.
    Neither affects a recorded verdict (both are watches), so this is housekeeping, but do the two
    together in one pass rather than per-name.
-3. **R2 COHORT UNDERWRITES — NCNO + AORT + MVST DONE. FUBO is next and LAST.** VITL stays
-   survival-blocked (re-engage on an Item 1.01/2.03 financing filing or FCF turning positive).
+3. **R2 COHORT — *NOT* COMPLETE. Four dispositioned (NCNO, AORT, MVST recorded watches; VITL
+   survival-blocked) + FUBO documented as BLOCKED/UNDISPOSITIONED.** Do not mark this cohort
+   complete: FUBO has no record and no verdict, and the reason is structural, not effort.
    Superseded detail: `scenarios/NCNO.json` is the first R2
    record (watch, 2026-07-21). **AORT recorded 2026-07-22** — its share-step question is CLOSED (a May-2025
-   convert-for-stock exchange; override to the 2.25% organic rate, reason recorded). Remaining:
+   convert-for-stock exchange; override to the 2.25% organic rate, reason recorded).
    **VITL is survival-blocked** (0.76y runway vs 4y; re-engage on an Item 1.01/2.03 financing filing or on
-   free cash flow turning positive). MVST/FUBO remain fact-blocked (item 3).
-4. **g_sbc CONTAMINATION WARNING (queued).** The trailing-3-year diluted-share CAGR is taken raw;
+   free cash flow turning positive). **MVST recorded 2026-07-22** (watch, survival FAIL on a stated
+   going concern).
+4. **FUBO — RECLASSIFIED 2026-07-22: NOT UNDERWRITABLE ON CURRENT EVIDENCE. Undispositioned,
+   pending a combined-entity evidence pull. A SCOPED FUTURE THREAD, not an open task.** The
+   underwrite was briefed, built to the record step, and STOPPED when the Q1-26 10-Q
+   (`0001628280-26-031265`, filed 2026-05-06, period ended 2026-03-31) falsified its premises.
+   **FUBO is a post-2025-10-29 Up-C combination with Disney/Hulu**: the registrant converted FL→DE,
+   is sole managing member of Newco and consolidates it at **70%**, with Hulu/Disney holding **30%**
+   as a **$1,843,003K redeemable non-controlling interest**. The cash-flow statement carries
+   `Acquisition of Fubo, net of cash acquired +$268,057K` in INVESTING and
+   `Pre-combination net contributions from Disney` in the comparative — **legacy Fubo is the
+   ACQUIREE and the predecessor is the Hulu Live business.** The comparative balance-sheet date is
+   **Sep. 27, 2025**: the registrant now reports on Disney's 52/53-week fiscal calendar.
+   - **THE DIVISOR IS WRONG BY ~5×, AND IT IS THE WHOLE GRID.** Cover page: Class A **29,435,597** +
+     Class B **78,992,518** = **108,428,115** economic shares. The **30,715,279** figure everyone
+     (including this agent's own evidence pull) treated as the share count is the **Class A
+     weighted-average EPS denominator**. Putting consolidated Newco revenue over it *while also*
+     ignoring the 30% NCI would have produced ~$120/share against a $9.42 spot — a runaway PASS that
+     is pure accounting artifact. Sanity check: 108.4M × $9.42 ≈ **$1.0bn** market cap reconciles
+     with the business's scale; 30.7M × $9.42 = $289M does not.
+   - **THE "SIX-YEAR LOSS-NARROWING SLOPE" IS THE ACQUIREE'S HISTORY.** −910% → −12.1% EBIT
+     (FY2019–24) is legacy Fubo, now a subsidiary — not the registrant's trajectory. It was the
+     spine of the briefed bull leg and rationale.
+   - **THE BURN IS A RECEIVABLES BUILD, NOT A BURN.** Six months to 2026-03-31: net loss
+     **−$25,270K**, operating cash flow **−$412,383K**, of which **accounts receivable −$525,032K**.
+     The latest QUARTER is revenue **$1,573,867K** vs opex **$1,582,945K** — an operating margin of
+     **−0.58%**. Annualizing the headline outflow gives −$837.5M/yr → 0.28y runway → a screaming
+     survival FAIL that describes the formation of a balance sheet, not the business.
+   - The **$145M note is RELATED-PARTY (Disney)** and the same statement shows
+     `Repayment of convertible notes $144,765K` — it refinanced legacy Fubo's assumed converts; it
+     is not burn financing. `net_debt 170.4 [VENDOR]` does not describe a balance sheet carrying
+     $1,325,737K of liabilities plus $1.84bn of mezzanine.
+   - **THE R2 ENGINE HAS NO NCI TERM** (queue item 25). A combined-entity underwrite needs one built
+     first, plus a ratified economic-share convention (Class A+B, and whether Class B double-counts
+     Disney's interest with the redeemable NCI — UNRESOLVED, an operator question).
+   - **PRIOR FUBO ANALYSIS IN THIS FILE IS TAINTED** wherever it treats the FY2019–24 series as the
+     registrant's or 30.7M as the divisor. So is the 2026-07-22 read-only evidence sheet.
+5. **g_sbc CONTAMINATION WARNING (queued).** The trailing-3-year diluted-share CAGR is taken raw;
    a single acquisition issuance inside the window silently becomes a permanent dilution rate.
    Ship a flag when any single year-over-year share jump exceeds about twice the series median —
    AORT's FY2025 step is the live example, and it is an input to a valuation, not a footnote.
-5. **R2 ENGINE — BUILT 2026-07-21 (`R2_terminal_margin`).** Terminal-margin bridge, 15% house
+6. **R2 ENGINE — BUILT 2026-07-21 (`R2_terminal_margin`).** Terminal-margin bridge, 15% house
    hurdle, hard survival gate, tier A/B, EV/EBIT basis supported, card rendered. Conventions
-   ratified in §7. **NEXT: the per-name grids** — cohort underwrites (NCNO / MVST / AORT / VITL,
-   and FUBO once its facts exist) each need their own evidence pull → analyst bear/base/bull, the
-   same way R1 ran. The engine does not underwrite anything by itself.
-6. **~~COHORT FACT GAPS — CIQ balance-sheet extraction~~ — CLOSED 2026-07-22.** MVST and FUBO are
-   both underwritable; see the build record. Superseded detail: **MVST**:
+   ratified in §7. **EV/Revenue basis added 2026-07-22 (PR #187) — capability only, no name
+   underwritten on it; see §2.** **NEXT: the per-name grids** — each cohort underwrite needs its own
+   evidence pull → analyst bear/base/bull, the same way R1 ran. The engine does not underwrite
+   anything by itself. **It also has no NCI term** — see item 25.
+7. **~~COHORT FACT GAPS — CIQ balance-sheet extraction~~ — CLOSED 2026-07-22 for MVST.** MVST is
+   underwritable and is now recorded. **FUBO is NOT** — the CIQ bridge closed its *tag* gaps, but
+   the name is blocked for a structural reason found later (item 4): the vendor figures splice
+   pre- and post-combination periods and the share basis is wrong. Superseded detail: **MVST**:
    no D&A tag at all; net debt UNKNOWN (under-capture guard refused). **FUBO**: not underwritable
    from committed data — `dep_amort` resolves to $0.003M from **FY2014**, debt tags last filed
    **2020-06-30**, FCF is **FY2024**, and diluted WA reads 30.0M against 342.7M shares outstanding
    (an 11x gap; reverse split?). EDGAR cannot close either — these need the CIQ balance sheet.
-7. **TAGGER PROPOSALS AWAITING RATIFICATION (operator).** The propose-only tagger agrees with 10 of
+8. **TAGGER PROPOSALS AWAITING RATIFICATION (operator).** The propose-only tagger agrees with 10 of
    11 committed hand tags; it proposes `R2_NEEDED` for FUBO, whose committed hint is the machine
    placeholder `unknown`. No hint was written — ratify or reject, then re-run the sweep.
-8. **~~EPAM'S COMMITTED D&A IS SIX YEARS STALE~~ — CLOSED 2026-07-22 (amended pre-verdict).** The vintage fix
+   **CAUTION 2026-07-22:** the FUBO proposal reads on pre-combination data (item 4). `R2_NEEDED` may
+   still be the right tag, but do not ratify it as evidence that FUBO is underwritable — it is not.
+9. **~~EPAM'S COMMITTED D&A IS SIX YEARS STALE~~ — CLOSED 2026-07-22 (amended pre-verdict).** The vintage fix
    resolves EPAM to **124.811** (FY2025) against a committed **45.317** (FY2019, +175%). EPAM has a
    PENDING underwrite whose EBITDA basis rests on the stale figure. Reported, NOT rewritten (out of
    this branch's scope). Re-check the held grid before the verdict lands.
-9. **~~`_latest_dep_amort` prefers a STALE combined tag~~ — CLOSED 2026-07-22.** FUBO takes a 2014
+10. **~~`_latest_dep_amort` prefers a STALE combined tag~~ — CLOSED 2026-07-22.** FUBO takes a 2014
    value of $0.003M over split tags summing $38.5M (FY2024). Affects any filer that switched tags.
    Found 2026-07-21, not fixed in-branch (scope).
-10. **`own-history-refresh` silently drops `ev_ebitda.note`.** Its branch only re-applies the
+11. **`own-history-refresh` silently drops `ev_ebitda.note`.** Its branch only re-applies the
    "trailing only" note when `ev_ebitda_adjusted_fwd` is absent; when present (VITL) the committed
    note is lost. Found 2026-07-21 by dry-run diff and routed around surgically, not patched.
 
 **ANALYST / OPERATOR**
-11. **EPAM underwrite — RUN 2026-07-21, VERDICT PENDING.** `scenarios/EPAM.json` written and
+12. **EPAM underwrite — RUN 2026-07-21, VERDICT PENDING.** `scenarios/EPAM.json` written and
    computed standalone (R1, EV/EBITDA); card shipped at `pending_analyst` — the machine
    recorded the bar test, it did NOT decide. Legs (live spot $89.40, Polygon close
    2026-07-20): bear $63.14 · base $163.08 · bull $291.24 (printed, never in the ratio);
@@ -3885,29 +3954,29 @@ re-anchor (the full STATE split stays its own queued task — nothing was reloca
    implied-D&A ratio was the book's worst honest reading at **4.20x** and now sits at **1.52x**,
    in line with IT 0.90x / BRBR 1.33x / AORT 1.38x / CNXC 1.68x / SMPL 1.79x — **the stale
    denominator WAS the outlier.** Verdict stays `pending_analyst`; methods stay DRAFT. EPAM now rides the monitor freshness panel as `verdict pending`.
-12. **BRBR — QUEUE A FULL R1 UNDERWRITE, POST-AUGUST-WINDOW.** The last of the three dispositions
+13. **BRBR — QUEUE A FULL R1 UNDERWRITE, POST-AUGUST-WINDOW.** The last of the three dispositions
    still open; CNXC and VITL were closed 2026-07-21 (`R1_NOT_ROBUST` and `R2_NEEDED`). BRBR passes
    both band guards, so its anchor is usable. **Basis = the 2026-07-21 disposition pull**, whose
    one contested item is now settled: `book value/share −$4.28` IS committed and sourced
    (`mechanical.stock_info.book_value_ps`) — the pull's "unsourced" finding was a false negative.
    Hold until after the August print window for the same reason EPAM is held.
-13. **CIQ ESCALATION — VITL `TEV/LTM EBITDA` (LOW PRIORITY, operator).** Reproducible statement
+14. **CIQ ESCALATION — VITL `TEV/LTM EBITDA` (LOW PRIORITY, operator).** Reproducible statement
    drafted: *VITL (NasdaqGM:VITL), Financials→Multiples — `TEV/LTM EBITDA` is populated against a
    rent-adjusted denominator. Backing it out of the sheet's own TEV gives ~393 against EBITDAR
    ~390.5 (1.007x) and EBITDA 79.5 (4.94x), across every recent period; `TEV/LTM EBIT` on the same
    sheet reconciles to EDGAR exactly.* Low priority: the guard already disqualifies the band, so
    nothing downstream depends on CIQ answering. Worth sending because the same rent-adjustment
    substitution would silently distort ANY lease-heavy name.
-14. **Truckload freeze-source re-run** — confirm the surgically-patched
+15. **Truckload freeze-source re-run** — confirm the surgically-patched
    `frontend/themes/truckload-supply-purge.json` reproduces byte-identical from the freeze.
-15. **Sweep-#2 fail-closed coverage holes (2)** — operator decision, report-only.
-16. **Drafting-rubric v2 validation — DATED 2026-08-13** (pre-registered; do not run early).
+16. **Sweep-#2 fail-closed coverage holes (2)** — operator decision, report-only.
+17. **Drafting-rubric v2 validation — DATED 2026-08-13** (pre-registered; do not run early).
 
 **HOUSEKEEPING**
-17. **Refresh cadence → docs/RUNBOOKS.md** (it is operating practice, not state).
-18. **Full STATE split** — §5 build records → a fossils/decisions file; this block is the interim.
+18. **Refresh cadence → docs/RUNBOOKS.md** (it is operating practice, not state).
+19. **Full STATE split** — §5 build records → a fossils/decisions file; this block is the interim.
 
-19. **REFERENCE-LABEL REGISTER + de-couple the median lookup (PAIRED — do not split).**
+20. **REFERENCE-LABEL REGISTER + de-couple the median lookup (PAIRED — do not split).**
     `assumptions[].references[].label` renders to the reader but is not linted; 14 labels across
     the four records still carry house vocabulary (`own-history band low`, `committed anchor
     median`, EPAM's `DEAD REGIME`). Restating them is blocked on a real coupling: `uw-card.js:188`
@@ -3916,14 +3985,14 @@ re-anchor (the full STATE split stays its own queued task — nothing was reloca
     (`median` / `band_low` / `p75` / …), switch the lookup to it, THEN restate the labels with
     analyst ratification. Splitting them means either a broken card or a rule left violated.
 
-20. **MIRROR-SYNC CI CHECK.** A generator run dirties BOTH its source and its `frontend/` mirror;
+21. **MIRROR-SYNC CI CHECK.** A generator run dirties BOTH its source and its `frontend/` mirror;
     an artifact pass that commits only the source leaves the deployed site reading stale data
     SILENTLY — nothing is red, the page is just wrong. Found 2026-07-21: `92feab0` committed
     `data/monitor/2026-07-20.json` without its mirror, so the live freshness panel was still
     missing EPAM (fixed in `a982900`). Ship a CI step that rebuilds and fails if `git status` is
     dirty — the artifact pass is complete when the tree is clean, not when the source commit lands.
 
-21. **RATIONALE STYLE RULE (adopted 2026-07-21; binds FUTURE verdicts, never sealed ones).**
+22. **RATIONALE STYLE RULE (adopted 2026-07-21; binds FUTURE verdicts, never sealed ones).**
     `verdict.rationale` is plain thesis prose — the market-standard shape: thesis, the two or
     three numbers that carry it, the risk accepted. **Accession numbers, vendor names (CIQ /
     Polygon), verification arithmetic ("1,100 × 8% × 6.0x → $3.54 → 2.17:1"), and process
@@ -3993,7 +4062,34 @@ re-anchor (the full STATE split stays its own queued task — nothing was reloca
     analyst-facing prose that needs ratification like the other restatements, and `uw-card.js:188`
     CLASSIFIES on label text (`/median/i.test(p.label)`) to find the median reference — so
     restating a label can silently break the card. That classifier is itself a standing violation
-    of the parsers-consume-structured-values rule. Queued as item 12.
+    of the parsers-consume-structured-values rule. Queued as item 20.
+
+23. **RENDER-COMPLETENESS CHECK (from #185's dropped survival `detail`).** The survival panel
+    silently dropped its `detail` list — the runway arithmetic and the going-concern sentence were
+    IN the record and absent from the card. This is the second instance of the same shape (#179's
+    `undefined` reference table was the first), so the pin belongs at the class level, not the
+    instance: a check that every populated field of a committed record reaches the rendered surface
+    (or is DELIBERATELY tiered per the three-tier design rule), rather than one more per-field
+    assertion added after each miss. Both instances were invisible to a preview that checked only
+    the visible tier — so the check must run against the FORCE-OPEN print state too.
+
+24. **TESTING NOTE — `model_copy` DOES NOT RE-RUN PYDANTIC VALIDATORS.** Found 2026-07-22 building
+    the EV/Revenue axes pin: a test helper that built its record with `rec.model_copy(update=...)`
+    sailed past the record-level guards it existed to exercise, and the test passed for the wrong
+    reason. Any test asserting a `@model_validator` REFUSES something must construct through
+    `ScenarioRecord(...)` or `model_validate(...)`. Worth a sweep of existing `model_copy` uses in
+    tests — this one was caught because the assertion was a `pytest.raises` that did not raise; a
+    helper used for a POSITIVE assertion would have failed silently and still be green.
+
+25. **NCI TERM FOR THE R2 ENGINE — GATES ANY COMBINED-ENTITY UNDERWRITE (FUBO is the live case).**
+    `terminal_value` bridges `EV_T − net_debt_T → equity_T ÷ shares_T` with no non-controlling
+    interest term, so it implicitly hands 100% of a consolidated enterprise to the parent's
+    shareholders. That is wrong for any Up-C or partly-owned structure, and it is wrong by a factor
+    (FUBO: 30% NCI plus a Class A/Class B share basis, ≈5× combined — item 4). Needs: an NCI
+    deduction on the bridge, a ratified ECONOMIC-share convention, and a guard that REFUSES to
+    compute when a record's share count is an EPS denominator rather than the economic count. Until
+    this exists, no name with a material NCI can be underwritten on R2 — and the engine should say
+    so rather than quietly produce a number.
 
 **BUILD RECORD — 2026-07-21 Analysis declutter (PR #177, stacked on #175).** The audited
 Analysis-tier defects, applied display-only in BOTH renderers: the four surface CONTRADICTIONS
@@ -4513,6 +4609,26 @@ SIC-87xx sector miss · entry-price/ratio-at-entry + implied-odds display.
     | implied D&A / revenue | CNXC 11.14% | 41.91% | 25% | 2.2x / 1.7x |
     | implied D&A / recorded D&A | EPAM 4.20x | 35.53x | 8x | 1.9x / 4.4x |
     | market-implied EBITDA / recorded | CNXC 1.41x | 4.62x | 2.5x | 1.8x / 1.8x |
+
+  - **KNOWN CIQ DEFECT CLASS #2 — PERIOD SPLICING ACROSS A REVERSE MERGER (found 2026-07-22, FUBO).**
+    Distinct from the EBITDAR substitution above, and **neither guard catches it**: the vendor's
+    LTM/trailing columns are stitched across a combination, blending the ACQUIREE's pre-deal periods
+    with the registrant's post-deal ones into a single "trailing" figure for a legal entity whose
+    predecessor changed. FUBO's `Total Revenue 5,304.1` LTM and its `Gross Profit 236.4 / 4.46%`
+    are spliced across the **2025-10-29** Up-C combination (item 4): the pre-October periods are
+    legacy Fubo's, the post-October ones the Hulu-Live-predecessor registrant's. The peer table and
+    every margin computed off that LTM inherit the splice.
+    - **WHY THE GUARDS ARE BLIND:** both test INTERNAL coherence of one column, or that column
+      against market cap. A spliced column can be perfectly self-consistent and still describe no
+      entity that ever existed. The tell is not in the sheet — it is the **predecessor change**
+      (here: a fiscal-calendar shift to Disney's 52/53-week year, comparatives showing
+      `Pre-combination net contributions`, and an `Acquisition of <the ticker's own name>` line in
+      investing).
+    - **DETECTION RULE FOR NOW (manual, until something machine-checkable exists):** before
+      underwriting any name, check EDGAR for a business combination inside the trailing window. If
+      one exists, **the vendor trailing panel is unusable** and the registrant's own filed
+      statements are the only basis. A candidate future guard: flag when a filer's fiscal-period end
+      dates SHIFT between consecutive filings, which is cheap and would have caught this.
 
   - **FULL SWEEP RUN — VITL IS THE ONLY NAME THAT TRIPS.** All 11 committed bands, both guards, real
     run. 9 with a CIQ export pass internal coherence (FUBO/VRRM have no local export — check not
