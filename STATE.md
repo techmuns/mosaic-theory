@@ -2833,6 +2833,54 @@ Each line: *what it does* — *verified how*.
     revisit re-downloads + re-parses (AORT's 209 KB was fetched 3× in one session). That is a SPEED
     cost only, with no memory implication; always-fresh fetches match the "static mirror lags local
     state until the next `git push`" design. Revisit only if navigation latency becomes a complaint.
+- **FIRST POSITION CLOSE — IT, LOGGED 2026-07-22.** Verbatim: *"closed flat by operator 2026-07-21
+  immediately after entry; evidence-confirmed 2026-07-22; realized 0.0% before costs; the call
+  remains in 180-day calibration."* Close row `C-IT-screen2-20260706` closes
+  `V-IT-screen2-20260706` at **141.06 (2026-07-21)** — the entry price. The record moves
+  `confirmed → watch`, avoid-priced, with the exit disclosed in full.
+  - **CHRONOLOGY, stated because the order matters:** the sale PRE-DATES all of this analysis. The
+    re-underwrite confirmed the exit; it did not cause it. The amendments govern watch framing and
+    the re-engage level, nothing else.
+  - **THE BASE LEG WAS AMENDED, NOT "HELD"** — 15.0x → 12.5x, with reasons that stand independent
+    of the exit (stabilized-state peers price near 12.5x / 6.5x / 8x private; the prior 15.0x was
+    set below a median drawn from a 2017-opening, growth-era-only window — the same window defect
+    the downside leg carried). **DISCLOSURE, recorded in the record itself:** under the
+    pre-amendment 15.0x the charitable downside alone read **2.03:1** — it would have PASSED. The
+    base revision is load-bearing and is labelled as such.
+  - **BOUNDARY NOTE:** 2.03 sits inside the ±0.5 band around the 2.0 bar, so the single-flip rule
+    fires on it regardless of which base multiple governs.
+
+- **STANDING RULE — EXECUTIONS ARE REPORTED SAME-DAY (adopted 2026-07-22).** Executions are
+  reported into the advisory loop the day they occur; records follow within a day. **The
+  deliberation of 2026-07-21/22 ran on a stale position state** — the name was analysed, re-priced
+  and re-underwritten as a live holding for two days after it had been sold. Recorded as the
+  motivating case, **blame-free**: no analysis was wrong, it was merely addressed to a position
+  that no longer existed.
+
+- **BRIEF RULE — ADVISORY VALUES NEVER ENTER A BRIEF AS COMMITTED STATE (adopted 2026-07-22).**
+  *"Advisory-layer values never enter a brief as committed state; any brief value differing from
+  the record carries an explicit AMEND instruction with reason — 'held at' may only describe
+  committed values."* Three basis-class brief defects in this one sequence, advisor-attributed:
+  1. **EBITDA-margin vs EBIT-margin mistranslation** — an advisory cell of 5800 × **15.5% EBITDA
+     margin** (= 899.0, already EBITDA) reached the brief as **13.2% EBIT margin**. Correct
+     conversion is 12.345%. The two differ by exactly the D&A add-back.
+  2. **The $72.24 expectation under an EBIT label** — it reproduces exactly from the EBITDA cell
+     and from nothing else.
+  3. **12.5x quoted as "held" when the record committed 15.0x** — the defect that would have
+     silently flipped a PASS to a FAIL.
+  - **THE METHOD LESSON, and it is against the machine:** the agent back-solved defect (2) to an
+    operating-lease double-count — 372.0 to the dollar, an *exact* match to IT's lease component
+    (49.6 × 7.5 = 372.0). It was a coincidence. **An arithmetically exact back-solve is not proof
+    of mechanism — provenance adjudicates.** Recurring defect class: **basis mistranslation**
+    (EBITDAR-vs-EBITDA on VITL; LTM-vs-same-period on NCNO; EBITDA-margin-vs-EBIT-margin here).
+    **Rule adopted: every margin cell carries its basis label; `bear_basis` gains `margin_basis`.**
+
+- **GOVERNANCE EXHIBIT (for the external-review memo).** *"Asked to write the one number that flips
+  a record from pass to fail, the machine computed both readings and stopped."* The agent halted
+  twice in this sequence rather than resolve an ambiguity in the direction the narrative wanted:
+  once on the unfilled exit price (an irreversible append-only financial record), once on the base
+  multiple. Both were resolved by the operator, on the record, with reasons.
+
 - **EXTERNAL IC REVIEW — LOGGED 2026-07-22 (15 claims verified against primary sources).**
   **12 VERIFIED / 2 REFUTED / 1 SPLIT.** IC assertions were given the same treatment as any machine
   claim, and two did not survive:
@@ -4173,6 +4221,17 @@ re-anchor (the full STATE split stays its own queued task — nothing was reloca
 39. **WERN HAS NO DOSSIER** — `data/dossiers/` covers 11 names, not WERN; its band provenance lives
     only in the scenario record's `assumptions`.
 
+40. **IC RESPONSE MEMO — THE NEXT ARTIFACT.** The external review's closing fact is the exit; the
+    memo answers the review with what was verified, what was refuted, what changed, and what the
+    exit realized. Everything it needs is now committed.
+41. **BEAR-STATE PULL → REUSABLE RUNBOOK STEP.** The 2026-07-22 cross-section pull (admission test,
+    per-name admit/reject with numbers, TEV basis stated, margin-retention-through-decline) becomes
+    a standing runbook step for any name whose own history lacks a bear-state precedent.
+42. **EXTENDED OWN-HISTORY CIQ PULL (~2006) — OPTIONAL DEPTH.** IT's committed multiple window
+    opens 2017Q1, so pre-2015 and the 2008-09 trough are unobservable. A pull back to ~2006 would
+    let a slower-growth Gartner be priced from its own record rather than the cross-section. Not
+    blocking — the cross-check convention (above) covers the gap.
+
 **BUILD RECORD — 2026-07-21 Analysis declutter (PR #177, stacked on #175).** The audited
 Analysis-tier defects, applied display-only in BOTH renderers: the four surface CONTRADICTIONS
 (two P/Es on one page; UNKNOWN-market beside a present relative; UNKNOWN-FCF-sign beside a present
@@ -4692,6 +4751,17 @@ SIC-87xx sector miss · entry-price/ratio-at-entry + implied-odds display.
     | implied D&A / recorded D&A | EPAM 4.20x | 35.53x | 8x | 1.9x / 4.4x |
     | market-implied EBITDA / recorded | CNXC 1.41x | 4.62x | 2.5x | 1.8x / 1.8x |
 
+  - **BEAR-STATE CROSS-CHECK — CONVENTION ADOPTED 2026-07-22.** *"Bear legs are cross-checked
+    against bear-state comparables whenever the name's own history contains no bear-state
+    precedent; own-history floors from a growth-era-only window are inadmissible as bear
+    multiples."* Trigger: IT's committed multiple series **opens in 2017Q1** — 9.3 years, entirely
+    inside the growth era — so its own floor (16.95x, the COVID trough) describes a state the
+    business is no longer in. The cross-section governs instead: declining information-services
+    businesses price at **4.79 / 6.30 / 6.30 / 8.30x** (Ipsos, Clarivate, GTM, Forrester
+    ex-impairment), median 6.30x.
+    - **CONTAGION CHECK RUN — IT was uniquely exposed.** SMPL's and EPAM's bear legs already sit at
+      bear-state levels, so neither needed re-setting. No other record carries a growth-era-only
+      floor as its downside multiple.
   - **LEASE-BASIS CONVENTION — RATIFIED 2026-07-22. THE NET-DEBT BASIS STAYS LEASE-INCLUSIVE, AND
     THIS REVERSES A FINDING.** The 2026-07-22 IC review raised a basis-inconsistency concern: our
     net debt is lease-inclusive while the multiple band is a CIQ TEV multiple, so if CIQ's TEV

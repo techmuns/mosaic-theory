@@ -172,29 +172,29 @@
   {
    "name": "bear",
    "revenue": 5800.0,
-   "margin": 0.15,
-   "multiple": 9.5,
-   "reason": "Secular case: GenAI substitution bites Insights (78% of revenue); revenue declines over several years; margin holds above the COVID trough (FY2020 12.0%) on subscription cost flex; the multiple sits near the low end of its own nine-year trading range (7.46x), with 9.5x at roughly the 5th percentile. [restated for external readability 2026-07-21; substance unchanged]",
-   "valuePerShare": 121.2,
-   "opIncome": 870.0,
-   "ebitda": 1070.3,
-   "ev": 10167.9,
-   "equity": 8479.7,
-   "evEbit": 11.7,
-   "normFcf": 560.9
+   "margin": 0.132,
+   "multiple": 7.5,
+   "reason": "set from the market's own pricing of the downside state: declining information-services businesses trade near six times cash earnings (observed range roughly five to eight) and keep only a fraction of their margins through a real decline. This cell takes the most charitable coherent reading - cash-margin retention of the closest surviving decliner, and a multiple at the top of the observed range in credit to the balance sheet (margin stated on the operating line; equivalent to roughly 16.3% on the cash-earnings line - the closest surviving decliner's margin retention applied in full). The company's own trading record contains no downside-state precedent (it opens in 2017, inside the growth era), so the cross-section governs. [amended 2026-07-22]",
+   "valuePerShare": 77.56,
+   "opIncome": 765.6,
+   "ebitda": 948.6,
+   "ev": 7114.5,
+   "equity": 5426.3,
+   "evEbit": 9.3,
+   "normFcf": 482.3
   },
   {
    "name": "base",
    "revenue": 6430.0,
    "margin": 0.185,
-   "multiple": 15.0,
-   "reason": "Margin is the seven-year clean median of 18.45% (rounded to 18.5%), excluding the $150M FY25 goodwill impairment. The 14.13% full-history screening median is dragged down by the pre-2021 regime, while the last five years ran 18-21%. Revenue is consensus FY26E. The multiple is set deliberately below the 23.4x median of that nine-year trading range: a decelerating top line does not re-earn the growth-era multiple. [restated for external readability 2026-07-21; substance unchanged]",
-   "valuePerShare": 273.85,
+   "multiple": 12.5,
+   "reason": "the base describes a stabilized business that no longer grows, and multiples must be paired to the state they describe. The stabilized state's observable prices sit far below the growth era: the highest-quality stabilized peer trades near 12.5 times cash earnings, a distrusted-but-stable data business near 6.5, and a comparable data company was taken private near 8. The prior 15.0x was set 'deliberately below' the company's own long-run median - but that median comes from a trading record that opens in 2017, entirely inside the growth era: the same window defect the downside leg carried. At 12.5x the base still prices the whole business near a 7% cash-earnings yield - fair for excellent-and-stable, generous for anything less. [amended 2026-07-22]",
+   "valuePerShare": 221.09,
    "opIncome": 1189.5,
-   "ebitda": 1389.9,
-   "ev": 20847.9,
-   "equity": 19159.7,
-   "evEbit": 17.5,
+   "ebitda": 1372.5,
+   "ev": 17156.9,
+   "equity": 15468.6,
+   "evEbit": 14.4,
    "normFcf": 801.6
   },
   {
@@ -203,40 +203,39 @@
    "margin": 0.205,
    "multiple": 20.0,
    "reason": "The turn proves cyclical: FY27E re-acceleration (+4%); margin near the FY2023 best (20.94%); the multiple moves toward but stays below the median of its own trading history. [restated for external readability 2026-07-21; substance unchanged]",
-   "valuePerShare": 426.63,
+   "valuePerShare": 421.69,
    "opIncome": 1376.6,
-   "ebitda": 1576.9,
-   "ev": 31537.7,
-   "equity": 29849.5,
-   "evEbit": 22.9,
+   "ebitda": 1559.6,
+   "ev": 31191.5,
+   "equity": 29503.3,
+   "evEbit": 22.7,
    "normFcf": 942.5
   }
  ],
- "reward": 133.66,
- "risk": 18.99,
- "ratio": 7.04,
+ "reward": 80.9,
+ "risk": 62.63,
+ "ratio": 1.29,
  "bar": 2.0,
  "ratioUndefined": null,
- "passFail": "PASS",
+ "passFail": "FAIL",
  "verdict": {
-  "status": "confirmed",
+  "status": "watch",
   "recorded": "2026-07-21",
-  "rationale": "BUY at $141.06, 6.7:1 against the 2:1 bar; a brutal secular bear still clears 2.0. The market is pricing GenAI as a structural displacement of syndicated research; our judgment is that the sell-off has overshot fair value for a still-intact business \u2014 five straight years of 18\u201321% operating margins, absolute EBITDA rising through the decline, ~11% trailing free-cash-flow yield, an entry near the 3rd percentile of its own nine-year multiple range. Only the top line has slowed. The trade fails if revenue never re-stabilizes \u2014 a shrinking Gartner deserving ~12x \u2014 with contract-value growth at the August print as the first test. [amended 2026-07-22: with the perimeter-corrected D&A the deep-stress case \u2014 base revenue -20% (~$5,144M) at a 13% margin and an 8x exit \u2014 reads ~1.90:1 against the 2.0 bar (was 2.02); the formal bear leg clears at ~5.8:1.]",
+  "rationale": "BUY at $141.06, 6.7:1 against the 2:1 bar; a brutal secular bear still clears 2.0. The market is pricing GenAI as a structural displacement of syndicated research; our judgment is that the sell-off has overshot fair value for a still-intact business \u2014 five straight years of 18\u201321% operating margins, absolute EBITDA rising through the decline, ~11% trailing free-cash-flow yield, an entry near the 3rd percentile of its own nine-year multiple range. Only the top line has slowed. The trade fails if revenue never re-stabilizes \u2014 a shrinking Gartner deserving ~12x \u2014 with contract-value growth at the August print as the first test. [amended 2026-07-22: with the perimeter-corrected D&A the deep-stress case \u2014 base revenue -20% (~$5,144M) at a 13% margin and an 8x exit \u2014 reads ~1.90:1 against the 2.0 bar (was 2.02); the formal bear leg clears at ~5.8:1.] [amended 2026-07-22: position closed 2026-07-21 at 141.06 - the entry price, flat before costs - by operator action immediately after entry. The re-underwrite completed 2026-07-22 set the downside from market evidence and no coherent grid clears the 2:1 bar, confirming the exit; the record moves to watch. The August 5 report is still read; it informs re-engagement, not this exit.]",
   "reunderwriteTriggers": [
-   "Q2-2026 print (early Aug): contract-value growth decelerates further or turns negative \u2192 deepen the bear case and re-underwrite. [restated for external readability 2026-07-21; substance unchanged] [review checklist expanded 2026-07-22 after external review - the Q2 print is adjudicated against: GTS and GBS contract value, ex-federal contract value, new business, new contract value increase, wallet retention by segment, client enterprises, quota-bearing headcount, consulting backlog and billable headcount, and the FY2027 revision direction. Recorded Q1 baselines: quota-bearing headcount 4,866 (-3.4%); client enterprises 12,913 (from 13,600); trailing-twelve-month new contract value increase $54M (-83.8%); wallet retention 96.5% technology / 98.3% business / 97.7% global; consulting backlog $200.5M (-8.6%), billable headcount 875 (-9.6%).]",
-   "revenue below the FY26E consensus path two consecutive quarters \u2192 re-test base at 12x",
-   "operating margin breaks below ~16% ex one-offs \u2192 regime assumption fails"
+   "price below about $125 - computed from the recorded grid as the level where reward reaches twice the risk - re-run at the live price",
+   "the quarterly report shows contract-value growth stabilizing AND client count, salesforce and retention turning - re-set the downside case from the new evidence and re-underwrite in full. Recorded quarterly baselines for that reading: quota-bearing headcount 4,866 (-3.4%); client enterprises 12,913 (from 13,600); trailing-twelve-month new contract value increase $54M (-83.8%); wallet retention 96.5% technology / 98.3% business / 97.7% global; consulting backlog $200.5M (-8.6%), billable headcount 875 (-9.6%)."
   ],
   "entryPrice": 141.06,
   "ratioAtEntry": 6.69,
-  "avoidPriced": false,
-  "avoidPricedNote": null
+  "avoidPriced": true,
+  "avoidPricedNote": "position closed flat at the entry price on 2026-07-21 by operator action, before this analysis existed. Under the revised grid no evidence-coherent reading clears the 2.0 bar at that price - about 1.3 to 1 on the most charitable cells, far below 1 on the central ones. Disclosure: under the previously recorded base multiple (15.0x, amended above with reasons), the charitable downside alone would have read 2.03 to 1 - a knife-edge inside the boundary band, flipped by one step on any cell. The base revision is load-bearing; its reasons stand independent of the exit."
  },
  "ledger": {
   "verdict": "BUY",
-  "entryId": "V-IT-screen2-20260706",
+  "entryId": "C-IT-screen2-20260706",
   "entryPrice": 141.06,
   "entryPriceAsOf": "2026-07-20",
-  "decidedAt": "2026-07-21T00:00:00"
+  "decidedAt": "2026-07-22T00:00:00"
  }
 }
