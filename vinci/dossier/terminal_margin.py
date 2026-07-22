@@ -13,6 +13,14 @@ terminal margin per leg; the engine builds the bridge to a terminal value per sh
 a fixed house-wide hurdle, and applies the SAME reward/risk convention and 2:1 bar as R1 — the bar
 does not move because the recipe did.
 
+For the hardest names even that question is unanswerable, because there is no honest way to name the
+terminal margin: FUBO earns 4.5c of gross profit on the dollar and has never printed a positive one.
+The ``EV/Revenue`` basis exists for exactly that case and asks the SMALLER question — *what is this
+business worth if it merely survives at the margins its peers already deliver?* On that basis margin
+and D&A do not enter the arithmetic at all, and the engine REFUSES them rather than carrying inputs
+no computation reads. Everything else — dilution, the cash burned on the way, survival, the hurdle,
+the bar — is unchanged: only the terminal valuation differs.
+
 Three things R1 never had to model, all of which bite a pre-profit name:
 
 * **DILUTION.** Years of stock compensation, plus any announced raise, land between today and the
@@ -50,7 +58,14 @@ _USD_M = 1e6            # money is $M; share counts are raw. See terminal_value'
 RECIPE_R2 = "R2_terminal_margin"
 BASIS_EBITDA = "EV/EBITDA"
 BASIS_EBIT = "EV/EBIT"
-_BASES = (BASIS_EBITDA, BASIS_EBIT)
+# EV/Revenue — for a business with NO profits to value. FUBO's TEV/LTM EBITDA, TEV/LTM EBIT and
+# P/LTM EPS are all "NM" and it has ZERO committed own-history bands, so every earnings basis would
+# have to invent the terminal margin and then multiply that invention by a peer multiple earned on
+# margins somebody else actually delivered. Revenue is the one denominator the company reports.
+# The trade is explicit: this basis assumes SURVIVAL AT PEER-THIN MARGINS, never profitability —
+# which is why margin and D&A do not enter it at all (see terminal_value).
+BASIS_REVENUE = "EV/Revenue"
+_BASES = (BASIS_EBITDA, BASIS_EBIT, BASIS_REVENUE)
 
 # TIER — a property of the BUSINESS, not of the answer. It feeds confidence at the verdict; it does
 # NOT move the bar, because a lower bar for a worse business is how a fund talks itself into one.
@@ -78,9 +93,32 @@ R2_FORMULA: tuple[str, ...] = (
     "PV = value_T ÷ (1 + hurdle)^years",
 )
 
+# The EV/Revenue chain — a SEPARATE stamp, not extra lines on R2_FORMULA. Two reasons, and the
+# second is the real one:
+#   * the committed EBITDA/EBIT records carry R2_FORMULA verbatim, and the stamp/refuse guard in
+#     scenarios._run_r2 would reject every one of them if the tuple grew; but
+#   * an EV/Revenue record stamped "EBIT_T = terminal revenue × terminal margin" would be STATING
+#     AN ARITHMETIC IT NEVER RAN. The stamp exists so a card prints the recipe its numbers actually
+#     came from — sharing one stamp across two different chains is the single thing it must not do.
+R2_FORMULA_REVENUE: tuple[str, ...] = (
+    "EV_T = terminal revenue × exit multiple   (basis EV/Revenue — margin and D&A do not enter)",
+    "net debt_T = current net debt + cumulative burn to breakeven",
+    "equity_T = EV_T − net debt_T",
+    "shares_T = current diluted × (1 + share growth)^years + announced-raise shares",
+    "value_T = equity_T ÷ shares_T",
+    "PV = value_T ÷ (1 + hurdle)^years",
+)
+
 
 class TerminalError(ValueError):
     """An R2 leg the machine refuses to compute — a degenerate input, never a silent fudge."""
+
+
+def formula_for(basis: str) -> tuple[str, ...]:
+    """The arithmetic chain a record on ``basis`` ACTUALLY ran, for the record's stamp."""
+    if basis not in _BASES:
+        raise TerminalError(f"unknown multiple basis {basis!r} — expected one of {_BASES}")
+    return R2_FORMULA_REVENUE if basis == BASIS_REVENUE else R2_FORMULA
 
 
 @dataclass(frozen=True)
@@ -90,7 +128,9 @@ class TerminalLeg:
     name: str                      # bear | base | bull
     years: float                   # years to the terminal year
     revenue: float                 # terminal revenue ($M)
-    margin: float                  # terminal EBIT margin, decimal fraction
+    # terminal EBIT margin, decimal fraction. **None is REQUIRED on EV/Revenue** — margin does not
+    # enter that value, and a supplied-then-ignored margin is refused rather than carried.
+    margin: float | None
     multiple: float                # exit multiple, turns on the record's basis
     reason: str                    # WHY these terminal values — required, never blank
 
@@ -102,10 +142,14 @@ class TerminalValue:
     five-year story gets compared against a price paid today."""
 
     years: float
-    ebit_t: float
-    d_and_a_t: float
-    ebitda_t: float
-    denominator_t: float           # EBITDA_T, or EBIT_T on an EV/EBIT basis
+    # **None on EV/Revenue, and that is the point.** These are not "unavailable" — they are values
+    # the EV/Revenue chain never computes. Holding them None rather than filling them in makes the
+    # dead-input dishonesty STRUCTURALLY impossible: a card cannot print a margin-derived driver
+    # beside a value that no margin produced, because there is nothing to print.
+    ebit_t: float | None
+    d_and_a_t: float | None
+    ebitda_t: float | None
+    denominator_t: float           # EBITDA_T; EBIT_T on EV/EBIT; terminal REVENUE on EV/Revenue
     basis: str
     ev_t: float
     net_debt_t: float
@@ -284,7 +328,7 @@ def survival_gate(
 
 
 def terminal_value(
-    leg: TerminalLeg, *, basis: str, d_and_a_ratio_: float, net_debt_now: float,
+    leg: TerminalLeg, *, basis: str, d_and_a_ratio_: float | None, net_debt_now: float,
     burn_to_breakeven: float, shares_now: float, g_sbc: float, raise_shares: float = 0.0,
     hurdle: float = HURDLE,
 ) -> TerminalValue:
@@ -318,10 +362,41 @@ def terminal_value(
     if hurdle <= -1:
         raise TerminalError("hurdle must be > -100%")
 
-    ebit_t = leg.revenue * leg.margin
-    d_and_a_t = d_and_a_ratio_ * leg.revenue
-    ebitda_t = ebit_t + d_and_a_t
-    denom = ebitda_t if basis == BASIS_EBITDA else ebit_t
+    ebit_t: float | None
+    d_and_a_t: float | None
+    ebitda_t: float | None
+    if basis == BASIS_REVENUE:
+        # THE POINT OF THIS BASIS: the value is revenue × multiple. Margin and D&A are not
+        # "defaulted" or "zeroed" — they are absent, and a supplied one is REFUSED rather than
+        # ignored. An input a computation never reads is the dead-input dishonesty: it renders on
+        # the card as though it drove the number, and the reader has no way to tell that it did
+        # not. Refusing is the only version of this that stays honest.
+        if leg.margin is not None:
+            raise TerminalError(
+                f"{leg.name}: a {BASIS_REVENUE} leg carries terminal margin {leg.margin!r}, which "
+                "this basis never reads — recording it would put a driver on the card that no "
+                "computation used. Omit it (margin-inapplicable), or underwrite on an earnings "
+                "basis where the margin actually sets the value.")
+        if d_and_a_ratio_ is not None:
+            raise TerminalError(
+                f"{leg.name}: a {BASIS_REVENUE} leg carries a D&A ratio {d_and_a_ratio_!r}, which "
+                "this basis never reads — the D&A bridge exists to build EBITDA, and there is no "
+                "EBITDA here. Omit it.")
+        ebit_t = d_and_a_t = ebitda_t = None
+        denom = leg.revenue
+    else:
+        if leg.margin is None:
+            raise TerminalError(
+                f"{leg.name}: basis {basis} values the business THROUGH its terminal margin — "
+                "refusing to compute one that was not supplied")
+        if d_and_a_ratio_ is None:
+            raise TerminalError(
+                f"{leg.name}: basis {basis} needs a D&A ratio to bridge EBIT to EBITDA — "
+                "refusing to assume it")
+        ebit_t = leg.revenue * leg.margin
+        d_and_a_t = d_and_a_ratio_ * leg.revenue
+        ebitda_t = ebit_t + d_and_a_t
+        denom = ebitda_t if basis == BASIS_EBITDA else ebit_t
     if denom <= 0:
         raise TerminalError(
             f"{leg.name}: terminal {basis} denominator is {denom:,.2f} — a multiple on a "
@@ -342,7 +417,8 @@ def terminal_value(
 
 
 __all__ = [
-    "BAR", "BASIS_EBIT", "BASIS_EBITDA", "HURDLE", "R2_FORMULA", "RECIPE_R2", "TIER_A", "TIER_B",
-    "TIER_DESC", "Survival", "TerminalError", "TerminalLeg", "TerminalValue", "d_and_a_ratio",
-    "share_growth", "survival_gate", "terminal_value",
+    "BAR", "BASIS_EBIT", "BASIS_EBITDA", "BASIS_REVENUE", "HURDLE", "R2_FORMULA",
+    "R2_FORMULA_REVENUE", "RECIPE_R2", "TIER_A", "TIER_B", "TIER_DESC", "Survival", "TerminalError",
+    "TerminalLeg", "TerminalValue", "d_and_a_ratio", "formula_for", "share_growth",
+    "survival_gate", "terminal_value",
 ]

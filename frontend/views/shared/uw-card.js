@@ -341,6 +341,11 @@ function impliedOdds(c, mark) {
 // which is the one the ratio uses. Showing only the terminal number would compare a five-year story
 // against a price paid today; showing only the PV would hide what was actually assumed.
 const isR2 = (c) => (c.recipeId || "").startsWith("R2");
+// EV/Revenue values a business with NO profits to value: revenue × multiple, full stop. Margin and
+// D&A never enter that arithmetic, so the card must not print them as though they did — a driver
+// row beside a value it did not produce reads as evidence, and the reader cannot tell it is inert.
+// The record makes this cheap to honour: those fields are absent, not zero.
+const onRevenueBasis = (c) => (c.multipleBasis || "") === "EV/Revenue";
 
 // TIER is a property of the BUSINESS, not of the answer — it feeds confidence and never the bar.
 function tierBadge(c) {
@@ -426,7 +431,8 @@ function legsTable(c) {
         ${row("vs spot", delta, { cls: " uw-vs" })}
         ${isR2(c) ? row("Years to terminal", (l) => oneDp(l.years ?? l.yearsToTerminal, "y")) : ""}
         ${row(isR2(c) ? "Terminal revenue ($M)" : "Revenue ($M)", (l) => thousands(l.revenue))}
-        ${row(isR2(c) ? "Terminal op margin" : "Op margin", (l) => pct(l.margin))}
+        ${onRevenueBasis(c) ? "" :
+          row(isR2(c) ? "Terminal op margin" : "Op margin", (l) => pct(l.margin))}
         ${row(`Exit ${basis}`, (l) => oneDp(l.multiple, "×"))}
       </tbody>
     </table></div>
@@ -553,8 +559,9 @@ function methodFact(c) {
   if (!lines) return "";
   // no fact() wrapper: a "Method" label over a summary that says "How each axis was modeled"
   // is the same word twice — the summary IS the label
+  const axes = onRevenueBasis(c) ? "revenue, multiple and horizon" : "revenue, margin and multiple";
   return `<details class="uw-method-block">
-    <summary>How each axis was modeled — revenue, margin and multiple methodology</summary>
+    <summary>How each axis was modeled — ${axes} methodology</summary>
     <div>${lines}${methodRefsDetails(c)}</div></details>`;
 }
 

@@ -105,7 +105,9 @@ class ScenarioInput(BaseModel):
     """One analyst-supplied leg. ``margin`` is a DECIMAL fraction (0.0625 = 6.25%)."""
 
     revenue: float                 # $M  (R2: TERMINAL-year revenue)
-    margin: float                  # decimal fraction of revenue (R2: TERMINAL EBIT margin)
+    # decimal fraction of revenue (R2: TERMINAL EBIT margin). **OMITTED on an EV/Revenue record** —
+    # that basis never reads a margin, so recording one would show a driver the value never used.
+    margin: float | None = None
     multiple: float                # turns, on `multiple_basis` (R2: the EXIT multiple)
     reason: str                    # WHY this deviates from the anchor — required, never blank
     # (R2) years from today to this leg's terminal year. Per LEG, not per record: a bear case that
@@ -131,8 +133,11 @@ class ScenarioOutcome(BaseModel):
     """One computed leg + its capital-intensity cross-checks."""
 
     value_per_share: float
-    op_income: float               # EBIT ($M)
-    ebitda: float                  # EBIT + D&A ($M) — what the multiple is applied to
+    # EBIT / EBITDA ($M). **None on an R2 EV/Revenue leg** — not missing, but never computed: that
+    # basis applies its multiple to revenue, so there is no earnings figure behind the value and
+    # none is fabricated to fill the field.
+    op_income: float | None = None
+    ebitda: float | None = None
     ev: float                      # $M
     equity: float                  # $M
     ev_ebit: float | None = None   # CROSS-CHECK
@@ -296,7 +301,7 @@ class ScenarioRecord(BaseModel):
         (a typo'd axis silently dropping from the render is data loss). Completeness (exactly
         the recipe's axes) binds FORWARD from schema 1.1 — 1.0 records predate the field and
         stay valid. An unknown recipe_id is unconstrained until it declares its axes."""
-        axes = AXES_BY_RECIPE.get(self.recipe_id)
+        axes = axes_for(self.recipe_id, self.multiple_basis)
         if axes is None:
             return self
         unknown = set(self.assumptions) - set(axes)
@@ -350,6 +355,22 @@ AXES_BY_RECIPE: dict[str, tuple[str, ...]] = {
     RECIPE_R2: ("revenue", "margin", "multiple", "horizon"),
 }
 
+# R2 on an EV/Revenue basis models THREE axes: the margin axis does not exist, because the value
+# does not read a margin. Requiring a margin methodology here would force the analyst to write up
+# how they derived an input the arithmetic ignores — a reviewable-looking paragraph attached to
+# nothing, which is worse than no paragraph at all.
+_R2_REVENUE_AXES: tuple[str, ...] = ("revenue", "multiple", "horizon")
+
+
+def axes_for(recipe_id: str, multiple_basis: str | None) -> tuple[str, ...] | None:
+    """The assumption axes a record must cover, given its recipe AND its multiple basis."""
+    # lazy import: the basis constant lives in the engine, which imports back from here
+    from vinci.dossier import terminal_margin as tmod
+
+    if recipe_id == RECIPE_R2 and multiple_basis == tmod.BASIS_REVENUE:
+        return _R2_REVENUE_AXES
+    return AXES_BY_RECIPE.get(recipe_id)
+
 
 def _run_r2(rec: ScenarioRecord) -> ScenarioRecord:
     """(R2) Compute ``result{}`` via the terminal-margin engine. The machine records the bar test
@@ -362,15 +383,26 @@ def _run_r2(rec: ScenarioRecord) -> ScenarioRecord:
     from vinci.dossier import midcycle as mc
     from vinci.dossier import terminal_margin as tmod
 
-    if rec.multiple_basis not in (tmod.BASIS_EBITDA, tmod.BASIS_EBIT):
+    if rec.multiple_basis not in (tmod.BASIS_EBITDA, tmod.BASIS_EBIT, tmod.BASIS_REVENUE):
         raise ValueError(f"record multiple_basis {rec.multiple_basis!r} is not an R2 basis — "
-                         f"expected {tmod.BASIS_EBITDA!r} or {tmod.BASIS_EBIT!r}")
-    for key in ("net_debt", "diluted_shares", "d_and_a_ratio", "share_growth"):
+                         f"expected {tmod.BASIS_EBITDA!r}, {tmod.BASIS_EBIT!r} or "
+                         f"{tmod.BASIS_REVENUE!r}")
+    on_revenue = rec.multiple_basis == tmod.BASIS_REVENUE
+    # d_and_a_ratio is required ONLY where it is read. Demanding it on an EV/Revenue record would
+    # make the analyst source a number the arithmetic never touches — the same dead input the
+    # engine refuses one layer down, wearing a fact's clothes. Carrying one is refused too.
+    needed = ("net_debt", "diluted_shares", "share_growth")
+    for key in needed if on_revenue else (*needed, "d_and_a_ratio"):
         if key not in rec.facts:
             raise ValueError(f"recipe {RECIPE_R2} needs fact {key!r} — refusing to assume it")
-    if rec.recipe_formula and rec.recipe_formula != list(tmod.R2_FORMULA):
-        raise ValueError("record's recipe_formula does not match R2_FORMULA — refusing to "
-                         "compute under a misstated recipe")
+    if on_revenue and "d_and_a_ratio" in rec.facts:
+        raise ValueError(
+            f"recipe {RECIPE_R2} on basis {tmod.BASIS_REVENUE} carries a 'd_and_a_ratio' fact that "
+            "no computation reads — omit it rather than record a driver the value never used")
+    formula = tmod.formula_for(rec.multiple_basis)
+    if rec.recipe_formula and rec.recipe_formula != list(formula):
+        raise ValueError(f"record's recipe_formula does not match the {rec.multiple_basis} chain — "
+                         "refusing to compute under a misstated recipe")
     si = rec.survival_input
     if si is None:
         raise ValueError(f"recipe {RECIPE_R2} needs survival_input — a terminal value on a company "
@@ -405,14 +437,17 @@ def _run_r2(rec: ScenarioRecord) -> ScenarioRecord:
         v = tmod.terminal_value(
             tmod.TerminalLeg(name=name, years=s.years_to_terminal, revenue=s.revenue,
                              margin=s.margin, multiple=s.multiple, reason=s.reason),
-            basis=rec.multiple_basis, d_and_a_ratio_=rec.facts["d_and_a_ratio"].value,
+            basis=rec.multiple_basis,
+            d_and_a_ratio_=(None if on_revenue else rec.facts["d_and_a_ratio"].value),
             net_debt_now=net_debt, burn_to_breakeven=(burn_fact.value if burn_fact else 0.0),
             shares_now=shares_now, g_sbc=rec.facts["share_growth"].value,
             raise_shares=si.raise_shares * 1e6)
         per[name] = ScenarioOutcome(
             value_per_share=v.pv,                 # the PV IS what the ratio uses
             op_income=v.ebit_t, ebitda=v.ebitda_t, ev=v.ev_t, equity=v.equity_t,
-            ev_ebit=(v.ev_t / v.ebit_t if v.ebit_t > 0 else None),
+            # EV/EBIT is a cross-check on the EBIT the value used; with no EBIT there is nothing
+            # to cross-check, and inventing one from a revenue multiple would be circular.
+            ev_ebit=(v.ev_t / v.ebit_t if v.ebit_t is not None and v.ebit_t > 0 else None),
             years=v.years, d_and_a_t=v.d_and_a_t, net_debt_t=v.net_debt_t,
             shares_t=v.shares_t / 1e6, value_terminal=v.value_t, hurdle=v.hurdle)
 
@@ -430,7 +465,7 @@ def _run_r2(rec: ScenarioRecord) -> ScenarioRecord:
                      ratio_undefined=rr.undefined, bar=BAR, survival=sb, hurdle=tmod.HURDLE,
                      pass_fail=("UNDEFINED" if rr.ratio is None else
                                 ("PASS" if rr.clears_bar else "FAIL")))
-    return rec.model_copy(update={"result": res, "recipe_formula": list(tmod.R2_FORMULA)})
+    return rec.model_copy(update={"result": res, "recipe_formula": list(formula)})
 
 
 def run_recipe(rec: ScenarioRecord) -> ScenarioRecord:
@@ -471,6 +506,12 @@ def run_recipe(rec: ScenarioRecord) -> ScenarioRecord:
 
     per: dict[str, ScenarioOutcome] = {}
     for name, s in rec.scenarios.items():
+        # R1 IS a margin recipe — mid-cycle margin × own-history multiple. `margin` became
+        # nullable for R2's EV/Revenue basis; on R1 an absent one has no meaning, so refuse here
+        # rather than let a None reach the block as a silent zero.
+        if s.margin is None:
+            raise ValueError(f"{name}: recipe {RECIPE_R1} is a mid-cycle MARGIN recipe — a leg "
+                             "without a margin cannot be computed")
         sc = mc.Scenario(name=name, revenue=s.revenue, margin=s.margin, multiple=s.multiple,
                          source="analyst", reason=s.reason, d_and_a=dna)
         v = mc.scenario_value(sc, net_debt=net_debt, shares=shares,
