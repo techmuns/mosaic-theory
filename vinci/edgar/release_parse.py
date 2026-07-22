@@ -173,7 +173,14 @@ _RECON = re.compile(
     r"(?:ebitda|income\s+from\s+operations|operating\s+income|net\s+(?:income|loss|profit)|"
     r"(?:income|loss)\s+per\s+share|earnings\s+per\s+share|eps))"
     r"\s*[*†‡]?\s*(?:of|was|totaled|of\s+approximately)\s+"
-    r"(positive\s+|negative\s+)?\$?\s*([\d,.]+)\s*(?:million|billion)?"
+    # CURRENCY EVIDENCE IS MANDATORY — a '$' before the number, or a million/billion after it.
+    # Without this the pattern reads a RATIO as an amount: EPAM writes "non-GAAP income from
+    # operations was 16.3% of revenues" (a margin), which was stored as $16.3M against a true
+    # ~$230M on $1.4B revenue. A fabricated magnitude in a decision figure is the exact failure
+    # this codebase refuses; a metric stated only as a percentage is simply not this extractor's.
+    r"(positive\s+|negative\s+)?"
+    r"(?:\$\s*([\d,.]+)\s*(?:million|billion)?|([\d,.]+)\s*(?:million|billion))"
+    r"(?!\s*%)"
     r"(?!\s*(?:million\s+|billion\s+)?to\b)",
     re.I,
 )
@@ -196,7 +203,10 @@ def _reconciliation(text: str, src: str, period: str) -> list[ReconciliationValu
     seen: set[tuple[str, str]] = set()  # (metric, period) — current actual AND prior-year comp
     for m in _RECON.finditer(text):  # both captured, period-labeled, NEVER conflated
         is_comparison = "compared to" in text[max(0, m.start() - 26):m.start()].lower()
-        metric_raw, sign, num = m.group(1), (m.group(2) or "").lower(), m.group(3)
+        # the amount comes from EITHER currency branch: "$53.8 million" (group 3) or
+        # "53.8 million" (group 4). A bare number with neither marker no longer matches at all.
+        metric_raw, sign = m.group(1), (m.group(2) or "").lower()
+        num = m.group(3) or m.group(4)
         val, metric = _money(num), _norm_metric(m.group(1))
         if val is None:
             continue

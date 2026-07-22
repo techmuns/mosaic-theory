@@ -353,3 +353,60 @@ def test_one_off_dedup_is_amount_aware_and_the_prior_year_guard_is_sentence_boun
         "Adjusted EBITDA included, for the prior year period, integration expenses of "
         "$0.2 million.", source_ref=_SRC).one_offs
     assert dropped == [], "an in-sentence prior-year comparative is still not this period's cause"
+
+
+def test_recon_requires_currency_evidence_and_never_reads_a_ratio_as_an_amount() -> None:
+    """(fabrication guard) A margin is not an amount. EPAM states 'non-GAAP income from operations
+    was 16.3% of revenues'; the widened metric list matched it and stored 16.3, which rendered as
+    '$16.3M' against a true ~$230M on $1.4B revenue — a decision figure wrong by ~14x.
+
+    An amount must therefore CARRY its currency: a '$' before the number, or an explicit
+    million/billion after it. A bare number, and any number trailed by '%', is not this
+    extractor's fact — honest absence beats a fabricated magnitude."""
+    # ⊖ the ratio that caused it — and any bare, unqualified number
+    for ratio in ("Non-GAAP Income from Operations was 16.3% of revenues.",
+                  "non-GAAP income from operations was 14.3% of revenues, up 120bps.",
+                  "Adjusted EBITDA was 22.5% of sales.",
+                  "Adjusted EBITDA of 53.8."):
+        assert rp.parse_release(ratio, source_ref=_SRC).reconciliation == [], ratio
+    # ⊕ every legitimate currency shape still parses
+    cases = {
+        "Adjusted EBITDA* of $53.8 million.": ("adjusted ebitda", 53.8),
+        "Non-GAAP Diluted EPS of $3.26, up.": ("adjusted eps", 3.26),
+        "Non-GAAP adjusted EBITDA of negative $5.5 million.": ("adjusted ebitda", -5.5),
+        "Adjusted EBITDA of 57 million.": ("adjusted ebitda", 57.0),  # unit, no $ sign
+    }
+    for text, want in cases.items():
+        got = [(v.metric, v.value) for v in rp.parse_release(text, source_ref=_SRC).reconciliation]
+        assert got == [want], f"{text} → {got}"
+
+
+def test_committed_dossiers_carry_no_ratio_as_a_currency_amount() -> None:
+    """(committed-artifact invariant) Every stored CURRENCY value must show currency evidence in
+    its own verbatim — a '$' before it, or a million/billion after it.
+
+    Deliberately NOT "the verbatim contains a %": EPAM's bad row read
+    '…non-GAAP income from operations was 14.3' — the window ended before the '%', so a
+    percent-scan passes it while the value is still a ratio. The invariant has to assert what a
+    currency amount MUST look like, not guess at what a bad one happens to contain."""
+    import json
+    import re as _re
+    from pathlib import Path
+    currency = {"adjusted ebitda", "adjusted operating income", "adjusted net income",
+                "adjusted eps"}
+    for p in sorted(Path("data/dossiers").glob("*/dossier.json")):
+        for rel in ((json.loads(p.read_text())["mechanical"].get("primary_source") or {})
+                    .get("releases") or []):
+            for v in (rel.get("reconciliation") or []):
+                if v["metric"] not in currency:
+                    continue
+                # match the magnitude AS THE FILER WROTE IT: a stored 59.0 comes from "$59
+                # million", so an integral value must not be searched for as "59.0".
+                a = abs(v["value"])
+                vb = str(v.get("verbatim") or "")
+                mag = _re.escape(str(int(a)) if a == int(a) else str(a))
+                has_currency = _re.search(rf"\$\s*{mag}", vb) or _re.search(
+                    rf"{mag}\s*(?:million|billion)", vb, _re.I)
+                assert has_currency, (
+                    f"{p.parent.name}: {v['metric']}={v['value']} has no currency evidence "
+                    f"in its source — …{vb[-70:]!r}")
