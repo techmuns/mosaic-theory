@@ -130,6 +130,11 @@ def _norm_metric(raw: str) -> str:
         return "adjusted ebitda"
     if "per share" in r or "eps" in r:
         return "adjusted eps"
+    # operating income / income from operations is PRE interest and tax — bucketing it into
+    # "adjusted net income" (the old fall-through) states a different figure under a familiar
+    # name, which is worse than not extracting it. It gets its own label.
+    if "operating income" in r or "income from operations" in r:
+        return "adjusted operating income"
     return "adjusted net income"
 
 
@@ -152,9 +157,15 @@ def _release_period(text: str) -> str:
 # 'Non-GAAP adjusted EBITDA of positive $44.7 million' / '… of negative $5.5 million' / an adjusted
 # net loss. NOT a guidance range: the (?! … to) tail rejects '… of $380 million to $385 million'.
 _RECON = re.compile(
-    r"(?:non-gaap\s+)?adjusted\s+"
-    r"(ebitda|net\s+(?:income|loss|profit)|(?:diluted\s+)?(?:net\s+)?(?:income|loss)\s+per\s+share|"
-    r"earnings\s+per\s+share|eps)\s+(?:of|was|totaled|of\s+approximately)\s+"
+    # "Adjusted X" OR "Non-GAAP X" — filers use either, and EPAM/CNXC never write "adjusted"
+    # ("Non-GAAP Diluted EPS of $3.26"). A footnote MARKER may follow the metric name: BellRing
+    # writes "Adjusted EBITDA* of $53.8 million", and the un-tolerated '*' silently dropped the
+    # whole release. \*? also covers the †/‡ conventions via the [*†‡]? class.
+    r"(?:non-gaap|adjusted)\s+"
+    r"((?:diluted\s+)?(?:net\s+)?"
+    r"(?:ebitda|income\s+from\s+operations|operating\s+income|net\s+(?:income|loss|profit)|"
+    r"(?:income|loss)\s+per\s+share|earnings\s+per\s+share|eps))"
+    r"\s*[*†‡]?\s*(?:of|was|totaled|of\s+approximately)\s+"
     r"(positive\s+|negative\s+)?\$?\s*([\d,.]+)\s*(?:million|billion)?"
     r"(?!\s*(?:million\s+|billion\s+)?to\b)",
     re.I,
@@ -221,9 +232,17 @@ def _reconciliation(text: str, src: str, period: str) -> list[ReconciliationValu
 
 # --- (2) guidance ranges + QUALITATIVE-only outlook ----------------------------------------------
 _GUIDE_RANGE = re.compile(
-    r"(total\s+revenue|revenue|adjusted\s+ebitda|adjusted\s+eps|adjusted\s+earnings\s+per\s+share|"
-    r"free\s+cash\s+flow|gross\s+margin)\s+of\s+\$?\s*([\d,.]+)\s*(?:million|billion|%)?\s+to\s+"
-    r"\$?\s*([\d,.]+)",
+    # Metric names as filers write them (net sales / total revenues — BellRing, Simply Good, nCino
+    # all guide on these and were invisible), an optional footnote marker, and BOTH range
+    # phrasings: "outlook of $X to $Y" and "expected to range between $X and $Y".
+    r"(total\s+revenues?|net\s+sales|revenues?|adjusted\s+ebitda|adjusted\s+eps|"
+    r"adjusted\s+earnings\s+per\s+share|free\s+cash\s+flow|gross\s+margin)"
+    r"\s*[*†‡]?\s*(?:outlook\s+)?(?:of|expected\s+to\s+range\s+between|to\s+range\s+between|"
+    r"between)\s+"
+    # range separator: "to" / "and" / a bare hyphen or en/em dash ("$2.325-$2.365 billion" —
+    # BellRing). The dash form carries no spaces, so \s* around it, not \s+.
+    r"\$?\s*([\d,.]+)\s*(?:million|billion|%)?\s*(?:to|and|[-–—])\s*"
+    r"\$?\s*([\d,.]+)\s*(million|billion)?",
     re.I,
 )
 _OUTLOOK = re.compile(
@@ -256,6 +275,15 @@ def _guidance(text: str, src: str) -> list[GuidanceItem]:
         low, high = _money(m.group(2)), _money(m.group(3))
         if low is None or high is None or metric in seen:
             continue
+        # UNITS: normalise to $M. Concentrix guides revenue in BILLIONS ("$2.465 to $2.49 billion")
+        # while every other name guides in millions, and the composer prints the bare number — so an
+        # un-scaled 2.465 read as $2.5M beside VRRM's 985.0 ($M). A magnitude error in a
+        # decision figure is worse than an absent one, so scale here where the unit word is in hand.
+        # Scale ONLY on the stated unit word — the trailing unit governs the whole range
+        # ("$2.465 to $2.49 billion"). Inferring billions from magnitude would be a guess, and a
+        # guessed magnitude is exactly the fabrication this codebase refuses.
+        if (m.group(4) or "").lower().startswith("billion"):
+            low, high = low * 1000.0, high * 1000.0
         seen.add(metric)
         out.append(GuidanceItem(
             metric=metric, period=_period_near(text, m.start(), m.end()) or "next-fy",
@@ -279,15 +307,24 @@ def _guidance(text: str, src: str) -> list[GuidanceItem]:
 
 # --- (3) one-off items (impairments / charges) ---------------------------------------------------
 _ONEOFF = re.compile(
-    r"\$\s*([\d,.]+)\s*(?:million|billion)\s+"
-    r"((?:[\w'’-]+\s+){0,6}?(?:impairment|write[- ]?off|write[- ]?down|restructuring\s+charge|"
-    r"one[- ]?time\s+charge)[\w\s,'’-]{0,80})",
+    # The one-off IS usually the reason for the gap ("a pre-tax $11.3 million inventory-related
+    # charge"), so the noun set must cover how filers actually write it — charge / costs /
+    # expenses, not only impairment-family words. Each generic noun REQUIRES a qualifier before it
+    # (restructuring, integration, one-time, inventory-related …) so routine operating costs
+    # ("cost of goods sold", "interest expense") are never mistaken for a discrete item.
+    r"\$\s*([\d,.]+)\s*(?:million|billion)\s+(?:of\s+|in\s+)?"
+    r"((?:[\w'’-]+\s+){0,6}?"
+    r"(?:impairment|write[- ]?off|write[- ]?down|"
+    r"(?:restructuring|integration|one[- ]?time|transaction|acquisition[- ]related|"
+    r"inventory[- ]related|impairment[- ]related|separation|transition|legal\s+settlement)"
+    r"\s+(?:charge|charges|cost|costs|expense|expenses))"
+    r"[\w\s,'’-]{0,80})",
     re.I,
 )
 
 
 def _one_offs(text: str, src: str) -> list[OneOffItem]:
-    out: list[OneOffItem] = []
+    by_key: dict[str, OneOffItem] = {}
     for m in _ONEOFF.finditer(text):
         amt = _money(m.group(1))
         if amt is None:
@@ -295,11 +332,29 @@ def _one_offs(text: str, src: str) -> list[OneOffItem]:
         desc = " ".join(m.group(2).split())
         # trim the description at the next clause boundary
         desc = re.split(r"(?:,\s+which|\.\s|;\s)", desc)[0][:200].strip()
-        out.append(OneOffItem(
-            amount=amt, description=desc,
-            verbatim=_verbatim(text, m.start(), m.end()), source_ref=src,
-        ))
-    return out
+        # PRIOR-PERIOD COMPARATIVES are not this period's one-off. A release states the current
+        # charge and then restates last year's beside it ("and for the prior year period
+        # integration expenses of $0.2 million"); listing both as drivers of THIS gap-down would
+        # attribute a year-old item to today's move.
+        window = text[max(0, m.start() - 90):m.start()].lower()
+        if re.search(r"prior[- ]year|prior\s+period|year[- ]ago", window):
+            continue
+        if re.match(r"^(?:and\s+)?(?:for|in)\b", desc, re.I):  # a dangling comparative fragment
+            continue
+        # ONE ROW PER DISTINCT ITEM. A press release repeats the same charge in the highlights and
+        # again per segment, at different roundings ($11 million / $11.3 million), so a bare dedup
+        # on the exact string leaves eight copies of one fact. Key on the item's NOUN PHRASE and
+        # keep the most precise mention (the largest magnitude wins ties of rounding).
+        key = re.sub(r"[^a-z ]", "", desc.lower())[:24].strip()
+        prev = by_key.get(key)
+        better = prev is None or amt > prev.amount or (
+            amt == prev.amount and len(desc) > len(prev.description))
+        if better:
+            by_key[key] = OneOffItem(
+                amount=amt, description=desc,
+                verbatim=_verbatim(text, m.start(), m.end()), source_ref=src,
+            )
+    return list(by_key.values())
 
 
 # --- (4) event-impact quantifications (the Avis class) -------------------------------------------

@@ -251,3 +251,70 @@ def test_sgml_detection_covers_every_real_filename_the_regex_missed() -> None:
     assert len(urls) == len(_EX991_REAL_NAMES), "TYPE lookup must find every real press release"
     by_name = sum(1 for n in _EX991_REAL_NAMES if rp._is_ex991(n))
     assert by_name < len(_EX991_REAL_NAMES), "the filename rule is a strict subset (the bug)"
+
+
+# --- parser COVERAGE: verbatim sentences from the real releases the locator fix recovered ---------
+# Each is the exact phrasing that yielded NOTHING before (recovering the document is not the same
+# as reading it). Frozen strings — no network.
+
+def test_recon_tolerates_footnote_markers_and_the_non_gaap_phrasing() -> None:
+    """BellRing footnotes its non-GAAP measure ('Adjusted EBITDA* of $53.8 million') and the
+    un-tolerated '*' dropped the WHOLE release; EPAM/Concentrix never write "adjusted" at all
+    ('Non-GAAP Diluted EPS of $3.26'). Both are the same fact in different house style."""
+    r = rp.parse_release("BellRing reported Adjusted EBITDA* of $53.8 million for the quarter.",
+                         source_ref=_SRC)
+    assert [(v.metric, v.value) for v in r.reconciliation] == [("adjusted ebitda", 53.8)]
+    r2 = rp.parse_release("EPAM Reports Non-GAAP Diluted EPS of $3.26, up year-over-year.",
+                          source_ref=_SRC)
+    assert [(v.metric, v.value) for v in r2.reconciliation] == [("adjusted eps", 3.26)]
+
+
+def test_one_off_covers_the_generic_nouns_but_needs_a_qualifier() -> None:
+    """The one-off IS usually the reason for the gap, and filers write 'charge'/'costs'/'expenses'
+    far more often than 'impairment'. A qualifier is REQUIRED so routine operating lines are never
+    promoted to a discrete item."""
+    r = rp.parse_release(
+        "Results were impacted by the current year $11.3 million inventory-related charge.",
+        source_ref=_SRC)
+    assert [(o.amount, "inventory-related charge" in o.description) for o in r.one_offs] \
+        == [(11.3, True)]
+    r2 = rp.parse_release("Excluding $4.5 million in restructuring costs for the period.",
+                          source_ref=_SRC)
+    assert [o.amount for o in r2.one_offs] == [4.5]
+    # ⊖ routine operating lines are NOT one-offs (no qualifier before the generic noun)
+    for routine in ("Cost of goods sold was $210.0 million for the quarter.",
+                    "Interest expense of $12.4 million was recorded.",
+                    "Selling expenses of $88.0 million in the period."):
+        assert rp.parse_release(routine, source_ref=_SRC).one_offs == [], routine
+
+
+def test_one_off_reports_each_item_once_and_skips_prior_year_comparatives() -> None:
+    """A release states the same charge in the highlights and again per segment, at different
+    roundings — eight rows for one fact. And it restates LAST year's item beside this year's;
+    attributing a year-old expense to today's gap-down would be a false cause."""
+    text = ("Highlights: a pre-tax $11 million inventory-related charge. "
+            "Segment results were impacted by the current year $11.3 million inventory-related "
+            "charge associated with a third-party supplied ingredient. "
+            "Adjusted EBITDA included, for the prior year period, integration expenses of "
+            "$0.2 million.")
+    offs = rp.parse_release(text, source_ref=_SRC).one_offs
+    assert len(offs) == 1, [o.description for o in offs]
+    assert offs[0].amount == 11.3, "the most precise mention of the item wins the rounding tie"
+    assert "0.2" not in str(offs[0].amount)
+
+
+def test_guidance_reads_filer_metric_names_range_words_and_scales_billions() -> None:
+    """'net sales' / 'total revenues' are how these filers guide, the range is written 'to', 'and'
+    or a bare hyphen, and Concentrix guides in BILLIONS while everyone else uses millions — an
+    unscaled 2.465 would read as $2.5M beside VRRM's 985.0 ($M)."""
+    g = rp.parse_release(
+        "Updated fiscal year 2026 net sales outlook of $2.325-$2.365 billion and "
+        "Adjusted EBITDA* outlook of $315-$335 million.", source_ref=_SRC).guidance
+    by = {x.metric: (x.low, x.high) for x in g}
+    assert by["net sales"] == (2325.0, 2365.0), "billions must normalise to $M"
+    assert by["adjusted ebitda"] == (315.0, 335.0)
+    g2 = rp.parse_release(
+        "Total revenues expected to range between $157.75 million and $159.75 million.",
+        source_ref=_SRC).guidance
+    # 'Total revenues' normalises to the canonical 'revenue' (nCino's phrasing, one metric key)
+    assert [(x.metric, x.low, x.high) for x in g2] == [("revenue", 157.75, 159.75)]

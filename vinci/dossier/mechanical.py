@@ -304,9 +304,11 @@ def _drawdown_cause(record: DataRecord, edgar: EdgarClient, http: CachedHttp) ->
 
 
 # --- (B1) informative drawdown: join each gap-down's 8-K to its parsed EX-99.1 drivers -----------
-_DRIVER_METRICS = ("adjusted ebitda", "adjusted net income", "adjusted eps")
+_DRIVER_METRICS = ("adjusted ebitda", "adjusted operating income", "adjusted net income",
+                   "adjusted eps")
 _METRIC_SHORT = {
     "adjusted ebitda": "adj EBITDA",
+    "adjusted operating income": "adj operating income",  # pre interest/tax — never "net income"
     "adjusted net income": "adj net income",
     "adjusted eps": "adj EPS",
 }
@@ -359,10 +361,16 @@ def _compose_gap_drivers(release: ReleaseExtract) -> Sourced[str] | None:
             s += f" (vs {_fmt_driver(metric, prior.value)} {prior.period})"
         parts.append(s)
     for o in release.one_offs:
-        desc = o.description[:48].rsplit(" ", 1)[0] if len(o.description) > 48 else o.description
+        # Trim at a CLAUSE boundary, not a character count: the old 48-char cut left dangling
+        # connectives ("…charge associated with a", "…expenses in the"), which read as a
+        # truncation artefact rather than a fact. Prefer the shortest complete noun phrase.
+        desc = re.split(r"\s+(?:associated|related\s+to|in\s+the|for\s+the|due\s+to|which)\b",
+                        o.description, maxsplit=1)[0].strip(" ,;")
         parts.append(f"${o.amount:,.1f}M {desc}")
     for g in release.guidance:
-        outlook = "qualitative" if g.qualitative else f"{g.low}–{g.high}"
+        # UNITS on the range: values are normalised to $M upstream, but an unlabelled
+        # "2325.0–2365.0" invites the reader to supply their own scale.
+        outlook = "qualitative" if g.qualitative else f"${g.low:,.1f}–${g.high:,.1f}M"
         parts.append(f"{g.period} {g.metric} outlook: {outlook}")
     if not parts:
         return None
