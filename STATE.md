@@ -4063,8 +4063,19 @@ re-anchor (the full STATE split stays its own queued task — nothing was reloca
    "trailing only" note when `ev_ebitda_adjusted_fwd` is absent; when present (VITL) the committed
    note is lost. Found 2026-07-21 by dry-run diff and routed around surgically, not patched.
 
+12. **XBRL IMPAIRMENT-TAG-OVERLAP RULE — one tag family per adjustment, never summed across
+    families.** Found 2026-07-22 in the SMPL bear-state pull: summing `GoodwillImpairmentLoss` +
+    `GoodwillAndIntangibleAssetImpairment` + `ImpairmentOfIntangibleAssetsExcludingGoodwill` +
+    `AssetImpairmentCharges` double- and triple-counts, because the middle tag is a SUPERSET of
+    the two around it. KHC summed to **$27.9B**; GIS's "ex-impairment" EBIT came out ABOVE its
+    own prior full year — face-invalid, and it would have silently inflated any ex-impairment
+    earnings base. The rule: pick ONE family per adjustment (prefer the filer's own summary
+    line), never add across families, and fail loud when two families both report the period.
+    Same class as `_latest_dep_amort`'s vintage trap — a tag-name heuristic standing in for
+    reading the statement.
+
 **ANALYST / OPERATOR**
-12. **EPAM underwrite — RUN 2026-07-21, VERDICT PENDING.** `scenarios/EPAM.json` written and
+13. **EPAM underwrite — RUN 2026-07-21, VERDICT PENDING.** `scenarios/EPAM.json` written and
    computed standalone (R1, EV/EBITDA); card shipped at `pending_analyst` — the machine
    recorded the bar test, it did NOT decide. Legs (live spot $89.40, Polygon close
    2026-07-20): bear $63.14 · base $163.08 · bull $291.24 (printed, never in the ratio);
@@ -4085,29 +4096,43 @@ re-anchor (the full STATE split stays its own queued task — nothing was reloca
    implied-D&A ratio was the book's worst honest reading at **4.20x** and now sits at **1.52x**,
    in line with IT 0.90x / BRBR 1.33x / AORT 1.38x / CNXC 1.68x / SMPL 1.79x — **the stale
    denominator WAS the outlier.** Verdict stays `pending_analyst`; methods stay DRAFT. EPAM now rides the monitor freshness panel as `verdict pending`.
-13. **BRBR — QUEUE A FULL R1 UNDERWRITE, POST-AUGUST-WINDOW.** The last of the three dispositions
+14. **BRBR — QUEUE A FULL R1 UNDERWRITE, POST-AUGUST-WINDOW.** The last of the three dispositions
    still open; CNXC and VITL were closed 2026-07-21 (`R1_NOT_ROBUST` and `R2_NEEDED`). BRBR passes
    both band guards, so its anchor is usable. **Basis = the 2026-07-21 disposition pull**, whose
    one contested item is now settled: `book value/share −$4.28` IS committed and sourced
    (`mechanical.stock_info.book_value_ps`) — the pull's "unsourced" finding was a false negative.
    Hold until after the August print window for the same reason EPAM is held.
-14. **CIQ ESCALATION — VITL `TEV/LTM EBITDA` (LOW PRIORITY, operator).** Reproducible statement
+15. **HAND-READ PACKAGED-FOOD SECTOR MEDIAN — OPTIONAL DEPTH, NOT REQUIRED.** GIS / BGS / CAG /
+    KHC / HAIN need their income statements read BY HAND (impairments isolated per the tag-overlap
+    rule above) before a sector median is admissible. **Explicitly optional:** the SMPL
+    verification was decided on the clean-comp RANGE (6.08–8.57x), which governed and was
+    sufficient. Do this only if a future name's bear leg turns on the median rather than the
+    range.
+16. **CIQ ESCALATION — VITL `TEV/LTM EBITDA` (LOW PRIORITY, operator).** Reproducible statement
    drafted: *VITL (NasdaqGM:VITL), Financials→Multiples — `TEV/LTM EBITDA` is populated against a
    rent-adjusted denominator. Backing it out of the sheet's own TEV gives ~393 against EBITDAR
    ~390.5 (1.007x) and EBITDA 79.5 (4.94x), across every recent period; `TEV/LTM EBIT` on the same
    sheet reconciles to EDGAR exactly.* Low priority: the guard already disqualifies the band, so
    nothing downstream depends on CIQ answering. Worth sending because the same rent-adjustment
    substitution would silently distort ANY lease-heavy name.
-15. **Truckload freeze-source re-run** — confirm the surgically-patched
+17. **Truckload freeze-source re-run** — confirm the surgically-patched
    `frontend/themes/truckload-supply-purge.json` reproduces byte-identical from the freeze.
-16. **Sweep-#2 fail-closed coverage holes (2)** — operator decision, report-only.
-17. **Drafting-rubric v2 validation — DATED 2026-08-13** (pre-registered; do not run early).
+18. **Sweep-#2 fail-closed coverage holes (2)** — operator decision, report-only.
+19. **Drafting-rubric v2 validation — DATED 2026-08-13** (pre-registered; do not run early).
 
 **HOUSEKEEPING**
-18. **Refresh cadence → docs/RUNBOOKS.md** (it is operating practice, not state).
-19. **Full STATE split** — §5 build records → a fossils/decisions file; this block is the interim.
+20. **UNIT-BOUNDARY AUDIT — priority raised; operator records this as the FIFTH instance.**
+    Latest (2026-07-22, the SMPL bear-state pull): `_lease_inclusive_net_debt` returns **DOLLARS**
+    while its sibling anchor fields are **$M**, and a consumer that read it as $M produced a TEV of
+    $1.99 **trillion** for B&G Foods. Caught by face validity, not by a type — the return is
+    `float` either way. Sweep every cross-module numeric boundary for an implicit unit and make it
+    explicit (name, wrapper type, or a stated-unit return). **NOTE: no unit-boundary item existed
+    in STATE before this entry** — the operator's "fifth instance" count is recorded as given and
+    was not independently verified here; earlier instances are not enumerated in this file.
+21. **Refresh cadence → docs/RUNBOOKS.md** (it is operating practice, not state).
+22. **Full STATE split** — §5 build records → a fossils/decisions file; this block is the interim.
 
-20. **REFERENCE-LABEL REGISTER + de-couple the median lookup (PAIRED — do not split).**
+23. **REFERENCE-LABEL REGISTER + de-couple the median lookup (PAIRED — do not split).**
     `assumptions[].references[].label` renders to the reader but is not linted; 14 labels across
     the four records still carry house vocabulary (`own-history band low`, `committed anchor
     median`, EPAM's `DEAD REGIME`). Restating them is blocked on a real coupling: `uw-card.js:188`
@@ -4116,14 +4141,14 @@ re-anchor (the full STATE split stays its own queued task — nothing was reloca
     (`median` / `band_low` / `p75` / …), switch the lookup to it, THEN restate the labels with
     analyst ratification. Splitting them means either a broken card or a rule left violated.
 
-21. **MIRROR-SYNC CI CHECK.** A generator run dirties BOTH its source and its `frontend/` mirror;
+24. **MIRROR-SYNC CI CHECK.** A generator run dirties BOTH its source and its `frontend/` mirror;
     an artifact pass that commits only the source leaves the deployed site reading stale data
     SILENTLY — nothing is red, the page is just wrong. Found 2026-07-21: `92feab0` committed
     `data/monitor/2026-07-20.json` without its mirror, so the live freshness panel was still
     missing EPAM (fixed in `a982900`). Ship a CI step that rebuilds and fails if `git status` is
     dirty — the artifact pass is complete when the tree is clean, not when the source commit lands.
 
-22. **SINGLE-REGISTER POLICY — FORMALIZED 2026-07-22 (supersedes the two-field arrangement below).**
+25. **SINGLE-REGISTER POLICY — FORMALIZED 2026-07-22 (supersedes the two-field arrangement below).**
     **`verdict.rationale` is THE rationale.** Renderer, tear-sheet, card emitter and linter bind it
     alone; **`rationale_plain` is DEPRECATED** — schema keeps it nullable so historical JSON loads,
     and nothing reads it. *Why:* the two-field split did not hold in practice. The four restated
@@ -4147,7 +4172,7 @@ re-anchor (the full STATE split stays its own queued task — nothing was reloca
       (byte-identical, verified); AORT/MVST/NCNO already canonical; EPAM stays null (pending). The
       `.uw-rationale-orig` expander and its CSS are removed.
 
-23. **RATIONALE STYLE RULE (adopted 2026-07-21; binds FUTURE verdicts, never sealed ones).**
+26. **RATIONALE STYLE RULE (adopted 2026-07-21; binds FUTURE verdicts, never sealed ones).**
     `verdict.rationale` is plain thesis prose — the market-standard shape: thesis, the two or
     three numbers that carry it, the risk accepted. **Accession numbers, vendor names (CIQ /
     Polygon), verification arithmetic ("1,100 × 8% × 6.0x → $3.54 → 2.17:1"), and process
@@ -4219,7 +4244,7 @@ re-anchor (the full STATE split stays its own queued task — nothing was reloca
     restating a label can silently break the card. That classifier is itself a standing violation
     of the parsers-consume-structured-values rule. Queued as item 20.
 
-24. **RENDER-COMPLETENESS CHECK (from #185's dropped survival `detail`).** The survival panel
+27. **RENDER-COMPLETENESS CHECK (from #185's dropped survival `detail`).** The survival panel
     silently dropped its `detail` list — the runway arithmetic and the going-concern sentence were
     IN the record and absent from the card. This is the second instance of the same shape (#179's
     `undefined` reference table was the first), so the pin belongs at the class level, not the
@@ -4228,7 +4253,7 @@ re-anchor (the full STATE split stays its own queued task — nothing was reloca
     assertion added after each miss. Both instances were invisible to a preview that checked only
     the visible tier — so the check must run against the FORCE-OPEN print state too.
 
-25. **TESTING NOTE — `model_copy` DOES NOT RE-RUN PYDANTIC VALIDATORS.** Found 2026-07-22 building
+28. **TESTING NOTE — `model_copy` DOES NOT RE-RUN PYDANTIC VALIDATORS.** Found 2026-07-22 building
     the EV/Revenue axes pin: a test helper that built its record with `rec.model_copy(update=...)`
     sailed past the record-level guards it existed to exercise, and the test passed for the wrong
     reason. Any test asserting a `@model_validator` REFUSES something must construct through
@@ -4236,7 +4261,7 @@ re-anchor (the full STATE split stays its own queued task — nothing was reloca
     tests — this one was caught because the assertion was a `pytest.raises` that did not raise; a
     helper used for a POSITIVE assertion would have failed silently and still be green.
 
-26. **NCI TERM FOR THE R2 ENGINE — GATES ANY COMBINED-ENTITY UNDERWRITE (FUBO is the live case).**
+29. **NCI TERM FOR THE R2 ENGINE — GATES ANY COMBINED-ENTITY UNDERWRITE (FUBO is the live case).**
     `terminal_value` bridges `EV_T − net_debt_T → equity_T ÷ shares_T` with no non-controlling
     interest term, so it implicitly hands 100% of a consolidated enterprise to the parent's
     shareholders. That is wrong for any Up-C or partly-owned structure, and it is wrong by a factor
@@ -4246,59 +4271,59 @@ re-anchor (the full STATE split stays its own queued task — nothing was reloca
     this exists, no name with a material NCI can be underwritten on R2 — and the engine should say
     so rather than quietly produce a number.
 
-27. **IR-DOCUMENT INGESTION TIER** — company documents that are NOT SEC filings (earnings
+30. **IR-DOCUMENT INGESTION TIER** — company documents that are NOT SEC filings (earnings
     supplements, IR decks) need first-class provenance: URL + retrieval date + sha256. IT's
     covenant ratio and FY26 guidance exist ONLY there, with no accession to cite.
-28. **PERIMETER WATCHER reading FOOTNOTES AND RELEASES, not 8-K only** — Gartner's Digital Markets
+31. **PERIMETER WATCHER reading FOOTNOTES AND RELEASES, not 8-K only** — Gartner's Digital Markets
     sale completed with **no Form 8-K at all**; it surfaced in a 10-K subsequent-events note.
-29. **ENTITY-STRUCTURE GATE BEFORE ANY PER-SHARE MATH** — check for NCI / multi-class / Up-C before
+32. **ENTITY-STRUCTURE GATE BEFORE ANY PER-SHARE MATH** — check for NCI / multi-class / Up-C before
     dividing anything by a share count (the FUBO lesson; pairs with item 26).
-30. **FORM-4 TRANSACTION-CODE CLASSIFIER** — the insider leaf read twelve director compensation
+33. **FORM-4 TRANSACTION-CODE CLASSIFIER** — the insider leaf read twelve director compensation
     grants (codes A/J, $0 paid) as an open-market purchase off the grant reference price.
-31. **STALENESS BANNERS ON MARKET-SENSITIVE DISPLAY FIELDS** — IT's committed market cap is
+34. **STALENESS BANNERS ON MARKET-SENSITIVE DISPLAY FIELDS** — IT's committed market cap is
     as-of 2026-06-25 and 12.3% light; it renders as "$8.7B" with no staleness mark. Stamp until it
     lands.
-32. **COMPANY-METRIC PRIMACY SWEEP** — where a metric is computable from filings, the filings
+35. **COMPANY-METRIC PRIMACY SWEEP** — where a metric is computable from filings, the filings
     number is primary and the vendor number becomes a guarded cross-check (trigger: the $193.8M
     free-cash-flow gap, item 34).
-33. **INTERIM-FCF SENSITIVITY OPTION IN THE R2 ENGINE, printed per record.** Falsifier already
+36. **INTERIM-FCF SENSITIVITY OPTION IN THE R2 ENGINE, printed per record.** Falsifier already
     observed: crediting NCNO's four guided years moves the optimistic case to roughly the market
     price, so a verdict note claiming "even the optimistic case sits below the price" holds only
     before interim cash. The engine should print the sensitivity rather than leave it to prose.
-34. **CIQ ESCALATION #2 — the levered-free-cash-flow gap (DRAFTED).** Vendor 'Levered Free Cash
+37. **CIQ ESCALATION #2 — the levered-free-cash-flow gap (DRAFTED).** Vendor 'Levered Free Cash
     Flow' reads **1,064.2** for LTM to Mar-31-2026 against the company's own **1,258.0** on the
     same period and nominally the same construction. **Debt service does not explain it**: interest
     paid is $99.5M and long-term-debt repayments are $0.0M, so ~$194M is unaccounted for. Same
     shape as the VITL defect (a row populated against a denominator its label does not describe) —
     **suspect until diagnosed, not concluded.** Dossier leaf now carries the filings figure with
     the vendor reading recorded as a caveat.
-35. **DATED + SHA-STAMPED VENDOR-EXPORT SNAPSHOTS, surfaced per record** — so a record states which
+38. **DATED + SHA-STAMPED VENDOR-EXPORT SNAPSHOTS, surfaced per record** — so a record states which
     export vintage it was built from.
-36. **DOSSIER GOVERNANCE BLOCK (proxy-sourced)** — board, auditor, compensation, related-party.
-37. **ANALOGUE SECTIONS — rebuild or remove** under the external review pack format.
-38. **MVST NET-DEBT LEASE DECOMPOSITION UNKNOWN** — its bridge is a CIQ vendor figure on a
+39. **DOSSIER GOVERNANCE BLOCK (proxy-sourced)** — board, auditor, compensation, related-party.
+40. **ANALOGUE SECTIONS — rebuild or remove** under the external review pack format.
+41. **MVST NET-DEBT LEASE DECOMPOSITION UNKNOWN** — its bridge is a CIQ vendor figure on a
     "classified total debt less total cash" basis with no lease split, and the basis string does
     not even claim lease-inclusivity. Any lease-basis question is uncomputable for this name.
-39. **WERN HAS NO DOSSIER** — `data/dossiers/` covers 11 names, not WERN; its band provenance lives
+42. **WERN HAS NO DOSSIER** — `data/dossiers/` covers 11 names, not WERN; its band provenance lives
     only in the scenario record's `assumptions`.
 
-40. **IC RESPONSE MEMO — THE NEXT ARTIFACT.** The external review's closing fact is the exit; the
+43. **IC RESPONSE MEMO — THE NEXT ARTIFACT.** The external review's closing fact is the exit; the
     memo answers the review with what was verified, what was refuted, what changed, and what the
     exit realized. Everything it needs is now committed.
-41. **BEAR-STATE PULL → REUSABLE RUNBOOK STEP.** The 2026-07-22 cross-section pull (admission test,
+44. **BEAR-STATE PULL → REUSABLE RUNBOOK STEP.** The 2026-07-22 cross-section pull (admission test,
     per-name admit/reject with numbers, TEV basis stated, margin-retention-through-decline) becomes
     a standing runbook step for any name whose own history lacks a bear-state precedent.
-42. **EXTENDED OWN-HISTORY CIQ PULL (~2006) — OPTIONAL DEPTH.** IT's committed multiple window
+45. **EXTENDED OWN-HISTORY CIQ PULL (~2006) — OPTIONAL DEPTH.** IT's committed multiple window
     opens 2017Q1, so pre-2015 and the 2008-09 trough are unobservable. A pull back to ~2006 would
     let a slower-growth Gartner be priced from its own record rather than the cross-section. Not
     blocking — the cross-check convention (above) covers the gap.
 
-43. **MVST BEAR_BASIS UNRESOLVED — the one backfill withheld.** Its multiple method says the exit
+46. **MVST BEAR_BASIS UNRESOLVED — the one backfill withheld.** Its multiple method says the exit
     is *"set AT the closest economic analogue - a levered auto-parts maker"* (BorgWarner, 7.9x
     reference; bear 6.0x), which reads `peer-reference`; the brief expected `analyst`. Prose does
     not determine the enum, so it was NOT guessed. MVST stays at schema 1.1 with both labels
     absent until the operator rules. One line to close.
-44. **PEER MARGIN FRAMES MIX EBITDA WITH EBIT (AORT, MVST) — BASIS-MISTRANSLATION CLASS, SIXTH
+47. **PEER MARGIN FRAMES MIX EBITDA WITH EBIT (AORT, MVST) — BASIS-MISTRANSLATION CLASS, SIXTH
     SIGHTING.** The running tally: EBITDAR-vs-EBITDA (VITL), LTM-vs-same-period (NCNO), a display
     string re-parsed thousands-blind, EBITDA-margin-vs-EBIT-margin in an advisory brief, the
     $72.24 EBITDA cell under an EBIT label, and now peer reference frames quoted on a different
@@ -4309,7 +4334,7 @@ re-anchor (the full STATE split stays its own queued task — nothing was reloca
     MVST's does not. Not a defect in either cell — the engine adds D&A — but it is the exact
     cross-basis comparison `margin_basis` exists to make visible, and the reference frames should
     carry the label too.
-45. **ENTITY GATE — NCI / SHARE-CLASS CHECK (gates any FUBO record).** The audit's entity check
+48. **ENTITY GATE — NCI / SHARE-CLASS CHECK (gates any FUBO record).** The audit's entity check
     reads the diluted-vs-outstanding gap but has no NCI or multi-class detector beyond a text
     scan, and a pre-combination dossier defeats a text scan by construction.
 
@@ -4843,6 +4868,40 @@ SIC-87xx sector miss · entry-price/ratio-at-entry + implied-odds display.
     - **CONTAGION CHECK RUN — IT was uniquely exposed.** SMPL's and EPAM's bear legs already sit at
       bear-state levels, so neither needed re-setting. No other record carries a growth-era-only
       floor as its downside multiple.
+    - **SMPL VERIFIED 2026-07-22 — THE INSTRUMENT'S FIRST CONFIRMATION.** Until now the
+      convention had only ever REJECTED a bear leg (IT). SMPL is the first name run through it
+      and CLEARED, which is the more important result: **it discriminates, it does not merely
+      reject.** A test that only ever fails everything is not evidence.
+      - **The evidence.** Declining US packaged-food comparables with clean income statements
+        trade at **6.08x (INGR) – 8.57x (LW)** TEV/EBITDA on the ratified lease-inclusive basis;
+        SMPL's recorded bear multiple **7.0x sits inside that range**, while the market prices
+        the name **BELOW** the state at **5.65x**. Its recorded 10% bear margin equals the worst
+        clean retention observed (**64.5% of normal vs the weakest survivor's 63%**). At the
+        2026-07-21 close ($11.04) **no evidence-coherent cell falls below ~2.7:1** against the
+        2.0 bar (floor 2.7458 at 9.58% × 6.08x); the recorded grid reads **3.88:1**. The
+        entry-boundary pair is unmoved: **2.12 clears / 1.88 fails**.
+      - **CONVENTION REFINED (2026-07-22).** *"A bear multiple ABOVE the current multiple is a
+        TRIPWIRE that forces the evidence test — not a defect in itself. It is ADMISSIBLE when
+        the current multiple sits BELOW the sector's own bear state, i.e. the market is pricing
+        past the downside case rather than the bear leg assuming a re-rating up."* `vinci audit
+        r1` raises exactly this flag on SMPL (**7.00x vs 5.65x**) and on **EPAM (6.00x vs
+        4.87x)**; SMPL's is now DISCHARGED by evidence. **EPAM's is not — it is the next name
+        owed this test** (queue item 12).
+      - **WHAT THE EVIDENCE PULL COULD NOT ESTABLISH, and why it was not forced.** A full
+        sector-median distribution is NOT recorded: reported EBIT is impairment-contaminated
+        exactly in the bear state (GIS FY2026 EBIT $886M vs $3,305M prior on a 5.4% revenue
+        fall), and the mechanical ex-impairment repair DOUBLE-COUNTS across overlapping XBRL tag
+        families (KHC summed to $27.9B; GIS's "ex-impairment" EBIT exceeded its own prior year).
+        The clean-comp RANGE governs instead — narrower evidence, honestly bounded, rather than
+        a median carrying two charge-depressed denominators. Also unconfirmed at this sample:
+        the *a-priori* expectation that packaged food holds margin through decline far better
+        than information services — the two clean names point OPPOSITE ways (INGR 120%
+        retention, LW 63%), so **n=2 does not establish it** and it is not claimed.
+      - **REGISTER RULE ADDITION:** *"A verification tag carries its RUN DATE, its PRICE DATE and
+        the PRICE explicitly."* A tag that says "verified" without naming the close it was
+        verified at cannot be re-checked, and a run date silently implies a price that may not
+        exist yet (this tag ran 2026-07-22 against the 2026-07-21 session — the latest completed
+        close; writing "at today's price" would have been false).
   - **LEASE-BASIS CONVENTION — RATIFIED 2026-07-22. THE NET-DEBT BASIS STAYS LEASE-INCLUSIVE, AND
     THIS REVERSES A FINDING.** The 2026-07-22 IC review raised a basis-inconsistency concern: our
     net debt is lease-inclusive while the multiple band is a CIQ TEV multiple, so if CIQ's TEV
