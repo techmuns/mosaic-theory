@@ -58,7 +58,7 @@
       "revenue": 1180.0,
       "margin": 0.1,
       "multiple": 7.0,
-      "reason": "Value-trap case: the GLP-1 and Atkins declines prove secular; revenue falls past consensus; margin at about the worst clean year (FY2020 9.58%); the multiple at the trough of its trading range (prior low 6.11x). [restated for external readability 2026-07-21; substance unchanged]",
+      "reason": "Value-trap case: the GLP-1 and Atkins declines prove secular; revenue falls past consensus; margin at about the worst clean year (FY2020 9.58%); the multiple at the trough of its trading range (prior low 6.11x). [restated for external readability 2026-07-21; substance unchanged] [verified 2026-07-22 against sector bear-state evidence, at the latest completed session's close ($11.04, 2026-07-21): declining packaged-food comparables with clean income statements trade at 6.1–8.6 times cash earnings — the recorded 7.0x sits inside that range while the market prices this company below it (5.65x); and the recorded 10% margin equals the worst clean margin retention observed in the state (roughly two-thirds of normal, 64.5% vs the weakest survivor's 63%). No evidence-coherent cell falls below roughly 2.7 to 1 against the 2.0 bar at that close; the recorded grid reads 3.88 to 1. Fragility unchanged and exactly as recorded: the entry-boundary cells still read 2.12 clears / 1.88 fails.]",
       "bear_basis": "own-history",
       "margin_basis": "EBIT"
     },
