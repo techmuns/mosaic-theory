@@ -353,3 +353,107 @@ def test_one_off_dedup_is_amount_aware_and_the_prior_year_guard_is_sentence_boun
         "Adjusted EBITDA included, for the prior year period, integration expenses of "
         "$0.2 million.", source_ref=_SRC).one_offs
     assert dropped == [], "an in-sentence prior-year comparative is still not this period's cause"
+
+
+def test_recon_requires_currency_evidence_and_never_reads_a_ratio_as_an_amount() -> None:
+    """(fabrication guard) A margin is not an amount. EPAM states 'non-GAAP income from operations
+    was 16.3% of revenues'; the widened metric list matched it and stored 16.3, which rendered as
+    '$16.3M' against a true ~$230M on $1.4B revenue — a decision figure wrong by ~14x.
+
+    An amount must therefore CARRY its currency: a '$' before the number, or an explicit
+    million/billion after it. A bare number, and any number trailed by '%', is not this
+    extractor's fact — honest absence beats a fabricated magnitude."""
+    # ⊖ the ratio that caused it — and any bare, unqualified number
+    for ratio in ("Non-GAAP Income from Operations was 16.3% of revenues.",
+                  "non-GAAP income from operations was 14.3% of revenues, up 120bps.",
+                  "Adjusted EBITDA was 22.5% of sales.",
+                  "Adjusted EBITDA of 53.8."):
+        assert rp.parse_release(ratio, source_ref=_SRC).reconciliation == [], ratio
+    # ⊕ every legitimate currency shape still parses
+    cases = {
+        "Adjusted EBITDA* of $53.8 million.": ("adjusted ebitda", 53.8),
+        "Non-GAAP Diluted EPS of $3.26, up.": ("adjusted eps", 3.26),
+        "Non-GAAP adjusted EBITDA of negative $5.5 million.": ("adjusted ebitda", -5.5),
+        "Adjusted EBITDA of 57 million.": ("adjusted ebitda", 57.0),  # unit, no $ sign
+    }
+    for text, want in cases.items():
+        got = [(v.metric, v.value) for v in rp.parse_release(text, source_ref=_SRC).reconciliation]
+        assert got == [want], f"{text} → {got}"
+
+
+def test_committed_dossiers_carry_no_ratio_as_a_currency_amount() -> None:
+    """(committed-artifact invariant) Every stored CURRENCY value must show currency evidence in
+    its own verbatim — a '$' before it, or a million/billion after it.
+
+    Deliberately NOT "the verbatim contains a %": EPAM's bad row read
+    '…non-GAAP income from operations was 14.3' — the window ended before the '%', so a
+    percent-scan passes it while the value is still a ratio. The invariant has to assert what a
+    currency amount MUST look like, not guess at what a bad one happens to contain."""
+    import json
+    import re as _re
+    from pathlib import Path
+    currency = {"adjusted ebitda", "adjusted operating income", "adjusted net income",
+                "adjusted eps"}
+    for p in sorted(Path("data/dossiers").glob("*/dossier.json")):
+        for rel in ((json.loads(p.read_text())["mechanical"].get("primary_source") or {})
+                    .get("releases") or []):
+            for v in (rel.get("reconciliation") or []):
+                if v["metric"] not in currency:
+                    continue
+                # match the magnitude AS THE FILER WROTE IT: a stored 59.0 comes from "$59
+                # million", so an integral value must not be searched for as "59.0".
+                a = abs(v["value"])
+                vb = str(v.get("verbatim") or "")
+                mag = _re.escape(str(int(a)) if a == int(a) else str(a))
+                has_currency = _re.search(rf"\$\s*{mag}", vb) or _re.search(
+                    rf"{mag}\s*(?:million|billion)", vb, _re.I)
+                assert has_currency, (
+                    f"{p.parent.name}: {v['metric']}={v['value']} has no currency evidence "
+                    f"in its source — …{vb[-70:]!r}")
+
+
+def test_recon_captures_the_direction_stated_beside_the_level() -> None:
+    """A gap-down is about the DELTA, not the level: '$230.0M' alone cannot explain why a stock
+    fell. The release states the change in the same sentence, so it is captured and rendered.
+    Verbatim forms observed across the five recovered releases."""
+    cases = {
+        "Non-GAAP income from operations was $230.0 million, an increase of $21.8 million, "
+        "or 10.5%, compared to $208.2 million.":
+            ("adjusted operating income", 230.0, "+$21.8 million"),
+        "Adjusted EBITDA of $55.5 million decreased 18.4% versus the year ago period.":
+            ("adjusted ebitda", 55.5, "-18.4%"),
+        "Non-GAAP Diluted EPS of $3.26, an increase of 14.8%.": ("adjusted eps", 3.26, "+14.8%"),
+    }
+    for text, (metric, value, change) in cases.items():
+        got = [(v.metric, v.value, v.change)
+               for v in rp.parse_release(text, source_ref=_SRC).reconciliation]
+        assert (metric, value, change) in got, f"{text[:50]} → {got}"
+    # a level with NO stated change carries None — never an invented direction
+    plain = rp.parse_release("Adjusted EBITDA* of $53.8 million.", source_ref=_SRC).reconciliation
+    assert [v.change for v in plain] == [None]
+
+
+def test_change_never_borrows_a_delta_from_a_neighbouring_metric() -> None:
+    """The change must belong to ITS value: the window stops at the sentence/bullet boundary, so a
+    later metric's delta is never attached to an earlier one."""
+    text = ("• Adjusted EBITDA of $55.5 million • Adjusted EPS of $0.45, an increase of 14.8%")
+    rows = {v.metric: v.change for v in rp.parse_release(text, source_ref=_SRC).reconciliation}
+    assert rows.get("adjusted ebitda") is None, "EBITDA must not borrow the EPS delta"
+    assert rows.get("adjusted eps") == "+14.8%"
+
+
+def test_growth_rate_guidance_is_a_real_range_not_a_qualitative_marker() -> None:
+    """EPAM guides 'the year-over-year revenue growth rate to be in the range of 4.5% to 7.5%'.
+    The dollar-range pattern cannot see a RATE, so it fell through to the QUALITATIVE marker —
+    which asserts the company said nothing when it gave the most decision-relevant number in the
+    release. A rate guide is a number, carried with unit='%'."""
+    g = rp.parse_release(
+        "2026 Outlook. The Company expects the year-over-year revenue growth rate to be in the "
+        "range of 4.5% to 7.5% for 2026.", source_ref=_SRC).guidance
+    assert [(x.metric, x.low, x.high, x.unit, x.qualitative) for x in g] == \
+        [("revenue", 4.5, 7.5, "%", False)]
+    # a genuinely number-free outlook is STILL qualitative — the honest-absence path is intact
+    q = rp.parse_release(
+        "2026 Outlook. The Company expects continued revenue growth in the coming year.",
+        source_ref=_SRC).guidance
+    assert all(x.qualitative for x in q) and all(x.low is None for x in q)

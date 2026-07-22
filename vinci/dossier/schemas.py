@@ -650,6 +650,11 @@ class GuidanceItem(BaseModel):
     period: str  # e.g. "2026"
     low: float | None  # range low ($M; $/sh for EPS; % for margin). None when QUALITATIVE
     high: float | None  # range high. None when a single value or QUALITATIVE
+    # "$M" (default) or "%" — a guide can be a GROWTH-RATE range ("revenue growth rate in the range
+    # of 4.5% to 7.5%"), which is a real number, not a qualitative outlook. Rendering that as
+    # "qualitative" asserts the company said nothing when it said the most decision-relevant thing
+    # in the release. Optional so pre-existing dossier.json still validates.
+    unit: str = "$M"
     qualitative: bool  # True ⇒ named in the outlook with NO number (fail-loud honest, not a guess)
     verbatim: str  # the outlook sentence, ≤200c
     source_ref: str  # accession + exhibit
@@ -664,6 +669,11 @@ class ReconciliationValue(BaseModel):
     metric: str  # "adjusted ebitda" | "adjusted net income" | "adjusted eps"
     period: str
     value: float  # $M (or $/share for EPS); NEGATIVE for a loss
+    # The DIRECTION the release states beside the level ("$230.0 million, an increase of $21.5
+    # million" / "up 12.8% year-over-year"). A level alone cannot explain a gap-down — the reader
+    # needs to know whether it rose or fell. Verbatim-derived; None when no change is stated.
+    # Optional so pre-existing dossier.json still validates.
+    change: str | None = None
     verbatim: str
     source_ref: str
 

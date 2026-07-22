@@ -858,7 +858,7 @@
     },
     "drawdown_cause": {
       "shape": {
-        "value": "discrete gap-downs — 2026-02-03 no 8-K matched; 2026-02-19 earnings (2.02); 2026-06-18 no 8-K matched",
+        "value": "discrete gap-downs — 2026-02-03 no company filing; 2026-02-19 earnings (2.02); 2026-06-18 no company filing",
         "source_ref": "EDGAR 8-K item codes at the gap-down dates (not blanket-labelled earnings)",
         "status": "present",
         "note": null
@@ -892,7 +892,7 @@
             "2.02 Results of Operations and Financial Condition: Results of Operations and Financial Condition. On February 19, 2026, EPAM Systems, Inc. (the “Company” or “EPAM”) issued a press release discussing its results of operations for the fourth quarter and the year ended December 31, 2025. A copy of the press release is attached as Exhibit 99.1 to this report and is incorporated by reference into this"
           ],
           "drivers": {
-            "value": "adj operating income Q4 2025 $16.3M; adj EPS Q4 2025 $3.26; 2026 revenue outlook: qualitative",
+            "value": "adj operating income Q4 2025 $230.0M (+$21.8 million); adj EPS Q4 2025 $3.26 (+14.8%); 2026 revenue outlook: 4.5–7.5% growth",
             "source_ref": "8-K 0001352010-26-000010 EX-99.1",
             "status": "present",
             "note": null
@@ -4031,7 +4031,7 @@
         "note": null
       },
       "covenant_terms": {
-        "value": "COVENANT & MATURITY DIGEST (governing terms; verbatim quotes omitted):\n[Revolving Credit Facility · 0001352010-17-000022 · amended by 0001352010-21-000039]\n  Principal / commitment amount: $700,000,000 REVOLVING CREDIT FACILITY; aggregate principal amount not to exceed…\n  Interest / coupon rate: Base Rate Option: Base Rate plus Applicable Margin (Base Rate Spread 0.000% to…\n  Maturity date: Expiration Date: October 21, 2026 (as may be extended). Closing Date: October 21,…\n  Financial-maintenance covenants: Maximum Consolidated Leverage Ratio: not to exceed 3.50 to 1.00 (temporarily…",
+        "value": "COVENANT & MATURITY DIGEST (governing terms; verbatim quotes omitted):\n[Revolving Credit Facility · 0001352010-17-000022 · amended by 0001352010-21-000039]\n  Principal / commitment amount: $700,000,000 revolving credit facility; Swingline Loan Commitment aggregate…\n  Interest / coupon rate: Base Rate plus Applicable Margin (Revolving Credit Base Rate Spread 0.000%–1.000%…\n  Maturity date: October 21, 2026 (Expiration Date), as such date may be extended pursuant to Section…\n  Financial-maintenance covenants: Maximum Consolidated Leverage Ratio: not to exceed 3.50 to 1.00 (temporarily…",
         "source_ref": "fenced Tier-2 digest (P1)",
         "status": "present",
         "note": null
@@ -4067,82 +4067,12 @@
             "pik_pct": null
           },
           {
-            "name": "Interest / coupon rate",
+            "name": "Incremental Loan Commitment",
             "value": {
-              "value": "Base Rate Option: Base Rate plus the Applicable Margin; Euro-Rate Option: Euro-Rate plus the Applicable Margin (Applicable Margin based on the Leverage Ratio per the pricing grid on Schedule 1.1(A))",
+              "value": "Incremental Loan Commitments aggregate not to exceed $100,000,000.00; minimum each not less than $25,000,000.00",
               "source_ref": "8-K 0001352010-17-000022 · exhibit10-1epamcreditagree.htm",
               "status": "present",
-              "note": "verbatim: “(i) Revolving Credit Base Rate Option:  A fluctuating rate per annum equal to the Base Rate plus the Applicable Margin, such interest rate to change automatically from time to time effective as of the effective date of each change in the Base Rate; or (ii) Revolving Credit Euro-Rate Option:  A rate per annum equal to the Euro-Rate as determined for each applicable Interest Period plus the Applicable Margin.”"
-            },
-            "base_rate_label": "Euro-Rate",
-            "margin_pct": null,
-            "margin_bps": null,
-            "floor_pct": null,
-            "pik_pct": null
-          },
-          {
-            "name": "Maturity date",
-            "value": {
-              "value": "Expiration Date: May 24, 2022",
-              "source_ref": "8-K 0001352010-17-000022 · exhibit10-1epamcreditagree.htm",
-              "status": "present",
-              "note": "verbatim: “Expiration Date shall mean, with respect to the Revolving Credit Commitments, May 24, 2022.”"
-            },
-            "base_rate_label": null,
-            "margin_pct": null,
-            "margin_bps": null,
-            "floor_pct": null,
-            "pik_pct": null
-          },
-          {
-            "name": "Financial-maintenance covenants",
-            "value": {
-              "value": "7.2.13 Maximum Leverage Ratio; 7.2.14 Minimum Interest Coverage Ratio (specific required levels not stated in the exhibit text; Leverage Ratio and Interest Coverage Ratio defined in Section 1.1)",
-              "source_ref": "8-K 0001352010-17-000022 · exhibit10-1epamcreditagree.htm",
-              "status": "present",
-              "note": "verbatim: “7.2.13 Maximum Leverage Ratio. 7.2.14 Minimum Interest Coverage Ratio.”"
-            },
-            "base_rate_label": null,
-            "margin_pct": null,
-            "margin_bps": null,
-            "floor_pct": null,
-            "pik_pct": null
-          },
-          {
-            "name": "Security / collateral / guarantors",
-            "value": {
-              "value": "Guarantors party hereto (signature page: VESTED DEVELOPMENT, INC.; EPAM SYSTEMS, LLC; NAVIGATION ARTS, LLC; NAVIGATIONARTS, INC.; ALLIANCE GLOBAL SERVICES, LLC; ALLIANCE GLOBAL SERVICES, INC.; ALLIANCE CONSULTING GLOBAL HOLDINGS, INC.). Guaranty Agreement (Continuing Agreement of Guaranty and Suretyship). Cash Collateral security interest granted for Letter of Credit Obligations. Note: 6.1.1(x) states 'all liens and security interests granted in connection [with the Existing Credit Agreement] shall be terminated and released on the Closing Date' — facility is guaranteed but generally unsecured.",
-              "source_ref": "8-K 0001352010-17-000022 · exhibit10-1epamcreditagree.htm",
-              "status": "present",
-              "note": "verbatim: “Guaranty Agreement shall mean the Continuing Agreement of Guaranty and Suretyship in substantially the form of Exhibit 1.1(G)(2) executed and delivered by each of the Guarantors to the Administrative Agent for the benefit of the Lenders.”"
-            },
-            "base_rate_label": null,
-            "margin_pct": null,
-            "margin_bps": null,
-            "floor_pct": null,
-            "pik_pct": null
-          },
-          {
-            "name": "Mandatory prepayment / events of default",
-            "value": {
-              "value": "Mandatory Prepayments (Section 4.7): 4.7.1 and 4.7.2 intentionally omitted; 4.7.3 Currency Fluctuations; 4.7.4 Application Among Interest Rate Options. Events of Default (Section 8.1): 8.1.1 Payments Under Loan Documents; 8.1.2 Breach of Warranty; 8.1.3 Anti-Terrorism/Anti-Corruption Laws; 8.1.4 Breach of Negative Covenants, Visitation Rights or Anti-Terrorism Laws; 8.1.5 Breach of Other Covenants; 8.1.6 Defaults in Other Agreements or Indebtedness; 8.1.7 Final Judgments or Orders; 8.1.8 Loan Document Unenforceable; 8.1.9 Uninsured Losses; Proceedings Against Assets; 8.1.10 Events Relating to Plans and Benefit Arrangements; 8.1.11 Change of Control; 8.1.12 Relief Proceedings.",
-              "source_ref": "8-K 0001352010-17-000022 · exhibit10-1epamcreditagree.htm",
-              "status": "present",
-              "note": "verbatim: “4.7 Mandatory Prepayments. 4.7.1 [Intentionally omitted]. 4.7.2 [Intentionally omitted]. 4.7.3 Currency Fluctuations. 4.7.4 Application Among Interest Rate Options. ... 8.1 Events of Default. An Event of Default shall mean the occurrence or existence of any one or more of the following events or conditions ... 8.1.1 Payments Under Loan Documents ... 8.1.11 Change of Control. 8.1.12 Relief Proceedings.”"
-            },
-            "base_rate_label": null,
-            "margin_pct": null,
-            "margin_bps": null,
-            "floor_pct": null,
-            "pik_pct": null
-          },
-          {
-            "name": "Commitment Fee",
-            "value": {
-              "value": "Commitment Fee equal to the Applicable Commitment Fee Rate (based on Leverage Ratio per pricing grid on Schedule 1.1(A)) times average daily unused commitments",
-              "source_ref": "8-K 0001352010-17-000022 · exhibit10-1epamcreditagree.htm",
-              "status": "present",
-              "note": "verbatim: “Accruing from the date hereof until the Expiration Date, the Borrower agrees to pay to the Administrative Agent for the account of each Lender according to its Ratable Share, a nonrefundable commitment fee (the \"Commitment Fee\") equal to the Applicable Commitment Fee Rate ... multiplied by the average daily difference between the amount of (i) the Revolving Credit Commitments and (ii) the Dollar Equivalent amount of the Revolving Facility Usage”"
+              "note": "verbatim: “the total aggregate principal amount of all such Incremental Loan Commitments shall not (as of any date of incurrence thereof) exceed $100,000,000.00 and (b) the minimum principal amount of each such Incremental Loan Commitment shall not be less than $25,000,000.00 or an incremental multiple in excess thereof.”"
             },
             "base_rate_label": null,
             "margin_pct": null,
@@ -4156,7 +4086,7 @@
               "value": "$50,000,000.00",
               "source_ref": "8-K 0001352010-17-000022 · exhibit10-1epamcreditagree.htm",
               "status": "present",
-              "note": "verbatim: “in no event shall (i) the Letter of Credit Obligations exceed, at any one time, $50,000,000.00 (the \"Letter of Credit Sublimit\")”"
+              "note": "verbatim: “in no event shall (i) the Letter of Credit Obligations exceed, at any one time, $50,000,000.00 (the \" Letter of Credit Sublimit \")”"
             },
             "base_rate_label": null,
             "margin_pct": null,
@@ -4165,12 +4095,26 @@
             "pik_pct": null
           },
           {
-            "name": "Incremental / accordion facility",
+            "name": "Interest / coupon rate",
             "value": {
-              "value": "Incremental Loan Commitments aggregate not to exceed $100,000,000.00; each not less than $25,000,000.00 (Section 2.12)",
+              "value": "Base Rate Option: Base Rate plus Applicable Margin; Euro-Rate Option: Euro-Rate plus Applicable Margin (Applicable Margin based on Leverage Ratio per pricing grid on Schedule 1.1(A); Euro-Rate commonly known as LIBOR). Base Rate = highest of (a) Overnight Bank Funding Rate plus 0.5%, (b) Prime Rate, and (c) Daily LIBOR Rate plus 1.00%.",
               "source_ref": "8-K 0001352010-17-000022 · exhibit10-1epamcreditagree.htm",
               "status": "present",
-              "note": "verbatim: “the total aggregate principal amount of all such Incremental Loan Commitments shall not (as of any date of incurrence thereof) exceed $100,000,000.00 and (b) the minimum principal amount of each such Incremental Loan Commitment shall not be less than $25,000,000.00”"
+              "note": "verbatim: “(i) Revolving Credit Base Rate Option :  A fluctuating rate per annum equal to the Base Rate plus the Applicable Margin, such interest rate to change automatically from time to time effective as of the effective date of each change in the Base Rate; or (ii) Revolving Credit Euro-Rate Option :  A rate per annum equal to the Euro-Rate as determined for each applicable Interest Period plus the Applicable Margin.”"
+            },
+            "base_rate_label": "Euro-Rate",
+            "margin_pct": null,
+            "margin_bps": null,
+            "floor_pct": 0.0,
+            "pik_pct": null
+          },
+          {
+            "name": "Maturity date",
+            "value": {
+              "value": "May 24, 2022 (Expiration Date)",
+              "source_ref": "8-K 0001352010-17-000022 · exhibit10-1epamcreditagree.htm",
+              "status": "present",
+              "note": "verbatim: “Expiration Date shall mean, with respect to the Revolving Credit Commitments, May 24, 2022.”"
             },
             "base_rate_label": null,
             "margin_pct": null,
@@ -4179,12 +4123,12 @@
             "pik_pct": null
           },
           {
-            "name": "Swing Loan sublimit",
+            "name": "Financial-maintenance covenants",
             "value": {
-              "value": "Swing Loan Commitment up to amount specified in Section 2.1.2 (amount not stated in exhibit text)",
+              "value": "Section 7.2.13 Maximum Leverage Ratio and Section 7.2.14 Minimum Interest Coverage Ratio (specific required levels not stated in the body of the exhibit as reproduced; section headings only). Leverage Ratio defined; Interest Coverage Ratio defined; note: Permitted Acquisition requires Leverage Ratio not greater than 2.75 to 1.00.",
               "source_ref": "8-K 0001352010-17-000022 · exhibit10-1epamcreditagree.htm",
               "status": "present",
-              "note": "verbatim: “Swing Loan Commitment shall mean PNC's commitment to make Swing Loans to the Borrower pursuant to Section 2.1.2 [Swing Loan Commitment] hereof in an aggregate principal amount up to the amount specified in such Section.”"
+              "note": "verbatim: “7.2.13 Maximum Leverage Ratio. 7.2.14 Minimum Interest Coverage Ratio.”"
             },
             "base_rate_label": null,
             "margin_pct": null,
@@ -4193,12 +4137,26 @@
             "pik_pct": null
           },
           {
-            "name": "Governing law",
+            "name": "Security / collateral / guarantors",
             "value": {
-              "value": "Section 10.11.1 Governing Law (specific state not stated in exhibit text)",
+              "value": "Guarantors party to the Agreement: Vested Development, Inc.; EPAM Systems, LLC; NavigationArts, LLC; NavigationArts, Inc.; Alliance Global Services, LLC; Alliance Global Services, Inc.; Alliance Consulting Global Holdings, Inc. Guaranty via Guaranty Agreement (Continuing Agreement of Guaranty and Suretyship). As to collateral: \"all liens and security interests granted in connection therewith [Existing Credit Agreement] shall be terminated and released on the Closing Date\"; Borrower grants security interest in Cash Collateral for Letter of Credit Obligations.",
               "source_ref": "8-K 0001352010-17-000022 · exhibit10-1epamcreditagree.htm",
               "status": "present",
-              "note": "verbatim: “10.11.1 Governing Law.”"
+              "note": "verbatim: “Guaranty Agreement shall mean the Continuing Agreement of Guaranty and Suretyship in substantially the form of Exhibit 1.1(G)(2) executed and delivered by each of the Guarantors to the Administrative Agent for the benefit of the Lenders.”"
+            },
+            "base_rate_label": null,
+            "margin_pct": null,
+            "margin_bps": null,
+            "floor_pct": null,
+            "pik_pct": null
+          },
+          {
+            "name": "Mandatory prepayment / events of default",
+            "value": {
+              "value": "Mandatory Prepayments (Section 4.7): 4.7.1 and 4.7.2 intentionally omitted; 4.7.3 Currency Fluctuations; 4.7.4 Application Among Interest Rate Options. Events of Default (Section 8.1): 8.1.1 Payments Under Loan Documents; 8.1.2 Breach of Warranty; 8.1.3 Anti-Terrorism Laws; Anti-Corruption Laws; 8.1.4 Breach of Negative Covenants, Visitation Rights or Anti-Terrorism Laws; 8.1.5 Breach of Other Covenants; 8.1.6 Defaults in Other Agreements or Indebtedness; 8.1.7 Final Judgments or Orders; 8.1.8 Loan Document Unenforceable; 8.1.9 Uninsured Losses; Proceedings Against Assets; 8.1.10 Events Relating to Plans and Benefit Arrangements; 8.1.11 Change of Control; 8.1.12 Relief Proceedings.",
+              "source_ref": "8-K 0001352010-17-000022 · exhibit10-1epamcreditagree.htm",
+              "status": "present",
+              "note": "verbatim: “4.7 Mandatory Prepayments. 4.7.1 [Intentionally omitted]. 4.7.2 [Intentionally omitted]. 4.7.3 Currency Fluctuations. 4.7.4 Application Among Interest Rate Options.”"
             },
             "base_rate_label": null,
             "margin_pct": null,
@@ -4221,26 +4179,12 @@
             "pik_pct": null
           },
           {
-            "name": "Permitted Acquisition leverage condition",
+            "name": "Commitment Fee",
             "value": {
-              "value": "Leverage Ratio not greater than 2.75 to 1.00 (Permitted Acquisition condition, Section 7.2.6(ii)(4))",
+              "value": "Applicable Commitment Fee Rate (based on Leverage Ratio per pricing grid on Schedule 1.1(A)) multiplied by average daily unused commitment",
               "source_ref": "8-K 0001352010-17-000022 · exhibit10-1epamcreditagree.htm",
               "status": "present",
-              "note": "verbatim: “the Leverage Ratio shall not be greater than 2.75 to 1.00 both immediately prior to and on a pro forma basis after giving effect to such Permitted Acquisition”"
-            },
-            "base_rate_label": null,
-            "margin_pct": null,
-            "margin_bps": null,
-            "floor_pct": null,
-            "pik_pct": null
-          },
-          {
-            "name": "Optional Currencies",
-            "value": {
-              "value": "Canadian Dollars, Euro, British Pounds Sterling, Swiss Francs (and other approved currencies)",
-              "source_ref": "8-K 0001352010-17-000022 · exhibit10-1epamcreditagree.htm",
-              "status": "present",
-              "note": "verbatim: “Optional Currency shall mean the following lawful currencies: Canadian Dollars, the Euro, British Pounds Sterling, Swiss Francs and any other currency approved by Administrative Agent and all of the Lenders”"
+              "note": "verbatim: “the Borrower agrees to pay to the Administrative Agent for the account of each Lender according to its Ratable Share, a nonrefundable commitment fee (the \" Commitment Fee \") equal to the Applicable Commitment Fee Rate (computed on the basis of a year of 365 or 366 days, as the case may be, and actual days elapsed) multiplied by the average daily difference between the amount of (i) the Revolving Credit Commitments and (ii) the Dollar Equivalent amount of the Revolving Facility Usage”"
             },
             "base_rate_label": null,
             "margin_pct": null,
@@ -4265,7 +4209,7 @@
           {
             "name": "Principal / commitment amount",
             "value": {
-              "value": "$700,000,000 REVOLVING CREDIT FACILITY; aggregate principal amount not to exceed $700,000,000, including a Swingline Loan subfacility (up to $50,000,000) and a Letter of Credit subfacility (Letter of Credit Sublimit of $100,000,000); Alternative Currency Sublimit the lesser of $150,000,000 and the total Revolving Credit Commitment; Incremental Loan Commitments not to exceed $300,000,000",
+              "value": "$700,000,000 revolving credit facility; Swingline Loan Commitment aggregate principal amount up to $50,000,000; Letter of Credit Sublimit $100,000,000; Alternative Currency Sublimit lesser of $150,000,000 and total Revolving Credit Commitment; Incremental Loan Commitments not to exceed $300,000,000",
               "source_ref": "8-K 0001352010-21-000039 · exhibit101-arcreditagreeme.htm",
               "status": "present",
               "note": "verbatim: “The Borrower has requested that the Administrative Agent and the Lenders amend and restate the Existing Credit Agreement to provide a revolving credit facility to the Borrower in an aggregate principal amount not to exceed $700,000,000, including therein a Swingline Loan (as hereinafter defined) subfacility and a Letter of Credit (as hereinafter defined) subfacility.”"
@@ -4279,21 +4223,21 @@
           {
             "name": "Interest / coupon rate",
             "value": {
-              "value": "Base Rate Option: Base Rate plus Applicable Margin (Base Rate Spread 0.000% to 1.000% by Level); Eurocurrency Rate Option: Adjusted Eurocurrency Rate plus Applicable Margin (Eurocurrency Rate Spread 0.875% to 2.000% by Level based on Consolidated Leverage Ratio). Base Rate defined as highest of (i) Overnight Bank Funding Rate plus 0.5%, (ii) Prime Rate, and (iii) Daily LIBOR Rate plus 1.00%, floored at 0.00%. Interest After Default increased by 2.0% per annum.",
+              "value": "Base Rate plus Applicable Margin (Revolving Credit Base Rate Spread 0.000%–1.000% per Level); Adjusted Eurocurrency Rate (LIBOR Rate/CDOR based) plus Applicable Margin (Revolving Credit Eurocurrency Rate Spread 0.875%–2.000% per Level based on Consolidated Leverage Ratio). Base Rate = highest of (i) Overnight Bank Funding Rate plus 0.5%, (ii) Prime Rate, and (iii) Daily LIBOR Rate plus 1.00%. Interest After Default: increased by 2.0% per annum.",
               "source_ref": "8-K 0001352010-21-000039 · exhibit101-arcreditagreeme.htm",
               "status": "present",
-              "note": "verbatim: “(i) Revolving Credit Base Rate Option: A fluctuating rate per annum ... equal to the Base Rate plus the Applicable Margin ... (ii) Revolving Credit Eurocurrency Rate Option: A rate per annum ... equal to the Adjusted Eurocurrency Rate as determined for each applicable Interest Period plus the Applicable Margin.”"
+              "note": "verbatim: “Revolving Credit Base Rate Option: A fluctuating rate per annum ... equal to the Base Rate plus the Applicable Margin ... Revolving Credit Eurocurrency Rate Option: A rate per annum ... equal to the Adjusted Eurocurrency Rate as determined for each applicable Interest Period plus the Applicable Margin.”"
             },
-            "base_rate_label": "Adjusted Eurocurrency Rate (LIBOR Rate / Applicable Reference Rate)",
+            "base_rate_label": "Adjusted Eurocurrency Rate",
             "margin_pct": null,
             "margin_bps": null,
-            "floor_pct": 0.0,
+            "floor_pct": null,
             "pik_pct": null
           },
           {
             "name": "Maturity date",
             "value": {
-              "value": "Expiration Date: October 21, 2026 (as may be extended). Closing Date: October 21, 2021.",
+              "value": "October 21, 2026 (Expiration Date), as such date may be extended pursuant to Section 12.1",
               "source_ref": "8-K 0001352010-21-000039 · exhibit101-arcreditagreeme.htm",
               "status": "present",
               "note": "verbatim: ““ Expiration Date ” means, with respect to the Revolving Credit Commitments, October 21, 2026, as such date may be extended pursuant to Section 12.1 [Modifications, Amendments or Waivers].”"
@@ -4307,10 +4251,10 @@
           {
             "name": "Financial-maintenance covenants",
             "value": {
-              "value": "Maximum Consolidated Leverage Ratio: not to exceed 3.50 to 1.00 (temporarily increasable to 4.00 to 1.00 for four fiscal quarters upon a Material Permitted Acquisition, not more than twice during the term). Minimum Consolidated Interest Coverage Ratio: not less than 3.00 to 1.00.",
+              "value": "Maximum Consolidated Leverage Ratio: not to exceed 3.50 to 1.00 (temporarily increasable to 4.00 to 1.00 for four fiscal quarters following a Material Permitted Acquisition, no more than twice during term); Minimum Consolidated Interest Coverage Ratio: not less than 3.00 to 1.00",
               "source_ref": "8-K 0001352010-21-000039 · exhibit101-arcreditagreeme.htm",
               "status": "present",
-              "note": "verbatim: “9.14 Maximum Consolidated Leverage Ratio. Permit the Consolidated Leverage Ratio to exceed 3.50 to 1.00 (tested as of the end of each fiscal quarter) ... temporarily increased to 4.00 to 1.00 for a four (4) fiscal quarter period ... 9.15 Minimum Consolidated Interest Coverage Ratio. Permit the Interest Coverage Ratio to be less than 3.00 to 1.00 (tested as of the end of each fiscal quarter for the immediately preceding four (4) fiscal quarters).”"
+              "note": "verbatim: “9.14 Maximum Consolidated Leverage Ratio . Permit the Consolidated Leverage Ratio to exceed 3.50 to 1.00 (tested as of the end of each fiscal quarter); provided , however , upon the Borrower’s written request ... the maximum Consolidated Leverage Ratio permitted pursuant to this Section 9.14 shall be temporarily increased to 4.00 to 1.00 for a four (4) fiscal quarter period ... 9.15 Minimum Consolidated Interest Coverage Ratio . Permit the Interest Coverage Ratio to be less than 3.00 to 1.00 (tested as of the end of each fiscal quarter for the immediately preceding four (4) fiscal quarters).”"
             },
             "base_rate_label": null,
             "margin_pct": null,
@@ -4321,10 +4265,10 @@
           {
             "name": "Security / collateral / guarantors",
             "value": {
-              "value": "Guarantors: each direct or indirect Subsidiary of the Borrower (other than Excluded Subsidiaries), party to Continuing Agreement of Guaranty and Suretyship. Signatory guarantors include Vested Development, Inc.; EPAM Systems, LLC; Navigation Arts, LLC; Navigation Arts, Inc.; Alliance Global Services, LLC; Alliance Global Services, Inc.; Alliance Consulting Global Holdings, Inc.; Continuum Innovation, LLC; Continuum, LLC; ShareKnowledge, Inc.; Competentum USA, Ltd.; EPAM DX, LLC; EPAM Upskill, LLC. Cash Collateral required for Letters of Credit/Defaulting Lender Fronting Exposure (security interest granted in Cash Collateral); note the facility does not otherwise state a general lien on assets (Permitted Liens in favor of Administrative Agent contemplated).",
+              "value": "Guarantors: each direct or indirect Subsidiary of the Borrower (other than Excluded Subsidiaries), pursuant to Continuing Agreement of Guaranty and Suretyship. Signatory guarantors include Vested Development, Inc.; EPAM Systems, LLC; Navigation Arts, LLC; Navigation Arts, Inc.; Alliance Global Services, LLC; Alliance Global Services, Inc.; Alliance Consulting Global Holdings, Inc.; Continuum Innovation, LLC; Continuum, LLC; ShareKnowledge, Inc.; Competentum USA, Ltd.; EPAM DX, LLC; EPAM Upskill, LLC. Security interest granted only in Cash Collateral (for Letters of Credit / Defaulting Lenders); no general lien on assets stated (Permitted Liens §9.2 include Liens in favor of Administrative Agent securing the Obligations).",
               "source_ref": "8-K 0001352010-21-000039 · exhibit101-arcreditagreeme.htm",
               "status": "present",
-              "note": "verbatim: ““ Guarantors ” means, collectively, each direct or indirect Subsidiary of the Borrower (other than Excluded Subsidiaries). ... “ Guaranty Agreement ” means the Continuing Agreement of Guaranty and Suretyship, dated of even date herewith, executed and delivered by each of the Guarantors in favor of the Administrative Agent for the benefit of the Lenders.”"
+              "note": "verbatim: ““ Guarantors ” means, collectively, each direct or indirect Subsidiary of the Borrower (other than Excluded Subsidiaries). “ Guaranty Agreement ” means the Continuing Agreement of Guaranty and Suretyship, dated of even date herewith, executed and delivered by each of the Guarantors in favor of the Administrative Agent for the benefit of the Lenders.”"
             },
             "base_rate_label": null,
             "margin_pct": null,
@@ -4335,10 +4279,10 @@
           {
             "name": "Mandatory prepayment / events of default",
             "value": {
-              "value": "Mandatory Prepayments (Section 5.3): (a) & (b) Reserved; (d) Alternative Currency overage - if Alternative Currency Loans/LC Obligations exceed 105% of Alternative Currency Sublimit, prepay/Cash Collateralize within 5 Business Days down to not more than 100% of the Sublimit. Events of Default (Section 10.1): (a) failure to pay principal/interest/fees (3 BD grace for interest, 5 BD for other non-principal amounts); (b) breach of warranty; (c) breach of Article 9 negative covenants; (d) breach of other covenants (30-day cure, none for Sections 8.12(a),(b),8.13(a)); (e) cross-default on other Indebtedness in excess of Threshold Amount ($75,000,000); (f) final judgments in excess of Threshold Amount unstayed 30 days; (g) Loan Document unenforceable; (i) ERISA/Pension Plan events (in excess of $25,000,000 / Threshold Amount); (j) Change of Control; (k) Relief Proceedings/insolvency/attachment.",
+              "value": "Mandatory Prepayments (Section 5.3): (a) and (b) [Reserved]; (d) Alternative Currencies — if Alternative Currency Loans and LC Obligations exceed 105% of Alternative Currency Sublimit, prepay/Cash Collateralize within 5 Business Days to reduce to not more than 100% of the Sublimit. Events of Default (Section 10.1): (a) Payments Under Loan Documents (3 Business Day grace for interest, 5 Business Days for other amounts other than principal); (b) Breach of Warranty; (c) Breach of Certain Covenants (Article 9); (d) Breach of Other Covenants (30-day cure, no grace for §8.12(a),(b),8.13(a)); (e) Defaults in Other Agreements/Indebtedness in excess of Threshold Amount ($75,000,000); (f) Final Judgments/Orders in excess of Threshold Amount; (g) Loan Document Unenforceable; (h) [Reserved]; (i) ERISA/Pension events (in excess of $25,000,000 / Threshold Amount); (j) Change of Control; (k) Relief Proceedings; Solvency; Attachment (30 consecutive days).",
               "source_ref": "8-K 0001352010-21-000039 · exhibit101-arcreditagreeme.htm",
               "status": "present",
-              "note": "verbatim: “5.3 Mandatory Prepayments. (a) [Reserved]. (b) [Reserved]. ... (d) Alternative Currencies. If the Administrative Agent notifies the Borrower ... that the aggregate amount of all Loans and Letter of Credit Obligations denominated in Alternative Currencies at such time exceeds an amount equal to 105% of the Alternative Currency Sublimit then in effect, then, within five (5) Business Days ... the Borrower shall prepay Loans and/or Cash Collateralize Letters of Credit ... to an amount not to exceed 100% of the Alternative Currency Sublimit then in effect. ... 10.1 Events of Default. An Event of Default means the occurrence or existence of any one or more of the following events or conditions ...”"
+              "note": "verbatim: “5.3 Mandatory Prepayments . (a) [Reserved] . (b) [ Reserved] . ... (d) Alternative Currencies . If the Administrative Agent notifies the Borrower at any time that the aggregate amount of all Loans and Letter of Credit Obligations denominated in Alternative Currencies at such time exceeds an amount equal to 105% of the Alternative Currency Sublimit then in effect, then, within five (5) Business Days after receipt of such notice, the Borrower shall prepay Loans and/or Cash Collateralize Letters of Credit in an aggregate amount sufficient to reduce such amount as of such date of payment to an amount not to exceed 100% of the Alternative Currency Sublimit then in effect.”"
             },
             "base_rate_label": null,
             "margin_pct": null,
@@ -5002,27 +4946,30 @@
           "guidance": [
             {
               "metric": "revenue",
-              "period": "2026",
-              "low": null,
-              "high": null,
-              "qualitative": true,
-              "verbatim": "2026 Outlook - Full Year and Second Quarter Full Year EPAM expects the following for the full year: • The Company now expects the year-over-year revenue growth rate to be in the range of 4.0% to 6.5%",
+              "period": "next-fy",
+              "low": 4.0,
+              "high": 6.5,
+              "unit": "%",
+              "qualitative": false,
+              "verbatim": "For the full year, EPAM now expects the year-over-year revenue growth rate to be in the range of 4.0% to 6.5%",
               "source_ref": "8-K 0001352010-26-000026 EX-99.1"
             }
           ],
           "reconciliation": [
             {
-              "metric": "adjusted operating income",
-              "period": "Q1 2026",
-              "value": 14.3,
-              "verbatim": "GAAP income from operations was 8.3% of revenues and non-GAAP income from operations was 14.3",
-              "source_ref": "8-K 0001352010-26-000026 EX-99.1"
-            },
-            {
               "metric": "adjusted eps",
               "period": "Q1 2026",
               "value": 2.86,
+              "change": "+$0.45,",
               "verbatim": "First quarter GAAP diluted EPS of $1.52, an increase of $0.24, or 18.8%, and non-GAAP diluted EPS of $2.86,",
+              "source_ref": "8-K 0001352010-26-000026 EX-99.1"
+            },
+            {
+              "metric": "adjusted operating income",
+              "period": "Q1 2026",
+              "value": 200.7,
+              "change": "+$25.0 million",
+              "verbatim": "Non-GAAP income from operations was $200.7 million",
               "source_ref": "8-K 0001352010-26-000026 EX-99.1"
             }
           ],
@@ -5036,26 +4983,29 @@
             {
               "metric": "revenue",
               "period": "2026",
-              "low": null,
-              "high": null,
-              "qualitative": true,
-              "verbatim": "2026 Outlook - Full Year and First Quarter Full Year EPAM expects the following for the full year: • The Company expects the year-over-year revenue growth rate to be in the range of 4.5% to 7.5% f or",
+              "low": 4.5,
+              "high": 7.5,
+              "unit": "%",
+              "qualitative": false,
+              "verbatim": "The Company expects the year-over-year revenue growth rate to be in the range of 4.5% to 7.5%",
               "source_ref": "8-K 0001352010-26-000010 EX-99.1"
             }
           ],
           "reconciliation": [
             {
-              "metric": "adjusted operating income",
-              "period": "Q4 2025",
-              "value": 16.3,
-              "verbatim": "GAAP Income from Operations was 10.6% of revenues and Non-GAAP Income from Operations was 16.3",
-              "source_ref": "8-K 0001352010-26-000010 EX-99.1"
-            },
-            {
               "metric": "adjusted eps",
               "period": "Q4 2025",
               "value": 3.26,
+              "change": "+14.8%",
               "verbatim": "GAAP Diluted EPS of $1.98, an increase of 10.0%, and Non-GAAP Diluted EPS of $3.26,",
+              "source_ref": "8-K 0001352010-26-000010 EX-99.1"
+            },
+            {
+              "metric": "adjusted operating income",
+              "period": "Q4 2025",
+              "value": 230.0,
+              "change": "+$21.8 million",
+              "verbatim": "Non-GAAP income from operations was $230.0 million",
               "source_ref": "8-K 0001352010-26-000010 EX-99.1"
             }
           ],
@@ -5065,28 +5015,39 @@
         },
         {
           "source_ref": "8-K 0001352010-25-000053 EX-99.1",
-          "guidance": [],
-          "reconciliation": [
+          "guidance": [
             {
-              "metric": "adjusted operating income",
-              "period": "Q3 2025",
-              "value": 16.0,
-              "verbatim": "GAAP income from operations was 10.4% of revenues and non-GAAP income from operations was 16.0",
+              "metric": "revenue",
+              "period": "next-fy",
+              "low": 14.8,
+              "high": 15.2,
+              "unit": "%",
+              "qualitative": false,
+              "verbatim": "EPAM raises its full year expected revenue growth rate for 2025 to now be in the range of 14.8% to 15.2%",
               "source_ref": "8-K 0001352010-25-000053 EX-99.1"
-            },
+            }
+          ],
+          "reconciliation": [
             {
               "metric": "adjusted eps",
               "period": "Q3 2025",
               "value": 3.08,
+              "change": "-$0.04",
               "verbatim": "Third quarter GAAP diluted EPS of $1.91, a decrease of $0.46, and non-GAAP diluted EPS of $3.08,",
+              "source_ref": "8-K 0001352010-25-000053 EX-99.1"
+            },
+            {
+              "metric": "adjusted operating income",
+              "period": "Q3 2025",
+              "value": 222.8,
+              "change": "-$0.1 million",
+              "verbatim": "Non-GAAP income from operations was $222.8 million",
               "source_ref": "8-K 0001352010-25-000053 EX-99.1"
             }
           ],
           "one_offs": [],
           "event_impacts": [],
-          "qa_flags": [
-            "no anchored pattern matched — guidance/outlook: 8-K 0001352010-25-000053 EX-99.1"
-          ]
+          "qa_flags": []
         },
         {
           "source_ref": "8-K 0001352010-25-000050 EX-99.1",
@@ -5136,7 +5097,7 @@
         "note": null
       },
       "guide_verification": {
-        "value": "guide verification (revenue): CIQ 1400.0–1415.0 vs release QUALITATIVE → plausibility flag; render the qualitative growth line",
+        "value": "guide verification (revenue): CIQ 1400.0–1415.0 vs release 4.0–6.5 → MISMATCH flag",
         "source_ref": "CIQ revenue guide vs release actual/outlook",
         "status": "present",
         "note": null
@@ -5890,7 +5851,7 @@
         },
         {
           "kind": "leading_indicator",
-          "metric": "pure AI-native revenues",
+          "metric": "pure AI revenues",
           "period": "Q1 2026",
           "value": "exceeded $125 million in Q1, up nearly 20% sequentially from Q4",
           "value_num": null,
@@ -5902,7 +5863,7 @@
         {
           "kind": "leading_indicator",
           "metric": "Claude certifications",
-          "period": "to date (Q1 2026)",
+          "period": "to date",
           "value": "more than 1,300 are already Claude certified",
           "value_num": null,
           "unit": null,
@@ -5913,8 +5874,8 @@
         {
           "kind": "leading_indicator",
           "metric": "Anthropic Academy training completions",
-          "period": "to date (Q1 2026)",
-          "value": "over 20,000 EPAMers have completed training",
+          "period": "to date",
+          "value": "over 20,000 EPAMers",
           "value_num": null,
           "unit": null,
           "verbatim": "To date, over 20,000 EPAMers have completed training via Anthropic Academy and more than 1,300 are already Claude certified.",
@@ -5925,7 +5886,7 @@
           "kind": "leading_indicator",
           "metric": "revenue growth year-over-year",
           "period": "Q1 2026",
-          "value": "7.6% year-over-year",
+          "value": "grew 7.6% year-over-year",
           "value_num": null,
           "unit": null,
           "verbatim": "In Q1, revenues grew 7.6% year-over-year with constant organic currency revenue growth of 3.7%.",
@@ -5944,10 +5905,10 @@
           "tier": "llm-fenced"
         },
         {
-          "kind": "leading_indicator",
+          "kind": "competitive_position",
           "metric": "top 100 clients engaged in AI initiatives",
           "period": "Q1 2026",
-          "value": "more than 80%",
+          "value": "more than 80% are engaged in AI initiatives",
           "value_num": null,
           "unit": null,
           "verbatim": "Looking across our top 100 clients, traction remains strong as more than 80% are engaged in AI initiatives.",
@@ -5966,13 +5927,13 @@
           "tier": "llm-fenced"
         },
         {
-          "kind": "competitive_position",
-          "metric": "AI-enabled vendor consolidation market share opportunity",
+          "kind": "leading_indicator",
+          "metric": "client productivity increase (Nelnet)",
           "period": "Q1 2026",
-          "value": "significant opportunity to gain market share",
+          "value": "31% productivity increase, accelerated back-end development by nearly 2x",
           "value_num": null,
           "unit": null,
-          "verbatim": "EPAM is seeing an accelerating large-deal pipeline focused on AI-enabled vendor consolidations, where EPAM has significant opportunity to gain market share.",
+          "verbatim": "Based on EPAM's AI/Run.Transform, Nelnet achieved a 31% productivity increase, accelerated back-end development by nearly 2x and empowered its teams to scale AI-driven innovation across the organization.",
           "source_ref": "CIQ transcript: EPAM Systems, Inc., Q1 2026 Earnings Call, May 07, 2026.rtf",
           "tier": "llm-fenced"
         },
@@ -6002,7 +5963,7 @@
           "kind": "leading_indicator",
           "metric": "AI-native projects expanded from proof of concept into larger programs",
           "period": "Q4 2025",
-          "value": "between 60% to 70%",
+          "value": "between 60% to 70% have expanded from initial proof of concept into larger programs",
           "value_num": null,
           "unit": null,
           "verbatim": "In line with last quarter, between 60% to 70% have expanded from initial proof of concept into larger programs, a clear indicator of our ability to scale AI-native solution into production and convert early wins into more meaningful revenue.",
@@ -6010,13 +5971,13 @@
           "tier": "llm-fenced"
         },
         {
-          "kind": "competitive_position",
-          "metric": "Microsoft Partner of the Year award",
-          "period": "2025",
-          "value": "2025 Microsoft Innovate with Azure AI Platform Partner of the Year",
+          "kind": "leading_indicator",
+          "metric": "incremental yearly profit from Bayer AI pricing tool",
+          "period": "Q4 2025",
+          "value": "EUR 20 million to EUR 30 million in incremental yearly profit, reduced analytics time by 10x",
           "value_num": null,
           "unit": null,
-          "verbatim": "With Microsoft, we were thrilled to be named the 2025 Microsoft Innovate with Azure AI Platform Partner of the Year.",
+          "verbatim": "Leveraging machine learning, the tools delivered EUR 20 million to EUR 30 million in incremental yearly profit, reduced analytics time by 10x and provided advanced scenario planning capabilities.",
           "source_ref": "CIQ transcript: EPAM Systems, Inc., Q4 2025 Earnings Call, Feb 19, 2026.rtf",
           "tier": "llm-fenced"
         }
@@ -6028,83 +5989,88 @@
     }
   },
   "synthesis": {
-    "evidence_balance": "mixed — a growing net-cash, still-growing franchise at a 3%ile multiple, but genuine multi-year margin/ROIC erosion and management-flagged demand softness cut both ways.",
+    "evidence_balance": "mixed — a still-growing, net-cash, AI-scaling business sits against a ~72pp idiosyncratic de-rate, margin compression and falling second-half visibility.",
     "bull_points": [
       {
-        "claim": "The stock now trades at a 3%ile EV/EBITDA (4.9x TEV/LTM) against a 9.3-year own-history median of 22.4x — a fully-priced compression versus a franchise that historically earned a premium multiple.",
-        "source_ref": "CIQ Financials→Multiples (Close; last col = current, excluded from history)",
-        "cited": true
-      },
-      {
-        "claim": "Absolute EBITDA has RISEN through the de-rate — $652M (FY23) → $693M (FY24) → $707M (FY25) → $731M LTM — so the collapse in the multiple, not a collapse in cash earnings, drives the optical cheapness.",
+        "claim": "The trailing 4.1x EV/EBITDA is not a shrinking-EBITDA story: absolute LTM EBITDA rose to $731M (Mar-31-2026) from $707M (FY25) even as the margin % held at 13%, so the depressed multiple sits on rising, not falling, cash earnings.",
         "source_ref": "CIQ Financials→Income Statement (margin % + absolute EBITDA reconciler)",
         "cited": true
       },
       {
-        "claim": "The balance sheet is net cash (net-debt/EBITDA -1.0x) and LTM FCF is positive ($692.9M), so the business is self-funding through the downturn rather than facing a solvency clock.",
-        "source_ref": "CIQ Net Debt ÷ CIQ LTM EBITDA (EDGAR XBRL breadth fallback) + FCF sign (survival capacity)",
+        "claim": "Revenue is still growing, not eroding: FY25 $5,457M rose to LTM $5,555M with Q1 Mar-31-2026 revenue +7.6% YoY, so the de-rate coincides with top-line expansion rather than contraction.",
+        "source_ref": "CIQ Financials→Income Statement + Segments + Ratios (multi-year columns)",
         "cited": true
       },
       {
-        "claim": "Revenue is still growing — LTM $5,555M with Q1-26 up 7.6% YoY — against a peer median of just 1% growth, so the discount is not being earned on a shrinking top line.",
-        "source_ref": "CIQ Comparable Analysis→Operating Statistics (name vs peer median: growth/margin/leverage/beta)",
-        "cited": true
-      },
-      {
-        "claim": "On the fundamental_deltas the name pairs faster revenue growth (14% vs 1%), faster EBITDA growth (6% vs 2%) and far lower leverage (0.4x vs 1.5x) with a TEV/EBITDA of 4.1x below the 5.5x peer median — posing whether the discount is RESIDUAL (overshoot) rather than EARNED, though margin (13% vs 17%) and higher beta (1.4 vs 0.8) cut the other way; the peer set is HETEROGENEOUS ($734M–$77.7B), so treat this as a confidence-gated input, not a clean benchmark.",
-        "source_ref": "CIQ Comparable Analysis→Operating Statistics (name vs peer median: growth/margin/leverage/beta)",
-        "cited": true
-      },
-      {
-        "claim": "Pure AI-native revenue is scaling fast — exceeded $125M in Q1 up ~20% sequentially — giving management a stated $600M full-year line of sight and evidence of a live growth engine beneath the de-rate.",
+        "claim": "Q1 2026 growth is mechanism-backed: revenue grew 7.6% YoY with 3.7% constant organic currency growth, a genuine operating driver behind the top line.",
         "source_ref": "CIQ transcript: EPAM Systems, Inc., Q1 2026 Earnings Call, May 07, 2026.rtf",
         "cited": true
       },
       {
-        "claim": "Forward normalized EPS estimates have drifted UP through the sell-off (FY26 EPS Normalized 12.1 → 13.1, net +8% over 12m), inconsistent with a terminal-earnings collapse.",
-        "source_ref": "CIQ Estimates→Trends (current-FY consensus path; ragged, absent lookbacks n/a)",
+        "claim": "A new revenue engine is scaling: pure AI revenues exceeded $125M in Q1, up nearly 20% sequentially from Q4's $105M+, with management guiding a $600M full-year target.",
+        "source_ref": "CIQ transcript: EPAM Systems, Inc., Q1 2026 Earnings Call, May 07, 2026.rtf",
         "cited": true
       },
       {
-        "claim": "The company is buying back stock into the decline (-8.2% shares over ~1.7y) and insiders were net open-market buyers (6 buys, 0 sells), a self-funded capital-return posture inconsistent with distress.",
+        "claim": "AI traction is broad-based across the largest accounts: more than 80% of top-100 clients are engaged in AI initiatives with 100+ new AI-native projects launched in Q1, evidencing pipeline replenishment.",
+        "source_ref": "CIQ transcript: EPAM Systems, Inc., Q1 2026 Earnings Call, May 07, 2026.rtf",
+        "cited": true
+      },
+      {
+        "claim": "The balance sheet is net cash (net-debt/EBITDA -1.0x) and FCF-positive ($692.9M LTM), so the company is self-funding and not a leverage-driven terminal risk.",
+        "source_ref": "CIQ Net Debt ÷ CIQ LTM EBITDA (EDGAR XBRL breadth fallback) + FCF sign (survival capacity)",
+        "cited": true
+      },
+      {
+        "claim": "On the fundamental_deltas the discount looks partly RESIDUAL rather than fully EARNED: the name out-grows peers on revenue (14% vs 1%) and EBITDA (6% vs 2%) and carries far lower leverage (Debt/EBITDA 0.4 vs 1.5) — the human must judge whether faster growth plus a net-cash balance sheet justifies trading below the peer EV/EBITDA of 5.5x, though the HETEROGENEOUS peer set (caps $734M–$77.7B) gates this read.",
+        "source_ref": "CIQ Comparable Analysis→Operating Statistics (name vs peer median: growth/margin/leverage/beta)",
+        "cited": true
+      },
+      {
+        "claim": "Management is buying back stock (shares -8.2% over ~1.7y) and insiders show net open-market buys (6 buys, 0 sells), a capital-return posture inconsistent with a terminal read.",
         "source_ref": "EDGAR XBRL shares, trailing 2024-07-31..2026-04-30",
+        "cited": true
+      },
+      {
+        "claim": "The current EV/EBITDA of 4.9x sits at the 3rd percentile of its own 38-quarter history (median 22.4x), a floor-level own-history extreme that frames the overshoot question.",
+        "source_ref": "CIQ Financials→Multiples (Close; last col = current, excluded from history)",
         "cited": true
       }
     ],
     "bear_points": [
       {
-        "claim": "The gross margin has stair-stepped down from 36% (FY17) to 29% (LTM) and EBITDA margin from 17% (FY22) to 13% (LTM) — a multi-year structural erosion, and here the % is the REAL signal, not merely optical: absolute EBITDA rose only ~9% (652→731) while revenue rose ~18% (4,691→5,555) over FY23→LTM, i.e. incremental margins are compressing.",
-        "source_ref": "CIQ Financials→Income Statement (margin % + absolute EBITDA reconciler)",
-        "cited": true
-      },
-      {
-        "claim": "Management itself flagged deteriorating conditions — 'more macro uncertainty today compared to 90 days ago,' North America underperformance, and 'lower visibility in the second half' with expected Q2 impact — a qualitative posture-shift consistent with a demand air-pocket, not a one-off.",
-        "source_ref": "CIQ transcript: EPAM Systems, Inc., Q1 2026 Earnings Call, May 07, 2026.rtf",
-        "cited": true
-      },
-      {
-        "claim": "The near-term revenue estimate breadth is overwhelmingly negative — Revenue FQ2 2026 1↑/14↓ and FQ3 2026 0↑/14↓ over 3m — showing analysts cutting the top line even as the stock has already fallen ~52% over 180d.",
-        "source_ref": "CIQ Estimates→Revisions (next-2-FQ breadth; 1m/2m/3m Upward/Downward)",
-        "cited": true
-      },
-      {
-        "claim": "GAAP earnings estimates have been cut through the de-rate (FY26 Net Income GAAP 479.5 → 438.7, net -9%; EPS GAAP net -3%), so a meaningful part of the trailing multiple's cheapness reflects a genuinely lower forward earnings base, not pure overshoot.",
-        "source_ref": "CIQ Estimates→Trends (current-FY consensus path; ragged, absent lookbacks n/a)",
-        "cited": true
-      },
-      {
-        "claim": "The de-rate is idiosyncratic and severe: -60.2% over 180d versus the benchmark's +11.7%, a -71.9 percentage-point relative shortfall, and it came via discrete gap-downs at earnings/events rather than a broad-market move.",
+        "claim": "The de-rate is idiosyncratic, not a market swoon: the name fell ~60% over 180d while the MDY benchmark rose ~12% (−72pp relative), so the market is pricing something specific to EPAM — a genuine, load-bearing signal that OUTWEIGHS the own-history-floor optics.",
         "source_ref": "EOD EPAM−MDY 180d to 2026-07-06 (assembly, cap-band)",
         "cited": true
       },
       {
-        "claim": "Short interest is high and rising — 11.3M shares (21.6% of shares out), up +9.5% into the latest settle — signalling a large, growing bear position rather than capitulation.",
-        "source_ref": "FINRA consolidated short interest (settle 2026-06-30); DTC = 11,288,524 short ÷ 1,993,681 screen 90d ADV",
+        "claim": "Quality is deteriorating on the trend that matters most for a services firm: gross margin fell from 36% (FY17) to 29% (LTM) and EBITDA margin from 17% (FY22) to 13% (LTM); absolute EBITDA rising alongside is the reconciler, but the structural margin compression is the REAL signal of pricing/mix pressure, not an optical artifact.",
+        "source_ref": "CIQ Financials→Income Statement (margin % + absolute EBITDA reconciler)",
         "cited": true
       },
       {
-        "claim": "ROIC has trended down from ~14.9% (FY22) to ~10.1% (LTM), consistent with a franchise whose returns on capital are structurally fading, not a temporary dip.",
+        "claim": "Forward estimates lean down where it counts: next-2-FQ revenue breadth is overwhelmingly negative (FQ2 2026 revenue 1↑/14↓; FQ3 2026 1↑/13↓), a genuine deterioration in the top-line trajectory the AI narrative rests on.",
+        "source_ref": "CIQ Estimates→Revisions (next-2-FQ breadth; 1m/2m/3m Upward/Downward)",
+        "cited": true
+      },
+      {
+        "claim": "Management itself flagged rising macro caution: more uncertainty than 90 days ago, North America underperformance, lower second-half visibility and expected Q2 impact on larger discretionary programs — a mechanism-level warning on demand timing.",
+        "source_ref": "CIQ transcript: EPAM Systems, Inc., Q1 2026 Earnings Call, May 07, 2026.rtf",
+        "cited": true
+      },
+      {
+        "claim": "ROIC has stepped down and stayed down: RoCE fell from 14.9% (FY22) to 9.6% (FY25)/10.1% (LTM), so returns on capital sit structurally below the prior regime even as the business grows.",
         "source_ref": "CIQ Financials→Ratios (Return on Capital %, multi-year columns)",
+        "cited": true
+      },
+      {
+        "claim": "The drawdown came in discrete earnings-driven gap-downs (2026-02-19 results, 2026-06-18), consistent with repeated negative surprises rather than a single dislocation — and short interest is rising (10.3M→11.3M sh, 21.6% of shares out).",
+        "source_ref": "EDGAR 8-K item codes at the gap-down dates (not blanket-labelled earnings)",
+        "cited": true
+      },
+      {
+        "claim": "Sell-side conviction has collapsed: the consensus rating is Hold (3.00) and target prices were cut hard (e.g., Wedbush 230→99, Mizuho 199→162, Truist 146→112), signalling broad-based estimate/valuation reset.",
+        "source_ref": "CIQ Estimates→Consensus",
         "cited": true
       }
     ],
@@ -6112,83 +6078,75 @@
       {
         "name": "Cognizant Technology Solutions Corporation",
         "outcome": "recovered",
-        "distinguishing_fact": "IT-services peer that de-rated hard on a growth/margin slowdown then stabilised as demand normalised — the analogue for a cyclical services de-rate that mean-reverts.",
-        "source": "CIQ Comparable Analysis→Financial Data + Business Description (roster + caps + business)"
+        "distinguishing_fact": "A large-scale IT-services peer that de-rated on growth-scare and margin worries yet held a net-cash, FCF-generative model and re-rated as growth stabilised — the overshoot pattern for a self-funding services name.",
+        "source": "CIQ Comparable Analysis→Financial Data + Operating Statistics (per-peer grid) · as-of 2026-06-24"
       },
       {
         "name": "DXC Technology Company",
         "outcome": "went terminal",
-        "distinguishing_fact": "IT-services peer stuck in secular revenue decline (negative growth, deep multiple compression) — the analogue for a services name where the discount was EARNED by a shrinking book, a value trap.",
-        "source": "CIQ Comparable Analysis→Financial Data + Business Description (roster + caps + business)"
+        "distinguishing_fact": "An IT-services name whose revenue kept shrinking and EBITDA growth stayed deeply negative while leverage rose — the value-trap pattern where a low multiple was EARNED by secular decline, distinct from a still-growing top line.",
+        "source": "CIQ Comparable Analysis→Financial Data + Operating Statistics (per-peer grid) · as-of 2026-06-24"
       },
       {
         "name": "Globant S.A.",
         "outcome": "went terminal",
-        "distinguishing_fact": "Digital-engineering peer whose premium growth multiple collapsed as growth stalled — the analogue for a former high-growth compounder losing its rating as AI reprices the model.",
-        "source": "CIQ Comparable Analysis→Financial Data + Business Description (roster + caps + business)"
+        "distinguishing_fact": "A digital-engineering peer whose growth stalled to roughly flat and re-rated sharply lower as the AI-disruption-to-services thesis took hold — the analogue for demand timing turning structural.",
+        "source": "CIQ Comparable Analysis→Financial Data + Operating Statistics (per-peer grid) · as-of 2026-06-24"
       },
       {
         "name": "Accenture plc",
         "outcome": "recovered",
-        "distinguishing_fact": "Large IT/consulting peer that positioned as an AI-transformation winner and defended its rating through the cycle — the analogue for the bull thesis that AI is a tailwind, not a disruptor.",
-        "source": "CIQ Comparable Analysis→Financial Data + Business Description (roster + caps + business)"
-      },
-      {
-        "name": "Wipro Limited",
-        "outcome": "went terminal",
-        "distinguishing_fact": "IT-services provider that de-rated on stagnating growth and margin drift and stayed cheap for years — the analogue for a persistent low-multiple services trap despite a clean balance sheet.",
+        "distinguishing_fact": "A scaled consulting/IT-services leader that navigated a discretionary-spend slowdown while positioning AI offerings as a growth vector rather than a cannibaliser — the analogue for the AI-tailwind-outweighs-disruption case.",
         "source": "[LLM-suggested, unverified]"
       }
     ],
     "decisive_question": {
-      "question": "Is the margin/growth deterioration a temporary macro-and-mix air-pocket that mean-reverts (overshoot), or a structural repricing of the labour-arbitrage services model as AI compresses billable volume and pricing (value trap)?",
+      "question": "Is the AI shift a net demand TAILWIND that reaccelerates EPAM's growth, or is the second-half visibility hit and margin compression the leading edge of a structural, AI-driven de-rating of custom software/IT services?",
       "evidence_for": [
         {
-          "claim": "Pure AI-native revenue exceeded $125M in Q1 up ~20% sequentially with a $600M full-year target, and >80% of the top 100 clients are engaged in AI initiatives — a live offsetting growth engine.",
+          "claim": "Pure AI revenues exceeded $125M in Q1 (+~20% sequentially) toward a $600M full-year target, with 100+ new AI-native projects launched and 80%+ of top-100 clients engaged — a scaling growth vector.",
           "source_ref": "CIQ transcript: EPAM Systems, Inc., Q1 2026 Earnings Call, May 07, 2026.rtf",
           "cited": true
         },
         {
-          "claim": "Management frames the Q2/H2 softness as 'a temporary shift in timing and direction' with the AI program pipeline and funding 'strong,' and forward normalized EPS estimates rose +8% over 12m.",
-          "source_ref": "CIQ Estimates→Trends (current-FY consensus path; ragged, absent lookbacks n/a)",
+          "claim": "Revenue still grew 7.6% YoY in Q1 2026 with the top line rising to LTM $5,555M, so demand had not yet inflected down at the print date.",
+          "source_ref": "CIQ Financials→Income Statement + Segments + Ratios (multi-year columns)",
           "cited": true
         }
       ],
       "evidence_against": [
         {
-          "claim": "Management concedes 'more macro uncertainty today compared to 90 days ago,' North America underperformance and 'lower visibility in the second half' with expected Q2 impact — the same call that touts AI also flags a broadening demand hole.",
+          "claim": "Management flagged more macro uncertainty than 90 days ago, North America underperformance, lower second-half visibility and expected Q2 impact on larger discretionary programs.",
           "source_ref": "CIQ transcript: EPAM Systems, Inc., Q1 2026 Earnings Call, May 07, 2026.rtf",
           "cited": true
         },
         {
-          "claim": "Gross margin fell to 29% and EBITDA margin to 13% (LTM) while incremental margins compressed (EBITDA +9% vs revenue +18% FY23→LTM), and near-term revenue breadth is 0↑/14↓ — consistent with a structural, not transient, pressure.",
-          "source_ref": "CIQ Financials→Income Statement (margin % + absolute EBITDA reconciler)",
+          "claim": "Next-2-FQ revenue estimate breadth is heavily negative (FQ2 1↑/14↓, FQ3 1↑/13↓), and gross margin has eroded to 29% from 36%, consistent with pricing/mix pressure.",
+          "source_ref": "CIQ Estimates→Revisions (next-2-FQ breadth; 1m/2m/3m Upward/Downward)",
           "cited": true
         }
       ]
     },
     "key_unknowns": [
-      "The FQ2/FY26 revenue guide is QUALITATIVE only (no number in the 8-K EX-99.1) and the latest CIQ guide is 60d stale — no fresh company forward revenue anchor to distinguish overshoot from terminal.",
-      "No adjusted/forward EV/EBITDA or adjusted EPS is in the revised guidance, so the cheap multiple cannot be reconciled to a company-adjusted forward basis; note flags 'cannot distinguish cheap-overshoot from cheap-terminal.'",
-      "Segment EBITDA is not disclosed (Segments sheet has no EBITDA section) — cannot see whether Americas (58%, the flagged weak region) is dragging profitability disproportionately. Missing expected disclosure is a bearish opacity risk.",
-      "Interest coverage is UNKNOWN (no period with both EBITDA and interest expense) and covenant basis is UNKNOWN/not disclosed, though the net-cash position mitigates.",
-      "Self-funding is MIXED: latest-quarter OCF is negative while LTM FCF is positive — a genuine cash-timing flag that undercuts the clean 'self-funding' read and needs resolution.",
-      "'Tokenomics'/AI-pricing effect on services economics is management-flagged as 'a genuinely new and consequential commercial construct' but unquantified — the core structural-repricing unknown behind the decisive question.",
-      "Export date on the estimates/consensus pull is unverified (a floor ≥2026-06-18); the true vintage may be weeks newer, so revision-breadth freshness is uncertain."
+      "Adjusted/forward EV/EBITDA and adjusted EPS are not in the revised guidance, so the cheap-overshoot vs cheap-terminal distinction cannot be settled on a forward-adjusted basis — a MISSING disclosure that leans bearish.",
+      "Segment-level EBITDA is not broken out (Segments sheet has no EBITDA section), so profitability by geography/vertical cannot be checked against the margin-compression story — an opacity risk.",
+      "Interest coverage is UNKNOWN (no period with both EBITDA and interest expense), limiting the leverage read despite net-cash headline.",
+      "Self-funding is MIXED per primary-source cross-check: latest-Q OCF negative while LTM FCF positive — unresolved whether the quarter's cash generation is deteriorating.",
+      "A guide MISMATCH flag exists (CIQ revenue guide 1400.0–1415.0 vs release outlook 4.0–6.5%) — needs reconciliation before relying on the guidance track record.",
+      "The revolving credit facility maturity is stated as October 21, 2026 in the covenant digest but Oct-3-2030 in the instrument table — the near-term maturity/refi picture is unresolved.",
+      "Export date on the estimates/catalyst data is unverified (a floor ≥ 2026-06-18), so the most recent revision breadth may be stale relative to the latest price."
     ]
   },
   "caveats": [
-    "primary-source: 4 EX-99.1 release(s) + 1 10-Q parsed (+0.5s fetch)"
+    "primary-source: 4 EX-99.1 release(s) + 1 10-Q parsed (+0.6s fetch)",
+    "Unreconciled margin-compression (a decisive-against point): 'Next-2-FQ revenue estimate breadth is heavily negative (FQ2 1↑/14↓, FQ3 1↑/13↓), and gross margin has eroded to 29% from 36%, consistent with pricing/mix pressure.' — cites margin compression without the absolute-EBITDA reconciliation (margin % can fall while EBITDA rises)"
   ],
   "qa_flags": [
     "operating-drivers: no anchored pattern matched — EX-99.1 pricing/KPI",
-    "operating-drivers: no anchored pattern matched — 10-Q MD&A attribution",
-    "operating-drivers: Tier-B rows capped at 12 — AWS Partner of the Year award dropped",
-    "operating-drivers: Tier-B rows capped at 12 — SWE-bench verified leaderboard ranking dropped",
-    "operating-drivers: Tier-B rows capped at 12 — Gartner positioning in generative AI consulting and implementation services dropped"
+    "operating-drivers: no anchored pattern matched — 10-Q MD&A attribution"
   ],
   "llm_model": "claude-opus-4-8",
-  "assembled_at": "2026-07-22T13:38:52.018199Z",
+  "assembled_at": "2026-07-22T14:49:50.108113Z",
   "sector": "Technology",
   "industry": {
     "value": "IT Consulting and Other Services",
@@ -6208,7 +6166,7 @@
     "recipe_hint": "R1_midcycle_margin_evebitda",
     "applicable": true,
     "multiple_basis": "EV/EBITDA",
-    "computed_at": "2026-07-22T13:38:51.661921Z",
+    "computed_at": "2026-07-22T14:49:49.700785Z",
     "reason": null,
     "data_quality": null,
     "data_quality_detail": [],

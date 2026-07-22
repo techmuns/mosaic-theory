@@ -272,7 +272,9 @@ def _drawdown_cause(record: DataRecord, edgar: EdgarClient, http: CachedHttp) ->
         parts = [
             f"{gd.isoformat()} {_gap_label(by_gap[gd.isoformat()].items)}"
             if gd.isoformat() in by_gap
-            else f"{gd.isoformat()} no 8-K matched"
+            # state the WORLD, not our process: a hard fall on a day the company filed nothing is
+            # itself a finding (it points away from company news), not a tooling miss.
+            else f"{gd.isoformat()} no company filing"
             for gd in gaps
         ]
         shape = Sourced.present(
@@ -349,6 +351,9 @@ def _compose_gap_drivers(release: ReleaseExtract) -> Sourced[str] | None:
             continue
         latest = items[0]
         s = f"{_METRIC_SHORT[metric]} {latest.period} {_fmt_driver(metric, latest.value)}"
+        # the DIRECTION the release stated beside the level — a gap-down is about the delta
+        if latest.change:
+            s += f" ({latest.change})"
         # the prior contrast must match the period TYPE (annual vs quarterly) — an FY result pairs
         # with the prior FY, a quarter with the prior-year quarter, never FY vs Q4.
         latest_q = "Q" in latest.period.upper()
@@ -370,7 +375,12 @@ def _compose_gap_drivers(release: ReleaseExtract) -> Sourced[str] | None:
     for g in release.guidance:
         # UNITS on the range: values are normalised to $M upstream, but an unlabelled
         # "2325.0–2365.0" invites the reader to supply their own scale.
-        outlook = "qualitative" if g.qualitative else f"${g.low:,.1f}–${g.high:,.1f}M"
+        if g.qualitative:
+            outlook = "stated, no number given"  # honest: the company spoke, without a figure
+        elif getattr(g, "unit", "$M") == "%":
+            outlook = f"{g.low:g}–{g.high:g}% growth"
+        else:
+            outlook = f"${g.low:,.1f}–${g.high:,.1f}M"
         parts.append(f"{g.period} {g.metric} outlook: {outlook}")
     if not parts:
         return None
