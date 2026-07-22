@@ -416,6 +416,9 @@ def _catalyst_section(m: MechanicalLayer) -> list[str]:
         out += _horizon_lines(cp.horizon_read)
         out.append(_fact("Acceleration read (monthly consensus path)", cp.acceleration_read))
         out += _ladder_lines(cp.cross_name_anchor)
+        # (buy-side restructure, twins the web) revised guidance is a guidance fact — it lives
+        # beside the guidance bridge, not on the what-broke section
+        out.append(_fact("Revised guidance (8-K 99.1)", m.drawdown_cause.revised_guidance))
         out += _guidance_bridge_lines(cp)
         out.append(_fact("Consensus stats (target + ratings)", cp.consensus_stats))
         out += _grouped_events_lines(cp.revision_events)
@@ -1890,8 +1893,15 @@ def _brief_lines(d: Dossier, *, show_proposal: bool = False) -> list[str]:
     io = m.idiosyncratic_vs_shared
     if io is not None and io.name_180d_return.status is SourceStatus.PRESENT:
         out.append(_fact("Price (180d)", io.name_180d_return, _pct))
+    # (buy-side what-happened, twins the web strip) the market leg + the idio read join the
+    # comparison — same declutter-P1 suppression as the Analysis section
+    if io is not None and (io.market_180d_return.status is SourceStatus.PRESENT
+                           or io.rel_vs_market.status is not SourceStatus.PRESENT):
+        out.append(_fact(f"Market ({io.benchmark_symbol}) 180d", io.market_180d_return, _pct))
     if io is not None:
         out.append(_fact("vs market (180d)", io.rel_vs_market, _pct))
+    if io is not None and io.read.status is SourceStatus.PRESENT:
+        out.append(_fact("Read", io.read))
     if m.quality is not None:
         out += [_fact("Net debt / EBITDA", m.quality.net_debt_to_ebitda, _mult),
                 _fact("Free cash flow", m.quality.fcf_sign, _signword)]
@@ -2058,21 +2068,9 @@ def render_markdown(d: Dossier, *, dev: bool = False, show_proposal: bool = Fals
     if not (gd.status is SourceStatus.PRESENT and shape_v.status is SourceStatus.PRESENT
             and all(str(d) in str(shape_v.value) for d in (gd.value or []))):
         out.append(_fact("Gap-down dates", gd, _dates))
-    if m.drawdown_cause.filings:
-        out.append("- **Gap-downs — what the results showed (parsed EX-99.1) + the 8-K:**")
-        for f in m.drawdown_cause.filings:
-            out.append(f"  - gap {f.gap_date} → {f.filing_date} [`{f.accession}`]({f.url})")
-            out.append(f"    - items: {', '.join(f.item_types) or '—'}")
-            # (B1) parsed release drivers ARE the informative cause — they supersede the item-code
-            # boilerplate; non-earnings 8-Ks (no match) still show their source-bound events.
-            if f.drivers is not None and f.drivers.status is SourceStatus.PRESENT:
-                out.append(f"    - **what the results showed:** {f.drivers.value}"
-                           f"{_cite(f.drivers.source_ref)}")
-            else:
-                for ev in f.events:
-                    out.append(f"    - {ev}")
-    out.append(_fact("Revised guidance", m.drawdown_cause.revised_guidance))
-    out += _event_impact_lines(m)  # (RC-1 C) Avis-class event-impact quantifications
+    # (buy-side restructure, twins the web) the alone-or-with-market comparison follows the READ
+    # directly; the 8-K evidence closes the section as provenance. Revised guidance is a guidance
+    # fact — it renders on the street section (legacy no-catalyst-path JSON keeps it here).
     io = m.idiosyncratic_vs_shared
     out += ["", "_Company-specific or market-wide?_",
             _fact("Name 180d return", io.name_180d_return, _pct)]
@@ -2093,10 +2091,25 @@ def render_markdown(d: Dossier, *, dev: bool = False, show_proposal: bool = Fals
             ret = f"{cm.ret_180d:.0%}" if cm.ret_180d is not None else "no bars"
             out.append(f"  - [{cm.hops}h] {cm.ticker}: {ret} · via {cm.via}")
     else:
-        # (declutter) ONE row for one absence — "Cohort read UNKNOWN" + "Graph cohort UNKNOWN"
-        # said the same thing twice, one of them citing an internal filename
-        out.append("- **Supplier/customer cohort:** none mapped for this name — the comparison "
-                   "is vs the market only")
+        # (declutter · buy-side) absence is ONE quiet footnote line, never a labelled fact row
+        out.append("_no supplier/customer cohort mapped for this name — the comparison is vs "
+                   "the market only_")
+    if m.drawdown_cause.filings:
+        out.append("- **Gap-downs — what the results showed (parsed EX-99.1) + the 8-K:**")
+        for f in m.drawdown_cause.filings:
+            out.append(f"  - gap {f.gap_date} → {f.filing_date} [`{f.accession}`]({f.url})")
+            out.append(f"    - items: {', '.join(f.item_types) or '—'}")
+            # (B1) parsed release drivers ARE the informative cause — they supersede the item-code
+            # boilerplate; non-earnings 8-Ks (no match) still show their source-bound events.
+            if f.drivers is not None and f.drivers.status is SourceStatus.PRESENT:
+                out.append(f"    - **what the results showed:** {f.drivers.value}"
+                           f"{_cite(f.drivers.source_ref)}")
+            else:
+                for ev in f.events:
+                    out.append(f"    - {ev}")
+    out += _event_impact_lines(m)  # (RC-1 C) Avis-class event-impact quantifications
+    if m.catalyst_path is None:  # legacy: never drop the fact when there is no street section
+        out.append(_fact("Revised guidance", m.drawdown_cause.revised_guidance))
     out.append("")
 
     # (D1·§2) Leverage & survival — the survival story in one place (+ FCF + liquidity).

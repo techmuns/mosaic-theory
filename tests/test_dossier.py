@@ -3025,7 +3025,9 @@ def test_k6_99_1_unknown_reason_renders_once_on_real_mvst() -> None:
     assert "['" not in unk[0]
     # (declutter) the graph-cohort absence renders as ONE plain line, no internal filename
     assert "graph_coverage.json" not in md
-    assert md.count("Supplier/customer cohort") == 1
+    # (buy-side restructure) cohort absence is ONE quiet footnote line, never a labelled fact row
+    assert md.count("no supplier/customer cohort mapped") == 1
+    assert "Supplier/customer cohort:**" not in md
 
 
 def test_k1_covenant_value_lead_extracts_the_decision_figure_before_clip() -> None:
@@ -7512,3 +7514,69 @@ def test_md_brief_crux_block_and_case_dedup() -> None:
     assert "The crux — what decides this" in glance and q in glance
     case = md.split("## The case")[1].split("\n## ")[0]
     assert q not in case and "_Key unknowns:_" not in case
+
+
+def test_what_broke_restructure_and_survival_columns_e2e_node() -> None:
+    """(review-round restructure e2e, phrasing-independent) On the committed IT artifact:
+
+    1. WHAT-BROKE ORDER — the idio comparison ("Company-specific or market-wide?") renders BEFORE
+       the 8-K filing callout (read → question → evidence), the card carries NO revised-guidance
+       row (it moved to the street card), and the cohort absence is a quiet footnote, not a
+       labelled row.
+    2. STREET — the revised-guidance fact renders on the street card exactly once (never dropped).
+    3. BRIEF STRIP — 'What happened' carries the stat grid with the market leg cell.
+    4. SURVIVAL COLUMNS — the leverage grid and the maturity wall render inside the two-column
+       wrapper (ls-cols), and the wall does NOT render a second time below it.
+    5. PEER ROSTER — the business descriptor column is the prose class, never a numeric cell.
+    """
+    import json as _json
+    import shutil
+    import subprocess
+
+    if not shutil.which("node"):
+        pytest.skip("node not available")
+    p = Path("data/dossiers/IT/dossier.json")
+    if not p.exists():
+        pytest.skip("no committed IT dossier.json")
+    dj = Path("frontend/views/shared/dossier.js").resolve().as_uri()
+    driver = f"""
+const handler = {{ get: () => stub, apply: () => stub, construct: () => ({{}}) }};
+const stub = new Proxy(function(){{}}, handler);
+for (const g of ["window","document","location"]) {{ try {{ globalThis[g] = stub; }} catch {{}} }}
+import {{ readFileSync }} from "node:fs";
+const {{ renderDossier }} = await import("{dj}");
+const rd = (p) => JSON.parse(readFileSync(p));
+const h = renderDossier(rd("data/dossiers/IT/dossier.json"), null,
+  rd("frontend/scenarios/IT.json"));
+console.log(JSON.stringify({{ html: h }}));
+"""
+    out = subprocess.run(["node", "--input-type=module", "-e", driver],
+                         capture_output=True, text=True, check=True)
+    h = _json.loads(out.stdout)["html"]
+
+    # 1 — order + relocations inside the what-broke card
+    card = h.split(">What broke — and did it fall alone?<")[1].split('class="card')[0]
+    assert card.index("Company-specific or market-wide?") < card.index('class="filing"'), (
+        "the idio comparison must precede the 8-K evidence")
+    assert "Revised guidance" not in card
+    assert "no supplier/customer cohort mapped" in card  # IT has no cohort — quiet footnote
+    assert "Supplier/customer cohort</div>" not in card
+
+    # 2 — the street card carries the guidance fact once
+    street = h.split(">The street — estimates &amp; guidance<")[1].split('class="card')[0]
+    assert street.count("Revised guidance (8-K 99.1)") == 1
+
+    # 3 — the Brief what-happened strip has the market cell
+    wh = h.split(">What happened<")[1].split('class="card')[0]
+    assert 'class="fg-grid"' in wh and "Market (" in wh
+
+    # 4 — survival two-column: grid + wall inside ls-cols; the wall renders ONCE
+    surv = h.split(">Survival — leverage")[1].split('class="card')[0]
+    cols = surv.split('class="ls-cols"')
+    assert len(cols) == 2, "the two-column wrapper must render once"
+    assert 'class="fg-grid"' in cols[1].split("</div></div>")[0] or 'class="fg-grid"' in cols[1]
+    assert surv.count('class="wall-strip"') == 1
+
+    # 5 — peer business column is prose-classed
+    assert 'class="peer-desc"' in h
+    assert 'class="peer-desc">operates' in h  # descriptor text rides the prose cell, not .num
