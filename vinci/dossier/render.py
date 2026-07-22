@@ -1876,8 +1876,9 @@ def _underwrite_lines(card: ScenarioRecord | None) -> list[str]:
         entry = f" · entry ${v.entry_price:,.2f}" if v.entry_price is not None else ""
         out += [f"**Underwrite disposition:** {v.status.upper()}{rec}{entry} — "
                 f"_the BUY/AVOID verdict of record is the ledger's_", ""]
-    # the THESIS — the analyst's own words (plain restatement preferred), never machine text
-    thesis = v.rationale_plain or v.rationale
+    # the THESIS — the analyst's own words, never machine text. ONE field since 2026-07-22:
+    # `rationale` is canonical, `rationale_plain` deprecated and read by nothing (vinci/seal.py).
+    thesis = v.rationale
     if thesis:
         out += ["### Thesis — our rationale", thesis, ""]
     return out
@@ -1953,7 +1954,7 @@ def _brief_lines(d: Dossier, *, show_proposal: bool = False,
     # leads with the analyst's THESIS (rendered by _underwrite_lines above) and the machine read
     # is suppressed — the human's words are the verdict of record, and two voices in one slot
     # blurs which is which. A pending name keeps the machine assessment, never titled a thesis.
-    has_thesis = card is not None and bool(card.verdict.rationale_plain or card.verdict.rationale)
+    has_thesis = card is not None and bool(card.verdict.rationale)
     if s is not None and s.evidence_balance and not has_thesis:
         out.append(_machine_read_md(s.evidence_balance))
     if m.concentration is not None:

@@ -2486,7 +2486,10 @@ def test_web_brief_proposal_mirror_static() -> None:
     # block; the detail card suppresses its rationale copy so the words appear ONCE
     assert "function thesisBlock" in src
     assert "Thesis — our rationale" in src
-    assert "v.rationalePlain || v.rationale" in src
+    # SINGLE REGISTER (2026-07-22): `rationale` is the one field; `rationalePlain` is retired and
+    # must not creep back into any reader path.
+    assert "const thesis = v.rationale;" in src
+    assert "v.rationalePlain" not in src, "the retired field must not be READ (comments are fine)"
     assert "rationale: false" in src
 
 

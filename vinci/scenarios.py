@@ -237,8 +237,13 @@ class Verdict(BaseModel):
     # four (the append-only LEDGER copy is the sealed one, and it is untouchable). So a record may
     # legitimately carry the restatement alone. Before dropping an original, check the name HAS a
     # ledger row: a watch/no-position verdict has none, so the drop is irreversible.
+    # DEPRECATED 2026-07-22 — the single-register ratification. Kept nullable so historical JSON
+    # still loads, but NOTHING reads it: renderer, tear-sheet, card emitter and linter all bind
+    # `rationale` alone. Its sealing job moved into `rationale` itself (vinci/seal.py: growth is
+    # append-only), which is strictly better — the original and its amendments read in one place,
+    # in order, instead of the reader having to reconcile two registers of the same claim.
     rationale_plain: str | None = None
-    rationale_plain_recorded: str | None = None   # ISO date the restatement was recorded
+    rationale_plain_recorded: str | None = None   # DEPRECATED with the field above
     reunderwrite_triggers: list[str] = Field(default_factory=list)  # what would reopen the name
     # A recorded BUY is the start of a forward track, so the spread needs the price and the
     # asymmetry AT the moment of the call — not the underwrite-date spot, which has since moved.

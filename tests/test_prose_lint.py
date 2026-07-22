@@ -125,34 +125,51 @@ def test_lint_record_reaches_every_prose_surface() -> None:
     }
     fields = {f.field for f in pl.lint_record(rec)}
     assert fields == {
-        # rationale_plain is present, so IT is the reader-facing text and the sealed original is
-        # exempt (see test_sealed_original_is_exempt_once_restated)
-        "verdict.rationale_plain", "verdict.avoid_priced_note",
+        # SINGLE REGISTER (2026-07-22): `rationale` is the ONLY rationale the linter binds;
+        # `rationale_plain` is deprecated and read by nothing — including here.
+        "verdict.rationale", "verdict.avoid_priced_note",
         "verdict.reunderwrite_triggers[0]", "scenarios.bear.reason",
         "assumptions.margin.method", "gate_adjudication",
     }
 
 
-def test_sealed_original_is_exempt_once_restated_but_bound_until_then() -> None:
-    """Whichever rationale faces the READER is the one the register binds.
+def test_only_rationale_is_bound_and_the_deprecated_field_is_ignored() -> None:
+    """SINGLE REGISTER, replacing the two-field arrangement retired on 2026-07-22.
 
-    §7 seals the original: the machine never rewrites analyst words, and a restatement is recorded
-    INSTEAD of altering it. If the sealed copy kept flagging, no restated record could ever reach
-    zero — the linter would cry wolf forever and get switched off.
+    The old rule exempted `rationale` once a `rationale_plain` restatement existed. That split the
+    register in practice — the four restated records populated one field while the three R2 records
+    written afterwards populated the other — so "the reader-facing text" resolved to a DIFFERENT
+    field per record and linter coverage moved with it. One field cannot drift from itself.
     """
-    original = "Side taken: overshoot; the anchor is dragged by CIQ data"
-    # no restatement yet -> the original is reader-facing and MUST flag
-    only_original = pl.lint_record({"verdict": {"rationale": original}})
-    assert only_original and all(f.field == "verdict.rationale" for f in only_original)
-    # restatement recorded -> the original is a historical artifact, exempt; the plain text binds
-    restated = pl.lint_record({"verdict": {"rationale": original,
-                                           "rationale_plain": "The market has overshot on a "
-                                                              "still-intact business."}})
-    assert restated == [], "the sealed original must not flag once a restatement is recorded"
-    # and the restatement itself is still policed
-    bad_restatement = pl.lint_record({"verdict": {"rationale": original,
-                                                  "rationale_plain": "the anchor says so"}})
-    assert [f.field for f in bad_restatement] == ["verdict.rationale_plain"]
+    bad = "Side taken: overshoot; the anchor is dragged by CIQ data"
+    flags = pl.lint_record({"verdict": {"rationale": bad}})
+    assert flags and all(f.field == "verdict.rationale" for f in flags)
+    # a leftover value in the deprecated field must NOT exempt the canonical one
+    still = pl.lint_record({"verdict": {"rationale": bad,
+                                        "rationale_plain": "The market has overshot on a "
+                                                           "still-intact business."}})
+    assert [f.field for f in still] == [f.field for f in flags], (
+        "a value in the deprecated field must not silence the canonical one")
+    # ...and the deprecated field is never itself reported
+    assert not any(f.field == "verdict.rationale_plain" for f in pl.lint_record(
+        {"verdict": {"rationale": "The market has overshot on a still-intact business.",
+                     "rationale_plain": "the anchor says so"}}))
+
+
+def test_amendment_tags_do_not_consume_the_thesis_word_budget() -> None:
+    """The cap binds the THESIS, not the audit trail. A sealed rationale grows only by dated
+    amendment tags (vinci.seal), so counting those against the cap would force a choice between
+    recording an amendment and passing the linter — and the amendment would lose."""
+    thesis = "The market has overshot on a still-intact business. " * 4
+    amended = thesis + " ".join(
+        f"[amended 2026-07-{d:02d}: a further note on the perimeter and the guided figure.]"
+        for d in range(1, 12))
+    assert len(amended.split()) > pl.RATIONALE_MAX_WORDS      # long ONLY because of the tags
+    assert [f.category for f in pl.lint_record({"verdict": {"rationale": amended}})] == []
+    # the THESIS itself is still capped
+    over = "The market has overshot on a still-intact business. " * 40
+    assert any(f.category == "length"
+               for f in pl.lint_record({"verdict": {"rationale": over}}))
 
 
 # ---------------------------------------------------------------- write-path + schema
@@ -229,11 +246,12 @@ def _uw_card_src() -> str:
             ).read_text()
 
 
-def test_rationale_render_leads_with_the_restatement_and_keeps_the_original() -> None:
-    """Structure pin (never a text pin): the plain read leads, the sealed original stays reachable.
+def test_rationale_renders_the_single_field_and_sets_amendments_apart() -> None:
+    """Structure pin (never a text pin): ONE rationale field renders, and its dated amendment tags
+    are visually distinguished from the text recorded at the verdict.
 
-    Deliberately asserts SHAPE, not wording — rationale text is analyst-authored prose and an
-    exact-string pin on it would rot the moment a name is re-underwritten.
+    Replaces the two-field pin retired on 2026-07-22. Deliberately asserts SHAPE, not wording —
+    rationale text is analyst prose and an exact-string pin would rot on re-underwrite.
     """
     import re
 
@@ -241,15 +259,23 @@ def test_rationale_render_leads_with_the_restatement_and_keeps_the_original() ->
     fn = re.search(r"function rationaleFact\(v\) \{(.*?)\n\}", src, re.S)
     assert fn, "rationaleFact() is gone"
     body = fn.group(1)
-    assert "if (!v.rationalePlain) return fact" in body, (
-        "with no restatement the original must render exactly as before — no record is worse off")
-    assert "uw-rationale-orig" in body and "<details" in body, (
-        "the original must survive behind an expander, never be replaced")
-    assert "v.recorded" in body, "the expander must date the original ('as recorded <date>')"
-    # the card body calls it — the old inline conditional must be gone
-    assert "${rationaleFact(v)}" in src and 'fact("Rationale", escapeHtml(v.rationale))' not in \
-        re.sub(r"function rationaleFact\(v\) \{.*?\n\}", "", src, flags=re.S), (
-        "the card body must route through rationaleFact()")
+    assert "v.rationalePlain" not in body, "the retired field must not be read"
+    assert "if (!v.rationale) return" in body, "an unrationalised record renders nothing, silently"
+    # the amendment marker is what lets a reader separate recorded text from later additions
+    assert "amendMarks" in body, "amendment tags must be set apart, not run together with the text"
+    marks = re.search(r"function amendMarks\(text\) \{(.*?)\n\}", src, re.S)
+    assert marks, "amendMarks() is gone"
+    assert "escapeHtml(text)" in marks.group(1), "amendment marking must not bypass escaping"
+    assert r"\[amended (\d{4}-\d{2}-\d{2})" in marks.group(1), "the tag pattern must carry a date"
+    assert "${rationaleFact(v)}" in src, "the card body must route through rationaleFact()"
+
+
+def test_the_retired_rationale_expander_left_no_dead_styles() -> None:
+    """The two-field arrangement rendered the original behind a `.uw-rationale-orig` expander.
+    With the field retired the selector is unreachable — dead CSS naming a removed feature reads
+    as though the feature still exists."""
+    css = (Path(__file__).resolve().parents[1] / "frontend" / "assets" / "styles.css").read_text()
+    assert "uw-rationale-orig" not in css
 
 
 def test_card_emitter_omits_rationale_plain_when_absent() -> None:
