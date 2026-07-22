@@ -131,6 +131,37 @@ def _period_near(text: str, start: int, end: int) -> str:
     return re.sub(r"\s+", " ", m.group(1)).strip() if m else ""
 
 
+# The DIRECTION a release states beside the level: "…$230.0 million, an increase of $21.5 million",
+# "…of $3.26, an increase of 14.2%", "Revenues of $1.408 billion, up 12.8% year-over-year".
+# A gap-down is about the DELTA, not the level, so the level alone cannot explain it.
+_CHANGE = re.compile(
+    r"^[^.•]{0,60}?\b(?:(an\s+increase|a\s+decrease|an\s+improvement|a\s+decline)\s+of|"
+    r"(up|down|rose|fell|declined|increased|decreased))\s+"
+    r"(?:by\s+)?(\$?\s*[\d,.]+\s*(?:million|billion|%)?)",
+    re.I,
+)
+_DOWNWORDS = ("decrease", "decline", "down", "fell", "declined", "decreased")
+
+
+def _change_after(text: str, end: int) -> str | None:
+    """The change clause immediately following a metric's value, normalised to a signed token.
+
+    Read only from the SAME sentence/bullet as the value (the window stops at the next '.'/'•'),
+    so a delta belonging to a later metric is never attached to this one."""
+    stop = len(text)
+    for mark in (". ", "•", "; "):
+        j = text.find(mark, end, end + 160)
+        if j != -1:
+            stop = min(stop, j)
+    m = _CHANGE.search(text[end:stop])
+    if not m:
+        return None
+    word = (m.group(1) or m.group(2) or "").lower()
+    amt = " ".join(m.group(3).split()).replace("$ ", "$")
+    sign = "-" if any(w in word for w in _DOWNWORDS) else "+"
+    return f"{sign}{amt}"
+
+
 def _norm_metric(raw: str) -> str:
     r = raw.lower()
     if "ebitda" in r:
@@ -220,7 +251,7 @@ def _reconciliation(text: str, src: str, period: str) -> list[ReconciliationValu
             continue
         seen.add((metric, p))
         out.append(ReconciliationValue(
-            metric=metric, period=p, value=val,
+            metric=metric, period=p, value=val, change=_change_after(text, m.end()),
             verbatim=_verbatim(text, m.start(), m.end()), source_ref=src,
         ))
     for m in _REVENUE.finditer(text):  # headline revenue actual (same current/prior discipline)
@@ -260,6 +291,17 @@ _GUIDE_RANGE = re.compile(
     # BellRing). The dash form carries no spaces, so \s* around it, not \s+.
     r"\$?\s*([\d,.]+)\s*(?:million|billion|%)?\s*(?:to|and|[-–—])\s*"
     r"\$?\s*([\d,.]+)\s*(million|billion)?",
+    re.I,
+)
+# A GROWTH-RATE guide is a real number, not a qualitative outlook: EPAM guides
+# "the year-over-year revenue growth rate to be in the range of 4.5% to 7.5%". The dollar-range
+# pattern cannot see it, so it fell through to the QUALITATIVE marker — which asserts the company
+# said nothing when it said the most decision-relevant thing in the release.
+_GUIDE_PCT = re.compile(
+    r"(revenue|net\s+sales|total\s+revenues?|adjusted\s+ebitda|gross\s+margin)"
+    r"[^.]{0,60}?growth\s+rate[^.]{0,60}?"
+    r"(?:in\s+the\s+range\s+of|between|of)\s+"
+    r"([\d.]+)\s*%\s*(?:to|and|[-–—])\s*([\d.]+)\s*%",
     re.I,
 )
 _OUTLOOK = re.compile(
@@ -305,6 +347,17 @@ def _guidance(text: str, src: str) -> list[GuidanceItem]:
         out.append(GuidanceItem(
             metric=metric, period=_period_near(text, m.start(), m.end()) or "next-fy",
             low=low, high=high, qualitative=False,
+            verbatim=_verbatim(text, m.start(), m.end()), source_ref=src,
+        ))
+    for m in _GUIDE_PCT.finditer(text):
+        metric = _guide_metric(m.group(1))
+        lo, hi = _money(m.group(2)), _money(m.group(3))
+        if lo is None or hi is None or metric in seen:
+            continue
+        seen.add(metric)
+        out.append(GuidanceItem(
+            metric=metric, period=_period_near(text, m.start(), m.end()) or "next-fy",
+            low=lo, high=hi, unit="%", qualitative=False,
             verbatim=_verbatim(text, m.start(), m.end()), source_ref=src,
         ))
     # QUALITATIVE-only: an outlook section that names revenue but carries NO number in its window.

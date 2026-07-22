@@ -410,3 +410,50 @@ def test_committed_dossiers_carry_no_ratio_as_a_currency_amount() -> None:
                 assert has_currency, (
                     f"{p.parent.name}: {v['metric']}={v['value']} has no currency evidence "
                     f"in its source — …{vb[-70:]!r}")
+
+
+def test_recon_captures_the_direction_stated_beside_the_level() -> None:
+    """A gap-down is about the DELTA, not the level: '$230.0M' alone cannot explain why a stock
+    fell. The release states the change in the same sentence, so it is captured and rendered.
+    Verbatim forms observed across the five recovered releases."""
+    cases = {
+        "Non-GAAP income from operations was $230.0 million, an increase of $21.8 million, "
+        "or 10.5%, compared to $208.2 million.":
+            ("adjusted operating income", 230.0, "+$21.8 million"),
+        "Adjusted EBITDA of $55.5 million decreased 18.4% versus the year ago period.":
+            ("adjusted ebitda", 55.5, "-18.4%"),
+        "Non-GAAP Diluted EPS of $3.26, an increase of 14.8%.": ("adjusted eps", 3.26, "+14.8%"),
+    }
+    for text, (metric, value, change) in cases.items():
+        got = [(v.metric, v.value, v.change)
+               for v in rp.parse_release(text, source_ref=_SRC).reconciliation]
+        assert (metric, value, change) in got, f"{text[:50]} → {got}"
+    # a level with NO stated change carries None — never an invented direction
+    plain = rp.parse_release("Adjusted EBITDA* of $53.8 million.", source_ref=_SRC).reconciliation
+    assert [v.change for v in plain] == [None]
+
+
+def test_change_never_borrows_a_delta_from_a_neighbouring_metric() -> None:
+    """The change must belong to ITS value: the window stops at the sentence/bullet boundary, so a
+    later metric's delta is never attached to an earlier one."""
+    text = ("• Adjusted EBITDA of $55.5 million • Adjusted EPS of $0.45, an increase of 14.8%")
+    rows = {v.metric: v.change for v in rp.parse_release(text, source_ref=_SRC).reconciliation}
+    assert rows.get("adjusted ebitda") is None, "EBITDA must not borrow the EPS delta"
+    assert rows.get("adjusted eps") == "+14.8%"
+
+
+def test_growth_rate_guidance_is_a_real_range_not_a_qualitative_marker() -> None:
+    """EPAM guides 'the year-over-year revenue growth rate to be in the range of 4.5% to 7.5%'.
+    The dollar-range pattern cannot see a RATE, so it fell through to the QUALITATIVE marker —
+    which asserts the company said nothing when it gave the most decision-relevant number in the
+    release. A rate guide is a number, carried with unit='%'."""
+    g = rp.parse_release(
+        "2026 Outlook. The Company expects the year-over-year revenue growth rate to be in the "
+        "range of 4.5% to 7.5% for 2026.", source_ref=_SRC).guidance
+    assert [(x.metric, x.low, x.high, x.unit, x.qualitative) for x in g] == \
+        [("revenue", 4.5, 7.5, "%", False)]
+    # a genuinely number-free outlook is STILL qualitative — the honest-absence path is intact
+    q = rp.parse_release(
+        "2026 Outlook. The Company expects continued revenue growth in the coming year.",
+        source_ref=_SRC).guidance
+    assert all(x.qualitative for x in q) and all(x.low is None for x in q)
