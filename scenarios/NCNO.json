@@ -33,10 +33,10 @@
       "source": "EDGAR WeightedAverageNumberOfDilutedSharesOutstanding, quarter ended 2026-04-30"
     },
     "d_and_a_ratio": {
-      "value": 0.069264,
+      "value": 0.071043,
       "unit": "rate",
-      "basis": "latest full-year depreciation and amortisation over the same year's revenue (42.255 / 610.058)",
-      "source": "EDGAR companyfacts dep_amort, FY2026"
+      "basis": "latest full-year depreciation and amortisation over the SAME year's revenue (42.255 / 594.781, fiscal 2026) [amended 2026-07-22: the denominator was 610.058, which is not that year's revenue, so the ratio was not the same-period figure its basis described; both terms now come from the fiscal-2026 annual report.]",
+      "source": "EDGAR companyfacts, FY2026 (Feb-2025 to Jan-2026), acc 0001902733-26-000022"
     },
     "share_growth": {
       "value": 0.011119,
@@ -287,13 +287,13 @@
     "rationale_plain": null,
     "rationale_plain_recorded": null,
     "reunderwrite_triggers": [
-      "price below about $9, roughly the base case in today's terms, then re-run the underwrite at the new price",
-      "subscription revenue growth at or above 12% year over year for two consecutive quarters - the deferred-consumption thesis is converting; re-underwrite with a faster ramp",
-      "reported operating margin expanding by 4 points a year or more across two consecutive halves - raise the terminal path and re-underwrite"
+      "price below about $11.5 - the base case in today's terms with interim free cash flow credited (about 8.17 plus 3.58) - then re-run the underwrite at the new price [amended 2026-07-22: was 'below about $9', which credited no interim cash.]",
+      "subscription revenue growth at or above 12% year over year for two consecutive quarters - the deferred-consumption thesis is converting; re-underwrite with a faster ramp [status at record date: the first quarter of fiscal 2027, reported in May 2026, printed +12.2% - quarter one of two is on the board; the trigger arms at the second-quarter print, expected late August 2026. The prior quarter printed +6.7%, so there is no earlier streak.]",
+      "reported operating margin expanding by 4 points a year or more across two consecutive halves - raise the terminal path and re-underwrite [amended 2026-07-22: the first quarter of fiscal 2027 printed a 13.25% reported operating margin ($21.119M on $159.414M) against a central terminal path of 12.6% at four years - with only $0.7M of transaction items and no restructuring charge, the fiscal-2026 cost reset having lapped. One quarter; the second-quarter print decides. Final settlement of the accelerated share repurchase also lands that quarter, so the share count is not final.]"
     ],
     "entry_price": null,
     "ratio_at_entry": null,
     "avoid_priced": true,
-    "avoid_priced_note": "inverted asymmetry at $17.93: upside to the optimistic case is about -21%, downside to the pessimistic case about -77%, both in present-value terms. The verdict is invariant to the waiting-charge rate - it fails even at zero - and to giving full credit for interim free cash flow."
+    "avoid_priced_note": "inverted asymmetry at $17.93: upside to the optimistic case is about -21%, downside to the pessimistic case about -77%, both in present-value terms. The verdict is invariant to the waiting-charge rate - it fails even at zero - and to giving full credit for interim free cash flow. [amended 2026-07-22: the fail verdict is invariant to interim free cash flow - with four guided years of roughly $137.5M a year (the fiscal-2027 guide is $135-140M) credited in full, the central case reaches about $11.7 and the ratio stays deeply negative - but the optimistic case then reaches roughly the market price, so 'even the optimistic case sits below the price' holds only before interim cash.]"
   }
 }

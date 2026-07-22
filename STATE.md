@@ -2833,6 +2833,28 @@ Each line: *what it does* — *verified how*.
     revisit re-downloads + re-parses (AORT's 209 KB was fetched 3× in one session). That is a SPEED
     cost only, with no memory implication; always-fresh fetches match the "static mirror lags local
     state until the next `git push`" design. Revisit only if navigation latency becomes a complaint.
+- **EXTERNAL IC REVIEW — LOGGED 2026-07-22 (15 claims verified against primary sources).**
+  **12 VERIFIED / 2 REFUTED / 1 SPLIT.** IC assertions were given the same treatment as any machine
+  claim, and two did not survive:
+  - **REFUTED — the "insider purchase".** The 2026-07-06 Forms 4 are **twelve outside-DIRECTOR
+    compensation grants**, codes **A and J only, $0 paid** (acc `0000749251-26-000227`…`-000239`).
+    No code P anywhere. The $133.76 grant reference price was being read as a purchase price.
+    There is no insider conviction signal to read. Dossier leaf corrected.
+  - **REFUTED — LTM NCVI "−84.4%".** True figure **−83.8%** ($333M → $54M). The −84.4% is the
+    **Productivity row directly beneath it** on the same slide. A row-adjacency misread, not
+    rounding.
+  - **SPLIT — the Digital Markets divestiture.** Substance verified ($110.0M gross / $104.8M net of
+    cash, completed 2026-02-05, 10-K Note 19 `0000749251-26-000112`) but **no Form 8-K reported it
+    at all** — the claimed 8-K item does not exist (queue item 28).
+  - **Label imprecision, three places:** $1,545M is Adjusted EBITDA *excluding the divested
+    operation* (plain Adjusted EBITDA guides ≥$1,550M); the ~$183M line is D&A **plus accretion**;
+    the 4.0x covenant carries a **4.5x acquisition step-up**.
+  - **A1/A2/A3 have NO SEC ACCESSION** — the leverage ratio and FY26 guidance exist only in the IR
+    earnings supplement, referenced under Item 7.01 but never furnished as an exhibit (queue 27).
+  - **The basis-inconsistency finding was REVERSED by workbook evidence** — see the lease-basis
+    ratification in §5; the agent's back-solve was inconclusive and was reported as such.
+  - **A7 vendor-FCF gap ($193.8M) UNEXPLAINED → CIQ escalation #2 drafted** (queue item 34).
+
 - **R2 `EV/Revenue` BASIS (`vinci/dossier/terminal_margin.py`) — SHIPPED 2026-07-22 as a CAPABILITY,
   with NO name underwritten on it.** For a business with no profits to value: every earnings basis
   would have to invent the terminal margin and then multiply that invention by a peer multiple
@@ -3893,7 +3915,7 @@ re-anchor (the full STATE split stays its own queued task — nothing was reloca
      `Repayment of convertible notes $144,765K` — it refinanced legacy Fubo's assumed converts; it
      is not burn financing. `net_debt 170.4 [VENDOR]` does not describe a balance sheet carrying
      $1,325,737K of liabilities plus $1.84bn of mezzanine.
-   - **THE R2 ENGINE HAS NO NCI TERM** (queue item 25). A combined-entity underwrite needs one built
+   - **THE R2 ENGINE HAS NO NCI TERM** (queue item 26). A combined-entity underwrite needs one built
      first, plus a ratified economic-share convention (Class A+B, and whether Class B double-counts
      Disney's interest with the redeemable NCI — UNRESOLVED, an operator question).
    - **PRIOR FUBO ANALYSIS IN THIS FILE IS TAINTED** wherever it treats the FY2019–24 series as the
@@ -3907,7 +3929,7 @@ re-anchor (the full STATE split stays its own queued task — nothing was reloca
    ratified in §7. **EV/Revenue basis added 2026-07-22 (PR #187) — capability only, no name
    underwritten on it; see §2.** **NEXT: the per-name grids** — each cohort underwrite needs its own
    evidence pull → analyst bear/base/bull, the same way R1 ran. The engine does not underwrite
-   anything by itself. **It also has no NCI term** — see item 25.
+   anything by itself. **It also has no NCI term** — see item 26.
 7. **~~COHORT FACT GAPS — CIQ balance-sheet extraction~~ — CLOSED 2026-07-22 for MVST.** MVST is
    underwritable and is now recorded. **FUBO is NOT** — the CIQ bridge closed its *tag* gaps, but
    the name is blocked for a structural reason found later (item 4): the vendor figures splice
@@ -3992,7 +4014,31 @@ re-anchor (the full STATE split stays its own queued task — nothing was reloca
     missing EPAM (fixed in `a982900`). Ship a CI step that rebuilds and fails if `git status` is
     dirty — the artifact pass is complete when the tree is clean, not when the source commit lands.
 
-22. **RATIONALE STYLE RULE (adopted 2026-07-21; binds FUTURE verdicts, never sealed ones).**
+22. **SINGLE-REGISTER POLICY — FORMALIZED 2026-07-22 (supersedes the two-field arrangement below).**
+    **`verdict.rationale` is THE rationale.** Renderer, tear-sheet, card emitter and linter bind it
+    alone; **`rationale_plain` is DEPRECATED** — schema keeps it nullable so historical JSON loads,
+    and nothing reads it. *Why:* the two-field split did not hold in practice. The four restated
+    records populated `rationale_plain` while the three R2 records written afterwards populated
+    `rationale`, so "the reader-facing text" resolved to a DIFFERENT field per record and the
+    linter's coverage moved with it. One field cannot drift from itself.
+    - **SEALED POST-VERDICT, AMENDMENT-APPEND ONLY (`vinci/seal.py`, `scenarios/_seal.json`).** Once
+      a verdict is recorded, its rationale may grow ONLY by an appended `[amended <date>: …]` tag.
+      Rewording, truncating, prepending, appending untagged prose, or nulling all FAIL a repo test.
+      *Why it matters:* if a rationale can be quietly re-worded, every past call reads as
+      well-reasoned in hindsight and the forward spread proves nothing.
+    - **The word cap binds the THESIS, not the audit trail** — `seal.base_text()` strips amendment
+      tags before the count, or recording an amendment and passing the linter become mutually
+      exclusive and the amendment loses. The register checks still scan the tags.
+    - **RESIDUAL RISK, recorded not papered over:** the baseline lives in a committed manifest, so a
+      deliberate regeneration of `scenarios/_seal.json` defeats the seal. It guards against silent
+      drift and careless edits, NOT a determined rewrite. For names that opened a position the
+      append-only ledger remains the untamperable copy; **a watch has no such backstop** (the
+      2026-07-21 WERN loss is the precedent).
+    - Migration 2026-07-22: IT/SMPL/WERN copied `rationale_plain` → `rationale` **verbatim**
+      (byte-identical, verified); AORT/MVST/NCNO already canonical; EPAM stays null (pending). The
+      `.uw-rationale-orig` expander and its CSS are removed.
+
+23. **RATIONALE STYLE RULE (adopted 2026-07-21; binds FUTURE verdicts, never sealed ones).**
     `verdict.rationale` is plain thesis prose — the market-standard shape: thesis, the two or
     three numbers that carry it, the risk accepted. **Accession numbers, vendor names (CIQ /
     Polygon), verification arithmetic ("1,100 × 8% × 6.0x → $3.54 → 2.17:1"), and process
@@ -4064,7 +4110,7 @@ re-anchor (the full STATE split stays its own queued task — nothing was reloca
     restating a label can silently break the card. That classifier is itself a standing violation
     of the parsers-consume-structured-values rule. Queued as item 20.
 
-23. **RENDER-COMPLETENESS CHECK (from #185's dropped survival `detail`).** The survival panel
+24. **RENDER-COMPLETENESS CHECK (from #185's dropped survival `detail`).** The survival panel
     silently dropped its `detail` list — the runway arithmetic and the going-concern sentence were
     IN the record and absent from the card. This is the second instance of the same shape (#179's
     `undefined` reference table was the first), so the pin belongs at the class level, not the
@@ -4073,7 +4119,7 @@ re-anchor (the full STATE split stays its own queued task — nothing was reloca
     assertion added after each miss. Both instances were invisible to a preview that checked only
     the visible tier — so the check must run against the FORCE-OPEN print state too.
 
-24. **TESTING NOTE — `model_copy` DOES NOT RE-RUN PYDANTIC VALIDATORS.** Found 2026-07-22 building
+25. **TESTING NOTE — `model_copy` DOES NOT RE-RUN PYDANTIC VALIDATORS.** Found 2026-07-22 building
     the EV/Revenue axes pin: a test helper that built its record with `rec.model_copy(update=...)`
     sailed past the record-level guards it existed to exercise, and the test passed for the wrong
     reason. Any test asserting a `@model_validator` REFUSES something must construct through
@@ -4081,7 +4127,7 @@ re-anchor (the full STATE split stays its own queued task — nothing was reloca
     tests — this one was caught because the assertion was a `pytest.raises` that did not raise; a
     helper used for a POSITIVE assertion would have failed silently and still be green.
 
-25. **NCI TERM FOR THE R2 ENGINE — GATES ANY COMBINED-ENTITY UNDERWRITE (FUBO is the live case).**
+26. **NCI TERM FOR THE R2 ENGINE — GATES ANY COMBINED-ENTITY UNDERWRITE (FUBO is the live case).**
     `terminal_value` bridges `EV_T − net_debt_T → equity_T ÷ shares_T` with no non-controlling
     interest term, so it implicitly hands 100% of a consolidated enterprise to the parent's
     shareholders. That is wrong for any Up-C or partly-owned structure, and it is wrong by a factor
@@ -4090,6 +4136,42 @@ re-anchor (the full STATE split stays its own queued task — nothing was reloca
     compute when a record's share count is an EPS denominator rather than the economic count. Until
     this exists, no name with a material NCI can be underwritten on R2 — and the engine should say
     so rather than quietly produce a number.
+
+27. **IR-DOCUMENT INGESTION TIER** — company documents that are NOT SEC filings (earnings
+    supplements, IR decks) need first-class provenance: URL + retrieval date + sha256. IT's
+    covenant ratio and FY26 guidance exist ONLY there, with no accession to cite.
+28. **PERIMETER WATCHER reading FOOTNOTES AND RELEASES, not 8-K only** — Gartner's Digital Markets
+    sale completed with **no Form 8-K at all**; it surfaced in a 10-K subsequent-events note.
+29. **ENTITY-STRUCTURE GATE BEFORE ANY PER-SHARE MATH** — check for NCI / multi-class / Up-C before
+    dividing anything by a share count (the FUBO lesson; pairs with item 26).
+30. **FORM-4 TRANSACTION-CODE CLASSIFIER** — the insider leaf read twelve director compensation
+    grants (codes A/J, $0 paid) as an open-market purchase off the grant reference price.
+31. **STALENESS BANNERS ON MARKET-SENSITIVE DISPLAY FIELDS** — IT's committed market cap is
+    as-of 2026-06-25 and 12.3% light; it renders as "$8.7B" with no staleness mark. Stamp until it
+    lands.
+32. **COMPANY-METRIC PRIMACY SWEEP** — where a metric is computable from filings, the filings
+    number is primary and the vendor number becomes a guarded cross-check (trigger: the $193.8M
+    free-cash-flow gap, item 34).
+33. **INTERIM-FCF SENSITIVITY OPTION IN THE R2 ENGINE, printed per record.** Falsifier already
+    observed: crediting NCNO's four guided years moves the optimistic case to roughly the market
+    price, so a verdict note claiming "even the optimistic case sits below the price" holds only
+    before interim cash. The engine should print the sensitivity rather than leave it to prose.
+34. **CIQ ESCALATION #2 — the levered-free-cash-flow gap (DRAFTED).** Vendor 'Levered Free Cash
+    Flow' reads **1,064.2** for LTM to Mar-31-2026 against the company's own **1,258.0** on the
+    same period and nominally the same construction. **Debt service does not explain it**: interest
+    paid is $99.5M and long-term-debt repayments are $0.0M, so ~$194M is unaccounted for. Same
+    shape as the VITL defect (a row populated against a denominator its label does not describe) —
+    **suspect until diagnosed, not concluded.** Dossier leaf now carries the filings figure with
+    the vendor reading recorded as a caveat.
+35. **DATED + SHA-STAMPED VENDOR-EXPORT SNAPSHOTS, surfaced per record** — so a record states which
+    export vintage it was built from.
+36. **DOSSIER GOVERNANCE BLOCK (proxy-sourced)** — board, auditor, compensation, related-party.
+37. **ANALOGUE SECTIONS — rebuild or remove** under the external review pack format.
+38. **MVST NET-DEBT LEASE DECOMPOSITION UNKNOWN** — its bridge is a CIQ vendor figure on a
+    "classified total debt less total cash" basis with no lease split, and the basis string does
+    not even claim lease-inclusivity. Any lease-basis question is uncomputable for this name.
+39. **WERN HAS NO DOSSIER** — `data/dossiers/` covers 11 names, not WERN; its band provenance lives
+    only in the scenario record's `assumptions`.
 
 **BUILD RECORD — 2026-07-21 Analysis declutter (PR #177, stacked on #175).** The audited
 Analysis-tier defects, applied display-only in BOTH renderers: the four surface CONTRADICTIONS
@@ -4610,6 +4692,26 @@ SIC-87xx sector miss · entry-price/ratio-at-entry + implied-odds display.
     | implied D&A / recorded D&A | EPAM 4.20x | 35.53x | 8x | 1.9x / 4.4x |
     | market-implied EBITDA / recorded | CNXC 1.41x | 4.62x | 2.5x | 1.8x / 1.8x |
 
+  - **LEASE-BASIS CONVENTION — RATIFIED 2026-07-22. THE NET-DEBT BASIS STAYS LEASE-INCLUSIVE, AND
+    THIS REVERSES A FINDING.** The 2026-07-22 IC review raised a basis-inconsistency concern: our
+    net debt is lease-inclusive while the multiple band is a CIQ TEV multiple, so if CIQ's TEV
+    excluded operating leases we would be deducting a liability the multiple never carried.
+    **Workbook evidence settles it the other way.** The Historical Capitalization identity:
+    **IT CIQ Total Debt 3,355.2 vs EDGAR ex-operating-lease 2,983 / including operating leases
+    3,355 — exact to $0.2M**; VITL directional on the same test (54.2 against 17 / 62). CIQ's TEV
+    **includes** operating leases, so our construction already matches the band's. **One ruler.**
+    - Vendor lease MEASUREMENT diverges slightly on small names (VITL 7.8, SMPL 17.8) — documented
+      noise, not a basis difference.
+    - Reconciliation tolerance: CIQ prices multiples at FILING dates against quarter-end balance
+      sheets, so small timing gaps are expected and are not evidence of a different construction.
+    - **The agent's own back-solve was INCONCLUSIVE and said so** rather than calling it: the
+      committed multiple is rounded to 1 d.p. and the mcap/multiple/EBITDA vintages are not
+      aligned, so the misses (IT 2.6%, SMPL 8.0%, EPAM 9.7%) contradicted each other and were
+      larger than the effect being detected. The workbook read at full precision is what resolved
+      it — the lesson is that a rounded committed field cannot adjudicate a vendor convention.
+    - The read-only impact table computed under the (now-refuted) hypothesis showed **no boundary
+      would have moved** in any case: no PASS/FAIL, watch or avoid_priced flip, with WERN closing
+      only 17.7% of its base-vs-spot gap. **No record changes.**
   - **KNOWN CIQ DEFECT CLASS #2 — PERIOD SPLICING ACROSS A REVERSE MERGER (found 2026-07-22, FUBO).**
     Distinct from the EBITDAR substitution above, and **neither guard catches it**: the vendor's
     LTM/trailing columns are stitched across a combination, blending the ACQUIREE's pre-deal periods

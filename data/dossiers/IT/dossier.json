@@ -498,10 +498,10 @@
         "note": "no OCF/capex"
       },
       "free_cash_flow": {
-        "value": 1064.2,
-        "source_ref": "CIQ Financials→Cash Flow 'Levered Free Cash Flow' [LTM 12 months Mar-31-2026]",
+        "value": 1258.0,
+        "source_ref": "computed from filings: quarterly free cash flow 347+269+271+371 (operating cash flow less capex), LTM to Q1-2026; matches the company-stated $1.3bn",
         "status": "present",
-        "note": null
+        "note": "vendor 'Levered Free Cash Flow' read 1,064.2 - $193.8M unexplained after debt service (interest paid $99.5M, principal $0); suspect, CIQ escalation #2"
       },
       "margin_trend": {
         "value": "EBITDA margin: Dec-31-2017 (R) 12% → Dec-31-2018 (R) 15% → Dec-31-2019 13% → Dec-31-2020 17% → Dec-31-2021 24% → Dec-31-2022 24% → Dec-31-2023 22% → Dec-31-2024 21% → Dec-31-2025 20% → Mar-31-2026 (LTM) 21%; gross margin: Dec-31-2017 (R) 60% → Dec-31-2018 (R) 63% → Dec-31-2019 63% → Dec-31-2020 67% → Dec-31-2021 69% → Dec-31-2022 69% → Dec-31-2023 68% → Dec-31-2024 68% → Dec-31-2025 68% → Mar-31-2026 (LTM) 69%; absolute EBITDA: Dec-31-2017 (R) 382 → Dec-31-2018 (R) 609 → Dec-31-2019 571 → Dec-31-2020 686 → Dec-31-2021 1,148 → Dec-31-2022 1,314 → Dec-31-2023 1,274 → Dec-31-2024 1,309 → Dec-31-2025 1,311 → Mar-31-2026 (LTM) 1,337; absolute revenue: Dec-31-2017 (R) 3,311 → Dec-31-2018 (R) 3,975 → Dec-31-2019 4,245 → Dec-31-2020 4,099 → Dec-31-2021 4,734 → Dec-31-2022 5,476 → Dec-31-2023 5,907 → Dec-31-2024 6,267 → Dec-31-2025 6,497 → Mar-31-2026 (LTM) 6,474  [R reclassified; margin % can fall while absolute EBITDA RISES — read them together]",
@@ -3793,7 +3793,7 @@
         "note": null
       },
       "insider_activity": {
-        "value": "Open-market buys 1 · sells 0 (net +0.1K sh) · grants 0 · last 2026-07-06 · other F×46/G×6/J×34/M×56",
+        "value": "No open-market insider purchases: the 2026-07-06 Forms 4 are twelve outside-director compensation grants, codes A/J only, $0 paid (acc 0000749251-26-000227 to -000239) [amended 2026-07-22: this leaf read 'Open-market buys 1 - grants 0'. The grant reference price was being read as a purchase price; there is no insider buying to read.]",
         "source_ref": "EDGAR Form 4 (latest 0000749251-26-000239; 98 in 6m)",
         "status": "present",
         "note": null
@@ -5070,7 +5070,7 @@
         "note": null
       },
       "basis_triangulation": {
-        "value": "EBITDA-basis triangulation (each leverage basis-labeled):\n  net debt / EBITDA (CIQ, GAAP basis): 1.3x\n  total debt / EBITDA (CIQ comps, GAAP basis): 2.4x\n  net debt / company-adjusted LTM EBITDA (LTM unavailable): UNKNOWN\n  covenant basis: UNKNOWN (not disclosed)",
+        "value": "EBITDA-basis triangulation (each leverage basis-labeled):\n  net debt / EBITDA (CIQ, GAAP basis): 1.3x\n  total debt / EBITDA (CIQ comps, GAAP basis): 2.4x\n  FY2026 company guides: Adjusted EBITDA >=$1,550M; excluding the divested operation >=$1,545M; adjusted EPS >=$13.25 (IR earnings supplement)\n  covenant basis: Consolidated Leverage Ratio 1.6x against a <=4.0x covenant (4.5x acquisition step-up); company-disclosed, Q1-2026 IR earnings supplement slide 12 (unfiled company document; covenant terms EX-10.1 acc 0001193125-24-083467) [amended 2026-07-22: both lines previously read UNKNOWN; the figures are disclosed, just not in an SEC filing.]",
         "source_ref": "CIQ leverage bases + release LTM adj-EBITDA/margins",
         "status": "present",
         "note": null
@@ -5852,7 +5852,7 @@
         "cited": true
       },
       {
-        "claim": "The name self-funds: latest-quarter OCF positive and LTM FCF positive at $1,064.2M, so runway and buyback capacity rest on generated cash, not new debt.",
+        "claim": "The name self-funds: latest-quarter OCF positive and LTM free cash flow positive at $1,258M (computed from filings), so runway and buyback capacity rest on generated cash, not new debt.",
         "source_ref": "CIQ Financials→Cash Flow 'Levered Free Cash Flow' [LTM 12 months Mar-31-2026]",
         "cited": true
       },
@@ -5864,7 +5864,7 @@
     ],
     "bear_points": [
       {
-        "claim": "Revenue growth has stalled to a stop — FY25 +4% decelerating to LTM, with Q1-2026 revenue -1.5% YoY, the first same-quarter contraction in the series, indicating the top line is no longer compounding.",
+        "claim": "Revenue growth has stalled to a stop — FY25 +4% decelerating to LTM, with Q1-2026 revenue -1.5% YoY, the first same-quarter contraction in the series, indicating the top line is no longer compounding. (total; +1.6% reported / -1.4% FX-neutral excluding the business divested 2026-02-05)",
         "source_ref": "CIQ Financials→Income Statement + Segments + Ratios (multi-year columns)",
         "cited": true
       },
@@ -5913,7 +5913,7 @@
       "question": "Is the contract-value deceleration a transient, federal-and-macro-driven pause in an intact subscription compounder (overshoot), or the leading edge of a structural demand impairment in the core Insights franchise (value trap)?",
       "evidence_for": [
         {
-          "claim": "CV grew 1% YoY but 3.5% ex-US-federal with GTS/GBS wallet retention of 97-99%, and management flagged the March slowing as geopolitical decision-deferral, framing it as cyclical.",
+          "claim": "CV grew 1% YoY but 3.5% ex-US-federal with wallet retention of 96.5% technology / 98.3% business / 97.7% global (Q1-2026 supplement) - technology below 100 means retained-client spend no longer fully offsets contraction, and management flagged the March slowing as geopolitical decision-deferral, framing it as cyclical.",
           "source_ref": "CIQ transcript: Gartner, Inc., Q1 2026 Earnings Call, May 05, 2026.rtf",
           "cited": true
         },

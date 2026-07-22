@@ -208,8 +208,7 @@
  "verdict": {
   "status": "watch",
   "recorded": "2026-07-19",
-  "rationale": null,
-  "rationalePlain": "WATCH at $46. The underwrite fails our 2:1 bar \u2014 the base case values the business roughly 22% below the market price, so the recovery is already paid for. A sound franchise at the wrong price, not a broken one. We revisit below about $28\u201330, or on evidence that normal profitability is genuinely higher than the company's own history suggests.",
+  "rationale": "WATCH at $46. The underwrite fails our 2:1 bar \u2014 the base case values the business roughly 22% below the market price, so the recovery is already paid for. A sound franchise at the wrong price, not a broken one. We revisit below about $28\u201330, or on evidence that normal profitability is genuinely higher than the company's own history suggests.",
   "reunderwriteTriggers": [
    "spot pulls to ~28-30 (where base offers 2:1)",
    "a reported quarter proving normalized operating margin genuinely >7.5% (e.g. disclosed Dedicated segment economics, or a clean beat)"
