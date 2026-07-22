@@ -5573,7 +5573,7 @@
     "recipe_hint": "R1_midcycle_margin_evebitda",
     "applicable": true,
     "multiple_basis": "EV/EBITDA",
-    "computed_at": "2026-07-20T19:57:26.057764Z",
+    "computed_at": "2026-07-22T04:19:24.608041Z",
     "reason": null,
     "data_quality": null,
     "data_quality_detail": [
@@ -5595,10 +5595,10 @@
       "confidence": "firm"
     },
     "d_and_a": {
-      "value": 45.317,
+      "value": 124.811,
       "unit": "$M",
       "basis": "consolidated latest FY",
-      "source": "EDGAR companyfacts dep_amort (combined)"
+      "source": "EDGAR companyfacts DepreciationAndAmortization (combined, FY2025) — CHOSEN BY VINTAGE over 1 staler candidate(s), oldest FY2019 (6y behind)"
     },
     "net_debt": {
       "value": -749.016,
@@ -5618,8 +5618,14 @@
       "basis": "LTM revenue",
       "source": "committed financial_summary.annual (LTM)"
     },
-    "anchor_base_value_per_share": 306.0468,
-    "anchor_ev_ebit": 23.9511,
+    "ltm_fcf": {
+      "value": 612.691,
+      "unit": "$M",
+      "basis": "latest FY2025 (not LTM)",
+      "source": "EDGAR companyfacts operating_cash_flow − capex (FY2025, same period)"
+    },
+    "anchor_base_value_per_share": 338.9321,
+    "anchor_ev_ebit": 26.6465,
     "overall_confidence": "firm",
     "note": "ATTENTION FILTER, not a verdict. Even a firm anchor requires a full bear/base/bull 2:1 underwrite before any BUY. Spot and reward-to-base are computed live at triage, not stored here."
   }
