@@ -538,7 +538,10 @@ def test_uw_headline_state_machine_never_invents_a_target() -> None:
 import {{ readFileSync }} from "node:fs";
 const {{ uwCard }} = await import("{uw}");
 const rd = (p) => JSON.parse(readFileSync(p));
-const it = rd("frontend/scenarios/IT.json");        // confirmed BUY, base ABOVE spot
+// SMPL, not IT: IT was this fixture until it was EXITED on 2026-07-21 and moved to watch with a
+// base below spot. A living record's disposition is not a fixture — the state machine is pinned
+// on whichever card currently occupies the state, plus synthetics for the rest.
+const it = rd("frontend/scenarios/SMPL.json");      // confirmed BUY, base ABOVE spot
 const wern = rd("frontend/scenarios/WERN.json");    // watch, base BELOW spot (priced)
 // synthetic: the same record still awaiting the analyst — the machine's only reachable state
 const pending = JSON.parse(JSON.stringify(it));
@@ -559,7 +562,7 @@ console.log(JSON.stringify({{
   pendingShowsPass: /uw-mini">PASS</.test(uwCard(pending)),
   targetHidesPass: !/uw-mini">PASS</.test(uwCard(it)),
   pendingNoEntry: /no position/.test(uwCard(pending)),
-  targetHasEntry: uwCard(it).includes("141.06"),
+  targetHasEntry: uwCard(it).includes(String(it.verdict.entryPrice)),
 }}));
 """
     out = subprocess.run(["node", "--input-type=module", "-e", driver],
@@ -725,3 +728,37 @@ console.log(JSON.stringify(out));
         assert all(part.strip().endswith("y") and part.strip()[:-1].replace(".", "").isdigit()
                    for part in yrs[0].split("·")), (
             f"{t}: the horizon chosen row is not per-leg year values — got {yrs[0]!r}")
+
+
+def test_every_committed_record_result_matches_its_own_facts() -> None:
+    """COHERENCE INVARIANT — a record's stored ``result`` must equal ``run_recipe`` on its own
+    inputs.
+
+    Shipped after a real defect (PR #189, found 2026-07-22): two records had a FACT amended and
+    verified by an in-memory recompute, but were written back with ``json.dumps`` rather than
+    ``write_record`` — so the stored ``result`` kept the pre-amendment values while the facts moved
+    beneath it. IT rendered 121.20/273.85 at ratio 7.04 on a card whose facts computed
+    118.85/270.14 at 6.09, and nothing was red: no consumer re-derives on read.
+
+    This is the one check that makes stored-derived-state safe. It runs over every committed
+    record, so the next silent divergence fails here instead of on a card.
+    """
+    import warnings as _w
+    for path in sorted((Path(__file__).resolve().parents[1] / "scenarios").glob("[A-Z]*.json")):
+        payload = json.loads(path.read_text())
+        stored = (payload.get("result") or {}).get("per_scenario") or {}
+        if not stored:
+            continue                      # a record that has never been run has nothing to diverge
+        with _w.catch_warnings():
+            _w.simplefilter("ignore")
+            fresh = sc.run_recipe(sc.ScenarioRecord.model_validate(payload))
+        for leg, cell in stored.items():
+            assert cell["value_per_share"] == pytest.approx(
+                fresh.result.per_scenario[leg].value_per_share, abs=1e-6), (
+                f"{path.stem} {leg}: stored {cell['value_per_share']:.4f} but its own facts "
+                f"compute {fresh.result.per_scenario[leg].value_per_share:.4f} — the record was "
+                "written without persisting the recompute")
+        if (payload["result"].get("ratio") is not None
+                and fresh.result.ratio is not None):
+            assert payload["result"]["ratio"] == pytest.approx(fresh.result.ratio, abs=1e-6), (
+                f"{path.stem}: stored ratio diverges from its own facts")

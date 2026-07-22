@@ -5,7 +5,7 @@ _July 20, 2026_
 # Brief — first cut
 
 ## At a glance
-**Target (base)** $8.09 (-54.9% vs spot) · **Spot** $17.93 (underwritten 2026-07-21) · **Reward** $-9.84 · **Risk** $13.74 · **Reward : risk** -0.72 : 1 (bar 2 : 1)
+**Target (base)** $8.17 (-54.4% vs spot) · **Spot** $17.93 (underwritten 2026-07-21) · **Reward** $-9.76 · **Risk** $13.68 · **Reward : risk** -0.71 : 1 (bar 2 : 1)
 
 **Underwrite disposition:** WATCH (2026-07-21) — _the BUY/AVOID verdict of record is the ledger's_
 
@@ -30,9 +30,9 @@ _Terminal-margin: value the business in the year it reaches a normal operating m
 
 | scenario | revenue $M | margin | multiple | value / sh | vs spot |
 | --- | ---: | ---: | ---: | ---: | ---: |
-| bear | 684 | 8.6% | 10x | $4.19 | -76.6% |
-| base | 755 | 12.6% | 12.5x | $8.09 | -54.9% |
-| bull | 809 | 16.6% | 16x | $14.10 | -21.3% |
+| bear | 684 | 8.6% | 10x | $4.25 | -76.3% |
+| base | 755 | 12.6% | 12.5x | $8.17 | -54.4% |
+| bull | 809 | 16.6% | 16x | $14.22 | -20.7% |
 
 - **bear** — deceleration runs past consensus (forward operating-income revisions 0 up / 9 down); operating leverage slows with growth; exit below the mature-peer reference.
 - **base** — revenue = consensus FY2027 then a stated fade of ~1.5 points a year; margin = the durable +3-points-a-year leverage path from the first positive year (+0.6%); exit set on the one genuinely mature vertical-software peer (12.3x at 23% margins) - at terminal, growth has decelerated by construction, so a growth multiple would pay for the same growth twice.
