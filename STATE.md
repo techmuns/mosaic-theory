@@ -4399,6 +4399,19 @@ margin/cash inflection and cheap forward multiples"). The false-balance guard fi
 as an analyst caveat. Re-running the LLM until the content improved would be shopping for an
 outcome — the discipline this fund exists to hold — so the caveat stands for the analyst to judge.
 
+**OPERATOR TO-DO — MVST cannot be re-assembled (2026-07-22).** MVST is the ONE dossier name absent
+from `data/snapshots/candidate_records.jsonl` (the other ten are present), so `dossier assemble`
+raises `LookupError: MVST not in candidate_records.jsonl`. Its committed dossier therefore stays on
+the OLD driver format — "no 8-K matched" wording, metrics without the stated direction — while the
+other ten carry the new one. Re-running screen+rank would fix it but regenerates the RANKED QUEUE,
+a decision surface, so it is deliberately not bundled into an extractor PR. Do it as its own
+operator step, then re-assemble MVST.
+
+**VERIFICATION LESSON (same day).** The re-assembly loop checked "does `synthesis` exist" and
+reported MVST as `synth` — it was reading the PRE-EXISTING synthesis of a dossier that had not been
+rewritten at all. A liveness check must assert the artifact was REWRITTEN (`assembled_at` == today),
+not merely that a field is populated. Caught by an assembled_at audit, not by the loop.
+
 **INCIDENT 2026-07-22 (recorded risk, no shipped block).** `dossier assemble` OVERWRITES a good
 dossier with a synthesis-less one when the LLM call fails: `synthesize` returns None on a transient
 error, and the assembler writes `synthesis: null` anyway. Observed live — BRBR's committed
