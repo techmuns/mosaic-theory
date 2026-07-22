@@ -15,6 +15,7 @@ import tempfile
 import typing
 from datetime import UTC, date, datetime, timedelta, timezone
 from pathlib import Path
+from typing import Any
 
 import pytest
 from pydantic import BaseModel
@@ -7875,3 +7876,30 @@ def test_scenario_card_read_is_loud_on_a_corrupt_record() -> None:
                 "a corrupt record must not be reported as an absent one")
         finally:
             os.chdir(cwd)
+
+
+def test_scenario_table_renders_a_revenue_basis_leg_without_a_margin() -> None:
+    """(review fix, PR #188 interaction) An R2 EV/Revenue leg applies its multiple to REVENUE and
+    never reads a margin, so ``ScenarioInput.margin`` is None by design rather than missing. The
+    md table must render that absence as an em-dash — formatting None raises TypeError, and
+    substituting 0% would fabricate a driver the arithmetic never used."""
+    class _S:
+        revenue, margin, multiple, reason = 500.0, None, 2.5, "revenue-basis leg"
+
+    class _P:
+        value_per_share = 12.0
+
+    class _R:
+        per_scenario = {"base": _P()}
+
+    class _Card:
+        result, spot, recipe_desc = _R(), 10.0, "R2 EV/Revenue"
+        scenarios = {"base": _S()}
+
+    lines = dr._scenario_table_lines(typing.cast(Any, _Card()))
+    row = next(x for x in lines if x.startswith("| base |"))
+    cells = [c.strip() for c in row.strip("|").split("|")]
+    # cells: scenario · revenue · margin · multiple · value/sh · vs spot
+    assert cells[2] == "—", f"absent margin must render as an em-dash, got {cells[2]!r}"
+    assert "%" not in cells[2]  # never a fabricated 0.0% margin
+    assert cells[1] == "500" and cells[3] == "2.5x" and cells[4] == "$12.00"

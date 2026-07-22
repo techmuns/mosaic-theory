@@ -1900,7 +1900,11 @@ def _scenario_table_lines(card: ScenarioRecord | None) -> list[str]:
             continue
         vps = p.value_per_share
         vs = f"{vps / spot - 1.0:+.1%}" if (vps is not None and spot) else "—"
-        rows.append(f"| {nm} | {s.revenue:,.0f} | {s.margin:.1%} | {s.multiple:g}x | "
+        # margin is OPTIONAL by design: an R2 EV/Revenue leg applies its multiple to revenue and
+        # never reads a margin, so the record omits one rather than fabricating a driver the
+        # arithmetic ignores. Render the absence as "—" — never format None, never invent 0%.
+        marg = "—" if s.margin is None else f"{s.margin:.1%}"
+        rows.append(f"| {nm} | {s.revenue:,.0f} | {marg} | {s.multiple:g}x | "
                     f"{'—' if vps is None else f'${vps:,.2f}'} | {vs} |")
     if not rows:
         return []
