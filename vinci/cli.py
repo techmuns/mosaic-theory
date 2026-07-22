@@ -8,6 +8,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import re
 import sqlite3
 import sys
 from collections.abc import Callable, Sequence
@@ -544,6 +545,123 @@ def _cmd_financials_backfill(args: argparse.Namespace) -> int:
         fs["annual"], fs["quarterly"] = new_ann, new_qtr
         jp.write_text(_json.dumps(doc, indent=2, ensure_ascii=False))
         print(f"{t}: annual {before[0]}→{after[0]} cols · quarterly {before[1]}→{after[1]} → {jp}")
+    return rc
+
+
+def _peerset_drift(committed: str, fresh: str) -> str | None:
+    """VINTAGE GUARD for the peer_set writer: the fresh roster may only LENGTHEN each business
+    descriptor — same peer count, same per-peer 'Name $CAP' prefix (order included), same
+    name-cap tail, and every committed descriptor a PREFIX of its fresh twin (the old capture
+    was a word-boundary clip of the same underlying text). Anything else means the on-disk
+    workbook is a different export than this dossier was assembled from → refuse (the
+    financials-backfill precedent). Composer-output vs composer-output byte comparison — no
+    display string is parsed back into values."""
+    def parts(s: str) -> tuple[str, list[str], str] | None:
+        m = re.match(r"^(\d+ peers) — (.*?)(\s\|\sthe name:.*)?$", s, re.DOTALL)
+        if not m:
+            return None
+        return m.group(1), m.group(2).split("; "), m.group(3) or ""
+
+    pc, pf = parts(committed), parts(fresh)
+    if pc is None or pf is None:
+        return "unparseable roster line"
+    if pc[0] != pf[0]:
+        return f"peer count changed ({pc[0]} → {pf[0]})"
+    if pc[2] != pf[2]:
+        return f"name-cap tail changed ({pc[2]!r} → {pf[2]!r})"
+    if len(pc[1]) != len(pf[1]):
+        return "segment count changed"
+    for seg_c, seg_f in zip(pc[1], pf[1], strict=True):  # lengths equal — checked above
+        head_c = seg_c.split(" — ", 1)[0]
+        head_f = seg_f.split(" — ", 1)[0]
+        if head_c != head_f:
+            return f"peer/cap changed ({head_c!r} → {head_f!r})"
+        desc_c = seg_c.split(" — ", 1)[1] if " — " in seg_c else ""
+        desc_f = seg_f.split(" — ", 1)[1] if " — " in seg_f else ""
+        # strip the shared " (HQ)" suffix; the widened text must extend the committed clip
+        hq = re.search(r" \([^()]*\)$", desc_c)
+        core_c = desc_c[: hq.start()] if hq else desc_c
+        hq_f = re.search(r" \([^()]*\)$", desc_f)
+        core_f = desc_f[: hq_f.start()] if hq_f else desc_f
+        if (hq.group(0) if hq else "") != (hq_f.group(0) if hq_f else ""):
+            return f"HQ suffix changed for {head_c!r}"
+        # same underlying text proves itself by a prefix relation in EITHER direction: the widened
+        # capture extends the old clip — or trims it, where the old [:55] ran PAST the sentence
+        # end and grabbed spill from sentence two ("…worldwide. The company"). Only a text with
+        # neither relation is a different export.
+        if not (core_f.startswith(core_c.rstrip()) or core_c.startswith(core_f.rstrip())):
+            return f"description text changed for {head_c!r} (newer export)"
+    return None
+
+
+def _cmd_peerset_backfill(args: argparse.Namespace) -> int:
+    """Re-extract the peer_set roster from the on-disk CIQ export into committed dossiers.
+
+    The PEER_SET-ONLY writer, modelled on ``financials-backfill``: a dict-level patch (the
+    committed files round-trip byte-identically under ``json.dumps(indent=2,
+    ensure_ascii=False)``, asserted per file) that touches ONLY
+    ``mechanical.peer_comps.peer_set.value``. Why it exists: the extractor used to clip each
+    business descriptor at a hard 55 chars mid-clause ("…risk assessment firm in the");
+    widening the capture only helps names re-assembled afterwards — this backfills the ones
+    already committed, refusing any name whose workbook is a newer export (``_peerset_drift``)."""
+    import json as _json
+
+    from vinci.dossier.ciq import CiqBundle, CiqUnavailableError
+    from vinci.dossier.ciq_sheets import peer_comps
+
+    root = Path("data/dossiers")
+    tickers = [t.strip().upper() for t in args.tickers.split(",") if t.strip()]
+    rc = 0
+    for t in tickers:
+        jp = root / t / "dossier.json"
+        if not jp.exists():
+            print(f"{t}: no committed dossier.json — skipped")
+            continue
+        raw = jp.read_text()
+        doc = _json.loads(raw)
+        if _json.dumps(doc, indent=2, ensure_ascii=False) != raw:
+            print(f"{t}: REFUSING — serialiser does not reproduce the committed bytes")
+            rc = 1
+            continue
+        paths = sorted((Path("data/manual/ciq") / t).glob("*.xls"))
+        if not paths:
+            print(f"{t}: no CIQ workbook on disk — skipped (re-extraction needs the export)")
+            continue
+        try:
+            fresh = peer_comps(CiqBundle.from_files(t, paths)).peer_set
+        except CiqUnavailableError as exc:
+            print(f"{t}: CIQ unavailable ({exc}) — skipped")
+            rc = 1
+            continue
+        ps = ((doc.get("mechanical") or {}).get("peer_comps") or {}).get("peer_set")
+        if ps is None or ps.get("status") != "present" or not ps.get("value"):
+            print(f"{t}: no committed present peer_set — skipped")
+            continue
+        if fresh.status.value != "present" or not fresh.value:
+            print(f"{t}: fresh extraction returned {fresh.status.value} — skipped")
+            rc = 1
+            continue
+        if fresh.source_ref != ps.get("source_ref"):
+            print(f"{t}: REFUSED — source_ref changed ({ps.get('source_ref')!r} → "
+                  f"{fresh.source_ref!r})")
+            rc = 1
+            continue
+        drift = _peerset_drift(str(ps["value"]), str(fresh.value))
+        if drift:
+            print(f"{t}: REFUSED — {drift}. The on-disk export is not the one this dossier was "
+                  f"assembled from; re-assemble {t} instead.")
+            rc = 1
+            continue
+        old_len, new_len = len(str(ps["value"])), len(str(fresh.value))
+        if ps["value"] == fresh.value:
+            print(f"{t}: already at the widened capture — nothing to write")
+            continue
+        if args.dry_run:
+            print(f"{t}: peer_set {old_len}→{new_len} chars (dry-run, nothing written)")
+            continue
+        ps["value"] = fresh.value
+        jp.write_text(_json.dumps(doc, indent=2, ensure_ascii=False))
+        print(f"{t}: peer_set {old_len}→{new_len} chars → {jp}")
     return rc
 
 
@@ -2255,6 +2373,17 @@ def build_parser() -> argparse.ArgumentParser:
     p_fin.add_argument("--dry-run", action="store_true", dest="dry_run",
                        help="DIAGNOSTIC: report old-vs-new column counts without writing")
     p_fin.set_defaults(func=_cmd_financials_backfill)
+
+    p_peer = sub.add_parser(
+        "peerset-backfill",
+        help="re-extract the peer_set roster line from the on-disk CIQ export into committed "
+        "dossiers (peer_set-only writer — no re-assembly, no LLM; every other field "
+        "byte-identical; refuses on a newer-vintage workbook)")
+    p_peer.add_argument("--tickers", required=True,
+                        help="comma-separated tickers, e.g. AORT,BRBR,IT")
+    p_peer.add_argument("--dry-run", action="store_true", dest="dry_run",
+                        help="DIAGNOSTIC: report old-vs-new without writing")
+    p_peer.set_defaults(func=_cmd_peerset_backfill)
 
     p_ohr = sub.add_parser(
         "own-history-refresh",

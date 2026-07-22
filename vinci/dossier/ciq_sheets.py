@@ -2365,6 +2365,34 @@ def book_value_per_share(bundle: CiqBundle) -> Sourced[float]:
     return Sourced.unknown(note="no Book Value/Share row in the CIQ Balance Sheet")
 
 
+_DESC_SENTENCE_CAP = 160  # clause-boundary cap when the first sentence runs long
+# same abbreviation set as render._brief_oneliner — the two surfaces must agree on what ends a
+# sentence (a split at "Inc." mid-name is the failure both guard against)
+_DESC_ABBREV_RE = re.compile(r"\b(Inc|Corp|Ltd|Co|LLC|LP|plc|Ltda|S\.A|N\.V)\.$")
+
+
+def _desc_first_sentence(text: str, cap: int = _DESC_SENTENCE_CAP) -> str:
+    """First sentence of a peer business description, abbreviation-aware; a sentence longer than
+    ``cap`` cuts at the last CLAUSE boundary (","/";") inside the cap, else the last word.
+
+    Replaces the old hard ``[:55]`` capture that clipped mid-clause ("…risk assessment firm in
+    the") — the record should carry a readable capture; display never has to signal truncation
+    for a text that ends at a real boundary."""
+    text = text.strip()
+    sent = ""
+    for piece in re.split(r"(?<=\.)\s+", text):
+        sent = f"{sent} {piece}".strip() if sent else piece
+        if not _DESC_ABBREV_RE.search(sent):
+            break
+    if len(sent) <= cap:
+        return sent
+    cut = sent[:cap]
+    clause = max(cut.rfind(","), cut.rfind(";"))
+    if clause > 0:
+        return cut[:clause].rstrip()
+    return cut.rsplit(" ", 1)[0]
+
+
 def peer_comps(bundle: CiqBundle) -> PeerComps:
     """Assemble the peer-comps section from the CIQ Company Comparable Analysis workbook: roster +
     market-cap/business dispersion + the name-vs-peer multiple gap (LTM + NTM) + the fundamental
@@ -2398,7 +2426,7 @@ def peer_comps(bundle: CiqBundle) -> PeerComps:
                 r"\b(operates|provides|engages|develops|offers|designs|manufactures|owns|"
                 r"distributes|focuses|is a)\b", full,
             )
-            d = (full[vm.start():] if vm else full)[:55].rsplit(" ", 1)[0]
+            d = _desc_first_sentence(full[vm.start():] if vm else full)
             hq = str(bd[i][2]).strip().rsplit(",", 1)[-1].strip()[:18] if len(bd[i]) > 2 else ""
             desc[nm] = f"{d} ({hq})" if hq else d
     except CiqUnavailableError:
