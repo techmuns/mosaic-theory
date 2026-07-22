@@ -103,13 +103,16 @@ def _read_scenario_card(ticker: str) -> Any | None:
     Imported HERE, not at module scope: ``vinci.scenarios`` imports ``vinci.dossier.midcycle``, so
     a top-level import would cycle. Read-only — the assembler never writes the record, and the
     dossier package still imports no ledger/scoring (the structural no-verdict line is untouched).
-    A malformed/absent record degrades to None: an export missing its thesis is a smaller failure
-    than an assembly that dies on it."""
+
+    FAIL-LOUD BOUNDARY: an ABSENT record is a normal state (most names are never underwritten) and
+    degrades to None. A record that EXISTS but will not parse is not normal — swallowing it would
+    ship a dossier.md silently missing its thesis and scenarios, with nothing anywhere saying so.
+    That error propagates."""
+    from vinci.scenarios import read_record
     try:
-        from vinci.scenarios import read_record
         return read_record(ticker)
-    except Exception:  # noqa: BLE001 — absent or unreadable record is a normal, non-fatal state
-        return None
+    except FileNotFoundError:
+        return None  # not underwritten — the majority case, not a failure
 
 
 def _write(dossier: Dossier, llm_log: str, out_root: Path) -> Path:

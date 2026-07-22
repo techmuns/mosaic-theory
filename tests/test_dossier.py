@@ -9,7 +9,9 @@ from __future__ import annotations
 
 import ast
 import json
+import os
 import re
+import tempfile
 import typing
 from datetime import UTC, date, datetime, timedelta, timezone
 from pathlib import Path
@@ -7845,3 +7847,31 @@ def test_download_menu_offers_three_scopes_and_serves_the_committed_md() -> None
     mirrored = {p.stem for p in Path("frontend/dossiers").glob("*.json")} - {"index"}
     md_served = {p.stem for p in Path("frontend/dossiers").glob("*.md")}
     assert mirrored == md_served, f"missing md for: {sorted(mirrored - md_served)}"
+
+
+def test_scenario_card_read_is_loud_on_a_corrupt_record() -> None:
+    """(review fix) FAIL-LOUD BOUNDARY on the underwrite read: an ABSENT record is the normal
+    state (most names are never underwritten) and degrades to None, but a record that EXISTS and
+    will not parse must PROPAGATE — swallowing it would ship a dossier.md silently missing its
+    thesis and scenarios with nothing anywhere saying so. Mirrors the repo's disclose-on-degrade
+    convention ('a peer that won't resolve is EXCLUDED, named')."""
+    import json as _json
+
+    from vinci.dossier import assemble as dassemble
+
+    cwd = Path.cwd()
+    with tempfile.TemporaryDirectory() as tmp:
+        root = Path(tmp)
+        (root / "scenarios").mkdir()
+        try:
+            os.chdir(root)
+            # absent → None, no raise
+            assert dassemble._read_scenario_card("ZZZZ") is None
+            # present but malformed → LOUD
+            (root / "scenarios" / "BAD.json").write_text(_json.dumps({"ticker": "BAD"}))
+            with pytest.raises(Exception) as exc:
+                dassemble._read_scenario_card("BAD")
+            assert not isinstance(exc.value, FileNotFoundError), (
+                "a corrupt record must not be reported as an absent one")
+        finally:
+            os.chdir(cwd)

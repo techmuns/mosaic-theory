@@ -428,9 +428,9 @@ def _attach_midcycle(cfg: Config, ticker: str, *, peers: list[str],
     d2 = d.model_copy(update={"midcycle": block})
     path.write_text(d2.model_dump_json(indent=2))
     from vinci.scenarios import read_record as _read_rec
-    try:  # the underwrite record rides the md Brief; absent/unreadable → facts-only md
+    try:  # ABSENT record = not underwritten (normal); a record that won't parse propagates LOUD
         _card = _read_rec(d2.ticker)
-    except Exception:  # noqa: BLE001
+    except FileNotFoundError:
         _card = None
     (ddir / "dossier.md").write_text(render_markdown(d2, card=_card))
     print(f"  midcycle attached → {ddir} (anchors"
