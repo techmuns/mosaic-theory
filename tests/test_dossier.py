@@ -7598,3 +7598,27 @@ def test_page_width_containment_css_pins() -> None:
     for m in re.finditer(r"<svg viewBox[^>]+>", src):
         frag = m.group(0)[:70]
         assert 'width="100%"' in m.group(0), f"fixed-width svg breaks containment: {frag}"
+
+
+def test_print_css_collapses_the_survival_columns() -> None:
+    """(review fix) The PDF is the complete record: the two-column survival card must collapse to
+    one column in print like every other split (the .uw-split precedent), and the new blocks must
+    not be severed across a page."""
+    css = Path("frontend/assets/styles.css").read_text()
+    blocks = []
+    for s in (j for j in range(len(css)) if css.startswith("@media print", j)):
+        depth, k = 0, css.index("{", s)
+        while k < len(css):
+            if css[k] == "{":
+                depth += 1
+            elif css[k] == "}":
+                depth -= 1
+                if depth == 0:
+                    break
+            k += 1
+        blocks.append(css[s:k])
+    printed = "\n".join(blocks)
+    assert ".ls-cols { grid-template-columns: 1fr !important; }" in printed
+    assert "break-inside: avoid" in printed and ".wall-strip" in printed
+    # and the screen rules must NOT be trapped inside a print block
+    assert ".fg-hero .fg-val { font-size: 20px" not in printed

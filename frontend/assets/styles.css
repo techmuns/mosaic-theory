@@ -1168,6 +1168,12 @@ table.data tr td.uw-vs { font-size: 12.5px; }
 
 @media print {
   .uw-split { grid-template-columns: 1fr !important; }
+  /* (buy-side layout) the survival two-column collapses in print like every other split — a
+     half-width column at print width cramps the wall chips; and the new blocks must not be
+     severed across a page (the PDF is the complete record). */
+  .ls-cols { grid-template-columns: 1fr !important; }
+  .ls-wall, .wall-strip, .fg-grid, .brief-crux, .fg-read { break-inside: avoid; }
+  .fg-hero .fg-cell + .fg-cell { border-left: none; padding-left: 0; }
   .uw-rail { border-left: 0; padding-left: 0; border-top: 1px solid var(--line);
     padding-top: 12px; margin-top: 12px; display: block; }
 }
