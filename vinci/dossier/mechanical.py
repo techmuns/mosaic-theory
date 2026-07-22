@@ -211,29 +211,20 @@ def _drawdown_filings(
 
 
 _INDEX = "https://www.sec.gov/Archives/edgar/data/{cik}/{acc}/index.json"
-_EX991 = re.compile(r"ex\W*99\W*d?\W*1(?!\d)", re.I)  # Ex-99.1: dex991/ex-99.1/ex99d1 (not 99.2)
 _GUIDANCE_ANCHOR = re.compile(r"revis\w*[^.]{0,80}?(?:full[- ]year|outlook|guidance)", re.I)
 _MONEY = re.compile(r"\$\s?\d")
 _METRIC = re.compile(r"\b(revenue|ebitda|eps|free cash flow|earnings per share)\b", re.I)
 
 
-def _is_ex991(name: str) -> bool:
-    low = name.lower()
-    return low.endswith((".htm", ".html", ".txt")) and _EX991.search(low) is not None
-
-
 def _exhibit_991_url(http: CachedHttp, cik: str, accession: str) -> str | None:
-    """The furnished Exhibit 99.1 (press release) URL from the filing index, or None if absent."""
-    acc = accession.replace("-", "")
-    try:
-        idx = http.get_json(_INDEX.format(cik=int(pad_cik(cik)), acc=acc), ttl_seconds=None)
-    except (HttpError, ValueError):
-        return None
-    for item in idx.get("directory", {}).get("item", []):
-        name = str(item.get("name", ""))
-        if _is_ex991(name):
-            return _ARCHIVE.format(cik=int(pad_cik(cik)), acc=acc, doc=name)
-    return None
+    """The furnished Exhibit 99.1 (press release) URL, or None if the filing furnishes none.
+
+    ONE detector, shared with the primary-source fetch: this module used to carry its own copy of
+    the filename regex, and the two DRIFTED — the copy here never learned the '_' separator class,
+    so it missed 'ex99_1.htm' that the other matched. The rule now lives once, in
+    release_parse.exhibit_991_urls (EDGAR's SGML exhibit TYPE, filename match as fallback)."""
+    urls = release_parse.exhibit_991_urls(http, cik, accession)
+    return urls[0] if urls else None
 
 
 def _extract_revised_guidance(text: str) -> str | None:
@@ -313,9 +304,11 @@ def _drawdown_cause(record: DataRecord, edgar: EdgarClient, http: CachedHttp) ->
 
 
 # --- (B1) informative drawdown: join each gap-down's 8-K to its parsed EX-99.1 drivers -----------
-_DRIVER_METRICS = ("adjusted ebitda", "adjusted net income", "adjusted eps")
+_DRIVER_METRICS = ("adjusted ebitda", "adjusted operating income", "adjusted net income",
+                   "adjusted eps")
 _METRIC_SHORT = {
     "adjusted ebitda": "adj EBITDA",
+    "adjusted operating income": "adj operating income",  # pre interest/tax — never "net income"
     "adjusted net income": "adj net income",
     "adjusted eps": "adj EPS",
 }
@@ -368,10 +361,16 @@ def _compose_gap_drivers(release: ReleaseExtract) -> Sourced[str] | None:
             s += f" (vs {_fmt_driver(metric, prior.value)} {prior.period})"
         parts.append(s)
     for o in release.one_offs:
-        desc = o.description[:48].rsplit(" ", 1)[0] if len(o.description) > 48 else o.description
+        # Trim at a CLAUSE boundary, not a character count: the old 48-char cut left dangling
+        # connectives ("…charge associated with a", "…expenses in the"), which read as a
+        # truncation artefact rather than a fact. Prefer the shortest complete noun phrase.
+        desc = re.split(r"\s+(?:associated|related\s+to|in\s+the|for\s+the|due\s+to|which)\b",
+                        o.description, maxsplit=1)[0].strip(" ,;")
         parts.append(f"${o.amount:,.1f}M {desc}")
     for g in release.guidance:
-        outlook = "qualitative" if g.qualitative else f"{g.low}–{g.high}"
+        # UNITS on the range: values are normalised to $M upstream, but an unlabelled
+        # "2325.0–2365.0" invites the reader to supply their own scale.
+        outlook = "qualitative" if g.qualitative else f"${g.low:,.1f}–${g.high:,.1f}M"
         parts.append(f"{g.period} {g.metric} outlook: {outlook}")
     if not parts:
         return None
@@ -1839,7 +1838,16 @@ def _primary_source(
                 if not (set(f.items) & {"2.02", "8.01"}):
                     continue
                 try:
-                    for url in release_parse.exhibit_991_urls(http, cik, f.accession):
+                    urls = release_parse.exhibit_991_urls(http, cik, f.accession)
+                    if not urls:
+                        # DISCLOSE the empty read. An 8-K carrying item 2.02/8.01 almost always
+                        # furnishes a press release, so finding none is a detection miss far more
+                        # often than a filing that truly has none — and a silent zero here reads
+                        # downstream as "this company said nothing", which is a different claim.
+                        qa.append(f"primary-source: 8-K {f.accession} carries "
+                                  f"{'/'.join(sorted(set(f.items) & {'2.02', '8.01'}))} but no "
+                                  f"EX-99.1 exhibit was found")
+                    for url in urls:
                         txt = normalize_text(html_to_text(http.get_text(url, ttl_seconds=_PS_TTL)))
                         src = f"8-K {f.accession} EX-99.1"
                         releases.append(release_parse.parse_release(txt, source_ref=src))

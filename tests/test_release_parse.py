@@ -4,9 +4,11 @@ pinned on real filenames. A miss fails LOUD (qa_flags), never fabricating a valu
 """
 from __future__ import annotations
 
+import typing
 from typing import Any
 
 from vinci.edgar import release_parse as rp
+from vinci.netcache import CachedHttp, HttpError
 
 _SRC = "8-K 0000000000-00-000000 Ex-99.1"
 
@@ -160,3 +162,194 @@ def test_release_parse_fail_loud_no_pattern() -> None:
                           source_ref=_SRC)
     assert ex.reconciliation == [] and ex.guidance == [] and ex.event_impacts == []
     assert ex.one_offs == [] and any("no anchored pattern matched" in f for f in ex.qa_flags)
+
+
+# --- Ex-99.1 discovery: EDGAR's SGML TYPE leads, the filename guess is the fallback ---------------
+# REAL filenames observed 2026-07-22 across every 2.02/8.01 8-K of the eleven committed names.
+_EX991_REAL_NAMES = (
+    "aort-2025x8k063025ex991.htm", "form8k-ex991.htm", "ex991nov25sharerepurchasepr.htm",
+    "ex99-1.htm", "it-12312025xex991.htm", "it-09302025xex991_gdm.htm",
+    "mvst2026q1ex991earningspre.htm", "vitl-ex99_1.htm", "d123116dex991.htm", "vrrm-ex99_1.htm",
+    # the five conventions the filename rule NEVER matched (24 of 53 releases lost)
+    "brbrexh991-q12026earningsr.htm", "exhibit991-pressrelease.htm", "exhibit991q22026.htm",
+    "exhibit991pressreleaseofnc.htm", "a991_pressreleasexq2x2026.htm",
+    "exhibit99_q1x2026.htm",  # EPAM — its only '1' comes from "q1"; no filename rule can win here
+)
+
+
+class _FakeHttp:
+    """Minimal CachedHttp stand-in — records calls, serves canned header/index payloads."""
+
+    def __init__(self, header_text: str | None, index_names: list[str] | None = None) -> None:
+        self._header, self._names, self.calls = header_text, index_names or [], []
+
+    def get_text(self, url: str, **_kw: object) -> str:
+        self.calls.append(url)
+        if self._header is None:
+            raise HttpError("no header")
+        return self._header
+
+    def get_json(self, url: str, **_kw: object) -> dict[str, object]:
+        self.calls.append(url)
+        return {"directory": {"item": [{"name": n} for n in self._names]}}
+
+
+def _headers_html(pairs: list[tuple[str, str]]) -> str:
+    """The -index-headers page as EDGAR serves it: SGML tags HTML-ESCAPED."""
+    body = "".join(
+        f"&lt;DOCUMENT&gt; &lt;TYPE&gt;{ty} &lt;SEQUENCE&gt;{i} &lt;FILENAME&gt;{fn} "
+        f"&lt;DESCRIPTION&gt;{ty} &lt;/DOCUMENT&gt;"
+        for i, (ty, fn) in enumerate(pairs, start=1)
+    )
+    return f"<html><body><pre>&lt;SEC-HEADER&gt;{body}</pre></body></html>"
+
+
+def test_ex991_urls_prefer_the_sgml_type_over_the_filename() -> None:
+    """The authoritative path: EDGAR types the exhibit, so a press release is found REGARDLESS of
+    its filename — including EPAM's 'exhibit99_q1x2026.htm', which no filename rule can classify
+    (its '1' is the quarter). EX-99.2 in the same filing is never picked up."""
+    http = _FakeHttp(_headers_html([
+        ("8-K", "epam-20260507.htm"),
+        ("EX-99.1", "exhibit99_q1x2026.htm"),
+        ("EX-99.2", "someother.htm"),
+    ]))
+    urls = rp.exhibit_991_urls(typing.cast(CachedHttp, http), "0001352010", "0001352010-26-000026")
+    assert len(urls) == 1 and urls[0].endswith("/exhibit99_q1x2026.htm")
+    assert not rp._is_ex991("exhibit99_q1x2026.htm"), "the filename rule alone would have missed it"
+
+
+def test_ex991_urls_return_every_furnished_release_and_reject_neighbours() -> None:
+    """A filing can furnish more than one 99.1; 99.10/99.11 are DIFFERENT exhibits, and a
+    non-text document is never fetched as prose."""
+    http = _FakeHttp(_headers_html([
+        ("EX-99.1", "a991_pressreleasexq2x2026.htm"),
+        ("EX-99.1", "second-release.htm"),
+        ("EX-99.10", "ex9910.htm"),
+        ("EX-99.11", "ex9911.htm"),
+        ("EX-99.1", "deck.pdf"),
+    ]))
+    urls = rp.exhibit_991_urls(typing.cast(CachedHttp, http), "0001702744", "0001702744-26-000010")
+    assert [u.rsplit("/", 1)[1] for u in urls] == [
+        "a991_pressreleasexq2x2026.htm", "second-release.htm"]
+
+
+def test_ex991_urls_fall_back_to_the_filename_when_the_header_is_unreadable() -> None:
+    """Header unreachable → the filename guess still finds the conventionally-named exhibit
+    (degrade, never crash); a filing that furnishes none returns []."""
+    http = _FakeHttp(None, index_names=["it-12312025xex991.htm", "it-20260129.htm"])
+    urls = rp.exhibit_991_urls(typing.cast(CachedHttp, http), "0000749251", "0000749251-26-000028")
+    assert len(urls) == 1 and urls[0].endswith("/it-12312025xex991.htm")
+    empty = _FakeHttp(None, index_names=["primary-doc.htm", "FilingSummary.xml"])
+    assert rp.exhibit_991_urls(typing.cast(CachedHttp, empty), "1", "0-0-0") == []
+
+
+def test_sgml_detection_covers_every_real_filename_the_regex_missed() -> None:
+    """The full observed corpus: TYPE-based discovery finds all of them, and the filename rule is
+    measurably weaker — the gap this change closes."""
+    http = _FakeHttp(_headers_html([("EX-99.1", n) for n in _EX991_REAL_NAMES]))
+    urls = rp.exhibit_991_urls(typing.cast(CachedHttp, http), "1", "0-0-0")
+    assert len(urls) == len(_EX991_REAL_NAMES), "TYPE lookup must find every real press release"
+    by_name = sum(1 for n in _EX991_REAL_NAMES if rp._is_ex991(n))
+    assert by_name < len(_EX991_REAL_NAMES), "the filename rule is a strict subset (the bug)"
+
+
+# --- parser COVERAGE: verbatim sentences from the real releases the locator fix recovered ---------
+# Each is the exact phrasing that yielded NOTHING before (recovering the document is not the same
+# as reading it). Frozen strings — no network.
+
+def test_recon_tolerates_footnote_markers_and_the_non_gaap_phrasing() -> None:
+    """BellRing footnotes its non-GAAP measure ('Adjusted EBITDA* of $53.8 million') and the
+    un-tolerated '*' dropped the WHOLE release; EPAM/Concentrix never write "adjusted" at all
+    ('Non-GAAP Diluted EPS of $3.26'). Both are the same fact in different house style."""
+    r = rp.parse_release("BellRing reported Adjusted EBITDA* of $53.8 million for the quarter.",
+                         source_ref=_SRC)
+    assert [(v.metric, v.value) for v in r.reconciliation] == [("adjusted ebitda", 53.8)]
+    r2 = rp.parse_release("EPAM Reports Non-GAAP Diluted EPS of $3.26, up year-over-year.",
+                          source_ref=_SRC)
+    assert [(v.metric, v.value) for v in r2.reconciliation] == [("adjusted eps", 3.26)]
+
+
+def test_one_off_covers_the_generic_nouns_but_needs_a_qualifier() -> None:
+    """The one-off IS usually the reason for the gap, and filers write 'charge'/'costs'/'expenses'
+    far more often than 'impairment'. A qualifier is REQUIRED so routine operating lines are never
+    promoted to a discrete item."""
+    r = rp.parse_release(
+        "Results were impacted by the current year $11.3 million inventory-related charge.",
+        source_ref=_SRC)
+    assert [(o.amount, "inventory-related charge" in o.description) for o in r.one_offs] \
+        == [(11.3, True)]
+    r2 = rp.parse_release("Excluding $4.5 million in restructuring costs for the period.",
+                          source_ref=_SRC)
+    assert [o.amount for o in r2.one_offs] == [4.5]
+    # ⊖ routine operating lines are NOT one-offs (no qualifier before the generic noun)
+    for routine in ("Cost of goods sold was $210.0 million for the quarter.",
+                    "Interest expense of $12.4 million was recorded.",
+                    "Selling expenses of $88.0 million in the period."):
+        assert rp.parse_release(routine, source_ref=_SRC).one_offs == [], routine
+
+
+def test_one_off_reports_each_item_once_and_skips_prior_year_comparatives() -> None:
+    """A release states the same charge in the highlights and again per segment, at different
+    roundings — eight rows for one fact. And it restates LAST year's item beside this year's;
+    attributing a year-old expense to today's gap-down would be a false cause."""
+    text = ("Highlights: a pre-tax $11 million inventory-related charge. "
+            "Segment results were impacted by the current year $11.3 million inventory-related "
+            "charge associated with a third-party supplied ingredient. "
+            "Adjusted EBITDA included, for the prior year period, integration expenses of "
+            "$0.2 million.")
+    offs = rp.parse_release(text, source_ref=_SRC).one_offs
+    assert len(offs) == 1, [o.description for o in offs]
+    assert offs[0].amount == 11.3, "the most precise mention of the item wins the rounding tie"
+    assert "0.2" not in str(offs[0].amount)
+
+
+def test_guidance_reads_filer_metric_names_range_words_and_scales_billions() -> None:
+    """'net sales' / 'total revenues' are how these filers guide, the range is written 'to', 'and'
+    or a bare hyphen, and Concentrix guides in BILLIONS while everyone else uses millions — an
+    unscaled 2.465 would read as $2.5M beside VRRM's 985.0 ($M)."""
+    g = rp.parse_release(
+        "Updated fiscal year 2026 net sales outlook of $2.325-$2.365 billion and "
+        "Adjusted EBITDA* outlook of $315-$335 million.", source_ref=_SRC).guidance
+    by = {x.metric: (x.low, x.high) for x in g}
+    assert by["net sales"] == (2325.0, 2365.0), "billions must normalise to $M"
+    assert by["adjusted ebitda"] == (315.0, 335.0)
+    g2 = rp.parse_release(
+        "Total revenues expected to range between $157.75 million and $159.75 million.",
+        source_ref=_SRC).guidance
+    # 'Total revenues' normalises to the canonical 'revenue' (nCino's phrasing, one metric key)
+    assert [(x.metric, x.low, x.high) for x in g2] == [("revenue", 157.75, 159.75)]
+
+
+def test_one_off_dedup_is_amount_aware_and_the_prior_year_guard_is_sentence_bounded() -> None:
+    """(review fixes) Two failure modes of the dedup/exclusion pair, each found by stress-testing
+    the widened extractor rather than by a live release:
+
+    1. Keying on the NOUN PHRASE alone collapsed two genuinely different charges — $12.0M
+       European-footprint and $30.0M Asia-exit restructuring both read "restructuring charges rel…"
+       — and silently dropped the smaller. Distinctness needs the amount too; only a NEAR-equal
+       amount means one item restated at a different rounding.
+    2. A fixed character look-back reached across a sentence boundary and killed a current-period
+       charge because the PRECEDING sentence mentioned last year. The window is bounded by the
+       sentence, so a genuine in-sentence comparative is still excluded."""
+    two = rp.parse_release(
+        "Results included $12.0 million of restructuring charges related to the European "
+        "footprint, and $30.0 million of restructuring charges related to the Asia exit.",
+        source_ref=_SRC).one_offs
+    assert sorted(o.amount for o in two) == [12.0, 30.0], "distinct charges must both survive"
+
+    one = rp.parse_release(
+        "Highlights: a pre-tax $11 million inventory-related charge. Segment results were impacted "
+        "by the current year $11.3 million inventory-related charge associated with a supplier.",
+        source_ref=_SRC).one_offs
+    assert [o.amount for o in one] == [11.3], "one item at two roundings is ONE row, most precise"
+
+    kept = rp.parse_release(
+        "Compared with the prior year period, results improved. The quarter included a "
+        "$25.0 million impairment charge on the Digital unit.", source_ref=_SRC).one_offs
+    assert [o.amount for o in kept] == [25.0], "a prior-year mention in a PRIOR sentence must not "\
+        "suppress this period's charge"
+
+    dropped = rp.parse_release(
+        "Adjusted EBITDA included, for the prior year period, integration expenses of "
+        "$0.2 million.", source_ref=_SRC).one_offs
+    assert dropped == [], "an in-sentence prior-year comparative is still not this period's cause"

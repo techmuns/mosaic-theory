@@ -13,7 +13,7 @@
         "note": null
       },
       "pe": {
-        "value": 8.25,
+        "value": 7.214285714285714,
         "source_ref": "EDGAR XBRL eps_diluted × EOD price (screen data-record, G3)",
         "status": "present",
         "note": null
@@ -185,6 +185,9 @@
             "periodicity": "quarterly",
             "data_quality": null,
             "source_file": "BellRing Brands Inc NYSE BRBR Financials_Quarterly.xls",
+            "implied_ebitda_margin": 0.136038,
+            "implied_ebit_margin": 0.125402,
+            "implied_d_and_a_margin": 0.010636,
             "source_sha256": "bc8ac66837",
             "source_mtime": "2026-07-20T13:11:59+00:00"
           },
@@ -317,6 +320,9 @@
             "periodicity": "quarterly",
             "data_quality": null,
             "source_file": "BellRing Brands Inc NYSE BRBR Financials_Quarterly.xls",
+            "implied_ebitda_margin": null,
+            "implied_ebit_margin": null,
+            "implied_d_and_a_margin": null,
             "source_sha256": "bc8ac66837",
             "source_mtime": "2026-07-20T13:11:59+00:00"
           }
@@ -422,7 +428,7 @@
         "note": null
       },
       "margin_trend": {
-        "value": "EBITDA margin: Sep-30-2021 18% → Sep-30-2022 (R) 17% → Sep-30-2023 (R) 19% → Sep-30-2024 21% → Sep-30-2025 16% → Mar-31-2026 (LTM) 13%; gross margin: Sep-30-2021 31% → Sep-30-2022 (R) 31% → Sep-30-2023 (R) 32% → Sep-30-2024 35% → Sep-30-2025 33% → Mar-31-2026 (LTM) 30%; absolute EBITDA: Sep-30-2021 227 → Sep-30-2022 (R) 234 → Sep-30-2023 (R) 316 → Sep-30-2024 424 → Sep-30-2025 376 → Mar-31-2026 (LTM) 312; absolute revenue: Sep-30-2021 1,247 → Sep-30-2022 (R) 1,372 → Sep-30-2023 (R) 1,667 → Sep-30-2024 1,996 → Sep-30-2025 2,317 → Mar-31-2026 (LTM) 2,332  [R reclassified; margin % can fall while absolute EBITDA RISES — read them together]",
+        "value": "EBITDA margin: Sep-30-2017 (R) 16% → Sep-30-2018 18% → Sep-30-2019 23% → Sep-30-2020 19% → Sep-30-2021 18% → Sep-30-2022 (R) 17% → Sep-30-2023 (R) 19% → Sep-30-2024 21% → Sep-30-2025 16% → Mar-31-2026 (LTM) 13%; gross margin: Sep-30-2017 (R) 34% → Sep-30-2018 34% → Sep-30-2019 36% → Sep-30-2020 34% → Sep-30-2021 31% → Sep-30-2022 (R) 31% → Sep-30-2023 (R) 32% → Sep-30-2024 35% → Sep-30-2025 33% → Mar-31-2026 (LTM) 30%; absolute EBITDA: Sep-30-2017 (R) 117 → Sep-30-2018 146 → Sep-30-2019 194 → Sep-30-2020 191 → Sep-30-2021 227 → Sep-30-2022 (R) 234 → Sep-30-2023 (R) 316 → Sep-30-2024 424 → Sep-30-2025 376 → Mar-31-2026 (LTM) 312; absolute revenue: Sep-30-2017 (R) 713 → Sep-30-2018 828 → Sep-30-2019 854 → Sep-30-2020 988 → Sep-30-2021 1,247 → Sep-30-2022 (R) 1,372 → Sep-30-2023 (R) 1,667 → Sep-30-2024 1,996 → Sep-30-2025 2,317 → Mar-31-2026 (LTM) 2,332  [R reclassified; margin % can fall while absolute EBITDA RISES — read them together]",
         "source_ref": "CIQ Financials→Income Statement (margin % + absolute EBITDA reconciler)",
         "status": "present",
         "note": null
@@ -470,13 +476,25 @@
         "note": null
       },
       "multi_year_trajectory": {
-        "value": "Revenue: Sep-30-2021 1,247 → Sep-30-2022 (R) 1,372 → Sep-30-2023 (R) 1,667 → Sep-30-2024 1,996 → Sep-30-2025 2,317 → Mar-31-2026 (LTM) 2,332; EBITDA: Sep-30-2021 227 → Sep-30-2022 (R) 234 → Sep-30-2023 (R) 316 → Sep-30-2024 424 → Sep-30-2025 376 → Mar-31-2026 (LTM) 312; ROIC: Sep-30-2021 23.1% → Sep-30-2022 23.9% → Sep-30-2023 33.4% → Sep-30-2024 43.1% → Sep-30-2025 34.5% → Mar-31-2026 (LTM) 25.6%  [R reclassified; per-period values, never YoY'd across a basis]",
+        "value": "Revenue: Sep-30-2017 (R) 713 → Sep-30-2018 828 → Sep-30-2019 854 → Sep-30-2020 988 → Sep-30-2021 1,247 → Sep-30-2022 (R) 1,372 → Sep-30-2023 (R) 1,667 → Sep-30-2024 1,996 → Sep-30-2025 2,317 → Mar-31-2026 (LTM) 2,332; EBITDA: Sep-30-2017 (R) 117 → Sep-30-2018 146 → Sep-30-2019 194 → Sep-30-2020 191 → Sep-30-2021 227 → Sep-30-2022 (R) 234 → Sep-30-2023 (R) 316 → Sep-30-2024 424 → Sep-30-2025 376 → Mar-31-2026 (LTM) 312; ROIC: Sep-30-2018 16.0% → Sep-30-2019 22.5% → Sep-30-2020 20.0% → Sep-30-2021 23.1% → Sep-30-2022 23.9% → Sep-30-2023 33.4% → Sep-30-2024 43.1% → Sep-30-2025 34.5% → Mar-31-2026 (LTM) 25.6%  [R reclassified; per-period values, never YoY'd across a basis]",
         "source_ref": "CIQ Financials→Income Statement + Segments + Ratios (multi-year columns)",
         "status": "present",
         "note": null
       },
       "roic_trend": {
         "value": [
+          {
+            "period": "Sep-30-2018",
+            "value": 0.159972
+          },
+          {
+            "period": "Sep-30-2019",
+            "value": 0.225455
+          },
+          {
+            "period": "Sep-30-2020",
+            "value": 0.200284
+          },
           {
             "period": "Sep-30-2021",
             "value": 0.230937
@@ -797,7 +815,12 @@
           "events": [
             "2.02 Results of Operations and Financial Condition: Results of Operation and Financial Condition. On May 5, 2026, BellRing Brands, Inc. (the \"Company\") issued a press release announcing results for its second fiscal quarter ended March 31, 2026. A copy of the press release is attached hereto as Exhibit 99.1 and incorporated herein by reference. In addition, on May 5, 2026, the Company published to the \"Investor Relations\" section of its website, ww"
           ],
-          "drivers": null
+          "drivers": {
+            "value": "adj EBITDA 2026 $53.8M; $11.3M inventory-related charge; 2026 net sales outlook: $2,325.0–$2,365.0M; 2026 adjusted ebitda outlook: $315.0–$335.0M",
+            "source_ref": "8-K 0001628280-26-030115 EX-99.1",
+            "status": "present",
+            "note": null
+          }
         }
       ],
       "revised_guidance": {
@@ -815,14 +838,14 @@
         "note": null
       },
       "market_180d_return": {
-        "value": null,
-        "source_ref": null,
-        "status": "unknown",
-        "note": "IWM benchmark bars unavailable"
+        "value": 0.16995459527164547,
+        "source_ref": "EOD IWM 180d to 2026-07-06 (cap-band: $1.3B @ 2026-07-06 → small (<$4B) → IWM)",
+        "status": "present",
+        "note": null
       },
       "rel_vs_market": {
-        "value": -0.5634863318827867,
-        "source_ref": "EOD name−IWM 180d (screen data-record, G2)",
+        "value": -0.5864404954885652,
+        "source_ref": "EOD BRBR−IWM 180d to 2026-07-06 (assembly, cap-band)",
         "status": "present",
         "note": null
       },
@@ -837,7 +860,9 @@
         "source_ref": null,
         "status": "unknown",
         "note": "no graph cohort to compare — see rel_vs_market for the name-vs-market read"
-      }
+      },
+      "benchmark_symbol": "IWM",
+      "benchmark_basis": "cap-band: $1.3B @ 2026-07-06 → small (<$4B) → IWM"
     },
     "consensus_context": {
       "eps_trend": {
@@ -859,7 +884,7 @@
         "note": null
       },
       "surprise_history": {
-        "value": "GAAP-EPS surprise: FY2021 +0%, FY2022 -20%, FY2023 -5%, FY2024 -1%, FY2025 -8%; Revenue surprise: FY2021 -2%, FY2022 -2%, FY2023 +1%, FY2024 +1%, FY2025 +1% (GAAP-EPS basis; +beat / −miss)",
+        "value": "GAAP-EPS surprise: FY2019 +259%, FY2020 +13%, FY2021 +0%, FY2022 -20%, FY2023 -5%, FY2024 -1%, FY2025 -8%; Revenue surprise: FY2019 -0%, FY2020 +2%, FY2021 -2%, FY2022 -2%, FY2023 +1%, FY2024 +1%, FY2025 +1% (GAAP-EPS basis; +beat / −miss)",
         "source_ref": "CIQ Estimates→Surprise (annual)",
         "status": "present",
         "note": null
@@ -3709,8 +3734,8 @@
         "note": null
       },
       "short_interest": {
-        "value": "Short interest (FINRA, settle 2026-06-15): 11.9M → 15.8M sh (+33.1%, rising) · 13.6% of shares out (EDGAR XBRL) · DTC 2.9d · recent: 2026-06-15 15.8M · 2026-05-29 11.9M · 2026-05-15 12.4M · 2026-04-30 9.6M",
-        "source_ref": "FINRA consolidated short interest (settle 2026-06-15); DTC = 15,839,200 short ÷ 5,445,993 screen 90d ADV",
+        "value": "Short interest (FINRA, settle 2026-06-30): 15.8M → 17.7M sh (+11.8%, rising) · 15.2% of shares out (EDGAR XBRL) · DTC 3.1d · recent: 2026-06-30 17.7M · 2026-06-15 15.8M · 2026-05-29 11.9M · 2026-05-15 12.4M",
+        "source_ref": "FINRA consolidated short interest (settle 2026-06-30); DTC = 17,704,494 short ÷ 5,697,012 screen 90d ADV",
         "status": "present",
         "note": null
       }
@@ -3941,7 +3966,7 @@
         "note": null
       },
       "covenant_terms": {
-        "value": "COVENANT & MATURITY DIGEST (governing terms; verbatim quotes omitted):\n[Revolving Credit Facility · 0001772016-21-000029]\n  Principal / commitment amount: aggregate principal amount up to $636,200,000 (Schedule I: Total 2021 Refinancing…\n  Interest / coupon rate: in respect of Term B Loans, 3.00% per annum for Base Rate Loans and 4.00% per annum…",
+        "value": "COVENANT & MATURITY DIGEST (governing terms; verbatim quotes omitted):\n[Revolving Credit Facility · 0001772016-21-000029]\n  Principal / commitment amount: aggregate principal amount up to $636,200,000 (2021 Refinancing Term Loans);…\n  Interest / coupon rate: in respect of Term B Loans, 3.00% per annum for Base Rate Loans and 4.00% per annum…",
         "source_ref": "fenced Tier-2 digest (P1)",
         "status": "present",
         "note": null
@@ -3965,10 +3990,10 @@
           {
             "name": "Principal / commitment amount",
             "value": {
-              "value": "aggregate principal amount up to $636,200,000 (Schedule I: Total 2021 Refinancing Term Commitments $636,200,000)",
+              "value": "aggregate principal amount up to $636,200,000 (2021 Refinancing Term Loans); Schedule I 2021 Refinancing Term Commitments: Credit Suisse AG, Cayman Islands Branch $636,200,000; Total $636,200,000",
               "source_ref": "8-K 0001772016-21-000029 · ex10-1_amend2creditagmt.htm",
               "status": "present",
-              "note": "verbatim: “the Borrower requests that the 2021 Refinancing Term Lenders make Term Loans in an aggregate principal amount up to $636,200,000 on the Amendment No. 2 Effective Date (the “2021 Refinancing Term Loans”)”"
+              "note": "verbatim: “the Borrower requests that the 2021 Refinancing Term Lenders make Term Loans in an aggregate principal amount up to $636,200,000 on the Amendment No. 2 Effective Date (the “ 2021 Refinancing Term Loans ”)”"
             },
             "base_rate_label": null,
             "margin_pct": null,
@@ -3979,10 +4004,10 @@
           {
             "name": "Interest / coupon rate",
             "value": {
-              "value": "in respect of Term B Loans, 3.00% per annum for Base Rate Loans and 4.00% per annum for Eurodollar Rate Loans",
+              "value": "in respect of Term B Loans, 3.00% per annum for Base Rate Loans and 4.00% per annum for Eurodollar Rate Loans; Eurodollar Rate floor: in the case of Revolving Credit Loans, less than 1.00% per annum and in the case of Term Loans, less than 0.75% per annum",
               "source_ref": "8-K 0001772016-21-000029 · ex10-1_amend2creditagmt.htm",
               "status": "present",
-              "note": "verbatim: “Clause (a) of the defined term “Applicable Rate” ... amended and restated ... to read as follows: “(a) in respect of Term B Loans, 3.00% per annum for Base Rate Loans and 4.00% per annum for Eurodollar Rate Loans and””"
+              "note": "verbatim: “Clause (a) of the defined term “ Applicable Rate ” ... is hereby amended and restated in its entirety to read as follows: “(a) in respect of Term B Loans, 3.00% per annum for Base Rate Loans and 4.00% per annum for Eurodollar Rate Loans and””"
             },
             "base_rate_label": "Eurodollar Rate",
             "margin_pct": 4.0,
@@ -4021,10 +4046,10 @@
           {
             "name": "Security / collateral / guarantors",
             "value": {
-              "value": "2021 Refinancing Term Loans are secured by the Collateral Documents and guaranteed pursuant to the Loan Documents; each Loan Party reaffirms each Lien granted to the Administrative Agent for the benefit of the Secured Parties and the guaranties made pursuant to the Collateral Agreement. Guarantors executing: Dymatize Enterprises, LLC; Premier Nutrition Company, LLC; Supreme Protein, LLC; TA/DEI-A Acquisition Corp.",
+              "value": "Reaffirmation of Liens/security interests under Collateral Agreement; 2021 Refinancing Term Loans “are secured by the Collateral Documents, and are guaranteed pursuant to the Loan Documents.” Guarantor Loan Parties signing: DYMATIZE ENTERPRISES, LLC; PREMIER NUTRITION COMPANY, LLC; SUPREME PROTEIN, LLC; TA/DEI-A ACQUISITION CORP. (Borrower: BELLRING BRANDS, LLC)",
               "source_ref": "8-K 0001772016-21-000029 · ex10-1_amend2creditagmt.htm",
               "status": "present",
-              "note": "verbatim: “Each Loan Party hereby acknowledges and agrees that the 2021 Refinancing Term Loans incurred on the Amendment No. 2 Effective Date constitute Obligations and, without limiting the foregoing, are secured by the Collateral Documents, and are guaranteed pursuant to the Loan Documents.”"
+              "note": "verbatim: “Each Loan Party party hereto hereby (i) acknowledges and agrees that all of its pledges, grants of security interests and Liens and other obligations under the Collateral Agreement and the other Loan Documents to which it is a party are reaffirmed and remain in full force and effect ... (iii) acknowledges and agrees that the grants of security interests and Liens by, and the guaranties of, the Guarantors contained in the Collateral Agreement and the other Loan Documents are, and shall remain, in full force and effect on and after the Amendment No. 2 Effective Date.”"
             },
             "base_rate_label": null,
             "margin_pct": null,
@@ -4035,52 +4060,10 @@
           {
             "name": "Mandatory prepayment / events of default",
             "value": {
-              "value": "Repricing Event premium: within 6 months after Amendment No. 2 Effective Date, 1.00% of aggregate principal amount of Term B Loans repriced/refinanced or subject to amendment (Section 2.05(b)(ix)). Also, condition/representation of no Default or Event of Default; Event of Default and Default are defined terms carried from the Amended Credit Agreement but no specific events of default enumerated in this Amendment.",
+              "value": "Repricing Event premium: 1.00% of the aggregate principal amount of Term B Loans repriced/refinanced (clause (i)) or subject to amendment (clause (ii)) if occurring on or before 6 months after Amendment No. 2 Effective Date. Prepayment notice of Existing Term Loans given; conditions require no Default/Event of Default before or after funding. (Full events of default provisions not restated in this exhibit; governed by Amended Credit Agreement.)",
               "source_ref": "8-K 0001772016-21-000029 · ex10-1_amend2creditagmt.htm",
               "status": "present",
-              "note": "verbatim: “If on or before the date that is 6 months after the Amendment No. 2 Effective Date, there occurs any (i) prepayment or repayment of Term B Loans ... (any such transaction or event ..., a “Repricing Event”), then, simultaneously with the consummation of such Repricing Event, the Borrower shall pay ... an amount equal to 1.00% of the aggregate principal amount of the Term B Loans so repriced or refinanced”"
-            },
-            "base_rate_label": null,
-            "margin_pct": null,
-            "margin_bps": null,
-            "floor_pct": null,
-            "pik_pct": null
-          },
-          {
-            "name": "Prepayment notice of Existing Term Loans",
-            "value": {
-              "value": "notice of prepayment of the Existing Term Loans in the amount equal to the aggregate principal amount of the 2021 Refinancing Term Loans on the Amendment No. 2 Effective Date",
-              "source_ref": "8-K 0001772016-21-000029 · ex10-1_amend2creditagmt.htm",
-              "status": "present",
-              "note": "verbatim: “This Amendment constitutes notice by the Borrower to the Administrative Agent of prepayment of the Existing Term Loans in the amount equal to the aggregate principal amount of the 2021 Refinancing Term Loans on the Amendment No. 2 Effective Date”"
-            },
-            "base_rate_label": null,
-            "margin_pct": null,
-            "margin_bps": null,
-            "floor_pct": null,
-            "pik_pct": null
-          },
-          {
-            "name": "Revolving Credit Loan floor",
-            "value": {
-              "value": "Eurodollar Rate floor: Revolving Credit Loans 1.00% per annum; Term Loans 0.75% per annum",
-              "source_ref": "8-K 0001772016-21-000029 · ex10-1_amend2creditagmt.htm",
-              "status": "present",
-              "note": "verbatim: “at no time will the Eurodollar Rate be deemed to be (i) in the case of Revolving Credit Loans, less than 1.00% per annum and (ii) in the case of Term Loans, less than 0.75% per annum.”"
-            },
-            "base_rate_label": null,
-            "margin_pct": null,
-            "margin_bps": null,
-            "floor_pct": null,
-            "pik_pct": null
-          },
-          {
-            "name": "Governing law",
-            "value": {
-              "value": "State of New York",
-              "source_ref": "8-K 0001772016-21-000029 · ex10-1_amend2creditagmt.htm",
-              "status": "present",
-              "note": "verbatim: “THIS AMENDMENT ... SHALL BE GOVERNED BY, AND CONSTRUED IN ACCORDANCE WITH, THE LAW OF THE STATE OF NEW YORK.”"
+              "note": "verbatim: “If on or before the date that is 6 months after the Amendment No. 2 Effective Date, there occurs any (i) prepayment or repayment of Term B Loans ... bearing interest at an “effective” interest rate that is less than the “effective” interest rate applicable to the Term B Loans ... (any such transaction or event ..., a “ Repricing Event ”), then, simultaneously with the consummation of such Repricing Event, the Borrower shall pay ... an amount equal to 1.00% of the aggregate principal amount of the Term B Loans so repriced or refinanced”"
             },
             "base_rate_label": null,
             "margin_pct": null,
@@ -4179,6 +4162,62 @@
               "source_ref": null,
               "status": "unknown",
               "note": "not stated in 8-K 0001193125-19-270862 · d812149dex101.htm"
+            },
+            "base_rate_label": null,
+            "margin_pct": null,
+            "margin_bps": null,
+            "floor_pct": null,
+            "pik_pct": null
+          },
+          {
+            "name": "Redemption Right / mechanics (Nonvoting Common Units into Class A Common Stock)",
+            "value": {
+              "value": "Redemption Right: each Member (other than Pubco) may cause Company to redeem its Nonvoting Common Units, settled by Share Settlement or Cash Settlement at the Company's/Board's option; Share Settlement = a number of shares of Class A Common Stock equal to the number of Redeemed Units, subject to adjustment as set forth in Section 9.01(e); Cash Settlement = the Redeemed Units Equivalent",
+              "source_ref": "8-K 0001193125-19-270862 · d812149dex101.htm",
+              "status": "present",
+              "note": "verbatim: “Subject to the provisions set forth in this Section 9.01, each Member (other than Pubco) shall be entitled to cause the Company to redeem (a “ Redemption ”) its Nonvoting Common Units (the “ Redemption Right ”) at any time (subject to any applicable lock-up agreements). ... In exercising its Redemption Right, a Redeeming Member shall be entitled to receive the Share Settlement or the Cash Settlement; provided that the Company shall have the option (as determined by the Board) as provided in Section 9.02 and subject to Section 9.01(d) to select whether the redemption payment is made by means of a Share Settlement or a Cash Settlement.”"
+            },
+            "base_rate_label": null,
+            "margin_pct": null,
+            "margin_bps": null,
+            "floor_pct": null,
+            "pik_pct": null
+          },
+          {
+            "name": "Units issued / outstanding",
+            "value": {
+              "value": "97,474,180 Nonvoting Common Units reclassified (held by Holdings); 39,428,571 Nonvoting Common Units issued to Pubco; one Voting Common Unit issued to Pubco",
+              "source_ref": "8-K 0001193125-19-270862 · d812149dex101.htm",
+              "status": "present",
+              "note": "verbatim: “All limited liability company interests in the Company outstanding as of immediately prior to the Effective Time, all of which are held by Holdings, shall be reclassified into 97,474,180 Nonvoting Common Units, and the Company hereby issues 39,428,571 Nonvoting Common Units to Pubco”"
+            },
+            "base_rate_label": null,
+            "margin_pct": null,
+            "margin_bps": null,
+            "floor_pct": null,
+            "pik_pct": null
+          },
+          {
+            "name": "Governing law",
+            "value": {
+              "value": "State of Delaware",
+              "source_ref": "8-K 0001193125-19-270862 · d812149dex101.htm",
+              "status": "present",
+              "note": "verbatim: “This Agreement shall be governed by and construed in accordance with the laws of the State of Delaware, without regard to the conflicts of law rules of such State that would result in the application of the laws of any other State.”"
+            },
+            "base_rate_label": null,
+            "margin_pct": null,
+            "margin_bps": null,
+            "floor_pct": null,
+            "pik_pct": null
+          },
+          {
+            "name": "Term / existence",
+            "value": {
+              "value": "Perpetual existence unless dissolved per Article XI",
+              "source_ref": "8-K 0001193125-19-270862 · d812149dex101.htm",
+              "status": "present",
+              "note": "verbatim: “The Company shall have perpetual existence unless sooner dissolved and its affairs wound up as provided in Article XI.”"
             },
             "base_rate_label": null,
             "margin_pct": null,
@@ -4488,7 +4527,7 @@
               "values": []
             }
           ],
-          "note": "E = consensus (Estimates→Trends 'Current'), as-of ?; (R) = Reclassified basis",
+          "note": "E = consensus (Estimates→Trends 'Current'), as-of ≥2026-05-14; (R) = Reclassified basis",
           "is_estimate": [
             false,
             false,
@@ -4817,6 +4856,90 @@
     "primary_source": {
       "releases": [
         {
+          "source_ref": "8-K 0001628280-26-030115 EX-99.1",
+          "guidance": [
+            {
+              "metric": "net sales",
+              "period": "2026",
+              "low": 2325.0,
+              "high": 2365.0,
+              "qualitative": false,
+              "verbatim": "Updated fiscal year 2026 net sales outlook of $2.325-$2.365 billion",
+              "source_ref": "8-K 0001628280-26-030115 EX-99.1"
+            },
+            {
+              "metric": "adjusted ebitda",
+              "period": "2026",
+              "low": 315.0,
+              "high": 335.0,
+              "qualitative": false,
+              "verbatim": "Updated fiscal year 2026 net sales outlook of $2.325-$2.365 billion and Adjusted EBITDA* outlook of $315-$335 million",
+              "source_ref": "8-K 0001628280-26-030115 EX-99.1"
+            }
+          ],
+          "reconciliation": [
+            {
+              "metric": "adjusted ebitda",
+              "period": "2026",
+              "value": 53.8,
+              "verbatim": "Operating profit of $66.0 million, net earnings of $33.9 million and Adjusted EBITDA* of $53.8 million",
+              "source_ref": "8-K 0001628280-26-030115 EX-99.1"
+            }
+          ],
+          "one_offs": [
+            {
+              "amount": 11.3,
+              "description": "inventory-related charge associated with a third-party supplied ingredient that did not meet BellRing’s",
+              "verbatim": "In addition, gross profit and adjusted gross profit were impacted by an $11.3 million inventory-related charge associated with a third-party supplied ingredient that did not meet BellRing’s",
+              "source_ref": "8-K 0001628280-26-030115 EX-99.1"
+            }
+          ],
+          "event_impacts": [],
+          "qa_flags": []
+        },
+        {
+          "source_ref": "8-K 0001628280-26-004789 EX-99.1",
+          "guidance": [
+            {
+              "metric": "net sales",
+              "period": "2026",
+              "low": 2410.0,
+              "high": 2460.0,
+              "qualitative": false,
+              "verbatim": "Narrowed fiscal year 2026 net sales outlook of $2.41-$2.46 billion",
+              "source_ref": "8-K 0001628280-26-004789 EX-99.1"
+            },
+            {
+              "metric": "adjusted ebitda",
+              "period": "2026",
+              "low": 425.0,
+              "high": 440.0,
+              "qualitative": false,
+              "verbatim": "Narrowed fiscal year 2026 net sales outlook of $2.41-$2.46 billion and Adjusted EBITDA* outlook of $425-$440 million",
+              "source_ref": "8-K 0001628280-26-004789 EX-99.1"
+            }
+          ],
+          "reconciliation": [
+            {
+              "metric": "adjusted ebitda",
+              "period": "2026",
+              "value": 90.3,
+              "verbatim": "Operating profit of $78.5 million, net earnings of $43.7 million and Adjusted EBITDA* of $90.3 million",
+              "source_ref": "8-K 0001628280-26-004789 EX-99.1"
+            }
+          ],
+          "one_offs": [
+            {
+              "amount": 1.3,
+              "description": "office relocation and separation costs, both of which are discussed later in this release and were treated as adjustm",
+              "verbatim": "SG&A expenses in the first quarter of 2026 included $1.3 million of office relocation and separation costs, both of which are discussed later in this release and were treated as adjustm",
+              "source_ref": "8-K 0001628280-26-004789 EX-99.1"
+            }
+          ],
+          "event_impacts": [],
+          "qa_flags": []
+        },
+        {
           "source_ref": "8-K 0001628280-25-053329 EX-99.1",
           "guidance": [],
           "reconciliation": [],
@@ -4826,6 +4949,41 @@
             "no anchored pattern matched — guidance/outlook: 8-K 0001628280-25-053329 EX-99.1",
             "no anchored pattern matched — non-GAAP reconciliation: 8-K 0001628280-25-053329 EX-99.1"
           ]
+        },
+        {
+          "source_ref": "8-K 0001628280-25-052773 EX-99.1",
+          "guidance": [
+            {
+              "metric": "adjusted ebitda",
+              "period": "2026",
+              "low": 2410.0,
+              "high": 2490.0,
+              "qualitative": false,
+              "verbatim": "Fiscal year 2026 net sales and Adjusted EBITDA* expected to range between $2.41-$2.49 billion",
+              "source_ref": "8-K 0001628280-25-052773 EX-99.1"
+            },
+            {
+              "metric": "net sales",
+              "period": "next-fy",
+              "low": 18.0,
+              "high": 20.0,
+              "qualitative": false,
+              "verbatim": "Adjusted EBITDA as a percentage of net sales of 18% to 20",
+              "source_ref": "8-K 0001628280-25-052773 EX-99.1"
+            }
+          ],
+          "reconciliation": [
+            {
+              "metric": "adjusted ebitda",
+              "period": "2025",
+              "value": 117.4,
+              "verbatim": "Fourth quarter operating profit of $102.2 million, net earnings of $59.6 million and Adjusted EBITDA* of $117.4 million",
+              "source_ref": "8-K 0001628280-25-052773 EX-99.1"
+            }
+          ],
+          "one_offs": [],
+          "event_impacts": [],
+          "qa_flags": []
         }
       ],
       "filing": {
@@ -4869,7 +5027,9 @@
         "status": "present",
         "note": null
       },
-      "qa_flags": []
+      "qa_flags": [
+        "primary-source: 8-K 0001628280-26-045287 carries 8.01 but no EX-99.1 exhibit was found"
+      ]
     },
     "management_commentary": {
       "value": "2 earnings-call transcript(s) on file — read in full for management posture: BellRing Brands, Inc., Q1 2026 Earnings Call, Feb 03, 2026.rtf; BellRing Brands, Inc., Q2 2026 Earnings Call, May 05, 2026.rtf (pointer only; the synthesis cites them, the machine does not curate an excerpt)",
@@ -4878,7 +5038,7 @@
       "note": null
     },
     "key_ratios": {
-      "value": "RoCE 25.6%; RoA 18.5%; current ratio 2.52; dividend: none (latest)",
+      "value": "RoE 61.5%; RoCE 25.6%; RoA 18.5%; current ratio 2.52; dividend: none (latest)",
       "source_ref": "CIQ Financials→Ratios (latest period)",
       "status": "present",
       "note": null
@@ -4886,6 +5046,10 @@
     "return_ratios": {
       "value": {
         "columns": [
+          "FY17",
+          "FY18",
+          "FY19",
+          "FY20",
           "FY21",
           "FY22",
           "FY23",
@@ -4895,8 +5059,39 @@
         ],
         "rows": [
           {
+            "label": "RoE %",
+            "cells": [
+              "—",
+              "20.5%",
+              "26.2%",
+              "61.5%",
+              "—",
+              "—",
+              "—",
+              "—",
+              "—",
+              "—"
+            ],
+            "values": [
+              null,
+              0.205319,
+              0.262445,
+              0.615242,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
             "label": "RoCE %",
             "cells": [
+              "—",
+              "16.0%",
+              "22.5%",
+              "20.0%",
               "23.1%",
               "23.9%",
               "33.4%",
@@ -4905,6 +5100,10 @@
               "25.6%"
             ],
             "values": [
+              null,
+              0.159972,
+              0.225455,
+              0.200284,
               0.230937,
               0.239081,
               0.333544,
@@ -4916,6 +5115,10 @@
           {
             "label": "RoA %",
             "cells": [
+              "—",
+              "13.1%",
+              "18.3%",
+              "16.6%",
               "18.8%",
               "18.9%",
               "26.3%",
@@ -4924,6 +5127,10 @@
               "18.5%"
             ],
             "values": [
+              null,
+              0.130946,
+              0.183132,
+              0.166165,
               0.187777,
               0.189142,
               0.263082,
@@ -4935,6 +5142,10 @@
           {
             "label": "Current ratio",
             "cells": [
+              "2.16x",
+              "1.74x",
+              "2.37x",
+              "1.90x",
               "1.54x",
               "2.94x",
               "2.82x",
@@ -4952,6 +5163,10 @@
               "none",
               "none",
               "none",
+              "none",
+              "none",
+              "none",
+              "none",
               "none"
             ],
             "values": []
@@ -4959,6 +5174,10 @@
         ],
         "note": "",
         "is_estimate": [
+          false,
+          false,
+          false,
+          false,
           false,
           false,
           false,
@@ -4973,7 +5192,7 @@
     },
     "stock_info": {
       "price": {
-        "value": 13.18,
+        "value": 12.66,
         "source_ref": "EOD BRBR last close",
         "status": "present",
         "note": null
@@ -5008,7 +5227,7 @@
         "status": "present",
         "note": null
       },
-      "as_of": "2026-07-08"
+      "as_of": "2026-07-21"
     },
     "stock_performance": {
       "points": [
@@ -5340,81 +5559,343 @@
       "name_return": -0.7651885474860336,
       "benchmark_return": 0.360305829882128,
       "source_ref": "EOD BRBR vs IWM rebased to 100, 2025-07-07..2026-07-06"
+    },
+    "operating_drivers": {
+      "rows": [
+        {
+          "kind": "pricing_action",
+          "metric": "pricing action",
+          "period": null,
+          "value": "price increases",
+          "value_num": null,
+          "unit": null,
+          "verbatim": "Net sales benefited from higher average net selling prices, with volumes impacted by elasticities due to inflation-driven price increases",
+          "source_ref": "8-K 0001628280-26-030115 EX-99.1",
+          "tier": "anchored"
+        },
+        {
+          "kind": "pricing_action",
+          "metric": "pricing action",
+          "period": "fiscal 2026",
+          "value": "pricing actions",
+          "value_num": null,
+          "unit": null,
+          "verbatim": "In addition, international benefitted from an estimated timing shift of $8 million in net sales purchased ahead of pricing actions",
+          "source_ref": "8-K 0001628280-25-052773 EX-99.1",
+          "tier": "anchored"
+        },
+        {
+          "kind": "attribution",
+          "metric": "operating profit",
+          "period": "three months ended March 31, 2026",
+          "value": "$29.1 million, or 31%",
+          "value_num": -31.0,
+          "unit": "%",
+          "verbatim": "Operating Profit Operating pro fit decreased $29.1 million, or 31%, d uring the three months ended March 31, 2026, compared to the prior year period. This decrease w as primarily driven by lower average net selling prices on Premier Protein products, as previously discussed, higher net product costs of $9.7 million, and increased advertis",
+          "source_ref": "10-Q 0001772016-26-000012",
+          "tier": "anchored"
+        },
+        {
+          "kind": "attribution",
+          "metric": "operating profit",
+          "period": "six months ended March 31, 2026",
+          "value": "$65.9 million, or 31%",
+          "value_num": -31.0,
+          "unit": "%",
+          "verbatim": "Operating pro fit decreased $65.9 million, or 31%, d uring the six months ended March 31, 2026 compared to the prior year period. This decrease w as primarily driven by higher net product costs of $45.7 million, lower average net selling prices, as previously discussed, and increased advertising expenses of $6.0 million.",
+          "source_ref": "10-Q 0001772016-26-000012",
+          "tier": "anchored"
+        },
+        {
+          "kind": "event",
+          "metric": "Corporate Guidance - New/Confirmed",
+          "period": "May-05-2026",
+          "value": "BellRing Brands, Inc. Revises Earnings Guidance for the Year 2026",
+          "value_num": null,
+          "unit": null,
+          "verbatim": "Situation: BellRing Brands, Inc. revised earnings guidance for the year 2026. For the year, the company expects net sales of $2.325 billion - $2.365 billion. Net Sales Growth of 0% to 2%.",
+          "source_ref": "CIQ Key Developments: BellRing Brands Inc NYSE BRBR Key Developments.rtf · May-05-2026",
+          "tier": "anchored"
+        },
+        {
+          "kind": "event",
+          "metric": "Corporate Guidance - New/Confirmed",
+          "period": "Feb-03-2026",
+          "value": "Bellring Brands, Inc. Narrows Earnings Guidance for the Fiscal Year 2026",
+          "value_num": null,
+          "unit": null,
+          "verbatim": "Situation: BellRing Brands, Inc. narrowed earnings guidance for the fiscal year 2026. For the period, the company narrowed its previously issued guidance and now expects Net Sales $2.41 billion to $2.46 billion, Net Sales Growth of 4% to 6%.",
+          "source_ref": "CIQ Key Developments: BellRing Brands Inc NYSE BRBR Key Developments.rtf · Feb-03-2026",
+          "tier": "anchored"
+        },
+        {
+          "kind": "event",
+          "metric": "Product-Related Announcement",
+          "period": "Jan-07-2026",
+          "value": "Premier Protein in Partnership with Hometown Food Company, LLC Introduces Two New Way to Enjoy Additional Protein Throughout Your Day",
+          "value_num": null,
+          "unit": null,
+          "verbatim": "Situation: Premier Protein®, in partnership with Hometown Food Company, is introducing two new ways to enjoy extra protein throughout your day: Premier Protein® Muffin MixesandMicrowavable Muffin Cups. Available in Blueberry and Chocolate Chip, the new lineup delivers 13 to 15 grams of protein per s",
+          "source_ref": "CIQ Key Developments: BellRing Brands Inc NYSE BRBR Key Developments.rtf · Jan-07-2026",
+          "tier": "anchored"
+        },
+        {
+          "kind": "event",
+          "metric": "Corporate Guidance - New/Confirmed",
+          "period": "Nov-18-2025",
+          "value": "Bellring Brands, Inc. Provides Earnings Guidance for the Fiscal Year 2026",
+          "value_num": null,
+          "unit": null,
+          "verbatim": "Situation: BellRing Brands, Inc. provides earnings guidance for the fiscal year 2026. For the period, the company expects Net Sales of $2.41 billion - $2.49 billion, Net Sales Growth 4% to 8%.",
+          "source_ref": "CIQ Key Developments: BellRing Brands Inc NYSE BRBR Key Developments.rtf · Nov-18-2025",
+          "tier": "anchored"
+        },
+        {
+          "kind": "event",
+          "metric": "Product-Related Announcement",
+          "period": "Oct-20-2025",
+          "value": "Dymatize Launches New Creatine Monohydrate with Creapure®?",
+          "value_num": null,
+          "unit": null,
+          "verbatim": "Situation: Dymatize is now making high-quality creatine accessible to both athletes and wellness enthusiasts alike with their new Creatine Monohydrate with Creapure®?. Each scoop of Dymatize's new Creatine Monohydrate packs 5g of high-quality Creapure®?, known for its ability to fuel both muscle and",
+          "source_ref": "CIQ Key Developments: BellRing Brands Inc NYSE BRBR Key Developments.rtf · Oct-20-2025",
+          "tier": "anchored"
+        },
+        {
+          "kind": "event",
+          "metric": "Corporate Guidance - New/Confirmed",
+          "period": "Aug-04-2025",
+          "value": "BellRing Brands, Inc. Narrows Earnings Guidance for the Fiscal Year 2025",
+          "value_num": null,
+          "unit": null,
+          "verbatim": "Situation: BellRing Brands, Inc. narrowed earnings guidance for the fiscal year 2025. For the year, the company has narrowed its outlook for net sales to range between $2.28 billion - $2.32 billion.",
+          "source_ref": "CIQ Key Developments: BellRing Brands Inc NYSE BRBR Key Developments.rtf · Aug-04-2025",
+          "tier": "anchored"
+        },
+        {
+          "kind": "competitive_position",
+          "metric": "market share",
+          "period": "Q1 2026",
+          "value": "22% market share",
+          "value_num": null,
+          "unit": null,
+          "verbatim": "The RTD shake category remains healthy, and Premier continues to hold a leadership position with 22% market share and best-in-class household penetration, brand equity scores and repeat rates.",
+          "source_ref": "CIQ transcript: BellRing Brands, Inc., Q1 2026 Earnings Call, Feb 03, 2026.rtf",
+          "tier": "llm-fenced"
+        },
+        {
+          "kind": "leading_indicator",
+          "metric": "all-channel consumption growth (January)",
+          "period": "January 2026",
+          "value": "up 6% in all channels and 16% excluding club",
+          "value_num": null,
+          "unit": null,
+          "verbatim": "We were encouraged by the growth in consumption during January, up 6% in all channels and 16% excluding club.",
+          "source_ref": "CIQ transcript: BellRing Brands, Inc., Q1 2026 Earnings Call, Feb 03, 2026.rtf",
+          "tier": "llm-fenced"
+        },
+        {
+          "kind": "leading_indicator",
+          "metric": "wellness category growth",
+          "period": "Q1 2026",
+          "value": "grew 7%",
+          "value_num": null,
+          "unit": null,
+          "verbatim": "The wellness category grew 7% in Q1 and RTD shakes also up 7%, with growth driven by volume.",
+          "source_ref": "CIQ transcript: BellRing Brands, Inc., Q1 2026 Earnings Call, Feb 03, 2026.rtf",
+          "tier": "llm-fenced"
+        },
+        {
+          "kind": "leading_indicator",
+          "metric": "RTD shakes category growth",
+          "period": "Q1 2026",
+          "value": "up 7%",
+          "value_num": null,
+          "unit": null,
+          "verbatim": "The wellness category grew 7% in Q1 and RTD shakes also up 7%, with growth driven by volume.",
+          "source_ref": "CIQ transcript: BellRing Brands, Inc., Q1 2026 Earnings Call, Feb 03, 2026.rtf",
+          "tier": "llm-fenced"
+        },
+        {
+          "kind": "leading_indicator",
+          "metric": "Premier RTD shake consumption",
+          "period": "Q1 2026",
+          "value": "down 2%",
+          "value_num": null,
+          "unit": null,
+          "verbatim": "Premier RTD shake consumption was down 2% in the quarter, lapping 23% consumption growth in the first quarter of '25, which included very strong club consumption with the smallest number of new brand entrants in a nonrecurring promotion.",
+          "source_ref": "CIQ transcript: BellRing Brands, Inc., Q1 2026 Earnings Call, Feb 03, 2026.rtf",
+          "tier": "llm-fenced"
+        },
+        {
+          "kind": "leading_indicator",
+          "metric": "consumption outside of club",
+          "period": "Q1 2026",
+          "value": "up 11%",
+          "value_num": null,
+          "unit": null,
+          "verbatim": "Consumption outside of club was strong, up 11% in the quarter.",
+          "source_ref": "CIQ transcript: BellRing Brands, Inc., Q1 2026 Earnings Call, Feb 03, 2026.rtf",
+          "tier": "llm-fenced"
+        },
+        {
+          "kind": "leading_indicator",
+          "metric": "total net sales",
+          "period": "Q1 2026",
+          "value": "increased 1%",
+          "value_num": null,
+          "unit": null,
+          "verbatim": "First quarter net sales increased 1% with Premier net sales down 1% and Dymatize net sales up 16% on strong international growth.",
+          "source_ref": "CIQ transcript: BellRing Brands, Inc., Q1 2026 Earnings Call, Feb 03, 2026.rtf",
+          "tier": "llm-fenced"
+        },
+        {
+          "kind": "leading_indicator",
+          "metric": "Premier net sales",
+          "period": "Q1 2026",
+          "value": "down 1%",
+          "value_num": null,
+          "unit": null,
+          "verbatim": "First quarter net sales increased 1% with Premier net sales down 1% and Dymatize net sales up 16% on strong international growth.",
+          "source_ref": "CIQ transcript: BellRing Brands, Inc., Q1 2026 Earnings Call, Feb 03, 2026.rtf",
+          "tier": "llm-fenced"
+        },
+        {
+          "kind": "leading_indicator",
+          "metric": "Dymatize net sales",
+          "period": "Q1 2026",
+          "value": "up 16%",
+          "value_num": null,
+          "unit": null,
+          "verbatim": "First quarter net sales increased 1% with Premier net sales down 1% and Dymatize net sales up 16% on strong international growth.",
+          "source_ref": "CIQ transcript: BellRing Brands, Inc., Q1 2026 Earnings Call, Feb 03, 2026.rtf",
+          "tier": "llm-fenced"
+        },
+        {
+          "kind": "leading_indicator",
+          "metric": "single bottle sales",
+          "period": "January 2026",
+          "value": "more than doubled",
+          "value_num": null,
+          "unit": null,
+          "verbatim": "In particular, our sales of single bottles have more than doubled in January, effectively increasing trial.",
+          "source_ref": "CIQ transcript: BellRing Brands, Inc., Q1 2026 Earnings Call, Feb 03, 2026.rtf",
+          "tier": "llm-fenced"
+        },
+        {
+          "kind": "leading_indicator",
+          "metric": "total net sales",
+          "period": "Q1 2026",
+          "value": "$537 million, up 1%",
+          "value_num": null,
+          "unit": null,
+          "verbatim": "Total BellRing net sales for the quarter were $537 million, up 1% over a year.",
+          "source_ref": "CIQ transcript: BellRing Brands, Inc., Q1 2026 Earnings Call, Feb 03, 2026.rtf",
+          "tier": "llm-fenced"
+        },
+        {
+          "kind": "leading_indicator",
+          "metric": "Premier Protein net sales",
+          "period": "Q1 2026",
+          "value": "down 1%",
+          "value_num": null,
+          "unit": null,
+          "verbatim": "Premier Protein net sales were down 1% with RTD shake net sales down 2%.",
+          "source_ref": "CIQ transcript: BellRing Brands, Inc., Q1 2026 Earnings Call, Feb 03, 2026.rtf",
+          "tier": "llm-fenced"
+        }
+      ],
+      "qa_flags": []
     }
   },
   "synthesis": {
-    "evidence_balance": "strongly-bearish — a broad, sustained FY26 earnings reset (EBITDA -41%) atop elevated leverage and a largely earned peer discount.",
+    "evidence_balance": "strongly-bearish — a ~41% EBITDA reset with management-confirmed structural pricing/cost pressure and negative modelled long-term growth outweighs the intact volume/category story.",
     "bull_points": [
       {
-        "claim": "On the consensus comp read the name screens cheap on earnings — P/E 8.8x vs peer median 19.3x (-54%) — but the peer set is HETEROGENEOUS (caps span $111M–$36.4B, 327x) so this is a confidence-gated input, not a clean benchmark; the human must judge whether the discount is EARNED or RESIDUAL.",
-        "source_ref": "CIQ Comparable Analysis→Trading Multiples (name vs peer Median)",
+        "claim": "The de-rate is a discrete, mechanism-identified reset, not a slow bleed: two dated gap-downs (2026-02-03, 2026-05-05) around the FQ2 print, so the fall attaches to specific events rather than terminal decay.",
+        "source_ref": "EDGAR 8-K item codes at the gap-down dates (not blanket-labelled earnings)",
         "cited": true
       },
       {
-        "claim": "On the trailing-vs-forward peer spread the name sits BELOW peers on both LTM (7.9x vs 6.2x median is a premium on EBITDA, but P/E -54%) and NTM TEV/EBITDA (7.78x vs peer median 8.7x) and NTM P/E (8.78x vs peer median 10.97x) — posing whether the earnings discount is a residual overshoot rather than fully earned.",
-        "source_ref": "CIQ Comparable Analysis→Trading Multiples (name row + Summary Statistics Low/Median/Mean/High)",
-        "cited": true
-      },
-      {
-        "claim": "The business is self-funding on an LTM basis — LTM Levered FCF +$182.7M and FCF sign positive — supporting solvency rather than terminal distress.",
-        "source_ref": "CIQ Financials→Cash Flow 'Levered Free Cash Flow' [LTM 12 months Mar-31-2026]",
-        "cited": true
-      },
-      {
-        "claim": "Absolute EBITDA has grown structurally over the cycle (227 → 234 → 316 → 424 in FY24, now 312 LTM) and revenue has compounded from 1,247 to 2,332, so the recent margin-% compression sits on a far larger absolute base than 2021 — a % can fall while the dollar base is materially higher.",
+        "claim": "Absolute EBITDA rose across the multi-year arc even as the margin % fell — EBITDA went 117→424 (FY24) before easing to 312 LTM while revenue kept climbing to 2,332, so the recent margin compression is a step-down off a peak, not a collapse of the earnings base.",
         "source_ref": "CIQ Financials→Income Statement (margin % + absolute EBITDA reconciler)",
         "cited": true
       },
       {
-        "claim": "Management has a clean guidance-delivery record — EBITDA actual ≥ guided floor 7/7 resolved and revenue ≥ floor 9/11, most recent FY2025 MET — arguing the reset guide (EBITDA 315–335) is credible rather than a first of serial cuts.",
-        "source_ref": "CIQ Estimates→Guidance (latest guide + sign-aware delivery track-record)",
+        "claim": "The underlying category and franchise remain intact per management: RTD shakes grew ~8% and Premier held a 22% share leadership position, so the top line is being pressured by promotional mix, not lost demand.",
+        "source_ref": "CIQ transcript: BellRing Brands, Inc., Q1 2026 Earnings Call, Feb 03, 2026.rtf",
         "cited": true
       },
       {
-        "claim": "The company is buying back stock (129.2M → 116.3M shares, -10.0% over ~1.7y) and interest coverage is 4.0x, consistent with a self-funding capital posture.",
+        "claim": "Volume is actually growing under the price weakness — Premier shake volumes rose 12% in Q2 with the sales shortfall coming from a 9% unfavorable price/mix, indicating a pricing/promotion problem rather than a demand-destruction problem.",
+        "source_ref": "10-Q 0001772016-26-000012",
+        "cited": true
+      },
+      {
+        "claim": "The business self-funds on a full-year basis: FCF is positive at $182.7M LTM with interest coverage of ~4.0x, so leverage is serviceable while the margin issue is worked through.",
+        "source_ref": "CIQ Financials→Cash Flow 'Levered Free Cash Flow' [LTM 12 months Mar-31-2026]",
+        "cited": true
+      },
+      {
+        "claim": "Management is buying back stock through the decline — shares fell ~10% from 129.2M to 116.3M over ~1.7 years — consistent with a view that the drop is an overshoot.",
         "source_ref": "EDGAR XBRL shares, trailing 2024-07-31..2026-04-28",
+        "cited": true
+      },
+      {
+        "claim": "On the forward basis the name's NTM TEV/EBITDA of 7.78x sits BELOW the peer median 8.7x, posing whether some of the discount is residual overshoot rather than fully earned — but this peer set is heterogeneous (caps $111M–$36.4B) so it is a confidence-gated input, not a clean benchmark.",
+        "source_ref": "CIQ Comparable Analysis→Trading Multiples (name row + Summary Statistics Low/Median/Mean/High)",
         "cited": true
       }
     ],
     "bear_points": [
       {
-        "claim": "Forward consensus has collapsed across the board — FY26 EBITDA cut -41% (536.4 → 318.6), EPS Normalized -51% (2.53 → 1.25), revenue -9% (12m → latest) — so the low trailing multiple is partly the market pricing a genuine earnings reset, not purely optical cheapness.",
+        "claim": "Consensus FY26 EBITDA was cut ~41% (536.4→318.6) and normalized EPS ~51% (2.53→1.25) over the estimate path — this is a fundamental earnings-power reset, not an optical multiple artifact, and the trailing 8.2x EV/EBITDA sitting at its own 4%ile is a floor-vs-terminal question the trailing metric cannot answer on its own.",
         "source_ref": "CIQ Estimates→Trends (current-FY consensus path; ragged, absent lookbacks n/a)",
         "cited": true
       },
       {
-        "claim": "The EBITDA-margin % decline is NOT merely optical: absolute EBITDA has also fallen from the FY24 peak (424 → 376 FY25 → 312 LTM) alongside margin compressing 21% → 16% → 13%, so both the ratio AND the dollar base are shrinking off the peak — this is the REAL signal on the recent leg, not a % artifact.",
-        "source_ref": "CIQ Financials→Income Statement (margin % + absolute EBITDA reconciler)",
+        "claim": "The margin decline is REAL, not an optical %-vs-absolute misread: absolute EBITDA fell from a 424 peak (FY24) to 312 LTM while the margin compressed to 13%, and management attributes it to structural competitive/cost pressure (negative mix, freight, protein-input inflation) expected to persist through the back half.",
+        "source_ref": "CIQ transcript: BellRing Brands, Inc., Q2 2026 Earnings Call, May 05, 2026.rtf",
+        "cited": false
+      },
+      {
+        "claim": "The core pricing lever is broken by competition: 27% of RTD-shake category volume sold on promotion (+8pts YoY) and the first decline in buy-rate in 5 years, driving a 9% unfavorable price/mix — the mechanism behind falling profitability and a threat to durable margins.",
+        "source_ref": "10-Q 0001772016-26-000012",
         "cited": true
       },
       {
-        "claim": "On the fundamental_deltas the peer discount looks substantially EARNED — name EBITDA margin 13% vs peer 16%, EBITDA growth -31% vs peer -6%, Debt/EBITDA 3.9 vs peer 2.5, LT EPS growth -7% vs peer +7% — worse on margin, growth and leverage points toward value-trap risk, not clean overshoot.",
+        "claim": "Leverage is elevated versus peers on an earned basis — net-debt/EBITDA 3.8x (total-debt 3.9x vs peer median 2.5x) against a shrinking EBITDA base and NEGATIVE book equity (-$498M) — the discount is at least partly earned.",
+        "source_ref": "CIQ Comparable Analysis→Operating Statistics (LTM Total Debt/EBITDA) · as-of 2026-06-24",
+        "cited": true
+      },
+      {
+        "claim": "Fundamentals justify much of the peer discount: name EBITDA growth -31% vs peer-median -6%, LT EPS growth -7% vs +7%, EBITDA margin 13% vs 16%, and Debt/EBITDA 3.9 vs 2.5 — worse on nearly every axis, pointing toward an EARNED value-trap read rather than a clean overshoot.",
         "source_ref": "CIQ Comparable Analysis→Operating Statistics (name vs peer median: growth/margin/leverage/beta)",
         "cited": true
       },
       {
-        "claim": "Leverage is elevated at net-debt/EBITDA 3.8x (and total-debt/EBITDA 3.9x vs peer median 2.5x), with equity book value negative (-$4.28/sh), so a further EBITDA leg down tightens the credit picture materially.",
-        "source_ref": "CIQ Net Debt $1,190M [FQ2/CQ1 Mar-31-2026] ÷ CIQ EBITDA $312M [LTM 12 months Mar-31-2026]",
+        "claim": "The revision breadth is uniformly negative — next-two-quarter EBITDA/EBIT/revenue estimates show 0 up / ~10-13 down at the 2m/3m marks — analysts are cutting in one direction, consistent with deteriorating fundamentals not a transient dip.",
+        "source_ref": "CIQ Estimates→Revisions (next-2-FQ breadth; 1m/2m/3m Upward/Downward)",
         "cited": true
       },
       {
-        "claim": "Sell-side conviction has broken — recommendation now Hold (3.00), consensus target mean $13.69 barely above the $13.18 price, LT growth mean -7.2%, with brokers cutting targets from as high as $34/$35 to $10–$13.",
+        "claim": "Consensus posture has turned defensive: target-price mean $13.69 / median $13.00 and LT growth mean -7.2% — the Street is modelling negative long-term growth, the signature of a terminal-decline framing.",
         "source_ref": "CIQ Estimates→Consensus",
         "cited": true
       },
       {
-        "claim": "Short interest is rising sharply — 11.9M → 15.8M shares (+33.1%), 13.6% of shares outstanding — signalling growing bearish positioning into the reset.",
-        "source_ref": "FINRA consolidated short interest (settle 2026-06-15); DTC = 15,839,200 short ÷ 5,445,993 screen 90d ADV",
+        "claim": "Short interest is high and rising — 17.7M shares (15.2% of float), up ~11.8% into the June settle — positioning leans against a recovery.",
+        "source_ref": "FINRA consolidated short interest (settle 2026-06-30); DTC = 17,704,494 short ÷ 5,697,012 screen 90d ADV",
         "cited": true
       },
       {
-        "claim": "The drawdown is idiosyncratic and severe — the name is down 41.6% over 180d and -56.3% relative to market — with the decisive gap-down tied to the May-05 earnings release (8-K item 2.02), not a shared sector move.",
-        "source_ref": "EOD name−IWM 180d (screen data-record, G2)",
+        "claim": "The name idiosyncratically underperformed its cap-band benchmark by ~59% over 180d (BRBR -41.6% vs IWM +17.0%), so the drawdown is name-specific rather than a shared sector move.",
+        "source_ref": "EOD BRBR−IWM 180d to 2026-07-06 (assembly, cap-band)",
         "cited": true
       },
       {
-        "claim": "The gap-down driver is confirmed as the Q2 earnings print rather than a transient non-narrative item.",
-        "source_ref": "EDGAR 8-K item codes at the gap-down dates (not blanket-labelled earnings)",
+        "claim": "A CEO transition compounds the reset — Davenport announced retirement effective on/before FY-end with an external search underway — execution/leadership uncertainty during a competitive inflection.",
+        "source_ref": "CIQ transcript: BellRing Brands, Inc., Q1 2026 Earnings Call, Feb 03, 2026.rtf",
         "cited": true
       }
     ],
@@ -5422,85 +5903,113 @@
       {
         "name": "The Simply Good Foods Company",
         "outcome": "recovered",
-        "distinguishing_fact": "Nearest in-roster analogue — a similarly-sized single-category active-nutrition/protein brand that de-rated on a growth/margin scare and re-rated once volume held; the pattern to test is whether BRBR's demand is intact or structurally impaired.",
+        "distinguishing_fact": "In-roster single-category nutrition/protein peer that faced category-competition and margin scrutiny yet kept a self-funding cash profile — the analogue for a brand-led snack/nutrition player working through a promotional-intensity squeeze without balance-sheet distress.",
+        "source": "CIQ Comparable Analysis→Financial Data + Business Description (roster + caps + business)"
+      },
+      {
+        "name": "The Campbell's Company",
+        "outcome": "went terminal",
+        "distinguishing_fact": "In-roster packaged-food peer carrying elevated leverage against low-single-digit or negative volume/organic growth — the analogue for a levered staples name whose discount proved earned as pricing power eroded rather than a mean-reverting overshoot.",
         "source": "CIQ Comparable Analysis→Financial Data + Business Description (roster + caps + business)"
       },
       {
         "name": "Herbalife Ltd.",
         "outcome": "went terminal",
-        "distinguishing_fact": "In-roster nutrition peer carrying elevated leverage and negative/declining equity value where the low multiple proved a value trap as the debt load, not the discount, drove the equity story — the leverage-overhang cautionary pattern.",
+        "distinguishing_fact": "In-roster wellness-products peer that trades at a very low multiple with high leverage and a persistently discounted tape — the analogue for a low-multiple, levered nutrition name where cheapness reflected structural doubt, not a temporary dislocation.",
         "source": "CIQ Comparable Analysis→Financial Data + Business Description (roster + caps + business)"
       },
       {
-        "name": "The Campbell's Company",
+        "name": "Freshpet",
         "outcome": "recovered",
-        "distinguishing_fact": "In-roster packaged-food name that traded at a depressed multiple through a margin trough and mean-reverted as gross-margin normalized — the earned-discount-that-later-faded pattern.",
-        "source": "CIQ Comparable Analysis→Financial Data + Business Description (roster + caps + business)"
-      },
-      {
-        "name": "Medifast",
-        "outcome": "went terminal",
-        "distinguishing_fact": "Single-brand consumer-nutrition franchise where a rapid demand deceleration turned an optically cheap stock into a durable de-rate — the concentration-plus-demand-cliff pattern to rule out here.",
+        "distinguishing_fact": "Single-category consumer-brand grower that saw a sharp de-rate on margin/cost concerns while category demand and volumes kept expanding, then re-rated as the cost issue proved transitory — analogue for a volume-growing brand whose margin dip was cyclical.",
         "source": "[LLM-suggested, unverified]"
       },
       {
-        "name": "WW International",
+        "name": "Beyond Meat",
         "outcome": "went terminal",
-        "distinguishing_fact": "High-leverage single-category wellness name whose FCF could not outrun a structural revenue erosion — the pattern where self-funding today is insufficient if the top line is secularly impaired.",
+        "distinguishing_fact": "Protein-adjacent brand where a category slowed and insurgent/private-label competition permanently compressed pricing power and share, turning an apparent value into a value trap — the analogue for competitive intensity structurally impairing a once-dominant brand.",
         "source": "[LLM-suggested, unverified]"
       }
     ],
     "decisive_question": {
-      "question": "Is the sharp FY26 earnings reset a one-time margin/demand air-pocket that stabilizes near the reset guide (overshoot), or the first leg of a structural erosion in this single protein-based franchise (value trap)?",
+      "question": "Is the FY26 margin/EBITDA reset a cyclical trough driven by transient input-cost inflation and a promotional war that moderates — or a permanent impairment of Premier's pricing power as insurgent brands and a value-focused consumer structurally reset category economics?",
       "evidence_for": [
         {
-          "claim": "The reset guide has a perfect delivery record backing it — EBITDA actual ≥ floor 7/7, most recent FY2025 MET — suggesting 315–335 may hold rather than fall further.",
-          "source_ref": "CIQ Estimates→Guidance (latest guide + sign-aware delivery track-record)",
+          "claim": "Volume is still growing strongly (Premier shake volumes +12% in Q2) with the miss concentrated in price/mix and one-off charges — consistent with a recoverable pricing/cost problem over intact demand.",
+          "source_ref": "10-Q 0001772016-26-000012",
           "cited": true
         },
         {
-          "claim": "LTM FCF is positive at $182.7M and revenue is still growing (6% vs peer 4%), consistent with a demand base that is decelerating, not collapsing.",
-          "source_ref": "CIQ Comparable Analysis→Operating Statistics (name vs peer median: growth/margin/leverage/beta)",
+          "claim": "The category itself is healthy (RTD shakes up ~8%, Premier at 22% share leadership), and management frames competitive intensity as expected to gradually moderate.",
+          "source_ref": "CIQ transcript: BellRing Brands, Inc., Q1 2026 Earnings Call, Feb 03, 2026.rtf",
+          "cited": true
+        },
+        {
+          "claim": "The company self-funds (LTM FCF +$182.7M) with ~4.0x interest coverage, buying time for the pricing/cost normalization thesis.",
+          "source_ref": "CIQ Financials→Cash Flow 'Levered Free Cash Flow' [LTM 12 months Mar-31-2026]",
           "cited": true
         }
       ],
       "evidence_against": [
         {
-          "claim": "The magnitude and breadth of the cut argue structural — FY26 EBITDA -41%, gross margin guided down to ~27% from ~30%+, and EBITDA growth -31% vs peers -6%.",
-          "source_ref": "CIQ Estimates→Trends (current-FY consensus path; ragged, absent lookbacks n/a)",
+          "claim": "Management itself reports the first decline in RTD-shake buy-rate in 5 years and 27% of category volume on promotion (+8pts YoY), describing an increasingly value-focused consumer — evidence the pricing reset may be structural.",
+          "source_ref": "CIQ transcript: BellRing Brands, Inc., Q2 2026 Earnings Call, May 05, 2026.rtf",
+          "cited": false
+        },
+        {
+          "claim": "Operating profit fell 31% with protein-input inflation guided to worsen into FQ4, so the cost side is deteriorating not stabilizing near term.",
+          "source_ref": "10-Q 0001772016-26-000012",
           "cited": true
         },
         {
-          "claim": "Quarterly EBITDA margin has decayed through the year (23%/21%/22% FY24 → 12% latest FY26Q), showing sustained rather than single-quarter deterioration.",
-          "source_ref": "CIQ Financials→Income Statement (quarterly, trailing 8Q)",
+          "claim": "Consensus models negative long-term growth (LT growth mean -7.2%) and a $13 target, treating the reset as durable rather than cyclical.",
+          "source_ref": "CIQ Estimates→Consensus",
           "cited": true
         }
       ]
     },
     "key_unknowns": [
-      "Current TEV/LTM EBITDA is trailing-only with no forward-adjusted basis in the revised 99.1 guidance — cannot cleanly distinguish cheap-overshoot from cheap-terminal (adjusted EPS and adjusted EBITDA both UNKNOWN).",
-      "No revised-outlook 99.1 exhibit was parsed for the May-05 8-K and the release carries NO NUMERIC OUTLOOK, so the guide could not be cross-checked against actual/outlook — an opacity gap on the single most decisive datapoint (bearish risk).",
-      "Self-funding is MIXED on cross-check: latest-quarter OCF is negative while LTM FCF is positive — both must be positive to self-fund, so intra-year cash generation is a live risk.",
-      "Segment EBITDA is UNKNOWN (Segments sheet has no EBITDA section) and revenue is 100% one segment (Protein-Based Consumer Goods) — no breakout to locate where the margin damage sits (bearish opacity).",
-      "Covenant basis and net-debt/company-adjusted-EBITDA are UNKNOWN; the 10-Q states no ≤12m maturity but covenant headroom against a falling EBITDA base is not disclosed.",
-      "Credit Health panel not rendered (scale direction ambiguous) — no independent credit signal to corroborate the 3.8x leverage read.",
-      "Market 180d return and cohort are UNKNOWN (IWM bars unavailable; BRBR absent from graph coverage) — only the name-vs-market relative is available, limiting the shared-vs-idiosyncratic read.",
-      "Export date is unverified (a floor ≥ 2026-05-14) while the price is as-of 2026-07-08 — consensus figures may lag the current tape.",
-      "Peer set is HETEROGENEOUS (caps 327x span); every peer multiple is a confidence-gated input, so the earned-vs-residual decomposition of the P/E discount cannot rest on the peer median as a clean benchmark."
+      "Company-adjusted LTM EBITDA and adjusted net-debt/EBITDA are UNKNOWN (not in the revised 99.1 guidance), and covenant-basis leverage is undisclosed — an expected-disclosure gap that obscures true covenant headroom (bearish opacity).",
+      "No forward EV/EBITDA on an adjusted basis and no adjusted-EPS figure in guidance — the trailing 8.2x at its 4%ile floor cannot by itself distinguish cheap-overshoot from cheap-terminal.",
+      "Segment-level EBITDA is UNKNOWN (single reported segment, no EBITDA breakout) — cannot separate Premier vs Dymatize profitability or isolate where margin erosion concentrates.",
+      "Latest-quarter OCF is negative while LTM FCF is positive (self-funding is MIXED on a two-input read) — intra-year cash conversion timing is unresolved.",
+      "The FY26 revised release carries NO numeric revenue outlook to cross-check against the CIQ guide, and the 10-Q states no near-term maturity wall figure — refinancing timing of the $840M 2030 notes is not stress-tested here.",
+      "Depth/durability of protein-input commodity inflation beyond FQ4 is not quantified — the single largest swing factor in the cyclical-vs-structural margin question.",
+      "The new-CEO identity and strategic direction are unresolved pending an external search — execution risk during a competitive inflection.",
+      "Peer set is HETEROGENEOUS (caps $111M–$36.4B, 327x span); every peer-median comparison is a confidence-gated input, not a clean benchmark."
     ]
   },
   "caveats": [
-    "primary-source: 1 EX-99.1 release(s) + 1 10-Q parsed (+0.1s fetch)",
+    "primary-source: 8-K 0001628280-26-045287 carries 8.01 but no EX-99.1 exhibit was found",
+    "primary-source: 4 EX-99.1 release(s) + 1 10-Q parsed (+0.3s fetch)",
     "Net debt/EBITDA (3.8x) is on REPORTED EBITDA (CIQ / consolidated GAAP), not the covenant basis; management and credit covenants typically define leverage on adjusted EBITDA (a larger denominator → a lower ratio), reconciled in the earnings release/transcript (currently UNAVAILABLE) — do not read 3.8x as the covenant-basis leverage.",
     "Catalyst-path as-of UNVERIFIABLE — the CIQ Estimates export carries no as-of stamp; its data is on/after 2026-05-14 (the latest embedded revision event), so it is up to 53d before the 2026-07-06 reference — beyond the 45d tolerance — and the true export date is unknown, so freshness cannot be confirmed. Re-pull CIQ Estimates, or attest the export date (AS_OF sidecar).",
-    "Possible false balance — evidence_balance commits a strong lean but the body is near-symmetric (6 bull vs 8 bear) and the minority bull_points aren't qualified-as-outweighed — size the minority against the lean (rule 7), or it launders a one-sided case"
+    "Possible false balance — the written assessment commits a strong lean but the body is near-symmetric (7 bull vs 10 bear) and the minority bull_points aren't qualified-as-outweighed — size the minority against the lean (rule 7), or it launders a one-sided case"
   ],
   "qa_flags": [
-    "DIRECTIONAL language 'recommendation' — human review (dossier frames, not concludes)",
-    "DIRECTIONAL language 'conviction' — human review (dossier frames, not concludes)"
+    "operating-drivers: Tier-B rows capped at 12 — Premier RTD shake net sales dropped",
+    "operating-drivers: Tier-B rows capped at 12 — Premier shake volumes dropped",
+    "operating-drivers: Tier-B rows capped at 12 — Dymatize sales dropped",
+    "operating-drivers: Tier-B rows capped at 12 — total net sales dropped",
+    "operating-drivers: Tier-B rows capped at 12 — net sales growth dropped",
+    "operating-drivers: Tier-B rows capped at 12 — Premier RTD shake net sales dropped",
+    "operating-drivers: Tier-B rows capped at 12 — Premier shake dollar consumption dropped",
+    "operating-drivers: Tier-B rows capped at 12 — consumption outside of club dropped",
+    "operating-drivers: Tier-B rows capped at 12 — RTD shakes category growth dropped",
+    "operating-drivers: Tier-B rows capped at 12 — RTD shake category volume sold on price promotion dropped",
+    "operating-drivers: Tier-B rows capped at 12 — RTD shake spend per household (buy rate) dropped",
+    "operating-drivers: Tier-B rows capped at 12 — club channel share of BellRing sales dropped",
+    "operating-drivers: Tier-B rows capped at 12 — Premier Protein net sales dropped",
+    "operating-drivers: Tier-B rows capped at 12 — Premier shake volumes dropped",
+    "operating-drivers: Tier-B rows capped at 12 — Dymatize sales dropped",
+    "operating-drivers: Tier-B rows capped at 12 — Premier Powder and Dymatize sales elasticity to price increase dropped",
+    "operating-drivers: Tier-B rows capped at 12 — Dymatize pricing dropped",
+    "operating-drivers: Tier-B rows capped at 12 — adjusted gross profit / margin dropped",
+    "UNCITED bear_point: 'The margin decline is REAL, not an optical %-vs-absolute misread:…' (ref not in mechanical facts)",
+    "UNCITED decisive.against: 'Management itself reports the first decline in RTD-shake buy-rate in…' (ref not in mechanical facts)"
   ],
   "llm_model": "claude-opus-4-8",
-  "assembled_at": "2026-07-10T06:56:18.264668Z",
+  "assembled_at": "2026-07-22T13:36:14.101399Z",
   "sector": "Consumer Staples",
   "industry": {
     "value": "Personal Care Products",
@@ -5515,11 +6024,12 @@
     "status": "present",
     "note": null
   },
+  "midcycle": null,
   "anchor": {
     "recipe_hint": "R1_midcycle_margin_evebitda",
     "applicable": true,
     "multiple_basis": "EV/EBITDA",
-    "computed_at": "2026-07-20T19:57:26.022074Z",
+    "computed_at": "2026-07-22T13:36:13.643468Z",
     "reason": null,
     "data_quality": null,
     "data_quality_detail": [],
@@ -5542,7 +6052,7 @@
       "value": 18.6,
       "unit": "$M",
       "basis": "consolidated latest FY",
-      "source": "EDGAR companyfacts dep_amort (combined)"
+      "source": "EDGAR companyfacts DepreciationDepletionAndAmortization (combined, FY2025)"
     },
     "net_debt": {
       "value": 1181.9,
@@ -5561,6 +6071,12 @@
       "unit": "$M",
       "basis": "LTM revenue",
       "source": "committed financial_summary.annual (LTM)"
+    },
+    "ltm_fcf": {
+      "value": 255.9,
+      "unit": "$M",
+      "basis": "latest FY2025 (not LTM)",
+      "source": "EDGAR companyfacts operating_cash_flow − capex (FY2025, same period)"
     },
     "anchor_base_value_per_share": 55.4062,
     "anchor_ev_ebit": 20.7442,

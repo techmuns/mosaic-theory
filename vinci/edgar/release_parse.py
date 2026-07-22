@@ -14,6 +14,7 @@ Text is read pre-normalized (vinci.graph.filings.normalize_text folds the nbsp E
 """
 from __future__ import annotations
 
+import html
 import re
 
 from vinci.dossier.schemas import (
@@ -30,36 +31,82 @@ from vinci.resolver.index import pad_cik
 
 _INDEX = "https://www.sec.gov/Archives/edgar/data/{cik}/{acc}/index.json"
 _ARCHIVE = "https://www.sec.gov/Archives/edgar/data/{cik}/{acc}/{doc}"
+_HEADERS = "https://www.sec.gov/Archives/edgar/data/{cik}/{acc}/{acc_dashed}-index-headers.html"
 
-# TOLERANT Ex-99.1 filename match: 'ex991' / 'dex991' / 'ex-99.1' / 'ex99_1' — ANY separators,
-# including the '_' WORD char that the old \W* class dropped (→ vrrm-ex99_1.htm was missed).
-# The final '1' requirement + (?!\d) exclude 99.2 / ex99_2 (the char after the separators is not 1).
-_EX991 = re.compile(r"ex[\W_]*99[\W_]*d?[\W_]*1(?!\d)", re.I)
+# TOLERANT Ex-99.1 filename match — the FALLBACK only (see exhibit_991_urls): 'ex991' / 'dex991' /
+# 'ex-99.1' / 'ex99_1', any separators including the '_' WORD char that a \W* class drops.
+# The final '1' + (?!\d) exclude 99.2 / 99.10. Filenames are a GUESS: filers also ship
+# 'a991_pressrelease…', 'exhibit991…', 'exh991…' (unmatched here), and EPAM's 'exhibit99_q1x2026'
+# matches only by the accident of "q1" — which is precisely why the TYPE lookup below leads.
+_EX991_NAME = re.compile(r"ex[\W_]*99[\W_]*d?[\W_]*1(?!\d)", re.I)
+# EDGAR's own per-document SGML header: <TYPE>EX-99.1 … <FILENAME>whatever.htm. Served
+# HTML-ESCAPED inside the -index-headers page, so the caller unescapes before matching.
+_SGML_DOC = re.compile(r"<TYPE>([^\s<]+)[\s\S]{0,400}?<FILENAME>([^\s<]+)", re.I)
+_TEXT_DOC = (".htm", ".html", ".txt")
 
 
 def _is_ex991(name: str) -> bool:
+    """Filename-shaped guess at an Ex-99.1 press release (the fallback path)."""
     low = name.lower()
-    return low.endswith((".htm", ".html", ".txt")) and _EX991.search(low) is not None
+    return low.endswith(_TEXT_DOC) and _EX991_NAME.search(low) is not None
+
+
+def _ex991_names_from_headers(http: CachedHttp, cik: str, accession: str) -> list[str] | None:
+    """Filenames EDGAR itself types as EX-99.1, from the filing's SGML header.
+
+    The AUTHORITATIVE source: the header states the exhibit designator, so no filename convention
+    has to be guessed. Returns None when the header is unreachable/unparseable (caller falls back
+    to the filename match) — distinct from [] which means 'read it, this filing furnishes none'."""
+    acc = accession.replace("-", "")
+    url = _HEADERS.format(cik=int(pad_cik(cik)), acc=acc, acc_dashed=accession)
+    try:
+        raw = http.get_text(url, ttl_seconds=None)
+    except (HttpError, ValueError):
+        return None
+    text = html.unescape(raw)
+    if "<TYPE>" not in text.upper():
+        return None  # not the SGML shape we expect — fall back rather than assert absence
+    return [
+        fn for ty, fn in _SGML_DOC.findall(text)
+        # EX-99.1 exactly — never EX-99.11/99.12, and never the EX-99.2 sibling
+        if re.fullmatch(r"ex-?99[.\-]?1", ty.strip(), re.I) and fn.lower().endswith(_TEXT_DOC)
+    ]
 
 
 def exhibit_991_urls(http: CachedHttp, cik: str, accession: str) -> list[str]:
     """ALL furnished Exhibit-99.1 press-release URLs in a filing (not first-match — a filing can
-    carry more than one, and both must parse). Empty when none / the index is unreachable."""
+    carry more than one, and both must parse).
+
+    Reads the exhibit TYPE from EDGAR's SGML header rather than pattern-matching the FILENAME:
+    filers name the same exhibit 'ex991', 'a991_pressrelease…', 'exhibit991…', 'exh991…' and
+    'exhibit99_q1x2026', so a filename rule is a guess that silently loses press releases (measured
+    2026-07-22: 24 of 53 across five names). The filename match stays as the fallback for a filing
+    whose header cannot be read. Empty when the filing genuinely furnishes no Ex-99.1."""
     acc = accession.replace("-", "")
-    try:
-        idx = http.get_json(_INDEX.format(cik=int(pad_cik(cik)), acc=acc), ttl_seconds=None)
-    except (HttpError, ValueError):
-        return []
-    return [
-        _ARCHIVE.format(cik=int(pad_cik(cik)), acc=acc, doc=str(item.get("name", "")))
-        for item in idx.get("directory", {}).get("item", [])
-        if _is_ex991(str(item.get("name", "")))
-    ]
+    names = _ex991_names_from_headers(http, cik, accession)
+    if names is None:  # header unreadable → fall back to the filename guess
+        try:
+            idx = http.get_json(_INDEX.format(cik=int(pad_cik(cik)), acc=acc), ttl_seconds=None)
+        except (HttpError, ValueError):
+            return []
+        names = [
+            str(item.get("name", ""))
+            for item in idx.get("directory", {}).get("item", [])
+            if _is_ex991(str(item.get("name", "")))
+        ]
+    return [_ARCHIVE.format(cik=int(pad_cik(cik)), acc=acc, doc=n) for n in names]
 
 
 # --- helpers -------------------------------------------------------------------------------------
 
 _PERIOD = re.compile(r"\b(Q[1-4]\s+20\d\d|FY\s*20\d\d|(?:fiscal\s+)?20\d\d)\b", re.I)
+
+
+def _near(a: float, b: float, *, tol: float = 0.10) -> bool:
+    """Two magnitudes close enough to be the SAME item restated at a different rounding
+    ($11.0M vs $11.3M), rather than two different charges ($12.0M vs $30.0M)."""
+    hi = max(abs(a), abs(b))
+    return hi == 0 or abs(a - b) / hi <= tol
 
 
 def _money(s: str) -> float | None:
@@ -90,6 +137,11 @@ def _norm_metric(raw: str) -> str:
         return "adjusted ebitda"
     if "per share" in r or "eps" in r:
         return "adjusted eps"
+    # operating income / income from operations is PRE interest and tax — bucketing it into
+    # "adjusted net income" (the old fall-through) states a different figure under a familiar
+    # name, which is worse than not extracting it. It gets its own label.
+    if "operating income" in r or "income from operations" in r:
+        return "adjusted operating income"
     return "adjusted net income"
 
 
@@ -112,9 +164,15 @@ def _release_period(text: str) -> str:
 # 'Non-GAAP adjusted EBITDA of positive $44.7 million' / '… of negative $5.5 million' / an adjusted
 # net loss. NOT a guidance range: the (?! … to) tail rejects '… of $380 million to $385 million'.
 _RECON = re.compile(
-    r"(?:non-gaap\s+)?adjusted\s+"
-    r"(ebitda|net\s+(?:income|loss|profit)|(?:diluted\s+)?(?:net\s+)?(?:income|loss)\s+per\s+share|"
-    r"earnings\s+per\s+share|eps)\s+(?:of|was|totaled|of\s+approximately)\s+"
+    # "Adjusted X" OR "Non-GAAP X" — filers use either, and EPAM/CNXC never write "adjusted"
+    # ("Non-GAAP Diluted EPS of $3.26"). A footnote MARKER may follow the metric name: BellRing
+    # writes "Adjusted EBITDA* of $53.8 million", and the un-tolerated '*' silently dropped the
+    # whole release. \*? also covers the †/‡ conventions via the [*†‡]? class.
+    r"(?:non-gaap|adjusted)\s+"
+    r"((?:diluted\s+)?(?:net\s+)?"
+    r"(?:ebitda|income\s+from\s+operations|operating\s+income|net\s+(?:income|loss|profit)|"
+    r"(?:income|loss)\s+per\s+share|earnings\s+per\s+share|eps))"
+    r"\s*[*†‡]?\s*(?:of|was|totaled|of\s+approximately)\s+"
     r"(positive\s+|negative\s+)?\$?\s*([\d,.]+)\s*(?:million|billion)?"
     r"(?!\s*(?:million\s+|billion\s+)?to\b)",
     re.I,
@@ -181,9 +239,17 @@ def _reconciliation(text: str, src: str, period: str) -> list[ReconciliationValu
 
 # --- (2) guidance ranges + QUALITATIVE-only outlook ----------------------------------------------
 _GUIDE_RANGE = re.compile(
-    r"(total\s+revenue|revenue|adjusted\s+ebitda|adjusted\s+eps|adjusted\s+earnings\s+per\s+share|"
-    r"free\s+cash\s+flow|gross\s+margin)\s+of\s+\$?\s*([\d,.]+)\s*(?:million|billion|%)?\s+to\s+"
-    r"\$?\s*([\d,.]+)",
+    # Metric names as filers write them (net sales / total revenues — BellRing, Simply Good, nCino
+    # all guide on these and were invisible), an optional footnote marker, and BOTH range
+    # phrasings: "outlook of $X to $Y" and "expected to range between $X and $Y".
+    r"(total\s+revenues?|net\s+sales|revenues?|adjusted\s+ebitda|adjusted\s+eps|"
+    r"adjusted\s+earnings\s+per\s+share|free\s+cash\s+flow|gross\s+margin)"
+    r"\s*[*†‡]?\s*(?:outlook\s+)?(?:of|expected\s+to\s+range\s+between|to\s+range\s+between|"
+    r"between)\s+"
+    # range separator: "to" / "and" / a bare hyphen or en/em dash ("$2.325-$2.365 billion" —
+    # BellRing). The dash form carries no spaces, so \s* around it, not \s+.
+    r"\$?\s*([\d,.]+)\s*(?:million|billion|%)?\s*(?:to|and|[-–—])\s*"
+    r"\$?\s*([\d,.]+)\s*(million|billion)?",
     re.I,
 )
 _OUTLOOK = re.compile(
@@ -216,6 +282,15 @@ def _guidance(text: str, src: str) -> list[GuidanceItem]:
         low, high = _money(m.group(2)), _money(m.group(3))
         if low is None or high is None or metric in seen:
             continue
+        # UNITS: normalise to $M. Concentrix guides revenue in BILLIONS ("$2.465 to $2.49 billion")
+        # while every other name guides in millions, and the composer prints the bare number — so an
+        # un-scaled 2.465 read as $2.5M beside VRRM's 985.0 ($M). A magnitude error in a
+        # decision figure is worse than an absent one, so scale here where the unit word is in hand.
+        # Scale ONLY on the stated unit word — the trailing unit governs the whole range
+        # ("$2.465 to $2.49 billion"). Inferring billions from magnitude would be a guess, and a
+        # guessed magnitude is exactly the fabrication this codebase refuses.
+        if (m.group(4) or "").lower().startswith("billion"):
+            low, high = low * 1000.0, high * 1000.0
         seen.add(metric)
         out.append(GuidanceItem(
             metric=metric, period=_period_near(text, m.start(), m.end()) or "next-fy",
@@ -239,15 +314,24 @@ def _guidance(text: str, src: str) -> list[GuidanceItem]:
 
 # --- (3) one-off items (impairments / charges) ---------------------------------------------------
 _ONEOFF = re.compile(
-    r"\$\s*([\d,.]+)\s*(?:million|billion)\s+"
-    r"((?:[\w'’-]+\s+){0,6}?(?:impairment|write[- ]?off|write[- ]?down|restructuring\s+charge|"
-    r"one[- ]?time\s+charge)[\w\s,'’-]{0,80})",
+    # The one-off IS usually the reason for the gap ("a pre-tax $11.3 million inventory-related
+    # charge"), so the noun set must cover how filers actually write it — charge / costs /
+    # expenses, not only impairment-family words. Each generic noun REQUIRES a qualifier before it
+    # (restructuring, integration, one-time, inventory-related …) so routine operating costs
+    # ("cost of goods sold", "interest expense") are never mistaken for a discrete item.
+    r"\$\s*([\d,.]+)\s*(?:million|billion)\s+(?:of\s+|in\s+)?"
+    r"((?:[\w'’-]+\s+){0,6}?"
+    r"(?:impairment|write[- ]?off|write[- ]?down|"
+    r"(?:restructuring|integration|one[- ]?time|transaction|acquisition[- ]related|"
+    r"inventory[- ]related|impairment[- ]related|separation|transition|legal\s+settlement)"
+    r"\s+(?:charge|charges|cost|costs|expense|expenses))"
+    r"[\w\s,'’-]{0,80})",
     re.I,
 )
 
 
 def _one_offs(text: str, src: str) -> list[OneOffItem]:
-    out: list[OneOffItem] = []
+    by_key: dict[str, OneOffItem] = {}
     for m in _ONEOFF.finditer(text):
         amt = _money(m.group(1))
         if amt is None:
@@ -255,11 +339,48 @@ def _one_offs(text: str, src: str) -> list[OneOffItem]:
         desc = " ".join(m.group(2).split())
         # trim the description at the next clause boundary
         desc = re.split(r"(?:,\s+which|\.\s|;\s)", desc)[0][:200].strip()
-        out.append(OneOffItem(
-            amount=amt, description=desc,
-            verbatim=_verbatim(text, m.start(), m.end()), source_ref=src,
-        ))
-    return out
+        # PRIOR-PERIOD COMPARATIVES are not this period's one-off. A release states the current
+        # charge and then restates last year's beside it ("and for the prior year period
+        # integration expenses of $0.2 million"); listing both as drivers of THIS gap-down would
+        # attribute a year-old item to today's move.
+        # Look back only to the START OF THIS SENTENCE — a fixed character window reaches across
+        # sentence boundaries and kills a current-period item merely because the preceding
+        # sentence mentioned last year ("Compared with the prior year period, results improved.
+        # The quarter included a $25.0 million impairment charge.").
+        sent_start = max(text.rfind(". ", max(0, m.start() - 300), m.start()),
+                         text.rfind("• ", max(0, m.start() - 300), m.start()))
+        window = text[(sent_start + 1) if sent_start != -1 else max(0, m.start() - 90):m.start()]
+        if re.search(r"prior[- ]year|prior\s+period|year[- ]ago", window, re.I):
+            continue
+        if re.match(r"^(?:and\s+)?(?:for|in)\b", desc, re.I):  # a dangling comparative fragment
+            continue
+        # ONE ROW PER DISTINCT ITEM. A press release repeats the same charge in the highlights and
+        # again per segment, at different roundings ($11 million / $11.3 million), so a bare dedup
+        # on the exact string leaves eight copies of one fact. Key on the item's NOUN PHRASE and
+        # keep the most precise mention (the largest magnitude wins ties of rounding).
+        # ONE ROW PER DISTINCT ITEM — but "distinct" needs the AMOUNT too. Keying on the noun
+        # phrase alone collapsed two genuinely different charges ($12.0M European footprint and
+        # $30.0M Asia exit both read "restructuring charges rel…"), silently dropping the smaller.
+        # Same phrase AND a near-equal amount is one item restated at a different rounding
+        # ($11.0M / $11.3M); a materially different amount is a different item.
+        phrase = re.sub(r"[^a-z ]", "", desc.lower())[:24].strip()
+        # default key CARRIES THE AMOUNT, so two different charges under the same phrase stay two
+        # rows; the loop below re-uses an existing key only when the amounts are near-equal (one
+        # item restated at a different rounding).
+        key = f"{phrase}|{amt}"
+        for k, seen_item in by_key.items():
+            if k.startswith(phrase[:16]) and _near(amt, seen_item.amount):
+                key = k
+                break
+        prev = by_key.get(key)
+        better = prev is None or amt > prev.amount or (
+            amt == prev.amount and len(desc) > len(prev.description))
+        if better:
+            by_key[key] = OneOffItem(
+                amount=amt, description=desc,
+                verbatim=_verbatim(text, m.start(), m.end()), source_ref=src,
+            )
+    return list(by_key.values())
 
 
 # --- (4) event-impact quantifications (the Avis class) -------------------------------------------
