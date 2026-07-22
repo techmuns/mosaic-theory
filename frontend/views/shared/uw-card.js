@@ -377,11 +377,17 @@ function survivalPanel(c) {
       ? `committed <span class="mono">${escapeHtml(s.raiseAccession)}</span>`
       : `<span class="uw-bad">no accession on file — not counted</span>`));
   }
+  // The DETAIL lines carry what the note cannot: the going-concern disclosure with its accession,
+  // and any trailing-vs-latest sign contradiction. Both are the reason a gate failed, so a panel
+  // that printed only the one-line note would show the verdict and hide the evidence.
+  const detail = (s.detail || []).map((d) =>
+    `<div class="uw-note ${/WARNING|going concern/i.test(d) ? "uw-bad" : "muted"}">${
+      escapeHtml(d)}</div>`).join("");
   return `<div class="uw-survival${fail ? " uw-survival-fail" : ""}">
       <div class="uw-sec-h">Survival <span class="basis">${
         fail ? "GATE FAILED — blocks a confirmed buy" : "gate cleared"}</span></div>
       <div class="uw-surv-body">${rows.join("")}
-        <div class="uw-note muted">${escapeHtml(s.note || "")}</div></div></div>`;
+        <div class="uw-note muted">${escapeHtml(s.note || "")}</div>${detail}</div></div>`;
 }
 
 function legsTable(c) {
