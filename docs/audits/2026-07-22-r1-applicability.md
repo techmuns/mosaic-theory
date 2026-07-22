@@ -18,7 +18,7 @@ Read-only. Flags PRINT, never block (the linter model): the machine surfaces, th
 - **EPAM** — *** NO GATE — new exposure (1 flag)
 - **FUBO** — gate exists and FIRED — via anchor not applicable, unknown (3 flags)
 - **IT** — *** NO GATE — new exposure (2 flags)
-- **MVST** — gate exists and FIRED — via anchor not applicable, R2_NEEDED (3 flags)
+- **MVST** — gate exists and FIRED — via anchor not applicable, R2_NEEDED (2 flags)
 - **NCNO** — gate exists and FIRED — via anchor not applicable, R2_NEEDED (2 flags)
 - **SMPL** — *** NO GATE — new exposure (1 flag)
 - **VITL** — gate exists and FIRED — via band_incoherent+band_unreconciled, anchor not applicable, R2_NEEDED (2 flags)
@@ -111,14 +111,13 @@ Read-only. Flags PRINT, never block (the linter model): the machine surfaces, th
 
 - `margin` — ramp: n=8 med -34.3% spread 141.2% shift +33.8%
 - `band` — 6q / 1.3y from 2025-03-31 · min 9.98 med 19.31 cur 8.95 · min/med 0.52
-- `bear` — 6.0x · bear_basis=ABSENT margin_basis=ABSENT
+- `bear` — 6.0x · bear_basis=peer-reference margin_basis=EBIT
 - `leverage` — anchor not applicable — no base value published (guard behaviour)
 - `perimeter` — 0 dated M&A mention(s); event_impacts empty on 4/4 releases
 - `entity` — diluted 385,272,000 vs outstanding 333,157,384 · gap 0.86x
 - `data` — guards=clean · d_and_a[consolidated latest FY] · ltm_fcf[latest FY2025 (not LTM)]
   - **FLAG**: median FY margin is NEGATIVE (-34.3%) — no mid-cycle margin exists to revert to
   - **FLAG**: SHORT band: 1.3y / 6 closes (floor 3.0y / 12)
-  - **FLAG**: bear_basis ABSENT — the multiple's provenance is unstated
   - note: event_impacts EMPTY on every release — this check is running on a text scan, not on structured capture
   - note: ltm_fcf is latest FY2025 (not LTM) — not a trailing twelve months
 

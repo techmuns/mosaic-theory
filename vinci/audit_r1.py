@@ -193,7 +193,7 @@ def check_bear(a: NameAudit, record: dict[str, Any] | None, b: dict[str, Any] | 
         return
     leg = (record.get("scenarios") or {}).get("bear") or {}
     bx = leg.get("multiple")
-    basis = leg.get("bear_basis") or record.get("bear_basis")
+    basis = leg.get("bear_basis")          # leg-level only — there is no record-level field
     mbasis = leg.get("margin_basis")
     a.rows["bear"] = (f"{bx}x · bear_basis={basis or 'ABSENT'} margin_basis={mbasis or 'ABSENT'}")
     if bx is None or b is None:

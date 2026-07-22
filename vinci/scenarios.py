@@ -596,12 +596,31 @@ def _require_bear_basis(rec: ScenarioRecord) -> None:
     This one REFUSES rather than warns. The labels cost a word each and their absence is exactly
     what made the IT band defect and the EBITDA/EBIT mistranslation invisible; a warning would be
     read past on the day it mattered."""
-    if rec.schema_version < BASIS_REQUIRED_FROM:
+    def _ver(s: str) -> tuple[int, ...]:
+        """Numeric version compare. String compare would read '1.10' < '1.2' as True and let a
+        future record skip the rule — the silent-bypass class this whole field exists to close."""
+        try:
+            return tuple(int(x) for x in s.split("."))
+        except ValueError:
+            return (0,)
+
+    if _ver(rec.schema_version) < _ver(BASIS_REQUIRED_FROM):
         return
     bear = (rec.scenarios or {}).get("bear")
     if bear is None:
         return
-    missing = [f for f in ("bear_basis", "margin_basis") if getattr(bear, f, None) is None]
+    required = ["bear_basis"]
+    # margin_basis is required only where a MARGIN EXISTS. An EV/Revenue record refuses a margin
+    # outright (terminal_value raises on one), so demanding a label for it would make that basis
+    # unwritable — the same dead-input argument that removed the margin axis from it in the first
+    # place. A label for a number that cannot exist is not provenance, it is furniture.
+    if bear.margin is not None:
+        required.append("margin_basis")
+    elif bear.margin_basis is not None:
+        raise ValueError(
+            f"{rec.ticker}: bear leg carries margin_basis={bear.margin_basis!r} but no margin — "
+            "on a basis that reads no margin, labelling one states a line nothing sits on")
+    missing = [f for f in required if getattr(bear, f, None) is None]
     if missing:
         raise ValueError(
             f"{rec.ticker}: bear leg is missing {missing} — schema {rec.schema_version} requires "

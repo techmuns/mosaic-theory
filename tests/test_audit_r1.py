@@ -205,3 +205,76 @@ def test_render_covers_every_check_and_states_the_thresholds() -> None:
     for c in ar.CHECK_ORDER:
         assert f"`{c}`" in out, f"the report drops the {c} check"
     assert str(ar.GROWTH_ERA_MIN_MEDIAN) in out and str(ar.SHORT_BAND_YEARS) in out
+
+
+# --- the WRITE-TIME rule (C1.2) and the admissibility warning (C1.3) ----------------------------
+# Added in review of PR #192: both paths shipped untested, so removing either call from
+# write_record would have gone green.
+def _minimal_r1(**bear_over):
+    from vinci import scenarios as sc
+    bear = {"revenue": 100.0, "margin": 0.1, "multiple": 5.0, "reason": "r"}
+    bear.update(bear_over)
+    return sc.ScenarioRecord(
+        ticker="TESTW", recipe_id=sc.RECIPE_R1, recipe_desc="d", multiple_basis="EV/EBITDA",
+        underwrite_date="2026-07-22", analyst="t", spot=10.0, spot_source="s",
+        facts={"d_and_a": sc.Fact(value=1.0, unit="$M", basis="b", source="s"),
+               "net_debt": sc.Fact(value=1.0, unit="$M", basis="b", source="s"),
+               "diluted_shares": sc.Fact(value=1.0, unit="M shares", basis="b", source="s")},
+        scenarios={"bear": sc.ScenarioInput(**bear),
+                   "base": sc.ScenarioInput(revenue=200.0, margin=0.1, multiple=5.0, reason="r"),
+                   "bull": sc.ScenarioInput(revenue=300.0, margin=0.1, multiple=5.0, reason="r")},
+        assumptions={a: sc.AssumptionDerivation(method="m")
+                     for a in ("revenue", "margin", "multiple")})
+
+
+def test_write_refuses_a_bear_leg_without_its_basis_labels(tmp_path) -> None:
+    """C1.2. The labels cost a word each; their absence is what made the IT band defect and the
+    EBITDA/EBIT mistranslation invisible. This one REFUSES rather than warns."""
+    from vinci import scenarios as sc
+    with pytest.raises(ValueError, match="bear_basis"):
+        sc.write_record(_minimal_r1(), root=tmp_path)
+    with pytest.raises(ValueError, match="margin_basis"):
+        sc.write_record(_minimal_r1(bear_basis="own-history"), root=tmp_path)
+    import warnings as w
+    ok = _minimal_r1(bear_basis="own-history", margin_basis="EBIT")
+    with w.catch_warnings():
+        w.simplefilter("ignore", sc.AdmissibilityWarning)   # asserted separately below
+        assert sc.write_record(ok, root=tmp_path).exists()
+
+
+def test_margin_basis_is_required_only_where_a_margin_exists(tmp_path) -> None:
+    """REVIEW FIX (PR #192). An EV/Revenue leg REFUSES a margin outright, so demanding a
+    margin_basis for it made that basis unwritable — a label for a number that cannot exist.
+    Required when a margin is present; refused when it is not."""
+    from vinci import scenarios as sc
+    no_margin = _minimal_r1(margin=None, bear_basis="bear-state-comps")
+    sc._require_bear_basis(no_margin)                       # no margin -> no label demanded
+    with pytest.raises(ValueError, match="no margin"):
+        sc._require_bear_basis(_minimal_r1(margin=None, bear_basis="analyst",
+                                           margin_basis="EBIT"))
+
+
+def test_the_version_gate_compares_numerically_not_lexicographically() -> None:
+    """REVIEW FIX (PR #192). String compare reads '1.10' < '1.2' as True, which would let a future
+    record skip the rule entirely — the silent-bypass class this field exists to close."""
+    from vinci import scenarios as sc
+    legacy = _minimal_r1().model_copy(update={"schema_version": "1.1"})
+    sc._require_bear_basis(legacy)                          # legacy is exempt
+    for future in ("1.2", "1.10", "2.0"):
+        with pytest.raises(ValueError, match="bear_basis"):
+            sc._require_bear_basis(_minimal_r1().model_copy(
+                update={"schema_version": future}))
+
+
+def test_an_own_history_bear_basis_warns_at_write(tmp_path) -> None:
+    """C1.3. The IT signature cannot pass silently: an own-history bear basis is exactly the claim
+    that needs its band checked for a bear-state visit."""
+    from vinci import scenarios as sc
+    with pytest.warns(sc.AdmissibilityWarning, match="own-history"):
+        sc.write_record(_minimal_r1(bear_basis="own-history", margin_basis="EBIT"),
+                        root=tmp_path)
+    import warnings as w
+    with w.catch_warnings():
+        w.simplefilter("error", sc.AdmissibilityWarning)
+        sc.write_record(_minimal_r1(bear_basis="bear-state-comps", margin_basis="EBIT"),
+                        root=tmp_path)          # a comps basis makes no own-history claim
