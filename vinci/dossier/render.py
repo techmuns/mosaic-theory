@@ -2049,8 +2049,9 @@ def render_markdown(d: Dossier, *, dev: bool = False, show_proposal: bool = Fals
     out += ["## Mechanical layer", ""]  # (K5) methodology jargon lives in source_refs/JSON
 
     # (D1·§1) Drawdown cause & idiosyncrasy — CLUBBED: what happened, and did it happen alone?
+    # (buy-side anatomy) the Shape classification is this section's READ — label twins the web lead
     out.append("### What broke — and did it fall alone?")
-    out.append(_fact("Shape", m.drawdown_cause.shape, _fmt_shape))
+    out.append(_fact("Read — what broke", m.drawdown_cause.shape, _fmt_shape))
     # (declutter) the dates row repeats the shape line whenever every date already appears there
     gd = m.drawdown_cause.gap_down_dates
     shape_v = m.drawdown_cause.shape

@@ -70,7 +70,7 @@ _table shows the last 4 fiscal years · 5 earlier years are in the Appendix_
 ## Mechanical layer
 
 ### What broke — and did it fall alone?
-- **Shape:** discrete gap-downs — 2026-02-03 no 8-K matched [4]
+- **Read — what broke:** discrete gap-downs — 2026-02-03 no 8-K matched [4]
 - **Revised guidance · Net debt / EBITDA [FWD-ADJ] · EV/EBITDA (adjusted, forward) · Adjusted EPS (earnings power):** _UNKNOWN_ — no revised-outlook 99.1 exhibit parsed — the revised forward guidance is UNKNOWN
 
 _Company-specific or market-wide?_

@@ -73,7 +73,7 @@ _table shows the last 4 fiscal years · 4 earlier years are in the Appendix_
 ## Mechanical layer
 
 ### What broke — and did it fall alone?
-- **Shape:** discrete gap-downs — 2026-03-17 earnings; 2026-05-12 earnings; 2026-05-18 no 8-K matched [5]
+- **Read — what broke:** discrete gap-downs — 2026-03-17 earnings; 2026-05-12 earnings; 2026-05-18 no 8-K matched [5]
 - **Gap-downs — what the results showed (parsed EX-99.1) + the 8-K:**
   - gap 2026-03-17 → 2026-03-16 [`0001628280-26-018235`](https://www.sec.gov/Archives/edgar/data/1760689/000162828026018235/mvst-20260316.htm)
     - items: 2.02 Results of Operations and Financial Condition, 9.01 Financial Statements and Exhibits

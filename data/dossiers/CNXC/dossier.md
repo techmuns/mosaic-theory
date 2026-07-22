@@ -69,7 +69,7 @@ _Bear case — the decline is real:_
 ## Mechanical layer
 
 ### What broke — and did it fall alone?
-- **Shape:** discrete gap-downs — 2026-01-28 no 8-K matched; 2026-02-11 other event; 2026-02-12 other event; 2026-03-24 material agreement; 2026-06-30 earnings [4]
+- **Read — what broke:** discrete gap-downs — 2026-01-28 no 8-K matched; 2026-02-11 other event; 2026-02-12 other event; 2026-03-24 material agreement; 2026-06-30 earnings [4]
 - **Gap-downs — what the results showed (parsed EX-99.1) + the 8-K:**
   - gap 2026-02-11 → 2026-02-13 [`0001803599-26-000068`](https://www.sec.gov/Archives/edgar/data/1803599/000180359926000068/cnxc-20260212.htm)
     - items: 8.01 Other Events, 9.01 Financial Statements and Exhibits

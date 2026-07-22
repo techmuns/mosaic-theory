@@ -71,7 +71,7 @@ _table shows the last 4 fiscal years · 5 earlier years are in the Appendix_
 ## Mechanical layer
 
 ### What broke — and did it fall alone?
-- **Shape:** discrete gap-downs — 2026-02-03 non-narrative items ['5.07']; 2026-05-05 earnings [4]
+- **Read — what broke:** discrete gap-downs — 2026-02-03 non-narrative items ['5.07']; 2026-05-05 earnings [4]
 - **Gap-downs — what the results showed (parsed EX-99.1) + the 8-K:**
   - gap 2026-02-03 → 2026-02-02 [`0001628280-26-004642`](https://www.sec.gov/Archives/edgar/data/1772016/000162828026004642/brbr-20260128.htm)
     - items: 5.07 Item 5.07

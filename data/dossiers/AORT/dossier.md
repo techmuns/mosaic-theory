@@ -77,7 +77,7 @@ _table shows the last 4 fiscal years · 6 earlier years are in the Appendix_
 ## Mechanical layer
 
 ### What broke — and did it fall alone?
-- **Shape:** discrete gap-downs — 2026-05-08 material agreement + earnings [4]
+- **Read — what broke:** discrete gap-downs — 2026-05-08 material agreement + earnings [4]
 - **Gap-downs — what the results showed (parsed EX-99.1) + the 8-K:**
   - gap 2026-05-08 → 2026-05-07 [`0001628280-26-032097`](https://www.sec.gov/Archives/edgar/data/784199/000162828026032097/aort-20260507.htm)
     - items: 1.01 Entry into a Material Definitive Agreement, 2.02 Results of Operations and Financial Condition, 9.01 Financial Statements and Exhibits
