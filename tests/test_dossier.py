@@ -1175,9 +1175,9 @@ def test_primary_source_render_surfaces_and_supersede() -> None:
     assert "VENDOR-ECHO" in ver, "guide verification must survive in the appendix"
     # (declutter) the two-input read REPLACES the one-input survival line (no superseded line left)
     lev = "\n".join(dr._leverage_block(m))
-    assert "Self-funding (two-input" in lev and "MIXED" in lev
+    assert "Self-funding:**" in lev and "MIXED" in lev  # (terse label) rule reads in the value
     assert "supersedes the line above" not in lev
-    assert "Survival (self-funding + nearest wall)" not in lev
+    assert "Survival:**" not in lev  # the one-input line stays replaced, under its terse label too
     m2 = _minimal_mech().model_copy(update={"primary_source": _primary_source_fixture(doubt=False)})
     block2 = "\n".join(dr._primary_source_block(m2))
     assert "none in latest 10-Q — checked, absent" in block2
@@ -2477,9 +2477,12 @@ def test_web_brief_proposal_mirror_static() -> None:
     assert "revealed after your verdict is logged" not in src
     # the old header meta (process telemetry as a subtitle) is gone
     assert "Assembled facts" not in src
-    # the NARRATIVE slot: a logged name leads with the analyst's rationale; pending names with the
-    # machine read; the detail card suppresses its rationale copy so the words appear ONCE
-    assert "function narrativeRow" in src
+    # the NARRATIVE slot (buy-side cover): a logged name leads the narrative column with the
+    # analyst's rationale under the THESIS heading (the machine assessment is NEVER titled as a
+    # thesis — authorship stays marked); pending names keep the machine read inside the About
+    # block; the detail card suppresses its rationale copy so the words appear ONCE
+    assert "function thesisBlock" in src
+    assert "Thesis — our rationale" in src
     assert "v.rationalePlain || v.rationale" in src
     assert "rationale: false" in src
 
@@ -3015,14 +3018,16 @@ def test_k6_99_1_unknown_reason_renders_once_on_real_mvst() -> None:
     unk = [ln for ln in md.splitlines()
            if ln.startswith("- **") and "_UNKNOWN_" in ln and "99.1" in ln]
     assert len(unk) == 1, f"99.1 unknown-reason occurrences must be 1, got {len(unk)}"
-    assert "Revised guidance" in unk[0] and "fwd-adj" in unk[0]  # all affected fields named
+    assert "Revised guidance" in unk[0] and "FWD-ADJ" in unk[0]  # all affected fields named
     # (declutter) the reason reads plain — no Python list-repr survives anywhere in the render
     # (the repr→plain transform itself is pinned on a frozen string in
     # test_display_transforms_read_plain; MVST's own note never carried one)
     assert "['" not in unk[0]
     # (declutter) the graph-cohort absence renders as ONE plain line, no internal filename
     assert "graph_coverage.json" not in md
-    assert md.count("Supplier/customer cohort") == 1
+    # (buy-side restructure) cohort absence is ONE quiet footnote line, never a labelled fact row
+    assert md.count("no supplier/customer cohort mapped") == 1
+    assert "Supplier/customer cohort:**" not in md
 
 
 def test_k1_covenant_value_lead_extracts_the_decision_figure_before_clip() -> None:
@@ -7140,12 +7145,14 @@ def test_verify_first_skips_resolved_caveats_and_keeps_genuine_ones() -> None:
 
 
 def test_opener_narrative_slot_rationale_once_and_conditional_warning_node() -> None:
-    """(tier redesign e2e) TWO structural invariants of the new Brief, phrasing-independent:
+    """(tier redesign e2e, re-pinned for the buy-side cover) TWO structural invariants of the
+    Brief, phrasing-independent:
 
-    1. NARRATIVE ONCE — with an underwrite record carrying a recorded rationale (IT), the Brief
-       renders EXACTLY ONE 'Rationale' fact label and NO 'Assessment' label (the analyst's words
-       replace the machine read, and the detail card suppresses its copy). A pending name (EPAM)
-       renders exactly one 'Assessment' and no 'Rationale'.
+    1. NARRATIVE ONCE, THESIS-FIRST — with an underwrite record carrying a recorded rationale
+       (IT), the Brief renders the analyst's words EXACTLY ONCE, as the THESIS block leading the
+       narrative column (before the About heading), and NO machine 'Assessment' label. A pending
+       name (EPAM) renders exactly one 'Assessment' and no thesis block — the machine read is
+       never titled as a thesis (authorship stays marked).
     2. CONDITIONAL WARNING — on a FROZEN synthetic dossier, a decision-keyword caveat fires the
        strip once; a RESOLVED caveat and a process caveat fire nothing (living-artifact caveats
        re-word on every assembly, so the strip's fixture is synthetic by the TEST-LAYER rule)."""
@@ -7175,10 +7182,12 @@ const clean = renderDossier({{ ...bare, caveats: [
   "RESOLVED (P/E basis) — one-time distortion, verified",
   "primary-source: 0 EX-99.1 release(s) + 1 10-Q parsed (+0.1s fetch)"] }}, null);
 console.log(JSON.stringify({{
-  itRationale: count(it, ">Rationale</div>"),
+  itThesis: count(it, 'class="brief-thesis"'),
+  itThesisFirst: it.indexOf("Thesis — our rationale") >= 0
+    && it.indexOf("Thesis — our rationale") < it.indexOf("About the company"),
   itAssessment: count(it, ">Assessment</div>"),
   epamAssessment: count(epam, ">Assessment</div>"),
-  epamRationale: count(epam, ">Rationale</div>"),
+  epamThesis: count(epam, 'class="brief-thesis"'),
   warnFires: count(warn, "uw-warn"),
   cleanFires: count(clean, "uw-warn"),
 }}));
@@ -7186,10 +7195,11 @@ console.log(JSON.stringify({{
     out = subprocess.run(["node", "--input-type=module", "-e", driver],
                          capture_output=True, text=True, check=True)
     r = json.loads(out.stdout)
-    assert r["itRationale"] == 1 and r["itAssessment"] == 0, (
-        "a logged name must carry the analyst's rationale EXACTLY once, replacing the assessment")
-    assert r["epamAssessment"] == 1 and r["epamRationale"] == 0, (
-        "a pending name must carry the machine assessment exactly once, and no rationale")
+    assert r["itThesis"] == 1 and r["itAssessment"] == 0, (
+        "a logged name must carry the analyst's rationale EXACTLY once, as the thesis block")
+    assert r["itThesisFirst"], "the thesis must lead the narrative column, above About"
+    assert r["epamAssessment"] == 1 and r["epamThesis"] == 0, (
+        "a pending name carries the machine assessment once and never a thesis block")
     assert r["warnFires"] == 1, "a decision-keyword caveat must fire the warning strip once"
     assert r["cleanFires"] == 0, "RESOLVED + process caveats must fire nothing"
 
@@ -7402,3 +7412,213 @@ def test_committed_it_dossier_capband_benchmark_and_fresh_price() -> None:
     assert mech["stock_info"]["price"].get("note") in (None, "")
     md = Path("data/dossiers/IT/dossier.md").read_text()
     assert "Market (MDY) 180d return" in md
+
+
+def test_buyside_cover_and_field_grids_e2e_node() -> None:
+    """(buy-side layout e2e, phrasing-independent) On the committed IT artifact, the web render:
+
+    1. CRUX ONCE, CONSISTENT — the cover carries exactly one crux block whose question text equals
+       the committed ``synthesis.decisive_question.question`` (internal consistency, never a
+       literal pin) plus the first two key unknowns; "The case" card carries NO question copy
+       (the de-dup) and no unknowns list.
+    2. FIELD GRIDS — the leverage stat grid renders with the basis TAGS VISIBLE (NET / FWD-ADJ)
+       and an UNKNOWN cell's note as visible text (never tooltip-only — the PDF is the record).
+    3. WALL STRIP — the year→amount chips equal per-year principal sums computed here from the
+       committed structured instruments (deterministic; never hard-coded values).
+    4. READ-FIRST — the what-broke card leads with the promoted Shape read (fg-read present).
+    """
+    import html as _html
+    import json as _json
+    import shutil
+    import subprocess
+
+    if not shutil.which("node"):
+        pytest.skip("node not available")
+    p = Path("data/dossiers/IT/dossier.json")
+    if not p.exists():
+        pytest.skip("no committed IT dossier.json")
+    dj = Path("frontend/views/shared/dossier.js").resolve().as_uri()
+    driver = f"""
+const handler = {{ get: () => stub, apply: () => stub, construct: () => ({{}}) }};
+const stub = new Proxy(function(){{}}, handler);
+for (const g of ["window","document","location"]) {{ try {{ globalThis[g] = stub; }} catch {{}} }}
+import {{ readFileSync }} from "node:fs";
+const {{ renderDossier }} = await import("{dj}");
+const rd = (p) => JSON.parse(readFileSync(p));
+const h = renderDossier(rd("data/dossiers/IT/dossier.json"), null,
+  rd("frontend/scenarios/IT.json"));
+console.log(JSON.stringify({{ html: h }}));
+"""
+    out = subprocess.run(["node", "--input-type=module", "-e", driver],
+                         capture_output=True, text=True, check=True)
+    h = _json.loads(out.stdout)["html"]
+    d = _json.loads(p.read_text())
+    s = d["synthesis"]
+
+    # 1 — crux once + consistency + the-case de-dup
+    assert h.count('class="brief-crux"') == 1
+    q = s["decisive_question"]["question"]
+    assert _html.escape(q) in h
+    crux = h.split('class="brief-crux"')[1].split("</div></div>")[0]
+    for u in (s.get("key_unknowns") or [])[:2]:
+        assert _html.escape(u) in crux, "top-2 unknowns must render inside the crux"
+    case = h.split(">The case<")[1].split('class="card')[0] if ">The case<" in h else ""
+    assert "brief-dq" not in case, "the case card must not carry a second question copy"
+    assert "Key unknowns" not in case
+
+    # 2 — leverage grid: visible basis tags + visible UNKNOWN note
+    assert h.count('class="fg-grid') >= 2  # leverage (standard) + the idio returns (hero)
+    assert '<span class="fg-basis">NET</span>' in h
+    assert '<span class="fg-basis">FWD-ADJ</span>' in h
+    fwd = h.split('<span class="fg-basis">FWD-ADJ</span>')[1].split("</div></div>")[0]
+    note = (d["mechanical"]["quality"]["net_debt_to_ebitda_adjusted"].get("note") or "")
+    if note:
+        assert _html.escape(note) in fwd, "an UNKNOWN cell's note must be visible text"
+
+    # 3 — wall strip totals computed from the committed instruments
+    inst = ((d["mechanical"].get("capital_structure") or {}).get("instruments") or {})
+    if inst.get("status") == "present":
+        ref = str(d["reference_date"])
+        by_yr: dict[str, float] = {}
+        for i in inst["value"]:
+            md = i.get("maturity_date")
+            if md and md >= ref and md[:4] != ref[:4]:
+                by_yr[md[:4]] = by_yr.get(md[:4], 0.0) + (i.get("principal_musd") or 0.0)
+        assert by_yr, "IT carries later-year maturities"
+        for yr, tot in by_yr.items():
+            chip = f"<div class=\"wall-yr\"><span>{yr}</span><b>${tot:,.1f}M</b></div>"
+            assert chip in h, f"wall chip for {yr} must equal the instruments sum"
+        assert 'class="wall-foot"' in h  # reconciliation demoted to the footnote, still present
+
+    # 4 — read-first on what-broke
+    assert 'class="fg-read"' in h
+    shape = d["mechanical"]["drawdown_cause"]["shape"]
+    assert shape["status"] == "present"  # IT: the promoted read exists
+
+    # mockup classes never leak into the app renderer
+    src = Path("frontend/views/shared/dossier.js").read_text()
+    assert 'class="mx-' not in src
+
+
+def test_md_brief_crux_block_and_case_dedup() -> None:
+    """(buy-side cover, md twin) The committed IT markdown carries the crux block inside
+    'At a glance' (question + ≤2 unknowns + the pointer line) and 'The case' carries neither the
+    question nor an unknowns list — content parity with the web cover, layout linear."""
+    p = Path("data/dossiers/IT/dossier.md")
+    if not p.exists():
+        pytest.skip("no committed IT dossier.md")
+    md = p.read_text()
+    j = json.loads(Path("data/dossiers/IT/dossier.json").read_text())
+    q = j["synthesis"]["decisive_question"]["question"]
+    glance = md.split("## At a glance")[1].split("\n## ")[0]
+    assert "The crux — what decides this" in glance and q in glance
+    case = md.split("## The case")[1].split("\n## ")[0]
+    assert q not in case and "_Key unknowns:_" not in case
+
+
+def test_what_broke_restructure_and_survival_columns_e2e_node() -> None:
+    """(review-round restructure e2e, phrasing-independent) On the committed IT artifact:
+
+    1. WHAT-BROKE ORDER — the idio comparison ("Company-specific or market-wide?") renders BEFORE
+       the 8-K filing callout (read → question → evidence), the card carries NO revised-guidance
+       row (it moved to the street card), and the cohort absence is a quiet footnote, not a
+       labelled row.
+    2. STREET — the revised-guidance fact renders on the street card exactly once (never dropped).
+    3. BRIEF STRIP — 'What happened' carries the stat grid with the market leg cell.
+    4. SURVIVAL COLUMNS — the leverage grid and the maturity wall render inside the two-column
+       wrapper (ls-cols), and the wall does NOT render a second time below it.
+    5. PEER ROSTER — the business descriptor column is the prose class, never a numeric cell.
+    """
+    import json as _json
+    import shutil
+    import subprocess
+
+    if not shutil.which("node"):
+        pytest.skip("node not available")
+    p = Path("data/dossiers/IT/dossier.json")
+    if not p.exists():
+        pytest.skip("no committed IT dossier.json")
+    dj = Path("frontend/views/shared/dossier.js").resolve().as_uri()
+    driver = f"""
+const handler = {{ get: () => stub, apply: () => stub, construct: () => ({{}}) }};
+const stub = new Proxy(function(){{}}, handler);
+for (const g of ["window","document","location"]) {{ try {{ globalThis[g] = stub; }} catch {{}} }}
+import {{ readFileSync }} from "node:fs";
+const {{ renderDossier }} = await import("{dj}");
+const rd = (p) => JSON.parse(readFileSync(p));
+const h = renderDossier(rd("data/dossiers/IT/dossier.json"), null,
+  rd("frontend/scenarios/IT.json"));
+console.log(JSON.stringify({{ html: h }}));
+"""
+    out = subprocess.run(["node", "--input-type=module", "-e", driver],
+                         capture_output=True, text=True, check=True)
+    h = _json.loads(out.stdout)["html"]
+
+    # 1 — order + relocations inside the what-broke card
+    card = h.split(">What broke — and did it fall alone?<")[1].split('class="card')[0]
+    assert card.index("Company-specific or market-wide?") < card.index('class="filing"'), (
+        "the idio comparison must precede the 8-K evidence")
+    assert "Revised guidance" not in card
+    assert "no supplier/customer cohort mapped" in card  # IT has no cohort — quiet footnote
+    assert "Supplier/customer cohort</div>" not in card
+
+    # 2 — the street card carries the guidance fact once
+    street = h.split(">The street — estimates &amp; guidance<")[1].split('class="card')[0]
+    assert street.count("Revised guidance (8-K 99.1)") == 1
+
+    # 3 — the Brief what-happened strip has the market cell
+    wh = h.split(">What happened<")[1].split('class="card')[0]
+    assert 'class="fg-grid fg-hero"' in wh and "Market (" in wh  # the comparison is HERO
+
+    # 4 — survival two-column: grid + wall inside ls-cols; the wall renders ONCE
+    surv = h.split(">Survival — leverage")[1].split('class="card')[0]
+    cols = surv.split('class="ls-cols"')
+    assert len(cols) == 2, "the two-column wrapper must render once"
+    assert 'class="fg-grid"' in cols[1]  # the scalar grid pairs with the wall
+    # the long prose rows stay OUT of the columns (full-width below — no half-width cramming)
+    assert "Total debt / EBITDA vs peers" not in cols[1].split('class="ls-wall"')[0]
+    assert surv.count('class="wall-strip"') == 1
+
+    # 5 — peer business column is prose-classed
+    assert 'class="peer-desc"' in h
+    assert 'class="peer-desc">operates' in h  # descriptor text rides the prose cell, not .num
+
+
+def test_page_width_containment_css_pins() -> None:
+    """(review round — page never scrolls horizontally) `.main` is a grid column: without
+    min-width:0 the widest table's INTRINSIC width (appendix statements ~2.7k px) bubbles up
+    through `min-width:auto` and forces the whole column wide, defeating every inner
+    overflow-x:auto wrapper from above. Static pins: the containment rule + contained pre;
+    the exhibits stay width-responsive (width=100%, never a bare fixed width)."""
+    css = Path("frontend/assets/styles.css").read_text()
+    assert ".main { min-width: 0; }" in css
+    assert ".card pre { overflow-x: auto; }" in css
+    src = Path("frontend/views/shared/dossier.js").read_text()
+    assert 'width="100%"' in src
+    for m in re.finditer(r"<svg viewBox[^>]+>", src):
+        frag = m.group(0)[:70]
+        assert 'width="100%"' in m.group(0), f"fixed-width svg breaks containment: {frag}"
+
+
+def test_print_css_collapses_the_survival_columns() -> None:
+    """(review fix) The PDF is the complete record: the two-column survival card must collapse to
+    one column in print like every other split (the .uw-split precedent), and the new blocks must
+    not be severed across a page."""
+    css = Path("frontend/assets/styles.css").read_text()
+    blocks = []
+    for s in (j for j in range(len(css)) if css.startswith("@media print", j)):
+        depth, k = 0, css.index("{", s)
+        while k < len(css):
+            if css[k] == "{":
+                depth += 1
+            elif css[k] == "}":
+                depth -= 1
+                if depth == 0:
+                    break
+            k += 1
+        blocks.append(css[s:k])
+    printed = "\n".join(blocks)
+    assert ".ls-cols { grid-template-columns: 1fr !important; }" in printed
+    assert "break-inside: avoid" in printed and ".wall-strip" in printed
+    # and the screen rules must NOT be trapped inside a print block
+    assert ".fg-hero .fg-val { font-size: 20px" not in printed

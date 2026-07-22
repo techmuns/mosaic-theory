@@ -12,6 +12,12 @@ Verra Mobility Corporation provides smart mobility technology solutions in the U
 - **Customer concentration:** top customer 15% (from 15%) of revenue [3]
 - **Snapshot:** Nasdaq · CMP $4.22 (2026-07-08) · cap $668M · 52-wk $3.40–$25.73 · shares 151.9M · book value/sh $1.79 [4]
 
+**The crux — what decides this, and what would change our mind**
+**Does the Avis termination represent a one-time step-down after which the remaining ~$850M franchise re-stabilizes and grows off a self-funding base, or is it the first crack in a decelerating, single-customer-exposed revenue profile that keeps the multiple permanently depressed?**
+- Whether the ~$4.7x trailing / ~4.3x forward EV/EBITDA at a 0th-percentile own-history floor is overshoot or earned remains unresolved — a trailing multiple at its floor is neither bull nor bear until the forward base stabilizes.
+- The peer set is HETEROGENEOUS (caps $430M–$15.9B, 37x span) so every peer-median multiple is a confidence-gated input, not a clean benchmark; the earned-vs-residual split cannot be cleanly read off this comp.
+_full unknowns + the evidence for/against in Analysis_
+
 ## What happened
 - **Shape:** discrete gap-downs — 2026-02-25 earnings + Reg-FD; 2026-05-27 Reg-FD + other event; 2026-06-02 management change + Reg-FD [5]
 - **Price (180d):** -81.1% [6]
@@ -20,8 +26,6 @@ Verra Mobility Corporation provides smart mobility technology solutions in the U
 - **Free cash flow:** positive [9]
 
 ## The case
-**Does the Avis termination represent a one-time step-down after which the remaining ~$850M franchise re-stabilizes and grows off a self-funding base, or is it the first crack in a decelerating, single-customer-exposed revenue profile that keeps the multiple permanently depressed?**
-
 _(top points; the full argument is in Analysis)_
 
 _Bull case — the decline is overdone:_
@@ -32,10 +36,6 @@ _Bear case — the decline is real:_
 - Leverage is elevated versus peers and the company carries a sub-investment-grade profile — net-debt/EBITDA 2.9x, total-debt/EBITDA 3.0x vs peer-median 1.9x, S&P issuer rating BB- with weakest-tier Solvency score — raising the stakes if the forward EBITDA base steps down further. [13]
 - The drawdown is driven by a discrete, structural customer loss — Avis Budget (>10% of total revenue) served a termination notice — which management itself quantifies as a $135–145M annualized revenue hit and $120–125M segment-profit hit; this is a real permanent-impairment signal, not an optical timing artifact. [14]
 - Forward estimates have been cut sharply and broadly — FY26 EBITDA consensus -16%, EBIT -26%, GAAP net income -29% (12m→latest) — and revision breadth is one-sided (Revenue FY26 0↑/8↓; EPS 1↑/5↓ last month), confirming this is a genuine downgrade cycle not a transient overshoot. [15]
-_Key unknowns:_
-- Whether the ~$4.7x trailing / ~4.3x forward EV/EBITDA at a 0th-percentile own-history floor is overshoot or earned remains unresolved — a trailing multiple at its floor is neither bull nor bear until the forward base stabilizes.
-- The peer set is HETEROGENEOUS (caps $430M–$15.9B, 37x span) so every peer-median multiple is a confidence-gated input, not a clean benchmark; the earned-vs-residual split cannot be cleanly read off this comp.
-- Covenant basis and covenant headroom are UNKNOWN/not disclosed — an expected disclosure gap that is a bearish risk given BB- rating and 3.0x total-debt/EBITDA if the forward EBITDA base erodes further.
 
 ## Financial snapshot
 - **Financial snapshot** — [16]  <!-- ds-table -->
@@ -69,7 +69,12 @@ _table shows the last 4 fiscal years · 1 earlier year is in the Appendix_
 ## Mechanical layer
 
 ### What broke — and did it fall alone?
-- **Shape:** discrete gap-downs — 2026-02-25 earnings + Reg-FD; 2026-05-27 Reg-FD + other event; 2026-06-02 management change + Reg-FD [5]
+- **Read — what broke:** discrete gap-downs — 2026-02-25 earnings + Reg-FD; 2026-05-27 Reg-FD + other event; 2026-06-02 management change + Reg-FD [5]
+
+_Company-specific or market-wide?_
+- **Name 180d return:** -81.1% [6]
+- **Relative vs market:** -97.7% [7]
+_no supplier/customer cohort mapped for this name — the comparison is vs the market only_
 - **Gap-downs — what the results showed (parsed EX-99.1) + the 8-K:**
   - gap 2026-02-25 → 2026-02-24 [`0001193125-26-067015`](https://www.sec.gov/Archives/edgar/data/1682745/000119312526067015/vrrm-20260224.htm)
     - items: 2.02 Results of Operations and Financial Condition, 7.01 Regulation FD Disclosure, 9.01 Financial Statements and Exhibits
@@ -81,23 +86,17 @@ _table shows the last 4 fiscal years · 1 earlier year is in the Appendix_
     - items: 5.02 Departure/Election of Directors or Certain Officers, 7.01 Regulation FD Disclosure, 9.01 Financial Statements and Exhibits
     - 5.02 Departure/Election of Directors or Certain Officers: Departure of Directors or Certain Officers; Election of Directors; Appointment of Certain Officers; Compensatory Arrangements of Certain Officers. On June 1, 2026, Verra Mobility Corporation (the “Company”) announced that the Board of Directors of the Company (the “Board”) approved the appointment of Jonathan Keyser as the Interim President and Chief Executive Officer of the Company, effective May
     - 7.01 Regulation FD Disclosure: Regulation FD Disclosure. On June 1, 2026, the Company issued a press release announcing the appointment of Jonathan Keyser as Interim President and Chief Executive Officer and related matters. A copy of the press release is furnished as Exhibit 99.1 to this Current Report on Form 8-K and is incorporated by reference herein. The information furnished pursuant to
-- **Revised guidance:** Revised 2026 Full-Year Guidance Based on the Company’s year-to-date 2026 results and outlook for the remainder of the year including the aforementioned termination notice, Verra Mobility is revising its 2026 full-year financial outlook to the following: • Total Revenue of $985 million to $995 million • Adjusted EBITDA of $380 million to $385 million • Adjusted EPS of $1.19 to $1.25 • Free Cash Flow of $140 million to $150 million Underlying Assumptions for 2026 Full-Year Guidance • Weighted average fully diluted share count expected to be approximately 155 million shares for the full-year 2026 • Effective tax rate (including state taxes) is expected to be 28.0% to 29.0%, with approximately $50 million in total cash taxes expected to be paid in 2026. The effective tax rate for non-GAAP adju [12]
 - **Event-impact quantifications (8-K EX-99.1, verbatim-bound):**
   - reduce revenue by $135–145M (2026 annualized) — [14]
   - reduce segment profit by $120–125M (2026 annualized) — [14]
 
-_Company-specific or market-wide?_
-- **Name 180d return:** -81.1% [6]
-- **Relative vs market:** -97.7% [7]
-- **Supplier/customer cohort:** none mapped for this name — the comparison is vs the market only
-
 ### Leverage & survival
-- **Net debt / EBITDA (CIQ NET basis):** 2.9x [8]
-- **Total debt / EBITDA (comps — name vs peer median):** name 3.0x vs peer median 1.9x (comps TOTAL-debt/EBITDA basis) [13]
+- **Net debt / EBITDA [NET]:** 2.9x [8]
+- **Total debt / EBITDA vs peers:** name 3.0x vs peer median 1.9x (comps TOTAL-debt/EBITDA basis) [13]
 - **Net debt / OCF:** 4.5x [22]
-- **Net debt / EBITDA (fwd-adj covenant basis):** ~2.6x fwd-adj (net debt $1,009M / FY26 adj-EBITDA $380–$385M) [23]
+- **Net debt / EBITDA [FWD-ADJ]:** ~2.6x fwd-adj (net debt $1,009M / FY26 adj-EBITDA $380–$385M) [23]
 - **Interest coverage:** 5.6x [24]
-- **Self-funding (two-input: latest-Q OCF + LTM FCF):** self-funding: YES — latest-Q OCF > 0 AND LTM FCF > 0 [25]
+- **Self-funding:** self-funding: YES — latest-Q OCF > 0 AND LTM FCF > 0 [25]
 - **Credit health** — [26]  <!-- ds-table -->
 
 |  | Name | Peer median |
@@ -113,7 +112,7 @@ _S&P issuer rating BB- · scale 1=strongest … 4=weakest (S&P-MI PD model)_
 - **FCF sign:** positive [9]
 - **Free cash flow ($M):** 53.9 [11]
 - **Live instruments — near-dated (≤12m + 2027):** none due in the window — 4 undated / later aggregate line item(s) in the appendix panel [27]
-- **Maturity wall** (deterministic, vs the 2026-07-06 reference):
+- **Maturity wall** · vs the 2026-07-06 reference:
   - due 2028: $687.1M
   - due 2029: $350.0M
   - due 2030: $0.0M
@@ -236,6 +235,7 @@ _export date unverified (data ≥ 2026-06-09)_
   - FY 2027: TEV/REV 1.82 · TEV/EBITDA 5.17 · TEV/EBIT 9.39 · Price/Earnings 6.07 · PEG 3.21 · P/BV 1.42
   - FY 2028: TEV/REV 1.79 · TEV/EBITDA 4.85 · TEV/EBIT 7.83 · Price/Earnings 5.36 · PEG 2.83 · P/BV 1.11
   - _+2 later fiscal years in JSON_
+- **Revised guidance (8-K 99.1):** Revised 2026 Full-Year Guidance Based on the Company’s year-to-date 2026 results and outlook for the remainder of the year including the aforementioned termination notice, Verra Mobility is revising its 2026 full-year financial outlook to the following: • Total Revenue of $985 million to $995 million • Adjusted EBITDA of $380 million to $385 million • Adjusted EPS of $1.19 to $1.25 • Free Cash Flow of $140 million to $150 million Underlying Assumptions for 2026 Full-Year Guidance • Weighted average fully diluted share count expected to be approximately 155 million shares for the full-year 2026 • Effective tax rate (including state taxes) is expected to be 28.0% to 29.0%, with approximately $50 million in total cash taxes expected to be paid in 2026. The effective tax rate for non-GAAP adju [12]
 - **Guidance bridge (latest guide + sign-aware delivery track-record)** — [39]  <!-- ds-table -->
 
 |  | Latest guide | For | Dated | Age | Record (met/resolved) | Most recent |

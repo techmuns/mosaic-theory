@@ -12,6 +12,12 @@ Vital Farms, Inc., a food company, packages, markets, and distributes shell eggs
 - **Customer concentration:** top customer 22% (from 23%) · top-2 ~34% of revenue [3]
 - **Snapshot:** Nasdaq · CMP $12.32 (2026-07-08) · cap $480M · 52-wk $7.95–$53.12 · shares 42.8M · book value/sh $7.52 [4]
 
+**The crux — what decides this, and what would change our mind**
+**Is the FY26 earnings collapse a transient trough driven by the butter wind-down plus an input/margin shock that reverses as the restructuring completes, or the start of a durable impairment of the core egg franchise's economics?**
+- Cash runway is not derived despite FCF -$53.9M and negative latest-Q OCF — the actual months of self-funding capacity at current burn is undisclosed (a bearish opacity risk).
+- No forward/adjusted EV/EBITDA basis and no adjusted-EPS figure were in the revised 99.1 guidance, so cheap-overshoot vs cheap-terminal on a forward basis cannot be distinguished (trailing-only multiple, unresolved — neither bull nor bear).
+_full unknowns + the evidence for/against in Analysis_
+
 ## What happened
 - **Shape:** discrete gap-downs — 2026-02-26 earnings + management change + Reg-FD + other event; 2026-05-07 earnings + restructuring [5]
 - **Price (180d):** -57.3% [6]
@@ -20,8 +26,6 @@ Vital Farms, Inc., a food company, packages, markets, and distributes shell eggs
 - **Free cash flow:** negative [9]
 
 ## The case
-**Is the FY26 earnings collapse a transient trough driven by the butter wind-down plus an input/margin shock that reverses as the restructuring completes, or the start of a durable impairment of the core egg franchise's economics?**
-
 _(top points; the full argument is in Analysis)_
 
 _Bull case — the decline is overdone:_
@@ -32,10 +36,6 @@ _Bear case — the decline is real:_
 - The company is burning cash — LTM FCF -$53.9M with latest-Q OCF also negative — so neither leg self-funds, a load-bearing concern given cash is not derived. [13]
 - Management guided next-FY adjusted EBITDA down to 0.0–10.0 from the 105.0–115.0 given just months earlier, a self-inflicted collapse in the forward outlook. [14]
 - Sell-side conviction has broken — multiple brokers (William Blair, Craig-Hallum, Telsey) cut from Buy (1.00) to Hold (3.00) on 2026-05-08 with target prices slashed (e.g., 26.0→11.0), and the horizon breadth is uniformly downward (e.g., Revenue FQ2 0↑/9↓). [15]
-_Key unknowns:_
-- Cash runway is not derived despite FCF -$53.9M and negative latest-Q OCF — the actual months of self-funding capacity at current burn is undisclosed (a bearish opacity risk).
-- No forward/adjusted EV/EBITDA basis and no adjusted-EPS figure were in the revised 99.1 guidance, so cheap-overshoot vs cheap-terminal on a forward basis cannot be distinguished (trailing-only multiple, unresolved — neither bull nor bear).
-- Segment-level EBITDA is unavailable (Segments sheet has no EBITDA section), so the profitability drag from butter vs the core egg business cannot be isolated.
 
 ## Financial snapshot
 - **Financial snapshot** — [16]  <!-- ds-table -->
@@ -74,7 +74,12 @@ _Key unknowns:_
 ## Mechanical layer
 
 ### What broke — and did it fall alone?
-- **Shape:** discrete gap-downs — 2026-02-26 earnings + management change + Reg-FD + other event; 2026-05-07 earnings + restructuring [5]
+- **Read — what broke:** discrete gap-downs — 2026-02-26 earnings + management change + Reg-FD + other event; 2026-05-07 earnings + restructuring [5]
+
+_Company-specific or market-wide?_
+- **Name 180d return:** -57.3% [6]
+- **Relative vs market:** -74.0% [7]
+_no supplier/customer cohort mapped for this name — the comparison is vs the market only_
 - **Gap-downs — what the results showed (parsed EX-99.1) + the 8-K:**
   - gap 2026-02-26 → 2026-02-26 [`0001193125-26-073373`](https://www.sec.gov/Archives/edgar/data/1579733/000119312526073373/vitl-20260220.htm)
     - items: 2.02 Results of Operations and Financial Condition, 5.02 Departure/Election of Directors or Certain Officers, 7.01 Regulation FD Disclosure, 8.01 Other Events, 9.01 Financial Statements and Exhibits
@@ -82,19 +87,14 @@ _Key unknowns:_
   - gap 2026-05-07 → 2026-05-07 [`0001193125-26-210294`](https://www.sec.gov/Archives/edgar/data/1579733/000119312526210294/vitl-20260501.htm)
     - items: 2.02 Results of Operations and Financial Condition, 2.05 Costs Associated with Exit or Disposal Activities, 9.01 Financial Statements and Exhibits
     - **what the results showed:** adj EBITDA Q1 2026 $5.0M; 2026 revenue outlook: 775.0–800.0; next-fy adjusted ebitda outlook: 0.0–10.0 [14]
-- **Revised guidance · Net debt / EBITDA (fwd-adj covenant basis) · EV/EBITDA (adjusted, forward) · Adjusted EPS (earnings power):** _UNKNOWN_ — no revised-outlook 99.1 exhibit parsed — the revised forward guidance is UNKNOWN
-
-_Company-specific or market-wide?_
-- **Name 180d return:** -57.3% [6]
-- **Relative vs market:** -74.0% [7]
-- **Supplier/customer cohort:** none mapped for this name — the comparison is vs the market only
 
 ### Leverage & survival
-- **Net debt / EBITDA (CIQ NET basis):** 0.0x [8]
-- **Total debt / EBITDA (comps — name vs peer median):** name 0.1x vs peer median 3.8x (comps TOTAL-debt/EBITDA basis) [10]
+- **Net debt / EBITDA [NET]:** 0.0x [8]
+- **Total debt / EBITDA vs peers:** name 0.1x vs peer median 3.8x (comps TOTAL-debt/EBITDA basis) [10]
 - **Net debt / OCF:** 0.3x [22]
+- **Net debt / EBITDA [FWD-ADJ] · EV/EBITDA (adjusted, forward) · Adjusted EPS (earnings power) · Revised guidance (8-K 99.1):** _UNKNOWN_ — no revised-outlook 99.1 exhibit parsed — the revised forward guidance is UNKNOWN
 - **Interest coverage:** 99.4x [23]
-- **Self-funding (two-input: latest-Q OCF + LTM FCF):** self-funding: MIXED — latest-Q OCF < 0, LTM FCF < 0 (both must be positive to self-fund) [24]
+- **Self-funding:** self-funding: MIXED — latest-Q OCF < 0, LTM FCF < 0 (both must be positive to self-fund) [24]
 - **Credit health** — [11]  <!-- ds-table -->
 
 |  | Name | Peer median |
@@ -110,7 +110,7 @@ _S&P issuer rating unrated · scale 1=strongest … 4=weakest (S&P-MI PD model)_
 - **FCF sign:** negative [9]
 - **Free cash flow ($M):** -53.9 [13]
 - **Live instruments — near-dated (≤12m + 2027):** none due in the window — 3 undated / later aggregate line item(s) in the appendix panel [25]
-- **Maturity wall** (deterministic, vs the 2026-07-06 reference):
+- **Maturity wall** · vs the 2026-07-06 reference:
   - due 2029: $0.0M
   - undated (floor — no panel maturity): $53.5M — Finance Lease Liabilities $10.8M, Operating Lease Liabilities $42.7M
   - _reconciliation: itemized $53.5M (panel A 2025 filed Feb-26-2026) vs the latest-quarter aggregates below — the gap is unitemized / newer term loans; read the QoQ movement in the aggregates line._

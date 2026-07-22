@@ -257,6 +257,50 @@ python3 frontend/build.py                                # mirror into this dash
 }
 
 
+// --- (buy-side layout) a RUN of scalar facts as one stat grid — label over value, basis tag
+// visible in the cell (never tooltip-only: NET vs TOTAL on adjacent leverage rows is disclosure,
+// not decoration), UNKNOWN as chip + its note in visible small text (prints — the PDF is the
+// record). Entries are an EXPLICIT field map ({label, s, fmt, basis}) — layout is chosen per field
+// by the renderer, never by string length. Prose/composite values stay individual fact() rows.
+// hero mode: the DECISION comparison register (large signed values, negatives in the danger
+// tone, hairline cell separators) — for the name/market/relative strips. Reference scalars keep
+// the standard register.
+function factGrid(entries, { hero = false } = {}) {
+  const cells = entries.filter((e) => e && e.s).map((e) => {
+    const s = e.s;
+    const basis = e.basis ? ` <span class="fg-basis">${escapeHtml(e.basis)}</span>` : "";
+    // e.sub: a NON-caveat subline (e.g. the idio read under the relative cell) — no ⚠
+    const sub = e.sub ? `<div class="fg-note">${escapeHtml(e.sub)}</div>` : "";
+    if (!(s.status === "present" && s.value != null)) {
+      const badge = s.status === "missing" ? "MISSING" : "UNKNOWN";
+      return `<div class="fg-cell"><div class="fg-lab">${escapeHtml(e.label)}${basis}</div>
+        <div class="fg-val muted"><span class="pill unresolved">${badge}</span></div>
+        ${s.note ? `<div class="fg-note">${escapeHtml(s.note)}</div>` : ""}</div>`;
+    }
+    const val = e.fmt ? e.fmt(s.value) : escapeHtml(String(s.value));
+    const caveat = s.note ? `<div class="fg-note">⚠ ${escapeHtml(s.note)}</div>` : "";
+    return `<div class="fg-cell"><div class="fg-lab">${escapeHtml(e.label)}${basis}</div>
+      <div class="fg-val">${val}${citeMark(s.source_ref)}</div>${caveat}${sub}</div>`;
+  });
+  return cells.length ? `<div class="fg-grid${hero ? " fg-hero" : ""}">${cells.join("")}</div>` : "";
+}
+
+// signed % for the HERO comparison cells — negatives carry the danger tone (the reference
+// register: a −45% drawdown reads red; a positive market leg stays ink, never celebratory green)
+function retHero(v) {
+  const txt = fmtPct(v, { signed: true });
+  return Number(v) < 0 ? `<span class="fg-neg">${txt}</span>` : txt;
+}
+
+// (buy-side layout) a card's READ — the one-line answer to the card's question, styled as the
+// lead. Reads lead when they exist; a grid never holds an interpretive sentence.
+function factRead(label, s, fmt) {
+  if (!s || s.status !== "present" || s.value == null) return "";
+  const val = fmt ? fmt(s.value) : escapeHtml(String(s.value));
+  return `<div class="fg-read"><div class="fg-read-lab">${escapeHtml(label)}</div>
+    <div class="fg-read-txt">${val}${citeMark(s.source_ref)}</div></div>`;
+}
+
 // --- a single Sourced fact: value + [n] cite, or honest UNKNOWN/MISSING --
 function fact(label, s, fmt, { hi = false } = {}) {
   s = s || {};
@@ -493,7 +537,7 @@ function analysisTier(d, m) {
     + trajectorySection(m.quality || {}, m)             // trajectory + the return-ratios table
     + valuation(m.valuation)                            // the ONLY home of the full multiples read
     + peerComps(m.peer_comps)                           // peer comps (per-peer grid inside)
-    + catalystPath(m.catalyst_path, m.consensus_context)  // the street — estimates & guidance
+    + catalystPath(m.catalyst_path, m.consensus_context, m.drawdown_cause)  // the street
     + (m.catalyst_path ? "" : consensus(m.consensus_context))  // legacy fallback only for old JSON
     + concentration(m.concentration)
     + synthesis(d.synthesis);                           // the argument — stays the capstone
@@ -589,21 +633,34 @@ function briefTile(label, value, danger) {
 // drawdown vs the market + leverage + FCF sign (+ going-concern when flagged). Fail-honest: a tile
 // renders only when its source is present. (The "Valuation (vs peers)" line moved OUT — it is already
 // rendered by valuationCard; showing it here was a literal duplicate.)
+// (buy-side what-happened) the Brief's decision numbers as ONE stat strip — the name/market/
+// relative comparison (with the idio read as the relative cell's subline) + the two survival
+// scalars. Replaces the pill tiles; same suppression discipline as the Analysis idio grid
+// (an UNKNOWN market cell is dropped when the relative is present — declutter P1).
 function briefTilesGrid(m) {
-  const tiles = [];
   const io = m.idiosyncratic_vs_shared || {};
-  if (io.name_180d_return && io.name_180d_return.status === "present")
-    tiles.push(briefTile("Price (180d)", fmtPct(io.name_180d_return.value, { signed: true })));
-  if (io.rel_vs_market && io.rel_vs_market.status === "present")
-    tiles.push(briefTile("vs market (180d)", fmtPct(io.rel_vs_market.value, { signed: true })));
   const q = m.quality || {};
-  if (q.net_debt_to_ebitda && q.net_debt_to_ebitda.status === "present")
-    tiles.push(briefTile("Net debt/EBITDA", mult(q.net_debt_to_ebitda.value)));
-  if (q.fcf_sign && q.fcf_sign.status === "present")
-    tiles.push(briefTile("Free cash flow", escapeHtml(signWord(q.fcf_sign.value))));
+  const marketCell = (io.market_180d_return && io.market_180d_return.status === "present")
+    || !(io.rel_vs_market && io.rel_vs_market.status === "present")
+    ? { label: `Market (${io.benchmark_symbol || "IWM"}) 180d`, s: io.market_180d_return, fmt: retHero }
+    : null;
+  const idioRead = (io.read && io.read.status === "present") ? String(io.read.value) : "";
+  // the comparison is the HERO register (large, negatives red); the survival scalars ride a
+  // standard reference line under it
+  const heroGrid = factGrid([
+    { label: "Price (180d)", s: io.name_180d_return, fmt: retHero },
+    marketCell,
+    { label: "Relative vs market", s: io.rel_vs_market, fmt: retHero, sub: idioRead },
+  ].filter((e) => e && e.s && (e.s.status === "present" || e === marketCell)), { hero: true });
+  const refGrid = factGrid([
+    { label: "Net debt / EBITDA", basis: "NET", s: q.net_debt_to_ebitda, fmt: mult },
+    { label: "Free cash flow", s: q.fcf_sign, fmt: (v) => escapeHtml(signWord(v)) },
+  ].filter((e) => e && e.s && e.s.status === "present"));
   const gc = (((m.primary_source || {}).filing || {}).going_concern) || null;
-  if (gc) tiles.push(briefTile("Going concern", gc.substantial_doubt ? "⚠ substantial doubt" : "not flagged", gc.substantial_doubt));
-  return tiles.length ? `<div class="brief-tiles">${tiles.join("")}</div>` : "";
+  const gcLine = gc
+    ? `<div class="fg-note" style="margin-top:4px;${gc.substantial_doubt ? " color:var(--danger-text); font-weight:600;" : ""}">Going concern: ${gc.substantial_doubt ? "⚠ substantial doubt" : "not flagged"}</div>`
+    : "";
+  return heroGrid || refGrid || gcLine ? `${heroGrid}${refGrid}${gcLine}` : "";
 }
 
 function briefVerdictChip(verdict) {
@@ -647,16 +704,19 @@ function assessmentRow(d) {
     <div class="fact-val">${machineReadHtml(s.evidence_balance)}</div></div>`;
 }
 
-// The opener's NARRATIVE slot (user decision): a logged name leads with the ANALYST'S rationale —
-// the verdict of record's own words replace the machine read; a pending name (no rationale yet)
-// leads with the machine Assessment. The rationale renders HERE only — the detail card suppresses
-// its copy (rationale: false), so the words appear once.
-function narrativeRow(d, card) {
+// The opener's NARRATIVE slot (user decisions, 2026-07-21 + buy-side cover 2026-07-22): a logged
+// name leads the narrative column with the ANALYST'S rationale under its own "Thesis — our
+// rationale" heading, ABOVE the About block — the variant perception is the thesis, the company
+// description is context. A pending name (no rationale yet) keeps the machine Assessment inside
+// the About block, NEVER titled as a thesis — machine framing and the human's verdict of record
+// are different voices, and the heading marks authorship. The rationale renders HERE only — the
+// detail card suppresses its copy (rationale: false), so the words appear once.
+function thesisBlock(card) {
   const v = (card && card.verdict) || {};
   const plain = v.rationalePlain || v.rationale;
-  if (plain) return `<div class="fact"><div class="fact-label">Rationale</div>
-    <div class="fact-val">${escapeHtml(plain)}</div></div>`;
-  return assessmentRow(d);
+  if (!plain) return "";
+  return `<div class="brief-vlab brief-eyebrow">Thesis — our rationale</div>
+    <div class="brief-thesis">${escapeHtml(plain)}</div>`;
 }
 
 // (user decision) the standing proposal row is GONE from the web brief. The pivot
@@ -689,12 +749,27 @@ function openerCard(d, verdict, m, card, mark) {
   const title = `<div class="ds-title">At a glance${chips}</div>`;
   const lead = parts ? parts.head : briefVerdictChip(verdict);
   const warn = warningStrip(d);
-  const about = companyInner(d, m, narrativeRow(d, card));
-  if (!lead && !(warn + about).trim()) return "";
-  // one divider only (the company block's own border-top); the narrative lives INSIDE it,
-  // above Segments — no extra sectioned rule between the masthead and the block
-  const body = () => `${lead}${warn}${about}`;
+  const about = companyInner(d, m, card);
+  const crux = cruxInner(d.synthesis);
+  if (!lead && !(warn + about + crux).trim()) return "";
+  // one divider only (the company block's own border-top); the thesis leads the narrative column
+  // inside it; the crux CLOSES the cover (the memo convention: open with the thesis, end with
+  // what would change our mind).
+  const body = () => `${lead}${warn}${about}${crux}`;
   return `<div class="card ds-section uw-card uw-open">${title}${withEndnotes("S", body)}</div>`;
+}
+
+// (buy-side cover) THE CRUX — the decisive question + the top unknowns, closing the cover. Pure
+// render-tier: both fields are already committed in the synthesis (no assembly change); "The case"
+// card drops its copies so the question renders once per tier. Fail-honest: no question → no block.
+function cruxInner(s) {
+  const q = s && s.decisive_question && s.decisive_question.question;
+  if (!q) return "";
+  const unks = (s.key_unknowns || []).slice(0, 2);
+  return `<div class="brief-crux"><div class="brief-vlab brief-eyebrow">The crux — what decides this, and what would change our mind</div>
+    <div class="brief-dq">${escapeHtml(q)}</div>
+    ${unks.length ? `<ul class="kv-list">${unks.map((k) => `<li>${escapeHtml(k)}</li>`).join("")}</ul>` : ""}
+    <div class="muted" style="font-size:11px; margin-top:4px;">full unknowns + the evidence for/against in Analysis</div></div>`;
 }
 
 // 2 — UNDERWRITE DETAIL (user decision): the scenarios table + range rail, the analyst's rationale,
@@ -716,7 +791,9 @@ function underwriteDetail(d, verdict, m, card, mark) {
 
 // the company-identity block shared by the opener: one-liner · segments / geography / customer
 // concentration · the key-figures table + 52-week relative path. CIK lives in Record & reproduce.
-function companyInner(d, m, narrative = "") {
+function companyInner(d, m, card = null) {
+  const thesis = thesisBlock(card);
+  const narrative = thesis ? "" : assessmentRow(d);  // unlogged names keep the machine read here
   const one = (d.business_description && d.business_description.status === "present")
     ? firstSentence(d.business_description.value) : "";
   const c = m.concentration || {};
@@ -735,9 +812,13 @@ function companyInner(d, m, narrative = "") {
     ((c.geographic && c.geographic.status === "present") ? fact("Geography", c.geographic) : "") +
     concLine;
   const right = briefSnapshot(d, m);
-  if (!left && !right) return "";
+  if (!left && !right && !thesis) return "";
+  // (buy-side cover) the thesis leads the narrative column; About demotes below it with its heading
   return `<div class="uw-company"><div class="brief-body">${
-    left ? `<div class="brief-narrative"><div class="brief-vlab brief-eyebrow">About the company</div>${left}</div>` : ""}${right}</div></div>`;
+    (thesis || left)
+      ? `<div class="brief-narrative">${thesis}${
+        left ? `<div class="brief-vlab brief-eyebrow">About the company</div>${left}` : ""}</div>`
+      : ""}${right}</div></div>`;
 }
 
 // 3 — WHAT HAPPENED: the drawdown events + the decision tiles. The Brief used to show the raw
@@ -885,18 +966,16 @@ function briefSnapshot(d, m) {
 // "the decline is real" (was "overshoot" / "terminal"). Full argument lives in Analysis.
 function briefCase(s) {
   if (!s || (!(s.bull_points || []).length && !(s.bear_points || []).length)) return "";
-  const q = (s.decisive_question && s.decisive_question.question) ? s.decisive_question.question : "";
+  // (buy-side cover) the decisive question + key unknowns moved to the opener's CRUX block — this
+  // card carries the condensed bull/bear alone, so the question renders once per tier.
   const pt = (p, cls) => `<div class="point ${cls}">${escapeHtml(p.claim)}${citeMark(p.source_ref)}</div>`;
   const bulls = orderPoints(s.bull_points).slice(0, 3).map((p) => pt(p, "bull")).join("") || `<div class="muted">—</div>`;
   const bears = orderPoints(s.bear_points).slice(0, 3).map((p) => pt(p, "bear")).join("") || `<div class="muted">—</div>`;
-  const uks = (s.key_unknowns || []).slice(0, 3);
-  const uk = uks.length ? `<div class="ds-title" style="font-size:12px; margin-top:12px;">Key unknowns</div><ul class="kv-list">${uks.map((k) => `<li>${escapeHtml(k)}</li>`).join("")}</ul>` : "";
   return `<div class="card ds-section"><div class="ds-title">The case<span class="ds-route">full argument in Analysis</span></div>
-    ${q ? `<div class="brief-dq">${escapeHtml(q)}</div>` : ""}
     <div class="brief-case">
       <div><div class="ds-title" style="font-size:12px; color:var(--pos-text);">Bull case — the decline is overdone</div>${bulls}</div>
       <div><div class="ds-title" style="font-size:12px; color:var(--danger);">Bear case — the decline is real</div>${bears}</div>
-    </div>${uk}</div>`;
+    </div></div>`;
 }
 
 // (Phase-3) Revenue + EBITDA bars ($M) + EBITDA-margin % line — the institutional financial-trend
@@ -1259,15 +1338,20 @@ function cleanNote(note) {
              "credit-health panel scale is ambiguous in the export");
 }
 
-// (D1/R3) drawdown cause + idiosyncrasy under ONE section header (matches the md) — what happened,
-// and did it happen alone?
+// (D1/R3 · buy-side restructure) drawdown cause + idiosyncrasy under ONE section header — the
+// READ leads, the alone-or-with-market comparison follows DIRECTLY (the card's question), and the
+// 8-K evidence closes as provenance. Revised guidance moved to the street card (it is a guidance
+// fact, not a what-broke fact); the cohort-absence row collapsed to a footnote (idioVsShared).
 function drawdownIdio(m) {
   const dd = drawdownCause(m.drawdown_cause), io = idioVsShared(m.idiosyncratic_vs_shared);
-  if (!dd && !io) return "";
-  const divider = `<div class="ds-title" style="font-size:12px; margin-top:14px;">Company-specific or market-wide?</div>`;
+  // legacy no-street-card JSON: the guidance fact renders here so it is never dropped
+  const legacyGuide = (!m.catalyst_path && m.drawdown_cause)
+    ? fact("Revised guidance", m.drawdown_cause.revised_guidance) : "";
+  if (!dd.read && !dd.evidence && !io && !legacyGuide) return "";
+  const divider = `<div class="ds-title" style="font-size:12px; margin-top:10px;">Company-specific or market-wide?</div>`;
   return sec("What broke — and did it fall alone?",
     "The event(s) that broke the name, then whether it fell alone (idiosyncratic) or with its graph cohort.",
-    dd + (io ? divider + io : ""));
+    dd.read + (io ? divider + io : "") + legacyGuide + dd.evidence);
 }
 
 // (E2) $M principal → "$25.0M" / "–"
@@ -1277,7 +1361,7 @@ const _mM = (v) => (v == null ? DASH : `$${Number(v).toLocaleString("en-US", { m
 
 // (E2) deterministic month-precision maturity wall from the structured instruments (mirrors
 // render._maturity_wall_lines): matured-pre-reference / due this ref year / due later years / undated.
-function maturityWall(cs, refDate) {
+function maturityWall(cs, refDate, { column = false } = {}) {
   const inst = cs.instruments;
   if (!inst || inst.status !== "present" || !Array.isArray(inst.value)) return "";
   // Bucket by the ISO date STRING (YYYY-MM-DD), NOT a local Date: `new Date("…T00:00:00")` is LOCAL
@@ -1298,14 +1382,28 @@ function maturityWall(cs, refDate) {
       matured.sort((a, b) => (a[0] < b[0] ? -1 : a[0] > b[0] ? 1 : 0)).map(([m, i]) => `<li>${i.maturity_date}: ${_mM(i.principal_musd)} ${escapeHtml(i.description.slice(0, 34))}</li>`).join("") + "</ul></li>");
   }
   if (thisYear.length) li.push(`<li>due ≤12m (through ${refYear}): ${_mM(sum(thisYear))} — ${thisYear.map(([m, i]) => `${i.maturity_date} ${_mM(i.principal_musd)}`).join(", ")}</li>`);
+  // (buy-side layout) the by-year run is a same-schema series → a year→amount STRIP, not list
+  // lines; matured/≤12m keep their loud list form above (they carry warnings, not just amounts).
   const byYr = {};
   for (const [m, i] of later) (byYr[m.slice(0, 4)] ||= []).push([m, i]);
-  for (const yr of Object.keys(byYr).sort()) li.push(`<li>due ${yr}: ${_mM(sum(byYr[yr]))}</li>`);
+  const chips = Object.keys(byYr).sort().map((yr) =>
+    `<div class="wall-yr"><span>${yr}</span><b>${_mM(sum(byYr[yr]))}</b></div>`);
   const shortName = (n, cap = 34) =>
     (n.length <= cap ? n : n.slice(0, cap).split(" ").slice(0, -1).join(" ") + "…");
-  if (undated.length) li.push(`<li>undated (floor — no panel maturity): ${_mM(sum(undated))} — ${undated.map((i) => `${escapeHtml(shortName(i.description))} ${_mM(i.principal_musd)}`).join(", ")}</li>`);
-  li.push(`<li class="muted"><i>reconciliation: itemized ${_mM(sum(inst.value))} (panel ${escapeHtml(cs.detail_as_of || "")}) vs the latest-quarter aggregates below — the gap is unitemized / newer term loans.</i></li>`);
-  return `<div class="fact"><div class="fact-label">Maturity wall (deterministic, vs ${escapeHtml(refDate)})</div><ul class="kv-list">${li.join("")}</ul></div>`;
+  let undatedFoot = "";
+  if (undated.length) {
+    chips.push(`<div class="wall-yr"><span>undated†</span><b>${_mM(sum(undated))}</b></div>`);
+    undatedFoot = `† floor — no panel maturity: ${undated.map((i) => `${escapeHtml(shortName(i.description))} ${_mM(i.principal_musd)}`).join(", ")}. `;
+  }
+  const strip = chips.length ? `<div class="wall-strip">${chips.join("")}</div>` : "";
+  const foot = `<div class="wall-foot">${undatedFoot}reconciliation: itemized ${_mM(sum(inst.value))} (panel ${escapeHtml(cs.detail_as_of || "")}) vs the latest-quarter aggregates below — the gap is unitemized / newer term loans.</div>`;
+  const body = `${li.length ? `<ul class="kv-list">${li.join("")}</ul>` : ""}${strip}${foot}`;
+  // column mode (buy-side two-column survival card): the wall carries its own sub-head and fills
+  // the right column — no label|value grid wasting the column's width
+  if (column) {
+    return `<div class="ls-wall"><div class="ds-title" style="font-size:12px;">Maturity wall · vs ${escapeHtml(refDate)}</div>${body}</div>`;
+  }
+  return `<div class="fact"><div class="fact-label">Maturity wall · vs ${escapeHtml(refDate)}</div><div>${body}</div></div>`;
 }
 
 // (E1/E2) instrument columns + one instrument → a {label, cells} row (mirrors render._CS_COLS /
@@ -1482,7 +1580,7 @@ function covenantSummary(cs) {
 // the maturity-resolution verbatim, and the curated covenant-values summary. The full instrument
 // panel, the 8-K/covenant pointer tables, and the full per-family covenant tables move to the
 // appendix (capitalStructureAppendix). Mirrors render._capital_structure_lines.
-function capitalStructureInner(cs, refDate) {
+function capitalStructureInner(cs, refDate, { skipWall = false } = {}) {
   const inst = cs.instruments;
   let table = fact("Capital structure (instruments)", inst);
   if (inst && inst.status === "present" && Array.isArray(inst.value)) {
@@ -1502,8 +1600,9 @@ function capitalStructureInner(cs, refDate) {
   // (P3) the verbatim maturity-resolution event, when captured (a pre-P3 JSON has no field → nothing)
   const matEv = cs.maturity_event && (cs.maturity_event.status !== "present" || cs.maturity_event.value)
     ? fact("Maturity resolution (8-K verbatim)", cs.maturity_event) : "";
-  return subhead("Capital structure & maturity wall") +
-    table + maturityWall(cs, refDate) +
+  // the sub-head stops claiming the wall once the wall renders in the column above
+  return subhead(skipWall ? "Capital structure" : "Capital structure & maturity wall") +
+    table + (skipWall ? "" : maturityWall(cs, refDate)) +
     fact("Aggregates (latest quarter)", cs.summary) + matEv +
     covenantSummary(cs);  // (K1) curated per-family survival covenant VALUES; "" → appendix carries it
 }
@@ -1653,12 +1752,14 @@ function covenantTerms(cs) {
 // wall + covenant pointers/terms. leverageBlock/capitalStructureInner return INNER content (no card).
 function leverageSurvival(m, refDate) {
   const q = m.quality || {};
-  const leverage = m.leverage_survival ? leverageBlock(m) : (
-    fact("Net debt / EBITDA (GAAP)", q.net_debt_to_ebitda, mult) +
-    fact("Net debt / OCF", q.net_debt_to_ocf, mult) +
-    fact("Net debt / EBITDA (covenant adj.)", q.net_debt_to_ebitda_adjusted) +
-    fact("Survival capacity", q.survival_capacity) +
-    fact("Interest coverage", q.interest_coverage, mult));
+  const lb = m.leverage_survival ? leverageBlock(m) : {
+    grid: "",
+    rows: fact("Net debt / EBITDA (GAAP)", q.net_debt_to_ebitda, mult) +
+      fact("Net debt / OCF", q.net_debt_to_ocf, mult) +
+      fact("Net debt / EBITDA (covenant adj.)", q.net_debt_to_ebitda_adjusted) +
+      fact("Survival capacity", q.survival_capacity) +
+      fact("Interest coverage", q.interest_coverage, mult),
+  };
   // (declutter P1) "FCF sign: UNKNOWN" above a present FCF value read as a contradiction
   const fcfSign = (q.fcf_sign && q.fcf_sign.status === "present")
     || !(q.free_cash_flow && q.free_cash_flow.status === "present")
@@ -1666,10 +1767,18 @@ function leverageSurvival(m, refDate) {
   const cash = subhead("Cash & liquidity") +
     fcfSign + fact("Free cash flow ($M)", q.free_cash_flow) +
     (m.capital_structure ? "" : fact("Liquidity / covenant flags", q.liquidity_covenant_flags));
-  const capital = m.capital_structure ? capitalStructureInner(m.capital_structure, refDate) : "";
+  // (buy-side two-column) the SCALAR GRID pairs with the maturity wall side-by-side — two compact
+  // blocks of like density; the prose rows (long values) stay FULL-WIDTH below the columns.
+  // Narrow screens collapse to one column (CSS); no wall → single column (fail-honest).
+  const cs = m.capital_structure;
+  const wallCol = cs ? maturityWall(cs, refDate, { column: true }) : "";
+  const capital = cs ? capitalStructureInner(cs, refDate, { skipWall: !!wallCol }) : "";
+  const top = wallCol && lb.grid
+    ? `<div class="ls-cols"><div>${lb.grid}</div><div>${wallCol}</div></div>` + lb.rows
+    : lb.grid + (wallCol || "") + lb.rows;
   return sec("Survival — leverage · cash/FCF · capital structure & maturity wall",
     "One block: the leverage bases, self-funding, the month-precision wall, and the covenant "
-    + "pointers/terms.", leverage + cash + capital);
+    + "pointers/terms.", top + cash + capital);
 }
 
 // (D2/D1) trajectory — the merged table + the share-count trend.
@@ -1898,8 +2007,20 @@ function peerRosterFact(label, s) {
   if (!s || s.status !== "present" || s.value == null) return fact(label, s);
   const p = parsePeerRoster(s.value);
   if (!p) return fact(label, s);
-  const rows = p.rows.map((r) => ({ label: r.name, cells: [r.cap || DASH, r.desc] }));
-  return dataTable(label, s.source_ref, ["Mkt cap", "Business"], rows, p.nameCap ? `the name: ${p.nameCap}` : "");
+  // (buy-side polish) the business descriptor is PROSE, not a numeric cell: left-aligned, small
+  // muted sans, wrapped — never mono/right-aligned. The stored text is clipped AT EXTRACTION
+  // (CIQ profile cap), so a non-terminal fragment gets an honest ellipsis marker — display only,
+  // the record is unchanged; widening the capture is an extractor item, not a render one.
+  const desc = (t) => {
+    const x = String(t || "").trim();
+    if (!x) return DASH;
+    return escapeHtml(x) + (/[.!?)]$/.test(x) ? "" : "…");
+  };
+  const body = p.rows.map((r) => `<tr><td style="white-space:nowrap;">${escapeHtml(r.name)}</td>
+    <td class="num">${escapeHtml(r.cap || DASH)}</td><td class="peer-desc">${desc(r.desc)}</td></tr>`).join("");
+  const note = p.nameCap ? `<div class="muted" style="font-size:11px; margin-top:5px;">the name: ${escapeHtml(p.nameCap)}</div>` : "";
+  return `<div class="fact"><div class="fact-label">${escapeHtml(label)}</div>
+    <div style="min-width:0;"><div style="overflow-x:auto;"><table class="data"><thead><tr><th></th><th class="num">Mkt cap</th><th class="peer-desc-h">Business</th></tr></thead><tbody>${body}</tbody></table></div>${note}${citeMark(s.source_ref)}</div></div>`;
 }
 
 function peerComps(pc) {
@@ -1917,7 +2038,7 @@ function peerComps(pc) {
 }
 
 function drawdownCause(dc) {
-  if (!dc) return "";
+  if (!dc) return { read: "", evidence: "" };
   const filings = (dc.filings || []).map((f) => `
     <div class="filing">
       <div class="fh">${escapeHtml(f.form || "8-K")} · filed ${fmtDate(f.filing_date)} <span class="muted">(for the ${escapeHtml(f.gap_date || "")} gap-down)</span></div>
@@ -1932,11 +2053,19 @@ function drawdownCause(dc) {
   const shapeV = dc.shape || {};
   const datesDup = gd.status === "present" && shapeV.status === "present"
     && (gd.value || []).every((d) => String(shapeV.value).includes(String(d)));
-  return (  // (R3) body only — drawdownIdio wraps it in the shared section header
-    fact("Shape", dc.shape, fmtShape) +
-    (datesDup ? "" : fact("Gap-down dates", listFact(dc.gap_down_dates))) +
-    fact("Revised guidance", dc.revised_guidance) +
-    (filings ? `<div style="margin-top:12px;">${filings}</div>` : ""));
+  // (buy-side anatomy) the Shape classification IS this card's read — it leads when present;
+  // an absent shape stays a loud UNKNOWN row (fail-honest, never silently dropped)
+  const shapeLead = (shapeV.status === "present" && shapeV.value != null)
+    ? factRead("Read — what broke", dc.shape, (v) => escapeHtml(fmtShape(v)))
+    : fact("Shape", dc.shape, fmtShape);
+  // (restructure) read + evidence returned SEPARATELY: the idio comparison renders between them
+  // (the card's question directly after its read; the 8-K callout closes as provenance). Revised
+  // guidance is a street/guidance fact — it renders on the street card (catalystPath); the legacy
+  // no-catalyst-path JSON keeps it here so the fact is never dropped.
+  return {
+    read: shapeLead + (datesDup ? "" : fact("Gap-down dates", listFact(dc.gap_down_dates))),
+    evidence: (filings ? `<div style="margin-top:12px;">${filings}</div>` : ""),
+  };
 }
 
 function idioVsShared(io) {
@@ -1951,18 +2080,25 @@ function idioVsShared(io) {
   const cohortPresent = io.cohort && io.cohort.status === "present" && Array.isArray(io.cohort.value);
   // (declutter P1) an UNKNOWN market row above a PRESENT relative read as a contradiction; and the
   // two cohort-absence rows said one absence twice, one citing an internal filename.
-  const marketRow = (io.market_180d_return && io.market_180d_return.status === "present")
+  const marketCell = (io.market_180d_return && io.market_180d_return.status === "present")
     || !(io.rel_vs_market && io.rel_vs_market.status === "present")
-    ? fact(`Market (${escapeHtml(io.benchmark_symbol || "IWM")}) 180d`, io.market_180d_return, ret) : "";
+    ? { label: `Market (${io.benchmark_symbol || "IWM"}) 180d`, s: io.market_180d_return, fmt: retHero }
+    : null;
+  const readLead = (io.read && io.read.status === "present" && io.read.value != null)
+    ? factRead("Read — alone or with the cohort?", io.read)
+    : fact("Read", io.read, null, { hi: true });  // an UNKNOWN read stays loud, never dropped
+  // (restructure) cohort ABSENCE is one honest footnote line, not a full labelled row
   const cohortBlock = cohortPresent
-    ? fact("Read", io.read, null, { hi: true })
+    ? readLead
       + `<div class="fact"><div class="fact-label">Graph cohort</div><div>${cohort}</div></div>`
-    : `<div class="fact"><div class="fact-label">Supplier/customer cohort</div>
-      <div class="fact-val muted">none mapped for this name — the comparison is vs the market only</div></div>`;
+    : `<div class="fg-note" style="margin-top:2px;">no supplier/customer cohort mapped for this name — the comparison is vs the market only</div>`;
   return (  // (R3) body only — drawdownIdio wraps it in the shared section header
-    fact("Name 180d return", io.name_180d_return, ret) +
-    marketRow +
-    fact("Relative vs market", io.rel_vs_market, ret) +
+    // (buy-side layout) the three returns are ONE comparison — the HERO register, not three rows
+    factGrid([
+      { label: "Name 180d return", s: io.name_180d_return, fmt: retHero },
+      marketCell,
+      { label: "Relative vs market", s: io.rel_vs_market, fmt: retHero },
+    ], { hero: true }) +
     cohortBlock);
 }
 
@@ -2067,15 +2203,23 @@ function leverageBlock(m) {
   // mirrors the corrected shape. No subhead — the section title directly above already says it.
   const sf = ((m.primary_source || {}).self_funding) || null;
   const survival = (sf && sf.status === "present")
-    ? fact("Self-funding (two-input: latest-Q OCF + LTM FCF)", sf)
-    : fact("Survival (self-funding + nearest wall)", lv.survival);
-  return fact("Net debt / EBITDA (CIQ NET basis)", lv.net_debt_to_ebitda, mult) +
-    fact("Total debt / EBITDA (comps — name vs peer median)", lv.total_debt_to_ebitda) +
-    fact("Net debt / OCF", m.quality.net_debt_to_ocf, mult) +
-    fact("Net debt / EBITDA (fwd-adj)", m.quality.net_debt_to_ebitda_adjusted) +
-    fact("Interest coverage", lv.interest_coverage, mult) +
-    survival +
-    creditHealth(lv);  // (K3) 4-row mini-table; fail-soft to fact("Credit health", …)
+    ? fact("Self-funding", sf)  // (terse label) the two-input rule reads in the value itself
+    : fact("Survival", lv.survival);
+  // (buy-side layout) the numeric leverage scalars are ONE reference block — a stat grid with the
+  // BASIS VISIBLE in each cell (NET vs TOTAL vs FWD-ADJ is disclosure, never tooltip-only). The
+  // grid alone pairs with the wall column; the prose rows (long values) render FULL-WIDTH below
+  // the columns — half-width cramming is exactly the misfit the field map exists to avoid.
+  return {
+    grid: factGrid([
+      { label: "Net debt / EBITDA", basis: "NET", s: lv.net_debt_to_ebitda, fmt: mult },
+      { label: "Net debt / OCF", s: m.quality.net_debt_to_ocf, fmt: mult },
+      { label: "Net debt / EBITDA", basis: "FWD-ADJ", s: m.quality.net_debt_to_ebitda_adjusted },
+      { label: "Interest coverage", s: lv.interest_coverage, fmt: mult },
+    ]),
+    rows: fact("Total debt / EBITDA vs peers", lv.total_debt_to_ebitda) +
+      survival +
+      creditHealth(lv),  // (K3) 4-row mini-table; fail-soft to fact("Credit health", …)
+  };
 }
 
 // (B3 · K4) DEMOTED to the appendix, reference-only (mirrors render._implied_lines): implied EQUITY
@@ -2352,17 +2496,21 @@ function eventGroups(s) {
   return `<div class="fact"><div class="fact-label">${escapeHtml(label)} <span class="muted">(${events.length} events · ${keys.length} broker-days)</span></div><div>${lines}${moreGroups}${details}${cite}</div></div>`;
 }
 
-function catalystPath(cp, cc) {
+function catalystPath(cp, cc, dc = null) {
   if (!cp) return "";
   // Fix 5: the legacy consensus facts are gone (duplicated by the reads); fold in the one
   // non-duplicate — Surprise history.
   const surprise = cc ? seriesTable("Surprise history (annual beat/miss)", cc.surprise_history) : "";
+  // (restructure) revised guidance is a GUIDANCE fact — it lives here beside the guidance bridge,
+  // not on the what-broke card (which keeps read → idio → 8-K evidence).
+  const revised = dc ? fact("Revised guidance (8-K 99.1)", dc.revised_guidance) : "";
   return sec("The street — estimates & guidance",
     "Revision breadth, the monthly consensus path, guidance delivery, and positioning.",
     `<div class="muted" style="font-size:11px; margin:-2px 0 8px;">${escapeHtml(catAsof(cp))}</div>` +
     horizonTable(cp.horizon_read) +
     accelTable(cp.acceleration_read) +
     ladderTable(cp.cross_name_anchor) +
+    revised +
     guidanceBridge(cp) +
     fact("Consensus stats (target + ratings)", cp.consensus_stats) +
     eventGroups(cp.revision_events) +

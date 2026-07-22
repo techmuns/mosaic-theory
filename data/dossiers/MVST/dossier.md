@@ -14,6 +14,12 @@ Microvast Holdings, Inc. engages in the design, development, and manufacturing o
 - **Customer concentration:** top customer 52% (from 31%) · top-2 ~70% of revenue [3]
 - **Snapshot:** Nasdaq · CMP $1.08 (2026-07-08) · cap $423M · 52-wk $1.03–$7.12 · shares 333.2M · book value/sh $1.40 [4]
 
+**The crux — what decides this, and what would change our mind**
+**Can the near-term maturity wall be refinanced/converted and operating cash generation be restored before the going-concern doubt becomes terminal — i.e. is the collapse a survivable liquidity squeeze on a genuinely profitable business, or a value trap on a business whose profitability was one-off-flattered and is now contracting?**
+- Covenant basis leverage and the minimum-liquidity covenant threshold are UNKNOWN/undisclosed — whether the name is in or near breach cannot be judged (bearish opacity given going-concern status).
+- No numeric FY26 revenue guidance was given — the outlook is QUALITATIVE-only, and the CIQ 427.5 'guide' is a stale vendor-echo of prior-year actual, leaving no verified forward guide (bearish disclosure gap).
+_full unknowns + the evidence for/against in Analysis_
+
 ## What happened
 - **Shape:** discrete gap-downs — 2026-03-17 earnings; 2026-05-12 earnings; 2026-05-18 no 8-K matched [5]
 - **Price (180d):** -62.9% [6]
@@ -23,8 +29,6 @@ Microvast Holdings, Inc. engages in the design, development, and manufacturing o
 - **Going concern:** ⚠ SUBSTANTIAL DOUBT stated [3]
 
 ## The case
-**Can the near-term maturity wall be refinanced/converted and operating cash generation be restored before the going-concern doubt becomes terminal — i.e. is the collapse a survivable liquidity squeeze on a genuinely profitable business, or a value trap on a business whose profitability was one-off-flattered and is now contracting?**
-
 _(top points; the full argument is in Analysis)_
 
 _Bull case — the decline is overdone:_
@@ -35,10 +39,6 @@ _Bear case — the decline is real:_
 - The latest 10-Q states SUBSTANTIAL DOUBT about going concern (with plans present), the single most load-bearing terminal-risk fact in the file. [3]
 - The reported EBITDA margin improvement is heavily flattered by one-offs: a $32.5M inventory impairment sits inside the numbers and company-adjusted LTM EBITDA is only ~$10.7M, pushing net-debt/adjusted-EBITDA to ~18.7x — the 3.9x GAAP-basis leverage is the optical MISREAD, the adjusted ~18.7x is closer to the real signal. [13]
 - The most recent quarter reversed the profitability story: Q1 2026 adjusted EBITDA was -$5.5M (vs +$28.5M Q1 2025) and adjusted net income -$14.6M (vs +$19.3M), so the trailing margin recovery is already rolling over. [14]
-_Key unknowns:_
-- Covenant basis leverage and the minimum-liquidity covenant threshold are UNKNOWN/undisclosed — whether the name is in or near breach cannot be judged (bearish opacity given going-concern status).
-- No numeric FY26 revenue guidance was given — the outlook is QUALITATIVE-only, and the CIQ 427.5 'guide' is a stale vendor-echo of prior-year actual, leaving no verified forward guide (bearish disclosure gap).
-- Adjusted forward EV/EBITDA, adjusted EPS and net-debt/adjusted-EBITDA are not in the revised 99.1 guidance — the forward valuation basis is missing.
 
 ## Financial snapshot
 - **Financial snapshot** — [15]  <!-- ds-table -->
@@ -73,7 +73,12 @@ _table shows the last 4 fiscal years · 4 earlier years are in the Appendix_
 ## Mechanical layer
 
 ### What broke — and did it fall alone?
-- **Shape:** discrete gap-downs — 2026-03-17 earnings; 2026-05-12 earnings; 2026-05-18 no 8-K matched [5]
+- **Read — what broke:** discrete gap-downs — 2026-03-17 earnings; 2026-05-12 earnings; 2026-05-18 no 8-K matched [5]
+
+_Company-specific or market-wide?_
+- **Name 180d return:** -62.9% [6]
+- **Relative vs market:** -80.9% [7]
+_no supplier/customer cohort mapped for this name — the comparison is vs the market only_
 - **Gap-downs — what the results showed (parsed EX-99.1) + the 8-K:**
   - gap 2026-03-17 → 2026-03-16 [`0001628280-26-018235`](https://www.sec.gov/Archives/edgar/data/1760689/000162828026018235/mvst-20260316.htm)
     - items: 2.02 Results of Operations and Financial Condition, 9.01 Financial Statements and Exhibits
@@ -81,19 +86,14 @@ _table shows the last 4 fiscal years · 4 earlier years are in the Appendix_
   - gap 2026-05-12 → 2026-05-11 [`0001628280-26-033601`](https://www.sec.gov/Archives/edgar/data/1760689/000162828026033601/mvst-20260511.htm)
     - items: 2.02 Results of Operations and Financial Condition
     - **what the results showed:** adj EBITDA Q1 2026 -$5.5M (vs $28.5M Q1 2025); adj net income Q1 2026 -$14.6M (vs $19.3M Q1 2025); adj EPS Q1 2026 -$0.04; 2026 revenue outlook: qualitative [14]
-- **Revised guidance · Net debt / EBITDA (fwd-adj covenant basis) · EV/EBITDA (adjusted, forward) · Adjusted EPS (earnings power):** _UNKNOWN_ — no revised-outlook 99.1 exhibit parsed — the revised forward guidance is UNKNOWN
-
-_Company-specific or market-wide?_
-- **Name 180d return:** -62.9% [6]
-- **Relative vs market:** -80.9% [7]
-- **Supplier/customer cohort:** none mapped for this name — the comparison is vs the market only
 
 ### Leverage & survival
-- **Net debt / EBITDA (CIQ NET basis):** 3.9x [8]
-- **Total debt / EBITDA (comps — name vs peer median):** name 5.8x vs peer median 2.0x (comps TOTAL-debt/EBITDA basis) [21]
+- **Net debt / EBITDA [NET]:** 3.9x [8]
+- **Total debt / EBITDA vs peers:** name 5.8x vs peer median 2.0x (comps TOTAL-debt/EBITDA basis) [21]
 - **Net debt / OCF:** 4.4x [22]
+- **Net debt / EBITDA [FWD-ADJ] · EV/EBITDA (adjusted, forward) · Adjusted EPS (earnings power) · Revised guidance (8-K 99.1):** _UNKNOWN_ — no revised-outlook 99.1 exhibit parsed — the revised forward guidance is UNKNOWN
 - **Interest coverage:** 10.6x [11]
-- **Self-funding (two-input: latest-Q OCF + LTM FCF):** self-funding: MIXED — latest-Q OCF < 0, LTM FCF > 0 (both must be positive to self-fund) [23]
+- **Self-funding:** self-funding: MIXED — latest-Q OCF < 0, LTM FCF > 0 (both must be positive to self-fund) [23]
 - **Credit health** — [24]  <!-- ds-table -->
 
 |  | Name | Peer median |
@@ -121,7 +121,7 @@ _S&P issuer rating unrated · scale 1=strongest … 4=weakest (S&P-MI PD model)_
 
 _2 undated / later aggregate line item(s) in the appendix panel_
 
-- **Maturity wall** (deterministic, vs the 2026-07-06 reference):
+- **Maturity wall** · vs the 2026-07-06 reference:
   - **matured (pre-reference): $25.0M** — resolution not in this data; verify each against its 8-K (NEVER assume repaid or defaulted):
     - 2026-05-28 (39d before ref): $13.0M Convertible Loan With Shareholder 
     - 2026-05-28 (39d before ref): $12.0M Convertible Loan With Shareholder 

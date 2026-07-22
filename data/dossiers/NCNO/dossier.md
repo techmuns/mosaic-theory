@@ -13,6 +13,12 @@ nCino, Inc., a software-as-a-service company, provides software solutions to fin
 - **Geography:** United States 78%; United Kingdom 12%; Other 10% [2]
 - **Snapshot:** Nasdaq · cap $2.0B · shares 109.6M · book value/sh $8.92 [3]
 
+**The crux — what decides this, and what would change our mind**
+**Will the AI/platform-pricing transition convert deliberately deferred intelligence-unit consumption into re-accelerating subscription revenue before decelerating growth (+10%, below peers) turns the low forward multiple into an earned value-trap discount?**
+- No forward/adjusted EV-EBITDA or adjusted EPS in the 99.1 revised guidance, and no direct FY26E EBITDA consensus — the trailing 27.8x cannot be cleanly reconciled to a forward basis (vintage-coherence UNKNOWN).
+- The 5y P/E percentile is unavailable (only 75 points) and the EV/EBITDA history spans just 10 closes — too short to judge whether the near-floor multiple is a true floor.
+_full unknowns + the evidence for/against in Analysis_
+
 ## What happened
 - **Shape:** discrete gap-downs — 2026-02-03 no 8-K matched [4]
 - **vs market (180d):** -32.0% [5]
@@ -20,8 +26,6 @@ nCino, Inc., a software-as-a-service company, provides software solutions to fin
 - **Free cash flow:** positive [7]
 
 ## The case
-**Will the AI/platform-pricing transition convert deliberately deferred intelligence-unit consumption into re-accelerating subscription revenue before decelerating growth (+10%, below peers) turns the low forward multiple into an earned value-trap discount?**
-
 _(top points; the full argument is in Analysis)_
 
 _Bull case — the decline is overdone:_
@@ -32,10 +36,6 @@ _Bear case — the decline is real:_
 - A genuine counter-point: rising short interest (17.0M→20.2M sh, +18.4%; 18.4% of shares out) and insider selling (23 open-market sells, 0 buys) reflect bearish positioning — outweighed by the constructive sell-side consensus and self-funding cash profile. [11]
 - A genuine counter-point: revenue growth is decelerating and below peers (name +10% vs peer-median +16%), a real earned-discount input — but it is outweighed by the +13% FY27 EBITDA revision and the margin inflection to +12%. [12]
 - A genuine counter-point: near-term estimate breadth is negative (Revenue FQ2'27 2m 2↑/8↓, EBITDA 2m 0↑/4↓, EBIT 2m 0↑/9↓) signaling near-term downward pressure — outweighed by the improving 12m FY27 trend that crossed zero on GAAP net income. [13]
-_Key unknowns:_
-- No forward/adjusted EV-EBITDA or adjusted EPS in the 99.1 revised guidance, and no direct FY26E EBITDA consensus — the trailing 27.8x cannot be cleanly reconciled to a forward basis (vintage-coherence UNKNOWN).
-- The 5y P/E percentile is unavailable (only 75 points) and the EV/EBITDA history spans just 10 closes — too short to judge whether the near-floor multiple is a true floor.
-- No segment EBITDA breakout (single 'Software & Programming' segment; Segments sheet lacks an EBITDA section) — an expected disclosure gap that obscures where profitability is concentrated; treat as a bearish opacity, not neutral.
 
 ## Financial snapshot
 - **Financial snapshot** — [14]  <!-- ds-table -->
@@ -70,26 +70,26 @@ _table shows the last 4 fiscal years · 5 earlier years are in the Appendix_
 ## Mechanical layer
 
 ### What broke — and did it fall alone?
-- **Shape:** discrete gap-downs — 2026-02-03 no 8-K matched [4]
-- **Revised guidance · Net debt / EBITDA (fwd-adj covenant basis) · EV/EBITDA (adjusted, forward) · Adjusted EPS (earnings power):** _UNKNOWN_ — no revised-outlook 99.1 exhibit parsed — the revised forward guidance is UNKNOWN
+- **Read — what broke:** discrete gap-downs — 2026-02-03 no 8-K matched [4]
 
 _Company-specific or market-wide?_
 - **Name 180d return:** _UNKNOWN_ — name has no bars over the window
 - **Relative vs market:** -32.0% [5]
-- **Supplier/customer cohort:** none mapped for this name — the comparison is vs the market only
+_no supplier/customer cohort mapped for this name — the comparison is vs the market only_
 
 ### Leverage & survival
-- **Net debt / EBITDA (CIQ NET basis):** 3.1x [6]
-- **Total debt / EBITDA (comps — name vs peer median):** name 4.1x vs peer median 8.0x (comps TOTAL-debt/EBITDA basis) [19]
+- **Net debt / EBITDA [NET]:** 3.1x [6]
+- **Total debt / EBITDA vs peers:** name 4.1x vs peer median 8.0x (comps TOTAL-debt/EBITDA basis) [19]
 - **Net debt / OCF:** 1.9x [20]
+- **Net debt / EBITDA [FWD-ADJ] · EV/EBITDA (adjusted, forward) · Adjusted EPS (earnings power) · Revised guidance (8-K 99.1):** _UNKNOWN_ — no revised-outlook 99.1 exhibit parsed — the revised forward guidance is UNKNOWN
 - **Interest coverage:** 4.1x [21]
-- **Self-funding (two-input: latest-Q OCF + LTM FCF):** self-funding: YES — latest-Q OCF > 0 AND LTM FCF > 0 [22]
+- **Self-funding:** self-funding: YES — latest-Q OCF > 0 AND LTM FCF > 0 [22]
 - **Credit health:** _UNKNOWN_ — credit-health panel scale is ambiguous in the export
 
 - **FCF sign:** positive [7]
 - **Free cash flow ($M):** 138.5 [8]
 - **Live instruments — near-dated (≤12m + 2027):** none due in the window — 3 undated / later aggregate line item(s) in the appendix panel [23]
-- **Maturity wall** (deterministic, vs the 2026-07-06 reference):
+- **Maturity wall** · vs the 2026-07-06 reference:
   - due 2029: $213.5M
   - due 2034: $14.0M
   - undated (floor — no panel maturity): $51.2M — Financing Obligations - Lease $51.2M

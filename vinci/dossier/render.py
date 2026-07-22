@@ -416,6 +416,9 @@ def _catalyst_section(m: MechanicalLayer) -> list[str]:
         out += _horizon_lines(cp.horizon_read)
         out.append(_fact("Acceleration read (monthly consensus path)", cp.acceleration_read))
         out += _ladder_lines(cp.cross_name_anchor)
+        # (buy-side restructure, twins the web) revised guidance is a guidance fact — it lives
+        # beside the guidance bridge, not on the what-broke section
+        out.append(_fact("Revised guidance (8-K 99.1)", m.drawdown_cause.revised_guidance))
         out += _guidance_bridge_lines(cp)
         out.append(_fact("Consensus stats (target + ratings)", cp.consensus_stats))
         out += _grouped_events_lines(cp.revision_events)
@@ -621,12 +624,16 @@ def _leverage_block(m: MechanicalLayer) -> list[str]:
     lines (which fall back for a pre-B2 dossier.json)."""
     lv = m.leverage_survival
     assert lv is not None
+    # (buy-side layout, terse labels) the basis stays VISIBLE as a [TAG] — NET vs TOTAL vs FWD-ADJ
+    # on adjacent rows is disclosure, never tooltip/cite-only; methodology beyond the basis lives in
+    # the cite. Twins frontend leverageBlock()'s stat-grid cells (the md stays linear — content
+    # parity, layout differs).
     lines = [
         "### Leverage & survival",  # (K5) header humanized; the net-vs-total discipline is per-row
-        _fact("Net debt / EBITDA (CIQ NET basis)", lv.net_debt_to_ebitda, _mult),
-        _fact("Total debt / EBITDA (comps — name vs peer median)", lv.total_debt_to_ebitda),
+        _fact("Net debt / EBITDA [NET]", lv.net_debt_to_ebitda, _mult),
+        _fact("Total debt / EBITDA vs peers", lv.total_debt_to_ebitda),
         _fact("Net debt / OCF", m.quality.net_debt_to_ocf, _mult),
-        _fact("Net debt / EBITDA (fwd-adj covenant basis)", m.quality.net_debt_to_ebitda_adjusted),
+        _fact("Net debt / EBITDA [FWD-ADJ]", m.quality.net_debt_to_ebitda_adjusted),
         _fact("Interest coverage", lv.interest_coverage, _mult),
     ]
     # (declutter P1) when the two-input self-funding read exists it REPLACES the one-input survival
@@ -635,9 +642,10 @@ def _leverage_block(m: MechanicalLayer) -> list[str]:
     # a pre-RC-1 dossier that has nothing better.
     ps = m.primary_source
     if ps is not None and ps.self_funding.status is SourceStatus.PRESENT:
-        lines.append(_fact("Self-funding (two-input: latest-Q OCF + LTM FCF)", ps.self_funding))
+        # (terse label) the two-input rule reads in the value itself
+        lines.append(_fact("Self-funding", ps.self_funding))
     else:
-        lines.append(_fact("Survival (self-funding + nearest wall)", lv.survival))
+        lines.append(_fact("Survival", lv.survival))
     return [*lines, *_credit_health_lines(lv), ""]
 
 
@@ -746,7 +754,7 @@ def _maturity_wall_lines(cs: Any, reference_date: date) -> list[str]:
     def bykey(x: tuple[date, Any]) -> tuple[date, str]:  # sort a (date, instrument) pair stably
         return (x[0], x[1].description)
 
-    out = [f"- **Maturity wall** (deterministic, vs the {reference_date.isoformat()} reference):"]
+    out = [f"- **Maturity wall** · vs the {reference_date.isoformat()} reference:"]
     if matured:
         out.append(
             f"  - **matured (pre-reference): {_musd(dtot(matured))}** — resolution not in this "
@@ -1655,8 +1663,9 @@ def _brief_verify_first(caveats: list[str], limit: int = 2) -> list[str]:
 
 
 def _brief_case_lines(s: Any) -> list[str]:
-    """THE CASE, condensed — top-3 bull / top-3 bear (same evidence-weighted order as Analysis) +
-    top-3 key unknowns. The FULL synthesis stays in the Analysis tier; source-bound here too."""
+    """THE CASE, condensed — top-3 bull / top-3 bear (same evidence-weighted order as Analysis).
+    The decisive question + unknowns live in the cover's crux block; the FULL synthesis stays in
+    the Analysis tier; source-bound here too."""
     if s is None or (not s.bull_points and not s.bear_points):
         return []
     # (tier redesign) no inner "The case" line — the section header carries it; leg labels state
@@ -1669,9 +1678,7 @@ def _brief_case_lines(s: Any) -> list[str]:
 
     out += ["_Bull case — the decline is overdone:_", *(top3(s.bull_points) or ["- —"])]
     out += ["_Bear case — the decline is real:_", *(top3(s.bear_points) or ["- —"])]
-    uks = list(s.key_unknowns)[:3]
-    if uks:
-        out += ["_Key unknowns:_", *[f"- {u}" for u in uks]]
+    # (buy-side cover) key unknowns moved to the cover's crux block — no second copy here
     out.append("")
     return out
 
@@ -1860,6 +1867,14 @@ def _brief_lines(d: Dossier, *, show_proposal: bool = False) -> list[str]:
     snap = _brief_snapshot(d.exchange, m.stock_info)
     if snap:
         out += snap
+    # (buy-side cover) THE CRUX closes the cover — the decisive question + the top-2 unknowns,
+    # both ALREADY-COMMITTED synthesis fields (render-tier only; no assembly change). "The case"
+    # below drops its copies so the question renders once per tier. Mirrors cruxInner() on the web.
+    if s is not None and s.decisive_question is not None and s.decisive_question.question:
+        out += ["", "**The crux — what decides this, and what would change our mind**",
+                f"**{s.decisive_question.question}**"]
+        out += [f"- {u}" for u in list(s.key_unknowns)[:2]]
+        out.append("_full unknowns + the evidence for/against in Analysis_")
     out.append("")
     # (user decision) the standing machine-proposal line is GONE from the default brief — the
     # pivot MECHANISM is untouched (derived + sealed to the shadow ledger at assembly; disposition
@@ -1878,8 +1893,15 @@ def _brief_lines(d: Dossier, *, show_proposal: bool = False) -> list[str]:
     io = m.idiosyncratic_vs_shared
     if io is not None and io.name_180d_return.status is SourceStatus.PRESENT:
         out.append(_fact("Price (180d)", io.name_180d_return, _pct))
+    # (buy-side what-happened, twins the web strip) the market leg + the idio read join the
+    # comparison — same declutter-P1 suppression as the Analysis section
+    if io is not None and (io.market_180d_return.status is SourceStatus.PRESENT
+                           or io.rel_vs_market.status is not SourceStatus.PRESENT):
+        out.append(_fact(f"Market ({io.benchmark_symbol}) 180d", io.market_180d_return, _pct))
     if io is not None:
         out.append(_fact("vs market (180d)", io.rel_vs_market, _pct))
+    if io is not None and io.read.status is SourceStatus.PRESENT:
+        out.append(_fact("Read", io.read))
     if m.quality is not None:
         out += [_fact("Net debt / EBITDA", m.quality.net_debt_to_ebitda, _mult),
                 _fact("Free cash flow", m.quality.fcf_sign, _signword)]
@@ -1887,11 +1909,9 @@ def _brief_lines(d: Dossier, *, show_proposal: bool = False) -> list[str]:
     if gc is not None:
         out.append(gc)
     out.append("")
-    # 4 — THE CASE: the decisive question LEADS (one line does not earn a section of its own),
-    # then the condensed bull/bear + key unknowns.
+    # 4 — THE CASE: the condensed bull/bear alone — the decisive question + unknowns moved to the
+    # cover's CRUX block (buy-side cover), so the question renders once per tier.
     out.append("## The case")
-    if s is not None and s.decisive_question is not None and s.decisive_question.question:
-        out += [f"**{s.decisive_question.question}**", ""]
     out += _brief_case_lines(s)
     # 5 — FINANCIAL SNAPSHOT: the compact table. The per-period return-ratios table moved to the
     # Analysis trajectory section (the web keeps its exhibit here; markdown has no chart).
@@ -2039,29 +2059,18 @@ def render_markdown(d: Dossier, *, dev: bool = False, show_proposal: bool = Fals
     out += ["## Mechanical layer", ""]  # (K5) methodology jargon lives in source_refs/JSON
 
     # (D1·§1) Drawdown cause & idiosyncrasy — CLUBBED: what happened, and did it happen alone?
+    # (buy-side anatomy) the Shape classification is this section's READ — label twins the web lead
     out.append("### What broke — and did it fall alone?")
-    out.append(_fact("Shape", m.drawdown_cause.shape, _fmt_shape))
+    out.append(_fact("Read — what broke", m.drawdown_cause.shape, _fmt_shape))
     # (declutter) the dates row repeats the shape line whenever every date already appears there
     gd = m.drawdown_cause.gap_down_dates
     shape_v = m.drawdown_cause.shape
     if not (gd.status is SourceStatus.PRESENT and shape_v.status is SourceStatus.PRESENT
             and all(str(d) in str(shape_v.value) for d in (gd.value or []))):
         out.append(_fact("Gap-down dates", gd, _dates))
-    if m.drawdown_cause.filings:
-        out.append("- **Gap-downs — what the results showed (parsed EX-99.1) + the 8-K:**")
-        for f in m.drawdown_cause.filings:
-            out.append(f"  - gap {f.gap_date} → {f.filing_date} [`{f.accession}`]({f.url})")
-            out.append(f"    - items: {', '.join(f.item_types) or '—'}")
-            # (B1) parsed release drivers ARE the informative cause — they supersede the item-code
-            # boilerplate; non-earnings 8-Ks (no match) still show their source-bound events.
-            if f.drivers is not None and f.drivers.status is SourceStatus.PRESENT:
-                out.append(f"    - **what the results showed:** {f.drivers.value}"
-                           f"{_cite(f.drivers.source_ref)}")
-            else:
-                for ev in f.events:
-                    out.append(f"    - {ev}")
-    out.append(_fact("Revised guidance", m.drawdown_cause.revised_guidance))
-    out += _event_impact_lines(m)  # (RC-1 C) Avis-class event-impact quantifications
+    # (buy-side restructure, twins the web) the alone-or-with-market comparison follows the READ
+    # directly; the 8-K evidence closes the section as provenance. Revised guidance is a guidance
+    # fact — it renders on the street section (legacy no-catalyst-path JSON keeps it here).
     io = m.idiosyncratic_vs_shared
     out += ["", "_Company-specific or market-wide?_",
             _fact("Name 180d return", io.name_180d_return, _pct)]
@@ -2082,10 +2091,25 @@ def render_markdown(d: Dossier, *, dev: bool = False, show_proposal: bool = Fals
             ret = f"{cm.ret_180d:.0%}" if cm.ret_180d is not None else "no bars"
             out.append(f"  - [{cm.hops}h] {cm.ticker}: {ret} · via {cm.via}")
     else:
-        # (declutter) ONE row for one absence — "Cohort read UNKNOWN" + "Graph cohort UNKNOWN"
-        # said the same thing twice, one of them citing an internal filename
-        out.append("- **Supplier/customer cohort:** none mapped for this name — the comparison "
-                   "is vs the market only")
+        # (declutter · buy-side) absence is ONE quiet footnote line, never a labelled fact row
+        out.append("_no supplier/customer cohort mapped for this name — the comparison is vs "
+                   "the market only_")
+    if m.drawdown_cause.filings:
+        out.append("- **Gap-downs — what the results showed (parsed EX-99.1) + the 8-K:**")
+        for f in m.drawdown_cause.filings:
+            out.append(f"  - gap {f.gap_date} → {f.filing_date} [`{f.accession}`]({f.url})")
+            out.append(f"    - items: {', '.join(f.item_types) or '—'}")
+            # (B1) parsed release drivers ARE the informative cause — they supersede the item-code
+            # boilerplate; non-earnings 8-Ks (no match) still show their source-bound events.
+            if f.drivers is not None and f.drivers.status is SourceStatus.PRESENT:
+                out.append(f"    - **what the results showed:** {f.drivers.value}"
+                           f"{_cite(f.drivers.source_ref)}")
+            else:
+                for ev in f.events:
+                    out.append(f"    - {ev}")
+    out += _event_impact_lines(m)  # (RC-1 C) Avis-class event-impact quantifications
+    if m.catalyst_path is None:  # legacy: never drop the fact when there is no street section
+        out.append(_fact("Revised guidance", m.drawdown_cause.revised_guidance))
     out.append("")
 
     # (D1·§2) Leverage & survival — the survival story in one place (+ FCF + liquidity).

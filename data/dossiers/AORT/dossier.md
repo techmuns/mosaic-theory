@@ -13,6 +13,12 @@ Artivion, Inc. manufactures, processes, and distributes medical devices and impl
 - **Geography:** North America 50%; Europe The Middle East and Africa 34%; Asia Pacific 10%; Latin America 5% [2]
 - **Snapshot:** NYSE · cap $1.1B · shares 48.5M · book value/sh $9.29 [3]
 
+**The crux — what decides this, and what would change our mind**
+**Is the sharp de-rate a temporary overshoot around a stumble in the still-growing stent-graft/On-X franchise, or the start of a terminal impairment where the recall and guidance cut expose a thin, leveraged, equity-funded earnings base that genuinely earns the discount?**
+- Adjusted forward EV/EBITDA and adjusted EPS are UNKNOWN (not in the revised guidance 99.1) — without a forward adjusted basis the trailing 20.6x / NTM 12.8x cannot cleanly separate cheap-overshoot from cheap-terminal; treat as a bearish disclosure gap.
+- Covenant basis and the specific maintenance covenant levels on the Secured Term Loan / Revolver (due 2031) are UNKNOWN/undisclosed; net-debt/EBITDA on a covenant basis is not stated — an opaque leg for a 3.7x-levered name.
+_full unknowns + the evidence for/against in Analysis_
+
 ## What happened
 - **Shape:** discrete gap-downs — 2026-05-08 material agreement + earnings [4]
 - **vs market (180d):** -53.2% [5]
@@ -20,8 +26,6 @@ Artivion, Inc. manufactures, processes, and distributes medical devices and impl
 - **Free cash flow:** positive [7]
 
 ## The case
-**Is the sharp de-rate a temporary overshoot around a stumble in the still-growing stent-graft/On-X franchise, or the start of a terminal impairment where the recall and guidance cut expose a thin, leveraged, equity-funded earnings base that genuinely earns the discount?**
-
 _(top points; the full argument is in Analysis)_
 
 _Bull case — the decline is overdone:_
@@ -32,10 +36,6 @@ _Bear case — the decline is real:_
 - Leverage is elevated versus peers on the earned-discount ledger: total debt/EBITDA 3.7x vs peer median 2.1x with interest coverage only 2.5x — a genuine value-trap input, part of what could EARN the discount. [11]
 - Self-funding is only MIXED: LTM levered free cash flow is negative (−$7.3M) while the share count diluted +15.9% over ~1.7 years — growth is being part-funded by equity issuance, not internally. [12]
 - Credit-health screens weaker than peers across the board (Overall/Operational/Solvency/Liquidity 4/3/3/4 vs peer-median ~2.5, 1=strongest…4=weakest; S&P issuer NR), reinforcing the earned-discount case. [13]
-_Key unknowns:_
-- Adjusted forward EV/EBITDA and adjusted EPS are UNKNOWN (not in the revised guidance 99.1) — without a forward adjusted basis the trailing 20.6x / NTM 12.8x cannot cleanly separate cheap-overshoot from cheap-terminal; treat as a bearish disclosure gap.
-- Covenant basis and the specific maintenance covenant levels on the Secured Term Loan / Revolver (due 2031) are UNKNOWN/undisclosed; net-debt/EBITDA on a covenant basis is not stated — an opaque leg for a 3.7x-levered name.
-- No revised-outlook 99.1 exhibit was parsed for the May 2026 8-K — the quantified guidance-cut detail behind the headline is missing.
 
 ## Financial snapshot
 - **Financial snapshot** — [14]  <!-- ds-table -->
@@ -77,25 +77,25 @@ _table shows the last 4 fiscal years · 6 earlier years are in the Appendix_
 ## Mechanical layer
 
 ### What broke — and did it fall alone?
-- **Shape:** discrete gap-downs — 2026-05-08 material agreement + earnings [4]
+- **Read — what broke:** discrete gap-downs — 2026-05-08 material agreement + earnings [4]
+
+_Company-specific or market-wide?_
+- **Name 180d return:** _UNKNOWN_ — name has no bars over the window
+- **Relative vs market:** -53.2% [5]
+_no supplier/customer cohort mapped for this name — the comparison is vs the market only_
 - **Gap-downs — what the results showed (parsed EX-99.1) + the 8-K:**
   - gap 2026-05-08 → 2026-05-07 [`0001628280-26-032097`](https://www.sec.gov/Archives/edgar/data/784199/000162828026032097/aort-20260507.htm)
     - items: 1.01 Entry into a Material Definitive Agreement, 2.02 Results of Operations and Financial Condition, 9.01 Financial Statements and Exhibits
     - 1.01 Entry into a Material Definitive Agreement: Entry into a Material Definitive Agreement. Securities Purchase Option Agreement As previously disclosed in connection with the announcement of the Exclusive Distribution Agreement, dated September 11, 2019, between JOTEC GmbH, a wholly owned subsidiary of Artivion, Inc., a Delaware corporation formerly known as CryoLife, Inc. (“Artivion”), and Endospan Ltd., an Israeli corporation (“Endospan”), a
     - 2.02 Results of Operations and Financial Condition: Results of Operations and Financial Condition. On May 7, 2026, Artivion issued a press release announcing its financial results for the first quarter ended March 31, 2026 and the exercise of the Option. Artivion hereby incorporates by reference herein the information set forth in its press release dated May 7, 2026, a copy of which is attached hereto as Exhibit 99.1. Except as otherwise provided i
-- **Revised guidance · Net debt / EBITDA (fwd-adj covenant basis) · EV/EBITDA (adjusted, forward) · Adjusted EPS (earnings power):** _UNKNOWN_ — no revised-outlook 99.1 exhibit parsed — the revised forward guidance is UNKNOWN
-
-_Company-specific or market-wide?_
-- **Name 180d return:** _UNKNOWN_ — name has no bars over the window
-- **Relative vs market:** -53.2% [5]
-- **Supplier/customer cohort:** none mapped for this name — the comparison is vs the market only
 
 ### Leverage & survival
-- **Net debt / EBITDA (CIQ NET basis):** 3.3x [6]
-- **Total debt / EBITDA (comps — name vs peer median):** name 3.7x vs peer median 2.1x (comps TOTAL-debt/EBITDA basis) [11]
+- **Net debt / EBITDA [NET]:** 3.3x [6]
+- **Total debt / EBITDA vs peers:** name 3.7x vs peer median 2.1x (comps TOTAL-debt/EBITDA basis) [11]
 - **Net debt / OCF:** 3.5x [19]
+- **Net debt / EBITDA [FWD-ADJ] · EV/EBITDA (adjusted, forward) · Adjusted EPS (earnings power) · Revised guidance (8-K 99.1):** _UNKNOWN_ — no revised-outlook 99.1 exhibit parsed — the revised forward guidance is UNKNOWN
 - **Interest coverage:** 2.5x [20]
-- **Self-funding (two-input: latest-Q OCF + LTM FCF):** self-funding: MIXED — latest-Q OCF > 0, LTM FCF < 0 (both must be positive to self-fund) [21]
+- **Self-funding:** self-funding: MIXED — latest-Q OCF > 0, LTM FCF < 0 (both must be positive to self-fund) [21]
 - **Credit health** — [13]  <!-- ds-table -->
 
 |  | Name | Peer median |
@@ -119,7 +119,7 @@ _S&P issuer rating NR · scale 1=strongest … 4=weakest (S&P-MI PD model)_
 
 _6 undated / later aggregate line item(s) in the appendix panel_
 
-- **Maturity wall** (deterministic, vs the 2026-07-06 reference):
+- **Maturity wall** · vs the 2026-07-06 reference:
   - **matured (pre-reference): $0.9M** — resolution not in this data; verify each against its 8-K (NEVER assume repaid or defaulted):
     - 2025-07-01 (370d before ref): – Convertible Senior Notes
     - 2026-04-01 (96d before ref): $0.9M Notes Payable

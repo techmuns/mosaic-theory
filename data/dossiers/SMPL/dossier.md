@@ -13,6 +13,12 @@ The Simply Good Foods Company, a consumer-packaged food and beverage company, en
 - **Geography:** North America 98%; International 2% [2]
 - **Snapshot:** Nasdaq · CMP $12.84 (2026-07-08) · cap $1.1B · 52-wk $10.21–$34.19 · shares 88.5M · book value/sh $16.46 [3]
 
+**The crux — what decides this, and what would change our mind**
+**Is the sharp cut to forward revenue and EBITDA a one-time reset to a new but stable base (overshoot), or the first leg of a structural demand decline in the core low-carb snacking category (value trap)?**
+- The company issued NO numeric forward outlook in the earnings release and the 99.1 exhibit was not parsed for a revised guide — an opacity that removes the primary check on where the top line stabilizes (bearish disclosure gap).
+- What drove GAAP net income negative (LTM -$106M) below the EBITDA line — impairment, one-time charge, or ongoing deterioration — is not disclosed; adjusted EPS and adjusted EBITDA figures are UNKNOWN (not in the 99.1 revised guidance).
+_full unknowns + the evidence for/against in Analysis_
+
 ## What happened
 - **Shape:** discrete gap-downs — 2026-04-09 earnings; 2026-04-10 earnings [4]
 - **Price (180d):** -33.1% [5]
@@ -21,8 +27,6 @@ The Simply Good Foods Company, a consumer-packaged food and beverage company, en
 - **Free cash flow:** positive [8]
 
 ## The case
-**Is the sharp cut to forward revenue and EBITDA a one-time reset to a new but stable base (overshoot), or the first leg of a structural demand decline in the core low-carb snacking category (value trap)?**
-
 _(top points; the full argument is in Analysis)_
 
 _Bull case — the decline is overdone:_
@@ -33,10 +37,6 @@ _Bear case — the decline is real:_
 - Consensus FY26 EBITDA has been cut -26% (297.8→219.8) and revenue -13% (1,539→1,334) over the estimate path — this is a genuine forward-earnings-power reset, not a trailing optical artifact, so the falling margin % here IS the real signal, corroborated by absolute EBITDA rolling over (262→236 LTM). [12]
 - Guidance delivery is deteriorating: the most recent resolved period MISSED on Revenue, Gross Margin, EBITDA and Capex, and the company issued NO numeric forward outlook in the release — a real credibility and disclosure deficit. [13]
 - Forward EPS revision breadth is overwhelmingly negative at the 3-month horizon (FQ3 EPS-Normalized 0↑/8↓; revenue 0↑/8↓; EBITDA 0↑/7↓), showing the analyst community is still marking the name down, not stabilizing. [14]
-_Key unknowns:_
-- The company issued NO numeric forward outlook in the earnings release and the 99.1 exhibit was not parsed for a revised guide — an opacity that removes the primary check on where the top line stabilizes (bearish disclosure gap).
-- What drove GAAP net income negative (LTM -$106M) below the EBITDA line — impairment, one-time charge, or ongoing deterioration — is not disclosed; adjusted EPS and adjusted EBITDA figures are UNKNOWN (not in the 99.1 revised guidance).
-- Segment-level EBITDA is not broken out (Segments sheet has no EBITDA section), so profitability by product line cannot be verified inside the single 100% branded-nutrition segment.
 
 ## Financial snapshot
 - **Financial snapshot** — [15]  <!-- ds-table -->
@@ -71,7 +71,12 @@ _Key unknowns:_
 ## Mechanical layer
 
 ### What broke — and did it fall alone?
-- **Shape:** discrete gap-downs — 2026-04-09 earnings; 2026-04-10 earnings [4]
+- **Read — what broke:** discrete gap-downs — 2026-04-09 earnings; 2026-04-10 earnings [4]
+
+_Company-specific or market-wide?_
+- **Name 180d return:** -33.1% [5]
+- **Relative vs market:** -45.6% [6]
+_no supplier/customer cohort mapped for this name — the comparison is vs the market only_
 - **Gap-downs — what the results showed (parsed EX-99.1) + the 8-K:**
   - gap 2026-04-09 → 2026-04-09 [`0001702744-26-000010`](https://www.sec.gov/Archives/edgar/data/1702744/000170274426000010/atk-20260409.htm)
     - items: 2.02 Results of Operations and Financial Condition, 9.01 Financial Statements and Exhibits
@@ -79,19 +84,14 @@ _Key unknowns:_
   - gap 2026-04-10 → 2026-04-09 [`0001702744-26-000010`](https://www.sec.gov/Archives/edgar/data/1702744/000170274426000010/atk-20260409.htm)
     - items: 2.02 Results of Operations and Financial Condition, 9.01 Financial Statements and Exhibits
     - 2.02 Results of Operations and Financial Condition: Results of Operations and Financial Condition. On April 9, 2026, The Simply Good Foods Company, a Delaware corporation (the “Company”), reported its results for the fiscal second quarter ended February 28, 2026. The results are discussed in detail in the press release attached hereto as Exhibit 99.1. In addition, the Company has posted an investor presentation at www.thesimplygoodfoodscompany.com.
-- **Revised guidance · Net debt / EBITDA (fwd-adj covenant basis) · EV/EBITDA (adjusted, forward) · Adjusted EPS (earnings power):** _UNKNOWN_ — no revised-outlook 99.1 exhibit parsed — the revised forward guidance is UNKNOWN
-
-_Company-specific or market-wide?_
-- **Name 180d return:** -33.1% [5]
-- **Relative vs market:** -45.6% [6]
-- **Supplier/customer cohort:** none mapped for this name — the comparison is vs the market only
 
 ### Leverage & survival
-- **Net debt / EBITDA (CIQ NET basis):** 1.5x [7]
-- **Total debt / EBITDA (comps — name vs peer median):** name 1.8x vs peer median 3.4x (comps TOTAL-debt/EBITDA basis) [20]
+- **Net debt / EBITDA [NET]:** 1.5x [7]
+- **Total debt / EBITDA vs peers:** name 1.8x vs peer median 3.4x (comps TOTAL-debt/EBITDA basis) [20]
 - **Net debt / OCF:** 2.0x [21]
+- **Net debt / EBITDA [FWD-ADJ] · EV/EBITDA (adjusted, forward) · Adjusted EPS (earnings power) · Revised guidance (8-K 99.1):** _UNKNOWN_ — no revised-outlook 99.1 exhibit parsed — the revised forward guidance is UNKNOWN
 - **Interest coverage:** 12.3x [22]
-- **Self-funding (two-input: latest-Q OCF + LTM FCF):** self-funding: YES — latest-Q OCF > 0 AND LTM FCF > 0 [23]
+- **Self-funding:** self-funding: YES — latest-Q OCF > 0 AND LTM FCF > 0 [23]
 - **Credit health** — [10]  <!-- ds-table -->
 
 |  | Name | Peer median |
@@ -107,7 +107,7 @@ _S&P issuer rating BB- · scale 1=strongest … 4=weakest (S&P-MI PD model)_
 - **FCF sign:** positive [8]
 - **Free cash flow ($M):** 125.5 [24]
 - **Live instruments — near-dated (≤12m + 2027):** none due in the window — 3 undated / later aggregate line item(s) in the appendix panel [25]
-- **Maturity wall** (deterministic, vs the 2026-07-06 reference):
+- **Maturity wall** · vs the 2026-07-06 reference:
   - due 2029: $0.0M
   - due 2030: $249.1M
   - undated (floor — no panel maturity): $55.4M — Operating Lease $55.4M
