@@ -5,10 +5,16 @@ _July 10, 2026_
 # Brief — first cut
 
 ## At a glance
+**Target (base)** $26.90 (+146.4% vs spot) · **Spot** $10.92 (underwritten 2026-07-21) · **Reward** $15.98 · **Risk** $3.97 · **Reward : risk** 4.03 : 1 (bar 2 : 1)
+
+**Underwrite disposition:** CONFIRMED (2026-07-21) · entry $10.92 — _the BUY/AVOID verdict of record is the ledger's_
+
+### Thesis — our rationale
+BUY at $10.92, 4.0:1 against the 2:1 bar. The market sold a consensus beat with reinstated guidance down to the lowest multiple in the company's own history — pricing GLP-1 drugs as a permanent decline of the whole snacking category. Our judgment is the sell-off has overshot: margins never broke (ex the Atkins write-down, last year sat at the seven-year median), our base revenue sits below management's own new guidance, and a ~12% free-cash-flow yield with active buybacks pays us while the question resolves. The accepted risk: Quest, the growth engine, just printed +1% — unproven. The trade fails only if revenue, margin, and multiple all break below their historical worsts together; Quest stalling two more quarters forces a re-underwrite.
+
 > ⚠ **Verify before the verdict:** Net debt/EBITDA (1.5x) is on REPORTED EBITDA (CIQ / consolidated GAAP), not the covenant basis — full caveats in Analysis.
 
 The Simply Good Foods Company, a consumer-packaged food and beverage company, engages in the development, marketing, and sale of snacks and meal replacements, and other products in North America and internationally.
-**Mixed** — a genuine ~26% forward-earnings reset with no floor yet, against a conservative, self-funding balance sheet and single-event drawdown.
 - **Segments:** Branded Nutritional Foods and Snacking Products — single segment [1]
 - **Geography:** North America 98%; International 2% [2]
 - **Snapshot:** Nasdaq · CMP $12.84 (2026-07-08) · cap $1.1B · 52-wk $10.21–$34.19 · shares 88.5M · book value/sh $16.46 [3]
@@ -18,6 +24,19 @@ The Simply Good Foods Company, a consumer-packaged food and beverage company, en
 - The company issued NO numeric forward outlook in the earnings release and the 99.1 exhibit was not parsed for a revised guide — an opacity that removes the primary check on where the top line stabilizes (bearish disclosure gap).
 - What drove GAAP net income negative (LTM -$106M) below the EBITDA line — impairment, one-time charge, or ongoing deterioration — is not disclosed; adjusted EPS and adjusted EBITDA figures are UNKNOWN (not in the 99.1 revised guidance).
 _full unknowns + the evidence for/against in Analysis_
+
+## Scenario analysis
+_Mid-cycle underwrite: normalized operating margin on a mid-cycle revenue base, valued at an exit EV/LTM-EBITDA multiple; reward/risk measured at SPOT._
+
+| scenario | revenue $M | margin | multiple | value / sh | vs spot |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| bear | 1,180 | 10.0% | 7x | $6.95 | -36.3% |
+| base | 1,330 | 15.5% | 12.5x | $26.90 | +146.4% |
+| bull | 1,420 | 16.5% | 16x | $40.21 | +268.3% |
+
+- **bear** — Value-trap case: the GLP-1 and Atkins declines prove secular; revenue falls past consensus; margin at about the worst clean year (FY2020 9.58%); the multiple at the trough of its trading range (prior low 6.11x). [restated for external readability 2026-07-21; substance unchanged]
+- **base** — Margin is the seven-year clean median of 15.51%. The clean statistics bracket the full-history screening median rather than breaking from it: FY2025 resolved with a $60.9M intangible impairment, and excluding it margin was 15.0% — at the median. The residual ~$22.8M gap to the vendor's figure is definitional (intangible amortization 16.9 plus transaction costs 0.8), not operating. Revenue is consensus FY26E of 1,334 [amended 2026-07-21 pre-verdict: FY26 guidance reinstated at the fiscal Q3 print at $1.345-1.355B; base revenue of 1,330 sits below the guidance midpoint, so the base case is conservative against management's own path]. The multiple is set below the 17.9x median of its 8.55-year trading range (35 quarterly closes): the unresolved category question earns a durable discount; 12.5x is the 14th percentile. [restated for external readability 2026-07-21; substance unchanged]
+- **bull** — The sell-off proves excessive: Quest carries growth and Atkins stabilizes at a smaller base; margin between the median and the best year (17.35%); the multiple moves toward but stays below the 17.85x median of its trading history (16.0x, roughly the 29th percentile of the 8.55-year range) [amended 2026-07-21 pre-verdict: trading-range refresh]. [restated for external readability 2026-07-21; substance unchanged]
 
 ## What happened
 - **Shape:** discrete gap-downs — 2026-04-09 earnings; 2026-04-10 earnings [4]

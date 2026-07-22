@@ -5,10 +5,16 @@ _July 20, 2026_
 # Brief — first cut
 
 ## At a glance
+**Target (base)** $8.09 (-54.9% vs spot) · **Spot** $17.93 (underwritten 2026-07-21) · **Reward** $-9.84 · **Risk** $13.74 · **Reward : risk** -0.72 : 1 (bar 2 : 1)
+
+**Underwrite disposition:** WATCH (2026-07-21) — _the BUY/AVOID verdict of record is the ledger's_
+
+### Thesis — our rationale
+WATCH at $17.93. The underwrite fails our 2:1 bar decisively: the base case values the business near $8 a share in today's terms - under half the market price - and even the optimistic case sits below the price. nCino has just crossed into profitability and the path to mature software margins is real, but the market is already paying today, with no waiting charge, for earnings that on a reported accounting basis arrive around 2030. A sound franchise, fully paid for. We revisit below about $9, or on evidence the ramp is beating our pace - subscription growth back above 12% for two straight quarters, or margins expanding faster than four points a year.
+
 > ⚠ **Verify before the verdict:** Net debt/EBITDA (3.1x) is on REPORTED EBITDA (CIQ / consolidated GAAP), not the covenant basis — full caveats in Analysis.
 
 nCino, Inc., a software-as-a-service company, provides software solutions to financial institutions in the United States, the United Kingdom, and internationally.
-**Strongly-bullish** — EBITDA inflected positive and compounding with self-funding FCF while the punishing trailing multiples are denominator/EPS artifacts.
 - **Segments:** Software & Programming — single segment [1]
 - **Geography:** United States 78%; United Kingdom 12%; Other 10% [2]
 - **Snapshot:** Nasdaq · cap $2.0B · shares 109.6M · book value/sh $8.92 [3]
@@ -18,6 +24,19 @@ nCino, Inc., a software-as-a-service company, provides software solutions to fin
 - No forward/adjusted EV-EBITDA or adjusted EPS in the 99.1 revised guidance, and no direct FY26E EBITDA consensus — the trailing 27.8x cannot be cleanly reconciled to a forward basis (vintage-coherence UNKNOWN).
 - The 5y P/E percentile is unavailable (only 75 points) and the EV/EBITDA history spans just 10 closes — too short to judge whether the near-floor multiple is a true floor.
 _full unknowns + the evidence for/against in Analysis_
+
+## Scenario analysis
+_Terminal-margin: value the business in the year it reaches a normal operating margin, then discount that value back at the house waiting charge. Used where no trailing multiple describes the company._
+
+| scenario | revenue $M | margin | multiple | value / sh | vs spot |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| bear | 684 | 8.6% | 10x | $4.19 | -76.6% |
+| base | 755 | 12.6% | 12.5x | $8.09 | -54.9% |
+| bull | 809 | 16.6% | 16x | $14.10 | -21.3% |
+
+- **bear** — deceleration runs past consensus (forward operating-income revisions 0 up / 9 down); operating leverage slows with growth; exit below the mature-peer reference.
+- **base** — revenue = consensus FY2027 then a stated fade of ~1.5 points a year; margin = the durable +3-points-a-year leverage path from the first positive year (+0.6%); exit set on the one genuinely mature vertical-software peer (12.3x at 23% margins) - at terminal, growth has decelerated by construction, so a growth multiple would pay for the same growth twice.
+- **bull** — the recent +4-points-a-year pace holds and revenue fades only to 8%; exit at a premium to the mature peer for franchise dominance in bank software.
 
 ## What happened
 - **Shape:** discrete gap-downs — 2026-02-03 no 8-K matched [4]

@@ -5,10 +5,16 @@ _July 20, 2026_
 # Brief — first cut
 
 ## At a glance
+**Target (base)** $10.44 (-58.9% vs spot) · **Spot** $25.37 (underwritten 2026-07-22) · **Reward** $-14.93 · **Risk** $22.25 · **Reward : risk** -0.67 : 1 (bar 2 : 1)
+
+**Underwrite disposition:** WATCH (2026-07-22) — _the BUY/AVOID verdict of record is the ledger's_
+
+### Thesis — our rationale
+WATCH at $25.37. The underwrite fails our 2:1 bar with room to spare: the base case is worth about $10 a share in today's terms - under half the market price - and even the optimistic case sits a quarter below it. The market is paying today for margins this company has never printed: breaking even needs roughly 15% operating margins at the stock's own historical floor multiple, against a best-ever year of 10%, margins that moved backwards last year, three-and-a-half turns of debt, and a product recall whose cost is not yet quantified. A real franchise, priced past its delivery. We revisit near $10, or on proof the 2024 cost discipline was structural rather than a one-year event.
+
 > ⚠ **Verify before the verdict:** Net debt/EBITDA (3.3x) is on REPORTED EBITDA (CIQ / consolidated GAAP), not the covenant basis — full caveats in Analysis.
 
 Artivion, Inc. manufactures, processes, and distributes medical devices and implantable human tissues worldwide.
-**Mixed** — a recall and −78% EPS-revision hit a franchise still growing double-digit with rising absolute EBITDA and forward-multiple compression.
 - **Segments:** Products 78%; Preservation Services 22% [1]
 - **Geography:** North America 50%; Europe The Middle East and Africa 34%; Asia Pacific 10%; Latin America 5% [2]
 - **Snapshot:** NYSE · cap $1.1B · shares 48.5M · book value/sh $9.29 [3]
@@ -18,6 +24,19 @@ Artivion, Inc. manufactures, processes, and distributes medical devices and impl
 - Adjusted forward EV/EBITDA and adjusted EPS are UNKNOWN (not in the revised guidance 99.1) — without a forward adjusted basis the trailing 20.6x / NTM 12.8x cannot cleanly separate cheap-overshoot from cheap-terminal; treat as a bearish disclosure gap.
 - Covenant basis and the specific maintenance covenant levels on the Secured Term Loan / Revolver (due 2031) are UNKNOWN/undisclosed; net-debt/EBITDA on a covenant basis is not stated — an opaque leg for a 3.7x-levered name.
 _full unknowns + the evidence for/against in Analysis_
+
+## Scenario analysis
+_Terminal-margin: value the business in the year it reaches a normal operating margin, then discount that value back at the house waiting charge. Used where no trailing multiple describes the company._
+
+| scenario | revenue $M | margin | multiple | value / sh | vs spot |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| bear | 590 | 4.5% | 9x | $3.12 | -87.7% |
+| base | 638 | 9.5% | 13x | $10.44 | -58.9% |
+| bull | 680 | 13.0% | 16x | $18.35 | -27.7% |
+
+- **bear** — the valve recall dents the growth franchise and the FY2024 cost reset proves unsustainable: margin returns toward the 2021-23 structural zone as spending normalizes; a levered, low-margin device business exits well below mature peers.
+- **base** — revenue = consensus FY2027 then a stated fade of ~1.5 points a year; margin = partial delivery of the consensus path - above the realized two-year mean (8.83%), below next year's street case (10.80%), respecting that operating leverage ran backwards in the latest year; exit paired to the outcome: mature device businesses at about twice our terminal margin trade near 14x, so 13x for this one.
+- **bull** — the FY2024 operating model (10% on falling spend) proves durable and scales past consensus; the recall is bounded at the next print; partial deleveraging earns a step toward - but below - the company's own trading floor.
 
 ## What happened
 - **Shape:** discrete gap-downs — 2026-05-08 material agreement + earnings [4]

@@ -5,6 +5,10 @@ _July 10, 2026_
 # Brief — first cut
 
 ## At a glance
+**Target (base)** $181.42 (+102.9% vs spot) · **Spot** $89.40 (underwritten 2026-07-21) · **Reward** $92.02 · **Risk** $17.46 · **Reward : risk** 5.27 : 1 (bar 2 : 1)
+
+**Underwrite disposition:** PENDING_ANALYST — _the BUY/AVOID verdict of record is the ledger's_
+
 EPAM Systems, Inc. provides digital platform engineering and software development services worldwide.
 **Mixed** — a net-cash, still-growing, FCF-positive franchise at a historic-floor multiple, set against sharply negative forward revenue revisions and multi-year margin erosion.
 - **Segments:** Americas 58%; Europe 42% [1]
@@ -16,6 +20,19 @@ EPAM Systems, Inc. provides digital platform engineering and software developmen
 - Adjusted/forward EBITDA and adjusted EPS are UNKNOWN — the 99.1 revised guidance carried no adjusted figure, so the trailing 4.0x cannot be cleanly split into cheap-overshoot vs cheap-terminal.
 - The 2026-02-19 earnings 8-K carried NO NUMERIC forward outlook and NO revised-guidance 99.1 exhibit was parsed — the absence of a management forward guide at the very event that triggered the de-rating is a bearish disclosure gap, not a neutral one.
 _full unknowns + the evidence for/against in Analysis_
+
+## Scenario analysis
+_Mid-cycle underwrite: normalized operating margin on a mid-cycle revenue base, valued at an exit EV/LTM-EBITDA multiple; reward/risk measured at SPOT._
+
+| scenario | revenue $M | margin | multiple | value / sh | vs spot |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| bear | 5,000 | 8.0% | 6x | $71.94 | -19.5% |
+| base | 5,730 | 10.5% | 12.5x | $181.42 | +102.9% |
+| bull | 6,075 | 13.0% | 18x | $317.65 | +255.3% |
+
+- **bear** — Secular case: AI substitution erodes the labour-arbitrage model; revenue -10% from the trailing twelve months (carrying the negative forward revision breadth, FQ3 0 up / 14 down, rather than assuming it reverses); margin below the FY25 worst (9.53%) as pricing grinds — floored by the variable-cost model, not collapsed; the multiple holds near the post-2022 trough (range low 4.26x, current 4.87x at the 2.6th percentile) — a secular decline earns no re-rating. [restated for external readability 2026-07-21; substance unchanged]
+- **base** — Margin is the post-2022 regime median of 11.10% less a ~60bps trajectory haircut: the regime's most recent year (FY25, 9.53%) is its worst and revision breadth is 0 up / 14 down, so the live-regime median likely overstates the forward mid-cycle. Explicitly not the 10-year blend (11.9%, which straddles the 2022 break), not the pre-war level (13.27%, a regime no longer representative), and not the consensus recovery (~15.6% operating income — the Street's base case is our bull). Revenue is consensus FY26E. The multiple sits below the 15.16x post-2022 median: the AI-substitution question earns a durable discount even at mid-cycle. [restated for external readability 2026-07-21; substance unchanged]
+- **bull** — The cyclical air-pocket resolves: the delivery rebuild completes and margin recovers toward but below the pre-war median (13.27%) and well below consensus (~15.6%); revenue is consensus FY27E; the multiple moves toward but stays below the post-2022 75th percentile (20.09x). [restated for external readability 2026-07-21; substance unchanged]
 
 ## What happened
 - **Shape:** discrete gap-downs — 2026-02-03 no 8-K matched; 2026-02-19 earnings; 2026-06-18 no 8-K matched [4]
