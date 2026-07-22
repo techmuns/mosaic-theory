@@ -3827,7 +3827,9 @@ re-anchor (the full STATE split stays its own queued task — nothing was reloca
    rule it was never tested against — a fresh backfill would demote its multiple leg to weak.
    Neither affects a recorded verdict (both are watches), so this is housekeeping, but do the two
    together in one pass rather than per-name.
-3. **R2 COHORT UNDERWRITES — NCNO + AORT DONE, three to go.** `scenarios/NCNO.json` is the first R2
+3. **R2 COHORT UNDERWRITES — NCNO + AORT + MVST DONE. FUBO is next and LAST.** VITL stays
+   survival-blocked (re-engage on an Item 1.01/2.03 financing filing or FCF turning positive).
+   Superseded detail: `scenarios/NCNO.json` is the first R2
    record (watch, 2026-07-21). **AORT recorded 2026-07-22** — its share-step question is CLOSED (a May-2025
    convert-for-stock exchange; override to the 2.25% organic rate, reason recorded). Remaining:
    **VITL is survival-blocked** (0.76y runway vs 4y; re-engage on an Item 1.01/2.03 financing filing or on
@@ -4179,6 +4181,43 @@ cannot drift between emitters. Pinned both ways
 **CLOSED by the 2026-07-21 monitor build:** position monitor (book vs benchmarks, spread,
 freshness panel) · benchmark-by-cap-band assignment + the ledger-supersession artifact · the
 SIC-87xx sector miss · entry-price/ratio-at-entry + implied-odds display.
+
+- **SURVIVAL-GATE UPGRADE + THIRD R2 RECORD — MVST (branch `feat/survival-gate-going-concern`,
+  2026-07-22).** Falsifier-driven, exactly as the queued pattern asks.
+  - **THE FALSIFIER.** MVST's committed `ltm_fcf` is **+$56.074M** (EDGAR FY2025). Fed to the gate
+    it returned *"trivial pass — the company funds itself and has no runway question"* — on a
+    company whose own 10-Q states **substantial doubt about its ability to continue as a going
+    concern** (accession `0001628280-26-033590`) and whose latest quarter annualises to a **$102.6M
+    burn**. The gate printed the most reassuring line in the module on the most distressed name in
+    the cohort. Found by the read-only basis pull, before any record existed.
+  - **THE RULE.** A stated going concern **forbids the trivial pass**, whatever the trailing sign:
+    the disclosure is about the FUTURE, the cash flow is about the PAST, so the past cannot overturn
+    it. `burn_override` becomes MANDATORY (falling back to the trailing figure would defeat the
+    branch — it is the very number the disclosure contradicts). A trailing-vs-latest **sign
+    contradiction is always printed**, including on the trivial-pass path, which previously dropped
+    its detail list entirely.
+  - **SHAPE-READ FIRST, no duplicates.** The gate already had the brief's `committed_facility` as
+    `facilities`/`facilities_source` (crediting runway) and the #176 announced-raise branch
+    (`raise_shares` + `raise_proceeds` moving together). Both USED, neither re-implemented; the new
+    surface is only `going_concern_stated`, `burn_override` and `latest_period_fcf`.
+  - **THE RECORD.** `scenarios/MVST.json`, tier **B**, 4y, spot **$0.9188** (close 2026-07-21).
+    Survival **FAIL**: runway **2.18y** — (cash 126.1 + ATM remaining 98.0) ÷ burn 102.6 — against
+    3.0y to breakeven. Legs bear **−$0.049** · base **$0.602** · bull **$1.505**; **ratio −0.328**.
+    **The bear case values the equity BELOW ZERO**, which is the whole read: the price pays nothing
+    for the chance of a zero. Verdict `watch`, `avoid_priced`, no ledger row. Engine and an
+    independent hand recomputation printed side by side — MATCH.
+  - **THE DILUTION OVERRIDE.** Organic 2.30% cannot see the **open $125M at-the-market programme**
+    (8-K Item 1.01 + 424B5, 2025-10-03) already drawn **+19% in two quarters** — $27.0M received of
+    $125M authorised. Overridden to **10%/yr**, with the ATM's remaining $98M credited to runway AND
+    its proceeds to terminal net debt, the coherent pair.
+  - **ALL BALANCE-SHEET FACTS ARE VENDOR BASIS** — EDGAR tags no depreciation for this filer at all,
+    so CIQ is the only basis available. Flagged in the facts, the methods and every table.
+  - **THE CARD WAS HIDING THE EVIDENCE.** The survival panel rendered its one-line note but not its
+    `detail`, so the going-concern disclosure and the sign-contradiction warning — the two reasons
+    the gate failed — never reached the reader. Fixed: detail lines render, warnings in the danger
+    colour. Clean names are unaffected.
+  - Gate: ruff + `mypy --strict` clean; suite green; linter 0; mirrors rebuilt with all six other
+    cards byte-identical.
 
 - **EPAM PRE-VERDICT AMENDMENT — THE VINTAGE SWEEP PROTECTED A LIVE RECORD (branch
   `data/epam-dep-amort-amendment`, 2026-07-22).** The sweep shipped in #182 existed to prove the R1

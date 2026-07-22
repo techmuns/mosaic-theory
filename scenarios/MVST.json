@@ -1,0 +1,344 @@
+{
+  "schema_version": "1.1",
+  "ticker": "MVST",
+  "recipe_id": "R2_terminal_margin",
+  "recipe_desc": "Terminal-margin: value the business in the year it reaches a normal operating margin, then discount that value back at the house waiting charge.",
+  "recipe_formula": [
+    "EBIT_T = terminal revenue × terminal margin",
+    "D&A_T = (latest-FY D&A ÷ latest-FY revenue) × terminal revenue",
+    "EBITDA_T = EBIT_T + D&A_T",
+    "EV_T = denominator_T × exit multiple   (denominator = EBITDA_T, or EBIT_T on EV/EBIT)",
+    "net debt_T = current net debt + cumulative burn to breakeven",
+    "equity_T = EV_T − net debt_T",
+    "shares_T = current diluted × (1 + share growth)^years + announced-raise shares",
+    "value_T = equity_T ÷ shares_T",
+    "PV = value_T ÷ (1 + hurdle)^years"
+  ],
+  "multiple_basis": "EV/EBITDA",
+  "underwrite_date": "2026-07-22",
+  "analyst": "analyst",
+  "spot": 0.9188,
+  "spot_source": "Polygon MVST close 2026-07-21 (live at underwrite)",
+  "facts": {
+    "net_debt": {
+      "value": 199.9,
+      "unit": "$M",
+      "basis": "classified total debt less total cash and short-term investments, latest balance sheet [VENDOR BASIS: CIQ workbook; EDGAR has no depreciation tag for this filer]",
+      "source": "CIQ Financials->Balance Sheet (vendor basis; EDGAR debt tags under-captured)"
+    },
+    "diluted_shares": {
+      "value": 385.272,
+      "unit": "shares",
+      "basis": "latest-quarter diluted weighted-average count, quarter ended 2026-03-31",
+      "source": "EDGAR WeightedAverageNumberOfDilutedSharesOutstanding"
+    },
+    "d_and_a_ratio": {
+      "value": 0.08941,
+      "unit": "rate",
+      "basis": "depreciation and amortisation over trailing revenue (33.228 / 371.637) [VENDOR BASIS: CIQ workbook; EDGAR has no depreciation tag for this filer]",
+      "source": "CIQ Financials->Cash Flow and Income Statement (vendor basis)"
+    },
+    "share_growth": {
+      "value": 0.1,
+      "unit": "rate",
+      "basis": "OVERRIDE. The organic three-year compound rate (2.30%) cannot see the open $125M at-the-market programme already drawn +19% in two quarters; 10% a year approximates full remaining draw near current prices plus organic issuance.",
+      "source": "EDGAR 8-K Item 1.01 accession 0000947871-25-000881 and the 424B5 of 2025-10-03 (Controlled Equity Offering Sales Agreement, up to $125,000,000); share series FY2022-FY2025"
+    },
+    "burn_to_breakeven": {
+      "value": 307.79999999999995,
+      "unit": "$M",
+      "basis": "three years at the stated current burn (102.60 x 3) - the survival block's years to breakeven",
+      "source": "EDGAR 10-Q accession 0001628280-26-033590, quarter ended 2026-03-31"
+    }
+  },
+  "scenarios": {
+    "bear": {
+      "revenue": 550.0,
+      "margin": 0.02,
+      "multiple": 6.0,
+      "reason": "the contraction proves durable: the largest customer (52% of revenue) wobbles, revenue stabilizes well below the peak run-rate, margins hold barely positive as a marginal producer; a levered, distressed supplier exit.",
+      "years_to_terminal": 4.0
+    },
+    "base": {
+      "revenue": 850.0,
+      "margin": 0.06,
+      "multiple": 7.9,
+      "reason": "revenue recovers on the consensus path with a haircut for the current -25% quarter; margin reaches levered-auto-supplier economics rather than the street's cut-but-still-hopeful path; exit at the closest economic analogue (a levered auto-parts maker at 7.9x), not the scale leader's multiple.",
+      "years_to_terminal": 4.0
+    },
+    "bull": {
+      "revenue": 1000.0,
+      "margin": 0.1,
+      "multiple": 10.0,
+      "reason": "the gross-margin engineering (-28% to +31% in three years) carries through: revenue re-accelerates, double-digit operating margin arrives, partial deleveraging earns a step above the analogue.",
+      "years_to_terminal": 4.0
+    }
+  },
+  "assumptions": {
+    "revenue": {
+      "method": "Terminal revenue starts from the street path and is cut for what the latest quarter actually did: revenue fell about a quarter year on year, so the central case sits well below the street's own two-year figure. Everything past the street's second year is our extrapolation.",
+      "references": [
+        {
+          "label": "street revenue, FY2026",
+          "value": 444.4,
+          "unit": "$M",
+          "source": "CIQ Estimates->Trends"
+        },
+        {
+          "label": "street revenue, FY2027",
+          "value": 591.5,
+          "unit": "$M",
+          "source": "CIQ Estimates->Trends"
+        },
+        {
+          "label": "reported revenue, FY2025",
+          "value": 427.5,
+          "unit": "$M",
+          "source": "EDGAR Revenues"
+        },
+        {
+          "label": "latest-quarter revenue decline, year on year",
+          "value": -25.5,
+          "unit": "%",
+          "source": "CIQ transcript and quarterly income statement"
+        },
+        {
+          "label": "street revenue cut over twelve months",
+          "value": -27.0,
+          "unit": "%",
+          "source": "CIQ Estimates->Trends"
+        }
+      ],
+      "ratified_by": null,
+      "ratified": null
+    },
+    "margin": {
+      "method": "Reported accounting basis throughout, and the depreciation assumption is vendor-sourced because this filer tags none at all in its own machine-readable filings - stated here so the basis is never mistaken for a primary figure. The gross-margin arc is real: minus twenty-eight per cent to plus thirty-one in three years. The operating margin turned positive for the first time in the latest full year and has already rolled over - the most recent quarter's adjusted operating profit is negative against a strongly positive comparison. The central case therefore takes levered auto-supplier economics rather than the street's cut-but-still-hopeful path, and the leverage read that matters is the company-adjusted one, not the headline.",
+      "references": [
+        {
+          "label": "gross margin, FY2021",
+          "value": -28.1,
+          "unit": "%",
+          "source": "EDGAR GrossProfit / Revenues"
+        },
+        {
+          "label": "gross margin, FY2024 - the arc's peak",
+          "value": 31.5,
+          "unit": "%",
+          "source": "EDGAR GrossProfit / Revenues"
+        },
+        {
+          "label": "gross margin, FY2025",
+          "value": 28.6,
+          "unit": "%",
+          "source": "EDGAR GrossProfit / Revenues"
+        },
+        {
+          "label": "reported operating margin, FY2025 - first positive year",
+          "value": 1.6,
+          "unit": "%",
+          "source": "EDGAR OperatingIncomeLoss / Revenues"
+        },
+        {
+          "label": "street operating margin, FY2026 - stated",
+          "value": 4.5,
+          "unit": "%",
+          "source": "CIQ Estimates->Trends (EBIT row)"
+        },
+        {
+          "label": "street operating margin, FY2027 - stated",
+          "value": 11.6,
+          "unit": "%",
+          "source": "CIQ Estimates->Trends (EBIT row)"
+        },
+        {
+          "label": "street earnings cut over twelve months",
+          "value": -52.0,
+          "unit": "%",
+          "source": "CIQ Estimates->Trends"
+        },
+        {
+          "label": "leverage on company-adjusted earnings",
+          "value": 18.7,
+          "unit": "x",
+          "source": "company-adjusted trailing figure, vs the 3.9x headline optic"
+        },
+        {
+          "label": "depreciation and amortisation - vendor basis",
+          "value": 33.228,
+          "unit": "$M",
+          "source": "CIQ Financials->Cash Flow (no EDGAR tag exists)"
+        }
+      ],
+      "ratified_by": null,
+      "ratified": null
+    },
+    "multiple": {
+      "method": "The exit is set at the closest economic analogue - a levered auto-parts maker - rather than at the scale leader, whose multiple belongs to a business with tens of billions of net cash and none of this balance sheet. This company's own trading history is unusable as an exit: six closes over one and a third years, with the current reading below its own trailing low, which the range read itself calls low-confidence. The peer median spans thirty-four million to two hundred and seventy-five billion of market value, so it is a number rather than a comparison.",
+      "references": [
+        {
+          "label": "closest economic analogue, enterprise value to EBITDA",
+          "value": 7.9,
+          "unit": "x",
+          "source": "CIQ Comparable Analysis (BorgWarner, 13.9% EBITDA margin, levered)"
+        },
+        {
+          "label": "scale leader, enterprise value to EBITDA - NOT a reference for us",
+          "value": 14.5,
+          "unit": "x",
+          "source": "CIQ Comparable Analysis (CATL, 23.8% margin, large net cash)"
+        },
+        {
+          "label": "peer median, heterogeneous nine-name set",
+          "value": 14.5,
+          "unit": "x",
+          "source": "CIQ Comparable Analysis (set spans $34M to $275bn; several members not meaningful)"
+        },
+        {
+          "label": "this company's trailing median - unusable, six closes over 1.3 years",
+          "value": 19.3,
+          "unit": "x",
+          "source": "CIQ Financials->Multiples"
+        },
+        {
+          "label": "this company's current reading - below its own trailing low",
+          "value": 9.0,
+          "unit": "x",
+          "source": "CIQ Financials->Multiples (low-confidence range read)"
+        }
+      ],
+      "ratified_by": null,
+      "ratified": null
+    },
+    "horizon": {
+      "method": "Four years, matching the other records on this recipe so the three are comparable. The survival block sets breakeven three years out, so the terminal year sits one year past the point the business is assumed to fund itself.",
+      "references": [
+        {
+          "label": "years to the terminal year",
+          "value": 4.0,
+          "unit": "years",
+          "source": "analyst judgement"
+        },
+        {
+          "label": "waiting charge applied over the horizon",
+          "value": 74.9,
+          "unit": "%",
+          "source": "house rate of 15% a year compounded over four years"
+        }
+      ],
+      "ratified_by": null,
+      "ratified": null
+    }
+  },
+  "gate_adjudication": null,
+  "tier": "B",
+  "survival_input": {
+    "fcf": 56.074,
+    "fcf_basis": "trailing annual (FY2025) - sign already contradicted by the latest quarter, see the survival block",
+    "fcf_source": "EDGAR companyfacts operating cash flow less capital expenditure, FY2025",
+    "cash": 126.1,
+    "facilities": 98.0,
+    "facilities_source": "at-the-market programme remaining capacity: $125.0M authorised less $27.0M received to date (10-Q accession 0001628280-26-033590); agreement accession 0000947871-25-000881",
+    "years_to_breakeven": 3.0,
+    "announced_raise": false,
+    "raise_accession": null,
+    "raise_shares": 0.0,
+    "raise_proceeds": 98.0,
+    "going_concern_stated": true,
+    "going_concern_accession": "0001628280-26-033590",
+    "burn_override": 102.6,
+    "burn_override_basis": "latest quarter annualised: operating cash flow -22.80 less capital expenditure 2.85 = -25.65, x4",
+    "latest_period_fcf": -25.65
+  },
+  "result": {
+    "per_scenario": {
+      "bear": {
+        "value_per_share": -0.04930903616952478,
+        "op_income": 11.0,
+        "ebitda": 60.1755,
+        "ev": 361.053,
+        "equity": -48.646999999999935,
+        "ev_ebit": 32.823,
+        "norm_fcf": null,
+        "years": 4.0,
+        "d_and_a_t": 49.1755,
+        "net_debt_t": 409.69999999999993,
+        "shares_t": 564.0767352000001,
+        "value_terminal": -0.08624181244197486,
+        "hurdle": 0.15
+      },
+      "base": {
+        "value_per_share": 0.601666280719291,
+        "op_income": 51.0,
+        "ebitda": 126.9985,
+        "ev": 1003.2881500000001,
+        "equity": 593.5881500000002,
+        "ev_ebit": 19.672316666666667,
+        "norm_fcf": null,
+        "years": 4.0,
+        "d_and_a_t": 75.9985,
+        "net_debt_t": 409.69999999999993,
+        "shares_t": 564.0767352000001,
+        "value_terminal": 1.052318085392294,
+        "hurdle": 0.15
+      },
+      "bull": {
+        "value_per_share": 1.5046011735573144,
+        "op_income": 100.0,
+        "ebitda": 189.41,
+        "ev": 1894.1,
+        "equity": 1484.4,
+        "ev_ebit": 18.941,
+        "norm_fcf": null,
+        "years": 4.0,
+        "d_and_a_t": 89.41,
+        "net_debt_t": 409.69999999999993,
+        "shares_t": 564.0767352000001,
+        "value_terminal": 2.6315568563090768,
+        "hurdle": 0.15
+      }
+    },
+    "survival": {
+      "status": "FAIL",
+      "burn": 102.6,
+      "burn_basis": "latest quarter annualised: operating cash flow -22.80 less capital expenditure 2.85 = -25.65, x4",
+      "burn_source": "EDGAR companyfacts operating cash flow less capital expenditure, FY2025",
+      "cash": 126.1,
+      "facilities": 98.0,
+      "facilities_source": "at-the-market programme remaining capacity: $125.0M authorised less $27.0M received to date (10-Q accession 0001628280-26-033590); agreement accession 0000947871-25-000881",
+      "runway_years": 2.1842105263157894,
+      "years_to_breakeven": 3.0,
+      "announced_raise": false,
+      "raise_accession": null,
+      "note": "FAIL — 2.18y of runway against 3.00y to breakeven, and no announced or committed raise on file",
+      "detail": [
+        "WARNING: trailing free cash flow +56.1 and the latest period -25.6 have OPPOSITE SIGNS — the trailing figure is describing a period that has ended",
+        "going concern: the filer states substantial doubt about its ability to continue (accession 0001628280-26-033590)",
+        "runway = (cash 126.1 + committed undrawn facilities 98.0) ÷ burn 102.6 = 2.18y"
+      ]
+    },
+    "hurdle": 0.15,
+    "reward": -0.317133719280709,
+    "risk": 0.9681090361695247,
+    "ratio": -0.32758057969947096,
+    "ratio_undefined": null,
+    "bar": 2.0,
+    "pass_fail": "FAIL"
+  },
+  "verdict": {
+    "status": "watch",
+    "recorded": "2026-07-22",
+    "rationale": "WATCH at $0.92. The underwrite fails our 2:1 bar: the base case is worth roughly the market price in today's terms, so the price pays nothing for the very real chance the equity is worth zero - the company's own filings state substantial doubt it can continue, a debt wall comes due within a year against roughly matching cash, and the share count is compounding double-digit through an open selling programme. The gross-margin turnaround is real engineering - from deeply negative to thirty percent in three years - which is why this stays on the watch list at all. We revisit on a completed refinancing, or on returning growth with cash generation.",
+    "rationale_plain": null,
+    "rationale_plain_recorded": null,
+    "reunderwrite_triggers": [
+      "the maturity wall is refinanced or extended (a material-agreement or debt-obligation filing) - re-underwrite survival",
+      "two consecutive quarters of positive revenue growth AND positive operating cash flow - the rollover was a squeeze, not a break; re-underwrite the central and optimistic cases",
+      "going-concern language removed in a periodic filing - re-underwrite in full"
+    ],
+    "entry_price": null,
+    "ratio_at_entry": null,
+    "avoid_priced": true,
+    "avoid_priced_note": "inverted asymmetry at $0.92: the pessimistic case values the equity BELOW ZERO and the central case lands near the current price, so there is no asymmetry to buy. The survival gate FAILS on the company's own disclosure - about two years of runway, including the remaining selling-programme capacity, against three years to breakeven."
+  }
+}
