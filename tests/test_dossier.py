@@ -7582,3 +7582,19 @@ console.log(JSON.stringify({{ html: h }}));
     # 5 — peer business column is prose-classed
     assert 'class="peer-desc"' in h
     assert 'class="peer-desc">operates' in h  # descriptor text rides the prose cell, not .num
+
+
+def test_page_width_containment_css_pins() -> None:
+    """(review round — page never scrolls horizontally) `.main` is a grid column: without
+    min-width:0 the widest table's INTRINSIC width (appendix statements ~2.7k px) bubbles up
+    through `min-width:auto` and forces the whole column wide, defeating every inner
+    overflow-x:auto wrapper from above. Static pins: the containment rule + contained pre;
+    the exhibits stay width-responsive (width=100%, never a bare fixed width)."""
+    css = Path("frontend/assets/styles.css").read_text()
+    assert ".main { min-width: 0; }" in css
+    assert ".card pre { overflow-x: auto; }" in css
+    src = Path("frontend/views/shared/dossier.js").read_text()
+    assert 'width="100%"' in src
+    for m in re.finditer(r"<svg viewBox[^>]+>", src):
+        frag = m.group(0)[:70]
+        assert 'width="100%"' in m.group(0), f"fixed-width svg breaks containment: {frag}"

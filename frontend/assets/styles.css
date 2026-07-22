@@ -1307,3 +1307,11 @@ table.data th.peer-desc-h { text-align: left; }
 .fg-hero .fg-val { font-size: 20px; font-weight: 650; letter-spacing: -0.01em; }
 .fg-hero .fg-val sup.cite-n { font-size: 10px; }
 .fg-neg { color: var(--danger-text); }
+
+/* (review round 3) THE PAGE NEVER SCROLLS HORIZONTALLY. `.main` is a grid column whose
+   `min-width:auto` let the widest table's intrinsic width (street panel ~1.4k, appendix
+   statements ~2.7k) bubble up and force the whole column wide — defeating every inner
+   overflow-x:auto wrapper from above. min-width:0 lets the column shrink to the viewport;
+   wide content then scrolls inside its own wrapper, never the page. */
+.main { min-width: 0; }
+.card pre { overflow-x: auto; }
