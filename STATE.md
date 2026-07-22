@@ -3850,7 +3850,7 @@ re-anchor (the full STATE split stays its own queued task — nothing was reloca
 7. **TAGGER PROPOSALS AWAITING RATIFICATION (operator).** The propose-only tagger agrees with 10 of
    11 committed hand tags; it proposes `R2_NEEDED` for FUBO, whose committed hint is the machine
    placeholder `unknown`. No hint was written — ratify or reject, then re-run the sweep.
-8. **EPAM'S COMMITTED D&A IS SIX YEARS STALE — CHECK BEFORE ITS VERDICT.** The vintage fix
+8. **~~EPAM'S COMMITTED D&A IS SIX YEARS STALE~~ — CLOSED 2026-07-22 (amended pre-verdict).** The vintage fix
    resolves EPAM to **124.811** (FY2025) against a committed **45.317** (FY2019, +175%). EPAM has a
    PENDING underwrite whose EBITDA basis rests on the stale figure. Reported, NOT rewritten (out of
    this branch's scope). Re-check the held grid before the verdict lands.
@@ -3873,9 +3873,16 @@ re-anchor (the full STATE split stays its own queued task — nothing was reloca
    post-2022 median (15.16x), not the bubble-era full-blend 22.41x. The three `method`
    sentences are **DRAFT — ratify at review**. **Analyst decision outstanding** — the verdict
    lands as its own data-only pass. **HELD pending the Q2 print (~2026-08-07 — the filer's
-   own cadence, an ESTIMATE, not a date certain).** The 2:1 bar is met at any spot ≤ **$96.45**
-   (from base 163.08 / bear 63.14: spot = (base + 2·bear) ÷ 3), recorded so the ceiling never
-   has to be re-derived. EPAM now rides the monitor freshness panel as `verdict pending`.
+   own cadence, an ESTIMATE, not a date certain).** **AMENDED 2026-07-22 (pre-verdict, D&A vintage):** the committed
+   `d_and_a` was **45.317 — the abandoned combined tag's FY2019 value**, carried forward six years
+   by alias ordering (defect fixed in #182). Corrected to **124.811** (FY2025, accession
+   `0001352010-26-000015`). Legs UNTOUCHED; only the fact moved. Recomputed: bear **$71.94** ·
+   base **$181.42** · bull **$317.65**; ratio **5.27** at the recorded $89.40 (was 2.81).
+   **The 2:1 bar is now met at any spot ≤ $108.43** (was ~$96.45) — headroom at the 2026-07-21
+   close of $89.22 is **+21.5%**, against ~8% before. The band cross-check moved with it: EPAM's
+   implied-D&A ratio was the book's worst honest reading at **4.20x** and now sits at **1.52x**,
+   in line with IT 0.90x / BRBR 1.33x / AORT 1.38x / CNXC 1.68x / SMPL 1.79x — **the stale
+   denominator WAS the outlier.** Verdict stays `pending_analyst`; methods stay DRAFT. EPAM now rides the monitor freshness panel as `verdict pending`.
 12. **BRBR — QUEUE A FULL R1 UNDERWRITE, POST-AUGUST-WINDOW.** The last of the three dispositions
    still open; CNXC and VITL were closed 2026-07-21 (`R1_NOT_ROBUST` and `R2_NEEDED`). BRBR passes
    both band guards, so its anchor is usable. **Basis = the 2026-07-21 disposition pull**, whose
@@ -4172,6 +4179,42 @@ cannot drift between emitters. Pinned both ways
 **CLOSED by the 2026-07-21 monitor build:** position monitor (book vs benchmarks, spread,
 freshness panel) · benchmark-by-cap-band assignment + the ledger-supersession artifact · the
 SIC-87xx sector miss · entry-price/ratio-at-entry + implied-odds display.
+
+- **EPAM PRE-VERDICT AMENDMENT — THE VINTAGE SWEEP PROTECTED A LIVE RECORD (branch
+  `data/epam-dep-amort-amendment`, 2026-07-22).** The sweep shipped in #182 existed to prove the R1
+  book was current. It was — for eight of eleven names. The ninth was the one name with an OPEN
+  underwrite.
+  - **WHAT WAS WRONG.** EPAM's committed `d_and_a` of **45.317** is `DepreciationDepletion
+    AndAmortization`'s **FY2019** value. That tag stops at FY2019; the filer moved to
+    `DepreciationAndAmortization`, which reports through **FY2025 at 124.811**. Both tags agree
+    exactly on FY2014-FY2019, so this is a clean tag migration — not a definitional difference —
+    and alias ordering carried the dead one forward for six years. Accession
+    `0001352010-26-000015`, 10-K filed 2026-02-26.
+  - **WHY IT MATTERED HERE.** EPAM is R1, EBITDA-basis: EV = (EBIT + D&A) x multiple. Understating
+    D&A by $79.5M understates EBITDA in every leg, so the whole grid was compressed. The legs were
+    never wrong — the analyst's revenue, margin and multiple stand untouched — only the fact under
+    them was.
+  - **EFFECT, legs unchanged:** bear 63.14 → **71.94**, base 163.08 → **181.42**, bull 291.24 →
+    **317.65**; ratio 2.81 → **5.27** at the recorded spot, **5.34** at the 2026-07-21 close. The
+    **2:1 ceiling moves $96.45 → $108.43**, and headroom at the last close goes ~8% → **+21.5%**.
+    Anchor base 306.05 → 338.93 (derived, +11%).
+  - **THE GUARD AGREED.** EPAM was the closest honest name to the implied-D&A bound at **4.20x**
+    (bound 8x) and I recorded that at the time as "an EDGAR under-capture, not a sheet defect".
+    That read was right and now has its cause: corrected, the ratio is **1.52x**. A cross-check
+    flagging the name whose fact was stale is the guard working, a fortnight before anyone looked.
+  - **AMENDED VISIBLY, per the SMPL precedent.** The fact carries its own amendment tag in
+    `source`, so the record shows what changed and why rather than quietly reading differently.
+    Legs untouched, methods stay DRAFT, verdict stays `pending_analyst`, no ledger row. One
+    reference line added on the multiple axis recording that the band's multiples are computed on
+    the filer's actual depreciation, so the corrected fact aligns the grid's EBITDA basis with the
+    band's.
+  - **ONE THING THE BACKFILL DROPPED, restored by hand.** The re-backfill replaced the committed
+    `data_quality_detail` — an operator re-audit note from 2026-07-21 explaining that a prior
+    revenue-tag flag was a DURATION artifact. `preserve_operator_tag` REPORTED the drop (it warns
+    but does not merge, by design, so a stale narrative cannot outlive its cause); here the note was
+    still true, so it was put back. That warning earning its keep is the reason it prints.
+  - Gate: ruff + `mypy --strict` clean; suite green; prose linter 0 flags; mirrors rebuilt with
+    every other card byte-identical.
 
 - **CIQ BALANCE-SHEET EXTRACTION + THE D&A VINTAGE FIX — MVST AND FUBO UNBLOCKED (branch
   `feat/ciq-balance-sheet-extraction`, 2026-07-22).** Closes two queued items.

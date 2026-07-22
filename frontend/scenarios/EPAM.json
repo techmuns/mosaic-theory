@@ -106,6 +106,12 @@
      "value": 4.87,
      "unit": "x",
      "source": "committed valuation.own_history current, as-of 2026-07-17 \u2014 refreshed band sha 9614730c9e"
+    },
+    {
+     "label": "band multiples are vendor TEV/LTM-EBITDA computed on the filer's actual depreciation - the corrected fact aligns the grid's EBITDA basis with the band's",
+     "value": 124.811,
+     "unit": "$M",
+     "source": "EDGAR companyfacts DepreciationAndAmortization FY2025 (accession 0001352010-26-000015)"
     }
    ]
   }
@@ -118,10 +124,10 @@
  "facts": [
   {
    "key": "d_and_a",
-   "value": 45.317,
+   "value": 124.811,
    "unit": "$M",
-   "basis": "consolidated latest FY",
-   "source": "committed anchor block \u2014 EDGAR companyfacts dep_amort (combined)"
+   "basis": "consolidated latest FY (FY2025)",
+   "source": "EDGAR companyfacts DepreciationAndAmortization, 10-K accession 0001352010-26-000015 filed 2026-02-26 (CY2025) [amended 2026-07-22 pre-verdict: prior 45.317 was the abandoned combined tag's FY2019 value carried forward by alias ordering (fixed PR #182); filer's split tag FY2025 = 124.811]"
   },
   {
    "key": "net_debt",
@@ -166,12 +172,12 @@
    "margin": 0.08,
    "multiple": 6.0,
    "reason": "Secular case: AI substitution erodes the labour-arbitrage model; revenue -10% from the trailing twelve months (carrying the negative forward revision breadth, FQ3 0 up / 14 down, rather than assuming it reverses); margin below the FY25 worst (9.53%) as pricing grinds \u2014 floored by the variable-cost model, not collapsed; the multiple holds near the post-2022 trough (range low 4.26x, current 4.87x at the 2.6th percentile) \u2014 a secular decline earns no re-rating. [restated for external readability 2026-07-21; substance unchanged]",
-   "valuePerShare": 63.14,
+   "valuePerShare": 71.94,
    "opIncome": 400.0,
-   "ebitda": 445.3,
-   "ev": 2671.9,
-   "equity": 3420.9,
-   "evEbit": 6.7,
+   "ebitda": 524.8,
+   "ev": 3148.9,
+   "equity": 3897.9,
+   "evEbit": 7.9,
    "normFcf": 297.8
   },
   {
@@ -180,12 +186,12 @@
    "margin": 0.105,
    "multiple": 12.5,
    "reason": "Margin is the post-2022 regime median of 11.10% less a ~60bps trajectory haircut: the regime's most recent year (FY25, 9.53%) is its worst and revision breadth is 0 up / 14 down, so the live-regime median likely overstates the forward mid-cycle. Explicitly not the 10-year blend (11.9%, which straddles the 2022 break), not the pre-war level (13.27%, a regime no longer representative), and not the consensus recovery (~15.6% operating income \u2014 the Street's base case is our bull). Revenue is consensus FY26E. The multiple sits below the 15.16x post-2022 median: the AI-substitution question earns a durable discount even at mid-cycle. [restated for external readability 2026-07-21; substance unchanged]",
-   "valuePerShare": 163.08,
+   "valuePerShare": 181.42,
    "opIncome": 601.6,
-   "ebitda": 647.0,
-   "ev": 8087.1,
-   "equity": 8836.1,
-   "evEbit": 13.4,
+   "ebitda": 726.5,
+   "ev": 9080.8,
+   "equity": 9829.8,
+   "evEbit": 15.1,
    "normFcf": 448.4
   },
   {
@@ -194,18 +200,18 @@
    "margin": 0.13,
    "multiple": 18.0,
    "reason": "The cyclical air-pocket resolves: the delivery rebuild completes and margin recovers toward but below the pre-war median (13.27%) and well below consensus (~15.6%); revenue is consensus FY27E; the multiple moves toward but stays below the post-2022 75th percentile (20.09x). [restated for external readability 2026-07-21; substance unchanged]",
-   "valuePerShare": 291.24,
+   "valuePerShare": 317.65,
    "opIncome": 789.8,
-   "ebitda": 835.1,
-   "ev": 15031.2,
-   "equity": 15780.2,
-   "evEbit": 19.0,
+   "ebitda": 914.6,
+   "ev": 16462.1,
+   "equity": 17211.1,
+   "evEbit": 20.8,
    "normFcf": 588.9
   }
  ],
- "reward": 73.68,
- "risk": 26.26,
- "ratio": 2.81,
+ "reward": 92.02,
+ "risk": 17.46,
+ "ratio": 5.27,
  "bar": 2.0,
  "ratioUndefined": null,
  "passFail": "PASS",
