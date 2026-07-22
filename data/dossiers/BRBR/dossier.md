@@ -159,16 +159,16 @@ _R reclassified; margin % can fall while absolute EBITDA RISES — read them tog
 
 |  | Mkt cap | Business |
 |---|---|---|
-| The Simply Good Foods Company | $1.1B | engages in the development, marketing, and sale of (United States) |
-| The Campbell's Company | $6.3B | manufactures and markets food and beverage products in (United States) |
-| The J. M. Smucker Company | $11.8B | manufactures and markets branded food and beverage (United States) |
-| The Hershey Company | $36.4B | engages in the manufacture and sale of confectionery (United States) |
-| Nu Skin Enterprises | $250M | engages in the development and distribution of various (United States) |
-| Herbalife Ltd. | $1.3B | provides health and wellness products in North (United States) |
-| USANA Health Sciences | $354M | develops, manufactures, and sells science-based (United States) |
-| Nature's Sunshine Products | $366M | manufactures and sells nutritional and personal care (United States) |
-| Kenvue Inc. | $35.3B | operates as a consumer health company in the United (United States) |
-| FitLife Brands | $111M | provides nutritional supplements and wellness products (United States) |
+| The Simply Good Foods Company | $1.1B | engages in the development, marketing, and sale of snacks and meal replacements, and other products in North America and internationally. (United States) |
+| The Campbell's Company | $6.3B | manufactures and markets food and beverage products in the United States and internationally. (United States) |
+| The J. M. Smucker Company | $11.8B | manufactures and markets branded food and beverage products worldwide. (United States) |
+| The Hershey Company | $36.4B | engages in the manufacture and sale of confectionery products and pantry items in the United States and internationally. (United States) |
+| Nu Skin Enterprises | $250M | engages in the development and distribution of various beauty and wellness products worldwide. (United States) |
+| Herbalife Ltd. | $1.3B | provides health and wellness products in North America, Mexico, South and Central America, Europe, the Middle East, Africa, China, and the Asia Pacific. (United States) |
+| USANA Health Sciences | $354M | develops, manufactures, and sells science-based nutritional, personal care, and skincare products in the Asia Pacific, the Americas, and Europe. (United States) |
+| Nature's Sunshine Products | $366M | manufactures and sells nutritional and personal care products in Asia, Europe, North America, Latin America, and internationally. (United States) |
+| Kenvue Inc. | $35.3B | operates as a consumer health company in the United States, rest of North America, Europe, the Middle East, Africa, the Asia-Pacific, and Latin America. (United States) |
+| FitLife Brands | $111M | provides nutritional supplements and wellness products for health-conscious consumers in the United States and internationally. (United States) |
 
 _the name: $1.3B_
 

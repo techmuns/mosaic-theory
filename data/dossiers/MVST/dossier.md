@@ -205,14 +205,14 @@ _Revenue YoY (latest same-quarter): -25.5% (Q1 Mar-31-2026 vs Q1 Mar-31-2024). R
 
 |  | Mkt cap | Business |
 |---|---|---|
-| Amprius Technologies | $2.0B | develops, manufactures, and markets lithium-ion (United States) |
-| Forsee Power S.A. | $34M | designs, manufactures, and sells battery systems for (France) |
-| Cummins Inc. | $96.5B | offers various power solutions worldwide. The company (United States) |
-| BorgWarner Inc. | $14.5B | provides technology solutions for combustion, hybrid, (United States) |
-| Contemporary Amperex Technology Co. | $275.0B | engages in the research, development, production, and (China) |
-| Panasonic Holdings Corporation | $64.4B | develops, manufactures, sells, services, and supplies (Japan) |
-| Leclanché SA | $167M | designs, develops, and manufactures customized turnkey (Switzerland) |
-| Samsung SDI Co. | $24.8B | manufactures and sells batteries in South Korea, (Gyeonggi-do South) |
+| Amprius Technologies | $2.0B | develops, manufactures, and markets lithium-ion batteries for mobility applications. (United States) |
+| Forsee Power S.A. | $34M | designs, manufactures, and sells battery systems for electromobility in France, res of Europe, Asia, the United States, and internationally. (France) |
+| Cummins Inc. | $96.5B | offers various power solutions worldwide. (United States) |
+| BorgWarner Inc. | $14.5B | provides technology solutions for combustion, hybrid, and electric vehicles worldwide. (United States) |
+| Contemporary Amperex Technology Co. | $275.0B | engages in the research, development, production, and sale of electric vehicle and energy storage system batteries in China and internationally. (China) |
+| Panasonic Holdings Corporation | $64.4B | develops, manufactures, sells, services, and supplies various electrical and electronic equipment and related products in Japan, the Americas (Japan) |
+| Leclanché SA | $167M | designs, develops, and manufactures customized turnkey energy storage solutions for electricity generation and transmission, mass transportation (Switzerland) |
+| Samsung SDI Co. | $24.8B | manufactures and sells batteries in South Korea, Europe, China, North America, Southeast Asia, and internationally. (Gyeonggi-do South) |
 
 _the name: $423M_
 

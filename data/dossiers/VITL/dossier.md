@@ -176,16 +176,16 @@ _Revenue YoY (latest same-quarter): +15.4% (Q1 Mar-29-2026 vs Q1 Mar-30-2025). R
 
 |  | Mkt cap | Business |
 |---|---|---|
-| Cal-Maine Foods | $3.8B | engages in the production, grading, packaging, (United States) |
-| The Simply Good Foods Company | $1.2B | engages in the development, marketing, and sale of (United States) |
-| Mondelez International | $78.0B | manufactures, markets, and sells snack food and (United States) |
-| The Kraft Heinz Company | $28.1B | manufactures and markets food and beverage products in (United States) |
-| Freshpet | $2.8B | manufactures, distributes, and markets natural fresh (United States) |
-| Utz Brands | $683M | manufactures branded salty snacks in the United (United States) |
-| Oatly Group AB | $281M | provides a range of plant-based dairy products in the (Sweden) |
-| BellRing Brands | $1.3B | provides various nutrition products in the United (United States) |
-| The Hain Celestial Group | $50M | manufactures, markets, and sells organic and natural (United States) |
-| Post Holdings | $4.1B | operates as a consumer packaged goods holding company (United States) |
+| Cal-Maine Foods | $3.8B | engages in the production, grading, packaging, marketing, and distribution of shell eggs, egg products, and prepared foods. (United States) |
+| The Simply Good Foods Company | $1.2B | engages in the development, marketing, and sale of snacks and meal replacements, and other products in North America and internationally. (United States) |
+| Mondelez International | $78.0B | manufactures, markets, and sells snack food and beverage products in Latin America, North America, Asia, the Middle East, Africa, and Europe. (United States) |
+| The Kraft Heinz Company | $28.1B | manufactures and markets food and beverage products in North America and internationally. (United States) |
+| Freshpet | $2.8B | manufactures, distributes, and markets natural fresh meals and treats for dogs and cats in the United States, Canada, and Europe. (United States) |
+| Utz Brands | $683M | manufactures branded salty snacks in the United States. (United States) |
+| Oatly Group AB | $281M | provides a range of plant-based dairy products in the United States, United Kingdom, Germany, China, Sweden, The Netherlands, Finland, and Switzerland. (Sweden) |
+| BellRing Brands | $1.3B | provides various nutrition products in the United States. (United States) |
+| The Hain Celestial Group | $50M | manufactures, markets, and sells organic and natural products in the United States, United Kingdom, Europe, and internationally. (United States) |
+| Post Holdings | $4.1B | operates as a consumer packaged goods holding company in the United States and internationally. (United States) |
 
 _the name: $480M_
 

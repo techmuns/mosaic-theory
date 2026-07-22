@@ -162,16 +162,16 @@ _Revenue YoY (latest same-quarter): +7.6% (Q1 Mar-31-2026 vs Q1 Mar-31-2025). R 
 
 |  | Mkt cap | Business |
 |---|---|---|
-| Amdocs Limited | $5.6B | provides software and services to communications, (United States) |
-| Cognizant Technology Solutions Corporation | $19.4B | provides consulting and technology, and outsourcing (United States) |
-| DXC Technology Company | $1.4B | provides information technology services and solutions (United States) |
-| Globant S.A. | $1.3B | provides technology services in the United States, (Luxembourg) |
-| Sopra Steria Group SA | $3.0B | provides consulting, digital, and software development (France) |
-| Everforth | $734M | provides information technology solutions for (United States) |
-| Nomura Research Institute | $15.1B | engages in the provision of consulting, financial (Japan) |
-| Gartner | $8.6B | provides business and technology insights for (United States) |
-| Accenture plc | $77.7B | provides strategy and consulting, industry X, song, (D02 P820 Ireland) |
-| iSoftStone Information Technology | $5.8B | provides information technology services in China and (China) |
+| Amdocs Limited | $5.6B | provides software and services to communications, entertainment, media, and other service providers worldwide. (United States) |
+| Cognizant Technology Solutions Corporation | $19.4B | provides consulting and technology, and outsourcing services in North America, Europe, and internationally. (United States) |
+| DXC Technology Company | $1.4B | provides information technology services and solutions in the United States, the United Kingdom, the Rest of Europe, Australia, and internationally. (United States) |
+| Globant S.A. | $1.3B | provides technology services in the United States, rest of North America, Latin America, Europe, and internationally. (Luxembourg) |
+| Sopra Steria Group SA | $3.0B | provides consulting, digital, and software development services in France and internationally. (France) |
+| Everforth | $734M | provides information technology solutions for commercial and government sectors in the United States, Canada, and Europe. (United States) |
+| Nomura Research Institute | $15.1B | engages in the provision of consulting, financial information technology (IT) solutions, Industrial IT solutions (Japan) |
+| Gartner | $8.6B | provides business and technology insights for decisions and performance on an organization’s mission-critical priorities in the United States, Canada, Europe (United States) |
+| Accenture plc | $77.7B | provides strategy and consulting, industry X, song, and technology and operation services in the Americas, Europe, the Middle East, Africa (D02 P820 Ireland) |
+| iSoftStone Information Technology | $5.8B | provides information technology services in China and internationally. (China) |
 
 _the name: $4.0B_
 

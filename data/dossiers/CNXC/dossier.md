@@ -190,16 +190,16 @@ _Revenue YoY (latest same-quarter): +4.1% (Q1 Feb-28-2026 vs Q1 Feb-29-2024). R 
 
 |  | Mkt cap | Business |
 |---|---|---|
-| ExlService Holdings | $4.0B | operates as a data and artificial intelligence (“AI”) (United States) |
-| Teleperformance SE | $3.4B | operates as a digital business services company in (France) |
-| Fiserv | $25.7B | provides payments and financial services technology (United States) |
-| TaskUs | $447M | provides outsourced digital services for companies in (United States) |
-| Wipro Limited | $19.4B | operates as an information technology (IT), (560035 India) |
-| TTEC Holdings | $103M | operates as a customer experience (CX) company that (United States) |
-| Genpact Limited | $4.8B | provides business process outsourcing and information (Hamilton HM 12 ) |
-| IBEX Limited | $401M | provides end-to-end technology-enabled customer (United States) |
-| Capita plc | $478M | operates as an outsourcer that supports clients across (United Kingdom) |
-| HCL Technologies Limited | $32.0B | provides IT and business services, engineering, (India) |
+| ExlService Holdings | $4.0B | operates as a data and artificial intelligence (“AI”) company in the North America, the United Kingdom, Europe, and internationally. (United States) |
+| Teleperformance SE | $3.4B | operates as a digital business services company in France and internationally. (France) |
+| Fiserv | $25.7B | provides payments and financial services technology solutions in the United States, Europe, the Middle East and Africa, Latin America, the Asia-Pacific (United States) |
+| TaskUs | $447M | provides outsourced digital services for companies in Philippines, the United States, India, and internationally. (United States) |
+| Wipro Limited | $19.4B | operates as an information technology (IT), consulting, and business process services company worldwide. (560035 India) |
+| TTEC Holdings | $103M | operates as a customer experience (CX) company that designs, builds, and operates technology-enabled customer experiences across live interaction channels. (United States) |
+| Genpact Limited | $4.8B | provides business process outsourcing and information technology services in India, the rest of Asia, North and Latin America, and Europe. (Hamilton HM 12 ) |
+| IBEX Limited | $401M | provides end-to-end technology-enabled customer lifecycle experience solutions in the United States and internationally. (United States) |
+| Capita plc | $478M | operates as an outsourcer that supports clients across the public and private sectors in the United Kingdom, India, South Africa, and the rest of Europe. (United Kingdom) |
+| HCL Technologies Limited | $32.0B | provides IT and business services, engineering, research and development services, software products, and IP-led offerings. (India) |
 
 _the name: $1.5B_
 
