@@ -64,21 +64,21 @@ _table shows the last 4 fiscal years · 5 earlier years are in the Appendix_
 
 ### What broke — and did it fall alone?
 - **Read — what broke:** discrete gap-downs — 2026-02-03 no 8-K matched; 2026-02-19 earnings; 2026-06-18 no 8-K matched [4]
-- **Gap-downs — what the results showed (parsed EX-99.1) + the 8-K:**
-  - gap 2026-02-19 → 2026-02-19 [`0001352010-26-000010`](https://www.sec.gov/Archives/edgar/data/1352010/000135201026000010/epam-20260219.htm)
-    - items: 2.02 Results of Operations and Financial Condition, 9.01 Financial Statements and Exhibits
-    - 2.02 Results of Operations and Financial Condition: Results of Operations and Financial Condition. On February 19, 2026, EPAM Systems, Inc. (the “Company” or “EPAM”) issued a press release discussing its results of operations for the fourth quarter and the year ended December 31, 2025. A copy of the press release is attached as Exhibit 99.1 to this report and is incorporated by reference into this
-- **Revised guidance · Net debt / EBITDA [FWD-ADJ] · EV/EBITDA (adjusted, forward) · Adjusted EPS (earnings power):** _UNKNOWN_ — no revised-outlook 99.1 exhibit parsed — the revised forward guidance is UNKNOWN
 
 _Company-specific or market-wide?_
 - **Name 180d return:** -60.2% [5]
 - **Relative vs market:** -76.0% [6]
-- **Supplier/customer cohort:** none mapped for this name — the comparison is vs the market only
+_no supplier/customer cohort mapped for this name — the comparison is vs the market only_
+- **Gap-downs — what the results showed (parsed EX-99.1) + the 8-K:**
+  - gap 2026-02-19 → 2026-02-19 [`0001352010-26-000010`](https://www.sec.gov/Archives/edgar/data/1352010/000135201026000010/epam-20260219.htm)
+    - items: 2.02 Results of Operations and Financial Condition, 9.01 Financial Statements and Exhibits
+    - 2.02 Results of Operations and Financial Condition: Results of Operations and Financial Condition. On February 19, 2026, EPAM Systems, Inc. (the “Company” or “EPAM”) issued a press release discussing its results of operations for the fourth quarter and the year ended December 31, 2025. A copy of the press release is attached as Exhibit 99.1 to this report and is incorporated by reference into this
 
 ### Leverage & survival
 - **Net debt / EBITDA [NET]:** -1.0x [7]
 - **Total debt / EBITDA vs peers:** name 0.4x vs peer median 1.5x (comps TOTAL-debt/EBITDA basis) [19]
 - **Net debt / OCF:** -1.3x [20]
+- **Net debt / EBITDA [FWD-ADJ] · EV/EBITDA (adjusted, forward) · Adjusted EPS (earnings power) · Revised guidance (8-K 99.1):** _UNKNOWN_ — no revised-outlook 99.1 exhibit parsed — the revised forward guidance is UNKNOWN
 - **Interest coverage:** _UNKNOWN_ — no period with both EBITDA and Interest Expense
 - **Self-funding:** self-funding: MIXED — latest-Q OCF < 0, LTM FCF > 0 (both must be positive to self-fund) [11]
 - **Credit health** — [10]  <!-- ds-table -->

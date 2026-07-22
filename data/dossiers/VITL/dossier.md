@@ -75,6 +75,11 @@ _Bear case — the decline is real:_
 
 ### What broke — and did it fall alone?
 - **Read — what broke:** discrete gap-downs — 2026-02-26 earnings + management change + Reg-FD + other event; 2026-05-07 earnings + restructuring [5]
+
+_Company-specific or market-wide?_
+- **Name 180d return:** -57.3% [6]
+- **Relative vs market:** -74.0% [7]
+_no supplier/customer cohort mapped for this name — the comparison is vs the market only_
 - **Gap-downs — what the results showed (parsed EX-99.1) + the 8-K:**
   - gap 2026-02-26 → 2026-02-26 [`0001193125-26-073373`](https://www.sec.gov/Archives/edgar/data/1579733/000119312526073373/vitl-20260220.htm)
     - items: 2.02 Results of Operations and Financial Condition, 5.02 Departure/Election of Directors or Certain Officers, 7.01 Regulation FD Disclosure, 8.01 Other Events, 9.01 Financial Statements and Exhibits
@@ -82,17 +87,12 @@ _Bear case — the decline is real:_
   - gap 2026-05-07 → 2026-05-07 [`0001193125-26-210294`](https://www.sec.gov/Archives/edgar/data/1579733/000119312526210294/vitl-20260501.htm)
     - items: 2.02 Results of Operations and Financial Condition, 2.05 Costs Associated with Exit or Disposal Activities, 9.01 Financial Statements and Exhibits
     - **what the results showed:** adj EBITDA Q1 2026 $5.0M; 2026 revenue outlook: 775.0–800.0; next-fy adjusted ebitda outlook: 0.0–10.0 [14]
-- **Revised guidance · Net debt / EBITDA [FWD-ADJ] · EV/EBITDA (adjusted, forward) · Adjusted EPS (earnings power):** _UNKNOWN_ — no revised-outlook 99.1 exhibit parsed — the revised forward guidance is UNKNOWN
-
-_Company-specific or market-wide?_
-- **Name 180d return:** -57.3% [6]
-- **Relative vs market:** -74.0% [7]
-- **Supplier/customer cohort:** none mapped for this name — the comparison is vs the market only
 
 ### Leverage & survival
 - **Net debt / EBITDA [NET]:** 0.0x [8]
 - **Total debt / EBITDA vs peers:** name 0.1x vs peer median 3.8x (comps TOTAL-debt/EBITDA basis) [10]
 - **Net debt / OCF:** 0.3x [22]
+- **Net debt / EBITDA [FWD-ADJ] · EV/EBITDA (adjusted, forward) · Adjusted EPS (earnings power) · Revised guidance (8-K 99.1):** _UNKNOWN_ — no revised-outlook 99.1 exhibit parsed — the revised forward guidance is UNKNOWN
 - **Interest coverage:** 99.4x [23]
 - **Self-funding:** self-funding: MIXED — latest-Q OCF < 0, LTM FCF < 0 (both must be positive to self-fund) [24]
 - **Credit health** — [11]  <!-- ds-table -->

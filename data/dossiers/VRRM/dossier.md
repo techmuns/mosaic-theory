@@ -70,6 +70,11 @@ _table shows the last 4 fiscal years · 1 earlier year is in the Appendix_
 
 ### What broke — and did it fall alone?
 - **Read — what broke:** discrete gap-downs — 2026-02-25 earnings + Reg-FD; 2026-05-27 Reg-FD + other event; 2026-06-02 management change + Reg-FD [5]
+
+_Company-specific or market-wide?_
+- **Name 180d return:** -81.1% [6]
+- **Relative vs market:** -97.7% [7]
+_no supplier/customer cohort mapped for this name — the comparison is vs the market only_
 - **Gap-downs — what the results showed (parsed EX-99.1) + the 8-K:**
   - gap 2026-02-25 → 2026-02-24 [`0001193125-26-067015`](https://www.sec.gov/Archives/edgar/data/1682745/000119312526067015/vrrm-20260224.htm)
     - items: 2.02 Results of Operations and Financial Condition, 7.01 Regulation FD Disclosure, 9.01 Financial Statements and Exhibits
@@ -81,15 +86,9 @@ _table shows the last 4 fiscal years · 1 earlier year is in the Appendix_
     - items: 5.02 Departure/Election of Directors or Certain Officers, 7.01 Regulation FD Disclosure, 9.01 Financial Statements and Exhibits
     - 5.02 Departure/Election of Directors or Certain Officers: Departure of Directors or Certain Officers; Election of Directors; Appointment of Certain Officers; Compensatory Arrangements of Certain Officers. On June 1, 2026, Verra Mobility Corporation (the “Company”) announced that the Board of Directors of the Company (the “Board”) approved the appointment of Jonathan Keyser as the Interim President and Chief Executive Officer of the Company, effective May
     - 7.01 Regulation FD Disclosure: Regulation FD Disclosure. On June 1, 2026, the Company issued a press release announcing the appointment of Jonathan Keyser as Interim President and Chief Executive Officer and related matters. A copy of the press release is furnished as Exhibit 99.1 to this Current Report on Form 8-K and is incorporated by reference herein. The information furnished pursuant to
-- **Revised guidance:** Revised 2026 Full-Year Guidance Based on the Company’s year-to-date 2026 results and outlook for the remainder of the year including the aforementioned termination notice, Verra Mobility is revising its 2026 full-year financial outlook to the following: • Total Revenue of $985 million to $995 million • Adjusted EBITDA of $380 million to $385 million • Adjusted EPS of $1.19 to $1.25 • Free Cash Flow of $140 million to $150 million Underlying Assumptions for 2026 Full-Year Guidance • Weighted average fully diluted share count expected to be approximately 155 million shares for the full-year 2026 • Effective tax rate (including state taxes) is expected to be 28.0% to 29.0%, with approximately $50 million in total cash taxes expected to be paid in 2026. The effective tax rate for non-GAAP adju [12]
 - **Event-impact quantifications (8-K EX-99.1, verbatim-bound):**
   - reduce revenue by $135–145M (2026 annualized) — [14]
   - reduce segment profit by $120–125M (2026 annualized) — [14]
-
-_Company-specific or market-wide?_
-- **Name 180d return:** -81.1% [6]
-- **Relative vs market:** -97.7% [7]
-- **Supplier/customer cohort:** none mapped for this name — the comparison is vs the market only
 
 ### Leverage & survival
 - **Net debt / EBITDA [NET]:** 2.9x [8]
@@ -236,6 +235,7 @@ _export date unverified (data ≥ 2026-06-09)_
   - FY 2027: TEV/REV 1.82 · TEV/EBITDA 5.17 · TEV/EBIT 9.39 · Price/Earnings 6.07 · PEG 3.21 · P/BV 1.42
   - FY 2028: TEV/REV 1.79 · TEV/EBITDA 4.85 · TEV/EBIT 7.83 · Price/Earnings 5.36 · PEG 2.83 · P/BV 1.11
   - _+2 later fiscal years in JSON_
+- **Revised guidance (8-K 99.1):** Revised 2026 Full-Year Guidance Based on the Company’s year-to-date 2026 results and outlook for the remainder of the year including the aforementioned termination notice, Verra Mobility is revising its 2026 full-year financial outlook to the following: • Total Revenue of $985 million to $995 million • Adjusted EBITDA of $380 million to $385 million • Adjusted EPS of $1.19 to $1.25 • Free Cash Flow of $140 million to $150 million Underlying Assumptions for 2026 Full-Year Guidance • Weighted average fully diluted share count expected to be approximately 155 million shares for the full-year 2026 • Effective tax rate (including state taxes) is expected to be 28.0% to 29.0%, with approximately $50 million in total cash taxes expected to be paid in 2026. The effective tax rate for non-GAAP adju [12]
 - **Guidance bridge (latest guide + sign-aware delivery track-record)** — [39]  <!-- ds-table -->
 
 |  | Latest guide | For | Dated | Age | Record (met/resolved) | Most recent |

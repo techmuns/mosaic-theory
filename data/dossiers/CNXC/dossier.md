@@ -70,6 +70,11 @@ _Bear case — the decline is real:_
 
 ### What broke — and did it fall alone?
 - **Read — what broke:** discrete gap-downs — 2026-01-28 no 8-K matched; 2026-02-11 other event; 2026-02-12 other event; 2026-03-24 material agreement; 2026-06-30 earnings [4]
+
+_Company-specific or market-wide?_
+- **Name 180d return:** -45.4% [5]
+- **Relative vs market:** -61.5% [6]
+_no supplier/customer cohort mapped for this name — the comparison is vs the market only_
 - **Gap-downs — what the results showed (parsed EX-99.1) + the 8-K:**
   - gap 2026-02-11 → 2026-02-13 [`0001803599-26-000068`](https://www.sec.gov/Archives/edgar/data/1803599/000180359926000068/cnxc-20260212.htm)
     - items: 8.01 Other Events, 9.01 Financial Statements and Exhibits
@@ -84,17 +89,12 @@ _Bear case — the decline is real:_
   - gap 2026-06-30 → 2026-06-29 [`0001803599-26-000133`](https://www.sec.gov/Archives/edgar/data/1803599/000180359926000133/cnxc-20260629.htm)
     - items: 2.02 Results of Operations and Financial Condition, 9.01 Financial Statements and Exhibits
     - 2.02 Results of Operations and Financial Condition: Results of Operations and Financial Condition. On June 29, 2026, Concentrix Corporation (the “Company” or “Concentrix”) issued a press release reporting its financial results for the second quarter ended May 31, 2026. A copy of the press release is furnished as Exhibit 99.1 hereto and is incorporated in this
-- **Revised guidance · Net debt / EBITDA [FWD-ADJ] · EV/EBITDA (adjusted, forward) · Adjusted EPS (earnings power):** _UNKNOWN_ — no revised-outlook 99.1 exhibit parsed — the revised forward guidance is UNKNOWN
-
-_Company-specific or market-wide?_
-- **Name 180d return:** -45.4% [5]
-- **Relative vs market:** -61.5% [6]
-- **Supplier/customer cohort:** none mapped for this name — the comparison is vs the market only
 
 ### Leverage & survival
 - **Net debt / EBITDA [NET]:** 4.4x [7]
 - **Total debt / EBITDA vs peers:** name 3.4x vs peer median 2.0x (comps TOTAL-debt/EBITDA basis) [12]
 - **Net debt / OCF:** 7.6x [19]
+- **Net debt / EBITDA [FWD-ADJ] · EV/EBITDA (adjusted, forward) · Adjusted EPS (earnings power) · Revised guidance (8-K 99.1):** _UNKNOWN_ — no revised-outlook 99.1 exhibit parsed — the revised forward guidance is UNKNOWN
 - **Interest coverage:** 3.4x [20]
 - **Self-funding:** self-funding: MIXED — latest-Q OCF < 0, LTM FCF > 0 (both must be positive to self-fund) [13]
 - **Credit health** — [10]  <!-- ds-table -->

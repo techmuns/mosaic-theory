@@ -71,17 +71,17 @@ _table shows the last 4 fiscal years · 5 earlier years are in the Appendix_
 
 ### What broke — and did it fall alone?
 - **Read — what broke:** discrete gap-downs — 2026-02-03 no 8-K matched [4]
-- **Revised guidance · Net debt / EBITDA [FWD-ADJ] · EV/EBITDA (adjusted, forward) · Adjusted EPS (earnings power):** _UNKNOWN_ — no revised-outlook 99.1 exhibit parsed — the revised forward guidance is UNKNOWN
 
 _Company-specific or market-wide?_
 - **Name 180d return:** _UNKNOWN_ — name has no bars over the window
 - **Relative vs market:** -32.0% [5]
-- **Supplier/customer cohort:** none mapped for this name — the comparison is vs the market only
+_no supplier/customer cohort mapped for this name — the comparison is vs the market only_
 
 ### Leverage & survival
 - **Net debt / EBITDA [NET]:** 3.1x [6]
 - **Total debt / EBITDA vs peers:** name 4.1x vs peer median 8.0x (comps TOTAL-debt/EBITDA basis) [19]
 - **Net debt / OCF:** 1.9x [20]
+- **Net debt / EBITDA [FWD-ADJ] · EV/EBITDA (adjusted, forward) · Adjusted EPS (earnings power) · Revised guidance (8-K 99.1):** _UNKNOWN_ — no revised-outlook 99.1 exhibit parsed — the revised forward guidance is UNKNOWN
 - **Interest coverage:** 4.1x [21]
 - **Self-funding:** self-funding: YES — latest-Q OCF > 0 AND LTM FCF > 0 [22]
 - **Credit health:** _UNKNOWN_ — credit-health panel scale is ambiguous in the export

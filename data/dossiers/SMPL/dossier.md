@@ -72,6 +72,11 @@ _Bear case — the decline is real:_
 
 ### What broke — and did it fall alone?
 - **Read — what broke:** discrete gap-downs — 2026-04-09 earnings; 2026-04-10 earnings [4]
+
+_Company-specific or market-wide?_
+- **Name 180d return:** -33.1% [5]
+- **Relative vs market:** -45.6% [6]
+_no supplier/customer cohort mapped for this name — the comparison is vs the market only_
 - **Gap-downs — what the results showed (parsed EX-99.1) + the 8-K:**
   - gap 2026-04-09 → 2026-04-09 [`0001702744-26-000010`](https://www.sec.gov/Archives/edgar/data/1702744/000170274426000010/atk-20260409.htm)
     - items: 2.02 Results of Operations and Financial Condition, 9.01 Financial Statements and Exhibits
@@ -79,17 +84,12 @@ _Bear case — the decline is real:_
   - gap 2026-04-10 → 2026-04-09 [`0001702744-26-000010`](https://www.sec.gov/Archives/edgar/data/1702744/000170274426000010/atk-20260409.htm)
     - items: 2.02 Results of Operations and Financial Condition, 9.01 Financial Statements and Exhibits
     - 2.02 Results of Operations and Financial Condition: Results of Operations and Financial Condition. On April 9, 2026, The Simply Good Foods Company, a Delaware corporation (the “Company”), reported its results for the fiscal second quarter ended February 28, 2026. The results are discussed in detail in the press release attached hereto as Exhibit 99.1. In addition, the Company has posted an investor presentation at www.thesimplygoodfoodscompany.com.
-- **Revised guidance · Net debt / EBITDA [FWD-ADJ] · EV/EBITDA (adjusted, forward) · Adjusted EPS (earnings power):** _UNKNOWN_ — no revised-outlook 99.1 exhibit parsed — the revised forward guidance is UNKNOWN
-
-_Company-specific or market-wide?_
-- **Name 180d return:** -33.1% [5]
-- **Relative vs market:** -45.6% [6]
-- **Supplier/customer cohort:** none mapped for this name — the comparison is vs the market only
 
 ### Leverage & survival
 - **Net debt / EBITDA [NET]:** 1.5x [7]
 - **Total debt / EBITDA vs peers:** name 1.8x vs peer median 3.4x (comps TOTAL-debt/EBITDA basis) [20]
 - **Net debt / OCF:** 2.0x [21]
+- **Net debt / EBITDA [FWD-ADJ] · EV/EBITDA (adjusted, forward) · Adjusted EPS (earnings power) · Revised guidance (8-K 99.1):** _UNKNOWN_ — no revised-outlook 99.1 exhibit parsed — the revised forward guidance is UNKNOWN
 - **Interest coverage:** 12.3x [22]
 - **Self-funding:** self-funding: YES — latest-Q OCF > 0 AND LTM FCF > 0 [23]
 - **Credit health** — [10]  <!-- ds-table -->

@@ -74,6 +74,11 @@ _table shows the last 4 fiscal years · 4 earlier years are in the Appendix_
 
 ### What broke — and did it fall alone?
 - **Read — what broke:** discrete gap-downs — 2026-03-17 earnings; 2026-05-12 earnings; 2026-05-18 no 8-K matched [5]
+
+_Company-specific or market-wide?_
+- **Name 180d return:** -62.9% [6]
+- **Relative vs market:** -80.9% [7]
+_no supplier/customer cohort mapped for this name — the comparison is vs the market only_
 - **Gap-downs — what the results showed (parsed EX-99.1) + the 8-K:**
   - gap 2026-03-17 → 2026-03-16 [`0001628280-26-018235`](https://www.sec.gov/Archives/edgar/data/1760689/000162828026018235/mvst-20260316.htm)
     - items: 2.02 Results of Operations and Financial Condition, 9.01 Financial Statements and Exhibits
@@ -81,17 +86,12 @@ _table shows the last 4 fiscal years · 4 earlier years are in the Appendix_
   - gap 2026-05-12 → 2026-05-11 [`0001628280-26-033601`](https://www.sec.gov/Archives/edgar/data/1760689/000162828026033601/mvst-20260511.htm)
     - items: 2.02 Results of Operations and Financial Condition
     - **what the results showed:** adj EBITDA Q1 2026 -$5.5M (vs $28.5M Q1 2025); adj net income Q1 2026 -$14.6M (vs $19.3M Q1 2025); adj EPS Q1 2026 -$0.04; 2026 revenue outlook: qualitative [14]
-- **Revised guidance · Net debt / EBITDA [FWD-ADJ] · EV/EBITDA (adjusted, forward) · Adjusted EPS (earnings power):** _UNKNOWN_ — no revised-outlook 99.1 exhibit parsed — the revised forward guidance is UNKNOWN
-
-_Company-specific or market-wide?_
-- **Name 180d return:** -62.9% [6]
-- **Relative vs market:** -80.9% [7]
-- **Supplier/customer cohort:** none mapped for this name — the comparison is vs the market only
 
 ### Leverage & survival
 - **Net debt / EBITDA [NET]:** 3.9x [8]
 - **Total debt / EBITDA vs peers:** name 5.8x vs peer median 2.0x (comps TOTAL-debt/EBITDA basis) [21]
 - **Net debt / OCF:** 4.4x [22]
+- **Net debt / EBITDA [FWD-ADJ] · EV/EBITDA (adjusted, forward) · Adjusted EPS (earnings power) · Revised guidance (8-K 99.1):** _UNKNOWN_ — no revised-outlook 99.1 exhibit parsed — the revised forward guidance is UNKNOWN
 - **Interest coverage:** 10.6x [11]
 - **Self-funding:** self-funding: MIXED — latest-Q OCF < 0, LTM FCF > 0 (both must be positive to self-fund) [23]
 - **Credit health** — [24]  <!-- ds-table -->

@@ -72,6 +72,11 @@ _table shows the last 4 fiscal years · 5 earlier years are in the Appendix_
 
 ### What broke — and did it fall alone?
 - **Read — what broke:** discrete gap-downs — 2026-02-03 non-narrative items ['5.07']; 2026-05-05 earnings [4]
+
+_Company-specific or market-wide?_
+- **Name 180d return:** -41.6% [5]
+- **Relative vs market:** -56.3% [6]
+_no supplier/customer cohort mapped for this name — the comparison is vs the market only_
 - **Gap-downs — what the results showed (parsed EX-99.1) + the 8-K:**
   - gap 2026-02-03 → 2026-02-02 [`0001628280-26-004642`](https://www.sec.gov/Archives/edgar/data/1772016/000162828026004642/brbr-20260128.htm)
     - items: 5.07 Item 5.07
@@ -79,17 +84,12 @@ _table shows the last 4 fiscal years · 5 earlier years are in the Appendix_
   - gap 2026-05-05 → 2026-05-05 [`0001628280-26-030115`](https://www.sec.gov/Archives/edgar/data/1772016/000162828026030115/brbr-20260505.htm)
     - items: 2.02 Results of Operations and Financial Condition, 9.01 Financial Statements and Exhibits
     - 2.02 Results of Operations and Financial Condition: Results of Operation and Financial Condition. On May 5, 2026, BellRing Brands, Inc. (the "Company") issued a press release announcing results for its second fiscal quarter ended March 31, 2026. A copy of the press release is attached hereto as Exhibit 99.1 and incorporated herein by reference. In addition, on May 5, 2026, the Company published to the "Investor Relations" section of its website, ww
-- **Revised guidance · Net debt / EBITDA [FWD-ADJ] · EV/EBITDA (adjusted, forward) · Adjusted EPS (earnings power):** _UNKNOWN_ — no revised-outlook 99.1 exhibit parsed — the revised forward guidance is UNKNOWN
-
-_Company-specific or market-wide?_
-- **Name 180d return:** -41.6% [5]
-- **Relative vs market:** -56.3% [6]
-- **Supplier/customer cohort:** none mapped for this name — the comparison is vs the market only
 
 ### Leverage & survival
 - **Net debt / EBITDA [NET]:** 3.8x [7]
 - **Total debt / EBITDA vs peers:** name 3.9x vs peer median 2.5x (comps TOTAL-debt/EBITDA basis) [19]
 - **Net debt / OCF:** 6.1x [20]
+- **Net debt / EBITDA [FWD-ADJ] · EV/EBITDA (adjusted, forward) · Adjusted EPS (earnings power) · Revised guidance (8-K 99.1):** _UNKNOWN_ — no revised-outlook 99.1 exhibit parsed — the revised forward guidance is UNKNOWN
 - **Interest coverage:** 4.0x [21]
 - **Self-funding:** self-funding: MIXED — latest-Q OCF < 0, LTM FCF > 0 (both must be positive to self-fund) [22]
 - **Credit health:** _UNKNOWN_ — credit-health panel scale is ambiguous in the export

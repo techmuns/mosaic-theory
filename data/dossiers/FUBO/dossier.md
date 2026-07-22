@@ -79,6 +79,11 @@ _Bear case — the decline is real:_
 
 ### What broke — and did it fall alone?
 - **Read — what broke:** discrete gap-downs — 2026-02-03 earnings; 2026-03-26 no 8-K matched; 2026-05-06 earnings [4]
+
+_Company-specific or market-wide?_
+- **Name 180d return:** -65.9% [5]
+- **Relative vs market:** -82.5% [6]
+_no supplier/customer cohort mapped for this name — the comparison is vs the market only_
 - **Gap-downs — what the results showed (parsed EX-99.1) + the 8-K:**
   - gap 2026-02-03 → 2026-02-03 [`0001493152-26-004826`](https://www.sec.gov/Archives/edgar/data/1484769/000149315226004826/form8-k.htm)
     - items: 2.02 Results of Operations and Financial Condition, 9.01 Financial Statements and Exhibits
@@ -86,16 +91,11 @@ _Bear case — the decline is real:_
   - gap 2026-05-06 → 2026-05-06 [`0001493152-26-021406`](https://www.sec.gov/Archives/edgar/data/1484769/000149315226021406/form8-k.htm)
     - items: 2.02 Results of Operations and Financial Condition, 9.01 Financial Statements and Exhibits
     - 2.02 Results of Operations and Financial Condition: Results of Operations and Financial Condition. On May 6, 2026, FuboTV Inc. announced its financial results for the quarter ended March 31, 2026. The full text of the shareholder letter and press release issued in connection with the announcement are attached as Exhibits 99.1 and 99.2, respectively, to this Current Report on Form 8-K. The information in this
-- **Revised guidance · Net debt / EBITDA [FWD-ADJ] · EV/EBITDA (adjusted, forward) · Adjusted EPS (earnings power):** _UNKNOWN_ — no revised-outlook 99.1 exhibit parsed — the revised forward guidance is UNKNOWN
-
-_Company-specific or market-wide?_
-- **Name 180d return:** -65.9% [5]
-- **Relative vs market:** -82.5% [6]
-- **Supplier/customer cohort:** none mapped for this name — the comparison is vs the market only
 
 ### Leverage & survival
 - **Total debt / EBITDA vs peers:** name NM vs peer median 3.2x (comps TOTAL-debt/EBITDA basis) [19]
 - **Net debt / OCF:** _UNKNOWN_ — CIQ OCF $-489M <= 0 — ratio meaningless
+- **Net debt / EBITDA [FWD-ADJ] · EV/EBITDA (adjusted, forward) · Adjusted EPS (earnings power) · Revised guidance (8-K 99.1):** _UNKNOWN_ — no revised-outlook 99.1 exhibit parsed — the revised forward guidance is UNKNOWN
 - **Interest coverage:** _UNKNOWN_ — Income Statement missing EBITDA or Interest Expense row
 - **Self-funding:** self-funding: MIXED — latest-Q OCF < 0, LTM FCF < 0 (both must be positive to self-fund) [20]
 - **Credit health:** _UNKNOWN_ — comps workbook Company Comparable Analysis FuboTV Inc .xls has no 'Credit Health Panel' sheet
