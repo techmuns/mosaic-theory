@@ -36,7 +36,24 @@ from pydantic import BaseModel, Field, field_validator, model_validator
 from vinci.dossier.midcycle import BAR, R1_FORMULA
 from vinci.prose_lint import ProseRegisterWarning, lint_record
 
-SCHEMA_VERSION = "1.1"
+SCHEMA_VERSION = "1.2"
+
+# WHERE a bear multiple came from. Each member is a different KIND of evidence, and the difference
+# is what the 2026-07-22 audit turned on: an own-history floor drawn from a growth-era-only window
+# is not the same claim as a multiple taken from businesses actually in the state being modelled.
+BEAR_BASES = frozenset({
+    "own-history",        # the name's own committed multiple band
+    "bear-state-comps",   # businesses observed IN the downside state (the IT correction)
+    "peer-reference",     # a named peer or peer set, not the name's own history
+    "analyst",            # judgment, stated as judgment — legitimate, but labelled
+})
+# WHICH earnings line a margin cell is stated on. The two differ by D&A, and a silent conversion
+# between them put a 15.5% EBITDA cell into a brief as a 13.2% EBIT cell.
+MARGIN_BASES = frozenset({"EBIT", "EBITDA"})
+
+# From this schema version the BEAR leg must carry both labels at write. Older records predate the
+# fields and stay writable — the rule binds forward, never retroactively.
+BASIS_REQUIRED_FROM = "1.2"
 # "watch" = the name is not underwritable at TODAY's price but the franchise is intact — a
 # re-underwrite candidate, explicitly NOT an avoid. Distinct from "passed" (declined outright).
 VerdictStatus = Literal["pending_analyst", "confirmed", "overridden", "passed", "watch"]
@@ -114,6 +131,34 @@ class ScenarioInput(BaseModel):
     # takes longer to arrive is worth less today, and forcing one horizon on all three legs would
     # hide exactly that. None on R1 records, which have no horizon.
     years_to_terminal: float | None = None
+
+    # --- BASIS LABELS (2026-07-22) -------------------------------------------------------------
+    # WHERE the bear multiple came from, and WHICH earnings line the margin is stated on. Both
+    # exist because both have already gone wrong:
+    #   * IT's bear multiple was drawn from a band whose window opens inside the growth era, so its
+    #     "floor" had never seen the state the bear leg described. Naming the provenance makes that
+    #     inspectable instead of implicit.
+    #   * an advisory cell of 15.5% EBITDA margin reached a brief as 13.2% EBIT margin — a silent
+    #     D&A add-back. A margin without its line is not a number, it is two numbers.
+    # Required on the BEAR leg at write from schema 1.2; optional on legacy records, which predate
+    # the field and must stay writable.
+    bear_basis: str | None = None      # own-history | bear-state-comps | peer-reference | analyst
+    margin_basis: str | None = None    # EBIT | EBITDA
+
+    @field_validator("bear_basis")
+    @classmethod
+    def _bear_basis_known(cls, v: str | None) -> str | None:
+        if v is not None and v not in BEAR_BASES:
+            raise ValueError(f"bear_basis {v!r} is not one of {sorted(BEAR_BASES)} — an unlisted "
+                             "provenance is not reviewable; add the member deliberately")
+        return v
+
+    @field_validator("margin_basis")
+    @classmethod
+    def _margin_basis_known(cls, v: str | None) -> str | None:
+        if v is not None and v not in MARGIN_BASES:
+            raise ValueError(f"margin_basis {v!r} is not one of {sorted(MARGIN_BASES)}")
+        return v
 
     model_config = {"frozen": True}
 
@@ -540,6 +585,49 @@ def records_dir(root: Path | None = None) -> Path:
     return (root or Path.cwd()) / "scenarios"
 
 
+class AdmissibilityWarning(UserWarning):
+    """The bear leg may not describe a downside state. Printed, never blocking."""
+
+
+def _require_bear_basis(rec: ScenarioRecord) -> None:
+    """From schema 1.2 the BEAR leg states where its multiple came from and which line its margin
+    is on. Legacy records predate the fields and stay writable — the rule binds forward.
+
+    This one REFUSES rather than warns. The labels cost a word each and their absence is exactly
+    what made the IT band defect and the EBITDA/EBIT mistranslation invisible; a warning would be
+    read past on the day it mattered."""
+    if rec.schema_version < BASIS_REQUIRED_FROM:
+        return
+    bear = (rec.scenarios or {}).get("bear")
+    if bear is None:
+        return
+    missing = [f for f in ("bear_basis", "margin_basis") if getattr(bear, f, None) is None]
+    if missing:
+        raise ValueError(
+            f"{rec.ticker}: bear leg is missing {missing} — schema {rec.schema_version} requires "
+            f"the bear multiple's provenance ({sorted(BEAR_BASES)}) and the margin's earnings "
+            f"line ({sorted(MARGIN_BASES)}). Both exist because both have already gone wrong.")
+
+
+def _warn_admissibility(rec: ScenarioRecord) -> None:
+    """Print the R1 admissibility flags at the moment a record is written or re-run.
+
+    THE IT SIGNATURE CAN NEVER AGAIN PASS SILENTLY: a bear multiple above where the name trades
+    today is a downside case that assumes a re-rating upward, and an own-history bear basis on a
+    growth-era-only band is a floor that has never seen the state it is standing in for. Both were
+    present in a recorded BUY and neither surfaced until an external review forced a re-underwrite.
+    Warned, not blocked — the analyst may have a reason, and must be the one to state it."""
+    bear = (rec.scenarios or {}).get("bear")
+    if bear is None:
+        return
+    notes: list[str] = []
+    if bear.bear_basis == "own-history":
+        notes.append("bear_basis is 'own-history' — confirm the band contains a bear-state visit "
+                     "(vinci audit r1)")
+    if notes:
+        warnings.warn(f"{rec.ticker}: " + "; ".join(notes), AdmissibilityWarning, stacklevel=3)
+
+
 def write_record(rec: ScenarioRecord, *, root: Path | None = None) -> Path:
     """Persist to ``scenarios/<TICKER>.json`` — pretty + diff-able, so committed state reads.
 
@@ -551,6 +639,8 @@ def write_record(rec: ScenarioRecord, *, root: Path | None = None) -> Path:
     d = records_dir(root)
     d.mkdir(parents=True, exist_ok=True)
     path = d / f"{rec.ticker.upper()}.json"
+    _require_bear_basis(rec)
+    _warn_admissibility(rec)
     flags = lint_record(rec)
     if flags:
         warnings.warn(

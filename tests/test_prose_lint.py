@@ -185,7 +185,8 @@ def _minimal(**over: object) -> sc.ScenarioRecord:
             "diluted_shares": sc.Fact(value=1.0, unit="M shares", basis="b", source="s"),
         },
         "scenarios": {
-            "bear": sc.ScenarioInput(revenue=1.0, margin=0.1, multiple=5.0, reason="r"),
+            "bear": sc.ScenarioInput(revenue=1.0, margin=0.1, multiple=5.0, reason="r",
+                                     bear_basis="own-history", margin_basis="EBIT"),
             "base": sc.ScenarioInput(revenue=2.0, margin=0.1, multiple=5.0, reason="r"),
             "bull": sc.ScenarioInput(revenue=3.0, margin=0.1, multiple=5.0, reason="r"),
         },
