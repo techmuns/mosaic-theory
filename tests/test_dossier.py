@@ -7733,3 +7733,38 @@ def test_committed_peer_rosters_have_no_midclause_clip() -> None:
             core = desc[: desc.rfind(" (")] if " (" in desc else desc
             last = core.rstrip(".").rsplit(" ", 1)[-1]
             assert last not in stop, f"{p.parent.name}: mid-clause descriptor: …{core[-40:]!r}"
+
+
+def test_desc_capture_never_emits_the_roster_delimiters() -> None:
+    """(review fix) The roster line joins peers with '; ' and splits name/descriptor on ' — ',
+    so a descriptor carrying either delimiter would corrupt the segment split for EVERY consumer
+    (web parser, md table, the peerset-backfill vintage guard). The capture neutralises both, so
+    the delimiters are unambiguous by construction — not by whatever a given export happens to
+    contain. Negative pin with a real-shaped clause list; positive pin that normal text is
+    untouched."""
+    f = cs._desc_first_sentence
+    out = f("provides data; analytics; and risk tools worldwide.")
+    assert "; " not in out and out == "provides data, analytics, and risk tools worldwide."
+    out2 = f("operates two units — retail and wholesale — across Europe.")
+    assert " — " not in out2 and "–" in out2
+    # normal text is untouched (no gratuitous rewriting of the record)
+    plain = "operates as a data, analytics, and technology company."
+    assert f(plain) == plain
+
+
+def test_committed_peer_rosters_split_to_their_declared_count() -> None:
+    """(review fix, committed-artifact invariant) Every roster's '; ' split must yield exactly the
+    peer count the line declares, and no segment may carry a second ' — ' — the structural proof
+    that no widened descriptor swallowed a delimiter."""
+    for p in sorted(Path("data/dossiers").glob("*/dossier.json")):
+        ps = ((json.loads(p.read_text()).get("mechanical") or {})
+              .get("peer_comps") or {}).get("peer_set") or {}
+        if ps.get("status") != "present" or not ps.get("value"):
+            continue
+        v = str(ps["value"])
+        declared = int(re.match(r"^(\d+) peers", v).group(1))
+        body = re.sub(r"^\d+ peers — ", "", v.split(" | the name:")[0])
+        segs = body.split("; ")
+        assert len(segs) == declared, f"{p.parent.name}: {declared} declared, {len(segs)} split"
+        for s in segs:
+            assert s.count(" — ") <= 1, f"{p.parent.name}: extra delimiter in {s[:60]!r}"

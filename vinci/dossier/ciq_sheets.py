@@ -2384,13 +2384,16 @@ def _desc_first_sentence(text: str, cap: int = _DESC_SENTENCE_CAP) -> str:
         sent = f"{sent} {piece}".strip() if sent else piece
         if not _DESC_ABBREV_RE.search(sent):
             break
-    if len(sent) <= cap:
-        return sent
-    cut = sent[:cap]
-    clause = max(cut.rfind(","), cut.rfind(";"))
-    if clause > 0:
-        return cut[:clause].rstrip()
-    return cut.rsplit(" ", 1)[0]
+    if len(sent) > cap:
+        cut = sent[:cap]
+        clause = max(cut.rfind(","), cut.rfind(";"))
+        sent = cut[:clause].rstrip() if clause > 0 else cut.rsplit(" ", 1)[0]
+    # The roster line joins peers with "; " and splits name from descriptor on " — ", so a
+    # descriptor carrying either delimiter would corrupt the segment split for every consumer
+    # (web parser, md table, this module's own vintage guard). The old 55-char clip rarely
+    # reached one; a sentence-length capture can. Neutralise them at the source — the delimiters
+    # stay unambiguous by construction, not by luck.
+    return sent.replace("; ", ", ").replace(" — ", " – ")
 
 
 def peer_comps(bundle: CiqBundle) -> PeerComps:
