@@ -2833,6 +2833,60 @@ Each line: *what it does* — *verified how*.
     revisit re-downloads + re-parses (AORT's 209 KB was fetched 3× in one session). That is a SPEED
     cost only, with no memory implication; always-fresh fetches match the "static mirror lags local
     state until the next `git push`" design. Revisit only if navigation latency becomes a complaint.
+- **R1 APPLICABILITY GATES — RATIFIED AND SHIPPED 2026-07-22 (`vinci audit r1`).** The hand audit
+  became standing machinery. Seven checks — margin shape, band regime, bear admissibility,
+  leverage, perimeter, entity, data — run read-only over every committed anchor and print a matrix
+  plus a per-name disposition. **Flags print, never block** (the prose-linter model): a check that
+  refused to compute would be routed around at the moment it mattered.
+  - **THRESHOLDS RATIFIED** as committed constants: growth-era-only band `min/median ≥ 0.55`; short
+    band `< 3.0y OR < 12 closes`; margin median unusable at `spread > 8pp`, `ramp > 3pp`, or a
+    negative median; leverage at `net debt > 50% of anchor equity` or `one turn > 30% of spot`;
+    bear admissibility above the CURRENT multiple (loud) or above the band minimum (note). Face
+    validity only — no threshold has seen a forward return.
+  - **DIVERGENCE FROM THE HAND AUDIT, recorded:** at the ratified 0.55 line **AORT's band
+    (min/med 0.58) now reads growth-era-only**, where the hand pass's looser 0.6 cut called it a
+    bear-state visit. The machine is stricter than the hand audit was; AORT's disposition is
+    unaffected (its `R2_NEEDED` tag already gated it).
+  - **AUDIT CADENCE ADOPTED:** run before any new BUY verdict, and monthly. First artifact:
+    `docs/audits/2026-07-22-r1-applicability.md`.
+  - **SCHEMA 1.2** — the bear leg carries `bear_basis` (own-history | bear-state-comps |
+    peer-reference | analyst) and `margin_basis` (EBIT | EBITDA), required at write from 1.2.
+  - **STANDING RESULT: 10 names audited · 19 flags · 1 clean (BRBR).** Seven read "gate exists and
+    FIRED" — existing machinery caught them. **Three read "NO GATE": IT, SMPL, EPAM.**
+
+- **SMPL + EPAM — BEAR LEGS ABOVE THE CURRENT MULTIPLE (acknowledged 2026-07-22, not yet acted
+  on).** SMPL's bear exits at **7.00x against a current 5.65x**; EPAM's at **6.00x against 4.87x**.
+  A downside case that assumes a re-rating UP is not a downside case, and SMPL is a **confirmed BUY
+  with an open ledger row**.
+  - **PRE-REGISTERED ROBUSTNESS ARITHMETIC** — the test that decides whether either verdict moves,
+    written down BEFORE it is run so the answer cannot select the test: re-run each grid with the
+    bear multiple set to the CURRENT multiple, all else held. **A PASS that survives its own
+    current-multiple bear stands; one that does not is re-underwritten in full.**
+  - The **margin cells** on both are under evidence review via the sector pulls (the bear-state
+    cross-check convention), separately from the multiple.
+
+- **AORT — CLARIFICATION (2026-07-22).** Its anchor reads `overall_confidence: firm` beside a margin
+  spread of 11.7pp, which looks contradictory and is not. **Anchor confidence measures DATA VALIDITY
+  only** — whether the inputs are trustworthy — never whether R1 applies. Applicability lives in the
+  recipe tag, and AORT's is `R2_NEEDED`. **The R2 record governs AORT**; the R1 anchor is an
+  attention filter already superseded for this name.
+
+- **FUBO — STANDING RULE (2026-07-22).** No record is written until a **post-combination
+  re-assembly** exists. The committed dossier was assembled 2026-07-10 and contains no `Hulu`, no
+  `noncontrolling`, no `Newco`, no `Class B`, no reverse split — it describes the pre-combination
+  entity throughout. **The entity-gate build gates this**: until an NCI/share-class check runs, a
+  FUBO record could pass every existing check while resting on the wrong share base.
+
+- **`event_impacts` CONFIRMED EMPTY (2026-07-22).** The assembler's structured perimeter field is
+  empty on **every release of every name**. The audit's perimeter check therefore runs on a TEXT
+  SCAN and says so in its own output. Consequence, measured: IT's completed Digital Markets
+  divestiture surfaces only because prose was hand-added, and **FUBO's full reverse merger produces
+  zero hits**. Logged against the perimeter-watcher queue item as evidence, not conjecture.
+
+- **WERN — NO DOSSIER (2026-07-22).** `data/dossiers/` covers 11 names; WERN is not among them, so
+  it has no anchor and cannot be audited. Its band provenance lives only in the scenario record's
+  `assumptions`. Recorded so the audit's silence on WERN is never read as a pass.
+
 - **FIRST POSITION CLOSE — IT, LOGGED 2026-07-22.** Verbatim: *"closed flat by operator 2026-07-21
   immediately after entry; evidence-confirmed 2026-07-22; realized 0.0% before costs; the call
   remains in 180-day calibration."* Close row `C-IT-screen2-20260706` closes
@@ -4231,6 +4285,21 @@ re-anchor (the full STATE split stays its own queued task — nothing was reloca
     opens 2017Q1, so pre-2015 and the 2008-09 trough are unobservable. A pull back to ~2006 would
     let a slower-growth Gartner be priced from its own record rather than the cross-section. Not
     blocking — the cross-check convention (above) covers the gap.
+
+43. **MVST BEAR_BASIS UNRESOLVED — the one backfill withheld.** Its multiple method says the exit
+    is *"set AT the closest economic analogue - a levered auto-parts maker"* (BorgWarner, 7.9x
+    reference; bear 6.0x), which reads `peer-reference`; the brief expected `analyst`. Prose does
+    not determine the enum, so it was NOT guessed. MVST stays at schema 1.1 with both labels
+    absent until the operator rules. One line to close.
+44. **PEER MARGIN FRAMES MIX EBITDA WITH EBIT (AORT, MVST).** Both records cite peer margins on an
+    EBITDA basis (Boston Scientific 26.7%, LeMaitre 30.7%, BorgWarner 13.9%) beside their own legs
+    stated on the operating line. AORT's margin method ADDRESSES this explicitly and adjusts;
+    MVST's does not. Not a defect in either cell — the engine adds D&A — but it is the exact
+    cross-basis comparison `margin_basis` exists to make visible, and the reference frames should
+    carry the label too.
+45. **ENTITY GATE — NCI / SHARE-CLASS CHECK (gates any FUBO record).** The audit's entity check
+    reads the diluted-vs-outstanding gap but has no NCI or multi-class detector beyond a text
+    scan, and a pre-combination dossier defeats a text scan by construction.
 
 **BUILD RECORD — 2026-07-21 Analysis declutter (PR #177, stacked on #175).** The audited
 Analysis-tier defects, applied display-only in BOTH renderers: the four surface CONTRADICTIONS
