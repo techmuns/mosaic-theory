@@ -102,6 +102,13 @@ def exhibit_991_urls(http: CachedHttp, cik: str, accession: str) -> list[str]:
 _PERIOD = re.compile(r"\b(Q[1-4]\s+20\d\d|FY\s*20\d\d|(?:fiscal\s+)?20\d\d)\b", re.I)
 
 
+def _near(a: float, b: float, *, tol: float = 0.10) -> bool:
+    """Two magnitudes close enough to be the SAME item restated at a different rounding
+    ($11.0M vs $11.3M), rather than two different charges ($12.0M vs $30.0M)."""
+    hi = max(abs(a), abs(b))
+    return hi == 0 or abs(a - b) / hi <= tol
+
+
 def _money(s: str) -> float | None:
     try:
         return float(s.replace(",", "").replace("$", "").strip())
@@ -336,8 +343,14 @@ def _one_offs(text: str, src: str) -> list[OneOffItem]:
         # charge and then restates last year's beside it ("and for the prior year period
         # integration expenses of $0.2 million"); listing both as drivers of THIS gap-down would
         # attribute a year-old item to today's move.
-        window = text[max(0, m.start() - 90):m.start()].lower()
-        if re.search(r"prior[- ]year|prior\s+period|year[- ]ago", window):
+        # Look back only to the START OF THIS SENTENCE — a fixed character window reaches across
+        # sentence boundaries and kills a current-period item merely because the preceding
+        # sentence mentioned last year ("Compared with the prior year period, results improved.
+        # The quarter included a $25.0 million impairment charge.").
+        sent_start = max(text.rfind(". ", max(0, m.start() - 300), m.start()),
+                         text.rfind("• ", max(0, m.start() - 300), m.start()))
+        window = text[(sent_start + 1) if sent_start != -1 else max(0, m.start() - 90):m.start()]
+        if re.search(r"prior[- ]year|prior\s+period|year[- ]ago", window, re.I):
             continue
         if re.match(r"^(?:and\s+)?(?:for|in)\b", desc, re.I):  # a dangling comparative fragment
             continue
@@ -345,7 +358,20 @@ def _one_offs(text: str, src: str) -> list[OneOffItem]:
         # again per segment, at different roundings ($11 million / $11.3 million), so a bare dedup
         # on the exact string leaves eight copies of one fact. Key on the item's NOUN PHRASE and
         # keep the most precise mention (the largest magnitude wins ties of rounding).
-        key = re.sub(r"[^a-z ]", "", desc.lower())[:24].strip()
+        # ONE ROW PER DISTINCT ITEM — but "distinct" needs the AMOUNT too. Keying on the noun
+        # phrase alone collapsed two genuinely different charges ($12.0M European footprint and
+        # $30.0M Asia exit both read "restructuring charges rel…"), silently dropping the smaller.
+        # Same phrase AND a near-equal amount is one item restated at a different rounding
+        # ($11.0M / $11.3M); a materially different amount is a different item.
+        phrase = re.sub(r"[^a-z ]", "", desc.lower())[:24].strip()
+        # default key CARRIES THE AMOUNT, so two different charges under the same phrase stay two
+        # rows; the loop below re-uses an existing key only when the amounts are near-equal (one
+        # item restated at a different rounding).
+        key = f"{phrase}|{amt}"
+        for k, seen_item in by_key.items():
+            if k.startswith(phrase[:16]) and _near(amt, seen_item.amount):
+                key = k
+                break
         prev = by_key.get(key)
         better = prev is None or amt > prev.amount or (
             amt == prev.amount and len(desc) > len(prev.description))

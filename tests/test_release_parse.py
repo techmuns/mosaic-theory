@@ -318,3 +318,38 @@ def test_guidance_reads_filer_metric_names_range_words_and_scales_billions() -> 
         source_ref=_SRC).guidance
     # 'Total revenues' normalises to the canonical 'revenue' (nCino's phrasing, one metric key)
     assert [(x.metric, x.low, x.high) for x in g2] == [("revenue", 157.75, 159.75)]
+
+
+def test_one_off_dedup_is_amount_aware_and_the_prior_year_guard_is_sentence_bounded() -> None:
+    """(review fixes) Two failure modes of the dedup/exclusion pair, each found by stress-testing
+    the widened extractor rather than by a live release:
+
+    1. Keying on the NOUN PHRASE alone collapsed two genuinely different charges — $12.0M
+       European-footprint and $30.0M Asia-exit restructuring both read "restructuring charges rel…"
+       — and silently dropped the smaller. Distinctness needs the amount too; only a NEAR-equal
+       amount means one item restated at a different rounding.
+    2. A fixed character look-back reached across a sentence boundary and killed a current-period
+       charge because the PRECEDING sentence mentioned last year. The window is bounded by the
+       sentence, so a genuine in-sentence comparative is still excluded."""
+    two = rp.parse_release(
+        "Results included $12.0 million of restructuring charges related to the European "
+        "footprint, and $30.0 million of restructuring charges related to the Asia exit.",
+        source_ref=_SRC).one_offs
+    assert sorted(o.amount for o in two) == [12.0, 30.0], "distinct charges must both survive"
+
+    one = rp.parse_release(
+        "Highlights: a pre-tax $11 million inventory-related charge. Segment results were impacted "
+        "by the current year $11.3 million inventory-related charge associated with a supplier.",
+        source_ref=_SRC).one_offs
+    assert [o.amount for o in one] == [11.3], "one item at two roundings is ONE row, most precise"
+
+    kept = rp.parse_release(
+        "Compared with the prior year period, results improved. The quarter included a "
+        "$25.0 million impairment charge on the Digital unit.", source_ref=_SRC).one_offs
+    assert [o.amount for o in kept] == [25.0], "a prior-year mention in a PRIOR sentence must not "\
+        "suppress this period's charge"
+
+    dropped = rp.parse_release(
+        "Adjusted EBITDA included, for the prior year period, integration expenses of "
+        "$0.2 million.", source_ref=_SRC).one_offs
+    assert dropped == [], "an in-sentence prior-year comparative is still not this period's cause"
