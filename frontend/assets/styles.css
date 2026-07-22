@@ -1298,3 +1298,12 @@ table.data thead th { border-bottom: 1px solid var(--line-2); }
 table.data td.peer-desc { text-align: left; font-family: var(--sans); font-size: 11.5px;
   color: var(--ink-2); white-space: normal; line-height: 1.45; min-width: 220px; }
 table.data th.peer-desc-h { text-align: left; }
+
+/* (review round 2) HERO comparison register — large signed values, negatives in the danger tone,
+   hairline separators between cells; the reference-scalar grids keep the standard register */
+.fg-hero { gap: 2px 0; margin: 6px 0 8px; }
+.fg-hero .fg-cell { padding: 5px 22px 4px 0; }
+.fg-hero .fg-cell + .fg-cell { border-left: 1px solid var(--line); padding-left: 20px; }
+.fg-hero .fg-val { font-size: 20px; font-weight: 650; letter-spacing: -0.01em; }
+.fg-hero .fg-val sup.cite-n { font-size: 10px; }
+.fg-neg { color: var(--danger-text); }

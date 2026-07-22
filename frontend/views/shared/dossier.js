@@ -262,7 +262,10 @@ python3 frontend/build.py                                # mirror into this dash
 // not decoration), UNKNOWN as chip + its note in visible small text (prints — the PDF is the
 // record). Entries are an EXPLICIT field map ({label, s, fmt, basis}) — layout is chosen per field
 // by the renderer, never by string length. Prose/composite values stay individual fact() rows.
-function factGrid(entries) {
+// hero mode: the DECISION comparison register (large signed values, negatives in the danger
+// tone, hairline cell separators) — for the name/market/relative strips. Reference scalars keep
+// the standard register.
+function factGrid(entries, { hero = false } = {}) {
   const cells = entries.filter((e) => e && e.s).map((e) => {
     const s = e.s;
     const basis = e.basis ? ` <span class="fg-basis">${escapeHtml(e.basis)}</span>` : "";
@@ -279,7 +282,14 @@ function factGrid(entries) {
     return `<div class="fg-cell"><div class="fg-lab">${escapeHtml(e.label)}${basis}</div>
       <div class="fg-val">${val}${citeMark(s.source_ref)}</div>${caveat}${sub}</div>`;
   });
-  return cells.length ? `<div class="fg-grid">${cells.join("")}</div>` : "";
+  return cells.length ? `<div class="fg-grid${hero ? " fg-hero" : ""}">${cells.join("")}</div>` : "";
+}
+
+// signed % for the HERO comparison cells — negatives carry the danger tone (the reference
+// register: a −45% drawdown reads red; a positive market leg stays ink, never celebratory green)
+function retHero(v) {
+  const txt = fmtPct(v, { signed: true });
+  return Number(v) < 0 ? `<span class="fg-neg">${txt}</span>` : txt;
 }
 
 // (buy-side layout) a card's READ — the one-line answer to the card's question, styled as the
@@ -632,21 +642,25 @@ function briefTilesGrid(m) {
   const q = m.quality || {};
   const marketCell = (io.market_180d_return && io.market_180d_return.status === "present")
     || !(io.rel_vs_market && io.rel_vs_market.status === "present")
-    ? { label: `Market (${io.benchmark_symbol || "IWM"}) 180d`, s: io.market_180d_return, fmt: ret }
+    ? { label: `Market (${io.benchmark_symbol || "IWM"}) 180d`, s: io.market_180d_return, fmt: retHero }
     : null;
   const idioRead = (io.read && io.read.status === "present") ? String(io.read.value) : "";
-  const grid = factGrid([
-    { label: "Price (180d)", s: io.name_180d_return, fmt: ret },
+  // the comparison is the HERO register (large, negatives red); the survival scalars ride a
+  // standard reference line under it
+  const heroGrid = factGrid([
+    { label: "Price (180d)", s: io.name_180d_return, fmt: retHero },
     marketCell,
-    { label: "Relative vs market", s: io.rel_vs_market, fmt: ret, sub: idioRead },
+    { label: "Relative vs market", s: io.rel_vs_market, fmt: retHero, sub: idioRead },
+  ].filter((e) => e && e.s && (e.s.status === "present" || e === marketCell)), { hero: true });
+  const refGrid = factGrid([
     { label: "Net debt / EBITDA", basis: "NET", s: q.net_debt_to_ebitda, fmt: mult },
     { label: "Free cash flow", s: q.fcf_sign, fmt: (v) => escapeHtml(signWord(v)) },
-  ].filter((e) => e && e.s && (e.s.status === "present" || e === marketCell)));
+  ].filter((e) => e && e.s && e.s.status === "present"));
   const gc = (((m.primary_source || {}).filing || {}).going_concern) || null;
   const gcLine = gc
     ? `<div class="fg-note" style="margin-top:4px;${gc.substantial_doubt ? " color:var(--danger-text); font-weight:600;" : ""}">Going concern: ${gc.substantial_doubt ? "⚠ substantial doubt" : "not flagged"}</div>`
     : "";
-  return grid || gcLine ? `${grid}${gcLine}` : "";
+  return heroGrid || refGrid || gcLine ? `${heroGrid}${refGrid}${gcLine}` : "";
 }
 
 function briefVerdictChip(verdict) {
@@ -1586,7 +1600,8 @@ function capitalStructureInner(cs, refDate, { skipWall = false } = {}) {
   // (P3) the verbatim maturity-resolution event, when captured (a pre-P3 JSON has no field → nothing)
   const matEv = cs.maturity_event && (cs.maturity_event.status !== "present" || cs.maturity_event.value)
     ? fact("Maturity resolution (8-K verbatim)", cs.maturity_event) : "";
-  return subhead("Capital structure & maturity wall") +
+  // the sub-head stops claiming the wall once the wall renders in the column above
+  return subhead(skipWall ? "Capital structure" : "Capital structure & maturity wall") +
     table + (skipWall ? "" : maturityWall(cs, refDate)) +
     fact("Aggregates (latest quarter)", cs.summary) + matEv +
     covenantSummary(cs);  // (K1) curated per-family survival covenant VALUES; "" → appendix carries it
@@ -1737,12 +1752,14 @@ function covenantTerms(cs) {
 // wall + covenant pointers/terms. leverageBlock/capitalStructureInner return INNER content (no card).
 function leverageSurvival(m, refDate) {
   const q = m.quality || {};
-  const leverage = m.leverage_survival ? leverageBlock(m) : (
-    fact("Net debt / EBITDA (GAAP)", q.net_debt_to_ebitda, mult) +
-    fact("Net debt / OCF", q.net_debt_to_ocf, mult) +
-    fact("Net debt / EBITDA (covenant adj.)", q.net_debt_to_ebitda_adjusted) +
-    fact("Survival capacity", q.survival_capacity) +
-    fact("Interest coverage", q.interest_coverage, mult));
+  const lb = m.leverage_survival ? leverageBlock(m) : {
+    grid: "",
+    rows: fact("Net debt / EBITDA (GAAP)", q.net_debt_to_ebitda, mult) +
+      fact("Net debt / OCF", q.net_debt_to_ocf, mult) +
+      fact("Net debt / EBITDA (covenant adj.)", q.net_debt_to_ebitda_adjusted) +
+      fact("Survival capacity", q.survival_capacity) +
+      fact("Interest coverage", q.interest_coverage, mult),
+  };
   // (declutter P1) "FCF sign: UNKNOWN" above a present FCF value read as a contradiction
   const fcfSign = (q.fcf_sign && q.fcf_sign.status === "present")
     || !(q.free_cash_flow && q.free_cash_flow.status === "present")
@@ -1750,15 +1767,15 @@ function leverageSurvival(m, refDate) {
   const cash = subhead("Cash & liquidity") +
     fcfSign + fact("Free cash flow ($M)", q.free_cash_flow) +
     (m.capital_structure ? "" : fact("Liquidity / covenant flags", q.liquidity_covenant_flags));
-  // (buy-side two-column) leverage LEFT, the maturity wall RIGHT — the two survival halves read
-  // side-by-side; narrow screens collapse to one column (CSS). The wall leaves the capital-
-  // structure run below only when it actually rendered in the column (fail-honest otherwise).
+  // (buy-side two-column) the SCALAR GRID pairs with the maturity wall side-by-side — two compact
+  // blocks of like density; the prose rows (long values) stay FULL-WIDTH below the columns.
+  // Narrow screens collapse to one column (CSS); no wall → single column (fail-honest).
   const cs = m.capital_structure;
   const wallCol = cs ? maturityWall(cs, refDate, { column: true }) : "";
   const capital = cs ? capitalStructureInner(cs, refDate, { skipWall: !!wallCol }) : "";
-  const top = wallCol
-    ? `<div class="ls-cols"><div>${leverage}</div><div>${wallCol}</div></div>`
-    : leverage;
+  const top = wallCol && lb.grid
+    ? `<div class="ls-cols"><div>${lb.grid}</div><div>${wallCol}</div></div>` + lb.rows
+    : lb.grid + (wallCol || "") + lb.rows;
   return sec("Survival — leverage · cash/FCF · capital structure & maturity wall",
     "One block: the leverage bases, self-funding, the month-precision wall, and the covenant "
     + "pointers/terms.", top + cash + capital);
@@ -2065,7 +2082,7 @@ function idioVsShared(io) {
   // two cohort-absence rows said one absence twice, one citing an internal filename.
   const marketCell = (io.market_180d_return && io.market_180d_return.status === "present")
     || !(io.rel_vs_market && io.rel_vs_market.status === "present")
-    ? { label: `Market (${io.benchmark_symbol || "IWM"}) 180d`, s: io.market_180d_return, fmt: ret }
+    ? { label: `Market (${io.benchmark_symbol || "IWM"}) 180d`, s: io.market_180d_return, fmt: retHero }
     : null;
   const readLead = (io.read && io.read.status === "present" && io.read.value != null)
     ? factRead("Read — alone or with the cohort?", io.read)
@@ -2076,12 +2093,12 @@ function idioVsShared(io) {
       + `<div class="fact"><div class="fact-label">Graph cohort</div><div>${cohort}</div></div>`
     : `<div class="fg-note" style="margin-top:2px;">no supplier/customer cohort mapped for this name — the comparison is vs the market only</div>`;
   return (  // (R3) body only — drawdownIdio wraps it in the shared section header
-    // (buy-side layout) the three returns are ONE comparison — a stat grid, not three rows
+    // (buy-side layout) the three returns are ONE comparison — the HERO register, not three rows
     factGrid([
-      { label: "Name 180d return", s: io.name_180d_return, fmt: ret },
+      { label: "Name 180d return", s: io.name_180d_return, fmt: retHero },
       marketCell,
-      { label: "Relative vs market", s: io.rel_vs_market, fmt: ret },
-    ]) +
+      { label: "Relative vs market", s: io.rel_vs_market, fmt: retHero },
+    ], { hero: true }) +
     cohortBlock);
 }
 
@@ -2190,16 +2207,19 @@ function leverageBlock(m) {
     : fact("Survival", lv.survival);
   // (buy-side layout) the numeric leverage scalars are ONE reference block — a stat grid with the
   // BASIS VISIBLE in each cell (NET vs TOTAL vs FWD-ADJ is disclosure, never tooltip-only). The
-  // comparison sentence (total-debt vs peers) and the survival/credit reads stay prose rows.
-  return factGrid([
-    { label: "Net debt / EBITDA", basis: "NET", s: lv.net_debt_to_ebitda, fmt: mult },
-    { label: "Net debt / OCF", s: m.quality.net_debt_to_ocf, fmt: mult },
-    { label: "Net debt / EBITDA", basis: "FWD-ADJ", s: m.quality.net_debt_to_ebitda_adjusted },
-    { label: "Interest coverage", s: lv.interest_coverage, fmt: mult },
-  ]) +
-    fact("Total debt / EBITDA vs peers", lv.total_debt_to_ebitda) +
-    survival +
-    creditHealth(lv);  // (K3) 4-row mini-table; fail-soft to fact("Credit health", …)
+  // grid alone pairs with the wall column; the prose rows (long values) render FULL-WIDTH below
+  // the columns — half-width cramming is exactly the misfit the field map exists to avoid.
+  return {
+    grid: factGrid([
+      { label: "Net debt / EBITDA", basis: "NET", s: lv.net_debt_to_ebitda, fmt: mult },
+      { label: "Net debt / OCF", s: m.quality.net_debt_to_ocf, fmt: mult },
+      { label: "Net debt / EBITDA", basis: "FWD-ADJ", s: m.quality.net_debt_to_ebitda_adjusted },
+      { label: "Interest coverage", s: lv.interest_coverage, fmt: mult },
+    ]),
+    rows: fact("Total debt / EBITDA vs peers", lv.total_debt_to_ebitda) +
+      survival +
+      creditHealth(lv),  // (K3) 4-row mini-table; fail-soft to fact("Credit health", …)
+  };
 }
 
 // (B3 · K4) DEMOTED to the appendix, reference-only (mirrors render._implied_lines): implied EQUITY

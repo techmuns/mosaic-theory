@@ -7467,7 +7467,7 @@ console.log(JSON.stringify({{ html: h }}));
     assert "Key unknowns" not in case
 
     # 2 — leverage grid: visible basis tags + visible UNKNOWN note
-    assert h.count('class="fg-grid"') >= 2  # leverage + the idio returns
+    assert h.count('class="fg-grid') >= 2  # leverage (standard) + the idio returns (hero)
     assert '<span class="fg-basis">NET</span>' in h
     assert '<span class="fg-basis">FWD-ADJ</span>' in h
     fwd = h.split('<span class="fg-basis">FWD-ADJ</span>')[1].split("</div></div>")[0]
@@ -7568,13 +7568,15 @@ console.log(JSON.stringify({{ html: h }}));
 
     # 3 — the Brief what-happened strip has the market cell
     wh = h.split(">What happened<")[1].split('class="card')[0]
-    assert 'class="fg-grid"' in wh and "Market (" in wh
+    assert 'class="fg-grid fg-hero"' in wh and "Market (" in wh  # the comparison is HERO
 
     # 4 — survival two-column: grid + wall inside ls-cols; the wall renders ONCE
     surv = h.split(">Survival — leverage")[1].split('class="card')[0]
     cols = surv.split('class="ls-cols"')
     assert len(cols) == 2, "the two-column wrapper must render once"
-    assert 'class="fg-grid"' in cols[1].split("</div></div>")[0] or 'class="fg-grid"' in cols[1]
+    assert 'class="fg-grid"' in cols[1]  # the scalar grid pairs with the wall
+    # the long prose rows stay OUT of the columns (full-width below — no half-width cramming)
+    assert "Total debt / EBITDA vs peers" not in cols[1].split('class="ls-wall"')[0]
     assert surv.count('class="wall-strip"') == 1
 
     # 5 — peer business column is prose-classed
