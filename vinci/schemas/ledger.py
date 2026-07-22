@@ -16,6 +16,19 @@ from datetime import date, datetime
 
 from pydantic import BaseModel, model_validator
 
+# The one non-decision event a ledger row may record. A close is an APPENDED row, never an edit.
+EVENT_CLOSE = "CLOSE"
+
+# Close-row id convention. The decision row is "V-{candidate_id}" and re-logging it fails loud —
+# that uniqueness rule is what makes the ledger append-only in practice. It is widened HERE, once
+# and deliberately: a candidate may carry exactly one decision row and one close row.
+CLOSE_ID_PREFIX = "C-"
+
+
+def close_entry_id(candidate_id: str) -> str:
+    """The close row's id for ``candidate_id`` — one per candidate, by construction."""
+    return f"{CLOSE_ID_PREFIX}{candidate_id}"
+
 
 class Verdict(enum.StrEnum):
     """The two verdicts Loop 1 records for Screen 2 (overshot de-rating)."""
@@ -92,6 +105,51 @@ class LedgerEntry(BaseModel, frozen=True):
     # ``False`` in normal flow == an uncontaminated human-vs-machine comparison; ``True`` flags a
     # disposition whose CONFIRMED/OVERRIDDEN reading is anchored and must be down-weighted.
     revealed_pre_verdict: bool = False
+
+    # --- CLOSE ROWS (2026-07-22) ---------------------------------------------------------------
+    # A position is closed by APPENDING a row, never by mutating the decision row: the ledger is
+    # append-only, and the entry it froze is the anchor the forward spread measures from.
+    #
+    # ``event`` is the discriminator. ABSENT/None == a DECISION row — which is what every legacy
+    # row is, so no committed row changes. ``EVENT_CLOSE`` == a close row, which is NOT a position
+    # and must never be counted as one. That is the entire reason this field exists: without it a
+    # close appended for IT would be partitioned by ``compute_spread`` as a SECOND BUY leg and
+    # double-count the name in the one number this fund exists to measure.
+    #
+    # ``verdict`` on a close row repeats the ORIGINAL call, for provenance only. Deliberately not a
+    # new verdict: closing a BUY is not an AVOID, and a close row carrying its own directional call
+    # would put a second, contradictory opinion into an append-only record.
+    event: str | None = None                 # None = decision row · "CLOSE" = close row
+    closes_entry_id: str | None = None       # CLOSE only — the entry_id being closed
+    exit_price: float | None = None          # CLOSE only — the realized exit
+    exit_price_as_of: date | None = None     # CLOSE only
+
+    @model_validator(mode="after")
+    def _close_row_shape(self) -> LedgerEntry:
+        """A close row is fully specified or refused. Half a close — an exit price with no link, or
+        a link with no price — yields an unpairable row that the realized view would silently drop
+        instead of failing."""
+        close_only = {"closes_entry_id": self.closes_entry_id, "exit_price": self.exit_price,
+                      "exit_price_as_of": self.exit_price_as_of}
+        if self.event is None:
+            stray = sorted(k for k, v in close_only.items() if v is not None)
+            if stray:
+                raise ValueError(
+                    f"{stray} set on a DECISION row (event is None) — those fields belong to a "
+                    f"close row; set event={EVENT_CLOSE!r} or remove them")
+            return self
+        if self.event != EVENT_CLOSE:
+            raise ValueError(f"unknown ledger event {self.event!r} — expected {EVENT_CLOSE!r}, "
+                             "or None for a decision row")
+        missing = sorted(k for k, v in close_only.items() if v is None)
+        if missing:
+            raise ValueError(f"close row {self.entry_id!r} is missing {missing} — a close is "
+                             "fully specified or it is refused")
+        if self.exit_price is not None and self.exit_price <= 0:
+            raise ValueError(f"close row {self.entry_id!r}: exit_price must be positive")
+        if self.closes_entry_id == self.entry_id:
+            raise ValueError(f"close row {self.entry_id!r} closes itself")
+        return self
 
     @model_validator(mode="after")
     def _sane(self) -> LedgerEntry:

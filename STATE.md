@@ -6223,6 +6223,22 @@ calendar time. Validate **forward, never backtest**. Pre-register kill criteria;
 de-confounded/control number over the persuasive story. **Manual** = the CIQ export + the verdict;
 **automated** = everything mechanical between.
 
+**DUAL MEASUREMENT — RATIFIED 2026-07-22, with the close machinery.** A position may be exited; a
+CALL may not be withdrawn. The two are measured separately and neither may stand in for the other:
+- **CALIBRATION (primary).** Every logged call is scored at its `horizon_days` from its frozen
+  entry price, **regardless of whether the position was exited**. An exit is a capital decision,
+  not a retraction. If exits removed calls from calibration, the discriminator's hit-rate could be
+  curated by sell timing — the one number the fund exists to prove would become a function of
+  trading, which is precisely what it is meant to be independent of.
+- **REALIZED P&L (separate, labelled).** `entry → exit`, derived as `exit/entry − 1` from the two
+  frozen prices and **never stored** (a persisted return is a second source of truth able to drift
+  from the prices it came from). Shown beside calibration on the monitor and the tear-sheet,
+  always labelled, never blended into the spread.
+- **MECHANICALLY**: a close is an APPENDED row (`event="CLOSE"`, id `C-{candidate_id}`), never an
+  edit. It repeats the original verdict for provenance only and is filtered out of the position
+  set by `monitor.decision_rows` — without that filter a close would be partitioned by verdict as
+  a SECOND leg on its own original side and double-count the name in the spread.
+
 **Print-freshness gate (standing, formalized 2026-07-21 at the SMPL BUY):** mandatory before ANY
 verdict — check EDGAR for filings newer than the record's evidence (the record's as-of vs the
 latest 8-K/10-Q/10-K); read the print against the record; amend VISIBLY (tagged, numbers

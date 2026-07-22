@@ -32,6 +32,8 @@ from typing import Any
 
 from pydantic import BaseModel, Field
 
+from vinci.schemas.ledger import EVENT_CLOSE
+
 # --- design constants (tunable; named so a change is a decision, not a drift) ------------------
 # Cap bands → benchmark proxy. Chosen by FACE VALIDITY (a small-cap leg is measured against a
 # small-cap index), never by which pairing would have flattered a spread.
@@ -153,6 +155,78 @@ class FreshnessRow(BaseModel):
 
 
 MonitorSnapshot.model_rebuild()
+
+
+# --- close rows: the position/close partition, and the realized view --------------------------
+def entry_of(row: dict[str, Any]) -> dict[str, Any]:
+    """The full LedgerEntry dict behind a ledger row — the ONE place the two shapes are reconciled.
+
+    A committed ledger row mirrors the DB columns and carries the complete entry as JSON in
+    ``payload``; a freshly dumped model is already the entry. Close fields (``event``,
+    ``closes_entry_id``, ``exit_price``) live on the ENTRY, so every close-aware reader must go
+    through here rather than probing the row's top level — where those keys simply do not exist on
+    a committed row, and the filter would silently pass every close through as a position.
+    """
+    p = row.get("payload")
+    if isinstance(p, str):
+        return dict(json.loads(p))
+    if isinstance(p, dict):
+        return dict(p)
+    return row
+
+
+def decision_rows(raw: list[dict[str, Any]]) -> list[dict[str, Any]]:
+    """The rows that are POSITIONS — every raw ledger row whose ``event`` is not a close.
+
+    THE LANDMINE THIS DEFUSES: ``compute_spread`` partitions by verdict alone, and a close row
+    carries the ORIGINAL verdict for provenance. Appending a close for IT without this filter
+    would count IT as a SECOND BUY leg and double it in the BUY−AVOID spread — corrupting the one
+    number the fund exists to measure, silently, with nothing red.
+
+    Legacy rows have no ``event`` key at all and are decision rows by definition, so this is a
+    no-op on everything committed before 2026-07-22.
+    """
+    return [r for r in raw if entry_of(r).get("event") != EVENT_CLOSE]
+
+
+def close_rows(raw: list[dict[str, Any]]) -> list[dict[str, Any]]:
+    """The close rows only — the realized-P&L view's input."""
+    return [r for r in raw if entry_of(r).get("event") == EVENT_CLOSE]
+
+
+def pair_closes(raw: list[dict[str, Any]]) -> list[dict[str, Any]]:
+    """Pair each close to the decision row it closes, and DERIVE the realized return.
+
+    Realized return is computed here, never stored: it is ``exit/entry − 1`` from two frozen
+    prices, so persisting it would create a second source of truth able to drift from the two
+    numbers it came from. The ledger stores facts; views derive.
+
+    Refuses loud on an unpairable or duplicated close — a close pointing at nothing, or two closes
+    for one entry, means the realized book is wrong and must not render as though it were right.
+    """
+    by_id = {entry_of(r)["entry_id"]: entry_of(r) for r in decision_rows(raw)}
+    seen: set[str] = set()
+    out: list[dict[str, Any]] = []
+    for row in close_rows(raw):
+        c = entry_of(row)
+        target = c.get("closes_entry_id")
+        if not isinstance(target, str) or target not in by_id:
+            raise ValueError(
+                f"close row {c.get('entry_id')!r} references entry_id {target!r}, which is not a "
+                "decision row in the ledger — a close must close something")
+        if target in seen:
+            raise ValueError(
+                f"entry_id {target!r} is closed TWICE (second close {c.get('entry_id')!r}) — a "
+                "position closes once, or the realized return is ambiguous")
+        seen.add(target)
+        d = by_id[target]
+        entry, exit_ = float(d["entry_price"]), float(c["exit_price"])
+        out.append({"ticker": d["ticker"], "entry_id": target, "close_id": c.get("entry_id"),
+                    "verdict": d["verdict"], "entry_price": entry,
+                    "entry_price_as_of": d.get("entry_price_as_of"),
+                    "exit_price": exit_, "exit_price_as_of": c.get("exit_price_as_of"),
+                    "realized_return": exit_ / entry - 1.0})    # DERIVED, never stored
+    return out
 
 
 # --- spread ------------------------------------------------------------------------------------

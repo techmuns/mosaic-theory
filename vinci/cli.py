@@ -961,10 +961,16 @@ def _cmd_monitor(args: argparse.Namespace) -> int:
     if not ledger_path.exists():
         print(f"no committed ledger at {ledger_path}")
         return 1
-    rows_raw = [json.loads(ln) for ln in ledger_path.read_text().splitlines() if ln.strip()]
-    if not rows_raw:
+    ledger_all = [json.loads(ln) for ln in ledger_path.read_text().splitlines() if ln.strip()]
+    if not ledger_all:
         print("decision ledger is empty — nothing to monitor")
         return 0
+    # POSITIONS ONLY. A close row carries the original verdict for provenance, so feeding the raw
+    # ledger to the spread would count a closed name a SECOND time on its own original side.
+    # `pair_closes` refuses loud on an unpairable or duplicated close, so a malformed realized book
+    # stops the run rather than rendering wrong.
+    rows_raw = mon.decision_rows(ledger_all)
+    realized = mon.pair_closes(ledger_all)
     assignments = mon.read_assignments(root)
     missing = sorted({r["ticker"] for r in rows_raw} - set(assignments))
     if missing:
@@ -1049,6 +1055,17 @@ def _cmd_monitor(args: argparse.Namespace) -> int:
             ticker=name, verdict=logged or _STATUS_LABEL.get(status, status),
             record=record, filings=filings, today=ref, watch_note=note))
 
+    # DUAL MEASUREMENT (ratified §7, 2026-07-22). The CALL is scored at its horizon regardless of
+    # whether the position was exited — an exit is a capital decision, not a retraction, and
+    # dropping exited names from calibration would let the discriminator's hit-rate be curated by
+    # sell timing. REALIZED P&L (entry→exit) is a SEPARATE, labelled view. Both are shown; neither
+    # is allowed to stand in for the other.
+    for r in realized:
+        notes.append(
+            f"{r['ticker']}: REALIZED {r['realized_return']:+.1%} "
+            f"(entry ${r['entry_price']:,.2f} {r['entry_price_as_of']} → exit "
+            f"${r['exit_price']:,.2f} {r['exit_price_as_of']}) — realized P&L, a separate view; "
+            f"the {r['verdict']} call stays in horizon calibration")
     snap = mon.MonitorSnapshot(as_of=now_date, rows=rows, spread=mon.compute_spread(rows),
                                freshness=fresh, notes=notes)
     print(mon.render_table(snap))
