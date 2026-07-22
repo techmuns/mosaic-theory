@@ -4354,6 +4354,37 @@ and the leak scan caught a second evidence_balance phrasing on three names (tran
 both generator strings fixed). Data artifact left honestly in place: IT's doubled impairment
 sentence — recorded here as "heals at re-assembly", which was WRONG (see the #178 record below).
 
+**BUILD RECORD — 2026-07-22 EX-99.1 detection by SGML TYPE + five-name re-assembly.** The
+exhibit locator matched FILENAMES (`ex991`/`dex991`/`ex99_1`), so every other filer convention was
+invisible: `a991_pressrelease…` (SMPL), `exhibit991…` (CNXC, NCNO), `exh991…` (BRBR), and EPAM's
+`exhibit99_q1x2026` whose only "1" is the quarter — unclassifiable by ANY filename rule. Measured
+over every 2.02/8.01 8-K of the eleven names: **24 of 53 press releases lost (45%)** across five
+names, each silently — the fetch recorded nothing, and the What-broke card fell back to reciting
+raw 8-K item text. Fixed by reading EDGAR's own `<TYPE>EX-99.1` from the filing SGML header
+(HTML-escaped in `-index-headers.html`; filename match demoted to fallback when the header is
+unreadable). Live re-check: **53/53 discovered**. Two side-findings closed with it: `mechanical.py`
+carried a SECOND copy of the regex that had already DRIFTED (no `_` class → it missed `ex99_1.htm`
+the other matched) — collapsed to one detector, pinned against recurrence; and a passing 8-K that
+yields no exhibit now emits a QA flag instead of a silent zero. Re-assembled BRBR/CNXC/EPAM/NCNO/
+SMPL: releases 1→4, 0→6, 0→4, 0→6, 0→5; operating-driver rows +22/+21/+28/0/+25; gap-down "what the
+results showed" now present on CNXC, EPAM and SMPL (SMPL: `adj EBITDA Q2 2026 $55.5M`).
+**LEAN FLIP:** BRBR strongly-bearish → mixed on 4× the evidence, so its machine proposal changed
+AVOID_TERMINAL → none (no ledger entry existed; nothing invalidated). **VINTAGE:** the standing
+CNXC/SMPL to-do is now CLOSED by this re-assembly — both widened 7→12 annual columns AND took
+newer-export restatements (SMPL LTM net income −106 → −199, FCF 125 → 107; CNXC FCF 517 → 776),
+with each synthesis regenerated against the new numbers. SMPL is a LIVE confirmed position
+(entry $10.92) — its analysis text changed under an open position, deliberately and disclosed.
+
+**INCIDENT 2026-07-22 (recorded risk, no shipped block).** `dossier assemble` OVERWRITES a good
+dossier with a synthesis-less one when the LLM call fails: `synthesize` returns None on a transient
+error, and the assembler writes `synthesis: null` anyway. Observed live — BRBR's committed
+6-bull/8-bear synthesis was wiped by one flaky call; the only signal was the word `NO-synth` in a
+summary line, and a plain retry succeeded. Recovered from git; all five names verified
+synthesis-present before commit. SHIPPED: a pin that the failure must emit a NAMED flag (never a
+bare None). NOT shipped: a block on the write itself — the assembler would need to refuse to
+replace an existing synthesis with nothing, or write to a temp path and promote only on success.
+**ACCEPTED RISK until that lands: never re-assemble without verifying `synthesis` survived.**
+
 **BUILD RECORD — 2026-07-21 IT full re-assembly (artifact pass e8181e7) + before/after comparison.**
 IT re-assembled against the same-vintage on-disk workbook; committed-vs-fresh compared leaf-by-leaf
 (4294→4519 leaves). VINTAGE CLEAN: financial_summary values byte-identical (sole annual diff: the
