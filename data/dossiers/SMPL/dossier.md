@@ -169,16 +169,16 @@ _R reclassified; margin % can fall while absolute EBITDA RISES — read them tog
 
 |  | Mkt cap | Business |
 |---|---|---|
-| Utz Brands | $651M | manufactures branded salty snacks in the United (United States) |
-| The Hain Celestial Group | $54M | manufactures, markets, and sells organic and natural (United States) |
-| J&J Snack Foods Corp. | $1.4B | manufactures, markets, and distributes nutritional (United States) |
-| The Marzetti Company | $3.1B | engages in manufacturing and marketing of specialty (United States) |
-| BellRing Brands | $1.4B | provides various nutrition products in the United (United States) |
-| The Campbell's Company | $6.6B | manufactures and markets food and beverage products in (United States) |
-| John B. Sanfilippo & Son | $985M | distributes tree nuts and peanuts in the United (United States) |
-| Conagra Brands | $6.5B | operates as a consumer packaged goods food company (United States) |
-| Freshpet | $2.6B | manufactures, distributes, and markets natural fresh (United States) |
-| The Kraft Heinz Company | $27.2B | manufactures and markets food and beverage products in (United States) |
+| Utz Brands | $651M | manufactures branded salty snacks in the United States. (United States) |
+| The Hain Celestial Group | $54M | manufactures, markets, and sells organic and natural products in the United States, United Kingdom, Europe, and internationally. (United States) |
+| J&J Snack Foods Corp. | $1.4B | manufactures, markets, and distributes nutritional snack food and beverages to the food service and retail supermarket industries in the United States, Mexico (United States) |
+| The Marzetti Company | $3.1B | engages in manufacturing and marketing of specialty food products for the retail and foodservice channels in the United States. (United States) |
+| BellRing Brands | $1.4B | provides various nutrition products in the United States. (United States) |
+| The Campbell's Company | $6.6B | manufactures and markets food and beverage products in the United States and internationally. (United States) |
+| John B. Sanfilippo & Son | $985M | distributes tree nuts and peanuts in the United States. (United States) |
+| Conagra Brands | $6.5B | operates as a consumer packaged goods food company primarily in the United States. (United States) |
+| Freshpet | $2.6B | manufactures, distributes, and markets natural fresh meals and treats for dogs and cats in the United States, Canada, and Europe. (United States) |
+| The Kraft Heinz Company | $27.2B | manufactures and markets food and beverage products in North America and internationally. (United States) |
 
 _the name: $1.1B_
 

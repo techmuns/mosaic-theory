@@ -7622,3 +7622,149 @@ def test_print_css_collapses_the_survival_columns() -> None:
     assert "break-inside: avoid" in printed and ".wall-strip" in printed
     # and the screen rules must NOT be trapped inside a print block
     assert ".fg-hero .fg-val { font-size: 20px" not in printed
+
+
+def test_desc_first_sentence_boundaries() -> None:
+    """(peer-set capture) The business-descriptor capture ends at REAL boundaries — the first
+    sentence (abbreviation-aware), a clause boundary under the cap for a run-on sentence, a word
+    for a comma-free run-on — never the old mid-clause [:55] clip, and never sentence-two spill
+    (the Netflix "worldwide. The company" case). Frozen strings; deterministic."""
+    f = cs._desc_first_sentence
+    # short full sentence — kept whole, terminal period intact
+    assert f("operates a TV streaming platform in the United States.") == \
+        "operates a TV streaming platform in the United States."
+    # sentence-two spill stops at the FIRST boundary (the old [:55] grabbed "The company")
+    assert f("provides entertainment services worldwide. The company also streams films.") == \
+        "provides entertainment services worldwide."
+    # an abbreviation does not end the sentence
+    assert f("is a subsidiary of Moody's Corp. and provides risk analytics worldwide.") == \
+        "is a subsidiary of Moody's Corp. and provides risk analytics worldwide."
+    # run-on over the cap with clauses → cut at the LAST clause boundary inside the cap
+    long = ("operates as an integrated risk assessment firm serving banks, insurers, "
+            "asset managers, corporates, governments, and public agencies across the Americas, "
+            "Europe, the Middle East and Africa with data and analytics.")
+    out = f(long, cap=120)
+    assert out == ("operates as an integrated risk assessment firm serving banks, insurers, "
+                   "asset managers, corporates, governments")
+    assert not out.endswith((",", ";", " "))
+    # run-on over the cap with NO clause boundary → last whole word
+    nocomma = "provides " + "very " * 40 + "specialized services worldwide."
+    out2 = f(nocomma, cap=60)
+    assert len(out2) <= 60 and not out2.endswith(" ") and " " in out2
+    assert nocomma.startswith(out2)
+
+
+def test_peerset_drift_guard_directions() -> None:
+    """(peerset-backfill vintage guard) Same-text proves itself by a prefix relation in EITHER
+    direction — widened capture (fresh extends committed) or trimmed sentence-two spill
+    (committed extends fresh). Different caps / names / counts / HQ / text all refuse."""
+    ok_c = "2 peers — A Co $1.0B — provides x services (US); B Inc. $2.0B — operates y (UK)"
+    widened = ("2 peers — A Co $1.0B — provides x services to global clients. (US); "
+               "B Inc. $2.0B — operates y platforms worldwide. (UK)")
+    assert cli._peerset_drift(ok_c, widened) is None
+    # trimmed spill: committed ran past the sentence end; fresh stops at it
+    spill_c = "1 peers — N Co $3.0B — provides z worldwide. The company (US)"
+    spill_f = "1 peers — N Co $3.0B — provides z worldwide. (US)"
+    assert cli._peerset_drift(spill_c, spill_f) is None
+    assert cli._peerset_drift(ok_c, ok_c) is None
+    # refusals
+    cap = cli._peerset_drift(ok_c, widened.replace("$1.0B", "$1.1B"))
+    assert cap is not None and "peer/cap changed" in cap
+    cnt = cli._peerset_drift(ok_c, "1 peers — A Co $1.0B — provides x services (US)")
+    assert cnt is not None
+    hq = cli._peerset_drift(ok_c, widened.replace("(UK)", "(India)"))
+    assert hq is not None and "HQ suffix" in hq
+    txt = cli._peerset_drift(ok_c, widened.replace("provides x services to global clients.",
+                                                   "makes entirely different things."))
+    assert txt is not None and "description text changed" in txt
+
+
+def test_peer_roster_builder_captures_to_sentence_not_55_chars() -> None:
+    """(builder-level, frozen fixture) A long first sentence survives past the old 55-char clip
+    and ends at a real boundary in the composed roster line."""
+    long_desc = ("Moody's Corporation operates as an integrated risk assessment firm serving "
+                 "banks, insurers and corporates in the Americas and Europe with data, "
+                 "analytics and research.")
+    bundle = _FakeCompsBundle(
+        {
+            ("comps", "Financial Data"): [
+                ["Company Name", "", "", "Market Cap ($M)"],
+                ["Moody's Corporation (NYSE:MCO)", "", "", 78600.0],
+                ["", "", "", ""],
+                ["fuboTV Inc. (NYSE:FUBO)", "", "", 256.0],
+            ],
+            ("comps", "Business Description"): [
+                ["Company Name", "Business Description", "Headquarters"],
+                ["Moody's Corporation (NYSE:MCO)", long_desc,
+                 "New York, New York, United States"],
+                ["", "", ""],
+                ["fuboTV Inc. (NYSE:FUBO)", "fuboTV Inc. operates a live TV streaming platform.",
+                 "New York, New York, United States"],
+            ],
+        }
+    )
+    ps = cs.peer_comps(typing.cast(ciq.CiqBundle, bundle)).peer_set
+    assert ps.status is ds.SourceStatus.PRESENT and ps.value is not None
+    body = re.sub(r"^\d+ peers — ", "", str(ps.value).split(" | the name:")[0])
+    seg = next(s for s in body.split("; ") if s.startswith("Moody's"))
+    desc = seg.split(" — ", 1)[1]
+    core = desc[: desc.rfind(" (")]
+    assert len(core) > 60, f"still clipped short: {core!r}"
+    assert core.endswith("."), f"must carry the full first sentence: {core!r}"
+    assert "operates as an integrated risk assessment firm serving banks" in core
+
+
+def test_committed_peer_rosters_have_no_midclause_clip() -> None:
+    """(committed-artifact invariant, all names) No roster descriptor ends on a dangling
+    function word — the mid-clause smell of the old [:55] capture ("…firm in the"). Terminal
+    sentences and clause-boundary cuts both pass; "…in the" / "…of" / "…and" fail."""
+    stop = {"the", "a", "an", "of", "in", "and", "or", "for", "to", "as", "its", "with",
+            "on", "at", "by", "The"}
+    for p in sorted(Path("data/dossiers").glob("*/dossier.json")):
+        ps = ((json.loads(p.read_text()).get("mechanical") or {})
+              .get("peer_comps") or {}).get("peer_set") or {}
+        if ps.get("status") != "present" or not ps.get("value"):
+            continue
+        body = re.sub(r"^\d+ peers — ", "", str(ps["value"]).split(" | the name:")[0])
+        for seg in body.split("; "):
+            if " — " not in seg:
+                continue
+            desc = seg.split(" — ", 1)[1]
+            core = desc[: desc.rfind(" (")] if " (" in desc else desc
+            last = core.rstrip(".").rsplit(" ", 1)[-1]
+            assert last not in stop, f"{p.parent.name}: mid-clause descriptor: …{core[-40:]!r}"
+
+
+def test_desc_capture_never_emits_the_roster_delimiters() -> None:
+    """(review fix) The roster line joins peers with '; ' and splits name/descriptor on ' — ',
+    so a descriptor carrying either delimiter would corrupt the segment split for EVERY consumer
+    (web parser, md table, the peerset-backfill vintage guard). The capture neutralises both, so
+    the delimiters are unambiguous by construction — not by whatever a given export happens to
+    contain. Negative pin with a real-shaped clause list; positive pin that normal text is
+    untouched."""
+    f = cs._desc_first_sentence
+    out = f("provides data; analytics; and risk tools worldwide.")
+    assert "; " not in out and out == "provides data, analytics, and risk tools worldwide."
+    out2 = f("operates two units — retail and wholesale — across Europe.")
+    assert " — " not in out2 and "–" in out2
+    # normal text is untouched (no gratuitous rewriting of the record)
+    plain = "operates as a data, analytics, and technology company."
+    assert f(plain) == plain
+
+
+def test_committed_peer_rosters_split_to_their_declared_count() -> None:
+    """(review fix, committed-artifact invariant) Every roster's '; ' split must yield exactly the
+    peer count the line declares, and no segment may carry a second ' — ' — the structural proof
+    that no widened descriptor swallowed a delimiter."""
+    for p in sorted(Path("data/dossiers").glob("*/dossier.json")):
+        ps = ((json.loads(p.read_text()).get("mechanical") or {})
+              .get("peer_comps") or {}).get("peer_set") or {}
+        if ps.get("status") != "present" or not ps.get("value"):
+            continue
+        v = str(ps["value"])
+        declared = int(re.match(r"^(\d+) peers", v).group(1))
+        body = re.sub(r"^\d+ peers — ", "", v.split(" | the name:")[0])
+        segs = body.split("; ")
+        assert len(segs) == declared, f"{p.parent.name}: {declared} declared, {len(segs)} split"
+        for s in segs:
+            assert s.count(" — ") <= 1, f"{p.parent.name}: extra delimiter in {s[:60]!r}"
