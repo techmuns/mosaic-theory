@@ -187,6 +187,14 @@ class SurvivalInput(BaseModel):
     raise_accession: str | None = None
     raise_shares: float = 0.0               # MILLIONS, the record convention
     raise_proceeds: float = 0.0             # $M — reduces terminal net debt
+    # (2026-07-22) A filer that has told the SEC there is substantial doubt about its ability to
+    # continue has answered the runway question itself; a positive TRAILING free cash flow cannot
+    # overturn it. Setting this FORBIDS the trivial pass and makes burn_override mandatory.
+    going_concern_stated: bool = False
+    going_concern_accession: str | None = None
+    burn_override: float | None = None      # $M/yr, positive — the CURRENT burn
+    burn_override_basis: str | None = None
+    latest_period_fcf: float | None = None  # $M — drives the sign-contradiction warning
 
 
 class Result(BaseModel):
@@ -372,7 +380,9 @@ def _run_r2(rec: ScenarioRecord) -> ScenarioRecord:
         fcf=si.fcf, fcf_basis=si.fcf_basis, fcf_source=si.fcf_source, cash=si.cash,
         facilities=si.facilities, facilities_source=si.facilities_source,
         years_to_breakeven=si.years_to_breakeven, announced_raise=si.announced_raise,
-        raise_accession=si.raise_accession)
+        raise_accession=si.raise_accession, going_concern_stated=si.going_concern_stated,
+        going_concern_accession=si.going_concern_accession, burn_override=si.burn_override,
+        burn_override_basis=si.burn_override_basis, latest_period_fcf=si.latest_period_fcf)
     # A BURNING company must state the cash it consumes on the way. Defaulting this to zero valued
     # the terminal year as though the burn were free: the survival block would read FAIL at 1.25y of
     # runway while the SAME record carried terminal net debt unchanged from today's balance sheet.

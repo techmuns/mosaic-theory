@@ -587,6 +587,59 @@
           "default": 0.0,
           "title": "Raise Proceeds",
           "type": "number"
+        },
+        "going_concern_stated": {
+          "default": false,
+          "title": "Going Concern Stated",
+          "type": "boolean"
+        },
+        "going_concern_accession": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Going Concern Accession"
+        },
+        "burn_override": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Burn Override"
+        },
+        "burn_override_basis": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Burn Override Basis"
+        },
+        "latest_period_fcf": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Latest Period Fcf"
         }
       },
       "required": [

@@ -170,7 +170,9 @@ def survival_gate(
     *, fcf: float | None, fcf_basis: str, fcf_source: str, cash: float,
     facilities: float = 0.0, facilities_source: str | None = None,
     years_to_breakeven: float | None = None, announced_raise: bool = False,
-    raise_accession: str | None = None,
+    raise_accession: str | None = None, going_concern_stated: bool = False,
+    going_concern_accession: str | None = None, burn_override: float | None = None,
+    burn_override_basis: str | None = None, latest_period_fcf: float | None = None,
 ) -> Survival:
     """Can this company reach its terminal year? PASS or FAIL, on stated inputs.
 
@@ -184,6 +186,45 @@ def survival_gate(
     is to refuse the assumption that money will appear.
     """
     detail: list[str] = []
+
+    # A SIGN CONTRADICTION between the trailing annual figure and the latest period is always
+    # printed, whatever the gate concludes. MVST's trailing year read +$56.1M while its latest
+    # quarter annualised to -$102.6M; a reader shown only the annual number would draw the
+    # opposite conclusion from the same company.
+    if fcf is not None and latest_period_fcf is not None and (fcf >= 0) != (latest_period_fcf >= 0):
+        detail.append(
+            f"WARNING: trailing free cash flow {fcf:+,.1f} and the latest period "
+            f"{latest_period_fcf:+,.1f} have OPPOSITE SIGNS — the trailing figure is "
+            "describing a period that has ended")
+
+    # GOING CONCERN FORBIDS THE TRIVIAL PASS. A filer that has told the SEC there is substantial
+    # doubt about its ability to continue has answered the runway question itself, and a positive
+    # TRAILING free cash flow cannot overturn it — the disclosure is about the future, the cash
+    # flow is about the past. MVST is the falsifier: trailing +$56.1M, going-concern stated, latest
+    # quarter annualising to -$102.6M. Without this branch the gate returned "the company funds
+    # itself and has no runway question" on exactly that name.
+    if going_concern_stated:
+        detail.append(
+            "going concern: the filer states substantial doubt about its ability to continue"
+            + (f" (accession {going_concern_accession})" if going_concern_accession
+               else " — NO ACCESSION on file"))
+        if burn_override is None:
+            return Survival(
+                status="FAIL", burn=None, burn_basis=(burn_override_basis or fcf_basis),
+                burn_source=fcf_source, cash=cash, facilities=facilities,
+                facilities_source=facilities_source, runway_years=None,
+                years_to_breakeven=years_to_breakeven, announced_raise=announced_raise,
+                raise_accession=raise_accession,
+                note="going concern stated and NO burn override supplied — the trailing figure "
+                     "cannot be used to clear a company whose own filing raises the doubt; state "
+                     "the current burn",
+                detail=detail)
+        fcf = -abs(burn_override)          # evaluate on the stated burn, never the trailing sign
+        fcf_basis = burn_override_basis or fcf_basis
+    elif burn_override is not None:
+        fcf = -abs(burn_override)
+        fcf_basis = burn_override_basis or fcf_basis
+
     if fcf is not None and fcf >= 0:
         return Survival(
             status="PASS", burn=None, burn_basis=fcf_basis, burn_source=fcf_source, cash=cash,
@@ -191,7 +232,8 @@ def survival_gate(
             years_to_breakeven=years_to_breakeven, announced_raise=announced_raise,
             raise_accession=raise_accession,
             note=(f"trivial pass — free cash flow is positive ({fcf:,.1f}, {fcf_basis}); the "
-                  "company funds itself and has no runway question"))
+                  "company funds itself and has no runway question"),
+            detail=detail)      # carries the sign-contradiction warning when one was raised
     if fcf is None:
         return Survival(
             status="FAIL", burn=None, burn_basis=fcf_basis, burn_source=fcf_source, cash=cash,
