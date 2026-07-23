@@ -305,7 +305,7 @@ _DEDUPE_MIN_REASON_LEN = 30
 # beyond the byte-identical H3 dedup. Each: (matcher, topic-key, canonical reason to render once).
 _UNKNOWN_TOPICS: tuple[tuple[re.Pattern[str], str, str], ...] = (
     (re.compile(r"99\.1|revised[- ]?(?:outlook|guidance)", re.IGNORECASE), "99.1",
-     "no revised-outlook 99.1 exhibit parsed — the revised forward guidance is UNKNOWN"),
+     "no revised-outlook block parsed from the 99.1 — the revised forward guidance is UNKNOWN"),
     (re.compile(r"graph cohort|US-listed exposed names to price|cohort to (?:compare|price)", re.I),
      "graph-cohort", "MVST is in the graph but has no US-listed exposed names to price — UNKNOWN"),
 )

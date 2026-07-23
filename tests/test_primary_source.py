@@ -9,6 +9,7 @@ from datetime import date
 import pytest
 
 from vinci.dossier import mechanical as mech
+from vinci.dossier import schemas as ds
 from vinci.edgar import primary_source as ps
 from vinci.edgar import release_parse as rp
 
@@ -38,6 +39,25 @@ def test_ltm_adj_ebitda_production_path() -> None:
     assert mech._fy_impairment(releases) == 32.5
     # a missing leg is fail-loud, never a partial guess
     assert mech._ltm_adj_ebitda([rp.parse_release(_Q1_26, source_ref="q1")]) is None
+
+
+def _adj_ebitda_release(rows: list[tuple[str, float]]) -> ds.ReleaseExtract:
+    return ds.ReleaseExtract(source_ref="t", reconciliation=[
+        ds.ReconciliationValue(metric="adjusted ebitda", period=p, value=v, verbatim="v",
+                               source_ref="t")
+        for p, v in rows])
+
+
+def test_ltm_adj_ebitda_refuses_misperiodized_fy() -> None:
+    """SMPL regression (committed 2026-07-23 artifact): a prior-year QUARTER row stamped with the
+    bare year '2025' (66.2) composed LTM = 66.2 − 73.9 + 57.0 = $49.3M — a quarter-scale 'LTM'
+    that printed a bogus ~6.6x net-debt/EBITDA in basis_triangulation beside a real ~$220M LTM.
+    A FULL-YEAR below one of its own quarters is a mis-periodized row — refused (None → 'LTM
+    unavailable'), never a quarter-scale LTM. A plausible FY (≥ its quarters) still composes."""
+    poisoned = _adj_ebitda_release([("2025", 66.2), ("Q3 2025", 73.9), ("Q3 2026", 57.0)])
+    assert mech._ltm_adj_ebitda([poisoned]) is None
+    sane = _adj_ebitda_release([("2025", 261.9), ("Q3 2025", 73.9), ("Q3 2026", 57.0)])
+    assert mech._ltm_adj_ebitda([sane]) == 245.0
 
 
 def test_release_revenue_guide_prefers_most_recent() -> None:

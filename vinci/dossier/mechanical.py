@@ -262,7 +262,8 @@ def _drawdown_filings(
 
 
 _INDEX = "https://www.sec.gov/Archives/edgar/data/{cik}/{acc}/index.json"
-_GUIDANCE_ANCHOR = re.compile(r"revis\w*[^.]{0,80}?(?:full[- ]year|outlook|guidance)", re.I)
+_GUIDANCE_ANCHOR = re.compile(
+    r"(?:revis|updat)\w*[^.]{0,80}?(?:full[- ]year|outlook|guidance)", re.I)
 _MONEY = re.compile(r"\$\s?\d")
 _METRIC = re.compile(r"\b(revenue|ebitda|eps|free cash flow|earnings per share)\b", re.I)
 
@@ -280,37 +281,64 @@ def _exhibit_991_url(http: CachedHttp, cik: str, accession: str) -> str | None:
 
 def _extract_revised_guidance(text: str) -> str | None:
     """The REVISED full-year outlook block (figures verbatim) from a 99.1 press release. Anchored on
-    'revis…(full-year|outlook|guidance)' so it surfaces the *revised* outlook, not an initial one.
+    'revis…/updat…(full-year|outlook|guidance)' so it surfaces a *changed* outlook, not an initial
+    one ('updat' is load-bearing: SMPL's 2026-04-09 exhibit said 'Updating Fiscal Year 2026
+    Outlook' — no 'revis…' verb anywhere — and the revis-only anchor read it as no-outlook while
+    the gap-card parser extracted the same figures from the same exhibit).
     Verbatim — the figures are read from the primary source, never parsed into numbers here (no
-    mis-extraction). Returns None when no revised-outlook section exists (→ UNKNOWN upstream)."""
+    mis-extraction). Returns None when no revised-outlook section exists (→ UNKNOWN upstream).
+
+    Among figures-bearing windows, an anchor that INTRODUCES a list (a ':' within 40 chars of the
+    anchor) wins over a bare headline: SMPL's top headline ('Updates Fiscal Year 2026 Outlook
+    Denver, CO …') passes the money+metric test on the RESULTS lede behind it, while the actual
+    outlook bullets sit under the later 'Updating Fiscal Year 2026 Outlook:' heading. The first
+    figures-bearing window stays as the fallback when no colon-introduced anchor exists."""
+    fallback: str | None = None
     for m in _GUIDANCE_ANCHOR.finditer(text):  # skip the lede; take the anchor whose window has the
         window = " ".join(text[m.start() : m.start() + 800].split())  # the figures window
         if len(_MONEY.findall(window)) >= 2 and _METRIC.search(window):
-            return window
-    return None
+            if ":" in text[m.start() : m.end() + 40]:
+                return window
+            if fallback is None:
+                fallback = window
+    return fallback
 
 
 def _revised_guidance(http: CachedHttp, cik: str, filings: list[FilingRef]) -> Sourced[str]:
     """Follow the furnished 99.1 exhibit on the drawdown 8-Ks (the body only *points* to it) and
     surface the company's revised full-year guidance — the verdict-relevant number. Source-bound to
-    the exhibit; fail loud UNKNOWN with the accession(s) when no revised-outlook exhibit parses."""
+    the exhibit; fail loud UNKNOWN naming the accession(s). The UNKNOWN note distinguishes 'a 99.1
+    WAS parsed but no revised-outlook block matched' from 'no 99.1 located' — it never claims the
+    exhibit wasn't parsed when it was (SMPL: the gap card extracted this very exhibit's figures
+    while this note said 'no … exhibit parsed' — an internal contradiction in one dossier)."""
     tried: list[str] = []
+    parsed: list[str] = []
     for f in filings:
         if not ({"2.02", "7.01", "8.01"} & set(f.items)):  # press releases live under these items
+            continue
+        if f.accession in tried:  # two gap-downs can share ONE filing — list it once
             continue
         tried.append(f.accession)
         url = _exhibit_991_url(http, cik, f.accession)
         if url is None:
             continue
         try:
-            block = _extract_revised_guidance(html_to_text(http.get_text(url, ttl_seconds=None)))
+            text = html_to_text(http.get_text(url, ttl_seconds=None))
         except HttpError:
             continue
+        parsed.append(f.accession)
+        block = _extract_revised_guidance(text)
         if block:
             ref = f"EDGAR 8-K {f.accession} Ex-99.1 — {url}"
             return Sourced.present(block, source_ref=ref)
+    if parsed:
+        return Sourced.unknown(
+            note=f"no revised-outlook block matched in the parsed 99.1 for 8-Ks {parsed}")
     if tried:
-        return Sourced.unknown(note=f"no revised-outlook 99.1 exhibit parsed for 8-Ks {tried}")
+        # located/fetched: an accession lands here when no 99.1 URL was found OR the fetch
+        # errored — the exhibit may exist unretrieved; never claim more precision than we have.
+        # The "for 8-Ks ['…']" tail is the shape _clean_note/cleanNote singularize — keep it.
+        return Sourced.unknown(note=f"no 99.1 exhibit located/fetched for 8-Ks {tried}")
     return Sourced.unknown(note="no results/Reg-FD/other-event 8-K at the gap-downs with a 99.1")
 
 
@@ -737,8 +765,11 @@ def _pe_reconciliation(
 def _eps_caveat_flags(record: DataRecord, bundle: CiqBundle, *, eps_resolved: bool) -> list[str]:
     """Flag (a) that earnings power (company-adjusted, non-GAAP EPS) is not shown — UNLESS it now is
     (``eps_resolved``: the 99.1 adjusted EPS surfaced it, so the caveat is a resolved fact, not a
-    warning); and (b) when the EDGAR P/E conflicts ~Nx with CIQ P/LTM EPS, that the EDGAR trailing
-    EPS is one-time-inflated and the synthesis must not anchor on it as 'cheap' (always kept)."""
+    warning); (b) when the EDGAR P/E conflicts ~Nx with CIQ P/LTM EPS, that the EDGAR trailing
+    EPS is one-time-inflated and the synthesis must not anchor on it as 'cheap' (always kept); and
+    (c) when CIQ P/LTM EPS prints a finite multiple while NO GAAP trailing P/E exists (negative or
+    unavailable trailing GAAP EPS), that the two rest on different earnings definitions — the SMPL
+    blind spot: 16.0x printed beside an LTM GAAP EPS of −2.08 and a peers-row 'NM' with no flag."""
     pe = record.fundamentals.pe
     ciq_pe = ciq_sheets.pe_ltm_current(bundle)
     if not pe.is_known and ciq_pe.status is not SourceStatus.PRESENT:
@@ -762,6 +793,16 @@ def _eps_caveat_flags(record: DataRecord, bundle: CiqBundle, *, eps_resolved: bo
                 f"({ciq_pe.value:.1f}x) — EDGAR trailing EPS is one-time-inflated; the "
                 f"synthesis must not anchor on {pe.value:.1f}x as 'cheap'."
             )
+    # (c) CIQ prints a finite trailing P/E while GAAP shows none — the existing conflict check
+    # above needs BOTH values present, so a negative-GAAP-EPS name (EDGAR P/E absent) slipped
+    # through with an unlabeled 16.0x beside 'NM'. Different earnings definitions — say so.
+    if not pe.is_known and ciq_pe.status is SourceStatus.PRESENT and ciq_pe.value:
+        out.append(
+            f"CIQ P/LTM EPS prints {ciq_pe.value:.1f}x while no GAAP trailing P/E is shown "
+            f"(trailing GAAP EPS negative or unavailable) — the CIQ multiple rests on a "
+            f"different earnings definition; do not read {ciq_pe.value:.1f}x as a GAAP "
+            f"trailing P/E."
+        )
     return out
 
 
@@ -1828,6 +1869,12 @@ def _ltm_adj_ebitda(releases: list[ReleaseExtract]) -> float | None:
     yr, qn = int(cur[3:7]), int(cur[1])
     prior, fy = f"Q{qn} {yr - 1}", str(yr - 1)  # prior-year same quarter; the completed FY
     if prior not in vals or fy not in vals:
+        return None
+    if vals[fy] < vals[cur] or vals[fy] < vals[prior]:
+        # A FULL-YEAR below one of its own quarters ⇒ a mis-periodized row (SMPL: a prior-year
+        # QUARTER stamped with the bare year '2025' composed LTM = 66.2 − 73.9 + 57.0 = $49.3M →
+        # a bogus ~6.6x net-debt/EBITDA in basis_triangulation, beside a real ~$220M LTM) or a
+        # pathological quarter mix — refuse (→ 'LTM unavailable'), never a quarter-scale LTM.
         return None
     return round(vals[fy] - vals[prior] + vals[cur], 1)
 
