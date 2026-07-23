@@ -19,7 +19,12 @@ from typing import Any
 from vinci.config import Config, get_config, load_local_env
 from vinci.dossier.verdict import derive_proposal
 from vinci.edgar import EdgarClient
-from vinci.eod import PolygonEodClient, compute_price_features, ingest_prices
+from vinci.eod import (
+    PolygonEodClient,
+    compute_price_features,
+    ingest_prices,
+    ingest_prices_per_symbol,
+)
 from vinci.ledger import LedgerError, log_verdict
 from vinci.monitor import BENCHMARK_LARGE, BENCHMARK_MID, BENCHMARK_SMALL
 from vinci.orchestrator import run_monthly, run_weekly
@@ -84,11 +89,18 @@ def _cmd_refresh(args: argparse.Namespace) -> int:
         except ResolutionError as exc:
             print(f"skip {t}: {exc}")
     start, end = date.fromisoformat(args.start), date.fromisoformat(args.end)
-    print(f"refreshing {len(secs)} names {start}..{end} (Polygon free tier ≈ 5/min; be patient)…")
+    mode = "per-symbol aggs" if args.aggs else "grouped-daily"
+    print(f"refreshing {len(secs)} names {start}..{end} via {mode} "
+          f"(Polygon free tier ≈ 5/min; be patient)…")
     with Store(cfg.db_path) as store:
         for s in secs:
             store.upsert_security(s)
-        summary = ingest_prices(client, store, secs, start=start, end=end, progress=stderr_reporter)
+        if args.aggs:  # ONE call per symbol — for backfilling a NEW name's history (NCNO-class)
+            summary = ingest_prices_per_symbol(
+                client, store, secs, start=start, end=end, progress=stderr_reporter)
+        else:  # whole-market grouped-daily — the ongoing universe refresh
+            summary = ingest_prices(
+                client, store, secs, start=start, end=end, progress=stderr_reporter)
     print(f"done: {summary}")
     return 0
 
@@ -2319,6 +2331,9 @@ def build_parser() -> argparse.ArgumentParser:
     p_refresh.add_argument("tickers", nargs="+", help="tickers to refresh")
     p_refresh.add_argument("--start", required=True, help="start date YYYY-MM-DD")
     p_refresh.add_argument("--end", required=True, help="end date YYYY-MM-DD")
+    p_refresh.add_argument("--aggs", action="store_true",
+                           help="per-symbol aggregates (ONE call/name) — backfill a NEW name's "
+                                "history; default grouped-daily is the whole-universe refresh")
     p_refresh.set_defaults(func=_cmd_refresh)
 
     p_eod = sub.add_parser("eod", help="show computed Screen-2 price features for a ticker")
