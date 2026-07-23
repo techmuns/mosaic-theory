@@ -206,6 +206,23 @@ def _gap_pct_from_perf(sp: Any, date_str: str) -> float | None:
 
 _LEGALESE_PAREN = re.compile(r"\s*\(\s*(?:the\s+)?[\u201c\"][^)]{1,70}[\u201d\"]\s*\)")
 _XREF_STUB = re.compile(r"The information set forth in", re.IGNORECASE)
+# (#2) items whose parsed body is a SUBSTANTIVE catalyst — it belongs on the visible card beside
+# the 2.02 metrics: a material agreement, an offering, a restructuring/impairment, a mgmt change,
+# a delisting/restatement. NOT 7.01 (Reg-FD "will host a webcast") / 9.01 (exhibits): those stay
+# collapsed. Twin of dossier.js ``_SUBSTANTIVE``.
+_SUBSTANTIVE_ITEM = re.compile(r"^(1\.01|1\.02|2\.05|2\.06|3\.01|4\.02|5\.02|8\.01)\b")
+
+
+def _substantive_events(f: Any) -> list[str]:
+    """Cleaned narratives of a filing's substantive non-2.02 items (the ones that belong on the
+    visible card). Empty when the filing carries only earnings/Reg-FD/exhibits."""
+    out: list[str] = []
+    for ev in f.events:
+        if _SUBSTANTIVE_ITEM.match(str(ev)):
+            cleaned = _clean_item_event(ev)
+            if cleaned is not None:
+                out.append(cleaned)
+    return out
 
 
 def _clean_item_event(ev: str) -> str | None:
@@ -2393,26 +2410,41 @@ def render_markdown(d: Dossier, *, dev: bool = False, show_proposal: bool = Fals
             continue
         k = f.accession or f"{f.form}|{f.filing_date}"
         grouped.setdefault(k, (f, []))[1].append(f.gap_date)
-    if grouped:
+    # (#2/#3b twin) a filing is CARDED when it parsed a driver OR carries a substantive non-2.02
+    # item (1.01/8.01/…); those show in full. NON-carded filings (a lone 7.01, an unparsed 2.02)
+    # list under "Other 8-Ks" — no filing is shown twice.
+    _carded = {k: (f, gaps) for k, (f, gaps) in grouped.items()
+               if (f.drivers is not None and f.drivers.status is SourceStatus.PRESENT)
+               or _substantive_events(f)}
+    _uncarded = {k: v for k, v in grouped.items() if k not in _carded}
+    if _carded:
         out.append("- **Gap-downs — what the results showed (parsed EX-99.1) + the 8-K:**")
-        for f, gaps in grouped.values():
+        for f, gaps in _carded.values():
             gap_str = " and ".join(gaps)
             plural = "s" if len(gaps) > 1 else ""
             out.append(f"  - gap-down{plural} {gap_str} → filed {f.filing_date} "
                        f"[`{f.accession}`]({f.url})")
-            # 9.01 (exhibits) is on every 8-K and never explanatory — display noise (JSON keeps it)
-            _shown_items = [t for t in f.item_types if not t.startswith("9.01")]
+            # 9.01 (exhibits) + 7.01 (Reg-FD webcast noise) dropped from display; JSON keeps them
+            _shown_items = [t for t in f.item_types
+                            if not (t.startswith("9.01") or t.startswith("7.01"))]
             out.append(f"    - items: {', '.join(_shown_items) or '—'}")
-            # (B1) parsed release drivers ARE the informative cause — they supersede the item-code
-            # boilerplate; non-earnings 8-Ks (no match) still show their source-bound events.
+            # the parsed EX-99.1 driver (metrics) PLUS the substantive non-2.02 item narratives —
+            # the driver often isn't the catalyst (VRRM's Avis termination, AORT's 1.01 agreement)
             if f.drivers is not None and f.drivers.status is SourceStatus.PRESENT:
                 out.append(f"    - **what the results showed:** {_fix_acronyms(f.drivers.value)}"
                            f"{_cite(f.drivers.source_ref)}")
-            else:
-                for ev in f.events:
-                    cleaned = _clean_item_event(ev)
-                    if cleaned is not None:
-                        out.append(f"    - {cleaned}")
+            for ev in _substantive_events(f):
+                out.append(f"    - {_fix_acronyms(ev)}")
+    if _uncarded:
+        out.append(f"- **Other 8-Ks at the gap dates ({len(_uncarded)}):**")
+        for f, _gaps in _uncarded.values():
+            _shown_items = [t for t in f.item_types if not t.startswith("9.01")]
+            out.append(f"  - filed {f.filing_date} · items: {', '.join(_shown_items) or '—'} "
+                       f"[`{f.accession}`]({f.url})")
+            for ev in f.events:
+                cleaned = _clean_item_event(ev)
+                if cleaned is not None:
+                    out.append(f"    - {cleaned}")
     out += _event_impact_lines(m)  # (RC-1 C) Avis-class event-impact quantifications
     if m.catalyst_path is None:  # legacy: never drop the fact when there is no street section
         out.append(_fact("Revised guidance", m.drawdown_cause.revised_guidance))

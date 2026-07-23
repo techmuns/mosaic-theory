@@ -8399,3 +8399,51 @@ def test_what_broke_event_study_on_committed_cnxc_e2e() -> None:
         assert f"- {g} **{v * 100:+.1f}%**" in md, f"md row for {g} must carry the derived %"
         if thr is not None:
             assert v <= thr, f"{g}: derived {v} must be ≤ the detector threshold {thr}"
+
+
+def test_substantive_non_earnings_items_surface_on_card_and_dropdown_dedups() -> None:
+    """(#2 + #3b) The parsed EX-99.1 driver often ISN'T the catalyst — a substantive non-2.02 item
+    (VRRM's 8.01 Avis termination, AORT's 1.01 agreement) must show on the visible card beside the
+    metrics; 7.01/9.01 stay noise. And a filing shown as a card must NOT be repeated in the "Other
+    8-Ks" dropdown (the recurring duplication). Committed-artifact e2e, guarded."""
+    class _F:
+        def __init__(self, events: list[str], drivers_present: bool = False) -> None:
+            self.events = events
+            self.drivers = (ds.Sourced.present("m", source_ref="x") if drivers_present
+                            else ds.Sourced.unknown(note="n"))
+
+    subs = dr._substantive_events(_F([
+        "1.01 Entry into a Material Definitive Agreement: entered into a purchase option",
+        "8.01 Other Events: received a termination notice from Avis Budget regarding the contract",
+        "7.01 Regulation FD Disclosure: the Company will host a webcast",
+        "2.02 Results of Operations and Financial Condition: On May 5 the company reported",
+    ]))
+    assert len(subs) == 2 and any("purchase option" in s for s in subs) \
+        and any("termination notice" in s for s in subs)
+    assert dr._substantive_events(_F(["7.01 Regulation FD Disclosure: webcast"])) == []
+
+    pv = Path("data/dossiers/VRRM/dossier.json")
+    if pv.exists() and "termination notice from Avis" in pv.read_text():
+        md = dr.render_markdown(ds.Dossier.model_validate_json(pv.read_text()))
+        wb = md.split("What broke — and did it fall alone?")[1].split("\n### ")[0]
+        assert "termination notice from Avis" in wb, "the Avis catalyst must be on the surface"
+    pc = Path("data/dossiers/CNXC/dossier.json")
+    if pc.exists():
+        md = dr.render_markdown(ds.Dossier.model_validate_json(pc.read_text()))
+        wb = md.split("What broke — and did it fall alone?")[1].split("\n### ")[0]
+        assert "Other 8-Ks at the gap dates" not in wb, "all CNXC gap filings carded → no dropdown"
+        for acc in ["0001803599-26-000068", "0001803599-26-000080", "0001803599-26-000133"]:
+            assert wb.count(acc) == 1, f"{acc} must appear exactly once (no card+dropdown dup)"
+
+
+def test_substantive_item_set_twins_between_py_and_js() -> None:
+    """The substantive-item regex must be identical in both renderers (a filing carded on one
+    surface but dropdowned on the other would diverge web from PDF)."""
+    import re as _re
+    js = Path("frontend/views/shared/dossier.js").read_text()
+    m = _re.search(r"_SUBSTANTIVE = /\^\(([^)]+)\)", js)
+    assert m, "JS _SUBSTANTIVE regex not found"
+    js_codes = set(m.group(1).replace("\\", "").split("|"))
+    _pat = dr._SUBSTANTIVE_ITEM.pattern.split("(")[1].split(")")[0]
+    py_codes = set(_pat.replace("\\", "").split("|"))
+    assert js_codes == py_codes, f"substantive-item sets diverge: js={js_codes} py={py_codes}"

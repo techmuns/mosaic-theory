@@ -2370,34 +2370,52 @@ function drawdownCause(dc, sp, refDate) {
     ? gapList(fmtShape(shapeV.value)) : null;
   const numByDate = new Map((ledgerRows || []).map(([d], i) => [d, i + 1]));
   const nums = (gaps) => gaps.map((g) => numByDate.get(g)).filter(Boolean).map(_circled).join("");
-  // (event study) the VISIBLE tier carries only the INFORMATIVE cards — filings whose EX-99.1
-  // parsed into drivers ("what the results showed"). Item-code recitals move to the on-demand
-  // provenance tier below (print-expanded per T1); the ledger already names every cause.
+  // (#2) SUBSTANTIVE non-2.02 item narratives BELONG on the visible card — the parsed EX-99.1 driver
+  // (metrics) often isn't the catalyst (VRRM's Avis-termination 8.01, AORT's 1.01 purchase-option
+  // were dropdown-only). 7.01 (Reg-FD "will host a webcast") and 9.01 (exhibits) stay noise.
+  const _SUBSTANTIVE = /^(1\.01|1\.02|2\.05|2\.06|3\.01|4\.02|5\.02|8\.01)\b/;
+  const substantiveEvents = (f) => (f.events || [])
+    .filter((e) => _SUBSTANTIVE.test(String(e))).map(cleanItemEvent).filter(Boolean);
+  // (event study) the VISIBLE tier carries the INFORMATIVE cards — a filing has a card when it
+  // parsed a driver OR carries a substantive non-earnings item. A filing with neither (a lone 7.01,
+  // or an unparsed 2.02) has no card; its items live only in the provenance tier below.
   const grouped = [...byAcc.values()];
-  const driverCards = grouped.filter(({ f }) => f.drivers && f.drivers.status === "present")
-    .map(({ f, gaps }) => {
-      const forWhich = gaps.length
-        ? `(for the ${gaps.map(escapeHtml).join(" and ")} gap-down${gaps.length > 1 ? "s" : ""})`
-        : "";
-      return `
+  const isCarded = ({ f }) => (f.drivers && f.drivers.status === "present") || substantiveEvents(f).length;
+  const carded = grouped.filter(isCarded);
+  const driverCards = carded.map(({ f, gaps }) => {
+    const forWhich = gaps.length
+      ? `(for the ${gaps.map(escapeHtml).join(" and ")} gap-down${gaps.length > 1 ? "s" : ""})`
+      : "";
+    const driverLine = (f.drivers && f.drivers.status === "present")
+      ? `<div class="fe"><b>what the results showed:</b> ${escapeHtml(fixAcronyms(f.drivers.value))}${citeMark(f.drivers.source_ref)}</div>`
+      : "";
+    const eventLines = substantiveEvents(f)
+      .map((e) => `<div class="fe">${escapeHtml(fixAcronyms(String(e).slice(0, 260)))}</div>`).join("");
+    // items line: the 8-K's codes in words (9.01/7.01 dropped), so the card names what the filing is
+    const items = (f.item_types || f.items || [])
+      .filter((t) => !/^(9\.01|7\.01)\b/.test(String(t)));
+    return `
     <div class="filing">
       <div class="fh"><span style="color:var(--danger);">${nums(gaps)}</span> ${escapeHtml(f.form || "8-K")} · filed ${fmtDate(f.filing_date)} <span class="muted">${forWhich}</span></div>
-      <div class="fe"><b>what the results showed:</b> ${escapeHtml(fixAcronyms(f.drivers.value))}${citeMark(f.drivers.source_ref)}</div>
+      <div class="muted" style="font-size:11px; margin:1px 0 3px;">items: ${escapeHtml(items.join(" · ") || "—")}</div>
+      ${driverLine}${eventLines}
       ${f.url ? `<div style="margin-top:5px;"><a href="${encodeURI(f.url)}" target="_blank" rel="noopener">EDGAR ${escapeHtml(f.accession || "")}</a></div>` : ""}
     </div>`;
-    }).join("");
-  // on-demand provenance: every explanatory filing's items + cleaned parse text + EDGAR link — the
-  // complete record behind the ledger (collapsed on screen, force-open in the PDF).
-  const provEntries = grouped.map(({ f, gaps }) => {
+  }).join("");
+  // (#3b) on-demand provenance lists ONLY the NON-carded filings (a carded filing is already shown
+  // in full — repeating it here was the duplication). Disappears entirely when every filing is
+  // carded. The complete raw record always stays in dossier.json regardless.
+  const uncarded = grouped.filter((g) => !isCarded(g));
+  const provEntries = uncarded.map(({ f, gaps }) => {
     const items = (f.item_types || f.items || []).filter((t) => !String(t).startsWith("9.01"));
     const evs = (f.events || []).map(cleanItemEvent).filter(Boolean)
       .map((e) => `<div style="margin:2px 0 0 14px;">${escapeHtml(String(e).slice(0, 300))}</div>`).join("");
     return `<div style="margin-top:7px;"><b>${nums(gaps) || "—"}</b> · filed ${fmtDate(f.filing_date)} · items: ${escapeHtml(items.join(" · ") || "—")}
       ${f.url ? ` · <a href="${encodeURI(f.url)}" target="_blank" rel="noopener">EDGAR ${escapeHtml(f.accession || "")}</a>` : ""}${evs}</div>`;
   }).join("");
-  const provenance = grouped.length
+  const provenance = uncarded.length
     ? `<details style="margin-top:10px; font-size:12px; color:var(--ink-2);">
-        <summary style="cursor:pointer; font-size:11.5px; color:var(--ink-3);">8-K detail — items, parsed text &amp; EDGAR links (${grouped.length} filing${grouped.length > 1 ? "s" : ""})</summary>
+        <summary style="cursor:pointer; font-size:11.5px; color:var(--ink-3);">Other 8-Ks at the gap dates — items &amp; EDGAR links (${uncarded.length})</summary>
         <div style="padding:2px 2px 4px;">${provEntries}</div></details>`
     : "";
   // (declutter) the dates row repeats the shape line whenever every date already appears there
@@ -2444,19 +2462,21 @@ function idioVsShared(io, sym) {
     ? readLead
       + `<div class="fact"><div class="fact-label">Graph cohort</div><div>${cohort}</div></div>`
     : `<div class="fg-note" style="margin-top:2px;">no supplier/customer cohort mapped for this name — the comparison is vs the market only</div>`;
-  // (event study) the three returns compress to ONE strip line when all present — the chart above
-  // already SHOWS the divergence, so a tile grid restated it at hero scale. Any absent leg → the
-  // old tile grid (fail-honest: an UNKNOWN stays a loud labelled cell, never a silent omission).
+  // (event study) the returns compress to ONE strip line — the chart above already SHOWS the
+  // divergence, a tile grid restated it at hero scale. The strip renders whenever the NAME return
+  // is present; an absent market leg drops the "vs IWM" middle (same P1 honesty the tile grid used),
+  // an absent relative leg drops the arrow. Only a fully-UNKNOWN name return → the loud tile grid.
   const nm = io.name_180d_return, mk = io.market_180d_return, rel = io.rel_vs_market;
-  const allPresent = [nm, mk, rel].every((x) => x && x.status === "present" && x.value != null);
-  const comparison = allPresent
+  const has = (x) => x && x.status === "present" && x.value != null;
+  const comparison = has(nm)
     ? `<div style="display:flex; gap:8px; align-items:baseline; flex-wrap:wrap; background:var(--surface-2); border:1px solid var(--line); border-radius:8px; padding:8px 12px; margin-top:8px; font-size:13px;">
         <span class="muted" style="font-size:11px; text-transform:uppercase; letter-spacing:0.04em;">180d</span>
         <span>${escapeHtml(sym || "Name")} <b style="color:var(--danger);">${fmtPct(nm.value, { signed: true })}</b>${citeMark(nm.source_ref)}</span>
-        <span class="muted">vs</span>
-        <span>${escapeHtml(io.benchmark_symbol || "IWM")} <b>${fmtPct(mk.value, { signed: true })}</b>${citeMark(mk.source_ref)}</span>
-        <span class="muted">→</span>
-        <span><b style="color:var(--danger);">${fmtPct(rel.value, { signed: true }).replace("%", "pp")}</b> idiosyncratic${citeMark(rel.source_ref)}</span>
+        ${has(mk) ? `<span class="muted">vs</span>
+        <span>${escapeHtml(io.benchmark_symbol || "IWM")} <b>${fmtPct(mk.value, { signed: true })}</b>${citeMark(mk.source_ref)}</span>` : ""}
+        ${has(rel) ? `<span class="muted">→</span>
+        <span><b style="color:var(--danger);">${fmtPct(rel.value, { signed: true }).replace("%", "pp")}</b> idiosyncratic${citeMark(rel.source_ref)}</span>`
+        : `<span class="muted" style="font-size:11.5px;">· ${escapeHtml((io.benchmark_symbol || "IWM"))} benchmark bars unavailable — relative read UNKNOWN</span>`}
       </div>`
     : factGrid([
       { label: "Name 180d return", s: io.name_180d_return, fmt: retHero },
