@@ -4430,6 +4430,58 @@ the honest label, 1 filing card = the real 2026-05-05 earnings 2.02, vote text g
 Gate green: 1028 passed. INVARIANT: a deterministic unit pin (`_is_explanatory`/`_gap_label` on item
 codes) + a committed-artifact e2e (5.07 card suppressed, 2.02 card kept) on both renderers.
 
+**BUILD RECORD — 2026-07-23 What-broke event study (chart + ledger + true gap %s, operator-driven
+redesign).** The What-broke section rebuilt to the institutional "share price & key events"
+anatomy, from four operator critiques of the first chart preview (no axes; key wastes vertical
+space; drops unquantified and partly invisible; section interleaved analysis into evidence).
+ASSEMBLY (re-assembly of 10 names; MVST excluded — candidate_records absence — and stays the LIVE
+back-compat case): (1) `stock_performance` DAILY (`_PERF_MAX_POINTS` 60→400 ⇒ 251 pts/52wk) — the
+weekly downsample had SMOOTHED AWAY the very 1-day gap-downs the chart marks (CNXC's −11.2% Jun-30
+was invisible) and made the true gap % unrecoverable (a weekly proxy misstated −12.7% as −21.7%);
+(2) `DrawdownCause.gap_threshold/gap_window_days` (additive, default None) copied from the
+now-PUBLIC screen constants — ONE source of truth, no frontend magic numbers; (3) 8.01 refinement:
+anchored two-step (offering context → instrument) relabels a routine-8.01 gap from "other event" —
+CNXC's Feb pair now reads **debt offering** (the $600M 6.5% notes; the mockup's "equity offering"
+guess was WRONG — the anchored classifier read the filing). RENDER (both twins): gridlined chart
+(nice-step y, four x dates), right-side EVENT LEDGER (№ · date · true 1-day % · cause · same-8-K
+cross-refs), the % derived from consecutive DAILY points by the detector's own formula and OMITTED
+(never estimated) on pre-daily JSON; detector-window boundary + HOLLOW markers for real ≤threshold
+drops BEFORE the window (CNXC: Aug-1 −11.1%, Sep-26 −13.3% — real drops, honestly outside
+coverage); marker stagger on adjacent-day collisions (②③); the three 180d tiles compressed to ONE
+idio strip (chart shows the divergence; any absent leg → tile fallback); visible tier = driver
+cards only (numbered to the ledger); item recitals → collapsed 8-K-detail provenance
+(print-expanded per T1) cleaned of doubled titles / defined-term parentheticals (incl. multi-term)
+/ cross-reference stubs; 9.01 filtered from items display (JSON keeps raw). VERIFIED: node renders
+across CNXC (5 markers · 7 %s · boundary · 2 hollow · same-8-K · debt offering), SMPL/BRBR (stagger
++ hollow), MVST (markers, %s honestly omitted), NCNO (1 gap → one-liner; `stock_performance` ABSENT
+in the STORE for NCNO — pre-existing fail-loud absence, NOT a regression; its first artifact-pass
+verify wrongly demanded daily points and discarded a good retry before the check was corrected);
+live preview screenshots incl. the EXPANDED provenance state. The twin test caught a REAL ordering
+bug pre-ship (title-recovery ate the cross-ref stub → mangled instead of dropped; stub-truncation
+now runs first in both twins). Gate green on fresh artifacts: 1038 passed; the guarded CNXC e2e
+ACTIVATED (recomputes every % from the artifact's own points; each ≤ the threshold). INVARIANT:
+deterministic unit pins (8.01 anchor map, gap-% refusal rules, clean-event trims) + JS↔py twin
+equivalence drivers + the committed-CNXC e2e. Synthesis regenerated on the 10 (weather); one
+NCNO overwrite incident (synth=null) caught by the standard check and recovered on retry.
+
+**EXPERIMENT RECORD — 2026-07-23 synthesis net-direction prompt fix TESTED AND REJECTED (weather
+baseline).** Diagnosis: BRBR's committed synthesis carried 2 mis-slotted `bull_points` (a net-bear
+"fundamental margin collapse … real earnings hit" reconciler + a neutral "a PREMIUM, not a
+discount" valuation question), traced to (a) the `bull_points` schema description INSTRUCTING the
+LLM to "POSE earned-vs-residual" inside bull (contradicting system rule 7b) and (b) no net-direction
+rule for mixed points. A candidate fix (net-bull-only schema description + a 7c NET-DIRECTION rule)
+looked like a clean win on ONE run (both mis-slots gone). The operator required a WEATHER BASELINE
+before adoption: OLD-prompt fresh runs vs NEW-prompt runs on BRBR/EPAM/SMPL. RESULT — the fix was
+REJECTED on three findings: (1) BRBR's OLD-prompt FRESH run produced 7 clean bull points with ZERO
+mis-slots — the diagnosed failure is LLM WEATHER, not a stable prompt defect; (2) the one-run "win"
+didn't replicate (the NEW run's false-balance flag came back); (3) the fix has a real side effect —
+it systematically drains bull_points and FLIPPED SMPL's lean mixed → strongly-bearish (and cut EPAM
+9→6 bull), i.e. a bearish bias worse than the artifact it chased. `synthesis.py` reverted untouched.
+STANDING LESSON: a defect observed in ONE committed synthesis snapshot is not a prompt defect until
+a same-prompt re-run reproduces it; the downstream guards (false-balance + the diagnostic caveats)
+are the correct catch for weather-class mis-slots. Experiment artifacts restored from git; committed
+dossiers untouched.
+
 **BUILD RECORD — 2026-07-23 caveat/section display pass (PR #196, operator-reviewed, DISPLAY-TIER
 ONLY — NO re-assembly).** Four render-layer polish items from a live review of BRBR's Analysis tab,
 each rendered from the COMMITTED JSON (both `dossier.js` + `render.py`), verified live, then md

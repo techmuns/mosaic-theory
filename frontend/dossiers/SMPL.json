@@ -855,7 +855,8 @@
             "source_ref": "8-K 0001702744-26-000010 EX-99.1",
             "status": "present",
             "note": null
-          }
+          },
+          "explanatory": true
         },
         {
           "gap_date": "2026-04-10",
@@ -879,7 +880,8 @@
             "source_ref": "8-K 0001702744-26-000010 EX-99.1",
             "status": "present",
             "note": null
-          }
+          },
+          "explanatory": true
         }
       ],
       "revised_guidance": {
@@ -887,7 +889,9 @@
         "source_ref": null,
         "status": "unknown",
         "note": "no revised-outlook 99.1 exhibit parsed for 8-Ks ['0001702744-26-000010', '0001702744-26-000010']"
-      }
+      },
+      "gap_threshold": -0.1,
+      "gap_window_days": 180
     },
     "idiosyncratic_vs_shared": {
       "name_180d_return": {
@@ -5166,9 +5170,39 @@
           "benchmark": 100.0
         },
         {
+          "date": "2025-07-08",
+          "name": 100.92,
+          "benchmark": 100.69
+        },
+        {
+          "date": "2025-07-09",
+          "name": 102.41,
+          "benchmark": 101.78
+        },
+        {
+          "date": "2025-07-10",
+          "name": 102.31,
+          "benchmark": 102.31
+        },
+        {
           "date": "2025-07-11",
           "name": 104.15,
           "benchmark": 100.9
+        },
+        {
+          "date": "2025-07-14",
+          "name": 107.82,
+          "benchmark": 101.57
+        },
+        {
+          "date": "2025-07-15",
+          "name": 104.69,
+          "benchmark": 99.59
+        },
+        {
+          "date": "2025-07-16",
+          "name": 104.72,
+          "benchmark": 100.59
         },
         {
           "date": "2025-07-17",
@@ -5176,9 +5210,39 @@
           "benchmark": 101.91
         },
         {
+          "date": "2025-07-18",
+          "name": 103.64,
+          "benchmark": 101.18
+        },
+        {
+          "date": "2025-07-21",
+          "name": 103.7,
+          "benchmark": 100.77
+        },
+        {
+          "date": "2025-07-22",
+          "name": 104.08,
+          "benchmark": 101.61
+        },
+        {
           "date": "2025-07-23",
           "name": 103.26,
           "benchmark": 103.16
+        },
+        {
+          "date": "2025-07-24",
+          "name": 104.08,
+          "benchmark": 101.74
+        },
+        {
+          "date": "2025-07-25",
+          "name": 105.1,
+          "benchmark": 102.12
+        },
+        {
+          "date": "2025-07-28",
+          "name": 101.55,
+          "benchmark": 102.0
         },
         {
           "date": "2025-07-29",
@@ -5186,9 +5250,39 @@
           "benchmark": 101.35
         },
         {
+          "date": "2025-07-30",
+          "name": 98.48,
+          "benchmark": 100.83
+        },
+        {
+          "date": "2025-07-31",
+          "name": 96.45,
+          "benchmark": 99.85
+        },
+        {
+          "date": "2025-08-01",
+          "name": 95.16,
+          "benchmark": 97.81
+        },
+        {
           "date": "2025-08-04",
           "name": 97.09,
           "benchmark": 100.0
+        },
+        {
+          "date": "2025-08-05",
+          "name": 95.06,
+          "benchmark": 100.51
+        },
+        {
+          "date": "2025-08-06",
+          "name": 94.33,
+          "benchmark": 100.38
+        },
+        {
+          "date": "2025-08-07",
+          "name": 95.03,
+          "benchmark": 100.05
         },
         {
           "date": "2025-08-08",
@@ -5196,9 +5290,39 @@
           "benchmark": 100.27
         },
         {
+          "date": "2025-08-11",
+          "name": 91.48,
+          "benchmark": 100.25
+        },
+        {
+          "date": "2025-08-12",
+          "name": 92.12,
+          "benchmark": 103.22
+        },
+        {
+          "date": "2025-08-13",
+          "name": 94.17,
+          "benchmark": 105.23
+        },
+        {
           "date": "2025-08-14",
           "name": 91.96,
           "benchmark": 103.87
+        },
+        {
+          "date": "2025-08-15",
+          "name": 89.96,
+          "benchmark": 103.37
+        },
+        {
+          "date": "2025-08-18",
+          "name": 89.65,
+          "benchmark": 103.75
+        },
+        {
+          "date": "2025-08-19",
+          "name": 90.91,
+          "benchmark": 102.95
         },
         {
           "date": "2025-08-20",
@@ -5206,9 +5330,39 @@
           "benchmark": 102.58
         },
         {
+          "date": "2025-08-21",
+          "name": 93.0,
+          "benchmark": 102.84
+        },
+        {
+          "date": "2025-08-22",
+          "name": 95.54,
+          "benchmark": 106.87
+        },
+        {
+          "date": "2025-08-25",
+          "name": 92.72,
+          "benchmark": 105.75
+        },
+        {
           "date": "2025-08-26",
           "name": 91.01,
           "benchmark": 106.62
+        },
+        {
+          "date": "2025-08-27",
+          "name": 92.21,
+          "benchmark": 107.38
+        },
+        {
+          "date": "2025-08-28",
+          "name": 90.69,
+          "benchmark": 107.5
+        },
+        {
+          "date": "2025-08-29",
+          "name": 90.66,
+          "benchmark": 107.03
         },
         {
           "date": "2025-09-02",
@@ -5216,9 +5370,39 @@
           "benchmark": 106.45
         },
         {
+          "date": "2025-09-03",
+          "name": 90.75,
+          "benchmark": 106.34
+        },
+        {
+          "date": "2025-09-04",
+          "name": 90.34,
+          "benchmark": 107.67
+        },
+        {
+          "date": "2025-09-05",
+          "name": 90.09,
+          "benchmark": 108.21
+        },
+        {
           "date": "2025-09-08",
           "name": 89.23,
           "benchmark": 108.43
+        },
+        {
+          "date": "2025-09-09",
+          "name": 89.14,
+          "benchmark": 107.79
+        },
+        {
+          "date": "2025-09-10",
+          "name": 85.97,
+          "benchmark": 107.6
+        },
+        {
+          "date": "2025-09-11",
+          "name": 87.62,
+          "benchmark": 109.59
         },
         {
           "date": "2025-09-12",
@@ -5226,9 +5410,39 @@
           "benchmark": 108.47
         },
         {
+          "date": "2025-09-15",
+          "name": 82.77,
+          "benchmark": 108.93
+        },
+        {
+          "date": "2025-09-16",
+          "name": 85.5,
+          "benchmark": 108.44
+        },
+        {
+          "date": "2025-09-17",
+          "name": 84.01,
+          "benchmark": 108.72
+        },
+        {
           "date": "2025-09-18",
           "name": 85.12,
           "benchmark": 111.43
+        },
+        {
+          "date": "2025-09-19",
+          "name": 83.47,
+          "benchmark": 110.58
+        },
+        {
+          "date": "2025-09-22",
+          "name": 82.96,
+          "benchmark": 111.22
+        },
+        {
+          "date": "2025-09-23",
+          "name": 81.16,
+          "benchmark": 110.97
         },
         {
           "date": "2025-09-24",
@@ -5236,9 +5450,39 @@
           "benchmark": 109.95
         },
         {
+          "date": "2025-09-25",
+          "name": 78.47,
+          "benchmark": 108.9
+        },
+        {
+          "date": "2025-09-26",
+          "name": 78.25,
+          "benchmark": 109.83
+        },
+        {
+          "date": "2025-09-29",
+          "name": 77.87,
+          "benchmark": 109.96
+        },
+        {
           "date": "2025-09-30",
           "name": 78.59,
           "benchmark": 110.12
+        },
+        {
+          "date": "2025-10-01",
+          "name": 78.59,
+          "benchmark": 110.36
+        },
+        {
+          "date": "2025-10-02",
+          "name": 77.01,
+          "benchmark": 111.05
+        },
+        {
+          "date": "2025-10-03",
+          "name": 78.15,
+          "benchmark": 111.88
         },
         {
           "date": "2025-10-06",
@@ -5246,9 +5490,39 @@
           "benchmark": 112.32
         },
         {
+          "date": "2025-10-07",
+          "name": 76.82,
+          "benchmark": 111.12
+        },
+        {
+          "date": "2025-10-08",
+          "name": 76.16,
+          "benchmark": 112.28
+        },
+        {
+          "date": "2025-10-09",
+          "name": 77.83,
+          "benchmark": 111.56
+        },
+        {
           "date": "2025-10-10",
           "name": 75.97,
           "benchmark": 108.22
+        },
+        {
+          "date": "2025-10-13",
+          "name": 76.38,
+          "benchmark": 111.23
+        },
+        {
+          "date": "2025-10-14",
+          "name": 76.57,
+          "benchmark": 112.82
+        },
+        {
+          "date": "2025-10-15",
+          "name": 77.2,
+          "benchmark": 113.93
         },
         {
           "date": "2025-10-16",
@@ -5256,9 +5530,39 @@
           "benchmark": 111.53
         },
         {
+          "date": "2025-10-17",
+          "name": 77.77,
+          "benchmark": 110.78
+        },
+        {
+          "date": "2025-10-20",
+          "name": 79.64,
+          "benchmark": 112.94
+        },
+        {
+          "date": "2025-10-21",
+          "name": 80.56,
+          "benchmark": 112.41
+        },
+        {
           "date": "2025-10-22",
           "name": 79.04,
           "benchmark": 110.75
+        },
+        {
+          "date": "2025-10-23",
+          "name": 65.33,
+          "benchmark": 112.15
+        },
+        {
+          "date": "2025-10-24",
+          "name": 64.15,
+          "benchmark": 113.52
+        },
+        {
+          "date": "2025-10-27",
+          "name": 64.31,
+          "benchmark": 113.91
         },
         {
           "date": "2025-10-28",
@@ -5266,9 +5570,39 @@
           "benchmark": 113.3
         },
         {
+          "date": "2025-10-29",
+          "name": 62.35,
+          "benchmark": 112.34
+        },
+        {
+          "date": "2025-10-30",
+          "name": 60.89,
+          "benchmark": 111.43
+        },
+        {
+          "date": "2025-10-31",
+          "name": 61.97,
+          "benchmark": 112.06
+        },
+        {
           "date": "2025-11-03",
           "name": 62.79,
           "benchmark": 111.7
+        },
+        {
+          "date": "2025-11-04",
+          "name": 63.96,
+          "benchmark": 109.77
+        },
+        {
+          "date": "2025-11-05",
+          "name": 65.17,
+          "benchmark": 111.35
+        },
+        {
+          "date": "2025-11-06",
+          "name": 63.65,
+          "benchmark": 109.38
         },
         {
           "date": "2025-11-07",
@@ -5276,9 +5610,39 @@
           "benchmark": 109.96
         },
         {
+          "date": "2025-11-10",
+          "name": 60.86,
+          "benchmark": 111.06
+        },
+        {
+          "date": "2025-11-11",
+          "name": 60.29,
+          "benchmark": 111.15
+        },
+        {
+          "date": "2025-11-12",
+          "name": 61.94,
+          "benchmark": 110.88
+        },
+        {
           "date": "2025-11-13",
           "name": 61.97,
           "benchmark": 107.76
+        },
+        {
+          "date": "2025-11-14",
+          "name": 62.54,
+          "benchmark": 108.08
+        },
+        {
+          "date": "2025-11-17",
+          "name": 63.93,
+          "benchmark": 105.93
+        },
+        {
+          "date": "2025-11-18",
+          "name": 62.35,
+          "benchmark": 106.25
         },
         {
           "date": "2025-11-19",
@@ -5286,9 +5650,39 @@
           "benchmark": 106.23
         },
         {
+          "date": "2025-11-20",
+          "name": 63.68,
+          "benchmark": 104.27
+        },
+        {
+          "date": "2025-11-21",
+          "name": 63.9,
+          "benchmark": 107.22
+        },
+        {
+          "date": "2025-11-24",
+          "name": 62.51,
+          "benchmark": 109.18
+        },
+        {
           "date": "2025-11-25",
           "name": 63.14,
           "benchmark": 111.56
+        },
+        {
+          "date": "2025-11-26",
+          "name": 62.44,
+          "benchmark": 112.55
+        },
+        {
+          "date": "2025-11-28",
+          "name": 62.32,
+          "benchmark": 113.21
+        },
+        {
+          "date": "2025-12-01",
+          "name": 61.4,
+          "benchmark": 111.78
         },
         {
           "date": "2025-12-02",
@@ -5296,9 +5690,39 @@
           "benchmark": 111.58
         },
         {
+          "date": "2025-12-03",
+          "name": 60.13,
+          "benchmark": 113.61
+        },
+        {
+          "date": "2025-12-04",
+          "name": 59.34,
+          "benchmark": 114.6
+        },
+        {
+          "date": "2025-12-05",
+          "name": 59.94,
+          "benchmark": 114.13
+        },
+        {
           "date": "2025-12-08",
           "name": 58.9,
           "benchmark": 114.17
+        },
+        {
+          "date": "2025-12-09",
+          "name": 58.96,
+          "benchmark": 114.41
+        },
+        {
+          "date": "2025-12-10",
+          "name": 59.02,
+          "benchmark": 115.97
+        },
+        {
+          "date": "2025-12-11",
+          "name": 59.12,
+          "benchmark": 117.33
         },
         {
           "date": "2025-12-12",
@@ -5306,9 +5730,39 @@
           "benchmark": 115.53
         },
         {
+          "date": "2025-12-15",
+          "name": 61.11,
+          "benchmark": 114.65
+        },
+        {
+          "date": "2025-12-16",
+          "name": 60.51,
+          "benchmark": 113.73
+        },
+        {
+          "date": "2025-12-17",
+          "name": 62.25,
+          "benchmark": 112.52
+        },
+        {
           "date": "2025-12-18",
           "name": 61.72,
           "benchmark": 113.19
+        },
+        {
+          "date": "2025-12-19",
+          "name": 62.19,
+          "benchmark": 114.14
+        },
+        {
+          "date": "2025-12-22",
+          "name": 62.25,
+          "benchmark": 115.41
+        },
+        {
+          "date": "2025-12-23",
+          "name": 62.06,
+          "benchmark": 114.72
         },
         {
           "date": "2025-12-24",
@@ -5316,9 +5770,39 @@
           "benchmark": 115.01
         },
         {
+          "date": "2025-12-26",
+          "name": 63.27,
+          "benchmark": 114.42
+        },
+        {
+          "date": "2025-12-29",
+          "name": 63.3,
+          "benchmark": 113.72
+        },
+        {
+          "date": "2025-12-30",
+          "name": 62.86,
+          "benchmark": 112.88
+        },
+        {
           "date": "2025-12-31",
           "name": 63.58,
           "benchmark": 112.03
+        },
+        {
+          "date": "2026-01-02",
+          "name": 61.94,
+          "benchmark": 113.22
+        },
+        {
+          "date": "2026-01-05",
+          "name": 59.66,
+          "benchmark": 115.02
+        },
+        {
+          "date": "2026-01-06",
+          "name": 60.64,
+          "benchmark": 116.54
         },
         {
           "date": "2026-01-07",
@@ -5326,9 +5810,39 @@
           "benchmark": 116.27
         },
         {
+          "date": "2026-01-08",
+          "name": 65.39,
+          "benchmark": 117.54
+        },
+        {
+          "date": "2026-01-09",
+          "name": 67.76,
+          "benchmark": 118.43
+        },
+        {
+          "date": "2026-01-12",
+          "name": 65.42,
+          "benchmark": 119.01
+        },
+        {
           "date": "2026-01-13",
           "name": 67.32,
           "benchmark": 118.94
+        },
+        {
+          "date": "2026-01-14",
+          "name": 66.47,
+          "benchmark": 119.78
+        },
+        {
+          "date": "2026-01-15",
+          "name": 66.97,
+          "benchmark": 120.83
+        },
+        {
+          "date": "2026-01-16",
+          "name": 66.28,
+          "benchmark": 120.95
         },
         {
           "date": "2026-01-20",
@@ -5336,9 +5850,39 @@
           "benchmark": 119.5
         },
         {
+          "date": "2026-01-21",
+          "name": 67.07,
+          "benchmark": 121.87
+        },
+        {
+          "date": "2026-01-22",
+          "name": 66.15,
+          "benchmark": 122.78
+        },
+        {
+          "date": "2026-01-23",
+          "name": 64.19,
+          "benchmark": 120.52
+        },
+        {
           "date": "2026-01-26",
           "name": 64.0,
           "benchmark": 120.14
+        },
+        {
+          "date": "2026-01-27",
+          "name": 62.06,
+          "benchmark": 120.48
+        },
+        {
+          "date": "2026-01-28",
+          "name": 60.89,
+          "benchmark": 119.83
+        },
+        {
+          "date": "2026-01-29",
+          "name": 59.37,
+          "benchmark": 119.86
         },
         {
           "date": "2026-01-30",
@@ -5346,9 +5890,39 @@
           "benchmark": 118.17
         },
         {
+          "date": "2026-02-02",
+          "name": 57.41,
+          "benchmark": 119.32
+        },
+        {
+          "date": "2026-02-03",
+          "name": 54.08,
+          "benchmark": 119.59
+        },
+        {
+          "date": "2026-02-04",
+          "name": 56.14,
+          "benchmark": 118.56
+        },
+        {
           "date": "2026-02-05",
           "name": 55.0,
           "benchmark": 116.43
+        },
+        {
+          "date": "2026-02-06",
+          "name": 54.88,
+          "benchmark": 120.61
+        },
+        {
+          "date": "2026-02-09",
+          "name": 52.15,
+          "benchmark": 121.46
+        },
+        {
+          "date": "2026-02-10",
+          "name": 51.96,
+          "benchmark": 121.13
         },
         {
           "date": "2026-02-11",
@@ -5356,9 +5930,39 @@
           "benchmark": 120.58
         },
         {
+          "date": "2026-02-12",
+          "name": 50.79,
+          "benchmark": 118.12
+        },
+        {
+          "date": "2026-02-13",
+          "name": 50.51,
+          "benchmark": 119.67
+        },
+        {
+          "date": "2026-02-17",
+          "name": 49.11,
+          "benchmark": 119.71
+        },
+        {
           "date": "2026-02-18",
           "name": 51.04,
           "benchmark": 120.14
+        },
+        {
+          "date": "2026-02-19",
+          "name": 53.1,
+          "benchmark": 120.42
+        },
+        {
+          "date": "2026-02-20",
+          "name": 53.55,
+          "benchmark": 120.43
+        },
+        {
+          "date": "2026-02-23",
+          "name": 53.89,
+          "benchmark": 118.55
         },
         {
           "date": "2026-02-24",
@@ -5366,9 +5970,39 @@
           "benchmark": 119.84
         },
         {
+          "date": "2026-02-25",
+          "name": 53.42,
+          "benchmark": 120.41
+        },
+        {
+          "date": "2026-02-26",
+          "name": 53.99,
+          "benchmark": 121.05
+        },
+        {
+          "date": "2026-02-27",
+          "name": 54.02,
+          "benchmark": 118.97
+        },
+        {
           "date": "2026-03-02",
           "name": 51.49,
           "benchmark": 120.06
+        },
+        {
+          "date": "2026-03-03",
+          "name": 51.49,
+          "benchmark": 117.98
+        },
+        {
+          "date": "2026-03-04",
+          "name": 51.87,
+          "benchmark": 119.13
+        },
+        {
+          "date": "2026-03-05",
+          "name": 51.9,
+          "benchmark": 116.85
         },
         {
           "date": "2026-03-06",
@@ -5376,9 +6010,39 @@
           "benchmark": 114.18
         },
         {
+          "date": "2026-03-09",
+          "name": 49.05,
+          "benchmark": 115.42
+        },
+        {
+          "date": "2026-03-10",
+          "name": 47.53,
+          "benchmark": 115.31
+        },
+        {
+          "date": "2026-03-11",
+          "name": 46.96,
+          "benchmark": 115.07
+        },
+        {
           "date": "2026-03-12",
           "name": 45.63,
           "benchmark": 112.6
+        },
+        {
+          "date": "2026-03-13",
+          "name": 45.65,
+          "benchmark": 112.22
+        },
+        {
+          "date": "2026-03-16",
+          "name": 48.2,
+          "benchmark": 113.28
+        },
+        {
+          "date": "2026-03-17",
+          "name": 47.85,
+          "benchmark": 113.8
         },
         {
           "date": "2026-03-18",
@@ -5386,9 +6050,39 @@
           "benchmark": 111.96
         },
         {
+          "date": "2026-03-19",
+          "name": 46.17,
+          "benchmark": 112.7
+        },
+        {
+          "date": "2026-03-20",
+          "name": 44.74,
+          "benchmark": 110.24
+        },
+        {
+          "date": "2026-03-23",
+          "name": 44.49,
+          "benchmark": 112.62
+        },
+        {
           "date": "2026-03-24",
           "name": 44.05,
           "benchmark": 113.22
+        },
+        {
+          "date": "2026-03-25",
+          "name": 45.57,
+          "benchmark": 114.6
+        },
+        {
+          "date": "2026-03-26",
+          "name": 45.79,
+          "benchmark": 112.61
+        },
+        {
+          "date": "2026-03-27",
+          "name": 45.44,
+          "benchmark": 110.64
         },
         {
           "date": "2026-03-30",
@@ -5396,9 +6090,39 @@
           "benchmark": 109.05
         },
         {
+          "date": "2026-03-31",
+          "name": 45.44,
+          "benchmark": 112.87
+        },
+        {
+          "date": "2026-04-01",
+          "name": 44.97,
+          "benchmark": 113.58
+        },
+        {
+          "date": "2026-04-02",
+          "name": 44.84,
+          "benchmark": 114.36
+        },
+        {
           "date": "2026-04-06",
           "name": 45.03,
           "benchmark": 114.85
+        },
+        {
+          "date": "2026-04-07",
+          "name": 45.76,
+          "benchmark": 115.1
+        },
+        {
+          "date": "2026-04-08",
+          "name": 45.63,
+          "benchmark": 118.54
+        },
+        {
+          "date": "2026-04-09",
+          "name": 37.37,
+          "benchmark": 119.22
         },
         {
           "date": "2026-04-10",
@@ -5406,9 +6130,39 @@
           "benchmark": 118.92
         },
         {
+          "date": "2026-04-13",
+          "name": 35.18,
+          "benchmark": 120.63
+        },
+        {
+          "date": "2026-04-14",
+          "name": 36.07,
+          "benchmark": 122.3
+        },
+        {
+          "date": "2026-04-15",
+          "name": 37.11,
+          "benchmark": 122.6
+        },
+        {
           "date": "2026-04-16",
           "name": 36.76,
           "benchmark": 122.86
+        },
+        {
+          "date": "2026-04-17",
+          "name": 37.65,
+          "benchmark": 125.51
+        },
+        {
+          "date": "2026-04-20",
+          "name": 39.96,
+          "benchmark": 126.22
+        },
+        {
+          "date": "2026-04-21",
+          "name": 39.3,
+          "benchmark": 124.93
         },
         {
           "date": "2026-04-22",
@@ -5416,9 +6170,39 @@
           "benchmark": 125.83
         },
         {
+          "date": "2026-04-23",
+          "name": 39.33,
+          "benchmark": 125.39
+        },
+        {
+          "date": "2026-04-24",
+          "name": 42.31,
+          "benchmark": 125.9
+        },
+        {
+          "date": "2026-04-27",
+          "name": 42.24,
+          "benchmark": 126.13
+        },
+        {
           "date": "2026-04-28",
           "name": 43.67,
           "benchmark": 124.66
+        },
+        {
+          "date": "2026-04-29",
+          "name": 43.03,
+          "benchmark": 123.82
+        },
+        {
+          "date": "2026-04-30",
+          "name": 42.34,
+          "benchmark": 126.51
+        },
+        {
+          "date": "2026-05-01",
+          "name": 41.89,
+          "benchmark": 127.1
         },
         {
           "date": "2026-05-04",
@@ -5426,9 +6210,39 @@
           "benchmark": 126.46
         },
         {
+          "date": "2026-05-05",
+          "name": 40.47,
+          "benchmark": 128.59
+        },
+        {
+          "date": "2026-05-06",
+          "name": 39.99,
+          "benchmark": 130.52
+        },
+        {
+          "date": "2026-05-07",
+          "name": 39.39,
+          "benchmark": 128.46
+        },
+        {
           "date": "2026-05-08",
           "name": 38.82,
           "benchmark": 129.33
+        },
+        {
+          "date": "2026-05-11",
+          "name": 36.0,
+          "benchmark": 129.85
+        },
+        {
+          "date": "2026-05-12",
+          "name": 35.91,
+          "benchmark": 128.6
+        },
+        {
+          "date": "2026-05-13",
+          "name": 35.47,
+          "benchmark": 128.64
         },
         {
           "date": "2026-05-14",
@@ -5436,9 +6250,39 @@
           "benchmark": 129.45
         },
         {
+          "date": "2026-05-15",
+          "name": 36.57,
+          "benchmark": 126.34
+        },
+        {
+          "date": "2026-05-18",
+          "name": 37.37,
+          "benchmark": 125.6
+        },
+        {
+          "date": "2026-05-19",
+          "name": 36.13,
+          "benchmark": 124.24
+        },
+        {
           "date": "2026-05-20",
           "name": 35.4,
           "benchmark": 127.37
+        },
+        {
+          "date": "2026-05-21",
+          "name": 36.73,
+          "benchmark": 128.56
+        },
+        {
+          "date": "2026-05-22",
+          "name": 37.56,
+          "benchmark": 129.76
+        },
+        {
+          "date": "2026-05-26",
+          "name": 36.1,
+          "benchmark": 132.21
         },
         {
           "date": "2026-05-27",
@@ -5446,9 +6290,39 @@
           "benchmark": 132.15
         },
         {
+          "date": "2026-05-28",
+          "name": 37.37,
+          "benchmark": 132.9
+        },
+        {
+          "date": "2026-05-29",
+          "name": 36.48,
+          "benchmark": 132.18
+        },
+        {
+          "date": "2026-06-01",
+          "name": 36.92,
+          "benchmark": 131.52
+        },
+        {
           "date": "2026-06-02",
           "name": 37.4,
           "benchmark": 132.74
+        },
+        {
+          "date": "2026-06-03",
+          "name": 36.13,
+          "benchmark": 130.92
+        },
+        {
+          "date": "2026-06-04",
+          "name": 37.02,
+          "benchmark": 132.89
+        },
+        {
+          "date": "2026-06-05",
+          "name": 37.81,
+          "benchmark": 128.18
         },
         {
           "date": "2026-06-08",
@@ -5456,9 +6330,39 @@
           "benchmark": 129.3
         },
         {
+          "date": "2026-06-09",
+          "name": 39.39,
+          "benchmark": 129.71
+        },
+        {
+          "date": "2026-06-10",
+          "name": 39.93,
+          "benchmark": 128.36
+        },
+        {
+          "date": "2026-06-11",
+          "name": 40.03,
+          "benchmark": 132.17
+        },
+        {
           "date": "2026-06-12",
           "name": 39.8,
           "benchmark": 133.32
+        },
+        {
+          "date": "2026-06-15",
+          "name": 39.61,
+          "benchmark": 134.09
+        },
+        {
+          "date": "2026-06-16",
+          "name": 39.74,
+          "benchmark": 132.93
+        },
+        {
+          "date": "2026-06-17",
+          "name": 38.44,
+          "benchmark": 131.93
         },
         {
           "date": "2026-06-18",
@@ -5466,14 +6370,49 @@
           "benchmark": 134.52
         },
         {
+          "date": "2026-06-22",
+          "name": 37.56,
+          "benchmark": 135.7
+        },
+        {
+          "date": "2026-06-23",
+          "name": 38.51,
+          "benchmark": 134.4
+        },
+        {
+          "date": "2026-06-24",
+          "name": 39.99,
+          "benchmark": 135.02
+        },
+        {
           "date": "2026-06-25",
           "name": 38.92,
           "benchmark": 136.04
         },
         {
+          "date": "2026-06-26",
+          "name": 41.36,
+          "benchmark": 136.45
+        },
+        {
+          "date": "2026-06-29",
+          "name": 41.61,
+          "benchmark": 136.06
+        },
+        {
+          "date": "2026-06-30",
+          "name": 42.05,
+          "benchmark": 136.74
+        },
+        {
           "date": "2026-07-01",
           "name": 42.75,
           "benchmark": 136.22
+        },
+        {
+          "date": "2026-07-02",
+          "name": 43.48,
+          "benchmark": 135.43
         },
         {
           "date": "2026-07-06",
@@ -5669,7 +6608,7 @@
         },
         {
           "kind": "pricing_action",
-          "metric": "recent pricing actions reflected on shelf",
+          "metric": "pricing actions on shelf",
           "period": "Q1 2026",
           "value": "recent pricing actions are now reflected on shelf",
           "value_num": null,
@@ -5680,12 +6619,23 @@
         },
         {
           "kind": "pass_through_structure",
-          "metric": "cocoa supply coverage locked in",
+          "metric": "cocoa input supply coverage",
           "period": "will begin to flow into the P&L late in Q4 and into fiscal 2027",
           "value": "locked in incremental supply at sequentially more favorable level",
           "value_num": null,
           "unit": null,
           "verbatim": "Finally, we took advantage of the opportunity to extend supply coverage at attractive year-over-year prices on several key inputs, most notably cocoa, where we have now locked in incremental supply at sequentially more favorable level, which will begin to flow into the P&L late in Q4 and into fiscal 2027.",
+          "source_ref": "CIQ transcript: The Simply Good Foods Company, Q1 2026 Earnings Call, Jan 08, 2026.rtf",
+          "tier": "llm-fenced"
+        },
+        {
+          "kind": "leading_indicator",
+          "metric": "shares repurchased",
+          "period": "since the start of the year",
+          "value": "over 7% of our common stock",
+          "value_num": null,
+          "unit": null,
+          "verbatim": "Since the start of the year, we have repurchased over 7% of our common stock.",
           "source_ref": "CIQ transcript: The Simply Good Foods Company, Q1 2026 Earnings Call, Jan 08, 2026.rtf",
           "tier": "llm-fenced"
         },
@@ -5724,7 +6674,7 @@
         },
         {
           "kind": "leading_indicator",
-          "metric": "Quest salty snacks consumption",
+          "metric": "Quest salty snacks consumption growth",
           "period": "Q1 2026",
           "value": "up 40%",
           "value_num": null,
@@ -5754,17 +6704,6 @@
           "verbatim": "To put this into perspective, ACV was up nearly 5 points in the quarter versus the prior year, and average items per store were up 34%.",
           "source_ref": "CIQ transcript: The Simply Good Foods Company, Q1 2026 Earnings Call, Jan 08, 2026.rtf",
           "tier": "llm-fenced"
-        },
-        {
-          "kind": "leading_indicator",
-          "metric": "Quest Salty average items per store",
-          "period": "Q1 2026",
-          "value": "up 34%",
-          "value_num": null,
-          "unit": null,
-          "verbatim": "To put this into perspective, ACV was up nearly 5 points in the quarter versus the prior year, and average items per store were up 34%.",
-          "source_ref": "CIQ transcript: The Simply Good Foods Company, Q1 2026 Earnings Call, Jan 08, 2026.rtf",
-          "tier": "llm-fenced"
         }
       ],
       "qa_flags": [
@@ -5773,178 +6712,184 @@
     }
   },
   "synthesis": {
-    "evidence_balance": "mixed — self-funding balance sheet and intact category/Quest growth offset a genuine, broad-based multi-brand demand deterioration and $249M brand impairment.",
+    "evidence_balance": "mixed — durable balance sheet and FCF offset by a deep, guidance-confirmed earnings reset and impaired, shrinking acquired brands.",
     "bull_points": [
       {
-        "claim": "Net-debt/EBITDA is only 1.5x with 10.9x interest coverage and positive LTM FCF of $107.2M — the balance sheet is self-funding, not distressed, weighing against a terminal read.",
-        "source_ref": "CIQ Net Debt ÷ CIQ LTM EBITDA (EDGAR XBRL breadth fallback) + FCF sign (survival capacity)",
+        "claim": "Balance sheet is durable: net-debt/EBITDA is only 1.5x versus a peer median of 3.4x, and interest coverage is 10.9x, so leverage is not the terminal risk here.",
+        "source_ref": "CIQ Net Debt $325M [FQ3/CQ2 May-30-2026] ÷ CIQ EBITDA $218M [LTM 12 months May-30-2026]",
         "cited": true
       },
       {
-        "claim": "S&P-MI credit-health panel rates the name stronger than peers on every axis (Overall/Operational/Solvency/Liquidity 1/2/2/2 vs peer-median 3/3/3/3), so the leverage profile is materially better than the comp set.",
+        "claim": "The business self-funds: LTM levered FCF is $107.2M and FCF sign is positive, so the de-rate is not a solvency event.",
+        "source_ref": "CIQ Financials→Cash Flow 'Levered Free Cash Flow' [LTM 12 months May-30-2026]",
+        "cited": true
+      },
+      {
+        "claim": "S&P-model credit health scores the name 1/2/2/2 (Overall/Operational/Solvency/Liquidity) against a peer-median 3/3/3/3, i.e. materially stronger than the comp set on every leg.",
         "source_ref": "CIQ Comparable Analysis→Credit Health Panel · as-of 2026-06-25",
         "cited": true
       },
       {
-        "claim": "The peer discount is set against a HETEROGENEOUS roster (caps $54M–$27.2B, 507x span vs the name's $1.1B), so whether the EV/EBITDA gap (6x vs 7.8x LTM) is EARNED or RESIDUAL cannot be read cleanly off the median — the composition must be judged, not taken as a benchmark.",
-        "source_ref": "CIQ Comparable Analysis→Financial Data (market-cap dispersion) + Business Description",
+        "claim": "The absolute-EBITDA reconciler shows the margin story is milder than the % optics: EBITDA still ~$217M LTM off ~$1,392M revenue — a decline from $262M, not a collapse.",
+        "source_ref": "CIQ Financials→Income Statement (margin % + absolute EBITDA reconciler)",
         "cited": true
       },
       {
-        "claim": "On the fundamental_deltas the name screens BETTER than the peer median on the very axes that would justify a discount — EBITDA margin 17% vs 14%, Debt/EBITDA 1.8 vs 3.4, LT EPS growth +3% vs -9%, beta 0.2 vs 0.4 — posing whether the discount is residual rather than earned.",
-        "source_ref": "CIQ Comparable Analysis→Operating Statistics (name vs peer median: growth/margin/leverage/beta)",
-        "cited": true
-      },
-      {
-        "claim": "The core growth engine is intact: Quest (with OWYN 71% of net sales) delivered 12% consumption growth and household penetration reached ~20% (up 200bps YoY) in Q1 2026, within a nutritional-snacking category growing 10%.",
+        "claim": "The category backdrop and the two growth brands are the mechanism: nutritional snacking grew 10% and Quest+OWYN generated 71% of net sales with double-digit consumption growth in Q1.",
         "source_ref": "CIQ transcript: The Simply Good Foods Company, Q1 2026 Earnings Call, Jan 08, 2026.rtf",
         "cited": true
       },
       {
-        "claim": "Management is buying back stock aggressively — shares out fell 11.7% over ~1.7y, ~10% of the float repurchased in the trailing 12 months — and insiders were net open-market buyers (+90.0K sh), signalling internal conviction the price discounts long-term value.",
+        "claim": "Management is retiring the discount to itself: over 10% of common stock repurchased in the past 12 months while FCF-positive, an owner-aligned use of the low multiple.",
         "source_ref": "EDGAR XBRL shares, trailing 2024-10-18..2026-07-02",
+        "cited": true
+      },
+      {
+        "claim": "On the peer grid the name's EBITDA margin (17%) is above the peer median (14%) and its LT-EPS-growth (3%) exceeds the peer median (-9%), so the discount is not obviously explained by worse fundamentals — posing whether it is RESIDUAL rather than EARNED (human to judge, and note the HETEROGENEOUS peer set).",
+        "source_ref": "CIQ Comparable Analysis→Operating Statistics (name vs peer median: growth/margin/leverage/beta)",
         "cited": true
       }
     ],
     "bear_points": [
       {
-        "claim": "The de-rate is idiosyncratic, not a market move: the name fell 33% over 180d while its small-cap benchmark rose 17% (relative -50%), and the drawdown traces to discrete earnings gap-downs on 2026-04-09/10.",
-        "source_ref": "EOD SMPL−IWM 180d to 2026-07-06 (assembly, cap-band)",
-        "cited": true
-      },
-      {
-        "claim": "The Q2 print drove the gap-down and marks a genuine deterioration in the P&L: adj EBITDA -18.4% YoY, gross margin cut, plus $3.9M OWYN integration and $4.5M restructuring charges — a real operating miss, not an optical artefact.",
-        "source_ref": "8-K 0001702744-26-000010 EX-99.1",
-        "cited": true
-      },
-      {
-        "claim": "The falling EBITDA margin (18% FY25 → 16% LTM) is confirmed as the REAL signal, not an optical %-only misread: read against the reconciler, absolute EBITDA also FELL from $262M (FY25) to $217M (LTM) — both the ratio and the dollar level declined.",
-        "source_ref": "CIQ Financials→Income Statement (margin % + absolute EBITDA reconciler)",
-        "cited": true
-      },
-      {
-        "claim": "Consensus is being cut hard and broadly: FY26 EBITDA revised -26% and GAAP net income crossed to a loss (12m→latest), with the near-2-quarter revision breadth deeply negative (e.g. FQ3 EPS 3m 0↑/8↓) — estimates are still falling, not stabilising.",
+        "claim": "Earnings power is being reset downward hard: FY26 consensus EBITDA fell -26% and revenue -13% from 12m-ago path, and the trailing 6x EV/EBITDA is confirmed by the forward NTM 6.81x — the multiple is low because forward EBITDA itself is falling, not merely optics.",
         "source_ref": "CIQ Estimates→Trends (current-FY consensus path; ragged, absent lookbacks n/a)",
         "cited": true
       },
       {
-        "claim": "The trailing revenue trajectory has rolled over: LTM revenue of $1,392M is below FY25's $1,451M and consensus models a further -8% FY26 and -1% FY27 — the top line is contracting, not merely optically compressed.",
-        "source_ref": "CIQ Financials→Income Statement + Segments + Ratios (multi-year columns)",
-        "cited": true
-      },
-      {
-        "claim": "The demand deterioration is mechanism-grounded and worsening across brands: Q2 retail takeaway declined 6.4% YoY, OWYN consumption fell and will trigger lost distribution, and Atkins consumption declined 23.4% — a broad-based volume problem, not a single-line issue.",
+        "claim": "The mechanism is deteriorating in-market: Q2 net sales fell 9.4% and adjusted EBITDA -18.4%, with gross margin 31.6% (-460bps), driven by cocoa/whey/tariff inflation — a real operating miss, not a timing artifact.",
         "source_ref": "8-K 0001702744-26-000010 EX-99.1",
         "cited": true
       },
       {
-        "claim": "Guidance credibility is impaired: management reaffirmed the FY26 outlook in Q1 (Jan) then cut it materially one quarter later, and the delivery track-record shows the most-recent resolved period MISSED on revenue, gross margin and EBITDA.",
-        "source_ref": "CIQ Estimates→Guidance (latest guide + sign-aware delivery track-record)",
+        "claim": "Gross-margin erosion is structural in the trend: gross margin fell from 39% (FY24) to 33% LTM even as absolute revenue rose, so the % decline reflects genuine cost/mix pressure, not a base effect that flatters absolute EBITDA.",
+        "source_ref": "CIQ Financials→Income Statement (margin % + absolute EBITDA reconciler)",
         "cited": true
       },
       {
-        "claim": "A $249M non-cash impairment against OWYN and Atkins brand assets signals the company itself has written down the value of two of its three brands, consistent with a structural rather than transitory demand hit.",
+        "claim": "Guidance was cut and Q3 points lower still: FY26 net sales guided $1.31–$1.35B (down 10–7%) and Q3 adjusted EBITDA $46–$50M (down 38–32% YoY), so the near-term trajectory is a further step down.",
         "source_ref": "8-K 0001702744-26-000010 EX-99.1",
+        "cited": true
+      },
+      {
+        "claim": "Two of three brands are shrinking: Atkins consumption -23.4% on distribution losses and OWYN -2.4% with further lost distribution flagged — growth rests narrowly on Quest, whose bars are already softening.",
+        "source_ref": "8-K 0001702744-26-000010 EX-99.1",
+        "cited": true
+      },
+      {
+        "claim": "The dominant driver of the drawdown was idiosyncratic, not market: SMPL returned -33% over 180d while IWM was +17%, a -50% relative gap concentrated in two earnings gap-downs.",
+        "source_ref": "EOD SMPL−IWM 180d to 2026-07-06 (assembly, cap-band)",
+        "cited": true
+      },
+      {
+        "claim": "A $249M non-cash impairment on OWYN and Atkins brand assets drove a GAAP net loss, an admission that acquired brand value is being written down.",
+        "source_ref": "8-K 0001702744-26-000010 EX-99.1",
+        "cited": true
+      },
+      {
+        "claim": "On the company-adjusted EBITDA basis the leverage picture is far worse: net debt / adjusted LTM EBITDA (~$49.3M) implies ~6.6x, so the benign 1.5x GAAP figure may understate strain on the actual earnings run-rate.",
+        "source_ref": "CIQ leverage bases + release LTM adj-EBITDA/margins",
+        "cited": true
+      },
+      {
+        "claim": "Sell-side conviction has broken: recommendation cut to Hold (3.00), target price median $14.00, and a CEO change mid-stream underscores the executional reset.",
+        "source_ref": "CIQ Estimates→Consensus",
         "cited": true
       }
     ],
     "twin_reference_cases": [
       {
-        "name": "The Kraft Heinz Company",
-        "outcome": "went terminal",
-        "distinguishing_fact": "In-roster packaged-food name that took large brand-asset impairments as legacy labels lost relevance and the multiple stayed structurally low — the value-trap template where a brand writedown precedes, not follows, de-rating.",
-        "source": "CIQ Comparable Analysis→Financial Data + Business Description (roster + caps + business)"
-      },
-      {
         "name": "BellRing Brands",
         "outcome": "recovered",
-        "distinguishing_fact": "In-roster protein-nutrition peer riding the same high-protein snacking tailwind; a comparison of whether SMPL's category-growth engine (Quest) resembles BellRing's durable demand or is being lost to competitive entrants.",
+        "distinguishing_fact": "Same nutritional-snacking/protein category and a peer here; a single dominant growth brand carrying the portfolio while legacy lines fade — the pattern SMPL is betting Quest replicates.",
         "source": "CIQ Comparable Analysis→Financial Data + Business Description (roster + caps + business)"
       },
       {
         "name": "The Hain Celestial Group",
         "outcome": "went terminal",
-        "distinguishing_fact": "In-roster better-for-you food name where distribution losses and volume declines compounded into a persistent low-multiple stall despite a 'healthy' positioning — the pattern SMPL's Atkins distribution losses risk echoing.",
+        "distinguishing_fact": "A better-for-you branded packaged-food roll-up whose acquired-brand portfolio de-rated on volume declines and impairment — the value-trap analogue where a cheap multiple kept getting cheaper.",
         "source": "CIQ Comparable Analysis→Financial Data + Business Description (roster + caps + business)"
       },
       {
-        "name": "Medifast",
+        "name": "The Kraft Heinz Company",
         "outcome": "went terminal",
-        "distinguishing_fact": "Weight-management consumer brand whose demand base eroded as GLP-1 adoption reshaped the category, showing how a diet-oriented franchise can face a structural (not cyclical) headwind — relevant to the Atkins leg.",
-        "source": "[LLM-suggested, unverified]"
+        "distinguishing_fact": "Acquired-brand impairment against declining core volumes; the write-down-plus-shrinking-legacy-brand pattern mirrors SMPL's Atkins/OWYN impairment.",
+        "source": "CIQ Comparable Analysis→Financial Data + Business Description (roster + caps + business)"
       },
       {
-        "name": "e.l.f. Beauty",
+        "name": "Freshpet",
         "outcome": "recovered",
-        "distinguishing_fact": "Consumer name that gapped down on a single guidance cut/deceleration scare yet had intact share and household-penetration gains, later re-rating — the overshoot template if SMPL's Quest momentum proves the durable driver.",
+        "distinguishing_fact": "A trend-right consumer category leader that traded through a margin/inflation reset while volume growth persisted — the overshoot analogue if SMPL's category tailwind holds.",
         "source": "[LLM-suggested, unverified]"
       }
     ],
     "decisive_question": {
-      "question": "Is the demand deterioration a transitory, executional stumble in a still-growing category (overshoot) or a structural loss of relevance across the brand portfolio (value trap)?",
+      "question": "Is the earnings reset a temporary inflation/execution trough that Quest's category momentum and cost-out will reverse, or a structural erosion of an acquired-brand portfolio (Atkins/OWYN) whose distribution and margin losses are permanent?",
       "evidence_for": [
         {
-          "claim": "The category itself grew 10% and Quest — the largest, highest-margin brand — posted 12% consumption growth with rising household penetration, suggesting the growth engine is intact and the problem is executional/mix.",
+          "claim": "Quest — the largest, highest-margin brand — posted 12% consumption growth, ~10% net-sales growth and household penetration near 20% (+200bps YoY), a durable growth engine.",
           "source_ref": "CIQ transcript: The Simply Good Foods Company, Q1 2026 Earnings Call, Jan 08, 2026.rtf",
           "cited": true
         },
         {
-          "claim": "New CEO Scalzo frames results as fixable executional/strategy missteps and launched a ~$15M fixed-cost reduction to reshape the P&L, with Q4 gross-margin expansion expected — a self-help path consistent with recovery.",
-          "source_ref": "8-K 0001702744-26-000010 EX-99.1",
+          "claim": "Cocoa input coverage was locked in at sequentially more favorable levels flowing into P&L late Q4 and fiscal 2027, and management guides Q4 gross-margin expansion — a mechanism for margin recovery.",
+          "source_ref": "CIQ transcript: The Simply Good Foods Company, Q1 2026 Earnings Call, Jan 08, 2026.rtf",
           "cited": true
         }
       ],
       "evidence_against": [
         {
-          "claim": "The deterioration is broad-based: Q2 takeaway -6.4%, Quest consumption decelerated to 2.4%, OWYN fell and faces lost distribution, and Atkins declined 23.4% — weakness across all three brands, not one.",
+          "claim": "The impairment wrote down OWYN and Atkins brand assets by $249M, and both brands are losing distribution — evidence the portfolio erosion may be structural, not cyclical.",
           "source_ref": "8-K 0001702744-26-000010 EX-99.1",
           "cited": true
         },
         {
-          "claim": "The company wrote off $249M of OWYN and Atkins brand assets, an internal admission that value in two of three brands has structurally impaired.",
+          "claim": "Q3 adjusted-EBITDA guide of $46–$50M (down 38–32% YoY) shows the trough is deepening, not turning, at the horizon.",
           "source_ref": "8-K 0001702744-26-000010 EX-99.1",
           "cited": true
         }
       ]
     },
     "key_unknowns": [
-      "Covenant terms are UNKNOWN (extraction failed; no CIK-scoped agreement exhibit located) — an opaque disclosure gap that matters given the QoQ debt increase and cannot be treated as benign.",
-      "No forward/adjusted EV-EBITDA or adjusted-EPS figure in the revised 99.1 guidance, and the trailing EV/EBITDA (5.6x, 0th percentile of its own 8.5y range) is flagged trailing-only — cannot distinguish cheap-overshoot from cheap-terminal.",
-      "Segment EBITDA is not disclosed (single reported segment, no EBITDA breakout) — obscures which brand is carrying/eroding profitability, a bearish visibility gap.",
-      "The two CIQ sources DISAGREE on cash ($124M BS vs $107M bridge) and debt ($448M BS vs $450M bridge) — the human must verify which basis the valuation should use.",
-      "As-of dating is a floor (≥2026-06-03, export date unverified), so revision/consensus breadth may be staler than the true export.",
-      "No graph cohort exposed for SMPL — no cross-sectional peer-return comparison beyond the name-vs-IWM relative.",
-      "Durability of the pricing actions and cocoa/whey input-cost trajectory into FY27 — whether the promised Q4 margin expansion and locked-in cocoa coverage actually flow through."
+      "Covenant terms are UNKNOWN (extraction failed) and covenant-basis leverage is undisclosed — with company-adjusted EBITDA (~$49.3M) implying ~6.6x, the true covenant headroom cannot be assessed (opacity = risk).",
+      "No forward adjusted EV/EBITDA or adjusted EPS in the revised guidance, so the trailing-6x-vs-forward-6.81x cheap-overshoot-vs-cheap-terminal question cannot be closed from the data.",
+      "Segment EBITDA is not disclosed (single reported segment), so the profitability of Quest vs the shrinking Atkins/OWYN brands cannot be isolated — the whole bull case rests on unverifiable brand-level economics.",
+      "The two CIQ sources disagree on cash ($124M BS vs $107M bridge) and debt ($448M BS vs $450M bridge) — the human must pick the basis before trusting the equity bridge.",
+      "The peer set is HETEROGENEOUS (market caps $54M–$27.2B, 507x span); every peer multiple/median is a confidence-gated input, not a clean benchmark for a $1.1B name.",
+      "Whether the new CEO's ~$15M fixed-cost-reduction initiative delivers the promised P&L reshaping is unproven — a management-transition execution risk."
     ]
   },
   "caveats": [
     "primary-source: 5 EX-99.1 release(s) + 1 10-Q parsed (+0.5s fetch)",
-    "Net debt/EBITDA (1.5x) is on REPORTED EBITDA (CIQ / consolidated GAAP), not the covenant basis; management and credit covenants typically define leverage on adjusted EBITDA (a larger denominator → a lower ratio), reconciled in the earnings release/transcript (currently UNAVAILABLE) — do not read 1.5x as the covenant-basis leverage."
+    "Net debt/EBITDA (1.5x) is on REPORTED EBITDA (CIQ / consolidated GAAP), not the covenant basis; management and credit covenants typically define leverage on adjusted EBITDA (a larger denominator → a lower ratio), reconciled in the earnings release/transcript (currently UNAVAILABLE) — do not read 1.5x as the covenant-basis leverage.",
+    "Unreconciled margin-compression (a bear point): 'Gross-margin erosion is structural in the trend: gross margin fell from 39% (FY24) to 33% LTM even as absolute revenue rose, so the % decline reflects genuine cost/mix pressure, not a base effect that flatters absolute EBITDA.' — cites margin compression without the absolute-EBITDA reconciliation (margin % can fall while EBITDA rises)"
   ],
   "qa_flags": [
     "operating-drivers: no anchored pattern matched — EX-99.1 pricing/KPI",
+    "operating-drivers: Tier-B rows capped at 12 — Quest Salty average items per store dropped",
     "operating-drivers: Tier-B rows capped at 12 — Quest Bars consumption dropped",
-    "operating-drivers: Tier-B rows capped at 12 — 45-gram Protein Milkshake ACV gain dropped",
-    "operating-drivers: Tier-B rows capped at 12 — Quest positioned as innovation leader / distribution runway dropped",
+    "operating-drivers: Tier-B rows capped at 12 — 45-gram Protein Milkshake ACV dropped",
     "operating-drivers: Tier-B rows capped at 12 — Atkins consumption decline dropped",
-    "operating-drivers: Tier-B rows capped at 12 — Atkins lost distribution share of headwind dropped",
-    "operating-drivers: Tier-B rows capped at 12 — Atkins 4-pack meal bar opening price point dropped",
-    "operating-drivers: Tier-B rows capped at 12 — Atkins unit velocities and new buyers dropped",
+    "operating-drivers: Tier-B rows capped at 12 — Atkins distribution loss share of headwind dropped",
+    "operating-drivers: Tier-B rows capped at 12 — Atkins 4-pack/meal bars unit velocities dropped",
+    "operating-drivers: Tier-B rows capped at 12 — Atkins new buyers percentage increase dropped",
     "operating-drivers: Tier-B rows capped at 12 — OWYN consumption growth dropped",
     "operating-drivers: Tier-B rows capped at 12 — OWYN household penetration dropped",
-    "operating-drivers: Tier-B rows capped at 12 — OWYN recent pricing actions dropped",
+    "operating-drivers: Tier-B rows capped at 12 — OWYN pricing actions dropped",
+    "operating-drivers: Tier-B rows capped at 12 — OWYN marketing as a percentage of sales dropped",
     "operating-drivers: Tier-B rows capped at 12 — OWYN brand awareness dropped",
-    "operating-drivers: Tier-B rows capped at 12 — total retail takeaway decline dropped",
+    "operating-drivers: Tier-B rows capped at 12 — total retail takeaway dropped",
     "operating-drivers: Tier-B rows capped at 12 — Quest consumption growth dropped",
     "operating-drivers: Tier-B rows capped at 12 — Quest Salty consumption growth dropped",
     "operating-drivers: Tier-B rows capped at 12 — OWYN consumption dropped",
     "operating-drivers: Tier-B rows capped at 12 — Atkins consumption decline dropped",
-    "operating-drivers: Tier-B rows capped at 12 — input cost inflation on gross profit dropped",
-    "operating-drivers: Tier-B rows capped at 12 — category structure / private label dropped",
-    "DIRECTIONAL language 'conviction' — human review (dossier frames, not concludes)"
+    "operating-drivers: Tier-B rows capped at 12 — shares repurchased dropped",
+    "operating-drivers: Tier-B rows capped at 12 — private label presence in category dropped",
+    "DIRECTIONAL language 'conviction' — human review (dossier frames, not concludes)",
+    "DIRECTIONAL language 'recommendation' — human review (dossier frames, not concludes)"
   ],
   "llm_model": "claude-opus-4-8",
-  "assembled_at": "2026-07-23T06:25:53.861950Z",
+  "assembled_at": "2026-07-23T12:21:04.832191Z",
   "sector": "Consumer Staples",
   "industry": {
     "value": "Packaged Foods and Meats",
@@ -5964,7 +6909,7 @@
     "recipe_hint": "R1_midcycle_margin_evebitda",
     "applicable": true,
     "multiple_basis": "EV/EBITDA",
-    "computed_at": "2026-07-23T06:25:53.457387Z",
+    "computed_at": "2026-07-23T12:21:04.426018Z",
     "reason": null,
     "data_quality": null,
     "data_quality_detail": [],

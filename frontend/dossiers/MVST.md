@@ -94,7 +94,10 @@ _3 to verify._
 ## Mechanical layer
 
 ### What broke — and did it fall alone?
-- **Read — what broke:** discrete gap-downs — 2026-03-17 earnings; 2026-05-12 earnings; 2026-05-18 no 8-K matched [5]
+- **Read — what broke** · discrete gap-downs: [5]
+  - 2026-03-17 → earnings
+  - 2026-05-12 → earnings
+  - 2026-05-18 → no 8-K matched
 
 _Company-specific or market-wide?_
 - **Name 180d return:** -62.9% [6]
@@ -102,7 +105,7 @@ _Company-specific or market-wide?_
 _no supplier/customer cohort mapped for this name — the comparison is vs the market only_
 - **Gap-downs — what the results showed (parsed EX-99.1) + the 8-K:**
   - gap-down 2026-03-17 → filed 2026-03-16 [`0001628280-26-018235`](https://www.sec.gov/Archives/edgar/data/1760689/000162828026018235/mvst-20260316.htm)
-    - items: 2.02 Results of Operations and Financial Condition, 9.01 Financial Statements and Exhibits
+    - items: 2.02 Results of Operations and Financial Condition
     - **what the results showed:** adj EBITDA 2025 $44.7M (vs -$44.8M 2024); adj net income 2025 $13.0M (vs -$84.6M 2024); adj EPS 2025 -$0.11 (vs -$0.27 2024); $32.5M inventory impairment charge related to; 2026 revenue outlook: qualitative [20]
   - gap-down 2026-05-12 → filed 2026-05-11 [`0001628280-26-033601`](https://www.sec.gov/Archives/edgar/data/1760689/000162828026033601/mvst-20260511.htm)
     - items: 2.02 Results of Operations and Financial Condition

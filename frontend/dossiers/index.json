@@ -70,16 +70,16 @@
     }
   },
   "reads": {
-    "AORT": "mixed \u2014 a recall and \u221278% EPS-revision hit a franchise still growing double-digit with rising absolute EBITDA and forward-multiple compression.",
-    "BRBR": "strongly-bearish \u2014 consensus EBITDA cut ~41% on a structural margin/competitive reset that management's own guidance assumes persists.",
-    "CNXC": "mixed \u2014 cash-generative and near-historic-low multiple, but high above-peer leverage, collapsed GAAP earnings, and volume erosion in key verticals cut both ways.",
-    "EPAM": "mixed \u2014 a still-growing, net-cash, AI-scaling business sits against a ~72pp idiosyncratic de-rate, margin compression and falling second-half visibility.",
-    "FUBO": "mixed \u2014 a contractually-supported merger EBITDA ramp and deep revenue-multiple discount sit against heavy cash burn, shrinking subs and a -34% consensus cut.",
-    "IT": "mixed \u2014 a franchise-quality subscription model (high ROIC, rising absolute EBITDA, growing CV) de-rated on genuine growth-stall and demand-headwind evidence.",
+    "AORT": "mixed \u2014 a real guidance-down, recall and EPS collapse offset a still-accelerating growth engine and near-floor trailing multiple.",
+    "BRBR": "mixed \u2014 a real category-wide earnings reset (EBITDA/EPS cut ~40-50%) collides with intact volume growth, share leadership and self-funding cash flow.",
+    "CNXC": "mixed \u2014 trough multiple and FCF-positive base against loss-making GAAP earnings, heavy leverage, and a sharply cut forward path.",
+    "EPAM": "mixed \u2014 growing absolute EBITDA and AI-native momentum against multi-year margin erosion and deteriorating second-half visibility, neither clearly dominant.",
+    "FUBO": "mixed \u2014 genuine scale/EBITDA-inflection and constructive targets sit directly against ongoing cash burn, sub decline and a sharp consensus cut.",
+    "IT": "mixed \u2014 an intact high-ROIC cash franchise and CV acceleration collide with still-falling forward estimates and negative revenue-revision breadth.",
     "MVST": "strongly-bearish \u2014 stated going-concern doubt with a near-term maturity wall against thin cash while adjusted EBITDA has turned negative and revenue is contracting.",
-    "NCNO": "mixed-to-bullish \u2014 forward multiples undercut peers with superior margins and rising EBITDA estimates, but decelerating growth leaves the discount arguably part-earned.",
-    "SMPL": "mixed \u2014 self-funding balance sheet and intact category/Quest growth offset a genuine, broad-based multi-brand demand deterioration and $249M brand impairment.",
-    "VITL": "mixed \u2014 a fixable self-inflicted price-gap/margin reset on an unlevered balance sheet, but forward EBITDA cut ~97% with cash burning and recovery deferred to 2027.",
-    "VRRM": "mixed \u2014 a real >10%-customer loss and falling forward estimates offset a self-funding, growing-Government core trading at a post-shock ~4x."
+    "NCNO": "mixed \u2014 a genuine, confirmed EBITDA/FCF profitability turn and forward-multiple compression offset by decelerating ~10% growth and unresolved monetization.",
+    "SMPL": "mixed \u2014 durable balance sheet and FCF offset by a deep, guidance-confirmed earnings reset and impaired, shrinking acquired brands.",
+    "VITL": "mixed \u2014 a genuine balance-sheet/share-gain franchise against a management-confirmed ~97% forward-EBITDA collapse and lost pricing power.",
+    "VRRM": "mixed \u2014 a real Avis-driven earnings step-down and guidance cut offset by a profitable, self-funding, growing-government base still intact."
   }
 }
