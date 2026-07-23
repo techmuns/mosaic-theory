@@ -1508,7 +1508,9 @@ function drawdownChart(sp, rows, det) {
 // it. A repeat filing reads "same 8-K as №" instead of restating the cause.
 function readWhatBroke(s, sp, dc, refDate) {
   const rows = gapList(fmtShape(s.value));
-  if (!rows || rows.length < 2) return factRead("Read — what broke", s, (v) => escapeHtml(fmtShape(v)));
+  // ANY discrete-gap name gets the chart+ledger (a 1-gap name still needs "did it fall alone" and
+  // its true 1-day %); only a gradual-bleed / unparseable shape stays the one-liner.
+  if (!rows) return factRead("Read — what broke", s, (v) => escapeHtml(fmtShape(v)));
   const det = { threshold: dc && dc.gap_threshold, windowDays: dc && dc.gap_window_days, refDate };
   const { svg, preDrops } = drawdownChart(sp, rows, det);
   // accession per gap-date (explanatory filings only) → "same 8-K as №" cross-refs

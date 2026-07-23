@@ -2341,7 +2341,7 @@ def render_markdown(d: Dossier, *, dev: bool = False, show_proposal: bool = Fals
     _shape = m.drawdown_cause.shape
     _rows = (_gap_list(_fmt_shape(_shape.value))
              if _shape.status is SourceStatus.PRESENT and _shape.value is not None else None)
-    if _rows is not None and len(_rows) >= 2:
+    if _rows is not None:  # ANY discrete-gap name — a 1-gap ledger still carries the true %
         out.append(f"- **Read — what broke** · discrete gap-downs:{_cite(_shape.source_ref)}")
         for _gd, _cause in _rows:
             _gpct = _gap_pct_from_perf(m.stock_performance, _gd)

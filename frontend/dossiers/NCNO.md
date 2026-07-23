@@ -92,7 +92,8 @@ _3 to verify._
 ## Mechanical layer
 
 ### What broke — and did it fall alone?
-- **Read — what broke:** discrete gap-downs — 2026-02-03 no company filing [4]
+- **Read — what broke** · discrete gap-downs: [4]
+  - 2026-02-03 → no company filing
 
 _Company-specific or market-wide?_
 - **Name 180d return:** _UNKNOWN_ — name has no bars over the window

@@ -93,7 +93,8 @@ _3 to verify._
 ## Mechanical layer
 
 ### What broke — and did it fall alone?
-- **Read — what broke:** discrete gap-downs — 2026-05-08 material agreement + earnings [4]
+- **Read — what broke** · discrete gap-downs: [4]
+  - 2026-05-08 **-28.3%** → material agreement + earnings
 
 _Company-specific or market-wide?_
 - **Name 180d return:** -45.3% [5]

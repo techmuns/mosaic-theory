@@ -83,7 +83,8 @@ _table shows the last 4 fiscal years · 5 earlier years are in the Appendix_
 ## Mechanical layer
 
 ### What broke — and did it fall alone?
-- **Read — what broke:** discrete gap-downs — 2026-02-03 earnings + Reg-FD [4]
+- **Read — what broke** · discrete gap-downs: [4]
+  - 2026-02-03 **-20.9%** → earnings + Reg-FD
 
 _Company-specific or market-wide?_
 - **Name 180d return:** -45.0% [5]
