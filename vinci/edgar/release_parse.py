@@ -180,7 +180,13 @@ def _release_period(text: str) -> str:
     """The release's PRIMARY fiscal period from its header — so a reconciliation ACTUAL is not
     mislabeled with the 'compared to … in {prior year}' comparison year that trails in-sentence."""
     head = text[:400]
-    q = re.search(r"(first|second|third|fourth)\s+quarter\s+(?:of\s+)?(20\d\d)", head, re.I)
+    # "Second Quarter of Fiscal Year 2026" / "of 2026" / "of fiscal 2026" — the FY phrasing between
+    # 'quarter' and the year must not push this to the bare-year fallback (BellRing mislabelled its
+    # quarterly figures with the year).
+    q = re.search(
+        r"(first|second|third|fourth)\s+quarter\s+"
+        r"(?:of\s+)?(?:the\s+)?(?:fiscal\s+year\s+|fiscal\s+|fy\s*)?(20\d\d)",
+        head, re.I)
     if q:
         qn = ["first", "second", "third", "fourth"].index(q.group(1).lower()) + 1
         return f"Q{qn} {q.group(2)}"
@@ -395,13 +401,19 @@ _ONEOFF = re.compile(
 
 def _one_offs(text: str, src: str) -> list[OneOffItem]:
     by_key: dict[str, OneOffItem] = {}
+    # key → normalized FULL raw desc, for the identical-item (same-scope-two-figures) collapse
+    raw_by_key: dict[str, str] = {}
     for m in _ONEOFF.finditer(text):
         amt = _money(m.group(1))
         if amt is None:
             continue
-        desc = " ".join(m.group(2).split())
-        # trim the description at the next clause boundary
-        desc = re.split(r"(?:,\s+which|\.\s|;\s)", desc)[0][:200].strip()
+        raw_desc = " ".join(m.group(2).split())
+        # trim at the next clause boundary AND at the first comma — a one-off's name rarely spans a
+        # comma, so the comma introduces a SECOND, different item ("restructuring costs, integration
+        # expenses of" → "restructuring costs", not a fragment dangling at "of").
+        desc = re.split(r"(?:,\s|\.\s|;\s|\s+which\b)", raw_desc)[0][:200].strip()
+        # belt-and-braces: never end on a bare preposition/conjunction
+        desc = re.sub(r"\s+(?:of|in|for|to|by|and|the|a|an)$", "", desc, flags=re.I).strip()
         # PRIOR-PERIOD COMPARATIVES are not this period's one-off. A release states the current
         # charge and then restates last year's beside it ("and for the prior year period
         # integration expenses of $0.2 million"); listing both as drivers of THIS gap-down would
@@ -428,21 +440,30 @@ def _one_offs(text: str, src: str) -> list[OneOffItem]:
         # ($11.0M / $11.3M); a materially different amount is a different item.
         phrase = re.sub(r"[^a-z ]", "", desc.lower())[:24].strip()
         # default key CARRIES THE AMOUNT, so two different charges under the same phrase stay two
-        # rows; the loop below re-uses an existing key only when the amounts are near-equal (one
-        # item restated at a different rounding).
+        # rows; the loop below re-uses an existing key when the amounts are near-equal (one item
+        # restated at a different rounding, $11.0M/$11.3M) OR when the FULL raw descriptions are
+        # byte-identical (the SAME item quoted at two reconciliation scopes — SMPL's OWYN
+        # integration expense at $3.9M for the quarter and $6.5M year-to-date, both worded
+        # identically). A DIFFERENT qualifier ($12M European vs $30M Asia restructuring) keeps two.
+        raw_norm = re.sub(r"[^a-z ]", "", raw_desc.lower())[:60].strip()
         key = f"{phrase}|{amt}"
         for k, seen_item in by_key.items():
-            if k.startswith(phrase[:16]) and _near(amt, seen_item.amount):
+            same_rounding = k.startswith(phrase[:16]) and _near(amt, seen_item.amount)
+            same_item = raw_by_key.get(k) == raw_norm
+            if same_rounding or same_item:
                 key = k
                 break
         prev = by_key.get(key)
-        better = prev is None or amt > prev.amount or (
-            amt == prev.amount and len(desc) > len(prev.description))
-        if better:
+        # keep the FIRST occurrence for an identical-item collapse (the quarter is quoted first);
+        # for a rounding tie, keep the more precise (larger / longer) mention.
+        identical_item = raw_by_key.get(key) == raw_norm
+        if prev is None or (not identical_item and (amt > prev.amount
+                            or (amt == prev.amount and len(desc) > len(prev.description)))):
             by_key[key] = OneOffItem(
                 amount=amt, description=desc,
                 verbatim=_verbatim(text, m.start(), m.end()), source_ref=src,
             )
+            raw_by_key[key] = raw_norm
     return list(by_key.values())
 
 

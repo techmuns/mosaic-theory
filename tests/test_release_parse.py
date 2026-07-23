@@ -457,3 +457,40 @@ def test_growth_rate_guidance_is_a_real_range_not_a_qualitative_marker() -> None
         "2026 Outlook. The Company expects continued revenue growth in the coming year.",
         source_ref=_SRC).guidance
     assert all(x.qualitative for x in q) and all(x.low is None for x in q)
+
+
+def test_release_period_handles_fiscal_year_phrasing() -> None:
+    """BellRing dates its release 'Second Quarter of Fiscal Year 2026'; the FY words between
+    'quarter' and the year must not push _release_period to the bare-year fallback (which
+    mislabelled the quarterly figures as '2026')."""
+    assert rp._release_period("Reports Results for the Second Quarter of Fiscal Year 2026.") \
+        == "Q2 2026"
+    assert rp._release_period("Reports Fourth Quarter of 2025 Results.") == "Q4 2025"
+    assert rp._release_period("Reports First Quarter Fiscal 2027 Results.") == "Q1 2027"
+    # a pure full-year release still reads the year
+    assert rp._release_period("Reports Full Year 2025 Financial Results.") == "2025"
+
+
+def test_one_off_collapses_the_same_item_at_two_scopes_but_keeps_distinct_qualifiers() -> None:
+    """Three behaviours that must hold together:
+
+    - SAME item, two scopes (SMPL's OWYN integration expense, $3.9M for the quarter and $6.5M YTD,
+      both worded identically) → ONE row, the first (quarter);
+    - DIFFERENT qualifier ($12M European vs $30M Asia restructuring) → two rows;
+    - the description never dangles at a second item ('restructuring costs, integration expenses
+      of' → 'restructuring costs')."""
+    owyn = (
+        "Excluding $3.9 million of one-time OWYN integration expenses in the current year period, "
+        "gross margin was 32.8%. Excluding $6.5 million of one-time OWYN integration expenses in "
+        "the current year period, gross margin was 32.9%.")
+    got = rp.parse_release(owyn, source_ref=_SRC).one_offs
+    assert [o.amount for o in got] == [3.9], f"same item two scopes → one row: {got}"
+
+    distinct = ("$12.0 million of restructuring charges related to the European footprint, and "
+                "$30.0 million of restructuring charges related to the Asia exit.")
+    assert sorted(o.amount for o in rp.parse_release(distinct, source_ref=_SRC).one_offs) \
+        == [12.0, 30.0]
+
+    dangling = "Excluding for the current period $4.5 million in restructuring costs, integration."
+    off = rp.parse_release(dangling, source_ref=_SRC).one_offs
+    assert [o.description for o in off] == ["restructuring costs"], off

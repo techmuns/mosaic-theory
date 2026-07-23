@@ -7929,3 +7929,53 @@ def test_assembly_writes_no_synthesis_less_dossier_over_a_good_one_undetected() 
     asm = Path("vinci/dossier/assemble.py").read_text()
     assert "LLM synthesis skipped (no ANTHROPIC client) — mechanical layer only" in asm, (
         "a skipped synthesis must be disclosed on the dossier, not inferred from a console line")
+
+
+def test_one_8k_explaining_two_gap_downs_renders_once_e2e() -> None:
+    """(SMPL/CNXC) Two consecutive gap-downs can share ONE 8-K; the flat loop rendered the whole
+    block per gap-date, and the md even printed 'gap 2026-04-10 → 2026-04-09' which read like a
+    date error. Both renderers now group by accession: one entry per filing, naming every
+    gap-down it explains. Pinned on SMPL's committed artifact (its 04-09/04-10 share one 8-K)."""
+    import json as _json
+    import shutil
+    import subprocess
+
+    p = Path("data/dossiers/SMPL/dossier.json")
+    if not p.exists():
+        pytest.skip("no committed SMPL dossier.json")
+    d = _json.loads(p.read_text())
+    filings = (d["mechanical"].get("drawdown_cause") or {}).get("filings") or []
+    accs = [f.get("accession") for f in filings]
+    if len(accs) == len(set(accs)):
+        pytest.skip("SMPL no longer has a shared-accession gap pair")
+    dup_acc = next(a for a in accs if accs.count(a) > 1)
+
+    # md: one grouped entry, both dates named, no reversed 'gap X → Y' arrow
+    md = Path("data/dossiers/SMPL/dossier.md").read_text()
+    blk = md.split("Gap-downs — what the results showed")[1].split("###")[0]
+    assert blk.count(f"`{dup_acc}`") == 1, "the shared 8-K must appear once in the md"
+    assert "2026-04-09 and 2026-04-10" in blk
+
+    # web: one .filing card for the shared accession
+    if not shutil.which("node"):
+        return
+    dj = Path("frontend/views/shared/dossier.js").resolve().as_uri()
+    driver = f"""
+const handler = {{ get: () => stub, apply: () => stub, construct: () => ({{}}) }};
+const stub = new Proxy(function(){{}}, handler);
+for (const g of ["window","document","location"]) {{ try {{ globalThis[g] = stub; }} catch {{}} }}
+import {{ readFileSync }} from "node:fs";
+const {{ renderDossier }} = await import("{dj}");
+const h = renderDossier(JSON.parse(readFileSync("data/dossiers/SMPL/dossier.json")), null,
+  JSON.parse(readFileSync("frontend/scenarios/SMPL.json")));
+const wb = h.split(">What broke")[1].split('class="card ds-section"')[0];
+console.log(JSON.stringify({{
+  cards: (wb.match(/class="filing"/g) || []).length,
+  bothGaps: wb.includes("2026-04-09 and 2026-04-10 gap-downs"),
+}}));
+"""
+    out = subprocess.run(["node", "--input-type=module", "-e", driver],
+                         capture_output=True, text=True, check=True)
+    r = _json.loads(out.stdout)
+    assert r["cards"] == 1, f"the shared 8-K must render ONE filing card, got {r['cards']}"
+    assert r["bothGaps"], "the single card must name both gap-downs it explains"

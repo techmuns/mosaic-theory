@@ -2068,15 +2068,29 @@ function peerComps(pc) {
 
 function drawdownCause(dc) {
   if (!dc) return { read: "", evidence: "" };
-  const filings = (dc.filings || []).map((f) => `
+  // GROUP BY ACCESSION: two consecutive gap-downs can share ONE 8-K (SMPL 04-09/04-10, CNXC
+  // 02-11/02-12), and rendering the identical block per gap-date read as a duplicate. One card per
+  // filing, naming every gap-down it explains.
+  const byAcc = new Map();
+  for (const f of (dc.filings || [])) {
+    const k = f.accession || `${f.form}|${f.filing_date}`;
+    if (!byAcc.has(k)) byAcc.set(k, { f, gaps: [] });
+    if (f.gap_date) byAcc.get(k).gaps.push(f.gap_date);
+  }
+  const filings = [...byAcc.values()].map(({ f, gaps }) => {
+    const forWhich = gaps.length
+      ? `(for the ${gaps.map(escapeHtml).join(" and ")} gap-down${gaps.length > 1 ? "s" : ""})`
+      : "";
+    return `
     <div class="filing">
-      <div class="fh">${escapeHtml(f.form || "8-K")} · filed ${fmtDate(f.filing_date)} <span class="muted">(for the ${escapeHtml(f.gap_date || "")} gap-down)</span></div>
+      <div class="fh">${escapeHtml(f.form || "8-K")} · filed ${fmtDate(f.filing_date)} <span class="muted">${forWhich}</span></div>
       <div class="muted" style="font-size:11.5px; margin-top:2px;">items: ${escapeHtml((f.item_types || f.items || []).join(" · "))}</div>
       ${(f.drivers && f.drivers.status === "present")
         ? `<div class="fe"><b>what the results showed:</b> ${escapeHtml(f.drivers.value)}${citeMark(f.drivers.source_ref)}</div>`
         : (f.events || []).map((e) => `<div class="fe">${escapeHtml(e)}</div>`).join("")}
       ${f.url ? `<div style="margin-top:5px;"><a href="${encodeURI(f.url)}" target="_blank" rel="noopener">EDGAR ${escapeHtml(f.accession || "")}</a></div>` : ""}
-    </div>`).join("");
+    </div>`;
+  }).join("");
   // (declutter) the dates row repeats the shape line whenever every date already appears there
   const gd = dc.gap_down_dates || {};
   const shapeV = dc.shape || {};

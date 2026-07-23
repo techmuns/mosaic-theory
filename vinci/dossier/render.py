@@ -2201,8 +2201,19 @@ def render_markdown(d: Dossier, *, dev: bool = False, show_proposal: bool = Fals
                    "the market only_")
     if m.drawdown_cause.filings:
         out.append("- **Gap-downs — what the results showed (parsed EX-99.1) + the 8-K:**")
+        # GROUP BY ACCESSION (twin of the web): one 8-K can explain two consecutive gap-downs
+        # (SMPL 04-09/04-10, CNXC 02-11/02-12); the flat loop printed the same block per gap-date,
+        # once even as "gap 2026-04-10 → 2026-04-09" which read like a date error. One entry per
+        # filing, naming every gap-down it explains.
+        grouped: dict[str, tuple[Any, list[str]]] = {}
         for f in m.drawdown_cause.filings:
-            out.append(f"  - gap {f.gap_date} → {f.filing_date} [`{f.accession}`]({f.url})")
+            k = f.accession or f"{f.form}|{f.filing_date}"
+            grouped.setdefault(k, (f, []))[1].append(f.gap_date)
+        for f, gaps in grouped.values():
+            gap_str = " and ".join(gaps)
+            plural = "s" if len(gaps) > 1 else ""
+            out.append(f"  - gap-down{plural} {gap_str} → filed {f.filing_date} "
+                       f"[`{f.accession}`]({f.url})")
             out.append(f"    - items: {', '.join(f.item_types) or '—'}")
             # (B1) parsed release drivers ARE the informative cause — they supersede the item-code
             # boilerplate; non-earnings 8-Ks (no match) still show their source-bound events.
