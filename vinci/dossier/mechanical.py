@@ -773,14 +773,48 @@ def _pe_reconciliation(
     return flag, note
 
 
-def _eps_caveat_flags(record: DataRecord, bundle: CiqBundle, *, eps_resolved: bool) -> list[str]:
+def _ltm_gaap_eps(fs: FinancialSummary | None) -> float | None:
+    """The LTM GAAP DILUTED EPS as a STRUCTURED value from the financial-summary annual table —
+    the 'EPS (GAAP, dil.)' row's ``values`` at the 'LTM' column. None when the summary, the table,
+    the row, the LTM column, or the structured value is absent. Reads ``values`` (structured),
+    NEVER ``cells`` (display) — the parsers-consume-structured-values rule; a display '(2.08)'/'—'
+    is never parsed here."""
+    if fs is None:
+        return None
+    annual = fs.annual
+    if annual.status is not SourceStatus.PRESENT or annual.value is None:
+        return None
+    tbl = annual.value
+    # PREFIX-match the LTM header — it can carry a Reclassified '(R)' suffix ('LTM (R)', ciq_sheets
+    # tags every period column), exactly like the renderer's own LTM detection
+    # (render.py startswith('LTM')). Exact '== "LTM"' would return None on a reclassified twin and
+    # silently reintroduce the claim-#7 blind spot for it.
+    i = next((k for k, c in enumerate(tbl.columns) if str(c).upper().startswith("LTM")), None)
+    if i is None:
+        return None
+    for row in tbl.rows:
+        if row.label == "EPS (GAAP, dil.)" and len(row.values) > i:
+            return row.values[i]
+    return None
+
+
+def _eps_caveat_flags(
+    record: DataRecord, bundle: CiqBundle, *, eps_resolved: bool,
+    ltm_gaap_eps: float | None = None,
+) -> list[str]:
     """Flag (a) that earnings power (company-adjusted, non-GAAP EPS) is not shown — UNLESS it now is
     (``eps_resolved``: the 99.1 adjusted EPS surfaced it, so the caveat is a resolved fact, not a
     warning); (b) when the EDGAR P/E conflicts ~Nx with CIQ P/LTM EPS, that the EDGAR trailing
-    EPS is one-time-inflated and the synthesis must not anchor on it as 'cheap' (always kept); and
-    (c) when CIQ P/LTM EPS prints a finite multiple while NO GAAP trailing P/E exists (negative or
-    unavailable trailing GAAP EPS), that the two rest on different earnings definitions — the SMPL
-    blind spot: 16.0x printed beside an LTM GAAP EPS of −2.08 and a peers-row 'NM' with no flag."""
+    EPS is one-time-inflated and the synthesis must not anchor on it as 'cheap' — kept UNLESS the
+    LTM GAAP EPS is a known LOSS, where (d) owns it (an 'inflated' EPS framing is wrong when GAAP
+    trailing is negative, and stacking (b)+(d) is flag noise);
+    (d) when a displayed trailing P/E multiple (EDGAR and/or CIQ) rests on NORMALIZED earnings
+    while the LTM GAAP diluted EPS is a LOSS — SMPL showed EDGAR P/E 10.9x + CIQ P/LTM 16.0x beside
+    an LTM GAAP dil EPS of −2.08 (LTM net income −$199M, the $249M impairment inside the window)
+    with no basis label; (b) needs the two multiples ~2x apart, ``_pe_reconciliation`` checks the
+    ANNUAL EPS (FY25 +1.02, in line) — both are blind to the LTM sign, the signal that is actually
+    wrong; and (c) the ``ltm_gaap_eps``-UNAVAILABLE fallback of (d): CIQ prints a finite P/LTM
+    while EDGAR shows no trailing P/E and the GAAP LTM sign can't be read."""
     pe = record.fundamentals.pe
     ciq_pe = ciq_sheets.pe_ltm_current(bundle)
     if not pe.is_known and ciq_pe.status is not SourceStatus.PRESENT:
@@ -796,6 +830,7 @@ def _eps_caveat_flags(record: DataRecord, bundle: CiqBundle, *, eps_resolved: bo
     if (
         not eps_resolved and pe.is_known and pe.value
         and ciq_pe.status is SourceStatus.PRESENT and ciq_pe.value
+        and not (ltm_gaap_eps is not None and ltm_gaap_eps < 0)  # a GAAP LTM loss → (d) owns it
     ):
         ratio = max(pe.value, ciq_pe.value) / min(pe.value, ciq_pe.value)
         if ratio >= 2:
@@ -804,10 +839,28 @@ def _eps_caveat_flags(record: DataRecord, bundle: CiqBundle, *, eps_resolved: bo
                 f"({ciq_pe.value:.1f}x) — EDGAR trailing EPS is one-time-inflated; the "
                 f"synthesis must not anchor on {pe.value:.1f}x as 'cheap'."
             )
-    # (c) CIQ prints a finite trailing P/E while GAAP shows none — the existing conflict check
-    # above needs BOTH values present, so a negative-GAAP-EPS name (EDGAR P/E absent) slipped
-    # through with an unlabeled 16.0x beside 'NM'. Different earnings definitions — say so.
-    if not pe.is_known and ciq_pe.status is SourceStatus.PRESENT and ciq_pe.value:
+    # (d) The real basis mismatch, keyed on the LTM GAAP EPS SIGN (the signal (b)/(c)/_pe_recon
+    # miss). A displayed positive trailing P/E multiple — EDGAR and/or CIQ — while GAAP LTM diluted
+    # EPS is a LOSS: the multiple can only be on normalized/adjusted earnings, and unlabeled it
+    # reads as a GAAP trailing P/E. Names both multiples that are shown.
+    if ltm_gaap_eps is not None and ltm_gaap_eps < 0:
+        shown: list[str] = []
+        if pe.is_known and pe.value and pe.value > 0:
+            shown.append(f"EDGAR P/E {pe.value:.1f}x")
+        if ciq_pe.status is SourceStatus.PRESENT and ciq_pe.value and ciq_pe.value > 0:
+            shown.append(f"CIQ P/LTM EPS {ciq_pe.value:.1f}x")
+        if shown:
+            out.append(
+                f"{' and '.join(shown)} rest on normalized/adjusted earnings — LTM GAAP diluted "
+                f"EPS is NEGATIVE ({ltm_gaap_eps:.2f}); do not read "
+                f"{'them' if len(shown) > 1 else 'it'} as a GAAP trailing multiple."
+            )
+    # (c) FALLBACK, only when the LTM GAAP EPS sign is UNAVAILABLE: CIQ prints a finite trailing P/E
+    # while EDGAR shows none (an absent EDGAR P/E is itself the negative-GAAP tell). With the sign
+    # in hand (d) supersedes this, so gate on ltm_gaap_eps is None to avoid a double caveat.
+    elif ltm_gaap_eps is None and not pe.is_known and (
+        ciq_pe.status is SourceStatus.PRESENT and ciq_pe.value
+    ):
         out.append(
             f"CIQ P/LTM EPS prints {ciq_pe.value:.1f}x while no GAAP trailing P/E is shown "
             f"(trailing GAAP EPS negative or unavailable) — the CIQ multiple rests on a "
@@ -2246,7 +2299,9 @@ def assemble_mechanical(
                  f"(+{ps_latency:.1f}s fetch)")
     if pe_recon is not None:
         flags.append(pe_recon[0])
-    flags += _eps_caveat_flags(record, bundle, eps_resolved=adj_eps.status is SourceStatus.PRESENT)
+    flags += _eps_caveat_flags(
+        record, bundle, eps_resolved=adj_eps.status is SourceStatus.PRESENT,
+        ltm_gaap_eps=_ltm_gaap_eps(mech.financial_summary))
     # the reported-leverage caveat is an open warning only while the covenant basis isn't shown;
     # reads the RESOLVED ratio so the flag can't quote a different number than the field shows
     if adj_lev.status is not SourceStatus.PRESENT and (
