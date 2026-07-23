@@ -59,6 +59,7 @@
       "margin": 0.1,
       "multiple": 7.0,
       "reason": "Value-trap case: the GLP-1 and Atkins declines prove secular; revenue falls past consensus; margin at about the worst clean year (FY2020 9.58%); the multiple at the trough of its trading range (prior low 6.11x). [restated for external readability 2026-07-21; substance unchanged] [verified 2026-07-22 against sector bear-state evidence, at the latest completed session's close ($11.04, 2026-07-21): declining packaged-food comparables with clean income statements trade at 6.1–8.6 times cash earnings — the recorded 7.0x sits inside that range while the market prices this company below it (5.65x); and the recorded 10% margin equals the worst clean margin retention observed in the state (roughly two-thirds of normal, 64.5% vs the weakest survivor's 63%). No evidence-coherent cell falls below roughly 2.7 to 1 against the 2.0 bar at that close; the recorded grid reads 3.88 to 1. Fragility unchanged and exactly as recorded: the entry-boundary cells still read 2.12 clears / 1.88 fails.]",
+      "years_to_terminal": null,
       "bear_basis": "own-history",
       "margin_basis": "EBIT"
     },
@@ -66,13 +67,19 @@
       "revenue": 1330.0,
       "margin": 0.155,
       "multiple": 12.5,
-      "reason": "Margin is the seven-year clean median of 15.51%. The clean statistics bracket the full-history screening median rather than breaking from it: FY2025 resolved with a $60.9M intangible impairment, and excluding it margin was 15.0% — at the median. The residual ~$22.8M gap to the vendor's figure is definitional (intangible amortization 16.9 plus transaction costs 0.8), not operating. Revenue is consensus FY26E of 1,334 [amended 2026-07-21 pre-verdict: FY26 guidance reinstated at the fiscal Q3 print at $1.345-1.355B; base revenue of 1,330 sits below the guidance midpoint, so the base case is conservative against management's own path]. The multiple is set below the 17.9x median of its 8.55-year trading range (35 quarterly closes): the unresolved category question earns a durable discount; 12.5x is the 14th percentile. [restated for external readability 2026-07-21; substance unchanged]"
+      "reason": "Margin is the seven-year clean median of 15.51%. The clean statistics bracket the full-history screening median rather than breaking from it: FY2025 resolved with a $60.9M intangible impairment, and excluding it margin was 15.0% — at the median. The residual ~$22.8M gap to the vendor's figure is definitional (intangible amortization 16.9 plus transaction costs 0.8), not operating. Revenue is consensus FY26E of 1,334 [amended 2026-07-21 pre-verdict: FY26 guidance reinstated at the fiscal Q3 print at $1.345-1.355B; base revenue of 1,330 sits below the guidance midpoint, so the base case is conservative against management's own path]. The multiple is set below the 17.9x median of its 8.55-year trading range (35 quarterly closes): the unresolved category question earns a durable discount; 12.5x is the 14th percentile. [restated for external readability 2026-07-21; substance unchanged]",
+      "years_to_terminal": null,
+      "bear_basis": null,
+      "margin_basis": null
     },
     "bull": {
       "revenue": 1420.0,
       "margin": 0.165,
       "multiple": 16.0,
-      "reason": "The sell-off proves excessive: Quest carries growth and Atkins stabilizes at a smaller base; margin between the median and the best year (17.35%); the multiple moves toward but stays below the 17.85x median of its trading history (16.0x, roughly the 29th percentile of the 8.55-year range) [amended 2026-07-21 pre-verdict: trading-range refresh]. [restated for external readability 2026-07-21; substance unchanged]"
+      "reason": "The sell-off proves excessive: Quest carries growth and Atkins stabilizes at a smaller base; margin between the median and the best year (17.35%); the multiple moves toward but stays below the 17.85x median of its trading history (16.0x, roughly the 29th percentile of the 8.55-year range) [amended 2026-07-21 pre-verdict: trading-range refresh]. [restated for external readability 2026-07-21; substance unchanged]",
+      "years_to_terminal": null,
+      "bear_basis": null,
+      "margin_basis": null
     }
   },
   "assumptions": {
@@ -177,6 +184,8 @@
     }
   },
   "gate_adjudication": "~80% one-off bar fired at 72.8%; residual identified as vendor-definitional, not operating; analyst adjudicated RESUME 2026-07-21.",
+  "tier": null,
+  "survival_input": null,
   "result": {
     "per_scenario": {
       "bear": {
@@ -186,7 +195,13 @@
         "ev": 976.017,
         "equity": 651.4350000000001,
         "ev_ebit": 8.271330508474577,
-        "norm_fcf": 72.23816240000001
+        "norm_fcf": 72.23816240000001,
+        "years": null,
+        "d_and_a_t": null,
+        "net_debt_t": null,
+        "shares_t": null,
+        "value_terminal": null,
+        "hurdle": null
       },
       "base": {
         "value_per_share": 26.902643669016104,
@@ -195,7 +210,13 @@
         "ev": 2844.7625000000003,
         "equity": 2520.1805000000004,
         "ev_ebit": 13.799478535047296,
-        "norm_fcf": 139.4437224
+        "norm_fcf": 139.4437224,
+        "years": null,
+        "d_and_a_t": null,
+        "net_debt_t": null,
+        "shares_t": null,
+        "value_terminal": null,
+        "hurdle": null
       },
       "bull": {
         "value_per_share": 40.21351867557182,
@@ -204,9 +225,17 @@
         "ev": 4091.6960000000004,
         "equity": 3767.1140000000005,
         "ev_ebit": 17.463491250533504,
-        "norm_fcf": 160.9052824
+        "norm_fcf": 160.9052824,
+        "years": null,
+        "d_and_a_t": null,
+        "net_debt_t": null,
+        "shares_t": null,
+        "value_terminal": null,
+        "hurdle": null
       }
     },
+    "survival": null,
+    "hurdle": null,
     "reward": 15.982643669016104,
     "risk": 3.9660045704958415,
     "ratio": 4.029910552276017,
@@ -218,6 +247,8 @@
     "status": "confirmed",
     "recorded": "2026-07-21",
     "rationale": "BUY at $10.92, 4.0:1 against the 2:1 bar. The market sold a consensus beat with reinstated guidance down to the lowest multiple in the company's own history — pricing GLP-1 drugs as a permanent decline of the whole snacking category. Our judgment is the sell-off has overshot: margins never broke (ex the Atkins write-down, last year sat at the seven-year median), our base revenue sits below management's own new guidance, and a ~12% free-cash-flow yield with active buybacks pays us while the question resolves. The accepted risk: Quest, the growth engine, just printed +1% — unproven. The trade fails only if revenue, margin, and multiple all break below their historical worsts together; Quest stalling two more quarters forces a re-underwrite.",
+    "rationale_plain": null,
+    "rationale_plain_recorded": null,
     "reunderwrite_triggers": [
       "Quest revenue growth ≤ 0% YoY for two consecutive quarters → the growth engine is dead; re-underwrite the bull and base cases. [restated for external readability 2026-07-21; substance unchanged]",
       "FY26 guidance cut at the fiscal Q4 print (~Oct 2026), or initial FY27 guidance below ~$1.30B → base revenue path fails",
@@ -226,8 +257,6 @@
     "entry_price": 10.92,
     "ratio_at_entry": 4.029910552276017,
     "avoid_priced": false,
-    "avoid_priced_note": null,
-    "rationale_plain": null,
-    "rationale_plain_recorded": null
+    "avoid_priced_note": null
   }
 }
