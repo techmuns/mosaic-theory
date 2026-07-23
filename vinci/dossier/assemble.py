@@ -10,6 +10,7 @@ read-only. A name whose CIQ export is missing still produces a dossier (CIQ sect
 from __future__ import annotations
 
 import json
+import math
 from concurrent.futures import ThreadPoolExecutor
 from dataclasses import dataclass
 from datetime import UTC, date, datetime
@@ -47,16 +48,30 @@ from vinci.store import Store
 
 @dataclass(frozen=True)
 class Finalist:
-    """A ranked-queue finalist: the screen record, its queue rank, and the as-of reference date."""
+    """A ranked-queue finalist: the screen record, its queue rank, the as-of reference date, and
+    the ranker's frozen screen-time market cap (USD) — the benchmark-band fallback the dossier uses
+    when the CIQ cap is absent, so re-assembly can't silently reselect the index (the MDY→IWM
+    drift)."""
 
     record: CandidateRecord
     rank: int | None
     reference_date: date
+    market_cap_screen: float | None = None
 
 
 def _ref_of(row: dict[str, Any]) -> date:
     sra = row.get("screen_run_at")
     return date.fromisoformat(str(sra)[:10]) if sra else date.today()
+
+
+def _cap_of(row: dict[str, Any]) -> float | None:
+    """The ranked-queue row's screen-time EOD×XBRL market cap (USD), or None if it isn't a finite
+    positive number — a bool (``isinstance(True, int)``), ``inf``/``nan``, or ≤0 is not a real cap
+    and must never band a benchmark (fail to the CIQ/IWM path, never fabricate a band from junk)."""
+    v = row.get("market_cap")
+    if isinstance(v, bool) or not isinstance(v, (int, float)):
+        return None
+    return float(v) if math.isfinite(v) and v > 0 else None
 
 
 def load_finalists(
@@ -81,13 +96,15 @@ def load_finalists(
         rec = by_ticker.get(t) or (by_cid.get(str(row["candidate_id"])) if row else None)
         if rec is None:
             raise LookupError(f"{t} not in candidate_records.jsonl — run screen then rank first")
-        return [Finalist(rec, int(row["rank"]) if row else None, _ref_of(row or {}))]
+        return [Finalist(rec, int(row["rank"]) if row else None, _ref_of(row or {}),
+                         _cap_of(row) if row else None)]
 
     out: list[Finalist] = []
     for r in queue[: top or len(queue)]:
         rec = by_cid.get(str(r.get("candidate_id"))) or by_ticker.get(str(r.get("ticker")))
         if rec is not None:
-            out.append(Finalist(rec, int(r["rank"]) if "rank" in r else None, _ref_of(r)))
+            out.append(Finalist(rec, int(r["rank"]) if "rank" in r else None,
+                                 _ref_of(r), _cap_of(r)))
     return out
 
 
@@ -147,7 +164,7 @@ def assemble_one(
         mech, mech_flags = assemble_mechanical(
             rec, store=store, edgar=EdgarClient.from_config(cfg), http=build_sec_http(cfg),
             finra=build_finra_http(cfg), graph=graph, resolver=resolver, bundle=bundle,
-            reference_date=fin.reference_date,
+            reference_date=fin.reference_date, screen_cap_usd=fin.market_cap_screen,
         )
     flags += mech_flags
     # (PR-B §3-now) transcript slice computed ONCE here so a fail-loud flag fires whether or not

@@ -550,17 +550,28 @@ def _idio_read(name_180d: Sourced[float], cohort: Sourced[list[CohortMember]]) -
     return Sourced.present(read, source_ref=f"derived from {len(rets)} cohort names; face-validity")
 
 
-def _resolve_benchmark(market_cap_musd: Sourced[float], ref: date) -> tuple[Identity, str]:
+def _resolve_benchmark(
+    market_cap_musd: Sourced[float], ref: date, *, screen_cap_usd: float | None = None
+) -> tuple[Identity, str]:
     """The dossier surface's benchmark = the SAME cap-band policy the monitor freezes at entry
     (``vinci.monitor.benchmark_for_cap``), applied to the CIQ cap ($M) at the reference date.
     One policy, two instants — the monitor's assignment stays frozen for scoring; this one gives
-    the analytical context (exhibit + 180d relative) the right yardstick. Cap UNKNOWN → the
-    small-cap default, stated loudly in the basis (never a silent guess)."""
+    the analytical context (exhibit + 180d relative) the right yardstick.
+
+    Cap fallback order: CIQ cap → the SCREEN-TIME EOD×XBRL cap the ranker already froze at entry
+    (``screen_cap_usd``, threaded from the ranked-queue row) → the small-cap IWM default. The
+    ranker fallback exists because the CIQ cap is environment-sensitive (absent when re-assembling
+    in an incomplete store), which silently flipped a mid-cap's benchmark to IWM (the IT MDY→IWM
+    drift); the ranker's screen-time cap is present regardless and can't reselect on re-assembly.
+    Every branch states its basis loudly — never a silent guess."""
     cap_m = market_cap_musd.value if market_cap_musd.status is SourceStatus.PRESENT else None
     if cap_m is not None and cap_m > 0:
         cap_usd = cap_m * 1e6  # CIQ panel is $M; the policy takes USD
         sym, band = benchmark_for_cap(cap_usd)
         basis = f"cap-band: ${cap_usd / 1e9:.1f}B @ {ref} → {band} → {sym}"
+    elif screen_cap_usd is not None and screen_cap_usd > 0:
+        sym, band = benchmark_for_cap(screen_cap_usd)
+        basis = f"cap-band: ${screen_cap_usd / 1e9:.1f}B (screen-time, ranker) → {band} → {sym}"
     else:
         sym, basis = "IWM", "cap-band: cap UNKNOWN → small-cap default IWM"
     return benchmark_identity(sym), basis
@@ -2170,9 +2181,11 @@ def assemble_mechanical(
     resolver: EntityResolver,
     bundle: CiqBundle,
     reference_date: date,
+    screen_cap_usd: float | None = None,
 ) -> tuple[MechanicalLayer, list[str]]:
     """Assemble the source-bound mechanical layer (no LLM) + any flags for human review (e.g. a
-    distorted-P/E-basis warning). No conclusions."""
+    distorted-P/E-basis warning). No conclusions. ``screen_cap_usd`` is the ranker's frozen
+    screen-time cap — the benchmark-band fallback when the CIQ cap is absent (see below)."""
     # the catalyst 8-K's 99.1 (revised guidance) is fetched first: its adjusted EBITDA/EPS feed the
     # adjusted-basis multiples + leverage, which in turn RESOLVE the GAAP-only caveats below.
     drawdown = _drawdown_cause(record, edgar, http)
@@ -2213,7 +2226,8 @@ def assemble_mechanical(
     implied_val = ciq_sheets.implied_valuation(bundle, peer_comps.comparability)
     # cap-band benchmark for the dossier surface (exhibit + 180d relative) — the monitor's policy
     # applied at the reference date's CIQ cap; one yardstick across both consumers below.
-    bench, bench_basis = _resolve_benchmark(implied_val.market_cap, reference_date)
+    bench, bench_basis = _resolve_benchmark(
+        implied_val.market_cap, reference_date, screen_cap_usd=screen_cap_usd)
     today = date.today()  # assembly instant — the staleness guard compares the store against NOW
     # (F) positioning inputs slotted into the catalyst path — free DATED feeds: EDGAR Form 4 insider
     # activity + FINRA short interest (DTC vs the screen ADV). Counts/shares/dates only.
