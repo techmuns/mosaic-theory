@@ -335,7 +335,10 @@ def _revised_guidance(http: CachedHttp, cik: str, filings: list[FilingRef]) -> S
         return Sourced.unknown(
             note=f"no revised-outlook block matched in the parsed 99.1 for 8-Ks {parsed}")
     if tried:
-        return Sourced.unknown(note=f"no 99.1 exhibit located on the drawdown 8-Ks {tried}")
+        # located/fetched: an accession lands here when no 99.1 URL was found OR the fetch
+        # errored — the exhibit may exist unretrieved; never claim more precision than we have.
+        # The "for 8-Ks ['…']" tail is the shape _clean_note/cleanNote singularize — keep it.
+        return Sourced.unknown(note=f"no 99.1 exhibit located/fetched for 8-Ks {tried}")
     return Sourced.unknown(note="no results/Reg-FD/other-event 8-K at the gap-downs with a 99.1")
 
 

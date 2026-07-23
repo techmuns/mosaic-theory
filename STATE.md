@@ -4617,6 +4617,7 @@ reproduced exactly this gap); a cap-vs-price×shares vintage caveat. (d) STEP 2 
 this PR merges — recipe re-run (pure re-stamp; the record verified exact) + SMPL re-assembly +
 frontend build + full offline suite → commit artifacts; clears the three defect shapes from the
 committed surfaces.
+
 **OPERATOR TO-DO — NCNO price series unavailable for the reference window (2026-07-23).** NCNO's
 What-broke chart / 180d returns / stock_performance are all UNKNOWN because its store bars run
 **2021-07-01 → 2024-05-20, then a hole, then only 2026-07-08+** — the 52-wk window the dossier needs
