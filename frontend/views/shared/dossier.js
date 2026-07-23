@@ -1855,8 +1855,25 @@ function header(d) {
 // what / where / why-it-matters / how-to-verify shape (offending sentence IN FULL). A mechanical /
 // 'pull CIQ …' caveat is already a complete advisory → one full-sentence bullet.
 const _CAVEAT_RE = /^(.*?)\(([^)]*?\bpoint[^)]*?)\):\s*'([\s\S]*?)'\s*—\s*([\s\S]*)$/;
+// (A) Render-time caveat cleanup — the human tier never shows the synthesis's field tokens or the
+// internal rule numbers a guardrail cites; the committed JSON keeps the raw strings. Twin of
+// render.py _dejargon_caveat. AS_OF (a real sidecar name) is deliberately left intact.
+function dejargonCaveat(s) {
+  return String(s)
+    .replace(/evidence_balance/g, "the written assessment")
+    .replace(/bull_points/g, "bull points")
+    .replace(/bear_points/g, "bear points")
+    .replace(/\s*\(rule \d+\)/g, "");
+}
+
+// (D) Financial acronyms render uppercase even when a parser lower-cased them ("adjusted ebitda
+// outlook"). Word-boundary only — never mid-word. Twin of render.py _fix_acronyms.
+function fixAcronyms(s) {
+  return String(s).replace(/\b(ebitda|eps|fcf|ebit|roic|roe)\b/gi, (m) => m.toUpperCase());
+}
+
 function caveatBlock(f) {
-  f = String(f).replace(/evidence_balance/g, "the written assessment");
+  f = dejargonCaveat(f);
   const resolved = /^RESOLVED\b/i.test(f);
   const icon = resolved ? "✓" : "⚠";
   const m = f.match(_CAVEAT_RE);
@@ -1874,13 +1891,52 @@ function caveatBlock(f) {
   </span></div>`;
 }
 
+// One guard type firing on N synthesis points was rendering N near-identical cards (BRBR's two
+// "Unreconciled margin-compression" flags, same title + same why-it-matters). Collapse caveats that
+// share a lead + the what/where/why shape into ONE card — the lead once, each offending claim
+// nested with its own where, one shared why/how when identical. The action item is singular; the
+// audit trail keeps every claim. Grouping keys off the DETERMINISTIC lead (flags.revoice), never
+// LLM-composed text; non-matching caveats (mechanical, false-balance) stay one-per-card.
+function caveatGroupBlock(group) {
+  const parsed = group.map((f) => dejargonCaveat(f).match(_CAVEAT_RE));
+  const lead = parsed[0][1].trim();
+  const parts = parsed.map((m) => {
+    const why = m[4].trim(); const i = why.lastIndexOf("; ");
+    return { where: m[2].trim(), what: m[3].trim(),
+      why: i >= 0 ? why.slice(0, i).trim() : why, how: i >= 0 ? why.slice(i + 2).trim() : "" };
+  });
+  const sameWhy = parts.every((p) => p.why === parts[0].why);
+  const sameHow = parts.every((p) => p.how === parts[0].how);
+  const claims = parts.map((p) => `
+    <div style="margin-top:8px; padding-left:11px; border-left:2px solid var(--warn-border);">${escapeHtml(p.what)}
+      <div class="muted" style="font-size:11.5px; margin-top:2px;"><i>where:</i> ${escapeHtml(p.where)}${sameWhy ? "" : ` · <i>why:</i> ${escapeHtml(p.why)}`}</div>
+    </div>`).join("");
+  return `<div class="flag open"><span class="fi">⚠</span><span>
+    <b>${escapeHtml(lead)}</b> <span style="font-size:11px; font-weight:500; border:1px solid var(--warn-border); border-radius:20px; padding:0 7px; margin-left:4px;">${parts.length} points</span>${claims}
+    ${sameWhy ? `<div class="muted" style="font-size:11.5px; margin-top:6px;"><i>why it matters:</i> ${escapeHtml(parts[0].why)}</div>` : ""}
+    ${sameWhy && sameHow && parts[0].how ? `<div class="muted" style="font-size:11.5px;"><i>how to verify:</i> ${escapeHtml(parts[0].how)}</div>` : ""}
+  </span></div>`;
+}
+
 function flagsSection(caveats) {
   // Decision caveats only (d.caveats) — the machine-QA self-checks live in d.qa_flags (dev/JSON),
   // deliberately kept out of this human view, matching the PDF/markdown render. (D4) each renders in
-  // the what/where/why/how-to-verify shape, the offending sentence IN FULL.
+  // the what/where/why/how-to-verify shape, the offending sentence IN FULL. Same-type caveats
+  // collapse into one grouped card (caveatGroupBlock); everything else stays one-per-card.
   if (!caveats.length) return "";
-  const rows = caveats.map(caveatBlock).join("");
-  return `<div class="card ds-section"><div class="ds-title">Analyst caveats — verify before the verdict</div>
+  const groups = [];
+  const byLead = new Map();
+  for (const f of caveats) {
+    const m = dejargonCaveat(f).match(_CAVEAT_RE);
+    if (!m) { groups.push([f]); continue; }
+    const lead = m[1].trim();
+    if (byLead.has(lead)) byLead.get(lead).push(f);
+    else { const g = [f]; byLead.set(lead, g); groups.push(g); }
+  }
+  const rows = groups.map((g) => g.length === 1 ? caveatBlock(g[0]) : caveatGroupBlock(g)).join("");
+  // (B) count = DISTINCT advisories (grouped cards), so the human sees the surface size at a glance
+  const count = `<span style="font-size:11.5px; font-weight:500; color:var(--warn-text); background:var(--conditional-bg); border:1px solid var(--warn-border); border-radius:20px; padding:1px 9px; margin-left:8px; vertical-align:middle;">${groups.length} to verify</span>`;
+  return `<div class="card ds-section"><div class="ds-title">Analyst caveats — verify before the verdict${count}</div>
     <div class="subtitle muted ds-sub">Open caveats (⚠) need a human check before the verdict; they are not conclusions.</div>${rows}</div>`;
 }
 
@@ -2090,7 +2146,7 @@ function drawdownCause(dc) {
       <div class="fh">${escapeHtml(f.form || "8-K")} · filed ${fmtDate(f.filing_date)} <span class="muted">${forWhich}</span></div>
       <div class="muted" style="font-size:11.5px; margin-top:2px;">items: ${escapeHtml((f.item_types || f.items || []).join(" · "))}</div>
       ${(f.drivers && f.drivers.status === "present")
-        ? `<div class="fe"><b>what the results showed:</b> ${escapeHtml(f.drivers.value)}${citeMark(f.drivers.source_ref)}</div>`
+        ? `<div class="fe"><b>what the results showed:</b> ${escapeHtml(fixAcronyms(f.drivers.value))}${citeMark(f.drivers.source_ref)}</div>`
         : (f.events || []).map((e) => `<div class="fe">${escapeHtml(e)}</div>`).join("")}
       ${f.url ? `<div style="margin-top:5px;"><a href="${encodeURI(f.url)}" target="_blank" rel="noopener">EDGAR ${escapeHtml(f.accession || "")}</a></div>` : ""}
     </div>`;

@@ -8059,3 +8059,98 @@ console.log(JSON.stringify({{
     )
     assert not r["recitesVote"], "the administrative-only 8-K's vote text must not be recited"
     assert r["keptEarnings"], "the real 2026-05-05 earnings card must survive the suppression"
+
+
+def test_caveat_dejargon_and_acronym_render_helpers() -> None:
+    """(A, D) Pure render-time cleanups — deterministic, so exact pins are safe here. The human tier
+    drops the synthesis field tokens and the internal rule numbers a guardrail cites, keeps the real
+    AS_OF sidecar name, and uppercases financial acronyms a parser lower-cased. Word-boundary."""
+    # (A) de-jargon
+    assert dr._dejargon_caveat("the minority bull_points aren't outweighed (rule 7)") == \
+        "the minority bull points aren't outweighed"
+    assert dr._dejargon_caveat("bear_points sized (rule 12), noted") == "bear points sized, noted"
+    assert dr._dejargon_caveat("evidence_balance is near-symmetric") == \
+        "the written assessment is near-symmetric"
+    assert dr._dejargon_caveat("attest the export date (AS_OF sidecar)") == \
+        "attest the export date (AS_OF sidecar)"  # a real artifact name — NEVER stripped
+    # (D) acronym casing
+    assert dr._fix_acronyms("2026 adjusted ebitda outlook; adj eps 2025") == \
+        "2026 adjusted EBITDA outlook; adj EPS 2025"
+    assert dr._fix_acronyms("adj EBITDA $53.8M") == "adj EBITDA $53.8M"  # idempotent
+    assert dr._fix_acronyms("kebitda noteps") == "kebitda noteps"  # word-boundary — never mid-word
+
+
+def test_caveats_collapse_dejargon_and_acronyms_committed_brbr_e2e() -> None:
+    """(Option 2 + A + B + D) End-to-end on the committed artifact as TRANSFORM invariants — the raw
+    JSON carries the jargon / lowercase acronyms; the render must not. Phrasing-independent (guarded
+    on the raw pattern being present), so it survives re-assembly. md + web both: same-type caveats
+    collapse to one advisory, field tokens + rule numbers gone, the real AS_OF kept, the count
+    equals the rendered advisory count, EBITDA/EPS uppercased in the driver line."""
+    import json as _json
+    import re as _re
+    import shutil
+    import subprocess
+
+    p = Path("data/dossiers/BRBR/dossier.json")
+    if not p.exists():
+        pytest.skip("no committed BRBR dossier.json")
+    d = _json.loads(p.read_text())
+    raw = " ".join(c for c in (d.get("caveats") or []))
+    md = dr.render_markdown(ds.Dossier.model_validate(d))
+    flags_md = md.split("Analyst caveats")[1].split("\n## ")[0]
+
+    # (A) de-jargon transform: raw carries the token, the render does not; the real AS_OF survives
+    if "bull_points" in raw:
+        assert "bull_points" not in flags_md and "bull points" in flags_md
+    if "(rule 7)" in raw:
+        assert "(rule 7)" not in flags_md and "(rule" not in flags_md
+    if "AS_OF" in raw:
+        assert "AS_OF" in flags_md  # never collateral-damaged by the underscore cleanup
+
+    # (B) the header count line renders and equals the number of advisory blocks the web draws
+    n_md = _re.search(r"_(\d+) to verify\._", flags_md)
+    assert n_md, "the caveat count line must render"
+
+    # (Option 2) any lead appearing >=2x in the raw caveats collapses to ONE block naming N points
+    leads = [m.group("lead").strip() for c in (d.get("caveats") or [])
+             if (m := dr._CAVEAT_RE.match(dr._dejargon_caveat(c)))]
+    dup = next((x for x in leads if leads.count(x) > 1), None)
+    if dup is not None:
+        n = leads.count(dup)
+        assert flags_md.count(f"**{dup}** ({n} points)") == 1, "duplicate lead must collapse once"
+        assert flags_md.count(f"**{dup}**") == 1, "collapsed lead must not also render alone"
+
+    # (D) acronym casing in the driver line (What broke section, not the caveats)
+    if "adjusted ebitda outlook" in _json.dumps(d):
+        assert "adjusted EBITDA outlook" in md and "adjusted ebitda outlook" not in md
+
+    # web parity: the count equals the rendered .flag cards, and the duplicate lead renders once
+    if not shutil.which("node"):
+        return
+    dj = Path("frontend/views/shared/dossier.js").resolve().as_uri()
+    scen_path = Path("frontend/scenarios/BRBR.json")
+    scen = f'JSON.parse(readFileSync("{scen_path}"))' if scen_path.exists() else "null"
+    driver = f"""
+const handler = {{ get: () => stub, apply: () => stub, construct: () => ({{}}) }};
+const stub = new Proxy(function(){{}}, handler);
+for (const g of ["window","document","location"]) {{ try {{ globalThis[g] = stub; }} catch {{}} }}
+import {{ readFileSync }} from "node:fs";
+const {{ renderDossier }} = await import("{dj}");
+const h = renderDossier(JSON.parse(readFileSync("frontend/dossiers/BRBR.json")), null, {scen});
+const cav = h.split("Analyst caveats")[1].split('class="card ds-section"')[0];
+const badge = (cav.match(/(\\d+) to verify/) || [])[1];
+console.log(JSON.stringify({{
+  flagCards: (cav.match(/class="flag/g) || []).length,
+  badge: badge ? Number(badge) : null,
+  hasJargon: /bull_points|\\(rule 7\\)/.test(cav),
+  asofKept: /AS_OF/.test(cav),
+}}));
+"""
+    out = subprocess.run(["node", "--input-type=module", "-e", driver],
+                         capture_output=True, text=True, check=True)
+    r = _json.loads(out.stdout)
+    assert r["badge"] == r["flagCards"], "the header count must equal the rendered advisory cards"
+    assert r["badge"] == int(n_md.group(1)), "web + md must agree on the advisory count"
+    assert not r["hasJargon"], "the web render must not leak bull_points / (rule N)"
+    if "AS_OF" in raw:
+        assert r["asofKept"], "the real AS_OF sidecar name must survive the web de-jargon"

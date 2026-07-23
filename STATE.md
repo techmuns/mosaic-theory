@@ -4430,6 +4430,29 @@ the honest label, 1 filing card = the real 2026-05-05 earnings 2.02, vote text g
 Gate green: 1028 passed. INVARIANT: a deterministic unit pin (`_is_explanatory`/`_gap_label` on item
 codes) + a committed-artifact e2e (5.07 card suppressed, 2.02 card kept) on both renderers.
 
+**BUILD RECORD — 2026-07-23 caveat/section display pass (PR #196, operator-reviewed, DISPLAY-TIER
+ONLY — NO re-assembly).** Four render-layer polish items from a live review of BRBR's Analysis tab,
+each rendered from the COMMITTED JSON (both `dossier.js` + `render.py`), verified live, then md
+re-rendered (deterministic, from committed json — never re-assembled) + frontend mirror rebuilt.
+(Opt 2) One guard TYPE firing on N synthesis points drew N near-identical caveat cards (BRBR's 2×
+"Unreconciled margin-compression", same title + same why). Same-lead caveats now COLLAPSE into one
+advisory — lead once + "N points" badge, each claim nested with its own `where`, one shared
+why/how when identical; grouping keys off the DETERMINISTIC lead (flags.revoice), never LLM text;
+non-matching + singletons unchanged. (A) De-jargon at render (twin `dejargonCaveat`/`_dejargon_caveat`,
+extends the existing `evidence_balance` swap): `bull_points`/`bear_points` → plain, strip internal
+`(rule N)`; the real `AS_OF` sidecar name is left intact. (B) The section header carries a
+group-count ("N to verify" web badge / `_N to verify._` md) = DISTINCT advisories. (D) Financial
+acronyms uppercased at render (`_fix_acronyms`, word-boundary): `adjusted ebitda outlook` →
+`EBITDA`, VRRM `eps` → `EPS`. Scope: 10 of 11 md re-rendered (IT has no analyst caveats); `AORT`
+et al. changed ONLY by the (B) count line; NO `dossier.json` and NO `index.json` touched (proof the
+pass is re-assembly-free — synthesis reads intact). Verified live (BRBR: "4 to verify" badge, one
+collapsed card, "bull points" + no "(rule 7)", "AS_OF" kept, "adjusted EBITDA outlook"). Gate green:
+1030 passed. INVARIANT: deterministic unit pins on the two pure helpers + a committed-artifact e2e
+as TRANSFORM invariants (raw JSON carries the jargon/lowercase, the render must not; guarded on the
+raw pattern → survives re-assembly) with web↔md count-agreement, both renderers. DEFERRED (operator
+chose): the "what broke" shape line as a structured per-gap list (option C) — needs a
+`[{date,cause}]` field + full re-assembly, so it is its own change, not this pass.
+
 **OPERATOR TO-DO — MVST cannot be re-assembled (2026-07-22).** MVST is the ONE dossier name absent
 from `data/snapshots/candidate_records.jsonl` (the other ten are present), so `dossier assemble`
 raises `LookupError: MVST not in candidate_records.jsonl`. Its committed dossier therefore stays on
