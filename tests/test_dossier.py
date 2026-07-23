@@ -7464,6 +7464,46 @@ def test_resolve_benchmark_cap_bands_and_unknown_fallback() -> None:
     assert mid.internal_id == "IDX-MDY" and "mid" in m_basis and "MDY" in m_basis
     unk, u_basis = dm._resolve_benchmark(ds.Sourced.unknown(note="no CIQ cap"), ref)
     assert unk.eod_symbol == "IWM" and "UNKNOWN" in u_basis
+    # ranker-cap FALLBACK: when the CIQ cap is absent (re-assembly in an incomplete store), band by
+    # the SCREEN-TIME EOD×XBRL cap the ranker already froze — so a mid-cap can't silently flip to
+    # IWM (the observed IT MDY→IWM drift). Positive + negative + priority pins:
+    it_fb, it_basis = dm._resolve_benchmark(  # IT's ranker cap $9.13B
+        ds.Sourced.unknown(note="no CIQ cap"), ref, screen_cap_usd=9_126_881_508.48)
+    assert it_fb.eod_symbol == "MDY" and "ranker" in it_basis and "screen-time" in it_basis
+    small_fb, _ = dm._resolve_benchmark(  # ranker cap < $4B → still small-cap
+        ds.Sourced.unknown(note="no CIQ cap"), ref, screen_cap_usd=2.03e9)
+    assert small_fb.eod_symbol == "IWM"
+    ciq_wins, _ = dm._resolve_benchmark(  # a PRESENT CIQ cap wins; ranker cap is only a fallback
+        ds.Sourced.present(8_735.2, source_ref="CIQ cap"), ref, screen_cap_usd=500e9)
+    assert ciq_wins.eod_symbol == "MDY"  # CIQ mid-band, never the absurd $500B ranker override
+
+
+def test_finalist_carries_ranker_screen_cap_for_benchmark_fallback() -> None:
+    """(benchmark drift pin) The ranked-queue row's screen-time market cap threads onto the Finalist
+    (``market_cap_screen``) so the dossier can band the benchmark on it when the CIQ cap is absent.
+    ``_cap_of`` takes only a positive numeric cap; load_finalists carries the committed value."""
+    from vinci.config import get_config
+    from vinci.dossier.assemble import _cap_of, load_finalists
+    assert _cap_of({"market_cap": 9.13e9}) == 9.13e9
+    assert _cap_of({"market_cap": 0}) is None and _cap_of({"market_cap": -5}) is None
+    assert _cap_of({"market_cap": None}) is None and _cap_of({}) is None
+    assert _cap_of({"market_cap": True}) is None  # bool is a subclass of int — not a real cap
+    assert _cap_of({"market_cap": float("inf")}) is None  # non-finite → never bands a benchmark
+    assert _cap_of({"market_cap": float("nan")}) is None
+    import json as _json
+    rq = Path("data/snapshots/ranked_queue.jsonl")
+    if not rq.exists():
+        pytest.skip("no committed ranked_queue snapshot")
+    rows = {r["ticker"]: r for r in
+            (_json.loads(x) for x in rq.read_text().splitlines() if x.strip())}
+    if "IT" not in rows:  # threading needs IT in BOTH the queue AND candidate_records
+        pytest.skip("IT not in the committed ranked_queue")
+    try:
+        fin = load_finalists(get_config(), ticker="IT")[0]  # IT: the canonical mid-cap case
+    except LookupError:
+        pytest.skip("IT not in the committed candidate set")
+    assert fin.market_cap_screen is not None and fin.market_cap_screen > 0
+    assert fin.market_cap_screen == pytest.approx(rows["IT"]["market_cap"])  # threaded, not dropped
 
 
 def test_price_stale_note_fires_only_past_the_cadence() -> None:
