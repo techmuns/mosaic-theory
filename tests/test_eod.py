@@ -245,6 +245,35 @@ def test_ingest_prices_per_symbol_is_one_call_each(tmp_path) -> None:
     assert len(hist) == 2 and hist[0].source == "polygon-aggs"
 
 
+def test_ingest_prices_per_symbol_fails_loud_on_empty_backfill(tmp_path) -> None:
+    """(fail-loud) An OK-but-empty daily_bars (a mis-resolved eod_symbol, or a range outside the
+    free-tier window) IS the silent gap this path exists to catch — it must RAISE, never read as a
+    0-bar success. The names that DID return bars are still written before the raise (the operator
+    re-runs only the failed ones)."""
+    from vinci.eod.client import RawBar, ingest_prices_per_symbol
+
+    class _FakeClient:
+        def daily_bars(self, symbol: str, start: date, end: date):  # type: ignore[no-untyped-def]
+            if symbol == "BADSYM":
+                return []  # OK response, no results — the exact failure shape
+            b = RawBar(ticker=symbol, open=1, high=2, low=1, close=1.5, volume=9)
+            return [(date(2026, 6, 10), b)]
+
+    def _ident(iid: str, sym: str) -> Identity:
+        return Identity(internal_id=iid, issuer_id="ISS-X", cik="0000000001", ticker=sym,
+                        mic="XNAS", exchange="Nasdaq", eod_symbol=sym, name=sym)
+
+    secs = [_ident("SEC-GOOD", "GOOD"), _ident("SEC-BAD", "BADSYM")]
+    with Store(tmp_path / "aggs.db") as store:
+        for s in secs:
+            store.upsert_security(s)
+        with pytest.raises(EodError, match="BADSYM"):
+            ingest_prices_per_symbol(
+                _FakeClient(), store, secs,  # type: ignore[arg-type]
+                start=date(2026, 6, 1), end=date(2026, 6, 30))
+        assert len(store.get_price_history("SEC-GOOD")) == 1  # GOOD written before the raise
+
+
 @pytest.mark.network
 def test_ingest_prices_to_store(tmp_path) -> None:
     resolver = EntityResolver.from_config()

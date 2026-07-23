@@ -137,6 +137,7 @@ def ingest_prices_per_symbol(
     secs = list(securities)
     reporter = ProgressReporter("EOD-aggs", len(secs), emit=progress)
     bars_written = 0
+    empty: list[str] = []
     for i, s in enumerate(secs, 1):
         rows = [
             PriceBar(
@@ -145,8 +146,18 @@ def ingest_prices_per_symbol(
             )
             for d, b in client.daily_bars(s.eod_symbol, start, end)
         ]
+        if not rows:
+            empty.append(s.eod_symbol)  # OK-but-empty ⇒ mis-resolved symbol or out-of-window range
         bars_written += store.write_prices(rows)
         reporter.tick(i, suffix=f"{s.eod_symbol} {len(rows)} bars")
+    # FAIL LOUD: a 0-bar backfill IS the NCNO-class silent gap this path exists to prevent — an OK
+    # response with no rows (a symbol Polygon doesn't carry, or an out-of-window range) must never
+    # read as success. The non-empty names are already written; the operator re-runs these.
+    if empty:
+        raise EodError(
+            f"per-symbol backfill returned NO bars for {empty} — mis-resolved eod_symbol or an "
+            f"out-of-window date range; the store gained nothing for these (a silent gap)"
+        )
     return {"symbols": len(secs), "bars_written": bars_written}
 
 

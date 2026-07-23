@@ -199,7 +199,11 @@ def _gap_pct_from_perf(sp: Any, date_str: str) -> float | None:
     if a.name is None or b.name is None or a.name <= 0:
         return None
     spacing = (date.fromisoformat(b.date) - date.fromisoformat(a.date)).days
-    if not 1 <= spacing <= 4:  # more than a long weekend apart → a downsampled series
+    # b must be the IMMEDIATELY-next trading day: 1 calendar day (adjacent weekday) or a Fri→Mon
+    # weekend (3 days, prior point a Friday). Any other spacing — 2 (a weekday was skipped ⇒ a
+    # downsampled step≥2 series), 4 (a day skipped / post-holiday), 7 (weekly) — can't be proven
+    # consecutive, so REFUSE rather than misstate a multi-trading-day move as the 1-day gap.
+    if not (spacing == 1 or (spacing == 3 and date.fromisoformat(a.date).isoweekday() == 5)):
         return None
     return float(b.name) / float(a.name) - 1.0
 

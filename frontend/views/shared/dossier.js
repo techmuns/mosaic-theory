@@ -1397,8 +1397,12 @@ export function gapPctFromPerf(sp, dateStr) {  // exported for the py-twin equiv
   if (i <= 0) return null;
   const a = pts[i - 1], b = pts[i];
   if (!a || !Number.isFinite(a.name) || !Number.isFinite(b.name) || a.name <= 0) return null;
-  const spacing = (Date.parse(b.date) - Date.parse(a.date)) / 86400000;
-  if (!(spacing >= 1 && spacing <= 4)) return null;  // > a long weekend apart → downsampled series
+  const spacing = Math.round((Date.parse(b.date) - Date.parse(a.date)) / 86400000);
+  // b must be the immediately-next trading day: 1 calendar day (adjacent weekday) or a Fri→Mon
+  // weekend (3 days, prior point a Friday, getUTCDay()===5). Any other spacing — 2 (a weekday
+  // skipped ⇒ downsampled step≥2 series), 4 (skip/post-holiday), 7 (weekly) — can't be proven
+  // consecutive → refuse (twin of render.py _gap_pct_from_perf).
+  if (!(spacing === 1 || (spacing === 3 && new Date(a.date).getUTCDay() === 5))) return null;
   return b.name / a.name - 1;
 }
 const fmtGapPct = (p) => `${p > 0 ? "+" : "−"}${Math.abs(p * 100).toFixed(1)}%`;
@@ -1410,7 +1414,7 @@ const _circled = (n) => (n >= 1 && n <= 20 ? String.fromCharCode(0x245F + n) : `
 // markers for real ≤threshold drops BEFORE the detector window + the window boundary (both only
 // when the dossier carries the detector params — no frontend magic numbers). Returns {svg, preDrops}
 // ({svg:"", preDrops:[]} when the series is absent) — preDrops feeds the ledger's honesty footnote.
-function drawdownChart(sp, rows, det) {
+export function drawdownChart(sp, rows, det) {  // exported for the SVG-renderer smoke test
   const none = { svg: "", preDrops: [] };
   if (!sp || !Array.isArray(sp.points) || sp.points.length < 2) return none;
   const pts = sp.points;
@@ -1474,15 +1478,20 @@ function drawdownChart(sp, rows, det) {
       }
     }
   }
-  // numbered markers, STAGGERED on collision (adjacent-day gaps overlap at daily resolution)
-  let markers = "", prevX = -1e9, prevAbove = false;
+  // numbered markers, STAGGERED on collision (adjacent-day gaps overlap at daily resolution). A run
+  // of 3+ near markers steps through extra lanes so it doesn't just flip between two that re-collide
+  // (a mere flip puts marker 1 and marker 3 back on the same lane). Lanes 0/1 keep the ±16 an
+  // isolated or paired marker has always used, so all current (≤2-cluster) charts are unchanged.
+  const LANES = [-16, 16, -30, 30];
+  let markers = "", prevX = -1e9, cluster = 0;
   (rows || []).forEach(([gd], i) => {
     const exact = pts.findIndex((p) => p && p.date === gd);
     const idx = exact >= 0 ? exact : nearestPtIdx(pts, gd);
     const x = sx(idx), yPt = sy(nameS[idx] != null ? nameS[idx] : dom.lo);
-    const above = (x - prevX < 18) ? !prevAbove : true;
-    prevX = x; prevAbove = above;
-    const yC = above ? yPt - 16 : yPt + 16;
+    cluster = (x - prevX < 18) ? cluster + 1 : 0;
+    prevX = x;
+    const off = LANES[cluster % LANES.length], above = off < 0;
+    const yC = yPt + off;
     markers += `<line x1="${x.toFixed(1)}" y1="${yPt.toFixed(1)}" x2="${x.toFixed(1)}" y2="${(above ? yC + 7 : yC - 7).toFixed(1)}" stroke="var(--danger)" stroke-width="0.8"/>`
       + `<circle cx="${x.toFixed(1)}" cy="${yC.toFixed(1)}" r="7.5" fill="var(--surface)" stroke="var(--danger)" stroke-width="1.5"/>`
       + `<text x="${x.toFixed(1)}" y="${(yC + 3.2).toFixed(1)}" text-anchor="middle" font-size="9.5" font-weight="600" fill="var(--danger)">${i + 1}</text>`;
