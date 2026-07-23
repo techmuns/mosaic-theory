@@ -1386,11 +1386,6 @@ function nearestPtIdx(pts, dateStr) {
   return best;
 }
 
-// The exact 1-day close-to-close move at `dateStr`, derived from consecutive DAILY perf points —
-// the detector's own formula on the same closes (a rebased-index ratio IS the close ratio). null
-// when the series doesn't carry the date, or the previous point isn't the prior trading day
-// (old weekly-downsampled JSON): REFUSE rather than misstate a multi-day move as the 1-day gap.
-// Twin of render.py _gap_pct_from_perf.
 // Is bDate the immediately-next TRADING day after aDate? 1 calendar day (adjacent weekday), or a
 // Fri→Mon weekend (3 days, aDate a Friday → getUTCDay()===5). Any other spacing — 2 (a weekday was
 // skipped ⇒ a downsampled step≥2 series), 4 (skip/post-holiday), 7 (weekly) — can't be proven
@@ -1401,6 +1396,11 @@ export function isNextTradingDay(aDateStr, bDateStr) {  // exported for the equi
   return spacing === 1 || (spacing === 3 && new Date(aDateStr).getUTCDay() === 5);
 }
 
+// The exact 1-day close-to-close move at `dateStr`, derived from consecutive DAILY perf points —
+// the detector's own formula on the same closes (a rebased-index ratio IS the close ratio). null
+// when the series doesn't carry the date, or the previous point isn't the prior trading day
+// (old weekly-downsampled JSON): REFUSE rather than misstate a multi-day move as the 1-day gap.
+// Twin of render.py _gap_pct_from_perf.
 export function gapPctFromPerf(sp, dateStr) {  // exported for the py-twin equivalence test
   const pts = (sp && sp.points) || [];
   const i = pts.findIndex((p) => p && p.date === dateStr);
