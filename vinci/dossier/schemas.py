@@ -288,6 +288,13 @@ class DrawdownCause(BaseModel):
     gap_down_dates: Sourced[list[str]]
     filings: list[FilingRef]  # 8-Ks bound to the gap-down dates (the cause, source-bound)
     revised_guidance: Sourced[str]  # revised FY outlook from the catalyst 8-K's Ex-99.1
+    # The detector's own params (screens.assemble constants, copied at assembly — ONE source of
+    # truth, no frontend magic numbers). The renderers use them to mark coverage honestly: the
+    # 52-wk chart spans ~364d but the detector scans only the last ``gap_window_days``, so a real
+    # ≤threshold drop BEFORE the window renders as an unclassified (hollow) marker, never silently
+    # unmarked. None on pre-field committed JSON → the renderers skip the boundary/hollow marks.
+    gap_threshold: float | None = None  # single-day close-to-close drop that fires the detector
+    gap_window_days: int | None = None  # how far back from the reference date the detector scans
 
     model_config = {"frozen": True}
 

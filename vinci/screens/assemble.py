@@ -26,7 +26,10 @@ from vinci.schemas.data_record import (
 from vinci.schemas.envelope import DataField, SourceTier
 from vinci.schemas.market import PriceBar
 
-_GAP_DOWN = -0.10  # a single-day close-to-close drop this steep is a de-rating event marker
+# PUBLIC detector params — the dossier's DrawdownCause carries them so the frontend can mark the
+# detector's coverage honestly (boundary + pre-window drops) without duplicating a magic number.
+GAP_DOWN_THRESHOLD = -0.10  # a single-day close-to-close drop this steep marks a de-rating event
+DECLINE_WINDOW_DAYS = 180  # the detector scans this many days back from the reference date
 _PE_WINDOW_DAYS = 1825  # ~5y multiple range (Polygon Starter gives 5y history) — the spec's 3-5y
 # "Multiple at/near floor of its OWN trailing range" needs a real range to judge against. The spec
 # wants 3-5y; the free 2y feed caps us, so we require ≈the full ~2y (~450 trading days) before G3
@@ -87,7 +90,7 @@ def pe_current_and_percentile(
 
 
 def detect_gap_downs(
-    bars: list[PriceBar], *, since: date, threshold: float = _GAP_DOWN
+    bars: list[PriceBar], *, since: date, threshold: float = GAP_DOWN_THRESHOLD
 ) -> list[date]:
     """Dates of single-day close-to-close drops ≤ ``threshold`` on/after ``since``."""
     bars = sorted(bars, key=lambda b: b.bar_date)
@@ -105,7 +108,7 @@ def build_price_record(
     benchmark_bars: list[PriceBar],
     reference_date: date,
     staleness_days: int,
-    decline_window_days: int = 180,
+    decline_window_days: int = DECLINE_WINDOW_DAYS,
     market_cap: DataField[float] | None = None,
 ) -> DataRecord:
     """The **cheap** price-only data-record — enough to evaluate G1/G2 without any EDGAR call.
@@ -182,7 +185,7 @@ def build_data_record(
     edgar: EdgarClient,
     reference_date: date,
     staleness_days: int,
-    decline_window_days: int = 180,
+    decline_window_days: int = DECLINE_WINDOW_DAYS,
 ) -> DataRecord:
     """Assemble the full data-record (price + EDGAR fundamentals). The eager path used off the
     hot loop (orchestrator/tests); the screen uses the lazy price→enrich split."""
