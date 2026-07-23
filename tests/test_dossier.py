@@ -7487,12 +7487,17 @@ def test_finalist_carries_ranker_screen_cap_for_benchmark_fallback() -> None:
     assert _cap_of({"market_cap": 9.13e9}) == 9.13e9
     assert _cap_of({"market_cap": 0}) is None and _cap_of({"market_cap": -5}) is None
     assert _cap_of({"market_cap": None}) is None and _cap_of({}) is None
+    assert _cap_of({"market_cap": True}) is None  # bool is a subclass of int — not a real cap
+    assert _cap_of({"market_cap": float("inf")}) is None  # non-finite → never bands a benchmark
+    assert _cap_of({"market_cap": float("nan")}) is None
     import json as _json
     rq = Path("data/snapshots/ranked_queue.jsonl")
     if not rq.exists():
         pytest.skip("no committed ranked_queue snapshot")
     rows = {r["ticker"]: r for r in
             (_json.loads(x) for x in rq.read_text().splitlines() if x.strip())}
+    if "IT" not in rows:  # threading needs IT in BOTH the queue AND candidate_records
+        pytest.skip("IT not in the committed ranked_queue")
     try:
         fin = load_finalists(get_config(), ticker="IT")[0]  # IT: the canonical mid-cap case
     except LookupError:

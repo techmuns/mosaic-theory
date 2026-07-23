@@ -10,6 +10,7 @@ read-only. A name whose CIQ export is missing still produces a dossier (CIQ sect
 from __future__ import annotations
 
 import json
+import math
 from concurrent.futures import ThreadPoolExecutor
 from dataclasses import dataclass
 from datetime import UTC, date, datetime
@@ -64,9 +65,13 @@ def _ref_of(row: dict[str, Any]) -> date:
 
 
 def _cap_of(row: dict[str, Any]) -> float | None:
-    """The ranked-queue row's screen-time EOD×XBRL market cap (USD), or None if absent/≤0."""
+    """The ranked-queue row's screen-time EOD×XBRL market cap (USD), or None if it isn't a finite
+    positive number — a bool (``isinstance(True, int)``), ``inf``/``nan``, or ≤0 is not a real cap
+    and must never band a benchmark (fail to the CIQ/IWM path, never fabricate a band from junk)."""
     v = row.get("market_cap")
-    return float(v) if isinstance(v, (int, float)) and v > 0 else None
+    if isinstance(v, bool) or not isinstance(v, (int, float)):
+        return None
+    return float(v) if math.isfinite(v) and v > 0 else None
 
 
 def load_finalists(
