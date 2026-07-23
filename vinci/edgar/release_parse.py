@@ -209,7 +209,11 @@ _RECON = re.compile(
     r"((?:diluted\s+)?(?:net\s+)?"
     r"(?:ebitda|income\s+from\s+operations|operating\s+income|net\s+(?:income|loss|profit)|"
     r"(?:income|loss)\s+per\s+share|earnings\s+per\s+share|eps))"
-    r"\s*[*†‡]?\s*(?:of|was|totaled|of\s+approximately)\s+"
+    # CONNECTOR: a verb ("of/was/totaled") OR a bare COLON — Gartner writes "adjusted EBITDA: $436
+    # million, +5%" (period stated in the section header, not inline), which the verb-only connector
+    # silently dropped. The currency-evidence + no-% guards below still gate every match, so a colon
+    # can't admit a ratio ("adjusted EBITDA margin: 21%") or a non-amount.
+    r"\s*[*†‡]?\s*(?::\s*|(?:of|was|totaled|of\s+approximately)\s+)"
     # CURRENCY EVIDENCE IS MANDATORY — a '$' before the number, or a million/billion after it.
     # Without this the pattern reads a RATIO as an amount: EPAM writes "non-GAAP income from
     # operations was 16.3% of revenues" (a margin), which was stored as $16.3M against a true

@@ -94,7 +94,7 @@ _no supplier/customer cohort mapped for this name — the comparison is vs the m
 - **Gap-downs — what the results showed (parsed EX-99.1) + the 8-K:**
   - gap-down 2026-02-03 → filed 2026-02-03 [`0000749251-26-000028`](https://www.sec.gov/Archives/edgar/data/749251/000074925126000028/it-20260129.htm)
     - items: 2.02 Results of Operations and Financial Condition
-    - **what the results showed:** $150.0M goodwill impairment [19]
+    - **what the results showed:** adj EBITDA Q4 2025 $436.0M; adj EPS Q4 2025 $3.94; $150.0M goodwill impairment [19]
 
 ### Leverage & survival
 - **Net debt / EBITDA [NET]:** 1.3x [8]

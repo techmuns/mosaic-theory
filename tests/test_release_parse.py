@@ -381,6 +381,26 @@ def test_recon_requires_currency_evidence_and_never_reads_a_ratio_as_an_amount()
         assert got == [want], f"{text} → {got}"
 
 
+def test_recon_accepts_the_colon_connector_gartner_format() -> None:
+    """(IT) Gartner states its non-GAAP metrics with a COLON — "adjusted EBITDA: $436 million, +5%"
+    — the period living in the section header, not inline. The verb-only connector (of/was/totaled)
+    matched none of them, so IT's driver was just the $150M impairment one-off; the actual results
+    (adj EBITDA $436M, adj EPS $3.94) were dropped. The colon connector recovers them, and the
+    currency-evidence + no-% guards still reject the ratio ("adjusted EBITDA margin: 21%")."""
+    txt = ("Reports Fourth Quarter 2025 Results. Fourth quarter highlights: "
+           "adjusted EBITDA: $436 million, +5% as reported; adjusted diluted EPS: $3.94, -28%; "
+           "adjusted EBITDA margin: 21%.")
+    got = {(v.metric, v.value) for v in rp.parse_release(txt, source_ref=_SRC).reconciliation}
+    assert ("adjusted ebitda", 436.0) in got
+    assert ("adjusted eps", 3.94) in got
+    assert not any(v == 21.0 for _, v in got), "the margin % must not be read as an amount"
+    # the verb connector is untouched (no regression)
+    assert ("adjusted eps", 3.26) in {
+        (v.metric, v.value) for v in rp.parse_release(
+            "Non-GAAP Diluted EPS of $3.26 for the quarter.", source_ref=_SRC).reconciliation
+    }
+
+
 def test_committed_dossiers_carry_no_ratio_as_a_currency_amount() -> None:
     """(committed-artifact invariant) Every stored CURRENCY value must show currency evidence in
     its own verbatim — a '$' before it, or a million/billion after it.
