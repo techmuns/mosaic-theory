@@ -4536,6 +4536,21 @@ MINOR review findings fixed instead: the caveat collapse is now LOSSLESS on diff
 and the JS render twins (catalyst reword, EBITDA casing, collapse) gained the web-e2e pins they
 lacked.
 
+**OPERATOR TO-DO — NCNO price series unavailable for the reference window (2026-07-23).** NCNO's
+What-broke chart / 180d returns / stock_performance are all UNKNOWN because its store bars run
+**2021-07-01 → 2024-05-20, then a hole, then only 2026-07-08+** — the 52-wk window the dossier needs
+(2025-07-07 .. 2026-07-06, ref 2026-07-06) has ZERO bars. A `vinci refresh --start 2021-07-01 …
+NCNO` filled 2021-2024 but returned NOTHING for the 2024-2026 window, and a targeted re-run of that
+window **HANGS** (3-min timeout, no output — the same reason the first backfill's log came back
+empty). So this is a **data-source/pipeline wall, not a render bug**: NCNO stays correctly fail-loud
+(no series → no chart, %s omitted; the strip falls to the tile grid on the fully-UNKNOWN name
+return). REAL FIX (operator/infra step, NOT a render change): (a) diagnose why Polygon `refresh`
+returns a 2024-05→2026-07 gap for NCNO and hangs on re-fetch (ticker remap? plan-history cap? a
+silent per-day rate-limit backoff loop with no progress output — the refresh command should stream
+progress / fail fast, worth its own fix); OR (b) use the Tiingo deep-history backfill path
+(`vinci/eod/tiingo.py`, needs a Tiingo key), then re-assemble NCNO. Until then NCNO is the second
+live back-compat case beside MVST — both render honestly.
+
 **OPERATOR TO-DO — MVST cannot be re-assembled (2026-07-22).** MVST is the ONE dossier name absent
 from `data/snapshots/candidate_records.jsonl` (the other ten are present), so `dossier assemble`
 raises `LookupError: MVST not in candidate_records.jsonl`. Its committed dossier therefore stays on

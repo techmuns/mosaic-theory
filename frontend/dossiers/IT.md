@@ -93,7 +93,7 @@ _Company-specific or market-wide?_
 _no supplier/customer cohort mapped for this name — the comparison is vs the market only_
 - **Gap-downs — what the results showed (parsed EX-99.1) + the 8-K:**
   - gap-down 2026-02-03 → filed 2026-02-03 [`0000749251-26-000028`](https://www.sec.gov/Archives/edgar/data/749251/000074925126000028/it-20260129.htm)
-    - items: 2.02 Results of Operations and Financial Condition, 7.01 Regulation FD Disclosure
+    - items: 2.02 Results of Operations and Financial Condition
     - **what the results showed:** $150.0M goodwill impairment [19]
 
 ### Leverage & survival

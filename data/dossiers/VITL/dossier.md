@@ -85,11 +85,14 @@ _Company-specific or market-wide?_
 _no supplier/customer cohort mapped for this name — the comparison is vs the market only_
 - **Gap-downs — what the results showed (parsed EX-99.1) + the 8-K:**
   - gap-down 2026-02-26 → filed 2026-02-26 [`0001193125-26-073373`](https://www.sec.gov/Archives/edgar/data/1579733/000119312526073373/vitl-20260220.htm)
-    - items: 2.02 Results of Operations and Financial Condition, 5.02 Departure/Election of Directors or Certain Officers, 7.01 Regulation FD Disclosure, 8.01 Other Events
+    - items: 2.02 Results of Operations and Financial Condition, 5.02 Departure/Election of Directors or Certain Officers, 8.01 Other Events
     - **what the results showed:** adj EBITDA 2025 $29.2M; 2025 revenue outlook: $900.0–$920.0M; next-fy adjusted EBITDA outlook: $105.0–$115.0M [22]
+    - 5.02 Departure/Election of Directors or Certain Officers: Departure of Directors or Certain Officers; Appointment of Certain Officers; Compensatory Arrangement of Certain Officers. On February 20, 2026, Matthew O’Hayer, the Company’s founder, Executive Chairperson and a member of the Company's Board of Directors informed the Company and the Board of his resignation as Executive Chairperson, as a member of the Board and as an employee, effec
+    - 8.01 Other Events: On February 26, 2026, the Company announced that the Board has authorized and approved a plan to repurchase up to $100.0 million of shares of the Company’s outstanding common stock, par value $0.0001 per share. Under the Stock Repurchase Program, the Company intends to repurchase shares of Common Stock from time to time, including, wi
   - gap-down 2026-05-07 → filed 2026-05-07 [`0001193125-26-210294`](https://www.sec.gov/Archives/edgar/data/1579733/000119312526210294/vitl-20260501.htm)
     - items: 2.02 Results of Operations and Financial Condition, 2.05 Costs Associated with Exit or Disposal Activities
     - **what the results showed:** adj EBITDA Q1 2026 $5.0M; 2026 revenue outlook: $775.0–$800.0M; next-fy adjusted EBITDA outlook: $0.0–$10.0M [15]
+    - 2.05 Costs Associated with Exit or Disposal Activities: On May 1, 2026, management of the Company elected to wind down and discontinue its butter product offerings to focus on its core egg product categories, with such discontinuation expected to be substantially completed by the end of fiscal 2026. In connection with the discontinuation plan, the Company expects to incur butter inventory-related charg
 
 ### Leverage & survival
 - **Net debt / EBITDA [NET]:** 0.0x [9]

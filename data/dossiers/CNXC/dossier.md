@@ -99,7 +99,6 @@ _no supplier/customer cohort mapped for this name — the comparison is vs the m
   - gap-down 2026-03-24 → filed 2026-03-23 [`0001803599-26-000080`](https://www.sec.gov/Archives/edgar/data/1803599/000180359926000080/cnxc-20260320.htm)
     - items: 1.01 Entry into a Material Definitive Agreement, 2.03 Item 2.03
     - 1.01 Entry into a Material Definitive Agreement: On March 20, 2026, Concentrix Corporation, as servicer, entered into an amendment to its accounts receivable securitization facility (as amended, the “Securitization Facility”) by and among Concentrix Receivables, Inc., a subsidiary of the Company, as borrower, PNC Bank, National Association, as administrative agent, and
-    - 2.03: Creation of a Direct Financial Obligation or an Obligation under an Off-Balance Sheet Arrangement of a Registrant.
   - gap-down 2026-06-30 → filed 2026-06-29 [`0001803599-26-000133`](https://www.sec.gov/Archives/edgar/data/1803599/000180359926000133/cnxc-20260629.htm)
     - items: 2.02 Results of Operations and Financial Condition
     - **what the results showed:** adj EBITDA Q2 2026 $347.4M; adj operating income Q2 2026 $292.0M; adj EPS Q2 2026 $2.63; Fiscal 2026 revenue outlook: $2,465.0–$2,490.0M [13]

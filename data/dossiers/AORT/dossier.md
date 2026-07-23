@@ -105,6 +105,7 @@ _no supplier/customer cohort mapped for this name — the comparison is vs the m
   - gap-down 2026-05-08 → filed 2026-05-07 [`0001628280-26-032097`](https://www.sec.gov/Archives/edgar/data/784199/000162828026032097/aort-20260507.htm)
     - items: 1.01 Entry into a Material Definitive Agreement, 2.02 Results of Operations and Financial Condition
     - **what the results showed:** adj net income Q1 2026 $4.2M [20]
+    - 1.01 Entry into a Material Definitive Agreement: Securities Purchase Option Agreement As previously disclosed in connection with the announcement of the Exclusive Distribution Agreement, dated September 11, 2019, between JOTEC GmbH, a wholly owned subsidiary of Artivion, Inc., a Delaware corporation formerly known as CryoLife, Inc., and Endospan Ltd., an Israeli corporation, a
 
 ### Leverage & survival
 - **Net debt / EBITDA [NET]:** 3.3x [8]

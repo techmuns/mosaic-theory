@@ -85,15 +85,15 @@ _Company-specific or market-wide?_
 _no supplier/customer cohort mapped for this name — the comparison is vs the market only_
 - **Gap-downs — what the results showed (parsed EX-99.1) + the 8-K:**
   - gap-down 2026-02-25 → filed 2026-02-24 [`0001193125-26-067015`](https://www.sec.gov/Archives/edgar/data/1682745/000119312526067015/vrrm-20260224.htm)
-    - items: 2.02 Results of Operations and Financial Condition, 7.01 Regulation FD Disclosure
+    - items: 2.02 Results of Operations and Financial Condition
     - **what the results showed:** adj EBITDA 2025 $101.8M; adj EPS 2025 $1.30; next-fy revenue outlook: $1,020.0–$1,030.0M; next-fy adjusted EBITDA outlook: $405.0–$415.0M; next-fy adjusted EPS outlook: $1.3–$1.4M; 2026 free cash flow outlook: $150.0–$160.0M [20]
   - gap-down 2026-05-27 → filed 2026-05-26 [`0001193125-26-239351`](https://www.sec.gov/Archives/edgar/data/1682745/000119312526239351/d123116d8k.htm)
-    - items: 7.01 Regulation FD Disclosure, 8.01 Other Events
+    - items: 8.01 Other Events
     - **what the results showed:** adj EBITDA 2026 $38.0M; adj EPS 2026 $1.10; 2026 revenue outlook: $985.0–$995.0M; next-fy adjusted EBITDA outlook: $380.0–$385.0M; next-fy adjusted EPS outlook: $1.2–$1.2M; 2026 free cash flow outlook: $140.0–$150.0M [21]
+    - 8.01 Other Events: On May 26, 2026, the Company announced that it received a termination notice from Avis Budget regarding Avis Budget’s contract with the Company. Avis Budget is one of the Company’s significant Commercial Services customers and represented over 10% of the Company’s total revenue for the three months ended March 31, 2026 and year ended December 31, 2025
   - gap-down 2026-06-02 → filed 2026-06-01 [`0001193125-26-251522`](https://www.sec.gov/Archives/edgar/data/1682745/000119312526251522/d39754d8k.htm)
-    - items: 5.02 Departure/Election of Directors or Certain Officers, 7.01 Regulation FD Disclosure
+    - items: 5.02 Departure/Election of Directors or Certain Officers
     - 5.02 Departure/Election of Directors or Certain Officers: Departure of Directors or Certain Officers; Election of Directors; Appointment of Certain Officers; Compensatory Arrangements of Certain Officers. On June 1, 2026, Verra Mobility Corporation announced that the Board of Directors of the Company approved the appointment of Jonathan Keyser as the Interim President and Chief Executive Officer of the Company, effective May
-    - 7.01 Regulation FD Disclosure: On June 1, 2026, the Company issued a press release announcing the appointment of Jonathan Keyser as Interim President and Chief Executive Officer and related matters. A copy of the press release is furnished as Exhibit 99.1 to this Current Report on Form 8-K and is incorporated by reference herein. The information furnished pursuant to
 - **Event-impact quantifications (8-K EX-99.1, verbatim-bound):**
   - reduce revenue by $135–145M (2026 annualized) — [21]
   - reduce segment profit by $120–125M (2026 annualized) — [21]

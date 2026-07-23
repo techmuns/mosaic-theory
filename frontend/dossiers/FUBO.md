@@ -92,8 +92,8 @@ _no supplier/customer cohort mapped for this name — the comparison is vs the m
   - gap-down 2026-02-03 → filed 2026-02-03 [`0001493152-26-004826`](https://www.sec.gov/Archives/edgar/data/1484769/000149315226004826/form8-k.htm)
     - items: 2.02 Results of Operations and Financial Condition
     - **what the results showed:** adj EBITDA 2026 $77.9M [19]
-  - gap-down 2026-05-06 → filed 2026-05-06 [`0001493152-26-021406`](https://www.sec.gov/Archives/edgar/data/1484769/000149315226021406/form8-k.htm)
-    - items: 2.02 Results of Operations and Financial Condition
+- **Other 8-Ks at the gap dates (1):**
+  - filed 2026-05-06 · items: 2.02 Results of Operations and Financial Condition [`0001493152-26-021406`](https://www.sec.gov/Archives/edgar/data/1484769/000149315226021406/form8-k.htm)
     - 2.02 Results of Operations and Financial Condition: On May 6, 2026, FuboTV Inc. announced its financial results for the quarter ended March 31, 2026. The full text of the shareholder letter and press release issued in connection with the announcement are attached as Exhibits 99.1 and 99.2, respectively, to this Current Report on Form 8-K. The information in this
 
 ### Leverage & survival
