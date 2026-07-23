@@ -4208,8 +4208,9 @@ def test_ciq_pltm_without_gaap_pe_fires_basis_caveat(monkeypatch: pytest.MonkeyP
     """SMPL regression: CIQ P/LTM EPS printed 16.0x while LTM GAAP EPS was −2.08 — EDGAR P/E
     absent, the peers row said 'NM' — three EPS readings with no shared basis and no flag. The
     existing conflict check needs BOTH multiples present, so the negative-GAAP-EPS shape slipped
-    through. CIQ-present + EDGAR-absent now fires the basis caveat; a known EDGAR P/E near CIQ
-    stays quiet; CIQ absent stays quiet."""
+    through. CIQ-present + EDGAR-absent fires the basis caveat — the LTM-GAAP-EPS-UNAVAILABLE
+    fallback (c) of the newer sign-keyed (d) guard, so it's called here WITHOUT ``ltm_gaap_eps``; a
+    known EDGAR P/E near CIQ stays quiet; CIQ absent stays quiet."""
     bundle = ciq.CiqBundle(ticker="SMPL", workbooks=())
     monkeypatch.setattr(dm.ciq_sheets, "pe_ltm_current",
                         lambda b: ds.Sourced.present(16.0, source_ref="t"))
@@ -4224,6 +4225,77 @@ def test_ciq_pltm_without_gaap_pe_fires_basis_caveat(monkeypatch: pytest.MonkeyP
     monkeypatch.setattr(dm.ciq_sheets, "pe_ltm_current",
                         lambda b: ds.Sourced.unknown(note="no value"))
     assert dm._eps_caveat_flags(rec_no_pe, bundle, eps_resolved=False) == []
+
+
+def _fin_summary_ltm_eps(rows: list[ds.FinRow], cols: tuple[str, ...] = ("FY25", "LTM")
+                         ) -> ds.FinancialSummary:
+    u: ds.Sourced[typing.Any] = ds.Sourced.unknown(note="n/a")
+    return ds.FinancialSummary(
+        annual=ds.Sourced.present(ds.FinTable(columns=list(cols), rows=rows), source_ref="t"),
+        quarterly=u, balance_sheet=u, coherence=u, as_of=u)
+
+
+def test_ltm_gaap_eps_reads_structured_ltm_column() -> None:
+    """``_ltm_gaap_eps`` reads the STRUCTURED ``values`` at the 'LTM' column of the 'EPS (GAAP,
+    dil.)' row — never the display ``cells`` (parsers-consume-structured-values). None when the
+    table/row/LTM-column/value is absent."""
+    eps = ds.FinRow(label="EPS (GAAP, dil.)", cells=["1.02", "(2.08)"], values=[1.02, -2.08])
+    assert dm._ltm_gaap_eps(_fin_summary_ltm_eps([eps])) == -2.08
+    # values WIN over a divergent display cell (the rule: never parse the rendered string)
+    tricky = ds.FinRow(label="EPS (GAAP, dil.)", cells=["1.02", "1.00"], values=[1.02, -2.08])
+    assert dm._ltm_gaap_eps(_fin_summary_ltm_eps([tricky])) == -2.08
+    rev = ds.FinRow(label="Revenue ($M)", cells=["1", "2"], values=[1.0, 2.0])
+    assert dm._ltm_gaap_eps(_fin_summary_ltm_eps([rev])) is None            # no EPS row
+    no_ltm = _fin_summary_ltm_eps([eps], cols=("FY24", "FY25"))             # no LTM column
+    assert dm._ltm_gaap_eps(no_ltm) is None
+    empty = ds.FinRow(label="EPS (GAAP, dil.)", cells=["1.02", "—"], values=[])
+    assert dm._ltm_gaap_eps(_fin_summary_ltm_eps([empty])) is None             # no structured value
+    unk: ds.Sourced[typing.Any] = ds.Sourced.unknown(note="no ciq")
+    assert dm._ltm_gaap_eps(ds.FinancialSummary(
+        annual=unk, quarterly=unk, balance_sheet=unk, coherence=unk, as_of=unk)) is None
+
+
+def test_pltm_basis_caveat_on_negative_ltm_gaap_eps(monkeypatch: pytest.MonkeyPatch) -> None:
+    """SMPL claim-#7 — the shape #198's guard MISSED. A POSITIVE trailing P/E multiple shown while
+    the LTM GAAP dil EPS is a LOSS: SMPL had EDGAR P/E 10.86x + CIQ P/LTM 16.0x beside LTM GAAP EPS
+    −2.08. Both multiples present (so #198's EDGAR-absent (c) never fired) and ANNUAL EPS in line
+    (so ``_pe_reconciliation`` stayed quiet). Keyed on the LTM GAAP EPS SIGN, (d) fires naming every
+    positive multiple shown; a positive LTM GAAP EPS stays quiet; the (c) fallback survives when the
+    sign is UNAVAILABLE, with NO double caveat when it is present."""
+    bundle = ciq.CiqBundle(ticker="SMPL", workbooks=())
+
+    def set_ciq(v: float | None) -> None:
+        monkeypatch.setattr(dm.ciq_sheets, "pe_ltm_current", lambda b: (
+            ds.Sourced.present(v, source_ref="t") if v is not None
+            else ds.Sourced.unknown(note="none")))
+
+    def rec_pe(v: float | None) -> sdr.DataRecord:
+        r = _min_record(v if v is not None else 5.0)
+        if v is None:
+            r = r.model_copy(update={"fundamentals": r.fundamentals.model_copy(update={
+                "pe": DataField.unknown(source="x", tier=SourceTier.DERIVED)})})
+        return r
+
+    # (1) the SMPL shape — EDGAR 10.86 + CIQ 16.0 + LTM GAAP −2.08 → names BOTH multiples
+    set_ciq(16.0)
+    f1 = dm._eps_caveat_flags(rec_pe(10.86), bundle, eps_resolved=False, ltm_gaap_eps=-2.08)
+    assert any("EDGAR P/E 10.9x and CIQ P/LTM EPS 16.0x" in f and "NEGATIVE (-2.08)" in f
+               and "do not read them" in f for f in f1)
+    # (2) only EDGAR positive (CIQ absent) → names EDGAR only, singular "it"
+    set_ciq(None)
+    f2 = dm._eps_caveat_flags(rec_pe(10.86), bundle, eps_resolved=False, ltm_gaap_eps=-2.08)
+    assert any("EDGAR P/E 10.9x rest" in f and "do not read it" in f and "CIQ" not in f for f in f2)
+    # (3) EDGAR absent + CIQ present + negative LTM → (d) names CIQ; NO (c) double
+    set_ciq(16.0)
+    f3 = dm._eps_caveat_flags(rec_pe(None), bundle, eps_resolved=False, ltm_gaap_eps=-2.08)
+    assert any("CIQ P/LTM EPS 16.0x rest" in f and "NEGATIVE (-2.08)" in f for f in f3)
+    assert not any("different earnings definition" in f for f in f3)
+    # (4) positive LTM GAAP EPS → (d) stays quiet (multiples coherent with a positive GAAP trail)
+    f4 = dm._eps_caveat_flags(rec_pe(10.86), bundle, eps_resolved=False, ltm_gaap_eps=1.15)
+    assert not any("rest on normalized" in f for f in f4)
+    # (5) sign UNAVAILABLE + EDGAR absent + CIQ present → the (c) #198 fallback is preserved
+    f5 = dm._eps_caveat_flags(rec_pe(None), bundle, eps_resolved=False, ltm_gaap_eps=None)
+    assert any("different earnings definition" in f for f in f5)
 
 
 # --- item 2: geographic = the 'Geographic Segments' → 'Revenues' block, not the business one ----
