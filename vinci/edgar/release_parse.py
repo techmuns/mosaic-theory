@@ -454,8 +454,13 @@ def _one_offs(text: str, src: str) -> list[OneOffItem]:
                 key = k
                 break
         prev = by_key.get(key)
-        # keep the FIRST occurrence for an identical-item collapse (the quarter is quoted first);
-        # for a rounding tie, keep the more precise (larger / longer) mention.
+        # keep the FIRST occurrence for an identical-item collapse (the quarter is quoted first, and
+        # the gap-down driver wants the QUARTER figure); a same-phrase non-identical mention is a
+        # rounding tie ($11.0M/$11.3M) where the more precise (larger/longer) wins. ACCEPTED RISK:
+        # two GENUINELY DIFFERENT charges worded byte-identically in the captured phrase (differing
+        # only in amount, no distinguishing scope/qualifier text — indistinguishable from SMPL's
+        # same-item QTD/YTD restatement) collapse to the first; recorded in STATE.md with its
+        # falsifier. No local signal separates the two, so the code optimizes for the observed case.
         identical_item = raw_by_key.get(key) == raw_norm
         if prev is None or (not identical_item and (amt > prev.amount
                             or (amt == prev.amount and len(desc) > len(prev.description)))):

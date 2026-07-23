@@ -1917,14 +1917,16 @@ function caveatGroupBlock(group) {
   });
   const sameWhy = parts.every((p) => p.why === parts[0].why);
   const sameHow = parts.every((p) => p.how === parts[0].how);
+  // LOSSLESS: a shared why/how prints once below; a why/how that DIFFERS across the group prints
+  // per-claim on the where line — the collapse never drops a claim's why-it-matters or how-to-verify.
   const claims = parts.map((p) => `
     <div style="margin-top:8px; padding-left:11px; border-left:2px solid var(--warn-border);">${escapeHtml(p.what)}
-      <div class="muted" style="font-size:11.5px; margin-top:2px;"><i>where:</i> ${escapeHtml(p.where)}${sameWhy ? "" : ` · <i>why:</i> ${escapeHtml(p.why)}`}</div>
+      <div class="muted" style="font-size:11.5px; margin-top:2px;"><i>where:</i> ${escapeHtml(p.where)}${sameWhy ? "" : ` · <i>why:</i> ${escapeHtml(p.why)}`}${!sameHow && p.how ? ` · <i>how:</i> ${escapeHtml(p.how)}` : ""}</div>
     </div>`).join("");
   return `<div class="flag open"><span class="fi">⚠</span><span>
     <b>${escapeHtml(lead)}</b> <span style="font-size:11px; font-weight:500; border:1px solid var(--warn-border); border-radius:20px; padding:0 7px; margin-left:4px;">${parts.length} points</span>${claims}
     ${sameWhy ? `<div class="muted" style="font-size:11.5px; margin-top:6px;"><i>why it matters:</i> ${escapeHtml(parts[0].why)}</div>` : ""}
-    ${sameWhy && sameHow && parts[0].how ? `<div class="muted" style="font-size:11.5px;"><i>how to verify:</i> ${escapeHtml(parts[0].how)}</div>` : ""}
+    ${sameHow && parts[0].how ? `<div class="muted" style="font-size:11.5px;"><i>how to verify:</i> ${escapeHtml(parts[0].how)}</div>` : ""}
   </span></div>`;
 }
 

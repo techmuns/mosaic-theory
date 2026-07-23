@@ -8144,16 +8144,32 @@ console.log(JSON.stringify({{
   badge: badge ? Number(badge) : null,
   hasJargon: /bull_points|\\(rule 7\\)/.test(cav),
   asofKept: /AS_OF/.test(cav),
+  catalystLeads: /Estimates data up to \\d+d stale/.test(cav),
+  catalystOpenerGone: !/Catalyst-path as-of UNVERIFIABLE/.test(cav),
+  dupLeadCount: (cav.match(/Unreconciled margin-compression/g) || []).length,
+  twoPointsBadges: (cav.match(/2 points/g) || []).length,
+  ebitdaUpper: /adjusted EBITDA outlook/.test(h) && !/adjusted ebitda outlook/.test(h),
 }}));
 """
     out = subprocess.run(["node", "--input-type=module", "-e", driver],
                          capture_output=True, text=True, check=True)
     r = _json.loads(out.stdout)
-    assert r["badge"] == r["flagCards"], "the header count must equal the rendered advisory cards"
     assert r["badge"] == int(n_md.group(1)), "web + md must agree on the advisory count"
+    assert r["flagCards"] == r["badge"], "each advisory must render exactly one card (no split)"
     assert not r["hasJargon"], "the web render must not leak bull_points / (rule N)"
     if "AS_OF" in raw:
         assert r["asofKept"], "the real AS_OF sidecar name must survive the web de-jargon"
+    # (twin coverage) the JS render must ALSO reword the catalyst caveat, not just the md path
+    if "Catalyst-path as-of UNVERIFIABLE" in raw:
+        assert r["catalystLeads"], "web catalyst caveat must lead with the staleness discriminator"
+        assert r["catalystOpenerGone"], "the buried-lede opener must not survive into the web"
+    # (twin coverage) the collapse renders ONE card with the N-points badge, not the count alone
+    if dup is not None:
+        assert r["dupLeadCount"] == 1, "the duplicate lead must render once on the web (collapsed)"
+        assert r["twoPointsBadges"] >= 1, "the collapsed web card must show its N-points badge"
+    # (twin coverage) the JS driver line must uppercase EBITDA/EPS, like the md path
+    if "adjusted ebitda outlook" in _json.dumps(d):
+        assert r["ebitdaUpper"], "the web 'what broke' driver line must uppercase EBITDA"
 
 
 def test_catalyst_stale_caveat_leads_with_the_discriminator() -> None:
@@ -8197,3 +8213,27 @@ def test_catalyst_stale_caveat_reworded_on_committed_brbr_e2e() -> None:
     assert "Estimates data up to" in flags_md and "stale (beyond the" in flags_md
     assert "Catalyst-path as-of UNVERIFIABLE — the CIQ Estimates export carries no as-of stamp;" \
         not in flags_md, "the buried-lede opener must not survive into the render"
+
+
+def test_caveat_group_block_is_lossless_when_why_or_how_differ() -> None:
+    """The collapse must NEVER drop a claim's why-it-matters or how-to-verify (the 'curating never
+    deletes a fact' contract). A shared why/how prints once; a why/how that DIFFERS across the group
+    prints per-claim. Deterministic on frozen inputs. Twin behaviour lives in dossier.js."""
+    # same why, DIFFERENT how → each how survives per-claim (the pre-fix bug dropped both)
+    same_why_diff_how = [
+        "Guard X (a bull point): 'claim one' — shared why; check source A",
+        "Guard X (a bear point): 'claim two' — shared why; check source B",
+    ]
+    out = "\n".join(dr._caveat_group_block(same_why_diff_how))
+    assert out.count("**Guard X** (2 points)") == 1  # collapsed to one advisory
+    assert "check source A" in out and "check source B" in out  # both hows kept
+    assert out.count("_why it matters:_ shared why") == 1  # shared why printed once
+
+    # DIFFERENT why, same how → each why survives per-claim, the how prints once (shared)
+    diff_why_same_how = [
+        "Guard Y (a bull point): 'c1' — why alpha; same fix",
+        "Guard Y (a bear point): 'c2' — why beta; same fix",
+    ]
+    out2 = "\n".join(dr._caveat_group_block(diff_why_same_how))
+    assert "why alpha" in out2 and "why beta" in out2  # both whys kept
+    assert out2.count("_how to verify:_ same fix") == 1  # shared how printed once

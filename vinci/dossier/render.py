@@ -1409,13 +1409,21 @@ def _caveat_group_block(group: list[str]) -> list[str]:
     same_why = len({p[2] for p in parts}) == 1
     same_how = len({p[3] for p in parts}) == 1
     out = [f"- **{lead}** ({len(parts)} points)"]
-    for where, what, why, _how in parts:
+    # LOSSLESS: a shared why/how prints once below; a why/how that DIFFERS across the group prints
+    # per-claim on the where line — so the collapse never silently drops a claim's why-it-matters or
+    # how-to-verify (the "curating never deletes a fact" contract).
+    for where, what, why, how in parts:
         out.append(f"  - {what}")
-        out.append(f"    - _where:_ {where}" + ("" if same_why else f" · _why:_ {why}"))
+        line = f"    - _where:_ {where}"
+        if not same_why:
+            line += f" · _why:_ {why}"
+        if not same_how and how:
+            line += f" · _how:_ {how}"
+        out.append(line)
     if same_why:
         out.append(f"  - _why it matters:_ {parts[0][2]}")
-        if same_how and parts[0][3]:
-            out.append(f"  - _how to verify:_ {parts[0][3]}")
+    if same_how and parts[0][3]:
+        out.append(f"  - _how to verify:_ {parts[0][3]}")
     return out
 
 
