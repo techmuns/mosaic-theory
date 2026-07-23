@@ -24,6 +24,7 @@ from vinci.eod import (
 )
 from vinci.eod.features import _close_on_or_before
 from vinci.resolver import EntityResolver
+from vinci.schemas.data_record import Identity
 from vinci.schemas.envelope import CoverageStatus
 from vinci.schemas.market import PriceBar
 from vinci.store import Store
@@ -208,6 +209,40 @@ def test_grouped_daily_trading_day() -> None:
 def test_grouped_daily_weekend_is_empty() -> None:
     client = PolygonEodClient.from_config()
     assert client.grouped_daily(date(2026, 6, 13)) == {}  # Saturday -> non-trading
+
+
+def test_ingest_prices_per_symbol_is_one_call_each(tmp_path) -> None:
+    """(NCNO-class backfill) The per-symbol path (refresh --aggs) issues exactly ONE daily_bars call
+    per name and writes its bars — the efficient fix for a NEW name with no history, where
+    grouped-daily would be ~250 whole-market calls at the free tier's ~5/min. Deterministic on a
+    fake client; the store round-trips the written bars."""
+    from vinci.eod.client import RawBar, ingest_prices_per_symbol
+
+    class _FakeClient:
+        def __init__(self) -> None:
+            self.calls: list[str] = []
+
+        def daily_bars(self, symbol: str, start: date, end: date):  # type: ignore[no-untyped-def]
+            self.calls.append(symbol)
+            b = lambda c: RawBar(ticker=symbol, open=1, high=2, low=1, close=c, volume=9)  # noqa: E731
+            return [(date(2026, 6, 10), b(1.5)), (date(2026, 6, 11), b(1.6))]
+
+    def _ident(iid: str, sym: str) -> Identity:
+        return Identity(internal_id=iid, issuer_id="ISS-X", cik="0000000001", ticker=sym,
+                        mic="XNAS", exchange="Nasdaq", eod_symbol=sym, name=sym)
+
+    secs = [_ident("SEC-1-NCNO", "NCNO"), _ident("IDX-IWM", "IWM")]
+    client = _FakeClient()
+    with Store(tmp_path / "aggs.db") as store:
+        for s in secs:
+            store.upsert_security(s)
+        summary = ingest_prices_per_symbol(
+            client, store, secs, start=date(2026, 6, 1), end=date(2026, 6, 30))  # type: ignore[arg-type]
+    assert client.calls == ["NCNO", "IWM"]  # ONE call per symbol, in order
+    assert summary == {"symbols": 2, "bars_written": 4}
+    with Store(tmp_path / "aggs.db") as store:
+        hist = store.get_price_history("SEC-1-NCNO")
+    assert len(hist) == 2 and hist[0].source == "polygon-aggs"
 
 
 @pytest.mark.network

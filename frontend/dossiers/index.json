@@ -48,11 +48,6 @@
       "source": "ciq-gics",
       "source_ref": "CIQ Public Company Profile\u2192Primary Industry Classification"
     },
-    "NCNO": {
-      "industry": "Application Software",
-      "source": "ciq-gics",
-      "source_ref": "CIQ Public Company Profile\u2192Primary Industry Classification"
-    },
     "SMPL": {
       "industry": "Packaged Foods and Meats",
       "source": "ciq-gics",
@@ -77,7 +72,7 @@
     "FUBO": "mixed \u2014 genuine scale/EBITDA-inflection and constructive targets sit directly against ongoing cash burn, sub decline and a sharp consensus cut.",
     "IT": "mixed \u2014 an intact high-ROIC cash franchise and CV acceleration collide with still-falling forward estimates and negative revenue-revision breadth.",
     "MVST": "strongly-bearish \u2014 stated going-concern doubt with a near-term maturity wall against thin cash while adjusted EBITDA has turned negative and revenue is contracting.",
-    "NCNO": "mixed \u2014 a genuine, confirmed EBITDA/FCF profitability turn and forward-multiple compression offset by decelerating ~10% growth and unresolved monetization.",
+    "NCNO": "mixed \u2014 rising guides and self-funding signals pull against name-specific weakness, rising shorts, insider selling, and an unexplained February gap; peer/estimate data entirely absent.",
     "SMPL": "mixed \u2014 durable balance sheet and FCF offset by a deep, guidance-confirmed earnings reset and impaired, shrinking acquired brands.",
     "VITL": "mixed \u2014 a genuine balance-sheet/share-gain franchise against a management-confirmed ~97% forward-EBITDA collapse and lost pricing power.",
     "VRRM": "mixed \u2014 a real Avis-driven earnings step-down and guidance cut offset by a profitable, self-funding, growing-government base still intact."

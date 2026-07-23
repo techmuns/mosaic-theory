@@ -7,6 +7,7 @@ from vinci.eod.client import (
     PolygonEodClient,
     RawBar,
     ingest_prices,
+    ingest_prices_per_symbol,
     parse_aggregates,
     parse_grouped_daily,
 )
@@ -21,6 +22,7 @@ __all__ = [
     "TiingoEodClient",
     "compute_price_features",
     "ingest_prices",
+    "ingest_prices_per_symbol",
     "parse_aggregates",
     "parse_grouped_daily",
     "parse_tiingo_prices",

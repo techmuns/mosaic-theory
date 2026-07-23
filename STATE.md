@@ -4430,6 +4430,38 @@ the honest label, 1 filing card = the real 2026-05-05 earnings 2.02, vote text g
 Gate green: 1028 passed. INVARIANT: a deterministic unit pin (`_is_explanatory`/`_gap_label` on item
 codes) + a committed-artifact e2e (5.07 card suppressed, 2.02 card kept) on both renderers.
 
+**BUILD RECORD — 2026-07-23 What-broke follow-ups (IT driver, NCNO price series, per-symbol
+backfill).** Three operator-flagged fixes on PR #197. (1) IT's driver read only "$150.0M goodwill
+impairment" — Gartner states its non-GAAP metrics with a COLON ("adjusted EBITDA: $436 million,
++5%", period in the section header), which `_RECON`'s verb-only connector (of/was/totaled) dropped.
+Added the colon to the connector; currency-evidence + no-% guards still reject the ratio. Verified
+no-regression by re-parsing all 11 EX-99.1 (only IT changed; MVST's diffs were stale-artifact
+drift). IT's driver patched SURGICALLY (byte-preserving recompute of the one field) — a full
+re-assembly was observed to flip IT's cap-band benchmark MDY→IWM (a data-sensitive side effect;
+see the drift note). (2) NCNO had NO price series (10 store bars, all post-dating its 2026-07-06
+reference). Root cause was NOT a missing vendor — Polygon HAS NCNO's history; `ingest_prices` uses
+grouped-daily (whole-market/day), so backfilling ONE new name = ~250 whole-market calls at the free
+tier's ~5/min (the stall). Fix: `refresh --aggs` = `ingest_prices_per_symbol` using the existing
+`daily_bars` (ONE call/name). Backfilled NCNO (1268 bars) + the IWM/MDY benchmarks; re-assembled →
+NCNO now renders the full chart + idio strip (name −37% vs IWM +36%, −45pp idiosyncratic). Tiingo
+(the wired-but-keyless per-symbol adapter) is NOT needed. Pinned: colon-connector on a frozen
+Gartner fixture; per-symbol ingest on a fake client (one call/name, store round-trip). Gate: 1042.
+
+**KNOWN-ISSUE (recorded 2026-07-23, INVARIANT RULE) — re-assembly can flip a cap-band benchmark.**
+Re-assembling IT flipped its benchmark MDY→IWM (cascading to `stock_performance` + the idio
+comparison + the What-broke chart) — the cap→band→benchmark assignment is data-sensitive near a band
+boundary (or store-state dependent), so a fresh assembly of a borderline name can silently change
+which index it's judged against. Mitigation used: a single-field surgical patch when only a derived
+field needs updating. FALSIFIER/next: pin the benchmark to the screen-time cap band (store it on the
+record) so dossier re-assembly can't reselect it. Not shipped (out of scope for #197).
+
+**OPERATOR NOTE — worktree stores are separate + need the benchmark ETFs.** `db_path=data/vinci.db`
+is CWD-relative, so `../mosaic-theory-wb` has its OWN `data/vinci.db` (started empty). Re-assembling
+a name IN a worktree needs its bars AND the IWM/MDY benchmark bars in THAT store, else the
+stock-performance benchmark line is empty. Backfill both with `refresh <NAME> IWM MDY --aggs` from
+the worktree, or re-assemble in the main checkout (full store) and copy the artifact. The worktree
+also needs a `.env` symlink for the ANTHROPIC/POLYGON keys (synthesis + EOD).
+
 **BUILD RECORD — 2026-07-23 What-broke event study (chart + ledger + true gap %s, operator-driven
 redesign).** The What-broke section rebuilt to the institutional "share price & key events"
 anatomy, from four operator critiques of the first chart preview (no axes; key wastes vertical
