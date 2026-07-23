@@ -379,7 +379,10 @@ def ev_ebitda_asof(bundle: CiqBundle) -> date | None:
 
 
 def pe_ltm_current(bundle: CiqBundle) -> Sourced[float]:
-    """Current P/LTM EPS (latest Close) — GAAP-trailing, for cross-checking the EDGAR P/E basis."""
+    """Current P/LTM EPS (latest Close) — CIQ's Multiples-sheet trailing P/E, for cross-checking
+    the EDGAR P/E basis. NOT reliably GAAP-trailing: SMPL printed 16.0x here while LTM GAAP EPS
+    was −2.08 (the vendor's LTM EPS excluded the $249M impairment) — treat the basis as CIQ's,
+    never assert it as GAAP."""
     try:
         rows = bundle.sheet("financials", "Multiples", freq="quarterly")
     except CiqUnavailableError as exc:

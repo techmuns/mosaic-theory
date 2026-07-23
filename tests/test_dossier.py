@@ -4047,6 +4047,62 @@ def test_revised_guidance_extracts_figures_block_not_lede() -> None:
     assert dm._extract_revised_guidance("An earnings call. Revenue grew. No outlook given.") is None
 
 
+def test_revised_guidance_updating_verb_matches_and_initial_does_not() -> None:
+    """SMPL 2026-04-09 regression (verbatim from Ex-99.1 a991_pressreleasexq2x2026.htm): the
+    release's verb is 'updating' — 'revis…' appears nowhere — and the revis-only anchor read a
+    PARSED exhibit as no-outlook while the gap card extracted these same figures from the same
+    exhibit (an internal contradiction in one committed dossier). 'updat…' now anchors the block.
+    The TOP headline ('Updates … Outlook Denver, CO') passes the money+metric test on the RESULTS
+    lede behind it — the colon-introduced outlook heading must win over it, so the surfaced block
+    is the guidance bullets, not the quarter's results. An INITIAL outlook ('provides…') still
+    returns None."""
+    smpl = (
+        "Updates Fiscal Year 2026 Outlook Denver, CO, April 9, 2026 - The Simply Good Foods "
+        "Company today reported financial results: net sales of $301.9 million and Adjusted "
+        "EBITDA of $55.5 million for the second quarter. "
+        + "The company is taking actions to adapt operations to current demand. " * 12
+        + "As a result of its second quarter performance, the Company is updating its previously "
+        "provided outlook for fiscal year 2026: Net Sales expected to range between $1.31 to "
+        "$1.35 billion, or -10% to -7% year-over-year Gross Margins expected to decline between "
+        "300 and 350 basis points year-over-year Adjusted EBITDA expected to range between $217 "
+        "to $225 million, or -22% to -19% year-over-year"
+    )
+    block = dm._extract_revised_guidance(smpl)
+    assert block is not None and "$1.31" in block and "$217" in block
+    assert "reported financial results" not in block  # the results-lede headline window lost
+    initial = (
+        "The Company provides its fiscal year 2027 outlook: Net sales expected between $1.40 "
+        "and $1.45 billion with Adjusted EBITDA of approximately $230 million."
+    )
+    assert dm._extract_revised_guidance(initial) is None
+
+
+def test_revised_guidance_note_honest_and_accessions_deduped(
+        monkeypatch: pytest.MonkeyPatch) -> None:
+    """(1) Two gap-downs sharing ONE 8-K list its accession ONCE (SMPL's committed note listed
+    '0001702744-26-000010' twice). (2) A parsed 99.1 with no matching block says the BLOCK did not
+    match — never the old 'no … exhibit parsed', which was false whenever a 99.1 WAS parsed.
+    (3) With no 99.1 located, the note says located."""
+    f = ds.FilingRef(gap_date="2026-04-09", filing_date="2026-04-09", form="8-K", items=["2.02"],
+                     item_types=["2.02 Results of Operations"], accession="A-1", url="u",
+                     events=[])
+    twin = f.model_copy(update={"gap_date": "2026-04-10"})
+
+    class _Http:
+        def get_text(self, url: str, ttl_seconds: object = None) -> str:
+            return "<p>An earnings call transcript. No outlook discussed.</p>"
+
+    monkeypatch.setattr(dm, "_exhibit_991_url", lambda http, cik, acc: "http://x/ex991.htm")
+    got = dm._revised_guidance(_Http(), "1", [f, twin])  # type: ignore[arg-type]
+    assert got.status is ds.SourceStatus.UNKNOWN
+    note = str(got.note)
+    assert "block matched" in note and note.count("A-1") == 1
+    assert "exhibit parsed" not in note
+    monkeypatch.setattr(dm, "_exhibit_991_url", lambda http, cik, acc: None)
+    got2 = dm._revised_guidance(_Http(), "1", [f])  # type: ignore[arg-type]
+    assert "no 99.1 exhibit located" in str(got2.note)
+
+
 def test_ex_991_detector_lives_in_exactly_one_place() -> None:
     """This module used to carry its OWN copy of the Ex-99.1 filename regex, and the two copies
     DRIFTED — the one here never learned the '_' separator class, so it missed 'ex99_1.htm' that
@@ -4146,6 +4202,28 @@ def test_adjusted_guidance_parse_and_eps_caveat_dropped() -> None:
     for resolved in (False, True):
         flags = dm._eps_caveat_flags(rec, empty, eps_resolved=resolved)
         assert not any("understates earnings power" in f for f in flags)
+
+
+def test_ciq_pltm_without_gaap_pe_fires_basis_caveat(monkeypatch: pytest.MonkeyPatch) -> None:
+    """SMPL regression: CIQ P/LTM EPS printed 16.0x while LTM GAAP EPS was −2.08 — EDGAR P/E
+    absent, the peers row said 'NM' — three EPS readings with no shared basis and no flag. The
+    existing conflict check needs BOTH multiples present, so the negative-GAAP-EPS shape slipped
+    through. CIQ-present + EDGAR-absent now fires the basis caveat; a known EDGAR P/E near CIQ
+    stays quiet; CIQ absent stays quiet."""
+    bundle = ciq.CiqBundle(ticker="SMPL", workbooks=())
+    monkeypatch.setattr(dm.ciq_sheets, "pe_ltm_current",
+                        lambda b: ds.Sourced.present(16.0, source_ref="t"))
+    rec = _min_record(5.5)
+    funds_no_pe = rec.fundamentals.model_copy(update={
+        "pe": DataField.unknown(source="x", tier=SourceTier.DERIVED)})
+    rec_no_pe = rec.model_copy(update={"fundamentals": funds_no_pe})
+    flags = dm._eps_caveat_flags(rec_no_pe, bundle, eps_resolved=False)
+    assert any("P/LTM EPS prints 16.0x" in f and "different earnings definition" in f
+               for f in flags)
+    assert dm._eps_caveat_flags(_min_record(15.0), bundle, eps_resolved=False) == []
+    monkeypatch.setattr(dm.ciq_sheets, "pe_ltm_current",
+                        lambda b: ds.Sourced.unknown(note="no value"))
+    assert dm._eps_caveat_flags(rec_no_pe, bundle, eps_resolved=False) == []
 
 
 # --- item 2: geographic = the 'Geographic Segments' → 'Revenues' block, not the business one ----
