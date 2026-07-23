@@ -204,7 +204,7 @@ def _gap_pct_from_perf(sp: Any, date_str: str) -> float | None:
     return float(b.name) / float(a.name) - 1.0
 
 
-_LEGALESE_PAREN = re.compile(r"\s*\((?:the\s+)?[\u201c\"][^\u201d\"]{1,60}[\u201d\"]\)")
+_LEGALESE_PAREN = re.compile(r"\s*\(\s*(?:the\s+)?[\u201c\"][^)]{1,70}[\u201d\"]\s*\)")
 _XREF_STUB = re.compile(r"The information set forth in", re.IGNORECASE)
 
 

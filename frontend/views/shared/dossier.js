@@ -2341,7 +2341,7 @@ export function cleanItemEvent(ev) {  // exported for the py-twin equivalence te
     const esc = title.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
     body = body.replace(new RegExp(`^(?:Item\\s+\\d\\.\\d\\d[.:]?\\s*)?${esc}\\s*[.:]\\s*`, "i"), "");
   }
-  body = body.replace(/\s*\((?:the\s+)?[“"][^”"]{1,60}[”"]\)/g, "");
+  body = body.replace(/\s*\(\s*(?:the\s+)?[“"][^)]{1,70}[”"]\s*\)/g, "");
   body = body.trim();
   if (!body) return null;  // pure cross-reference / heading-only item — nothing informative
   return title ? `${code} ${title}: ${body}` : `${code}: ${body}`;

@@ -8327,6 +8327,11 @@ def test_clean_item_event_trims_and_drops_and_twins_js() -> None:
     got_stub = dr._clean_item_event(stub_tail)
     assert got_stub is not None and "information set forth" not in got_stub
     assert dr._clean_item_event(stub_only) is None  # nothing informative left → dropped
+    multi = ('2.02 Results of Operations and Financial Condition: Results of Operations and '
+             'Financial Condition. On June 29, 2026, Concentrix Corporation (the “Company” or '
+             '“Concentrix”) issued a press release')
+    got_multi = dr._clean_item_event(multi)
+    assert got_multi is not None and "(the" not in got_multi  # multi-term defined-term paren too
     assert dr._clean_item_event(unparseable) == unparseable  # non-item line passes through
     if not shutil.which("node"):
         return
