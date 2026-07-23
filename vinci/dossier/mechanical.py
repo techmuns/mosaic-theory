@@ -66,6 +66,7 @@ from vinci.resolver.index import pad_cik
 from vinci.schemas.data_record import DataRecord, Identity
 from vinci.schemas.envelope import CoverageStatus, DataField
 from vinci.schemas.market import PriceBar
+from vinci.screens.assemble import DECLINE_WINDOW_DAYS, GAP_DOWN_THRESHOLD
 from vinci.store import Store
 from vinci.universe import benchmark_identity
 
@@ -163,11 +164,37 @@ def _admin_label(items: list[str]) -> str:
     return f"no earnings/guidance filing (administrative 8-K only · items {codes})"
 
 
-def _gap_label(items: list[str]) -> str:
+# (8.01 refinement) ANCHORED patterns on the parsed 8.01 body — a bare "other event" hides the one
+# cause class 8.01 routinely carries: a securities offering. Deterministic two-step: an OFFERING
+# CONTEXT anchor must fire first, then the instrument decides the label (notes → debt, stock →
+# equity, neither → the honest generic). No context anchor → the label stays "other event".
+_OFFERING_CTX = re.compile(r"underwriting agreement|public offering|to issue and sell", re.I)
+_OFFERING_DEBT = re.compile(r"\bnotes?\b|debentures|principal amount", re.I)
+_OFFERING_EQUITY = re.compile(r"common stock|ordinary shares|\bshares\b", re.I)
+
+
+def _refine_801(label: str, events: list[str] | None) -> str:
+    """Refine the 8.01 "other event" label from the filing's own parsed body — never a guess."""
+    body = " ".join(e for e in (events or []) if e.startswith("8.01"))
+    if not body or not _OFFERING_CTX.search(body):
+        return label
+    if _OFFERING_DEBT.search(body):
+        return "debt offering (8.01)"
+    if _OFFERING_EQUITY.search(body):
+        return "equity offering (8.01)"
+    return "securities offering (8.01)"
+
+
+def _gap_label(items: list[str], events: list[str] | None = None) -> str:
     """A short cause label for one gap-down from its 8-K items. Never "earnings" without 2.02;
     an administrative-only 8-K (5.07 annual-meeting vote, etc.) is NOT a cause — it reads as no
-    earnings/guidance filing, matching the 'no company filing' treatment of a gap with no 8-K."""
-    labels = [_CAUSE_BY_ITEM[c] for c in items if c in _CAUSE_BY_ITEM]
+    earnings/guidance filing, matching the 'no company filing' treatment of a gap with no 8-K.
+    An 8.01 refines to its offering class when the parsed body anchors one (_refine_801)."""
+    labels = [
+        _refine_801(_CAUSE_BY_ITEM[c], events) if c == "8.01" else _CAUSE_BY_ITEM[c]
+        for c in items
+        if c in _CAUSE_BY_ITEM
+    ]
     return " + ".join(labels) if labels else _admin_label(items)
 
 
@@ -319,7 +346,8 @@ def _drawdown_cause(record: DataRecord, edgar: EdgarClient, http: CachedHttp) ->
     by_gap = {f.gap_date: f for f in filings}
     if gaps:
         parts = [
-            f"{gd.isoformat()} {_gap_label(by_gap[gd.isoformat()].items)}"
+            f"{gd.isoformat()} "
+            f"{_gap_label(by_gap[gd.isoformat()].items, by_gap[gd.isoformat()].events)}"
             if gd.isoformat() in by_gap
             # state the WORLD, not our process: a hard fall on a day the company filed nothing is
             # itself a finding (it points away from company news), not a tooling miss.
@@ -351,6 +379,10 @@ def _drawdown_cause(record: DataRecord, edgar: EdgarClient, http: CachedHttp) ->
             if cik and filings
             else Sourced.unknown(note="no catalyst 8-K to follow for a revised-guidance exhibit")
         ),
+        # the detector's own params, copied from the screen constants (ONE source of truth) so the
+        # renderers can mark coverage honestly (window boundary + pre-window drops).
+        gap_threshold=GAP_DOWN_THRESHOLD,
+        gap_window_days=DECLINE_WINDOW_DAYS,
     )
 
 
@@ -578,7 +610,13 @@ def _idiosyncratic_vs_shared(
 
 
 _PERF_WINDOW_DAYS = 364  # 52 weeks — the Brief stock-performance exhibit window
-_PERF_MAX_POINTS = 60  # weekly-ish downsample cap: keeps the committed JSON + the SVG path light
+# DAILY resolution (a 52-wk window holds ~251 trading days; the cap only guards a pathological
+# store). Weekly-ish downsampling (the old cap of 60) SMOOTHED AWAY the very one-day gap-downs the
+# What-broke chart marks (CNXC's -11.2% Jun-30 drop was invisible), and made the true 1-day gap %
+# unrecoverable from the committed series (a weekly proxy misstated -12.7% as -21.7%). Daily points
+# let the renderers derive each gap's exact close-to-close move — the detector's own formula on the
+# same closes — instead of fabricating from a downsample. Cost: ~12KB/name of committed JSON.
+_PERF_MAX_POINTS = 400
 
 
 def _stock_performance(

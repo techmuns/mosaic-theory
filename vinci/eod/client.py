@@ -118,6 +118,49 @@ def ingest_prices(
     }
 
 
+def ingest_prices_per_symbol(
+    client: PolygonEodClient,
+    store: Any,
+    securities: Iterable[Identity],
+    *,
+    start: date,
+    end: date,
+    progress: ProgressFn | None = None,
+) -> dict[str, int]:
+    """Backfill via ONE per-symbol aggregates call each (``daily_bars``) instead of grouped-daily.
+
+    grouped-daily fetches the WHOLE market per day — right for the ongoing universe refresh, but for
+    backfilling a NEW name's history that is ~250 whole-market calls at the free tier's ~5/min (the
+    NCNO-class stall: a name that entered the tracked set with no history — its stock-perf
+    exhibit and 180d returns were all UNKNOWN). Polygon HAS the history; this pulls it in ONE call
+    per symbol. Same store, same PriceBar shape — the efficient path for a per-name backfill."""
+    secs = list(securities)
+    reporter = ProgressReporter("EOD-aggs", len(secs), emit=progress)
+    bars_written = 0
+    empty: list[str] = []
+    for i, s in enumerate(secs, 1):
+        rows = [
+            PriceBar(
+                internal_id=s.internal_id, bar_date=d, open=b.open, high=b.high, low=b.low,
+                close=b.close, volume=b.volume, source="polygon-aggs",
+            )
+            for d, b in client.daily_bars(s.eod_symbol, start, end)
+        ]
+        if not rows:
+            empty.append(s.eod_symbol)  # OK-but-empty ⇒ mis-resolved symbol or out-of-window range
+        bars_written += store.write_prices(rows)
+        reporter.tick(i, suffix=f"{s.eod_symbol} {len(rows)} bars")
+    # FAIL LOUD: a 0-bar backfill IS the NCNO-class silent gap this path exists to prevent — an OK
+    # response with no rows (a symbol Polygon doesn't carry, or an out-of-window range) must never
+    # read as success. The non-empty names are already written; the operator re-runs these.
+    if empty:
+        raise EodError(
+            f"per-symbol backfill returned NO bars for {empty} — mis-resolved eod_symbol or an "
+            f"out-of-window date range; the store gained nothing for these (a silent gap)"
+        )
+    return {"symbols": len(secs), "bars_written": bars_written}
+
+
 class PolygonEodClient(EodClient):
     """Polygon.io Grouped Daily adapter (primary). Header auth; fail-loud on partial refresh."""
 

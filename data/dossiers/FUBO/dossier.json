@@ -513,7 +513,8 @@
             "source_ref": "8-K 0001493152-26-004826 EX-99.1",
             "status": "present",
             "note": null
-          }
+          },
+          "explanatory": true
         },
         {
           "gap_date": "2026-05-06",
@@ -532,7 +533,8 @@
           "events": [
             "2.02 Results of Operations and Financial Condition: Results of Operations and Financial Condition. On May 6, 2026, FuboTV Inc. announced its financial results for the quarter ended March 31, 2026. The full text of the shareholder letter and press release issued in connection with the announcement are attached as Exhibits 99.1 and 99.2, respectively, to this Current Report on Form 8-K. The information in this"
           ],
-          "drivers": null
+          "drivers": null,
+          "explanatory": true
         }
       ],
       "revised_guidance": {
@@ -540,7 +542,9 @@
         "source_ref": null,
         "status": "unknown",
         "note": "no revised-outlook 99.1 exhibit parsed for 8-Ks ['0001493152-26-004826', '0001493152-26-021406']"
-      }
+      },
+      "gap_threshold": -0.1,
+      "gap_window_days": 180
     },
     "idiosyncratic_vs_shared": {
       "name_180d_return": {
@@ -3963,7 +3967,7 @@
           "reconciliation": [
             {
               "metric": "revenue",
-              "period": "2026",
+              "period": "Q2 2026",
               "value": 1.57,
               "change": null,
               "verbatim": "We delivered North America revenue of $1.57 billion",
@@ -4203,7 +4207,7 @@
         "value": 9.56,
         "source_ref": "EOD FUBO last close",
         "status": "present",
-        "note": "PRICE STALE AT ASSEMBLY: last stored close 2026-07-08 is 14 calendar days before assembly — run `vinci refresh` before assembling"
+        "note": "PRICE STALE AT ASSEMBLY: last stored close 2026-07-08 is 15 calendar days before assembly — run `vinci refresh` before assembling"
       },
       "high_52w": {
         "value": 56.64,
@@ -4245,9 +4249,39 @@
           "benchmark": 100.0
         },
         {
+          "date": "2025-07-08",
+          "name": 98.9,
+          "benchmark": 100.69
+        },
+        {
+          "date": "2025-07-09",
+          "name": 95.62,
+          "benchmark": 101.78
+        },
+        {
+          "date": "2025-07-10",
+          "name": 95.07,
+          "benchmark": 102.31
+        },
+        {
           "date": "2025-07-11",
           "name": 90.68,
           "benchmark": 100.9
+        },
+        {
+          "date": "2025-07-14",
+          "name": 93.42,
+          "benchmark": 101.57
+        },
+        {
+          "date": "2025-07-15",
+          "name": 93.15,
+          "benchmark": 99.59
+        },
+        {
+          "date": "2025-07-16",
+          "name": 96.44,
+          "benchmark": 100.59
         },
         {
           "date": "2025-07-17",
@@ -4255,9 +4289,39 @@
           "benchmark": 101.91
         },
         {
+          "date": "2025-07-18",
+          "name": 91.78,
+          "benchmark": 101.18
+        },
+        {
+          "date": "2025-07-21",
+          "name": 90.96,
+          "benchmark": 100.77
+        },
+        {
+          "date": "2025-07-22",
+          "name": 93.42,
+          "benchmark": 101.61
+        },
+        {
           "date": "2025-07-23",
           "name": 99.45,
           "benchmark": 103.16
+        },
+        {
+          "date": "2025-07-24",
+          "name": 98.63,
+          "benchmark": 101.74
+        },
+        {
+          "date": "2025-07-25",
+          "name": 100.82,
+          "benchmark": 102.12
+        },
+        {
+          "date": "2025-07-28",
+          "name": 96.71,
+          "benchmark": 102.0
         },
         {
           "date": "2025-07-29",
@@ -4265,9 +4329,39 @@
           "benchmark": 101.35
         },
         {
+          "date": "2025-07-30",
+          "name": 113.97,
+          "benchmark": 100.83
+        },
+        {
+          "date": "2025-07-31",
+          "name": 109.04,
+          "benchmark": 99.85
+        },
+        {
+          "date": "2025-08-01",
+          "name": 102.74,
+          "benchmark": 97.81
+        },
+        {
           "date": "2025-08-04",
           "name": 108.49,
           "benchmark": 100.0
+        },
+        {
+          "date": "2025-08-05",
+          "name": 107.4,
+          "benchmark": 100.51
+        },
+        {
+          "date": "2025-08-06",
+          "name": 102.47,
+          "benchmark": 100.38
+        },
+        {
+          "date": "2025-08-07",
+          "name": 101.37,
+          "benchmark": 100.05
         },
         {
           "date": "2025-08-08",
@@ -4275,9 +4369,39 @@
           "benchmark": 100.27
         },
         {
+          "date": "2025-08-11",
+          "name": 98.36,
+          "benchmark": 100.25
+        },
+        {
+          "date": "2025-08-12",
+          "name": 99.73,
+          "benchmark": 103.22
+        },
+        {
+          "date": "2025-08-13",
+          "name": 103.01,
+          "benchmark": 105.23
+        },
+        {
           "date": "2025-08-14",
           "name": 101.37,
           "benchmark": 103.87
+        },
+        {
+          "date": "2025-08-15",
+          "name": 99.45,
+          "benchmark": 103.37
+        },
+        {
+          "date": "2025-08-18",
+          "name": 103.29,
+          "benchmark": 103.75
+        },
+        {
+          "date": "2025-08-19",
+          "name": 95.34,
+          "benchmark": 102.95
         },
         {
           "date": "2025-08-20",
@@ -4285,9 +4409,39 @@
           "benchmark": 102.58
         },
         {
+          "date": "2025-08-21",
+          "name": 92.88,
+          "benchmark": 102.84
+        },
+        {
+          "date": "2025-08-22",
+          "name": 95.62,
+          "benchmark": 106.87
+        },
+        {
+          "date": "2025-08-25",
+          "name": 95.07,
+          "benchmark": 105.75
+        },
+        {
           "date": "2025-08-26",
           "name": 94.52,
           "benchmark": 106.62
+        },
+        {
+          "date": "2025-08-27",
+          "name": 93.42,
+          "benchmark": 107.38
+        },
+        {
+          "date": "2025-08-28",
+          "name": 95.34,
+          "benchmark": 107.5
+        },
+        {
+          "date": "2025-08-29",
+          "name": 96.71,
+          "benchmark": 107.03
         },
         {
           "date": "2025-09-02",
@@ -4295,9 +4449,39 @@
           "benchmark": 106.45
         },
         {
+          "date": "2025-09-03",
+          "name": 101.64,
+          "benchmark": 106.34
+        },
+        {
+          "date": "2025-09-04",
+          "name": 103.29,
+          "benchmark": 107.67
+        },
+        {
+          "date": "2025-09-05",
+          "name": 109.86,
+          "benchmark": 108.21
+        },
+        {
           "date": "2025-09-08",
           "name": 112.88,
           "benchmark": 108.43
+        },
+        {
+          "date": "2025-09-09",
+          "name": 112.05,
+          "benchmark": 107.79
+        },
+        {
+          "date": "2025-09-10",
+          "name": 107.67,
+          "benchmark": 107.6
+        },
+        {
+          "date": "2025-09-11",
+          "name": 113.97,
+          "benchmark": 109.59
         },
         {
           "date": "2025-09-12",
@@ -4305,9 +4489,39 @@
           "benchmark": 108.47
         },
         {
+          "date": "2025-09-15",
+          "name": 119.45,
+          "benchmark": 108.93
+        },
+        {
+          "date": "2025-09-16",
+          "name": 117.53,
+          "benchmark": 108.44
+        },
+        {
+          "date": "2025-09-17",
+          "name": 115.34,
+          "benchmark": 108.72
+        },
+        {
           "date": "2025-09-18",
           "name": 120.0,
           "benchmark": 111.43
+        },
+        {
+          "date": "2025-09-19",
+          "name": 119.18,
+          "benchmark": 110.58
+        },
+        {
+          "date": "2025-09-22",
+          "name": 124.93,
+          "benchmark": 111.22
+        },
+        {
+          "date": "2025-09-23",
+          "name": 121.92,
+          "benchmark": 110.97
         },
         {
           "date": "2025-09-24",
@@ -4315,9 +4529,39 @@
           "benchmark": 109.95
         },
         {
+          "date": "2025-09-25",
+          "name": 112.05,
+          "benchmark": 108.9
+        },
+        {
+          "date": "2025-09-26",
+          "name": 115.07,
+          "benchmark": 109.83
+        },
+        {
+          "date": "2025-09-29",
+          "name": 116.99,
+          "benchmark": 109.96
+        },
+        {
           "date": "2025-09-30",
           "name": 113.7,
           "benchmark": 110.12
+        },
+        {
+          "date": "2025-10-01",
+          "name": 106.85,
+          "benchmark": 110.36
+        },
+        {
+          "date": "2025-10-02",
+          "name": 108.22,
+          "benchmark": 111.05
+        },
+        {
+          "date": "2025-10-03",
+          "name": 108.49,
+          "benchmark": 111.88
         },
         {
           "date": "2025-10-06",
@@ -4325,9 +4569,39 @@
           "benchmark": 112.32
         },
         {
+          "date": "2025-10-07",
+          "name": 106.03,
+          "benchmark": 111.12
+        },
+        {
+          "date": "2025-10-08",
+          "name": 106.3,
+          "benchmark": 112.28
+        },
+        {
+          "date": "2025-10-09",
+          "name": 104.93,
+          "benchmark": 111.56
+        },
+        {
           "date": "2025-10-10",
           "name": 100.82,
           "benchmark": 108.22
+        },
+        {
+          "date": "2025-10-13",
+          "name": 104.66,
+          "benchmark": 111.23
+        },
+        {
+          "date": "2025-10-14",
+          "name": 104.93,
+          "benchmark": 112.82
+        },
+        {
+          "date": "2025-10-15",
+          "name": 106.03,
+          "benchmark": 113.93
         },
         {
           "date": "2025-10-16",
@@ -4335,9 +4609,39 @@
           "benchmark": 111.53
         },
         {
+          "date": "2025-10-17",
+          "name": 99.73,
+          "benchmark": 110.78
+        },
+        {
+          "date": "2025-10-20",
+          "name": 100.0,
+          "benchmark": 112.94
+        },
+        {
+          "date": "2025-10-21",
+          "name": 100.0,
+          "benchmark": 112.41
+        },
+        {
           "date": "2025-10-22",
           "name": 95.07,
           "benchmark": 110.75
+        },
+        {
+          "date": "2025-10-23",
+          "name": 98.36,
+          "benchmark": 112.15
+        },
+        {
+          "date": "2025-10-24",
+          "name": 99.18,
+          "benchmark": 113.52
+        },
+        {
+          "date": "2025-10-27",
+          "name": 98.08,
+          "benchmark": 113.91
         },
         {
           "date": "2025-10-28",
@@ -4345,9 +4649,39 @@
           "benchmark": 113.3
         },
         {
+          "date": "2025-10-29",
+          "name": 101.1,
+          "benchmark": 112.34
+        },
+        {
+          "date": "2025-10-30",
+          "name": 100.27,
+          "benchmark": 111.43
+        },
+        {
+          "date": "2025-10-31",
+          "name": 103.56,
+          "benchmark": 112.06
+        },
+        {
           "date": "2025-11-03",
           "name": 94.79,
           "benchmark": 111.7
+        },
+        {
+          "date": "2025-11-04",
+          "name": 100.82,
+          "benchmark": 109.77
+        },
+        {
+          "date": "2025-11-05",
+          "name": 111.78,
+          "benchmark": 111.35
+        },
+        {
+          "date": "2025-11-06",
+          "name": 103.29,
+          "benchmark": 109.38
         },
         {
           "date": "2025-11-07",
@@ -4355,9 +4689,39 @@
           "benchmark": 109.96
         },
         {
+          "date": "2025-11-10",
+          "name": 107.95,
+          "benchmark": 111.06
+        },
+        {
+          "date": "2025-11-11",
+          "name": 105.75,
+          "benchmark": 111.15
+        },
+        {
+          "date": "2025-11-12",
+          "name": 107.67,
+          "benchmark": 110.88
+        },
+        {
           "date": "2025-11-13",
           "name": 101.92,
           "benchmark": 107.76
+        },
+        {
+          "date": "2025-11-14",
+          "name": 98.9,
+          "benchmark": 108.08
+        },
+        {
+          "date": "2025-11-17",
+          "name": 92.05,
+          "benchmark": 105.93
+        },
+        {
+          "date": "2025-11-18",
+          "name": 96.99,
+          "benchmark": 106.25
         },
         {
           "date": "2025-11-19",
@@ -4365,9 +4729,39 @@
           "benchmark": 106.23
         },
         {
+          "date": "2025-11-20",
+          "name": 88.77,
+          "benchmark": 104.27
+        },
+        {
+          "date": "2025-11-21",
+          "name": 86.58,
+          "benchmark": 107.22
+        },
+        {
+          "date": "2025-11-24",
+          "name": 84.93,
+          "benchmark": 109.18
+        },
+        {
           "date": "2025-11-25",
           "name": 85.21,
           "benchmark": 111.56
+        },
+        {
+          "date": "2025-11-26",
+          "name": 82.47,
+          "benchmark": 112.55
+        },
+        {
+          "date": "2025-11-28",
+          "name": 83.29,
+          "benchmark": 113.21
+        },
+        {
+          "date": "2025-12-01",
+          "name": 79.45,
+          "benchmark": 111.78
         },
         {
           "date": "2025-12-02",
@@ -4375,9 +4769,39 @@
           "benchmark": 111.58
         },
         {
+          "date": "2025-12-03",
+          "name": 78.36,
+          "benchmark": 113.61
+        },
+        {
+          "date": "2025-12-04",
+          "name": 79.45,
+          "benchmark": 114.6
+        },
+        {
+          "date": "2025-12-05",
+          "name": 78.08,
+          "benchmark": 114.13
+        },
+        {
           "date": "2025-12-08",
           "name": 77.81,
           "benchmark": 114.17
+        },
+        {
+          "date": "2025-12-09",
+          "name": 78.9,
+          "benchmark": 114.41
+        },
+        {
+          "date": "2025-12-10",
+          "name": 75.89,
+          "benchmark": 115.97
+        },
+        {
+          "date": "2025-12-11",
+          "name": 75.07,
+          "benchmark": 117.33
         },
         {
           "date": "2025-12-12",
@@ -4385,9 +4809,39 @@
           "benchmark": 115.53
         },
         {
+          "date": "2025-12-15",
+          "name": 70.41,
+          "benchmark": 114.65
+        },
+        {
+          "date": "2025-12-16",
+          "name": 73.42,
+          "benchmark": 113.73
+        },
+        {
+          "date": "2025-12-17",
+          "name": 72.33,
+          "benchmark": 112.52
+        },
+        {
           "date": "2025-12-18",
           "name": 71.78,
           "benchmark": 113.19
+        },
+        {
+          "date": "2025-12-19",
+          "name": 74.25,
+          "benchmark": 114.14
+        },
+        {
+          "date": "2025-12-22",
+          "name": 72.6,
+          "benchmark": 115.41
+        },
+        {
+          "date": "2025-12-23",
+          "name": 73.97,
+          "benchmark": 114.72
         },
         {
           "date": "2025-12-24",
@@ -4395,9 +4849,39 @@
           "benchmark": 115.01
         },
         {
+          "date": "2025-12-26",
+          "name": 72.6,
+          "benchmark": 114.42
+        },
+        {
+          "date": "2025-12-29",
+          "name": 70.41,
+          "benchmark": 113.72
+        },
+        {
+          "date": "2025-12-30",
+          "name": 68.77,
+          "benchmark": 112.88
+        },
+        {
           "date": "2025-12-31",
           "name": 69.04,
           "benchmark": 112.03
+        },
+        {
+          "date": "2026-01-02",
+          "name": 70.96,
+          "benchmark": 113.22
+        },
+        {
+          "date": "2026-01-05",
+          "name": 69.32,
+          "benchmark": 115.02
+        },
+        {
+          "date": "2026-01-06",
+          "name": 68.49,
+          "benchmark": 116.54
         },
         {
           "date": "2026-01-07",
@@ -4405,9 +4889,39 @@
           "benchmark": 116.27
         },
         {
+          "date": "2026-01-08",
+          "name": 67.95,
+          "benchmark": 117.54
+        },
+        {
+          "date": "2026-01-09",
+          "name": 70.14,
+          "benchmark": 118.43
+        },
+        {
+          "date": "2026-01-12",
+          "name": 72.05,
+          "benchmark": 119.01
+        },
+        {
           "date": "2026-01-13",
           "name": 70.41,
           "benchmark": 118.94
+        },
+        {
+          "date": "2026-01-14",
+          "name": 70.68,
+          "benchmark": 119.78
+        },
+        {
+          "date": "2026-01-15",
+          "name": 72.88,
+          "benchmark": 120.83
+        },
+        {
+          "date": "2026-01-16",
+          "name": 73.15,
+          "benchmark": 120.95
         },
         {
           "date": "2026-01-20",
@@ -4415,9 +4929,39 @@
           "benchmark": 119.5
         },
         {
+          "date": "2026-01-21",
+          "name": 70.68,
+          "benchmark": 121.87
+        },
+        {
+          "date": "2026-01-22",
+          "name": 70.14,
+          "benchmark": 122.78
+        },
+        {
+          "date": "2026-01-23",
+          "name": 67.95,
+          "benchmark": 120.52
+        },
+        {
           "date": "2026-01-26",
           "name": 62.19,
           "benchmark": 120.14
+        },
+        {
+          "date": "2026-01-27",
+          "name": 64.93,
+          "benchmark": 120.48
+        },
+        {
+          "date": "2026-01-28",
+          "name": 63.84,
+          "benchmark": 119.83
+        },
+        {
+          "date": "2026-01-29",
+          "name": 63.29,
+          "benchmark": 119.86
         },
         {
           "date": "2026-01-30",
@@ -4425,9 +4969,39 @@
           "benchmark": 118.17
         },
         {
+          "date": "2026-02-02",
+          "name": 62.19,
+          "benchmark": 119.32
+        },
+        {
+          "date": "2026-02-03",
+          "name": 48.49,
+          "benchmark": 119.59
+        },
+        {
+          "date": "2026-02-04",
+          "name": 44.38,
+          "benchmark": 118.56
+        },
+        {
           "date": "2026-02-05",
           "name": 44.38,
           "benchmark": 116.43
+        },
+        {
+          "date": "2026-02-06",
+          "name": 43.29,
+          "benchmark": 120.61
+        },
+        {
+          "date": "2026-02-09",
+          "name": 40.82,
+          "benchmark": 121.46
+        },
+        {
+          "date": "2026-02-10",
+          "name": 41.64,
+          "benchmark": 121.13
         },
         {
           "date": "2026-02-11",
@@ -4435,9 +5009,39 @@
           "benchmark": 120.58
         },
         {
+          "date": "2026-02-12",
+          "name": 36.44,
+          "benchmark": 118.12
+        },
+        {
+          "date": "2026-02-13",
+          "name": 36.71,
+          "benchmark": 119.67
+        },
+        {
+          "date": "2026-02-17",
+          "name": 36.44,
+          "benchmark": 119.71
+        },
+        {
           "date": "2026-02-18",
           "name": 36.16,
           "benchmark": 120.14
+        },
+        {
+          "date": "2026-02-19",
+          "name": 34.79,
+          "benchmark": 120.42
+        },
+        {
+          "date": "2026-02-20",
+          "name": 33.97,
+          "benchmark": 120.43
+        },
+        {
+          "date": "2026-02-23",
+          "name": 32.33,
+          "benchmark": 118.55
         },
         {
           "date": "2026-02-24",
@@ -4445,9 +5049,39 @@
           "benchmark": 119.84
         },
         {
+          "date": "2026-02-25",
+          "name": 32.33,
+          "benchmark": 120.41
+        },
+        {
+          "date": "2026-02-26",
+          "name": 32.6,
+          "benchmark": 121.05
+        },
+        {
+          "date": "2026-02-27",
+          "name": 32.05,
+          "benchmark": 118.97
+        },
+        {
           "date": "2026-03-02",
           "name": 32.05,
           "benchmark": 120.06
+        },
+        {
+          "date": "2026-03-03",
+          "name": 32.88,
+          "benchmark": 117.98
+        },
+        {
+          "date": "2026-03-04",
+          "name": 33.97,
+          "benchmark": 119.13
+        },
+        {
+          "date": "2026-03-05",
+          "name": 33.97,
+          "benchmark": 116.85
         },
         {
           "date": "2026-03-06",
@@ -4455,9 +5089,39 @@
           "benchmark": 114.18
         },
         {
+          "date": "2026-03-09",
+          "name": 32.05,
+          "benchmark": 115.42
+        },
+        {
+          "date": "2026-03-10",
+          "name": 32.05,
+          "benchmark": 115.31
+        },
+        {
+          "date": "2026-03-11",
+          "name": 32.05,
+          "benchmark": 115.07
+        },
+        {
           "date": "2026-03-12",
           "name": 31.51,
           "benchmark": 112.6
+        },
+        {
+          "date": "2026-03-13",
+          "name": 32.6,
+          "benchmark": 112.22
+        },
+        {
+          "date": "2026-03-16",
+          "name": 32.05,
+          "benchmark": 113.28
+        },
+        {
+          "date": "2026-03-17",
+          "name": 32.05,
+          "benchmark": 113.8
         },
         {
           "date": "2026-03-18",
@@ -4465,9 +5129,39 @@
           "benchmark": 111.96
         },
         {
+          "date": "2026-03-19",
+          "name": 31.51,
+          "benchmark": 112.7
+        },
+        {
+          "date": "2026-03-20",
+          "name": 30.96,
+          "benchmark": 110.24
+        },
+        {
+          "date": "2026-03-23",
+          "name": 30.14,
+          "benchmark": 112.62
+        },
+        {
           "date": "2026-03-24",
           "name": 27.44,
           "benchmark": 113.22
+        },
+        {
+          "date": "2026-03-25",
+          "name": 24.77,
+          "benchmark": 114.6
+        },
+        {
+          "date": "2026-03-26",
+          "name": 22.05,
+          "benchmark": 112.61
+        },
+        {
+          "date": "2026-03-27",
+          "name": 21.19,
+          "benchmark": 110.64
         },
         {
           "date": "2026-03-30",
@@ -4475,9 +5169,39 @@
           "benchmark": 109.05
         },
         {
+          "date": "2026-03-31",
+          "name": 21.6,
+          "benchmark": 112.87
+        },
+        {
+          "date": "2026-04-01",
+          "name": 21.0,
+          "benchmark": 113.58
+        },
+        {
+          "date": "2026-04-02",
+          "name": 22.31,
+          "benchmark": 114.36
+        },
+        {
           "date": "2026-04-06",
           "name": 27.56,
           "benchmark": 114.85
+        },
+        {
+          "date": "2026-04-07",
+          "name": 28.45,
+          "benchmark": 115.1
+        },
+        {
+          "date": "2026-04-08",
+          "name": 27.51,
+          "benchmark": 118.54
+        },
+        {
+          "date": "2026-04-09",
+          "name": 27.49,
+          "benchmark": 119.22
         },
         {
           "date": "2026-04-10",
@@ -4485,9 +5209,39 @@
           "benchmark": 118.92
         },
         {
+          "date": "2026-04-13",
+          "name": 26.8,
+          "benchmark": 120.63
+        },
+        {
+          "date": "2026-04-14",
+          "name": 27.58,
+          "benchmark": 122.3
+        },
+        {
+          "date": "2026-04-15",
+          "name": 30.0,
+          "benchmark": 122.6
+        },
+        {
           "date": "2026-04-16",
           "name": 29.0,
           "benchmark": 122.86
+        },
+        {
+          "date": "2026-04-17",
+          "name": 29.91,
+          "benchmark": 125.51
+        },
+        {
+          "date": "2026-04-20",
+          "name": 30.34,
+          "benchmark": 126.22
+        },
+        {
+          "date": "2026-04-21",
+          "name": 29.79,
+          "benchmark": 124.93
         },
         {
           "date": "2026-04-22",
@@ -4495,9 +5249,39 @@
           "benchmark": 125.83
         },
         {
+          "date": "2026-04-23",
+          "name": 28.01,
+          "benchmark": 125.39
+        },
+        {
+          "date": "2026-04-24",
+          "name": 27.42,
+          "benchmark": 125.9
+        },
+        {
+          "date": "2026-04-27",
+          "name": 26.48,
+          "benchmark": 126.13
+        },
+        {
           "date": "2026-04-28",
           "name": 26.23,
           "benchmark": 124.66
+        },
+        {
+          "date": "2026-04-29",
+          "name": 27.05,
+          "benchmark": 123.82
+        },
+        {
+          "date": "2026-04-30",
+          "name": 28.13,
+          "benchmark": 126.51
+        },
+        {
+          "date": "2026-05-01",
+          "name": 31.55,
+          "benchmark": 127.1
         },
         {
           "date": "2026-05-04",
@@ -4505,9 +5289,39 @@
           "benchmark": 126.46
         },
         {
+          "date": "2026-05-05",
+          "name": 28.31,
+          "benchmark": 128.59
+        },
+        {
+          "date": "2026-05-06",
+          "name": 23.81,
+          "benchmark": 130.52
+        },
+        {
+          "date": "2026-05-07",
+          "name": 24.63,
+          "benchmark": 128.46
+        },
+        {
           "date": "2026-05-08",
           "name": 23.47,
           "benchmark": 129.33
+        },
+        {
+          "date": "2026-05-11",
+          "name": 22.72,
+          "benchmark": 129.85
+        },
+        {
+          "date": "2026-05-12",
+          "name": 22.44,
+          "benchmark": 128.6
+        },
+        {
+          "date": "2026-05-13",
+          "name": 22.63,
+          "benchmark": 128.64
         },
         {
           "date": "2026-05-14",
@@ -4515,9 +5329,39 @@
           "benchmark": 129.45
         },
         {
+          "date": "2026-05-15",
+          "name": 21.96,
+          "benchmark": 126.34
+        },
+        {
+          "date": "2026-05-18",
+          "name": 21.42,
+          "benchmark": 125.6
+        },
+        {
+          "date": "2026-05-19",
+          "name": 21.0,
+          "benchmark": 124.24
+        },
+        {
           "date": "2026-05-20",
           "name": 20.91,
           "benchmark": 127.37
+        },
+        {
+          "date": "2026-05-21",
+          "name": 20.87,
+          "benchmark": 128.56
+        },
+        {
+          "date": "2026-05-22",
+          "name": 22.26,
+          "benchmark": 129.76
+        },
+        {
+          "date": "2026-05-26",
+          "name": 21.74,
+          "benchmark": 132.21
         },
         {
           "date": "2026-05-27",
@@ -4525,9 +5369,39 @@
           "benchmark": 132.15
         },
         {
+          "date": "2026-05-28",
+          "name": 23.81,
+          "benchmark": 132.9
+        },
+        {
+          "date": "2026-05-29",
+          "name": 23.04,
+          "benchmark": 132.18
+        },
+        {
+          "date": "2026-06-01",
+          "name": 26.3,
+          "benchmark": 131.52
+        },
+        {
           "date": "2026-06-02",
           "name": 24.47,
           "benchmark": 132.74
+        },
+        {
+          "date": "2026-06-03",
+          "name": 22.42,
+          "benchmark": 130.92
+        },
+        {
+          "date": "2026-06-04",
+          "name": 23.2,
+          "benchmark": 132.89
+        },
+        {
+          "date": "2026-06-05",
+          "name": 21.78,
+          "benchmark": 128.18
         },
         {
           "date": "2026-06-08",
@@ -4535,9 +5409,39 @@
           "benchmark": 129.3
         },
         {
+          "date": "2026-06-09",
+          "name": 22.21,
+          "benchmark": 129.71
+        },
+        {
+          "date": "2026-06-10",
+          "name": 22.79,
+          "benchmark": 128.36
+        },
+        {
+          "date": "2026-06-11",
+          "name": 23.9,
+          "benchmark": 132.17
+        },
+        {
           "date": "2026-06-12",
           "name": 22.44,
           "benchmark": 133.32
+        },
+        {
+          "date": "2026-06-15",
+          "name": 22.65,
+          "benchmark": 134.09
+        },
+        {
+          "date": "2026-06-16",
+          "name": 21.19,
+          "benchmark": 132.93
+        },
+        {
+          "date": "2026-06-17",
+          "name": 20.32,
+          "benchmark": 131.93
         },
         {
           "date": "2026-06-18",
@@ -4545,14 +5449,49 @@
           "benchmark": 134.52
         },
         {
+          "date": "2026-06-22",
+          "name": 20.14,
+          "benchmark": 135.7
+        },
+        {
+          "date": "2026-06-23",
+          "name": 19.89,
+          "benchmark": 134.4
+        },
+        {
+          "date": "2026-06-24",
+          "name": 19.98,
+          "benchmark": 135.02
+        },
+        {
           "date": "2026-06-25",
           "name": 18.47,
           "benchmark": 136.04
         },
         {
+          "date": "2026-06-26",
+          "name": 22.63,
+          "benchmark": 136.45
+        },
+        {
+          "date": "2026-06-29",
+          "name": 21.6,
+          "benchmark": 136.06
+        },
+        {
+          "date": "2026-06-30",
+          "name": 21.0,
+          "benchmark": 136.74
+        },
+        {
           "date": "2026-07-01",
           "name": 23.01,
           "benchmark": 136.22
+        },
+        {
+          "date": "2026-07-02",
+          "name": 23.29,
+          "benchmark": 135.43
         },
         {
           "date": "2026-07-06",
@@ -4671,9 +5610,9 @@
         },
         {
           "kind": "leading_indicator",
-          "metric": "trailing 12-month pro forma revenue (Fubo + Hulu Live)",
+          "metric": "trailing 12-month pro forma revenue",
           "period": "trailing 12 months (pro forma)",
-          "value": "$6.2 billion",
+          "value": "$6.2 billion of revenue",
           "value_num": null,
           "unit": null,
           "verbatim": "On a pro forma basis, over the past 12 months, the Fubo and Hulu Live businesses generated $6.2 billion of revenue and ended the period with 6.2 million subscribers in North America.",
@@ -4682,8 +5621,8 @@
         },
         {
           "kind": "leading_indicator",
-          "metric": "North America subscribers (pro forma, trailing 12 months)",
-          "period": "end of period (pro forma)",
+          "metric": "North America subscribers",
+          "period": "end of trailing 12-month period (pro forma)",
           "value": "6.2 million subscribers in North America",
           "value_num": null,
           "unit": null,
@@ -4703,19 +5642,8 @@
           "tier": "llm-fenced"
         },
         {
-          "kind": "competitive_position",
-          "metric": "ESPN digital and social reach among U.S. adults",
-          "period": "November 2025",
-          "value": "4 out of every 5 U.S. adults in November of 2025",
-          "value_num": null,
-          "unit": null,
-          "verbatim": "Per comScore, ESPN's digital and social properties reached 4 out of every 5 U.S. adults in November of 2025, representing hundreds of millions of unique fans.",
-          "source_ref": "CIQ transcript: FuboTV Inc., Q1 2026 Earnings Call, Feb 03, 2026.rtf",
-          "tier": "llm-fenced"
-        },
-        {
           "kind": "pricing_action",
-          "metric": "Fubo consumer price change following removal of NBC content",
+          "metric": "Fubo pricing following removal of NBC content",
           "period": "Q1 fiscal 2026",
           "value": "decision to lower prices",
           "value_num": null,
@@ -4725,9 +5653,31 @@
           "tier": "llm-fenced"
         },
         {
+          "kind": "competitive_position",
+          "metric": "ESPN digital and social reach",
+          "period": "November 2025",
+          "value": "reached 4 out of every 5 U.S. adults in November of 2025",
+          "value_num": null,
+          "unit": null,
+          "verbatim": "Per comScore, ESPN's digital and social properties reached 4 out of every 5 U.S. adults in November of 2025, representing hundreds of millions of unique fans.",
+          "source_ref": "CIQ transcript: FuboTV Inc., Q1 2026 Earnings Call, Feb 03, 2026.rtf",
+          "tier": "llm-fenced"
+        },
+        {
+          "kind": "leading_indicator",
+          "metric": "Fubo Latino subscribers",
+          "period": "fiscal 1Q '26",
+          "value": "record high subscribers on Fubo's Latino product",
+          "value_num": null,
+          "unit": null,
+          "verbatim": "And in fiscal 1Q '26, we delivered record high subscribers on Fubo's Latino product.",
+          "source_ref": "CIQ transcript: FuboTV Inc., Q1 2026 Earnings Call, Feb 03, 2026.rtf",
+          "tier": "llm-fenced"
+        },
+        {
           "kind": "leading_indicator",
           "metric": "North America reported revenue",
-          "period": "Q1 fiscal 2026 (reported)",
+          "period": "Q1 fiscal 2026",
           "value": "$1.54 billion compared to $1.11 billion in the prior year period",
           "value_num": null,
           "unit": null,
@@ -4748,9 +5698,9 @@
         },
         {
           "kind": "leading_indicator",
-          "metric": "North America subscribers (combined)",
-          "period": "Q1 fiscal 2026 (combined)",
-          "value": "approximately 6.2 million North America subscribers compared to 6.3 million in the prior year",
+          "metric": "North America subscribers (combined basis)",
+          "period": "Q1 fiscal 2026",
+          "value": "approximately 6.2 million compared to 6.3 million in the prior year",
           "value_num": null,
           "unit": null,
           "verbatim": "On a combined basis, we ended the quarter with approximately 6.2 million North America subscribers compared to 6.3 million in the prior year.",
@@ -4761,7 +5711,7 @@
           "kind": "leading_indicator",
           "metric": "pro forma adjusted EBITDA",
           "period": "Q1 fiscal 2026 (pro forma)",
-          "value": "$41.4 million, nearly doubling from $22 million in the prior year period",
+          "value": "positive pro forma adjusted EBITDA of $41.4 million, nearly doubling from $22 million in the prior year period",
           "value_num": null,
           "unit": null,
           "verbatim": "Importantly, we delivered positive pro forma adjusted EBITDA of $41.4 million, nearly doubling from $22 million in the prior year period.",
@@ -4770,7 +5720,7 @@
         },
         {
           "kind": "leading_indicator",
-          "metric": "subscriber growth year-over-year",
+          "metric": "subscribers year-over-year",
           "period": "year-over-year",
           "value": "up 3% year-over-year versus the prior year in subscribers",
           "value_num": null,
@@ -4782,22 +5732,11 @@
         {
           "kind": "leading_indicator",
           "metric": "trailing 12-month pro forma adjusted EBITDA",
-          "period": "trailing 12 months",
+          "period": "trailing 12 months (pro forma)",
           "value": "exceeded $100 million in pro forma adjusted EBITDA",
           "value_num": null,
           "unit": null,
           "verbatim": "More importantly, on a trailing 12-month basis, we have now exceeded $100 million in pro forma adjusted EBITDA, an important milestone that reinforces our confidence in delivering against our long-term target of at least $300 million in adjusted EBITDA by 2028.",
-          "source_ref": "CIQ transcript: FuboTV Inc., Q2 2026 Earnings Call, May 06, 2026.rtf",
-          "tier": "llm-fenced"
-        },
-        {
-          "kind": "competitive_position",
-          "metric": "ESPN ecosystem monthly reach",
-          "period": "monthly",
-          "value": "over 100 million users every month",
-          "value_num": null,
-          "unit": null,
-          "verbatim": "As a reminder, the ESPN ecosystem reaches over 100 million users every month.",
           "source_ref": "CIQ transcript: FuboTV Inc., Q2 2026 Earnings Call, May 06, 2026.rtf",
           "tier": "llm-fenced"
         }
@@ -4809,78 +5748,98 @@
     }
   },
   "synthesis": {
-    "evidence_balance": "mixed — a contractually-supported merger EBITDA ramp and deep revenue-multiple discount sit against heavy cash burn, shrinking subs and a -34% consensus cut.",
+    "evidence_balance": "mixed — genuine scale/EBITDA-inflection and constructive targets sit directly against ongoing cash burn, sub decline and a sharp consensus cut.",
     "bull_points": [
       {
-        "claim": "Absolute EBITDA is inflecting positive despite the 4% headline gross margin — company-reported trailing 12-month pro forma adjusted EBITDA has now exceeded $100M, a milestone management ties to its 2028 $300M target, so the low % masks a rising absolute base.",
+        "claim": "The equity has de-rated ~66% over 180 days against a +17% small-cap benchmark, an almost entirely idiosyncratic drawdown that sets up an overshoot-vs-terminal question rather than a market beta problem.",
+        "source_ref": "EOD FUBO−IWM 180d to 2026-07-06 (assembly, cap-band)",
+        "cited": true
+      },
+      {
+        "claim": "The Hulu + Live TV combination materially expanded scale — pro forma trailing-12-month revenue of ~$6.2 billion with 6.2 million North America subscribers — versus a market cap of only $256M.",
+        "source_ref": "CIQ transcript: FuboTV Inc., Q1 2026 Earnings Call, Feb 03, 2026.rtf",
+        "cited": true
+      },
+      {
+        "claim": "Trailing-12-month pro forma adjusted EBITDA has now exceeded $100 million, a management-stated milestone framed against a long-term target of at least $300 million by 2028.",
         "source_ref": "CIQ transcript: FuboTV Inc., Q2 2026 Earnings Call, May 06, 2026.rtf",
         "cited": true
       },
       {
-        "claim": "The Hulu Live combination provides contractual visibility into margin expansion — Fubo receives a wholesale fee at 95% of Hulu Live carriage costs in 2026 scaling to 99% by 2028, a mechanical step-up management calls a high-conviction earnings driver.",
-        "source_ref": "CIQ transcript: FuboTV Inc., Q2 2026 Earnings Call, May 06, 2026.rtf",
-        "cited": true
-      },
-      {
-        "claim": "Consensus forward EBITDA rebuilds sharply on the merged base — FY26E $92.3M to FY27E $187.1M direct consensus, so the forward TEV/EBITDA multiple compresses from 24.6x (FY26) to 12.1x (FY27) to 7.0x (FY28) on the consensus path.",
+        "claim": "Consensus forward EBITDA anchors are substantial and rising into FY27 — FY26E $92.3M and FY27E $187.1M — against a simple TEV of $426.8M.",
         "source_ref": "CIQ Estimates→Trends (FY26/FY27 consensus EBITDA, latest snapshot)",
         "cited": true
       },
       {
-        "claim": "The name's forward revenue multiple sits below every peer — NTM TEV/Rev 0.36 vs peer Low 0.62 / Median 2.07 — and the fundamental_deltas show FUBO's revenue growth (22%) exceeds the peer median (9%), posing whether the discount is RESIDUAL rather than earned; but the peer set is HETEROGENEOUS (caps $478M–$306.6B, 642x) so the median is not a clean benchmark.",
+        "claim": "Absolute revenue has grown continuously (3,419→3,846→4,220→4,413→5,304 LTM) and gross margin turned positive to 4% LTM — the margin % is rising off the reclassified base, not deteriorating, so a low headline margin is not the real signal here.",
+        "source_ref": "CIQ Financials→Income Statement (margin % + absolute EBITDA reconciler)",
+        "cited": true
+      },
+      {
+        "claim": "Revenue growth of 22% far exceeds the peer-median 9%, a genuine growth advantage that argues the TEV/Rev discount (name 0.4 vs peer median 1.9) may be residual rather than fully earned — the human must judge justified-vs-residual against the heterogeneous roster.",
         "source_ref": "CIQ Comparable Analysis→Operating Statistics (name vs peer median: growth/margin/leverage/beta)",
         "cited": true
       },
       {
-        "claim": "New distribution and acquisition channels are being added, not lost — NBCUniversal distribution agreement (Jun-10-2026) and a planned ESPN e-commerce reseller integration reaching an ecosystem of 100M+ monthly users provide mechanism for subscriber acquisition at lower CAC.",
-        "source_ref": "CIQ Key Developments: FuboTV Inc NYSE FUBO Key Developments.rtf · Jun-10-2026",
+        "claim": "The commercial structure gives contracted visibility: Fubo receives a wholesale fee at 95% of Hulu + Live TV carriage costs in 2026 scaling to 99% by 2028, a step-up management cites as underpinning the EBITDA-expansion path.",
+        "source_ref": "CIQ transcript: FuboTV Inc., Q2 2026 Earnings Call, May 06, 2026.rtf",
         "cited": true
       },
       {
-        "claim": "Sell-side remains constructive with material upside to the tape — consensus rating Buy (1.00) and mean/median target $17.00 against a $9.56 last close.",
+        "claim": "Sell-side posture is constructive — consensus rating Buy (1.00) with a mean/median target of $17.00, well above the stale $9.56 last close.",
         "source_ref": "CIQ Estimates→Consensus",
+        "cited": true
+      },
+      {
+        "claim": "Management states it navigated the NBCU loss with minimal incremental combined-company churn, evidencing that the business is not reliant on any single programming provider.",
+        "source_ref": "CIQ transcript: FuboTV Inc., Q2 2026 Earnings Call, May 06, 2026.rtf",
         "cited": true
       }
     ],
     "bear_points": [
       {
-        "claim": "Cash burn is unresolved and self-funding fails on both legs — LTM levered FCF is -$131.2M and CIQ LTM operating cash flow is -$489M, so the company is burning cash against only $238M cash on the balance sheet.",
+        "claim": "The company is FCF-negative (LTM levered FCF −$131.2M) and burning cash with net debt $170M and no derived cash-runway — a genuine survival risk, not an optical metric.",
         "source_ref": "CIQ Financials→Cash Flow 'Levered Free Cash Flow' [LTM 12 months Mar-31-2026]",
         "cited": true
       },
       {
-        "claim": "The forward earnings path has collapsed across the board since the merger — FY26 consensus EBITDA cut -34% (140.7→92.3), EBIT crossed from +162.0 to -103.3, and GAAP EPS from +1.68 to -1.40 over the 6m-to-latest window, all worsening (crossed zero).",
+        "claim": "Consensus FY26 EBITDA has been cut ~34% over six months (140.7 → 92.3), and GAAP EPS, EBIT, EBT and net income all crossed from positive to negative on the same path — a broad, worsening estimate deterioration.",
         "source_ref": "CIQ Estimates→Trends (current-FY consensus path; ragged, absent lookbacks n/a)",
         "cited": true
       },
       {
-        "claim": "Near-term revision breadth is overwhelmingly negative — FQ3/FQ4 2026 EBITDA revisions run 2m 1↑/6↓ and 0↑/7↓, and Revenue FQ3 2m 2↑/7↓, signalling brokers are still cutting the merged forecast rather than raising it.",
-        "source_ref": "CIQ Estimates→Revisions (next-2-FQ breadth; 1m/2m/3m Upward/Downward)",
+        "claim": "The drawdown was driven by discrete earnings gap-downs (2026-02-03 and 2026-05-06, both Item 2.02 results filings), tying the ~66% decline to fundamentals reported at results, not to sentiment.",
+        "source_ref": "EDGAR 8-K item codes at the gap-down dates (not blanket-labelled earnings)",
         "cited": true
       },
       {
-        "claim": "The forward EBITDA multiple is EXPENSIVE, not cheap, on the near horizon — NTM TEV/EBITDA 17.77 vs peer median 8.19 and FY26 24.6x, so on the metric that actually has a positive base the name trades at a premium to peers, the opposite of the trailing-revenue optics.",
+        "claim": "The name's forward EBITDA multiple is NOT cheap on the metric that reconciles the optical TEV/Rev discount: NTM TEV/EBITDA is 17.77 vs a peer median of 8.19 — a forward premium, meaning the cheap-on-revenue read is not the real signal.",
         "source_ref": "CIQ Comparable Analysis→Trading Multiples (name row + Summary Statistics Low/Median/Mean/High)",
         "cited": true
       },
       {
-        "claim": "Subscribers are shrinking, not growing — North America ended Q2 at 5.7M vs 5.9M prior year, a decline that undercuts the 'growth North Star' framing.",
-        "source_ref": "CIQ transcript: FuboTV Inc., Q2 2026 Earnings Call, May 06, 2026.rtf",
+        "claim": "Return on capital remains negative across every reported period (RoCE -11.2% → -3.3% LTM), so the business has not yet earned its cost of capital despite improvement.",
+        "source_ref": "CIQ Financials→Ratios (Return on Capital %, multi-year columns)",
         "cited": true
       },
       {
-        "claim": "Equity has continued to dilute and insiders are selling — share count +4.0% over trailing ~1 year, with a further planned reverse split, and Form 4 shows open-market sells 2 / buys 0 (net -311.4K sh).",
+        "claim": "Share count is diluting (+4.0% over ~1 year) and management announced a reverse stock split, adding to per-share pressure on holders.",
         "source_ref": "EDGAR XBRL shares, trailing 2024-07-31..2025-07-31",
         "cited": true
       },
       {
-        "claim": "The stock is a severe idiosyncratic underperformer — down 66% over 180 days against IWM +17%, a -83% relative spread not explained by the market.",
-        "source_ref": "EOD FUBO−IWM 180d to 2026-07-06 (assembly, cap-band)",
+        "claim": "Loss of NBCUniversal content and a decision to lower prices to preserve consumer value point to real revenue/mix pressure from a distribution dispute the company could not resolve.",
+        "source_ref": "CIQ transcript: FuboTV Inc., Q1 2026 Earnings Call, Feb 03, 2026.rtf",
         "cited": true
       },
       {
-        "claim": "Structural loss-making persists — ROCE remains negative (-3.3% LTM after -10.7% FY25) and every historical annual net-income line is a loss, so profitability rests entirely on the not-yet-delivered merger synergy story.",
-        "source_ref": "CIQ Financials→Ratios (Return on Capital %, multi-year columns)",
+        "claim": "Subscribers declined year-over-year in Q2 (5.7M vs 5.9M North America), a deterioration from the ~6.2M discussed a quarter earlier — a leading-indicator softening on the core user base.",
+        "source_ref": "CIQ transcript: FuboTV Inc., Q2 2026 Earnings Call, May 06, 2026.rtf",
+        "cited": true
+      },
+      {
+        "claim": "Insiders were net sellers (0 buys, 2 sells, net −311.4K shares, latest 2026-07-13) with no offsetting open-market buying.",
+        "source_ref": "EDGAR Form 4 (latest 0001493152-26-033082; 3 in 6m)",
         "cited": true
       }
     ],
@@ -4888,98 +5847,89 @@
       {
         "name": "Roku",
         "outcome": "recovered",
-        "distinguishing_fact": "US streaming-platform peer in the same roster that ran deep operating losses and a shredded stock before an ad-monetization and scale narrative re-rated it; the analogue is loss-to-scale streaming, not a match on any figure.",
-        "source": "CIQ Comparable Analysis→Financial Data + Business Description (roster + caps + business)"
-      },
-      {
-        "name": "Sirius XM Holdings Inc.",
-        "outcome": "recovered",
-        "distinguishing_fact": "Subscription-audio peer in the roster that consolidated a competitor and leaned on a mature-subscriber, cost-synergy model to sustain EBITDA — the pattern Fubo is betting the Hulu Live combination delivers.",
+        "distinguishing_fact": "US streaming-platform peer that de-rated hard on profitability doubts, then stabilized as ad monetization and scale improved — the same fill-rate/CPM lever Fubo cites via the Disney ad-server migration.",
         "source": "CIQ Comparable Analysis→Financial Data + Business Description (roster + caps + business)"
       },
       {
         "name": "Paramount Skydance Corporation",
         "outcome": "recovered",
-        "distinguishing_fact": "Highly-levered media peer that pursued a transformational combination to reset its earnings base under a heavy-debt, thin-margin profile — the merger-integration-under-leverage arc most comparable to Fubo's Hulu Live bet.",
+        "distinguishing_fact": "Levered legacy-media/streaming peer whose survival question hinged on carriage economics and content-cost discipline rather than top-line growth.",
         "source": "CIQ Comparable Analysis→Financial Data + Business Description (roster + caps + business)"
       },
       {
-        "name": "Chicken Soup for the Soul Entertainment (Redbox)",
+        "name": "Starz Entertainment Corp.",
         "outcome": "went terminal",
-        "distinguishing_fact": "Streaming/video roll-up that combined assets to buy scale but could not fund the cash burn against its debt, and the equity was wiped out — the value-trap tail if Fubo's cash runway runs out before synergies land.",
+        "distinguishing_fact": "Sub-scale subscription-video peer with high leverage and shrinking relevance — the value-trap archetype where a low revenue multiple never re-rated.",
+        "source": "CIQ Comparable Analysis→Financial Data + Business Description (roster + caps + business)"
+      },
+      {
+        "name": "Chewy",
+        "outcome": "recovered",
+        "distinguishing_fact": "High-growth, long-loss-making consumer-subscription business that re-rated once it crossed into positive EBITDA and demonstrated a credible path to self-funding.",
         "source": "[LLM-suggested, unverified]"
       }
     ],
     "decisive_question": {
-      "question": "Will the Hulu Live combination's contractual wholesale-fee step-up and ad-monetization synergies convert into positive free cash flow before the ~$238M cash balance is exhausted by continued burn?",
+      "question": "Does the Hulu + Live TV combination durably convert Fubo into a self-funding, EBITDA-growing business (overshoot), or does continued cash burn, sub attrition and NBCU-style carriage risk make the forward EBITDA path unattainable (value trap)?",
       "evidence_for": [
         {
-          "claim": "Management points to a contractual wholesale-fee step-up (95% of Hulu Live carriage in 2026 rising to 99% by 2028) and early Disney-ad-server CPM/fill-rate gains as high-conviction drivers of adjusted-EBITDA expansion toward the $300M 2028 target.",
+          "claim": "Trailing-12-month pro forma adjusted EBITDA has crossed $100M with a contracted wholesale-fee step-up to 99% by 2028 giving visibility into the expansion path.",
           "source_ref": "CIQ transcript: FuboTV Inc., Q2 2026 Earnings Call, May 06, 2026.rtf",
           "cited": true
         },
         {
-          "claim": "Trailing-12m pro forma adjusted EBITDA has already exceeded $100M and consensus rebuilds FY27E EBITDA to $187.1M, showing the merged base scaling.",
+          "claim": "Consensus still models FY26E $92.3M rising to FY27E $187.1M EBITDA, with management guiding to $80–100M for FY26 and positive free cash flow in FY27–FY28.",
           "source_ref": "CIQ Estimates→Trends (FY26/FY27 consensus EBITDA, latest snapshot)",
-          "cited": true
-        },
-        {
-          "claim": "Management reiterated it expects to finish the year with more than $200M of cash and to deliver positive free cash flow in fiscal 2027 and 2028 under its current operating plan.",
-          "source_ref": "CIQ transcript: FuboTV Inc., Q2 2026 Earnings Call, May 06, 2026.rtf",
           "cited": true
         }
       ],
       "evidence_against": [
         {
-          "claim": "LTM levered FCF is -$131.2M and LTM operating cash flow is -$489M against only $238M cash, and brokers cut FY26 free cash flow estimates as deeply negative (e.g. to -$438.9M, -$469.0M), so the burn is large relative to the buffer.",
+          "claim": "LTM levered FCF is −$131.2M and both latest-quarter OCF and LTM FCF are negative, so the business does not yet self-fund and cash runway is not derivable.",
           "source_ref": "CIQ Financials→Cash Flow 'Levered Free Cash Flow' [LTM 12 months Mar-31-2026]",
           "cited": true
         },
         {
-          "claim": "FY26 consensus EBITDA has been cut -34% and near-term EBITDA revision breadth is 2m 1↑/6↓ and 0↑/7↓, indicating the synergy ramp is being marked down, not up, in the near term.",
-          "source_ref": "CIQ Estimates→Trends (current-FY consensus path; ragged, absent lookbacks n/a)",
-          "cited": true
-        },
-        {
-          "claim": "Subscribers declined year-over-year (5.7M vs 5.9M) even as management touts flexible packaging, so the revenue engine feeding the synergy plan is not yet growing.",
+          "claim": "North America subscribers fell to 5.7M from 5.9M year-over-year while the company lost NBCU content and cut prices — the demand and mix drivers under the EBITDA plan are softening.",
           "source_ref": "CIQ transcript: FuboTV Inc., Q2 2026 Earnings Call, May 06, 2026.rtf",
           "cited": true
         }
       ]
     },
     "key_unknowns": [
-      "Exact cash runway: cash balance is $238M (BS) but the burn rate and any drawdown covenants are not derivable — CIQ Net Debt/EBITDA, interest coverage, and covenant terms are all UNKNOWN/extraction-failed, a material bearish opacity given FCF-negative status.",
-      "No segment or product-level EBITDA breakout — Fubo reports a single 'Streaming Business' segment with no segment EBITDA, so the profitability contribution of Hulu Live vs legacy Fubo cannot be verified.",
-      "No company revenue guide cross-check — CIQ revenue guide UNKNOWN and only an adjusted-EBITDA guide ($80–100M FY26) exists; the adjusted figure is absent from the 99.1 revised guidance, so headline vs adjusted cannot be reconciled.",
-      "Vintage incoherence: multiples priced 2026-06-12 vs TEV as-of 2026-06-24 with a flagged re-pull (derived FY26 EBITDA $17.4M vs direct $92.3M, residual 0.81) — the forward-multiple ladder should be re-pulled before it is leaned on.",
-      "Price is stale: last stored close 2026-07-08 is 14 days before assembly; the $9.56 vs $17 target gap and all multiple reads may have moved.",
-      "NBCUniversal relationship is ambiguous — content was removed on the Fubo side yet a Jun-10-2026 NBCUniversal distribution agreement is logged; the net carriage/economics effect is unresolved.",
-      "Reverse stock split is planned but its ratio and execution date are not specified in the facts."
+      "Cash runway is not derivable: no CIQ Net Debt/EBITDA, no interest-coverage row, and cash not derived — an expected-disclosure gap that is a bearish risk given ongoing FCF burn.",
+      "No segment or geographic EBITDA breakout (single Streaming segment, single US geography) and no segment-EBITDA section — opacity on where profitability actually sits.",
+      "Covenant terms UNKNOWN (extraction failed; no CIK-scoped agreement exhibit located) — leverage-trigger risk on $323M senior bonds plus leases cannot be assessed.",
+      "TEV as-of (2026-06-24) and multiple-pricing vintage (2026-06-12) are incoherent (derived FY26 $17.4M vs direct $92.3M, residual 0.812) — comps should be re-pulled before leaning on any multiple.",
+      "Price is stale at assembly (last close 2026-07-08, $9.56, 15 days old) — the actual de-rating and any implied gap to the $17 target may differ.",
+      "The peer set is HETEROGENEOUS (caps $478M–$306.6B, 642x; the name $256M) — every peer stat is confidence-gated, not a clean benchmark.",
+      "FY26 EBITDA guidance is stale (dated 2026-05-06, 61 days old) with no delivery track-record — the credibility of the $80–100M guide against a worsening consensus path is unresolved.",
+      "Whether the Disney ad-server CPM/fill-rate uplift is material enough to offset sub attrition and price cuts — management asserts early benefit but no validated figures exist."
     ]
   },
   "caveats": [
     "primary-source: 8-K 0001493152-26-011823 carries 8.01 but no EX-99.1 exhibit was found",
     "primary-source: 8-K 0001493152-26-003429 carries 8.01 but no EX-99.1 exhibit was found",
-    "stock-info: PRICE STALE AT ASSEMBLY: last stored close 2026-07-08 is 14 calendar days before assembly — run `vinci refresh` before assembling",
-    "primary-source: 3 EX-99.1 release(s) + 1 10-Q parsed (+2.0s fetch)",
+    "stock-info: PRICE STALE AT ASSEMBLY: last stored close 2026-07-08 is 15 calendar days before assembly — run `vinci refresh` before assembling",
+    "primary-source: 3 EX-99.1 release(s) + 1 10-Q parsed (+0.4s fetch)",
     "P/E may be distorted by non-recurring EPS — latest annual EPS -0.54 vs recent median -2.06; verify against normalized/forward EPS (CIQ)",
-    "Bare peer-comparison (a bear point): 'The forward EBITDA multiple is EXPENSIVE, not cheap, on the near horizon — NTM TEV/EBITDA 17.77 vs peer median 8.19 and FY26 24.6x, so on the metric that actually has a positive base the name trades at a premium to peers, the opposite of the trailing-revenue optics.' — presents cheap/rich vs peers as a verdict without the earned-vs-residual decomposition or the peer-set composition; POSE justified-vs-residual, never the bare gap",
-    "Heterogeneous-peer benchmark (a bear point): 'The forward EBITDA multiple is EXPENSIVE, not cheap, on the near horizon — NTM TEV/EBITDA 17.77 vs peer median 8.19 and FY26 24.6x, so on the metric that actually has a positive base the name trades at a premium to peers, the opposite of the trailing-revenue optics.' — leans on the peer set as a clean benchmark, but comparability flags it HETEROGENEOUS; confidence-gate every peer stat"
+    "Bare peer-comparison (a bear point): 'The name's forward EBITDA multiple is NOT cheap on the metric that reconciles the optical TEV/Rev discount: NTM TEV/EBITDA is 17.77 vs a peer median of 8.19 — a forward premium, meaning the cheap-on-revenue read is not the real signal.' — presents cheap/rich vs peers as a verdict without the earned-vs-residual decomposition or the peer-set composition; POSE justified-vs-residual, never the bare gap",
+    "Heterogeneous-peer benchmark (a bear point): 'The name's forward EBITDA multiple is NOT cheap on the metric that reconciles the optical TEV/Rev discount: NTM TEV/EBITDA is 17.77 vs a peer median of 8.19 — a forward premium, meaning the cheap-on-revenue read is not the real signal.' — leans on the peer set as a clean benchmark, but comparability flags it HETEROGENEOUS; confidence-gate every peer stat"
   ],
   "qa_flags": [
     "operating-drivers: no anchored pattern matched — EX-99.1 pricing/KPI",
     "operating-drivers: no anchored pattern matched — 10-Q MD&A attribution",
+    "operating-drivers: Tier-B rows capped at 12 — ESPN ecosystem reach dropped",
     "operating-drivers: Tier-B rows capped at 12 — North America revenue dropped",
-    "operating-drivers: Tier-B rows capped at 12 — North America pro forma revenue dropped",
+    "operating-drivers: Tier-B rows capped at 12 — North America pro forma revenue growth dropped",
     "operating-drivers: Tier-B rows capped at 12 — total North America subscribers dropped",
     "operating-drivers: Tier-B rows capped at 12 — adjusted EBITDA dropped",
     "operating-drivers: Tier-B rows capped at 12 — wholesale fee relative to Hulu + Live TV's carriage costs dropped",
-    "DIRECTIONAL language 'conviction' — human review (dossier frames, not concludes)",
-    "TWIN self-referential 'fuboTV Inc. (pre-Hulu standalone)' suppressed — a twin must be ANOTHER company, or the subject with an explicit resolved past period ('2022-2024 arc')",
+    "TWIN self-referential 'fuboTV Inc. (pre-Hulu-Live standalone arc)' suppressed — a twin must be ANOTHER company, or the subject with an explicit resolved past period ('2022-2024 arc')",
     "TWIN 1 invalid twin(s) suppressed"
   ],
   "llm_model": "claude-opus-4-8",
-  "assembled_at": "2026-07-22T15:05:59.862292Z",
+  "assembled_at": "2026-07-23T12:12:26.315316Z",
   "sector": "Consumer Discretionary",
   "industry": {
     "value": "Interactive Media and Services",
@@ -4999,7 +5949,7 @@
     "recipe_hint": "unknown",
     "applicable": false,
     "multiple_basis": "EV/EBITDA",
-    "computed_at": "2026-07-22T15:05:59.602462Z",
+    "computed_at": "2026-07-23T12:12:26.060933Z",
     "reason": "own-history multiple missing (valuation.own_history.median absent)",
     "data_quality": null,
     "data_quality_detail": [],

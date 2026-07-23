@@ -168,6 +168,98 @@ def _fmt_shape(v: Any) -> str:
     return re.sub(r"\s*\((\d\.\d{2})\)", "", str(v))
 
 
+def _gap_list(shape: str) -> list[tuple[str, str]] | None:
+    """(event study) Parse the committed shape 'discrete gap-downs — DATE cause; DATE cause' into
+    per-gap (date, cause) rows for a scannable list. None (→ fall through to the run-on) for the
+    gradual-bleed read or any shape not in the discrete-gap format. Cosmetic re-layout of the SAME
+    committed labels — no logic reads the result; twin of dossier.js ``gapList``."""
+    m = re.match(r"discrete gap-downs — (.+)", shape.strip())
+    if m is None:
+        return None
+    rows: list[tuple[str, str]] = []
+    for part in m.group(1).split("; "):
+        dm = re.match(r"(\d{4}-\d{2}-\d{2})\s+(.+)", part.strip())
+        if dm is None:
+            return None  # an unexpected part shape → fail through, never a mangled list
+        rows.append((dm.group(1), dm.group(2).strip()))
+    return rows or None
+
+
+def _gap_pct_from_perf(sp: Any, date_str: str) -> float | None:
+    """The exact 1-day close-to-close move at ``date_str``, derived from consecutive DAILY perf
+    points — the detector's own formula on the same closes (a rebased-index ratio IS the close
+    ratio). None when the series doesn't carry the date or the previous point isn't the prior
+    trading day (old weekly-downsampled JSON): REFUSE rather than misstate a multi-day move as
+    the 1-day gap. Twin of dossier.js ``gapPctFromPerf``."""
+    pts = getattr(sp, "points", None) or []
+    idx = next((i for i, p in enumerate(pts) if p.date == date_str), None)
+    if idx is None or idx == 0:
+        return None
+    a, b = pts[idx - 1], pts[idx]
+    if a.name is None or b.name is None or a.name <= 0:
+        return None
+    spacing = (date.fromisoformat(b.date) - date.fromisoformat(a.date)).days
+    # b must be the IMMEDIATELY-next trading day: 1 calendar day (adjacent weekday) or a Fri→Mon
+    # weekend (3 days, prior point a Friday). Any other spacing — 2 (a weekday was skipped ⇒ a
+    # downsampled step≥2 series), 4 (a day skipped / post-holiday), 7 (weekly) — can't be proven
+    # consecutive, so REFUSE rather than misstate a multi-trading-day move as the 1-day gap.
+    if not (spacing == 1 or (spacing == 3 and date.fromisoformat(a.date).isoweekday() == 5)):
+        return None
+    return float(b.name) / float(a.name) - 1.0
+
+
+_LEGALESE_PAREN = re.compile(r"\s*\(\s*(?:the\s+)?[\u201c\"][^)]{1,70}[\u201d\"]\s*\)")
+_XREF_STUB = re.compile(r"The information set forth in", re.IGNORECASE)
+# (#2) items whose parsed body is a SUBSTANTIVE catalyst — it belongs on the visible card beside
+# the 2.02 metrics: a material agreement, an offering, a restructuring/impairment, a mgmt change,
+# a delisting/restatement. NOT 7.01 (Reg-FD "will host a webcast") / 9.01 (exhibits): those stay
+# collapsed. Twin of dossier.js ``_SUBSTANTIVE``.
+_SUBSTANTIVE_ITEM = re.compile(r"^(1\.01|1\.02|2\.05|2\.06|3\.01|4\.02|5\.02|8\.01)\b")
+
+
+def _substantive_events(f: Any) -> list[str]:
+    """Cleaned narratives of a filing's substantive non-2.02 items (the ones that belong on the
+    visible card). Empty when the filing carries only earnings/Reg-FD/exhibits."""
+    out: list[str] = []
+    for ev in f.events:
+        if _SUBSTANTIVE_ITEM.match(str(ev)):
+            cleaned = _clean_item_event(ev)
+            if cleaned is not None:
+                out.append(cleaned)
+    return out
+
+
+def _clean_item_event(ev: str) -> str | None:
+    """One parsed 8-K item line ("CODE Title: body") → the body with the DOUBLED leading title and
+    the defined-term legalese parentheticals stripped, truncated at a cross-reference stub. None
+    when nothing informative remains. Display trim of a parse-summary (never a verbatim quote —
+    those live untouched in JSON); twin of dossier.js ``cleanItemEvent``."""
+    m = re.match(r"^(\d\.\d\d)\s+([^:]{1,90}):\s*(.*)$", ev, re.DOTALL)
+    if m is None:
+        return ev
+    code, title, body = m.group(1), m.group(2), m.group(3).strip()
+    title = re.sub(r"^Item\s+\d\.\d\d:?\s*", "", title, flags=re.IGNORECASE).strip()
+    # cross-reference stub truncation FIRST — otherwise the title-recovery fallback below reads the
+    # stub text itself as a "title" and mangles instead of dropping (caught by the twin test)
+    stub = _XREF_STUB.search(body)
+    if stub:
+        body = body[: stub.start()].strip()
+    if not title:
+        t2 = re.match(r"^([^.:]{2,80})[.:]\s*", body)
+        if t2:
+            title = t2.group(1).strip()
+    if title:
+        body = re.sub(
+            rf"^(?:Item\s+\d\.\d\d[.:]?\s*)?{re.escape(title)}\s*[.:]\s*", "", body,
+            flags=re.IGNORECASE,
+        )
+    body = _LEGALESE_PAREN.sub("", body)
+    body = body.strip()
+    if not body:
+        return None  # pure cross-reference / heading-only item — nothing informative
+    return f"{code} {title}: {body}" if title else f"{code}: {body}"
+
+
 def _fmt_guide_verification(v: Any) -> str:
     """'guide verification (revenue): CIQ 6405.0–6405.0 vs release QUALITATIVE → plausibility flag;
     render the qualitative growth line' → the label duplicate, the degenerate range, and the
@@ -2264,7 +2356,20 @@ def render_markdown(d: Dossier, *, dev: bool = False, show_proposal: bool = Fals
     # (D1·§1) Drawdown cause & idiosyncrasy — CLUBBED: what happened, and did it happen alone?
     # (buy-side anatomy) the Shape classification is this section's READ — label twins the web lead
     out.append("### What broke — and did it fall alone?")
-    out.append(_fact("Read — what broke", m.drawdown_cause.shape, _fmt_shape))
+    # (event study) discrete gap-downs render as a scannable per-gap list — date, the TRUE 1-day
+    # move (derived from the daily perf series; omitted, never estimated, when the committed series
+    # can't carry it), cause. One gap / unparseable shape → the one-line fact.
+    _shape = m.drawdown_cause.shape
+    _rows = (_gap_list(_fmt_shape(_shape.value))
+             if _shape.status is SourceStatus.PRESENT and _shape.value is not None else None)
+    if _rows is not None:  # ANY discrete-gap name — a 1-gap ledger still carries the true %
+        out.append(f"- **Read — what broke** · discrete gap-downs:{_cite(_shape.source_ref)}")
+        for _gd, _cause in _rows:
+            _gpct = _gap_pct_from_perf(m.stock_performance, _gd)
+            _gpct_s = f" **{_gpct * 100:+.1f}%**" if _gpct is not None else ""
+            out.append(f"  - {_gd}{_gpct_s} → {_cause}")
+    else:
+        out.append(_fact("Read — what broke", _shape, _fmt_shape))
     # (declutter) the dates row repeats the shape line whenever every date already appears there
     gd = m.drawdown_cause.gap_down_dates
     shape_v = m.drawdown_cause.shape
@@ -2309,22 +2414,41 @@ def render_markdown(d: Dossier, *, dev: bool = False, show_proposal: bool = Fals
             continue
         k = f.accession or f"{f.form}|{f.filing_date}"
         grouped.setdefault(k, (f, []))[1].append(f.gap_date)
-    if grouped:
+    # (#2/#3b twin) a filing is CARDED when it parsed a driver OR carries a substantive non-2.02
+    # item (1.01/8.01/…); those show in full. NON-carded filings (a lone 7.01, an unparsed 2.02)
+    # list under "Other 8-Ks" — no filing is shown twice.
+    _carded = {k: (f, gaps) for k, (f, gaps) in grouped.items()
+               if (f.drivers is not None and f.drivers.status is SourceStatus.PRESENT)
+               or _substantive_events(f)}
+    _uncarded = {k: v for k, v in grouped.items() if k not in _carded}
+    if _carded:
         out.append("- **Gap-downs — what the results showed (parsed EX-99.1) + the 8-K:**")
-        for f, gaps in grouped.values():
+        for f, gaps in _carded.values():
             gap_str = " and ".join(gaps)
             plural = "s" if len(gaps) > 1 else ""
             out.append(f"  - gap-down{plural} {gap_str} → filed {f.filing_date} "
                        f"[`{f.accession}`]({f.url})")
-            out.append(f"    - items: {', '.join(f.item_types) or '—'}")
-            # (B1) parsed release drivers ARE the informative cause — they supersede the item-code
-            # boilerplate; non-earnings 8-Ks (no match) still show their source-bound events.
+            # 9.01 (exhibits) + 7.01 (Reg-FD webcast noise) dropped from display; JSON keeps them
+            _shown_items = [t for t in f.item_types
+                            if not (t.startswith("9.01") or t.startswith("7.01"))]
+            out.append(f"    - items: {', '.join(_shown_items) or '—'}")
+            # the parsed EX-99.1 driver (metrics) PLUS the substantive non-2.02 item narratives —
+            # the driver often isn't the catalyst (VRRM's Avis termination, AORT's 1.01 agreement)
             if f.drivers is not None and f.drivers.status is SourceStatus.PRESENT:
                 out.append(f"    - **what the results showed:** {_fix_acronyms(f.drivers.value)}"
                            f"{_cite(f.drivers.source_ref)}")
-            else:
-                for ev in f.events:
-                    out.append(f"    - {ev}")
+            for ev in _substantive_events(f):
+                out.append(f"    - {_fix_acronyms(ev)}")
+    if _uncarded:
+        out.append(f"- **Other 8-Ks at the gap dates ({len(_uncarded)}):**")
+        for f, _gaps in _uncarded.values():
+            _shown_items = [t for t in f.item_types if not t.startswith("9.01")]
+            out.append(f"  - filed {f.filing_date} · items: {', '.join(_shown_items) or '—'} "
+                       f"[`{f.accession}`]({f.url})")
+            for ev in f.events:
+                cleaned = _clean_item_event(ev)
+                if cleaned is not None:
+                    out.append(f"    - {cleaned}")
     out += _event_impact_lines(m)  # (RC-1 C) Avis-class event-impact quantifications
     if m.catalyst_path is None:  # legacy: never drop the fact when there is no street section
         out.append(_fact("Revised guidance", m.drawdown_cause.revised_guidance))
