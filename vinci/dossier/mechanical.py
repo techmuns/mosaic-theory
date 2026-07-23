@@ -785,9 +785,13 @@ def _ltm_gaap_eps(fs: FinancialSummary | None) -> float | None:
     if annual.status is not SourceStatus.PRESENT or annual.value is None:
         return None
     tbl = annual.value
-    if "LTM" not in tbl.columns:
+    # PREFIX-match the LTM header — it can carry a Reclassified '(R)' suffix ('LTM (R)', ciq_sheets
+    # tags every period column), exactly like the renderer's own LTM detection
+    # (render.py startswith('LTM')). Exact '== "LTM"' would return None on a reclassified twin and
+    # silently reintroduce the claim-#7 blind spot for it.
+    i = next((k for k, c in enumerate(tbl.columns) if str(c).upper().startswith("LTM")), None)
+    if i is None:
         return None
-    i = tbl.columns.index("LTM")
     for row in tbl.rows:
         if row.label == "EPS (GAAP, dil.)" and len(row.values) > i:
             return row.values[i]
@@ -801,7 +805,9 @@ def _eps_caveat_flags(
     """Flag (a) that earnings power (company-adjusted, non-GAAP EPS) is not shown — UNLESS it now is
     (``eps_resolved``: the 99.1 adjusted EPS surfaced it, so the caveat is a resolved fact, not a
     warning); (b) when the EDGAR P/E conflicts ~Nx with CIQ P/LTM EPS, that the EDGAR trailing
-    EPS is one-time-inflated and the synthesis must not anchor on it as 'cheap' (always kept);
+    EPS is one-time-inflated and the synthesis must not anchor on it as 'cheap' — kept UNLESS the
+    LTM GAAP EPS is a known LOSS, where (d) owns it (an 'inflated' EPS framing is wrong when GAAP
+    trailing is negative, and stacking (b)+(d) is flag noise);
     (d) when a displayed trailing P/E multiple (EDGAR and/or CIQ) rests on NORMALIZED earnings
     while the LTM GAAP diluted EPS is a LOSS — SMPL showed EDGAR P/E 10.9x + CIQ P/LTM 16.0x beside
     an LTM GAAP dil EPS of −2.08 (LTM net income −$199M, the $249M impairment inside the window)
@@ -824,6 +830,7 @@ def _eps_caveat_flags(
     if (
         not eps_resolved and pe.is_known and pe.value
         and ciq_pe.status is SourceStatus.PRESENT and ciq_pe.value
+        and not (ltm_gaap_eps is not None and ltm_gaap_eps < 0)  # a GAAP LTM loss → (d) owns it
     ):
         ratio = max(pe.value, ciq_pe.value) / min(pe.value, ciq_pe.value)
         if ratio >= 2:

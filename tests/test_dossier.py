@@ -4244,9 +4244,12 @@ def test_ltm_gaap_eps_reads_structured_ltm_column() -> None:
     # values WIN over a divergent display cell (the rule: never parse the rendered string)
     tricky = ds.FinRow(label="EPS (GAAP, dil.)", cells=["1.02", "1.00"], values=[1.02, -2.08])
     assert dm._ltm_gaap_eps(_fin_summary_ltm_eps([tricky])) == -2.08
+    # the LTM header may carry a Reclassified '(R)' suffix — prefix-match must still find it
+    # (else a reclassified twin silently reintroduces the claim-#7 blind spot)
+    assert dm._ltm_gaap_eps(_fin_summary_ltm_eps([eps], cols=("FY25", "LTM (R)"))) == -2.08
     rev = ds.FinRow(label="Revenue ($M)", cells=["1", "2"], values=[1.0, 2.0])
     assert dm._ltm_gaap_eps(_fin_summary_ltm_eps([rev])) is None            # no EPS row
-    no_ltm = _fin_summary_ltm_eps([eps], cols=("FY24", "FY25"))             # no LTM column
+    no_ltm = _fin_summary_ltm_eps([eps], cols=("FY24", "FY25"))             # no LTM column at all
     assert dm._ltm_gaap_eps(no_ltm) is None
     empty = ds.FinRow(label="EPS (GAAP, dil.)", cells=["1.02", "—"], values=[])
     assert dm._ltm_gaap_eps(_fin_summary_ltm_eps([empty])) is None             # no structured value
@@ -4296,6 +4299,14 @@ def test_pltm_basis_caveat_on_negative_ltm_gaap_eps(monkeypatch: pytest.MonkeyPa
     # (5) sign UNAVAILABLE + EDGAR absent + CIQ present → the (c) #198 fallback is preserved
     f5 = dm._eps_caveat_flags(rec_pe(None), bundle, eps_resolved=False, ltm_gaap_eps=None)
     assert any("different earnings definition" in f for f in f5)
+    # (6) (b) EDGAR-vs-CIQ conflict (ratio ≥ 2) is SUPPRESSED when GAAP LTM is a known loss — the
+    # 'inflated' framing is wrong there and (d) owns it; with the sign UNKNOWN (b) still fires.
+    set_ciq(16.0)  # EDGAR 6.0x vs CIQ 16.0x → ratio 2.67 ≥ 2
+    b_loss = dm._eps_caveat_flags(rec_pe(6.0), bundle, eps_resolved=False, ltm_gaap_eps=-2.08)
+    assert not any("one-time-inflated" in f for f in b_loss)             # (b) yields to (d)
+    assert any("rest on normalized" in f for f in b_loss)               # (d) fires instead
+    b_unknown = dm._eps_caveat_flags(rec_pe(6.0), bundle, eps_resolved=False, ltm_gaap_eps=None)
+    assert any("one-time-inflated" in f for f in b_unknown)             # sign unknown → (b) kept
 
 
 # --- item 2: geographic = the 'Geographic Segments' → 'Revenues' block, not the business one ----
