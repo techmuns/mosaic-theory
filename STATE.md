@@ -4618,6 +4618,31 @@ this PR merges — recipe re-run (pure re-stamp; the record verified exact) + SM
 frontend build + full offline suite → commit artifacts; clears the three defect shapes from the
 committed surfaces.
 
+**BUILD RECORD — 2026-07-23 SMPL step-2 re-assembly (branch `chore/reassemble-smpl`, post-#198).**
+Ran the ratified step 2 in an ISOLATED worktree off origin/main (CIQ store + EDGAR cache symlinked,
+`vinci.db` copied) because the main checkout held another live session's 45-file uncommitted regen,
+left untouched. Recipe re-run: values byte-identical (R1, ratio 4.0299, bear/base/bull
+6.95/26.90/40.21) — idempotent as predicted; `write_record` NORMALIZED the record to the current
+schema (`years_to_terminal` + R2 null legs, matching 5/7 cohort records; `verdict.rationale`
+byte-identical, seal re-verified CLEAN). Dossier re-assembled (1 done, 0 err, synth present, suite
+1049 passed on the committed artifacts). **FIX 1 ✓** revised guidance now PRESENT — "Updating Fiscal
+Year 2026 (4) Outlook: Net sales $1.31–$1.35B … adj EBITDA $217–225M", sourced to Ex-99.1
+`a991_pressreleasexq2x2026.htm` (was the false "no revised-outlook 99.1 exhibit parsed"). **FIX 2 ✓**
+the bogus 49.3/6.6x row is GONE — "net debt / company-adjusted LTM EBITDA (LTM unavailable):
+UNKNOWN"; 49.3 and 6.6x absent from the json.
+**FIX 3 DID NOT FIRE — and the audit's claim-#7 adjudication was WRONG on the facts.** The #198 guard
+fires only when EDGAR P/E is ABSENT + CIQ P/LTM present; SMPL's `fundamentals.pe` is PRESENT at
+10.86x, so the new branch is skipped and the existing conflict branch sees 16.0/10.86 = 1.47x < 2x
+and stays quiet. The guard is SOUND for its shape (a real negative-GAAP name where EDGAR shows no
+P/E — the synthetic unit test proves the logic) but SMPL is a DIFFERENT shape: three mutually
+incoherent EPS readings ALL PRESENT — EDGAR P/E 10.86x, CIQ P/LTM 16.0x, GAAP LTM dil EPS −2.08 (+
+peers "P/E NM"). The committed dossier STILL shows 16.0x / P/E-NM beside −2.08 with no caveat →
+**claim #7 UNRESOLVED**. FOLLOW-UP (own PR, code + pins): extend `_eps_caveat_flags` to flag a
+POSITIVE P/E multiple (EDGAR or CIQ) against a NEGATIVE GAAP trailing EPS — the basis mismatch SMPL
+actually has; add SMPL's real shape (both-present) to the pins, not only the EDGAR-absent synthetic.
+Scope: SMPL only (`data/dossiers/SMPL/*`, `scenarios/SMPL.json`, `frontend/{dossiers/SMPL.*,
+dossiers/index.json}` — no other name's artifact or mirror touched).
+
 **OPERATOR TO-DO — NCNO price series unavailable for the reference window (2026-07-23).** NCNO's
 What-broke chart / 180d returns / stock_performance are all UNKNOWN because its store bars run
 **2021-07-01 → 2024-05-20, then a hole, then only 2026-07-08+** — the 52-wk window the dossier needs
