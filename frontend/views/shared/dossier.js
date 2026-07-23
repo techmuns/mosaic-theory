@@ -1872,8 +1872,18 @@ function fixAcronyms(s) {
   return String(s).replace(/\b(ebitda|eps|fcf|ebit|roic|roe)\b/gi, (m) => m.toUpperCase());
 }
 
+// (Option 1) Lead the catalyst-staleness caveat with the name-specific discriminator (days stale vs
+// the tolerance) instead of the structural "no as-of stamp" preamble that buried it. Deterministic;
+// fails through unchanged if the template differs. Twin of render.py _reword_catalyst_stale.
+const _CATALYST_STALE_RE = /Catalyst-path as-of UNVERIFIABLE — the CIQ Estimates export carries no as-of stamp; its data is on\/after ([\d-]+) \(the latest embedded revision event\), so it is up to (\d+)d before the [\d-]+ reference — beyond the (\d+)d tolerance — and the true export date is unknown, so freshness cannot be confirmed\. (.+)/;
+function rewordCatalystStale(s) {
+  const m = String(s).match(_CATALYST_STALE_RE);
+  if (!m) return String(s);
+  return `Estimates data up to ${m[2]}d stale (beyond the ${m[3]}d tolerance) — freshness UNVERIFIABLE: the CIQ Estimates export has no as-of stamp, and its data is on/after ${m[1]} (its latest embedded revision event — a worst-case floor on the true export date). ${m[4]}`;
+}
+
 function caveatBlock(f) {
-  f = dejargonCaveat(f);
+  f = rewordCatalystStale(dejargonCaveat(f));
   const resolved = /^RESOLVED\b/i.test(f);
   const icon = resolved ? "✓" : "⚠";
   const m = f.match(_CAVEAT_RE);

@@ -1337,6 +1337,30 @@ def _dejargon_caveat(c: str) -> str:
     return re.sub(r"\s*\(rule \d+\)", "", c)
 
 
+_CATALYST_STALE_RE = re.compile(
+    r"Catalyst-path as-of UNVERIFIABLE — the CIQ Estimates export carries no as-of stamp; "
+    r"its data is on/after (?P<floor>[\d-]+) \(the latest embedded revision event\), so it is "
+    r"up to (?P<days>\d+)d before the [\d-]+ reference — beyond the (?P<tol>\d+)d tolerance — "
+    r"and the true export date is unknown, so freshness cannot be confirmed\. (?P<action>.+)"
+)
+
+
+def _reword_catalyst_stale(c: str) -> str:
+    """(Option 1) Lead the catalyst-staleness caveat with the name-specific DISCRIMINATOR — how many
+    days stale, vs the tolerance — instead of the structural 'no as-of stamp' preamble that buried
+    it (all CIQ exports lack a stamp; only some are stale). Render-time, deterministic; fails
+    through unchanged if the template ever differs. Twin of dossier.js ``rewordCatalystStale``."""
+    m = _CATALYST_STALE_RE.search(c)
+    if m is None:
+        return c
+    return (
+        f"Estimates data up to {m['days']}d stale (beyond the {m['tol']}d tolerance) — freshness "
+        f"UNVERIFIABLE: the CIQ Estimates export has no as-of stamp, and its data is on/after "
+        f"{m['floor']} (its latest embedded revision event — a worst-case floor on the true export "
+        f"date). {m['action']}"
+    )
+
+
 _ACRONYMS = re.compile(r"\b(ebitda|eps|fcf|ebit|roic|roe)\b", re.IGNORECASE)
 
 
@@ -1351,7 +1375,7 @@ def _caveat_block(c: str) -> list[str]:
     """(D4) A guardrail caveat renders in the what / where / why-it-matters / how-to-verify shape,
     the offending sentence IN FULL. A mechanical / 'pull CIQ …' caveat is already a complete
     advisory sentence, so it stays a single full-sentence bullet (no forced split)."""
-    c = _dejargon_caveat(c)  # committed strings, any variant
+    c = _reword_catalyst_stale(_dejargon_caveat(c))  # committed strings, any variant
     m = _CAVEAT_RE.match(c)
     if not m:
         return [f"- {c}"]

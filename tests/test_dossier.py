@@ -8154,3 +8154,46 @@ console.log(JSON.stringify({{
     assert not r["hasJargon"], "the web render must not leak bull_points / (rule N)"
     if "AS_OF" in raw:
         assert r["asofKept"], "the real AS_OF sidecar name must survive the web de-jargon"
+
+
+def test_catalyst_stale_caveat_leads_with_the_discriminator() -> None:
+    """(Option 1) The catalyst-staleness caveat must LEAD with the name-specific discriminator (days
+    stale vs the tolerance), not the structural 'no as-of stamp' preamble every CIQ export shares.
+    Unit is a FROZEN template fixture (deterministic → exact pins safe); non-matching input fails
+    through unchanged."""
+    raw = (
+        "Catalyst-path as-of UNVERIFIABLE — the CIQ Estimates export carries no as-of stamp; "
+        "its data is on/after 2026-05-14 (the latest embedded revision event), so it is up to "
+        "53d before the 2026-07-06 reference — beyond the 45d tolerance — and the true export "
+        "date is unknown, so freshness cannot be confirmed. Re-pull CIQ Estimates, or attest "
+        "the export date (AS_OF sidecar)."
+    )
+    out = dr._reword_catalyst_stale(raw)
+    assert out.startswith("Estimates data up to 53d stale (beyond the 45d tolerance)")
+    assert "no as-of stamp" in out  # the mechanism is kept — just no longer the lede
+    assert "2026-05-14" in out and "worst-case floor" in out
+    assert out.endswith("Re-pull CIQ Estimates, or attest the export date (AS_OF sidecar).")
+    assert "Catalyst-path as-of UNVERIFIABLE" not in out  # the buried-lede opener is gone
+    # fail-through: a caveat that isn't the catalyst template is returned verbatim
+    assert dr._reword_catalyst_stale("Net debt/EBITDA (3.8x) is on REPORTED EBITDA") == \
+        "Net debt/EBITDA (3.8x) is on REPORTED EBITDA"
+
+
+def test_catalyst_stale_caveat_reworded_on_committed_brbr_e2e() -> None:
+    """(Option 1) End-to-end transform invariant on the committed artifact — guarded on the raw
+    caveat carrying the old template, so it survives re-assembly. The rendered caveats section leads
+    the catalyst caveat with the staleness discriminator, never the 'no as-of stamp' opener."""
+    import json as _json
+
+    p = Path("data/dossiers/BRBR/dossier.json")
+    if not p.exists():
+        pytest.skip("no committed BRBR dossier.json")
+    d = _json.loads(p.read_text())
+    raw = " ".join(c for c in (d.get("caveats") or []))
+    if "Catalyst-path as-of UNVERIFIABLE" not in raw:
+        pytest.skip("committed BRBR no longer carries the catalyst-staleness caveat")
+    md = dr.render_markdown(ds.Dossier.model_validate(d))
+    flags_md = md.split("Analyst caveats")[1].split("\n## ")[0]
+    assert "Estimates data up to" in flags_md and "stale (beyond the" in flags_md
+    assert "Catalyst-path as-of UNVERIFIABLE — the CIQ Estimates export carries no as-of stamp;" \
+        not in flags_md, "the buried-lede opener must not survive into the render"

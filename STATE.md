@@ -4452,6 +4452,20 @@ as TRANSFORM invariants (raw JSON carries the jargon/lowercase, the render must 
 raw pattern → survives re-assembly) with web↔md count-agreement, both renderers. DEFERRED (operator
 chose): the "what broke" shape line as a structured per-gap list (option C) — needs a
 `[{date,cause}]` field + full re-assembly, so it is its own change, not this pass.
+FOLLOW-ON (same PR, render-only): the catalyst-staleness caveat was BURYING THE LEDE — it opened
+with the structural "the CIQ Estimates export carries no as-of stamp" (true of EVERY CIQ export;
+fires on only 2/11) and put the name-specific discriminator mid-sentence. `_reword_catalyst_stale`
+(twin `rewordCatalystStale`) now LEADS with "Estimates data up to Nd stale (beyond the {tol}d
+tolerance)"; deterministic, fail-through if the template differs, so no re-assembly (BRBR 53d +
+MVST 52d re-rendered from committed json — MVST's re-assembly block is irrelevant to a render
+change). Pinned: a FROZEN-fixture unit (exact) + a committed-BRBR transform e2e. Gate: 1032 passed.
+DIAGNOSED-NOT-CHANGED (operator review): the BRBR "false balance" caveat is a BORDERLINE-false-
+positive — it fires because 9 bear < 2×5 bull (one more bear and it wouldn't) AND because 2 of the
+5 "bull_points" are actually bear/neutral (pt1 "fundamental margin collapse … a real earnings hit";
+pt5 "a PREMIUM, not a discount"), so the EFFECTIVE ~3-bull/9-bear body is comfortably lopsided and
+the strong-bearish lean is earned. The guard is SOUND + selective (3/11: BRBR/MVST strong-lean,
+NCNO mixed-over-lopsided) → KEPT as-is. Real (minor) root cause = LLM mis-slotted 2 bear args into
+bull_points; an LLM-composition issue, fixable only on re-assembly → logged, not fixed here.
 
 **OPERATOR TO-DO — MVST cannot be re-assembled (2026-07-22).** MVST is the ONE dossier name absent
 from `data/snapshots/candidate_records.jsonl` (the other ten are present), so `dossier assemble`
