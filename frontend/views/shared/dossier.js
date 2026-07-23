@@ -555,7 +555,7 @@ function tierTabs() {
 function analysisTier(d, m) {
   const analystCaveats = (d.caveats || d.flags || []).filter((c) => !isProcessCaveat(c));
   return flagsSection(analystCaveats)                   // caveats first (what to verify)
-    + drawdownIdio(m)                                   // what broke — and did it fall alone?
+    + drawdownIdio(m, d.reference_date)                 // what broke — and did it fall alone?
     + leverageSurvival(m, d.reference_date)             // balance sheet & survival
     + trajectorySection(m.quality || {}, m)             // trajectory + the return-ratios table
     + valuation(m.valuation)                            // the ONLY home of the full multiples read
@@ -1359,6 +1359,193 @@ function fmtCustomers(v) {
 
 function fmtShape(v) { return String(v).replace(/\s*\(\d\.\d{2}\)/g, ""); }
 
+// (event study) parse the committed shape "discrete gap-downs — DATE cause; DATE cause" into
+// per-gap [date, cause] rows; null (→ fall through to the run-on) for a gradual-bleed read or any
+// shape that doesn't parse. Cosmetic; twin of render.py _gap_list.
+function gapList(shape) {
+  const m = /^discrete gap-downs — (.+)$/.exec(String(shape).trim());
+  if (!m) return null;
+  const rows = [];
+  for (const part of m[1].split("; ")) {
+    const dm = /^(\d{4}-\d{2}-\d{2})\s+(.+)$/.exec(part.trim());
+    if (!dm) return null;
+    rows.push([dm[1], dm[2].trim()]);
+  }
+  return rows.length ? rows : null;
+}
+
+// nearest point index to a gap date — fallback for pre-daily committed JSON only (the marker still
+// lands near the right week); the % derivation below never uses it (exact-date or nothing).
+function nearestPtIdx(pts, dateStr) {
+  const t = Date.parse(dateStr);
+  let best = 0, bd = Infinity;
+  for (let i = 0; i < pts.length; i++) {
+    const d = Math.abs(Date.parse(pts[i].date) - t);
+    if (d < bd) { bd = d; best = i; }
+  }
+  return best;
+}
+
+// The exact 1-day close-to-close move at `dateStr`, derived from consecutive DAILY perf points —
+// the detector's own formula on the same closes (a rebased-index ratio IS the close ratio). null
+// when the series doesn't carry the date, or the previous point isn't the prior trading day
+// (old weekly-downsampled JSON): REFUSE rather than misstate a multi-day move as the 1-day gap.
+// Twin of render.py _gap_pct_from_perf.
+function gapPctFromPerf(sp, dateStr) {
+  const pts = (sp && sp.points) || [];
+  const i = pts.findIndex((p) => p && p.date === dateStr);
+  if (i <= 0) return null;
+  const a = pts[i - 1], b = pts[i];
+  if (!a || !Number.isFinite(a.name) || !Number.isFinite(b.name) || a.name <= 0) return null;
+  const spacing = (Date.parse(b.date) - Date.parse(a.date)) / 86400000;
+  if (!(spacing >= 1 && spacing <= 4)) return null;  // > a long weekend apart → downsampled series
+  return b.name / a.name - 1;
+}
+const fmtGapPct = (p) => `${p > 0 ? "+" : "−"}${Math.abs(p * 100).toFixed(1)}%`;
+const _monDay = (iso) => { const p = String(iso).split("-"); return `${_MON[(+p[1]) - 1] || "?"} ${+p[2]}`; };
+const _circled = (n) => (n >= 1 && n <= 20 ? String.fromCharCode(0x245F + n) : `#${n}`);
+
+// (event study) the "what broke" price chart — name vs benchmark rebased to 100 (the committed
+// stock_performance series), gridlined axes, NUMBERED gap markers staggered on collision, hollow
+// markers for real ≤threshold drops BEFORE the detector window + the window boundary (both only
+// when the dossier carries the detector params — no frontend magic numbers). Returns {svg, preDrops}
+// ({svg:"", preDrops:[]} when the series is absent) — preDrops feeds the ledger's honesty footnote.
+function drawdownChart(sp, rows, det) {
+  const none = { svg: "", preDrops: [] };
+  if (!sp || !Array.isArray(sp.points) || sp.points.length < 2) return none;
+  const pts = sp.points;
+  const nameS = pts.map((p) => (p && Number.isFinite(p.name) ? p.name : null));
+  const benchS = pts.map((p) => (p && Number.isFinite(p.benchmark) ? p.benchmark : null));
+  if (!nameS.some((v) => v != null)) return none;
+  const { fs } = EXHIBIT;
+  const ex = extent([...nameS, ...benchS]);
+  if (!ex) return none;
+  const pad = Math.max((ex[1] - ex[0]) * 0.1, 6), dom = { lo: ex[0] - pad, hi: ex[1] + pad };
+  const W = 720, H = 258, padL = 36, padR = 14, cy0 = 24, cy1 = 200, px0 = padL, px1 = W - padR;
+  const sx = linScale(0, pts.length - 1, px0, px1), sy = linScale(dom.lo, dom.hi, cy1, cy0);
+  const line = (series, color, w, dash) => {
+    const seg = series.map((v, i) => (v == null ? null : `${sx(i).toFixed(1)},${sy(v).toFixed(1)}`)).filter(Boolean).join(" ");
+    return seg ? `<polyline points="${seg}" fill="none" stroke="${color}" stroke-width="${w}"${dash ? ` stroke-dasharray="${dash}"` : ""} stroke-linejoin="round"/>` : "";
+  };
+  const nameCol = "var(--accent)", benchCol = "var(--ink-3)";
+  // real axes: horizontal gridlines at a nice step, labelled; the 100-rebase line emphasized
+  const span = dom.hi - dom.lo;
+  const step = [10, 20, 25, 50, 100].find((g) => span / g <= 6) || 100;
+  let grid = "";
+  for (let v = Math.ceil(dom.lo / step) * step; v < dom.hi; v += step) {
+    const y = sy(v).toFixed(1), is100 = v === 100;
+    grid += `<line x1="${px0}" y1="${y}" x2="${px1}" y2="${y}" stroke="${is100 ? "var(--line-2)" : "var(--line)"}" stroke-width="1"${is100 ? ` stroke-dasharray="3 2"` : ""}/>`
+      + `<text x="${px0 - 4}" y="${+y + 3}" font-size="${fs.axis}" text-anchor="end" fill="var(--ink-3)">${v}</text>`;
+  }
+  // x labels: four evenly spaced dates (dedup consecutive repeats)
+  let xLab = "", lastTxt = "";
+  for (const frac of [0, 1 / 3, 2 / 3, 1]) {
+    const i = Math.round((pts.length - 1) * frac);
+    const txt = _monYr(pts[i].date);
+    if (txt === lastTxt) continue;
+    lastTxt = txt;
+    const anchor = frac === 0 ? "start" : frac === 1 ? "end" : "middle";
+    xLab += `<text x="${sx(i).toFixed(1)}" y="${cy1 + 15}" font-size="${fs.xlabel}" text-anchor="${anchor}" fill="var(--ink-3)">${txt}</text>`;
+  }
+  // detector-coverage honesty: boundary + real pre-window drops as HOLLOW markers. Daily-only —
+  // a downsampled series can neither find 1-day drops nor place them truthfully.
+  const spacingDays = [];
+  for (let i = 1; i < Math.min(pts.length, 24); i++) spacingDays.push((Date.parse(pts[i].date) - Date.parse(pts[i - 1].date)) / 86400000);
+  const isDaily = spacingDays.length > 0 && spacingDays.slice().sort((a, b) => a - b)[Math.floor(spacingDays.length / 2)] <= 4;
+  const gapSet = new Set((rows || []).map((r) => r[0]));
+  let boundary = "";
+  const preDrops = [];
+  if (det && det.windowDays != null && det.refDate && isDaily) {
+    const bMs = Date.parse(det.refDate) - det.windowDays * 86400000;
+    const bIdx = pts.findIndex((p) => Date.parse(p.date) >= bMs);
+    if (bIdx > 3 && bIdx < pts.length - 3) {
+      const bx = sx(bIdx).toFixed(1);
+      boundary = `<line x1="${bx}" y1="${cy0}" x2="${bx}" y2="${cy1}" stroke="var(--line-2)" stroke-width="1" stroke-dasharray="2 4"/>`
+        + `<text x="${+bx - 5}" y="${cy0 + 8}" font-size="9" text-anchor="end" fill="var(--ink-3)">◂ before detector window (${det.windowDays}d)</text>`;
+      if (det.threshold != null) {
+        for (let i = 1; i < bIdx; i++) {
+          const a = nameS[i - 1], b = nameS[i];
+          const sp2 = (Date.parse(pts[i].date) - Date.parse(pts[i - 1].date)) / 86400000;
+          if (a != null && b != null && a > 0 && sp2 >= 1 && sp2 <= 4 && b / a - 1 <= det.threshold && !gapSet.has(pts[i].date)) {
+            preDrops.push({ date: pts[i].date, pct: b / a - 1 });
+            boundary += `<circle cx="${sx(i).toFixed(1)}" cy="${sy(b).toFixed(1)}" r="5" fill="none" stroke="var(--ink-3)" stroke-width="1.3"/>`;
+          }
+        }
+      }
+    }
+  }
+  // numbered markers, STAGGERED on collision (adjacent-day gaps overlap at daily resolution)
+  let markers = "", prevX = -1e9, prevAbove = false;
+  (rows || []).forEach(([gd], i) => {
+    const exact = pts.findIndex((p) => p && p.date === gd);
+    const idx = exact >= 0 ? exact : nearestPtIdx(pts, gd);
+    const x = sx(idx), yPt = sy(nameS[idx] != null ? nameS[idx] : dom.lo);
+    const above = (x - prevX < 18) ? !prevAbove : true;
+    prevX = x; prevAbove = above;
+    const yC = above ? yPt - 16 : yPt + 16;
+    markers += `<line x1="${x.toFixed(1)}" y1="${yPt.toFixed(1)}" x2="${x.toFixed(1)}" y2="${(above ? yC + 7 : yC - 7).toFixed(1)}" stroke="var(--danger)" stroke-width="0.8"/>`
+      + `<circle cx="${x.toFixed(1)}" cy="${yC.toFixed(1)}" r="7.5" fill="var(--surface)" stroke="var(--danger)" stroke-width="1.5"/>`
+      + `<text x="${x.toFixed(1)}" y="${(yC + 3.2).toFixed(1)}" text-anchor="middle" font-size="9.5" font-weight="600" fill="var(--danger)">${i + 1}</text>`;
+  });
+  const sym = escapeHtml(sp.name_symbol || "Name"), bsym = escapeHtml(sp.benchmark_symbol || "IWM");
+  const nr = fmtPct(sp.name_return, { signed: true });
+  const br = (typeof sp.benchmark_return === "number") ? fmtPct(sp.benchmark_return, { signed: true }) : DASH;
+  const ly = H - 6;
+  const leg = `<g font-size="${fs.legend}">`
+    + `<circle cx="${px0 + 3}" cy="${ly - 3}" r="2.6" fill="${nameCol}"/><text x="${px0 + 10}" y="${ly}" fill="var(--ink-2)">${sym} <tspan fill="${nameCol}" font-weight="600">${nr}</tspan></text>`
+    + `<circle cx="${px0 + 150}" cy="${ly - 3}" r="2.6" fill="${benchCol}"/><text x="${px0 + 157}" y="${ly}" fill="var(--ink-2)">${bsym} <tspan fill="${benchCol}" font-weight="600">${br}</tspan></text>`
+    + `<text x="${px0 + 300}" y="${ly}" fill="var(--ink-3)">52-wk · rebased = 100</text></g>`;
+  const svg = `<div class="ds-exhibit" style="margin:4px 0 2px; flex:1 1 400px; min-width:0;">
+    <svg viewBox="0 0 ${W} ${H}" width="100%" style="display:block;" role="img" aria-label="Price performance ${sym} versus ${bsym}, rebased to 100, gap-down events marked">
+      ${grid}${xLab}${boundary}${line(benchS, benchCol, 1.4, "5 4")}${line(nameS, nameCol, 1.9)}${markers}${leg}
+    </svg></div>`;
+  return { svg, preDrops };
+}
+
+// (event study) the gap-down read: chart + numbered EVENT LEDGER side-by-side for MULTIPLE
+// gap-downs (№ · date · true 1-day % · cause), the one-liner otherwise. The % derives from the
+// daily perf series (gapPctFromPerf) and is OMITTED, never estimated, when the series can't carry
+// it. A repeat filing reads "same 8-K as №" instead of restating the cause.
+function readWhatBroke(s, sp, dc, refDate) {
+  const rows = gapList(fmtShape(s.value));
+  if (!rows || rows.length < 2) return factRead("Read — what broke", s, (v) => escapeHtml(fmtShape(v)));
+  const det = { threshold: dc && dc.gap_threshold, windowDays: dc && dc.gap_window_days, refDate };
+  const { svg, preDrops } = drawdownChart(sp, rows, det);
+  // accession per gap-date (explanatory filings only) → "same 8-K as №" cross-refs
+  const accByDate = new Map();
+  for (const f of ((dc && dc.filings) || [])) {
+    if (f.explanatory === false || !f.gap_date) continue;
+    accByDate.set(f.gap_date, f.accession || `${f.form}|${f.filing_date}`);
+  }
+  const firstRowOfAcc = new Map();
+  rows.forEach(([d], i) => {
+    const a = accByDate.get(d);
+    if (a && !firstRowOfAcc.has(a)) firstRowOfAcc.set(a, i + 1);
+  });
+  const items = rows.map(([d, c], i) => {
+    const pct = gapPctFromPerf(sp, d);
+    const acc = accByDate.get(d);
+    const first = acc ? firstRowOfAcc.get(acc) : null;
+    const causeTxt = (first && first < i + 1) ? `same 8-K as ${_circled(first)}` : c;
+    return `<div style="display:flex; gap:7px; align-items:baseline; padding:3.5px 0; border-bottom:1px solid var(--line);">
+      <span style="flex:none; width:15px; height:15px; border-radius:50%; border:1.5px solid var(--danger); color:var(--danger); font-size:9.5px; font-weight:600; display:flex; align-items:center; justify-content:center;">${i + 1}</span>
+      <span style="font-variant-numeric:tabular-nums; color:var(--ink-2); white-space:nowrap;">${escapeHtml(_monDay(d))}</span>
+      ${pct == null ? "" : `<span style="font-variant-numeric:tabular-nums; color:var(--danger); font-weight:600; white-space:nowrap;">${fmtGapPct(pct)}</span>`}
+      <span>${escapeHtml(causeTxt)}</span></div>`;
+  }).join("");
+  const hdr = (det.threshold != null && det.windowDays != null)
+    ? `Gap-downs · 1-day ≤ −${Math.round(Math.abs(det.threshold) * 100)}% · ${det.windowDays}d window`
+    : "Gap-downs";
+  const pre = preDrops.length
+    ? `<div style="color:var(--ink-3); font-size:10.5px; margin-top:7px; line-height:1.55;">○ before the ${det.windowDays}d detector window:<br>${preDrops.map((q) => `${escapeHtml(_monDay(q.date))} ${fmtGapPct(q.pct)}`).join(" · ")} (not classified)</div>`
+    : "";
+  const key = `<div style="flex:0 1 236px; font-size:11.5px;">
+    <div style="font-size:10.5px; font-weight:600; text-transform:uppercase; letter-spacing:0.05em; color:var(--ink-3); margin:2px 0 6px;">${hdr}</div>
+    ${items}${pre}${citeMark(s.source_ref)}</div>`;
+  return `<div class="fg-read"><div class="fg-read-lab">Read — what broke</div>
+    <div style="display:flex; gap:16px; align-items:flex-start; flex-wrap:wrap;">${svg}${key}</div></div>`;
+}
+
 function cleanNote(note) {
   return String(note)
     .replace(/\s*for 8-Ks \['([^']+)'\]/, " for the filed 8-K $1")
@@ -1370,8 +1557,9 @@ function cleanNote(note) {
 // READ leads, the alone-or-with-market comparison follows DIRECTLY (the card's question), and the
 // 8-K evidence closes as provenance. Revised guidance moved to the street card (it is a guidance
 // fact, not a what-broke fact); the cohort-absence row collapsed to a footnote (idioVsShared).
-function drawdownIdio(m) {
-  const dd = drawdownCause(m.drawdown_cause), io = idioVsShared(m.idiosyncratic_vs_shared);
+function drawdownIdio(m, refDate) {
+  const dd = drawdownCause(m.drawdown_cause, m.stock_performance, refDate);
+  const io = idioVsShared(m.idiosyncratic_vs_shared, m.stock_performance && m.stock_performance.name_symbol);
   // legacy no-street-card JSON: the guidance fact renders here so it is never dropped
   const legacyGuide = (!m.catalyst_path && m.drawdown_cause)
     ? fact("Revised guidance", m.drawdown_cause.revised_guidance) : "";
@@ -2134,7 +2322,30 @@ function peerComps(pc) {
       : peerDeltasFact("Fundamental deltas (earned-vs-residual inputs)", pc.fundamental_deltas)));
 }
 
-function drawdownCause(dc) {
+// One parsed 8-K item line ("CODE Title: body") → the body with the DOUBLED leading title and the
+// defined-term legalese parentheticals stripped, truncated at a cross-reference stub. null when
+// nothing informative remains. Display trim of a parse-summary (never a verbatim quote — those
+// live untouched in JSON); twin of render.py _clean_item_event.
+function cleanItemEvent(ev) {
+  const m = /^(\d\.\d\d)\s+([^:]{1,90}):\s*([\s\S]*)$/.exec(String(ev));
+  if (!m) return String(ev);
+  const code = m[1];
+  let title = m[2].replace(/^Item\s+\d\.\d\d:?\s*/i, "").trim();
+  let body = m[3].trim();
+  if (!title) { const t2 = /^([^.:]{2,80})[.:]\s*/.exec(body); if (t2) title = t2[1].trim(); }
+  if (title) {
+    const esc = title.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+    body = body.replace(new RegExp(`^(?:Item\\s+\\d\\.\\d\\d[.:]?\\s*)?${esc}\\s*[.:]\\s*`, "i"), "");
+  }
+  body = body.replace(/\s*\((?:the\s+)?[“"][^”"]{1,60}[”"]\)/g, "");
+  const stub = body.search(/The information set forth in/i);
+  if (stub >= 0) body = body.slice(0, stub);
+  body = body.trim();
+  if (!body) return null;  // pure cross-reference / heading-only item — nothing informative
+  return title ? `${code} ${title}: ${body}` : `${code}: ${body}`;
+}
+
+function drawdownCause(dc, sp, refDate) {
   if (!dc) return { read: "", evidence: "" };
   // GROUP BY ACCESSION: two consecutive gap-downs can share ONE 8-K (SMPL 04-09/04-10, CNXC
   // 02-11/02-12), and rendering the identical block per gap-date read as a duplicate. One card per
@@ -2149,29 +2360,50 @@ function drawdownCause(dc) {
     if (!byAcc.has(k)) byAcc.set(k, { f, gaps: [] });
     if (f.gap_date) byAcc.get(k).gaps.push(f.gap_date);
   }
-  const filings = [...byAcc.values()].map(({ f, gaps }) => {
-    const forWhich = gaps.length
-      ? `(for the ${gaps.map(escapeHtml).join(" and ")} gap-down${gaps.length > 1 ? "s" : ""})`
-      : "";
-    return `
+  // ledger №s for the header chips ("⑤ 8-K · filed …") — same numbering as the event ledger
+  const shapeV = dc.shape || {};
+  const ledgerRows = (shapeV.status === "present" && shapeV.value != null)
+    ? gapList(fmtShape(shapeV.value)) : null;
+  const numByDate = new Map((ledgerRows || []).map(([d], i) => [d, i + 1]));
+  const nums = (gaps) => gaps.map((g) => numByDate.get(g)).filter(Boolean).map(_circled).join("");
+  // (event study) the VISIBLE tier carries only the INFORMATIVE cards — filings whose EX-99.1
+  // parsed into drivers ("what the results showed"). Item-code recitals move to the on-demand
+  // provenance tier below (print-expanded per T1); the ledger already names every cause.
+  const grouped = [...byAcc.values()];
+  const driverCards = grouped.filter(({ f }) => f.drivers && f.drivers.status === "present")
+    .map(({ f, gaps }) => {
+      const forWhich = gaps.length
+        ? `(for the ${gaps.map(escapeHtml).join(" and ")} gap-down${gaps.length > 1 ? "s" : ""})`
+        : "";
+      return `
     <div class="filing">
-      <div class="fh">${escapeHtml(f.form || "8-K")} · filed ${fmtDate(f.filing_date)} <span class="muted">${forWhich}</span></div>
-      <div class="muted" style="font-size:11.5px; margin-top:2px;">items: ${escapeHtml((f.item_types || f.items || []).join(" · "))}</div>
-      ${(f.drivers && f.drivers.status === "present")
-        ? `<div class="fe"><b>what the results showed:</b> ${escapeHtml(fixAcronyms(f.drivers.value))}${citeMark(f.drivers.source_ref)}</div>`
-        : (f.events || []).map((e) => `<div class="fe">${escapeHtml(e)}</div>`).join("")}
+      <div class="fh"><span style="color:var(--danger);">${nums(gaps)}</span> ${escapeHtml(f.form || "8-K")} · filed ${fmtDate(f.filing_date)} <span class="muted">${forWhich}</span></div>
+      <div class="fe"><b>what the results showed:</b> ${escapeHtml(fixAcronyms(f.drivers.value))}${citeMark(f.drivers.source_ref)}</div>
       ${f.url ? `<div style="margin-top:5px;"><a href="${encodeURI(f.url)}" target="_blank" rel="noopener">EDGAR ${escapeHtml(f.accession || "")}</a></div>` : ""}
     </div>`;
+    }).join("");
+  // on-demand provenance: every explanatory filing's items + cleaned parse text + EDGAR link — the
+  // complete record behind the ledger (collapsed on screen, force-open in the PDF).
+  const provEntries = grouped.map(({ f, gaps }) => {
+    const items = (f.item_types || f.items || []).filter((t) => !String(t).startsWith("9.01"));
+    const evs = (f.events || []).map(cleanItemEvent).filter(Boolean)
+      .map((e) => `<div style="margin:2px 0 0 14px;">${escapeHtml(String(e).slice(0, 300))}</div>`).join("");
+    return `<div style="margin-top:7px;"><b>${nums(gaps) || "—"}</b> · filed ${fmtDate(f.filing_date)} · items: ${escapeHtml(items.join(" · ") || "—")}
+      ${f.url ? ` · <a href="${encodeURI(f.url)}" target="_blank" rel="noopener">EDGAR ${escapeHtml(f.accession || "")}</a>` : ""}${evs}</div>`;
   }).join("");
+  const provenance = grouped.length
+    ? `<details style="margin-top:10px; font-size:12px; color:var(--ink-2);">
+        <summary style="cursor:pointer; font-size:11.5px; color:var(--ink-3);">8-K detail — items, parsed text &amp; EDGAR links (${grouped.length} filing${grouped.length > 1 ? "s" : ""})</summary>
+        <div style="padding:2px 2px 4px;">${provEntries}</div></details>`
+    : "";
   // (declutter) the dates row repeats the shape line whenever every date already appears there
   const gd = dc.gap_down_dates || {};
-  const shapeV = dc.shape || {};
   const datesDup = gd.status === "present" && shapeV.status === "present"
     && (gd.value || []).every((d) => String(shapeV.value).includes(String(d)));
   // (buy-side anatomy) the Shape classification IS this card's read — it leads when present;
   // an absent shape stays a loud UNKNOWN row (fail-honest, never silently dropped)
   const shapeLead = (shapeV.status === "present" && shapeV.value != null)
-    ? factRead("Read — what broke", dc.shape, (v) => escapeHtml(fmtShape(v)))
+    ? readWhatBroke(dc.shape, sp, dc, refDate)
     : fact("Shape", dc.shape, fmtShape);
   // (restructure) read + evidence returned SEPARATELY: the idio comparison renders between them
   // (the card's question directly after its read; the 8-K callout closes as provenance). Revised
@@ -2179,11 +2411,12 @@ function drawdownCause(dc) {
   // no-catalyst-path JSON keeps it here so the fact is never dropped.
   return {
     read: shapeLead + (datesDup ? "" : fact("Gap-down dates", listFact(dc.gap_down_dates))),
-    evidence: (filings ? `<div style="margin-top:12px;">${filings}</div>` : ""),
+    evidence: (driverCards || provenance)
+      ? `<div style="margin-top:12px;">${driverCards}${provenance}</div>` : "",
   };
 }
 
-function idioVsShared(io) {
+function idioVsShared(io, sym) {
   if (!io) return "";
   const cohort = io.cohort && io.cohort.status === "present" && Array.isArray(io.cohort.value)
     ? `<div style="margin-top:10px;"><table class="data"><thead><tr><th>Cohort name</th><th class="num">Hops</th><th class="num">180d return</th><th>Via</th></tr></thead><tbody>
@@ -2207,14 +2440,27 @@ function idioVsShared(io) {
     ? readLead
       + `<div class="fact"><div class="fact-label">Graph cohort</div><div>${cohort}</div></div>`
     : `<div class="fg-note" style="margin-top:2px;">no supplier/customer cohort mapped for this name — the comparison is vs the market only</div>`;
-  return (  // (R3) body only — drawdownIdio wraps it in the shared section header
-    // (buy-side layout) the three returns are ONE comparison — the HERO register, not three rows
-    factGrid([
+  // (event study) the three returns compress to ONE strip line when all present — the chart above
+  // already SHOWS the divergence, so a tile grid restated it at hero scale. Any absent leg → the
+  // old tile grid (fail-honest: an UNKNOWN stays a loud labelled cell, never a silent omission).
+  const nm = io.name_180d_return, mk = io.market_180d_return, rel = io.rel_vs_market;
+  const allPresent = [nm, mk, rel].every((x) => x && x.status === "present" && x.value != null);
+  const comparison = allPresent
+    ? `<div style="display:flex; gap:8px; align-items:baseline; flex-wrap:wrap; background:var(--surface-2); border:1px solid var(--line); border-radius:8px; padding:8px 12px; margin-top:8px; font-size:13px;">
+        <span class="muted" style="font-size:11px; text-transform:uppercase; letter-spacing:0.04em;">180d</span>
+        <span>${escapeHtml(sym || "Name")} <b style="color:var(--danger);">${fmtPct(nm.value, { signed: true })}</b>${citeMark(nm.source_ref)}</span>
+        <span class="muted">vs</span>
+        <span>${escapeHtml(io.benchmark_symbol || "IWM")} <b>${fmtPct(mk.value, { signed: true })}</b>${citeMark(mk.source_ref)}</span>
+        <span class="muted">→</span>
+        <span><b style="color:var(--danger);">${fmtPct(rel.value, { signed: true }).replace("%", "pp")}</b> idiosyncratic${citeMark(rel.source_ref)}</span>
+      </div>`
+    : factGrid([
       { label: "Name 180d return", s: io.name_180d_return, fmt: retHero },
       marketCell,
       { label: "Relative vs market", s: io.rel_vs_market, fmt: retHero },
-    ], { hero: true }) +
-    cohortBlock);
+    ], { hero: true });
+  // (R3) body only — drawdownIdio wraps it in the shared section header
+  return comparison + cohortBlock;
 }
 
 // --- catalyst path (the five CIQ Estimates sheets, horizon-matched). Fix 4: the string fields are
