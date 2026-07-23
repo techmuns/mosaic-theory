@@ -168,6 +168,75 @@ def _fmt_shape(v: Any) -> str:
     return re.sub(r"\s*\((\d\.\d{2})\)", "", str(v))
 
 
+def _gap_list(shape: str) -> list[tuple[str, str]] | None:
+    """(event study) Parse the committed shape 'discrete gap-downs — DATE cause; DATE cause' into
+    per-gap (date, cause) rows for a scannable list. None (→ fall through to the run-on) for the
+    gradual-bleed read or any shape not in the discrete-gap format. Cosmetic re-layout of the SAME
+    committed labels — no logic reads the result; twin of dossier.js ``gapList``."""
+    m = re.match(r"discrete gap-downs — (.+)", shape.strip())
+    if m is None:
+        return None
+    rows: list[tuple[str, str]] = []
+    for part in m.group(1).split("; "):
+        dm = re.match(r"(\d{4}-\d{2}-\d{2})\s+(.+)", part.strip())
+        if dm is None:
+            return None  # an unexpected part shape → fail through, never a mangled list
+        rows.append((dm.group(1), dm.group(2).strip()))
+    return rows or None
+
+
+def _gap_pct_from_perf(sp: Any, date_str: str) -> float | None:
+    """The exact 1-day close-to-close move at ``date_str``, derived from consecutive DAILY perf
+    points — the detector's own formula on the same closes (a rebased-index ratio IS the close
+    ratio). None when the series doesn't carry the date or the previous point isn't the prior
+    trading day (old weekly-downsampled JSON): REFUSE rather than misstate a multi-day move as
+    the 1-day gap. Twin of dossier.js ``gapPctFromPerf``."""
+    pts = getattr(sp, "points", None) or []
+    idx = next((i for i, p in enumerate(pts) if p.date == date_str), None)
+    if idx is None or idx == 0:
+        return None
+    a, b = pts[idx - 1], pts[idx]
+    if a.name is None or b.name is None or a.name <= 0:
+        return None
+    spacing = (date.fromisoformat(b.date) - date.fromisoformat(a.date)).days
+    if not 1 <= spacing <= 4:  # more than a long weekend apart → a downsampled series
+        return None
+    return float(b.name) / float(a.name) - 1.0
+
+
+_LEGALESE_PAREN = re.compile(r"\s*\((?:the\s+)?[\u201c\"][^\u201d\"]{1,60}[\u201d\"]\)")
+_XREF_STUB = re.compile(r"The information set forth in", re.IGNORECASE)
+
+
+def _clean_item_event(ev: str) -> str | None:
+    """One parsed 8-K item line ("CODE Title: body") → the body with the DOUBLED leading title and
+    the defined-term legalese parentheticals stripped, truncated at a cross-reference stub. None
+    when nothing informative remains. Display trim of a parse-summary (never a verbatim quote —
+    those live untouched in JSON); twin of dossier.js ``cleanItemEvent``."""
+    m = re.match(r"^(\d\.\d\d)\s+([^:]{1,90}):\s*(.*)$", ev, re.DOTALL)
+    if m is None:
+        return ev
+    code, title, body = m.group(1), m.group(2), m.group(3).strip()
+    title = re.sub(r"^Item\s+\d\.\d\d:?\s*", "", title, flags=re.IGNORECASE).strip()
+    if not title:
+        t2 = re.match(r"^([^.:]{2,80})[.:]\s*", body)
+        if t2:
+            title = t2.group(1).strip()
+    if title:
+        body = re.sub(
+            rf"^(?:Item\s+\d\.\d\d[.:]?\s*)?{re.escape(title)}\s*[.:]\s*", "", body,
+            flags=re.IGNORECASE,
+        )
+    body = _LEGALESE_PAREN.sub("", body)
+    stub = _XREF_STUB.search(body)
+    if stub:
+        body = body[: stub.start()].strip()
+    body = body.strip()
+    if not body:
+        return None  # pure cross-reference / heading-only item — nothing informative
+    return f"{code} {title}: {body}" if title else f"{code}: {body}"
+
+
 def _fmt_guide_verification(v: Any) -> str:
     """'guide verification (revenue): CIQ 6405.0–6405.0 vs release QUALITATIVE → plausibility flag;
     render the qualitative growth line' → the label duplicate, the degenerate range, and the
@@ -2264,7 +2333,20 @@ def render_markdown(d: Dossier, *, dev: bool = False, show_proposal: bool = Fals
     # (D1·§1) Drawdown cause & idiosyncrasy — CLUBBED: what happened, and did it happen alone?
     # (buy-side anatomy) the Shape classification is this section's READ — label twins the web lead
     out.append("### What broke — and did it fall alone?")
-    out.append(_fact("Read — what broke", m.drawdown_cause.shape, _fmt_shape))
+    # (event study) discrete gap-downs render as a scannable per-gap list — date, the TRUE 1-day
+    # move (derived from the daily perf series; omitted, never estimated, when the committed series
+    # can't carry it), cause. One gap / unparseable shape → the one-line fact.
+    _shape = m.drawdown_cause.shape
+    _rows = (_gap_list(_fmt_shape(_shape.value))
+             if _shape.status is SourceStatus.PRESENT and _shape.value is not None else None)
+    if _rows is not None and len(_rows) >= 2:
+        out.append(f"- **Read — what broke** · discrete gap-downs:{_cite(_shape.source_ref)}")
+        for _gd, _cause in _rows:
+            _gpct = _gap_pct_from_perf(m.stock_performance, _gd)
+            _gpct_s = f" **{_gpct * 100:+.1f}%**" if _gpct is not None else ""
+            out.append(f"  - {_gd}{_gpct_s} → {_cause}")
+    else:
+        out.append(_fact("Read — what broke", _shape, _fmt_shape))
     # (declutter) the dates row repeats the shape line whenever every date already appears there
     gd = m.drawdown_cause.gap_down_dates
     shape_v = m.drawdown_cause.shape
@@ -2316,7 +2398,9 @@ def render_markdown(d: Dossier, *, dev: bool = False, show_proposal: bool = Fals
             plural = "s" if len(gaps) > 1 else ""
             out.append(f"  - gap-down{plural} {gap_str} → filed {f.filing_date} "
                        f"[`{f.accession}`]({f.url})")
-            out.append(f"    - items: {', '.join(f.item_types) or '—'}")
+            # 9.01 (exhibits) is on every 8-K and never explanatory — display noise (JSON keeps it)
+            _shown_items = [t for t in f.item_types if not t.startswith("9.01")]
+            out.append(f"    - items: {', '.join(_shown_items) or '—'}")
             # (B1) parsed release drivers ARE the informative cause — they supersede the item-code
             # boilerplate; non-earnings 8-Ks (no match) still show their source-bound events.
             if f.drivers is not None and f.drivers.status is SourceStatus.PRESENT:
@@ -2324,7 +2408,9 @@ def render_markdown(d: Dossier, *, dev: bool = False, show_proposal: bool = Fals
                            f"{_cite(f.drivers.source_ref)}")
             else:
                 for ev in f.events:
-                    out.append(f"    - {ev}")
+                    cleaned = _clean_item_event(ev)
+                    if cleaned is not None:
+                        out.append(f"    - {cleaned}")
     out += _event_impact_lines(m)  # (RC-1 C) Avis-class event-impact quantifications
     if m.catalyst_path is None:  # legacy: never drop the fact when there is no street section
         out.append(_fact("Revised guidance", m.drawdown_cause.revised_guidance))
