@@ -68,7 +68,7 @@ _table shows the last 4 fiscal years · 5 earlier years are in the Appendix_
 _4 to verify._
 
 - Net debt/EBITDA (3.8x) is on REPORTED EBITDA (CIQ / consolidated GAAP), not the covenant basis; management and credit covenants typically define leverage on adjusted EBITDA (a larger denominator → a lower ratio), reconciled in the earnings release/transcript (currently UNAVAILABLE) — do not read 3.8x as the covenant-basis leverage.
-- Catalyst-path as-of UNVERIFIABLE — the CIQ Estimates export carries no as-of stamp; its data is on/after 2026-05-14 (the latest embedded revision event), so it is up to 53d before the 2026-07-06 reference — beyond the 45d tolerance — and the true export date is unknown, so freshness cannot be confirmed. Re-pull CIQ Estimates, or attest the export date (AS_OF sidecar).
+- Estimates data up to 53d stale (beyond the 45d tolerance) — freshness UNVERIFIABLE: the CIQ Estimates export has no as-of stamp, and its data is on/after 2026-05-14 (its latest embedded revision event — a worst-case floor on the true export date). Re-pull CIQ Estimates, or attest the export date (AS_OF sidecar).
 - **Unreconciled margin-compression** (2 points)
   - The full-year outlook was cut twice within months — from 4-8% net-sales growth (Nov) to 4-6% (Feb) to flat-to-+2% (May) with adjusted EBITDA margin guided down to 14% — a deteriorating, repeatedly-revised trajectory.
     - _where:_ a bear point

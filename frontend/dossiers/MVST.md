@@ -88,7 +88,7 @@ _table shows the last 4 fiscal years · 4 earlier years are in the Appendix_
 _3 to verify._
 
 - Net debt/EBITDA (3.9x) is on REPORTED EBITDA (CIQ / consolidated GAAP), not the covenant basis; management and credit covenants typically define leverage on adjusted EBITDA (a larger denominator → a lower ratio), reconciled in the earnings release/transcript (currently UNAVAILABLE) — do not read 3.9x as the covenant-basis leverage.
-- Catalyst-path as-of UNVERIFIABLE — the CIQ Estimates export carries no as-of stamp; its data is on/after 2026-05-15 (the latest embedded revision event), so it is up to 52d before the 2026-07-06 reference — beyond the 45d tolerance — and the true export date is unknown, so freshness cannot be confirmed. Re-pull CIQ Estimates, or attest the export date (AS_OF sidecar).
+- Estimates data up to 52d stale (beyond the 45d tolerance) — freshness UNVERIFIABLE: the CIQ Estimates export has no as-of stamp, and its data is on/after 2026-05-15 (its latest embedded revision event — a worst-case floor on the true export date). Re-pull CIQ Estimates, or attest the export date (AS_OF sidecar).
 - Possible false balance — the written assessment commits a strong lean but the body is near-symmetric (5 bull vs 8 bear) and the minority bull points aren't qualified-as-outweighed — size the minority against the lean, or it launders a one-sided case
 
 ## Mechanical layer
