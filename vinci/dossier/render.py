@@ -218,6 +218,11 @@ def _clean_item_event(ev: str) -> str | None:
         return ev
     code, title, body = m.group(1), m.group(2), m.group(3).strip()
     title = re.sub(r"^Item\s+\d\.\d\d:?\s*", "", title, flags=re.IGNORECASE).strip()
+    # cross-reference stub truncation FIRST — otherwise the title-recovery fallback below reads the
+    # stub text itself as a "title" and mangles instead of dropping (caught by the twin test)
+    stub = _XREF_STUB.search(body)
+    if stub:
+        body = body[: stub.start()].strip()
     if not title:
         t2 = re.match(r"^([^.:]{2,80})[.:]\s*", body)
         if t2:
@@ -228,9 +233,6 @@ def _clean_item_event(ev: str) -> str | None:
             flags=re.IGNORECASE,
         )
     body = _LEGALESE_PAREN.sub("", body)
-    stub = _XREF_STUB.search(body)
-    if stub:
-        body = body[: stub.start()].strip()
     body = body.strip()
     if not body:
         return None  # pure cross-reference / heading-only item — nothing informative

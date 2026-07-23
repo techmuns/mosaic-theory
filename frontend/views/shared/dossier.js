@@ -1391,7 +1391,7 @@ function nearestPtIdx(pts, dateStr) {
 // when the series doesn't carry the date, or the previous point isn't the prior trading day
 // (old weekly-downsampled JSON): REFUSE rather than misstate a multi-day move as the 1-day gap.
 // Twin of render.py _gap_pct_from_perf.
-function gapPctFromPerf(sp, dateStr) {
+export function gapPctFromPerf(sp, dateStr) {  // exported for the py-twin equivalence test
   const pts = (sp && sp.points) || [];
   const i = pts.findIndex((p) => p && p.date === dateStr);
   if (i <= 0) return null;
@@ -2326,20 +2326,22 @@ function peerComps(pc) {
 // defined-term legalese parentheticals stripped, truncated at a cross-reference stub. null when
 // nothing informative remains. Display trim of a parse-summary (never a verbatim quote — those
 // live untouched in JSON); twin of render.py _clean_item_event.
-function cleanItemEvent(ev) {
+export function cleanItemEvent(ev) {  // exported for the py-twin equivalence test
   const m = /^(\d\.\d\d)\s+([^:]{1,90}):\s*([\s\S]*)$/.exec(String(ev));
   if (!m) return String(ev);
   const code = m[1];
   let title = m[2].replace(/^Item\s+\d\.\d\d:?\s*/i, "").trim();
   let body = m[3].trim();
+  // cross-reference stub truncation FIRST — otherwise the title-recovery fallback below reads the
+  // stub text itself as a "title" and mangles instead of dropping (caught by the twin test)
+  const stub = body.search(/The information set forth in/i);
+  if (stub >= 0) body = body.slice(0, stub).trim();
   if (!title) { const t2 = /^([^.:]{2,80})[.:]\s*/.exec(body); if (t2) title = t2[1].trim(); }
   if (title) {
     const esc = title.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
     body = body.replace(new RegExp(`^(?:Item\\s+\\d\\.\\d\\d[.:]?\\s*)?${esc}\\s*[.:]\\s*`, "i"), "");
   }
   body = body.replace(/\s*\((?:the\s+)?[“"][^”"]{1,60}[”"]\)/g, "");
-  const stub = body.search(/The information set forth in/i);
-  if (stub >= 0) body = body.slice(0, stub);
   body = body.trim();
   if (!body) return null;  // pure cross-reference / heading-only item — nothing informative
   return title ? `${code} ${title}: ${body}` : `${code}: ${body}`;

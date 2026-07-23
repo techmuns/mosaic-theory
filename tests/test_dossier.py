@@ -8237,3 +8237,160 @@ def test_caveat_group_block_is_lossless_when_why_or_how_differ() -> None:
     out2 = "\n".join(dr._caveat_group_block(diff_why_same_how))
     assert "why alpha" in out2 and "why beta" in out2  # both whys kept
     assert out2.count("_how to verify:_ same fix") == 1  # shared how printed once
+
+
+def test_801_offering_refinement_is_anchored_and_honest() -> None:
+    """(8.01 refinement) A bare "other event" hides the one cause class 8.01 routinely carries — a
+    securities offering. The refinement is a deterministic TWO-STEP anchor on the parsed body: an
+    offering CONTEXT must fire first, then the instrument picks the label. No anchor → the label is
+    UNCHANGED (never a guess). Deterministic on frozen strings → exact pins are safe."""
+    debt = ["8.01 Other Events: entered into an underwriting agreement to issue and sell "
+            "$600 million principal amount of its 6.500% Senior Notes due 2029"]
+    equity = ["8.01 Other Events: underwriting agreement to issue and sell 4,000,000 shares "
+              "of its common stock"]
+    bare = ["8.01 Other Events: announced a public offering"]
+    non = ["8.01 Other Events: announced a settlement of the patent litigation"]
+    assert dm._gap_label(["8.01"], debt) == "debt offering (8.01)"
+    assert dm._gap_label(["8.01"], equity) == "equity offering (8.01)"
+    assert dm._gap_label(["8.01"], bare) == "securities offering (8.01)"
+    assert dm._gap_label(["8.01"], non) == "other event (8.01)"  # no context anchor → unchanged
+    assert dm._gap_label(["8.01"], None) == "other event (8.01)"  # no body at all → unchanged
+    # non-8.01 items never touched by the refinement; composition order preserved
+    assert dm._gap_label(["2.02", "9.01"], debt) == "earnings (2.02)"
+    assert dm._gap_label(["1.01", "8.01"], debt) == \
+        "material agreement (1.01) + debt offering (8.01)"
+
+
+def test_gap_pct_derivation_refuses_downsampled_series_and_twins_js() -> None:
+    """(true 1-day %) The derivation is the detector's own formula on consecutive DAILY points; a
+    previous point more than a long weekend away (old weekly JSON) → None — REFUSE, never misstate
+    a multi-day move as the 1-day gap. The JS twin must produce the same floats."""
+    import json as _json
+    import shutil
+    import subprocess
+
+    class _P:
+        def __init__(self, d: str, n: float | None) -> None:
+            self.date, self.name = d, n
+
+    class _SP:
+        def __init__(self, pts: list[Any]) -> None:
+            self.points = pts
+
+    daily = _SP([_P("2026-01-27", 50.0), _P("2026-01-28", 43.65)])
+    weekend = _SP([_P("2026-01-23", 50.0), _P("2026-01-26", 45.0)])  # Fri→Mon: 3d, valid
+    weekly = _SP([_P("2026-01-21", 50.0), _P("2026-01-28", 43.65)])  # 7d: refuse
+    assert dr._gap_pct_from_perf(daily, "2026-01-28") == pytest.approx(-0.127)
+    assert dr._gap_pct_from_perf(weekend, "2026-01-26") == pytest.approx(-0.10)
+    assert dr._gap_pct_from_perf(weekly, "2026-01-28") is None
+    assert dr._gap_pct_from_perf(daily, "2026-02-01") is None  # date not in series
+    assert dr._gap_pct_from_perf(daily, "2026-01-27") is None  # first point has no prior
+    if not shutil.which("node"):
+        return
+    driver = """
+const handler = { get: () => stub, apply: () => stub, construct: () => ({}) };
+const stub = new Proxy(function(){}, handler);
+for (const g of ["window","document","location"]) { try { globalThis[g] = stub; } catch {} }
+const { gapPctFromPerf } = await import("__URI__");
+const sp = (pts) => ({ points: pts });
+console.log(JSON.stringify([
+  gapPctFromPerf(sp([{date:"2026-01-27",name:50.0},{date:"2026-01-28",name:43.65}]), "2026-01-28"),
+  gapPctFromPerf(sp([{date:"2026-01-23",name:50.0},{date:"2026-01-26",name:45.0}]), "2026-01-26"),
+  gapPctFromPerf(sp([{date:"2026-01-21",name:50.0},{date:"2026-01-28",name:43.65}]), "2026-01-28"),
+]));
+""".replace("__URI__", Path("frontend/views/shared/dossier.js").resolve().as_uri())
+    out = subprocess.run(["node", "--input-type=module", "-e", driver],
+                         capture_output=True, text=True, check=True)
+    js = _json.loads(out.stdout)
+    assert js[0] == pytest.approx(-0.127) and js[1] == pytest.approx(-0.10) and js[2] is None
+
+
+def test_clean_item_event_trims_and_drops_and_twins_js() -> None:
+    """(8-K display trims) Doubled leading titles, defined-term legalese parentheticals, and
+    cross-reference stubs are display noise on a parse-summary (JSON keeps the raw string). A line
+    with nothing informative left → None (dropped). The JS twin must produce identical strings."""
+    import json as _json
+    import shutil
+    import subprocess
+
+    doubled = ("8.01 Other Events: Other Events. On February 12, 2026, Concentrix Corporation "
+               "(the “Company”) entered into an underwriting agreement (the “Underwriting "
+               "Agreement”) with BofA")
+    want_doubled = ("8.01 Other Events: On February 12, 2026, Concentrix Corporation entered "
+                    "into an underwriting agreement with BofA")
+    stub_tail = ("2.03 Item 2.03: Creation of a Direct Financial Obligation or an Obligation "
+                 "under an Off-Balance Sheet Arrangement of a Registrant. The information set "
+                 "forth in")
+    stub_only = "2.03 Item 2.03: The information set forth in Item 1.01 is incorporated"
+    unparseable = "UNKNOWN — read filing 0000000000-26-000000 by hand"
+    assert dr._clean_item_event(doubled) == want_doubled
+    got_stub = dr._clean_item_event(stub_tail)
+    assert got_stub is not None and "information set forth" not in got_stub
+    assert dr._clean_item_event(stub_only) is None  # nothing informative left → dropped
+    assert dr._clean_item_event(unparseable) == unparseable  # non-item line passes through
+    if not shutil.which("node"):
+        return
+    driver = """
+const handler = { get: () => stub, apply: () => stub, construct: () => ({}) };
+const stub = new Proxy(function(){}, handler);
+for (const g of ["window","document","location"]) { try { globalThis[g] = stub; } catch {} }
+const { cleanItemEvent } = await import("__URI__");
+console.log(JSON.stringify([
+  cleanItemEvent(__A__),
+  cleanItemEvent(__B__),
+  cleanItemEvent(__C__),
+]));
+""".replace("__URI__", Path("frontend/views/shared/dossier.js").resolve().as_uri()) \
+    .replace("__A__", _json.dumps(doubled)).replace("__B__", _json.dumps(stub_only)) \
+    .replace("__C__", _json.dumps(unparseable))
+    out = subprocess.run(["node", "--input-type=module", "-e", driver],
+                         capture_output=True, text=True, check=True)
+    js = _json.loads(out.stdout)
+    assert js[0] == want_doubled and js[1] is None and js[2] == unparseable
+
+
+def test_drawdown_cause_detector_params_are_backcompat_and_single_source() -> None:
+    """(detector params) Old committed JSON without the fields validates (defaults None → the
+    renderers skip boundary/hollow marks); the constants the assembler copies are the SCREEN's own
+    (one source of truth, no drifted duplicate)."""
+    dc = ds.DrawdownCause(
+        shape=ds.Sourced.unknown(note="x"),
+        gap_down_dates=ds.Sourced.unknown(note="x"),
+        filings=[],
+        revised_guidance=ds.Sourced.unknown(note="x"),
+    )
+    assert dc.gap_threshold is None and dc.gap_window_days is None
+    from vinci.screens.assemble import DECLINE_WINDOW_DAYS, GAP_DOWN_THRESHOLD
+    assert dm.GAP_DOWN_THRESHOLD is GAP_DOWN_THRESHOLD
+    assert dm.DECLINE_WINDOW_DAYS is DECLINE_WINDOW_DAYS
+
+
+def test_what_broke_event_study_on_committed_cnxc_e2e() -> None:
+    """(event study e2e) On the committed CNXC artifact: the md renders the per-gap ledger; when
+    the committed series is DAILY (post-re-assembly) each row carries the true 1-day % equal to the
+    detector formula recomputed from the artifact's own points, and every derived % is ≤ the
+    detector threshold. Phrasing-independent: values recomputed from the artifact, never hardcoded;
+    guarded skips keep it green on pre-daily JSON."""
+    import json as _json
+
+    p = Path("data/dossiers/CNXC/dossier.json")
+    if not p.exists():
+        pytest.skip("no committed CNXC dossier.json")
+    d = _json.loads(p.read_text())
+    dc = d["mechanical"].get("drawdown_cause") or {}
+    gaps = (dc.get("gap_down_dates") or {}).get("value") or []
+    if len(gaps) < 2:
+        pytest.skip("CNXC no longer has multiple gap-downs")
+    md = Path("data/dossiers/CNXC/dossier.md").read_text()
+    if "**Read — what broke** · discrete gap-downs:" not in md:
+        pytest.skip("committed md pre-dates the event-study render (artifact pass pending)")
+    dd = ds.Dossier.model_validate(d)
+    pcts = {g: dr._gap_pct_from_perf(dd.mechanical.stock_performance, g) for g in gaps}
+    derivable = {g: v for g, v in pcts.items() if v is not None}
+    if not derivable:
+        pytest.skip("committed series is pre-daily — no derivable 1-day %s yet")
+    thr = dc.get("gap_threshold")
+    for g, v in derivable.items():
+        assert f"- {g} **{v * 100:+.1f}%**" in md, f"md row for {g} must carry the derived %"
+        if thr is not None:
+            assert v <= thr, f"{g}: derived {v} must be ≤ the detector threshold {thr}"
