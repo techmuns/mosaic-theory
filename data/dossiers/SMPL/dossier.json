@@ -851,7 +851,7 @@
             "2.02 Results of Operations and Financial Condition: Results of Operations and Financial Condition. On April 9, 2026, The Simply Good Foods Company, a Delaware corporation (the “Company”), reported its results for the fiscal second quarter ended February 28, 2026. The results are discussed in detail in the press release attached hereto as Exhibit 99.1. In addition, the Company has posted an investor presentation at www.thesimplygoodfoodscompany.com."
           ],
           "drivers": {
-            "value": "adj EBITDA Q2 2026 $55.5M (-18.4%); adj EPS Q2 2026 $0.45; $3.9M one-time OWYN integration expenses; $4.5M restructuring costs, integration expenses of; $6.5M one-time OWYN integration expenses; 2026 net sales outlook: $1,310.0–$1,350.0M; next-fy adjusted ebitda outlook: $217.0–$225.0M",
+            "value": "adj EBITDA Q2 2026 $55.5M (-18.4%); adj EPS Q2 2026 $0.45; $3.9M one-time OWYN integration expenses; $4.5M restructuring costs; 2026 net sales outlook: $1,310.0–$1,350.0M; next-fy adjusted ebitda outlook: $217.0–$225.0M",
             "source_ref": "8-K 0001702744-26-000010 EX-99.1",
             "status": "present",
             "note": null
@@ -875,7 +875,7 @@
             "2.02 Results of Operations and Financial Condition: Results of Operations and Financial Condition. On April 9, 2026, The Simply Good Foods Company, a Delaware corporation (the “Company”), reported its results for the fiscal second quarter ended February 28, 2026. The results are discussed in detail in the press release attached hereto as Exhibit 99.1. In addition, the Company has posted an investor presentation at www.thesimplygoodfoodscompany.com."
           ],
           "drivers": {
-            "value": "adj EBITDA Q2 2026 $55.5M (-18.4%); adj EPS Q2 2026 $0.45; $3.9M one-time OWYN integration expenses; $4.5M restructuring costs, integration expenses of; $6.5M one-time OWYN integration expenses; 2026 net sales outlook: $1,310.0–$1,350.0M; next-fy adjusted ebitda outlook: $217.0–$225.0M",
+            "value": "adj EBITDA Q2 2026 $55.5M (-18.4%); adj EPS Q2 2026 $0.45; $3.9M one-time OWYN integration expenses; $4.5M restructuring costs; 2026 net sales outlook: $1,310.0–$1,350.0M; next-fy adjusted ebitda outlook: $217.0–$225.0M",
             "source_ref": "8-K 0001702744-26-000010 EX-99.1",
             "status": "present",
             "note": null
@@ -4700,7 +4700,7 @@
           "one_offs": [
             {
               "amount": 6.2,
-              "description": "restructuring costs, decreased 1",
+              "description": "restructuring costs",
               "verbatim": "General and administrative (\"G&A\") expenses of $40.5 million, which contain $6.2 million in restructuring costs, decreased 1",
               "source_ref": "8-K 0001702744-26-000021 EX-99.1"
             }
@@ -4761,20 +4761,14 @@
           "one_offs": [
             {
               "amount": 3.9,
-              "description": "one-time OWYN integration expenses in the current year period and a",
+              "description": "one-time OWYN integration expenses in the current year period and",
               "verbatim": "Excluding $3.9 million of one-time OWYN integration expenses in the current year period and a",
               "source_ref": "8-K 0001702744-26-000010 EX-99.1"
             },
             {
               "amount": 4.5,
-              "description": "restructuring costs, integration expenses of",
+              "description": "restructuring costs",
               "verbatim": "Excluding for the current period $4.5 million in restructuring costs, integration expenses of",
-              "source_ref": "8-K 0001702744-26-000010 EX-99.1"
-            },
-            {
-              "amount": 6.5,
-              "description": "one-time OWYN integration expenses in the current year period and a",
-              "verbatim": "Excluding $6.5 million of one-time OWYN integration expenses in the current year period and a",
               "source_ref": "8-K 0001702744-26-000010 EX-99.1"
             }
           ],
@@ -4813,7 +4807,7 @@
           "one_offs": [
             {
               "amount": 2.6,
-              "description": "one-time OWYN integration expenses in the current year period and a",
+              "description": "one-time OWYN integration expenses in the current year period and",
               "verbatim": "Excluding $2.6 million of one-time OWYN integration expenses in the current year period and a",
               "source_ref": "8-K 0001702744-26-000004 EX-99.1"
             }
@@ -5127,7 +5121,7 @@
     },
     "stock_info": {
       "price": {
-        "value": 11.04,
+        "value": 10.53,
         "source_ref": "EOD SMPL last close",
         "status": "present",
         "note": null
@@ -5162,7 +5156,7 @@
         "status": "present",
         "note": null
       },
-      "as_of": "2026-07-21"
+      "as_of": "2026-07-22"
     },
     "stock_performance": {
       "points": [
@@ -5675,7 +5669,7 @@
         },
         {
           "kind": "pricing_action",
-          "metric": "pricing actions on shelf",
+          "metric": "recent pricing actions reflected on shelf",
           "period": "Q1 2026",
           "value": "recent pricing actions are now reflected on shelf",
           "value_num": null,
@@ -5686,23 +5680,12 @@
         },
         {
           "kind": "pass_through_structure",
-          "metric": "cocoa input supply coverage",
-          "period": "late in Q4 and into fiscal 2027",
+          "metric": "cocoa supply coverage locked in",
+          "period": "will begin to flow into the P&L late in Q4 and into fiscal 2027",
           "value": "locked in incremental supply at sequentially more favorable level",
           "value_num": null,
           "unit": null,
           "verbatim": "Finally, we took advantage of the opportunity to extend supply coverage at attractive year-over-year prices on several key inputs, most notably cocoa, where we have now locked in incremental supply at sequentially more favorable level, which will begin to flow into the P&L late in Q4 and into fiscal 2027.",
-          "source_ref": "CIQ transcript: The Simply Good Foods Company, Q1 2026 Earnings Call, Jan 08, 2026.rtf",
-          "tier": "llm-fenced"
-        },
-        {
-          "kind": "leading_indicator",
-          "metric": "share repurchased",
-          "period": "Since the start of the year",
-          "value": "over 7% of our common stock",
-          "value_num": null,
-          "unit": null,
-          "verbatim": "Since the start of the year, we have repurchased over 7% of our common stock.",
           "source_ref": "CIQ transcript: The Simply Good Foods Company, Q1 2026 Earnings Call, Jan 08, 2026.rtf",
           "tier": "llm-fenced"
         },
@@ -5741,7 +5724,7 @@
         },
         {
           "kind": "leading_indicator",
-          "metric": "salty snacks consumption",
+          "metric": "Quest salty snacks consumption",
           "period": "Q1 2026",
           "value": "up 40%",
           "value_num": null,
@@ -5764,8 +5747,19 @@
         {
           "kind": "leading_indicator",
           "metric": "Quest Salty ACV",
-          "period": "Q1 2026 versus prior year",
-          "value": "up nearly 5 points",
+          "period": "Q1 2026",
+          "value": "up nearly 5 points in the quarter versus the prior year",
+          "value_num": null,
+          "unit": null,
+          "verbatim": "To put this into perspective, ACV was up nearly 5 points in the quarter versus the prior year, and average items per store were up 34%.",
+          "source_ref": "CIQ transcript: The Simply Good Foods Company, Q1 2026 Earnings Call, Jan 08, 2026.rtf",
+          "tier": "llm-fenced"
+        },
+        {
+          "kind": "leading_indicator",
+          "metric": "Quest Salty average items per store",
+          "period": "Q1 2026",
+          "value": "up 34%",
           "value_num": null,
           "unit": null,
           "verbatim": "To put this into perspective, ACV was up nearly 5 points in the quarter versus the prior year, and average items per store were up 34%.",
@@ -5779,181 +5773,178 @@
     }
   },
   "synthesis": {
-    "evidence_balance": "mixed — genuine growth-brand momentum and a clean balance sheet against a real, guidance-confirmed consumption-and-margin deterioration with heavy downward revisions.",
+    "evidence_balance": "mixed — self-funding balance sheet and intact category/Quest growth offset a genuine, broad-based multi-brand demand deterioration and $249M brand impairment.",
     "bull_points": [
       {
-        "claim": "Absolute EBITDA has compounded from $67M (FY17) to a $250M-$262M FY24-FY25 peak with the recent LTM only pulling back to ~$217M — a temporary dip off a rising multi-year base, not a collapse.",
-        "source_ref": "CIQ Financials→Income Statement (margin % + absolute EBITDA reconciler)",
-        "cited": true
-      },
-      {
-        "claim": "The current-year growth engine is intact: Quest + OWYN together generate 71% of net sales and grew double-digit in Q1, offsetting the deliberately-run-off Atkins tail.",
-        "source_ref": "CIQ transcript: The Simply Good Foods Company, Q1 2026 Earnings Call, Jan 08, 2026.rtf",
-        "cited": true
-      },
-      {
-        "claim": "The category itself grew 10% in the most recent read, giving the two growth brands a supportive demand backdrop rather than a shrinking pool.",
-        "source_ref": "CIQ transcript: The Simply Good Foods Company, Q1 2026 Earnings Call, Jan 08, 2026.rtf",
-        "cited": true
-      },
-      {
-        "claim": "The balance sheet is self-funding and lightly levered — net-debt/EBITDA 1.5x, interest coverage 10.9x, LTM FCF +$107.2M — so the de-rate is not a solvency event.",
+        "claim": "Net-debt/EBITDA is only 1.5x with 10.9x interest coverage and positive LTM FCF of $107.2M — the balance sheet is self-funding, not distressed, weighing against a terminal read.",
         "source_ref": "CIQ Net Debt ÷ CIQ LTM EBITDA (EDGAR XBRL breadth fallback) + FCF sign (survival capacity)",
         "cited": true
       },
       {
-        "claim": "On leverage the name is materially STRONGER than peers (total-debt/EBITDA 1.8x vs peer-median 3.4x) and carries a better credit-health profile, so the discount is not explained by a weaker balance sheet — posing whether the peer-gap is RESIDUAL rather than earned; the heterogeneous $54M-$27.2B peer roster caps confidence in any single peer stat.",
-        "source_ref": "CIQ Comparable Analysis→Operating Statistics (LTM Total Debt/EBITDA) · as-of 2026-06-25",
+        "claim": "S&P-MI credit-health panel rates the name stronger than peers on every axis (Overall/Operational/Solvency/Liquidity 1/2/2/2 vs peer-median 3/3/3/3), so the leverage profile is materially better than the comp set.",
+        "source_ref": "CIQ Comparable Analysis→Credit Health Panel · as-of 2026-06-25",
         "cited": true
       },
       {
-        "claim": "Management is buying the stock into the drawdown — repurchasing over 10% of shares in 12 months (~$190M this fiscal year), with share count down 11.7% and net insider open-market buying.",
+        "claim": "The peer discount is set against a HETEROGENEOUS roster (caps $54M–$27.2B, 507x span vs the name's $1.1B), so whether the EV/EBITDA gap (6x vs 7.8x LTM) is EARNED or RESIDUAL cannot be read cleanly off the median — the composition must be judged, not taken as a benchmark.",
+        "source_ref": "CIQ Comparable Analysis→Financial Data (market-cap dispersion) + Business Description",
+        "cited": true
+      },
+      {
+        "claim": "On the fundamental_deltas the name screens BETTER than the peer median on the very axes that would justify a discount — EBITDA margin 17% vs 14%, Debt/EBITDA 1.8 vs 3.4, LT EPS growth +3% vs -9%, beta 0.2 vs 0.4 — posing whether the discount is residual rather than earned.",
+        "source_ref": "CIQ Comparable Analysis→Operating Statistics (name vs peer median: growth/margin/leverage/beta)",
+        "cited": true
+      },
+      {
+        "claim": "The core growth engine is intact: Quest (with OWYN 71% of net sales) delivered 12% consumption growth and household penetration reached ~20% (up 200bps YoY) in Q1 2026, within a nutritional-snacking category growing 10%.",
+        "source_ref": "CIQ transcript: The Simply Good Foods Company, Q1 2026 Earnings Call, Jan 08, 2026.rtf",
+        "cited": true
+      },
+      {
+        "claim": "Management is buying back stock aggressively — shares out fell 11.7% over ~1.7y, ~10% of the float repurchased in the trailing 12 months — and insiders were net open-market buyers (+90.0K sh), signalling internal conviction the price discounts long-term value.",
         "source_ref": "EDGAR XBRL shares, trailing 2024-10-18..2026-07-02",
-        "cited": true
-      },
-      {
-        "claim": "Forward estimates imply a recovery: consensus FY27E net income of $129M and EPS $1.53 versus the LTM GAAP loss, and forward P/E on the ladder falls to 7.59x NTM — a possible overshoot if delivered.",
-        "source_ref": "CIQ Estimates→Multiples (forward-multiple ladder: NTM + FY26→FY33)",
         "cited": true
       }
     ],
     "bear_points": [
       {
-        "claim": "The margin decline is the REAL signal, not an optical artifact: gross margin fell from 39% (FY24) to 33% LTM AND absolute EBITDA also fell (from a $262M peak to ~$217M LTM), so the % erosion is confirmed by falling absolute dollars — not a case of a % dropping while dollars rise.",
-        "source_ref": "CIQ Financials→Income Statement (margin % + absolute EBITDA reconciler)",
+        "claim": "The de-rate is idiosyncratic, not a market move: the name fell 33% over 180d while its small-cap benchmark rose 17% (relative -50%), and the drawdown traces to discrete earnings gap-downs on 2026-04-09/10.",
+        "source_ref": "EOD SMPL−IWM 180d to 2026-07-06 (assembly, cap-band)",
         "cited": true
       },
       {
-        "claim": "The de-rate is a discrete, fundamentals-driven repricing: the stock gapped down on the Apr-09/10 2026 earnings prints, with adj EBITDA -18.4% and a slashed FY26 outlook (net sales $1.31-1.35B, adj EBITDA $217-225M).",
+        "claim": "The Q2 print drove the gap-down and marks a genuine deterioration in the P&L: adj EBITDA -18.4% YoY, gross margin cut, plus $3.9M OWYN integration and $4.5M restructuring charges — a real operating miss, not an optical artefact.",
         "source_ref": "8-K 0001702744-26-000010 EX-99.1",
         "cited": true
       },
       {
-        "claim": "Consensus has been cut hard and persistently: FY26 EBITDA estimate down -26% and revenue -13% over 12m, with FQ3/FQ4 revisions running 0↑/8↓ — a broad, one-directional downgrade, not a stray miss.",
+        "claim": "The falling EBITDA margin (18% FY25 → 16% LTM) is confirmed as the REAL signal, not an optical %-only misread: read against the reconciler, absolute EBITDA also FELL from $262M (FY25) to $217M (LTM) — both the ratio and the dollar level declined.",
+        "source_ref": "CIQ Financials→Income Statement (margin % + absolute EBITDA reconciler)",
+        "cited": true
+      },
+      {
+        "claim": "Consensus is being cut hard and broadly: FY26 EBITDA revised -26% and GAAP net income crossed to a loss (12m→latest), with the near-2-quarter revision breadth deeply negative (e.g. FQ3 EPS 3m 0↑/8↓) — estimates are still falling, not stabilising.",
         "source_ref": "CIQ Estimates→Trends (current-FY consensus path; ragged, absent lookbacks n/a)",
         "cited": true
       },
       {
-        "claim": "The demand deterioration accelerated post-Q1: by Q2 total retail takeaway declined 6.4% y/y, OWYN consumption turned negative (-2.4%) with resulting lost distribution, and Atkins fell -23.4% — the growth story weakened in real time.",
-        "source_ref": "CIQ transcript: The Simply Good Foods Company, Q2 2026 Earnings Call, Apr 09, 2026.rtf",
-        "cited": false
-      },
-      {
-        "claim": "Management booked a $249M non-cash impairment on the OWYN and Atkins brand assets — an admission that acquired-brand value has been permanently written down.",
-        "source_ref": "CIQ transcript: The Simply Good Foods Company, Q2 2026 Earnings Call, Apr 09, 2026.rtf",
-        "cited": false
-      },
-      {
-        "claim": "Part of the peer discount is EARNED: EBITDA growth is -11% (worse than peer-median -9%) and rev growth 0%, so the name is contracting at least as fast as the peer group on the growth axis — a value-trap input, judged against a heterogeneous roster.",
-        "source_ref": "CIQ Comparable Analysis→Operating Statistics (name vs peer median: growth/margin/leverage/beta)",
+        "claim": "The trailing revenue trajectory has rolled over: LTM revenue of $1,392M is below FY25's $1,451M and consensus models a further -8% FY26 and -1% FY27 — the top line is contracting, not merely optically compressed.",
+        "source_ref": "CIQ Financials→Income Statement + Segments + Ratios (multi-year columns)",
         "cited": true
       },
       {
-        "claim": "On a company-adjusted EBITDA basis ($49.3M) leverage is ~6.6x rather than the reported 1.5x GAAP-basis figure, a very different survival picture depending on which EBITDA is load-bearing.",
-        "source_ref": "CIQ leverage bases + release LTM adj-EBITDA/margins",
+        "claim": "The demand deterioration is mechanism-grounded and worsening across brands: Q2 retail takeaway declined 6.4% YoY, OWYN consumption fell and will trigger lost distribution, and Atkins consumption declined 23.4% — a broad-based volume problem, not a single-line issue.",
+        "source_ref": "8-K 0001702744-26-000010 EX-99.1",
+        "cited": true
+      },
+      {
+        "claim": "Guidance credibility is impaired: management reaffirmed the FY26 outlook in Q1 (Jan) then cut it materially one quarter later, and the delivery track-record shows the most-recent resolved period MISSED on revenue, gross margin and EBITDA.",
+        "source_ref": "CIQ Estimates→Guidance (latest guide + sign-aware delivery track-record)",
+        "cited": true
+      },
+      {
+        "claim": "A $249M non-cash impairment against OWYN and Atkins brand assets signals the company itself has written down the value of two of its three brands, consistent with a structural rather than transitory demand hit.",
+        "source_ref": "8-K 0001702744-26-000010 EX-99.1",
         "cited": true
       }
     ],
     "twin_reference_cases": [
       {
+        "name": "The Kraft Heinz Company",
+        "outcome": "went terminal",
+        "distinguishing_fact": "In-roster packaged-food name that took large brand-asset impairments as legacy labels lost relevance and the multiple stayed structurally low — the value-trap template where a brand writedown precedes, not follows, de-rating.",
+        "source": "CIQ Comparable Analysis→Financial Data + Business Description (roster + caps + business)"
+      },
+      {
         "name": "BellRing Brands",
         "outcome": "recovered",
-        "distinguishing_fact": "In-roster protein-nutrition peer that leaned on a single high-momentum brand and household-penetration gains to compound through category tailwinds — the pattern SMPL's bulls attribute to Quest/OWYN.",
+        "distinguishing_fact": "In-roster protein-nutrition peer riding the same high-protein snacking tailwind; a comparison of whether SMPL's category-growth engine (Quest) resembles BellRing's durable demand or is being lost to competitive entrants.",
         "source": "CIQ Comparable Analysis→Financial Data + Business Description (roster + caps + business)"
       },
       {
         "name": "The Hain Celestial Group",
         "outcome": "went terminal",
-        "distinguishing_fact": "In-roster better-for-you packaged-foods peer whose distribution losses and margin compression ground the equity down persistently — the pattern SMPL's bears see in Atkins/OWYN distribution loss.",
+        "distinguishing_fact": "In-roster better-for-you food name where distribution losses and volume declines compounded into a persistent low-multiple stall despite a 'healthy' positioning — the pattern SMPL's Atkins distribution losses risk echoing.",
         "source": "CIQ Comparable Analysis→Financial Data + Business Description (roster + caps + business)"
       },
       {
-        "name": "The Kraft Heinz Company",
+        "name": "Medifast",
         "outcome": "went terminal",
-        "distinguishing_fact": "Legacy branded-food owner that took large non-cash brand impairments after acquired-brand value proved overstated — the pattern echoed by SMPL's OWYN/Atkins write-down.",
-        "source": "CIQ Comparable Analysis→Financial Data + Business Description (roster + caps + business)"
-      },
-      {
-        "name": "Celsius Holdings",
-        "outcome": "recovered",
-        "distinguishing_fact": "High-protein/functional consumer brand that saw a sharp de-rate on a growth scare, then re-rated as core-brand consumption reaccelerated.",
+        "distinguishing_fact": "Weight-management consumer brand whose demand base eroded as GLP-1 adoption reshaped the category, showing how a diet-oriented franchise can face a structural (not cyclical) headwind — relevant to the Atkins leg.",
         "source": "[LLM-suggested, unverified]"
       },
       {
-        "name": "Tupperware Brands",
-        "outcome": "went terminal",
-        "distinguishing_fact": "Consumer brand whose management insisted the franchise was structurally sound while consumption kept falling and turnaround plans failed to arrest volume decline.",
+        "name": "e.l.f. Beauty",
+        "outcome": "recovered",
+        "distinguishing_fact": "Consumer name that gapped down on a single guidance cut/deceleration scare yet had intact share and household-penetration gains, later re-rating — the overshoot template if SMPL's Quest momentum proves the durable driver.",
         "source": "[LLM-suggested, unverified]"
       }
     ],
     "decisive_question": {
-      "question": "Is the LTM EBITDA/margin drop a temporary trough (pricing catch-up, cost savings, Quest/OWYN reacceleration) that mean-reverts toward the FY24-25 base, or the first leg of a structural decline in consumption and margin that the cut guidance and impairment have only begun to reflect?",
+      "question": "Is the demand deterioration a transitory, executional stumble in a still-growing category (overshoot) or a structural loss of relevance across the brand portfolio (value trap)?",
       "evidence_for": [
         {
-          "claim": "Management flagged pricing actions now on shelf, a productivity program set to be visible in H2, and locked-in favorable cocoa costs flowing into P&L from Q4/FY27 — mechanisms that could rebuild margin.",
+          "claim": "The category itself grew 10% and Quest — the largest, highest-margin brand — posted 12% consumption growth with rising household penetration, suggesting the growth engine is intact and the problem is executional/mix.",
           "source_ref": "CIQ transcript: The Simply Good Foods Company, Q1 2026 Earnings Call, Jan 08, 2026.rtf",
           "cited": true
         },
         {
-          "claim": "Quest household penetration reached ~20% (up 200bps y/y) with salty consumption up 40%, evidencing a still-expanding core-brand demand base.",
-          "source_ref": "CIQ transcript: The Simply Good Foods Company, Q1 2026 Earnings Call, Jan 08, 2026.rtf",
+          "claim": "New CEO Scalzo frames results as fixable executional/strategy missteps and launched a ~$15M fixed-cost reduction to reshape the P&L, with Q4 gross-margin expansion expected — a self-help path consistent with recovery.",
+          "source_ref": "8-K 0001702744-26-000010 EX-99.1",
           "cited": true
         }
       ],
       "evidence_against": [
         {
-          "claim": "By Q2 the trend deteriorated — retail takeaway -6.4% y/y, OWYN consumption -2.4% with pending lost distribution, and guidance cut to a -10% to -7% net-sales decline — pointing to a deepening rather than troughing.",
-          "source_ref": "CIQ transcript: The Simply Good Foods Company, Q2 2026 Earnings Call, Apr 09, 2026.rtf",
-          "cited": false
+          "claim": "The deterioration is broad-based: Q2 takeaway -6.4%, Quest consumption decelerated to 2.4%, OWYN fell and faces lost distribution, and Atkins declined 23.4% — weakness across all three brands, not one.",
+          "source_ref": "8-K 0001702744-26-000010 EX-99.1",
+          "cited": true
         },
         {
-          "claim": "FQ3 adj-EBITDA is guided to $46-50M (a 38%-32% y/y decline), so the near-term trajectory implied by the company itself is still down sharply.",
+          "claim": "The company wrote off $249M of OWYN and Atkins brand assets, an internal admission that value in two of three brands has structurally impaired.",
           "source_ref": "8-K 0001702744-26-000010 EX-99.1",
           "cited": true
         }
       ]
     },
     "key_unknowns": [
-      "Forward/adjusted EV-EBITDA and adjusted-EPS figures were not in the revised guidance — the trailing 5.6x multiple cannot distinguish cheap-overshoot from cheap-terminal (own note flags this as unresolved).",
-      "Which EBITDA is load-bearing for leverage: GAAP-basis net-debt/EBITDA 1.5x vs company-adjusted ~6.6x — the survival picture differs materially and the covenant basis is UNDISCLOSED (a missing disclosure, treated as a downside risk).",
-      "No segment EBITDA breakout is disclosed (single reported segment) — profitability by Quest vs OWYN vs Atkins is opaque, obscuring how much margin the growth brands actually carry (a missing disclosure).",
-      "The two CIQ sources DISAGREE on cash ($124M BS vs $107M bridge) and debt ($448M vs $450M) — the correct balance-sheet inputs are unresolved.",
-      "Export/as-of date is unverified (a floor ≥ 2026-06-03); several guidance rows are 88d+ stale, so the freshest fundamentals may not be captured.",
-      "Durability of the $15M fixed-cost / restructuring program and whether the guided Q4 margin expansion actually materializes are unresolved forward claims."
+      "Covenant terms are UNKNOWN (extraction failed; no CIK-scoped agreement exhibit located) — an opaque disclosure gap that matters given the QoQ debt increase and cannot be treated as benign.",
+      "No forward/adjusted EV-EBITDA or adjusted-EPS figure in the revised 99.1 guidance, and the trailing EV/EBITDA (5.6x, 0th percentile of its own 8.5y range) is flagged trailing-only — cannot distinguish cheap-overshoot from cheap-terminal.",
+      "Segment EBITDA is not disclosed (single reported segment, no EBITDA breakout) — obscures which brand is carrying/eroding profitability, a bearish visibility gap.",
+      "The two CIQ sources DISAGREE on cash ($124M BS vs $107M bridge) and debt ($448M BS vs $450M bridge) — the human must verify which basis the valuation should use.",
+      "As-of dating is a floor (≥2026-06-03, export date unverified), so revision/consensus breadth may be staler than the true export.",
+      "No graph cohort exposed for SMPL — no cross-sectional peer-return comparison beyond the name-vs-IWM relative.",
+      "Durability of the pricing actions and cocoa/whey input-cost trajectory into FY27 — whether the promised Q4 margin expansion and locked-in cocoa coverage actually flow through."
     ]
   },
   "caveats": [
-    "primary-source: 5 EX-99.1 release(s) + 1 10-Q parsed (+0.6s fetch)",
+    "primary-source: 5 EX-99.1 release(s) + 1 10-Q parsed (+0.5s fetch)",
     "Net debt/EBITDA (1.5x) is on REPORTED EBITDA (CIQ / consolidated GAAP), not the covenant basis; management and credit covenants typically define leverage on adjusted EBITDA (a larger denominator → a lower ratio), reconciled in the earnings release/transcript (currently UNAVAILABLE) — do not read 1.5x as the covenant-basis leverage."
   ],
   "qa_flags": [
     "operating-drivers: no anchored pattern matched — EX-99.1 pricing/KPI",
-    "operating-drivers: Tier-B rows capped at 12 — Quest Salty average items per store dropped",
     "operating-drivers: Tier-B rows capped at 12 — Quest Bars consumption dropped",
-    "operating-drivers: Tier-B rows capped at 12 — 45-gram Protein Milkshake ACV dropped",
-    "operating-drivers: Tier-B rows capped at 12 — Quest category position dropped",
-    "operating-drivers: Tier-B rows capped at 12 — Atkins consumption dropped",
-    "operating-drivers: Tier-B rows capped at 12 — Atkins distribution loss share of headwind dropped",
-    "operating-drivers: Tier-B rows capped at 12 — Atkins opening price point (4-pack meal bars) dropped",
-    "operating-drivers: Tier-B rows capped at 12 — Atkins new buyers dropped",
-    "operating-drivers: Tier-B rows capped at 12 — OWYN consumption dropped",
+    "operating-drivers: Tier-B rows capped at 12 — 45-gram Protein Milkshake ACV gain dropped",
+    "operating-drivers: Tier-B rows capped at 12 — Quest positioned as innovation leader / distribution runway dropped",
+    "operating-drivers: Tier-B rows capped at 12 — Atkins consumption decline dropped",
+    "operating-drivers: Tier-B rows capped at 12 — Atkins lost distribution share of headwind dropped",
+    "operating-drivers: Tier-B rows capped at 12 — Atkins 4-pack meal bar opening price point dropped",
+    "operating-drivers: Tier-B rows capped at 12 — Atkins unit velocities and new buyers dropped",
+    "operating-drivers: Tier-B rows capped at 12 — OWYN consumption growth dropped",
     "operating-drivers: Tier-B rows capped at 12 — OWYN household penetration dropped",
-    "operating-drivers: Tier-B rows capped at 12 — OWYN pricing actions dropped",
+    "operating-drivers: Tier-B rows capped at 12 — OWYN recent pricing actions dropped",
     "operating-drivers: Tier-B rows capped at 12 — OWYN brand awareness dropped",
-    "operating-drivers: Tier-B rows capped at 12 — total retail takeaway dropped",
+    "operating-drivers: Tier-B rows capped at 12 — total retail takeaway decline dropped",
     "operating-drivers: Tier-B rows capped at 12 — Quest consumption growth dropped",
-    "operating-drivers: Tier-B rows capped at 12 — Salty consumption growth dropped",
+    "operating-drivers: Tier-B rows capped at 12 — Quest Salty consumption growth dropped",
     "operating-drivers: Tier-B rows capped at 12 — OWYN consumption dropped",
-    "operating-drivers: Tier-B rows capped at 12 — Atkins consumption dropped",
-    "operating-drivers: Tier-B rows capped at 12 — share repurchased (trailing 12 months) dropped",
-    "operating-drivers: Tier-B rows capped at 12 — private label presence in category dropped",
-    "operating-drivers: Tier-B rows capped at 12 — retail scale / category adviser role dropped",
-    "UNCITED bear_point: 'The demand deterioration accelerated post-Q1: by Q2 total retail…' (ref not in mechanical facts)",
-    "UNCITED bear_point: 'Management booked a $249M non-cash impairment on the OWYN and Atkins…' (ref not in mechanical facts)",
-    "UNCITED decisive.against: 'By Q2 the trend deteriorated — retail takeaway -6.4% y/y, OWYN…' (ref not in mechanical facts)"
+    "operating-drivers: Tier-B rows capped at 12 — Atkins consumption decline dropped",
+    "operating-drivers: Tier-B rows capped at 12 — input cost inflation on gross profit dropped",
+    "operating-drivers: Tier-B rows capped at 12 — category structure / private label dropped",
+    "DIRECTIONAL language 'conviction' — human review (dossier frames, not concludes)"
   ],
   "llm_model": "claude-opus-4-8",
-  "assembled_at": "2026-07-22T14:53:37.539863Z",
+  "assembled_at": "2026-07-23T06:25:53.861950Z",
   "sector": "Consumer Staples",
   "industry": {
     "value": "Packaged Foods and Meats",
@@ -5973,7 +5964,7 @@
     "recipe_hint": "R1_midcycle_margin_evebitda",
     "applicable": true,
     "multiple_basis": "EV/EBITDA",
-    "computed_at": "2026-07-22T14:53:37.051662Z",
+    "computed_at": "2026-07-23T06:25:53.457387Z",
     "reason": null,
     "data_quality": null,
     "data_quality_detail": [],

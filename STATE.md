@@ -4399,6 +4399,91 @@ margin/cash inflection and cheap forward multiples"). The false-balance guard fi
 as an analyst caveat. Re-running the LLM until the content improved would be shopping for an
 outcome — the discipline this fund exists to hold — so the caveat stands for the analyst to judge.
 
+**BUILD RECORD — 2026-07-23 gap-card quality pass (the three audit leftovers).**
+(1) BRBR quarterly figures were labelled with the YEAR: `_release_period` expected "Quarter of 2026"
+but BellRing writes "Quarter of Fiscal Year 2026", so it fell to the bare-year fallback →
+"adj EBITDA 2026" was really Q2. Handled the FY phrasing; scoped the re-assembly EMPIRICALLY
+(composed the fresh driver offline for every flagged name — only BRBR and SMPL actually change; FUBO's
+"2026" is a genuine full-year figure, CNXC's gap driver was already Q2). (2) SMPL listed the SAME
+OWYN integration expense twice ($3.9M quarter, $6.5M YTD, worded identically) and a dangling
+"restructuring costs, integration expenses of": the one-off dedup now collapses byte-identical full
+descriptions (keeping the first/quarter) while the amount-aware path still keeps distinct qualifiers
+($12M European vs $30M Asia), and the description trims at the first comma + strips a trailing
+preposition. (3) One 8-K explaining two consecutive gap-downs rendered its whole block twice
+(SMPL 04-09/04-10, CNXC 02-11/02-12) — the md even printed "gap 04-10 → 04-09" like a date error;
+both renderers now GROUP by accession, one card naming every gap-down ("filed Apr 9 (for the
+2026-04-09 and 2026-04-10 gap-downs)"). Display-tier for CNXC (md re-render only, no re-assembly).
+Verified live (SMPL: 1 filing card, both dates named, zero console errors). Gate green: 1026 passed.
+The synthesis-overwrite incident recurred on BRBR (REWRITTEN but synth=NO) — caught by the
+assembled_at+synth check, restored from git, retried clean.
+(4) BRBR's 2026-02-03 gap 8-K carried ONLY Item 5.07 (annual-meeting vote) — an administrative
+filing that cannot explain a de-rate. The shape line leaked the Python list repr (`non-narrative
+items ['5.07']`) and the card recited the vote text (the human flagged: "this text doesn't explain
+the gap"). Split 8-K items into explanatory (`_EXPLANATORY_ITEMS` = the `_CAUSE_BY_ITEM` keys; 5.02
+management-change stays IN) vs administrative; an admin-only gap now reads the honest
+`no earnings/guidance filing (annual-meeting 8-K only)` (mirrors the `no company filing` treatment),
+and a new `FilingRef.explanatory` flag (default True, back-compatible) makes BOTH renderers suppress
+the non-explanatory card — the filing ref STAYS in JSON (three-tier: fact preserved, noise removed).
+The md header is now gated on ≥1 explanatory filing (no dangling heading). Only BRBR is affected
+across the 11 names; re-assembled with synthesis verified present. Verified live (BRBR: shape reads
+the honest label, 1 filing card = the real 2026-05-05 earnings 2.02, vote text gone, no list repr).
+Gate green: 1028 passed. INVARIANT: a deterministic unit pin (`_is_explanatory`/`_gap_label` on item
+codes) + a committed-artifact e2e (5.07 card suppressed, 2.02 card kept) on both renderers.
+
+**BUILD RECORD — 2026-07-23 caveat/section display pass (PR #196, operator-reviewed, DISPLAY-TIER
+ONLY — NO re-assembly).** Four render-layer polish items from a live review of BRBR's Analysis tab,
+each rendered from the COMMITTED JSON (both `dossier.js` + `render.py`), verified live, then md
+re-rendered (deterministic, from committed json — never re-assembled) + frontend mirror rebuilt.
+(Opt 2) One guard TYPE firing on N synthesis points drew N near-identical caveat cards (BRBR's 2×
+"Unreconciled margin-compression", same title + same why). Same-lead caveats now COLLAPSE into one
+advisory — lead once + "N points" badge, each claim nested with its own `where`, one shared
+why/how when identical; grouping keys off the DETERMINISTIC lead (flags.revoice), never LLM text;
+non-matching + singletons unchanged. (A) De-jargon at render (twin `dejargonCaveat`/`_dejargon_caveat`,
+extends the existing `evidence_balance` swap): `bull_points`/`bear_points` → plain, strip internal
+`(rule N)`; the real `AS_OF` sidecar name is left intact. (B) The section header carries a
+group-count ("N to verify" web badge / `_N to verify._` md) = DISTINCT advisories. (D) Financial
+acronyms uppercased at render (`_fix_acronyms`, word-boundary): `adjusted ebitda outlook` →
+`EBITDA`, VRRM `eps` → `EPS`. Scope: 10 of 11 md re-rendered (IT has no analyst caveats); `AORT`
+et al. changed ONLY by the (B) count line; NO `dossier.json` and NO `index.json` touched (proof the
+pass is re-assembly-free — synthesis reads intact). Verified live (BRBR: "4 to verify" badge, one
+collapsed card, "bull points" + no "(rule 7)", "AS_OF" kept, "adjusted EBITDA outlook"). Gate green:
+1030 passed. INVARIANT: deterministic unit pins on the two pure helpers + a committed-artifact e2e
+as TRANSFORM invariants (raw JSON carries the jargon/lowercase, the render must not; guarded on the
+raw pattern → survives re-assembly) with web↔md count-agreement, both renderers. DEFERRED (operator
+chose): the "what broke" shape line as a structured per-gap list (option C) — needs a
+`[{date,cause}]` field + full re-assembly, so it is its own change, not this pass.
+FOLLOW-ON (same PR, render-only): the catalyst-staleness caveat was BURYING THE LEDE — it opened
+with the structural "the CIQ Estimates export carries no as-of stamp" (true of EVERY CIQ export;
+fires on only 2/11) and put the name-specific discriminator mid-sentence. `_reword_catalyst_stale`
+(twin `rewordCatalystStale`) now LEADS with "Estimates data up to Nd stale (beyond the {tol}d
+tolerance)"; deterministic, fail-through if the template differs, so no re-assembly (BRBR 53d +
+MVST 52d re-rendered from committed json — MVST's re-assembly block is irrelevant to a render
+change). Pinned: a FROZEN-fixture unit (exact) + a committed-BRBR transform e2e. Gate: 1032 passed.
+DIAGNOSED-NOT-CHANGED (operator review): the BRBR "false balance" caveat is a BORDERLINE-false-
+positive — it fires because 9 bear < 2×5 bull (one more bear and it wouldn't) AND because 2 of the
+5 "bull_points" are actually bear/neutral (pt1 "fundamental margin collapse … a real earnings hit";
+pt5 "a PREMIUM, not a discount"), so the EFFECTIVE ~3-bull/9-bear body is comfortably lopsided and
+the strong-bearish lean is earned. The guard is SOUND + selective (3/11: BRBR/MVST strong-lean,
+NCNO mixed-over-lopsided) → KEPT as-is. Real (minor) root cause = LLM mis-slotted 2 bear args into
+bull_points; an LLM-composition issue, fixable only on re-assembly → logged, not fixed here.
+
+**ACCEPTED RISK — one-off same-item collapse is amount-blind (2026-07-23, PR #196 review).**
+`_one_offs`' identical-item collapse keeps the FIRST of two mentions sharing a byte-identical
+captured phrase (SMPL's OWYN integration expense, $3.9M quarter / $6.5M YTD, worded identically →
+one row, the quarter). Adversarial review found it can't distinguish that same-item-two-scopes case
+from two GENUINELY DIFFERENT charges worded byte-identically (differing only in amount, no scope or
+qualifier text) — e.g. a constructed "$5.0M of transaction costs … $20.0M of transaction costs" →
+`[5.0]`, the $20.0M silently dropped. SMPL's real text carries NO QTD/YTD scope words ("…in the
+current year period" on both), so the two cases are structurally identical to the parser — no local
+signal separates them, and "keep both" would re-introduce the SMPL duplicate the operator flagged.
+Kept as-is (optimizes for the observed case). **Falsifier:** a real dossier whose one-off driver
+omits a materially different, identically-worded charge → then add scope-word detection or a
+keep-both-and-flag path. Not shipped: a machine guard (no sound local discriminator exists). Two
+MINOR review findings fixed instead: the caveat collapse is now LOSSLESS on differing why/how
+(per-claim render, both twins, pinned `test_caveat_group_block_is_lossless_when_why_or_how_differ`),
+and the JS render twins (catalyst reword, EBITDA casing, collapse) gained the web-e2e pins they
+lacked.
+
 **OPERATOR TO-DO — MVST cannot be re-assembled (2026-07-22).** MVST is the ONE dossier name absent
 from `data/snapshots/candidate_records.jsonl` (the other ten are present), so `dossier assemble`
 raises `LookupError: MVST not in candidate_records.jsonl`. Its committed dossier therefore stays on

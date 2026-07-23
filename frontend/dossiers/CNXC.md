@@ -65,6 +65,8 @@ _table shows the last 4 fiscal years · 5 earlier years are in the Appendix_
 
 ## ⚠ Analyst caveats — verify before the verdict
 
+_2 to verify._
+
 - P/E may be distorted by non-recurring EPS — latest annual EPS -20.36 vs recent median 4.71; verify against normalized/forward EPS (CIQ)
 - Net debt/EBITDA (4.1x) is on REPORTED EBITDA (CIQ / consolidated GAAP), not the covenant basis; management and credit covenants typically define leverage on adjusted EBITDA (a larger denominator → a lower ratio), reconciled in the earnings release/transcript (currently UNAVAILABLE) — do not read 4.1x as the covenant-basis leverage.
 
@@ -79,17 +81,14 @@ _Company-specific or market-wide?_
 - **Relative vs market:** -62.4% [7]
 _no supplier/customer cohort mapped for this name — the comparison is vs the market only_
 - **Gap-downs — what the results showed (parsed EX-99.1) + the 8-K:**
-  - gap 2026-02-11 → 2026-02-13 [`0001803599-26-000068`](https://www.sec.gov/Archives/edgar/data/1803599/000180359926000068/cnxc-20260212.htm)
+  - gap-downs 2026-02-11 and 2026-02-12 → filed 2026-02-13 [`0001803599-26-000068`](https://www.sec.gov/Archives/edgar/data/1803599/000180359926000068/cnxc-20260212.htm)
     - items: 8.01 Other Events, 9.01 Financial Statements and Exhibits
     - 8.01 Other Events: Other Events. On February 12, 2026, Concentrix Corporation (the “Company”) entered into an underwriting agreement (the “Underwriting Agreement”) with BofA Securities, Inc. and J.P. Morgan Securities LLC, as representatives of the several underwriters named in Schedule 1 thereto, to issue and sell (the “Offering”) $600 million principal amount of its 6.500% Senior Notes due 2029 (the “Notes”). The 
-  - gap 2026-02-12 → 2026-02-13 [`0001803599-26-000068`](https://www.sec.gov/Archives/edgar/data/1803599/000180359926000068/cnxc-20260212.htm)
-    - items: 8.01 Other Events, 9.01 Financial Statements and Exhibits
-    - 8.01 Other Events: Other Events. On February 12, 2026, Concentrix Corporation (the “Company”) entered into an underwriting agreement (the “Underwriting Agreement”) with BofA Securities, Inc. and J.P. Morgan Securities LLC, as representatives of the several underwriters named in Schedule 1 thereto, to issue and sell (the “Offering”) $600 million principal amount of its 6.500% Senior Notes due 2029 (the “Notes”). The 
-  - gap 2026-03-24 → 2026-03-23 [`0001803599-26-000080`](https://www.sec.gov/Archives/edgar/data/1803599/000180359926000080/cnxc-20260320.htm)
+  - gap-down 2026-03-24 → filed 2026-03-23 [`0001803599-26-000080`](https://www.sec.gov/Archives/edgar/data/1803599/000180359926000080/cnxc-20260320.htm)
     - items: 1.01 Entry into a Material Definitive Agreement, 2.03 Item 2.03, 9.01 Financial Statements and Exhibits
     - 1.01 Entry into a Material Definitive Agreement: Entry into a Material Definitive Agreement. On March 20, 2026, Concentrix Corporation (the “Company”), as servicer, entered into an amendment (the “Amendment”) to its accounts receivable securitization facility (as amended, the “Securitization Facility”) by and among Concentrix Receivables, Inc., a subsidiary of the Company, as borrower, PNC Bank, National Association, as administrative agent, and
     - 2.03 Item 2.03: Creation of a Direct Financial Obligation or an Obligation under an Off-Balance Sheet Arrangement of a Registrant. The information set forth in
-  - gap 2026-06-30 → 2026-06-29 [`0001803599-26-000133`](https://www.sec.gov/Archives/edgar/data/1803599/000180359926000133/cnxc-20260629.htm)
+  - gap-down 2026-06-30 → filed 2026-06-29 [`0001803599-26-000133`](https://www.sec.gov/Archives/edgar/data/1803599/000180359926000133/cnxc-20260629.htm)
     - items: 2.02 Results of Operations and Financial Condition, 9.01 Financial Statements and Exhibits
     - **what the results showed:** adj EBITDA Q2 2026 $347.4M; adj operating income Q2 2026 $292.0M; adj EPS Q2 2026 $2.63; Fiscal 2026 revenue outlook: $2,465.0–$2,490.0M [14]
 

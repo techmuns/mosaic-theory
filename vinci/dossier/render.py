@@ -1328,11 +1328,54 @@ def _split_why_how(explanation: str) -> tuple[str, str]:
     return explanation.strip(), ""
 
 
+def _dejargon_caveat(c: str) -> str:
+    """(A) Render-time cleanup — the human tier never shows the synthesis's field tokens or the
+    internal rule numbers a guardrail cites; the committed JSON keeps the raw strings (machine
+    tier). Twin of dossier.js ``dejargonCaveat``. ``AS_OF`` (a real sidecar name) is left intact."""
+    c = c.replace("evidence_balance", "the written assessment")
+    c = c.replace("bull_points", "bull points").replace("bear_points", "bear points")
+    return re.sub(r"\s*\(rule \d+\)", "", c)
+
+
+_CATALYST_STALE_RE = re.compile(
+    r"Catalyst-path as-of UNVERIFIABLE — the CIQ Estimates export carries no as-of stamp; "
+    r"its data is on/after (?P<floor>[\d-]+) \(the latest embedded revision event\), so it is "
+    r"up to (?P<days>\d+)d before the [\d-]+ reference — beyond the (?P<tol>\d+)d tolerance — "
+    r"and the true export date is unknown, so freshness cannot be confirmed\. (?P<action>.+)"
+)
+
+
+def _reword_catalyst_stale(c: str) -> str:
+    """(Option 1) Lead the catalyst-staleness caveat with the name-specific DISCRIMINATOR — how many
+    days stale, vs the tolerance — instead of the structural 'no as-of stamp' preamble that buried
+    it (all CIQ exports lack a stamp; only some are stale). Render-time, deterministic; fails
+    through unchanged if the template ever differs. Twin of dossier.js ``rewordCatalystStale``."""
+    m = _CATALYST_STALE_RE.search(c)
+    if m is None:
+        return c
+    return (
+        f"Estimates data up to {m['days']}d stale (beyond the {m['tol']}d tolerance) — freshness "
+        f"UNVERIFIABLE: the CIQ Estimates export has no as-of stamp, and its data is on/after "
+        f"{m['floor']} (its latest embedded revision event — a worst-case floor on the true export "
+        f"date). {m['action']}"
+    )
+
+
+_ACRONYMS = re.compile(r"\b(ebitda|eps|fcf|ebit|roic|roe)\b", re.IGNORECASE)
+
+
+def _fix_acronyms(s: str) -> str:
+    """(D) Financial acronyms render uppercase even when a parser lower-cased them (a guidance label
+    like 'adjusted ebitda outlook'). Word-boundary only — never mid-word. Twin of dossier.js
+    ``fixAcronyms``."""
+    return _ACRONYMS.sub(lambda m: m.group(0).upper(), s)
+
+
 def _caveat_block(c: str) -> list[str]:
     """(D4) A guardrail caveat renders in the what / where / why-it-matters / how-to-verify shape,
     the offending sentence IN FULL. A mechanical / 'pull CIQ …' caveat is already a complete
     advisory sentence, so it stays a single full-sentence bullet (no forced split)."""
-    c = c.replace("evidence_balance", "the written assessment")  # committed strings, any variant
+    c = _reword_catalyst_stale(_dejargon_caveat(c))  # committed strings, any variant
     m = _CAVEAT_RE.match(c)
     if not m:
         return [f"- {c}"]
@@ -1347,6 +1390,43 @@ def _caveat_block(c: str) -> list[str]:
     return out
 
 
+def _caveat_group_block(group: list[str]) -> list[str]:
+    """(D4·collapse) N caveats sharing one guard TYPE (same lead + what/where/why shape) render as
+    ONE advisory — the lead once, each offending claim nested with its own where, one shared
+    why/how when identical. The twin of the web ``caveatGroupBlock``: the same guard firing on two
+    synthesis points (BRBR's 2× margin-compression) is one action item, not two near-identical
+    blocks; every claim is still shown in full."""
+    matches: list[re.Match[str]] = []
+    for c in group:
+        m = _CAVEAT_RE.match(_dejargon_caveat(c))
+        assert m is not None  # groups of >1 are only formed from _CAVEAT_RE-matching caveats
+        matches.append(m)
+    lead = matches[0].group("lead").strip()
+    parts = [
+        (m.group("where").strip(), m.group("what").strip(), *_split_why_how(m.group("why").strip()))
+        for m in matches
+    ]
+    same_why = len({p[2] for p in parts}) == 1
+    same_how = len({p[3] for p in parts}) == 1
+    out = [f"- **{lead}** ({len(parts)} points)"]
+    # LOSSLESS: a shared why/how prints once below; a why/how that DIFFERS across the group prints
+    # per-claim on the where line — so the collapse never silently drops a claim's why-it-matters or
+    # how-to-verify (the "curating never deletes a fact" contract).
+    for where, what, why, how in parts:
+        out.append(f"  - {what}")
+        line = f"    - _where:_ {where}"
+        if not same_why:
+            line += f" · _why:_ {why}"
+        if not same_how and how:
+            line += f" · _how:_ {how}"
+        out.append(line)
+    if same_why:
+        out.append(f"  - _why it matters:_ {parts[0][2]}")
+    if same_how and parts[0][3]:
+        out.append(f"  - _how to verify:_ {parts[0][3]}")
+    return out
+
+
 def _flags_section(d: Dossier) -> list[str]:
     """(D1) The human-facing CAVEATS render at the TOP (right under the header) — the first thing
     the human sees is what to verify before trusting anything below. Each renders in the D4
@@ -1358,9 +1438,27 @@ def _flags_section(d: Dossier) -> list[str]:
     caveats = [c for c in d.caveats if not _is_process_caveat(c)]
     if not caveats:
         return []
-    out = ["## ⚠ Analyst caveats — verify before the verdict", ""]
+    # (Option 2) collapse caveats sharing a guard TYPE into one grouped block; non-matching +
+    # singletons stay one-per-block (identical to the prior render for the 99% single case). Grouped
+    # FIRST so the (B) header count is DISTINCT advisories — one grouped card per type, twin of web.
+    groups: list[list[str]] = []
+    by_lead: dict[str, list[str]] = {}
     for c in caveats:
-        out += _caveat_block(c)
+        m = _CAVEAT_RE.match(_dejargon_caveat(c))
+        if m is None:
+            groups.append([c])
+            continue
+        lead = m.group("lead").strip()
+        if lead in by_lead:
+            by_lead[lead].append(c)
+        else:
+            g = [c]
+            by_lead[lead] = g
+            groups.append(g)
+    hdr = "## ⚠ Analyst caveats — verify before the verdict"
+    out = [hdr, "", f"_{len(groups)} to verify._", ""]
+    for g in groups:
+        out += _caveat_block(g[0]) if len(g) == 1 else _caveat_group_block(g)
     out.append("")
     return out
 
@@ -2199,15 +2297,30 @@ def render_markdown(d: Dossier, *, dev: bool = False, show_proposal: bool = Fals
         # (declutter · buy-side) absence is ONE quiet footnote line, never a labelled fact row
         out.append("_no supplier/customer cohort mapped for this name — the comparison is vs "
                    "the market only_")
-    if m.drawdown_cause.filings:
+    # GROUP BY ACCESSION (twin of the web): one 8-K can explain two consecutive gap-downs
+    # (SMPL 04-09/04-10, CNXC 02-11/02-12); the flat loop printed the same block per gap-date,
+    # once even as "gap 2026-04-10 → 2026-04-09" which read like a date error. One entry per
+    # filing, naming every gap-down it explains. An administrative-only 8-K (5.07 annual-meeting
+    # vote, etc.) is dropped here — its card recited noise; the shape line already reads "no
+    # earnings/guidance filing" for that gap and the filing ref stays in JSON.
+    grouped: dict[str, tuple[Any, list[str]]] = {}
+    for f in m.drawdown_cause.filings:
+        if not f.explanatory:
+            continue
+        k = f.accession or f"{f.form}|{f.filing_date}"
+        grouped.setdefault(k, (f, []))[1].append(f.gap_date)
+    if grouped:
         out.append("- **Gap-downs — what the results showed (parsed EX-99.1) + the 8-K:**")
-        for f in m.drawdown_cause.filings:
-            out.append(f"  - gap {f.gap_date} → {f.filing_date} [`{f.accession}`]({f.url})")
+        for f, gaps in grouped.values():
+            gap_str = " and ".join(gaps)
+            plural = "s" if len(gaps) > 1 else ""
+            out.append(f"  - gap-down{plural} {gap_str} → filed {f.filing_date} "
+                       f"[`{f.accession}`]({f.url})")
             out.append(f"    - items: {', '.join(f.item_types) or '—'}")
             # (B1) parsed release drivers ARE the informative cause — they supersede the item-code
             # boilerplate; non-earnings 8-Ks (no match) still show their source-bound events.
             if f.drivers is not None and f.drivers.status is SourceStatus.PRESENT:
-                out.append(f"    - **what the results showed:** {f.drivers.value}"
+                out.append(f"    - **what the results showed:** {_fix_acronyms(f.drivers.value)}"
                            f"{_cite(f.drivers.source_ref)}")
             else:
                 for ev in f.events:

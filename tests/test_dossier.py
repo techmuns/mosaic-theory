@@ -7929,3 +7929,311 @@ def test_assembly_writes_no_synthesis_less_dossier_over_a_good_one_undetected() 
     asm = Path("vinci/dossier/assemble.py").read_text()
     assert "LLM synthesis skipped (no ANTHROPIC client) — mechanical layer only" in asm, (
         "a skipped synthesis must be disclosed on the dossier, not inferred from a console line")
+
+
+def test_one_8k_explaining_two_gap_downs_renders_once_e2e() -> None:
+    """(SMPL/CNXC) Two consecutive gap-downs can share ONE 8-K; the flat loop rendered the whole
+    block per gap-date, and the md even printed 'gap 2026-04-10 → 2026-04-09' which read like a
+    date error. Both renderers now group by accession: one entry per filing, naming every
+    gap-down it explains. Pinned on SMPL's committed artifact (its 04-09/04-10 share one 8-K)."""
+    import json as _json
+    import shutil
+    import subprocess
+
+    p = Path("data/dossiers/SMPL/dossier.json")
+    if not p.exists():
+        pytest.skip("no committed SMPL dossier.json")
+    d = _json.loads(p.read_text())
+    filings = (d["mechanical"].get("drawdown_cause") or {}).get("filings") or []
+    accs = [f.get("accession") for f in filings]
+    if len(accs) == len(set(accs)):
+        pytest.skip("SMPL no longer has a shared-accession gap pair")
+    dup_acc = next(a for a in accs if accs.count(a) > 1)
+
+    # md: one grouped entry, both dates named, no reversed 'gap X → Y' arrow
+    md = Path("data/dossiers/SMPL/dossier.md").read_text()
+    blk = md.split("Gap-downs — what the results showed")[1].split("###")[0]
+    assert blk.count(f"`{dup_acc}`") == 1, "the shared 8-K must appear once in the md"
+    assert "2026-04-09 and 2026-04-10" in blk
+
+    # web: one .filing card for the shared accession
+    if not shutil.which("node"):
+        return
+    dj = Path("frontend/views/shared/dossier.js").resolve().as_uri()
+    driver = f"""
+const handler = {{ get: () => stub, apply: () => stub, construct: () => ({{}}) }};
+const stub = new Proxy(function(){{}}, handler);
+for (const g of ["window","document","location"]) {{ try {{ globalThis[g] = stub; }} catch {{}} }}
+import {{ readFileSync }} from "node:fs";
+const {{ renderDossier }} = await import("{dj}");
+const h = renderDossier(JSON.parse(readFileSync("data/dossiers/SMPL/dossier.json")), null,
+  JSON.parse(readFileSync("frontend/scenarios/SMPL.json")));
+const wb = h.split(">What broke")[1].split('class="card ds-section"')[0];
+console.log(JSON.stringify({{
+  cards: (wb.match(/class="filing"/g) || []).length,
+  bothGaps: wb.includes("2026-04-09 and 2026-04-10 gap-downs"),
+}}));
+"""
+    out = subprocess.run(["node", "--input-type=module", "-e", driver],
+                         capture_output=True, text=True, check=True)
+    r = _json.loads(out.stdout)
+    assert r["cards"] == 1, f"the shared 8-K must render ONE filing card, got {r['cards']}"
+    assert r["bothGaps"], "the single card must name both gap-downs it explains"
+
+
+def test_admin_only_8k_is_non_explanatory_with_an_honest_label() -> None:
+    """(BRBR) An 8-K carrying only an administrative item — a 5.07 annual-meeting vote — does NOT
+    explain a gap-down. It must classify non-explanatory, and its gap label must read the honest
+    "no earnings/guidance filing (…)" — never the Python list-repr `['5.07']` the human flagged.
+    A management change (5.02) genuinely moves a stock, so it stays explanatory. Deterministic:
+    item codes → classification/label, no LLM text in play, so exact pins are safe here."""
+    # explanatory set is exactly the price-moving item map — administrative codes fall outside it
+    assert dm._is_explanatory(["2.02", "9.01"])  # earnings
+    assert dm._is_explanatory(["5.02"])          # management change moves a stock
+    assert not dm._is_explanatory(["5.07"])              # annual-meeting vote
+    assert not dm._is_explanatory(["5.07", "9.01"])      # vote + exhibits
+    assert not dm._is_explanatory(["5.03"])              # bylaw amendment
+    assert not dm._is_explanatory([])                    # nothing parsed
+    # the label is honest and carries NO list repr
+    lbl = dm._gap_label(["5.07"])
+    assert lbl == "no earnings/guidance filing (annual-meeting 8-K only)"
+    assert "[" not in lbl and "'" not in lbl, f"no Python list-repr leak: {lbl!r}"
+    assert dm._gap_label(["2.02", "9.01"]) == "earnings (2.02)"  # explanatory unchanged
+
+
+def test_admin_only_gap_8k_card_suppressed_on_committed_brbr_e2e() -> None:
+    """(BRBR) End-to-end on the committed artifact: BRBR's 2026-02-03 gap 8-K is a 5.07
+    annual-meeting vote (administrative). Its card recited the vote text and its shape line leaked
+    `['5.07']`; both are the noise the human flagged. The re-rendered md/web must (a) read the
+    honest shape label for that gap, (b) NOT recite the annual-meeting vote, (c) NOT leak the list
+    repr, while (d) KEEPING the real 2026-05-05 earnings (2.02) card. Phrasing-independent: card
+    presence/absence + deterministic-label substring, never an LLM-composed string."""
+    import json as _json
+    import shutil
+    import subprocess
+
+    p = Path("data/dossiers/BRBR/dossier.json")
+    if not p.exists():
+        pytest.skip("no committed BRBR dossier.json")
+    d = _json.loads(p.read_text())
+    filings = (d["mechanical"].get("drawdown_cause") or {}).get("filings") or []
+    admin = [f for f in filings if f.get("explanatory") is False]
+    if not admin:
+        pytest.skip("committed BRBR no longer carries an administrative-only gap 8-K")
+    # the shape line states the honest label for the administrative gap, never the list repr
+    shape = str(((d["mechanical"]["drawdown_cause"]).get("shape") or {}).get("value") or "")
+    assert "no earnings/guidance filing (annual-meeting 8-K only)" in shape
+    assert "['5.07']" not in shape and "non-narrative items [" not in shape
+
+    # md: the administrative filing's card is gone; the 2.02 earnings card stays
+    md = Path("data/dossiers/BRBR/dossier.md").read_text()
+    assert "Submission of Matters" not in md and "['5.07']" not in md
+    assert "gap-down 2026-05-05" in md, "the real earnings-gap card must survive"
+
+    # web: exactly the explanatory filing cards render (5.07 suppressed, 2.02 kept)
+    if not shutil.which("node"):
+        return
+    n_expl = sum(1 for f in filings if f.get("explanatory") is not False)
+    dj = Path("frontend/views/shared/dossier.js").resolve().as_uri()
+    scen_path = Path("frontend/scenarios/BRBR.json")
+    scen = f'JSON.parse(readFileSync("{scen_path}"))' if scen_path.exists() else "null"
+    driver = f"""
+const handler = {{ get: () => stub, apply: () => stub, construct: () => ({{}}) }};
+const stub = new Proxy(function(){{}}, handler);
+for (const g of ["window","document","location"]) {{ try {{ globalThis[g] = stub; }} catch {{}} }}
+import {{ readFileSync }} from "node:fs";
+const {{ renderDossier }} = await import("{dj}");
+const h = renderDossier(JSON.parse(readFileSync("frontend/dossiers/BRBR.json")), null, {scen});
+const wb = h.split(">What broke")[1].split('class="card ds-section"')[0];
+console.log(JSON.stringify({{
+  cards: (wb.match(/class="filing"/g) || []).length,
+  recitesVote: /Submission of Matters|annual meeting/i.test(wb),
+  keptEarnings: wb.includes("2026-05-05"),
+}}));
+"""
+    out = subprocess.run(["node", "--input-type=module", "-e", driver],
+                         capture_output=True, text=True, check=True)
+    r = _json.loads(out.stdout)
+    assert r["cards"] == n_expl, (
+        f"only explanatory 8-Ks render a card: {n_expl} want, {r['cards']} got"
+    )
+    assert not r["recitesVote"], "the administrative-only 8-K's vote text must not be recited"
+    assert r["keptEarnings"], "the real 2026-05-05 earnings card must survive the suppression"
+
+
+def test_caveat_dejargon_and_acronym_render_helpers() -> None:
+    """(A, D) Pure render-time cleanups — deterministic, so exact pins are safe here. The human tier
+    drops the synthesis field tokens and the internal rule numbers a guardrail cites, keeps the real
+    AS_OF sidecar name, and uppercases financial acronyms a parser lower-cased. Word-boundary."""
+    # (A) de-jargon
+    assert dr._dejargon_caveat("the minority bull_points aren't outweighed (rule 7)") == \
+        "the minority bull points aren't outweighed"
+    assert dr._dejargon_caveat("bear_points sized (rule 12), noted") == "bear points sized, noted"
+    assert dr._dejargon_caveat("evidence_balance is near-symmetric") == \
+        "the written assessment is near-symmetric"
+    assert dr._dejargon_caveat("attest the export date (AS_OF sidecar)") == \
+        "attest the export date (AS_OF sidecar)"  # a real artifact name — NEVER stripped
+    # (D) acronym casing
+    assert dr._fix_acronyms("2026 adjusted ebitda outlook; adj eps 2025") == \
+        "2026 adjusted EBITDA outlook; adj EPS 2025"
+    assert dr._fix_acronyms("adj EBITDA $53.8M") == "adj EBITDA $53.8M"  # idempotent
+    assert dr._fix_acronyms("kebitda noteps") == "kebitda noteps"  # word-boundary — never mid-word
+
+
+def test_caveats_collapse_dejargon_and_acronyms_committed_brbr_e2e() -> None:
+    """(Option 2 + A + B + D) End-to-end on the committed artifact as TRANSFORM invariants — the raw
+    JSON carries the jargon / lowercase acronyms; the render must not. Phrasing-independent (guarded
+    on the raw pattern being present), so it survives re-assembly. md + web both: same-type caveats
+    collapse to one advisory, field tokens + rule numbers gone, the real AS_OF kept, the count
+    equals the rendered advisory count, EBITDA/EPS uppercased in the driver line."""
+    import json as _json
+    import re as _re
+    import shutil
+    import subprocess
+
+    p = Path("data/dossiers/BRBR/dossier.json")
+    if not p.exists():
+        pytest.skip("no committed BRBR dossier.json")
+    d = _json.loads(p.read_text())
+    raw = " ".join(c for c in (d.get("caveats") or []))
+    md = dr.render_markdown(ds.Dossier.model_validate(d))
+    flags_md = md.split("Analyst caveats")[1].split("\n## ")[0]
+
+    # (A) de-jargon transform: raw carries the token, the render does not; the real AS_OF survives
+    if "bull_points" in raw:
+        assert "bull_points" not in flags_md and "bull points" in flags_md
+    if "(rule 7)" in raw:
+        assert "(rule 7)" not in flags_md and "(rule" not in flags_md
+    if "AS_OF" in raw:
+        assert "AS_OF" in flags_md  # never collateral-damaged by the underscore cleanup
+
+    # (B) the header count line renders and equals the number of advisory blocks the web draws
+    n_md = _re.search(r"_(\d+) to verify\._", flags_md)
+    assert n_md, "the caveat count line must render"
+
+    # (Option 2) any lead appearing >=2x in the raw caveats collapses to ONE block naming N points
+    leads = [m.group("lead").strip() for c in (d.get("caveats") or [])
+             if (m := dr._CAVEAT_RE.match(dr._dejargon_caveat(c)))]
+    dup = next((x for x in leads if leads.count(x) > 1), None)
+    if dup is not None:
+        n = leads.count(dup)
+        assert flags_md.count(f"**{dup}** ({n} points)") == 1, "duplicate lead must collapse once"
+        assert flags_md.count(f"**{dup}**") == 1, "collapsed lead must not also render alone"
+
+    # (D) acronym casing in the driver line (What broke section, not the caveats)
+    if "adjusted ebitda outlook" in _json.dumps(d):
+        assert "adjusted EBITDA outlook" in md and "adjusted ebitda outlook" not in md
+
+    # web parity: the count equals the rendered .flag cards, and the duplicate lead renders once
+    if not shutil.which("node"):
+        return
+    dj = Path("frontend/views/shared/dossier.js").resolve().as_uri()
+    scen_path = Path("frontend/scenarios/BRBR.json")
+    scen = f'JSON.parse(readFileSync("{scen_path}"))' if scen_path.exists() else "null"
+    driver = f"""
+const handler = {{ get: () => stub, apply: () => stub, construct: () => ({{}}) }};
+const stub = new Proxy(function(){{}}, handler);
+for (const g of ["window","document","location"]) {{ try {{ globalThis[g] = stub; }} catch {{}} }}
+import {{ readFileSync }} from "node:fs";
+const {{ renderDossier }} = await import("{dj}");
+const h = renderDossier(JSON.parse(readFileSync("frontend/dossiers/BRBR.json")), null, {scen});
+const cav = h.split("Analyst caveats")[1].split('class="card ds-section"')[0];
+const badge = (cav.match(/(\\d+) to verify/) || [])[1];
+console.log(JSON.stringify({{
+  flagCards: (cav.match(/class="flag/g) || []).length,
+  badge: badge ? Number(badge) : null,
+  hasJargon: /bull_points|\\(rule 7\\)/.test(cav),
+  asofKept: /AS_OF/.test(cav),
+  catalystLeads: /Estimates data up to \\d+d stale/.test(cav),
+  catalystOpenerGone: !/Catalyst-path as-of UNVERIFIABLE/.test(cav),
+  dupLeadCount: (cav.match(/Unreconciled margin-compression/g) || []).length,
+  twoPointsBadges: (cav.match(/2 points/g) || []).length,
+  ebitdaUpper: /adjusted EBITDA outlook/.test(h) && !/adjusted ebitda outlook/.test(h),
+}}));
+"""
+    out = subprocess.run(["node", "--input-type=module", "-e", driver],
+                         capture_output=True, text=True, check=True)
+    r = _json.loads(out.stdout)
+    assert r["badge"] == int(n_md.group(1)), "web + md must agree on the advisory count"
+    assert r["flagCards"] == r["badge"], "each advisory must render exactly one card (no split)"
+    assert not r["hasJargon"], "the web render must not leak bull_points / (rule N)"
+    if "AS_OF" in raw:
+        assert r["asofKept"], "the real AS_OF sidecar name must survive the web de-jargon"
+    # (twin coverage) the JS render must ALSO reword the catalyst caveat, not just the md path
+    if "Catalyst-path as-of UNVERIFIABLE" in raw:
+        assert r["catalystLeads"], "web catalyst caveat must lead with the staleness discriminator"
+        assert r["catalystOpenerGone"], "the buried-lede opener must not survive into the web"
+    # (twin coverage) the collapse renders ONE card with the N-points badge, not the count alone
+    if dup is not None:
+        assert r["dupLeadCount"] == 1, "the duplicate lead must render once on the web (collapsed)"
+        assert r["twoPointsBadges"] >= 1, "the collapsed web card must show its N-points badge"
+    # (twin coverage) the JS driver line must uppercase EBITDA/EPS, like the md path
+    if "adjusted ebitda outlook" in _json.dumps(d):
+        assert r["ebitdaUpper"], "the web 'what broke' driver line must uppercase EBITDA"
+
+
+def test_catalyst_stale_caveat_leads_with_the_discriminator() -> None:
+    """(Option 1) The catalyst-staleness caveat must LEAD with the name-specific discriminator (days
+    stale vs the tolerance), not the structural 'no as-of stamp' preamble every CIQ export shares.
+    Unit is a FROZEN template fixture (deterministic → exact pins safe); non-matching input fails
+    through unchanged."""
+    raw = (
+        "Catalyst-path as-of UNVERIFIABLE — the CIQ Estimates export carries no as-of stamp; "
+        "its data is on/after 2026-05-14 (the latest embedded revision event), so it is up to "
+        "53d before the 2026-07-06 reference — beyond the 45d tolerance — and the true export "
+        "date is unknown, so freshness cannot be confirmed. Re-pull CIQ Estimates, or attest "
+        "the export date (AS_OF sidecar)."
+    )
+    out = dr._reword_catalyst_stale(raw)
+    assert out.startswith("Estimates data up to 53d stale (beyond the 45d tolerance)")
+    assert "no as-of stamp" in out  # the mechanism is kept — just no longer the lede
+    assert "2026-05-14" in out and "worst-case floor" in out
+    assert out.endswith("Re-pull CIQ Estimates, or attest the export date (AS_OF sidecar).")
+    assert "Catalyst-path as-of UNVERIFIABLE" not in out  # the buried-lede opener is gone
+    # fail-through: a caveat that isn't the catalyst template is returned verbatim
+    assert dr._reword_catalyst_stale("Net debt/EBITDA (3.8x) is on REPORTED EBITDA") == \
+        "Net debt/EBITDA (3.8x) is on REPORTED EBITDA"
+
+
+def test_catalyst_stale_caveat_reworded_on_committed_brbr_e2e() -> None:
+    """(Option 1) End-to-end transform invariant on the committed artifact — guarded on the raw
+    caveat carrying the old template, so it survives re-assembly. The rendered caveats section leads
+    the catalyst caveat with the staleness discriminator, never the 'no as-of stamp' opener."""
+    import json as _json
+
+    p = Path("data/dossiers/BRBR/dossier.json")
+    if not p.exists():
+        pytest.skip("no committed BRBR dossier.json")
+    d = _json.loads(p.read_text())
+    raw = " ".join(c for c in (d.get("caveats") or []))
+    if "Catalyst-path as-of UNVERIFIABLE" not in raw:
+        pytest.skip("committed BRBR no longer carries the catalyst-staleness caveat")
+    md = dr.render_markdown(ds.Dossier.model_validate(d))
+    flags_md = md.split("Analyst caveats")[1].split("\n## ")[0]
+    assert "Estimates data up to" in flags_md and "stale (beyond the" in flags_md
+    assert "Catalyst-path as-of UNVERIFIABLE — the CIQ Estimates export carries no as-of stamp;" \
+        not in flags_md, "the buried-lede opener must not survive into the render"
+
+
+def test_caveat_group_block_is_lossless_when_why_or_how_differ() -> None:
+    """The collapse must NEVER drop a claim's why-it-matters or how-to-verify (the 'curating never
+    deletes a fact' contract). A shared why/how prints once; a why/how that DIFFERS across the group
+    prints per-claim. Deterministic on frozen inputs. Twin behaviour lives in dossier.js."""
+    # same why, DIFFERENT how → each how survives per-claim (the pre-fix bug dropped both)
+    same_why_diff_how = [
+        "Guard X (a bull point): 'claim one' — shared why; check source A",
+        "Guard X (a bear point): 'claim two' — shared why; check source B",
+    ]
+    out = "\n".join(dr._caveat_group_block(same_why_diff_how))
+    assert out.count("**Guard X** (2 points)") == 1  # collapsed to one advisory
+    assert "check source A" in out and "check source B" in out  # both hows kept
+    assert out.count("_why it matters:_ shared why") == 1  # shared why printed once
+
+    # DIFFERENT why, same how → each why survives per-claim, the how prints once (shared)
+    diff_why_same_how = [
+        "Guard Y (a bull point): 'c1' — why alpha; same fix",
+        "Guard Y (a bear point): 'c2' — why beta; same fix",
+    ]
+    out2 = "\n".join(dr._caveat_group_block(diff_why_same_how))
+    assert "why alpha" in out2 and "why beta" in out2  # both whys kept
+    assert out2.count("_how to verify:_ same fix") == 1  # shared how printed once

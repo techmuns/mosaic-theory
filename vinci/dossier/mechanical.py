@@ -143,10 +143,32 @@ def item_labels(items: list[str]) -> list[str]:
     return [f"{c} {_ITEM_TITLES.get(c, 'Item ' + c)}" for c in items]
 
 
+# The 8-K items that can actually MOVE a price (= the keys of _CAUSE_BY_ITEM). An 8-K carrying only
+# items OUTSIDE this set is administrative — a routine annual-meeting vote (5.07), bylaw amendment
+# (5.03), etc. — and does not explain a gap-down. 5.02 (management change) stays IN: a CEO departure
+# genuinely moves a stock.
+_EXPLANATORY_ITEMS = frozenset(_CAUSE_BY_ITEM)
+
+
+def _is_explanatory(items: list[str]) -> bool:
+    """Does this 8-K carry any item that could plausibly cause a gap-down?"""
+    return bool(set(items) & _EXPLANATORY_ITEMS)
+
+
+def _admin_label(items: list[str]) -> str:
+    """Plain-English label for an administrative-only 8-K — no list repr, no house jargon."""
+    if "5.07" in items:
+        return "no earnings/guidance filing (annual-meeting 8-K only)"
+    codes = ", ".join(c for c in items if c not in _EXPLANATORY_ITEMS) or "—"
+    return f"no earnings/guidance filing (administrative 8-K only · items {codes})"
+
+
 def _gap_label(items: list[str]) -> str:
-    """A short cause label for one gap-down from its 8-K items. Never "earnings" without 2.02."""
+    """A short cause label for one gap-down from its 8-K items. Never "earnings" without 2.02;
+    an administrative-only 8-K (5.07 annual-meeting vote, etc.) is NOT a cause — it reads as no
+    earnings/guidance filing, matching the 'no company filing' treatment of a gap with no 8-K."""
     labels = [_CAUSE_BY_ITEM[c] for c in items if c in _CAUSE_BY_ITEM]
-    return " + ".join(labels) if labels else f"non-narrative items {items}"
+    return " + ".join(labels) if labels else _admin_label(items)
 
 
 def parse_8k_events(text: str, items: list[str], accession: str) -> list[str]:
@@ -170,7 +192,8 @@ def parse_8k_events(text: str, items: list[str], accession: str) -> list[str]:
         else:
             out.append(f"{code} {title}: UNKNOWN narrative — read filing {accession} by hand")
     if not out:
-        out.append(f"only non-narrative items {items} — read filing {accession} by hand")
+        codes = ", ".join(items) or "—"
+        out.append(f"only non-narrative items ({codes}) — read filing {accession} by hand")
     return out
 
 
@@ -205,6 +228,7 @@ def _drawdown_filings(
                 gap_date=gd.isoformat(), filing_date=f.filing_date.isoformat(), form=f.form,
                 items=list(f.items), item_types=item_labels(list(f.items)),
                 accession=f.accession, url=url, events=events,
+                explanatory=_is_explanatory(list(f.items)),
             )
         )
     return refs
