@@ -66,6 +66,8 @@ _table shows the last 4 fiscal years · 5 earlier years are in the Appendix_
 
 ## ⚠ Analyst caveats — verify before the verdict
 
+_3 to verify._
+
 - stock-info: PRICE STALE AT ASSEMBLY: last stored close 2026-07-08 is 14 calendar days before assembly — run `vinci refresh` before assembling
 - EV/EBITDA cross-sheet gap — CIQ's Financials→Multiples reads 1.5x and its Comparable-Analysis sheet reads 1.2x on the same concept; verify which the verdict should use (a stale Close, a different pricing date, or an EBITDA basis) before reading either.
 - **Unreconciled margin-compression** — Management concedes 2026 is a 'low watermark for margins' with most cost-structure repair only landing in 2027+, so the margin reset is real and multi-quarter, not a one-off; Q1-26 EBITDA margin fell to 1% and gross margin to 28%.
@@ -85,10 +87,10 @@ _no supplier/customer cohort mapped for this name — the comparison is vs the m
 - **Gap-downs — what the results showed (parsed EX-99.1) + the 8-K:**
   - gap-down 2026-02-26 → filed 2026-02-26 [`0001193125-26-073373`](https://www.sec.gov/Archives/edgar/data/1579733/000119312526073373/vitl-20260220.htm)
     - items: 2.02 Results of Operations and Financial Condition, 5.02 Departure/Election of Directors or Certain Officers, 7.01 Regulation FD Disclosure, 8.01 Other Events, 9.01 Financial Statements and Exhibits
-    - **what the results showed:** adj EBITDA 2025 $29.2M; 2025 revenue outlook: $900.0–$920.0M; next-fy adjusted ebitda outlook: $105.0–$115.0M [21]
+    - **what the results showed:** adj EBITDA 2025 $29.2M; 2025 revenue outlook: $900.0–$920.0M; next-fy adjusted EBITDA outlook: $105.0–$115.0M [21]
   - gap-down 2026-05-07 → filed 2026-05-07 [`0001193125-26-210294`](https://www.sec.gov/Archives/edgar/data/1579733/000119312526210294/vitl-20260501.htm)
     - items: 2.02 Results of Operations and Financial Condition, 2.05 Costs Associated with Exit or Disposal Activities, 9.01 Financial Statements and Exhibits
-    - **what the results showed:** adj EBITDA Q1 2026 $5.0M; 2026 revenue outlook: $775.0–$800.0M; next-fy adjusted ebitda outlook: $0.0–$10.0M [14]
+    - **what the results showed:** adj EBITDA Q1 2026 $5.0M; 2026 revenue outlook: $775.0–$800.0M; next-fy adjusted EBITDA outlook: $0.0–$10.0M [14]
 
 ### Leverage & survival
 - **Net debt / EBITDA [NET]:** 0.0x [9]

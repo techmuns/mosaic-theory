@@ -80,6 +80,8 @@ _table shows the last 4 fiscal years · 5 earlier years are in the Appendix_
 
 ## ⚠ Analyst caveats — verify before the verdict
 
+_1 to verify._
+
 - **Unreconciled margin-compression** — Next-2-FQ revenue estimate breadth is heavily negative (FQ2 1↑/14↓, FQ3 1↑/13↓), and gross margin has eroded to 29% from 36%, consistent with pricing/mix pressure.
   - _where:_ a decisive-against point
   - _why it matters:_ cites margin compression without the absolute-EBITDA reconciliation (margin % can fall while EBITDA rises)

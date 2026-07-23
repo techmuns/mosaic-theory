@@ -62,6 +62,8 @@ _Bear case — the decline is real:_
 
 ## ⚠ Analyst caveats — verify before the verdict
 
+_4 to verify._
+
 - stock-info: PRICE STALE AT ASSEMBLY: last stored close 2026-07-08 is 14 calendar days before assembly — run `vinci refresh` before assembling
 - P/E may be distorted by non-recurring EPS — latest annual EPS -0.54 vs recent median -2.06; verify against normalized/forward EPS (CIQ)
 - **Bare peer-comparison** — The forward EBITDA multiple is EXPENSIVE, not cheap, on the near horizon — NTM TEV/EBITDA 17.77 vs peer median 8.19 and FY26 24.6x, so on the metric that actually has a positive base the name trades at a premium to peers, the opposite of the trailing-revenue optics.

@@ -82,6 +82,8 @@ _table shows the last 4 fiscal years · 6 earlier years are in the Appendix_
 
 ## ⚠ Analyst caveats — verify before the verdict
 
+_4 to verify._
+
 - P/E may be distorted by non-recurring EPS — latest annual EPS 0.21 vs recent median -0.54; verify against normalized/forward EPS (CIQ)
 - Net debt/EBITDA (3.3x) is on REPORTED EBITDA (CIQ / consolidated GAAP), not the covenant basis; management and credit covenants typically define leverage on adjusted EBITDA (a larger denominator → a lower ratio), reconciled in the earnings release/transcript (currently UNAVAILABLE) — do not read 3.3x as the covenant-basis leverage.
 - **Bare peer-comparison** — The trailing P/E of 91.4x is NOT the optical distortion it looks like on one screen (trailing EPS $0.21 is anomalous) but is corroborated forward: NTM P/E is 161.63x vs peer median 26.73x — the earnings base is genuinely thin, so the 'cheap on EV/EBITDA' read does not carry to equity.
