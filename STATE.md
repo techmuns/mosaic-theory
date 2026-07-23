@@ -4416,6 +4416,19 @@ both renderers now GROUP by accession, one card naming every gap-down ("filed Ap
 Verified live (SMPL: 1 filing card, both dates named, zero console errors). Gate green: 1026 passed.
 The synthesis-overwrite incident recurred on BRBR (REWRITTEN but synth=NO) — caught by the
 assembled_at+synth check, restored from git, retried clean.
+(4) BRBR's 2026-02-03 gap 8-K carried ONLY Item 5.07 (annual-meeting vote) — an administrative
+filing that cannot explain a de-rate. The shape line leaked the Python list repr (`non-narrative
+items ['5.07']`) and the card recited the vote text (the human flagged: "this text doesn't explain
+the gap"). Split 8-K items into explanatory (`_EXPLANATORY_ITEMS` = the `_CAUSE_BY_ITEM` keys; 5.02
+management-change stays IN) vs administrative; an admin-only gap now reads the honest
+`no earnings/guidance filing (annual-meeting 8-K only)` (mirrors the `no company filing` treatment),
+and a new `FilingRef.explanatory` flag (default True, back-compatible) makes BOTH renderers suppress
+the non-explanatory card — the filing ref STAYS in JSON (three-tier: fact preserved, noise removed).
+The md header is now gated on ≥1 explanatory filing (no dangling heading). Only BRBR is affected
+across the 11 names; re-assembled with synthesis verified present. Verified live (BRBR: shape reads
+the honest label, 1 filing card = the real 2026-05-05 earnings 2.02, vote text gone, no list repr).
+Gate green: 1028 passed. INVARIANT: a deterministic unit pin (`_is_explanatory`/`_gap_label` on item
+codes) + a committed-artifact e2e (5.07 card suppressed, 2.02 card kept) on both renderers.
 
 **OPERATOR TO-DO — MVST cannot be re-assembled (2026-07-22).** MVST is the ONE dossier name absent
 from `data/snapshots/candidate_records.jsonl` (the other ten are present), so `dossier assemble`

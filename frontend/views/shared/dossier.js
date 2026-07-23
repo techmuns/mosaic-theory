@@ -2073,6 +2073,10 @@ function drawdownCause(dc) {
   // filing, naming every gap-down it explains.
   const byAcc = new Map();
   for (const f of (dc.filings || [])) {
+    // An administrative-only 8-K (5.07 annual-meeting vote, etc.) does not explain the gap: the
+    // shape line already reads "no earnings/guidance filing" for it, so suppress its card here.
+    // Explicit === false only — pre-flag JSON (undefined) keeps rendering (default = explanatory).
+    if (f.explanatory === false) continue;
     const k = f.accession || `${f.form}|${f.filing_date}`;
     if (!byAcc.has(k)) byAcc.set(k, { f, gaps: [] });
     if (f.gap_date) byAcc.get(k).gaps.push(f.gap_date);

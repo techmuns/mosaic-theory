@@ -7979,3 +7979,83 @@ console.log(JSON.stringify({{
     r = _json.loads(out.stdout)
     assert r["cards"] == 1, f"the shared 8-K must render ONE filing card, got {r['cards']}"
     assert r["bothGaps"], "the single card must name both gap-downs it explains"
+
+
+def test_admin_only_8k_is_non_explanatory_with_an_honest_label() -> None:
+    """(BRBR) An 8-K carrying only an administrative item — a 5.07 annual-meeting vote — does NOT
+    explain a gap-down. It must classify non-explanatory, and its gap label must read the honest
+    "no earnings/guidance filing (…)" — never the Python list-repr `['5.07']` the human flagged.
+    A management change (5.02) genuinely moves a stock, so it stays explanatory. Deterministic:
+    item codes → classification/label, no LLM text in play, so exact pins are safe here."""
+    # explanatory set is exactly the price-moving item map — administrative codes fall outside it
+    assert dm._is_explanatory(["2.02", "9.01"])  # earnings
+    assert dm._is_explanatory(["5.02"])          # management change moves a stock
+    assert not dm._is_explanatory(["5.07"])              # annual-meeting vote
+    assert not dm._is_explanatory(["5.07", "9.01"])      # vote + exhibits
+    assert not dm._is_explanatory(["5.03"])              # bylaw amendment
+    assert not dm._is_explanatory([])                    # nothing parsed
+    # the label is honest and carries NO list repr
+    lbl = dm._gap_label(["5.07"])
+    assert lbl == "no earnings/guidance filing (annual-meeting 8-K only)"
+    assert "[" not in lbl and "'" not in lbl, f"no Python list-repr leak: {lbl!r}"
+    assert dm._gap_label(["2.02", "9.01"]) == "earnings (2.02)"  # explanatory unchanged
+
+
+def test_admin_only_gap_8k_card_suppressed_on_committed_brbr_e2e() -> None:
+    """(BRBR) End-to-end on the committed artifact: BRBR's 2026-02-03 gap 8-K is a 5.07
+    annual-meeting vote (administrative). Its card recited the vote text and its shape line leaked
+    `['5.07']`; both are the noise the human flagged. The re-rendered md/web must (a) read the
+    honest shape label for that gap, (b) NOT recite the annual-meeting vote, (c) NOT leak the list
+    repr, while (d) KEEPING the real 2026-05-05 earnings (2.02) card. Phrasing-independent: card
+    presence/absence + deterministic-label substring, never an LLM-composed string."""
+    import json as _json
+    import shutil
+    import subprocess
+
+    p = Path("data/dossiers/BRBR/dossier.json")
+    if not p.exists():
+        pytest.skip("no committed BRBR dossier.json")
+    d = _json.loads(p.read_text())
+    filings = (d["mechanical"].get("drawdown_cause") or {}).get("filings") or []
+    admin = [f for f in filings if f.get("explanatory") is False]
+    if not admin:
+        pytest.skip("committed BRBR no longer carries an administrative-only gap 8-K")
+    # the shape line states the honest label for the administrative gap, never the list repr
+    shape = str(((d["mechanical"]["drawdown_cause"]).get("shape") or {}).get("value") or "")
+    assert "no earnings/guidance filing (annual-meeting 8-K only)" in shape
+    assert "['5.07']" not in shape and "non-narrative items [" not in shape
+
+    # md: the administrative filing's card is gone; the 2.02 earnings card stays
+    md = Path("data/dossiers/BRBR/dossier.md").read_text()
+    assert "Submission of Matters" not in md and "['5.07']" not in md
+    assert "gap-down 2026-05-05" in md, "the real earnings-gap card must survive"
+
+    # web: exactly the explanatory filing cards render (5.07 suppressed, 2.02 kept)
+    if not shutil.which("node"):
+        return
+    n_expl = sum(1 for f in filings if f.get("explanatory") is not False)
+    dj = Path("frontend/views/shared/dossier.js").resolve().as_uri()
+    scen_path = Path("frontend/scenarios/BRBR.json")
+    scen = f'JSON.parse(readFileSync("{scen_path}"))' if scen_path.exists() else "null"
+    driver = f"""
+const handler = {{ get: () => stub, apply: () => stub, construct: () => ({{}}) }};
+const stub = new Proxy(function(){{}}, handler);
+for (const g of ["window","document","location"]) {{ try {{ globalThis[g] = stub; }} catch {{}} }}
+import {{ readFileSync }} from "node:fs";
+const {{ renderDossier }} = await import("{dj}");
+const h = renderDossier(JSON.parse(readFileSync("frontend/dossiers/BRBR.json")), null, {scen});
+const wb = h.split(">What broke")[1].split('class="card ds-section"')[0];
+console.log(JSON.stringify({{
+  cards: (wb.match(/class="filing"/g) || []).length,
+  recitesVote: /Submission of Matters|annual meeting/i.test(wb),
+  keptEarnings: wb.includes("2026-05-05"),
+}}));
+"""
+    out = subprocess.run(["node", "--input-type=module", "-e", driver],
+                         capture_output=True, text=True, check=True)
+    r = _json.loads(out.stdout)
+    assert r["cards"] == n_expl, (
+        f"only explanatory 8-Ks render a card: {n_expl} want, {r['cards']} got"
+    )
+    assert not r["recitesVote"], "the administrative-only 8-K's vote text must not be recited"
+    assert r["keptEarnings"], "the real 2026-05-05 earnings card must survive the suppression"

@@ -93,6 +93,12 @@ class FilingRef(BaseModel):
     # EBITDA/NI/EPS + one-offs + forward outlook), the informative cause that replaces the item-code
     # boilerplate. None until the join runs, or when no parsed release matched the gap's 8-K.
     drivers: Sourced[str] | None = None
+    # Does this 8-K carry any item that could plausibly cause the gap? An administrative-only filing
+    # (a 5.07 annual-meeting vote, a bylaw amendment) does NOT explain a de-rating — the shape line
+    # reads "no earnings/guidance filing" and the What-broke surface suppresses its card, but the
+    # filing ref STAYS in JSON (fact preserved, three-tier rule). Defaults True so pre-flag
+    # committed dossiers keep rendering their cards until re-assembled.
+    explanatory: bool = True
 
     model_config = {"frozen": True}
 

@@ -2199,16 +2199,20 @@ def render_markdown(d: Dossier, *, dev: bool = False, show_proposal: bool = Fals
         # (declutter · buy-side) absence is ONE quiet footnote line, never a labelled fact row
         out.append("_no supplier/customer cohort mapped for this name — the comparison is vs "
                    "the market only_")
-    if m.drawdown_cause.filings:
+    # GROUP BY ACCESSION (twin of the web): one 8-K can explain two consecutive gap-downs
+    # (SMPL 04-09/04-10, CNXC 02-11/02-12); the flat loop printed the same block per gap-date,
+    # once even as "gap 2026-04-10 → 2026-04-09" which read like a date error. One entry per
+    # filing, naming every gap-down it explains. An administrative-only 8-K (5.07 annual-meeting
+    # vote, etc.) is dropped here — its card recited noise; the shape line already reads "no
+    # earnings/guidance filing" for that gap and the filing ref stays in JSON.
+    grouped: dict[str, tuple[Any, list[str]]] = {}
+    for f in m.drawdown_cause.filings:
+        if not f.explanatory:
+            continue
+        k = f.accession or f"{f.form}|{f.filing_date}"
+        grouped.setdefault(k, (f, []))[1].append(f.gap_date)
+    if grouped:
         out.append("- **Gap-downs — what the results showed (parsed EX-99.1) + the 8-K:**")
-        # GROUP BY ACCESSION (twin of the web): one 8-K can explain two consecutive gap-downs
-        # (SMPL 04-09/04-10, CNXC 02-11/02-12); the flat loop printed the same block per gap-date,
-        # once even as "gap 2026-04-10 → 2026-04-09" which read like a date error. One entry per
-        # filing, naming every gap-down it explains.
-        grouped: dict[str, tuple[Any, list[str]]] = {}
-        for f in m.drawdown_cause.filings:
-            k = f.accession or f"{f.form}|{f.filing_date}"
-            grouped.setdefault(k, (f, []))[1].append(f.gap_date)
         for f, gaps in grouped.values():
             gap_str = " and ".join(gaps)
             plural = "s" if len(gaps) > 1 else ""
