@@ -14,6 +14,7 @@ from __future__ import annotations
 import json
 from datetime import date, datetime
 from pathlib import Path
+from typing import Any
 
 import pytest
 
@@ -51,9 +52,9 @@ def _open_buy(rows: list[dict]) -> dict:
         entry_price=100.0, entry_price_as_of=date(2026, 7, 1), thesis="synthetic",
         kill_criteria="n/a", horizon_days=180, confidence="medium",
         decided_at=datetime(2026, 7, 1, 12, 0, 0))
-    e = json.loads(syn.model_dump_json())
-    rows.append(e)
-    return e
+    syn_row: dict[str, Any] = json.loads(syn.model_dump_json())
+    rows.append(syn_row)
+    return syn_row
 
 
 def _close_for(row: dict, exit_price: float = 100.0) -> dict:
