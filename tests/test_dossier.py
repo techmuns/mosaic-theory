@@ -1986,16 +1986,17 @@ def test_p6_py_js_tier_classifier_parity() -> None:
         assert json.loads(out.stdout) == [dr._point_tier(c) for c in fx]  # zero divergence
 
 
-def test_p6_ordered_points_monotonic_tiers_and_recon_present_e2e() -> None:
-    """(P6, relayered — TEST-LAYER invariant-only) On the LIVING committed dossiers, assert the
-    PHRASING-INDEPENDENT invariants _ordered_points guards — NOT any LLM claim's tier. Pinning a
-    specific claim's tier is a classifier result on LLM text (an LLM-string pin IN DISGUISE): it
-    reddened when a fresh draw phrased the GAAP-artifact recon 'the reconciled adjusted result was a
-    loss' (Tier-3) vs the earlier 'adjusted EBITDA of NEGATIVE $X' (Tier-1). (a) _ordered_points
-    yields MONOTONIC non-decreasing tiers within each bull/bear case, on BOTH committed dossiers,
-    py==JS (the orderPoints mirror). (b) a cited bear point citing the EX-99.1 reconciliation EXISTS
-    on MVST (presence, phrasing-independent — no tier pinned). Tier VALUES stay pinned at the
-    deterministic layer on frozen fixtures (test_point_tier_* / the classifier-parity test)."""
+def test_p6_ordered_points_hybrid_invariants_and_recon_present_e2e() -> None:
+    """(P6, relayered for the HYBRID — TEST-LAYER invariant-only) On the LIVING committed
+    dossiers, assert the PHRASING-INDEPENDENT invariants the hybrid `_ordered_points` guards —
+    never any LLM claim's tier (a classifier result on LLM text is an LLM-string pin IN DISGUISE).
+    (a) BEAR: side-rank is non-decreasing — the survival-first guarantee (a T1 fact can never sit
+    below a narrative point); within an equal-rank run, crux-linked points precede non-crux.
+    (b) BULL: crux-prefix — once a non-crux point appears, no crux-linked point follows; within
+    each crux group the bull side-rank is non-decreasing (mechanism before the enabler).
+    (c) py==JS on the SAME refs (the orderPoints mirror) — zero order drift.
+    (d) a cited bear point citing the EX-99.1 reconciliation EXISTS on MVST (presence only).
+    Tier/order VALUES stay pinned at the deterministic layer on frozen fixtures."""
     import json
     import pathlib
     import shutil
@@ -2008,11 +2009,13 @@ def test_p6_ordered_points_monotonic_tiers_and_recon_present_e2e() -> None:
     order_block = js[js.index("const _TIERKW"):js.index("function trajectoryTable")]
     have_node = shutil.which("node") is not None
 
-    def js_order(pts: list[typing.Any]) -> list[str]:  # the JS orderPoints mirror → ordered claims
+    def js_order(pts: list[typing.Any], side: str, crux: frozenset[str],
+                 drv: frozenset[str]) -> list[str]:
         rows = [{"claim": p.claim, "source_ref": p.source_ref, "cited": getattr(p, "cited", True)}
                 for p in pts]
-        driver = ("const O=orderPoints(" + json.dumps(rows)
-                  + ");console.log(JSON.stringify(O.map((p)=>p.claim)));")
+        driver = (f"const O=orderPoints({json.dumps(rows)},{json.dumps(side)},"
+                  f"new Set({json.dumps(sorted(crux))}),new Set({json.dumps(sorted(drv))}));"
+                  "console.log(JSON.stringify(O.map((p)=>p.claim)));")
         out = subprocess.run(["node", "-e", order_block + "\n" + driver],
                              capture_output=True, text=True, check=True)
         return list(json.loads(out.stdout))
@@ -2022,16 +2025,30 @@ def test_p6_ordered_points_monotonic_tiers_and_recon_present_e2e() -> None:
             pathlib.Path(f"data/dossiers/{t}/dossier.json").read_text())
         if doss.synthesis is None:
             continue
-        for case in (list(doss.synthesis.bull_points), list(doss.synthesis.bear_points)):
-            ordered = dr._ordered_points(case)
-            tiers = [tier for _p, tier, _cr in ordered]
-            # (a) invariant: the sort key leads with tier → tiers are non-decreasing WITHIN the case
-            assert tiers == sorted(tiers), f"{t}: non-monotonic tiers {tiers}"
-            if have_node:  # py==JS: the JS orderPoints mirror yields the SAME claim ordering
-                py_claims = [p.claim for p, _t, _cr in ordered]
-                assert js_order(case) == py_claims, f"{t}: py↔js order drift"
-        # (b) presence: a cited bear point citing the EX-99.1 recon exists (MVST — the P6 subject),
-        # phrasing-independent, no tier pinned
+        s = doss.synthesis
+        drv = dr._driver_refs_of(doss.mechanical)
+        for side, case in (("bull", list(s.bull_points)), ("bear", list(s.bear_points))):
+            crux = dr._decisive_refs(s, side)
+            ordered = dr._ordered_points(case, side=side, crux_refs=crux, driver_refs=drv)
+            rank = dr._BULL_TIER_RANK if side == "bull" else dr._BEAR_TIER_RANK
+            ranks = [rank[tier] for _p, tier, _cr, _cx, _mb in ordered]
+            cruxes = [cx for _p, _t, _cr, cx, _mb in ordered]
+            if side == "bear":
+                # (a) survival-first: bear rank non-decreasing; crux-prefix inside equal-rank runs
+                assert ranks == sorted(ranks), f"{t} bear: rank demotion {ranks}"
+                for r in set(ranks):
+                    run = [cx for rk, cx in zip(ranks, cruxes, strict=True) if rk == r]
+                    assert run == sorted(run, reverse=True), f"{t} bear: crux order in rank {r}"
+            else:
+                # (b) crux-prefix over the whole list; rank monotone within each crux group
+                assert cruxes == sorted(cruxes, reverse=True), f"{t} bull: crux prefix broken"
+                for grp in (True, False):
+                    sub = [rk for rk, cx in zip(ranks, cruxes, strict=True) if cx is grp]
+                    assert sub == sorted(sub), f"{t} bull: rank demotion in crux={grp}"
+            if have_node:  # (c) py==JS with the same refs → identical claim ordering
+                py_claims = [p.claim for p, *_ in ordered]
+                assert js_order(case, side, crux, drv) == py_claims, f"{t}: py↔js order drift"
+        # (d) presence: a cited bear point citing the EX-99.1 recon exists (MVST — the P6 subject)
         if t == "MVST":
             recon = [p for p in doss.synthesis.bear_points
                      if "EX-99.1" in (p.source_ref or "") and getattr(p, "cited", False)]
@@ -6977,8 +6994,65 @@ def test_d3_point_tier_classification_and_ordering() -> None:
         _P("net profit is non-operating", "CIQ transcript(s): call"),     # T3, transcript
         _P("interest coverage is 10x", "CIQ IS"),                          # T1
     ]
-    order = [p.claim[:8] for p, _t, _c in dr._ordered_points(pts)]
+    order = [p.claim[:8] for p, *_ in dr._ordered_points(pts, side="bear")]
     assert order == ["levered ", "interest", "net prof", "valuatio"]  # T1 → T3 → T5 (stable)
+    # (hybrid) the BULL side demotes the balance-sheet ENABLER below the mechanism tiers:
+    # bull rank 2→3→1→4→4.5→5, so T3 leads and the two T1s follow (stable), valuation last.
+    bull = [p.claim[:8] for p, *_ in dr._ordered_points(pts, side="bull")]
+    assert bull == ["net prof", "levered ", "interest", "valuatio"]
+
+
+def test_d3_hybrid_crux_mech_and_bear_survival_guarantee() -> None:
+    """(D3 hybrid, ratified 2026-07-24 on the 119-draw archive) The asymmetric sort:
+    bull = (crux, side-rank, mech, citation, emission) — the crux-linked thesis LEADS, and the
+    balance-sheet enabler is demoted; bear = (side-rank, crux, mech, citation, emission) — a T1
+    survival fact is NEVER demoted below a narrative crux point (the guarantee that made hybrid
+    beat crux-dominant A, which demoted survival in ~1 of 5 archive draws). Deterministic
+    synthetic fixture — value-level pins are safe here."""
+
+    class _P:
+        def __init__(self, claim: str, ref: str) -> None:
+            self.claim, self.source_ref, self.cited = claim, ref, True
+
+    crux = frozenset({"REF-CRUX", "REF-CRUX-2"})
+    drivers = frozenset({"REF-DRV"})
+    bull_pts = [
+        _P("interest coverage is 10x and net-debt low", "CIQ IS"),        # T1 enabler, no crux
+        _P("valuation looks cheap vs the trough", "REF-CRUX"),            # T5 but CRUX-linked
+        _P("revenue re-accelerated 12% on volumes", "REF-DRV"),           # T2, mechanism-bearing
+        _P("revenue guide raised for FY27", "CIQ Estimates"),             # T2, plain
+    ]
+    got = [(p.claim[:8], cx, mb) for p, _t, _c, cx, mb
+           in dr._ordered_points(bull_pts, side="bull", crux_refs=crux, driver_refs=drivers)]
+    # crux first (even a T5); then T2 mech beats T2 plain; the T1 enabler sinks below both T2s
+    assert got == [("valuatio", True, False), ("revenue ", False, True),
+                   ("revenue ", False, False), ("interest", False, False)]
+
+    bear_pts = [
+        _P("a governance dispute over the impairment", "REF-CRUX"),       # T4.5 narrative, CRUX
+        _P("free cash flow is negative and burning", "CIQ CF"),           # T1 survival
+        _P("margin structure is compressing", "REF-CRUX-2"),              # T3, CRUX
+        _P("opex base is bloated at the mid", "CIQ Estimates"),           # T3, plain
+    ]
+    order = [p.claim[:8] for p, *_ in dr._ordered_points(
+        bear_pts, side="bear", crux_refs=crux, driver_refs=drivers)]
+    # THE GUARANTEE: T1 survival leads even though it is not crux-linked; within the T3 pair the
+    # crux-linked one wins; the crux-linked T4.5 narrative stays BELOW every classified tier.
+    assert order == ["free cas", "margin s", "opex bas", "a govern"]
+
+
+def test_point_tier_paren_needs_accounting_dollar() -> None:
+    """(fix-4 narrowing, SMPL regression) The K6 '(' alternative fired on ANY parenthetical within
+    40 chars of 'adjusted EBITDA' — SMPL's bear lead 'adjusted EBITDA -18.4%, with gross margin
+    31.6% (-460bps)' classified T1 by accident (a DECLINE, not negative EBITDA; its honest tier is
+    T2 via 'deteriorat'). Now '(' counts only when it opens an accounting-$ amount."""
+    smpl = ("The mechanism is deteriorating in-market: Q2 net sales fell 9.4% and adjusted "
+            "EBITDA -18.4%, with gross margin 31.6% (-460bps), driven by cocoa/whey/tariff "
+            "inflation")
+    assert dr._point_tier(smpl) == 2.0  # 'deteriorat' — no longer an accidental T1
+    assert dr._point_tier("adjusted EBITDA of ($5.5) million for the quarter") == 1.0  # accounting
+    assert dr._point_tier("adjusted EBITDA swung to -$5.5M") == 1.0                    # -$ kept
+    assert dr._point_tier("adjusted EBITDA was negative in Q1") == 1.0                 # word kept
 
 
 def test_d4_caveat_full_sentence_four_part_shape() -> None:
