@@ -114,8 +114,9 @@ PR (CLAUDE.md: coin-time translation).
 - **uw-card / tear sheet** — the underwrite scenario card rendered from `scenarios/<T>.json` —
   `frontend/views/shared/uw-card.js`.
 - **ledger / spread** — the append-only paper-verdict ledger; the **BUY−AVOID forward-return
-  spread** is THE fund metric. **close row / watch** = ledger lifecycle states (position closed /
-  recorded non-position disposition).
+  spread** is THE fund metric. **close row** = the ledger's position-closed row (with a stated
+  reason); **watch** = a `VerdictStatus` on the underwrite record — not underwritable at today's
+  price, franchise intact, no position (`scenarios.py`).
 - **themes lane** (`vinci/themes/`): **theme** = a ratified thematic driver; **DriverSpec** = its
   verbatim definition; **sweep** = the monthly theme sweep; **radar** = the frontend triage inbox;
   **assay** = the evidence test of a theme (**retrocast** = assay on deeper history);
