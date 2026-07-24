@@ -4902,24 +4902,38 @@ byte-identical, seal re-verified CLEAN. The calendar renders it TRIGGER-DEADLINE
 starts the clock at the next snapshot. FOLLOW-ON (operator, standing): the Q2+Q3 transcripts now
 in the store mean SMPL's next re-assembly extracts the September driver row itself (the gated
 transcript phase sees all three calls).
-**OPERATOR TO-DO — SMPL UNDERWRITE INPUTS STALE (verified 2026-07-24; disposition PENDING the
-operator's authorized wording).** The committed dossier (assembled 2026-07-23) and the scenario
-facts were built on CIQ panels that PREDATE the 2026-07-09 FQ3 print — multiples as-of
-2026-06-03, TEV as-of 2026-06-25, reference_date 2026-07-06 — so the 2026-07-21 BUY
-(`V-SMPL-screen2-20260706`, entry 10.92 frozen 2026-07-20) was underwritten on a pre-Q3 P&L.
-Fresh CIQ export uploaded 2026-07-24 and pipeline-verified (quarterly grid carries the
-May-30-2026 FQ3 columns + 2026-07-09; key devs through Jul-09; profile Jul-23). DISPOSITION PLAN
-(the IT-exit template, PR #191 — the ledger is append-only, nothing is deleted): (1) close row
-`C-SMPL-screen2-20260706` with reason = input-staleness (a PROCESS incident, not a market call —
-the reason string keeps the realized book partitionable); (2) seal-legal `[amended 2026-07-24 …]`
-tag on the rationale + `verdict.status → watch` (the IT transition); (3) AFTER the #208–#210
-queue lands: full re-assembly + R1 re-run on the fresh bundle (the calendar + source-D then ship
-in the fresh artifact — the September driver row extracts from the Q3 transcript); (4) analyst
-re-verdict on a NEW candidate row (one decision row per candidate, by construction). The dated
-trigger (PR #210) is TRANSCRIPT-sourced, not panel-sourced — it survives the disposition and
-carries to the re-underwrite. INVARIANT OWED (the queued assembly-freshness item is this
-incident's guard): a panel-vintage vs latest-EDGAR-print gate at assembly — loud caveat when any
-CIQ panel's as-of predates the newest print. This incident is that item's falsifier made real.
+**BUILD RECORD — 2026-07-24 SMPL INPUT-STALENESS DISPOSITION EXECUTED (C3 data, branch
+`data/smpl-staleness-disposition`; operator ratified the plan + wording in chat same day).**
+The incident (verified): the committed dossier (assembled 2026-07-23) and the scenario facts
+rode CIQ panels predating the 2026-07-09 FQ3 print (multiples as-of 2026-06-03, TEV as-of
+2026-06-25, reference 2026-07-06) — the 2026-07-21 BUY read a pre-Q3 P&L. EXECUTED, in order:
+(1) CLOSE ROW `C-SMPL-screen2-20260706` closes `V-SMPL-screen2-20260706` at 10.53 (2026-07-22
+point-in-time freeze; entry 10.92/2026-07-20; realized −3.5714% before costs, derived never
+stored; register-clean stated reason). Appended via the model + the guarded exporter — the
+committed snapshot IS the ledger of record (both working DBs carry 0 ledger rows; #121 guard);
+file re-canonicalized to the exporter's PK order, which corrected the IT card's close-blind
+last-row-wins ledger join in passing (join fix spun off as its own task). (2) SEAL-LEGAL
+amendment tag + `status confirmed → watch` (IT transition, PR #191); seal check_all CLEAN ×7;
+the dated September trigger untouched. (3) FULL RE-ASSEMBLY on the fresh 2026-07-24 export
+(tev_as_of 2026-07-24, multiples_as_of 2026-07-21, summary floor ≥2026-07-21; P/LTM caveat
+re-fired on the fresh shape — LTM GAAP dil EPS still −2.08 — so the #208 artifact pin stays
+armed) + MACHINE REFRESH of the record's stale-layer facts: ltm_revenue 1416.208 → 1392.235
+(the only stale-layer fact — net debt / D&A / diluted shares were filing-derived and already
+current), spot 10.92 → 10.53; legs untouched (analyst's), per-leg vps unchanged, ratio
+4.0299 → 4.5785 (PASS vs 2.0), engine==stored verified; second amendment tag documents it.
+CALENDAR NOTE (honest miss): the fresh driver phase surfaced a NEW dated event (Target
+exclusive launch → `2027-01 [stated]`, year-rollover correct) but did NOT surface the September
+price-increase sentence this run — the LLM driver tier picks its verbatims (weather); the
+September falsifier still rides the calendar as the analyst's dated-trigger row. Data-coupled
+test restorations shipped with the close (no open BUY / no confirmed record is now a legitimate
+book state; synthetic fallbacks per TEST-LAYER).
+
+**ANALYST / OPERATOR — SMPL RE-VERDICT PENDING (the disposition's step 4, open).** The record
+sits at `watch` with refreshed arithmetic (4.58:1 at 10.53); the re-verdict is the analyst's,
+on a NEW candidate row (one decision row per candidate, by construction — the next screen
+vintage or an operator-created candidate). INVARIANT OWED (unchanged, now with its falsifier
+real): the queued assembly-freshness item — a panel-vintage vs latest-EDGAR-print gate at
+assembly, loud caveat when any CIQ panel's as-of predates the newest print.
 
 **OPERATOR TO-DO — NCNO price series unavailable for the reference window (2026-07-23).** NCNO's
 What-broke chart / 180d returns / stock_performance are all UNKNOWN because its store bars run

@@ -233,9 +233,9 @@
  },
  "ledger": {
   "verdict": "BUY",
-  "entryId": "C-IT-screen2-20260706",
+  "entryId": "V-IT-screen2-20260706",
   "entryPrice": 141.06,
   "entryPriceAsOf": "2026-07-20",
-  "decidedAt": "2026-07-22T00:00:00"
+  "decidedAt": "2026-07-21T00:00:00"
  }
 }

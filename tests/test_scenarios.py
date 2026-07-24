@@ -540,9 +540,11 @@ import {{ readFileSync }} from "node:fs";
 const {{ uwCard }} = await import("{uw}");
 const rd = (p) => JSON.parse(readFileSync(p));
 // SMPL, not IT: IT was this fixture until it was EXITED on 2026-07-21 and moved to watch with a
-// base below spot. A living record's disposition is not a fixture — the state machine is pinned
-// on whichever card currently occupies the state, plus synthetics for the rest.
-const it = rd("frontend/scenarios/SMPL.json");      // confirmed BUY, base ABOVE spot
+// base below spot; SMPL followed on 2026-07-24 (input-staleness close), leaving NO live card at
+// "confirmed". A living record's disposition is not a fixture — the confirmed state is restored
+// on a COPY (same pattern as confirmedButPriced below); the base-above-spot shape is SMPL's own.
+const it = rd("frontend/scenarios/SMPL.json");      // base ABOVE spot; ledger BUY row present
+it.verdict.status = "confirmed";                    // synthetic: the state, not the record
 const wern = rd("frontend/scenarios/WERN.json");    // watch, base BELOW spot (priced)
 // synthetic: the same record still awaiting the analyst — the machine's only reachable state
 const pending = JSON.parse(JSON.stringify(it));
