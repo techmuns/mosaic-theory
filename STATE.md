@@ -4074,7 +4074,7 @@ re-anchor (the full STATE split stays its own queued task — nothing was reloca
     Same class as `_latest_dep_amort`'s vintage trap — a tag-name heuristic standing in for
     reading the statement.
 
-**QUEUED BUILD — CATALYST CALENDAR (brief drafted 2026-07-24; RATIFIED 2026-07-24 by the operator
+**QUEUED BUILD → BUILT 2026-07-24 — CATALYST CALENDAR (brief drafted 2026-07-24; RATIFIED 2026-07-24 by the operator
 WITH PLACEMENT B — see amended (d); mockups: standalone + in-situ on the live SMPL page, both
 reviewed).** Origin: the operator's SMPL ten-claim audit,
 claim #10 — catalysts exist only as scattered prose (cost-outs, Q4 margin inflection, the
@@ -4111,6 +4111,9 @@ direction: assembling dates is machine work; weighing them is the verdict's.
 mis-estimate negative; a stated-date positive); an artifact-level conditional invariant (rows
 present → each row dated-or-UNKNOWN + cited); JS twin parity.
 Size: a #205-class PR. RATIFY (a)-(g) or amend before any build.
+**→ DISCHARGED — BUILT same day** (PR #209; source D + the first dated trigger PR #210; BUILD
+RECORDS in §2). The brief stays as fossil; (b)'s source C shipped maturities-only and source D
+(dated operating events) superseded the 8-K-events slice — dispositions in the build records.
 
 **ANALYST / OPERATOR**
 13. **EPAM underwrite — RUN 2026-07-21, VERDICT PENDING.** `scenarios/EPAM.json` written and
@@ -4870,6 +4873,25 @@ assembly rows + fail-loud, placement-B render e2e on committed-SMPL-with-injecte
 passed/future/unparseable). ARTIFACT NOTE: calendars land in committed dossiers at each name's
 NEXT re-assembly (the field is mechanical DATA — a re-render alone cannot create it); dated
 triggers appear when the analyst records them (machine never invents either).
+
+**OPERATOR TO-DO — SMPL UNDERWRITE INPUTS STALE (verified 2026-07-24; disposition PENDING the
+operator's authorized wording).** The committed dossier (assembled 2026-07-23) and the scenario
+facts were built on CIQ panels that PREDATE the 2026-07-09 FQ3 print — multiples as-of
+2026-06-03, TEV as-of 2026-06-25, reference_date 2026-07-06 — so the 2026-07-21 BUY
+(`V-SMPL-screen2-20260706`, entry 10.92 frozen 2026-07-20) was underwritten on a pre-Q3 P&L.
+Fresh CIQ export uploaded 2026-07-24 and pipeline-verified (quarterly grid carries the
+May-30-2026 FQ3 columns + 2026-07-09; key devs through Jul-09; profile Jul-23). DISPOSITION PLAN
+(the IT-exit template, PR #191 — the ledger is append-only, nothing is deleted): (1) close row
+`C-SMPL-screen2-20260706` with reason = input-staleness (a PROCESS incident, not a market call —
+the reason string keeps the realized book partitionable); (2) seal-legal `[amended 2026-07-24 …]`
+tag on the rationale + `verdict.status → watch` (the IT transition); (3) AFTER the #208–#210
+queue lands: full re-assembly + R1 re-run on the fresh bundle (the calendar + source-D then ship
+in the fresh artifact — the September driver row extracts from the Q3 transcript); (4) analyst
+re-verdict on a NEW candidate row (one decision row per candidate, by construction). The dated
+trigger (PR #210) is TRANSCRIPT-sourced, not panel-sourced — it survives the disposition and
+carries to the re-underwrite. INVARIANT OWED (the queued assembly-freshness item is this
+incident's guard): a panel-vintage vs latest-EDGAR-print gate at assembly — loud caveat when any
+CIQ panel's as-of predates the newest print. This incident is that item's falsifier made real.
 
 **OPERATOR TO-DO — NCNO price series unavailable for the reference window (2026-07-23).** NCNO's
 What-broke chart / 180d returns / stock_performance are all UNKNOWN because its store bars run
