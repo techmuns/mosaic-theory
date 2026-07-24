@@ -70,6 +70,71 @@ branches with verification environments.
 - **Secrets / data boundary:** see CLAUDE.md (Security). Not duplicated here.
 - **Commits:** focused, single-purpose, honest messages; push to origin when done.
 
+## House vocabulary (glossary — plain words first)
+
+Idiosyncratic terms, one line each: *term → plain meaning → home*. This is a TRANSLATION table,
+not a capability index — capabilities are discovered from git log + code (CLAUDE.md's
+existence-check rule); this only bridges vocabulary. Coined a new term? Add its line in the same
+PR (CLAUDE.md: coin-time translation).
+
+- **D1/D2/D3** — dossier-restructure build tags; **D3 = deterministic render-side ORDERING of
+  bull/bear points** (facts-first tier sort; never an LLM/schema field) — `render.py` `_ordered_points`.
+- **twin (renderers)** — the py↔md and js↔web render PAIR that must not drift
+  (`vinci/dossier/render.py` ↔ `frontend/views/shared/dossier.js`); "twin pins" = tests on both.
+- **twin (reference cases)** — UNRELATED same word: synthesis's named analogue companies
+  (`twin_reference_cases`, `synthesis.py`).
+- **anchor (R1 block)** — the persisted spot-independent screening anchor (mid-cycle margin ×
+  own-history multiple) — `vinci/dossier/anchor.py`. In BRIEFS, "anchored" = deterministic
+  regex/heading extraction (CLAUDE.md §BRIEF CONTRACT, VOCABULARY).
+- **R1 / R2** — the two underwrite recipes: `R1_midcycle_margin_evebitda` (mean-revert margin ×
+  own-history EV/EBITDA) and `R2_terminal_margin` (terminal-margin bridge when R1 can't anchor) —
+  `vinci/scenarios.py`, `vinci/dossier/terminal_margin.py`.
+- **BAR / HURDLE** — operator-ratified fund-wide constants: BAR = the 2:1 reward/risk bar
+  (`midcycle.py`); HURDLE = the 15% PV discount rate (`terminal_margin.py`).
+- **band / own-history** — a name's OWN trailing multiple range (low–median–high + percentile);
+  `band_guards.py` disqualifies unusable bands.
+- **seal** — append-only integrity on recorded rationale: sha-digest manifest
+  (`scenarios/_seal.json`); text grows only by dated `[amended …]` tags — `vinci/seal.py`.
+  "Seal-once / k=1" = the machine proposal is derived once from the committed dossier and sealed.
+- **lean / evidence_balance** — synthesis's one-line strongly-bearish|mixed|strongly-bullish read;
+  the machine PROPOSAL derives deterministically from it (`vinci/dossier/verdict.py`), hidden
+  until the human's verdict of record is logged.
+- **mech / mechanical** — the deterministic assembled-facts layer of a dossier
+  (`vinci/dossier/mechanical.py`); **synthesis** = the LLM framing layer (no verdict field).
+- **what-broke / gap card / event ledger** — the drawdown anatomy: per-gap-down 8-K cards, the
+  annotated daily chart, the per-gap list ("What broke — and did it fall alone?", both renderers).
+- **idio / idio strip** — idiosyncratic-vs-shared decomposition (name vs benchmark/cohort) in the
+  what-broke section.
+- **one-off / recon** — EX-99.1 release-parse extractions: one-off charges (`OneOffItem`) and
+  non-GAAP reconciliation actuals (`ReconciliationValue`) — `vinci/edgar/release_parse.py`.
+- **drivers / operating drivers** — extracted operating mechanisms (volume/pricing/capacity/mix,
+  dated events) feeding synthesis rule 12 — `vinci/dossier/driver_extract.py`.
+- **three tiers** — the human surface: main body (decision values) / on-demand `<details>`
+  (print-EXPANDED audit tier) / machine-complete JSON — CLAUDE.md three-tier rule.
+- **uw-card / tear sheet** — the underwrite scenario card rendered from `scenarios/<T>.json` —
+  `frontend/views/shared/uw-card.js`.
+- **ledger / spread** — the append-only paper-verdict ledger; the **BUY−AVOID forward-return
+  spread** is THE fund metric. **close row** = the ledger's position-closed row (with a stated
+  reason); **watch** = a `VerdictStatus` on the underwrite record — not underwritable at today's
+  price, franchise intact, no position (`scenarios.py`).
+- **themes lane** (`vinci/themes/`): **theme** = a ratified thematic driver; **DriverSpec** = its
+  verbatim definition; **sweep** = the monthly theme sweep; **radar** = the frontend triage inbox;
+  **assay** = the evidence test of a theme (**retrocast** = assay on deeper history);
+  **freeze** = the frozen theme source artifact that must reproduce byte-identical.
+- **mirror** — the committed `frontend/` copy of data snapshots the static dashboard serves
+  (`frontend/build.py`); an artifact pass is incomplete until source AND mirror are synced.
+- **re-assemble vs re-render** — re-assemble = full pipeline re-run INCLUDING the LLM synthesis
+  (facts + framing both move); re-render = deterministic md/web redraw from committed JSON (no
+  LLM, framing frozen). Operationally different — always say which.
+- **brief item codes** — parenthesized tags in comments/commits (`(K6)`, `(H3)`, `(RC-1 A)`,
+  `(B1)`, `T1`, `C1/C2`, `PR-B`) are line items of a SPECIFIC build brief, not durable
+  vocabulary — grep STATE.md for the brief that defined them.
+- **governor** — the build-sequencing rule for deferred capabilities (STATE.md §4). **fossils** —
+  the archived planning/decision documents ("planning fossils").
+- **face-validity** — parameters set because the output looks structurally right, NEVER tuned on
+  forward returns (CLAUDE.md guardrail). **assemble-not-conclude** — the machine assembles,
+  cites, proposes; it never free-writes a verdict.
+
 ## Local setup (every laptop, every contributor)
 
 Secrets live in the environment (CLAUDE.md), loaded the SAME way on every machine so runs are

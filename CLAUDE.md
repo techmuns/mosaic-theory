@@ -65,6 +65,21 @@ verdict placement.
 - **Don't build speculatively.** If a change can't be proven by a real run (data, creds, or environment
   unavailable), do NOT write it — propose it and surface the blocker. Prefer the simplest working path
   before writing any new code.
+- **Never assert a capability is ABSENT off one search.** Before any "X doesn't exist / isn't
+  handled" claim: search ≥2 vocabularies (house term AND plain words — glossary:
+  docs/engineering.md §House vocabulary), run `git log --all -i --grep=<concept>` AND `git log
+  -S<term>` (pickaxe searches diff content, vocabulary-independent), and READ the definition of
+  every symbol the search surfaces near the topic — a call site's name is a claim, not proof.
+  Still not found → report "not found under <searches tried>", NEVER "doesn't exist". (Two real
+  incidents: the ranker's screen-time cap and the D3 bull/bear ordering were both denied while
+  existing — generic-vocabulary greps missed the house terms.)
+- **Coin a term → translate it once, at coin-time.** A PR that introduces a house term (the next
+  D3 / twin / assay) states its plain-English equivalent where it is coined — in the squash title
+  or body ("D3 — deterministic ORDERING of bull/bear points") — and appends ONE line to the
+  glossary (docs/engineering.md §House vocabulary). The coiner is the only scalable translator;
+  git log then answers existence questions in either vocabulary forever. No other capability
+  index is maintained — derive from git/code, never dual-write (a curated index rots and its
+  gaps re-create the false "not listed → doesn't exist" inference).
 - **Push when done** — commit, then push to origin. Unpushed work is a single point of failure.
   (Cloudflare Pages auto-deploy applies ONLY to a frontend reading committed snapshots — not backend.)
 

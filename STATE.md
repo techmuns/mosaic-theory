@@ -4716,6 +4716,26 @@ normalized (seal intact). Scope: SMPL only. Suite 1052 passed on the committed a
 P/LTM caveat (a phrasing-independent invariant on the living artifact) — the unit pins cover the
 logic; the artifact-level regression pin belongs in a code PR, not this artifact commit.
 
+**PROCESS RECORD — 2026-07-24 existence-check protocol + house-vocabulary glossary (branch
+`docs/vocab-and-existence-protocol`).** INCIDENT (twice): an agent asserted a capability was ABSENT
+while it existed — the ranker's screen-time cap, then the D3 deterministic bull/bear ordering
+(`render.py:_ordered_points`; the denial happened with `# D3 — deterministic tier order` in the
+agent's own grep output). ROOT CAUSES: (a) generic-vocabulary search (rank/weight/materiality)
+against idiosyncratic house terms (D3/tier/facts-first) read as proof of absence; (b) semantics
+inferred from a call site without reading the definition; (c) the project's knowledge surface is a
+chronological ledger (this file) + operator memory — no vocabulary bridge. FIX (deliberately
+minimal, derive-never-dual-write): (1) CLAUDE.md existence-check rule — ≥2 vocabularies +
+`git log --grep` + `-S` pickaxe + read surfaced definitions; report "not found under <searches>",
+never "doesn't exist"; (2) CLAUDE.md coin-time translation rule — a PR coining a house term states
+the plain-English equivalent in its squash title/body + one glossary line, by the coiner, in the
+same PR (the only translation point that scales across concurrent sessions); (3) a ~25-term
+glossary in docs/engineering.md §House vocabulary (translation table ONLY — explicitly NOT a
+capability index; a curated index was CONSIDERED AND REJECTED: dual-write across concurrent
+sessions guarantees gaps, and an index gap re-creates the false "not listed → doesn't exist"
+inference with more confidence). Every glossary pointer verified against the code before commit.
+ESCALATION (not built): a CI lint on squash titles only if the coin-time rule is violated in
+practice — incident→invariant, applied to process.
+
 **OPERATOR TO-DO — NCNO price series unavailable for the reference window (2026-07-23).** NCNO's
 What-broke chart / 180d returns / stock_performance are all UNKNOWN because its store bars run
 **2021-07-01 → 2024-05-20, then a hole, then only 2026-07-08+** — the 52-wk window the dossier needs
