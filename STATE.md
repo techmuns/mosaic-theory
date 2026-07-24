@@ -4931,9 +4931,28 @@ book state; synthetic fallbacks per TEST-LAYER).
 **ANALYST / OPERATOR — SMPL RE-VERDICT PENDING (the disposition's step 4, open).** The record
 sits at `watch` with refreshed arithmetic (4.58:1 at 10.53); the re-verdict is the analyst's,
 on a NEW candidate row (one decision row per candidate, by construction — the next screen
-vintage or an operator-created candidate). INVARIANT OWED (unchanged, now with its falsifier
-real): the queued assembly-freshness item — a panel-vintage vs latest-EDGAR-print gate at
-assembly, loud caveat when any CIQ panel's as-of predates the newest print.
+vintage or an operator-created candidate). INVARIANT: the assembly-freshness gate — **SHIPPED
+2026-07-24** (see build record below); the incident is closed per the INVARIANT RULE.
+
+**BUILD RECORD — 2026-07-24 ASSEMBLY-FRESHNESS GATE (branch `feat/assembly-freshness-gate`;
+the invariant the SMPL stale-inputs incident owed, INVARIANT RULE).** `_panel_freshness_flag(ie,
+latest_print)` + `_latest_earnings_print(edgar, cik)` in mechanical.py, wired into the
+assemble_mechanical flag tail beside `_catalyst_stale_flag`. Fires a loud human CAVEAT when a CIQ
+VALUATION panel (multiples_as_of / tev_as_of) predates the latest EARNINGS PRINT (newest 8-K item
+2.02). ORTHOGONAL to the existing reference-date stale checks — the exact gap that let SMPL
+through: its panels (2026-06-03 / 2026-06-25) sat WITHIN the 45d tolerance of the 2026-07-06
+reference, but the reference ITSELF predated the 2026-07-09 FQ3 print, so a reference-anchored
+check could not see it. ANCHORED / no tunable knob ("older than the newest print" is a hard fact);
+fail-quiet on a feed miss / no 2.02 on file / unparseable as-of (never aborts assembly); the print
+fetch reuses the HTTP-cached submissions JSON (no extra round-trip). REAL RUN (live EDGAR): SMPL
+latest print = 2026-07-09; the committed FRESH panels (07-21 / 07-24) → SILENT; the
+pre-disposition panels (06-03 / 06-25) → FIRES ("…predate the latest earnings print (2026-07-09…),
+the oldest by 36d…") — the caveat that was missing when the BUY was recorded. Pins: fire/silence/
+one-stale/on-the-print-date/fail-quiet (×3) + the 2.02-picking fetch (ignores 7.01, empty→None,
+raise→None) + a real-committed-artifact before/after invariant. Gate: ruff · mypy --strict vinci
+(110) · offline suite exit 0. SCOPE NOTE: gates the two valuation panels (the SMPL culprits);
+financial_summary.as_of carries its own floor/unstamped handling and is deliberately out of this
+first slice.
 
 **OPERATOR TO-DO — NCNO price series unavailable for the reference window (2026-07-23).** NCNO's
 What-broke chart / 180d returns / stock_performance are all UNKNOWN because its store bars run
