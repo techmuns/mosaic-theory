@@ -4074,6 +4074,37 @@ re-anchor (the full STATE split stays its own queued task — nothing was reloca
     Same class as `_latest_dep_amort`'s vintage trap — a tag-name heuristic standing in for
     reading the statement.
 
+**QUEUED BUILD — CATALYST CALENDAR (brief drafted 2026-07-24, RATIFICATION PENDING — do not build
+without operator sign-off; a schema change).** Origin: the operator's SMPL ten-claim audit,
+claim #10 — catalysts exist only as scattered prose (cost-outs, Q4 margin inflection, the
+two-quarter Quest test) with no dated surface and nothing watching the clock. Existing machinery
+(verified, not recalled): `catalyst_path` is the STREET's estimates/guidance view, not an event
+calendar; the underwrite record already carries `reunderwrite_triggers: list[str]` (undated
+free-text). THE BRIEF:
+(a) **Schema** — `CatalystCalendar` on the mechanical layer: rows `{event, expected_date,
+date_basis: "stated"|"cadence-estimate", tests_what, source_ref}`; every date source-bound or the
+row is UNKNOWN (fail-loud; never a guessed date). VERIFY-AT-BUILD: the filer's actual print
+cadence from its own filing history.
+(b) **Assembly (all ANCHORED/deterministic; no LLM phase)** — A: next expected print from the
+filer's historical 8-K/10-Q cadence, labeled `cadence-estimate` (the EPAM ~2026-08-07 precedent);
+B: guidance checkpoints — the committed FY guide (revised_guidance / guide fields) paired with the
+print that will test it; C: dated forward events already extracted from 8-K bodies (`events`,
+maturity dates). Supplying layers named per row.
+(c) **Triggers gain deadlines** — OPTIONAL `deadline` on `reunderwrite_triggers` entries (schema
+bump, additive-only; `verdict.rationale` untouched → SEAL-SAFE; legacy records round-trip).
+The analyst dates their own falsifiers ("Quest stalls two more quarters" → ≈ the second print
+out); the machine NEVER invents a trigger or a date.
+(d) **Render** — a dated rows table on the street card (both twins) + one Brief line ("next
+catalyst: <event> ~<date>"); exhibits cite via endnotes per the standing rule.
+(e) **Monitor** — the freshness panel flags a PASSED catalyst window ("window closed → re-read
+due"): a FLAG, never a machine-priced delayed-catalyst scenario.
+(f) **EXCLUDED BY CONSTITUTION** — no probabilities, no machine catalyst-weighting, no
+direction: assembling dates is machine work; weighing them is the verdict's.
+(g) **Pins** — per extractor a positive + negative pin on real committed shapes (a cadence
+mis-estimate negative; a stated-date positive); an artifact-level conditional invariant (rows
+present → each row dated-or-UNKNOWN + cited); JS twin parity.
+Size: a #205-class PR. RATIFY (a)-(g) or amend before any build.
+
 **ANALYST / OPERATOR**
 13. **EPAM underwrite — RUN 2026-07-21, VERDICT PENDING.** `scenarios/EPAM.json` written and
    computed standalone (R1, EV/EBITDA); card shipped at `pending_analyst` — the machine
