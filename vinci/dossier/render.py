@@ -2214,14 +2214,18 @@ def _brief_lines(d: Dossier, *, show_proposal: bool = False,
     snap = _brief_snapshot(d.exchange, m.stock_info)
     if snap:
         out += snap
-    # (buy-side cover) THE CRUX closes the cover — the decisive question + the top-2 unknowns,
-    # both ALREADY-COMMITTED synthesis fields (render-tier only; no assembly change). "The case"
-    # below drops its copies so the question renders once per tier. Mirrors cruxInner() on the web.
+    # (buy-side cover) THE CRUX closes the cover — the decisive question ONLY, plus an honest
+    # count-pointer to the unknowns. The former `key_unknowns[:2]` teaser was REMOVED (2026-07-24,
+    # weather audit): across 109 consecutive historical draw pairs the unknowns' SET survives only
+    # 17% and the top-2 slots ~7% — the teaser presented weather-rolled prose as a curated "top-2
+    # that would change our mind", a judgment the machine never made. The QUESTION's subject is
+    # draw-stable; the full unknown list lives in Analysis. Mirrors cruxInner() on the web.
     if s is not None and s.decisive_question is not None and s.decisive_question.question:
         out += ["", "**The crux — what decides this, and what would change our mind**",
                 f"**{s.decisive_question.question}**"]
-        out += [f"- {u}" for u in list(s.key_unknowns)[:2]]
-        out.append("_full unknowns + the evidence for/against in Analysis_")
+        n_unk = len(s.key_unknowns)
+        out.append(f"_{n_unk} key unknown{'s' if n_unk != 1 else ''} + the evidence for/against "
+                   "— in Analysis_")
     out.append("")
     # (user decision) the standing machine-proposal line is GONE from the default brief — the
     # pivot MECHANISM is untouched (derived + sealed to the shadow ledger at assembly; disposition

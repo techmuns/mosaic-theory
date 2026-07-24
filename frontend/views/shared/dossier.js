@@ -810,16 +810,17 @@ function openerCard(d, verdict, m, card, mark) {
 }
 
 // (buy-side cover) THE CRUX — the decisive question + the top unknowns, closing the cover. Pure
-// render-tier: both fields are already committed in the synthesis (no assembly change); "The case"
-// card drops its copies so the question renders once per tier. Fail-honest: no question → no block.
+// render-tier: the decisive QUESTION only + an honest count-pointer (twin of render.py's crux
+// block). The former key_unknowns[:2] teaser was REMOVED (2026-07-24 weather audit): the unknowns'
+// set survives consecutive draws ~17% and the top-2 slots ~7% — the teaser presented weather as a
+// curated "top-2", a judgment the machine never made. Fail-honest: no question → no block.
 function cruxInner(s) {
   const q = s && s.decisive_question && s.decisive_question.question;
   if (!q) return "";
-  const unks = (s.key_unknowns || []).slice(0, 2);
+  const n = ((s && s.key_unknowns) || []).length;
   return `<div class="brief-crux"><div class="brief-vlab brief-eyebrow">The crux — what decides this, and what would change our mind</div>
     <div class="brief-dq">${escapeHtml(q)}</div>
-    ${unks.length ? `<ul class="kv-list">${unks.map((k) => `<li>${escapeHtml(k)}</li>`).join("")}</ul>` : ""}
-    <div class="muted" style="font-size:11px; margin-top:4px;">full unknowns + the evidence for/against in Analysis</div></div>`;
+    <div class="muted" style="font-size:11px; margin-top:4px;">${n} key unknown${n === 1 ? "" : "s"} + the evidence for/against — in Analysis</div></div>`;
 }
 
 // 2 — UNDERWRITE DETAIL (user decision): the scenarios table + range rail, the analyst's rationale,
