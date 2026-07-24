@@ -428,14 +428,16 @@ class CatalystPath(BaseModel):
 class CatalystRow(BaseModel):
     """(catalyst calendar, ratified 2026-07-24) One DATED upcoming event and what it tests —
     machine-ASSEMBLED, never machine-weighted: no probability, no direction, no importance field
-    (weighing catalysts is the verdict's job, by constitution). ``expected_date`` is ISO;
-    ``date_basis`` says how the date is known — "stated" (a primary source states it) or
-    "cadence-estimate" (derived from the filer's own print rhythm; an ESTIMATE, never a date
-    certain). A date that cannot be sourced or soundly estimated produces NO row (fail-loud
-    qa_flag upstream) — never a guessed date."""
+    (weighing catalysts is the verdict's job, by constitution). ``expected_date`` is an ISO date
+    (YYYY-MM-DD) — or MONTH-granular (YYYY-MM) when the source states only a month (source D:
+    "effective in September"; a fabricated day would be a guessed date). Lexicographic sort keeps
+    YYYY-MM correctly ahead of every day in its month. ``date_basis`` says how the date is
+    known — "stated" (a primary source states it) or "cadence-estimate" (derived from the
+    filer's own print rhythm; an ESTIMATE, never a date certain). A date that cannot be sourced
+    or soundly estimated produces NO row (fail-loud qa_flag upstream) — never a guessed date."""
 
     event: str
-    expected_date: str  # ISO date
+    expected_date: str  # ISO date (YYYY-MM-DD) or month-granular (YYYY-MM)
     date_basis: str  # "stated" | "cadence-estimate"
     tests_what: str  # which committed claim/guide/wall this event will confirm or refute
     source_ref: str
