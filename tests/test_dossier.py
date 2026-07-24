@@ -9080,3 +9080,89 @@ def test_dated_operating_events_source_d_real_sentence_and_negatives() -> None:
     # month rows SORT correctly among day rows (lexicographic: YYYY-MM before its month's days)
     assert sorted(["2026-10-08", "2026-09", "2027-01-31"]) == ["2026-09", "2026-10-08",
                                                               "2027-01-31"]
+
+
+# --- panel-freshness gate (the SMPL 2026-07-24 stale-inputs incident guard) --------------------
+def _ie(multiples_as_of: str, tev_as_of: str) -> ds.ImpliedExpectations:
+    """A minimal ImpliedExpectations carrying only the two as-of stamps the freshness gate reads."""
+    return ds.ImpliedExpectations(
+        rows=[], tev=_u(), anchors=_u(), heterogeneity_gate="", tev_as_of=tev_as_of,
+        multiples_as_of=multiples_as_of, vintage_coherent=True, coherence_note="",
+        net_debt_reconciled=True)
+
+
+def test_panel_freshness_flag_fires_when_a_panel_predates_the_latest_print() -> None:
+    """(SMPL 2026-07-24 incident guard) A CIQ valuation panel whose as-of predates the latest 8-K
+    2.02 print → a loud caveat naming the stale panel(s) + the print; a panel on/after the print →
+    silence. Orthogonal to the reference-date stale checks: SMPL's panels (2026-06-03 / 2026-06-25)
+    sat within 45d of its 2026-07-06 reference, yet the 2026-07-09 FQ3 print postdated both — the
+    exact shape this gate exists to catch. Also fail-quiet: no print / no block / odd as-of."""
+    print_date = date(2026, 7, 9)
+    # STALE: both panels predate the print → fires, names both, dates the oldest lag (36d)
+    flag = dm._panel_freshness_flag(_ie("2026-06-03", "2026-06-25"), print_date)
+    assert flag is not None
+    assert "2026-07-09" in flag and "EDGAR 8-K item 2.02" in flag
+    assert "valuation multiples as-of 2026-06-03" in flag
+    assert "implied-TEV inputs as-of 2026-06-25" in flag
+    assert "the oldest by 36d" in flag                          # 2026-07-09 − 2026-06-03
+    # ONE stale panel (TEV fresh, multiples stale) → fires naming ONLY the stale one
+    one = dm._panel_freshness_flag(_ie("2026-06-03", "2026-07-21"), print_date)
+    assert one is not None and "1 CIQ valuation panel" in one and "implied-TEV" not in one
+    # FRESH: both on/after the print → silent (the post-disposition SMPL shape: 07-21 / 07-24)
+    assert dm._panel_freshness_flag(_ie("2026-07-21", "2026-07-24"), print_date) is None
+    # a panel ON the print date is not "before" it → silent
+    assert dm._panel_freshness_flag(_ie("2026-07-09", "2026-07-09"), print_date) is None
+    # FAIL-QUIET: no print date, no block, a floor/unparseable as-of → no caveat, never a crash
+    assert dm._panel_freshness_flag(_ie("2026-06-03", "2026-06-25"), None) is None
+    assert dm._panel_freshness_flag(None, print_date) is None
+    assert dm._panel_freshness_flag(_ie("≥2026-07-21", "unknown"), print_date) is None
+
+
+def test_latest_earnings_print_picks_the_newest_202_and_fails_quiet() -> None:
+    """The latest earnings print = the newest 8-K carrying item 2.02; a 7.01-only press release is
+    ignored; an empty feed or a raising client → None (the gate then stays silent, never aborts)."""
+    def f(d: date, items: list[str]) -> Filing:
+        return Filing(cik="1", form="8-K", filing_date=d, accession=f"a-{d}", items=items,
+                      primary_doc=None)
+    eod = _FakeEdgar(filings=[
+        f(date(2026, 4, 9), ["2.02"]), f(date(2026, 7, 9), ["2.02", "9.01"]),
+        f(date(2026, 7, 15), ["7.01"])])              # 7.01 press release — NOT an earnings print
+    assert dm._latest_earnings_print(eod, "1") == date(2026, 7, 9)
+    assert dm._latest_earnings_print(
+        _FakeEdgar(filings=[f(date(2026, 7, 15), ["7.01"])]), "1") is None
+    assert dm._latest_earnings_print(_FakeEdgar(filings=[]), "1") is None
+
+    class _Boom:
+        def recent_filings(self, *a: object, **k: object) -> list[Filing]:
+            raise RuntimeError("submissions feed down")
+    assert dm._latest_earnings_print(_Boom(), "1") is None      # fail-quiet, no abort
+
+
+def test_panel_freshness_on_the_real_smpl_panels_before_and_after_the_print() -> None:
+    """Real-data before/after of the exact incident, on the committed SMPL dossier's OWN as-of
+    stamps. The post-disposition (fresh) panels are SILENT at the real FQ3 print (2026-07-09);
+    rewind them to the pre-disposition stale vintages (2026-06-03 / 2026-06-25) and the gate FIRES —
+    the caveat that was missing when the BUY was recorded. Invariant, not a value pin: a fresh
+    assembly always pulls CIQ on/after the latest print, so 'fresh is silent' is stable."""
+    p = Path("data/dossiers/SMPL/dossier.json")
+    if not p.exists():
+        pytest.skip("no committed SMPL dossier.json")
+    ie = ds.Dossier.model_validate_json(p.read_text()).mechanical.valuation.implied_expectations
+    assert ie is not None, "SMPL dossier carries an implied-expectations block"
+    print_date = date(2026, 7, 9)  # SMPL FQ3 8-K item 2.02 (a fixed historical fact)
+    assert dm._panel_freshness_flag(ie, print_date) is None          # committed panels are fresh
+    stale = ie.model_copy(update={"multiples_as_of": "2026-06-03", "tev_as_of": "2026-06-25"})
+    flag = dm._panel_freshness_flag(stale, print_date)               # rewound → fires
+    assert flag is not None and "2026-06-03" in flag and "2026-07-09" in flag
+
+
+def test_panel_freshness_caveat_reaches_the_human_surface_not_qa() -> None:
+    """DELIVERY half (the claim-#7 lesson: a guard the human never sees is useless — a caveat
+    that assemble_mechanical emits must land in the human CAVEATS surface, not be swallowed as
+    machine qa-telemetry). The freshness caveat carries no QA marker, so ``dossier_flags.partition``
+    (the same audience-split assemble.py runs over every emitted flag) routes it to caveats. Pins
+    the wiring's delivery leg without standing up the whole assembler."""
+    caveat = dm._panel_freshness_flag(_ie("2026-06-03", "2026-06-25"), date(2026, 7, 9))
+    assert caveat is not None
+    caveats, qa = dflags.partition([caveat])
+    assert caveat in caveats and caveat not in qa

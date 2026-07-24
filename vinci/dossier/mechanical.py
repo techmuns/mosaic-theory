@@ -1710,6 +1710,60 @@ def _catalyst_stale_flag(catalyst: CatalystPath, reference_date: date) -> str | 
     )
 
 
+def _iso_or_none(stamp: str | None) -> date | None:
+    """A clean ISO date, or None for anything else (a floor ``≥…``, a prose note, empty). The
+    freshness gate fires only on a parseable as-of, so an odd stamp fails quiet."""
+    if not stamp:
+        return None
+    try:
+        return date.fromisoformat(stamp)
+    except ValueError:
+        return None
+
+
+def _latest_earnings_print(edgar: EdgarClient, cik: str) -> date | None:
+    """The latest EARNINGS print date on EDGAR — the newest 8-K carrying item 2.02 (Results of
+    Operations). Fail-quiet: a submissions-feed miss or a name with no 2.02 on file returns None
+    (the caller then raises no freshness caveat, never aborts)."""
+    try:
+        prints = [f.filing_date for f in edgar.recent_filings(cik, forms=("8-K",))
+                  if "2.02" in f.items]
+    except Exception:  # noqa: BLE001 — a feed miss silences the gate, never aborts the assembly
+        return None
+    return max(prints) if prints else None
+
+
+def _panel_freshness_flag(
+    ie: ImpliedExpectations | None, latest_print: date | None,
+) -> str | None:
+    """Fire a loud caveat when a CIQ valuation panel PREDATES the latest earnings print — the guard
+    the SMPL 2026-07-24 stale-inputs incident earned (a recorded BUY read panels dated 2026-06-03 /
+    2026-06-25 while the FQ3 print had landed 2026-07-09).
+
+    ORTHOGONAL to the reference-date stale checks (``_catalyst_stale_flag`` / the EV/EBITDA
+    stale-Close): those compare a panel's as-of to the REFERENCE date within a 45d tolerance, and a
+    panel can sit inside that tolerance yet still predate a PRINT that landed after both the panel
+    AND the reference (SMPL's panels were within 45d of its 2026-07-06 reference — the reference
+    itself predated the print). ANCHORED — EDGAR item-2.02 filing dates + the panels' own CIQ as-of
+    stamps; NO tunable knob (`older than the newest print` is a hard fact, not a face-validity
+    band). Fail-quiet: no print, no valuation block, or an unparseable as-of → no caveat."""
+    if ie is None or latest_print is None:
+        return None
+    stale = [(label, d) for label, stamp in (("valuation multiples", ie.multiples_as_of),
+                                             ("implied-TEV inputs", ie.tev_as_of))
+             if (d := _iso_or_none(stamp)) is not None and d < latest_print]
+    if not stale:
+        return None
+    lag = (latest_print - min(d for _, d in stale)).days
+    named = "; ".join(f"{label} as-of {d.isoformat()}" for label, d in stale)
+    return (
+        f"Panel-freshness caveat — {len(stale)} CIQ valuation panel(s) predate the latest earnings "
+        f"print ({latest_print.isoformat()}, EDGAR 8-K item 2.02), the oldest by {lag}d: {named}. "
+        "The valuation read may rest on a pre-print P&L — re-pull CIQ after the print before "
+        "relying on it."
+    )
+
+
 # --- E1/E3/E4: structured capital structure + maturity-anchored 8-Ks + covenant pointers -----
 def _maturity_8ks(
     edgar: EdgarClient, cik: str, instruments: list[CapitalInstrument], reference_date: date
@@ -2485,4 +2539,12 @@ def assemble_mechanical(
         cat_flag := _catalyst_stale_flag(mech.catalyst_path, reference_date)
     ):
         flags.append(cat_flag)
+    # panel-freshness (the SMPL 2026-07-24 incident guard): a CIQ valuation panel that predates the
+    # latest EARNINGS PRINT — orthogonal to the reference-date staleness above (a panel can sit
+    # within the 45d reference tolerance yet still predate a print that landed after both).
+    if (fresh_flag := _panel_freshness_flag(
+        mech.valuation.implied_expectations if mech.valuation is not None else None,
+        _latest_earnings_print(edgar, record.identity.cik),
+    )) is not None:
+        flags.append(fresh_flag)
     return mech, flags
