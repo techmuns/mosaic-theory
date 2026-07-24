@@ -8984,11 +8984,14 @@ def test_catalyst_calendar_render_placement_b_and_crux_line() -> None:
     glance = md.split("## At a glance")[1].split("\n## ")[0]
     assert "**Next catalyst:** Next results print ~2026-10-08" in glance  # earliest entry
     # NEGATIVE: no calendar field AND no dated triggers → no phantom section, no crux line.
-    # Constructed (triggers stripped) — the LIVE record legitimately carries SMPL's first dated
-    # trigger since 2026-07-24, so the raw card is no longer a valid no-trigger fixture.
+    # BOTH sides constructed — the LIVE record carries SMPL's first dated trigger since
+    # 2026-07-24, and the LIVE artifact carries a real machine calendar since the 2026-07-24
+    # fresh assembly, so the pre-build shape (the pin's subject) must be built, never read.
     bare = card.model_copy(update={"verdict": card.verdict.model_copy(
         update={"dated_triggers": []})})
-    md0 = dr.render_markdown(d, card=bare)
+    d0 = d.model_copy(update={
+        "mechanical": d.mechanical.model_copy(update={"catalyst_calendar": None})})
+    md0 = dr.render_markdown(d0, card=bare)
     assert "## Catalyst calendar" not in md0
     assert "Next catalyst:" not in md0
 

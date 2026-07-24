@@ -13,8 +13,8 @@
   "multiple_basis": "EV/EBITDA",
   "underwrite_date": "2026-07-21",
   "analyst": "nogods404",
-  "spot": 10.92,
-  "spot_source": "Polygon daily aggregate close 2026-07-20 (live)",
+  "spot": 10.53,
+  "spot_source": "Polygon daily aggregate close 2026-07-22 (store; machine refresh 2026-07-24)",
   "facts": {
     "d_and_a": {
       "value": 21.431,
@@ -35,7 +35,7 @@
       "source": "EDGAR WeightedAverageNumberOfDilutedSharesOutstanding — via committed dossier anchor block (#158/#160/#162-verified)"
     },
     "ltm_revenue": {
-      "value": 1416.208,
+      "value": 1392.235,
       "unit": "$M",
       "basis": "LTM revenue",
       "source": "committed financial_summary.annual (LTM) — via committed dossier anchor block (#158/#160/#162-verified)"
@@ -236,9 +236,9 @@
     },
     "survival": null,
     "hurdle": null,
-    "reward": 15.982643669016104,
-    "risk": 3.9660045704958415,
-    "ratio": 4.029910552276017,
+    "reward": 16.372643669016107,
+    "risk": 3.576004570495841,
+    "ratio": 4.578473921454164,
     "ratio_undefined": null,
     "bar": 2.0,
     "pass_fail": "PASS"
@@ -246,7 +246,7 @@
   "verdict": {
     "status": "watch",
     "recorded": "2026-07-21",
-    "rationale": "BUY at $10.92, 4.0:1 against the 2:1 bar. The market sold a consensus beat with reinstated guidance down to the lowest multiple in the company's own history — pricing GLP-1 drugs as a permanent decline of the whole snacking category. Our judgment is the sell-off has overshot: margins never broke (ex the Atkins write-down, last year sat at the seven-year median), our base revenue sits below management's own new guidance, and a ~12% free-cash-flow yield with active buybacks pays us while the question resolves. The accepted risk: Quest, the growth engine, just printed +1% — unproven. The trade fails only if revenue, margin, and multiple all break below their historical worsts together; Quest stalling two more quarters forces a re-underwrite. [amended 2026-07-24: the inputs behind this verdict were stale — every financial and valuation panel predated the quarterly report filed 2026-07-09, so the scenario arithmetic and the confirmation read the prior quarter's numbers. Verdict withdrawn and the paper position closed at 10.53 (2026-07-22) as a process correction, not a view on the stock; the record moves to watch pending a fresh underwrite on current data. The September price-increase trigger stands — it came from the earnings call, not the stale panels.]",
+    "rationale": "BUY at $10.92, 4.0:1 against the 2:1 bar. The market sold a consensus beat with reinstated guidance down to the lowest multiple in the company's own history — pricing GLP-1 drugs as a permanent decline of the whole snacking category. Our judgment is the sell-off has overshot: margins never broke (ex the Atkins write-down, last year sat at the seven-year median), our base revenue sits below management's own new guidance, and a ~12% free-cash-flow yield with active buybacks pays us while the question resolves. The accepted risk: Quest, the growth engine, just printed +1% — unproven. The trade fails only if revenue, margin, and multiple all break below their historical worsts together; Quest stalling two more quarters forces a re-underwrite. [amended 2026-07-24: the inputs behind this verdict were stale — every financial and valuation panel predated the quarterly report filed 2026-07-09, so the scenario arithmetic and the confirmation read the prior quarter's numbers. Verdict withdrawn and the paper position closed at 10.53 (2026-07-22) as a process correction, not a view on the stock; the record moves to watch pending a fresh underwrite on current data. The September price-increase trigger stands — it came from the earnings call, not the stale panels.] [amended 2026-07-24: machine refresh on current data after the staleness close — trailing-twelve-month revenue 1416.208 → 1392.235 (the fresh grid now includes the quarter reported 2026-07-09) and spot 10.92 (2026-07-20) → 10.53 (2026-07-22). The filing-derived inputs (net debt, depreciation, diluted shares) were already current and are unchanged, so each leg's value per share is unchanged; reward-to-risk at the new spot recomputes to 4.58:1 against the 2.0 bar. Machine arithmetic only — the scenario legs as recorded await the analyst's fresh underwrite, and the verdict remains withdrawn at watch.]",
     "rationale_plain": null,
     "rationale_plain_recorded": null,
     "reunderwrite_triggers": [
