@@ -1386,6 +1386,16 @@ function nearestPtIdx(pts, dateStr) {
   return best;
 }
 
+// Is bDate the immediately-next TRADING day after aDate? 1 calendar day (adjacent weekday), or a
+// Fri→Mon weekend (3 days, aDate a Friday → getUTCDay()===5). Any other spacing — 2 (a weekday was
+// skipped ⇒ a downsampled step≥2 series), 4 (skip/post-holiday), 7 (weekly) — can't be proven
+// consecutive. The ONE definition of "a true 1-day move", shared by the gap-% derivation AND the
+// chart's pre-window drop detector so the two can never drift apart (mirrors render.py's rule).
+export function isNextTradingDay(aDateStr, bDateStr) {  // exported for the equivalence test
+  const spacing = Math.round((Date.parse(bDateStr) - Date.parse(aDateStr)) / 86400000);
+  return spacing === 1 || (spacing === 3 && new Date(aDateStr).getUTCDay() === 5);
+}
+
 // The exact 1-day close-to-close move at `dateStr`, derived from consecutive DAILY perf points —
 // the detector's own formula on the same closes (a rebased-index ratio IS the close ratio). null
 // when the series doesn't carry the date, or the previous point isn't the prior trading day
@@ -1397,12 +1407,9 @@ export function gapPctFromPerf(sp, dateStr) {  // exported for the py-twin equiv
   if (i <= 0) return null;
   const a = pts[i - 1], b = pts[i];
   if (!a || !Number.isFinite(a.name) || !Number.isFinite(b.name) || a.name <= 0) return null;
-  const spacing = Math.round((Date.parse(b.date) - Date.parse(a.date)) / 86400000);
-  // b must be the immediately-next trading day: 1 calendar day (adjacent weekday) or a Fri→Mon
-  // weekend (3 days, prior point a Friday, getUTCDay()===5). Any other spacing — 2 (a weekday
-  // skipped ⇒ downsampled step≥2 series), 4 (skip/post-holiday), 7 (weekly) — can't be proven
-  // consecutive → refuse (twin of render.py _gap_pct_from_perf).
-  if (!(spacing === 1 || (spacing === 3 && new Date(a.date).getUTCDay() === 5))) return null;
+  // b must be the immediately-next trading day (shared rule), else a multi-day move would be
+  // misread as the 1-day gap — refuse (twin of render.py _gap_pct_from_perf).
+  if (!isNextTradingDay(a.date, b.date)) return null;
   return b.name / a.name - 1;
 }
 const fmtGapPct = (p) => `${p > 0 ? "+" : "−"}${Math.abs(p * 100).toFixed(1)}%`;
@@ -1469,8 +1476,10 @@ export function drawdownChart(sp, rows, det) {  // exported for the SVG-renderer
       if (det.threshold != null) {
         for (let i = 1; i < bIdx; i++) {
           const a = nameS[i - 1], b = nameS[i];
-          const sp2 = (Date.parse(pts[i].date) - Date.parse(pts[i - 1].date)) / 86400000;
-          if (a != null && b != null && a > 0 && sp2 >= 1 && sp2 <= 4 && b / a - 1 <= det.threshold && !gapSet.has(pts[i].date)) {
+          // the SAME "true 1-day move" rule the ledger uses — a downsampled step-2 pair (a weekday
+          // skipped) is NOT a 1-day drop and must not get a hollow marker (was a loose 1–4d check).
+          if (a != null && b != null && a > 0 && isNextTradingDay(pts[i - 1].date, pts[i].date)
+              && b / a - 1 <= det.threshold && !gapSet.has(pts[i].date)) {
             preDrops.push({ date: pts[i].date, pct: b / a - 1 });
             boundary += `<circle cx="${sx(i).toFixed(1)}" cy="${sy(b).toFixed(1)}" r="5" fill="none" stroke="var(--ink-3)" stroke-width="1.3"/>`;
           }
