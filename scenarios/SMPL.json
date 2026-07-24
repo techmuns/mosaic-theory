@@ -254,6 +254,13 @@
       "FY26 guidance cut at the fiscal Q4 print (~Oct 2026), or initial FY27 guidance below ~$1.30B → base revenue path fails",
       "gross-margin erosion beyond the guided ~375bps, or sustained GM below ~31% → margin regime break"
     ],
+    "dated_triggers": [
+      {
+        "trigger": "September portfolio-wide price increase fails to stick (elasticity / share loss)",
+        "deadline": "2027-01-07",
+        "basis": "second print after the September action — the Q1-FY27 print reveals elasticity; operator-confirmed 2026-07-24"
+      }
+    ],
     "entry_price": 10.92,
     "ratio_at_entry": 4.029910552276017,
     "avoid_priced": false,
