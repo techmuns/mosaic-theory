@@ -7051,6 +7051,7 @@ def test_point_tier_paren_needs_accounting_dollar() -> None:
             "inflation")
     assert dr._point_tier(smpl) == 2.0  # 'deteriorat' — no longer an accidental T1
     assert dr._point_tier("adjusted EBITDA of ($5.5) million for the quarter") == 1.0  # accounting
+    assert dr._point_tier("adjusted EBITDA of $(5.5) million for the quarter") == 1.0  # $-first too
     assert dr._point_tier("adjusted EBITDA swung to -$5.5M") == 1.0                    # -$ kept
     assert dr._point_tier("adjusted EBITDA was negative in Q1") == 1.0                 # word kept
 

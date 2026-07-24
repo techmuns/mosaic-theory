@@ -1719,7 +1719,7 @@ _TIER_REGEX: tuple[tuple[float, re.Pattern[str]], ...] = (
         # marker — a bare "(" fired on ANY parenthetical (SMPL: "adjusted EBITDA -18.4% …
         # (-460bps)" → an accidental Tier-1 on a decline point), so "(" now counts only when it
         # opens an accounting-$ amount ("($5.5)"); "-$" and the word "negative" unchanged.
-        r"|\badjusted\s+ebitda\b.{0,40}?(?:-\s*\$|\(\s*\$|negative)"
+        r"|\badjusted\s+ebitda\b.{0,40}?(?:-\s*\$|\(\s*\$|\$\s*\(|negative)"
         # "... turned negative" ONLY when the SUBJECT is a solvency/cash line (EBITDA above already
         # covers "EBITDA turned negative"); a subject-less "competitor guidance turned negative" no
         # longer false-matches tier-1. (R1 audit fix.)
