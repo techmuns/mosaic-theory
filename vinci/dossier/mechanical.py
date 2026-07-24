@@ -1541,6 +1541,72 @@ def _next_print_estimate(print_dates: list[date], ref: date) -> tuple[date, str]
     return est, basis
 
 
+# (source D, ratified 2026-07-24) a FORWARD action verb followed within a clause by a month name —
+# "will become effective in September", "launching in Q..January 2028". Tight by design (the K6
+# precision lesson): past-tense verbs are excluded by the alternation itself ("completed" is not
+# "completes|completing"), and a backward reference ("last September") is rejected post-match.
+_CAL_MONTHS = {m.lower(): i + 1 for i, m in enumerate(
+    ("January", "February", "March", "April", "May", "June", "July",
+     "August", "September", "October", "November", "December"))}
+_CAL_FWD_EVENT = re.compile(
+    r"\b(?:effective|launch(?:es|ing)?|open(?:s|ing)?|begin(?:s|ning)?|start(?:s|ing)?|"
+    r"roll(?:s|ing)?\s+out|ship(?:s|ping)?|transition(?:s|ing)?|commenc(?:es|ing))\b"
+    r"[^.]{0,60}?\b(January|February|March|April|May|June|July|August|September|October|"
+    r"November|December)\b(?:\s+(\d{4}))?",
+    re.IGNORECASE)
+_CAL_BACKWARD = re.compile(r"\b(?:last|past|earlier|prior|previous|ago)\b", re.IGNORECASE)
+
+
+def _dated_operating_events(
+    od: OperatingDriversExtract | None, reference_date: date,
+) -> list[CatalystRow]:
+    """(source D) MANAGEMENT-STATED dated operating events mined from the already-extracted
+    driver verbatims — a price increase 'effective in September', a launch, a plant opening.
+    Month-granular dates render as YYYY-MM (never a fabricated day). Year resolution when
+    unstated: the NEXT occurrence of that month on/after the reference month (a stated month is
+    forward-looking by construction of the pattern). Past-resolved events are dropped — a
+    calendar lists what is ahead. No match → no row, silently (no event stated is a normal
+    state, unlike an unreadable DATE, which flags)."""
+    if od is None:
+        return []
+    rows: list[CatalystRow] = []
+    seen: set[tuple[str, str]] = set()
+    for r in od.rows:
+        text = r.verbatim or ""
+        for m in _CAL_FWD_EVENT.finditer(text):
+            if _CAL_BACKWARD.search(text[max(0, m.start() - 24):m.end()]):
+                continue  # "last September" — a backward reference, not a calendar event
+            month = _CAL_MONTHS[m.group(1).lower()]
+            if m.group(2):
+                year = int(m.group(2))
+            else:
+                year = reference_date.year + (1 if month < reference_date.month else 0)
+            stamp = f"{year:04d}-{month:02d}"
+            if stamp < reference_date.strftime("%Y-%m"):
+                continue  # resolved to the past — not a calendar row
+            # the event text: the CLAUSE carrying the match — from the last comma/semicolon
+            # before the match (a long sentence's lead-in is throat-clearing, and a blind
+            # 120-char cap was cutting the event itself) to the sentence end, condensed
+            lo = text.rfind(". ", 0, m.start())
+            lo = lo + 2 if lo != -1 else 0
+            hi = text.find(". ", m.end())
+            hi = hi if hi != -1 else len(text)
+            cl = max(text.rfind(",", lo, m.start()), text.rfind(";", lo, m.start()))
+            start = cl + 1 if cl != -1 else lo
+            clause = " ".join(text[start:hi].split()).lstrip(",; ")
+            event = clause if len(clause) <= 120 else clause[:117].rstrip() + "…"
+            key = (stamp, clause[:60].lower())
+            if key in seen:
+                continue
+            seen.add(key)
+            rows.append(CatalystRow(
+                event=event, expected_date=stamp, date_basis="stated",
+                tests_what="a management-stated dated operating action — the thesis mechanism "
+                           "on a timetable; the following print reads its result",
+                source_ref=r.source_ref))
+    return rows
+
+
 def _catalyst_calendar(
     edgar: EdgarClient, cik: str, reference_date: date, mech: MechanicalLayer,
 ) -> CatalystCalendar:
@@ -1598,6 +1664,9 @@ def _catalyst_calendar(
                     expected_date=mat.isoformat(), date_basis="stated",
                     tests_what="refinance / repay / convert before the wall — the survival read",
                     source_ref="CIQ capital-structure panel (maturity_date)"))
+    # D — management-stated dated operating events from the driver verbatims (source D,
+    # ratified 2026-07-24; surfaced by SMPL's September price increase)
+    rows.extend(_dated_operating_events(mech.operating_drivers, reference_date))
     rows.sort(key=lambda r: r.expected_date)
     return CatalystCalendar(rows=rows, qa_flags=qa)
 

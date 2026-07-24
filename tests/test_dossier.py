@@ -8983,8 +8983,12 @@ def test_catalyst_calendar_render_placement_b_and_crux_line() -> None:
     assert "no probabilities, no weighting, no direction" in sec     # the constitution footer
     glance = md.split("## At a glance")[1].split("\n## ")[0]
     assert "**Next catalyst:** Next results print ~2026-10-08" in glance  # earliest entry
-    # NEGATIVE: the raw committed artifact (no calendar field, no dated triggers)
-    md0 = dr.render_markdown(d, card=card)
+    # NEGATIVE: no calendar field AND no dated triggers → no phantom section, no crux line.
+    # Constructed (triggers stripped) — the LIVE record legitimately carries SMPL's first dated
+    # trigger since 2026-07-24, so the raw card is no longer a valid no-trigger fixture.
+    bare = card.model_copy(update={"verdict": card.verdict.model_copy(
+        update={"dated_triggers": []})})
+    md0 = dr.render_markdown(d, card=bare)
     assert "## Catalyst calendar" not in md0
     assert "Next catalyst:" not in md0
 
@@ -9029,3 +9033,47 @@ console.log(JSON.stringify({{
     got = json.loads(out.stdout)
     assert got == {"after_argument": True, "row": True, "trigger": True,
                    "crux": True, "constitution": True}
+
+
+def test_dated_operating_events_source_d_real_sentence_and_negatives() -> None:
+    """(source D, ratified 2026-07-24 — surfaced by SMPL's September price increase) The REAL Q3
+    transcript sentence yields a month-granular STATED row (2026-09; the event text is the CLAUSE
+    carrying the action, not the sentence's lead-in); past-tense and backward references and
+    month-free text yield NOTHING; an unstated year resolves to the NEXT occurrence of the month
+    (March @ a July reference → next year); an explicit year is honored; duplicate mentions dedup
+    to one row. Frozen real-text fixture — value-level pins are safe here."""
+    smpl = ("Given the significant cost inflation we are experiencing this fiscal year and "
+            "believe will continue into the next year, we recently announced a high "
+            "single-digit price increase across most of our portfolio that will become "
+            "effective in September.")
+
+    def od(*verbatims: str) -> ds.OperatingDriversExtract:
+        return ds.OperatingDriversExtract(rows=[
+            ds.OperatingDriver(kind=ds.DriverKind.PRICING_ACTION, metric="m", value="v",
+                               verbatim=v, source_ref="CIQ transcript: t.rtf",
+                               tier="llm-fenced") for v in verbatims])
+
+    ref = date(2026, 7, 24)
+    rows = dm._dated_operating_events(od(smpl), ref)
+    assert len(rows) == 1
+    r = rows[0]
+    assert r.expected_date == "2026-09" and r.date_basis == "stated"
+    assert "high single-digit price increase" in r.event      # the clause, not the lead-in
+    assert r.source_ref == "CIQ transcript: t.rtf"
+    # negatives — no row, ever, on a backward or dateless statement
+    assert dm._dated_operating_events(
+        od("We completed the rollout in September and results were strong."), ref) == []
+    assert dm._dated_operating_events(
+        od("Elasticities from the increase effective last September remain in line."), ref) == []
+    assert dm._dated_operating_events(
+        od("We will raise prices to offset inflation."), ref) == []
+    # year resolution: rollover + explicit + dedup
+    assert [x.expected_date for x in dm._dated_operating_events(
+        od("The new plant begins production in March."), ref)] == ["2027-03"]
+    assert [x.expected_date for x in dm._dated_operating_events(
+        od("The line launches in January 2028 as planned."), ref)] == ["2028-01"]
+    assert len(dm._dated_operating_events(od(smpl, smpl), ref)) == 1  # dedup
+
+    # month rows SORT correctly among day rows (lexicographic: YYYY-MM before its month's days)
+    assert sorted(["2026-10-08", "2026-09", "2027-01-31"]) == ["2026-09", "2026-10-08",
+                                                              "2027-01-31"]
