@@ -449,7 +449,7 @@ const _TIERKW = [
 // negative" (words may sit between, e.g. "EBITDA of NEGATIVE $5.5M"), a solvency/cash line "… turned
 // negative", or "cash-negative". Checked BEFORE the keyword map. Bare "turned negative" was removed
 // from the keywords (R1 audit) so a subject-less "guidance turned negative" no longer false-hits T1.
-const _TIER_RE = /\b(?:adjusted\s+)?ebitda\b(?:\s+\w+){0,3}\s+negative\b|\badjusted\s+ebitda\b.{0,40}?(?:-\s*\$|\(|negative)|\b(?:cash[\s-]*flow|fcf|free\s+cash\s+flow|operating\s+(?:income|cash\s*flow)|ocf)\b(?:\s+\w+){0,3}\s+turned\s+negative\b|\bcash-negative\b/i;  /* (K6) mirrors render._TIER_REGEX[0] */
+const _TIER_RE = /\b(?:adjusted\s+)?ebitda\b(?:\s+\w+){0,3}\s+negative\b|\badjusted\s+ebitda\b.{0,40}?(?:-\s*\$|\(\s*\$|\$\s*\(|negative)|\b(?:cash[\s-]*flow|fcf|free\s+cash\s+flow|operating\s+(?:income|cash\s*flow)|ocf)\b(?:\s+\w+){0,3}\s+turned\s+negative\b|\bcash-negative\b/i;  /* (K6, narrowed) mirrors render._TIER_REGEX[0] */
 const _CONCESSION = /\b(?:though|although|but|however|offset by|posing whether|the human must weigh)\b/i;
 function _pointTier(claim) {
   const m = (claim || "").match(_CONCESSION);
@@ -464,9 +464,31 @@ function _citRank(p) {
   if (p.cited === false || s.includes("llm-suggested") || s.includes("unverified")) return 2;
   return s.includes("transcript") ? 1 : 0;
 }
-function orderPoints(pts) {  // stable sort by (tier, citation-class, emission index)
-  return (pts || []).map((p, i) => ({ p, t: _pointTier(p.claim), c: _citRank(p), i }))
-    .sort((a, b) => a.t - b.t || a.c - b.c || a.i - b.i).map((x) => x.p);
+// (D3 hybrid, mirrors render.py _ordered_points — the twin must not drift) side-aware tier rank:
+// bear keeps solvency-first (a survival fact is never demoted below a narrative point); bull leads
+// with the mean-revert mechanism and demotes the balance sheet to the enabler slot.
+const _BULL_RANK = { 2: 0, 3: 1, 1: 2, 4: 3, 4.5: 4, 5: 5 };
+const _BEAR_RANK = { 1: 0, 2: 1, 3: 2, 4: 3, 4.5: 4, 5: 5 };
+function decisiveRefs(s, side) {  // same-side decisive-question evidence refs (rule-2 verbatim)
+  const dq = (s || {}).decisive_question || {};
+  const ev = side === "bull" ? dq.evidence_for : dq.evidence_against;
+  return new Set((ev || []).map((p) => p.source_ref));
+}
+function driverRefs(m) {  // operating-driver rows' refs → mechanism-bearing tiebreak
+  return new Set((((m || {}).operating_drivers || {}).rows || [])
+    .map((r) => r.source_ref).filter(Boolean));
+}
+function orderPoints(pts, side, cruxRefs, drvRefs) {
+  // stable hybrid sort — bull: (crux, side-rank, mech, citation, emission);
+  // bear: (side-rank, crux, mech, citation, emission). Twin of render.py `_ordered_points`.
+  const rank = side === "bull" ? _BULL_RANK : _BEAR_RANK;
+  const cx = cruxRefs || new Set(), dv = drvRefs || new Set();
+  return (pts || []).map((p, i) => ({
+    p, i, t: rank[_pointTier(p.claim)], c: _citRank(p),
+    x: cx.has(p.source_ref) ? 0 : 1, m: dv.has(p.source_ref) ? 0 : 1,
+  })).sort((a, b) => (side === "bull"
+    ? a.x - b.x || a.t - b.t || a.m - b.m || a.c - b.c || a.i - b.i
+    : a.t - b.t || a.x - b.x || a.m - b.m || a.c - b.c || a.i - b.i)).map((x) => x.p);
 }
 
 // (D2) merge 'Margin trend' + 'Multi-year trajectory' into ONE table (reuse parseSeries). Rows keyed
@@ -563,7 +585,7 @@ function analysisTier(d, m) {
     + catalystPath(m.catalyst_path, m.consensus_context, m.drawdown_cause)  // the street
     + (m.catalyst_path ? "" : consensus(m.consensus_context))  // legacy fallback only for old JSON
     + concentration(m.concentration)
-    + synthesis(d.synthesis);                           // the argument — stays the capstone
+    + synthesis(d.synthesis, m);                        // the argument — stays the capstone
 }
 
 // assembly telemetry ("primary-source: N EX-99.1 release(s) + 1 10-Q parsed (+0.3s fetch)") is a
@@ -712,7 +734,7 @@ function briefVerdictChip(verdict) {
 function briefTier(d, verdict, m, card, mark) {
   const parts = openerCard(d, verdict, m, card, mark)
     + underwriteDetail(d, verdict, m, card, mark)
-    + whatHappened(m) + briefCase(d.synthesis)
+    + whatHappened(m) + briefCase(d.synthesis, m)
     + financialSnapshot(m) + valuationCard(m);
   return parts.trim() ? parts : "";
 }
@@ -992,13 +1014,14 @@ function briefSnapshot(d, m) {
 // a card), then top-3 bull / top-3 bear (evidence-weighted, same order as Analysis) + top-3 key
 // unknowns. Labels state the claim, not the house shorthand: "the decline is overdone" /
 // "the decline is real" (was "overshoot" / "terminal"). Full argument lives in Analysis.
-function briefCase(s) {
+function briefCase(s, m) {
   if (!s || (!(s.bull_points || []).length && !(s.bear_points || []).length)) return "";
   // (buy-side cover) the decisive question + key unknowns moved to the opener's CRUX block — this
   // card carries the condensed bull/bear alone, so the question renders once per tier.
   const pt = (p, cls) => `<div class="point ${cls}">${escapeHtml(p.claim)}${citeMark(p.source_ref)}</div>`;
-  const bulls = orderPoints(s.bull_points).slice(0, 3).map((p) => pt(p, "bull")).join("") || `<div class="muted">—</div>`;
-  const bears = orderPoints(s.bear_points).slice(0, 3).map((p) => pt(p, "bear")).join("") || `<div class="muted">—</div>`;
+  const dv = driverRefs(m);
+  const bulls = orderPoints(s.bull_points, "bull", decisiveRefs(s, "bull"), dv).slice(0, 3).map((p) => pt(p, "bull")).join("") || `<div class="muted">—</div>`;
+  const bears = orderPoints(s.bear_points, "bear", decisiveRefs(s, "bear"), dv).slice(0, 3).map((p) => pt(p, "bear")).join("") || `<div class="muted">—</div>`;
   return `<div class="card ds-section"><div class="ds-title">The case<span class="ds-route">full argument in Analysis</span></div>
     <div class="brief-case">
       <div><div class="ds-title" style="font-size:12px; color:var(--pos-text);">Bull case — the decline is overdone</div>${bulls}</div>
@@ -2948,7 +2971,7 @@ function consensus(cc) {
     seriesTable("Surprise history", cc.surprise_history));
 }
 
-function synthesis(s) {
+function synthesis(s, m) {
   // one lead line, not a boxed lecture — the full reading guide lives in the Appendix's
   // "How to read this dossier". The fence's substance (no recommendation anywhere, by design;
   // cited is not verified) is stated once there.
@@ -2974,12 +2997,13 @@ function synthesis(s) {
     <div class="point"><b>${escapeHtml(t.name || "")}</b> — ${escapeHtml(twinOutcome(t))}
       <div class="muted" style="font-size:12px; margin-top:3px;">distinguished by: ${escapeHtml(t.distinguishing_fact || "")}</div>
       <div class="muted" style="font-size:12px; margin-top:3px;">source: ${escapeHtml(t.source || "")}</div></div>`).join("");
+  const dv = driverRefs(m);
   return `<div class="card ds-section"><div class="ds-title">The argument</div>${fence}
     ${s.evidence_balance ? `<div style="margin:6px 0 10px; font-size:13.5px; line-height:1.5;">${machineReadHtml(s.evidence_balance)}</div>` : ""}
     <div class="ds-title" style="font-size:12px; margin-top:6px;">Bull case — the decline is overdone</div>
-    ${orderPoints(s.bull_points).map((p) => point(p, "bull")).join("") || `<div class="muted">—</div>`}
+    ${orderPoints(s.bull_points, "bull", decisiveRefs(s, "bull"), dv).map((p) => point(p, "bull")).join("") || `<div class="muted">—</div>`}
     <div class="ds-title" style="font-size:12px; margin-top:14px;">Bear case — the decline is real</div>
-    ${orderPoints(s.bear_points).map((p) => point(p, "bear")).join("") || `<div class="muted">—</div>`}
+    ${orderPoints(s.bear_points, "bear", decisiveRefs(s, "bear"), dv).map((p) => point(p, "bear")).join("") || `<div class="muted">—</div>`}
     <div class="ds-title" style="font-size:12px; margin-top:14px;">The decisive question</div>
     <div style="font-size:13.5px; font-weight:600; margin:4px 0 8px;">${escapeHtml(dq.question || DASH)}</div>
     <div class="muted" style="font-size:11px; text-transform:uppercase; letter-spacing:0.04em;">Evidence for</div>

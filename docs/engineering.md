@@ -78,7 +78,10 @@ existence-check rule); this only bridges vocabulary. Coined a new term? Add its 
 PR (CLAUDE.md: coin-time translation).
 
 - **D1/D2/D3** — dossier-restructure build tags; **D3 = deterministic render-side ORDERING of
-  bull/bear points** (facts-first tier sort; never an LLM/schema field) — `render.py` `_ordered_points`.
+  bull/bear points** — `render.py` `_ordered_points`; never an LLM/schema field. HYBRID since
+  2026-07-24: the bull case leads with crux-linked mechanism points (balance sheet demoted to the
+  enabler slot); the bear case stays survival-first (a T1 fact is never demoted below a narrative
+  point); mechanism-bearing refs break ties.
 - **twin (renderers)** — the py↔md and js↔web render PAIR that must not drift
   (`vinci/dossier/render.py` ↔ `frontend/views/shared/dossier.js`); "twin pins" = tests on both.
 - **twin (reference cases)** — UNRELATED same word: synthesis's named analogue companies

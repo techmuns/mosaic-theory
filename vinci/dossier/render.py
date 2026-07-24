@@ -1715,8 +1715,11 @@ _TIER_REGEX: tuple[tuple[float, re.Pattern[str]], ...] = (
     (1.0, re.compile(
         # (adjusted) EBITDA ... negative — interposition-tolerant primary case (pins the R1 test)
         r"\b(?:adjusted\s+)?ebitda\b(?:\s+\w+){0,3}\s+negative\b"
-        # (K6, FINAL widening) adjusted EBITDA within ~40 chars of a negative marker (-$/(/negative)
-        r"|\badjusted\s+ebitda\b.{0,40}?(?:-\s*\$|\(|negative)"
+        # (K6 widening, NARROWED by the hybrid audit) adjusted EBITDA within ~40 chars of a negative
+        # marker — a bare "(" fired on ANY parenthetical (SMPL: "adjusted EBITDA -18.4% …
+        # (-460bps)" → an accidental Tier-1 on a decline point), so "(" now counts only when it
+        # opens an accounting-$ amount ("($5.5)"); "-$" and the word "negative" unchanged.
+        r"|\badjusted\s+ebitda\b.{0,40}?(?:-\s*\$|\(\s*\$|\$\s*\(|negative)"
         # "... turned negative" ONLY when the SUBJECT is a solvency/cash line (EBITDA above already
         # covers "EBITDA turned negative"); a subject-less "competitor guidance turned negative" no
         # longer false-matches tier-1. (R1 audit fix.)
@@ -1745,16 +1748,63 @@ def _citation_rank(source_ref: str, cited: bool) -> int:
     return 1 if "transcript" in s else 0  # transcript-cited vs structured-fact-cited
 
 
-def _ordered_points(pts: list[Any]) -> list[tuple[Any, float, int]]:
-    """(D3) Sort by (tier, citation-class, original emission index) — a STABLE sort, so ties keep
-    emission order and the render is deterministic. Ordering is WITHIN a case only (nothing nets
-    across bull vs bear). Returns (point, tier, citation_rank) so the dev view can show the tier."""
-    keyed = [
-        (p, _point_tier(p.claim), _citation_rank(p.source_ref, getattr(p, "cited", True)), i)
-        for i, p in enumerate(pts)
-    ]
-    keyed.sort(key=lambda t: (t[1], t[2], t[3]))
-    return [(p, tier, cr) for p, tier, cr, _ in keyed]
+# (D3 hybrid, ratified 2026-07-24 on the 119-draw archive) SIDE-AWARE tier rank: the bear case
+# keeps solvency-first (death-risk first — a survival fact is NEVER demoted below a narrative
+# point); the bull case leads with the mean-revert MECHANISM (revenue → margin) and demotes the
+# balance sheet to the ENABLER slot (it is why you can wait, not why you are right). Face-validity
+# editorial convention, never outcome-tuned. Valuation stays last on both sides.
+_BULL_TIER_RANK: dict[float, int] = {2.0: 0, 3.0: 1, 1.0: 2, 4.0: 3, 4.5: 4, 5.0: 5}
+_BEAR_TIER_RANK: dict[float, int] = {1.0: 0, 2.0: 1, 3.0: 2, 4.0: 3, 4.5: 4, 5.0: 5}
+
+
+def _decisive_refs(s: Any, side: str) -> frozenset[str]:
+    """The SAME-SIDE decisive-question evidence refs (bull ↔ evidence_for, bear ↔
+    evidence_against). Rule 2 makes synthesis copy source_refs verbatim from the supplied facts, so
+    exact-ref overlap is a sound, deterministic crux-linkage signal (mean ~31% of a list's points
+    across the 119-draw archive; 0-overlap lists degrade gracefully to the tier order)."""
+    dq = getattr(s, "decisive_question", None)
+    if dq is None:
+        return frozenset()
+    ev = dq.evidence_for if side == "bull" else dq.evidence_against
+    return frozenset(p.source_ref for p in (ev or []))
+
+
+def _driver_refs_of(mech: Any) -> frozenset[str]:
+    """Refs of the operating-driver rows — a point citing one is MECHANISM-BEARING (synthesis rule
+    12's preference, enforced as a within-tier tiebreak, not just inclusion)."""
+    od = getattr(mech, "operating_drivers", None)
+    if od is None:
+        return frozenset()
+    return frozenset(r.source_ref for r in (od.rows or []) if r.source_ref)
+
+
+def _ordered_points(
+    pts: list[Any], *, side: str,
+    crux_refs: frozenset[str] = frozenset(), driver_refs: frozenset[str] = frozenset(),
+) -> list[tuple[Any, float, int, bool, bool]]:
+    """(D3 hybrid) Deterministic ordering of one case's points — plain English: the bull case
+    leads with the points that ground the DECISIVE QUESTION, the bear case leads with SURVIVAL.
+
+    Sort keys (STABLE sort — ties keep emission order, the render is deterministic):
+      bull: (crux-linked first, side-aware tier rank, mechanism-bearing, citation-class, emission)
+      bear: (side-aware tier rank, crux-linked, mechanism-bearing, citation-class, emission)
+    The asymmetry is the ratified hybrid: on the bull side the crux IS the thesis, so it dominates;
+    on the bear side the tier dominates so a T1 survival fact can never be demoted below a
+    narrative crux point (0 demotions across the 119-draw archive; crux-dominant ordering demoted
+    one in ~5 draws). Ordering is WITHIN a case only (nothing nets across bull vs bear).
+    Returns (point, tier, citation_rank, crux_linked, mechanism_bearing) for the dev view."""
+    rank = _BULL_TIER_RANK if side == "bull" else _BEAR_TIER_RANK
+    keyed = []
+    for i, p in enumerate(pts):
+        tier = _point_tier(p.claim)
+        cr = _citation_rank(p.source_ref, getattr(p, "cited", True))
+        crux = 0 if p.source_ref in crux_refs else 1
+        mech_b = 0 if p.source_ref in driver_refs else 1
+        key = ((crux, rank[tier], mech_b, cr, i) if side == "bull"
+               else (rank[tier], crux, mech_b, cr, i))
+        keyed.append((key, p, tier, cr, crux == 0, mech_b == 0))
+    keyed.sort(key=lambda t: t[0])
+    return [(p, tier, cr, cx, mb) for _, p, tier, cr, cx, mb in keyed]
 
 
 def _twin_outcome(t: Any) -> str:
@@ -1780,10 +1830,16 @@ def _synthesis_lines(d: Dossier, *, dev: bool) -> list[str]:
         warn = "" if getattr(p, "cited", True) else " ⚠ uncited"
         return f"- {p.claim}{tag}{warn}{_cite(p.source_ref)}"
 
-    def ordered(title: str, pts: list[Any]) -> None:  # D3 — deterministic tier order
+    driver_refs = _driver_refs_of(d.mechanical)
+
+    def ordered(title: str, pts: list[Any], side: str) -> None:  # D3 hybrid order
         out.append(f"### {title}")
-        for p, tier, cr in _ordered_points(pts):
-            tag = f" `[T{tier:g} {_TIER_NAME[tier]} · {_CITATION_CLASS[cr]}]`" if dev else ""
+        for p, tier, cr, cx, mb in _ordered_points(
+                pts, side=side, crux_refs=_decisive_refs(s, side), driver_refs=driver_refs):
+            marks = ("" if not dev else
+                     (" · crux" if cx else "") + (" · mech" if mb else ""))
+            tag = (f" `[T{tier:g} {_TIER_NAME[tier]} · {_CITATION_CLASS[cr]}{marks}]`"
+                   if dev else "")
             out.append(cite(p, tag))
         out.append("")
 
@@ -1792,8 +1848,8 @@ def _synthesis_lines(d: Dossier, *, dev: bool) -> list[str]:
         out.extend(cite(p) for p in pts)
         out.append("")
 
-    ordered("Bull case — the decline is overdone", s.bull_points)
-    ordered("Bear case — the decline is real", s.bear_points)
+    ordered("Bull case — the decline is overdone", s.bull_points, "bull")
+    ordered("Bear case — the decline is real", s.bear_points, "bear")
     out += ["### Decisive question", f"**{s.decisive_question.question}**", ""]
     plain("…evidence for", s.decisive_question.evidence_for)
     plain("…evidence against", s.decisive_question.evidence_against)
@@ -1855,22 +1911,24 @@ def _brief_verify_first(caveats: list[str], limit: int = 2) -> list[str]:
     return out
 
 
-def _brief_case_lines(s: Any) -> list[str]:
-    """THE CASE, condensed — top-3 bull / top-3 bear (same evidence-weighted order as Analysis).
-    The decisive question + unknowns live in the cover's crux block; the FULL synthesis stays in
-    the Analysis tier; source-bound here too."""
+def _brief_case_lines(s: Any, mech: Any) -> list[str]:
+    """THE CASE, condensed — top-3 bull / top-3 bear (same evidence-weighted hybrid order as
+    Analysis, so the Brief's three ARE the lead of the full argument). The decisive question +
+    unknowns live in the cover's crux block; the FULL synthesis stays in the Analysis tier."""
     if s is None or (not s.bull_points and not s.bear_points):
         return []
     # (tier redesign) no inner "The case" line — the section header carries it; leg labels state
     # the claim, not the house shorthand.
     out: list[str] = ["_(top points; the full argument is in Analysis)_", ""]
+    driver_refs = _driver_refs_of(mech)
 
-    def top3(pts: list[Any]) -> list[str]:
-        top = [p for p, _tier, _cr in _ordered_points(pts)][:3]
-        return [f"- {p.claim}{_cite(p.source_ref)}" for p in top]
+    def top3(pts: list[Any], side: str) -> list[str]:
+        ordered = _ordered_points(pts, side=side, crux_refs=_decisive_refs(s, side),
+                                  driver_refs=driver_refs)
+        return [f"- {p.claim}{_cite(p.source_ref)}" for p, *_ in ordered[:3]]
 
-    out += ["_Bull case — the decline is overdone:_", *(top3(s.bull_points) or ["- —"])]
-    out += ["_Bear case — the decline is real:_", *(top3(s.bear_points) or ["- —"])]
+    out += ["_Bull case — the decline is overdone:_", *(top3(s.bull_points, "bull") or ["- —"])]
+    out += ["_Bear case — the decline is real:_", *(top3(s.bear_points, "bear") or ["- —"])]
     # (buy-side cover) key unknowns moved to the cover's crux block — no second copy here
     out.append("")
     return out
@@ -2206,7 +2264,7 @@ def _brief_lines(d: Dossier, *, show_proposal: bool = False,
     # 4 — THE CASE: the condensed bull/bear alone — the decisive question + unknowns moved to the
     # cover's CRUX block (buy-side cover), so the question renders once per tier.
     out.append("## The case")
-    out += _brief_case_lines(s)
+    out += _brief_case_lines(s, d.mechanical)
     # 5 — FINANCIAL SNAPSHOT: the compact table. The per-period return-ratios table moved to the
     # Analysis trajectory section (the web keeps its exhibit here; markdown has no chart).
     out.append("## Financial snapshot")
