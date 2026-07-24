@@ -9154,3 +9154,15 @@ def test_panel_freshness_on_the_real_smpl_panels_before_and_after_the_print() ->
     stale = ie.model_copy(update={"multiples_as_of": "2026-06-03", "tev_as_of": "2026-06-25"})
     flag = dm._panel_freshness_flag(stale, print_date)               # rewound → fires
     assert flag is not None and "2026-06-03" in flag and "2026-07-09" in flag
+
+
+def test_panel_freshness_caveat_reaches_the_human_surface_not_qa() -> None:
+    """DELIVERY half (the claim-#7 lesson: a guard the human never sees is useless — a caveat
+    that assemble_mechanical emits must land in the human CAVEATS surface, not be swallowed as
+    machine qa-telemetry). The freshness caveat carries no QA marker, so ``dossier_flags.partition``
+    (the same audience-split assemble.py runs over every emitted flag) routes it to caveats. Pins
+    the wiring's delivery leg without standing up the whole assembler."""
+    caveat = dm._panel_freshness_flag(_ie("2026-06-03", "2026-06-25"), date(2026, 7, 9))
+    assert caveat is not None
+    caveats, qa = dflags.partition([caveat])
+    assert caveat in caveats and caveat not in qa
