@@ -32,13 +32,28 @@ def _open_buy(rows: list[dict]) -> dict:
     """A BUY decision row that is NOT already closed — the synthetic-close pins need a free one.
 
     IT occupied this role until it was closed for real on 2026-07-21; hard-coding "the first BUY"
-    silently started re-closing an already-closed position. Selected by state, not by name."""
+    silently started re-closing an already-closed position. Selected by state, not by name.
+
+    Since 2026-07-24 (the SMPL input-staleness close) the committed book can legitimately hold
+    ZERO open BUYs — the pins guard close MECHANICS, which must stay provable on any book, so a
+    SYNTHETIC open BUY decision row (built through the model) is APPENDED to ``rows`` and
+    returned. The mutation is deliberate: every pin needs the decision row present in the same
+    row set its close is appended to (the double-count demonstration counts both)."""
     closed = {mon.entry_of(c).get("closes_entry_id") for c in mon.close_rows(rows)}
     for r in mon.decision_rows(rows):
         e = mon.entry_of(r)
         if e["verdict"].upper().startswith("BUY") and e["entry_id"] not in closed:
             return e
-    raise AssertionError("no un-closed BUY row in the committed ledger")
+    syn = LedgerEntry(
+        entry_id="V-SYN-openbuy", candidate_id="SYN-openbuy",
+        internal_id="SEC-0000000000-SYN", ticker="SYN", verdict="BUY",
+        twin_call="synthetic open BUY — the committed book holds no open BUY",
+        entry_price=100.0, entry_price_as_of=date(2026, 7, 1), thesis="synthetic",
+        kill_criteria="n/a", horizon_days=180, confidence="medium",
+        decided_at=datetime(2026, 7, 1, 12, 0, 0))
+    e = json.loads(syn.model_dump_json())
+    rows.append(e)
+    return e
 
 
 def _close_for(row: dict, exit_price: float = 100.0) -> dict:
@@ -93,7 +108,9 @@ def test_a2_the_spread_itself_is_unmoved_by_a_close() -> None:
 def test_b_a_close_must_reference_an_existing_entry() -> None:
     """PIN (b). A close pointing at nothing is a hole in the realized book — refuse, never skip."""
     rows = _committed()
-    orphan = _close_for(rows[0])
+    # a DECISION row seed — rows[0] stopped being one when the exporter's PK order put a close
+    # row first (C- sorts before V-); a close-row seed self-collides at construction instead
+    orphan = _close_for(mon.entry_of(mon.decision_rows(rows)[0]))
     orphan["closes_entry_id"] = "V-does-not-exist"
     with pytest.raises(ValueError, match="not a decision row"):
         mon.pair_closes([*rows, orphan])
@@ -201,13 +218,17 @@ def test_confirmed_may_transition_to_watch_while_the_seal_still_binds() -> None:
     from vinci import scenarios as sc
     from vinci import seal
 
-    # IT held this role until its own exit moved it to watch. Pick whichever record is still
-    # confirmed — the pin is about the TRANSITION, not about any particular name.
+    # IT held this role until its own exit moved it to watch, then SMPL until its own
+    # input-staleness close (2026-07-24) left NO committed record at "confirmed". The pin is
+    # about the TRANSITION, not any particular name — so it runs on a COPY of any SEALED record,
+    # restored to "confirmed" in memory first (a living record's disposition is not a fixture).
     src = next(p for p in sorted((ROOT / "scenarios").glob("[A-Z]*.json"))
-               if _json.loads(p.read_text())["verdict"]["status"] == "confirmed")
+               if seal.is_sealed(_json.loads(p.read_text())["verdict"]["status"]))
     rec = _json.loads(src.read_text())
     ticker = rec["ticker"]
 
+    rec["verdict"]["status"] = "confirmed"
+    sc.ScenarioRecord.model_validate(rec)                 # the pre-transition state is valid
     rec["verdict"]["status"] = "watch"
     moved = sc.ScenarioRecord.model_validate(rec)         # validators RUN — transition allowed
     assert moved.verdict.status == "watch"

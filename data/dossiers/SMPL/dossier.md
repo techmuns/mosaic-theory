@@ -7,10 +7,10 @@ _July 23, 2026_
 ## At a glance
 **Target (base)** $26.90 (+146.4% vs spot) · **Spot** $10.92 (underwritten 2026-07-21) · **Reward** $15.98 · **Risk** $3.97 · **Reward : risk** 4.03 : 1 (bar 2 : 1)
 
-**Underwrite disposition:** CONFIRMED (2026-07-21) · entry $10.92 — _the BUY/AVOID verdict of record is the ledger's_
+**Underwrite disposition:** WATCH (2026-07-21) · entry $10.92 — _the BUY/AVOID verdict of record is the ledger's_
 
 ### Thesis — our rationale
-BUY at $10.92, 4.0:1 against the 2:1 bar. The market sold a consensus beat with reinstated guidance down to the lowest multiple in the company's own history — pricing GLP-1 drugs as a permanent decline of the whole snacking category. Our judgment is the sell-off has overshot: margins never broke (ex the Atkins write-down, last year sat at the seven-year median), our base revenue sits below management's own new guidance, and a ~12% free-cash-flow yield with active buybacks pays us while the question resolves. The accepted risk: Quest, the growth engine, just printed +1% — unproven. The trade fails only if revenue, margin, and multiple all break below their historical worsts together; Quest stalling two more quarters forces a re-underwrite.
+BUY at $10.92, 4.0:1 against the 2:1 bar. The market sold a consensus beat with reinstated guidance down to the lowest multiple in the company's own history — pricing GLP-1 drugs as a permanent decline of the whole snacking category. Our judgment is the sell-off has overshot: margins never broke (ex the Atkins write-down, last year sat at the seven-year median), our base revenue sits below management's own new guidance, and a ~12% free-cash-flow yield with active buybacks pays us while the question resolves. The accepted risk: Quest, the growth engine, just printed +1% — unproven. The trade fails only if revenue, margin, and multiple all break below their historical worsts together; Quest stalling two more quarters forces a re-underwrite. [amended 2026-07-24: the inputs behind this verdict were stale — every financial and valuation panel predated the quarterly report filed 2026-07-09, so the scenario arithmetic and the confirmation read the prior quarter's numbers. Verdict withdrawn and the paper position closed at 10.53 (2026-07-22) as a process correction, not a view on the stock; the record moves to watch pending a fresh underwrite on current data. The September price-increase trigger stands — it came from the earnings call, not the stale panels.]
 
 > ⚠ **Verify before the verdict:** EDGAR P/E 10.9x and CIQ P/LTM EPS 16.0x rest on normalized/adjusted earnings; Net debt/EBITDA (1.5x) is on REPORTED EBITDA (CIQ / consolidated GAAP), not the covenant basis — full caveats in Analysis.
 
@@ -22,6 +22,7 @@ The Simply Good Foods Company, a consumer-packaged food and beverage company, en
 **The crux — what decides this, and what would change our mind**
 **Is the collapse in EBITDA and margin a transitory input-cost/execution trough that the contracted cocoa relief, cost-reduction program and category growth reverse — or a structural loss of pricing power and volume across the whole portfolio (now including OWYN and Quest), making the low multiple an earned value trap?**
 _7 key unknowns + the evidence for/against — in Analysis_
+**Next catalyst:** Re-underwrite trigger: September portfolio-wide price increase fails to stick (elasticity / share loss) ~2027-01-07 `[trigger-deadline]` — calendar in Analysis
 
 ## Scenario analysis
 _Mid-cycle underwrite: normalized operating margin on a mid-cycle revenue base, valued at an exit EV/LTM-EBITDA multiple; reward/risk measured at SPOT._
@@ -348,6 +349,12 @@ _export date unverified (data ≥ 2026-06-03)_
   - distinguished by: A branded consumer-staples operator that used a conservative balance sheet and buybacks to bridge a demand air-pocket while the core categories re-accelerated.
   - source: [LLM-suggested, unverified]
 
+## Catalyst calendar — what tests the thesis, and when
+
+- **Re-underwrite trigger: September portfolio-wide price increase fails to stick (elasticity / share loss)** — ~2027-01-07 `[trigger-deadline]` — the analyst's own falsifier — unresolved by this date, the monitor flags re-underwrite due [47]
+
+_Dates assembled from sources or the analyst's own triggers; no probabilities, no weighting, no direction — weighing catalysts is the verdict's job._
+
 # Appendix — data & audit
 
 ## How to read this dossier
@@ -379,7 +386,7 @@ _export date unverified (data ≥ 2026-06-03)_
 _E = consensus (Estimates→Trends 'Current'), as-of ≥2026-06-03; (R) = Reclassified basis · FCF (levered, CIQ) = CIQ 'Levered Free Cash Flow', NOT CFO − capex_
 
 ### Quarterly — every exported quarter
-- **Quarterly financials** — [47]  <!-- ds-table -->
+- **Quarterly financials** — [48]  <!-- ds-table -->
 
 |  | FY16 | FY17 | FY17 | FY17 | FY17 | FY18 | FY18 | FY18 (R) | FY18 (R) | FY19 (R) | FY19 (R) | FY19 | FY19 | FY20 | FY20 | FY20 | FY20 | FY21 | FY21 | FY21 | FY21 | FY22 | FY22 | FY22 (R) | FY22 | FY23 | FY23 | FY23 | FY23 | FY24 | FY24 | FY24 | FY24 (R) | FY25 (R) | FY25 | FY25 | FY25 | FY26 | FY26 |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
@@ -393,8 +400,8 @@ _E = consensus (Estimates→Trends 'Current'), as-of ≥2026-06-03; (R) = Reclas
 _QoQ/YoY same-basis only; (R) = Reclassified_
 
 ### Balance-sheet posture
-- **Posture:** as of FY26 ($M): cash & ST inv 124; total debt 448; net debt 325; equity 1,418; net working capital 367; net-debt/EBITDA → see the Leverage & survival block (not recomputed) [48]
-- **Coherence — BS vs implied-valuation bridge:** CAVEAT — the two CIQ sources DISAGREE: cash BS $124M vs bridge $107M; debt BS $448M vs bridge $450M; verify which the verdict should use — neither is silently preferred. [49]
+- **Posture:** as of FY26 ($M): cash & ST inv 124; total debt 448; net debt 325; equity 1,418; net working capital 367; net-debt/EBITDA → see the Leverage & survival block (not recomputed) [49]
+- **Coherence — BS vs implied-valuation bridge:** CAVEAT — the two CIQ sources DISAGREE: cash BS $124M vs bridge $107M; debt BS $448M vs bridge $450M; verify which the verdict should use — neither is silently preferred. [50]
 
 
 ### Capital structure & debt terms — instruments · pointers · covenants
@@ -408,14 +415,14 @@ _QoQ/YoY same-basis only; (R) = Reclassified_
 
 - **8-Ks at instrument maturities:** _UNKNOWN_ — no trailing-12m instrument maturity to anchor an 8-K
 - **Covenant exhibit pointers:** _UNKNOWN_ — no CIK-scoped agreement exhibit located across the filing history
-- **Covenant terms (from the filed agreement):** COVENANT DIGEST — extraction failed: no covenant terms extracted from located exhibits (terms UNKNOWN, not pending). [50]
+- **Covenant terms (from the filed agreement):** COVENANT DIGEST — extraction failed: no covenant terms extracted from located exhibits (terms UNKNOWN, not pending). [51]
 
 ### Implied equity at peer multiples
 > **Comparability gate:** comparability: HETEROGENEOUS (see Peer comps gate)
 > _Reference only — the human judges earned vs residual (not a machine upside); the full Low/Mean/High and all bases are in the JSON._
-- **Name market cap ($M) — the ADJACENT fact to compare against:** 1142.9 [51]
-- **Bridge (TEV → equity):** TEV→equity bridge: + cash $107.40M, − total debt $449.80M [52]
-- **Implied equity at peer-median ($M, CIQ)** — [53]  <!-- ds-table -->
+- **Name market cap ($M) — the ADJACENT fact to compare against:** 1142.9 [52]
+- **Bridge (TEV → equity):** TEV→equity bridge: + cash $107.40M, − total debt $449.80M [53]
+- **Implied equity at peer-median ($M, CIQ)** — [54]  <!-- ds-table -->
 
 |  | Implied equity (median) |
 |---|---:|
@@ -425,11 +432,11 @@ _QoQ/YoY same-basis only; (R) = Reclassified_
 
 
 ### Management commentary
-- **Earnings call (transcript pointer — read the file):** 2 earnings-call transcript(s) on file — read in full for management posture: The Simply Good Foods Company, Q1 2026 Earnings Call, Jan 08, 2026.rtf; The Simply Good Foods Company, Q2 2026 Earnings Call, Apr 09, 2026.rtf (pointer only; the synthesis cites them, the machine does not curate an excerpt) [54]
+- **Earnings call (transcript pointer — read the file):** 2 earnings-call transcript(s) on file — read in full for management posture: The Simply Good Foods Company, Q1 2026 Earnings Call, Jan 08, 2026.rtf; The Simply Good Foods Company, Q2 2026 Earnings Call, Apr 09, 2026.rtf (pointer only; the synthesis cites them, the machine does not curate an excerpt) [55]
 
 ### Assembly verification — filing vs panel
-- **Wall coherence — filing ≤12m vs CIQ panel (same window):** wall coherence: UNKNOWN — filing states no ≤12m figure [55]
-- **Guide verification — CIQ guide vs release:** revenue: CIQ 329.0–338.0 vs release NO NUMERIC OUTLOOK → not cross-checked [56]
+- **Wall coherence — filing ≤12m vs CIQ panel (same window):** wall coherence: UNKNOWN — filing states no ≤12m figure [56]
+- **Guide verification — CIQ guide vs release:** revenue: CIQ 329.0–338.0 vs release NO NUMERIC OUTLOOK → not cross-checked [57]
 
 ## Record & reproduce
 - **Data window:** screened as of 2026-07-06 · assembled 2026-07-23 19:17 UTC
@@ -488,13 +495,14 @@ _QoQ/YoY same-basis only; (R) = Reclassified_
 [44] `CIQ Customers&Suppliers The Simply Good Foods Company NasdaqCM SMPL Customers.rtf`
 [45] `CIQ Estimates→Trends (FY26/FY27 consensus EBITDA, latest snapshot)`
 [46] `CIQ Financials→Multiples 'TEV/LTM EBITDA' Close (latest) — current multiple`
-[47] `CIQ Financials→Income Statement (quarterly, full exported history)`
-[48] `CIQ Financials→Balance Sheet (quarterly, FY26)`
-[49] `CIQ Financials→Balance Sheet vs Comparable Analysis→Implied Valuation`
-[50] `fenced Tier-2 digest (P1)`
-[51] `CIQ Comparable Analysis→Financial Data (name Market Capitalization Latest) · as-of 2026-06-25`
-[52] `CIQ Comparable Analysis→Implied Valuation (cash/debt bridge) · as-of 2026-06-25`
-[53] `CIQ Comparable Analysis→Implied Valuation (= Implied Equity Value, basis × Low/Median/Mean/High) · as-of 2026-06-25`
-[54] `CIQ transcript(s): The Simply Good Foods Company, Q1 2026 Earnings Call, Jan 08, 2026.rtf; The Simply Good Foods Company, Q2 2026 Earnings Call, Apr 09, 2026.rtf`
-[55] `10-Q maturity wall vs CIQ capital panel (same window)`
-[56] `CIQ revenue guide vs release actual/outlook`
+[47] `underwrite record (analyst-typed (second print after the September action — the Q1-FY27 print reveals elasticity; operator-confirmed 2026-07-24))`
+[48] `CIQ Financials→Income Statement (quarterly, full exported history)`
+[49] `CIQ Financials→Balance Sheet (quarterly, FY26)`
+[50] `CIQ Financials→Balance Sheet vs Comparable Analysis→Implied Valuation`
+[51] `fenced Tier-2 digest (P1)`
+[52] `CIQ Comparable Analysis→Financial Data (name Market Capitalization Latest) · as-of 2026-06-25`
+[53] `CIQ Comparable Analysis→Implied Valuation (cash/debt bridge) · as-of 2026-06-25`
+[54] `CIQ Comparable Analysis→Implied Valuation (= Implied Equity Value, basis × Low/Median/Mean/High) · as-of 2026-06-25`
+[55] `CIQ transcript(s): The Simply Good Foods Company, Q1 2026 Earnings Call, Jan 08, 2026.rtf; The Simply Good Foods Company, Q2 2026 Earnings Call, Apr 09, 2026.rtf`
+[56] `10-Q maturity wall vs CIQ capital panel (same window)`
+[57] `CIQ revenue guide vs release actual/outlook`
