@@ -1986,6 +1986,32 @@ def test_p6_py_js_tier_classifier_parity() -> None:
         assert json.loads(out.stdout) == [dr._point_tier(c) for c in fx]  # zero divergence
 
 
+def test_smpl_pltm_basis_caveat_present_in_committed_artifact_e2e() -> None:
+    """(claim #7, TEST-LAYER artifact pin) The P/LTM basis incoherence was observed IN THE
+    COMMITTED ARTIFACT (SMPL printed P/LTM 16.0x + EDGAR P/E 10.9x beside LTM GAAP dil EPS −2.08
+    with no flag), so the rule owes an artifact-level pin — unit pins on the guard never prove the
+    pipeline DELIVERED the caveat into the committed record (a disconnected call site keeps every
+    unit test green while artifacts silently lose the warning).
+
+    Invariant, conditional on the SHAPE (never a value pin on the living artifact): IF the
+    committed SMPL dossier's STRUCTURED LTM GAAP diluted EPS is negative, its caveats MUST carry
+    the basis warning. A future re-assembly where SMPL's LTM turns positive passes legitimately
+    (the caveat rightly disappears with the shape). The matched fragment is a code-generated
+    TEMPLATE (mechanical.py, the (d) branch) — deterministic, never LLM prose, so the substring
+    cannot rot on a reword."""
+    p = Path("data/dossiers/SMPL/dossier.json")
+    if not p.exists():
+        pytest.skip("no committed SMPL dossier.json")
+    doss = ds.Dossier.model_validate_json(p.read_text())
+    ltm = dm._ltm_gaap_eps(doss.mechanical.financial_summary)
+    if ltm is None or ltm >= 0:
+        return  # the shape that bit is gone from the artifact — nothing to guard here
+    assert any("rest on normalized/adjusted earnings" in c for c in doss.caveats), (
+        f"SMPL LTM GAAP dil EPS {ltm} < 0 but the P/LTM basis caveat is ABSENT from the "
+        "committed artifact — the guard is disconnected from the pipeline (claim-#7 regression)"
+    )
+
+
 def test_p6_ordered_points_hybrid_invariants_and_recon_present_e2e() -> None:
     """(P6, relayered for the HYBRID — TEST-LAYER invariant-only) On the LIVING committed
     dossiers, assert the PHRASING-INDEPENDENT invariants the hybrid `_ordered_points` guards —

@@ -4074,6 +4074,47 @@ re-anchor (the full STATE split stays its own queued task — nothing was reloca
     Same class as `_latest_dep_amort`'s vintage trap — a tag-name heuristic standing in for
     reading the statement.
 
+**QUEUED BUILD → BUILT 2026-07-24 — CATALYST CALENDAR (brief drafted 2026-07-24; RATIFIED 2026-07-24 by the operator
+WITH PLACEMENT B — see amended (d); mockups: standalone + in-situ on the live SMPL page, both
+reviewed).** Origin: the operator's SMPL ten-claim audit,
+claim #10 — catalysts exist only as scattered prose (cost-outs, Q4 margin inflection, the
+two-quarter Quest test) with no dated surface and nothing watching the clock. Existing machinery
+(verified, not recalled): `catalyst_path` is the STREET's estimates/guidance view, not an event
+calendar; the underwrite record already carries `reunderwrite_triggers: list[str]` (undated
+free-text). THE BRIEF:
+(a) **Schema** — `CatalystCalendar` on the mechanical layer: rows `{event, expected_date,
+date_basis: "stated"|"cadence-estimate", tests_what, source_ref}`; every date source-bound or the
+row is UNKNOWN (fail-loud; never a guessed date). VERIFY-AT-BUILD: the filer's actual print
+cadence from its own filing history.
+(b) **Assembly (all ANCHORED/deterministic; no LLM phase)** — A: next expected print from the
+filer's historical 8-K/10-Q cadence, labeled `cadence-estimate` (the EPAM ~2026-08-07 precedent);
+B: guidance checkpoints — the committed FY guide (revised_guidance / guide fields) paired with the
+print that will test it; C: dated forward events already extracted from 8-K bodies (`events`,
+maturity dates). Supplying layers named per row.
+(c) **Triggers gain deadlines** — OPTIONAL `deadline` on `reunderwrite_triggers` entries (schema
+bump, additive-only; `verdict.rationale` untouched → SEAL-SAFE; legacy records round-trip).
+The analyst dates their own falsifiers ("Quest stalls two more quarters" → ≈ the second print
+out); the machine NEVER invents a trigger or a date.
+(d) **Render — PLACEMENT B (amended at ratification, 2026-07-24)** — the dated rows table is the
+CLOSING card of the Analysis tier: AFTER the synthesis/argument, BEFORE Sources (both twins) — the
+buy-side memo close: the argument poses the crux, the calendar says when reality votes on it,
+hand-off to the monitor. NOT on/after the street card (the original draft — rejected at review:
+data-affinity placement read as consensus context, two sections before the argument it serves,
+and mechanical tables never interleave INSIDE the argument). The Brief keeps one line in the crux
+block ("Next catalyst: <event> ~<date> <basis-chip>"); exhibits cite via endnotes per the
+standing rule.
+(e) **Monitor** — the freshness panel flags a PASSED catalyst window ("window closed → re-read
+due"): a FLAG, never a machine-priced delayed-catalyst scenario.
+(f) **EXCLUDED BY CONSTITUTION** — no probabilities, no machine catalyst-weighting, no
+direction: assembling dates is machine work; weighing them is the verdict's.
+(g) **Pins** — per extractor a positive + negative pin on real committed shapes (a cadence
+mis-estimate negative; a stated-date positive); an artifact-level conditional invariant (rows
+present → each row dated-or-UNKNOWN + cited); JS twin parity.
+Size: a #205-class PR. RATIFY (a)-(g) or amend before any build.
+**→ DISCHARGED — BUILT same day** (PR #209; source D + the first dated trigger PR #210; BUILD
+RECORDS in §2). The brief stays as fossil; (b)'s source C shipped maturities-only and source D
+(dated operating events) superseded the 8-K-events slice — dispositions in the build records.
+
 **ANALYST / OPERATOR**
 13. **EPAM underwrite — RUN 2026-07-21, VERDICT PENDING.** `scenarios/EPAM.json` written and
    computed standalone (R1, EV/EBITDA); card shipped at `pending_analyst` — the machine
@@ -4861,6 +4902,24 @@ byte-identical, seal re-verified CLEAN. The calendar renders it TRIGGER-DEADLINE
 starts the clock at the next snapshot. FOLLOW-ON (operator, standing): the Q2+Q3 transcripts now
 in the store mean SMPL's next re-assembly extracts the September driver row itself (the gated
 transcript phase sees all three calls).
+**OPERATOR TO-DO — SMPL UNDERWRITE INPUTS STALE (verified 2026-07-24; disposition PENDING the
+operator's authorized wording).** The committed dossier (assembled 2026-07-23) and the scenario
+facts were built on CIQ panels that PREDATE the 2026-07-09 FQ3 print — multiples as-of
+2026-06-03, TEV as-of 2026-06-25, reference_date 2026-07-06 — so the 2026-07-21 BUY
+(`V-SMPL-screen2-20260706`, entry 10.92 frozen 2026-07-20) was underwritten on a pre-Q3 P&L.
+Fresh CIQ export uploaded 2026-07-24 and pipeline-verified (quarterly grid carries the
+May-30-2026 FQ3 columns + 2026-07-09; key devs through Jul-09; profile Jul-23). DISPOSITION PLAN
+(the IT-exit template, PR #191 — the ledger is append-only, nothing is deleted): (1) close row
+`C-SMPL-screen2-20260706` with reason = input-staleness (a PROCESS incident, not a market call —
+the reason string keeps the realized book partitionable); (2) seal-legal `[amended 2026-07-24 …]`
+tag on the rationale + `verdict.status → watch` (the IT transition); (3) AFTER the #208–#210
+queue lands: full re-assembly + R1 re-run on the fresh bundle (the calendar + source-D then ship
+in the fresh artifact — the September driver row extracts from the Q3 transcript); (4) analyst
+re-verdict on a NEW candidate row (one decision row per candidate, by construction). The dated
+trigger (PR #210) is TRANSCRIPT-sourced, not panel-sourced — it survives the disposition and
+carries to the re-underwrite. INVARIANT OWED (the queued assembly-freshness item is this
+incident's guard): a panel-vintage vs latest-EDGAR-print gate at assembly — loud caveat when any
+CIQ panel's as-of predates the newest print. This incident is that item's falsifier made real.
 
 **OPERATOR TO-DO — NCNO price series unavailable for the reference window (2026-07-23).** NCNO's
 What-broke chart / 180d returns / stock_performance are all UNKNOWN because its store bars run
