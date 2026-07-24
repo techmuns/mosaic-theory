@@ -8573,6 +8573,58 @@ console.log(JSON.stringify({
     assert "<svg viewBox=" in r["noDetSvg"] and "before detector window" not in r["noDetSvg"]
 
 
+def test_prewindow_hollow_drop_uses_the_shared_trading_day_rule() -> None:
+    """(#3) The chart's pre-window hollow-drop detector must use the SAME "true 1-day move" rule as
+    the gap ledger (`isNextTradingDay`), not a loose 1–4-day spacing. A downsampled step-2 pair (a
+    weekday skipped) is a MULTI-day slide, not a 1-day crash, and must NOT get a hollow marker — the
+    old loose check would have marked it. Also pins the shared rule's spacing/weekday cases."""
+    import json as _json
+    import shutil
+    import subprocess
+
+    if not shutil.which("node"):
+        pytest.skip("node unavailable")
+    driver = """
+const handler = { get: () => stub, apply: () => stub, construct: () => ({}) };
+const stub = new Proxy(function(){}, handler);
+for (const g of ["window","document","location"]) { try { globalThis[g] = stub; } catch {} }
+const { drawdownChart, isNextTradingDay } = await import("__URI__");
+// consecutive weekdays, but OMIT one calendar date to inject a step-2 (weekday-skipped) gap
+function weekdaysSkip(startISO, n, skip) {
+  const out = []; let d = new Date(startISO + "T00:00:00Z");
+  while (out.length < n) {
+    const wd = d.getUTCDay(); const iso = d.toISOString().slice(0, 10);
+    if (wd !== 0 && wd !== 6 && iso !== skip) out.push(iso);
+    d = new Date(d.getTime() + 86400000);
+  }
+  return out;
+}
+const dates = weekdaysSkip("2026-01-05", 55, "2026-01-13");  // Jan12 Mon → Jan14 Wed = step-2 pair
+const names = dates.map(() => 100);
+const iStep2 = dates.indexOf("2026-01-14");  // drop across the 2-day gap → must be EXCLUDED
+const iCtrl = dates.indexOf("2026-01-08");    // drop across a 1-day gap (Wed→Thu) → INCLUDED
+names[iStep2] = 80; names[iCtrl] = 80;        // both −20%, both pre-window
+const pts = dates.map((date, i) => ({ date, name: names[i], benchmark: 100 }));
+const sp = { points: pts, name_symbol: "T", benchmark_symbol: "IWM",
+             name_return: -0.2, benchmark_return: 0 };
+const det = { windowDays: 20, refDate: dates[dates.length - 1], threshold: -0.10 };
+const { preDrops } = drawdownChart(sp, [], det);  // no gap rows → gapSet empty
+console.log(JSON.stringify({
+  preDates: preDrops.map((p) => p.date), step2: dates[iStep2], ctrl: dates[iCtrl],
+  rule: [isNextTradingDay("2026-01-27","2026-01-28"), isNextTradingDay("2026-01-23","2026-01-26"),
+         isNextTradingDay("2026-01-26","2026-01-28"), isNextTradingDay("2026-01-26","2026-01-29"),
+         isNextTradingDay("2026-01-22","2026-01-26"), isNextTradingDay("2026-01-21","2026-01-28")],
+}));
+""".replace("__URI__", Path("frontend/views/shared/dossier.js").resolve().as_uri())
+    out = subprocess.run(["node", "--input-type=module", "-e", driver],
+                         capture_output=True, text=True, check=True)
+    r = _json.loads(out.stdout)
+    assert r["ctrl"] in r["preDates"], "a true 1-day pre-window drop must still get a hollow marker"
+    assert r["step2"] not in r["preDates"], "a step-2 (weekday-skipped) slide must NOT be marked"
+    # the shared rule: s1 / Fri→Mon-s3 accepted; s2, s3-non-Friday, s4, s7 refused
+    assert r["rule"] == [True, True, False, False, False, False]
+
+
 def test_clean_item_event_trims_and_drops_and_twins_js() -> None:
     """(8-K display trims) Doubled leading titles, defined-term legalese parentheticals, and
     cross-reference stubs are display noise on a parse-summary (JSON keeps the raw string). A line
