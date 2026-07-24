@@ -4074,8 +4074,9 @@ re-anchor (the full STATE split stays its own queued task — nothing was reloca
     Same class as `_latest_dep_amort`'s vintage trap — a tag-name heuristic standing in for
     reading the statement.
 
-**QUEUED BUILD — CATALYST CALENDAR (brief drafted 2026-07-24, RATIFICATION PENDING — do not build
-without operator sign-off; a schema change).** Origin: the operator's SMPL ten-claim audit,
+**QUEUED BUILD — CATALYST CALENDAR (brief drafted 2026-07-24; RATIFIED 2026-07-24 by the operator
+WITH PLACEMENT B — see amended (d); mockups: standalone + in-situ on the live SMPL page, both
+reviewed).** Origin: the operator's SMPL ten-claim audit,
 claim #10 — catalysts exist only as scattered prose (cost-outs, Q4 margin inflection, the
 two-quarter Quest test) with no dated surface and nothing watching the clock. Existing machinery
 (verified, not recalled): `catalyst_path` is the STREET's estimates/guidance view, not an event
@@ -4094,8 +4095,14 @@ maturity dates). Supplying layers named per row.
 bump, additive-only; `verdict.rationale` untouched → SEAL-SAFE; legacy records round-trip).
 The analyst dates their own falsifiers ("Quest stalls two more quarters" → ≈ the second print
 out); the machine NEVER invents a trigger or a date.
-(d) **Render** — a dated rows table on the street card (both twins) + one Brief line ("next
-catalyst: <event> ~<date>"); exhibits cite via endnotes per the standing rule.
+(d) **Render — PLACEMENT B (amended at ratification, 2026-07-24)** — the dated rows table is the
+CLOSING card of the Analysis tier: AFTER the synthesis/argument, BEFORE Sources (both twins) — the
+buy-side memo close: the argument poses the crux, the calendar says when reality votes on it,
+hand-off to the monitor. NOT on/after the street card (the original draft — rejected at review:
+data-affinity placement read as consensus context, two sections before the argument it serves,
+and mechanical tables never interleave INSIDE the argument). The Brief keeps one line in the crux
+block ("Next catalyst: <event> ~<date> <basis-chip>"); exhibits cite via endnotes per the
+standing rule.
 (e) **Monitor** — the freshness panel flags a PASSED catalyst window ("window closed → re-read
 due"): a FLAG, never a machine-priced delayed-catalyst scenario.
 (f) **EXCLUDED BY CONSTITUTION** — no probabilities, no machine catalyst-weighting, no
