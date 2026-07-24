@@ -7739,13 +7739,18 @@ console.log(JSON.stringify({{ html: h }}));
     d = _json.loads(p.read_text())
     s = d["synthesis"]
 
-    # 1 — crux once + consistency + the-case de-dup
+    # 1 — crux once + consistency + the-case de-dup. The crux carries the QUESTION + the honest
+    # count-pointer ONLY — the key_unknowns[:2] teaser was REMOVED (2026-07-24 weather audit:
+    # unknown-set survival ~17% / top-2 ~7% across draws — the teaser presented weather as a
+    # curated top-2). Absence-of-LLM-text pins are safe (reworded content stays absent).
     assert h.count('class="brief-crux"') == 1
     q = s["decisive_question"]["question"]
     assert _html.escape(q) in h
     crux = h.split('class="brief-crux"')[1].split("</div></div>")[0]
-    for u in (s.get("key_unknowns") or [])[:2]:
-        assert _html.escape(u) in crux, "top-2 unknowns must render inside the crux"
+    n_unk = len(s.get("key_unknowns") or [])
+    assert f"{n_unk} key unknowns + the evidence for/against — in Analysis" in crux
+    for u in (s.get("key_unknowns") or []):
+        assert _html.escape(u) not in crux, "no unknown may render inside the crux teaser"
     case = h.split(">The case<")[1].split('class="card')[0] if ">The case<" in h else ""
     assert "brief-dq" not in case, "the case card must not carry a second question copy"
     assert "Key unknowns" not in case
@@ -7786,8 +7791,9 @@ console.log(JSON.stringify({{ html: h }}));
 
 def test_md_brief_crux_block_and_case_dedup() -> None:
     """(buy-side cover, md twin) The committed IT markdown carries the crux block inside
-    'At a glance' (question + ≤2 unknowns + the pointer line) and 'The case' carries neither the
-    question nor an unknowns list — content parity with the web cover, layout linear."""
+    'At a glance' (the question; pre-teaser-removal artifacts may still carry ≤2 unknowns until
+    the next re-render — this test asserts only the shape-stable invariants) and 'The case'
+    carries neither the question nor an unknowns list — content parity with the web cover."""
     p = Path("data/dossiers/IT/dossier.md")
     if not p.exists():
         pytest.skip("no committed IT dossier.md")
@@ -7798,6 +7804,25 @@ def test_md_brief_crux_block_and_case_dedup() -> None:
     assert "The crux — what decides this" in glance and q in glance
     case = md.split("## The case")[1].split("\n## ")[0]
     assert q not in case and "_Key unknowns:_" not in case
+
+
+def test_md_crux_ku_teaser_removed_render_level() -> None:
+    """(2026-07-24 weather audit) The md crux block renders the QUESTION + the honest count-pointer
+    and NO unknown items — pinned at the RENDER level (committed json → render_markdown through
+    CURRENT code), artifact-independent, so it is green before AND after the artifact re-render.
+    Evidence for the removal: across 109 consecutive historical draw pairs the unknowns' set
+    survives ~17% and the top-2 slots ~7% — the teaser presented weather as a curated top-2."""
+    p = Path("data/dossiers/IT/dossier.json")
+    if not p.exists():
+        pytest.skip("no committed IT dossier.json")
+    doss = ds.Dossier.model_validate_json(p.read_text())
+    assert doss.synthesis is not None
+    md = dr.render_markdown(doss)
+    glance = md.split("## At a glance")[1].split("\n## ")[0]
+    n = len(doss.synthesis.key_unknowns)
+    assert f"_{n} key unknowns + the evidence for/against — in Analysis_" in glance
+    for u in doss.synthesis.key_unknowns:
+        assert u not in glance, "no unknown may render inside the crux block"
 
 
 def test_what_broke_restructure_and_survival_columns_e2e_node() -> None:
