@@ -14,9 +14,7 @@ Verra Mobility Corporation provides smart mobility technology solutions in the U
 
 **The crux — what decides this, and what would change our mind**
 **Is the Avis termination plus the guidance cut a one-time step-down onto a still-growing, recurring government-led base (overshoot), or the leading edge of broader customer attrition in the higher-margin Commercial Services segment (value trap)?**
-- Whether the >10%-of-revenue significant customer relationship still under short-term contract extension (per Q1 call) renews or follows Avis in exiting — a second concentration shock is not quantified.
-- Covenant terms are UNKNOWN (extraction failed) and the covenant leverage basis is UNKNOWN — headroom against the term loan/notes cannot be assessed from the supplied facts, a bearish disclosure gap.
-_full unknowns + the evidence for/against in Analysis_
+_7 key unknowns + the evidence for/against — in Analysis_
 
 ## What happened
 - **Shape:** discrete gap-downs — 2026-02-25 earnings + Reg-FD; 2026-05-27 Reg-FD + other event; 2026-06-02 management change + Reg-FD [5]
@@ -30,13 +28,13 @@ _full unknowns + the evidence for/against in Analysis_
 _(top points; the full argument is in Analysis)_
 
 _Bull case — the decline is overdone:_
-- The name is FCF-positive and self-funding with interest coverage 5.6x and net-debt/EBITDA ~2.6x on forward-adjusted EBITDA, so leverage does not threaten survival despite the de-rate. [11]
+- Government Solutions — 47% of revenue — is a recurring, long-contract engine with ~$71M of trailing-12-month new bookings and 4% Q1 growth driven by 12% growth outside New York City, evidencing durable demand. [11]
 - Even after the Avis termination, revised FY26 guidance still calls for $985–$995M revenue and $380–$385M adjusted EBITDA, and the revenue guide is cross-source VERIFIED against the release — the guided business remains sizeable and profitable, not collapsing. [12]
 - Fresh multi-year government wins — a five-year, $998M NYCDOT contract, a statewide 10-year Hawaii program, and the largest speed-safety program in California (Los Angeles) — extend forward revenue visibility in the largest segment. [13]
 _Bear case — the decline is real:_
-- Guidance was slashed within months — FY26 adjusted EBITDA outlook fell from $405–$415M (Feb) to $380–$385M (May) and consensus FY26 EBITDA fell ~16% over 12 months — a real forward-estimate reset, and forward NTM EV/EBITDA of ~4.7x already prices post-cut numbers, so it is not merely a stale-trailing distortion. [14]
+- Commercial Services revenue declined ~4% year-over-year on fleet-management churn, and the segment that just lost Avis is the largest EBITDA contributor (68% of segment-EBITDA sum), so the churn signal lands on the most valuable segment. [11]
 - The loss of Avis Budget — a >10% customer — is guided to cut 2026 annualized revenue by $135–$145M and segment profit by $120–$125M, a genuine step-down in the earnings base, not an optical artifact. [12]
-- An interim-CEO appointment amid the guidance cuts adds leadership uncertainty precisely when execution matters most. [5]
+- Guidance was slashed within months — FY26 adjusted EBITDA outlook fell from $405–$415M (Feb) to $380–$385M (May) and consensus FY26 EBITDA fell ~16% over 12 months — a real forward-estimate reset, and forward NTM EV/EBITDA of ~4.7x already prices post-cut numbers, so it is not merely a stale-trailing distortion. [14]
 
 ## Financial snapshot
 - **Financial snapshot** — [15]  <!-- ds-table -->
@@ -277,31 +275,31 @@ _export date unverified (data ≥ 2026-06-09)_
 **Evidence balance:** mixed — a real Avis-driven earnings step-down and guidance cut offset by a profitable, self-funding, growing-government base still intact.
 
 ### Bull case — the decline is overdone
-- The name is FCF-positive and self-funding with interest coverage 5.6x and net-debt/EBITDA ~2.6x on forward-adjusted EBITDA, so leverage does not threaten survival despite the de-rate. [11]
+- Government Solutions — 47% of revenue — is a recurring, long-contract engine with ~$71M of trailing-12-month new bookings and 4% Q1 growth driven by 12% growth outside New York City, evidencing durable demand. [11]
 - Even after the Avis termination, revised FY26 guidance still calls for $985–$995M revenue and $380–$385M adjusted EBITDA, and the revenue guide is cross-source VERIFIED against the release — the guided business remains sizeable and profitable, not collapsing. [12]
 - Fresh multi-year government wins — a five-year, $998M NYCDOT contract, a statewide 10-year Hawaii program, and the largest speed-safety program in California (Los Angeles) — extend forward revenue visibility in the largest segment. [13]
 - ROIC improved steadily from 5.1% (FY21) to 11.5% (FY25) and remains 11.1% LTM, indicating the underlying capital efficiency has been rising, not deteriorating. [49]
 - The company is buying back stock (share count -7.7% over ~1.7y) and the guidance track record is intact (revenue/EBITDA actual ≥ guided floor with FY25 MET), consistent with management confidence rather than distress. [33]
-- Government Solutions — 47% of revenue — is a recurring, long-contract engine with ~$71M of trailing-12-month new bookings and 4% Q1 growth driven by 12% growth outside New York City, evidencing durable demand. [50]
 - Absolute EBITDA rose every year from $229M (FY21) to $362M (FY25) even as EBITDA margin optically compressed from 42% to 37% — the margin-% decline is the consensus misread, not shrinking profit dollars. [32]
+- The name is FCF-positive and self-funding with interest coverage 5.6x and net-debt/EBITDA ~2.6x on forward-adjusted EBITDA, so leverage does not threaten survival despite the de-rate. [50]
 
 ### Bear case — the decline is real
-- Guidance was slashed within months — FY26 adjusted EBITDA outlook fell from $405–$415M (Feb) to $380–$385M (May) and consensus FY26 EBITDA fell ~16% over 12 months — a real forward-estimate reset, and forward NTM EV/EBITDA of ~4.7x already prices post-cut numbers, so it is not merely a stale-trailing distortion. [14]
+- Commercial Services revenue declined ~4% year-over-year on fleet-management churn, and the segment that just lost Avis is the largest EBITDA contributor (68% of segment-EBITDA sum), so the churn signal lands on the most valuable segment. [11]
 - The loss of Avis Budget — a >10% customer — is guided to cut 2026 annualized revenue by $135–$145M and segment profit by $120–$125M, a genuine step-down in the earnings base, not an optical artifact. [12]
+- Guidance was slashed within months — FY26 adjusted EBITDA outlook fell from $405–$415M (Feb) to $380–$385M (May) and consensus FY26 EBITDA fell ~16% over 12 months — a real forward-estimate reset, and forward NTM EV/EBITDA of ~4.7x already prices post-cut numbers, so it is not merely a stale-trailing distortion. [14]
 - An interim-CEO appointment amid the guidance cuts adds leadership uncertainty precisely when execution matters most. [5]
 - Consensus long-term growth was cut hard (a broker LT-growth revision from +4.08 to -11.22, dragging consensus LT growth to 1.9%) and near-term revision breadth is overwhelmingly negative (Revenue FY26 0↑/8↓), signalling deteriorating forward expectations. [51]
-- Commercial Services revenue declined ~4% year-over-year on fleet-management churn, and the segment that just lost Avis is the largest EBITDA contributor (68% of segment-EBITDA sum), so the churn signal lands on the most valuable segment. [50]
 - The de-rate is idiosyncratic: VRRM fell ~81% over 180 days while the small-cap benchmark rose ~17%, driven by discrete gap-downs on earnings, the Avis termination, and a CEO change — a cluster of company-specific negative events. [6]
 
 ### Decisive question
 **Is the Avis termination plus the guidance cut a one-time step-down onto a still-growing, recurring government-led base (overshoot), or the leading edge of broader customer attrition in the higher-margin Commercial Services segment (value trap)?**
 
 ### …evidence for
-- Government Solutions — the largest segment — shows sustained demand with ~$71M trailing-12-month bookings and fresh multi-year statewide contracts, supporting a stabilized post-Avis base. [50]
+- Government Solutions — the largest segment — shows sustained demand with ~$71M trailing-12-month bookings and fresh multi-year statewide contracts, supporting a stabilized post-Avis base. [11]
 - Revised guidance still targets $380–$385M adjusted EBITDA and positive FCF ($140–$150M), and the revenue guide is cross-source VERIFIED, indicating the reset base is profitable and self-funding. [12]
 
 ### …evidence against
-- Commercial Services already declined ~4% on fleet-management churn before the Avis loss, and Avis sat in that same segment — raising the risk that attrition is structural rather than isolated. [50]
+- Commercial Services already declined ~4% on fleet-management churn before the Avis loss, and Avis sat in that same segment — raising the risk that attrition is structural rather than isolated. [11]
 - The Avis exit removes $135–$145M annualized revenue and $120–$125M segment profit, a large enough hole that any further Commercial churn would compound the earnings reset. [12]
 
 ### Key unknowns
@@ -455,7 +453,7 @@ _Source §: fenced Tier-2 extraction (verbatim, source-bound)_
 [8] `EOD VRRM−IWM 180d to 2026-07-06 (assembly, cap-band)`
 [9] `CIQ Net Debt $1,046M [Q1 Mar-31-2026] ÷ CIQ EBITDA $358M [LTM 12 months Mar-31-2026]`
 [10] `EDGAR XBRL FCF sign (screen data-record)`
-[11] `CIQ Net Debt ÷ CIQ LTM EBITDA (EDGAR XBRL breadth fallback) + FCF sign (survival capacity)`
+[11] `CIQ transcript: Verra Mobility Corporation, Q1 2026 Earnings Call, May 06, 2026.rtf`
 [12] `EDGAR 8-K 0001193125-26-239351 Ex-99.1 — https://www.sec.gov/Archives/edgar/data/1682745/000119312526239351/d123116dex991.htm`
 [13] `CIQ Key Developments: Verra Mobility Corporation NasdaqCM VRRM Key Developments.rtf · Feb-11-2026`
 [14] `CIQ Estimates→Trends (current-FY consensus path; ragged, absent lookbacks n/a)`
@@ -494,7 +492,7 @@ _Source §: fenced Tier-2 extraction (verbatim, source-bound)_
 [47] `CIQ Financials→Segments (EBITDA, latest annual column, Dec-31-2025) + Income Statement (consolidated EBITDA)`
 [48] `CIQ Customers&Suppliers Verra Mobility Corporation NasdaqCM VRRM Customers.rtf`
 [49] `CIQ Financials→Ratios (Return on Capital %, multi-year columns)`
-[50] `CIQ transcript: Verra Mobility Corporation, Q1 2026 Earnings Call, May 06, 2026.rtf`
+[50] `CIQ Net Debt ÷ CIQ LTM EBITDA (EDGAR XBRL breadth fallback) + FCF sign (survival capacity)`
 [51] `CIQ Estimates→Trends (FY26/FY27 consensus Revenue, latest snapshot)`
 [52] `CIQ Financials→Income Statement (quarterly, full exported history)`
 [53] `CIQ Financials→Balance Sheet (quarterly, Q1-26)`

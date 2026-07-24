@@ -21,9 +21,7 @@ Artivion, Inc. manufactures, processes, and distributes medical devices and impl
 
 **The crux — what decides this, and what would change our mind**
 **Is the sharp guidance-down and consensus EPS collapse a temporary reset around AMDS stocking timing and a contained On-X recall — with the growth franchise (On-X share gains, NEXUS arch launch, tissue normalization) intact — or the first leg of a structural derating of an over-levered, low-FCF, share-diluting business?**
-- Adjusted (company-defined) LTM EBITDA, forward adjusted EV/EBITDA and adjusted net-debt/EBITDA are all UNKNOWN — 'adjusted figure not in the 99.1 revised guidance' — leaving the true leverage and forward-valuation basis undisclosed (a bearish opacity gap given the elevated GAAP leverage).
-- Segment-level EBITDA is not disclosed (Segments sheet has no EBITDA section), so profitability of Products (78%) vs Preservation Services (22%) cannot be assessed.
-_full unknowns + the evidence for/against in Analysis_
+_8 key unknowns + the evidence for/against — in Analysis_
 
 ## Scenario analysis
 _Terminal-margin: value the business in the year it reaches a normal operating margin, then discount that value back at the house waiting charge. Used where no trailing multiple describes the company._
@@ -111,7 +109,7 @@ _no supplier/customer cohort mapped for this name — the comparison is vs the m
 - **Net debt / EBITDA [NET]:** 3.3x [8]
 - **Total debt / EBITDA vs peers:** name 3.7x vs peer median 2.1x (comps TOTAL-debt/EBITDA basis) [12]
 - **Net debt / OCF:** 3.5x [21]
-- **Net debt / EBITDA [FWD-ADJ] · EV/EBITDA (adjusted, forward) · Adjusted EPS (earnings power) · Revised guidance (8-K 99.1):** _UNKNOWN_ — no revised-outlook 99.1 exhibit parsed — the revised forward guidance is UNKNOWN
+- **Net debt / EBITDA [FWD-ADJ] · EV/EBITDA (adjusted, forward) · Adjusted EPS (earnings power) · Revised guidance (8-K 99.1):** _UNKNOWN_ — no revised-outlook block parsed from the 99.1 — the revised forward guidance is UNKNOWN
 - **Interest coverage:** 2.5x [22]
 - **Self-funding:** self-funding: MIXED — latest-Q OCF > 0, LTM FCF < 0 (both must be positive to self-fund) [23]
 - **Credit health** — [14]  <!-- ds-table -->
@@ -312,10 +310,10 @@ _export date unverified (data ≥ 2026-06-23)_
 - FDA approval of the NEXUS Aortic Arch system and the Endospan option exercise complete a three-pronged arch portfolio with a launch pipeline — a forward growth driver, not a legacy asset. [10]
 - Q1 2026 delivered 12% constant-currency revenue growth and ~26% adjusted-EBITDA growth, a genuine operating acceleration rather than a wind-down. [11]
 - Tissue processing grew 23% constant-currency as volumes normalized post-cyber, evidencing a recovering rather than eroding revenue base. [11]
+- On-X grew 17% constant-currency on global share gains in a newly-unlocked ~$100M U.S. mechanical-valve opportunity for patients under 65 — a durable mechanism, not a one-off. [11]
 - Absolute EBITDA has risen sharply from a $15M trough (FY23 R) to $61M LTM even as the margin % reads a modest 13% — the level, not the ratio, is the signal of an inflecting business. [28]
 - On the forward ladder the name's NTM TEV/EBITDA is 12.8x — below the peer-median NTM of 17.59x — posing whether the discount is RESIDUAL overshoot rather than earned, given rev growth 18% vs peer-median 14% and EBITDA growth 42% vs 21%, though the peer set is heterogeneous. [44]
 - Consensus target price mean is $42.00 / median $43.00 with 6 Buy and 2 Outperform ratings and zero Holds/Sells, well above the ~$23.58 last close. [19]
-- On-X grew 17% constant-currency on global share gains in a newly-unlocked ~$100M U.S. mechanical-valve opportunity for patients under 65 — a durable mechanism, not a one-off. [11]
 - EV/EBITDA (TEV/LTM) sits at 20.6x, near the bottom of its own 42-quarter range (18.8–75.4x, median 32.1x, 7th percentile), a compression relative to its own history — though trailing-only. [16]
 
 ### Bear case — the decline is real

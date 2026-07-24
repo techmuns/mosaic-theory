@@ -19,9 +19,7 @@ WATCH at $17.93. The underwrite fails our 2:1 bar decisively: the base case valu
 
 **The crux — what decides this, and what would change our mind**
 **Is the ~37% de-rate a temporary overshoot on an unnamed February shock in a still-growing, self-funding SaaS franchise, or the early leg of a terminal demand/leverage problem the raised guides do not yet reflect?**
-- No peer set, comparability, trading multiples, or fundamental_deltas (all missing) — no source-bound way to test whether any discount is EARNED (value trap) or RESIDUAL (overshoot); the entire peer-comp read is absent.
-- No consensus estimates, revenue/EPS trend, revision or surprise history (all missing) — cannot see whether the Street is cutting or holding the number behind the guide.
-_full unknowns + the evidence for/against in Analysis_
+_8 key unknowns + the evidence for/against — in Analysis_
 
 ## Scenario analysis
 _Terminal-margin: value the business in the year it reaches a normal operating margin, then discount that value back at the house waiting charge. Used where no trailing multiple describes the company._
@@ -48,13 +46,13 @@ _Terminal-margin: value the business in the year it reaches a normal operating m
 _(top points; the full argument is in Analysis)_
 
 _Bull case — the decline is overdone:_
+- Successive revenue guides have stepped UP across the last three filings (146.75–148.25 → 154.5–156.5 → 157.75–159.75), a rising-guide sequence that resists the terminal read. [8]
 - Free cash flow is positive, and the two most recent guidance exhibits raised the FCF outlook (132.0–137.0 → 135.0–140.0 next-fy), implying self-funding rather than distress. [8]
-- The company is buying back stock, with shares out down 5.2% over ~1.7 years (115.56M → 109.55M), consistent with self-funding rather than dilution. [9]
-- The 10-Q states no near-term maturity wall (NOT_STATED, a KNOWN read), removing the refinancing-cliff leg of a distress thesis. [10]
+- The 10-Q states no near-term maturity wall (NOT_STATED, a KNOWN read), removing the refinancing-cliff leg of a distress thesis. [9]
 _Bear case — the decline is real:_
 - Leverage is not trivial at net-debt/EBITDA 3.5x on a GAAP basis, and the estimate is flagged as a breadth fallback that may UNDER-capture scattered debt — the real figure could be worse. [6]
 - The drawdown centred on a discrete gap-down on 2026-02-03 for which there is NO company filing to anchor a cause, and no revised-guidance 8-K to follow. [2]
-- Short interest is rising sharply and elevated — 20.2M shares (+18.4% over two weeks), 18.4% of shares out, 5.6 days to cover — the market is pressing the short side. [11]
+- Short interest is rising sharply and elevated — 20.2M shares (+18.4% over two weeks), 18.4% of shares out, 5.6 days to cover — the market is pressing the short side. [10]
 
 ## Financial snapshot
 
@@ -86,16 +84,16 @@ _no supplier/customer cohort mapped for this name — the comparison is vs the m
 
 ### Leverage & survival
 - **Net debt / EBITDA [NET]:** 3.5x [6]
-- **Net debt / OCF:** 1.8x [12]
-- **Net debt / EBITDA [FWD-ADJ] · EV/EBITDA (adjusted, forward) · Adjusted EPS (earnings power) · Revised guidance (8-K 99.1):** _UNKNOWN_ — no revised-outlook 99.1 exhibit parsed — the revised forward guidance is UNKNOWN
-- **Self-funding:** self-funding: UNKNOWN — latest-Q OCF and/or LTM FCF sign unavailable [13]
+- **Net debt / OCF:** 1.8x [11]
+- **Net debt / EBITDA [FWD-ADJ] · EV/EBITDA (adjusted, forward) · Adjusted EPS (earnings power) · Revised guidance (8-K 99.1):** _UNKNOWN_ — no revised-outlook block parsed from the 99.1 — the revised forward guidance is UNKNOWN
+- **Self-funding:** self-funding: UNKNOWN — latest-Q OCF and/or LTM FCF sign unavailable [12]
 
 - **FCF sign:** positive [7]
 
 ### Filing cross-checks — going concern · leverage basis
 
-- **Going-concern language:** none in latest 10-Q — checked, absent [10]
-- **EBITDA-basis triangulation (each leverage basis-labeled):** [14]
+- **Going-concern language:** none in latest 10-Q — checked, absent [9]
+- **EBITDA-basis triangulation (each leverage basis-labeled):** [13]
   - net debt / EBITDA (CIQ, GAAP basis): 3.4795572180418426x
   - total debt / EBITDA (CIQ comps, GAAP basis): UNKNOWN
   - net debt / company-adjusted LTM EBITDA (LTM unavailable): UNKNOWN
@@ -103,7 +101,7 @@ _no supplier/customer cohort mapped for this name — the comparison is vs the m
 
 ### Operating trajectory
 - **Trajectory (revenue · EBITDA · margins · ROIC):** _UNKNOWN_ — no multi-year revenue/EBITDA series in the sheets
-- **Share-count trend:** buying back (trailing ~1.7y): 115,559,517 (2024-08-22) → 109,552,950 (2026-05-22), -5.2% [9]
+- **Share-count trend:** buying back (trailing ~1.7y): 115,559,517 (2024-08-22) → 109,552,950 (2026-05-22), -5.2% [14]
 
 ### Valuation & own-history
 
@@ -113,7 +111,7 @@ _no supplier/customer cohort mapped for this name — the comparison is vs the m
 ### The street — estimates & guidance
 _as-of UNKNOWN_
 - **Insider activity (Form 4, 6m):** Open-market buys 0 · sells 23 (net -250.8K sh) · grants 14 · last 2026-07-08 · other filings 6 [15]
-- **Short interest (FINRA):** Short interest (FINRA, settle 2026-06-30): 17.0M → 20.2M sh (+18.4%, rising) · 18.4% of shares out (EDGAR XBRL) · DTC 5.6d · recent: 2026-06-30 20.2M · 2026-06-15 17.0M · 2026-05-29 16.6M · 2026-05-15 14.7M [11]
+- **Short interest (FINRA):** Short interest (FINRA, settle 2026-06-30): 17.0M → 20.2M sh (+18.4%, rising) · 18.4% of shares out (EDGAR XBRL) · DTC 5.6d · recent: 2026-06-30 20.2M · 2026-06-15 17.0M · 2026-05-29 16.6M · 2026-05-15 14.7M [10]
 
 ### Ownership & concentration
 - **Customers:** _MISSING_ — no Customers & Suppliers export for NCNO — pull it and re-run
@@ -123,15 +121,15 @@ _as-of UNKNOWN_
 **Evidence balance:** mixed — rising guides and self-funding signals pull against name-specific weakness, rising shorts, insider selling, and an unexplained February gap; peer/estimate data entirely absent.
 
 ### Bull case — the decline is overdone
-- Free cash flow is positive, and the two most recent guidance exhibits raised the FCF outlook (132.0–137.0 → 135.0–140.0 next-fy), implying self-funding rather than distress. [8]
-- The company is buying back stock, with shares out down 5.2% over ~1.7 years (115.56M → 109.55M), consistent with self-funding rather than dilution. [9]
-- The 10-Q states no near-term maturity wall (NOT_STATED, a KNOWN read), removing the refinancing-cliff leg of a distress thesis. [10]
 - Successive revenue guides have stepped UP across the last three filings (146.75–148.25 → 154.5–156.5 → 157.75–159.75), a rising-guide sequence that resists the terminal read. [8]
+- Free cash flow is positive, and the two most recent guidance exhibits raised the FCF outlook (132.0–137.0 → 135.0–140.0 next-fy), implying self-funding rather than distress. [8]
+- The 10-Q states no near-term maturity wall (NOT_STATED, a KNOWN read), removing the refinancing-cliff leg of a distress thesis. [9]
+- The company is buying back stock, with shares out down 5.2% over ~1.7 years (115.56M → 109.55M), consistent with self-funding rather than dilution. [14]
 
 ### Bear case — the decline is real
 - Leverage is not trivial at net-debt/EBITDA 3.5x on a GAAP basis, and the estimate is flagged as a breadth fallback that may UNDER-capture scattered debt — the real figure could be worse. [6]
 - The drawdown centred on a discrete gap-down on 2026-02-03 for which there is NO company filing to anchor a cause, and no revised-guidance 8-K to follow. [2]
-- Short interest is rising sharply and elevated — 20.2M shares (+18.4% over two weeks), 18.4% of shares out, 5.6 days to cover — the market is pressing the short side. [11]
+- Short interest is rising sharply and elevated — 20.2M shares (+18.4% over two weeks), 18.4% of shares out, 5.6 days to cover — the market is pressing the short side. [10]
 - Insiders sold, not bought: open-market buys 0 versus sells 23 (net -250.8K sh), the last as recent as 2026-07-08 — no insider conviction at the lows. [15]
 - The stock is idiosyncratically weak: NCNO returned -28.3% over 180d while IWM returned +17.0%, a -45.3 point relative gap not shared with the small-cap market. [5]
 
@@ -140,7 +138,7 @@ _as-of UNKNOWN_
 
 ### …evidence for
 - Revenue guides rose across three successive filings and FCF guidance was lifted, signalling management still sees the top line and cash generation expanding. [8]
-- The 10-Q states no near-term maturity wall, and buybacks reduced shares 5.2%, both inconsistent with a liquidity-driven terminal path. [10]
+- The 10-Q states no near-term maturity wall, and buybacks reduced shares 5.2%, both inconsistent with a liquidity-driven terminal path. [9]
 
 ### …evidence against
 - A discrete 2026-02-03 gap-down with NO company filing to explain it, combined with rising short interest to 18.4% of float and continued insider selling, points to an unresolved fundamental concern the market is pricing. [2]
@@ -219,12 +217,12 @@ _as-of UNKNOWN_
 [6] `EDGAR XBRL net-debt/EBITDA (screen data-record); breadth estimate — may under-capture scattered debt; pull CIQ`
 [7] `EDGAR XBRL FCF sign (screen data-record)`
 [8] `8-K 0001902733-26-000064 EX-99.1`
-[9] `EDGAR XBRL shares, trailing 2024-08-22..2026-05-22`
-[10] `10-Q 0001902733-26-000066`
-[11] `FINRA consolidated short interest (settle 2026-06-30); DTC = 20,167,235 short ÷ 3,579,253 screen 90d ADV`
-[12] `EDGAR XBRL net-debt/OCF (screen data-record) — OCF basis, not EBITDA; breadth estimate — may under-capture scattered debt; pull CIQ`
-[13] `EDGAR latest-Q OCF sign + CIQ LTM FCF sign`
-[14] `CIQ leverage bases + release LTM adj-EBITDA/margins`
+[9] `10-Q 0001902733-26-000066`
+[10] `FINRA consolidated short interest (settle 2026-06-30); DTC = 20,167,235 short ÷ 3,579,253 screen 90d ADV`
+[11] `EDGAR XBRL net-debt/OCF (screen data-record) — OCF basis, not EBITDA; breadth estimate — may under-capture scattered debt; pull CIQ`
+[12] `EDGAR latest-Q OCF sign + CIQ LTM FCF sign`
+[13] `CIQ leverage bases + release LTM adj-EBITDA/margins`
+[14] `EDGAR XBRL shares, trailing 2024-08-22..2026-05-22`
 [15] `EDGAR Form 4 (latest 0001902733-26-000084; 32 in 6m)`
 [16] `fenced Tier-2 digest (P1)`
 [17] `10-Q maturity wall vs CIQ capital panel (same window)`
