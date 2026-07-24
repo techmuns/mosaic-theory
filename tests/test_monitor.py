@@ -284,3 +284,25 @@ def test_freshness_panel_includes_pending_analyst_records(tmp_path: Path) -> Non
     assert set(_FRESHNESS_STATUSES) == {"watch", "pending_analyst"}
     # the panel labels it in plain words, never the raw enum
     assert _STATUS_LABEL["pending_analyst"] == "verdict pending"
+
+
+def test_dated_trigger_deadlines_flag_passed_windows_never_adjudicate() -> None:
+    """(catalyst calendar) An analyst-DATED trigger whose deadline is on/before today lands in
+    ``passed_trigger_deadlines`` as a FLAG ("… PASSED → re-underwrite due" — the window closed;
+    whether the trigger FIRED stays the human's read); a future one joins the display triggers
+    with its date; an unparseable analyst date is skipped here (it still renders verbatim in the
+    dossier). Undated ``reunderwrite_triggers`` are untouched."""
+    rec = {"underwrite_date": "2026-07-10", "verdict": {
+        "reunderwrite_triggers": ["guidance cut"],
+        "dated_triggers": [
+            {"trigger": "Quest stalls two quarters", "deadline": "2026-07-20", "basis": "b"},
+            {"trigger": "CV re-accelerates", "deadline": "2027-01-07"},
+            {"trigger": "bad date", "deadline": "soonish"},
+        ]}}
+    row = mon.freshness_row(ticker="T", verdict="BUY", record=rec,
+                            filings=[("10-Q", date(2026, 5, 1), "a")], today=date(2026, 7, 21))
+    assert row.passed_trigger_deadlines == [
+        "Quest stalls two quarters — deadline 2026-07-20 PASSED → re-underwrite due"]
+    assert "guidance cut" in row.triggers
+    assert "CV re-accelerates (by 2027-01-07)" in row.triggers
+    assert not any("bad date" in t for t in row.triggers + row.passed_trigger_deadlines)

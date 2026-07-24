@@ -45,6 +45,30 @@
       "title": "AssumptionDerivation",
       "type": "object"
     },
+    "DatedTrigger": {
+      "description": "(catalyst calendar, ratified 2026-07-24) An ANALYST-owned re-underwrite trigger with a\ndeadline \u2014 the dated form of a ``reunderwrite_triggers`` entry (\"Quest stalling two more\nquarters\" \u2192 the print that closes the window). ANALYST-TYPED ONLY: the machine never invents a\ntrigger or its date. The calendar renders these with the TRIGGER-DEADLINE basis; the monitor\nflags a passed deadline as \"re-underwrite due\" (a flag, never a machine action).",
+      "properties": {
+        "trigger": {
+          "title": "Trigger",
+          "type": "string"
+        },
+        "deadline": {
+          "title": "Deadline",
+          "type": "string"
+        },
+        "basis": {
+          "default": "",
+          "title": "Basis",
+          "type": "string"
+        }
+      },
+      "required": [
+        "trigger",
+        "deadline"
+      ],
+      "title": "DatedTrigger",
+      "type": "object"
+    },
     "Fact": {
       "description": "One source-bound input. ``basis`` names WHAT the number is; ``source`` names WHERE it came\nfrom (form + accession + statement line) so the human can verify rather than trust.",
       "properties": {
@@ -764,6 +788,13 @@
             "type": "string"
           },
           "title": "Reunderwrite Triggers",
+          "type": "array"
+        },
+        "dated_triggers": {
+          "items": {
+            "$ref": "#/$defs/DatedTrigger"
+          },
+          "title": "Dated Triggers",
           "type": "array"
         },
         "entry_price": {

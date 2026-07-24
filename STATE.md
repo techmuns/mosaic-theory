@@ -4074,7 +4074,7 @@ re-anchor (the full STATE split stays its own queued task — nothing was reloca
     Same class as `_latest_dep_amort`'s vintage trap — a tag-name heuristic standing in for
     reading the statement.
 
-**QUEUED BUILD — CATALYST CALENDAR (brief drafted 2026-07-24; RATIFIED 2026-07-24 by the operator
+**QUEUED BUILD → BUILT 2026-07-24 — CATALYST CALENDAR (brief drafted 2026-07-24; RATIFIED 2026-07-24 by the operator
 WITH PLACEMENT B — see amended (d); mockups: standalone + in-situ on the live SMPL page, both
 reviewed).** Origin: the operator's SMPL ten-claim audit,
 claim #10 — catalysts exist only as scattered prose (cost-outs, Q4 margin inflection, the
@@ -4111,6 +4111,9 @@ direction: assembling dates is machine work; weighing them is the verdict's.
 mis-estimate negative; a stated-date positive); an artifact-level conditional invariant (rows
 present → each row dated-or-UNKNOWN + cited); JS twin parity.
 Size: a #205-class PR. RATIFY (a)-(g) or amend before any build.
+**→ DISCHARGED — BUILT same day** (PR #209; source D + the first dated trigger PR #210; BUILD
+RECORDS in §2). The brief stays as fossil; (b)'s source C shipped maturities-only and source D
+(dated operating events) superseded the 8-K-events slice — dispositions in the build records.
 
 **ANALYST / OPERATOR**
 13. **EPAM underwrite — RUN 2026-07-21, VERDICT PENDING.** `scenarios/EPAM.json` written and
@@ -4836,6 +4839,59 @@ ACCEPTED as fail-loud redundancy; render-side fuzzy dedupe and prompt-side "don'
 both rejected (tunable threshold / weather-risk per the rejected net-direction experiment).
 Gate: ruff · mypy --strict (110) · offline suite green. The re-render artifact pass now picks up
 hybrid ordering + this in one pass.
+
+**BUILD RECORD — 2026-07-24 CATALYST CALENDAR BUILT (branch `feat/catalyst-calendar`; the brief
+RATIFIED same day with PLACEMENT B — brief text + amendment ride PR #208's STATE change; mockups:
+standalone + in-situ, operator-reviewed).** SHIPPED per the ratified (a)–(g):
+(a) `CatalystRow {event, expected_date, date_basis stated|cadence-estimate, tests_what,
+source_ref}` + `CatalystCalendar {rows, qa_flags}`; `MechanicalLayer.catalyst_calendar`
+optional-with-default (old JSON round-trips). `DatedTrigger {trigger, deadline, basis}` on the
+VERDICT block (`Verdict.dated_triggers`, additive — legacy records round-trip; rationale untouched
+→ seal-safe; `scenarios/_schema.json` regenerated, the schema-sync pin enforced it).
+(b) `_next_print_estimate` — median inter-print gap over the filer's OWN 2.02-8-K history (≥4
+prints, gap sane-banded 60–120d, rolled past the reference; face-validity constants, never
+outcome-tuned); REFUSES on thin/irregular history → loud qa_flag, no row. `_catalyst_calendar`
+assembles A (cadence row; B enriches it with the committed revised-guidance checkpoint when
+present) + C (in-horizon ≤730d stated maturities from the capital-structure panel); attached in
+`assemble_mechanical`, misses ride the QA channel. REAL RUN: SMPL → next print 2026-10-08
+(median 91d over 36 real results 8-Ks; the mockup's hand-estimate "~late Oct" confirmed) + the
+guide checkpoint; MVST → print 2026-08-11 + FOUR stated wall dates incl. the decisive $41.7M
+convertible 2027-01-31.
+(c) render PLACEMENT B, both twins: the calendar closes the Analysis (after the argument, before
+Sources/appendix) — `render.py _catalyst_calendar_lines` + `dossier.js catalystCalendar`; the
+Brief crux gains ONE Next-catalyst line (earliest entry) — `_brief_lines` + `cruxInner`. Dated
+triggers are read from the VERDICT (a mid-build bug caught by checking the field's landed home:
+the first draft read record-level and the smoke masked it by fabricating the field — fixed both
+twins, re-verified with correct nesting). Constitution footer on the card; endnote cites.
+(d) monitor: `FreshnessRow.passed_trigger_deadlines` — an analyst deadline on/before the run date
+flags "… PASSED → re-underwrite due" (window-closed FLAG; whether the trigger FIRED stays the
+human's read — the standing no-adjudication pin still passes); future dated triggers join the
+display list "(by YYYY-MM-DD)"; the decision-log panel renders passed flags loudest.
+Gate: ruff · mypy --strict (110) · **1061 offline passed** (+6 pins: cadence positive/negative,
+assembly rows + fail-loud, placement-B render e2e on committed-SMPL-with-injected-fixtures
+(negative: pre-build JSON renders NO section, NO crux line), node py==JS twin parity, monitor
+passed/future/unparseable). ARTIFACT NOTE: calendars land in committed dossiers at each name's
+NEXT re-assembly (the field is mechanical DATA — a re-render alone cannot create it); dated
+triggers appear when the analyst records them (machine never invents either).
+
+**OPERATOR TO-DO — SMPL UNDERWRITE INPUTS STALE (verified 2026-07-24; disposition PENDING the
+operator's authorized wording).** The committed dossier (assembled 2026-07-23) and the scenario
+facts were built on CIQ panels that PREDATE the 2026-07-09 FQ3 print — multiples as-of
+2026-06-03, TEV as-of 2026-06-25, reference_date 2026-07-06 — so the 2026-07-21 BUY
+(`V-SMPL-screen2-20260706`, entry 10.92 frozen 2026-07-20) was underwritten on a pre-Q3 P&L.
+Fresh CIQ export uploaded 2026-07-24 and pipeline-verified (quarterly grid carries the
+May-30-2026 FQ3 columns + 2026-07-09; key devs through Jul-09; profile Jul-23). DISPOSITION PLAN
+(the IT-exit template, PR #191 — the ledger is append-only, nothing is deleted): (1) close row
+`C-SMPL-screen2-20260706` with reason = input-staleness (a PROCESS incident, not a market call —
+the reason string keeps the realized book partitionable); (2) seal-legal `[amended 2026-07-24 …]`
+tag on the rationale + `verdict.status → watch` (the IT transition); (3) AFTER the #208–#210
+queue lands: full re-assembly + R1 re-run on the fresh bundle (the calendar + source-D then ship
+in the fresh artifact — the September driver row extracts from the Q3 transcript); (4) analyst
+re-verdict on a NEW candidate row (one decision row per candidate, by construction). The dated
+trigger (PR #210) is TRANSCRIPT-sourced, not panel-sourced — it survives the disposition and
+carries to the re-underwrite. INVARIANT OWED (the queued assembly-freshness item is this
+incident's guard): a panel-vintage vs latest-EDGAR-print gate at assembly — loud caveat when any
+CIQ panel's as-of predates the newest print. This incident is that item's falsifier made real.
 
 **OPERATOR TO-DO — NCNO price series unavailable for the reference window (2026-07-23).** NCNO's
 What-broke chart / 180d returns / stock_performance are all UNKNOWN because its store bars run
