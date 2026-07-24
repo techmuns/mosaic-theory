@@ -81,6 +81,10 @@ function freshnessPanel(mon) {
       : `<span class="pill live">current</span>`;
     const newer = (f.newer_filings || []).map((x) => `<li>${escapeHtml(x)}</li>`).join("");
     const trigs = (f.triggers || []).map((x) => `<li>${escapeHtml(x)}</li>`).join("");
+    // (catalyst calendar) a PASSED analyst deadline is the loudest row on the card — a flag that
+    // the window closed, never an adjudication that the trigger fired.
+    const passed = (f.passed_trigger_deadlines || [])
+      .map((x) => `<div class="fact-caveat" style="margin-top:6px;">⏰ ${escapeHtml(x)}</div>`).join("");
     return `
       <div class="card" style="margin-bottom:10px;">
         <div style="display:flex; gap:10px; align-items:baseline; flex-wrap:wrap;">
@@ -89,6 +93,7 @@ function freshnessPanel(mon) {
           ${flag}
           <span class="muted" style="font-size:12px; margin-left:auto;">evidence ${fmtDate(f.last_evidence_date)}${f.last_evidence_source ? ` · ${escapeHtml(f.last_evidence_source)}` : ""}</span>
         </div>
+        ${passed}
         ${f.next_expected_print ? `<div class="foot" style="margin-top:6px;">next print ~${fmtDate(f.next_expected_print)} — ${escapeHtml(f.next_expected_basis || "estimate")}</div>` : ""}
         ${newer ? `<div style="margin-top:8px;"><span class="muted" style="font-size:11px; text-transform:uppercase; letter-spacing:0.04em;">Filed since the record's evidence</span><ul class="kv-list">${newer}</ul></div>` : ""}
         ${trigs ? `<div style="margin-top:8px;"><span class="muted" style="font-size:11px; text-transform:uppercase; letter-spacing:0.04em;">Re-underwrite triggers (verbatim — not adjudicated)</span><ul class="kv-list">${trigs}</ul></div>` : ""}

@@ -151,6 +151,10 @@ class FreshnessRow(BaseModel):
     next_expected_print: date | None = None
     next_expected_basis: str | None = None                   # ESTIMATE — from filing cadence
     triggers: list[str] = Field(default_factory=list)
+    # (catalyst calendar, ratified 2026-07-24) analyst-DATED triggers whose deadline has PASSED —
+    # each a FLAG ("… — deadline YYYY-MM-DD PASSED → re-underwrite due"), never an adjudication:
+    # the window closed; whether the trigger FIRED is the human's read.
+    passed_trigger_deadlines: list[str] = Field(default_factory=list)
     watch_note: str | None = None                            # e.g. WERN avoid_priced
 
 
@@ -324,11 +328,28 @@ def freshness_row(*, ticker: str, verdict: str, record: dict[str, Any],
              for form, d, acc in sorted(filings, key=lambda t: t[1])
              if ev is not None and d > ev]
     nxt, basis = next_expected_print([d for _, d, _ in filings], today=today)
+    # (catalyst calendar) the analyst's DATED triggers: a deadline on/before today → the PASSED
+    # flag list; a future one joins the display list with its date. Both verbatim + labeled —
+    # the machine never adjudicates whether a trigger fired.
+    triggers = list((record.get("verdict") or {}).get("reunderwrite_triggers") or [])
+    passed: list[str] = []
+    for dt in (record.get("verdict") or {}).get("dated_triggers") or []:
+        trig, deadline = str(dt.get("trigger") or ""), str(dt.get("deadline") or "")
+        if not trig or not deadline:
+            continue
+        try:
+            dl = date.fromisoformat(deadline)
+        except ValueError:
+            continue  # an unparseable analyst date renders verbatim in the dossier, not here
+        if dl <= today:
+            passed.append(f"{trig} — deadline {deadline} PASSED → re-underwrite due")
+        else:
+            triggers.append(f"{trig} (by {deadline})")
     return FreshnessRow(
         ticker=ticker, verdict=verdict, last_evidence_date=ev, last_evidence_source=ev_src,
         newer_filings=newer, unread_print=bool(newer),
         next_expected_print=nxt, next_expected_basis=basis,
-        triggers=list((record.get("verdict") or {}).get("reunderwrite_triggers") or []),
+        triggers=triggers, passed_trigger_deadlines=passed,
         watch_note=watch_note,
     )
 

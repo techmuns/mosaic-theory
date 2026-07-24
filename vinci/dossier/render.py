@@ -1863,6 +1863,53 @@ def _synthesis_lines(d: Dossier, *, dev: bool) -> list[str]:
     return out
 
 
+# --- (catalyst calendar, ratified 2026-07-24 · PLACEMENT B) ------------------------------------
+def _calendar_entries(
+    d: Dossier, card: ScenarioRecord | None,
+) -> list[tuple[str, str, str, str, str]]:
+    """The MERGED dated entries — machine rows (mechanical.catalyst_calendar) + the analyst's
+    dated triggers from the underwrite record — as (date, event, basis, tests, source_ref),
+    sorted by date. The machine rows are assembled; the trigger rows are ANALYST-TYPED (the
+    machine never invents a trigger or its date). Empty when neither exists."""
+    entries: list[tuple[str, str, str, str, str]] = []
+    cal = d.mechanical.catalyst_calendar
+    if cal is not None:
+        for r in cal.rows:
+            entries.append((r.expected_date, r.event, r.date_basis, r.tests_what, r.source_ref))
+    # dated triggers live on the VERDICT block (they are the recorded decision's falsifiers)
+    for t in (getattr(getattr(card, "verdict", None), "dated_triggers", None) or []):
+        basis_note = f" ({t.basis})" if t.basis else ""
+        entries.append((
+            t.deadline, f"Re-underwrite trigger: {t.trigger}", "trigger-deadline",
+            "the analyst's own falsifier — unresolved by this date, the monitor flags "
+            "re-underwrite due", f"underwrite record (analyst-typed{basis_note})"))
+    entries.sort(key=lambda e: e[0])
+    return entries
+
+
+def _catalyst_calendar_lines(d: Dossier, card: ScenarioRecord | None) -> list[str]:
+    """(PLACEMENT B) The Analysis closer. Rows are dated + basis-labeled + cited; an EMPTY
+    assembled calendar renders its honest reason (never invented dates); absent field (pre-build
+    dossier.json) renders NOTHING — old artifacts round-trip without a phantom section."""
+    cal = d.mechanical.catalyst_calendar
+    if cal is None and not (
+            getattr(getattr(card, "verdict", None), "dated_triggers", None) or []):
+        return []
+    out = ["## Catalyst calendar — what tests the thesis, and when", ""]
+    entries = _calendar_entries(d, card)
+    if entries:
+        for date_s, event, basis, tests, src in entries:
+            out.append(f"- **{event}** — ~{date_s} `[{basis}]` — {tests}{_cite(src)}")
+    else:
+        out.append("- _no dated catalysts could be assembled — see the QA flags "
+                   "(a missing date is stated, never guessed)_")
+    if cal is not None and cal.qa_flags:
+        out += [f"  - _QA: {q}_" for q in cal.qa_flags]
+    out += ["", "_Dates assembled from sources or the analyst's own triggers; no probabilities, "
+            "no weighting, no direction — weighing catalysts is the verdict's job._", ""]
+    return out
+
+
 # --- (Brief) first-cut tier -------------------------------------------------------------------
 # Leads the dossier with the machine's assembled READ (evidence_balance), its PROPOSED verdict
 # (the 2026-07-13 pivot: a deterministic, face-validity-frozen derivation of the lean — see
@@ -2226,6 +2273,12 @@ def _brief_lines(d: Dossier, *, show_proposal: bool = False,
         n_unk = len(s.key_unknowns)
         out.append(f"_{n_unk} key unknown{'s' if n_unk != 1 else ''} + the evidence for/against "
                    "— in Analysis_")
+        # (catalyst calendar) ONE line: the earliest upcoming dated event — when the crux next
+        # gets tested. Rendered only when a dated entry exists; twin: cruxInner() on the web.
+        upcoming = _calendar_entries(d, card)
+        if upcoming:
+            date_s, event, basis, _tests, _src = upcoming[0]
+            out.append(f"**Next catalyst:** {event} ~{date_s} `[{basis}]` — calendar in Analysis")
     out.append("")
     # (user decision) the standing machine-proposal line is GONE from the default brief — the
     # pivot MECHANISM is untouched (derived + sealed to the shadow ledger at assembly; disposition
@@ -2596,6 +2649,11 @@ def render_markdown(d: Dossier, *, dev: bool = False, show_proposal: bool = Fals
     else:
         out += ["## The argument",
                 "_Synthesis not assembled — the facts above stand on their own._", ""]
+
+    # (catalyst calendar, PLACEMENT B ratified 2026-07-24) the Analysis CLOSER — after the
+    # argument, before the appendix: the argument poses the crux, the calendar says when reality
+    # votes on it, hand-off to the monitor. Twin: dossier.js catalystCalendar().
+    out += _catalyst_calendar_lines(d, card)
 
     # (3-tier · tier redesign) APPENDIX — verify & reproduce: reading guide → financial
     # statements → capital-structure provenance → implied-equity reference → mgmt pointer →

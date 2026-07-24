@@ -23,7 +23,9 @@ from vinci.dossier.ciq import CiqBundle
 from vinci.dossier.schemas import (
     CapitalInstrument,
     CapitalStructure,
+    CatalystCalendar,
     CatalystPath,
+    CatalystRow,
     CohortMember,
     Concentration,
     ConsensusContext,
@@ -1509,6 +1511,97 @@ def _catalyst_path(
     )
 
 
+# --- (catalyst calendar, ratified 2026-07-24) dated events + what each tests ---------------------
+# Face-validity constants (never outcome-tuned): a print rhythm needs ≥4 results 8-Ks to call;
+# a sane quarterly gap sits in 60..120d (an irregular filer → REFUSE, never guess); maturities
+# make the calendar when they fall within ~24 months of the reference date.
+_CAL_MIN_PRINTS = 4
+_CAL_GAP_DAYS = (60, 120)
+_CAL_MATURITY_HORIZON_DAYS = 730
+
+
+def _next_print_estimate(print_dates: list[date], ref: date) -> tuple[date, str] | None:
+    """CADENCE-ESTIMATE of the next results print from the filer's OWN 2.02-8-K history: the
+    median inter-print gap (≥ ``_CAL_MIN_PRINTS`` prints, gap within ``_CAL_GAP_DAYS``) rolled
+    forward from the last print past ``ref``. None on any doubt — the caller emits a qa_flag and
+    NO row (an estimate is labeled; a guess is forbidden)."""
+    prints = sorted(set(print_dates))
+    if len(prints) < _CAL_MIN_PRINTS:
+        return None
+    gaps = [(b - a).days for a, b in zip(prints, prints[1:], strict=False)]
+    med = statistics.median(gaps)
+    if not (_CAL_GAP_DAYS[0] <= med <= _CAL_GAP_DAYS[1]):
+        return None  # irregular rhythm — refuse to call it
+    step = timedelta(days=round(med))
+    est = prints[-1] + step
+    while est <= ref:
+        est += step
+    basis = (f"median {round(med)}d gap over {len(prints)} results 8-Ks; "
+             f"last print {prints[-1].isoformat()}")
+    return est, basis
+
+
+def _catalyst_calendar(
+    edgar: EdgarClient, cik: str, reference_date: date, mech: MechanicalLayer,
+) -> CatalystCalendar:
+    """Assemble the DATED catalyst rows — deterministic, source-bound, never weighted:
+    A. the next results print (cadence-estimate from the filer's own 2.02 history);
+    B. the committed revised-guidance checkpoint enriches the print row (the print TESTS the guide);
+    C. in-horizon debt maturities from the capital-structure panel (stated ISO dates).
+    Every miss is a loud qa_flag; an empty calendar is an honest outcome."""
+    rows: list[CatalystRow] = []
+    qa: list[str] = []
+    # A + B — the next print, and what it tests
+    try:
+        filings = edgar.recent_filings(cik, forms=("8-K",))
+        prints = [f.filing_date for f in filings if "2.02" in f.items]
+    except Exception as exc:  # noqa: BLE001 — a feed miss is a loud flag, never an abort
+        prints = []
+        qa.append(f"catalyst: submissions feed unavailable ({type(exc).__name__}) — no print row")
+    if prints:
+        est = _next_print_estimate(prints, reference_date)
+        if est is None:
+            qa.append(f"catalyst: print cadence unreadable ({len(prints)} results 8-Ks / "
+                      "irregular gaps) — no estimated print row (never guessed)")
+        else:
+            est_date, basis = est
+            rg = mech.drawdown_cause.revised_guidance
+            if rg.status is SourceStatus.PRESENT and rg.value:
+                tests = ("the committed revised outlook (see Revised guidance — the print is the "
+                         "checkpoint that confirms or refutes it)")
+                src = f"cadence: EDGAR submissions ({basis}) · guide: {rg.source_ref}"
+            else:
+                tests = "the next reported quarter against the committed trajectory"
+                src = f"cadence: EDGAR submissions ({basis})"
+            rows.append(CatalystRow(
+                event="Next results print", expected_date=est_date.isoformat(),
+                date_basis="cadence-estimate", tests_what=tests, source_ref=src))
+    # C — in-horizon maturities (stated dates from the capital-structure panel). ``instruments``
+    # is Sourced[list[...]] — read the value only when PRESENT (absent panel = no rows, no guess).
+    cs = mech.capital_structure
+    if (cs is not None and cs.instruments.status is SourceStatus.PRESENT
+            and cs.instruments.value):
+        horizon = reference_date + timedelta(days=_CAL_MATURITY_HORIZON_DAYS)
+        for inst in cs.instruments.value:
+            if not inst.maturity_date:
+                continue
+            try:
+                mat = date.fromisoformat(inst.maturity_date)
+            except ValueError:
+                qa.append(f"catalyst: unparseable maturity {inst.maturity_date!r} "
+                          f"on {inst.description!r} — row skipped")
+                continue
+            if reference_date < mat <= horizon:
+                amt = (f"${inst.principal_musd:,.1f}M " if inst.principal_musd is not None else "")
+                rows.append(CatalystRow(
+                    event=f"{inst.description} {amt}matures".replace("  ", " "),
+                    expected_date=mat.isoformat(), date_basis="stated",
+                    tests_what="refinance / repay / convert before the wall — the survival read",
+                    source_ref="CIQ capital-structure panel (maturity_date)"))
+    rows.sort(key=lambda r: r.expected_date)
+    return CatalystCalendar(rows=rows, qa_flags=qa)
+
+
 def _catalyst_stale_flag(catalyst: CatalystPath, reference_date: date) -> str | None:
     """Fire the SHARED staleness caveat (same 45d knob as the EV/EBITDA stale-Close check) when the
     Estimates export's as-of trails the reference date by more than the constant — the revision
@@ -2289,8 +2382,13 @@ def assemble_mechanical(
     mech = mech.model_copy(update={
         "primary_source": primary, "operating_drivers": op_drivers})  # (PR-B) mechanism tier
     mech = _enrich_drawdown_drivers(mech, primary)  # (B1) gap-downs → parsed EX-99.1 drivers
+    # (catalyst calendar) dated events + what each tests — needs drawdown_cause (the guide) and
+    # capital_structure (maturities), both on mech by now; its misses ride the QA channel.
+    calendar = _catalyst_calendar(edgar, record.identity.cik, reference_date, mech)
+    mech = mech.model_copy(update={"catalyst_calendar": calendar})
     flags: list[str] = list(primary.qa_flags)
     flags += op_drivers.qa_flags  # (PR-B) operating-driver per-source honest-miss flags → QA
+    flags += calendar.qa_flags  # (catalyst calendar) cadence/maturity honest-miss flags → QA
     si_asof = mech.stock_info.as_of if mech.stock_info is not None else None
     if (stale := _price_stale_note(si_asof, today)) is not None:
         flags.append(f"stock-info: {stale}")  # loud twin of the CMP-row note — machine-visible

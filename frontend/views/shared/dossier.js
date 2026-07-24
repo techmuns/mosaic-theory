@@ -557,7 +557,7 @@ export function renderDossier(d, verdict, card = null, mark = null) {  // export
   // list at its end (self-contained per tab / per PDF scope).
   return header(d) + tierTabs() + `<div class="ds-tiers">
     <section class="ds-tier on" data-tier="brief">${withEndnotes("B", () => briefTier(d, verdict, m, card, mark))}</section>
-    <section class="ds-tier" data-tier="analysis">${withEndnotes("A", () => analysisTier(d, m))}</section>
+    <section class="ds-tier" data-tier="analysis">${withEndnotes("A", () => analysisTier(d, m, card))}</section>
     <section class="ds-tier" data-tier="appendix">${withEndnotes("X", () => appendixTier(d, verdict, m, card))}</section>
   </div>`;
 }
@@ -574,7 +574,7 @@ function tierTabs() {
 // how it's trending → what it's worth → vs whom → what the street thinks → who owns it → the full
 // argument. Caveats are ANALYST caveats only — the `primary-source:` assembly-log line renders in
 // Record & reproduce, not here (process telemetry is not a caveat).
-function analysisTier(d, m) {
+function analysisTier(d, m, card) {
   const analystCaveats = (d.caveats || d.flags || []).filter((c) => !isProcessCaveat(c));
   return flagsSection(analystCaveats)                   // caveats first (what to verify)
     + drawdownIdio(m, d.reference_date)                 // what broke — and did it fall alone?
@@ -585,7 +585,44 @@ function analysisTier(d, m) {
     + catalystPath(m.catalyst_path, m.consensus_context, m.drawdown_cause)  // the street
     + (m.catalyst_path ? "" : consensus(m.consensus_context))  // legacy fallback only for old JSON
     + concentration(m.concentration)
-    + synthesis(d.synthesis, m);                        // the argument — stays the capstone
+    + synthesis(d.synthesis, m)                         // the argument — stays the capstone
+    + catalystCalendar(m, card);                        // (PLACEMENT B) when reality votes on it
+}
+
+// (catalyst calendar, ratified 2026-07-24 · PLACEMENT B — twin of render.py _calendar_entries /
+// _catalyst_calendar_lines) merged machine rows + the analyst's dated triggers, sorted by date.
+function calendarEntries(m, card) {
+  const out = [];
+  for (const r of (((m || {}).catalyst_calendar || {}).rows || [])) {
+    out.push({ date: r.expected_date, event: r.event, basis: r.date_basis,
+               tests: r.tests_what, src: r.source_ref });
+  }
+  for (const t of (((card || {}).verdict || {}).dated_triggers || [])) {
+    const note = t.basis ? ` (${t.basis})` : "";
+    out.push({ date: t.deadline, event: `Re-underwrite trigger: ${t.trigger}`,
+               basis: "trigger-deadline",
+               tests: "the analyst's own falsifier — unresolved by this date, the monitor flags re-underwrite due",
+               src: `underwrite record (analyst-typed${note})` });
+  }
+  out.sort((a, b) => (a.date < b.date ? -1 : a.date > b.date ? 1 : 0));
+  return out;
+}
+function catalystCalendar(m, card) {
+  const cal = (m || {}).catalyst_calendar;
+  const trig = (((card || {}).verdict || {}).dated_triggers || []);
+  if (!cal && !trig.length) return "";  // pre-build JSON round-trips without a phantom card
+  const entries = calendarEntries(m, card);
+  const chip = (b) => `<span class="pill" style="font-size:10px; text-transform:uppercase; letter-spacing:.03em;">${escapeHtml(b)}</span>`;
+  const rows = entries.map((e) => `<div class="point">
+      <b>${escapeHtml(e.event)}</b> — ~<span style="font-variant-numeric:tabular-nums; font-weight:600;">${escapeHtml(e.date)}</span> ${chip(e.basis)}
+      <div style="font-size:12.5px; margin-top:2px;">${escapeHtml(e.tests)}${citeMark(e.src)}</div>
+    </div>`).join("");
+  const empty = `<div class="muted">no dated catalysts could be assembled — a missing date is stated, never guessed</div>`;
+  const qa = (cal && cal.qa_flags && cal.qa_flags.length)
+    ? `<div class="muted" style="font-size:11px; margin-top:4px;">${cal.qa_flags.map(escapeHtml).join(" · ")}</div>` : "";
+  return `<div class="card ds-section"><div class="ds-title">Catalyst calendar<span class="ds-route">what tests the thesis, and when</span></div>
+    ${rows || empty}${qa}
+    <div class="muted" style="font-size:11px; margin-top:8px;">Dates assembled from sources or the analyst's own triggers; no probabilities, no weighting, no direction — weighing catalysts is the verdict's job.</div></div>`;
 }
 
 // assembly telemetry ("primary-source: N EX-99.1 release(s) + 1 10-Q parsed (+0.3s fetch)") is a
@@ -800,7 +837,7 @@ function openerCard(d, verdict, m, card, mark) {
   const lead = parts ? parts.head : briefVerdictChip(verdict);
   const warn = warningStrip(d);
   const about = companyInner(d, m, card);
-  const crux = cruxInner(d.synthesis);
+  const crux = cruxInner(d.synthesis, m, card);
   if (!lead && !(warn + about + crux).trim()) return "";
   // one divider only (the company block's own border-top); the thesis leads the narrative column
   // inside it; the crux CLOSES the cover (the memo convention: open with the thesis, end with
@@ -814,13 +851,19 @@ function openerCard(d, verdict, m, card, mark) {
 // block). The former key_unknowns[:2] teaser was REMOVED (2026-07-24 weather audit): the unknowns'
 // set survives consecutive draws ~17% and the top-2 slots ~7% — the teaser presented weather as a
 // curated "top-2", a judgment the machine never made. Fail-honest: no question → no block.
-function cruxInner(s) {
+function cruxInner(s, m, card) {
   const q = s && s.decisive_question && s.decisive_question.question;
   if (!q) return "";
   const n = ((s && s.key_unknowns) || []).length;
+  // (catalyst calendar) ONE line: the earliest dated entry — when the crux next gets tested.
+  // Twin of render.py's crux Next-catalyst line; renders only when a dated entry exists.
+  const up = calendarEntries(m, card);
+  const next = up.length
+    ? `<div style="font-size:12.5px; margin-top:7px; padding-top:7px; border-top:1px solid var(--line,#eee);"><b>Next catalyst:</b> ${escapeHtml(up[0].event)} ~<span style="font-variant-numeric:tabular-nums;">${escapeHtml(up[0].date)}</span> <span class="pill" style="font-size:10px; text-transform:uppercase;">${escapeHtml(up[0].basis)}</span> <span class="muted">— calendar in Analysis</span></div>`
+    : "";
   return `<div class="brief-crux"><div class="brief-vlab brief-eyebrow">The crux — what decides this, and what would change our mind</div>
     <div class="brief-dq">${escapeHtml(q)}</div>
-    <div class="muted" style="font-size:11px; margin-top:4px;">${n} key unknown${n === 1 ? "" : "s"} + the evidence for/against — in Analysis</div></div>`;
+    <div class="muted" style="font-size:11px; margin-top:4px;">${n} key unknown${n === 1 ? "" : "s"} + the evidence for/against — in Analysis</div>${next}</div>`;
 }
 
 // 2 — UNDERWRITE DETAIL (user decision): the scenarios table + range rail, the analyst's rationale,

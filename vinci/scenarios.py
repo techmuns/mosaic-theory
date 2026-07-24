@@ -290,6 +290,9 @@ class Verdict(BaseModel):
     rationale_plain: str | None = None
     rationale_plain_recorded: str | None = None   # DEPRECATED with the field above
     reunderwrite_triggers: list[str] = Field(default_factory=list)  # what would reopen the name
+    # (catalyst calendar) the DATED form — analyst-typed trigger deadlines; additive-only so every
+    # legacy record round-trips unchanged; `verdict.rationale` untouched → seal-safe.
+    dated_triggers: list[DatedTrigger] = Field(default_factory=list)
     # A recorded BUY is the start of a forward track, so the spread needs the price and the
     # asymmetry AT the moment of the call — not the underwrite-date spot, which has since moved.
     # Both stay None for a verdict that opens no position (watch / passed).
@@ -310,6 +313,20 @@ class Verdict(BaseModel):
             raise ValueError(f"entry_price {v} is not a traded price — refusing to record an "
                              "entry the forward spread cannot be measured from")
         return v
+
+
+class DatedTrigger(BaseModel):
+    """(catalyst calendar, ratified 2026-07-24) An ANALYST-owned re-underwrite trigger with a
+    deadline — the dated form of a ``reunderwrite_triggers`` entry ("Quest stalling two more
+    quarters" → the print that closes the window). ANALYST-TYPED ONLY: the machine never invents a
+    trigger or its date. The calendar renders these with the TRIGGER-DEADLINE basis; the monitor
+    flags a passed deadline as "re-underwrite due" (a flag, never a machine action)."""
+
+    trigger: str          # the falsifier, in the analyst's words
+    deadline: str         # ISO date the window closes
+    basis: str = ""       # optional: how the deadline was chosen ("second print after verdict")
+
+    model_config = {"frozen": True}
 
 
 class ScenarioRecord(BaseModel):

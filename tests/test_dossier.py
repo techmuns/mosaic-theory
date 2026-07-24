@@ -8871,3 +8871,135 @@ def test_substantive_item_set_twins_between_py_and_js() -> None:
     _pat = dr._SUBSTANTIVE_ITEM.pattern.split("(")[1].split(")")[0]
     py_codes = set(_pat.replace("\\", "").split("|"))
     assert js_codes == py_codes, f"substantive-item sets diverge: js={js_codes} py={py_codes}"
+
+
+# --- catalyst calendar (ratified 2026-07-24 · PLACEMENT B) --------------------------------------
+def test_next_print_estimate_cadence_positive_and_negative() -> None:
+    """A quarterly rhythm (≥4 results 8-Ks, median gap 60–120d) rolls forward past the reference;
+    too few prints or an irregular rhythm → None (a qa_flag upstream — an estimate is labeled, a
+    guess is forbidden)."""
+    q = [date(2025, 10, 8), date(2026, 1, 7), date(2026, 4, 9), date(2026, 7, 9)]
+    est = dm._next_print_estimate(q, date(2026, 7, 24))
+    assert est is not None
+    est_date, basis = est
+    assert date(2026, 9, 25) <= est_date <= date(2026, 10, 20)  # ~last + median ≈ 91d
+    assert "results 8-Ks" in basis and "2026-07-09" in basis
+    assert dm._next_print_estimate(q[:3], date(2026, 7, 24)) is None          # <4 prints
+    irregular = [date(2025, 1, 1), date(2025, 1, 20), date(2026, 1, 1), date(2026, 7, 1)]
+    assert dm._next_print_estimate(irregular, date(2026, 7, 24)) is None      # rhythm unreadable
+
+
+def test_catalyst_calendar_assembles_rows_and_fails_loud() -> None:
+    """A (cadence) + C (in-horizon stated maturities) assemble; an unreadable cadence is a LOUD
+    qa_flag and NO row; an out-of-horizon or undated instrument produces no row."""
+    def filing(d: date) -> Filing:
+        return Filing(cik="1", form="8-K", filing_date=d, accession=f"a-{d}", items=["2.02"],
+                      primary_doc=None)
+
+    inst = ds.CapitalInstrument(
+        description="Convertible Bond", type="Bonds and Notes", principal_musd=41.7,
+        coupon="3%", floating_rate="NA", maturity_date="2027-01-31", seniority="Senior",
+        secured=False, convertible=True, currency="CNY")
+    far = inst.model_copy(update={"description": "Far Bond", "maturity_date": "2031-01-01"})
+    undated = inst.model_copy(update={"description": "Lease", "maturity_date": None})
+    cs = ds.CapitalStructure(
+        instruments=ds.Sourced.present([inst, far, undated], source_ref="CIQ panel"),
+        summary=ds.Sourced[str].unknown(note="x"), detail_as_of="d",
+        maturity_filings=ds.Sourced[str].unknown(note="x"),
+        covenant_pointers=ds.Sourced[str].unknown(note="x"),
+        covenant_terms=ds.Sourced[str].unknown(note="x"))
+    mech = _minimal_mech().model_copy(update={"capital_structure": cs})
+
+    quarterly = [filing(d) for d in (date(2025, 10, 8), date(2026, 1, 7),
+                                     date(2026, 4, 9), date(2026, 7, 9))]
+    cal = dm._catalyst_calendar(
+        _FakeEdgar(filings=quarterly), "1", date(2026, 7, 24), mech)  # type: ignore[arg-type]
+    assert [r.date_basis for r in cal.rows] == ["cadence-estimate", "stated"]
+    assert cal.rows[0].event == "Next results print" and cal.qa_flags == []
+    assert cal.rows[1].expected_date == "2027-01-31" and "Convertible Bond" in cal.rows[1].event
+    assert not any("Far Bond" in r.event or "Lease" in r.event for r in cal.rows)
+
+    thin = dm._catalyst_calendar(
+        _FakeEdgar(filings=quarterly[:2]), "1", date(2026, 7, 24), mech)  # type: ignore[arg-type]
+    assert not any(r.date_basis == "cadence-estimate" for r in thin.rows)
+    assert any("cadence unreadable" in q for q in thin.qa_flags)          # loud, never guessed
+
+
+def test_catalyst_calendar_render_placement_b_and_crux_line() -> None:
+    """(PLACEMENT B) On the committed SMPL json with an injected calendar + an analyst dated
+    trigger (VERDICT-nested — the recorded decision's falsifier): the section renders AFTER the
+    argument and BEFORE the appendix; rows are dated+basis-labeled+cited; the Brief crux carries
+    ONE Next-catalyst line (the earliest entry). A dossier WITHOUT the field (every pre-build
+    artifact) renders NO section and NO crux line — old JSON round-trips without a phantom."""
+    import vinci.scenarios as sc
+    p = Path("data/dossiers/SMPL/dossier.json")
+    if not p.exists():
+        pytest.skip("no committed SMPL dossier.json")
+    d = ds.Dossier.model_validate_json(p.read_text())
+    cal = ds.CatalystCalendar(rows=[ds.CatalystRow(
+        event="Next results print", expected_date="2026-10-08", date_basis="cadence-estimate",
+        tests_what="the committed revised outlook", source_ref="cadence: EDGAR submissions")])
+    d2 = d.model_copy(update={
+        "mechanical": d.mechanical.model_copy(update={"catalyst_calendar": cal})})
+    card = sc.read_record("SMPL")
+    card2 = card.model_copy(update={"verdict": card.verdict.model_copy(update={
+        "dated_triggers": [sc.DatedTrigger(
+            trigger="Quest stalling two more quarters", deadline="2027-01-07",
+            basis="second print after the 2026-07-21 verdict")]})})
+    md = dr.render_markdown(d2, card=card2)
+    ia, ic, iap = (md.index("## The argument"), md.index("## Catalyst calendar"),
+                   md.index("# Appendix"))
+    assert ia < ic < iap                                             # placement B
+    sec = md[ic:iap]
+    assert "~2026-10-08 `[cadence-estimate]`" in sec
+    assert "Re-underwrite trigger: Quest stalling two more quarters" in sec
+    assert "~2027-01-07 `[trigger-deadline]`" in sec
+    assert "no probabilities, no weighting, no direction" in sec     # the constitution footer
+    glance = md.split("## At a glance")[1].split("\n## ")[0]
+    assert "**Next catalyst:** Next results print ~2026-10-08" in glance  # earliest entry
+    # NEGATIVE: the raw committed artifact (no calendar field, no dated triggers)
+    md0 = dr.render_markdown(d, card=card)
+    assert "## Catalyst calendar" not in md0
+    assert "Next catalyst:" not in md0
+
+
+def test_catalyst_calendar_js_twin_parity_node() -> None:
+    """py==JS: the web renders the SAME calendar — card after the argument, crux line, rows —
+    from the same committed-json + injected fixtures (verdict-nested trigger)."""
+    import shutil
+    import subprocess
+    if not shutil.which("node"):
+        pytest.skip("node unavailable")
+    p = Path("data/dossiers/SMPL/dossier.json")
+    if not p.exists():
+        pytest.skip("no committed SMPL dossier.json")
+    dj = Path("frontend/views/shared/dossier.js").resolve().as_uri()
+    driver = f"""
+const handler = {{ get: () => stub, apply: () => stub, construct: () => ({{}}) }};
+const stub = new Proxy(function(){{}}, handler);
+for (const g of ["window","document","location"]) {{ try {{ globalThis[g] = stub; }} catch {{}} }}
+import {{ readFileSync }} from "node:fs";
+const {{ renderDossier }} = await import("{dj}");
+const d = JSON.parse(readFileSync("data/dossiers/SMPL/dossier.json"));
+d.mechanical.catalyst_calendar = {{ rows: [{{ event: "Next results print",
+  expected_date: "2026-10-08", date_basis: "cadence-estimate",
+  tests_what: "the committed revised outlook", source_ref: "cadence: EDGAR submissions" }}],
+  qa_flags: [] }};
+const card = JSON.parse(readFileSync("frontend/scenarios/SMPL.json"));
+card.verdict.dated_triggers = [{{ trigger: "Quest stalling two more quarters",
+  deadline: "2027-01-07", basis: "second print after the 2026-07-21 verdict" }}];
+const h = renderDossier(d, null, card);
+console.log(JSON.stringify({{
+  after_argument: h.indexOf("Catalyst calendar") > h.indexOf("The argument"),
+  row: h.includes("2026-10-08") && h.includes("cadence-estimate"),
+  trigger: h.includes("Re-underwrite trigger: Quest stalling two more quarters")
+           && h.includes("2027-01-07"),
+  crux: h.split("brief-crux")[1].includes("Next catalyst:")
+        && h.split("brief-crux")[1].includes("2026-10-08"),
+  constitution: h.includes("no probabilities, no weighting, no direction"),
+}}));"""
+    out = subprocess.run(["node", "--input-type=module", "-e", driver],
+                         capture_output=True, text=True, check=True)
+    got = json.loads(out.stdout)
+    assert got == {"after_argument": True, "row": True, "trigger": True,
+                   "crux": True, "constitution": True}

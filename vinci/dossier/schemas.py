@@ -425,6 +425,35 @@ class CatalystPath(BaseModel):
     model_config = {"frozen": True}
 
 
+class CatalystRow(BaseModel):
+    """(catalyst calendar, ratified 2026-07-24) One DATED upcoming event and what it tests —
+    machine-ASSEMBLED, never machine-weighted: no probability, no direction, no importance field
+    (weighing catalysts is the verdict's job, by constitution). ``expected_date`` is ISO;
+    ``date_basis`` says how the date is known — "stated" (a primary source states it) or
+    "cadence-estimate" (derived from the filer's own print rhythm; an ESTIMATE, never a date
+    certain). A date that cannot be sourced or soundly estimated produces NO row (fail-loud
+    qa_flag upstream) — never a guessed date."""
+
+    event: str
+    expected_date: str  # ISO date
+    date_basis: str  # "stated" | "cadence-estimate"
+    tests_what: str  # which committed claim/guide/wall this event will confirm or refute
+    source_ref: str
+
+    model_config = {"frozen": True}
+
+
+class CatalystCalendar(BaseModel):
+    """(catalyst calendar) The assembled dated-event rows + fail-loud QA. Rows sorted by
+    ``expected_date``. Empty rows + a qa_flag is an HONEST outcome (cadence unreadable, no
+    in-horizon maturities) — the render says so instead of inventing dates."""
+
+    rows: list[CatalystRow] = Field(default_factory=list)
+    qa_flags: list[str] = Field(default_factory=list)
+
+    model_config = {"frozen": True}
+
+
 class PeerRow(BaseModel):
     """One row of the per-peer comparability grid (B1) — a peer, the subject (``is_name``), or the
     synthetic peer-median footer (``is_median``). Every figure is CIQ-sourced; NO computed
@@ -929,6 +958,10 @@ class MechanicalLayer(BaseModel):
     # field must still round-trip (the flags-PR precedent). A FRESH assembly ALWAYS builds it — the
     # fail-loud lives one level down (each sub-field is UNKNOWN/MISSING when its sheet is absent).
     catalyst_path: CatalystPath | None = None
+    # (catalyst calendar, ratified 2026-07-24) dated upcoming events + what each tests — assembled
+    # deterministically (print cadence, guide checkpoints, in-horizon maturities). Optional-with-
+    # default for back-compat: old JSON round-trips; a FRESH assembly always builds it.
+    catalyst_calendar: CatalystCalendar | None = None
     # B2 unified leverage & survival (both bases labeled + peer median + credit health) and B3 CIQ
     # implied valuation (posed, no computed %). Optional-with-default for back-compat: old JSON
     # round-trips (its Quality leverage lines render as the fallback); a FRESH assembly builds both.
