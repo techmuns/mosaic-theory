@@ -122,3 +122,49 @@ def test_low10_reserved_slugs_match_router_normalizer() -> None:
 
 if __name__ == "__main__":
     raise SystemExit(pytest.main([__file__, "-q"]))
+
+
+def test_card_verdict_keys_read_by_js_are_emitted_by_build() -> None:
+    """(catalyst-calendar drift, 2026-07-24) ``frontend/build.py`` camelCases every card key; the
+    dossier renderer reads them back by hand. ``dated_triggers`` was read in SNAKE case and never
+    emitted at all, so the WEB silently rendered a SHORTER catalyst calendar than the PDF — SMPL
+    showed 2 of 3 entries and the missing row was the analyst's own falsifier. Pin the contract in
+    BOTH directions: every ``card.verdict.<key>`` the JS reads must be a key build.py emits."""
+    js, build = _src("frontend/views/shared/dossier.js"), _src("frontend/build.py")
+    # keys the renderer reads off the card's verdict
+    read = set(re.findall(r"\(\{\}\)\)\.verdict \|\| \{\}\)\.(\w+)", js))
+    read |= set(re.findall(r"verdict\s*\|\|\s*\{\}\)\.(\w+)", js))
+    assert read, "no card.verdict.<key> reads found — the regex went stale, not the code"
+    # keys build.py emits inside the verdict block (quoted literal keys)
+    vblock = build.split('"verdict": {', 1)[1].split("\n        }", 1)[0]
+    emitted = set(re.findall(r'"(\w+)":', vblock))
+    missing = read - emitted
+    assert not missing, (
+        f"dossier.js reads card.verdict keys build.py never emits: {sorted(missing)} — "
+        f"emitted={sorted(emitted)}. A read key that is never written renders SILENTLY EMPTY.")
+    # and no snake_case survives on the card side (build.py camelCases everything)
+    snake = {k for k in read if "_" in k}
+    assert not snake, f"card keys must be camelCase (build.py's convention): {sorted(snake)}"
+
+
+def test_committed_web_card_carries_the_same_dated_triggers_as_its_record() -> None:
+    """(e2e) The analyst's dated falsifiers must reach the WEB card, not just the md tier — the
+    web calendar merges them with the machine rows exactly as ``render.py`` does. Structural count
+    parity only: the trigger TEXT is analyst prose and is never pinned."""
+    import json
+
+    recs = sorted((ROOT / "scenarios").glob("*.json"))
+    checked = 0
+    for src in recs:
+        if src.stem.startswith("_"):
+            continue
+        card_p = ROOT / "frontend" / "scenarios" / f"{src.stem}.json"
+        if not card_p.exists():
+            continue
+        want = (json.loads(src.read_text()).get("verdict") or {}).get("dated_triggers") or []
+        got = (json.loads(card_p.read_text()).get("verdict") or {}).get("datedTriggers") or []
+        assert len(got) == len(want), (
+            f"{src.stem}: record has {len(want)} dated trigger(s) but the web card carries "
+            f"{len(got)} — the web calendar would render short of the PDF")
+        checked += 1
+    assert checked, "no committed underwrite cards found to check"

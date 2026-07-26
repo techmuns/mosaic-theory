@@ -4544,6 +4544,29 @@ stock-performance benchmark line is empty. Backfill both with `refresh <NAME> IW
 the worktree, or re-assemble in the main checkout (full store) and copy the artifact. The worktree
 also needs a `.env` symlink for the ANTHROPIC/POLYGON keys (synthesis + EOD).
 
+**BUILD RECORD — 2026-07-24 catalyst calendar reached the PDF but not the WEB (card key drift).**
+Found by actually LOOKING at the rendered page (operator asked for a screenshot). `frontend/build.py`
+camelCases every card key, but never emitted `dated_triggers` at all, and `dossier.js` read it in
+SNAKE case — two independent breaks on the same field. Effect: the web calendar rendered SHORT of
+the md/PDF — SMPL showed **2 of 3** entries and the missing row was **the analyst's own falsifier**
+(the September pricing trigger), i.e. the single most decision-relevant row for a months-to-quarters
+book. WHY IT SURVIVED SINCE #209/#211: the twin test `test_catalyst_calendar_js_twin_parity_node`
+injected `card.verdict.dated_triggers` — a snake_case shape **build.py never emits** — so the
+fixture LIED and the test stayed green while production dropped the data. (A second red herring:
+the preview server was rooted in the MAIN checkout, then **45 commits stale**, which briefly looked
+like a total outage. Preview only from the worktree under test.) FIX: build.py emits
+`datedTriggers` (omitted when empty → trigger-less records stay byte-identical); dossier.js reads
+camelCase; the twin fixture now uses the production shape. Artifact diff: **+7 lines on
+frontend/scenarios/SMPL.json alone**, every other artifact byte-identical. VERIFIED on the running
+worktree preview: SMPL's web calendar now renders **3 rows = md 3**, incl. "Re-underwrite trigger:
+September portfolio-wide price increase fails to stick … 2027-01-07 [trigger-deadline]".
+INVARIANT (2 pins, both proven RED on the reverted bug then green): `test_card_verdict_keys_read_
+by_js_are_emitted_by_build` — every `card.verdict.<key>` the JS reads must be a key build.py emits,
+and no snake_case survives on the card side (this is the general guard: it catches the NEXT such
+field, not just this one); and `test_committed_web_card_carries_the_same_dated_triggers_as_its_
+record` — structural count parity on the committed artifacts (counts only; analyst prose is never
+pinned). Gate: ruff + `mypy --strict` clean · 1068 passed.
+
 **DIAGNOSIS RECORD — 2026-07-24 THE REPORT RE-DESIGN THREAD — four proposals, zero built; the
 valuation surface is COMPLETE. PR #214 closed unbuilt.** An external buy-side report framework was
 mapped onto this stack (brief → analysis → appendix; add IRR / sizing / football field / catalyst
