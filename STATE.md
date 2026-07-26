@@ -4589,14 +4589,21 @@ NEGATIVE result is the durable output, and because the same proposals will other
    verified genuinely absent (no `position_size`/`portfolio_weight` anywhere in `vinci/` or
    `frontend/views/`), and its inputs already exist on every ranked-queue row (`adv_usd`,
    `liquidity_tier`, `market_cap`, `sector`, `industry`, `tradeability_gated`). But the arithmetic
-   says wait: at **$10M AUM a 2.5% position is $250k**, which at 20% of ADV takes **0.005–0.18 days
-   to build** across the whole cohort (IT 0.005 · SMPL 0.035 · AORT 0.065 · MVST 0.181 — the
-   THINNEST name absorbs a full position in under two hours). A capacity block would print a
-   near-constant "0.0 days" for every name — the SAME failure mode as the horizon ratio. **Trigger
-   to revisit: ~$50–100M AUM** (where the thinnest names start taking a full day) or a genuinely
-   illiquid candidate. The split to preserve when it IS built: **capacity is a FACT** (ADV ×
-   participation × days — mechanical, fence-safe); **a proposed WEIGHT is a JUDGEMENT** (conviction
-   × correlation × theme slot) and would be the machine concluding — expect the fences to apply.
+   says wait. **OPERATOR PARAMETERS (ratified 2026-07-24): participation 10% of ADV · build window
+   2 days · 10–20 positions · AUM $1M today, growing with results.** So a position is **$50–100k**,
+   and the capacity ceiling (ADV × 10% × 2d) clears it by **14× on the THINNEST name and 486× on
+   the deepest** (MVST $6.9M ADV → $1.38M ceiling; IT $243M ADV → $48.6M). A $100k position builds
+   in **0.004–0.145 days** cohort-wide. A capacity block would print "0.0 days" for every name —
+   the SAME failure mode as the horizon ratio: a second constant that discriminates nothing.
+   **TRIGGER TO REVISIT — derived from the operator's own parameters, not a guess:** capacity binds
+   when `AUM > N × ADV × 0.2`, i.e. **~$14M AUM** (MVST at 10 positions), then AORT $38M, SMPL/VRRM
+   ~$71–73M, and only ~$400M+ for IT/EPAM. At 20 positions every threshold doubles ($28M / $77M /
+   ~$142M). **So: build the capacity block when AUM approaches ~$14M, or sooner if a genuinely
+   illiquid candidate (ADV < ~$5M) reaches the finalist stage — whichever comes first.** The split
+   to preserve when it IS built: **capacity is a FACT** (ADV × participation × days — mechanical,
+   fence-safe); **a proposed WEIGHT is a JUDGEMENT** (conviction × correlation × theme slot) and
+   would be the machine concluding — expect the fences to apply, and treat it as an operator ruling
+   rather than a build. At 10–20 positions with a two-person team, sizing is a conversation.
 6. **METHOD NOTE (why four proposals were wrong).** Each was outside-in framework advice applied
    before reading the code; each was caught by the operator asking "does this already exist?" —
    never by self-check. Two of the four were missed by grepping only the file already open rather
