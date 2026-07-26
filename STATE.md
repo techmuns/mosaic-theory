@@ -4497,6 +4497,45 @@ field needs updating. FALSIFIER/next: pin the benchmark to the screen-time cap b
 record) so dossier re-assembly can't reselect it. **RESOLVED 2026-07-24 — see the build record
 immediately below (the pin already existed on the ranked-queue row; the dossier now reads it).**
 
+**BUILD RECORD — 2026-07-24 TWO CLOCKS + the recipe capability registry (engine, additive).**
+Operator question: for a months-to-quarters book, is R2's 4-year terminal bridge built on a wrong
+premise? DIAGNOSIS (verified against the records, not asserted): **no — but two clocks were being
+conflated.** How long we HOLD and how far out we VALUE are different questions; a price reflects
+the whole future no matter how briefly the stock is held, so forcing the valuation to 180 days
+would replace a valuation with a price forecast. The genuine finding is that **R1 is TIMELESS**
+(`revenue · margin · multiple`, no years — SMPL/IT/EPAM/WERN, 4 of 7 records) while **R2 already
+models a horizon** (`years_to_terminal` per leg, a declared 4th axis, `HURDLE=0.15`,
+`PV = value_T ÷ (1+hurdle)^years`). PV-at-hurdle IS time-adjustment — the dual of an IRR — so the
+"add IRR" instinct was already half-built. SECOND finding, from the record: **every R2 name has a
+NEGATIVE reward:risk and failed the bar** (AORT −0.67, MVST −0.33, NCNO −0.71 → all watches) while
+both BUYs are R1 (SMPL, IT). Discounting a distant terminal at 15%/yr divides by ~1.75, so R2 is
+STRICT by construction — it functions as a rejection filter, which the operator ratified as
+working-as-intended (option (a), 2026-07-24). BUILT: (1) **recipe capability registry** — `Recipe`
+(frozen) + `RECIPES` declare each recipe's axes AND where its own valuation clock lives
+(`horizon_leg_field`: R1 None/timeless, R2 `years_to_terminal`); `AXES_BY_RECIPE` is now DERIVED
+from it (dual-write is how the two drift) and `axes_for` reads through `recipe_for`, so a future R3
+costs ONE row instead of an edit in every consumer — the EV/Revenue 3-axis special case preserved.
+(2) **two clocks** — `ScenarioRecord.trade_horizon_days` (additive, default None;
+`DEFAULT_TRADE_HORIZON_DAYS = 180`, chosen to MATCH the ledger's existing `horizon_days`, which all
+4 logged verdicts already use, so the period we claim a return over is the period we score) +
+engine-computed `Result.valuation_horizon_years / trade_horizon_years / horizon_ratio`, stamped by
+ONE helper (`_with_horizons`) on both recipe paths and sealed with the rest of the result. PLACED IN
+THE ENGINE, not the renderer, on the reward:risk precedent (decision-relevant numbers are computed
+once, stored, sealed) and because a render-time recompute is exactly the MDY→IWM drift class.
+**It moves no bar and touches no verdict** — `derive_proposal` still reads only the synthesis lean.
+REAL RUN (recipes re-run in memory on all 7 committed records, nothing written): R2 names → 4.0y
+valuation clock vs 0.49y trade clock = **8.12× ratio** (the value sits ~8 holding periods away ⇒ the
+trade underwrites a RE-RATING, not a result held to see); R1 names → ratio None (timeless, refused
+not defaulted); **every pre-existing reward:risk identical**. INVARIANT: 3 pins — registry
+(positive R2 clock / negative R1 timeless / derived-not-dual-written / undeclared→None),
+`horizons()` refusals (no valuation clock, no trade clock, non-positive days→raise), and
+engine-stamps-without-moving-reward-risk incl. the legacy no-horizon path. `scenarios/_schema.json`
+regenerated (48 insertions, 0 deletions — only the 4 new fields). Gate: ruff + `mypy --strict`
+clean · 1069 passed. NOT BUILT (deliberate, operator-flagged): the analyst "expected gap closure by
+horizon" input — recommended as an OPTIONAL field first (an axis would make every existing record
+incomplete); and NO naive annualized return (SMPL's +146% over 180d annualizes to ~500% — a fantasy
+number). Render of the clocks is a SEPARATE PR (preview rule).
+
 **BUILD RECORD — 2026-07-24 benchmark cap-band pin (ranker screen-time cap as the fallback).**
 Closes the KNOWN-ISSUE above. Root cause: the dossier's `_resolve_benchmark` bands on the **CIQ
 valuation cap** (`implied_val.market_cap`, $M) and **silently defaults to IWM when that is UNKNOWN**;

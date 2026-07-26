@@ -229,6 +229,42 @@
           ],
           "default": null,
           "title": "Pass Fail"
+        },
+        "valuation_horizon_years": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Valuation Horizon Years"
+        },
+        "trade_horizon_years": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trade Horizon Years"
+        },
+        "horizon_ratio": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Horizon Ratio"
         }
       },
       "title": "Result",
@@ -888,6 +924,18 @@
     "spot_source": {
       "title": "Spot Source",
       "type": "string"
+    },
+    "trade_horizon_days": {
+      "anyOf": [
+        {
+          "type": "integer"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Trade Horizon Days"
     },
     "facts": {
       "additionalProperties": {

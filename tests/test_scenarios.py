@@ -765,3 +765,77 @@ def test_every_committed_record_result_matches_its_own_facts() -> None:
                 and fresh.result.ratio is not None):
             assert payload["result"]["ratio"] == pytest.approx(fresh.result.ratio, abs=1e-6), (
                 f"{path.stem}: stored ratio diverges from its own facts")
+
+
+def _r2(**over: object) -> sc.ScenarioRecord:
+    """An R2-shaped record: R2's fourth axis (horizon) + the per-leg terminal year it declares."""
+    legs = {
+        "bear": sc.ScenarioInput(revenue=2850.0, margin=0.015, multiple=6.0, reason="trough",
+                                 bear_basis="own-history", margin_basis="EBIT",
+                                 years_to_terminal=4.0),
+        "base": sc.ScenarioInput(revenue=3100.0, margin=0.0625, multiple=6.5, reason="mid",
+                                 years_to_terminal=4.0),
+        "bull": sc.ScenarioInput(revenue=3400.0, margin=0.080, multiple=7.0, reason="turn",
+                                 years_to_terminal=4.0),
+    }
+    axes = {a: sc.AssumptionDerivation(method=f"{a} — how this leg was derived")
+            for a in ("revenue", "margin", "multiple", "horizon")}
+    base: dict[str, object] = {"recipe_id": sc.RECIPE_R2, "scenarios": legs, "assumptions": axes}
+    base.update(over)
+    return _rec(**base)
+
+
+def test_recipe_registry_declares_axes_and_the_valuation_clock() -> None:
+    """(two clocks · registry) Every recipe DECLARES what it models — its assumption axes, and
+    where (if anywhere) its own valuation clock lives. R1 is TIMELESS by construction: it
+    normalises to a mid-cycle year that already exists, so there is no bridge to date. R2 carries a
+    per-leg terminal year. ``AXES_BY_RECIPE`` is DERIVED from the registry so the two cannot drift,
+    and an undeclared recipe answers None rather than a guess (a future R3 costs one row here)."""
+    r1, r2 = sc.recipe_for(sc.RECIPE_R1), sc.recipe_for(sc.RECIPE_R2)
+    assert r1 is not None and r2 is not None
+    assert r1.horizon_leg_field is None                    # negative pin — timeless
+    assert r2.horizon_leg_field == "years_to_terminal"     # positive pin — a declared clock
+    assert r1.axes == ("revenue", "margin", "multiple")
+    assert r2.axes == ("revenue", "margin", "multiple", "horizon")
+    # derived from the registry, never hand-maintained beside it
+    assert {k: v.axes for k, v in sc.RECIPES.items()} == sc.AXES_BY_RECIPE
+    assert sc.recipe_for("R9_undeclared") is None
+    assert sc.axes_for("R9_undeclared", "EV/EBITDA") is None
+
+
+def test_two_clocks_ratio_and_its_refusals() -> None:
+    """(two clocks) The VALUATION clock (how far out the modelled state sits) and the TRADE clock
+    (how long we intend to hold) answer different questions; their ratio says how much of the
+    thesis rests on a RE-RATING rather than a result we hold long enough to see. Every unknown leg
+    refuses to None rather than defaulting into a number that would read as measured."""
+    horizon_years = sc.DEFAULT_TRADE_HORIZON_DAYS / 365.25
+    vh, th, ratio = sc.horizons(_r2(trade_horizon_days=sc.DEFAULT_TRADE_HORIZON_DAYS))
+    assert vh == 4.0 and th == pytest.approx(horizon_years)
+    assert ratio == pytest.approx(4.0 / horizon_years)
+    assert ratio > 8.0        # the warning shape: the modelled state sits ~8 holding periods away
+    # R1 is TIMELESS — a trade clock, but no valuation clock, so NO ratio (never a fabricated 1.0)
+    assert sc.horizons(_rec(trade_horizon_days=sc.DEFAULT_TRADE_HORIZON_DAYS)) == (
+        None, pytest.approx(horizon_years), None)
+    # no stated holding period → no trade clock and no ratio, even on a recipe that HAS a clock
+    assert sc.horizons(_r2()) == (4.0, None, None)
+    # a non-positive holding period is not a horizon — refused at the record, not by dividing by it
+    with pytest.raises(ValueError, match="trade_horizon_days"):
+        _rec(trade_horizon_days=0)
+
+
+def test_run_recipe_stamps_the_two_clocks_without_moving_reward_risk() -> None:
+    """(two clocks · additive) The engine stamps the clocks into ``result`` beside reward/risk — a
+    machine-computed FACT about the underwrite, sealed with the rest. It must move no existing
+    number, and a record that predates the field must still compute (purely additive)."""
+    with_h = sc.run_recipe(_rec(trade_horizon_days=sc.DEFAULT_TRADE_HORIZON_DAYS))
+    legacy = sc.run_recipe(_rec())                    # no stated horizon — the back-compat path
+    assert with_h.result.trade_horizon_years == pytest.approx(
+        sc.DEFAULT_TRADE_HORIZON_DAYS / 365.25)
+    assert legacy.result.trade_horizon_years is None and legacy.result.horizon_ratio is None
+    assert with_h.result.valuation_horizon_years is None      # R1 timeless on both paths
+    # PURELY ADDITIVE: every pre-existing figure is identical with and without the new field
+    assert with_h.result.ratio == legacy.result.ratio
+    assert with_h.result.reward == legacy.result.reward and with_h.result.risk == legacy.result.risk
+    assert with_h.result.pass_fail == legacy.result.pass_fail
+    # the clocks INFORM; they never conclude — the machine leaves the verdict where it found it
+    assert with_h.verdict.status == "pending_analyst"

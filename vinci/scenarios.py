@@ -38,6 +38,14 @@ from vinci.prose_lint import ProseRegisterWarning, lint_record
 
 SCHEMA_VERSION = "1.2"
 
+# (two clocks) The intended HOLDING period an underwrite is written to — the SAME 180 days the
+# decision ledger already scores every verdict at (``LedgerEntry.horizon_days``), so the period we
+# claim a return over is the period we actually check. It is deliberately NOT the recipe's
+# valuation clock: how long we HOLD and how far out we VALUE are different questions (a business
+# may take four years to reach the modelled state while the trade is scored at 180 days), and
+# collapsing them would either break the valuation or turn it into a price forecast.
+DEFAULT_TRADE_HORIZON_DAYS = 180
+
 # WHERE a bear multiple came from. Each member is a different KIND of evidence, and the difference
 # is what the 2026-07-22 audit turned on: an own-history floor drawn from a growth-era-only window
 # is not the same claim as a multiple taken from businesses actually in the state being modelled.
@@ -260,6 +268,15 @@ class Result(BaseModel):
     ratio_undefined: str | None = None     # set when the risk leg is degenerate
     bar: float = BAR
     pass_fail: Literal["PASS", "FAIL", "UNDEFINED"] | None = None
+    # (two clocks) the recipe's own VALUATION horizon against the intended HOLDING period, and
+    # their ratio. Machine-computed and sealed beside reward/risk — a fact about the underwrite,
+    # never a judgement on it: a high ratio SAYS the value depends on a state far beyond the window
+    # the verdict is scored in, i.e. the trade underwrites a RE-RATING rather than a result we hold
+    # long enough to see. It moves no bar and touches no verdict. None on a timeless recipe (R1
+    # normalises to a year that already exists) or an unset trade horizon — never fabricated.
+    valuation_horizon_years: float | None = None
+    trade_horizon_years: float | None = None
+    horizon_ratio: float | None = None
 
 
 class Verdict(BaseModel):
@@ -344,6 +361,11 @@ class ScenarioRecord(BaseModel):
     analyst: str
     spot: float
     spot_source: str
+    # (two clocks) the intended HOLDING period for this underwrite, in calendar days — the analyst's
+    # statement of the window the thesis is written to, stored HERE (not read from the ledger) so a
+    # record states its own horizon at underwrite time, before any verdict exists.
+    # ``DEFAULT_TRADE_HORIZON_DAYS`` is the fund's standard; None on records that predate the field.
+    trade_horizon_days: int | None = None
     facts: dict[str, Fact]                 # d_and_a, net_debt, diluted_shares (+ any recipe extras)
     scenarios: dict[str, ScenarioInput]    # bear | base | bull
     # per-AXIS methodology (revenue | margin | multiple for R1): how each modeled input was
@@ -361,6 +383,14 @@ class ScenarioRecord(BaseModel):
     survival_input: SurvivalInput | None = None      # (R2) inputs to the gate; None on R1
     result: Result = Field(default_factory=Result)
     verdict: Verdict = Field(default_factory=Verdict)
+
+    @field_validator("trade_horizon_days")
+    @classmethod
+    def _trade_horizon_positive(cls, v: int | None) -> int | None:
+        """A non-positive holding period is not a horizon — refuse rather than divide by it."""
+        if v is not None and v <= 0:
+            raise ValueError(f"trade_horizon_days must be > 0 (got {v})")
+        return v
 
     @model_validator(mode="after")
     def _assumption_axes_guarded(self) -> ScenarioRecord:
@@ -409,24 +439,54 @@ class ScenarioRecord(BaseModel):
 
 
 RECIPE_R1 = "R1_midcycle_margin_evebitda"
+RECIPE_R2 = "R2_terminal_margin"
+
+
+class Recipe(BaseModel):
+    """What a valuation recipe MODELS — declared per recipe, never inferred.
+
+    Adding a recipe is adding a ROW here: the assumption axes it reviews, and where (if anywhere)
+    its own VALUATION CLOCK lives. Consumers ask this registry rather than branching on
+    ``recipe_id``, so a future R3 costs one declaration instead of an edit inside every consumer.
+    Declared only when the recipe EXISTS — never speculatively."""
+
+    recipe_id: str
+    axes: tuple[str, ...]
+    # The per-LEG field naming how many years forward the modelled state sits — the recipe's own
+    # VALUATION clock, which is NOT the holding period (see ``ScenarioRecord.trade_horizon_days``).
+    # None ⇒ the recipe is TIMELESS by construction: R1 normalises to a mid-cycle year that already
+    # exists, so there is no bridge to date and no clock to compare a holding period against.
+    horizon_leg_field: str | None = None
+
+    model_config = {"frozen": True}
+
 
 # The assumption AXES each known recipe models. The axes guard binds per-recipe: unknown axes are
 # refused for a known recipe at any schema version; completeness (all axes present) binds from
-# schema 1.1. A future recipe declares its axes here when it exists — never speculatively.
-RECIPE_R2 = "R2_terminal_margin"
-AXES_BY_RECIPE: dict[str, tuple[str, ...]] = {
-    RECIPE_R1: ("revenue", "margin", "multiple"),
+# schema 1.1. A future recipe declares itself here when it exists — never speculatively.
+RECIPES: dict[str, Recipe] = {
+    RECIPE_R1: Recipe(recipe_id=RECIPE_R1, axes=("revenue", "margin", "multiple")),
     # R2 models the HORIZON as a fourth axis: when the terminal year arrives is an assumption in
     # its own right (it drives both the discount and the accumulated dilution), so it is stated and
     # reviewed like the other three rather than buried in the leg inputs.
-    RECIPE_R2: ("revenue", "margin", "multiple", "horizon"),
+    RECIPE_R2: Recipe(recipe_id=RECIPE_R2, axes=("revenue", "margin", "multiple", "horizon"),
+                      horizon_leg_field="years_to_terminal"),
 }
+
+# DERIVED from RECIPES, never hand-maintained beside it — dual-write is exactly how the two drift.
+# Kept as a public name because it is the shape consumers and tests already read.
+AXES_BY_RECIPE: dict[str, tuple[str, ...]] = {r: c.axes for r, c in RECIPES.items()}
 
 # R2 on an EV/Revenue basis models THREE axes: the margin axis does not exist, because the value
 # does not read a margin. Requiring a margin methodology here would force the analyst to write up
 # how they derived an input the arithmetic ignores — a reviewable-looking paragraph attached to
 # nothing, which is worse than no paragraph at all.
 _R2_REVENUE_AXES: tuple[str, ...] = ("revenue", "multiple", "horizon")
+
+
+def recipe_for(recipe_id: str) -> Recipe | None:
+    """The declared capabilities of ``recipe_id`` — None when the recipe is not (yet) declared."""
+    return RECIPES.get(recipe_id)
 
 
 def axes_for(recipe_id: str, multiple_basis: str | None) -> tuple[str, ...] | None:
@@ -436,7 +496,36 @@ def axes_for(recipe_id: str, multiple_basis: str | None) -> tuple[str, ...] | No
 
     if recipe_id == RECIPE_R2 and multiple_basis == tmod.BASIS_REVENUE:
         return _R2_REVENUE_AXES
-    return AXES_BY_RECIPE.get(recipe_id)
+    cap = recipe_for(recipe_id)
+    return cap.axes if cap is not None else None
+
+
+def horizons(rec: ScenarioRecord) -> tuple[float | None, float | None, float | None]:
+    """(two clocks) ``(valuation_horizon_years, trade_horizon_years, ratio)`` for ``rec``.
+
+    The VALUATION clock is read from the recipe's DECLARED leg field (the registry — never a branch
+    on ``recipe_id``) at the BASE leg, the leg the reward/ratio convention already privileges. An
+    undeclared recipe, a timeless one (R1), a missing or non-positive leg value, or an unset trade
+    horizon each yield None: an unknown clock is reported as UNKNOWN, never defaulted into a number
+    that would read as measured."""
+    cap = recipe_for(rec.recipe_id)
+    val_years: float | None = None
+    if cap is not None and cap.horizon_leg_field is not None:
+        base = rec.scenarios.get("base")
+        raw = getattr(base, cap.horizon_leg_field, None) if base is not None else None
+        if isinstance(raw, (int, float)) and not isinstance(raw, bool) and raw > 0:
+            val_years = float(raw)
+    days = rec.trade_horizon_days
+    trade_years = days / 365.25 if days is not None and days > 0 else None
+    ratio = val_years / trade_years if (val_years is not None and trade_years) else None
+    return val_years, trade_years, ratio
+
+
+def _with_horizons(res: Result, rec: ScenarioRecord) -> Result:
+    """Stamp the two clocks onto a computed ``Result`` — ONE implementation, both recipes."""
+    vh, th, hr = horizons(rec)
+    return res.model_copy(update={"valuation_horizon_years": vh,
+                                  "trade_horizon_years": th, "horizon_ratio": hr})
 
 
 def _run_r2(rec: ScenarioRecord) -> ScenarioRecord:
@@ -532,7 +621,8 @@ def _run_r2(rec: ScenarioRecord) -> ScenarioRecord:
                      ratio_undefined=rr.undefined, bar=BAR, survival=sb, hurdle=tmod.HURDLE,
                      pass_fail=("UNDEFINED" if rr.ratio is None else
                                 ("PASS" if rr.clears_bar else "FAIL")))
-    return rec.model_copy(update={"result": res, "recipe_formula": list(formula)})
+    return rec.model_copy(update={"result": _with_horizons(res, rec),
+                                  "recipe_formula": list(formula)})
 
 
 def run_recipe(rec: ScenarioRecord) -> ScenarioRecord:
@@ -595,7 +685,8 @@ def run_recipe(rec: ScenarioRecord) -> ScenarioRecord:
                      pass_fail=("UNDEFINED" if rr.ratio is None else
                                 ("PASS" if rr.clears_bar else "FAIL")))
     # stamp result + the formula (machine assembly, like multiple_basis — never judgment)
-    return rec.model_copy(update={"result": res, "recipe_formula": list(R1_FORMULA)})
+    return rec.model_copy(update={"result": _with_horizons(res, rec),
+                                  "recipe_formula": list(R1_FORMULA)})
 
 
 def records_dir(root: Path | None = None) -> Path:
