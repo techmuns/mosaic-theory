@@ -578,17 +578,23 @@ function tierTabs() {
 // Record & reproduce, not here (process telemetry is not a caveat).
 function analysisTier(d, m, card) {
   const analystCaveats = (d.caveats || d.flags || []).filter((c) => !isProcessCaveat(c));
-  return flagsSection(analystCaveats)                   // caveats first (what to verify)
-    + drawdownIdio(m, d.reference_date)                 // what broke — and did it fall alone?
-    + leverageSurvival(m, d.reference_date)             // balance sheet & survival
-    + trajectorySection(m.quality || {}, m)             // trajectory + the return-ratios table
+  // (content re-order 2026-07-27) DECISION order, not provenance order. The old sequence led with
+  // caveats and closed with the argument — evidence-assembly order. It now reads as the questions
+  // a decision asks: what broke → what the business IS → the argument → when reality votes → what
+  // it's worth → vs whom → how it's trending → what the street thinks → can it survive → what to
+  // verify. Twin: render.py's analysis composition (which also drops its "Mechanical layer"
+  // wrapper — a grouping by who PRODUCED the content, which this side never had).
+  return drawdownIdio(m, d.reference_date)              // what broke — and did it fall alone?
+    + concentration(m.concentration)                    // business quality — what this IS
+    + synthesis(d.synthesis, m)                         // the argument
+    + catalystCalendar(m, card)                         // when reality votes on it
     + valuation(m.valuation)                            // the ONLY home of the full multiples read
     + peerComps(m.peer_comps)                           // peer comps (per-peer grid inside)
+    + trajectorySection(m.quality || {}, m)             // trajectory + the return-ratios table
     + catalystPath(m.catalyst_path, m.consensus_context, m.drawdown_cause)  // the street
     + (m.catalyst_path ? "" : consensus(m.consensus_context))  // legacy fallback only for old JSON
-    + concentration(m.concentration)
-    + synthesis(d.synthesis, m)                         // the argument — stays the capstone
-    + catalystCalendar(m, card);                        // (PLACEMENT B) when reality votes on it
+    + leverageSurvival(m, d.reference_date)             // balance sheet & survival
+    + flagsSection(analystCaveats);                     // what to verify before the verdict
 }
 
 // (catalyst calendar, ratified 2026-07-24 · PLACEMENT B — twin of render.py _calendar_entries /

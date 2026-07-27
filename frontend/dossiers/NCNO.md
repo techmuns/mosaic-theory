@@ -14,7 +14,7 @@ WATCH at $17.93. The underwrite fails our 2:1 bar decisively: the base case valu
 
 > ⚠ **Verify before the verdict:** Net debt/EBITDA (3.5x) is on REPORTED EBITDA (CIQ / consolidated GAAP), not the covenant basis — full caveats in Analysis.
 
-- **Segments · Geography · Key ratios (latest) · vs own trading history · Interest coverage · Free cash flow ($M) · Capital structure (instruments) · Capital-structure aggregates (latest quarter) · Own-history range position · Segments (revenue share) · Segments (EBITDA share — where profit sits) · Geographic · Annual financials ($M; E = consensus) · Quarterly financials · Posture:** _MISSING_ — CIQ 'financials' export not found for NCNO — pull it
+- **Segments · Geography · Key ratios (latest) · vs own trading history · Segments (revenue share) · Segments (EBITDA share — where profit sits) · Geographic · Own-history range position · Interest coverage · Free cash flow ($M) · Capital structure (instruments) · Capital-structure aggregates (latest quarter) · Annual financials ($M; E = consensus) · Quarterly financials · Posture:** _MISSING_ — CIQ 'financials' export not found for NCNO — pull it
 - **Snapshot:** Nasdaq · CMP $17.28 (2026-07-21) · 52-wk $13.80–$33.92 · shares 109.6M [1]
 
 **The crux — what decides this, and what would change our mind**
@@ -57,22 +57,12 @@ _Bear case — the decline is real:_
 ## Financial snapshot
 
 ## Valuation — first cut
-- **vs peers · Comparability · Total debt / EBITDA vs peers · Credit health · Cross-sectional (vs peers — the edge) · Peer set (roster · caps · business) · Comparability (confidence gate) · Forward multiples (name vs peer Low/Median/Mean/High · NTM) · Per-peer grid (cap · valuation · margin · growth · leverage — name vs peers) · Name market cap ($M) — the ADJACENT fact to compare against · Bridge (TEV → equity) · Implied equity:** _MISSING_ — CIQ 'comps' export not found for NCNO — pull it
+- **vs peers · Comparability · Cross-sectional (vs peers — the edge) · Peer set (roster · caps · business) · Comparability (confidence gate) · Forward multiples (name vs peer Low/Median/Mean/High · NTM) · Per-peer grid (cap · valuation · margin · growth · leverage — name vs peers) · Total debt / EBITDA vs peers · Credit health · Name market cap ($M) — the ADJACENT fact to compare against · Bridge (TEV → equity) · Implied equity:** _MISSING_ — CIQ 'comps' export not found for NCNO — pull it
 - **The street, for contrast (target · ratings) · Horizon read (FQ — next-2Q revision breadth) · Acceleration read (monthly consensus path) · Cross-name anchor (NTM forward-multiple ladder) · Guidance bridge (latest guide + track-record) · Consensus stats (target + ratings) · Revision-event log · Surprise history (annual beat/miss):** _MISSING_ — CIQ 'estimates' export not found for NCNO — pull it
 
 # Analysis — full dossier
 
-## ⚠ Analyst caveats — verify before the verdict
-
-_3 to verify._
-
-- pull CIQ for NCNO and re-run — no export found at data/manual/ciq/NCNO (need: Financials — Annual, Financials — Quarterly, Estimates Report, Business Relationships (Customers & Suppliers))
-- P/E may be distorted by non-recurring EPS — latest annual EPS 0.05 vs recent median -0.35; verify against normalized/forward EPS (CIQ)
-- Net debt/EBITDA (3.5x) is on REPORTED EBITDA (CIQ / consolidated GAAP), not the covenant basis; management and credit covenants typically define leverage on adjusted EBITDA (a larger denominator → a lower ratio), reconciled in the earnings release/transcript (currently UNAVAILABLE) — do not read 3.5x as the covenant-basis leverage.
-
-## Mechanical layer
-
-### What broke — and did it fall alone?
+## What broke — and did it fall alone?
 - **Read — what broke** · discrete gap-downs: [2]
   - 2026-02-03 **-10.6%** → no company filing
 
@@ -82,36 +72,7 @@ _Company-specific or market-wide?_
 - **Relative vs market:** -45.3% [5]
 _no supplier/customer cohort mapped for this name — the comparison is vs the market only_
 
-### Leverage & survival
-- **Net debt / EBITDA [NET]:** 3.5x [6]
-- **Net debt / OCF:** 1.8x [11]
-- **Net debt / EBITDA [FWD-ADJ] · EV/EBITDA (adjusted, forward) · Adjusted EPS (earnings power) · Revised guidance (8-K 99.1):** _UNKNOWN_ — no revised-outlook block parsed from the 99.1 — the revised forward guidance is UNKNOWN
-- **Self-funding:** self-funding: UNKNOWN — latest-Q OCF and/or LTM FCF sign unavailable [12]
-
-- **FCF sign:** positive [7]
-
-### Filing cross-checks — going concern · leverage basis
-
-- **Going-concern language:** none in latest 10-Q — checked, absent [9]
-- **EBITDA-basis triangulation (each leverage basis-labeled):** [13]
-  - net debt / EBITDA (CIQ, GAAP basis): 3.4795572180418426x
-  - total debt / EBITDA (CIQ comps, GAAP basis): UNKNOWN
-  - net debt / company-adjusted LTM EBITDA (LTM unavailable): UNKNOWN
-  - covenant basis: UNKNOWN (not disclosed)
-
-### Operating trajectory
-- **Trajectory (revenue · EBITDA · margins · ROIC):** _UNKNOWN_ — no multi-year revenue/EBITDA series in the sheets
-- **Share-count trend:** buying back (trailing ~1.7y): 115,559,517 (2024-08-22) → 109,552,950 (2026-05-22), -5.2% [14]
-
-### Valuation & own-history
-
-### Peer comps
-
-
-### The street — estimates & guidance
-_as-of UNKNOWN_
-
-### Business quality
+## Business quality
 - **Customers:** _MISSING_ — no Customers & Suppliers export for NCNO — pull it and re-run
 
 ## The argument
@@ -122,13 +83,13 @@ _as-of UNKNOWN_
 - Successive revenue guides have stepped UP across the last three filings (146.75–148.25 → 154.5–156.5 → 157.75–159.75), a rising-guide sequence that resists the terminal read. [8]
 - Free cash flow is positive, and the two most recent guidance exhibits raised the FCF outlook (132.0–137.0 → 135.0–140.0 next-fy), implying self-funding rather than distress. [8]
 - The 10-Q states no near-term maturity wall (NOT_STATED, a KNOWN read), removing the refinancing-cliff leg of a distress thesis. [9]
-- The company is buying back stock, with shares out down 5.2% over ~1.7 years (115.56M → 109.55M), consistent with self-funding rather than dilution. [14]
+- The company is buying back stock, with shares out down 5.2% over ~1.7 years (115.56M → 109.55M), consistent with self-funding rather than dilution. [11]
 
 ### Bear case — the decline is real
 - Leverage is not trivial at net-debt/EBITDA 3.5x on a GAAP basis, and the estimate is flagged as a breadth fallback that may UNDER-capture scattered debt — the real figure could be worse. [6]
 - The drawdown centred on a discrete gap-down on 2026-02-03 for which there is NO company filing to anchor a cause, and no revised-guidance 8-K to follow. [2]
 - Short interest is rising sharply and elevated — 20.2M shares (+18.4% over two weeks), 18.4% of shares out, 5.6 days to cover — the market is pressing the short side. [10]
-- Insiders sold, not bought: open-market buys 0 versus sells 23 (net -250.8K sh), the last as recent as 2026-07-08 — no insider conviction at the lows. [15]
+- Insiders sold, not bought: open-market buys 0 versus sells 23 (net -250.8K sh), the last as recent as 2026-07-08 — no insider conviction at the lows. [12]
 - The stock is idiosyncratically weak: NCNO returned -28.3% over 180d while IWM returned +17.0%, a -45.3 point relative gap not shared with the small-cap market. [5]
 
 ### Decisive question
@@ -163,6 +124,43 @@ _as-of UNKNOWN_
   - distinguished by: Mortgage/lending-tech SaaS whose revenue was tethered to bank loan-origination volume; a rate-driven origination slump exposed structural demand dependence with no self-rescue.
   - source: [LLM-suggested, unverified]
 
+## Valuation & own-history
+- **EV/EBITDA (adjusted, forward) · Adjusted EPS (earnings power) · Revised guidance (8-K 99.1) · Net debt / EBITDA [FWD-ADJ]:** _UNKNOWN_ — no revised-outlook block parsed from the 99.1 — the revised forward guidance is UNKNOWN
+
+## Peer comps
+
+## Operating trajectory
+- **Trajectory (revenue · EBITDA · margins · ROIC):** _UNKNOWN_ — no multi-year revenue/EBITDA series in the sheets
+- **Share-count trend:** buying back (trailing ~1.7y): 115,559,517 (2024-08-22) → 109,552,950 (2026-05-22), -5.2% [11]
+
+
+## The street — estimates & guidance
+_as-of UNKNOWN_
+
+## Leverage & survival
+- **Net debt / EBITDA [NET]:** 3.5x [6]
+- **Net debt / OCF:** 1.8x [13]
+- **Self-funding:** self-funding: UNKNOWN — latest-Q OCF and/or LTM FCF sign unavailable [14]
+
+- **FCF sign:** positive [7]
+
+### Filing cross-checks — going concern · leverage basis
+
+- **Going-concern language:** none in latest 10-Q — checked, absent [9]
+- **EBITDA-basis triangulation (each leverage basis-labeled):** [15]
+  - net debt / EBITDA (CIQ, GAAP basis): 3.4795572180418426x
+  - total debt / EBITDA (CIQ comps, GAAP basis): UNKNOWN
+  - net debt / company-adjusted LTM EBITDA (LTM unavailable): UNKNOWN
+  - covenant basis: UNKNOWN (not disclosed)
+
+## ⚠ Analyst caveats — verify before the verdict
+
+_3 to verify._
+
+- pull CIQ for NCNO and re-run — no export found at data/manual/ciq/NCNO (need: Financials — Annual, Financials — Quarterly, Estimates Report, Business Relationships (Customers & Suppliers))
+- P/E may be distorted by non-recurring EPS — latest annual EPS 0.05 vs recent median -0.35; verify against normalized/forward EPS (CIQ)
+- Net debt/EBITDA (3.5x) is on REPORTED EBITDA (CIQ / consolidated GAAP), not the covenant basis; management and credit covenants typically define leverage on adjusted EBITDA (a larger denominator → a lower ratio), reconciled in the earnings release/transcript (currently UNAVAILABLE) — do not read 3.5x as the covenant-basis leverage.
+
 # Appendix — data & audit
 
 ## How to read this dossier
@@ -193,7 +191,7 @@ _as-of UNKNOWN_
 - **Earnings call (transcript pointer — read the file):** _MISSING_ — no earnings-call transcript for NCNO — pull it
 
 ### Ownership & positioning
-- **Insider activity (Form 4, 6m):** Open-market buys 0 · sells 23 (net -250.8K sh) · grants 14 · last 2026-07-08 · other filings 6 [15]
+- **Insider activity (Form 4, 6m):** Open-market buys 0 · sells 23 (net -250.8K sh) · grants 14 · last 2026-07-08 · other filings 6 [12]
 - **Short interest (FINRA):** Short interest (FINRA, settle 2026-06-30): 17.0M → 20.2M sh (+18.4%, rising) · 18.4% of shares out (EDGAR XBRL) · DTC 5.6d · recent: 2026-06-30 20.2M · 2026-06-15 17.0M · 2026-05-29 16.6M · 2026-05-15 14.7M [10]
 
 ### Assembly verification — filing vs panel
@@ -221,11 +219,11 @@ _as-of UNKNOWN_
 [8] `8-K 0001902733-26-000064 EX-99.1`
 [9] `10-Q 0001902733-26-000066`
 [10] `FINRA consolidated short interest (settle 2026-06-30); DTC = 20,167,235 short ÷ 3,579,253 screen 90d ADV`
-[11] `EDGAR XBRL net-debt/OCF (screen data-record) — OCF basis, not EBITDA; breadth estimate — may under-capture scattered debt; pull CIQ`
-[12] `EDGAR latest-Q OCF sign + CIQ LTM FCF sign`
-[13] `CIQ leverage bases + release LTM adj-EBITDA/margins`
-[14] `EDGAR XBRL shares, trailing 2024-08-22..2026-05-22`
-[15] `EDGAR Form 4 (latest 0001902733-26-000084; 32 in 6m)`
+[11] `EDGAR XBRL shares, trailing 2024-08-22..2026-05-22`
+[12] `EDGAR Form 4 (latest 0001902733-26-000084; 32 in 6m)`
+[13] `EDGAR XBRL net-debt/OCF (screen data-record) — OCF basis, not EBITDA; breadth estimate — may under-capture scattered debt; pull CIQ`
+[14] `EDGAR latest-Q OCF sign + CIQ LTM FCF sign`
+[15] `CIQ leverage bases + release LTM adj-EBITDA/margins`
 [16] `fenced Tier-2 digest (P1)`
 [17] `10-Q maturity wall vs CIQ capital panel (same window)`
 [18] `CIQ revenue guide vs release actual/outlook`

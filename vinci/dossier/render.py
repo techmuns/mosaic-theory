@@ -505,7 +505,7 @@ def _catalyst_section(m: MechanicalLayer) -> list[str]:
             _fact("Surprise history (beat/miss)", m.consensus_context.surprise_history),
         ]
     else:
-        hdr = "### The street — estimates & guidance"
+        hdr = "## The street — estimates & guidance"
         out.append(hdr)
         out.append(f"_{_asof_header(cp.as_of)}_")
         out += _horizon_lines(cp.horizon_read)
@@ -722,7 +722,7 @@ def _leverage_block(m: MechanicalLayer) -> list[str]:
     # the cite. Twins frontend leverageBlock()'s stat-grid cells (the md stays linear — content
     # parity, layout differs).
     lines = [
-        "### Leverage & survival",  # (K5) header humanized; the net-vs-total discipline is per-row
+        "## Leverage & survival",  # (K5) header humanized; the net-vs-total discipline is per-row
         _fact("Net debt / EBITDA [NET]", lv.net_debt_to_ebitda, _mult),
         _fact("Total debt / EBITDA vs peers", lv.total_debt_to_ebitda),
         _fact("Net debt / OCF", m.quality.net_debt_to_ocf, _mult),
@@ -2467,7 +2467,7 @@ def _drawdown_idio_lines(m: MechanicalLayer) -> list[str]:
     out: list[str] = []
     # (D1·§1) Drawdown cause & idiosyncrasy — CLUBBED: what happened, and did it happen alone?
     # (buy-side anatomy) the Shape classification is this section's READ — label twins the web lead
-    out.append("### What broke — and did it fall alone?")
+    out.append("## What broke — and did it fall alone?")
     # (event study) discrete gap-downs render as a scannable per-gap list — date, the TRUE 1-day
     # move (derived from the daily perf series; omitted, never estimated, when the committed series
     # can't carry it), cause. One gap / unparseable shape → the one-line fact.
@@ -2580,7 +2580,7 @@ def _leverage_survival_lines(d: Dossier, m: MechanicalLayer) -> list[str]:
     if m.leverage_survival is not None:
         out += _leverage_block(m)  # ### Leverage & survival (unified) …
     else:  # pre-B2 JSON: the quality leverage lines under the same header
-        out += ["### Leverage & survival", *_quality_leverage_lines(m)]
+        out += ["## Leverage & survival", *_quality_leverage_lines(m)]
     # (declutter P1) "FCF sign: UNKNOWN" directly above a present FCF value read as a
     # contradiction — the sign is derivable from the number on the same surface. The sign row
     # renders only when it carries a value or the FCF value itself is absent.
@@ -2610,7 +2610,7 @@ def _trajectory_section_lines(m: MechanicalLayer) -> list[str]:
     out: list[str] = []
     # (D1·§3 · D2) Operating trajectory — the merged margin/multi-year table + share-count trend
     # + (tier redesign) the per-period return-ratios table, moved here from the Brief.
-    out.append("### Operating trajectory")
+    out.append("## Operating trajectory")
     out += _trajectory_table_lines(m)
     out.append(_fact("Share-count trend", m.quality.share_count_trend))
     if m.return_ratios is not None and m.return_ratios.status is SourceStatus.PRESENT:
@@ -2630,7 +2630,7 @@ def _valuation_section_lines(d: Dossier, m: MechanicalLayer) -> list[str]:
     out: list[str] = []
     # (D1·§4) Valuation & own-history. (G) implied expectations slot in AFTER cross-sectional (the
     # edge) and BEFORE the own-history reads.
-    out.append("### Valuation & own-history")
+    out.append("## Valuation & own-history")
     out.append(_fact("Cross-sectional (vs peers — the edge)", m.valuation.cross_sectional))
     out += _implied_expectations_lines(m.valuation)
     # (declutter P1) the bare P/E and EV/EBITDA fact rows are GONE: both numbers already render
@@ -2659,7 +2659,7 @@ def _peer_comps_lines(m: MechanicalLayer) -> list[str]:
     like its JS twin instead of running inline — no behaviour change."""
     out: list[str] = []
     # (D1·§5) Peer comps — roster + comparability + multiples + grid + implied valuation.
-    out.append("### Peer comps")  # (K5) discipline framing lives in the block body + source_refs
+    out.append("## Peer comps")  # (K5) discipline framing lives in the block body + source_refs
     out += _roster_lines(m.peer_comps.peer_set)
     out.append(_fact("Comparability (confidence gate)", m.peer_comps.comparability))
     out += _multiples_lines(m.peer_comps.trading_multiples,
@@ -2684,7 +2684,7 @@ def _business_quality_lines(m: MechanicalLayer) -> list[str]:
     # profit sits, to whom, where). The real ownership data (insider activity, short interest) sat
     # in "The street" and moves to the appendix. This section answers "what is this business, and
     # is it any good" — the question that belongs BEFORE anyone argues about value.
-    out.append("### Business quality")
+    out.append("## Business quality")
     out += [
         _fact("Segments (revenue share)", m.concentration.segments),
         _fact("Segments (EBITDA share — where profit sits)", m.concentration.segment_ebitda),
@@ -2742,28 +2742,22 @@ def render_markdown(d: Dossier, *, dev: bool = False, show_proposal: bool = Fals
     out += _brief_lines(d, show_proposal=show_proposal, card=card)
     # (3-tier) ANALYSIS — the full dossier: caveats → mechanical layer → FULL synthesis.
     out += ["# Analysis — full dossier", ""]
-    # (D1) CAVEATS — what to verify before trusting the evidence below.
-    out += _flags_section(d)
-    out += ["## Mechanical layer", ""]  # (K5) methodology jargon lives in source_refs/JSON
+    # (content re-order 2026-07-27) DECISION order, not provenance order. The old sequence
+    # ran machine-assembled facts first and the argument last, under a '## Mechanical layer'
+    # wrapper — a grouping by WHO PRODUCED the content. That wrapper is gone (the web twin
+    # never had it, per-fact source-binding already carries provenance precisely, and the
+    # three tiers already separate decide/argue/prove), so the sequence below reads as the
+    # questions a decision asks, in order. Twin: dossier.js analysisTier().
     out += _drawdown_idio_lines(m)
-    out += _leverage_survival_lines(d, m)
-    out += _trajectory_section_lines(m)
-    out += _valuation_section_lines(d, m)
-    out += _peer_comps_lines(m)
-    # (D1·§6) Catalyst path (the management-commentary pointer moved to the appendix).
-    out += _catalyst_section(m)
     out += _business_quality_lines(m)
     out += _argument_lines(d, dev=dev)
-    # (catalyst calendar, PLACEMENT B ratified 2026-07-24) the Analysis CLOSER — after the
-    # argument, before the appendix: the argument poses the crux, the calendar says when reality
-    # votes on it, hand-off to the monitor. Twin: dossier.js catalystCalendar().
     out += _catalyst_calendar_lines(d, card)
-    # (3-tier · tier redesign) APPENDIX — verify & reproduce: reading guide → financial
-    # statements → capital-structure provenance → implied-equity reference → mgmt pointer →
-    # Record & reproduce closing the document. The old verdict footer is GONE (it was a third
-    # copy of the pivot statement, beside the brief's sealed-proposal line and Record &
-    # reproduce's verdict row).
-
+    out += _valuation_section_lines(d, m)
+    out += _peer_comps_lines(m)
+    out += _trajectory_section_lines(m)
+    out += _catalyst_section(m)
+    out += _leverage_survival_lines(d, m)
+    out += _flags_section(d)
     out += ["# Appendix — data & audit", ""]
     out += _how_to_read_lines()
     appendix = _appendix_lines(m)
