@@ -4614,14 +4614,21 @@ field, not just this one); and `test_committed_web_card_carries_the_same_dated_t
 record` — structural count parity on the committed artifacts (counts only; analyst prose is never
 pinned). Gate: ruff + `mypy --strict` clean · 1068 passed.
 
-**BUILD RECORD — 2026-07-27 SCREENING ANCHOR REACHES THE PRINT TWIN (audit Q1).** The
+**BUILD RECORD — 2026-07-27 SCREENING ANCHOR REACHES THE MARKDOWN TWIN (audit Q1).** The
 post-restructure structural read asked whether any section needs redesign against the full
 buy-side architecture. ANSWER: no re-ordering — the tier map is right and #221 settled it — but
 measuring per-section COVERAGE across all 11 committed dossiers surfaced a twin divergence that
 ordering work would never have found. `anchorInner()` (dossier.js) rendered the screening ANCHOR
 for all 11 names; `render.py` had **no screening renderer at all**, so the block reached ZERO
-PDFs. Scope, stated precisely because the first read understated it: this was never limited to the
-no-scenario path — every name lost it in print. The loss is WORST on the five names carrying no
+committed `.md` files. SCOPE, CORRECTED 2026-07-27 after a live preview — the first three
+statements of this build (PR #227's body, this record, and two docstrings) all said "every PDF
+omitted it", and that was WRONG. The download menu offers three scopes and the PDF ones are
+**`window.print()` on the WEB page**, which has always rendered `anchorInner`; only `Full dossier
+MD` fetches the committed `.md`. So a reader printing to PDF from the browser DID see the anchor.
+What lacked it was the **markdown export and the committed `.md` record** — a real deliverable and
+the artifact the repo keeps, but NOT the PDF. The fix and its pins stand unchanged; only the blast
+radius was overstated, and the overstatement is recorded rather than quietly edited away. This was
+never limited to the no-scenario path — every name lost it from the markdown. The loss is WORST on the five names carrying no
 scenario card (BRBR, CNXC, FUBO, VITL, VRRM), where the anchor is the ONLY valuation LEVEL in the
 document — `Valuation — first cut` is relative-only by the ImpliedValuation fence — and on the two
 INAPPLICABLE anchors (VITL, FUBO) it also swallowed the DIAGNOSTIC saying why no screen value

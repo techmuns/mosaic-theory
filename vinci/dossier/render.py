@@ -2313,10 +2313,16 @@ _SCREEN_SUBTITLE = (
 
 def _screening_context_lines(anchor: Anchor | None) -> list[str]:
     """(md/web parity) The screening ANCHOR — how this name surfaced. Twin of anchorInner() in
-    frontend dossier.js, which renders it for every name; the print twin rendered it for NONE, so
-    a PDF reader never saw the level that put the name in the funnel. That loss is total on the
-    five names carrying no scenario card, where this is the only valuation LEVEL in the document
-    (``Valuation — first cut`` is relative-only by the ImpliedValuation fence).
+    frontend dossier.js, which renders it for every name; this renderer rendered it for NONE, so
+    the level that put the name in the funnel was missing from every committed ``dossier.md``.
+    That loss is total on the five names carrying no scenario card, where this is the only
+    valuation LEVEL in the document (``Valuation — first cut`` is relative-only by the
+    ImpliedValuation fence).
+
+    WHO actually lost it: the ``Full dossier MD`` download and the committed ``.md`` record. NOT
+    the PDF — the download menu's PDF scopes are ``window.print()`` on the WEB page, which has
+    always drawn anchorInner. The first write-up of this fix said "every PDF omitted it" and that
+    was wrong; corrected after a live preview.
 
     HARD FENCE, same as the web: the base value renders as a LEVEL and is labelled
     spot-independent. No %, delta, discount or upside against spot is computed here — differencing
@@ -2463,8 +2469,8 @@ def _brief_lines(d: Dossier, *, show_proposal: bool = False,
     scen = _scenario_table_lines(card)
     # The SCREENING ANCHOR closes the section in both twins (underwriteDetail() appends it after
     # the card detail, and renders the section on the anchor ALONE when no card exists — with the
-    # absence stated rather than the section vanishing). The print twin now does the same: a
-    # shorter PDF is not a substitute for saying "this name has not been underwritten".
+    # absence stated rather than the section vanishing). The markdown twin now does the same: a
+    # shorter document is not a substitute for saying "this name has not been underwritten".
     screen = _screening_context_lines(d.anchor)
     if scen or screen or show_proposal:
         out.append("## Scenario analysis")

@@ -260,8 +260,11 @@ def test_screening_context_py_js_parity() -> None:
     """(2026-07-27) The screening ANCHOR renders on BOTH surfaces and must carry the same numbers.
 
     It did not render on one of them at all. `anchorInner` (dossier.js) drew the block for all 11
-    committed names; the print twin had NO screening renderer whatsoever, so every PDF omitted the
-    level that put the name in the funnel. On the five names carrying no scenario card that was the
+    committed names; render.py had NO screening renderer whatsoever, so every committed .md — and
+    the `Full dossier MD` download that serves it — omitted the level that put the name in the
+    funnel. (NOT the PDF: that download scope is window.print() on the WEB page, which always drew
+    the block. The first write-up said "every PDF" and was corrected after a live preview.)
+    On the five names carrying no scenario card that was the
     ONLY valuation level in the document — `Valuation — first cut` is relative-only by the
     ImpliedValuation fence — and on the two INAPPLICABLE anchors it also swallowed the diagnostic
     saying why no screen value exists.
