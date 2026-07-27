@@ -234,13 +234,17 @@ function mastheadFoot(c) {
   // already existed for exactly this class of fact.
   const ne = s.nextEvidence || {};
   if (ne.date && ne.date !== "UNKNOWN") {
-    bits.push(`Next evidence ${escapeHtml(ne.date)}${ne.what ? ` ${escapeHtml(ne.what)}` : ""}`);
+    // the event label already NAMES the event ("Next results print"), so prefixing it with
+    // "Next evidence" said Next twice. Strip the label's own "Next " and lead with the event.
+    const what = String(ne.what || "").replace(/^next\s+/i, "").trim();
+    const lead = what ? what.charAt(0).toUpperCase() + what.slice(1) : "Next evidence";
+    bits.push(`${escapeHtml(lead)} ${escapeHtml(ne.date)}`);
   }
   if (s.underwriteDate) bits.push(`underwritten ${escapeHtml(s.underwriteDate)}`);
   if (c.gateAdjudication) bits.push(escapeHtml(c.gateAdjudication));
   // only meaningful while no ledger row exists — a logged name says so in the foot instead
   if (!(c.ledger && c.ledger.entryId) && v.status && v.status !== "pending_analyst") {
-    bits.push("scenario verdict — NOT a ledger verdict of record");
+    bits.push("no ledger verdict logged");
   }
   if (v.avoidPriced) {
     bits.push(`⚠ avoid-priced${v.avoidPricedNote ? ` — ${escapeHtml(v.avoidPricedNote)}` : ""}`);
@@ -758,8 +762,11 @@ export function uwCardParts(c, { mark = null, detailExtra = "", rationale = true
   const v = c.verdict || {};
   // `rationale: false` — the host lifted the analyst's rationale into its opener card (the
   // narrative slot), so the detail must not render it a second time.
+  // (2026-07-27) the supersession banner does NOT render here. Lineage is filing-cabinet
+  // information — which record this one replaced — not decision information, so on the dossier it
+  // belongs in the Appendix's "Record & reproduce" beside the analyst, date and ledger id. The
+  // standalone card KEEPS it (uwCard): an archived record's page has no appendix to carry it.
   const detail = () => `
-    ${supersessionBanner(c)}
     ${legsTable(c)}
     ${survivalPanel(c)}
     ${impliedOdds(c, mark)}
