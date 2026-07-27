@@ -19,6 +19,14 @@ EPAM Systems, Inc. provides digital platform engineering and software developmen
 **Is the margin/growth compression a temporary macro-plus-AI-transition trough (mean-revert) or a structural erosion of the engineering-services model (value trap)?**
 _8 key unknowns + the evidence for/against — in Analysis_
 
+## What happened — and can it survive?
+- **Shape:** discrete gap-downs — 2026-02-03 no company filing; 2026-02-19 earnings; 2026-06-18 no company filing [4]
+- **Price (180d):** -60.2% [5]
+- **Market (MDY) 180d:** 11.7% [6]
+- **vs market (180d):** -71.9% [7]
+- **Net debt / EBITDA:** -1.0x [8]
+- **Free cash flow:** positive [9]
+
 ## Scenario analysis
 _Mid-cycle underwrite: normalized operating margin on a mid-cycle revenue base, valued at an exit EV/LTM-EBITDA multiple; reward/risk measured at SPOT._
 
@@ -31,14 +39,6 @@ _Mid-cycle underwrite: normalized operating margin on a mid-cycle revenue base, 
 - **bear** — Secular case: AI substitution erodes the labour-arbitrage model; revenue -10% from the trailing twelve months (carrying the negative forward revision breadth, FQ3 0 up / 14 down, rather than assuming it reverses); margin below the FY25 worst (9.53%) as pricing grinds — floored by the variable-cost model, not collapsed; the multiple holds near the post-2022 trough (range low 4.26x, current 4.87x at the 2.6th percentile) — a secular decline earns no re-rating. [restated for external readability 2026-07-21; substance unchanged]
 - **base** — Margin is the post-2022 regime median of 11.10% less a ~60bps trajectory haircut: the regime's most recent year (FY25, 9.53%) is its worst and revision breadth is 0 up / 14 down, so the live-regime median likely overstates the forward mid-cycle. Explicitly not the 10-year blend (11.9%, which straddles the 2022 break), not the pre-war level (13.27%, a regime no longer representative), and not the consensus recovery (~15.6% operating income — the Street's base case is our bull). Revenue is consensus FY26E. The multiple sits below the 15.16x post-2022 median: the AI-substitution question earns a durable discount even at mid-cycle. [restated for external readability 2026-07-21; substance unchanged]
 - **bull** — The cyclical air-pocket resolves: the delivery rebuild completes and margin recovers toward but below the pre-war median (13.27%) and well below consensus (~15.6%); revenue is consensus FY27E; the multiple moves toward but stays below the post-2022 75th percentile (20.09x). [restated for external readability 2026-07-21; substance unchanged]
-
-## What happened — and can it survive?
-- **Shape:** discrete gap-downs — 2026-02-03 no company filing; 2026-02-19 earnings; 2026-06-18 no company filing [4]
-- **Price (180d):** -60.2% [5]
-- **Market (MDY) 180d:** 11.7% [6]
-- **vs market (180d):** -71.9% [7]
-- **Net debt / EBITDA:** -1.0x [8]
-- **Free cash flow:** positive [9]
 
 ## The case
 _(top points; the full argument is in Analysis)_
@@ -345,6 +345,45 @@ _1 to verify._
 - Citations [n] resolve in the Sources list at the document end. **Cited is not verified** — the reference locates the claim so you can check it.
 - Reference values (peer-implied equity, price-implied levels) are shown **beside** the figures they contextualize, never differenced into an upside — the reader judges the gap.
 - A value shown as UNKNOWN is honestly absent at the source — nothing is imputed.
+
+## How these numbers were set
+
+_Per-axis methodology from the underwrite record — the reference frame each leg was chosen against, not a re-derivation._
+
+### Revenue · **DRAFT — not ratified by the analyst**
+
+Legs are set on the consensus path: base is consensus FY26E, bull is consensus FY27E, and bear is the trailing twelve months less ~10%, carrying the negative forward revision breadth (FQ3 0 up / 14 down) forward rather than assuming it reverses. [restated for external readability 2026-07-21; substance unchanged]
+
+| reference | value | source |
+| --- | ---: | --- |
+| consensus FY26E revenue | $5,730.43M | `committed financial_summary.annual FY26E — CIQ Estimates→Trends 'Current', as-of ≥2026-06-18` |
+| consensus FY27E revenue | $6,074.52M | `committed financial_summary.annual FY27E — CIQ Estimates→Trends 'Current', as-of ≥2026-06-18` |
+| LTM revenue | $5,555.425M | `committed financial_summary.annual (LTM) — CIQ Income Statement` |
+
+### Margin · **DRAFT — not ratified by the analyst**
+
+Modelled on regime-split operating-margin statistics (post-2022 window; operating income divided by the ASC-606 revenue tag, with annual filing points filtered to 350-380 day durations so no quarter is mistaken for a year): base is the post-2022 median of 11.10% less a ~60bps trajectory haircut; bear sits below the regime's worst year (FY25, 9.53%); bull recovers toward but below the pre-war median (13.27%, a regime no longer representative). The 10-year blend (11.90%) is explicitly not used — it straddles the 2022 break and describes neither regime. [restated for external readability 2026-07-21; substance unchanged]
+
+| reference | value | source |
+| --- | ---: | --- |
+| post-2022 regime median operating margin (FY2022-2025) | 11.1% | `EDGAR companyfacts OperatingIncomeLoss ÷ RevenueFromContractWithCustomerExcludingAssessedTax, 10-K 365d points — regime-split basis pull 2026-07-21` |
+| post-2022 worst year (FY2025) | 9.53% | `EDGAR companyfacts — same basis, FY2025 (520 EBIT / 5,457 revenue)` |
+| post-2022 best year (FY2022) | 11.88% | `EDGAR companyfacts — same basis, FY2022 (573 EBIT / 4,825 revenue); GAAP carries the war-year charges, so a cleaned FY22 would sit higher` |
+| pre-war median operating margin (FY2016-2021) — DEAD REGIME | 13.27% | `EDGAR companyfacts — same basis, pre-2022 window; shown for reference ONLY (the pre-invasion cost structure no longer exists)` |
+| 10-FY blended median (FY2016-2025) — STRADDLES-BREAK, not used | 11.9% | `EDGAR companyfacts — same basis, 10 FY; equals the committed anchor's margin, which averages across the 2022 regime break and describes neither regime` |
+
+### Multiple · **DRAFT — not ratified by the analyst**
+
+Chosen against the regime-split TEV/LTM-EBITDA trading range (38 quarterly closes): base sits below the post-2022 median (15.16x) as an analyst discount for the unresolved AI-substitution question; bear near the post-2022 trough; bull toward but below the post-2022 75th percentile (20.09x). The full-blend median (22.41x) is not used — it is a pre-2022 bubble-era statistic. [restated for external readability 2026-07-21; substance unchanged]
+
+| reference | value | source |
+| --- | ---: | --- |
+| post-2022 band 25th percentile | 11.83x | `committed valuation.own_history series, 2022Q1 onward (n=18) — refreshed band sha 9614730c9e` |
+| post-2022 band median | 15.16x | `committed valuation.own_history series, 2022Q1 onward (n=18) — refreshed band sha 9614730c9e` |
+| post-2022 band 75th percentile | 20.09x | `committed valuation.own_history series, 2022Q1 onward (n=18) — refreshed band sha 9614730c9e` |
+| full-band minimum (9.5y history) | 4.26x | `committed valuation.own_history — refreshed band sha 9614730c9e` |
+| current TEV/LTM-EBITDA (2.6th percentile of the full band) | 4.87x | `committed valuation.own_history current, as-of 2026-07-17 — refreshed band sha 9614730c9e` |
+| band multiples are vendor TEV/LTM-EBITDA computed on the filer's actual depreciation - the corrected fact aligns the grid's EBITDA basis with the band's | $124.811M | `EDGAR companyfacts DepreciationAndAmortization FY2025 (accession 0001352010-26-000015)` |
 
 
 ## Financial statements (actuals + consensus estimates) — export date unverified (data ≥ 2026-06-18)

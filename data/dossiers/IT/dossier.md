@@ -21,6 +21,14 @@ Gartner, Inc. provides business and technology insights for decisions and perfor
 **Does contract value (the leading indicator for the subscription Insights franchise) re-accelerate as management projects, or is the top-line deceleration a durable demand reset that keeps forward estimates falling?**
 _6 key unknowns + the evidence for/against — in Analysis_
 
+## What happened — and can it survive?
+- **Shape:** discrete gap-downs — 2026-02-03 earnings + Reg-FD [4]
+- **Price (180d):** -45.0% [5]
+- **Market (MDY) 180d:** 11.7% [6]
+- **vs market (180d):** -56.7% [7]
+- **Net debt / EBITDA:** 1.3x [8]
+- **Free cash flow:** _UNKNOWN_ — no OCF/capex
+
 ## Scenario analysis
 _Mid-cycle underwrite: normalized operating margin on a mid-cycle revenue base, valued at an exit EV/LTM-EBITDA multiple; reward/risk measured at SPOT._
 
@@ -33,14 +41,6 @@ _Mid-cycle underwrite: normalized operating margin on a mid-cycle revenue base, 
 - **bear** — set from the market's own pricing of the downside state: declining information-services businesses trade near six times cash earnings (observed range roughly five to eight) and keep only a fraction of their margins through a real decline. This cell takes the most charitable coherent reading - cash-margin retention of the closest surviving decliner, and a multiple at the top of the observed range in credit to the balance sheet (margin stated on the operating line; equivalent to roughly 16.3% on the cash-earnings line - the closest surviving decliner's margin retention applied in full). The company's own trading record contains no downside-state precedent (it opens in 2017, inside the growth era), so the cross-section governs. [amended 2026-07-22]
 - **base** — the base describes a stabilized business that no longer grows, and multiples must be paired to the state they describe. The stabilized state's observable prices sit far below the growth era: the highest-quality stabilized peer trades near 12.5 times cash earnings, a distrusted-but-stable data business near 6.5, and a comparable data company was taken private near 8. The prior 15.0x was set 'deliberately below' the company's own long-run median - but that median comes from a trading record that opens in 2017, entirely inside the growth era: the same window defect the downside leg carried. At 12.5x the base still prices the whole business near a 7% cash-earnings yield - fair for excellent-and-stable, generous for anything less. [amended 2026-07-22]
 - **bull** — The turn proves cyclical: FY27E re-acceleration (+4%); margin near the FY2023 best (20.94%); the multiple moves toward but stays below the median of its own trading history. [restated for external readability 2026-07-21; substance unchanged]
-
-## What happened — and can it survive?
-- **Shape:** discrete gap-downs — 2026-02-03 earnings + Reg-FD [4]
-- **Price (180d):** -45.0% [5]
-- **Market (MDY) 180d:** 11.7% [6]
-- **vs market (180d):** -56.7% [7]
-- **Net debt / EBITDA:** 1.3x [8]
-- **Free cash flow:** _UNKNOWN_ — no OCF/capex
 
 ## The case
 _(top points; the full argument is in Analysis)_
@@ -327,6 +327,46 @@ _export date unverified (data ≥ 2026-06-24)_
 - Citations [n] resolve in the Sources list at the document end. **Cited is not verified** — the reference locates the claim so you can check it.
 - Reference values (peer-implied equity, price-implied levels) are shown **beside** the figures they contextualize, never differenced into an upside — the reader judges the gap.
 - A value shown as UNKNOWN is honestly absent at the source — nothing is imputed.
+
+## How these numbers were set
+
+_Per-axis methodology from the underwrite record — the reference frame each leg was chosen against, not a re-derivation._
+
+### Revenue · ratified 2026-07-21
+
+Legs are set off the recorded consensus path rather than round numbers: base is consensus FY26E, bull is consensus FY27E (the modelled re-acceleration), and bear takes a multi-year secular decline materially below FY26E to price the GenAI-substitution case. [restated for external readability 2026-07-21; substance unchanged]
+
+| reference | value | source |
+| --- | ---: | --- |
+| FY2025 reported revenue | $6,497M | `committed dossier financial_summary.annual (CIQ; E cols = consensus Trends 'Current')` |
+| LTM revenue | $6,474.137M | `committed dossier financial_summary.annual (CIQ; E cols = consensus Trends 'Current')` |
+| consensus FY26E revenue (base) | $6,431M | `committed dossier financial_summary.annual (CIQ; E cols = consensus Trends 'Current')` |
+| consensus FY27E revenue (bull) | $6,715M | `committed dossier financial_summary.annual (CIQ; E cols = consensus Trends 'Current')` |
+| Q1-2026 revenue growth, excluding the divested Digital Markets business (reported basis; -1.4% FX-neutral; total revenue -1.5%) | 1.6% | `8-K EX-99.1 acc 0000749251-26-000165` |
+
+### Margin · ratified 2026-07-21
+
+Operating-margin legs are set off the clean reported history, with FY2025 adjusted for the quantified $150.0M Digital Markets goodwill impairment — not off the raw full-history screening median, which spans the pre-2021 regime while the last five years ran 18-21%. Bear holds above the FY2020 COVID trough on subscription cost flex; base is the seven-year clean median; bull sits near the FY2023 best. [restated for external readability 2026-07-21; substance unchanged]
+
+| reference | value | source |
+| --- | ---: | --- |
+| committed anchor median (pre-2021-dragged) | 14.13% | `committed anchor block margin.value` |
+| 7yr clean median (FY2025 adjusted) — base | 18.45% | `EDGAR companyfacts OperatingIncomeLoss / RevenueFromContractWithCustomerExcludingAssessedTax` |
+| 5yr clean median (FY2025 adjusted) | 19.34% | `EDGAR companyfacts OperatingIncomeLoss / RevenueFromContractWithCustomerExcludingAssessedTax` |
+| FY2020 COVID trough — bear floor | 11.96% | `EDGAR companyfacts OperatingIncomeLoss / RevenueFromContractWithCustomerExcludingAssessedTax` |
+| FY2023 best clean year — bull | 20.94% | `EDGAR companyfacts OperatingIncomeLoss / RevenueFromContractWithCustomerExcludingAssessedTax` |
+| FY2025 adjusted ex $150.0M impairment | 18.1% | `EDGAR OperatingIncomeLoss + $150.0M; one-off per primary_source.releases[].one_offs (8-K 0000749251-26-000028 EX-99.1)` |
+
+### Multiple · ratified 2026-07-21
+
+Multiple legs sit inside the company's own EV/EBITDA trading range, deliberately below the median at base: a decelerating top line does not re-earn the growth-era multiple. Bear is set near the low end of the range; bull moves toward but stays under the median. [restated for external readability 2026-07-21; substance unchanged]
+
+| reference | value | source |
+| --- | ---: | --- |
+| own-history band low — bear | 7.46x | `committed dossier valuation.own_history (CIQ Financials→Multiples 'TEV/LTM EBITDA' Close, 38 closes, 9.3y span, as-of 2026-07-17, sha 66405c3bc0)` |
+| own-history median (base set below it) | 23.38x | `committed dossier valuation.own_history (CIQ Financials→Multiples 'TEV/LTM EBITDA' Close, 38 closes, 9.3y span, as-of 2026-07-17, sha 66405c3bc0)` |
+| own-history 75th percentile | 26.82x | `committed dossier valuation.own_history (CIQ Financials→Multiples 'TEV/LTM EBITDA' Close, 38 closes, 9.3y span, as-of 2026-07-17, sha 66405c3bc0)` |
+| current multiple (3rd pctile) | 7.97x | `committed dossier valuation.own_history (CIQ Financials→Multiples 'TEV/LTM EBITDA' Close, 38 closes, 9.3y span, as-of 2026-07-17, sha 66405c3bc0)` |
 
 
 ## Financial statements (actuals + consensus estimates) — export date unverified (data ≥ 2026-06-24)

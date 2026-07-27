@@ -23,6 +23,14 @@ Artivion, Inc. manufactures, processes, and distributes medical devices and impl
 **Is the sharp guidance-down and consensus EPS collapse a temporary reset around AMDS stocking timing and a contained On-X recall — with the growth franchise (On-X share gains, NEXUS arch launch, tissue normalization) intact — or the first leg of a structural derating of an over-levered, low-FCF, share-diluting business?**
 _8 key unknowns + the evidence for/against — in Analysis_
 
+## What happened — and can it survive?
+- **Shape:** discrete gap-downs — 2026-05-08 material agreement + earnings [4]
+- **Price (180d):** -45.3% [5]
+- **Market (IWM) 180d:** 17.0% [6]
+- **vs market (180d):** -62.3% [7]
+- **Net debt / EBITDA:** 3.3x [8]
+- **Free cash flow:** positive [9]
+
 ## Scenario analysis
 _Terminal-margin: value the business in the year it reaches a normal operating margin, then discount that value back at the house waiting charge. Used where no trailing multiple describes the company._
 
@@ -35,14 +43,6 @@ _Terminal-margin: value the business in the year it reaches a normal operating m
 - **bear** — the valve recall dents the growth franchise and the FY2024 cost reset proves unsustainable: margin returns toward the 2021-23 structural zone as spending normalizes; a levered, low-margin device business exits well below mature peers.
 - **base** — revenue = consensus FY2027 then a stated fade of ~1.5 points a year; margin = partial delivery of the consensus path - above the realized two-year mean (8.83%), below next year's street case (10.80%), respecting that operating leverage ran backwards in the latest year; exit paired to the outcome: mature device businesses at about twice our terminal margin trade near 14x, so 13x for this one.
 - **bull** — the FY2024 operating model (10% on falling spend) proves durable and scales past consensus; the recall is bounded at the next print; partial deleveraging earns a step toward - but below - the company's own trading floor.
-
-## What happened — and can it survive?
-- **Shape:** discrete gap-downs — 2026-05-08 material agreement + earnings [4]
-- **Price (180d):** -45.3% [5]
-- **Market (IWM) 180d:** 17.0% [6]
-- **vs market (180d):** -62.3% [7]
-- **Net debt / EBITDA:** 3.3x [8]
-- **Free cash flow:** positive [9]
 
 ## The case
 _(top points; the full argument is in Analysis)_
@@ -369,6 +369,62 @@ _3 to verify._
 - Citations [n] resolve in the Sources list at the document end. **Cited is not verified** — the reference locates the claim so you can check it.
 - Reference values (peer-implied equity, price-implied levels) are shown **beside** the figures they contextualize, never differenced into an upside — the reader judges the gap.
 - A value shown as UNKNOWN is honestly absent at the source — nothing is imputed.
+
+## How these numbers were set
+
+_Per-axis methodology from the underwrite record — the reference frame each leg was chosen against, not a re-derivation._
+
+### Revenue · **DRAFT — not ratified by the analyst**
+
+Terminal revenue starts from the street's FY2027 figure and then fades at a stated rate of about 1.5 points of growth a year in the central case. Only FY2026 and FY2027 are street figures; everything beyond is our own extrapolation, and the realized growth record is lumpy rather than a smooth curve because acquisitions and the 2020 shutdown both sit inside it.
+
+| reference | value | source |
+| --- | ---: | --- |
+| street revenue, FY2026 | $486.4M | `CIQ Estimates->Trends` |
+| street revenue, FY2027 | $540M | `CIQ Estimates->Trends` |
+| reported revenue, FY2025 | $441.3M | `EDGAR RevenueFromContractWithCustomerExcludingAssessedTax` |
+| company revenue guidance, FY2026 low end | $480M | `CIQ guidance bridge, dated 2026-05-07` |
+| company revenue guidance, FY2026 high end | $496M | `CIQ guidance bridge, dated 2026-05-07` |
+
+### Margin · **DRAFT — not ratified by the analyst**
+
+Every margin here is on a reported accounting basis, and so is the depreciation assumption, because the two must sit in the same layer. The street's 'EBITDA' figures are not: they imply about $62M of depreciation for a year in which the company reported about $22M, so converting them at our depreciation rate would overstate the operating margin by roughly eight points. The honest street references are its own stated operating-profit rows, 6.93% for FY2026 and 10.80% for FY2027. The realized record is the harder evidence: the best year on file, FY2024 at 10.01%, came from spending FALLING 11.7% in absolute dollars, and the following year gave 2.4 points back as spending grew 22.7% against 13.6% revenue. Operating leverage ran backwards in the latest year, which is why the central case sits below next year's street figure rather than on it.
+
+| reference | value | source |
+| --- | ---: | --- |
+| reported operating margin, FY2024 - best year on file | 10.01% | `EDGAR OperatingIncomeLoss / revenue` |
+| operating expenses, FY2024 - the reason for that year | -11.7% | `EDGAR OperatingExpenses, year on year` |
+| reported operating margin, FY2025 | 7.65% | `EDGAR OperatingIncomeLoss / revenue` |
+| operating expenses, FY2025 - leverage running backwards | 22.7% | `EDGAR OperatingExpenses, year on year` |
+| realized two-year mean operating margin | 8.83% | `EDGAR, FY2024 and FY2025` |
+| street operating margin, FY2026 - stated, not derived | 6.93% | `CIQ Estimates->Trends (EBIT row)` |
+| street operating margin, FY2027 - stated, not derived | 10.8% | `CIQ Estimates->Trends (EBIT row)` |
+| depreciation implied by the street layer, FY2026 | $61.6M | `CIQ Estimates->Trends (EBITDA less EBIT)` |
+| depreciation reported, FY2025 | $22.458M | `EDGAR companyfacts dep_amort` |
+| earnings revision breadth, next two quarters | -7count | `CIQ Estimates->Revisions (0 upward / 7 downward)` |
+| street full-year earnings revision over twelve months | -78% | `CIQ Estimates->Trends (FY2026 reported EPS path)` |
+
+### Multiple · **DRAFT — not ratified by the analyst**
+
+The exit multiple is paired to the margin the leg actually reaches, not taken from a peer whose economics the leg does not model. Mature device businesses earning about twice our terminal margin trade near 14x, and every one of them carries net cash while this company carries three and a half turns of debt - so the central case exits just below that level and the pessimistic case well below it. This company's own trading history is the longest series available and both data-quality checks pass on it, but its median spans years when earnings were near zero, which inflates a multiple without saying anything about value; the current and low readings are the usable part. For orientation: breaking even against the price would need roughly 15 to 17 percent operating margins at that historical floor multiple.
+
+| reference | value | source |
+| --- | ---: | --- |
+| mature device business, enterprise value to EBITDA | 13.8x | `CIQ Comparable Analysis (Boston Scientific, 26.7% EBITDA margin)` |
+| mature device business, closest in size, net cash | 23.2x | `CIQ Comparable Analysis (LeMaitre Vascular, 30.7% EBITDA margin)` |
+| this company's trailing current reading, seventh percentile | 20.6x | `CIQ Financials->Multiples (42 closes; both checks pass)` |
+| this company's trailing low | 18.8x | `CIQ Financials->Multiples (42 closes; both checks pass)` |
+| this company's trailing median - spans near-zero-earnings years | 32.1x | `CIQ Financials->Multiples (42 closes; both checks pass)` |
+| peer median, heterogeneous ten-name set | 24.6x | `CIQ Comparable Analysis (set spans $39M to $66.1B)` |
+
+### Horizon · **DRAFT — not ratified by the analyst**
+
+Four years to the terminal year, matching the first record on this recipe so the two are comparable. Three years would require the margin recovery to complete almost immediately after a recall and a guidance cut; five would let the waiting charge halve the answer, leaving the exit multiple rather than the operating case to carry it.
+
+| reference | value | source |
+| --- | ---: | --- |
+| years to the terminal year | 4years | `analyst judgement` |
+| waiting charge applied over the horizon | 74.9% | `house rate of 15% a year compounded over four years` |
 
 
 ## Financial statements (actuals + consensus estimates) — export date unverified (data ≥ 2026-06-23)

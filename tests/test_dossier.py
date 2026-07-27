@@ -9225,7 +9225,7 @@ def test_positioning_lands_in_the_appendix_in_both_twins_e2e() -> None:
             assert "Insider activity" not in before_next, f"{t}: insider is back in the street"
 
     if not shutil.which("node"):
-        return
+        pytest.skip("node unavailable")
     dj = Path("frontend/views/shared/dossier.js").resolve().as_uri()
     t = names[0]
     driver = f"""
@@ -9333,3 +9333,72 @@ console.log(JSON.stringify(["What broke", "Business quality", "The argument", "C
     idx = [i for _, i in found]
     assert len(found) >= 8, f"web rendered too few analysis sections: {found}"
     assert idx == sorted(idx), f"web analysis sections out of decision order: {found}"
+
+
+def test_assumption_methodology_renders_in_both_twins_e2e() -> None:
+    """(addition #1, 2026-07-27) The per-axis methodology behind an underwrite — the method
+    sentence plus the SOURCE-BOUND reference points each leg was chosen against — renders in the
+    APPENDIX of both twins. Schema 1.1 captured this from the day it shipped and nothing rendered
+    it, so the failure mode is silent: drop the single call site in either renderer and the
+    reviewable "why these numbers" vanishes with every other test still green.
+
+    Presence + TIER + source-binding only. The method text is ANALYST prose and is never pinned."""
+    import shutil
+    import subprocess
+
+    from vinci.dossier.assemble import _read_scenario_card
+
+    names = [d.name for d in sorted(Path("data/dossiers").iterdir())
+             if (d / "dossier.json").exists()
+             and getattr(_read_scenario_card(d.name), "assumptions", None)]
+    if not names:
+        pytest.skip("no committed dossier has an underwrite record with assumptions")
+
+    for t in names:
+        dd = ds.Dossier.model_validate_json(Path(f"data/dossiers/{t}/dossier.json").read_text())
+        card = _read_scenario_card(t)
+        md = dr.render_markdown(dd, card=card)
+        assert "## How these numbers were set" in md, f"{t}: md lost the methodology section"
+        # TIER: it belongs in the appendix (it audits the analyst's inputs), never in Analysis
+        head, appendix = md.split("# Appendix", 1)
+        assert "## How these numbers were set" not in head, f"{t}: methodology left the appendix"
+        # every axis on the record appears, each carrying at least its method sentence
+        for axis, a in card.assumptions.items():
+            assert f"### {axis.capitalize()}" in appendix, f"{t}: axis {axis} missing"
+            assert a.method[:40] in appendix, f"{t}: axis {axis} lost its method sentence"
+            # SOURCE-BINDING: a reference point without its source would be an unverifiable number
+            for r in a.references:
+                assert r.source in appendix, f"{t}: reference {r.label!r} lost its source"
+
+    if not shutil.which("node"):
+        pytest.skip("node unavailable")          # skip, never a silent no-op
+    dj = Path("frontend/views/shared/dossier.js").resolve().as_uri()
+    for t in names:                              # EVERY record, not just the first
+        driver = f"""
+const handler = {{ get: () => stub, apply: () => stub, construct: () => ({{}}) }};
+const stub = new Proxy(function(){{}}, handler);
+for (const g of ["window","document","location"]) {{ try {{ globalThis[g] = stub; }} catch {{}} }}
+import {{ readFileSync }} from "node:fs";
+const {{ renderDossier }} = await import("{dj}");
+const d = JSON.parse(readFileSync("frontend/dossiers/{t}.json"));
+const card = JSON.parse(readFileSync("frontend/scenarios/{t}.json"));
+const h = renderDossier(d, null, card);
+// UNESCAPE before comparing: the renderer escapeHtml()s & < > " ' , so an apostrophe in
+// "the street's FY2027 figure" would make a raw substring check fail on correct output.
+const ap = (h.split('data-tier="appendix">')[1] || "")
+  .replace(/&#39;/g, "'").replace(/&quot;/g, '"')
+  .replace(/&lt;/g, "<").replace(/&gt;/g, ">").replace(/&amp;/g, "&");
+console.log(JSON.stringify({{
+  inAppendix: ap.includes("How these numbers were set"),
+  axes: (card.assumptions || []).map((a) => ap.includes(a.method.slice(0, 40))),
+  sources: (card.assumptions || []).flatMap((a) => (a.references || [])
+    .map((r) => ap.includes(r.source))),
+}}));
+"""
+        out = subprocess.run(["node", "--input-type=module", "-e", driver],
+                             capture_output=True, text=True, check=True)
+        web = json.loads(out.stdout)
+        assert web["inAppendix"], f"{t}: web lost the methodology section from the appendix"
+        assert web["axes"] and all(web["axes"]), f"{t}: web dropped an axis method: {web['axes']}"
+        # `and web["sources"]` — all([]) is vacuously true, so an empty list must not pass
+        assert web["sources"] and all(web["sources"]), f"{t}: web dropped a source"

@@ -24,6 +24,14 @@ Microvast Holdings, Inc. engages in the design, development, and manufacturing o
 **Can the near-term maturity wall be refinanced/converted and operating cash generation be restored before the going-concern doubt becomes terminal — i.e. is the collapse a survivable liquidity squeeze on a genuinely profitable business, or a value trap on a business whose profitability was one-off-flattered and is now contracting?**
 _8 key unknowns + the evidence for/against — in Analysis_
 
+## What happened — and can it survive?
+- **Shape:** discrete gap-downs — 2026-03-17 earnings; 2026-05-12 earnings; 2026-05-18 no 8-K matched [5]
+- **Price (180d):** -62.9% [6]
+- **vs market (180d):** -80.9% [7]
+- **Net debt / EBITDA:** 3.9x [8]
+- **Free cash flow:** positive [9]
+- **Going concern:** ⚠ SUBSTANTIAL DOUBT stated [3]
+
 ## Scenario analysis
 _Terminal-margin: value the business in the year it reaches a normal operating margin, then discount that value back at the house waiting charge._
 
@@ -36,14 +44,6 @@ _Terminal-margin: value the business in the year it reaches a normal operating m
 - **bear** — the contraction proves durable: the largest customer (52% of revenue) wobbles, revenue stabilizes well below the peak run-rate, margins hold barely positive as a marginal producer; a levered, distressed supplier exit.
 - **base** — revenue recovers on the consensus path with a haircut for the current -25% quarter; margin reaches levered-auto-supplier economics rather than the street's cut-but-still-hopeful path; exit at the closest economic analogue (a levered auto-parts maker at 7.9x), not the scale leader's multiple.
 - **bull** — the gross-margin engineering (-28% to +31% in three years) carries through: revenue re-accelerates, double-digit operating margin arrives, partial deleveraging earns a step above the analogue.
-
-## What happened — and can it survive?
-- **Shape:** discrete gap-downs — 2026-03-17 earnings; 2026-05-12 earnings; 2026-05-18 no 8-K matched [5]
-- **Price (180d):** -62.9% [6]
-- **vs market (180d):** -80.9% [7]
-- **Net debt / EBITDA:** 3.9x [8]
-- **Free cash flow:** positive [9]
-- **Going concern:** ⚠ SUBSTANTIAL DOUBT stated [3]
 
 ## The case
 _(top points; the full argument is in Analysis)_
@@ -365,6 +365,59 @@ _3 to verify._
 - Citations [n] resolve in the Sources list at the document end. **Cited is not verified** — the reference locates the claim so you can check it.
 - Reference values (peer-implied equity, price-implied levels) are shown **beside** the figures they contextualize, never differenced into an upside — the reader judges the gap.
 - A value shown as UNKNOWN is honestly absent at the source — nothing is imputed.
+
+## How these numbers were set
+
+_Per-axis methodology from the underwrite record — the reference frame each leg was chosen against, not a re-derivation._
+
+### Revenue · **DRAFT — not ratified by the analyst**
+
+Terminal revenue starts from the street path and is cut for what the latest quarter actually did: revenue fell about a quarter year on year, so the central case sits well below the street's own two-year figure. Everything past the street's second year is our extrapolation.
+
+| reference | value | source |
+| --- | ---: | --- |
+| street revenue, FY2026 | $444.4M | `CIQ Estimates->Trends` |
+| street revenue, FY2027 | $591.5M | `CIQ Estimates->Trends` |
+| reported revenue, FY2025 | $427.5M | `EDGAR Revenues` |
+| latest-quarter revenue decline, year on year | -25.5% | `CIQ transcript and quarterly income statement` |
+| street revenue cut over twelve months | -27% | `CIQ Estimates->Trends` |
+
+### Margin · **DRAFT — not ratified by the analyst**
+
+Reported accounting basis throughout, and the depreciation assumption is vendor-sourced because this filer tags none at all in its own machine-readable filings - stated here so the basis is never mistaken for a primary figure. The gross-margin arc is real: minus twenty-eight per cent to plus thirty-one in three years. The operating margin turned positive for the first time in the latest full year and has already rolled over - the most recent quarter's adjusted operating profit is negative against a strongly positive comparison. The central case therefore takes levered auto-supplier economics rather than the street's cut-but-still-hopeful path, and the leverage read that matters is the company-adjusted one, not the headline.
+
+| reference | value | source |
+| --- | ---: | --- |
+| gross margin, FY2021 | -28.1% | `EDGAR GrossProfit / Revenues` |
+| gross margin, FY2024 - the arc's peak | 31.5% | `EDGAR GrossProfit / Revenues` |
+| gross margin, FY2025 | 28.6% | `EDGAR GrossProfit / Revenues` |
+| reported operating margin, FY2025 - first positive year | 1.6% | `EDGAR OperatingIncomeLoss / Revenues` |
+| street operating margin, FY2026 - stated | 4.5% | `CIQ Estimates->Trends (EBIT row)` |
+| street operating margin, FY2027 - stated | 11.6% | `CIQ Estimates->Trends (EBIT row)` |
+| street earnings cut over twelve months | -52% | `CIQ Estimates->Trends` |
+| leverage on company-adjusted earnings | 18.7x | `company-adjusted trailing figure, vs the 3.9x headline optic` |
+| depreciation and amortisation - vendor basis | $33.228M | `CIQ Financials->Cash Flow (no EDGAR tag exists)` |
+
+### Multiple · **DRAFT — not ratified by the analyst**
+
+The exit is set at the closest economic analogue - a levered auto-parts maker - rather than at the scale leader, whose multiple belongs to a business with tens of billions of net cash and none of this balance sheet. This company's own trading history is unusable as an exit: six closes over one and a third years, with the current reading below its own trailing low, which the range read itself calls low-confidence. The peer median spans thirty-four million to two hundred and seventy-five billion of market value, so it is a number rather than a comparison.
+
+| reference | value | source |
+| --- | ---: | --- |
+| closest economic analogue, enterprise value to EBITDA | 7.9x | `CIQ Comparable Analysis (BorgWarner, 13.9% EBITDA margin, levered)` |
+| scale leader, enterprise value to EBITDA - NOT a reference for us | 14.5x | `CIQ Comparable Analysis (CATL, 23.8% margin, large net cash)` |
+| peer median, heterogeneous nine-name set | 14.5x | `CIQ Comparable Analysis (set spans $34M to $275bn; several members not meaningful)` |
+| this company's trailing median - unusable, six closes over 1.3 years | 19.3x | `CIQ Financials->Multiples` |
+| this company's current reading - below its own trailing low | 9x | `CIQ Financials->Multiples (low-confidence range read)` |
+
+### Horizon · **DRAFT — not ratified by the analyst**
+
+Four years, matching the other records on this recipe so the three are comparable. The survival block sets breakeven three years out, so the terminal year sits one year past the point the business is assumed to fund itself.
+
+| reference | value | source |
+| --- | ---: | --- |
+| years to the terminal year | 4years | `analyst judgement` |
+| waiting charge applied over the horizon | 74.9% | `house rate of 15% a year compounded over four years` |
 
 
 ## Financial statements (actuals + consensus estimates) — export date unverified (data ≥ 2026-05-15)

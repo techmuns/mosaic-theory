@@ -1416,6 +1416,75 @@ def _positioning_lines(m: MechanicalLayer) -> list[str]:
     return ["### Ownership & positioning", *rows, ""] if rows else []
 
 
+def _md_cell(text: str) -> str:
+    """Analyst free text safe for a markdown TABLE cell. GFM splits rows on "|" before any inline
+    parsing, so an unescaped pipe shifts every later cell and the trailing ones are DISCARDED —
+    a source silently vanishing, which is worse than an ugly row."""
+    return text.replace("|", "\\|")
+
+
+def _ref_value(value: float, unit: str) -> str:
+    """A reference point in DISPLAY-natural form. The record stores value + unit separately, already
+    in display units (4.06 + "%", 6.56 + "x"), so most units suffix — but a currency unit PREFIXES
+    its symbol: "1450.9$M" is not a number anyone reads.
+
+    EXACT TWIN of dossier.js ``refValue`` — pinned by test_ref_value_py_js_parity, because the
+    first cut was NOT: this used ``,.6g`` while the JS used a bare ``toLocaleString``, and three
+    committed references already rendered differently in the PDF and on the web ($1,416.21M vs
+    $1,416.208M). Two traps that fix avoids, both verified: ``g`` flips to SCIENTIFIC at 1e6
+    ("$1.23457e+06M" in a PDF), and ``toLocaleString``'s default 3-fraction-digit cap silently
+    rounds a non-zero source-bound value to "$0M" — the fabrication class this repo forbids.
+    So: fixed 6 decimals (every committed value carries ≤3), trailing zeros trimmed, manual
+    grouping — never scientific, never a rounded-away non-zero."""
+    n = float(value)
+    s = f"{n:.6f}"
+    if float(s) == 0 and n != 0:
+        s = f"{n:.10f}"                 # a value smaller than 6dp must never display as 0
+    s = s.rstrip("0").rstrip(".")
+    neg, s = s.startswith("-"), s.lstrip("-")
+    ip, _, fp = s.partition(".")
+    s = ("-" if neg else "") + f"{int(ip):,}" + (f".{fp}" if fp else "")
+    return f"${s}{unit[1:]}" if unit.startswith("$") else f"{s}{unit}"
+
+
+def _assumption_methodology_lines(card: ScenarioRecord | None) -> list[str]:
+    """(addition #1, 2026-07-27) "How these numbers were set" — the per-AXIS methodology behind the
+    underwrite: a method sentence and the SOURCE-BOUND reference points each leg was chosen
+    against. Schema 1.1 has captured this on every record since it shipped, and NOTHING rendered
+    it — the reviewable "why these numbers" was committed and shown to nobody (SMPL alone carries
+    3 axes and 12 references). Appendix, because it is the audit of the analyst's inputs, not a
+    decision surface; the legs themselves and their reasons already render in the Brief's grid.
+
+    An UNRATIFIED axis is marked: the record distinguishes a method sentence the analyst stood
+    behind from one that merely shipped with the run. Absent record → nothing (most names carry no
+    underwrite). Twin: dossier.js assumptionMethodology()."""
+    axes = getattr(card, "assumptions", None) if card is not None else None
+    if not axes:
+        return []
+    out = ["## How these numbers were set", "",
+           "_Per-axis methodology from the underwrite record — the reference frame each leg was "
+           "chosen against, not a re-derivation._", ""]
+    for axis, a in axes.items():
+        # RATIFIED-BY is the predicate, matching the card exactly: frontend/build.py emits
+        # `unratified` from `not ratified_by`, so badging off `ratified` (the DATE) here let the
+        # twins disagree whenever only one of the pair was set. The date is shown when present.
+        stamp = (f" · ratified{f' {a.ratified}' if a.ratified else ''}" if a.ratified_by
+                 else " · **DRAFT — not ratified by the analyst**")
+        out += [f"### {axis.capitalize()}{stamp}", "", a.method, ""]
+        if a.references:
+            out += ["| reference | value | source |", "| --- | ---: | --- |"]
+            # ESCAPE PIPES: label and source are analyst free text in a markdown TABLE. GFM splits
+            # on "|" before inline parsing, so a pipe silently shifts cells and DROPS the source
+            # (backticks do not protect it). The JS twin renders a <ul>, so it is unaffected.
+            out += [f"| {_md_cell(r.label)} | {_ref_value(r.value, r.unit)} "
+                    f"| `{_md_cell(r.source)}` |" for r in a.references]
+            out.append("")
+        else:
+            # a pure-judgment method honestly stated beats a fabricated reference (schema 1.1)
+            out += ["_No reference points recorded — stated as judgment._", ""]
+    return out
+
+
 # (D4) a guardrail caveat is emitted as "Lead (a bull point): '<full claim>' — <explanation>". Parse
 # it into the structured shape; the offending sentence is shown IN FULL (synthesis no longer _snips
 # the human caveats — truncation is retained for the dev-only QA flags).
@@ -2301,15 +2370,8 @@ def _brief_lines(d: Dossier, *, show_proposal: bool = False,
     # pivot MECHANISM is untouched (derived + sealed to the shadow ledger at assembly; disposition
     # recorded at log time; the ledger CLI reveals post-log). ``--show-proposal`` is the operator's
     # explicit peek and still renders the proposal, under its own section header.
-    # SCENARIO ANALYSIS — the recorded bear/base/bull table (+ reasons); the sealed machine
-    # proposal joins it only under the operator's explicit --show-proposal peek.
-    scen = _scenario_table_lines(card)
-    if scen or show_proposal:
-        out.append("## Scenario analysis")
-        out += scen
-        if show_proposal:
-            out += [_machine_proposal_md(
-                derive_proposal(s.evidence_balance if s is not None else None)), ""]
+    # (brief re-order 2026-07-27) WHAT HAPPENED now precedes the scenario grid: the reader
+    # met the valuation before the problem it values. Setup, then what it's worth.
     # 3 — WHAT HAPPENED: the drawdown shape + the decision tiles. The Brief used to show the raw
     # drawdown % with no WHY; the fund's whole question (overshoot vs terminal) starts from what
     # broke. Full event log + filings stay in Analysis.
@@ -2339,6 +2401,15 @@ def _brief_lines(d: Dossier, *, show_proposal: bool = False,
     if gc is not None:
         out.append(gc)
     out.append("")
+    # SCENARIO ANALYSIS — the recorded bear/base/bull table (+ reasons); the sealed machine
+    # proposal joins it only under the operator's explicit --show-proposal peek.
+    scen = _scenario_table_lines(card)
+    if scen or show_proposal:
+        out.append("## Scenario analysis")
+        out += scen
+        if show_proposal:
+            out += [_machine_proposal_md(
+                derive_proposal(s.evidence_balance if s is not None else None)), ""]
     # 4 — THE CASE: the condensed bull/bear alone — the decisive question + unknowns moved to the
     # cover's CRUX block (buy-side cover), so the question renders once per tier.
     out.append("## The case")
@@ -2766,6 +2837,9 @@ def render_markdown(d: Dossier, *, dev: bool = False, show_proposal: bool = Fals
     out += _flags_section(d)
     out += ["# Appendix — data & audit", ""]
     out += _how_to_read_lines()
+    # (addition #1) the analyst's own inputs are audited FIRST — everything below is machine-
+    # assembled evidence, so "why these numbers" belongs at the top of the audit tier.
+    out += _assumption_methodology_lines(card)
     appendix = _appendix_lines(m)
     out += appendix if appendix else ["## Financial statements", ""]
     if m.capital_structure is not None:
