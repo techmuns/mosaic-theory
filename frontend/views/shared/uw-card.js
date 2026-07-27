@@ -102,6 +102,17 @@ function verdictPills(c) {
   // and it is what the reader weighs the verdict's confidence against.
   const t = tierBadge(c);
   if (t) out.push(t);
+  // (at-a-glance v2) STATUS sits with the rating, where a reader looks for it first: the short
+  // holding word, then the analyst's one-line caption at 11.2px. A status word alone misleads —
+  // SMPL reads `watch` while its position is closed — and the caption is a CAPTION: prose never
+  // sits between the title and the numbers, which is the scan zone.
+  const s = c.currentState || {};
+  if (s.holdingLabel) {
+    out.push(`<span class="uw-hold">${escapeHtml(s.holdingLabel)}</span>`);
+  }
+  if (s.statusNote) {
+    out.push(`<span class="muted uw-hold-note">· ${escapeHtml(s.statusNote)}</span>`);
+  }
   return out.join(" ");
 }
 
@@ -122,8 +133,12 @@ function ratioCell(c) {
   // an invented 2 (LOW-11: the card carries no fund constants of its own)
   // #165's two-ratio rule, kept under the masthead layout: the UNDERWRITE ratio lives here
   // (labelled), the AT-ENTRY ratio lives in the Entry cell — both shown, neither misreported.
-  const bar = typeof c.bar === "number"
-    ? `at underwrite · vs the ${escapeHtml(String(c.bar))} : 1 bar` : `at underwrite · bar ${DASH}`;
+  const ceil = (c.currentState || {}).ceiling2to1;
+  const bar = (typeof c.bar === "number"
+    ? `at underwrite · vs the ${escapeHtml(String(c.bar))} : 1 bar` : `at underwrite · bar ${DASH}`)
+    // the price at which the ratio decays to the bar — a qualifier ON this cell, so it belongs in
+    // this cell's sub-line rather than in a block of its own.
+    + (typeof ceil === "number" ? ` · ceiling $${ceil.toFixed(2)}` : "");
   return statCell("Reward : risk", c.ratio.toFixed(2) + " : 1" + badge, bar);
 }
 
@@ -210,7 +225,18 @@ function methodCell(c) {
 // Those moved to the foot, where the card's other metadata already lives.
 function mastheadFoot(c) {
   const v = c.verdict || {};
+  const s = c.currentState || {};
   const bits = [];
+  // (at-a-glance v2, 2026-07-27) VINTAGE + FORWARD DATES live here, at the band's lowest weight.
+  // They were briefly proposed as a 6th stat cell — wrong twice over: `.uw-statband` is
+  // repeat(5,1fr), so a 6th cell drops Method to a ragged second row; and a DATE rendered at the
+  // 16.5px mono of `.uw-stat-val` reads with the authority of a valuation number. This slot
+  // already existed for exactly this class of fact.
+  const ne = s.nextEvidence || {};
+  if (ne.date && ne.date !== "UNKNOWN") {
+    bits.push(`Next evidence ${escapeHtml(ne.date)}${ne.what ? ` ${escapeHtml(ne.what)}` : ""}`);
+  }
+  if (s.underwriteDate) bits.push(`underwritten ${escapeHtml(s.underwriteDate)}`);
   if (c.gateAdjudication) bits.push(escapeHtml(c.gateAdjudication));
   // only meaningful while no ledger row exists — a logged name says so in the foot instead
   if (!(c.ledger && c.ledger.entryId) && v.status && v.status !== "pending_analyst") {
@@ -615,36 +641,6 @@ function supersessionBanner(c) {
   return "";
 }
 
-// (record legibility) THE CURRENT-STATE BLOCK — what is true NOW, first on the card.
-function currentStateBlock(c) {
-  const s = c.currentState;
-  if (!s) return "";                       // pre-build cards round-trip without a phantom block
-  const ne = s.nextEvidence || {};
-  const row = (k, v) => v ? `<div><span class="muted">${k}</span> ${v}</div>` : "";
-  const pct = (x) => typeof x === "number" ? `${(x * 100).toFixed(1)}%` : "";
-  const ratio = typeof s.ratio === "number"
-    ? `${s.ratio.toFixed(2)} : 1 <span class="muted">vs the ${s.bar} bar</span> ${
-        s.passFail ? `<b>${escapeHtml(s.passFail)}</b>` : ""}`
-    : "";
-  return `<div class="card uw-now" style="margin-bottom:10px;">
-    <div style="display:flex; gap:8px; align-items:baseline; flex-wrap:wrap;">
-      <span class="muted" style="font-size:11px; text-transform:uppercase; letter-spacing:.04em;">Current state</span>
-      <b>${escapeHtml(s.holdingLabel || s.status || "")}</b>
-      ${s.status ? `<span class="pill">${escapeHtml(String(s.status).replace("_", " "))}</span>` : ""}
-    </div>
-    ${s.statusNote ? `<div style="margin-top:4px;">${escapeHtml(s.statusNote)}</div>` : ""}
-    <div class="foot" style="margin-top:6px; display:grid; gap:2px;">
-      ${row("Reward : risk", ratio)}
-      ${row("at spot", s.spot ? `$${s.spot} <span class="muted">${escapeHtml(s.spotSource || "")}</span>` : "")}
-      ${row("underwritten", s.underwriteDate ? escapeHtml(s.underwriteDate) : "")}
-      ${row("base normal margin", pct(s.baseNormalMargin))}
-      ${row("2:1 ceiling", typeof s.ceiling2to1 === "number" ? `$${s.ceiling2to1.toFixed(2)}` : "")}
-      ${row("next evidence", ne.date
-        ? `${escapeHtml(ne.date)} <span class="muted">${escapeHtml(ne.what || "")} · ${escapeHtml(ne.source || "")}</span>`
-        : "")}
-    </div></div>`;
-}
-
 // A record carrying amendment tags written BEFORE the class gate (2026-07-27) mixes investment
 // judgment with system corrections in one undifferentiated trail — say so rather than let a
 // reader assume every amendment was a change of mind.
@@ -733,7 +729,6 @@ export function uwCard(c, { ticker = true, mark = null } = {}) {
   const body = () => `
     ${masthead(c, ticker)}
     ${supersessionBanner(c)}
-    ${currentStateBlock(c)}
     ${legsTable(c)}
     ${survivalPanel(c)}
     ${impliedOdds(c, mark)}
@@ -765,7 +760,6 @@ export function uwCardParts(c, { mark = null, detailExtra = "", rationale = true
   // narrative slot), so the detail must not render it a second time.
   const detail = () => `
     ${supersessionBanner(c)}
-    ${currentStateBlock(c)}
     ${legsTable(c)}
     ${survivalPanel(c)}
     ${impliedOdds(c, mark)}

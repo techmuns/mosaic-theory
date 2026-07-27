@@ -179,8 +179,17 @@ function verdictTag(v) {
   const buy = isBuyVerdict(v.verdict);
   const at = [v.entryPrice != null ? `@ ${fmtPrice(v.entryPrice)}` : "", fmtDate(v.decidedAt)]
     .filter(Boolean).join(" · ");
-  return `<span class="pill ${buy ? "buy" : "avoid"} ds-card-tag" title="${escapeHtml(
-    `your logged verdict${at ? " " + at : ""}`)}">${buy ? "BUY" : "AVOID"}</span>`;
+  // CLOSE-AWARE (2026-07-27): a closed position never reads as a live BUY on the shelf. The word
+  // of record stays — the call is still scored at its horizon, exits cannot launder the track
+  // record — but the tag says it is closed, so the index cannot show a green BUY for a name the
+  // book no longer holds.
+  const cl = v.closed;
+  const tone = cl ? "unresolved" : buy ? "buy" : "avoid";
+  const tip = `your logged verdict${at ? " " + at : ""}${cl
+    ? ` — closed ${cl.exitPriceAsOf || ""}${cl.exitPrice != null ? ` at ${fmtPrice(cl.exitPrice)}` : ""}`
+    : ""}`;
+  return `<span class="pill ${tone} ds-card-tag" title="${escapeHtml(tip)}">${
+    buy ? "BUY" : "AVOID"}${cl ? " · closed" : ""}</span>`;
 }
 
 function leanTag(eb) {
@@ -765,8 +774,17 @@ function briefVerdictChip(verdict) {
       <span class="muted" style="font-size:11.5px;">the human logs it after reviewing the facts</span></div>`;
   }
   const isBuy = isBuyVerdict(verdict.verdict);
-  return `<div class="brief-chip"><span class="pill ${isBuy ? "buy" : "avoid"}">${escapeHtml(verdict.verdict)}</span>
-    <span class="muted" style="font-size:11.5px;">logged @ ${fmtPrice(verdict.entryPrice)} · ${fmtDate(verdict.decidedAt)}</span></div>`;
+  // CLOSE-AWARE (2026-07-27) — same rule as the shelf tag and the card: the verdict word of
+  // record stays, but it never renders as a live call once the position is closed.
+  const cl = verdict.closed;
+  const tone = cl ? "unresolved" : isBuy ? "buy" : "avoid";
+  const meta = cl
+    ? `logged @ ${fmtPrice(verdict.entryPrice)} · ${fmtDate(verdict.decidedAt)} — closed ${
+        fmtDate(cl.exitPriceAsOf)}${cl.exitPrice != null ? ` @ ${fmtPrice(cl.exitPrice)}` : ""}`
+    : `logged @ ${fmtPrice(verdict.entryPrice)} · ${fmtDate(verdict.decidedAt)}`;
+  return `<div class="brief-chip"><span class="pill ${tone}">${escapeHtml(verdict.verdict)}${
+    cl ? " · closed" : ""}</span>
+    <span class="muted" style="font-size:11.5px;">${meta}</span></div>`;
 }
 
 // (Brief · tier redesign 2026-07-21, card split per user) SIX decision-ordered cards:

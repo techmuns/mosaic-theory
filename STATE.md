@@ -5527,6 +5527,42 @@ confirmed-record mode the directive first assumed.
    reissue brief required (evidence, not amendment). The verification did not disappear; the
    classifier cannot see it in this shape. QUEUED: teach the discharge reader a structured
    verification field, or re-verify the reissued bear leg with a dated tag.
+21. **LEDGER→RECORD BINDING + CLOSE-AWARENESS EVERYWHERE — 2026-07-27 (bug, operator-spotted).**
+   The operator asked why a `watch` record headlined `BUY`. It was a real defect, and bigger than
+   the symptom. THE CAUSE: the ledger joined to a card **by TICKER alone** — correct while one
+   ticker meant one record, broken by supersession. SMPL's BUY was decided 2026-07-21 against the
+   record now ARCHIVED; the live record was reissued 2026-07-27 and **opened no position**
+   (`entry_price` is None) — so the reissued card advertised a verdict it never made, and the SAME
+   row displayed on two records. RULE ADOPTED: *a record owns a ledger row only if the row was
+   decided during its tenure* (`underwrite_date` is the latest at-or-before `decided_at`).
+   Never-superseded names are unaffected.
+   **THE WIDER FINDING — the close-aware fix had reached ONE of FOUR surfaces.** The other three
+   still showed a bare live BUY: the dossier Brief chip, the dossier INDEX badge, and the decision
+   log — which had **no close handling at all**. Root cause was one layer down, in the JS ledger
+   loader: it mapped EVERY row into `entries`, and a close row repeats the ORIGINAL verdict for
+   provenance, so **the dashboard reported 5 logged / 4 BUY against a true 3 / 2** and last-row-wins
+   decided which row a per-ticker lookup returned. Fixed at the loader — the JS twin of
+   `vinci.monitor.decision_rows`/`pair_closes`: partition first, attach each close to the row it
+   closes, derive the realized return from the two frozen prices (never stored). Every consumer
+   gets close-awareness from that one place. `resolved` is deliberately untouched: a call is scored
+   at its horizon whatever happened to the position — **exits never launder the track record**.
+22. **AT-A-GLANCE v2 — the current-state block FOLDED INTO the masthead (2026-07-27).** The
+   operator challenged the duplicate block, then challenged the first proposal against buy-side
+   structure. Both challenges were right, and v1 was wrong in two STRUCTURAL ways:
+   (a) it added a 6th stat cell — but `.uw-statband` is `repeat(5, 1fr)`, so the 6th does not
+   wrap, it drops Method to a ragged one-cell second row; going to six shrinks every cell to
+   ~173px while the 22px mono lead value alone needs ~150px, so the dominant number would wrap.
+   (b) it mismatched WEIGHT TO FACT-CLASS: a **date** rendered at `.uw-stat-val`'s 16.5px mono
+   carries a valuation number's authority, and a 13-word prose caption at 13.5px sat between the
+   title and the numbers — the scan zone. **`.uw-mast-foot` (11.2px, ink-3) already existed for
+   exactly this class of fact and the first proposal invented a new slot instead of using it.**
+   SHIPPED (v2, zero CSS change to the band): holding label + status caption join the chip cluster
+   beside the rating (11.2px caption, matching `.uw-stat-sub`); the 2:1 ceiling qualifies the
+   Reward:risk cell in ITS sub-line; next-evidence + underwritten date go to the mast-foot; base
+   normal margin is DROPPED (the legs table carries it); the separate block is deleted from both
+   compositions — the masthead now carries it, so the card and the dossier agree by construction
+   rather than by duplication. LESSON: propose placement only after reading the type scale — the
+   component's contract is data, not taste.
 20. **SUPERSEDED NOTES ON AMENDMENTS — 2026-07-27.** `superseded_note` on the sidecar, rendered
    beside the class label INSIDE the "Verdict as recorded" expander. First case: SMPL tag 1, whose
    staleness premise the 2026-07-26 verification refuted (the mechanical facts were current; the

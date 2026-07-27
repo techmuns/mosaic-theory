@@ -176,13 +176,26 @@ export function getLedger() { return _once("ledger", _loadLedger); }
 async function _loadLedger() {
   const raw = await _jsonl(`${SNAPSHOTS}/decision_ledger.jsonl`);
   const today = new Date().toISOString().slice(0, 10);
-  const entries = raw
-    .map((r) => {
-      const p = JSON.parse(r.payload);
+  // CLOSE ROWS ARE NOT POSITIONS (2026-07-27). Every row was mapped into `entries`, so a closed
+  // name appeared TWICE — a close row repeats the ORIGINAL verdict for provenance. That made
+  // `counts.logged` read 5 for 3 positions and `counts.buy` read 4 for 2, and left last-row-wins
+  // deciding which row a per-ticker lookup returned. This is the JS twin of
+  // vinci.monitor.decision_rows / pair_closes: partition first, attach each close to the decision
+  // row it closes, and let no consumer mistake a close for a position.
+  const payloads = raw.map((r) => (typeof r.payload === "string" ? JSON.parse(r.payload) : r));
+  const closeBy = {};
+  for (const p of payloads) {
+    if (p.event === "CLOSE" && p.closes_entry_id) closeBy[p.closes_entry_id] = p;
+  }
+  const entries = payloads
+    .filter((p) => !p.event)                                   // decision rows only
+    .map((p) => {
       const horizonDate = _addDays(p.entry_price_as_of, p.horizon_days);
       const daysToHorizon = horizonDate ? _diffDays(today, horizonDate) : null;
+      const cl = closeBy[p.entry_id];
       return {
         ticker: p.ticker,
+        entryId: p.entry_id,
         verdict: p.verdict,
         entryPrice: p.entry_price,
         entryPriceAsOf: p.entry_price_as_of,
@@ -191,8 +204,21 @@ async function _loadLedger() {
         confidence: p.confidence,
         benchmark: p.benchmark,
         decidedAt: p.decided_at,
+        // the call is STILL scored at its horizon after a close — exits never launder the track
+        // record — so `resolved` is untouched; `closed` is a separate, additive fact.
         resolved: daysToHorizon !== null ? daysToHorizon <= 0 : false,
         daysToHorizon,
+        ...(cl ? {
+          closed: {
+            exitPrice: cl.exit_price,
+            exitPriceAsOf: cl.exit_price_as_of,
+            reason: cl.reason,
+            closeEntryId: cl.entry_id,
+            // derived here, never stored — two frozen prices, one truth
+            realizedReturn: (typeof cl.exit_price === "number" && p.entry_price)
+              ? cl.exit_price / p.entry_price - 1 : null,
+          },
+        } : {}),
         thesis: p.thesis,
         killCriteria: p.kill_criteria,
         twinCall: p.twin_call,
