@@ -1318,3 +1318,9 @@ table.data th.peer-desc-h { text-align: left; }
    wide content then scrolls inside its own wrapper, never the page. */
 .main { min-width: 0; }
 .card pre { overflow-x: auto; }
+
+/* (at-a-glance v2, 2026-07-27) STATUS beside the rating chip. The holding word is short and
+   weighted like a label; the caption is 11.2px — the same rank as .uw-stat-sub / .uw-mast-foot,
+   so prose never competes with the numbers it sits above. */
+.uw-hold { font-weight: 650; font-size: 12.4px; color: var(--ink); }
+.uw-hold-note { font-size: 11.2px; }

@@ -284,3 +284,54 @@ def test_one_amendment_marker_shared_by_the_card_and_the_dossier() -> None:
     # the dossier must no longer carry its own copy of the tag regex
     assert r"\[amended (\d{4}-\d{2}-\d{2})" not in doss, (
         "the dossier is parsing amendment tags itself again — use the shared amendMarks")
+
+
+# --- at-a-glance v2 + the ledger binding (2026-07-27) ------------------------------------------
+def test_a_reissued_record_does_not_inherit_the_ledger_row_it_never_made() -> None:
+    """THE SUPERSESSION BUG. The ledger joined by TICKER alone, which was right while one ticker
+    meant one record. SMPL's BUY was decided 2026-07-21 against the record now ARCHIVED; the live
+    record was reissued 2026-07-27 and opened no position (`entry_price` is None) — yet its card
+    headlined that BUY, and the SAME row displayed on two records.
+
+    RULE: a record owns the row only if the row was decided during its tenure."""
+    ledger = _BUILD._ledger_by_ticker()
+    live = json.loads((ROOT / "scenarios" / "SMPL.json").read_text())
+    arch = json.loads((ROOT / "scenarios" / "archive" / "SMPL-2026-07-21.json").read_text())
+    assert _BUILD._ledger_for_record(live, ledger) is None, (
+        "the reissued record post-dates the decision — it cannot own that ledger row")
+    owned = _BUILD._ledger_for_record(arch, ledger)
+    assert owned and owned["entry_id"] == "V-SMPL-screen2-20260706"
+    # a never-superseded name is unaffected: one record, it owns its row
+    it = json.loads((ROOT / "scenarios" / "IT.json").read_text())
+    assert (_BUILD._ledger_for_record(it, ledger) or {}).get("entry_id") == "V-IT-screen2-20260706"
+
+
+def test_close_rows_are_not_positions_in_the_js_ledger_loader() -> None:
+    """The loader mapped EVERY row into `entries`, so a closed name counted twice — a close row
+    repeats the ORIGINAL verdict for provenance. The dashboard read 5 logged / 4 BUY against a
+    true 3 / 2. JS twin of vinci.monitor.decision_rows: partition, then attach."""
+    src = (ROOT / "frontend" / "lib" / "snapshots.js").read_text()
+    body = src[src.index("async function _loadLedger"):]
+    body = body[:body.index("\n}")]
+    assert '.filter((p) => !p.event)' in body, "close rows must be filtered out of entries"
+    assert "closes_entry_id" in body and "closeBy" in body, "closes must be paired to their row"
+    assert "realizedReturn" in body, "realized return is derived here, never stored"
+
+
+def test_at_a_glance_v2_keeps_five_cells_and_ranks_by_fact_class() -> None:
+    """v1 proposed a 6th stat cell for `next evidence`. Wrong twice: `.uw-statband` is
+    repeat(5,1fr), so a 6th cell drops Method to a ragged second row; and a DATE at the 16.5px
+    mono of `.uw-stat-val` reads with a valuation number's authority. Dates belong in the
+    pre-existing `.uw-mast-foot` (11.2px ink-3), and the status caption is a CAPTION — prose never
+    sits between the title and the numbers."""
+    css = (ROOT / "frontend" / "assets" / "styles.css").read_text()
+    assert "repeat(5, 1fr)" in css, "the band contract is five columns"
+    card = (ROOT / "frontend" / "views" / "shared" / "uw-card.js").read_text()
+    band = card[card.index('<div class="uw-statband">'):]
+    band = band[:band.index("</div>")]
+    assert band.count("Cell(c)") == 5, f"the band must render exactly 5 cells, got: {band}"
+    # the promoted fields landed in their correct slots
+    foot = card[card.index("function mastheadFoot"):]
+    foot = foot[:foot.index("\n}")]
+    assert "Next evidence" in foot and "underwritten" in foot, "dates belong in the mast-foot"
+    assert "currentStateBlock" not in card, "the separate block is superseded by the masthead"

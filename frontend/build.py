@@ -167,6 +167,40 @@ def _amendment_index() -> dict[str, list[dict[str, Any]]]:
     return out
 
 
+def _ledger_for_record(
+    rec: dict[str, Any], ledger: dict[str, dict[str, Any]] | None,
+) -> dict[str, Any] | None:
+    """The ledger row THIS record justified — or None (supersession fix, 2026-07-27).
+
+    THE DEFECT. The join was by TICKER alone, which was right while one ticker meant one record.
+    Supersession broke that: SMPL's BUY was decided 2026-07-21 against the record that is now
+    ARCHIVED, while the live record was reissued 2026-07-27 and opened no position at all
+    (`entry_price` is None). Joining by ticker put that BUY on the reissued card — a `watch`
+    record headlining a verdict it never made — and displayed the SAME row on two records.
+
+    THE RULE. A record owns the row only if the row was decided during ITS tenure: the record's
+    `underwrite_date` is the latest one at or before `decided_at`. A record underwritten AFTER the
+    decision cannot have justified it. Records with no supersession are unaffected — there is only
+    one record, so it is trivially the latest at-or-before.
+    """
+    led = (ledger or {}).get(str(rec.get("ticker", "")).upper())
+    if not led:
+        return None
+    decided = str(led.get("decided_at") or "")[:10]
+    mine = str(rec.get("underwrite_date") or "")
+    if not decided or not mine:
+        return led                      # undatable either side → keep the legacy behaviour
+    if mine > decided:
+        return None                     # this record post-dates the decision: not its row
+    # a LATER sibling that still pre-dates the decision owns it instead
+    sib = str(rec.get("superseded_by") or "")
+    if sib:
+        successor_date = sib.split("-", 1)[1] if "-" in sib else ""
+        if successor_date and successor_date <= decided:
+            return None
+    return led
+
+
 def _record_key(rec: dict[str, Any]) -> str:
     """The key a record is indexed under: its ARCHIVE KEY once superseded, else its ticker."""
     t = str(rec.get("ticker", "")).upper()
@@ -265,7 +299,7 @@ def _scenario_card(rec: dict[str, Any], ledger: dict[str, dict[str, Any]] | None
     r = rec.get("result") or {}
     per = r.get("per_scenario") or {}
     v = rec.get("verdict") or {}
-    led = (ledger or {}).get(str(rec["ticker"]).upper())
+    led = _ledger_for_record(rec, ledger)
     return {
         "ticker": rec["ticker"], "recipeId": rec["recipe_id"], "recipeDesc": rec["recipe_desc"],
         # schema-1.1 methodology: the stamped arithmetic chain + per-axis derivations. Keys are
