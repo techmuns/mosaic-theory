@@ -34,7 +34,7 @@ _Terminal-margin: value the business in the year it reaches a normal operating m
 - **base** — revenue = consensus FY2027 then a stated fade of ~1.5 points a year; margin = the durable +3-points-a-year leverage path from the first positive year (+0.6%); exit set on the one genuinely mature vertical-software peer (12.3x at 23% margins) - at terminal, growth has decelerated by construction, so a growth multiple would pay for the same growth twice.
 - **bull** — the recent +4-points-a-year pace holds and revenue fades only to 8%; exit at a premium to the mature peer for franchise dominance in bank software.
 
-## What happened
+## What happened — and can it survive?
 - **Shape:** discrete gap-downs — 2026-02-03 no company filing [2]
 - **Price (180d):** -28.3% [3]
 - **Market (IWM) 180d:** 17.0% [4]
@@ -58,7 +58,7 @@ _Bear case — the decline is real:_
 
 ## Valuation — first cut
 - **vs peers · Comparability · Total debt / EBITDA vs peers · Credit health · Cross-sectional (vs peers — the edge) · Peer set (roster · caps · business) · Comparability (confidence gate) · Forward multiples (name vs peer Low/Median/Mean/High · NTM) · Per-peer grid (cap · valuation · margin · growth · leverage — name vs peers) · Name market cap ($M) — the ADJACENT fact to compare against · Bridge (TEV → equity) · Implied equity:** _MISSING_ — CIQ 'comps' export not found for NCNO — pull it
-- **Consensus (target · ratings) · Horizon read (FQ — next-2Q revision breadth) · Acceleration read (monthly consensus path) · Cross-name anchor (NTM forward-multiple ladder) · Guidance bridge (latest guide + track-record) · Consensus stats (target + ratings) · Revision-event log · Surprise history (annual beat/miss):** _MISSING_ — CIQ 'estimates' export not found for NCNO — pull it
+- **The street, for contrast (target · ratings) · Horizon read (FQ — next-2Q revision breadth) · Acceleration read (monthly consensus path) · Cross-name anchor (NTM forward-multiple ladder) · Guidance bridge (latest guide + track-record) · Consensus stats (target + ratings) · Revision-event log · Surprise history (annual beat/miss):** _MISSING_ — CIQ 'estimates' export not found for NCNO — pull it
 
 # Analysis — full dossier
 
@@ -110,10 +110,8 @@ _no supplier/customer cohort mapped for this name — the comparison is vs the m
 
 ### The street — estimates & guidance
 _as-of UNKNOWN_
-- **Insider activity (Form 4, 6m):** Open-market buys 0 · sells 23 (net -250.8K sh) · grants 14 · last 2026-07-08 · other filings 6 [15]
-- **Short interest (FINRA):** Short interest (FINRA, settle 2026-06-30): 17.0M → 20.2M sh (+18.4%, rising) · 18.4% of shares out (EDGAR XBRL) · DTC 5.6d · recent: 2026-06-30 20.2M · 2026-06-15 17.0M · 2026-05-29 16.6M · 2026-05-15 14.7M [10]
 
-### Ownership & concentration
+### Business quality
 - **Customers:** _MISSING_ — no Customers & Suppliers export for NCNO — pull it and re-run
 
 ## The argument
@@ -193,6 +191,10 @@ _as-of UNKNOWN_
 
 ### Management commentary
 - **Earnings call (transcript pointer — read the file):** _MISSING_ — no earnings-call transcript for NCNO — pull it
+
+### Ownership & positioning
+- **Insider activity (Form 4, 6m):** Open-market buys 0 · sells 23 (net -250.8K sh) · grants 14 · last 2026-07-08 · other filings 6 [15]
+- **Short interest (FINRA):** Short interest (FINRA, settle 2026-06-30): 17.0M → 20.2M sh (+18.4%, rising) · 18.4% of shares out (EDGAR XBRL) · DTC 5.6d · recent: 2026-06-30 20.2M · 2026-06-15 17.0M · 2026-05-29 16.6M · 2026-05-15 14.7M [10]
 
 ### Assembly verification — filing vs panel
 - **Wall coherence — filing ≤12m vs CIQ panel (same window):** wall coherence: UNKNOWN — filing states no ≤12m figure [17]

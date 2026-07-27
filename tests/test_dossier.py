@@ -6941,9 +6941,9 @@ def _synth_min(bull: list[typing.Any], bear: list[typing.Any]) -> ds.Synthesis:
 
 def test_d1_section_order_facts_first() -> None:
     """(D1, re-pinned for the tier redesign) The rendered markdown is decision-logic ordered:
-    caveats → what broke → survival → operating trajectory → valuation → peer comps → ownership &
-    concentration → the argument (twins LAST) → appendix (reading guide … Record & reproduce
-    closing). The old verdict footer is GONE — a third copy of the pivot statement."""
+    caveats → what broke → survival → operating trajectory → valuation → peer comps → business
+    quality → the argument (twins LAST) → appendix (reading guide … Record & reproduce closing).
+    The old verdict footer is GONE — a third copy of the pivot statement."""
     dossier = ds.Dossier(
         ticker="X", name="X Co", cik="0", reference_date=date(2026, 6, 1), rank=1,
         mechanical=_minimal_mech(), synthesis=_synth_min([], []),
@@ -6959,7 +6959,10 @@ def test_d1_section_order_facts_first() -> None:
     assert (pos("Analyst caveats") < pos("What broke — and did it fall alone?")
             < pos("### Leverage & survival") < pos("### Operating trajectory")
             < pos("### Valuation & own-history") < pos("### Peer comps")
-            < pos("### Ownership & concentration") < pos("## The argument"))
+            # (content relocation 2026-07-24) renamed from "Ownership & concentration" — the
+            # section carried no ownership, only business mix; the real ownership data (insider,
+            # short interest) moved to the appendix as "Ownership & positioning".
+            < pos("### Business quality") < pos("## The argument"))
     assert (pos("### Bull case") < pos("### Bear case") < pos("### Decisive question")
             < pos("### Key unknowns") < pos("### Twin reference cases"))
     assert "The machine PROPOSES" not in md  # the verdict footer is retired
@@ -7859,7 +7862,8 @@ def test_what_broke_restructure_and_survival_columns_e2e_node() -> None:
        row (it moved to the street card), and the cohort absence is a quiet footnote, not a
        labelled row.
     2. STREET — the revised-guidance fact renders on the street card exactly once (never dropped).
-    3. BRIEF STRIP — 'What happened' carries the stat grid with the market leg cell.
+    3. BRIEF STRIP — 'What happened — and can it survive?' carries the stat grid with the market
+       leg cell (the heading gained its survival half when the strip's triage content was named).
     4. SURVIVAL COLUMNS — the leverage grid and the maturity wall render inside the two-column
        wrapper (ls-cols), and the wall does NOT render a second time below it.
     5. PEER ROSTER — the business descriptor column is the prose class, never a numeric cell.
@@ -7901,8 +7905,10 @@ console.log(JSON.stringify({{ html: h }}));
     street = h.split(">The street — estimates &amp; guidance<")[1].split('class="card')[0]
     assert street.count("Revised guidance (8-K 99.1)") == 1
 
-    # 3 — the Brief what-happened strip has the market cell
-    wh = h.split(">What happened<")[1].split('class="card')[0]
+    # 3 — the Brief what-happened strip has the market cell. (content relocation 2026-07-24) the
+    # heading gained "— and can it survive?": the strip carries survival triage (net debt/EBITDA,
+    # FCF, going concern) beside the event, and the old title described only the first half.
+    wh = h.split(">What happened — and can it survive?<")[1].split('class="card')[0]
     assert 'class="fg-grid fg-hero"' in wh and "Market (" in wh  # the comparison is HERO
 
     # 4 — survival two-column: grid + wall inside ls-cols; the wall renders ONCE
@@ -9169,3 +9175,68 @@ def test_panel_freshness_caveat_reaches_the_human_surface_not_qa() -> None:
     assert caveat is not None
     caveats, qa = dflags.partition([caveat])
     assert caveat in caveats and caveat not in qa
+
+
+def test_positioning_lands_in_the_appendix_in_both_twins_e2e() -> None:
+    """(content relocation 2026-07-24) Insider activity + short interest were the ONLY real
+    ownership content in the dossier, and they sat inside "The street — estimates & guidance".
+    They now render in the APPENDIX as "Ownership & positioning". Pin BOTH twins end-to-end on the
+    committed artifacts, because the relocation's failure mode is SILENT: deleting the single call
+    site in either renderer drops both facts from the whole document and every other test still
+    passes. Presence + TIER placement only — no value pins (the figures are live data)."""
+    import shutil
+    import subprocess
+
+    src = Path("data/dossiers")
+    names = [d.name for d in sorted(src.iterdir())
+             if (d / "dossier.json").exists()
+             and ((json.loads((d / "dossier.json").read_text()).get("mechanical") or {})
+                  .get("catalyst_path") or {}).get("insider_activity")]
+    if not names:
+        pytest.skip("no committed dossier carries insider activity")
+
+    for t in names:
+        md = (src / t / "dossier.md").read_text()
+        assert "### Ownership & positioning" in md, f"{t}: md lost the positioning section"
+        assert "Insider activity (Form 4, 6m)" in md, f"{t}: md lost insider activity"
+        # TIER: it must sit in the appendix, and NOT back in the street section it came from
+        appendix = md.split("# Appendix", 1)
+        assert len(appendix) == 2, f"{t}: no appendix tier in the md"
+        assert "Insider activity" in appendix[1], f"{t}: insider activity is not in the appendix"
+        street = md.split("### The street", 1)
+        if len(street) == 2:
+            before_next = street[1].split("###", 1)[0]
+            assert "Insider activity" not in before_next, f"{t}: insider is back in the street"
+
+    if not shutil.which("node"):
+        return
+    dj = Path("frontend/views/shared/dossier.js").resolve().as_uri()
+    t = names[0]
+    driver = f"""
+const handler = {{ get: () => stub, apply: () => stub, construct: () => ({{}}) }};
+const stub = new Proxy(function(){{}}, handler);
+for (const g of ["window","document","location"]) {{ try {{ globalThis[g] = stub; }} catch {{}} }}
+import {{ readFileSync, existsSync }} from "node:fs";
+const {{ renderDossier }} = await import("{dj}");
+const d = JSON.parse(readFileSync("frontend/dossiers/{t}.json"));
+const cp = "frontend/scenarios/{t}.json";
+const card = existsSync(cp) ? JSON.parse(readFileSync(cp)) : null;
+const h = renderDossier(d, null, card);
+const street = h.split("The street &mdash; estimates").length > 1
+  ? h.split("The street")[1].split('class="card')[0] : "";
+console.log(JSON.stringify({{
+  hasSection: h.includes("Ownership &amp; positioning") || h.includes("Ownership & positioning"),
+  hasInsider: h.includes("Insider activity"),
+  hasShort: h.includes("Short interest"),
+  streetStillHasIt: street.includes("Insider activity"),
+  businessQuality: h.includes("Business quality"),
+  oldName: h.includes("Ownership &amp; concentration") || h.includes("Ownership & concentration"),
+}}));
+"""
+    out = subprocess.run(["node", "--input-type=module", "-e", driver],
+                         capture_output=True, text=True, check=True)
+    web = json.loads(out.stdout)
+    assert web["hasSection"], f"{t}: web lost the Ownership & positioning section"
+    assert web["hasInsider"] and web["hasShort"], f"{t}: web lost the positioning facts"
+    assert not web["streetStillHasIt"], f"{t}: web still renders positioning inside the street"
+    assert web["businessQuality"] and not web["oldName"], f"{t}: web rename missing"
