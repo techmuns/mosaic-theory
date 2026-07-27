@@ -734,8 +734,6 @@
     "passFail": "FAIL",
     "currentState": {
      "status": "watch",
-     "held": false,
-     "holdingLabel": "not held",
      "ratio": -0.35,
      "bar": 2.0,
      "passFail": "FAIL",
@@ -747,7 +745,6 @@
       "what": "no scheduled evidence",
       "source": "none on file"
      },
-     "baseNormalMargin": 0.0625,
      "ceiling2to1": 22.98
     },
     "verdict": {

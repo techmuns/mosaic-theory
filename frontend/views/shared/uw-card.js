@@ -102,17 +102,10 @@ function verdictPills(c) {
   // and it is what the reader weighs the verdict's confidence against.
   const t = tierBadge(c);
   if (t) out.push(t);
-  // (at-a-glance v2) STATUS sits with the rating, where a reader looks for it first: the short
-  // holding word, then the analyst's one-line caption at 11.2px. A status word alone misleads —
-  // SMPL reads `watch` while its position is closed — and the caption is a CAPTION: prose never
-  // sits between the title and the numbers, which is the scan zone.
-  const s = c.currentState || {};
-  if (s.holdingLabel) {
-    out.push(`<span class="uw-hold">${escapeHtml(s.holdingLabel)}</span>`);
-  }
-  if (s.statusNote) {
-    out.push(`<span class="muted uw-hold-note">· ${escapeHtml(s.statusNote)}</span>`);
-  }
+  // (2026-07-27, operator) The header is the RATING and nothing else. The holding label was
+  // removed because the band already carries it: the ENTRY cell reads "— no position" for a
+  // record that holds nothing, and a closed position states its close inside the verdict chip
+  // itself. Saying it again beside the chip was the same redundancy the caption had.
   return out.join(" ");
 }
 

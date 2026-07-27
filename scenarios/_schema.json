@@ -871,18 +871,6 @@
           ],
           "default": null,
           "title": "Avoid Priced Note"
-        },
-        "status_note": {
-          "anyOf": [
-            {
-              "type": "string"
-            },
-            {
-              "type": "null"
-            }
-          ],
-          "default": null,
-          "title": "Status Note"
         }
       },
       "title": "Verdict",
