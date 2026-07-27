@@ -8182,9 +8182,11 @@ def test_md_without_a_card_states_the_absence_and_keeps_the_machine_read() -> No
     AMENDED 2026-07-27. This previously asserted the whole section was ABSENT, which pinned a
     py↔js DIVERGENCE rather than a property: `underwriteDetail` on the web has always rendered the
     section for un-underwritten names, stating the absence and carrying the screening anchor. The
-    print twin rendered nothing, so a PDF reader could not tell an un-underwritten name from an
-    underwritten one — it just got a shorter document. Saying "not underwritten" IS the fail-honest
-    behaviour; hiding the section was the failure mode.
+    markdown twin rendered nothing, so a reader of the committed .md could not tell an
+    un-underwritten name from an underwritten one — it just got a shorter document. Saying "not
+    underwritten" IS the fail-honest behaviour; hiding the section was the failure mode.
+    (Said "a PDF reader" until 2026-07-27; the PDF scopes print the WEB page and were never
+    affected. Corrected after a live preview.)
     """
     p = Path("data/dossiers/IT/dossier.json")
     if not p.exists():
