@@ -3545,6 +3545,18 @@
       "name_return": -0.6588921282798834,
       "benchmark_return": 0.360305829882128,
       "source_ref": "EOD MVST vs IWM rebased to 100, 2025-07-07..2026-07-06"
+    },
+    "catalyst_calendar": {
+      "rows": [
+        {
+          "event": "Next results print",
+          "expected_date": "2026-08-11",
+          "date_basis": "cadence-estimate",
+          "tests_what": "the next reported quarter against the committed trajectory",
+          "source_ref": "cadence: EDGAR submissions (median 92d gap over 19 results 8-Ks; last print 2026-05-11)"
+        }
+      ],
+      "qa_flags": []
     }
   },
   "synthesis": {

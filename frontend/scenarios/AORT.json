@@ -318,9 +318,9 @@
   "spotSource": "Polygon AORT close 2026-07-20 (live at underwrite)",
   "underwriteDate": "2026-07-22",
   "nextEvidence": {
-   "date": "UNKNOWN",
-   "what": "no scheduled evidence",
-   "source": "none on file"
+   "date": "2026-08-06",
+   "what": "Next results print",
+   "source": "catalyst calendar (cadence-estimate)"
   },
   "baseNormalMargin": 0.095,
   "ceiling2to1": 5.56

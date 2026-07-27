@@ -229,13 +229,25 @@
   "spotSource": "Polygon EOD grouped-daily close 2026-07-17 (live)",
   "underwriteDate": "2026-07-20",
   "nextEvidence": {
-   "date": "UNKNOWN",
-   "what": "no scheduled evidence",
-   "source": "none on file"
+   "date": "2026-08-04",
+   "what": "Next results print",
+   "source": "catalyst calendar (cadence-estimate)"
   },
   "baseNormalMargin": 0.185,
   "ceiling2to1": 125.4
  },
+ "amendmentIndex": [
+  {
+   "index": 1,
+   "date": "2026-07-22",
+   "inferredClass": "judgment"
+  },
+  {
+   "index": 2,
+   "date": "2026-07-22",
+   "inferredClass": "judgment"
+  }
+ ],
  "verdict": {
   "status": "watch",
   "recorded": "2026-07-21",

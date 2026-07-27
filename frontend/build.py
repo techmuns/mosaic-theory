@@ -139,6 +139,30 @@ def _ledger_by_ticker() -> dict[str, dict[str, Any]]:
     return {str(e.get("ticker", "")).upper(): e for e in by_entry.values()}
 
 
+def _amendment_index() -> dict[str, list[dict[str, Any]]]:
+    """The amendment-index sidecar, keyed by ticker (record legibility, 2026-07-27).
+
+    Carries the CLASS of each pre-gate tag (inferred, and labelled as inferred) and any
+    ``superseded_note`` — a LATER finding that changed what an earlier tag means. SMPL tag 1 is
+    the case: it records a staleness premise that the 2026-07-26 verification then refuted. The
+    sealed text is never edited, so the correction has to travel BESIDE it; otherwise a reader
+    meets the superseded claim and only learns it was wrong three tags later, if at all."""
+    p = ROOT / "scenarios" / "_amendment_index.json"
+    if not p.is_file():
+        return {}
+    try:
+        rows = json.loads(p.read_text()).get("tags") or []
+    except ValueError:
+        return {}
+    out: dict[str, list[dict[str, Any]]] = {}
+    for r in rows:
+        out.setdefault(str(r.get("ticker", "")).upper(), []).append(
+            {"index": r.get("tag_index"), "date": r.get("date"),
+             "inferredClass": r.get("inferred_class"),
+             **({"supersededNote": r["superseded_note"]} if r.get("superseded_note") else {})})
+    return out
+
+
 def _next_evidence(ticker: str, verdict: dict[str, Any]) -> dict[str, str]:
     """(record legibility, 2026-07-27) WHEN this record next meets new evidence, and FROM WHERE.
 
@@ -295,6 +319,10 @@ def _scenario_card(rec: dict[str, Any], ledger: dict[str, dict[str, Any]] | None
         # (record legibility) the MACHINE-DERIVED current state — emitted first in the payload and
         # rendered first on the card, above the rationale.
         "currentState": _current_state(rec, led),
+        # the sidecar's classification of this record's PRE-GATE tags (+ any supersession).
+        # OMITTED when the record has none, so unamended cards stay byte-identical.
+        **({"amendmentIndex": _amendment_index()[str(rec["ticker"]).upper()]}
+           if _amendment_index().get(str(rec["ticker"]).upper()) else {}),
         "verdict": {"status": v.get("status"), "recorded": v.get("recorded"),
                     # THE rationale — one field since 2026-07-22. `rationale_plain` is deprecated
                     # and deliberately NOT emitted: a card key nothing reads is a key that will be
