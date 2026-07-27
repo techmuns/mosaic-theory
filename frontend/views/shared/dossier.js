@@ -640,6 +640,7 @@ function isProcessCaveat(c) { return String(c).startsWith("primary-source:"); }
 function appendixTier(d, verdict, m, card) {
   return howToRead()
     + appendixBlock(m)
+    + positioning(m)                    // (relocation) insider + short interest, from "The street"
     + recordAndReproduce(d, verdict, card);
 }
 
@@ -926,7 +927,9 @@ function whatHappened(m) {
   const shape = (dc.shape && dc.shape.status === "present") ? fact("Shape", dc.shape, fmtShape) : "";
   const tiles = briefTilesGrid(m);
   if (!shape && !tiles) return "";
-  return `<div class="card ds-section"><div class="ds-title">What happened<span class="ds-route">full event log in Analysis</span></div>
+  // (content relocation 2026-07-24) title matches the contents: the tiles carry survival triage
+  // (net debt/EBITDA, FCF, going concern) beside the event. Twin of render.py.
+  return `<div class="card ds-section"><div class="ds-title">What happened — and can it survive?<span class="ds-route">full event log in Analysis</span></div>
     ${shape}${tiles}</div>`;
 }
 
@@ -1404,7 +1407,10 @@ function valuationCard(m) {
   const rng = (m.valuation && m.valuation.range_position && m.valuation.range_position.status === "present")
     ? fact("vs own trading history", m.valuation.range_position) : "";
   const cs = (m.catalyst_path || {}).consensus_stats;
-  const cons = (cs && cs.status === "present") ? fact("Consensus (target · ratings)", cs) : "";
+  // (content relocation 2026-07-24) framed as CONTRAST — the rows above are OUR read, this is the
+  // street's. Listing it as a peer of our own valuation blurs the variant view. Twin of render.py.
+  const cons = (cs && cs.status === "present")
+    ? fact("The street, for contrast (target · ratings)", cs) : "";
   if (!cross && !comp && !rng && !cons) return "";
   return `<div class="card ds-section"><div class="ds-title">Valuation — first cut<span class="ds-route">full multiples, implied levels &amp; the forward ladder in Analysis</span></div>${rng}${ownHistoryExhibit(m)}${cross}${comp}${cons}</div>`;
 }
@@ -2289,7 +2295,10 @@ function valuation(v) {
 
 function concentration(c) {
   if (!c) return "";
-  return sec("Ownership & concentration", "Segment, customer and geographic exposure.",
+  // (content relocation 2026-07-24) renamed from "Ownership & concentration" — it carries NO
+  // ownership; all four facts are the business MIX. Real ownership (insider, short interest) moved
+  // to the appendix. Twin of render.py's "### Business quality".
+  return sec("Business quality", "What it sells, where the profit sits, to whom, and where.",
     fact("Segments (revenue share)", c.segments) +
     fact("Segment EBITDA share", c.segment_ebitda, null, { hi: true }) +
     fact("Customers", c.customers, fmtCustomers) +
@@ -2976,8 +2985,11 @@ function catalystPath(cp, cc, dc = null) {
   // (restructure) revised guidance is a GUIDANCE fact — it lives here beside the guidance bridge,
   // not on the what-broke card (which keeps read → idio → 8-K evidence).
   const revised = dc ? fact("Revised guidance (8-K 99.1)", dc.revised_guidance) : "";
+  // (content relocation 2026-07-24) positioning (insider activity, short interest) moved OUT of
+  // this section into the appendix — it is estimates & guidance. Subtitle follows. Twin of
+  // render.py's _catalyst_section / _positioning_lines.
   return sec("The street — estimates & guidance",
-    "Revision breadth, the monthly consensus path, guidance delivery, and positioning.",
+    "Revision breadth, the monthly consensus path, and guidance delivery.",
     `<div class="muted" style="font-size:11px; margin:-2px 0 8px;">${escapeHtml(catAsof(cp))}</div>` +
     horizonTable(cp.horizon_read) +
     accelTable(cp.acceleration_read) +
@@ -2986,11 +2998,21 @@ function catalystPath(cp, cc, dc = null) {
     guidanceBridge(cp) +
     fact("Consensus stats (target + ratings)", cp.consensus_stats) +
     eventGroups(cp.revision_events) +
-    surprise +
-    // (F) positioning inputs — free DATED feeds; only when present (pre-F JSON omits both fields).
-    // Counts / shares / dates only, no interpretation.
-    (cp.insider_activity ? fact("Insider activity (Form 4, 6m)", cp.insider_activity, fmtInsider) : "") +
-    (cp.short_interest ? fact("Short interest (FINRA)", cp.short_interest) : ""));
+    surprise);
+}
+
+// (content relocation 2026-07-24) OWNERSHIP & POSITIONING — insider activity + short interest,
+// relocated out of "The street". Free DATED feeds: counts, shares and dates only, never an
+// interpretation. Omitted entirely when absent (pre-F JSON has neither field) rather than printing
+// two empty rows. Twin of render.py's _positioning_lines.
+function positioning(m) {
+  const cp = (m || {}).catalyst_path;
+  if (!cp) return "";
+  const rows = (cp.insider_activity
+      ? fact("Insider activity (Form 4, 6m)", cp.insider_activity, fmtInsider) : "")
+    + (cp.short_interest ? fact("Short interest (FINRA)", cp.short_interest) : "");
+  return rows ? sec("Ownership & positioning",
+    "Who is buying, selling and short — counts and dates only.", rows) : "";
 }
 
 // (H4) guidance bridge → table (metric | latest guide | for | dated | age | record | most recent);

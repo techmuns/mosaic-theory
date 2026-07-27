@@ -519,14 +519,12 @@ def _catalyst_section(m: MechanicalLayer) -> list[str]:
         out += _grouped_events_lines(cp.revision_events)
         sh = _fact("Surprise history (annual beat/miss)", m.consensus_context.surprise_history)
         out.append(sh)  # the one non-duplicate legacy fact, folded in
-        # (F) positioning inputs — free DATED feeds; rendered only when present (pre-F JSON
-        # has neither field → None → not rendered). Counts / shares / dates only, no interpretation.
-        if cp.insider_activity is not None:
-            out.append(_fact("Insider activity (Form 4, 6m)", cp.insider_activity,
-                             _fmt_insider))
-        if cp.short_interest is not None:
-            out.append(_fact("Short interest (FINRA)", cp.short_interest))
-    out.append("")  # (D1) the management-commentary pointer moved OUT of here, into the appendix
+    # (content relocation 2026-07-24) POSITIONING (insider activity, short interest) moved OUT of
+    # here, into the appendix — same move the management-commentary pointer already made. This
+    # section is estimates & guidance; who owns the stock and who is short it is reference data,
+    # and it was the only actual OWNERSHIP content in the dossier while the section NAMED for
+    # ownership carried none.
+    out.append("")
     return out
 
 
@@ -1395,11 +1393,29 @@ def _mgmt_commentary_lines(m: MechanicalLayer) -> list[str]:
     """(D1) The management-commentary pointer — relocated into the appendix zone (it is a transcript
     POINTER, not a headline read: the human opens the file, the machine never excerpts it). Rendered
     unconditionally so a pre-C dossier.json (no financial-summary appendix) still surfaces it."""
-    return [
+    out = [
         "### Management commentary",  # (K5) 'transcript pointer, not an excerpt' noted on the fact
         _fact("Earnings call (transcript pointer — read the file)", m.management_commentary),
         "",
     ]
+    out += _positioning_lines(m)
+    return out
+
+
+def _positioning_lines(m: MechanicalLayer) -> list[str]:
+    """(content relocation 2026-07-24) OWNERSHIP & POSITIONING — insider activity + short interest,
+    relocated out of "The street" (which is estimates & guidance). Free DATED feeds: counts, shares
+    and dates only, never an interpretation. Rendered only when present — pre-F JSON has neither
+    field, so the whole section is omitted rather than printing two empty rows."""
+    cp = m.catalyst_path
+    if cp is None:
+        return []
+    rows = []
+    if cp.insider_activity is not None:
+        rows.append(_fact("Insider activity (Form 4, 6m)", cp.insider_activity, _fmt_insider))
+    if cp.short_interest is not None:
+        rows.append(_fact("Short interest (FINRA)", cp.short_interest))
+    return ["### Ownership & positioning", *rows, ""] if rows else []
 
 
 # (D4) a guardrail caveat is emitted as "Lead (a bull point): '<full claim>' — <explanation>". Parse
@@ -2296,7 +2312,11 @@ def _brief_lines(d: Dossier, *, show_proposal: bool = False,
     # 3 — WHAT HAPPENED: the drawdown shape + the decision tiles. The Brief used to show the raw
     # drawdown % with no WHY; the fund's whole question (overshoot vs terminal) starts from what
     # broke. Full event log + filings stay in Analysis.
-    out.append("## What happened")
+    # (content relocation 2026-07-24) TITLE, not composition. The section carries the event (shape,
+    # 180d, idio) AND survival triage (net debt/EBITDA, FCF sign, going concern). Keeping those
+    # adjacent is right — overshoot-vs-terminal is the fund's whole question and survival is its
+    # discriminator — but "What happened" described only the first half.
+    out.append("## What happened — and can it survive?")
     if m.drawdown_cause is not None:
         out.append(_fact("Shape", m.drawdown_cause.shape, _fmt_shape))
     io = m.idiosyncratic_vs_shared
@@ -2340,7 +2360,11 @@ def _brief_lines(d: Dossier, *, show_proposal: bool = False,
     if m.peer_comps is not None:
         out.append(_fact("Comparability", m.peer_comps.comparability))
     if m.catalyst_path is not None:
-        out.append(_fact("Consensus (target · ratings)", m.catalyst_path.consensus_stats))
+        # (content relocation 2026-07-24) framed as CONTRAST, not as one of our numbers. The rows
+        # above are our read; this is the street's. On a fund whose edge IS a variant view, listing
+        # the consensus target as a peer of our own valuation blurs the distinction being sold.
+        out.append(_fact("The street, for contrast (target · ratings)",
+                         m.catalyst_path.consensus_stats))
     out.append("")
     return out
 
@@ -2633,8 +2657,12 @@ def render_markdown(d: Dossier, *, dev: bool = False, show_proposal: bool = Fals
     # (D1·§6) Catalyst path (the management-commentary pointer moved to the appendix).
     out += _catalyst_section(m)
 
-    # (D1·§7) Ownership & concentration.
-    out.append("### Ownership & concentration")
+    # (content relocation 2026-07-24) BUSINESS QUALITY — renamed from "Ownership & concentration",
+    # which carried NO ownership: all four facts are the business MIX (what it sells, where the
+    # profit sits, to whom, where). The real ownership data (insider activity, short interest) sat
+    # in "The street" and moves to the appendix. This section answers "what is this business, and
+    # is it any good" — the question that belongs BEFORE anyone argues about value.
+    out.append("### Business quality")
     out += [
         _fact("Segments (revenue share)", m.concentration.segments),
         _fact("Segments (EBITDA share — where profit sits)", m.concentration.segment_ebitda),

@@ -6959,7 +6959,10 @@ def test_d1_section_order_facts_first() -> None:
     assert (pos("Analyst caveats") < pos("What broke — and did it fall alone?")
             < pos("### Leverage & survival") < pos("### Operating trajectory")
             < pos("### Valuation & own-history") < pos("### Peer comps")
-            < pos("### Ownership & concentration") < pos("## The argument"))
+            # (content relocation 2026-07-24) renamed from "Ownership & concentration" — the
+            # section carried no ownership, only business mix; the real ownership data (insider,
+            # short interest) moved to the appendix as "Ownership & positioning".
+            < pos("### Business quality") < pos("## The argument"))
     assert (pos("### Bull case") < pos("### Bear case") < pos("### Decisive question")
             < pos("### Key unknowns") < pos("### Twin reference cases"))
     assert "The machine PROPOSES" not in md  # the verdict footer is retired
@@ -7901,8 +7904,10 @@ console.log(JSON.stringify({{ html: h }}));
     street = h.split(">The street — estimates &amp; guidance<")[1].split('class="card')[0]
     assert street.count("Revised guidance (8-K 99.1)") == 1
 
-    # 3 — the Brief what-happened strip has the market cell
-    wh = h.split(">What happened<")[1].split('class="card')[0]
+    # 3 — the Brief what-happened strip has the market cell. (content relocation 2026-07-24) the
+    # heading gained "— and can it survive?": the strip carries survival triage (net debt/EBITDA,
+    # FCF, going concern) beside the event, and the old title described only the first half.
+    wh = h.split(">What happened — and can it survive?<")[1].split('class="card')[0]
     assert 'class="fg-grid fg-hero"' in wh and "Market (" in wh  # the comparison is HERO
 
     # 4 — survival two-column: grid + wall inside ls-cols; the wall renders ONCE
