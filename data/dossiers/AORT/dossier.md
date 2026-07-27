@@ -45,6 +45,18 @@ _Terminal-margin: value the business in the year it reaches a normal operating m
 - **base** — revenue = consensus FY2027 then a stated fade of ~1.5 points a year; margin = partial delivery of the consensus path - above the realized two-year mean (8.83%), below next year's street case (10.80%), respecting that operating leverage ran backwards in the latest year; exit paired to the outcome: mature device businesses at about twice our terminal margin trade near 14x, so 13x for this one.
 - **bull** — the FY2024 operating model (10% on falling spend) proves durable and scales past consensus; the recall is bounded at the next print; partial deleveraging earns a step toward - but below - the company's own trading floor.
 
+### Screening context — how this name surfaced — _not a verdict_
+
+_A mechanical re-rate to the median multiple of this name's own trading history, on its naive reported median margin. An attention filter only — it applies no structural adjustment, so a cheap-looking screen still has to survive the full bear/base/bull underwrite._
+
+| input | value | basis |
+| --- | ---: | --- |
+| Method | mid-cycle margin × the median multiple of its own history | applicable |
+| Mid-cycle margin | 3.9% | 10y history · firm |
+| Median multiple, own history | 32.1x | 42 closes · firm · EV/EBITDA |
+| Screen value / share | $21.90 | spot-independent · EV/EBIT 72.7x |
+| Overall confidence | firm |  |
+
 ## The case
 _(top points; the full argument is in Analysis)_
 

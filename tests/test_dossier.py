@@ -2485,8 +2485,13 @@ def test_brief_hides_proposal_until_verdict_but_reveals_on_show_proposal() -> No
         # shows nothing it could anchor with.
         assert "Machine proposal" not in hidden, f"{jp.parent.name}: proposal surfaced by default"
         assert "machine proposal sealed" not in hidden, f"{jp.parent.name}: stale sealed-note"
-        assert "## Scenario analysis" not in hidden, (
-            f"{jp.parent.name}: the proposal section must exist only under --show-proposal")
+        # Assert the PROPOSAL TEXT is absent, not the section header. The header used to be a valid
+        # proxy only because the section rendered for nothing else; since 2026-07-27 it also carries
+        # the screening anchor, so the proxy would fail on a document containing no proposal at all.
+        # This is the direct form and is strictly stronger than the proxy ever was.
+        assert dr._machine_proposal_md(p) not in hidden, (
+            f"{jp.parent.name}: the derived proposal surfaced by default — it must anchor nobody "
+            "before the human's verdict is logged")
         # --show-proposal REVEALS exactly the derived line, under its own section header
         assert dr._machine_proposal_md(p) in revealed, f"{jp.parent.name}: reveal missing/diverged"
         assert "## Scenario analysis" in revealed, f"{jp.parent.name}: peek section header missing"
@@ -8169,10 +8174,18 @@ def test_md_brief_carries_the_underwrite_layer_and_suppresses_the_machine_read()
             assert s.reason in scen, f"{nm}'s recorded reason must render beside the arithmetic"
 
 
-def test_md_without_a_card_is_unchanged_and_keeps_the_machine_read() -> None:
-    """Fail-honest: a name with no underwrite record renders NO underwrite section and keeps the
-    machine assessment — byte-identity for un-underwritten names, and the machine voice is never
-    dressed as a thesis."""
+def test_md_without_a_card_states_the_absence_and_keeps_the_machine_read() -> None:
+    """Fail-honest: a name with no underwrite record FABRICATES no underwrite — no thesis, no
+    disposition, no bear/base/bull arithmetic — and keeps the machine assessment, so the machine
+    voice is never dressed as a thesis.
+
+    AMENDED 2026-07-27. This previously asserted the whole section was ABSENT, which pinned a
+    py↔js DIVERGENCE rather than a property: `underwriteDetail` on the web has always rendered the
+    section for un-underwritten names, stating the absence and carrying the screening anchor. The
+    print twin rendered nothing, so a PDF reader could not tell an un-underwritten name from an
+    underwritten one — it just got a shorter document. Saying "not underwritten" IS the fail-honest
+    behaviour; hiding the section was the failure mode.
+    """
     p = Path("data/dossiers/IT/dossier.json")
     if not p.exists():
         pytest.skip("no committed IT dossier.json")
@@ -8180,7 +8193,11 @@ def test_md_without_a_card_is_unchanged_and_keeps_the_machine_read() -> None:
     md = dr.render_markdown(d, card=None)
     assert "Thesis — our rationale" not in md
     assert "Underwrite disposition:" not in md
-    assert "## Scenario analysis" not in md
+    # the absence is STATED, and no scenario arithmetic is invented to fill the gap
+    assert "## Scenario analysis" in md and "_no scenario record for this name_" in md
+    assert "| scenario | revenue $M |" not in md
+    for nm in ("bear", "base", "bull"):
+        assert f"| {nm} |" not in md, f"a {nm} row rendered with no scenario record behind it"
     if d.synthesis is not None and d.synthesis.evidence_balance:
         assert dr._machine_read_md(d.synthesis.evidence_balance) in md
 

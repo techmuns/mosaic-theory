@@ -46,6 +46,17 @@ _Terminal-margin: value the business in the year it reaches a normal operating m
 - **base** — revenue recovers on the consensus path with a haircut for the current -25% quarter; margin reaches levered-auto-supplier economics rather than the street's cut-but-still-hopeful path; exit at the closest economic analogue (a levered auto-parts maker at 7.9x), not the scale leader's multiple.
 - **bull** — the gross-margin engineering (-28% to +31% in three years) carries through: revenue re-accelerates, double-digit operating margin arrives, partial deleveraging earns a step above the analogue.
 
+### Screening context — how this name surfaced — _not a verdict_
+
+_A mechanical re-rate to the median multiple of this name's own trading history, on its naive reported median margin. An attention filter only — it applies no structural adjustment, so a cheap-looking screen still has to survive the full bear/base/bull underwrite._
+
+| input | value | basis |
+| --- | ---: | --- |
+| Method | R2_NEEDED | NOT applicable |
+| Overall confidence | — |  |
+
+_no positive operating margin over available history — needs revenue-anchored recipe_
+
 ## The case
 _(top points; the full argument is in Analysis)_
 

@@ -4614,6 +4614,53 @@ field, not just this one); and `test_committed_web_card_carries_the_same_dated_t
 record` — structural count parity on the committed artifacts (counts only; analyst prose is never
 pinned). Gate: ruff + `mypy --strict` clean · 1068 passed.
 
+**BUILD RECORD — 2026-07-27 SCREENING ANCHOR REACHES THE PRINT TWIN (audit Q1).** The
+post-restructure structural read asked whether any section needs redesign against the full
+buy-side architecture. ANSWER: no re-ordering — the tier map is right and #221 settled it — but
+measuring per-section COVERAGE across all 11 committed dossiers surfaced a twin divergence that
+ordering work would never have found. `anchorInner()` (dossier.js) rendered the screening ANCHOR
+for all 11 names; `render.py` had **no screening renderer at all**, so the block reached ZERO
+PDFs. Scope, stated precisely because the first read understated it: this was never limited to the
+no-scenario path — every name lost it in print. The loss is WORST on the five names carrying no
+scenario card (BRBR, CNXC, FUBO, VITL, VRRM), where the anchor is the ONLY valuation LEVEL in the
+document — `Valuation — first cut` is relative-only by the ImpliedValuation fence — and on the two
+INAPPLICABLE anchors (VITL, FUBO) it also swallowed the DIAGNOSTIC saying why no screen value
+exists (a failed coherence guard; a missing own-history multiple). Three of the five carry a real
+base: CNXC $62.33 firm, BRBR $55.41 firm, VRRM $21.40 weak. Shipped `_screening_context_lines()`,
+a field-for-field twin of `anchorInner`, appended to `## Scenario analysis` in both twins — and the
+section now RENDERS when only the anchor exists, stating `_no scenario record for this name_`
+exactly as the web does. Saying "not underwritten" IS the fail-honest behaviour; a silently shorter
+PDF was the failure mode. FENCE HELD: the base renders as a LEVEL labelled spot-independent, never
+differenced against price — guarded by a negative pin that scans the renderer's CODE (not its
+docstring, which necessarily names every forbidden word) and rejects any signed % in the block;
+mutation-tested both directions (renderer-absent ⇒ 2 pins red; implied-upside ⇒ fence red).
+TEST-LAYER: two committed tests had pinned the DIVERGENCE rather than a property and were amended
+with the reason recorded in-place — `test_md_without_a_card_*` asserted the section was ABSENT
+(that WAS the bug), and the proposal test used the section header as a PROXY for the proposal being
+hidden (now asserts the proposal TEXT is absent — strictly stronger). Artifacts re-rendered from
+committed JSON with a line-diff check: **+11..23 lines, ZERO removed, on all 11** — the check that
+would have caught #220's orphaned decorator. Gate: ruff + `mypy --strict` clean · **1092 passed,
+1 skipped**.
+
+**INCIDENT — 2026-07-27 #224 MERGED RED; ARTIFACT-PASS RULE VIOLATED BY ITS OWN AUTHOR.** The
+re-assembly PR reported "1076 passed" for the whole cohort. That number came from the 3-name PILOT
+run; the suite was NOT re-run after the second batch of 6, and `main` merged with
+`test_next_evidence_prefers_the_calendar_then_a_trigger_then_says_unknown` RED. Cause: that test
+hardcoded **AORT** as "the name that carries no calendar" — a data-STATE pin on a LIVING artifact —
+and the re-assembly gave AORT a calendar (2026-08-06), so it reddened on CORRECT behaviour. Exactly
+the failure mode the TEST-LAYER RULE names. FIXED ON MAIN BY #226, INDEPENDENTLY AND BETTER — this
+build had swapped in a synthetic `NO_SUCH_TICKER`, but #226 re-pointed the fixture at **WERN**, which
+has no dossier at all (so no calendar CAN exist for it) and added `assert not (…/dossiers/WERN)
+.exists()` so the fixture POLICES ITSELF if WERN is ever covered. A structural UNKNOWN beats both a
+temporary one and a name that can never exist; #226's version was taken wholesale at the merge and
+this build's was discarded. The same staleness left FOUR `frontend/scenarios/*` mirrors claiming
+"no scheduled evidence" while their dossiers carried calendars (AORT/EPAM/IT/NCNO — resolved to real
+rows, basis `cadence-estimate`, by #226's mirror rebuild). INVARIANT: the ARTIFACT-PASS RULE was already
+written and was simply not followed — the gap is compliance, not a missing rule. Recorded here rather
+than papered over: a green claim sourced from a PARTIAL run is a false green, and the pilot-then-batch
+shape is where that mistake is easy to make. Any future batched artifact pass re-runs the FULL suite
+after the LAST batch, not after the pilot.
+
 **ARTIFACT PASS — 2026-07-27 COHORT RE-ASSEMBLED (9 names) onto current engine code.** The
 re-structure PRs (#219–#222) were RENDER work, but the cohort had drifted behind the ASSEMBLY
 engine: 9 of 11 dossiers were assembled 2026-07-23 ~12:0x, BEFORE the catalyst calendar (#209/#211),

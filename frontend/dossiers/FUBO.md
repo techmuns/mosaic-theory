@@ -26,6 +26,20 @@ _8 key unknowns + the evidence for/against — in Analysis_
 - **Net debt / EBITDA · Net debt / EBITDA [NET]:** _UNKNOWN_ — no CIQ Net Debt/EBITDA; EDGAR no net-debt — debt/cash not in XBRL — pull CIQ
 - **Free cash flow:** negative [8]
 
+## Scenario analysis
+_no scenario record for this name_
+
+### Screening context — how this name surfaced — _not a verdict_
+
+_A mechanical re-rate to the median multiple of this name's own trading history, on its naive reported median margin. An attention filter only — it applies no structural adjustment, so a cheap-looking screen still has to survive the full bear/base/bull underwrite._
+
+| input | value | basis |
+| --- | ---: | --- |
+| Method | unknown | NOT applicable |
+| Overall confidence | — |  |
+
+_own-history multiple missing (valuation.own_history.median absent)_
+
 ## The case
 _(top points; the full argument is in Analysis)_
 

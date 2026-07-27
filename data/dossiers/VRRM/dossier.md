@@ -25,6 +25,29 @@ _6 key unknowns + the evidence for/against — in Analysis_
 - **Net debt / EBITDA:** 2.9x [9]
 - **Free cash flow:** positive [10]
 
+## Scenario analysis
+_no scenario record for this name_
+
+### Screening context — how this name surfaced — _not a verdict_
+
+_A mechanical re-rate to the median multiple of this name's own trading history, on its naive reported median margin. An attention filter only — it applies no structural adjustment, so a cheap-looking screen still has to survive the full bear/base/bull underwrite._
+
+| input | value | basis |
+| --- | ---: | --- |
+| Method | mid-cycle margin × the median multiple of its own history | applicable |
+| Mid-cycle margin | 20.9% | 8y history · weak |
+| Median multiple, own history | 13.6x | 19 closes · weak · EV/EBITDA |
+| Screen value / share | $21.40 | spot-independent · EV/EBIT 21.2x |
+| Overall confidence | weak |  |
+
+**data_quality: revenue_tag_conflict**
+- FY2020: RevenueFromContractWithCustomerExcludingAssessedTax 394M vs Revenues 13M (97% apart)
+- FY2021: RevenueFromContractWithCustomerExcludingAssessedTax 551M vs Revenues 40M (93% apart)
+- FY2022: RevenueFromContractWithCustomerExcludingAssessedTax 742M vs Revenues 94M (87% apart)
+- FY2023: RevenueFromContractWithCustomerExcludingAssessedTax 817M vs Revenues 104M (87% apart)
+- FY2024: RevenueFromContractWithCustomerExcludingAssessedTax 879M vs Revenues 116M (87% apart)
+- FY2025: RevenueFromContractWithCustomerExcludingAssessedTax 979M vs Revenues 133M (86% apart)
+
 ## The case
 _(top points; the full argument is in Analysis)_
 
