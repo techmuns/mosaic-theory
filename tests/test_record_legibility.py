@@ -255,3 +255,32 @@ def test_supersession_did_not_touch_the_ledger() -> None:
     assert len(smpl) == 2, "SMPL still has exactly its decision row + its close row"
     assert {r["entry_id"] for r in smpl} == {
         "V-SMPL-screen2-20260706", "C-SMPL-screen2-20260706"}
+
+
+# --- what the RENDERED PAGE showed (2026-07-27, found by looking) ------------------------------
+def test_supersession_links_use_the_apps_hash_route_not_a_query_string() -> None:
+    """FOUND BY LOOKING AT THE PAGE, not by reading code. The banners shipped with
+    `href="?scenario=…"` — a query string, in an app that routes entirely on the hash
+    (`#/dossier/<key>`). Both links rendered, looked right, and would have dumped the reader at
+    the app root with the route lost. Same lesson as #216: the card renderer passing in isolation
+    proves nothing about the page."""
+    src = (ROOT / "frontend" / "views" / "shared" / "uw-card.js").read_text()
+    assert "?scenario=" not in src, "supersession links must not use a query string"
+    banner = src[src.index("function supersessionBanner"):]
+    banner = banner[:banner.index("\n}")]
+    assert banner.count('href="#/dossier/') == 2, (
+        "both directions (archived→live, live→archived) must link on the app's hash route")
+
+
+def test_one_amendment_marker_shared_by_the_card_and_the_dossier() -> None:
+    """The dossier's thesis block carried a SECOND copy of the amendment-tag regex, and that copy
+    never learned about CLASSED tags — so `[amended 2026-07-28 (judgment): …]` rendered marked on
+    the card and UNMARKED in the Brief. Two divergent parsers of one string is the named bug
+    class; this pins the single shared helper."""
+    card = (ROOT / "frontend" / "views" / "shared" / "uw-card.js").read_text()
+    doss = (ROOT / "frontend" / "views" / "shared" / "dossier.js").read_text()
+    assert "export function amendMarks" in card, "amendMarks must be the exported shared helper"
+    assert "amendMarks" in doss.split("\n")[9], "the dossier must IMPORT it"
+    # the dossier must no longer carry its own copy of the tag regex
+    assert r"\[amended (\d{4}-\d{2}-\d{2})" not in doss, (
+        "the dossier is parsing amendment tags itself again — use the shared amendMarks")

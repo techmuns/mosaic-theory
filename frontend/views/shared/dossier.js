@@ -7,7 +7,7 @@ import { fmtPrice, fmtDate, fmtStamp, fmtPct, escapeHtml, DASH } from "../../lib
 // (it was private here, which is why the underwrite card had to hardcode the inline form).
 import { citeMark, withEndnotes, auditCitesInline } from "../../lib/cites.js";
 import { barDomain, lineDomain, linScale, logScale, barLabelY, extent, EXHIBIT } from "../../lib/exhibit.js";
-import { uwCard, uwCardParts } from "./uw-card.js";
+import { uwCard, uwCardParts, amendMarks } from "./uw-card.js";
 
 // PDF export uses the browser's native print-to-PDF (no library — the frontend stays dependency-free).
 // The browser derives the saved-file name from document.title, so on a dossier print we swap in a
@@ -817,10 +817,11 @@ function thesisBlock(card) {
   // what was recorded at the verdict from what was appended after it.
   const thesis = v.rationale;
   if (!thesis) return "";
-  const marked = escapeHtml(thesis).replace(
-    /\[amended (\d{4}-\d{2}-\d{2})\s*:/g, '<span class="muted">[amended $1:</span>');
+  // ONE marker, shared with the card (uw-card.js). This block used to carry its own copy of the
+  // regex, which never learned about CLASSED tags — the same amendment rendered marked on the
+  // card and unmarked here. Two parsers of one string; now there is one.
   return `<div class="brief-vlab brief-eyebrow">Thesis — our rationale</div>
-    <div class="brief-thesis">${marked}</div>`;
+    <div class="brief-thesis">${amendMarks(thesis)}</div>`;
 }
 
 // (user decision) the standing proposal row is GONE from the web brief. The pivot
