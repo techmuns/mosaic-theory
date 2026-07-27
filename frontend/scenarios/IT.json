@@ -218,6 +218,24 @@
  "bar": 2.0,
  "ratioUndefined": null,
  "passFail": "FAIL",
+ "currentState": {
+  "status": "watch",
+  "held": false,
+  "holdingLabel": "not held \u2014 position closed",
+  "ratio": 1.29,
+  "bar": 2.0,
+  "passFail": "FAIL",
+  "spot": 140.19,
+  "spotSource": "Polygon EOD grouped-daily close 2026-07-17 (live)",
+  "underwriteDate": "2026-07-20",
+  "nextEvidence": {
+   "date": "UNKNOWN",
+   "what": "no scheduled evidence",
+   "source": "none on file"
+  },
+  "baseNormalMargin": 0.185,
+  "ceiling2to1": 125.4
+ },
  "verdict": {
   "status": "watch",
   "recorded": "2026-07-21",

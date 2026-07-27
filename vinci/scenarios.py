@@ -51,6 +51,11 @@ BEAR_BASES = frozenset({
 # between them put a 15.5% EBITDA cell into a brief as a 13.2% EBIT cell.
 MARGIN_BASES = frozenset({"EBIT", "EBITDA"})
 
+# (record legibility, 2026-07-27) `verdict.status_note` is a CAPTION on the current state — one
+# line telling the reader why the status word reads as it does. Capped hard so it can never grow
+# into a second, unsealed rationale sitting above the sealed one.
+STATUS_NOTE_MAX_WORDS = 25
+
 # From this schema version the BEAR leg must carry both labels at write. Older records predate the
 # fields and stay writable — the rule binds forward, never retroactively.
 BASIS_REQUIRED_FROM = "1.2"
@@ -302,6 +307,24 @@ class Verdict(BaseModel):
     # Recording it does NOT create a position: no code path here approaches execution.
     avoid_priced: bool = False
     avoid_priced_note: str | None = None
+    # (record legibility, 2026-07-27) ONE analyst line answering "why does the status read the way
+    # it does?", carried in the machine-derived current-state block ABOVE the rationale. It exists
+    # because a status word alone misleads: SMPL's `watch` is a stay-out decision after a round
+    # trip, NOT a failed underwrite, and no reader could tell those apart from the word. Amendable
+    # like any analyst prose and NOT sealed — it describes the CURRENT state, which moves, whereas
+    # the rationale records the state at decision time, which must not.
+    status_note: str | None = None
+
+    @field_validator("status_note")
+    @classmethod
+    def _status_note_is_one_line(cls, v: str | None) -> str | None:
+        """A caption, not a second rationale. 25 words is the whole budget — anything longer is
+        the argument, and the argument's home is the sealed rationale."""
+        if v is not None and len(v.split()) > STATUS_NOTE_MAX_WORDS:
+            raise ValueError(
+                f"status_note is {len(v.split())} words against a {STATUS_NOTE_MAX_WORDS}-word "
+                "cap — it is a one-line caption on the CURRENT state, not a second rationale")
+        return v
 
     @field_validator("entry_price")
     @classmethod
@@ -313,6 +336,28 @@ class Verdict(BaseModel):
             raise ValueError(f"entry_price {v} is not a traded price — refusing to record an "
                              "entry the forward spread cannot be measured from")
         return v
+
+
+class RefreshEntry(BaseModel):
+    """(record legibility, 2026-07-27) ONE machine data/spot refresh — what changed, old → new.
+
+    THE POINT: a machine refresh is not an amendment to anyone's reasoning, and putting it in the
+    sealed rationale made the audit trail read like argument. SMPL's 88-word "machine refresh on
+    current data" tag is the specimen: it changed two numbers and cost a fifth of the record's
+    prose. Refreshes now land HERE — structured, greppable, and machine-written by
+    ``vinci scenario-refresh`` — while ``machine``-class tags are refused from the rationale
+    outright (vinci/seal.py).
+
+    Append-only by convention: entries are added, never edited. This log is NOT sealed — it is
+    machine-generated fact, reproducible from the sources it names, not a record of judgment."""
+
+    field: str            # dotted path into the record, e.g. "spot" / "facts.ltm_revenue"
+    old: str              # rendered old value (str so ints/floats/None all round-trip legibly)
+    new: str              # rendered new value
+    date: str             # ISO date the refresh ran
+    source: str           # WHERE the new value came from — the provenance, never bare "refresh"
+
+    model_config = {"frozen": True}
 
 
 class DatedTrigger(BaseModel):
@@ -361,6 +406,10 @@ class ScenarioRecord(BaseModel):
     survival_input: SurvivalInput | None = None      # (R2) inputs to the gate; None on R1
     result: Result = Field(default_factory=Result)
     verdict: Verdict = Field(default_factory=Verdict)
+    # (record legibility, 2026-07-27) machine data/spot refreshes, append-only. Written by
+    # `vinci scenario-refresh`, never by hand and never into the rationale. Optional-with-default
+    # so every legacy record round-trips byte-identical.
+    refresh_log: list[RefreshEntry] = Field(default_factory=list)
 
     @model_validator(mode="after")
     def _assumption_axes_guarded(self) -> ScenarioRecord:
@@ -719,3 +768,84 @@ def write_json_schema(*, root: Path | None = None) -> Path:
     path = d / "_schema.json"
     path.write_text(json.dumps(json_schema(), indent=2) + "\n")
     return path
+
+
+# --- (record legibility, 2026-07-27) THE INSTRUMENTED REFRESH PATH -----------------------------
+# Before this, `write_record()` had ZERO programmatic callers: every record edit in this repo's
+# history was hand-edited JSON, including the 2026-07-24 SMPL machine refresh. That is why the
+# refresh ended up narrated in the sealed rationale — there was nowhere else for it to go.
+#
+# `refresh_record` is now the ONE path for changing a record's MACHINE inputs. It recomputes the
+# result through the engine, appends a structured `refresh_log` entry per field, and REFUSES to
+# touch anything the analyst owns. The refusals are asserted, not documented: a refresh that
+# silently moved a leg would be the machine overwriting judgment, which is the one thing the
+# constitution forbids outright.
+REFRESHABLE_FACTS = frozenset({"ltm_revenue", "d_and_a", "net_debt", "diluted_shares",
+                               "cash_interest", "cash_tax_rate"})
+
+
+class RefreshRefusedError(RuntimeError):
+    """The refresh would have touched an analyst-owned surface. Raised, never warned."""
+
+
+def refresh_record(
+    rec: ScenarioRecord, *, spot: float | None = None, facts: dict[str, float] | None = None,
+    source: str, on_date: str,
+) -> ScenarioRecord:
+    """Refresh MACHINE inputs on ``rec`` and return a NEW record with the result recomputed.
+
+    ``spot`` and ``facts`` are the only things this may move. Every change is appended to
+    ``refresh_log`` with its old → new value, the date, and the SOURCE it came from — provenance is
+    required, because a refresh nobody can re-derive is just an untraceable edit.
+
+    REFUSES (raises :class:`RefreshRefusedError`) on any attempt to reach an analyst surface: a fact
+    outside :data:`REFRESHABLE_FACTS`, or a fact the record does not already carry. The legs,
+    assumptions, verdict and rationale are structurally unreachable from here — this function
+    cannot express a change to them — and the caller-facing pins assert exactly that.
+    """
+    if not source.strip():
+        raise RefreshRefusedError(
+            "a refresh must state its SOURCE — an unattributable refresh is an untraceable edit")
+    entries: list[RefreshEntry] = list(rec.refresh_log)
+    updates: dict[str, Any] = {}
+
+    if spot is not None and spot != rec.spot:
+        entries.append(RefreshEntry(field="spot", old=str(rec.spot), new=str(spot),
+                                    date=on_date, source=source))
+        updates["spot"] = spot
+
+    if facts:
+        bad = sorted(set(facts) - REFRESHABLE_FACTS)
+        if bad:
+            raise RefreshRefusedError(
+                f"{bad} is not a refreshable machine fact — refreshable: "
+                f"{sorted(REFRESHABLE_FACTS)}. Analyst-owned inputs are changed by re-underwriting,"
+                " never by a refresh")
+        missing = sorted(k for k in facts if k not in rec.facts)
+        if missing:
+            raise RefreshRefusedError(
+                f"{missing} is not on this record — a refresh UPDATES a fact the analyst already "
+                "recorded; it never introduces one")
+        new_facts = dict(rec.facts)
+        for k, v in facts.items():
+            if v == rec.facts[k].value:
+                continue
+            entries.append(RefreshEntry(field=f"facts.{k}", old=str(rec.facts[k].value),
+                                        new=str(v), date=on_date, source=source))
+            new_facts[k] = rec.facts[k].model_copy(update={"value": v})
+        updates["facts"] = new_facts
+
+    if not entries[len(rec.refresh_log):]:
+        return rec                      # nothing actually moved — no entry, no rewrite
+    updates["refresh_log"] = entries
+    out = run_recipe(rec.model_copy(update=updates))
+
+    # The refusals, ASSERTED on the way out — cheap, and they turn a future refactor that widened
+    # this function's reach into a loud failure instead of a silent overwrite of judgment.
+    if out.verdict != rec.verdict:
+        raise RefreshRefusedError("a refresh moved the VERDICT — refusing to write")
+    if out.scenarios != rec.scenarios:
+        raise RefreshRefusedError("a refresh moved a SCENARIO LEG — refusing to write")
+    if out.assumptions != rec.assumptions:
+        raise RefreshRefusedError("a refresh moved an ASSUMPTION — refusing to write")
+    return out

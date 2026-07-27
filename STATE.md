@@ -3998,6 +3998,10 @@ renumber.** No other unverifiable claim found in this block.
    inputs live nowhere machine-readable cannot be re-verified at a later vintage, which is exactly
    when it matters. (Schema enforcement of the verification-artifact reference on verdict
    transitions — governance convention 3 below — belongs with this item.)
+   **PARTIALLY DISCHARGED 2026-07-27 — the STRUCTURED AMENDMENT CLASS half shipped** (record
+   legibility): a tag now declares its own kind in the tag itself, so "what kind of change was
+   this?" is machine-readable rather than inferred from prose. The generating-CELLS half (a
+   quoted ratio's inputs stored structurally) remains open.
 3. **READ-ONLY SHAPE-READ OF OUT-OF-CHAT PRs #194–#216 — REQUIRED BEFORE 2026-08-05** (queued
    2026-07-26; scope widened + deadlined 2026-07-27). Twenty-plus PRs merged outside the advisory
    thread. A read-only pass to map what changed, what carries verification artifacts, and where
@@ -5338,6 +5342,57 @@ confirmed-record mode the directive first assumed.
    the 2026-07-23 queue too, so it did not vanish during the scope), yet is de-facto practice in
    23 test files. **An unwritten convention that 23 files already follow should be written down or
    dropped deliberately — it is currently neither.**
+12. **TESTS-WRITE-TO-TMP — CONVENTION WRITTEN DOWN 2026-07-27** (the flag above, closed):
+   *"A test that writes MUST write under pytest's `tmp_path`, never into the repo. A test that
+   mutates a committed artifact makes the suite order-dependent and can leave a dirty tree that
+   the next artifact pass commits by accident."* Already de-facto practice in 23 test files; it
+   was carrying no STATE record, so it could not be cited, taught, or enforced. Recorded now as
+   what it is — an adopted convention, not an aspiration.
+13. **AMENDMENT-CLASS ROUTING RULE — ADOPTED 2026-07-27 (standing).** Every amendment declares
+   WHAT KIND of change it records, and each kind has ONE home:
+   * **judgment** → the sealed `rationale` (≤100 words). A leg or verdict change: the call moved.
+   * **machine** → the record's `refresh_log` (structured). **REFUSED from the rationale entirely.**
+   * **process** → the governance log, with a ≤25-word POINTER in the rationale.
+   VERSION GATE: required for tags dated on/after 2026-07-27; the five earlier tags stay legal
+   unclassed — a rule that invalidates the records it was written for is a rule that gets ignored.
+   **MOTIVATING CASE, recorded because the numbers make the argument:** SMPL's rationale reached
+   **450 words, of which 330 (73%) was amendment** — an audit trail nearly three times the length
+   of the 120-word thesis it hung from. Under this rule **169 of those words route elsewhere**
+   (the 79-word process tag → a pointer; the 86-word machine refresh → the refresh log), and a
+   reader meets the argument rather than the maintenance. The 100-word judgment cap is set where
+   it is BECAUSE of SMPL tag 3: a real leg change carried the change, its evidence AND its
+   fragility disclosure, and a 60-word cap would have forced one of the three out of the record.
+14. **THE FIRST INSTRUMENTED RECORD-WRITE PATH — `vinci scenario-refresh` (2026-07-27).**
+   `write_record()` previously had **ZERO programmatic callers**: every record edit in this repo's
+   history was hand-edited JSON, including the 2026-07-24 SMPL machine refresh — which is exactly
+   *why* that refresh ended up narrated inside a sealed rationale. There was nowhere else to put
+   it. `scenario-refresh` is now the one path for changing a record's MACHINE inputs (spot +
+   the six refreshable facts): it recomputes through the engine, appends a `refresh_log` entry per
+   field with old → new and a REQUIRED source, and **refuses** any analyst surface — an
+   analyst-owned input is not expressible, and legs/assumptions/verdict are asserted unchanged on
+   the way out. Hand-editing remains physically possible; it is now the exception, not the norm.
+15. **CURRENT-STATE BLOCK — machine-derived, renders FIRST (2026-07-27).** Status with **"not
+   held" explicit**, reward:risk at spot vs the bar with BOTH dates (the spot's and the
+   underwrite's), base normal margin, 2:1 ceiling, and next scheduled evidence; plus an optional
+   ≤25-word analyst `status_note`. The rationale moves behind a **"Verdict as recorded"** expander
+   (force-opens in print per T1, so the PDF stays complete). WHY: the rationale records the state
+   at DECISION time and is increasingly historical — SMPL's is correct as of 2026-07-21 and cannot
+   mention the close, the watch transition, or the margin re-set that followed. Leading with it
+   invited readers to infer the present from the past. NEXT-EVIDENCE RESOLUTION (ratified): the
+   dossier catalyst calendar's earliest future row → the earliest dated trigger → honest UNKNOWN.
+   The calendar leads because it carries the real next print (SMPL 2026-10-08); SMPL's dated
+   trigger sits a full quarter later (2027-01-07) and leading with it would misstate "next
+   evidence" by three months. Records with neither (AORT and five others today) say UNKNOWN.
+   A **construction-era banner** renders on any record carrying pre-gate tags: *"Recorded while
+   the platform was under construction; the amendment history includes system corrections as well
+   as investment judgment."*
+16. **AMENDMENT INDEX SIDECAR — `scenarios/_amendment_index.json` (2026-07-27).** The five
+   pre-gate tags classified, with their dates, first-12-words and body word counts. Classified by
+   **INFERENCE, not self-declaration** — and the sidecar says so in its own provenance field,
+   because the alternative (adding classes to the sealed text) would mean rewriting sealed
+   rationales, which is precisely the dishonesty the seal exists to prevent. Recorded limitation:
+   SMPL tag 3 is genuinely MIXED (process narration around a judgment) and is labelled by its
+   operative act; one label cannot fully describe it.
 
 **BUILD RECORD — 2026-07-24 ASSEMBLY-FRESHNESS GATE (branch `feat/assembly-freshness-gate`;
 the invariant the SMPL stale-inputs incident owed, INVARIANT RULE).** `_panel_freshness_flag(ie,

@@ -34,11 +34,84 @@ UNSEALED_STATUSES = frozenset({"pending_analyst", None, ""})
 
 # THE only legal growth. Anchored so a tag must open a segment, and dated so an amendment cannot be
 # backdated into invisibility — the date renders to the reader beside the text it changed.
-AMEND_TAG = re.compile(r"\[amended (\d{4}-\d{2}-\d{2})\s*:")
-_SPLIT = re.compile(r"\s*(?=\[amended \d{4}-\d{2}-\d{2}\s*:)")
+#
+# CLASSES (adopted 2026-07-27). A tag now declares WHAT KIND of change it records:
+#   judgment — a leg or verdict change: the analyst's call moved. BELONGS in the rationale.
+#   process  — a governance or system correction. A POINTER only; the detail lives in the
+#              governance log, so the cap is tight.
+#   machine  — a data or spot refresh. REJECTED from the rationale entirely: it belongs in the
+#              record's ``refresh_log``, which is structured and machine-written.
+# MOTIVATING CASE: SMPL's rationale reached 450 words of which 330 (73%) was amendment, and 169 of
+# those words were process narration and a machine refresh — an audit trail three times the length
+# of the thesis it was attached to. A reader met far more amendment than argument.
+AMENDMENT_CLASSES: tuple[str, ...] = ("judgment", "machine", "process")
+# Caps are FACE-VALIDITY limits on register, never tuned on anything. judgment is 100 (not 60): a
+# real leg change legitimately carries the change, its evidence, AND its fragility disclosure —
+# SMPL's 161-word re-verification showed 60 would force omission of substance. process is 25
+# because it is a pointer by definition.
+AMENDMENT_WORD_CAPS: dict[str, int] = {"judgment": 100, "process": 25}
+# VERSION GATE. Tags dated ON OR AFTER this date must declare a class; every tag written before it
+# stays legal unclassed — the rule is not retroactive, and a record written under the old contract
+# is not made invalid by the new one.
+CLASS_REQUIRED_FROM = "2026-07-27"
+
+_CLASS_ALT = "|".join(AMENDMENT_CLASSES)
+AMEND_TAG = re.compile(rf"\[amended (\d{{4}}-\d{{2}}-\d{{2}})(?:\s*\((?:{_CLASS_ALT})\))?\s*:")
+_SPLIT = re.compile(rf"\s*(?=\[amended \d{{4}}-\d{{2}}-\d{{2}}(?:\s*\((?:{_CLASS_ALT})\))?\s*:)")
 # A COMPLETE tag: opened by AMEND_TAG and closed by its bracket, nothing trailing. DOTALL so a
 # multi-sentence amendment spanning newlines still reads as one tag.
-_WHOLE_TAG = re.compile(r"\[amended \d{4}-\d{2}-\d{2}\s*:.*\]", re.S)
+_WHOLE_TAG = re.compile(
+    rf"\[amended \d{{4}}-\d{{2}}-\d{{2}}(?:\s*\((?:{_CLASS_ALT})\))?\s*:.*\]", re.S)
+# The head of one tag, for reading its date + (optional) class back off the text.
+_TAG_HEAD = re.compile(
+    rf"\[amended (\d{{4}}-\d{{2}}-\d{{2}})(?:\s*\((?P<cls>{_CLASS_ALT})\))?\s*:")
+
+
+def tag_parts(tag: str) -> tuple[str, str | None, int]:
+    """``(date, class-or-None, body word count)`` for ONE whole amendment tag.
+
+    The word count measures the BODY — the text after the colon, minus the closing bracket — so a
+    cap counts what the reader reads, not the tag's own scaffolding."""
+    m = _TAG_HEAD.match(tag.strip())
+    if m is None:
+        return ("", None, 0)
+    body = tag.strip()[m.end():].rstrip()
+    if body.endswith("]"):
+        body = body[:-1]
+    return (m.group(1), m.group("cls"), len(body.split()))
+
+
+def amendment_violations(rationale: str | None) -> list[str]:
+    """Every class-contract violation in a rationale's amendment tags. Empty == compliant.
+
+    THE CONTRACT, in one place so the seal and the linter cannot drift apart:
+    a tag dated on/after :data:`CLASS_REQUIRED_FROM` must declare a class; ``machine`` is refused
+    outright (its home is ``refresh_log``); ``judgment`` and ``process`` are capped. Tags written
+    before the gate are legal unclassed and are NOT cap-checked — the rule is not retroactive.
+    """
+    out: list[str] = []
+    for tag in amendments(rationale or ""):
+        d, cls, words = tag_parts(tag)
+        if not d:
+            continue                                  # not a whole tag; `check` owns that failure
+        if cls is None:
+            if d >= CLASS_REQUIRED_FROM:              # ISO dates compare lexicographically
+                out.append(
+                    f"amendment {d} declares no class — tags dated on/after "
+                    f"{CLASS_REQUIRED_FROM} must be one of {list(AMENDMENT_CLASSES)}")
+            continue                                  # legacy tag: legal, and not cap-checked
+        if cls == "machine":
+            out.append(
+                f"amendment {d} is class 'machine' — a data/spot refresh is REJECTED from the "
+                "rationale; record it in the record's refresh_log (vinci scenario-refresh)")
+            continue
+        cap = AMENDMENT_WORD_CAPS[cls]
+        if words > cap:
+            out.append(
+                f"amendment {d} ({cls}) is {words} words against a {cap}-word cap"
+                + (" — a process tag is a POINTER; the detail belongs in the governance log"
+                   if cls == "process" else ""))
+    return out
 
 
 def digest(text: str) -> str:
@@ -103,7 +176,8 @@ def check(*, ticker: str, status: str | None, rationale: str | None,
             return [f"{ticker}: text was appended to the rationale that is not a dated amendment "
                     f"tag — got {seg.strip()[:60]!r}; the only legal growth is "
                     f"'[amended YYYY-MM-DD: …]'"]
-    return []
+    # ...and every tag must honour the CLASS contract (one definition, above).
+    return [f"{ticker}: {v}" for v in amendment_violations(rationale)]
 
 
 def load_manifest(root: Path) -> dict[str, Any]:

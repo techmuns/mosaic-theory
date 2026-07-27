@@ -1,0 +1,53 @@
+{
+  "generated": "2026-07-27",
+  "what_this_is": "A read-only SIDECAR classifying the five amendment tags that predate the 2026-07-27 class gate. The sealed rationales are UNTOUCHED \u2014 classes could not be added to them without rewriting sealed text, which the seal forbids and which would be the exact dishonesty the seal exists to prevent.",
+  "provenance": "Classified by INFERENCE on 2026-07-27 from each tag's text, NOT self-declared by its author. Tags written on/after 2026-07-27 declare their own class in the tag itself and do not appear here.",
+  "known_limitation": "SMPL tag 3 is genuinely MIXED \u2014 process narration (the alarm was overstated) wrapped around a judgment (base margin 15.5% -> 14%). It is classified by its OPERATIVE act, the leg change. A single label cannot fully describe it.",
+  "tags": [
+    {
+      "ticker": "IT",
+      "tag_index": 1,
+      "date": "2026-07-22",
+      "declared_class": null,
+      "inferred_class": "judgment",
+      "body_words": 36,
+      "first_12_words": "with the perimeter-corrected D&A the deep-stress case \u2014 base revenue -20% (~$5,144M)"
+    },
+    {
+      "ticker": "IT",
+      "tag_index": 2,
+      "date": "2026-07-22",
+      "declared_class": null,
+      "inferred_class": "judgment",
+      "body_words": 58,
+      "first_12_words": "position closed 2026-07-21 at 141.06 - the entry price, flat before costs"
+    },
+    {
+      "ticker": "SMPL",
+      "tag_index": 1,
+      "date": "2026-07-24",
+      "declared_class": null,
+      "inferred_class": "process",
+      "body_words": 79,
+      "first_12_words": "the inputs behind this verdict were stale \u2014 every financial and valuation"
+    },
+    {
+      "ticker": "SMPL",
+      "tag_index": 2,
+      "date": "2026-07-24",
+      "declared_class": null,
+      "inferred_class": "machine",
+      "body_words": 86,
+      "first_12_words": "machine refresh on current data after the staleness close \u2014 trailing-twelve-month revenue"
+    },
+    {
+      "ticker": "SMPL",
+      "tag_index": 3,
+      "date": "2026-07-26",
+      "declared_class": null,
+      "inferred_class": "judgment",
+      "body_words": 159,
+      "first_12_words": "third-quarter re-verification. A staleness alarm led to a paper close of the"
+    }
+  ]
+}

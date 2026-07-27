@@ -954,6 +954,59 @@ def _cmd_log_verdict(args: argparse.Namespace) -> int:
     return 0
 
 
+def _cmd_scenario_refresh(args: argparse.Namespace) -> int:
+    """THE path for changing a record's MACHINE inputs (record legibility, 2026-07-27).
+
+    Before this existed, `write_record()` had zero programmatic callers and every record edit was
+    hand-edited JSON — which is how a machine refresh ended up narrated inside a SEALED rationale.
+    Refreshes now land in the structured `refresh_log`, and `machine`-class amendment tags are
+    refused from the rationale outright (vinci/seal.py). Hand-editing remains physically possible;
+    it is now the exception, not the norm."""
+    from datetime import date as _date
+
+    import vinci.scenarios as sc
+
+    facts: dict[str, float] = {}
+    for kv in args.fact:
+        if "=" not in kv:
+            print(f"--fact expects KEY=VALUE, got {kv!r}")
+            return 2
+        k, _, v = kv.partition("=")
+        try:
+            facts[k.strip()] = float(v)
+        except ValueError:
+            print(f"--fact {k.strip()!r}: {v!r} is not a number")
+            return 2
+    try:
+        rec = sc.read_record(args.ticker.upper())
+    except FileNotFoundError:
+        print(f"no committed record for {args.ticker.upper()}")
+        return 1
+    on_date = args.as_of or _date.today().isoformat()
+    try:
+        out = sc.refresh_record(rec, spot=args.spot, facts=facts or None,
+                                source=args.source, on_date=on_date)
+    except sc.RefreshRefusedError as exc:
+        print(f"REFUSED: {exc}")
+        return 1
+    new_entries = out.refresh_log[len(rec.refresh_log):]
+    if not new_entries:
+        print(f"{rec.ticker}: nothing to refresh — every supplied value already matches the record")
+        return 0
+    print(f"=== scenario-refresh {rec.ticker} ({on_date}) ===")
+    for e in new_entries:
+        print(f"  {e.field:22} {e.old} → {e.new}")
+    print(f"  source: {args.source}")
+    print(f"  ratio {rec.result.ratio and round(rec.result.ratio, 4)} → "
+          f"{out.result.ratio and round(out.result.ratio, 4)}  ({out.result.pass_fail})")
+    print("  legs / assumptions / verdict / rationale: UNTOUCHED (asserted)")
+    if args.dry_run:
+        print("  --dry-run: nothing written")
+        return 0
+    print(f"  written: {sc.write_record(out)}")
+    return 0
+
+
 def _cmd_monitor(args: argparse.Namespace) -> int:
     """MANUAL cadence (no scheduler): mark the committed ledger to the latest close against each
     leg's ASSIGNED benchmark, print the book + the BUY−AVOID diagnostic + the freshness panel,
@@ -2483,6 +2536,22 @@ def build_parser() -> argparse.ArgumentParser:
     p_mon = sub.add_parser("monitor", help="mark the book to market vs benchmarks (manual)")
     p_mon.add_argument("--ref", help="as-of date YYYY-MM-DD (default: today)")
     p_mon.set_defaults(func=_cmd_monitor)
+
+    p_sr = sub.add_parser(
+        "scenario-refresh",
+        help="refresh a record's MACHINE inputs (spot / facts) — never its legs, verdict or "
+             "rationale; every change lands in the record's refresh_log")
+    p_sr.add_argument("ticker")
+    p_sr.add_argument("--spot", type=float, help="new spot; omit to leave unchanged")
+    p_sr.add_argument("--fact", action="append", default=[], metavar="KEY=VALUE",
+                      help="refresh one machine fact (repeatable); see the refreshable set")
+    p_sr.add_argument("--source", required=True,
+                      help="WHERE the new values came from — required; an unattributable refresh "
+                           "is an untraceable edit")
+    p_sr.add_argument("--as-of", dest="as_of", help="date stamp (default: today)")
+    p_sr.add_argument("--dry-run", action="store_true", dest="dry_run",
+                      help="print what would change and write nothing")
+    p_sr.set_defaults(func=_cmd_scenario_refresh)
 
     p_audit = sub.add_parser("audit", help="standing read-only audits over committed artifacts")
     audit_sub = p_audit.add_subparsers(dest="audit_what", required=True)
