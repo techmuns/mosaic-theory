@@ -236,6 +236,12 @@
   "entryId": "V-IT-screen2-20260706",
   "entryPrice": 141.06,
   "entryPriceAsOf": "2026-07-20",
-  "decidedAt": "2026-07-21T00:00:00"
+  "decidedAt": "2026-07-21T00:00:00",
+  "closed": {
+   "exitPrice": 141.06,
+   "exitPriceAsOf": "2026-07-21",
+   "reason": "position closed by the operator at the entry price the day after entry - flat before costs; the re-underwrite completed the following day set the downside case from market evidence of how declining information businesses are actually priced, and no evidence-coherent grid clears the 2:1 bar at the entry price or the prevailing market price - the exit stands confirmed on evidence.",
+   "closeEntryId": "C-IT-screen2-20260706"
+  }
  }
 }
