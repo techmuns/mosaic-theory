@@ -139,10 +139,25 @@ def test_refresh_is_a_noop_when_nothing_moved() -> None:
     assert sc.refresh_record(rec, spot=rec.spot, source="s", on_date="2026-07-28") is rec
 
 
-def test_status_note_is_capped_at_one_line() -> None:
-    with pytest.raises(ValueError, match="25-word cap"):
-        sc.Verdict(status="watch", status_note=" ".join(["word"] * 26))
-    assert sc.Verdict(status="watch", status_note=" ".join(["word"] * 25)).status_note
+def test_a_retired_field_is_refused_loudly_not_dropped_quietly() -> None:
+    """`status_note` was retired 2026-07-27 — the header is the rating alone, so nothing rendered
+    it. Pydantic's default is extra="ignore", which would have made every stale record load CLEAN
+    and lose the analyst's sentence on the next write. Silent loss is the one failure this repo
+    never takes: the load RAISES and names the key, so the words are migrated or discarded by
+    a decision, never by omission."""
+    assert "status_note" in sc.RETIRED_VERDICT_FIELDS
+    assert not hasattr(sc.Verdict(status="watch"), "status_note")
+    with pytest.raises(ValueError, match="retired field"):
+        sc.Verdict.model_validate({"status": "watch", "status_note": "a caption"})
+    # the schema no longer advertises it, so nothing downstream can start writing it again
+    assert "status_note" not in (ROOT / "scenarios" / "_schema.json").read_text()
+    # and no committed record still carries it — live or archived
+    live = (ROOT / "scenarios").glob("*.json")
+    archived = (ROOT / "scenarios" / "archive").glob("*.json")
+    for p in [*live, *archived]:
+        if p.name.startswith("_"):
+            continue
+        assert "status_note" not in p.read_text(), f"{p.name} still carries the retired key"
 
 
 # --- the current-state block -------------------------------------------------------------------
@@ -167,24 +182,241 @@ def test_next_evidence_prefers_the_calendar_then_a_trigger_then_says_unknown() -
     assert fb["date"] == "2027-01-07" and fb["source"] == "analyst dated trigger"
 
 
-def test_current_state_says_not_held_explicitly_for_a_closed_position() -> None:
-    """A status word alone misleads: SMPL reads `watch` while its position is CLOSED. The block
-    must say "not held" in words, and must not claim `held` for a closed or pending record."""
-    rec = json.loads((ROOT / "scenarios" / "SMPL.json").read_text())
-    closed = _BUILD._current_state(rec, {"_closed": {"exitPrice": 10.53}})
-    assert closed["held"] is False and closed["holdingLabel"] == "not held — position closed"
-    no_ledger = _BUILD._current_state(rec, None)
-    assert no_ledger["held"] is False and "not held" in no_ledger["holdingLabel"]
-    # a genuinely held position: confirmed + a ledger row + NO close
-    conf = dict(rec)
-    conf["verdict"] = {**rec["verdict"], "status": "confirmed"}
-    held = _BUILD._current_state(conf, {"entry_id": "V-X"})
-    assert held["held"] is True and held["holdingLabel"] == "held"
+def test_the_holding_question_is_answered_by_the_band_not_a_dead_key() -> None:
+    """A status word alone misleads: SMPL reads `watch` while its position is CLOSED, and the
+    reader needs "not held" in words. That answer MOVED rather than disappeared — the at-a-glance
+    fold put it in the ENTRY cell, so `held` / `holdingLabel` became emitted-and-unread and were
+    retired with `statusNote`. Pin the answer where it now lives, so this cannot regress into a
+    card that states the holding nowhere."""
+    s = _BUILD._current_state(json.loads((ROOT / "scenarios" / "SMPL.json").read_text()))
+    assert "held" not in s and "holdingLabel" not in s, "the retired trio must not come back"
+    card = (ROOT / "frontend" / "views" / "shared" / "uw-card.js").read_text()
+    ratio = card[card.index("function ratioCell"):]
+    entry = card[card.index("ENTRY"):]
+    assert "no position" in entry, "the ENTRY cell must state a record that holds nothing"
+    assert ratio, "ratioCell still carries the ceiling sub-line the band reads"
+    # and a closed position states its close in the verdict chip itself
+    assert "— closed " in card, "the verdict chip carries the close"
 
 
 def test_current_state_carries_the_decision_numbers_and_both_dates() -> None:
     rec = json.loads((ROOT / "scenarios" / "SMPL.json").read_text())
-    s = _BUILD._current_state(rec, None)
+    s = _BUILD._current_state(rec)
     assert s["ratio"] == 3.83 and s["bar"] == 2.0 and s["passFail"] == "PASS"
-    assert s["baseNormalMargin"] == 0.14 and s["ceiling2to1"] == 12.72
-    assert s["spot"] == 10.53 and s["spotSource"] and s["underwriteDate"] == "2026-07-21"
+    assert s["ceiling2to1"] == 12.72
+    # the underwrite date is the RECORD's own — SMPL was reissued 2026-07-27, so a frozen
+    # literal here would pin the pre-supersession vintage forever
+    assert s["spot"] == 10.53 and s["spotSource"]
+    assert s["underwriteDate"] == rec["underwrite_date"]
+
+
+# --- SUPERSESSION: archive-and-reissue (2026-07-27) --------------------------------------------
+def test_archived_records_leave_the_live_set_but_stay_in_the_seal_sweep() -> None:
+    """THE TWO-SIDED SCOPE RULE, both halves pinned.
+
+    OUT of the live set: the audit, the monitor and the spread read `scenarios/*.json`, which does
+    NOT recurse into `archive/` — so a superseded record can never be scored, counted or audited a
+    second time. IN the seal sweep: superseding must not become a way to move a sealed rationale
+    out from under the seal. An archived record is still the record of what was believed."""
+    live = sc.all_records(root=ROOT)
+    archived = sc.all_archived(root=ROOT)
+    assert archived, "the committed book carries at least one archived record"
+    assert set(live) & set(archived) == set(), "an archive key must never collide with a ticker"
+    for key, rec in archived.items():
+        assert rec.superseded_by, f"{key} is archived but points nowhere"
+        assert key not in live, f"{key} is in the LIVE set — audit/spread would double-count"
+    # the seal sweep DOES cover them, keyed as the manifest keys them
+    sealable = seal.load_all_sealable(ROOT)
+    for key in archived:
+        assert key in sealable, f"{key} escaped the seal sweep"
+    assert seal.check_all(sealable, seal.load_manifest(ROOT)) == []
+
+
+def test_supersession_links_both_ways_and_never_edits_the_archived_rationale() -> None:
+    """The pair is bidirectional and the archived copy differs from its original by ONE field."""
+    live = sc.read_record("SMPL", root=ROOT)
+    key = live.supersedes
+    assert key, "the reissued SMPL record must point back at what it replaced"
+    arch = sc.read_archived(key, root=ROOT)
+    assert arch.superseded_by == sc.archive_key(live), "the archived record must point forward"
+    assert sc.archive_key(arch) == key
+    # the reissue is CLEAN: no amendment tags carried over into the new sealed text
+    assert seal.amendments(live.verdict.rationale or "") == []
+    # ...and the archived record keeps every one of them
+    assert len(seal.amendments(arch.verdict.rationale or "")) == 3
+
+
+def test_supersede_refuses_a_live_position_and_a_one_way_link() -> None:
+    """A LIVE position is AMENDED, never superseded — reissuing would move the thesis out from
+    under an open position. Proven by the refusal, not by the docstring."""
+    live = sc.read_record("SMPL", root=ROOT)
+    arch = sc.read_archived(str(live.supersedes), root=ROOT)
+    confirmed = arch.model_copy(update={
+        "verdict": arch.verdict.model_copy(update={"status": "confirmed"})})
+    with pytest.raises(sc.SupersedeRefusedError, match="LIVE position"):
+        sc.supersede_record(confirmed, live, live_confirmed_open=True)
+    with pytest.raises(sc.SupersedeRefusedError, match="ticker mismatch"):
+        sc.supersede_record(arch, live.model_copy(update={"ticker": "AORT"}))
+    with pytest.raises(sc.SupersedeRefusedError, match="already points at"):
+        sc.supersede_record(arch, live.model_copy(update={"supersedes": "XXXX-2020-01-01"}))
+    with pytest.raises(sc.SupersedeRefusedError, match="no close row"):
+        sc.supersede_record(confirmed, live, closed_entry_ids=set())
+
+
+def test_supersession_did_not_touch_the_ledger() -> None:
+    """A reissue is a RECORD event, not a transaction: no new ledger row, nothing mutated. The
+    forward spread must be identical before and after — supersession cannot launder a track."""
+    led = (ROOT / "data" / "snapshots" / "decision_ledger.jsonl").read_text().splitlines()
+    rows = [json.loads(x) for x in led if x.strip()]
+    smpl = [r for r in rows if r["ticker"] == "SMPL"]
+    assert len(smpl) == 2, "SMPL still has exactly its decision row + its close row"
+    assert {r["entry_id"] for r in smpl} == {
+        "V-SMPL-screen2-20260706", "C-SMPL-screen2-20260706"}
+
+
+# --- what the RENDERED PAGE showed (2026-07-27, found by looking) ------------------------------
+def test_supersession_links_use_the_apps_hash_route_not_a_query_string() -> None:
+    """FOUND BY LOOKING AT THE PAGE, not by reading code. The banners shipped with
+    `href="?scenario=…"` — a query string, in an app that routes entirely on the hash
+    (`#/dossier/<key>`). Both links rendered, looked right, and would have dumped the reader at
+    the app root with the route lost. Same lesson as #216: the card renderer passing in isolation
+    proves nothing about the page."""
+    src = (ROOT / "frontend" / "views" / "shared" / "uw-card.js").read_text()
+    assert "?scenario=" not in src, "supersession links must not use a query string"
+    banner = src[src.index("function supersessionBanner"):]
+    banner = banner[:banner.index("\n}")]
+    assert banner.count('href="#/dossier/') == 2, (
+        "both directions (archived→live, live→archived) must link on the app's hash route")
+
+
+def test_one_amendment_marker_shared_by_the_card_and_the_dossier() -> None:
+    """The dossier's thesis block carried a SECOND copy of the amendment-tag regex, and that copy
+    never learned about CLASSED tags — so `[amended 2026-07-28 (judgment): …]` rendered marked on
+    the card and UNMARKED in the Brief. Two divergent parsers of one string is the named bug
+    class; this pins the single shared helper."""
+    card = (ROOT / "frontend" / "views" / "shared" / "uw-card.js").read_text()
+    doss = (ROOT / "frontend" / "views" / "shared" / "dossier.js").read_text()
+    assert "export function amendMarks" in card, "amendMarks must be the exported shared helper"
+    assert "amendMarks" in doss.split("\n")[9], "the dossier must IMPORT it"
+    # the dossier must no longer carry its own copy of the tag regex
+    assert r"\[amended (\d{4}-\d{2}-\d{2})" not in doss, (
+        "the dossier is parsing amendment tags itself again — use the shared amendMarks")
+
+
+# --- at-a-glance v2 + the ledger binding (2026-07-27) ------------------------------------------
+def test_a_reissued_record_does_not_inherit_the_ledger_row_it_never_made() -> None:
+    """THE SUPERSESSION BUG. The ledger joined by TICKER alone, which was right while one ticker
+    meant one record. SMPL's BUY was decided 2026-07-21 against the record now ARCHIVED; the live
+    record was reissued 2026-07-27 and opened no position (`entry_price` is None) — yet its card
+    headlined that BUY, and the SAME row displayed on two records.
+
+    RULE: a record owns the row only if the row was decided during its tenure."""
+    ledger = _BUILD._ledger_by_ticker()
+    live = json.loads((ROOT / "scenarios" / "SMPL.json").read_text())
+    arch = json.loads((ROOT / "scenarios" / "archive" / "SMPL-2026-07-21.json").read_text())
+    assert _BUILD._ledger_for_record(live, ledger) is None, (
+        "the reissued record post-dates the decision — it cannot own that ledger row")
+    owned = _BUILD._ledger_for_record(arch, ledger)
+    assert owned and owned["entry_id"] == "V-SMPL-screen2-20260706"
+    # a never-superseded name is unaffected: one record, it owns its row
+    it = json.loads((ROOT / "scenarios" / "IT.json").read_text())
+    assert (_BUILD._ledger_for_record(it, ledger) or {}).get("entry_id") == "V-IT-screen2-20260706"
+
+
+def test_close_rows_are_not_positions_in_the_js_ledger_loader() -> None:
+    """The loader mapped EVERY row into `entries`, so a closed name counted twice — a close row
+    repeats the ORIGINAL verdict for provenance. The dashboard read 5 logged / 4 BUY against a
+    true 3 / 2. JS twin of vinci.monitor.decision_rows: partition, then attach."""
+    src = (ROOT / "frontend" / "lib" / "snapshots.js").read_text()
+    body = src[src.index("async function _loadLedger"):]
+    body = body[:body.index("\n}")]
+    assert '.filter((p) => !p.event)' in body, "close rows must be filtered out of entries"
+    assert "closes_entry_id" in body and "closeBy" in body, "closes must be paired to their row"
+    assert "realizedReturn" in body, "realized return is derived here, never stored"
+
+
+def test_at_a_glance_v2_keeps_five_cells_and_ranks_by_fact_class() -> None:
+    """v1 proposed a 6th stat cell for `next evidence`. Wrong twice: `.uw-statband` is
+    repeat(5,1fr), so a 6th cell drops Method to a ragged second row; and a DATE at the 16.5px
+    mono of `.uw-stat-val` reads with a valuation number's authority. Dates belong in the
+    pre-existing `.uw-mast-foot` (11.2px ink-3), and the status caption is a CAPTION — prose never
+    sits between the title and the numbers."""
+    css = (ROOT / "frontend" / "assets" / "styles.css").read_text()
+    assert "repeat(5, 1fr)" in css, "the band contract is five columns"
+    card = (ROOT / "frontend" / "views" / "shared" / "uw-card.js").read_text()
+    band = card[card.index('<div class="uw-statband">'):]
+    band = band[:band.index("</div>")]
+    assert band.count("Cell(c)") == 5, f"the band must render exactly 5 cells, got: {band}"
+    # the promoted fields landed in their correct slots
+    foot = card[card.index("function mastheadFoot"):]
+    foot = foot[:foot.index("\n}")]
+    assert "Next evidence" in foot and "underwritten" in foot, "dates belong in the mast-foot"
+    assert "currentStateBlock" not in card, "the separate block is superseded by the masthead"
+
+
+def test_header_and_foot_say_each_thing_once() -> None:
+    """COPY DISCIPLINE (operator: "not comprehendible … non-necessary words"). The header said the
+    status THREE times — the `watch` pill, then "not held", then a caption OPENING "Watch
+    reflects…" — and the foot said "Next" twice ("Next evidence … Next results print") before a
+    shouty "scenario verdict — NOT a ledger verdict of record". Both are now stated once.
+
+    The caption was then retired outright (see the retired-field pin): shortening it twice and
+    still finding it redundant was the evidence that the slot itself was the problem."""
+    card = (ROOT / "frontend" / "views" / "shared" / "uw-card.js").read_text()
+    foot = card[card.index("function mastheadFoot"):]
+    foot = foot[:foot.index("\n}")]
+    assert "Next evidence ${" not in foot, "the event label already names the event"
+    assert 'replace(/^next\\s+/i' in foot, "the label's own leading 'Next ' must be stripped"
+    assert "no ledger verdict logged" in foot
+    assert "NOT a ledger verdict of record" not in card, "the shouty clause is retired"
+    # the header states the rating and nothing else — no holding word, no caption
+    pills = card[card.index("function verdictPills"):]
+    pills = pills[:pills.index("\n}")]
+    assert "statusNote" not in pills and "holdingLabel" not in pills
+
+
+def test_lineage_sits_in_record_and_reproduce_not_above_the_numbers() -> None:
+    """(#3) Which record this one replaced is FILING-CABINET information — it helps a reader find
+    the paperwork, not judge the name — so on the dossier it belongs in the Appendix's
+    "Record & reproduce" beside the analyst, date and ledger id. The STANDALONE card keeps the
+    banner: an archived record's page has no appendix to carry it."""
+    card = (ROOT / "frontend" / "views" / "shared" / "uw-card.js").read_text()
+    doss = (ROOT / "frontend" / "views" / "shared" / "dossier.js").read_text()
+    detail = card[card.index("const detail = () =>"):]
+    detail = detail[:detail.index("`;")]
+    assert "supersessionBanner" not in detail, "the dossier tier must not carry the banner"
+    body = card[card.index("const body = () =>"):]
+    body = body[:body.index("`;")]
+    assert "supersessionBanner" in body, "the standalone card must keep it"
+    assert "supersedes <a href=" in doss, "the Appendix must carry the lineage, linked"
+
+
+def test_the_logged_verdict_panel_states_a_close() -> None:
+    """THE FIFTH SURFACE. Four surfaces were made close-aware when the ledger row was bound to the
+    record that justified it; this one was missed, and SMPL's exited position still read as a live
+    "BUY · unresolved" in the Appendix. `resolved` stays untouched on purpose — a call is scored at
+    its horizon whatever happened to the position — so the close is stated as an ADDITIVE fact,
+    exactly as decision-log.js already states it."""
+    doss = (ROOT / "frontend" / "views" / "shared" / "dossier.js").read_text()
+    fn = doss[doss.index("function loggedVerdict("):]
+    fn = fn[:fn.index("\n}\n")]
+    assert "v.closed" in fn, "the panel must read the close attached by the loader"
+    assert "closedChip" in fn and "realizedReturn" in fn, "close date, price and realized return"
+    assert "Close reason" in fn, "why it was exited is the point of the row"
+    # a close must NOT flip `resolved` — the call is still scored at its horizon
+    assert 'v.resolved ? "resolved"' in fn, "horizon scoring stands after an exit"
+
+
+def test_the_record_only_page_binds_its_ledger_row_by_id_not_by_route_key() -> None:
+    """On the record-only path the route key IS the record key (`SMPL-2026-07-21`), so a
+    `e.ticker === ticker` lookup matched nothing: the archived page printed "no verdict logged yet
+    for SMPL-2026-07-21" three inches under a masthead correctly reading "BUY — closed 2026-07-22",
+    and offered a CLI recipe built on a fabricated candidate id. build.py already decided which
+    record owns the row; this side takes that answer rather than re-deriving it."""
+    doss = (ROOT / "frontend" / "views" / "shared" / "dossier.js").read_text()
+    seg = doss[doss.index("if (card) {"):]
+    seg = seg[:seg.index("${assembleHelp()}")]
+    assert "e.ticker === ticker" not in seg, "the route key is not a ticker on this path"
+    assert "card.ledger.entryId" in seg, "bind by the id build.py resolved"
+    assert "card.ticker || ticker" in seg and "loggedVerdict(verdict, tk," in seg, (
+        "the CLI recipe must use the real ticker, never the record key")

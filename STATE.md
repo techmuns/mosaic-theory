@@ -5497,7 +5497,138 @@ confirmed-record mode the directive first assumed.
    UNKNOWN by STRUCTURE, not by ignorance. Queued: either assemble a WERN dossier or give the
    card a dossier-free calendar source. **Operationally: a watch record prints tomorrow and the
    surface cannot say so.**
-18. **SUPERSEDED NOTES ON AMENDMENTS — 2026-07-27.** `superseded_note` on the sidecar, rendered
+19. **SUPERSESSION CONVENTION — ADOPTED 2026-07-27 (standing).** Verbatim:
+   *"A withdrawn or closed verdict may be superseded by a reissued record; the outgoing record is
+   archived, sealed, publicly rendered and bidirectionally linked; a live position is never
+   superseded, only amended; supersession never touches the ledger."*
+   **MOTIVATING CASE:** SMPL's rationale reached **450 words of which 330 were amendment** — and
+   three-quarters of that was construction-era PROCESS (a staleness alarm, a machine refresh, a
+   re-verification), not investment judgment. Amending further would have buried the thesis under
+   its own maintenance history, and the seal rightly forbids editing any of it. The reissue gives
+   a reader a clean current record **without deleting or rewriting one recorded word**. Executed:
+   `SMPL-2026-07-21` archived (its 3 tags, class labels, superseded note and construction banner
+   all travel with it); live `SMPL` reissued at 2026-07-27 with **zero amendment tags**, ratio
+   **3.8341 PASS** at the same 10.53 spot, legs unchanged, facts read from the archived record
+   rather than retyped.
+   **MECHANISM:** `vinci scenario-supersede` — one instrumented path, the scenario-refresh
+   precedent. FOUR refusals, each pinned by proving it fires: a LIVE position (confirmed with no
+   close row), a ticker mismatch, an incoming record already pointing elsewhere, and any
+   difference between the archived copy and its original beyond the `superseded_by` pointer.
+   **SEAL KEYING, decided here:** the manifest is keyed by ticker, so the archived record takes
+   its ARCHIVE KEY (`SMPL-2026-07-21`) and the live ticker key is RE-SEALED at the new rationale —
+   the "deliberate, reviewable act" vinci/seal.py names, performed once and atomically inside the
+   command rather than by hand.
+   **SCOPE, both halves pinned:** archived records LEAVE the live set (audit / monitor / spread
+   read `scenarios/*.json`, which does not recurse into `archive/`) so they can never be scored or
+   counted twice; and they STAY in the seal sweep (`seal.load_all_sealable`) so superseding can
+   never become a way to move a sealed rationale out from under the seal.
+   **LEDGER UNTOUCHED** — verified: SMPL still carries exactly its decision row and its close row.
+   *Consequence recorded rather than fixed:* the ledger's `underwrite_ref` still reads
+   `scenarios/SMPL.json`, which now holds the REISSUED record. The pointer is one hop short, not
+   wrong — a reader following it lands on the live record and walks `supersedes` back to the one
+   that justified the row. Left as-is because the ledger is append-only and the chain resolves it.
+   **KNOWN REGRESSION, stated not smoothed:** `vinci audit r1` reads SMPL as
+   `*** NO GATE — new exposure` again, where the superseded record read
+   `fired — discharged 2026-07-26`. Cause: the discharge reader keys on a dated `[verified …]`
+   TAG, and the reissued record states its bear-state evidence as METHOD PROSE — which is what the
+   reissue brief required (evidence, not amendment). The verification did not disappear; the
+   classifier cannot see it in this shape. QUEUED: teach the discharge reader a structured
+   verification field, or re-verify the reissued bear leg with a dated tag.
+21. **LEDGER→RECORD BINDING + CLOSE-AWARENESS EVERYWHERE — 2026-07-27 (bug, operator-spotted).**
+   The operator asked why a `watch` record headlined `BUY`. It was a real defect, and bigger than
+   the symptom. THE CAUSE: the ledger joined to a card **by TICKER alone** — correct while one
+   ticker meant one record, broken by supersession. SMPL's BUY was decided 2026-07-21 against the
+   record now ARCHIVED; the live record was reissued 2026-07-27 and **opened no position**
+   (`entry_price` is None) — so the reissued card advertised a verdict it never made, and the SAME
+   row displayed on two records. RULE ADOPTED: *a record owns a ledger row only if the row was
+   decided during its tenure* (`underwrite_date` is the latest at-or-before `decided_at`).
+   Never-superseded names are unaffected.
+   **THE WIDER FINDING — the close-aware fix had reached ONE of FOUR surfaces.** The other three
+   still showed a bare live BUY: the dossier Brief chip, the dossier INDEX badge, and the decision
+   log — which had **no close handling at all**. Root cause was one layer down, in the JS ledger
+   loader: it mapped EVERY row into `entries`, and a close row repeats the ORIGINAL verdict for
+   provenance, so **the dashboard reported 5 logged / 4 BUY against a true 3 / 2** and last-row-wins
+   decided which row a per-ticker lookup returned. Fixed at the loader — the JS twin of
+   `vinci.monitor.decision_rows`/`pair_closes`: partition first, attach each close to the row it
+   closes, derive the realized return from the two frozen prices (never stored). Every consumer
+   gets close-awareness from that one place. `resolved` is deliberately untouched: a call is scored
+   at its horizon whatever happened to the position — **exits never launder the track record**.
+24. **`status_note` RETIRED + the archived page's two render defects — 2026-07-27 (operator).**
+   Three decisions, one PR.
+   **(a) THE HEADER IS THE RATING ALONE.** `VERDICT watch`, nothing beside it. The holding word
+   and caption were a third statement of a fact the band already carries: the ENTRY cell reads
+   *"— no position"* for a record holding nothing, and a closed position states its close inside
+   the verdict chip. `.uw-hold` / `.uw-hold-note` deleted with them.
+   **(b) `verdict.status_note` RETIRED OUTRIGHT** (schema, validator, 25-word cap, the
+   `frontend/build.py` emit, and the value in BOTH records). It was added at #15 for the
+   current-state block; #22 folded that block into the masthead and (a) removed its last renderer,
+   leaving a card key nothing reads — the kind that gets read again by mistake. Shortening the
+   caption twice (13 words → 6) and still finding it redundant was the evidence that the SLOT was
+   wrong, not the wording. **The archived record was edited this time** — a reversal of #23's
+   "history is not edited", and the distinction is the point: #23 changed the *words of a caption*
+   (a judgment, which history owns), this deletes a *retired field* (a schema migration, which
+   history does not). The seal is unaffected either way: it digests `base_text(rationale)` only —
+   swept all 7 live+archived records, **INTACT**.
+   **INVARIANT SHIPPED:** pydantic defaults to `extra="ignore"`, so every stale record would have
+   loaded CLEAN and lost the analyst's sentence on the next write — a silent drop, the one failure
+   this repo never takes. `RETIRED_VERDICT_FIELDS` + a `mode="before"` validator now RAISE, naming
+   the key. Demonstrated against git's own pre-change `scenarios/SMPL.json`: refused.
+   **(c) THE ARCHIVED PAGE HAD TWO DEFECTS**, found only by opening it — neither was visible to
+   the suite. (i) The record-only path looked its ledger row up with `e.ticker === ticker`, but on
+   that path `ticker` is the ROUTE key (`SMPL-2026-07-21`), so nothing matched: the page printed
+   *"no verdict logged yet for SMPL-2026-07-21"* directly beneath a masthead correctly reading
+   *"BUY — closed 2026-07-22 at $10.53"*, and offered a CLI recipe on a FABRICATED candidate id.
+   It now takes `build.py`'s `_ledger_for_record` answer and resolves by entry id — one authority
+   for which record owns a row. (ii) `loggedVerdict` was the **FIFTH** close-awareness surface
+   (#21 fixed four and missed this one): SMPL's exited position read as a live *"BUY ·
+   unresolved"*. `resolved` stays untouched by design — a call is scored at its horizon whatever
+   happened to the position, so exits never launder the track record — and the close is stated
+   additively with its realized return and reason.
+   **LESSON, third time this week:** the browser served CACHED ES modules and showed a CLOSE row
+   masquerading as the decision row. That looked exactly like a loader bug and was not one. A
+   render verification is only valid against force-refetched modules.
+23. **COPY DISCIPLINE + LINEAGE PLACEMENT — 2026-07-27 (operator: "not comprehendible … contain
+   non-necessary words").** Right on both strings. **(Item (b) of #24 later retired the caption
+   slot entirely — the re-wording below is a fossil; `status_note` no longer exists.)**
+   **THE HEADER said the status THREE times in 19 words** — the `watch` pill, then "not held",
+   then a caption OPENING *"Watch reflects a stay-out decision after the round trip, not a failed
+   underwrite."* It also carried jargon ("the round trip" — the reader has not been told what
+   round trip) and defined by negation ("not a failed underwrite") while the band directly below
+   already showed `3.83 : 1 PASS`. Now: **`watch` · not held · by choice, not by the numbers** —
+   the caption carries ONLY what the status words cannot. RULE: the caption answers the one
+   question the status leaves open (here, *why* not held); it never restates the status.
+   **THE FOOT said "Next" twice** ("Next evidence 2026-10-08 Next results print") because the
+   calendar's event label already NAMES the event, then closed with a shouty
+   "scenario verdict — NOT a ledger verdict of record". Now **"Results print 2026-10-08 ·
+   underwritten 2026-07-27 · no ledger verdict logged"** — 19 words → 11.
+   **DATA vs RENDER, kept separate:** the caption lives in `verdict.status_note` (analyst prose),
+   so the LIVE record was re-worded with the operator's go-ahead and the **ARCHIVED record was
+   left untouched** — history is not edited, so `SMPL-2026-07-21` still carries the original
+   13-word caption. Sealed rationale byte-identical; seal CLEAN.
+   **(#3) LINEAGE MOVED TO "RECORD & REPRODUCE."** *"Supersedes the record of 2026-07-21…"* is
+   filing-cabinet information — it helps a reader find the paperwork, not judge the name — so on
+   the dossier it now sits in the Appendix beside the analyst, underwrite date and ledger id,
+   linked. The STANDALONE card keeps the banner: an archived record's page has no appendix to
+   carry it. It could only move once #1 landed — while the card still showed a stale `BUY` on a
+   `watch` record, that line was the only thing explaining the contradiction, i.e. load-bearing.
+22. **AT-A-GLANCE v2 — the current-state block FOLDED INTO the masthead (2026-07-27).** The
+   operator challenged the duplicate block, then challenged the first proposal against buy-side
+   structure. Both challenges were right, and v1 was wrong in two STRUCTURAL ways:
+   (a) it added a 6th stat cell — but `.uw-statband` is `repeat(5, 1fr)`, so the 6th does not
+   wrap, it drops Method to a ragged one-cell second row; going to six shrinks every cell to
+   ~173px while the 22px mono lead value alone needs ~150px, so the dominant number would wrap.
+   (b) it mismatched WEIGHT TO FACT-CLASS: a **date** rendered at `.uw-stat-val`'s 16.5px mono
+   carries a valuation number's authority, and a 13-word prose caption at 13.5px sat between the
+   title and the numbers — the scan zone. **`.uw-mast-foot` (11.2px, ink-3) already existed for
+   exactly this class of fact and the first proposal invented a new slot instead of using it.**
+   SHIPPED (v2, zero CSS change to the band): holding label + status caption join the chip cluster
+   beside the rating (11.2px caption, matching `.uw-stat-sub`); the 2:1 ceiling qualifies the
+   Reward:risk cell in ITS sub-line; next-evidence + underwritten date go to the mast-foot; base
+   normal margin is DROPPED (the legs table carries it); the separate block is deleted from both
+   compositions — the masthead now carries it, so the card and the dossier agree by construction
+   rather than by duplication. LESSON: propose placement only after reading the type scale — the
+   component's contract is data, not taste.
+20. **SUPERSEDED NOTES ON AMENDMENTS — 2026-07-27.** `superseded_note` on the sidecar, rendered
    beside the class label INSIDE the "Verdict as recorded" expander. First case: SMPL tag 1, whose
    staleness premise the 2026-07-26 verification refuted (the mechanical facts were current; the
    move to watch stands as an operator decision). The sealed text is never edited — the correction

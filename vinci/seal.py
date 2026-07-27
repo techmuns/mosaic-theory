@@ -185,8 +185,33 @@ def load_manifest(root: Path) -> dict[str, Any]:
     return json.loads(p.read_text()) if p.exists() else {}
 
 
+def load_all_sealable(root: Path) -> dict[str, dict[str, Any]]:
+    """Every record the seal governs, keyed as the manifest keys it: LIVE records by ticker, and
+    ARCHIVED records by their archive key (``<TICKER>-<underwrite_date>``).
+
+    Archived records stay in the sweep BY DESIGN (2026-07-27). Superseding a record must not be a
+    way to move a sealed rationale out from under the seal — an archived record is still the
+    record of what was believed, and the seal is the only thing that makes that claim checkable.
+    (They leave the LIVE set, which is what the audit / monitor / spread read, so they can never
+    be counted or scored twice.)"""
+    import json as _json
+
+    out: dict[str, dict[str, Any]] = {}
+    d = root / "scenarios"
+    if d.is_dir():
+        for p in sorted(d.glob("*.json")):
+            if not p.name.startswith("_"):
+                out[p.stem] = _json.loads(p.read_text())
+    a = d / "archive"
+    if a.is_dir():
+        for p in sorted(a.glob("*.json")):
+            if not p.name.startswith("_"):
+                out[p.stem] = _json.loads(p.read_text())
+    return out
+
+
 def check_all(records: dict[str, dict[str, Any]], manifest: dict[str, Any]) -> list[str]:
-    """Violations across every record. ``records`` maps ticker -> record dict."""
+    """Violations across every record. ``records`` maps ticker (or archive key) -> record dict."""
     out: list[str] = []
     for ticker, rec in sorted(records.items()):
         v = rec.get("verdict") or {}
@@ -195,5 +220,6 @@ def check_all(records: dict[str, dict[str, Any]], manifest: dict[str, Any]) -> l
     return out
 
 
-__all__ = ["AMEND_TAG", "SEAL_FILE", "UNSEALED_STATUSES", "amendments", "base_text", "check",
-           "check_all", "digest", "is_sealed", "load_manifest", "seal_entry"]
+__all__ = ["AMEND_TAG", "SEAL_FILE", "UNSEALED_STATUSES", "amendment_violations", "amendments",
+           "base_text", "check", "check_all", "digest", "is_sealed", "load_all_sealable",
+           "load_manifest", "seal_entry", "tag_parts"]

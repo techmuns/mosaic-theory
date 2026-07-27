@@ -24,8 +24,19 @@ _AMEND = " [amended 2026-07-22: the perimeter-corrected figure moves the base le
 
 
 def _records() -> dict[str, dict]:
-    return {p.stem: json.loads(p.read_text())
-            for p in sorted((ROOT / "scenarios").glob("[A-Z]*.json"))}
+    """Every record the seal governs — LIVE by ticker AND ARCHIVED by archive key.
+
+    Archived records stay under the seal (supersession, 2026-07-27): superseding must not be a way
+    to move a sealed rationale out from under it. So the manifest legitimately carries archive keys
+    like ``SMPL-2026-07-21``, and this helper has to see them or the staleness pin below reads a
+    live archive entry as an orphan."""
+    out = {p.stem: json.loads(p.read_text())
+           for p in sorted((ROOT / "scenarios").glob("[A-Z]*.json"))}
+    arch = ROOT / "scenarios" / "archive"
+    if arch.is_dir():
+        out |= {p.stem: json.loads(p.read_text())
+                for p in sorted(arch.glob("[A-Z]*.json"))}
+    return out
 
 
 # --- the binding assertion: every committed record, against the committed manifest --------------

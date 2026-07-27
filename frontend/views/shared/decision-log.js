@@ -115,14 +115,31 @@ function entryCard(e, mark) {
     : `<span class="pill unresolved">unresolved · ${e.daysToHorizon == null ? DASH : Math.max(0, e.daysToHorizon) + "d to horizon"}</span>`;
   const field = (k, v) => v ? `<div style="margin-top:8px;"><span class="muted" style="font-size:11px; text-transform:uppercase; letter-spacing:0.04em;">${k}</span><div style="font-size:13px; color:var(--ink-2);">${escapeHtml(v)}</div></div>` : "";
 
+  // CLOSE-AWARE (2026-07-27). The log had NO close handling at all: both closed positions read as
+  // live BUYs. The verdict word and `resolved` are untouched — a call is scored at its horizon
+  // whatever happened to the position, so exits can never launder the track record — but a closed
+  // row now says so, with its realized return derived from the two frozen prices (never stored).
+  const cl = e.closed;
+  const closedChip = cl
+    ? `<span class="pill unresolved">closed ${fmtDate(cl.exitPriceAsOf)}${
+        cl.exitPrice != null ? ` @ ${fmtPrice(cl.exitPrice)}` : ""}${
+        cl.realizedReturn != null
+          ? ` · ${cl.realizedReturn >= 0 ? "+" : "−"}${Math.abs(cl.realizedReturn * 100).toFixed(2)}%`
+          : ""}</span>`
+    : "";
+  const closeReason = cl && cl.reason
+    ? `<div class="muted" style="font-size:11.5px; margin-top:6px;">Close reason — ${escapeHtml(cl.reason)}</div>`
+    : "";
   return `
     <div class="card" style="margin-bottom:14px;">
       <div style="display:flex; gap:12px; align-items:baseline; flex-wrap:wrap;">
         <span class="mono" style="font-size:16px; font-weight:650;">${escapeHtml(e.ticker)}</span>
-        <span class="pill ${isBuy ? "buy" : "avoid"}">${escapeHtml(e.verdict)}</span>
+        <span class="pill ${cl ? "unresolved" : isBuy ? "buy" : "avoid"}">${escapeHtml(e.verdict)}</span>
+        ${closedChip}
         ${status}
         <span class="muted" style="font-size:12px; margin-left:auto;">decided ${fmtDate(e.decidedAt)}</span>
       </div>
+      ${closeReason}
       <div style="display:flex; gap:22px; flex-wrap:wrap; margin-top:10px; font-size:13px;">
         <div><span class="muted">Frozen entry</span> <span class="mono" style="font-weight:600;">${fmtPrice(e.entryPrice)}</span> <span class="muted">@ ${fmtDate(e.entryPriceAsOf)}</span></div>
         <div><span class="muted">Horizon</span> <span class="mono">${fmtInt(e.horizonDays)}d</span> <span class="muted">→ ${fmtDate(e.horizonDate)}</span></div>

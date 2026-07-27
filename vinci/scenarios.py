@@ -51,10 +51,12 @@ BEAR_BASES = frozenset({
 # between them put a 15.5% EBITDA cell into a brief as a 13.2% EBIT cell.
 MARGIN_BASES = frozenset({"EBIT", "EBITDA"})
 
-# (record legibility, 2026-07-27) `verdict.status_note` is a CAPTION on the current state — one
-# line telling the reader why the status word reads as it does. Capped hard so it can never grow
-# into a second, unsealed rationale sitting above the sealed one.
-STATUS_NOTE_MAX_WORDS = 25
+# RETIRED VERDICT FIELDS — names that were once written into records and are now gone. They stay
+# listed because pydantic's default is extra="ignore": a record file still carrying a retired key
+# would load CLEAN and lose the analyst's words on the next write — a silent drop, which is the one
+# failure mode this repo never accepts. Loading such a record RAISES instead, naming the key, so
+# the words are migrated deliberately or discarded deliberately, never by omission.
+RETIRED_VERDICT_FIELDS: frozenset[str] = frozenset({"status_note"})
 
 # From this schema version the BEAR leg must carry both labels at write. Older records predate the
 # fields and stay writable — the rule binds forward, never retroactively.
@@ -307,24 +309,23 @@ class Verdict(BaseModel):
     # Recording it does NOT create a position: no code path here approaches execution.
     avoid_priced: bool = False
     avoid_priced_note: str | None = None
-    # (record legibility, 2026-07-27) ONE analyst line answering "why does the status read the way
-    # it does?", carried in the machine-derived current-state block ABOVE the rationale. It exists
-    # because a status word alone misleads: SMPL's `watch` is a stay-out decision after a round
-    # trip, NOT a failed underwrite, and no reader could tell those apart from the word. Amendable
-    # like any analyst prose and NOT sealed — it describes the CURRENT state, which moves, whereas
-    # the rationale records the state at decision time, which must not.
-    status_note: str | None = None
+    # RETIRED 2026-07-27: `status_note`. It was a one-line caption explaining why the status word
+    # read as it did — added when the card carried a "Current state" block, retired when that block
+    # was folded into the masthead and the caption turned out to be saying a third time what the
+    # band already said. The header is now the RATING alone, so nothing rendered it.
 
-    @field_validator("status_note")
+    @model_validator(mode="before")
     @classmethod
-    def _status_note_is_one_line(cls, v: str | None) -> str | None:
-        """A caption, not a second rationale. 25 words is the whole budget — anything longer is
-        the argument, and the argument's home is the sealed rationale."""
-        if v is not None and len(v.split()) > STATUS_NOTE_MAX_WORDS:
-            raise ValueError(
-                f"status_note is {len(v.split())} words against a {STATUS_NOTE_MAX_WORDS}-word "
-                "cap — it is a one-line caption on the CURRENT state, not a second rationale")
-        return v
+    def _no_retired_fields(cls, data: Any) -> Any:
+        """A retired key in a record is analyst prose about to vanish silently — refuse it."""
+        if isinstance(data, dict):
+            gone = sorted(RETIRED_VERDICT_FIELDS & set(data))
+            if gone:
+                raise ValueError(
+                    f"verdict carries retired field(s) {', '.join(gone)} — the schema no longer "
+                    "reads them, so a load-and-write would drop the words without saying so. "
+                    "Move them somewhere that renders, or delete them deliberately.")
+        return data
 
     @field_validator("entry_price")
     @classmethod
@@ -410,6 +411,18 @@ class ScenarioRecord(BaseModel):
     # `vinci scenario-refresh`, never by hand and never into the rationale. Optional-with-default
     # so every legacy record round-trips byte-identical.
     refresh_log: list[RefreshEntry] = Field(default_factory=list)
+    # --- SUPERSESSION (2026-07-27) -------------------------------------------------------------
+    # A withdrawn or closed verdict can be REISSUED rather than amended forever. The outgoing
+    # record is archived (sealed, still publicly rendered) and the two are linked BOTH ways, so a
+    # reader can always walk from the live record back to what it replaced and forward again.
+    # Archive key form: "<TICKER>-<underwrite_date>" (e.g. "SMPL-2026-07-21").
+    #
+    # WHY: SMPL's rationale reached 450 words of which 330 were amendment — three-quarters of it
+    # construction-era PROCESS, not investment judgment. Amending further would have buried the
+    # thesis deeper under its own maintenance history. A reissue gives the reader a clean current
+    # record without deleting or rewriting one word of what was recorded before.
+    supersedes: str | None = None        # archive key of the record THIS one replaces
+    superseded_by: str | None = None     # archive key of the record that replaced THIS one
 
     @model_validator(mode="after")
     def _assumption_axes_guarded(self) -> ScenarioRecord:
@@ -849,3 +862,107 @@ def refresh_record(
     if out.assumptions != rec.assumptions:
         raise RefreshRefusedError("a refresh moved an ASSUMPTION — refusing to write")
     return out
+
+
+# --- SUPERSESSION: archive-and-reissue (2026-07-27) --------------------------------------------
+# THE PROBLEM IT SOLVES. A verdict that is withdrawn or closed keeps accreting amendment tags, and
+# past some point the audit trail is longer than the thesis: SMPL reached 450 words of which 330
+# were amendment, three-quarters of that construction-era process rather than investment judgment.
+# The seal (rightly) forbids editing any of it. So the only honest way to give a reader a clean
+# current record is to REISSUE — archive the outgoing record intact, write a fresh one, and link
+# them both ways so nothing is hidden and nothing is rewritten.
+#
+# ARCHIVED RECORDS STAY PUBLIC. They render, they are indexed, and they remain in the seal sweep.
+# What they leave is the LIVE set: the audit, the monitor and the spread read live records only,
+# so an archived record can never be counted twice or scored a second time.
+ARCHIVE_DIRNAME = "archive"
+
+
+class SupersedeRefusedError(RuntimeError):
+    """The supersession would break an invariant. Raised, never warned."""
+
+
+def archive_key(rec: ScenarioRecord) -> str:
+    """``<TICKER>-<underwrite_date>`` — stable, human-readable, and unique per underwrite."""
+    return f"{rec.ticker.upper()}-{rec.underwrite_date}"
+
+
+def archive_dir(root: Path | None = None) -> Path:
+    return records_dir(root) / ARCHIVE_DIRNAME
+
+
+def read_archived(key: str, *, root: Path | None = None) -> ScenarioRecord:
+    return ScenarioRecord.model_validate_json((archive_dir(root) / f"{key}.json").read_text())
+
+
+def all_archived(*, root: Path | None = None) -> dict[str, ScenarioRecord]:
+    """Every ARCHIVED record, keyed by archive key. Separate from :func:`all_records` on purpose —
+    ``all_records`` globs the records dir NON-recursively, so archived records are already outside
+    the live set for every consumer that reads it (audit, monitor, spread). This function is the
+    deliberate way in, used by the renderer and the seal sweep."""
+    d = archive_dir(root)
+    if not d.is_dir():
+        return {}
+    out: dict[str, ScenarioRecord] = {}
+    for p in sorted(d.glob("*.json")):
+        if p.name.startswith("_"):
+            continue
+        out[p.stem] = ScenarioRecord.model_validate_json(p.read_text())
+    return out
+
+
+def supersede_record(
+    outgoing: ScenarioRecord, incoming: ScenarioRecord, *,
+    closed_entry_ids: set[str] | None = None, live_confirmed_open: bool = False,
+) -> tuple[ScenarioRecord, ScenarioRecord]:
+    """Return ``(archived, live)`` — the pointer-linked pair. Pure: writes nothing.
+
+    REFUSALS, each one an invariant rather than a preference:
+      * a LIVE position is never superseded (confirmed status with no close row) — that record is
+        amended, because superseding it would move the thesis out from under an open position;
+      * the incoming record must be the same ticker (a supersession is a reissue, not a swap);
+      * the incoming record must not already point somewhere else;
+      * the archived copy's SEALED TEXT must be byte-identical to the outgoing record's — the
+        whole point is that archiving alters nothing that was recorded.
+    """
+    if outgoing.ticker.upper() != incoming.ticker.upper():
+        raise SupersedeRefusedError(
+            f"ticker mismatch: {outgoing.ticker} -> {incoming.ticker}; a supersession reissues the "
+            "SAME name's record")
+    if live_confirmed_open:
+        raise SupersedeRefusedError(
+            f"{outgoing.ticker} is a LIVE position (verdict {outgoing.verdict.status!r} with no "
+            "close row) — a live position is AMENDED, never superseded: reissuing would move the "
+            "thesis out from under an open position")
+    if incoming.supersedes not in (None, archive_key(outgoing)):
+        raise SupersedeRefusedError(
+            f"incoming record already points at {incoming.supersedes!r}, not "
+            f"{archive_key(outgoing)!r}")
+    key = archive_key(outgoing)
+    archived = outgoing.model_copy(update={"superseded_by": archive_key(incoming)})
+    live = incoming.model_copy(update={"supersedes": key, "superseded_by": None})
+    # the guarantee, asserted rather than documented: archiving edits NOTHING that was recorded
+    if archived.verdict.rationale != outgoing.verdict.rationale:
+        raise SupersedeRefusedError(
+            "archived rationale differs from the outgoing record — refusing")
+    if archived.model_dump(exclude={"superseded_by"}) != outgoing.model_dump(
+            exclude={"superseded_by"}):
+        raise SupersedeRefusedError(
+            "the archived copy differs from the outgoing record beyond its superseded_by pointer")
+    if not live.supersedes or not archived.superseded_by:
+        raise SupersedeRefusedError("both pointers are required — refusing a one-way link")
+    if closed_entry_ids is not None and outgoing.verdict.status == "confirmed" \
+            and not closed_entry_ids:
+        raise SupersedeRefusedError(
+            f"{outgoing.ticker}: confirmed verdict with no close row in the ledger")
+    return archived, live
+
+
+def write_archived(rec: ScenarioRecord, *, root: Path | None = None) -> Path:
+    """Persist an archived record. Same serialization as :func:`write_record` so the two stay
+    diff-able; no lint warning — an archived record is history, not a worklist."""
+    d = archive_dir(root)
+    d.mkdir(parents=True, exist_ok=True)
+    path = d / f"{archive_key(rec)}.json"
+    path.write_text(rec.model_dump_json(indent=2) + "\n")
+    return path

@@ -102,6 +102,10 @@ function verdictPills(c) {
   // and it is what the reader weighs the verdict's confidence against.
   const t = tierBadge(c);
   if (t) out.push(t);
+  // (2026-07-27, operator) The header is the RATING and nothing else. The holding label was
+  // removed because the band already carries it: the ENTRY cell reads "— no position" for a
+  // record that holds nothing, and a closed position states its close inside the verdict chip
+  // itself. Saying it again beside the chip was the same redundancy the caption had.
   return out.join(" ");
 }
 
@@ -122,8 +126,12 @@ function ratioCell(c) {
   // an invented 2 (LOW-11: the card carries no fund constants of its own)
   // #165's two-ratio rule, kept under the masthead layout: the UNDERWRITE ratio lives here
   // (labelled), the AT-ENTRY ratio lives in the Entry cell — both shown, neither misreported.
-  const bar = typeof c.bar === "number"
-    ? `at underwrite · vs the ${escapeHtml(String(c.bar))} : 1 bar` : `at underwrite · bar ${DASH}`;
+  const ceil = (c.currentState || {}).ceiling2to1;
+  const bar = (typeof c.bar === "number"
+    ? `at underwrite · vs the ${escapeHtml(String(c.bar))} : 1 bar` : `at underwrite · bar ${DASH}`)
+    // the price at which the ratio decays to the bar — a qualifier ON this cell, so it belongs in
+    // this cell's sub-line rather than in a block of its own.
+    + (typeof ceil === "number" ? ` · ceiling $${ceil.toFixed(2)}` : "");
   return statCell("Reward : risk", c.ratio.toFixed(2) + " : 1" + badge, bar);
 }
 
@@ -210,11 +218,26 @@ function methodCell(c) {
 // Those moved to the foot, where the card's other metadata already lives.
 function mastheadFoot(c) {
   const v = c.verdict || {};
+  const s = c.currentState || {};
   const bits = [];
+  // (at-a-glance v2, 2026-07-27) VINTAGE + FORWARD DATES live here, at the band's lowest weight.
+  // They were briefly proposed as a 6th stat cell — wrong twice over: `.uw-statband` is
+  // repeat(5,1fr), so a 6th cell drops Method to a ragged second row; and a DATE rendered at the
+  // 16.5px mono of `.uw-stat-val` reads with the authority of a valuation number. This slot
+  // already existed for exactly this class of fact.
+  const ne = s.nextEvidence || {};
+  if (ne.date && ne.date !== "UNKNOWN") {
+    // the event label already NAMES the event ("Next results print"), so prefixing it with
+    // "Next evidence" said Next twice. Strip the label's own "Next " and lead with the event.
+    const what = String(ne.what || "").replace(/^next\s+/i, "").trim();
+    const lead = what ? what.charAt(0).toUpperCase() + what.slice(1) : "Next evidence";
+    bits.push(`${escapeHtml(lead)} ${escapeHtml(ne.date)}`);
+  }
+  if (s.underwriteDate) bits.push(`underwritten ${escapeHtml(s.underwriteDate)}`);
   if (c.gateAdjudication) bits.push(escapeHtml(c.gateAdjudication));
   // only meaningful while no ledger row exists — a logged name says so in the foot instead
   if (!(c.ledger && c.ledger.entryId) && v.status && v.status !== "pending_analyst") {
-    bits.push("scenario verdict — NOT a ledger verdict of record");
+    bits.push("no ledger verdict logged");
   }
   if (v.avoidPriced) {
     bits.push(`⚠ avoid-priced${v.avoidPricedNote ? ` — ${escapeHtml(v.avoidPricedNote)}` : ""}`);
@@ -582,7 +605,12 @@ function rationaleFact(v, { constructionEra = false, index = [] } = {}) {
 // which words were recorded at the verdict and which were added afterwards, and WHEN.
 // CLASSED tags (2026-07-27 on) also carry WHAT KIND of change they record, so a reader can tell a
 // leg change from a system correction without parsing the prose.
-function amendMarks(text) {
+//
+// EXPORTED, and the ONLY marker (2026-07-27). The dossier's own thesis block used to carry a
+// SECOND copy of this regex — which never learned about classed tags, so the same amendment
+// rendered marked on the card and unmarked in the Brief. Two parsers of one string is the bug
+// class the constitution names; there is now one shared helper and both surfaces call it.
+export function amendMarks(text) {
   return escapeHtml(text)
     .replace(/\[amended (\d{4}-\d{2}-\d{2})\s*\((judgment|machine|process)\)\s*:/g,
       '<span class="muted">[amended $1</span> <span class="pill" style="font-size:10px;">$2</span><span class="muted">:</span>')
@@ -590,34 +618,24 @@ function amendMarks(text) {
       '<span class="muted">[amended $1:</span>');
 }
 
-// (record legibility) THE CURRENT-STATE BLOCK — what is true NOW, first on the card.
-function currentStateBlock(c) {
-  const s = c.currentState;
-  if (!s) return "";                       // pre-build cards round-trip without a phantom block
-  const ne = s.nextEvidence || {};
-  const row = (k, v) => v ? `<div><span class="muted">${k}</span> ${v}</div>` : "";
-  const pct = (x) => typeof x === "number" ? `${(x * 100).toFixed(1)}%` : "";
-  const ratio = typeof s.ratio === "number"
-    ? `${s.ratio.toFixed(2)} : 1 <span class="muted">vs the ${s.bar} bar</span> ${
-        s.passFail ? `<b>${escapeHtml(s.passFail)}</b>` : ""}`
-    : "";
-  return `<div class="card uw-now" style="margin-bottom:10px;">
-    <div style="display:flex; gap:8px; align-items:baseline; flex-wrap:wrap;">
-      <span class="muted" style="font-size:11px; text-transform:uppercase; letter-spacing:.04em;">Current state</span>
-      <b>${escapeHtml(s.holdingLabel || s.status || "")}</b>
-      ${s.status ? `<span class="pill">${escapeHtml(String(s.status).replace("_", " "))}</span>` : ""}
-    </div>
-    ${s.statusNote ? `<div style="margin-top:4px;">${escapeHtml(s.statusNote)}</div>` : ""}
-    <div class="foot" style="margin-top:6px; display:grid; gap:2px;">
-      ${row("Reward : risk", ratio)}
-      ${row("at spot", s.spot ? `$${s.spot} <span class="muted">${escapeHtml(s.spotSource || "")}</span>` : "")}
-      ${row("underwritten", s.underwriteDate ? escapeHtml(s.underwriteDate) : "")}
-      ${row("base normal margin", pct(s.baseNormalMargin))}
-      ${row("2:1 ceiling", typeof s.ceiling2to1 === "number" ? `$${s.ceiling2to1.toFixed(2)}` : "")}
-      ${row("next evidence", ne.date
-        ? `${escapeHtml(ne.date)} <span class="muted">${escapeHtml(ne.what || "")} · ${escapeHtml(ne.source || "")}</span>`
-        : "")}
-    </div></div>`;
+// (supersession 2026-07-27) THE LINK BANNERS — an archived record is never hidden and never a
+// dead end. The archived card says what replaced it; the live card says what it replaced. Both
+// clickable, so the chain walks in either direction without leaving the surface.
+function supersessionBanner(c) {
+  const dateOf = (key) => String(key || "").split("-").slice(1).join("-") || String(key || "");
+  if (c.supersededBy) {
+    return `<div class="fact-caveat" style="margin-bottom:10px;">
+      <b>ARCHIVED</b> — superseded by the record of
+      <a href="#/dossier/${encodeURIComponent(String(c.supersededBy).split("-")[0])}"
+        >${escapeHtml(dateOf(c.supersededBy))}</a>.
+      This record is kept intact and sealed; it is not the current view of the name.</div>`;
+  }
+  if (c.supersedes) {
+    return `<div class="foot" style="margin-bottom:8px;">Supersedes the record of
+      <a href="#/dossier/${encodeURIComponent(String(c.supersedes))}"
+        >${escapeHtml(dateOf(c.supersedes))}</a> — archived, sealed, still readable.</div>`;
+  }
+  return "";
 }
 
 // A record carrying amendment tags written BEFORE the class gate (2026-07-27) mixes investment
@@ -707,7 +725,7 @@ export function uwCard(c, { ticker = true, mark = null } = {}) {
   // other audit blocks it stops interrupting and starts belonging.
   const body = () => `
     ${masthead(c, ticker)}
-    ${currentStateBlock(c)}
+    ${supersessionBanner(c)}
     ${legsTable(c)}
     ${survivalPanel(c)}
     ${impliedOdds(c, mark)}
@@ -737,8 +755,11 @@ export function uwCardParts(c, { mark = null, detailExtra = "", rationale = true
   const v = c.verdict || {};
   // `rationale: false` — the host lifted the analyst's rationale into its opener card (the
   // narrative slot), so the detail must not render it a second time.
+  // (2026-07-27) the supersession banner does NOT render here. Lineage is filing-cabinet
+  // information — which record this one replaced — not decision information, so on the dossier it
+  // belongs in the Appendix's "Record & reproduce" beside the analyst, date and ledger id. The
+  // standalone card KEEPS it (uwCard): an archived record's page has no appendix to carry it.
   const detail = () => `
-    ${currentStateBlock(c)}
     ${legsTable(c)}
     ${survivalPanel(c)}
     ${impliedOdds(c, mark)}

@@ -539,11 +539,13 @@ def test_uw_headline_state_machine_never_invents_a_target() -> None:
 import {{ readFileSync }} from "node:fs";
 const {{ uwCard }} = await import("{uw}");
 const rd = (p) => JSON.parse(readFileSync(p));
-// SMPL, not IT: IT was this fixture until it was EXITED on 2026-07-21 and moved to watch with a
-// base below spot; SMPL followed on 2026-07-24 (input-staleness close), leaving NO live card at
-// "confirmed". A living record's disposition is not a fixture — the confirmed state is restored
-// on a COPY (same pattern as confirmedButPriced below); the base-above-spot shape is SMPL's own.
-const it = rd("frontend/scenarios/SMPL.json");      // base ABOVE spot; ledger BUY row present
+// The ARCHIVED SMPL record, not the live one (2026-07-27). Fixture history, because it is the
+// argument: IT held this role until it was exited; live SMPL held it until the input-staleness
+// close; then live SMPL was REISSUED as a fresh watch record with NO entry price, which is
+// correct for a record that opens no position and useless as a "has an entry" fixture.
+// An ARCHIVED record is frozen by construction — it cannot drift out from under the pin the way
+// three living records already have.
+const it = rd("frontend/scenarios/SMPL-2026-07-21.json");  // base ABOVE spot; entry + ledger row
 it.verdict.status = "confirmed";                    // synthetic: the state, not the record
 const wern = rd("frontend/scenarios/WERN.json");    // watch, base BELOW spot (priced)
 // synthetic: the same record still awaiting the analyst — the machine's only reachable state
