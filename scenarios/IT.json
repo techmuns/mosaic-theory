@@ -1,5 +1,5 @@
 {
-  "schema_version": "1.2",
+  "schema_version": "1.3",
   "ticker": "IT",
   "recipe_id": "R1_midcycle_margin_evebitda",
   "recipe_desc": "Mid-cycle underwrite: normalized operating margin on a mid-cycle revenue base, valued at an exit EV/LTM-EBITDA multiple; reward/risk measured at SPOT.",
@@ -95,16 +95,20 @@
           "source": "committed dossier financial_summary.annual (CIQ; E cols = consensus Trends 'Current')"
         },
         {
-          "label": "consensus FY26E revenue (base)",
+          "label": "consensus FY26E revenue",
           "value": 6431.0,
           "unit": "$M",
-          "source": "committed dossier financial_summary.annual (CIQ; E cols = consensus Trends 'Current')"
+          "source": "committed dossier financial_summary.annual (CIQ; E cols = consensus Trends 'Current')",
+          "role": "consensus",
+          "leg": "base"
         },
         {
-          "label": "consensus FY27E revenue (bull)",
+          "label": "consensus FY27E revenue",
           "value": 6715.0,
           "unit": "$M",
-          "source": "committed dossier financial_summary.annual (CIQ; E cols = consensus Trends 'Current')"
+          "source": "committed dossier financial_summary.annual (CIQ; E cols = consensus Trends 'Current')",
+          "role": "consensus",
+          "leg": "bull"
         },
         {
           "label": "Q1-2026 revenue growth, excluding the divested Digital Markets business (reported basis; -1.4% FX-neutral; total revenue -1.5%)",
@@ -120,16 +124,19 @@
       "method": "Operating-margin legs are set off the clean reported history, with FY2025 adjusted for the quantified $150.0M Digital Markets goodwill impairment — not off the raw full-history screening median, which spans the pre-2021 regime while the last five years ran 18-21%. Bear holds above the FY2020 COVID trough on subscription cost flex; base is the seven-year clean median; bull sits near the FY2023 best. [restated for external readability 2026-07-21; substance unchanged]",
       "references": [
         {
-          "label": "committed anchor median (pre-2021-dragged)",
+          "label": "screening median (pre-2021-dragged)",
           "value": 14.13,
           "unit": "%",
-          "source": "committed anchor block margin.value"
+          "source": "committed anchor block margin.value",
+          "role": "median"
         },
         {
-          "label": "7yr clean median (FY2025 adjusted) — base",
+          "label": "7yr clean median (FY2025 adjusted)",
           "value": 18.45,
           "unit": "%",
-          "source": "EDGAR companyfacts OperatingIncomeLoss / RevenueFromContractWithCustomerExcludingAssessedTax"
+          "source": "EDGAR companyfacts OperatingIncomeLoss / RevenueFromContractWithCustomerExcludingAssessedTax",
+          "role": "median",
+          "leg": "base"
         },
         {
           "label": "5yr clean median (FY2025 adjusted)",
@@ -138,16 +145,20 @@
           "source": "EDGAR companyfacts OperatingIncomeLoss / RevenueFromContractWithCustomerExcludingAssessedTax"
         },
         {
-          "label": "FY2020 COVID trough — bear floor",
+          "label": "FY2020 COVID trough",
           "value": 11.96,
           "unit": "%",
-          "source": "EDGAR companyfacts OperatingIncomeLoss / RevenueFromContractWithCustomerExcludingAssessedTax"
+          "source": "EDGAR companyfacts OperatingIncomeLoss / RevenueFromContractWithCustomerExcludingAssessedTax",
+          "role": "trough",
+          "leg": "bear"
         },
         {
-          "label": "FY2023 best clean year — bull",
+          "label": "FY2023 best clean year",
           "value": 20.94,
           "unit": "%",
-          "source": "EDGAR companyfacts OperatingIncomeLoss / RevenueFromContractWithCustomerExcludingAssessedTax"
+          "source": "EDGAR companyfacts OperatingIncomeLoss / RevenueFromContractWithCustomerExcludingAssessedTax",
+          "role": "peak",
+          "leg": "bull"
         },
         {
           "label": "FY2025 adjusted ex $150.0M impairment",
@@ -163,22 +174,27 @@
       "method": "Multiple legs sit inside the company's own EV/EBITDA trading range, deliberately below the median at base: a decelerating top line does not re-earn the growth-era multiple. Bear is set near the low end of the range; bull moves toward but stays under the median. [restated for external readability 2026-07-21; substance unchanged]",
       "references": [
         {
-          "label": "own-history band low — bear",
+          "label": "this company's trading-range low",
           "value": 7.46,
           "unit": "x",
-          "source": "committed dossier valuation.own_history (CIQ Financials→Multiples 'TEV/LTM EBITDA' Close, 38 closes, 9.3y span, as-of 2026-07-17, sha 66405c3bc0)"
+          "source": "committed dossier valuation.own_history (CIQ Financials→Multiples 'TEV/LTM EBITDA' Close, 38 closes, 9.3y span, as-of 2026-07-17, sha 66405c3bc0)",
+          "role": "band_low",
+          "leg": "bear"
         },
         {
-          "label": "own-history median (base set below it)",
+          "label": "this company's trailing median",
           "value": 23.38,
           "unit": "x",
-          "source": "committed dossier valuation.own_history (CIQ Financials→Multiples 'TEV/LTM EBITDA' Close, 38 closes, 9.3y span, as-of 2026-07-17, sha 66405c3bc0)"
+          "source": "committed dossier valuation.own_history (CIQ Financials→Multiples 'TEV/LTM EBITDA' Close, 38 closes, 9.3y span, as-of 2026-07-17, sha 66405c3bc0)",
+          "role": "median",
+          "leg": "base"
         },
         {
-          "label": "own-history 75th percentile",
+          "label": "this company's trailing 75th percentile",
           "value": 26.82,
           "unit": "x",
-          "source": "committed dossier valuation.own_history (CIQ Financials→Multiples 'TEV/LTM EBITDA' Close, 38 closes, 9.3y span, as-of 2026-07-17, sha 66405c3bc0)"
+          "source": "committed dossier valuation.own_history (CIQ Financials→Multiples 'TEV/LTM EBITDA' Close, 38 closes, 9.3y span, as-of 2026-07-17, sha 66405c3bc0)",
+          "role": "percentile"
         },
         {
           "label": "current multiple (3rd pctile)",

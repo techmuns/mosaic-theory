@@ -1,5 +1,5 @@
 {
-  "schema_version": "1.2",
+  "schema_version": "1.3",
   "ticker": "MVST",
   "recipe_id": "R2_terminal_margin",
   "recipe_desc": "Terminal-margin: value the business in the year it reaches a normal operating margin, then discount that value back at the house waiting charge.",
@@ -182,31 +182,41 @@
           "label": "closest economic analogue, enterprise value to EBITDA",
           "value": 7.9,
           "unit": "x",
-          "source": "CIQ Comparable Analysis (BorgWarner, 13.9% EBITDA margin, levered)"
+          "source": "CIQ Comparable Analysis (BorgWarner, 13.9% EBITDA margin, levered)",
+          "role": "analogue",
+          "leg": "base"
         },
         {
-          "label": "scale leader, enterprise value to EBITDA - NOT a reference for us",
+          "label": "scale leader, enterprise value to EBITDA",
           "value": 14.5,
           "unit": "x",
-          "source": "CIQ Comparable Analysis (CATL, 23.8% margin, large net cash)"
+          "source": "CIQ Comparable Analysis (CATL, 23.8% margin, large net cash)",
+          "role": "peer",
+          "excluded": true,
+          "excluded_reason": "the scale leader's multiple belongs to a different business model (see method)"
         },
         {
           "label": "peer median, heterogeneous nine-name set",
           "value": 14.5,
           "unit": "x",
-          "source": "CIQ Comparable Analysis (set spans $34M to $275bn; several members not meaningful)"
+          "source": "CIQ Comparable Analysis (set spans $34M to $275bn; several members not meaningful)",
+          "role": "peer_median"
         },
         {
-          "label": "this company's trailing median - unusable, six closes over 1.3 years",
+          "label": "this company's trailing median",
           "value": 19.3,
           "unit": "x",
-          "source": "CIQ Financials->Multiples"
+          "source": "CIQ Financials->Multiples",
+          "role": "median",
+          "excluded": true,
+          "excluded_reason": "six closes over 1.3 years — too short a series to stand on"
         },
         {
           "label": "this company's current reading - below its own trailing low",
           "value": 9.0,
           "unit": "x",
-          "source": "CIQ Financials->Multiples (low-confidence range read)"
+          "source": "CIQ Financials->Multiples (low-confidence range read)",
+          "role": "current"
         }
       ],
       "ratified_by": null,

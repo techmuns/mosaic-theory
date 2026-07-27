@@ -1,5 +1,5 @@
 {
-  "schema_version": "1.2",
+  "schema_version": "1.3",
   "ticker": "EPAM",
   "recipe_id": "R1_midcycle_margin_evebitda",
   "recipe_desc": "Mid-cycle underwrite: normalized operating margin on a mid-cycle revenue base, valued at an exit EV/LTM-EBITDA multiple; reward/risk measured at SPOT.",
@@ -126,16 +126,22 @@
           "source": "EDGAR companyfacts — same basis, FY2022 (573 EBIT / 4,825 revenue); GAAP carries the war-year charges, so a cleaned FY22 would sit higher"
         },
         {
-          "label": "pre-war median operating margin (FY2016-2021) — DEAD REGIME",
+          "label": "pre-war median operating margin (FY2016-2021)",
           "value": 13.27,
           "unit": "%",
-          "source": "EDGAR companyfacts — same basis, pre-2022 window; shown for reference ONLY (the pre-invasion cost structure no longer exists)"
+          "source": "EDGAR companyfacts — same basis, pre-2022 window; shown for reference ONLY (the pre-invasion cost structure no longer exists)",
+          "role": "median",
+          "excluded": true,
+          "excluded_reason": "the pre-war margin structure no longer obtains"
         },
         {
-          "label": "10-FY blended median (FY2016-2025) — STRADDLES-BREAK, not used",
+          "label": "10-FY blended median (FY2016-2025)",
           "value": 11.9,
           "unit": "%",
-          "source": "EDGAR companyfacts — same basis, 10 FY; equals the committed anchor's margin, which averages across the 2022 regime break and describes neither regime"
+          "source": "EDGAR companyfacts — same basis, 10 FY; equals the committed anchor's margin, which averages across the 2022 regime break and describes neither regime",
+          "role": "median",
+          "excluded": true,
+          "excluded_reason": "blends across the structural break"
         }
       ],
       "ratified_by": null,
@@ -154,7 +160,8 @@
           "label": "post-2022 band median",
           "value": 15.16,
           "unit": "x",
-          "source": "committed valuation.own_history series, 2022Q1 onward (n=18) — refreshed band sha 9614730c9e"
+          "source": "committed valuation.own_history series, 2022Q1 onward (n=18) — refreshed band sha 9614730c9e",
+          "role": "median"
         },
         {
           "label": "post-2022 band 75th percentile",

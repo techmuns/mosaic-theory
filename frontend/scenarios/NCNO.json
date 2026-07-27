@@ -106,10 +106,13 @@
      "source": "CIQ Comparable Analysis (Q2 Holdings, pre-maturity)"
     },
     {
-     "label": "this company's trailing median, ten closes over 2.3 years - unusable",
+     "label": "this company's trailing median, ten closes over 2.3 years",
      "value": 82.9,
      "unit": "x",
-     "source": "CIQ Financials->Multiples (near-zero denominator)"
+     "source": "CIQ Financials->Multiples (near-zero denominator)",
+     "role": "median",
+     "excluded": true,
+     "excludedReason": "ten closes over 2.3 years \u2014 too short a series to stand on"
     },
     {
      "label": "mature vertical-software peer, enterprise value to revenue",

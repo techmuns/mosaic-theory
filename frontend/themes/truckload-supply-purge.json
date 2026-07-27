@@ -560,10 +560,11 @@
       "method": "Modelled off the 7.45% full-history screening median: base deducts ~125bps for the structurally higher insurance run-rate and ~50bps for the Dedicated mix shift capping One-Way upside; bear is a slight lift off the ~0% FY2025 underlying floor; bull re-rates toward but below the FY2021 consolidated peak. [restated for external readability 2026-07-21; substance unchanged]",
       "references": [
        {
-        "label": "own-history median operating margin, FY2008-2025 (the anchor)",
+        "label": "this company's median operating margin, FY2008-2025",
         "value": 7.45,
         "unit": "%",
-        "source": "EDGAR companyfacts OperatingIncomeLoss / Revenues, 18 FYs \u2014 midcycle margin_anchor median (#150 run 2026-07-19; verified 2026-07-20 vs EDGAR companyfacts)"
+        "source": "EDGAR companyfacts OperatingIncomeLoss / Revenues, 18 FYs \u2014 midcycle margin_anchor median (#150 run 2026-07-19; verified 2026-07-20 vs EDGAR companyfacts)",
+        "role": "median"
        },
        {
         "label": "peer-band median operating margin (MRTN/HTLD/KNX/SNDR/ARCB/LSTR)",
@@ -620,22 +621,25 @@
       "method": "Chosen against the company's own TEV/LTM-EBITDA trading range: bear between the trough and the median, base at roughly the median, bull toward the upper quartile on a genuine cycle turn. [restated for external readability 2026-07-21; substance unchanged]",
       "references": [
        {
-        "label": "own-history TEV/LTM-EBITDA trough (43 quarterly closes)",
+        "label": "this company's TEV/LTM-EBITDA trough (43 quarterly closes)",
         "value": 4.56,
         "unit": "x",
-        "source": "CIQ Financials\u2192Multiples 'TEV/LTM EBITDA' Close \u2014 derived band statistic (#150 run 2026-07-19; series read in place, never committed)"
+        "source": "CIQ Financials\u2192Multiples 'TEV/LTM EBITDA' Close \u2014 derived band statistic (#150 run 2026-07-19; series read in place, never committed)",
+        "role": "trough"
        },
        {
-        "label": "own-history TEV/LTM-EBITDA median",
+        "label": "this company's TEV/LTM-EBITDA median",
         "value": 6.56,
         "unit": "x",
-        "source": "same series \u2014 derived band statistic (#150 run 2026-07-19)"
+        "source": "same series \u2014 derived band statistic (#150 run 2026-07-19)",
+        "role": "median"
        },
        {
-        "label": "own-history TEV/LTM-EBITDA upper quartile",
+        "label": "this company's TEV/LTM-EBITDA upper quartile",
         "value": 6.97,
         "unit": "x",
-        "source": "same series \u2014 derived band statistic (#150 run 2026-07-19)"
+        "source": "same series \u2014 derived band statistic (#150 run 2026-07-19)",
+        "role": "percentile"
        }
       ]
      }

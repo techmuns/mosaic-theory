@@ -366,8 +366,8 @@ Legs are set off the recorded consensus path rather than round numbers: base is 
 | --- | ---: |
 | FY2025 reported revenue | $6,497M [45] |
 | LTM revenue | $6,474.137M [45] |
-| consensus FY26E revenue (base) | $6,431M [45] |
-| consensus FY27E revenue (bull) | $6,715M [45] |
+| consensus FY26E revenue `base` | $6,431M [45] |
+| consensus FY27E revenue `bull` | $6,715M [45] |
 | Q1-2026 revenue growth, excluding the divested Digital Markets business (reported basis; -1.4% FX-neutral; total revenue -1.5%) | 1.6% [46] |
 
 ### Margin · ratified 2026-07-21
@@ -376,11 +376,11 @@ Operating-margin legs are set off the clean reported history, with FY2025 adjust
 
 | reference | value |
 | --- | ---: |
-| committed anchor median (pre-2021-dragged) | 14.13% [47] |
-| 7yr clean median (FY2025 adjusted) — base | 18.45% [48] |
+| screening median (pre-2021-dragged) | 14.13% [47] |
+| 7yr clean median (FY2025 adjusted) `base` | 18.45% [48] |
 | 5yr clean median (FY2025 adjusted) | 19.34% [48] |
-| FY2020 COVID trough — bear floor | 11.96% [48] |
-| FY2023 best clean year — bull | 20.94% [48] |
+| FY2020 COVID trough `bear` | 11.96% [48] |
+| FY2023 best clean year `bull` | 20.94% [48] |
 | FY2025 adjusted ex $150.0M impairment | 18.1% [49] |
 
 ### Multiple · ratified 2026-07-21
@@ -389,9 +389,9 @@ Multiple legs sit inside the company's own EV/EBITDA trading range, deliberately
 
 | reference | value |
 | --- | ---: |
-| own-history band low — bear | 7.46x [50] |
-| own-history median (base set below it) | 23.38x [50] |
-| own-history 75th percentile | 26.82x [50] |
+| this company's trading-range low `bear` | 7.46x [50] |
+| this company's trailing median `base` | 23.38x [50] |
+| this company's trailing 75th percentile | 26.82x [50] |
 | current multiple (3rd pctile) | 7.97x [50] |
 
 

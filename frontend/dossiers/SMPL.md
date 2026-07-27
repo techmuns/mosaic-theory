@@ -382,7 +382,7 @@ Legs are set off the consensus path and the trailing-twelve-month base rather th
 | --- | ---: |
 | FY2025 reported revenue | $1,450.9M [47] |
 | LTM revenue | $1,416.208M [48] |
-| consensus FY26E revenue (base) | $1,334M [49] |
+| consensus FY26E revenue `base` | $1,334M [49] |
 
 ### Margin · ratified 2026-07-27
 
@@ -390,10 +390,10 @@ The normal margin is set between the seven-year clean median and the trailing cl
 
 | reference | value |
 | --- | ---: |
-| committed anchor median (naive, 8 FY) | 15.45% [50] |
-| 7yr clean median (FY2025 adjusted) — base | 15.51% [51] |
-| FY2020 worst clean year — bear | 9.58% [52] |
-| FY2022 best clean year — bull ceiling | 17.35% [53] |
+| screening median (naive, 8 FY) | 15.45% [50] |
+| 7yr clean median (FY2025 adjusted) `base` | 15.51% [51] |
+| FY2020 worst clean year `bear` | 9.58% [52] |
+| FY2022 best clean year `bull` | 17.35% [53] |
 | FY2025 adjusted ex $60.9M impairment | 15.01% [54] |
 
 ### Multiple · ratified 2026-07-27
@@ -402,12 +402,15 @@ Multiple legs sit inside the company's own EV/EBITDA trading range, deliberately
 
 | reference | value |
 | --- | ---: |
-| own-history band low — bear | 6.11x [55] |
-| own-history 25th percentile | 15.2x [55] |
-| own-history median (base set below it) | 17.85x [55] |
-| own-history 75th percentile | 20.88x [55] |
+| this company's trading-range low `bear` | 6.11x [55] |
+| this company's trailing 25th percentile | 15.2x [55] |
+| this company's trailing median `base` | 17.85x [55] |
+| this company's trailing 75th percentile | 20.88x [55] |
 | current multiple (0th pctile) | 5.65x [55] |
-| entry-boundary cells: 1,100 × 8% × 6.0x → $3.54; 1,050 × 7% × 6.0x → $2.62 (from the sealed entry rationale, preserved in the ledger payload). At the verification price ($10.53, 2026-07-22 close) both clear on the entry-vintage 15.5% normal (≈2.34 / ≈2.07); on the re-set 14% normal they read ≈1.96 / ≈1.73 — below the bar. The boundary tightened with the cut: the 2:1 line now sits between the recorded 10% bear and these stress cells. | 1.96:1 (cell A at the re-set 14% normal; cell B ≈1.73) [56] |
+| entry-boundary cell A (1,100 × 8% × 6.0x) | 1.96:1 [56] |
+| entry-boundary cell B (1,050 × 7% × 6.0x) | 1.73:1 [56] |
+
+_2026-07-26 — entry-boundary cells: 1,100 × 8% × 6.0x → $3.54; 1,050 × 7% × 6.0x → $2.62 (from the sealed entry rationale, preserved in the ledger payload). At the verification price ($10.53, 2026-07-22 close) both clear on the entry-vintage 15.5% normal (≈2.34 / ≈2.07); on the re-set 14% normal they read ≈1.96 / ≈1.73 — below the bar. The boundary tightened with the cut: the 2:1 line now sits between the recorded 10% bear and these stress cells._ [56]
 
 
 ## Financial statements (actuals + consensus estimates) — export date unverified (data ≥ 2026-07-21)
@@ -553,7 +556,7 @@ _QoQ/YoY same-basis only; (R) = Reclassified_
 [53] `EDGAR companyfacts OperatingIncomeLoss / RevenueFromContractWithCustomerExcludingAssessedTax (FY2022)`
 [54] `EDGAR companyfacts OperatingIncomeLoss / RevenueFromContractWithCustomerExcludingAssessedTax (FY2025) + 10-K 0001702744-25-000046 (FY2025, Note 5 Goodwill and Intangibles)`
 [55] `committed dossier valuation.own_history (CIQ Financials→Multiples 'TEV/LTM EBITDA' Close, 35 closes, 8.55y span, as-of 2026-07-17, sha 7bd83a1103)`
-[56] `sealed entry rationale, preserved in the ledger payload (V-SMPL-screen2-20260706); ratios recomputed 2026-07-26 at $10.53`
+[56] `entry rationale cells preserved in the ledger payload; re-verified 2026-07-26 at the 2026-07-22 close ($10.53)`
 [57] `CIQ Financials→Income Statement (quarterly, full exported history)`
 [58] `CIQ Financials→Balance Sheet (quarterly, FY26)`
 [59] `CIQ Financials→Balance Sheet vs Comparable Analysis→Implied Valuation`
