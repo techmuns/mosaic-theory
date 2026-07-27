@@ -369,3 +369,34 @@ def test_lineage_sits_in_record_and_reproduce_not_above_the_numbers() -> None:
     body = body[:body.index("`;")]
     assert "supersessionBanner" in body, "the standalone card must keep it"
     assert "supersedes <a href=" in doss, "the Appendix must carry the lineage, linked"
+
+
+def test_the_logged_verdict_panel_states_a_close() -> None:
+    """THE FIFTH SURFACE. Four surfaces were made close-aware when the ledger row was bound to the
+    record that justified it; this one was missed, and SMPL's exited position still read as a live
+    "BUY · unresolved" in the Appendix. `resolved` stays untouched on purpose — a call is scored at
+    its horizon whatever happened to the position — so the close is stated as an ADDITIVE fact,
+    exactly as decision-log.js already states it."""
+    doss = (ROOT / "frontend" / "views" / "shared" / "dossier.js").read_text()
+    fn = doss[doss.index("function loggedVerdict("):]
+    fn = fn[:fn.index("\n}\n")]
+    assert "v.closed" in fn, "the panel must read the close attached by the loader"
+    assert "closedChip" in fn and "realizedReturn" in fn, "close date, price and realized return"
+    assert "Close reason" in fn, "why it was exited is the point of the row"
+    # a close must NOT flip `resolved` — the call is still scored at its horizon
+    assert 'v.resolved ? "resolved"' in fn, "horizon scoring stands after an exit"
+
+
+def test_the_record_only_page_binds_its_ledger_row_by_id_not_by_route_key() -> None:
+    """On the record-only path the route key IS the record key (`SMPL-2026-07-21`), so a
+    `e.ticker === ticker` lookup matched nothing: the archived page printed "no verdict logged yet
+    for SMPL-2026-07-21" three inches under a masthead correctly reading "BUY — closed 2026-07-22",
+    and offered a CLI recipe built on a fabricated candidate id. build.py already decided which
+    record owns the row; this side takes that answer rather than re-deriving it."""
+    doss = (ROOT / "frontend" / "views" / "shared" / "dossier.js").read_text()
+    seg = doss[doss.index("if (card) {"):]
+    seg = seg[:seg.index("${assembleHelp()}")]
+    assert "e.ticker === ticker" not in seg, "the route key is not a ticker on this path"
+    assert "card.ledger.entryId" in seg, "bind by the id build.py resolved"
+    assert "card.ticker || ticker" in seg and "loggedVerdict(verdict, tk," in seg, (
+        "the CLI recipe must use the real ticker, never the record key")

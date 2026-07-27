@@ -78,7 +78,17 @@ export async function render(root, params, { item, frame }) {
     // record under explicit typing (an underwrite is NOT assembled facts, and its scenario
     // verdict is NOT a ledger verdict of record). Neither artifact → the plain notice, unchanged.
     if (card) {
-      const verdict = led.entries.find((e) => e.ticker === ticker) || null;
+      // BIND VIA THE CARD, NEVER BY `ticker` (2026-07-27). On this path `ticker` is the ROUTE key,
+      // which for an archived record is `SMPL-2026-07-21` — no ledger row ever matches it, so the
+      // archived page said "none yet" three inches under a masthead correctly reading "BUY —
+      // closed 2026-07-22", and offered a CLI recipe with a fabricated candidate id. build.py's
+      // _ledger_for_record already decided WHICH record a ledger row belongs to; re-deriving that
+      // here would be a second parser of the same question. Take its answer and look the full
+      // entry up by id. Real ticker for the recipe, always.
+      const tk = card.ticker || ticker;
+      const verdict = card.ledger && card.ledger.entryId
+        ? (led.entries.find((e) => e.entryId === card.ledger.entryId) || null)
+        : null;
       root.innerHTML = frame(item, { crumbExtra: crumb, bare: true, bodyHtml: `
         <div class="header-block">
           <h1 class="page-h"><span class="mono">${escapeHtml(ticker)}</span> · first analysis</h1>
@@ -87,7 +97,7 @@ export async function render(root, params, { item, frame }) {
         <div class="subtitle muted" style="margin:-6px 0 12px;">This is the analyst's scenario underwrite —
           not assembled facts. The full dossier is built on a re-underwrite trigger.</div>
         ${uwCard(card, { ticker: false, mark })}
-        ${loggedVerdict(verdict, ticker, card.underwriteDate)}
+        ${loggedVerdict(verdict, tk, card.underwriteDate)}
         ${assembleHelp()}` });
       return;
     }
@@ -3198,12 +3208,27 @@ function loggedVerdict(v, ticker, refDate, { bare = false } = {}) {
       <div class="subtitle muted" style="margin-top:8px;">Append-only — the entry price is frozen from the screen's as-of date (<span class="mono">${escapeHtml(String(refDate || DASH))}</span>); a logged verdict cannot be edited or deleted.</div></details>`;
   }
   const isBuy = isBuyVerdict(v.verdict);
+  // CLOSE-AWARE (2026-07-27) — the FIFTH surface of the same defect. The other four were fixed
+  // when the ledger row was bound to the record that justified it; this one still read a closed
+  // position as a live "BUY · unresolved". Same rule as decision-log.js: the verdict word and
+  // `resolved` are untouched (a call is scored at its horizon whatever happened to the position,
+  // so exits never launder the track record) — the close is stated as an additive fact.
+  const cl = v.closed;
+  const closedChip = cl
+    ? `<span class="pill unresolved">closed ${fmtDate(cl.exitPriceAsOf)}${
+        cl.exitPrice != null ? ` @ ${fmtPrice(cl.exitPrice)}` : ""}${
+        cl.realizedReturn != null
+          ? ` · ${cl.realizedReturn >= 0 ? "+" : "−"}${Math.abs(cl.realizedReturn * 100).toFixed(2)}%`
+          : ""}</span>`
+    : "";
   const body = `<div class="logged-verdict">
       <div style="display:flex; gap:12px; align-items:baseline; flex-wrap:wrap;">
-        <span class="pill ${isBuy ? "buy" : "avoid"}">${escapeHtml(v.verdict)}</span>
+        <span class="pill ${cl ? "unresolved" : isBuy ? "buy" : "avoid"}">${escapeHtml(v.verdict)}</span>
+        ${closedChip}
         <span class="pill ${v.resolved ? "live" : "unresolved"}">${v.resolved ? "resolved" : "unresolved · " + (v.daysToHorizon == null ? DASH : Math.max(0, v.daysToHorizon) + "d to horizon")}</span>
         <span class="muted" style="font-size:12px; margin-left:auto;">decided ${fmtDate(v.decidedAt)}</span>
       </div>
+      ${cl && cl.reason ? `<div class="muted" style="font-size:11.5px; margin-top:6px;">Close reason — ${escapeHtml(cl.reason)}</div>` : ""}
       <div style="display:flex; gap:22px; flex-wrap:wrap; margin-top:10px; font-size:13px;">
         <div><span class="muted">Frozen entry</span> <span class="mono" style="font-weight:600;">${fmtPrice(v.entryPrice)}</span> <span class="muted">@ ${fmtDate(v.entryPriceAsOf)}</span></div>
         <div><span class="muted">Horizon</span> <span class="mono">${v.horizonDays}d</span> → ${fmtDate(v.horizonDate)}</div>
