@@ -339,7 +339,7 @@ Legs are set off the recorded consensus path rather than round numbers: base is 
 | reference | value | source |
 | --- | ---: | --- |
 | FY2025 reported revenue | $6,497M | `committed dossier financial_summary.annual (CIQ; E cols = consensus Trends 'Current')` |
-| LTM revenue | $6,474.14M | `committed dossier financial_summary.annual (CIQ; E cols = consensus Trends 'Current')` |
+| LTM revenue | $6,474.137M | `committed dossier financial_summary.annual (CIQ; E cols = consensus Trends 'Current')` |
 | consensus FY26E revenue (base) | $6,431M | `committed dossier financial_summary.annual (CIQ; E cols = consensus Trends 'Current')` |
 | consensus FY27E revenue (bull) | $6,715M | `committed dossier financial_summary.annual (CIQ; E cols = consensus Trends 'Current')` |
 | Q1-2026 revenue growth, excluding the divested Digital Markets business (reported basis; -1.4% FX-neutral; total revenue -1.5%) | 1.6% | `8-K EX-99.1 acc 0000749251-26-000165` |

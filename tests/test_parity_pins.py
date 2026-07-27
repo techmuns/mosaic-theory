@@ -197,3 +197,60 @@ def test_committed_web_card_carries_the_same_dated_triggers_as_its_record() -> N
 
 if __name__ == "__main__":
     raise SystemExit(pytest.main([__file__, "-q"]))
+
+
+def test_ref_value_py_js_parity() -> None:
+    """(2026-07-27) `_ref_value` (render.py) and `refValue` (dossier.js) format the SAME
+    source-bound reference point on two surfaces, so they must agree CHARACTER FOR CHARACTER.
+
+    They did not. The first cut used py `,.6g` against a bare js `toLocaleString`, and three
+    COMMITTED references already rendered differently in the PDF and on the web ($1,416.21M vs
+    $1,416.208M). Two traps the fix must keep closed, both previously reachable: `g` flips to
+    SCIENTIFIC at 1e6 ("$1.23457e+06M" in a PDF), and toLocaleString's default 3-fraction-digit
+    cap silently rounds a non-zero source-bound value to "$0M" — a fabricated number.
+
+    Pins EVERY reference value in EVERY committed record, plus the pathological set."""
+    import json
+    import shutil
+    import subprocess
+
+    from vinci.dossier.render import _ref_value
+
+    cases: list[tuple[float, str]] = [
+        (1e6, "$M"), (1234567.89, "$M"), (123456.7, "$M"),   # scientific-notation trap
+        (0.000123, "$M"), (1e-7, "$M"),                       # round-to-zero trap
+        (0.0, "$M"), (-45.5, "$M"), (12.3456789, "%"), (6.11, "x"), (100.0, "%"),
+    ]
+    for rec in sorted((ROOT / "scenarios").glob("*.json")):
+        if rec.stem.startswith("_"):
+            continue
+        for axis in (json.loads(rec.read_text()).get("assumptions") or {}).values():
+            cases += [(r["value"], r["unit"]) for r in (axis.get("references") or [])]
+    assert len(cases) > 50, f"expected the committed reference corpus, got {len(cases)}"
+
+    if not shutil.which("node"):
+        pytest.skip("node unavailable")
+    dj = (ROOT / "frontend" / "views" / "shared" / "dossier.js").resolve().as_uri()
+    driver = """
+const handler = { get: () => stub, apply: () => stub, construct: () => ({}) };
+const stub = new Proxy(function(){}, handler);
+for (const g of ["window","document","location"]) { try { globalThis[g] = stub; } catch {} }
+const mod = await import("__URI__");
+// refValue is module-private; reach it through the rendered surface instead by re-declaring the
+// same source. Keeping ONE copy honest is the point of this pin, so read it from the file.
+import { readFileSync } from "node:fs";
+const src = readFileSync("frontend/views/shared/dossier.js", "utf8");
+const body = src.split("function refValue(value, unit) {")[1].split("\\n}")[0];
+const refValue = new Function("value", "unit", body);
+console.log(JSON.stringify(__CASES__.map(([v, u]) => refValue(v, u))));
+""".replace("__URI__", dj).replace("__CASES__", json.dumps([[v, u] for v, u in cases]))
+    out = subprocess.run(["node", "--input-type=module", "-e", driver],
+                         capture_output=True, text=True, check=True, cwd=ROOT)
+    js = json.loads(out.stdout)
+    py = [_ref_value(v, u) for v, u in cases]
+    bad = [(v, u, p, j) for (v, u), p, j in zip(cases, py, js, strict=True) if p != j]
+    assert not bad, ("py/js reference formatting diverges — the SAME number renders differently in "
+                     f"the PDF and on the web: {bad[:6]}")
+    # and the two traps stay closed
+    assert "e+" not in "".join(py), f"scientific notation reached a rendered value: {py}"
+    assert _ref_value(0.000123, "$M") != "$0M", "a non-zero reference rounded away to zero"

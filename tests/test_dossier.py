@@ -9225,7 +9225,7 @@ def test_positioning_lands_in_the_appendix_in_both_twins_e2e() -> None:
             assert "Insider activity" not in before_next, f"{t}: insider is back in the street"
 
     if not shutil.which("node"):
-        return
+        pytest.skip("node unavailable")
     dj = Path("frontend/views/shared/dossier.js").resolve().as_uri()
     t = names[0]
     driver = f"""
@@ -9371,10 +9371,10 @@ def test_assumption_methodology_renders_in_both_twins_e2e() -> None:
                 assert r.source in appendix, f"{t}: reference {r.label!r} lost its source"
 
     if not shutil.which("node"):
-        return
+        pytest.skip("node unavailable")          # skip, never a silent no-op
     dj = Path("frontend/views/shared/dossier.js").resolve().as_uri()
-    t = names[0]
-    driver = f"""
+    for t in names:                              # EVERY record, not just the first
+        driver = f"""
 const handler = {{ get: () => stub, apply: () => stub, construct: () => ({{}}) }};
 const stub = new Proxy(function(){{}}, handler);
 for (const g of ["window","document","location"]) {{ try {{ globalThis[g] = stub; }} catch {{}} }}
@@ -9395,9 +9395,10 @@ console.log(JSON.stringify({{
     .map((r) => ap.includes(r.source))),
 }}));
 """
-    out = subprocess.run(["node", "--input-type=module", "-e", driver],
-                         capture_output=True, text=True, check=True)
-    web = json.loads(out.stdout)
-    assert web["inAppendix"], f"{t}: web lost the methodology section from the appendix"
-    assert web["axes"] and all(web["axes"]), f"{t}: web dropped an axis method: {web['axes']}"
-    assert all(web["sources"]), f"{t}: web dropped a reference source: {web['sources']}"
+        out = subprocess.run(["node", "--input-type=module", "-e", driver],
+                             capture_output=True, text=True, check=True)
+        web = json.loads(out.stdout)
+        assert web["inAppendix"], f"{t}: web lost the methodology section from the appendix"
+        assert web["axes"] and all(web["axes"]), f"{t}: web dropped an axis method: {web['axes']}"
+        # `and web["sources"]` — all([]) is vacuously true, so an empty list must not pass
+        assert web["sources"] and all(web["sources"]), f"{t}: web dropped a source"

@@ -369,7 +369,7 @@ Legs are set off the consensus path and the trailing-twelve-month base rather th
 | reference | value | source |
 | --- | ---: | --- |
 | FY2025 reported revenue | $1,450.9M | `EDGAR companyfacts OperatingIncomeLoss / RevenueFromContractWithCustomerExcludingAssessedTax (FY2025)` |
-| LTM revenue | $1,416.21M | `committed dossier anchor block (#158/#160/#162-verified)` |
+| LTM revenue | $1,416.208M | `committed dossier anchor block (#158/#160/#162-verified)` |
 | consensus FY26E revenue (base) | $1,334M | `committed dossier financial_summary (E cols = consensus)` |
 
 ### Margin · ratified 2026-07-21

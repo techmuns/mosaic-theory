@@ -1416,14 +1416,35 @@ def _positioning_lines(m: MechanicalLayer) -> list[str]:
     return ["### Ownership & positioning", *rows, ""] if rows else []
 
 
+def _md_cell(text: str) -> str:
+    """Analyst free text safe for a markdown TABLE cell. GFM splits rows on "|" before any inline
+    parsing, so an unescaped pipe shifts every later cell and the trailing ones are DISCARDED —
+    a source silently vanishing, which is worse than an ugly row."""
+    return text.replace("|", "\\|")
+
+
 def _ref_value(value: float, unit: str) -> str:
-    """A reference point in DISPLAY-natural form. The record stores value + unit separately and in
-    display units already (4.06 + "%", 6.56 + "x"), so most units simply suffix — but a currency
-    unit PREFIXES its symbol, and "1450.9$M" is not a number anyone reads. Twin of dossier.js
-    refValue()."""
-    if unit.startswith("$"):
-        return f"${value:,.6g}{unit[1:]}"        # 1450.9 + "$M" → "$1,450.9M"
-    return f"{value:g}{unit}"                     # 4.06 + "%" → "4.06%" · 6.11 + "x" → "6.11x"
+    """A reference point in DISPLAY-natural form. The record stores value + unit separately, already
+    in display units (4.06 + "%", 6.56 + "x"), so most units suffix — but a currency unit PREFIXES
+    its symbol: "1450.9$M" is not a number anyone reads.
+
+    EXACT TWIN of dossier.js ``refValue`` — pinned by test_ref_value_py_js_parity, because the
+    first cut was NOT: this used ``,.6g`` while the JS used a bare ``toLocaleString``, and three
+    committed references already rendered differently in the PDF and on the web ($1,416.21M vs
+    $1,416.208M). Two traps that fix avoids, both verified: ``g`` flips to SCIENTIFIC at 1e6
+    ("$1.23457e+06M" in a PDF), and ``toLocaleString``'s default 3-fraction-digit cap silently
+    rounds a non-zero source-bound value to "$0M" — the fabrication class this repo forbids.
+    So: fixed 6 decimals (every committed value carries ≤3), trailing zeros trimmed, manual
+    grouping — never scientific, never a rounded-away non-zero."""
+    n = float(value)
+    s = f"{n:.6f}"
+    if float(s) == 0 and n != 0:
+        s = f"{n:.10f}"                 # a value smaller than 6dp must never display as 0
+    s = s.rstrip("0").rstrip(".")
+    neg, s = s.startswith("-"), s.lstrip("-")
+    ip, _, fp = s.partition(".")
+    s = ("-" if neg else "") + f"{int(ip):,}" + (f".{fp}" if fp else "")
+    return f"${s}{unit[1:]}" if unit.startswith("$") else f"{s}{unit}"
 
 
 def _assumption_methodology_lines(card: ScenarioRecord | None) -> list[str]:
@@ -1444,13 +1465,19 @@ def _assumption_methodology_lines(card: ScenarioRecord | None) -> list[str]:
            "_Per-axis methodology from the underwrite record — the reference frame each leg was "
            "chosen against, not a re-derivation._", ""]
     for axis, a in axes.items():
-        stamp = (f" · ratified {a.ratified}" if a.ratified
+        # RATIFIED-BY is the predicate, matching the card exactly: frontend/build.py emits
+        # `unratified` from `not ratified_by`, so badging off `ratified` (the DATE) here let the
+        # twins disagree whenever only one of the pair was set. The date is shown when present.
+        stamp = (f" · ratified{f' {a.ratified}' if a.ratified else ''}" if a.ratified_by
                  else " · **DRAFT — not ratified by the analyst**")
         out += [f"### {axis.capitalize()}{stamp}", "", a.method, ""]
         if a.references:
             out += ["| reference | value | source |", "| --- | ---: | --- |"]
-            out += [f"| {r.label} | {_ref_value(r.value, r.unit)} | `{r.source}` |"
-                    for r in a.references]
+            # ESCAPE PIPES: label and source are analyst free text in a markdown TABLE. GFM splits
+            # on "|" before inline parsing, so a pipe silently shifts cells and DROPS the source
+            # (backticks do not protect it). The JS twin renders a <ul>, so it is unaffected.
+            out += [f"| {_md_cell(r.label)} | {_ref_value(r.value, r.unit)} "
+                    f"| `{_md_cell(r.source)}` |" for r in a.references]
             out.append("")
         else:
             # a pure-judgment method honestly stated beats a fabricated reference (schema 1.1)

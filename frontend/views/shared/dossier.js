@@ -3033,9 +3033,22 @@ function positioning(m) {
 // display units ("%" / "x" suffix), but a CURRENCY unit prefixes its symbol — "1450.9$M" is not a
 // number anyone reads. Twin of render.py _ref_value().
 function refValue(value, unit) {
+  // EXACT TWIN of render.py _ref_value — pinned by test_ref_value_py_js_parity. The first cut was
+  // NOT: py used ",.6g" and this used a bare toLocaleString, so three committed references already
+  // rendered differently in the PDF and on the web ($1,416.21M vs $1,416.208M). Two traps that fix
+  // avoids: "g" flips to SCIENTIFIC at 1e6, and toLocaleString's default 3-fraction-digit cap
+  // silently rounds a non-zero source-bound value to "$0M". Fixed 6 decimals (every committed
+  // value carries <=3), trailing zeros trimmed, manual grouping.
+  const n = Number(value);
+  let s = n.toFixed(6);
+  if (Number(s) === 0 && n !== 0) s = n.toFixed(10);   // never display a non-zero as 0
+  s = s.replace(/0+$/, "").replace(/\.$/, "");
+  const neg = s.startsWith("-");
+  if (neg) s = s.slice(1);
+  const [ip, fp] = s.split(".");
+  s = (neg ? "-" : "") + ip.replace(/\B(?=(\d{3})+(?!\d))/g, ",") + (fp ? "." + fp : "");
   const u = String(unit || "");
-  if (u.startsWith("$")) return "$" + Number(value).toLocaleString("en-US") + u.slice(1);
-  return `${value}${u}`;
+  return u.startsWith("$") ? "$" + s + u.slice(1) : s + u;
 }
 
 // (addition #1, 2026-07-27) "How these numbers were set" — the per-AXIS methodology behind the

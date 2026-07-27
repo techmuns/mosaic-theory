@@ -4632,8 +4632,24 @@ references, all sources intact; AORT: 4 axes incl. R2's horizon); fact inventory
 method + every reference's SOURCE, in both twins, across every committed record that has
 assumptions — mutation-tested (dropping either call site reddens it). The JS half UNESCAPES before
 comparing: `escapeHtml` encodes the apostrophe in AORT's "the street's FY2027 figure", so a raw
-substring check failed on correct output — a fixture trap of the same family as #216's. Gate: ruff +
-`mypy --strict` clean · 1075 passed.
+substring check failed on correct output — a fixture trap of the same family as #216's. **REVIEW FIXES (blocking + 2 minor).** The formatter twins DID NOT agree — py `,.6g` against a
+bare js `toLocaleString`, and THREE committed references already rendered differently in the PDF
+and on the web (EPAM $5,555.43 vs $5,555.425; IT $6,474.14 vs $6,474.137; SMPL $1,416.21 vs
+$1,416.208). Two traps were reachable: `g` flips to SCIENTIFIC at 1e6 ("$1.23457e+06M" in a PDF),
+and `toLocaleString`'s default 3-fraction-digit cap silently rounds a non-zero source-bound value
+to "$0M" — the fabrication class. BOTH twins rewritten to fixed 6 decimals + trailing trim + manual
+grouping (never scientific, never a rounded-away non-zero) and pinned by
+`test_ref_value_py_js_parity` over EVERY committed reference value plus the pathological set. I had
+written these as "twins" without ever comparing their output — the repo carries 7+ py↔js parity
+pins precisely for this, and the new test compared no VALUE between surfaces. Also fixed: analyst
+free text is now pipe-escaped in the md reference TABLE (GFM splits on `|` before inline parsing,
+so a pipe silently shifts cells and DROPS the source — backticks do not protect it; 0 committed
+labels contain one today), and the ratification badge now reads `ratified_by` in BOTH twins (py had
+used the `ratified` DATE while the card derives `unratified` from `ratified_by`, so a record
+setting only one would show DRAFT on one surface and ratified on the other). Test tightened: the
+web half loops EVERY record (was `names[0]`), `all(sources)` is no longer vacuous on an empty list,
+and absent node SKIPS rather than silently returning. Gate: ruff + `mypy --strict` clean · 1076
+passed.
 
 **BUILD RECORD — 2026-07-27 ANALYSIS TIER RE-ORDERED BY DECISION QUESTION (PR 2b).** Closes the
 report re-structure. The audit's root cause was that both tiers were composed and ordered by WHERE

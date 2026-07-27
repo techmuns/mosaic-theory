@@ -358,7 +358,7 @@ Legs are set on the consensus path: base is consensus FY26E, bull is consensus F
 | --- | ---: | --- |
 | consensus FY26E revenue | $5,730.43M | `committed financial_summary.annual FY26E — CIQ Estimates→Trends 'Current', as-of ≥2026-06-18` |
 | consensus FY27E revenue | $6,074.52M | `committed financial_summary.annual FY27E — CIQ Estimates→Trends 'Current', as-of ≥2026-06-18` |
-| LTM revenue | $5,555.43M | `committed financial_summary.annual (LTM) — CIQ Income Statement` |
+| LTM revenue | $5,555.425M | `committed financial_summary.annual (LTM) — CIQ Income Statement` |
 
 ### Margin · **DRAFT — not ratified by the analyst**
 
