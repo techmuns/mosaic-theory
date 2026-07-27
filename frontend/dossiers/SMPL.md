@@ -24,6 +24,14 @@ The Simply Good Foods Company, a consumer-packaged food and beverage company, en
 _8 key unknowns + the evidence for/against — in Analysis_
 **Next catalyst:** Next results print ~2026-10-08 `[cadence-estimate]` — calendar in Analysis
 
+## What happened — and can it survive?
+- **Shape:** discrete gap-downs — 2026-04-09 earnings; 2026-04-10 earnings [4]
+- **Price (180d):** -33.1% [5]
+- **Market (IWM) 180d:** 17.0% [6]
+- **vs market (180d):** -50.1% [7]
+- **Net debt / EBITDA:** 1.5x [8]
+- **Free cash flow:** positive [9]
+
 ## Scenario analysis
 _Mid-cycle underwrite: normalized operating margin on a mid-cycle revenue base, valued at an exit EV/LTM-EBITDA multiple; reward/risk measured at SPOT._
 
@@ -36,14 +44,6 @@ _Mid-cycle underwrite: normalized operating margin on a mid-cycle revenue base, 
 - **bear** — Value-trap case: the GLP-1 and Atkins declines prove secular; revenue falls past consensus; margin at about the worst clean year (FY2020 9.58%); the multiple at the trough of its trading range (prior low 6.11x). [restated for external readability 2026-07-21; substance unchanged] [verified 2026-07-22 against sector bear-state evidence, at the latest completed session's close ($11.04, 2026-07-21): declining packaged-food comparables with clean income statements trade at 6.1–8.6 times cash earnings — the recorded 7.0x sits inside that range while the market prices this company below it (5.65x); and the recorded 10% margin equals the worst clean margin retention observed in the state (roughly two-thirds of normal, 64.5% vs the weakest survivor's 63%). No evidence-coherent cell falls below roughly 2.7 to 1 against the 2.0 bar at that close; the recorded grid reads 3.88 to 1. Fragility unchanged and exactly as recorded: the entry-boundary cells still read 2.12 clears / 1.88 fails.] [re-verified 2026-07-26 at the third-quarter data, price $10.53 (2026-07-22): the market-pricing discharge holds on the record's own basis (adjusted trailing multiple ~5.3x, below the 6.1x floor of the declining-comparables range) and sits at that floor on the strictest reported basis (5.8–6.05x) — stated rather than smoothed. Against the re-set 14% normal, the 10% bear retains 71% — milder than the worst observed survivor's 63%; a retention-consistent bear (~8.8% margin) still reads about 3.0 to 1. Trailing cash generation through the third quarter is about $119M (operating cash flow minus capital spending), roughly a quarter below the full-year figure the machine-assembled fact set carries — still about a 12.8% cash yield at the verification price; that fact itself refreshes with the queued quarterly-refresh build. The bear floor itself is unbroken: no quarter this year fell below the worst clean year (9.58%).]
 - **base** — Margin is the seven-year clean median of 15.51%. The clean statistics bracket the full-history screening median rather than breaking from it: FY2025 resolved with a $60.9M intangible impairment, and excluding it margin was 15.0% — at the median. The residual ~$22.8M gap to the vendor's figure is definitional (intangible amortization 16.9 plus transaction costs 0.8), not operating. Revenue is consensus FY26E of 1,334 [amended 2026-07-21 pre-verdict: FY26 guidance reinstated at the fiscal Q3 print at $1.345-1.355B; base revenue of 1,330 sits below the guidance midpoint, so the base case is conservative against management's own path]. The multiple is set below the 17.9x median of its 8.55-year trading range (35 quarterly closes): the unresolved category question earns a durable discount; 12.5x is the 14th percentile. [restated for external readability 2026-07-21; substance unchanged] the normal level is set between the seven-year clean median (15.5%) and the trailing clean margin through the third quarter (about 13.8%), deliberately nearer the trailing figure: this year's four-point gross-margin reset is treated as partly structural rather than fully temporary, after write-downs far larger than the single one the clean series originally excluded. At 14%, the business recovers most — not all — of its historical profitability. [amended 2026-07-26]
 - **bull** — The sell-off proves excessive: Quest carries growth and Atkins stabilizes at a smaller base; margin between the median and the best year (17.35%); the multiple moves toward but stays below the 17.85x median of its trading history (16.0x, roughly the 29th percentile of the 8.55-year range) [amended 2026-07-21 pre-verdict: trading-range refresh]. [restated for external readability 2026-07-21; substance unchanged]
-
-## What happened — and can it survive?
-- **Shape:** discrete gap-downs — 2026-04-09 earnings; 2026-04-10 earnings [4]
-- **Price (180d):** -33.1% [5]
-- **Market (IWM) 180d:** 17.0% [6]
-- **vs market (180d):** -50.1% [7]
-- **Net debt / EBITDA:** 1.5x [8]
-- **Free cash flow:** positive [9]
 
 ## The case
 _(top points; the full argument is in Analysis)_
@@ -357,6 +357,45 @@ _2 to verify._
 - Citations [n] resolve in the Sources list at the document end. **Cited is not verified** — the reference locates the claim so you can check it.
 - Reference values (peer-implied equity, price-implied levels) are shown **beside** the figures they contextualize, never differenced into an upside — the reader judges the gap.
 - A value shown as UNKNOWN is honestly absent at the source — nothing is imputed.
+
+## How these numbers were set
+
+_Per-axis methodology from the underwrite record — the reference frame each leg was chosen against, not a re-derivation._
+
+### Revenue · ratified 2026-07-21
+
+Legs are set off the consensus path and the trailing-twelve-month base rather than round numbers: base is consensus FY26E (the company issued no numeric guidance), bull sits just under the trailing twelve months on a stabilizing Atkins, and bear takes revenue materially past consensus to price the secular GLP-1 and Atkins decline case. [restated for external readability 2026-07-21; substance unchanged]
+
+| reference | value | source |
+| --- | ---: | --- |
+| FY2025 reported revenue | $1,450.9M | `EDGAR companyfacts OperatingIncomeLoss / RevenueFromContractWithCustomerExcludingAssessedTax (FY2025)` |
+| LTM revenue | $1,416.21M | `committed dossier anchor block (#158/#160/#162-verified)` |
+| consensus FY26E revenue (base) | $1,334M | `committed dossier financial_summary (E cols = consensus)` |
+
+### Margin · ratified 2026-07-21
+
+Operating-margin legs are set off the clean reported history, with FY2025 adjusted for the quantified $60.9M Atkins-brand and licensing-agreement intangible impairment — the clean statistics bracket the full-history screening median rather than breaking from it. Bear sits at the worst clean year, base at the seven-year clean median, bull between the median and the FY2022 best. [restated for external readability 2026-07-21; substance unchanged]
+
+| reference | value | source |
+| --- | ---: | --- |
+| committed anchor median (naive, 8 FY) | 15.45% | `committed dossier anchor block (#158/#160/#162-verified) anchor.margin.value` |
+| 7yr clean median (FY2025 adjusted) — base | 15.51% | `EDGAR companyfacts OperatingIncomeLoss / RevenueFromContractWithCustomerExcludingAssessedTax FY2019-FY2025, FY2025 ex the $60.9M impairment` |
+| FY2020 worst clean year — bear | 9.58% | `EDGAR companyfacts OperatingIncomeLoss / RevenueFromContractWithCustomerExcludingAssessedTax (FY2020)` |
+| FY2022 best clean year — bull ceiling | 17.35% | `EDGAR companyfacts OperatingIncomeLoss / RevenueFromContractWithCustomerExcludingAssessedTax (FY2022)` |
+| FY2025 adjusted ex $60.9M impairment | 15.01% | `EDGAR companyfacts OperatingIncomeLoss / RevenueFromContractWithCustomerExcludingAssessedTax (FY2025) + 10-K 0001702744-25-000046 (FY2025, Note 5 Goodwill and Intangibles)` |
+
+### Multiple · ratified 2026-07-21
+
+Multiple legs sit inside the company's own EV/EBITDA trading range, deliberately below the median at base: the unresolved category question (GLP-1 substitution, Atkins decline) earns a durable discount rather than a cyclical one. Bear sits at the trough of the range; bull moves toward but stays under the median. [restated for external readability 2026-07-21; substance unchanged]
+
+| reference | value | source |
+| --- | ---: | --- |
+| own-history band low — bear | 6.11x | `committed dossier valuation.own_history (CIQ Financials→Multiples 'TEV/LTM EBITDA' Close, 35 closes, 8.55y span, as-of 2026-07-17, sha 7bd83a1103)` |
+| own-history 25th percentile | 15.2x | `committed dossier valuation.own_history (CIQ Financials→Multiples 'TEV/LTM EBITDA' Close, 35 closes, 8.55y span, as-of 2026-07-17, sha 7bd83a1103)` |
+| own-history median (base set below it) | 17.85x | `committed dossier valuation.own_history (CIQ Financials→Multiples 'TEV/LTM EBITDA' Close, 35 closes, 8.55y span, as-of 2026-07-17, sha 7bd83a1103)` |
+| own-history 75th percentile | 20.88x | `committed dossier valuation.own_history (CIQ Financials→Multiples 'TEV/LTM EBITDA' Close, 35 closes, 8.55y span, as-of 2026-07-17, sha 7bd83a1103)` |
+| current multiple (0th pctile) | 5.65x | `committed dossier valuation.own_history (CIQ Financials→Multiples 'TEV/LTM EBITDA' Close, 35 closes, 8.55y span, as-of 2026-07-17, sha 7bd83a1103)` |
+| entry-boundary cells: 1,100 × 8% × 6.0x → $3.54; 1,050 × 7% × 6.0x → $2.62 (from the sealed entry rationale, preserved in the ledger payload). At the verification price ($10.53, 2026-07-22 close) both clear on the entry-vintage 15.5% normal (≈2.34 / ≈2.07); on the re-set 14% normal they read ≈1.96 / ≈1.73 — below the bar. The boundary tightened with the cut: the 2:1 line now sits between the recorded 10% bear and these stress cells. | 1.96:1 (cell A at the re-set 14% normal; cell B ≈1.73) | `sealed entry rationale, preserved in the ledger payload (V-SMPL-screen2-20260706); ratios recomputed 2026-07-26 at $10.53` |
 
 
 ## Financial statements (actuals + consensus estimates) — export date unverified (data ≥ 2026-07-21)

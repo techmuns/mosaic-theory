@@ -647,6 +647,9 @@ function isProcessCaveat(c) { return String(c).startsWith("primary-source:"); }
 // sealed-proposal suffix and Record & reproduce's verdict row).
 function appendixTier(d, verdict, m, card) {
   return howToRead()
+    // (addition #1) the ANALYST's own inputs are audited first — everything below is
+    // machine-assembled evidence, so "why these numbers" opens the audit tier.
+    + assumptionMethodology(card)
     + appendixBlock(m)
     + positioning(m)                    // (relocation) insider + short interest, from "The street"
     + recordAndReproduce(d, verdict, card);
@@ -780,9 +783,12 @@ function briefVerdictChip(verdict) {
 // proposal stays SEALED until the human's verdict (the 2026-07-13 pivot — anti-anchoring intact;
 // it now rides as the assessment line's suffix instead of a standing row). Mirrors _brief_lines().
 function briefTier(d, verdict, m, card, mark) {
+  // (brief re-order 2026-07-27) WHAT HAPPENED precedes the underwrite detail — the reader met the
+  // valuation grid before the problem it values. Setup, then what it is worth. Twin of render.py.
   const parts = openerCard(d, verdict, m, card, mark)
+    + whatHappened(m)
     + underwriteDetail(d, verdict, m, card, mark)
-    + whatHappened(m) + briefCase(d.synthesis, m)
+    + briefCase(d.synthesis, m)
     + financialSnapshot(m) + valuationCard(m);
   return parts.trim() ? parts : "";
 }
@@ -3021,6 +3027,45 @@ function positioning(m) {
     + (cp.short_interest ? fact("Short interest (FINRA)", cp.short_interest) : "");
   return rows ? sec("Ownership & positioning",
     "Who is buying, selling and short — counts and dates only.", rows) : "";
+}
+
+// A reference point in DISPLAY-natural form. The record stores value + unit separately, already in
+// display units ("%" / "x" suffix), but a CURRENCY unit prefixes its symbol — "1450.9$M" is not a
+// number anyone reads. Twin of render.py _ref_value().
+function refValue(value, unit) {
+  const u = String(unit || "");
+  if (u.startsWith("$")) return "$" + Number(value).toLocaleString("en-US") + u.slice(1);
+  return `${value}${u}`;
+}
+
+// (addition #1, 2026-07-27) "How these numbers were set" — the per-AXIS methodology behind the
+// underwrite: the method sentence and the SOURCE-BOUND reference points each leg was chosen
+// against. Schema 1.1 has captured this on every record since it shipped and NOTHING rendered it.
+// Appendix, because it audits the ANALYST's inputs — the legs themselves live in the Brief grid.
+// An UNRATIFIED axis is badged (the card carries `unratified` only when it is). Twin of
+// render.py _assumption_methodology_lines().
+function assumptionMethodology(card) {
+  const axes = ((card || {}).assumptions) || [];
+  if (!axes.length) return "";
+  const body = axes.map((a) => {
+    const badge = a.unratified
+      ? ` <span class="pill" style="font-size:10px;">draft — not ratified</span>` : "";
+    const name = String(a.axis || "").replace(/^./, (c) => c.toUpperCase());
+    // a plain reference list, not dataTable: that helper right-aligns every cell as numeric, which
+    // is wrong for a source string, and its first column is the row label — the shapes don't fit.
+    const refs = (a.references || []).length
+      ? `<ul class="kv-list">${(a.references || []).map((r) =>
+          `<li>${escapeHtml(r.label)} — <b>${escapeHtml(refValue(r.value, r.unit))}</b>`
+          + `<span class="muted mono" style="font-size:11px;"> · ${escapeHtml(r.source)}</span></li>`
+        ).join("")}</ul>`
+      : `<div class="muted">No reference points recorded — stated as judgment.</div>`;
+    return `<div class="point"><b>${escapeHtml(name)}</b>${badge}
+      <div style="font-size:13px; margin:3px 0 6px;">${escapeHtml(a.method || "")}</div>
+      ${refs}</div>`;
+  }).join("");
+  return sec("How these numbers were set",
+    "Per-axis methodology from the underwrite record — the reference frame each leg was chosen "
+    + "against, not a re-derivation.", body);
 }
 
 // (H4) guidance bridge → table (metric | latest guide | for | dated | age | record | most recent);

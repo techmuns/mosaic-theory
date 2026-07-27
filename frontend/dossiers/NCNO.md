@@ -21,6 +21,14 @@ WATCH at $17.93. The underwrite fails our 2:1 bar decisively: the base case valu
 **Is the ~37% de-rate a temporary overshoot on an unnamed February shock in a still-growing, self-funding SaaS franchise, or the early leg of a terminal demand/leverage problem the raised guides do not yet reflect?**
 _8 key unknowns + the evidence for/against — in Analysis_
 
+## What happened — and can it survive?
+- **Shape:** discrete gap-downs — 2026-02-03 no company filing [2]
+- **Price (180d):** -28.3% [3]
+- **Market (IWM) 180d:** 17.0% [4]
+- **vs market (180d):** -45.3% [5]
+- **Net debt / EBITDA:** 3.5x [6]
+- **Free cash flow:** positive [7]
+
 ## Scenario analysis
 _Terminal-margin: value the business in the year it reaches a normal operating margin, then discount that value back at the house waiting charge. Used where no trailing multiple describes the company._
 
@@ -33,14 +41,6 @@ _Terminal-margin: value the business in the year it reaches a normal operating m
 - **bear** — deceleration runs past consensus (forward operating-income revisions 0 up / 9 down); operating leverage slows with growth; exit below the mature-peer reference.
 - **base** — revenue = consensus FY2027 then a stated fade of ~1.5 points a year; margin = the durable +3-points-a-year leverage path from the first positive year (+0.6%); exit set on the one genuinely mature vertical-software peer (12.3x at 23% margins) - at terminal, growth has decelerated by construction, so a growth multiple would pay for the same growth twice.
 - **bull** — the recent +4-points-a-year pace holds and revenue fades only to 8%; exit at a premium to the mature peer for franchise dominance in bank software.
-
-## What happened — and can it survive?
-- **Shape:** discrete gap-downs — 2026-02-03 no company filing [2]
-- **Price (180d):** -28.3% [3]
-- **Market (IWM) 180d:** 17.0% [4]
-- **vs market (180d):** -45.3% [5]
-- **Net debt / EBITDA:** 3.5x [6]
-- **Free cash flow:** positive [7]
 
 ## The case
 _(top points; the full argument is in Analysis)_
@@ -169,6 +169,54 @@ _3 to verify._
 - Citations [n] resolve in the Sources list at the document end. **Cited is not verified** — the reference locates the claim so you can check it.
 - Reference values (peer-implied equity, price-implied levels) are shown **beside** the figures they contextualize, never differenced into an upside — the reader judges the gap.
 - A value shown as UNKNOWN is honestly absent at the source — nothing is imputed.
+
+## How these numbers were set
+
+_Per-axis methodology from the underwrite record — the reference frame each leg was chosen against, not a re-derivation._
+
+### Revenue · **DRAFT — not ratified by the analyst**
+
+Terminal revenue starts from the consensus FY2027 figure and then fades at a stated rate: about 1.5 points of growth lost each year in the central case, 1.0 in the optimistic case. Only FY2027 is a consensus figure; every year beyond it is our own extrapolation of a deceleration that has held for four years and need not hold again.
+
+| reference | value | source |
+| --- | ---: | --- |
+| consensus revenue, FY2027 | $644.7M | `CIQ Estimates->Trends` |
+| reported revenue, FY2026 | $594.8M | `EDGAR RevenueFromContractWithCustomerExcludingAssessedTax` |
+| realised growth, FY2024/FY2025/FY2026 | 10% | `EDGAR revenue series (16.7 / 13.5 / 10.0)` |
+
+### Margin · **DRAFT — not ratified by the analyst**
+
+Every margin here is on a reported accounting basis, and so is the depreciation assumption, because the two have to sit in the same layer. The 26-28% operating margins widely quoted for this company exclude stock compensation and the amortisation of acquired intangibles; both are real costs to an owner. The evidence that the layers differ is arithmetic: the consensus figures imply about $6M of depreciation for a year in which the company reported about $42M. The central path takes the durable improvement of the last two years - roughly 3 points a year from the first positive year of +0.6% - rather than the one-off step of four years ago. The weakness is that a straight-line margin has no ceiling, while a 60.6% gross margin is a real one.
+
+| reference | value | source |
+| --- | ---: | --- |
+| reported operating margin, FY2026 | 0.6% | `EDGAR OperatingIncomeLoss / revenue` |
+| margin path at +2 points a year, pessimistic | 8.6% | `extrapolation of the reported margin series` |
+| margin path at +3 points a year, central | 12.6% | `extrapolation of the reported margin series` |
+| margin path at +4 points a year, optimistic | 16.6% | `extrapolation of the reported margin series` |
+| gross margin, FY2026 - the structural ceiling | 60.6% | `EDGAR GrossProfit / revenue` |
+| depreciation implied by the consensus layer | $5.7M | `CIQ Estimates->Trends (EBITDA less EBIT, FY2027)` |
+| depreciation reported, FY2026 | $42.255M | `EDGAR companyfacts dep_amort` |
+
+### Multiple · **DRAFT — not ratified by the analyst**
+
+The exit multiple is set against a mature vertical-software peer rather than against this company's own trading history. That history spans ten quarterly closes over 2.3 years, and for most of it the earnings denominator sat near zero, which inflates a multiple without saying anything about value - its median of 82.9x is unusable as an exit. Both data-quality checks on that series pass, so the number is real; it is the period that is too short and too distorted. Cross-checked on revenue: 754.8 at 3.0 times enterprise value to revenue, the mature peer's level, gives about $10 a share in today's terms, which agrees with the central case.
+
+| reference | value | source |
+| --- | ---: | --- |
+| mature vertical-software peer, enterprise value to EBITDA | 12.3x | `CIQ Comparable Analysis (SPS Commerce, 23.2% EBITDA margin)` |
+| closest bank-software peer, enterprise value to EBITDA | 33.2x | `CIQ Comparable Analysis (Q2 Holdings, pre-maturity)` |
+| this company's trailing median, ten closes over 2.3 years - unusable | 82.9x | `CIQ Financials->Multiples (near-zero denominator)` |
+| mature vertical-software peer, enterprise value to revenue | 3x | `CIQ Comparable Analysis (SPS Commerce)` |
+
+### Horizon · **DRAFT — not ratified by the analyst**
+
+Four years to the terminal year. At three years the margin ramp would have to finish almost immediately; at five the waiting charge halves the answer, so the exit multiple rather than the operating case would carry the result. Four years matches the improvement pace the company has actually delivered for two years running.
+
+| reference | value | source |
+| --- | ---: | --- |
+| years to the terminal year | 4years | `analyst judgement, set against the realised margin pace` |
+| waiting charge applied over the horizon | 74.9% | `house rate of 15% a year compounded over four years` |
 
 
 ## Financial statements (actuals + consensus estimates) — as-of UNKNOWN

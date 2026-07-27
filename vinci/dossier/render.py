@@ -1416,6 +1416,48 @@ def _positioning_lines(m: MechanicalLayer) -> list[str]:
     return ["### Ownership & positioning", *rows, ""] if rows else []
 
 
+def _ref_value(value: float, unit: str) -> str:
+    """A reference point in DISPLAY-natural form. The record stores value + unit separately and in
+    display units already (4.06 + "%", 6.56 + "x"), so most units simply suffix — but a currency
+    unit PREFIXES its symbol, and "1450.9$M" is not a number anyone reads. Twin of dossier.js
+    refValue()."""
+    if unit.startswith("$"):
+        return f"${value:,.6g}{unit[1:]}"        # 1450.9 + "$M" → "$1,450.9M"
+    return f"{value:g}{unit}"                     # 4.06 + "%" → "4.06%" · 6.11 + "x" → "6.11x"
+
+
+def _assumption_methodology_lines(card: ScenarioRecord | None) -> list[str]:
+    """(addition #1, 2026-07-27) "How these numbers were set" — the per-AXIS methodology behind the
+    underwrite: a method sentence and the SOURCE-BOUND reference points each leg was chosen
+    against. Schema 1.1 has captured this on every record since it shipped, and NOTHING rendered
+    it — the reviewable "why these numbers" was committed and shown to nobody (SMPL alone carries
+    3 axes and 12 references). Appendix, because it is the audit of the analyst's inputs, not a
+    decision surface; the legs themselves and their reasons already render in the Brief's grid.
+
+    An UNRATIFIED axis is marked: the record distinguishes a method sentence the analyst stood
+    behind from one that merely shipped with the run. Absent record → nothing (most names carry no
+    underwrite). Twin: dossier.js assumptionMethodology()."""
+    axes = getattr(card, "assumptions", None) if card is not None else None
+    if not axes:
+        return []
+    out = ["## How these numbers were set", "",
+           "_Per-axis methodology from the underwrite record — the reference frame each leg was "
+           "chosen against, not a re-derivation._", ""]
+    for axis, a in axes.items():
+        stamp = (f" · ratified {a.ratified}" if a.ratified
+                 else " · **DRAFT — not ratified by the analyst**")
+        out += [f"### {axis.capitalize()}{stamp}", "", a.method, ""]
+        if a.references:
+            out += ["| reference | value | source |", "| --- | ---: | --- |"]
+            out += [f"| {r.label} | {_ref_value(r.value, r.unit)} | `{r.source}` |"
+                    for r in a.references]
+            out.append("")
+        else:
+            # a pure-judgment method honestly stated beats a fabricated reference (schema 1.1)
+            out += ["_No reference points recorded — stated as judgment._", ""]
+    return out
+
+
 # (D4) a guardrail caveat is emitted as "Lead (a bull point): '<full claim>' — <explanation>". Parse
 # it into the structured shape; the offending sentence is shown IN FULL (synthesis no longer _snips
 # the human caveats — truncation is retained for the dev-only QA flags).
@@ -2301,15 +2343,8 @@ def _brief_lines(d: Dossier, *, show_proposal: bool = False,
     # pivot MECHANISM is untouched (derived + sealed to the shadow ledger at assembly; disposition
     # recorded at log time; the ledger CLI reveals post-log). ``--show-proposal`` is the operator's
     # explicit peek and still renders the proposal, under its own section header.
-    # SCENARIO ANALYSIS — the recorded bear/base/bull table (+ reasons); the sealed machine
-    # proposal joins it only under the operator's explicit --show-proposal peek.
-    scen = _scenario_table_lines(card)
-    if scen or show_proposal:
-        out.append("## Scenario analysis")
-        out += scen
-        if show_proposal:
-            out += [_machine_proposal_md(
-                derive_proposal(s.evidence_balance if s is not None else None)), ""]
+    # (brief re-order 2026-07-27) WHAT HAPPENED now precedes the scenario grid: the reader
+    # met the valuation before the problem it values. Setup, then what it's worth.
     # 3 — WHAT HAPPENED: the drawdown shape + the decision tiles. The Brief used to show the raw
     # drawdown % with no WHY; the fund's whole question (overshoot vs terminal) starts from what
     # broke. Full event log + filings stay in Analysis.
@@ -2339,6 +2374,15 @@ def _brief_lines(d: Dossier, *, show_proposal: bool = False,
     if gc is not None:
         out.append(gc)
     out.append("")
+    # SCENARIO ANALYSIS — the recorded bear/base/bull table (+ reasons); the sealed machine
+    # proposal joins it only under the operator's explicit --show-proposal peek.
+    scen = _scenario_table_lines(card)
+    if scen or show_proposal:
+        out.append("## Scenario analysis")
+        out += scen
+        if show_proposal:
+            out += [_machine_proposal_md(
+                derive_proposal(s.evidence_balance if s is not None else None)), ""]
     # 4 — THE CASE: the condensed bull/bear alone — the decisive question + unknowns moved to the
     # cover's CRUX block (buy-side cover), so the question renders once per tier.
     out.append("## The case")
@@ -2766,6 +2810,9 @@ def render_markdown(d: Dossier, *, dev: bool = False, show_proposal: bool = Fals
     out += _flags_section(d)
     out += ["# Appendix — data & audit", ""]
     out += _how_to_read_lines()
+    # (addition #1) the analyst's own inputs are audited FIRST — everything below is machine-
+    # assembled evidence, so "why these numbers" belongs at the top of the audit tier.
+    out += _assumption_methodology_lines(card)
     appendix = _appendix_lines(m)
     out += appendix if appendix else ["## Financial statements", ""]
     if m.capital_structure is not None:
