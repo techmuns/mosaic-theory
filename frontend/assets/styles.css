@@ -1167,6 +1167,22 @@ table.data tr td.uw-vs { font-size: 12.5px; }
   border: 1px solid var(--line); background: var(--bg-2); color: var(--ink-2);
   font-size: 10.5px; font-weight: 600; letter-spacing: 0.02em; vertical-align: 1px; }
 
+/* (schema 1.3) reference STRUCTURE from fields, never parsed from labels.
+   .uw-leg-chip — which case a reference anchors (bear/base/bull), the same visual weight as the
+   draft badge: metadata beside the label, not a second label.
+   .uw-ref-excl — a recorded-but-NOT-used reference. Dimmed whole-row: before this, "NOT a
+   reference for us" sat in the same confident aligned column as the numbers that count. The row
+   stays in the table (curating never deletes a fact) — it just stops borrowing authority.
+   .uw-axis-note — a dated analyst finding about the axis, prose register (the home the SMPL
+   boundary-cells narrative never had). */
+.uw-leg-chip {
+  display: inline-block; margin-left: 6px; padding: 0 5px; border-radius: 3px;
+  border: 1px solid var(--line); background: var(--bg-2); color: var(--ink-2);
+  font-size: 10px; font-weight: 600; letter-spacing: 0.03em; vertical-align: 1px; }
+tr.uw-ref-excl td { color: var(--ink-3); }
+tr.uw-ref-excl td.num { text-decoration: line-through; text-decoration-thickness: 1px; }
+.uw-axis-note { font-size: 12.5px; margin: 6px 0 2px; line-height: 1.5; }
+
 /* The sealed original sits INSIDE the Rationale fact, under the plain restatement — indented so
    the eye reads it as the same claim in the analyst's own words, not a second, competing point. */
 .uw-reasons .kv-list { margin-top: 6px; }

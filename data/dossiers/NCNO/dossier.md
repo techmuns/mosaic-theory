@@ -392,7 +392,7 @@ The exit multiple is set against a mature vertical-software peer rather than aga
 | --- | ---: |
 | mature vertical-software peer, enterprise value to EBITDA | 12.3x [55] |
 | closest bank-software peer, enterprise value to EBITDA | 33.2x [56] |
-| this company's trailing median, ten closes over 2.3 years - unusable | 82.9x [57] |
+| _this company's trailing median, ten closes over 2.3 years — excluded: ten closes over 2.3 years — too short a series to stand on_ | _82.9x_ [57] |
 | mature vertical-software peer, enterprise value to revenue | 3x [58] |
 
 ### Horizon · **DRAFT — not ratified by the analyst**

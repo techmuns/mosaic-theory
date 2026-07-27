@@ -157,13 +157,15 @@
      "label": "this company's trailing median - spans near-zero-earnings years",
      "value": 32.1,
      "unit": "x",
-     "source": "CIQ Financials->Multiples (42 closes; both checks pass)"
+     "source": "CIQ Financials->Multiples (42 closes; both checks pass)",
+     "role": "median"
     },
     {
      "label": "peer median, heterogeneous ten-name set",
      "value": 24.6,
      "unit": "x",
-     "source": "CIQ Comparable Analysis (set spans $39M to $66.1B)"
+     "source": "CIQ Comparable Analysis (set spans $39M to $66.1B)",
+     "role": "peer_median"
     }
    ]
   },

@@ -394,8 +394,8 @@ Modelled on regime-split operating-margin statistics (post-2022 window; operatin
 | post-2022 regime median operating margin (FY2022-2025) | 11.1% [49] |
 | post-2022 worst year (FY2025) | 9.53% [50] |
 | post-2022 best year (FY2022) | 11.88% [51] |
-| pre-war median operating margin (FY2016-2021) — DEAD REGIME | 13.27% [52] |
-| 10-FY blended median (FY2016-2025) — STRADDLES-BREAK, not used | 11.9% [53] |
+| _pre-war median operating margin (FY2016-2021) — excluded: the pre-war margin structure no longer obtains_ | _13.27%_ [52] |
+| _10-FY blended median (FY2016-2025) — excluded: blends across the structural break_ | _11.9%_ [53] |
 
 ### Multiple · **DRAFT — not ratified by the analyst**
 

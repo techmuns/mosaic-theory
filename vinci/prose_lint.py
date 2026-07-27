@@ -197,8 +197,25 @@ def lint_record(rec: Any) -> list[ProseFlag]:
             flags += lint_text(s["reason"], f"scenarios.{leg}.reason")
 
     for key, a in (d.get("assumptions") or {}).items():
-        if isinstance(a, dict) and a.get("method"):
+        if not isinstance(a, dict):
+            continue
+        if a.get("method"):
             flags += lint_text(a["method"], f"assumptions.{key}.method")
+        # (schema 1.3) reference LABELS and axis NOTES are prose too. The census found 26
+        # violations of this module's own patterns sitting in labels — including the explicitly
+        # banned "DEAD REGIME" — precisely because this scan used to stop at `method`. The
+        # register rule did not fail; its coverage did. `source` stays UNscanned (structured
+        # provenance — an accession or a vendor name is CORRECT there), and `unit` is
+        # vocabulary-gated in the model rather than register-linted.
+        for i, r in enumerate(a.get("references") or []):
+            if isinstance(r, dict) and r.get("label"):
+                flags += lint_text(r["label"], f"assumptions.{key}.references[{i}].label")
+            if isinstance(r, dict) and r.get("excluded_reason"):
+                flags += lint_text(r["excluded_reason"],
+                                   f"assumptions.{key}.references[{i}].excluded_reason")
+        for i, n in enumerate(a.get("notes") or []):
+            if isinstance(n, dict) and n.get("text"):
+                flags += lint_text(n["text"], f"assumptions.{key}.notes[{i}].text")
 
     if d.get("gate_adjudication"):
         flags += lint_text(d["gate_adjudication"], "gate_adjudication")

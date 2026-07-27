@@ -1,5 +1,5 @@
 {
-  "schema_version": "1.2",
+  "schema_version": "1.3",
   "ticker": "SMPL",
   "recipe_id": "R1_midcycle_margin_evebitda",
   "recipe_desc": "Mid-cycle underwrite: normalized operating margin on a mid-cycle revenue base, valued at an exit EV/LTM-EBITDA multiple; reward/risk measured at SPOT.",
@@ -99,10 +99,12 @@
           "source": "committed dossier anchor block (#158/#160/#162-verified)"
         },
         {
-          "label": "consensus FY26E revenue (base)",
+          "label": "consensus FY26E revenue",
           "value": 1334.0,
           "unit": "$M",
-          "source": "committed dossier financial_summary (E cols = consensus)"
+          "source": "committed dossier financial_summary (E cols = consensus)",
+          "role": "consensus",
+          "leg": "base"
         }
       ],
       "ratified_by": "analyst",
@@ -112,28 +114,35 @@
       "method": "The normal margin is set between the seven-year clean median and the trailing clean margin through the third quarter, nearer the trailing figure, treating part of this year's gross-margin reset as structural. The bear leg takes the worst clean year; the bull leg sits between the median and the best clean year.",
       "references": [
         {
-          "label": "committed anchor median (naive, 8 FY)",
+          "label": "screening median (naive, 8 FY)",
           "value": 15.45,
           "unit": "%",
-          "source": "committed dossier anchor block (#158/#160/#162-verified) anchor.margin.value"
+          "source": "committed dossier anchor block (#158/#160/#162-verified) anchor.margin.value",
+          "role": "median"
         },
         {
-          "label": "7yr clean median (FY2025 adjusted) — base",
+          "label": "7yr clean median (FY2025 adjusted)",
           "value": 15.51,
           "unit": "%",
-          "source": "EDGAR companyfacts OperatingIncomeLoss / RevenueFromContractWithCustomerExcludingAssessedTax FY2019-FY2025, FY2025 ex the $60.9M impairment"
+          "source": "EDGAR companyfacts OperatingIncomeLoss / RevenueFromContractWithCustomerExcludingAssessedTax FY2019-FY2025, FY2025 ex the $60.9M impairment",
+          "role": "median",
+          "leg": "base"
         },
         {
-          "label": "FY2020 worst clean year — bear",
+          "label": "FY2020 worst clean year",
           "value": 9.58,
           "unit": "%",
-          "source": "EDGAR companyfacts OperatingIncomeLoss / RevenueFromContractWithCustomerExcludingAssessedTax (FY2020)"
+          "source": "EDGAR companyfacts OperatingIncomeLoss / RevenueFromContractWithCustomerExcludingAssessedTax (FY2020)",
+          "role": "trough",
+          "leg": "bear"
         },
         {
-          "label": "FY2022 best clean year — bull ceiling",
+          "label": "FY2022 best clean year",
           "value": 17.35,
           "unit": "%",
-          "source": "EDGAR companyfacts OperatingIncomeLoss / RevenueFromContractWithCustomerExcludingAssessedTax (FY2022)"
+          "source": "EDGAR companyfacts OperatingIncomeLoss / RevenueFromContractWithCustomerExcludingAssessedTax (FY2022)",
+          "role": "peak",
+          "leg": "bull"
         },
         {
           "label": "FY2025 adjusted ex $60.9M impairment",
@@ -149,44 +158,64 @@
       "method": "Multiple legs sit inside the company's own EV/EBITDA trading range, deliberately below the median at base: the unresolved category question earns a durable discount rather than a cyclical one. The bear leg is cross-checked against businesses observed IN the declining state.",
       "references": [
         {
-          "label": "own-history band low — bear",
+          "label": "this company's trading-range low",
           "value": 6.11,
           "unit": "x",
-          "source": "committed dossier valuation.own_history (CIQ Financials→Multiples 'TEV/LTM EBITDA' Close, 35 closes, 8.55y span, as-of 2026-07-17, sha 7bd83a1103)"
+          "source": "committed dossier valuation.own_history (CIQ Financials→Multiples 'TEV/LTM EBITDA' Close, 35 closes, 8.55y span, as-of 2026-07-17, sha 7bd83a1103)",
+          "role": "band_low",
+          "leg": "bear"
         },
         {
-          "label": "own-history 25th percentile",
+          "label": "this company's trailing 25th percentile",
           "value": 15.2,
           "unit": "x",
-          "source": "committed dossier valuation.own_history (CIQ Financials→Multiples 'TEV/LTM EBITDA' Close, 35 closes, 8.55y span, as-of 2026-07-17, sha 7bd83a1103)"
+          "source": "committed dossier valuation.own_history (CIQ Financials→Multiples 'TEV/LTM EBITDA' Close, 35 closes, 8.55y span, as-of 2026-07-17, sha 7bd83a1103)",
+          "role": "percentile"
         },
         {
-          "label": "own-history median (base set below it)",
+          "label": "this company's trailing median",
           "value": 17.85,
           "unit": "x",
-          "source": "committed dossier valuation.own_history (CIQ Financials→Multiples 'TEV/LTM EBITDA' Close, 35 closes, 8.55y span, as-of 2026-07-17, sha 7bd83a1103)"
+          "source": "committed dossier valuation.own_history (CIQ Financials→Multiples 'TEV/LTM EBITDA' Close, 35 closes, 8.55y span, as-of 2026-07-17, sha 7bd83a1103)",
+          "role": "median",
+          "leg": "base"
         },
         {
-          "label": "own-history 75th percentile",
+          "label": "this company's trailing 75th percentile",
           "value": 20.88,
           "unit": "x",
-          "source": "committed dossier valuation.own_history (CIQ Financials→Multiples 'TEV/LTM EBITDA' Close, 35 closes, 8.55y span, as-of 2026-07-17, sha 7bd83a1103)"
+          "source": "committed dossier valuation.own_history (CIQ Financials→Multiples 'TEV/LTM EBITDA' Close, 35 closes, 8.55y span, as-of 2026-07-17, sha 7bd83a1103)",
+          "role": "percentile"
         },
         {
           "label": "current multiple (0th pctile)",
           "value": 5.65,
           "unit": "x",
-          "source": "committed dossier valuation.own_history (CIQ Financials→Multiples 'TEV/LTM EBITDA' Close, 35 closes, 8.55y span, as-of 2026-07-17, sha 7bd83a1103)"
+          "source": "committed dossier valuation.own_history (CIQ Financials→Multiples 'TEV/LTM EBITDA' Close, 35 closes, 8.55y span, as-of 2026-07-17, sha 7bd83a1103)",
+          "role": "current"
         },
         {
-          "label": "entry-boundary cells: 1,100 × 8% × 6.0x → $3.54; 1,050 × 7% × 6.0x → $2.62 (from the sealed entry rationale, preserved in the ledger payload). At the verification price ($10.53, 2026-07-22 close) both clear on the entry-vintage 15.5% normal (≈2.34 / ≈2.07); on the re-set 14% normal they read ≈1.96 / ≈1.73 — below the bar. The boundary tightened with the cut: the 2:1 line now sits between the recorded 10% bear and these stress cells.",
+          "label": "entry-boundary cell A (1,100 × 8% × 6.0x)",
           "value": 1.96,
-          "unit": ":1 (cell A at the re-set 14% normal; cell B ≈1.73)",
-          "source": "sealed entry rationale, preserved in the ledger payload (V-SMPL-screen2-20260706); ratios recomputed 2026-07-26 at $10.53"
+          "unit": ":1",
+          "source": "entry rationale cells preserved in the ledger payload; re-verified 2026-07-26 at the 2026-07-22 close ($10.53)"
+        },
+        {
+          "label": "entry-boundary cell B (1,050 × 7% × 6.0x)",
+          "value": 1.73,
+          "unit": ":1",
+          "source": "entry rationale cells preserved in the ledger payload; re-verified 2026-07-26 at the 2026-07-22 close ($10.53)"
         }
       ],
       "ratified_by": "analyst",
-      "ratified": "2026-07-27"
+      "ratified": "2026-07-27",
+      "notes": [
+        {
+          "text": "entry-boundary cells: 1,100 × 8% × 6.0x → $3.54; 1,050 × 7% × 6.0x → $2.62 (from the sealed entry rationale, preserved in the ledger payload). At the verification price ($10.53, 2026-07-22 close) both clear on the entry-vintage 15.5% normal (≈2.34 / ≈2.07); on the re-set 14% normal they read ≈1.96 / ≈1.73 — below the bar. The boundary tightened with the cut: the 2:1 line now sits between the recorded 10% bear and these stress cells.",
+          "date": "2026-07-26",
+          "source": "entry rationale cells preserved in the ledger payload; re-verified 2026-07-26 at the 2026-07-22 close ($10.53)"
+        }
+      ]
     }
   },
   "gate_adjudication": null,

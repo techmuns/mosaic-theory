@@ -3111,19 +3111,29 @@ function assumptionMethodology(card) {
     // right-alignment is for. `.ref-table` is a HOOK, not a width override — these keep the K2
     // content-sized width. A 100% version was tried and REVERTED: it opened a 603–785px gulf
     // between a label and its own value (see the .ref-table note in styles.css).
-    // NOT parsed: some labels carry the leg they anchor ("… — bear") or an exclusion flag
-    // ("— DEAD REGIME") as prose. Printed VERBATIM — a display string is never parsed for meaning.
+    // (schema 1.3) leg and exclusion render FROM FIELDS — labels are printed verbatim and never
+    // parsed. An excluded row dims with its reason stated; before this, "NOT a reference for us"
+    // sat in the same confident aligned column as the numbers that count.
     const refs = (a.references || []).length
       ? `<table class="data ref-table"><tbody>${(a.references || []).map((r) =>
-          `<tr><td>${escapeHtml(r.label)}</td>`
+          `<tr${r.excluded ? ` class="uw-ref-excl"` : ""}><td>${escapeHtml(r.label)}${
+            r.leg ? ` <span class="uw-leg-chip">${escapeHtml(r.leg)}</span>` : ""}${
+            r.excluded
+              ? `<span class="muted"> — excluded: ${escapeHtml(r.excludedReason || "")}</span>` : ""
+          }</td>`
           + `<td class="num mono">${escapeHtml(refValue(r.value, r.unit))}${citeMark(r.source)}</td>`
           + `</tr>`).join("")}</tbody></table>`
       : `<div class="muted">No reference points recorded — stated as judgment.</div>`;
+    // (schema 1.3) dated axis NOTES — analyst findings beside the numbers they interpret (the
+    // home the SMPL boundary-cells narrative never had).
+    const notes = (a.notes || []).map((n) =>
+      `<div class="uw-axis-note muted"><b>${escapeHtml(n.date)}</b> — ${escapeHtml(n.text)}${
+        n.source ? `${citeMark(n.source)}` : ""}</div>`).join("");
     // the house in-card sub-head (12px .ds-title), as briefCase/argument use: a bare <b> left the
     // axis NAME, its method prose and its data all at 13px — three roles with no typographic step.
     return `<div class="point"><div class="ds-title" style="font-size:12px;">${escapeHtml(name)}${badge}</div>
       <div style="font-size:13px; margin:3px 0 6px;">${escapeHtml(a.method || "")}</div>
-      ${refs}</div>`;
+      ${refs}${notes}</div>`;
   }).join("");
   return sec("How these numbers were set",
     "Per-axis methodology from the underwrite record — the reference frame each leg was chosen "

@@ -422,10 +422,10 @@ The exit is set at the closest economic analogue - a levered auto-parts maker - 
 
 | reference | value |
 | --- | ---: |
-| closest economic analogue, enterprise value to EBITDA | 7.9x [52] |
-| scale leader, enterprise value to EBITDA - NOT a reference for us | 14.5x [53] |
+| closest economic analogue, enterprise value to EBITDA `base` | 7.9x [52] |
+| _scale leader, enterprise value to EBITDA — excluded: the scale leader's multiple belongs to a different business model (see method)_ | _14.5x_ [53] |
 | peer median, heterogeneous nine-name set | 14.5x [54] |
-| this company's trailing median - unusable, six closes over 1.3 years | 19.3x [55] |
+| _this company's trailing median — excluded: six closes over 1.3 years — too short a series to stand on_ | _19.3x_ [55] |
 | this company's current reading - below its own trailing low | 9x [56] |
 
 ### Horizon · **DRAFT — not ratified by the analyst**
