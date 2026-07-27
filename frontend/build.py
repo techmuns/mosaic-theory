@@ -216,6 +216,13 @@ def _scenario_card(rec: dict[str, Any], ledger: dict[str, dict[str, Any]] | None
                     # read again by mistake.
                     "rationale": v.get("rationale"),
                     "reunderwriteTriggers": v.get("reunderwrite_triggers") or [],
+                    # (catalyst calendar) the analyst's DATED falsifiers. The md tier merges these
+                    # into the calendar as `trigger-deadline` rows; the card never carried them, so
+                    # the WEB silently rendered a SHORTER calendar than the PDF — SMPL showed 2 of
+                    # 3 entries, and the missing one was the analyst's own falsifier. OMITTED when
+                    # empty so trigger-less records stay byte-identical across re-emits. The
+                    # sub-fields (trigger/deadline/basis) are single words — no case conversion.
+                    **({"datedTriggers": v["dated_triggers"]} if v.get("dated_triggers") else {}),
                     # the human's FROZEN entry beside the underwrite's own ratio — the card must
                     # show what was accepted AT ENTRY, not only what the grid computed at spot.
                     # Keys OMITTED (never null) on a verdict that opened no position (watch /

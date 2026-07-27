@@ -597,7 +597,9 @@ function calendarEntries(m, card) {
     out.push({ date: r.expected_date, event: r.event, basis: r.date_basis,
                tests: r.tests_what, src: r.source_ref });
   }
-  for (const t of (((card || {}).verdict || {}).dated_triggers || [])) {
+  // camelCase: the CARD is emitted by frontend/build.py, which camelCases every key (the dossier
+  // JSON beside it stays snake_case — hence `m.catalyst_calendar` above and `datedTriggers` here).
+  for (const t of (((card || {}).verdict || {}).datedTriggers || [])) {
     const note = t.basis ? ` (${t.basis})` : "";
     out.push({ date: t.deadline, event: `Re-underwrite trigger: ${t.trigger}`,
                basis: "trigger-deadline",
@@ -609,7 +611,7 @@ function calendarEntries(m, card) {
 }
 function catalystCalendar(m, card) {
   const cal = (m || {}).catalyst_calendar;
-  const trig = (((card || {}).verdict || {}).dated_triggers || []);
+  const trig = (((card || {}).verdict || {}).datedTriggers || []);
   if (!cal && !trig.length) return "";  // pre-build JSON round-trips without a phantom card
   const entries = calendarEntries(m, card);
   const chip = (b) => `<span class="pill" style="font-size:10px; text-transform:uppercase; letter-spacing:.03em;">${escapeHtml(b)}</span>`;
