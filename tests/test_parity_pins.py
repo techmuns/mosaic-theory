@@ -120,29 +120,48 @@ def test_low10_reserved_slugs_match_router_normalizer() -> None:
         f"app.js normalizer handles {js_set} but build.py reserves {set(b._RESERVED_SLUGS)}")
 
 
-if __name__ == "__main__":
-    raise SystemExit(pytest.main([__file__, "-q"]))
-
-
 def test_card_verdict_keys_read_by_js_are_emitted_by_build() -> None:
     """(catalyst-calendar drift, 2026-07-24) ``frontend/build.py`` camelCases every card key; the
     dossier renderer reads them back by hand. ``dated_triggers`` was read in SNAKE case and never
     emitted at all, so the WEB silently rendered a SHORTER catalyst calendar than the PDF — SMPL
     showed 2 of 3 entries and the missing row was the analyst's own falsifier. Pin the contract in
     BOTH directions: every ``card.verdict.<key>`` the JS reads must be a key build.py emits."""
-    js, build = _src("frontend/views/shared/dossier.js"), _src("frontend/build.py")
-    # keys the renderer reads off the card's verdict
-    read = set(re.findall(r"\(\{\}\)\)\.verdict \|\| \{\}\)\.(\w+)", js))
-    read |= set(re.findall(r"verdict\s*\|\|\s*\{\}\)\.(\w+)", js))
-    assert read, "no card.verdict.<key> reads found — the regex went stale, not the code"
-    # keys build.py emits inside the verdict block (quoted literal keys)
-    vblock = build.split('"verdict": {', 1)[1].split("\n        }", 1)[0]
-    emitted = set(re.findall(r'"(\w+)":', vblock))
+    build = _src("frontend/build.py")
+    # EMITTED — brace-BALANCE the verdict dict. A naive terminator (a fixed indent) silently ran
+    # 200 lines past its close and swallowed three unrelated emitters, inflating the set to 32
+    # names and letting foreign keys pass as "emitted" (incl. `ledger`, a top-level card SIBLING —
+    # exactly the wrong-nesting drift this pin exists to catch).
+    tail = build.split('"verdict": {', 1)[1]
+    depth, end = 1, len(tail)
+    for i, ch in enumerate(tail):
+        depth += (ch == "{") - (ch == "}")
+        if depth == 0:
+            end = i
+            break
+    emitted = set(re.findall(r'"(\w+)":', tail[:end]))
+    assert 5 < len(emitted) < 20, f"verdict-block extraction looks wrong: {sorted(emitted)}"
+
+    # READ — DIRECT verdict reads across EVERY view file (the original pin scanned one file).
+    # SCOPE, stated honestly: only reads that name `verdict` at the access site are traced. The
+    # alias form (`const v = c.verdict || {}` … `v.key`) is NOT traced — a regex cannot tell which
+    # object a re-used single-letter variable holds, and attempting it pulled in JS builtins
+    # (`toFixed`, `slice`) and mechanical-layer snake fields, i.e. noise that would redden the
+    # suite for no defect. Behaviour on the alias paths is covered by the e2e pin below and the
+    # twin-parity tests; this pin owns the KEY-NAME contract on the direct idiom.
+    read: set[str] = set()
+    for path in sorted((ROOT / "frontend" / "views").rglob("*.js")):
+        src = path.read_text()
+        read |= set(re.findall(r"\.verdict\s*\|\|\s*\{\}\)\s*\.\s*(\w+)", src))
+        read |= set(re.findall(r"\.verdict\s*\.\s*(\w+)", src))
+        read |= set(re.findall(r"\.verdict\?\.\s*(\w+)", src))
+    assert read, "no card.verdict.<key> reads found — the regexes went stale, not the code"
+
+    # A read key that build.py never writes renders SILENTLY EMPTY — the catalyst-calendar bug.
     missing = read - emitted
     assert not missing, (
-        f"dossier.js reads card.verdict keys build.py never emits: {sorted(missing)} — "
+        f"views read card.verdict keys build.py never emits: {sorted(missing)} — "
         f"emitted={sorted(emitted)}. A read key that is never written renders SILENTLY EMPTY.")
-    # and no snake_case survives on the card side (build.py camelCases everything)
+    # and no snake_case survives on the card side (build.py camelCases every key it emits)
     snake = {k for k in read if "_" in k}
     assert not snake, f"card keys must be camelCase (build.py's convention): {sorted(snake)}"
 
@@ -154,7 +173,7 @@ def test_committed_web_card_carries_the_same_dated_triggers_as_its_record() -> N
     import json
 
     recs = sorted((ROOT / "scenarios").glob("*.json"))
-    checked = 0
+    checked = carrying = 0
     for src in recs:
         if src.stem.startswith("_"):
             continue
@@ -167,4 +186,14 @@ def test_committed_web_card_carries_the_same_dated_triggers_as_its_record() -> N
             f"{src.stem}: record has {len(want)} dated trigger(s) but the web card carries "
             f"{len(got)} — the web calendar would render short of the PDF")
         checked += 1
+        carrying += 1 if want else 0
     assert checked, "no committed underwrite cards found to check"
+    # NON-VACUITY: with zero triggers anywhere every comparison is 0 == 0 and this pin guards
+    # nothing while still printing green. At least one committed record must carry a trigger.
+    assert carrying, (
+        "no committed record carries dated_triggers — this pin is passing vacuously. Either a "
+        "record lost its triggers, or the emit broke upstream; check before deleting this guard.")
+
+
+if __name__ == "__main__":
+    raise SystemExit(pytest.main([__file__, "-q"]))
