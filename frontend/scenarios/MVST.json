@@ -311,9 +311,9 @@
   "spotSource": "Polygon MVST close 2026-07-21 (live at underwrite)",
   "underwriteDate": "2026-07-22",
   "nextEvidence": {
-   "date": "UNKNOWN",
-   "what": "no scheduled evidence",
-   "source": "none on file"
+   "date": "2026-08-11",
+   "what": "Next results print",
+   "source": "catalyst calendar (cadence-estimate)"
   },
   "baseNormalMargin": 0.06,
   "ceiling2to1": 0.17

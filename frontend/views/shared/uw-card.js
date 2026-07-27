@@ -552,8 +552,22 @@ function methodRefsDetails(c) {
 // increasingly historical: SMPL's is correct as of 2026-07-21 and cannot mention the close, the
 // watch transition or the margin re-set that followed. Leading with it made readers infer the
 // present from the past. The expander force-opens in print (T1), so the PDF is still complete.
-function rationaleFact(v, { constructionEra = false } = {}) {
+function rationaleFact(v, { constructionEra = false, index = [] } = {}) {
   if (!v.rationale) return "";
+  // (2026-07-27) The sidecar's read of each PRE-GATE tag — its inferred class, and any later
+  // finding that SUPERSEDED it. Rendered under the rationale rather than inside the sealed text,
+  // which is never edited: a reader must meet the correction with the claim, not three tags later.
+  const idx = (index || []).length
+    ? `<div class="foot" style="margin-top:8px;">
+        <span class="muted" style="font-size:11px; text-transform:uppercase; letter-spacing:.04em;">Amendment index</span>
+        ${index.map((t) => `<div style="margin-top:3px;">
+          <span class="muted">${escapeHtml(String(t.date || ""))}</span>
+          <span class="pill" style="font-size:10px;">${escapeHtml(String(t.inferredClass || ""))}</span>
+          <span class="muted" style="font-size:11px;">inferred, not self-declared</span>
+          ${t.supersededNote
+            ? `<div class="fact-caveat" style="margin-top:3px;">SUPERSEDED — ${escapeHtml(t.supersededNote)}</div>`
+            : ""}</div>`).join("")}</div>`
+    : "";
   const banner = constructionEra
     ? '<div class="fact-caveat" style="margin-bottom:6px;">Recorded while the platform was under '
       + "construction; the amendment history includes system corrections as well as investment "
@@ -561,7 +575,7 @@ function rationaleFact(v, { constructionEra = false } = {}) {
     : "";
   return `<details class="uw-recorded"><summary>Verdict as recorded${
     v.recorded ? ` — ${escapeHtml(v.recorded)}` : ""}</summary>
-    ${banner}<div class="fact-val">${amendMarks(v.rationale)}</div></details>`;
+    ${banner}<div class="fact-val">${amendMarks(v.rationale)}</div>${idx}</details>`;
 }
 
 // Amendment tags are audit trail, not thesis — set them apart so a reader can see at a glance
@@ -697,7 +711,7 @@ export function uwCard(c, { ticker = true, mark = null } = {}) {
     ${legsTable(c)}
     ${survivalPanel(c)}
     ${impliedOdds(c, mark)}
-    ${rationaleFact(v, { constructionEra: hasPreAdoptionTags(v) })}
+    ${rationaleFact(v, { constructionEra: hasPreAdoptionTags(v), index: c.amendmentIndex })}
     ${trigChips(c, v)}
     ${legReasons(c)}
     ${methodFact(c)}`;
@@ -728,7 +742,7 @@ export function uwCardParts(c, { mark = null, detailExtra = "", rationale = true
     ${legsTable(c)}
     ${survivalPanel(c)}
     ${impliedOdds(c, mark)}
-    ${rationale ? rationaleFact(v, { constructionEra: hasPreAdoptionTags(v) }) : ""}
+    ${rationale ? rationaleFact(v, { constructionEra: hasPreAdoptionTags(v), index: c.amendmentIndex }) : ""}
     ${detailExtra}
     ${trigChips(c, v)}
     ${legReasons(c)}

@@ -232,6 +232,24 @@
   "ceiling2to1": 12.72,
   "statusNote": "Watch reflects a stay-out decision after the round trip, not a failed underwrite."
  },
+ "amendmentIndex": [
+  {
+   "index": 1,
+   "date": "2026-07-24",
+   "inferredClass": "process",
+   "supersededNote": "the staleness premise was refuted by the 2026-07-26 verification, which found the mechanical facts current; the record's move to watch stands as an operator decision."
+  },
+  {
+   "index": 2,
+   "date": "2026-07-24",
+   "inferredClass": "machine"
+  },
+  {
+   "index": 3,
+   "date": "2026-07-26",
+   "inferredClass": "judgment"
+  }
+ ],
  "verdict": {
   "status": "watch",
   "recorded": "2026-07-21",
