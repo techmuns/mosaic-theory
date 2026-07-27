@@ -497,26 +497,38 @@ def test_methodology_references_cite_by_endnote_on_both_twins() -> None:
 
 
 def test_methodology_reference_tables_share_one_grid() -> None:
-    """Every axis of the card renders its own table; they must share ONE width.
+    """The reference tables are ALIGNED but stay CONTENT-SIZED — two house rules, both easy to
+    break in the same well-meaning edit.
 
-    Content-sized (the K2 default, ``table.data { width: auto }``) they came out 32% / 34% / 97%
-    of the card in a SINGLE dossier, so the value column began at a different x on every axis and
-    the numbers formed no readable column — the whole point of right-aligning them. `.ref-table`
-    applies the same slack-absorbing pair `.vs-table` already uses for the same reason.
+    The card must not go back to the flat ``<ul>``: values then sit at as many different x as there
+    are rows (24 of them on AORT), which is the whole reason the value column is right-aligned.
+
+    And it must not be stretched to the container either. That WAS tried in this build and reverted
+    on operator challenge: ``.vs-table`` stretches because it is a MULTI-column comparison whose
+    number columns must group right against one wide label, but a reference list is TWO columns, so
+    100% only opens a gulf — measured on AORT, 603–785px of empty space between a label and its own
+    value, against 149–243px content-sized, with no row rules to carry the eye across it. The
+    raggedness that motivated the override (32%/34%/97% in one card) was SMPL alone, caused by a
+    380-char malformed label; clean records sit at 353–497px. CSS is not the place to compensate
+    for one bad data row.
 
     Also pins what must NOT be added: row dividers. "rows rule-free, tighter rhythm; the section
     head carries the rule" is house policy in styles.css, applied to `.fact`, `.brief-snap-t` and
-    `table.data tbody td` alike — alignment carries this table, not hairlines.
+    `table.data tbody td` alike.
     """
     js = _src("frontend/views/shared/dossier.js")
     body = js.split("function assumptionMethodology(card) {")[1].split("\n}")[0]
     assert 'class="data ref-table"' in body, "the methodology tables lost the .ref-table class"
     assert "kv-list" not in body, "the methodology card reverted to the unaligned flat list"
+    assert 'class="num mono"' in body, "the value cell lost its right-aligned numeric class"
 
     css = " ".join(_src("frontend/assets/styles.css").split())
-    assert "table.data.ref-table { width: 100%; }" in css, (
-        ".ref-table has no width rule — the per-axis tables will shrink-wrap to different widths")
-    assert ".ref-table td:first-child { width: 100%; }" in css, (
-        "the label column must absorb the slack so the value columns align on one right edge")
+    assert "table.data { width: auto; max-width: 100%;" in css, (
+        "the K2 content-sized default for data tables is gone — .ref-table inherits it")
+    for stretched in ("table.data.ref-table { width: 100%; }",
+                      ".ref-table td:first-child { width: 100%; }"):
+        assert stretched not in css, (
+            f"{stretched!r} is back — stretching a TWO-column reference list to the container "
+            "opens a 600px+ gulf between each label and its value; this was tried and reverted")
     assert "table.data tbody td { border-bottom: none; }" in css, (
         "the rule-free row policy was dropped — this card was designed against it")

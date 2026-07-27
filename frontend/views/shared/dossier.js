@@ -3068,9 +3068,9 @@ function assumptionMethodology(card) {
     // An ALIGNED table, not the old flat <ul>. The original objection — that dataTable right-aligns
     // the SOURCE string as if numeric — was right about dataTable, and dissolved once the source
     // became an endnote: the row is now label + value, and a value column is exactly what
-    // right-alignment is for. `.ref-table` widths to 100% so every axis of one card shares one grid
-    // and the values land on a single right edge; they shrink-wrapped to 32%/34%/97% before —
-    // three different shapes for one kind of content.
+    // right-alignment is for. `.ref-table` is a HOOK, not a width override — these keep the K2
+    // content-sized width. A 100% version was tried and REVERTED: it opened a 603–785px gulf
+    // between a label and its own value (see the .ref-table note in styles.css).
     // NOT parsed: some labels carry the leg they anchor ("… — bear") or an exclusion flag
     // ("— DEAD REGIME") as prose. Printed VERBATIM — a display string is never parsed for meaning.
     const refs = (a.references || []).length

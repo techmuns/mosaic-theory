@@ -509,14 +509,15 @@ table.data.vs-table { width: 100%; }
 .vs-table td:first-child, .vs-table th:first-child { width: 100%; }
 .vs-table th.num { text-align: right; }
 
-/* "How these numbers were set" reference tables — the same slack-absorbing trick as .vs-table, for
-   the same reason. That card renders one table PER AXIS; content-sized (K2) they came out 32% /
-   34% / 97% wide in a single card, so the value column began at a different x on every axis and the
-   numbers formed no column at all. Widthing to 100% puts every axis on one grid with the values on
-   a single right edge. Row dividers stay ABSENT on purpose — rule-free rows is house policy (see
-   the row-divider policy block); alignment, not a hairline, is what makes the column scannable. */
-table.data.ref-table { width: 100%; }
-.ref-table td:first-child { width: 100%; }
+/* "How these numbers were set" reference tables (.ref-table) keep the K2 CONTENT-SIZED width —
+   deliberately NO width override here, recorded because a 100% version was tried and REVERTED.
+   .vs-table stretches because it is a MULTI-column comparison whose number columns must group on
+   the right against one wide label. A reference list is TWO columns, so stretching it to the
+   container only opens a gulf: measured on AORT, 603–785px of empty space between a label and its
+   own value, against 149–243px content-sized — and with rule-free rows (house policy) nothing
+   carries the eye across it. The raggedness that prompted the override (32%/34%/97% in one card)
+   was SMPL ALONE, caused by a 380-char malformed label; clean records sit at 353–497px. CSS must
+   not be used to compensate for one bad data row. */
 
 .vs-table th.grp { text-align: center; font-size: 10px; text-transform: uppercase; letter-spacing: 0.06em; font-weight: 700; padding-bottom: 2px; }
 .vs-table th.grp-verdict { color: var(--ink); }
