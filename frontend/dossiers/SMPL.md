@@ -378,36 +378,36 @@ _Per-axis methodology from the underwrite record — the reference frame each le
 
 Legs are set off the consensus path and the trailing-twelve-month base rather than round numbers: base is consensus FY26E, bull sits just under the trailing twelve months on a stabilizing Atkins, and bear takes revenue materially past consensus to price the secular decline case.
 
-| reference | value | source |
-| --- | ---: | --- |
-| FY2025 reported revenue | $1,450.9M | `EDGAR companyfacts OperatingIncomeLoss / RevenueFromContractWithCustomerExcludingAssessedTax (FY2025)` |
-| LTM revenue | $1,416.208M | `committed dossier anchor block (#158/#160/#162-verified)` |
-| consensus FY26E revenue (base) | $1,334M | `committed dossier financial_summary (E cols = consensus)` |
+| reference | value |
+| --- | ---: |
+| FY2025 reported revenue | $1,450.9M [47] |
+| LTM revenue | $1,416.208M [48] |
+| consensus FY26E revenue (base) | $1,334M [49] |
 
 ### Margin · ratified 2026-07-27
 
 The normal margin is set between the seven-year clean median and the trailing clean margin through the third quarter, nearer the trailing figure, treating part of this year's gross-margin reset as structural. The bear leg takes the worst clean year; the bull leg sits between the median and the best clean year.
 
-| reference | value | source |
-| --- | ---: | --- |
-| committed anchor median (naive, 8 FY) | 15.45% | `committed dossier anchor block (#158/#160/#162-verified) anchor.margin.value` |
-| 7yr clean median (FY2025 adjusted) — base | 15.51% | `EDGAR companyfacts OperatingIncomeLoss / RevenueFromContractWithCustomerExcludingAssessedTax FY2019-FY2025, FY2025 ex the $60.9M impairment` |
-| FY2020 worst clean year — bear | 9.58% | `EDGAR companyfacts OperatingIncomeLoss / RevenueFromContractWithCustomerExcludingAssessedTax (FY2020)` |
-| FY2022 best clean year — bull ceiling | 17.35% | `EDGAR companyfacts OperatingIncomeLoss / RevenueFromContractWithCustomerExcludingAssessedTax (FY2022)` |
-| FY2025 adjusted ex $60.9M impairment | 15.01% | `EDGAR companyfacts OperatingIncomeLoss / RevenueFromContractWithCustomerExcludingAssessedTax (FY2025) + 10-K 0001702744-25-000046 (FY2025, Note 5 Goodwill and Intangibles)` |
+| reference | value |
+| --- | ---: |
+| committed anchor median (naive, 8 FY) | 15.45% [50] |
+| 7yr clean median (FY2025 adjusted) — base | 15.51% [51] |
+| FY2020 worst clean year — bear | 9.58% [52] |
+| FY2022 best clean year — bull ceiling | 17.35% [53] |
+| FY2025 adjusted ex $60.9M impairment | 15.01% [54] |
 
 ### Multiple · ratified 2026-07-27
 
 Multiple legs sit inside the company's own EV/EBITDA trading range, deliberately below the median at base: the unresolved category question earns a durable discount rather than a cyclical one. The bear leg is cross-checked against businesses observed IN the declining state.
 
-| reference | value | source |
-| --- | ---: | --- |
-| own-history band low — bear | 6.11x | `committed dossier valuation.own_history (CIQ Financials→Multiples 'TEV/LTM EBITDA' Close, 35 closes, 8.55y span, as-of 2026-07-17, sha 7bd83a1103)` |
-| own-history 25th percentile | 15.2x | `committed dossier valuation.own_history (CIQ Financials→Multiples 'TEV/LTM EBITDA' Close, 35 closes, 8.55y span, as-of 2026-07-17, sha 7bd83a1103)` |
-| own-history median (base set below it) | 17.85x | `committed dossier valuation.own_history (CIQ Financials→Multiples 'TEV/LTM EBITDA' Close, 35 closes, 8.55y span, as-of 2026-07-17, sha 7bd83a1103)` |
-| own-history 75th percentile | 20.88x | `committed dossier valuation.own_history (CIQ Financials→Multiples 'TEV/LTM EBITDA' Close, 35 closes, 8.55y span, as-of 2026-07-17, sha 7bd83a1103)` |
-| current multiple (0th pctile) | 5.65x | `committed dossier valuation.own_history (CIQ Financials→Multiples 'TEV/LTM EBITDA' Close, 35 closes, 8.55y span, as-of 2026-07-17, sha 7bd83a1103)` |
-| entry-boundary cells: 1,100 × 8% × 6.0x → $3.54; 1,050 × 7% × 6.0x → $2.62 (from the sealed entry rationale, preserved in the ledger payload). At the verification price ($10.53, 2026-07-22 close) both clear on the entry-vintage 15.5% normal (≈2.34 / ≈2.07); on the re-set 14% normal they read ≈1.96 / ≈1.73 — below the bar. The boundary tightened with the cut: the 2:1 line now sits between the recorded 10% bear and these stress cells. | 1.96:1 (cell A at the re-set 14% normal; cell B ≈1.73) | `sealed entry rationale, preserved in the ledger payload (V-SMPL-screen2-20260706); ratios recomputed 2026-07-26 at $10.53` |
+| reference | value |
+| --- | ---: |
+| own-history band low — bear | 6.11x [55] |
+| own-history 25th percentile | 15.2x [55] |
+| own-history median (base set below it) | 17.85x [55] |
+| own-history 75th percentile | 20.88x [55] |
+| current multiple (0th pctile) | 5.65x [55] |
+| entry-boundary cells: 1,100 × 8% × 6.0x → $3.54; 1,050 × 7% × 6.0x → $2.62 (from the sealed entry rationale, preserved in the ledger payload). At the verification price ($10.53, 2026-07-22 close) both clear on the entry-vintage 15.5% normal (≈2.34 / ≈2.07); on the re-set 14% normal they read ≈1.96 / ≈1.73 — below the bar. The boundary tightened with the cut: the 2:1 line now sits between the recorded 10% bear and these stress cells. | 1.96:1 (cell A at the re-set 14% normal; cell B ≈1.73) [56] |
 
 
 ## Financial statements (actuals + consensus estimates) — export date unverified (data ≥ 2026-07-21)
@@ -431,7 +431,7 @@ Multiple legs sit inside the company's own EV/EBITDA trading range, deliberately
 _E = consensus (Estimates→Trends 'Current'), as-of ≥2026-07-21; (R) = Reclassified basis · FCF (levered, CIQ) = CIQ 'Levered Free Cash Flow', NOT CFO − capex_
 
 ### Quarterly — every exported quarter
-- **Quarterly financials** — [47]  <!-- ds-table -->
+- **Quarterly financials** — [57]  <!-- ds-table -->
 
 |  | FY16 | FY17 | FY17 | FY17 | FY17 | FY18 | FY18 | FY18 (R) | FY18 (R) | FY19 (R) | FY19 (R) | FY19 | FY19 | FY20 | FY20 | FY20 | FY20 | FY21 | FY21 | FY21 | FY21 | FY22 | FY22 | FY22 (R) | FY22 | FY23 | FY23 | FY23 | FY23 | FY24 | FY24 | FY24 | FY24 (R) | FY25 (R) | FY25 | FY25 | FY25 | FY26 | FY26 |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
@@ -445,8 +445,8 @@ _E = consensus (Estimates→Trends 'Current'), as-of ≥2026-07-21; (R) = Reclas
 _QoQ/YoY same-basis only; (R) = Reclassified_
 
 ### Balance-sheet posture
-- **Posture:** as of FY26 ($M): cash & ST inv 124; total debt 448; net debt 325; equity 1,418; net working capital 367; net-debt/EBITDA → see the Leverage & survival block (not recomputed) [48]
-- **Coherence — BS vs implied-valuation bridge:** cash BS $124M / bridge $124M; debt BS $448M / bridge $448M — reconcile with the implied-valuation bridge. [49]
+- **Posture:** as of FY26 ($M): cash & ST inv 124; total debt 448; net debt 325; equity 1,418; net working capital 367; net-debt/EBITDA → see the Leverage & survival block (not recomputed) [58]
+- **Coherence — BS vs implied-valuation bridge:** cash BS $124M / bridge $124M; debt BS $448M / bridge $448M — reconcile with the implied-valuation bridge. [59]
 
 
 ### Capital structure & debt terms — instruments · pointers · covenants
@@ -460,14 +460,14 @@ _QoQ/YoY same-basis only; (R) = Reclassified_
 
 - **8-Ks at instrument maturities:** _UNKNOWN_ — no trailing-12m instrument maturity to anchor an 8-K
 - **Covenant exhibit pointers:** _UNKNOWN_ — no CIK-scoped agreement exhibit located across the filing history
-- **Covenant terms (from the filed agreement):** COVENANT DIGEST — extraction failed: no covenant terms extracted from located exhibits (terms UNKNOWN, not pending). [50]
+- **Covenant terms (from the filed agreement):** COVENANT DIGEST — extraction failed: no covenant terms extracted from located exhibits (terms UNKNOWN, not pending). [60]
 
 ### Implied equity at peer multiples
 > **Comparability gate:** comparability: HETEROGENEOUS (see Peer comps gate)
 > _Reference only — the human judges earned vs residual (not a machine upside); the full Low/Mean/High and all bases are in the JSON._
-- **Name market cap ($M) — the ADJACENT fact to compare against:** 909.4 [51]
-- **Bridge (TEV → equity):** TEV→equity bridge: + cash $123.90M, − total debt $448.50M [52]
-- **Implied equity at peer-median ($M, CIQ)** — [53]  <!-- ds-table -->
+- **Name market cap ($M) — the ADJACENT fact to compare against:** 909.4 [61]
+- **Bridge (TEV → equity):** TEV→equity bridge: + cash $123.90M, − total debt $448.50M [62]
+- **Implied equity at peer-median ($M, CIQ)** — [63]  <!-- ds-table -->
 
 |  | Implied equity (median) |
 |---|---:|
@@ -477,15 +477,15 @@ _QoQ/YoY same-basis only; (R) = Reclassified_
 
 
 ### Management commentary
-- **Earnings call (transcript pointer — read the file):** 2 earnings-call transcript(s) on file — read in full for management posture: The Simply Good Foods Company, Q2 2026 Earnings Call, Apr 09, 2026.rtf; The Simply Good Foods Company, Q3 2026 Earnings Call, Jul 09, 2026.rtf (pointer only; the synthesis cites them, the machine does not curate an excerpt) [54]
+- **Earnings call (transcript pointer — read the file):** 2 earnings-call transcript(s) on file — read in full for management posture: The Simply Good Foods Company, Q2 2026 Earnings Call, Apr 09, 2026.rtf; The Simply Good Foods Company, Q3 2026 Earnings Call, Jul 09, 2026.rtf (pointer only; the synthesis cites them, the machine does not curate an excerpt) [64]
 
 ### Ownership & positioning
-- **Insider activity (Form 4, 6m):** Open-market buys 2 · sells 0 (net +90.0K sh) · grants 10 · last 2026-05-18 · other filings 4 [55]
-- **Short interest (FINRA):** Short interest (FINRA, settle 2026-06-30): 6.5M → 7.2M sh (+11.1%, rising) · 8.2% of shares out (EDGAR XBRL) · DTC 2.9d · recent: 2026-06-30 7.2M · 2026-06-15 6.5M · 2026-05-29 6.7M · 2026-05-15 6.4M [56]
+- **Insider activity (Form 4, 6m):** Open-market buys 2 · sells 0 (net +90.0K sh) · grants 10 · last 2026-05-18 · other filings 4 [65]
+- **Short interest (FINRA):** Short interest (FINRA, settle 2026-06-30): 6.5M → 7.2M sh (+11.1%, rising) · 8.2% of shares out (EDGAR XBRL) · DTC 2.9d · recent: 2026-06-30 7.2M · 2026-06-15 6.5M · 2026-05-29 6.7M · 2026-05-15 6.4M [66]
 
 ### Assembly verification — filing vs panel
-- **Wall coherence — filing ≤12m vs CIQ panel (same window):** wall coherence: UNKNOWN — filing states no ≤12m figure [57]
-- **Guide verification — CIQ guide vs release:** revenue: CIQ 322.0–332.0 vs release NO NUMERIC OUTLOOK → not cross-checked [58]
+- **Wall coherence — filing ≤12m vs CIQ panel (same window):** wall coherence: UNKNOWN — filing states no ≤12m figure [67]
+- **Guide verification — CIQ guide vs release:** revenue: CIQ 322.0–332.0 vs release NO NUMERIC OUTLOOK → not cross-checked [68]
 
 ## Record & reproduce
 - **Data window:** screened as of 2026-07-06 · assembled 2026-07-24 13:02 UTC
@@ -544,15 +544,25 @@ _QoQ/YoY same-basis only; (R) = Reclassified_
 [44] `CIQ Financials→Capital Structure Summary`
 [45] `10-Q 0001702744-26-000023`
 [46] `CIQ leverage bases + release LTM adj-EBITDA/margins`
-[47] `CIQ Financials→Income Statement (quarterly, full exported history)`
-[48] `CIQ Financials→Balance Sheet (quarterly, FY26)`
-[49] `CIQ Financials→Balance Sheet vs Comparable Analysis→Implied Valuation`
-[50] `fenced Tier-2 digest (P1)`
-[51] `CIQ Comparable Analysis→Financial Data (name Market Capitalization Latest) · as-of 2026-07-24`
-[52] `CIQ Comparable Analysis→Implied Valuation (cash/debt bridge) · as-of 2026-07-24`
-[53] `CIQ Comparable Analysis→Implied Valuation (= Implied Equity Value, basis × Low/Median/Mean/High) · as-of 2026-07-24`
-[54] `CIQ transcript(s): The Simply Good Foods Company, Q2 2026 Earnings Call, Apr 09, 2026.rtf; The Simply Good Foods Company, Q3 2026 Earnings Call, Jul 09, 2026.rtf`
-[55] `EDGAR Form 4 (latest 0001180778-26-000004; 16 in 6m)`
-[56] `FINRA consolidated short interest (settle 2026-06-30); DTC = 7,211,389 short ÷ 2,454,317 screen 90d ADV`
-[57] `10-Q maturity wall vs CIQ capital panel (same window)`
-[58] `CIQ revenue guide vs release actual/outlook`
+[47] `EDGAR companyfacts OperatingIncomeLoss / RevenueFromContractWithCustomerExcludingAssessedTax (FY2025)`
+[48] `committed dossier anchor block (#158/#160/#162-verified)`
+[49] `committed dossier financial_summary (E cols = consensus)`
+[50] `committed dossier anchor block (#158/#160/#162-verified) anchor.margin.value`
+[51] `EDGAR companyfacts OperatingIncomeLoss / RevenueFromContractWithCustomerExcludingAssessedTax FY2019-FY2025, FY2025 ex the $60.9M impairment`
+[52] `EDGAR companyfacts OperatingIncomeLoss / RevenueFromContractWithCustomerExcludingAssessedTax (FY2020)`
+[53] `EDGAR companyfacts OperatingIncomeLoss / RevenueFromContractWithCustomerExcludingAssessedTax (FY2022)`
+[54] `EDGAR companyfacts OperatingIncomeLoss / RevenueFromContractWithCustomerExcludingAssessedTax (FY2025) + 10-K 0001702744-25-000046 (FY2025, Note 5 Goodwill and Intangibles)`
+[55] `committed dossier valuation.own_history (CIQ Financials→Multiples 'TEV/LTM EBITDA' Close, 35 closes, 8.55y span, as-of 2026-07-17, sha 7bd83a1103)`
+[56] `sealed entry rationale, preserved in the ledger payload (V-SMPL-screen2-20260706); ratios recomputed 2026-07-26 at $10.53`
+[57] `CIQ Financials→Income Statement (quarterly, full exported history)`
+[58] `CIQ Financials→Balance Sheet (quarterly, FY26)`
+[59] `CIQ Financials→Balance Sheet vs Comparable Analysis→Implied Valuation`
+[60] `fenced Tier-2 digest (P1)`
+[61] `CIQ Comparable Analysis→Financial Data (name Market Capitalization Latest) · as-of 2026-07-24`
+[62] `CIQ Comparable Analysis→Implied Valuation (cash/debt bridge) · as-of 2026-07-24`
+[63] `CIQ Comparable Analysis→Implied Valuation (= Implied Equity Value, basis × Low/Median/Mean/High) · as-of 2026-07-24`
+[64] `CIQ transcript(s): The Simply Good Foods Company, Q2 2026 Earnings Call, Apr 09, 2026.rtf; The Simply Good Foods Company, Q3 2026 Earnings Call, Jul 09, 2026.rtf`
+[65] `EDGAR Form 4 (latest 0001180778-26-000004; 16 in 6m)`
+[66] `FINRA consolidated short interest (settle 2026-06-30); DTC = 7,211,389 short ÷ 2,454,317 screen 90d ADV`
+[67] `10-Q maturity wall vs CIQ capital panel (same window)`
+[68] `CIQ revenue guide vs release actual/outlook`

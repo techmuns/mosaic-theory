@@ -529,3 +529,89 @@ def test_every_assembled_field_reaches_both_dossier_renderers() -> None:
         f"{one_sided}. The markdown twin (and the 'Full dossier MD' download) and the web page "
         "(and both PDF scopes) must both acknowledge every assembled field — that asymmetry is "
         "#227. Render it on the missing side, or record the exemption in twin_exempt.")
+
+
+def test_methodology_references_cite_by_endnote_on_both_twins() -> None:
+    """"How these numbers were set" cites via ENDNOTES, like every other MAIN-BODY block.
+
+    frontend/lib/cites.js states two sanctioned modes and says the choice is not stylistic:
+    ``withEndnotes()`` for the main body, ``auditCitesInline()`` for on-demand <details> audit
+    blocks. This card is main body on both surfaces (a plain card, not a <details>), and it used
+    NEITHER — it hardcoded the source string into the markup, so no pass ever saw it.
+
+    That is a RECURRENCE. cites.js exists because uw-card.js did exactly this; its module docstring
+    names the defect. uw-card was fixed, then #222 shipped a new card that reintroduced it.
+
+    Pins the CONTRACT, not the phrasing: the renderer must not paste a source string into the
+    reference row on either twin, and every committed record's sources must still be reachable in
+    the rendered markdown (moved to the endnote list, never dropped).
+    """
+    import json
+
+    js = _src("frontend/views/shared/dossier.js")
+    body = js.split("function assumptionMethodology(card) {")[1].split("\n}")[0]
+    assert "citeMark(r.source)" in body, (
+        "the web methodology card no longer emits a citeMark — a main-body cite must be an endnote")
+    assert "escapeHtml(r.source)" not in body, (
+        "the web methodology card pastes the source string inline again (the uw-card defect)")
+
+    py = _src("vinci/dossier/render.py")
+    pybody = py.split("def _assumption_methodology_lines(")[1].split("\ndef ")[0]
+    assert "_cite(r.source)" in pybody, "the markdown twin no longer emits an endnote cite"
+    assert "_md_cell(r.source)" not in pybody, (
+        "the markdown twin renders the source as a table column again")
+
+    # E2E — no source string may be LOST by the move; each must still resolve in the rendered md.
+    checked = 0
+    for p in sorted((ROOT / "scenarios").glob("*.json")):
+        if p.stem.startswith("_"):
+            continue
+        md_p = ROOT / "data" / "dossiers" / p.stem / "dossier.md"
+        if not md_p.exists():
+            continue
+        md = md_p.read_text()
+        for a in (json.loads(p.read_text()).get("assumptions") or {}).values():
+            for r in (a.get("references") or []):
+                checked += 1
+                assert r["source"] in md, (
+                    f"{p.stem}: a reference source vanished from the rendered dossier — moving "
+                    f"a cite to the endnote list must never drop it: {r['source'][:60]!r}")
+    assert checked >= 60, f"expected the committed reference corpus end-to-end, got {checked}"
+
+
+def test_methodology_reference_tables_share_one_grid() -> None:
+    """The reference tables are ALIGNED but stay CONTENT-SIZED — two house rules, both easy to
+    break in the same well-meaning edit.
+
+    The card must not go back to the flat ``<ul>``: values then sit at as many different x as there
+    are rows (24 of them on AORT), which is the whole reason the value column is right-aligned.
+
+    And it must not be stretched to the container either. That WAS tried in this build and reverted
+    on operator challenge: ``.vs-table`` stretches because it is a MULTI-column comparison whose
+    number columns must group right against one wide label, but a reference list is TWO columns, so
+    100% only opens a gulf — measured on AORT, 603–785px of empty space between a label and its own
+    value, against 149–243px content-sized, with no row rules to carry the eye across it. The
+    raggedness that motivated the override (32%/34%/97% in one card) was SMPL alone, caused by a
+    380-char malformed label; clean records sit at 353–497px. CSS is not the place to compensate
+    for one bad data row.
+
+    Also pins what must NOT be added: row dividers. "rows rule-free, tighter rhythm; the section
+    head carries the rule" is house policy in styles.css, applied to `.fact`, `.brief-snap-t` and
+    `table.data tbody td` alike.
+    """
+    js = _src("frontend/views/shared/dossier.js")
+    body = js.split("function assumptionMethodology(card) {")[1].split("\n}")[0]
+    assert 'class="data ref-table"' in body, "the methodology tables lost the .ref-table class"
+    assert "kv-list" not in body, "the methodology card reverted to the unaligned flat list"
+    assert 'class="num mono"' in body, "the value cell lost its right-aligned numeric class"
+
+    css = " ".join(_src("frontend/assets/styles.css").split())
+    assert "table.data { width: auto; max-width: 100%;" in css, (
+        "the K2 content-sized default for data tables is gone — .ref-table inherits it")
+    for stretched in ("table.data.ref-table { width: 100%; }",
+                      ".ref-table td:first-child { width: 100%; }"):
+        assert stretched not in css, (
+            f"{stretched!r} is back — stretching a TWO-column reference list to the container "
+            "opens a 600px+ gulf between each label and its value; this was tried and reverted")
+    assert "table.data tbody td { border-bottom: none; }" in css, (
+        "the rule-free row policy was dropped — this card was designed against it")
