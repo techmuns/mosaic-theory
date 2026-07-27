@@ -4614,6 +4614,44 @@ field, not just this one); and `test_committed_web_card_carries_the_same_dated_t
 record` — structural count parity on the committed artifacts (counts only; analyst prose is never
 pinned). Gate: ruff + `mypy --strict` clean · 1068 passed.
 
+**BUILD RECORD — 2026-07-27 "HOW THESE NUMBERS WERE SET" — ENDNOTE CITES + ONE GRID.** Operator
+spotted inline sources on a MAIN-BODY card and asked why, against the house convention. He was
+right, and it was worse than a style slip: the card used NEITHER sanctioned citation mode.
+`frontend/lib/cites.js` states two and says the choice is not stylistic — `withEndnotes()` for the
+main body, `auditCitesInline()` for on-demand `<details>`. This card HARDCODED the source string
+into the markup on BOTH twins, so no pass ever saw it. A RECURRENCE: cites.js was extracted out of
+uw-card.js for this exact defect (its docstring names it), uw-card was fixed, and #222 then shipped
+a NEW card that reintroduced it. Fixed to `citeMark`/`_cite`; the Appendix tier already wraps in
+`withEndnotes("X", …)` so the markers number and list themselves with no plumbing, and DEDUPE for
+free (AORT's street-revenue rows share one source — [X1] twice instead of the 60-char path twice).
+DESIGN AUDIT that followed, operator-prompted ("data is simply added line by line"), measured
+rather than eyeballed: the web rendered a flat `<ul>`, so 24 AORT values sat at 24 different x —
+while the MD twin already used an aligned table, i.e. the twins diverged in STRUCTURE and the
+markdown was the better-designed surface. Root cause was documented in the code: `dataTable` was
+rejected because it right-aligns the SOURCE string as if numeric — a correct objection that
+DISSOLVED once the source became an endnote. Now `.ref-table`, following the `.vs-table`
+slack-absorbing pair already in styles.css: measured 32%/34%/97% of card width BEFORE (three shapes
+for one kind of content), 96%/96%/96% with a single value right-edge (1227px) after. Axis heads
+moved from a bare `<b>` to the house 12px in-card `.ds-title` used by briefCase/argument — the name,
+its method prose and its data had all been 13px, three roles with no typographic step. TWO
+CORRECTIONS TO MY OWN AUDIT, both caught by checking instead of assuming: (1) I proposed adding row
+hairlines — styles.css carries an explicit "rows rule-free, tighter rhythm; the section head carries
+the rule" policy applied to `.fact`, `.brief-snap-t` and `table.data tbody td` alike, so adding them
+would have overridden a stated decision on preference; NOT done, and now PINNED so nobody adds them
+later. (2) I argued per-axis (ragged) width was correct because the units differ — that conflated
+unit comparability with GEOMETRY; the axis headings already separate the units. SENTENCE CASE
+checked and left alone: 95 labels lowercase / 19 upper, and all 19 lead with an acronym or fiscal
+token (LTM, FY2025, Q1-2026) — a consistent convention, not sloppiness. NOT FIXED, deliberately
+out of scope and recorded for the schema decision: 14/118 references carry the LEG they anchor as
+prose in `label` ("… — bear"); 3 carry an EXCLUSION flag ("— DEAD REGIME", "NOT a reference for
+us") yet still render a value in the aligned numeric column, which now lends them authority the
+data does not have; and SMPL's last multiple "reference" is a 380-char narrative with a sentence in
+its `unit`. Labels are printed VERBATIM and never parsed — grouping by leg needs a FIELD, not a
+regex over a display string. Verified: every removal from the md is the 3-column ref row or a
+renumbered cite (0 unexplained across 6 dossiers), and all 74 distinct sources still resolve in the
+rendered markdown. Four mutations caught (web inline revert · md column revert · width rule dropped
+· row-rule policy overridden). Gate: ruff + `mypy --strict` clean · **1101 passed, 1 skipped**.
+
 **BUILD RECORD — 2026-07-27 SCREENING ANCHOR REACHES THE PRINT TWIN (audit Q1).** The
 post-restructure structural read asked whether any section needs redesign against the full
 buy-side architecture. ANSWER: no re-ordering — the tier map is right and #221 settled it — but

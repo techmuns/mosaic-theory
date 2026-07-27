@@ -508,6 +508,16 @@ a.tier-count:hover { text-decoration: underline; }
 table.data.vs-table { width: 100%; }
 .vs-table td:first-child, .vs-table th:first-child { width: 100%; }
 .vs-table th.num { text-align: right; }
+
+/* "How these numbers were set" reference tables — the same slack-absorbing trick as .vs-table, for
+   the same reason. That card renders one table PER AXIS; content-sized (K2) they came out 32% /
+   34% / 97% wide in a single card, so the value column began at a different x on every axis and the
+   numbers formed no column at all. Widthing to 100% puts every axis on one grid with the values on
+   a single right edge. Row dividers stay ABSENT on purpose — rule-free rows is house policy (see
+   the row-divider policy block); alignment, not a hairline, is what makes the column scannable. */
+table.data.ref-table { width: 100%; }
+.ref-table td:first-child { width: 100%; }
+
 .vs-table th.grp { text-align: center; font-size: 10px; text-transform: uppercase; letter-spacing: 0.06em; font-weight: 700; padding-bottom: 2px; }
 .vs-table th.grp-verdict { color: var(--ink); }
 .vs-table th.grp-scan { color: var(--ink-3); font-weight: 600; }

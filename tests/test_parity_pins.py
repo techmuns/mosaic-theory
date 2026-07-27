@@ -446,3 +446,77 @@ def test_screening_context_prose_is_the_same_on_both_surfaces() -> None:
         assert " ".join(const.split()) in " ".join(js.split()), (
             f"{name} no longer matches its dossier.js original — the print twin and the web would "
             "describe the SAME screening number in different words")
+
+
+def test_methodology_references_cite_by_endnote_on_both_twins() -> None:
+    """"How these numbers were set" cites via ENDNOTES, like every other MAIN-BODY block.
+
+    frontend/lib/cites.js states two sanctioned modes and says the choice is not stylistic:
+    ``withEndnotes()`` for the main body, ``auditCitesInline()`` for on-demand <details> audit
+    blocks. This card is main body on both surfaces (a plain card, not a <details>), and it used
+    NEITHER — it hardcoded the source string into the markup, so no pass ever saw it.
+
+    That is a RECURRENCE. cites.js exists because uw-card.js did exactly this; its module docstring
+    names the defect. uw-card was fixed, then #222 shipped a new card that reintroduced it.
+
+    Pins the CONTRACT, not the phrasing: the renderer must not paste a source string into the
+    reference row on either twin, and every committed record's sources must still be reachable in
+    the rendered markdown (moved to the endnote list, never dropped).
+    """
+    import json
+
+    js = _src("frontend/views/shared/dossier.js")
+    body = js.split("function assumptionMethodology(card) {")[1].split("\n}")[0]
+    assert "citeMark(r.source)" in body, (
+        "the web methodology card no longer emits a citeMark — a main-body cite must be an endnote")
+    assert "escapeHtml(r.source)" not in body, (
+        "the web methodology card pastes the source string inline again (the uw-card defect)")
+
+    py = _src("vinci/dossier/render.py")
+    pybody = py.split("def _assumption_methodology_lines(")[1].split("\ndef ")[0]
+    assert "_cite(r.source)" in pybody, "the markdown twin no longer emits an endnote cite"
+    assert "_md_cell(r.source)" not in pybody, (
+        "the markdown twin renders the source as a table column again")
+
+    # E2E — no source string may be LOST by the move; each must still resolve in the rendered md.
+    checked = 0
+    for p in sorted((ROOT / "scenarios").glob("*.json")):
+        if p.stem.startswith("_"):
+            continue
+        md_p = ROOT / "data" / "dossiers" / p.stem / "dossier.md"
+        if not md_p.exists():
+            continue
+        md = md_p.read_text()
+        for a in (json.loads(p.read_text()).get("assumptions") or {}).values():
+            for r in (a.get("references") or []):
+                checked += 1
+                assert r["source"] in md, (
+                    f"{p.stem}: a reference source vanished from the rendered dossier — moving "
+                    f"a cite to the endnote list must never drop it: {r['source'][:60]!r}")
+    assert checked >= 60, f"expected the committed reference corpus end-to-end, got {checked}"
+
+
+def test_methodology_reference_tables_share_one_grid() -> None:
+    """Every axis of the card renders its own table; they must share ONE width.
+
+    Content-sized (the K2 default, ``table.data { width: auto }``) they came out 32% / 34% / 97%
+    of the card in a SINGLE dossier, so the value column began at a different x on every axis and
+    the numbers formed no readable column — the whole point of right-aligning them. `.ref-table`
+    applies the same slack-absorbing pair `.vs-table` already uses for the same reason.
+
+    Also pins what must NOT be added: row dividers. "rows rule-free, tighter rhythm; the section
+    head carries the rule" is house policy in styles.css, applied to `.fact`, `.brief-snap-t` and
+    `table.data tbody td` alike — alignment carries this table, not hairlines.
+    """
+    js = _src("frontend/views/shared/dossier.js")
+    body = js.split("function assumptionMethodology(card) {")[1].split("\n}")[0]
+    assert 'class="data ref-table"' in body, "the methodology tables lost the .ref-table class"
+    assert "kv-list" not in body, "the methodology card reverted to the unaligned flat list"
+
+    css = " ".join(_src("frontend/assets/styles.css").split())
+    assert "table.data.ref-table { width: 100%; }" in css, (
+        ".ref-table has no width rule — the per-axis tables will shrink-wrap to different widths")
+    assert ".ref-table td:first-child { width: 100%; }" in css, (
+        "the label column must absorb the slack so the value columns align on one right edge")
+    assert "table.data tbody td { border-bottom: none; }" in css, (
+        "the rule-free row policy was dropped — this card was designed against it")
