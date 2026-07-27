@@ -582,7 +582,12 @@ function rationaleFact(v, { constructionEra = false, index = [] } = {}) {
 // which words were recorded at the verdict and which were added afterwards, and WHEN.
 // CLASSED tags (2026-07-27 on) also carry WHAT KIND of change they record, so a reader can tell a
 // leg change from a system correction without parsing the prose.
-function amendMarks(text) {
+//
+// EXPORTED, and the ONLY marker (2026-07-27). The dossier's own thesis block used to carry a
+// SECOND copy of this regex — which never learned about classed tags, so the same amendment
+// rendered marked on the card and unmarked in the Brief. Two parsers of one string is the bug
+// class the constitution names; there is now one shared helper and both surfaces call it.
+export function amendMarks(text) {
   return escapeHtml(text)
     .replace(/\[amended (\d{4}-\d{2}-\d{2})\s*\((judgment|machine|process)\)\s*:/g,
       '<span class="muted">[amended $1</span> <span class="pill" style="font-size:10px;">$2</span><span class="muted">:</span>')
@@ -598,13 +603,13 @@ function supersessionBanner(c) {
   if (c.supersededBy) {
     return `<div class="fact-caveat" style="margin-bottom:10px;">
       <b>ARCHIVED</b> — superseded by the record of
-      <a href="?scenario=${encodeURIComponent(String(c.supersededBy).split("-")[0])}"
+      <a href="#/dossier/${encodeURIComponent(String(c.supersededBy).split("-")[0])}"
         >${escapeHtml(dateOf(c.supersededBy))}</a>.
       This record is kept intact and sealed; it is not the current view of the name.</div>`;
   }
   if (c.supersedes) {
     return `<div class="foot" style="margin-bottom:8px;">Supersedes the record of
-      <a href="?scenario=${encodeURIComponent(String(c.supersedes))}"
+      <a href="#/dossier/${encodeURIComponent(String(c.supersedes))}"
         >${escapeHtml(dateOf(c.supersedes))}</a> — archived, sealed, still readable.</div>`;
   }
   return "";
