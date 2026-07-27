@@ -48,6 +48,11 @@
       "source": "ciq-gics",
       "source_ref": "CIQ Public Company Profile\u2192Primary Industry Classification"
     },
+    "NCNO": {
+      "industry": "Application Software",
+      "source": "ciq-gics",
+      "source_ref": "CIQ Public Company Profile\u2192Primary Industry Classification"
+    },
     "SMPL": {
       "industry": "Packaged Foods and Meats",
       "source": "ciq-gics",
@@ -65,16 +70,16 @@
     }
   },
   "reads": {
-    "AORT": "mixed \u2014 a real guidance-down, recall and EPS collapse offset a still-accelerating growth engine and near-floor trailing multiple.",
-    "BRBR": "mixed \u2014 a real category-wide earnings reset (EBITDA/EPS cut ~40-50%) collides with intact volume growth, share leadership and self-funding cash flow.",
-    "CNXC": "mixed \u2014 trough multiple and FCF-positive base against loss-making GAAP earnings, heavy leverage, and a sharply cut forward path.",
-    "EPAM": "mixed \u2014 growing absolute EBITDA and AI-native momentum against multi-year margin erosion and deteriorating second-half visibility, neither clearly dominant.",
-    "FUBO": "mixed \u2014 genuine scale/EBITDA-inflection and constructive targets sit directly against ongoing cash burn, sub decline and a sharp consensus cut.",
-    "IT": "mixed \u2014 an intact high-ROIC cash franchise and CV acceleration collide with still-falling forward estimates and negative revenue-revision breadth.",
+    "AORT": "mixed \u2014 real double-digit growth and operating leverage collide with a fresh recall, lowered guidance, sharp EPS cuts and negative FCF against 3.7x leverage.",
+    "BRBR": "strongly-bearish \u2014 margin % AND absolute EBITDA fell together with a management-confirmed guide cut and structural pricing-power erosion; discount looks largely earned.",
+    "CNXC": "mixed \u2014 cash-generative, deleveraging franchise with an AI mix-shift tailwind, but heavy leverage, a huge GAAP loss and idiosyncratic de-rate cut both ways.",
+    "EPAM": "mixed \u2014 a net-cash, still-growing, AI-scaling franchise de-rated to near-trough multiples, but genuine multi-year margin/ROIC erosion and North America demand softness keep the value-trap risk live.",
+    "FUBO": "strongly-bearish \u2014 idiosyncratic -83% relative collapse, across-the-board FY26 estimate cuts crossing zero, and unfunded cash burn with opaque leverage.",
+    "IT": "mixed \u2014 franchise economics and CV/engagement momentum intact, but revenue is contracting and the forward consensus base keeps being cut.",
     "MVST": "strongly-bearish \u2014 stated going-concern doubt with a near-term maturity wall against thin cash while adjusted EBITDA has turned negative and revenue is contracting.",
-    "NCNO": "mixed \u2014 rising guides and self-funding signals pull against name-specific weakness, rising shorts, insider selling, and an unexplained February gap; peer/estimate data entirely absent.",
+    "NCNO": "mixed \u2014 genuine absolute-EBITDA/cash inflection and sub-peer forward multiples set against decelerating top-line growth and rising short interest.",
     "SMPL": "mixed \u2014 a self-funding, low-leverage franchise with real turnaround levers, but unstabilized -6.7% takeaway and structural Atkins erosion keep the decline live.",
-    "VITL": "mixed \u2014 a genuine balance-sheet/share-gain franchise against a management-confirmed ~97% forward-EBITDA collapse and lost pricing power.",
-    "VRRM": "mixed \u2014 a real Avis-driven earnings step-down and guidance cut offset by a profitable, self-funding, growing-government base still intact."
+    "VITL": "mixed \u2014 a self-funded, growing brand doing a self-inflicted price-gap reset, but FY26 profit consensus collapsed ~97% and trial is slowing.",
+    "VRRM": "strongly-bearish \u2014 a >10%-revenue customer termination cutting $135\u2013145M annualized plus CEO exit drove an ~81% idiosyncratic collapse and forward step-down."
   }
 }
