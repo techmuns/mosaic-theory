@@ -541,7 +541,7 @@
         "value": null,
         "source_ref": null,
         "status": "unknown",
-        "note": "no revised-outlook 99.1 exhibit parsed for 8-Ks ['0001493152-26-004826', '0001493152-26-021406']"
+        "note": "no revised-outlook block matched in the parsed 99.1 for 8-Ks ['0001493152-26-004826', '0001493152-26-021406']"
       },
       "gap_threshold": -0.1,
       "gap_window_days": 180
@@ -3429,6 +3429,39 @@
         "note": null
       }
     },
+    "catalyst_calendar": {
+      "rows": [
+        {
+          "event": "Next results print",
+          "expected_date": "2026-07-13",
+          "date_basis": "cadence-estimate",
+          "tests_what": "the next reported quarter against the committed trajectory",
+          "source_ref": "cadence: EDGAR submissions (median 68d gap over 33 results 8-Ks; last print 2026-05-06)"
+        },
+        {
+          "event": "Beginning September 2, sports fans will be able to subscribe to Fubo Sports, a standalone plan with 20+ sports and br…",
+          "expected_date": "2026-09",
+          "date_basis": "stated",
+          "tests_what": "a management-stated dated operating action — the thesis mechanism on a timetable; the following print reads its result",
+          "source_ref": "CIQ Key Developments: FuboTV Inc NYSE FUBO Key Developments.rtf · Aug-28-2025"
+        },
+        {
+          "event": "Other Notes $0.5M matures",
+          "expected_date": "2027-03-31",
+          "date_basis": "stated",
+          "tests_what": "refinance / repay / convert before the wall — the survival read",
+          "source_ref": "CIQ capital-structure panel (maturity_date)"
+        },
+        {
+          "event": "Beginning June 20, Fubo Sports Network will stream 16 live games for the duration of Season 9, with t",
+          "expected_date": "2027-06",
+          "date_basis": "stated",
+          "tests_what": "a management-stated dated operating action — the thesis mechanism on a timetable; the following print reads its result",
+          "source_ref": "CIQ Key Developments: FuboTV Inc NYSE FUBO Key Developments.rtf · Jun-18-2026"
+        }
+      ],
+      "qa_flags": []
+    },
     "leverage_survival": {
       "net_debt_to_ebitda": {
         "value": null,
@@ -4204,10 +4237,10 @@
     },
     "stock_info": {
       "price": {
-        "value": 9.56,
+        "value": 8.33,
         "source_ref": "EOD FUBO last close",
         "status": "present",
-        "note": "PRICE STALE AT ASSEMBLY: last stored close 2026-07-08 is 15 calendar days before assembly — run `vinci refresh` before assembling"
+        "note": null
       },
       "high_52w": {
         "value": 56.64,
@@ -4239,7 +4272,7 @@
         "status": "present",
         "note": null
       },
-      "as_of": "2026-07-08"
+      "as_of": "2026-07-24"
     },
     "stock_performance": {
       "points": [
@@ -5610,7 +5643,7 @@
         },
         {
           "kind": "leading_indicator",
-          "metric": "trailing 12-month pro forma revenue",
+          "metric": "trailing 12-month pro forma revenue (Fubo and Hulu Live combined)",
           "period": "trailing 12 months (pro forma)",
           "value": "$6.2 billion of revenue",
           "value_num": null,
@@ -5621,7 +5654,7 @@
         },
         {
           "kind": "leading_indicator",
-          "metric": "North America subscribers",
+          "metric": "North America subscribers (combined)",
           "period": "end of trailing 12-month period (pro forma)",
           "value": "6.2 million subscribers in North America",
           "value_num": null,
@@ -5642,19 +5675,8 @@
           "tier": "llm-fenced"
         },
         {
-          "kind": "pricing_action",
-          "metric": "Fubo pricing following removal of NBC content",
-          "period": "Q1 fiscal 2026",
-          "value": "decision to lower prices",
-          "value_num": null,
-          "unit": null,
-          "verbatim": "We believe this reflects the resilience of our sports-focused value proposition, the actions we took to preserve consumer value, including our decision to lower prices and customers' ability to supplement Fubo with Peacock.",
-          "source_ref": "CIQ transcript: FuboTV Inc., Q1 2026 Earnings Call, Feb 03, 2026.rtf",
-          "tier": "llm-fenced"
-        },
-        {
           "kind": "competitive_position",
-          "metric": "ESPN digital and social reach",
+          "metric": "ESPN digital/social reach of U.S. adults",
           "period": "November 2025",
           "value": "reached 4 out of every 5 U.S. adults in November of 2025",
           "value_num": null,
@@ -5665,7 +5687,7 @@
         },
         {
           "kind": "leading_indicator",
-          "metric": "Fubo Latino subscribers",
+          "metric": "Fubo Latino product subscribers",
           "period": "fiscal 1Q '26",
           "value": "record high subscribers on Fubo's Latino product",
           "value_num": null,
@@ -5675,9 +5697,20 @@
           "tier": "llm-fenced"
         },
         {
+          "kind": "pricing_action",
+          "metric": "price change following removal of NBC content",
+          "period": null,
+          "value": "our decision to lower prices",
+          "value_num": null,
+          "unit": null,
+          "verbatim": "We believe this reflects the resilience of our sports-focused value proposition, the actions we took to preserve consumer value, including our decision to lower prices and customers' ability to supplement Fubo with Peacock.",
+          "source_ref": "CIQ transcript: FuboTV Inc., Q1 2026 Earnings Call, Feb 03, 2026.rtf",
+          "tier": "llm-fenced"
+        },
+        {
           "kind": "leading_indicator",
           "metric": "North America reported revenue",
-          "period": "Q1 fiscal 2026",
+          "period": "fiscal Q1 2026",
           "value": "$1.54 billion compared to $1.11 billion in the prior year period",
           "value_num": null,
           "unit": null,
@@ -5688,7 +5721,7 @@
         {
           "kind": "leading_indicator",
           "metric": "North America pro forma revenue",
-          "period": "Q1 fiscal 2026 (pro forma)",
+          "period": "fiscal Q1 2026 (pro forma)",
           "value": "$1.68 billion, compared to $1.58 billion in the prior year, representing growth of 6%",
           "value_num": null,
           "unit": null,
@@ -5698,9 +5731,9 @@
         },
         {
           "kind": "leading_indicator",
-          "metric": "North America subscribers (combined basis)",
-          "period": "Q1 fiscal 2026",
-          "value": "approximately 6.2 million compared to 6.3 million in the prior year",
+          "metric": "North America subscribers (combined)",
+          "period": "end of fiscal Q1 2026",
+          "value": "approximately 6.2 million North America subscribers compared to 6.3 million in the prior year",
           "value_num": null,
           "unit": null,
           "verbatim": "On a combined basis, we ended the quarter with approximately 6.2 million North America subscribers compared to 6.3 million in the prior year.",
@@ -5710,7 +5743,7 @@
         {
           "kind": "leading_indicator",
           "metric": "pro forma adjusted EBITDA",
-          "period": "Q1 fiscal 2026 (pro forma)",
+          "period": "fiscal Q1 2026 (pro forma)",
           "value": "positive pro forma adjusted EBITDA of $41.4 million, nearly doubling from $22 million in the prior year period",
           "value_num": null,
           "unit": null,
@@ -5720,7 +5753,7 @@
         },
         {
           "kind": "leading_indicator",
-          "metric": "subscribers year-over-year",
+          "metric": "subscriber growth year-over-year",
           "period": "year-over-year",
           "value": "up 3% year-over-year versus the prior year in subscribers",
           "value_num": null,
@@ -5732,7 +5765,7 @@
         {
           "kind": "leading_indicator",
           "metric": "trailing 12-month pro forma adjusted EBITDA",
-          "period": "trailing 12 months (pro forma)",
+          "period": "trailing 12 months",
           "value": "exceeded $100 million in pro forma adjusted EBITDA",
           "value_num": null,
           "unit": null,
@@ -5748,188 +5781,171 @@
     }
   },
   "synthesis": {
-    "evidence_balance": "mixed — genuine scale/EBITDA-inflection and constructive targets sit directly against ongoing cash burn, sub decline and a sharp consensus cut.",
+    "evidence_balance": "strongly-bearish — idiosyncratic -83% relative collapse, across-the-board FY26 estimate cuts crossing zero, and unfunded cash burn with opaque leverage.",
     "bull_points": [
       {
-        "claim": "The equity has de-rated ~66% over 180 days against a +17% small-cap benchmark, an almost entirely idiosyncratic drawdown that sets up an overshoot-vs-terminal question rather than a market beta problem.",
-        "source_ref": "EOD FUBO−IWM 180d to 2026-07-06 (assembly, cap-band)",
+        "claim": "The reported P/E of ~13x rests on a non-current positive EPS and is explicitly flagged distorted — latest annual EPS is negative (-0.54), so the headline 'cheap' multiple is NOT a meaningful signal for either side.",
+        "source_ref": "EDGAR XBRL eps_diluted × EOD price (screen data-record, G3)",
         "cited": true
       },
       {
-        "claim": "The Hulu + Live TV combination materially expanded scale — pro forma trailing-12-month revenue of ~$6.2 billion with 6.2 million North America subscribers — versus a market cap of only $256M.",
-        "source_ref": "CIQ transcript: FuboTV Inc., Q1 2026 Earnings Call, Feb 03, 2026.rtf",
-        "cited": true
-      },
-      {
-        "claim": "Trailing-12-month pro forma adjusted EBITDA has now exceeded $100 million, a management-stated milestone framed against a long-term target of at least $300 million by 2028.",
-        "source_ref": "CIQ transcript: FuboTV Inc., Q2 2026 Earnings Call, May 06, 2026.rtf",
-        "cited": true
-      },
-      {
-        "claim": "Consensus forward EBITDA anchors are substantial and rising into FY27 — FY26E $92.3M and FY27E $187.1M — against a simple TEV of $426.8M.",
-        "source_ref": "CIQ Estimates→Trends (FY26/FY27 consensus EBITDA, latest snapshot)",
-        "cited": true
-      },
-      {
-        "claim": "Absolute revenue has grown continuously (3,419→3,846→4,220→4,413→5,304 LTM) and gross margin turned positive to 4% LTM — the margin % is rising off the reclassified base, not deteriorating, so a low headline margin is not the real signal here.",
-        "source_ref": "CIQ Financials→Income Statement (margin % + absolute EBITDA reconciler)",
-        "cited": true
-      },
-      {
-        "claim": "Revenue growth of 22% far exceeds the peer-median 9%, a genuine growth advantage that argues the TEV/Rev discount (name 0.4 vs peer median 1.9) may be residual rather than fully earned — the human must judge justified-vs-residual against the heterogeneous roster.",
-        "source_ref": "CIQ Comparable Analysis→Operating Statistics (name vs peer median: growth/margin/leverage/beta)",
-        "cited": true
-      },
-      {
-        "claim": "The commercial structure gives contracted visibility: Fubo receives a wholesale fee at 95% of Hulu + Live TV carriage costs in 2026 scaling to 99% by 2028, a step-up management cites as underpinning the EBITDA-expansion path.",
-        "source_ref": "CIQ transcript: FuboTV Inc., Q2 2026 Earnings Call, May 06, 2026.rtf",
-        "cited": true
-      },
-      {
-        "claim": "Sell-side posture is constructive — consensus rating Buy (1.00) with a mean/median target of $17.00, well above the stale $9.56 last close.",
+        "claim": "Consensus is Buy (1.00) with an $17.00 mean/median target against an $8.33 close, and ratings run 5 Buy / 3 Outperform / 2 Hold with zero sell — a genuinely constructive sell-side posture, though the 6m→latest EBITDA path fell -34%.",
         "source_ref": "CIQ Estimates→Consensus",
         "cited": true
       },
       {
-        "claim": "Management states it navigated the NBCU loss with minimal incremental combined-company churn, evidencing that the business is not reliant on any single programming provider.",
+        "claim": "Trailing revenue growth of 22% far exceeds the peer-median 9%, a residual-vs-earned input the human must judge: the TEV/Rev discount (name 0.4 vs peer median 1.9) may be RESIDUAL rather than earned given superior top-line growth.",
+        "source_ref": "CIQ Comparable Analysis→Operating Statistics (name vs peer median: growth/margin/leverage/beta)",
+        "cited": true
+      },
+      {
+        "claim": "Management states trailing-12-month pro forma adjusted EBITDA has now exceeded $100M, a milestone framed against a $300M-by-2028 target — a positive-EBITDA mechanism underlying the forward multiples.",
         "source_ref": "CIQ transcript: FuboTV Inc., Q2 2026 Earnings Call, May 06, 2026.rtf",
+        "cited": true
+      },
+      {
+        "claim": "The forward EBITDA ladder de-rates sharply as consensus EBITDA scales (FY26E $92.3M → FY27E $187.1M), implying a rising-EBITDA glide path the trailing NM multiple cannot capture.",
+        "source_ref": "CIQ Estimates→Trends (FY26/FY27 consensus EBITDA, latest snapshot)",
         "cited": true
       }
     ],
     "bear_points": [
       {
-        "claim": "The company is FCF-negative (LTM levered FCF −$131.2M) and burning cash with net debt $170M and no derived cash-runway — a genuine survival risk, not an optical metric.",
-        "source_ref": "CIQ Financials→Cash Flow 'Levered Free Cash Flow' [LTM 12 months Mar-31-2026]",
+        "claim": "The 180-day return of -65.9% versus IWM +17.0% (relative -82.9%) is deeply idiosyncratic, not a shared-market move, concentrated in discrete earnings gap-downs on 2026-02-03 and 2026-05-06.",
+        "source_ref": "EOD FUBO−IWM 180d to 2026-07-06 (assembly, cap-band)",
         "cited": true
       },
       {
-        "claim": "Consensus FY26 EBITDA has been cut ~34% over six months (140.7 → 92.3), and GAAP EPS, EBIT, EBT and net income all crossed from positive to negative on the same path — a broad, worsening estimate deterioration.",
+        "claim": "Consensus FY26 estimates crossed zero across the board 6m→latest — EPS 1.68→-1.40, EBIT +162.0→-103.3, EBITDA -34% — a broad, worsening downgrade cycle, not a single optical timing miss.",
         "source_ref": "CIQ Estimates→Trends (current-FY consensus path; ragged, absent lookbacks n/a)",
         "cited": true
       },
       {
-        "claim": "The drawdown was driven by discrete earnings gap-downs (2026-02-03 and 2026-05-06, both Item 2.02 results filings), tying the ~66% decline to fundamentals reported at results, not to sentiment.",
-        "source_ref": "EDGAR 8-K item codes at the gap-down dates (not blanket-labelled earnings)",
-        "cited": true
+        "claim": "The company is FCF-negative (LTM levered FCF -$131.2M) and LTM OCF is -$489M, so it cannot self-fund — a cash-burn risk against net debt of $170M with net-debt/EBITDA unavailable.",
+        "source_ref": "CIQ Financials→Cash Flow 'Levered Free Cash Flow' [LTM 12 months Mar-31-2026]",
+        "cited": false
       },
       {
-        "claim": "The name's forward EBITDA multiple is NOT cheap on the metric that reconciles the optical TEV/Rev discount: NTM TEV/EBITDA is 17.77 vs a peer median of 8.19 — a forward premium, meaning the cheap-on-revenue read is not the real signal.",
+        "claim": "The forward NTM TEV/EBITDA of 17.77x sits ABOVE the peer median of 8.19x — on a forward basis the name is EXPENSIVE, not cheap, so the 'discount to peers' read is a trailing-only artifact that inverts once EBITDA is normalized.",
         "source_ref": "CIQ Comparable Analysis→Trading Multiples (name row + Summary Statistics Low/Median/Mean/High)",
         "cited": true
       },
       {
-        "claim": "Return on capital remains negative across every reported period (RoCE -11.2% → -3.3% LTM), so the business has not yet earned its cost of capital despite improvement.",
-        "source_ref": "CIQ Financials→Ratios (Return on Capital %, multi-year columns)",
-        "cited": true
-      },
-      {
-        "claim": "Share count is diluting (+4.0% over ~1 year) and management announced a reverse stock split, adding to per-share pressure on holders.",
-        "source_ref": "EDGAR XBRL shares, trailing 2024-07-31..2025-07-31",
-        "cited": true
-      },
-      {
-        "claim": "Loss of NBCUniversal content and a decision to lower prices to preserve consumer value point to real revenue/mix pressure from a distribution dispute the company could not resolve.",
+        "claim": "The single anchor client NBCUniversal ceased renewal engagement and NBC content was removed on the Fubo side, a concrete loss of a major programming supplier for a single-segment US streaming business.",
         "source_ref": "CIQ transcript: FuboTV Inc., Q1 2026 Earnings Call, Feb 03, 2026.rtf",
         "cited": true
       },
       {
-        "claim": "Subscribers declined year-over-year in Q2 (5.7M vs 5.9M North America), a deterioration from the ~6.2M discussed a quarter earlier — a leading-indicator softening on the core user base.",
+        "claim": "Total North America subscribers fell to 5.7M from 5.9M year-over-year by Q2 2026, a declining user base even as reported revenue rose on the Hulu Live combination.",
         "source_ref": "CIQ transcript: FuboTV Inc., Q2 2026 Earnings Call, May 06, 2026.rtf",
         "cited": true
       },
       {
-        "claim": "Insiders were net sellers (0 buys, 2 sells, net −311.4K shares, latest 2026-07-13) with no offsetting open-market buying.",
-        "source_ref": "EDGAR Form 4 (latest 0001493152-26-033082; 3 in 6m)",
+        "claim": "Return on capital is persistently negative (RoCE Sep-2023 -11.2% → LTM -3.3%) and the share count is diluting +4.0% over ~1 year, compounding a structurally unprofitable base.",
+        "source_ref": "CIQ Financials→Ratios (Return on Capital %, multi-year columns)",
+        "cited": true
+      },
+      {
+        "claim": "The FY26 EBITDA guide of $80–100M is 61 days stale and gross-margin sits at only 4% LTM despite absolute revenue rising to $5,304M, so scale is not yet translating into structural profitability.",
+        "source_ref": "CIQ Financials→Income Statement (margin % + absolute EBITDA reconciler)",
         "cited": true
       }
     ],
     "twin_reference_cases": [
       {
+        "name": "Chewy",
+        "outcome": "recovered",
+        "distinguishing_fact": "Loss-making high-growth US subscription/consumer platform that de-rated hard, then reached positive adjusted EBITDA and free cash flow as scale matured.",
+        "source": "[LLM-suggested, unverified]"
+      },
+      {
         "name": "Roku",
         "outcome": "recovered",
-        "distinguishing_fact": "US streaming-platform peer that de-rated hard on profitability doubts, then stabilized as ad monetization and scale improved — the same fill-rate/CPM lever Fubo cites via the Disney ad-server migration.",
+        "distinguishing_fact": "US streaming-platform peer that ran negative-to-thin margins through a severe de-rating while top-line growth persisted, later stabilizing on ad monetization.",
         "source": "CIQ Comparable Analysis→Financial Data + Business Description (roster + caps + business)"
       },
       {
         "name": "Paramount Skydance Corporation",
-        "outcome": "recovered",
-        "distinguishing_fact": "Levered legacy-media/streaming peer whose survival question hinged on carriage economics and content-cost discipline rather than top-line growth.",
-        "source": "CIQ Comparable Analysis→Financial Data + Business Description (roster + caps + business)"
-      },
-      {
-        "name": "Starz Entertainment Corp.",
         "outcome": "went terminal",
-        "distinguishing_fact": "Sub-scale subscription-video peer with high leverage and shrinking relevance — the value-trap archetype where a low revenue multiple never re-rated.",
+        "distinguishing_fact": "US media peer carrying heavy leverage and secular Pay-TV pressure whose thin margins and content-cost dependence weighed on the equity despite scale.",
         "source": "CIQ Comparable Analysis→Financial Data + Business Description (roster + caps + business)"
       },
       {
-        "name": "Chewy",
-        "outcome": "recovered",
-        "distinguishing_fact": "High-growth, long-loss-making consumer-subscription business that re-rated once it crossed into positive EBITDA and demonstrated a credible path to self-funding.",
+        "name": "Cinedigm",
+        "outcome": "went terminal",
+        "distinguishing_fact": "Sub-scale US streaming/content name with chronic cash burn and dilution whose growth story never converted to durable free cash flow.",
         "source": "[LLM-suggested, unverified]"
       }
     ],
     "decisive_question": {
-      "question": "Does the Hulu + Live TV combination durably convert Fubo into a self-funding, EBITDA-growing business (overshoot), or does continued cash burn, sub attrition and NBCU-style carriage risk make the forward EBITDA path unattainable (value trap)?",
+      "question": "Does the Hulu Live combination convert scaled revenue into durable, self-funding adjusted-EBITDA/FCF (an overshoot), or does structural cash burn, subscriber attrition and content-supplier loss make the profitability inflection unreachable before the cash runs down (a value trap)?",
       "evidence_for": [
         {
-          "claim": "Trailing-12-month pro forma adjusted EBITDA has crossed $100M with a contracted wholesale-fee step-up to 99% by 2028 giving visibility into the expansion path.",
+          "claim": "Management reports trailing-12-month pro forma adjusted EBITDA now exceeds $100M against a stated $300M-by-2028 target, with expected positive free cash flow in FY27 and FY28.",
           "source_ref": "CIQ transcript: FuboTV Inc., Q2 2026 Earnings Call, May 06, 2026.rtf",
           "cited": true
         },
         {
-          "claim": "Consensus still models FY26E $92.3M rising to FY27E $187.1M EBITDA, with management guiding to $80–100M for FY26 and positive free cash flow in FY27–FY28.",
+          "claim": "Consensus FY27E EBITDA of $187.1M roughly doubles FY26E $92.3M, implying a steep near-term profitability ramp the market can underwrite.",
           "source_ref": "CIQ Estimates→Trends (FY26/FY27 consensus EBITDA, latest snapshot)",
           "cited": true
         }
       ],
       "evidence_against": [
         {
-          "claim": "LTM levered FCF is −$131.2M and both latest-quarter OCF and LTM FCF are negative, so the business does not yet self-fund and cash runway is not derivable.",
+          "claim": "LTM levered FCF of -$131.2M with LTM OCF -$489M shows the business does not yet self-fund, against only $170M net debt and net-debt/EBITDA unavailable.",
           "source_ref": "CIQ Financials→Cash Flow 'Levered Free Cash Flow' [LTM 12 months Mar-31-2026]",
-          "cited": true
+          "cited": false
         },
         {
-          "claim": "North America subscribers fell to 5.7M from 5.9M year-over-year while the company lost NBCU content and cut prices — the demand and mix drivers under the EBITDA plan are softening.",
+          "claim": "Loss of NBCU renewal engagement plus a year-over-year subscriber decline to 5.7M signals content-supplier and user-base erosion at the core.",
           "source_ref": "CIQ transcript: FuboTV Inc., Q2 2026 Earnings Call, May 06, 2026.rtf",
           "cited": true
         }
       ]
     },
     "key_unknowns": [
-      "Cash runway is not derivable: no CIQ Net Debt/EBITDA, no interest-coverage row, and cash not derived — an expected-disclosure gap that is a bearish risk given ongoing FCF burn.",
-      "No segment or geographic EBITDA breakout (single Streaming segment, single US geography) and no segment-EBITDA section — opacity on where profitability actually sits.",
-      "Covenant terms UNKNOWN (extraction failed; no CIK-scoped agreement exhibit located) — leverage-trigger risk on $323M senior bonds plus leases cannot be assessed.",
-      "TEV as-of (2026-06-24) and multiple-pricing vintage (2026-06-12) are incoherent (derived FY26 $17.4M vs direct $92.3M, residual 0.812) — comps should be re-pulled before leaning on any multiple.",
-      "Price is stale at assembly (last close 2026-07-08, $9.56, 15 days old) — the actual de-rating and any implied gap to the $17 target may differ.",
-      "The peer set is HETEROGENEOUS (caps $478M–$306.6B, 642x; the name $256M) — every peer stat is confidence-gated, not a clean benchmark.",
-      "FY26 EBITDA guidance is stale (dated 2026-05-06, 61 days old) with no delivery track-record — the credibility of the $80–100M guide against a worsening consensus path is unresolved.",
-      "Whether the Disney ad-server CPM/fill-rate uplift is material enough to offset sub attrition and price cuts — management asserts early benefit but no validated figures exist."
+      "Net-debt/EBITDA, interest coverage and covenant terms are all UNKNOWN (no CIQ Net Debt/EBITDA, Income Statement missing EBITDA/Interest rows, covenant extraction failed) — leverage-survival is opaque, a bearish gap.",
+      "Cash-runway is not derivable: FCF-negative with cash burn flagged and cash not derived; management asserts >$200M year-end cash but the machine cannot verify runway against burn.",
+      "Segment/geographic EBITDA is UNKNOWN (single Streaming segment, no segment EBITDA section) — no way to isolate profitable vs loss-making product lines.",
+      "The comp set is HETEROGENEOUS (caps $478M–$306.6B, 642x; name $256M) — every peer multiple is a confidence-gated input, not a clean benchmark.",
+      "Comp vintage is incoherent (multiples as-of 2026-06-12 vs TEV as-of 2026-06-24; derived FY26 $17.4M vs direct $92.3M, residual 0.812) — re-pull needed before leaning on any multiple.",
+      "TEV/LTM EBITDA and own-history multiple bands are UNKNOWN (<4 quarterly closes) — no trailing valuation anchor or own-history context.",
+      "Adjusted EBITDA and adjusted leverage figures are not in the revised 99.1 guidance — the company-adjusted profitability basis cannot be reconciled to GAAP.",
+      "A reverse stock split was announced but its execution/effect on the share and multiple picture is not resolved in the data."
     ]
   },
   "caveats": [
     "primary-source: 8-K 0001493152-26-011823 carries 8.01 but no EX-99.1 exhibit was found",
     "primary-source: 8-K 0001493152-26-003429 carries 8.01 but no EX-99.1 exhibit was found",
-    "stock-info: PRICE STALE AT ASSEMBLY: last stored close 2026-07-08 is 15 calendar days before assembly — run `vinci refresh` before assembling",
-    "primary-source: 3 EX-99.1 release(s) + 1 10-Q parsed (+0.4s fetch)",
+    "primary-source: 3 EX-99.1 release(s) + 1 10-Q parsed (+2.4s fetch)",
     "P/E may be distorted by non-recurring EPS — latest annual EPS -0.54 vs recent median -2.06; verify against normalized/forward EPS (CIQ)",
-    "Bare peer-comparison (a bear point): 'The name's forward EBITDA multiple is NOT cheap on the metric that reconciles the optical TEV/Rev discount: NTM TEV/EBITDA is 17.77 vs a peer median of 8.19 — a forward premium, meaning the cheap-on-revenue read is not the real signal.' — presents cheap/rich vs peers as a verdict without the earned-vs-residual decomposition or the peer-set composition; POSE justified-vs-residual, never the bare gap",
-    "Heterogeneous-peer benchmark (a bear point): 'The name's forward EBITDA multiple is NOT cheap on the metric that reconciles the optical TEV/Rev discount: NTM TEV/EBITDA is 17.77 vs a peer median of 8.19 — a forward premium, meaning the cheap-on-revenue read is not the real signal.' — leans on the peer set as a clean benchmark, but comparability flags it HETEROGENEOUS; confidence-gate every peer stat"
+    "EDGAR P/E 13.1x rest on normalized/adjusted earnings — LTM GAAP diluted EPS is NEGATIVE (-2.88); do not read it as a GAAP trailing multiple.",
+    "Possible false balance — the written assessment commits a strong lean but the body is near-symmetric (5 bull vs 8 bear) and the minority bull_points aren't qualified-as-outweighed — size the minority against the lean (rule 7), or it launders a one-sided case",
+    "Bare peer-comparison (a bear point): 'The forward NTM TEV/EBITDA of 17.77x sits ABOVE the peer median of 8.19x — on a forward basis the name is EXPENSIVE, not cheap, so the 'discount to peers' read is a trailing-only artifact that inverts once EBITDA is normalized.' — presents cheap/rich vs peers as a verdict without the earned-vs-residual decomposition or the peer-set composition; POSE justified-vs-residual, never the bare gap",
+    "Heterogeneous-peer benchmark (a bear point): 'The forward NTM TEV/EBITDA of 17.77x sits ABOVE the peer median of 8.19x — on a forward basis the name is EXPENSIVE, not cheap, so the 'discount to peers' read is a trailing-only artifact that inverts once EBITDA is normalized.' — leans on the peer set as a clean benchmark, but comparability flags it HETEROGENEOUS; confidence-gate every peer stat"
   ],
   "qa_flags": [
     "operating-drivers: no anchored pattern matched — EX-99.1 pricing/KPI",
     "operating-drivers: no anchored pattern matched — 10-Q MD&A attribution",
-    "operating-drivers: Tier-B rows capped at 12 — ESPN ecosystem reach dropped",
+    "operating-drivers: Tier-B rows capped at 12 — advertising fill rates and CPMs following Disney Ad Server migration dropped",
+    "operating-drivers: Tier-B rows capped at 12 — ESPN ecosystem monthly reach dropped",
     "operating-drivers: Tier-B rows capped at 12 — North America revenue dropped",
     "operating-drivers: Tier-B rows capped at 12 — North America pro forma revenue growth dropped",
     "operating-drivers: Tier-B rows capped at 12 — total North America subscribers dropped",
     "operating-drivers: Tier-B rows capped at 12 — adjusted EBITDA dropped",
     "operating-drivers: Tier-B rows capped at 12 — wholesale fee relative to Hulu + Live TV's carriage costs dropped",
-    "TWIN self-referential 'fuboTV Inc. (pre-Hulu-Live standalone arc)' suppressed — a twin must be ANOTHER company, or the subject with an explicit resolved past period ('2022-2024 arc')",
+    "operating-drivers: Tier-B rows capped at 12 — advertising CPMs and fill rate following Disney Ad Server migration dropped",
+    "MISMATCH bear_point: 'The company is FCF-negative (LTM levered FCF -$131.2M)…' asserts missing/UNKNOWN data yet cites a PRESENT field — move to key_unknowns, don't source-bind it",
+    "MISMATCH decisive.against: 'LTM levered FCF of -$131.2M with LTM OCF -$489M shows…' asserts missing/UNKNOWN data yet cites a PRESENT field — move to key_unknowns, don't source-bind it",
+    "DIRECTIONAL language 'buy' — human review (dossier frames, not concludes)",
+    "DIRECTIONAL language 'outperform' — human review (dossier frames, not concludes)",
+    "DIRECTIONAL language 'sell' — human review (dossier frames, not concludes)",
+    "TWIN self-referential 'fuboTV Inc.' suppressed — a twin must be ANOTHER company, or the subject with an explicit resolved past period ('2022-2024 arc')",
     "TWIN 1 invalid twin(s) suppressed"
   ],
   "llm_model": "claude-opus-4-8",
-  "assembled_at": "2026-07-23T12:12:26.315316Z",
+  "assembled_at": "2026-07-27T10:05:17.569227Z",
   "sector": "Consumer Discretionary",
   "industry": {
     "value": "Interactive Media and Services",
@@ -5949,7 +5965,7 @@
     "recipe_hint": "unknown",
     "applicable": false,
     "multiple_basis": "EV/EBITDA",
-    "computed_at": "2026-07-23T12:12:26.060933Z",
+    "computed_at": "2026-07-27T10:05:17.309324Z",
     "reason": "own-history multiple missing (valuation.own_history.median absent)",
     "data_quality": null,
     "data_quality_detail": [],
