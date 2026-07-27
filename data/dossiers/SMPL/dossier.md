@@ -45,6 +45,18 @@ _Mid-cycle underwrite: normalized operating margin on a mid-cycle revenue base, 
 - **base** — Margin is the seven-year clean median of 15.51%. The clean statistics bracket the full-history screening median rather than breaking from it: FY2025 resolved with a $60.9M intangible impairment, and excluding it margin was 15.0% — at the median. The residual ~$22.8M gap to the vendor's figure is definitional (intangible amortization 16.9 plus transaction costs 0.8), not operating. Revenue is consensus FY26E of 1,334 [amended 2026-07-21 pre-verdict: FY26 guidance reinstated at the fiscal Q3 print at $1.345-1.355B; base revenue of 1,330 sits below the guidance midpoint, so the base case is conservative against management's own path]. The multiple is set below the 17.9x median of its 8.55-year trading range (35 quarterly closes): the unresolved category question earns a durable discount; 12.5x is the 14th percentile. [restated for external readability 2026-07-21; substance unchanged] the normal level is set between the seven-year clean median (15.5%) and the trailing clean margin through the third quarter (about 13.8%), deliberately nearer the trailing figure: this year's four-point gross-margin reset is treated as partly structural rather than fully temporary, after write-downs far larger than the single one the clean series originally excluded. At 14%, the business recovers most — not all — of its historical profitability. [amended 2026-07-26]
 - **bull** — The sell-off proves excessive: Quest carries growth and Atkins stabilizes at a smaller base; margin between the median and the best year (17.35%); the multiple moves toward but stays below the 17.85x median of its trading history (16.0x, roughly the 29th percentile of the 8.55-year range) [amended 2026-07-21 pre-verdict: trading-range refresh]. [restated for external readability 2026-07-21; substance unchanged]
 
+### Screening context — how this name surfaced — _not a verdict_
+
+_A mechanical re-rate to the median multiple of this name's own trading history, on its naive reported median margin. An attention filter only — it applies no structural adjustment, so a cheap-looking screen still has to survive the full bear/base/bull underwrite._
+
+| input | value | basis |
+| --- | ---: | --- |
+| Method | mid-cycle margin × the median multiple of its own history | applicable |
+| Mid-cycle margin | 15.4% | 8y history · firm |
+| Median multiple, own history | 17.9x | 35 closes · firm · EV/EBITDA |
+| Screen value / share | $41.60 | spot-independent · EV/EBIT 19.6x |
+| Overall confidence | firm |  |
+
 ## The case
 _(top points; the full argument is in Analysis)_
 

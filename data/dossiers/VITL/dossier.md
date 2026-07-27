@@ -27,6 +27,27 @@ _8 key unknowns + the evidence for/against — in Analysis_
 - **Net debt / EBITDA:** 0.0x [9]
 - **Free cash flow:** negative [10]
 
+## Scenario analysis
+_no scenario record for this name_
+
+### Screening context — how this name surfaced — _not a verdict_
+
+_A mechanical re-rate to the median multiple of this name's own trading history, on its naive reported median margin. An attention filter only — it applies no structural adjustment, so a cheap-looking screen still has to survive the full bear/base/bull underwrite._
+
+| input | value | basis |
+| --- | ---: | --- |
+| Method | mid-cycle margin × the median multiple of its own history | NOT applicable |
+| Mid-cycle margin | 6.0% | 8y history · firm |
+| Median multiple, own history | 4.2x | 24 closes · weak · EV/EBITDA |
+| Overall confidence | weak |  |
+
+**data_quality: band_incoherent+band_unreconciled**
+- own_history multiple: band_incoherent (periodicity quarterly)
+- Multiples sheet implies D&A of 328.8 against 9.3 recorded (35.5x) — outside the 8x band; the EV/EBITDA denominator does not match this company's own cost structure
+- market-implied EBITDA 340.0 vs 73.5 recorded (4.62x) — outside the 2.5x band. TEV 504.7 (market cap 479.5 + net debt 25.2) ÷ current multiple 1.484x
+
+_own-history EV/EBITDA band failed a coherence guard — the multiple's denominator is not this company's EBITDA; multiple UNUSABLE until re-sourced_
+
 ## The case
 _(top points; the full argument is in Analysis)_
 

@@ -43,6 +43,18 @@ _Mid-cycle underwrite: normalized operating margin on a mid-cycle revenue base, 
 - **base** — the base describes a stabilized business that no longer grows, and multiples must be paired to the state they describe. The stabilized state's observable prices sit far below the growth era: the highest-quality stabilized peer trades near 12.5 times cash earnings, a distrusted-but-stable data business near 6.5, and a comparable data company was taken private near 8. The prior 15.0x was set 'deliberately below' the company's own long-run median - but that median comes from a trading record that opens in 2017, entirely inside the growth era: the same window defect the downside leg carried. At 12.5x the base still prices the whole business near a 7% cash-earnings yield - fair for excellent-and-stable, generous for anything less. [amended 2026-07-22]
 - **bull** — The turn proves cyclical: FY27E re-acceleration (+4%); margin near the FY2023 best (20.94%); the multiple moves toward but stays below the median of its own trading history. [restated for external readability 2026-07-21; substance unchanged]
 
+### Screening context — how this name surfaced — _not a verdict_
+
+_A mechanical re-rate to the median multiple of this name's own trading history, on its naive reported median margin. An attention filter only — it applies no structural adjustment, so a cheap-looking screen still has to survive the full bear/base/bull underwrite._
+
+| input | value | basis |
+| --- | ---: | --- |
+| Method | mid-cycle margin × the median multiple of its own history | applicable |
+| Mid-cycle margin | 14.1% | 10y history · firm |
+| Median multiple, own history | 23.4x | 38 closes · firm · EV/EBITDA |
+| Screen value / share | $348.64 | spot-independent · EV/EBIT 28.5x |
+| Overall confidence | firm |  |
+
 ## The case
 _(top points; the full argument is in Analysis)_
 

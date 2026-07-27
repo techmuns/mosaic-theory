@@ -45,6 +45,17 @@ _Terminal-margin: value the business in the year it reaches a normal operating m
 - **base** — revenue = consensus FY2027 then a stated fade of ~1.5 points a year; margin = the durable +3-points-a-year leverage path from the first positive year (+0.6%); exit set on the one genuinely mature vertical-software peer (12.3x at 23% margins) - at terminal, growth has decelerated by construction, so a growth multiple would pay for the same growth twice.
 - **bull** — the recent +4-points-a-year pace holds and revenue fades only to 8%; exit at a premium to the mature peer for franchise dominance in bank software.
 
+### Screening context — how this name surfaced — _not a verdict_
+
+_A mechanical re-rate to the median multiple of this name's own trading history, on its naive reported median margin. An attention filter only — it applies no structural adjustment, so a cheap-looking screen still has to survive the full bear/base/bull underwrite._
+
+| input | value | basis |
+| --- | ---: | --- |
+| Method | R2_NEEDED | NOT applicable |
+| Overall confidence | — |  |
+
+_no positive operating margin over available history — needs revenue-anchored recipe_
+
 ## The case
 _(top points; the full argument is in Analysis)_
 

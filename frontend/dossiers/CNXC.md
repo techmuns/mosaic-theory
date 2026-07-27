@@ -26,6 +26,21 @@ _8 key unknowns + the evidence for/against — in Analysis_
 - **Net debt / EBITDA:** 4.1x [8]
 - **Free cash flow:** positive [9]
 
+## Scenario analysis
+_no scenario record for this name_
+
+### Screening context — how this name surfaced — _not a verdict_
+
+_A mechanical re-rate to the median multiple of this name's own trading history, on its naive reported median margin. An attention filter only — it applies no structural adjustment, so a cheap-looking screen still has to survive the full bear/base/bull underwrite._
+
+| input | value | basis |
+| --- | ---: | --- |
+| Method | mid-cycle margin × the median multiple of its own history | applicable |
+| Mid-cycle margin | 6.5% | 7y history · firm |
+| Median multiple, own history | 6.9x | 23 closes · firm · EV/EBITDA |
+| Screen value / share | $62.33 | spot-independent · EV/EBIT 13.8x |
+| Overall confidence | firm |  |
+
 ## The case
 _(top points; the full argument is in Analysis)_
 
