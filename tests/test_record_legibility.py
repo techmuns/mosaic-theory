@@ -139,10 +139,25 @@ def test_refresh_is_a_noop_when_nothing_moved() -> None:
     assert sc.refresh_record(rec, spot=rec.spot, source="s", on_date="2026-07-28") is rec
 
 
-def test_status_note_is_capped_at_one_line() -> None:
-    with pytest.raises(ValueError, match="25-word cap"):
-        sc.Verdict(status="watch", status_note=" ".join(["word"] * 26))
-    assert sc.Verdict(status="watch", status_note=" ".join(["word"] * 25)).status_note
+def test_a_retired_field_is_refused_loudly_not_dropped_quietly() -> None:
+    """`status_note` was retired 2026-07-27 — the header is the rating alone, so nothing rendered
+    it. Pydantic's default is extra="ignore", which would have made every stale record load CLEAN
+    and lose the analyst's sentence on the next write. Silent loss is the one failure this repo
+    never takes: the load RAISES and names the key, so the words are migrated or discarded by
+    a decision, never by omission."""
+    assert "status_note" in sc.RETIRED_VERDICT_FIELDS
+    assert not hasattr(sc.Verdict(status="watch"), "status_note")
+    with pytest.raises(ValueError, match="retired field"):
+        sc.Verdict.model_validate({"status": "watch", "status_note": "a caption"})
+    # the schema no longer advertises it, so nothing downstream can start writing it again
+    assert "status_note" not in (ROOT / "scenarios" / "_schema.json").read_text()
+    # and no committed record still carries it — live or archived
+    live = (ROOT / "scenarios").glob("*.json")
+    archived = (ROOT / "scenarios" / "archive").glob("*.json")
+    for p in [*live, *archived]:
+        if p.name.startswith("_"):
+            continue
+        assert "status_note" not in p.read_text(), f"{p.name} still carries the retired key"
 
 
 # --- the current-state block -------------------------------------------------------------------
@@ -341,7 +356,10 @@ def test_header_and_foot_say_each_thing_once() -> None:
     """COPY DISCIPLINE (operator: "not comprehendible … non-necessary words"). The header said the
     status THREE times — the `watch` pill, then "not held", then a caption OPENING "Watch
     reflects…" — and the foot said "Next" twice ("Next evidence … Next results print") before a
-    shouty "scenario verdict — NOT a ledger verdict of record". Both are now stated once."""
+    shouty "scenario verdict — NOT a ledger verdict of record". Both are now stated once.
+
+    The caption was then retired outright (see the retired-field pin): shortening it twice and
+    still finding it redundant was the evidence that the slot itself was the problem."""
     card = (ROOT / "frontend" / "views" / "shared" / "uw-card.js").read_text()
     foot = card[card.index("function mastheadFoot"):]
     foot = foot[:foot.index("\n}")]
@@ -349,10 +367,10 @@ def test_header_and_foot_say_each_thing_once() -> None:
     assert 'replace(/^next\\s+/i' in foot, "the label's own leading 'Next ' must be stripped"
     assert "no ledger verdict logged" in foot
     assert "NOT a ledger verdict of record" not in card, "the shouty clause is retired"
-    # the live record's caption carries only what the status words do not
-    note = json.loads((ROOT / "scenarios" / "SMPL.json").read_text())["verdict"]["status_note"]
-    assert len(note.split()) <= 8, f"the caption is a caption, not a sentence: {note!r}"
-    assert not note.lower().startswith("watch"), "the pill already says the status"
+    # the header states the rating and nothing else — no holding word, no caption
+    pills = card[card.index("function verdictPills"):]
+    pills = pills[:pills.index("\n}")]
+    assert "statusNote" not in pills and "holdingLabel" not in pills
 
 
 def test_lineage_sits_in_record_and_reproduce_not_above_the_numbers() -> None:

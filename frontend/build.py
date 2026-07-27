@@ -284,8 +284,8 @@ def _current_state(rec: dict[str, Any], led: dict[str, Any] | None) -> dict[str,
         out["baseNormalMargin"] = base_margin
     if ceiling is not None:
         out["ceiling2to1"] = _rd(ceiling, 2)
-    if v.get("status_note"):
-        out["statusNote"] = v["status_note"]
+    # `statusNote` retired 2026-07-27 with vinci.scenarios.Verdict.status_note — the header is the
+    # rating alone now, so nothing rendered it, and a card key nothing reads gets read by mistake.
     return out
 
 

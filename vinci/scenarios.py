@@ -51,10 +51,12 @@ BEAR_BASES = frozenset({
 # between them put a 15.5% EBITDA cell into a brief as a 13.2% EBIT cell.
 MARGIN_BASES = frozenset({"EBIT", "EBITDA"})
 
-# (record legibility, 2026-07-27) `verdict.status_note` is a CAPTION on the current state — one
-# line telling the reader why the status word reads as it does. Capped hard so it can never grow
-# into a second, unsealed rationale sitting above the sealed one.
-STATUS_NOTE_MAX_WORDS = 25
+# RETIRED VERDICT FIELDS — names that were once written into records and are now gone. They stay
+# listed because pydantic's default is extra="ignore": a record file still carrying a retired key
+# would load CLEAN and lose the analyst's words on the next write — a silent drop, which is the one
+# failure mode this repo never accepts. Loading such a record RAISES instead, naming the key, so
+# the words are migrated deliberately or discarded deliberately, never by omission.
+RETIRED_VERDICT_FIELDS: frozenset[str] = frozenset({"status_note"})
 
 # From this schema version the BEAR leg must carry both labels at write. Older records predate the
 # fields and stay writable — the rule binds forward, never retroactively.
@@ -307,24 +309,23 @@ class Verdict(BaseModel):
     # Recording it does NOT create a position: no code path here approaches execution.
     avoid_priced: bool = False
     avoid_priced_note: str | None = None
-    # (record legibility, 2026-07-27) ONE analyst line answering "why does the status read the way
-    # it does?", carried in the machine-derived current-state block ABOVE the rationale. It exists
-    # because a status word alone misleads: SMPL's `watch` is a stay-out decision after a round
-    # trip, NOT a failed underwrite, and no reader could tell those apart from the word. Amendable
-    # like any analyst prose and NOT sealed — it describes the CURRENT state, which moves, whereas
-    # the rationale records the state at decision time, which must not.
-    status_note: str | None = None
+    # RETIRED 2026-07-27: `status_note`. It was a one-line caption explaining why the status word
+    # read as it did — added when the card carried a "Current state" block, retired when that block
+    # was folded into the masthead and the caption turned out to be saying a third time what the
+    # band already said. The header is now the RATING alone, so nothing rendered it.
 
-    @field_validator("status_note")
+    @model_validator(mode="before")
     @classmethod
-    def _status_note_is_one_line(cls, v: str | None) -> str | None:
-        """A caption, not a second rationale. 25 words is the whole budget — anything longer is
-        the argument, and the argument's home is the sealed rationale."""
-        if v is not None and len(v.split()) > STATUS_NOTE_MAX_WORDS:
-            raise ValueError(
-                f"status_note is {len(v.split())} words against a {STATUS_NOTE_MAX_WORDS}-word "
-                "cap — it is a one-line caption on the CURRENT state, not a second rationale")
-        return v
+    def _no_retired_fields(cls, data: Any) -> Any:
+        """A retired key in a record is analyst prose about to vanish silently — refuse it."""
+        if isinstance(data, dict):
+            gone = sorted(RETIRED_VERDICT_FIELDS & set(data))
+            if gone:
+                raise ValueError(
+                    f"verdict carries retired field(s) {', '.join(gone)} — the schema no longer "
+                    "reads them, so a load-and-write would drop the words without saying so. "
+                    "Move them somewhere that renders, or delete them deliberately.")
+        return data
 
     @field_validator("entry_price")
     @classmethod

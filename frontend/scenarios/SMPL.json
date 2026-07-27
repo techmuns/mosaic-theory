@@ -228,8 +228,7 @@
    "source": "catalyst calendar (cadence-estimate)"
   },
   "baseNormalMargin": 0.14,
-  "ceiling2to1": 12.72,
-  "statusNote": "by choice, not by the numbers"
+  "ceiling2to1": 12.72
  },
  "supersedes": "SMPL-2026-07-21",
  "verdict": {
