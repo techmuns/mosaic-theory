@@ -254,3 +254,168 @@ console.log(JSON.stringify(__CASES__.map(([v, u]) => refValue(v, u))));
     # and the two traps stay closed
     assert "e+" not in "".join(py), f"scientific notation reached a rendered value: {py}"
     assert _ref_value(0.000123, "$M") != "$0M", "a non-zero reference rounded away to zero"
+
+
+def test_screening_context_py_js_parity() -> None:
+    """(2026-07-27) The screening ANCHOR renders on BOTH surfaces and must carry the same numbers.
+
+    It did not render on one of them at all. `anchorInner` (dossier.js) drew the block for all 11
+    committed names; the print twin had NO screening renderer whatsoever, so every PDF omitted the
+    level that put the name in the funnel. On the five names carrying no scenario card that was the
+    ONLY valuation level in the document — `Valuation — first cut` is relative-only by the
+    ImpliedValuation fence — and on the two INAPPLICABLE anchors it also swallowed the diagnostic
+    saying why no screen value exists.
+
+    Pins the VALUES (deterministic — computed in anchor.py, never LLM-composed) rather than the
+    phrasing, on every committed anchor: whatever the web shows for margin/multiple/base/confidence,
+    the markdown shows too.
+    """
+    import json
+    import shutil
+    import subprocess
+
+    from vinci.dossier.anchor import Anchor
+    from vinci.dossier.render import _screening_context_lines
+
+    anchors: list[tuple[str, dict[str, Any]]] = []
+    for p in sorted((ROOT / "data" / "dossiers").iterdir()):
+        f = p / "dossier.json"
+        if not f.exists():
+            continue
+        a = json.loads(f.read_text()).get("anchor")
+        if a:
+            anchors.append((p.name, a))
+    assert len(anchors) >= 10, f"expected the committed anchor corpus, got {len(anchors)}"
+
+    if not shutil.which("node"):
+        pytest.skip("node unavailable")
+    driver = """
+import { readFileSync } from "node:fs";
+import { escapeHtml } from "./frontend/lib/format.js";
+const src = readFileSync("frontend/views/shared/dossier.js", "utf8");
+const body = src.split("function anchorInner(a) {")[1].split("\\n}")[0];
+const anchorInner = new Function("escapeHtml", "a", body).bind(null, escapeHtml);
+// decode the entities escapeHtml emits BEFORE comparing — the py twin holds the RAW text, and a
+// half-decoded compare is how this pin reports a false divergence on an apostrophe (it did:
+// escapeHtml writes &#39; where python's html.escape writes &#x27;, the same mismatch that
+// reddened the cover pin on correct output).
+const ENT = {"&#39;": "'", "&#x27;": "'", "&quot;": '"', "&lt;": "<", "&gt;": ">", "&amp;": "&"};
+const strip = (h) => h.replace(/<[^>]*>/g, " ")
+  .replace(/&(#39|#x27|quot|lt|gt|amp);/g, (m) => ENT[m]).replace(/\\s+/g, " ");
+console.log(JSON.stringify(__A__.map((a) => strip(anchorInner(a)))));
+""".replace("__A__", json.dumps([a for _, a in anchors]))
+    out = subprocess.run(["node", "--input-type=module", "-e", driver],
+                         capture_output=True, text=True, check=True, cwd=ROOT)
+    web = json.loads(out.stdout)
+
+    missing: list[str] = []
+    for (tkr, raw), web_text in zip(anchors, web, strict=True):
+        md = "\n".join(_screening_context_lines(Anchor.model_validate(raw)))
+        assert md, f"{tkr}: the print twin rendered NO screening block for a committed anchor"
+        mg, mu = raw.get("margin"), raw.get("multiple")
+        want: list[str] = []
+        if mg and mg.get("value") is not None:
+            want.append(f"{mg['value'] * 100:.1f}%")
+        if mu and mu.get("value") is not None:
+            want.append(f"{mu['value']:.1f}x")
+        if raw.get("anchor_base_value_per_share") is not None:
+            want.append(f"${raw['anchor_base_value_per_share']:,.2f}")
+        if raw.get("reason"):
+            want.append(str(raw["reason"]))
+        for v in want:
+            if v not in md:
+                missing.append(f"{tkr}: {v!r} absent from the MARKDOWN block")
+            if v not in web_text:
+                missing.append(f"{tkr}: {v!r} absent from the WEB block")
+    assert not missing, "screening-context twins disagree on committed values: " + "; ".join(
+        missing[:8])
+
+
+def test_screening_context_never_differences_the_anchor_against_spot() -> None:
+    """FENCE. The screen value is a LEVEL, labelled spot-independent. Differencing it against the
+    price is precisely the machine-implied upside `ImpliedValuation` forbids ("no computed %,
+    delta, discount, or upside"), and the anchor is the easiest place to reintroduce it — the base
+    value and the spot both sit in scope at the render site.
+
+    Negative pin: the block must not emit a signed percentage (the `vs spot` shape the SCENARIO
+    table legitimately carries, which this section must never grow).
+    """
+    import json
+
+    from vinci.dossier.anchor import Anchor
+    from vinci.dossier.render import _screening_context_lines
+
+    src = _src("vinci/dossier/render.py")
+    body = src.split("def _screening_context_lines(")[1].split("\ndef ")[0]
+    # scan the CODE, not the prose: the docstring states the fence, so it necessarily contains
+    # every word the fence forbids. "spot-independent" is the legitimate BASIS LABEL and is the
+    # one surviving mention — anything else means the price came into scope.
+    code = body.split('"""', 2)[-1].replace("spot-independent", "")
+    for bad in ("spot", "upside", "discount", "price"):
+        assert bad not in code, (
+            f"the screening renderer references {bad!r} — it must render the anchor as a LEVEL, "
+            "never differenced against the price (ImpliedValuation fence)")
+
+    rendered: list[tuple[str, float | None, str]] = []
+    for p in sorted((ROOT / "data" / "dossiers").iterdir()):
+        f = p / "dossier.json"
+        if not f.exists():
+            continue
+        a = json.loads(f.read_text()).get("anchor")
+        if a:
+            rendered.append((p.name, a.get("anchor_base_value_per_share"),
+                             "\n".join(_screening_context_lines(Anchor.model_validate(a)))))
+    assert rendered, "no committed anchors to check the fence against"
+    assert any(b is not None for _, b, _ in rendered), "no anchor carries a base value to fence"
+    for tkr, base, md in rendered:
+        assert not re.search(r"[+-]\d+(\.\d+)?%", md), (
+            f"{tkr}: a signed percentage reached the screening block — implied upside: {md[:200]}")
+        # the label rides the base-value ROW, so it exists exactly where a base value does — an
+        # INAPPLICABLE anchor prints no such row and must not claim spot-independence of nothing.
+        assert ("spot-independent" in md) is (base is not None), (
+            f"{tkr}: spot-independence label and the base value must appear together")
+
+
+def test_screening_context_reaches_every_committed_dossier_e2e() -> None:
+    """E2E on the RENDERED artifact — the layer the failure was observed at.
+
+    The unit pins above prove the helper works; they would ALL have stayed green while the section
+    never reached a single committed dossier.md, because nothing wired the helper into the render.
+    That is exactly how the gap shipped: `anchorInner` existed on the web for months and the print
+    twin simply never called anything.
+
+    Renders LIVE from committed JSON and compares to disk (the #221 lesson — an md pin that reads
+    dossier.md alone passes happily while the RENDERER has drifted away from it).
+    """
+    import pathlib
+
+    from vinci.dossier.render import render_markdown
+    from vinci.dossier.schemas import Dossier
+    from vinci.scenarios import read_record
+
+    seen = 0
+    for d in sorted((ROOT / "data" / "dossiers").iterdir()):
+        j = d / "dossier.json"
+        if not j.exists():
+            continue
+        doc = Dossier.model_validate_json(j.read_text())
+        if doc.anchor is None:
+            continue
+        seen += 1
+        try:
+            card = read_record(doc.ticker)
+        except FileNotFoundError:
+            card = None
+        live = render_markdown(doc, card=card)
+        disk = pathlib.Path(d / "dossier.md").read_text()
+        assert live == disk, (
+            f"{doc.ticker}: committed dossier.md has DRIFTED from the renderer — re-render the "
+            "artifacts (a render change without an artifact pass leaves the record stale)")
+        assert "### Screening context — how this name surfaced" in disk, (
+            f"{doc.ticker}: the screening anchor renders on the web but NOT in the committed "
+            "markdown — the print reader never sees the level that surfaced this name")
+        # and the absence of an underwrite is STATED, never silently a shorter document
+        if card is None:
+            assert "_no scenario record for this name_" in disk, (
+                f"{doc.ticker}: no scenario card, and the markdown does not say so")
+    assert seen >= 10, f"expected the committed anchor corpus end-to-end, got {seen}"

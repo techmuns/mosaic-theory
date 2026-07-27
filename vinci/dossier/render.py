@@ -17,6 +17,7 @@ from datetime import UTC, date, datetime
 from itertools import groupby
 from typing import TYPE_CHECKING, Any, ParamSpec
 
+from vinci.dossier.anchor import Anchor
 from vinci.dossier.covenant_extract import GoverningTerm, _derive_conversion, governing_terms
 from vinci.dossier.schemas import Dossier, MechanicalLayer, Sourced, SourceStatus, StockInfo
 from vinci.dossier.verdict import MachineProposal, derive_proposal, split_lean
@@ -2301,6 +2302,62 @@ def _scenario_table_lines(card: ScenarioRecord | None) -> list[str]:
     return out
 
 
+# The one-line method gloss for R1 — the web spells the recipe out rather than printing its slug,
+# and the print twin must say the SAME words (a reader comparing the two reads one method, not two).
+_SCREEN_METHOD_R1 = "mid-cycle margin × the median multiple of its own history"
+_SCREEN_SUBTITLE = (
+    "A mechanical re-rate to the median multiple of this name's own trading history, on its naive "
+    "reported median margin. An attention filter only — it applies no structural adjustment, so a "
+    "cheap-looking screen still has to survive the full bear/base/bull underwrite.")
+
+
+def _screening_context_lines(anchor: Anchor | None) -> list[str]:
+    """(md/web parity) The screening ANCHOR — how this name surfaced. Twin of anchorInner() in
+    frontend dossier.js, which renders it for every name; the print twin rendered it for NONE, so
+    a PDF reader never saw the level that put the name in the funnel. That loss is total on the
+    five names carrying no scenario card, where this is the only valuation LEVEL in the document
+    (``Valuation — first cut`` is relative-only by the ImpliedValuation fence).
+
+    HARD FENCE, same as the web: the base value renders as a LEVEL and is labelled
+    spot-independent. No %, delta, discount or upside against spot is computed here — differencing
+    it against the price is exactly the machine-implied upside the fence forbids.
+
+    An INAPPLICABLE anchor still renders: ``reason`` is the diagnostic telling the human WHY there
+    is no screen value (a failed coherence guard, a missing own-history multiple), and suppressing
+    it would hide a known gap behind an empty section."""
+    if anchor is None:
+        return []
+    method = (_SCREEN_METHOD_R1 if anchor.recipe_hint.startswith("R1")
+              else (anchor.recipe_hint or "—"))
+    rows = [f"| Method | {_md_cell(method)} | "
+            f"{'applicable' if anchor.applicable else 'NOT applicable'} |"]
+    mg, mu = anchor.margin, anchor.multiple
+    if mg is not None:
+        rows.append(f"| Mid-cycle margin | {'—' if mg.value is None else f'{mg.value * 100:.1f}%'} "
+                    f"| {mg.anchor_years}y history · {mg.confidence} |")
+    if mu is not None:
+        rows.append(f"| Median multiple, own history | "
+                    f"{'—' if mu.value is None else f'{mu.value:.1f}x'} | "
+                    f"{mu.history_quarters} closes · {mu.confidence} · "
+                    f"{_md_cell(anchor.multiple_basis)} |")
+    base = anchor.anchor_base_value_per_share
+    if base is not None:
+        ev = anchor.anchor_ev_ebit
+        rows.append(f"| Screen value / share | ${base:,.2f} | spot-independent · "
+                    f"EV/EBIT {'—' if ev is None else f'{ev:.1f}'}x |")
+    rows.append(f"| Overall confidence | {anchor.overall_confidence or '—'} |  |")
+    out = ["### Screening context — how this name surfaced — _not a verdict_", "",
+           f"_{_SCREEN_SUBTITLE}_", "",
+           "| input | value | basis |", "| --- | ---: | --- |", *rows, ""]
+    if anchor.data_quality:
+        out.append(f"**data_quality: {anchor.data_quality}**")
+        out += [f"- {x}" for x in anchor.data_quality_detail]
+        out.append("")
+    if anchor.reason:
+        out += [f"_{anchor.reason}_", ""]
+    return out
+
+
 def _brief_lines(d: Dossier, *, show_proposal: bool = False,
                  card: ScenarioRecord | None = None) -> list[str]:
     """(Brief · tier redesign 2026-07-21) the IC one-pager, SIX decision-ordered sections —
@@ -2404,12 +2461,20 @@ def _brief_lines(d: Dossier, *, show_proposal: bool = False,
     # SCENARIO ANALYSIS — the recorded bear/base/bull table (+ reasons); the sealed machine
     # proposal joins it only under the operator's explicit --show-proposal peek.
     scen = _scenario_table_lines(card)
-    if scen or show_proposal:
+    # The SCREENING ANCHOR closes the section in both twins (underwriteDetail() appends it after
+    # the card detail, and renders the section on the anchor ALONE when no card exists — with the
+    # absence stated rather than the section vanishing). The print twin now does the same: a
+    # shorter PDF is not a substitute for saying "this name has not been underwritten".
+    screen = _screening_context_lines(d.anchor)
+    if scen or screen or show_proposal:
         out.append("## Scenario analysis")
+        if not scen and screen:
+            out += ["_no scenario record for this name_", ""]
         out += scen
         if show_proposal:
             out += [_machine_proposal_md(
                 derive_proposal(s.evidence_balance if s is not None else None)), ""]
+        out += screen
     # 4 — THE CASE: the condensed bull/bear alone — the decisive question + unknowns moved to the
     # cover's CRUX block (buy-side cover), so the question renders once per tier.
     out.append("## The case")
