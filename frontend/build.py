@@ -139,6 +139,88 @@ def _ledger_by_ticker() -> dict[str, dict[str, Any]]:
     return {str(e.get("ticker", "")).upper(): e for e in by_entry.values()}
 
 
+def _next_evidence(ticker: str, verdict: dict[str, Any]) -> dict[str, str]:
+    """(record legibility, 2026-07-27) WHEN this record next meets new evidence, and FROM WHERE.
+
+    RESOLUTION ORDER, ratified 2026-07-27: the dossier catalyst calendar's earliest FUTURE row →
+    the earliest dated trigger → honest UNKNOWN. The calendar leads because it carries the actual
+    next print (SMPL: 2026-10-08); a dated trigger is a DEADLINE the analyst set, which for SMPL
+    sits a full quarter later (2027-01-07) and would misstate "next evidence" by three months if
+    it led. A record with neither says so rather than inventing a date."""
+    cal_path = DOSS / ticker.upper() / "dossier.json"
+    if cal_path.is_file():
+        try:
+            doss = json.loads(cal_path.read_text())
+            cal = ((doss.get("mechanical") or {}).get("catalyst_calendar") or {})
+            ref = str(doss.get("reference_date") or "")
+            rows = sorted((r for r in (cal.get("rows") or [])
+                           if str(r.get("expected_date") or "") > ref),
+                          key=lambda r: str(r.get("expected_date")))
+            if rows:
+                return {"date": str(rows[0]["expected_date"]),
+                        "what": str(rows[0].get("event") or "next scheduled event"),
+                        "source": f"catalyst calendar ({rows[0].get('date_basis') or 'stated'})"}
+        except (OSError, ValueError, KeyError):
+            pass                                   # a malformed dossier degrades to the fallback
+    trigs = sorted((t for t in (verdict.get("dated_triggers") or []) if t.get("deadline")),
+                   key=lambda t: str(t["deadline"]))
+    if trigs:
+        return {"date": str(trigs[0]["deadline"]),
+                "what": f"re-underwrite trigger: {trigs[0].get('trigger') or ''}".strip(),
+                "source": "analyst dated trigger"}
+    return {"date": "UNKNOWN", "what": "no scheduled evidence", "source": "none on file"}
+
+
+def _current_state(rec: dict[str, Any], led: dict[str, Any] | None) -> dict[str, Any]:
+    """(record legibility, 2026-07-27) The MACHINE-DERIVED current state — what is true NOW.
+
+    It renders FIRST, above the rationale, because the rationale records what was believed at
+    DECISION time and a reader meeting it first infers the present from the past. SMPL is the
+    specimen: `watch`, position closed, base margin re-set — none of which the (sealed, correct,
+    07-21) rationale can say, because it was written before any of it happened.
+
+    HELD is derived, never asserted: only a `confirmed`/`overridden` verdict with a ledger row and
+    NO close row is a held position. Everything else prints "not held" explicitly — the word the
+    reader actually needs, and the one a bare status like `watch` leaves them to guess at."""
+    v = rec.get("verdict") or {}
+    r = rec.get("result") or {}
+    per = r.get("per_scenario") or {}
+    status = str(v.get("status") or "pending_analyst")
+    closed = bool((led or {}).get("_closed"))
+    held = bool(led) and not closed and status in ("confirmed", "overridden")
+    base_vps, bear_vps = (per.get("base") or {}).get("value_per_share"), \
+                         (per.get("bear") or {}).get("value_per_share")
+    ceiling = (base_vps + 2 * bear_vps) / 3 if base_vps is not None and bear_vps is not None \
+        else None
+    base_margin = ((rec.get("scenarios") or {}).get("base") or {}).get("margin")
+    out: dict[str, Any] = {
+        "status": status,
+        "held": held,
+        # the plain-words line the reader needs first. "not held" is EXPLICIT on anything closed
+        # or on watch — a status word alone has misled here before.
+        "holdingLabel": ("held" if held else
+                         "not held — position closed" if closed else
+                         "not held — pending analyst" if status == "pending_analyst" else
+                         "not held"),
+        "ratio": _rd(r.get("ratio"), 2),
+        "bar": _rd(r.get("bar"), 1),
+        "passFail": r.get("pass_fail"),
+        # BOTH dates: the ratio is computed at a spot that has its own as-of, and the underwrite
+        # that produced the legs has another. Showing one invites reading a stale number as live.
+        "spot": _rd(rec.get("spot"), 2),
+        "spotSource": rec.get("spot_source"),
+        "underwriteDate": rec.get("underwrite_date"),
+        "nextEvidence": _next_evidence(str(rec["ticker"]), v),
+    }
+    if base_margin is not None:
+        out["baseNormalMargin"] = base_margin
+    if ceiling is not None:
+        out["ceiling2to1"] = _rd(ceiling, 2)
+    if v.get("status_note"):
+        out["statusNote"] = v["status_note"]
+    return out
+
+
 def _scenario_card(rec: dict[str, Any], ledger: dict[str, dict[str, Any]] | None = None
                    ) -> dict[str, Any]:
     """One underwrite record → the display card: the bear/base/bull grid, the reward/risk ratio
@@ -210,6 +292,9 @@ def _scenario_card(rec: dict[str, Any], ledger: dict[str, dict[str, Any]] | None
         # gate_adjudication: a machine gate the human consciously overrode. OMITTED when absent so
         # records that never hit a gate stay byte-identical.
         **({"gateAdjudication": rec["gate_adjudication"]} if rec.get("gate_adjudication") else {}),
+        # (record legibility) the MACHINE-DERIVED current state — emitted first in the payload and
+        # rendered first on the card, above the rationale.
+        "currentState": _current_state(rec, led),
         "verdict": {"status": v.get("status"), "recorded": v.get("recorded"),
                     # THE rationale — one field since 2026-07-22. `rationale_plain` is deprecated
                     # and deliberately NOT emitted: a card key nothing reads is a key that will be

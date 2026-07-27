@@ -257,9 +257,16 @@ def test_rationale_renders_the_single_field_and_sets_amendments_apart() -> None:
     import re
 
     src = _uw_card_src()
-    fn = re.search(r"function rationaleFact\(v\) \{(.*?)\n\}", src, re.S)
+    # signature-agnostic: rationaleFact gained a `constructionEra` option on 2026-07-27 when the
+    # rationale moved behind the "Verdict as recorded" expander. This pin is about SHAPE, so it
+    # must not redden every time the function takes another argument.
+    fn = re.search(r"function rationaleFact\(v[^)]*\) \{(.*?)\n\}", src, re.S)
     assert fn, "rationaleFact() is gone"
     body = fn.group(1)
+    # (record legibility 2026-07-27) the recorded rationale now sits behind an expander, BELOW the
+    # machine-derived current-state block — it is the state at decision time, not the state now.
+    assert "<details" in body and "Verdict as recorded" in body, (
+        "the recorded rationale must render behind the 'Verdict as recorded' expander")
     assert "v.rationalePlain" not in body, "the retired field must not be read"
     assert "if (!v.rationale) return" in body, "an unrationalised record renders nothing, silently"
     # the amendment marker is what lets a reader separate recorded text from later additions
@@ -268,7 +275,9 @@ def test_rationale_renders_the_single_field_and_sets_amendments_apart() -> None:
     assert marks, "amendMarks() is gone"
     assert "escapeHtml(text)" in marks.group(1), "amendment marking must not bypass escaping"
     assert r"\[amended (\d{4}-\d{2}-\d{2})" in marks.group(1), "the tag pattern must carry a date"
-    assert "${rationaleFact(v)}" in src, "the card body must route through rationaleFact()"
+    # signature-agnostic (see above): the call gained a constructionEra argument on 2026-07-27.
+    assert re.search(r"\$\{rationaleFact\(v[,)]", src), (
+        "the card body must route through rationaleFact()")
 
 
 def test_the_retired_rationale_expander_left_no_dead_styles() -> None:

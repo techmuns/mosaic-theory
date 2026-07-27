@@ -270,6 +270,8 @@
     "entry_price": 10.92,
     "ratio_at_entry": 4.029910552276017,
     "avoid_priced": false,
-    "avoid_priced_note": null
-  }
+    "avoid_priced_note": null,
+    "status_note": "Watch reflects a stay-out decision after the round trip, not a failed underwrite."
+  },
+  "refresh_log": []
 }

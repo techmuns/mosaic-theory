@@ -68,9 +68,15 @@ def test_unchanged_rationale_passes() -> None:
 
 
 def test_appending_a_dated_amendment_tag_passes() -> None:
-    """The ONE legal growth."""
-    assert _check(_SEALED + _AMEND) == []
-    assert _check(_SEALED + _AMEND + " [amended 2026-08-01: and again.]") == []
+    """The ONE legal growth.
+
+    UPDATED 2026-07-27 for amendment CLASSES: a tag dated on/after the gate must declare its kind,
+    so the second (2026-08-01) tag here is classed. The pre-gate tag beside it stays legal
+    unclassed — the non-retroactivity guarantee, asserted rather than assumed."""
+    assert _check(_SEALED + _AMEND) == []                       # pre-gate, unclassed: legal
+    assert _check(_SEALED + _AMEND + " [amended 2026-08-01 (judgment): and again.]") == []
+    # ...and the same tag WITHOUT a class is now refused — the gate has teeth
+    assert _check(_SEALED + _AMEND + " [amended 2026-08-01: and again.]") != []
 
 
 @pytest.mark.parametrize("mutation,label", [

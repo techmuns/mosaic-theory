@@ -127,6 +127,40 @@
       "title": "RefPoint",
       "type": "object"
     },
+    "RefreshEntry": {
+      "description": "(record legibility, 2026-07-27) ONE machine data/spot refresh \u2014 what changed, old \u2192 new.\n\nTHE POINT: a machine refresh is not an amendment to anyone's reasoning, and putting it in the\nsealed rationale made the audit trail read like argument. SMPL's 88-word \"machine refresh on\ncurrent data\" tag is the specimen: it changed two numbers and cost a fifth of the record's\nprose. Refreshes now land HERE \u2014 structured, greppable, and machine-written by\n``vinci scenario-refresh`` \u2014 while ``machine``-class tags are refused from the rationale\noutright (vinci/seal.py).\n\nAppend-only by convention: entries are added, never edited. This log is NOT sealed \u2014 it is\nmachine-generated fact, reproducible from the sources it names, not a record of judgment.",
+      "properties": {
+        "field": {
+          "title": "Field",
+          "type": "string"
+        },
+        "old": {
+          "title": "Old",
+          "type": "string"
+        },
+        "new": {
+          "title": "New",
+          "type": "string"
+        },
+        "date": {
+          "title": "Date",
+          "type": "string"
+        },
+        "source": {
+          "title": "Source",
+          "type": "string"
+        }
+      },
+      "required": [
+        "field",
+        "old",
+        "new",
+        "date",
+        "source"
+      ],
+      "title": "RefreshEntry",
+      "type": "object"
+    },
     "Result": {
       "description": "Filled by the run. ``pass_fail`` records the bar test honestly \u2014 a FAIL is a result.",
       "properties": {
@@ -837,6 +871,18 @@
           ],
           "default": null,
           "title": "Avoid Priced Note"
+        },
+        "status_note": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Status Note"
         }
       },
       "title": "Verdict",
@@ -950,6 +996,13 @@
     },
     "verdict": {
       "$ref": "#/$defs/Verdict"
+    },
+    "refresh_log": {
+      "items": {
+        "$ref": "#/$defs/RefreshEntry"
+      },
+      "title": "Refresh Log",
+      "type": "array"
     }
   },
   "required": [

@@ -300,6 +300,24 @@
  "bar": 2.0,
  "ratioUndefined": null,
  "passFail": "FAIL",
+ "currentState": {
+  "status": "watch",
+  "held": false,
+  "holdingLabel": "not held",
+  "ratio": -0.33,
+  "bar": 2.0,
+  "passFail": "FAIL",
+  "spot": 0.92,
+  "spotSource": "Polygon MVST close 2026-07-21 (live at underwrite)",
+  "underwriteDate": "2026-07-22",
+  "nextEvidence": {
+   "date": "UNKNOWN",
+   "what": "no scheduled evidence",
+   "source": "none on file"
+  },
+  "baseNormalMargin": 0.06,
+  "ceiling2to1": 0.17
+ },
  "verdict": {
   "status": "watch",
   "recorded": "2026-07-22",

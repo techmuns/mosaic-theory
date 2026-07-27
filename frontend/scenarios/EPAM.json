@@ -215,6 +215,24 @@
  "bar": 2.0,
  "ratioUndefined": null,
  "passFail": "PASS",
+ "currentState": {
+  "status": "pending_analyst",
+  "held": false,
+  "holdingLabel": "not held \u2014 pending analyst",
+  "ratio": 5.27,
+  "bar": 2.0,
+  "passFail": "PASS",
+  "spot": 89.4,
+  "spotSource": "Polygon EOD daily close 2026-07-20 (live; 2026-07-21 has not settled)",
+  "underwriteDate": "2026-07-21",
+  "nextEvidence": {
+   "date": "UNKNOWN",
+   "what": "no scheduled evidence",
+   "source": "none on file"
+  },
+  "baseNormalMargin": 0.105,
+  "ceiling2to1": 108.43
+ },
  "verdict": {
   "status": "pending_analyst",
   "recorded": null,

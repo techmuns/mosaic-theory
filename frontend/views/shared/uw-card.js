@@ -547,17 +547,71 @@ function methodRefsDetails(c) {
 // led. That job moved into the field itself: a recorded rationale is APPEND-ONLY (vinci/seal.py),
 // growing by dated `[amended <date>: …]` tags, so the original survives inside the text and the
 // reader sees the amendment beside the sentence it changed rather than in a separate expander.
-function rationaleFact(v) {
+// (record legibility, 2026-07-27) The rationale now sits BEHIND an expander, under the
+// machine-derived current-state block. It is the state at DECISION time — accurate, sealed, and
+// increasingly historical: SMPL's is correct as of 2026-07-21 and cannot mention the close, the
+// watch transition or the margin re-set that followed. Leading with it made readers infer the
+// present from the past. The expander force-opens in print (T1), so the PDF is still complete.
+function rationaleFact(v, { constructionEra = false } = {}) {
   if (!v.rationale) return "";
-  return fact("Rationale", amendMarks(v.rationale));
+  const banner = constructionEra
+    ? '<div class="fact-caveat" style="margin-bottom:6px;">Recorded while the platform was under '
+      + "construction; the amendment history includes system corrections as well as investment "
+      + "judgment.</div>"
+    : "";
+  return `<details class="uw-recorded"><summary>Verdict as recorded${
+    v.recorded ? ` — ${escapeHtml(v.recorded)}` : ""}</summary>
+    ${banner}<div class="fact-val">${amendMarks(v.rationale)}</div></details>`;
 }
 
 // Amendment tags are audit trail, not thesis — set them apart so a reader can see at a glance
 // which words were recorded at the verdict and which were added afterwards, and WHEN.
+// CLASSED tags (2026-07-27 on) also carry WHAT KIND of change they record, so a reader can tell a
+// leg change from a system correction without parsing the prose.
 function amendMarks(text) {
-  return escapeHtml(text).replace(
-    /\[amended (\d{4}-\d{2}-\d{2})\s*:/g,
-    '<span class="muted">[amended $1:</span>');
+  return escapeHtml(text)
+    .replace(/\[amended (\d{4}-\d{2}-\d{2})\s*\((judgment|machine|process)\)\s*:/g,
+      '<span class="muted">[amended $1</span> <span class="pill" style="font-size:10px;">$2</span><span class="muted">:</span>')
+    .replace(/\[amended (\d{4}-\d{2}-\d{2})\s*:/g,
+      '<span class="muted">[amended $1:</span>');
+}
+
+// (record legibility) THE CURRENT-STATE BLOCK — what is true NOW, first on the card.
+function currentStateBlock(c) {
+  const s = c.currentState;
+  if (!s) return "";                       // pre-build cards round-trip without a phantom block
+  const ne = s.nextEvidence || {};
+  const row = (k, v) => v ? `<div><span class="muted">${k}</span> ${v}</div>` : "";
+  const pct = (x) => typeof x === "number" ? `${(x * 100).toFixed(1)}%` : "";
+  const ratio = typeof s.ratio === "number"
+    ? `${s.ratio.toFixed(2)} : 1 <span class="muted">vs the ${s.bar} bar</span> ${
+        s.passFail ? `<b>${escapeHtml(s.passFail)}</b>` : ""}`
+    : "";
+  return `<div class="card uw-now" style="margin-bottom:10px;">
+    <div style="display:flex; gap:8px; align-items:baseline; flex-wrap:wrap;">
+      <span class="muted" style="font-size:11px; text-transform:uppercase; letter-spacing:.04em;">Current state</span>
+      <b>${escapeHtml(s.holdingLabel || s.status || "")}</b>
+      ${s.status ? `<span class="pill">${escapeHtml(String(s.status).replace("_", " "))}</span>` : ""}
+    </div>
+    ${s.statusNote ? `<div style="margin-top:4px;">${escapeHtml(s.statusNote)}</div>` : ""}
+    <div class="foot" style="margin-top:6px; display:grid; gap:2px;">
+      ${row("Reward : risk", ratio)}
+      ${row("at spot", s.spot ? `$${s.spot} <span class="muted">${escapeHtml(s.spotSource || "")}</span>` : "")}
+      ${row("underwritten", s.underwriteDate ? escapeHtml(s.underwriteDate) : "")}
+      ${row("base normal margin", pct(s.baseNormalMargin))}
+      ${row("2:1 ceiling", typeof s.ceiling2to1 === "number" ? `$${s.ceiling2to1.toFixed(2)}` : "")}
+      ${row("next evidence", ne.date
+        ? `${escapeHtml(ne.date)} <span class="muted">${escapeHtml(ne.what || "")} · ${escapeHtml(ne.source || "")}</span>`
+        : "")}
+    </div></div>`;
+}
+
+// A record carrying amendment tags written BEFORE the class gate (2026-07-27) mixes investment
+// judgment with system corrections in one undifferentiated trail — say so rather than let a
+// reader assume every amendment was a change of mind.
+function hasPreAdoptionTags(v) {
+  const m = String(v.rationale || "").match(/\[amended (\d{4}-\d{2}-\d{2})/g) || [];
+  return m.some((t) => t.slice(9, 19) < "2026-07-27");
 }
 
 // COLLAPSED by default on screen: this is per-axis METHODOLOGY, one step toward provenance,
@@ -639,10 +693,11 @@ export function uwCard(c, { ticker = true, mark = null } = {}) {
   // other audit blocks it stops interrupting and starts belonging.
   const body = () => `
     ${masthead(c, ticker)}
+    ${currentStateBlock(c)}
     ${legsTable(c)}
     ${survivalPanel(c)}
     ${impliedOdds(c, mark)}
-    ${rationaleFact(v)}
+    ${rationaleFact(v, { constructionEra: hasPreAdoptionTags(v) })}
     ${trigChips(c, v)}
     ${legReasons(c)}
     ${methodFact(c)}`;
@@ -669,10 +724,11 @@ export function uwCardParts(c, { mark = null, detailExtra = "", rationale = true
   // `rationale: false` — the host lifted the analyst's rationale into its opener card (the
   // narrative slot), so the detail must not render it a second time.
   const detail = () => `
+    ${currentStateBlock(c)}
     ${legsTable(c)}
     ${survivalPanel(c)}
     ${impliedOdds(c, mark)}
-    ${rationale ? rationaleFact(v) : ""}
+    ${rationale ? rationaleFact(v, { constructionEra: hasPreAdoptionTags(v) }) : ""}
     ${detailExtra}
     ${trigChips(c, v)}
     ${legReasons(c)}
