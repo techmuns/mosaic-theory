@@ -4610,6 +4610,26 @@ field, not just this one); and `test_committed_web_card_carries_the_same_dated_t
 record` — structural count parity on the committed artifacts (counts only; analyst prose is never
 pinned). Gate: ruff + `mypy --strict` clean · 1068 passed.
 
+**BUILD RECORD — 2026-07-24 EXTRACT THE ANALYSIS TIER INTO HELPERS (PR 2a — pure refactor).**
+Prerequisite for the section-ordering pass. The two twin renderers had drifted STRUCTURALLY: the
+web's `analysisTier` is a 14-line composition of 9 named calls, while the markdown equivalent was a
+**201-line inline block inside `render_markdown` with 30 interleaved conditionals**. Reordering
+that inline would have meant relocating 200 lines of conditional code in a diff no reviewer could
+check — and the fact-inventory guard catches DROPPED facts, not a conditional that quietly stopped
+firing. So the extraction ships first, on its own, where it is provable. BUILT: six helpers
+mirroring the JS twin one-for-one — `_drawdown_idio_lines`, `_leverage_survival_lines`,
+`_trajectory_section_lines`, `_valuation_section_lines`, `_peer_comps_lines`,
+`_business_quality_lines`, `_argument_lines` — each carrying the JS function it twins in its
+docstring. The analysis block is now **26 lines** and reads like `analysisTier`. NO reordering, NO
+content change: PR 2b does the actual moves on top. VERIFICATION (the only one that matters for a
+refactor): re-render all 11 md from committed JSON + rebuild the frontend ⇒ **zero artifact diff**;
+the sole changed file is `render.py`. INCIDENT CAUGHT BY THAT CHECK: the first extraction pass
+inserted the new defs between `@_endnote_scope` and `def render_markdown`, silently orphaning the
+decorator onto a helper — the endnote ContextVar never opened, so EVERY citation fell back from
+`[n]` to an inline `↳ ref` across all 11 dossiers. The byte-identity check caught it immediately;
+a "tests pass" check would NOT have (the suite stayed green). Decorator reattached, re-verified.
+Gate: ruff + `mypy --strict` clean · 1073 passed.
+
 **BUILD RECORD — 2026-07-24 CONTENT RELOCATIONS (PR 1 of the report re-structure).** Operator
 audit found the tiers were ordered AND composed by where content was COMPUTED, not by the question
 it answers. This pass fixes composition only (ordering is a separate PR). SHIPPED, both twins:
