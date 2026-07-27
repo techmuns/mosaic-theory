@@ -8969,9 +8969,12 @@ def test_catalyst_calendar_assembles_rows_and_fails_loud() -> None:
 
 
 def test_catalyst_calendar_render_placement_b_and_crux_line() -> None:
-    """(PLACEMENT B) On the committed SMPL json with an injected calendar + an analyst dated
-    trigger (VERDICT-nested — the recorded decision's falsifier): the section renders AFTER the
-    argument and BEFORE the appendix; rows are dated+basis-labeled+cited; the Brief crux carries
+    """(PLACEMENT B, re-ordered 2026-07-27) On the committed SMPL json with an injected calendar +
+    an analyst dated trigger (VERDICT-nested — the recorded decision's falsifier): the section
+    renders AFTER the argument and BEFORE the appendix. It was the Analysis CLOSER until the
+    decision re-order; it still follows the argument, but six sections now sit between it and the
+    appendix, so this pins the argument→calendar adjacency, NOT a closing position. Rows are
+    dated+basis-labeled+cited; the Brief crux carries
     ONE Next-catalyst line (the earliest entry). A dossier WITHOUT the field (every pre-build
     artifact) renders NO section and NO crux line — old JSON round-trips without a phantom."""
     import vinci.scenarios as sc
@@ -9216,7 +9219,9 @@ def test_positioning_lands_in_the_appendix_in_both_twins_e2e() -> None:
         assert "Insider activity" in appendix[1], f"{t}: insider activity is not in the appendix"
         street = md.split("## The street", 1)
         if len(street) == 2:
-            before_next = street[1].split("###", 1)[0]
+            # H2 bounds the section now — the section heads were promoted from H3 on 2026-07-27,
+            # so splitting on "###" would run past the street into Leverage & survival.
+            before_next = street[1].split("\n## ", 1)[0]
             assert "Insider activity" not in before_next, f"{t}: insider is back in the street"
 
     if not shutil.which("node"):
@@ -9267,12 +9272,23 @@ def test_analysis_tier_reads_in_decision_order_e2e() -> None:
             "## Catalyst calendar", "## Valuation & own-history", "## Peer comps",
             "## Operating trajectory", "## The street — estimates & guidance",
             "## Leverage & survival", "Analyst caveats"]
+    from vinci.dossier.assemble import _read_scenario_card
+
     checked = 0
     for folder in sorted(Path("data/dossiers").iterdir()):
-        md_p = folder / "dossier.md"
-        if not md_p.exists():
+        jf = folder / "dossier.json"
+        if not jf.exists():
             continue
-        md = md_p.read_text()
+        # RENDER LIVE from the committed JSON. Reading dossier.md off disk would only prove the
+        # ARTIFACT is ordered, not the RENDERER — a render.py reorder would ship green until the
+        # next artifact pass. Comparing the fresh render back to disk keeps the staleness check.
+        dd = ds.Dossier.model_validate_json(jf.read_text())
+        md = dr.render_markdown(dd, card=_read_scenario_card(dd.ticker))
+        md_p = folder / "dossier.md"
+        if md_p.exists():
+            assert md == md_p.read_text(), (
+                f"{folder.name}: committed dossier.md is STALE against its own JSON — "
+                "re-run the artifact pass")
         analysis = md.split("# Analysis — full dossier", 1)
         if len(analysis) != 2:
             continue
@@ -9283,6 +9299,9 @@ def test_analysis_tier_reads_in_decision_order_e2e() -> None:
         assert pos == sorted(pos), (
             f"{folder.name}: analysis sections out of decision order — got "
             f"{[s for _, s in sorted(zip(pos, seen, strict=True))]}, want the {want} order")
+        # FLOOR: ordering a 1-element list is trivially true, so a regression that DROPPED nine of
+        # the ten sections would still pass. A real dossier renders nearly all of them.
+        assert len(seen) >= 8, f"{folder.name}: only {len(seen)} analysis sections: {seen}"
         checked += 1
     assert checked >= 5, f"expected several committed dossiers, checked {checked}"
 

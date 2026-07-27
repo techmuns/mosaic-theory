@@ -4635,8 +4635,18 @@ change, no re-assembly, no LLM. VERIFIED: fact-inventory invariant (1,030 labels
 gained; the only 4 deltas are composite roll-up lines whose MEMBERS re-ordered with the sections
 (member-set decomposition proves identical membership). Live web preview confirms the twin renders
 the same 10 sections in the same order with the wrapper gone. INVARIANT:
-`test_analysis_tier_reads_in_decision_order_e2e` pins the order on committed artifacts in BOTH
-twins and asserts the wrapper cannot return — mutation-tested (swapping two web sections reddens it
+`test_analysis_tier_reads_in_decision_order_e2e` pins the order in BOTH twins and asserts the
+wrapper cannot return — mutation-tested. **REVIEW FIX (blocking):** the md half first READ
+`dossier.md` off disk, making it an artifact-staleness check, not a RENDERER check — a `render.py`
+reorder shipped fully green (reproduced). It now RE-RENDERS from committed JSON and compares back
+to disk, so it guards renderer + freshness together; a per-dossier ≥8-section floor closes the
+related hole that ordering a 1-element list is trivially true. Also fixed: five stale statements of
+the OLD order (two in `render_markdown`'s docstring/banner, one above `analysisTier`, the
+"PLACEMENT B — Analysis closer" framing in three places, and the now-false "the facts above stand
+on their own" line in both twins). NOTE (fold behaviour, not data loss): `_dedupe_unknown_reasons`
+anchors a folded UNKNOWN line at its FIRST member's position, so the forward-adjusted-leverage fold
+moved from Leverage & survival to Valuation on 10 of 11 tickers — membership-identical, invisible
+to a label inventory, but a reader in Leverage no longer sees that row. Mutation-tested (swapping two web sections reddens it
 and names the offending order). The pre-existing minimal-fixture order pin was rewritten and now
 documents why the calendar/street sections are legitimately absent from that fixture. Gate: ruff +
 `mypy --strict` clean · 1074 passed.

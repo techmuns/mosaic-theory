@@ -1877,7 +1877,7 @@ def _synthesis_lines(d: Dossier, *, dev: bool) -> list[str]:
     return out
 
 
-# --- (catalyst calendar, ratified 2026-07-24 · PLACEMENT B) ------------------------------------
+# --- (catalyst calendar · PLACEMENT B, re-ordered 2026-07-27) ---------------------------------
 def _calendar_entries(
     d: Dossier, card: ScenarioRecord | None,
 ) -> list[tuple[str, str, str, str, str]]:
@@ -1902,7 +1902,10 @@ def _calendar_entries(
 
 
 def _catalyst_calendar_lines(d: Dossier, card: ScenarioRecord | None) -> list[str]:
-    """(PLACEMENT B) The Analysis closer. Rows are dated + basis-labeled + cited; an EMPTY
+    """(PLACEMENT B, re-ordered 2026-07-27) The dated re-rating path. It followed the argument as
+    the Analysis CLOSER until the decision re-order; it still follows the argument, but now sits
+    4th of 10 — on a months-to-quarters book the dated path is the trade, not an afterthought.
+    Rows are dated + basis-labeled + cited; an EMPTY
     assembled calendar renders its honest reason (never invented dates); absent field (pre-build
     dossier.json) renders NOTHING — old artifacts round-trip without a phantom section."""
     cal = d.mechanical.catalyst_calendar
@@ -2578,7 +2581,7 @@ def _leverage_survival_lines(d: Dossier, m: MechanicalLayer) -> list[str]:
     out: list[str] = []
     # (D1·§2) Leverage & survival — the survival story in one place (+ FCF + liquidity).
     if m.leverage_survival is not None:
-        out += _leverage_block(m)  # ### Leverage & survival (unified) …
+        out += _leverage_block(m)  # ## Leverage & survival (unified) …
     else:  # pre-B2 JSON: the quality leverage lines under the same header
         out += ["## Leverage & survival", *_quality_leverage_lines(m)]
     # (declutter P1) "FCF sign: UNKNOWN" directly above a present FCF value read as a
@@ -2708,7 +2711,7 @@ def _argument_lines(d: Dossier, *, dev: bool) -> list[str]:
         out += _synthesis_lines(d, dev=dev)
     else:
         out += ["## The argument",
-                "_Synthesis not assembled — the facts above stand on their own._", ""]
+                "_Synthesis not assembled — the tier's mechanical evidence stands alone._", ""]
 
     return out
 
@@ -2716,10 +2719,12 @@ def _argument_lines(d: Dossier, *, dev: bool) -> list[str]:
 @_endnote_scope
 def render_markdown(d: Dossier, *, dev: bool = False, show_proposal: bool = False,
                     card: ScenarioRecord | None = None) -> str:
-    """(D1) Facts-first restructure. Section order: header → caveats → mechanical layer [drawdown &
-    idiosyncrasy (clubbed) → leverage & survival → trajectory → valuation → peer comps → catalyst →
-    business quality] → synthesis → appendix (+ management-commentary pointer, then ownership &
-    positioning) → verdict footer. Old
+    """(D1 · re-ordered 2026-07-27) DECISION order. Analysis reads: what broke → business quality
+    → the argument → catalyst calendar → valuation → peer comps → operating trajectory → the street
+    → leverage & survival → analyst caveats. The old "mechanical layer" wrapper (a grouping by who
+    PRODUCED the content) is gone, so those section heads are H2. Appendix: reading guide →
+    statements → cap-structure provenance → implied equity → mgmt pointer → ownership & positioning
+    → Record & reproduce. Old
     committed JSONs still render (every field is optional-safe). ``dev`` shows the D3 tier tags.
     ``show_proposal`` reveals the sealed machine proposal in the brief (default False — the brief
     hides it so it can't anchor the human before they log their verdict).
@@ -2740,7 +2745,8 @@ def render_markdown(d: Dossier, *, dev: bool = False, show_proposal: bool = Fals
     # (anti-anchoring) unless ``show_proposal``; the human's logged confirm/override — a ledger
     # concern — is the verdict of record, and the reveal happens after it is logged.
     out += _brief_lines(d, show_proposal=show_proposal, card=card)
-    # (3-tier) ANALYSIS — the full dossier: caveats → mechanical layer → FULL synthesis.
+    # (3-tier · re-ordered 2026-07-27) ANALYSIS — the full dossier, in DECISION order (see the
+    # composition below; caveats now CLOSE the tier rather than open it).
     out += ["# Analysis — full dossier", ""]
     # (content re-order 2026-07-27) DECISION order, not provenance order. The old sequence
     # ran machine-assembled facts first and the argument last, under a '## Mechanical layer'
