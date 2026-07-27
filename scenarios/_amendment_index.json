@@ -30,7 +30,8 @@
       "inferred_class": "process",
       "body_words": 79,
       "first_12_words": "the inputs behind this verdict were stale \u2014 every financial and valuation",
-      "superseded_note": "the staleness premise was refuted by the 2026-07-26 verification, which found the mechanical facts current; the record's move to watch stands as an operator decision."
+      "superseded_note": "the staleness premise was refuted by the 2026-07-26 verification, which found the mechanical facts current; the record's move to watch stands as an operator decision.",
+      "record": "SMPL-2026-07-21"
     },
     {
       "ticker": "SMPL",
@@ -39,7 +40,8 @@
       "declared_class": null,
       "inferred_class": "machine",
       "body_words": 86,
-      "first_12_words": "machine refresh on current data after the staleness close \u2014 trailing-twelve-month revenue"
+      "first_12_words": "machine refresh on current data after the staleness close \u2014 trailing-twelve-month revenue",
+      "record": "SMPL-2026-07-21"
     },
     {
       "ticker": "SMPL",
@@ -48,8 +50,10 @@
       "declared_class": null,
       "inferred_class": "judgment",
       "body_words": 159,
-      "first_12_words": "third-quarter re-verification. A staleness alarm led to a paper close of the"
+      "first_12_words": "third-quarter re-verification. A staleness alarm led to a paper close of the",
+      "record": "SMPL-2026-07-21"
     }
   ],
-  "superseded_note_means": "A LATER finding that changed what an earlier tag means. The sealed text is never edited \u2014 the note sits BESIDE it, so a reader meets the correction with the claim rather than discovering it three tags later."
+  "superseded_note_means": "A LATER finding that changed what an earlier tag means. The sealed text is never edited \u2014 the note sits BESIDE it, so a reader meets the correction with the claim rather than discovering it three tags later.",
+  "record_key_note": "`record` names WHICH record a tag lives on \u2014 a ticker for a live record, an archive key for a superseded one. SMPL's three tags travelled with the record they were written on when it was archived 2026-07-27; the live SMPL record was reissued clean and carries no tags."
 }

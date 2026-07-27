@@ -187,4 +187,71 @@ def test_current_state_carries_the_decision_numbers_and_both_dates() -> None:
     s = _BUILD._current_state(rec, None)
     assert s["ratio"] == 3.83 and s["bar"] == 2.0 and s["passFail"] == "PASS"
     assert s["baseNormalMargin"] == 0.14 and s["ceiling2to1"] == 12.72
-    assert s["spot"] == 10.53 and s["spotSource"] and s["underwriteDate"] == "2026-07-21"
+    # the underwrite date is the RECORD's own — SMPL was reissued 2026-07-27, so a frozen
+    # literal here would pin the pre-supersession vintage forever
+    assert s["spot"] == 10.53 and s["spotSource"]
+    assert s["underwriteDate"] == rec["underwrite_date"]
+
+
+# --- SUPERSESSION: archive-and-reissue (2026-07-27) --------------------------------------------
+def test_archived_records_leave_the_live_set_but_stay_in_the_seal_sweep() -> None:
+    """THE TWO-SIDED SCOPE RULE, both halves pinned.
+
+    OUT of the live set: the audit, the monitor and the spread read `scenarios/*.json`, which does
+    NOT recurse into `archive/` — so a superseded record can never be scored, counted or audited a
+    second time. IN the seal sweep: superseding must not become a way to move a sealed rationale
+    out from under the seal. An archived record is still the record of what was believed."""
+    live = sc.all_records(root=ROOT)
+    archived = sc.all_archived(root=ROOT)
+    assert archived, "the committed book carries at least one archived record"
+    assert set(live) & set(archived) == set(), "an archive key must never collide with a ticker"
+    for key, rec in archived.items():
+        assert rec.superseded_by, f"{key} is archived but points nowhere"
+        assert key not in live, f"{key} is in the LIVE set — audit/spread would double-count"
+    # the seal sweep DOES cover them, keyed as the manifest keys them
+    sealable = seal.load_all_sealable(ROOT)
+    for key in archived:
+        assert key in sealable, f"{key} escaped the seal sweep"
+    assert seal.check_all(sealable, seal.load_manifest(ROOT)) == []
+
+
+def test_supersession_links_both_ways_and_never_edits_the_archived_rationale() -> None:
+    """The pair is bidirectional and the archived copy differs from its original by ONE field."""
+    live = sc.read_record("SMPL", root=ROOT)
+    key = live.supersedes
+    assert key, "the reissued SMPL record must point back at what it replaced"
+    arch = sc.read_archived(key, root=ROOT)
+    assert arch.superseded_by == sc.archive_key(live), "the archived record must point forward"
+    assert sc.archive_key(arch) == key
+    # the reissue is CLEAN: no amendment tags carried over into the new sealed text
+    assert seal.amendments(live.verdict.rationale or "") == []
+    # ...and the archived record keeps every one of them
+    assert len(seal.amendments(arch.verdict.rationale or "")) == 3
+
+
+def test_supersede_refuses_a_live_position_and_a_one_way_link() -> None:
+    """A LIVE position is AMENDED, never superseded — reissuing would move the thesis out from
+    under an open position. Proven by the refusal, not by the docstring."""
+    live = sc.read_record("SMPL", root=ROOT)
+    arch = sc.read_archived(str(live.supersedes), root=ROOT)
+    confirmed = arch.model_copy(update={
+        "verdict": arch.verdict.model_copy(update={"status": "confirmed"})})
+    with pytest.raises(sc.SupersedeRefusedError, match="LIVE position"):
+        sc.supersede_record(confirmed, live, live_confirmed_open=True)
+    with pytest.raises(sc.SupersedeRefusedError, match="ticker mismatch"):
+        sc.supersede_record(arch, live.model_copy(update={"ticker": "AORT"}))
+    with pytest.raises(sc.SupersedeRefusedError, match="already points at"):
+        sc.supersede_record(arch, live.model_copy(update={"supersedes": "XXXX-2020-01-01"}))
+    with pytest.raises(sc.SupersedeRefusedError, match="no close row"):
+        sc.supersede_record(confirmed, live, closed_entry_ids=set())
+
+
+def test_supersession_did_not_touch_the_ledger() -> None:
+    """A reissue is a RECORD event, not a transaction: no new ledger row, nothing mutated. The
+    forward spread must be identical before and after — supersession cannot launder a track."""
+    led = (ROOT / "data" / "snapshots" / "decision_ledger.jsonl").read_text().splitlines()
+    rows = [json.loads(x) for x in led if x.strip()]
+    smpl = [r for r in rows if r["ticker"] == "SMPL"]
+    assert len(smpl) == 2, "SMPL still has exactly its decision row + its close row"
+    assert {r["entry_id"] for r in smpl} == {
+        "V-SMPL-screen2-20260706", "C-SMPL-screen2-20260706"}

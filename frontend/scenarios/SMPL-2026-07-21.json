@@ -1,0 +1,289 @@
+{
+ "ticker": "SMPL",
+ "recipeId": "R1_midcycle_margin_evebitda",
+ "recipeDesc": "Mid-cycle underwrite: normalized operating margin on a mid-cycle revenue base, valued at an exit EV/LTM-EBITDA multiple; reward/risk measured at SPOT.",
+ "recipeFormula": [
+  "EBIT = revenue \u00d7 op margin",
+  "EBITDA = EBIT + D&A",
+  "EV = EBITDA \u00d7 exit multiple (EV/EBITDA)",
+  "equity = EV \u2212 net debt",
+  "value/share = equity \u00f7 diluted shares"
+ ],
+ "assumptions": [
+  {
+   "axis": "revenue",
+   "method": "Legs are set off the consensus path and the trailing-twelve-month base rather than round numbers: base is consensus FY26E (the company issued no numeric guidance), bull sits just under the trailing twelve months on a stabilizing Atkins, and bear takes revenue materially past consensus to price the secular GLP-1 and Atkins decline case. [restated for external readability 2026-07-21; substance unchanged]",
+   "references": [
+    {
+     "label": "FY2025 reported revenue",
+     "value": 1450.9,
+     "unit": "$M",
+     "source": "EDGAR companyfacts OperatingIncomeLoss / RevenueFromContractWithCustomerExcludingAssessedTax (FY2025)"
+    },
+    {
+     "label": "LTM revenue",
+     "value": 1416.208,
+     "unit": "$M",
+     "source": "committed dossier anchor block (#158/#160/#162-verified)"
+    },
+    {
+     "label": "consensus FY26E revenue (base)",
+     "value": 1334.0,
+     "unit": "$M",
+     "source": "committed dossier financial_summary (E cols = consensus)"
+    }
+   ]
+  },
+  {
+   "axis": "margin",
+   "method": "Operating-margin legs are set off the clean reported history, with FY2025 adjusted for the quantified $60.9M Atkins-brand and licensing-agreement intangible impairment \u2014 the clean statistics bracket the full-history screening median rather than breaking from it. Bear sits at the worst clean year, base at the seven-year clean median, bull between the median and the FY2022 best. [restated for external readability 2026-07-21; substance unchanged]",
+   "references": [
+    {
+     "label": "committed anchor median (naive, 8 FY)",
+     "value": 15.45,
+     "unit": "%",
+     "source": "committed dossier anchor block (#158/#160/#162-verified) anchor.margin.value"
+    },
+    {
+     "label": "7yr clean median (FY2025 adjusted) \u2014 base",
+     "value": 15.51,
+     "unit": "%",
+     "source": "EDGAR companyfacts OperatingIncomeLoss / RevenueFromContractWithCustomerExcludingAssessedTax FY2019-FY2025, FY2025 ex the $60.9M impairment"
+    },
+    {
+     "label": "FY2020 worst clean year \u2014 bear",
+     "value": 9.58,
+     "unit": "%",
+     "source": "EDGAR companyfacts OperatingIncomeLoss / RevenueFromContractWithCustomerExcludingAssessedTax (FY2020)"
+    },
+    {
+     "label": "FY2022 best clean year \u2014 bull ceiling",
+     "value": 17.35,
+     "unit": "%",
+     "source": "EDGAR companyfacts OperatingIncomeLoss / RevenueFromContractWithCustomerExcludingAssessedTax (FY2022)"
+    },
+    {
+     "label": "FY2025 adjusted ex $60.9M impairment",
+     "value": 15.01,
+     "unit": "%",
+     "source": "EDGAR companyfacts OperatingIncomeLoss / RevenueFromContractWithCustomerExcludingAssessedTax (FY2025) + 10-K 0001702744-25-000046 (FY2025, Note 5 Goodwill and Intangibles)"
+    }
+   ]
+  },
+  {
+   "axis": "multiple",
+   "method": "Multiple legs sit inside the company's own EV/EBITDA trading range, deliberately below the median at base: the unresolved category question (GLP-1 substitution, Atkins decline) earns a durable discount rather than a cyclical one. Bear sits at the trough of the range; bull moves toward but stays under the median. [restated for external readability 2026-07-21; substance unchanged]",
+   "references": [
+    {
+     "label": "own-history band low \u2014 bear",
+     "value": 6.11,
+     "unit": "x",
+     "source": "committed dossier valuation.own_history (CIQ Financials\u2192Multiples 'TEV/LTM EBITDA' Close, 35 closes, 8.55y span, as-of 2026-07-17, sha 7bd83a1103)"
+    },
+    {
+     "label": "own-history 25th percentile",
+     "value": 15.2,
+     "unit": "x",
+     "source": "committed dossier valuation.own_history (CIQ Financials\u2192Multiples 'TEV/LTM EBITDA' Close, 35 closes, 8.55y span, as-of 2026-07-17, sha 7bd83a1103)"
+    },
+    {
+     "label": "own-history median (base set below it)",
+     "value": 17.85,
+     "unit": "x",
+     "source": "committed dossier valuation.own_history (CIQ Financials\u2192Multiples 'TEV/LTM EBITDA' Close, 35 closes, 8.55y span, as-of 2026-07-17, sha 7bd83a1103)"
+    },
+    {
+     "label": "own-history 75th percentile",
+     "value": 20.88,
+     "unit": "x",
+     "source": "committed dossier valuation.own_history (CIQ Financials\u2192Multiples 'TEV/LTM EBITDA' Close, 35 closes, 8.55y span, as-of 2026-07-17, sha 7bd83a1103)"
+    },
+    {
+     "label": "current multiple (0th pctile)",
+     "value": 5.65,
+     "unit": "x",
+     "source": "committed dossier valuation.own_history (CIQ Financials\u2192Multiples 'TEV/LTM EBITDA' Close, 35 closes, 8.55y span, as-of 2026-07-17, sha 7bd83a1103)"
+    },
+    {
+     "label": "entry-boundary cells: 1,100 \u00d7 8% \u00d7 6.0x \u2192 $3.54; 1,050 \u00d7 7% \u00d7 6.0x \u2192 $2.62 (from the sealed entry rationale, preserved in the ledger payload). At the verification price ($10.53, 2026-07-22 close) both clear on the entry-vintage 15.5% normal (\u22482.34 / \u22482.07); on the re-set 14% normal they read \u22481.96 / \u22481.73 \u2014 below the bar. The boundary tightened with the cut: the 2:1 line now sits between the recorded 10% bear and these stress cells.",
+     "value": 1.96,
+     "unit": ":1 (cell A at the re-set 14% normal; cell B \u22481.73)",
+     "source": "sealed entry rationale, preserved in the ledger payload (V-SMPL-screen2-20260706); ratios recomputed 2026-07-26 at $10.53"
+    }
+   ]
+  }
+ ],
+ "multipleBasis": "EV/EBITDA",
+ "underwriteDate": "2026-07-21",
+ "analyst": "nogods404",
+ "spot": 10.53,
+ "spotSource": "Polygon daily aggregate close 2026-07-22 (store; machine refresh 2026-07-24)",
+ "facts": [
+  {
+   "key": "d_and_a",
+   "value": 21.431,
+   "unit": "$M",
+   "basis": "consolidated latest FY",
+   "source": "EDGAR companyfacts dep_amort (combined) \u2014 via committed dossier anchor block (#158/#160/#162-verified)"
+  },
+  {
+   "key": "net_debt",
+   "value": 324.582,
+   "unit": "$M",
+   "basis": "lease-inclusive net debt (latest 10-Q)",
+   "source": "EDGAR: total debt 397 + finance leases 0 + operating leases 51 \u2212 cash 124 ($M) \u2014 via committed dossier anchor block (#158/#160/#162-verified)"
+  },
+  {
+   "key": "diluted_shares",
+   "value": 93.677801,
+   "unit": "M shares",
+   "basis": "diluted weighted-average (latest 10-Q) (anchor raw count / 1e6)",
+   "source": "EDGAR WeightedAverageNumberOfDilutedSharesOutstanding \u2014 via committed dossier anchor block (#158/#160/#162-verified)"
+  },
+  {
+   "key": "ltm_revenue",
+   "value": 1392.235,
+   "unit": "$M",
+   "basis": "LTM revenue",
+   "source": "committed financial_summary.annual (LTM) \u2014 via committed dossier anchor block (#158/#160/#162-verified)"
+  },
+  {
+   "key": "cash_interest",
+   "value": 23.249,
+   "unit": "$M",
+   "basis": "FY2025 non-operating interest expense (FCF cross-check only)",
+   "source": "EDGAR companyfacts InterestExpenseNonoperating FY2025"
+  },
+  {
+   "key": "cash_tax_rate",
+   "value": 0.2376,
+   "unit": "rate",
+   "basis": "FY2025 effective rate = tax expense / pre-tax income (FCF cross-check only; does not touch value/share)",
+   "source": "EDGAR companyfacts IncomeTaxExpenseBenefit 32.289 / pre-tax 135.903 (FY2025)"
+  }
+ ],
+ "scenarios": [
+  {
+   "name": "bear",
+   "revenue": 1180.0,
+   "margin": 0.1,
+   "multiple": 7.0,
+   "reason": "Value-trap case: the GLP-1 and Atkins declines prove secular; revenue falls past consensus; margin at about the worst clean year (FY2020 9.58%); the multiple at the trough of its trading range (prior low 6.11x). [restated for external readability 2026-07-21; substance unchanged] [verified 2026-07-22 against sector bear-state evidence, at the latest completed session's close ($11.04, 2026-07-21): declining packaged-food comparables with clean income statements trade at 6.1\u20138.6 times cash earnings \u2014 the recorded 7.0x sits inside that range while the market prices this company below it (5.65x); and the recorded 10% margin equals the worst clean margin retention observed in the state (roughly two-thirds of normal, 64.5% vs the weakest survivor's 63%). No evidence-coherent cell falls below roughly 2.7 to 1 against the 2.0 bar at that close; the recorded grid reads 3.88 to 1. Fragility unchanged and exactly as recorded: the entry-boundary cells still read 2.12 clears / 1.88 fails.] [re-verified 2026-07-26 at the third-quarter data, price $10.53 (2026-07-22): the market-pricing discharge holds on the record's own basis (adjusted trailing multiple ~5.3x, below the 6.1x floor of the declining-comparables range) and sits at that floor on the strictest reported basis (5.8\u20136.05x) \u2014 stated rather than smoothed. Against the re-set 14% normal, the 10% bear retains 71% \u2014 milder than the worst observed survivor's 63%; a retention-consistent bear (~8.8% margin) still reads about 3.0 to 1. Trailing cash generation through the third quarter is about $119M (operating cash flow minus capital spending), roughly a quarter below the full-year figure the machine-assembled fact set carries \u2014 still about a 12.8% cash yield at the verification price; that fact itself refreshes with the queued quarterly-refresh build. The bear floor itself is unbroken: no quarter this year fell below the worst clean year (9.58%).]",
+   "valuePerShare": 6.95,
+   "opIncome": 118.0,
+   "ebitda": 139.4,
+   "ev": 976.0,
+   "equity": 651.4,
+   "evEbit": 8.3,
+   "normFcf": 72.2
+  },
+  {
+   "name": "base",
+   "revenue": 1330.0,
+   "margin": 0.14,
+   "multiple": 12.5,
+   "reason": "Margin is the seven-year clean median of 15.51%. The clean statistics bracket the full-history screening median rather than breaking from it: FY2025 resolved with a $60.9M intangible impairment, and excluding it margin was 15.0% \u2014 at the median. The residual ~$22.8M gap to the vendor's figure is definitional (intangible amortization 16.9 plus transaction costs 0.8), not operating. Revenue is consensus FY26E of 1,334 [amended 2026-07-21 pre-verdict: FY26 guidance reinstated at the fiscal Q3 print at $1.345-1.355B; base revenue of 1,330 sits below the guidance midpoint, so the base case is conservative against management's own path]. The multiple is set below the 17.9x median of its 8.55-year trading range (35 quarterly closes): the unresolved category question earns a durable discount; 12.5x is the 14th percentile. [restated for external readability 2026-07-21; substance unchanged] the normal level is set between the seven-year clean median (15.5%) and the trailing clean margin through the third quarter (about 13.8%), deliberately nearer the trailing figure: this year's four-point gross-margin reset is treated as partly structural rather than fully temporary, after write-downs far larger than the single one the clean series originally excluded. At 14%, the business recovers most \u2014 not all \u2014 of its historical profitability. [amended 2026-07-26]",
+   "valuePerShare": 24.24,
+   "opIncome": 186.2,
+   "ebitda": 207.6,
+   "ev": 2595.4,
+   "equity": 2270.8,
+   "evEbit": 13.9,
+   "normFcf": 124.2
+  },
+  {
+   "name": "bull",
+   "revenue": 1420.0,
+   "margin": 0.165,
+   "multiple": 16.0,
+   "reason": "The sell-off proves excessive: Quest carries growth and Atkins stabilizes at a smaller base; margin between the median and the best year (17.35%); the multiple moves toward but stays below the 17.85x median of its trading history (16.0x, roughly the 29th percentile of the 8.55-year range) [amended 2026-07-21 pre-verdict: trading-range refresh]. [restated for external readability 2026-07-21; substance unchanged]",
+   "valuePerShare": 40.21,
+   "opIncome": 234.3,
+   "ebitda": 255.7,
+   "ev": 4091.7,
+   "equity": 3767.1,
+   "evEbit": 17.5,
+   "normFcf": 160.9
+  }
+ ],
+ "reward": 13.71,
+ "risk": 3.58,
+ "ratio": 3.83,
+ "bar": 2.0,
+ "ratioUndefined": null,
+ "passFail": "PASS",
+ "gateAdjudication": "~80% one-off bar fired at 72.8%; residual identified as vendor-definitional, not operating; analyst adjudicated RESUME 2026-07-21.",
+ "currentState": {
+  "status": "watch",
+  "held": false,
+  "holdingLabel": "not held \u2014 position closed",
+  "ratio": 3.83,
+  "bar": 2.0,
+  "passFail": "PASS",
+  "spot": 10.53,
+  "spotSource": "Polygon daily aggregate close 2026-07-22 (store; machine refresh 2026-07-24)",
+  "underwriteDate": "2026-07-21",
+  "nextEvidence": {
+   "date": "2026-10-08",
+   "what": "Next results print",
+   "source": "catalyst calendar (cadence-estimate)"
+  },
+  "baseNormalMargin": 0.14,
+  "ceiling2to1": 12.72,
+  "statusNote": "Watch reflects a stay-out decision after the round trip, not a failed underwrite."
+ },
+ "supersededBy": "SMPL-2026-07-27",
+ "archiveKey": "SMPL-2026-07-21",
+ "amendmentIndex": [
+  {
+   "index": 1,
+   "date": "2026-07-24",
+   "inferredClass": "process",
+   "supersededNote": "the staleness premise was refuted by the 2026-07-26 verification, which found the mechanical facts current; the record's move to watch stands as an operator decision."
+  },
+  {
+   "index": 2,
+   "date": "2026-07-24",
+   "inferredClass": "machine"
+  },
+  {
+   "index": 3,
+   "date": "2026-07-26",
+   "inferredClass": "judgment"
+  }
+ ],
+ "verdict": {
+  "status": "watch",
+  "recorded": "2026-07-21",
+  "rationale": "BUY at $10.92, 4.0:1 against the 2:1 bar. The market sold a consensus beat with reinstated guidance down to the lowest multiple in the company's own history \u2014 pricing GLP-1 drugs as a permanent decline of the whole snacking category. Our judgment is the sell-off has overshot: margins never broke (ex the Atkins write-down, last year sat at the seven-year median), our base revenue sits below management's own new guidance, and a ~12% free-cash-flow yield with active buybacks pays us while the question resolves. The accepted risk: Quest, the growth engine, just printed +1% \u2014 unproven. The trade fails only if revenue, margin, and multiple all break below their historical worsts together; Quest stalling two more quarters forces a re-underwrite. [amended 2026-07-24: the inputs behind this verdict were stale \u2014 every financial and valuation panel predated the quarterly report filed 2026-07-09, so the scenario arithmetic and the confirmation read the prior quarter's numbers. Verdict withdrawn and the paper position closed at 10.53 (2026-07-22) as a process correction, not a view on the stock; the record moves to watch pending a fresh underwrite on current data. The September price-increase trigger stands \u2014 it came from the earnings call, not the stale panels.] [amended 2026-07-24: machine refresh on current data after the staleness close \u2014 trailing-twelve-month revenue 1416.208 \u2192 1392.235 (the fresh grid now includes the quarter reported 2026-07-09) and spot 10.92 (2026-07-20) \u2192 10.53 (2026-07-22). The filing-derived inputs (net debt, depreciation, diluted shares) were already current and are unchanged, so each leg's value per share is unchanged; reward-to-risk at the new spot recomputes to 4.58:1 against the 2.0 bar. Machine arithmetic only \u2014 the scenario legs as recorded await the analyst's fresh underwrite, and the verdict remains withdrawn at watch.] [amended 2026-07-26: third-quarter re-verification. A staleness alarm led to a paper close of the position and a move to watch on 2026-07-24, before verification ran; verification then found the mechanical facts current to the day and the alarm overstated, while confirming real deterioration \u2014 a four-point gross-margin reset and write-downs far larger than the single one the clean series excluded. The recorded gross-margin tripwire fired and this re-verification discharges it: base normal margin cut from 15.5% to 14%. On corrected assumptions the grid reads about 3.8 to 1 at the current price \u2014 it clears the bar \u2014 though the entry-recorded stress cells (deep simultaneous revenue, margin and multiple breaks) now sit below it under the re-set normal, fragility stated rather than smoothed; the watch status reflects the operator's decision to remain out after the round trip, not a failed underwrite. Re-entry, if ever taken, is a new decision on a new row; the ~October report is the next scheduled evidence.]",
+  "reunderwriteTriggers": [
+   "Quest revenue growth \u2264 0% YoY for two consecutive quarters \u2192 the growth engine is dead; re-underwrite the bull and base cases. [restated for external readability 2026-07-21; substance unchanged]",
+   "FY26 guidance cut at the fiscal Q4 print (~Oct 2026), or initial FY27 guidance below ~$1.30B \u2192 base revenue path fails",
+   "gross-margin erosion beyond the guided ~375bps, or sustained GM below ~31% \u2192 margin regime break [fired 2026-07-26: nine-month gross margin declined about 4.1 points against the 3.75-point threshold (36.2% \u2192 32.2%, basis stated); discharged by the third-quarter re-verification recorded this date \u2014 base normal cut to 14%. The record remains at watch following the 2026-07-24 paper close; full-year basis re-read at the ~October print.]"
+  ],
+  "datedTriggers": [
+   {
+    "trigger": "September portfolio-wide price increase fails to stick (elasticity / share loss)",
+    "deadline": "2027-01-07",
+    "basis": "second print after the September action \u2014 the Q1-FY27 print reveals elasticity; operator-confirmed 2026-07-24"
+   }
+  ],
+  "entryPrice": 10.92,
+  "ratioAtEntry": 4.03,
+  "avoidPriced": false,
+  "avoidPricedNote": null
+ },
+ "ledger": {
+  "verdict": "BUY",
+  "entryId": "V-SMPL-screen2-20260706",
+  "entryPrice": 10.92,
+  "entryPriceAsOf": "2026-07-20",
+  "decidedAt": "2026-07-21T00:00:00",
+  "closed": {
+   "exitPrice": 10.53,
+   "exitPriceAsOf": "2026-07-22",
+   "reason": "input-staleness close 2026-07-24: the 2026-07-21 buy was underwritten on stale inputs \u2014 every financial and valuation panel predated the quarterly report filed 2026-07-09 (valuation panels dated 2026-06-03 and 2026-06-25 against a 2026-07-06 reference). A process correction, not a market call; the name returns at re-underwrite on current data.",
+   "closeEntryId": "C-SMPL-screen2-20260706"
+  }
+ }
+}
