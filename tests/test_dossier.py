@@ -9019,7 +9019,10 @@ d.mechanical.catalyst_calendar = {{ rows: [{{ event: "Next results print",
   tests_what: "the committed revised outlook", source_ref: "cadence: EDGAR submissions" }}],
   qa_flags: [] }};
 const card = JSON.parse(readFileSync("frontend/scenarios/SMPL.json"));
-card.verdict.dated_triggers = [{{ trigger: "Quest stalling two more quarters",
+// camelCase — the PRODUCTION card shape. This fixture injected snake_case `dated_triggers`
+// until 2026-07-24, a shape frontend/build.py never emits, so the test passed green while the
+// real web card carried nothing and the calendar rendered SHORT of the PDF (SMPL: 2 of 3).
+card.verdict.datedTriggers = [{{ trigger: "Quest stalling two more quarters",
   deadline: "2027-01-07", basis: "second print after the 2026-07-21 verdict" }}];
 const h = renderDossier(d, null, card);
 console.log(JSON.stringify({{
