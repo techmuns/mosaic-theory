@@ -7785,7 +7785,14 @@ console.log(JSON.stringify({{ html: h }}));
     # curated top-2). Absence-of-LLM-text pins are safe (reworded content stays absent).
     assert h.count('class="brief-crux"') == 1
     q = s["decisive_question"]["question"]
-    assert _html.escape(q) in h
+    # Compare on UNESCAPED text. Python's html.escape emits &#x27; for an apostrophe while the JS
+    # escapeHtml emits &#39; — both valid, different strings — so this passed only while the
+    # LLM-written question happened to contain no apostrophe. A 2026-07-27 re-assembly produced
+    # "Is Gartner's revenue contraction…" and it reddened on CORRECT output. The pin is presence of
+    # the committed question in the render, not a byte-match of one escaping convention.
+    unescaped = (h.replace("&#x27;", "'").replace("&#39;", "'").replace("&quot;", '"')
+                 .replace("&lt;", "<").replace("&gt;", ">").replace("&amp;", "&"))
+    assert q in unescaped
     crux = h.split('class="brief-crux"')[1].split("</div></div>")[0]
     n_unk = len(s.get("key_unknowns") or [])
     assert f"{n_unk} key unknowns + the evidence for/against — in Analysis" in crux
