@@ -85,7 +85,15 @@ function verdictPills(c) {
   const out = [];
   if (led && led.verdict) {
     const buy = String(led.verdict).toUpperCase().startsWith("BUY");
-    out.push(`<span class="pill ${buy ? "buy" : "avoid"}">${escapeHtml(led.verdict)}</span>`);
+    // CLOSE-AWARE (external-honesty pass 2026-07-27): a position that has been closed NEVER
+    // headlines as a bare live verdict. The word of record stays (the call is still scored at its
+    // horizon — exits cannot launder the track record), but it reads with its close attached.
+    const cl = led.closed;
+    const word = cl
+      ? `${escapeHtml(led.verdict)} — closed ${escapeHtml(cl.exitPriceAsOf || "")}` +
+        (typeof cl.exitPrice === "number" ? ` at $${cl.exitPrice.toFixed(2)}` : "")
+      : escapeHtml(led.verdict);
+    out.push(`<span class="pill ${cl ? "unresolved" : buy ? "buy" : "avoid"}">${word}</span>`);
   } else if (v.status) {
     out.push(`<span class="pill ${v.status === "pending_analyst" ? "conditional" : "unresolved"}"
       >${escapeHtml(v.status.replace("_", " "))}</span>`);

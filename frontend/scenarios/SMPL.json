@@ -239,6 +239,12 @@
   "entryId": "V-SMPL-screen2-20260706",
   "entryPrice": 10.92,
   "entryPriceAsOf": "2026-07-20",
-  "decidedAt": "2026-07-21T00:00:00"
+  "decidedAt": "2026-07-21T00:00:00",
+  "closed": {
+   "exitPrice": 10.53,
+   "exitPriceAsOf": "2026-07-22",
+   "reason": "input-staleness close 2026-07-24: the 2026-07-21 buy was underwritten on stale inputs \u2014 every financial and valuation panel predated the quarterly report filed 2026-07-09 (valuation panels dated 2026-06-03 and 2026-06-25 against a 2026-07-06 reference). A process correction, not a market call; the name returns at re-underwrite on current data.",
+   "closeEntryId": "C-SMPL-screen2-20260706"
+  }
  }
 }

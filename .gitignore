@@ -62,3 +62,7 @@ data/assay_history/
 
 # OS
 .DS_Store
+
+# Rendered external packs — regenerable exports, never committed (external-record rule
+# archives the MEMO verbatim in docs/ic/; the pack itself is a render of committed data).
+out/

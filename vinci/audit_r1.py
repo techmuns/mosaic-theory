@@ -82,6 +82,12 @@ class NameAudit:
     anchor_applicable: bool = True
     recipe_hint: str | None = None
     guards_tripped: str | None = None
+    # (external-honesty pass 2026-07-27) The LATEST analyst verification date found on the bear
+    # leg — a dated `[verified …]` / `[re-verified …]` tag. A flagged exposure the analyst has
+    # SINCE verified is a gate that fired and was DISCHARGED, not an open hole. The flag itself is
+    # NEVER downgraded (the exposure is real and stays visible); only the DISPOSITION reads the
+    # discharge. Honest in both directions: no tag → the name still reads as new exposure.
+    discharged_on: str | None = None
 
     @property
     def gate_fired(self) -> bool:
@@ -93,9 +99,11 @@ class NameAudit:
 
     @property
     def disposition(self) -> str:
-        """gate fired / NO GATE / clean — the audit's own summary of the name."""
+        """gate fired / discharged / NO GATE / clean — the audit's own summary of the name."""
         if not [f for f in self.flags if f.severity == "flag"]:
             return "clean"
+        if self.discharged_on:                      # analyst-verified since the flag was raised
+            return f"fired — discharged {self.discharged_on}"
         return "gate exists and FIRED" if self.gate_fired else "*** NO GATE — new exposure"
 
 
@@ -187,6 +195,18 @@ def check_band(a: NameAudit, dossier: dict[str, Any]) -> dict[str, Any] | None:
     return b
 
 
+# (external-honesty pass) A dated ANALYST verification tag on a leg — `[verified 2026-07-22: …]`
+# or `[re-verified 2026-07-26 …]`. Anchored on the tag's own opening (the same shape the seal
+# permits), so prose that merely uses the word "verified" cannot forge a discharge.
+_VERIFIED_TAG = re.compile(r"\[(?:re-)?verified (\d{4}-\d{2}-\d{2})")
+
+
+def _discharge_date(reason: str) -> str | None:
+    """The LATEST analyst verification date on a leg reason, or None. Latest — not first — because
+    a re-verification supersedes the one before it, and the audit reports the current state."""
+    return max(_VERIFIED_TAG.findall(reason), default=None)
+
+
 def check_bear(a: NameAudit, record: dict[str, Any] | None, b: dict[str, Any] | None) -> None:
     if not record:
         a.rows["bear"] = "no scenario record"
@@ -195,12 +215,16 @@ def check_bear(a: NameAudit, record: dict[str, Any] | None, b: dict[str, Any] | 
     bx = leg.get("multiple")
     basis = leg.get("bear_basis")          # leg-level only — there is no record-level field
     mbasis = leg.get("margin_basis")
-    a.rows["bear"] = (f"{bx}x · bear_basis={basis or 'ABSENT'} margin_basis={mbasis or 'ABSENT'}")
+    a.discharged_on = _discharge_date(leg.get("reason") or "")
+    a.rows["bear"] = (f"{bx}x · bear_basis={basis or 'ABSENT'} margin_basis={mbasis or 'ABSENT'}"
+                      + (f" · verified {a.discharged_on}" if a.discharged_on else ""))
     if bx is None or b is None:
         return
     if bx > b["current"]:
+        disc = (f" — FIRED, discharged {a.discharged_on} (analyst verification on the leg)"
+                if a.discharged_on else " — the downside case assumes a re-rating UP")
         a.flags.append(Flag("bear", "flag", f"BEAR MULTIPLE ABOVE CURRENT: {bx:.2f}x vs "
-                            f"{b['current']:.2f}x — the downside case assumes a re-rating UP"))
+                            f"{b['current']:.2f}x{disc}"))
     if bx > b["min"]:
         a.flags.append(Flag("bear", "note", f"bear multiple {bx:.2f}x above the band minimum "
                                             f"{b['min']:.2f}x"))
