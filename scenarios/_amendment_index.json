@@ -29,7 +29,8 @@
       "declared_class": null,
       "inferred_class": "process",
       "body_words": 79,
-      "first_12_words": "the inputs behind this verdict were stale \u2014 every financial and valuation"
+      "first_12_words": "the inputs behind this verdict were stale \u2014 every financial and valuation",
+      "superseded_note": "the staleness premise was refuted by the 2026-07-26 verification, which found the mechanical facts current; the record's move to watch stands as an operator decision."
     },
     {
       "ticker": "SMPL",
@@ -49,5 +50,6 @@
       "body_words": 159,
       "first_12_words": "third-quarter re-verification. A staleness alarm led to a paper close of the"
     }
-  ]
+  ],
+  "superseded_note_means": "A LATER finding that changed what an earlier tag means. The sealed text is never edited \u2014 the note sits BESIDE it, so a reader meets the correction with the claim rather than discovering it three tags later."
 }
