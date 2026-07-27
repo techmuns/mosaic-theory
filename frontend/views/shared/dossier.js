@@ -700,7 +700,12 @@ function recordAndReproduce(d, verdict, card = null) {
       ? `model <span class="mono">${escapeHtml(d.llm_model || "llm")}</span> — facts assembled mechanically; the synthesis frames, the analyst decides`
       : "not assembled — mechanical layer only")}
     ${row("Identifiers", `CIK <span class="mono">${escapeHtml(d.cik || DASH)}</span>${d.exchange ? ` · ${escapeHtml(d.exchange)}` : ""} : <span class="mono">${escapeHtml(d.ticker)}</span>`)}
-    ${card ? row("Underwrite record", `underwritten <span class="mono">${escapeHtml(card.underwriteDate || DASH)}</span> · analyst ${escapeHtml(card.analyst || DASH)}${card.ledger && card.ledger.entryId ? ` · ledger <span class="mono">${escapeHtml(card.ledger.entryId)}</span>` : ""}`) : ""}
+    ${card ? row("Underwrite record", `underwritten <span class="mono">${escapeHtml(card.underwriteDate || DASH)}</span> · analyst ${escapeHtml(card.analyst || DASH)}${card.ledger && card.ledger.entryId ? ` · ledger <span class="mono">${escapeHtml(card.ledger.entryId)}</span>` : ""}${
+      // LINEAGE (2026-07-27): which record this one replaced, or what replaced it. Housekeeping —
+      // it helps a reader find the paperwork, not judge the name — so it sits here with the other
+      // provenance rather than above the numbers.
+      card.supersedes ? ` · supersedes <a href="#/dossier/${escapeHtml(card.supersedes)}">${escapeHtml(card.supersedes)}</a>` : ""}${
+      card.supersededBy ? ` · superseded by <a href="#/dossier/${escapeHtml(String(card.supersededBy).split("-")[0])}">${escapeHtml(card.supersededBy)}</a>` : ""}`) : ""}
     ${proc.length ? row("Assembly log", proc.map(escapeHtml).join("; ")) : ""}
     ${row("Re-run", `<pre class="ds-rerun"><code>python -m vinci dossier --ticker ${escapeHtml(d.ticker)}</code></pre>
       <span class="muted" style="font-size:11px;">regenerates every assembled fact from the same sources; committed values change only when the sources have</span>`)}

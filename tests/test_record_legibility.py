@@ -335,3 +335,37 @@ def test_at_a_glance_v2_keeps_five_cells_and_ranks_by_fact_class() -> None:
     foot = foot[:foot.index("\n}")]
     assert "Next evidence" in foot and "underwritten" in foot, "dates belong in the mast-foot"
     assert "currentStateBlock" not in card, "the separate block is superseded by the masthead"
+
+
+def test_header_and_foot_say_each_thing_once() -> None:
+    """COPY DISCIPLINE (operator: "not comprehendible … non-necessary words"). The header said the
+    status THREE times — the `watch` pill, then "not held", then a caption OPENING "Watch
+    reflects…" — and the foot said "Next" twice ("Next evidence … Next results print") before a
+    shouty "scenario verdict — NOT a ledger verdict of record". Both are now stated once."""
+    card = (ROOT / "frontend" / "views" / "shared" / "uw-card.js").read_text()
+    foot = card[card.index("function mastheadFoot"):]
+    foot = foot[:foot.index("\n}")]
+    assert "Next evidence ${" not in foot, "the event label already names the event"
+    assert 'replace(/^next\\s+/i' in foot, "the label's own leading 'Next ' must be stripped"
+    assert "no ledger verdict logged" in foot
+    assert "NOT a ledger verdict of record" not in card, "the shouty clause is retired"
+    # the live record's caption carries only what the status words do not
+    note = json.loads((ROOT / "scenarios" / "SMPL.json").read_text())["verdict"]["status_note"]
+    assert len(note.split()) <= 8, f"the caption is a caption, not a sentence: {note!r}"
+    assert not note.lower().startswith("watch"), "the pill already says the status"
+
+
+def test_lineage_sits_in_record_and_reproduce_not_above_the_numbers() -> None:
+    """(#3) Which record this one replaced is FILING-CABINET information — it helps a reader find
+    the paperwork, not judge the name — so on the dossier it belongs in the Appendix's
+    "Record & reproduce" beside the analyst, date and ledger id. The STANDALONE card keeps the
+    banner: an archived record's page has no appendix to carry it."""
+    card = (ROOT / "frontend" / "views" / "shared" / "uw-card.js").read_text()
+    doss = (ROOT / "frontend" / "views" / "shared" / "dossier.js").read_text()
+    detail = card[card.index("const detail = () =>"):]
+    detail = detail[:detail.index("`;")]
+    assert "supersessionBanner" not in detail, "the dossier tier must not carry the banner"
+    body = card[card.index("const body = () =>"):]
+    body = body[:body.index("`;")]
+    assert "supersessionBanner" in body, "the standalone card must keep it"
+    assert "supersedes <a href=" in doss, "the Appendix must carry the lineage, linked"
