@@ -24,6 +24,7 @@ axis silently dropping from the render is data loss.
 from __future__ import annotations
 
 import json
+import re
 import warnings
 from pathlib import Path
 from typing import Any, Literal
@@ -36,7 +37,7 @@ from pydantic import BaseModel, Field, field_validator, model_validator
 from vinci.dossier.midcycle import BAR, R1_FORMULA
 from vinci.prose_lint import ProseRegisterWarning, lint_record
 
-SCHEMA_VERSION = "1.2"
+SCHEMA_VERSION = "1.3"
 
 # WHERE a bear multiple came from. Each member is a different KIND of evidence, and the difference
 # is what the 2026-07-22 audit turned on: an own-history floor drawn from a growth-era-only window
@@ -50,6 +51,39 @@ BEAR_BASES = frozenset({
 # WHICH earnings line a margin cell is stated on. The two differ by D&A, and a silent conversion
 # between them put a 15.5% EBITDA cell into a brief as a 13.2% EBIT cell.
 MARGIN_BASES = frozenset({"EBIT", "EBITDA"})
+
+# --- (schema 1.3, ratified 2026-07-27 — docs/refpoint_schema_proposal.md) ----------------------
+# WHAT STATISTIC a reference is. The census of all 132 committed references found the role
+# travelling as prose in 50 (38%), and one production consumer already REGEX-PARSING labels for it
+# (uw-card's find(/median/i) rendered the PEER median on MVST while the own median sat two rows
+# down labelled "unusable" — which median showed was decided by array order). One tag, not a
+# statistic×population split (ratified): `peer_median` is its own member because the only
+# distinction any code needs today is own-median vs peer-median. Drawn from real usage — every
+# member had ≥2 uses at ratification; extend deliberately, as BEAR_BASES is.
+REF_ROLES = frozenset({
+    "median", "mean", "percentile", "band_low", "band_high", "trough", "peak",
+    "current", "reported", "consensus", "guidance", "peer_median", "peer", "analogue",
+})
+# The unit vocabulary — exactly the units found in legitimate committed use at the census, no
+# invention. The one committed unit OUTSIDE this set was a smuggled SENTENCE (":1 (cell A at the
+# re-set 14% normal; cell B ≈1.73)") — a second value hidden where only a unit may stand. A unit
+# is a unit; a finding is an AxisNote.
+REF_UNITS = frozenset({"%", "x", "$M", "$/share", ":1", "years", "% of revenue", "count"})
+# From this schema version, reference STRUCTURE must be fields, not label prose: the leg a
+# reference anchors, its exclusion, and its unit all live in their fields, and a label carrying
+# them as prose is REFUSED at write (the gate names the field to use). Older records predate the
+# fields and stay writable — the rule binds forward, never retroactively (BASIS_REQUIRED_FROM
+# precedent).
+FIELDED_REFS_FROM = "1.3"
+# The label patterns the 1.3 gate refuses — the exact prose shapes the census found carrying
+# structure. Kept beside the model, not in a consumer: a renderer must never need these.
+# DELIBERATELY NARROW (the prose_lint convention — each narrowing pinned with the real sentence
+# that motivated it): "not derived" is NOT an exclusion token, because AORT's "street operating
+# margin, FY2026 - stated, not derived" is PROVENANCE (the street stated it; we did not derive
+# it) on a row that IS used — refusing it would force a used reference to claim exclusion.
+_LEG_IN_LABEL = re.compile(r"\b(bear|base|bull)\b", re.IGNORECASE)
+_EXCLUSION_IN_LABEL = re.compile(
+    r"\b(NOT a reference|not used|unusable|DEAD REGIME|STRADDLES)\b", re.IGNORECASE)
 
 # RETIRED VERDICT FIELDS — names that were once written into records and are now gone. They stay
 # listed because pydantic's default is extra="ignore": a record file still carrying a retired key
@@ -81,12 +115,22 @@ class Fact(BaseModel):
 class RefPoint(BaseModel):
     """One source-bound REFERENCE value an assumption was modeled against (a history median, an
     anchor, a floor, a peak). ``label`` names what it is (the ``basis`` role); recorded in
-    display-natural units (``4.06`` + ``"%"``, ``6.56`` + ``"x"``) — no consumer re-scales it."""
+    display-natural units (``4.06`` + ``"%"``, ``6.56`` + ``"x"``) — no consumer re-scales it.
+
+    (schema 1.3) The STRUCTURE a label used to carry as prose is fields now: ``role`` (what
+    statistic), ``leg`` (which case it anchors — None for frame-level context, which most are),
+    and ``excluded`` (shown-but-not-used, with its reason). Labels stay verbatim analyst text and
+    are never parsed — the fields are the machine-readable duplicate of what the label says to a
+    human, and the ONLY thing a consumer may select on."""
 
     label: str
     value: float
-    unit: str                      # "%" | "$M" | "x" | ...
+    unit: str                      # from REF_UNITS on 1.3 records ("%" | "x" | "$M" | …)
     source: str                    # the filing/tag/run that produced the value
+    role: str | None = None        # REF_ROLES member; None = untagged (legal forever on legacy)
+    leg: Literal["bear", "base", "bull"] | None = None   # which case this anchors; None = context
+    excluded: bool = False         # recorded but NOT used — renders dimmed, never selected
+    excluded_reason: str | None = None                   # REQUIRED iff excluded
 
     model_config = {"frozen": True}
 
@@ -96,6 +140,55 @@ class RefPoint(BaseModel):
         if not v.strip():
             raise ValueError("a reference value with no label/unit/source cannot be verified — "
                              "refusing to record it")
+        return v
+
+    @field_validator("role")
+    @classmethod
+    def _role_known(cls, v: str | None) -> str | None:
+        if v is not None and v not in REF_ROLES:
+            raise ValueError(f"role {v!r} is not one of {sorted(REF_ROLES)} — an unlisted role is "
+                             "not selectable; add the member deliberately (BEAR_BASES precedent)")
+        return v
+
+    @model_validator(mode="after")
+    def _excluded_pair_coherent(self) -> RefPoint:
+        # mirrors the margin/margin_basis pair: a reason for an exclusion that is not declared is
+        # refused, and an exclusion with no reason is a judgment the reader cannot review.
+        if self.excluded and not (self.excluded_reason or "").strip():
+            raise ValueError(f"{self.label!r}: excluded=True requires excluded_reason — an "
+                             "exclusion whose why is unstated cannot be reviewed")
+        if not self.excluded and self.excluded_reason is not None:
+            raise ValueError(f"{self.label!r}: excluded_reason without excluded=True — a reason "
+                             "for an exclusion that is not declared")
+        return self
+
+
+class AxisNote(BaseModel):
+    """A dated analyst FINDING about one assumption axis — prose with provenance, in the
+    leg-reason register. Exists because the SMPL 2026-07-26 re-verification produced a two-number
+    finding (entry-boundary cells 1.96/1.73 vs the 2:1 bar) with nowhere to live: its prose was
+    poured into a 380-char reference ``label`` and its second value SMUGGLED into ``unit``. A
+    finding is a note beside honest references, never a fake reference."""
+
+    text: str
+    date: str                      # ISO date the finding was recorded
+    source: str | None = None      # provenance when the note carries numbers
+
+    model_config = {"frozen": True}
+
+    @field_validator("text")
+    @classmethod
+    def _note_not_blank(cls, v: str) -> str:
+        if not v.strip():
+            raise ValueError("a blank note records nothing — refusing it")
+        return v
+
+    @field_validator("date")
+    @classmethod
+    def _note_date_iso(cls, v: str) -> str:
+        if not re.fullmatch(r"\d{4}-\d{2}-\d{2}", v):
+            raise ValueError(f"note date {v!r} is not ISO (YYYY-MM-DD) — an undatable finding "
+                             "cannot be sequenced against the record's history")
         return v
 
 
@@ -111,6 +204,10 @@ class AssumptionDerivation(BaseModel):
 
     method: str
     references: list[RefPoint] = Field(default_factory=list)
+    # (schema 1.3) dated findings about this axis — the home the SMPL boundary-cells narrative
+    # never had. Axis-level, not record-level (ratified): the note sits beside the numbers it
+    # interprets.
+    notes: list[AxisNote] = Field(default_factory=list)
     ratified_by: str | None = None         # who ratified the method sentence; None while draft
     ratified: str | None = None            # ISO date of ratification; None while draft
 
@@ -675,15 +772,7 @@ def _require_bear_basis(rec: ScenarioRecord) -> None:
     This one REFUSES rather than warns. The labels cost a word each and their absence is exactly
     what made the IT band defect and the EBITDA/EBIT mistranslation invisible; a warning would be
     read past on the day it mattered."""
-    def _ver(s: str) -> tuple[int, ...]:
-        """Numeric version compare. String compare would read '1.10' < '1.2' as True and let a
-        future record skip the rule — the silent-bypass class this whole field exists to close."""
-        try:
-            return tuple(int(x) for x in s.split("."))
-        except ValueError:
-            return (0,)
-
-    if _ver(rec.schema_version) < _ver(BASIS_REQUIRED_FROM):
+    if _schema_ver(rec.schema_version) < _schema_ver(BASIS_REQUIRED_FROM):
         return
     bear = (rec.scenarios or {}).get("bear")
     if bear is None:
@@ -705,6 +794,49 @@ def _require_bear_basis(rec: ScenarioRecord) -> None:
             f"{rec.ticker}: bear leg is missing {missing} — schema {rec.schema_version} requires "
             f"the bear multiple's provenance ({sorted(BEAR_BASES)}) and the margin's earnings "
             f"line ({sorted(MARGIN_BASES)}). Both exist because both have already gone wrong.")
+
+
+def _schema_ver(s: str) -> tuple[int, ...]:
+    """Numeric version compare (shared by the forward-binding gates). String compare would read
+    '1.10' < '1.2' as True and let a future record skip a rule — the silent-bypass class the
+    versioned gates exist to close."""
+    try:
+        return tuple(int(x) for x in s.split("."))
+    except ValueError:
+        return (0,)
+
+
+def require_fielded_refs(rec: ScenarioRecord) -> None:
+    """(schema 1.3 — docs/refpoint_schema_proposal.md, ratified 2026-07-27) From 1.3 a reference's
+    STRUCTURE lives in fields, and a label carrying it as prose is REFUSED with the field named.
+    Legacy records predate the fields and stay writable — forward-binding, BASIS_REQUIRED_FROM
+    precedent.
+
+    REFUSES rather than warns, for the same reason bear_basis does: the prose forms already went
+    wrong in production — uw-card's find(/median/i) showed the PEER median on MVST because which
+    median a label named was decided by array order, and a whole finding was smuggled into a
+    ``unit``. Public (not underscore) because the migration pin validates committed records
+    through it directly."""
+    if _schema_ver(rec.schema_version) < _schema_ver(FIELDED_REFS_FROM):
+        return
+    problems: list[str] = []
+    for axis, a in (rec.assumptions or {}).items():
+        for i, r in enumerate(a.references):
+            where = f"assumptions.{axis}.references[{i}]"
+            if _LEG_IN_LABEL.search(r.label):
+                problems.append(f"{where}: label {r.label!r} names a leg — the leg belongs in "
+                                "`leg=`, not the label")
+            if _EXCLUSION_IN_LABEL.search(r.label):
+                problems.append(f"{where}: label {r.label!r} carries an exclusion as prose — "
+                                "use excluded=True + excluded_reason")
+            if r.unit not in REF_UNITS:
+                problems.append(f"{where}: unit {r.unit!r} is not one of {sorted(REF_UNITS)} — "
+                                "a unit is a unit; a finding belongs in the axis notes")
+    if problems:
+        raise ValueError(
+            f"{rec.ticker}: schema {rec.schema_version} requires fielded references — "
+            + "; ".join(problems[:4])
+            + (f"; +{len(problems) - 4} more" if len(problems) > 4 else ""))
 
 
 def _warn_admissibility(rec: ScenarioRecord) -> None:
@@ -738,6 +870,7 @@ def write_record(rec: ScenarioRecord, *, root: Path | None = None) -> Path:
     d.mkdir(parents=True, exist_ok=True)
     path = d / f"{rec.ticker.upper()}.json"
     _require_bear_basis(rec)
+    require_fielded_refs(rec)
     _warn_admissibility(rec)
     flags = lint_record(rec)
     if flags:

@@ -203,9 +203,15 @@ function methodCell(c) {
   const st = headlineState(c);
   const word = st === "target" ? "target exit" : "base exit";
   // the band reference the multiple was set against, from the committed reference frames — never
-  // an interpolated percentile (the card carries no series to compute one from)
+  // an interpolated percentile (the card carries no series to compute one from).
+  // (schema 1.3) selected by ROLE, never by label prose. The label regex this replaces picked
+  // whichever label mentioned the word FIRST: on MVST that was the PEER median of a heterogeneous
+  // set while the own-history median sat two rows down marked unusable, so which comparator the
+  // masthead showed was decided by array order. `role === "median"` is the own-history median by
+  // vocabulary (peer medians are `peer_median`), excluded rows never qualify, and an untagged
+  // legacy record honestly shows no sub-line rather than a guessed one.
   const ref = (c.assumptions || []).find((a) => a.axis === "multiple");
-  const med = ref && (ref.references || []).find((p) => /median/i.test(p.label || ""));
+  const med = ref && (ref.references || []).find((p) => p.role === "median" && !p.excluded);
   const sub = [m !== null ? `${word} ${oneDp(m, "×")}` : "",
     med ? `vs ${oneDp(med.value, "×")} median` : ""].filter(Boolean).join(" · ");
   return statCell("Method", escapeHtml(desc), escapeHtml(sub), { txt: true });
@@ -550,14 +556,25 @@ function methodRefsDetails(c) {
     .map((n) => (c.scenarios || []).find((s) => s.name === n)).filter(Boolean);
   const tables = () => withRefs.map((a) => {
     const fmt = axisFmt(a.axis);
+    // (schema 1.3) the leg a reference anchors renders as a chip FROM THE FIELD (labels are never
+    // parsed), and an excluded row dims with its reason stated — before this, "NOT a reference
+    // for us" sat in the same confident column as the numbers that count.
     const rows = a.references.map((p) =>
-      `<tr><td>${escapeHtml(p.label)}</td><td class="num">${mono(String(p.value))} ${escapeHtml(p.unit)}</td>
+      `<tr${p.excluded ? ` class="uw-ref-excl"` : ""}><td>${escapeHtml(p.label)}${
+        p.leg ? ` <span class="uw-leg-chip">${escapeHtml(p.leg)}</span>` : ""}${
+        p.excluded ? `<span class="muted"> — excluded: ${escapeHtml(p.excludedReason || "")}</span>` : ""
+      }</td><td class="num">${mono(String(p.value))} ${escapeHtml(p.unit)}</td>
         <td class="uw-ref-cite">${citeMark(p.source)}</td></tr>`).join("");
     const chosen = legs.length
       ? `<tr class="name-row"><td>chosen (${legs.map((l) => escapeHtml(l.name)).join(" · ")})</td>
           <td class="num">${legs.map((l) => fmt(axisLegValue(l, a.axis))).join(" · ")}</td><td></td></tr>` : "";
+    // (schema 1.3) dated axis NOTES — the analyst finding that used to be smuggled into a fake
+    // reference row (SMPL's boundary cells) renders as the prose it is, beside the honest numbers.
+    const notes = (a.notes || []).map((n) =>
+      `<div class="uw-axis-note muted"><b>${escapeHtml(n.date)}</b> — ${escapeHtml(n.text)}${
+        n.source ? `${citeMark(n.source)}` : ""}</div>`).join("");
     return `<div class="uw-method-h">${escapeHtml(axisLabel(a.axis, c.multipleBasis || DASH))}</div>
-      <div style="overflow-x:auto;"><table class="data uw-refs-t"><tbody>${rows}${chosen}</tbody></table></div>`;
+      <div style="overflow-x:auto;"><table class="data uw-refs-t"><tbody>${rows}${chosen}</tbody></table></div>${notes}`;
   }).join("");
   return `<details class="uw-method"><summary>Reference values — what each assumption was set against</summary>${
     withEndnotes("M", tables)}${recipeLine(c)}</details>`;

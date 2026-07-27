@@ -555,3 +555,107 @@ def test_methodology_reference_tables_share_one_grid() -> None:
             "opens a 600px+ gulf between each label and its value; this was tried and reverted")
     assert "table.data tbody td { border-bottom: none; }" in css, (
         "the rule-free row policy was dropped — this card was designed against it")
+
+
+def test_masthead_median_selects_by_role_never_by_label_prose() -> None:
+    """(schema 1.3) The uw-card masthead's "vs N× median" comparator is chosen by the ROLE field.
+
+    The regex it replaces — ``find(/median/i)`` over labels — picked whichever label mentioned
+    "median" FIRST: on MVST that was the PEER median (14.5x, a set the analyst called
+    heterogeneous) while the own-history median sat two rows down labelled "unusable". Which
+    comparator the masthead showed was decided by ARRAY ORDER — the display-string-parsing bug
+    class, live in production.
+
+    Three layers, mutation-tested: the source no longer contains a label regex; a FROZEN fixture
+    (the MVST shape) proves the behaviour — peer_median first + own median excluded ⇒ NO sub-line
+    (honest absence, never a guessed comparator); role-tagged clean median ⇒ selected.
+    """
+    import json
+    import shutil
+    import subprocess
+
+    src = _src("frontend/views/shared/uw-card.js")
+    assert "/median/i" not in src, (
+        "uw-card matches labels for 'median' again — the comparator must come from the ROLE "
+        "field; the regex showed the PEER median on MVST by array order")
+    assert 'p.role === "median" && !p.excluded' in src, (
+        "the masthead's median selection lost its role+excluded predicate")
+
+    if not shutil.which("node"):
+        pytest.skip("node unavailable")
+    # FROZEN fixture, not the living MVST mirror: the record's tags are analyst data and may
+    # legitimately change on a re-underwrite; the SELECTION RULE may not.
+    mvst_shape = {"assumptions": [{"axis": "multiple", "method": "m", "references": [
+        {"label": "peer median, heterogeneous set", "value": 14.5, "unit": "x", "source": "s",
+         "role": "peer_median"},
+        {"label": "this company's trailing median", "value": 19.3, "unit": "x", "source": "s",
+         "role": "median", "excluded": True, "excludedReason": "six closes over 1.3 years"},
+    ]}]}
+    clean_shape = {"assumptions": [{"axis": "multiple", "method": "m", "references": [
+        {"label": "peer median, nine names", "value": 14.5, "unit": "x", "source": "s",
+         "role": "peer_median"},
+        {"label": "this company's trailing median", "value": 17.85, "unit": "x", "source": "s",
+         "role": "median"},
+    ]}]}
+    legacy_shape = {"assumptions": [{"axis": "multiple", "method": "m", "references": [
+        {"label": "own-history median (base set below it)", "value": 17.85, "unit": "x",
+         "source": "s"},
+    ]}]}
+    driver = """
+import { readFileSync } from "node:fs";
+const src = readFileSync("frontend/views/shared/uw-card.js", "utf8");
+const body = src.split("function methodCell(c) {")[1].split("\\n}")[0];
+// stub the helpers methodCell closes over; statCell returns its sub text so we can read it
+const statCell = (t, h, sub) => sub;
+const leg = () => null; const num = () => null; const oneDp = (v, u) => `${v.toFixed(1)}${u}`;
+const headlineState = () => "pending"; const escapeHtml = (s) => String(s);
+const DASH = "—";
+const methodCell = new Function(
+  "statCell", "leg", "num", "oneDp", "headlineState", "escapeHtml", "DASH", "c",
+  body).bind(null, statCell, leg, num, oneDp, headlineState, escapeHtml, DASH);
+console.log(JSON.stringify(__CASES__.map((c) => methodCell(c))));
+""".replace("__CASES__", json.dumps([mvst_shape, clean_shape, legacy_shape]))
+    out = subprocess.run(["node", "--input-type=module", "-e", driver],
+                         capture_output=True, text=True, check=True, cwd=ROOT)
+    mvst_sub, clean_sub, legacy_sub = json.loads(out.stdout)
+    assert "median" not in mvst_sub, (
+        f"excluded own median + peer_median present ⇒ NO comparator, got {mvst_sub!r} — a "
+        "peer median must never masquerade as THE median")
+    assert "vs 17.9× median" in clean_sub or "vs 17.8× median" in clean_sub, (
+        f"a clean role-tagged median must be selected, got {clean_sub!r}")
+    assert "median" not in legacy_sub, (
+        f"an untagged legacy record shows NO sub-line (honest) — got {legacy_sub!r}")
+
+
+def test_13_fields_reach_both_twins_and_the_mirrors_e2e() -> None:
+    """E2E, phrasing-independent, over every committed record: whatever a record declares in its
+    1.3 fields is VISIBLE on both rendered surfaces and rides the mirrors — an excluded reference
+    states its exclusion wherever the row renders, a leg tag renders as a chip/suffix, and an
+    axis note renders dated. Conditional invariants (IF the record carries X…), so a legitimate
+    re-underwrite that changes the tags cannot redden this."""
+    import json
+
+    for p in sorted((ROOT / "scenarios").glob("*.json")):
+        if p.stem.startswith("_"):
+            continue
+        rec = json.loads(p.read_text())
+        md_p = ROOT / "data" / "dossiers" / p.stem / "dossier.md"
+        md = md_p.read_text() if md_p.exists() else None
+        mirror = json.loads((ROOT / "frontend" / "scenarios" / f"{p.stem}.json").read_text())
+        m_axes = {a["axis"]: a for a in mirror.get("assumptions") or []}
+        for axis, a in (rec.get("assumptions") or {}).items():
+            for i, r in enumerate(a.get("references") or []):
+                mr = m_axes[axis]["references"][i]
+                assert mr.get("role") == r.get("role"), f"{p.stem}/{axis}[{i}]: role lost"
+                assert mr.get("leg") == r.get("leg"), f"{p.stem}/{axis}[{i}]: leg lost"
+                if r.get("excluded"):
+                    assert mr.get("excluded") and mr.get("excludedReason"), (
+                        f"{p.stem}/{axis}[{i}]: exclusion lost from the mirror")
+                    if md:
+                        assert "excluded:" in md, (
+                            f"{p.stem}: an excluded reference renders undimmed/unstated in md")
+            for n in a.get("notes") or []:
+                assert any(mn["text"] == n["text"] for mn in m_axes[axis].get("notes") or []), (
+                    f"{p.stem}/{axis}: note lost from the mirror")
+                if md:
+                    assert n["date"] in md, f"{p.stem}/{axis}: note date absent from md"

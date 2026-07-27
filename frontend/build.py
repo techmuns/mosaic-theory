@@ -309,8 +309,21 @@ def _scenario_card(rec: dict[str, Any], ledger: dict[str, dict[str, Any]] | None
              # prose duplicate of structured state is the thing being removed). Emitted only when
              # UNratified, so a ratified axis stays byte-identical — the card badges from this.
              **({"unratified": True} if not a.get("ratified_by") else {}),
+             # (schema 1.3) role/leg/excluded ride each reference so the card SELECTS on fields,
+             # never on label prose (the /median/i regex this replaces showed the PEER median on
+             # MVST by array order). Emitted only when set — legacy refs stay byte-identical.
              "references": [{"label": p["label"], "value": p["value"], "unit": p["unit"],
-                             "source": p["source"]} for p in (a.get("references") or [])]}
+                             "source": p["source"],
+                             **({"role": p["role"]} if p.get("role") else {}),
+                             **({"leg": p["leg"]} if p.get("leg") else {}),
+                             **({"excluded": True,
+                                 "excludedReason": p.get("excluded_reason")}
+                                if p.get("excluded") else {})}
+                            for p in (a.get("references") or [])],
+             **({"notes": [{"text": n["text"], "date": n["date"],
+                            **({"source": n["source"]} if n.get("source") else {})}
+                           for n in a["notes"]]}
+                if a.get("notes") else {})}
             for k, a in rec["assumptions"].items()]}
            if rec.get("assumptions") else {}),
         "multipleBasis": rec["multiple_basis"], "underwriteDate": rec["underwrite_date"],

@@ -1482,12 +1482,26 @@ def _assumption_methodology_lines(card: ScenarioRecord | None) -> list[str]:
             # ESCAPE PIPES: the label is analyst free text in a markdown TABLE. GFM splits on "|"
             # before inline parsing, so a pipe silently shifts cells and drops content (backticks
             # do not protect it). The value is machine-formatted and the cite is a bare [n].
-            out += [f"| {_md_cell(r.label)} | {_ref_value(r.value, r.unit)}{_cite(r.source)} |"
-                    for r in a.references]
+            # (schema 1.3) leg and exclusion render FROM FIELDS, twinning the web: a leg chip
+            # after the label, and an excluded row italicised with its reason stated — never a
+            # confident bare number for a reference the analyst rejected. Labels stay verbatim.
+            for r in a.references:
+                leg = f" `{r.leg}`" if r.leg else ""
+                if r.excluded:
+                    out.append(f"| _{_md_cell(r.label)}{leg} — excluded: "
+                               f"{_md_cell(r.excluded_reason or '')}_ "
+                               f"| _{_ref_value(r.value, r.unit)}_{_cite(r.source)} |")
+                else:
+                    out.append(f"| {_md_cell(r.label)}{leg} "
+                               f"| {_ref_value(r.value, r.unit)}{_cite(r.source)} |")
             out.append("")
         else:
             # a pure-judgment method honestly stated beats a fabricated reference (schema 1.1)
             out += ["_No reference points recorded — stated as judgment._", ""]
+        # (schema 1.3) dated axis NOTES — analyst findings beside the numbers they interpret
+        # (the home the SMPL boundary-cells narrative never had). Twin: assumptionMethodology().
+        for n in getattr(a, "notes", []) or []:
+            out += [f"_{n.date} — {n.text}_{_cite(n.source) if n.source else ''}", ""]
     return out
 
 

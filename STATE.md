@@ -4133,7 +4133,7 @@ renumber.** No other unverifiable claim found in this block.
     exactly like `BASIS_REQUIRED_FROM`, hand-migration of ~27 rows (no label-parsing tool — N is
     too small to justify enshrining the display-string-parse). Four open decisions listed at the
     doc's end (role vocabulary; one field vs statistic×population; archived-SMPL row stays sealed;
-    one PR vs two). **DECISIONS RATIFIED 2026-07-27 (all four): census role list · one tag · archive stays sealed · one PR. Build unblocked — next build slot.**
+    one PR vs two). **DISCHARGED 2026-07-27 — BUILT (see the schema-1.3 build record). Decisions were: census role list · one tag · archive stays sealed · one PR. Build unblocked — next build slot.**
 
 **QUEUED BUILD → BUILT 2026-07-24 — CATALYST CALENDAR (brief drafted 2026-07-24; RATIFIED 2026-07-24 by the operator
 WITH PLACEMENT B — see amended (d); mockups: standalone + in-situ on the live SMPL page, both
@@ -4629,6 +4629,46 @@ and no snake_case survives on the card side (this is the general guard: it catch
 field, not just this one); and `test_committed_web_card_carries_the_same_dated_triggers_as_its_
 record` — structural count parity on the committed artifacts (counts only; analyst prose is never
 pinned). Gate: ruff + `mypy --strict` clean · 1068 passed.
+
+**BUILD RECORD — 2026-07-27 SCHEMA 1.3 — FIELDED REFERENCES (ratified proposal built; one PR).**
+The four ratified decisions executed exactly (docs/refpoint_schema_proposal.md header): census
+role list · one tag · archive sealed · one PR. MODEL: `RefPoint` gains `role` (validated against
+`REF_ROLES`, 14 members, every one census-evidenced), `leg` (bear/base/bull Literal), `excluded` +
+`excluded_reason` (pair-coherent both directions, margin/margin_basis precedent); new `AxisNote`
+(text + ISO date + optional source) on `AssumptionDerivation.notes`. GATE: `require_fielded_refs`
+— forward-binding from `FIELDED_REFS_FROM = "1.3"` exactly like `BASIS_REQUIRED_FROM` — REFUSES a
+1.3 label carrying a leg token or an exclusion token, and any unit outside `REF_UNITS` (the 8
+units in legitimate committed use; the smuggled-sentence unit becomes unrepresentable). Narrowing
+recorded with its real sentence, prose_lint convention: "stated, not derived" is PROVENANCE
+(AORT's street margins), NOT an exclusion token — my first regex wrongly caught it. `_schema_ver`
+extracted and shared by both gates (the inner `_ver` copy retired). LINTER: `lint_record` now
+scans `references[].label`, `excluded_reason` and `notes[].text` (flag-only, as everywhere) —
+closing the blind spot where its own banned vocabulary sat 26 times, incl. the explicitly-banned
+"DEAD REGIME". MIGRATION: 35 hand-authored row edits across all 7 live records (worklist printed,
+each edit read individually — NO regex transform ever touched a label; json round-trip proven
+byte-stable first), all bumped 1.2→1.3 after verifying every record carries bear_basis. SMPL
+multiple[5] — the 380-char smuggled finding — became two honest references (cell A 1.96:1, cell B
+1.73:1) + one dated AxisNote carrying the narrative VERBATIM; archived SMPL-2026-07-21 untouched
+(sealed, ratified). CONSUMERS: uw-card's masthead median now selects `role === "median" &&
+!excluded` — the label regex is DELETED, not kept as fallback; **verified live: MVST's masthead
+reads "base exit 7.9×" with NO "vs 14.5× median"** (the wrong peer-median comparator is gone;
+an untagged legacy record honestly shows no sub-line). build.py emits role/leg/excluded/
+excludedReason/notes (only when set — legacy refs byte-identical); theme embed re-embedded via
+`refresh_theme_cards()`; `_schema.json` regenerated. RENDER, both twins: leg chips FROM FIELDS
+(labels never parsed), excluded rows dimmed/struck with the reason stated ("NOT a reference for
+us" no longer borrows the aligned column's authority), notes render dated. PINS: 4 model-layer
+(validators; gate refusals with the real committed shapes; narrowings-stay-legal on the AORT
+sentence; e2e every-committed-record-passes-the-gate + migration-population floors) + masthead
+behaviour on a FROZEN fixture (the MVST shape ⇒ NO sub-line; clean median ⇒ selected; legacy ⇒
+honest absence — living-mirror tags are analyst data, so the fixture is frozen by design) + a
+conditional-invariant e2e (IF a record declares a tag THEN both surfaces and the mirror show it —
+re-underwrites cannot redden it). SIX mutations caught: label-regex revert · excluded-median
+selected · gate floor raised · emitter drops excluded · (earlier pair on the endnote/table pins).
+Gate: ruff + `mypy --strict` clean · **1114 passed, 1 skipped** — the pre-existing suite survived
+the migration with ZERO test edits (the three initial reds were stale derived artifacts:
+`_schema.json`, mirrors, theme embed — all regenerated via their sanctioned paths). Queue item 16
+DISCHARGED; queue item 2's generating-cells half partially discharged (the boundary cells now
+live structurally beside their narrative).
 
 **BUILD RECORD — 2026-07-27 "HOW THESE NUMBERS WERE SET" — ENDNOTE CITES + ONE GRID.** Operator
 spotted inline sources on a MAIN-BODY card and asked why, against the house convention. He was

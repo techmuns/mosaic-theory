@@ -9,6 +9,7 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
+import pydantic
 import pytest
 
 from vinci import scenarios as sc
@@ -781,3 +782,104 @@ def test_every_committed_record_result_matches_its_own_facts() -> None:
                 and fresh.result.ratio is not None):
             assert payload["result"]["ratio"] == pytest.approx(fresh.result.ratio, abs=1e-6), (
                 f"{path.stem}: stored ratio diverges from its own facts")
+
+
+# --- schema 1.3: fielded references (docs/refpoint_schema_proposal.md, ratified 2026-07-27) ----
+def test_13_refpoint_field_validators() -> None:
+    """The new fields refuse incoherent states at construction, version-independent."""
+    ok = sc.RefPoint(label="trailing median", value=6.9, unit="x", source="s",
+                     role="median", leg="base")
+    assert ok.role == "median" and ok.leg == "base" and not ok.excluded
+    with pytest.raises(pydantic.ValidationError, match="not one of"):
+        sc.RefPoint(label="x", value=1, unit="x", source="s", role="fiftieth-ish")
+    with pytest.raises(pydantic.ValidationError, match="requires excluded_reason"):
+        sc.RefPoint(label="x", value=1, unit="x", source="s", excluded=True)
+    with pytest.raises(pydantic.ValidationError, match="not declared"):
+        sc.RefPoint(label="x", value=1, unit="x", source="s", excluded_reason="why")
+    with pytest.raises(pydantic.ValidationError, match="not ISO"):
+        sc.AxisNote(text="finding", date="July 26")
+    with pytest.raises(pydantic.ValidationError, match="blank note"):
+        sc.AxisNote(text="   ", date="2026-07-26")
+
+
+def test_13_gate_refuses_prose_structure_and_foreign_units_forward_only(tmp_path: Path) -> None:
+    """require_fielded_refs: label prose carrying a LEG or an EXCLUSION, and a unit outside the
+    vocabulary, are REFUSED on 1.3 records and LEGAL on legacy — BASIS_REQUIRED_FROM precedent.
+
+    Each refusal is the real committed shape that motivated the field: the leg suffix ("— bear"),
+    the exclusion flag ("NOT a reference for us"), and the SMPL smuggled-finding unit (a second
+    value hidden in ":1 (cell A …; cell B ≈1.73)")."""
+    bad_leg = sc.RefPoint(label="FY2020 worst clean year — bear", value=9.58, unit="%", source="s")
+    bad_excl = sc.RefPoint(label="scale leader - NOT a reference for us", value=14.5, unit="x",
+                           source="s")
+    bad_unit = sc.RefPoint(label="entry-boundary cells", value=1.96,
+                           unit=":1 (cell A at the re-set 14% normal; cell B ≈1.73)", source="s")
+    for bad, msg in ((bad_leg, "leg belongs in"), (bad_excl, "excluded=True"),
+                     (bad_unit, "not one of")):
+        rec = _rec(assumptions={
+            "revenue": sc.AssumptionDerivation(method="m"),
+            "margin": sc.AssumptionDerivation(method="m"),
+            "multiple": sc.AssumptionDerivation(method="m", references=[bad])})
+        with pytest.raises(ValueError, match=msg):
+            sc.require_fielded_refs(rec)
+        legacy = rec.model_copy(update={"schema_version": "1.2"})
+        sc.require_fielded_refs(legacy)          # forward-binding: legacy stays writable
+    # write_record runs the gate — the refusal reaches the ONLY write path, and nothing lands
+    with pytest.raises(ValueError, match="fielded references"):
+        sc.write_record(_rec(assumptions={
+            "revenue": sc.AssumptionDerivation(method="m"),
+            "margin": sc.AssumptionDerivation(method="m"),
+            "multiple": sc.AssumptionDerivation(method="m", references=[bad_leg])},
+        ), root=tmp_path)
+    assert not list((tmp_path / "scenarios").glob("TEST*")), "a refused record must not be written"
+
+
+def test_13_gate_narrowings_stay_legal() -> None:
+    """DELIBERATELY NARROW MATCHES, pinned with the real sentences that motivated them (the
+    prose_lint convention). "stated, not derived" is PROVENANCE on a row that IS used — AORT's
+    street margins — and must never be read as an exclusion; stat words ("median", "worst",
+    "trough") are legal label prose because the ROLE field is the machine copy, not a ban."""
+    fine = [
+        sc.RefPoint(label="street operating margin, FY2026 - stated, not derived",
+                    value=6.93, unit="%", source="s"),
+        sc.RefPoint(label="this company's trailing median", value=17.85, unit="x", source="s",
+                    role="median"),
+        sc.RefPoint(label="FY2020 worst clean year", value=9.58, unit="%", source="s",
+                    role="trough", leg="bear"),
+    ]
+    rec = _rec(assumptions={
+        "revenue": sc.AssumptionDerivation(method="m"),
+        "margin": sc.AssumptionDerivation(method="m"),
+        "multiple": sc.AssumptionDerivation(method="m", references=fine)})
+    sc.require_fielded_refs(rec)                 # no raise — the narrowings hold
+
+
+def test_13_every_committed_record_passes_the_gate_and_carries_the_migration() -> None:
+    """E2E on the LIVING records, phrasing-independent: every committed 1.3 record passes the
+    fielded-refs gate on READ (the migration is complete, not partial), and the structure the
+    labels used to carry now exists as FIELDS somewhere in the corpus — at least one leg tag, one
+    exclusion with its reason, and SMPL's boundary FINDING as a dated note beside two honest
+    references (the row whose unit smuggled a second value; migration 2026-07-27, ratified)."""
+    root = Path(__file__).resolve().parents[1]
+    recs = {p.stem: sc.read_record(p.stem, root=root)
+            for p in (root / "scenarios").glob("*.json") if not p.stem.startswith("_")}
+    assert len(recs) >= 7
+    legs = excls = notes = 0
+    for t, rec in recs.items():
+        sc.require_fielded_refs(rec)             # raises = a migrated record regressed
+        for a in rec.assumptions.values():
+            for r in a.references:
+                legs += r.leg is not None
+                excls += r.excluded
+                if r.excluded:
+                    assert (r.excluded_reason or "").strip(), f"{t}: excluded without reason"
+            notes += len(a.notes)
+    assert legs >= 5, "the leg field lost its committed population"
+    assert excls >= 3, "the excluded field lost its committed population"
+    assert notes >= 1, "the axis-note home lost its committed population"
+    smpl = recs["SMPL"].assumptions["multiple"]
+    assert any(n.date == "2026-07-26" for n in smpl.notes), (
+        "SMPL's boundary finding must live as a dated NOTE (it was a fake reference row whose "
+        "unit carried a second value)")
+    assert sum(1 for r in smpl.references if r.unit == ":1") == 2, (
+        "the two entry-boundary cells must be honest references")
