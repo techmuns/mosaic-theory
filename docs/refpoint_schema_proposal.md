@@ -1,8 +1,11 @@
 # RefPoint schema 1.3 — proposal: fields for what today travels as prose
 
-> STATUS: PROPOSAL — nothing here is built. Diagnosis 2026-07-27 (operator-directed, this doc is
-> its record); decision + build are separate steps. Per the no-speculative-build rule, the code
-> change waits for an explicit go.
+> STATUS: RATIFIED 2026-07-27 — all four open decisions answered by the operator, build unblocked.
+> (1) role menu = the census list as proposed; (2) ONE role tag (`peer_median` a distinct entry,
+> not a statistic×population split); (3) the archived SMPL-2026-07-21 copy stays sealed with its
+> malformed row — only live `SMPL.json` is migrated; (4) ONE PR: model + gates + linter extension
+> + uw-card regex deletion + hand-migration + re-render, verified together. Diagnosis 2026-07-27;
+> decisions same day.
 
 ## What the diagnosis found
 

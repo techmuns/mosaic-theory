@@ -4133,7 +4133,7 @@ renumber.** No other unverifiable claim found in this block.
     exactly like `BASIS_REQUIRED_FROM`, hand-migration of ~27 rows (no label-parsing tool — N is
     too small to justify enshrining the display-string-parse). Four open decisions listed at the
     doc's end (role vocabulary; one field vs statistic×population; archived-SMPL row stays sealed;
-    one PR vs two). **Operator: read the doc, answer the four, then the build is unblocked.**
+    one PR vs two). **DECISIONS RATIFIED 2026-07-27 (all four): census role list · one tag · archive stays sealed · one PR. Build unblocked — next build slot.**
 
 **QUEUED BUILD → BUILT 2026-07-24 — CATALYST CALENDAR (brief drafted 2026-07-24; RATIFIED 2026-07-24 by the operator
 WITH PLACEMENT B — see amended (d); mockups: standalone + in-situ on the live SMPL page, both
