@@ -2461,8 +2461,9 @@ def _midcycle_section(mc: Any) -> list[str]:
 def _drawdown_idio_lines(m: MechanicalLayer) -> list[str]:
     """(D1·§1) "What broke — and did it fall alone?" — the drawdown READ (per-gap ledger when the
     shape is discrete), the market comparison, the graph cohort, and the 8-K evidence grouped by
-    accession. Extracted verbatim from render_markdown so the analysis tier composes like its JS
-    twin (dossier.js analysisTier) instead of running inline. Twin: drawdownIdio()."""
+    accession. Extracted verbatim from render_markdown (2026-07-27) so the analysis tier
+    COMPOSES like its JS twin instead of running inline — no behaviour change.
+    Twin: drawdownIdio()."""
     out: list[str] = []
     # (D1·§1) Drawdown cause & idiosyncrasy — CLUBBED: what happened, and did it happen alone?
     # (buy-side anatomy) the Shape classification is this section's READ — label twins the web lead
@@ -2572,7 +2573,7 @@ def _leverage_survival_lines(d: Dossier, m: MechanicalLayer) -> list[str]:
     leverage block (or the pre-B2 fallback), FCF, capital structure + maturity wall,
     and the primary-source cross-checks. Twin: dossier.js leverageSurvival().
 
-    Extracted verbatim from render_markdown (2026-07-24) so the analysis tier COMPOSES
+    Extracted verbatim from render_markdown (2026-07-27) so the analysis tier COMPOSES
     like its JS twin instead of running inline — no behaviour change."""
     out: list[str] = []
     # (D1·§2) Leverage & survival — the survival story in one place (+ FCF + liquidity).
@@ -2604,7 +2605,7 @@ def _trajectory_section_lines(m: MechanicalLayer) -> list[str]:
     """(D1·§3·D2) "Operating trajectory" — the merged margin/multi-year table, the
     share-count trend, and the per-period return-ratios table. Twin: dossier.js trajectorySection().
 
-    Extracted verbatim from render_markdown (2026-07-24) so the analysis tier COMPOSES
+    Extracted verbatim from render_markdown (2026-07-27) so the analysis tier COMPOSES
     like its JS twin instead of running inline — no behaviour change."""
     out: list[str] = []
     # (D1·§3 · D2) Operating trajectory — the merged margin/multi-year table + share-count trend
@@ -2624,7 +2625,7 @@ def _valuation_section_lines(d: Dossier, m: MechanicalLayer) -> list[str]:
     expectations, then the own-history reads; the mid-cycle underwrite block closes it when a
     record exists. Twin: dossier.js valuation().
 
-    Extracted verbatim from render_markdown (2026-07-24) so the analysis tier COMPOSES
+    Extracted verbatim from render_markdown (2026-07-27) so the analysis tier COMPOSES
     like its JS twin instead of running inline — no behaviour change."""
     out: list[str] = []
     # (D1·§4) Valuation & own-history. (G) implied expectations slot in AFTER cross-sectional (the
@@ -2654,7 +2655,7 @@ def _peer_comps_lines(m: MechanicalLayer) -> list[str]:
     """(D1·§5) "Peer comps" — roster, the comparability confidence gate, the multiples read and the
     per-peer grid. Implied valuation is DEMOTED to the appendix. Twin: dossier.js peerComps().
 
-    Extracted verbatim from render_markdown (2026-07-24) so the analysis tier COMPOSES
+    Extracted verbatim from render_markdown (2026-07-27) so the analysis tier COMPOSES
     like its JS twin instead of running inline — no behaviour change."""
     out: list[str] = []
     # (D1·§5) Peer comps — roster + comparability + multiples + grid + implied valuation.
@@ -2675,7 +2676,7 @@ def _business_quality_lines(m: MechanicalLayer) -> list[str]:
     whom and where. Renamed from "Ownership & concentration", which held no ownership.
     Twin: dossier.js concentration().
 
-    Extracted verbatim from render_markdown (2026-07-24) so the analysis tier COMPOSES
+    Extracted verbatim from render_markdown (2026-07-27) so the analysis tier COMPOSES
     like its JS twin instead of running inline — no behaviour change."""
     out: list[str] = []
     # (content relocation 2026-07-24) BUSINESS QUALITY — renamed from "Ownership & concentration",
@@ -2699,7 +2700,7 @@ def _argument_lines(d: Dossier, *, dev: bool) -> list[str]:
     """"The argument" — the synthesis tier (balance → bull → bear → decisive question → unknowns →
     twins), or the honest not-assembled note. Twin: dossier.js synthesis().
 
-    Extracted verbatim from render_markdown (2026-07-24) so the analysis tier COMPOSES
+    Extracted verbatim from render_markdown (2026-07-27) so the analysis tier COMPOSES
     like its JS twin instead of running inline — no behaviour change."""
     out: list[str] = []
     # Synthesis — balance → bull → bear → decisive → unknowns → twins.
@@ -2744,28 +2745,25 @@ def render_markdown(d: Dossier, *, dev: bool = False, show_proposal: bool = Fals
     # (D1) CAVEATS — what to verify before trusting the evidence below.
     out += _flags_section(d)
     out += ["## Mechanical layer", ""]  # (K5) methodology jargon lives in source_refs/JSON
-
     out += _drawdown_idio_lines(m)
-
     out += _leverage_survival_lines(d, m)
     out += _trajectory_section_lines(m)
     out += _valuation_section_lines(d, m)
     out += _peer_comps_lines(m)
     # (D1·§6) Catalyst path (the management-commentary pointer moved to the appendix).
     out += _catalyst_section(m)
-
     out += _business_quality_lines(m)
     out += _argument_lines(d, dev=dev)
     # (catalyst calendar, PLACEMENT B ratified 2026-07-24) the Analysis CLOSER — after the
     # argument, before the appendix: the argument poses the crux, the calendar says when reality
     # votes on it, hand-off to the monitor. Twin: dossier.js catalystCalendar().
     out += _catalyst_calendar_lines(d, card)
-
     # (3-tier · tier redesign) APPENDIX — verify & reproduce: reading guide → financial
     # statements → capital-structure provenance → implied-equity reference → mgmt pointer →
     # Record & reproduce closing the document. The old verdict footer is GONE (it was a third
     # copy of the pivot statement, beside the brief's sealed-proposal line and Record &
     # reproduce's verdict row).
+
     out += ["# Appendix — data & audit", ""]
     out += _how_to_read_lines()
     appendix = _appendix_lines(m)
