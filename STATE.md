@@ -4668,7 +4668,15 @@ Gate: ruff + `mypy --strict` clean · **1114 passed, 1 skipped** — the pre-exi
 the migration with ZERO test edits (the three initial reds were stale derived artifacts:
 `_schema.json`, mirrors, theme embed — all regenerated via their sanctioned paths). Queue item 16
 DISCHARGED; queue item 2's generating-cells half partially discharged (the boundary cells now
-live structurally beside their narrative).
+live structurally beside their narrative). ACCEPTED RISK, recorded at review (pre-existing class,
+1cf191d precedent): the migration wrote MINIMAL diffs (new keys only where set), so the NEXT
+programmatic `write_record` of a migrated record (the refresh path) will materialize `role:
+null / leg: null / excluded: false / excluded_reason: null` on every untagged reference — ~156
+mechanical lines on SMPL, no value moved. Committed records already carry such
+materialized-optional keys from past writes (`years_to_terminal` on R1 rows), so this joins an
+accepted class rather than opening one; FALSIFIER: if a materializing write ever changes a VALUE
+(not just adds a null key), the acceptance is void and the write path gets a byte-preserving
+mode.
 
 **BUILD RECORD — 2026-07-27 "HOW THESE NUMBERS WERE SET" — ENDNOTE CITES + ONE GRID.** Operator
 spotted inline sources on a MAIN-BODY card and asked why, against the house convention. He was
