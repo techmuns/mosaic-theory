@@ -1007,6 +1007,82 @@ def _cmd_scenario_refresh(args: argparse.Namespace) -> int:
     return 0
 
 
+def _cmd_scenario_supersede(args: argparse.Namespace) -> int:
+    """ARCHIVE-AND-REISSUE — the ONLY path that supersedes a record (scenario-refresh precedent).
+
+    The outgoing record is archived intact and both records point at each other; the incoming one
+    is supplied by the analyst as a full record payload. Nothing is deleted and no sealed word is
+    edited — a reader can always walk live → archived → live again."""
+    import json as _json
+
+    import vinci.scenarios as sc
+    import vinci.seal as seal
+    from vinci import monitor as mon
+
+    root = Path.cwd()
+    try:
+        outgoing = sc.read_record(args.ticker.upper(), root=root)
+    except FileNotFoundError:
+        print(f"no live record for {args.ticker.upper()}")
+        return 1
+    try:
+        incoming = sc.ScenarioRecord.model_validate_json(Path(args.payload).read_text())
+    except (OSError, ValueError) as exc:
+        print(f"payload unreadable / invalid against the schema: {exc}")
+        return 2
+
+    # A LIVE position is never superseded. Derived from the LEDGER, not asserted by the caller:
+    # a confirmed verdict whose decision row carries no close row is an open position.
+    led = root / "data" / "snapshots" / "decision_ledger.jsonl"
+    rows = [_json.loads(x) for x in led.read_text().splitlines() if x.strip()] if led.is_file() \
+        else []
+    closed = {str(mon.entry_of(r).get("closes_entry_id")) for r in mon.close_rows(rows)}
+    mine = [mon.entry_of(r) for r in mon.decision_rows(rows)
+            if mon.entry_of(r).get("ticker", "").upper() == outgoing.ticker.upper()]
+    open_position = bool(mine) and any(e["entry_id"] not in closed for e in mine)
+
+    try:
+        archived, live = sc.supersede_record(
+            outgoing, incoming,
+            closed_entry_ids={e["entry_id"] for e in mine if e["entry_id"] in closed},
+            live_confirmed_open=(outgoing.verdict.status == "confirmed" and open_position))
+    except sc.SupersedeRefusedError as exc:
+        print(f"REFUSED: {exc}")
+        return 1
+
+    # SEAL, before anything is written. The archived record keeps its OWN entry under the archive
+    # key; the live ticker key is RE-SEALED at the new rationale. Re-sealing is exactly the
+    # "deliberate, reviewable act" vinci/seal.py names — it happens here, once, or not at all.
+    man = seal.load_manifest(root)
+    man[sc.archive_key(archived)] = man.get(
+        outgoing.ticker.upper(), seal.seal_entry(archived.verdict.rationale or ""))
+    if seal.is_sealed(live.verdict.status):
+        man[live.ticker.upper()] = seal.seal_entry(live.verdict.rationale or "")
+    probe = {sc.archive_key(archived): _json.loads(archived.model_dump_json()),
+             live.ticker.upper(): _json.loads(live.model_dump_json())}
+    if viol := seal.check_all(probe, man):
+        print("REFUSED: the reissued pair does not pass the seal:")
+        for v in viol:
+            print(f"  {v}")
+        return 1
+
+    print(f"=== scenario-supersede {outgoing.ticker} ===")
+    print(f"  archived : {sc.archive_key(archived)}  (superseded_by {archived.superseded_by})")
+    print(f"  live     : {live.ticker} underwritten {live.underwrite_date} "
+          f"(supersedes {live.supersedes})")
+    print(f"  ratio    : {outgoing.result.ratio and round(outgoing.result.ratio, 4)} → "
+          f"{live.result.ratio and round(live.result.ratio, 4)}")
+    if args.dry_run:
+        print("  --dry-run: nothing written")
+        return 0
+    ap = sc.write_archived(archived, root=root)
+    lp = sc.write_record(live, root=root)
+    (root / "scenarios" / seal.SEAL_FILE).write_text(_json.dumps(man, indent=2, sort_keys=True)
+                                                     + "\n")
+    print(f"  written  : {ap}\n             {lp}\n             seal manifest updated")
+    return 0
+
+
 def _cmd_monitor(args: argparse.Namespace) -> int:
     """MANUAL cadence (no scheduler): mark the committed ledger to the latest close against each
     leg's ASSIGNED benchmark, print the book + the BUY−AVOID diagnostic + the freshness panel,
@@ -2552,6 +2628,17 @@ def build_parser() -> argparse.ArgumentParser:
     p_sr.add_argument("--dry-run", action="store_true", dest="dry_run",
                       help="print what would change and write nothing")
     p_sr.set_defaults(func=_cmd_scenario_refresh)
+
+    p_ss = sub.add_parser(
+        "scenario-supersede",
+        help="archive the live record and reissue a new one — the ONLY supersession path; a LIVE "
+             "position is refused (it is amended, never superseded)")
+    p_ss.add_argument("ticker")
+    p_ss.add_argument("--payload", required=True, type=Path,
+                      help="path to the NEW record as JSON (validated against the schema)")
+    p_ss.add_argument("--dry-run", action="store_true", dest="dry_run",
+                      help="print the pair and write nothing")
+    p_ss.set_defaults(func=_cmd_scenario_supersede)
 
     p_audit = sub.add_parser("audit", help="standing read-only audits over committed artifacts")
     audit_sub = p_audit.add_subparsers(dest="audit_what", required=True)

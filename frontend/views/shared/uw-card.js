@@ -590,6 +590,26 @@ function amendMarks(text) {
       '<span class="muted">[amended $1:</span>');
 }
 
+// (supersession 2026-07-27) THE LINK BANNERS — an archived record is never hidden and never a
+// dead end. The archived card says what replaced it; the live card says what it replaced. Both
+// clickable, so the chain walks in either direction without leaving the surface.
+function supersessionBanner(c) {
+  const dateOf = (key) => String(key || "").split("-").slice(1).join("-") || String(key || "");
+  if (c.supersededBy) {
+    return `<div class="fact-caveat" style="margin-bottom:10px;">
+      <b>ARCHIVED</b> — superseded by the record of
+      <a href="?scenario=${encodeURIComponent(String(c.supersededBy).split("-")[0])}"
+        >${escapeHtml(dateOf(c.supersededBy))}</a>.
+      This record is kept intact and sealed; it is not the current view of the name.</div>`;
+  }
+  if (c.supersedes) {
+    return `<div class="foot" style="margin-bottom:8px;">Supersedes the record of
+      <a href="?scenario=${encodeURIComponent(String(c.supersedes))}"
+        >${escapeHtml(dateOf(c.supersedes))}</a> — archived, sealed, still readable.</div>`;
+  }
+  return "";
+}
+
 // (record legibility) THE CURRENT-STATE BLOCK — what is true NOW, first on the card.
 function currentStateBlock(c) {
   const s = c.currentState;
@@ -707,6 +727,7 @@ export function uwCard(c, { ticker = true, mark = null } = {}) {
   // other audit blocks it stops interrupting and starts belonging.
   const body = () => `
     ${masthead(c, ticker)}
+    ${supersessionBanner(c)}
     ${currentStateBlock(c)}
     ${legsTable(c)}
     ${survivalPanel(c)}
@@ -738,6 +759,7 @@ export function uwCardParts(c, { mark = null, detailExtra = "", rationale = true
   // `rationale: false` — the host lifted the analyst's rationale into its opener card (the
   // narrative slot), so the detail must not render it a second time.
   const detail = () => `
+    ${supersessionBanner(c)}
     ${currentStateBlock(c)}
     ${legsTable(c)}
     ${survivalPanel(c)}

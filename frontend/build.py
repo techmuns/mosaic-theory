@@ -156,11 +156,21 @@ def _amendment_index() -> dict[str, list[dict[str, Any]]]:
         return {}
     out: dict[str, list[dict[str, Any]]] = {}
     for r in rows:
-        out.setdefault(str(r.get("ticker", "")).upper(), []).append(
+        # keyed by the RECORD the tags live on: a ticker for a live record, an ARCHIVE KEY for a
+        # superseded one. SMPL's three tags travelled with the record they were written on when it
+        # was archived; the reissued live record carries none, so it gets no index at all.
+        key = str(r.get("record") or r.get("ticker", "")).upper()
+        out.setdefault(key, []).append(
             {"index": r.get("tag_index"), "date": r.get("date"),
              "inferredClass": r.get("inferred_class"),
              **({"supersededNote": r["superseded_note"]} if r.get("superseded_note") else {})})
     return out
+
+
+def _record_key(rec: dict[str, Any]) -> str:
+    """The key a record is indexed under: its ARCHIVE KEY once superseded, else its ticker."""
+    t = str(rec.get("ticker", "")).upper()
+    return f"{t}-{rec['underwrite_date']}" if rec.get("superseded_by") else t
 
 
 def _next_evidence(ticker: str, verdict: dict[str, Any]) -> dict[str, str]:
@@ -319,10 +329,18 @@ def _scenario_card(rec: dict[str, Any], ledger: dict[str, dict[str, Any]] | None
         # (record legibility) the MACHINE-DERIVED current state — emitted first in the payload and
         # rendered first on the card, above the rationale.
         "currentState": _current_state(rec, led),
+        # (supersession 2026-07-27) the two pointers, BOTH rendered as links. An archived record is
+        # never hidden — it says what replaced it, and the live record says what it replaced, so a
+        # reader can walk the chain in either direction without leaving the surface.
+        **({"supersedes": rec["supersedes"]} if rec.get("supersedes") else {}),
+        **({"supersededBy": rec["superseded_by"]} if rec.get("superseded_by") else {}),
+        **({"archiveKey": f'{str(rec["ticker"]).upper()}-{rec["underwrite_date"]}'}
+           if rec.get("superseded_by") else {}),
         # the sidecar's classification of this record's PRE-GATE tags (+ any supersession).
-        # OMITTED when the record has none, so unamended cards stay byte-identical.
-        **({"amendmentIndex": _amendment_index()[str(rec["ticker"]).upper()]}
-           if _amendment_index().get(str(rec["ticker"]).upper()) else {}),
+        # Keyed by RECORD (ticker for live, archive key for archived) — a reissued live record
+        # carries no tags, so it gets no index; the archived one keeps them.
+        **({"amendmentIndex": _amendment_index()[_record_key(rec)]}
+           if _amendment_index().get(_record_key(rec)) else {}),
         "verdict": {"status": v.get("status"), "recorded": v.get("recorded"),
                     # THE rationale — one field since 2026-07-22. `rationale_plain` is deprecated
                     # and deliberately NOT emitted: a card key nothing reads is a key that will be
@@ -364,7 +382,13 @@ def _scenario_card(rec: dict[str, Any], ledger: dict[str, dict[str, Any]] | None
 
 
 def _scenario_cards() -> dict[str, dict[str, Any]]:
-    """Every committed underwrite record, keyed by ticker. Empty when none exist."""
+    """Every committed underwrite record — LIVE keyed by ticker, ARCHIVED by archive key.
+
+    Archived records are rendered and indexed, never hidden (supersession, 2026-07-27): the point
+    of archive-and-reissue is that nothing is deleted, so a superseded record keeps its own page
+    and its own link forward. They are excluded from the LIVE set that the audit, the monitor and
+    the spread read — that exclusion is structural (those read `scenarios/*.json`, which does not
+    recurse into `archive/`), so an archived record can never be scored or counted twice."""
     d = ROOT / "scenarios"
     if not d.is_dir():
         return {}
@@ -375,6 +399,13 @@ def _scenario_cards() -> dict[str, dict[str, Any]]:
             continue
         rec = json.loads(p.read_text())
         out[str(rec["ticker"]).upper()] = _scenario_card(rec, ledger)
+    arch = d / "archive"
+    if arch.is_dir():
+        for p in sorted(arch.glob("*.json")):
+            if p.name.startswith("_"):
+                continue
+            rec = json.loads(p.read_text())
+            out[p.stem.upper()] = _scenario_card(rec, ledger)
     return out
 
 
