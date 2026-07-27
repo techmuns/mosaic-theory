@@ -5321,7 +5321,9 @@ def test_fresh_dossier_renders_catalyst_path_in_place_of_consensus_slot() -> Non
         assembled_at=datetime(2026, 6, 1, 12, 0),
     )
     md = dr.render_markdown(dossier)
-    assert "### The street — estimates & guidance" in md
+    # (re-order 2026-07-27) H2: the "## Mechanical layer" wrapper is gone, so the analysis
+    # section heads promoted from H3 to H2.
+    assert "## The street — estimates & guidance" in md
     assert "_as-of 2026-05-15_" in md  # (declutter) the vintage is a line, not heading furniture
     assert "146.5 (6m) → 62.1 (now)" in md
     # events COMPRESSED (T3): one line per broker-day with the action mix + the headline revision
@@ -5806,7 +5808,7 @@ def test_peer_comps_section_reaches_the_rendered_markdown() -> None:
         assembled_at=datetime(2026, 6, 1, 12, 0),
     )
     md = dr.render_markdown(dossier)
-    assert "### Peer comps" in md  # the section is wired into the mechanical-layer render
+    assert "## Peer comps" in md  # H2 since the re-order dropped the mechanical-layer wrapper
     assert "Roku" in md and "$306.6B" in md  # the roster + caps reach the page
     # (declutter) with the grid present the multiples table keeps its FORWARD rows only — the LTM
     # rows were the grid's own summary statistics restated. NM still reaches the artifact (the
@@ -6150,7 +6152,7 @@ def test_old_json_without_comps_blocks_falls_back() -> None:
         assembled_at=datetime(2026, 6, 1, 12, 0),
     )
     md = dr.render_markdown(dossier)
-    assert "### Leverage & survival" in md  # (D1) the section header always renders
+    assert "## Leverage & survival" in md  # (D1) always renders; H2 since the 2026-07-27 re-order
     assert "both bases labeled" not in md  # NOT the unified block
     assert "Survival capacity (leverage + self-funding + wall)" in md  # Quality leverage fallback
     assert "Fundamental deltas" in md  # the median-only line renders (no grid)
@@ -6956,13 +6958,22 @@ def test_d1_section_order_facts_first() -> None:
         assert s in md, f"missing section: {s}"
         return md.index(s)
 
-    assert (pos("Analyst caveats") < pos("What broke — and did it fall alone?")
-            < pos("### Leverage & survival") < pos("### Operating trajectory")
-            < pos("### Valuation & own-history") < pos("### Peer comps")
-            # (content relocation 2026-07-24) renamed from "Ownership & concentration" — the
-            # section carried no ownership, only business mix; the real ownership data (insider,
-            # short interest) moved to the appendix as "Ownership & positioning".
-            < pos("### Business quality") < pos("## The argument"))
+    # (re-order 2026-07-27) DECISION order, not provenance order. Was: caveats first, the argument
+    # last, everything wrapped in "## Mechanical layer" — a grouping by WHO PRODUCED the content.
+    # The sequence now reads as the questions a decision asks, and with the wrapper gone these
+    # section heads are H2. "Business quality" is the 2026-07-24 rename of "Ownership &
+    # concentration", which carried no ownership; the real ownership data lives in the appendix.
+    assert "## Mechanical layer" not in md, "the provenance wrapper must not come back"
+    # The catalyst calendar and "The street" are ABSENT here by design — this minimal fixture
+    # carries no calendar rows, no underwrite card and no catalyst_path, and each section omits
+    # itself rather than printing an empty shell. Their placement is pinned on real committed
+    # artifacts by test_analysis_tier_reads_in_decision_order_e2e below.
+    assert "## Catalyst calendar" not in md and "## The street" not in md
+    assert (pos("## What broke — and did it fall alone?") < pos("## Business quality")
+            < pos("## The argument")
+            < pos("## Valuation & own-history") < pos("## Peer comps")
+            < pos("## Operating trajectory")
+            < pos("## Leverage & survival") < pos("Analyst caveats"))
     assert (pos("### Bull case") < pos("### Bear case") < pos("### Decisive question")
             < pos("### Key unknowns") < pos("### Twin reference cases"))
     assert "The machine PROPOSES" not in md  # the verdict footer is retired
@@ -8958,9 +8969,12 @@ def test_catalyst_calendar_assembles_rows_and_fails_loud() -> None:
 
 
 def test_catalyst_calendar_render_placement_b_and_crux_line() -> None:
-    """(PLACEMENT B) On the committed SMPL json with an injected calendar + an analyst dated
-    trigger (VERDICT-nested — the recorded decision's falsifier): the section renders AFTER the
-    argument and BEFORE the appendix; rows are dated+basis-labeled+cited; the Brief crux carries
+    """(PLACEMENT B, re-ordered 2026-07-27) On the committed SMPL json with an injected calendar +
+    an analyst dated trigger (VERDICT-nested — the recorded decision's falsifier): the section
+    renders AFTER the argument and BEFORE the appendix. It was the Analysis CLOSER until the
+    decision re-order; it still follows the argument, but six sections now sit between it and the
+    appendix, so this pins the argument→calendar adjacency, NOT a closing position. Rows are
+    dated+basis-labeled+cited; the Brief crux carries
     ONE Next-catalyst line (the earliest entry). A dossier WITHOUT the field (every pre-build
     artifact) renders NO section and NO crux line — old JSON round-trips without a phantom."""
     import vinci.scenarios as sc
@@ -9203,9 +9217,11 @@ def test_positioning_lands_in_the_appendix_in_both_twins_e2e() -> None:
         appendix = md.split("# Appendix", 1)
         assert len(appendix) == 2, f"{t}: no appendix tier in the md"
         assert "Insider activity" in appendix[1], f"{t}: insider activity is not in the appendix"
-        street = md.split("### The street", 1)
+        street = md.split("## The street", 1)
         if len(street) == 2:
-            before_next = street[1].split("###", 1)[0]
+            # H2 bounds the section now — the section heads were promoted from H3 on 2026-07-27,
+            # so splitting on "###" would run past the street into Leverage & survival.
+            before_next = street[1].split("\n## ", 1)[0]
             assert "Insider activity" not in before_next, f"{t}: insider is back in the street"
 
     if not shutil.which("node"):
@@ -9240,3 +9256,80 @@ console.log(JSON.stringify({{
     assert web["hasInsider"] and web["hasShort"], f"{t}: web lost the positioning facts"
     assert not web["streetStillHasIt"], f"{t}: web still renders positioning inside the street"
     assert web["businessQuality"] and not web["oldName"], f"{t}: web rename missing"
+
+
+def test_analysis_tier_reads_in_decision_order_e2e() -> None:
+    """(re-order 2026-07-27) The Analysis tier is ordered by the QUESTIONS a decision asks, not by
+    who produced the content. Pinned on the committed artifacts (the minimal-fixture pin above
+    can't reach the sections that need real data) and in BOTH twins, because an order that drifts
+    between md and web is the twin-divergence class this repo keeps paying for.
+
+    Order only — no content assertions. The provenance wrapper must stay gone."""
+    import shutil
+    import subprocess
+
+    want = ["## What broke — and did it fall alone?", "## Business quality", "## The argument",
+            "## Catalyst calendar", "## Valuation & own-history", "## Peer comps",
+            "## Operating trajectory", "## The street — estimates & guidance",
+            "## Leverage & survival", "Analyst caveats"]
+    from vinci.dossier.assemble import _read_scenario_card
+
+    checked = 0
+    for folder in sorted(Path("data/dossiers").iterdir()):
+        jf = folder / "dossier.json"
+        if not jf.exists():
+            continue
+        # RENDER LIVE from the committed JSON. Reading dossier.md off disk would only prove the
+        # ARTIFACT is ordered, not the RENDERER — a render.py reorder would ship green until the
+        # next artifact pass. Comparing the fresh render back to disk keeps the staleness check.
+        dd = ds.Dossier.model_validate_json(jf.read_text())
+        md = dr.render_markdown(dd, card=_read_scenario_card(dd.ticker))
+        md_p = folder / "dossier.md"
+        if md_p.exists():
+            assert md == md_p.read_text(), (
+                f"{folder.name}: committed dossier.md is STALE against its own JSON — "
+                "re-run the artifact pass")
+        analysis = md.split("# Analysis — full dossier", 1)
+        if len(analysis) != 2:
+            continue
+        body = analysis[1].split("# Appendix", 1)[0]
+        assert "## Mechanical layer" not in body, f"{folder.name}: the provenance wrapper is back"
+        seen = [s for s in want if s in body]
+        pos = [body.index(s) for s in seen]
+        assert pos == sorted(pos), (
+            f"{folder.name}: analysis sections out of decision order — got "
+            f"{[s for _, s in sorted(zip(pos, seen, strict=True))]}, want the {want} order")
+        # FLOOR: ordering a 1-element list is trivially true, so a regression that DROPPED nine of
+        # the ten sections would still pass. A real dossier renders nearly all of them.
+        assert len(seen) >= 8, f"{folder.name}: only {len(seen)} analysis sections: {seen}"
+        checked += 1
+    assert checked >= 5, f"expected several committed dossiers, checked {checked}"
+
+    if not shutil.which("node"):
+        return
+    dj = Path("frontend/views/shared/dossier.js").resolve().as_uri()
+    driver = f"""
+const handler = {{ get: () => stub, apply: () => stub, construct: () => ({{}}) }};
+const stub = new Proxy(function(){{}}, handler);
+for (const g of ["window","document","location"]) {{ try {{ globalThis[g] = stub; }} catch {{}} }}
+import {{ readFileSync, existsSync }} from "node:fs";
+const {{ renderDossier }} = await import("{dj}");
+const d = JSON.parse(readFileSync("frontend/dossiers/SMPL.json"));
+const cp = "frontend/scenarios/SMPL.json";
+const full = renderDossier(d, null, existsSync(cp) ? JSON.parse(readFileSync(cp)) : null);
+// scope to the ANALYSIS tier only — several of these labels also appear in the Brief (route
+// hints like "full argument in Analysis"), so a whole-document indexOf finds the wrong one.
+// NB the trailing '>' — the TAB buttons carry data-tier="analysis" too (followed by a space
+// and role="tab"); only the <section> has it immediately before the closing angle bracket.
+const h = full.split('data-tier="analysis">')[1].split('data-tier="appendix">')[0];
+const at = (s) => h.indexOf(s);
+console.log(JSON.stringify(["What broke", "Business quality", "The argument", "Catalyst calendar",
+  "Valuation", "Peer comparison", "Operating trajectory", "The street", "Survival",
+  "Analyst caveats"].map((s) => [s, at(s)])));
+"""
+    out = subprocess.run(["node", "--input-type=module", "-e", driver],
+                         capture_output=True, text=True, check=True)
+    found = [(s, i) for s, i in json.loads(out.stdout) if i >= 0]
+    idx = [i for _, i in found]
+    assert len(found) >= 8, f"web rendered too few analysis sections: {found}"
+    assert idx == sorted(idx), f"web analysis sections out of decision order: {found}"

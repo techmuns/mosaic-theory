@@ -570,25 +570,30 @@ function tierTabs() {
   </div>`;
 }
 
-// ANALYSIS tier — the work, ordered by the decision logic: verify → what broke → does it survive →
-// how it's trending → what it's worth → vs whom → what the street thinks → what the business IS →
-// the full argument. (Ownership moved to the APPENDIX; the section formerly named for it carried
-// only business mix and is now "Business quality".) Caveats are ANALYST caveats only — the
+// ANALYSIS tier — ordered by DECISION question (re-ordered 2026-07-27; the order itself is stated
+// on analysisTier below). Ownership moved to the APPENDIX; the section formerly named for it
+// carried only business mix and is now "Business quality". Caveats are ANALYST caveats only — the
 // `primary-source:` assembly-log line renders in
 // Record & reproduce, not here (process telemetry is not a caveat).
 function analysisTier(d, m, card) {
   const analystCaveats = (d.caveats || d.flags || []).filter((c) => !isProcessCaveat(c));
-  return flagsSection(analystCaveats)                   // caveats first (what to verify)
-    + drawdownIdio(m, d.reference_date)                 // what broke — and did it fall alone?
-    + leverageSurvival(m, d.reference_date)             // balance sheet & survival
-    + trajectorySection(m.quality || {}, m)             // trajectory + the return-ratios table
+  // (content re-order 2026-07-27) DECISION order, not provenance order. The old sequence led with
+  // caveats and closed with the argument — evidence-assembly order. It now reads as the questions
+  // a decision asks: what broke → what the business IS → the argument → when reality votes → what
+  // it's worth → vs whom → how it's trending → what the street thinks → can it survive → what to
+  // verify. Twin: render.py's analysis composition (which also drops its "Mechanical layer"
+  // wrapper — a grouping by who PRODUCED the content, which this side never had).
+  return drawdownIdio(m, d.reference_date)              // what broke — and did it fall alone?
+    + concentration(m.concentration)                    // business quality — what this IS
+    + synthesis(d.synthesis, m)                         // the argument
+    + catalystCalendar(m, card)                         // when reality votes on it
     + valuation(m.valuation)                            // the ONLY home of the full multiples read
     + peerComps(m.peer_comps)                           // peer comps (per-peer grid inside)
+    + trajectorySection(m.quality || {}, m)             // trajectory + the return-ratios table
     + catalystPath(m.catalyst_path, m.consensus_context, m.drawdown_cause)  // the street
     + (m.catalyst_path ? "" : consensus(m.consensus_context))  // legacy fallback only for old JSON
-    + concentration(m.concentration)
-    + synthesis(d.synthesis, m)                         // the argument — stays the capstone
-    + catalystCalendar(m, card);                        // (PLACEMENT B) when reality votes on it
+    + leverageSurvival(m, d.reference_date)             // balance sheet & survival
+    + flagsSection(analystCaveats);                     // what to verify before the verdict
 }
 
 // (catalyst calendar, ratified 2026-07-24 · PLACEMENT B — twin of render.py _calendar_entries /
@@ -2300,7 +2305,7 @@ function concentration(c) {
   if (!c) return "";
   // (content relocation 2026-07-24) renamed from "Ownership & concentration" — it carries NO
   // ownership; all four facts are the business MIX. Real ownership (insider, short interest) moved
-  // to the appendix. Twin of render.py's "### Business quality".
+  // to the appendix. Twin of render.py's "## Business quality".
   return sec("Business quality", "What it sells, where the profit sits, to whom, and where.",
     fact("Segments (revenue share)", c.segments) +
     fact("Segment EBITDA share", c.segment_ebitda, null, { hi: true }) +
@@ -3049,7 +3054,7 @@ function synthesis(s, m) {
   const fence = `<div class="subtitle muted ds-sub">A verdict-free framing for the analyst — no recommendation or direction anywhere in it, by design. Reading guide in the Appendix.</div>`;
   if (!s) {
     return `<div class="card ds-section"><div class="ds-title">The argument</div>${fence}
-      <div class="notice">Synthesis not assembled — mechanical layer only (source inputs too thin, or the synthesis step was skipped). The facts above stand on their own.</div></div>`;
+      <div class="notice">Synthesis not assembled (source inputs too thin, or the synthesis step was skipped). The mechanical evidence in this tier stands on its own.</div></div>`;
   }
   const point = (p, cls) => `<div class="point ${cls}">${escapeHtml(p.claim)}${citeMark(p.source_ref)}${p.cited === false ? ` <span class="uncited">⚠ uncited — does not trace to a mechanical fact</span>` : ""}</div>`;
   const dq = s.decisive_question || {};
