@@ -270,8 +270,7 @@
     "entry_price": null,
     "ratio_at_entry": null,
     "avoid_priced": false,
-    "avoid_priced_note": null,
-    "status_note": "Watch reflects a stay-out decision after the round trip, not a failed underwrite."
+    "avoid_priced_note": null
   },
   "refresh_log": [],
   "supersedes": "SMPL-2026-07-21",

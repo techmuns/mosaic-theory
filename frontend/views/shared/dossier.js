@@ -78,7 +78,17 @@ export async function render(root, params, { item, frame }) {
     // record under explicit typing (an underwrite is NOT assembled facts, and its scenario
     // verdict is NOT a ledger verdict of record). Neither artifact → the plain notice, unchanged.
     if (card) {
-      const verdict = led.entries.find((e) => e.ticker === ticker) || null;
+      // BIND VIA THE CARD, NEVER BY `ticker` (2026-07-27). On this path `ticker` is the ROUTE key,
+      // which for an archived record is `SMPL-2026-07-21` — no ledger row ever matches it, so the
+      // archived page said "none yet" three inches under a masthead correctly reading "BUY —
+      // closed 2026-07-22", and offered a CLI recipe with a fabricated candidate id. build.py's
+      // _ledger_for_record already decided WHICH record a ledger row belongs to; re-deriving that
+      // here would be a second parser of the same question. Take its answer and look the full
+      // entry up by id. Real ticker for the recipe, always.
+      const tk = card.ticker || ticker;
+      const verdict = card.ledger && card.ledger.entryId
+        ? (led.entries.find((e) => e.entryId === card.ledger.entryId) || null)
+        : null;
       root.innerHTML = frame(item, { crumbExtra: crumb, bare: true, bodyHtml: `
         <div class="header-block">
           <h1 class="page-h"><span class="mono">${escapeHtml(ticker)}</span> · first analysis</h1>
@@ -87,7 +97,7 @@ export async function render(root, params, { item, frame }) {
         <div class="subtitle muted" style="margin:-6px 0 12px;">This is the analyst's scenario underwrite —
           not assembled facts. The full dossier is built on a re-underwrite trigger.</div>
         ${uwCard(card, { ticker: false, mark })}
-        ${loggedVerdict(verdict, ticker, card.underwriteDate)}
+        ${loggedVerdict(verdict, tk, card.underwriteDate)}
         ${assembleHelp()}` });
       return;
     }
@@ -97,6 +107,13 @@ export async function render(root, params, { item, frame }) {
       <span class="mono">dossier.json</span> to the private repo).</div>` });
     return;
   }
+  // TICKER-SCOPED HERE, RECORD-SCOPED ABOVE — the asymmetry is deliberate, so don't "fix" it into
+  // agreement. This path is a DOSSIER: `ticker` is a real ticker, and the Appendix's "Verdict
+  // record" answers "has this NAME ever been logged?" — ledger history, which outlives any one
+  // underwrite. The record-only path above answers a different question ("did THIS record make
+  // that call?") and must bind by id, because its route key is not a ticker at all. Making either
+  // one match the other reintroduces a bug: ticker-binding there showed a stale BUY on a reissued
+  // watch record; id-binding here would blank the history the moment a record was superseded.
   const verdict = led.entries.find((e) => e.ticker === ticker) || null;
   root.innerHTML = frame(item, {
     crumbExtra: crumb, bare: true, bodyHtml: renderDossier(d, verdict, card, mark) });
@@ -179,8 +196,17 @@ function verdictTag(v) {
   const buy = isBuyVerdict(v.verdict);
   const at = [v.entryPrice != null ? `@ ${fmtPrice(v.entryPrice)}` : "", fmtDate(v.decidedAt)]
     .filter(Boolean).join(" · ");
-  return `<span class="pill ${buy ? "buy" : "avoid"} ds-card-tag" title="${escapeHtml(
-    `your logged verdict${at ? " " + at : ""}`)}">${buy ? "BUY" : "AVOID"}</span>`;
+  // CLOSE-AWARE (2026-07-27): a closed position never reads as a live BUY on the shelf. The word
+  // of record stays — the call is still scored at its horizon, exits cannot launder the track
+  // record — but the tag says it is closed, so the index cannot show a green BUY for a name the
+  // book no longer holds.
+  const cl = v.closed;
+  const tone = cl ? "unresolved" : buy ? "buy" : "avoid";
+  const tip = `your logged verdict${at ? " " + at : ""}${cl
+    ? ` — closed ${cl.exitPriceAsOf || ""}${cl.exitPrice != null ? ` at ${fmtPrice(cl.exitPrice)}` : ""}`
+    : ""}`;
+  return `<span class="pill ${tone} ds-card-tag" title="${escapeHtml(tip)}">${
+    buy ? "BUY" : "AVOID"}${cl ? " · closed" : ""}</span>`;
 }
 
 function leanTag(eb) {
@@ -691,7 +717,12 @@ function recordAndReproduce(d, verdict, card = null) {
       ? `model <span class="mono">${escapeHtml(d.llm_model || "llm")}</span> — facts assembled mechanically; the synthesis frames, the analyst decides`
       : "not assembled — mechanical layer only")}
     ${row("Identifiers", `CIK <span class="mono">${escapeHtml(d.cik || DASH)}</span>${d.exchange ? ` · ${escapeHtml(d.exchange)}` : ""} : <span class="mono">${escapeHtml(d.ticker)}</span>`)}
-    ${card ? row("Underwrite record", `underwritten <span class="mono">${escapeHtml(card.underwriteDate || DASH)}</span> · analyst ${escapeHtml(card.analyst || DASH)}${card.ledger && card.ledger.entryId ? ` · ledger <span class="mono">${escapeHtml(card.ledger.entryId)}</span>` : ""}`) : ""}
+    ${card ? row("Underwrite record", `underwritten <span class="mono">${escapeHtml(card.underwriteDate || DASH)}</span> · analyst ${escapeHtml(card.analyst || DASH)}${card.ledger && card.ledger.entryId ? ` · ledger <span class="mono">${escapeHtml(card.ledger.entryId)}</span>` : ""}${
+      // LINEAGE (2026-07-27): which record this one replaced, or what replaced it. Housekeeping —
+      // it helps a reader find the paperwork, not judge the name — so it sits here with the other
+      // provenance rather than above the numbers.
+      card.supersedes ? ` · supersedes <a href="#/dossier/${escapeHtml(card.supersedes)}">${escapeHtml(card.supersedes)}</a>` : ""}${
+      card.supersededBy ? ` · superseded by <a href="#/dossier/${escapeHtml(String(card.supersededBy).split("-")[0])}">${escapeHtml(card.supersededBy)}</a>` : ""}`) : ""}
     ${proc.length ? row("Assembly log", proc.map(escapeHtml).join("; ")) : ""}
     ${row("Re-run", `<pre class="ds-rerun"><code>python -m vinci dossier --ticker ${escapeHtml(d.ticker)}</code></pre>
       <span class="muted" style="font-size:11px;">regenerates every assembled fact from the same sources; committed values change only when the sources have</span>`)}
@@ -765,8 +796,17 @@ function briefVerdictChip(verdict) {
       <span class="muted" style="font-size:11.5px;">the human logs it after reviewing the facts</span></div>`;
   }
   const isBuy = isBuyVerdict(verdict.verdict);
-  return `<div class="brief-chip"><span class="pill ${isBuy ? "buy" : "avoid"}">${escapeHtml(verdict.verdict)}</span>
-    <span class="muted" style="font-size:11.5px;">logged @ ${fmtPrice(verdict.entryPrice)} · ${fmtDate(verdict.decidedAt)}</span></div>`;
+  // CLOSE-AWARE (2026-07-27) — same rule as the shelf tag and the card: the verdict word of
+  // record stays, but it never renders as a live call once the position is closed.
+  const cl = verdict.closed;
+  const tone = cl ? "unresolved" : isBuy ? "buy" : "avoid";
+  const meta = cl
+    ? `logged @ ${fmtPrice(verdict.entryPrice)} · ${fmtDate(verdict.decidedAt)} — closed ${
+        fmtDate(cl.exitPriceAsOf)}${cl.exitPrice != null ? ` @ ${fmtPrice(cl.exitPrice)}` : ""}`
+    : `logged @ ${fmtPrice(verdict.entryPrice)} · ${fmtDate(verdict.decidedAt)}`;
+  return `<div class="brief-chip"><span class="pill ${tone}">${escapeHtml(verdict.verdict)}${
+    cl ? " · closed" : ""}</span>
+    <span class="muted" style="font-size:11.5px;">${meta}</span></div>`;
 }
 
 // (Brief · tier redesign 2026-07-21, card split per user) SIX decision-ordered cards:
@@ -3183,12 +3223,27 @@ function loggedVerdict(v, ticker, refDate, { bare = false } = {}) {
       <div class="subtitle muted" style="margin-top:8px;">Append-only — the entry price is frozen from the screen's as-of date (<span class="mono">${escapeHtml(String(refDate || DASH))}</span>); a logged verdict cannot be edited or deleted.</div></details>`;
   }
   const isBuy = isBuyVerdict(v.verdict);
+  // CLOSE-AWARE (2026-07-27) — the FIFTH surface of the same defect. The other four were fixed
+  // when the ledger row was bound to the record that justified it; this one still read a closed
+  // position as a live "BUY · unresolved". Same rule as decision-log.js: the verdict word and
+  // `resolved` are untouched (a call is scored at its horizon whatever happened to the position,
+  // so exits never launder the track record) — the close is stated as an additive fact.
+  const cl = v.closed;
+  const closedChip = cl
+    ? `<span class="pill unresolved">closed ${fmtDate(cl.exitPriceAsOf)}${
+        cl.exitPrice != null ? ` @ ${fmtPrice(cl.exitPrice)}` : ""}${
+        cl.realizedReturn != null
+          ? ` · ${cl.realizedReturn >= 0 ? "+" : "−"}${Math.abs(cl.realizedReturn * 100).toFixed(2)}%`
+          : ""}</span>`
+    : "";
   const body = `<div class="logged-verdict">
       <div style="display:flex; gap:12px; align-items:baseline; flex-wrap:wrap;">
-        <span class="pill ${isBuy ? "buy" : "avoid"}">${escapeHtml(v.verdict)}</span>
+        <span class="pill ${cl ? "unresolved" : isBuy ? "buy" : "avoid"}">${escapeHtml(v.verdict)}</span>
+        ${closedChip}
         <span class="pill ${v.resolved ? "live" : "unresolved"}">${v.resolved ? "resolved" : "unresolved · " + (v.daysToHorizon == null ? DASH : Math.max(0, v.daysToHorizon) + "d to horizon")}</span>
         <span class="muted" style="font-size:12px; margin-left:auto;">decided ${fmtDate(v.decidedAt)}</span>
       </div>
+      ${cl && cl.reason ? `<div class="muted" style="font-size:11.5px; margin-top:6px;">Close reason — ${escapeHtml(cl.reason)}</div>` : ""}
       <div style="display:flex; gap:22px; flex-wrap:wrap; margin-top:10px; font-size:13px;">
         <div><span class="muted">Frozen entry</span> <span class="mono" style="font-weight:600;">${fmtPrice(v.entryPrice)}</span> <span class="muted">@ ${fmtDate(v.entryPriceAsOf)}</span></div>
         <div><span class="muted">Horizon</span> <span class="mono">${v.horizonDays}d</span> → ${fmtDate(v.horizonDate)}</div>

@@ -217,8 +217,6 @@
  "passFail": "PASS",
  "currentState": {
   "status": "pending_analyst",
-  "held": false,
-  "holdingLabel": "not held \u2014 pending analyst",
   "ratio": 5.27,
   "bar": 2.0,
   "passFail": "PASS",
@@ -230,7 +228,6 @@
    "what": "Next results print",
    "source": "catalyst calendar (cadence-estimate)"
   },
-  "baseNormalMargin": 0.105,
   "ceiling2to1": 108.43
  },
  "verdict": {

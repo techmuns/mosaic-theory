@@ -165,6 +165,29 @@ def test_card_verdict_keys_read_by_js_are_emitted_by_build() -> None:
     snake = {k for k in read if "_" in k}
     assert not snake, f"card keys must be camelCase (build.py's convention): {sorted(snake)}"
 
+    # THE OTHER DIRECTION (2026-07-27) — an ORPHAN: emitted, read by nothing. `read - emitted`
+    # above cannot see one, and neither could anything else: FOUR accumulated unnoticed
+    # (`statusNote`, `held`, `holdingLabel`, `baseNormalMargin`), all orphaned the day a render was
+    # deleted without its emitter. A key nothing reads is not harmless — it looks live in the
+    # committed card, so the next author renders it back instead of asking whether it should exist.
+    #
+    # SCOPE, stated honestly: this covers the `currentState` block TOO, not just `verdict` — the
+    # four orphans were all in `currentState`, so a verdict-only check would have caught none of
+    # them. Matched as a BARE TOKEN across the views rather than through the `.verdict.<key>`
+    # idiom, so the alias reads this pin deliberately does not trace (see above) still count; that
+    # looseness is what keeps it quiet enough to be worth having.
+    views_src = "\n".join(
+        p.read_text() for p in sorted((ROOT / "frontend" / "views").rglob("*.js")))
+    cur = build[build.index("def _current_state("):]
+    cur = cur[:cur.index("\n\n\ndef ")]
+    card_keys = emitted | set(re.findall(r'"(\w+)":', cur)) \
+        | set(re.findall(r'out\["(\w+)"\]', cur))
+    orphans = sorted(k for k in card_keys if not re.search(rf"\b{re.escape(k)}\b", views_src))
+    assert not orphans, (
+        f"build.py emits card keys no view names: {orphans} — either render them or retire them. "
+        "Machine-derived keys can just be deleted (a rebuild recomputes them); an analyst-authored "
+        "field needs an operator call, then vinci.scenarios.RETIRED_VERDICT_FIELDS.")
+
 
 def test_committed_web_card_carries_the_same_dated_triggers_as_its_record() -> None:
     """(e2e) The analyst's dated falsifiers must reach the WEB card, not just the md tier — the
