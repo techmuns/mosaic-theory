@@ -3968,11 +3968,19 @@ two-name analysis (mid/small-caps, opposite directions) mapped against this inve
 
 ## 5. Next steps (ordered, current)
 
-### LIVE QUEUE (authoritative — 2026-07-21)
+### LIVE QUEUE (authoritative — restamped 2026-07-27)
 
 **Everything below this block is a BUILD RECORD, not a queue item.** §5 accreted to 1,232 lines
 because completed work was appended to a section named "next steps"; this block is the interim
 re-anchor (the full STATE split stays its own queued task — nothing was relocated here).
+
+**QUEUE-INTEGRITY PASS — 2026-07-27 (findings recorded, not silently fixed).** Every PR reference
+inside this block was checked against the GitHub API: **#187, #194, #205, #209, #213, #215 verified
+merged**; **#210 verified CLOSED-UNMERGED** — STATE credited it with the first dated trigger, but
+GitHub auto-closed it when its stacked base branch was deleted and the identical content merged as
+**#211**; the claim is corrected in the build record below. ("#10" is *claim* #10 of the ten-claim
+audit, not a PR.) **No duplicate items; numbering sequential 1..15 after one deterministic
+renumber.** No other unverifiable claim found in this block.
 
 **BUILD**
 1. **QUARTERLY-FILING-TRIGGERED FACT REFRESH (queue head, spec'd 2026-07-26).** A new 10-Q must
@@ -3990,10 +3998,15 @@ re-anchor (the full STATE split stays its own queued task — nothing was reloca
    inputs live nowhere machine-readable cannot be re-verified at a later vintage, which is exactly
    when it matters. (Schema enforcement of the verification-artifact reference on verdict
    transitions — governance convention 3 below — belongs with this item.)
-3. **READ-ONLY SHAPE-READ OF OUT-OF-CHAT PRs #194–#215 (queued 2026-07-26).** Nineteen-plus PRs
-   merged outside the advisory thread. A read-only pass to map what changed, what carries
-   verification artifacts, and where record/ledger coherence may have drifted. No writes; output
-   is a map, not a fix list.
+3. **READ-ONLY SHAPE-READ OF OUT-OF-CHAT PRs #194–#216 — REQUIRED BEFORE 2026-08-05** (queued
+   2026-07-26; scope widened + deadlined 2026-07-27). Twenty-plus PRs merged outside the advisory
+   thread. A read-only pass to map what changed, what carries verification artifacts, and where
+   record/ledger coherence may have drifted — **with CHANNEL ATTRIBUTION per PR** (advisory thread
+   vs other channel), since the attribution is the governance finding, not a footnote. Deadline is
+   the **Aug-5 EPAM print**: an unmapped codebase must not meet a live verdict. No writes; the
+   output is a map, not a fix list. **#216 is OPEN in the other channel** (`fix/catalyst-web-render`
+   — "catalyst calendar reached the PDF but not the web (card key drift)", a live bug against the
+   #209 calendar): the operator reviews and merges it in that channel; this pass only records it.
 4. **Dossier-assembly freshness detection + assembly provenance stamp (PAIRED).** The 2026-07-10
    SMPL assembly missed the 2026-07-09 print by one day. Assembly must FLAG filings newer than
    its evidence window, and stamp what window it read. (The §7 print-freshness gate and the
@@ -4132,7 +4145,9 @@ direction: assembling dates is machine work; weighing them is the verdict's.
 mis-estimate negative; a stated-date positive); an artifact-level conditional invariant (rows
 present → each row dated-or-UNKNOWN + cited); JS twin parity.
 Size: a #205-class PR. RATIFY (a)-(g) or amend before any build.
-**→ DISCHARGED — BUILT same day** (PR #209; source D + the first dated trigger PR #210; BUILD
+**→ DISCHARGED — BUILT same day** (PR #209; source D + the first dated trigger **#211** — opened
+as #210, which GitHub auto-closed UNMERGED when its stacked base branch was deleted; identical
+content merged as #211, corrected here by the 2026-07-27 queue-integrity pass; BUILD
 RECORDS in §2). The brief stays as fossil; (b)'s source C shipped maturities-only and source D
 (dated operating events) superseded the 8-K-events slice — dispositions in the build records.
 
@@ -5108,6 +5123,21 @@ confirmed-record mode the directive first assumed.
    2:1 ceiling $12.72) — tracked; the forward path scores the stay-out decision in both
    directions; the entry-vintage stress cells sit below the bar on the re-set normal — the
    stay-out call carries that supporting fact.
+7. **EXTERNAL-RECORD RULE — FORMALIZED 2026-07-27 (standing).** *Anything transmitted outside the
+   firm — a memo, a dossier, a rendered pack — is archived VERBATIM in-repo within one day of
+   transmission, with a transmission record naming WHAT was sent, TO WHOM, WHEN, and the VINTAGE
+   of each artifact.* Rationale: an external reader's copy is a fixed point the internal record
+   keeps moving away from. The IC holds a 2026-07-23 SMPL pack showing a **confirmed BUY at a
+   15.5% base margin**; the live record reads **watch at 14%** after the 07-24 close and the 07-26
+   re-set. Without the archive there is no way to answer "what did they actually see?" — and every
+   later correction looks like a moving target rather than a recorded amendment.
+   **FIRST ARCHIVE (with its lag stated, not hidden):** `docs/ic/RESPONSE-2026-07.md` — the July
+   IC response memo, transmitted ~2026-07-23, archived 2026-07-27 (**4-day lag; the rule postdates
+   the transmission**). Transmitted alongside it: the SMPL dossier markdown and the rendered SMPL
+   analysis PDF, both ~07-23 vintage. **Format defect recorded plainly:** the transmission used the
+   RAW INTERNAL DOSSIER — the very format the memo's closing section commits to replacing with a
+   curated pack. The refreshed current-state pack ships with the addendum (built 2026-07-27 to
+   `out/ic-pack-SMPL-2026-07-27/`, NOT committed — it is a rendered export, regenerable).
 
 **BUILD RECORD — 2026-07-24 ASSEMBLY-FRESHNESS GATE (branch `feat/assembly-freshness-gate`;
 the invariant the SMPL stale-inputs incident owed, INVARIANT RULE).** `_panel_freshness_flag(ie,

@@ -91,19 +91,52 @@ def _rd(x: Any, places: int) -> Any:
 
 
 def _ledger_by_ticker() -> dict[str, dict[str, Any]]:
-    """The committed decision ledger, keyed by ticker — the BUY/AVOID word of record.
+    """The committed decision ledger, keyed by ticker — the DECISION row of record, with its
+    close attached when the position has been closed.
 
     The card renders on surfaces that never load the ledger snapshot (the theme watchlist embeds
     its card into the frozen theme JSON), so the join happens HERE, at build, not in the client.
     Absent file → empty: a deploy without a ledger renders cards with no verdict-of-record line
-    rather than failing. The ledger is append-only, so a ticker maps to at most one entry."""
+    rather than failing.
+
+    PAIRING, not last-row-wins (fixed 2026-07-27). Since close rows shipped (2026-07-22) a ticker
+    carries TWO rows — the decision row and its close — and a close row repeats the ORIGINAL
+    verdict for provenance. The former `out[ticker] = row` loop therefore let FILE ORDER decide
+    which one reached the card: IT's card rendered its close row's id as though it were the
+    decision, and a closed position still headlined a bare "BUY" as if it were open. The card now
+    always anchors on the DECISION row and carries `_closed` when a close pairs to it.
+
+    STDLIB TWIN of ``vinci.monitor.pair_closes`` (this file must never import vinci — see the
+    module note above; same twinning convention as the committed-GICS index below). The twin is
+    pinned against the original on the real committed ledger, so the two cannot drift.
+    """
     p = SNAP / "decision_ledger.jsonl"
     if not p.is_file():
         return {}
-    out: dict[str, dict[str, Any]] = {}
-    for row in _jsonl(p):
-        out[str(row.get("ticker", "")).upper()] = row
-    return out
+    rows = _jsonl(p)
+    # The close fields live on the ENTRY (inside `payload`), never at the row's top level — a
+    # committed row simply has no `event` key there, so a top-level filter passes every close
+    # through as a position. Stdlib twin of vinci.monitor.entry_of, which exists for this trap.
+    def entry_of(row: dict[str, Any]) -> dict[str, Any]:
+        pl = row.get("payload")
+        return json.loads(pl) if isinstance(pl, str) else row
+
+    entries = [entry_of(r) for r in rows]
+    by_entry: dict[str, dict[str, Any]] = {
+        str(e.get("entry_id")): dict(e) for e in entries if not e.get("event")}
+    for e in entries:
+        if e.get("event") != "CLOSE":
+            continue
+        target = by_entry.get(str(e.get("closes_entry_id")))
+        if target is None:
+            continue          # an unpairable close is the ledger's problem, not the card's
+        target["_closed"] = {
+            "exitPrice": _rd(e.get("exit_price"), 2),
+            "exitPriceAsOf": e.get("exit_price_as_of"),
+            "reason": e.get("reason"),
+            "closeEntryId": e.get("entry_id"),
+        }
+    return {str(e.get("ticker", "")).upper(): e for e in by_entry.values()}
 
 
 def _scenario_card(rec: dict[str, Any], ledger: dict[str, dict[str, Any]] | None = None
@@ -198,10 +231,15 @@ def _scenario_card(rec: dict[str, Any], ledger: dict[str, dict[str, Any]] | None
         # The LEDGER verdict of record (BUY / AVOID_TERMINAL) — the scenario record has no such
         # field, and the card must never invent one. Key OMITTED when the name has no ledger row,
         # so an un-logged name renders no verdict-of-record line (and stays byte-identical).
+        # `closed` rides WITH the verdict so no surface can render the word "BUY" without the
+        # fact that the position is closed (external-honesty pass 2026-07-27). Key omitted for an
+        # open position → open cards stay byte-identical.
         **({"ledger": {"verdict": led["verdict"], "entryId": led["entry_id"],
                        "entryPrice": _rd(led.get("entry_price"), 2),
                        "entryPriceAsOf": led.get("entry_price_as_of"),
-                       "decidedAt": led.get("decided_at")}} if led else {}),
+                       "decidedAt": led.get("decided_at"),
+                       **({"closed": led["_closed"]} if led.get("_closed") else {})}}
+           if led else {}),
     }
 
 

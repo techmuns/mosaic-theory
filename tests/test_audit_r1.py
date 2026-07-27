@@ -95,6 +95,42 @@ def test_smpl_shape_bear_multiple_above_current_is_flagged() -> None:
     assert not any("ABOVE CURRENT" in m for m in _flags(ok, "bear"))
 
 
+def test_discharged_exposure_reads_fired_not_new_exposure() -> None:
+    """(external-honesty pass 2026-07-27) An exposure the analyst has SINCE verified reads
+    "fired — discharged <date>", not "NO GATE — new exposure": the audit was telling an external
+    reader a gate was missing on a name whose bear leg had carried a dated verification for days.
+
+    The flag itself is NEVER downgraded — the exposure is real and stays visible; only the
+    DISPOSITION reads the discharge. Honest in BOTH directions, so the negative is the point:
+    the same fixture WITHOUT a tag must still read as new exposure (the EPAM state)."""
+    band = _band(28, low=6.11, med=17.85)
+    band[-1] = (band[-1][0], 5.34)                     # SMPL's post-Q3 current multiple
+    d = _dossier(margins=STABLE, band=band)
+
+    def rec(reason: str) -> dict:
+        return {"scenarios": {"bear": {"multiple": 7.00, "bear_basis": "own-history",
+                                       "margin_basis": "EBIT", "reason": reason}}}
+
+    # DISCHARGED — two dated tags; the LATEST wins (a re-verification supersedes the one before)
+    a = ar.audit_name("SMPLISH", d, rec(
+        "Value-trap case … [verified 2026-07-22 against sector bear-state evidence …] "
+        "[re-verified 2026-07-26 at the third-quarter data …]"), spot=10.53)
+    assert a.discharged_on == "2026-07-26"
+    assert a.disposition == "fired — discharged 2026-07-26"
+    assert any("ABOVE CURRENT" in m for m in _flags(a, "bear")), "the exposure must stay visible"
+    assert any("discharged 2026-07-26" in m for m in _flags(a, "bear"))
+
+    # UNDISCHARGED (the EPAM state) — no tag → still new exposure, disposition unchanged
+    e = ar.audit_name("EPAMISH", d, rec("Downside case with no verification tag."), spot=10.53)
+    assert e.discharged_on is None
+    assert e.disposition.startswith("*** NO GATE")
+
+    # a bare mention of the word cannot forge a discharge — the tag shape is the anchor
+    f = ar.audit_name("FORGE", d, rec("We verified this informally; verified 2026-07-26."),
+                      spot=10.53)
+    assert f.discharged_on is None and f.disposition.startswith("*** NO GATE")
+
+
 def test_absent_bear_basis_is_flagged() -> None:
     d = _dossier(margins=STABLE, band=_band(28, low=6.0, med=20.0))
     a = ar.audit_name("NOBASIS", d, {"scenarios": {"bear": {"multiple": 5.0}}}, spot=20.0)

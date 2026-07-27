@@ -560,8 +560,19 @@ console.log(JSON.stringify({{
   pending: grab(uwCard(pending)),
   priced: grab(uwCard(wern)),
   confirmedButPriced: grab(uwCard(confirmedButPriced)),
-  targetHasLedgerPill: /pill buy">BUY</.test(uwCard(it)),
-  pricedHasNoLedgerPill: !/pill buy">BUY</.test(uwCard(wern)),
+  targetHasLedgerPill: /pill (?:buy|unresolved)">BUY/.test(uwCard(it)),
+  pricedHasNoLedgerPill: !/pill (?:buy|unresolved)">BUY/.test(uwCard(wern)),
+  // CLOSE-AWARE (2026-07-27): the ledger word stays, but a CLOSED position never headlines as a
+  // bare live verdict — it carries its close. SMPL is closed, so the fixture asserts the closed
+  // form; a synthetic OPEN copy of the same card must still read the bare word.
+  closedShowsClose: /BUY — closed [0-9]{{4}}-[0-9]{{2}}-[0-9]{{2}} at [$]/.test(uwCard(it)),
+  openStaysBare: (() => {{
+    const o = JSON.parse(JSON.stringify(it));
+    delete o.ledger.closed;
+    // the PILL must close immediately after the word — a bare verdict, no close clause. (Scoped
+    // to the pill on purpose: "closed"/"closes" appear all over the card's prose and band refs.)
+    return /pill buy">BUY</.test(uwCard(o));
+  }})(),
   pendingShowsPass: /uw-mini">PASS</.test(uwCard(pending)),
   targetHidesPass: !/uw-mini">PASS</.test(uwCard(it)),
   pendingNoEntry: /no position/.test(uwCard(pending)),
@@ -582,6 +593,9 @@ console.log(JSON.stringify({{
     # the verdict of record is the LEDGER's, never invented from the scenario status
     assert r["targetHasLedgerPill"], "a logged BUY must show the ledger verdict"
     assert r["pricedHasNoLedgerPill"], "a name with no ledger row must not show a BUY/AVOID word"
+    # ...and a CLOSED position shows its close beside that word, while an open one stays bare
+    assert r["closedShowsClose"], "a closed position must headline with its close, never bare BUY"
+    assert r["openStaysBare"], "an OPEN position must still render the bare ledger verdict"
     # PASS is the machine's bar test — it speaks only while the human's call is still open
     assert r["pendingShowsPass"] and r["targetHidesPass"], r
     assert r["pendingNoEntry"] and r["targetHasEntry"], r
