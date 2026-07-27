@@ -239,37 +239,36 @@ def _next_evidence(ticker: str, verdict: dict[str, Any]) -> dict[str, str]:
     return {"date": "UNKNOWN", "what": "no scheduled evidence", "source": "none on file"}
 
 
-def _current_state(rec: dict[str, Any], led: dict[str, Any] | None) -> dict[str, Any]:
+def _current_state(rec: dict[str, Any]) -> dict[str, Any]:
     """(record legibility, 2026-07-27) The MACHINE-DERIVED current state — what is true NOW.
 
-    It renders FIRST, above the rationale, because the rationale records what was believed at
-    DECISION time and a reader meeting it first infers the present from the past. SMPL is the
-    specimen: `watch`, position closed, base margin re-set — none of which the (sealed, correct,
-    07-21) rationale can say, because it was written before any of it happened.
+    Written because the rationale records what was believed at DECISION time, and a reader meeting
+    it first infers the present from the past. SMPL is the specimen: `watch`, position closed, base
+    margin re-set — none of which the (sealed, correct, 07-21) rationale can say, because it was
+    written before any of it happened.
 
-    HELD is derived, never asserted: only a `confirmed`/`overridden` verdict with a ledger row and
-    NO close row is a held position. Everything else prints "not held" explicitly — the word the
-    reader actually needs, and the one a bare status like `watch` leaves them to guess at."""
+    The block no longer renders as a block: the at-a-glance fold moved these values into the
+    masthead band, where the ENTRY cell states the holding directly ("— no position") and the
+    verdict chip states any close. The HOLDING TRIO that answered that question here — `held`,
+    `holdingLabel`, and the ledger argument they needed — is retired with `statusNote`; see the
+    note below. What remains is what the band actually reads."""
     v = rec.get("verdict") or {}
     r = rec.get("result") or {}
     per = r.get("per_scenario") or {}
     status = str(v.get("status") or "pending_analyst")
-    closed = bool((led or {}).get("_closed"))
-    held = bool(led) and not closed and status in ("confirmed", "overridden")
     base_vps, bear_vps = (per.get("base") or {}).get("value_per_share"), \
                          (per.get("bear") or {}).get("value_per_share")
     ceiling = (base_vps + 2 * bear_vps) / 3 if base_vps is not None and bear_vps is not None \
         else None
-    base_margin = ((rec.get("scenarios") or {}).get("base") or {}).get("margin")
+    # RETIRED 2026-07-27 — `statusNote`, and with it `held` / `holdingLabel` / `baseNormalMargin`,
+    # all four for the same reason: nothing read them. The at-a-glance fold deleted the block that
+    # rendered the holding trio and left them emitted into every card, which is exactly how a dead
+    # key gets rendered back by the next author instead of questioned. Those three were machine-
+    # DERIVED, so retiring them discards nothing — a rebuild recomputes them the day a surface
+    # wants them; `status_note` was analyst prose, which is why only that one needed an operator
+    # call. The orphan half of the card-key parity pin now catches the next one.
     out: dict[str, Any] = {
         "status": status,
-        "held": held,
-        # the plain-words line the reader needs first. "not held" is EXPLICIT on anything closed
-        # or on watch — a status word alone has misled here before.
-        "holdingLabel": ("held" if held else
-                         "not held — position closed" if closed else
-                         "not held — pending analyst" if status == "pending_analyst" else
-                         "not held"),
         "ratio": _rd(r.get("ratio"), 2),
         "bar": _rd(r.get("bar"), 1),
         "passFail": r.get("pass_fail"),
@@ -280,12 +279,8 @@ def _current_state(rec: dict[str, Any], led: dict[str, Any] | None) -> dict[str,
         "underwriteDate": rec.get("underwrite_date"),
         "nextEvidence": _next_evidence(str(rec["ticker"]), v),
     }
-    if base_margin is not None:
-        out["baseNormalMargin"] = base_margin
     if ceiling is not None:
         out["ceiling2to1"] = _rd(ceiling, 2)
-    # `statusNote` retired 2026-07-27 with vinci.scenarios.Verdict.status_note — the header is the
-    # rating alone now, so nothing rendered it, and a card key nothing reads gets read by mistake.
     return out
 
 
@@ -360,9 +355,10 @@ def _scenario_card(rec: dict[str, Any], ledger: dict[str, dict[str, Any]] | None
         # gate_adjudication: a machine gate the human consciously overrode. OMITTED when absent so
         # records that never hit a gate stay byte-identical.
         **({"gateAdjudication": rec["gate_adjudication"]} if rec.get("gate_adjudication") else {}),
-        # (record legibility) the MACHINE-DERIVED current state — emitted first in the payload and
-        # rendered first on the card, above the rationale.
-        "currentState": _current_state(rec, led),
+        # (record legibility) the MACHINE-DERIVED current state — the values the masthead band
+        # reads. No longer takes the ledger row: the only thing it needed one for was the retired
+        # holding trio, and the card binds its own ledger via `_ledger_for_record`.
+        "currentState": _current_state(rec),
         # (supersession 2026-07-27) the two pointers, BOTH rendered as links. An archived record is
         # never hidden — it says what replaced it, and the live record says what it replaced, so a
         # reader can walk the chain in either direction without leaving the surface.

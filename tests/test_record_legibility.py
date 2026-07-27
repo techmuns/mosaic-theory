@@ -182,26 +182,28 @@ def test_next_evidence_prefers_the_calendar_then_a_trigger_then_says_unknown() -
     assert fb["date"] == "2027-01-07" and fb["source"] == "analyst dated trigger"
 
 
-def test_current_state_says_not_held_explicitly_for_a_closed_position() -> None:
-    """A status word alone misleads: SMPL reads `watch` while its position is CLOSED. The block
-    must say "not held" in words, and must not claim `held` for a closed or pending record."""
-    rec = json.loads((ROOT / "scenarios" / "SMPL.json").read_text())
-    closed = _BUILD._current_state(rec, {"_closed": {"exitPrice": 10.53}})
-    assert closed["held"] is False and closed["holdingLabel"] == "not held — position closed"
-    no_ledger = _BUILD._current_state(rec, None)
-    assert no_ledger["held"] is False and "not held" in no_ledger["holdingLabel"]
-    # a genuinely held position: confirmed + a ledger row + NO close
-    conf = dict(rec)
-    conf["verdict"] = {**rec["verdict"], "status": "confirmed"}
-    held = _BUILD._current_state(conf, {"entry_id": "V-X"})
-    assert held["held"] is True and held["holdingLabel"] == "held"
+def test_the_holding_question_is_answered_by_the_band_not_a_dead_key() -> None:
+    """A status word alone misleads: SMPL reads `watch` while its position is CLOSED, and the
+    reader needs "not held" in words. That answer MOVED rather than disappeared — the at-a-glance
+    fold put it in the ENTRY cell, so `held` / `holdingLabel` became emitted-and-unread and were
+    retired with `statusNote`. Pin the answer where it now lives, so this cannot regress into a
+    card that states the holding nowhere."""
+    s = _BUILD._current_state(json.loads((ROOT / "scenarios" / "SMPL.json").read_text()))
+    assert "held" not in s and "holdingLabel" not in s, "the retired trio must not come back"
+    card = (ROOT / "frontend" / "views" / "shared" / "uw-card.js").read_text()
+    ratio = card[card.index("function ratioCell"):]
+    entry = card[card.index("ENTRY"):]
+    assert "no position" in entry, "the ENTRY cell must state a record that holds nothing"
+    assert ratio, "ratioCell still carries the ceiling sub-line the band reads"
+    # and a closed position states its close in the verdict chip itself
+    assert "— closed " in card, "the verdict chip carries the close"
 
 
 def test_current_state_carries_the_decision_numbers_and_both_dates() -> None:
     rec = json.loads((ROOT / "scenarios" / "SMPL.json").read_text())
-    s = _BUILD._current_state(rec, None)
+    s = _BUILD._current_state(rec)
     assert s["ratio"] == 3.83 and s["bar"] == 2.0 and s["passFail"] == "PASS"
-    assert s["baseNormalMargin"] == 0.14 and s["ceiling2to1"] == 12.72
+    assert s["ceiling2to1"] == 12.72
     # the underwrite date is the RECORD's own — SMPL was reissued 2026-07-27, so a frozen
     # literal here would pin the pre-supersession vintage forever
     assert s["spot"] == 10.53 and s["spotSource"]

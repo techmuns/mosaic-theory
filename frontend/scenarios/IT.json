@@ -220,8 +220,6 @@
  "passFail": "FAIL",
  "currentState": {
   "status": "watch",
-  "held": false,
-  "holdingLabel": "not held \u2014 position closed",
   "ratio": 1.29,
   "bar": 2.0,
   "passFail": "FAIL",
@@ -233,7 +231,6 @@
    "what": "Next results print",
    "source": "catalyst calendar (cadence-estimate)"
   },
-  "baseNormalMargin": 0.185,
   "ceiling2to1": 125.4
  },
  "amendmentIndex": [

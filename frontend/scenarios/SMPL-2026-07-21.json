@@ -215,8 +215,6 @@
  "gateAdjudication": "~80% one-off bar fired at 72.8%; residual identified as vendor-definitional, not operating; analyst adjudicated RESUME 2026-07-21.",
  "currentState": {
   "status": "watch",
-  "held": false,
-  "holdingLabel": "not held \u2014 position closed",
   "ratio": 3.83,
   "bar": 2.0,
   "passFail": "PASS",
@@ -228,7 +226,6 @@
    "what": "Next results print",
    "source": "catalyst calendar (cadence-estimate)"
   },
-  "baseNormalMargin": 0.14,
   "ceiling2to1": 12.72
  },
  "supersededBy": "SMPL-2026-07-27",

@@ -107,6 +107,13 @@ export async function render(root, params, { item, frame }) {
       <span class="mono">dossier.json</span> to the private repo).</div>` });
     return;
   }
+  // TICKER-SCOPED HERE, RECORD-SCOPED ABOVE — the asymmetry is deliberate, so don't "fix" it into
+  // agreement. This path is a DOSSIER: `ticker` is a real ticker, and the Appendix's "Verdict
+  // record" answers "has this NAME ever been logged?" — ledger history, which outlives any one
+  // underwrite. The record-only path above answers a different question ("did THIS record make
+  // that call?") and must bind by id, because its route key is not a ticker at all. Making either
+  // one match the other reintroduces a bug: ticker-binding there showed a stale BUY on a reissued
+  // watch record; id-binding here would blank the history the moment a record was superseded.
   const verdict = led.entries.find((e) => e.ticker === ticker) || null;
   root.innerHTML = frame(item, {
     crumbExtra: crumb, bare: true, bodyHtml: renderDossier(d, verdict, card, mark) });
