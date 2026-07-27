@@ -4004,9 +4004,16 @@ renumber.** No other unverifiable claim found in this block.
    record/ledger coherence may have drifted — **with CHANNEL ATTRIBUTION per PR** (advisory thread
    vs other channel), since the attribution is the governance finding, not a footnote. Deadline is
    the **Aug-5 EPAM print**: an unmapped codebase must not meet a live verdict. No writes; the
-   output is a map, not a fix list. **#216 is OPEN in the other channel** (`fix/catalyst-web-render`
-   — "catalyst calendar reached the PDF but not the web (card key drift)", a live bug against the
-   #209 calendar): the operator reviews and merges it in that channel; this pass only records it.
+   output is a map, not a fix list. **#216 MERGED in the other channel MID-PASS** (2026-07-27,
+   `fix/catalyst-web-render` — "catalyst calendar reached the PDF but not the web (card key
+   drift)"): recorded as OPEN when this pass began, merged before it shipped — a live illustration
+   of the divergence, not a complaint. Merged forward into this branch; suite green with its new
+   parity pins. The two changes are COMPLEMENTARY: #216 fixed the VERDICT block (`datedTriggers`
+   never emitted), this pass fixed the LEDGER block (close-awareness). **Note for the shape-read:**
+   #216's card-key pin is scoped to `card.verdict.*` and explicitly excludes the `ledger` sibling;
+   the ledger block's read/write contract is covered instead by `tests/test_build_ledger_join.py`
+   (twin-parity + fixture both ways). Whether that generic pin should extend to `card.ledger.*` is
+   a shape-read question, deliberately not decided here.
 4. **Dossier-assembly freshness detection + assembly provenance stamp (PAIRED).** The 2026-07-10
    SMPL assembly missed the 2026-07-09 print by one day. Assembly must FLAG filings newer than
    its evidence window, and stamp what window it read. (The §7 print-freshness gate and the
