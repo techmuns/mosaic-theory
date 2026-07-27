@@ -571,8 +571,10 @@ function tierTabs() {
 }
 
 // ANALYSIS tier — the work, ordered by the decision logic: verify → what broke → does it survive →
-// how it's trending → what it's worth → vs whom → what the street thinks → who owns it → the full
-// argument. Caveats are ANALYST caveats only — the `primary-source:` assembly-log line renders in
+// how it's trending → what it's worth → vs whom → what the street thinks → what the business IS →
+// the full argument. (Ownership moved to the APPENDIX; the section formerly named for it carried
+// only business mix and is now "Business quality".) Caveats are ANALYST caveats only — the
+// `primary-source:` assembly-log line renders in
 // Record & reproduce, not here (process telemetry is not a caveat).
 function analysisTier(d, m, card) {
   const analystCaveats = (d.caveats || d.flags || []).filter((c) => !isProcessCaveat(c));
@@ -633,7 +635,8 @@ function isProcessCaveat(c) { return String(c).startsWith("primary-source:"); }
 
 // APPENDIX tier — verify & reproduce: nothing here is needed to DECIDE; everything is needed to
 // AUDIT. Reading guide first, then the full statements + cap-structure provenance + implied-equity
-// reference + mgmt pointer (appendixBlock), and Record & reproduce closing the document. (The
+// reference + mgmt pointer (appendixBlock), then ownership & positioning (insider + short
+// interest, relocated here from "The street"), and Record & reproduce closing the document. (The
 // screening-context panel moved to the Brief's underwrite-detail card — user decision.)
 // verdictFooter is GONE — it was a third copy of the pivot statement (beside the decision strip's
 // sealed-proposal suffix and Record & reproduce's verdict row).

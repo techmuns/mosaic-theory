@@ -1393,13 +1393,11 @@ def _mgmt_commentary_lines(m: MechanicalLayer) -> list[str]:
     """(D1) The management-commentary pointer — relocated into the appendix zone (it is a transcript
     POINTER, not a headline read: the human opens the file, the machine never excerpts it). Rendered
     unconditionally so a pre-C dossier.json (no financial-summary appendix) still surfaces it."""
-    out = [
+    return [
         "### Management commentary",  # (K5) 'transcript pointer, not an excerpt' noted on the fact
         _fact("Earnings call (transcript pointer — read the file)", m.management_commentary),
         "",
     ]
-    out += _positioning_lines(m)
-    return out
 
 
 def _positioning_lines(m: MechanicalLayer) -> list[str]:
@@ -2465,7 +2463,8 @@ def render_markdown(d: Dossier, *, dev: bool = False, show_proposal: bool = Fals
                     card: ScenarioRecord | None = None) -> str:
     """(D1) Facts-first restructure. Section order: header → caveats → mechanical layer [drawdown &
     idiosyncrasy (clubbed) → leverage & survival → trajectory → valuation → peer comps → catalyst →
-    concentration] → synthesis → appendix (+ management-commentary pointer) → verdict footer. Old
+    business quality] → synthesis → appendix (+ management-commentary pointer, then ownership &
+    positioning) → verdict footer. Old
     committed JSONs still render (every field is optional-safe). ``dev`` shows the D3 tier tags.
     ``show_proposal`` reveals the sealed machine proposal in the brief (default False — the brief
     hides it so it can't anchor the human before they log their verdict).
@@ -2697,6 +2696,7 @@ def render_markdown(d: Dossier, *, dev: bool = False, show_proposal: bool = Fals
     if m.implied_valuation is not None:
         out += _implied_lines(m.implied_valuation)  # reference-only — its ONLY home
     out += _mgmt_commentary_lines(m)
+    out += _positioning_lines(m)  # (relocation) insider + short interest, from "The street"
     out += _verification_lines(m)
     out += _record_reproduce_lines(d)
     out += _sources_section()  # (A2) the single document-end Sources list — every [n] resolves here
