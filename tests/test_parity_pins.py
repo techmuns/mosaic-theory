@@ -472,3 +472,60 @@ def test_screening_context_prose_is_the_same_on_both_surfaces() -> None:
         assert " ".join(const.split()) in " ".join(js.split()), (
             f"{name} no longer matches its dossier.js original — the print twin and the web would "
             "describe the SAME screening number in different words")
+
+
+def test_every_assembled_field_reaches_both_dossier_renderers() -> None:
+    """THE BROAD TWIN-PARITY PIN (2026-07-27) — generalises the four ``screening_context`` pins
+    above from one hand-picked section to EVERY assembled field.
+
+    ``vinci/dossier/render.py`` (markdown, and therefore the committed ``dossier.md`` and the
+    "Full dossier MD" download) and ``frontend/views/shared/dossier.js`` (the web page, and
+    therefore both PDF scopes, which are ``window.print()`` on it) are twins over ONE artifact:
+    ``dossier.json``. #227 was the failure this guards — the screening anchor reached the web and
+    was silently absent from the markdown, and nothing caught it because the only parity checks
+    were the ones written *after* someone noticed. A per-section pin only ever covers the section
+    whose bug has already been paid for.
+
+    So drive it from the DATA, not from a maintained list: harvest every key the committed
+    dossiers actually carry in the three shared blocks, and require that a field named by one
+    renderer is named by the other. Adding a field to the assembler now reddens the suite until
+    BOTH surfaces acknowledge it.
+
+    SCOPE, stated honestly. This is a COVERAGE floor, not a semantics check: it proves a field is
+    named on both sides, never that both render it correctly, identically, or in the same tier.
+    Semantics stay with the per-section pins. Matching is a bare-token search, so a name that
+    survives only in a comment would pass — accepted, because the alternative (parsing two
+    languages' access idioms) is the brittleness that made the existing key-name pin give up on
+    alias reads. A DELIBERATE one-sidedness is expressible: add the key to ``twin_exempt`` with
+    the reason, which is a decision in the diff rather than a silent gap."""
+    import json
+
+    # Keys one renderer legitimately need not carry — key → the reason, so an exemption is an
+    # argument made in a diff rather than a hole nobody noticed. EMPTY TODAY: every harvested
+    # field currently reaches both surfaces, and that is the state worth defending.
+    twin_exempt: dict[str, str] = {}
+
+    blocks = ("mechanical", "synthesis", "anchor")
+    keys: set[str] = set()
+    for p in sorted((ROOT / "frontend" / "dossiers").glob("*.json")):
+        if p.stem == "index":                     # a manifest of what was emitted, not a dossier
+            continue
+        doc = json.loads(p.read_text())
+        for b in blocks:
+            sub = doc.get(b)
+            if isinstance(sub, dict):
+                keys |= set(sub)
+    assert len(keys) > 30, (
+        f"harvested only {len(keys)} fields from {blocks} — the committed dossiers moved or the "
+        "block names changed; a pin that harvests nothing passes for the wrong reason")
+
+    py, js = _src("vinci/dossier/render.py"), _src("frontend/views/shared/dossier.js")
+    named = lambda src, k: bool(re.search(rf"\b{re.escape(k)}\b", src))  # noqa: E731
+    one_sided = sorted(
+        f"{k} (md={'Y' if named(py, k) else '-'} web={'Y' if named(js, k) else '-'})"
+        for k in keys - set(twin_exempt) if named(py, k) != named(js, k))
+    assert not one_sided, (
+        "assembled fields that reach ONE dossier renderer and not the other: "
+        f"{one_sided}. The markdown twin (and the 'Full dossier MD' download) and the web page "
+        "(and both PDF scopes) must both acknowledge every assembled field — that asymmetry is "
+        "#227. Render it on the missing side, or record the exemption in twin_exempt.")
