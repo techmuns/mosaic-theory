@@ -3975,17 +3975,38 @@ because completed work was appended to a section named "next steps"; this block 
 re-anchor (the full STATE split stays its own queued task — nothing was relocated here).
 
 **BUILD**
-1. **Dossier-assembly freshness detection + assembly provenance stamp (PAIRED).** The 2026-07-10
+1. **QUARTERLY-FILING-TRIGGERED FACT REFRESH (queue head, spec'd 2026-07-26).** A new 10-Q must
+   force recomputation of every TRAILING fact — `ltm_fcf`, LTM revenue/EBITDA, the LTM-basis
+   derivations — each carrying a staleness stamp naming the period it was built from. ORIGIN: the
+   SMPL Q3 verification. The 2026-07-24 freshness gate (#213) read the PRINT correctly and stayed
+   silent, while the assembled facts sat a vintage behind it: `ltm_fcf` 157.915 is the FY2025
+   figure, ~32% above the true LTM-through-Q3 (~119.4). **The gate watches the panel; nothing
+   watched the fact.** Until this ships, `ltm_fcf` stays FY-basis in the anchor and any LTM
+   cash-flow read is stated in prose only (see the SMPL 2026-07-26 verification tag).
+2. **STRUCTURED GENERATING-CELLS RULE (queued 2026-07-26).** Any number quoted in record PROSE
+   must have its generating cells stored STRUCTURALLY beside it. ORIGIN: the boundary-pair hunt —
+   the entry rationale's "2.12 clears / 1.88 fails" was prose-only, so re-deriving it at Q3 data
+   was impossible until the cells were recovered from the LEDGER payload. A quoted ratio whose
+   inputs live nowhere machine-readable cannot be re-verified at a later vintage, which is exactly
+   when it matters. (Schema enforcement of the verification-artifact reference on verdict
+   transitions — governance convention 3 below — belongs with this item.)
+3. **READ-ONLY SHAPE-READ OF OUT-OF-CHAT PRs #194–#215 (queued 2026-07-26).** Nineteen-plus PRs
+   merged outside the advisory thread. A read-only pass to map what changed, what carries
+   verification artifacts, and where record/ledger coherence may have drifted. No writes; output
+   is a map, not a fix list.
+4. **Dossier-assembly freshness detection + assembly provenance stamp (PAIRED).** The 2026-07-10
    SMPL assembly missed the 2026-07-09 print by one day. Assembly must FLAG filings newer than
    its evidence window, and stamp what window it read. (The §7 print-freshness gate and the
-   monitor's freshness panel cover verdicts manually until this exists.)
-2. **BAND SPAN-METADATA STAMPS — NCNO + AORT, one byte-preserving pass.** Both bands predate the
+   monitor's freshness panel cover verdicts manually until this exists.) **PARTIALLY DISCHARGED
+   2026-07-24 by the panel-freshness gate (#213)** — panel-vintage vs latest print now flags; the
+   assembly provenance STAMP and the trailing-fact half (item 1) remain.
+5. **BAND SPAN-METADATA STAMPS — NCNO + AORT, one byte-preserving pass.** Both bands predate the
    periodicity/span stamp: NCNO carries 10 keys and AORT 10, neither with `window_span_years`,
    `data_quality` or the implied margins. AORT's committed band still reads `confidence: firm` on a
    rule it was never tested against — a fresh backfill would demote its multiple leg to weak.
    Neither affects a recorded verdict (both are watches), so this is housekeeping, but do the two
    together in one pass rather than per-name.
-3. **R2 COHORT — *NOT* COMPLETE. Four dispositioned (NCNO, AORT, MVST recorded watches; VITL
+6. **R2 COHORT — *NOT* COMPLETE. Four dispositioned (NCNO, AORT, MVST recorded watches; VITL
    survival-blocked) + FUBO documented as BLOCKED/UNDISPOSITIONED.** Do not mark this cohort
    complete: FUBO has no record and no verdict, and the reason is structural, not effort.
    Superseded detail: `scenarios/NCNO.json` is the first R2
@@ -3994,7 +4015,7 @@ re-anchor (the full STATE split stays its own queued task — nothing was reloca
    **VITL is survival-blocked** (0.76y runway vs 4y; re-engage on an Item 1.01/2.03 financing filing or on
    free cash flow turning positive). **MVST recorded 2026-07-22** (watch, survival FAIL on a stated
    going concern).
-4. **FUBO — RECLASSIFIED 2026-07-22: NOT UNDERWRITABLE ON CURRENT EVIDENCE. Undispositioned,
+7. **FUBO — RECLASSIFIED 2026-07-22: NOT UNDERWRITABLE ON CURRENT EVIDENCE. Undispositioned,
    pending a combined-entity evidence pull. A SCOPED FUTURE THREAD, not an open task.** The
    underwrite was briefed, built to the record step, and STOPPED when the Q1-26 10-Q
    (`0001628280-26-031265`, filed 2026-05-06, period ended 2026-03-31) falsified its premises.
@@ -4029,17 +4050,17 @@ re-anchor (the full STATE split stays its own queued task — nothing was reloca
      Disney's interest with the redeemable NCI — UNRESOLVED, an operator question).
    - **PRIOR FUBO ANALYSIS IN THIS FILE IS TAINTED** wherever it treats the FY2019–24 series as the
      registrant's or 30.7M as the divisor. So is the 2026-07-22 read-only evidence sheet.
-5. **g_sbc CONTAMINATION WARNING (queued).** The trailing-3-year diluted-share CAGR is taken raw;
+8. **g_sbc CONTAMINATION WARNING (queued).** The trailing-3-year diluted-share CAGR is taken raw;
    a single acquisition issuance inside the window silently becomes a permanent dilution rate.
    Ship a flag when any single year-over-year share jump exceeds about twice the series median —
    AORT's FY2025 step is the live example, and it is an input to a valuation, not a footnote.
-6. **R2 ENGINE — BUILT 2026-07-21 (`R2_terminal_margin`).** Terminal-margin bridge, 15% house
+9. **R2 ENGINE — BUILT 2026-07-21 (`R2_terminal_margin`).** Terminal-margin bridge, 15% house
    hurdle, hard survival gate, tier A/B, EV/EBIT basis supported, card rendered. Conventions
    ratified in §7. **EV/Revenue basis added 2026-07-22 (PR #187) — capability only, no name
    underwritten on it; see §2.** **NEXT: the per-name grids** — each cohort underwrite needs its own
    evidence pull → analyst bear/base/bull, the same way R1 ran. The engine does not underwrite
    anything by itself. **It also has no NCI term** — see item 26.
-7. **~~COHORT FACT GAPS — CIQ balance-sheet extraction~~ — CLOSED 2026-07-22 for MVST.** MVST is
+10. **~~COHORT FACT GAPS — CIQ balance-sheet extraction~~ — CLOSED 2026-07-22 for MVST.** MVST is
    underwritable and is now recorded. **FUBO is NOT** — the CIQ bridge closed its *tag* gaps, but
    the name is blocked for a structural reason found later (item 4): the vendor figures splice
    pre- and post-combination periods and the share basis is wrong. Superseded detail: **MVST**:
@@ -4047,23 +4068,23 @@ re-anchor (the full STATE split stays its own queued task — nothing was reloca
    from committed data — `dep_amort` resolves to $0.003M from **FY2014**, debt tags last filed
    **2020-06-30**, FCF is **FY2024**, and diluted WA reads 30.0M against 342.7M shares outstanding
    (an 11x gap; reverse split?). EDGAR cannot close either — these need the CIQ balance sheet.
-8. **TAGGER PROPOSALS AWAITING RATIFICATION (operator).** The propose-only tagger agrees with 10 of
+11. **TAGGER PROPOSALS AWAITING RATIFICATION (operator).** The propose-only tagger agrees with 10 of
    11 committed hand tags; it proposes `R2_NEEDED` for FUBO, whose committed hint is the machine
    placeholder `unknown`. No hint was written — ratify or reject, then re-run the sweep.
    **CAUTION 2026-07-22:** the FUBO proposal reads on pre-combination data (item 4). `R2_NEEDED` may
    still be the right tag, but do not ratify it as evidence that FUBO is underwritable — it is not.
-9. **~~EPAM'S COMMITTED D&A IS SIX YEARS STALE~~ — CLOSED 2026-07-22 (amended pre-verdict).** The vintage fix
+12. **~~EPAM'S COMMITTED D&A IS SIX YEARS STALE~~ — CLOSED 2026-07-22 (amended pre-verdict).** The vintage fix
    resolves EPAM to **124.811** (FY2025) against a committed **45.317** (FY2019, +175%). EPAM has a
    PENDING underwrite whose EBITDA basis rests on the stale figure. Reported, NOT rewritten (out of
    this branch's scope). Re-check the held grid before the verdict lands.
-10. **~~`_latest_dep_amort` prefers a STALE combined tag~~ — CLOSED 2026-07-22.** FUBO takes a 2014
+13. **~~`_latest_dep_amort` prefers a STALE combined tag~~ — CLOSED 2026-07-22.** FUBO takes a 2014
    value of $0.003M over split tags summing $38.5M (FY2024). Affects any filer that switched tags.
    Found 2026-07-21, not fixed in-branch (scope).
-11. **`own-history-refresh` silently drops `ev_ebitda.note`.** Its branch only re-applies the
+14. **`own-history-refresh` silently drops `ev_ebitda.note`.** Its branch only re-applies the
    "trailing only" note when `ev_ebitda_adjusted_fwd` is absent; when present (VITL) the committed
    note is lost. Found 2026-07-21 by dry-run diff and routed around surgically, not patched.
 
-12. **XBRL IMPAIRMENT-TAG-OVERLAP RULE — one tag family per adjustment, never summed across
+15. **XBRL IMPAIRMENT-TAG-OVERLAP RULE — one tag family per adjustment, never summed across
     families.** Found 2026-07-22 in the SMPL bear-state pull: summing `GoodwillImpairmentLoss` +
     `GoodwillAndIntangibleAssetImpairment` + `ImpairmentOfIntangibleAssetsExcludingGoodwill` +
     `AssetImpairmentCharges` double- and triple-counts, because the middle tag is a SUPERSET of
@@ -5023,6 +5044,93 @@ sits at `watch` with refreshed arithmetic (4.58:1 at 10.53); the re-verdict is t
 on a NEW candidate row (one decision row per candidate, by construction — the next screen
 vintage or an operator-created candidate). INVARIANT: the assembly-freshness gate — **SHIPPED
 2026-07-24** (see build record below); the incident is closed per the INVARIANT RULE.
+**SUPERSEDED IN PART 2026-07-26 by the Q3 re-verification (below): the record stays at `watch`
+by operator decision, its assumptions re-set on Q3 data. Re-entry remains a new decision on a
+new row.**
+
+**BUILD RECORD — 2026-07-26 SMPL Q3 RE-VERIFICATION (amend-at-watch; data-only, branch
+`data/smpl-q3-reverification`; operator directive, executed after three executor STOPs).**
+
+**(a) VINTAGE VERIFICATION — the operator's staleness alarm, premise-tested.** Every load-bearing
+committed number was vintage-mapped against the Q3 10-Q (`0001702744-26-000023`, filed
+2026-07-09, period 2026-05-30). RESULT: the alarm was **~80% refuted**. The R1 grid's mechanical
+facts are Q3-current **to the dollar** — `ltm_revenue` 1392.235 reproduces EDGAR exactly
+(FY2025 − 9mo-2025 + 9mo-2026); `net_debt` 324.582 IS the 2026-05-30 balance sheet (debt 397.0 +
+op-leases 51.4 − cash 123.9), and the "342.4 divergence" is the **Q2** figure, correctly not
+used; `diluted_shares` 93.678M is the Q3 9-month weighted average. THREE secondary layers were
+genuinely stale: `ltm_fcf` (FY2025 157.915 vs true LTM ~119.4, ~32% high), the multiple-leg's
+"current multiple 5.65x" reference (a 07-21 read; the fresh panel shows 5.34x), and the
+capital-structure detail (FY2025 10-K vintage). **But the deterioration is real and was NOT in
+the legs**: a **$369M** nine-month impairment (331 intangible + 38 goodwill) against the single
+$60.9M the clean series excluded, gross margin **36.2% → 32.2% (−4.1pp)**, trailing clean
+operating margin **~13.8%** vs the 15.5% base leg. Q3 reported operating income −$49.9M.
+
+**(b) RE-VERIFICATION RECORDED.** Base normal margin **0.155 → 0.140** (analyst judgment: set
+between the 15.5% seven-year clean median and the ~13.8% trailing clean margin, nearer the
+trailing figure — part of the gross-margin reset treated as structural). Revenue and multiple
+legs UNCHANGED. Engine on the amended legs at spot **$10.53 (2026-07-22)**: base **$24.2406**,
+bear **$6.9540** (unchanged), bull **$40.2135** (unchanged), 2:1 ceiling **$12.7162**, ratio
+**3.834:1** vs the 2.0 bar (PASS) — **3.359:1** at the $10.92 entry. Engine == stored verified;
+seal CLEAN ×7 (base text byte-identical, 3 legal amendment tags); prose lint 0. STATUS and the
+LEDGER are UNTOUCHED — no transition, no new row, close row unchanged.
+
+**(c) FRAGILITY STATED, NOT SMOOTHED.** The entry-recorded boundary cells (recovered from the
+LEDGER payload — the record layer had them in prose only): 1,100 × 8% × 6.0x → $3.54 and
+1,050 × 7% × 6.0x → $2.62. At $10.53 they clear on the entry-vintage 15.5% normal (≈2.34 /
+≈2.07) but read **≈1.96 / ≈1.73 — BELOW the bar — on the re-set 14% normal**. The 2:1 line now
+sits between the recorded 10% bear and these stress cells. This flip was caught by the
+executor's verify-before-seal pass; the directive as first written would have sealed "both
+clear" against a base it was simultaneously cutting.
+
+**(d) GROSS-MARGIN TRIGGER FIRED AND DISCHARGED.** Nine-month GM fell ~4.1pp against the recorded
+3.75pp threshold; the re-verification discharges it (base cut to 14%). Full-year basis re-read at
+the ~October print. Quest trigger untouched (Q3 printed +1.1% — clock not started); guidance
+trigger untouched (arms ~October). The dated September pricing trigger (2027-01-07) stands.
+
+**(e) LEDGER PRESERVED WHAT THE RECORD LOST.** The append-only ledger payload retained the
+boundary-cell definition that the scenario record carried only as prose — the append-only rule
+paid for itself the first time a number had to be re-derived at a new vintage. (→ queue item 2.)
+
+**(f) BRIEF-DESIGN LESSONS (advisor-attributed), fourth instance logged.** (i) A directive may
+not order NOW what it specs as a FUTURE build — the item-2/item-8c contradiction (refresh
+`ltm_fcf` now vs. the queued quarterly-refresh build that owns it) was caught by the executor,
+not the author. (ii) **Stale-basis quoting** — boundary ratios computed on the PRE-amendment base
+were quoted inside the directive that changes that base. **Advisor rule: any number quoted in a
+directive is recomputed against the state the directive itself produces.**
+
+**(g) STATUS-PROVENANCE CHECK (gate result).** `verdict.status == "watch"`, set by `d704317`
+(2026-07-24, "C3 data: SMPL input-staleness close…", hunk `-"confirmed"` → `+"watch"`), merged
+**in-chat** via PR #212; ledger shows **no open BUY** (`V-SMPL-…` closed by `C-SMPL-…` at 10.53).
+Provenance explained, not drifted — so the pass ran in amend-at-watch mode rather than the
+confirmed-record mode the directive first assumed.
+
+## GOVERNANCE LOG — two-channel divergence (opened 2026-07-26)
+
+1. **Divergence recorded.** Nineteen PRs (#194–#212) ran outside the advisory thread. #212 nulled
+   the live BUY on an **unverified** staleness alarm; verification subsequently refuted ~80% of
+   that premise while confirming real deterioration. The executor's STOP sequence and the
+   status-provenance gate caught the divergence **before the record could contradict the ledger**.
+   The close was **LEDGER-ONLY** (operator-confirmed): no market trade, no realized P&L.
+   *Divergence continued during the amendment pass itself: PRs #213–#215 merged out-of-chat
+   mid-exchange (origin/main 25afc96 → 8dd83c7, including the report re-design diagnosis and the
+   operator capacity parameters); the same-day reporting rule applies from today. Shape-read of
+   #194–#215 queued (queue item 3).*
+2. **STANDING RULE COMPLETED** (extends the IT-exit rule): *"Human actions — market executions AND
+   record-lifecycle actions (verdict transitions, closes, nulls) — are reported into the advisory
+   loop the day they occur, whichever channel executes them."*
+3. **CONVENTION ADOPTED.** Every verdict transition or close row carries EITHER a
+   verification-artifact reference OR the label **"operator override — verification pending."**
+   #212's row carried neither. Schema enforcement queued (with queue item 2).
+4. **CLOSE-ROW CONTEXT.** The ledger close row's stated reason (input staleness) stands
+   **append-only and unedited**; its subsequent partial refutation is recorded HERE and in the
+   record's amendment tag, so no future reader takes the reason at face value.
+5. **ADVISOR LESSON.** The standing FIRST question for any incident report is now: *"has any
+   action already been taken, in any channel?"* — the "re-create the verdict" phrasing was the
+   unasked tell.
+6. **MONITOR NOTE.** SMPL is the book's only `watch` carrying a PASSING grid (3.83:1 at $10.53,
+   2:1 ceiling $12.72) — tracked; the forward path scores the stay-out decision in both
+   directions; the entry-vintage stress cells sit below the bar on the re-set normal — the
+   stay-out call carries that supporting fact.
 
 **BUILD RECORD — 2026-07-24 ASSEMBLY-FRESHNESS GATE (branch `feat/assembly-freshness-gate`;
 the invariant the SMPL stale-inputs incident owed, INVARIANT RULE).** `_panel_freshness_flag(ie,
