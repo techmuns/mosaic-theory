@@ -4118,6 +4118,22 @@ renumber.** No other unverifiable claim found in this block.
     line), never add across families, and fail loud when two families both report the period.
     Same class as `_latest_dep_amort`'s vintage trap — a tag-name heuristic standing in for
     reading the statement.
+16. **RefPoint SCHEMA 1.3 — DECISION PENDING (proposal written 2026-07-27:
+    `docs/refpoint_schema_proposal.md`).** Census of all 132 committed references: the statistic
+    ROLE travels as prose in 50 (38%), the LEG in 21, exclusion flags in 5, and the register
+    linter cannot see any of it (`lint_record` skips `references[].label`/`unit` — its own
+    patterns find 26 violations there, incl. the explicitly-banned `DEAD REGIME`). **LIVE DISPLAY
+    DEFECT found by the same census:** uw-card's masthead picks its "vs N× median" by
+    `find(/median/i)` over labels — on MVST it shows the PEER median (14.5x, a set the analyst
+    called heterogeneous) while the own-history median is labelled *unusable*; on AORT it shows
+    32.1x, whose label warns it *spans near-zero-earnings years*. Which median renders is decided
+    by ARRAY ORDER. Proposal: `role` (enumerated, fixes the masthead by construction) + `leg` +
+    `excluded/excluded_reason` + per-axis `notes` (the SMPL boundary-finding home — cross-ref
+    queue item 2, whose generating-cells half this partially discharges), forward-gated from 1.3
+    exactly like `BASIS_REQUIRED_FROM`, hand-migration of ~27 rows (no label-parsing tool — N is
+    too small to justify enshrining the display-string-parse). Four open decisions listed at the
+    doc's end (role vocabulary; one field vs statistic×population; archived-SMPL row stays sealed;
+    one PR vs two). **Operator: read the doc, answer the four, then the build is unblocked.**
 
 **QUEUED BUILD → BUILT 2026-07-24 — CATALYST CALENDAR (brief drafted 2026-07-24; RATIFIED 2026-07-24 by the operator
 WITH PLACEMENT B — see amended (d); mockups: standalone + in-situ on the live SMPL page, both
