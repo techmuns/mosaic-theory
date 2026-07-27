@@ -419,3 +419,30 @@ def test_screening_context_reaches_every_committed_dossier_e2e() -> None:
             assert "_no scenario record for this name_" in disk, (
                 f"{doc.ticker}: no scenario card, and the markdown does not say so")
     assert seen >= 10, f"expected the committed anchor corpus end-to-end, got {seen}"
+
+
+def test_screening_context_prose_is_the_same_on_both_surfaces() -> None:
+    """The two HAND-COPIED strings in the screening block, bound to their JS originals.
+
+    `_screening_context_lines` cannot import from dossier.js, so the METHOD gloss and the
+    attention-filter SUBTITLE exist twice. Both are load-bearing prose, not decoration: the gloss
+    says what the number IS ("mid-cycle margin × the median multiple of its own history" rather
+    than the raw `R1_midcycle_margin_evebitda` slug), and the subtitle is the DISCLAIMER — it is
+    the sentence telling the reader a cheap screen still has to survive a full underwrite.
+
+    Found by mutation during review of the PR that introduced them: editing BOTH strings in the JS
+    left the whole suite green, so the PDF and the web could have described the same number two
+    different ways — and the value-parity pin above would not have noticed, because it compares
+    the NUMBERS and not the words framing them. That is the exact duplication class this module
+    exists for (see its docstring).
+    """
+    from vinci.dossier.render import _SCREEN_METHOD_R1, _SCREEN_SUBTITLE
+
+    js = _src("frontend/views/shared/dossier.js")
+    for const, name in ((_SCREEN_METHOD_R1, "_SCREEN_METHOD_R1"),
+                        (_SCREEN_SUBTITLE, "_SCREEN_SUBTITLE")):
+        # the JS source wraps across lines — compare on collapsed whitespace, which is what the
+        # rendered surface shows anyway (HTML collapses runs of space; markdown re-flows).
+        assert " ".join(const.split()) in " ".join(js.split()), (
+            f"{name} no longer matches its dossier.js original — the print twin and the web would "
+            "describe the SAME screening number in different words")
