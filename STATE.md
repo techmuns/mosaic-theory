@@ -5303,6 +5303,41 @@ confirmed-record mode the directive first assumed.
    RAW INTERNAL DOSSIER — the very format the memo's closing section commits to replacing with a
    curated pack. The refreshed current-state pack ships with the addendum (built 2026-07-27 to
    `out/ic-pack-SMPL-2026-07-27/`, NOT committed — it is a rendered export, regenerable).
+8. **INVARIANT-CHANGE CONSUMER SWEEP — RULE (standing, adopted 2026-07-27).** *When a data
+   invariant changes, sweep every CONSUMER of it in the same pass; the invariant's own docstring
+   is the first thing to re-read, not the last.* Root cause of #218's header defect: close rows
+   shipped 2026-07-22 and broke the invariant "a ticker maps to at most one ledger entry" — which
+   `frontend/build.py` had written into its docstring as a standing truth. The producer changed;
+   the consumer kept asserting the old contract for five days, and the card silently rendered a
+   closed position as an open BUY to an external reader. **The tell is a docstring stating an
+   invariant the change just falsified** — grep for the assertion, not only for the field.
+   *(Same class as #216: `dated_triggers` gained a consumer with no producer, four days after the
+   producer shipped.)*
+9. **STALE-CHECKOUT RUNBOOK LINE (both channels hit it, 2026-07-27).** *Never run, preview, or
+   test from the primary checkout `/Users/work/Documents/GitHub/mosaic-theory` — it is another
+   session's working tree and is routinely tens of commits stale. Work only in an isolated
+   worktree, and root any preview server in the worktree UNDER TEST.* This channel edited
+   mechanical.py + tests there by momentum and read a stale committed dossier, which made a
+   freshness pin fire spuriously (caught, reverted, re-applied in the worktree). The other
+   channel's #216 preview was rooted in the same checkout, then **45 commits stale**, and briefly
+   looked like a total render outage. Two independent channels, one footgun, one day apart.
+10. **SHAPE-READ COMPLETE — 2026-07-27, BEFORE the Aug-5 window** (queue item 3 discharged).
+   Catalog: `docs/audits/2026-07-27-two-channel-shape-read.md` — all 29 PRs #194–#222 (18 this
+   thread / 11 other channel; `Co-Authored-By` is a reliable channel signal, no PR unattributable).
+   **SEAL SWEEP CLEAN on three dimensions**: current-state `check_all` no violations; every
+   record's sealed base text byte-identical across the whole scope (growth only via dated
+   amendment tags, SMPL 0→3); ledger append-only held (4→5 rows, 0 dropped, 0 mutated). The
+   catalog carries the CONVENTIONS DELTA (the rules this channel had not seen — XBRL
+   impairment-tag overlap, the re-assembly benchmark flip, the card-key contract, and the operator
+   capacity parameters quoted VERBATIM) and the QUEUE RECONCILIATION.
+11. **QUEUE RECONCILIATION — 2026-07-27.** 50 numbered items at the 2026-07-23 check → **66 now**;
+   **nothing was pruned without disposition (zero vanished)** — the queue grew. Every named item
+   located in the catalog. Two notable dispositions: **basis-truthfulness GRADUATED** from queue
+   item to enforced rule (`margin_basis` validator + `_require_bear_basis`), and
+   **`tests-write-to-tmp` is FLAGGED** — it has no STATE record in this window at all (absent from
+   the 2026-07-23 queue too, so it did not vanish during the scope), yet is de-facto practice in
+   23 test files. **An unwritten convention that 23 files already follow should be written down or
+   dropped deliberately — it is currently neither.**
 
 **BUILD RECORD — 2026-07-24 ASSEMBLY-FRESHNESS GATE (branch `feat/assembly-freshness-gate`;
 the invariant the SMPL stale-inputs incident owed, INVARIANT RULE).** `_panel_freshness_flag(ie,
