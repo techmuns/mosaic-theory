@@ -1473,12 +1473,17 @@ def _assumption_methodology_lines(card: ScenarioRecord | None) -> list[str]:
                  else " · **DRAFT — not ratified by the analyst**")
         out += [f"### {axis.capitalize()}{stamp}", "", a.method, ""]
         if a.references:
-            out += ["| reference | value | source |", "| --- | ---: | --- |"]
-            # ESCAPE PIPES: label and source are analyst free text in a markdown TABLE. GFM splits
-            # on "|" before inline parsing, so a pipe silently shifts cells and DROPS the source
-            # (backticks do not protect it). The JS twin renders a <ul>, so it is unaffected.
-            out += [f"| {_md_cell(r.label)} | {_ref_value(r.value, r.unit)} "
-                    f"| `{_md_cell(r.source)}` |" for r in a.references]
+            # The SOURCE is an ENDNOTE, not a third column. Main-body cites resolve to the Sources
+            # list in this repo (frontend/lib/cites.js states the two sanctioned modes; inline is
+            # for on-demand audit blocks). This card hand-rolled the inline form on BOTH twins —
+            # the same defect that motivated extracting cites.js out of uw-card.js. `_cite` also
+            # DEDUPES: a source cited on four axes prints once instead of four times.
+            out += ["| reference | value |", "| --- | ---: |"]
+            # ESCAPE PIPES: the label is analyst free text in a markdown TABLE. GFM splits on "|"
+            # before inline parsing, so a pipe silently shifts cells and drops content (backticks
+            # do not protect it). The value is machine-formatted and the cite is a bare [n].
+            out += [f"| {_md_cell(r.label)} | {_ref_value(r.value, r.unit)}{_cite(r.source)} |"
+                    for r in a.references]
             out.append("")
         else:
             # a pure-judgment method honestly stated beats a fabricated reference (schema 1.1)

@@ -3105,15 +3105,23 @@ function assumptionMethodology(card) {
     const badge = a.unratified
       ? ` <span class="pill" style="font-size:10px;">draft — not ratified</span>` : "";
     const name = String(a.axis || "").replace(/^./, (c) => c.toUpperCase());
-    // a plain reference list, not dataTable: that helper right-aligns every cell as numeric, which
-    // is wrong for a source string, and its first column is the row label — the shapes don't fit.
+    // An ALIGNED table, not the old flat <ul>. The original objection — that dataTable right-aligns
+    // the SOURCE string as if numeric — was right about dataTable, and dissolved once the source
+    // became an endnote: the row is now label + value, and a value column is exactly what
+    // right-alignment is for. `.ref-table` is a HOOK, not a width override — these keep the K2
+    // content-sized width. A 100% version was tried and REVERTED: it opened a 603–785px gulf
+    // between a label and its own value (see the .ref-table note in styles.css).
+    // NOT parsed: some labels carry the leg they anchor ("… — bear") or an exclusion flag
+    // ("— DEAD REGIME") as prose. Printed VERBATIM — a display string is never parsed for meaning.
     const refs = (a.references || []).length
-      ? `<ul class="kv-list">${(a.references || []).map((r) =>
-          `<li>${escapeHtml(r.label)} — <b>${escapeHtml(refValue(r.value, r.unit))}</b>`
-          + `<span class="muted mono" style="font-size:11px;"> · ${escapeHtml(r.source)}</span></li>`
-        ).join("")}</ul>`
+      ? `<table class="data ref-table"><tbody>${(a.references || []).map((r) =>
+          `<tr><td>${escapeHtml(r.label)}</td>`
+          + `<td class="num mono">${escapeHtml(refValue(r.value, r.unit))}${citeMark(r.source)}</td>`
+          + `</tr>`).join("")}</tbody></table>`
       : `<div class="muted">No reference points recorded — stated as judgment.</div>`;
-    return `<div class="point"><b>${escapeHtml(name)}</b>${badge}
+    // the house in-card sub-head (12px .ds-title), as briefCase/argument use: a bare <b> left the
+    // axis NAME, its method prose and its data all at 13px — three roles with no typographic step.
+    return `<div class="point"><div class="ds-title" style="font-size:12px;">${escapeHtml(name)}${badge}</div>
       <div style="font-size:13px; margin:3px 0 6px;">${escapeHtml(a.method || "")}</div>
       ${refs}</div>`;
   }).join("");

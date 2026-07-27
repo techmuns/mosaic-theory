@@ -364,45 +364,45 @@ _Per-axis methodology from the underwrite record — the reference frame each le
 
 Terminal revenue starts from the consensus FY2027 figure and then fades at a stated rate: about 1.5 points of growth lost each year in the central case, 1.0 in the optimistic case. Only FY2027 is a consensus figure; every year beyond it is our own extrapolation of a deceleration that has held for four years and need not hold again.
 
-| reference | value | source |
-| --- | ---: | --- |
-| consensus revenue, FY2027 | $644.7M | `CIQ Estimates->Trends` |
-| reported revenue, FY2026 | $594.8M | `EDGAR RevenueFromContractWithCustomerExcludingAssessedTax` |
-| realised growth, FY2024/FY2025/FY2026 | 10% | `EDGAR revenue series (16.7 / 13.5 / 10.0)` |
+| reference | value |
+| --- | ---: |
+| consensus revenue, FY2027 | $644.7M [47] |
+| reported revenue, FY2026 | $594.8M [48] |
+| realised growth, FY2024/FY2025/FY2026 | 10% [49] |
 
 ### Margin · **DRAFT — not ratified by the analyst**
 
 Every margin here is on a reported accounting basis, and so is the depreciation assumption, because the two have to sit in the same layer. The 26-28% operating margins widely quoted for this company exclude stock compensation and the amortisation of acquired intangibles; both are real costs to an owner. The evidence that the layers differ is arithmetic: the consensus figures imply about $6M of depreciation for a year in which the company reported about $42M. The central path takes the durable improvement of the last two years - roughly 3 points a year from the first positive year of +0.6% - rather than the one-off step of four years ago. The weakness is that a straight-line margin has no ceiling, while a 60.6% gross margin is a real one.
 
-| reference | value | source |
-| --- | ---: | --- |
-| reported operating margin, FY2026 | 0.6% | `EDGAR OperatingIncomeLoss / revenue` |
-| margin path at +2 points a year, pessimistic | 8.6% | `extrapolation of the reported margin series` |
-| margin path at +3 points a year, central | 12.6% | `extrapolation of the reported margin series` |
-| margin path at +4 points a year, optimistic | 16.6% | `extrapolation of the reported margin series` |
-| gross margin, FY2026 - the structural ceiling | 60.6% | `EDGAR GrossProfit / revenue` |
-| depreciation implied by the consensus layer | $5.7M | `CIQ Estimates->Trends (EBITDA less EBIT, FY2027)` |
-| depreciation reported, FY2026 | $42.255M | `EDGAR companyfacts dep_amort` |
+| reference | value |
+| --- | ---: |
+| reported operating margin, FY2026 | 0.6% [50] |
+| margin path at +2 points a year, pessimistic | 8.6% [51] |
+| margin path at +3 points a year, central | 12.6% [51] |
+| margin path at +4 points a year, optimistic | 16.6% [51] |
+| gross margin, FY2026 - the structural ceiling | 60.6% [52] |
+| depreciation implied by the consensus layer | $5.7M [53] |
+| depreciation reported, FY2026 | $42.255M [54] |
 
 ### Multiple · **DRAFT — not ratified by the analyst**
 
 The exit multiple is set against a mature vertical-software peer rather than against this company's own trading history. That history spans ten quarterly closes over 2.3 years, and for most of it the earnings denominator sat near zero, which inflates a multiple without saying anything about value - its median of 82.9x is unusable as an exit. Both data-quality checks on that series pass, so the number is real; it is the period that is too short and too distorted. Cross-checked on revenue: 754.8 at 3.0 times enterprise value to revenue, the mature peer's level, gives about $10 a share in today's terms, which agrees with the central case.
 
-| reference | value | source |
-| --- | ---: | --- |
-| mature vertical-software peer, enterprise value to EBITDA | 12.3x | `CIQ Comparable Analysis (SPS Commerce, 23.2% EBITDA margin)` |
-| closest bank-software peer, enterprise value to EBITDA | 33.2x | `CIQ Comparable Analysis (Q2 Holdings, pre-maturity)` |
-| this company's trailing median, ten closes over 2.3 years - unusable | 82.9x | `CIQ Financials->Multiples (near-zero denominator)` |
-| mature vertical-software peer, enterprise value to revenue | 3x | `CIQ Comparable Analysis (SPS Commerce)` |
+| reference | value |
+| --- | ---: |
+| mature vertical-software peer, enterprise value to EBITDA | 12.3x [55] |
+| closest bank-software peer, enterprise value to EBITDA | 33.2x [56] |
+| this company's trailing median, ten closes over 2.3 years - unusable | 82.9x [57] |
+| mature vertical-software peer, enterprise value to revenue | 3x [58] |
 
 ### Horizon · **DRAFT — not ratified by the analyst**
 
 Four years to the terminal year. At three years the margin ramp would have to finish almost immediately; at five the waiting charge halves the answer, so the exit multiple rather than the operating case would carry the result. Four years matches the improvement pace the company has actually delivered for two years running.
 
-| reference | value | source |
-| --- | ---: | --- |
-| years to the terminal year | 4years | `analyst judgement, set against the realised margin pace` |
-| waiting charge applied over the horizon | 74.9% | `house rate of 15% a year compounded over four years` |
+| reference | value |
+| --- | ---: |
+| years to the terminal year | 4years [59] |
+| waiting charge applied over the horizon | 74.9% [60] |
 
 
 ## Financial statements (actuals + consensus estimates) — export date unverified (data ≥ 2026-07-12)
@@ -426,7 +426,7 @@ Four years to the terminal year. At three years the margin ramp would have to fi
 _E = consensus (Estimates→Trends 'Current'), as-of ≥2026-07-12; (R) = Reclassified basis · FCF (levered, CIQ) = CIQ 'Levered Free Cash Flow', NOT CFO − capex_
 
 ### Quarterly — every exported quarter
-- **Quarterly financials** — [47]  <!-- ds-table -->
+- **Quarterly financials** — [61]  <!-- ds-table -->
 
 |  | Q1-19 | Q2-19 | Q3-19 | Q4-20 | Q1-20 | Q2-20 | Q3-20 | Q4-21 | Q1-21 | Q2-21 | Q3-21 | Q4-22 | Q1-22 (R) | Q2-22 (R) | Q3-22 (R) | Q4-23 (R) | Q1-23 (R) | Q2-23 (R) | Q3-23 (R) | Q4-24 (R) | Q1-24 | Q2-24 (R) | Q3-24 | Q4-25 | Q1-25 | Q2-25 | Q3-25 | Q4-26 | Q1-26 |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
@@ -440,8 +440,8 @@ _E = consensus (Estimates→Trends 'Current'), as-of ≥2026-07-12; (R) = Reclas
 _QoQ/YoY same-basis only; (R) = Reclassified_
 
 ### Balance-sheet posture
-- **Posture:** as of Q1-26 ($M): cash & ST inv 103; total debt 327; net debt 224; equity 970; net working capital -32; net-debt/EBITDA → see the Leverage & survival block (not recomputed) [48]
-- **Coherence — BS vs implied-valuation bridge:** cash BS $103M / bridge $103M; debt BS $327M / bridge $327M — reconcile with the implied-valuation bridge. [49]
+- **Posture:** as of Q1-26 ($M): cash & ST inv 103; total debt 327; net debt 224; equity 970; net working capital -32; net-debt/EBITDA → see the Leverage & survival block (not recomputed) [62]
+- **Coherence — BS vs implied-valuation bridge:** cash BS $103M / bridge $103M; debt BS $327M / bridge $327M — reconcile with the implied-valuation bridge. [63]
 
 
 ### Capital structure & debt terms — instruments · pointers · covenants
@@ -454,7 +454,7 @@ _QoQ/YoY same-basis only; (R) = Reclassified_
 | Senior Secured Revolving Credit Facility | Revolving Credit | $213.5M | 5.680% | Benchmark | 2029-10-28 | Y | N | USD |
 
 - **8-Ks at instrument maturities:** _UNKNOWN_ — no trailing-12m instrument maturity to anchor an 8-K
-- **Covenant / contract pointers (CIK-verified execution filings)** — [50]  <!-- ds-table -->
+- **Covenant / contract pointers (CIK-verified execution filings)** — [64]  <!-- ds-table -->
 
 |  | Filing | Date | Accession / exhibit (or note) |
 |---|---|---|---|
@@ -463,7 +463,7 @@ _QoQ/YoY same-basis only; (R) = Reclassified_
 | Financing Obligations | — | — | no contract-level filing expected (aggregate line item) |
 | Operating Lease Liabilities | — | — | no contract-level filing expected (aggregate line item) |
 
-- **Covenant terms — Senior Secured Revolving Credit Facility (governing agreement)** — [51]  <!-- ds-table -->
+- **Covenant terms — Senior Secured Revolving Credit Facility (governing agreement)** — [65]  <!-- ds-table -->
 
 |  | Governing value (lead · clause ≤200c) | Source § |
 |---|---|---|
@@ -481,9 +481,9 @@ _Source §: 8-K 0001902733-24-000171 · exhibit101creditagreementb.htm · amende
 ### Implied equity at peer multiples
 > **Comparability gate:** market caps span $674M–$4.3B (6x); the name is $2.0B → moderately dispersed: the peer median is anchored by businesses of differing scale/model; scrutinise comparability before reading any peer stat as a clean benchmark.
 > _Reference only — the human judges earned vs residual (not a machine upside); the full Low/Mean/High and all bases are in the JSON._
-- **Name market cap ($M) — the ADJACENT fact to compare against:** 1955.5 [52]
-- **Bridge (TEV → equity):** TEV→equity bridge: + cash $102.80M, − total debt $326.70M [53]
-- **Implied equity at peer-median ($M, CIQ)** — [54]  <!-- ds-table -->
+- **Name market cap ($M) — the ADJACENT fact to compare against:** 1955.5 [66]
+- **Bridge (TEV → equity):** TEV→equity bridge: + cash $102.80M, − total debt $326.70M [67]
+- **Implied equity at peer-median ($M, CIQ)** — [68]  <!-- ds-table -->
 
 |  | Implied equity (median) |
 |---|---:|
@@ -493,15 +493,15 @@ _Source §: 8-K 0001902733-24-000171 · exhibit101creditagreementb.htm · amende
 
 
 ### Management commentary
-- **Earnings call (transcript pointer — read the file):** 2 earnings-call transcript(s) on file — read in full for management posture: nCino, Inc., Q1 2027 Earnings Call, May 27, 2026.rtf; nCino, Inc., Q4 2026 Earnings Call, Mar 31, 2026.rtf (pointer only; the synthesis cites them, the machine does not curate an excerpt) [55]
+- **Earnings call (transcript pointer — read the file):** 2 earnings-call transcript(s) on file — read in full for management posture: nCino, Inc., Q1 2027 Earnings Call, May 27, 2026.rtf; nCino, Inc., Q4 2026 Earnings Call, Mar 31, 2026.rtf (pointer only; the synthesis cites them, the machine does not curate an excerpt) [69]
 
 ### Ownership & positioning
 - **Insider activity (Form 4, 6m):** Open-market buys 0 · sells 23 (net -250.8K sh) · grants 14 · last 2026-07-08 · other filings 6 [27]
 - **Short interest (FINRA):** Short interest (FINRA, settle 2026-06-30): 17.0M → 20.2M sh (+18.4%, rising) · 18.4% of shares out (EDGAR XBRL) · DTC 5.6d · recent: 2026-06-30 20.2M · 2026-06-15 17.0M · 2026-05-29 16.6M · 2026-05-15 14.7M [14]
 
 ### Assembly verification — filing vs panel
-- **Wall coherence — filing ≤12m vs CIQ panel (same window):** wall coherence: UNKNOWN — filing states no ≤12m figure [56]
-- **Guide verification — CIQ guide vs release:** revenue: CIQ 157.75–159.75 vs release 157.75–159.75 → cross-source VERIFIED [57]
+- **Wall coherence — filing ≤12m vs CIQ panel (same window):** wall coherence: UNKNOWN — filing states no ≤12m figure [70]
+- **Guide verification — CIQ guide vs release:** revenue: CIQ 157.75–159.75 vs release 157.75–159.75 → cross-source VERIFIED [71]
 
 ## Record & reproduce
 - **Data window:** screened as of 2026-07-06 · assembled 2026-07-27 09:41 UTC
@@ -560,14 +560,28 @@ _Source §: 8-K 0001902733-24-000171 · exhibit101creditagreementb.htm · amende
 [44] `CIQ Financials→Capital Structure Summary`
 [45] `10-Q 0001902733-26-000066`
 [46] `CIQ leverage bases + release LTM adj-EBITDA/margins`
-[47] `CIQ Financials→Income Statement (quarterly, full exported history)`
-[48] `CIQ Financials→Balance Sheet (quarterly, Q1-26)`
-[49] `CIQ Financials→Balance Sheet vs Comparable Analysis→Implied Valuation`
-[50] `EDGAR 10-K exhibit index + CIK-scoped efts (agreement-class, exhibit-bearing)`
-[51] `fenced Tier-2 extraction (verbatim, source-bound)`
-[52] `CIQ Comparable Analysis→Financial Data (name Market Capitalization Latest) · as-of 2026-07-20`
-[53] `CIQ Comparable Analysis→Implied Valuation (cash/debt bridge) · as-of 2026-07-20`
-[54] `CIQ Comparable Analysis→Implied Valuation (= Implied Equity Value, basis × Low/Median/Mean/High) · as-of 2026-07-20`
-[55] `CIQ transcript(s): nCino, Inc., Q1 2027 Earnings Call, May 27, 2026.rtf; nCino, Inc., Q4 2026 Earnings Call, Mar 31, 2026.rtf`
-[56] `10-Q maturity wall vs CIQ capital panel (same window)`
-[57] `CIQ revenue guide vs release actual/outlook`
+[47] `CIQ Estimates->Trends`
+[48] `EDGAR RevenueFromContractWithCustomerExcludingAssessedTax`
+[49] `EDGAR revenue series (16.7 / 13.5 / 10.0)`
+[50] `EDGAR OperatingIncomeLoss / revenue`
+[51] `extrapolation of the reported margin series`
+[52] `EDGAR GrossProfit / revenue`
+[53] `CIQ Estimates->Trends (EBITDA less EBIT, FY2027)`
+[54] `EDGAR companyfacts dep_amort`
+[55] `CIQ Comparable Analysis (SPS Commerce, 23.2% EBITDA margin)`
+[56] `CIQ Comparable Analysis (Q2 Holdings, pre-maturity)`
+[57] `CIQ Financials->Multiples (near-zero denominator)`
+[58] `CIQ Comparable Analysis (SPS Commerce)`
+[59] `analyst judgement, set against the realised margin pace`
+[60] `house rate of 15% a year compounded over four years`
+[61] `CIQ Financials→Income Statement (quarterly, full exported history)`
+[62] `CIQ Financials→Balance Sheet (quarterly, Q1-26)`
+[63] `CIQ Financials→Balance Sheet vs Comparable Analysis→Implied Valuation`
+[64] `EDGAR 10-K exhibit index + CIK-scoped efts (agreement-class, exhibit-bearing)`
+[65] `fenced Tier-2 extraction (verbatim, source-bound)`
+[66] `CIQ Comparable Analysis→Financial Data (name Market Capitalization Latest) · as-of 2026-07-20`
+[67] `CIQ Comparable Analysis→Implied Valuation (cash/debt bridge) · as-of 2026-07-20`
+[68] `CIQ Comparable Analysis→Implied Valuation (= Implied Equity Value, basis × Low/Median/Mean/High) · as-of 2026-07-20`
+[69] `CIQ transcript(s): nCino, Inc., Q1 2027 Earnings Call, May 27, 2026.rtf; nCino, Inc., Q4 2026 Earnings Call, Mar 31, 2026.rtf`
+[70] `10-Q maturity wall vs CIQ capital panel (same window)`
+[71] `CIQ revenue guide vs release actual/outlook`

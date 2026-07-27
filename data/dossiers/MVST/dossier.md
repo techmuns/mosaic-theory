@@ -392,50 +392,50 @@ _Per-axis methodology from the underwrite record — the reference frame each le
 
 Terminal revenue starts from the street path and is cut for what the latest quarter actually did: revenue fell about a quarter year on year, so the central case sits well below the street's own two-year figure. Everything past the street's second year is our extrapolation.
 
-| reference | value | source |
-| --- | ---: | --- |
-| street revenue, FY2026 | $444.4M | `CIQ Estimates->Trends` |
-| street revenue, FY2027 | $591.5M | `CIQ Estimates->Trends` |
-| reported revenue, FY2025 | $427.5M | `EDGAR Revenues` |
-| latest-quarter revenue decline, year on year | -25.5% | `CIQ transcript and quarterly income statement` |
-| street revenue cut over twelve months | -27% | `CIQ Estimates->Trends` |
+| reference | value |
+| --- | ---: |
+| street revenue, FY2026 | $444.4M [44] |
+| street revenue, FY2027 | $591.5M [44] |
+| reported revenue, FY2025 | $427.5M [45] |
+| latest-quarter revenue decline, year on year | -25.5% [46] |
+| street revenue cut over twelve months | -27% [44] |
 
 ### Margin · **DRAFT — not ratified by the analyst**
 
 Reported accounting basis throughout, and the depreciation assumption is vendor-sourced because this filer tags none at all in its own machine-readable filings - stated here so the basis is never mistaken for a primary figure. The gross-margin arc is real: minus twenty-eight per cent to plus thirty-one in three years. The operating margin turned positive for the first time in the latest full year and has already rolled over - the most recent quarter's adjusted operating profit is negative against a strongly positive comparison. The central case therefore takes levered auto-supplier economics rather than the street's cut-but-still-hopeful path, and the leverage read that matters is the company-adjusted one, not the headline.
 
-| reference | value | source |
-| --- | ---: | --- |
-| gross margin, FY2021 | -28.1% | `EDGAR GrossProfit / Revenues` |
-| gross margin, FY2024 - the arc's peak | 31.5% | `EDGAR GrossProfit / Revenues` |
-| gross margin, FY2025 | 28.6% | `EDGAR GrossProfit / Revenues` |
-| reported operating margin, FY2025 - first positive year | 1.6% | `EDGAR OperatingIncomeLoss / Revenues` |
-| street operating margin, FY2026 - stated | 4.5% | `CIQ Estimates->Trends (EBIT row)` |
-| street operating margin, FY2027 - stated | 11.6% | `CIQ Estimates->Trends (EBIT row)` |
-| street earnings cut over twelve months | -52% | `CIQ Estimates->Trends` |
-| leverage on company-adjusted earnings | 18.7x | `company-adjusted trailing figure, vs the 3.9x headline optic` |
-| depreciation and amortisation - vendor basis | $33.228M | `CIQ Financials->Cash Flow (no EDGAR tag exists)` |
+| reference | value |
+| --- | ---: |
+| gross margin, FY2021 | -28.1% [47] |
+| gross margin, FY2024 - the arc's peak | 31.5% [47] |
+| gross margin, FY2025 | 28.6% [47] |
+| reported operating margin, FY2025 - first positive year | 1.6% [48] |
+| street operating margin, FY2026 - stated | 4.5% [49] |
+| street operating margin, FY2027 - stated | 11.6% [49] |
+| street earnings cut over twelve months | -52% [44] |
+| leverage on company-adjusted earnings | 18.7x [50] |
+| depreciation and amortisation - vendor basis | $33.228M [51] |
 
 ### Multiple · **DRAFT — not ratified by the analyst**
 
 The exit is set at the closest economic analogue - a levered auto-parts maker - rather than at the scale leader, whose multiple belongs to a business with tens of billions of net cash and none of this balance sheet. This company's own trading history is unusable as an exit: six closes over one and a third years, with the current reading below its own trailing low, which the range read itself calls low-confidence. The peer median spans thirty-four million to two hundred and seventy-five billion of market value, so it is a number rather than a comparison.
 
-| reference | value | source |
-| --- | ---: | --- |
-| closest economic analogue, enterprise value to EBITDA | 7.9x | `CIQ Comparable Analysis (BorgWarner, 13.9% EBITDA margin, levered)` |
-| scale leader, enterprise value to EBITDA - NOT a reference for us | 14.5x | `CIQ Comparable Analysis (CATL, 23.8% margin, large net cash)` |
-| peer median, heterogeneous nine-name set | 14.5x | `CIQ Comparable Analysis (set spans $34M to $275bn; several members not meaningful)` |
-| this company's trailing median - unusable, six closes over 1.3 years | 19.3x | `CIQ Financials->Multiples` |
-| this company's current reading - below its own trailing low | 9x | `CIQ Financials->Multiples (low-confidence range read)` |
+| reference | value |
+| --- | ---: |
+| closest economic analogue, enterprise value to EBITDA | 7.9x [52] |
+| scale leader, enterprise value to EBITDA - NOT a reference for us | 14.5x [53] |
+| peer median, heterogeneous nine-name set | 14.5x [54] |
+| this company's trailing median - unusable, six closes over 1.3 years | 19.3x [55] |
+| this company's current reading - below its own trailing low | 9x [56] |
 
 ### Horizon · **DRAFT — not ratified by the analyst**
 
 Four years, matching the other records on this recipe so the three are comparable. The survival block sets breakeven three years out, so the terminal year sits one year past the point the business is assumed to fund itself.
 
-| reference | value | source |
-| --- | ---: | --- |
-| years to the terminal year | 4years | `analyst judgement` |
-| waiting charge applied over the horizon | 74.9% | `house rate of 15% a year compounded over four years` |
+| reference | value |
+| --- | ---: |
+| years to the terminal year | 4years [57] |
+| waiting charge applied over the horizon | 74.9% [58] |
 
 
 ## Financial statements (actuals + consensus estimates) — export date unverified (data ≥ 2026-05-15)
@@ -459,7 +459,7 @@ Four years, matching the other records on this recipe so the three are comparabl
 _E = consensus (Estimates→Trends 'Current'), as-of ?; (R) = Reclassified basis · FCF (levered, CIQ) = CIQ 'Levered Free Cash Flow', NOT CFO − capex_
 
 ### Quarterly — every exported quarter
-- **Quarterly financials** — [44]  <!-- ds-table -->
+- **Quarterly financials** — [59]  <!-- ds-table -->
 
 |  | Q4-19 (R) | Q1-20 | Q2-20 | Q3-20 | Q4-20 (R) | Q1-21 (R) | Q2-21 | Q3-21 | Q4-21 | Q1-22 | Q2-22 | Q3-22 | Q4-22 | Q1-23 | Q2-23 (R) | Q3-23 (R) | Q4-23 (R) | Q1-24 | Q2-24 | Q3-24 (R) | Q4-24 (R) | Q1-25 (R) | Q2-25 | Q3-25 | Q4-25 | Q1-26 |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
@@ -473,8 +473,8 @@ _E = consensus (Estimates→Trends 'Current'), as-of ?; (R) = Reclassified basis
 _QoQ/YoY same-basis only; (R) = Reclassified_
 
 ### Balance-sheet posture
-- **Posture:** as of Q1-26 ($M): cash & ST inv 126; total debt 326; net debt 200; equity 466; net working capital -18; net-debt/EBITDA → see the Leverage & survival block (not recomputed) [45]
-- **Coherence — BS vs implied-valuation bridge:** cash BS $126M / bridge $126M; debt BS $326M / bridge $326M — reconcile with the implied-valuation bridge. [46]
+- **Posture:** as of Q1-26 ($M): cash & ST inv 126; total debt 326; net debt 200; equity 466; net working capital -18; net-debt/EBITDA → see the Leverage & survival block (not recomputed) [60]
+- **Coherence — BS vs implied-valuation bridge:** cash BS $126M / bridge $126M; debt BS $326M / bridge $326M — reconcile with the implied-valuation bridge. [61]
 
 
 ### Capital structure & debt terms — instruments · pointers · covenants
@@ -491,8 +491,8 @@ _QoQ/YoY same-basis only; (R) = Reclassified_
 | Operating Lease Liabilities | Capital Lease | $17.3M | 5.000% | NA | undated | Y | N | USD |
 | Short-term Loan Agreements and Bank Facilities With Chinese Banks | Term Loans | $49.5M | 2.400% - 4.850% | NA | 2027-03-31 | Y | N | USD |
 
-- **8-Ks at instrument maturities:** 8-K at maturity 2026-05-28: filed 2026-05-28 [0000947871-26-000585] 5.02 Departure/Election of Directors or Certain Officers, 8.01 Other Events, 9.01 Financial Statements and Exhibits — read for resolution [47]
-- **Covenant / contract pointers (CIK-verified execution filings)** — [48]  <!-- ds-table -->
+- **8-Ks at instrument maturities:** 8-K at maturity 2026-05-28: filed 2026-05-28 [0000947871-26-000585] 5.02 Departure/Election of Directors or Certain Officers, 8.01 Other Events, 9.01 Financial Statements and Exhibits — read for resolution [62]
+- **Covenant / contract pointers (CIK-verified execution filings)** — [63]  <!-- ds-table -->
 
 |  | Filing | Date | Accession / exhibit (or note) |
 |---|---|---|---|
@@ -503,7 +503,7 @@ _QoQ/YoY same-basis only; (R) = Reclassified_
 | Notes Payable | — | — | no contract-level filing expected (aggregate line item) |
 | Operating Lease Liabilities | — | — | no contract-level filing expected (aggregate line item) |
 
-- **Covenant terms — Convertible Loan (governing agreement)** — [49]  <!-- ds-table -->
+- **Covenant terms — Convertible Loan (governing agreement)** — [64]  <!-- ds-table -->
 
 |  | Governing value (lead · clause ≤200c) | Source § |
 |---|---|---|
@@ -517,7 +517,7 @@ _QoQ/YoY same-basis only; (R) = Reclassified_
 
 _Source §: 8-K 0001760689-24-000021 · wu_microvast-loanandsecuri.htm · amended by 0000947871-25-000313_
 
-- **Covenant terms — Loan Facilities Agreement (governing agreement)** — [49]  <!-- ds-table -->
+- **Covenant terms — Loan Facilities Agreement (governing agreement)** — [64]  <!-- ds-table -->
 
 |  | Governing value (lead · clause ≤200c) | Source § |
 |---|---|---|
@@ -532,7 +532,7 @@ _Source §: 8-K 0001760689-24-000021 · wu_microvast-loanandsecuri.htm · amende
 
 _Source §: 8-K 0001760689-22-000094 · exhibit101-syndicatedloana.htm_
 
-- **Covenant terms — material contracts (10-K exhibit index) (governing agreement)** — [49]  <!-- ds-table -->
+- **Covenant terms — material contracts (10-K exhibit index) (governing agreement)** — [64]  <!-- ds-table -->
 
 |  | Governing value (lead · clause ≤200c) | Source § |
 |---|---|---|
@@ -558,9 +558,9 @@ _Source §: latest 10-K 0001628280-26-018264 · mvst20251231-ex1013.htm_
 ### Implied equity at peer multiples
 > **Comparability gate:** comparability: HETEROGENEOUS (see Peer comps gate)
 > _Reference only — the human judges earned vs residual (not a machine upside); the full Low/Mean/High and all bases are in the JSON._
-- **Name market cap ($M) — the ADJACENT fact to compare against:** 423.1 [50]
-- **Bridge (TEV → equity):** TEV→equity bridge: + cash $126.10M, − total debt $326.00M [51]
-- **Implied equity at peer-median ($M, CIQ)** — [52]  <!-- ds-table -->
+- **Name market cap ($M) — the ADJACENT fact to compare against:** 423.1 [65]
+- **Bridge (TEV → equity):** TEV→equity bridge: + cash $126.10M, − total debt $326.00M [66]
+- **Implied equity at peer-median ($M, CIQ)** — [67]  <!-- ds-table -->
 
 |  | Implied equity (median) |
 |---|---:|
@@ -570,15 +570,15 @@ _Source §: latest 10-K 0001628280-26-018264 · mvst20251231-ex1013.htm_
 
 
 ### Management commentary
-- **Earnings call (transcript pointer — read the file):** 2 earnings-call transcript(s) on file — read in full for management posture: Microvast Holdings, Inc., Q1 2026 Earnings Call, May 11, 2026.rtf; Microvast Holdings, Inc., Q4 2025 Earnings Call, Mar 16, 2026.rtf (pointer only; the synthesis cites them, the machine does not curate an excerpt) [53]
+- **Earnings call (transcript pointer — read the file):** 2 earnings-call transcript(s) on file — read in full for management posture: Microvast Holdings, Inc., Q1 2026 Earnings Call, May 11, 2026.rtf; Microvast Holdings, Inc., Q4 2025 Earnings Call, Mar 16, 2026.rtf (pointer only; the synthesis cites them, the machine does not curate an excerpt) [68]
 
 ### Ownership & positioning
-- **Insider activity (Form 4, 6m):** Open-market buys 0 · sells 7 (net -121.0K sh) · grants 20 · last 2026-06-12 · other filings 1 [54]
-- **Short interest (FINRA):** Short interest (FINRA, settle 2026-06-15): 21.4M → 26.3M sh (+22.9%, rising) · 7.9% of shares out (EDGAR XBRL) · DTC 5.8d · recent: 2026-06-15 26.3M · 2026-05-29 21.4M · 2026-05-15 21.6M · 2026-04-30 21.2M [55]
+- **Insider activity (Form 4, 6m):** Open-market buys 0 · sells 7 (net -121.0K sh) · grants 20 · last 2026-06-12 · other filings 1 [69]
+- **Short interest (FINRA):** Short interest (FINRA, settle 2026-06-15): 21.4M → 26.3M sh (+22.9%, rising) · 7.9% of shares out (EDGAR XBRL) · DTC 5.8d · recent: 2026-06-15 26.3M · 2026-05-29 21.4M · 2026-05-15 21.6M · 2026-04-30 21.2M [70]
 
 ### Assembly verification — filing vs panel
-- **Wall coherence — filing ≤12m vs CIQ panel (same window):** wall coherence — filing cross-validates panel: panel same-window $109.6M (CIQ panel, principal basis) vs filing $111.2M (10-Q, repayment basis) — 1.4% < 5% tol → AGREES. Window [balance, +12m) EXCLUSIVE (filing convention). Convertible: $25.0M panel-principal vs $26.7M filing-repayment (+$1.7M accrued PIK). [56]
-- **Guide verification — CIQ guide vs release:** revenue: CIQ FY guide 427.516 ≈ prior-FY actual 427.5 (within source-rounding) → VENDOR-ECHO flag (stale carry-forward); release outlook QUALITATIVE-only — render the qualitative growth line [57]
+- **Wall coherence — filing ≤12m vs CIQ panel (same window):** wall coherence — filing cross-validates panel: panel same-window $109.6M (CIQ panel, principal basis) vs filing $111.2M (10-Q, repayment basis) — 1.4% < 5% tol → AGREES. Window [balance, +12m) EXCLUSIVE (filing convention). Convertible: $25.0M panel-principal vs $26.7M filing-repayment (+$1.7M accrued PIK). [71]
+- **Guide verification — CIQ guide vs release:** revenue: CIQ FY guide 427.516 ≈ prior-FY actual 427.5 (within source-rounding) → VENDOR-ECHO flag (stale carry-forward); release outlook QUALITATIVE-only — render the qualitative growth line [72]
 
 ## Record & reproduce
 - **Data window:** screened as of 2026-07-06 · assembled 2026-07-10 07:06 UTC
@@ -634,17 +634,32 @@ _Source §: latest 10-K 0001628280-26-018264 · mvst20251231-ex1013.htm_
 [41] `CIQ Comparable Analysis→Credit Health Panel · as-of 2026-06-24`
 [42] `CIQ Financials→Capital Structure Details (A 2025 filed Mar-16-2026)`
 [43] `CIQ Financials→Capital Structure Summary`
-[44] `CIQ Financials→Income Statement (quarterly, full exported history)`
-[45] `CIQ Financials→Balance Sheet (quarterly, Q1-26)`
-[46] `CIQ Financials→Balance Sheet vs Comparable Analysis→Implied Valuation`
-[47] `EDGAR 8-K submissions (±10d of instrument maturities)`
-[48] `EDGAR 10-K exhibit index + CIK-scoped efts (agreement-class, exhibit-bearing)`
-[49] `fenced Tier-2 extraction (verbatim, source-bound)`
-[50] `CIQ Comparable Analysis→Financial Data (name Market Capitalization Latest) · as-of 2026-06-24`
-[51] `CIQ Comparable Analysis→Implied Valuation (cash/debt bridge) · as-of 2026-06-24`
-[52] `CIQ Comparable Analysis→Implied Valuation (= Implied Equity Value, basis × Low/Median/Mean/High) · as-of 2026-06-24`
-[53] `CIQ transcript(s): Microvast Holdings, Inc., Q1 2026 Earnings Call, May 11, 2026.rtf; Microvast Holdings, Inc., Q4 2025 Earnings Call, Mar 16, 2026.rtf`
-[54] `EDGAR Form 4 (latest 0000947871-26-000620; 18 in 6m)`
-[55] `FINRA consolidated short interest (settle 2026-06-15); DTC = 26,323,600 short ÷ 4,571,432 screen 90d ADV`
-[56] `10-Q maturity wall vs CIQ capital panel (same window)`
-[57] `CIQ revenue guide vs release actual/outlook`
+[44] `CIQ Estimates->Trends`
+[45] `EDGAR Revenues`
+[46] `CIQ transcript and quarterly income statement`
+[47] `EDGAR GrossProfit / Revenues`
+[48] `EDGAR OperatingIncomeLoss / Revenues`
+[49] `CIQ Estimates->Trends (EBIT row)`
+[50] `company-adjusted trailing figure, vs the 3.9x headline optic`
+[51] `CIQ Financials->Cash Flow (no EDGAR tag exists)`
+[52] `CIQ Comparable Analysis (BorgWarner, 13.9% EBITDA margin, levered)`
+[53] `CIQ Comparable Analysis (CATL, 23.8% margin, large net cash)`
+[54] `CIQ Comparable Analysis (set spans $34M to $275bn; several members not meaningful)`
+[55] `CIQ Financials->Multiples`
+[56] `CIQ Financials->Multiples (low-confidence range read)`
+[57] `analyst judgement`
+[58] `house rate of 15% a year compounded over four years`
+[59] `CIQ Financials→Income Statement (quarterly, full exported history)`
+[60] `CIQ Financials→Balance Sheet (quarterly, Q1-26)`
+[61] `CIQ Financials→Balance Sheet vs Comparable Analysis→Implied Valuation`
+[62] `EDGAR 8-K submissions (±10d of instrument maturities)`
+[63] `EDGAR 10-K exhibit index + CIK-scoped efts (agreement-class, exhibit-bearing)`
+[64] `fenced Tier-2 extraction (verbatim, source-bound)`
+[65] `CIQ Comparable Analysis→Financial Data (name Market Capitalization Latest) · as-of 2026-06-24`
+[66] `CIQ Comparable Analysis→Implied Valuation (cash/debt bridge) · as-of 2026-06-24`
+[67] `CIQ Comparable Analysis→Implied Valuation (= Implied Equity Value, basis × Low/Median/Mean/High) · as-of 2026-06-24`
+[68] `CIQ transcript(s): Microvast Holdings, Inc., Q1 2026 Earnings Call, May 11, 2026.rtf; Microvast Holdings, Inc., Q4 2025 Earnings Call, Mar 16, 2026.rtf`
+[69] `EDGAR Form 4 (latest 0000947871-26-000620; 18 in 6m)`
+[70] `FINRA consolidated short interest (settle 2026-06-15); DTC = 26,323,600 short ÷ 4,571,432 screen 90d ADV`
+[71] `10-Q maturity wall vs CIQ capital panel (same window)`
+[72] `CIQ revenue guide vs release actual/outlook`
