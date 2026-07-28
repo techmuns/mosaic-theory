@@ -4328,6 +4328,25 @@ renumber.** No other unverifiable claim found in this block.
     learns the close-aware chip: `disposition: WATCH — prior BUY closed 07-24 (see Decision
     log)` · `covenant basis: not rendered — see record` (never UNKNOWN). Twin-parity pins on the
     rule, not on any one chip.
+    **NAMED INSTANCE — THE DISAPPEARING CIQ P/E CLAUSE (operator found it on CNXC's re-assembly,
+    2026-07-28; MEASURED, not reasoned).** Item 20 made `pe_ltm_current` REFUSE rather than return
+    a stale figure, so the caveat banner's `CIQ P/LTM EPS <n>x` clause simply DROPS. On CNXC a
+    replacement caveat appears — *"LTM GAAP diluted EPS is NEGATIVE (−21.35); do not read it as a
+    GAAP trailing multiple"* — which reads like coupling but **is not**: `_eps_caveat_flags` (d)
+    keys on `ltm_gaap_eps < 0`, entirely independently of whether the CIQ P/E was refused. Driven
+    across the truth table (written as lines, NOT a markdown table — an INDENTED table inside a
+    list item renders as literal pipes on GitHub; verified against the API, see below):
+    · CIQ **refused** + EDGAR 6.0x + LTM GAAP EPS **−21.35** (CNXC today) → **fires**, because EPS<0
+    · CIQ **refused** + EDGAR 6.0x + LTM GAAP EPS **+1.20** → **NO CAVEAT**
+    · CIQ **refused** + EDGAR 6.0x + LTM GAAP EPS **unavailable** → **NO CAVEAT**
+    · CIQ **8.8x** + EDGAR 6.0x + LTM GAAP EPS **−21.35** → fires, naming both
+    So a name whose P/LTM EPS is NM for ANY OTHER reason — a data gap, a zero denominator — loses
+    the clause with nothing replacing it: silent omission, this rule's exact prohibition.
+    **LATENT, NOT LIVE — verified across all 12 bundles**: every name that refuses (CNXC, FUBO,
+    MVST, SMPL, WERN) also has negative LTM GAAP EPS, so (d) covers all five TODAY. The coupling
+    is coincidence on every one of them. FIX: attribute the absence to its cause — the refusal
+    itself must render, not merely vanish. RED: with CIQ P/LTM EPS refused and GAAP EPS ≥ 0, the
+    render says WHY there is no CIQ trailing multiple.
 23. **~~ONE CONSENSUS VINTAGE PER BUILD~~ — CLOSED 2026-07-28 AS NOT-A-DEFECT (operator).** The
     extractor already uses exactly ONE vintage: `1,351.8` is Trends "latest". The `1,334` is the
     ANALYST'S FROZEN ENTRY-VINTAGE REFERENCE, source-stamped "committed dossier financial_summary
@@ -4548,6 +4567,50 @@ scheduled; 24 needs an operator policy line before any build encodes it.
     guards, confirm it reds, restore. **RUN IT AGAINST THE GUARDS ALREADY SHIPPED BEFORE ADDING
     MORE** — a guard that cannot fail is worse than a missing one, because it is counted.
     RED: for every guard in scope, a recorded mutation that reddens it.
+    **SECOND CLASS, ADDED 2026-07-28 (operator) — CORPUS DECAY, and it is distinct from the vacuous
+    assertion.** A vacuous assertion is born hollow; **a corpus-driven test crosses from meaningful
+    to hollow LATER, silently, when its corpus changes.** Found on CNXC's re-assembly:
+    `test_the_material_default_round_trips_every_pre_238_dossier` required every committed dossier
+    to be PRE-field. CNXC's re-assembly reddened it — but the other direction is the dangerous one:
+    **once the fleet is fully re-assembled there is no pre-field dossier left, and the test would
+    PASS ON AN EMPTY CORPUS**, proving nothing while green. **The fleet re-assembles name by name
+    from here**, so every corpus-driven test is walking toward its own decay date.
+    SO 31 HAS TWO PARTS: (a) mutate each audit-derived guard; (b) **ENUMERATE the corpus-driven
+    tests and state, per test, what happens when its corpus EMPTIES or INVERTS** — the answer must
+    be "reds", never "passes vacuously". The fix pattern is the TEST-LAYER rule already: a
+    value-level pin moves to a CONSTRUCTED fixture (as that test now does), and a
+    fleet-invariant asserts a floor on what it saw.
+    **31 STAYS AHEAD OF THE BATCH** (operator) — the batch adds guards, and guards must be
+    mutation-checked as they land rather than retro-fitted.
+    **31(b) MEASURED 2026-07-28 — THIRTEEN TESTS PASS ON AN EMPTY CORPUS. Not a regex estimate: the
+    corpora were EMPTIED in a throwaway worktree (never `git stash`) and the suite re-run.** A
+    regex first said 14; the measurement disagreed in both directions, which is why the regex is
+    not the finding. Baseline in a fresh worktree is **1137 passed / 13 skipped** (vs 1149/1 in a
+    working one) because `data/manual/ciq` is git-ignored and PER-WORKTREE — so four CIQ-driven
+    SKIPs in the run are an experiment artifact, NOT decay, and are excluded from the count below.
+    **DOSSIER CORPUS emptied → 11 red (honest), 8 still green:**
+    `test_committed_own_history_agrees_with_its_sibling_range_position` ·
+    `test_committed_peer_rosters_have_no_midclause_clip` ·
+    `test_committed_peer_rosters_split_to_their_declared_count` ·
+    `test_download_menu_offers_three_scopes_and_serves_the_committed_md` ·
+    `test_13_fields_reach_both_twins_and_the_mirrors_e2e` ·
+    `test_card_verdict_keys_read_by_js_are_emitted_by_build` · `test_ref_value_py_js_parity` ·
+    `test_committed_dossiers_carry_no_ratio_as_a_currency_amount`.
+    **SCENARIO CORPUS emptied → 5 still green:**
+    `test_every_committed_scenario_record_is_register_clean` ·
+    `test_new_fields_are_additive_so_existing_records_still_validate` ·
+    `test_every_committed_record_is_class_compliant_and_seal_clean` ·
+    `test_committed_records_that_opened_a_position_carry_their_entry` ·
+    `test_every_committed_record_result_matches_its_own_facts`.
+    **MOST ARE NAMED `test_every_committed_…`** — a name promising fleet coverage its assertion
+    does not enforce. That is the same sentence as `mypy --strict clean` and the 26a slice: the
+    wording is broader than the scope.
+    **SHIPPED — the cheap half:** `test_the_committed_corpora_are_not_empty` (mutation-verified
+    against a real-but-empty directory, so the FLOOR fires rather than a `FileNotFoundError`) turns
+    the EMPTYING mode — which all thirteen share — into ONE loud red.
+    **STILL OPEN — the other mode:** a FULL corpus where a test's own FILTER matches nothing. That
+    is how the pre-#238 fixture decayed on CNXC, and it needs a per-test floor plus a per-test
+    judgement. 31(a) — mutating each audit-derived guard — is also still open.
 32. **`midcycle` REACHES ONE TWIN ONLY — LATENT #227, queued 2026-07-28 (operator: "needs a
     number, or the diagnosis sits latent until something populates it").** `midcycle` is named in
     `render.py` and ABSENT from `dossier.js`; it is `null` on all 11 committed dossiers (absent on
@@ -4560,6 +4623,11 @@ scheduled; 24 needs an operator policy line before any build encodes it.
     and `extraction_version` all sit outside the fleet invariant — 26a had to ship its own pin
     because of it. Measured 2026-07-28: widening reds on exactly ONE field, `midcycle`, which is
     why (a) gates (b).
+    **THE ARGUMENT FOR (b)'s PRIORITY, in one line (operator 2026-07-28): `extraction_version` —
+    the field whose ENTIRE PURPOSE is telling a reader whether two dossiers are comparable — is
+    itself unchecked for consistency between the two renderings.** Not live, because 26a shipped a
+    dedicated pin for it; but a fleet invariant that excludes the comparability field is the
+    cleanest possible case that the exclusion is arbitrary rather than principled.
 24. **ANALYST-DECISION BUCKET — BOTH POLICY LINES RETRACTED BY THE OPERATOR 2026-07-28; DO NOT
     IMPLEMENT AS WRITTEN. Item stays BLOCKED pending archetype work.** (queued 2026-07-28 — DECISIONS, not builds; the machine proposes
     neither).** (a) SHARES BASIS: weighted-average diluted (recorded 93.678M) vs current shares
@@ -5309,6 +5377,18 @@ STATE-topology slot: prefix the audit-derived items (`A17`…`A27`) or relocate 
 behind its own heading, then re-sequence; either removes the ambiguity permanently. **Recorded
 rather than fixed here — re-sequencing a 4,000-line file inside a docs PR under review is the
 scope creep this repo keeps refusing, and the work is already queued.**
+**ADDED TO THAT SLOT 2026-07-28 (2) — INDENTED TABLES DO NOT RENDER, and it is the SAME shape as
+the orphan-`**` class: a markdown defect invisible to the author and only visible to the reader.**
+A markdown table INDENTED inside a list item is NOT parsed as a table by GitHub — it renders as a
+wall of literal `|` pipes inside the paragraph. **Verified against GitHub's own markdown API, not
+inferred from CommonMark** (the spec would also reject an unindented table interrupting a
+paragraph, and GitHub renders THAT one fine — so the spec is not the authority here; the renderer
+is). #248 introduced one, in queue item 22's caveat truth table, and it was rewritten as `·` lines.
+A parity scan finds **TWO MORE, PRE-EXISTING on main** (the `| field | register |` table and the
+`| check | honest worst | VITL | … |` table, both indent=4). Left standing — not #248's — but they
+belong to the topology PR alongside the two orphan `**`. **The check ships with it** and covers both
+classes: odd `**` count, and any delimiter row at indent > 0.
+
 **ADDED TO THAT SLOT 2026-07-28 — THE ORPHAN-`**` CLASS, AND ITS MACHINE CHECK.** #244's first cut
 left a dangling `(queued …).**` fragment inside item 26: an unbalanced bold that renders the rest
 of the item as literal asterisks, the same class that broke §7's THEME #2 and needed its own
