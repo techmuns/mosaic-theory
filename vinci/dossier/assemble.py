@@ -142,6 +142,43 @@ def _write(dossier: Dossier, llm_log: str, out_root: Path) -> Path:
     return folder
 
 
+
+def _materiality_check(bundle: Any, mech: Any, synthesis: Any, *, ticker: str) -> None:
+    """Run the materiality guard on the assembled record (P1). Skips silently ONLY when a
+    denominator or the sheet is genuinely unavailable — never when the check merely found nothing,
+    which is the distinction between "clean" and "not looked at"."""
+    from vinci.dossier import ciq_sheets as _cs
+    from vinci.dossier.materiality import (
+        MaterialityUnavailableError,
+        check_materiality,
+    )
+
+    try:
+        inc = bundle.sheet("financials", "Income Statement", freq="annual")
+    except Exception:
+        return                                   # no sheet — its own fail-loud lives upstream
+    hdr = _cs._period_header(inc)
+    if hdr is None:
+        return
+    periods = _cs._fin_periods(inc[hdr])
+    if not periods:
+        return
+    ltm = [pp for pp in periods if pp[2]]
+    col, label = (ltm[0][0], ltm[0][1]) if ltm else (periods[-1][0], periods[-1][1])
+    si = getattr(mech, "stock_info", None)
+    mcap = getattr(getattr(si, "market_cap", None), "value", None) if si else None
+    fs = getattr(mech, "financial_summary", None)
+    ann = getattr(getattr(fs, "annual", None), "value", None) if fs else None
+    labels = {r.label for r in getattr(ann, "rows", [])} if ann is not None else set()
+    try:
+        check_materiality(
+            inc, col, market_cap=mcap, revenue=None, summary_labels=labels,
+            synthesis_text=json.dumps(synthesis.model_dump(mode="json")) if synthesis else "",
+            ticker=ticker, period=label,
+        )
+    except MaterialityUnavailableError:
+        return                                   # no unusual-items block on this sheet
+
 def assemble_one(
     fin: Finalist,
     *,
@@ -231,6 +268,13 @@ def assemble_one(
         if term_rows is not None and mech.capital_structure is not None:
             cs_post = mech.capital_structure.model_copy(update={"covenant_term_rows": term_rows})
             mech = mech.model_copy(update={"capital_structure": cs_post})
+        # (P1, IC audit 2026-07-28) MATERIALITY GUARD — a one-off too big to go unmentioned may
+        # not reach the reader by no route at all. Runs AFTER synthesis because "mentioned in the
+        # synthesis" is one of the two satisfying routes (the other is the financial summary, where
+        # material unusual items now surface as data). Fail-loud: SMPL's -$391.9M LTM writedown was
+        # 43% of market cap, absent from every tier, while the bear case argued from a figure 5.3x
+        # smaller. A warning here would have been read past on exactly the day it mattered.
+        _materiality_check(bundle, mech, synthesis, ticker=ticker)
         # (P2) contradiction lint — flag any synthesis pending-claim about a NOW-present block (the
         # durable guard the FIX-0 incident earns); QA-channel.
         if synthesis is not None:
