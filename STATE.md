@@ -4197,7 +4197,29 @@ renumber.** No other unverifiable claim found in this block.
     "no older than the newest panel", is the flat rule the operator corrected); (v) disposition
     rendering the closed BUY per the visible-absence rule. **If any of the five still fails, the
     guard did not work — do not ship the next item until it does.**
-16c. **CNXC — PRE-UNDERWRITE RE-ASSEMBLY REQUIRED (operator gate 2026-07-28).** CNXC MAY NOT be
+16c. ~~**CNXC — PRE-UNDERWRITE RE-ASSEMBLY REQUIRED**~~ — **CLOSED 2026-07-28, GATE LIFTED. The
+    re-assembly ran on 26a and BOTH acceptance conditions hold, verified on both twins.**
+    **(1) THE IMPAIRMENT REACHES THE BRIEF.** `Impairment of Goodwill ($M) −1,523` renders in the
+    BRIEF's Financial-snapshot table — **directly beneath `EPS (GAAP, dil.) −21.35`**, so the
+    reader meets the cause next to the effect — carrying `material=true`. It was in NO tier before:
+    the string `1,523` appeared nowhere in the whole document. Six unusual-items rows surfaced in
+    all; **only the goodwill impairment was promoted to the brief**, the other five staying in the
+    appendix — `BRIEF_CORE_ROWS ∪ material` behaving exactly as specified.
+    **(2) THE STALE P/E IS GONE — and the precise answer differs from the shorthand.** `8.8x`
+    appears NOWHERE in the re-assembled document. But `pe_ltm_current` returns **`None`**, not the
+    string `NM`, so the caveat banner OMITS its CIQ clause rather than printing NM there; the sites
+    that DISPLAY a P/E all say NM (`P/LTM EPS NM (no meaningful trailing P/E at this close)` in
+    own-history, `P/E NM vs peer median 9.05` cross-sectionally, `NM` in the peer table). Worth
+    stating exactly: "reads NM" is true of every display site, and the banner's behaviour is
+    OMISSION — a None has nothing to caveat. A new caveat also fires: *"EDGAR P/E 6.0x … LTM GAAP
+    diluted EPS is NEGATIVE (−21.35); do not read it as a GAAP trailing multiple."*
+    **THE GENERALISATION TEST PASSED — this is the headline.** Both fixes were built against SMPL's
+    bundle and tested on it. CNXC is a different defect shape: goodwill impairment not asset
+    writedown, 102% of market cap not 43%, and a 7-line unusual-items block. **The thresholds
+    discriminated with no tuning** — pre-flight on the source workbook shows the guard firing on
+    exactly ONE line (the impairment, 102% of mcap / 16% of revenue) while correctly passing over
+    `Restructuring Charges` (−60.2, 4%) and `Merger & Related Restruct.` (−48.0, 3%).
+    THE ORIGINAL GATE, for the record: CNXC MAY NOT be
     underwritten off the current render: its dossier omits a **$1,523.3M Q4-FY25 goodwill
     impairment, 103% of market cap**, from both the financial summary and the synthesis. No ledger
     row, no scenario record, no verdict today — so nothing is unsafe YET; the gate exists because
@@ -4207,7 +4229,19 @@ renumber.** No other unverifiable claim found in this block.
     **BLOCKED-BY ITEM 26 (operator 2026-07-28) — DO NOT READ "as soon as convenient" AS FREE.**
     Merging #238 changed NO committed dossier; the two extraction vintages only materialise on the
     NEXT assembly, so the extraction stamp must exist BEFORE anything regenerates — CNXC's
-    re-assembly included. Item 26 is what makes "convenient" safe.
+    re-assembly included. Item 26 is what makes "convenient" safe. *(Satisfied: 26a shipped first,
+    and CNXC is now the FLEET'S ONLY STAMPED DOSSIER — `2026-07-28.1` against ten reading
+    `unstamped`. That asymmetry is the stamp doing its job, not a defect: the ten are a different,
+    older vintage and now say so.)*
+    **A TEST MOVED WITH IT, and the reason is worth keeping.**
+    `test_the_material_default_round_trips_every_pre_238_dossier` drove its claim off the committed
+    fleet, requiring EVERY dossier to be pre-field; CNXC's re-assembly reddened it — correctly, but
+    for a reason unrelated to the claim. It decays the other way too: once the fleet is fully
+    re-assembled there would be NO pre-field dossier left and the fleet-driven form would pass on
+    an EMPTY corpus, proving nothing while staying green. Per the TEST-LAYER rule the pre-field
+    JSON is now CONSTRUCTED (strip the key from a live record), so it cannot rot with the
+    re-assembly schedule; it also asserts the key was actually there to strip, and that CNXC still
+    marks its impairment. Mutation-verified (flip `FinRow.material`'s default → red).
 17. **UNUSUAL-ITEMS SURFACING GUARD** (renamed from "materiality guard" 2026-07-28 by the
     operator — the name over-claimed: as scoped it catches ONE-OFFS only, and will NOT catch
     material change in structural lines, balance-sheet items or cash-flow items. SMPL's capex ran
