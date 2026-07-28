@@ -85,7 +85,14 @@ Five record-only PRs is **the review cadence, not a requirement**. Three rules:
 
 ## Conventions (light — expand as needed)
 
-- **Quality gate:** ruff + `mypy --strict` clean before commit.
+- **Quality gate:** ruff + `mypy --strict` clean before commit. **State its SCOPE when you report
+  it** *(2026-07-28)*: strict comes from `pyproject.toml` and the gate runs over **`vinci` only —
+  111 source files; `tests/` is excluded and carries 308 strict errors.** Written as
+  `mypy --strict clean (vinci, 111 files; tests/ excluded, 308 known errors)`. Unqualified, the
+  line reads as *the codebase type-checks* and means *production type-checks* — the
+  assertion-integrity class applied to our own gate, and it matters here because **the tests are
+  the safety layer**: every guard in the audit remediation is a test. Whether to clear `tests/` is
+  queue item 30, deliberately unscheduled.
 - **Persistence:** SQLite store; committed analytical state as JSONL (diff-able), never binary `.db`.
 - **Secrets / data boundary:** see CLAUDE.md (Security). Not duplicated here.
 - **Commits:** focused, single-purpose, honest messages; push to origin when done.

@@ -4356,8 +4356,29 @@ scheduled; 24 needs an operator policy line before any build encodes it.
     "Maturity","Sec","Conv","Cur"]`, identically named with identical contents in `render.py` and
     `dossier.js`. Latent today; if those headers ever drift, the md and web dossiers show DIFFERENT
     capital-structure tables with nothing flagging it.
-26. **EXTRACTION-VERSION STAMP ON EVERY DOSSIER — MECHANISM VERIFIED AND RE-SPEC'D 2026-07-28
-    BEFORE BUILDING (the standing rule, applied to the operator's own spec).**
+26. **SPLIT INTO 26a / 26b BY THE OPERATOR 2026-07-28 — "the freeze doesn't need the hard half".**
+    The spec was corrected twice (both times correctly) with the pipeline frozen throughout, which
+    is the signal that the freeze was paying for the item's difficulty rather than for the
+    invariant. THE INVARIANT BEHIND THE FREEZE IS: *a reader can tell whether two dossiers are
+    comparable.* **A declared version string satisfies that the day it ships**; the drift test only
+    stops the string going stale later. So 26a unfreezes and 26b prevents rot.
+    **SEPARABILITY — CHECKED, NOT ASSUMED (the operator asked to be told if they are not
+    separable).** THEY ARE. 26a is a declared constant + one record field + its rendering, and
+    needs NO module set — the question that made 26 hard belongs entirely to 26b. 26b adds a TEST
+    and no field, so taking it later causes no churn in the record shape 26a ships. The residual
+    risk of running on 26a alone is that someone changes extraction and forgets to bump the
+    version — **which is exactly today's state, so it is not a regression**; it stops being a TOTAL
+    freeze, which is the whole point.
+26a. **DECLARED EXTRACTION VERSION, RENDERED — SHIPS NEXT, AND UNFREEZES THE PIPELINE.**
+    A declared version constant, carried on the dossier record, **rendered wherever the dossier
+    states its assembly date** — NOT in the appendix and NOT as a machine-only field (operator
+    2026-07-28: a stamp nobody reads cannot stop anyone comparing two dossiers of different
+    vintages, which is 17b's failure exactly — the record complete, the harm intact).
+    **RED:** two dossiers built under different extraction versions are distinguishable BY THE
+    STAMP ALONE. Note the currently-committed pre-#238 dossiers carry NO stamp, and absent-stamp
+    reads honestly as "vintage unknown, pre-stamp" — itself distinguishable from any stamped one.
+    **WHY DECLARED AND NOT DERIVED — THE MEASUREMENT THAT KILLED DERIVATION.** Two derived forms
+    were specified and both were measured before building, per the standing rule.
     **THE PROPOSED HASH WAS WRONG IN BOTH DIRECTIONS.** A content hash over the EMITTED row-label
     set was measured pre-#238 (`2facc5e`) vs post: **FALSE NEGATIVE** — FUBO hashes `6d170d2fe3`
     on BOTH sides, because it carries no unusual items and its output is byte-identical across the
@@ -4371,27 +4392,13 @@ scheduled; 24 needs an operator policy line before any build encodes it.
     and it is NAME-INDEPENDENT, so every dossier of one vintage shares it. Not a git SHA, for the
     operator's reason: a SHA moves on unrelated commits and would mark the fleet perpetually
     diverged.
-    **THE THIRD CASE — SEMANTIC CHANGE AT UNCHANGED SHAPE (operator 2026-07-28; DECIDED, one
-    line).** A schema hash catches an added row, not item 20's change — `range_position` and
-    `pe_ltm_current` now return `NM` where they returned a stale figure on three names, same
-    labels, same fields, and 16.0x vs `NM` matters to a reader more than an added row does.
-    **DECISION: build the operator's option 3 — a DECLARED extraction version in the stamp, plus a
-    drift test that hashes the extraction module SOURCES and fails when that hash moved while the
-    declared version did not.** Catches semantic change; no false positive at read time; the cost
-    is a red CI on refactor, which is the point — it forces a conscious "did behaviour change?"
-    call inside the PR instead of leaving it to a reader comparing two dossiers. (Schema-hash-only
-    was offered as acceptable and additive-later; taking the stronger form now, since the
-    difference is one constant and one test.) The module SET is the one thing option 3 needs that
-    is not yet verified — it is enumerated and shown at build, per the standing rule, and reported
-    if it does not come out clean.
-    **PRIORITY — THE FREEZE IS TOTAL, NOT TWO NAMES (operator 2026-07-28).** Nothing can be
-    re-assembled until 26 lands, and that includes ANY NEW UNDERWRITE, since a new name needs a
-    dossier built on the post-#238 extraction which is unstamped. **26 stands between the fund and
-    doing any underwriting at all** — it is not a hygiene item behind CNXC and SMPL.
-    **THE STAMP MUST BE READER-VISIBLE (operator 2026-07-28).** It renders wherever the dossier
-    states its assembly date — NOT in the appendix and NOT as a machine-only field. A stamp nobody
-    reads cannot stop anyone comparing two dossiers of different vintages, which is 17b's failure
-    exactly: the record complete, the harm intact.
+    **BOTH DERIVED FORMS ARE SUPERSEDED BY THE DECLARED VERSION** (operator's option 3, 2026-07-28)
+    — the measurements above are retained because they are WHY derivation was abandoned, not
+    because either form ships.
+    **PRIORITY — THE FREEZE WAS TOTAL, NOT TWO NAMES (operator 2026-07-28), AND 26a IS WHAT LIFTS
+    IT.** Nothing could be re-assembled, and that included ANY NEW UNDERWRITE, since a new name
+    needs a dossier built on the post-#238 extraction which is unstamped. **26 stood between the
+    fund and doing any underwriting at all** — never a hygiene item behind CNXC and SMPL.
     **ORIGIN (queued 2026-07-28 from the #238 blast-radius diagnosis).** Every committed dossier
     carries the extraction version that produced it, because
     after #238 the fleet holds two vintages with nothing distinguishing them — pre-guard tables
@@ -4399,6 +4406,36 @@ scheduled; 24 needs an operator policy line before any build encodes it.
     verdict-pending cohort silently assumes a common table. Cheap, makes the divergence legible
     WHILE it exists, and a fleet re-assembly cannot even be verified complete without it. Ships
     BEFORE any fleet re-assembly.
+26b. **DRIFT TEST — THE DECLARED VERSION MUST MOVE WHEN BEHAVIOUR DOES. Sequenced after the
+    mechanical batch; no freeze rides on it.**
+    **THE THIRD CASE IT EXISTS FOR — SEMANTIC CHANGE AT UNCHANGED SHAPE (operator 2026-07-28).** A
+    schema hash catches an added row, not item 20's change — `range_position` and `pe_ltm_current`
+    now return `NM` where they returned a stale figure on three names, same labels, same fields,
+    and 16.0x vs `NM` matters to a reader more than an added row does. The test hashes the
+    extraction module sources and FAILS when that hash moved while the declared version did not.
+    No false positive at read time; the cost is a red CI on refactor, which is the point — it
+    forces a conscious "did behaviour change?" call inside the PR instead of leaving it to a
+    reader comparing two dossiers.
+    **THE MODULE SET IS A DECLARED LIST, NOT A COMPUTED CLOSURE — CORRECTED 2026-07-28 BEFORE ANY
+    BUILD, on three findings.** (i) The transitive import closure from `assemble.py` is **58
+    modules** — resolver, store, universe, rank, screens, essentially the package; a drift test
+    over that reddens on nearly every commit, and a guard that always fires is switched off, which
+    is the unusual-items guard's own filing-date lesson turned on us. (ii) `ciq_balance.py` is
+    reached ONLY from `cli.py`, never from `assemble.py`, so seeding at the assembly entry point
+    silently omits balance-sheet extraction — the same false-negative shape that sank the row-label
+    hash. (iii) **The enumerating walker ITSELF had a false negative** — it missed
+    `from vinci.dossier import ciq_sheets, edgar_fundamentals` (submodules arriving as `names`,
+    not `module`), and nearly produced a report calling `edgar_fundamentals` unreferenced. Finding
+    (iii) is the argument against (i) and (ii) as a strategy: **a computed closure is the wrong
+    basis for this boundary.** Declare the set; let a machine catch drift against the declaration —
+    the same shape as 27a's baseline, and the same shape as this test itself.
+    **INVARIANT (operator 2026-07-28, stated WITHOUT a layer per the new spec rule):** *every
+    module that can change what appears in a dossier must be in the watched set; a module joining
+    that class without being declared must RED.*
+    **HYPOTHESIS, carrying no more weight than the builder's own reading (operator):** if extraction
+    output is TYPED, "which modules construct that type" may be a more reliable basis than import
+    reachability — AST-checkable rather than graph-traversable. UNVERIFIED; check it against the
+    code when 26b is scoped, and re-spec if it differs.
 29. **BULL-LEG CONSTRAINT AS A STRUCTURED FIELD — P3 part 2, GIVEN ITS OWN NUMBER by the operator
     2026-07-28 (previously folded into 24).** THE DEFECT: the bull leg sits ABOVE the constraint
     its own method sentence states. **WHY IT IS NOT 24:** 24 is a BLOCKED policy bucket (shares
@@ -4420,6 +4457,17 @@ scheduled; 24 needs an operator policy line before any build encodes it.
     **RED:** a record whose bull multiple violates its own declared constraint is REFUSED at write
     — SMPL's live record is the positive instance, and a conforming record the negative one.
     SEQUENCED AFTER 19.
+30. **TYPE-CHECK `tests/` — QUEUED 2026-07-28, DELIBERATELY NOT SCHEDULED (operator: "whether to
+    actually check `tests/` is a separate item — queue it, don't schedule it").** The standing gate
+    runs `mypy` over `vinci` only: **111 source files, and `tests/` excluded, carrying 308 strict
+    errors**. Nobody's claim was false, but the line "mypy --strict clean" READS as *the codebase
+    type-checks* and MEANS *production type-checks* — the assertion-integrity class (item 19)
+    applied to our own gate, which is why it is written down rather than shrugged at.
+    **WHY IT MATTERS MORE HERE THAN IT NORMALLY WOULD (operator):** **the tests ARE the safety
+    layer.** Every guard in this remediation is a test, and the code asserting those guards is not
+    type-checked. The CHEAP half is done immediately and is not this item: the gate line now states
+    its own scope (`docs/engineering.md` §Conventions). This item is the expensive half — actually
+    clearing `tests/` — and it is unscheduled on purpose.
 24. **ANALYST-DECISION BUCKET — BOTH POLICY LINES RETRACTED BY THE OPERATOR 2026-07-28; DO NOT
     IMPLEMENT AS WRITTEN. Item stays BLOCKED pending archetype work.** (queued 2026-07-28 — DECISIONS, not builds; the machine proposes
     neither).** (a) SHARES BASIS: weighted-average diluted (recorded 93.678M) vs current shares
@@ -5014,9 +5062,10 @@ PR per item. **#244 is the last of the class** (it is the amendment that adopts 
 SOLO** (19, 18a, 18, 1, 22), because focused review is what caught two gate omissions and one
 incomplete fix on this run. (iii) **Topology first** — every branch currently conflicts at the
 same insertion points, so re-sequencing is what makes batching cheap rather than merge-expensive.
-**THE ORDER, FIXED:** `26` → **STATE topology (solo, ahead of the batch)** → **mechanical batch:
-21 + 28 + 27a in ONE PR** → `19` scoping. Note STATE-topology is pulled OUT of the batch it was
-first listed in; it precedes the batch precisely so the batch does not fight it.
+**THE ORDER, FIXED (amended 2026-07-28 for the 26a/26b split):** `26a` **(ships next — LIFTS THE
+FREEZE)** → **STATE topology (solo, ahead of the batch)** → **mechanical batch: 21 + 28 + 27a in
+ONE PR** → `26b` → `19` scoping. Note STATE-topology is pulled OUT of the batch it was first
+listed in; it precedes the batch precisely so the batch does not fight it.
 
 **THIRTEEN-PART AUDIT — 2026-07-28 (operator-directed: re-read each P-item's evidence and count
 DISTINCT failures, verify against the committed report rather than accept the count). THE
