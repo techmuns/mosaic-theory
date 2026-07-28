@@ -247,3 +247,58 @@ def test_no_consumer_reads_the_annual_table_by_row_position() -> None:
             raise AssertionError(
                 f"{rel}: positional row read {var}[{idx}] near the financial-summary path — the "
                 "annual table gains rows when a name carries unusual items; select by LABEL")
+
+
+def test_appendix_only_is_not_enough_the_brief_must_carry_it() -> None:
+    """THE P1 BRIEF RED (operator, 2026-07-28). P1 was never "the writedown is absent from the
+    data" — it was that a DECISION-MAKER reads the dossier and never meets a charge worth 43% of
+    market cap. Surfacing the row into the appendix satisfied a guard while leaving the harm
+    substantially intact, because both brief snapshots filter on a static label whitelist.
+
+    An acceptance condition that does not match the harm is the same family as a guard that cannot
+    fire. So the guard's target surface is the BRIEF: its satisfying label set is CORE ∪ MATERIAL,
+    and a row present in the appendix but absent from the brief does NOT silence it.
+
+    Fixture: a >10%-of-market-cap charge sitting in the table (appendix) but unflagged (so no brief
+    renders it). The build must fail.
+    """
+    appendix_only = {*_CURATED, "Asset Writedown ($M)"}   # in the table…
+    brief_visible = set(_CURATED)                         # …but the brief never shows it
+    with pytest.raises(MaterialityError, match="material UNUSUAL ITEM"):
+        check_materiality(_sheet(-391.9), _LTM_COL, market_cap=909.4, revenue=None,
+                          summary_labels=brief_visible, synthesis_text="", ticker="FIXTURE")
+    # and the appendix-only set is exactly what USED to pass — kept so the regression is explicit
+    check_materiality(_sheet(-391.9), _LTM_COL, market_cap=909.4, revenue=None,
+                      summary_labels=appendix_only, synthesis_text="", ticker="FIXTURE")
+
+
+def test_only_rows_over_the_floor_are_promoted_to_the_brief() -> None:
+    """"Not every $2M restructuring line" (operator). The flag is set by magnitude against the same
+    floor the guard uses, so a small one-off stays in the appendix where it belongs and the brief
+    does not accumulate noise on every name."""
+    from vinci.dossier.materiality import mark_material_rows
+
+    class _Row:
+        def __init__(self, label: str, values: list[float | None]) -> None:
+            self.label, self.values, self.material = label, values, False
+
+        def model_copy(self, *, update: dict[str, Any]) -> _Row:
+            r = _Row(self.label, self.values)
+            r.material = update.get("material", self.material)
+            return r
+
+    class _Tbl:
+        def __init__(self, rows: list[_Row]) -> None:
+            self.rows = rows
+
+        def model_copy(self, *, update: dict[str, Any]) -> _Tbl:
+            return _Tbl(update.get("rows", self.rows))
+
+    tbl = _Tbl([
+        _Row("Revenue ($M)", [1392.0]),                 # core — never flagged, already in brief
+        _Row("Asset Writedown ($M)", [-391.9]),         # 43% of mcap — promoted
+        _Row("Restructuring Charges ($M)", [-2.4]),     # 0.3% — stays in the appendix
+    ])
+    out = mark_material_rows(tbl, market_cap=909.4, revenue=None)
+    flagged = {r.label for r in out.rows if r.material}
+    assert flagged == {"Asset Writedown ($M)"}, flagged

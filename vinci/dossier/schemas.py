@@ -647,6 +647,11 @@ class FinRow(BaseModel):
     # display strings (parsers rule). Populated for the raw numeric rows; default [] round-trips a
     # pre-Phase-3 dossier.json (a consumer treats absent/empty as "no structured series").
     values: list[float | None] = Field(default_factory=list)
+    # (P1 brief fix, 2026-07-28) Does this row clear the materiality floor? Set ONCE at assembly,
+    # where the market cap lives; both brief renderers READ it and neither recomputes — a second
+    # copy of the threshold arithmetic in two twins is the parity hazard this repo keeps closing.
+    # Default False round-trips every pre-existing dossier.json.
+    material: bool = False
 
     model_config = {"frozen": True}
 

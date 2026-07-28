@@ -219,3 +219,21 @@ Two acceptable shapes, either is fine:
 - write the record **post-merge as its own step**, when the anchor is guaranteed present.
 
 What is not acceptable is discovering the divergence after the fact.
+
+## Never `git stash` to compare across commits
+
+*(operator, 2026-07-28, after a near-miss)*
+
+Comparing behaviour on two commits by `git stash` → `git checkout <old> -- path/` → `git stash pop`
+is unsafe in this repo. Sessions run concurrently and a **stale stash from another session can pop
+instead of yours** — one from 2026-07-23 did exactly that, producing conflicts in three files the
+session had never touched. Nothing was lost only because the divergence was being watched.
+
+Use a throwaway branch or a second worktree:
+
+```bash
+git worktree add /tmp/cmp <old-commit>     # compare against /tmp/cmp, delete when done
+```
+
+The uncommitted state stays untouched, there is no stash stack to collide on, and the comparison
+is reproducible by anyone.

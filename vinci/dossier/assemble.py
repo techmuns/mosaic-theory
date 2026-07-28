@@ -143,6 +143,34 @@ def _write(dossier: Dossier, llm_log: str, out_root: Path) -> Path:
 
 
 
+
+# The brief's static row set — the labels both twins carry by construction. Kept beside the guard
+# because the guard's satisfying set is CORE ∪ MATERIAL, and a drift between this and the
+# renderers' own lists would silently narrow what counts as "the reader met it".
+_BRIEF_CORE = frozenset({
+    "Revenue ($M)", "Revenue growth", "EBITDA ($M)", "EBITDA margin", "EBIT ($M)",
+    "Net income ($M)", "EPS (GAAP, dil.)", "FCF ($M)",
+})
+
+
+def _mark_material(mech: Any) -> Any:
+    """Flag summary rows over the materiality floor so the BRIEF shows them (P1 brief fix)."""
+    from vinci.dossier.materiality import mark_material_rows
+
+    fs = getattr(mech, "financial_summary", None)
+    ann = getattr(fs, "annual", None) if fs else None
+    tbl = getattr(ann, "value", None) if ann is not None else None
+    if tbl is None or fs is None or ann is None:
+        return mech
+    si = getattr(mech, "stock_info", None)
+    mcap = getattr(getattr(si, "market_cap", None), "value", None) if si else None
+    marked = mark_material_rows(tbl, market_cap=mcap, revenue=None)
+    if marked is tbl:
+        return mech
+    return mech.model_copy(update={
+        "financial_summary": fs.model_copy(update={
+            "annual": ann.model_copy(update={"value": marked})})})
+
 def _materiality_check(bundle: Any, mech: Any, synthesis: Any, *, ticker: str) -> None:
     """Run the materiality guard on the assembled record (P1). Skips silently ONLY when a
     denominator or the sheet is genuinely unavailable — never when the check merely found nothing,
@@ -169,7 +197,11 @@ def _materiality_check(bundle: Any, mech: Any, synthesis: Any, *, ticker: str) -
     mcap = getattr(getattr(si, "market_cap", None), "value", None) if si else None
     fs = getattr(mech, "financial_summary", None)
     ann = getattr(getattr(fs, "annual", None), "value", None) if fs else None
-    labels = {r.label for r in getattr(ann, "rows", [])} if ann is not None else set()
+    # (P1 brief fix) The guard's target surface is the BRIEF, not the appendix. `material=True`
+    # rows are the ones the brief now shows in addition to its static whitelist, so the satisfying
+    # label set is CORE ∪ MATERIAL — an appendix-only row no longer silences the guard.
+    rows = list(getattr(ann, "rows", [])) if ann is not None else []
+    labels = {r.label for r in rows if r.label in _BRIEF_CORE or getattr(r, "material", False)}
     try:
         check_materiality(
             inc, col, market_cap=mcap, revenue=None, summary_labels=labels,
@@ -274,6 +306,7 @@ def assemble_one(
         # material unusual items now surface as data). Fail-loud: SMPL's -$391.9M LTM writedown was
         # 43% of market cap, absent from every tier, while the bear case argued from a figure 5.3x
         # smaller. A warning here would have been read past on exactly the day it mattered.
+        mech = _mark_material(mech)          # flag rows over the floor BEFORE the guard reads them
         _materiality_check(bundle, mech, synthesis, ticker=ticker)
         # (P2) contradiction lint — flag any synthesis pending-claim about a NOW-present block (the
         # durable guard the FIX-0 incident earns); QA-channel.

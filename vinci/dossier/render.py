@@ -2190,8 +2190,13 @@ def _brief_financials(m: MechanicalLayer) -> list[str]:
             "EBIT ($M)", "Net income ($M)", "EPS (GAAP, dil.)", "FCF ($M)"}
     idx = _brief_window(tbl)
     cols = [tbl.columns[i] for i in idx]
+    # (P1 brief fix, 2026-07-28) The whitelist is STATIC LABELS **plus any row flagged material**.
+    # Surfacing the writedown into the appendix closed the data half of P1 but not the harm: a
+    # brief-only reader still never met a 43%-of-market-cap charge. Not every $2M restructuring
+    # line — only rows over the floor, flagged ONCE at assembly (`FinRow.material`); this renderer
+    # reads the flag and never recomputes the threshold. Twin: financialSnapshot() in dossier.js.
     rows = [[r.label, *[r.cells[i] for i in idx if i < len(r.cells)]]
-            for r in tbl.rows if r.label in want]
+            for r in tbl.rows if r.label in want or getattr(r, "material", False)]
     if not rows or not cols:
         return []
     hidden = len(tbl.columns) - len(idx)

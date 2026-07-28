@@ -195,3 +195,48 @@ def check_materiality(
             f"on normalized earnings never meets: " + "; ".join(ln.why() for ln in bad[:4])
             + (f"; +{len(bad) - 4} more" if len(bad) > 4 else "")
         )
+
+
+def mark_material_rows(table: Any, *, market_cap: float | None, revenue: float | None) -> Any:
+    """Flag every summary row clearing the floor, so the BRIEF can show it without recomputing.
+
+    THE P1 BRIEF GAP (operator, 2026-07-28). Surfacing the writedown into the annual table closed
+    the DATA half but not the harm: both brief snapshots filter on a static label whitelist, so a
+    43%-of-market-cap charge landed in the APPENDIX and a brief-only reader still never met it.
+    P1 was never "the number is absent from the record" — it was "a decision-maker never meets it".
+    An acceptance condition that does not match the harm is the same family as a guard that cannot
+    fire, which is why this is fixed here rather than deferred.
+
+    Marks the ROW, not the renderer: the threshold arithmetic exists once, at assembly, where the
+    market cap is. Returns the table unchanged when no denominator is available.
+    """
+    if table is None or (not market_cap and not revenue):
+        return table
+    rows = list(getattr(table, "rows", []))
+    if not rows:
+        return table
+    out, touched = [], False
+    for r in rows:
+        vals = [v for v in (getattr(r, "values", None) or []) if v is not None]
+        mag = max((abs(v) for v in vals), default=0.0)
+        pm = (mag / market_cap) if market_cap else None
+        pr = (mag / revenue) if revenue else None
+        hit = (pm is not None and pm >= MCAP_FRACTION) or (
+            pr is not None and pr >= REVENUE_FRACTION)
+        # only the SURFACED unusual items are eligible — the core curated rows are already in the
+        # brief by construction, and re-flagging Revenue would put a marker on every name.
+        eligible = getattr(r, "label", "") not in _CORE_BRIEF_LABELS
+        if hit and eligible and not getattr(r, "material", False):
+            out.append(r.model_copy(update={"material": True}))
+            touched = True
+        else:
+            out.append(r)
+    return table.model_copy(update={"rows": out}) if touched else table
+
+
+# The rows the brief already carries by construction. A material flag on these would be noise.
+_CORE_BRIEF_LABELS = frozenset({
+    "Revenue ($M)", "Revenue growth", "EBITDA ($M)", "EBITDA margin", "EBIT ($M)",
+    "Net income ($M)", "EPS (GAAP, dil.)", "EPS (Normalized)", "CFO ($M)", "Capex ($M)",
+    "FCF ($M)", "FCF (levered, CIQ)",
+})
