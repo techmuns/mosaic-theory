@@ -3990,7 +3990,17 @@ renumber.** No other unverifiable claim found in this block.
    CORRECT while sitting fifteen days behind a 07-24 price — under a flat max it fails, and it
    should not. The per-instance rule catches both SMPL defects EXACTLY: a July 8-K existed and
    April was used; a 07-24 close existed IN THE SAME BUNDLE and 07-22 was used. Monday's weekly
-   price with no fresher instance available PASSES, carrying a stamped staleness note. **The
+   price with no fresher instance available PASSES, carrying a stamped staleness note.
+   **CROSS-PANEL BY DEFINITION (operator 2026-07-28 — without this the rule cannot fire on the
+   case that motivated it).** An INSTANCE is *any observation of the same quantity available to
+   the build, whichever panel carries it* — never scoped per-source. In SMPL the price store's
+   freshest entry genuinely WAS 07-22, so a per-source reading PASSES and the price defect
+   survives its own fix: P1's failure mode exactly, a guard that cannot fire on its motivating
+   case. VERIFIED IMPLEMENTABLE 2026-07-28 — the comps workbook stamps `As-Of Date: 46227`
+   (= 2026-07-24) on every sheet and its `Financial Data` sheet carries a `Day Close Price Latest`
+   column, so the build held TWO dated observations of the close (07-24 comps, 07-22 Polygon
+   store) and used the older. RED FOR ITEM 1: a fixture where the price panel carries 07-22 and
+   the comps panel carries a 07-24 close — the build must FAIL. **The
    contract therefore no longer depends on ingestion cadence and cannot fail builds by design** —
    the BLOCKED-BY stamp and the ingestion work are KEPT (daily prices are worth having on their
    own merits), but they are no longer a precondition for the contract to be safe.
@@ -4164,6 +4174,13 @@ renumber.** No other unverifiable claim found in this block.
     too small to justify enshrining the display-string-parse). Four open decisions listed at the
     doc's end (role vocabulary; one field vs statistic×population; archived-SMPL row stays sealed;
     one PR vs two). **DISCHARGED 2026-07-27 — BUILT (see the schema-1.3 build record). Decisions were: census role list · one tag · archive stays sealed · one PR. Build unblocked — next build slot.**
+16c. **CNXC — PRE-UNDERWRITE RE-ASSEMBLY REQUIRED (operator gate 2026-07-28).** CNXC MAY NOT be
+    underwritten off the current render: its dossier omits a **$1,523.3M Q4-FY25 goodwill
+    impairment, 103% of market cap**, from both the financial summary and the synthesis. No ledger
+    row, no scenario record, no verdict today — so nothing is unsafe YET; the gate exists because
+    the defective render is the INPUT to any future underwrite and a screen cohort can pick the
+    name up at any time. Re-assemble under the item-17 guard BEFORE any underwrite begins. Unlike
+    SMPL (16b) this is NOT held for acceptance-test purposes — re-assemble as soon as convenient.
 17. **UNUSUAL-ITEMS SURFACING GUARD** (renamed from "materiality guard" 2026-07-28 by the
     operator — the name over-claimed: as scoped it catches ONE-OFFS only, and will NOT catch
     material change in structural lines, balance-sheet items or cash-flow items. SMPL's capex ran
@@ -4177,20 +4194,35 @@ renumber.** No other unverifiable claim found in this block.
     in the synthesis or the build fails loud. ORIGIN: SMPL's $391.9M LTM Asset Writedown (43% of market cap, the sole
     cause of LTM net income −$198.8M) never reached the dossier while the FY25 $60.9M was cited
     three times. Positive pin: a fixture writedown at 11% of mcap must raise unless surfaced.
-18. **LEDGER READ-BACK — NO FALSE UNKNOWN (audit regression trio; queued 2026-07-28).** Assembly
-    must consult the ledger V-row payload for the name; a fact recorded there may not print as
-    UNKNOWN in the dossier. ORIGIN: the dossier printed "covenant basis: UNKNOWN (not disclosed)"
-    while the V-row recorded loan-basis 1.2x — plus the $331M YTD impairments and the ~2.1M-share
-    buyback pace, all recorded 07-21 and absent 07-24. The analyst knew; the pipeline lost it.
-    A false UNKNOWN is worse than a gap — it asserts ignorance the fund does not have.
-19. **ASSERTION INTEGRITY (operator-added 2026-07-28).** Every claim the document makes ABOUT ITS
-    OWN DATA is machine-checked at build: an absence reason must be filing-based, never
-    sheet-shape ("no EBITDA section" → the true reason is single-segment reporting — audit P9); a
-    caveat naming a basis must match the series it caveats (the "rests on normalized earnings"
-    note sat on a GAAP series — P5's label half); a METHOD sentence's stated relation must hold
-    against the legs it describes (bull 1,420 claimed "just under the trailing twelve months"
-    against LTM 1,392 — and 1,416 at entry). Overlaps item 18 on false-UNKNOWN; this item owns
-    the general class: the page may not contradict itself.
+18. **NO FALSE UNKNOWN (audit regression trio; queued 2026-07-28, TIGHTENED by the operator the
+    same day — the first wording, "assembly must consult the V-row facts", was too vague and
+    invited dumping ledger PROSE into the dossier).** THE PRECISE REQUIREMENT:
+
+    > **Any field the dossier would render as UNKNOWN must first be checked against the record.
+    > A false UNKNOWN fails the build.**
+
+    Not "consult the ledger" — a bounded, testable obligation attached to the exact moment a
+    render is about to claim ignorance. ORIGIN: the dossier printed `covenant basis: UNKNOWN (not
+    disclosed)` while the V-row recorded the 8-K's loan-basis at **1.2x** — the fund asserting
+    ignorance it did not have. A false UNKNOWN is worse than a gap: a gap invites a look, an
+    UNKNOWN closes the question. (Same regression carried $331.0M YTD impairments and the ~2.1M-sh
+    buyback pace, both recorded 07-21 and absent 07-24.)
+    **RED:** a fixture where the record holds `1.2x` loan-basis leverage and the render emits
+    UNKNOWN — the build must fail. That is the covenant case exactly, and it makes the fix
+    testable rather than aspirational.
+19. **ASSERTION INTEGRITY (operator-added 2026-07-28; TIGHTENED same day).** Every claim the
+    document makes ABOUT ITS OWN DATA is machine-checked at build. THE PRECISE REQUIREMENT: **a
+    stamp must be generated from the object actually read** — an absence reason must be
+    filing-based, never sheet-shape ("no EBITDA section" when the true reason is single-segment
+    reporting, audit P9); a caveat naming a basis must match the series it caveats (the "rests on
+    normalized earnings" note sat on a GAAP series, P5's label half); a method sentence's stated
+    relation must hold against the legs it describes (bull 1,420 claimed "just under the trailing
+    twelve months" against LTM 1,392).
+    **RED:** a fixture where a stamp NAMES AN OBJECT THAT WAS NOT THE OBJECT READ, and the build
+    fails. **If that red proves hard to write, the item is UNDER-SPECIFIED and that must surface
+    BEFORE it ships, not after** (operator, explicitly). GUARD AGAINST DEGRADATION: this must not
+    quietly become a house-token linter — that would catch P3's mislabel and nothing else, which
+    is the shape of a fix that reports success while the class survives.
 20. **NO BACKWARD-FILL ON SERIES (audit P5; queued 2026-07-28; VERIFY-AT-BUILD).** A series
     ending in NM propagates UNKNOWN — the reader must never walk back to the last numeric cell
     (16.0x was the 2026-03-31 close of a GAAP series whose current cell is NM; the correct
@@ -4218,6 +4250,13 @@ renumber.** No other unverifiable claim found in this block.
     one Trends vintage, stamped once at the top. ORIGIN: base case built on 1,334 ("consensus
     FY26E") while the same document prints 1,351.8 as the consensus path anchor — two vintages,
     no reconciliation. Valuation impact small (~$0.41/sh); the defect is systemic.
+**BUILD ORDER AFTER THE #237/#238 MERGES (operator 2026-07-28): 18, THEN 22.** Together they
+close the whole class of *the dossier under-representing what the fund already knows* — the
+information-regression trio, the false UNKNOWN, N7's unrendered triggers and the WATCH gap. Item 1
+stays BLOCKED on ingestion (though its re-spec means the contract itself is no longer unsafe
+without it); **20, 21 and 23 are mechanical and may follow in any order**; 25 is priced but not
+scheduled; 24 needs an operator policy line before any build encodes it.
+
 25. **MATERIAL-DELTA TEST — the general version of item 17 (operator-specified 2026-07-28).**
     A **DELTA** test, not a level test: any line whose YEAR-OVER-YEAR CHANGE exceeds 10% of market
     cap must be surfaced. This is the better primitive and it dissolves all three false-fire
@@ -4745,9 +4784,18 @@ $1,523.3M is a **SINGLE charge in Q4-FY25**, carried identically in FY25 and LTM
 not a cumulative roll-up) — quarterly confirms one hit, Q4-25 −1,523.3; CNXC's other one-offs are
 `Restructuring Charges` −60.2 (4%) and `Merger & Related Restruct.` −48.0 (3%), both already
 surfaced. BAND SCAN across all 12 bundles for one-offs between 10% and 100% of market cap — the
-operator's concern that the guard's 10% floor left an unseen middle: **THE BAND IS EMPTY.** Only
-two items clear 10% and both were already known (CNXC 103%, SMPL 43%); the next largest anywhere
-is MVST `Asset Writedown` −36.6 at **9%**, and it is already surfaced. Nothing hidden between.
+operator's concern that the guard's 10% floor left an unseen middle: **the band is empty WITHIN THE SCANNED SCOPE.**
+Only two items clear 10%, both already known (CNXC 103%, SMPL 43%); the next largest anywhere is
+MVST `Asset Writedown` −36.6 at **9%**, already surfaced. **NOT AN ALL-CLEAR — SCOPE STATED
+(operator correction 2026-07-28).** The scan inherits item 17's scope: the UNUSUAL-ITEMS BLOCK
+only. Structural lines, the balance sheet and the cash-flow statement are unscanned BY
+CONSTRUCTION — the same over-claim just recorded against item 17's name. SMPL's capex ran
+6 → 20 → 28 over two years and nothing here would have shown it. **The genuine all-clear is a
+DELIVERABLE OF ITEM 25: re-run the delta test across all twelve bundles when it lands.** That is
+the first scan that can honestly be called complete; until then this is evidence about one-offs,
+not about the financials. GATE (operator): **CNXC MAY NOT BE UNDERWRITTEN OFF THE CURRENT RENDER**
+— queue item 16c. The exposure is bounded only because nobody has decided on it yet; the defective
+dossier remains the INPUT to any future underwrite, and a screen cohort picks the name up as-is.
 
 **ACCEPTANCE-RED POLICY CORRECTED (operator 2026-07-28) — THE RED MUST BE THE DEFECT'S BEHAVIOUR,
 NEVER AN IMPORT ERROR.** #238's original red was `ModuleNotFoundError` on `2facc5e`, which proves
