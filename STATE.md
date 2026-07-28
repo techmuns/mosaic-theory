@@ -4334,13 +4334,12 @@ renumber.** No other unverifiable claim found in this block.
     replacement caveat appears — *"LTM GAAP diluted EPS is NEGATIVE (−21.35); do not read it as a
     GAAP trailing multiple"* — which reads like coupling but **is not**: `_eps_caveat_flags` (d)
     keys on `ltm_gaap_eps < 0`, entirely independently of whether the CIQ P/E was refused. Driven
-    across the truth table:
-    | CIQ P/LTM EPS | EDGAR P/E | LTM GAAP EPS | caveat |
-    |---|---|---|---|
-    | refused | 6.0x | −21.35 (CNXC today) | fires — *because EPS<0* |
-    | refused | 6.0x | **+1.20** | **NONE** |
-    | refused | 6.0x | **unavailable** | **NONE** |
-    | 8.8x | 6.0x | −21.35 | fires, naming both |
+    across the truth table (written as lines, NOT a markdown table — an INDENTED table inside a
+    list item renders as literal pipes on GitHub; verified against the API, see below):
+    · CIQ **refused** + EDGAR 6.0x + LTM GAAP EPS **−21.35** (CNXC today) → **fires**, because EPS<0
+    · CIQ **refused** + EDGAR 6.0x + LTM GAAP EPS **+1.20** → **NO CAVEAT**
+    · CIQ **refused** + EDGAR 6.0x + LTM GAAP EPS **unavailable** → **NO CAVEAT**
+    · CIQ **8.8x** + EDGAR 6.0x + LTM GAAP EPS **−21.35** → fires, naming both
     So a name whose P/LTM EPS is NM for ANY OTHER reason — a data gap, a zero denominator — loses
     the clause with nothing replacing it: silent omission, this rule's exact prohibition.
     **LATENT, NOT LIVE — verified across all 12 bundles**: every name that refuses (CNXC, FUBO,
@@ -5378,6 +5377,18 @@ STATE-topology slot: prefix the audit-derived items (`A17`…`A27`) or relocate 
 behind its own heading, then re-sequence; either removes the ambiguity permanently. **Recorded
 rather than fixed here — re-sequencing a 4,000-line file inside a docs PR under review is the
 scope creep this repo keeps refusing, and the work is already queued.**
+**ADDED TO THAT SLOT 2026-07-28 (2) — INDENTED TABLES DO NOT RENDER, and it is the SAME shape as
+the orphan-`**` class: a markdown defect invisible to the author and only visible to the reader.**
+A markdown table INDENTED inside a list item is NOT parsed as a table by GitHub — it renders as a
+wall of literal `|` pipes inside the paragraph. **Verified against GitHub's own markdown API, not
+inferred from CommonMark** (the spec would also reject an unindented table interrupting a
+paragraph, and GitHub renders THAT one fine — so the spec is not the authority here; the renderer
+is). #248 introduced one, in queue item 22's caveat truth table, and it was rewritten as `·` lines.
+A parity scan finds **TWO MORE, PRE-EXISTING on main** (the `| field | register |` table and the
+`| check | honest worst | VITL | … |` table, both indent=4). Left standing — not #248's — but they
+belong to the topology PR alongside the two orphan `**`. **The check ships with it** and covers both
+classes: odd `**` count, and any delimiter row at indent > 0.
+
 **ADDED TO THAT SLOT 2026-07-28 — THE ORPHAN-`**` CLASS, AND ITS MACHINE CHECK.** #244's first cut
 left a dangling `(queued …).**` fragment inside item 26: an unbalanced bold that renders the rest
 of the item as literal asterisks, the same class that broke §7's THEME #2 and needed its own
