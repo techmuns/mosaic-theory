@@ -160,7 +160,19 @@ def ev_ebitda_percentile(bundle: CiqBundle) -> Sourced[float]:
         rows = bundle.sheet("financials", "Multiples", freq="quarterly")
     except CiqUnavailableError as exc:
         return _miss_or_unknown(bundle, "financials", exc)
-    series = [v for _, v in _multiples_close(rows, "TEV/LTM EBITDA") if v is not None]
+    # (item 20, review) THE LATEST cell, never the last SURVIVING one. `ev_ebitda_current` gets
+    # away with filtering because `ev_ebitda_asof` filters IDENTICALLY, so its value and date move
+    # together and the pair stays honest. THIS function has no as-of anywhere — its source_ref
+    # names a quarter COUNT, not a date — so a filtered `[-1]` would compute a percentile against a
+    # stale "current" with nothing on the page to reveal it. Latent today (no committed name has an
+    # NM latest TEV/LTM EBITDA), fixed because item 20 is "no backward-fill on ANY time series"
+    # and a latent instance of the exact class the item closes is not a reason to leave it.
+    pairs_ev = _multiples_close(rows, "TEV/LTM EBITDA")
+    if pairs_ev and pairs_ev[-1][1] is None:
+        return Sourced.unknown(
+            note="TEV/LTM EBITDA is NM at the latest Close — a percentile against an older close "
+                 "would carry no date to reveal it")
+    series = [v for _, v in pairs_ev if v is not None]
     if len(series) < 4:
         return Sourced.unknown(note=f"TEV/LTM EBITDA Close <4 quarters ({len(series)}) — no pctile")
     current, history = series[-1], series[:-1]  # partial last col = current, excluded from history
@@ -299,7 +311,16 @@ def range_position(bundle: CiqBundle) -> Sourced[str]:
     except CiqUnavailableError as exc:
         return _miss_or_unknown(bundle, "financials", exc)
     ev_pairs = [(d, v) for d, v in _multiples_close(rows, "TEV/LTM EBITDA") if v is not None]
-    pe = [v for _, v in _multiples_close(rows, "P/LTM EPS") if v is not None]
+    # (item 20, audit P5) The P/LTM EPS tail reports the LATEST cell — never the last SURVIVING one.
+    # The old form filtered the Nones away and then took `pe[-1]`, which is backward-fill by a
+    # different route than the audit described (`_multiples_close` is correct: it maps NM → None).
+    # What made it a defect rather than a stale-ish number: unlike the EV band — whose as-of moves
+    # WITH its value, so it stays self-consistent — this tail carries NO date of its own and renders
+    # under the EV reading's as-of. SMPL printed "P/LTM EPS 16.0x" beside "as-of 2026-07-23" while
+    # that 16.0x was the 2026-03-31 close and the two most recent cells were NM. Live on THREE
+    # names at the fix: SMPL 16.0x, CNXC 8.8x, WERN 72.8x.
+    pe_pairs = _multiples_close(rows, "P/LTM EPS")
+    pe_latest = pe_pairs[-1][1] if pe_pairs else None
     b = _own_history_band("EV/EBITDA (TEV/LTM)", ev_pairs)
     if b is None:
         return Sourced.unknown(note="TEV/LTM EBITDA Close has <4 quarters — no range position")
@@ -313,7 +334,11 @@ def range_position(bundle: CiqBundle) -> Sourced[str]:
         band = next(bnd for t, bnd in _RANGE_BANDS if pct <= t)
         where = f"{pct:.0%}ile → {band}"
     asof = f" as-of {b.as_of}" if b.as_of is not None else ""
-    tail = f"; P/LTM EPS {pe[-1]:.1f}x" if pe else ""
+    # NM is stated, not silently dropped: an absent tail reads as "no P/E was available to look at",
+    # which is a different claim from "the trailing P/E is not meaningful because LTM EPS is
+    # negative". The absence is visible and attributed (the visible-absence rule, item 22).
+    tail = (f"; P/LTM EPS {pe_latest:.1f}x" if pe_latest is not None
+            else ("; P/LTM EPS NM (no meaningful trailing P/E at this close)" if pe_pairs else ""))
     return Sourced.present(
         f"EV/EBITDA (TEV/LTM) {cur:.1f}x{asof} — trailing range {lo:.1f}–{hi:.1f}x "
         f"(median {med:.1f}x) over {n} closes → {where}{tail}",
@@ -388,11 +413,20 @@ def pe_ltm_current(bundle: CiqBundle) -> Sourced[float]:
         rows = bundle.sheet("financials", "Multiples", freq="quarterly")
     except CiqUnavailableError as exc:
         return _miss_or_unknown(bundle, "financials", exc)
-    pe = [v for _, v in _multiples_close(rows, "P/LTM EPS") if v is not None]
-    if not pe:
-        return Sourced.unknown(note="P/LTM EPS Close has no value")
+    # (item 20) THE LATEST cell, never the last SURVIVING one. This is the SECOND consumer of the
+    # same series and it carried the identical defect: filtering the Nones away and taking [-1]
+    # returned a months-old close under a source_ref that literally claims "(latest)" — a false
+    # provenance stamp on top of a stale value. Missed by the first cut of the fix, which repaired
+    # `range_position` only; caught by checking the caveat-banner path that reads THIS function.
+    pairs = _multiples_close(rows, "P/LTM EPS")
+    latest = pairs[-1][1] if pairs else None
+    if latest is None:
+        return Sourced.unknown(
+            note=("P/LTM EPS Close has no value" if not pairs else
+                  "P/LTM EPS is NM at the latest Close — no meaningful trailing P/E")
+        )
     return Sourced.present(
-        round(pe[-1], 1), source_ref="CIQ Financials→Multiples 'P/LTM EPS' Close (latest)"
+        round(latest, 1), source_ref="CIQ Financials→Multiples 'P/LTM EPS' Close (latest)"
     )
 
 

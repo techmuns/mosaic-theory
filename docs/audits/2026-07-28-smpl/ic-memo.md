@@ -22,6 +22,28 @@ Three artifacts came out of this audit. Only two were previously exported as fil
 
 ---
 
+## ON MECHANISMS — appended 2026-07-28
+
+This audit was conducted against the **artifact, not the code**. Every symptom recorded was
+reproduced and verified. The stated root cause of each defect is **inference**, and has been wrong
+in seven of nine cases on subsequent code inspection.
+
+**Treat the symptom column as evidence and the mechanism column as hypothesis.**
+
+Confirmed divergences at the time of writing: P1 (the line never reaches the assembled table, so a
+guard scanning it could never fire) · P3 (a correctly-frozen reference row, mislabelled — not a
+stale anchor) · P4 (the Polygon local store, not the ledger exit price) · P5 (the consumer, not the
+series reader — and the defect is a value carrying no date of its own rendered under another
+reading's as-of) · P8 (one extracted vintage plus one frozen record reference — not two
+extractions) · the WATCH claim (a record reissue in a store the audit never saw) · and P5's second
+half reaching further than stated (two consumers, not one).
+
+The findings were sound and two of them uncovered defects nobody had looked at. The risk this note
+guards against is narrower and specific: **a fix aimed at the wrong mechanism reports success while
+the defect survives.**
+
+---
+
 ## ERRATUM — appended 2026-07-28
 
 **Kind:** `note_clear` · **Class:** scoping defect in the audit. Not a finding reversal.
