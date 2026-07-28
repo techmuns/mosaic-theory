@@ -3983,8 +3983,19 @@ audit, not a PR.) **No duplicate items; numbering sequential 1..15 after one det
 renumber.** No other unverifiable claim found in this block.
 
 **BUILD**
-1. **BUILD-WIDE FRESHNESS CONTRACT (queue head; widened 2026-07-28 by the IC audit — was
-   "quarterly-filing-triggered fact refresh", spec'd 2026-07-26).** POSITION IS PATH-DEPENDENCE,
+1. **FRESHNESS CONTRACT — RE-SPECIFIED 2026-07-28 (operator): NOTHING MAY BE OLDER THAN THE
+   FRESHEST AVAILABLE INSTANCE OF ITSELF.** The previous formulation ("nothing older than the
+   newest panel in the build") was MIS-SPECIFIED and would have been wrong even with daily
+   prices: panels have legitimately different cadences, so a guidance panel dated 2026-07-09 is
+   CORRECT while sitting fifteen days behind a 07-24 price — under a flat max it fails, and it
+   should not. The per-instance rule catches both SMPL defects EXACTLY: a July 8-K existed and
+   April was used; a 07-24 close existed IN THE SAME BUNDLE and 07-22 was used. Monday's weekly
+   price with no fresher instance available PASSES, carrying a stamped staleness note. **The
+   contract therefore no longer depends on ingestion cadence and cannot fail builds by design** —
+   the BLOCKED-BY stamp and the ingestion work are KEPT (daily prices are worth having on their
+   own merits), but they are no longer a precondition for the contract to be safe.
+   (was: "build-wide freshness contract", widened 2026-07-28 by the IC audit — originally
+   "quarterly-filing-triggered fact refresh", spec'd 2026-07-26) POSITION IS PATH-DEPENDENCE,
    NOT the audit's ranking: this item was already queue head, spec'd pre-audit (2026-07-26), so
    it keeps the slot; among the AUDIT-DERIVED builds the operator ranks the MATERIALITY GUARD
    (item 17) first. ONE rule: nothing on the page may be older than the newest panel in the same
@@ -4153,7 +4164,11 @@ renumber.** No other unverifiable claim found in this block.
     too small to justify enshrining the display-string-parse). Four open decisions listed at the
     doc's end (role vocabulary; one field vs statistic×population; archived-SMPL row stays sealed;
     one PR vs two). **DISCHARGED 2026-07-27 — BUILT (see the schema-1.3 build record). Decisions were: census role list · one tag · archive stays sealed · one PR. Build unblocked — next build slot.**
-17. **MATERIALITY GUARD (audit P1; queued 2026-07-28) — OPERATOR-RANKED FIRST among the
+17. **UNUSUAL-ITEMS SURFACING GUARD** (renamed from "materiality guard" 2026-07-28 by the
+    operator — the name over-claimed: as scoped it catches ONE-OFFS only, and will NOT catch
+    material change in structural lines, balance-sheet items or cash-flow items. SMPL's capex ran
+    6 → 20 → 28 over two years and nothing here fires. The general version is item 25.)
+    **(audit P1; queued 2026-07-28) — OPERATOR-RANKED FIRST among the
     audit-derived builds.** The only defect in the set that changed what the investment
     conclusion was ABOUT: stale guidance mis-framed the bear case, but the missing $391.9M meant
     the bear case was arguing about the wrong EVENT. A size test plus a fixture, with no
@@ -4203,6 +4218,15 @@ renumber.** No other unverifiable claim found in this block.
     one Trends vintage, stamped once at the top. ORIGIN: base case built on 1,334 ("consensus
     FY26E") while the same document prints 1,351.8 as the consensus path anchor — two vintages,
     no reconciliation. Valuation impact small (~$0.41/sh); the defect is systemic.
+25. **MATERIAL-DELTA TEST — the general version of item 17 (operator-specified 2026-07-28).**
+    A **DELTA** test, not a level test: any line whose YEAR-OVER-YEAR CHANGE exceeds 10% of market
+    cap must be surfaced. This is the better primitive and it dissolves all three false-fire
+    classes that forced item 17's block scoping, WITHOUT needing block scoping at all — on SMPL it
+    fires on the writedown (−60.9 → −391.9 = 36% of mcap) and on nothing else: COGS barely moves,
+    the `Filing Date` serial does not move, the share count moves ~6M units. It also extends PAST
+    the income statement, which item 17 cannot: balance-sheet and cash-flow lines get the same
+    test, closing the capex 6 → 20 → 28 gap item 17's rename records. Price the build; if it holds
+    up, item 17 becomes a special case of it rather than a parallel mechanism.
 24. **ANALYST-DECISION BUCKET (queued 2026-07-28 — DECISIONS, not builds; the machine proposes
     neither).** (a) SHARES BASIS: weighted-average diluted (recorded 93.678M) vs current shares
     outstanding (~88.5M) vs guided ~90M for FORWARD per-share values while the company retires
@@ -4708,6 +4732,30 @@ and no snake_case survives on the card side (this is the general guard: it catch
 field, not just this one); and `test_committed_web_card_carries_the_same_dated_triggers_as_its_
 record` — structural count parity on the committed artifacts (counts only; analyst prose is never
 pinned). Gate: ruff + `mypy --strict` clean · 1068 passed.
+
+**TRIAGE — 2026-07-28 CNXC $1,523.3M GOODWILL IMPAIRMENT (found by the item-17 guard;
+triaged same-day at operator direction, explicitly OUTSIDE the SMPL re-assembly hold — that hold
+was about preserving SMPL as the guard's acceptance case, never a reason to sit on a defect found
+elsewhere).** FINDING: **no live verdict is at risk.** CNXC has **NO ledger row** (open, closed or
+committed), **NO underwrite record** (`scenarios/CNXC.json` absent — its dossier renders "_no
+scenario record for this name_"), and no verdict block. It is a screened-and-dossiered name that
+was never underwritten, so the exposure is bounded to a dossier nobody has decided on — it does
+NOT get SMPL's unsafe-verdict treatment, because there is no verdict to mark unsafe. THE CHARGE:
+$1,523.3M is a **SINGLE charge in Q4-FY25**, carried identically in FY25 and LTM (the same event,
+not a cumulative roll-up) — quarterly confirms one hit, Q4-25 −1,523.3; CNXC's other one-offs are
+`Restructuring Charges` −60.2 (4%) and `Merger & Related Restruct.` −48.0 (3%), both already
+surfaced. BAND SCAN across all 12 bundles for one-offs between 10% and 100% of market cap — the
+operator's concern that the guard's 10% floor left an unseen middle: **THE BAND IS EMPTY.** Only
+two items clear 10% and both were already known (CNXC 103%, SMPL 43%); the next largest anywhere
+is MVST `Asset Writedown` −36.6 at **9%**, and it is already surfaced. Nothing hidden between.
+
+**ACCEPTANCE-RED POLICY CORRECTED (operator 2026-07-28) — THE RED MUST BE THE DEFECT'S BEHAVIOUR,
+NEVER AN IMPORT ERROR.** #238's original red was `ModuleNotFoundError` on `2facc5e`, which proves
+a FILE WAS ADDED — every new module produces it — not that the defect exists. Replaced with a pin
+importing ONLY `ciq_sheets` (present on 2facc5e), running the REAL extraction path over the REAL
+SMPL bundle: on 2facc5e it fails with an **AssertionError naming the missing line and printing the
+eleven hand-named rows it is absent from**; here it passes. Same function, same input, different
+output. This supersedes the acceptance clause as first written and binds every audit-derived build.
 
 **BUILD RECORD — 2026-07-28 MATERIALITY GUARD (queue item 17, audit P1) — FIRST AUDIT-DERIVED
 REMEDIATION. Shipped independently of item 1, as directed.** ROOT CAUSE IS DEEPER THAN THE AUDIT

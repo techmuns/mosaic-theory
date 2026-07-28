@@ -145,3 +145,35 @@ def test_material_unusual_items_reach_the_committed_record() -> None:
         for r in rows:
             if any(k in r["label"].lower() for k in ("writedown", "impairment", "restructuring")):
                 assert r.get("values"), f"{t}: {r['label']} carries no structured values"
+
+
+def test_the_defect_itself_the_extraction_drops_the_line() -> None:
+    """THE ACCEPTANCE RED — the DEFECT'S BEHAVIOUR, not an import error.
+
+    A ModuleNotFoundError proves a file was added; every new module produces one. The criterion is
+    that the fixture demonstrates the defect. This test imports ONLY `ciq_sheets`, which exists on
+    `2facc5e`, runs the REAL extraction path over the REAL SMPL bundle, and asserts the -$391.9M
+    LTM writedown reaches the assembled table.
+
+    On `2facc5e` that same call returns a table built from the hand-named row list, so the row is
+    absent and this fails with an AssertionError naming the missing line — the defect, observed.
+    Here it passes because material unusual items now surface as data. Same function, same input,
+    different output: that is what a red-then-green must look like.
+    """
+    from vinci.dossier.ciq import CiqBundle
+    from vinci.dossier.ciq_sheets import financial_summary_annual
+
+    d = ROOT / "data" / "manual" / "ciq" / "SMPL"
+    if not d.is_dir():
+        pytest.skip("licensed CIQ bundle unavailable (never committed)")
+    tbl = financial_summary_annual(CiqBundle.from_files("SMPL", sorted(d.glob("*")))).value
+    assert tbl is not None, "SMPL annual summary is UNKNOWN — cannot observe the defect"
+    labels = [r.label for r in tbl.rows]
+    assert any("Asset Writedown" in x for x in labels), (
+        "THE P1 DEFECT: SMPL's LTM Asset Writedown of -$391.9M (43% of market cap, the sole cause "
+        f"of LTM net income of -$198.8M) does not reach the assembled financial summary. Rows "
+        f"present: {labels}"
+    )
+    wd = next(r for r in tbl.rows if "Asset Writedown" in r.label)
+    assert any(v is not None and abs(v) > 390 for v in wd.values), (
+        f"the writedown row surfaced but carries no -391.9 magnitude: {wd.values}")
