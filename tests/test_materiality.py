@@ -316,30 +316,43 @@ def test_only_rows_over_the_floor_are_promoted_to_the_brief() -> None:
             if r.material} == set(), "promoted on history the guard never fires on"
 
 
-def test_every_committed_dossier_round_trips_under_the_new_finrow() -> None:
-    """`FinRow.material` defaults False so pre-#238 dossiers round-trip — VERIFIED, not asserted.
+def test_the_material_default_round_trips_every_pre_238_dossier() -> None:
+    """`FinRow.material` defaults False, so a dossier written BEFORE the field parses unchanged.
 
-    The claim was made in the 17b PR as design reasoning. It is cheap to prove and expensive to be
-    wrong about: every committed dossier predates the field, so if the default did not round-trip,
-    the whole fleet would fail to parse or would re-render differently the moment anything touched
-    it. Checks BOTH halves — parses, and renders byte-identical to what is committed.
+    VERIFIED, not asserted — the claim was design reasoning in the 17b PR, and it is cheap to prove
+    and expensive to be wrong about: every committed dossier predates the field, so a default that
+    did not round-trip would break the whole fleet the moment anything touched it.
+
+    SCOPED TO THE CLAIM (review fix). The first cut of this test asserted live-render ==
+    committed .md across the fleet, which (a) DUPLICATES
+    ``test_screening_context_reaches_every_committed_dossier_e2e``, already pinning exactly that,
+    and (b) never touched `material` at all — delete the field and that version still passed. A
+    test whose name and docstring claim one thing while its assertion tests another is worse than
+    no test: it reddens for unrelated renderer changes and stays green for the regression it is
+    named after. This one reads the FIELD: the committed JSON carries no `material` key, and every
+    row still comes back False.
     """
-    from vinci.dossier.render import render_markdown
-    from vinci.dossier.schemas import Dossier
-    from vinci.scenarios import read_record
+    import json
 
-    seen = 0
+    from vinci.dossier.schemas import Dossier
+
+    seen_rows = 0
     for d in sorted((ROOT / "data" / "dossiers").iterdir()):
         j = d / "dossier.json"
         if not j.exists():
             continue
+        raw = json.loads(j.read_text())
+        ann = ((raw.get("mechanical") or {}).get("financial_summary") or {}).get("annual") or {}
+        raw_rows = (ann.get("value", ann) or {}).get("rows") or []
+        assert not any("material" in r for r in raw_rows), (
+            f"{d.name}: committed JSON already carries a `material` key — this fixture is no "
+            "longer a PRE-field dossier, so it cannot prove the default round-trips")
         doc = Dossier.model_validate_json(j.read_text())     # parses under the new model
-        try:
-            card = read_record(doc.ticker, root=ROOT)
-        except FileNotFoundError:
-            card = None
-        assert render_markdown(doc, card=card) == (d / "dossier.md").read_text(), (
-            f"{doc.ticker}: adding FinRow.material changed the rendered artifact — the optional "
-            "default does not round-trip a pre-#238 dossier")
-        seen += 1
-    assert seen >= 10, f"expected the committed dossier fleet, saw {seen}"
+        fs = doc.mechanical.financial_summary
+        tbl = fs.annual.value if fs is not None else None
+        for r in (tbl.rows if tbl is not None else []):
+            assert r.material is False, (
+                f"{d.name}/{r.label}: absent key did not default to False — a pre-#238 dossier "
+                "would silently gain a promoted brief row")
+            seen_rows += 1
+    assert seen_rows >= 50, f"expected the committed fleet's rows, saw {seen_rows}"

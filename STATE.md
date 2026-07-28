@@ -4866,7 +4866,14 @@ build).**
 (1) **ROUND-TRIP CLAIM VERIFIED, not asserted.** "Defaults False, so every committed dossier
 round-trips" was a design claim. Checked on ALL ELEVEN committed dossiers (each predating #238, so
 none carries a `material` key): **11/11 parse under the new `FinRow`, and 11/11 render
-BYTE-IDENTICAL.** The optional-field default is confirmed, not assumed.
+BYTE-IDENTICAL.** The optional-field default is confirmed, not assumed. PIN SCOPED AT REVIEW: the
+first cut asserted live-render == committed `.md` fleet-wide, which DUPLICATED
+`test_screening_context_reaches_every_committed_dossier_e2e` and — worse — never read `material`
+at all, so deleting the field left it green. A test whose docstring claims one thing while its
+assertion tests another reddens on unrelated renderer changes and stays silent on the regression
+it is named for. Rewritten to read the FIELD (no `material` key in the committed JSON; every row
+returns False); mutation-tested — default flipped to True CAUGHT, field removed CAUGHT, both of
+which the first cut passed.
 (2) **ITEM 18'S INPUT DOES NOT EXIST IN USABLE FORM — the operator caught P1's shape again, before
 the build.** Confirmed and WORSE than the single example suggested: **all three** regression-trio
 facts live inside the `thesis` PROSE string of the V-row payload, none of them structured —
