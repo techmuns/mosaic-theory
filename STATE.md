@@ -4309,6 +4309,13 @@ scheduled; 24 needs an operator policy line before any build encodes it.
     today, so wiring it bare turns the suite red on merge. That is exactly the operator's own check
     on #240 ("if it's wired to CI while finding ten unpinned duplicates the suite should be red");
     the baseline IS the answer to it.
+    **FEASIBILITY, ANSWERED NOT ASSUMED (2026-07-28).** The operator asked to be told if "what the
+    twins consume" is not enumerable. IT IS — a prototype detector matching string-literal sets of
+    ≥3 members across py↔js twins finds **TEN duplicated sets live today, none pinned**. Proof it
+    finds REAL duplicates rather than noise: the driver keyword/weight vocabulary (12 members,
+    `render.py:1786` ↔ `dossier.js:466` — same words AND the same weight in two languages), plus
+    `_CS_COLS` (see 27b). The prototype was a throwaway and is NOT in the repo; 27a is where it
+    lands, baselined.
 27b. **CURATE THE TEN DOWN — as each is touched, NOT as a project (operator 2026-07-28).** Each hit
     needs a judgment: genuine shared definition (collapse to one import, or pin) vs short domain
     vocabulary used inline (`["bear","base","bull"]`, where a literal is legitimate).
@@ -4316,28 +4323,6 @@ scheduled; 24 needs an operator policy line before any build encodes it.
     "Maturity","Sec","Conv","Cur"]`, identically named with identical contents in `render.py` and
     `dossier.js`. Latent today; if those headers ever drift, the md and web dossiers show DIFFERENT
     capital-structure tables with nothing flagging it.
-27. **(SUPERSEDED by 27a/27b — kept for its reasoning)** **ONE DEFINITION FOR ANYTHING BOTH TWINS CONSUME — a GUARD, not a habit (operator
-    2026-07-28; rides with the STATE-topology slot).** ORIGIN, and why a habit is the wrong shape:
-    the duplication hazard **recurred WHILE BEING FIXED, by someone actively looking for it** —
-    the 17b review found three copies of the brief label set, two of them introduced by 17b
-    itself. "Worth watching for on every twin-touching change" is therefore not a fix; if it
-    recurs under active attention, watching will not catch the next one. THE RULE: assert there is
-    exactly ONE definition of anything both twins consume; a second copy reddens the suite. RED:
-    introduce a second brief label set in a fixture and the build fails.
-    **FEASIBILITY ANSWERED 2026-07-28 (the operator asked to be told if "what the twins consume"
-    is not enumerable — IT IS, and a prototype already works).** A detector matching string-literal
-    sets of ≥3 members across py↔js twins finds **TEN duplicated sets live today, none pinned**.
-    The clearest proof it finds REAL duplicates rather than noise: `_CS_COLS = ["Type",
-    "Principal", "Coupon", "Floating", "Maturity", "Sec", "Conv", "Cur"]` exists under the SAME
-    NAME with IDENTICAL contents in both `render.py` and `dossier.js`. Also live: the driver
-    keyword/weight vocabulary (12 members, `render.py:1786` ↔ `dossier.js:466`, same words AND
-    same weight in two languages) and several label vocabularies. THE REAL WORK IS THE ALLOWLIST,
-    not the detector: some hits are genuine shared definitions that must collapse to one import or
-    a pin, others are short domain vocabularies used inline (`["bear","base","bull"]`) where a
-    literal is legitimate. Each needs a judgment, and an un-curated detector is the cried-wolf
-    failure this repo keeps closing (the >10% level rule that fired on the filing date). **NOTE
-    FOR ITEM 22:** 22 lands on top of this surface, so the ten existing duplicates are known
-    BEFORE it adds render paths, which is what the operator's question was for.
 26. **EXTRACTION-VERSION STAMP ON EVERY DOSSIER (queued 2026-07-28 from the #238 blast-radius
     diagnosis).** Every committed dossier carries the extraction version that produced it. ORIGIN:
     after #238 the fleet holds two vintages with nothing distinguishing them — pre-guard tables
@@ -4901,6 +4886,23 @@ three days behind the others, which is the cadence gap in miniature. SMPL's own 
 `spot_source` reads "Polygon daily aggregate close 2026-07-22 (store)" — a store read, confirming
 the audit's P4 mechanism claim (ledger exit price) was WRONG while its staleness substance was
 right.
+
+**REVIEW FINDING — 2026-07-28 THE LIVE QUEUE HAS TWO COLLIDING NUMBER SERIES. This is the
+concrete brief for the queued STATE-topology work; it is NOT a formatting nit.** Found reviewing
+#240. Inside ONE continuous list, with **no separating heading**, item 24 (ANALYST-DECISION
+BUCKET) is followed directly by a SECOND series restarting at 16 (CIQ ESCALATION — VITL). So
+numbers **16–27 appear TWICE with entirely different meanings**: "item 22" resolves to either the
+**VISIBLE-ABSENCE RULE** or **"Full STATE split"** depending on which occurrence a reader hits —
+and the operator has been using the FIRST series' numbering in conversation all week, while the
+SECOND series' item 22 is literally the task to fix this. HONESTY ABOUT AUTHORSHIP: the collision
+PRE-DATED the audit work (both series already contained a 16), but the audit-derived additions
+(17–27) **widened it from one colliding number to twelve**. Also within the first series, physical
+order now reads `… 22, 23, 25, 27a, 27b, 26, 24` — 24/25/26 are out of sequence because successive
+insertions anchored on convenient text rather than maintaining order. RECOMMENDATION for the
+STATE-topology slot: prefix the audit-derived items (`A17`…`A27`) or relocate the older series
+behind its own heading, then re-sequence; either removes the ambiguity permanently. **Recorded
+rather than fixed here — re-sequencing a 4,000-line file inside a docs PR under review is the
+scope creep this repo keeps refusing, and the work is already queued.**
 
 **SIZE CHECK BEFORE BUILDING THE 20+21+23 BATCH — 2026-07-28 (operator asked to be told BEFORE
 rather than after). VERDICT: THE BATCH IS NOT ONE PR, AND ONE OF THE THREE IS MIS-SCOPED.**
