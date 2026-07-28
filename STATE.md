@@ -4221,7 +4221,10 @@ renumber.** No other unverifiable claim found in this block.
     payload, alongside (never replacing) the prose `thesis`. ORIGIN: the item-18 scope check found
     ALL THREE regression-trio facts living only inside the `thesis` string, so the guard's input
     does not exist in usable form — P1's shape (a guard whose input isn't usable) caught BEFORE
-    the build rather than after. Binds FORWARD (BASIS_REQUIRED_FROM / FIELDED_REFS_FROM pattern);
+    the build rather than after. **SCOPE SENTENCE, carried in deliberately so it is not
+    relitigated as "just parse the prose better": `log_verdict` takes `thesis: str`, so this is
+    THE WRITE PATH'S SHAPE, not one badly-written entry.** No regex over the thesis can be correct,
+    because the next payload is phrased differently by construction. Binds FORWARD (BASIS_REQUIRED_FROM / FIELDED_REFS_FROM pattern);
     the 3 existing V-rows are NOT backfilled and no committed decision is rewritten. RED: a
     payload written with a structured loan-basis field round-trips it, and `log_verdict` refuses a
     fact whose source stamp is absent.
@@ -4297,6 +4300,29 @@ scheduled; 24 needs an operator policy line before any build encodes it.
     the income statement, which item 17 cannot: balance-sheet and cash-flow lines get the same
     test, closing the capex 6 → 20 → 28 gap item 17's rename records. Price the build; if it holds
     up, item 17 becomes a special case of it rather than a parallel mechanism.
+27a. **DUPLICATE-DEFINITION DETECTOR + FROZEN BASELINE (operator split 2026-07-28; ships in the
+    STATE-topology slot).** The detector plus a BASELINE recording the ten known duplicates as
+    accepted-for-now: **the build fails only on the ELEVENTH.** Zero curation, ships immediately.
+    Why the split matters more than it sounds: the instance that started this was one I INTRODUCED
+    WHILE FIXING THE SAME CLASS, so 27a closes the hazard against NEW instances now rather than
+    after ten judgment calls. NOTE — the detector must NOT be wired un-baselined: it finds ten
+    today, so wiring it bare turns the suite red on merge. That is exactly the operator's own check
+    on #240 ("if it's wired to CI while finding ten unpinned duplicates the suite should be red");
+    the baseline IS the answer to it.
+    **FEASIBILITY, ANSWERED NOT ASSUMED (2026-07-28).** The operator asked to be told if "what the
+    twins consume" is not enumerable. IT IS — a prototype detector matching string-literal sets of
+    ≥3 members across py↔js twins finds **TEN duplicated sets live today, none pinned**. Proof it
+    finds REAL duplicates rather than noise: the driver keyword/weight vocabulary (12 members,
+    `render.py:1786` ↔ `dossier.js:466` — same words AND the same weight in two languages), plus
+    `_CS_COLS` (see 27b). The prototype was a throwaway and is NOT in the repo; 27a is where it
+    lands, baselined.
+27b. **CURATE THE TEN DOWN — as each is touched, NOT as a project (operator 2026-07-28).** Each hit
+    needs a judgment: genuine shared definition (collapse to one import, or pin) vs short domain
+    vocabulary used inline (`["bear","base","bull"]`, where a literal is legitimate).
+    **`_CS_COLS` first regardless of what touches it** — `["Type","Principal","Coupon","Floating",
+    "Maturity","Sec","Conv","Cur"]`, identically named with identical contents in `render.py` and
+    `dossier.js`. Latent today; if those headers ever drift, the md and web dossiers show DIFFERENT
+    capital-structure tables with nothing flagging it.
 26. **EXTRACTION-VERSION STAMP ON EVERY DOSSIER (queued 2026-07-28 from the #238 blast-radius
     diagnosis).** Every committed dossier carries the extraction version that produced it. ORIGIN:
     after #238 the fleet holds two vintages with nothing distinguishing them — pre-guard tables
@@ -4861,6 +4887,56 @@ three days behind the others, which is the cadence gap in miniature. SMPL's own 
 the audit's P4 mechanism claim (ledger exit price) was WRONG while its staleness substance was
 right.
 
+**REVIEW FINDING — 2026-07-28 THE LIVE QUEUE HAS TWO COLLIDING NUMBER SERIES. This is the
+concrete brief for the queued STATE-topology work; it is NOT a formatting nit.** Found reviewing
+#240. Inside ONE continuous list, with **no separating heading**, item 24 (ANALYST-DECISION
+BUCKET) is followed directly by a SECOND series restarting at 16 (CIQ ESCALATION — VITL). So
+numbers **16–27 appear TWICE with entirely different meanings**: "item 22" resolves to either the
+**VISIBLE-ABSENCE RULE** or **"Full STATE split"** depending on which occurrence a reader hits —
+and the operator has been using the FIRST series' numbering in conversation all week, while the
+SECOND series' item 22 is literally the task to fix this. HONESTY ABOUT AUTHORSHIP: the collision
+PRE-DATED the audit work (both series already contained a 16), but the audit-derived additions
+(17–27) **widened it from one colliding number to twelve**. Also within the first series, physical
+order now reads `… 22, 23, 25, 27a, 27b, 26, 24` — 24/25/26 are out of sequence because successive
+insertions anchored on convenient text rather than maintaining order. RECOMMENDATION for the
+STATE-topology slot: prefix the audit-derived items (`A17`…`A27`) or relocate the older series
+behind its own heading, then re-sequence; either removes the ambiguity permanently. **Recorded
+rather than fixed here — re-sequencing a 4,000-line file inside a docs PR under review is the
+scope creep this repo keeps refusing, and the work is already queued.**
+
+**SIZE CHECK BEFORE BUILDING THE 20+21+23 BATCH — 2026-07-28 (operator asked to be told BEFORE
+rather than after). VERDICT: THE BATCH IS NOT ONE PR, AND ONE OF THE THREE IS MIS-SCOPED.**
+· **ITEM 20 — SMALL, ~2 lines + a test. SHIP IT.** The claim VERIFIES against the real workbook:
+SMPL's quarterly `P/LTM EPS` Close series literally ends `NM`, prior cell `15.89`. But THE AUDIT
+MISPLACED THE DEFECT: `_multiples_close` is CORRECT — its docstring says "empty/NM → None" and it
+does exactly that. The backward-fill is in the CONSUMER, `range_position` (`ciq_sheets.py:302,316`):
+`pe = [v for _, v in _multiples_close(...) if v is not None]` FILTERS THE ABSENCE AWAY, then
+`pe[-1]` takes the last survivor — the previous quarter. Backward-fill by a different route than the
+audit described, which matters because a fix aimed at the READER would have changed nothing. Fix:
+read the LATEST cell; print nothing (or UNKNOWN) when it is None.
+· **ITEM 21 — MEDIUM, NOT the one-line routing change the audit implies.** The routing IS one line
+(`ciq_sheets.py:1900`, `read_text(wb.path, wb.fmt)` → `read_sheets`). But
+`_parse_business_relationships(raw)` consumes **TEXT**, while `read_sheets()` returns
+`dict[str, list[list]]` — a different shape. **The parser rewrite for the sheet shape IS the item.**
+Plus `Suppliers.xls` is a NEW consumer (never opened; carries the creditor group). Ship it, but as
+its own PR with its own red (`Customers.xls` reads successfully), not as a third of a batch.
+· **ITEM 23 — MIS-SCOPED. AS WRITTEN IT WOULD CHANGE NOTHING. DO NOT BUILD IT YET.** The extractor
+ALREADY uses exactly one vintage: `1,351.8` is Trends "latest", and the acceleration read prints
+the whole path (`1,334.2 (3m) → 1,335.1 (2m) → 1,333.9 (1m) → 1,351.8 (latest)`). The `1,334` is
+NOT a second extraction — it is the ANALYST'S FROZEN RECORD REFERENCE, source-stamped "committed
+dossier financial_summary (E cols = consensus)": what the dossier said when they underwrote,
+CORRECTLY frozen at entry vintage. So "single vintage per build, stamped once" targets a mechanism
+that is not the defect — the FOURTH instance of that pattern this week (P1's guard, item 18's
+input, item 1's flat max, now this). The real issue is **an entry-vintage record value rendering
+beside a fresh extraction value with nothing marking the difference**, which is ALREADY item 1's
+clause: "entry-vintage values are exempt but must be LABELLED entry-vintage wherever they render
+beside fresh values." **Recommendation: fold 23 into item 1's labelling clause and close it as a
+duplicate, or re-spec it — operator's call. It is not a mechanical build.**
+· **CONSEQUENCE FOR THE ARITHMETIC:** "one PR takes the original nine from 1 closed to 4 closed"
+does not hold. Honest count: **20 closes P5** (small); **21 closes P6** (medium, own PR); **23 does
+NOT close P8 as written**. The batch realistically takes the nine from 1 closed to **3 closed**,
+across TWO PRs, with P8 returning to spec.
+
 **POST-MERGE VERIFICATION + ITEM-18 SCOPE CHECK — 2026-07-28 (operator-directed, BEFORE any
 build).**
 (1) **ROUND-TRIP CLAIM VERIFIED, not asserted.** "Defaults False, so every committed dossier
@@ -4889,12 +4965,27 @@ structured-fact fields) must precede 18 (the guard); 18 is small once 18a exists
 ADDITIVE and OPTIONAL, so 18a binds FORWARD exactly like `BASIS_REQUIRED_FROM` / `FIELDED_REFS_FROM`
 — the repo's established pattern — and the three existing V-rows stay untouched. **NO COMMITTED
 DECISION IS REWRITTEN.** Consequence stated honestly: for those three legacy rows the guard has no
-structured source, so 18 cannot check them; it binds to rows written after 18a. If the operator
-later wants the legacy three covered, the options are (a) backfill — REWRITES A COMMITTED DECISION
-OF RECORD and needs an explicit decision, not a build, or (b) a SIDECAR carrying structured facts
-BESIDE the sealed row rather than inside it, which is the precedent this repo already set with
-`scenarios/_amendment_index.json` and the `superseded_note`. **Neither is proposed here** — flagged
-for the operator, per the standing rule that committed decisions are not rewritten silently.
+structured source, so 18 cannot check them; it binds to rows written after 18a.
+
+**DECISION — 2026-07-28 (operator): NEITHER BACKFILL NOR SIDECAR. The legacy rows render an
+EXPLICIT "no structured source for this decision vintage".** Both options I flagged were REJECTED,
+and the reasoning is the part that must survive:
+· **NOT BACKFILL.** Adding structured fields to a sealed V-row is additive but still EDITS A
+DECISION OF RECORD to satisfy a guard written afterwards. The seal is the point.
+· **NOT A SIDECAR EITHER — the less obvious rejection, and the more important one.** A sidecar
+carrying `loan_basis: 1.2x` beside a sealed thesis that already states it in prose creates **TWO
+COPIES OF ONE FACT THAT CAN DRIFT**. That is the GENERATOR OF EVERY DEFECT IN THIS AUDIT — anchor
+block vs reference row, web chip vs md render, the record's three triggers vs the dossier's one.
+Solving a divergence problem by adding a second source of truth is the wrong direction, and the
+`_amendment_index.json` precedent does not outweigh it.
+· **THE THIRD OPTION, AND IT IS NOT A COMPROMISE.** 18a binds forward; the guard treats a
+pre-schema row as **"no structured source for this decision vintage"** and RENDERS THAT, rather
+than UNKNOWN. This is item 22's visible-absence rule applied consistently: the absence is TRUE,
+VISIBLE and ATTRIBUTED, which is exactly what separates it from a false UNKNOWN.
+· **WHY THIS IS COMFORTABLE, NOT MERELY TIDY:** the exposure is THREE rows, all closed or avoid,
+with the facts recoverable from filings regardless; and **the gap SELF-HEALS** — SMPL is
+re-underwritten at the October print and its new V-row is written under the 18a schema.
+**Recorded as a DECISION with its reasoning so the next session does not re-open it.**
 
 **REVIEW OF #237/#238 — 2026-07-28, TWO DEFECTS FOUND IN MY OWN 17b CODE AND FIXED BEFORE MERGE.**
 (1) **THE MARKER DID NOT MATCH THE SPEC.** The operator's rule was "any row that TRIGGERS THE
