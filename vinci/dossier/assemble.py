@@ -29,6 +29,7 @@ from vinci.dossier.covenant_extract import (
     governing_terms,
 )
 from vinci.dossier.driver_extract import extract_transcript_drivers
+from vinci.dossier.extraction_version import EXTRACTION_VERSION
 from vinci.dossier.manual_store import LocalFolderStore, ManualDataStore
 from vinci.dossier.mechanical import assemble_mechanical
 from vinci.dossier.render import render_markdown
@@ -342,6 +343,10 @@ def assemble_one(
         # UTC-aware so the stamp is unambiguous and comparable across machines/timezones — it lets
         # the human tell two same-day re-assemblies apart (rendered with time + "UTC").
         llm_model=(llm.model if llm else None), assembled_at=datetime.now(UTC),
+        # (26a) the extractor's declared vintage — the assembly date says WHEN this was built, the
+        # version says WITH WHAT. Stored rather than recomputed at render time, so re-rendering an
+        # old JSON keeps the version that actually produced it instead of claiming today's.
+        extraction_version=EXTRACTION_VERSION,
     )
     _write(dossier, llm_log, out_root)
     return dossier

@@ -19,6 +19,7 @@ from typing import TYPE_CHECKING, Any, ParamSpec
 
 from vinci.dossier.anchor import Anchor
 from vinci.dossier.covenant_extract import GoverningTerm, _derive_conversion, governing_terms
+from vinci.dossier.extraction_version import stamp_detail, stamp_label
 from vinci.dossier.schemas import Dossier, MechanicalLayer, Sourced, SourceStatus, StockInfo
 from vinci.dossier.verdict import MachineProposal, derive_proposal, split_lean
 
@@ -2911,7 +2912,11 @@ def render_markdown(d: Dossier, *, dev: bool = False, show_proposal: bool = Fals
     out: list[str] = [
         f"# Dossier — {d.name} {ident}",
         "",
-        f"_{d.assembled_at:%B %-d, %Y}_",
+        # (26a) the extraction stamp rides the DOCUMENT DATE, in the MAIN BODY. The date says when
+        # this was built; the version says with what — and "are these two dossiers comparable?"
+        # turns on the second. Deliberately NOT confined to Record & reproduce: a stamp a reader
+        # never meets cannot stop them comparing two vintages, which is 17b's failure exactly.
+        f"_{d.assembled_at:%B %-d, %Y} · extraction {stamp_label(d.extraction_version)}_",
         "",
     ]
     # (3-tier) BRIEF — first cut: the machine READ + decisive question + decision data + condensed
@@ -2987,6 +2992,10 @@ def _record_reproduce_lines(d: Dossier) -> list[str]:
         "## Record & reproduce",
         f"- **Data window:** screened as of {d.reference_date} · assembled "
         f"{_fmt_assembled(d.assembled_at)}",
+        # (26a) the long form: the version PLUS what it names. The header carries the identifier so
+        # a reader meets it; this carries the meaning, which is audit-tier context by the three-tier
+        # rule and print-expanded regardless.
+        f"- **Extraction:** {stamp_detail(d.extraction_version)}",
         "- **Synthesis:** " + (
             f"model `{d.llm_model}` — facts assembled mechanically; the synthesis frames, "
             "the analyst decides"

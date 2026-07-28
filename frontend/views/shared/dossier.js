@@ -9,6 +9,28 @@ import { citeMark, withEndnotes, auditCitesInline } from "../../lib/cites.js";
 import { barDomain, lineDomain, linScale, logScale, barLabelY, extent, EXHIBIT } from "../../lib/exhibit.js";
 import { uwCard, uwCardParts, amendMarks } from "./uw-card.js";
 
+// (26a) EXTRACTION VERSION — the twin of vinci/dossier/extraction_version.py. The dossier's date
+// says WHEN it was built; this says WITH WHAT, which is what "are these two dossiers comparable?"
+// actually turns on (#238 left the fleet holding two vintages that dated alike). Mirrored rather
+// than imported — python↔JS twins cannot share a module — and PINNED in test_parity_pins.py, so a
+// one-sided edit reddens the suite instead of shipping a web page that disagrees with the markdown.
+// The table is append-only and the LAST row is current; a bump must say what it names.
+const EXTRACTION_VERSIONS = [
+  ["2026-07-28.1",
+    "unusual-items surfacing in the financial summary (#238) · multiples read from the " +
+    "latest close, NM rather than a stale figure (#241)"],
+];
+const UNSTAMPED = "unstamped";
+// An absent stamp renders VISIBLY: "unstamped" and "I did not look" are different states, and only
+// one of them is honest that the vintage is unknown.
+const stampLabel = (v) => v || UNSTAMPED;
+const stampDetail = (v) => {
+  if (!v) return `${UNSTAMPED} — assembled before extraction versions were declared; vintage unknown`;
+  const row = EXTRACTION_VERSIONS.find(([ver]) => ver === v);
+  return row ? `${v} — ${row[1]}`
+    : `${v} — not a version this code declares; built by a different extractor`;
+};
+
 // PDF export uses the browser's native print-to-PDF (no library — the frontend stays dependency-free).
 // The browser derives the saved-file name from document.title, so on a dossier print we swap in a
 // meaningful name ("VRRM · dossier · Nostra Vinci") and restore it afterward. Wiring it to the
@@ -713,6 +735,7 @@ function recordAndReproduce(d, verdict, card = null) {
   return `<div class="card ds-section"><div class="ds-title">Record &amp; reproduce</div>
     <div class="subtitle muted ds-sub">Everything needed to date, audit, or regenerate this document.</div>
     ${row("Data window", `screened as of <span class="mono">${fmtDate(d.reference_date)}</span> · assembled <span class="mono">${fmtStamp(d.assembled_at)}</span>`)}
+    ${row("Extraction", escapeHtml(stampDetail(d.extraction_version)))}
     ${row("Synthesis", d.synthesis
       ? `model <span class="mono">${escapeHtml(d.llm_model || "llm")}</span> — facts assembled mechanically; the synthesis frames, the analyst decides`
       : "not assembled — mechanical layer only")}
@@ -2179,7 +2202,7 @@ function header(d) {
   return `<div class="header-block ds-header">
     <div class="ds-header-main">
       <h1 class="page-h">${escapeHtml(d.name || d.ticker)} <span class="page-h-id">(${d.exchange ? `${escapeHtml(d.exchange)}: ` : ""}<span class="mono">${escapeHtml(d.ticker)}</span>)</span></h1>
-      <div class="ds-meta">${fmtDate(d.assembled_at)}</div>
+      <div class="ds-meta">${fmtDate(d.assembled_at)} · extraction <span class="mono">${escapeHtml(stampLabel(d.extraction_version))}</span></div>
     </div>
     <div class="ds-pdf-wrap">
       <button id="ds-pdf" class="ds-pdf-btn" type="button" aria-haspopup="true" aria-expanded="false"
