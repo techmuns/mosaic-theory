@@ -316,3 +316,20 @@ Street consensus for comparison: $14.88 (CIQ), $15.20 (MarketBeat, 13 analysts),
 | Brand-level profitability | Not disclosed by the company anywhere — single reportable segment |
 | Circana category data | The +10% category figure is management-sourced; verified as reported, not independently |
 | Q4 FY26 buyback quantum | Unknown; determines year-end net debt and share count |
+
+---
+
+## ERRATUM
+
+### E1 — "There is no WATCH row" · `kind: note_clear` · 2026-07-28
+
+A rendering/scoping defect in the audit, not a finding reversal. The statement was scoped to the
+five-row `decision_ledger.jsonl` provided to the audit; the WATCH is a 2026-07-27 record reissue
+the audit never saw.
+
+**Correct statement:** no WATCH row exists in the decision ledger; the WATCH is a 07-27 record
+reissue, rendered by the md twin without the close-aware chip the web carries.
+
+*(Scoping note by the repo: the quoted sentence appears in the audit as circulated; it is not
+present verbatim in this committed export, which appears to be an earlier or abridged copy. The
+erratum is recorded here regardless so the correction travels with the memo of record.)*

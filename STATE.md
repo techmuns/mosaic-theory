@@ -3984,9 +3984,12 @@ renumber.** No other unverifiable claim found in this block.
 
 **BUILD**
 1. **BUILD-WIDE FRESHNESS CONTRACT (queue head; widened 2026-07-28 by the IC audit — was
-   "quarterly-filing-triggered fact refresh", spec'd 2026-07-26).** ONE rule: nothing on the page
-   may be older than the newest panel in the same build, and every dated input carries its own
-   as-of. Three enforcement points, one class (audit P2+P3+P4 confirmed):
+   "quarterly-filing-triggered fact refresh", spec'd 2026-07-26).** POSITION IS PATH-DEPENDENCE,
+   NOT the audit's ranking: this item was already queue head, spec'd pre-audit (2026-07-26), so
+   it keeps the slot; among the AUDIT-DERIVED builds the operator ranks the MATERIALITY GUARD
+   (item 17) first. ONE rule: nothing on the page may be older than the newest panel in the same
+   build, and every dated input carries its own as-of. FOUR enforcement points, one class (audit
+   P2+P3+P4 confirmed + the scheduler, operator-scoped 2026-07-28):
    (a) TRAILING FACTS — a new 10-Q forces recomputation of every LTM-basis fact with a staleness
    stamp (the original item: `ltm_fcf` 157.915 was the FY figure, ~32% above true ~119.4; **the
    gate watches the panel; nothing watched the fact**);
@@ -3996,9 +3999,17 @@ renumber.** No other unverifiable claim found in this block.
    own build);
    (c) GUIDANCE — selected by MAX guidance date from the structured grid, never by filing match,
    with a prose-vs-grid cross-check that fails loud on disagreement (SMPL cited April's 8-K 4×,
-   never July's; the bear leg argued from the superseded guide). Entry-vintage values that are
-   MEANT to be frozen (an underwrite record's reference frame) are exempt but must be LABELLED
-   entry-vintage wherever they render beside fresh values.
+   never July's; the bear leg argued from the superseded guide);
+   (d) THE SCHEDULER (operator-scoped 2026-07-28) — freshness is MAX-AGE-OF-CONTAINED-FACTS,
+   never assembly date, in the thing that decides WHETHER to build as well as in the builder.
+   SMPL was skipped on 07-27 as "freshest" by assembly timestamp while containing a 07-22 price,
+   a one-month-old consensus vintage and April guidance — freshest by the clock, stale by the
+   facts. A scheduler keeping the clock definition will systematically skip the dossiers MOST in
+   need of re-assembly, because a build that failed to refresh its inputs still earns a recent
+   timestamp; land the contract in the builder alone and the broken definition survives exactly
+   where it does the damage. Entry-vintage values that are MEANT to be frozen (an underwrite
+   record's reference frame) are exempt but must be LABELLED entry-vintage wherever they render
+   beside fresh values.
 2. **STRUCTURED GENERATING-CELLS RULE (queued 2026-07-26).** Any number quoted in record PROSE
    must have its generating cells stored STRUCTURALLY beside it. ORIGIN: the boundary-pair hunt —
    the entry rationale's "2.12 clears / 1.88 fails" was prose-only, so re-deriving it at Q3 data
@@ -4142,9 +4153,13 @@ renumber.** No other unverifiable claim found in this block.
     too small to justify enshrining the display-string-parse). Four open decisions listed at the
     doc's end (role vocabulary; one field vs statistic×population; archived-SMPL row stays sealed;
     one PR vs two). **DISCHARGED 2026-07-27 — BUILT (see the schema-1.3 build record). Decisions were: census role list · one tag · archive stays sealed · one PR. Build unblocked — next build slot.**
-17. **MATERIALITY GUARD (audit P1; queued 2026-07-28).** Any single income-statement or
-    cash-flow line exceeding 10% of market cap or 5% of revenue MUST appear in the synthesis or
-    the build fails loud. ORIGIN: SMPL's $391.9M LTM Asset Writedown (43% of market cap, the sole
+17. **MATERIALITY GUARD (audit P1; queued 2026-07-28) — OPERATOR-RANKED FIRST among the
+    audit-derived builds.** The only defect in the set that changed what the investment
+    conclusion was ABOUT: stale guidance mis-framed the bear case, but the missing $391.9M meant
+    the bear case was arguing about the wrong EVENT. A size test plus a fixture, with no
+    dependencies — against a freshness contract that touches every panel loader. Any single
+    income-statement or cash-flow line exceeding 10% of market cap or 5% of revenue MUST appear
+    in the synthesis or the build fails loud. ORIGIN: SMPL's $391.9M LTM Asset Writedown (43% of market cap, the sole
     cause of LTM net income −$198.8M) never reached the dossier while the FY25 $60.9M was cited
     three times. Positive pin: a fixture writedown at 11% of mcap must raise unless surfaced.
 18. **LEDGER READ-BACK — NO FALSE UNKNOWN (audit regression trio; queued 2026-07-28).** Assembly
@@ -4172,13 +4187,18 @@ renumber.** No other unverifiable claim found in this block.
     error INTO the dossier and a spurious UNKNOWN. Add Suppliers.xls to the workbook-keyword
     consumers (never opened; carries the creditor group). The downstream customer-concentration
     conclusion happened to be right for a different reason — right conclusion, wrong route.
-22. **RENDER PARITY WITH THE RECORD & LEDGER (audit N7 + the WATCH/CLOSE gap; queued
-    2026-07-28).** Two md-twin gaps, one item: (a) the record's THREE `reunderwrite_triggers`
-    (Quest / guidance-cut / gross-margin — full parity with the V-row) render nowhere in the md
-    dossier, so the monitoring surface reads thinner than the decision of record; (b) the
-    2026-07-27 close-aware verdict chip ("BUY — closed … at $10.53") shipped WEB-ONLY —
-    `render.py` has no close-aware disposition, so the md/PDF shows WATCH + "not held" with no
-    trace of the closed BUY. Not data loss; unrendered fields. Twin-parity pins required.
+22. **VISIBLE-ABSENCE RULE (generalised by the operator 2026-07-28 from audit N7 + the
+    WATCH/CLOSE gap): a render that cannot express a field MUST SAY SO. Silent omission is
+    prohibited; absence must be visible and attributed.** The md does not merely under-tell the
+    WATCH — it shows WATCH + "not held" with no trace a BUY existed, and a reader CANNOT DETECT
+    they are seeing a partial view: the same distinction as the false UNKNOWN — not incomplete,
+    MISLEADING. One rule closes N7 (the record's three `reunderwrite_triggers` render nowhere),
+    the WATCH gap (the 07-27 close-aware chip shipped web-only), and the covenant UNKNOWN's
+    render half together — and lets the web and md twins LAG each other without CONTRADICTING
+    each other, which is the actual production requirement. INTERIM BEHAVIOUR, before render.py
+    learns the close-aware chip: `disposition: WATCH — prior BUY closed 07-24 (see Decision
+    log)` · `covenant basis: not rendered — see record` (never UNKNOWN). Twin-parity pins on the
+    rule, not on any one chip.
 23. **ONE CONSENSUS VINTAGE PER BUILD (audit P8; queued 2026-07-28).** A build references exactly
     one Trends vintage, stamped once at the top. ORIGIN: base case built on 1,334 ("consensus
     FY26E") while the same document prints 1,351.8 as the consensus path anchor — two vintages,
@@ -4712,7 +4732,11 @@ flags; the surviving catch is real (bull 1,420 sits ABOVE the LTM it claims to s
 price (they coincide because both froze the same session); the staleness substance stands.
 **N7 is half-wrong** — the record carries ALL THREE re-underwrite triggers (parity with the
 V-row); the md dossier simply does not render them — a RENDER gap, cheaper than re-speccing.
-EXTERNAL VALIDATION banked: the auditor independently reproduced all six boundary-cell ratios
+ERRATUM E1 appended to the committed memo (`kind: note_clear`, 2026-07-28, operator-directed):
+its "no WATCH row" statement was scoped to the five-row ledger export the audit received — the
+WATCH is the 07-27 record reissue the audit never saw; a rendering/scoping defect in the audit,
+not a finding reversal (the committed export is an earlier copy lacking the sentence verbatim —
+noted in the erratum itself). EXTERNAL VALIDATION banked: the auditor independently reproduced all six boundary-cell ratios
 (2.17/1.92/2.34/2.07/1.96/1.73 — the exact cells the 1.3 migration re-homed) and §D verifies the
 whole mechanical layer (band, percentiles, margin anchors, transcripts verbatim, peers, insiders).
 OPERATOR QUESTIONS ANSWERED IN THIS RECORD: (1) **WATCH-vs-CLOSE in production is a TWIN-PARITY
