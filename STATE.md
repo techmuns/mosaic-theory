@@ -4221,7 +4221,10 @@ renumber.** No other unverifiable claim found in this block.
     payload, alongside (never replacing) the prose `thesis`. ORIGIN: the item-18 scope check found
     ALL THREE regression-trio facts living only inside the `thesis` string, so the guard's input
     does not exist in usable form — P1's shape (a guard whose input isn't usable) caught BEFORE
-    the build rather than after. Binds FORWARD (BASIS_REQUIRED_FROM / FIELDED_REFS_FROM pattern);
+    the build rather than after. **SCOPE SENTENCE, carried in deliberately so it is not
+    relitigated as "just parse the prose better": `log_verdict` takes `thesis: str`, so this is
+    THE WRITE PATH'S SHAPE, not one badly-written entry.** No regex over the thesis can be correct,
+    because the next payload is phrased differently by construction. Binds FORWARD (BASIS_REQUIRED_FROM / FIELDED_REFS_FROM pattern);
     the 3 existing V-rows are NOT backfilled and no committed decision is rewritten. RED: a
     payload written with a structured loan-basis field round-trips it, and `log_verdict` refuses a
     fact whose source stamp is absent.
@@ -4297,6 +4300,28 @@ scheduled; 24 needs an operator policy line before any build encodes it.
     the income statement, which item 17 cannot: balance-sheet and cash-flow lines get the same
     test, closing the capex 6 → 20 → 28 gap item 17's rename records. Price the build; if it holds
     up, item 17 becomes a special case of it rather than a parallel mechanism.
+27. **ONE DEFINITION FOR ANYTHING BOTH TWINS CONSUME — a GUARD, not a habit (operator
+    2026-07-28; rides with the STATE-topology slot).** ORIGIN, and why a habit is the wrong shape:
+    the duplication hazard **recurred WHILE BEING FIXED, by someone actively looking for it** —
+    the 17b review found three copies of the brief label set, two of them introduced by 17b
+    itself. "Worth watching for on every twin-touching change" is therefore not a fix; if it
+    recurs under active attention, watching will not catch the next one. THE RULE: assert there is
+    exactly ONE definition of anything both twins consume; a second copy reddens the suite. RED:
+    introduce a second brief label set in a fixture and the build fails.
+    **FEASIBILITY ANSWERED 2026-07-28 (the operator asked to be told if "what the twins consume"
+    is not enumerable — IT IS, and a prototype already works).** A detector matching string-literal
+    sets of ≥3 members across py↔js twins finds **TEN duplicated sets live today, none pinned**.
+    The clearest proof it finds REAL duplicates rather than noise: `_CS_COLS = ["Type",
+    "Principal", "Coupon", "Floating", "Maturity", "Sec", "Conv", "Cur"]` exists under the SAME
+    NAME with IDENTICAL contents in both `render.py` and `dossier.js`. Also live: the driver
+    keyword/weight vocabulary (12 members, `render.py:1786` ↔ `dossier.js:466`, same words AND
+    same weight in two languages) and several label vocabularies. THE REAL WORK IS THE ALLOWLIST,
+    not the detector: some hits are genuine shared definitions that must collapse to one import or
+    a pin, others are short domain vocabularies used inline (`["bear","base","bull"]`) where a
+    literal is legitimate. Each needs a judgment, and an un-curated detector is the cried-wolf
+    failure this repo keeps closing (the >10% level rule that fired on the filing date). **NOTE
+    FOR ITEM 22:** 22 lands on top of this surface, so the ten existing duplicates are known
+    BEFORE it adds render paths, which is what the operator's question was for.
 26. **EXTRACTION-VERSION STAMP ON EVERY DOSSIER (queued 2026-07-28 from the #238 blast-radius
     diagnosis).** Every committed dossier carries the extraction version that produced it. ORIGIN:
     after #238 the fleet holds two vintages with nothing distinguishing them — pre-guard tables
@@ -4889,12 +4914,27 @@ structured-fact fields) must precede 18 (the guard); 18 is small once 18a exists
 ADDITIVE and OPTIONAL, so 18a binds FORWARD exactly like `BASIS_REQUIRED_FROM` / `FIELDED_REFS_FROM`
 — the repo's established pattern — and the three existing V-rows stay untouched. **NO COMMITTED
 DECISION IS REWRITTEN.** Consequence stated honestly: for those three legacy rows the guard has no
-structured source, so 18 cannot check them; it binds to rows written after 18a. If the operator
-later wants the legacy three covered, the options are (a) backfill — REWRITES A COMMITTED DECISION
-OF RECORD and needs an explicit decision, not a build, or (b) a SIDECAR carrying structured facts
-BESIDE the sealed row rather than inside it, which is the precedent this repo already set with
-`scenarios/_amendment_index.json` and the `superseded_note`. **Neither is proposed here** — flagged
-for the operator, per the standing rule that committed decisions are not rewritten silently.
+structured source, so 18 cannot check them; it binds to rows written after 18a.
+
+**DECISION — 2026-07-28 (operator): NEITHER BACKFILL NOR SIDECAR. The legacy rows render an
+EXPLICIT "no structured source for this decision vintage".** Both options I flagged were REJECTED,
+and the reasoning is the part that must survive:
+· **NOT BACKFILL.** Adding structured fields to a sealed V-row is additive but still EDITS A
+DECISION OF RECORD to satisfy a guard written afterwards. The seal is the point.
+· **NOT A SIDECAR EITHER — the less obvious rejection, and the more important one.** A sidecar
+carrying `loan_basis: 1.2x` beside a sealed thesis that already states it in prose creates **TWO
+COPIES OF ONE FACT THAT CAN DRIFT**. That is the GENERATOR OF EVERY DEFECT IN THIS AUDIT — anchor
+block vs reference row, web chip vs md render, the record's three triggers vs the dossier's one.
+Solving a divergence problem by adding a second source of truth is the wrong direction, and the
+`_amendment_index.json` precedent does not outweigh it.
+· **THE THIRD OPTION, AND IT IS NOT A COMPROMISE.** 18a binds forward; the guard treats a
+pre-schema row as **"no structured source for this decision vintage"** and RENDERS THAT, rather
+than UNKNOWN. This is item 22's visible-absence rule applied consistently: the absence is TRUE,
+VISIBLE and ATTRIBUTED, which is exactly what separates it from a false UNKNOWN.
+· **WHY THIS IS COMFORTABLE, NOT MERELY TIDY:** the exposure is THREE rows, all closed or avoid,
+with the facts recoverable from filings regardless; and **the gap SELF-HEALS** — SMPL is
+re-underwritten at the October print and its new V-row is written under the 18a schema.
+**Recorded as a DECISION with its reasoning so the next session does not re-open it.**
 
 **REVIEW OF #237/#238 — 2026-07-28, TWO DEFECTS FOUND IN MY OWN 17b CODE AND FIXED BEFORE MERGE.**
 (1) **THE MARKER DID NOT MATCH THE SPEC.** The operator's rule was "any row that TRIGGERS THE
