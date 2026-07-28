@@ -22,7 +22,7 @@
         "http.server",
         "8791",
         "--directory",
-        "frontend"
+        "/Users/work/Documents/GitHub/mosaic-theory/frontend"
       ],
       "port": 8791,
       "autoPort": false
