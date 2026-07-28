@@ -92,7 +92,10 @@ Five record-only PRs is **the review cadence, not a requirement**. Three rules:
   line reads as *the codebase type-checks* and means *production type-checks* — the
   assertion-integrity class applied to our own gate, and it matters here because **the tests are
   the safety layer**: every guard in the audit remediation is a test. Whether to clear `tests/` is
-  queue item 30, deliberately unscheduled.
+  the AUDIT-REMEDIATION queue's item 30, deliberately unscheduled. (Qualified deliberately: STATE.md
+  carries two colliding number series, so a bare "item 30" also resolves to §Next-steps'
+  IR-DOCUMENT INGESTION TIER. The topology work fixes the collision; until it lands, cross-file
+  references name their series.)
 - **Persistence:** SQLite store; committed analytical state as JSONL (diff-able), never binary `.db`.
 - **Secrets / data boundary:** see CLAUDE.md (Security). Not duplicated here.
 - **Commits:** focused, single-purpose, honest messages; push to origin when done.
@@ -297,7 +300,7 @@ Every remaining audit-derived item still carries an unverified mechanism claim. 
 
 ## The spec gives the invariant and the red — never the layer
 
-*(operator, 2026-07-28, reviewing his OWN error rate — the rule above turned on its author)*
+*(operator, 2026-07-28, reviewing their OWN error rate — the rule above turned on its author)*
 
 The six above are the external audit's. Two more were the operator's own specs, on the same
 pattern: **P5's reach** (stated as closed; only the staleness half was) and **item 26's stamp**
