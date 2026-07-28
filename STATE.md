@@ -4500,6 +4500,32 @@ scheduled; 24 needs an operator policy line before any build encodes it.
     type-checked. The CHEAP half is done immediately and is not this item: the gate line now states
     its own scope (`docs/engineering.md` §Conventions). This item is the expensive half — actually
     clearing `tests/` — and it is unscheduled on purpose.
+31. **MUTATION-TEST THE AUDIT-DERIVED GUARDS — queued 2026-07-28 (operator: "the biggest finding
+    in #245"). SCOPED DELIBERATELY: not the suite.** ORIGIN: 26a's web e2e **passed with the
+    header stamp deleted** — its slice ran from `ds-meta` to end-of-document, so the audit-tier
+    stamp satisfied a check written for the HEADER. It was found only by mutating, never by
+    reading, and it was written by the same pass that wrote the guard it was checking.
+    **WHY IT MATTERS MORE THAN ONE BAD TEST: every guard in this remediation IS a test.** A green
+    suite of 1148 says "the guards hold"; a vacuous assertion makes that sentence mean less than it
+    reads — **the same shape as `mypy --strict clean` covering `vinci` only.** Both are green
+    signals whose SCOPE is narrower than their wording.
+    **SCOPE — ~20 assertions, not 1148.** The audit-derived guards only: 17b, item 20's
+    per-consumer tests, 26a's pins, and each new guard AS IT LANDS. Method: delete what each one
+    guards, confirm it reds, restore. **RUN IT AGAINST THE GUARDS ALREADY SHIPPED BEFORE ADDING
+    MORE** — a guard that cannot fail is worse than a missing one, because it is counted.
+    RED: for every guard in scope, a recorded mutation that reddens it.
+32. **`midcycle` REACHES ONE TWIN ONLY — LATENT #227, queued 2026-07-28 (operator: "needs a
+    number, or the diagnosis sits latent until something populates it").** `midcycle` is named in
+    `render.py` and ABSENT from `dossier.js`; it is `null` on all 11 committed dossiers (absent on
+    MVST), so nothing is missing from the web TODAY. The moment a dossier carries one, the markdown
+    renders a section the web twin and BOTH PDFs omit — #227's exact shape, pre-diagnosed.
+    TWO PARTS, and the second is the general fix: (a) decide whether `midcycle` is web-renderable
+    or a declared `twin_exempt` entry with its reason; (b) **WIDEN
+    `test_every_assembled_field_reaches_both_dossier_renderers` TO TOP-LEVEL KEYS.** It harvests
+    `mechanical`/`synthesis`/`anchor` only, so `assembled_at`, `llm_model`, `sector`, `exchange`
+    and `extraction_version` all sit outside the fleet invariant — 26a had to ship its own pin
+    because of it. Measured 2026-07-28: widening reds on exactly ONE field, `midcycle`, which is
+    why (a) gates (b).
 24. **ANALYST-DECISION BUCKET — BOTH POLICY LINES RETRACTED BY THE OPERATOR 2026-07-28; DO NOT
     IMPLEMENT AS WRITTEN. Item stays BLOCKED pending archetype work.** (queued 2026-07-28 — DECISIONS, not builds; the machine proposes
     neither).** (a) SHARES BASIS: weighted-average diluted (recorded 93.678M) vs current shares
@@ -5260,7 +5286,16 @@ that flags any list item or paragraph whose `**` count is odd, so the next one r
 of shipping. Three instances of one class, all caught by eye and one only after review, is the
 argument for the machine.
 
-**TWO FINDINGS FROM THE 26a BUILD — REPORTED, NOT FIXED (both out of its scope).**
+**THE DRIFT GUARD COUPLES RENDER CHANGES TO FLEET-WIDE ARTIFACT COMMITS — named once, 2026-07-28
+(operator), CORRECT BY DESIGN, no action.** `test_screening_context_reaches_every_committed_dossier
+_e2e` renders live from committed JSON and compares to disk, so ANY render change turns all 11
+committed `dossier.md` red until they are re-rendered. That is the guard working — it is what stops
+the committed record drifting from the renderer, which is #221's lesson. The consequence worth
+stating plainly: **the artifact pass is now ROUTINE on every render change, not an event.** 26a's
+PR carried it as a separate commit (no code in the artifact commit, per the repo rule), and every
+render PR after it must budget the same step.
+
+**TWO FINDINGS FROM THE 26a BUILD — (1) NOW QUEUED AS ITEM 32, (2) FIXED 2026-07-28.**
 (1) **THE BROAD TWIN-PARITY PIN DOES NOT COVER TOP-LEVEL FIELDS.**
 `test_every_assembled_field_reaches_both_dossier_renderers` harvests keys from `mechanical`,
 `synthesis` and `anchor` only — so `assembled_at`, `llm_model`, `sector`, `exchange` and (without
@@ -5272,13 +5307,15 @@ the markdown that the web twin and both PDFs omit, which is #227's exact shape. 
 ships its OWN explicit pin rather than widening the general one around an undiagnosed field.
 QUEUE: widen the pin to top-level keys, after deciding whether `midcycle` is web-renderable or a
 declared `twin_exempt` entry.
-(2) **`.claude/launch.json`'s `frontend` entry uses a RELATIVE `--directory frontend`,** so it
-serves whichever checkout the server process starts in — in practice the PRIMARY repo, which is
+(2) **`.claude/launch.json`'s `frontend` entry used a RELATIVE `--directory frontend`** — so it
+served whichever checkout the server process started in, in practice the PRIMARY repo, which is
 another session's working tree. The first preview of 26a rendered the primary checkout's CNXC
 (`assembled_at` 2026-07-23) and showed NO stamp, which reads exactly like "the feature does not
-work". The worktree-bound entries (`frontend-wb`, `main-worktree`, …) use ABSOLUTE paths and are
-correct. QUEUE: make the relative entry absolute, or delete it — a preview that silently reads the
-wrong tree can only ever mislead.
+work". **FIXED 2026-07-28 (operator: fix, don't report — "trusted, that's an hour debugging working
+code; the reverse case is a broken render previewing as fine because it's another session's
+tree").** It was the ONLY relative entry of ten; every other already names its tree absolutely.
+**GUARDED** (INVARIANT RULE): `test_every_preview_server_serves_an_absolute_directory` scans
+`.claude/launch.json` and reds on any `--directory` that is not absolute.
 
 **SIZE CHECK BEFORE BUILDING THE 20+21+23 BATCH — 2026-07-28 (operator asked to be told BEFORE
 rather than after). VERDICT: THE BATCH IS NOT ONE PR, AND ONE OF THE THREE IS MIS-SCOPED.**

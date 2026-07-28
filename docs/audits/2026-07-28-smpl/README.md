@@ -11,6 +11,27 @@ the memo's §Artifact Manifest specifies.
 | [`defect-report.md`](defect-report.md) | Nine platform + seven name-level defects, each with root cause, fix and acceptance test | **The engineering queue** (STATE.md §Next-steps items 1, 17–24) |
 | [`independent-dossier.md`](independent-dossier.md) | Thesis rebuilt on corrected methodology — brand-level sum-of-parts, cross-section multiples, time-value discipline | **The investment view and entry conditions** |
 
+## The audited artifact has since MOVED — what changed, and what did not
+
+This audit describes SMPL's `dossier.md` as it stood on 2026-07-28. **The committed artifact on
+`main` now differs from it**, so a later reader diffing the two will find lines the audit does not
+mention. Recorded here so that is not a surprise.
+
+| date | change to the committed `dossier.md` | affects a finding? |
+|---|---|---|
+| 2026-07-28 (#245, queue item 26a) | Two lines added — the header date now reads `· extraction unstamped`, and Record & reproduce gains an `Extraction:` row | **No** |
+
+**A RE-RENDER, NOT A RE-ASSEMBLY.** No extraction ran, no network was touched, no synthesis was
+re-generated and `dossier.json` did not change — the render gained an extraction-version stamp and
+all 11 committed dossiers were re-rendered from their existing JSON to keep them from drifting from
+the renderer. SMPL's reads **"unstamped — assembled before extraction versions were declared;
+vintage unknown"**, which is the truthful state of an artifact built before the stamp existed.
+
+**Every defect in this audit is still open on the artifact.** SMPL is deliberately NOT re-assembled
+(four of its five acceptance checks still fail, pending queue items 1, 18 and 22), so the numbers,
+the prose and the missing $391.9M writedown are exactly as the audit found them. When SMPL IS
+re-assembled, this table gets the row that matters.
+
 ## Precedence on valuation — READ BEFORE QUOTING A RATIO
 
 Two reward:risk ratios exist in this folder and they are **not** alternatives; one supersedes the
