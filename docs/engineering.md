@@ -62,10 +62,40 @@ Every change, regardless of size:
 Deliberately SKIPPED now (premature at 2 people — see deferred triggers): formal PR review (can't
 meaningfully self-review; becomes rubber-stamping), protected-branch CI merge gates, long-lived feature
 branches with verification environments.
+*(SUPERSEDED for PR review, 2026-07-28: review is no longer self-review — the agent opens and the
+operator reviews and merges, per CLAUDE.md. Step 5 above reads "merge to main" for the same reason
+and is likewise superseded: **the agent opens a PR and STOPS.** The cadence below governs.)*
+
+## PR cadence — one PR per item, batched by risk
+
+*(operator, 2026-07-28, reviewing the audit-remediation run: eight PRs, five of them docs-only)*
+
+Five record-only PRs is **the review cadence, not a requirement**. Three rules:
+
+1. **No record-only PRs.** #239/#240/#242/#243/#244 each recorded decisions about work done
+   elsewhere. The record rides in the PR that implements what it records. **One PR per item.**
+   (#244 is the last of the class, and says so.)
+2. **Batch by RISK, not by size.** Mechanical and independent — a parser rewrite, a disclosure
+   addition, a detector baseline, a file re-sequencing — go in **one** PR. Guards and policy go
+   **solo**. Focused review has caught three real things on this run (two gate omissions, one
+   incomplete fix); batching dilutes that attention, which is an acceptable trade for a parser
+   rewrite and not for a guard.
+3. **Topology before parallel work.** When every branch conflicts at the same insertion points,
+   fix the topology first — that is what makes batching cheap rather than merge-expensive.
 
 ## Conventions (light — expand as needed)
 
-- **Quality gate:** ruff + `mypy --strict` clean before commit.
+- **Quality gate:** ruff + `mypy --strict` clean before commit. **State its SCOPE when you report
+  it** *(2026-07-28)*: strict comes from `pyproject.toml` and the gate runs over **`vinci` only —
+  111 source files; `tests/` is excluded and carries 308 strict errors.** Written as
+  `mypy --strict clean (vinci, 111 files; tests/ excluded, 308 known errors)`. Unqualified, the
+  line reads as *the codebase type-checks* and means *production type-checks* — the
+  assertion-integrity class applied to our own gate, and it matters here because **the tests are
+  the safety layer**: every guard in the audit remediation is a test. Whether to clear `tests/` is
+  the AUDIT-REMEDIATION queue's item 30, deliberately unscheduled. (Qualified deliberately: STATE.md
+  carries two colliding number series, so a bare "item 30" also resolves to §Next-steps'
+  IR-DOCUMENT INGESTION TIER. The topology work fixes the collision; until it lands, cross-file
+  references name their series.)
 - **Persistence:** SQLite store; committed analytical state as JSONL (diff-able), never binary `.db`.
 - **Secrets / data boundary:** see CLAUDE.md (Security). Not duplicated here.
 - **Commits:** focused, single-purpose, honest messages; push to origin when done.
@@ -267,6 +297,26 @@ defect survives**, which is exactly what P1's first cut would have done: a guard
 the line never reached could never have fired.
 
 Every remaining audit-derived item still carries an unverified mechanism claim. Check each one.
+
+## The spec gives the invariant and the red — never the layer
+
+*(operator, 2026-07-28, reviewing their OWN error rate — the rule above turned on its author)*
+
+The six above are the external audit's. Two more were the operator's own specs, on the same
+pattern: **P5's reach** (stated as closed; only the staleness half was) and **item 26's stamp**
+(specified as a content hash of the emitted row-label set; measurement showed it false-negative on
+FUBO and false-positive across one vintage). **Eight wrong mechanisms — and in every one of the
+eight the ACCEPTANCE CONDITION was right and the IMPLEMENTATION was wrong.**
+
+That asymmetry is not luck, it is structural:
+
+> **An invariant is a statement about the ARTIFACT, which the specifier can see. An implementation
+> is a statement about CODE, which they cannot.**
+
+**The rule:** a brief states the **invariant** and the **red**, and stops there. Where it names a
+mechanism anyway, that mechanism is a **hypothesis with no more standing than the builder's own
+reading** — check it, and re-spec when it differs. This is what the verify-first rule already
+required; stating it here stops the work being generated in the first place.
 
 ## When the defect lives in a shared upstream, enumerate consumers
 

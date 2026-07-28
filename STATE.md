@@ -4356,13 +4356,118 @@ scheduled; 24 needs an operator policy line before any build encodes it.
     "Maturity","Sec","Conv","Cur"]`, identically named with identical contents in `render.py` and
     `dossier.js`. Latent today; if those headers ever drift, the md and web dossiers show DIFFERENT
     capital-structure tables with nothing flagging it.
-26. **EXTRACTION-VERSION STAMP ON EVERY DOSSIER (queued 2026-07-28 from the #238 blast-radius
-    diagnosis).** Every committed dossier carries the extraction version that produced it. ORIGIN:
+26. **SPLIT INTO 26a / 26b BY THE OPERATOR 2026-07-28 — "the freeze doesn't need the hard half".**
+    The spec was corrected twice (both times correctly) with the pipeline frozen throughout, which
+    is the signal that the freeze was paying for the item's difficulty rather than for the
+    invariant. THE INVARIANT BEHIND THE FREEZE IS: *a reader can tell whether two dossiers are
+    comparable.* **A declared version string satisfies that the day it ships**; the drift test only
+    stops the string going stale later. So 26a unfreezes and 26b prevents rot.
+    **SEPARABILITY — CHECKED, NOT ASSUMED (the operator asked to be told if they are not
+    separable).** THEY ARE. 26a is a declared constant + one record field + its rendering, and
+    needs NO module set — the question that made 26 hard belongs entirely to 26b. 26b adds a TEST
+    and no field, so taking it later causes no churn in the record shape 26a ships. The residual
+    risk of running on 26a alone is that someone changes extraction and forgets to bump the
+    version — **which is exactly today's state, so it is not a regression**; it stops being a TOTAL
+    freeze, which is the whole point.
+26a. **DECLARED EXTRACTION VERSION, RENDERED — SHIPS NEXT, AND UNFREEZES THE PIPELINE.**
+    A declared version constant, carried on the dossier record, **rendered wherever the dossier
+    states its assembly date** — NOT in the appendix and NOT as a machine-only field (operator
+    2026-07-28: a stamp nobody reads cannot stop anyone comparing two dossiers of different
+    vintages, which is 17b's failure exactly — the record complete, the harm intact).
+    **RED:** two dossiers built under different extraction versions are distinguishable BY THE
+    STAMP ALONE. Note the currently-committed pre-#238 dossiers carry NO stamp, and absent-stamp
+    reads honestly as "vintage unknown, pre-stamp" — itself distinguishable from any stamped one.
+    **WHY DECLARED AND NOT DERIVED — THE MEASUREMENT THAT KILLED DERIVATION.** Two derived forms
+    were specified and both were measured before building, per the standing rule.
+    **THE PROPOSED HASH WAS WRONG IN BOTH DIRECTIONS.** A content hash over the EMITTED row-label
+    set was measured pre-#238 (`2facc5e`) vs post: **FALSE NEGATIVE** — FUBO hashes `6d170d2fe3`
+    on BOTH sides, because it carries no unusual items and its output is byte-identical across the
+    change, so a reader comparing FUBO-pre with FUBO-post would conclude "same vintage" and be
+    wrong; **FALSE POSITIVE** — post-#238 SMPL `be2c3d4ec5`, AORT `03aa28a19d`, FUBO `6d170d2fe3`
+    all differ from each other despite being ONE vintage, so the hash is a SHAPE identifier, not a
+    VINTAGE identifier, and cannot answer "are these two dossiers comparable?".
+    **CORRECTED MECHANISM: hash the extractor's CODE-SIDE SCHEMA** — the emitted model field names
+    (`FinRow`/`FinTable`) plus the hand-named row list plus the surfacing-rule marker. VERIFIED to
+    behave: pre `57066b8cea` → post `42c81f752d` (it moves, because #238 added `FinRow.material`),
+    and it is NAME-INDEPENDENT, so every dossier of one vintage shares it. Not a git SHA, for the
+    operator's reason: a SHA moves on unrelated commits and would mark the fleet perpetually
+    diverged.
+    **BOTH DERIVED FORMS ARE SUPERSEDED BY THE DECLARED VERSION** (operator's option 3, 2026-07-28)
+    — the measurements above are retained because they are WHY derivation was abandoned, not
+    because either form ships.
+    **PRIORITY — THE FREEZE WAS TOTAL, NOT TWO NAMES (operator 2026-07-28), AND 26a IS WHAT LIFTS
+    IT.** Nothing could be re-assembled, and that included ANY NEW UNDERWRITE, since a new name
+    needs a dossier built on the post-#238 extraction which is unstamped. **26 stood between the
+    fund and doing any underwriting at all** — never a hygiene item behind CNXC and SMPL.
+    **ORIGIN (queued 2026-07-28 from the #238 blast-radius diagnosis).** Every committed dossier
+    carries the extraction version that produced it, because
     after #238 the fleet holds two vintages with nothing distinguishing them — pre-guard tables
     lack the unusual-items rows, post-guard tables carry them — and cross-name comparison in the
     verdict-pending cohort silently assumes a common table. Cheap, makes the divergence legible
     WHILE it exists, and a fleet re-assembly cannot even be verified complete without it. Ships
     BEFORE any fleet re-assembly.
+26b. **DRIFT TEST — THE DECLARED VERSION MUST MOVE WHEN BEHAVIOUR DOES. Sequenced after the
+    mechanical batch; no freeze rides on it.**
+    **THE THIRD CASE IT EXISTS FOR — SEMANTIC CHANGE AT UNCHANGED SHAPE (operator 2026-07-28).** A
+    schema hash catches an added row, not item 20's change — `range_position` and `pe_ltm_current`
+    now return `NM` where they returned a stale figure on three names, same labels, same fields,
+    and 16.0x vs `NM` matters to a reader more than an added row does. The test hashes the
+    extraction module sources and FAILS when that hash moved while the declared version did not.
+    No false positive at read time; the cost is a red CI on refactor, which is the point — it
+    forces a conscious "did behaviour change?" call inside the PR instead of leaving it to a
+    reader comparing two dossiers.
+    **THE MODULE SET IS A DECLARED LIST, NOT A COMPUTED CLOSURE — CORRECTED 2026-07-28 BEFORE ANY
+    BUILD, on three findings.** (i) The transitive import closure from `assemble.py` is **58
+    modules** — resolver, store, universe, rank, screens, essentially the package; a drift test
+    over that reddens on nearly every commit, and a guard that always fires is switched off, which
+    is the unusual-items guard's own filing-date lesson turned on us. (ii) `ciq_balance.py` is
+    reached ONLY from `cli.py`, never from `assemble.py`, so seeding at the assembly entry point
+    silently omits balance-sheet extraction — the same false-negative shape that sank the row-label
+    hash. (iii) **The enumerating walker ITSELF had a false negative** — it missed
+    `from vinci.dossier import ciq_sheets, edgar_fundamentals` (submodules arriving as `names`,
+    not `module`), and nearly produced a report calling `edgar_fundamentals` unreferenced. Finding
+    (iii) is the argument against (i) and (ii) as a strategy: **a computed closure is the wrong
+    basis for this boundary.** Declare the set; let a machine catch drift against the declaration —
+    the same shape as 27a's baseline, and the same shape as this test itself.
+    **INVARIANT (operator 2026-07-28, stated WITHOUT a layer per the new spec rule):** *every
+    module that can change what appears in a dossier must be in the watched set; a module joining
+    that class without being declared must RED.*
+    **HYPOTHESIS, carrying no more weight than the builder's own reading (operator):** if extraction
+    output is TYPED, "which modules construct that type" may be a more reliable basis than import
+    reachability — AST-checkable rather than graph-traversable. UNVERIFIED; check it against the
+    code when 26b is scoped, and re-spec if it differs.
+29. **BULL-LEG CONSTRAINT AS A STRUCTURED FIELD — P3 part 2, GIVEN ITS OWN NUMBER by the operator
+    2026-07-28 (previously folded into 24).** THE DEFECT: the bull leg sits ABOVE the constraint
+    its own method sentence states. **WHY IT IS NOT 24:** 24 is a BLOCKED policy bucket (shares
+    basis + regime test) awaiting a ratified line; a schema change parked inside a blocked policy
+    item is stranded by it. **WHY IT IS NOT 18a:** 18a is the LEDGER PAYLOAD's structured fact
+    fields — this is the SCENARIO RECORD's schema. Same move, different object; the first
+    recording of this dependency named 18a and was wrong.
+    **MECHANISM (verified 2026-07-28 before queueing, not assumed).** The method sentence is
+    ANALYST-AUTHORED — no code constructs one — so the generator-assertion route is unavailable,
+    and P1's presence-check route does not transfer either: P1's half works because a typed FIGURE
+    must appear, whereas this is a RELATION ("just under X") that lives only in prose. **The
+    tractable route is the `bear_basis` precedent** (schema 1.2 turned bear-multiple provenance
+    from prose into an enumerated, validated, forward-required field): give the bull leg a TYPED
+    constraint — the reference it is set against, plus the relation — after which the check is
+    arithmetic rather than parsing. Schema 1.3's `leg`/`role` (item 16) are the plausible carrier;
+    HYPOTHESIS, to be checked against the model before building, like every other mechanism here.
+    **KIND: ANALYST DATA** under the closure taxonomy → closed only when the guard ships **AND**
+    the surfaced SMPL instance is adjudicated; the guard alone leaves the record still wrong.
+    **RED:** a record whose bull multiple violates its own declared constraint is REFUSED at write
+    — SMPL's live record is the positive instance, and a conforming record the negative one.
+    SEQUENCED AFTER 19.
+30. **TYPE-CHECK `tests/` — QUEUED 2026-07-28, DELIBERATELY NOT SCHEDULED (operator: "whether to
+    actually check `tests/` is a separate item — queue it, don't schedule it").** The standing gate
+    runs `mypy` over `vinci` only: **111 source files, and `tests/` excluded, carrying 308 strict
+    errors**. Nobody's claim was false, but the line "mypy --strict clean" READS as *the codebase
+    type-checks* and MEANS *production type-checks* — the assertion-integrity class (item 19)
+    applied to our own gate, which is why it is written down rather than shrugged at.
+    **WHY IT MATTERS MORE HERE THAN IT NORMALLY WOULD (operator):** **the tests ARE the safety
+    layer.** Every guard in this remediation is a test, and the code asserting those guards is not
+    type-checked. The CHEAP half is done immediately and is not this item: the gate line now states
+    its own scope (`docs/engineering.md` §Conventions). This item is the expensive half — actually
+    clearing `tests/` — and it is unscheduled on purpose.
 24. **ANALYST-DECISION BUCKET — BOTH POLICY LINES RETRACTED BY THE OPERATOR 2026-07-28; DO NOT
     IMPLEMENT AS WRITTEN. Item stays BLOCKED pending archetype work.** (queued 2026-07-28 — DECISIONS, not builds; the machine proposes
     neither).** (a) SHARES BASIS: weighted-average diluted (recorded 93.678M) vs current shares
@@ -4920,6 +5025,48 @@ three days behind the others, which is the cadence gap in miniature. SMPL's own 
 the audit's P4 mechanism claim (ledger exit price) was WRONG while its staleness substance was
 right.
 
+**CLOSURE TAXONOMY — 2026-07-28 (operator). THREE KINDS, THREE CLOSURE CONDITIONS — because
+"not the same kind of done" has a consequence: FOR THE NON-CODE DEFECTS, SHIPPING THE GUARD LEAVES
+THE ARTIFACT STILL WRONG.** "13 of 13" could otherwise coexist with a fleet carrying flagged
+violations nobody adjudicated — the same failure the 13-part recount was for, a completion figure
+meaning less than it says.
+| kind | example | CLOSED WHEN |
+|---|---|---|
+| **CODE** | P5 staleness, P6 branch | the fix ships |
+| **SYNTHESIS** | P1 pt 2 — prose cites 60.9 against a row of −392 | guard ships **AND** re-synthesis produces agreement |
+| **ANALYST DATA** | P3 pt 2 — bull leg above its own stated rule | guard ships **AND** the surfaced instance is adjudicated |
+Every one of the 13 is to be tagged by kind as it is worked, and a part is not counted closed until
+its kind's condition is met.
+
+**METHOD SENTENCE IS ANALYST-AUTHORED — VERIFIED, and it changes P3 pt 2's route.** The operator
+asked whether it is generated or authored, because a generated sentence makes the constraint
+knowable structurally (a plain `bull ≤ typed LTM` comparison the generator can assert about its own
+output). **NO code constructs one:** the only references to `method` are the linter reading it, the
+model validator refusing a blank, and unrelated names (`cap_method`, `members_method`). Records were
+hand-edited JSON — `write_record()` had zero programmatic callers until `refresh_record`. So it is
+authored, and the generator-assertion route is unavailable. NOR does the PRESENCE trick apply: P1's
+half works because a typed FIGURE must appear, whereas P3 pt 2 is a RELATION ("just under"), and the
+relation lives only in prose. **The tractable route is the `bear_basis` precedent** — schema 1.2
+turned "where the bear multiple came from" from prose into an enumerated field; the same move here
+makes the bull leg's constraint structural, after which the check is plain arithmetic. That is a
+SCENARIO-RECORD schema change, NOT 18a (which is the LEDGER payload) — so P3 pt 2's unblock is a
+different dependency than first recorded. **It is now QUEUE ITEM 29** (operator 2026-07-28): a
+schema change parked inside item 24 — blocked pending the validation run — would be stranded by
+that block, so it carries its own number and its own sequencing.
+
+**PR CADENCE CHANGED — 2026-07-28 (operator, reviewing the run: eight PRs, five docs-only). THE
+RULES LIVE IN docs/engineering.md §PR cadence; THE CONSEQUENCE FOR THIS QUEUE IS AN ORDER.**
+(i) **No more record-only PRs** — the record rides in the PR that implements what it records, one
+PR per item. **#244 is the last of the class** (it is the amendment that adopts the rule).
+(ii) **Batch by RISK, not size** — mechanical and independent go together; **guards and policy stay
+SOLO** (19, 18a, 18, 1, 22), because focused review is what caught two gate omissions and one
+incomplete fix on this run. (iii) **Topology first** — every branch currently conflicts at the
+same insertion points, so re-sequencing is what makes batching cheap rather than merge-expensive.
+**THE ORDER, FIXED (amended 2026-07-28 for the 26a/26b split):** `26a` **(ships next — LIFTS THE
+FREEZE)** → **STATE topology (solo, ahead of the batch)** → **mechanical batch: 21 + 28 + 27a in
+ONE PR** → `26b` → `19` scoping. Note STATE-topology is pulled OUT of the batch it was first
+listed in; it precedes the batch precisely so the batch does not fight it.
+
 **THIRTEEN-PART AUDIT — 2026-07-28 (operator-directed: re-read each P-item's evidence and count
 DISTINCT failures, verify against the committed report rather than accept the count). THE
 OPERATOR'S COUNT OF 13 IS CORRECT; TWO OF HIS HOMES ARE NOT.**
@@ -5059,13 +5206,27 @@ numbers **16–27 appear TWICE with entirely different meanings**: "item 22" res
 and the operator has been using the FIRST series' numbering in conversation all week, while the
 SECOND series' item 22 is literally the task to fix this. HONESTY ABOUT AUTHORSHIP: the collision
 PRE-DATED the audit work (both series already contained a 16), but the audit-derived additions
-(17–27) **widened it from one colliding number to twelve**. Also within the first series, physical
+(17–27) **widened it from one colliding number to twelve**. **UPDATED 2026-07-28 — NOW FOURTEEN**:
+#244 adds items **29** (bull-leg constraint) and **30** (type-check `tests/`), and §Next-steps
+already holds a 29 (NCI TERM FOR THE R2 ENGINE) and a 30 (IR-DOCUMENT INGESTION TIER). The
+colliding set is now `16–26, 28, 29, 30`. Recorded rather than avoided: renumbering to dodge the
+clash would scatter the audit series, and the topology work is two slots away. Also within the first series, physical
 order now reads `… 22, 23, 25, 27a, 27b, 26, 24` — 24/25/26 are out of sequence because successive
 insertions anchored on convenient text rather than maintaining order. RECOMMENDATION for the
 STATE-topology slot: prefix the audit-derived items (`A17`…`A27`) or relocate the older series
 behind its own heading, then re-sequence; either removes the ambiguity permanently. **Recorded
 rather than fixed here — re-sequencing a 4,000-line file inside a docs PR under review is the
 scope creep this repo keeps refusing, and the work is already queued.**
+**ADDED TO THAT SLOT 2026-07-28 — THE ORPHAN-`**` CLASS, AND ITS MACHINE CHECK.** #244's first cut
+left a dangling `(queued …).**` fragment inside item 26: an unbalanced bold that renders the rest
+of the item as literal asterisks, the same class that broke §7's THEME #2 and needed its own
+fix-PR. Caught by counting `**` per list item, not by reading. A parity scan over both files finds
+**two more, PRE-EXISTING on main**: queue item 24 (a trailing `).**` after its origin clause) and
+§7 item 19. Left standing here deliberately — they are not this PR's — but the topology PR is
+STATE.md-structural and is where they belong. **It also ships the check** (INVARIANT RULE): a test
+that flags any list item or paragraph whose `**` count is odd, so the next one reddens CI instead
+of shipping. Three instances of one class, all caught by eye and one only after review, is the
+argument for the machine.
 
 **SIZE CHECK BEFORE BUILDING THE 20+21+23 BATCH — 2026-07-28 (operator asked to be told BEFORE
 rather than after). VERDICT: THE BATCH IS NOT ONE PR, AND ONE OF THE THREE IS MIS-SCOPED.**
