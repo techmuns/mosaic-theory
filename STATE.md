@@ -4910,6 +4910,29 @@ three days behind the others, which is the cadence gap in miniature. SMPL's own 
 the audit's P4 mechanism claim (ledger exit price) was WRONG while its staleness substance was
 right.
 
+**STATUS CORRECTION — 2026-07-28: P1 IS HALF CLOSED TOO. HONEST COUNT IS 1.0 OF 9, NOT 1.5.**
+The operator applied the half-closed reasoning backwards to P1 and it holds. P1's evidence was TWO
+things: the $391.9M never appears, AND the bear case argues from $60.9M. **17b fixes the first
+only** — it guarantees the row is PRESENT, not that the prose is consistent with it. VERIFIED
+rather than reasoned: on re-assembly SMPL's brief would carry `Asset Writedown ($M)` with cells
+`-3, -61, **-392**` while its committed bear point reads *"A $60.9M non-cash impairment on the
+Atkins brand…"* — a material row and prose citing two different numbers for one event, on the same
+page. The synthesis re-runs at assembly and MIGHT pick up the larger figure, but "might" is not a
+guard, and nothing checks it. **P1's contradiction half is unguarded and sits in item 19's scope.**
+**ITEM 19 NOW HOLDS PART OF FOUR OF THE NINE** — P1's contradiction half, P3's anchor mislabel,
+P5's basis mislabel, P9's structural-inference reason — plus the general prevention it was written
+for. It was scheduled second-to-last when it held one instance. **OPERATOR DIRECTION: scope 19
+immediately after 26, with mechanism verification, and set the order from what the scope finds —
+genuine refactor ⇒ it stays put; tractable ⇒ ahead of 21.** The specific question to answer at
+scope time: **is "the page may not contradict itself" mechanically checkable, or does it reduce to
+an enumerable list of NAMED PAIRINGS** (caveat-vs-basis · material-row-vs-prose ·
+method-sentence-vs-legs · absence-reason-vs-filing · frozen-beside-live)? If the latter, 19 is a
+list rather than a refactor and THE LIST IS THE ITEM. Early signal, to be confirmed at scope: the
+pairings split — caveat-vs-basis and absence-reason look structurally checkable TODAY (both sides
+are already typed), while material-row-vs-prose and method-sentence-vs-legs need a number extracted
+FROM PROSE and so may depend on 18a-style structure or be intractable without it. If that split
+holds, 19 ships its structural half early and the prose half queues behind 18a.
+
 **REVIEW OF #241 — 2026-07-28. A THIRD SITE, found by enumerating consumers instead of trusting
 the fix.** After the build already corrected itself once (one consumer → two), the review asked the
 only question that pattern justifies: **how many consumers of `_multiples_close` are there?** NINE.

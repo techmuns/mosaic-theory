@@ -267,3 +267,27 @@ defect survives**, which is exactly what P1's first cut would have done: a guard
 the line never reached could never have fired.
 
 Every remaining audit-derived item still carries an unverified mechanism claim. Check each one.
+
+## When the defect lives in a shared upstream, enumerate consumers
+
+*(operator, 2026-07-28, from the item-20 build)*
+
+> **When a defect lives in a shared upstream, the test must enumerate consumers. A test on one
+> rendering surface proves only that surface is clean.**
+
+Item 20's spec was "no backward-fill on **any** time series". It took three cuts:
+
+1. Fixed `range_position` — the reading that appeared in the audit.
+2. Review found `pe_ltm_current`, feeding the caveat banner, with the identical defect. It had kept
+   returning 16.0 / 8.8 / 72.8 under a `source_ref` claiming `"Close (latest)"` — false provenance
+   on top of a stale value. The fleet-invariant test missed it because it asserted the **rendered
+   string**, not the extractor.
+3. Review then enumerated all nine call sites of `_multiples_close` and found a third,
+   `ev_ebitda_percentile`, latent.
+
+Cuts 1 and 2 each fixed **the consumer in front of them**. What found all three was enumerating the
+call sites of the shared reader rather than the readings.
+
+The failure in cut 2 is worth naming precisely: it is *acceptance-condition-does-not-match-the-harm*
+occurring **inside a test** — the same class the tests exist to catch. A green fleet invariant is
+not evidence that a shared upstream is clean; it is evidence that one surface is.
