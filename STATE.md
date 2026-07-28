@@ -4322,6 +4322,16 @@ scheduled; 24 needs an operator policy line before any build encodes it.
     the income statement, which item 17 cannot: balance-sheet and cash-flow lines get the same
     test, closing the capex 6 → 20 → 28 gap item 17's rename records. Price the build; if it holds
     up, item 17 becomes a special case of it rather than a parallel mechanism.
+28. **SCENARIO-INPUT DISCLOSURE — P7 part 1, THE ORPHAN found by the 13-part audit (queued
+    2026-07-28).** Print **shares, D&A and net debt inside the scenario block**, so every scenario
+    value recomputes from figures on the same page. ORIGIN: the auditor could not reproduce a single
+    scenario cell from anything the dossier printed — he solved the system backwards and landed on
+    93.77M shares against our recorded 93.678M, which is itself the proof (the inputs were
+    recoverable only by inference). Distinct from item 24, which is the SHARES-BASIS policy
+    question — this is disclosure of whatever basis is chosen, and it is queued because the audit
+    verified NO queue item covered it. Distinct also from queue item 2, which governs numbers
+    quoted in the RECORD'S prose, not the dossier's scenario block. RED: assert every scenario
+    value recomputes from figures printed in the same document.
 27a. **DUPLICATE-DEFINITION DETECTOR + FROZEN BASELINE (operator split 2026-07-28; ships in the
     STATE-topology slot; SIZED UP 2026-07-28 — the prototype heredoc NEVER LANDED in the repo, so
     27a is BUILD THE DETECTOR **plus** baseline, not baseline alone).** The detector plus a BASELINE recording the ten known duplicates as
@@ -4909,6 +4919,49 @@ three days behind the others, which is the cadence gap in miniature. SMPL's own 
 `spot_source` reads "Polygon daily aggregate close 2026-07-22 (store)" — a store read, confirming
 the audit's P4 mechanism claim (ledger exit price) was WRONG while its staleness substance was
 right.
+
+**THIRTEEN-PART AUDIT — 2026-07-28 (operator-directed: re-read each P-item's evidence and count
+DISTINCT failures, verify against the committed report rather than accept the count). THE
+OPERATOR'S COUNT OF 13 IS CORRECT; TWO OF HIS HOMES ARE NOT.**
+
+| item | parts | disposition (verified) |
+|---|---|---|
+| P1 | **2** | absent-from-data **CLOSED (17/17b)** · prose-cites-wrong-figure → **19** |
+| P2 | 1 | wrong 8-K selected → item 1(c) |
+| P3 | **2** | "stale anchor" **DISPROVED** (frozen reference, mislabelled) → 19/1(e) · bull leg violates its own rule → **19, already named verbatim** |
+| P4 | **2** | stale price → 1(b) · false "underwritten" stamp → 19 |
+| P5 | **2** | staleness **CLOSED (20)** · basis mislabel → **19** |
+| P6 | 1 | wrong extractor branch → 21 |
+| P7 | **2** | inputs not printed → **UNQUEUED → new item 28** · wrong share basis → 24 |
+| P8 | 0 | folded; not a defect |
+| P9 | 1 | sheet-shape reason → 19 |
+
+**THIRTEEN distinct failures described as nine.** The denominator was wrong, which made every
+completion figure wrong. **CORRECTED SCORE: 2 of 13 closed** (P1's absence half, P5's staleness
+half) — the same work, honestly denominated.
+**CORRECTION 1 — P3's second part is NOT homeless.** Item 19 already names it VERBATIM: "a method
+sentence's stated relation must hold against the legs it describes (bull 1,420 claimed 'just under
+the trailing twelve months' against LTM 1,392)." It sits in 19's PROSE-DEPENDENT half. The
+operator's classification of it as SCENARIO-CONSTRUCTION rather than rendering is right and worth
+keeping, because it changes what "fixed" means: a guard can only SURFACE it — the leg is analyst
+data, so the remedy is the analyst re-setting the bull leg or restating the method. **Some of the
+13 are code defects; others are data defects a guard makes visible. Not the same kind of done.**
+**CORRECTION 2 — the real orphan is P7 part 1**, "print shares, D&A and net debt inside the
+scenario block". Verified unqueued: it is not item 24 (that is the shares-BASIS policy question),
+not queue item 2 (that governs the RECORD's prose, not the dossier's scenario block), and appears
+in STATE only as a description inside the audit record. **Queued as item 28.**
+**P1'S HELD HALF MAY BE TRACTABLE NOW (operator, to test at 19's scope).** The PRESENCE form needs
+no extraction: *if a material row exists, its figure must appear in the prose* — a substring
+comparison against a TYPED figure, not general contradiction detection. SMPL today: row −392, prose
+"$60.9M", `391.9` absent ⇒ FIRES. Accepted weakness: prose carrying BOTH numbers passes — verbose,
+not wrong. If it holds at scope, P1's half ships with 19-STRUCTURAL rather than queuing behind 18a,
+and the unblock dates change. **Same trick may apply to P3 part 2** (assert the bull leg is not
+ABOVE a typed LTM when the method names it) — worth testing at the same scope.
+**NOTHING REGENERATED, verified on the operator's challenge:** working tree clean, no artifact
+under `data/dossiers`/`frontend/dossiers` changed since #238 merged, and SMPL's committed files
+carry ZERO `Asset Writedown` rows and ZERO `material` keys. The "after re-assembly the brief
+carries…" check was IN-MEMORY — built from the bundle and printed, never written. The fleet remains
+unstamped and unchanged, as 16b/16c/26 require.
 
 **STATUS CORRECTION — 2026-07-28: P1 IS HALF CLOSED TOO. HONEST COUNT IS 1.0 OF 9, NOT 1.5.**
 The operator applied the half-closed reasoning backwards to P1 and it holds. P1's evidence was TWO
