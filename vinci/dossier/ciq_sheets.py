@@ -26,6 +26,7 @@ from vinci.dossier.ciq import (
     excel_date,
     read_text,
 )
+from vinci.dossier.materiality import MaterialityUnavailableError, unusual_items_block
 from vinci.dossier.schemas import (
     CapitalInstrument,
     DriverKind,
@@ -2986,6 +2987,28 @@ def financial_summary_annual(bundle: CiqBundle, *, as_of: str | None = None) -> 
         fn = _fmt_eps if fmt == "e" else _fmt_m
         unit = "" if fmt == "e" else " ($M)"
         rows.append(FinRow(label=disp_lbl + unit, cells=[fn(v) for v in s], values=s))
+    # (P1, materiality guard 2026-07-28) MATERIAL UNUSUAL ITEMS reach the record as DATA. The
+    # curated row list above is hand-named, so a one-off outside it — SMPL's LTM Asset Writedown of
+    # -$391.9M, 43% of market cap and the sole cause of LTM net income of -$198.8M — entered no
+    # tier of the dossier at all and no downstream consumer could surface it. Rows are taken from
+    # the sheet's OWN unusual-items block and appended only when they carry a value, so a name with
+    # no one-offs is byte-identical to before. Assemble-and-cite: the figure is surfaced, never
+    # interpreted — whether it is cyclical or secular is the analyst's call, not the extractor's.
+    try:
+        u_lo, u_hi = unusual_items_block(inc)
+        for ur in inc[u_lo:u_hi]:
+            u_lbl = str(ur[0] or "").strip()
+            if not u_lbl:
+                continue
+            u_series = [
+                clean_num(ur[c]) if c < len(ur) else None for c in act_cols
+            ] + [None, None]
+            if any(v for v in u_series):
+                rows.append(FinRow(label=u_lbl + " ($M)",
+                                   cells=[_fmt_m(v) for v in u_series], values=u_series))
+    except MaterialityUnavailableError:
+        pass   # no unusual-items block on this sheet — the guard reports it; the table stays core
+
     # C4 cash-flow essentials (actuals only; no consensus E), matched to the displayed column by
     # FISCAL-PERIOD identity (short, is_ltm) with collision detection — NOT the bare short, and NOT
     # the Reclassified flag: CIQ tags a P&L reclassification on the Income Statement but not the

@@ -719,3 +719,32 @@ def test_13_fields_reach_both_twins_and_the_mirrors_e2e() -> None:
                     f"{p.stem}/{axis}: note lost from the mirror")
                 if md:
                     assert n["date"] in md, f"{p.stem}/{axis}: note date absent from md"
+
+
+def test_brief_core_rows_py_js_parity() -> None:
+    """The brief's static row set is maintained in TWO languages and must not drift.
+
+    Found in review of the P1 brief fix: the set existed in THREE places — render.py, assemble.py
+    and dossier.js. Two were python, so the repo's own rule applied (where a single import IS
+    possible, import) and `assemble` now reads `render.BRIEF_CORE_ROWS`. The JS copy cannot import
+    it, so it is pinned here — the py↔JS leftover this module exists for.
+
+    Drift matters more than usual now: the guard's satisfying set is CORE ∪ MATERIAL, so a label
+    silently missing from one side narrows what counts as "the reader met it" on that surface.
+    """
+    from vinci.dossier.render import BRIEF_CORE_ROWS
+
+    js = _src("frontend/views/shared/dossier.js")
+    m = re.search(r"const want = \[(.*?)\];", js, re.S)
+    assert m, "dossier.js brief row whitelist not found"
+    js_set = set(re.findall(r'"([^"]+)"', m.group(1)))
+    assert js_set == set(BRIEF_CORE_ROWS), (
+        "brief core rows diverge between render.py and dossier.js — one surface would show a "
+        f"different snapshot: py-only={sorted(set(BRIEF_CORE_ROWS) - js_set)} "
+        f"js-only={sorted(js_set - set(BRIEF_CORE_ROWS))}")
+
+    # and BOTH twins must still admit the dynamic material rows on top of the static set
+    assert "getattr(r, \"material\", False)" in _src("vinci/dossier/render.py"), (
+        "the md brief lost its material-row promotion — an appendix-only charge again")
+    assert "r.material === true" in js, (
+        "the web brief lost its material-row promotion — an appendix-only charge again")

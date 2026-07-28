@@ -175,3 +175,65 @@ has a home). Each carries the trigger that should prompt adopting it:
 
 > When you add a practice here, keep it a CONVENTION (how we build over time). If a rule is high-stakes
 > and must be followed on EVERY build, it belongs in CLAUDE.md instead.
+
+## Acceptance red — the defect's behaviour, never an import error
+
+*(operator, 2026-07-28, from the item-17 build)*
+
+A defect-fix PR ships a fixture that **fails on the pre-fix commit and passes after**. The failure
+must be **the defect behaving**, not the absence of the file that fixes it.
+
+`ModuleNotFoundError: No module named 'vinci.dossier.materiality'` is not acceptance evidence.
+Every new module produces it. It proves a file was added.
+
+The correct form imports only modules that already exist on the pre-fix commit, runs the real path
+over real inputs, and asserts the thing the defect gets wrong:
+
+```python
+# imports only ciq_sheets, which exists pre-fix; runs the real extraction on the real bundle
+tbl = financial_summary_annual(CiqBundle.from_files("SMPL", paths)).value
+assert any("Asset Writedown" in r.label for r in tbl.rows), (
+    "THE P1 DEFECT: SMPL's LTM Asset Writedown of -$391.9M does not reach the assembled "
+    f"financial summary. Rows present: {[r.label for r in tbl.rows]}")
+```
+
+Pre-fix that raises `AssertionError` naming the missing line and printing the eleven rows it is
+absent from. Post-fix it passes. Same function, same input, different output — which is what a
+red-then-green must look like.
+
+**Suite-green-unchanged is never evidence a defect is fixed.** A suite that was green while the
+defect shipped is, by construction, a suite that does not test for it.
+
+## Record-writing and the anchor trap
+
+*(operator, 2026-07-28)*
+
+A STATE.md build record inserted against a text anchor **must anchor on text present in `main`**,
+not on text added by a sibling branch still in review. The item-17 build committed its CODE before
+its RECORD because the intended anchor lived on another open PR's branch and the insert assertion
+tripped after the code commit had already run — the artifact-and-record divergence pattern again,
+in miniature.
+
+Two acceptable shapes, either is fine:
+- anchor only on `main`-resident text, or
+- write the record **post-merge as its own step**, when the anchor is guaranteed present.
+
+What is not acceptable is discovering the divergence after the fact.
+
+## Never `git stash` to compare across commits
+
+*(operator, 2026-07-28, after a near-miss)*
+
+Comparing behaviour on two commits by `git stash` → `git checkout <old> -- path/` → `git stash pop`
+is unsafe in this repo. Sessions run concurrently and a **stale stash from another session can pop
+instead of yours** — one from 2026-07-23 did exactly that, producing conflicts in three files the
+session had never touched. Nothing was lost only because the divergence was being watched.
+
+Use a throwaway branch or a second worktree:
+
+```bash
+git worktree add /tmp/cmp <old-commit>     # compare against /tmp/cmp, delete when done
+```
+
+The uncommitted state stays untouched, there is no stash stack to collide on, and the comparison
+is reproducible by anyone.

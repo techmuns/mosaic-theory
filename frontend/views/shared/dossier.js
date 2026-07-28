@@ -1351,7 +1351,11 @@ function financialSnapshot(m) {
   if (!fsa || fsa.status !== "present" || !fsa.value) return "";
   const want = ["Revenue ($M)", "Revenue growth", "EBITDA ($M)",
     "EBITDA margin", "EBIT ($M)", "Net income ($M)", "EPS (GAAP, dil.)", "FCF ($M)"];
-  const rows = (fsa.value.rows || []).filter((r) => want.includes(r.label));
+  // (P1 brief fix, 2026-07-28) static labels PLUS any row flagged material at assembly. Surfacing
+  // the writedown into the appendix closed P1's data half but not the harm — a brief-only reader
+  // still never met a 43%-of-market-cap charge. Only rows over the floor, and the flag is computed
+  // ONCE in the extractor: this renderer reads it, never recomputes. Twin: render._brief_fin_lines.
+  const rows = (fsa.value.rows || []).filter((r) => want.includes(r.label) || r.material === true);
   const { idx, hidden } = briefWindow(fsa.value);
   const cols = idx.map((i) => (fsa.value.columns || [])[i]);
   if (!cols.length || !rows.length) return "";

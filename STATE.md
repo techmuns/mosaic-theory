@@ -3983,8 +3983,29 @@ audit, not a PR.) **No duplicate items; numbering sequential 1..15 after one det
 renumber.** No other unverifiable claim found in this block.
 
 **BUILD**
-1. **BUILD-WIDE FRESHNESS CONTRACT (queue head; widened 2026-07-28 by the IC audit — was
-   "quarterly-filing-triggered fact refresh", spec'd 2026-07-26).** POSITION IS PATH-DEPENDENCE,
+1. **FRESHNESS CONTRACT — RE-SPECIFIED 2026-07-28 (operator): NOTHING MAY BE OLDER THAN THE
+   FRESHEST AVAILABLE INSTANCE OF ITSELF.** The previous formulation ("nothing older than the
+   newest panel in the build") was MIS-SPECIFIED and would have been wrong even with daily
+   prices: panels have legitimately different cadences, so a guidance panel dated 2026-07-09 is
+   CORRECT while sitting fifteen days behind a 07-24 price — under a flat max it fails, and it
+   should not. The per-instance rule catches both SMPL defects EXACTLY: a July 8-K existed and
+   April was used; a 07-24 close existed IN THE SAME BUNDLE and 07-22 was used. Monday's weekly
+   price with no fresher instance available PASSES, carrying a stamped staleness note.
+   **CROSS-PANEL BY DEFINITION (operator 2026-07-28 — without this the rule cannot fire on the
+   case that motivated it).** An INSTANCE is *any observation of the same quantity available to
+   the build, whichever panel carries it* — never scoped per-source. In SMPL the price store's
+   freshest entry genuinely WAS 07-22, so a per-source reading PASSES and the price defect
+   survives its own fix: P1's failure mode exactly, a guard that cannot fire on its motivating
+   case. VERIFIED IMPLEMENTABLE 2026-07-28 — the comps workbook stamps `As-Of Date: 46227`
+   (= 2026-07-24) on every sheet and its `Financial Data` sheet carries a `Day Close Price Latest`
+   column, so the build held TWO dated observations of the close (07-24 comps, 07-22 Polygon
+   store) and used the older. RED FOR ITEM 1: a fixture where the price panel carries 07-22 and
+   the comps panel carries a 07-24 close — the build must FAIL. **The
+   contract therefore no longer depends on ingestion cadence and cannot fail builds by design** —
+   the BLOCKED-BY stamp and the ingestion work are KEPT (daily prices are worth having on their
+   own merits), but they are no longer a precondition for the contract to be safe.
+   (was: "build-wide freshness contract", widened 2026-07-28 by the IC audit — originally
+   "quarterly-filing-triggered fact refresh", spec'd 2026-07-26) POSITION IS PATH-DEPENDENCE,
    NOT the audit's ranking: this item was already queue head, spec'd pre-audit (2026-07-26), so
    it keeps the slot; among the AUDIT-DERIVED builds the operator ranks the MATERIALITY GUARD
    (item 17) first. ONE rule: nothing on the page may be older than the newest panel in the same
@@ -4163,12 +4184,26 @@ renumber.** No other unverifiable claim found in this block.
     reproduce all nine defects and burn the only clean acceptance case. On re-assembly it MUST
     show all five: (i) the $391.9M LTM writedown present in the synthesis; (ii) July guidance
     ($1.345–1.355B / $220–225M adj EBITDA) cited, not April; (iii) covenant basis reading ~1.2x
-    from the ledger, not UNKNOWN; (iv) price carrying its own as-of, no older than the newest
-    panel; (v) disposition rendering the closed BUY per the visible-absence rule. **If any of the
-    five still fails, the guard did not work — do not ship the next item until it does.**
-17. **MATERIALITY GUARD (audit P1; queued 2026-07-28) — OPERATOR-RANKED FIRST among the
-    audit-derived builds; SHIPS INDEPENDENTLY AND IN PARALLEL with item 1** (no dependency on the
-    freshness contract; every week it waits is a week a dossier can drop its largest line item).** The only defect in the set that changed what the investment
+    from the ledger, not UNKNOWN; (iv) price carrying its own as-of, **no older than the freshest
+    available instance of itself ACROSS PANELS** (re-spec 2026-07-28 — the original wording here,
+    "no older than the newest panel", is the flat rule the operator corrected); (v) disposition
+    rendering the closed BUY per the visible-absence rule. **If any of the five still fails, the
+    guard did not work — do not ship the next item until it does.**
+16c. **CNXC — PRE-UNDERWRITE RE-ASSEMBLY REQUIRED (operator gate 2026-07-28).** CNXC MAY NOT be
+    underwritten off the current render: its dossier omits a **$1,523.3M Q4-FY25 goodwill
+    impairment, 103% of market cap**, from both the financial summary and the synthesis. No ledger
+    row, no scenario record, no verdict today — so nothing is unsafe YET; the gate exists because
+    the defective render is the INPUT to any future underwrite and a screen cohort can pick the
+    name up at any time. Re-assemble under the item-17 guard BEFORE any underwrite begins. Unlike
+    SMPL (16b) this is NOT held for acceptance-test purposes — re-assemble as soon as convenient.
+17. **UNUSUAL-ITEMS SURFACING GUARD** (renamed from "materiality guard" 2026-07-28 by the
+    operator — the name over-claimed: as scoped it catches ONE-OFFS only, and will NOT catch
+    material change in structural lines, balance-sheet items or cash-flow items. SMPL's capex ran
+    6 → 20 → 28 over two years and nothing here fires. The general version is item 25.)
+    **(audit P1; queued 2026-07-28) — OPERATOR-RANKED FIRST among the audit-derived builds;
+    SHIPPED INDEPENDENTLY AND IN PARALLEL with item 1** (no dependency on the freshness contract;
+    every week it waited was a week a dossier could drop its largest line item). The only defect
+    in the set that changed what the investment
     conclusion was ABOUT: stale guidance mis-framed the bear case, but the missing $391.9M meant
     the bear case was arguing about the wrong EVENT. A size test plus a fixture, with no
     dependencies — against a freshness contract that touches every panel loader. Any single
@@ -4176,20 +4211,35 @@ renumber.** No other unverifiable claim found in this block.
     in the synthesis or the build fails loud. ORIGIN: SMPL's $391.9M LTM Asset Writedown (43% of market cap, the sole
     cause of LTM net income −$198.8M) never reached the dossier while the FY25 $60.9M was cited
     three times. Positive pin: a fixture writedown at 11% of mcap must raise unless surfaced.
-18. **LEDGER READ-BACK — NO FALSE UNKNOWN (audit regression trio; queued 2026-07-28).** Assembly
-    must consult the ledger V-row payload for the name; a fact recorded there may not print as
-    UNKNOWN in the dossier. ORIGIN: the dossier printed "covenant basis: UNKNOWN (not disclosed)"
-    while the V-row recorded loan-basis 1.2x — plus the $331M YTD impairments and the ~2.1M-share
-    buyback pace, all recorded 07-21 and absent 07-24. The analyst knew; the pipeline lost it.
-    A false UNKNOWN is worse than a gap — it asserts ignorance the fund does not have.
-19. **ASSERTION INTEGRITY (operator-added 2026-07-28).** Every claim the document makes ABOUT ITS
-    OWN DATA is machine-checked at build: an absence reason must be filing-based, never
-    sheet-shape ("no EBITDA section" → the true reason is single-segment reporting — audit P9); a
-    caveat naming a basis must match the series it caveats (the "rests on normalized earnings"
-    note sat on a GAAP series — P5's label half); a METHOD sentence's stated relation must hold
-    against the legs it describes (bull 1,420 claimed "just under the trailing twelve months"
-    against LTM 1,392 — and 1,416 at entry). Overlaps item 18 on false-UNKNOWN; this item owns
-    the general class: the page may not contradict itself.
+18. **NO FALSE UNKNOWN (audit regression trio; queued 2026-07-28, TIGHTENED by the operator the
+    same day — the first wording, "assembly must consult the V-row facts", was too vague and
+    invited dumping ledger PROSE into the dossier).** THE PRECISE REQUIREMENT:
+
+    > **Any field the dossier would render as UNKNOWN must first be checked against the record.
+    > A false UNKNOWN fails the build.**
+
+    Not "consult the ledger" — a bounded, testable obligation attached to the exact moment a
+    render is about to claim ignorance. ORIGIN: the dossier printed `covenant basis: UNKNOWN (not
+    disclosed)` while the V-row recorded the 8-K's loan-basis at **1.2x** — the fund asserting
+    ignorance it did not have. A false UNKNOWN is worse than a gap: a gap invites a look, an
+    UNKNOWN closes the question. (Same regression carried $331.0M YTD impairments and the ~2.1M-sh
+    buyback pace, both recorded 07-21 and absent 07-24.)
+    **RED:** a fixture where the record holds `1.2x` loan-basis leverage and the render emits
+    UNKNOWN — the build must fail. That is the covenant case exactly, and it makes the fix
+    testable rather than aspirational.
+19. **ASSERTION INTEGRITY (operator-added 2026-07-28; TIGHTENED same day).** Every claim the
+    document makes ABOUT ITS OWN DATA is machine-checked at build. THE PRECISE REQUIREMENT: **a
+    stamp must be generated from the object actually read** — an absence reason must be
+    filing-based, never sheet-shape ("no EBITDA section" when the true reason is single-segment
+    reporting, audit P9); a caveat naming a basis must match the series it caveats (the "rests on
+    normalized earnings" note sat on a GAAP series, P5's label half); a method sentence's stated
+    relation must hold against the legs it describes (bull 1,420 claimed "just under the trailing
+    twelve months" against LTM 1,392).
+    **RED:** a fixture where a stamp NAMES AN OBJECT THAT WAS NOT THE OBJECT READ, and the build
+    fails. **If that red proves hard to write, the item is UNDER-SPECIFIED and that must surface
+    BEFORE it ships, not after** (operator, explicitly). GUARD AGAINST DEGRADATION: this must not
+    quietly become a house-token linter — that would catch P3's mislabel and nothing else, which
+    is the shape of a fix that reports success while the class survives.
 20. **NO BACKWARD-FILL ON SERIES (audit P5; queued 2026-07-28; VERIFY-AT-BUILD).** A series
     ending in NM propagates UNKNOWN — the reader must never walk back to the last numeric cell
     (16.0x was the 2026-03-31 close of a GAAP series whose current cell is NM; the correct
@@ -4217,7 +4267,31 @@ renumber.** No other unverifiable claim found in this block.
     one Trends vintage, stamped once at the top. ORIGIN: base case built on 1,334 ("consensus
     FY26E") while the same document prints 1,351.8 as the consensus path anchor — two vintages,
     no reconciliation. Valuation impact small (~$0.41/sh); the defect is systemic.
-24. **ANALYST-DECISION BUCKET (queued 2026-07-28 — DECISIONS, not builds; the machine proposes
+**BUILD ORDER AFTER THE #237/#238 MERGES (operator 2026-07-28): 18, THEN 22.** Together they
+close the whole class of *the dossier under-representing what the fund already knows* — the
+information-regression trio, the false UNKNOWN, N7's unrendered triggers and the WATCH gap. Item 1
+stays BLOCKED on ingestion (though its re-spec means the contract itself is no longer unsafe
+without it); **20, 21 and 23 are mechanical and may follow in any order**; 25 is priced but not
+scheduled; 24 needs an operator policy line before any build encodes it.
+
+25. **MATERIAL-DELTA TEST — the general version of item 17 (operator-specified 2026-07-28).**
+    A **DELTA** test, not a level test: any line whose YEAR-OVER-YEAR CHANGE exceeds 10% of market
+    cap must be surfaced. This is the better primitive and it dissolves all three false-fire
+    classes that forced item 17's block scoping, WITHOUT needing block scoping at all — on SMPL it
+    fires on the writedown (−60.9 → −391.9 = 36% of mcap) and on nothing else: COGS barely moves,
+    the `Filing Date` serial does not move, the share count moves ~6M units. It also extends PAST
+    the income statement, which item 17 cannot: balance-sheet and cash-flow lines get the same
+    test, closing the capex 6 → 20 → 28 gap item 17's rename records. Price the build; if it holds
+    up, item 17 becomes a special case of it rather than a parallel mechanism.
+26. **EXTRACTION-VERSION STAMP ON EVERY DOSSIER (queued 2026-07-28 from the #238 blast-radius
+    diagnosis).** Every committed dossier carries the extraction version that produced it. ORIGIN:
+    after #238 the fleet holds two vintages with nothing distinguishing them — pre-guard tables
+    lack the unusual-items rows, post-guard tables carry them — and cross-name comparison in the
+    verdict-pending cohort silently assumes a common table. Cheap, makes the divergence legible
+    WHILE it exists, and a fleet re-assembly cannot even be verified complete without it. Ships
+    BEFORE any fleet re-assembly.
+24. **ANALYST-DECISION BUCKET — BOTH POLICY LINES RETRACTED BY THE OPERATOR 2026-07-28; DO NOT
+    IMPLEMENT AS WRITTEN. Item stays BLOCKED pending archetype work.** (queued 2026-07-28 — DECISIONS, not builds; the machine proposes
     neither).** (a) SHARES BASIS: weighted-average diluted (recorded 93.678M) vs current shares
     outstanding (~88.5M) vs guided ~90M for FORWARD per-share values while the company retires
     ~11.7% of its equity — the auditor sizes the difference at ~$1.00–1.50/sh of understatement.
@@ -4772,6 +4846,197 @@ three days behind the others, which is the cadence gap in miniature. SMPL's own 
 `spot_source` reads "Polygon daily aggregate close 2026-07-22 (store)" — a store read, confirming
 the audit's P4 mechanism claim (ledger exit price) was WRONG while its staleness substance was
 right.
+
+**REVIEW OF #237/#238 — 2026-07-28, TWO DEFECTS FOUND IN MY OWN 17b CODE AND FIXED BEFORE MERGE.**
+(1) **THE MARKER DID NOT MATCH THE SPEC.** The operator's rule was "any row that TRIGGERS THE
+GUARD"; the guard reads the LATEST column, but `mark_material_rows` took `max(|v|)` across EVERY
+column. Result: rows promoted to the brief on HISTORY the guard never fires on — **MVST** (LTM
+−36.6 = 8.7%, below the floor, flagged off a −93 two years earlier) and **VRRM** (latest column
+empty, flagged off an older −97). Precisely the "not every $2M restructuring line" noise the brief
+was told not to accumulate. Fixed by resolving the guard's own period in the ASSEMBLED table
+(`_latest_actual_index`: LTM, else last non-estimate) — the two indexings differ, and matching the
+PERIOD rather than the index is what keeps "flagged for the brief" and "fires the guard" one
+predicate. Post-fix the flagged set is exactly SMPL + CNXC, matching the guard. Regression pinned
+with the MVST shape.
+(2) **THREE COPIES of the brief's core row set** (render.py, assemble.py, dossier.js), two of them
+introduced by 17b, with NO pin — the duplication class `test_parity_pins.py` exists for. Per the
+repo's own rule ("where a single import IS possible the repo does that instead"), the two PYTHON
+copies collapse to one: `render.BRIEF_CORE_ROWS`, imported by assemble. The JS copy cannot import
+it, so it is PINNED (`test_brief_core_rows_py_js_parity`), mutation-tested by dropping a label
+from the JS side. Drift matters more than usual here because the guard's satisfying set is
+CORE ∪ MATERIAL — a label missing on one side silently narrows what counts as "the reader met it".
+ALSO CHECKED, no defect: the promoted-row-blank-in-the-brief-window risk does not materialise on
+any of the twelve (every flagged row has a value inside the displayed window); #237 carries no
+secrets and no licensed CIQ content. Gate: ruff + `mypy --strict` clean · **1129 passed**.
+
+**BUILD RECORD — 2026-07-28 P1 BRIEF FIX (item 17b, operator-blocked #238 until done).** P1 was
+NOT closed by surfacing. The operator's blocker, accepted in full: *P1 was never "the writedown is
+absent from the data" — it was that a DECISION-MAKER reads the dossier and never meets a charge
+worth 43% of market cap.* With both brief snapshots filtering on a STATIC label whitelist, the
+surfaced row landed in the APPENDIX only: guard passing, record complete, **harm substantially
+intact**. That is the same family as a guard that cannot fire — the acceptance condition did not
+match the harm — so it was fixed on the branch rather than deferred. THREE CHANGES: (a) `FinRow`
+gains a structural `material: bool = False`, set ONCE at assembly where the market cap lives —
+neither renderer recomputes the threshold, because a second copy of that arithmetic in two twins
+is the parity hazard this repo keeps closing (default False round-trips every committed
+dossier.json); (b) BOTH brief whitelists become DYNAMIC — static labels **∪ any row flagged
+material** — so it is not every $2M restructuring line, only rows over the floor; (c) the GUARD'S
+TARGET SURFACE MOVES TO THE BRIEF: its satisfying set is CORE ∪ MATERIAL, so an appendix-only row
+no longer silences it. VERIFIED END-TO-END on real bundles: SMPL flags `Asset Writedown ($M)` and
+CNXC flags `Impairment of Goodwill ($M)`, each brief going 8 → 9 rows; AORT and FUBO flag nothing
+and stay at 8 — no noise on names without material one-offs. The web needs no emitter change: the
+`frontend/dossiers/` mirror copies the mechanical layer verbatim, so the flag rides through. RED
+(operator's, shipped): a >10% charge present in the table but absent from the brief FAILS the
+build — and the old appendix-only set is asserted still-passing beside it, so the regression is
+explicit rather than implied. Gate: ruff + `mypy --strict` clean · **1128 passed** (+2).
+
+**ITEM 24 — SHARES SPEC CORRECTED BY THE OPERATOR 2026-07-28 (still ADOPT NOTHING; the run comes
+first).** MVST killed the previous "third quantity" as written, and the reason makes the problem
+worse rather than smaller: for a LOSS-MAKER, GAAP excludes anti-dilutive instruments, so the
+converts are not understated in the reported diluted count — they are **ABSENT**. Reported diluted
+therefore cannot be the starting point for any loss-maker. CORRECTED RULE, with a profitability
+branch, justified by the fact that **we are valuing a FUTURE state in which the company is
+profitable** — at which point the anti-dilutive exclusion lapses and those instruments dilute:
+PROFITABLE → reported diluted plus post-period changes; LOSS-MAKING → **computed if-converted**
+(converts, options, RSUs) regardless of current GAAP treatment. AORT carrying the largest gap at
++4.8%, unpredicted by either party, is the operator's stated argument for running this across all
+twelve rather than reasoning further.
+
+**ITEM 24 — JOINT TEST STAYS UNADOPTED pending an ALIGNED re-run (operator 2026-07-28).** My own
+flag governs: the harness compared the multiple at a LAGGED INDEX rather than aligned to the
+EBITDA trough year, so the AORT and EPAM "secular" calls are uninterpretable. RE-RUN REQUIREMENTS:
+the multiple observation aligned to the SAME fiscal period as the EBITDA observation, and the
+LTM/estimate column included so SMPL's fire can be established either way. Note the operator's
+sharpening of the archetype conclusion: the naive test fails on **AORT, EPAM and WERN** and is
+MEANINGLESS on **MVST, NCNO and VITL** — **six of twelve**, which is not a rule with an edge case.
+
+**DIAGNOSIS — 2026-07-28 #238 BLAST RADIUS (operator-required before any re-assembly).** Four
+questions, all answered by real runs across the twelve bundles.
+(1) **GREEN PATH IS DETERMINISTIC — the LLM is NOT in the loop.** The guard is satisfied by EITHER
+route, and the SURFACING half is mechanical (reads the sheet's own block, appends), so by the time
+the guard runs the summary already carries the row. PROVEN by running the guard with an **EMPTY
+synthesis string** against the real post-surfacing table for both firing names: SMPL and CNXC both
+pass. No intermittent failure on model variance, and no name that can never build. Pinned
+(`test_the_green_path_is_deterministic_and_does_not_involve_the_llm`) so a change making the
+summary route conditional reddens BEFORE anyone meets it as a stuck build. **CNXC's item-16c
+re-assembly is therefore UNBLOCKED on this ground.**
+(2) **ROW-SET DIFF, pre vs post, real code both sides: 11 of 12 names gain rows; 56 rows fleet-wide.**
+Gains: EPAM/IT +4, CNXC/WERN +3, BRBR/SMPL +2, AORT/MVST/NCNO/VITL/VRRM +1, **FUBO +0** (no
+unusual items — byte-identical, as designed). So the blast radius is far wider than the two names
+above the 10% floor: MVST's −36.6, VRRM's −1.3, BRBR's −0.9 and the rest all now surface.
+(3) **POSITIONAL-INDEXING REGRESSION: none — but the risk was real.** The insert sits BEFORE the
+cash-flow block, so **CFO/Capex/FCF shift position on 11 of 12 names**. Safe only because every
+consumer selects BY LABEL: `audit_r1._fy_margins` uses `startswith("Revenue ($M)")`, render's FCF
+relabel matches `r.label == "FCF ($M)"`, and both twins' brief snapshots filter on an explicit
+label WHITELIST. The only `rows[0]` reads in the tree are the catalyst calendar, a different
+structure. PINNED (`test_no_consumer_reads_the_annual_table_by_row_position`) — the row-wise form
+of ciq.py's never-hard-code-column-positions rule; mutation-tested. CONSEQUENCE WORTH THE
+OPERATOR'S ATTENTION: because both brief snapshots whitelist, **the surfaced writedown lands in the
+APPENDIX, not the brief** — the record is complete and the guard is satisfied, but a brief-only
+reader still does not meet a 43%-of-market-cap charge. Whether P1-scale items belong in the brief
+is a DESIGN decision, not a defect, and is not taken here.
+(4) **FLEET DIVERGENCE IS REAL AND UNMARKED.** Every committed dossier predates the guard; after
+any single re-assembly we hold two extraction vintages with nothing distinguishing them, which
+breaks cross-name comparison exactly where it matters most (the verdict-pending cohort). NOT FIXED
+HERE — the operator's two options stand: stamp each dossier with an extraction version, or plan a
+single fleet re-assembly once the guard is proven green. **Recommendation: the version stamp, and
+FIRST** — it is cheap, it makes the divergence legible while it exists, and a fleet re-assembly
+without it cannot even be verified complete. Queued as item 26.
+
+**ITEM-24 VALIDATION RUN — 2026-07-28 (operator-directed: build both, run the fleet, adopt
+nothing). ITEM 24 REMAINS BLOCKED.** Scoreboard against the operator's four predictions:
+· **SHARES RULE INVERTS — CONFIRMED on NCNO** (basic 111.3 vs diluted 112.6, **+1.1%** → current
+outstanding ignores dilution and OVERSTATES value). **NOT confirmed on MVST** (basic == diluted,
++0.0%) — **and the reason strengthens the operator's case rather than weakening it**: MVST is
+loss-making, so GAAP excludes anti-dilutive instruments and the REPORTED diluted count hides the
+convertibles entirely. The "diluted shares outstanding at the valuation date" quantity therefore
+CANNOT be lifted from the reported diluted weighted average for any loss-maker; it must be computed
+if-converted. A third name nobody predicted carries the largest gap: **AORT +4.8%**.
+· **NAIVE EBITDA REGIME TEST FALSE-FIRES — CONFIRMED, and worse than predicted.** At its trough
+year **WERN fires at −20.7% (FY24)** exactly as called. It also fires on **AORT (−25.7%, FY23)**
+and **EPAM (−18.3%, FY23)** — two false positives beyond the prediction. And on MVST/NCNO/VITL the
+statistic is not merely wrong but MEANINGLESS: EBITDA crosses zero, so the YoY reads +1300%, +119%,
+−1285%. (AEHR is not in the bundle set and could not be tested.)
+· **JOINT TEST DOES NOT FIRE ON WERN — CONFIRMED, and for the stated reason.** At WERN's trough
+EBITDA fell −20.7% while the multiple **EXPANDED +39%** → classified CYCLICAL, not secular. That is
+the operator's mechanism reproducing on real data.
+· **JOINT RETURNS NOT-APPLICABLE ON MVST/NCNO — CONFIRMED** (zero-crossing), plus VITL.
+· **JOINT FIRES ON SMPL — NOT CONFIRMED, and the reason is a scope flaw in MY run, not in the
+rule**: the harness read completed FISCAL YEARS only, where SMPL's worst is +1.4% (FY23); the −20%
+the operator cites is FY2026E/LTM. A correct implementation must include the LTM/estimate column.
+· **UNRESOLVED — the joint test's two SECULAR calls (AORT, EPAM) are UNRELIABLE as run**: my
+harness compared the multiple at a lagged index rather than at the EBITDA trough year, so earnings
+and multiple are not aligned to the same period. Alignment is required before either call means
+anything. **Adopt nothing.** The operator's §4 reading — that no single rule is universal and the
+right anchor differs by archetype (stable compounder / cyclical / pre-profit issuer / discontinuous
+entity), with the recipe R1/R2 split as precedent — is SUPPORTED by this run, not contradicted.
+
+**TRIAGE — 2026-07-28 CNXC $1,523.3M GOODWILL IMPAIRMENT (found by the item-17 guard;
+triaged same-day at operator direction, explicitly OUTSIDE the SMPL re-assembly hold — that hold
+was about preserving SMPL as the guard's acceptance case, never a reason to sit on a defect found
+elsewhere).** FINDING: **no live verdict is at risk.** CNXC has **NO ledger row** (open, closed or
+committed), **NO underwrite record** (`scenarios/CNXC.json` absent — its dossier renders "_no
+scenario record for this name_"), and no verdict block. It is a screened-and-dossiered name that
+was never underwritten, so the exposure is bounded to a dossier nobody has decided on — it does
+NOT get SMPL's unsafe-verdict treatment, because there is no verdict to mark unsafe. THE CHARGE:
+$1,523.3M is a **SINGLE charge in Q4-FY25**, carried identically in FY25 and LTM (the same event,
+not a cumulative roll-up) — quarterly confirms one hit, Q4-25 −1,523.3; CNXC's other one-offs are
+`Restructuring Charges` −60.2 (4%) and `Merger & Related Restruct.` −48.0 (3%), both already
+surfaced. BAND SCAN across all 12 bundles for one-offs between 10% and 100% of market cap — the
+operator's concern that the guard's 10% floor left an unseen middle: **the band is empty WITHIN THE SCANNED SCOPE.**
+Only two items clear 10%, both already known (CNXC 103%, SMPL 43%); the next largest anywhere is
+MVST `Asset Writedown` −36.6 at **9%**, already surfaced. **NOT AN ALL-CLEAR — SCOPE STATED
+(operator correction 2026-07-28).** The scan inherits item 17's scope: the UNUSUAL-ITEMS BLOCK
+only. Structural lines, the balance sheet and the cash-flow statement are unscanned BY
+CONSTRUCTION — the same over-claim just recorded against item 17's name. SMPL's capex ran
+6 → 20 → 28 over two years and nothing here would have shown it. **The genuine all-clear is a
+DELIVERABLE OF ITEM 25: re-run the delta test across all twelve bundles when it lands.** That is
+the first scan that can honestly be called complete; until then this is evidence about one-offs,
+not about the financials. GATE (operator): **CNXC MAY NOT BE UNDERWRITTEN OFF THE CURRENT RENDER**
+— queue item 16c. The exposure is bounded only because nobody has decided on it yet; the defective
+dossier remains the INPUT to any future underwrite, and a screen cohort picks the name up as-is.
+
+**ACCEPTANCE-RED POLICY CORRECTED (operator 2026-07-28) — THE RED MUST BE THE DEFECT'S BEHAVIOUR,
+NEVER AN IMPORT ERROR.** #238's original red was `ModuleNotFoundError` on `2facc5e`, which proves
+a FILE WAS ADDED — every new module produces it — not that the defect exists. Replaced with a pin
+importing ONLY `ciq_sheets` (present on 2facc5e), running the REAL extraction path over the REAL
+SMPL bundle: on 2facc5e it fails with an **AssertionError naming the missing line and printing the
+eleven hand-named rows it is absent from**; here it passes. Same function, same input, different
+output. This supersedes the acceptance clause as first written and binds every audit-derived build.
+
+**BUILD RECORD — 2026-07-28 MATERIALITY GUARD (queue item 17, audit P1) — FIRST AUDIT-DERIVED
+REMEDIATION. Shipped independently of item 1, as directed.** ROOT CAUSE IS DEEPER THAN THE AUDIT
+STATED: it called this "no materiality guard between extraction and synthesis", but the line never
+reaches the extraction OUTPUT either — `financial_summary_annual` builds from a HAND-NAMED row
+list, so `Asset Writedown` is invisible to every downstream consumer and a guard scanning the
+assembled table could never fire. Fixed in BOTH halves: (a) SURFACING — material unusual items now
+enter the annual summary as DATA, from the sheet's own unusual-items block, appended only when
+valued (a name with no one-offs stays byte-identical); (b) the GUARD — fail-loud when a material
+one-off appears in NEITHER the summary NOR the synthesis (two satisfying routes: data or argument).
+SCOPE NARROWED ON EVIDENCE, the load-bearing finding: **the audit's stated fix is not implementable
+as written.** "Any income-statement line >10% mcap / 5% revenue" fires on TWELVE lines for SMPL —
+`Cost Of Goods Sold` at 102% of market cap (recurring, structural on every name forever),
+`Weighted Avg. Diluted Shares Out.` (a SHARE COUNT against dollars), and `Filing Date` +46,212 (an
+Excel DATE SERIAL read as $M, 5082% of market cap). A guard that fires on the filing date is
+switched off within a week, and then the real one never fires either. Scope is therefore the CIQ
+UNUSUAL-ITEMS BLOCK, delimited by the sheet's OWN subtotals (`EBT Excl. Unusual Items` → `EBT Incl.
+Unusual Items`) — right on the merits, being exactly the family "clean"/"normalized" figures
+EXCLUDE, i.e. what a reader on normalized earnings never meets; SMPL's bear case was already
+arguing inside this family with the wrong member. NOT P9's defect (that inferred a FILING fact from
+sheet shape; this reads a sheet's labelled subtotals to locate rows within it), and a missing
+delimiter RAISES rather than reporting a clean pass. Present on all 12 committed bundles (3–8
+rows). **REAL-RUN RESULT ACROSS THE COHORT: fires on exactly 2 of 11, zero false positives** —
+SMPL `Asset Writedown` −$391.9M (43% of mcap, the audited defect) and **CNXC `Impairment of
+Goodwill` −$1,523.3M (103% of market cap) — A PREVIOUSLY UNKNOWN SECOND INSTANCE nobody had looked
+at**, in neither its summary nor its synthesis. ACCEPTANCE (operator policy 2026-07-28): the
+fixture ERRORS on `2facc5e` (`ModuleNotFoundError: vinci.dossier.materiality`) and passes here —
+red→green demonstrated, not asserted. 8 pins: the audited shape raises · the audit's own
+11%-of-mcap test · either satisfying route silences it · the twelve-false-fire negative pin naming
+COGS/share-count/date-serial · a sheet without the block refuses a clean pass · no-denominator is a
+documented silent pass · every committed bundle has a locatable block · e2e conditional invariant.
+Gate: ruff + `mypy --strict` clean · **1123 passed** (+8). NOT DONE HERE: SMPL/CNXC still carry the
+pre-guard render — they re-assemble under item 16b's acceptance conditions once 18 and 1 land, and
+this guard is what holds that re-assembly honest.
 
 **AUDIT RECORD — 2026-07-28 EXTERNAL IC AUDIT OF THE SMPL DOSSIER (docs/audits/
 2026-07-28-smpl-ic-audit.md) — VERIFIED AGAINST THE REPO, QUEUED.** An external Investment-
