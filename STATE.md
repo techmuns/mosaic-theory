@@ -4300,7 +4300,23 @@ scheduled; 24 needs an operator policy line before any build encodes it.
     the income statement, which item 17 cannot: balance-sheet and cash-flow lines get the same
     test, closing the capex 6 → 20 → 28 gap item 17's rename records. Price the build; if it holds
     up, item 17 becomes a special case of it rather than a parallel mechanism.
-27. **ONE DEFINITION FOR ANYTHING BOTH TWINS CONSUME — a GUARD, not a habit (operator
+27a. **DUPLICATE-DEFINITION DETECTOR + FROZEN BASELINE (operator split 2026-07-28; ships in the
+    STATE-topology slot).** The detector plus a BASELINE recording the ten known duplicates as
+    accepted-for-now: **the build fails only on the ELEVENTH.** Zero curation, ships immediately.
+    Why the split matters more than it sounds: the instance that started this was one I INTRODUCED
+    WHILE FIXING THE SAME CLASS, so 27a closes the hazard against NEW instances now rather than
+    after ten judgment calls. NOTE — the detector must NOT be wired un-baselined: it finds ten
+    today, so wiring it bare turns the suite red on merge. That is exactly the operator's own check
+    on #240 ("if it's wired to CI while finding ten unpinned duplicates the suite should be red");
+    the baseline IS the answer to it.
+27b. **CURATE THE TEN DOWN — as each is touched, NOT as a project (operator 2026-07-28).** Each hit
+    needs a judgment: genuine shared definition (collapse to one import, or pin) vs short domain
+    vocabulary used inline (`["bear","base","bull"]`, where a literal is legitimate).
+    **`_CS_COLS` first regardless of what touches it** — `["Type","Principal","Coupon","Floating",
+    "Maturity","Sec","Conv","Cur"]`, identically named with identical contents in `render.py` and
+    `dossier.js`. Latent today; if those headers ever drift, the md and web dossiers show DIFFERENT
+    capital-structure tables with nothing flagging it.
+27. **(SUPERSEDED by 27a/27b — kept for its reasoning)** **ONE DEFINITION FOR ANYTHING BOTH TWINS CONSUME — a GUARD, not a habit (operator
     2026-07-28; rides with the STATE-topology slot).** ORIGIN, and why a habit is the wrong shape:
     the duplication hazard **recurred WHILE BEING FIXED, by someone actively looking for it** —
     the 17b review found three copies of the brief label set, two of them introduced by 17b
@@ -4885,6 +4901,39 @@ three days behind the others, which is the cadence gap in miniature. SMPL's own 
 `spot_source` reads "Polygon daily aggregate close 2026-07-22 (store)" — a store read, confirming
 the audit's P4 mechanism claim (ledger exit price) was WRONG while its staleness substance was
 right.
+
+**SIZE CHECK BEFORE BUILDING THE 20+21+23 BATCH — 2026-07-28 (operator asked to be told BEFORE
+rather than after). VERDICT: THE BATCH IS NOT ONE PR, AND ONE OF THE THREE IS MIS-SCOPED.**
+· **ITEM 20 — SMALL, ~2 lines + a test. SHIP IT.** The claim VERIFIES against the real workbook:
+SMPL's quarterly `P/LTM EPS` Close series literally ends `NM`, prior cell `15.89`. But THE AUDIT
+MISPLACED THE DEFECT: `_multiples_close` is CORRECT — its docstring says "empty/NM → None" and it
+does exactly that. The backward-fill is in the CONSUMER, `range_position` (`ciq_sheets.py:302,316`):
+`pe = [v for _, v in _multiples_close(...) if v is not None]` FILTERS THE ABSENCE AWAY, then
+`pe[-1]` takes the last survivor — the previous quarter. Backward-fill by a different route than the
+audit described, which matters because a fix aimed at the READER would have changed nothing. Fix:
+read the LATEST cell; print nothing (or UNKNOWN) when it is None.
+· **ITEM 21 — MEDIUM, NOT the one-line routing change the audit implies.** The routing IS one line
+(`ciq_sheets.py:1900`, `read_text(wb.path, wb.fmt)` → `read_sheets`). But
+`_parse_business_relationships(raw)` consumes **TEXT**, while `read_sheets()` returns
+`dict[str, list[list]]` — a different shape. **The parser rewrite for the sheet shape IS the item.**
+Plus `Suppliers.xls` is a NEW consumer (never opened; carries the creditor group). Ship it, but as
+its own PR with its own red (`Customers.xls` reads successfully), not as a third of a batch.
+· **ITEM 23 — MIS-SCOPED. AS WRITTEN IT WOULD CHANGE NOTHING. DO NOT BUILD IT YET.** The extractor
+ALREADY uses exactly one vintage: `1,351.8` is Trends "latest", and the acceleration read prints
+the whole path (`1,334.2 (3m) → 1,335.1 (2m) → 1,333.9 (1m) → 1,351.8 (latest)`). The `1,334` is
+NOT a second extraction — it is the ANALYST'S FROZEN RECORD REFERENCE, source-stamped "committed
+dossier financial_summary (E cols = consensus)": what the dossier said when they underwrote,
+CORRECTLY frozen at entry vintage. So "single vintage per build, stamped once" targets a mechanism
+that is not the defect — the FOURTH instance of that pattern this week (P1's guard, item 18's
+input, item 1's flat max, now this). The real issue is **an entry-vintage record value rendering
+beside a fresh extraction value with nothing marking the difference**, which is ALREADY item 1's
+clause: "entry-vintage values are exempt but must be LABELLED entry-vintage wherever they render
+beside fresh values." **Recommendation: fold 23 into item 1's labelling clause and close it as a
+duplicate, or re-spec it — operator's call. It is not a mechanical build.**
+· **CONSEQUENCE FOR THE ARITHMETIC:** "one PR takes the original nine from 1 closed to 4 closed"
+does not hold. Honest count: **20 closes P5** (small); **21 closes P6** (medium, own PR); **23 does
+NOT close P8 as written**. The batch realistically takes the nine from 1 closed to **3 closed**,
+across TWO PRs, with P8 returning to spec.
 
 **POST-MERGE VERIFICATION + ITEM-18 SCOPE CHECK — 2026-07-28 (operator-directed, BEFORE any
 build).**
