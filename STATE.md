@@ -3983,14 +3983,33 @@ audit, not a PR.) **No duplicate items; numbering sequential 1..15 after one det
 renumber.** No other unverifiable claim found in this block.
 
 **BUILD**
-1. **QUARTERLY-FILING-TRIGGERED FACT REFRESH (queue head, spec'd 2026-07-26).** A new 10-Q must
-   force recomputation of every TRAILING fact — `ltm_fcf`, LTM revenue/EBITDA, the LTM-basis
-   derivations — each carrying a staleness stamp naming the period it was built from. ORIGIN: the
-   SMPL Q3 verification. The 2026-07-24 freshness gate (#213) read the PRINT correctly and stayed
-   silent, while the assembled facts sat a vintage behind it: `ltm_fcf` 157.915 is the FY2025
-   figure, ~32% above the true LTM-through-Q3 (~119.4). **The gate watches the panel; nothing
-   watched the fact.** Until this ships, `ltm_fcf` stays FY-basis in the anchor and any LTM
-   cash-flow read is stated in prose only (see the SMPL 2026-07-26 verification tag).
+1. **BUILD-WIDE FRESHNESS CONTRACT (queue head; widened 2026-07-28 by the IC audit — was
+   "quarterly-filing-triggered fact refresh", spec'd 2026-07-26).** POSITION IS PATH-DEPENDENCE,
+   NOT the audit's ranking: this item was already queue head, spec'd pre-audit (2026-07-26), so
+   it keeps the slot; among the AUDIT-DERIVED builds the operator ranks the MATERIALITY GUARD
+   (item 17) first. ONE rule: nothing on the page may be older than the newest panel in the same
+   build, and every dated input carries its own as-of. FOUR enforcement points, one class (audit
+   P2+P3+P4 confirmed + the scheduler, operator-scoped 2026-07-28):
+   (a) TRAILING FACTS — a new 10-Q forces recomputation of every LTM-basis fact with a staleness
+   stamp (the original item: `ltm_fcf` 157.915 was the FY figure, ~32% above true ~119.4; **the
+   gate watches the panel; nothing watched the fact**);
+   (b) PRICE — spot carries `as_of` and the build FAILS LOUD when `price.as_of < max(as_of)`
+   across panels (SMPL: Polygon-store 07-22 close beside 07-24 CIQ panels; NOT the ledger exit
+   price as the audit guessed — the source stamp proves Polygon — but two sessions stale in its
+   own build);
+   (c) GUIDANCE — selected by MAX guidance date from the structured grid, never by filing match,
+   with a prose-vs-grid cross-check that fails loud on disagreement (SMPL cited April's 8-K 4×,
+   never July's; the bear leg argued from the superseded guide);
+   (d) THE SCHEDULER (operator-scoped 2026-07-28) — freshness is MAX-AGE-OF-CONTAINED-FACTS,
+   never assembly date, in the thing that decides WHETHER to build as well as in the builder.
+   SMPL was skipped on 07-27 as "freshest" by assembly timestamp while containing a 07-22 price,
+   a one-month-old consensus vintage and April guidance — freshest by the clock, stale by the
+   facts. A scheduler keeping the clock definition will systematically skip the dossiers MOST in
+   need of re-assembly, because a build that failed to refresh its inputs still earns a recent
+   timestamp; land the contract in the builder alone and the broken definition survives exactly
+   where it does the damage. Entry-vintage values that are MEANT to be frozen (an underwrite
+   record's reference frame) are exempt but must be LABELLED entry-vintage wherever they render
+   beside fresh values.
 2. **STRUCTURED GENERATING-CELLS RULE (queued 2026-07-26).** Any number quoted in record PROSE
    must have its generating cells stored STRUCTURALLY beside it. ORIGIN: the boundary-pair hunt —
    the entry rationale's "2.12 clears / 1.88 fails" was prose-only, so re-deriving it at Q3 data
@@ -4134,6 +4153,66 @@ renumber.** No other unverifiable claim found in this block.
     too small to justify enshrining the display-string-parse). Four open decisions listed at the
     doc's end (role vocabulary; one field vs statistic×population; archived-SMPL row stays sealed;
     one PR vs two). **DISCHARGED 2026-07-27 — BUILT (see the schema-1.3 build record). Decisions were: census role list · one tag · archive stays sealed · one PR. Build unblocked — next build slot.**
+17. **MATERIALITY GUARD (audit P1; queued 2026-07-28) — OPERATOR-RANKED FIRST among the
+    audit-derived builds.** The only defect in the set that changed what the investment
+    conclusion was ABOUT: stale guidance mis-framed the bear case, but the missing $391.9M meant
+    the bear case was arguing about the wrong EVENT. A size test plus a fixture, with no
+    dependencies — against a freshness contract that touches every panel loader. Any single
+    income-statement or cash-flow line exceeding 10% of market cap or 5% of revenue MUST appear
+    in the synthesis or the build fails loud. ORIGIN: SMPL's $391.9M LTM Asset Writedown (43% of market cap, the sole
+    cause of LTM net income −$198.8M) never reached the dossier while the FY25 $60.9M was cited
+    three times. Positive pin: a fixture writedown at 11% of mcap must raise unless surfaced.
+18. **LEDGER READ-BACK — NO FALSE UNKNOWN (audit regression trio; queued 2026-07-28).** Assembly
+    must consult the ledger V-row payload for the name; a fact recorded there may not print as
+    UNKNOWN in the dossier. ORIGIN: the dossier printed "covenant basis: UNKNOWN (not disclosed)"
+    while the V-row recorded loan-basis 1.2x — plus the $331M YTD impairments and the ~2.1M-share
+    buyback pace, all recorded 07-21 and absent 07-24. The analyst knew; the pipeline lost it.
+    A false UNKNOWN is worse than a gap — it asserts ignorance the fund does not have.
+19. **ASSERTION INTEGRITY (operator-added 2026-07-28).** Every claim the document makes ABOUT ITS
+    OWN DATA is machine-checked at build: an absence reason must be filing-based, never
+    sheet-shape ("no EBITDA section" → the true reason is single-segment reporting — audit P9); a
+    caveat naming a basis must match the series it caveats (the "rests on normalized earnings"
+    note sat on a GAAP series — P5's label half); a METHOD sentence's stated relation must hold
+    against the legs it describes (bull 1,420 claimed "just under the trailing twelve months"
+    against LTM 1,392 — and 1,416 at entry). Overlaps item 18 on false-UNKNOWN; this item owns
+    the general class: the page may not contradict itself.
+20. **NO BACKWARD-FILL ON SERIES (audit P5; queued 2026-07-28; VERIFY-AT-BUILD).** A series
+    ending in NM propagates UNKNOWN — the reader must never walk back to the last numeric cell
+    (16.0x was the 2026-03-31 close of a GAAP series whose current cell is NM; the correct
+    current normalized figure is 8.90x). Same class as coercing UNAVAILABLE to zero, arriving by
+    a different route. The NM cell claim is credible but unverified against the workbook — verify
+    at build, not from the report.
+21. **SPREADSHEET EXTRACTOR BRANCH ROUTING (audit P6; queued 2026-07-28).** Route BIFF_XLS/OOXML
+    classifications to `read_sheets()` — `read_text()` on Customers.xls produced our own fail-loud
+    error INTO the dossier and a spurious UNKNOWN. Add Suppliers.xls to the workbook-keyword
+    consumers (never opened; carries the creditor group). The downstream customer-concentration
+    conclusion happened to be right for a different reason — right conclusion, wrong route.
+22. **VISIBLE-ABSENCE RULE (generalised by the operator 2026-07-28 from audit N7 + the
+    WATCH/CLOSE gap): a render that cannot express a field MUST SAY SO. Silent omission is
+    prohibited; absence must be visible and attributed.** The md does not merely under-tell the
+    WATCH — it shows WATCH + "not held" with no trace a BUY existed, and a reader CANNOT DETECT
+    they are seeing a partial view: the same distinction as the false UNKNOWN — not incomplete,
+    MISLEADING. One rule closes N7 (the record's three `reunderwrite_triggers` render nowhere),
+    the WATCH gap (the 07-27 close-aware chip shipped web-only), and the covenant UNKNOWN's
+    render half together — and lets the web and md twins LAG each other without CONTRADICTING
+    each other, which is the actual production requirement. INTERIM BEHAVIOUR, before render.py
+    learns the close-aware chip: `disposition: WATCH — prior BUY closed 07-24 (see Decision
+    log)` · `covenant basis: not rendered — see record` (never UNKNOWN). Twin-parity pins on the
+    rule, not on any one chip.
+23. **ONE CONSENSUS VINTAGE PER BUILD (audit P8; queued 2026-07-28).** A build references exactly
+    one Trends vintage, stamped once at the top. ORIGIN: base case built on 1,334 ("consensus
+    FY26E") while the same document prints 1,351.8 as the consensus path anchor — two vintages,
+    no reconciliation. Valuation impact small (~$0.41/sh); the defect is systemic.
+24. **ANALYST-DECISION BUCKET (queued 2026-07-28 — DECISIONS, not builds; the machine proposes
+    neither).** (a) SHARES BASIS: weighted-average diluted (recorded 93.678M) vs current shares
+    outstanding (~88.5M) vs guided ~90M for FORWARD per-share values while the company retires
+    ~11.7% of its equity — the auditor sizes the difference at ~$1.00–1.50/sh of understatement.
+    (b) REGIME TEST (operator-added): when is an own-history multiple band admissible after an
+    earnings-regime break — window it, down-weight it, or exclude it (audit N2: the 12.5x exit is
+    43% above peer NTM median and drawn from the 2018–23 growth era; EPAM's DEAD-REGIME /
+    STRADDLES-BREAK exclusions are the existing in-house precedent for the same judgment, now
+    expressible as `excluded` fields). Both need a ratified policy line before any build encodes
+    them.
 
 **QUEUED BUILD → BUILT 2026-07-24 — CATALYST CALENDAR (brief drafted 2026-07-24; RATIFIED 2026-07-24 by the operator
 WITH PLACEMENT B — see amended (d); mockups: standalone + in-situ on the live SMPL page, both
@@ -4629,6 +4708,49 @@ and no snake_case survives on the card side (this is the general guard: it catch
 field, not just this one); and `test_committed_web_card_carries_the_same_dated_triggers_as_its_
 record` — structural count parity on the committed artifacts (counts only; analyst prose is never
 pinned). Gate: ruff + `mypy --strict` clean · 1068 passed.
+
+**AUDIT RECORD — 2026-07-28 EXTERNAL IC AUDIT OF THE SMPL DOSSIER (docs/audits/
+2026-07-28-smpl-ic-audit.md) — VERIFIED AGAINST THE REPO, QUEUED.** An external Investment-
+Committee audit of the live SMPL dossier (the 07-24 assembly; 104 claims, 93% resolved, three
+self-retractions and a do-not-change list). Every checkable claim was verified against our own
+files before queueing — CONFIRMED: **P1** (the $391.9M LTM Asset Writedown — 43% of market cap —
+absent from the dossier, which cites only the FY25 $60.9M three times; the ledger V-row KNEW the
+YTD $331M); the **information-regression trio** (V-row records $331M impairments, 1.2x loan-basis
+leverage, ~2.1M-share buyback pace; the dossier prints "covenant basis: UNKNOWN (not disclosed)" —
+a FALSE UNKNOWN, our own ledger knew — root cause: assembly never reads the ledger payload back);
+**P2** (guidance block cites the April 8-K `-000010` 4×, never July's `-000021`; the bear leg
+argues from the superseded guide while the base uses the fresh one); **P8** (two consensus
+vintages in one build: 1,334 ×3 and 1,351.8 ×1, unreconciled); **P6/P9** (the `biff_xls` branch
+error and the sheet-shape absence reason are both in the artifact); **P7** (the scenario block
+prints none of shares/D&A/net-debt — the auditor reverse-solved our inputs to 93.77M vs the
+recorded 93.678M, which proves the reproducibility gap). WRONG IN THE REPORT, so the queue items
+below name the true objects: **P3's mechanism** — the ANCHOR is current (1,392.235, recomputed
+07-24); the stale 1,416.208 sits in the underwrite record's ENTRY-VINTAGE reference row, whose
+source label ("committed dossier anchor block") is itself the house-token confusion our linter now
+flags; the surviving catch is real (bull 1,420 sits ABOVE the LTM it claims to sit "just under").
+**P4's mechanism** — spot's source stamp reads Polygon store close 2026-07-22, NOT the ledger exit
+price (they coincide because both froze the same session); the staleness substance stands.
+**N7 is half-wrong** — the record carries ALL THREE re-underwrite triggers (parity with the
+V-row); the md dossier simply does not render them — a RENDER gap, cheaper than re-speccing.
+ERRATUM E1 appended to the committed memo (`kind: note_clear`, 2026-07-28, operator-directed):
+its "no WATCH row" statement was scoped to the five-row ledger export the audit received — the
+WATCH is the 07-27 record reissue the audit never saw; a rendering/scoping defect in the audit,
+not a finding reversal (the committed export is an earlier copy lacking the sentence verbatim —
+noted in the erratum itself). EXTERNAL VALIDATION banked: the auditor independently reproduced all six boundary-cell ratios
+(2.17/1.92/2.34/2.07/1.96/1.73 — the exact cells the 1.3 migration re-homed) and §D verifies the
+whole mechanical layer (band, percentiles, margin anchors, transcripts verbatim, peers, insiders).
+OPERATOR QUESTIONS ANSWERED IN THIS RECORD: (1) **WATCH-vs-CLOSE in production is a TWIN-PARITY
+GAP, not a data conflict.** The sequence is coherent (BUY 07-21 → CLOSED 07-24 → record reissued
+WATCH 07-27) and the WEB narrates it — the 2026-07-27 external-honesty pass renders the verdict
+chip close-aware ("BUY — closed … at $10.53") beside the watch status. The MD/PDF twin never got
+that pass: `render.py` has no close-aware disposition, so the audited artifact shows WATCH + "not
+held" with NO trace of the closed BUY. Queued as the render-parity item below. (2) **WHY SMPL WAS
+SKIPPED on 07-27** — recorded at the time: "already current at 07-24 with its calendar, and
+carrying the operator's #212/#217 work — re-assembly would have regenerated its synthesis for no
+gain." Synthesis-weather avoidance, NOT an audit hold. Consequence owned: the 07-24 render stayed
+the artifact of record four days. Mitigation, stated honestly: a 07-27 re-assembly would NOT have
+cured the confirmed defects — P1/P2/P5/P6/P9 are extractor/synthesis code paths that reproduce on
+every assembly, and SMPL was not in the 07-27 price backfill so spot would have stayed 07-22.
 
 **BUILD RECORD — 2026-07-27 SCHEMA 1.3 — FIELDED REFERENCES (ratified proposal built; one PR).**
 The four ratified decisions executed exactly (docs/refpoint_schema_proposal.md header): census
