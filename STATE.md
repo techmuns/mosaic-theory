@@ -4356,8 +4356,30 @@ scheduled; 24 needs an operator policy line before any build encodes it.
     "Maturity","Sec","Conv","Cur"]`, identically named with identical contents in `render.py` and
     `dossier.js`. Latent today; if those headers ever drift, the md and web dossiers show DIFFERENT
     capital-structure tables with nothing flagging it.
-26. **EXTRACTION-VERSION STAMP ON EVERY DOSSIER (queued 2026-07-28 from the #238 blast-radius
-    diagnosis).** Every committed dossier carries the extraction version that produced it. ORIGIN:
+26. **EXTRACTION-VERSION STAMP ON EVERY DOSSIER — MECHANISM VERIFIED AND RE-SPEC'D 2026-07-28
+    BEFORE BUILDING (the standing rule, applied to the operator's own spec).**
+    **THE PROPOSED HASH WAS WRONG IN BOTH DIRECTIONS.** A content hash over the EMITTED row-label
+    set was measured pre-#238 (`2facc5e`) vs post: **FALSE NEGATIVE** — FUBO hashes `6d170d2fe3`
+    on BOTH sides, because it carries no unusual items and its output is byte-identical across the
+    change, so a reader comparing FUBO-pre with FUBO-post would conclude "same vintage" and be
+    wrong; **FALSE POSITIVE** — post-#238 SMPL `be2c3d4ec5`, AORT `03aa28a19d`, FUBO `6d170d2fe3`
+    all differ from each other despite being ONE vintage, so the hash is a SHAPE identifier, not a
+    VINTAGE identifier, and cannot answer "are these two dossiers comparable?".
+    **CORRECTED MECHANISM: hash the extractor's CODE-SIDE SCHEMA** — the emitted model field names
+    (`FinRow`/`FinTable`) plus the hand-named row list plus the surfacing-rule marker. VERIFIED to
+    behave: pre `57066b8cea` → post `42c81f752d` (it moves, because #238 added `FinRow.material`),
+    and it is NAME-INDEPENDENT, so every dossier of one vintage shares it. Not a git SHA, for the
+    operator's reason: a SHA moves on unrelated commits and would mark the fleet perpetually
+    diverged.
+    **PRIORITY — THE FREEZE IS TOTAL, NOT TWO NAMES (operator 2026-07-28).** Nothing can be
+    re-assembled until 26 lands, and that includes ANY NEW UNDERWRITE, since a new name needs a
+    dossier built on the post-#238 extraction which is unstamped. **26 stands between the fund and
+    doing any underwriting at all** — it is not a hygiene item behind CNXC and SMPL.
+    **THE STAMP MUST BE READER-VISIBLE (operator 2026-07-28).** It renders wherever the dossier
+    states its assembly date — NOT in the appendix and NOT as a machine-only field. A stamp nobody
+    reads cannot stop anyone comparing two dossiers of different vintages, which is 17b's failure
+    exactly: the record complete, the harm intact.
+    (queued 2026-07-28 from the #238 blast-radius diagnosis).** Every committed dossier carries the extraction version that produced it. ORIGIN:
     after #238 the fleet holds two vintages with nothing distinguishing them — pre-guard tables
     lack the unusual-items rows, post-guard tables carry them — and cross-name comparison in the
     verdict-pending cohort silently assumes a common table. Cheap, makes the divergence legible
@@ -4919,6 +4941,33 @@ three days behind the others, which is the cadence gap in miniature. SMPL's own 
 `spot_source` reads "Polygon daily aggregate close 2026-07-22 (store)" — a store read, confirming
 the audit's P4 mechanism claim (ledger exit price) was WRONG while its staleness substance was
 right.
+
+**CLOSURE TAXONOMY — 2026-07-28 (operator). THREE KINDS, THREE CLOSURE CONDITIONS — because
+"not the same kind of done" has a consequence: FOR THE NON-CODE DEFECTS, SHIPPING THE GUARD LEAVES
+THE ARTIFACT STILL WRONG.** "13 of 13" could otherwise coexist with a fleet carrying flagged
+violations nobody adjudicated — the same failure the 13-part recount was for, a completion figure
+meaning less than it says.
+| kind | example | CLOSED WHEN |
+|---|---|---|
+| **CODE** | P5 staleness, P6 branch | the fix ships |
+| **SYNTHESIS** | P1 pt 2 — prose cites 60.9 against a row of −392 | guard ships **AND** re-synthesis produces agreement |
+| **ANALYST DATA** | P3 pt 2 — bull leg above its own stated rule | guard ships **AND** the surfaced instance is adjudicated |
+Every one of the 13 is to be tagged by kind as it is worked, and a part is not counted closed until
+its kind's condition is met.
+
+**METHOD SENTENCE IS ANALYST-AUTHORED — VERIFIED, and it changes P3 pt 2's route.** The operator
+asked whether it is generated or authored, because a generated sentence makes the constraint
+knowable structurally (a plain `bull ≤ typed LTM` comparison the generator can assert about its own
+output). **NO code constructs one:** the only references to `method` are the linter reading it, the
+model validator refusing a blank, and unrelated names (`cap_method`, `members_method`). Records were
+hand-edited JSON — `write_record()` had zero programmatic callers until `refresh_record`. So it is
+authored, and the generator-assertion route is unavailable. NOR does the PRESENCE trick apply: P1's
+half works because a typed FIGURE must appear, whereas P3 pt 2 is a RELATION ("just under"), and the
+relation lives only in prose. **The tractable route is the `bear_basis` precedent** — schema 1.2
+turned "where the bear multiple came from" from prose into an enumerated field; the same move here
+makes the bull leg's constraint structural, after which the check is plain arithmetic. That is a
+SCENARIO-RECORD schema change, NOT 18a (which is the LEDGER payload) — so P3 pt 2's unblock is a
+different dependency than first recorded.
 
 **THIRTEEN-PART AUDIT — 2026-07-28 (operator-directed: re-read each P-item's evidence and count
 DISTINCT failures, verify against the committed report rather than accept the count). THE
