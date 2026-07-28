@@ -331,28 +331,43 @@ def test_the_material_default_round_trips_every_pre_238_dossier() -> None:
     no test: it reddens for unrelated renderer changes and stays green for the regression it is
     named after. This one reads the FIELD: the committed JSON carries no `material` key, and every
     row still comes back False.
+
+    CORPUS MOVED TO A CONSTRUCTED FIXTURE, 2026-07-28. The first scoped version drove the claim off
+    the committed fleet and required EVERY dossier to be pre-field. CNXC's re-assembly made that
+    premise false and reddened it — correctly, but for a reason that has nothing to do with the
+    claim. Worse, the premise decays the other way too: once the whole fleet is re-assembled there
+    would be NO pre-field dossier left, and a fleet-driven version would then pass on an empty
+    corpus, i.e. prove nothing while staying green. Per the TEST-LAYER rule a value-level pin lives
+    on a FROZEN fixture, never on the re-drawn artifact — so the pre-field JSON is CONSTRUCTED here
+    by stripping the key, which is exactly what a dossier committed before the field looks like.
     """
     import json
 
     from vinci.dossier.schemas import Dossier
 
-    seen_rows = 0
-    for d in sorted((ROOT / "data" / "dossiers").iterdir()):
-        j = d / "dossier.json"
-        if not j.exists():
-            continue
-        raw = json.loads(j.read_text())
-        ann = ((raw.get("mechanical") or {}).get("financial_summary") or {}).get("annual") or {}
-        raw_rows = (ann.get("value", ann) or {}).get("rows") or []
-        assert not any("material" in r for r in raw_rows), (
-            f"{d.name}: committed JSON already carries a `material` key — this fixture is no "
-            "longer a PRE-field dossier, so it cannot prove the default round-trips")
-        doc = Dossier.model_validate_json(j.read_text())     # parses under the new model
-        fs = doc.mechanical.financial_summary
-        tbl = fs.annual.value if fs is not None else None
-        for r in (tbl.rows if tbl is not None else []):
-            assert r.material is False, (
-                f"{d.name}/{r.label}: absent key did not default to False — a pre-#238 dossier "
-                "would silently gain a promoted brief row")
-            seen_rows += 1
-    assert seen_rows >= 50, f"expected the committed fleet's rows, saw {seen_rows}"
+    live = Dossier.model_validate_json(
+        (ROOT / "data" / "dossiers" / "CNXC" / "dossier.json").read_text())
+    raw = json.loads(live.model_dump_json())
+
+    ann = raw["mechanical"]["financial_summary"]["annual"]["value"]
+    stripped = 0
+    for r in ann["rows"]:
+        stripped += r.pop("material", None) is not None
+    assert stripped, (
+        "no `material` key was present to strip — the field or its JSON path moved, and this "
+        "fixture would silently stop being a PRE-field dossier while still passing")
+
+    doc = Dossier.model_validate(raw)                        # parses under the CURRENT model
+    tbl = doc.mechanical.financial_summary.annual.value      # type: ignore[union-attr]
+    assert tbl.rows, "constructed fixture carries no rows — it cannot prove anything"
+    for r in tbl.rows:
+        assert r.material is False, (
+            f"{r.label}: absent key did not default to False — a pre-#238 dossier would silently "
+            "gain a promoted brief row")
+
+    # ...and the guard is still live on the SAME data once the key is present: the row the audit
+    # found must come back material, or this test would pass on a build where nothing marks it.
+    assert any(r.material for r in
+               live.mechanical.financial_summary.annual.value.rows), (   # type: ignore[union-attr]
+        "CNXC carries no material row — the $1,523.3M goodwill impairment is 102% of its market "
+        "cap, so either the marking regressed or the fixture is no longer CNXC")
