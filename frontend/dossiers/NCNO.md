@@ -1,6 +1,6 @@
 # Dossier — nCino, Inc. (Nasdaq: NCNO)
 
-_July 27, 2026_
+_July 27, 2026 · extraction unstamped_
 
 # Brief — first cut
 
@@ -505,6 +505,7 @@ _Source §: 8-K 0001902733-24-000171 · exhibit101creditagreementb.htm · amende
 
 ## Record & reproduce
 - **Data window:** screened as of 2026-07-06 · assembled 2026-07-27 09:41 UTC
+- **Extraction:** unstamped — assembled before extraction versions were declared; vintage unknown
 - **Synthesis:** model `claude-opus-4-8` — facts assembled mechanically; the synthesis frames, the analyst decides
 - **Identifiers:** CIK `0001902733` · Nasdaq : NCNO
 - **Assembly log:** primary-source: 6 EX-99.1 release(s) + 1 10-Q parsed (+3.7s fetch)

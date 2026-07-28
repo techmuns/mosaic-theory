@@ -1,6 +1,6 @@
 # Dossier — GARTNER INC (NYSE: IT)
 
-_July 27, 2026_
+_July 27, 2026 · extraction unstamped_
 
 # Brief — first cut
 
@@ -503,6 +503,7 @@ _Source §: 8-K 0001193125-20-256749 · d75343dex101.htm · amended by 000119312
 
 ## Record & reproduce
 - **Data window:** screened as of 2026-07-06 · assembled 2026-07-27 09:45 UTC
+- **Extraction:** unstamped — assembled before extraction versions were declared; vintage unknown
 - **Synthesis:** model `claude-opus-4-8` — facts assembled mechanically; the synthesis frames, the analyst decides
 - **Identifiers:** CIK `0000749251` · NYSE : IT
 - **Assembly log:** primary-source: 8-K 0001193125-25-289854 carries 8.01 but no EX-99.1 exhibit was found; primary-source: 8-K 0000749251-25-000048 carries 8.01 but no EX-99.1 exhibit was found; primary-source: 5 EX-99.1 release(s) + 1 10-Q parsed (+3.3s fetch)

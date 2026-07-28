@@ -1,6 +1,6 @@
 # Dossier — EPAM Systems, Inc. (NYSE: EPAM)
 
-_July 27, 2026_
+_July 27, 2026 · extraction unstamped_
 
 # Brief — first cut
 
@@ -520,6 +520,7 @@ _Source §: 8-K 0001352010-17-000022 · exhibit10-1epamcreditagree.htm · amende
 
 ## Record & reproduce
 - **Data window:** screened as of 2026-07-06 · assembled 2026-07-27 10:03 UTC
+- **Extraction:** unstamped — assembled before extraction versions were declared; vintage unknown
 - **Synthesis:** model `claude-opus-4-8` — facts assembled mechanically; the synthesis frames, the analyst decides
 - **Identifiers:** CIK `0001352010` · NYSE : EPAM
 - **Assembly log:** primary-source: 4 EX-99.1 release(s) + 1 10-Q parsed (+3.3s fetch)

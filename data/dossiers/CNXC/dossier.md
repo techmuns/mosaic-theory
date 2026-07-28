@@ -1,6 +1,6 @@
 # Dossier — Concentrix Corp (Nasdaq: CNXC)
 
-_July 27, 2026_
+_July 27, 2026 · extraction unstamped_
 
 # Brief — first cut
 
@@ -482,6 +482,7 @@ _Source §: 8-K 0001803599-23-000177 · exhibit41indenture.htm_
 
 ## Record & reproduce
 - **Data window:** screened as of 2026-07-06 · assembled 2026-07-27 09:48 UTC
+- **Extraction:** unstamped — assembled before extraction versions were declared; vintage unknown
 - **Synthesis:** model `claude-opus-4-8` — facts assembled mechanically; the synthesis frames, the analyst decides
 - **Identifiers:** CIK `0001803599` · Nasdaq : CNXC
 - **Assembly log:** primary-source: 5 EX-99.1 release(s) + 1 10-Q parsed (+3.0s fetch)

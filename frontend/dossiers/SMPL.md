@@ -1,6 +1,6 @@
 # Dossier — Simply Good Foods Co (Nasdaq: SMPL)
 
-_July 24, 2026_
+_July 24, 2026 · extraction unstamped_
 
 # Brief — first cut
 
@@ -492,6 +492,7 @@ _QoQ/YoY same-basis only; (R) = Reclassified_
 
 ## Record & reproduce
 - **Data window:** screened as of 2026-07-06 · assembled 2026-07-24 13:02 UTC
+- **Extraction:** unstamped — assembled before extraction versions were declared; vintage unknown
 - **Synthesis:** model `claude-opus-4-8` — facts assembled mechanically; the synthesis frames, the analyst decides
 - **Identifiers:** CIK `0001702744` · Nasdaq : SMPL
 - **Assembly log:** primary-source: 5 EX-99.1 release(s) + 1 10-Q parsed (+0.5s fetch)
