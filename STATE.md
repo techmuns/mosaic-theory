@@ -4021,6 +4021,10 @@ renumber.** No other unverifiable claim found in this block.
    (c) GUIDANCE — selected by MAX guidance date from the structured grid, never by filing match,
    with a prose-vs-grid cross-check that fails loud on disagreement (SMPL cited April's 8-K 4×,
    never July's; the bear leg argued from the superseded guide);
+   **BLOCKED-BY (2026-07-28): the ingestion cadence fix ships AHEAD of this contract** — see the
+   audit-of-record build record. Prices refresh WEEKLY on a schedule; CIQ panels arrive manually
+   and irregularly; a contract comparing them fails builds by design for most of the week. Do not
+   merge item 1 until price freshness can meet panel arrival.
    (d) THE SCHEDULER (operator-scoped 2026-07-28) — freshness is MAX-AGE-OF-CONTAINED-FACTS,
    never assembly date, in the thing that decides WHETHER to build as well as in the builder.
    SMPL was skipped on 07-27 as "freshest" by assembly timestamp while containing a 07-22 price,
@@ -4174,6 +4178,17 @@ renumber.** No other unverifiable claim found in this block.
     too small to justify enshrining the display-string-parse). Four open decisions listed at the
     doc's end (role vocabulary; one field vs statistic×population; archived-SMPL row stays sealed;
     one PR vs two). **DISCHARGED 2026-07-27 — BUILT (see the schema-1.3 build record). Decisions were: census role list · one tag · archive stays sealed · one PR. Build unblocked — next build slot.**
+16b. **SMPL RE-ASSEMBLY IS THE ACCEPTANCE TEST — HELD until items 17, 18 and 1 have shipped
+    (operator-directed 2026-07-28).** SMPL stays un-reassembled deliberately; the 07-24 render
+    remains the artifact of record until the guards exist, because re-assembling sooner would
+    reproduce all nine defects and burn the only clean acceptance case. On re-assembly it MUST
+    show all five: (i) the $391.9M LTM writedown present in the synthesis; (ii) July guidance
+    ($1.345–1.355B / $220–225M adj EBITDA) cited, not April; (iii) covenant basis reading ~1.2x
+    from the ledger, not UNKNOWN; (iv) price carrying its own as-of, **no older than the freshest
+    available instance of itself ACROSS PANELS** (re-spec 2026-07-28 — the original wording here,
+    "no older than the newest panel", is the flat rule the operator corrected); (v) disposition
+    rendering the closed BUY per the visible-absence rule. **If any of the five still fails, the
+    guard did not work — do not ship the next item until it does.**
 16c. **CNXC — PRE-UNDERWRITE RE-ASSEMBLY REQUIRED (operator gate 2026-07-28).** CNXC MAY NOT be
     underwritten off the current render: its dossier omits a **$1,523.3M Q4-FY25 goodwill
     impairment, 103% of market cap**, from both the financial summary and the synthesis. No ledger
@@ -4185,8 +4200,10 @@ renumber.** No other unverifiable claim found in this block.
     operator — the name over-claimed: as scoped it catches ONE-OFFS only, and will NOT catch
     material change in structural lines, balance-sheet items or cash-flow items. SMPL's capex ran
     6 → 20 → 28 over two years and nothing here fires. The general version is item 25.)
-    **(audit P1; queued 2026-07-28) — OPERATOR-RANKED FIRST among the
-    audit-derived builds.** The only defect in the set that changed what the investment
+    **(audit P1; queued 2026-07-28) — OPERATOR-RANKED FIRST among the audit-derived builds;
+    SHIPPED INDEPENDENTLY AND IN PARALLEL with item 1** (no dependency on the freshness contract;
+    every week it waited was a week a dossier could drop its largest line item). The only defect
+    in the set that changed what the investment
     conclusion was ABOUT: stale guidance mis-framed the bear case, but the missing $391.9M meant
     the bear case was arguing about the wrong EVENT. A size test plus a fixture, with no
     dependencies — against a freshness contract that touches every panel loader. Any single
@@ -4771,6 +4788,56 @@ and no snake_case survives on the card side (this is the general guard: it catch
 field, not just this one); and `test_committed_web_card_carries_the_same_dated_triggers_as_its_
 record` — structural count parity on the committed artifacts (counts only; analyst prose is never
 pinned). Gate: ruff + `mypy --strict` clean · 1068 passed.
+
+**AUDIT-OF-RECORD + ACCEPTANCE POLICY + THE ITEM-1 INGESTION DEPENDENCY (2026-07-28,
+operator-directed).** Three changes, none of them a defect fix — REMEDIATION STATUS IS STILL ZERO
+of nine platform defects (verified, not asserted: #236 touched STATE.md and docs/ only; no
+materiality guard exists anywhere in `vinci/`; no price-vs-panel as-of comparison exists; the
+guidance `Situation`-cell path is intact. Re-assembling SMPL today reproduces all nine).
+
+(1) **AUDIT OF RECORD is now the three-artifact folder** `docs/audits/2026-07-28-smpl/` with a
+README manifest as index. The earlier single-file export was an ABRIDGEMENT — only two of the
+three artifacts were ever files, the full IC memo having been delivered in conversation — and it
+is REMOVED, not left beside its replacement (two versions of one audit with no precedence marker
+is item 19 in our own paperwork). PRECEDENCE ON VALUATION recorded in the manifest: the memo's
+§10 audit-stage view (PW $14.44, **2.15:1 undiscounted**) is SUPERSEDED by the independent
+dossier ($16.47 nominal / **$12.69 PV / 1.36:1 time-adjusted**) — the later document discounts
+upside that requires ~2.5 years of proof against a downside that reprices in a quarter. Direction
+unchanged, magnitude moves. The ERRATUM (`kind: note_clear`) now lives properly in the memo, and
+records that the same scoping error occurred TWICE in one audit — the WATCH claim and P3's
+anchor-block mislabel — both being the assertion-integrity finding (item 19) pointing back at the
+audit itself. The memo carries the repo's recorded 93.678M share count, not the solved 93.77M.
+
+(2) **ACCEPTANCE POLICY — binds every audit-derived build (items 1, 17–23).** Each ships with a
+fixture that FAILS on `2facc5e` (the audit-merge commit) and PASSES after. **Suite-green-unchanged
+is not evidence a defect is fixed** — the 1115-green suite at `2facc5e` is precisely a suite that
+does not test for any of these nine. A build whose PR cannot show the red-then-green transition on
+its own fixture is not done, regardless of code state. This extends, and does not replace, the
+existing every-guard-ships-a-positive-AND-negative-pin rule.
+
+(3) **ITEM 1 HAS AN INGESTION DEPENDENCY THAT WOULD OUTAGE THE PIPELINE IF THE CONTRACT LANDED
+ALONE** (operator-raised, investigated 2026-07-28). The price store is a **git-ignored per-
+environment SQLite DB** (`data/vinci.db`; `*.db` in .gitignore — "durable state is the committed
+JSON/CSV snapshots, NOT the binary DB"), so there is NO committed price state and coverage is
+whatever that environment last ingested. Two ingestion modes: whole-market `grouped-daily` (the
+ongoing universe refresh) and per-symbol `--aggs` (ONE call per symbol, for backfilling a NEW
+name's history), against a Polygon free tier of ~5 calls/min. Refresh is scheduled — but WEEKLY
+(`.github/workflows/weekly-screen.yml`, Mondays 06:00 UTC, "refreshes EOD prices for the stored
+universe"). **THE REAL DEPENDENCY IS A CADENCE MISMATCH, not partial name coverage:** prices
+refresh on a weekly schedule while CIQ panels arrive MANUALLY and irregularly (CIQ is depth-stage,
+manual — no programmatic feed), so a bundle pasted on a Thursday is automatically newer than
+Monday's price, and a contract failing when `price.as_of < max(panel as_of)` would fail builds
+BY DESIGN for most of the week. It would convert a silent-staleness defect into a visible build
+outage — louder, but not fixed. SEQUENCING CONSEQUENCE: **the ingestion fix ships AHEAD of the
+contract, not with it.** Minimum shape before item 1 can bind: price refresh on demand at build
+time (or a cadence at least as fast as panel arrival), plus an explicit answer for a name whose
+bars are absent entirely. Worktree evidence (this environment, NOT authoritative — a session
+artifact): 11 securities in `securities`, all 11 with bars, 8 at 309 bars latest 2026-07-24 (a
+session backfill) and NCNO/IWM/MDY at 1,268 latest 2026-07-21 — i.e. even here two names sit
+three days behind the others, which is the cadence gap in miniature. SMPL's own recorded
+`spot_source` reads "Polygon daily aggregate close 2026-07-22 (store)" — a store read, confirming
+the audit's P4 mechanism claim (ledger exit price) was WRONG while its staleness substance was
+right.
 
 **TRIAGE — 2026-07-28 CNXC $1,523.3M GOODWILL IMPAIRMENT (found by the item-17 guard;
 triaged same-day at operator direction, explicitly OUTSIDE the SMPL re-assembly hold — that hold
