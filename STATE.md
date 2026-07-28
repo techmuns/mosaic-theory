@@ -4608,9 +4608,35 @@ scheduled; 24 needs an operator policy line before any build encodes it.
     **SHIPPED — the cheap half:** `test_the_committed_corpora_are_not_empty` (mutation-verified
     against a real-but-empty directory, so the FLOOR fires rather than a `FileNotFoundError`) turns
     the EMPTYING mode — which all thirteen share — into ONE loud red.
-    **STILL OPEN — the other mode:** a FULL corpus where a test's own FILTER matches nothing. That
-    is how the pre-#238 fixture decayed on CNXC, and it needs a per-test floor plus a per-test
-    judgement. 31(a) — mutating each audit-derived guard — is also still open.
+    **31(b) INVERT MODE — CLOSED 2026-07-29. AND THE COUNT WAS WRONG: 11 GENUINE, 2 FALSE
+    POSITIVES.** Re-measured with BOTH corpora empty (the first run emptied only dossiers, so
+    scenario-driven tests passed for an experimental reason). `test_ref_value_py_js_parity` already
+    carried `len(cases) > 50` and reds honestly; `test_card_verdict_keys_read_by_js_are_emitted_by
+    _build` reads only source files and never touches a corpus. Neither was ever at risk.
+    **THE RULE (operator), mechanically decidable:** *relational floor where expressible;
+    constructed fixture where not.* And the operator's sharpening is what makes it mechanical —
+    **inexpressibility IS the signal**: if the relation can't be stated, the test's premise depends
+    on the corpus rather than on its claim, which is the fixture branch.
+    APPLIED: **4 unfiltered sweeps → RELATIONAL floor** (`checked == len(corpus)`, which cannot
+    decay and cannot be quietly lowered the way an absolute `>= N` invites). **7 filtered sweeps →
+    a loud red when the filter matches nothing**, plus a constructed fixture for the claim where
+    one is meaningful (`test_an_opened_position_without_its_ratio_is_refused`).
+    **A THIRD BRANCH THE RULE DIDN'T ANTICIPATE, worth recording:** for
+    `test_every_committed_record_result_matches_its_own_facts` the fixture branch is UNAVAILABLE —
+    the claim is that PERSISTED numbers still match a recompute, and a constructed record computes
+    then compares against that same computation, proving nothing. A divergence can only exist on
+    data that was written and left. For claims of that kind the loud red IS the whole guard.
+    **ACCEPTANCE, run in a throwaway worktree with both corpora emptied: 27 red, 4 skip
+    (environment — no CIQ bundles), 1 green** — the one false positive above.
+    **31(a) — CLOSED 2026-07-29. Every audit-derived guard mutation-verified**, each by deleting
+    what it guards and confirming the red: item 20's consumer sweep (reds on SMPL, CNXC and WERN —
+    exactly the three names the defect was live on); 17b's material marking; the `FinRow.material`
+    round-trip (#247); 26a's md-header, both-md-sites and web-header stamps (#245); the preview-path
+    guard (#246); the corpus floor (#248).
+    **AND 31(a) CAUGHT ITSELF.** The first 17b mutation inserted its early `return` in the wrong
+    place, changed nothing, and left the suite green — the guard looked VACUOUS and was not. **A
+    mutation that does not change behaviour is not a test of the test**; now a standing line in
+    docs/engineering.md beside the worktree-baseline rule.
 32. **`midcycle` REACHES ONE TWIN ONLY — LATENT #227, queued 2026-07-28 (operator: "needs a
     number, or the diagnosis sits latent until something populates it").** `midcycle` is named in
     `render.py` and ABSENT from `dossier.js`; it is `null` on all 11 committed dossiers (absent on
@@ -5213,6 +5239,30 @@ SCENARIO-RECORD schema change, NOT 18a (which is the LEDGER payload) — so P3 p
 different dependency than first recorded. **It is now QUEUE ITEM 29** (operator 2026-07-28): a
 schema change parked inside item 24 — blocked pending the validation run — would be stranded by
 that block, so it carries its own number and its own sequencing.
+
+**THE `[-1]` SCAN — RUN 2026-07-29 (operator-directed, after the trap appeared a THIRD time, that
+time in the diagnostic written by whoever had just fixed the other two). RESULT: CLEAN, no fourth
+production instance — and the operator records the prediction as WRONG, alongside the mechanism
+errors.** 76 `[-1]` sites in production; **21 index a series**; all 21 correct, by THREE distinct
+mechanisms: (i) NAMED-OR-GUARDED — the caller refuses when the latest cell is absent, so `[-1]` is
+provably the latest (`pe_ltm_current`, `ev_ebitda_percentile`, `fy_cols`); (ii) THE DATE TRAVELS —
+the own-history band takes the last SURVIVING pair but stamps that value's own as-of, which is
+exactly why the band may and the P/LTM tail may not (the distinction was already written into item
+20's own comment); (iii) CORRECT BY THE EXPORT'S SHAPE — true only because CIQ happens to order
+columns a particular way, with nothing asserting it.
+**(iii) IS THE FINDING, and it was worth more than a fourth instance would have been.** Two sites:
+**capital structure** `vcols[-1]`, which stamps `"(latest quarter)"` — a provenance CLAIM on an
+unasserted convention → **ASSERTION SHIPPED** (`_cs_col_date` + refuse-on-descending, pinned
+positive AND negative); and the **materiality period fallback** `periods[-1]`, doubly protected
+(never fires — all 12 bundles carry LTM — and that sheet carries no estimate columns even if it
+did) → **comment, not assertion**, per the operator.
+**THE DURABLE OUTPUT IS THE RULE**, now in docs/engineering.md: *`[-1]` on a series is safe iff the
+element is guaranteed to be the one you mean, OR the value's own date travels with it.* It would
+have prevented all three instances.
+**SCOPE DISCIPLINE ADOPTED (operator, from this result): FINISH THE KNOWN QUEUE; DO NOT GO LOOKING
+FOR CLASSES ON SPEC.** Twenty-one sites correct by three distinct mechanisms is a codebase being
+careful, which is evidence the original nine were SPECIFIC GAPS rather than symptoms of general
+looseness. Run a scan when it is cheap AND motivated by a live recurrence; not on a hunch.
 
 **PR CADENCE CHANGED — 2026-07-28 (operator, reviewing the run: eight PRs, five docs-only). THE
 RULES LIVE IN docs/engineering.md §PR cadence; THE CONSEQUENCE FOR THIS QUEUE IS AN ORDER.**

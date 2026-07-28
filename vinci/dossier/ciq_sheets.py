@@ -724,6 +724,22 @@ def _cs_detail_asof(rows: Rows) -> str:
     return ""
 
 
+_CS_COL_DATE = re.compile(r"([A-Z][a-z]{2})-(\d{1,2})-(\d{4})")
+_CS_MONTHS = {m: i for i, m in enumerate(
+    ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
+     "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"], 1)}
+
+
+def _cs_col_date(header: Any) -> tuple[int, int, int] | None:
+    """The (y, m, d) a Capital-Structure period column names, or None when it names no date.
+
+    Used ONLY to verify the export's column ORDER before any figure claims to be the latest
+    quarter — never to select a column, so an unparseable header degrades to "order unknown"
+    rather than to a wrong pick."""
+    m = _CS_COL_DATE.search(str(header))
+    return (int(m.group(3)), _CS_MONTHS[m.group(1)], int(m.group(2))) if m else None
+
+
 def _capital_summary(bundle: CiqBundle) -> Sourced[str]:
     """(E1) Capital-Structure-Summary aggregates (latest quarter) + the term-loan QoQ movement — the
     reconciliation anchor: the itemized detail is panel-dated, the total debt is latest-quarter."""
@@ -736,6 +752,19 @@ def _capital_summary(bundle: CiqBundle) -> Sourced[str]:
              if "months" in str(hdrs[-1][j]).lower()] if hdrs else []
     if len(vcols) < 1:
         return Sourced.unknown(note="Capital Structure Summary: no period columns")
+    # (the [-1] scan, 2026-07-28) Everything below reads `vcols[-1]` and STAMPS IT "(latest
+    # quarter)" — a provenance claim resting on the export happening to run chronologically left to
+    # right. NOTHING asserted that. It holds on all 12 committed bundles, but an unasserted
+    # convention is exactly how `source_ref="Close (latest)"` came to sit on a months-old value in
+    # three dossiers (item 20): the false-provenance shape, arriving through the data provider
+    # rather than through the code. So check it, and refuse rather than mislabel.
+    _dates = [_cs_col_date(hdrs[-1][j]) for j in vcols]
+    _known = [d for d in _dates if d is not None]
+    if len(_known) > 1 and _known != sorted(_known):
+        return Sourced.unknown(
+            note="Capital Structure Summary: period columns are NOT in ascending date order, so "
+                 "the last column is not the latest quarter — refusing rather than stamping "
+                 "'(latest quarter)' on whichever column happens to sit last")
 
     def at(prefix: str, col: int) -> float | None:
         i = _find_row_prefix(s, prefix)

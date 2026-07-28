@@ -692,12 +692,20 @@ def test_13_fields_reach_both_twins_and_the_mirrors_e2e() -> None:
     1.3 fields is VISIBLE on both rendered surfaces and rides the mirrors — an excluded reference
     states its exclusion wherever the row renders, a leg tag renders as a chip/suffix, and an
     axis note renders dated. Conditional invariants (IF the record carries X…), so a legitimate
-    re-underwrite that changes the tags cannot redden this."""
+    re-underwrite that changes the tags cannot redden this.
+
+    (31b) The conditional shape that keeps it robust is also what lets it go hollow: every
+    assertion sits behind "IF the record carries X", so a corpus with no 1.3 fields at all passes
+    without comparing anything. RELATIONAL floor on the corpus (every record was opened) plus a
+    loud red if the 1.3 fields have vanished fleet-wide — the second is not a decaying number but
+    a statement that this pin currently has a subject."""
     import json
 
-    for p in sorted((ROOT / "scenarios").glob("*.json")):
-        if p.stem.startswith("_"):
-            continue
+    records = [p for p in sorted((ROOT / "scenarios").glob("*.json"))
+               if not p.stem.startswith("_")]
+    opened, compared = 0, 0
+    for p in records:
+        opened += 1
         rec = json.loads(p.read_text())
         md_p = ROOT / "data" / "dossiers" / p.stem / "dossier.md"
         md = md_p.read_text() if md_p.exists() else None
@@ -706,6 +714,7 @@ def test_13_fields_reach_both_twins_and_the_mirrors_e2e() -> None:
         for axis, a in (rec.get("assumptions") or {}).items():
             for i, r in enumerate(a.get("references") or []):
                 mr = m_axes[axis]["references"][i]
+                compared += 1
                 assert mr.get("role") == r.get("role"), f"{p.stem}/{axis}[{i}]: role lost"
                 assert mr.get("leg") == r.get("leg"), f"{p.stem}/{axis}[{i}]: leg lost"
                 if r.get("excluded"):
@@ -719,6 +728,14 @@ def test_13_fields_reach_both_twins_and_the_mirrors_e2e() -> None:
                     f"{p.stem}/{axis}: note lost from the mirror")
                 if md:
                     assert n["date"] in md, f"{p.stem}/{axis}: note date absent from md"
+    assert opened == len(records) and opened, (
+        f"opened {opened} of {len(records)} committed records — a twin-parity sweep over an "
+        "empty corpus compares nothing")
+    assert compared, (
+        "not one committed reference was compared against its mirror — every assertion here is "
+        "conditional on a record CARRYING 1.3 fields, so a fleet that has lost them entirely "
+        "passes this pin while proving nothing. This red means the pin has no subject, not that "
+        "the invariant is wrong")
 
 
 def test_brief_core_rows_py_js_parity() -> None:

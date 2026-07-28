@@ -64,3 +64,26 @@ def test_load_ciq_edges_filters_resolves_and_directs() -> None:
     assert by_name["Acme Corp"].direction == "downstream"  # customers view: focal → customer
     assert by_name["Beta Ltd"].resolution == "non_us"  # TSE → not resolved
     assert by_name["Private Mfg Co"].resolution == "private"  # no ticker
+
+def test_capital_structure_refuses_a_descending_export_rather_than_mislabel() -> None:
+    """(the [-1] scan, 2026-07-28) `_capital_summary` reads `vcols[-1]` and stamps the figure
+    "(latest quarter)". That was correct only because CIQ happens to export columns oldest-first —
+    an UNASSERTED convention, and an unasserted convention is precisely how `source_ref="Close
+    (latest)"` came to sit on a months-old value in three dossiers (item 20).
+
+    POSITIVE: ascending columns → the last column is the latest and the claim stands.
+    NEGATIVE: a descending export → REFUSE, rather than stamp "(latest quarter)" on the oldest
+    column. Uses the real ordering helper, so the pin binds the shipped check, not a copy."""
+    from vinci.dossier.ciq_sheets import _cs_col_date
+
+    asc = ["3 months Sep-30-2025", "3 months Dec-31-2025", "3 months Mar-31-2026"]
+    desc = list(reversed(asc))
+    a = [_cs_col_date(h) for h in asc]
+    d = [_cs_col_date(h) for h in desc]
+    assert all(x is not None for x in a), "the real headers must parse, or the guard sees nothing"
+    assert a == sorted(a), "ascending headers must read as ascending"
+    assert d != sorted(d), "a reversed export must be DETECTED as out of order"
+    # the last column really is the latest only in the ascending case — the whole claim
+    assert a[-1] == max(a) and d[-1] != max(d)
+    # and a header naming no date degrades to None (order unknown), never to a wrong pick
+    assert _cs_col_date("LTM") is None and _cs_col_date("") is None

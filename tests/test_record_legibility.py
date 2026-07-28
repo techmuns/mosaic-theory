@@ -83,9 +83,15 @@ def test_every_committed_record_is_class_compliant_and_seal_clean() -> None:
     man = seal.load_manifest(ROOT)
     recs = {p.stem: json.loads(p.read_text())
             for p in (ROOT / "scenarios").glob("*.json") if not p.stem.startswith("_")}
+    # (31b) RELATIONAL floor — unfiltered, so the seal check must cover the whole corpus.
+    assert recs, ("no committed records — check_all([]) is vacuously clean and this test would "
+                  "certify an empty book as seal-compliant")
     assert seal.check_all(recs, man) == []
+    checked = 0
     for t, r in recs.items():
+        checked += 1
         assert seal.amendment_violations((r.get("verdict") or {}).get("rationale")) == [], t
+    assert checked == len(recs)
 
 
 def test_tag_parts_reads_date_class_and_body_length() -> None:

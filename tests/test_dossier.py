@@ -8084,11 +8084,15 @@ def test_committed_peer_rosters_have_no_midclause_clip() -> None:
     sentences and clause-boundary cuts both pass; "…in the" / "…of" / "…and" fail."""
     stop = {"the", "a", "an", "of", "in", "and", "or", "for", "to", "as", "its", "with",
             "on", "at", "by", "The"}
+    # (31b) FILTERED sweep — no relational floor is expressible over "names carrying a peer set",
+    # so it must refuse to pass when the filter matches nothing.
+    rosters = 0
     for p in sorted(Path("data/dossiers").glob("*/dossier.json")):
         ps = ((json.loads(p.read_text()).get("mechanical") or {})
               .get("peer_comps") or {}).get("peer_set") or {}
         if ps.get("status") != "present" or not ps.get("value"):
             continue
+        rosters += 1
         body = re.sub(r"^\d+ peers — ", "", str(ps["value"]).split(" | the name:")[0])
         for seg in body.split("; "):
             if " — " not in seg:
@@ -8097,6 +8101,8 @@ def test_committed_peer_rosters_have_no_midclause_clip() -> None:
             core = desc[: desc.rfind(" (")] if " (" in desc else desc
             last = core.rstrip(".").rsplit(" ", 1)[-1]
             assert last not in stop, f"{p.parent.name}: mid-clause descriptor: …{core[-40:]!r}"
+    assert rosters, ("no committed dossier carries a peer set — this sweep examined ZERO rosters "
+                     "and would pass on any clipping defect whatsoever")
 
 
 def test_desc_capture_never_emits_the_roster_delimiters() -> None:
@@ -8120,11 +8126,14 @@ def test_committed_peer_rosters_split_to_their_declared_count() -> None:
     """(review fix, committed-artifact invariant) Every roster's '; ' split must yield exactly the
     peer count the line declares, and no segment may carry a second ' — ' — the structural proof
     that no widened descriptor swallowed a delimiter."""
+    # (31b) FILTERED sweep — same shape as its sibling above.
+    rosters = 0
     for p in sorted(Path("data/dossiers").glob("*/dossier.json")):
         ps = ((json.loads(p.read_text()).get("mechanical") or {})
               .get("peer_comps") or {}).get("peer_set") or {}
         if ps.get("status") != "present" or not ps.get("value"):
             continue
+        rosters += 1
         v = str(ps["value"])
         declared = int(re.match(r"^(\d+) peers", v).group(1))
         body = re.sub(r"^\d+ peers — ", "", v.split(" | the name:")[0])
@@ -8132,6 +8141,8 @@ def test_committed_peer_rosters_split_to_their_declared_count() -> None:
         assert len(segs) == declared, f"{p.parent.name}: {declared} declared, {len(segs)} split"
         for s in segs:
             assert s.count(" — ") <= 1, f"{p.parent.name}: extra delimiter in {s[:60]!r}"
+    assert rosters, ("no committed dossier carries a peer set — this declared-count sweep "
+                     "compared ZERO rosters")
 
 
 def test_md_brief_carries_the_underwrite_layer_and_suppresses_the_machine_read() -> None:
@@ -8222,6 +8233,9 @@ def test_download_menu_offers_three_scopes_and_serves_the_committed_md() -> None
     # every mirrored dossier has its markdown twin published
     mirrored = {p.stem for p in Path("frontend/dossiers").glob("*.json")} - {"index"}
     md_served = {p.stem for p in Path("frontend/dossiers").glob("*.md")}
+    # (31b) set equality is VACUOUSLY TRUE on two empty sets — the mirror must be non-empty before
+    # "every mirrored dossier has its markdown twin" means anything at all.
+    assert mirrored, "the frontend dossier mirror is empty — set() == set() proves no twin exists"
     assert mirrored == md_served, f"missing md for: {sorted(mirrored - md_served)}"
 
 

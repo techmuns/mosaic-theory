@@ -414,12 +414,16 @@ def test_committed_dossiers_carry_no_ratio_as_a_currency_amount() -> None:
     from pathlib import Path
     currency = {"adjusted ebitda", "adjusted operating income", "adjusted net income",
                 "adjusted eps"}
+    # (31b) FILTERED sweep (three levels of it) — no relational floor is expressible, so it must
+    # refuse to pass when nothing matched rather than certify a fleet it never looked at.
+    seen = 0
     for p in sorted(Path("data/dossiers").glob("*/dossier.json")):
         for rel in ((json.loads(p.read_text())["mechanical"].get("primary_source") or {})
                     .get("releases") or []):
             for v in (rel.get("reconciliation") or []):
                 if v["metric"] not in currency:
                     continue
+                seen += 1
                 # match the magnitude AS THE FILER WROTE IT: a stored 59.0 comes from "$59
                 # million", so an integral value must not be searched for as "59.0".
                 a = abs(v["value"])
@@ -430,6 +434,9 @@ def test_committed_dossiers_carry_no_ratio_as_a_currency_amount() -> None:
                 assert has_currency, (
                     f"{p.parent.name}: {v['metric']}={v['value']} has no currency evidence "
                     f"in its source — …{vb[-70:]!r}")
+    assert seen, (
+        "no committed dossier carries a currency-denominated reconciliation metric — this sweep "
+        "checked ZERO values and cannot have caught a ratio stored as a dollar amount")
 
 
 def test_recon_captures_the_direction_stated_beside_the_level() -> None:
