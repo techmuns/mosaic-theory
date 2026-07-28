@@ -160,7 +160,19 @@ def ev_ebitda_percentile(bundle: CiqBundle) -> Sourced[float]:
         rows = bundle.sheet("financials", "Multiples", freq="quarterly")
     except CiqUnavailableError as exc:
         return _miss_or_unknown(bundle, "financials", exc)
-    series = [v for _, v in _multiples_close(rows, "TEV/LTM EBITDA") if v is not None]
+    # (item 20, review) THE LATEST cell, never the last SURVIVING one. `ev_ebitda_current` gets
+    # away with filtering because `ev_ebitda_asof` filters IDENTICALLY, so its value and date move
+    # together and the pair stays honest. THIS function has no as-of anywhere — its source_ref
+    # names a quarter COUNT, not a date — so a filtered `[-1]` would compute a percentile against a
+    # stale "current" with nothing on the page to reveal it. Latent today (no committed name has an
+    # NM latest TEV/LTM EBITDA), fixed because item 20 is "no backward-fill on ANY time series"
+    # and a latent instance of the exact class the item closes is not a reason to leave it.
+    pairs_ev = _multiples_close(rows, "TEV/LTM EBITDA")
+    if pairs_ev and pairs_ev[-1][1] is None:
+        return Sourced.unknown(
+            note="TEV/LTM EBITDA is NM at the latest Close — a percentile against an older close "
+                 "would carry no date to reveal it")
+    series = [v for _, v in pairs_ev if v is not None]
     if len(series) < 4:
         return Sourced.unknown(note=f"TEV/LTM EBITDA Close <4 quarters ({len(series)}) — no pctile")
     current, history = series[-1], series[:-1]  # partial last col = current, excluded from history

@@ -123,3 +123,49 @@ def test_a_live_reading_still_reaches_the_caveat_path() -> None:
     must still receive it. Otherwise the fix is 'report nothing', which is the opposite failure."""
     got = pe_ltm_current(_bundle("AORT"))
     assert got.value is not None and got.value > 0, f"AORT lost its live P/E: {got.status}"
+
+
+def test_the_ev_percentile_refuses_an_undated_stale_current() -> None:
+    """THE LATENT SITE — synthetic, because no committed bundle carries an NM latest TEV/LTM EBITDA.
+
+    `ev_ebitda_current` survives filtering because `ev_ebitda_asof` filters IDENTICALLY: its value
+    and its date move together, so the pair stays honest even when the last cell is NM.
+    `ev_ebitda_percentile` has no as-of anywhere — its source_ref names a quarter COUNT — so a
+    filtered `[-1]` would rank an older close as "current" with nothing on the page to reveal it.
+
+    Item 20 is "no backward-fill on ANY time series", so a latent instance of the exact class the
+    item closes is not a reason to leave it. Pinned synthetically rather than waiting for a real
+    name to go NM, which is how it would otherwise be discovered.
+    """
+    from vinci.dossier import ciq_sheets as cs
+
+    hdr = ["Fiscal Quarter", "Q1", "Q2", "Q3", "Q4", "Q5"]
+    rows = [
+        ["TEV/LTM EBITDA"],
+        ["", "Close", "6.0", "7.0", "8.0", "9.0", "NM"],
+    ]
+
+    def fake_close(_rows: object, metric: str) -> list[tuple[object, float | None]]:
+        if metric != "TEV/LTM EBITDA":
+            return []
+        return [("q1", 6.0), ("q2", 7.0), ("q3", 8.0), ("q4", 9.0), ("q5", None)]
+
+    class _B:
+        ticker = "FIXTURE"
+
+        def sheet(self, *_a: object, **_k: object) -> list[list[str]]:
+            return [hdr, *rows]
+
+    orig = cs._multiples_close
+    cs._multiples_close = fake_close  # type: ignore[assignment]
+    try:
+        got = cs.ev_ebitda_percentile(_B())  # type: ignore[arg-type]
+    finally:
+        cs._multiples_close = orig  # type: ignore[assignment]
+
+    assert got.value is None, (
+        f"BACKWARD-FILL: the percentile returned {got.value} by ranking the last SURVIVING close "
+        "(9.0) as 'current' while the latest cell is NM — and this reading carries no as-of, so "
+        "nothing on the page would reveal the substitution")
+    assert "NM at the latest Close" in (got.note or ""), (
+        f"the refusal must state WHY, not just decline: {got.note!r}")
