@@ -197,8 +197,29 @@ def check_materiality(
         )
 
 
+def _latest_actual_index(table: Any) -> int | None:
+    """The column the GUARD reads: LTM when present, else the last non-estimate column.
+
+    The guard scans the SOURCE SHEET at its latest column; the marker scans the ASSEMBLED table,
+    whose columns are a different indexing (FY… + LTM + FY26E/FY27E). Resolving the same PERIOD in
+    both is what keeps "flagged for the brief" and "fires the guard" the same predicate.
+    """
+    cols = list(getattr(table, "columns", []) or [])
+    if not cols:
+        return None
+    est = list(getattr(table, "is_estimate", []) or [])
+    for i, c in enumerate(cols):
+        if str(c).strip().upper() == "LTM":
+            return i
+    for i in range(len(cols) - 1, -1, -1):
+        if i >= len(est) or not est[i]:
+            return i
+    return None
+
+
 def mark_material_rows(table: Any, *, market_cap: float | None, revenue: float | None) -> Any:
-    """Flag every summary row clearing the floor, so the BRIEF can show it without recomputing.
+    """Flag every summary row clearing the floor AT THE GUARD'S OWN OBSERVATION, so the BRIEF can
+    show it without recomputing.
 
     THE P1 BRIEF GAP (operator, 2026-07-28). Surfacing the writedown into the annual table closed
     the DATA half but not the harm: both brief snapshots filter on a static label whitelist, so a
@@ -207,18 +228,25 @@ def mark_material_rows(table: Any, *, market_cap: float | None, revenue: float |
     An acceptance condition that does not match the harm is the same family as a guard that cannot
     fire, which is why this is fixed here rather than deferred.
 
-    Marks the ROW, not the renderer: the threshold arithmetic exists once, at assembly, where the
-    market cap is. Returns the table unchanged when no denominator is available.
+    SAME OBSERVATION AS THE GUARD (review fix 2026-07-28). The spec is "any row that TRIGGERS THE
+    GUARD", and the guard reads the LATEST column. A first cut took ``max(|v|)`` across every
+    column, which promoted rows on HISTORY the guard never fires on: MVST (LTM −36.6 = 8.7%, below
+    the floor, flagged off a −93 two years earlier) and VRRM (latest column empty, flagged off an
+    older −97). Both are exactly the "not every $2M restructuring line" noise the brief must not
+    accumulate. Marks the ROW, not the renderer: the threshold arithmetic exists once, at assembly,
+    where the market cap is. Returns the table unchanged when no denominator is available.
     """
     if table is None or (not market_cap and not revenue):
         return table
     rows = list(getattr(table, "rows", []))
-    if not rows:
+    col = _latest_actual_index(table)
+    if not rows or col is None:
         return table
     out, touched = [], False
     for r in rows:
-        vals = [v for v in (getattr(r, "values", None) or []) if v is not None]
-        mag = max((abs(v) for v in vals), default=0.0)
+        vals = getattr(r, "values", None) or []
+        v = vals[col] if col < len(vals) else None
+        mag = abs(v) if v is not None else 0.0
         pm = (mag / market_cap) if market_cap else None
         pr = (mag / revenue) if revenue else None
         hit = (pm is not None and pm >= MCAP_FRACTION) or (

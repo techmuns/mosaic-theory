@@ -2161,6 +2161,15 @@ def _customer_concentration(m: MechanicalLayer) -> str | None:
 _BRIEF_FY = 4  # actual fiscal years on the first cut; the Appendix + JSON keep every one
 
 
+
+# THE brief's static row set — ONE definition. `assemble._mark_material`/the materiality guard read
+# it by import (a second python copy is the duplication class test_parity_pins.py exists for), and
+# dossier.js keeps a hand copy pinned against this one because JS cannot import it.
+BRIEF_CORE_ROWS = frozenset({
+    "Revenue ($M)", "Revenue growth", "EBITDA ($M)", "EBITDA margin",
+    "EBIT ($M)", "Net income ($M)", "EPS (GAAP, dil.)", "FCF ($M)",
+})
+
 def _brief_window(tbl: Any) -> list[int]:
     """Column indices for the BRIEF's view of the annual table: the last ``_BRIEF_FY`` ACTUAL
     fiscal years + LTM + every consensus column. Curated at the RENDER layer — the record holds
@@ -2186,8 +2195,7 @@ def _brief_financials(m: MechanicalLayer) -> list[str]:
     if fs is None or fs.annual.status is not SourceStatus.PRESENT or fs.annual.value is None:
         return []
     tbl = fs.annual.value
-    want = {"Revenue ($M)", "Revenue growth", "EBITDA ($M)", "EBITDA margin",
-            "EBIT ($M)", "Net income ($M)", "EPS (GAAP, dil.)", "FCF ($M)"}
+    want = BRIEF_CORE_ROWS
     idx = _brief_window(tbl)
     cols = [tbl.columns[i] for i in idx]
     # (P1 brief fix, 2026-07-28) The whitelist is STATIC LABELS **plus any row flagged material**.

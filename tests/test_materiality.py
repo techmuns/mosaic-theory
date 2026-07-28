@@ -288,17 +288,29 @@ def test_only_rows_over_the_floor_are_promoted_to_the_brief() -> None:
             return r
 
     class _Tbl:
+        # `columns`/`is_estimate` are REQUIRED: the marker resolves the GUARD'S OWN period (LTM,
+        # else the last non-estimate column) rather than scanning every year. A first cut took
+        # max(|v|) across all columns and promoted rows on HISTORY the guard never fires on —
+        # MVST (LTM 8.7%, flagged off a −93 two years earlier) and VRRM (latest column empty).
         def __init__(self, rows: list[_Row]) -> None:
             self.rows = rows
+            self.columns = ["FY24", "FY25", "LTM", "FY26E"]
+            self.is_estimate = [False, False, False, True]
 
         def model_copy(self, *, update: dict[str, Any]) -> _Tbl:
             return _Tbl(update.get("rows", self.rows))
 
+    #                                       FY24    FY25      LTM  FY26E
     tbl = _Tbl([
-        _Row("Revenue ($M)", [1392.0]),                 # core — never flagged, already in brief
-        _Row("Asset Writedown ($M)", [-391.9]),         # 43% of mcap — promoted
-        _Row("Restructuring Charges ($M)", [-2.4]),     # 0.3% — stays in the appendix
+        _Row("Revenue ($M)", [1401.6, 1450.9, 1392.0, None]),          # core — never flagged
+        _Row("Asset Writedown ($M)", [None, -60.9, -391.9, None]),     # 43% at LTM — promoted
+        _Row("Restructuring Charges ($M)", [None, None, -2.4, None]),  # 0.3% — stays in appendix
     ])
-    out = mark_material_rows(tbl, market_cap=909.4, revenue=None)
-    flagged = {r.label for r in out.rows if r.material}
-    assert flagged == {"Asset Writedown ($M)"}, flagged
+    assert {r.label for r in mark_material_rows(tbl, market_cap=909.4, revenue=None).rows
+            if r.material} == {"Asset Writedown ($M)"}
+
+    # SAME OBSERVATION AS THE GUARD: material in an OLD year but small at LTM is NOT promoted —
+    # the MVST/VRRM case the first cut got wrong.
+    hist = _Tbl([_Row("Asset Writedown ($M)", [-93.0, None, -36.6, None])])   # 22% then 8.7%
+    assert {r.label for r in mark_material_rows(hist, market_cap=423.1, revenue=None).rows
+            if r.material} == set(), "promoted on history the guard never fires on"

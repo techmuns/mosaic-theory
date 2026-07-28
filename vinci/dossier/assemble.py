@@ -144,13 +144,10 @@ def _write(dossier: Dossier, llm_log: str, out_root: Path) -> Path:
 
 
 
-# The brief's static row set — the labels both twins carry by construction. Kept beside the guard
-# because the guard's satisfying set is CORE ∪ MATERIAL, and a drift between this and the
-# renderers' own lists would silently narrow what counts as "the reader met it".
-_BRIEF_CORE = frozenset({
-    "Revenue ($M)", "Revenue growth", "EBITDA ($M)", "EBITDA margin", "EBIT ($M)",
-    "Net income ($M)", "EPS (GAAP, dil.)", "FCF ($M)",
-})
+# The brief's static row set is IMPORTED, never re-declared: the guard's satisfying set is
+# CORE ∪ MATERIAL, so a drift between this and the renderer's own list would silently narrow what
+# counts as "the reader met it". Review found three copies of this set; the repo's rule is that
+# where a single import is possible it is used, and a pin is only for the py↔JS leftover.
 
 
 def _mark_material(mech: Any) -> Any:
@@ -200,8 +197,11 @@ def _materiality_check(bundle: Any, mech: Any, synthesis: Any, *, ticker: str) -
     # (P1 brief fix) The guard's target surface is the BRIEF, not the appendix. `material=True`
     # rows are the ones the brief now shows in addition to its static whitelist, so the satisfying
     # label set is CORE ∪ MATERIAL — an appendix-only row no longer silences the guard.
+    from vinci.dossier.render import BRIEF_CORE_ROWS
+
     rows = list(getattr(ann, "rows", [])) if ann is not None else []
-    labels = {r.label for r in rows if r.label in _BRIEF_CORE or getattr(r, "material", False)}
+    labels = {r.label for r in rows
+              if r.label in BRIEF_CORE_ROWS or getattr(r, "material", False)}
     try:
         check_materiality(
             inc, col, market_cap=mcap, revenue=None, summary_labels=labels,
