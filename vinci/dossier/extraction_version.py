@@ -63,19 +63,30 @@ EXTRACTION_VERSION_NAMES: str = EXTRACTION_VERSIONS[-1][1]
 UNSTAMPED = "unstamped"
 
 
+def _declared(version: str | None) -> str | None:
+    """Normalise to ONE unstamped state. ``None``, ``""`` and whitespace-only all mean "no version
+    was recorded" and must render identically — records are hand-edited, so a blank string is
+    reachable, and treating it as a *version* produced two live defects in review: the two helpers
+    below disagreed with EACH OTHER on ``""`` (header "unstamped", audit tier "built by a different
+    extractor" — on one document), and the python and JS twins disagreed on it too. Normalising in
+    one place is what keeps all four call sites saying the same thing."""
+    return (version or "").strip() or None
+
+
 def stamp_label(version: str | None) -> str:
     """The short stamp shown beside the assembly date. Legacy records (assembled before 26a) carry
     no version and say so, rather than rendering nothing and reading as "no divergence here"."""
-    return version or UNSTAMPED
+    return _declared(version) or UNSTAMPED
 
 
 def stamp_detail(version: str | None) -> str:
     """The long form for the audit tier: the version plus what it names. A version we do not
     recognise is reported as such — never silently described with the CURRENT version's changes,
     which would attribute this code's behaviour to an artifact built by other code."""
-    if version is None:
+    v = _declared(version)
+    if v is None:
         return f"{UNSTAMPED} — assembled before extraction versions were declared; vintage unknown"
     for ver, names in EXTRACTION_VERSIONS:
-        if ver == version:
-            return f"{version} — {names}"
-    return f"{version} — not a version this code declares; built by a different extractor"
+        if ver == v:
+            return f"{v} — {names}"
+    return f"{v} — not a version this code declares; built by a different extractor"

@@ -138,6 +138,65 @@ def test_the_changelog_forces_a_bump_to_say_what_it_names() -> None:
         "move the stamp, or the table and the stamp disagree about what is current")
 
 
+def test_both_twins_agree_on_every_stamp_edge_case_e2e() -> None:
+    """BEHAVIOURAL twin pin — the machine check for a defect review caught in this PR.
+
+    The changelog pin in test_parity_pins binds the two TABLES. It does not bind the two
+    FUNCTIONS, and the untreated helpers diverged on the empty string in BOTH directions:
+    python's `stamp_detail("")` said "not a version this code declares" while `stamp_label("")`
+    said "unstamped" — self-contradictory on one document — and the JS twin said "unstamped" for
+    both, so the surfaces disagreed with each other too. Records are hand-edited, so "" is
+    reachable. A table equal on both sides is the only thing that keeps four call sites honest.
+
+    Drives the REAL render path on each side rather than exported helpers, so it pins what a reader
+    actually meets."""
+    if not shutil.which("node"):
+        pytest.skip("node not available")
+    cases = ["2026-07-28.1", "1999-01-01.0", "", "   ", None]
+
+    dj = (ROOT / "frontend" / "views" / "shared" / "dossier.js").resolve().as_uri()
+    driver = f"""
+const handler = {{ get: () => stub, apply: () => stub, construct: () => ({{}}) }};
+const stub = new Proxy(function(){{}}, handler);
+for (const g of ["window","document","location"]) {{ try {{ globalThis[g] = stub; }} catch {{}} }}
+const {{ renderDossier }} = await import("{dj}");
+const bare = {{ ticker: "X", name: "X Co", cik: "0", reference_date: "2026-06-01",
+  assembled_at: "2026-06-01T12:00:00", mechanical: {{}}, synthesis: null }};
+const strip = (s) => s.replace(/<[^>]*>/g, "").replace(/&amp;/g, "&").replace(/&#39;/g, "'")
+  .replace(/&quot;/g, '"').replace(/&lt;/g, "<").replace(/&gt;/g, ">").trim();
+const out = [];
+for (const v of {json.dumps(cases)}) {{
+  const html = renderDossier(v === null ? bare : {{ ...bare, extraction_version: v }}, null);
+  const meta = /<div class="ds-meta">([\\s\\S]*?)<\\/div>/.exec(html);
+  const det = /"fact-label">Extraction<\\/div>\\s*<div class="fact-val">([\\s\\S]*?)<\\/div>/
+    .exec(html);
+  // the header line is "<date> · extraction <label>" — take what follows the marker
+  const header = meta ? strip(meta[1]) : null;
+  out.push({{ label: header ? header.slice(header.indexOf("· extraction ") + 13) : null,
+             detail: det ? strip(det[1]) : null }});
+}}
+console.log(JSON.stringify(out));
+"""
+    got = json.loads(subprocess.run(["node", "--input-type=module", "-e", driver],
+                                    capture_output=True, text=True, check=True, cwd=ROOT).stdout)
+    mismatched = [
+        f"{v!r}: py=({stamp_label(v)!r}, {stamp_detail(v)!r}) "
+        f"js=({js['label']!r}, {js['detail']!r})"
+        for v, js in zip(cases, got, strict=True)
+        if js["label"] != stamp_label(v) or js["detail"] != stamp_detail(v)
+    ]
+    assert not mismatched, (
+        "the markdown and web twins render the SAME extraction_version differently — a "
+        "disagreement about provenance, which is worse than either omitting it:\n"
+        + "\n".join(mismatched))
+
+    # ...and no input may produce a BLANK stamp: an invisible label is the silent absence the whole
+    # item exists to end, so whitespace-only must normalise to the unstamped wording, not to itself.
+    for v, js in zip(cases, got, strict=True):
+        assert js["label"].strip(), f"input {v!r} rendered an empty stamp on the web header"
+        assert stamp_label(v).strip(), f"input {v!r} rendered an empty stamp on the md header"
+
+
 def test_web_twin_renders_the_stamp_in_both_tiers_e2e() -> None:
     """The twin surface, on a COMMITTED artifact. Phrasing-independent per the TEST-LAYER rule: the
     stamp reaches the header AND Record & reproduce, and a record with no stamp says 'unstamped'

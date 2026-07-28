@@ -21,14 +21,20 @@ const EXTRACTION_VERSIONS = [
     "latest close, NM rather than a stale figure (#241)"],
 ];
 const UNSTAMPED = "unstamped";
+// Normalise to ONE unstamped state — the twin of _declared() in extraction_version.py. null, "" and
+// whitespace-only all mean "no version was recorded". Records are hand-edited so a blank is
+// reachable, and review caught the untreated form diverging BOTH ways: label vs detail within a
+// document, and this file vs the python twin on the same input.
+const declaredVersion = (v) => (String(v ?? "").trim() || null);
 // An absent stamp renders VISIBLY: "unstamped" and "I did not look" are different states, and only
 // one of them is honest that the vintage is unknown.
-const stampLabel = (v) => v || UNSTAMPED;
+const stampLabel = (v) => declaredVersion(v) || UNSTAMPED;
 const stampDetail = (v) => {
-  if (!v) return `${UNSTAMPED} — assembled before extraction versions were declared; vintage unknown`;
-  const row = EXTRACTION_VERSIONS.find(([ver]) => ver === v);
-  return row ? `${v} — ${row[1]}`
-    : `${v} — not a version this code declares; built by a different extractor`;
+  const c = declaredVersion(v);
+  if (!c) return `${UNSTAMPED} — assembled before extraction versions were declared; vintage unknown`;
+  const row = EXTRACTION_VERSIONS.find(([ver]) => ver === c);
+  return row ? `${c} — ${row[1]}`
+    : `${c} — not a version this code declares; built by a different extractor`;
 };
 
 // PDF export uses the browser's native print-to-PDF (no library — the frontend stays dependency-free).
