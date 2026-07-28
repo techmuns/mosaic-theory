@@ -748,3 +748,39 @@ def test_brief_core_rows_py_js_parity() -> None:
         "the md brief lost its material-row promotion — an appendix-only charge again")
     assert "r.material === true" in js, (
         "the web brief lost its material-row promotion — an appendix-only charge again")
+
+
+def test_extraction_version_changelog_py_js_parity() -> None:
+    """(26a) The extraction-version changelog is maintained in TWO languages and must not drift.
+
+    The stamp answers "are these two dossiers comparable?". If the python bumps a vintage and the JS
+    copy does not, the web page describes an artifact with the WRONG set of changes while the
+    markdown twin describes it correctly — a disagreement about provenance, which is worse than
+    either surface simply omitting it. The two copies cannot share an import (py↔JS), which is the
+    leftover this module exists for.
+
+    Binds BOTH columns: the version identifiers AND what each one names. A version pair that agreed
+    on the id but disagreed on the description would still tell a reader two different stories."""
+    from vinci.dossier.extraction_version import EXTRACTION_VERSIONS
+
+    js = _src("frontend/views/shared/dossier.js")
+    m = re.search(r"const EXTRACTION_VERSIONS = \[(.*?)\n\];", js, re.S)
+    assert m, "dossier.js EXTRACTION_VERSIONS table not found — the web twin lost its copy"
+
+    # rows are ["<version>", "<names>"] with the names possibly split across a JS "+" concat
+    rows = re.findall(r'\["([^"]+)",\s*((?:"[^"]*"\s*\+?\s*)+)\]', m.group(1))
+    js_table = [(v, re.sub(r'"\s*\+\s*"', "", names.strip()).strip('"')) for v, names in rows]
+
+    assert js_table == list(EXTRACTION_VERSIONS), (
+        "the extraction-version changelog diverges between vinci/dossier/extraction_version.py and "
+        f"dossier.js — the two surfaces would describe the same artifact differently.\n"
+        f"  py={list(EXTRACTION_VERSIONS)}\n  js={js_table}")
+
+    # and BOTH twins must render the stamp where the assembly date is stated, not only in the audit
+    # tier — a stamp confined to Record & reproduce is 17b's failure repeated (the record complete,
+    # the harm intact), so the header site is pinned on each side.
+    assert "· extraction {stamp_label(d.extraction_version)}_" in _src("vinci/dossier/render.py"), (
+        "the md header lost the extraction stamp — it must ride the document date")
+    web_header = '· extraction <span class="mono">${escapeHtml(stampLabel(d.extraction_version))}'
+    assert web_header in js, (
+        "the web header lost the extraction stamp — it must ride the document date")

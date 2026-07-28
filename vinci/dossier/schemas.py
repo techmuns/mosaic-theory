@@ -1086,6 +1086,13 @@ class Dossier(BaseModel):
     qa_flags: list[str] = []
     llm_model: str | None
     assembled_at: datetime  # UTC-aware build stamp (rendered with time + "UTC"); legacy JSONs naive
+    # (26a) WHICH EXTRACTOR produced this document — see vinci.dossier.extraction_version. The
+    # assembly DATE says when; this says WITH WHAT, which is the question "are these two dossiers
+    # comparable?" actually turns on (#238 left the fleet holding two vintages that dated alike).
+    # Default None so dossiers committed before 26a round-trip byte-identically; absent renders as
+    # "unstamped" on BOTH twins rather than as nothing, because "vintage unknown" and "no
+    # divergence" must not look the same to a reader.
+    extraction_version: str | None = None
     # (teaser/company) Brief-teaser + company-overview context: the SIC-derived coarse sector (the
     # CIQ-GICS fallback), the CIQ GICS Primary Industry Classification (source-bound), the exchange,
     # and the CIQ subject business description. Assemble/inform only — never a gate/rank input.

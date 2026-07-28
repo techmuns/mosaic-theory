@@ -4369,7 +4369,39 @@ scheduled; 24 needs an operator policy line before any build encodes it.
     risk of running on 26a alone is that someone changes extraction and forgets to bump the
     version — **which is exactly today's state, so it is not a regression**; it stops being a TOTAL
     freeze, which is the whole point.
-26a. **DECLARED EXTRACTION VERSION, RENDERED — SHIPS NEXT, AND UNFREEZES THE PIPELINE.**
+26a. **DECLARED EXTRACTION VERSION, RENDERED — BUILT 2026-07-28; PR OPEN, PREVIEW-GATED.**
+    SHIPPED: `vinci/dossier/extraction_version.py` (an APPEND-ONLY changelog, last row current);
+    `Dossier.extraction_version: str | None` (default None → pre-26a JSON round-trips);
+    `assemble` stamps it; BOTH twins render it in BOTH tiers — the identifier beside the document
+    date in the MAIN BODY, the gloss ("what this version names") in Record & reproduce.
+    **THE OPERATOR'S SPEC POINT, IMPLEMENTED AS A FORCING FUNCTION.** *"The constant should declare
+    WHICH STATE IT NAMES, not just be a number."* So the version is not a free-standing string: it
+    is the last row of a table whose other column states the change, and a bump that names nothing
+    is unrepresentable. v1 = `2026-07-28.1` — "unusual-items surfacing (#238) · multiples read from
+    the latest close, NM rather than a stale figure (#241)": the two moves extraction has actually
+    made, with no artifacts existing between them, so today is ONE vintage.
+    **VERIFIED BY MUTATION, NOT BY GREEN.** Removing the md header stamp reds 2 tests; removing the
+    audit row as well reds THE RED itself (two vintages then render identically — the #238 state
+    reproduced on demand). Removing the web header stamp reds the parity pin. **The mutation run
+    also caught a VACUOUS ASSERTION IN THE NEW TEST**: the web e2e sliced from `ds-meta` to
+    end-of-document, so the Record & reproduce stamp satisfied a check written for the HEADER — it
+    passed with the header stamp deleted. Scoped to the element and re-mutated before landing.
+    **THE FUBO CASE IS THE HEADLINE TEST.** Identical extracted content, different extractor: any
+    identifier computed FROM the output collapses those two vintages onto one value (measured:
+    `6d170d2fe3` on both sides of #238). A declared version does not. That is the previously-broken
+    case, asserted first.
+    **PRINT FATE, READ FROM THE CSS rather than assumed** (a class-toggle probe cannot evaluate
+    `@media print`): `.ds-meta` carries no print override → the IDENTIFIER prints in BOTH PDF
+    scopes; Record & reproduce is appendix-tier (`body.ds-print-brief .ds-tier{display:none}`) →
+    the GLOSS prints in the Full dossier PDF only. That is the three-tier rule landing correctly,
+    not a gap.
+    **ARTIFACT PASS INCLUDED, AS A SEPARATE COMMIT.** The render change made all 11 committed
+    `dossier.md` stale against the drift guard, so they are RE-RENDERED from committed JSON — a
+    re-render, NOT a re-assembly: no extraction ran and no `dossier.json` changed. They render
+    "extraction unstamped", which is the truthful reading of an artifact that was never stamped.
+    Stamped values arrive with the re-assemblies, CNXC first.
+    **STILL 2 OF 13.** 26a is infrastructure, not a defect fix (operator 2026-07-28). What changes
+    is that the pipeline runs again.
     A declared version constant, carried on the dossier record, **rendered wherever the dossier
     states its assembly date** — NOT in the appendix and NOT as a machine-only field (operator
     2026-07-28: a stamp nobody reads cannot stop anyone comparing two dossiers of different
@@ -5227,6 +5259,26 @@ STATE.md-structural and is where they belong. **It also ships the check** (INVAR
 that flags any list item or paragraph whose `**` count is odd, so the next one reddens CI instead
 of shipping. Three instances of one class, all caught by eye and one only after review, is the
 argument for the machine.
+
+**TWO FINDINGS FROM THE 26a BUILD — REPORTED, NOT FIXED (both out of its scope).**
+(1) **THE BROAD TWIN-PARITY PIN DOES NOT COVER TOP-LEVEL FIELDS.**
+`test_every_assembled_field_reaches_both_dossier_renderers` harvests keys from `mechanical`,
+`synthesis` and `anchor` only — so `assembled_at`, `llm_model`, `sector`, `exchange` and (without
+26a's own pin) `extraction_version` are outside it. Measured: extending it to the 17 top-level keys
+would red on exactly ONE, **`midcycle`** (named in `render.py`, absent from `dossier.js`). That one
+is **LATENT, not live** — `midcycle` is `null` on all 11 committed dossiers (absent on MVST), so
+nothing is missing from the web today; but a dossier that ever carried it would render a section in
+the markdown that the web twin and both PDFs omit, which is #227's exact shape. 26a therefore
+ships its OWN explicit pin rather than widening the general one around an undiagnosed field.
+QUEUE: widen the pin to top-level keys, after deciding whether `midcycle` is web-renderable or a
+declared `twin_exempt` entry.
+(2) **`.claude/launch.json`'s `frontend` entry uses a RELATIVE `--directory frontend`,** so it
+serves whichever checkout the server process starts in — in practice the PRIMARY repo, which is
+another session's working tree. The first preview of 26a rendered the primary checkout's CNXC
+(`assembled_at` 2026-07-23) and showed NO stamp, which reads exactly like "the feature does not
+work". The worktree-bound entries (`frontend-wb`, `main-worktree`, …) use ABSOLUTE paths and are
+correct. QUEUE: make the relative entry absolute, or delete it — a preview that silently reads the
+wrong tree can only ever mislead.
 
 **SIZE CHECK BEFORE BUILDING THE 20+21+23 BATCH — 2026-07-28 (operator asked to be told BEFORE
 rather than after). VERDICT: THE BATCH IS NOT ONE PR, AND ONE OF THE THREE IS MIS-SCOPED.**

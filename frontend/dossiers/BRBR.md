@@ -1,6 +1,6 @@
 # Dossier — BELLRING BRANDS, INC. (NYSE: BRBR)
 
-_July 27, 2026_
+_July 27, 2026 · extraction unstamped_
 
 # Brief — first cut
 
@@ -448,6 +448,7 @@ _Source §: 8-K 0001772016-21-000029 · ex10-1_amend2creditagmt.htm_
 
 ## Record & reproduce
 - **Data window:** screened as of 2026-07-06 · assembled 2026-07-27 10:00 UTC
+- **Extraction:** unstamped — assembled before extraction versions were declared; vintage unknown
 - **Synthesis:** model `claude-opus-4-8` — facts assembled mechanically; the synthesis frames, the analyst decides
 - **Identifiers:** CIK `0001772016` · NYSE : BRBR
 - **Assembly log:** primary-source: 8-K 0001628280-26-045287 carries 8.01 but no EX-99.1 exhibit was found; primary-source: 4 EX-99.1 release(s) + 1 10-Q parsed (+4.6s fetch)

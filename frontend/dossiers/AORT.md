@@ -1,6 +1,6 @@
 # Dossier — ARTIVION, INC. (NYSE: AORT)
 
-_July 27, 2026_
+_July 27, 2026 · extraction unstamped_
 
 # Brief — first cut
 
@@ -592,6 +592,7 @@ _Source §: 8-K 0000784199-16-000175 · c199-20160125ex101fad737.htm_
 
 ## Record & reproduce
 - **Data window:** screened as of 2026-07-06 · assembled 2026-07-27 09:58 UTC
+- **Extraction:** unstamped — assembled before extraction versions were declared; vintage unknown
 - **Synthesis:** model `claude-opus-4-8` — facts assembled mechanically; the synthesis frames, the analyst decides
 - **Identifiers:** CIK `0000784199` · NYSE : AORT
 - **Assembly log:** primary-source: 6 EX-99.1 release(s) + 1 10-Q parsed (+4.9s fetch)
