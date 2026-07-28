@@ -177,3 +177,73 @@ def test_the_defect_itself_the_extraction_drops_the_line() -> None:
     wd = next(r for r in tbl.rows if "Asset Writedown" in r.label)
     assert any(v is not None and abs(v) > 390 for v in wd.values), (
         f"the writedown row surfaced but carries no -391.9 magnitude: {wd.values}")
+
+
+def test_the_green_path_is_deterministic_and_does_not_involve_the_llm() -> None:
+    """LOAD-BEARING (operator question 2026-07-28): can the guard EVER go green, deterministically?
+
+    The guard is satisfied by EITHER route — surfaced as data, or mentioned in the synthesis. If
+    only the second route worked the build would depend on a probabilistic synthesiser: intermittent
+    failures, or a name that can never build. It does not. `financial_summary_annual` surfaces
+    material unusual items MECHANICALLY (it reads the sheet's own block and appends), so by the time
+    the guard runs the summary already carries the row and the LLM is not in the loop.
+
+    Pinned by passing an EMPTY synthesis string against the REAL post-surfacing table for both
+    names the guard fires on. If a future change makes the summary route conditional, this reddens
+    before anyone discovers it as a stuck build.
+    """
+    import json as _json
+
+    from vinci.dossier import ciq_sheets as _cs
+    from vinci.dossier.ciq import CiqBundle
+    from vinci.dossier.ciq_sheets import financial_summary_annual
+
+    man = ROOT / "data" / "manual" / "ciq"
+    if not man.is_dir():
+        pytest.skip("licensed CIQ bundles unavailable (never committed)")
+    checked = 0
+    for t in ("SMPL", "CNXC"):
+        d, dj = man / t, ROOT / "data" / "dossiers" / t / "dossier.json"
+        if not d.is_dir() or not dj.exists():
+            continue
+        b = CiqBundle.from_files(t, sorted(d.glob("*")))
+        inc = b.sheet("financials", "Income Statement", freq="annual")
+        hdr = _cs._period_header(inc)
+        pers = _cs._fin_periods(inc[hdr])
+        ltm = [p for p in pers if p[2]]
+        col, lab = (ltm[0][0], ltm[0][1]) if ltm else (pers[-1][0], pers[-1][1])
+        tbl = financial_summary_annual(b).value
+        assert tbl is not None
+        mcap = ((_json.loads(dj.read_text())["mechanical"].get("stock_info") or {})
+                .get("market_cap") or {}).get("value")
+        # EMPTY synthesis — the summary route alone must satisfy the guard
+        check_materiality(inc, col, market_cap=mcap, revenue=None,
+                          summary_labels={r.label for r in tbl.rows},
+                          synthesis_text="", ticker=t, period=lab)
+        checked += 1
+    assert checked >= 1, "neither guard-firing name was available to prove the green path"
+
+
+def test_no_consumer_reads_the_annual_table_by_row_position() -> None:
+    """Surfacing SHIFTS pre-existing rows: CFO/Capex/FCF move down on 11 of 12 bundles because the
+    unusual-items rows are appended before the cash-flow block. That is safe only while every
+    consumer selects BY LABEL — the row-wise form of the never-hard-code-column-positions rule
+    already recorded in ciq.py. Pin it, because the next added row is the one that breaks a
+    positional reader nobody remembered writing."""
+    import re
+
+    for rel in ("vinci/audit_r1.py", "vinci/dossier/render.py",
+                "frontend/views/shared/dossier.js", "frontend/build.py"):
+        src = (ROOT / rel).read_text()
+        for m in re.finditer(r"(\w*(?:rows|fin_rows|annual))\s*\[\s*(-?\d+)\s*\]", src):
+            var, idx = m.group(1), m.group(2)
+            # SYMMETRIC window: the catalyst-calendar `rows[0]` is a DIFFERENT structure (dated
+            # events, pre-sorted), and its marker can sit either side of the match — `date_basis`
+            # names "catalyst calendar" on the same line, AFTER the read. A backward-only window
+            # missed it and the pin cried wolf on its first run.
+            ctx = src[max(0, m.start() - 300):m.start() + 300].lower()
+            if "catalyst" in ctx or "expected_date" in ctx or "dated_trigger" in ctx:
+                continue
+            raise AssertionError(
+                f"{rel}: positional row read {var}[{idx}] near the financial-summary path — the "
+                "annual table gains rows when a name carries unusual items; select by LABEL")
