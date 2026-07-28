@@ -4195,7 +4195,11 @@ renumber.** No other unverifiable claim found in this block.
     row, no scenario record, no verdict today — so nothing is unsafe YET; the gate exists because
     the defective render is the INPUT to any future underwrite and a screen cohort can pick the
     name up at any time. Re-assemble under the item-17 guard BEFORE any underwrite begins. Unlike
-    SMPL (16b) this is NOT held for acceptance-test purposes — re-assemble as soon as convenient.
+    SMPL (16b) this is NOT held for acceptance-test purposes.
+    **BLOCKED-BY ITEM 26 (operator 2026-07-28) — DO NOT READ "as soon as convenient" AS FREE.**
+    Merging #238 changed NO committed dossier; the two extraction vintages only materialise on the
+    NEXT assembly, so the extraction stamp must exist BEFORE anything regenerates — CNXC's
+    re-assembly included. Item 26 is what makes "convenient" safe.
 17. **UNUSUAL-ITEMS SURFACING GUARD** (renamed from "materiality guard" 2026-07-28 by the
     operator — the name over-claimed: as scoped it catches ONE-OFFS only, and will NOT catch
     material change in structural lines, balance-sheet items or cash-flow items. SMPL's capex ran
@@ -4211,6 +4215,16 @@ renumber.** No other unverifiable claim found in this block.
     in the synthesis or the build fails loud. ORIGIN: SMPL's $391.9M LTM Asset Writedown (43% of market cap, the sole
     cause of LTM net income −$198.8M) never reached the dossier while the FY25 $60.9M was cited
     three times. Positive pin: a fixture writedown at 11% of mcap must raise unless surfaced.
+18a. **LEDGER PAYLOAD — STRUCTURED FACT FIELDS (queued 2026-07-28; MUST PRECEDE ITEM 18).**
+    Facts the record already knows and the dossier can render — loan-basis leverage, impairment
+    quantum, buyback pace — become TYPED fields with their own source stamps on the ledger
+    payload, alongside (never replacing) the prose `thesis`. ORIGIN: the item-18 scope check found
+    ALL THREE regression-trio facts living only inside the `thesis` string, so the guard's input
+    does not exist in usable form — P1's shape (a guard whose input isn't usable) caught BEFORE
+    the build rather than after. Binds FORWARD (BASIS_REQUIRED_FROM / FIELDED_REFS_FROM pattern);
+    the 3 existing V-rows are NOT backfilled and no committed decision is rewritten. RED: a
+    payload written with a structured loan-basis field round-trips it, and `log_verdict` refuses a
+    fact whose source stamp is absent.
 18. **NO FALSE UNKNOWN (audit regression trio; queued 2026-07-28, TIGHTENED by the operator the
     same day — the first wording, "assembly must consult the V-row facts", was too vague and
     invited dumping ledger PROSE into the dossier).** THE PRECISE REQUIREMENT:
@@ -4846,6 +4860,41 @@ three days behind the others, which is the cadence gap in miniature. SMPL's own 
 `spot_source` reads "Polygon daily aggregate close 2026-07-22 (store)" — a store read, confirming
 the audit's P4 mechanism claim (ledger exit price) was WRONG while its staleness substance was
 right.
+
+**POST-MERGE VERIFICATION + ITEM-18 SCOPE CHECK — 2026-07-28 (operator-directed, BEFORE any
+build).**
+(1) **ROUND-TRIP CLAIM VERIFIED, not asserted.** "Defaults False, so every committed dossier
+round-trips" was a design claim. Checked on ALL ELEVEN committed dossiers (each predating #238, so
+none carries a `material` key): **11/11 parse under the new `FinRow`, and 11/11 render
+BYTE-IDENTICAL.** The optional-field default is confirmed, not assumed. PIN SCOPED AT REVIEW: the
+first cut asserted live-render == committed `.md` fleet-wide, which DUPLICATED
+`test_screening_context_reaches_every_committed_dossier_e2e` and — worse — never read `material`
+at all, so deleting the field left it green. A test whose docstring claims one thing while its
+assertion tests another reddens on unrelated renderer changes and stays silent on the regression
+it is named for. Rewritten to read the FIELD (no `material` key in the committed JSON; every row
+returns False); mutation-tested — default flipped to True CAUGHT, field removed CAUGHT, both of
+which the first cut passed.
+(2) **ITEM 18'S INPUT DOES NOT EXIST IN USABLE FORM — the operator caught P1's shape again, before
+the build.** Confirmed and WORSE than the single example suggested: **all three** regression-trio
+facts live inside the `thesis` PROSE string of the V-row payload, none of them structured —
+loan-basis 1.2x, the $331.0M impairments, AND the ~2.1M-share buyback pace, all three in `thesis`
+only. The payload's structured fields are `entry_price`, `ratio_at_entry`, `confidence`,
+`horizon_days`, `kill_criteria`, `twin_call`, `machine_proposal`… — the DECISION metadata, never
+the underlying facts. `log_verdict` takes `thesis: str`, so this is the write path's shape, not an
+accident of one entry. A guard reading these would have no structured source and would fall back
+to regexing free text — which fails on the first payload phrased differently. **18a (payload
+structured-fact fields) must precede 18 (the guard); 18 is small once 18a exists.**
+(3) **SCOPE — SMALL, AND NO BACKFILL IS REQUIRED.** The ledger holds **5 rows: 3 V-rows**
+(`V-IT-…` BUY, `V-SMPL-…` BUY, `V-VRRM-…` AVOID_TERMINAL) **and 2 C-rows**. Structured fields are
+ADDITIVE and OPTIONAL, so 18a binds FORWARD exactly like `BASIS_REQUIRED_FROM` / `FIELDED_REFS_FROM`
+— the repo's established pattern — and the three existing V-rows stay untouched. **NO COMMITTED
+DECISION IS REWRITTEN.** Consequence stated honestly: for those three legacy rows the guard has no
+structured source, so 18 cannot check them; it binds to rows written after 18a. If the operator
+later wants the legacy three covered, the options are (a) backfill — REWRITES A COMMITTED DECISION
+OF RECORD and needs an explicit decision, not a build, or (b) a SIDECAR carrying structured facts
+BESIDE the sealed row rather than inside it, which is the precedent this repo already set with
+`scenarios/_amendment_index.json` and the `superseded_note`. **Neither is proposed here** — flagged
+for the operator, per the standing rule that committed decisions are not rewritten silently.
 
 **REVIEW OF #237/#238 — 2026-07-28, TWO DEFECTS FOUND IN MY OWN 17b CODE AND FIXED BEFORE MERGE.**
 (1) **THE MARKER DID NOT MATCH THE SPEC.** The operator's rule was "any row that TRIGGERS THE

@@ -314,3 +314,45 @@ def test_only_rows_over_the_floor_are_promoted_to_the_brief() -> None:
     hist = _Tbl([_Row("Asset Writedown ($M)", [-93.0, None, -36.6, None])])   # 22% then 8.7%
     assert {r.label for r in mark_material_rows(hist, market_cap=423.1, revenue=None).rows
             if r.material} == set(), "promoted on history the guard never fires on"
+
+
+def test_the_material_default_round_trips_every_pre_238_dossier() -> None:
+    """`FinRow.material` defaults False, so a dossier written BEFORE the field parses unchanged.
+
+    VERIFIED, not asserted — the claim was design reasoning in the 17b PR, and it is cheap to prove
+    and expensive to be wrong about: every committed dossier predates the field, so a default that
+    did not round-trip would break the whole fleet the moment anything touched it.
+
+    SCOPED TO THE CLAIM (review fix). The first cut of this test asserted live-render ==
+    committed .md across the fleet, which (a) DUPLICATES
+    ``test_screening_context_reaches_every_committed_dossier_e2e``, already pinning exactly that,
+    and (b) never touched `material` at all — delete the field and that version still passed. A
+    test whose name and docstring claim one thing while its assertion tests another is worse than
+    no test: it reddens for unrelated renderer changes and stays green for the regression it is
+    named after. This one reads the FIELD: the committed JSON carries no `material` key, and every
+    row still comes back False.
+    """
+    import json
+
+    from vinci.dossier.schemas import Dossier
+
+    seen_rows = 0
+    for d in sorted((ROOT / "data" / "dossiers").iterdir()):
+        j = d / "dossier.json"
+        if not j.exists():
+            continue
+        raw = json.loads(j.read_text())
+        ann = ((raw.get("mechanical") or {}).get("financial_summary") or {}).get("annual") or {}
+        raw_rows = (ann.get("value", ann) or {}).get("rows") or []
+        assert not any("material" in r for r in raw_rows), (
+            f"{d.name}: committed JSON already carries a `material` key — this fixture is no "
+            "longer a PRE-field dossier, so it cannot prove the default round-trips")
+        doc = Dossier.model_validate_json(j.read_text())     # parses under the new model
+        fs = doc.mechanical.financial_summary
+        tbl = fs.annual.value if fs is not None else None
+        for r in (tbl.rows if tbl is not None else []):
+            assert r.material is False, (
+                f"{d.name}/{r.label}: absent key did not default to False — a pre-#238 dossier "
+                "would silently gain a promoted brief row")
+            seen_rows += 1
+    assert seen_rows >= 50, f"expected the committed fleet's rows, saw {seen_rows}"
