@@ -10,7 +10,7 @@ from pathlib import Path
 
 import pytest
 
-from vinci.dossier.ciq_sheets import _multiples_close, range_position
+from vinci.dossier.ciq_sheets import _multiples_close, pe_ltm_current, range_position
 
 ROOT = Path(__file__).resolve().parents[1]
 
@@ -91,3 +91,35 @@ def test_the_reported_value_is_always_the_latest_cell() -> None:
                 f"{d.name}: reported P/E is not the latest cell ({latest:.1f}x). …{out[-90:]}")
         checked += 1
     assert checked >= 5, f"expected the committed bundle corpus, checked {checked}"
+
+
+@pytest.mark.parametrize("ticker", ["SMPL", "CNXC", "WERN"])
+def test_every_consumer_of_the_series_reports_the_latest_cell(ticker: str) -> None:
+    """THE SECOND CONSUMER — missed by the first cut of this fix, and the reason this test exists
+    per-consumer rather than per-reading.
+
+    `range_position` renders the P/E tail; `pe_ltm_current` feeds the verify-before-the-verdict
+    CAVEAT BANNER. Both read the same series and both carried the identical
+    filter-then-take-[-1] defect. Fixing only the first left the banner citing "CIQ P/LTM EPS
+    8.8x" on CNXC — under a ``source_ref`` that literally claims "Close (latest)", which is a
+    FALSE PROVENANCE STAMP on top of a stale value. A test asserting only the rendered string
+    would have passed while the banner stayed wrong.
+    """
+    b = _bundle(ticker)
+    rows = b.sheet("financials", "Multiples", freq="quarterly")
+    pairs = _multiples_close(rows, "P/LTM EPS")
+    if not pairs or pairs[-1][1] is not None:
+        pytest.skip(f"{ticker}: latest P/LTM EPS is present — not a backward-fill fixture")
+    got = pe_ltm_current(b)
+    stale = next((v for _, v in reversed(pairs) if v is not None), None)
+    assert got.value is None, (
+        f"{ticker}: pe_ltm_current returned {got.value} while the latest Close is NM — the "
+        f"last SURVIVING value ({stale:.1f}x) under a source_ref claiming '(latest)'. This feeds "
+        "the caveat banner, so the stale figure reaches the reader even with the tail fixed.")
+
+
+def test_a_live_reading_still_reaches_the_caveat_path() -> None:
+    """Negative control for the second consumer: AORT's latest cell is present, so the banner path
+    must still receive it. Otherwise the fix is 'report nothing', which is the opposite failure."""
+    got = pe_ltm_current(_bundle("AORT"))
+    assert got.value is not None and got.value > 0, f"AORT lost its live P/E: {got.status}"

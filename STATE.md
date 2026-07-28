@@ -4265,7 +4265,13 @@ renumber.** No other unverifiable claim found in this block.
     BEFORE it ships, not after** (operator, explicitly). GUARD AGAINST DEGRADATION: this must not
     quietly become a house-token linter — that would catch P3's mislabel and nothing else, which
     is the shape of a fix that reports success while the class survives.
-20. **~~NO BACKWARD-FILL ON SERIES~~ — CLOSED 2026-07-28 (audit P5; P5 IS THE SECOND OF THE NINE GENUINELY DONE).** A series
+20. **~~NO BACKWARD-FILL ON SERIES~~ — CLOSED 2026-07-28. P5 IS HALF CLOSED, NOT WHOLE —
+    CORRECTED CLAIM (see the build record).** Item 20 closes P5's STALENESS half on BOTH consumers.
+    P5's BASIS-MISLABEL half (`mechanical.py:856` asserts the reading "rest on normalized/adjusted
+    earnings" when `P/LTM EPS` is CIQ's **GAAP** series — `P/LTM Normalized EPS` is a SEPARATE row,
+    e.g. CNXC GAAP `[9.01, NM, NM]` vs Normalized `[10.21, 8.81, 5.97]`) is **ITEM 19's stated
+    example** — "a caveat naming a basis must match the series it caveats" — and remains OPEN.
+    **P5 is not closed until 19 lands.** (audit P5) A series
     ending in NM propagates UNKNOWN — the reader must never walk back to the last numeric cell
     (16.0x was the 2026-03-31 close of a GAAP series whose current cell is NM; the correct
     current normalized figure is 8.90x). Same class as coercing UNAVAILABLE to zero, arriving by
@@ -4904,7 +4910,27 @@ three days behind the others, which is the cadence gap in miniature. SMPL's own 
 the audit's P4 mechanism claim (ledger exit price) was WRONG while its staleness substance was
 right.
 
-**BUILD RECORD — 2026-07-28 ITEM 20 SHIPPED — audit P5 closed; SECOND OF THE NINE.** MECHANISM
+**BUILD RECORD — 2026-07-28 ITEM 20 SHIPPED — audit P5's STALENESS HALF closed on BOTH consumers.
+CLAIM CORRECTED TWICE DURING THE BUILD, both by checking rather than asserting.**
+**CORRECTION 1 — THE FIRST CUT FIXED ONLY ONE OF TWO CONSUMERS.** `range_position` renders the P/E
+tail; `pe_ltm_current` feeds the verify-before-the-verdict CAVEAT BANNER. Both read the same series
+and both carried the identical filter-then-take-`[-1]` defect. Fixing only the first left the banner
+citing "CIQ P/LTM EPS 8.8x" on CNXC — under a `source_ref` that literally claims "Close (latest)",
+a FALSE PROVENANCE STAMP on top of a stale value. My fleet invariant missed it because it asserted
+the rendered STRING, not the extractor. Tests are now PER-CONSUMER.
+**CORRECTION 2 — "P5 CLOSED" WAS OVERSTATED.** The audit said "both parts are wrong": stale AND
+mislabelled basis. Item 20 fixes the staleness. The basis mislabel is live — `mechanical.py:856`
+asserts the figure rests on normalized earnings while `P/LTM EPS` is CIQ's GAAP series and
+`P/LTM Normalized EPS` is a separate row. That is verbatim item 19's example, so P5 is HALF closed.
+**EXPOSURE OF THE THREE WRONG READINGS, bounded (operator-required):** **WERN — ZERO.** It has a
+scenario record but **NO DOSSIER**, no ledger row, and its record is anchored entirely on EV/EBITDA
+(`P/LTM`, `P/E`, `72.8` all absent; multiple-axis references are TEV/LTM-EBITDA only). The 72.8x
+was a latent extractor output that would have appeared only if WERN were ever dossiered — and now
+cannot. **CNXC — REAL but GATED under 16c** (4 occurrences incl. the caveat banner; no verdict
+exists). **SMPL — REAL but GATED under 16b.** The operator's direction-of-error point holds and is
+worth keeping: 72.8x where the truth is NM UNDERSTATES distress ("expensive but earning" instead of
+"no meaningful earnings"), the opposite of the usual overstatement bias.
+ MECHANISM
 VERIFIED BEFORE BUILDING (now standing policy, docs/engineering.md) and it differed from the audit's
 claim: `_multiples_close` is CORRECT — it maps NM → None, as its docstring says. The backward-fill
 was in the CONSUMER, `range_position`, which filtered the Nones away and then took `pe[-1]`, the

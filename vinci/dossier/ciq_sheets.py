@@ -401,11 +401,20 @@ def pe_ltm_current(bundle: CiqBundle) -> Sourced[float]:
         rows = bundle.sheet("financials", "Multiples", freq="quarterly")
     except CiqUnavailableError as exc:
         return _miss_or_unknown(bundle, "financials", exc)
-    pe = [v for _, v in _multiples_close(rows, "P/LTM EPS") if v is not None]
-    if not pe:
-        return Sourced.unknown(note="P/LTM EPS Close has no value")
+    # (item 20) THE LATEST cell, never the last SURVIVING one. This is the SECOND consumer of the
+    # same series and it carried the identical defect: filtering the Nones away and taking [-1]
+    # returned a months-old close under a source_ref that literally claims "(latest)" — a false
+    # provenance stamp on top of a stale value. Missed by the first cut of the fix, which repaired
+    # `range_position` only; caught by checking the caveat-banner path that reads THIS function.
+    pairs = _multiples_close(rows, "P/LTM EPS")
+    latest = pairs[-1][1] if pairs else None
+    if latest is None:
+        return Sourced.unknown(
+            note=("P/LTM EPS Close has no value" if not pairs else
+                  "P/LTM EPS is NM at the latest Close — no meaningful trailing P/E")
+        )
     return Sourced.present(
-        round(pe[-1], 1), source_ref="CIQ Financials→Multiples 'P/LTM EPS' Close (latest)"
+        round(latest, 1), source_ref="CIQ Financials→Multiples 'P/LTM EPS' Close (latest)"
     )
 
 
