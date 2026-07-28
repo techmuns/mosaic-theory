@@ -4035,6 +4035,14 @@ renumber.** No other unverifiable claim found in this block.
    where it does the damage. Entry-vintage values that are MEANT to be frozen (an underwrite
    record's reference frame) are exempt but must be LABELLED entry-vintage wherever they render
    beside fresh values.
+   **(e) THE FROZEN-VALUE LABEL — absorbed from item 23 when it closed as not-a-defect, and
+   WRITTEN HERE EXPLICITLY rather than inferred as covered (operator 2026-07-28):**
+   > **A frozen entry-vintage value must render marked as frozen, with its vintage date, wherever
+   > it appears beside a live value.**
+   The clause above already exempted entry-vintage values; it did NOT state the positive
+   obligation. SMPL renders `1,334` (the analyst's frozen consensus reference) beside `1,351.8`
+   (Trends latest) with nothing distinguishing them — the same class as P3's mislabelled reference
+   row, P4's stale spot under a fresh stamp, and item 20's March P/E under a July as-of.
 2. **STRUCTURED GENERATING-CELLS RULE (queued 2026-07-26).** Any number quoted in record PROSE
    must have its generating cells stored STRUCTURALLY beside it. ORIGIN: the boundary-pair hunt —
    the entry rationale's "2.12 clears / 1.88 fails" was prose-only, so re-deriving it at Q3 data
@@ -4257,7 +4265,7 @@ renumber.** No other unverifiable claim found in this block.
     BEFORE it ships, not after** (operator, explicitly). GUARD AGAINST DEGRADATION: this must not
     quietly become a house-token linter — that would catch P3's mislabel and nothing else, which
     is the shape of a fix that reports success while the class survives.
-20. **NO BACKWARD-FILL ON SERIES (audit P5; queued 2026-07-28; VERIFY-AT-BUILD).** A series
+20. **~~NO BACKWARD-FILL ON SERIES~~ — CLOSED 2026-07-28 (audit P5; P5 IS THE SECOND OF THE NINE GENUINELY DONE).** A series
     ending in NM propagates UNKNOWN — the reader must never walk back to the last numeric cell
     (16.0x was the 2026-03-31 close of a GAAP series whose current cell is NM; the correct
     current normalized figure is 8.90x). Same class as coercing UNAVAILABLE to zero, arriving by
@@ -4280,7 +4288,15 @@ renumber.** No other unverifiable claim found in this block.
     learns the close-aware chip: `disposition: WATCH — prior BUY closed 07-24 (see Decision
     log)` · `covenant basis: not rendered — see record` (never UNKNOWN). Twin-parity pins on the
     rule, not on any one chip.
-23. **ONE CONSENSUS VINTAGE PER BUILD (audit P8; queued 2026-07-28).** A build references exactly
+23. **~~ONE CONSENSUS VINTAGE PER BUILD~~ — CLOSED 2026-07-28 AS NOT-A-DEFECT (operator).** The
+    extractor already uses exactly ONE vintage: `1,351.8` is Trends "latest". The `1,334` is the
+    ANALYST'S FROZEN ENTRY-VINTAGE REFERENCE, source-stamped "committed dossier financial_summary
+    (E cols = consensus)" — correctly frozen at underwrite time. "One vintage per build" targeted a
+    mechanism that was never broken. THE REAL PROBLEM UNDERNEATH is the same one as P3, P4, the
+    false UNKNOWN and the WATCH gap: **a frozen value rendering beside a live one with nothing
+    marking which is which** — a reader cannot distinguish "what we underwrote against" from "what
+    is current". FOLDED INTO ITEM 1 as an explicit requirement (written, not inferred as covered).
+    Original text retained below for the audit trail: (audit P8; queued 2026-07-28). A build references exactly
     one Trends vintage, stamped once at the top. ORIGIN: base case built on 1,334 ("consensus
     FY26E") while the same document prints 1,351.8 as the consensus path anchor — two vintages,
     no reconciliation. Valuation impact small (~$0.41/sh); the defect is systemic.
@@ -4301,7 +4317,8 @@ scheduled; 24 needs an operator policy line before any build encodes it.
     test, closing the capex 6 → 20 → 28 gap item 17's rename records. Price the build; if it holds
     up, item 17 becomes a special case of it rather than a parallel mechanism.
 27a. **DUPLICATE-DEFINITION DETECTOR + FROZEN BASELINE (operator split 2026-07-28; ships in the
-    STATE-topology slot).** The detector plus a BASELINE recording the ten known duplicates as
+    STATE-topology slot; SIZED UP 2026-07-28 — the prototype heredoc NEVER LANDED in the repo, so
+    27a is BUILD THE DETECTOR **plus** baseline, not baseline alone).** The detector plus a BASELINE recording the ten known duplicates as
     accepted-for-now: **the build fails only on the ELEVENTH.** Zero curation, ships immediately.
     Why the split matters more than it sounds: the instance that started this was one I INTRODUCED
     WHILE FIXING THE SAME CLASS, so 27a closes the hazard against NEW instances now rather than
@@ -4886,6 +4903,27 @@ three days behind the others, which is the cadence gap in miniature. SMPL's own 
 `spot_source` reads "Polygon daily aggregate close 2026-07-22 (store)" — a store read, confirming
 the audit's P4 mechanism claim (ledger exit price) was WRONG while its staleness substance was
 right.
+
+**BUILD RECORD — 2026-07-28 ITEM 20 SHIPPED — audit P5 closed; SECOND OF THE NINE.** MECHANISM
+VERIFIED BEFORE BUILDING (now standing policy, docs/engineering.md) and it differed from the audit's
+claim: `_multiples_close` is CORRECT — it maps NM → None, as its docstring says. The backward-fill
+was in the CONSUMER, `range_position`, which filtered the Nones away and then took `pe[-1]`, the
+last SURVIVING close. SHARPER STILL, and the reason this was a defect rather than an ordinary stale
+number: unlike the EV band — whose as-of moves WITH its value and so stays self-consistent — the
+P/E tail carries **no date of its own** and renders under the EV reading's as-of. SMPL printed
+"P/LTM EPS 16.0x" beside "as-of 2026-07-23" while 16.0x was the **2026-03-31** close and the two
+most recent cells were NM. **LIVE ON THREE NAMES, not one: SMPL 16.0x · CNXC 8.8x · WERN 72.8x.**
+Fixed to report the LATEST cell, and to STATE `NM (no meaningful trailing P/E at this close)`
+rather than silently dropping the tail — an absent tail reads as "no P/E was available to look at",
+a different claim from "the trailing P/E is not meaningful" (the visible-absence rule applied
+before item 22 formalises it). RED, behavioural per the standing policy: run on the pre-fix commit
+IN A WORKTREE (never a stash — the 2026-07-23 collision), all three names fail with an
+AssertionError NAMING the stale figure; a negative control asserts AORT's LIVE P/E still renders,
+so "no backward-fill" cannot be achieved by reporting nothing; and a fleet invariant asserts the
+reported value IS the series' last cell on every bundle. NO COMMITTED ARTIFACT CHANGES — the fix is
+in the extractor and nothing has been re-assembled (verified: 0 of 11 dossiers would re-render
+differently), so the three wrong readings persist in the committed dossiers until 26 lands and
+re-assembly runs. Gate: ruff + `mypy --strict` clean · **1135 passed** (+5).
 
 **REVIEW FINDING — 2026-07-28 THE LIVE QUEUE HAS TWO COLLIDING NUMBER SERIES. This is the
 concrete brief for the queued STATE-topology work; it is NOT a formatting nit.** Found reviewing

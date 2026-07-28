@@ -237,3 +237,33 @@ git worktree add /tmp/cmp <old-commit>     # compare against /tmp/cmp, delete wh
 
 The uncommitted state stays untouched, there is no stash stack to collide on, and the comparison
 is reproducible by anyone.
+
+## An audit-derived item's stated mechanism is unverified until checked against code
+
+*(operator, 2026-07-28)*
+
+An external audit reads the **artifact**. It can establish that the artifact is wrong — and be
+right about that every time — while inferring the wrong **location** in code, because the code was
+never visible to it. Both things can be true at once, and usually are.
+
+Counted honestly on the 2026-07-28 IC audit, the stated mechanism was wrong **six** times while
+the symptom was real in all six:
+
+| item | audit said | it was |
+|---|---|---|
+| P1 | guard the assembled table | the line never reaches the assembled table |
+| P3 | stale committed anchor | a correctly-frozen reference row, mislabelled |
+| P4 | ledger exit price | the Polygon local store |
+| P5 | backward-fill in the series reader | in the CONSUMER; the reader is correct |
+| P8 | two vintages extracted | one vintage, plus one frozen record reference |
+| WATCH | "there is no WATCH row" | a record reissue in a store the audit never saw |
+
+**The rule:** verify the mechanism against code before building. When it differs, report and
+re-spec rather than building to the stated shape.
+
+This is not scepticism about the audit — the findings were sound and two of them uncovered defects
+nobody had looked at. It is that **a fix aimed at the wrong mechanism reports success while the
+defect survives**, which is exactly what P1's first cut would have done: a guard scanning a table
+the line never reached could never have fired.
+
+Every remaining audit-derived item still carries an unverified mechanism claim. Check each one.

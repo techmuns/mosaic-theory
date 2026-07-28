@@ -299,7 +299,16 @@ def range_position(bundle: CiqBundle) -> Sourced[str]:
     except CiqUnavailableError as exc:
         return _miss_or_unknown(bundle, "financials", exc)
     ev_pairs = [(d, v) for d, v in _multiples_close(rows, "TEV/LTM EBITDA") if v is not None]
-    pe = [v for _, v in _multiples_close(rows, "P/LTM EPS") if v is not None]
+    # (item 20, audit P5) The P/LTM EPS tail reports the LATEST cell — never the last SURVIVING one.
+    # The old form filtered the Nones away and then took `pe[-1]`, which is backward-fill by a
+    # different route than the audit described (`_multiples_close` is correct: it maps NM → None).
+    # What made it a defect rather than a stale-ish number: unlike the EV band — whose as-of moves
+    # WITH its value, so it stays self-consistent — this tail carries NO date of its own and renders
+    # under the EV reading's as-of. SMPL printed "P/LTM EPS 16.0x" beside "as-of 2026-07-23" while
+    # that 16.0x was the 2026-03-31 close and the two most recent cells were NM. Live on THREE
+    # names at the fix: SMPL 16.0x, CNXC 8.8x, WERN 72.8x.
+    pe_pairs = _multiples_close(rows, "P/LTM EPS")
+    pe_latest = pe_pairs[-1][1] if pe_pairs else None
     b = _own_history_band("EV/EBITDA (TEV/LTM)", ev_pairs)
     if b is None:
         return Sourced.unknown(note="TEV/LTM EBITDA Close has <4 quarters — no range position")
@@ -313,7 +322,11 @@ def range_position(bundle: CiqBundle) -> Sourced[str]:
         band = next(bnd for t, bnd in _RANGE_BANDS if pct <= t)
         where = f"{pct:.0%}ile → {band}"
     asof = f" as-of {b.as_of}" if b.as_of is not None else ""
-    tail = f"; P/LTM EPS {pe[-1]:.1f}x" if pe else ""
+    # NM is stated, not silently dropped: an absent tail reads as "no P/E was available to look at",
+    # which is a different claim from "the trailing P/E is not meaningful because LTM EPS is
+    # negative". The absence is visible and attributed (the visible-absence rule, item 22).
+    tail = (f"; P/LTM EPS {pe_latest:.1f}x" if pe_latest is not None
+            else ("; P/LTM EPS NM (no meaningful trailing P/E at this close)" if pe_pairs else ""))
     return Sourced.present(
         f"EV/EBITDA (TEV/LTM) {cur:.1f}x{asof} — trailing range {lo:.1f}–{hi:.1f}x "
         f"(median {med:.1f}x) over {n} closes → {where}{tail}",
