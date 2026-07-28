@@ -4371,6 +4371,19 @@ scheduled; 24 needs an operator policy line before any build encodes it.
     and it is NAME-INDEPENDENT, so every dossier of one vintage shares it. Not a git SHA, for the
     operator's reason: a SHA moves on unrelated commits and would mark the fleet perpetually
     diverged.
+    **THE THIRD CASE — SEMANTIC CHANGE AT UNCHANGED SHAPE (operator 2026-07-28; DECIDED, one
+    line).** A schema hash catches an added row, not item 20's change — `range_position` and
+    `pe_ltm_current` now return `NM` where they returned a stale figure on three names, same
+    labels, same fields, and 16.0x vs `NM` matters to a reader more than an added row does.
+    **DECISION: build the operator's option 3 — a DECLARED extraction version in the stamp, plus a
+    drift test that hashes the extraction module SOURCES and fails when that hash moved while the
+    declared version did not.** Catches semantic change; no false positive at read time; the cost
+    is a red CI on refactor, which is the point — it forces a conscious "did behaviour change?"
+    call inside the PR instead of leaving it to a reader comparing two dossiers. (Schema-hash-only
+    was offered as acceptable and additive-later; taking the stronger form now, since the
+    difference is one constant and one test.) The module SET is the one thing option 3 needs that
+    is not yet verified — it is enumerated and shown at build, per the standing rule, and reported
+    if it does not come out clean.
     **PRIORITY — THE FREEZE IS TOTAL, NOT TWO NAMES (operator 2026-07-28).** Nothing can be
     re-assembled until 26 lands, and that includes ANY NEW UNDERWRITE, since a new name needs a
     dossier built on the post-#238 extraction which is unstamped. **26 stands between the fund and
@@ -4379,12 +4392,34 @@ scheduled; 24 needs an operator policy line before any build encodes it.
     states its assembly date — NOT in the appendix and NOT as a machine-only field. A stamp nobody
     reads cannot stop anyone comparing two dossiers of different vintages, which is 17b's failure
     exactly: the record complete, the harm intact.
-    (queued 2026-07-28 from the #238 blast-radius diagnosis).** Every committed dossier carries the extraction version that produced it. ORIGIN:
+    **ORIGIN (queued 2026-07-28 from the #238 blast-radius diagnosis).** Every committed dossier
+    carries the extraction version that produced it, because
     after #238 the fleet holds two vintages with nothing distinguishing them — pre-guard tables
     lack the unusual-items rows, post-guard tables carry them — and cross-name comparison in the
     verdict-pending cohort silently assumes a common table. Cheap, makes the divergence legible
     WHILE it exists, and a fleet re-assembly cannot even be verified complete without it. Ships
     BEFORE any fleet re-assembly.
+29. **BULL-LEG CONSTRAINT AS A STRUCTURED FIELD — P3 part 2, GIVEN ITS OWN NUMBER by the operator
+    2026-07-28 (previously folded into 24).** THE DEFECT: the bull leg sits ABOVE the constraint
+    its own method sentence states. **WHY IT IS NOT 24:** 24 is a BLOCKED policy bucket (shares
+    basis + regime test) awaiting a ratified line; a schema change parked inside a blocked policy
+    item is stranded by it. **WHY IT IS NOT 18a:** 18a is the LEDGER PAYLOAD's structured fact
+    fields — this is the SCENARIO RECORD's schema. Same move, different object; the first
+    recording of this dependency named 18a and was wrong.
+    **MECHANISM (verified 2026-07-28 before queueing, not assumed).** The method sentence is
+    ANALYST-AUTHORED — no code constructs one — so the generator-assertion route is unavailable,
+    and P1's presence-check route does not transfer either: P1's half works because a typed FIGURE
+    must appear, whereas this is a RELATION ("just under X") that lives only in prose. **The
+    tractable route is the `bear_basis` precedent** (schema 1.2 turned bear-multiple provenance
+    from prose into an enumerated, validated, forward-required field): give the bull leg a TYPED
+    constraint — the reference it is set against, plus the relation — after which the check is
+    arithmetic rather than parsing. Schema 1.3's `leg`/`role` (item 16) are the plausible carrier;
+    HYPOTHESIS, to be checked against the model before building, like every other mechanism here.
+    **KIND: ANALYST DATA** under the closure taxonomy → closed only when the guard ships **AND**
+    the surfaced SMPL instance is adjudicated; the guard alone leaves the record still wrong.
+    **RED:** a record whose bull multiple violates its own declared constraint is REFUSED at write
+    — SMPL's live record is the positive instance, and a conforming record the negative one.
+    SEQUENCED AFTER 19.
 24. **ANALYST-DECISION BUCKET — BOTH POLICY LINES RETRACTED BY THE OPERATOR 2026-07-28; DO NOT
     IMPLEMENT AS WRITTEN. Item stays BLOCKED pending archetype work.** (queued 2026-07-28 — DECISIONS, not builds; the machine proposes
     neither).** (a) SHARES BASIS: weighted-average diluted (recorded 93.678M) vs current shares
@@ -4967,7 +5002,21 @@ relation lives only in prose. **The tractable route is the `bear_basis` preceden
 turned "where the bear multiple came from" from prose into an enumerated field; the same move here
 makes the bull leg's constraint structural, after which the check is plain arithmetic. That is a
 SCENARIO-RECORD schema change, NOT 18a (which is the LEDGER payload) — so P3 pt 2's unblock is a
-different dependency than first recorded.
+different dependency than first recorded. **It is now QUEUE ITEM 29** (operator 2026-07-28): a
+schema change parked inside item 24 — blocked pending the validation run — would be stranded by
+that block, so it carries its own number and its own sequencing.
+
+**PR CADENCE CHANGED — 2026-07-28 (operator, reviewing the run: eight PRs, five docs-only). THE
+RULES LIVE IN docs/engineering.md §PR cadence; THE CONSEQUENCE FOR THIS QUEUE IS AN ORDER.**
+(i) **No more record-only PRs** — the record rides in the PR that implements what it records, one
+PR per item. **#244 is the last of the class** (it is the amendment that adopts the rule).
+(ii) **Batch by RISK, not size** — mechanical and independent go together; **guards and policy stay
+SOLO** (19, 18a, 18, 1, 22), because focused review is what caught two gate omissions and one
+incomplete fix on this run. (iii) **Topology first** — every branch currently conflicts at the
+same insertion points, so re-sequencing is what makes batching cheap rather than merge-expensive.
+**THE ORDER, FIXED:** `26` → **STATE topology (solo, ahead of the batch)** → **mechanical batch:
+21 + 28 + 27a in ONE PR** → `19` scoping. Note STATE-topology is pulled OUT of the batch it was
+first listed in; it precedes the batch precisely so the batch does not fight it.
 
 **THIRTEEN-PART AUDIT — 2026-07-28 (operator-directed: re-read each P-item's evidence and count
 DISTINCT failures, verify against the committed report rather than accept the count). THE
@@ -5115,6 +5164,16 @@ STATE-topology slot: prefix the audit-derived items (`A17`…`A27`) or relocate 
 behind its own heading, then re-sequence; either removes the ambiguity permanently. **Recorded
 rather than fixed here — re-sequencing a 4,000-line file inside a docs PR under review is the
 scope creep this repo keeps refusing, and the work is already queued.**
+**ADDED TO THAT SLOT 2026-07-28 — THE ORPHAN-`**` CLASS, AND ITS MACHINE CHECK.** #244's first cut
+left a dangling `(queued …).**` fragment inside item 26: an unbalanced bold that renders the rest
+of the item as literal asterisks, the same class that broke §7's THEME #2 and needed its own
+fix-PR. Caught by counting `**` per list item, not by reading. A parity scan over both files finds
+**two more, PRE-EXISTING on main**: queue item 24 (a trailing `).**` after its origin clause) and
+§7 item 19. Left standing here deliberately — they are not this PR's — but the topology PR is
+STATE.md-structural and is where they belong. **It also ships the check** (INVARIANT RULE): a test
+that flags any list item or paragraph whose `**` count is odd, so the next one reddens CI instead
+of shipping. Three instances of one class, all caught by eye and one only after review, is the
+argument for the machine.
 
 **SIZE CHECK BEFORE BUILDING THE 20+21+23 BATCH — 2026-07-28 (operator asked to be told BEFORE
 rather than after). VERDICT: THE BATCH IS NOT ONE PR, AND ONE OF THE THREE IS MIS-SCOPED.**
