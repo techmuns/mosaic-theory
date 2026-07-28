@@ -314,3 +314,32 @@ def test_only_rows_over_the_floor_are_promoted_to_the_brief() -> None:
     hist = _Tbl([_Row("Asset Writedown ($M)", [-93.0, None, -36.6, None])])   # 22% then 8.7%
     assert {r.label for r in mark_material_rows(hist, market_cap=423.1, revenue=None).rows
             if r.material} == set(), "promoted on history the guard never fires on"
+
+
+def test_every_committed_dossier_round_trips_under_the_new_finrow() -> None:
+    """`FinRow.material` defaults False so pre-#238 dossiers round-trip — VERIFIED, not asserted.
+
+    The claim was made in the 17b PR as design reasoning. It is cheap to prove and expensive to be
+    wrong about: every committed dossier predates the field, so if the default did not round-trip,
+    the whole fleet would fail to parse or would re-render differently the moment anything touched
+    it. Checks BOTH halves — parses, and renders byte-identical to what is committed.
+    """
+    from vinci.dossier.render import render_markdown
+    from vinci.dossier.schemas import Dossier
+    from vinci.scenarios import read_record
+
+    seen = 0
+    for d in sorted((ROOT / "data" / "dossiers").iterdir()):
+        j = d / "dossier.json"
+        if not j.exists():
+            continue
+        doc = Dossier.model_validate_json(j.read_text())     # parses under the new model
+        try:
+            card = read_record(doc.ticker, root=ROOT)
+        except FileNotFoundError:
+            card = None
+        assert render_markdown(doc, card=card) == (d / "dossier.md").read_text(), (
+            f"{doc.ticker}: adding FinRow.material changed the rendered artifact — the optional "
+            "default does not round-trip a pre-#238 dossier")
+        seen += 1
+    assert seen >= 10, f"expected the committed dossier fleet, saw {seen}"
