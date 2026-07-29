@@ -250,6 +250,48 @@ Two acceptable shapes, either is fine:
 
 What is not acceptable is discovering the divergence after the fact.
 
+## `[-1]` on a series: name the element, or carry its date
+
+*(from the 2026-07-28 scan; generalises item 20)*
+
+> **`X[-1]` is safe iff the element is GUARANTEED to be the one you mean, or the value's own date
+> travels with it.**
+
+Three instances of the same defect in four days, one of them in the diagnostic written by the
+person who had just fixed the other two:
+
+| where | `[-1]` returned | should have been |
+|---|---|---|
+| `range_position` / `pe_ltm_current` | the last SURVIVING close | the LATEST close (NM ⇒ refuse) |
+| a throwaway reader over `FinRow.values` | the FY+2 ESTIMATE | the LTM column, by name |
+
+A scan of all 21 series-shaped `[-1]` sites in production found **no fourth instance** — they are
+correct by one of three mechanisms, and the third is the one to watch:
+
+1. **Named or guarded** — the caller refuses when the latest cell is absent, so `[-1]` is provably
+   the latest.
+2. **The date travels** — the value is stamped with its own as-of, so a stale current is *labelled*
+   stale rather than silently claimed as latest. This is why the own-history band may take the last
+   surviving pair and the P/LTM tail may not.
+3. **Correct by the export's shape** — true only because the vendor happens to order columns a
+   particular way, with nothing asserting it. **Assert it.** An unasserted convention is how
+   `source_ref="Close (latest)"` came to sit on a months-old value: the same false-provenance shape,
+   arriving through the data provider instead of through the code.
+
+## A measurement in a throwaway tree establishes its own baseline first
+
+*(operator, 2026-07-28)*
+
+Before attributing any delta to the thing you changed, run the unchanged tree and record what it
+gives. A fresh worktree baselines at **1137 passed / 13 skipped** where a working one gives
+**1149 / 1** — because `data/` is git-ignored per-worktree, so the CIQ bundles are simply absent.
+Without that baseline, four environment-induced skips read as four decayed tests.
+
+Related: **a mutation that does not change behaviour is not a test of the test.** A first attempt at
+mutating the unusual-items marking inserted its early `return` in the wrong place; the suite stayed
+green and the guard looked vacuous. It was not — the corrected mutation reddened it immediately.
+Verify the mutation took effect before believing what its result implies.
+
 ## Never `git stash` to compare across commits
 
 *(operator, 2026-07-28, after a near-miss)*

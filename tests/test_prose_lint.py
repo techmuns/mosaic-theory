@@ -225,12 +225,18 @@ def test_clean_record_writes_without_warning(tmp_path: Path, recwarn: pytest.War
 
 def test_new_fields_are_additive_so_existing_records_still_validate() -> None:
     """Every committed record predates rationale_plain — none may fail to load."""
-    for p in sorted(Path("scenarios").glob("*.json")):
-        if p.name.startswith("_"):
-            continue
+    # (31b) RELATIONAL floor — unfiltered sweep, so checked must equal the corpus.
+    records = [p for p in sorted(Path("scenarios").glob("*.json"))
+               if not p.name.startswith("_")]
+    checked = 0
+    for p in records:
+        checked += 1
         rec = sc.ScenarioRecord.model_validate_json(p.read_text())
         assert rec.verdict is None or rec.verdict.rationale_plain is None or isinstance(
             rec.verdict.rationale_plain, str)
+    assert checked == len(records) and checked, (
+        f"validated {checked} of {len(records)} committed records — an additive-schema check "
+        "that validates nothing proves nothing")
 
 
 def test_rationale_plain_never_replaces_the_sealed_original() -> None:
@@ -343,12 +349,19 @@ def test_every_committed_scenario_record_is_register_clean() -> None:
     Data-coupled by design: it ships with the restatement that makes it true, because a test that
     is red at one commit and green at the next is a red commit.
     """
-    dirty = {}
-    for p in sorted(Path("scenarios").glob("*.json")):
-        if p.name.startswith("_"):
-            continue
+    # (31b) RELATIONAL floor: this sweep has no data-shape filter, so the count it examined must
+    # equal the corpus itself. A relation cannot decay and cannot be quietly lowered the way an
+    # absolute `>= N` can be when it reddens.
+    records = [p for p in sorted(Path("scenarios").glob("*.json"))
+               if not p.name.startswith("_")]
+    dirty, checked = {}, 0
+    for p in records:
+        checked += 1
         flags = pl.lint_record(json.loads(p.read_text()))
         if flags:
             dirty[p.stem] = [str(f) for f in flags]
     assert not dirty, ("prose-register violations in committed records:\n"
                        + json.dumps(dirty, indent=2))
+    assert checked == len(records) and checked, (
+        f"linted {checked} of {len(records)} committed records — a register sweep that examines "
+        "nothing passes for the wrong reason")

@@ -360,6 +360,11 @@ def test_committed_own_history_agrees_with_its_sibling_range_position() -> None:
     Refreshing the band ALONE left a 35-close band beside a string still reading "over 20 closes".
     Every committed dossier must quote the SAME median and close-count in both places."""
     import re
+    # (31b) FILTERED sweep — its subject is the names carrying BOTH readings, so no relational
+    # floor is expressible (counting them independently just re-runs the filter). The claim is a
+    # cross-artifact coherence one that only exists on committed data, so it cannot move to a
+    # fixture either: the whole fix is refusing to pass when the filter matches nothing.
+    agreed = 0
     for doss in sorted((_ROOT / "data" / "dossiers").glob("*/dossier.json")):
         val = (json.loads(doss.read_text()).get("mechanical") or {}).get("valuation") or {}
         oh, rp = val.get("own_history") or {}, val.get("range_position") or {}
@@ -374,6 +379,11 @@ def test_committed_own_history_agrees_with_its_sibling_range_position() -> None:
             f"{doss.parent.name}: range_position median {m.group(1)} != band {band['median']:.2f}")
         assert int(m.group(2)) == band["n_closes"], (
             f"{doss.parent.name}: range_position {m.group(2)} closes != band {band['n_closes']}")
+        agreed += 1
+    assert agreed, (
+        "no committed dossier carries BOTH own_history and range_position as present — this "
+        "coherence sweep compared ZERO pairs and would have passed however far the rendered "
+        "string had drifted from the band it is built from")
 
 
 # --- byte-preserving backfill insert -----------------------------------------------------------

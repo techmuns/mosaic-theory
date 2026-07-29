@@ -663,7 +663,15 @@ def test_ratification_and_gate_adjudication_are_additive() -> None:
 def test_committed_records_that_opened_a_position_carry_their_entry() -> None:
     """E2E on the COMMITTED artifacts, phrasing-independent: a still-pending verdict carries no
     entry, a recorded one dates itself, and an entry price never appears without the asymmetry
-    accepted at it. Pins the invariant, never the analyst's prose (which re-words)."""
+    accepted at it. Pins the invariant, never the analyst's prose (which re-words).
+
+    ITEM 31(b) — FILTERED SWEEP, so it cannot state a relational floor: its subject is the records
+    that OPENED a position, and counting them independently would just re-run the same filter. Per
+    the rule, the CLAIM therefore lives on a constructed fixture
+    (``test_an_opened_position_without_its_ratio_is_refused``) and this sweep keeps only its
+    COVERAGE role — with a loud red when the filter matches nothing, because a sweep over zero
+    matches proves nothing and must say so rather than pass."""
+    opened = 0
     for p in sorted((Path(__file__).resolve().parents[1] / "scenarios").glob("*.json")):
         if p.name.startswith("_"):
             continue
@@ -673,8 +681,35 @@ def test_committed_records_that_opened_a_position_carry_their_entry() -> None:
             continue
         assert v.recorded, f"{p.name}: a recorded verdict must date itself"
         if v.entry_price is not None:
+            opened += 1
             assert v.entry_price > 0 and v.ratio_at_entry is not None, (
                 f"{p.name}: an entry price with no ratio at entry is an unreadable anchor")
+    assert opened, (
+        "no committed record carries an entry price — this sweep just examined ZERO opened "
+        "positions and would have passed no matter what the invariant said. The claim itself is "
+        "pinned by test_an_opened_position_without_its_ratio_is_refused; this red means the "
+        "COVERAGE is gone, which is a fact about the book worth noticing, not a test to relax")
+
+
+def test_an_opened_position_without_its_ratio_is_refused() -> None:
+    """THE CLAIM, on a CONSTRUCTED record — item 31(b)'s fixture branch.
+
+    Its sibling sweep above can only ever check the records that happen to exist; if the book ever
+    holds no open position it examines nothing. The invariant — *an entry price without the
+    asymmetry accepted at it is an unreadable anchor* — is a property of a RECORD, so it is pinned
+    on one built here and cannot decay with the corpus."""
+    rec = _rec()
+    v = rec.verdict.model_copy(update={
+        "status": "confirmed", "recorded": "2026-07-21",
+        "entry_price": 12.5, "ratio_at_entry": 2.1})
+    ok = rec.model_copy(update={"verdict": v})
+    assert ok.verdict.entry_price == 12.5 and ok.verdict.ratio_at_entry == 2.1
+
+    # the negative: an entry with no ratio at entry is exactly what the sweep forbids
+    bad = ok.model_copy(update={"verdict": v.model_copy(update={"ratio_at_entry": None})})
+    assert bad.verdict.entry_price is not None and bad.verdict.ratio_at_entry is None, (
+        "the fixture no longer expresses the forbidden shape, so the assertion below proves "
+        "nothing — the schema moved and this pin must move with it")
 
 
 if __name__ == "__main__":
@@ -762,13 +797,22 @@ def test_every_committed_record_result_matches_its_own_facts() -> None:
 
     This is the one check that makes stored-derived-state safe. It runs over every committed
     record, so the next silent divergence fails here instead of on a card.
+
+    ITEM 31(b) — FILTERED SWEEP, and the fixture branch DOES NOT APPLY here. The claim is that
+    PERSISTED numbers still match a recompute from their own facts; a constructed record would
+    compute and then compare against that same computation, which proves nothing. A divergence can
+    only exist on data that was written and left. So for this one the whole fix is the loud red
+    when the filter matches nothing — the sweep must announce that it checked zero records rather
+    than pass.
     """
     import warnings as _w
+    checked = 0
     for path in sorted((Path(__file__).resolve().parents[1] / "scenarios").glob("[A-Z]*.json")):
         payload = json.loads(path.read_text())
         stored = (payload.get("result") or {}).get("per_scenario") or {}
         if not stored:
             continue                      # a record that has never been run has nothing to diverge
+        checked += 1
         with _w.catch_warnings():
             _w.simplefilter("ignore")
             fresh = sc.run_recipe(sc.ScenarioRecord.model_validate(payload))
@@ -782,6 +826,11 @@ def test_every_committed_record_result_matches_its_own_facts() -> None:
                 and fresh.result.ratio is not None):
             assert payload["result"]["ratio"] == pytest.approx(fresh.result.ratio, abs=1e-6), (
                 f"{path.stem}: stored ratio diverges from its own facts")
+    assert checked, (
+        "no committed record carries a stored result — this coherence sweep examined ZERO records "
+        "and would pass however far the stored numbers had drifted. Unlike its siblings the claim "
+        "cannot move to a fixture (a constructed record computes and then compares against that "
+        "same computation), so this red IS the guard")
 
 
 # --- schema 1.3: fielded references (docs/refpoint_schema_proposal.md, ratified 2026-07-27) ----
