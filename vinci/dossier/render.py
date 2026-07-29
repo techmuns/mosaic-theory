@@ -3003,6 +3003,14 @@ def _panel_spread_note(d: Dossier) -> str | None:
     return sp.note() if sp is not None else None
 
 
+def _spread_line(d: Dossier) -> list[str]:
+    """The panel-spread line, or nothing. Computed ONCE — the note walks the whole mechanical
+    layer, and the first cut called it twice in one expression (a second full model_dump per
+    rendered dossier, for a value it already had)."""
+    note = _panel_spread_note(d)
+    return [f"- **Panel spread:** {note}"] if note else []
+
+
 def _record_reproduce_lines(d: Dossier) -> list[str]:
     """RECORD & REPRODUCE — everything needed to date, audit, or regenerate this document. Absorbs
     the old header meta (assembly stamp, model), the assembly-log caveat line, and the identifiers.
@@ -3021,7 +3029,7 @@ def _record_reproduce_lines(d: Dossier) -> list[str]:
         # breaches: the spread is context a reader needs in order to read a multiple at all. Nine
         # of eleven committed dossiers pair fundamentals 30+ days older than their price with
         # nothing on the page saying so.
-        *( [f"- **Panel spread:** {_panel_spread_note(d)}"] if _panel_spread_note(d) else [] ),
+        *_spread_line(d),
         "- **Synthesis:** " + (
             f"model `{d.llm_model}` — facts assembled mechanically; the synthesis frames, "
             "the analyst decides"

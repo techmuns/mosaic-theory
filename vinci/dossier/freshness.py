@@ -99,9 +99,11 @@ class CapReconciliation:
 
     def note(self) -> str:
         if self.corporate_action:
+            fold = max(self.ratio, 1.0 / self.ratio) if self.ratio else self.ratio
             return (f"market cap implies ${self.implied_price:,.2f}/sh against a ${self.spot:,.2f} "
-                    f"close — a ratio of {self.ratio:.2f}x, which is a SHARE-BASIS mismatch (a "
-                    f"corporate action between the panels), not price drift")
+                    f"close — a ratio of {self.ratio:.4g}x ({fold:.2f}x either way), which is a "
+                    f"SHARE-BASIS mismatch (a corporate action between the panels), not price "
+                    f"drift")
         return (f"market cap implies ${self.implied_price:,.2f}/sh against a ${self.spot:,.2f} "
                 f"close ({self.gap:+.1%}) — the cap is an older panel's, and is labelled with its "
                 f"own as-of")
@@ -148,8 +150,14 @@ def reconcile_cap(*, cap_musd: float | None, shares: float | None,
     if implied <= 0:
         return None
     ratio = spot / implied
-    nearest = round(ratio)
-    corporate = nearest >= 2 and abs(ratio - nearest) / nearest <= _INTEGER_TOLERANCE
+    # A share-basis mismatch has NO PREFERRED DIRECTION: a PRE-split share count against a
+    # POST-split cap gives ~11x (FUBO), and the reverse assignment gives ~1/11. Testing only
+    # ratio >= 2 catches one and silently reports the other as ordinary drift — so fold the
+    # inverse in. Review finding on #253; nothing guarantees which side of the pair is the stale
+    # one, and the remediation is identical either way.
+    folded = max(ratio, 1.0 / ratio)
+    nearest = round(folded)
+    corporate = nearest >= 2 and abs(folded - nearest) / nearest <= _INTEGER_TOLERANCE
     return CapReconciliation(
         cap_musd=cap_musd, shares=shares, spot=spot, implied_price=implied,
         gap=(implied - spot) / spot, ratio=ratio, corporate_action=corporate)

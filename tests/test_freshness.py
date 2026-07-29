@@ -85,6 +85,33 @@ def test_the_ratio_separates_a_corporate_action_from_price_drift() -> None:
     assert ok is not None and not ok.corporate_action and abs(ok.gap) < 1e-9
 
 
+def test_a_share_basis_mismatch_is_caught_in_both_directions() -> None:
+    """REVIEW FINDING on #253. The first cut tested `ratio >= 2`, which catches a PRE-split share
+    count against a POST-split cap (FUBO, ~11x) and SILENTLY REPORTS THE REVERSE AS DRIFT.
+
+    Nothing guarantees which side of the pair is the stale one: if the CAP were the pre-split
+    figure and the shares post-split, the ratio is ~1/11 and the old test returned
+    corporate_action=False — so the build would pass, the cap would render merely 'labelled with
+    its own as-of', and a page whose every per-share figure is wrong by 11x would look like
+    ordinary June-vs-July drift. The remediation is identical in both directions, so the detection
+    must be too."""
+    forward = fr.reconcile_cap(cap_musd=256.4, shares=342_433_118, spot=8.33)
+    inverse = fr.reconcile_cap(cap_musd=2853.0, shares=342_433_118, spot=0.749)
+    assert forward is not None and inverse is not None
+    assert forward.corporate_action and inverse.corporate_action, (
+        f"forward={forward.ratio:.4g} inverse={inverse.ratio:.4g} — a share-basis mismatch was "
+        "missed in one direction")
+    assert forward.ratio > 2 and inverse.ratio < 0.5, "the fixture no longer spans both directions"
+    assert "either way" in inverse.note(), (
+        "the note prints a bare 0.09x with no explanation — a reader cannot tell that from a "
+        "90%-off drift, which is the distinction the ratio exists to draw")
+
+    # the fold must NOT drag ordinary drift over the line: 1.17x is EPAM's real June-vs-July gap
+    for r in (1.148, 1.169, 0.850, 0.918):
+        drift = fr.reconcile_cap(cap_musd=100.0, shares=1e7, spot=10.0 * r)
+        assert drift is not None and not drift.corporate_action, f"{r} misread as a split"
+
+
 def test_absent_inputs_reconcile_to_nothing_rather_than_to_a_guess() -> None:
     """A missing cap/shares/spot is its own fail-loud elsewhere. Inventing one here to keep the
     check running would be the fabrication the repo refuses."""
