@@ -303,6 +303,35 @@ waiting for its trigger" was already written down — and the trigger was the fi
 > **A fix that makes a latent ordering assumption load-bearing inherits that assumption's defect.**
 > Check what your change promotes from cosmetic to critical.
 
+### Generalised from ordering to FORMAT — the fifth instance, 2026-07-29
+
+Five now, and the fifth is not about order at all:
+
+| # | the unasserted convention | what it produced |
+|---|---|---|
+| 1 | `[-1]` is the latest cell | a months-old close labelled "latest" |
+| 2 | capital-structure rows ascend | a maturity read off the wrong row |
+| 3 | EDGAR returns newest-first | a positional guide selection |
+| 4 | `"Customers"` sorts before `"Suppliers"` | creditors nearly rendered as customer concentration |
+| 5 | **a guidance value is in `$M`** | **adjusted EPS of $1.19–$1.25 rendered `$1.2–$1.2M`** |
+
+So the rule is not about ordering:
+
+> **Any assumption about a value that is not derived from the value's own metadata is an
+> unasserted convention. Assert it or derive it.**
+
+Instance 5 is the sharpest because the metadata *exists and is wrong*: `GuidanceItem.unit` is a
+two-value vocabulary (`"$M"` | `"%"`) over a three-value reality — the model's own docstring says
+"*$M; $/sh for EPS; % for margin*", encoding the third unit in the METRIC NAME where no formatter
+reads it. One hardcoded format string then serves the whole heterogeneous vocabulary.
+
+Two failure modes fall out of one root, and fixing either alone leaves a wrong number on the page:
+* **unit** — `$1.19` printed as `$1.19M`, wrong by 10⁶;
+* **precision** — `.1f` collapses `1.19–1.25` to `$1.2–$1.2`, a **zero-width range**.
+
+And the reason it outranks its two live instances: **every new metric inherits the wrong default.**
+A vocabulary that cannot express a unit will keep producing values that claim the wrong one.
+
 ## For anything a reader sees rendered, the renderer is the authority
 
 *(operator, 2026-07-29, after three heuristics over-flagged in a week)*
