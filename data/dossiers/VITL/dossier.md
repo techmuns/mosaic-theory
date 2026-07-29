@@ -447,7 +447,7 @@ _QoQ/YoY same-basis only; (R) = Reclassified_
 ## Record & reproduce
 - **Data window:** screened as of 2026-07-06 · assembled 2026-07-27 10:07 UTC
 - **Extraction:** unstamped — assembled before extraction versions were declared; vintage unknown
-- **Panel spread:** panel spread 25d — oldest 2026-06-29 (valuation.implied_expectations.tev_as_of), newest 2026-07-24 (stock_info.as_of)
+- **Panel age:** oldest panel 28d old — 2026-06-29 (valuation.implied_expectations.tev_as_of), against a 2026-07-27 build
 - **Synthesis:** model `claude-opus-4-8` — facts assembled mechanically; the synthesis frames, the analyst decides
 - **Identifiers:** CIK `0001579733` · Nasdaq : VITL
 - **Assembly log:** primary-source: 6 EX-99.1 release(s) + 1 10-Q parsed (+4.3s fetch)

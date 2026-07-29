@@ -529,7 +529,7 @@ _Source §: 8-K 0001902733-24-000171 · exhibit101creditagreementb.htm · amende
 ## Record & reproduce
 - **Data window:** screened as of 2026-07-06 · assembled 2026-07-27 09:41 UTC
 - **Extraction:** unstamped — assembled before extraction versions were declared; vintage unknown
-- **Panel spread:** panel spread 9d — oldest 2026-07-12 (valuation.implied_expectations.multiples_as_of), newest 2026-07-21 (stock_info.as_of)
+- **Panel age:** oldest panel 15d old — 2026-07-12 (valuation.implied_expectations.multiples_as_of), against a 2026-07-27 build
 - **Synthesis:** model `claude-opus-4-8` — facts assembled mechanically; the synthesis frames, the analyst decides
 - **Identifiers:** CIK `0001902733` · Nasdaq : NCNO
 - **Assembly log:** primary-source: 6 EX-99.1 release(s) + 1 10-Q parsed (+3.7s fetch)

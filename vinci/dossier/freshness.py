@@ -12,11 +12,17 @@ propagates into the cross-sectional leg of any thesis built on the page.
 SMPL — the audited name, the one that motivated all of this — has the SMALLEST gap. A fix built to
 close SMPL would have closed the least of eleven instances.
 
-TWO GUARDS, BECAUSE NEITHER PREDICTS THE OTHER. BRBR has the worst panel spread (71d) and a middling
-gap; MVST has a shorter spread (54d) and a worse gap (+17.6%). The gap is spread × volatility, so:
+TWO GUARDS, BECAUSE NEITHER PREDICTS THE OTHER. BRBR has the oldest panels (74d) and a middling
+gap; MVST's panels are younger (56d) with a worse gap (+17.6%).
 
-  * the SPREAD CEILING measures STALENESS — how old the oldest panel is;
+  * the AGE CEILING measures STALENESS — how old the oldest panel is, against the BUILD's date;
   * the RECONCILIATION measures INCOHERENCE — whether the numbers on the page agree with each other.
+
+RE-MEASURED 2026-07-29. The age ceiling was originally an oldest→NEWEST spread, and
+``stock_info.as_of`` is the newest panel on 11 of 11 dossiers — so the PRICE set one end and
+refreshing prices widened the gap. Fresher market data degraded a build, which is backwards and
+creates an incentive to skip refreshes. The two concerns had been merged into one number; they are
+separated now, and the reconciliation already owned the price-coherence half.
 
 WHY THE RECONCILIATION IS NOT FATAL BY DEFAULT. At any tolerance it fails 11 of 11, which is a
 freeze, not a guard. But a June cap is not WRONG — it is UNLABELLED, which is item 1 clause (e):
@@ -39,13 +45,19 @@ import datetime as dt
 import re
 from dataclasses import dataclass
 
-#: Days between a build's oldest and newest PANEL as-of before it fails. Set from the measured
-#: distribution (3–71d, median 36d), not guessed: at 60d only BRBR fails; at 45d, CNXC, MVST and
-#: BRBR do — and CNXC is the name cleared under 16c this week on comps 49 days old, whose peer
-#: multiples drive the cross-sectional leg. Clearing a name on data we would fail at 45 is the
-#: reason for the tighter number (operator 2026-07-29). The remedy is a manual re-export, which is
-#: ordinary workflow rather than a code blocker.
-MAX_PANEL_SPREAD_DAYS = 45
+#: Days a build's OLDEST panel may be, measured against the build's own date, before it fails.
+#: Re-measured 2026-07-29 (see PanelAge): the old oldest→newest form was price-driven, so a price
+#: refresh could fail a build on unchanged CIQ panels.
+#:
+#: Set from the measured distribution, not guessed — RE-MEASURED with the ceiling, because the
+#: figures below described the OLD gap and a constant justified by stale numbers is the
+#: assertion-integrity defect wearing a comment: **8–74d, median 39d** across the 11 committed
+#: dossiers. At 60d only BRBR fails; at 45d **BRBR, CNXC, MVST and VRRM** do — and CNXC is the
+#: name cleared under 16c on comps that are 53 days old, whose peer multiples drive the
+#: cross-sectional leg. Clearing a name on data we would fail at 45 is the reason for the tighter
+#: number (operator 2026-07-29). The remedy is a manual re-export, ordinary workflow rather than a
+#: code blocker. FUBO sits on exactly 45 and PASSES this ceiling; it fails the reconciliation.
+MAX_PANEL_AGE_DAYS = 45
 
 #: Beyond this the cap and the spot do not describe the same equity, and the cap must RENDER its own
 #: vintage rather than sit unlabelled beside a live price.
@@ -56,7 +68,7 @@ _INTEGER_TOLERANCE = 0.03
 
 #: A PANEL date is an ARRIVAL — when an export was taken. A date that TRAVELS WITH A VALUE (an
 #: own-history band's observation date, a per-point series date) is a different object, and mixing
-#: them inverts the ranking: SMPL reads 115 days stale on the mixed measure and 3 days — the
+#: them inverts the ranking: SMPL reads 115 days stale on the mixed measure and 8 days — the
 #: TIGHTEST in the fleet — on panel dates alone. Excluded by name for that reason.
 _NOT_A_PANEL = re.compile(
     r"own_history|stock_performance|gap_date|filing_date|maturity|expected_date|dated|points")
@@ -69,20 +81,37 @@ class FreshnessError(RuntimeError):
 
 
 @dataclass(frozen=True)
-class PanelSpread:
-    """The oldest and newest PANEL as-of in a build, and the gap between them."""
+class PanelAge:
+    """How old the OLDEST panel in a build is, measured against the build's own date.
+
+    RE-MEASURED 2026-07-29, replacing an oldest→NEWEST spread. The old measure was PRICE-DRIVEN:
+    ``stock_info.as_of`` was the newest panel on 11 of 11 committed dossiers, so the price set one
+    end of the gap and **refreshing prices widened it**. Moving the frontier 07-24 → 07-28 pushed
+    every name +4 days (NCNO +7) and took VRRM's OLD-measure gap from 45d to 49d — assemblable
+    before the refresh, REFUSED after it, on unchanged CIQ panels. (Under THIS measure VRRM is
+    48d and still over the ceiling — but because time passed, not because someone refreshed.)
+
+    That is backwards, and it creates an incentive to skip refreshes, against everything else
+    built here. MVST is the sharpest demonstration: its OLD-measure gap read 54d only because
+    its price panel was stale at 07-08 — **not refreshing a name made its build look fresher**.
+
+    Two concerns had been merged into one number. They are separated now:
+      * *comps too old to be useful* → THIS measure, oldest panel vs the build date;
+      * *price and cap incoherent* → :func:`reconcile_cap`, which already covered it.
+
+    Same outcomes, honest cause, no perverse incentive: under this measure VRRM still fails, but
+    because time passed rather than because someone refreshed."""
 
     oldest: str
     oldest_key: str
-    newest: str
-    newest_key: str
+    as_of: str                       # the build's own date — what the age is measured against
     days: int
 
     def note(self) -> str:
-        """The reader-facing line. Rendered on EVERY dossier, passing or failing — the spread is
+        """The reader-facing line. Rendered on EVERY dossier, passing or failing — panel age is
         context a reader needs in order to read a multiple, not merely a failure condition."""
-        return (f"panel spread {self.days}d — oldest {self.oldest} ({self.oldest_key}), "
-                f"newest {self.newest} ({self.newest_key})")
+        return (f"oldest panel {self.days}d old — {self.oldest} ({self.oldest_key}), "
+                f"against a {self.as_of} build")
 
 
 @dataclass(frozen=True)
@@ -128,15 +157,31 @@ def panel_dates(mechanical: object, _path: str = "") -> list[tuple[str, str]]:
     return out
 
 
-def panel_spread(mechanical: object) -> PanelSpread | None:
-    """The build's oldest→newest panel gap, or None when fewer than two panels carry a date."""
+def panel_age(mechanical: object, as_of: dt.date | str) -> PanelAge | None:
+    """How old the build's OLDEST panel is against ``as_of``, or None when no panel carries a date.
+
+    ``as_of`` is the BUILD's date — the reference date at assembly, and the stored ``assembled_at``
+    when a committed artifact re-renders. That distinction matters: a committed dossier reports the
+    age it had WHEN IT WAS BUILT, so re-reading last week's artifact does not silently age it.
+
+    ONE dated panel is enough (the old spread needed two, since a gap needs two ends). A build
+    with a single dated panel still has an oldest one, and its age is what is being measured."""
     dates = panel_dates(mechanical)
-    if len(dates) < 2:
+    if not dates:
         return None
     dates.sort(key=lambda kv: kv[1])
-    (ok, ov), (nk, nv) = dates[0], dates[-1]
-    days = (dt.date.fromisoformat(nv) - dt.date.fromisoformat(ov)).days
-    return PanelSpread(oldest=ov, oldest_key=ok, newest=nv, newest_key=nk, days=days)
+    ok, ov = dates[0]
+    # `datetime` SUBCLASSES `date`, so an `isinstance(x, dt.date)` check accepts a datetime and
+    # then `datetime - date` raises. `assembled_at` is a datetime and `reference_date` is a date,
+    # and both reach this function — the datetime branch has to come FIRST.
+    if isinstance(as_of, dt.datetime):
+        ref = as_of.date()
+    elif isinstance(as_of, dt.date):
+        ref = as_of
+    else:
+        ref = dt.date.fromisoformat(str(as_of)[:10])
+    return PanelAge(oldest=ov, oldest_key=ok, as_of=ref.isoformat(),
+                    days=(ref - dt.date.fromisoformat(ov)).days)
 
 
 def reconcile_cap(*, cap_musd: float | None, shares: float | None,
@@ -188,7 +233,7 @@ def absent_cap_inputs(*, cap_musd: float | None, shares: float | None,
     return tuple(n for n, v in zip(_CAP_INPUTS, (cap_musd, shares, spot), strict=True) if not v)
 
 
-def check_freshness(spread: PanelSpread | None, recon: CapReconciliation | None,
+def check_freshness(age: PanelAge | None, recon: CapReconciliation | None,
                     *, ticker: str, absent: tuple[str, ...] = ()) -> None:
     """FAIL LOUD on the two conditions a page cannot honestly carry. Ordinary drift is NOT one of
     them — it is a rendering obligation (clause (e)), because failing on it would fail 11 of 11 and
@@ -200,9 +245,9 @@ def check_freshness(spread: PanelSpread | None, recon: CapReconciliation | None,
             "cannot run either, so passing here would be a guard reporting a clean pass it never "
             "made. (A fresh worktree with an unpopulated EOD store produces exactly this: run the "
             "price refresh for this name before assembling.)")
-    if spread is not None and spread.days > MAX_PANEL_SPREAD_DAYS:
+    if age is not None and age.days > MAX_PANEL_AGE_DAYS:
         raise FreshnessError(
-            f"{ticker}: {spread.note()} — beyond the {MAX_PANEL_SPREAD_DAYS}d ceiling. The oldest "
+            f"{ticker}: {age.note()} — beyond the {MAX_PANEL_AGE_DAYS}d ceiling. The oldest "
             "panel drives the peer multiples and the cross-sectional leg; re-export it before "
             "underwriting from this page.")
     if recon is not None and recon.corporate_action:

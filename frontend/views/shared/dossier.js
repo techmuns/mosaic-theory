@@ -757,13 +757,24 @@ function panelDates(node, path = "") {
   }
   return out;
 }
-function panelSpreadNote(m) {
+// How old this build's OLDEST panel was AT ASSEMBLY (item 1, re-measured 2026-07-29). Twin of
+// `panel_age` / `_panel_age_note` in vinci/dossier/{freshness,render}.py.
+//
+// The previous form measured oldest -> NEWEST, and `stock_info.as_of` is the newest panel on 11 of
+// 11 committed dossiers — so the PRICE set one end and the rendered number MOVED when someone
+// refreshed prices, on unchanged CIQ panels. Measured against `assembled_at` rather than today, so
+// a committed dossier reports the age it had when built instead of silently ageing on re-read.
+//
+// ONE dated panel is enough; the old spread needed two because a gap needs two ends.
+function panelAgeNote(m, assembledAt) {
   const ds = panelDates(m || {});
-  if (ds.length < 2) return null;
+  if (!ds.length || !assembledAt) return null;
   ds.sort((a, b) => (a[1] < b[1] ? -1 : 1));
-  const [ok, ov] = ds[0], [nk, nv] = ds[ds.length - 1];
-  const days = Math.round((Date.parse(nv + "T00:00:00Z") - Date.parse(ov + "T00:00:00Z")) / 86400000);
-  return `panel spread ${days}d — oldest ${ov} (${ok}), newest ${nv} (${nk})`;
+  const [ok, ov] = ds[0];
+  const ref = String(assembledAt).slice(0, 10);
+  const days = Math.round(
+    (Date.parse(ref + "T00:00:00Z") - Date.parse(ov + "T00:00:00Z")) / 86400000);
+  return `oldest panel ${days}d old — ${ov} (${ok}), against a ${ref} build`;
 }
 
 function recordAndReproduce(d, verdict, card = null) {
@@ -774,7 +785,7 @@ function recordAndReproduce(d, verdict, card = null) {
     <div class="subtitle muted ds-sub">Everything needed to date, audit, or regenerate this document.</div>
     ${row("Data window", `screened as of <span class="mono">${fmtDate(d.reference_date)}</span> · assembled <span class="mono">${fmtStamp(d.assembled_at)}</span>`)}
     ${row("Extraction", escapeHtml(stampDetail(d.extraction_version)))}
-    ${(() => { const n = panelSpreadNote(d.mechanical); return n ? row("Panel spread", escapeHtml(n)) : ""; })()}
+    ${(() => { const n = panelAgeNote(d.mechanical, d.assembled_at); return n ? row("Panel age", escapeHtml(n)) : ""; })()}
     ${row("Synthesis", d.synthesis
       ? `model <span class="mono">${escapeHtml(d.llm_model || "llm")}</span> — facts assembled mechanically; the synthesis frames, the analyst decides`
       : "not assembled — mechanical layer only")}

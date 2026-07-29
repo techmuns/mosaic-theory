@@ -3107,22 +3107,28 @@ def _how_to_read_lines() -> list[str]:
     ]
 
 
-def _panel_spread_note(d: Dossier) -> str | None:
-    """The build's oldest→newest PANEL as-of gap (item 1). None when fewer than two panels are
-    dated. Value-borne dates (an own-history band's observation date) are NOT panels — conflating
-    them inverted the fleet ranking twice, putting SMPL top of a staleness list it is bottom of."""
-    from vinci.dossier.freshness import panel_spread
+def _panel_age_note(d: Dossier) -> str | None:
+    """How old this build's OLDEST panel was AT ASSEMBLY (item 1, re-measured 2026-07-29). None
+    when no panel is dated. Value-borne dates (an own-history band's observation date) are NOT
+    panels — conflating them inverted the fleet ranking twice, putting SMPL top of a staleness list
+    it is bottom of.
 
-    sp = panel_spread(d.mechanical.model_dump(mode="json"))
-    return sp.note() if sp is not None else None
+    Measured against ``assembled_at``, deliberately, NOT against today: a committed dossier reports
+    the age it had when it was built, so re-reading last week's artifact does not silently age it.
+    The previous form measured oldest→NEWEST, and the newest panel was the PRICE on 11 of 11 — so
+    the rendered number moved when someone refreshed prices, on unchanged CIQ panels."""
+    from vinci.dossier.freshness import panel_age
+
+    pa = panel_age(d.mechanical.model_dump(mode="json"), d.assembled_at)
+    return pa.note() if pa is not None else None
 
 
-def _spread_line(d: Dossier) -> list[str]:
-    """The panel-spread line, or nothing. Computed ONCE — the note walks the whole mechanical
-    layer, and the first cut called it twice in one expression (a second full model_dump per
-    rendered dossier, for a value it already had)."""
-    note = _panel_spread_note(d)
-    return [f"- **Panel spread:** {note}"] if note else []
+def _panel_age_line(d: Dossier) -> list[str]:
+    """The panel-age line, or nothing. Computed ONCE — the note walks the whole mechanical layer,
+    and the first cut called it twice in one expression (a second full model_dump per rendered
+    dossier, for a value it already had)."""
+    note = _panel_age_note(d)
+    return [f"- **Panel age:** {note}"] if note else []
 
 
 def _record_reproduce_lines(d: Dossier) -> list[str]:
@@ -3143,7 +3149,7 @@ def _record_reproduce_lines(d: Dossier) -> list[str]:
         # breaches: the spread is context a reader needs in order to read a multiple at all. Nine
         # of eleven committed dossiers pair fundamentals 30+ days older than their price with
         # nothing on the page saying so.
-        *_spread_line(d),
+        *_panel_age_line(d),
         "- **Synthesis:** " + (
             f"model `{d.llm_model}` — facts assembled mechanically; the synthesis frames, "
             "the analyst decides"

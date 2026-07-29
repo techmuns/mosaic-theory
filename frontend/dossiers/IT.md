@@ -528,7 +528,7 @@ _Source §: 8-K 0001193125-20-256749 · d75343dex101.htm · amended by 000119312
 ## Record & reproduce
 - **Data window:** screened as of 2026-07-06 · assembled 2026-07-27 09:45 UTC
 - **Extraction:** unstamped — assembled before extraction versions were declared; vintage unknown
-- **Panel spread:** panel spread 30d — oldest 2026-06-24 (valuation.implied_expectations.multiples_as_of), newest 2026-07-24 (stock_info.as_of)
+- **Panel age:** oldest panel 33d old — 2026-06-24 (valuation.implied_expectations.multiples_as_of), against a 2026-07-27 build
 - **Synthesis:** model `claude-opus-4-8` — facts assembled mechanically; the synthesis frames, the analyst decides
 - **Identifiers:** CIK `0000749251` · NYSE : IT
 - **Assembly log:** primary-source: 8-K 0001193125-25-289854 carries 8.01 but no EX-99.1 exhibit was found; primary-source: 8-K 0000749251-25-000048 carries 8.01 but no EX-99.1 exhibit was found; primary-source: 5 EX-99.1 release(s) + 1 10-Q parsed (+3.3s fetch)

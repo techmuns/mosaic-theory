@@ -4097,6 +4097,47 @@ re-anchor (the full STATE split stays its own queued task — nothing was reloca
   **IT WOULD NOT FIX CNXC.** CNXC's defect is the PERIOD recorded in the structured item itself
   (mode 3), so no render change reaches it. That asymmetry is the decision: render-derivation buys
   VRRM immediately; CNXC is unreachable either way.
+- **CEILING RE-MEASURED 2026-07-29 — `panel_spread` → `panel_age`, and the rename is the point.**
+  The old measure was oldest→NEWEST, and `stock_info.as_of` is the newest panel on **11 of 11**
+  dossiers — so the PRICE set one end and **refreshing prices widened the gap**. Fresher market
+  data degraded a build, creating an incentive to skip refreshes. MVST is the demonstration: its
+  gap read 54d only because its price panel was stale at 07-08 — **not refreshing a name made its
+  build look fresher.** Now: oldest panel vs the BUILD's own date; the price cannot move it.
+  Two concerns were merged in one number and are separated — staleness here, price/cap coherence in
+  `reconcile_cap`, which already owned it. Renamed rather than re-pointed, because keeping "spread"
+  for an age is the mislabelling class this whole run has been closing.
+  **RENDER: measured against `assembled_at`, NOT today** — a committed dossier reports the age it
+  had when built, so re-reading last week's artifact does not silently age it. Both twins, verified
+  byte-identical on CNXC (`oldest panel 53d old — 2026-06-05 (…multiples_as_of), against a
+  2026-07-28 build`).
+  **OUTCOMES (measured, each against its own build date):** BRBR 74 · MVST 56 · CNXC 53 · **VRRM 48
+  — newly failing**, at exactly 45 under the old form. FUBO lands on exactly 45 and PASSES the age
+  ceiling, failing only on the 11.13x corporate action. No name moves fail→pass.
+  **A `datetime`/`date` TRAP CAUGHT IN BUILD:** `datetime` SUBCLASSES `date`, so an
+  `isinstance(x, dt.date)` check accepts a datetime and then `datetime - date` raises.
+  `assembled_at` is a datetime and `reference_date` is a date, and both reach the function.
+  **REVIEW FINDING — ELEVEN STALE NUMERIC CLAIMS IN THE FILE THAT IMPLEMENTS THE NEW MEASURE.**
+  Every figure in `freshness.py`'s module docstring, its `MAX_PANEL_AGE_DAYS` justification and its
+  `_NOT_A_PANEL` note described the OLD gap, and five more sat in the test docstrings — a constant
+  justified by numbers its own module no longer produces. **Item 19's class, in the file arguing
+  for item 19's class.** Corrected against a computed table, not by hand: BRBR 71→74 · MVST 54→56 ·
+  CNXC 49→53 · SMPL 3→8 · distribution 3–71/median 36 → **8–74/median 39** · "at 45d CNXC, MVST and
+  BRBR" → **+VRRM**. Historical figures that describe the OLD measure are kept and LABELLED
+  old-measure rather than silently updated — they are the evidence for the change.
+  **AND THE BOUNDARY TEST HAD STOPPED TESTING THE BOUNDARY.** It keyed on VRRM sitting at exactly
+  45d; the re-measure moved VRRM to 48 and put FUBO on 45, so the test would have passed while
+  asserting nothing about the boundary. Now driven off a CONSTRUCTED `PanelAge` — the boundary is a
+  property of the guard, not of whichever name happens to land on it. Mutation-confirmed by
+  flipping `>` to `>=`.
+  **THE FLEET ASSERTION NOW MOVES WITH THE WIN.** It was hardcoded to {BRBR, MVST, CNXC}; it now
+  asserts the gate refuses EXACTLY the names whose computed age is over the ceiling. The comps
+  re-exports will move names off that list, and a hardcoded set would have redded on a WIN and read
+  as a regression.
+- **STATE APPEND-POINT CONFLICTS — SECOND OCCURRENCE, noted against TOPOLOGY (operator
+  2026-07-29).** The topology work fixed the NUMBERING collision but not the append-point
+  conflicts raised alongside it; the operator-actions block has now conflicted twice across
+  parallel branches. **Do not build — infrastructure stays frozen.** A third occurrence means it
+  costs more than it saves.
 - **DEFERRED — item 1 clause (b)** (operator ruling 2026-07-29). The "VERIFIED IMPLEMENTABLE" note
   confirmed the `Day Close Price Latest` column EXISTS but never checked that anything READ it;
   nothing does. That makes it a new extractor **plus** a guard — the largest remaining item, and it
