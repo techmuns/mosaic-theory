@@ -112,6 +112,52 @@ def test_a_share_basis_mismatch_is_caught_in_both_directions() -> None:
         assert drift is not None and not drift.corporate_action, f"{r} misread as a split"
 
 
+def test_a_build_with_no_price_bars_fails_rather_than_passing_silently() -> None:
+    """THE DEFECT, and it happened: a SMPL re-assembly in a worktree whose EOD store had no SMPL
+    bars produced a dossier with **no spot, no 52-week range and no as-of** — and reported
+    "1 done · 0 error(s)", raised no caveat, and PASSED this very gate.
+
+    The gate catches *cap ÷ shares disagrees with spot*. It did not catch *there is no spot*,
+    because `reconcile_cap` returns None on an absent input and `check_freshness` read None as
+    nothing-to-report. Completeness and reconciliation are different checks and it conflated them
+    — the guard-that-cannot-fire class, inside a guard built to close that class.
+
+    The field layer was honest throughout (`status=unknown, note="no price bars"`). Nothing at
+    BUILD level noticed, which is what made it shippable."""
+    # exactly the shape the failed re-assembly produced
+    absent = fr.absent_cap_inputs(cap_musd=909.4, shares=88_460_545, spot=None)
+    assert absent == ("spot price",), absent
+    with pytest.raises(fr.FreshnessError, match="not underwritable"):
+        fr.check_freshness(None, None, ticker="SMPL", absent=absent)
+
+    # every combination of absence is named, not just the first
+    assert fr.absent_cap_inputs(cap_musd=None, shares=None, spot=None) == (
+        "market cap", "shares outstanding", "spot price")
+    assert fr.absent_cap_inputs(cap_musd=None, shares=1e7, spot=10.0) == ("market cap",)
+
+    # ...and a complete build still passes: the check must not fire on the fleet
+    assert fr.absent_cap_inputs(cap_musd=909.4, shares=88_460_545, spot=10.53) == ()
+    fr.check_freshness(None, None, ticker="SMPL", absent=())      # must not raise
+
+
+def test_every_committed_name_has_the_inputs_the_gate_requires() -> None:
+    """PER-NAME TABLE for the completeness half: requiring all three costs nothing on the fleet
+    today (11 of 11 carry price, shares and cap), so the gate fires ONLY on a genuinely incomplete
+    build — a fresh worktree, or a name whose price refresh has not run."""
+    incomplete = {}
+    for name, mech in _fleet().items():
+        absent = fr.absent_cap_inputs(cap_musd=_stock(mech, "market_cap"),
+                                      shares=_stock(mech, "shares_out"),
+                                      spot=_stock(mech, "price"))
+        if absent:
+            incomplete[name] = absent
+    assert not incomplete, (
+        f"committed dossiers missing gate inputs: {incomplete}. Either a name shipped without a "
+        "price — which the gate now refuses — or the fleet changed and the requirement needs "
+        "re-deciding rather than relaxing")
+    assert len(_fleet()) >= 10, "the corpus shrank; this table proves less than it says"
+
+
 def test_absent_inputs_reconcile_to_nothing_rather_than_to_a_guess() -> None:
     """A missing cap/shares/spot is its own fail-loud elsewhere. Inventing one here to keep the
     check running would be the fabrication the repo refuses."""
@@ -145,14 +191,30 @@ def test_the_guards_fail_the_four_names_they_should_and_no_others_e2e() -> None:
     assert spread_fail == {"BRBR", "MVST", "CNXC"}, spread_fail
     assert basis_fail == {"FUBO"}, basis_fail
     assert quiet == {"AORT", "EPAM", "IT", "NCNO", "SMPL", "VITL", "VRRM"}, quiet
-    # ...and every quiet name is quiet because it DRIFTS, never because its cap reconciles
+    # ...and each quiet name is quiet for a STATED reason — it either RECONCILES (the end state we
+    # want) or merely DRIFTS (labelled, per clause (e)). The first cut asserted every quiet name
+    # drifts, carrying the note "if a name now reconciles this is a WIN, but the assertion must
+    # move with it rather than silently weaken". SMPL's 2026-07-29 re-assembly made it so: it
+    # picked up the 2026-07-24 close, matching the 2026-07-24 comps vintage, and now implies
+    # $10.28 against a $10.22 spot — +0.6%. **$10.28 is exactly the figure the audit's own P4
+    # cross-check computed**, so C16 is resolved on the first name re-assembled since it was found.
+    reconciled, drifting = set(), set()
     for name in quiet:
         mech = _fleet()[name]
         r = fr.reconcile_cap(cap_musd=_stock(mech, "market_cap"),
                              shares=_stock(mech, "shares_out"), spot=_stock(mech, "price"))
-        assert r is not None and abs(r.gap) > fr.RECONCILE_TOLERANCE, (
-            f"{name} now reconciles within tolerance — if a panel was re-exported this is a WIN, "
-            "but the assertion must move with it rather than silently weaken")
+        assert r is not None, f"{name} passed the gate with an input absent — impossible now"
+        (reconciled if abs(r.gap) <= fr.RECONCILE_TOLERANCE else drifting).add(name)
+
+    assert reconciled | drifting == quiet, "a quiet name fell into neither bucket"
+    assert "SMPL" in reconciled, (
+        f"SMPL no longer reconciles (reconciled={sorted(reconciled)}) — it did after its "
+        "2026-07-29 re-assembly, and losing that is a regression in price selection, not a data "
+        "change to absorb")
+    assert drifting, (
+        "EVERY name now reconciles — genuinely the goal, but then clause (e)'s vintage labelling "
+        "has no live instance and this test stops proving the drift path works. Move the drift "
+        "assertions to a constructed fixture before deleting this one")
 
 
 def test_the_ceiling_is_a_boundary_not_a_range() -> None:

@@ -163,11 +163,43 @@ def reconcile_cap(*, cap_musd: float | None, shares: float | None,
         gap=(implied - spot) / spot, ratio=ratio, corporate_action=corporate)
 
 
+#: The inputs the reconciliation needs. A build missing ANY of them cannot be checked — and the
+#: page is unusable without the price regardless of any check.
+_CAP_INPUTS = ("market cap", "shares outstanding", "spot price")
+
+
+def absent_cap_inputs(*, cap_musd: float | None, shares: float | None,
+                      spot: float | None) -> tuple[str, ...]:
+    """Which reconciliation inputs are missing. Empty when the check can run.
+
+    COMPLETENESS AND RECONCILIATION ARE DIFFERENT CHECKS, and conflating them shipped a live
+    defect: `reconcile_cap` returns None when an input is absent, `check_freshness` treated None as
+    "nothing to complain about", and a SMPL assembly with **no price bars at all** — no spot, no
+    52-week range, no as-of — passed every gate and reported "1 done · 0 error(s)". The gate
+    catches *cap ÷ shares disagrees with spot*; it did not catch *there is no spot*.
+
+    The comment that justified it read "an absent input is its own fail-loud elsewhere". For a
+    missing price at assembly there IS no elsewhere: the fields carry an honest
+    `status=unknown, note="no price bars"` and nothing at BUILD level notices. That is the
+    guard-that-cannot-fire class, inside a guard built to close it.
+
+    The repo already answers this — the unusual-items guard raises when it cannot locate its block,
+    because *a guard that cannot find its rows must not report a clean pass*. Same rule here."""
+    return tuple(n for n, v in zip(_CAP_INPUTS, (cap_musd, shares, spot), strict=True) if not v)
+
+
 def check_freshness(spread: PanelSpread | None, recon: CapReconciliation | None,
-                    *, ticker: str) -> None:
+                    *, ticker: str, absent: tuple[str, ...] = ()) -> None:
     """FAIL LOUD on the two conditions a page cannot honestly carry. Ordinary drift is NOT one of
     them — it is a rendering obligation (clause (e)), because failing on it would fail 11 of 11 and
     a guard that stops every build is a freeze wearing a guard's name."""
+    if absent:
+        raise FreshnessError(
+            f"{ticker}: the build is missing {', '.join(absent)} — every ratio on the page rests "
+            "on the spot, and a dossier without one is not underwritable. The reconciliation "
+            "cannot run either, so passing here would be a guard reporting a clean pass it never "
+            "made. (A fresh worktree with an unpopulated EOD store produces exactly this: run the "
+            "price refresh for this name before assembling.)")
     if spread is not None and spread.days > MAX_PANEL_SPREAD_DAYS:
         raise FreshnessError(
             f"{ticker}: {spread.note()} — beyond the {MAX_PANEL_SPREAD_DAYS}d ceiling. The oldest "

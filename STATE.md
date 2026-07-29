@@ -4100,6 +4100,39 @@ newest and the selection has the dates it claims.
 `dated[0]` reds it. Test count moved 1163 → 1167; the operator caught that it had NOT moved on the
 first cut, which is the standing "every fix ships with a behavioural red" doing its job.
 
+**ITEM 1 GAINS A COMPLETENESS CHECK — 2026-07-29, and it closed a defect the gate itself had.**
+A SMPL re-assembly in a worktree whose EOD store held no SMPL bars produced a dossier with **no
+spot, no 52-week range and no as-of** — and reported "1 done · 0 error(s)", raised no caveat, and
+**PASSED the freshness gate**. The gate catches *cap ÷ shares disagrees with spot*; it did not
+catch *there is no spot*, because `reconcile_cap` returns None on an absent input and
+`check_freshness` read None as nothing-to-report. **Completeness and reconciliation are different
+checks and the gate conflated them** — the guard-that-cannot-fire class, inside a guard built to
+close that class. The comment that justified it ("an absent input is its own fail-loud elsewhere")
+was wrong: for a missing price at assembly there IS no elsewhere. The FIELD layer was honest
+throughout (`status=unknown, note="no price bars"`); nothing at BUILD level noticed, which is what
+made it shippable. Now `absent_cap_inputs()` names every missing input and the build REFUSES —
+following the unusual-items guard's precedent that a guard which cannot run must not report a pass.
+Per-name table: 11/11 carry all three inputs, so it fires only on a genuinely incomplete build.
+**THE DEGRADED ARTIFACT WAS REVERTED, NOT COMMITTED.**
+
+**SMPL RE-ASSEMBLED 2026-07-29 — 16b's hold RELEASED by the operator, and the acceptance test
+reshaped from a one-shot event into a repeated checklist. 3 OF 5.**
+· (i) the $391.9M writedown reaches the SYNTHESIS **and** the brief table, which now carries
+  **−61 and −392 SIDE BY SIDE** — the FY25 figure the bear cited beside the LTM figure it should
+  have. That is 19c's live test case, not a fixture.
+· (ii) the July guide (`net sales 2026: 1,345.0–1,355.0 $M`) carried via `current_guide`.
+· (iv) price 10.22 **as-of 2026-07-24** — the freshest close, where the audit found 10.53/07-22.
+· (iii) covenant basis and (v) the closed-BUY disposition still fail — items **18** and **22**
+  exactly, as predicted. Nothing unexpected failed.
+**AND C16 IS RESOLVED ON SMPL — the first name re-assembled since it was found.** cap ÷ shares now
+implies **$10.28 against a $10.22 spot, +0.6%**, inside the 2% tolerance. **$10.28 is precisely the
+figure the audit's own P4 cross-check computed.** The fleet test's assertion MOVED WITH THE WIN, as
+its own failure message had instructed: quiet names now partition into RECONCILED (SMPL) and
+DRIFTING (the rest, labelled per clause (e)), with a guard that reds if every name reconciles and
+the drift path loses its live instance.
+**RE-ASSEMBLY LEDGER (the operational track, NOT part of the thirteen):** CNXC 2026-07-28, SMPL
+2026-07-29 — **2 of 11 on the current extraction**; nine still carry pre-`2026-07-28.1` artifacts.
+
 **ITEM 1 — BUILT 2026-07-29. THE BLOCKED-BY WAS STALE, AND THE DEFECT WAS LIVE ON ALL ELEVEN.**
 The stamp said "do not merge until price freshness can meet panel arrival"; the same item also said
 the re-spec "no longer depends on ingestion cadence". Measured: a fresher instance of the close
