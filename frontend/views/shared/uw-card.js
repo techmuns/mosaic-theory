@@ -157,7 +157,13 @@ function headlineCell(c) {
   // to sit on its own line below the masthead — a citation that had lost its home when the
   // masthead replaced the old "Spot" fact row, restating a price the tile states one line above
   // and breaking the price/target pairing a tear-sheet header exists to make.
-  const sub = [STATE_NOTE[st], `vs spot ${escapeHtml(fmtPrice(c.spot))}${
+  // (item 1e) DATE THE FROZEN SPOT. `c.spot` is the price the call was underwritten AT, frozen in
+  // the record — not the live close the host page shows one section away. On SMPL the two are
+  // $10.53 and $10.22, and "vs spot $10.53" beside a live $10.22 gives a reader no way to tell
+  // which price is which. The vintage travels WITH the value; the twin in `_underwrite_lines`
+  // (vinci/dossier/render.py) says the same thing in words.
+  const vintage = c.underwriteDate ? ` @ ${escapeHtml(c.underwriteDate)}` : "";
+  const sub = [STATE_NOTE[st], `vs spot ${escapeHtml(fmtPrice(c.spot))}${vintage}${
     c.spotSource ? " " + citeMark(c.spotSource) : ""}`].filter(Boolean).join(" · ");
   return `<div class="uw-stat uw-stat-lead ${st}">
     <div class="uw-stat-lab uw-eyebrow">${escapeHtml(STATE_LABEL[st])}</div>

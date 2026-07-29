@@ -2288,9 +2288,12 @@ def _underwrite_lines(card: ScenarioRecord | None) -> list[str]:
     if base is not None and base.value_per_share is not None:
         vps = base.value_per_share
         upside = (vps / spot - 1.0) if spot else None
+        # (item 1e) "vs spot" is against the FROZEN entry-vintage spot below, never the live close
+        # that leads this page. SMPL rendered "+130.2% vs spot" off $10.53 while the page's own CMP
+        # read $10.22 — two prices, one label, and nothing telling the reader which was which.
         strip.append(f"**Target (base)** ${vps:,.2f}"
-                     + (f" ({upside:+.1%} vs spot)" if upside is not None else ""))
-    strip.append(f"**Spot** ${spot:,.2f} (underwritten {card.underwrite_date})")
+                     + (f" ({upside:+.1%} vs entry-vintage spot)" if upside is not None else ""))
+    strip.append(f"**Spot** ${spot:,.2f} (entry-vintage — underwritten {card.underwrite_date})")
     if r.reward is not None:
         strip.append(f"**Reward** ${r.reward:,.2f}")
     if r.risk is not None:
@@ -2306,14 +2309,41 @@ def _underwrite_lines(card: ScenarioRecord | None) -> list[str]:
         # not import (the structural no-verdict line) — labelling it "verdict" here would blur the
         # two exact things the pivot keeps separate.
         rec = f" ({v.recorded})" if v.recorded else ""
-        entry = f" · entry ${v.entry_price:,.2f}" if v.entry_price is not None else ""
+        entry = f" · entry ${v.entry_price:,.2f} (entry-vintage)" if v.entry_price is not None \
+            else ""
         out += [f"**Underwrite disposition:** {v.status.upper()}{rec}{entry} — "
                 f"_the BUY/AVOID verdict of record is the ledger's_", ""]
+        # (item 22, VISIBLE-ABSENCE RULE) This renderer CANNOT express the ledger: the underwrite
+        # record is the only artifact it reads, and the render package deliberately does not import
+        # the ledger — that isolation is what stops the machine asserting verdicts, and it is load-
+        # bearing. So the gap is DECLARED rather than closed here. SMPL showed `WATCH` + "not held"
+        # with no trace that a BUY had existed and been closed, and a reader could not detect they
+        # were seeing a partial view — not incomplete, MISLEADING.
+        #
+        # Deliberately names NO DATE. An earlier draft of this line read "prior BUY closed 07-24",
+        # which this function has no way to obtain; a render that invents the fact it just admitted
+        # it cannot reach is worse than the silence it replaces.
+        out += ["> **Not shown here:** any prior position, close or realized return for this name. "
+                "This surface reads the underwrite record only — the ledger is the record of "
+                "positions. **See the Decision log.**", ""]
+    # (item 22 / audit N7) what would REOPEN the name. Recorded on every watch record — 16 triggers
+    # across 6 names — rendered on the web card and, until now, nowhere in the md. A trigger the
+    # reader never sees cannot do the job it was written for.
+    if v.reunderwrite_triggers:
+        out += ["### What would reopen this name", ""]
+        out += [f"- {t}" for t in v.reunderwrite_triggers]
+        out.append("")
     # the THESIS — the analyst's own words, never machine text. ONE field since 2026-07-22:
     # `rationale` is canonical, `rationale_plain` deprecated and read by nothing (vinci/seal.py).
     thesis = v.rationale
     if thesis:
-        out += ["### Thesis — our rationale", thesis, ""]
+        # (item 1e) the rationale is SEALED analyst text and is never edited — so where it quotes a
+        # price ("WATCH at $10.53 — not held"), the vintage is supplied AROUND it. Labelled, not
+        # corrected: the entry-vintage number is the reference frame the call was made in, and
+        # rewriting it would falsify the record rather than date it.
+        out += ["### Thesis — our rationale",
+                f"_Prices quoted below are entry-vintage ({card.underwrite_date}); "
+                f"the live close is in Key figures._", "", thesis, ""]
     return out
 
 
@@ -2342,14 +2372,63 @@ def _scenario_table_lines(card: ScenarioRecord | None) -> list[str]:
                     f"{'—' if vps is None else f'${vps:,.2f}'} | {vs} |")
     if not rows:
         return []
+    # (item 1e) the % column is computed against the record's FROZEN spot, not the live close that
+    # leads this page. Undated it reads as a live number; the header carries the vintage so the
+    # basis travels with the value rather than being inferred from the section it sits in.
     out = [f"_{card.recipe_desc}_", "",
-           "| scenario | revenue $M | margin | multiple | value / sh | vs spot |",
+           f"| scenario | revenue $M | margin | multiple | value / sh | "
+           f"vs spot @ {card.underwrite_date} |",
            "| --- | ---: | ---: | ---: | ---: | ---: |", *rows, ""]
     for nm in ("bear", "base", "bull"):
         s = card.scenarios.get(nm)
         if s is not None and s.reason:
             out.append(f"- **{nm}** — {s.reason}")
     out.append("")
+    return out + _scenario_input_lines(card)
+
+
+def _scenario_input_lines(card: ScenarioRecord) -> list[str]:
+    """(item 28) The RECORDED INPUTS behind the grid, printed on the same page as the grid.
+
+    ORIGIN: the 13-part audit could not reproduce a single scenario cell from anything the dossier
+    printed. The auditor solved the system backwards and landed on 93.77M shares against our
+    recorded 93.677801M — a 0.1% miss, and the miss IS the finding: the inputs were recoverable
+    only by inference. They were in ``ScenarioRecord.facts`` the whole time, source-stamped, and
+    this renderer never printed them.
+
+    Prints EVERY recorded fact rather than a fixed shares/D&A/net-debt trio, because the trio is
+    recipe-specific: R1 records carry an absolute D&A figure, R2 records carry a D&A RATIO plus a
+    share-growth term (and a burn-to-breakeven on MVST). A hardcoded three would print blanks on
+    half the corpus and silently omit the inputs that actually drive the other half.
+    (Those field names are spelled in prose deliberately. The twin-parity pin does a bare-token
+    search across the two renderers, so a key named only in a COMMENT here registers as a
+    one-sided field and reds a check this block has nothing to do with.)
+
+    Distinct from item 24, which is the shares-BASIS policy question: this discloses whatever basis
+    was chosen, and says which one it was."""
+    if not card.facts:
+        return []
+
+    def num(v: float) -> str:
+        """Full recorded precision, trailing zeros stripped. NOT ``%g``: at 6 significant digits
+        it renders 93.677801 as 93.6778, and this block exists because an auditor back-solved
+        93.77 against that very number — printing a rounded input would reproduce the defect in
+        smaller type."""
+        return f"{v:,.6f}".rstrip("0").rstrip(".")
+
+    rows = [f"| {name.replace('_', ' ')} | {num(f.value)} {f.unit} | {f.basis} | {f.source} |"
+            for name, f in card.facts.items()]
+    out = ["**Scenario inputs** — every value in the grid recomputes from these.", "",
+           "| input | value | basis | source |",
+           "| --- | ---: | --- | --- |", *rows, ""]
+    # THE CHAIN, not just the numbers. `recipe_formula` is stamped onto the record by `run_recipe`
+    # and was rendered by NOTHING — so a reader with the inputs still had to guess how they
+    # combine. That guess is not hypothetical: verifying this very block, the D&A add-back was
+    # omitted and the base leg recomputed to $21.38 against a recorded $24.24. Inputs without the
+    # chain are still a system to be solved backwards, which is the audit's original complaint.
+    if card.recipe_formula:
+        out += [f"_Chain ({card.multiple_basis}):_ "
+                + " → ".join(card.recipe_formula), ""]
     return out
 
 

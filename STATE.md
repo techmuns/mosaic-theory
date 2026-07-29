@@ -4224,7 +4224,22 @@ screen cohort.**
    where it does the damage. Entry-vintage values that are MEANT to be frozen (an underwrite
    record's reference frame) are exempt but must be LABELLED entry-vintage wherever they render
    beside fresh values.
-   **(e) THE FROZEN-VALUE LABEL — absorbed from item 23 when it closed as not-a-defect, and
+   **(e) THE FROZEN-VALUE LABEL — BUILT 2026-07-29 (Batch A) on BOTH twins.** The md's stat strip
+   and scenario-table `vs spot` were computed off the record's FROZEN spot and rendered undated;
+   the web's `vs spot $10.53` likewise. On SMPL that sat beside a live `CMP $10.22 (2026-07-24)` —
+   two prices, one label, and no way for a reader to tell which was which. Now: `vs entry-vintage
+   spot`, `Spot $10.53 (entry-vintage — underwritten 2026-07-27)`, `vs spot @ 2026-07-27` on the
+   table header, and `vs spot $10.53 @ 2026-07-27` on the web (twin parity binds on CONSUMERS).
+   **THE SEALED RATIONALE IS LABELLED, NEVER EDITED.** It quotes entry-vintage prices inside
+   analyst text (`WATCH at $10.53 — not held`); the vintage is supplied AROUND it by the renderer.
+   Rewriting the number would falsify the record instead of dating it — pinned both ways (the note
+   is present AND the sealed text is byte-identical).
+   **NOT CLOSED BY THIS:** the stale `'LTM revenue' = 1,416.208` RefPoint on SMPL (frozen at
+   underwrite, never refreshed after the 2026-07-09 print, against `facts.ltm_revenue`
+   1,392.235 — operator ruling 2026-07-29). It is a RECORD-DATA instance of clause (e), not a
+   render one: it needs the reference labelled entry-vintage in the record itself.
+   ORIGINAL SPEC BELOW.
+   **(e-spec) THE FROZEN-VALUE LABEL — absorbed from item 23 when it closed as not-a-defect, and
    WRITTEN HERE EXPLICITLY rather than inferred as covered (operator 2026-07-28):**
    > **A frozen entry-vintage value must render marked as frozen, with its vintage date, wherever
    > it appears beside a live value.**
@@ -4514,9 +4529,28 @@ screen cohort.**
     error INTO the dossier and a spurious UNKNOWN. Add Suppliers.xls to the workbook-keyword
     consumers (never opened; carries the creditor group). The downstream customer-concentration
     conclusion happened to be right for a different reason — right conclusion, wrong route.
-22. **VISIBLE-ABSENCE RULE (generalised by the operator 2026-07-28 from audit N7 + the
-    WATCH/CLOSE gap): a render that cannot express a field MUST SAY SO. Silent omission is
-    prohibited; absence must be visible and attributed.** The md does not merely under-tell the
+22. **VISIBLE-ABSENCE RULE — N7 HALF AND THE DECLARATION BUILT 2026-07-29 (Batch A); THE
+    CLOSE-AWARE CHIP REMAINS OPEN BY RULING.**
+    **N7 half (SHIPPED).** `reunderwrite_triggers` — 16 across 6 names (AORT 3, IT 2, MVST 3,
+    NCNO 3, SMPL 3, WERN 2) — rendered on the web card at `uw-card.js` and **nowhere in the md**.
+    A trigger the reader never sees cannot do the job it was written for. Now a
+    `### What would reopen this name` section. Twin lag, not a missing field — same shape as 28.
+    **THE INTERIM WORDING WAS UNIMPLEMENTABLE, AND THE OPERATOR RULED RATHER THAN FORCING IT
+    (2026-07-29).** The spec'd string `disposition: WATCH — prior BUY closed 07-24` names a close
+    DATE that `_underwrite_lines` cannot obtain: it takes the `ScenarioRecord` only, and the render
+    package **deliberately does not import the ledger** — that isolation is what stops the machine
+    asserting verdicts, and it is load-bearing. **RULING: do not breach the isolation; take the
+    cannot-express note.** The md now declares the gap and points at the Decision log, and names no
+    date. Negative pin: the note must contain **no date and no claim of a close** — a render that
+    invents the fact it has just admitted it cannot reach is worse than the silence it replaces.
+    **A STRUCTURAL PIN SHIPPED WITH IT:** a test asserts `render.py` still does not import the
+    ledger, so a later "small" fix that threads it in has to argue with a test instead of sliding
+    past review.
+    **STILL OPEN:** the close-aware chip itself (the md cannot show the closed BUY beside SMPL's
+    WATCH). It needs a decision on whether the ledger reaches the renderer at all, or whether the
+    Decision log stays the only surface that can express it. The declaration makes the gap honest
+    in the meantime; it does not close it.
+    ORIGINAL SPEC BELOW. The md does not merely under-tell the
     WATCH — it shows WATCH + "not held" with no trace a BUY existed, and a reader CANNOT DETECT
     they are seeing a partial view: the same distinction as the false UNKNOWN — not incomplete,
     MISLEADING. One rule closes N7 (the record's three `reunderwrite_triggers` render nowhere),
@@ -4573,8 +4607,28 @@ scheduled; 24 needs an operator policy line before any build encodes it.
     the income statement, which item 17 cannot: balance-sheet and cash-flow lines get the same
     test, closing the capex 6 → 20 → 28 gap item 17's rename records. Price the build; if it holds
     up, item 17 becomes a special case of it rather than a parallel mechanism.
-28. **SCENARIO-INPUT DISCLOSURE — P7 part 1, THE ORPHAN found by the 13-part audit (queued
-    2026-07-28).** Print **shares, D&A and net debt inside the scenario block**, so every scenario
+28. **~~SCENARIO-INPUT DISCLOSURE~~ — BUILT 2026-07-29 (Batch A). AND IT WAS A TWIN LAG, NOT A
+    MISSING DISCLOSURE.** The mechanism pass expected a new disclosure; reading the code found the
+    inputs ALREADY in `ScenarioRecord.facts`, source-stamped, and already rendered by the WEB card
+    (`uw-card.js` — a `<details class="uw-inputs">` block, plus `recipeLine()` for the chain since
+    schema 1.1). `render.py` printed NEITHER. The md twin lagged the web on two blocks that had
+    existed there for versions — the same shape as item 22's N7 half, found in the same pass.
+    **PRINTS EVERY RECORDED FACT, not a fixed shares/D&A/net-debt trio**, because the trio is
+    recipe-specific: R1 records carry an absolute D&A figure, R2 records carry a D&A ratio + a
+    share-growth term (+ burn-to-breakeven on MVST). A hardcoded three would print blanks on half
+    the corpus and omit the inputs that actually drive the other half.
+    **THE CHAIN SHIPPED BECAUSE THE RED FAILED — the most useful thing in this build.** The first
+    cut printed the inputs and not `recipe_formula`, and the recompute test FAILED at $21.38
+    against a recorded $24.24: the D&A add-back was invisible, and I made the auditor's own mistake
+    while verifying the fix for it. **Inputs without their chain are still a system to be solved
+    backwards**, which is precisely P7's complaint. Both now print; the recompute walks the
+    document's own stated chain over the document's own printed inputs and matches every leg on
+    every R1 name.
+    **PRECISION IS LOAD-BEARING HERE:** `%g` at 6 significant figures renders 93.677801 as
+    93.6778, and this item exists because an auditor back-solved 93.77 against that number —
+    printing a rounded input would reproduce the defect in smaller type. Pinned.
+    **ORIGINAL SPEC, kept for the record:**
+    Print **shares, D&A and net debt inside the scenario block**, so every scenario
     value recomputes from figures on the same page. ORIGIN: the auditor could not reproduce a single
     scenario cell from anything the dossier printed — they solved the system backwards and landed on
     93.77M shares against our recorded 93.678M, which is itself the proof (the inputs were

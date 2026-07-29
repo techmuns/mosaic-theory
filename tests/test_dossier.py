@@ -8175,7 +8175,10 @@ def test_md_brief_carries_the_underwrite_layer_and_suppresses_the_machine_read()
     assert f"{card.spot:,.2f}" in glance  # the economics strip carries the recorded spot
 
     scen = md.split("## Scenario analysis")[1].split("\n## ")[0]
-    assert "| scenario | revenue $M | margin | multiple | value / sh | vs spot |" in scen
+    # (item 1e) the % column is against the record's FROZEN spot, so the header carries the
+    # vintage. Asserted from the record rather than hardcoded — a re-underwrite must not rot it.
+    assert ("| scenario | revenue $M | margin | multiple | value / sh | "
+            f"vs spot @ {card.underwrite_date} |") in scen
     for nm in ("bear", "base", "bull"):
         s = card.scenarios.get(nm)
         if s is None:
@@ -8284,6 +8287,9 @@ def test_scenario_table_renders_a_revenue_basis_leg_without_a_margin() -> None:
     class _Card:
         result, spot, recipe_desc = _R(), 10.0, "R2 EV/Revenue"
         scenarios = {"base": _S()}
+        # required on the real model since it existed; the stub simply predated the renderer
+        # reading it (item 1e dates the "vs spot" column off this field).
+        underwrite_date, facts, recipe_formula, multiple_basis = "2026-07-01", {}, [], "EV/Revenue"
 
     lines = dr._scenario_table_lines(typing.cast(Any, _Card()))
     row = next(x for x in lines if x.startswith("| base |"))
