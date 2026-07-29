@@ -644,7 +644,7 @@ function analysisTier(d, m, card) {
     + valuation(m.valuation)                            // the ONLY home of the full multiples read
     + peerComps(m.peer_comps)                           // peer comps (per-peer grid inside)
     + trajectorySection(m.quality || {}, m)             // trajectory + the return-ratios table
-    + catalystPath(m.catalyst_path, m.consensus_context, m.drawdown_cause)  // the street
+    + catalystPath(m.catalyst_path, m.consensus_context, m.drawdown_cause, m.primary_source)  // the street
     + (m.catalyst_path ? "" : consensus(m.consensus_context))  // legacy fallback only for old JSON
     + leverageSurvival(m, d.reference_date)             // balance sheet & survival
     + flagsSection(analystCaveats);                     // what to verify before the verdict
@@ -3107,14 +3107,19 @@ function eventGroups(s) {
   return `<div class="fact"><div class="fact-label">${escapeHtml(label)} <span class="muted">(${events.length} events · ${keys.length} broker-days)</span></div><div>${lines}${moreGroups}${details}${cite}</div></div>`;
 }
 
-function catalystPath(cp, cc, dc = null) {
+function catalystPath(cp, cc, dc = null, ps = null) {
   if (!cp) return "";
   // Fix 5: the legacy consensus facts are gone (duplicated by the reads); fold in the one
   // non-duplicate — Surprise history.
   const surprise = cc ? seriesTable("Surprise history (annual beat/miss)", cc.surprise_history) : "";
   // (restructure) revised guidance is a GUIDANCE fact — it lives here beside the guidance bridge,
   // not on the what-broke card (which keeps read → idio → 8-K evidence).
-  const revised = dc ? fact("Revised guidance (8-K 99.1)", dc.revised_guidance) : "";
+  // (item 1 clause (c)) THE SPLIT — twin of render.py. Two questions that were one field:
+  // guidance AT THE DRAWDOWN (drawdown-vintage by construction) vs the guide that GOVERNS today.
+  // They diverge exactly when guidance is revised after the gap, which is SMPL.
+  const revised = dc ? fact("Guidance at the drawdown (8-K 99.1)", dc.revised_guidance) : "";
+  const curGuide = (ps || {}).current_guide;
+  const current = curGuide ? fact("Current guide (latest results filing)", curGuide) : "";
   // (content relocation 2026-07-24) positioning (insider activity, short interest) moved OUT of
   // this section into the appendix — it is estimates & guidance. Subtitle follows. Twin of
   // render.py's _catalyst_section / _positioning_lines.
@@ -3124,7 +3129,7 @@ function catalystPath(cp, cc, dc = null) {
     horizonTable(cp.horizon_read) +
     accelTable(cp.acceleration_read) +
     ladderTable(cp.cross_name_anchor) +
-    revised +
+    current + revised +
     guidanceBridge(cp) +
     fact("Consensus stats (target + ratings)", cp.consensus_stats) +
     eventGroups(cp.revision_events) +

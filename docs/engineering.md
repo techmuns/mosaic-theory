@@ -303,6 +303,29 @@ list-item continuation. That false negative reached main in #250 and rewrote a c
 sampling a document to render, include enough enclosing structure that it parses the way it does in
 situ — for a list item, start at the marker.
 
+## A Python diff is not a review surface for indentation-scoped changes
+
+*(operator, 2026-07-29, on a diff they said they would have approved)*
+
+An edit inside an indented block can silently move the lines AFTER it under a different gate. The
+diff shows the added lines and looks correct; what it does not show is that four unrelated
+statements changed which condition they hang from.
+
+The live instance: inserting a `current_guide` render into `_catalyst_section` dedented
+`_guidance_bridge_lines`, `consensus_stats`, `revision_events` and `surprise_history` out of their
+`if cp is not None:` block and under the new `if ps_cg is not None:`. **Four facts would have
+vanished from every dossier whose `current_guide` is None — which was all of them.** The diff read
+as four added lines.
+
+> **The running is where the safety is, not the reading.** For any change inside an indented block,
+> render the artifact and diff the OUTPUT, or run the suite — do not rely on reviewing the patch.
+
+The same edit produced the second instance of a related class: a JS helper referencing a variable
+its enclosing function does not take (`m` inside `catalystPath(cp, cc, dc)`, after `m` inside
+`briefSnapshot(d, m)` days earlier). **Check the signature before using a name inside a twin
+function** — the two renderers pass different things and the habit of reaching for `m` is wrong
+about half the time.
+
 ## A date that travels with a value is not a date that describes an arrival
 
 *(operator, 2026-07-29, after the two were conflated twice)*

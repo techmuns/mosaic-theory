@@ -515,7 +515,16 @@ def _catalyst_section(m: MechanicalLayer) -> list[str]:
         out += _ladder_lines(cp.cross_name_anchor)
         # (buy-side restructure, twins the web) revised guidance is a guidance fact — it lives
         # beside the guidance bridge, not on the what-broke section
-        out.append(_fact("Revised guidance (8-K 99.1)", m.drawdown_cause.revised_guidance))
+        # (item 1 clause (c)) THE SPLIT, rendered. Two different questions that used to be ONE
+        # field: "what did management say in the filing that caused the gap" (drawdown-vintage by
+        # construction) versus "what guide governs today". They coincide until guidance is revised
+        # after the drawdown — SMPL's bear argued April's from the first while the base used July's
+        # from the second, both unlabelled, on one page. Each now names its own filing.
+        out.append(_fact("Guidance at the drawdown (8-K 99.1)",
+                         m.drawdown_cause.revised_guidance))
+        ps_cg = getattr(getattr(m, "primary_source", None), "current_guide", None)
+        if ps_cg is not None:
+            out.append(_fact("Current guide (latest results filing)", ps_cg))
         out += _guidance_bridge_lines(cp)
         out.append(_fact("Consensus stats (target + ratings)", cp.consensus_stats))
         out += _grouped_events_lines(cp.revision_events)

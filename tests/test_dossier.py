@@ -3072,7 +3072,7 @@ def test_k6_99_1_unknown_reason_renders_once_on_real_mvst() -> None:
     unk = [ln for ln in md.splitlines()
            if ln.startswith("- **") and "_UNKNOWN_" in ln and "99.1" in ln]
     assert len(unk) == 1, f"99.1 unknown-reason occurrences must be 1, got {len(unk)}"
-    assert "Revised guidance" in unk[0] and "FWD-ADJ" in unk[0]  # all affected fields named
+    assert "Guidance at the drawdown" in unk[0] and "FWD-ADJ" in unk[0]  # all affected fields named
     # (declutter) the reason reads plain — no Python list-repr survives anywhere in the render
     # (the repr→plain transform itself is pinned on a frozen string in
     # test_display_transforms_read_plain; MVST's own note never carried one)
@@ -7920,13 +7920,13 @@ console.log(JSON.stringify({{ html: h }}));
     card = h.split(">What broke — and did it fall alone?<")[1].split('class="card')[0]
     assert card.index("Company-specific or market-wide?") < card.index('class="filing"'), (
         "the idio comparison must precede the 8-K evidence")
-    assert "Revised guidance" not in card
+    assert "Guidance at the drawdown" not in card
     assert "no supplier/customer cohort mapped" in card  # IT has no cohort — quiet footnote
     assert "Supplier/customer cohort</div>" not in card
 
     # 2 — the street card carries the guidance fact once
     street = h.split(">The street — estimates &amp; guidance<")[1].split('class="card')[0]
-    assert street.count("Revised guidance (8-K 99.1)") == 1
+    assert street.count("Guidance at the drawdown (8-K 99.1)") == 1
 
     # 3 — the Brief what-happened strip has the market cell. (content relocation 2026-07-24) the
     # heading gained "— and can it survive?": the strip carries survival triage (net debt/EBITDA,

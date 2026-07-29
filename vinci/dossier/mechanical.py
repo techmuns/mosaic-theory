@@ -2210,6 +2210,67 @@ def _release_revenue_guide(
     return (None, None, False)
 
 
+#: Display cap for a qualitative guide's verbatim in the MAIN BODY. The stored text is a 200-char
+#: raw extract; the whole of it is not a decision value.
+_GUIDE_VERBATIM_CAP = 110
+
+
+def _current_guide(releases: list[ReleaseExtract]) -> Sourced[str]:
+    """(item 1 clause (c)) The guide from the LATEST results filing that carries one.
+
+    THE SPLIT. `_revised_guidance` walks the DRAWDOWN 8-Ks and answers "what did management say in
+    the filing that caused the gap" — drawdown-vintage by construction, and correct as built. This
+    answers the other question its docstring also claimed: "the verdict-relevant number", i.e. the
+    guide that GOVERNS today. The two coincide until guidance is revised after the drawdown, and
+    then they diverge — SMPL's bear argued April's guide while the base used July's, both in one
+    document, neither labelled.
+
+    Selection is by the release's OWN `filed` date, never by list position and never by parsing the
+    accession out of `source_ref`. Absence is ATTRIBUTED, never silent."""
+    dated = [r for r in releases if r.guidance and r.filed is not None]
+    if not dated:
+        undated = [r for r in releases if r.guidance]
+        if undated:
+            return Sourced.unknown(
+                note=f"{len(undated)} release(s) carry a guide but none carries a filing date — "
+                     "cannot say which governs")
+        return Sourced.unknown(
+            note=f"no guide in any of the {len(releases)} parsed release(s)" if releases
+                 else "no EX-99.1 release parsed")
+    latest = max(dated, key=lambda r: r.filed or date.min)
+    filed = latest.filed
+    assert filed is not None                            # `dated` filtered on it
+    parts = []
+    for g in latest.guidance:
+        # REVIEW FIX (#254). The first cut printed "metric period: — $M" for BOTH a
+        # qualitative guide and a high-only range: it read `low`/`high` and ignored the
+        # `qualitative` flag and the `verbatim` text the model already carries. Live on 6 rows
+        # across 4 names (AORT, IT, MVST, VITL) — every one of them qualitative — so a
+        # reaffirmed-outlook statement rendered as an em-dash with a currency unit stuck to it:
+        # a missing NUMBER where the filer made a non-numeric statement, which is a different
+        # claim and the wrong one.
+        if g.qualitative or (g.low is None and g.high is None):
+            # the verbatim is a 200-char raw extract and carries page furniture ("Page 2 of 13 …")
+            # on real filings, so cap it for a MAIN-BODY slot. Truncation is MARKED, never silent,
+            # and the untruncated text stays in the release record.
+            said = " ".join((g.verbatim or "").split())
+            if len(said) > _GUIDE_VERBATIM_CAP:
+                said = said[:_GUIDE_VERBATIM_CAP].rstrip() + "… (full text in the release record)"
+            parts.append(f"{g.metric} {g.period}: {said}" if said
+                         else f"{g.metric} {g.period}: qualitative guide, no figure given")
+            continue
+        if g.low is not None and g.high is not None:
+            rng = f"{g.low:,.1f}–{g.high:,.1f}"
+        elif g.low is not None:
+            rng = f"≥ {g.low:,.1f}"          # a floor is not a point estimate; say which it is
+        else:
+            rng = f"≤ {g.high:,.1f}"         # was silently dropped — the bound is the whole guide
+        parts.append(f"{g.metric} {g.period}: {rng} {g.unit}".strip())
+    return Sourced.present(
+        "; ".join(parts),
+        source_ref=f"{latest.source_ref} (filed {filed.isoformat()})")
+
+
 def _primary_source(
     record: DataRecord, edgar: EdgarClient, http: CachedHttp,
     bundle: CiqBundle, reference_date: date, mech: MechanicalLayer,
@@ -2249,7 +2310,10 @@ def _primary_source(
                     for url in urls:
                         txt = normalize_text(html_to_text(http.get_text(url, ttl_seconds=_PS_TTL)))
                         src = f"8-K {f.accession} EX-99.1"
-                        releases.append(release_parse.parse_release(txt, source_ref=src))
+                        rel = release_parse.parse_release(txt, source_ref=src)
+                        # the filing's own date, so a consumer can pick the FRESHEST guide
+                        # without parsing the accession out of source_ref
+                        releases.append(rel.model_copy(update={"filed": f.filing_date}))
                         saw_release = True
                         driver_rows += release_parse.operating_drivers(txt, source_ref=src)  # A1
                 except Exception as exc:
@@ -2338,6 +2402,7 @@ def _primary_source(
             tri, source_ref="CIQ leverage bases + release LTM adj-EBITDA/margins"),
         guide_verification=Sourced.present(
             guide, source_ref="CIQ revenue guide vs release actual/outlook"),
+        current_guide=_current_guide(releases),
         qa_flags=qa)
     return ps, latency, op_drivers
 
