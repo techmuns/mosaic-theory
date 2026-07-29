@@ -762,6 +762,11 @@ class ReleaseExtract(BaseModel):
     source-bound to the exhibit. ``qa_flags`` carries fail-loud markers ('no anchored pattern
     matched') — a miss is UNKNOWN + a QA note, never an analyst caveat, never a guessed number."""
 
+    # (item 1 clause (c)) The filing's OWN date, structured. `source_ref` carries the
+    # accession as a DISPLAY STRING ("8-K 0001702744-26-000021 EX-99.1"); selecting the
+    # freshest guide by parsing that string would be the display-string parse this repo
+    # forbids. Default None so releases committed before this field round-trip.
+    filed: date | None = None
     source_ref: str  # accession + exhibit URL
     guidance: list[GuidanceItem] = Field(default_factory=list)
     reconciliation: list[ReconciliationValue] = Field(default_factory=list)
@@ -927,6 +932,16 @@ class PrimarySource(BaseModel):
     self_funding: Sourced[str]        # two-input read: latest-Q OCF sign AND LTM FCF (MIXED / fund)
     wall_coherence: Sourced[str]      # same-window filing-vs-panel coherence, tranche-matched
     basis_triangulation: Sourced[str]  # EBITDA/margin bases table — every leverage row labeled
+    # (item 1 clause (c)) THE VERDICT-RELEVANT CURRENT GUIDE — the split out of
+    # `drawdown_cause.revised_guidance`. That field follows the 99.1 on the DRAWDOWN 8-Ks, so it is
+    # drawdown-vintage BY CONSTRUCTION: what management said in the filing that caused the gap.
+    # Correct as built. But its docstring also claimed "the verdict-relevant number", and the two
+    # readings DIVERGE exactly when guidance is revised after the drawdown — which is SMPL: the
+    # bear argued the April guide from the drawdown block while the base used the July guide from
+    # `releases`, both unlabelled, in one document. One function was trying to be two things.
+    # This field is the second thing: the latest results filing's guide, independent of whether a
+    # price event occurred. UNKNOWN (attributed) when no release carries one.
+    current_guide: Sourced[str] | None = None
     guide_verification: Sourced[str]  # CIQ guide vs release guide (vendor-echo / cross-source)
     qa_flags: list[str] = Field(default_factory=list)
 
