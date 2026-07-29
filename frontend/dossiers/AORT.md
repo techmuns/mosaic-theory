@@ -616,7 +616,7 @@ _Source §: 8-K 0000784199-16-000175 · c199-20160125ex101fad737.htm_
 ## Record & reproduce
 - **Data window:** screened as of 2026-07-06 · assembled 2026-07-27 09:58 UTC
 - **Extraction:** unstamped — assembled before extraction versions were declared; vintage unknown
-- **Panel spread:** panel spread 31d — oldest 2026-06-23 (valuation.implied_expectations.multiples_as_of), newest 2026-07-24 (stock_info.as_of)
+- **Panel age:** oldest panel 34d old — 2026-06-23 (valuation.implied_expectations.multiples_as_of), against a 2026-07-27 build
 - **Synthesis:** model `claude-opus-4-8` — facts assembled mechanically; the synthesis frames, the analyst decides
 - **Identifiers:** CIK `0000784199` · NYSE : AORT
 - **Assembly log:** primary-source: 6 EX-99.1 release(s) + 1 10-Q parsed (+4.9s fetch)

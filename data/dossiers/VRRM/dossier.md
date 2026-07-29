@@ -474,7 +474,7 @@ _Source §: fenced Tier-2 extraction (verbatim, source-bound)_
 ## Record & reproduce
 - **Data window:** screened as of 2026-07-06 · assembled 2026-07-27 10:09 UTC
 - **Extraction:** unstamped — assembled before extraction versions were declared; vintage unknown
-- **Panel spread:** panel spread 45d — oldest 2026-06-09 (valuation.implied_expectations.multiples_as_of), newest 2026-07-24 (stock_info.as_of)
+- **Panel age:** oldest panel 48d old — 2026-06-09 (valuation.implied_expectations.multiples_as_of), against a 2026-07-27 build
 - **Synthesis:** model `claude-opus-4-8` — facts assembled mechanically; the synthesis frames, the analyst decides
 - **Identifiers:** CIK `0001682745` · Nasdaq : VRRM
 - **Assembly log:** primary-source: 8-K 0001193125-26-260606 carries 8.01 but no EX-99.1 exhibit was found; primary-source: 4 EX-99.1 release(s) + 1 10-Q parsed (+2.8s fetch)
