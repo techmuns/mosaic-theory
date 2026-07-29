@@ -293,14 +293,28 @@ _GUIDE_RANGE = re.compile(
     # Metric names as filers write them (net sales / total revenues — BellRing, Simply Good, nCino
     # all guide on these and were invisible), an optional footnote marker, and BOTH range
     # phrasings: "outlook of $X to $Y" and "expected to range between $X and $Y".
-    r"(total\s+revenues?|net\s+sales|revenues?|adjusted\s+ebitda|adjusted\s+eps|"
+    r"(?P<metric>total\s+revenues?|net\s+sales|revenues?|adjusted\s+ebitda|adjusted\s+eps|"
     r"adjusted\s+earnings\s+per\s+share|free\s+cash\s+flow|gross\s+margin)"
-    r"\s*[*†‡]?\s*(?:outlook\s+)?(?:of|expected\s+to\s+range\s+between|to\s+range\s+between|"
-    r"between)\s+"
+    # Artivion writes "revenues FOR THE FULL YEAR 2026 TO BE in the range of $486 to $504 million";
+    # the old pattern required the introducer to follow the metric immediately, so a real, numeric,
+    # in-sentence range was invisible and fell through to the qualitative marker.
+    #
+    # The interlude is SPELLED OUT rather than left as a wildcard gap, and that is not fussiness:
+    # a `[^.$•]{0,60}?` gap was tried first and the per-item table over all 51 caught it binding a
+    # metric to a number from a LATER clause — VITL's revenue guide took the adjusted-EBITDA range
+    # (900–920 became 105–115) and EPAM's took a prior year's (4.5–7.5 became 14.8–15.2). It also
+    # moved the match start, which shifted `_period_near`'s window and dropped the year off eight
+    # otherwise-correct items. A wildcard between a metric and its number is the same
+    # wrong-magnitude class this whole item exists to remove.
+    r"\s*[*†‡]?\s*(?:for\s+the\s+full\s+year(?:\s+20\d\d)?\s+)?(?:to\s+be\s+)?"
+    r"(?:outlook\s+of|expected\s+to\s+range\s+between|to\s+range\s+between|"
+    r"in\s+the\s+range\s+of|between|of)\s+"
     # range separator: "to" / "and" / a bare hyphen or en/em dash ("$2.325-$2.365 billion" —
     # BellRing). The dash form carries no spaces, so \s* around it, not \s+.
-    r"\$?\s*([\d,.]+)\s*(?:million|billion|%)?\s*(?:to|and|[-–—])\s*"
-    r"\$?\s*([\d,.]+)\s*(million|billion)?",
+    # `pct` is CAPTURED now: it used to be discarded inside a non-capturing group, so a percentage
+    # range was stored with the default "$M" unit.
+    r"\$?\s*(?P<low>[\d,.]+)\s*(?P<pct>%)?\s*(?:million|billion)?\s*(?:to|and|[-–—])\s*"
+    r"\$?\s*(?P<high>[\d,.]+)\s*(?P<unitword>million|billion|%)?",
     re.I,
 )
 # A GROWTH-RATE guide is a real number, not a qualitative outlook: EPAM guides
@@ -336,13 +350,90 @@ def _guide_metric(raw: str) -> str:
     return r.strip()
 
 
-def _guidance(text: str, src: str) -> list[GuidanceItem]:
+_METRIC_WORDS = re.compile(
+    r"total\s+revenues?|net\s+sales|revenues?|adjusted\s+ebitda|adjusted\s+eps|"
+    r"adjusted\s+earnings\s+per\s+share|free\s+cash\s+flow|gross\s+margin", re.I)
+# The prefix a guidance REFUSAL carries. Shared so the rollup in `vinci.dossier.mechanical`
+# selects on the same literal that is emitted here, rather than on a copy that can drift.
+GUIDANCE_REFUSAL_PREFIX = "Guidance stated but not attributable"
+_QUARTER = re.compile(r"\b(first|second|third|fourth)\s+quarter\b", re.I)
+_Q_NUM = {"first": 1, "second": 2, "third": 3, "fourth": 4}
+# A forward statement ABOUT THE BUSINESS. "updated its financial outlook" is a statement about the
+# ACT of guiding and says nothing forward — Gartner's boilerplate opener matched `_OUTLOOK` on
+# exactly that phrase and produced two fabricated revenue guides from a sentence that carries no
+# outlook at all. Microvast's real qualitative outlook says "we anticipate a recovery".
+_FORWARD_VERB = re.compile(
+    r"\b(?:expects?|expecting|anticipates?|anticipating|forecasts?|projects?|targets?|"
+    r"sees|continues?\s+to\s+(?:expect|see))\b", re.I)
+
+
+def _guide_unit(metric: str, pct_marker: str | None) -> str:
+    """The unit a guidance range is stated in — DERIVED, never assumed (2026-07-29).
+
+    Order matters: an explicit '%' in the text wins, because a percentage guide is a percentage
+    whatever the metric; then a per-share metric is ``$/sh``; otherwise ``$M``. There was no
+    branch for the middle case at all, which is why VRRM's $1.19–$1.25 EPS guide rendered in
+    millions. See ``GUIDANCE_UNITS``."""
+    if pct_marker:
+        return "%"
+    if metric == "adjusted eps":
+        return "$/sh"
+    if metric == "gross margin":
+        return "%"
+    return "$M"
+
+
+def _period_for(text: str, start: int, end: int, verbatim: str) -> str:
+    """The period a guide governs, read from the guide's OWN sentence first.
+
+    Two live defects came from reading it elsewhere. FUBO's bullet says "Fiscal 2026 Pro Forma
+    Adjusted EBITDA of $80-100 million" and was labelled **Fiscal 2028** — the forward scan crossed
+    into a later bullet. Concentrix guides a QUARTER ("Third quarter reported revenue of $2.465
+    billion to $2.490 billion") and was labelled **Fiscal 2026**, turning a quarterly range into a
+    full-year one on a business annualising ~$9.9bn.
+
+    So the enclosing bullet/sentence governs, and a quarter named there BEATS a bare year: a
+    quarterly range mislabelled annual is a ~4x error in a decision figure."""
+    q = _QUARTER.search(verbatim)
+    y = _PERIOD.search(verbatim)
+    if q is not None:
+        yr = re.search(r"20\d\d", y.group(1)) if y else None
+        return f"Q{_Q_NUM[q.group(1).lower()]}" + (f" {yr.group(0)}" if yr else "")
+    if y is not None:
+        return re.sub(r"\s+", " ", y.group(1)).strip()
+    return _period_near(text, start, end) or "next-fy"
+
+
+def _guidance(text: str, src: str, notes: list[str] | None = None) -> list[GuidanceItem]:
+    """Guidance items from a release. ``notes`` collects REFUSALS — sentences that plainly state a
+    guidance range which cannot be attributed safely.
+
+    A REFUSAL MUST NOT BE SILENT (item 22). "We found guidance and could not parse it" is a
+    different fact from "this release states no guidance", and a reader whose guidance picture is
+    incomplete needs to know which one they have. The existing ``no anchored pattern matched`` flag
+    already covers the second; before this, the first vanished entirely — leaving no trace that a
+    number had been seen and declined, which is the absent-and-silent shape the rule prohibits."""
     out: list[GuidanceItem] = []
     seen: set[str] = set()
+    notes = notes if notes is not None else []
     for m in _GUIDE_RANGE.finditer(text):
-        metric = _guide_metric(m.group(1))
-        low, high = _money(m.group(2)), _money(m.group(3))
+        metric = _guide_metric(m["metric"])
+        low, high = _money(m["low"]), _money(m["high"])
         if low is None or high is None or metric in seen:
+            continue
+        vb = _verbatim(text, m.start(), m.end())
+        # AMBIGUOUS SENTENCE ⇒ REFUSE, never guess. BellRing writes "Fiscal year 2026 net sales and
+        # Adjusted EBITDA* expected to range between $2.41-$2.49 billion": TWO metrics, ONE range.
+        # The regex binds it to whichever sits nearer the introducer, which produced an "adjusted
+        # EBITDA" guide of $2,410–2,490M against a business earning ~$490M — a ~5x error stated
+        # confidently. A reader cannot resolve that sentence either, so neither may we — but the
+        # refusal is ATTRIBUTED, with the sentence, so the reader can resolve it from the filing.
+        named = {_guide_metric(x.group(0)) for x in _METRIC_WORDS.finditer(vb)}
+        if len(named) > 1:
+            notes.append(
+                f"{GUIDANCE_REFUSAL_PREFIX} — one range is shared by "
+                f"{len(named)} metrics ({', '.join(sorted(named))}), so which it governs cannot be "
+                f"read from the sentence; verify against the filing: \"{vb[:150]}\" ({src})")
             continue
         # UNITS: normalise to $M. Concentrix guides revenue in BILLIONS ("$2.465 to $2.49 billion")
         # while every other name guides in millions, and the composer prints the bare number — so an
@@ -351,13 +442,14 @@ def _guidance(text: str, src: str) -> list[GuidanceItem]:
         # Scale ONLY on the stated unit word — the trailing unit governs the whole range
         # ("$2.465 to $2.49 billion"). Inferring billions from magnitude would be a guess, and a
         # guessed magnitude is exactly the fabrication this codebase refuses.
-        if (m.group(4) or "").lower().startswith("billion"):
+        unit = _guide_unit(metric, m["pct"] or (m["unitword"] if m["unitword"] == "%" else None))
+        if (m["unitword"] or "").lower().startswith("billion") and unit == "$M":
             low, high = low * 1000.0, high * 1000.0
         seen.add(metric)
         out.append(GuidanceItem(
-            metric=metric, period=_period_near(text, m.start(), m.end()) or "next-fy",
-            low=low, high=high, qualitative=False,
-            verbatim=_verbatim(text, m.start(), m.end()), source_ref=src,
+            metric=metric, period=_period_for(text, m.start(), m.end(), vb),
+            low=low, high=high, unit=unit, qualitative=False,
+            verbatim=vb, source_ref=src,
         ))
     for m in _GUIDE_PCT.finditer(text):
         metric = _guide_metric(m.group(1))
@@ -365,22 +457,32 @@ def _guidance(text: str, src: str) -> list[GuidanceItem]:
         if lo is None or hi is None or metric in seen:
             continue
         seen.add(metric)
+        vb = _verbatim(text, m.start(), m.end())
         out.append(GuidanceItem(
-            metric=metric, period=_period_near(text, m.start(), m.end()) or "next-fy",
+            metric=metric, period=_period_for(text, m.start(), m.end(), vb),
             low=lo, high=hi, unit="%", qualitative=False,
-            verbatim=_verbatim(text, m.start(), m.end()), source_ref=src,
+            verbatim=vb, source_ref=src,
         ))
     # QUALITATIVE-only: an outlook section that names revenue but carries NO number in its window.
     om = _OUTLOOK.search(text)
     if om and "revenue" not in seen:
         window = text[om.start():om.start() + 700]
+        # (Artivion's numeric range now matches `_GUIDE_RANGE` via the interlude above, so it
+        # never reaches this fallback; the fallback is left exactly as it was.)
         has_rev_number = re.search(r"revenue\D{0,40}\$\s*[\d,]", window, re.I)
-        if re.search(r"revenue", window, re.I) and not has_rev_number:
+        vb = _verbatim(text, om.start(), om.start() + 200)
+        # BOILERPLATE IS NOT AN OUTLOOK. Gartner's opener — "(NYSE: IT) today reported results for
+        # the first quarter of 2026 and updated its financial outlook for the full year 2026" —
+        # matches `_OUTLOOK` on the phrase "financial outlook" while stating no outlook whatever.
+        # It fabricated two revenue guides. Require a forward statement about the BUSINESS, and
+        # reject the results-announcement opener however many outlook words it carries.
+        forward = _FORWARD_VERB.search(window)
+        if re.search(r"revenue", window, re.I) and not has_rev_number and forward:
             ym = re.search(r"20\d\d", om.group(1))
             out.append(GuidanceItem(
                 metric="revenue", period=ym.group(0) if ym else "next-fy",
                 low=None, high=None, qualitative=True,
-                verbatim=_verbatim(text, om.start(), om.start() + 200), source_ref=src,
+                verbatim=vb, source_ref=src,
             ))
     return out
 
@@ -610,12 +712,15 @@ def operating_drivers(text: str, *, source_ref: str) -> list[OperatingDriver]:
 def parse_release(text: str, *, source_ref: str) -> ReleaseExtract:
     """Parse ONE 99.1 exhibit's normalized text into a source-bound ReleaseExtract. Each empty
     section fails loud with a qa_flag — a miss is UNKNOWN, never a fabricated value."""
-    guidance = _guidance(text, source_ref)
+    guidance_notes: list[str] = []
+    guidance = _guidance(text, source_ref, guidance_notes)
     reconciliation = _reconciliation(text, source_ref, _release_period(text))
     one_offs = _one_offs(text, source_ref)
     event_impacts = _event_impacts(text, source_ref)
-    flags: list[str] = []
-    if not guidance:
+    flags: list[str] = list(guidance_notes)
+    if not guidance and not guidance_notes:
+        # ONLY when nothing was found at all. A release whose guidance was FOUND and refused states
+        # guidance — saying "no anchored pattern matched" there would be the false-UNKNOWN shape.
         flags.append(f"no anchored pattern matched — guidance/outlook: {source_ref}")
     if not reconciliation:
         flags.append(f"no anchored pattern matched — non-GAAP reconciliation: {source_ref}")

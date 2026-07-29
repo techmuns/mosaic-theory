@@ -14,6 +14,7 @@ import re
 import statistics
 import time
 import xml.etree.ElementTree as ET
+from collections.abc import Sequence
 from datetime import date, timedelta
 from typing import Any, TypeVar
 
@@ -57,6 +58,7 @@ from vinci.dossier.schemas import (
 from vinci.edgar import filing_sections, primary_source, release_parse
 from vinci.edgar.client import EdgarClient
 from vinci.edgar.concepts import extract_points, latest_instant
+from vinci.edgar.release_parse import GUIDANCE_REFUSAL_PREFIX
 from vinci.eod import compute_price_features
 from vinci.finra import FinraLayoutError, short_interest_points
 from vinci.graph.exposure import ExposureGraph
@@ -422,6 +424,56 @@ def _fmt_driver(metric: str, value: float) -> str:
     return f"-${abs(value):,.1f}M" if value < 0 else f"${value:,.1f}M"
 
 
+def guidance_refusal_flags(releases: Sequence[ReleaseExtract]) -> list[str]:
+    """(item 22) Lift GUIDANCE REFUSALS off the releases so they reach the READER.
+
+    ``qa_flags`` is the machine tier by design (``render.py``: "dev/JSON only"), and a release's
+    own flags roll up nowhere — so a refused guidance sentence was invisible on every surface, the
+    absent-and-silent shape the visible-absence rule prohibits. ``flags.partition`` routes anything
+    off the QA hide-list to the human caveat channel, which is where "your guidance picture is
+    incomplete, and here is the sentence" belongs.
+
+    ONLY the refusals. The sibling ``no anchored pattern matched`` flags say a release stated no
+    guidance at all — ordinary across the fleet, and promoting those would drown the channel and
+    make the real refusals harder to see, not easier.
+
+    A named function rather than an inline comprehension so the routing has a behavioural pin:
+    inlined, the only available test was a source-text assertion."""
+    return [f for r in releases for f in r.qa_flags
+            if f.startswith(GUIDANCE_REFUSAL_PREFIX)]
+
+
+def _fmt_guide_range(low: float | None, high: float | None, unit: str) -> str:
+    """A guidance range, formatted from its OWN unit and at a precision that keeps the range a
+    range. TWO defects, one root, and fixing either alone still prints a wrong number.
+
+    UNIT. The old formatter had one branch for "%" and assumed "$M" for everything else, so VRRM's
+    adjusted-EPS guide of $1.19–$1.25 **per share** printed as "$1.2–$1.2M" — wrong by 1e6. The
+    unit was unexpressible upstream (``GuidanceItem.unit`` had no ``$/sh``), which is why the
+    default was never questioned: every new metric inherits it.
+
+    PRECISION. ``.1f`` collapsed 1.19–1.25 to "$1.2–$1.2" — a ZERO-WIDTH range, which reads as a
+    point estimate the company never gave. Decimals are widened until the two bounds are actually
+    distinguishable, so the printed range is the recorded one.
+    """
+    if low is None or high is None:
+        return "stated, no number given"
+
+    def pair(dp: int) -> tuple[str, str]:
+        return f"{low:,.{dp}f}", f"{high:,.{dp}f}"
+
+    base = {"$M": 1, "$/sh": 2, "%": 1}.get(unit, 1)
+    dp = base
+    while dp < 4 and low != high and pair(dp)[0] == pair(dp)[1]:
+        dp += 1
+    lo, hi = pair(dp)
+    if unit == "%":
+        return f"{lo}–{hi}% growth"
+    if unit == "$/sh":
+        return f"${lo}–${hi}/sh"
+    return f"${lo}–${hi}M"
+
+
 def _compose_gap_drivers(release: ReleaseExtract) -> Sourced[str] | None:
     """WHAT the results showed — the latest-period adjusted EBITDA / net income / EPS (with the
     prior-period contrast), one-off charges, and the forward outlook — from an already-parsed
@@ -459,14 +511,10 @@ def _compose_gap_drivers(release: ReleaseExtract) -> Sourced[str] | None:
                         o.description, maxsplit=1)[0].strip(" ,;")
         parts.append(f"${o.amount:,.1f}M {desc}")
     for g in release.guidance:
-        # UNITS on the range: values are normalised to $M upstream, but an unlabelled
-        # "2325.0–2365.0" invites the reader to supply their own scale.
         if g.qualitative:
             outlook = "stated, no number given"  # honest: the company spoke, without a figure
-        elif getattr(g, "unit", "$M") == "%":
-            outlook = f"{g.low:g}–{g.high:g}% growth"
         else:
-            outlook = f"${g.low:,.1f}–${g.high:,.1f}M"
+            outlook = _fmt_guide_range(g.low, g.high, getattr(g, "unit", "$M"))
         parts.append(f"{g.period} {g.metric} outlook: {outlook}")
     if not parts:
         return None
@@ -2575,6 +2623,7 @@ def assemble_mechanical(
     calendar = _catalyst_calendar(edgar, record.identity.cik, reference_date, mech)
     mech = mech.model_copy(update={"catalyst_calendar": calendar})
     flags: list[str] = list(primary.qa_flags)
+    flags += guidance_refusal_flags(primary.releases)
     flags += op_drivers.qa_flags  # (PR-B) operating-driver per-source honest-miss flags → QA
     flags += calendar.qa_flags  # (catalyst calendar) cadence/maturity honest-miss flags → QA
     si_asof = mech.stock_info.as_of if mech.stock_info is not None else None
