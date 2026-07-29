@@ -3993,6 +3993,31 @@ audit, not a PR.) **No duplicate items; numbering sequential 1..15 after one det
 renumber.** No other unverifiable claim found in this block.
 
 **BUILD**
+**WHAT #253 ACTUALLY CLOSES — ZERO OF THE ELEVEN REMAINING HALVES. Stated precisely because the
+operator asked for "1 of 3 stated rather than 3 of 3 assumed", and the honest answer is lower than
+either.** Verified against the committed artifact, not against the item's own description:
+· **P2 (guidance reads the wrong 8-K) — OPEN.** Item 1 clause (c) — guidance selected by MAX
+  guidance date from the structured grid — is NOT in #253. SMPL's dossier still cites 8-K
+  `0001702744-26-000010` (the April/Q2 guide); the July `…-26-000021` is still unused. Untouched.
+· **P4 pt1 (spot is not the freshest available instance) — OPEN.** Clause (b), the
+  freshest-available-instance contract, is NOT implemented. #253 ships a panel-SPREAD ceiling and a
+  cap RECONCILIATION; neither selects a fresher close. Note P4's own evidence table used
+  `cap ÷ shares = $10.28` as its CROSS-CHECK — so #253 implements the audit's DIAGNOSTIC and not
+  its FIX.
+· **P4 pt2 / clause (e) — PARTIAL.** The market cap now renders its own vintage on both twins. The
+  instance clause (e) was WRITTEN FOR is still unlabelled: SMPL renders `consensus FY26E revenue
+  base $1,334M` — the analyst's frozen reference — beside the live 1,351.8 with nothing
+  distinguishing them. The cap is one frozen value; clause (e) governs all of them.
+**SO #253 CLOSES NO AUDIT HALF.** What it DOES close is a defect the audit noted as C16 and never
+raised to a P-item — live on **11 of 11 names**, worst on the ten SMPL is not. That is worth
+shipping on its own merits and must not be counted against the thirteen.
+**ITEM 1's CLAUSES STILL OPEN:** (a) trailing-fact recomputation · (b) freshest-available-instance
+· (c) guidance-by-max-date · (d) the scheduler's max-age-of-contained-facts definition · (e) beyond
+the market cap.
+**BOUNDARY NOTE — VRRM SITS AT EXACTLY 45d AND PASSES**, because the ceiling is `>` not `>=`
+(pinned). One day of ageing flips it. **A future VRRM failure is the guard working, not a
+regression.**
+
 **ITEM 1 — BUILT 2026-07-29. THE BLOCKED-BY WAS STALE, AND THE DEFECT WAS LIVE ON ALL ELEVEN.**
 The stamp said "do not merge until price freshness can meet panel arrival"; the same item also said
 the re-spec "no longer depends on ingestion cadence". Measured: a fresher instance of the close
@@ -4246,7 +4271,16 @@ screen cohort.**
     "no older than the newest panel", is the flat rule the operator corrected); (v) disposition
     rendering the closed BUY per the visible-absence rule. **If any of the five still fails, the
     guard did not work — do not ship the next item until it does.**
-16c. ~~**CNXC — PRE-UNDERWRITE RE-ASSEMBLY REQUIRED**~~ — **CLOSED 2026-07-28, GATE LIFTED. The
+16c. **CNXC — RE-OPENED 2026-07-29. The 16c closure of 2026-07-28 does NOT survive item 1's
+    ceiling, and is not grandfathered (operator).** CNXC's comps panel is **2026-06-05 — 49 days**
+    behind its price, so it FAILS the 45d ceiling shipped in #253. Its dossier is live and was
+    cleared for underwriting under a rule this guard now rejects; its peer multiples drive the
+    cross-sectional leg of any thesis. **Same logic as revoking the merge authorisation: a decision
+    made under a rule we have since tightened does not get grandfathered.** RE-CLOSES when the
+    comps are re-exported and CNXC rebuilds clean through the freshness gate — not before.
+    The 07-28 closure's FINDINGS stand (the impairment reaches the brief; the stale P/E is gone);
+    what does not stand is the CLEARANCE. Original closure retained below for the audit trail.
+    ~~**CLOSED 2026-07-28, GATE LIFTED. The
     re-assembly ran on 26a and BOTH acceptance conditions hold, verified on both twins.**
     **(1) THE IMPAIRMENT REACHES THE BRIEF.** `Impairment of Goodwill ($M) −1,523` renders in the
     BRIEF's Financial-snapshot table — **directly beneath `EPS (GAAP, dil.) −21.35`**, so the
