@@ -5,7 +5,9 @@ _July 27, 2026 · extraction unstamped_
 # Brief — first cut
 
 ## At a glance
-**Target (base)** $10.44 (-58.9% vs entry-vintage spot) · **Spot** $25.37 (entry-vintage — underwritten 2026-07-22) · **Reward** $-14.93 · **Risk** $22.25 · **Reward : risk** -0.67 : 1 (bar 2 : 1)
+**Target (base)** $10.44 (-58.9% vs entry-vintage spot) · **Spot** $25.37 (entry-vintage — frozen at underwrite 2026-07-22) · **Reward** $-14.93 · **Risk** $22.25 · **Reward : risk** -0.67 : 1 (bar 2 : 1)
+
+_Spot source: Polygon AORT close 2026-07-20 (live at underwrite)_
 
 **Underwrite disposition:** WATCH (2026-07-22) — _the BUY/AVOID verdict of record is the ledger's_
 
@@ -45,7 +47,7 @@ _6 key unknowns + the evidence for/against — in Analysis_
 ## Scenario analysis
 _Terminal-margin: value the business in the year it reaches a normal operating margin, then discount that value back at the house waiting charge. Used where no trailing multiple describes the company._
 
-| scenario | revenue $M | margin | multiple | value / sh | vs spot @ 2026-07-22 |
+| scenario | revenue $M | margin | multiple | value / sh | vs entry-vintage spot |
 | --- | ---: | ---: | ---: | ---: | ---: |
 | bear | 590 | 4.5% | 9x | $3.12 | -87.7% |
 | base | 638 | 9.5% | 13x | $10.44 | -58.9% |

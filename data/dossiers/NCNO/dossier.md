@@ -5,7 +5,9 @@ _July 27, 2026 · extraction unstamped_
 # Brief — first cut
 
 ## At a glance
-**Target (base)** $8.17 (-54.4% vs entry-vintage spot) · **Spot** $17.93 (entry-vintage — underwritten 2026-07-21) · **Reward** $-9.76 · **Risk** $13.68 · **Reward : risk** -0.71 : 1 (bar 2 : 1)
+**Target (base)** $8.17 (-54.4% vs entry-vintage spot) · **Spot** $17.93 (entry-vintage — frozen at underwrite 2026-07-21) · **Reward** $-9.76 · **Risk** $13.68 · **Reward : risk** -0.71 : 1 (bar 2 : 1)
+
+_Spot source: Polygon NCNO close 2026-07-20 (live at underwrite)_
 
 **Underwrite disposition:** WATCH (2026-07-21) — _the BUY/AVOID verdict of record is the ledger's_
 
@@ -45,7 +47,7 @@ _7 key unknowns + the evidence for/against — in Analysis_
 ## Scenario analysis
 _Terminal-margin: value the business in the year it reaches a normal operating margin, then discount that value back at the house waiting charge. Used where no trailing multiple describes the company._
 
-| scenario | revenue $M | margin | multiple | value / sh | vs spot @ 2026-07-21 |
+| scenario | revenue $M | margin | multiple | value / sh | vs entry-vintage spot |
 | --- | ---: | ---: | ---: | ---: | ---: |
 | bear | 684 | 8.6% | 10x | $4.25 | -76.3% |
 | base | 755 | 12.6% | 12.5x | $8.17 | -54.4% |

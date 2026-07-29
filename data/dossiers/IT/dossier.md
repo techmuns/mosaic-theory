@@ -5,7 +5,9 @@ _July 27, 2026 · extraction unstamped_
 # Brief — first cut
 
 ## At a glance
-**Target (base)** $221.09 (+57.7% vs entry-vintage spot) · **Spot** $140.19 (entry-vintage — underwritten 2026-07-20) · **Reward** $80.90 · **Risk** $62.63 · **Reward : risk** 1.29 : 1 (bar 2 : 1)
+**Target (base)** $221.09 (+57.7% vs entry-vintage spot) · **Spot** $140.19 (entry-vintage — frozen at underwrite 2026-07-20) · **Reward** $80.90 · **Risk** $62.63 · **Reward : risk** 1.29 : 1 (bar 2 : 1)
+
+_Spot source: Polygon EOD grouped-daily close 2026-07-17 (live)_
 
 **Underwrite disposition:** WATCH (2026-07-21) · entry $141.06 (entry-vintage) — _the BUY/AVOID verdict of record is the ledger's_
 
@@ -42,7 +44,7 @@ _7 key unknowns + the evidence for/against — in Analysis_
 ## Scenario analysis
 _Mid-cycle underwrite: normalized operating margin on a mid-cycle revenue base, valued at an exit EV/LTM-EBITDA multiple; reward/risk measured at SPOT._
 
-| scenario | revenue $M | margin | multiple | value / sh | vs spot @ 2026-07-20 |
+| scenario | revenue $M | margin | multiple | value / sh | vs entry-vintage spot |
 | --- | ---: | ---: | ---: | ---: | ---: |
 | bear | 5,800 | 13.2% | 7.5x | $77.56 | -44.7% |
 | base | 6,430 | 18.5% | 12.5x | $221.09 | +57.7% |
