@@ -176,7 +176,12 @@ def _freshness_check(mech: Any, *, ticker: str) -> None:
     Ordinary drift is deliberately NOT fatal — it is a RENDERING obligation (clause (e)), and the
     cap now carries its own vintage on both twins. Failing on drift would fail 11 of 11 committed
     dossiers, which is a freeze wearing a guard's name."""
-    from vinci.dossier.freshness import check_freshness, panel_spread, reconcile_cap
+    from vinci.dossier.freshness import (
+        absent_cap_inputs,
+        check_freshness,
+        panel_spread,
+        reconcile_cap,
+    )
 
     si = getattr(mech, "stock_info", None)
 
@@ -184,8 +189,10 @@ def _freshness_check(mech: Any, *, ticker: str) -> None:
         v = getattr(getattr(si, k, None), "value", None) if si is not None else None
         return float(v) if isinstance(v, (int, float)) else None
 
-    recon = reconcile_cap(cap_musd=val("market_cap"), shares=val("shares_out"), spot=val("price"))
-    check_freshness(panel_spread(mech.model_dump(mode="json")), recon, ticker=ticker)
+    cap, shares, spot = val("market_cap"), val("shares_out"), val("price")
+    recon = reconcile_cap(cap_musd=cap, shares=shares, spot=spot)
+    check_freshness(panel_spread(mech.model_dump(mode="json")), recon, ticker=ticker,
+                    absent=absent_cap_inputs(cap_musd=cap, shares=shares, spot=spot))
 
 
 def _materiality_check(bundle: Any, mech: Any, synthesis: Any, *, ticker: str) -> None:

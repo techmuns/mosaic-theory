@@ -372,6 +372,26 @@ noise.
 Same distinction item 20 turns on. When measuring staleness, harvest arrivals only, and say in the
 code which is which.
 
+## Verify the worktree holds the data an operation needs, before running it
+
+*(operator, 2026-07-29 — the general form of the baseline rule, after three instances)*
+
+`data/` is git-ignored and PER-WORKTREE. Three times a missing local input produced a signal that
+looked like a code failure and was not:
+
+| what was absent | what it looked like |
+|---|---|
+| CIQ bundles in a fresh worktree | 12 tests "skipping" — 1137 passed vs 1149 |
+| the right checkout behind `launch.json` | a preview reading exactly like "the feature doesn't work" |
+| EOD bars for SMPL / MVST / WERN | a re-assembly producing a dossier with **no price at all** |
+
+> **Before an operation, check the worktree actually holds its inputs.** A baseline covers the
+> measurement case; this covers the general one.
+
+The third instance is the expensive one: the assembly completed, reported "1 done · 0 error(s)",
+and wrote a WORSE artifact than the one it replaced. It was caught by reading the output, not by
+any guard — see item 1's completeness check, which now refuses it.
+
 ## A measurement in a throwaway tree establishes its own baseline first
 
 *(operator, 2026-07-28)*
