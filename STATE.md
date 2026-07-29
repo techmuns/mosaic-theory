@@ -4006,6 +4006,25 @@ re-anchor (the full STATE split stays its own queued task — nothing was reloca
   written against `facts.ltm_revenue`; the stale RefPoint is **item 1 clause (e)'s** problem —
   LABELLED, not corrected, and never used as a forward reference. Bull 1,420.0 exceeds both, so
   the ruling costs nothing on the live instance.
+- **THE 45d PANEL SPREAD GROWS WITH EVERY PRICE REFRESH — measured 2026-07-29, and it CORRECTS
+  what I told the operator an hour earlier.** I said the spread was "fixed at assembly and won't
+  age out; only a re-export clears it." **Wrong.** `stock_info.as_of` IS one of the panels, so
+  moving the price frontier widens the spread by exactly the days the price moved. Refreshing
+  2026-07-24 → 2026-07-28 moved every name by +4 (NCNO +7, from a staler start):
+  AORT 31→35, EPAM 36→40, IT 30→34, NCNO 9→16, VITL 25→29, **VRRM 45→49 — over the ceiling.**
+  **VRRM was assemblable before the refresh and refused after it**, on unchanged CIQ panels.
+  CONSEQUENCE: with weekly price refreshes and a 45d ceiling, CIQ panels must be re-exported on
+  roughly a monthly cadence or names fall out of the fleet one by one. EPAM at 40d is next.
+  This is the ceiling behaving as designed — the oldest panel really does drive the peer multiples
+  — but the OPERATIONAL cost was not costed when 45d was chosen, and it should be.
+- **FUBO CARRIES TWO SEPARATE DEFECTS, and a build report conflated them (corrected 2026-07-29).**
+  The freshness gate refuses FUBO on **11.13x**: cap $256.4M ÷ 342,433,118 shares = **$0.75/sh
+  implied against a $8.33 close**, i.e. the cap panel is on a **30,780,312**-share basis — the
+  ~1-for-11 reverse split, a SHARE-BASIS mismatch between panels. The **≈5x** figure is a
+  DIFFERENT problem on the same name: 30% NCI + a Class A/Class B economic-share convention, which
+  breaks the R2 terminal bridge (the NCI item). Labelling the gate's refusal "the Class A/B ≈5x
+  case" merged two diagnoses; the ratio is the field that distinguishes corporate action from
+  drift, so it has to be right.
 - **DEFERRED — item 1 clause (b)** (operator ruling 2026-07-29). The "VERIFIED IMPLEMENTABLE" note
   confirmed the `Day Close Price Latest` column EXISTS but never checked that anything READ it;
   nothing does. That makes it a new extractor **plus** a guard — the largest remaining item, and it
@@ -5106,6 +5125,17 @@ sample: **the source was authoritative and the excerpt was not.**
     time, at a cost of one build each. **This item's check compares FIELD NAMES in source text; a
     check comparing what each twin actually EMITS would have caught all five at once.** That is the
     general fix and it is the reason (b) is worth doing properly rather than as a token widen.
+    **(d) THE CONSEQUENCE, and it reframes three queued items (operator 2026-07-29).**
+    > **Twin parity checks AGREEMENT, not TRUTH.** A parity check catches DIVERGENCE by
+    > construction; a shared error passes it. The `@ 2026-07-27` stamp reached both twins from one
+    > wrong assumption, so parity CONFIRMED it.
+    And the operative half:
+    > **Truth-checking a stamp requires the vintage to be STRUCTURED.** `@ 2026-07-27` cannot be
+    > verified against anything while the real date lives in free text.
+    Therefore `spot_as_of`, **18a's typed facts** and **29's typed relation** are NOT schema
+    hygiene — they are what makes truth-checkable rendering possible at all. Everything short of
+    them is agreement between two surfaces that may both be wrong. **These move UP in priority once
+    the current run finishes**, and now have a stronger case than item 1(b).
     **INFRASTRUCTURE STAYS FROZEN — do NOT build this now** (operator, same message). Recorded so
     the count is on the board when the freeze lifts.
     **NOTE ON THE PARITY PIN'S OWN BLIND SPOT (found 2026-07-29):** its docstring accepts that a key
