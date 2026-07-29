@@ -4067,6 +4067,36 @@ re-anchor (the full STATE split stays its own queued task — nothing was reloca
   **REACHES A NAME ONLY ON REBUILD** — no committed artifact changes in the PR.
 - **SEQUENCING (operator): do NOT re-assemble CNXC until this ships** — its quarterly-as-annual
   period comes from the extractor, so re-assembling first re-extracts the same defect twice.
+- **TWO MANUAL CIQ COMPS RE-EXPORTS — ON THE CRITICAL PATH FOR A LIVE WRONG NUMBER, not just for
+  underwritability (2026-07-29). Do both in one session.**
+  · **CNXC** — oldest comps panel 2026-06-05, **54 days** under the assembly-date measure. Its
+    committed page renders `Fiscal 2026 revenue outlook: $2,465.0–$2,490.0M`, which is a **single
+    QUARTER's** guide labelled full-year on a company annualizing ~$9.9bn. The extractor fix for
+    that (mode 3) reaches CNXC **only when CNXC re-assembles**, and CNXC cannot assemble until its
+    comps are re-exported. "Blocked on freshness" reads as an availability problem; **this one is a
+    correctness problem** — the re-export is the only route to correcting a live 4x error.
+  · **VRRM** — oldest comps panel 2026-06-09, **50 days**. Renders `adjusted eps outlook:
+    $1.2–$1.2M` for a guide of **$1.19–$1.25 per share**. Same structural trap (see below).
+  · **EPAM at 41 days fails within a week** and is in the parked batch. Re-export it in the same
+    session rather than discovering it when a build refuses.
+  **COMPS RE-EXPORT IS A STANDING ~45-DAY CADENCE, not a one-off** — that is the honest operational
+  consequence of the ceiling, and it belongs on the board as a recurring task.
+- **MODE 4 IS NOT A DEPLOY-REACHING FIX AS THE CODE STANDS — CORRECTION 2026-07-29, checked before
+  building.** The item was ordered first on the premise that it is a RENDERER defect reaching all
+  eleven names on deploy. It is not: `_compose_gap_drivers` runs at ASSEMBLY and stores a composed
+  string in `drawdown_cause.filings[].drivers`; both twins print `f.drivers.value` VERBATIM
+  (`render.py`, `dossier.js`) and re-derive nothing. So fixing the format string reaches a name only
+  when that name rebuilds — and **VRRM, the only live instance, cannot rebuild** (50d comps). Under
+  that route BOTH live wrong numbers stay on the page until the re-exports happen.
+  **A RENDER-TIME ROUTE EXISTS AND WAS VERIFIED FEASIBLE, not assumed:** the structured
+  `primary_source.releases[].guidance` items are COMMITTED beside the filings, the accession join
+  resolves (2 of 3 VRRM filings matched, exactly the two carrying outlook clauses), and their
+  `low`/`high` are CORRECT. Deriving the outlook clause at render would fix VRRM with no
+  re-assembly and no re-export — and it is what the repo's own rule already asks for: a stored
+  composed string that consumers depend on IS display formatting made load-bearing.
+  **IT WOULD NOT FIX CNXC.** CNXC's defect is the PERIOD recorded in the structured item itself
+  (mode 3), so no render change reaches it. That asymmetry is the decision: render-derivation buys
+  VRRM immediately; CNXC is unreachable either way.
 - **DEFERRED — item 1 clause (b)** (operator ruling 2026-07-29). The "VERIFIED IMPLEMENTABLE" note
   confirmed the `Day Close Price Latest` column EXISTS but never checked that anything READ it;
   nothing does. That makes it a new extractor **plus** a guard — the largest remaining item, and it
