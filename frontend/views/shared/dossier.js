@@ -1494,7 +1494,14 @@ function ownHistoryExhibit(m) {
     // (no "avg" prefix) so the label fits the shared left inset; the dashed line marks the average.
     const ref = (v, dash, tag) => `<line x1="${x0}" y1="${sc(v)}" x2="${x1}" y2="${sc(v)}" stroke="var(--line-2)"${dash ? ' stroke-dasharray="3 3"' : ""}/><text x="${x0 - 4}" y="${sc(v) + 3}" font-size="${fs.axis}" text-anchor="end" fill="var(--ink-3)">${tag}</text>`;
     let s = `<text x="${x0}" y="${cy0 - 9}" font-size="${fs.panel}" font-weight="600" fill="var(--ink-2)">${escapeHtml(label)}</text>`;
-    s += `<text x="${x1}" y="${cy0 - 9}" font-size="${fs.xlabel}" text-anchor="end" fill="var(--ink-3)">${Math.round(b.percentile * 100)}%ile${lowConf ? "*" : ""} · ${b.n_closes}q</text>`;
+    // (P5 pt1, 2026-07-29) EACH PANEL CARRIES ITS OWN AS-OF. The shared caption used to stamp
+    // `bands[0].as_of` across every panel, so CNXC's P/E panel — whose last usable close is
+    // 2025-12-31 — sat under "as-of 2026-07-17", 198 days out; SMPL's under 2026-07-23 at 114.
+    // That is the audit's P5 verbatim ("printed P/LTM EPS 16.0x beside as-of 2026-07-23 while
+    // that 16.0x was the 2026-03-31 close") surviving in the exhibit after item 20 fixed the
+    // prose. A band's date TRAVELS WITH ITS VALUE in the data; that only protects a reader if the
+    // RENDER shows that date, which is the correction to the [-1] rule.
+    s += `<text x="${x1}" y="${cy0 - 9}" font-size="${fs.xlabel}" text-anchor="end" fill="var(--ink-3)">${Math.round(b.percentile * 100)}%ile${lowConf ? "*" : ""} · ${b.n_closes}q${b.as_of ? " · " + escapeHtml(b.as_of) : ""}</text>`;
     s += ref(b.high, false, b.high.toFixed(1)) + ref(b.mean, true, b.mean.toFixed(1)) + ref(b.low, false, b.low.toFixed(1));
     s += `<polyline points="${pts.map((p, i) => `${px(i)},${sc(p[1])}`).join(" ")}" fill="none" stroke="var(--accent)" stroke-width="1.8"/>`;
     // current = the last close: DIRECTIONAL color (below/above its own trailing range is a FACT) + value;
@@ -1514,7 +1521,11 @@ function ownHistoryExhibit(m) {
   // the label can't drift from the transform.
   const allLog = bands.every((b) => b.series.filter((p) => p && p[1] != null).map((p) => p[1])
     .concat([b.low, b.high, b.mean]).every((v) => v > 0));
-  const meta = `each quarter's close vs its trailing avg (dashed) &amp; range${allLog ? " · log scale" : ""}${bands[0].as_of ? " · as-of " + escapeHtml(bands[0].as_of) : ""}`;
+  // The shared caption NO LONGER carries an as-of. It took `bands[0].as_of` and applied it to every
+  // panel — position-trust, the `[-1]` class, and false provenance whenever the panels differ
+  // (2 of 11 names today). Each panel now states its own date above itself, so there is no shared
+  // stamp left that COULD be wrong about a panel.
+  const meta = `each quarter's close vs its trailing avg (dashed) &amp; range${allLog ? " · log scale" : ""} · each panel dated above`;
   // no inline "Source:" caption — the Multiples source is already cited at the card level (range_position's
   // endnote → the tier's Sources list). Exhibits cite via endnotes, never a duplicate inline caption.
   return `<div class="ds-exhibit" style="margin:${EXHIBIT.margin};">

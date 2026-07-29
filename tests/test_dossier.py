@@ -9442,3 +9442,66 @@ console.log(JSON.stringify({{
         assert web["axes"] and all(web["axes"]), f"{t}: web dropped an axis method: {web['axes']}"
         # `and web["sources"]` — all([]) is vacuously true, so an empty list must not pass
         assert web["sources"] and all(web["sources"]), f"{t}: web dropped a source"
+
+def test_each_own_history_panel_carries_its_own_as_of_e2e() -> None:
+    """P5 pt1 IN THE EXHIBIT — the half item 20 left open, found on the DEPLOYED page.
+
+    The audit's words were: *"SMPL printed 'P/LTM EPS 16.0x' beside 'as-of 2026-07-23' while that
+    16.0x was the 2026-03-31 close."* Item 20 fixed the PROSE readings and the chart kept doing
+    exactly that: the shared caption stamped `bands[0].as_of` — the EV/EBITDA band's date — across
+    every panel, so CNXC's P/E panel (last usable close 2025-12-31) sat under 2026-07-17, **198
+    days out**, and SMPL's under 2026-07-23 at 114. Live on 2 of 11 names and on the deployed site,
+    on the one name cleared for underwriting.
+
+    THE RULE IT CORRECTS: a band's date travels with its value in the DATA, which the `[-1]` scan
+    recorded as one of three sound mechanisms. It only protects a reader if the RENDER shows THAT
+    date. Here the render dropped it and substituted another band's.
+
+    Pinned on the two real names, because a synthetic fixture would not have caught it — the defect
+    is that two panels DISAGREE, and only a real bundle produces the disagreement."""
+    import json
+    import shutil
+    import subprocess
+
+    if not shutil.which("node"):
+        pytest.skip("node not available")
+    dj = Path("frontend/views/shared/dossier.js").resolve().as_uri()
+    driver = rf"""
+const handler = {{ get: () => stub, apply: () => stub, construct: () => ({{}}) }};
+const stub = new Proxy(function(){{}}, handler);
+for (const g of ["window","document","location"]) {{ try {{ globalThis[g] = stub; }} catch {{}} }}
+import {{ readFileSync }} from "node:fs";
+const {{ renderDossier }} = await import("{dj}");
+const out = {{}};
+for (const t of ["CNXC", "SMPL", "AORT"]) {{
+  const h = renderDossier(JSON.parse(readFileSync(`data/dossiers/${{t}}/dossier.json`)), null);
+  out[t] = {{
+    panels: [...h.matchAll(/>(\d+%ile\*? · \d+q[^<]*)</g)].map((m) => m[1]),
+    caption: (/each quarter's close[^<]*/.exec(h) || [""])[0],
+  }};
+}}
+console.log(JSON.stringify(out));
+"""
+    r = json.loads(subprocess.run(["node", "--input-type=module", "-e", driver],
+                                  capture_output=True, text=True, check=True).stdout)
+
+    for name, expect in (("CNXC", ("2026-07-17", "2025-12-31")),
+                         ("SMPL", ("2026-07-23", "2026-03-31"))):
+        panels = r[name]["panels"]
+        assert len(panels) == 2, f"{name}: expected two panels, got {panels}"
+        for got, want in zip(panels, expect, strict=True):
+            assert want in got, (
+                f"{name}: panel header {got!r} does not carry its OWN as-of {want} — a panel "
+                "showing another band's date is the P5 false stamp")
+        assert expect[0] != expect[1], "fixture no longer has DISAGREEING panels — it pins nothing"
+
+    # the shared caption must carry NO date: one stamp over differing panels is the defect itself
+    for name in r:
+        cap = r[name]["caption"]
+        assert "as-of" not in cap, (
+            f"{name}: the shared caption regained an as-of ({cap!r}) — whatever single date it "
+            "carries is wrong for at least one panel the moment two bands disagree")
+
+    # a name whose panels genuinely AGREE still dates both, rather than falling back to silence
+    assert all("2026-07-17" in p for p in r["AORT"]["panels"]), r["AORT"]["panels"]
+
