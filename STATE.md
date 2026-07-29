@@ -3984,6 +3984,33 @@ references name their series.
 because completed work was appended to a section named "next steps"; this block is the interim
 re-anchor (the full STATE split stays its own queued task — nothing was relocated here).
 
+**OPERATOR ACTIONS / COHORT FACTS — appended by the build, 2026-07-29 (OPERATOR-ACTION RULE).**
+- **THE SCREEN COHORT IS SMALLER THAN THE DOSSIER CORPUS, and the fleet batch will hit it.**
+  `data/snapshots/candidate_records.jsonl` holds **318 records from the 2026-07-27 screen**.
+  Resolved by identity (NOT by substring on `internal_id` — a first pass using substrings gave a
+  false answer), **9 of the 11 committed dossier names are present; FUBO and MVST are NOT.**
+  `load_finalists` raises `LookupError: <T> not in candidate_records.jsonl` for a name it cannot
+  find, so **FUBO and MVST will fail re-assembly exactly as WERN did** — before the fleet batch,
+  not during it. Nothing here is degraded: both have committed dossiers; they simply cannot be
+  re-assembled against the current cohort.
+- **WERN IS GATED, NOT FLAGGED-AND-ABANDONED (operator ruling 2026-07-29, gated like 16c).** WERN
+  has CIQ files, an EDGAR bundle, 309 price bars and a scenario record (`scenarios/WERN.json`,
+  status `watch`, 2 triggers) — but **never passed the screen**, so it has no candidate record and
+  cannot assemble. Its **72.8x** figure closes at the **next natural screen**, not before. **DO NOT
+  run `run-weekly` to fix one page:** it regenerates `candidate_records.jsonl` and would SHIFT THE
+  COHORT mid-remediation, potentially dropping names that have committed dossiers. That is a fund
+  operation, not a plumbing step. `refresh` is unrelated and is already done for the three names.
+- **UNBLOCKED FOR THE NEXT ROUND — item 29** (operator ruling 2026-07-29). Canonical LTM is
+  `facts.ltm_revenue` **1,392.235**; the RefPoint `'LTM revenue'` **1,416.208** is LTM-through-FQ2,
+  frozen at underwrite and never refreshed after the 2026-07-09 print. The bull constraint is
+  written against `facts.ltm_revenue`; the stale RefPoint is **item 1 clause (e)'s** problem —
+  LABELLED, not corrected, and never used as a forward reference. Bull 1,420.0 exceeds both, so
+  the ruling costs nothing on the live instance.
+- **DEFERRED — item 1 clause (b)** (operator ruling 2026-07-29). The "VERIFIED IMPLEMENTABLE" note
+  confirmed the `Day Close Price Latest` column EXISTS but never checked that anything READ it;
+  nothing does. That makes it a new extractor **plus** a guard — the largest remaining item, and it
+  closes one half. Batch C waits.
+
 **QUEUE-INTEGRITY PASS — 2026-07-27 (findings recorded, not silently fixed).** Every PR reference
 inside this block was checked against the GitHub API: **#187, #194, #205, #209, #213, #215 verified
 merged**; **#210 verified CLOSED-UNMERGED** — STATE credited it with the first dated trigger, but
@@ -4479,7 +4506,36 @@ screen cohort.**
     in the synthesis or the build fails loud. ORIGIN: SMPL's $391.9M LTM Asset Writedown (43% of market cap, the sole
     cause of LTM net income −$198.8M) never reached the dossier while the FY25 $60.9M was cited
     three times. Positive pin: a fixture writedown at 11% of mcap must raise unless surfaced.
-18a. **LEDGER PAYLOAD — STRUCTURED FACT FIELDS (queued 2026-07-28; MUST PRECEDE ITEM 18).**
+18a. **~~LEDGER PAYLOAD — STRUCTURED FACT FIELDS~~ — BUILT 2026-07-29 (Batch D). ITEM 18 IS NOW
+    UNBLOCKED.** `LedgerFact` (value / unit / basis / source) + `LedgerEntry.facts:
+    dict[str, LedgerFact]`, and `log_verdict` grew a `facts=` parameter. **Deliberately the same
+    four fields as `vinci.scenarios.Fact`** — a reader moving between the underwrite record and the
+    ledger meets ONE shape, not two.
+    **THE MECHANISM WAS CONFIRMED EXACTLY AS SPEC'D, worth recording after eight mis-specified
+    ones.** The trio really does live only in prose: VRRM's committed row carries "68% of EBITDA at
+    ~65% margins" inside `thesis`; SMPL's carries its guidance range the same way. Five ledger rows
+    total (3 decisions + 2 closes).
+    **REFUSALS.** A fact with a blank unit, basis or **source** is refused — an unverifiable number
+    sealed into an append-only record is worse than no field (the negative red, driven across `""`,
+    whitespace and tab so a space bar cannot bypass it). A **CLOSE row may not carry facts**: a
+    close repeats the original verdict for provenance and opens no position, so facts there would
+    read as a second, later-dated underwrite — the same reason a close carries no verdict of its own.
+    **BINDS FORWARD:** the 3 committed V-rows predate the field, stay valid, and are **NOT
+    backfilled** — pinned by a test that re-validates every committed row AND asserts none acquired
+    facts. Empty is a legitimate PERMANENT state, not a migration waypoint.
+    **REVIEW FINDING, fixed before merge: the first cut declared a `FACTS_AVAILABLE_FROM` constant
+    citing the BASIS_REQUIRED_FROM / FIELDED_REFS_FROM pattern — and nothing read it.** Those two
+    ARE read, by real version gates in `vinci/scenarios.py`. This one could not be: they mark the
+    version from which a field becomes REQUIRED, and `facts` is permanently optional. A constant
+    that looks like a guard and enforces nothing is worse than no constant, so it was DELETED and
+    the forward-binding property left where it is actually true — on the field, and in the test.
+    **TEST-LAYER NOTE.** The first cut pinned only the MODEL (construct → serialise → re-validate),
+    which proves the shape and not the path. The brief's red names the write path, and the item's
+    own scope sentence exists to stop it being relitigated as a parsing problem — so the pin was
+    moved onto `log_verdict` + a real `Store`, asserting the fact returns from the store as a
+    number. 13 tests, each mutation-checked (drop the writer's `facts=` → the store test reds;
+    relax the validator → five red; allow facts on a close → one reds).
+    **ORIGINAL SPEC, kept for the record:**
     Facts the record already knows and the dossier can render — loan-basis leverage, impairment
     quantum, buyback pace — become TYPED fields with their own source stamps on the ledger
     payload, alongside (never replacing) the prose `thesis`. ORIGIN: the item-18 scope check found
@@ -4510,17 +4566,65 @@ screen cohort.**
     testable rather than aspirational.
 19. **ASSERTION INTEGRITY (operator-added 2026-07-28; TIGHTENED same day).** Every claim the
     document makes ABOUT ITS OWN DATA is machine-checked at build. THE PRECISE REQUIREMENT: **a
-    stamp must be generated from the object actually read** — an absence reason must be
-    filing-based, never sheet-shape ("no EBITDA section" when the true reason is single-segment
-    reporting, audit P9); a caveat naming a basis must match the series it caveats (the "rests on
-    normalized earnings" note sat on a GAAP series, P5's label half); a method sentence's stated
-    relation must hold against the legs it describes (bull 1,420 claimed "just under the trailing
-    twelve months" against LTM 1,392).
+    stamp must be generated from the object actually read.**
+    **THE a/b/c SPLIT — RECORDED 2026-07-29, having been referenced in chat since 07-28 and never
+    written down** (operator: "my mess"). The mechanism pass could not tell which third "19a"
+    named, because STATE carried the three examples as prose and the letters nowhere; the only
+    occurrence of "19c" in this file was a passing reference in a build record. Sub-items are
+    numbered HERE so an order that names one is unambiguous:
+    - **19a — BASIS AGREEMENT (audit P5 pt 2).** A caveat naming a basis must match the series it
+      caveats: `mechanical.py:856` asserts "rest on normalized/adjusted earnings" over CIQ's
+      **GAAP** `P/LTM EPS` row. **OPEN.** Live on CNXC, FUBO, SMPL. Item 20 changed its shape —
+      with the CIQ clause now refused, the surviving text reads `EDGAR P/E 6.0x rest on
+      normalized/adjusted earnings`, which INFERS a basis from a negative GAAP EPS rather than
+      reading one (a period mismatch produces the same symptom). **FOLD IN WHEN BUILT:** the
+      verb is hardcoded `rest` while the pronoun switches on `len(shown)`, so the now-common
+      one-multiple case is ungrammatical on all three names — trivial in the same edit.
+    - **19b — ABSENCE REASONS (audit P9). BUILT 2026-07-29, this build.** See below.
+    - **19c — SYNTHESIS/DATA AGREEMENT (audit P1 pt 2).** A method sentence's stated relation must
+      hold against the legs it describes (bull 1,420 vs LTM 1,392). **OPEN**; its live test case is
+      SMPL's writedown row carrying −61 and −392 side by side. Overlaps item 29, which types the
+      bull-leg constraint so the check becomes arithmetic rather than parsing.
     **RED:** a fixture where a stamp NAMES AN OBJECT THAT WAS NOT THE OBJECT READ, and the build
     fails. **If that red proves hard to write, the item is UNDER-SPECIFIED and that must surface
     BEFORE it ships, not after** (operator, explicitly). GUARD AGAINST DEGRADATION: this must not
     quietly become a house-token linter — that would catch P3's mislabel and nothing else, which
     is the shape of a fix that reports success while the class survives.
+    **19b — BUILT 2026-07-29 (Batch B).** `_segment_section` emitted `Segments sheet has no
+    'EBITDA' section as expected` on **10 of 11** names — a claim about the SHEET's shape standing
+    in for a fact about the FILING, and it sent a reader looking for a better export that does not
+    exist. It also LUMPED three distinct causes (`start`/`total`/`hdr` all None → one string),
+    against the `net_lev` precedent in `vinci/edgar/client.py` ("never lump them"). Measured before
+    building: `hdr` was found on all 11 and was NEVER the cause; `start`/`total` were both absent on
+    all 10. `_absence_reason` now reads the sheet's OWN revenue roster and names the filing fact:
+    **7 names are single-segment** (BRBR, CNXC, FUBO, MVST, NCNO, SMPL, VITL) → "single-segment
+    reporting (X) — no segment EBITDA to break out"; **3 are multi-segment** (AORT, EPAM, IT) →
+    "reports N segments (…) but discloses no segment EBITDA"; VRRM is PRESENT and untouched. The
+    single-segment test MIRRORS the `lean` collapse (one item at ≥99.5%) so the note and the
+    `segments` field can never disagree about the same sheet. An unreadable roster says
+    **"undetermined"** rather than defaulting to a reason — the negative pin, and the one that
+    keeps this from becoming fabricated absence in item 19's clothes.
+    **CORRECTION carried in:** the mechanism pass first reported SIX single-segment names. That was
+    an artifact of a 40-char print truncating SMPL's segment label, not a fact about the corpus —
+    caught by re-reading the field rather than the console line. Seven.
+    **TWO REVIEW FINDINGS ON THIS PR, both mine, both fixed before merge.**
+    (i) **The scoped path reintroduced item 19b's own defect INSIDE the function written to remove
+    it.** `geographic` searches for 'Revenues' UNDER a 'Geographic Segment' label; when that
+    subsection is missing, `_absence_reason` answered with the BUSINESS roster from the top of the
+    sheet — *"reports 2 segments (Products; Preservation Services) but discloses no segment
+    Revenues"* — a stamp naming an object the caller never read, and self-contradictory besides.
+    Latent on today's corpus (`geographic` is PRESENT on all 11), which is why it is PINNED rather
+    than re-measured. `after_label` now scopes the claim, and a scoped absence says only what it
+    can support.
+    (ii) **An unguarded `rows[i][0]` crashed the build on a blank roster row.** The sibling loop in
+    `_segment_section` has the same shape but runs on the SUCCESS path; this one runs on the
+    FAILURE path, so the unguarded read turned a graceful UNKNOWN into an IndexError that kills the
+    whole dossier build — strictly worse than the note it was trying to write. Bounds-checked, with
+    its own red.
+    **LESSON, and it is the third instance:** a guard written against a defect class is not immune
+    to that class. Item 1's completeness gate had it (a guard that could not fire), the freshness
+    reconcile had it (the inverse-ratio blind spot), and now the absence-reason guard names the
+    wrong object on its own sibling path.
 20. **~~NO BACKWARD-FILL ON SERIES~~ — CLOSED 2026-07-28. P5 IS HALF CLOSED, NOT WHOLE —
     CORRECTED CLAIM (see the build record).** Item 20 closes P5's STALENESS half on BOTH consumers.
     P5's BASIS-MISLABEL half (`mechanical.py:856` asserts the reading "rest on normalized/adjusted
@@ -4533,11 +4637,35 @@ screen cohort.**
     current normalized figure is 8.90x). Same class as coercing UNAVAILABLE to zero, arriving by
     a different route. The NM cell claim is credible but unverified against the workbook — verify
     at build, not from the report.
-21. **SPREADSHEET EXTRACTOR BRANCH ROUTING (audit P6; queued 2026-07-28).** Route BIFF_XLS/OOXML
-    classifications to `read_sheets()` — `read_text()` on Customers.xls produced our own fail-loud
-    error INTO the dossier and a spurious UNKNOWN. Add Suppliers.xls to the workbook-keyword
-    consumers (never opened; carries the creditor group). The downstream customer-concentration
-    conclusion happened to be right for a different reason — right conclusion, wrong route.
+21. **~~SPREADSHEET EXTRACTOR BRANCH ROUTING~~ (audit P6) — ROUTING HALF BUILT 2026-07-29 (Batch
+    B); THE SUPPLIERS-FIELD HALF REMAINS OPEN.** `customers()` called `read_text()` unconditionally;
+    on a `.xls` that raises `format biff_xls is not text — use read_sheets()` by design, and the
+    function CAUGHT its own fail-loud message and shipped it into the dossier as the field's UNKNOWN
+    note — which reads to a human as "CapIQ has no customer data" rather than "we called the wrong
+    reader". Live on **SMPL**; **WERN** is the second instance (`WERN Customers.xls`), latent until
+    it assembles. Now routed by format; both parse.
+    **THE ROUTE'S REAL TRAP, found by reading the file rather than assuming symmetry:** the `.xls`
+    lays out `Customer Name | Exchange:Ticker Symbol | Relationship Type | …`, so reusing the
+    `.rtf` parser's positional `cells[0], cells[1], cells[2]` would have read the TICKER as the
+    relationship type and produced a fluent, plausible, WRONG line. `_parse_relationship_sheet`
+    locates columns BY HEADER TEXT. Its red is built so positional and header-keyed reads give
+    different answers — with the ticker column absent the fixture would pin nothing.
+    **A SECOND FIX THE FIRST ONE MADE NECESSARY.** `bundle.workbook("customers")` returns
+    `cands[0]`, and the `customers` KIND matches BOTH exports (its keywords already include
+    `"supplier"` — the "add Suppliers to the consumers" half was done at the keyword layer all
+    along). Which file arrives first was therefore decided by the store's sort order:
+    `"Customers" < "Suppliers"` is **alphabetical luck, not a rule**. Harmless only while the `.xls`
+    route failed loud — routing it correctly would have made SMPL render SUPPLIER rows as customer
+    concentration, which is how a fix becomes a worse bug. Selection is now by filename and pinned
+    order-independent (forward and reversed file lists must agree).
+    **STILL OPEN:** Suppliers is matched but never READ — surfacing the creditor group needs its
+    own field (schema + render), which crosses into Batch A's files. Not widened silently.
+    **PRE-EXISTING DEFECT SURFACED, NOT FIXED (out of scope, in the same function).** The `.rtf`
+    parser splits on `|` and DROPS empty cells before reading positionally, so a row with a blank
+    column shifts left. **5 of 10 `.rtf` names carry a COMPANY NAME in the relationship-type slot**
+    — AORT 4 rows, CNXC 3, EPAM 12, FUBO 8, IT 5 (32 rows total); BRBR, MVST, NCNO, VITL, VRRM are
+    clean. Same root cause as the trap above (positional parsing of a variable-width table), and
+    the header-keyed reader written here is the model for its fix. Queue it deliberately.
 22. **VISIBLE-ABSENCE RULE — N7 HALF AND THE DECLARATION BUILT 2026-07-29 (Batch A); THE
     CLOSE-AWARE CHIP REMAINS OPEN BY RULING.**
     **N7 half (SHIPPED).** `reunderwrite_triggers` — 16 across 6 names (AORT 3, IT 2, MVST 3,

@@ -14,10 +14,19 @@ from __future__ import annotations
 import enum
 from datetime import date, datetime
 
-from pydantic import BaseModel, model_validator
+from pydantic import BaseModel, Field, field_validator, model_validator
 
 # The one non-decision event a ledger row may record. A close is an APPENDED row, never an edit.
 EVENT_CLOSE = "CLOSE"
+
+# NOTE (item 18a, review finding): there is deliberately NO `FACTS_AVAILABLE_FROM` constant here.
+# The first cut declared one, citing the BASIS_REQUIRED_FROM / FIELDED_REFS_FROM pattern — but
+# those are READ by real version gates in vinci/scenarios.py, and nothing read this one. It could
+# not be read, either: those constants mark a version from which a field becomes REQUIRED, and
+# `facts` is permanently optional (a verdict that types nothing is still a verdict). A constant
+# that looks like a guard and enforces nothing is worse than no constant, so the forward-binding
+# property is stated where it is actually true — on the field, and in the test that pins that no
+# committed row was backfilled.
 
 # Close-row id convention. The decision row is "V-{candidate_id}" and re-logging it fails loud —
 # that uniqueness rule is what makes the ledger append-only in practice. It is widened HERE, once
@@ -56,6 +65,40 @@ class Disposition(enum.StrEnum):
     NO_PROPOSAL = "no_proposal"  # machine abstained (mixed / no read) — human decided cold
 
 
+class LedgerFact(BaseModel, frozen=True):
+    """One source-bound fact a verdict rested on — TYPED, beside the prose, never instead of it.
+
+    WHY THIS EXISTS (item 18a). The item-18 scope check found all three regression-trio facts —
+    loan-basis leverage, impairment quantum, buyback pace — living ONLY inside the ``thesis``
+    string: VRRM's row carries "68% of EBITDA at ~65% margins" as prose, SMPL's carries its
+    guidance range the same way. A guard that must compare the record's facts against the dossier's
+    therefore had no usable input. **That is the WRITE PATH'S SHAPE, not one badly-written entry:**
+    ``log_verdict`` takes ``thesis: str``, so the next payload is phrased differently by
+    construction and no regex over it can be correct.
+
+    Deliberately the same four fields as ``vinci.scenarios.Fact`` — ``basis`` names WHAT the number
+    is, ``source`` names WHERE it came from — so a reader moving between the underwrite record and
+    the ledger meets one shape, not two. ``source`` is REQUIRED and must be non-blank: a fact whose
+    provenance is unstated cannot be verified against a filing, and an unverifiable fact in the
+    append-only record is worse than no field at all.
+    """
+
+    value: float
+    unit: str    # "$M" | "x" | "%" | "shares" | "$/share"
+    basis: str   # e.g. "loan-basis net leverage, lease-inclusive (FY2025)"
+    source: str  # e.g. "10-K acc 0000793074-26-000071 — Note 9, long-term debt"
+
+    @field_validator("unit", "basis", "source")
+    @classmethod
+    def _not_blank(cls, v: str) -> str:
+        if not v.strip():
+            raise ValueError(
+                "a ledger fact needs its unit, basis and source — refusing to seal a number into "
+                "an append-only record with no way to check it against a filing"
+            )
+        return v
+
+
 class LedgerEntry(BaseModel, frozen=True):
     """A single recorded paper verdict. Append-only; never mutated after logging."""
 
@@ -83,6 +126,12 @@ class LedgerEntry(BaseModel, frozen=True):
     underwrite_ref: str | None = None
 
     thesis: str  # short written thesis (BUY) or rationale (AVOID)
+    # (item 18a) The facts the thesis rests on, TYPED and source-stamped — ALONGSIDE the prose,
+    # never replacing it. Empty on every row logged before this field existed, and empty is a
+    # legitimate permanent state: this records what the analyst chose to type, and a verdict that
+    # types nothing is still a verdict. Keyed by a short fact name ("loan_basis_leverage",
+    # "impairment_quantum", "buyback_pace") so a consumer selects by name rather than by position.
+    facts: dict[str, LedgerFact] = Field(default_factory=dict)
     kill_criteria: str  # what would falsify the thesis
     horizon_days: int  # thesis horizon in calendar days (the de-rating twin resolves in months)
     confidence: Confidence
@@ -157,6 +206,14 @@ class LedgerEntry(BaseModel, frozen=True):
         if not (self.reason or "").strip():
             raise ValueError(f"close row {self.entry_id!r} has no reason — a position closes for a "
                              "stated reason, or the record cannot be reviewed later")
+        if self.facts:
+            # (item 18a) Facts belong to the DECISION they justified. A close repeats the original
+            # verdict for provenance and opens no new position, so facts attached here would read
+            # as a second, later-dated underwrite of the same call — the same reason a close row
+            # carries no directional verdict of its own.
+            raise ValueError(
+                f"close row {self.entry_id!r} carries facts {sorted(self.facts)} — facts belong to "
+                f"the decision row they justified ({self.closes_entry_id!r}), not to its close")
         return self
 
     @model_validator(mode="after")

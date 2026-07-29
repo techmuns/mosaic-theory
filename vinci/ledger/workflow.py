@@ -10,11 +10,12 @@ The ledger is append-only: re-logging a candidate fails loud (a verdict is never
 
 from __future__ import annotations
 
+from collections.abc import Mapping
 from datetime import date, datetime
 from typing import Protocol
 
 from vinci.labels import resolve_label
-from vinci.schemas.ledger import Confidence, Disposition, LedgerEntry, Verdict
+from vinci.schemas.ledger import Confidence, Disposition, LedgerEntry, LedgerFact, Verdict
 from vinci.store import Store
 
 
@@ -37,6 +38,7 @@ def log_verdict(
     verdict: Verdict,
     twin_call: str,
     thesis: str,
+    facts: Mapping[str, LedgerFact] | None = None,
     kill_criteria: str,
     horizon_days: int,
     confidence: Confidence,
@@ -57,7 +59,13 @@ def log_verdict(
     The machine's SEALED proposal (2026-07-13 pivot) arrives from the caller — derived by
     ``vinci.dossier.verdict.derive_proposal`` over the COMMITTED dossier artifact, never recomputed
     from live data — and the disposition (confirm / override / no-proposal) is stamped here, once:
-    the human's verdict is the verdict of record; the disposition is the disagreement ledger."""
+    the human's verdict is the verdict of record; the disposition is the disagreement ledger.
+
+    ``facts`` (item 18a) carries the TYPED, source-stamped numbers the thesis rests on, alongside
+    the prose and never replacing it. Optional and defaulting to empty: this parameter changes the
+    write path's SHAPE so a structured fact CAN be recorded, and does not oblige any caller to
+    record one. Rows logged before it existed keep an empty mapping and are never backfilled — a
+    sealed decision is not rewritten to satisfy a later schema."""
     cand = store.get_candidate(candidate_id)
     if cand is None:
         raise LedgerError(f"no candidate {candidate_id!r} in the store (run the screen first)")
@@ -98,6 +106,7 @@ def log_verdict(
         entry_price=close.value,  # frozen
         entry_price_as_of=close.as_of,  # frozen
         thesis=thesis,
+        facts=dict(facts or {}),
         kill_criteria=kill_criteria,
         horizon_days=horizon_days,
         confidence=confidence,
