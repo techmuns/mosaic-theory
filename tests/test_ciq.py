@@ -71,19 +71,41 @@ def test_capital_structure_refuses_a_descending_export_rather_than_mislabel() ->
     an UNASSERTED convention, and an unasserted convention is precisely how `source_ref="Close
     (latest)"` came to sit on a months-old value in three dossiers (item 20).
 
-    POSITIVE: ascending columns → the last column is the latest and the claim stands.
-    NEGATIVE: a descending export → REFUSE, rather than stamp "(latest quarter)" on the oldest
-    column. Uses the real ordering helper, so the pin binds the shipped check, not a copy."""
+    DRIVES `_capital_summary` ITSELF, not the date helper. The first cut of this test asserted only
+    on `_cs_col_date`, and deleting the entire refusal from the shipped function left it GREEN — a
+    test whose name claims one thing while its assertion checks another, in the very PR about
+    vacuous tests. Caught by mutation, which is the only thing that catches this.
+
+    POSITIVE: ascending columns → PRESENT, and the value is read from the LATEST column.
+    NEGATIVE: the same sheet reversed → UNKNOWN naming the ordering, rather than "(latest
+    quarter)" stamped on the oldest column."""
+    from vinci.dossier.ciq_sheets import _capital_summary
+    from vinci.dossier.schemas import SourceStatus
+
+    cols = ["3 months Sep-30-2025", "3 months Dec-31-2025", "3 months Mar-31-2026"]
+    debts = ["100.0", "200.0", "300.0"]
+
+    class _Stub:
+        def __init__(self, headers: list[str], vals: list[str]) -> None:
+            self.rows = [["Fiscal Period", *headers], ["Total Debt Outstanding", *vals]]
+
+        def sheet(self, kind: str, name: str, *, freq: str | None = None) -> list[list[object]]:
+            return self.rows
+
+    ok = _capital_summary(_Stub(cols, debts))                       # type: ignore[arg-type]
+    assert ok.status is SourceStatus.PRESENT, f"ascending export refused: {ok.note}"
+    assert "300.0" in str(ok.value), (
+        f"the LATEST column was not the one read — got {ok.value!r}")
+
+    # the same data, exported newest-first: the last column is now the OLDEST
+    bad = _capital_summary(_Stub(cols[::-1], debts[::-1]))          # type: ignore[arg-type]
+    assert bad.status is not SourceStatus.PRESENT, (
+        f"a descending export was accepted and stamped '(latest quarter)': {bad.value!r} — this "
+        "is the false-provenance shape arriving through the data provider")
+    assert "ascending" in str(bad.note or ""), (
+        f"refused, but not for the ordering reason — note was {bad.note!r}")
+
+    # a header naming no date degrades to "order unknown", never to a wrong pick
     from vinci.dossier.ciq_sheets import _cs_col_date
 
-    asc = ["3 months Sep-30-2025", "3 months Dec-31-2025", "3 months Mar-31-2026"]
-    desc = list(reversed(asc))
-    a = [_cs_col_date(h) for h in asc]
-    d = [_cs_col_date(h) for h in desc]
-    assert all(x is not None for x in a), "the real headers must parse, or the guard sees nothing"
-    assert a == sorted(a), "ascending headers must read as ascending"
-    assert d != sorted(d), "a reversed export must be DETECTED as out of order"
-    # the last column really is the latest only in the ascending case — the whole claim
-    assert a[-1] == max(a) and d[-1] != max(d)
-    # and a header naming no date degrades to None (order unknown), never to a wrong pick
     assert _cs_col_date("LTM") is None and _cs_col_date("") is None

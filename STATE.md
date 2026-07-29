@@ -4633,10 +4633,19 @@ scheduled; 24 needs an operator policy line before any build encodes it.
     exactly the three names the defect was live on); 17b's material marking; the `FinRow.material`
     round-trip (#247); 26a's md-header, both-md-sites and web-header stamps (#245); the preview-path
     guard (#246); the corpus floor (#248).
-    **AND 31(a) CAUGHT ITSELF.** The first 17b mutation inserted its early `return` in the wrong
-    place, changed nothing, and left the suite green — the guard looked VACUOUS and was not. **A
-    mutation that does not change behaviour is not a test of the test**; now a standing line in
-    docs/engineering.md beside the worktree-baseline rule.
+    **AND 31(a) CAUGHT ITSELF — TWICE.** (1) The first 17b mutation inserted its early `return` in
+    the wrong place, changed nothing, and left the suite green — the guard looked VACUOUS and was
+    not. **A mutation that does not change behaviour is not a test of the test**; now a standing
+    line in docs/engineering.md beside the worktree-baseline rule. (2) **REVIEW OF #249 FOUND THE
+    SAME CLASS IN #249's OWN NEW TEST.**
+    `test_capital_structure_refuses_a_descending_export_rather_than_mislabel` asserted only on the
+    date HELPER: deleting the entire refusal from `_capital_summary` left it GREEN. A test whose
+    NAME claims one thing while its ASSERTION checks another — in the PR about vacuous tests.
+    Rewritten to drive `_capital_summary` itself (positive: ascending → PRESENT and reads the
+    LATEST column; negative: the same sheet reversed → UNKNOWN naming the ordering), and
+    re-mutated to confirm it now reds. **Two instances in one PR is the argument for making the
+    mutation step routine on every new guard rather than a one-off exercise** — writing the guard
+    and writing its test in the same pass is exactly when this blind spot occurs.
 32. **`midcycle` REACHES ONE TWIN ONLY — LATENT #227, queued 2026-07-28 (operator: "needs a
     number, or the diagnosis sits latent until something populates it").** `midcycle` is named in
     `render.py` and ABSENT from `dossier.js`; it is `null` on all 11 committed dossiers (absent on
