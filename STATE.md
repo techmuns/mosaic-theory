@@ -4116,6 +4116,19 @@ re-anchor (the full STATE split stays its own queued task — nothing was reloca
   **A `datetime`/`date` TRAP CAUGHT IN BUILD:** `datetime` SUBCLASSES `date`, so an
   `isinstance(x, dt.date)` check accepts a datetime and then `datetime - date` raises.
   `assembled_at` is a datetime and `reference_date` is a date, and both reach the function.
+  **REVIEW FINDING — ELEVEN STALE NUMERIC CLAIMS IN THE FILE THAT IMPLEMENTS THE NEW MEASURE.**
+  Every figure in `freshness.py`'s module docstring, its `MAX_PANEL_AGE_DAYS` justification and its
+  `_NOT_A_PANEL` note described the OLD gap, and five more sat in the test docstrings — a constant
+  justified by numbers its own module no longer produces. **Item 19's class, in the file arguing
+  for item 19's class.** Corrected against a computed table, not by hand: BRBR 71→74 · MVST 54→56 ·
+  CNXC 49→53 · SMPL 3→8 · distribution 3–71/median 36 → **8–74/median 39** · "at 45d CNXC, MVST and
+  BRBR" → **+VRRM**. Historical figures that describe the OLD measure are kept and LABELLED
+  old-measure rather than silently updated — they are the evidence for the change.
+  **AND THE BOUNDARY TEST HAD STOPPED TESTING THE BOUNDARY.** It keyed on VRRM sitting at exactly
+  45d; the re-measure moved VRRM to 48 and put FUBO on 45, so the test would have passed while
+  asserting nothing about the boundary. Now driven off a CONSTRUCTED `PanelAge` — the boundary is a
+  property of the guard, not of whichever name happens to land on it. Mutation-confirmed by
+  flipping `>` to `>=`.
   **THE FLEET ASSERTION NOW MOVES WITH THE WIN.** It was hardcoded to {BRBR, MVST, CNXC}; it now
   asserts the gate refuses EXACTLY the names whose computed age is over the ceiling. The comps
   re-exports will move names off that list, and a hardcoded set would have redded on a WIN and read

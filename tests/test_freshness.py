@@ -56,7 +56,8 @@ def test_a_value_borne_date_is_not_a_panel_arrival() -> None:
     An own-history band's `as_of` travels WITH ITS VALUE (item 20's fix: a band's current reading
     carries the date of the close it came from). A panel's `as_of` is an ARRIVAL — when an export
     was taken. Counting the first as the second makes SMPL read 115 days stale when its true panel
-    spread is 3 days, the TIGHTEST in the fleet, and puts it top of a list it should be bottom of.
+    oldest panel is 8 days old, the TIGHTEST in the fleet, and puts it top of a list it should be
+    bottom of.
     """
     mech = _fleet()["SMPL"]
     keys = {k for k, _ in fr.panel_dates(mech)}
@@ -178,12 +179,14 @@ def test_the_guards_fail_the_four_names_they_should_and_no_others_e2e() -> None:
     without a per-name table showing where it fires, where it does not, and that not-firing is
     correct on each).
 
-    FIRES — BRBR 71d, MVST 54d, CNXC 49d: comps older than the ceiling, driving peer multiples and
+    FIRES — BRBR 74d, MVST 56d, CNXC 53d, VRRM 48d: comps older than the ceiling, driving peer
+    multiples and
     the cross-sectional leg. CNXC is the reason the ceiling is 45 and not 60: it was cleared under
     16c this week on comps 49 days old.
     QUIET — the other seven: ordinary drift, which is a RENDERING obligation (clause (e)), not a
     build stop. Failing on drift would fail 11 of 11, which is a freeze wearing a guard's name.
-    FUBO fails on the SHARE BASIS rather than the spread — its 42d is inside the ceiling.
+    FUBO fails on the SHARE BASIS rather than the age — its 45d lands exactly ON the ceiling and
+    passes it (`> 45`, not `>=`).
     """
     age_fail, basis_fail, quiet = set(), set(), set()
     over_ceiling = set()
@@ -238,8 +241,13 @@ def test_the_guards_fail_the_four_names_they_should_and_no_others_e2e() -> None:
 
 
 def test_the_ceiling_is_a_boundary_not_a_range() -> None:
-    """`> 45`, not `>= 45`: VRRM sits at exactly 45d and passes. Pinned because a silent flip to
-    `>=` would fail a fourth name and read as a data change rather than a code change."""
+    """`> 45`, not `>= 45`. Pinned because a silent flip to `>=` would fail an extra name and read
+    as a data change rather than a code change.
+
+    Driven off a CONSTRUCTED PanelAge, not off a fleet name. It used to key on VRRM sitting at
+    exactly 45d — but the 2026-07-29 re-measure moved VRRM to 48d and put FUBO on the boundary
+    instead, so a fleet-keyed boundary test silently stops testing the boundary whenever the
+    fleet moves. The boundary is a property of the guard, so it is tested as one."""
     at = fr.PanelAge(oldest="2026-01-01", oldest_key="a", as_of="2026-02-15",
                      days=fr.MAX_PANEL_AGE_DAYS)
     fr.check_freshness(at, None, ticker="X")               # exactly at the ceiling: must not raise
@@ -250,8 +258,8 @@ def test_the_ceiling_is_a_boundary_not_a_range() -> None:
         fr.check_freshness(over, None, ticker="X")
 
 
-def test_the_spread_note_renders_on_a_passing_build_too() -> None:
-    """Rendered ALWAYS, not only on failure (operator): the spread is context a reader needs to
+def test_the_panel_age_note_renders_on_a_passing_build_too() -> None:
+    """Rendered ALWAYS, not only on failure (operator): panel age is context a reader needs to
     read a multiple. A guard that speaks only when it fails leaves the other seven names looking
     clean when their fundamentals are weeks behind their price."""
     age = fr.panel_age(_fleet()["AORT"], _assembled("AORT"))

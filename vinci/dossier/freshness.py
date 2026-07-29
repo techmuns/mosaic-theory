@@ -12,8 +12,8 @@ propagates into the cross-sectional leg of any thesis built on the page.
 SMPL — the audited name, the one that motivated all of this — has the SMALLEST gap. A fix built to
 close SMPL would have closed the least of eleven instances.
 
-TWO GUARDS, BECAUSE NEITHER PREDICTS THE OTHER. BRBR has the oldest panels (71d) and a middling
-gap; MVST's panels are younger (54d) with a worse gap (+17.6%).
+TWO GUARDS, BECAUSE NEITHER PREDICTS THE OTHER. BRBR has the oldest panels (74d) and a middling
+gap; MVST's panels are younger (56d) with a worse gap (+17.6%).
 
   * the AGE CEILING measures STALENESS — how old the oldest panel is, against the BUILD's date;
   * the RECONCILIATION measures INCOHERENCE — whether the numbers on the page agree with each other.
@@ -47,12 +47,16 @@ from dataclasses import dataclass
 
 #: Days a build's OLDEST panel may be, measured against the build's own date, before it fails.
 #: Re-measured 2026-07-29 (see PanelAge): the old oldest→newest form was price-driven, so a price
-#: refresh could fail a build on unchanged CIQ panels. Set from the measured
-#: distribution (3–71d, median 36d), not guessed: at 60d only BRBR fails; at 45d, CNXC, MVST and
-#: BRBR do — and CNXC is the name cleared under 16c this week on comps 49 days old, whose peer
-#: multiples drive the cross-sectional leg. Clearing a name on data we would fail at 45 is the
-#: reason for the tighter number (operator 2026-07-29). The remedy is a manual re-export, which is
-#: ordinary workflow rather than a code blocker.
+#: refresh could fail a build on unchanged CIQ panels.
+#:
+#: Set from the measured distribution, not guessed — RE-MEASURED with the ceiling, because the
+#: figures below described the OLD gap and a constant justified by stale numbers is the
+#: assertion-integrity defect wearing a comment: **8–74d, median 39d** across the 11 committed
+#: dossiers. At 60d only BRBR fails; at 45d **BRBR, CNXC, MVST and VRRM** do — and CNXC is the
+#: name cleared under 16c on comps that are 53 days old, whose peer multiples drive the
+#: cross-sectional leg. Clearing a name on data we would fail at 45 is the reason for the tighter
+#: number (operator 2026-07-29). The remedy is a manual re-export, ordinary workflow rather than a
+#: code blocker. FUBO sits on exactly 45 and PASSES this ceiling; it fails the reconciliation.
 MAX_PANEL_AGE_DAYS = 45
 
 #: Beyond this the cap and the spot do not describe the same equity, and the cap must RENDER its own
@@ -64,7 +68,7 @@ _INTEGER_TOLERANCE = 0.03
 
 #: A PANEL date is an ARRIVAL — when an export was taken. A date that TRAVELS WITH A VALUE (an
 #: own-history band's observation date, a per-point series date) is a different object, and mixing
-#: them inverts the ranking: SMPL reads 115 days stale on the mixed measure and 3 days — the
+#: them inverts the ranking: SMPL reads 115 days stale on the mixed measure and 8 days — the
 #: TIGHTEST in the fleet — on panel dates alone. Excluded by name for that reason.
 _NOT_A_PANEL = re.compile(
     r"own_history|stock_performance|gap_date|filing_date|maturity|expected_date|dated|points")
@@ -83,12 +87,13 @@ class PanelAge:
     RE-MEASURED 2026-07-29, replacing an oldest→NEWEST spread. The old measure was PRICE-DRIVEN:
     ``stock_info.as_of`` was the newest panel on 11 of 11 committed dossiers, so the price set one
     end of the gap and **refreshing prices widened it**. Moving the frontier 07-24 → 07-28 pushed
-    every name +4 days (NCNO +7) and took VRRM from 45d to 49d — assemblable before the refresh,
-    REFUSED after it, on unchanged CIQ panels.
+    every name +4 days (NCNO +7) and took VRRM's OLD-measure gap from 45d to 49d — assemblable
+    before the refresh, REFUSED after it, on unchanged CIQ panels. (Under THIS measure VRRM is
+    48d and still over the ceiling — but because time passed, not because someone refreshed.)
 
     That is backwards, and it creates an incentive to skip refreshes, against everything else
-    built here. MVST is the sharpest demonstration: its gap read 54d only because its price panel
-    was stale at 07-08 — **not refreshing a name made its build look fresher**.
+    built here. MVST is the sharpest demonstration: its OLD-measure gap read 54d only because
+    its price panel was stale at 07-08 — **not refreshing a name made its build look fresher**.
 
     Two concerns had been merged into one number. They are separated now:
       * *comps too old to be useful* → THIS measure, oldest panel vs the build date;
