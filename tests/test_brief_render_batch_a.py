@@ -164,6 +164,26 @@ def test_the_sealed_rationale_is_labelled_rather_than_edited() -> None:
         assert card.verdict.rationale in md, f"{name}: sealed rationale text was altered"
 
 
+def test_the_vintage_note_points_at_a_section_this_document_actually_has() -> None:
+    """REVIEW FINDING on this PR. The note first read "the live close is in Key figures" — the WEB
+    card's heading, which appears NOWHERE in the markdown; the md carries the live close under
+    `- **Snapshot:**`. A pointer to a section that does not exist is a false claim about the
+    document, shipped inside the batch whose whole subject is false claims about the document.
+
+    Written generally — it reads the target OUT of the note and requires it to exist — so a later
+    reword to another web-only label reds here rather than in a PDF."""
+    for name, _d, _card in CARDED:
+        md = _md(name)
+        if "### Thesis — our rationale" not in md:
+            continue
+        note = next(ln for ln in md.splitlines() if "entry-vintage (" in ln and "live close" in ln)
+        m = re.search(r"the live close is in ([A-Za-z][A-Za-z ]*?)[,.]", note)
+        assert m, f"{name}: could not read the pointer out of {note!r}"
+        target = m.group(1).strip()
+        assert re.search(rf"\*\*{re.escape(target)}:?\*\*|^#+ .*{re.escape(target)}", md, re.M), (
+            f"{name}: the note points at {target!r} and this render has no such section")
+
+
 # --- item 22: a render that cannot express a field must say so ----------------------------------
 
 

@@ -2326,13 +2326,6 @@ def _underwrite_lines(card: ScenarioRecord | None) -> list[str]:
         out += ["> **Not shown here:** any prior position, close or realized return for this name. "
                 "This surface reads the underwrite record only — the ledger is the record of "
                 "positions. **See the Decision log.**", ""]
-    # (item 22 / audit N7) what would REOPEN the name. Recorded on every watch record — 16 triggers
-    # across 6 names — rendered on the web card and, until now, nowhere in the md. A trigger the
-    # reader never sees cannot do the job it was written for.
-    if v.reunderwrite_triggers:
-        out += ["### What would reopen this name", ""]
-        out += [f"- {t}" for t in v.reunderwrite_triggers]
-        out.append("")
     # the THESIS — the analyst's own words, never machine text. ONE field since 2026-07-22:
     # `rationale` is canonical, `rationale_plain` deprecated and read by nothing (vinci/seal.py).
     thesis = v.rationale
@@ -2341,9 +2334,23 @@ def _underwrite_lines(card: ScenarioRecord | None) -> list[str]:
         # price ("WATCH at $10.53 — not held"), the vintage is supplied AROUND it. Labelled, not
         # corrected: the entry-vintage number is the reference frame the call was made in, and
         # rewriting it would falsify the record rather than date it.
+        #
+        # It points at "Snapshot" because that is what the MARKDOWN calls the block carrying the
+        # live close (`- **Snapshot:** … CMP $10.22 (2026-07-24) …`). The first cut said "Key
+        # figures", which is the WEB's heading and appears nowhere in the md — a pointer to a
+        # section that does not exist, in the batch whose subject is false claims about the page.
         out += ["### Thesis — our rationale",
                 f"_Prices quoted below are entry-vintage ({card.underwrite_date}); "
-                f"the live close is in Key figures._", "", thesis, ""]
+                f"the live close is in Snapshot, above._", "", thesis, ""]
+    # (item 22 / audit N7) what would REOPEN the name. Recorded on every watch record — 16 triggers
+    # across 6 names — rendered on the web card and, until now, nowhere in the md. A trigger the
+    # reader never sees cannot do the job it was written for. Placed AFTER the rationale to match
+    # the web card's order (rationale → host extras → trigger chips): the twins are allowed to LAG
+    # each other, but a reader comparing them should not meet the same two blocks in two orders.
+    if v.reunderwrite_triggers:
+        out += ["### What would reopen this name", ""]
+        out += [f"- {t}" for t in v.reunderwrite_triggers]
+        out.append("")
     return out
 
 
