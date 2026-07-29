@@ -4455,7 +4455,31 @@ screen cohort.**
     in the synthesis or the build fails loud. ORIGIN: SMPL's $391.9M LTM Asset Writedown (43% of market cap, the sole
     cause of LTM net income −$198.8M) never reached the dossier while the FY25 $60.9M was cited
     three times. Positive pin: a fixture writedown at 11% of mcap must raise unless surfaced.
-18a. **LEDGER PAYLOAD — STRUCTURED FACT FIELDS (queued 2026-07-28; MUST PRECEDE ITEM 18).**
+18a. **~~LEDGER PAYLOAD — STRUCTURED FACT FIELDS~~ — BUILT 2026-07-29 (Batch D). ITEM 18 IS NOW
+    UNBLOCKED.** `LedgerFact` (value / unit / basis / source) + `LedgerEntry.facts:
+    dict[str, LedgerFact]`, and `log_verdict` grew a `facts=` parameter. **Deliberately the same
+    four fields as `vinci.scenarios.Fact`** — a reader moving between the underwrite record and the
+    ledger meets ONE shape, not two.
+    **THE MECHANISM WAS CONFIRMED EXACTLY AS SPEC'D, worth recording after eight mis-specified
+    ones.** The trio really does live only in prose: VRRM's committed row carries "68% of EBITDA at
+    ~65% margins" inside `thesis`; SMPL's carries its guidance range the same way. Five ledger rows
+    total (3 decisions + 2 closes).
+    **REFUSALS.** A fact with a blank unit, basis or **source** is refused — an unverifiable number
+    sealed into an append-only record is worse than no field (the negative red, driven across `""`,
+    whitespace and tab so a space bar cannot bypass it). A **CLOSE row may not carry facts**: a
+    close repeats the original verdict for provenance and opens no position, so facts there would
+    read as a second, later-dated underwrite — the same reason a close carries no verdict of its own.
+    **BINDS FORWARD** (`FACTS_AVAILABLE_FROM = "2026-07-29"`, on the BASIS_REQUIRED_FROM /
+    FIELDED_REFS_FROM pattern): the 3 committed V-rows predate the field, stay valid, and are **NOT
+    backfilled** — pinned by a test that re-validates every committed row AND asserts none acquired
+    facts. Empty is a legitimate PERMANENT state, not a migration waypoint.
+    **TEST-LAYER NOTE.** The first cut pinned only the MODEL (construct → serialise → re-validate),
+    which proves the shape and not the path. The brief's red names the write path, and the item's
+    own scope sentence exists to stop it being relitigated as a parsing problem — so the pin was
+    moved onto `log_verdict` + a real `Store`, asserting the fact returns from the store as a
+    number. 13 tests, each mutation-checked (drop the writer's `facts=` → the store test reds;
+    relax the validator → five red; allow facts on a close → one reds).
+    **ORIGINAL SPEC, kept for the record:**
     Facts the record already knows and the dossier can render — loan-basis leverage, impairment
     quantum, buyback pace — become TYPED fields with their own source stamps on the ledger
     payload, alongside (never replacing) the prose `thesis`. ORIGIN: the item-18 scope check found
