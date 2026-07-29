@@ -4554,9 +4554,24 @@ screen cohort.**
     **CORRECTION carried in:** the mechanism pass first reported SIX single-segment names. That was
     an artifact of a 40-char print truncating SMPL's segment label, not a fact about the corpus —
     caught by re-reading the field rather than the console line. Seven.
-    **NOT DONE HERE:** `geographic`'s `after_label` absence branch carries the same sheet-shape
-    phrasing, but `geographic` is PRESENT on all 11, so the branch is dead on the current corpus —
-    left alone rather than changed unverifiably (hold scope).
+    **TWO REVIEW FINDINGS ON THIS PR, both mine, both fixed before merge.**
+    (i) **The scoped path reintroduced item 19b's own defect INSIDE the function written to remove
+    it.** `geographic` searches for 'Revenues' UNDER a 'Geographic Segment' label; when that
+    subsection is missing, `_absence_reason` answered with the BUSINESS roster from the top of the
+    sheet — *"reports 2 segments (Products; Preservation Services) but discloses no segment
+    Revenues"* — a stamp naming an object the caller never read, and self-contradictory besides.
+    Latent on today's corpus (`geographic` is PRESENT on all 11), which is why it is PINNED rather
+    than re-measured. `after_label` now scopes the claim, and a scoped absence says only what it
+    can support.
+    (ii) **An unguarded `rows[i][0]` crashed the build on a blank roster row.** The sibling loop in
+    `_segment_section` has the same shape but runs on the SUCCESS path; this one runs on the
+    FAILURE path, so the unguarded read turned a graceful UNKNOWN into an IndexError that kills the
+    whole dossier build — strictly worse than the note it was trying to write. Bounds-checked, with
+    its own red.
+    **LESSON, and it is the third instance:** a guard written against a defect class is not immune
+    to that class. Item 1's completeness gate had it (a guard that could not fire), the freshness
+    reconcile had it (the inverse-ratio blind spot), and now the absence-reason guard names the
+    wrong object on its own sibling path.
 20. **~~NO BACKWARD-FILL ON SERIES~~ — CLOSED 2026-07-28. P5 IS HALF CLOSED, NOT WHOLE —
     CORRECTED CLAIM (see the build record).** Item 20 closes P5's STALENESS half on BOTH consumers.
     P5's BASIS-MISLABEL half (`mechanical.py:856` asserts the reading "rest on normalized/adjusted

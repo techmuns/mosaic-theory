@@ -92,6 +92,42 @@ def test_a_missing_period_header_is_its_own_reason() -> None:
     assert "single-segment" not in note and "reports" not in note
 
 
+def test_a_scoped_absence_does_not_describe_the_unscoped_roster() -> None:
+    """REVIEW FINDING on this PR — item 19b's own defect, reintroduced inside the function written
+    to remove it.
+
+    ``geographic`` searches for 'Revenues' UNDER a 'Geographic Segment' label. When that subsection
+    is missing, the first cut answered with the BUSINESS roster from the top of the sheet: "reports
+    2 segments (Products; Preservation Services) but discloses no segment Revenues" — a stamp
+    naming an object the caller never read, and self-contradictory besides ("revenue is segmented
+    in the filing and Revenues is not").
+
+    Latent on today's corpus (``geographic`` is PRESENT on all 11), which is exactly why it needs a
+    pin rather than a re-measurement."""
+    rows = _seg_rows([("Products", 78.0), ("Preservation Services", 22.0)])
+    rows.append(["Geographic Segment", None])
+
+    scoped = _absence_reason(rows, "Revenues", hdr=0, after_label="Geographic Segment")
+    assert "Geographic Segment" in scoped
+    assert "Products" not in scoped, f"the scoped note described the business roster: {scoped}"
+    assert "reports 2 segments" not in scoped
+    # the UNSCOPED call on the SAME sheet still answers with the roster — without this the fixture
+    # would pass by making both branches say nothing, which pins the absence of a feature.
+    assert "reports 2 segments" in _absence_reason(rows, "EBITDA", hdr=0)
+
+
+def test_an_empty_row_in_the_roster_block_does_not_crash_the_build() -> None:
+    """REVIEW FINDING on this PR. ``_segment_roster`` indexed ``rows[i][0]`` unguarded, so a blank
+    row between 'Revenues' and 'Total Revenues' raised IndexError. The sibling loop in
+    ``_segment_section`` has the same shape but runs on the SUCCESS path; this one runs on the
+    FAILURE path, so the unguarded read turned a graceful UNKNOWN into a crash that kills the whole
+    dossier build — strictly worse than the note it was trying to write."""
+    rows: list[list[Any]] = [["Fiscal Period", "FY 2025"], ["Revenues", None],
+                             ["A", 60.0], [], ["B", 40.0], ["Total Revenues", 100.0]]
+    note = _absence_reason(rows, "EBITDA", hdr=0)      # must not raise
+    assert "reports 2 segments" in note and "A; B" in note
+
+
 @pytest.mark.skipif(not CIQ.is_dir(), reason="licensed CIQ bundles unavailable (never committed)")
 def test_no_committed_bundle_still_asserts_sheet_shape() -> None:
     """THE CORPUS RED. Ten of eleven names carried the sheet-shape note; none may now."""

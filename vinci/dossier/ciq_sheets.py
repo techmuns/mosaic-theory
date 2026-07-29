@@ -874,6 +874,12 @@ def _segment_roster(rows: list[list[Any]], hdr: int | None) -> list[tuple[str, f
         return None
     out: list[tuple[str, float]] = []
     for i in range(start + 1, total):
+        # BOUNDS-CHECKED, unlike the sibling loop in `_segment_section`. That one runs on the
+        # SUCCESS path, where the block is known good; this runs on the FAILURE path, so an
+        # unguarded ``rows[i][0]`` would turn a graceful UNKNOWN into an IndexError that kills the
+        # whole build — strictly worse than the note it was trying to write.
+        if not rows[i]:
+            continue
         seg = str(rows[i][0]).strip()
         v = clean_num(rows[i][col]) if col < len(rows[i]) else None
         if seg and v is not None:
@@ -881,7 +887,9 @@ def _segment_roster(rows: list[list[Any]], hdr: int | None) -> list[tuple[str, f
     return out or None
 
 
-def _absence_reason(rows: list[list[Any]], section: str, hdr: int | None) -> str:
+def _absence_reason(
+    rows: list[list[Any]], section: str, hdr: int | None, *, after_label: str | None = None
+) -> str:
     """WHY a Segments section is absent, generated from the object actually read (item 19b).
 
     The note this replaces — "Segments sheet has no 'EBITDA' section as expected" — asserted SHEET
@@ -891,9 +899,20 @@ def _absence_reason(rows: list[list[Any]], section: str, hdr: int | None) -> str
 
     Follows the ``net_lev`` precedent in ``vinci/edgar/client.py`` — name the SPECIFIC cause, never
     lump distinct ones. The single-segment test mirrors the ``lean`` collapse below (one item at
-    >=99.5%) so the note and the ``segments`` field can never disagree about what the sheet says."""
+    >=99.5%) so the note and the ``segments`` field can never disagree about what the sheet says.
+
+    ``after_label`` SCOPES the claim, and the first cut of this function got it wrong. The roster
+    is the BUSINESS-segment block at the top of the sheet; a scoped caller (``geographic``, which
+    searches under 'Geographic Segment') asking why ITS subsection is missing would have been
+    answered with the business roster — "reports 2 segments (Products; Preservation Services) but
+    discloses no segment Revenues", which describes an object the caller never read. That is item
+    19b's own defect, reintroduced inside the function written to remove it. A scoped absence
+    therefore says only what it can support."""
     if hdr is None:
         return f"Segments sheet has no period header — the '{section}' column cannot be located"
+    if after_label is not None:
+        return (f"Segments sheet has a '{after_label}' section but no '{section}' block under it — "
+                f"the {after_label.lower()} breakdown is absent from this export")
     roster = _segment_roster(rows, hdr)
     if roster is None:
         return (f"Segments sheet has no '{section}' section, and its revenue roster could not be "
@@ -942,7 +961,7 @@ def _segment_section(
         None,
     )
     if start is None or total is None or hdr is None:
-        return Sourced.unknown(note=_absence_reason(rows, section, hdr))
+        return Sourced.unknown(note=_absence_reason(rows, section, hdr, after_label=after_label))
     latest = _latest_col(rows, total, hdr)
     if latest is None:
         return Sourced.unknown(note=f"Segments 'Total {section}' has no value")
