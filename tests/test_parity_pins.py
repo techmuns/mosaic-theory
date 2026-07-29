@@ -801,3 +801,28 @@ def test_extraction_version_changelog_py_js_parity() -> None:
     web_header = '· extraction <span class="mono">${escapeHtml(stampLabel(d.extraction_version))}'
     assert web_header in js, (
         "the web header lost the extraction stamp — it must ride the document date")
+
+def test_panel_date_exclusions_py_js_parity() -> None:
+    """(item 1) The panel-date harvester exists in BOTH languages and its EXCLUSION LIST is the
+    load-bearing part — the distinction between a date that TRAVELS WITH A VALUE and one that
+    describes an ARRIVAL. Get it wrong and SMPL reads 115 days stale instead of 3, the tightest in
+    the fleet, and the whole staleness ranking inverts. That error was made twice while measuring
+    this, so a one-sided edit to either list must redden rather than quietly re-invert it."""
+    import re as _re
+
+    from vinci.dossier.freshness import _NOT_A_PANEL
+
+    py_terms = set(_NOT_A_PANEL.pattern.split("|"))
+    js = _src("frontend/views/shared/dossier.js")
+    m = _re.search(r"const _NOT_A_PANEL = /([^/]+)/", js)
+    assert m, "dossier.js lost its _NOT_A_PANEL exclusion list"
+    js_terms = set(m.group(1).split("|"))
+
+    assert py_terms == js_terms, (
+        "panel-date EXCLUSIONS diverge between freshness.py and dossier.js — one twin would count "
+        f"a value-borne date as a panel arrival.\n  py-only={sorted(py_terms - js_terms)}\n"
+        f"  js-only={sorted(js_terms - py_terms)}")
+    assert {"own_history", "stock_performance"} <= py_terms, (
+        "the two exclusions that inverted the ranking are gone from BOTH sides, so this pin would "
+        "pass while the defect returned")
+

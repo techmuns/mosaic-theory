@@ -1,0 +1,180 @@
+"""ITEM 1 — the freshness contract's two guards.
+
+THE DEFECT WAS LIVE ON ALL ELEVEN, and the audited name was the least of them: every committed
+dossier renders a market cap that cannot be reconciled to the price beside it, SMPL smallest at
+−2.4% and FUBO worst at −91%. A fix built and tested on SMPL alone would have closed the mildest
+instance in the fleet.
+
+WHAT IS PINNED HERE. The two guards fire on the right names and stay quiet on the right names; the
+ratio DIAGNOSES rather than merely flags; and — the pin that would have caught the mistake made
+twice while measuring this — a value-borne date is not a panel arrival.
+"""
+from __future__ import annotations
+
+import json
+import pathlib
+import re
+
+import pytest
+
+from vinci.dossier import freshness as fr
+
+ROOT = pathlib.Path(__file__).resolve().parents[1]
+
+
+def _num(x: object) -> float | None:
+    if isinstance(x, (int, float)) and not isinstance(x, bool):
+        return float(x)
+    m = re.search(r"-?[\d,]+\.?\d*", str(x or ""))
+    return float(m.group(0).replace(",", "")) if m else None
+
+
+def _stock(mech: dict, key: str) -> float | None:
+    v = (mech.get("stock_info") or {}).get(key)
+    return _num(v.get("value") if isinstance(v, dict) else v)
+
+
+def _fleet() -> dict[str, dict]:
+    out = {}
+    for d in sorted((ROOT / "data" / "dossiers").iterdir()):
+        j = d / "dossier.json"
+        if j.exists():
+            out[d.name] = json.loads(j.read_text()).get("mechanical") or {}
+    return out
+
+
+def test_a_value_borne_date_is_not_a_panel_arrival() -> None:
+    """THE MEASUREMENT BUG, pinned — it was made twice and inverted the fleet's ranking both times.
+
+    An own-history band's `as_of` travels WITH ITS VALUE (item 20's fix: a band's current reading
+    carries the date of the close it came from). A panel's `as_of` is an ARRIVAL — when an export
+    was taken. Counting the first as the second makes SMPL read 115 days stale when its true panel
+    spread is 3 days, the TIGHTEST in the fleet, and puts it top of a list it should be bottom of.
+    """
+    mech = _fleet()["SMPL"]
+    keys = {k for k, _ in fr.panel_dates(mech)}
+    assert keys, "no panel dates found on SMPL — the harvester is looking in the wrong place"
+    assert not [k for k in keys if "own_history" in k or "stock_performance" in k], (
+        f"value-borne dates leaked into the panel set: {sorted(keys)}")
+
+    spread = fr.panel_spread(mech)
+    assert spread is not None and spread.days <= 10, (
+        f"SMPL's PANEL spread is {spread.days if spread else '?'}d — it is 3d in fact, and a "
+        "larger number here means value-borne dates are being counted as arrivals again")
+
+
+def test_the_ratio_separates_a_corporate_action_from_price_drift() -> None:
+    """The diagnosis, not just the flag (operator 2026-07-29). A near-whole-number ratio is a
+    SHARE-BASIS mismatch — a split straddling the panel dates — and a fractional one is drift.
+    The remediations differ completely: fix a share basis vs re-export a panel. A gate reporting
+    only pass/fail would flag FUBO without saying which."""
+    # FUBO's real numbers: EDGAR's pre-split 342.4M shares against CIQ's post-split $256.4M cap
+    split = fr.reconcile_cap(cap_musd=256.4, shares=342_433_118, spot=8.33)
+    assert split is not None and split.corporate_action
+    assert 11.0 < split.ratio < 11.3, split.ratio
+    assert "SHARE-BASIS mismatch" in split.note() and "not price drift" in split.note()
+
+    # ordinary drift — a June cap against a July close — must NOT be called a corporate action
+    drift = fr.reconcile_cap(cap_musd=1069.4, shares=48_543_350, spot=25.28)
+    assert drift is not None and not drift.corporate_action
+    assert -0.15 < drift.gap < -0.10
+    assert "own as-of" in drift.note()
+
+    # and a clean reconciliation is neither
+    ok = fr.reconcile_cap(cap_musd=100.0, shares=10_000_000, spot=10.0)
+    assert ok is not None and not ok.corporate_action and abs(ok.gap) < 1e-9
+
+
+def test_a_share_basis_mismatch_is_caught_in_both_directions() -> None:
+    """REVIEW FINDING on #253. The first cut tested `ratio >= 2`, which catches a PRE-split share
+    count against a POST-split cap (FUBO, ~11x) and SILENTLY REPORTS THE REVERSE AS DRIFT.
+
+    Nothing guarantees which side of the pair is the stale one: if the CAP were the pre-split
+    figure and the shares post-split, the ratio is ~1/11 and the old test returned
+    corporate_action=False — so the build would pass, the cap would render merely 'labelled with
+    its own as-of', and a page whose every per-share figure is wrong by 11x would look like
+    ordinary June-vs-July drift. The remediation is identical in both directions, so the detection
+    must be too."""
+    forward = fr.reconcile_cap(cap_musd=256.4, shares=342_433_118, spot=8.33)
+    inverse = fr.reconcile_cap(cap_musd=2853.0, shares=342_433_118, spot=0.749)
+    assert forward is not None and inverse is not None
+    assert forward.corporate_action and inverse.corporate_action, (
+        f"forward={forward.ratio:.4g} inverse={inverse.ratio:.4g} — a share-basis mismatch was "
+        "missed in one direction")
+    assert forward.ratio > 2 and inverse.ratio < 0.5, "the fixture no longer spans both directions"
+    assert "either way" in inverse.note(), (
+        "the note prints a bare 0.09x with no explanation — a reader cannot tell that from a "
+        "90%-off drift, which is the distinction the ratio exists to draw")
+
+    # the fold must NOT drag ordinary drift over the line: 1.17x is EPAM's real June-vs-July gap
+    for r in (1.148, 1.169, 0.850, 0.918):
+        drift = fr.reconcile_cap(cap_musd=100.0, shares=1e7, spot=10.0 * r)
+        assert drift is not None and not drift.corporate_action, f"{r} misread as a split"
+
+
+def test_absent_inputs_reconcile_to_nothing_rather_than_to_a_guess() -> None:
+    """A missing cap/shares/spot is its own fail-loud elsewhere. Inventing one here to keep the
+    check running would be the fabrication the repo refuses."""
+    for kw in ({"cap_musd": None}, {"shares": None}, {"spot": None}, {"spot": 0.0}):
+        args = {"cap_musd": 100.0, "shares": 1e7, "spot": 10.0, **kw}
+        assert fr.reconcile_cap(**args) is None            # type: ignore[arg-type]
+
+
+def test_the_guards_fail_the_four_names_they_should_and_no_others_e2e() -> None:
+    """THE PER-NAME GATE across the whole committed fleet (operator's standing rule: no fix ships
+    without a per-name table showing where it fires, where it does not, and that not-firing is
+    correct on each).
+
+    FIRES — BRBR 71d, MVST 54d, CNXC 49d: comps older than the ceiling, driving peer multiples and
+    the cross-sectional leg. CNXC is the reason the ceiling is 45 and not 60: it was cleared under
+    16c this week on comps 49 days old.
+    QUIET — the other seven: ordinary drift, which is a RENDERING obligation (clause (e)), not a
+    build stop. Failing on drift would fail 11 of 11, which is a freeze wearing a guard's name.
+    FUBO fails on the SHARE BASIS rather than the spread — its 42d is inside the ceiling.
+    """
+    spread_fail, basis_fail, quiet = set(), set(), set()
+    for name, mech in _fleet().items():
+        recon = fr.reconcile_cap(cap_musd=_stock(mech, "market_cap"),
+                                 shares=_stock(mech, "shares_out"), spot=_stock(mech, "price"))
+        try:
+            fr.check_freshness(fr.panel_spread(mech), recon, ticker=name)
+            quiet.add(name)
+        except fr.FreshnessError as exc:
+            (basis_fail if "share basis" in str(exc) else spread_fail).add(name)
+
+    assert spread_fail == {"BRBR", "MVST", "CNXC"}, spread_fail
+    assert basis_fail == {"FUBO"}, basis_fail
+    assert quiet == {"AORT", "EPAM", "IT", "NCNO", "SMPL", "VITL", "VRRM"}, quiet
+    # ...and every quiet name is quiet because it DRIFTS, never because its cap reconciles
+    for name in quiet:
+        mech = _fleet()[name]
+        r = fr.reconcile_cap(cap_musd=_stock(mech, "market_cap"),
+                             shares=_stock(mech, "shares_out"), spot=_stock(mech, "price"))
+        assert r is not None and abs(r.gap) > fr.RECONCILE_TOLERANCE, (
+            f"{name} now reconciles within tolerance — if a panel was re-exported this is a WIN, "
+            "but the assertion must move with it rather than silently weaken")
+
+
+def test_the_ceiling_is_a_boundary_not_a_range() -> None:
+    """`> 45`, not `>= 45`: VRRM sits at exactly 45d and passes. Pinned because a silent flip to
+    `>=` would fail a fourth name and read as a data change rather than a code change."""
+    mech = _fleet()["VRRM"]
+    spread = fr.panel_spread(mech)
+    assert spread is not None and spread.days == fr.MAX_PANEL_SPREAD_DAYS
+    fr.check_freshness(spread, None, ticker="VRRM")        # must not raise
+
+    over = fr.PanelSpread(oldest="2026-01-01", oldest_key="a", newest="2026-02-16",
+                          newest_key="b", days=fr.MAX_PANEL_SPREAD_DAYS + 1)
+    with pytest.raises(fr.FreshnessError, match="ceiling"):
+        fr.check_freshness(over, None, ticker="X")
+
+
+def test_the_spread_note_renders_on_a_passing_build_too() -> None:
+    """Rendered ALWAYS, not only on failure (operator): the spread is context a reader needs to
+    read a multiple. A guard that speaks only when it fails leaves the other seven names looking
+    clean when their fundamentals are weeks behind their price."""
+    spread = fr.panel_spread(_fleet()["AORT"])
+    assert spread is not None
+    note = spread.note()
+    assert "panel spread" in note and str(spread.days) in note
+    assert spread.oldest in note and spread.newest in note

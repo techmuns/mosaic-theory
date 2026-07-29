@@ -10,7 +10,7 @@ Verra Mobility Corporation provides smart mobility technology solutions in the U
 - **Segments:** Government Solutions 47%; Commercial Services 45%; Parking Solutions 8% [1]
 - **Geography:** United States 86%; Australia 7%; Canada 3%; United Kingdom 3%; ALL Other 1% [2]
 - **Customer concentration:** top customer 15% (from 15%) of revenue [3]
-- **Snapshot:** Nasdaq · CMP $4.05 (2026-07-24) · cap $668M · 52-wk $3.40–$25.73 · shares 151.9M · book value/sh $1.79 [4]
+- **Snapshot:** Nasdaq · CMP $4.05 (2026-07-24) · cap $668M (2026-06-09) · 52-wk $3.40–$25.73 · shares 151.9M · book value/sh $1.79 [4]
 
 **The crux — what decides this, and what would change our mind**
 **Does the durable Government Solutions recurring pipeline replace the lost Avis revenue and stabilise forward EBITDA, or does the Avis termination plus NYC pricing pressure mark a step-down to a permanently lower earnings base?**
@@ -474,6 +474,7 @@ _Source §: fenced Tier-2 extraction (verbatim, source-bound)_
 ## Record & reproduce
 - **Data window:** screened as of 2026-07-06 · assembled 2026-07-27 10:09 UTC
 - **Extraction:** unstamped — assembled before extraction versions were declared; vintage unknown
+- **Panel spread:** panel spread 45d — oldest 2026-06-09 (valuation.implied_expectations.multiples_as_of), newest 2026-07-24 (stock_info.as_of)
 - **Synthesis:** model `claude-opus-4-8` — facts assembled mechanically; the synthesis frames, the analyst decides
 - **Identifiers:** CIK `0001682745` · Nasdaq : VRRM
 - **Assembly log:** primary-source: 8-K 0001193125-26-260606 carries 8.01 but no EX-99.1 exhibit was found; primary-source: 4 EX-99.1 release(s) + 1 10-Q parsed (+2.8s fetch)

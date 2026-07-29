@@ -11,7 +11,7 @@ FuboTV Inc. operates as a live TV streaming platform company in the United State
 **Strongly-bearish** — idiosyncratic -83% relative collapse, across-the-board FY26 estimate cuts crossing zero, and unfunded cash burn with opaque leverage.
 - **Segments:** Streaming Business — single segment [1]
 - **Geography:** United States — single geography [2]
-- **Snapshot:** NYSE · CMP $8.33 (2026-07-24) · cap $256M · 52-wk $7.95–$56.64 · shares 342.4M · book value/sh $27.58 [3]
+- **Snapshot:** NYSE · CMP $8.33 (2026-07-24) · cap $256M (2026-06-12) · 52-wk $7.95–$56.64 · shares 342.4M · book value/sh $27.58 [3]
 
 **The crux — what decides this, and what would change our mind**
 **Does the Hulu Live combination convert scaled revenue into durable, self-funding adjusted-EBITDA/FCF (an overshoot), or does structural cash burn, subscriber attrition and content-supplier loss make the profitability inflection unreachable before the cash runs down (a value trap)?**
@@ -433,6 +433,7 @@ _QoQ/YoY same-basis only; (R) = Reclassified_
 ## Record & reproduce
 - **Data window:** screened as of 2026-07-06 · assembled 2026-07-27 10:05 UTC
 - **Extraction:** unstamped — assembled before extraction versions were declared; vintage unknown
+- **Panel spread:** panel spread 42d — oldest 2026-06-12 (valuation.implied_expectations.multiples_as_of), newest 2026-07-24 (stock_info.as_of)
 - **Synthesis:** model `claude-opus-4-8` — facts assembled mechanically; the synthesis frames, the analyst decides
 - **Identifiers:** CIK `0001484769` · NYSE : FUBO
 - **Assembly log:** primary-source: 8-K 0001493152-26-011823 carries 8.01 but no EX-99.1 exhibit was found; primary-source: 8-K 0001493152-26-003429 carries 8.01 but no EX-99.1 exhibit was found; primary-source: 3 EX-99.1 release(s) + 1 10-Q parsed (+2.4s fetch)

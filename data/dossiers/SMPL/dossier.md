@@ -17,7 +17,7 @@ WATCH at $10.53 — not held. The market prices this business below the cheapest
 The Simply Good Foods Company, a consumer-packaged food and beverage company, engages in the development, marketing, and sale of snacks and meal replacements, and other products in North America and internationally.
 - **Segments:** Branded Nutritional Foods and Snacking Products — single segment [1]
 - **Geography:** North America 98%; International 2% [2]
-- **Snapshot:** Nasdaq · CMP $10.53 (2026-07-22) · cap $909M · 52-wk $10.21–$34.19 · shares 88.5M · book value/sh $16.03 [3]
+- **Snapshot:** Nasdaq · CMP $10.53 (2026-07-22) · cap $909M (2026-07-21) · 52-wk $10.21–$34.19 · shares 88.5M · book value/sh $16.03 [3]
 
 **The crux — what decides this, and what would change our mind**
 **Will management's September price increase plus cost restructuring rebuild margin and stabilize takeaway before Atkins/OWYN distribution losses and category share erosion make the sales decline structural?**
@@ -493,6 +493,7 @@ _QoQ/YoY same-basis only; (R) = Reclassified_
 ## Record & reproduce
 - **Data window:** screened as of 2026-07-06 · assembled 2026-07-24 13:02 UTC
 - **Extraction:** unstamped — assembled before extraction versions were declared; vintage unknown
+- **Panel spread:** panel spread 3d — oldest 2026-07-21 (valuation.implied_expectations.multiples_as_of), newest 2026-07-24 (valuation.implied_expectations.tev_as_of)
 - **Synthesis:** model `claude-opus-4-8` — facts assembled mechanically; the synthesis frames, the analyst decides
 - **Identifiers:** CIK `0001702744` · Nasdaq : SMPL
 - **Assembly log:** primary-source: 5 EX-99.1 release(s) + 1 10-Q parsed (+0.5s fetch)

@@ -11,7 +11,7 @@ Concentrix Corporation designs, builds, and runs integrated customer experience 
 **Mixed** — genuine cash generation and a live mix-upgrade thesis sit against heavy 4.1x leverage, a deep GAAP loss, and sharp consensus cuts.
 - **Segments:** Software & Programming — single segment [1]
 - **Geography:** Others 52%; Philippines 16%; India 11%; United States 11%; Great Britain 4%; Germany 3%; Canada 3% [2]
-- **Snapshot:** Nasdaq · CMP $22.25 (2026-07-24) · cap $1.5B · 52-wk $19.12–$62.14 · shares 61.0M · book value/sh $44.38 [3]
+- **Snapshot:** Nasdaq · CMP $22.25 (2026-07-24) · cap $1.5B (2026-06-05) · 52-wk $19.12–$62.14 · shares 61.0M · book value/sh $44.38 [3]
 
 **The crux — what decides this, and what would change our mind**
 **Is the AI-driven mix shift toward higher-value, tech-enabled work a genuine, margin-accretive revenue-quality upgrade that will de-lever the balance sheet toward the committed sub-2.6x, or is AI a secular volume-destruction threat that erodes the core CX book faster than the new offerings can replace it?**
@@ -497,6 +497,7 @@ _Source §: 8-K 0001803599-23-000177 · exhibit41indenture.htm_
 ## Record & reproduce
 - **Data window:** screened as of 2026-07-06 · assembled 2026-07-28 17:23 UTC
 - **Extraction:** 2026-07-28.1 — unusual-items surfacing in the financial summary (#238) · multiples read from the latest close, NM rather than a stale figure (#241)
+- **Panel spread:** panel spread 49d — oldest 2026-06-05 (valuation.implied_expectations.multiples_as_of), newest 2026-07-24 (stock_info.as_of)
 - **Synthesis:** model `claude-opus-4-8` — facts assembled mechanically; the synthesis frames, the analyst decides
 - **Identifiers:** CIK `0001803599` · Nasdaq : CNXC
 - **Assembly log:** primary-source: 5 EX-99.1 release(s) + 1 10-Q parsed (+3.1s fetch)

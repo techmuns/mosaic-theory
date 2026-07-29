@@ -17,7 +17,7 @@ WATCH at $25.37. The underwrite fails our 2:1 bar with room to spare: the base c
 Artivion, Inc. manufactures, processes, and distributes medical devices and implantable human tissues worldwide.
 - **Segments:** Products 78%; Preservation Services 22% [1]
 - **Geography:** North America 50%; Europe The Middle East and Africa 34%; Asia Pacific 10%; Latin America 5% [2]
-- **Snapshot:** NYSE · CMP $25.28 (2026-07-24) · cap $1.1B · 52-wk $19.16–$48.25 · shares 48.5M · book value/sh $9.29 [3]
+- **Snapshot:** NYSE · CMP $25.28 (2026-07-24) · cap $1.1B (2026-06-23) · 52-wk $19.16–$48.25 · shares 48.5M · book value/sh $9.29 [3]
 
 **The crux — what decides this, and what would change our mind**
 **Is the stent-graft/AMDS deceleration plus the On-X recall a transient stumble against an intact double-digit-growth, operating-leverage thesis, or the first evidence of a structural growth-and-cash impairment that makes the leverage and falling EPS the real story?**
@@ -593,6 +593,7 @@ _Source §: 8-K 0000784199-16-000175 · c199-20160125ex101fad737.htm_
 ## Record & reproduce
 - **Data window:** screened as of 2026-07-06 · assembled 2026-07-27 09:58 UTC
 - **Extraction:** unstamped — assembled before extraction versions were declared; vintage unknown
+- **Panel spread:** panel spread 31d — oldest 2026-06-23 (valuation.implied_expectations.multiples_as_of), newest 2026-07-24 (stock_info.as_of)
 - **Synthesis:** model `claude-opus-4-8` — facts assembled mechanically; the synthesis frames, the analyst decides
 - **Identifiers:** CIK `0000784199` · NYSE : AORT
 - **Assembly log:** primary-source: 6 EX-99.1 release(s) + 1 10-Q parsed (+4.9s fetch)
