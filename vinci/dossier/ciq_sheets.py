@@ -20,10 +20,12 @@ from vinci.dossier.band_guards import SheetCoherence, compose_flag, sheet_cohere
 from vinci.dossier.ciq import (
     _UNAVAILABLE_CELLS,
     CiqBundle,
+    CiqFormat,
     CiqParseError,
     CiqUnavailableError,
     clean_num,
     excel_date,
+    read_sheets,
     read_text,
 )
 from vinci.dossier.materiality import MaterialityUnavailableError, unusual_items_block
@@ -848,6 +850,62 @@ def capital_structure_ciq(
 # --- concentration: Segments ------------------------------------------------------------------
 
 
+def _segment_roster(rows: list[list[Any]], hdr: int | None) -> list[tuple[str, float]] | None:
+    """The BUSINESS-segment roster (name, share of total revenue) from the sheet's own 'Revenues'
+    block — read so an absence reason can name the FILING FACT rather than the sheet's shape.
+
+    Deliberately re-reads the Revenues block instead of taking :func:`segments`' rendered string:
+    display formatting is never load-bearing, and a note that parsed the field it sits beside
+    would be a second parser of the same value. None when the roster itself cannot be read — in
+    which case the caller has nothing to assert and must say so."""
+    if hdr is None:
+        return None
+    start = next((i for i, r in enumerate(rows) if r and str(r[0]).strip() == "Revenues"), None)
+    total = next(
+        (i for i, r in enumerate(rows) if r and str(r[0]).strip().startswith("Total Revenue")), None
+    )
+    if start is None or total is None:
+        return None
+    latest = _latest_col(rows, total, hdr)
+    if latest is None:
+        return None
+    col, tot, _period = latest
+    if not tot:
+        return None
+    out: list[tuple[str, float]] = []
+    for i in range(start + 1, total):
+        seg = str(rows[i][0]).strip()
+        v = clean_num(rows[i][col]) if col < len(rows[i]) else None
+        if seg and v is not None:
+            out.append((seg, v / tot))
+    return out or None
+
+
+def _absence_reason(rows: list[list[Any]], section: str, hdr: int | None) -> str:
+    """WHY a Segments section is absent, generated from the object actually read (item 19b).
+
+    The note this replaces — "Segments sheet has no 'EBITDA' section as expected" — asserted SHEET
+    SHAPE on 10 of 11 names. On seven of them the true reason is a fact about the FILING: the
+    company reports ONE segment, so there is no segment breakout to give and none is missing. A
+    reader told the sheet was malformed goes looking for a better export that does not exist.
+
+    Follows the ``net_lev`` precedent in ``vinci/edgar/client.py`` — name the SPECIFIC cause, never
+    lump distinct ones. The single-segment test mirrors the ``lean`` collapse below (one item at
+    >=99.5%) so the note and the ``segments`` field can never disagree about what the sheet says."""
+    if hdr is None:
+        return f"Segments sheet has no period header — the '{section}' column cannot be located"
+    roster = _segment_roster(rows, hdr)
+    if roster is None:
+        return (f"Segments sheet has no '{section}' section, and its revenue roster could not be "
+                "read either — the reason for the absence is undetermined")
+    if len(roster) == 1 and roster[0][1] >= 0.995:
+        return (f"single-segment reporting ({roster[0][0]}) — no segment {section} to break out; "
+                f"the consolidated {section} is the whole business")
+    names = "; ".join(n for n, _ in sorted(roster, key=lambda t: -t[1]))  # share order, as `lean`
+    return (f"reports {len(roster)} segments ({names}) but discloses no segment {section} — "
+            f"revenue is segmented in the filing and {section} is not")
+
+
 def _segment_section(
     bundle: CiqBundle, section: str, *, after_label: str | None = None, total_label: str = "Total",
     extra_fn: Callable[[float, str], str] | None = None, source_note: str = "", lean: bool = True,
@@ -884,7 +942,7 @@ def _segment_section(
         None,
     )
     if start is None or total is None or hdr is None:
-        return Sourced.unknown(note=f"Segments sheet has no '{section}' section as expected")
+        return Sourced.unknown(note=_absence_reason(rows, section, hdr))
     latest = _latest_col(rows, total, hdr)
     if latest is None:
         return Sourced.unknown(note=f"Segments 'Total {section}' has no value")
@@ -1951,19 +2009,83 @@ def _parse_business_relationships(raw: str) -> list[str] | None:
     return out or None
 
 
+_REL_COLUMNS = ("Customer Name", "Relationship Type", "Primary Industry", "Source")
+
+
+def _parse_relationship_sheet(rows: list[list[Any]]) -> list[str] | None:
+    """The SPREADSHEET form of the Business-Relationships export → the same lines the .rtf form
+    produces. Columns are located BY HEADER TEXT, never by position: the .xls lays out
+    ``Customer Name | Exchange:Ticker Symbol | Relationship Type | Primary Industry | …``, so the
+    .rtf parser's ``cells[0], cells[1], cells[2]`` would read the TICKER as the relationship type
+    and silently produce 'Amazon.com, Inc. — NasdaqGS:AMZN · Distributor'. A right-looking line
+    off the wrong columns is worse than the loud parse error this route replaces."""
+    hdr = next(
+        (i for i, r in enumerate(rows)
+         if r and all(any(str(c).strip() == want for c in r) for want in _REL_COLUMNS[:2])),
+        None,
+    )
+    if hdr is None:
+        return None
+    col = {want: next((j for j, c in enumerate(rows[hdr]) if str(c).strip() == want), None)
+           for want in _REL_COLUMNS}
+    if col["Customer Name"] is None or col["Relationship Type"] is None:
+        return None
+
+    def cell(row: list[Any], want: str) -> str:
+        j = col[want]
+        return str(row[j]).strip() if j is not None and j < len(row) and row[j] is not None else ""
+
+    out: list[str] = []
+    for row in rows[hdr + 1:]:
+        name, rtype = cell(row, "Customer Name"), cell(row, "Relationship Type")
+        if not name or not rtype or name.startswith("*denotes"):
+            continue
+        line = f"{name} — {rtype}"
+        if industry := cell(row, "Primary Industry"):
+            line += f" · {industry}"
+        if src := cell(row, "Source"):
+            line += f" · src: {src}"
+        out.append(line)
+    return out or None
+
+
 def customers(bundle: CiqBundle) -> Sourced[str]:
-    """Customer concentration from the CIQ Business-Relationships (.rtf) export — parsed into
-    readable lines (name / relationship / industry), not a raw pipe-dump. Fail loud if unparsed."""
-    wb = bundle.workbook("customers")
+    """Customer concentration from the CIQ Business-Relationships export — parsed into readable
+    lines (name / relationship / industry), not a raw pipe-dump. Fail loud if unparsed.
+
+    ROUTED BY FORMAT (item 21). The export ships as .rtf for most names and as a .xls SPREADSHEET
+    for others (SMPL today, WERN next). ``read_text`` refuses a spreadsheet by design — and this
+    function caught that refusal and rendered OUR OWN error string into the dossier as the field's
+    UNKNOWN note, which reads to a human as "CapIQ has no customer data" rather than "we called
+    the wrong reader". Right conclusion by luck downstream; wrong route."""
+    # SELECT THE CUSTOMERS FILE BY NAME, never by position. `bundle.workbook()` returns cands[0],
+    # and the "customers" kind matches BOTH exports (its keywords include "supplier"), so which one
+    # arrives first is decided by the store's sort order — "Customers" < "Suppliers" is alphabetical
+    # luck, not a rule. That accident was harmless only while the .xls route failed loud for SMPL;
+    # routing it correctly would otherwise have made supplier rows render as customer concentration.
+    cands = bundle.all_workbooks("customers")
+    wb = next((w for w in cands if "customer" in w.path.name.lower()), None)
     if wb is None:
         return Sourced.missing(
-            note=f"no Customers & Suppliers export for {bundle.ticker} — pull it and re-run"
+            note=(f"no Customers export for {bundle.ticker} — pull it and re-run"
+                  if cands else
+                  f"no Customers & Suppliers export for {bundle.ticker} — pull it and re-run")
         )
-    try:
-        raw = read_text(wb.path, wb.fmt)
-    except CiqParseError as exc:
-        return Sourced.unknown(note=str(exc))
-    parsed = _parse_business_relationships(raw)
+    parsed: list[str] | None
+    if wb.fmt in (CiqFormat.BIFF_XLS, CiqFormat.OOXML):
+        try:
+            sheets = read_sheets(wb.path, wb.fmt)
+        except CiqParseError as exc:
+            return Sourced.unknown(note=str(exc))
+        parsed = next(
+            (p for rows in sheets.values() if (p := _parse_relationship_sheet(rows))), None
+        )
+    else:
+        try:
+            raw = read_text(wb.path, wb.fmt)
+        except CiqParseError as exc:
+            return Sourced.unknown(note=str(exc))
+        parsed = _parse_business_relationships(raw)
     if not parsed:
         return Sourced.unknown(
             note=f"could not parse the Business-Relationships table in {wb.path.name}"
