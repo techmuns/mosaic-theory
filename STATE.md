@@ -4018,6 +4018,28 @@ the market cap.
 (pinned). One day of ageing flips it. **A future VRRM failure is the guard working, not a
 regression.**
 
+**THE NEW PIN WAS ITSELF THE DECAY CLASS — caught by the operator before merge, and it was worse
+than suspected.** The first cut hardcoded literal dates (`"2026-07-17"`, `"2025-12-31"`, and AORT's)
+against a LIVING artifact, so CNXC's queued re-assembly would have reddened it for a reason
+unrelated to its claim — the TEST-LAYER rule's exact prohibition. And its "fixture still disagrees"
+guard read `assert expect[0] != expect[1]`, comparing a HARDCODED TUPLE TO ITSELF: vacuously true,
+never looking at the data. **Third instance of the vacuous-assertion class this week**, after 26a's
+end-of-document slice and the `... or True` ruff caught.
+REWRITTEN per #249's own rule: **relational** — each panel's expected date is read from its OWN band
+in the committed JSON, so convergence is harmless — plus a **CONSTRUCTED companion** carrying the
+DISAGREEING shape, which is what makes the bug possible and would vanish from the corpus the moment
+both names re-assemble. **Verified by simulating the decay**: converging CNXC's panel dates to
+2026-09-30 leaves the relational test PASSING; removing the per-panel date reds BOTH.
+**STANDING VERIFICATION GAP, recorded (operator 2026-07-29): THE VISUAL LAYER HAS ONE VERIFIER AND
+IT IS THE OPERATOR.** Screenshot capture has failed twice — the 375px pane, and blank frames here —
+so render changes are verified by DOM assertions, which confirm a string and check overflow but
+CANNOT catch what the deploy check caught: a chart marker contradicting the prose beside it, on a
+page nobody questioned because the CHANGE rendered correctly. **After every render change deploys,
+the operator opens the live page.** Not the local preview. That is the only visual verification in
+the loop, and it has already found the most consequential render defect in this work.
+**COUNT HELD: P5 pt1 closes again on merge AND live-page confirmation — not on merge alone**, since
+that is how it re-opened.
+
 **P5 pt1 RE-OPENS — COUNT GOES 3 OF 13 BACK TO 2 OF 13. NOT a new finding: the SAME defect, one
 consumer down (operator 2026-07-29).** The audit's words were *"SMPL printed 'P/LTM EPS 16.0x'
 beside 'as-of 2026-07-23' while that 16.0x was the 2026-03-31 close."* **The chart does that
