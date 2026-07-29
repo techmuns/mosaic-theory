@@ -4234,6 +4234,15 @@ screen cohort.**
    analyst text (`WATCH at $10.53 — not held`); the vintage is supplied AROUND it by the renderer.
    Rewriting the number would falsify the record instead of dating it — pinned both ways (the note
    is present AND the sealed text is byte-identical).
+   **REVIEW FINDING, fixed before merge: the vintage note pointed at a section the md does not
+   have.** It read *"the live close is in Key figures"* — the WEB card's heading; the markdown
+   carries the live close under `- **Snapshot:**`. A pointer to a non-existent section is a false
+   claim about the document, shipped inside the batch whose subject is false claims about the
+   document — the launch.json class again (a claim true on one surface, asserted on another). The
+   pin is written GENERALLY: it reads the target out of the note and requires a matching section in
+   the same render, so a future reword to another web-only label reds in CI rather than in a PDF.
+   Also aligned the twins' ORDER (rationale → triggers, as the web card does); twins may LAG each
+   other, but a reader should not meet the same two blocks in two orders.
    **NOT CLOSED BY THIS:** the stale `'LTM revenue' = 1,416.208` RefPoint on SMPL (frozen at
    underwrite, never refreshed after the 2026-07-09 print, against `facts.ltm_revenue`
    1,392.235 — operator ruling 2026-07-29). It is a RECORD-DATA instance of clause (e), not a
