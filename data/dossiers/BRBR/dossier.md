@@ -11,7 +11,7 @@ BellRing Brands, Inc., together with its subsidiaries, provides various nutritio
 **Strongly-bearish** — margin % AND absolute EBITDA fell together with a management-confirmed guide cut and structural pricing-power erosion; discount looks largely earned.
 - **Segments:** Protein-Based Consumer Goods — single segment [1]
 - **Geography:** United States 88%; Other Foreign 8%; Canada 4% [2]
-- **Snapshot:** NYSE · CMP $12.95 (2026-07-24) · cap $1.3B · 52-wk $7.82–$59.09 · shares 116.3M · book value/sh $-4.28 [3]
+- **Snapshot:** NYSE · CMP $12.95 (2026-07-24) · cap $1.3B (2026-05-14) · 52-wk $7.82–$59.09 · shares 116.3M · book value/sh $-4.28 [3]
 
 **The crux — what decides this, and what would change our mind**
 **Is the sharp margin/EBITDA compression a temporary, competition-and-input-cost trough that reverses as promotional intensity moderates and volume-led category growth carries through — or a structural reset in pricing power that permanently rebases earnings at the lower level?**
@@ -449,6 +449,7 @@ _Source §: 8-K 0001772016-21-000029 · ex10-1_amend2creditagmt.htm_
 ## Record & reproduce
 - **Data window:** screened as of 2026-07-06 · assembled 2026-07-27 10:00 UTC
 - **Extraction:** unstamped — assembled before extraction versions were declared; vintage unknown
+- **Panel spread:** panel spread 71d — oldest 2026-05-14 (valuation.implied_expectations.multiples_as_of), newest 2026-07-24 (stock_info.as_of)
 - **Synthesis:** model `claude-opus-4-8` — facts assembled mechanically; the synthesis frames, the analyst decides
 - **Identifiers:** CIK `0001772016` · NYSE : BRBR
 - **Assembly log:** primary-source: 8-K 0001628280-26-045287 carries 8.01 but no EX-99.1 exhibit was found; primary-source: 4 EX-99.1 release(s) + 1 10-Q parsed (+4.6s fetch)

@@ -15,7 +15,7 @@ BUY at $141.06, 6.7:1 against the 2:1 bar; a brutal secular bear still clears 2.
 Gartner, Inc. provides business and technology insights for decisions and performance on an organization’s mission-critical priorities in the United States, Canada, Europe, the Middle East, Africa, and internationally.
 - **Segments:** Insights 78%; Conferences 10%; Consulting 9%; Other 4% [1]
 - **Geography:** United States and Canada 62%; Europe, Middle East and Africa 26%; Other International 12% [2]
-- **Snapshot:** NYSE · CMP $140.50 (2026-07-24) · cap $8.7B · 52-wk $124.25–$403.95 · shares 67.0M · book value/sh $0.93 [3]
+- **Snapshot:** NYSE · CMP $140.50 (2026-07-24) · cap $8.7B (2026-06-24) · 52-wk $124.25–$403.95 · shares 67.0M · book value/sh $0.93 [3]
 
 **The crux — what decides this, and what would change our mind**
 **Is Gartner's revenue contraction and CV stall a TEMPORARY, geopolitics-driven pause in an intact sticky-subscription franchise (overshoot), or the start of a durable slowdown that justifies a permanently lower multiple (value trap)?**
@@ -504,6 +504,7 @@ _Source §: 8-K 0001193125-20-256749 · d75343dex101.htm · amended by 000119312
 ## Record & reproduce
 - **Data window:** screened as of 2026-07-06 · assembled 2026-07-27 09:45 UTC
 - **Extraction:** unstamped — assembled before extraction versions were declared; vintage unknown
+- **Panel spread:** panel spread 30d — oldest 2026-06-24 (valuation.implied_expectations.multiples_as_of), newest 2026-07-24 (stock_info.as_of)
 - **Synthesis:** model `claude-opus-4-8` — facts assembled mechanically; the synthesis frames, the analyst decides
 - **Identifiers:** CIK `0000749251` · NYSE : IT
 - **Assembly log:** primary-source: 8-K 0001193125-25-289854 carries 8.01 but no EX-99.1 exhibit was found; primary-source: 8-K 0000749251-25-000048 carries 8.01 but no EX-99.1 exhibit was found; primary-source: 5 EX-99.1 release(s) + 1 10-Q parsed (+3.3s fetch)

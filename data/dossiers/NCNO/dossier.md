@@ -17,7 +17,7 @@ WATCH at $17.93. The underwrite fails our 2:1 bar decisively: the base case valu
 nCino, Inc., a software-as-a-service company, provides software solutions to financial institutions in the United States, the United Kingdom, and internationally.
 - **Segments:** Software & Programming — single segment [1]
 - **Geography:** United States 78%; United Kingdom 12%; Other 10% [2]
-- **Snapshot:** Nasdaq · CMP $17.28 (2026-07-21) · cap $2.0B · 52-wk $13.80–$33.92 · shares 109.6M · book value/sh $8.92 [3]
+- **Snapshot:** Nasdaq · CMP $17.28 (2026-07-21) · cap $2.0B (2026-07-12) · 52-wk $13.80–$33.92 · shares 109.6M · book value/sh $8.92 [3]
 
 **The crux — what decides this, and what would change our mind**
 **Is the sharp de-rating an overshoot on a business whose absolute earnings and cash flow are genuinely inflecting, or an earned discount on a SaaS name whose growth has structurally decelerated toward low-double-digits?**
@@ -506,6 +506,7 @@ _Source §: 8-K 0001902733-24-000171 · exhibit101creditagreementb.htm · amende
 ## Record & reproduce
 - **Data window:** screened as of 2026-07-06 · assembled 2026-07-27 09:41 UTC
 - **Extraction:** unstamped — assembled before extraction versions were declared; vintage unknown
+- **Panel spread:** panel spread 9d — oldest 2026-07-12 (valuation.implied_expectations.multiples_as_of), newest 2026-07-21 (stock_info.as_of)
 - **Synthesis:** model `claude-opus-4-8` — facts assembled mechanically; the synthesis frames, the analyst decides
 - **Identifiers:** CIK `0001902733` · Nasdaq : NCNO
 - **Assembly log:** primary-source: 6 EX-99.1 release(s) + 1 10-Q parsed (+3.7s fetch)

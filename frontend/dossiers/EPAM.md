@@ -13,7 +13,7 @@ EPAM Systems, Inc. provides digital platform engineering and software developmen
 **Mixed** — a net-cash, still-growing, AI-scaling franchise de-rated to near-trough multiples, but genuine multi-year margin/ROIC erosion and North America demand softness keep the value-trap risk live.
 - **Segments:** Americas 58%; Europe 42% [1]
 - **Geography:** United States 52%; Other Locations 21%; United Kingdom 11%; Switzerland 8%; Germany 4%; Netherlands 4% [2]
-- **Snapshot:** NYSE · CMP $89.85 (2026-07-24) · cap $4.0B · 52-wk $73.06–$222.53 · shares 52.2M · book value/sh $65.04 [3]
+- **Snapshot:** NYSE · CMP $89.85 (2026-07-24) · cap $4.0B (2026-06-18) · 52-wk $73.06–$222.53 · shares 52.2M · book value/sh $65.04 [3]
 
 **The crux — what decides this, and what would change our mind**
 **Is the margin/return erosion and North America demand softness a temporary, macro/AI-transition air-pocket (an overshoot in a still-growing, net-cash, AI-scaling franchise), or the leading edge of structural displacement of services revenue by AI that permanently resets margins and growth lower (a value trap)?**
@@ -521,6 +521,7 @@ _Source §: 8-K 0001352010-17-000022 · exhibit10-1epamcreditagree.htm · amende
 ## Record & reproduce
 - **Data window:** screened as of 2026-07-06 · assembled 2026-07-27 10:03 UTC
 - **Extraction:** unstamped — assembled before extraction versions were declared; vintage unknown
+- **Panel spread:** panel spread 36d — oldest 2026-06-18 (valuation.implied_expectations.multiples_as_of), newest 2026-07-24 (stock_info.as_of)
 - **Synthesis:** model `claude-opus-4-8` — facts assembled mechanically; the synthesis frames, the analyst decides
 - **Identifiers:** CIK `0001352010` · NYSE : EPAM
 - **Assembly log:** primary-source: 4 EX-99.1 release(s) + 1 10-Q parsed (+3.3s fetch)
